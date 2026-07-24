@@ -277,7 +277,7 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
         if (shipment.getCarrierId() == null) {
             return null;
         }
-        ErpLogCarrier carrier = daoProvider().daoFor(ErpLogCarrier.class).getEntityById(shipment.getCarrierId());
+        ErpLogCarrier carrier = shipment.getCarrier();
         return carrier != null ? carrier.getPartnerId() : null;
     }
 

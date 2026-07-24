@@ -104,8 +104,7 @@ public class SimulationMrpEngine {
             throw new NopException(ErpMfgErrors.ERR_MFG_SIMULATION_NO_BASELINE_PLAN)
                     .param(ErpMfgErrors.ARG_SCENARIO_ID, scenarioId);
         }
-        ErpMfgMrpPlan basePlan = daoProvider.daoFor(ErpMfgMrpPlan.class)
-                .getEntityById(scenario.getBaseMrpPlanId());
+        ErpMfgMrpPlan basePlan = scenario.getBaseMrpPlan();
         if (basePlan == null) {
             throw new NopException(ErpMfgErrors.ERR_MFG_SIMULATION_NO_BASELINE_PLAN)
                     .param(ErpMfgErrors.ARG_SCENARIO_ID, scenarioId);
@@ -180,8 +179,7 @@ public class SimulationMrpEngine {
                     .param(ErpMfgErrors.ARG_SCENARIO_VERSION_ID, scenarioVersionId)
                     .param(ErpMfgErrors.ARG_CURRENT_STATUS, version.getStatus());
         }
-        ErpMfgMrpPlan computed = daoProvider.daoFor(ErpMfgMrpPlan.class)
-                .getEntityById(version.getComputedMrpPlanId());
+        ErpMfgMrpPlan computed = version.getComputedMrpPlan();
         if (computed == null) {
             throw new NopException(ErpMfgErrors.ERR_MRP_PLAN_NOT_FOUND)
                     .param(ErpMfgErrors.ARG_MRP_PLAN_ID, version.getComputedMrpPlanId());

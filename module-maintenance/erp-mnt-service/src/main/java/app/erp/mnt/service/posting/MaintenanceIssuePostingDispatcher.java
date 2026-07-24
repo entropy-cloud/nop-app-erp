@@ -95,9 +95,7 @@ public class MaintenanceIssuePostingDispatcher {
             return;
         }
 
-        ErpMntEquipment equipment = usage.getEquipmentId() != null
-                ? daoProvider.daoFor(ErpMntEquipment.class).getEntityById(usage.getEquipmentId())
-                : null;
+        ErpMntEquipment equipment = usage.getEquipment();
 
         ErpInvStockMove move = findIssueMove(usage.getCode());
         if (move == null) {
@@ -170,9 +168,7 @@ public class MaintenanceIssuePostingDispatcher {
             line.put(MaintenanceIssueAcctDocProvider.KEY_MATERIAL_AMOUNT, lineCost);
             line.put(MaintenanceIssueAcctDocProvider.KEY_INVENTORY_SUBJECT, inventorySubject);
 
-            ErpMdMaterial material = ledger.getMaterialId() != null
-                    ? daoProvider.daoFor(ErpMdMaterial.class).getEntityById(ledger.getMaterialId())
-                    : null;
+            ErpMdMaterial material = ledger.getMaterial();
             line.put(MaintenanceIssueAcctDocProvider.KEY_MATERIAL_CODE,
                     material != null ? material.getCode() : "");
             lines.add(line);

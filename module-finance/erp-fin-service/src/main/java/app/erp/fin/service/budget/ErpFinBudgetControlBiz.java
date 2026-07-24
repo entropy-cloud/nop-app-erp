@@ -148,8 +148,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
             lq.addFilter(isNull("costCenterId"));
         }
         for (ErpFinBudgetLine line : lineDao.findAllByQuery(lq)) {
-            ErpFinBudgetScenario scenario = daoProvider.daoFor(ErpFinBudgetScenario.class)
-                    .getEntityById(line.getScenarioId());
+            ErpFinBudgetScenario scenario = line.getScenario();
             if (scenario != null && Objects.equals(scenario.getDocStatus(), ErpFinConstants.BUDGET_STATUS_APPROVED)) {
                 return new BudgetLineMatch(line, scenario);
             }

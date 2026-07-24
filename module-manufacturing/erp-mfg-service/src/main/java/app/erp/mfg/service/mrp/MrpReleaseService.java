@@ -70,7 +70,7 @@ public class MrpReleaseService {
                     .param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
         }
         ErpMfgMrpPlanLine line = requireReleasable(planLineId, ErpMfgConstants.MRP_ORDER_TYPE_PURCHASE_REQUEST);
-        ErpMfgMrpPlan plan = daoProvider.daoFor(ErpMfgMrpPlan.class).getEntityById(line.getMrpPlanId());
+        ErpMfgMrpPlan plan = line.getMrpPlan();
         String billCode = releaseToPurchaseOrder(line, plan, supplierId, currencyId, CoreMetrics.today());
         markFirmed(line, billCode);
         advancePlanToFirmedIfComplete(plan);
@@ -82,7 +82,7 @@ public class MrpReleaseService {
      */
     public String releaseWorkRequest(Long planLineId) {
         ErpMfgMrpPlanLine line = requireReleasable(planLineId, ErpMfgConstants.MRP_ORDER_TYPE_WORK_ORDER_REQUEST);
-        ErpMfgMrpPlan plan = daoProvider.daoFor(ErpMfgMrpPlan.class).getEntityById(line.getMrpPlanId());
+        ErpMfgMrpPlan plan = line.getMrpPlan();
         String billCode = releaseToWorkOrder(line, plan, CoreMetrics.today());
         markFirmed(line, billCode);
         advancePlanToFirmedIfComplete(plan);
@@ -105,7 +105,7 @@ public class MrpReleaseService {
                     .param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
         }
         ErpMfgMrpPlanLine line = requireReleasable(planLineId, ErpMfgConstants.MRP_ORDER_TYPE_SUBCONTRACT_REQUEST);
-        ErpMfgMrpPlan plan = daoProvider.daoFor(ErpMfgMrpPlan.class).getEntityById(line.getMrpPlanId());
+        ErpMfgMrpPlan plan = line.getMrpPlan();
         String billCode = releaseToSubcontractOrder(line, plan, supplierId, currencyId, CoreMetrics.today());
         markFirmed(line, billCode);
         advancePlanToFirmedIfComplete(plan);

@@ -90,7 +90,7 @@ public class ReturnRefundOrchestrator {
                 continue;
             }
             touchedReceipts.add(line.getReceiptId());
-            ErpSalReceipt receipt = daoProvider.daoFor(ErpSalReceipt.class).getEntityById(line.getReceiptId());
+            ErpSalReceipt receipt = line.getReceipt();
             if (receipt == null) {
                 continue;
             }

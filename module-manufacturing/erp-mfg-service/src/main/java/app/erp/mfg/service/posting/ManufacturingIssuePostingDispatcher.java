@@ -85,9 +85,7 @@ public class ManufacturingIssuePostingDispatcher {
             return;
         }
 
-        ErpMfgWorkOrder wo = issue.getWorkOrderId() != null
-                ? daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(issue.getWorkOrderId())
-                : null;
+        ErpMfgWorkOrder wo = issue.getWorkOrder();
 
         ErpInvStockMove move = findIssueMove(issue.getCode());
         if (move == null) {
@@ -143,9 +141,7 @@ public class ManufacturingIssuePostingDispatcher {
             line.put(ManufacturingIssueAcctDocProvider.KEY_MATERIAL_COST, lineCost);
             line.put(ManufacturingIssueAcctDocProvider.KEY_INVENTORY_SUBJECT, "1401");
 
-            ErpMdMaterial material = ledger.getMaterialId() != null
-                    ? daoProvider.daoFor(ErpMdMaterial.class).getEntityById(ledger.getMaterialId())
-                    : null;
+            ErpMdMaterial material = ledger.getMaterial();
             line.put(ManufacturingIssueAcctDocProvider.KEY_MATERIAL_CODE,
                     material != null ? material.getCode() : "");
             lines.add(line);

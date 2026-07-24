@@ -647,9 +647,8 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
         int sourceYear;
         int sourceMonth;
         if (simulation.getSourceSalaryId() != null) {
-            // 内部只读访问：经 daoProvider 直接读，不走代理管道（context 不可得；对齐 PayrollCalculator 读 master 模式）
-            ErpHrSalary source = daoProvider().daoFor(ErpHrSalary.class)
-                    .getEntityById(simulation.getSourceSalaryId());
+            // 内部只读访问：经 ORM 关系导航读取（context 不可得；对齐 PayrollCalculator 读 master 模式）
+            ErpHrSalary source = simulation.getSourceSalary();
             if (source != null) {
                 sourceYear = source.getYear();
                 sourceMonth = source.getMonth();
@@ -766,9 +765,8 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
     Map<Long, EmployeeSimResult> computeAllEmployeeSims(ErpHrSalarySimulation simulation, IServiceContext context) {
         int sourceYear;
         int sourceMonth;
-        // 内部只读访问：经 daoProvider 直接读代表行（context 不可得；对齐 PayrollCalculator 读 master 模式）
-        ErpHrSalary representative = simulation.getSourceSalaryId() != null
-                ? daoProvider().daoFor(ErpHrSalary.class).getEntityById(simulation.getSourceSalaryId()) : null;
+        // 内部只读访问：经 ORM 关系导航读取代表行（context 不可得；对齐 PayrollCalculator 读 master 模式）
+        ErpHrSalary representative = simulation.getSourceSalary();
         if (representative == null) {
             return Collections.emptyMap();
         }

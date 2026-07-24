@@ -352,7 +352,7 @@ public class GatewayDispatcher {
         if (shipment.getCarrierId() == null) {
             return null;
         }
-        ErpLogCarrier carrier = daoProvider.daoFor(ErpLogCarrier.class).getEntityById(shipment.getCarrierId());
+        ErpLogCarrier carrier = shipment.getCarrier();
         return carrier != null ? carrier.getGatewayId() : null;
     }
 

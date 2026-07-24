@@ -179,8 +179,7 @@ public class SubcontractPostingDispatcher {
             Map<String, Object> line = new LinkedHashMap<>();
             line.put(SubcontractIssueAcctDocProvider.KEY_MATERIAL_COST, lineCost);
             line.put(SubcontractIssueAcctDocProvider.KEY_INVENTORY_SUBJECT, ErpMfgConstants.SUBJECT_FINISHED_GOODS);
-            ErpMdMaterial material = ledger.getMaterialId() != null
-                    ? daoProvider.daoFor(ErpMdMaterial.class).getEntityById(ledger.getMaterialId()) : null;
+            ErpMdMaterial material = ledger.getMaterial();
             line.put(SubcontractIssueAcctDocProvider.KEY_MATERIAL_CODE,
                     material != null ? material.getCode() : "");
             ledgerLines.add(line);
@@ -215,8 +214,7 @@ public class SubcontractPostingDispatcher {
             line.put(SubcontractReceiptAcctDocProvider.KEY_FINISHED_COST, lineCost);
             line.put(SubcontractReceiptAcctDocProvider.KEY_FINISHED_SUBJECT,
                     ErpMfgConstants.SUBJECT_SUBCONTRACT_FINISHED_GOODS);
-            ErpMdMaterial material = ledger.getMaterialId() != null
-                    ? daoProvider.daoFor(ErpMdMaterial.class).getEntityById(ledger.getMaterialId()) : null;
+            ErpMdMaterial material = ledger.getMaterial();
             line.put(SubcontractReceiptAcctDocProvider.KEY_MATERIAL_CODE,
                     material != null ? material.getCode() : "");
             receiptLines.add(line);

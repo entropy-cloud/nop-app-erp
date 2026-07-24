@@ -72,7 +72,7 @@ public class SimulationDrpEngine {
             throw new NopException(ErpDrpErrors.ERR_DRP_SIMULATION_NO_BASELINE_PLAN)
                     .param(ErpDrpErrors.ARG_SCENARIO_ID, scenarioId);
         }
-        ErpDrpPlan basePlan = daoProvider.daoFor(ErpDrpPlan.class).getEntityById(scenario.getBaseDrpPlanId());
+        ErpDrpPlan basePlan = scenario.getBaseDrpPlan();
         if (basePlan == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SIMULATION_NO_BASELINE_PLAN)
                     .param(ErpDrpErrors.ARG_SCENARIO_ID, scenarioId);
@@ -176,7 +176,7 @@ public class SimulationDrpEngine {
                     .param(ErpDrpErrors.ARG_SCENARIO_VERSION_ID, scenarioVersionId)
                     .param(ErpDrpErrors.ARG_CURRENT_STATUS, version.getStatus());
         }
-        ErpDrpPlan computed = daoProvider.daoFor(ErpDrpPlan.class).getEntityById(version.getComputedDrpPlanId());
+        ErpDrpPlan computed = version.getComputedDrpPlan();
         if (computed == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_SIMULATION_NO_BASELINE_PLAN)
                     .param(ErpDrpErrors.ARG_SCENARIO_VERSION_ID, scenarioVersionId);
