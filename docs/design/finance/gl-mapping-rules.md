@@ -111,6 +111,14 @@ materialCategoryId=NULL, warehouseId=NULL, ...)` 匹配任意账套 + 任意 par
 
 ## §3 优先级链算法
 
+> **orgId 维度激活（plan 2026-07-25-1016-2）**：本节伪代码 `:118` `rulesByIndex.get((orgId, businessType, accountKey))` 与
+> `:192`「按 `(orgId, businessType, accountKey)` 索引」自 A1 起即为 owner doc 设计真相源，但代码（`ErpFinGlMappingResolver`）
+> 自 A1 起漂移——`resolveOrgIdFromDimensions` 硬编码 `return null`、cache key 丢弃 `rule.orgId`。**此 doc/code drift 已收口**：
+> 代码现与 `:118/192` 一致，经 config-gate `erp-fin.gl-mapping.org-dimension-enabled`（默认 `false`）激活：
+> 关闭态（默认）= org-agnostic（orgId 不参与 cache key 与匹配，向后兼容现状）；开启态 = org 精确匹配（cache 按
+> `(orgId, businessType, accountKey)` 分桶 + `matches` exact 校验 + `specificity` 含 orgId 计数）。orgId 维度仅做
+> exact 匹配（非通配），因 `orgId` 在 ORM 层 `mandatory="true"`。
+
 ### 3.1 算法（伪代码）
 
 ```
@@ -185,6 +193,10 @@ specificity(rule) = 非 NULL 维度字段数（partnerGroupId/materialCategoryId
 ---
 
 ## §4 缓存策略 + 失效机制
+
+> **orgId 分桶对齐（plan 2026-07-25-1016-2）**：cache 数据结构与 `:191` 规定一致——关闭态统一 `_` 桶（向后兼容），
+> 开启态按 `(orgId, businessType, accountKey)` 分桶。`loadFromDb`（cache 禁用降级路径）同样按 orgId 精确过滤，
+> 避免绕过分桶。config-gate 见 §3 orgId 维度激活注记。
 
 ### 4.1 进程内缓存设计
 

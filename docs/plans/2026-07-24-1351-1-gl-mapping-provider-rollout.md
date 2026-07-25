@@ -172,6 +172,7 @@ Exit Criteria:
 - Classification: `optimization candidate`
 - Why Not Blocking Closure: resolver `resolveOrgIdFromDimensions` 当前返回 null，orgId 维度为预留；本计划仅消费既有 6 维度
 - Successor Required: `yes`（触发条件：多组织差异化科目映射需求）
+- **Resolved（2026-07-25）**：successor plan `2026-07-25-1016-2-gl-mapping-org-dimension-activation` 已收口——orgId 经 config-gate `erp-fin.gl-mapping.org-dimension-enabled`（默认 false）激活，doc/code drift（owner doc `gl-mapping-rules.md:118/192` 规定 orgId cache key 但代码漂移）已收口。
 
 ### 多节点分布式缓存一致性
 

@@ -234,6 +234,14 @@ CANDIDATE ──postElimination──► DRAFT_VOUCHER ──(人工过账)─�
 | `ErpFinPostingProcessor` | 单据过账编排 | A3 不改其核心；配对凭证经独立 Generator 写入 |
 | `ErpFinAcctDocRegistry` | Provider 路由 | A3 不接入路由（INTERCOMPANY_* 不进枚举） |
 | A1 `ErpFinGlMappingResolver` | 多维科目解析 | A3 新增 intercompany 维度（fromOrgId/toOrgId）+ 4 accountKey |
+
+> **orgId 维度激活（plan 2026-07-25-1016-2 EXPAND）**：`ErpFinGlMappingRule.orgId`（核算组织，A1 已建模 `mandatory=true`）
+> 自 A1 起 dormant——owner doc `gl-mapping-rules.md:118/192` 已规定其参与 cache key 但代码漂移。本次收口：orgId 经
+> config-gate `erp-fin.gl-mapping.org-dimension-enabled`（默认 `false`）激活，plumbing 链路
+> `PostingEvent.orgId → VoucherFact.orgId → GlMappingDimensions.orgId → resolver`。**注意**：此 orgId（核算组织）与
+> A3 intercompany 的 `fromOrgId`/`toOrgId`（跨法人交易双方组织）语义不同——后者作为匹配维度仍 Deferred（需 ORM 新增列 +
+> ask-first）。多组织部署启用 org-dimension 后，不同组织可为同一 `(businessType, accountKey)` 配置不同 `targetSubjectCode`，
+> 自证多组织差异化科目映射需求。
 | A2 `CommitmentVoucherGenerator` | 影子凭证生成 | A3 `IntercompanyVoucherGenerator` 同型范式 |
 
 ## 反模式自检表
