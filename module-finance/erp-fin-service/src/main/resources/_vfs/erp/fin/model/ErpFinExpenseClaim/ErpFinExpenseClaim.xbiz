@@ -9,7 +9,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').submitForApproval(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimSubmitForApprovalProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
@@ -19,7 +19,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').approve(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimApproveProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
@@ -29,7 +29,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').reject(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimRejectProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
@@ -39,7 +39,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').reverseApprove(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimReverseApproveProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
@@ -49,7 +49,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').withdrawApproval(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinExpenseClaimWithdrawApprovalProcessor').withdrawApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
     </actions>

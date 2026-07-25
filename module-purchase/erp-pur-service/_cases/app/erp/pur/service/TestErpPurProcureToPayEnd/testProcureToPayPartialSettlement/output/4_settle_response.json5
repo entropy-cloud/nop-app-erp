@@ -1,10 +1,10 @@
 {
   "data": {
-    "id": "@var:NopWfInstance@bizObjId",
+    "id": "@var:NopWfInstance@bizObjId_1",
     "code": "@var:ErpFinArApItem@sourceBillCode_1",
     "orgId": 1401,
     "supplierId": 2401,
-    "businessDate": "@var:ErpFinVoucher@voucherDate",
+    "businessDate": "@var:ErpPurInvoice@businessDate",
     "currencyId": 6401,
     "exchangeRate": 1.00000000,
     "amountSource": 56.5000,

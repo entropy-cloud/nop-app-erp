@@ -106,4 +106,20 @@
          经 @BizQuery 暴露 renderHtml/download。@BizModel 注解由 bizObject 管理器自动识别。
          镜像 finance ErpFinReportBizModel / manufacturing ErpMfgReportBizModel（域隔离 /inv/ vs /fin/ vs /mfg/）。 -->
     <bean id="app.erp.inv.service.report.ErpInvReportBizModel" ioc:type="@bean:id"/>
+
+    <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustSubmitForApprovalProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustSubmitForApprovalProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustApproveProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustApproveProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustRejectProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustRejectProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustReverseApproveProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustReverseApproveProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustWithdrawApprovalProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustWithdrawApprovalProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvLandedCostApproveProcessor"
+          class="app.erp.inv.service.processor.ErpInvLandedCostApproveProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvLandedCostReverseApproveProcessor"
+          class="app.erp.inv.service.processor.ErpInvLandedCostReverseApproveProcessor"/>
 </beans>

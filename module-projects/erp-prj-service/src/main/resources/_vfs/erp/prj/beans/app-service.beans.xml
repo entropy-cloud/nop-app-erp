@@ -54,4 +54,14 @@
     <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementProcessor"
           class="app.erp.prj.service.processor.ErpPrjProjectSettlementProcessor"/>
 
+
+    <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementSubmitForApprovalProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectSettlementSubmitForApprovalProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementApproveProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectSettlementApproveProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementRejectProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectSettlementRejectProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementCancelProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectSettlementCancelProcessor"/>
 </beans>

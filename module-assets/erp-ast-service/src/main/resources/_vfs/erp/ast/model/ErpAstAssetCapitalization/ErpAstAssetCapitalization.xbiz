@@ -9,7 +9,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor').submitForApproval(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationSubmitForApprovalProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
@@ -19,7 +19,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor').approve(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationApproveProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
@@ -29,7 +29,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor').reject(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationRejectProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
@@ -39,7 +39,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor').reverseApprove(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationReverseApproveProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
@@ -49,7 +49,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationProcessor').withdrawApproval(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstAssetCapitalizationWithdrawApprovalProcessor').withdrawApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
     </actions>

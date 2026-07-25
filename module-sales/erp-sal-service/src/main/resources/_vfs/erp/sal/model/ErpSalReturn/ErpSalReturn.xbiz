@@ -9,7 +9,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.sal.service.processor.ErpSalReturnProcessor').submitForApproval(id, svcCtx);
+                return inject('app.erp.sal.service.processor.ErpSalReturnSubmitForApprovalProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
@@ -19,7 +19,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.sal.service.processor.ErpSalReturnProcessor').approve(id, svcCtx);
+                return inject('app.erp.sal.service.processor.ErpSalReturnApproveProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
@@ -29,7 +29,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.sal.service.processor.ErpSalReturnProcessor').reject(id, svcCtx);
+                return inject('app.erp.sal.service.processor.ErpSalReturnRejectProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
@@ -39,7 +39,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.sal.service.processor.ErpSalReturnProcessor').reverseApprove(id, svcCtx);
+                return inject('app.erp.sal.service.processor.ErpSalReturnReverseApproveProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
             <mutation name="withdrawApproval">

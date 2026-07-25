@@ -9,7 +9,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.pur.service.processor.ErpPurRequisitionProcessor').submitForApproval(id, svcCtx);
+                return inject('app.erp.pur.service.processor.ErpPurRequisitionSubmitForApprovalProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
@@ -19,7 +19,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.pur.service.processor.ErpPurRequisitionProcessor').reverseApprove(id, svcCtx);
+                return inject('app.erp.pur.service.processor.ErpPurRequisitionReverseApproveProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
             <mutation name="approve">

@@ -4,27 +4,27 @@
     <actions>
         <mutation name="submitForApproval">
             <source><c:script><![CDATA[
-                return inject('app.erp.inv.service.processor.ErpInvCostAdjustProcessor').submitForApproval(id, svcCtx);
+                return inject('app.erp.inv.service.processor.ErpInvCostAdjustSubmitForApprovalProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
             <source><c:script><![CDATA[
-                return inject('app.erp.inv.service.processor.ErpInvCostAdjustProcessor').approve(id, svcCtx);
+                return inject('app.erp.inv.service.processor.ErpInvCostAdjustApproveProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
             <source><c:script><![CDATA[
-                return inject('app.erp.inv.service.processor.ErpInvCostAdjustProcessor').reject(id, svcCtx);
+                return inject('app.erp.inv.service.processor.ErpInvCostAdjustRejectProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
             <source><c:script><![CDATA[
-                return inject('app.erp.inv.service.processor.ErpInvCostAdjustProcessor').reverseApprove(id, svcCtx);
+                return inject('app.erp.inv.service.processor.ErpInvCostAdjustReverseApproveProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
             <source><c:script><![CDATA[
-                return inject('app.erp.inv.service.processor.ErpInvCostAdjustProcessor').withdrawApproval(id, svcCtx);
+                return inject('app.erp.inv.service.processor.ErpInvCostAdjustWithdrawApprovalProcessor').withdrawApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
     </actions>

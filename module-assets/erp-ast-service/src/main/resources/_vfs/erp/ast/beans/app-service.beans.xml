@@ -90,4 +90,66 @@
     <!-- 资产域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /ast/）。 -->
     <bean id="app.erp.ast.service.report.ErpAstReportBizModel" ioc:type="@bean:id"/>
+
+    <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
+    <bean id="app.erp.ast.service.processor.ErpAstSplitSubmitForApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstSplitSubmitForApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstSplitApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstSplitApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstSplitRejectProcessor"
+          class="app.erp.ast.service.processor.ErpAstSplitRejectProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstSplitReverseApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstSplitReverseApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstSplitWithdrawApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstSplitWithdrawApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstSplitCancelProcessor"
+          class="app.erp.ast.service.processor.ErpAstSplitCancelProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstValueAdjustmentSubmitForApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstValueAdjustmentSubmitForApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstValueAdjustmentApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstValueAdjustmentApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstValueAdjustmentRejectProcessor"
+          class="app.erp.ast.service.processor.ErpAstValueAdjustmentRejectProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstValueAdjustmentReverseApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstValueAdjustmentReverseApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstValueAdjustmentWithdrawApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstValueAdjustmentWithdrawApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstValueAdjustmentCancelProcessor"
+          class="app.erp.ast.service.processor.ErpAstValueAdjustmentCancelProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstMergeSubmitForApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstMergeSubmitForApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstMergeApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstMergeApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstMergeRejectProcessor"
+          class="app.erp.ast.service.processor.ErpAstMergeRejectProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstMergeReverseApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstMergeReverseApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstMergeWithdrawApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstMergeWithdrawApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstMergeCancelProcessor"
+          class="app.erp.ast.service.processor.ErpAstMergeCancelProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstAssetCapitalizationSubmitForApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstAssetCapitalizationSubmitForApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstAssetCapitalizationApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstAssetCapitalizationApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstAssetCapitalizationRejectProcessor"
+          class="app.erp.ast.service.processor.ErpAstAssetCapitalizationRejectProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstAssetCapitalizationReverseApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstAssetCapitalizationReverseApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstAssetCapitalizationWithdrawApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstAssetCapitalizationWithdrawApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstDisposalSubmitForApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstDisposalSubmitForApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstDisposalApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstDisposalApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstDisposalRejectProcessor"
+          class="app.erp.ast.service.processor.ErpAstDisposalRejectProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstDisposalReverseApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstDisposalReverseApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstDisposalWithdrawApprovalProcessor"
+          class="app.erp.ast.service.processor.ErpAstDisposalWithdrawApprovalProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstInventoryApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstInventoryApproveProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstMaintenanceApproveProcessor"
+          class="app.erp.ast.service.processor.ErpAstMaintenanceApproveProcessor"/>
 </beans>

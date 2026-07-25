@@ -91,4 +91,8 @@
           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-crm.funnel.aggregation-cron 配置门控。 -->
     <bean id="erpCrmFunnelAggregationJob"
           class="app.erp.crm.service.job.ErpCrmFunnelAggregationJob"/>
+
+    <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadCancelProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadCancelProcessor"/>
 </beans>

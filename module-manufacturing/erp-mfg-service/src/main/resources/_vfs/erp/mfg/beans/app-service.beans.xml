@@ -135,4 +135,26 @@
           class="app.erp.mfg.service.simulation.SimulationMrpEngine"/>
     <bean id="app.erp.mfg.service.simulation.SimulationVersionComparator"
           class="app.erp.mfg.service.simulation.SimulationVersionComparator"/>
+
+    <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
+    <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderSubmitForApprovalProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgWorkOrderSubmitForApprovalProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderApproveProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgWorkOrderApproveProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderRejectProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgWorkOrderRejectProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderReverseApproveProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgWorkOrderReverseApproveProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderWithdrawApprovalProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgWorkOrderWithdrawApprovalProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgSubcontractOrderSubmitForApprovalProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgSubcontractOrderSubmitForApprovalProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgSubcontractOrderApproveProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgSubcontractOrderApproveProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgSubcontractOrderRejectProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgSubcontractOrderRejectProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgSubcontractOrderReverseApproveProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgSubcontractOrderReverseApproveProcessor"/>
+    <bean id="app.erp.mfg.service.processor.ErpMfgSubcontractOrderWithdrawApprovalProcessor"
+          class="app.erp.mfg.service.processor.ErpMfgSubcontractOrderWithdrawApprovalProcessor"/>
 </beans>

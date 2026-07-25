@@ -9,7 +9,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').submitForApproval(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentSubmitForApprovalProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
@@ -19,7 +19,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').approve(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentApproveProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
@@ -29,7 +29,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').reject(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentRejectProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
@@ -39,7 +39,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').reverseApprove(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentReverseApproveProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
@@ -49,7 +49,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor').withdrawApproval(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstValueAdjustmentWithdrawApprovalProcessor').withdrawApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
     </actions>

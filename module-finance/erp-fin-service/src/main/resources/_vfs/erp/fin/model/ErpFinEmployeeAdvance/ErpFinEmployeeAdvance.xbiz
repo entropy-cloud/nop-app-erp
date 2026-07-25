@@ -9,7 +9,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceProcessor').submitForApproval(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceSubmitForApprovalProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
@@ -19,7 +19,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceProcessor').approve(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceApproveProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
@@ -29,7 +29,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceProcessor').reject(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceRejectProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
@@ -39,7 +39,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceProcessor').reverseApprove(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceReverseApproveProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
@@ -49,7 +49,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceProcessor').withdrawApproval(id, svcCtx);
+                return inject('app.erp.fin.service.processor.ErpFinEmployeeAdvanceWithdrawApprovalProcessor').withdrawApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
     </actions>

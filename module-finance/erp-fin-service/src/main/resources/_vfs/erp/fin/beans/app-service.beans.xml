@@ -232,4 +232,46 @@
          统计员工借款单引用。被 master-data 的 ErpPartyBizModel.employeeReferenceChecker 经 @Nullable @Inject 收集。 -->
     <bean id="app.erp.fin.service.spi.ErpMdEmployeeReferenceCheckerImpl"
           class="app.erp.fin.service.spi.ErpMdEmployeeReferenceCheckerImpl"/>
+
+    <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
+    <bean id="app.erp.fin.service.processor.ErpFinEmployeeAdvanceSubmitForApprovalProcessor"
+          class="app.erp.fin.service.processor.ErpFinEmployeeAdvanceSubmitForApprovalProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinEmployeeAdvanceApproveProcessor"
+          class="app.erp.fin.service.processor.ErpFinEmployeeAdvanceApproveProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinEmployeeAdvanceRejectProcessor"
+          class="app.erp.fin.service.processor.ErpFinEmployeeAdvanceRejectProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinEmployeeAdvanceReverseApproveProcessor"
+          class="app.erp.fin.service.processor.ErpFinEmployeeAdvanceReverseApproveProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinEmployeeAdvanceWithdrawApprovalProcessor"
+          class="app.erp.fin.service.processor.ErpFinEmployeeAdvanceWithdrawApprovalProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinEmployeeAdvanceCancelProcessor"
+          class="app.erp.fin.service.processor.ErpFinEmployeeAdvanceCancelProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinExpenseClaimSubmitForApprovalProcessor"
+          class="app.erp.fin.service.processor.ErpFinExpenseClaimSubmitForApprovalProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinExpenseClaimApproveProcessor"
+          class="app.erp.fin.service.processor.ErpFinExpenseClaimApproveProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinExpenseClaimRejectProcessor"
+          class="app.erp.fin.service.processor.ErpFinExpenseClaimRejectProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinExpenseClaimReverseApproveProcessor"
+          class="app.erp.fin.service.processor.ErpFinExpenseClaimReverseApproveProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinExpenseClaimWithdrawApprovalProcessor"
+          class="app.erp.fin.service.processor.ErpFinExpenseClaimWithdrawApprovalProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinExpenseClaimCancelProcessor"
+          class="app.erp.fin.service.processor.ErpFinExpenseClaimCancelProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinBadDebtSubmitForApprovalProcessor"
+          class="app.erp.fin.service.processor.ErpFinBadDebtSubmitForApprovalProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinBadDebtApproveProcessor"
+          class="app.erp.fin.service.processor.ErpFinBadDebtApproveProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinBadDebtRejectProcessor"
+          class="app.erp.fin.service.processor.ErpFinBadDebtRejectProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinBadDebtReverseApproveProcessor"
+          class="app.erp.fin.service.processor.ErpFinBadDebtReverseApproveProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinBudgetScenarioSubmitForApprovalProcessor"
+          class="app.erp.fin.service.processor.ErpFinBudgetScenarioSubmitForApprovalProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinBudgetScenarioApproveProcessor"
+          class="app.erp.fin.service.processor.ErpFinBudgetScenarioApproveProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinBudgetScenarioRejectProcessor"
+          class="app.erp.fin.service.processor.ErpFinBudgetScenarioRejectProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinBudgetScenarioCancelProcessor"
+          class="app.erp.fin.service.processor.ErpFinBudgetScenarioCancelProcessor"/>
 </beans>

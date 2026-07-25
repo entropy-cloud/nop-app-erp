@@ -7,6 +7,7 @@ import io.nop.orm.support.OrmEntity;
 import io.nop.wf.core.IWorkflow;
 import io.nop.wf.core.IWorkflowManager;
 import io.nop.wf.core.support.ApprovalFlowHelper;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 
 import java.util.HashMap;
@@ -32,10 +33,17 @@ public abstract class AbstractSubmitForApprovalProcessor<T extends OrmEntity> ex
 
     protected final String bizObjName;
 
+    // @Nullable: per-mutation Processor 子类通常 override submitForApproval 直接委托到 monolithic
+    // Processor（不经 super 编排骨架），workflowManager 在此场景下不被使用。@Nullable 使 IoC
+    // 在 nopWorkflowManager bean 未注册的测试环境（如 finance-service）跳过注入而非抛错。
+    // 下游 Delta 若 override submitForApproval 并调 super 编排骨架 + maybeStartWorkflow 启动 wf，
+    // 须确保运行时容器注册了 nopWorkflowManager（nop-wf-core/beans/wf-core.beans.xml）。
     @Inject
+    @Nullable
     protected IBizObjectManager bizObjectManager;
 
     @Inject
+    @Nullable
     protected IWorkflowManager workflowManager;
 
     protected AbstractSubmitForApprovalProcessor(String bizObjName) {
@@ -67,6 +75,9 @@ public abstract class AbstractSubmitForApprovalProcessor<T extends OrmEntity> ex
     }
 
     protected void maybeStartWorkflow(T entity, IServiceContext context) {
+        if (workflowManager == null) {
+            return;
+        }
         String wfName = resolveWorkflowName();
         if (wfName == null || wfName.isEmpty()) {
             return;
@@ -79,6 +90,9 @@ public abstract class AbstractSubmitForApprovalProcessor<T extends OrmEntity> ex
     }
 
     protected String resolveWorkflowName() {
+        if (bizObjectManager == null) {
+            return null;
+        }
         IBizObject bizObj = bizObjectManager.getBizObject(bizObjName);
         if (bizObj == null || bizObj.getObjMeta() == null) {
             return null;

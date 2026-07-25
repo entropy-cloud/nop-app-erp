@@ -1,6 +1,6 @@
 {
   "data": {
-    "id": "@var:NopWfInstance@bizObjId",
+    "id": "@var:NopWfInstance@bizObjId_1",
     "code": "@var:ErpFinArApItem@sourceBillCode_1",
     "orgId": 1401,
     "supplierId": 2401,
@@ -32,7 +32,7 @@
     "createTime": "@var:ErpPurPayment@createTime",
     "updatedBy": "autotest-ref",
     "updateTime": "@var:ErpPurPayment@updateTime_4",
-    "nopFlowId": "@var:NopWfInstance@wfId"
+    "nopFlowId": "@var:ErpPurPayment@nopFlowId"
   },
   "status": 0
 }

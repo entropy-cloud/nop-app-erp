@@ -10,7 +10,7 @@
             </return>
             <source><c:script><![CDATA[
                 import io.nop.wf.core.support.ApprovalFlowHelper;
-                const entity = inject('app.erp.ast.service.processor.ErpAstDisposalProcessor').submitForApproval(id, svcCtx);
+                const entity = inject('app.erp.ast.service.processor.ErpAstDisposalSubmitForApprovalProcessor').submitForApproval(id, svcCtx);
                 const wfName = thisObj.objMeta['wf:wfName'];
                 if (wfName) {
                     const wfManager = inject('nopWorkflowManager');
@@ -27,7 +27,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstDisposalProcessor').approve(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstDisposalApproveProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
@@ -37,7 +37,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstDisposalProcessor').reject(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstDisposalRejectProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
@@ -47,7 +47,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstDisposalProcessor').reverseApprove(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstDisposalReverseApproveProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
@@ -57,7 +57,7 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><c:script><![CDATA[
-                return inject('app.erp.ast.service.processor.ErpAstDisposalProcessor').withdrawApproval(id, svcCtx);
+                return inject('app.erp.ast.service.processor.ErpAstDisposalWithdrawApprovalProcessor').withdrawApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
     </actions>
