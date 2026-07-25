@@ -112,6 +112,22 @@ daoFor 真违规子集分两类，**重构前置条件不同**：
 
 **Type 1 `getEntityById(FK)` 全形态工作流收尾**：chained 两批共重构 37 处（batch1 18 + batch2 19）+ variable-split safe 子集 8 处 = **累计 45 处**，checker 累计下降 R2b 319→314（-5）/ R2c 1108→1065（-43）/ R2d 34→27（-7）。`getEntityById(FK)` **chained + variable-split 两形态**全域清零（仅余已登记 Type 2 voucher-by-link 豁免 7 处 + Type 5 dashboard + ErpCtRebateSettlementBizModel Non-Goal 排除 + helper-wrapped 广义模式 successor 边界），Type 1 `getEntityById(FK)` 工作流**收尾**。残余形态：`findAllByQuery` 子集（watch-only residual）、Type 4（既定阻塞 successor）、helper-wrapped chained-via-helper 变体（独立 successor 边界）。
 
+### 3.7 基线漂移复发防护（plan 2026-07-25-1057-1 先例登记）
+
+**背景**：基线门控自 `2026-07-24-0930-1` 激活后，单向收紧规则要求「actual > baseline → CI 失败」。但合规改善/深化计划（如 `1351-1/1351-2/1351-3/1016-2`）在落地合法跨域编排时新增生产代码 daoFor，若不同步调高基线，会导致 CI red（合法新增被判为回归）。基线规则明示「禁止在功能 PR 中直接调高基线；调高基线的唯一途径是开独立计划」——但「何时开基线裁决计划」的触发时机此前未在 closure 流程中显式登记，导致漂移在 `2026-07-25-1057-1` 才批量裁决。
+
+**纪律强化（closure audit 必查项）**：功能计划的生产代码新增/修改 daoFor 站点后，结束审计（closure audit）**必须**核实 checker 基线是否漂移：
+
+1. **closure 前复跑 checker**：`bash docs/audits/nop-compliance-checker.sh`，将汇总表与 `docs/audits/compliance-baseline.md` 的 `## BASELINE (machine-readable)` 块逐行比对。
+2. **若 actual > baseline（漂移）**：closure 前必须二选一——
+   - (a) **开独立基线裁决计划**（如本 `2026-07-25-1057-1`）：在该计划中逐项确认新增命中的合理性（合理偏离 / 已登记豁免 / 需重构），并显式更新基线表 + machine-readable 块 + 漂移裁决注记；或
+   - (b) **在 closure gates 中显式记录**「基线漂移已知（规则 X：baseline Y → actual Z），归 successor 基线裁决计划 `<plan-id>`」，并确保该 successor 计划已草案化（非仅口头承诺）。
+3. **禁止的处理**：在功能 PR 中直接调高基线（违反单向收紧规则）、或在 closure 中遗漏 checker 复跑（导致漂移静默积累至下次批量裁决）。
+
+**R8 false positive 校准先例**：若 checker 规则本身存在测量口径偏差（如 R8 将 `module-common-service` 抽象基类误报为「领域 Processor 缺少 xbiz」），应在独立基线裁决计划中校准 checker（扩展排除集 / 交叉引用实体声明），而非下调 baseline。校准先例：`2026-07-24-0941-2` R3（orm.xml 白名单）+ `2026-07-25-1057-1` R8（排除 module-common-service 抽象基类）。
+
+**本节为先例登记**：引用 `docs/plans/2026-07-25-1057-1-compliance-baseline-drift-adjudication.md` 作为首批批量基线裁决的执行先例。后续功能计划的 closure audit 须按本节流程执行。
+
 ## 4. 重构前置条件总结
 
 1. **Type 1（~100-150 处）**：无前置阻塞，可立即开按域分批重构计划（目标：daoFor → ORM 关系 getter）。

@@ -246,6 +246,15 @@ echo "$R7_N" > "$TMPDIR/r7"
 # ============================================================
 # R8: Processor 编排完整性
 # ============================================================
+# 测量口径校准（plan 2026-07-25-1057-1 Phase 2 Decision A）：
+# 原 find 收集全部 `*Processor.java`，但 `module-common-service/` 下的 7 个
+# `Abstract*Processor`（`public abstract class ... extends AbstractProcessor<T>`）
+# 为 2200-1 Phase 1 创建的抽象基类——非领域 Processor，不经 xbiz 路由（由具体
+# 子类继承后经 BizModel @Inject 消费）。R8 原始语义「领域 Processor 缺少 xbiz
+# 接线」不覆盖抽象基类 → 校准=排除 `module-common-service/` 目录（对齐 0941-2
+# R3 交叉引用 orm.xml 先例的「排除集」思路，最小侵入）。
+# 残留风险：若未来在 module-common-service/ 新增具体（非 abstract）领域 Processor，
+# 本排除会静默豁免——届时升级为动态 `abstract class` 提取（开独立 successor）。
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "[R8] 🔴 高 — Processor 缺少 xbiz 接线"
@@ -259,8 +268,8 @@ while IFS= read -r proc; do
     echo "  ✗ $(echo "$proc" | sed "s|$REPO_ROOT/||")"
     R8_N=$((R8_N + 1))
   fi
-done < <(eval "find '$REPO_ROOT' $PRUNE_DIRS -o -type d -name test -prune -o -name '*Processor.java' -type f -print" 2>/dev/null || true)
-echo "  → 命中: $R8_N 个 Processor 缺少 xbiz"
+done < <(eval "find '$REPO_ROOT' $PRUNE_DIRS -o -type d -name test -prune -o -type d -name module-common-service -prune -o -name '*Processor.java' -type f -print" 2>/dev/null || true)
+echo "  → 命中: $R8_N 个 Processor 缺少 xbiz（已排除 module-common-service 抽象基类）"
 echo "$R8_N" > "$TMPDIR/r8"
 
 # ============================================================

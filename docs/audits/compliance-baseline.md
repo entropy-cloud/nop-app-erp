@@ -19,9 +19,9 @@
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 23 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 37 |
-| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 314 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1065 |
-| R2d | Processor daoFor(ErpMd*) | 🔴 高 | 27 |
+| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 315 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1079 |
+| R2d | Processor daoFor(ErpMd*) | 🔴 高 | 28 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
 | R5 | @Inject private | 🟡 中 | 0 |
@@ -113,6 +113,24 @@ R2a 不变（=37）。本批收尾后 `getEntityById(FK)` **chained + variable-s
 
 **校准实施位置**：`docs/audits/nop-compliance-checker.sh` R3 段（构建 ENTITY_WHITELIST + 逐行 cls 提取 + `grep -qxF` 白名单比对）。全仓 `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）+ 受影响域 `mvn test` 全绿（fin 264 / md 109）+ checker 复跑 R3=5 / R7=0。
 
+## R2b/R2c/R2d 基线裁决性上调注记 + R8 checker 校准（plan 2026-07-25-1057-1）
+
+`2026-07-25-1057-1`（合规基线漂移裁决，CI red fix）处理基线门控上线后（`2026-07-24-0930-1` 之后）由已审计深化计划引入的 daoFor 漂移 + R8 抽象基类 false positive。**漂移源全部来自已经独立草案审查 + 结束审计的计划**，其生产代码变更已经审计验证为合法跨域编排。
+
+**R8 checker 校准**（actual 49 → 42，baseline 不变=42）：`module-common-service/` 下 7 个 `Abstract*Processor`（`public abstract class ... extends AbstractProcessor<T>`）由 `2026-07-24-2200-1` Phase 1 创建，为跨域共享抽象基类（非领域 Processor，不经 xbiz 路由，由具体子类继承后经 BizModel `@Inject` 消费）。R8 原始语义「领域 Processor 缺少 xbiz 接线」不覆盖抽象基类 → checker R8 段校准=排除 `module-common-service/` 目录（对齐 0941-2 R3 交叉引用 orm.xml 先例的「排除集」思路，Decision 选方案 A）。**残留风险**：若未来在 `module-common-service/` 新增具体（非 abstract）领域 Processor，本排除会静默豁免——届时升级为动态 `abstract class` 提取（开独立 successor）。校准实施位置：`nop-compliance-checker.sh` R8 段（find 新增 `-type d -name module-common-service -prune`）。
+
+**R2b/R2c/R2d 基线裁决性上调**（逐项合法性分类，源计划均已审计）：
+
+| 规则 | 旧基线 | 新基线 | 漂移源（已审计计划） | 合法性分类 |
+|------|--------|--------|---------------------|-----------|
+| R2b | 314 | **315** | `2026-07-24-1351-3` `ErpFinBudgetCommitmentBizModel`（承付款 sales→finance 跨域编排） | ✅ 合法跨域编排（承付款过账需读取 master-data subject + sales delivery/order） |
+| R2c | 1065 | **1079** | `2026-07-24-1351-2`（intercompany +17 毛）+ `2026-07-24-1351-3`（commitment +16 毛）+ `2026-07-24-1351-1`（GL Mapping +3 毛）− 同提交内重构/移除 | ✅ 合法跨域编排（intercompany 跨公司凭证 / commitment 承付款过账 / GL Mapping 全域接入均为设计既定跨域编排） |
+| R2d | 27 | **28** | `2026-07-24-1351-3` `ErpSalOrderProcessor:377`（commitment subject resolution，config-gated `erp-fin.budget-commitment-enabled` 默认 false） | ✅ 合法跨域编排（销售订单审核后置 commitment 释放钩子） |
+
+逐站点 file:line 清单 + 源计划 + 合法性分类 + git 提交时间线核实见 `docs/plans/2026-07-25-1057-1-compliance-baseline-drift-adjudication.md` §Phase 1 Evidence。checker 复跑全 16 规则 actual ≤ baseline（R2b=315≤315 / R2c=1079≤1079 / R2d=28≤28 / R8=42≤42），CI green 恢复。
+
+**纪律强化**（见 `docs/analysis/governed-path-cost-evaluation.md` §基线漂移复发防护）：功能计划的生产代码新增 daoFor 后，closure audit 须核实 checker 基线是否漂移；若漂移则须在 closure 前开独立基线裁决计划（或在 closure gates 中显式记录「基线漂移已知，归 successor 基线裁决计划」）。本计划为先例。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -123,9 +141,9 @@ R1b: 0
 R1c: 0
 R1d: 23
 R2a: 37
-R2b: 314
-R2c: 1065
-R2d: 27
+R2b: 315
+R2c: 1079
+R2d: 28
 R3: 5
 R4: 0
 R5: 0
