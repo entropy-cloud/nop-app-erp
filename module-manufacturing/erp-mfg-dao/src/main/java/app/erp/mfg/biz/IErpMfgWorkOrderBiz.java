@@ -7,7 +7,6 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 
@@ -39,7 +38,7 @@ import java.util.List;
  * {@code docs/design/manufacturing/state-machine.md}；计划见
  * {@code docs/plans/2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md}。
  */
-public interface IErpMfgWorkOrderBiz extends ICrudBiz<ErpMfgWorkOrder>, IApprovableBiz<ErpMfgWorkOrder> {
+public interface IErpMfgWorkOrderBiz extends ICrudBiz<ErpMfgWorkOrder> {
 
     @BizMutation
     ErpMfgWorkOrder checkAvailability(@Name("workOrderId") Long workOrderId, IServiceContext context);

@@ -155,9 +155,8 @@
         <entity className="app.erp.qa.dao.entity.ErpQaInspection" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="质检单"
                 name="app.erp.qa.dao.entity.ErpQaInspection" registerShortName="true" tableName="erp_qa_inspection"
-                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="clipboard-check"
-                i18n-en:displayName="Inspection">
+                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="clipboard-check" i18n-en:displayName="Inspection">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -806,9 +805,8 @@
         <entity className="app.erp.qa.dao.entity.ErpQaReview" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="质量评审"
                 name="app.erp.qa.dao.entity.ErpQaReview" registerShortName="true" tableName="erp_qa_review"
-                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="clipboard-list"
-                i18n-en:displayName="Quality Review">
+                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="clipboard-list" i18n-en:displayName="Quality Review">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -931,8 +929,8 @@
         <entity className="app.erp.qa.dao.entity.ErpQaCalibration" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="量具校准"
                 name="app.erp.qa.dao.entity.ErpQaCalibration" registerShortName="true" tableName="erp_qa_calibration"
-                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="gauge" i18n-en:displayName="Gauge Calibration">
+                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="gauge" i18n-en:displayName="Gauge Calibration">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1023,9 +1021,8 @@
         <entity className="app.erp.qa.dao.entity.ErpQaRecall" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="召回事件"
                 name="app.erp.qa.dao.entity.ErpQaRecall" registerShortName="true" tableName="erp_qa_recall"
-                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="alert-octagon"
-                i18n-en:displayName="Recall Event">
+                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="alert-octagon" i18n-en:displayName="Recall Event">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1203,8 +1200,8 @@
         <entity className="app.erp.qa.dao.entity.ErpQaSpcChart" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="SPC 控制图配置"
                 name="app.erp.qa.dao.entity.ErpQaSpcChart" registerShortName="true" tableName="erp_qa_spc_chart"
-                tagSet="gid,erp.quality,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="activity" i18n-en:displayName="SPC Chart">
+                tagSet="gid,erp.quality" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="activity" i18n-en:displayName="SPC Chart">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>

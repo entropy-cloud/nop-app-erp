@@ -104,7 +104,7 @@
         <!-- 销售报价单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalQuotation"
                 displayName="销售报价单" ext:icon="file-sign" i18n-en:displayName="Sales Quotation" name="app.erp.sal.dao.entity.ErpSalQuotation"
-                tableName="erp_sal_quotation" tagSet="gid,erp.sales,use-approval" registerShortName="true"
+                tableName="erp_sal_quotation" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -224,7 +224,7 @@
         <!-- 销售合同头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalContract"
                 displayName="销售合同" ext:icon="file-text" i18n-en:displayName="Sales Contract" name="app.erp.sal.dao.entity.ErpSalContract"
-                tableName="erp_sal_contract" tagSet="gid,erp.sales,use-approval" registerShortName="true"
+                tableName="erp_sal_contract" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -288,7 +288,7 @@
         <!-- 销售订单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalOrder"
                 displayName="销售订单" ext:icon="receipt" i18n-en:displayName="Sales Order" name="app.erp.sal.dao.entity.ErpSalOrder"
-                tableName="erp_sal_order" tagSet="gid,erp.sales,use-approval" registerShortName="true"
+                tableName="erp_sal_order" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -464,7 +464,7 @@
         <!-- 销售出库单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalDelivery"
                 displayName="销售出库单" ext:icon="package-minus" i18n-en:displayName="Sales Delivery" name="app.erp.sal.dao.entity.ErpSalDelivery"
-                tableName="erp_sal_delivery" tagSet="gid,erp.sales,use-approval" registerShortName="true"
+                tableName="erp_sal_delivery" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -612,7 +612,7 @@
         <!-- 销售发票头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalInvoice"
                 displayName="销售发票" ext:icon="receipt" i18n-en:displayName="Sales Invoice" name="app.erp.sal.dao.entity.ErpSalInvoice"
-                tableName="erp_sal_invoice" tagSet="gid,erp.sales,use-approval" registerShortName="true"
+                tableName="erp_sal_invoice" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -737,7 +737,7 @@
         <!-- 收款单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalReceipt"
                 displayName="收款单" ext:icon="banknote" i18n-en:displayName="Receipt" name="app.erp.sal.dao.entity.ErpSalReceipt"
-                tableName="erp_sal_receipt" tagSet="gid,erp.sales,use-approval" useWorkflow="true" registerShortName="true"
+                tableName="erp_sal_receipt" tagSet="gid,erp.sales" useWorkflow="true" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -861,7 +861,7 @@
         <!-- 销售退货单头 -->
         <entity className="app.erp.sal.dao.entity.ErpSalReturn"
                 displayName="销售退货单" ext:icon="undo-2" i18n-en:displayName="Sales Return" name="app.erp.sal.dao.entity.ErpSalReturn"
-                tableName="erp_sal_return" tagSet="gid,erp.sales,use-approval" registerShortName="true"
+                tableName="erp_sal_return" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy"
                 updateTimeProp="updateTime" updaterProp="updatedBy">

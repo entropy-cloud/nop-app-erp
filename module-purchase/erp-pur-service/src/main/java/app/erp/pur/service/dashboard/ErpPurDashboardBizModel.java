@@ -41,6 +41,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
+import app.erp.common.service.DashboardUtil;
 
 /**
  * 采购看板聚合入口（{@code dashboards.md §2}）。服务型 BizObject（非实体聚合），
@@ -78,9 +79,9 @@ public class ErpPurDashboardBizModel {
             BigDecimal purchaseAmount = BigDecimal.ZERO;
             Map<Long, BigDecimal> bySupplier = new HashMap<>();
             for (ErpPurInvoice inv : invoices) {
-                purchaseAmount = purchaseAmount.add(nz(inv.getAmountFunctional()));
+                purchaseAmount = purchaseAmount.add(DashboardUtil.nz(inv.getAmountFunctional()));
                 if (inv.getSupplierId() != null) {
-                    bySupplier.merge(inv.getSupplierId(), nz(inv.getAmountFunctional()), BigDecimal::add);
+                    bySupplier.merge(inv.getSupplierId(), DashboardUtil.nz(inv.getAmountFunctional()), BigDecimal::add);
                 }
             }
 
@@ -112,7 +113,7 @@ public class ErpPurDashboardBizModel {
                 LocalDate d = inv.getBusinessDate();
                 if (d == null) continue;
                 String key = d.getYear() + "-" + String.format("%02d", d.getMonthValue());
-                amountByMonth.merge(key, nz(inv.getAmountFunctional()), BigDecimal::add);
+                amountByMonth.merge(key, DashboardUtil.nz(inv.getAmountFunctional()), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             for (int i = 0; i < n; i++) {
@@ -138,7 +139,7 @@ public class ErpPurDashboardBizModel {
             for (ErpPurInvoice inv : invoices) {
                 Long sid = inv.getSupplierId();
                 if (sid == null) continue;
-                bySupplier.merge(sid, nz(inv.getAmountFunctional()), BigDecimal::add);
+                bySupplier.merge(sid, DashboardUtil.nz(inv.getAmountFunctional()), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             bySupplier.entrySet().stream()
@@ -231,7 +232,7 @@ public class ErpPurDashboardBizModel {
                 }
                 row.put("partnerName", partnerName);
                 row.put("sourceBillCode", it.getSourceBillCode());
-                row.put("openAmount", nz(it.getOpenAmountFunctional()));
+                row.put("openAmount", DashboardUtil.nz(it.getOpenAmountFunctional()));
                 row.put("ageDays", age);
                 rows.add(row);
             }
@@ -261,7 +262,7 @@ public class ErpPurDashboardBizModel {
         List<ErpFinArApItem> items = arApItemBiz.findOpenItems(direction, context);
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpFinArApItem it : items) {
-            sum = sum.add(nz(it.getOpenAmountFunctional()));
+            sum = sum.add(DashboardUtil.nz(it.getOpenAmountFunctional()));
         }
         return sum;
     }
@@ -346,9 +347,5 @@ public class ErpPurDashboardBizModel {
             }
         }
         return false;
-    }
-
-    private static BigDecimal nz(BigDecimal v) {
-        return v == null ? BigDecimal.ZERO : v;
     }
 }

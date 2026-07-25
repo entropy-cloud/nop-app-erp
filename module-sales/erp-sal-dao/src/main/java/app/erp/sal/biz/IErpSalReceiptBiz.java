@@ -5,7 +5,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import app.erp.md.biz.SettlementAllocation;
 import app.erp.sal.dao.entity.ErpSalReceipt;
@@ -23,7 +22,7 @@ import java.util.List;
  *   <li>{@link #reverseSettlement}：生成反向 ReceiptLine（冲销），恢复发票/收款余额与状态。</li>
  * </ul>
  */
-public interface IErpSalReceiptBiz extends ICrudBiz<ErpSalReceipt>, IApprovableBiz<ErpSalReceipt> {
+public interface IErpSalReceiptBiz extends ICrudBiz<ErpSalReceipt> {
 
     @BizMutation
     ErpSalReceipt cancel(@Name("receiptId") Long receiptId, IServiceContext context);

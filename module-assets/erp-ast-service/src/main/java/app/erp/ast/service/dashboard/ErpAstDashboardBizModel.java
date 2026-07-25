@@ -32,6 +32,7 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import app.erp.common.service.DashboardUtil;
 
 /**
  * 资产看板聚合入口（{@code dashboards.md §5}）。服务型 BizObject（非实体聚合），
@@ -60,8 +61,8 @@ public class ErpAstDashboardBizModel {
             BigDecimal originalValue = BigDecimal.ZERO;
             BigDecimal accumulatedDepreciation = BigDecimal.ZERO;
             for (ErpAstAsset a : inServiceAssets) {
-                originalValue = originalValue.add(nz(a.getOriginalValue()));
-                accumulatedDepreciation = accumulatedDepreciation.add(nz(a.getAccumulatedDepreciation()));
+                originalValue = originalValue.add(DashboardUtil.nz(a.getOriginalValue()));
+                accumulatedDepreciation = accumulatedDepreciation.add(DashboardUtil.nz(a.getAccumulatedDepreciation()));
             }
             BigDecimal netBookValue = originalValue.subtract(accumulatedDepreciation);
             BigDecimal periodDepreciation = sumPeriodDepreciation(period);
@@ -87,7 +88,7 @@ public class ErpAstDashboardBizModel {
             for (ErpAstAsset a : assets) {
                 Long cid = a.getCategoryId();
                 if (cid == null) continue;
-                BigDecimal net = nz(a.getOriginalValue()).subtract(nz(a.getAccumulatedDepreciation()));
+                BigDecimal net = DashboardUtil.nz(a.getOriginalValue()).subtract(DashboardUtil.nz(a.getAccumulatedDepreciation()));
                 netByCategory.merge(cid, net, BigDecimal::add);
             }
             Map<Long, String> categoryNames = loadCategoryNames(netByCategory.keySet());
@@ -118,7 +119,7 @@ public class ErpAstDashboardBizModel {
             for (ErpAstDepreciationSchedule s : schedules) {
                 String p = s.getPeriod();
                 if (p == null) continue;
-                amountByPeriod.merge(p, nz(s.getActualAmount()), BigDecimal::add);
+                amountByPeriod.merge(p, DashboardUtil.nz(s.getActualAmount()), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             for (int i = 0; i < n; i++) {
@@ -150,7 +151,7 @@ public class ErpAstDashboardBizModel {
                     row.put("assetCode", a.getCode());
                     row.put("assetName", a.getName());
                     row.put("period", period);
-                    row.put("originalValue", nz(a.getOriginalValue()));
+                    row.put("originalValue", DashboardUtil.nz(a.getOriginalValue()));
                     rows.add(row);
                 }
             }
@@ -186,7 +187,7 @@ public class ErpAstDashboardBizModel {
         q.addFilter(eq("period", period));
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpAstDepreciationSchedule s : dao.findAllByQuery(q)) {
-            sum = sum.add(nz(s.getActualAmount()));
+            sum = sum.add(DashboardUtil.nz(s.getActualAmount()));
         }
         return sum;
     }
@@ -197,7 +198,7 @@ public class ErpAstDashboardBizModel {
         q.addFilter(eq("isCompleted", Boolean.FALSE));
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpAstCip c : dao.findAllByQuery(q)) {
-            sum = sum.add(nz(c.getAccumulatedCost()));
+            sum = sum.add(DashboardUtil.nz(c.getAccumulatedCost()));
         }
         return sum;
     }
@@ -224,9 +225,5 @@ public class ErpAstDashboardBizModel {
     private static String currentPeriod() {
         LocalDate today = CoreMetrics.currentDate();
         return today.getYear() + "-" + String.format("%02d", today.getMonthValue());
-    }
-
-    private static BigDecimal nz(BigDecimal v) {
-        return v == null ? BigDecimal.ZERO : v;
     }
 }

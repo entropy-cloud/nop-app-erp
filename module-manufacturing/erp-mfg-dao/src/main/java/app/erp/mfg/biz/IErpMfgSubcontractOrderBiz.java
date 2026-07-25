@@ -5,7 +5,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
 
@@ -27,7 +26,7 @@ import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
  * <p>权威：{@code docs/design/manufacturing/subcontracting.md}；计划见
  * {@code docs/plans/2026-07-13-0455-1-manufacturing-subcontracting-engine.md}。
  */
-public interface IErpMfgSubcontractOrderBiz extends ICrudBiz<ErpMfgSubcontractOrder>, IApprovableBiz<ErpMfgSubcontractOrder> {
+public interface IErpMfgSubcontractOrderBiz extends ICrudBiz<ErpMfgSubcontractOrder> {
 
     /**
      * 取消委外单。DRAFT/SUBMITTED/APPROVED→CANCELLED。

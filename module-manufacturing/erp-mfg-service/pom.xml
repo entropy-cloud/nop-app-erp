@@ -14,6 +14,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>io.nop.app</groupId>
+            <artifactId>app-erp-common-test</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.nop.app</groupId>
+            <artifactId>app-erp-common-service</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
             <artifactId>app-erp-manufacturing-dao</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>

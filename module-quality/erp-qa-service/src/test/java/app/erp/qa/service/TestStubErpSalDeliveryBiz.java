@@ -32,28 +32,18 @@ public class TestStubErpSalDeliveryBiz extends CrudBizModel<ErpSalDelivery> impl
     public ErpSalDelivery get(String id, boolean ignoreUnknown, IServiceContext context) {
         return dao().getEntityById(Long.valueOf(id));
     }
-
-    @Override
     public ErpSalDelivery submitForApproval(String id, IServiceContext context) {
         return get(id, false, context);
     }
-
-    @Override
     public ErpSalDelivery withdrawApproval(String id, IServiceContext context) {
         return get(id, false, context);
     }
-
-    @Override
     public ErpSalDelivery approve(String id, IServiceContext context) {
         return get(id, false, context);
     }
-
-    @Override
     public ErpSalDelivery reject(String id, IServiceContext context) {
         return get(id, false, context);
     }
-
-    @Override
     public ErpSalDelivery reverseApprove(String id, IServiceContext context) {
         return get(id, false, context);
     }

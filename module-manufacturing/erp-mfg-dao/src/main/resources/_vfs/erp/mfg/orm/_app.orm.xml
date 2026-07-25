@@ -915,7 +915,7 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrder" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单"
                 name="app.erp.mfg.dao.entity.ErpMfgWorkOrder" registerShortName="true" tableName="erp_mfg_work_order"
-                tagSet="gid,erp.manufacturing,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
+                tagSet="gid,erp.manufacturing" updateTimeProp="updateTime" updaterProp="updatedBy"
                 useLogicalDelete="true" versionProp="version" ext:icon="factory" i18n-en:displayName="Work Order">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
@@ -1720,9 +1720,9 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgMaterialIssue" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="领料单"
                 name="app.erp.mfg.dao.entity.ErpMfgMaterialIssue" registerShortName="true"
-                tableName="erp_mfg_material_issue" tagSet="gid,erp.manufacturing,use-approval"
-                updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true" versionProp="version"
-                ext:icon="package-minus" i18n-en:displayName="Material Issue">
+                tableName="erp_mfg_material_issue" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="package-minus"
+                i18n-en:displayName="Material Issue">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1965,9 +1965,9 @@
         <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="委外加工单"
                 name="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder" registerShortName="true"
-                tableName="erp_mfg_subcontract_order" tagSet="gid,erp.manufacturing,use-approval"
-                updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true" versionProp="version"
-                ext:icon="truck" i18n-en:displayName="Subcontract Order">
+                tableName="erp_mfg_subcontract_order" tagSet="gid,erp.manufacturing" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="truck"
+                i18n-en:displayName="Subcontract Order">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>

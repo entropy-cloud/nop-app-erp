@@ -106,7 +106,7 @@
         <!-- 请购单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurRequisition"
                 displayName="采购请购单" ext:icon="file-text" i18n-en:displayName="Purchase Requisition" name="app.erp.pur.dao.entity.ErpPurRequisition"
-                tableName="erp_pur_requisition" tagSet="gid,erp.purchase,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_pur_requisition" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -205,7 +205,7 @@
         <!-- 询价单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurRfq"
                 displayName="采购询价单" ext:icon="message-circle-question" i18n-en:displayName="Purchase RFQ" name="app.erp.pur.dao.entity.ErpPurRfq"
-                tableName="erp_pur_rfq" tagSet="gid,erp.purchase,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_pur_rfq" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -289,7 +289,7 @@
         <!-- 供应商报价单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurQuotation"
                 displayName="供应商报价单" ext:icon="file-sign" i18n-en:displayName="Supplier Quotation" name="app.erp.pur.dao.entity.ErpPurQuotation"
-                tableName="erp_pur_quotation" tagSet="gid,erp.purchase,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_pur_quotation" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -538,7 +538,7 @@
         <!-- 采购订单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurOrder"
                 displayName="采购订单" ext:icon="shopping-cart" i18n-en:displayName="Purchase Order" name="app.erp.pur.dao.entity.ErpPurOrder"
-                tableName="erp_pur_order" tagSet="gid,erp.purchase,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_pur_order" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -687,7 +687,7 @@
         <!-- 采购入库单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurReceive"
                 displayName="采购入库单" ext:icon="package-plus" i18n-en:displayName="Purchase Receipt" name="app.erp.pur.dao.entity.ErpPurReceive"
-                tableName="erp_pur_receive" tagSet="gid,erp.purchase,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_pur_receive" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -816,7 +816,7 @@
         <!-- 采购发票头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurInvoice"
                 displayName="采购发票" ext:icon="receipt" i18n-en:displayName="Purchase Invoice" name="app.erp.pur.dao.entity.ErpPurInvoice"
-                tableName="erp_pur_invoice" tagSet="gid,erp.purchase,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_pur_invoice" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -925,7 +925,7 @@
         <!-- 付款单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurPayment"
                 displayName="付款单" ext:icon="banknote" i18n-en:displayName="Payment" name="app.erp.pur.dao.entity.ErpPurPayment"
-                tableName="erp_pur_payment" tagSet="gid,erp.purchase,use-approval" useWorkflow="true" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_pur_payment" tagSet="gid,erp.purchase" useWorkflow="true" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -1031,7 +1031,7 @@
         <!-- 采购退货单头 -->
         <entity className="app.erp.pur.dao.entity.ErpPurReturn"
                 displayName="采购退货单" ext:icon="undo-2" i18n-en:displayName="Purchase Return" name="app.erp.pur.dao.entity.ErpPurReturn"
-                tableName="erp_pur_return" tagSet="gid,erp.purchase,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_pur_return" tagSet="gid,erp.purchase" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />

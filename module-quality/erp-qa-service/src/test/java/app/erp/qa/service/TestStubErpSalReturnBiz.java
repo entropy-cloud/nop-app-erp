@@ -62,28 +62,18 @@ public class TestStubErpSalReturnBiz extends CrudBizModel<ErpSalReturn> implemen
     public ErpSalReturn get(String id, boolean ignoreUnknown, IServiceContext context) {
         return dao().getEntityById(Long.valueOf(id));
     }
-
-    @Override
     public ErpSalReturn submitForApproval(String id, IServiceContext context) {
         return get(id, false, context);
     }
-
-    @Override
     public ErpSalReturn withdrawApproval(String id, IServiceContext context) {
         return get(id, false, context);
     }
-
-    @Override
     public ErpSalReturn approve(String id, IServiceContext context) {
         return get(id, false, context);
     }
-
-    @Override
     public ErpSalReturn reject(String id, IServiceContext context) {
         return get(id, false, context);
     }
-
-    @Override
     public ErpSalReturn reverseApprove(String id, IServiceContext context) {
         return get(id, false, context);
     }

@@ -6,7 +6,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import java.util.Map;
 
@@ -33,7 +32,7 @@ import java.util.Map;
  *
  * <p>非法迁移抛 {@code ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION}。
  */
-public interface IErpQaRecallBiz extends ICrudBiz<ErpQaRecall>, IApprovableBiz<ErpQaRecall> {
+public interface IErpQaRecallBiz extends ICrudBiz<ErpQaRecall> {
 
     @BizMutation
     ErpQaRecall register(@Name("data") Map<String, Object> data, IServiceContext context);

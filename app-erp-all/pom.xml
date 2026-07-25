@@ -27,6 +27,20 @@
             <artifactId>nop-quarkus-web-orm-starter</artifactId>
         </dependency>
 
+        <!-- 项目级共享模块（plan 2026-07-24-2200-1）。service compile 传递；test 仅注册到聚合 app 用于全局可见性 -->
+        <dependency>
+            <groupId>io.nop.app</groupId>
+            <artifactId>app-erp-common-service</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>io.nop.app</groupId>
+            <artifactId>app-erp-common-test</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+            <optional>true</optional>
+        </dependency>
+
         <!-- 全部 19 个业务域 app(已传递依赖各自 service/web/dao) -->
         <dependency>
             <artifactId>app-erp-master-data-web</artifactId>

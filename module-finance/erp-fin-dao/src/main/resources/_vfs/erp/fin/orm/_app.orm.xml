@@ -1979,7 +1979,7 @@
         <entity className="app.erp.fin.dao.entity.ErpFinExpenseClaim" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="费用报销单"
                 name="app.erp.fin.dao.entity.ErpFinExpenseClaim" registerShortName="true"
-                tableName="erp_fin_expense_claim" tagSet="gid,erp.finance,use-approval" updateTimeProp="updateTime"
+                tableName="erp_fin_expense_claim" tagSet="gid,erp.finance" updateTimeProp="updateTime"
                 updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="receipt"
                 i18n-en:displayName="Expense Claim">
             <columns>
@@ -2219,7 +2219,7 @@
         <entity className="app.erp.fin.dao.entity.ErpFinEmployeeAdvance" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="员工借款单"
                 name="app.erp.fin.dao.entity.ErpFinEmployeeAdvance" registerShortName="true"
-                tableName="erp_fin_employee_advance" tagSet="gid,erp.finance,use-approval" updateTimeProp="updateTime"
+                tableName="erp_fin_employee_advance" tagSet="gid,erp.finance" updateTimeProp="updateTime"
                 updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="hand-coins"
                 i18n-en:displayName="Employee Advance">
             <columns>

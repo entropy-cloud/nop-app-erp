@@ -623,8 +623,8 @@
         <entity className="app.erp.prj.dao.entity.ErpPrjBudget" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目预算"
                 name="app.erp.prj.dao.entity.ErpPrjBudget" registerShortName="true" tableName="erp_prj_budget"
-                tagSet="gid,erp.projects,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="wallet" i18n-en:displayName="Project Budget">
+                tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="wallet" i18n-en:displayName="Project Budget">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -794,7 +794,7 @@
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollection" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成本归集"
                 name="app.erp.prj.dao.entity.ErpPrjCostCollection" registerShortName="true"
-                tableName="erp_prj_cost_collection" tagSet="gid,erp.projects,use-approval" updateTimeProp="updateTime"
+                tableName="erp_prj_cost_collection" tagSet="gid,erp.projects" updateTimeProp="updateTime"
                 updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="coins"
                 i18n-en:displayName="Project Cost Collection">
             <columns>
@@ -1046,8 +1046,8 @@
         <entity className="app.erp.prj.dao.entity.ErpPrjBilling" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目开票"
                 name="app.erp.prj.dao.entity.ErpPrjBilling" registerShortName="true" tableName="erp_prj_billing"
-                tagSet="gid,erp.projects,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="receipt" i18n-en:displayName="Project Billing">
+                tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="receipt" i18n-en:displayName="Project Billing">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>

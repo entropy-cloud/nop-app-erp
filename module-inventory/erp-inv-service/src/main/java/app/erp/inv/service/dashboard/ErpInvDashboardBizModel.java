@@ -41,6 +41,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
+import app.erp.common.service.DashboardUtil;
 
 /**
  * 库存看板聚合入口（{@code dashboards.md §3}）。服务型 BizObject（非实体聚合），
@@ -112,7 +113,7 @@ public class ErpInvDashboardBizModel {
                 LocalDate d = l.getBusinessDate();
                 if (d == null) continue;
                 String key = d.getYear() + "-" + String.format("%02d", d.getMonthValue());
-                valueByMonth.merge(key, nz(l.getTotalCost()), BigDecimal::add);
+                valueByMonth.merge(key, DashboardUtil.nz(l.getTotalCost()), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             for (int i = 0; i < n; i++) {
@@ -143,7 +144,7 @@ public class ErpInvDashboardBizModel {
                 if (row.get("warehouseId") == null) continue;
                 Map<String, Object> r = new LinkedHashMap<>();
                 r.put("warehouseId", row.get("warehouseId"));
-                r.put("totalValue", nz(toBigDecimal(row.get("totalValue"))));
+                r.put("totalValue", DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("totalValue"))));
                 result.add(r);
             }
             result.sort(Comparator.<Map<String, Object>, BigDecimal>comparing(
@@ -181,13 +182,13 @@ public class ErpInvDashboardBizModel {
             for (ErpInvStockBalance b : balances) {
                 BigDecimal safety = safetyByMaterial.get(b.getMaterialId());
                 if (safety == null || safety.signum() <= 0) continue;
-                if (nz(b.getAvailableQuantity()).compareTo(safety) < 0) {
+                if (DashboardUtil.nz(b.getAvailableQuantity()).compareTo(safety) < 0) {
                     Map<String, Object> row = new LinkedHashMap<>();
                     row.put("materialId", b.getMaterialId());
                     row.put("materialName", materialNames.get(b.getMaterialId()));
                     row.put("warehouseId", b.getWarehouseId());
                     row.put("warehouseName", warehouseNames.get(b.getWarehouseId()));
-                    row.put("availableQuantity", nz(b.getAvailableQuantity()));
+                    row.put("availableQuantity", DashboardUtil.nz(b.getAvailableQuantity()));
                     row.put("safetyStock", safety);
                     rows.add(row);
                 }
@@ -217,7 +218,7 @@ public class ErpInvDashboardBizModel {
             Set<Long> materialIds = new HashSet<>();
             Set<Long> warehouseIds = new HashSet<>();
             for (ErpInvStockBalance b : balances) {
-                if (nz(b.getTotalQuantity()).signum() <= 0) continue;
+                if (DashboardUtil.nz(b.getTotalQuantity()).signum() <= 0) continue;
                 if (b.getMaterialId() != null) materialIds.add(b.getMaterialId());
                 if (b.getWarehouseId() != null) warehouseIds.add(b.getWarehouseId());
             }
@@ -225,7 +226,7 @@ public class ErpInvDashboardBizModel {
             Map<Long, String> warehouseNames = loadWarehouseNames(warehouseIds);
             List<Map<String, Object>> rows = new ArrayList<>();
             for (ErpInvStockBalance b : balances) {
-                if (nz(b.getTotalQuantity()).signum() <= 0) continue;
+                if (DashboardUtil.nz(b.getTotalQuantity()).signum() <= 0) continue;
                 LocalDate lastOut = lastOutByMaterial.get(b.getMaterialId());
                 // 最后出库日期早于 cutoff（或从无出库）→ 滞销
                 if (lastOut == null || lastOut.isBefore(cutoff)) {
@@ -234,7 +235,7 @@ public class ErpInvDashboardBizModel {
                     row.put("materialName", materialNames.get(b.getMaterialId()));
                     row.put("warehouseId", b.getWarehouseId());
                     row.put("warehouseName", warehouseNames.get(b.getWarehouseId()));
-                    row.put("totalQuantity", nz(b.getTotalQuantity()));
+                    row.put("totalQuantity", DashboardUtil.nz(b.getTotalQuantity()));
                     row.put("lastOutDate", lastOut);
                     rows.add(row);
                 }
@@ -282,7 +283,7 @@ public class ErpInvDashboardBizModel {
                 row.put("warehouseName", warehouseNames.get(batch.getWarehouseId()));
                 row.put("expiryDate", exp);
                 row.put("remainingDays", remaining);
-                row.put("availableQuantity", nz(batch.getAvailableQuantity()));
+                row.put("availableQuantity", DashboardUtil.nz(batch.getAvailableQuantity()));
                 rows.add(row);
             }
             return rows;
@@ -310,7 +311,7 @@ public class ErpInvDashboardBizModel {
         BigDecimal incoming = BigDecimal.ZERO;
         BigDecimal outgoing = BigDecimal.ZERO;
         for (ErpInvStockMoveLine l : lines) {
-            BigDecimal qty = nz(l.getQuantity());
+            BigDecimal qty = DashboardUtil.nz(l.getQuantity());
             if (incomingMoveIds.contains(l.getMoveId())) {
                 incoming = incoming.add(qty);
             } else if (outgoingMoveIds.contains(l.getMoveId())) {
@@ -335,7 +336,7 @@ public class ErpInvDashboardBizModel {
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpInvStockMoveLine l : lines) {
             if (outgoingMoveIds.contains(l.getMoveId())) {
-                sum = sum.add(nz(l.getTotalCost()));
+                sum = sum.add(DashboardUtil.nz(l.getTotalCost()));
             }
         }
         return sum;
@@ -373,7 +374,7 @@ public class ErpInvDashboardBizModel {
         q.addFilter(in("id", materialIds));
         Map<Long, BigDecimal> map = new HashMap<>();
         for (ErpMdMaterial m : dao.findAllByQuery(q)) {
-            map.put(m.getId(), nz(m.getSafetyStock()));
+            map.put(m.getId(), DashboardUtil.nz(m.getSafetyStock()));
         }
         return map;
     }
@@ -435,10 +436,6 @@ public class ErpInvDashboardBizModel {
         return result;
     }
 
-    private static BigDecimal nz(BigDecimal v) {
-        return v == null ? BigDecimal.ZERO : v;
-    }
-
     /**
      * DB 级 SUM(totalCost)：按 warehouseId 分组取各组 SUM 后再汇总。
      * <p>不直接用无维度全局聚合——MdxQueryExecutor 对无维度聚合会强制注入主键维度，生成非法 SQL
@@ -453,15 +450,8 @@ public class ErpInvDashboardBizModel {
         List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
         BigDecimal total = BigDecimal.ZERO;
         for (Map<String, Object> row : rows) {
-            total = total.add(nz(toBigDecimal(row.get("totalValue"))));
+            total = total.add(DashboardUtil.nz(DashboardUtil.toBigDecimal(row.get("totalValue"))));
         }
         return total;
-    }
-
-    private static BigDecimal toBigDecimal(Object v) {
-        if (v == null) return BigDecimal.ZERO;
-        if (v instanceof BigDecimal) return (BigDecimal) v;
-        if (v instanceof Number) return new BigDecimal(v.toString());
-        return new BigDecimal(v.toString());
     }
 }

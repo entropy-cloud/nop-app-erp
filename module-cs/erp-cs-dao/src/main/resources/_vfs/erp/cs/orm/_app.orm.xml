@@ -138,8 +138,8 @@
         <entity className="app.erp.cs.dao.entity.ErpCsTicket" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="客服工单"
                 name="app.erp.cs.dao.entity.ErpCsTicket" registerShortName="true" tableName="erp_cs_ticket"
-                tagSet="gid,erp.cs,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="headset" i18n-en:displayName="Ticket">
+                tagSet="gid,erp.cs" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="headset" i18n-en:displayName="Ticket">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>

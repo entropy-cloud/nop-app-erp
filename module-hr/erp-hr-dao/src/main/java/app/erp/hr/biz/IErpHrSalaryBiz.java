@@ -8,7 +8,6 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import java.util.List;
 
@@ -25,7 +24,7 @@ import java.util.List;
  *
  * <p>Facade 只负责入口/事务；核算编排委托 {@code PayrollCalculator}，过账委托 {@code SalaryPostingDispatcher}。
  */
-public interface IErpHrSalaryBiz extends ICrudBiz<ErpHrSalary>, IApprovableBiz<ErpHrSalary> {
+public interface IErpHrSalaryBiz extends ICrudBiz<ErpHrSalary> {
 
     /**
      * 单员工月度薪酬核算。生成 ErpHrSalary（approveStatus=UNSUBMITTED, paymentStatus=PENDING）。

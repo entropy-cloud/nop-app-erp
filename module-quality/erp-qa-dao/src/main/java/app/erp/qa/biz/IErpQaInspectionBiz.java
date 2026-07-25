@@ -6,7 +6,6 @@ import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -31,7 +30,7 @@ import java.util.List;
  * {@code docs/design/quality/state-machine.md}；计划见
  * {@code docs/plans/2026-07-02-2237-3-quality-inspection-trigger-ncr-capa.md}。
  */
-public interface IErpQaInspectionBiz extends ICrudBiz<ErpQaInspection>, IApprovableBiz<ErpQaInspection> {
+public interface IErpQaInspectionBiz extends ICrudBiz<ErpQaInspection> {
 
     @BizMutation
     ErpQaInspection recordResult(@Name("inspectionId") Long inspectionId,

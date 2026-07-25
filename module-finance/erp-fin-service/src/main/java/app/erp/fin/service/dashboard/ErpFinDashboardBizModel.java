@@ -33,6 +33,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
+import app.erp.common.service.DashboardUtil;
 
 /**
  * 财务看板聚合入口（{@code dashboards.md §4}）。服务型 BizObject（非实体聚合），
@@ -205,7 +206,7 @@ public class ErpFinDashboardBizModel {
         List<ErpFinFundAccount> accounts = dao.findAllByQuery(q);
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpFinFundAccount a : accounts) {
-            sum = sum.add(nz(a.getCurrentBalance()));
+            sum = sum.add(DashboardUtil.nz(a.getCurrentBalance()));
         }
         return sum;
     }
@@ -220,20 +221,16 @@ public class ErpFinDashboardBizModel {
         List<ErpFinArApItem> items = dao.findAllByQuery(q);
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpFinArApItem it : items) {
-            sum = sum.add(nz(it.getOpenAmountFunctional()));
+            sum = sum.add(DashboardUtil.nz(it.getOpenAmountFunctional()));
         }
         return sum;
     }
 
     private static BigDecimal periodActivity(ErpFinGlBalance b, ErpMdSubject s) {
-        BigDecimal debit = nz(b.getPeriodDebit());
-        BigDecimal credit = nz(b.getPeriodCredit());
+        BigDecimal debit = DashboardUtil.nz(b.getPeriodDebit());
+        BigDecimal credit = DashboardUtil.nz(b.getPeriodCredit());
         return ErpFinConstants.DC_DEBIT.equals(s.getDirection())
                 ? debit.subtract(credit)
                 : credit.subtract(debit);
-    }
-
-    private static BigDecimal nz(BigDecimal v) {
-        return v == null ? BigDecimal.ZERO : v;
     }
 }

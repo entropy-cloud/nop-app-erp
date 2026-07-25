@@ -1101,9 +1101,8 @@
         <entity className="app.erp.hr.dao.entity.ErpHrSalary" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬记录"
                 name="app.erp.hr.dao.entity.ErpHrSalary" registerShortName="true" tableName="erp_hr_salary"
-                tagSet="gid,erp.hr,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" useWorkflow="true" versionProp="version" ext:icon="wallet"
-                i18n-en:displayName="Salary Record">
+                tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                useWorkflow="true" versionProp="version" ext:icon="wallet" i18n-en:displayName="Salary Record">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>

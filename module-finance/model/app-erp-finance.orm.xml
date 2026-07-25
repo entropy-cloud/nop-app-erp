@@ -1248,7 +1248,7 @@
         <!-- 费用报销单头（员工费用报销，价税分离 + 项目/成本中心归集 + 业财过账） -->
         <entity className="app.erp.fin.dao.entity.ErpFinExpenseClaim"
                 displayName="费用报销单" ext:icon="receipt" i18n-en:displayName="Expense Claim" name="app.erp.fin.dao.entity.ErpFinExpenseClaim"
-                tableName="erp_fin_expense_claim" tagSet="gid,erp.finance,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_expense_claim" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" tagSet="var" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />
@@ -1366,7 +1366,7 @@
         <!-- 员工借款单（预支/备用金/差旅借款，方向=其他应收款-员工预支） -->
         <entity className="app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
                 displayName="员工借款单" ext:icon="hand-coins" i18n-en:displayName="Employee Advance" name="app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
-                tableName="erp_fin_employee_advance" tagSet="gid,erp.finance,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_fin_employee_advance" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="voucherCode" mandatory="true" code="CODE" propId="2" tagSet="var" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' />

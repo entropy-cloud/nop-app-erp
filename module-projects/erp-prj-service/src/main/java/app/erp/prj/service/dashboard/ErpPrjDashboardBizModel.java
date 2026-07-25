@@ -32,6 +32,7 @@ import java.util.Set;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.ne;
+import app.erp.common.service.DashboardUtil;
 
 /**
  * 项目看板聚合入口（{@code dashboards.md §6}）。服务型 BizObject（非实体聚合），
@@ -184,9 +185,9 @@ public class ErpPrjDashboardBizModel {
             BigDecimal totalGrossProfit = BigDecimal.ZERO;
             Set<Long> projectIds = new HashSet<>();
             for (ErpPrjProjectPnl p : rows) {
-                totalRevenue = totalRevenue.add(nz(p.getRevenueAmount()));
-                totalCost = totalCost.add(nz(p.getTotalCost()));
-                totalGrossProfit = totalGrossProfit.add(nz(p.getGrossProfit()));
+                totalRevenue = totalRevenue.add(DashboardUtil.nz(p.getRevenueAmount()));
+                totalCost = totalCost.add(DashboardUtil.nz(p.getTotalCost()));
+                totalGrossProfit = totalGrossProfit.add(DashboardUtil.nz(p.getGrossProfit()));
                 if (p.getProjectId() != null) projectIds.add(p.getProjectId());
             }
             BigDecimal grossMarginPct = totalRevenue.signum() > 0
@@ -219,7 +220,7 @@ public class ErpPrjDashboardBizModel {
         q.addFilter(in("projectId", projectIds));
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpPrjBudget b : dao.findAllByQuery(q)) {
-            sum = sum.add(nz(b.getTotalAmount()));
+            sum = sum.add(DashboardUtil.nz(b.getTotalAmount()));
         }
         return sum;
     }
@@ -231,7 +232,7 @@ public class ErpPrjDashboardBizModel {
         q.addFilter(in("projectId", projectIds));
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpPrjCostCollection c : dao.findAllByQuery(q)) {
-            sum = sum.add(nz(c.getTotalAmount()));
+            sum = sum.add(DashboardUtil.nz(c.getTotalAmount()));
         }
         return sum;
     }
@@ -257,7 +258,7 @@ public class ErpPrjDashboardBizModel {
         for (Map<String, Object> row : rows) {
             Object pid = row.get("projectId");
             if (pid == null) continue;
-            map.put(((Number) pid).longValue(), toBigDecimal(row.get("total")));
+            map.put(((Number) pid).longValue(), DashboardUtil.toBigDecimal(row.get("total")));
         }
         return map;
     }
@@ -266,16 +267,5 @@ public class ErpPrjDashboardBizModel {
         Set<Long> ids = new HashSet<>();
         for (ErpPrjProject p : projects) ids.add(p.getId());
         return ids;
-    }
-
-    private static BigDecimal nz(BigDecimal v) {
-        return v == null ? BigDecimal.ZERO : v;
-    }
-
-    private static BigDecimal toBigDecimal(Object v) {
-        if (v == null) return BigDecimal.ZERO;
-        if (v instanceof BigDecimal) return (BigDecimal) v;
-        if (v instanceof Number) return new BigDecimal(v.toString());
-        return new BigDecimal(v.toString());
     }
 }

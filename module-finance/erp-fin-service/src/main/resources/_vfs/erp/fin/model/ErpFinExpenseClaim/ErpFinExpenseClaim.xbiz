@@ -3,26 +3,51 @@
 
     <actions>
         <mutation name="submitForApproval">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.fin.service.processor.ErpFinExpenseClaimProcessor').withdrawApproval(id, svcCtx);
             ]]></c:script></source>

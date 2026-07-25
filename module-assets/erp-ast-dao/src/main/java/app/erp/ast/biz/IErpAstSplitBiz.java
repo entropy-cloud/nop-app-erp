@@ -5,7 +5,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import app.erp.ast.dao.entity.ErpAstSplit;
 
@@ -16,7 +15,7 @@ import app.erp.ast.dao.entity.ErpAstSplit;
  * <p>reverseApprove 走 {@code ErpAstSplitProcessor} 抛 {@code ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED}
  * （遵守 owner doc {@code split-merge.md} §关键业务规则 5 不可逆契约）。
  */
-public interface IErpAstSplitBiz extends ICrudBiz<ErpAstSplit>, IApprovableBiz<ErpAstSplit> {
+public interface IErpAstSplitBiz extends ICrudBiz<ErpAstSplit> {
 
     @BizMutation
     ErpAstSplit cancel(@Name("id") Long id, IServiceContext context);

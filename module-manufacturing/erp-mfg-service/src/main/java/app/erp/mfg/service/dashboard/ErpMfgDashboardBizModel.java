@@ -34,6 +34,7 @@ import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
 import static io.nop.api.core.beans.FilterBeans.ne;
+import app.erp.common.service.DashboardUtil;
 
 /**
  * 制造看板聚合入口（{@code dashboards.md §7}）。服务型 BizObject（非实体聚合），
@@ -127,7 +128,7 @@ public class ErpMfgDashboardBizModel {
                 LocalDate d = o.getActualEndDate();
                 if (d == null) continue;
                 String key = d.getYear() + "-" + String.format("%02d", d.getMonthValue());
-                qtyByMonth.merge(key, nz(o.getCompletedQuantity()), BigDecimal::add);
+                qtyByMonth.merge(key, DashboardUtil.nz(o.getCompletedQuantity()), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             for (int i = 0; i < n; i++) {
@@ -214,8 +215,8 @@ public class ErpMfgDashboardBizModel {
         for (CrpLoadReportItem item : items) {
             LocalDate d = item.getLoadDate();
             if (d == null) continue;
-            loadByDate.merge(d, nz(item.getLoadHours()), BigDecimal::add);
-            capByDate.merge(d, nz(item.getCapacityHours()), BigDecimal::add);
+            loadByDate.merge(d, DashboardUtil.nz(item.getLoadHours()), BigDecimal::add);
+            capByDate.merge(d, DashboardUtil.nz(item.getCapacityHours()), BigDecimal::add);
         }
 
         List<Map<String, Object>> series = new ArrayList<>();
@@ -271,7 +272,7 @@ public class ErpMfgDashboardBizModel {
         q.addFilter(le("actualEndDate", to));
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpMfgWorkOrder o : dao.findAllByQuery(q)) {
-            sum = sum.add(nz(o.getCompletedQuantity()));
+            sum = sum.add(DashboardUtil.nz(o.getCompletedQuantity()));
         }
         return sum;
     }
@@ -302,10 +303,6 @@ public class ErpMfgDashboardBizModel {
         return dao.findAllByQuery(q);
     }
 
-    private static BigDecimal nz(BigDecimal v) {
-        return v == null ? BigDecimal.ZERO : v;
-    }
-
     private static LocalDate parseDate(String raw, LocalDate fallback) {
         if (raw == null || raw.trim().isEmpty()) {
             return fallback;
@@ -318,8 +315,8 @@ public class ErpMfgDashboardBizModel {
     }
 
     private static BigDecimal deriveLoadRate(BigDecimal loadHours, BigDecimal capacityHours) {
-        loadHours = nz(loadHours);
-        capacityHours = nz(capacityHours);
+        loadHours = DashboardUtil.nz(loadHours);
+        capacityHours = DashboardUtil.nz(capacityHours);
         if (capacityHours.signum() <= 0) {
             return loadHours.signum() > 0 ? new BigDecimal("9999") : BigDecimal.ZERO;
         }

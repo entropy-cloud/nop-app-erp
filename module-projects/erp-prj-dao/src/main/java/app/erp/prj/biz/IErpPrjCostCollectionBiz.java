@@ -5,7 +5,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import java.math.BigDecimal;
 
@@ -21,7 +20,7 @@ import java.math.BigDecimal;
  * <p>费用归集受 {@code erp-prj.expense-aggregation-enabled}（默认 true）config-gated。
  * 关闭时 {@code refreshExpenseCost} 直接返回 0。
  */
-public interface IErpPrjCostCollectionBiz extends ICrudBiz<ErpPrjCostCollection>, IApprovableBiz<ErpPrjCostCollection> {
+public interface IErpPrjCostCollectionBiz extends ICrudBiz<ErpPrjCostCollection> {
 
     /**
      * 刷新项目的费用报销归集。返回本次新增的归集金额合计。

@@ -3,26 +3,51 @@
 
     <actions>
         <mutation name="submitForApproval">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.ast.service.processor.ErpAstSplitProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.ast.service.processor.ErpAstSplitProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.ast.service.processor.ErpAstSplitProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.ast.service.processor.ErpAstSplitProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.ast.service.processor.ErpAstSplitProcessor').withdrawApproval(id, svcCtx);
             ]]></c:script></source>

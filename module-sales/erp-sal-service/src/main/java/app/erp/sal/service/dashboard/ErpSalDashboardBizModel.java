@@ -37,6 +37,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
+import app.erp.common.service.DashboardUtil;
 
 /**
  * 销售看板聚合入口（{@code dashboards.md §1}）。服务型 BizObject（非实体聚合），
@@ -69,7 +70,7 @@ public class ErpSalDashboardBizModel {
             List<ErpSalInvoice> invoices = loadPostedInvoicesInRange(from, to);
             BigDecimal salesAmount = BigDecimal.ZERO;
             for (ErpSalInvoice inv : invoices) {
-                salesAmount = salesAmount.add(nz(inv.getAmountFunctional()));
+                salesAmount = salesAmount.add(DashboardUtil.nz(inv.getAmountFunctional()));
             }
 
             long orderCount = countActiveOrders();
@@ -103,7 +104,7 @@ public class ErpSalDashboardBizModel {
                 LocalDate d = inv.getBusinessDate();
                 if (d == null) continue;
                 String key = d.getYear() + "-" + String.format("%02d", d.getMonthValue());
-                amountByMonth.merge(key, nz(inv.getAmountFunctional()), BigDecimal::add);
+                amountByMonth.merge(key, DashboardUtil.nz(inv.getAmountFunctional()), BigDecimal::add);
             }
             List<Map<String, Object>> rows = new ArrayList<>();
             for (int i = 0; i < n; i++) {
@@ -138,7 +139,7 @@ public class ErpSalDashboardBizModel {
                 if (row.get("customerId") == null) continue;
                 Map<String, Object> r = new LinkedHashMap<>();
                 r.put("customerId", row.get("customerId"));
-                r.put("salesAmount", toBigDecimal(row.get("salesAmount")));
+                r.put("salesAmount", DashboardUtil.toBigDecimal(row.get("salesAmount")));
                 grouped.add(r);
             }
             grouped.sort(Comparator.<Map<String, Object>, BigDecimal>comparing(
@@ -185,7 +186,7 @@ public class ErpSalDashboardBizModel {
             LocalDate base = it.getDueDate() != null ? it.getDueDate() : it.getBusinessDate();
             long age = base != null ? ChronoUnit.DAYS.between(base, today) : 0L;
             if (age < 0) age = 0L;
-            BigDecimal open = nz(it.getOpenAmountFunctional());
+            BigDecimal open = DashboardUtil.nz(it.getOpenAmountFunctional());
             boolean dayHit = daysThreshold > 0 && age > daysThreshold;
             boolean amountHit = amountThreshold != null && amountThreshold.signum() > 0
                     && open.compareTo(amountThreshold) > 0;
@@ -229,19 +230,8 @@ public class ErpSalDashboardBizModel {
         List<ErpFinArApItem> items = arApItemBiz.findOpenItems(direction, context);
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpFinArApItem it : items) {
-            sum = sum.add(nz(it.getOpenAmountFunctional()));
+            sum = sum.add(DashboardUtil.nz(it.getOpenAmountFunctional()));
         }
         return sum;
-    }
-
-    private static BigDecimal nz(BigDecimal v) {
-        return v == null ? BigDecimal.ZERO : v;
-    }
-
-    private static BigDecimal toBigDecimal(Object v) {
-        if (v == null) return BigDecimal.ZERO;
-        if (v instanceof BigDecimal) return (BigDecimal) v;
-        if (v instanceof Number) return new BigDecimal(v.toString());
-        return new BigDecimal(v.toString());
     }
 }

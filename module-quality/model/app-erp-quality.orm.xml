@@ -171,7 +171,7 @@
         <!-- 质检单 -->
         <entity className="app.erp.qa.dao.entity.ErpQaInspection"
                 displayName="质检单" ext:icon="clipboard-check" i18n-en:displayName="Inspection" name="app.erp.qa.dao.entity.ErpQaInspection"
-                tableName="erp_qa_inspection" tagSet="gid,erp.quality,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_inspection" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -535,7 +535,7 @@
         <!-- 质量评审 -->
         <entity className="app.erp.qa.dao.entity.ErpQaReview"
                 displayName="质量评审" ext:icon="clipboard-list" i18n-en:displayName="Quality Review" name="app.erp.qa.dao.entity.ErpQaReview"
-                tableName="erp_qa_review" tagSet="gid,erp.quality,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_review" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="编号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -607,7 +607,7 @@
         <!-- 量具/检验设备校准 -->
         <entity className="app.erp.qa.dao.entity.ErpQaCalibration"
                 displayName="量具校准" ext:icon="gauge" i18n-en:displayName="Gauge Calibration" name="app.erp.qa.dao.entity.ErpQaCalibration"
-                tableName="erp_qa_calibration" tagSet="gid,erp.quality,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_calibration" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -658,7 +658,7 @@
         <!-- 召回事件头（2.11） -->
         <entity className="app.erp.qa.dao.entity.ErpQaRecall"
                 displayName="召回事件" ext:icon="alert-octagon" i18n-en:displayName="Recall Event" name="app.erp.qa.dao.entity.ErpQaRecall"
-                tableName="erp_qa_recall" tagSet="gid,erp.quality,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_recall" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -758,7 +758,7 @@
         <!-- SPC 控制图配置（2.4b，docs/design/quality/spc.md §实体清单） -->
         <entity className="app.erp.qa.dao.entity.ErpQaSpcChart"
                 displayName="SPC 控制图配置" ext:icon="activity" i18n-en:displayName="SPC Chart" name="app.erp.qa.dao.entity.ErpQaSpcChart"
-                tableName="erp_qa_spc_chart" tagSet="gid,erp.quality,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_qa_spc_chart" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />

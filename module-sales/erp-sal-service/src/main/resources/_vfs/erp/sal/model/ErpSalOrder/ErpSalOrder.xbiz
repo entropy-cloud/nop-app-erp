@@ -3,24 +3,67 @@
 
     <actions>
         <mutation name="submitForApproval">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.sal.service.processor.ErpSalOrderProcessor').submitForApproval(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.sal.service.processor.ErpSalOrderProcessor').approve(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reject">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.sal.service.processor.ErpSalOrderProcessor').reject(id, svcCtx);
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.sal.service.processor.ErpSalOrderProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>
+        </mutation>
+            <mutation name="withdrawApproval">
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
+            <source><![CDATA[
+                const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
+                const status = entity.approveStatus;
+
+                if (status !== 'SUBMITTED') {
+                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
+                        .param("bizObjName", thisObj.bizObjName)
+                        .param("bizObjId", entity.id)
+                        .param("action", "withdrawApproval")
+                        .param("currentStatus", status)
+                        .param("expectedStatus", "SUBMITTED");
+                }
+
+                entity.approveStatus = 'UNSUBMITTED';
+                return entity;
+            ]]></source>
         </mutation>
     </actions>
 </biz>

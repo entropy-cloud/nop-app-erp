@@ -4,7 +4,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import app.erp.mnt.dao.entity.ErpMntRequest;
 
@@ -17,7 +16,7 @@ import app.erp.mnt.dao.entity.ErpMntRequest;
  *
  * <p>accept 受理后生成维护访问（DRAFT, visitType=RESPONSIVE）。
  */
-public interface IErpMntRequestBiz extends ICrudBiz<ErpMntRequest>, IApprovableBiz<ErpMntRequest> {
+public interface IErpMntRequestBiz extends ICrudBiz<ErpMntRequest> {
 
     @BizMutation
     ErpMntRequest accept(@Name("requestId") Long requestId, IServiceContext context);

@@ -540,9 +540,8 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntRequest" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护请求"
                 name="app.erp.mnt.dao.entity.ErpMntRequest" registerShortName="true" tableName="erp_mnt_request"
-                tagSet="gid,erp.maintenance,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="life-buoy"
-                i18n-en:displayName="Maintenance Request">
+                tagSet="gid,erp.maintenance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="life-buoy" i18n-en:displayName="Maintenance Request">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -999,8 +998,8 @@
         <entity className="app.erp.mnt.dao.entity.ErpMntCalibration" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="校准记录"
                 name="app.erp.mnt.dao.entity.ErpMntCalibration" registerShortName="true" tableName="erp_mnt_calibration"
-                tagSet="gid,erp.maintenance,use-approval" updateTimeProp="updateTime" updaterProp="updatedBy"
-                useLogicalDelete="true" versionProp="version" ext:icon="gauge" i18n-en:displayName="Calibration">
+                tagSet="gid,erp.maintenance" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:icon="gauge" i18n-en:displayName="Calibration">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>

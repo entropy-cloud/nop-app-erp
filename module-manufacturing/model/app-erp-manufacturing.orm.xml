@@ -569,7 +569,7 @@
         <!-- 工单 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrder"
                 displayName="工单" ext:icon="factory" i18n-en:displayName="Work Order" name="app.erp.mfg.dao.entity.ErpMfgWorkOrder"
-                tableName="erp_mfg_work_order" tagSet="gid,erp.manufacturing,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_work_order" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="工单号" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -975,7 +975,7 @@
         <!-- 领料单头（绑定工单/作业卡，触发库存出库） -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgMaterialIssue"
                 displayName="领料单" ext:icon="package-minus" i18n-en:displayName="Material Issue" name="app.erp.mfg.dao.entity.ErpMfgMaterialIssue"
-                tableName="erp_mfg_material_issue" tagSet="gid,erp.manufacturing,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_material_issue" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -1097,7 +1097,7 @@
         <!-- 委外加工单头 -->
         <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
                 displayName="委外加工单" ext:icon="truck" i18n-en:displayName="Subcontract Order" name="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
-                tableName="erp_mfg_subcontract_order" tagSet="gid,erp.manufacturing,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_mfg_subcontract_order" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="workOrderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />

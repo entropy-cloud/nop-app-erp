@@ -5,7 +5,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalQuotation;
@@ -17,7 +16,7 @@ import app.erp.sal.dao.entity.ErpSalQuotation;
  * <p>模型边界：报价单无 {@code approvedBy}/{@code approvedAt} 列——审核仅翻转 {@code approveStatus}，
  * 不记录审核人/时间（已知缺口，不改 ORM）。
  */
-public interface IErpSalQuotationBiz extends ICrudBiz<ErpSalQuotation>, IApprovableBiz<ErpSalQuotation> {
+public interface IErpSalQuotationBiz extends ICrudBiz<ErpSalQuotation> {
 
     @BizMutation
     ErpSalQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context);

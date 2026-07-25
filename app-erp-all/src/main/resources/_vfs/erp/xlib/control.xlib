@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--
+  项目级 control.xlib（plan 2026-07-24-2200-1 Phase 5）
+  扩展平台 /nop/web/xlib/control.xlib，为 ERP 域特有 domain 映射 AMIS 控件。
+  消除各 view.xml 中重复的 gen-control 脚本。
+-->
+<lib xmlns:x="/nop/schema/xdsl.xdef" x:extends="/nop/web/xlib/control.xlib"
+     x:schema="/nop/schema/xlib.xdef">
+
+    <tags>
+        <!-- 金额编辑控件：2 位精度，千分位，右对齐 -->
+        <edit-amount outputMode="xjson">
+            <attr name="precision"/>
+            <attr name="step"/>
+            <source>
+                <input-number type="number" kilometer="@:true" precision="@:2"
+                              step="@:0.01" align="right"/>
+            </source>
+        </edit-amount>
+
+        <!-- 数量编辑控件：3 位精度 -->
+        <edit-quantity outputMode="xjson">
+            <attr name="precision"/>
+            <source>
+                <input-number type="number" kilometer="@:true" precision="@:3"
+                              step="@:1" align="right"/>
+            </source>
+        </edit-quantity>
+
+        <!-- 单价编辑控件：4 位精度 -->
+        <edit-unitPrice outputMode="xjson">
+            <attr name="precision"/>
+            <source>
+                <input-number type="number" kilometer="@:true" precision="@:4"
+                              step="@:0.0001" align="right"/>
+            </source>
+        </edit-unitPrice>
+
+        <!-- 日期时间显示控件 -->
+        <view-datetime outputMode="xjson">
+            <attr name="format"/>
+            <source>
+                <text type="datetime" format="@:YYYY-MM-DD HH:mm:ss"/>
+            </source>
+        </view-datetime>
+
+        <!-- 金额显示控件 -->
+        <view-amount outputMode="xjson">
+            <attr name="precision"/>
+            <source>
+                <text type="number" kilometer="@:true" precision="@:2"/>
+            </source>
+        </view-amount>
+    </tags>
+</lib>

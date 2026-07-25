@@ -2,7 +2,7 @@
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
       xmlns:xpl="xpl" ext:model="orm" ext:icon="package-minus" ext:web-renderer="" xmlns:c="c" xmlns:graphql="graphql"
       xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="销售出库单" i18n-en:displayName="Sales Delivery"
-      tagSet="gid,erp.sales,use-approval" xmlns:ui="ui" xmlns:orm="orm">
+      tagSet="gid,erp.sales" xmlns:ui="ui" xmlns:orm="orm">
 
     <entityName>app.erp.sal.dao.entity.ErpSalDelivery</entityName>
 

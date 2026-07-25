@@ -5,7 +5,6 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
-import io.nop.wf.core.biz.IApprovableBiz;
 
 import app.erp.sal.dao.entity.ErpSalReturn;
 
@@ -18,7 +17,7 @@ import app.erp.sal.dao.entity.ErpSalReturn;
  * SALES_RETURN 过账 + 回减客户应收余额。reverseApprove 前置冲销已生成库存移动单 + 红字冲销已过账凭证。
  * 每条迁移校验前置状态，违反抛 {@link io.nop.api.core.exceptions.NopException}。
  */
-public interface IErpSalReturnBiz extends ICrudBiz<ErpSalReturn>, IApprovableBiz<ErpSalReturn> {
+public interface IErpSalReturnBiz extends ICrudBiz<ErpSalReturn> {
 
     @BizMutation
     ErpSalReturn cancel(@Name("returnId") Long returnId, IServiceContext context);

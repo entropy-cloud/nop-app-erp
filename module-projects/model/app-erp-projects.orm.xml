@@ -373,7 +373,7 @@
         <!-- 项目预算头 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBudget"
                 displayName="项目预算" ext:icon="wallet" i18n-en:displayName="Project Budget" name="app.erp.prj.dao.entity.ErpPrjBudget"
-                tableName="erp_prj_budget" tagSet="gid,erp.projects,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_budget" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -470,7 +470,7 @@
         <!-- 项目成本归集头（汇总采购/工时/费用到项目） -->
         <entity className="app.erp.prj.dao.entity.ErpPrjCostCollection"
                 displayName="项目成本归集" ext:icon="coins" i18n-en:displayName="Project Cost Collection" name="app.erp.prj.dao.entity.ErpPrjCostCollection"
-                tableName="erp_prj_cost_collection" tagSet="gid,erp.projects,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_cost_collection" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
@@ -611,7 +611,7 @@
         <!-- 项目开票头 -->
         <entity className="app.erp.prj.dao.entity.ErpPrjBilling"
                 displayName="项目开票" ext:icon="receipt" i18n-en:displayName="Project Billing" name="app.erp.prj.dao.entity.ErpPrjBilling"
-                tableName="erp_prj_billing" tagSet="gid,erp.projects,use-approval" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+                tableName="erp_prj_billing" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
                 <column name="code" displayName="单号" domain="projectCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
