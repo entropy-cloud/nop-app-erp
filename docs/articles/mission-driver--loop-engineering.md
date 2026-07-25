@@ -28,45 +28,31 @@ Mission Driver 是一个声明式的任务驱动引擎。你给它一个目标�
 
 循环一直跑，直到目标达成或审计预算耗尽。每一步都是独立的 AI 子进程或者脚本函数，单个步骤失败不会影响整体循环。
 
-它是吸引子引导工程（Attractor Guided Engineering）的一个组成部分，不仅仅可以用于软件开发设计。通过配置自定义prompt和command，它可以很自然的被推广到数据处理、文档分析等场景，是一种通用的AI全自主运行机制。
+它是吸引子引导工程（Attractor Guided Engineering）的一个组成部分，不仅仅可以用于软件开发设计。通过配置自定义 flow、prompt 和 commands，它可以很自然的被推广到数据处理、文档分析等场景，是一种通用的AI全自主运行机制。通过配置自定义 flow、prompt 和 commands，它可以很自然的被推广到数据处理、文档分析等场景，是一种通用的AI全自主运行机制。
 
 它适合需要长时间运行、有明确验收标准、需要多步迭代的复杂任务。
 
 ## 三、怎么运作：Loop 嵌套与局部容错
 
-如果把Vibe Coding看作是一种无限长的单一Loop，Mission Driver 的核心就是分解为三个Loop的嵌套。理解了这个结构，就理解了它为什么能长时间稳定运行。
+如果把Vibe Coding看作是一种无限长的单一Loop，Mission Driver 的核心就是分解为多层Loop的嵌套——Mission Driver 的主循环（5 步闭环）在外层，内层嵌入了 Plan Loop（EXEC_PLANS 子流中的执行→检查→审计→验证闭环）和可选的 Audit Loop（DEEP_AUDIT 子流中的多维审计闭环）。理解了这个嵌套结构，就理解了它为什么能长时间稳定运行。
 
-```
-┌─────────────────────────────────────────────────────────┐
-│  顶层循环：CHECK → REVIEW → EXEC → DRAFT → [AUDIT]     │
-│  终止：roadmap 全部 done + 审计预算耗尽                   │
-└────────────────────────┬────────────────────────────────┘
-                         │ EXEC 对每个 active plan 启动子流
-                         ▼
-┌─────────────────────────────────────────────────────────┐
-│  Plan 子流：EXECUTE → CLOSURE_CHECK → AUDIT → BUILD     │
-│  隔离：plan-001 失败不影响 plan-002                       │
-└────────────────────────┬────────────────────────────────┘
-                         │ 空闲时自动触发
-                         ▼
-┌─────────────────────────────────────────────────────────┐
-│  审计子流：多维度审计 + 开放式对抗审查                     │
-│  发现问题 → 生成修正 plan → 回到顶层执行                  │
-└─────────────────────────────────────────────────────────┘
-```
+![mission-driver-loop](images/mission-driver-loop.png)
 
-假设有 3 个 active plan，plan-002 的执行失败了：
+假设有 3 个 active plan，plan-002 的执行遇到了阻塞：
 
 ```
 EXEC_PLANS:
   ├── plan-001: EXECUTE ✓ → CHECK ✓ → BUILD ✓ → completed ✓
-  ├── plan-002: EXECUTE ✗ → 重试 3 次仍失败 → failed
+  ├── plan-002: EXECUTE ✗ → 重试 3 次仍失败 → subflow failed
+  │              → 执行 agent 发现某个前提不成立
+  │              → 将阻塞项移至 Deferred But Adjudicated，记录触发条件
+  │              → 其余 Phase 继续执行 → completed（含 Follow-up 项）
   └── plan-003: EXECUTE ✓ → CHECK ✓ → BUILD ✓ → completed ✓
-
-→ DEEP_AUDIT 发现 plan-002 失败 → 起草 plan-004 修复 → 继续
 ```
 
-plan-002 的失败完全没有影响 plan-001 和 plan-003。失败被限制在子流内部，不传播到兄弟子流或父循环。这就是 loop 嵌套带来的局部容错。
+plan-002 的执行阻塞完全没有影响 plan-001 和 plan-003。阻塞被限制在子流内部，不传播到兄弟子流或父循环。这就是 loop 嵌套带来的局部容错。
+
+> Plan执行时，AI 根据实际情况决定：局部阻塞的项移入 `Deferred But Adjudicated` 并记录 successor 触发条件，其余范围正常完成；如果整个 plan 方向被证伪，则标 `superseded` 或 `cancelled`。plan 的 `.md` 文件状态始终由 AI agent 管理。
 
 每一步的执行状态都持久化到磁盘（plan 文件中的 checkbox）。进程崩溃后重启，引擎扫描磁盘上的 checkbox 标记，从断点恢复，不回放历史。
 
@@ -137,9 +123,9 @@ Postmortem 扫描所有事件和日志，运行复盘 agent，将结构化报告
 - 启动前先手动运行一次 commands.test 确认基线通过
 - 修改 roadmap 前，先停掉 mission（Ctrl-C），改完再重启
 
-## 五、四层 DSL 架构
+## 五、四层定义体系
 
-Mission Driver 由四层 DSL 组成，通过配置而非编程使用。
+Mission Driver 由四层定义组成，通过配置而非编程使用。
 
 ### 5.1 Mission Config（missions/\<name\>.json）
 
@@ -163,7 +149,42 @@ commands.test 是必需字段，CHECK 和 BUILD_VERIFY 都会运行它。build/l
 
 ### 5.2 Flow 定义
 
-状态机 DSL，声明步骤怎么编排。内置 flow：CHECK → REVIEW_PLANS → EXEC_PLANS → DRAFT_PLANS → [DEEP_AUDIT] → loop。支持子流组合、条件跳过、项目级覆盖。
+引擎核心是**通用状态机 DSL 执行器**（`FlowEngine` 类，零项目特定逻辑）。Flow 定义声明步骤怎么编排、如何转换、遇到错误怎么办。引擎按 flow 描述推进状态机，不绑定任何固定步骤。
+
+一个简化的 flow 结构：
+
+```json
+{
+  "name": "my-flow",
+  "entry": "CHECK",
+  "steps": {
+    "CHECK": {
+      "type": "agent",
+      "promptPath": "prompts/health-check.md",
+      "transitions": {
+        "pass": { "goto": "NEXT_STEP" },
+        "fail": { "done": "failed" }
+      }
+    },
+    "NEXT_STEP": {
+      "type": "subflow",
+      "flow": "my-subflow",
+      "forEach": "activePlans()",
+      "transitions": {
+        "all_complete": { "done": "completed" }
+      }
+    }
+  }
+}
+```
+
+- **步骤类型**：`agent`（AI 子进程）、`script`（JS 函数）、`subflow`（嵌套子流）、`group`（分组步骤）
+- **控制流**：`transitions` 定义步骤间的跳转（`goto`/`done`/`retry`）；`forEach` 遍历集合为每个元素启动子流；`when`/`otherwise` 条件跳过
+- **错误处理**：每步可配 `maxRetries`、`onMaxRetries`、`onError`、`onUnknown`；引擎还提供全局死循环检测（ping_pong + max_cycles + max_total_steps）
+
+**随引擎内置的默认 flow**（`flows/mission-driver.json`）就是文章一直在讲的那个循环。它的实际结构是：CHECK **仅入口运行一次**，然后进入 REVIEW_PLANS → EXEC_PLANS → DRAFT_PLANS 的循环体；当 DRAFT_PLANS 无新方案可起草时进入 DEEP_AUDIT，之后回到循环体。它不是硬编码，只是一个**缺省配置**。EXEC_PLANS 和 DEEP_AUDIT 本身也是子流（`plan-execution.json` / `deep-audit-loop.json`），可单独替换。
+
+这意味着**可以设计全新的流程**——例如一个代码审查工作流，不需要 Plan 编排，可以直接写一个四步流：FETCH_PR → RUN_LINT → AI_REVIEW → POST_COMMENT。在 `missions/flows/` 下放自定义 flow.json，同时在 mission.json 中设置 `"flowName": "<custom>"` 即可，引擎不变。审查步骤是 `type: "agent"` 步骤配一个审查 prompt，不是特殊的步骤类型——任何 flow 都可以包含。关键约束：审查 agent 应在全新会话中执行，不与执行步骤共享上下文，以确保独立验证（见 §十三）。
 
 ### 5.3 Plan 文件
 
@@ -223,7 +244,7 @@ Exit Criteria:
 - [ ] M2: P2P 端到端
 ```
 
-引擎的 DRAFT_PLANS 读第一个 todo/active 项起草 plan。完成后变 done，引擎进入下一个。Autonomy 列控制自主级别。
+DRAFT_PLANS 启动 AI agent 读取 roadmap，选择工作项起草 plan，起草完成后将 roadmap 项标记为 active（待 plan 执行审计通过后才转为 done）。Autonomy 列控制自主级别。
 
 ## 六、配置与定制
 
@@ -231,11 +252,15 @@ Exit Criteria:
 
 | 定制层 | 机制 | 示例 |
 |--------|------|------|
-| Prompt 覆盖 | missions/prompts/\<name\>.md 覆盖内置 | 数据处理的 EXECUTE prompt 说"调脚本"而非"改代码" |
-| Flow 覆盖 | missions/flows/\<name\>.json 覆盖内置 | 增加合规审计步骤 |
-| Commands | mission.json 的 commands 字段 | test = 质量检查脚本 |
+| Prompt 覆盖 | `missions/prompts/\<name\>.md` 覆盖内置 | 数据处理的 EXECUTE prompt 说"调脚本"而非"改代码" |
+| Flow 微调 | 在 `missions/flows/mission-driver.json` 覆盖同名 flow，增删改步骤 | 在 CHECK 后插入一个合规审计步骤 |
+| 全新流程 | 写 `missions/flows/\<custom\>.json`，mission.json 设 `flowName: "\<custom\>"` | 代码审查流 FETCH_PR → RUN_LINT → AI_REVIEW → POST_COMMENT，不含 Plan 编排 |
+| 子流覆盖 | 在 `missions/flows/` 放同名子流 JSON（如 `plan-execution.json`）替换内置子流 | 替换 EXEC_PLANS 子流，让每个 active plan 执行前后调外部脚本 |
+| Commands | `mission.json` 的 commands 字段 | test = 质量检查脚本 |
 
-promptsDir 配置允许不同 mission 指向不同的 prompt 子目录，实现同一引擎、不同 prompt 集：
+**flow 加载优先级**：项目 `missions/flows/\<flowName\>.json` → 引擎内置 `tools/mission-driver/flows/\<flowName\>.json`。同名文件项目优先。子流同样遵循此链。
+
+`promptsDir` 配置允许不同 mission 指向不同的 prompt 子目录，实现同一引擎、不同 prompt 集：
 
 ```json
 {
@@ -244,9 +269,9 @@ promptsDir 配置允许不同 mission 指向不同的 prompt 子目录，实现�
 }
 ```
 
-引擎 prompt 加载链：promptsDir（任务类型级）→ missionsDir/prompts（项目级）→ 内置默认。不设 promptsDir 时行为不变。
+引擎 prompt 加载链：`promptsDir`（任务类型级）→ `missionsDir/prompts`（项目级）→ 内置默认。不设 `promptsDir` 时行为不变。
 
-内置的 CHECK→REVIEW→EXEC→DRAFT→AUDIT 适用于几乎所有场景。Plan 格式、恢复机制、监控也是通用的。
+内置的 CHECK→REVIEW→EXEC→DRAFT→AUDIT 适用于软件开发类的大部分场景。但对于数据处理、文档分析等任务，完全可以用不同的 flow 来适配——引擎不变，换一个 flow 文件即可。
 
 ---
 
@@ -309,7 +334,7 @@ E2E 测试手写成本高，可以让 AI 自动生成。关键是降低难度：
 
 ## 十、通用应用场景
 
-四个场景的区别只在 prompt 集和 commands，flow 引擎、plan 格式、恢复机制全部相同。
+四个场景共享同一默认 flow，区别在 prompt 集和 commands；flow 引擎、plan 格式、恢复机制全部相同。
 
 | 场景 | DRAFT | EXEC | AUDIT |
 |------|-------|------|-------|
@@ -324,7 +349,7 @@ E2E 测试手写成本高，可以让 AI 自动生成。关键是降低难度：
 
 ## 十一、nop-app-erp：22 天 154 模块
 
-nop-app-erp 提供了一个可公开审计的案例：三层 Loop 如何驱动 AI 从空骨架产出产品级 ERP。
+nop-app-erp 提供了一个可公开审计的案例：多层 Loop 嵌套如何驱动 AI 从空骨架产出产品级 ERP。
 
 ### 规模指标（经独立审计校准）
 
@@ -414,7 +439,8 @@ CLOSURE_SCRIPT_CHECK (script: 检查 checkbox + evidence)
   ├── pass → BUILD_VERIFY
   └── fail → CLOSURE_AUDIT (独立子代理审查)
                ├── 可修 → 回 EXECUTE
-               └── 不可修 → plan 失败
+               └── 不可修 → 阻塞项移至 Deferred/Follow-up
+                              plan 其余范围继续 → completed
 BUILD_VERIFY (agent: AI 运行 test/build/lint)
   ├── 失败 → AI 自动诊断 → 修复 → 重新运行
   └── 通过 → plan completed ✓
@@ -423,7 +449,7 @@ BUILD_VERIFY (agent: AI 运行 test/build/lint)
 | 检查点 | 检测方式 | 发现问题后 |
 |--------|---------|-----------|
 | CHECK | 确认可编译、测试通过的基线 | AI 自动修复（最多 3 次全新 session） |
-| CLOSURE_SCRIPT_CHECK | script 检查 checkbox + evidence | 进入 CLOSURE_AUDIT → 回 EXECUTE |
+| CLOSURE_SCRIPT_CHECK | script 检查 checkbox + evidence | 进入 CLOSURE_AUDIT → 回 EXECUTE；不可修项移至 Deferred/Follow-up |
 | BUILD_VERIFY | AI 运行 test/build/lint | AI 诊断 → 修复 → 重新运行 |
 | DEEP_AUDIT | 多维度审计 + 对抗审查 | 生成 remediation plan |
 
@@ -431,14 +457,14 @@ BUILD_VERIFY (agent: AI 运行 test/build/lint)
 
 ## 十四、AGE 理论：吸引子与动力系统
 
-Mission Driver 的设计灵感来自 AGE（Attractor-Guided Engineering）理论：
+Mission Driver 是 AGE（Attractor-Guided Engineering）理论在工具层的核心实现：
 
 ```
 状态空间 = 仓库/项目的所有可能状态
 吸引子   = docs 文档体系（design/architecture 等规范化文档）
            定义"系统应长期收敛到什么稳定结构"
 轨迹     = plans + logs + audits 记录的"怎么走到现在的"
-控制     = CHECK + CLOSURE_AUDIT + DEEP_AUDIT 校正偏离
+控制     = 健康检查 + 执行验证 + 独立审计 校正偏离
 ```
 
 关键区分：roadmap 不是吸引子。Roadmap 是人类可控制的宏观规划，是吸引子的任务化投影。真正的吸引子是 docs 中的文档体系，变化速度远慢于 roadmap（季度级 vs 周级）。
@@ -480,7 +506,7 @@ plans 目录是文件系统上的共享队列，多个贡献者可以独立写�
 |------|------------|----------------|
 | 状态持久化 | SQLite + rollout JSONL。但运行时计量状态仅在内存 Mutex，崩溃即丢失；rollout 可能未物化 | checkbox 磁盘持久化 + run-state.json，所有状态在磁盘 |
 | 独立验证 | continuation prompt 要求自审，但 update_goal(complete) 仅写 DB 不检查客观状态 | CLOSURE_AUDIT 强制由独立子代理执行 |
-| 任务粒度 | 每 thread 至多 1 个 goal（单一目标 + token 预算） | 多 plan 并行：plans/ 可有多个 active plan |
+| 任务粒度 | 每 thread 至多 1 个 goal（单一目标 + token 预算） | 多 plan 共存管理：plans/ 可同时有多个 active plan，引擎顺序执行 |
 | 异步交互 | 可 pause/resume 同一线程，但无法异步注入新任务 | 随时往 plans/ 塞 plan，下轮自动拾取 |
 | 失败隔离 | 单 goal 内失败污染 context window | 子流隔离：一个 plan 失败不影响其他 |
 | 终止保障 | token 预算 + blocked 检测（模型自报需 3 轮，或系统强制） | 多层防线（重试预算、死循环检测、看门狗等），全部外部强制 |
@@ -496,7 +522,7 @@ METR 的研究表明，大量通过自动化测试的自主 agent PR 仍需显�
 
 **Harness Engineering**：构建控制 AI 行为的线束——plan 审计、验证命令、质量门控。Mission Driver 的 plan-execution 子流就是一个 harness。
 
-**Loop Engineering**：用循环结构替代线性 pipeline。Mission Driver 的三层 loop 嵌套是 Loop Engineering 的一种实现。
+**Loop Engineering**：用循环结构替代线性 pipeline。Mission Driver 的主循环与内嵌的 Plan Loop / Audit Loop 的多层嵌套是 Loop Engineering 的一种实现。
 
 **SDD（Spec-Driven Development）/ OpenSpec**：先写规格再写代码。Mission Driver 的 plan（Goals / Non-Goals / Exit Criteria / Closure Gates）本质上是一份执行规格。
 
@@ -535,7 +561,7 @@ Mission Driver 的价值在于三个方面：
 
 第一，它用持久化的、可局部重试的 loop 嵌套替代线性 pipeline。AI 步骤是概率性的，需要重试、迭代、局部容错。子流隔离让一个 plan 的失败不影响其他 plan。
 
-第二，它通过配置而非编程实现定制。不同任务类型的区别只在 prompt 和 commands。项目级 prompt 覆盖和 commands 配置已经可用，promptsDir 提供任务类型级的 prompt 自动选择能力。
+第二，它通过配置而非编程实现定制。引擎是通用 FSM DSL 执行器，5 步循环只是内置默认 flow——可以微调步骤、替换子流，也可以设计全新的流程。不同任务类型的区别在 flow + prompt + commands 三层。
 
 第三，它把所有状态放在磁盘上。checkbox 持久化 + 磁盘扫描恢复，进程崩溃后无损恢复。
 

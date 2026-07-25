@@ -1166,28 +1166,28 @@ flowchart TD
 
         <!-- S23: 落地路径——三种项目模式 -->
         <section class="slide">
-          <h2><i class="fa-solid fa-road"></i> 落地路径——三种项目模式</h2>
+          <h2><i class="fa-solid fa-road"></i> 实战方案——三种项目模式</h2>
           <div class="card-grid" style="grid-template-columns:1fr 1fr 1fr;gap:1rem;">
             <div class="card" style="background:#eff6ff;border-color:var(--color-primary);text-align:center;">
               <div style="font-size:2rem;color:var(--color-primary);margin-bottom:0.5rem;"><i class="fa-solid fa-building"></i></div>
-              <h4>模式 A：已有项目</h4>
-              <p class="details" style="text-align:left;">加 Plan Loop：修改 PR 模板，每次变更加 Plan + 独立审计</p>
-              <p class="details" style="text-align:left;">先定义一个 Attractor（核心架构文档），再看是否需要 Mission Driver</p>
-              <div style="margin-top:0.5rem;"><span class="tag tag-warn">最小改动</span></div>
+              <h4>模式 A：手工驱动</h4>
+              <p class="details" style="text-align:left;">Plan 机制：每次变更加 Plan + 独立审计，人驱动路线图</p>
+              <p class="details" style="text-align:left;">手工执行 Plan 生命周期，零工具依赖</p>
+              <div style="margin-top:0.5rem;"><span class="tag tag-warn">人工驱动</span></div>
             </div>
             <div class="card" style="background:#f0fdf4;border-color:var(--color-secondary);text-align:center;">
               <div style="font-size:2rem;color:var(--color-secondary);margin-bottom:0.5rem;"><i class="fa-solid fa-rocket"></i></div>
-              <h4>模式 B：新项目</h4>
-              <p class="details" style="text-align:left;">从 AGE 模板开始（含 Plan Loop + Mission Driver + Attractor 骨架）</p>
-              <p class="details" style="text-align:left;">先花 1-2 天定义 Attractor（不能外包给 AI），然后运行 Mission Driver</p>
-              <div style="margin-top:0.5rem;"><span class="tag tag-success">全自动</span></div>
+              <h4>模式 B：路线图驱动</h4>
+              <p class="details" style="text-align:left;">Roadmap 已就绪（AI 生成或手工调整）</p>
+              <p class="details" style="text-align:left;">Mission Driver 根据 Roadmap 全自主运行</p>
+              <div style="margin-top:0.5rem;"><span class="tag tag-success">自动驱动</span></div>
             </div>
             <div class="card" style="background:#fffbeb;border-color:var(--color-warning);text-align:center;">
               <div style="font-size:2rem;color:var(--color-warning);margin-bottom:0.5rem;"><i class="fa-solid fa-cubes"></i></div>
-              <h4>模式 C：平台/框架</h4>
-              <p class="details" style="text-align:left;">Attractor 定义最重要——平台方向决策权不能交给 AI</p>
-              <p class="details" style="text-align:left;">Plan Loop 用于框架自身开发控制</p>
-              <div style="margin-top:0.5rem;"><span class="tag tag-danger">方向决策</span></div>
+              <h4>模式 C：愿景驱动</h4>
+              <p class="details" style="text-align:left;">用户描述简短目标，Mission Driver 自动运行技能生成 Roadmap</p>
+              <p class="details" style="text-align:left;">然后全自主执行——对用户表现为许愿式开发</p>
+              <div style="margin-top:0.5rem;"><span class="tag tag-danger">许愿式开发</span></div>
             </div>
           </div>
         </section>
