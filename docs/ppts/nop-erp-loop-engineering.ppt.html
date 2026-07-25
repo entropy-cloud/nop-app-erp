@@ -747,19 +747,31 @@ draft → 审查 iter1（"客户维度 Decision 缺失"，needs_revision）
         <!-- S11: MD 5 步闭环 -->
         <section class="slide">
           <h2><i class="fa-solid fa-diagram-project" style="margin-right:10px;"></i>Mission Driver 的 5 步闭环</h2>
+          <div class="highlight-box" style="margin-bottom:0.5rem;">
+            <p><i class="fa-solid fa-arrows-spin"></i> Vibe Coding 是一条<strong>无限长单一 Loop</strong>（没有退出条件，用户喊停才停）。Mission Driver 的核心贡献：将其分解为<strong>三个嵌套的 Loop</strong>，每个有终止条件、有隔离边界。理解了这个结构，就理解了它为什么能长时间稳定运行。</p>
+          </div>
           <div class="mermaid-container" style="overflow:visible;flex-shrink:0;margin:0.3rem 0;padding:0.5rem;">
             <div class="mermaid">
 flowchart TD
-    subgraph L1["主流程：5 步闭环"]
+
+    subgraph L3["审计子流（DEEP_AUDIT 展开）"]
+        A1["多维度审计"] --> A2{"发现问题"}
+        A2 -->|是| A3["生成修正 Plan"]
+        A3 -.-> A1
+        A2 -->|否| A4["审计预算耗尽\n→ 顶层终止"]
+    end
+
+
+    subgraph L2["Plan 子流（EXEC 展开）"]
+        E1["EXECUTE"] --> E2["CLOSURE_CHECK"] --> E3["CLOSURE_AUDIT"] --> E4["BUILD_VERIFY"]
+    end
+
+
+    subgraph L1["顶层 Loop：Mission Driver"]
         C["CHECK"] --> R["REVIEW_PLANS"] --> E["EXEC_PLANS"] --> D["DRAFT_PLANS"] --> A["DEEP_AUDIT"]
-        A -.-> R
+        A -.->|"发现问题 → 生成修正 plan"| R
     end
-    subgraph L2["展开：EXEC_PLANS"]
-        E1["对每个 Plan"] --> E2["执行 Phase"] --> E3["BUILD_VERIFY"] --> E4["CLOSURE_AUDIT"]
-    end
-    subgraph L3["展开：DRAFT_PLANS"]
-        D1["读路线图"] --> D2["选工作项"] --> D3["起草 Plan"] --> D4["自审计"] --> D5["标记 active"]
-    end
+
     style C fill:#dbeafe,stroke:#2563eb
     style R fill:#fef3c7,stroke:#f59e0b
     style E fill:#dcfce7,stroke:#059669
@@ -770,10 +782,7 @@ flowchart TD
     style L3 fill:#eff6ff,stroke:#93c5fd
             </div>
           </div>
-          <div class="highlight-box">
-            <p><strong>关键设计：</strong>REVIEW 在 EXEC 之前 / EXEC 用 forEach / DRAFT 含自审计 / DEEP_AUDIT（全部完成不是停止信号，是升级审计的信号）</p>
-            <p style="margin-top:0.3rem;margin-bottom:0;">——<strong>这就是 Boris Cherny 说的"我的工作是写 Loop"</strong>，但前提是 Loop 在已定义的 attractor 内工作</p>
-          </div>
+          
         </section>
 
         <!-- S12: MD 实现架构 -->
