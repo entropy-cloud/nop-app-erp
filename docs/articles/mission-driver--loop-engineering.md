@@ -40,7 +40,7 @@ Mission Driver 是一个声明式的任务驱动引擎。你给它一个目标�
 
 假设有 3 个 active plan，plan-002 的执行遇到了阻塞：
 
-```
+```text
 EXEC_PLANS:
   ├── plan-001: EXECUTE ✓ → CHECK ✓ → BUILD ✓ → completed ✓
   ├── plan-002: EXECUTE ✗ → 重试 3 次仍失败 → subflow failed
@@ -52,17 +52,16 @@ EXEC_PLANS:
 
 plan-002 的执行阻塞完全没有影响 plan-001 和 plan-003。阻塞被限制在子流内部，不传播到兄弟子流或父循环。这就是 loop 嵌套带来的局部容错。
 
-> Plan执行时，AI 根据实际情况决定：局部阻塞的项移入 `Deferred But Adjudicated` 并记录 successor 触发条件，其余范围正常完成；如果整个 plan 方向被证伪，则标 `superseded` 或 `cancelled`。plan 的 `.md` 文件状态始终由 AI agent 管理。
+> Plan执行时，AI 根据实际情况决定：局部阻塞的项移入 `Deferred But Adjudicated` 并记录 successor 触发条件，其余范围正常完成；如果整个 plan 方向被证伪，则标记为 `superseded` 或 `cancelled`。plan 的 `.md` 文件状态始终由 AI agent 管理。
 
 每一步的执行状态都持久化到磁盘（plan 文件中的 checkbox）。进程崩溃后重启，引擎扫描磁盘上的 checkbox 标记，从断点恢复，不回放历史。
 
----
 
 # 第二部分：起步
 
 ## 四、快速上手
 
-> Mission Driver 的启动脚本路径因项目而异。在 AGE Template 原始项目中位于 tools/mission-driver.sh，在衍生项目中可能位于 ai-dev/tools/mission-driver.sh。使用前确认脚本位置和 MISSION_DRIVER_HOME 环境变量。
+> Mission Driver 的启动脚本路径在 AGE Template 原始项目中位于 tools/mission-driver.sh。使用前确认脚本位置和 MISSION_DRIVER_HOME 环境变量。
 
 **起步流程**：
 
@@ -73,7 +72,7 @@ plan-002 的执行阻塞完全没有影响 plan-001 和 plan-003。阻塞被限�
 
 ```bash
 # 生成 mission 配置 + roadmap
-./tools/mission-driver.sh draft "你的目标描述" --target-file <需求文档>
+./tools/mission-driver.sh draft "你的目标描述" 
 
 # 验证配置
 node $MISSION_DRIVER_HOME/src/mission-check.mjs missions/<name>.json .
@@ -116,13 +115,6 @@ tail -f _tmp/<runDir>/<mission>.log     # 追日志
 
 Postmortem 扫描所有事件和日志，运行复盘 agent，将结构化报告写入 memory 目录。后续同模块的 mission 会自动加载这些经验记忆。
 
-**注意事项**：
-
-- 不要在 mission 执行期间手动编辑正在被执行的 plan 文件（写竞争）
-- 不要在同一个 opencode session 中嵌套启动 mission
-- 启动前先手动运行一次 commands.test 确认基线通过
-- 修改 roadmap 前，先停掉 mission（Ctrl-C），改完再重启
-
 ## 五、四层定义体系
 
 Mission Driver 由四层定义组成，通过配置而非编程使用。
@@ -149,7 +141,7 @@ commands.test 是必需字段，CHECK 和 BUILD_VERIFY 都会运行它。build/l
 
 ### 5.2 Flow 定义
 
-引擎核心是**通用状态机 DSL 执行器**（`FlowEngine` 类，零项目特定逻辑）。Flow 定义声明步骤怎么编排、如何转换、遇到错误怎么办。引擎按 flow 描述推进状态机，不绑定任何固定步骤。
+引擎核心是**通用状态机 DSL 执行器**（`FlowEngine` ，零项目特定逻辑）。Flow 定义声明步骤怎么编排、如何转换、遇到错误怎么办。引擎按 flow 描述推进状态机，不绑定任何固定步骤。
 
 一个简化的 flow 结构：
 
@@ -184,11 +176,11 @@ commands.test 是必需字段，CHECK 和 BUILD_VERIFY 都会运行它。build/l
 
 **随引擎内置的默认 flow**（`flows/mission-driver.json`）就是文章一直在讲的那个循环。它的实际结构是：CHECK **仅入口运行一次**，然后进入 REVIEW_PLANS → EXEC_PLANS → DRAFT_PLANS 的循环体；当 DRAFT_PLANS 无新方案可起草时进入 DEEP_AUDIT，之后回到循环体。它不是硬编码，只是一个**缺省配置**。EXEC_PLANS 和 DEEP_AUDIT 本身也是子流（`plan-execution.json` / `deep-audit-loop.json`），可单独替换。
 
-这意味着**可以设计全新的流程**——例如一个代码审查工作流，不需要 Plan 编排，可以直接写一个四步流：FETCH_PR → RUN_LINT → AI_REVIEW → POST_COMMENT。在 `missions/flows/` 下放自定义 flow.json，同时在 mission.json 中设置 `"flowName": "<custom>"` 即可，引擎不变。审查步骤是 `type: "agent"` 步骤配一个审查 prompt，不是特殊的步骤类型——任何 flow 都可以包含。关键约束：审查 agent 应在全新会话中执行，不与执行步骤共享上下文，以确保独立验证（见 §十三）。
+这意味着**可以设计全新的流程**——例如一个代码审查工作流，不需要 Plan 编排，可以直接写一个四步流程：FETCH_PR → RUN_LINT → AI_REVIEW → POST_COMMENT。在 `missions/flows/` 目录中存放自定义 flow.json，同时在 mission.json 中设置 `"flowName": "<custom>"` 即可，引擎不变。
 
 ### 5.3 Plan 文件
 
-Plan 是关闭契约，不是任务清单。Markdown + checkbox，核心元素：
+Plan 是由AI按照一定的格式要求自动生成的最小工作单元，它的核心不是定义一组待办工作，而是定义如何判断工作完成的关闭契约。它的标准结构如下：
 
 ```markdown
 # 01 采购订单审批流接入
@@ -227,28 +219,46 @@ Exit Criteria:
 
 顶部三行状态标记、Goals + Non-Goals（防止 scope drift）、每个 Phase 有 Status + checkbox + Exit Criteria、Closure Gates 是 plan 级关门检查。Checkbox 是机器可读的持久化状态，引擎通过扫描 checkbox 从断点恢复。标记 completed 前所有 checkbox 必须勾选。
 
+**在AGE实践中，一般情况下人是不阅读Plan的，完全依赖AI自主创建和更新**。
+
 ### 5.4 Roadmap
 
-工作项索引，人类可阅读、可控制的宏观规划：
+roadmap是人类可阅读、可控制的宏观规划。按 `docs/backlog/00-roadmap-authoring-guide.md` 规范，工作项按里程碑分组，只携带 `todo`/`ready`/`done` 三种状态，里程碑本身不带状态：
 
 ```markdown
-| Status | Item | Target | Autonomy |
-|--------|------|--------|----------|
-| done   | ORM 建模 + codegen | 10 域 145 实体 | implement |
-| active | 采购审批 → 库存过账 | 端到端 P2P 打通 | plan-first |
-| todo   | 供应商发票 → 三单匹配 | 三单匹配 + 核销 | plan-first |
-| planned| 多公司多账套 | 多公司行为 | ask-first |
+# Core Business Roadmap
 
-## Milestones
-- [x] M1: 核心域 CRUD 全绿
-- [ ] M2: P2P 端到端
+> 前置条件：CRUD 全部完成
+
+## Work Item Status
+
+### Milestone M1 — 核心业务循环
+
+- 采购申请审批→转订单逻辑：`done`
+- 销售报价单审批→转订单逻辑：`done`
+- Purchase Order BizModel（审批/入库触发/过账）：`done`
+- Sales Order BizModel（审批/出库触发/过账）：`done`
+- 三单匹配逻辑：`done`
+
+### Milestone M2 — 业财一体端到端
+
+- 采购到付款全链路（PO→Receive→Invoice→Pay）：`done`
+- 销售到收款全链路（SO→Delivery→Invoice→Receipt）：`done`
+- 期末结账全流程：`todo`
+- 退货到退款全链路：`todo`
+
+### Milestone M3 — 扩展域业务逻辑
+
+- HR 排班引擎：`todo`
+- 工资核算：`todo`
+- APS 排产：`todo`
 ```
 
-DRAFT_PLANS 启动 AI agent 读取 roadmap，选择工作项起草 plan，起草完成后将 roadmap 项标记为 active（待 plan 执行审计通过后才转为 done）。Autonomy 列控制自主级别。
+DRAFT_PLANS 启动 AI agent：完整读取 roadmap + 历史 plan 中的 deferred 项 → 阅读项目上下文和 planGuide → 选择接下来 1-3 个工作项 → 起草 plan 草案（`Status: draft`）→ 调用独立子 agent 审查通过后标记 `active`。无剩余工作可起草时返回 `nothing`，引擎据此决定是否进入审计轮次。
 
 ## 六、配置与定制
 
-引擎通用，定制通过配置和 prompt 完成，不改代码。
+mission driver引擎是完全通用的，定制可以通过配置和 prompt覆盖来完成，完全不需要修改代码。一般情况下，在自己的项目中只需要增加一个mission-driver.sh，它通过相对路径调用AGE模板项目中的mission driver实现即可。
 
 | 定制层 | 机制 | 示例 |
 |--------|------|------|
@@ -273,49 +283,17 @@ DRAFT_PLANS 启动 AI agent 读取 roadmap，选择工作项起草 plan，起草
 
 内置的 CHECK→REVIEW→EXEC→DRAFT→AUDIT 适用于软件开发类的大部分场景。但对于数据处理、文档分析等任务，完全可以用不同的 flow 来适配——引擎不变，换一个 flow 文件即可。
 
----
+## 七、循环即智能
 
-# 第三部分：实践方法
+Mission Driver 的有效性并不仅仅来自于单次 AI 调用的质量，而更主要的是来自于循环反馈改进。每一轮执行产生的反馈（测试结果、审计发现、人工纠正）应该被记录下来，用于改进下一轮。
 
-## 七、标准工作流
-
-一个完整的任务从问题到交付，经过五步：
-
-```
-1. 分析
-   写分析报告，用独立子 agent 反复审查改进直到达成共识
-
-2. 计划拟制
-   根据分析报告，按照 plan guide 拟制 plan 到 plans 目录
-
-3. 自动审查
-   REVIEW_PLANS 步骤启动独立子 agent 审查
-   通过则提升为 active，未通过则退回修改
-
-4. 执行
-   EXECUTE 执行 plan，之后 CLOSURE_SCRIPT_CHECK 检查完整性
-   BUILD_VERIFY 运行测试，失败时 AI 自动修复
-
-5. 审计关闭
-   独立子 agent 审计关闭（CLOSURE_AUDIT）
-   通过后 plan 标记 completed
-```
-
-这五步不是可选项。跳过分析直接编码，跳过审查直接执行，跳过审计直接关闭，都是最常见的质量事故来源。
-
-## 八、智能就是循环反馈改进
-
-Mission Driver 的有效性不来自单次 AI 调用的质量，而来自循环反馈改进。每一轮执行产生的反馈（测试结果、审计发现、人工纠正）被记录下来，用于改进下一轮。
-
-两条改进轨道并行运行：
+AGE采用两条改进轨道并行运行：
 
 **做事的提示词**（DRAFT/EXECUTE）：当 AI 生成的 plan 或代码被人工纠正时，纠正记录被子 agent 分析，提取通用规则写入 skill。下次 AI 自动加载。
 
 **检查的提示词**（CLOSURE_AUDIT/DEEP_AUDIT）：当审计遗漏问题时，补充检查维度到审计 prompt。
 
-共同原则：AI 生成第一版，人工修改的历史记录下来，修改意见用于完善提示词。
-
-```
+```text
 AI 生成第一版
   → 人工修改（修改过程被 log 记录）
   → 独立子 agent 对比原始和修改后版本
@@ -324,32 +302,20 @@ AI 生成第一版
   → 下次 AI 自动加载
 ```
 
-nop-app-erp 项目积累了 19 个可复用 skill，全部来自这个循环。
+nop-app-erp 项目积累了 19 个可复用 skill，全部来自这种循环改进。
 
-## 九、E2E 测试的 AI 自动生成
+## 八、E2E 测试的 AI 自动生成
 
-E2E 测试手写成本高，可以让 AI 自动生成。关键是降低难度：封装 PageObject 模式，提供 getFieldValue(containerLocator, fieldName) 等简化操作，让 AI 不需要处理复杂 DOM 选择器。
+E2E 测试通过手工编写和维护成本非常高，此前很少有团队能长期大范围的维护。现在则可以让 AI 自动生成。关键是降低难度：封装 PageObject 模式，提供 getFieldValue(containerLocator, fieldName) 等简化操作，让 AI 不需要每个页面都重复处理复杂的DOM 选择器。
 
-然后就是 §八的循环：AI 生成 → 人工纠正 → 提取规则 → 写入 skill → 下次改进。nop-app-erp 从 0 到 260+ spec，初期人工纠正频繁，后期基本自动生成。
-
-## 十、通用应用场景
-
-四个场景共享同一默认 flow，区别在 prompt 集和 commands；flow 引擎、plan 格式、恢复机制全部相同。
-
-| 场景 | DRAFT | EXEC | AUDIT |
-|------|-------|------|-------|
-| 数据处理 | 读 scripts/index 拟制 pipeline | 调预置脚本 | 数据质量断言 |
-| 文档对比分析 | 拟制分析维度 | 读源码生成对比表 | 分析覆盖度检查 |
-| 技术调研 | 拟制调研提纲 | 搜索+阅读+总结 | 结论可靠性检查 |
-| 代码开发 | 读设计文档拟制 plan | 改代码 | 测试+lint+审查 |
-
----
+nop-app-erp 从 0 到 260+ spec，在初期人工纠正频繁，后期则基本自动生成或修改。
 
 # 第四部分：案例研究
 
-## 十一、nop-app-erp：22 天 154 模块
+## 十、nop-app-erp：22 天 154 模块
 
-nop-app-erp 提供了一个可公开审计的案例：多层 Loop 嵌套如何驱动 AI 从空骨架产出产品级 ERP。
+nop-app-erp 提供了一个可公开审计的案例：多层 Loop 嵌套如何驱动 AI 从空骨架产出产品级 ERP。在这个项目中，logs/audits/plans等目录记录了所有关键性决策的执行过程和原因，因此可以完全用AI自主分析并回答一切关于这个项目演化的问题。
+这一点是AGE明确要求项目本身是唯一事实真相源的必然结果：没有任何信息滞留在人脑中、chat窗口中、临时对话中，项目的文档和源码包含了项目最新情况以及它的完整演化轨迹信息。
 
 ### 规模指标（经独立审计校准）
 
@@ -383,29 +349,23 @@ nop-app-erp 提供了一个可公开审计的案例：多层 Loop 嵌套如何�
 
 用户介入分三类：A 类（明确指明平台机制，集中在早期）、B 类（指明工程原则方向）、C 类（只让 AI 自查对比，后期为主）。
 
-```
-06-22  AAAAAAAAAAA  A 类密集
-06-29        CCCCCCCCCC  C 类为主（grill 83 问，仅 4 题需纠正）
-07-04+         CCCCCCCCCCCC  几乎全 C 类
-```
+![knownledge-transfer](images/knowlege-transfer.png)
 
 两条曲线在 06-29 ~ 07-01 交叉，此后 AI 自主成为主要工作模式。
 
-"用户后期介入归零不是因为 AI 学会了写代码，而是因为吸引子已经定义好了（吸引子的形式化定义见 §十四）。方向对了，AI 能自动扩张。"
+"用户后期介入归零不是因为 AI 学会了写代码，而是因为吸引子已经定义好了（吸引子的形式化定义见 §十三）。方向对了，AI就能自动扩张。"
 
 人的注意力应该花在定义吸引子上，而不是监督执行。Mission Driver 做的是后者。整个 22 天只有 28 次人类干预，且集中在项目早期。后期随着吸引子定型，人类介入归零，AI 完全自主推进。
 
----
-
 # 第五部分：深度分析
 
-## 十二、Loop Engineering 原理
+## 十一、Loop Engineering 原理
 
-传统的 pipeline 假设每一步是确定性的。但 AI 步骤是概率性的——同一个 prompt 在不同 session 可能产生不同结果。
+传统的 pipeline 假设每一步都是确定性的，但是AI执行的本质就是概率性的——同一个 prompt 在不同 session 可能产生不同结果。
 
 Loop 嵌套的优势：失败是预期的（loop 天然支持重试和跳过）、质量是迭代的（audit 发现后可以改进）、恢复是自然的（checkpoint 就是磁盘上的 checkbox）、隔离是结构性的（子流边界 = 容错边界）。
 
-三个原则：轨迹可恢复（持久化到磁盘，崩溃后磁盘扫描恢复）、局部容错（子任务失败不传播到父循环）、独立验证（完成与否由独立子代理审计，不由执行者自验）。
+Loop Engineering的三个基本原则是，轨迹可恢复（持久化到磁盘，崩溃后磁盘扫描恢复）、局部容错（子任务失败不传播到父循环）、独立验证（完成与否由独立子代理审计，不由执行者自验）。
 
 ### 稳定保障
 
@@ -422,15 +382,17 @@ Loop 嵌套的优势：失败是预期的（loop 天然支持重试和跳过）�
 
 恢复不是 replay（不重新执行历史步骤），而是 disk scan（扫描磁盘标记）。引擎启动后扫描 plansDir 的 .md 文件，找到 Status: active 的 plan，读 checkbox（[x] 跳过，[ ] 恢复）。run-state.json 的 steps 历史仅用于审计查看，不驱动恢复。
 
-## 十三、Plan Loop 与验证体系
+## 十二、Plan Loop 与验证体系
 
-每次 plan 的执行本身有一个内部控制循环——Plan Loop。生命周期：draft → 独立草案审查（fresh session）→ active → 执行 → 独立结束审计（fresh session）→ completed。
+每次 plan 的执行本身有一个内部控制循环——Plan Loop。
+
+![plan-loop](images/plan-loop.png)
 
 核心原则：生成与验收必须分离。草案审查和结束审计都由独立子代理在全新会话中执行，审计者不继承执行者的上下文，从零开始读仓库。
 
 ### 验证体系：脚本检测 + AI 自动改进
 
-验证不是单纯的机械检查或 AI 审计，而是两者的配对协作。脚本自动检测，发现问题后 AI 自动诊断并修复，然后重新检测。
+对于Plan是否完成的审计验证不是单纯的机械检查或 AI 审计，而是两者的配对协作。脚本自动检测，发现问题后 AI 自动诊断并修复，然后重新检测。
 
 ```
 EXECUTE (agent: AI 执行 plan)
@@ -455,7 +417,7 @@ BUILD_VERIFY (agent: AI 运行 test/build/lint)
 
 机器负责裁判，AI 负责改进。
 
-## 十四、AGE 理论：吸引子与动力系统
+## 十三、AGE 理论：吸引子与动力系统
 
 Mission Driver 是 AGE（Attractor-Guided Engineering）理论在工具层的核心实现：
 
@@ -467,11 +429,11 @@ Mission Driver 是 AGE（Attractor-Guided Engineering）理论在工具层的核
 控制     = 健康检查 + 执行验证 + 独立审计 校正偏离
 ```
 
-关键区分：roadmap 不是吸引子。Roadmap 是人类可控制的宏观规划，是吸引子的任务化投影。真正的吸引子是 docs 中的文档体系，变化速度远慢于 roadmap（季度级 vs 周级）。
+需要注意，roadmap 不是吸引子。Roadmap 是人类可控制的宏观规划，是吸引子的任务化投影，真正的吸引子是 docs 中的文档体系。
 
-### 吸引子的形成生命周期
+### 吸引子的形成
 
-吸引子不是一开始就完整的。它从模糊到精确：
+吸引子不是一开始就明确的。它有一个从模糊到清晰的过程：
 
 ```
 一句话需求 → Grill Me 澄清 → 吸引子雏形（docs 初稿 + roadmap）
@@ -481,7 +443,7 @@ Mission Driver 是 AGE（Attractor-Guided Engineering）理论在工具层的核
   → 收敛完成
 ```
 
-整个 roadmap 全自主执行。人类通过两个通道施加影响：执行前（Grill Me 澄清 + roadmap 设定）和执行中（异步注入 plan 到 plans 目录）。
+整个 roadmap 全自主执行，而人类通过两个通道对它施加影响：执行前（Grill Me 澄清 + roadmap 设定）和执行中（异步注入 plan 到 plans 目录）。
 
 ### 异步人机交互
 
@@ -494,46 +456,30 @@ Mission Driver 执行中不需要人类实时交互。但人类可以随时通�
   → active 状态：直接进入执行队列
 ```
 
-默认不打断原则：即使当前执行可能有误，也优先不立刻打断。打断会丢失上下文；错误会被审计捕获；修正可以排队（插入修正 plan）。例外：破坏性操作、token 预算告警、明显死循环。
+plans 目录可以看作是文件系统上的共享队列，多个贡献者可以独立写入：人类开发者、Code Review agent、DEEP_AUDIT 生成的 remediation plan，都进入同一队列。并不需要强行打断当前正在执行的mission来插入额外的工作。
 
-plans 目录是文件系统上的共享队列，多个贡献者可以独立写入：人类开发者、Code Review agent、DEEP_AUDIT 生成的 remediation plan，都进入同一队列。
+## 十四、与 Codex goal 的对比
 
-## 十五、与 Codex goal 的对比
+这里可以将mission driver与Codex编程工具的goal模式做一个对比。通过对Codex的源码分析，可以发现Codex具有比较完善的机制（SQLite 状态库、goal 6 态状态机、pause/resume、token 预算），但以下维度与Mission Driver相比仍有较大区别
 
-基于 Codex codex-rs/ 源码分析。Codex 有比较完善的机制（SQLite 状态库、goal 6 态状态机、pause/resume、token 预算），但以下维度仍有结构性差距。
-
-| 维度 | Codex goal | Mission Driver |
-|------|------------|----------------|
-| 状态持久化 | SQLite + rollout JSONL。但运行时计量状态仅在内存 Mutex，崩溃即丢失；rollout 可能未物化 | checkbox 磁盘持久化 + run-state.json，所有状态在磁盘 |
-| 独立验证 | continuation prompt 要求自审，但 update_goal(complete) 仅写 DB 不检查客观状态 | CLOSURE_AUDIT 强制由独立子代理执行 |
+| 维度 | Codex goal | Mission Driver                               |
+|------|------------|----------------------------------------------|
+| 状态持久化 | SQLite + rollout JSONL。但运行时计量状态仅在内存 Mutex，崩溃即丢失；rollout 可能未物化 | checkbox 磁盘持久化 + run-state.json，所有状态在磁盘      |
+| 独立验证 | continuation prompt 要求自审，但 update_goal(complete) 仅写 DB 不检查客观状态 | 脚本检查和AI检查结合，CLOSURE_AUDIT 强制由独立子代理执行         |
 | 任务粒度 | 每 thread 至多 1 个 goal（单一目标 + token 预算） | 多 plan 共存管理：plans/ 可同时有多个 active plan，引擎顺序执行 |
-| 异步交互 | 可 pause/resume 同一线程，但无法异步注入新任务 | 随时往 plans/ 塞 plan，下轮自动拾取 |
-| 失败隔离 | 单 goal 内失败污染 context window | 子流隔离：一个 plan 失败不影响其他 |
-| 终止保障 | token 预算 + blocked 检测（模型自报需 3 轮，或系统强制） | 多层防线（重试预算、死循环检测、看门狗等），全部外部强制 |
-| 信息可见性 | SQLite + JSONL 需工具解析；运行时状态内存不可见 | 所有状态是文件，cat 即可读 |
-
-METR 的研究表明，大量通过自动化测试的自主 agent PR 仍需显著人工修正才能合并（来源：METR developer productivity study, Becker et al., arXiv:2507.09089, July 2025）。原因在于缺乏独立审计层——agent 既是执行者又是验证者。
-
----
+| 异步交互 | 可 pause/resume 同一线程，但无法异步注入新任务 | 随时往 plans/ 塞 plan，下轮自动拾取                     |
+| 失败隔离 | 单 goal 内失败污染 context window | 子流隔离：一个 plan 失败不影响其他                         |
+| 终止保障 | token 预算 + blocked 检测（模型自报需 3 轮，或系统强制） | 多层防线（重试预算、死循环检测、看门狗等），全部外部强制                 |
+| 信息可见性 | SQLite + JSONL 需工具解析；运行时状态内存不可见 | 所有状态是文件，人和AI均可读                              |
 
 # 第六部分：愿景
 
-## 十六、相关概念框架
-
-**Harness Engineering**：构建控制 AI 行为的线束——plan 审计、验证命令、质量门控。Mission Driver 的 plan-execution 子流就是一个 harness。
-
-**Loop Engineering**：用循环结构替代线性 pipeline。Mission Driver 的主循环与内嵌的 Plan Loop / Audit Loop 的多层嵌套是 Loop Engineering 的一种实现。
-
-**SDD（Spec-Driven Development）/ OpenSpec**：先写规格再写代码。Mission Driver 的 plan（Goals / Non-Goals / Exit Criteria / Closure Gates）本质上是一份执行规格。
-
-三者的交集正是 Mission Driver 的定位：用 Loop Engineering 的循环结构，在 Harness 的控制下，按照 SDD 的规格驱动 AI 工作。
-
-## 十七、Goal-Driven 愿景与经济范式
+## 十五、Goal-Driven 愿景与经济范式
 
 Mission Driver 的演进方向是 goal-driven 的 AI 系统——用户说目标，系统自动澄清、规划、执行、验证。
 
 ```
-用户: "帮我分析 DataFlow 和 Flink 的区别"
+用户: "帮我分析 nop-stream 和 Flink 的区别，改进nop-stream直到它成为一个成熟的分布式流处理框架"
   → Grill Me（需求澄清）→ clarified spec
   → Auto-Detect（任务类型 → promptsDir）
   → Generate（roadmap + mission.json）
@@ -544,7 +490,7 @@ Mission Driver 的演进方向是 goal-driven 的 AI 系统——用户说目标
 
 ### 经济范式的转变
 
-§一 已经指出人在环中模式的人时天花板。这里展开这个转变在设计上的具体含义。
+§一 已经指出Human In The Loop模式中存在效率天花板，为了实现彻底变革，引入类似Mission Driver的机制是一个必然要求。
 
 Human On The Loop 的核心不是把人完全排除出去，而是改变人在系统中的位置：人从 loop 内部的执行节点变成 loop 外部的控制因子。AI 在 loop 内 7×24 自主推进，人脱离 loop，只在需要时按需介入——介入的频率和时机由吸引子定义的清晰度决定，而不是由 AI 的工作节奏决定。
 
@@ -555,25 +501,21 @@ Human On The Loop 的核心不是把人完全排除出去，而是改变人在�
 
 成本核算因此从"每小时人时产出"变成"每美元智能产出"——前者优化的是单次人机交互的效率，后者优化的是单位算力的累积产出。这两个优化目标导致完全不同的工程选择：前者追求单次对话质量，后者追求循环结构的稳定性和审计严密度。
 
-## 十八、总结
+## 十六、总结
 
 Mission Driver 的价值在于三个方面：
 
 第一，它用持久化的、可局部重试的 loop 嵌套替代线性 pipeline。AI 步骤是概率性的，需要重试、迭代、局部容错。子流隔离让一个 plan 的失败不影响其他 plan。
 
-第二，它通过配置而非编程实现定制。引擎是通用 FSM DSL 执行器，5 步循环只是内置默认 flow——可以微调步骤、替换子流，也可以设计全新的流程。不同任务类型的区别在 flow + prompt + commands 三层。
+第二，它通过配置而非编程实现定制。引擎是通用的Flow DSL 执行器，内置的5 步循环只是默认 flow——可以微调步骤、替换子流，也可以设计全新的流程。不同任务类型的区别在 flow + prompt + commands 三层。
 
 第三，它把所有状态放在磁盘上。checkbox 持久化 + 磁盘扫描恢复，进程崩溃后无损恢复。
 
 它不局限于代码开发。任何需要多步迭代、质量审计、容错恢复的复杂任务，都可以用它驱动。这正是 Loop Engineering 作为一种工程实践的落地实现。
 
----
-
 ## 进一步阅读
 
-- Mission Driver 完整文档：`.opencode/skills/mission-driver/SKILL.md`
-- Mission Config Schema：`.opencode/skills/mission-driver/references/mission-config-schema.md`
-- Plan 编写指南：`ai-dev/plans/00-plan-authoring-and-execution-guide.md`
+- Mission Driver 源码：https://github.com/entropy-cloud/attractor-guided-engineering-template/tools
+- Plan 编写指南：https://github.com/entropy-cloud/attractor-guided-engineering-template/plans/00-plan-authoring-and-execution-guide.md
 - AGE 理论深度分析：`ai-dev/analysis/2026-06-07-trellis-vs-age-comparison.md`
-- nop-app-erp 案例完整材料：`~/app/nop-app-erp/docs/ppts/`
-- DataFlow Harness 完整推演：`ai-dev/analysis/2026-07-25-opendcai-vs-age-vs-mission-driver.md`
+- nop-app-erp 案例完整材料：https://github.com/entropy-cloud/nop-app-erp
