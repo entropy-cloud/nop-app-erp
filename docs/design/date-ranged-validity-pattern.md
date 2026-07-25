@@ -106,6 +106,65 @@
 
 **残留风险**：试点仅 3 个 MUTEX 实体；PRIORITY / STACKABLE 策略的运行时取值 helper（`pickHighestPriority`）属 Deferred successor，触发条件：业务方明确需求 + PRIORITY 实体接入。
 
+### 4.1 PRIORITY 策略运行时取值 helper（plan 2026-07-26-0315-1 落地）
+
+**裁决**：`ErpDateRanges.pickHighestPriority(List<T extends IDateRange> effective, Comparator<T> priorityCmp)` —— 纯函数 + 调用方提供 Comparator，不假定优先级方向。
+
+**选择理由**：
+1. 与 `ErpDateRanges` 既有 4 个无业务语义原语风格一致（纯函数 + Comparator 入参）
+2. 调用方明确传方向（如 sales 约定 priority 数值越小优先级越高，调用方传 `Comparator.comparingInt(ErpSalPriceList::getPriority)`）
+3. 不污染 `IDateRange` 接口（MUTEX 实体无 priority 字段，若在接口加 default getter 违反接口最小化）
+
+**调用范式**：
+
+```java
+// PRIORITY 策略 warn-on-ambiguity（保存校验层）
+List<ErpSalPriceList> effective = ErpDateRanges.effectiveOn(sameDimension, candidate.getValidFrom());
+if (effective.size() >= 2) {
+    effective.sort(Comparator.comparingInt(ErpSalPriceListBizModel::safePriority));
+    int top = safePriority(effective.get(0));
+    int next = safePriority(effective.get(1));
+    if (top == next) {
+        LOG.warn("取价歧义：同维度多份同优先级清单");
+    }
+}
+```
+
+**PRIORITY vs MUTEX 语义对比**：
+
+| 维度 | MUTEX | PRIORITY |
+|------|-------|----------|
+| 同维度重叠 | 拒绝（`enforceMutex` 抛异常） | 允许（不调 `enforceMutex`） |
+| 保存时动作 | 区间重叠阻断保存 | 仅 warn-on-ambiguity（多份同优先级才提示） |
+| 运行时取值 | `effectiveOn` 返回 0/1 条 | `pickHighestPriority(effective, cmp)` 取首 |
+| 典型错误码 | `ERR_*_OVERLAP`（抛异常） | `ERR_*_PRIORITY_AMBIGUOUS`（warn-only，不抛） |
+
+### 4.2 STACKABLE 混合策略校验器（plan 2026-07-26-0315-1 落地）
+
+**裁决 (a)**：`stackable=true` 表达「我可被叠加」语义——可与任何规则重叠；仅当两侧均 `stackable=false` 且区间重叠时互斥。与促销引擎「满减+折扣+赠品」叠加场景一致（满减+折扣两 stackable=false 互斥，但任一可与 stackable=true 的赠品并行）。
+
+**实现**：`ErpDateRangeOverlapValidator.enforceStackableAware(T candidate, List<T> existing, ErrorCode errorCode, Object selfId, Predicate<T> isStackable)` —— 与 `enforceMutex` 同型签名 + 附加 `isStackable` Predicate。调用方提供 Predicate（如 `rule -> Boolean.TRUE.equals(rule.getStackable())`）。
+
+**替代方案（被否决）**：
+- (b) `stackable=false` 与所有规则互斥（包括 stackable=true）—— 拒绝。`stackable=true` 表达「我可被叠加」非「我排斥他人」；若按 (b)，stackable=true 规则一旦遇到 stackable=false 即被拒，与促销叠加场景不符
+- 在 `IDateRange` 加 `isStackable()` default 方法 —— 拒绝。MUTEX/PRIORITY 实体无 stackable 字段，违反接口最小化
+
+**残留风险**：若业务语义实为 (b)，需调整校验器判定逻辑——经 owner doc 显式记录 + sales 域审查缓解。
+
+**调用范式**：
+
+```java
+// STACKABLE 混合策略（ErpSalPricingRuleBizModel）
+ErpDateRangeOverlapValidator.enforceStackableAware(
+        candidateAdapter,                  // IDateRange 适配器（TIMESTAMP 截断到 LocalDate）
+        existingAdapters,                   // 同维度既有规则的适配器 List
+        ErpSalErrors.ERR_SAL_PRICING_RULE_OVERLAP,
+        entity.getId(),
+        PricingRuleDateRange::getStackable);
+```
+
+
+
 ## 5. 查询 helper 契约（Decision D）
 
 ### Decision D — helper 实现位置
@@ -206,6 +265,27 @@ public final class ErpDateRangeOverlapValidator {
 - 试点集成测试：`TestErpMdDateRangePilots`（10 场景，经 GraphQL RPC 触发 `__save` 走完整管道）
 - master-data service 全 108 测试全绿（98 既有 + 10 新增 pilot 集成测试）
 
+### sales 定价 3 实体接入记录（plan 2026-07-26-0315-1，2026-07-26）
+
+C3 helper 扩展 PRIORITY（`pickHighestPriority`）+ STACKABLE（`enforceStackableAware`）后，sales 定价 3 实体接入：
+
+| 实体 | 模块 | 策略 | 维度键 | 接入点 | 错误码 | 测试 |
+|------|------|------|--------|--------|--------|------|
+| `ErpSalPriceList` | `erp-sal-service` | PRIORITY（warn-only） | `customerGroupCode + partnerId` | `ErpSalPriceListBizModel.defaultPrepareSave/Update` | `ERR_SAL_PRICE_LIST_PRIORITY_AMBIGUOUS`（warn-only，不抛异常） | `TestErpSalDateRange.priceList_*`（2 场景） |
+| `ErpSalPriceListLine` | `erp-sal-service` | MUTEX | `priceListId + materialId` | `ErpSalPriceListLineBizModel.defaultPrepareSave/Update` | `ERR_SAL_PRICE_LIST_LINE_OVERLAP` | `TestErpSalDateRange.priceListLine_*`（3 场景） |
+| `ErpSalPricingRule` | `erp-sal-service` | STACKABLE（混合策略） | `ruleType + targetType + materialId + materialCategoryId + customerGroupCode + partnerId` | `ErpSalPricingRuleBizModel.defaultPrepareSave/Update` | `ERR_SAL_PRICING_RULE_OVERLAP` | `TestErpSalDateRange.pricingRule_*`（5 场景） |
+
+### TIMESTAMP 变体适配（ErpSalPricingRule）
+
+`ErpSalPricingRule.validFrom/validTo` 为 `java.sql.Timestamp`（含时间分量），与 `IDateRange.getValidFrom(): LocalDate` 返回类型不兼容；ORM 生成基类的 getter 为 `final`，无法 covariant override。按 §8.1「跨域接入适配器」范式在 BizModel 内构造 `PricingRuleDateRange implements IDateRange`，将 `Timestamp.toLocalDateTime().toLocalDate()` 截断后传入 `enforceStackableAware`。语义与 Decision (a)「TIMESTAMP 调用方先截断到 LocalDate」等价。
+
+### 关键设计决策记录（sales 接入）
+
+- **PRIORITY 不阻断**：`ErpSalPriceListBizModel.warnIfPriorityAmbiguous` 仅在多份同优先级清单时记录 LOG.warn，不抛异常——PRIORITY 策略语义允许重叠，运行时取价由 `ErpSalCustomerPriceResolver` 独立排序逻辑承担；保存校验仅为 warn 层。
+- **STACKABLE 混合判定**：`ErpSalPricingRuleBizModel.enforceStackableAware` 调 helper 时 `isStackable = rule -> Boolean.TRUE.equals(rule.getStackable())`；双非 stackable 重叠抛异常，任一方 stackable=true 允许重叠（§4.2 Decision (a)）。
+- **依赖可达性修正**：sales-service 原仅 test-scope 依赖 `app-erp-master-data-service`（C3 helper 所在模块），plan baseline「传递依赖可达」不准——已提升为 compile-scope（master-data→sales 无依赖，DAG 无环）。
+
+
 ## 8. 反模式自检表
 
 | # | 反模式 | 正确做法 |
@@ -236,9 +316,9 @@ public final class ErpDateRangeOverlapValidator {
 
 | 实体 | 域 | 命名变体 | 策略 | 接入触发条件 |
 |------|-----|---------|------|-------------|
-| `ErpSalPriceList` | sales | validFrom/validTo | PRIORITY | 销售定价引擎细化 + sales service 接入 |
-| `ErpSalPriceListLine` | sales | validFrom/validTo | MUTEX（同 priceListId + materialId 维度） | 同上 |
-| `ErpSalPricingRule` | sales | validFrom/validTo (TIMESTAMP) | STACKABLE | 同上 |
+| `ErpSalPriceList` | sales | validFrom/validTo | PRIORITY | **RELEASED by 2026-07-26-0315-1** |
+| `ErpSalPriceListLine` | sales | validFrom/validTo | MUTEX（同 priceListId + materialId 维度） | **RELEASED by 2026-07-26-0315-1** |
+| `ErpSalPricingRule` | sales | validFrom/validTo (TIMESTAMP) | STACKABLE | **RELEASED by 2026-07-26-0315-1** |
 | `ErpSalQuotation` | sales | validFrom/validTo | PRIORITY | 报价转订单流程细化 |
 | `ErpSalContract` | sales | validFrom/validTo | MUTEX | 合同续签/废止流程 |
 | `ErpPurQuotation` | purchase | validFrom/validTo | PRIORITY | 采购定价引擎 |

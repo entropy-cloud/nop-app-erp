@@ -286,7 +286,7 @@ C3（Date-Ranged Validity Pattern）已落地，状态 `todo → done`：
   - master-data service 全 108 测试全绿（98 既有 + 10 新增 pilot 集成测试）
   - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
   - 下游依赖模块（purchase/sales/finance service）`mvn test` 全绿无回归
-- **Deferred successor**：全量实体应用（17 个 follow-up 实体清单见 owner doc §10）/ PRIORITY 策略运行时取值 helper（`pickHighestPriority`，触发：sales `ErpSalPriceList` 接入）/ STACKABLE 策略叠加计算 helper（触发：sales `ErpSalPricingRule` 接入）/ 物化视图/反向索引按日期查询（触发：单实体有效记录数 > 10K 且 effectiveOn 查询 P95 > 200ms）/ helper 下沉到独立 `erp-common-dao` 模块（触发：跨域接入数 > 3，aps 域当前不依赖 md-service）
+- **Deferred successor**：全量实体应用（17 个 follow-up 实体清单见 owner doc §10，**sales 子集 3 实体 RELEASED by 2026-07-26-0315-1**）/ PRIORITY 策略运行时取值 helper（`pickHighestPriority`，触发：sales `ErpSalPriceList` 接入，**RELEASED by 2026-07-26-0315-1**）/ STACKABLE 策略叠加计算 helper（触发：sales `ErpSalPricingRule` 接入，**RELEASED by 2026-07-26-0315-1**）/ 物化视图/反向索引按日期查询（触发：单实体有效记录数 > 10K 且 effectiveOn 查询 P95 > 200ms）/ helper 下沉到独立 `erp-common-dao` 模块（触发：跨域接入数 > 3，aps 域当前不依赖 md-service；当前跨域接入数 = 1：sales）
 
 ## 8.7 D3 落地证据（2026-07-21）
 

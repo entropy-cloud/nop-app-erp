@@ -123,6 +123,18 @@
 - 销售域支持**赠品与折扣**行，采购域通常无赠品（但可有采购折扣）。
 - 销售域涉及**收入确认**（开票即确认收入），采购域涉及**费用确认**。
 
+## 日期范围有效性校验（C3 交叉引用）
+
+sales 定价 3 实体（`ErpSalPriceList` / `ErpSalPriceListLine` / `ErpSalPricingRule`）已接入 C3 日期范围有效性模式（plan `2026-07-26-0315-1`，详见 `../date-ranged-validity-pattern.md` §7 sales 接入记录 + §10 follow-up 清单）。**重要声明：本接入仅增加保存时日期范围校验（防歧义），不改变定价引擎运行时取价逻辑——`ErpSalCustomerPriceResolver` 取价链不变。**
+
+| 实体 | 策略 | 维度键 | 校验时机 | 行为 |
+|------|------|--------|----------|------|
+| `ErpSalPriceList` | PRIORITY | `customerGroupCode + partnerId` | `defaultPrepareSave/Update` | 不拒绝重叠（PRIORITY 允许重叠）；多份同优先级清单时 LOG.warn 提示取价歧义（不阻断） |
+| `ErpSalPriceListLine` | MUTEX | `priceListId + materialId` | 同上 | 同维度区间重叠抛 `ERR_SAL_PRICE_LIST_LINE_OVERLAP` 拒绝保存 |
+| `ErpSalPricingRule` | STACKABLE（混合） | `ruleType + targetType + materialId + materialCategoryId + customerGroupCode + partnerId` | 同上 | 双非 stackable 重叠抛 `ERR_SAL_PRICING_RULE_OVERLAP` 拒绝；任一方 `stackable=true` 允许重叠 |
+
+**TIMESTAMP 变体**：`ErpSalPricingRule.validFrom/validTo` 为 `java.sql.Timestamp`，BizModel 内构造 `PricingRuleDateRange implements IDateRange` 适配器（截断到 `LocalDate`）后调 `enforceStackableAware`，详见 `../date-ranged-validity-pattern.md` §7 「TIMESTAMP 变体适配」段。
+
 ## 本域文档
 
 | 文档 | 职责 |
