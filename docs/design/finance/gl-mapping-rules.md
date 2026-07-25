@@ -487,7 +487,61 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 
 
 
-- Plan：`docs/plans/2026-07-21-0827-1-finance-gl-mapping-rule-tables.md`
+## §9 浏览器层路由验证（plan 2026-07-26-0410-1）
+
+> GL Mapping 路由（规则命中 → 科目覆盖）经 JUnit 单层验证（`TestErpFinGlMappingResolver` 8 场景 +
+> `TestErpPurInvoicePosting` 3 场景）已充分覆盖解析算法；本节记录补充的**浏览器层全栈路径**验证范式
+> （规则经 GraphQL `__save` 创建 → 链路审核触发过账 → `resolveSubjects` 调 resolver → 凭证行 subjectCode
+> 覆盖可观测），解除「零浏览器层 E2E」缺口。
+
+### 9.1 全栈验证路径
+
+`tests/e2e/business-actions/fin-gl-mapping-routing.action.spec.ts` 经 GraphQL `/graphql` 驱动完整路径：
+
+1. **规则创建**：`ErpFinGlMappingRule__save`（`isActive=true` + 测试专用 `targetSubjectCode`，区别种子默认
+   科目）→ `defaultPrepareSave` 注册 post-commit `invalidateCache`（§4.2），spec **无需手动刷缓存**。
+2. **链路审核过账**：复用 `runP2pChain`（AP_INVOICE 三 accountKey 覆盖面充分；AR_INVOICE 同机制不重复）
+   → Invoice approve → `ErpFinPostingProcessor.resolveSubjects:562` 无条件调 resolver。
+3. **凭证行覆盖观测**：`assertVoucherLines`（`tests/e2e/orchestration/_helper.ts`）按 voucherId 查
+   `ErpFinVoucherLine`，逐行匹配 subjectCode + dcDirection + 借贷金额 → 命中键被覆盖、未命中键保留默认。
+
+### 9.2 三组断言
+
+| 断言组 | 规则配置 | 期望凭证行（AP_INVOICE） |
+|--------|----------|-------------------------|
+| **命中覆盖** | orgId=2 + AP_INVOICE+PURCHASE → 1401 | Dr **1401**=50（覆盖）/ Dr 2221=6.5（不变）/ Cr 2202=56.5（不变） |
+| **控制对照** | 无规则（同一 runP2pChain 先于建规则运行） | Dr 1403=50 / Dr 2221=6.5 / Cr 2202=56.5（默认） |
+| **orgId 维度** | orgId=1（非匹配链路 org=2）+ AP_INVOICE+PURCHASE → 1401 | Dr 1403=50（默认保留，org 不匹配 → cache 按 orgId 分桶空 → null） |
+
+「命中覆盖」+「控制对照」同 spec 内连续运行同一 `runP2pChain`（先后两次，中间 `cleanupP2p`），证明覆盖非
+偶然；「orgId 维度」用规则 orgId 差异化（org=1 vs 链路 org=2）证明 `erp-fin.gl-mapping.org-dimension-enabled`
+开启态的 cache 分桶 + exact 匹配行为（§3 orgId 维度激活注记）。
+
+### 9.3 fresh-DB 缓存行为
+
+`@PostConstruct init()`（`ErpFinGlMappingResolver:68-78`）启动期 eager load 全表。fresh-DB 无
+`erp_fin_gl_mapping_rule.csv` 种子，启动期 cache 为空（0 规则）→ 首次 resolve 返回 null → 保留 Provider
+默认科目。**全局启用 `org-dimension-enabled=true` 对既有 spec 零回归**：空 cache 下 org-dimension 仅影响
+cache key 分桶，空集仍空集（`playwright.config.ts` webServer JVM arg 已追加，经 orchestration 20 + 
+business-actions 273 spec 回归 0 新增失败证实）。
+
+### 9.4 orgId 维度断言范式
+
+`runP2pChain`（`orchestration/_helper.ts:262`）固定 `orgId=SEED.ORG=2`，**不可 per-call 参数化**。orgId 维度
+断言无需参数化链路 orgId——通过**规则 orgId 差异化**即可：org-dimension-enabled=true 全局下，建 orgId=2
+规则（匹配 → 覆盖）vs orgId=1 规则（非匹配 → 保留默认），同一链路（org=2）双路径观测差异化。org 1
+（GROUP-HQ）+ org 2（ERP-CO）均存于种子 `erp_md_organization.csv`，规则 orgId FK 校验通过。
+
+### 9.5 覆盖目标科目选择
+
+spec 选用种子已有科目 `1401`（原材料，ASSET/DEBIT，`erp_md_subject.csv` id=9）作为 PURCHASE 覆盖目标
+（区别默认 `1403` 在途物资）。两者同向（DEBIT asset），覆盖后 `resolveSubjects` 的 `code → ErpMdSubject.findByCode`
+查找可达，方向语义一致；避免 spec 自行种子新科目（共享 DB 不可幂等）。
+
+---
+
+
+
 - Posting 设计：`docs/design/finance/posting.md` §科目映射 / §凭证模板机制 / §过账引擎 / §失败处理策略
 - 多账套：`docs/design/finance/multiple-accounting-schemas.md` §科目映射规则
 - Processor 范式：`docs/architecture/processor-extension-pattern.md`
