@@ -362,9 +362,9 @@ Exit Criteria:
 
 ### Phase 5 gen-control 批量替换（224 处）
 
-- Classification: `deferred optimization`
+- Classification: `deferred optimization` → **successor completed 2026-07-26** (`docs/plans/2026-07-25-1430-1-gen-control-domain-mapping-convergence.md` Plan Status: completed)
 - Why Not Blocking Closure: ORM domain 定义已完备（amount/quantity/unitPrice/taxAmount 均 ≥19 处）；项目级 `control.xlib` 已创建。gen-control 为 domain 映射的冗余覆盖，不影响功能。可在后续迭代逐步清理。
-- Successor Required: `no`（control.xlib 已就绪，gen-control 清理可增量进行）
+- Successor Required: `no`（control.xlib 已就绪，gen-control 清理可增量进行）→ **successor 已完成**：629 块冗余 gen-control 移除（R 4 + D 625，含 D 类 col `domain` 补齐 + control.xlib 扩展 view-quantity/view-unitPrice/view-date/view-timestamp + edit-quantity precision 3→4 修正）+ 337 块 C 类自定义渲染保留。Playwright 视觉回归（field-format/status-tag/sensitive-masking 20 passed）+ CRUD 写路径/业务动作 E2E 抽样 3 域 10 passed + 154 模块 BUILD SUCCESS。详见 plan 1430-1 Closure。
 
 ## Closure
 

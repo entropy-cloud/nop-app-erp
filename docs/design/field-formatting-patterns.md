@@ -86,6 +86,18 @@
 - **Phase 4**：13 扩展域剩余金额/数量/日期字段
 - **长尾字段**（低频、非业务核心）显式 defer 到 successor，记录于 plan
 
+### Decision (e): control.xlib 自动映射优先于 gen-control（plan 2026-07-25-1430-1 收敛）
+
+> 上方 Decision (a) 方案 C（codegen `domain → format` 全局映射）原标 `✗（successor）`，现经项目级 `control.xlib`（`app-erp-all/src/main/resources/_vfs/erp/xlib/control.xlib`，`x:extends` 平台基线）**已落地为首选机制**。方案 D（inline gen-control）降级为「仅在 control.xlib 无法覆盖时使用」。
+
+**约定**：标准金额/数量/单价/日期/日期时间格式化**必须**经 ORM `domain`（amount/quantity/unitPrice）或 `stdSqlType`（DATE/TIMESTAMP）→ 项目级 `control.xlib` 控件匹配链（`XuiHelper.getControlTag`：`{mode}-{domain}` / `{mode}-{stdDataType}`）自动选择控件，**不得**新写 `<gen-control>` 内联脚本。仅以下场景保留 gen-control：
+
+- 自定义渲染（tpl 状态标签 / 敏感字段脱敏 / 链接单元格 / switch）
+- 非标准 precision（<3 域共享，如 exchangeRate precision=8）
+- edit-mode display-number（避免 list-edit 回退链选择可编辑控件改变行为）
+
+控件匹配链与 control.xlib 标签清单见 `../nop-entropy/docs-for-ai/02-core-guides/frontend-rendering-pipeline.md` 与 `docs/analysis/gen-control-classification-audit.md`。629 块冗余 gen-control 已移除（R 4 + D 625），337 块 C 类自定义渲染保留。
+
 ## 3. view.xml inline 引用范式
 
 ### 3.1 金额列（amount）
