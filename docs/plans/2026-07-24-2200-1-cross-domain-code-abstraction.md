@@ -355,10 +355,10 @@ Exit Criteria:
 
 ### Phase 2 per-mutation Processor 文件拆分（42 → ~250 文件）
 
-- Classification: `deferred architecture improvement`
+- Classification: `deferred architecture improvement` → **successor completed 2026-07-25** (`docs/plans/2026-07-25-1057-2-per-mutation-processor-file-split.md` Plan Status: completed)
 - Why Not Blocking Closure: 行为已由 Phase 1 桥接保证（xbir 内联 `<source>` 复制 `approval-support.xbiz` 行为）。per-mutation 文件拆分为纯架构重构，不影响功能、测试或行为。
-- Successor Required: `yes`（`docs/analysis/per-mutation-processor-split-plan.md` 已记录拆分清单）
-- 已完成项：Phase 1 创建了全部抽象基类（`AbstractApproveProcessor<T>` 等 7 个）；`docs/analysis/per-mutation-processor-split-plan.md` 记录了完整拆分计划。
+- Successor Required: `yes`（`docs/analysis/per-mutation-processor-split-plan.md` 已记录拆分清单）→ **successor 已完成**：149 per-mutation 文件落地（27 拆分候选 Processor，15 无 S-mutation Processor 不拆分）+ 7 抽象基类全部激活 + BizModel `@BizMutation` 接管 + xbiz `<source>` 清理 + R8 二次校准 + R2c 上调裁决（1079→1228）。详见 plan 1057-2 Closure。
+- 已完成项：Phase 1 创建了全部抽象基类（`AbstractApproveProcessor<T>` 等 7 个）；`docs/analysis/per-mutation-processor-split-plan.md` 记录了完整拆分计划；successor plan 1057-2 执行了完整拆分。
 
 ### Phase 5 gen-control 批量替换（224 处）
 

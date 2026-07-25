@@ -46,6 +46,7 @@
 | `cross-module-dependency-audit-prompt.md` | 多模块跨工程数据依赖合理性、DAG 合规性、外部实体引用一致性审计 | 单模块审计、需求综合 | `module-boundaries.md`、`data-dependency-matrix.md`、`cross-module-entity-reference.md`、所有 orm.xml | DAG 验证结果 + 外部实体声明完整性矩阵 + 裁决 |
 | `nop-platform-conformance-audit-prompt.md` | 项目设计与实现对 Nop Platform 最佳实践的遵循度审计 | 业务设计审计（用 design-doc-audit）、ORM 字段审计（用 orm-model-audit） | `../nop-entropy/docs-for-ai/` 全部、项目 architecture 文档 | 12 维度合规率 + 反模式清单 + 裁决 |
 | `development-wisdom-gate-prompt.md` | AI 开发过程中自检：假设面出、深度充电、跨层一致性、意图忠实度、生态约束、第一性原理验证，使用通用开发通识在声称完成前系统性挑战产出 | 审计特定对象需要针对性工具（plan-audit、multi-dimensional-audit 等） | 当前产出（设计/计划/代码）、项目 owner docs | 6 维度裁决 + 综合通过/不通过 |
+| `remove-ai-flavor-prompt.md` | 技术文章/文档有 AI 生成痕迹——读起来太整洁、像教科书定义、流程太完美 | 只需要事实校对或格式修正 | 目标文档 | 逐段的去 AI 味修改 + 自检确认 |
 
 ## 入门技能
 

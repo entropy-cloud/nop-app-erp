@@ -255,6 +255,18 @@ echo "$R7_N" > "$TMPDIR/r7"
 # R3 交叉引用 orm.xml 先例的「排除集」思路，最小侵入）。
 # 残留风险：若未来在 module-common-service/ 新增具体（非 abstract）领域 Processor，
 # 本排除会静默豁免——届时升级为动态 `abstract class` 提取（开独立 successor）。
+#
+# 二次校准（plan 2026-07-25-1057-2 Phase 4 R8 Decision）：
+# per-mutation Processor 文件（如 `ErpPurOrderApproveProcessor`）继承
+# `AbstractApproveProcessor<T>` 等 7 个抽象基类，经 BizModel @BizMutation →
+# @Inject 路由消费（非 Processor xbiz 接线）。R8 原始语义「领域 Processor 缺少
+# xbiz 接线」不覆盖 per-mutation Processor（其路由面是 BizModel @BizMutation，
+# 而 BizModel 已有自身的方法声明经反射自动生成 GraphQL schema）。校准=循环内
+# 跳过类体含 `extends Abstract*Processor` 的文件。全域 149 per-mutation 文件
+# 全部继承 7 抽象基类，本次校准排除后 R8 回落至原 42 monolithic 基线。
+# 残留风险：若未来 per-mutation Processor 不继承抽象基类（如手写 per-mutation
+# 类未 extends Abstract*），本 grep 会漏排除——届时升级为 per-mutation 文件
+# 命名规则动态匹配（开独立 successor）。
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "[R8] 🔴 高 — Processor 缺少 xbiz 接线"
@@ -262,6 +274,10 @@ echo "规则: service-layer-orchestration.md — Processor 需 xbiz 绑定"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 R8_N=0
 while IFS= read -r proc; do
+  # 跳过 per-mutation Processor（继承 Abstract*Processor，经 BizModel 路由非 xbiz）
+  if grep -qE 'extends Abstract[A-Z][a-zA-Z]*Processor' "$proc" 2>/dev/null; then
+    continue
+  fi
   base=$(basename "$proc" Processor.java)
   module_dir=$(echo "$proc" | sed -E 's|/src/main/java.*||')
   if ! find "$module_dir" -name "${base}.xbiz.xml" 2>/dev/null | grep -q .; then
@@ -269,7 +285,7 @@ while IFS= read -r proc; do
     R8_N=$((R8_N + 1))
   fi
 done < <(eval "find '$REPO_ROOT' $PRUNE_DIRS -o -type d -name test -prune -o -type d -name module-common-service -prune -o -name '*Processor.java' -type f -print" 2>/dev/null || true)
-echo "  → 命中: $R8_N 个 Processor 缺少 xbiz（已排除 module-common-service 抽象基类）"
+echo "  → 命中: $R8_N 个 Processor 缺少 xbiz（已排除 module-common-service 抽象基类 + per-mutation 子类）"
 echo "$R8_N" > "$TMPDIR/r8"
 
 # ============================================================
