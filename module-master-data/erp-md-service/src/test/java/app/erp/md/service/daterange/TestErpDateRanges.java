@@ -9,10 +9,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -63,9 +66,67 @@ public class TestErpDateRanges {
         }
     }
 
+    /**
+     * 带 priority + stackable 字段的测试 IDateRange 实现（PRIORITY / STACKABLE 策略场景）。
+     */
+    private static final class PriorityRange implements IDateRange {
+        final Long id;
+        final LocalDate from;
+        final LocalDate to;
+        final int priority;
+        final boolean stackable;
+
+        PriorityRange(Long id, LocalDate from, LocalDate to, int priority) {
+            this(id, from, to, priority, false);
+        }
+
+        PriorityRange(Long id, LocalDate from, LocalDate to, int priority, boolean stackable) {
+            this.id = id;
+            this.from = from;
+            this.to = to;
+            this.priority = priority;
+            this.stackable = stackable;
+        }
+
+        @Override
+        public LocalDate getValidFrom() {
+            return from;
+        }
+
+        @Override
+        public LocalDate getValidTo() {
+            return to;
+        }
+
+        public Long getId() {
+            return id;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
+
+        public boolean getStackable() {
+            return stackable;
+        }
+
+        @Override
+        public String toString() {
+            return "PriorityRange[" + id + ": " + from + ".." + to + " prio=" + priority + " stack=" + stackable + "]";
+        }
+    }
+
+    private static final Predicate<PriorityRange> STACKABLE_GETTER = pr -> Boolean.TRUE.equals(pr.getStackable());
+
     private static final ErrorCode ERR_TEST_OVERLAP = ErrorCode.define(
             "erp.err.test.date-range.overlap",
             "测试错误码：{entityName} 区间冲突 id={conflictId}",
+            ErpDateRangeOverlapValidator.ARG_ENTITY_NAME,
+            ErpDateRangeOverlapValidator.ARG_CONFLICT_ID);
+
+    private static final ErrorCode ERR_TEST_STACKABLE_CONFLICT = ErrorCode.define(
+            "erp.err.test.date-range.stackable-conflict",
+            "测试错误码：{entityName} 不可叠加冲突 id={conflictId}",
             ErpDateRangeOverlapValidator.ARG_ENTITY_NAME,
             ErpDateRangeOverlapValidator.ARG_CONFLICT_ID);
 
@@ -348,6 +409,157 @@ public class TestErpDateRanges {
                 new Range(1L, ld("2026-01-01"), ld("2026-12-31")));
         assertThrows(NopException.class,
                 () -> ErpDateRangeOverlapValidator.enforceMutex(candidate, existing, ERR_TEST_OVERLAP, null));
+    }
+
+    // ---------- ErpDateRanges.pickHighestPriority (PRIORITY 策略) ----------
+
+    @Test
+    public void pickHighestPriorityEmptyListReturnsNull() {
+        assertNull(ErpDateRanges.pickHighestPriority(null, Comparator.comparingInt(PriorityRange::getPriority)));
+        assertNull(ErpDateRanges.pickHighestPriority(
+                Collections.emptyList(), Comparator.comparingInt(PriorityRange::getPriority)));
+    }
+
+    @Test
+    public void pickHighestPrioritySingleElementReturnsIt() {
+        PriorityRange only = new PriorityRange(1L, ld("2026-01-01"), ld("2026-12-31"), 100);
+        PriorityRange result = ErpDateRanges.pickHighestPriority(
+                Collections.singletonList(only), Comparator.comparingInt(PriorityRange::getPriority));
+        assertEquals(only, result);
+    }
+
+    @Test
+    public void pickHighestPriorityMultipleReturnsFirstByComparator() {
+        // 3 条同日生效，priority 数值越小优先级越高（sales 约定）
+        PriorityRange r1 = new PriorityRange(1L, ld("2026-01-01"), ld("2026-12-31"), 100);  // 标准价
+        PriorityRange r2 = new PriorityRange(2L, ld("2026-01-01"), ld("2026-12-31"), 50);   // 客户组价
+        PriorityRange r3 = new PriorityRange(3L, ld("2026-01-01"), ld("2026-12-31"), 10);   // VIP 价
+        List<PriorityRange> effective = Arrays.asList(r1, r2, r3);
+        PriorityRange top = ErpDateRanges.pickHighestPriority(
+                effective, Comparator.comparingInt(PriorityRange::getPriority));
+        assertEquals(3L, top.getId(), "priority ASC 取首 → r3（VIP 价）");
+    }
+
+    @Test
+    public void pickHighestPrioritySamePriorityStableByStreamOrder() {
+        // 相同优先级时 stream().min 稳定取第一个最小元素（按入参顺序）
+        PriorityRange r1 = new PriorityRange(1L, ld("2026-01-01"), ld("2026-12-31"), 100);
+        PriorityRange r2 = new PriorityRange(2L, ld("2026-01-01"), ld("2026-12-31"), 100);
+        PriorityRange top = ErpDateRanges.pickHighestPriority(
+                Arrays.asList(r1, r2), Comparator.comparingInt(PriorityRange::getPriority));
+        assertEquals(1L, top.getId(), "相同优先级稳定性：取 stream 第一个");
+    }
+
+    @Test
+    public void pickHighestPriorityWorksWithEffectiveOnPipeline() {
+        // PRIORITY 策略典型用法：effectiveOn 结果接 pickHighestPriority
+        List<PriorityRange> ranges = Arrays.asList(
+                new PriorityRange(1L, ld("2026-01-01"), ld("2026-06-30"), 100),
+                new PriorityRange(2L, ld("2026-04-01"), ld("2026-12-31"), 50),
+                new PriorityRange(3L, ld("2026-07-01"), ld("2026-12-31"), 10));
+        List<PriorityRange> effective = ErpDateRanges.effectiveOn(ranges, ld("2026-05-15"));
+        assertEquals(2, effective.size(), "5 月 15 日命中 r1 + r2");
+        PriorityRange top = ErpDateRanges.pickHighestPriority(
+                effective, Comparator.comparingInt(PriorityRange::getPriority));
+        assertEquals(2L, top.getId(), "r2 priority=50 < r1 priority=100 → 取 r2");
+    }
+
+    // ---------- ErpDateRangeOverlapValidator.enforceStackableAware (STACKABLE 策略) ----------
+
+    @Test
+    public void enforceStackableAwareBothNonStackableOverlapRejects() {
+        // 双方 stackable=false 且区间重叠 → 抛异常（MUTEX 语义）
+        PriorityRange candidate = new PriorityRange(10L, ld("2026-03-01"), ld("2026-09-30"), 100, false);
+        List<PriorityRange> existing = new ArrayList<>();
+        existing.add(new PriorityRange(1L, ld("2026-01-01"), ld("2026-06-30"), 100, false));  // 重叠
+        NopException ex = assertThrows(NopException.class,
+                () -> ErpDateRangeOverlapValidator.enforceStackableAware(
+                        candidate, existing, ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER));
+        assertEquals(ERR_TEST_STACKABLE_CONFLICT.getErrorCode(), ex.getErrorCode());
+        assertEquals(1L, ex.getParam(ErpDateRangeOverlapValidator.ARG_CONFLICT_ID));
+    }
+
+    @Test
+    public void enforceStackableAwareCandidateStackableAllowsOverlap() {
+        // candidate stackable=true 与非 stackable 既有重叠 → 允许（可叠加）
+        PriorityRange candidate = new PriorityRange(10L, ld("2026-03-01"), ld("2026-09-30"), 100, true);
+        List<PriorityRange> existing = Collections.singletonList(
+                new PriorityRange(1L, ld("2026-01-01"), ld("2026-06-30"), 100, false));
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                candidate, existing, ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER);
+        // 无异常即允许
+    }
+
+    @Test
+    public void enforceStackableAwareOtherStackableAllowsOverlap() {
+        // candidate 非 stackable 与 stackable 既有重叠 → 允许（可被叠加）
+        PriorityRange candidate = new PriorityRange(10L, ld("2026-03-01"), ld("2026-09-30"), 100, false);
+        List<PriorityRange> existing = Collections.singletonList(
+                new PriorityRange(1L, ld("2026-01-01"), ld("2026-06-30"), 100, true));
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                candidate, existing, ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER);
+        // 无异常即允许
+    }
+
+    @Test
+    public void enforceStackableAwareBothStackableAllowsOverlap() {
+        // 双方 stackable=true 且重叠 → 允许（并行叠加）
+        PriorityRange candidate = new PriorityRange(10L, ld("2026-03-01"), ld("2026-09-30"), 100, true);
+        List<PriorityRange> existing = Collections.singletonList(
+                new PriorityRange(1L, ld("2026-01-01"), ld("2026-06-30"), 100, true));
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                candidate, existing, ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER);
+        // 无异常即允许
+    }
+
+    @Test
+    public void enforceStackableAwareExcludesSelfId() {
+        // 更新场景：候选 id 与既有 id 相同 → 排除自身
+        PriorityRange candidate = new PriorityRange(5L, ld("2026-01-01"), ld("2026-12-31"), 100, false);
+        List<PriorityRange> existing = new ArrayList<>();
+        existing.add(new PriorityRange(5L, ld("2026-01-01"), ld("2026-12-31"), 100, false));
+        existing.add(new PriorityRange(6L, ld("2027-01-01"), ld("2027-12-31"), 100, false));
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                candidate, existing, ERR_TEST_STACKABLE_CONFLICT, 5L, STACKABLE_GETTER);
+        // 无异常即通过
+    }
+
+    @Test
+    public void enforceStackableAwareSkipPermanentRange() {
+        // 候选永久无区间（from=to=null）→ 跳过
+        PriorityRange candidate = new PriorityRange(10L, null, null, 100, false);
+        List<PriorityRange> existing = Collections.singletonList(
+                new PriorityRange(1L, ld("2026-01-01"), ld("2026-12-31"), 100, false));
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                candidate, existing, ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER);
+
+        // 反向：既有永久无区间也跳过
+        PriorityRange candidate2 = new PriorityRange(11L, ld("2026-01-01"), ld("2026-12-31"), 100, false);
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                candidate2, Collections.singletonList(new PriorityRange(1L, null, null, 100, false)),
+                ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER);
+    }
+
+    @Test
+    public void enforceStackableAwareEmptyAndNullExistingPasses() {
+        PriorityRange candidate = new PriorityRange(10L, ld("2026-01-01"), ld("2026-12-31"), 100, false);
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                candidate, Collections.emptyList(), ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER);
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                candidate, null, ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER);
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                null, Collections.singletonList(new PriorityRange(1L, null, null, 100, false)),
+                ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER);
+    }
+
+    @Test
+    public void enforceStackableAwareAdjacentNoOverlapPasses() {
+        // 双方 stackable=false 但相邻日不重叠 → 通过
+        PriorityRange candidate = new PriorityRange(10L, ld("2026-07-01"), ld("2026-12-31"), 100, false);
+        List<PriorityRange> existing = Collections.singletonList(
+                new PriorityRange(1L, ld("2026-01-01"), ld("2026-06-30"), 100, false));
+        ErpDateRangeOverlapValidator.enforceStackableAware(
+                candidate, existing, ERR_TEST_STACKABLE_CONFLICT, null, STACKABLE_GETTER);
     }
 
     // ---------- helpers ----------

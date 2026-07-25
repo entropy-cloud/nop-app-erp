@@ -3,6 +3,7 @@ package app.erp.md.service.daterange;
 import app.erp.md.dao.daterange.IDateRange;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -149,5 +150,33 @@ public final class ErpDateRanges {
             return ((java.sql.Date) date).toLocalDate();
         }
         return date.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+    }
+
+    /**
+     * 从 {@code effectiveOn} 结果中按调用方提供的优先级 {@link Comparator} 取首条记录。
+     *
+     * <p>PRIORITY 策略（owner doc §4 Decision C）的运行时取值 helper：
+     * 允许同维度多条记录同时生效（重叠），但业务上仅取优先级最高的一条作为「有效值」。
+     * 本方法为纯函数，不假定优先级方向（升序/降序）—— 调用方经 {@code priorityCmp} 明确方向
+     * （如 sales 约定 {@code priority} 数值越小优先级越高，调用方传
+     * {@code Comparator.comparingInt(ErpSalPriceList::getPriority)}）。
+     *
+     * <p>典型用法（PRIORITY 策略保存校验层 warn-on-ambiguity）：
+     * <pre>{@code
+     * List<ErpSalPriceList> effective = ErpDateRanges.effectiveOn(existing, targetDate);
+     * ErpSalPriceList top = ErpDateRanges.pickHighestPriority(
+     *         effective, Comparator.comparingInt(ErpSalPriceList::getPriority));
+     * }</pre>
+     *
+     * @param effective    {@link #effectiveOn} 返回的同日生效记录集合（{@code null} 或空返回 {@code null}）
+     * @param priorityCmp  调用方提供的优先级比较器（决定「优先级最高」的方向）
+     * @param <T>          实体类型（必须实现 {@link IDateRange}）
+     * @return 优先级最高的记录；空集合返回 {@code null}；相同优先级时取 stream 最小元素（稳定）
+     */
+    public static <T extends IDateRange> T pickHighestPriority(List<T> effective, Comparator<T> priorityCmp) {
+        if (effective == null || effective.isEmpty()) {
+            return null;
+        }
+        return effective.stream().min(priorityCmp).orElse(null);
     }
 }
