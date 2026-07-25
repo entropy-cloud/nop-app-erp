@@ -1,5 +1,6 @@
 package app.erp.sal.service;
 
+import app.erp.md.service.daterange.ErpDateRangeOverlapValidator;
 import io.nop.api.core.exceptions.ErrorCode;
 
 /**
@@ -228,4 +229,40 @@ public interface ErpSalErrors {
     ErrorCode ERR_PRICE_LIST_EXPIRED = ErrorCode.define("erp.err.sal.price-list-expired",
             "价格清单 {priceListCode} 已过期，不可引用",
             ARG_PRICE_LIST_CODE);
+
+    // ---- C3 日期范围有效性校验（plan 2026-07-26-0315-1）----
+    // 详见 docs/design/date-ranged-validity-pattern.md §6 + sales/README C3 交叉引用段
+
+    /**
+     * 价格清单行同维度（priceListId + materialId）区间互斥校验失败（MUTEX 策略）。
+     * 经 {@code ErpSalPriceListLineBizModel.defaultPrepareSave/Update} 钩子调用
+     * {@code ErpDateRangeOverlapValidator.enforceMutex} 抛出。
+     */
+    ErrorCode ERR_SAL_PRICE_LIST_LINE_OVERLAP = ErrorCode.define("erp.err.sal.price-list-line.overlap",
+            "价格清单行 {entityName} 在区间 [{validFrom}..{validTo}] 内与既有记录 id={conflictId} 冲突（同 priceListId+materialId 维度 MUTEX 策略）",
+            ErpDateRangeOverlapValidator.ARG_ENTITY_NAME,
+            ErpDateRangeOverlapValidator.ARG_VALID_FROM,
+            ErpDateRangeOverlapValidator.ARG_VALID_TO,
+            ErpDateRangeOverlapValidator.ARG_CONFLICT_ID);
+
+    /**
+     * 促销规则同维度不可叠加冲突（STACKABLE 混合策略：双非 stackable 重叠）。
+     * 经 {@code ErpSalPricingRuleBizModel.defaultPrepareSave/Update} 钩子调用
+     * {@code ErpDateRangeOverlapValidator.enforceStackableAware} 抛出。
+     */
+    ErrorCode ERR_SAL_PRICING_RULE_OVERLAP = ErrorCode.define("erp.err.sal.pricing-rule.overlap",
+            "促销规则 {entityName} 在区间 [{validFrom}..{validTo}] 内与既有不可叠加规则 id={conflictId} 冲突（STACKABLE 混合策略：双方均 stackable=false 时互斥）",
+            ErpDateRangeOverlapValidator.ARG_ENTITY_NAME,
+            ErpDateRangeOverlapValidator.ARG_VALID_FROM,
+            ErpDateRangeOverlapValidator.ARG_VALID_TO,
+            ErpDateRangeOverlapValidator.ARG_CONFLICT_ID);
+
+    /**
+     * 价格清单同维度多份有效且优先级相同（warn-only 提示，不抛异常）。
+     * PRIORITY 策略允许重叠，但当多份同优先级有效清单存在时取价引擎可能产生歧义——本错误码用于 log warn，
+     * 不通过 {@code NopException} 抛出。
+     */
+    ErrorCode ERR_SAL_PRICE_LIST_PRIORITY_AMBIGUOUS = ErrorCode.define("erp.err.sal.price-list.priority-ambiguous",
+            "价格清单 {entityName} 同 customerGroupCode+partnerId 维度存在多份相同优先级清单，取价可能产生歧义（warn-only，不阻断保存）",
+            ErpDateRangeOverlapValidator.ARG_ENTITY_NAME);
 }

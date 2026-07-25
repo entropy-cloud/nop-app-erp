@@ -53,6 +53,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: C3 日期范围有效性 helper（ErpDateRanges / ErpDateRangeOverlapValidator）位于 master-data service。
+             sales 定价 3 实体（ErpSalPriceList/ErpSalPriceListLine/ErpSalPricingRule）BizModel 在
+             defaultPrepareSave/Update 钩子中调用 helper 做区间互斥/歧义/叠加校验。master-data→sales 无依赖，DAG 无环。 -->
+        <dependency>
+            <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- compile: 出库审核强制质检门控（IErpQaInspectionBiz + InspectionTrigger 位于 quality dao）。
              sales→quality 单向（business→quality 触发），DAG 无环。默认配置空=不强制，无副作用。 -->
         <dependency>
@@ -82,14 +90,8 @@
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
-        <!-- test-only: 引入 master-data 注册跨域业务对象(ErpMdPartner/ErpMdCurrency 等)及 BizModel Bean，
-             使单域 GraphQL save 的跨域引用校验(validateRefValue)可在 H2 内存库中通过 -->
-        <dependency>
-            <artifactId>app-erp-master-data-service</artifactId>
-            <groupId>io.nop.app</groupId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>test</scope>
-        </dependency>
+        <!-- app-erp-master-data-service 已提升为 compile 依赖（C3 helper 跨域调用），
+             test-scope 条目已合并至上方 compile 块。 -->
         <!-- test-only: 强制质检门控 IErpQaInspectionBiz Bean 实现注册（app-erp-all 聚合时由 app 层提供）。
              默认配置空=不强制，现有销售流程测试不受影响。 -->
         <dependency>
