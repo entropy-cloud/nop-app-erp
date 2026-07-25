@@ -13,6 +13,7 @@ package app.erp.fin.dao.dto;
  * <p>权威：{@code docs/design/finance/gl-mapping-rules.md §3.4 维度数据来源}。
  */
 public class GlMappingDimensions {
+    private Long orgId;
     private Long partnerId;
     private Long partnerGroupId;
     private Long materialId;
@@ -24,6 +25,14 @@ public class GlMappingDimensions {
     private Long fromOrgId;
     /** A3 intercompany 维度：调入方组织。 */
     private Long toOrgId;
+
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
+    }
 
     public Long getPartnerId() {
         return partnerId;

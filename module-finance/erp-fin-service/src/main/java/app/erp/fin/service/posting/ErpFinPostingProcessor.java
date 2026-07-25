@@ -541,10 +541,20 @@ public class ErpFinPostingProcessor {
     }
 
     protected List<VoucherFact> generateFacts(PostingEvent event, IErpFinAcctDocProvider provider,
-                                              AcctDocContext ctx, IServiceContext context) {
+                                               AcctDocContext ctx, IServiceContext context) {
         List<VoucherFact> facts = provider.createFacts(event, ctx);
         for (IErpFinFactsValidator validator : registry.getValidators()) {
             facts = validator.validate(facts, ctx);
+        }
+        // orgId plumbing（plan 2026-07-25-1016-2）：PostingEvent.orgId → VoucherFact.orgId，
+        // 供 buildGlMappingDimensions 透传至 GlMappingDimensions.orgId 参与 GL 映射 orgId 维度（config-gated）。
+        if (facts != null) {
+            Long orgId = event.getOrgId();
+            for (VoucherFact fact : facts) {
+                if (fact.getOrgId() == null) {
+                    fact.setOrgId(orgId);
+                }
+            }
         }
         return facts;
     }
@@ -610,6 +620,7 @@ public class ErpFinPostingProcessor {
     /** A1 辅助：从 VoucherFact 维度字段构造 {@link GlMappingDimensions}。 */
     protected GlMappingDimensions buildGlMappingDimensions(VoucherFact fact) {
         GlMappingDimensions dims = new GlMappingDimensions();
+        dims.setOrgId(fact.getOrgId());
         dims.setPartnerId(fact.getPartnerId());
         dims.setMaterialId(fact.getMaterialId());
         dims.setWarehouseId(fact.getWarehouseId());
@@ -660,6 +671,7 @@ public class ErpFinPostingProcessor {
             copy.setAmountKey(f.getAmountKey());
             copy.setAccountKey(f.getAccountKey());
             copy.setMemo(f.getMemo());
+            copy.setOrgId(f.getOrgId());
             copy.setPartnerId(f.getPartnerId());
             copy.setDepartmentId(f.getDepartmentId());
             copy.setProjectId(f.getProjectId());

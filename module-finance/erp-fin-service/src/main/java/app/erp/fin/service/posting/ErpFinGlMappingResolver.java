@@ -48,6 +48,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
 
     static final String CONFIG_CACHE_ENABLED = "erp-fin.gl-mapping.cache-enabled";
     static final String CONFIG_CACHE_TTL_SECONDS = "erp-fin.gl-mapping.cache-ttl-seconds";
+    static final String CONFIG_ORG_DIMENSION_ENABLED = "erp-fin.gl-mapping.org-dimension-enabled";
 
     @Inject
     IDaoProvider daoProvider;
@@ -139,11 +140,12 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
     }
 
     /**
-     * 维度具体度：非 NULL 维度字段数（acctSchemaId + partnerGroupId + materialCategoryId + warehouseId +
-     * departmentId + projectId + fromOrgId + toOrgId，共 8 维）。数值越大越具体。
+     * 维度具体度：非 NULL 维度字段数（orgId + acctSchemaId + partnerGroupId + materialCategoryId + warehouseId +
+     * departmentId + projectId，共 7 维）。数值越大越具体。
      */
     private static int specificity(ErpFinGlMappingRule rule) {
         int count = 0;
+        if (rule.getOrgId() != null) count++;
         if (rule.getAcctSchemaId() != null) count++;
         if (rule.getPartnerGroupId() != null) count++;
         if (rule.getMaterialCategoryId() != null) count++;
@@ -154,6 +156,10 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
     }
 
     private boolean matches(ErpFinGlMappingRule rule, GlMappingDimensions dims, Long acctSchemaId) {
+        if (isOrgDimensionEnabled() && rule.getOrgId() != null
+                && !Objects.equals(rule.getOrgId(), dims.getOrgId())) {
+            return false;
+        }
         if (rule.getAcctSchemaId() != null && !Objects.equals(rule.getAcctSchemaId(), acctSchemaId)) {
             return false;
         }
@@ -185,6 +191,7 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
             return new GlMappingDimensions();
         }
         GlMappingDimensions expanded = new GlMappingDimensions();
+        expanded.setOrgId(input.getOrgId());
         expanded.setPartnerId(input.getPartnerId());
         expanded.setPartnerGroupId(input.getPartnerGroupId());
         expanded.setWarehouseId(input.getWarehouseId());
@@ -218,15 +225,26 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
     }
 
     /**
-     * 解析 orgId：A1 当前不依赖 orgId 维度（规则表 orgId 字段为多组织隔离预留，匹配逻辑暂不参与）。
-     * 返回 {@code null} 使 cache key 退化为 (businessType, accountKey)；后续多组织支持时再扩展。
+     * 解析 orgId：config-gated（{@code erp-fin.gl-mapping.org-dimension-enabled}，默认 {@code false}）。
+     * <ul>
+     *   <li>关闭态（默认）：返回 {@code null}，cache key 退化为 (businessType, accountKey)——向后兼容现状。</li>
+     *   <li>开启态：返回 {@code dimensions.getOrgId()}，cache 按 (orgId, businessType, accountKey) 分桶——
+     *       对齐 owner doc {@code gl-mapping-rules.md:118/192}。</li>
+     * </ul>
      */
     private Long resolveOrgIdFromDimensions(GlMappingDimensions dims) {
-        return null;
+        if (!isOrgDimensionEnabled()) {
+            return null;
+        }
+        return dims == null ? null : dims.getOrgId();
     }
 
     private boolean isCacheEnabled() {
         return AppConfig.var(CONFIG_CACHE_ENABLED, true);
+    }
+
+    private boolean isOrgDimensionEnabled() {
+        return AppConfig.var(CONFIG_ORG_DIMENSION_ENABLED, false);
     }
 
     private List<ErpFinGlMappingRule> loadFromCache(Long orgId, String businessType, String accountKey) {
@@ -241,6 +259,9 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         QueryBean q = new QueryBean();
         q.addFilter(eq("businessType", businessType));
         q.addFilter(eq("accountKey", accountKey));
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
         return dao.findAllByQuery(q);
     }
 
@@ -249,16 +270,20 @@ public class ErpFinGlMappingResolver implements IErpFinGlMappingResolver {
         QueryBean q = new QueryBean();
         // 仅加载未逻辑删除的规则（useLogicalDelete 由 ORM 自动加 delVersion 过滤）
         List<ErpFinGlMappingRule> all = dao.findAllByQuery(q);
+        boolean orgDimEnabled = isOrgDimensionEnabled();
         Map<String, List<ErpFinGlMappingRule>> newCache = new HashMap<>();
         for (ErpFinGlMappingRule rule : all) {
-            String key = cacheKey(null, rule.getBusinessType(), rule.getAccountKey());
+            // 关闭态（默认）：统一 "_" 桶（orgId 不参与 cache key），向后兼容现状——所有规则同 (businessType, accountKey) 共桶。
+            // 开启态：按 rule.orgId 分桶，对齐 owner doc gl-mapping-rules.md:118/192 的 (orgId, businessType, accountKey) 索引。
+            Long bucketOrgId = orgDimEnabled ? rule.getOrgId() : null;
+            String key = cacheKey(bucketOrgId, rule.getBusinessType(), rule.getAccountKey());
             newCache.computeIfAbsent(key, k -> new ArrayList<>()).add(rule);
         }
         cache.clear();
         cache.putAll(newCache);
         cacheLoaded = true;
         lastLoadTimeMillis = CoreMetrics.currentTimeMillis();
-        LOG.info("GL 映射规则缓存已加载：{} 条规则，{} 个 (businessType, accountKey) 索引", all.size(), newCache.size());
+        LOG.info("GL 映射规则缓存已加载：{} 条规则，{} 个索引键，orgDimension={}", all.size(), newCache.size(), orgDimEnabled);
     }
 
     private static String cacheKey(Long orgId, String businessType, String accountKey) {

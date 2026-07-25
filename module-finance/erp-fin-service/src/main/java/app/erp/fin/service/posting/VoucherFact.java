@@ -18,6 +18,7 @@ public class VoucherFact {
     private String accountKey;
     private String memo;
 
+    private Long orgId;
     private Long partnerId;
     private Long departmentId;
     private Long projectId;
@@ -88,6 +89,14 @@ public class VoucherFact {
 
     public void setMemo(String memo) {
         this.memo = memo;
+    }
+
+    public Long getOrgId() {
+        return orgId;
+    }
+
+    public void setOrgId(Long orgId) {
+        this.orgId = orgId;
     }
 
     public Long getPartnerId() {

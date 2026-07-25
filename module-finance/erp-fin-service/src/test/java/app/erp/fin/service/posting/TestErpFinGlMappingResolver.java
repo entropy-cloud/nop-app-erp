@@ -6,6 +6,7 @@ import app.erp.fin.dao.entity.ErpFinGlMappingRule;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -17,11 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
- * GL 映射规则解析器单元测试（plan 2026-07-21-0827-1 A1 Phase 2）。
+ * GL 映射规则解析器单元测试（plan 2026-07-21-0827-1 A1 Phase 2 + 2026-07-25-1016-2 orgId 维度激活）。
  *
- * <p>覆盖 8 场景：(a) exact match 优先 / (b) partial-wildcard / (c) default fallback / (d) 空匹配 null /
+ * <p>覆盖场景：(a) exact match 优先 / (b) partial-wildcard / (c) default fallback / (d) 空匹配 null /
  * (e) acctSchemaId specific > wildcard / (f) priority 打破并列维度 / (g) 维度扩展（materialId → materialCategoryId）/
- * (h) 缓存失效后 reload。
+ * (h) 缓存失效后 reload / (i) 新增域专用键命中 / (j) 新增域专用键未命中 /
+ * (k) 关闭态忽略 orgId（零回归）/ (l) 开启态 org 精确匹配 / (m) 开启态 org 不匹配返回 null /
+ * (n) 开启态不同组织不同科目（cache 按 orgId 分桶）/ (o) 开启态 specificity 含 orgId 计数。
  *
  * <p>种子规则经 DAO 直建（与 {@code TestErpPurInvoicePosting.seedPeriodAndSubjects} 同范式）。
  */
@@ -40,6 +43,8 @@ public class TestErpFinGlMappingResolver extends JunitAutoTestCase {
     static final Long MATERIAL_CATEGORY_43 = 43L;
     static final Long WAREHOUSE_1 = 101L;
     static final Long MATERIAL_ID_5001 = 5001L;
+    static final Long ORG_1 = 1L;
+    static final Long ORG_2 = 2L;
 
     @Inject
     IDaoProvider daoProvider;
@@ -231,6 +236,115 @@ public class TestErpFinGlMappingResolver extends JunitAutoTestCase {
         String result = resolver.resolveSubjectCode("NOTES_RECEIVABLE_RECEIVED", "NOTES_RECEIVABLE",
                 new GlMappingDimensions(), null);
         assertNull(result, "无规则时返回 null（保留 Provider fallback，向后兼容）");
+    }
+
+    // ---------- orgId 维度激活场景（plan 2026-07-25-1016-2） ----------
+
+    /**
+     * (k) 关闭态（默认）忽略 orgId：dims.orgId=2 仍命中 orgId=1 规则（orgId 维度不参与匹配，向后兼容）。
+     */
+    @Test
+    public void testOrgDimensionDisabledIgnoresOrgId() {
+        ormTemplate.runInSession(() -> {
+            seedRule("RULE-K-ORG1", BT, AK_PURCHASE, null, null, null, null, null, null, ORG_1, "1403", 0);
+        });
+        resolver.invalidateCache();
+
+        GlMappingDimensions dims = new GlMappingDimensions();
+        dims.setOrgId(ORG_2); // dims orgId 与 rule orgId 不同
+        String result = resolver.resolveSubjectCode(BT, AK_PURCHASE, dims, null);
+        assertEquals("1403", result, "关闭态应忽略 orgId：dims.orgId=2 仍命中 orgId=1 规则（向后兼容）");
+    }
+
+    /**
+     * (l) 开启态 org 精确匹配：orgId=2 命中 orgId=2 规则。
+     */
+    @Test
+    public void testOrgDimensionEnabledExactMatch() {
+        ormTemplate.runInSession(() -> {
+            seedRule("RULE-L-ORG2", BT, AK_PURCHASE, null, null, null, null, null, null, ORG_2, "5001", 0);
+        });
+        withOrgDimensionEnabled(() -> {
+            resolver.invalidateCache();
+            GlMappingDimensions dims = new GlMappingDimensions();
+            dims.setOrgId(ORG_2);
+            String result = resolver.resolveSubjectCode(BT, AK_PURCHASE, dims, null);
+            assertEquals("5001", result, "开启态应按 orgId 精确匹配：orgId=2 命中 orgId=2 规则");
+        });
+    }
+
+    /**
+     * (m) 开启态 org 不匹配返回 null：orgId=2 不命中 orgId=1 规则（cache 按 orgId 分桶，orgId=2 桶为空）。
+     */
+    @Test
+    public void testOrgDimensionEnabledMismatchReturnsNull() {
+        ormTemplate.runInSession(() -> {
+            seedRule("RULE-M-ORG1", BT, AK_PURCHASE, null, null, null, null, null, null, ORG_1, "1403", 0);
+        });
+        withOrgDimensionEnabled(() -> {
+            resolver.invalidateCache();
+            GlMappingDimensions dims = new GlMappingDimensions();
+            dims.setOrgId(ORG_2);
+            String result = resolver.resolveSubjectCode(BT, AK_PURCHASE, dims, null);
+            assertNull(result, "开启态 org 不匹配应返回 null：orgId=2 不命中 orgId=1 规则（cache 按 orgId 分桶）");
+        });
+    }
+
+    /**
+     * (n) 开启态不同组织不同科目 + cache 按 orgId 分桶：orgId=1 → "1403"，orgId=2 → "5001"。
+     */
+    @Test
+    public void testOrgDimensionEnabledDifferentOrgsDifferentSubjects() {
+        ormTemplate.runInSession(() -> {
+            seedRule("RULE-N-ORG1", BT, AK_PURCHASE, null, null, null, null, null, null, ORG_1, "1403", 0);
+            seedRule("RULE-N-ORG2", BT, AK_PURCHASE, null, null, null, null, null, null, ORG_2, "5001", 0);
+        });
+        withOrgDimensionEnabled(() -> {
+            resolver.invalidateCache();
+            GlMappingDimensions dims1 = new GlMappingDimensions();
+            dims1.setOrgId(ORG_1);
+            assertEquals("1403", resolver.resolveSubjectCode(BT, AK_PURCHASE, dims1, null),
+                    "orgId=1 桶应命中 orgId=1 规则 → 1403");
+
+            GlMappingDimensions dims2 = new GlMappingDimensions();
+            dims2.setOrgId(ORG_2);
+            assertEquals("5001", resolver.resolveSubjectCode(BT, AK_PURCHASE, dims2, null),
+                    "orgId=2 桶应命中 orgId=2 规则 → 5001（cache 按 orgId 分桶生效）");
+        });
+    }
+
+    /**
+     * (o) 开启态 specificity 含 orgId 计数：同 org 下 orgId+materialCategoryId（具体度 2）
+     * 在等 priority 下胜过仅 orgId（具体度 1）。
+     */
+    @Test
+    public void testOrgDimensionEnabledSpecificityIncludesOrgId() {
+        ormTemplate.runInSession(() -> {
+            seedRule("RULE-O-DEFAULT", BT, AK_PURCHASE, null, null, null, null, null, null, ORG_1, "1403", 100);
+            seedRule("RULE-O-MAT42", BT, AK_PURCHASE, null, null, MATERIAL_CATEGORY_42, null, null, null, ORG_1, "1404", 100);
+        });
+        withOrgDimensionEnabled(() -> {
+            resolver.invalidateCache();
+            GlMappingDimensions dims = new GlMappingDimensions();
+            dims.setOrgId(ORG_1);
+            dims.setMaterialCategoryId(MATERIAL_CATEGORY_42);
+            String result = resolver.resolveSubjectCode(BT, AK_PURCHASE, dims, null);
+            assertEquals("1404", result, "等 priority 下 orgId+materialCategoryId（具体度 2）应胜过仅 orgId（具体度 1）");
+        });
+    }
+
+    /** 在 org-dimension-enabled=true 作用域内执行 action，结束后恢复默认 false 并 invalidate cache。 */
+    private void withOrgDimensionEnabled(Runnable action) {
+        Boolean original = AppConfig.var(ErpFinGlMappingResolver.CONFIG_ORG_DIMENSION_ENABLED, Boolean.FALSE);
+        try {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinGlMappingResolver.CONFIG_ORG_DIMENSION_ENABLED, Boolean.TRUE);
+            action.run();
+        } finally {
+            AppConfig.getConfigProvider().assignConfigValue(
+                    ErpFinGlMappingResolver.CONFIG_ORG_DIMENSION_ENABLED, original);
+            resolver.invalidateCache();
+        }
     }
 
     // ---------- helpers ----------
