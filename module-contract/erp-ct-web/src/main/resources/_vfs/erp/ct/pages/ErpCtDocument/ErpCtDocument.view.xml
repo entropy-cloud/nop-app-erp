@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCtDocument.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
                 <grid id="list">
@@ -18,47 +19,17 @@
                 <col id="ocrStatus" sortable="true"/>
                 <col id="fullTextSearch" sortable="true"/>
                 <col id="metadataTags" sortable="true"/>
-                <col id="retentionDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="archiveDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="purgeDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="retentionDate" sortable="true" align="center"></col>
+                <col id="archiveDate" sortable="true" align="center"></col>
+                <col id="purgeDate" sortable="true" align="center"></col>
                 <col id="isArchived" sortable="true"/>
                 <col id="versionNo" ui:number="true" sortable="true"/>
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
-                <col id="createTime" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="createTime" mandatory="true" sortable="true" align="center"></col>
                 <col id="updatedBy" mandatory="true" sortable="true"/>
-                <col id="updateTime" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="updateTime" mandatory="true" sortable="true" align="center"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpQaQualityGoal.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -7,36 +8,12 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="name" mandatory="true" sortable="true"/>
-                <col id="targetValue" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="currentValue" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="targetValue" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="currentValue" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="unit" sortable="true"/>
                 <col id="responsiblePersonId" label="负责人" i18n-en:label="Owner"/>
-                <col id="startDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="endDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="startDate" sortable="true" align="center"></col>
+                <col id="endDate" sortable="true" align="center"></col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

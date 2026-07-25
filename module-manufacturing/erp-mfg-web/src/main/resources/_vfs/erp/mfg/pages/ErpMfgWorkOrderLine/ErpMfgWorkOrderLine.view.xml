@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgWorkOrderLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -11,27 +12,9 @@
                 <col id="materialId" label="物料名称" i18n-en:label="Material Name"/>
                 <col id="sourceWarehouseId" label="领料仓库" i18n-en:label="Picking Warehouse"/>
                 <col id="destWarehouseId" label="入库仓库" i18n-en:label="Inbound Warehouse"/>
-                <col id="plannedQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="actualQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="scrappedQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="plannedQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="actualQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="scrappedQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
                 <col id="remark" sortable="true"/>
             </cols>
         </grid>
@@ -141,27 +124,9 @@
                 <col id="lineType"/>
                 <col id="materialId"/>
                 <col id="uoMId"/>
-                <col id="plannedQuantity" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="actualQuantity" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="scrappedQuantity" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="plannedQuantity" align="right" domain="quantity"></col>
+                <col id="actualQuantity" align="right" domain="quantity"></col>
+                <col id="scrappedQuantity" align="right" domain="quantity"></col>
                 <col id="sourceWarehouseId"/>
                 <col id="destWarehouseId"/>
                 <col id="remark"/>

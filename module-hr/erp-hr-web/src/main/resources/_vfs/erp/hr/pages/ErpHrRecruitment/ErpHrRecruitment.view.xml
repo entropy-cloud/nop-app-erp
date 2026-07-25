@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrRecruitment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -36,21 +37,9 @@
                     </gen-control>
                 </col>
                 <col id="interviewer" label="面试官" i18n-en:label="Interviewer"/>
-                <col id="interviewDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="interviewDate" sortable="true" align="center"></col>
                 <col id="offerSalary" ui:number="true" sortable="true"/>
-                <col id="hiredDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="hiredDate" sortable="true" align="center"></col>
                 <col id="employee" label="员工" i18n-en:label="Employee"/>
                 <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
             </cols>

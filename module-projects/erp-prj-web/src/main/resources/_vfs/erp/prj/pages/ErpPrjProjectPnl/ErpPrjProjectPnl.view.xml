@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpPrjProjectPnl.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -11,20 +12,8 @@
                 <col id="periodFrom" mandatory="true" sortable="true"/>
                 <col id="periodTo" mandatory="true" sortable="true"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
-                <col id="revenueAmount" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="totalCost" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="revenueAmount" sortable="true" align="right" domain="amount"></col>
+                <col id="totalCost" sortable="true" align="right" domain="amount"></col>
                 <col id="grossProfit" sortable="true"/>
                 <col id="grossMarginPct" sortable="true"/>
                 <col id="calcStatus" mandatory="true" sortable="true"/>

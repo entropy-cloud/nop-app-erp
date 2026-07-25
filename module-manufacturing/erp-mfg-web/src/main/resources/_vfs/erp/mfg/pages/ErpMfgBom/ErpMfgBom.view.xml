@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgBom.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -9,13 +10,7 @@
                 <col id="productId" label="产品" i18n-en:label="Product"/>
                 <col id="bomType" mandatory="true" sortable="true"/>
                 <col id="versionLabel" sortable="true"/>
-                <col id="qty" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="qty" ui:number="true" sortable="true" align="right" domain="quantity"></col>
                 <col id="isActive" sortable="true"/>
                 <col id="isDefault" sortable="true"/>
             </cols>

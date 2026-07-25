@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMntEquipment.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -38,13 +39,7 @@
                 <col id="serialNo" sortable="true"/>
                 <col id="manufacturer" sortable="true"/>
                 <col id="model" sortable="true"/>
-                <col id="installDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="installDate" sortable="true" align="center"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -53,13 +48,7 @@
             <cols>
                 <col id="id" custom="true" mandatory="true" ui:number="true" sortable="true" domain="long"/>
                 <col id="code" custom="true" mandatory="true" sortable="true" domain="string"/>
-                <col id="visitDate" custom="true" mandatory="true" sortable="true" align="center" domain="date">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="visitDate" custom="true" mandatory="true" sortable="true" align="center" domain="date"></col>
                 <col id="visitType" custom="true" sortable="true" domain="string"/>
                 <col id="status" custom="true" mandatory="true" sortable="true" domain="string">
                     <gen-control>
@@ -92,20 +81,8 @@
             <cols>
                 <col id="id" custom="true" mandatory="true" ui:number="true" sortable="true" domain="long"/>
                 <col id="code" custom="true" mandatory="true" sortable="true" domain="string"/>
-                <col id="businessDate" custom="true" mandatory="true" sortable="true" align="center" domain="date">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="totalAmount" custom="true" ui:number="true" sortable="true" align="right" domain="amount">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="businessDate" custom="true" mandatory="true" sortable="true" align="center" domain="date"></col>
+                <col id="totalAmount" custom="true" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="docStatus" custom="true" mandatory="true" sortable="true" domain="string">
                     <gen-control>
                         <c:script><![CDATA[

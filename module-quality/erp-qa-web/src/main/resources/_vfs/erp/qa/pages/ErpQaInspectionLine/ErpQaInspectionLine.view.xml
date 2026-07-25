@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpQaInspectionLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -11,13 +12,7 @@
                 <col id="parameterName" sortable="true"/>
                 <col id="specMin" ui:number="true" sortable="true"/>
                 <col id="specMax" ui:number="true" sortable="true"/>
-                <col id="measuredValue" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="measuredValue" sortable="true" align="right" domain="amount"></col>
                 <col id="unit" sortable="true"/>
                 <col id="result" mandatory="true" sortable="true"/>
             </cols>

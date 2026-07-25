@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMdLocation.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
                 <grid id="list">
@@ -12,21 +13,9 @@
                 <col id="isActive" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
-                <col id="createTime" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="createTime" mandatory="true" sortable="true" align="center"></col>
                 <col id="updatedBy" mandatory="true" sortable="true"/>
-                <col id="updateTime" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="updateTime" mandatory="true" sortable="true" align="center"></col>
             </cols>
         </grid>
         <grid id="pick-list">

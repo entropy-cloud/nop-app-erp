@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgCostRollupLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -11,34 +12,10 @@
                 <col id="materialId" label="产品" i18n-en:label="Product"/>
                 <col id="uoMId" label="计量单位" i18n-en:label="UoM"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
-                <col id="materialCost" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="laborCost" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="totalCost" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="unitCost" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="materialCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="laborCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="totalCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="unitCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>

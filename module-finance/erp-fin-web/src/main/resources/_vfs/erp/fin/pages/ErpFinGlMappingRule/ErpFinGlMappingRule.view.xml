@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinGlMappingRule.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <!-- plan 2026-07-21-0827-1 A1 Phase 3：list grid 列精选 + form 分组 + 缓存刷新按钮。
          targetSubjectCode 保留为简单 code 输入（运维手填或粘贴；复杂 picker 后续按需扩展）。 -->

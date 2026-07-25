@@ -125,5 +125,57 @@
       "passed": false,
       "msg": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  958 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: master-data-v-b-font.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(master-data-v-b-font.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 958 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 958 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n"
     }
+  },
+  "run-1784990483856": {
+    "finance-v-a-bare": {
+      "passed": false,
+      "msg": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  1518 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: finance-v-a-bare.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(finance-v-a-bare.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 1518 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 1518 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n"
+    }
+  },
+  "run-1784990499664": {
+    "finance-v-b-font": {
+      "passed": false,
+      "msg": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  1792 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: finance-v-b-font.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(finance-v-b-font.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 1792 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 1792 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n"
+    }
+  },
+  "run-1784990518855": {
+    "finance-v-c-mask": {
+      "passed": false,
+      "msg": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  1102 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: finance-v-c-mask.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(finance-v-c-mask.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 1102 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 1102 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n"
+    }
+  },
+  "run-1784990531043": {
+    "master-data-v-a-bare": {
+      "passed": false,
+      "msg": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  1007 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: master-data-v-a-bare.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(master-data-v-a-bare.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 1007 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 1007 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n"
+    }
+  },
+  "run-1784990541184": {
+    "master-data-v-b-font": {
+      "passed": false,
+      "msg": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveScreenshot\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\n  958 pixels (ratio 0.01 of all image pixels) are different.\n\n  Snapshot: master-data-v-b-font.png\n\nCall log:\n\u001b[2m  - Expect \"toHaveScreenshot(master-data-v-b-font.png)\" with timeout 5000ms\u001b[22m\n\u001b[2m    - verifying given screenshot expectation\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - 958 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n\u001b[2m  - waiting 100ms before taking screenshot\u001b[22m\n\u001b[2m  - taking page screenshot\u001b[22m\n\u001b[2m    - disabled all CSS animations\u001b[22m\n\u001b[2m  - waiting for fonts to load...\u001b[22m\n\u001b[2m  - fonts loaded\u001b[22m\n\u001b[2m  - captured a stable screenshot\u001b[22m\n\u001b[2m  - 958 pixels (ratio 0.01 of all image pixels) are different.\u001b[22m\n"
+    }
+  },
+  "run-1785000376802": {
+    "finance-v-a-bare": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    },
+    "finance-v-b-font": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    },
+    "finance-v-c-mask": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    },
+    "master-data-v-a-bare": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    },
+    "master-data-v-b-font": {
+      "passed": true,
+      "msg": "0 diff pixels (exact match)"
+    }
   }
 }

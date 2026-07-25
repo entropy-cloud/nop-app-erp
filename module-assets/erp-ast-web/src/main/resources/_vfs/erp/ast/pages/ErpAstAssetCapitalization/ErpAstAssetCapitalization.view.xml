@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpAstAssetCapitalization.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -12,13 +13,7 @@
                 <col id="assetName" sortable="true"/>
                 <col id="categoryId" label="资产类别" i18n-en:label="Asset Category"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
-                <col id="capitalizationDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="capitalizationDate" sortable="true" align="center"></col>
                 <col id="docStatus" mandatory="true" sortable="true"/>
                 <col id="approveStatus" sortable="true"/>
                 <col id="amountSource" sortable="true"/>

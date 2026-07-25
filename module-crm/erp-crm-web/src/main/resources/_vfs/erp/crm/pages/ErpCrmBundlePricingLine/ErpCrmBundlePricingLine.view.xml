@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmBundlePricingLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
                 <grid id="list">
@@ -9,20 +10,8 @@
                 <col id="bundleId" label="捆绑定价" i18n-en:label="Bundle Pricing"/>
                 <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="product" label="产品" i18n-en:label="Product"/>
-                <col id="quantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="unitPrice" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="quantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="unitPrice" ui:number="true" sortable="true" align="right" domain="unitPrice"></col>
                 <col id="sequence" ui:number="true" sortable="true"/>
             </cols>
         </grid>

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpAstSplitLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -13,13 +14,7 @@
                 <col id="categoryId" label="资产类别" i18n-en:label="Asset Category"/>
                 <col id="allocationMethod" sortable="true"/>
                 <col id="proportion" sortable="true"/>
-                <col id="netBookValue" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="netBookValue" sortable="true" align="right" domain="amount"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>

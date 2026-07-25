@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrLeaveRequest.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -8,20 +9,8 @@
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="employee" label="员工" i18n-en:label="Employee"/>
                 <col id="leaveType" mandatory="true" sortable="true"/>
-                <col id="startDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="endDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="startDate" mandatory="true" sortable="true" align="center"></col>
+                <col id="endDate" mandatory="true" sortable="true" align="center"></col>
                 <col id="durationDays" ui:number="true" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
@@ -48,13 +37,7 @@
                     </gen-control>
                 </col>
                 <col id="approver" label="审批人" i18n-en:label="Approver"/>
-                <col id="approvedAt" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="approvedAt" sortable="true" align="center"></col>
                 <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
             </cols>
         </grid>

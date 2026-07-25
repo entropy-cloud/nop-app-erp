@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  项目级 control.xlib（plan 2026-07-24-2200-1 Phase 5）
+  项目级 control.xlib（plan 2026-07-24-2200-1 Phase 5 创建，2026-07-25-1430-1 Phase 2 扩展）
   扩展平台 /nop/web/xlib/control.xlib，为 ERP 域特有 domain 映射 AMIS 控件。
   消除各 view.xml 中重复的 gen-control 脚本。
 -->
@@ -18,11 +18,11 @@
             </source>
         </edit-amount>
 
-        <!-- 数量编辑控件：3 位精度 -->
+        <!-- 数量编辑控件：4 位精度（与 ORM quantity domain scale=4 一致） -->
         <edit-quantity outputMode="xjson">
             <attr name="precision"/>
             <source>
-                <input-number type="number" kilometer="@:true" precision="@:3"
+                <input-number type="number" kilometer="@:true" precision="@:4"
                               step="@:1" align="right"/>
             </source>
         </edit-quantity>
@@ -40,7 +40,7 @@
         <view-datetime outputMode="xjson">
             <attr name="format"/>
             <source>
-                <text type="datetime" format="@:YYYY-MM-DD HH:mm:ss"/>
+                <text type="datetime" format="YYYY-MM-DD HH:mm:ss"/>
             </source>
         </view-datetime>
 
@@ -51,5 +51,32 @@
                 <text type="number" kilometer="@:true" precision="@:2"/>
             </source>
         </view-amount>
+
+        <!-- 数量显示控件：4 位精度（plan 2026-07-25-1430-1 Phase 2 新增） -->
+        <view-quantity outputMode="xjson">
+            <attr name="precision"/>
+            <source>
+                <text type="number" kilometer="@:true" precision="@:4"/>
+            </source>
+        </view-quantity>
+
+        <!-- 单价显示控件：4 位精度（plan 2026-07-25-1430-1 Phase 2 新增） -->
+        <view-unitPrice outputMode="xjson">
+            <attr name="precision"/>
+            <source>
+                <text type="number" kilometer="@:true" precision="@:4"/>
+            </source>
+        </view-unitPrice>
+
+        <!-- 日期显示控件（plan 2026-07-25-1430-1 Phase 2 新增；stdSqlType=DATE → stdDataType=date 经此映射） -->
+        <view-date outputMode="xjson">
+            <attr name="format"/>
+            <source>
+                <text type="date" format="YYYY-MM-DD"/>
+            </source>
+        </view-date>
+
+        <!-- 时间戳显示控件（plan 2026-07-25-1430-1 Phase 2 新增；stdSqlType=TIMESTAMP → stdDataType=timestamp 经此映射） -->
+        <view-timestamp x:prototype="view-datetime"/>
     </tags>
 </lib>

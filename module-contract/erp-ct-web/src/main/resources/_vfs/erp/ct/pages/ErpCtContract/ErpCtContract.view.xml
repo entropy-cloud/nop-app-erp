@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCtContract.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
                 <grid id="list">
@@ -11,34 +12,10 @@
                 <col id="contractDirection" mandatory="true" sortable="true"/>
                 <col id="partnerId" label="合作方" i18n-en:label="Collaborator"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
-                <col id="totalAmount" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="startDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="endDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="signDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="totalAmount" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="startDate" mandatory="true" sortable="true" align="center"></col>
+                <col id="endDate" mandatory="true" sortable="true" align="center"></col>
+                <col id="signDate" sortable="true" align="center"></col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -70,28 +47,10 @@
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
-                <col id="createTime" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="createTime" mandatory="true" sortable="true" align="center"></col>
                 <col id="updatedBy" mandatory="true" sortable="true"/>
-                <col id="updateTime" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="businessDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="updateTime" mandatory="true" sortable="true" align="center"></col>
+                <col id="businessDate" mandatory="true" sortable="true" align="center"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>

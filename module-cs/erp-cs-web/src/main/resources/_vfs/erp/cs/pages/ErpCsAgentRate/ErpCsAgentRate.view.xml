@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCsAgentRate.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
                 <grid id="list">
@@ -15,13 +16,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="effectiveDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="effectiveDate" sortable="true" align="center"></col>
                 <col id="isActive" sortable="true"/>
             </cols>
         </grid>

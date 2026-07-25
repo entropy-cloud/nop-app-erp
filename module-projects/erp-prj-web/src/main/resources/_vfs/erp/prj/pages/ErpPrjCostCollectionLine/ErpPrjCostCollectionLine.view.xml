@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpPrjCostCollectionLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -13,13 +14,7 @@
                 <col id="sourceBillCode" sortable="true"/>
                 <col id="subjectId" label="科目" i18n-en:label="Account"/>
                 <col id="taskId" label="任务" i18n-en:label="Task"/>
-                <col id="amount" mandatory="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="amount" mandatory="true" sortable="true" align="right" domain="amount"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -88,13 +83,7 @@
                 <col id="sourceBillCode"/>
                 <col id="subjectId"/>
                 <col id="taskId"/>
-                <col id="amount" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="amount" align="right" domain="amount"></col>
                 <col id="remark"/>
             </cols>
         </grid>

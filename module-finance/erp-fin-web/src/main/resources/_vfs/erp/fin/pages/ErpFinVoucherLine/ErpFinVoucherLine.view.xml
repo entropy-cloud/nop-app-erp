@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinVoucherLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -10,20 +11,8 @@
                 <col id="subjectCode" mandatory="true" sortable="true"/>
                 <col id="subjectId" sortable="true"/>
                 <col id="dcDirection" mandatory="true" sortable="true"/>
-                <col id="debitAmount" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="creditAmount" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="debitAmount" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="creditAmount" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="acctSchema" label="账套" i18n-en:label="Accounting Set"/>
                 <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
@@ -340,42 +329,12 @@
                 <col id="subjectCode"/>
                 <col id="subjectName"/>
                 <col id="dcDirection"/>
-                <col id="debitAmount" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="creditAmount" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="debitAmount" align="right" domain="amount"></col>
+                <col id="creditAmount" align="right" domain="amount"></col>
                 <col id="currencyId"/>
-                <col id="exchangeRate" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="amountSource" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="amountFunctional" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="exchangeRate" align="right" domain="quantity"></col>
+                <col id="amountSource" align="right" domain="amount"></col>
+                <col id="amountFunctional" align="right" domain="amount"></col>
                 <col id="partnerId"/>
                 <col id="departmentId"/>
                 <col id="projectId"/>

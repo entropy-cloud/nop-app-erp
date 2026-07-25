@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgBomLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -10,13 +11,7 @@
                 <col id="materialId" label="物料" i18n-en:label="Material"/>
                 <col id="uoMId" label="计量单位" i18n-en:label="UoM"/>
                 <col id="warehouseId" label="发货仓库" i18n-en:label="Shipping Warehouse"/>
-                <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right" domain="quantity"></col>
                 <col id="scrapRate" ui:number="true" sortable="true"/>
             </cols>
         </grid>

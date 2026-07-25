@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpInvDrpLeadTimeRecord.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
                 <grid id="list">
@@ -9,62 +10,20 @@
                 <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="supplierId" label="供应商" i18n-en:label="Supplier"/>
                 <col id="materialId" label="物料" i18n-en:label="Material"/>
-                <col id="orderDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="receiptDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="actualLeadTime" mandatory="true" ui:number="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="expectedLeadTime" ui:number="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="orderDate" mandatory="true" sortable="true" align="center"></col>
+                <col id="receiptDate" mandatory="true" sortable="true" align="center"></col>
+                <col id="actualLeadTime" mandatory="true" ui:number="true" sortable="true" align="center"></col>
+                <col id="expectedLeadTime" ui:number="true" sortable="true" align="center"></col>
                 <col id="varianceDays" ui:number="true" sortable="true"/>
                 <col id="purchaseOrderCode" sortable="true"/>
-                <col id="isOnTime" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="isOnTime" sortable="true" align="center"></col>
                 <col id="earlyLateFlag" sortable="true"/>
                 <col id="remark" sortable="true"/>
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="createdBy" mandatory="true" sortable="true"/>
-                <col id="createTime" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="createTime" mandatory="true" sortable="true" align="center"></col>
                 <col id="updatedBy" mandatory="true" sortable="true"/>
-                <col id="updateTime" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="updateTime" mandatory="true" sortable="true" align="center"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>

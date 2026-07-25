@@ -1,30 +1,19 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpQaNonConformance.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="code" mandatory="true" sortable="true"/>
-                <col id="ncrDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="ncrDate" mandatory="true" sortable="true" align="center"></col>
                 <col id="sourceType" sortable="true"/>
                 <col id="sourceCode" sortable="true"/>
                 <col id="materialId" label="物料" i18n-en:label="Material"/>
                 <col id="inspection" label="质检单" i18n-en:label="QC Order"/>
-                <col id="quantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="quantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
                 <col id="severity" mandatory="true" sortable="true"/>
                 <col id="dispositionType" sortable="true"/>
                 <col id="status" mandatory="true" sortable="true">

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrSurveyAnswer.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -7,13 +8,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="responseId" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="question" label="题目" i18n-en:label="Question"/>
-                <col id="ratingValue" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="ratingValue" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="selectedOption" sortable="true"/>
                 <col id="openText" sortable="true"/>
             </cols>
@@ -44,13 +39,7 @@
         <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
             <cols x:override="bounded-merge">
                 <col id="questionId" mandatory="true"/>
-                <col id="ratingValue" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="ratingValue" align="right" domain="amount"></col>
                 <col id="selectedOption"/>
                 <col id="openText"/>
             </cols>

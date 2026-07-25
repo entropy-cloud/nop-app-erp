@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpCrmForecast.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
                 <grid id="list">
@@ -10,27 +11,9 @@
                 <col id="territoryId" label="销售区域" i18n-en:label="Sales Region"/>
                 <col id="teamId" label="销售团队" i18n-en:label="Sales Team"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
-                <col id="commitAmount" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="upsideAmount" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="weightedAmount" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="commitAmount" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="upsideAmount" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="weightedAmount" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="opportunityCount" ui:number="true" sortable="true"/>
                 <col id="lastCalculatedAt" sortable="true"/>
             </cols>

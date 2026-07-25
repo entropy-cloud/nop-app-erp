@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrTimesheetLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -8,13 +9,7 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="timesheet" label="工时表" i18n-en:label="Timesheet"/>
                 <col id="employee" label="员工" i18n-en:label="Employee"/>
-                <col id="workDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="workDate" mandatory="true" sortable="true" align="center"></col>
                 <col id="projectId" label="项目" i18n-en:label="Project"/>
                 <col id="taskId" label="任务" i18n-en:label="Task"/>
                 <col id="activityType" sortable="true"/>
@@ -69,23 +64,11 @@
 
         <grid id="sub-grid-view" x:prototype="list" editMode="list-view">
             <cols x:override="bounded-merge">
-                <col id="workDate" mandatory="true">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="workDate" mandatory="true"></col>
                 <col id="projectId"/>
                 <col id="taskId"/>
                 <col id="activityType"/>
-                <col id="hours" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="hours" align="right" domain="amount"></col>
                 <col id="description"/>
             </cols>
         </grid>

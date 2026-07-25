@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpQaRecall.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -11,13 +12,7 @@
                 <col id="sourceNcr" label="源不合格品" i18n-en:label="Source NCP"/>
                 <col id="materialId" label="物料" i18n-en:label="Material"/>
                 <col id="severityLevel" mandatory="true" sortable="true"/>
-                <col id="businessDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="businessDate" mandatory="true" sortable="true" align="center"></col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

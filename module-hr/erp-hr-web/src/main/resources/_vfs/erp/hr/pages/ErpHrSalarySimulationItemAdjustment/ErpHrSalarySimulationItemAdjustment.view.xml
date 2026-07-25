@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrSalarySimulationItemAdjustment.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -9,20 +10,8 @@
                 <col id="simulation" label="薪资模拟" i18n-en:label="Salary Simulation"/>
                 <col id="employee" label="员工" i18n-en:label="Employee"/>
                 <col id="salaryItemCode" mandatory="true" sortable="true"/>
-                <col id="originalAmount" mandatory="true" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="adjustedAmount" mandatory="true" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="originalAmount" mandatory="true" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="adjustedAmount" mandatory="true" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="adjustmentReason" sortable="true"/>
                 <col id="adjustedBy" sortable="true"/>
                 <col id="adjustedAt" sortable="true"/>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinConsolidationElimination.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <!-- plan 2026-07-22-1000-1 A3 Phase 4：合并抵消候选 list grid 精选列 + form 分组 + postElimination 按钮。
          postElimination 按钮带 visibleOn status=CANDIDATE 守卫（非候选状态不可过账）。 -->

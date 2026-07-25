@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpSalDeliveryLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -9,34 +10,10 @@
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="materialId" label="物料名称" i18n-en:label="Material Name"/>
                 <col id="warehouseId" label="出库库位" i18n-en:label="Outbound Location"/>
-                <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="unitPrice" mandatory="true" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="taxAmount" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="amount" mandatory="true" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="quantity" mandatory="true" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="unitPrice" mandatory="true" ui:number="true" sortable="true" align="right" domain="unitPrice"></col>
+                <col id="taxAmount" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="amount" mandatory="true" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="batchNo" sortable="true"/>
                 <col id="remark" sortable="true"/>
             </cols>
@@ -160,27 +137,9 @@
                 <col id="lineNo" mandatory="true" ui:number="true"/>
                 <col id="materialId"/>
                 <col id="uoMId"/>
-                <col id="quantity" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="unitPrice" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="amount" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="quantity" align="right" domain="quantity"></col>
+                <col id="unitPrice" align="right" domain="unitPrice"></col>
+                <col id="amount" align="right" domain="amount"></col>
                 <col id="taxRate" align="right">
                     <gen-control>
                         <c:script><![CDATA[
@@ -188,13 +147,7 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="taxAmount" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="taxAmount" align="right" domain="amount"></col>
                 <col id="warehouseId"/>
                 <col id="batchNo"/>
                 <col id="remark"/>

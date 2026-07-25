@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgWorkOrder.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -9,34 +10,10 @@
                 <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="productId" label="产品(主产出)" i18n-en:label="Product (Main Output)"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
-                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="completedQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="scrappedQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="businessDate" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="completedQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="scrappedQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="businessDate" mandatory="true" sortable="true" align="center"></col>
                 <col id="docStatus" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

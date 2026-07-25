@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpPrjProject.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -12,35 +13,11 @@
                 <col id="customerId" label="客户" i18n-en:label="Customer"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="managerId" label="项目经理" i18n-en:label="Project Manager"/>
-                <col id="startDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="endDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="startDate" sortable="true" align="center"></col>
+                <col id="endDate" sortable="true" align="center"></col>
                 <col id="budget" sortable="true"/>
-                <col id="actualCost" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="billedAmount" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="actualCost" sortable="true" align="right" domain="amount"></col>
+                <col id="billedAmount" sortable="true" align="right" domain="amount"></col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[
@@ -87,20 +64,8 @@
                         ]]></c:script>
                     </gen-control>
                 </col>
-                <col id="startDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="endDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="startDate" sortable="true" align="center"></col>
+                <col id="endDate" sortable="true" align="center"></col>
             </cols>
         </grid>
     </grids>

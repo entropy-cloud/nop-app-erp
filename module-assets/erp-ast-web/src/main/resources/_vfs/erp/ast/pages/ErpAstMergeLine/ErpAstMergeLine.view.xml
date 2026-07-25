@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpAstMergeLine.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -10,27 +11,9 @@
                 <col id="lineNo" ui:number="true" sortable="true"/>
                 <col id="sourceAsset" label="源资产编码" i18n-en:label="Source Asset Code"/>
                 <col id="contributionProportion" sortable="true"/>
-                <col id="originalCostAmount" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="accumulatedDepreciationAmount" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="netBookValue" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="originalCostAmount" sortable="true" align="right" domain="amount"></col>
+                <col id="accumulatedDepreciationAmount" sortable="true" align="right" domain="amount"></col>
+                <col id="netBookValue" sortable="true" align="right" domain="amount"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>

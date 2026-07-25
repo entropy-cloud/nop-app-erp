@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgMaterialIssueLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -8,34 +9,10 @@
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="materialId" label="物料名称" i18n-en:label="Material Name"/>
-                <col id="requiredQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="issuedQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="unitCost" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="totalCost" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="requiredQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="issuedQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="unitCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <col id="totalCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="batchNo" sortable="true"/>
                 <col id="remark" sortable="true"/>
             </cols>

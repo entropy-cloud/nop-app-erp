@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpAstDepreciationSchedule.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -9,27 +10,9 @@
                 <col id="asset" label="资产编码" i18n-en:label="Asset Code"/>
                 <col id="orgId" label="所属组织" i18n-en:label="Owning Org"/>
                 <col id="period" sortable="true"/>
-                <col id="plannedAmount" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="actualAmount" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="netBookValue" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 2 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="plannedAmount" sortable="true" align="right" domain="amount"></col>
+                <col id="actualAmount" sortable="true" align="right" domain="amount"></col>
+                <col id="netBookValue" sortable="true" align="right" domain="amount"></col>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
                 <col id="status" mandatory="true" sortable="true"/>
                 <col id="posted" sortable="true"/>

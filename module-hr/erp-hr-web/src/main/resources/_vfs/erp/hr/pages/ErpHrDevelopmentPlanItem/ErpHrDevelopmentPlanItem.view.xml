@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpHrDevelopmentPlanItem.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -12,20 +13,8 @@
                 <col id="targetLevel" mandatory="true" ui:number="true" sortable="true"/>
                 <col id="developmentAction" sortable="true"/>
                 <col id="mentor" label="导师" i18n-en:label="Mentor"/>
-                <col id="startDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="endDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="startDate" sortable="true" align="center"></col>
+                <col id="endDate" sortable="true" align="center"></col>
                 <col id="status" mandatory="true" sortable="true"/>
             </cols>
         </grid>
@@ -89,20 +78,8 @@
                 <col id="targetLevel" mandatory="true" ui:number="true"/>
                 <col id="developmentAction"/>
                 <col id="mentorId"/>
-                <col id="startDate">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="endDate">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="startDate"></col>
+                <col id="endDate"></col>
                 <col id="status" mandatory="true"/>
                 <col id="progressNote"/>
             </cols>

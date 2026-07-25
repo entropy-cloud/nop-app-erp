@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpFinPostingException.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -13,13 +14,7 @@
                 <col id="errorCode" mandatory="true" sortable="true"/>
                 <col id="errorMessage" sortable="true"/>
                 <col id="failedStage" sortable="true"/>
-                <col id="voucherDate" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'date', format: 'YYYY-MM-DD' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="voucherDate" sortable="true" align="center"></col>
                 <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
                 <col id="acctSchema" label="账套" i18n-en:label="Accounting Set"/>
                 <col id="status" mandatory="true" sortable="true">
@@ -39,13 +34,7 @@
                 </col>
                 <col id="voucher" label="凭证号" i18n-en:label="Voucher No"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
-                <col id="occurrenceTime" mandatory="true" sortable="true" align="center">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'datetime', format: 'YYYY-MM-DD HH:mm:ss' };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="occurrenceTime" mandatory="true" sortable="true" align="center"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>

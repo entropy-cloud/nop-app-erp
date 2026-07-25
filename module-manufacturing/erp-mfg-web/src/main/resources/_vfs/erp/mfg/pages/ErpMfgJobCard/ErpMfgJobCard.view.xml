@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpMfgJobCard.view.xml" x:schema="/nop/schema/xui/xview.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -9,27 +10,9 @@
                 <col id="workOrder" label="工单" i18n-en:label="Work Order"/>
                 <col id="workcenterId" label="工作中心" i18n-en:label="Work Center"/>
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="completedQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="scrappedQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="plannedQuantity" mandatory="true" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="completedQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="scrappedQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
                 <col id="status" mandatory="true" sortable="true">
                     <gen-control>
                         <c:script><![CDATA[

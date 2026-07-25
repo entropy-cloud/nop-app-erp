@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <view xmlns:i18n-en="i18n-en" x:extends="_gen/_ErpAstInventoryLine.view.xml" x:schema="/nop/schema/xui/xview.xdef"
       xmlns:x="/nop/schema/xdsl.xdef">
+    <controlLib>/erp/xlib/control.xlib</controlLib>
 
     <grids>
         <grid id="list">
@@ -12,27 +13,9 @@
                 <col id="assetCodeSnapshot" sortable="true"/>
                 <col id="assetNameSnapshot" sortable="true"/>
                 <col id="categoryId" label="资产类别" i18n-en:label="Asset Category"/>
-                <col id="bookQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="actualQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="varianceQuantity" ui:number="true" sortable="true" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="bookQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="actualQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
+                <col id="varianceQuantity" ui:number="true" sortable="true" align="right" domain="quantity"></col>
                 <col id="disposition" sortable="true"/>
                 <col id="newAsset" label="新增资产编码" i18n-en:label="New Asset Code"/>
                 <col id="capitalization" label="资本化单编码" i18n-en:label="Capitalization Order Code"/>
@@ -209,48 +192,12 @@
                 <col id="lineNo" mandatory="true" ui:number="true"/>
                 <col id="assetId"/>
                 <col id="categoryId"/>
-                <col id="bookQuantity" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="actualQuantity" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="varianceQuantity" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="bookValue" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="assessedValue" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
-                <col id="varianceAmount" align="right">
-                    <gen-control>
-                        <c:script><![CDATA[
-                            return { type: 'number', kilometer: true, precision: 4 };
-                        ]]></c:script>
-                    </gen-control>
-                </col>
+                <col id="bookQuantity" align="right" domain="quantity"></col>
+                <col id="actualQuantity" align="right" domain="quantity"></col>
+                <col id="varianceQuantity" align="right" domain="quantity"></col>
+                <col id="bookValue" align="right" domain="quantity"></col>
+                <col id="assessedValue" align="right" domain="quantity"></col>
+                <col id="varianceAmount" align="right" domain="quantity"></col>
                 <col id="varianceType"/>
                 <col id="disposition"/>
                 <col id="remark"/>
