@@ -64,6 +64,12 @@ start_server() {
     -Derp-fin.budget-purchase-expense-subject-code=6601 \
     -Derp-fin.expense-budget-check-enabled=true \
     -Derp-fin.budget-expense-subject-code=6602 \
+    -Derp-fin.gl-mapping.org-dimension-enabled=true \
+    -Derp-fin.budget-commitment-enabled=true \
+    -Derp-fin.budget-commitment-subject-code=2202 \
+    -Derp-fin.budget-commitment-sales-subject-code=5001 \
+    -Derp-fin.intercompany-posting-enabled=true \
+    -Derp-fin.consolidation-elimination-enabled=true \
     -Derp-fin.period-end-exchange-rate=8.5 \
     -Derp-fin.credit-facility-default-interest-rate=0.05 \
     -Derp-fin.notes-fx-gain-loss-enabled=true \
@@ -74,6 +80,8 @@ start_server() {
     -Derp-b2b.asn-auto-create-receive=true \
     -Derp-log.webhook-signature-required=false \
     -Derp-log.path2-landed-cost-auto-create=true \
+    -Derp-mfg.simulation-enabled=true \
+    -Derp-drp.simulation-enabled=true \
     -jar "${JAR}" > "${LOG}" 2>&1 &
   echo "waiting for server on ${PORT}"
   for i in $(seq 1 90); do

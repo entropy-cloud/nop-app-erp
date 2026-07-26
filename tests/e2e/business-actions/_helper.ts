@@ -200,3 +200,56 @@ export async function deleteByFilter(
 export async function deleteById(page: Page, entityName: string, id: string | number): Promise<void> {
   await gqlFor(page).deleteById(entityName, id);
 }
+
+// ---------- 公司间配对 + 合并抵消反查原语（plan 2026-07-26-1407-1） ----------
+
+/**
+ * 按 (pairKey + periodId) 反查首条 `ErpFinIntercompanyMatch` 记录（带 selection）。
+ *
+ * `runMatching(periodId)` 按 billCode 作 pairKey 写入配对记录；spec 经唯一 pairKey 隔离反查
+ * 断言 status(MATCHED/DIFF) + matchedAmount/diffAmount 精确数值。
+ */
+export async function findIntercompanyMatchByPairKey<T = any>(
+  page: Page,
+  pairKey: string,
+  periodId: number,
+  selection: string,
+): Promise<T | null> {
+  return gqlFor(page).findFirst<T>(
+    'ErpFinIntercompanyMatch',
+    andFilter(eqFilter('pairKey', pairKey), eqFilter('periodId', periodId)),
+    selection,
+  );
+}
+
+/**
+ * 按 (periodId) 反查全部 `ErpFinConsolidationElimination` 候选（带 selection）。
+ *
+ * `generateEliminationCandidates(periodId)` 为每条 MATCHED 记录生成 AR_AP + REVENUE_COST 两类
+ * CANDIDATE（INVENTORY_PROFIT config-gated off）；spec 断言两类候选均存在。
+ */
+export async function findEliminationCandidates<T = any>(
+  page: Page,
+  periodId: number,
+  selection: string,
+): Promise<T[]> {
+  return gqlFor(page).findItems<T>(
+    'ErpFinConsolidationElimination',
+    eqFilter('periodId', periodId),
+    selection,
+  );
+}
+
+/**
+ * 按 candidateId 反查 `ErpFinConsolidationElimination.draftVoucherId`（经 __get 权威查库）。
+ *
+ * `postElimination(candidateId)` 生成 DRAFT 抵消凭证并回写 draftVoucherId + 翻转 status=DRAFT_VOUCHER；
+ * spec 据此反查凭证断言 docStatus=DRAFT。
+ */
+export async function findEliminationVoucherId(
+  page: Page,
+  candidateId: number,
+): Promise<number | null> {
+  const cand = await verifyState(page, 'ErpFinConsolidationElimination', candidateId, 'draftVoucherId');
+  return cand?.draftVoucherId != null ? Number(cand.draftVoucherId) : null;
+}
