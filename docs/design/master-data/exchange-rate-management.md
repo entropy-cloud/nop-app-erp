@@ -92,3 +92,14 @@ ErpMdExchangeRate（汇率日表）
 - 真实 provider 接入（exchangerate.host 公开 API / 銀企直连）：触发条件 — 业务客户接入需求。
 - OAuth2 流程实施：触发条件 — 接入 OAuth2 provider API（如銀企直连 OAuth2）。
 - 完整熔断状态机：触发条件 — 生产高可用需求 + 平台熔断能力评估。
+
+### 浏览器层验证（plan `2026-07-26-1407-3`）
+
+`refreshRatesFromApi` `@BizMutation` 经 GraphQL `/graphql` 全栈可达性由 `tests/e2e/business-actions/md-exchange-rate-api.action.spec.ts` 覆盖（收口「JUnit 单层验证但零浏览器层 E2E」缺口）：
+
+- **config-gate 启用**：webServer JVM args 全局启用 5 项 exchange-rate-api config（`enabled=true` + `provider=mock` + `key=test-key` + `rate-limit-rps=100` + `cache-ttl-secs=60`）；config 关闭路径守卫 `ERR_EXCHANGE_RATE_API_UNAVAILABLE` 经 JUnit `testConfigGatedDefaultDisabled` 已覆盖，浏览器层不重复（webServer 全局启用无法 per-spec toggle，对齐 simulation/intercompany config-gate 范式）。
+- **双层断言**：(1) `refreshRatesFromApi(baseCurrency:"USD")` 返回 List 选择集断言 Mock 确定性 rate 值（USD→CNY 7.20 / USD→EUR 0.92，rateType=MIDDLE）；(2) `ErpMdExchangeRate__findPage` 按 fromCurrencyId 反查持久化行，关联 `ErpMdCurrency.code` 断言 fromCurrency/toCurrency code + rate 字段。
+- **自包含 EUR setup**：种子 `erp_md_currency.csv` 仅含 CNY+USD，EUR 不在种子 → spec 经 `ErpMdCurrency__save` 自包含建 code="EUR" 币种（mock 按目标币种 code 匹配），使 refresh 写入 2 条汇率（USD→CNY + USD→EUR）；JPY 不在主数据 → 跳过（部分成功语义）。
+- **幂等重写覆盖**：第二次 `refreshRatesFromApi` 按 `(fromCurrencyId, toCurrencyId, validFrom)` upsert 重写同区间汇率行不累积（count 稳定 2→2，对齐 JUnit cache 复用语义）。
+- **MIDDLE/SPOT 隔离**：BizModel 写 `rateType="MIDDLE"`，种子 `erp_md_exchange_rate.csv` 用 `SPOT`（validFrom=2026-01-01）→ cleanup 按 `fromCurrencyId=USD AND rateType=MIDDLE` 过滤仅删本 spec 产物，不触碰种子 SPOT 行。
+- **已知限制（watch-only residual）**：rate limiting `RATE_LIMITED` 错误浏览器层不复现（webServer JVM 全局单实例 + 令牌桶限流为并发场景，浏览器层单 spec 串行难以稳定复现；JUnit `testRateLimitingTriggersError` 已覆盖）。
