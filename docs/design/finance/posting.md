@@ -548,6 +548,10 @@ VoucherBillR（业财回链）
 | `ERP_FIN_BUDGET_COMMITMENT_ALREADY_RELEASED` | 重复 release 守卫（原 COMMITMENT 凭证已红冲或不存在） |
 | `ERP_FIN_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED` | 启用承付但未配置承付科目编码 |
 
+### 浏览器层验证（plan 2026-07-26-0410-2）
+
+承付过账三接入点经 `tests/e2e/business-actions/fin-commitment-accounting.action.spec.ts` 全栈浏览器层覆盖（4 用例：#1 commit / #2 release-on-cancel / #3 release-on-invoice-approve / 采购 release hook 容错回归）。验证范式：(A) order-only setup 隔离 #3 专测 #1+#2（commit 单行 CREDIT 科目 + 红冲 dcDirection 不变/debit-credit 互换）；(B) full-chain `runP2pChain`/`runO2cChain` 验证 #3（invoice approve → 承付原凭证 isReversed=true + 红冲凭证存在）。helper 扩展 `findCommitmentVoucherIdByCode` 镜像 BUDGET 范式（按 `reversalOfVoucherId` 区分正向/红冲）。详见 [`budget.md §承付会计 §浏览器层验证`](budget.md#浏览器层验证plan-2026-07-26-0410-2)。
+
 ## 跨法人内部交易凭证（A3，plan 2026-07-22-1000-1）
 
 > A3 落地 [`multi-company.md §跨公司交易生命周期状态机`](../architecture/multi-company.md) 既定义的跨法人调拨凭证生成逻辑。跨法人调拨 `ErpInvTransferOrder.confirm` 后置经 finance SPI 生成配对内部销售/采购凭证；同法人保持现状（仅库存移动）。

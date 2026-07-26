@@ -347,6 +347,19 @@ release-on-invoice 反查路径（镜像采购 invoiceLine→receiveLine→recei
 | `ERP_FIN_BUDGET_COMMITMENT_ALREADY_RELEASED` | 重复 release 守卫（原 COMMITMENT 凭证已红冲或不存在） |
 | `ERP_FIN_BUDGET_CARRY_FORWARD_RULE_INVALID` | rule 字典值校验失败 / 跨 orgId + acctSchemaId + currencyId |
 
+### 浏览器层验证（plan 2026-07-26-0410-2）
+
+承付会计三接入点经 `tests/e2e/business-actions/fin-commitment-accounting.action.spec.ts` 全栈浏览器层覆盖（4 用例 + helper 扩展）：
+
+- **helper 镜像 BUDGET 范式**：`findCommitmentVoucherIdByCode(page, billCode, reversal)`（`tests/e2e/orchestration/_helper.ts`）镜像既有 `findBudgetVoucherIdByCode:120`——按 `ErpFinVoucherBillR.billCode` 反查 + `postingType='COMMITMENT'` 过滤 + `reversalOfVoucherId` 区分正向（null）/红冲（非 null）。`assertVoucherLines` 共享原语复用。
+- **两组 setup 隔离接入点 #3 干扰**：
+  - (A) **order-only setup**：`__save` 建订单 + `submitForApproval` + `approve`，**不创建发票**——隔离发票审核释放，专测接入点 #1（commit）+ #2（release-on-cancel）。head `totalAmountWithTax` 必填（commit hook 读此字段，null/0 时 commit SPI early-return 不产凭证）。
+  - (B) **full-chain `runP2pChain`/`runO2cChain`**：链路末端发票 approve 触发接入点 #3 release——专测 #3 + 采购 release hook 容错回归（Phase 1 Fix）。helper 扩展 `cleanupP2p`/`cleanupO2c` 追加 `cleanupVoucherByBillCode(poCode/soCode)` 清理承付凭证回链（postingType-agnostic 已覆盖 COMMITMENT）。
+
+### release hook 容错对称性（plan 2026-07-26-0410-2 latent defect Fix）
+
+采购 `ErpPurOrderProcessor.runCommitmentReleaseHook` 原**无 try-catch**（与销售 `ErpSalOrderProcessor.runCommitmentReleaseHook:359-370` 不对称），承付已被接入点 #3（发票审核释放）红冲后，订单反审核/作废再次调 `release()` 抛 `ERR_BUDGET_COMMITMENT_ALREADY_RELEASED` 阻断业务流。Fix：补 try-catch（catch `NopException` + LOG.debug 静默跳过），镜像销售 hook 范式，恢复两域容错对称性。详见 `docs/bugs/2026-07-26-0410-pur-commitment-release-hook-tolerance-asymmetry.md`。
+
 ---
 
 ## 版本审计链（A2，plan 2026-07-21-1206-2）
