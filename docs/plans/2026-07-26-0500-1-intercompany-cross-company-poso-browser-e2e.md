@@ -166,7 +166,7 @@ Exit Criteria:
 - [x] 无范围内项目降级为 deferred/follow-up
 - [x] 独立草案审查已完成并记录
 - [x] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
 - [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
@@ -185,12 +185,20 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 跨公司 PO/SO Intercompany 配对凭证 + 红冲 + 同法人控制对照四组浏览器层 E2E 全绿（独立结束审计复跑 4 passed 29.8s）+ 后端代码逐行核实（IntercompanyVoucherGenerator 回退科目 1131/5001/1401/2202 + Decision C amount 直传 generator + resolveCounterpartyLegalEntity 仅按 fromOrgId/toOrgId/isActive 过滤 + 红冲 dcDirection 不变/debit-credit 互换 + Processor 钩子非阻塞 try-catch）+ owner docs（multi-company.md/e2e-runbook.md/posting.md）回链落地 + roadmap（README.md/deepening-roadmap.md）✅ done + 2 Deferred 项（发票级 + Receive/Delivery 联级）含后继触发条件非阻塞。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理填写>
-- Evidence: <待填写>
+- Auditor / Agent: 独立结束审计子代理（新会话 `ses_063857582ffe2k6VH2O7tCX0Ui`，无执行者上下文冷重播，2026-07-26）
+- Verdict: `pass`（0 Blocker / 0 Major / 0 Minor）
+- Evidence:
+  - 反空壳核实：`fin-intercompany-cross-company.action.spec.ts`（19,213 字节）4 个 `test(...)` 实质用例（L203 跨法人 PO 配对凭证 / L235 跨法人 SO 配对凭证 / L267 reverseApprove 红冲 / L312 同法人控制对照），均含 `assertVoucherLines`/`expect` 断言非桩；`_helper.ts:198-223` `findIntercompanyVoucherIdByBillCode` 按 `ErpFinVoucherBillR.billType` + `reversalOfVoucherId != null` 反查（L205-220）；`playwright.config.ts:18` webServer JVM arg `-Derp-fin.intercompany-posting-enabled=true` 逐字匹配。
+  - 后端代码逐行核实：`IntercompanyVoucherGenerator.java:46-49` 回退 1131/5001/1401/2202 + `:69-112` AR SALE（Dr 1131/Cr 5001）+ AP PURCHASE（Dr 1401/Cr 2202）；`:180-251` 红冲 `dcDirection` 不变（`:229`）+ debit↔credit 互换（`:230-231`）+ isReversed/reversalOfVoucherId 回链（`:212-213`）；`ErpFinIntercompanyTransferBizModel.java:149-150` amount 直传 generator（Decision C）+ `:174-192` resolveCounterpartyLegalEntity 仅按 toOrgId/fromOrgId + isActive 过滤；`ErpPurOrderProcessor.java:267-295` + `ErpSalOrderProcessor.java:304-327` 钩子非阻塞 try-catch。
+  - owner docs 回链：`multi-company.md:131` §跨公司 PO/SO 触发路径「浏览器层验证」注记 + 引本 plan；`e2e-runbook.md:57/121/325` webServer JVM arg + 套件计数 91→92 + 业务动作表 intercompany 行；`posting.md:555-595` 跨法人内部交易凭证段。
+  - roadmap ✅ done：`backlog/README.md:120` + `backlog/deepening-roadmap.md:460`。
+  - 验证复跑：`npx playwright test tests/e2e/business-actions/fin-intercompany-cross-company.action.spec.ts` → 4 passed 29.8s（独立复跑，匹配计划声称 30.0s）；4 用例名 ↔ 4 Goals 1:1 映射。
+  - Deferred 项：发票级 intercompany（L174-178）+ Receive/Delivery 联级（L180-184）均含 successor 触发条件非阻塞。
+  - 一致性：Phase 1/2/3 全 `[x]` + `Status: completed`；Goals/Non-Goals 匹配实建；Draft Review Record 2 轮（iteration 1 Major M1 已修订）齐备。
 
 Follow-up:
 
