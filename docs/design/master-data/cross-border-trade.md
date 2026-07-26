@@ -109,6 +109,20 @@ per-transaction 报关记录实体，每次报关独立记录报关单号、报�
 - **sourceBillType/sourceBillCode 校验**：BizModel.defaultPrepareSave 校验二者之一非空（业务回链必填）；
 - **partnerId 报关行校验**：BizModel.defaultPrepareSave 校验 partnerId 引用的 Partner 类型必须为 `CUSTOMS_BROKER`（非此类型抛 `ERP_MD_PARTNER_NOT_CUSTOMS_BROKER`）。
 
+### 浏览器层验证（plan 2026-07-26-1500-1）
+
+3 保存校验钩子（`enforceDeclarationNoUnique` / `enforcePartnerIsCustomsBroker` / `enforceSourceBillPresent`，经 `defaultPrepareSave`/`defaultPrepareUpdate` → `validateOnPersist` 统一触发）已补 Playwright 浏览器层 E2E 全栈验证（`tests/e2e/business-actions/md-material-customs-validation.action.spec.ts` 5 用例全绿），收口「JUnit 单层验证但零浏览器层 E2E」缺口（镜像 §8.6 C3 / §8.4 A2 范式）：
+
+- **写路径触发**：经 GraphQL `__save`/`__update` mutation 走 CrudBizModel `EntityData` 管道触发 `defaultPrepareSave`/`defaultPrepareUpdate` 钩子（对齐 `master-data.write.spec.ts` 写路径范式 + 0500-3 sales 日期范围校验同型先例；`updateEntity` 内部调用不触发钩子，对齐 C3 关键发现）。
+- **3 守卫 + 1 正路径 + `__update` 自身排除断言范式**：
+  - (1) 正路径合法 `__save`（declarationNo 唯一 + partnerId=CUSTOMS_BROKER partner + sourceBillType 非空）→ `data` 非空 + `__get` 反查持久化 declarationNo/partnerId/sourceBillType；
+  - (2) declarationNo 重复 → 拒绝（errors message 含「报关单号」token）；
+  - (3) partnerType 非 CUSTOMS_BROKER（种子 CUSTOMER）→ 拒绝（含「报关行」token）；
+  - (4) sourceBillType/sourceBillCode 均空 → 拒绝（含「业务单据」token，**非**「来源单据」——ErrorCode description 实测唯一稳定 token）；
+  - (5) `__update` 修改 remark（保持 declarationNo 不变）→ `enforceDeclarationNoUnique` 经 `entity.getId()` 排除自身通过（对齐 0500-3 `enforceMutex selfId` 范式）。
+- **自包含 setup**：种子 `erp_md_partner.csv` 0 CUSTOMS_BROKER 行 → 每测试经 `ErpMdPartner__save` 建 CUSTOMS_BROKER partner（唯一 `E2E-MC-BROKER-` code 前缀隔离）；materialId 复用种子 MAT_1=1（零物料基线污染）。
+- **拒绝路径断言原语**：`saveRaw`（裸 `__save` mutation 直取 `{data,errors,json}`）绕过 `createViaSave` 内置 `expect(errors).toBeNull()` 成功断言；GraphQL error envelope 仅 surface `message`（无 errorCode extension 路径），断言范式 `expect(JSON.stringify(errors)).toContain('<语义中文 token>')`。
+
 ## 4. 报关场景工作流
 
 ### 业务流程（语义描述，非状态机实施）
