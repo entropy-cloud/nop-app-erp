@@ -212,9 +212,22 @@ ErpPartyBizModel（service 模块，非实体 BizModel）
 | 测试类型 | 测试文件 | 场景数 | 状态 |
 |---------|---------|-------|------|
 | 单元测试 | `module-master-data/erp-md-service/src/test/java/app/erp/md/service/party/TestErpPartyBiz.java` | 8（含空数据集） | 全绿 |
-| Visual smoke | `tests/e2e/visual/party-search-picker.visual.spec.ts` | 3（findParties + getParty + findReferences wiring） | 全绿（需运行时 + app-erp-all server） |
+| Visual smoke | `tests/e2e/visual/party-search-picker.visual.spec.ts` | 3（findParties + getParty + findReferences wiring） | 2/3 绿（用例 3 因平台 GraphQL schema 演进为预存漂移——见 §6.6 已知问题） |
+| **浏览器层 E2E（plan 2026-07-26-1500-2）** | `tests/e2e/business-actions/md-party-query.action.spec.ts` | 6（findParties 多场景 + getParty + findReferences） | 全绿 |
 | md-service 全量回归 | `mvn test -pl module-master-data/erp-md-service` | 60 | 全绿 |
 | 工作空间全量构建 | `mvn clean install -DskipTests` | 154 模块 | BUILD SUCCESS |
+
+### 6.6 浏览器层验证（plan 2026-07-26-1500-2）
+
+**实现注记**：3 个 `@BizQuery`（`findParties`/`getParty`/`findReferences`）经 Playwright 浏览器层全栈 E2E 验证（`tests/e2e/business-actions/md-party-query.action.spec.ts`，6 用例覆盖）：
+
+- **findParties**（4 用例）：keyword 命中跨 PARTNER/EMPLOYEE/ORGANIZATION 三实体（经自包含 setup + 独占 keyword 隔离断言，非种子中文 name）+ 字段投影（partyType/code/name/status）+ partyTypes 过滤（仅 EMPLOYEE 排除 PARTNER/ORGANIZATION）+ keyword < 2 字符返回空 List（MIN_KEYWORD_LENGTH 守卫）+ limit 截断（三 setup 实体命中但 limit:2 截断 ≤2 可观测）
+- **getParty**（1 用例）：三类型单条加载 + ORGANIZATION phone/email=null 容忍（实体无对应列，BizModel 显式 setNull，对齐 §2.1 字段对齐表）
+- **findReferences**（1 用例）：Map 结构可达，断言 JSON 对象形态 + 非 null，不硬断言计数值（SPI 注册依赖运行时——PARTNER 经 `IErpMdPartnerReferenceChecker`，EMPLOYEE/ORGANIZATION SPI 注册状态运行时决定）
+
+**Setup 策略**：自包含默认（对齐 `2026-07-26-1407-3-exchange-rate-api-client-browser-e2e.md` Decision 3）——经 `__save` 建测试专用 partner（`E2E-PARTY-PN-{ts}`）+ employee（`E2E-PARTY-EMP-{ts}`）+ organization（`E2E-PARTY-ORG-{ts}`），三实体 name 共享独占 keyword `E2E-PARTY-KEY-{ts}`。断言针对自包含实体字段投影值，避免未来种子中文 name 编辑静默破坏字段投影断言无测试侧信号。Cleanup 按反依赖链 __delete（employee → partner FK 引用 + organization 独立）。
+
+**已知问题（pre-existing schema 漂移）**：`party-search-picker.visual.spec.ts` 用例 3「findReferences returns empty map for unregistered SPI」现失败——Nop GraphQL schema 对 `Map<String,Long>` 返回类型的序列化已改为 JSON 对象（实测 `{"employeeAdvance":0}` / `{}` 形态），不再支持 `{ k v }` selection set（错误："[Map]不是对象类型，不支持字段选择"）。本 spec 据实测调整为无 selection set 形式。Visual spec 修复（删除 `{ k v }` selection）归入后续平台 schema 同步任务（本计划范围外，本 spec 已用正确形态覆盖 findReferences 路径）。
 
 ## 7. 性能与扩展
 
