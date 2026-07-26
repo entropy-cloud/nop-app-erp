@@ -128,6 +128,8 @@
 
 **钩子范式**：非阻塞 try-catch（对齐 inventory confirm L45-58）；config-gated 关闭或同法人或无定价规则时 SPI 返回空列表，既有行为完全不变。
 
+**浏览器层验证**（plan 2026-07-26-0500-1）：跨法人 PO/SO 配对凭证 + 红冲 + 同法人控制对照经 Playwright 浏览器层 E2E 全栈验证（`tests/e2e/business-actions/fin-intercompany-cross-company.action.spec.ts`，4 用例，config-gated `erp-fin.intercompany-posting-enabled=true` 经 `playwright.config.ts` webServer JVM arg 启用）。**自包含跨法人 setup 范式**：因种子仅 1 个 COMPANY 法人根（org 2 ERP-CO）且 `runP2pChain`/`runO2cChain` 固定 orgId=2（同法人 skip 无凭证），spec 经 `ErpMdOrganization__save` 建测试专用跨法人组织对（2 COMPANY 法人根 + 2 DEPARTMENT 子公司，使 `resolveLegalEntityRoot` walk-up 产出不同法人）+ `ErpFinIntercompanyTransferPrice`（fromOrgId/toOrgId/isActive 编码对手方关系）+ PO/SO 订单挂子公司 orgId。**配对凭证反查**：intercompany 凭证无独立 postingType（voucherType=TRANSFER，postingType 未设），且同 orderCode 可能含 COMMITMENT 凭证（config 启用时），故 helper `findIntercompanyVoucherIdByBillCode` 按 `ErpFinVoucherBillR.billType`（INTERCOMPANY_SALE/INTERCOMPANY_PURCHASE）+ `reversalOfVoucherId`（原=null/红冲=非空）反查（区别于 BUDGET/COMMITMENT 按 postingType）。**同法人控制对照**：种子 ERP-CO（无转移定价规则）PO/SO approve → `resolveCounterpartyLegalEntity` 返回 null → skip 零凭证，显式断言无 INTERCOMPANY 凭证。
+
 ### Phase 1 决策记录（plan 2026-07-24-1351-2）
 
 **Decision A — SPI 泛化策略**：选择候选 (a) — 在既有 `IErpFinIntercompanyTransferBiz` 新增 2 个 trade-document 方法（`onTradeDocumentApproved` + `onTradeDocumentReversed`），保持 `onTransferConfirmed` 库存视角不变。理由：向后兼容（零触及既有 inventory 路径），最小接口面。替代方案 (b) 抽象统一入参 DTO 被否决（2 种调用形态不需要统一 DTO 抽象，徒增间接层）。残留风险：SPI 方法数从 1→3，但各方法语义正交（库存视角 vs 订单视角 vs 红冲），可读性可接受。

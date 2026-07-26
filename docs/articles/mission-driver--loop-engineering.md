@@ -1,4 +1,4 @@
-# Mission Driver：Loop Engineering 的参考实现
+# Mission Driver：Loop Engineering 的一种通用参考实现
 
 > 一个通用的 AI 任务驱动引擎如何通过 loop 嵌套实现局部容错和稳定保障。
 
@@ -28,15 +28,15 @@ Mission Driver 是一个声明式的任务驱动引擎。你给它一个目标�
 
 循环一直跑，直到目标达成或审计预算耗尽。每一步都是独立的 AI 子进程或者脚本函数，单个步骤失败不会影响整体循环。
 
-它是吸引子引导工程（Attractor-Guided Engineering）的一个组成部分，不仅仅可以用于软件开发设计。通过配置自定义 flow、prompt 和 commands，它可以很自然地推广到数据处理、文档分析等场景，是一种通用的AI全自主运行机制。
+它是吸引子引导工程（Attractor-Guided Engineering）的一个组成部分（开源地址参见文末），不仅仅可以用于软件开发设计。通过配置自定义 flow、prompt 和 commands，它可以很自然地推广到数据处理、文档分析等场景，是一种通用的AI全自主运行机制。
 
 它适合需要长时间运行、有明确验收标准、需要多步迭代的复杂任务。
 
-Loop Engineering 是 AI 工程领域正在快速形成的一种设计方法论——用循环结构替代线性提示，让 AI 系统自主运行直到目标达成。它不是某个工具的专属特性，而是一种可以独立于具体工具来设计的工程模式。Mission Driver 就是 Loop Engineering 的一种参考实现。
+Loop Engineering 是 AI 工程领域正在快速形成的一种设计方法论——用循环结构替代线性提示，让 AI 系统自主运行直到目标达成。它不是某个工具的专属特性，而是一种可以独立于具体工具来设计的工程模式。Mission Driver 就是 Loop Engineering 的一种通用参考实现。
 
 ## 三、怎么运作：Loop 嵌套与局部容错
 
-如果把 Vibe Coding 看作是一种无限长的单一 Loop，Mission Driver 的核心就是分解为多层Loop的嵌套——Mission Driver 的主循环（五步闭环）在外层，内层嵌入了 Plan Loop（EXEC_PLANS 子流中的执行→检查→审计→验证闭环）和可选的 Audit Loop（DEEP_AUDIT 子流中的多维审计闭环）。理解了这个嵌套结构，就理解了它为什么能长时间稳定运行。
+如果把 Vibe Coding 看作是一种无限长的单一 Loop，Mission Driver 的核心就是将这个单一Loop分解为多层Loop的嵌套——Mission Driver 的主循环（五步闭环）在外层，内层嵌入了 Plan Loop（EXEC_PLANS 子流中的执行→检查→审计→验证闭环）和可选的 Audit Loop（DEEP_AUDIT 子流中的多维审计闭环）。理解了这个嵌套结构，就理解了它为什么能长时间稳定运行。
 
 ![mission-driver-loop](images/mission-driver-loop.png)
 
@@ -52,7 +52,7 @@ EXEC_PLANS:
   └── plan-003: EXECUTE ✓ → CHECK ✓ → BUILD ✓ → completed ✓
 ```
 
-plan-002 的执行阻塞完全没有影响 plan-001 和 plan-003。阻塞被限制在子流内部，不传播到兄弟子流或父循环。这就是 loop 嵌套带来的局部容错。
+plan-002 的执行阻塞完全没有影响 plan-001 和 plan-003。阻塞被限制在子流程内部，不传播到兄弟子流程或父循环。这就是 loop 嵌套带来的局部容错。
 
 > Plan 执行时，AI 根据实际情况决定：局部阻塞的项移入 `Deferred But Adjudicated` 并记录 successor 触发条件，其余范围正常完成；如果整个 plan 方向被证伪，则标记为 `superseded` 或 `cancelled`。plan 的 `.md` 文件状态始终由 AI agent 管理。
 
@@ -63,7 +63,7 @@ plan-002 的执行阻塞完全没有影响 plan-001 和 plan-003。阻塞被限�
 
 ## 四、快速上手
 
-> Mission Driver 的启动脚本路径在 AGE Template 原始项目中位于 tools/mission-driver.sh。使用前确认脚本位置和 MISSION_DRIVER_HOME 环境变量。
+> Mission Driver 的源码工程在 AGE Template项目中，一般我们会在自己的项目中增加tools/mission-driver.sh脚本来代理调用Mission Driver，然后通过MISSION_DRIVER_HOME 环境变量来指向Mission Driver的源码目录。
 
 **起步流程**：
 
@@ -88,11 +88,16 @@ node $MISSION_DRIVER_HOME/src/mission-check.mjs missions/<name>.json .
 
 **监控**：
 
+Mission Driver内置了一个可视化的监控页面
+
+![misson-driver-monitor](images/mission-driver-monitor.png)
+
 ```bash
 open http://localhost:9300              # 浏览器看板
 cat _tmp/<runDir>/run-state.json        # 读状态
 tail -f _tmp/<runDir>/<mission>.log     # 追日志
 ```
+
 
 **中断和恢复**：
 
@@ -119,7 +124,7 @@ Postmortem 扫描所有事件和日志，运行复盘 agent，将结构化报告
 
 ## 五、四层定义体系
 
-Mission Driver 由四层定义组成，通过配置而非编程使用。
+Mission Driver 由四层定义组成，通过配置而非编程来使用。
 
 ### 5.1 Mission Config（missions/\<name\>.json）
 
@@ -176,7 +181,7 @@ commands.test 是必需字段，CHECK 和 BUILD_VERIFY 都会运行它。build/l
 - **控制流**：`transitions` 定义步骤间的跳转（`goto`/`done`/`retry`）；`forEach` 遍历集合为每个元素启动子流；`when`/`otherwise` 条件跳过
 - **错误处理**：每步可配 `maxRetries`、`onMaxRetries`、`onError`、`onUnknown`；引擎还提供全局死循环检测（ping_pong + max_cycles + max_total_steps）
 
-**随引擎内置的默认 flow**（`flows/mission-driver.json`）就是文章一直在讲的那个循环。它的实际结构是：CHECK **仅入口运行一次**，然后进入 REVIEW_PLANS → EXEC_PLANS → DRAFT_PLANS 的循环体；当 DRAFT_PLANS 无新方案可起草时进入 DEEP_AUDIT，之后回到循环体。它不是硬编码，只是一个**缺省配置**。EXEC_PLANS 和 DEEP_AUDIT 本身也是子流（`plan-execution.json` / `deep-audit-loop.json`），可单独替换。
+**随引擎内置的默认 flow**（`flows/mission-driver.json`）就是文章一直在讲的那个循环。它的实际结构是：CHECK **仅入口运行一次**，然后进入 REVIEW_PLANS → EXEC_PLANS → DRAFT_PLANS 的循环体；当 DRAFT_PLANS 无新方案可起草时进入 DEEP_AUDIT，之后回到循环体。它不是硬编码，只是一个**缺省配置**。EXEC_PLANS 和 DEEP_AUDIT 本身也是子流程（`plan-execution.json` / `deep-audit-loop.json`），可单独替换。
 
 这意味着**可以设计全新的流程**——例如一个代码审查工作流，不需要 Plan 编排，可以直接写一个四步流程：FETCH_PR → RUN_LINT → AI_REVIEW → POST_COMMENT。在 `missions/flows/` 目录中存放自定义 flow.json，同时在 mission.json 中设置 `"flowName": "<custom>"` 即可，引擎不变。
 
@@ -221,11 +226,11 @@ Exit Criteria:
 
 顶部三行状态标记、Goals + Non-Goals（防止 scope drift）、每个 Phase 有 Status + checkbox + Exit Criteria、Closure Gates 是 plan 级关门检查。Checkbox 是机器可读的持久化状态，引擎通过扫描 checkbox 从断点恢复。标记 completed 前所有 checkbox 必须勾选。
 
-**在 AGE 实践中，一般情况下人是不阅读 Plan 的，完全依赖AI自主创建和更新**。
+**在 AGE 实践中，一般情况下人不需要阅读 Plan，完全依赖AI自主创建和更新**。
 
 ### 5.4 Roadmap
 
-roadmap是人类可阅读、可控制的宏观规划。按 `docs/backlog/00-roadmap-authoring-guide.md` 规范，工作项按里程碑分组，只携带 `todo`/`ready`/`done` 三种状态，里程碑本身不带状态：
+Roadmap是人类可阅读、可控制的宏观规划。按 `docs/backlog/00-roadmap-authoring-guide.md` 规范，工作项按里程碑分组，只携带 `todo`/`ready`/`done` 三种状态，里程碑本身不带状态：
 
 ```markdown
 # Core Business Roadmap
@@ -260,7 +265,7 @@ DRAFT_PLANS 启动 AI agent：完整读取 roadmap + 历史 plan 中的 deferred
 
 ## 六、配置与定制
 
-Mission Driver 引擎是完全通用的，定制可以通过配置和 prompt 覆盖来完成，完全不需要修改代码。一般情况下，在自己的项目中只需要增加一个mission-driver.sh，它通过相对路径调用AGE模板项目中的 Mission Driver 实现即可。
+Mission Driver 引擎是完全通用的，定制可以通过配置和 prompt 覆盖来完成，完全不需要修改代码。一般情况下，在自己的项目中只需要增加一个mission-driver.sh，它通过环境变量配置的路径调用AGE模板项目中的 Mission Driver 实现即可。
 
 | 定制层 | 机制 | 示例 |
 |--------|------|------|
@@ -285,11 +290,13 @@ Mission Driver 引擎是完全通用的，定制可以通过配置和 prompt 覆
 
 内置的 CHECK→REVIEW→EXEC→DRAFT→AUDIT 适用于软件开发类的大部分场景。但对于数据处理、文档分析等任务，完全可以用不同的 flow 来适配——引擎不变，换一个 flow 文件即可。
 
+以上定制方式充分体现了可逆计算理论中Delta差量定制的思想，是非侵入式定制的一种具体实现。Delta定制的详细介绍参见[《如何在不修改基础产品源码的情况下实现定制化开发》](https://mp.weixin.qq.com/s/JopDTYBIw0_Pmp0ZsTuMpA)
+
 # 第三部分：实践方法
 
 ## 七、循环即智能
 
-Mission Driver 的有效性并不仅仅来自于单次 AI 调用的质量，而更主要的是来自于循环反馈改进。每一轮执行产生的反馈（测试结果、审计发现、人工纠正）应该被记录下来，用于改进下一轮。
+Mission Driver 的有效性并不仅仅来自于单次 AI 调用的质量，更主要的是来自于循环反馈改进。每一轮执行产生的反馈（测试结果、审计发现、人工纠正）应该被记录下来，用于改进下一轮。
 
 AGE采用两条改进轨道并行运行：
 
@@ -310,14 +317,14 @@ nop-app-erp 项目积累了 19 个可复用 skill，全部来自这种循环改�
 
 ## 八、E2E 测试的 AI 自动生成
 
-E2E 测试的手工编写和维护成本非常高，此前很少有团队能长期大范围的维护。现在则可以让 AI 自动生成。关键是降低难度：封装 PageObject 模式，提供 `getFieldValue(containerLocator, fieldName)` 等简化操作，让 AI 不需要每个页面都重复处理复杂的 DOM 选择器。
+E2E 测试的手工编写和维护成本非常高，此前很少有团队能长期大范围的维护。现在则可以让 AI 自动生成。关键是降低难度：封装 PageObject 模式，提供 `getFieldValue(containerLocator, fieldName)` 等简化操作，让 AI 不需要对每个页面都重复处理复杂的 DOM 选择器。
 
-例如，在 Nop 平台的 AMIS 页面中，每个字段都有 `nop-name` 属性作为稳定的业务标识。AI 只需以业务名称查找字段：
+例如，在 Nop 平台的 AMIS 页面中，每个字段都通过 view.xml 的 `<cell id="customerName">` 定义了稳定的业务标识，它会被渲染为 AMIS 组件的 `name` 属性。AI 只需以业务名称查找字段：
 
 ```
 # AI 关注"取客户名称"这个意图，而非 DOM 路径
 value = getFieldValue(page, "customerName")
-# 封装层内部解析 nop-name 属性，定位到正确输入框
+# 封装层内部按 name 属性定位到对应 AMIS 组件的输入元素
 ```
 
 这种封装让 AI 生成的测试脚本更稳定——页面布局调整时，只需更新 PageObject 封装层，已有的测试用例无需逐条修改。
@@ -483,7 +490,7 @@ plans 目录可以看作是文件系统上的共享队列，多个贡献者可�
 | 任务粒度 | 每 thread 至多 1 个 goal（单一目标 + token 预算） | 多 plan 共存管理：plans/ 可同时有多个 active plan，引擎顺序执行 |
 | 异步交互 | 可 pause/resume 同一线程，但无法异步注入新任务 | 随时往 plans/ 塞 plan，下轮自动拾取                     |
 | 失败隔离 | 单 goal 内失败污染 context window | 子流隔离：一个 plan 失败不影响其他                         |
-| 终止保障 | token 预算 + blocked 检测（模型自报需 3 轮，或系统强制） | 多层防线（重试预算、死循环检测、看门狗等），全部外部强制                 |
+| 终止保障 | token 预算 + blocked 检测（模型自报需 3 轮；自报后 deferred 表防续跑） | 多层防线（重试预算、死循环检测、看门狗等），全部外部强制                 |
 | 信息可见性 | SQLite + JSONL 需工具解析；运行时状态内存不可见 | 所有状态是文件，人和AI均可读                              |
 
 # 第六部分：愿景

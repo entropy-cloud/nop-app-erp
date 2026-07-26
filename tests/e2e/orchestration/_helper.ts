@@ -178,6 +178,51 @@ export async function findCommitmentVoucherIdByCode(
 }
 
 /**
+ * 经 ErpFinVoucherBillR(billCode + billType) 反查 **INTERCOMPANY 跨法人配对凭证** id，
+ * 按 reversalOfVoucherId 区分正向/红冲（plan 2026-07-26-0500-1）。
+ *
+ * 与 BUDGET/COMMITMENT 影子凭证不同，intercompany 凭证 **无独立 postingType**
+ * （`IntercompanyVoucherGenerator.writeIntercompanyVoucher` 未设 postingType → null，
+ * voucherType=TRANSFER），故不能按 postingType 过滤。本原语改为按 `billType`
+ * （INTERCOMPANY_SALE / INTERCOMPANY_PURCHASE）反查——同一 orderCode 可能同时含
+ * COMMITMENT 凭证（billType=PURCHASE_ORDER_COMMITMENT/SALES_ORDER_COMMITMENT，
+ * config `budget-commitment-enabled` 启用时由 commit hook 生成），须按 billType 区分。
+ *
+ * 正向与红冲凭证同 billType + 同 billCode（`writeIntercompanyReversalFromLines:243-248`
+ * 红冲凭证业财回链 billCode=findOriginalIntercompanyBillCode=orderCode），唯一区分项是
+ * `reversalOfVoucherId`（正向 null / 红冲非 null，`IntercompanyVoucherGenerator:212-213`）。
+ *
+ * @param billType `'INTERCOMPANY_SALE'`（AR 侧，seller）或 `'INTERCOMPANY_PURCHASE'`（AP 侧，buyer）
+ * @param reversal false=正向配对凭证（reversalOfVoucherId IS NULL）；true=红冲凭证（IS NOT NULL）
+ */
+export async function findIntercompanyVoucherIdByBillCode(
+  page: Page,
+  billCode: string,
+  billType: 'INTERCOMPANY_SALE' | 'INTERCOMPANY_PURCHASE',
+  reversal: boolean,
+): Promise<number | null> {
+  if (!billCode) return null;
+  const links = await findItems<any>(
+    page, 'ErpFinVoucherBillR',
+    andFilter(eqFilter('billCode', billCode), eqFilter('billType', billType)),
+    'voucherId',
+  );
+  for (const lnk of links) {
+    const v = await findFirst<any>(
+      page, 'ErpFinVoucher',
+      eqFilter('id', Number(lnk.voucherId)),
+      'id postingType reversalOfVoucherId',
+    );
+    if (!v) continue;
+    const isReversal = v.reversalOfVoucherId != null;
+    if (isReversal === reversal) {
+      return Number(v.id);
+    }
+  }
+  return null;
+}
+
+/**
  * 断言凭证行精确数值：按 voucherId 查 ErpFinVoucherLine，逐行匹配期望 subjectCode + dcDirection + 借贷金额。
  *
  * 匹配语义：同一凭证内每科目码至多一行（Provider 结构派生），按 subjectCode 唯一匹配。
