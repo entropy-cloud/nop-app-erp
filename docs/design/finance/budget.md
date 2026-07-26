@@ -183,6 +183,10 @@ finance 域「预算管理」分组:预算方案、预算明细、预算控制�
 | `erp-fin.budget-rollforward-default-strategy` | FIXED_PERCENTAGE | 缺省策略 |
 | `erp-fin.budget-rollforward-incremental-rate` | 0.05 | INCREMENTAL 增长率 |
 
+### 浏览器层验证（A2，plan 2026-07-26-1407-2）
+
+`rollForward` 三策略经 Playwright E2E 全栈验证（`fin-budget-rollforward-carryforward.action.spec.ts`，config-gate `erp-fin.budget-roll-forward-enabled=true` 经 `playwright.config.ts` webServer JVM arg 启用）。**自包含 setup**：经 GraphQL `ErpMdSubject__save`（唯一 code EXPENSE/DEBIT 隔离）+ `ErpFinAccountingPeriod__save`（source/target 年度两 OPEN 期间，同 month 使 `remapPeriodId` 命中）+ `ErpFinBudgetScenario__save` 直置 APPROVED（绕 submit/approve 状态机避免 BUDGET 影子凭证污染）+ `ErpFinBudgetLine__save`。三策略行金额确定性派生断言：FIXED_PERCENTAGE 1000→1000 / ZERO_BASED 1000→0 / INCREMENTAL 1000→1050（×(1+0.05)）；目标方案 fiscalYear/parentScenarioId/docStatus=DRAFT 经 `__get` 独立反查；RollforwardLog 写入经 `countBudgetRollforwardLogs >= 1` 断言。**voucher code precision 50 约束**：rollForward 目标方案 code = source.code + "-" + newFiscalYear，source code 用短前缀规避（同 1407-1 latent defect 范式）。
+
 ---
 
 ## 结转规则引擎（A2，plan 2026-07-21-1206-2）
@@ -232,6 +236,10 @@ finance 域「预算管理」分组:预算方案、预算明细、预算控制�
 ### commitment 与结转
 
 A2 默认 **commitment 不结转**（与 actualAmount 合并记录在源 Scenario 的余量计算中，结转后由源 Scenario 的 CLOSED 终态保留审计轨迹）。客户如有"未释放 commitment 一并结转至下年度"需求，归 successor（`commitment 一并结转` Deferred）。
+
+### 浏览器层验证（A2，plan 2026-07-26-1407-2）
+
+`carryForward` 四规则经 Playwright E2E 全栈验证（`fin-budget-rollforward-carryforward.action.spec.ts`，config-gate `erp-fin.budget-carry-forward-enabled=true` 经 `playwright.config.ts` webServer JVM arg 启用）。**自包含 setup**：经 GraphQL `ErpMdSubject__save`（唯一 code EXPENSE/DEBIT，使 actual 聚合按 subjectId 隔离仅命中本 spec actual voucher）+ `ErpFinAccountingPeriod__save`（单一 OPEN 期间）+ `ErpFinBudgetScenario__save` 直置源 APPROVED / 目标 DRAFT + `ErpFinBudgetLine__save`（budget 1000）；REMAINING_FULL/RATIO/USED_FULL 三规则另经 `ErpFinVoucher__save` 直置 actual 凭证（postingType=NORMAL + POSTED + isReversed=false，`aggregateActualForLine` 排除 BUDGET/COMMITMENT）+ `ErpFinVoucherLine__save`（debitAmount=actual 400，DEBIT 科目 actual=debit−credit）。四规则结转金额确定性派生断言：REMAINING_FULL 1000−400=600 / REMAINING_RATIO (1000−400)×0.5=300 / USED_FULL=400 / NONE=0（carriedAmount=0 不增补行）；源方案 docStatus=CLOSED + closedAt 经 `__get` 独立反查；CarryForwardLog 写入经 `countBudgetCarryForwardLogs >= 1` 断言（NONE 规则同样写 Log）。**voucher code precision 50 约束**：结转凭证 code = "CARRY-FORWARD-"+sourceCode+"-"+targetCode+"-"+uuid8，source/target code 用单字符短前缀规避（同 1407-1 latent defect 范式）。
 
 ---
 
