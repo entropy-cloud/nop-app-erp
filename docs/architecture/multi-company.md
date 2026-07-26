@@ -204,6 +204,8 @@
 
 **`checkDualSideConsistency(pairKey, periodId)`**：返回 `DualSideDiffReport`（复用 `DualSideDiffReport.DualSideDiffRow` 结构范式，对齐 plan `2026-07-12-0204-2` `checkDualSideConsistency`）。
 
+**浏览器层验证**（plan 2026-07-26-1407-1）：`runMatching` + `checkDualSideConsistency` + `generateEliminationCandidates` + `postElimination` 四入口经 Playwright 浏览器层 E2E 全栈验证（`tests/e2e/business-actions/fin-intercompany-matching-elimination.action.spec.ts`，5 用例，镜像 JUnit `TestErpFinIntercompanyMatchingAndElimination` 5 场景）。**自包含直置配对凭证 setup 范式**：经 `ErpFinAccountingPeriod__save` 建测试专用 OPEN 期间（unique code+ts 使 `runMatching(myPeriodId)` 仅扫描本 spec 凭证，零跨 spec 干扰）+ `ErpFinVoucher__save` 直置 SALE/PURCHASE 配对凭证（voucherType=TRANSFER/docStatus=POSTED）+ `ErpFinVoucherBillR__save` 挂 billType/billCode（配对键）。**MATCHED/DIFF 两态精确数值断言**：金额一致（sale=purchase=1000）→ status=MATCHED + matchedAmount=min(sale,purchase) + diffAmount=0；金额不一致（sale=1000/purchase=800）→ status=DIFF + matchedAmount=800 + diffAmount=200。**scalar-returning @BizMutation `gql.raw` 范式**：`runMatching`/`generateEliminationCandidates` 返回 int + `postElimination` 返回 Long，无 GraphQL 选择集，对齐 `finance-voucher-post`/`fin-credit-facility-interest` 既有范式；`checkDualSideConsistency` 返回 DualSideDiffReport 复杂对象须显式 selection set（对齐 `fin-reconciliation.checkDualSideConsistency`）。**config-gate**：`erp-fin.consolidation-elimination-enabled=true`（playwright.config.ts webServer JVM arg，默认 false）启用 `generateEliminationCandidates`/`postElimination` 入口；`runMatching`/`checkDualSideConsistency` 无 config gate 不受影响。
+
 ## 合并抵消范围（A3 EXPAND）
 
 ### Decision D — 合并抵消落地范围
@@ -228,6 +230,8 @@ CANDIDATE ──postElimination──► DRAFT_VOUCHER ──(人工过账)─�
 - **CANDIDATE**：`generateEliminationCandidates` 识别的待抵消候选
 - **DRAFT_VOUCHER**：`postElimination` 生成的草稿抵消分录凭证（`ErpFinVoucher` docStatus=DRAFT）
 - **POSTED**：人工审核过账后（既有凭证过账路径，本计划不重复实现）
+
+**浏览器层验证**（plan 2026-07-26-1407-1）：抵消候选识别 + 草稿凭证生成经 Playwright 浏览器层 E2E 全栈验证（同 §公司间自动配对算法 spec，第 (4)/(5) 用例）。**两类常态候选断言**：MATCHED 配对（sale=purchase=3000/2000）→ `generateEliminationCandidates` 产 AR_AP + REVENUE_COST 两类 CANDIDATE（INVENTORY_PROFIT config-gated 默认 off，Non-Goal），全部初始 status=CANDIDATE + eliminationAmount=matchedAmount。**DRAFT 凭证 + 状态翻转断言**：`postElimination(candidateId)` 生成 ErpFinVoucher（voucherType=TRANSFER + docStatus=DRAFT + totalDebit=totalCredit=amount）+ candidate.draftVoucherId 回写 + status 翻转 CANDIDATE→DRAFT_VOUCHER（经 `__get` 权威查库）。**业财回链 billCode**：`writeDraftEliminationVoucher` 写 ErpFinVoucherBillR.billType=CONSOLIDATION_ELIMINATION + billCode=candidate.code（cleanup 经此反查 DRAFT 凭证 + 凭证行）。
 
 ## 与 Posting + GL Mapping 关系（A3 EXPAND）
 
