@@ -68,6 +68,8 @@ start_server() {
     -Derp-fin.budget-commitment-enabled=true \
     -Derp-fin.budget-commitment-subject-code=2202 \
     -Derp-fin.budget-commitment-sales-subject-code=5001 \
+    -Derp-fin.budget-roll-forward-enabled=true \
+    -Derp-fin.budget-carry-forward-enabled=true \
     -Derp-fin.intercompany-posting-enabled=true \
     -Derp-fin.consolidation-elimination-enabled=true \
     -Derp-fin.period-end-exchange-rate=8.5 \

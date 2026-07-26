@@ -253,3 +253,71 @@ export async function findEliminationVoucherId(
   const cand = await verifyState(page, 'ErpFinConsolidationElimination', candidateId, 'draftVoucherId');
   return cand?.draftVoucherId != null ? Number(cand.draftVoucherId) : null;
 }
+
+// ---------- 预算滚动复制 + 结转反查原语（plan 2026-07-26-1407-2） ----------
+
+/**
+ * 按 code 反查首条 `ErpFinBudgetScenario`（带 selection）。
+ *
+ * `rollForward` 返回的目标方案 code=`source.code+"-"+newFiscalYear`，spec 据此反查目标方案 id
+ * 供 `verifyState(__get)` 独立断言字段翻转（fiscalYear/parentScenarioId/docStatus）。
+ */
+export async function findBudgetScenarioByCode<T = any>(
+  page: Page,
+  code: string,
+  selection: string,
+): Promise<T | null> {
+  return gqlFor(page).findFirst<T>('ErpFinBudgetScenario', eqFilter('code', code), selection);
+}
+
+/**
+ * 按 (scenarioId + subjectCode) 聚合 `ErpFinBudgetLine.budgetAmountFunctional` 之和。
+ *
+ * rollForward 复制行保留源 `subjectCode`；carryForward 增补行 `subjectCode="CARRY-FORWARD-"+source.code`。
+ * spec 据此断言新方案行金额确定性派生（FIXED_PERCENTAGE/ZERO_BASED/INCREMENTAL + 4 结转规则）。
+ * 金额经 Number() 归一（BigDecimal 确定性派生，无浮点误差）。
+ */
+export async function findBudgetLineAmount(
+  page: Page,
+  scenarioId: string | number,
+  subjectCode: string,
+): Promise<number> {
+  const lines = await gqlFor(page).findItems<{ budgetAmountFunctional: string | number }>(
+    'ErpFinBudgetLine',
+    andFilter(eqFilter('scenarioId', Number(scenarioId)), eqFilter('subjectCode', subjectCode)),
+    'budgetAmountFunctional',
+  );
+  return lines.reduce((sum, l) => sum + Number(l.budgetAmountFunctional ?? 0), 0);
+}
+
+/**
+ * 按 sourceScenarioId 反查 `ErpFinBudgetRollforwardLog` 计数。
+ *
+ * `rollForward` 写 RollforwardLog（sourceScenarioId + targetScenarioId + strategy + amounts）；
+ * spec 据此断言审计写入（count >= 1）。
+ */
+export async function countBudgetRollforwardLogs(
+  page: Page,
+  sourceScenarioId: string | number,
+): Promise<number> {
+  return gqlFor(page).findPageTotal(
+    'ErpFinBudgetRollforwardLog',
+    eqFilter('sourceScenarioId', Number(sourceScenarioId)),
+  );
+}
+
+/**
+ * 按 sourceScenarioId 反查 `ErpFinBudgetCarryForwardLog` 计数。
+ *
+ * `carryForward` 写 CarryForwardLog（sourceScenarioId + targetScenarioId + rule + amounts）；
+ * spec 据此断言审计写入（count >= 1）。
+ */
+export async function countBudgetCarryForwardLogs(
+  page: Page,
+  sourceScenarioId: string | number,
+): Promise<number> {
+  return gqlFor(page).findPageTotal(
+    'ErpFinBudgetCarryForwardLog',
+    eqFilter('sourceScenarioId', Number(sourceScenarioId)),
+  );
+}
