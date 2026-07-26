@@ -287,6 +287,7 @@ C3（Date-Ranged Validity Pattern）已落地，状态 `todo → done`：
   - 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
   - 下游依赖模块（purchase/sales/finance service）`mvn test` 全绿无回归
 - **Deferred successor**：全量实体应用（17 个 follow-up 实体清单见 owner doc §10，**sales 子集 3 实体 RELEASED by 2026-07-26-0315-1**）/ PRIORITY 策略运行时取值 helper（`pickHighestPriority`，触发：sales `ErpSalPriceList` 接入，**RELEASED by 2026-07-26-0315-1**）/ STACKABLE 策略叠加计算 helper（触发：sales `ErpSalPricingRule` 接入，**RELEASED by 2026-07-26-0315-1**）/ 物化视图/反向索引按日期查询（触发：单实体有效记录数 > 10K 且 effectiveOn 查询 P95 > 200ms）/ helper 下沉到独立 `erp-common-dao` 模块（触发：跨域接入数 > 3，aps 域当前不依赖 md-service；当前跨域接入数 = 1：sales）
+- **浏览器层验证**（plan 2026-07-26-0500-3，✅ done）：sales 定价 3 实体 C3 保存钩子经 GraphQL `__save`/`__update` 写路径 Playwright 浏览器层 E2E 全栈验证（`tests/e2e/business-actions/sal-date-range-validation.action.spec.ts` 4 用例全绿）：(1) `ErpSalPriceListLine` MUTEX 重叠拒绝（`ERR_SAL_PRICE_LIST_LINE_OVERLAP`，errors message 含「冲突」token）+ 相邻日通过；(2) `ErpSalPricingRule` STACKABLE 混合（双非 stackable 重叠拒绝 `ERR_SAL_PRICING_RULE_OVERLAP` + stackable=true 重叠通过，TIMESTAMP 区间经 `PricingRuleDateRange` 适配器截断）；(3) `ErpSalPriceList` PRIORITY warn-only（同维度同优先级 3 份均 `__save` 成功 + `__get` 共存，warn LOG 不可断言为诚实边界）；(4) `__update` 自身排除（`enforceMutex selfId` 排除）。owner doc `date-ranged-validity-pattern.md` 增「浏览器层验证实现注记」+ e2e-runbook 业务动作表 +sales 行；`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + sal-return 回归 0 新增失败。
 
 ## 8.7 D3 落地证据（2026-07-21）
 

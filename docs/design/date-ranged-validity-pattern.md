@@ -285,6 +285,18 @@ C3 helper 扩展 PRIORITY（`pickHighestPriority`）+ STACKABLE（`enforceStacka
 - **STACKABLE 混合判定**：`ErpSalPricingRuleBizModel.enforceStackableAware` 调 helper 时 `isStackable = rule -> Boolean.TRUE.equals(rule.getStackable())`；双非 stackable 重叠抛异常，任一方 stackable=true 允许重叠（§4.2 Decision (a)）。
 - **依赖可达性修正**：sales-service 原仅 test-scope 依赖 `app-erp-master-data-service`（C3 helper 所在模块），plan baseline「传递依赖可达」不准——已提升为 compile-scope（master-data→sales 无依赖，DAG 无环）。
 
+### 浏览器层验证实现注记（plan 2026-07-26-0500-3，2026-07-26）
+
+sales 定价 3 实体的 C3 保存钩子经 GraphQL `__save`/`__update` 写路径浏览器层 E2E 覆盖（`tests/e2e/business-actions/sal-date-range-validation.action.spec.ts`，4 用例全绿）。实现范式与关键约束：
+
+- **写路径触发**：CrudBizModel `defaultPrepareSave/Update` 仅在 GraphQL `__save`/`__update` Map 入口经 EntityData 管道时触发（§试点关键发现复述）。浏览器层经 `__save`/`__update` 直接驱动实体创建/更新即可触达钩子，不经 AMIS 表单层——对齐 `master-data.write.spec.ts`（GraphQL 写路径）+ `hr-leave-attendance.action.spec.ts:130-144`（日期重叠拒绝 `__save` 断言）双先例。
+- **三策略断言范式**：
+  - **MUTEX 拒绝**（`ErpSalPriceListLine`）：同维度（priceListId+materialId）建第一行成功 → 第二行重叠区间 `__save` 返回 GraphQL errors（拒绝）→ 相邻日通过。拒绝经 `enforceMutex` 抛 `ERR_SAL_PRICE_LIST_LINE_OVERLAP`。
+  - **STACKABLE 混合**（`ErpSalPricingRule`）：同维度双 stackable=false 重叠 `__save` 拒绝（`enforceStackableAware` 抛 `ERR_SAL_PRICING_RULE_OVERLAP`）→ 任一方 stackable=true 重叠通过。TIMESTAMP 区间经 GraphQL 传 ISO 时间戳（`"2026-01-01T00:00:00"`），`PricingRuleDateRange` 适配器截断到 LocalDate。
+  - **PRIORITY warn-only**（`ErpSalPriceList`）：同维度同优先级多份有效清单均 `__save` 成功（warn 不阻断）+ `__get` 断言记录共存。warn 的 LOG.warn 不可经浏览器层直接断言（诚实边界——仅验证保存成功 + 共存）。
+  - **__update 自身排除**（`ErpSalPriceListLine`）：更新既有行 validTo 经 `__update` 触发 `defaultPrepareUpdate` → `enforceMutex(selfId=entity.getId())` 排除自身 → 通过。
+- **错误响应 token 匹配**：Nop GraphQL 业务异常经 `/graphql` 响应封装为 `{data:null, errors:[{message}]}`——**envelope 仅 surface `message` 字段**，`extensions.nopError.errorCode` 路径未暴露。两 ErrorCode 中文描述实测含「**冲突**」token（非「重叠」——后者属 hr-leave `ERR_LEAVE_DATE_OVERLAP` 描述）。浏览器层断言匹配 `JSON.stringify(errors)` 含「冲突」中文语义 token（对齐 hr-leave 先例「errors 含语义中文 token」范式，token 字面按域 ErrorCode 描述适配）。
+- **PRIORITY warn 路径触达性**：`warnIfPriorityAmbiguous` 的 `dao().findAllByQuery` 在 `defaultPrepareSave`（持久化前）执行，候选记录不在结果集——顺序 `__save` 第 N 份时仅查到前 N-1 份。要触达 `effective.size()>=2 + top==next` 歧义分支需 **≥3 份**同维度同优先级有效清单（第 3 份 save 时前 2 份已落库）。spec 据此建 3 份以最大化歧义代码路径覆盖。
 
 ## 8. 反模式自检表
 
