@@ -321,3 +321,24 @@ export async function countBudgetCarryForwardLogs(
     eqFilter('sourceScenarioId', Number(sourceScenarioId)),
   );
 }
+
+// ---------- 汇率 API 客户端反查原语（plan 2026-07-26-1407-3） ----------
+
+/**
+ * 按 fromCurrencyId 反查 `ErpMdExchangeRate` 全部行（带 selection，关联 ErpMdCurrency code 字段断言）。
+ *
+ * `refreshRatesFromApi(baseCurrency)` 按 base 写入多条汇率行（USD→CNY / USD→EUR 等）；
+ * selection 须含 fromCurrency/toCurrency 关联字段（如 `fromCurrency{code} toCurrency{code} rate rateType validFrom`）
+ * 以独立反查持久化字段，对齐既有 value-spec 反查范式。
+ */
+export async function findExchangeRatesByBase<T = any>(
+  page: Page,
+  baseCurrencyId: string | number,
+  selection: string,
+): Promise<T[]> {
+  return gqlFor(page).findItems<T>(
+    'ErpMdExchangeRate',
+    eqFilter('fromCurrencyId', Number(baseCurrencyId)),
+    selection,
+  );
+}
