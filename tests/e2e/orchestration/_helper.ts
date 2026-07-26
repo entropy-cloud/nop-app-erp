@@ -142,6 +142,42 @@ export async function findBudgetVoucherIdByCode(
 }
 
 /**
+ * 经 ErpFinVoucherBillR(billCode) 反查 **COMMITMENT 影子凭证** id，按 reversalOfVoucherId 区分正向/红冲
+ * （plan 2026-07-26-0410-2）。
+ *
+ * 镜像 {@link findBudgetVoucherIdByCode}：COMMITMENT 影子凭证正向与红冲凭证同 `postingType=COMMITMENT`
+ * （{@code CommitmentVoucherGenerator.writeCommitmentVoucher:135} + `writeReversalFromLines:208`），
+ * 唯一区分项是 `reversalOfVoucherId`（正向 null / 红冲非 null，{@code CommitmentVoucherGenerator:216}）。
+ * 业财回链 billType 为 `PURCHASE_ORDER_COMMITMENT` / `SALES_ORDER_COMMITMENT`，{@code billCode=订单 code}，
+ * 故按订单 code 反查即可（不区分 billType，因一张订单不会同时是 PO+SO）。
+ *
+ * @param reversal false=正向 COMMITMENT 凭证（reversalOfVoucherId IS NULL）；true=红冲 COMMITMENT 凭证（IS NOT NULL）
+ */
+export async function findCommitmentVoucherIdByCode(
+  page: Page,
+  billCode: string,
+  reversal: boolean,
+): Promise<number | null> {
+  if (!billCode) return null;
+  const links = await findItems<any>(page, 'ErpFinVoucherBillR', eqFilter('billCode', billCode), 'voucherId');
+  for (const lnk of links) {
+    const v = await findFirst<any>(
+      page, 'ErpFinVoucher',
+      eqFilter('id', Number(lnk.voucherId)),
+      'id postingType reversalOfVoucherId',
+    );
+    if (!v || v.postingType !== 'COMMITMENT') {
+      continue;
+    }
+    const isReversal = v.reversalOfVoucherId != null;
+    if (isReversal === reversal) {
+      return Number(v.id);
+    }
+  }
+  return null;
+}
+
+/**
  * 断言凭证行精确数值：按 voucherId 查 ErpFinVoucherLine，逐行匹配期望 subjectCode + dcDirection + 借贷金额。
  *
  * 匹配语义：同一凭证内每科目码至多一行（Provider 结构派生），按 subjectCode 唯一匹配。
@@ -269,11 +305,14 @@ export async function runP2pChain(page: Page): Promise<P2pResult> {
   } as P2pResult;
 
   // PO：头 + 行（10 × 5 = 50）
+  // head.totalAmountWithTax 必填（plan 2026-07-26-0410-2：commit hook runCommitmentCommitHook 读此字段，
+  // null/0 时 commit SPI early-return 不产 COMMITMENT 凭证；设为含税 56.5 与 invoice 一致使承付金额确定性）
   const po = await saveHeadWithLine(
     page, 'ErpPurOrder',
     {
       code: r.codes.po, orgId: SEED.ORG, supplierId: SEED.SUPPLIER, warehouseId: SEED.WH_RAW,
       businessDate: BDATE, currencyId: SEED.CURRENCY, exchangeRate: 1,
+      totalAmount: P2P_EXPECT.invoiceNet, totalTaxAmount: P2P_EXPECT.invoiceTax, totalAmountWithTax: P2P_EXPECT.invoiceWithTax,
       docStatus: 'ACTIVE', approveStatus: 'UNSUBMITTED', receiveStatus: 'UNRECEIVED',
     }, 'id approveStatus',
     'ErpPurOrderLine',
@@ -349,6 +388,12 @@ export async function cleanupP2p(page: Page, r: P2pResult): Promise<void> {
   if (r.codes?.invoice) {
     await cleanupArApByCode(page, r.codes.invoice);
     await cleanupVoucherByBillCode(page, r.codes.invoice);
+  }
+  // 承付凭证回链 billCode=PO code（plan 2026-07-26-0410-2：config 启用后 runP2pChain PO.approve 产 COMMITMENT
+  // 凭证 + invoice.approve release 红冲凭证，全部共用 PO.code 经 voucher_bill_r 反查；既有 helper
+  // postingType-agnostic 已覆盖 COMMITMENT，仅补 PO.code 调用点；config 关闭时无凭证，调用幂等无副作用）
+  if (r.codes?.po) {
+    await cleanupVoucherByBillCode(page, r.codes.po);
   }
   if (r.invoice) {
     await deleteByFilter(page, 'ErpPurInvoiceLine', eqFilter('invoiceId', Number(r.invoice.id)));
@@ -464,11 +509,14 @@ export async function runO2cChain(page: Page): Promise<O2cResult> {
   r.setupMove = { id: setupCreated.id, code: setupCreated.code };
 
   // SO：头 + 行（10 × 10 = 100）
+  // head.totalAmountWithTax 必填（plan 2026-07-26-0410-2：commit hook runCommitmentCommitHook 读此字段，
+  // null/0 时 commit SPI early-return 不产 COMMITMENT 凭证；设为含税 113 与 invoice 一致使承付金额确定性）
   const so = await saveHeadWithLine(
     page, 'ErpSalOrder',
     {
       code: r.codes.so, orgId: SEED.ORG, customerId: SEED.CUSTOMER, warehouseId: SEED.WH_RAW,
       businessDate: BDATE, currencyId: SEED.CURRENCY, exchangeRate: 1,
+      totalAmount: O2C_EXPECT.invoiceNet, totalTaxAmount: O2C_EXPECT.invoiceTax, totalAmountWithTax: O2C_EXPECT.invoiceWithTax,
       docStatus: 'ACTIVE', approveStatus: 'UNSUBMITTED', deliveryStatus: 'UNDELIVERED',
     }, 'id approveStatus',
     'ErpSalOrderLine',
@@ -544,6 +592,11 @@ export async function cleanupO2c(page: Page, r: O2cResult): Promise<void> {
   if (r.codes?.invoice) {
     await cleanupArApByCode(page, r.codes.invoice);
     await cleanupVoucherByBillCode(page, r.codes.invoice);
+  }
+  // 承付凭证回链 billCode=SO code（plan 2026-07-26-0410-2：config 启用后 runO2cChain SO.approve 产
+  // SALES_ORDER_COMMITMENT 凭证 + invoice.approve release 红冲凭证，全部共用 SO.code 经 voucher_bill_r 反查）
+  if (r.codes?.so) {
+    await cleanupVoucherByBillCode(page, r.codes.so);
   }
   if (r.invoice) {
     await deleteByFilter(page, 'ErpSalInvoiceLine', eqFilter('invoiceId', Number(r.invoice.id)));

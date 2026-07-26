@@ -28,6 +28,9 @@ import java.util.Objects;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.le;
@@ -44,6 +47,8 @@ import static io.nop.api.core.beans.FilterBeans.le;
  * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpPurOrderProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpPurOrderProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -235,13 +240,22 @@ public class ErpPurOrderProcessor {
      * A2 承付 release 钩子（budget.md §承付会计 §3 接入点 #2 release-on-cancel）。
      * 订单反审核/作废 → 红冲原 COMMITMENT 凭证。
      * config-gated；无原凭证静默跳过（reverseApprove/cancel 路径容错，避免阻塞业务流）。
+     *
+     * <p>容错对称性（plan 2026-07-26-0410-2 latent defect Fix）：与销售侧 {@code ErpSalOrderProcessor.runCommitmentReleaseHook}
+     * 对齐——承付已被接入点 #3（发票审核释放）红冲后，订单反审核/作废再次调 {@code release()} 会抛
+     * {@code ERR_BUDGET_COMMITMENT_ALREADY_RELEASED}。catch {@link NopException} 后 LOG.debug 静默跳过，不阻断业务流。
      */
     protected void runCommitmentReleaseHook(ErpPurOrder order, IServiceContext context) {
         if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
             return;
         }
-        budgetCommitmentBiz.release(
-                ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, order.getCode(), context);
+        try {
+            budgetCommitmentBiz.release(
+                    ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, order.getCode(), context);
+        } catch (NopException e) {
+            // 容错：无原凭证（ERR_BUDGET_COMMITMENT_ALREADY_RELEASED）静默跳过
+            LOG.debug("commitment release skipped for purchase order {}: {}", order.getCode(), e.getMessage());
+        }
     }
 
     /**
