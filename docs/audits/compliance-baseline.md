@@ -17,7 +17,7 @@
 | R1a | dao().saveEntity (BizModel) | 🔴 高 | 0 |
 | R1b | dao().updateEntity (BizModel) | 🔴 高 | 0 |
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
-| R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 23 |
+| R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 17 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 37 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 315 |
 | R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1228 |
@@ -25,10 +25,10 @@
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
 | R5 | @Inject private | 🟡 中 | 0 |
-| R6 | @Transactional in BizModel | 🟢 低 | 7 |
+| R6 | @Transactional in BizModel | 🟢 低 | 2 |
 | R7 | System.currentTimeMillis() | 🟢 低 | 0 |
 | R8 | Processor 无 xbiz 接线 | 🔴 高 | 42 |
-| R10 | REQUIRES_NEW 事务 | 🟡 中 | 51 |
+| R10 | REQUIRES_NEW 事务 | 🟡 中 | 6 |
 | R11 | Processor 重复状态判断方法 | 🟡 中 | 0 |
 | R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 69 |
 | R12b | 共享内核 import PostingEvent | 🟡 中 | 66 |
@@ -156,6 +156,26 @@ R2a/R2b/R2d 不变（per-mutation Processor 不是 BizModel 故不命中 R2a/R2b
 
 本计划裁决=选 (c)（接受基线上调），(a)/(b) 为 successor 候选。
 
+## R1d/R10/R6 checker 注释排除校准 + 基线裁决注记（plan 2026-07-27-0823-1）
+
+`2026-07-27-0823-1`（R1d/R10/R6 合规基线裁决 + checker 注释校准，CI red fix）处理 R1d baseline=23 / actual=28 的 +5 漂移（CI red）+ R10/R6 grandfathered 基线（51/7）的注释虚假命中主导问题。三规则 checker 原始 grep 均不区分代码行与 javadoc/注释行，与 R8 content-based 排除先例（1057-1/1057-2）同型缺陷。
+
+**checker 注释排除校准**（per-rule option b，不动 `rgrep_bizmodel`/`rgrep_prodjava` helper，避免影响已稳定的 R1a/R1b/R1c/R2a/R2b）：R1d/R6/R10 三规则 grep 管道后追加 `grep -vE ':[0-9]+:[[:space:]]*(\*|//|/\*|\*/)' | grep -vE '\{@code|\{@link'`——排除 javadoc 续行（`*`）+ 行注释（`//`）+ 块注释开闭（`/*`/`*/`）+ `{@code`/`{@link` 安全网。校准对齐既有 checker 行级启发式风格（不引入 AST 解析，Non-Goal 显式排除）。校准实施位置：`nop-compliance-checker.sh` R1d/R6/R10 段。**残留风险**：块注释 `/* ... */` 跨行命中（无 `*` 续行前缀）漏排除——三规则 Phase 1 实测为 0；若未来出现升级为 AST 解析（开独立 successor）。
+
+**基线裁决**（注释校准后 actual 反映真实代码站点，逐项合法性分类）：
+
+| 规则 | 旧基线 | 新基线 | actual（校准后） | 合法性分类 |
+|------|--------|--------|------------------|-----------|
+| R1d | 23 | **17** | 17 | ✅ 17 处全部为同域只读内部辅助查询（crm 6 + master-data 8 + sales 3），绕过 CrudBizModel findList 管道的 objMeta 过滤/字段投影为有意设计（C3 日期范围互斥校验 + 价格清单维度查询 + 树形递归 + 唯一性前置友好校验），每处代码注释明示理由。owner doc 背书：`docs/design/date-ranged-validity-pattern.md`（C3）+ 各 BizModel inline 注释。 |
+| R10 | 51 | **6** | 6 | ✅ 6 处全部为 `docs/architecture/processor-extension-pattern.md` 硬规则 1 文档化的合法跨域失败隔离事务边界——ErpFinVoucherBizModel post/reverse Facade `@Transactional(REQUIRES_NEW)`（2）+ ErpFinPostingExceptionRecorder/ErpFinDeferredPostingRetryHelper 的 `runInTransaction(...REQUIRES_NEW...)` 独立事务（4）。代码注释 `nop-check: allow @Transactional(REQUIRES_NEW)` 交叉引用 owner doc。 |
+| R6 | 7 | **2** | 2 | ✅ 2 处 = R10 BizModel 子集（ErpFinVoucherBizModel post/reverse），同 R10 owner doc 背书。 |
+
+**R1d +5 漂移源裁决**：经 `git diff bd8540037..HEAD -- '*BizModel.java' | grep findAllByQuery` 核实，+5 checker 漂移**全部来自单一已审计计划** `2026-07-26-0315-1`（C3 sales 定价推广）——3 处真实 `dao().findAllByQuery` 调用（ErpSalPricingRule/PriceListLine/PriceList）+ 2 处 javadoc 注释行，全部晚于基线锚点 `bd8540037`（2026-07-24 11:43:20）。master-data BizModels 的 findAllByQuery 调用由 `2026-07-21-2225-1`（C3，2026-07-21）+ `2026-07-21-1206-1`（C2，2026-07-21）落地，均早于基线锚点已计入 baseline 23，post-baseline diff 为 0 不构成漂移。漂移经注释校准（排除 2 javadoc 行）+ 裁决性下调基线（23→17，吸收 3 真实调用并反映真实代码计数）双重吸收。
+
+逐站点 file:line 清单 + 三态分类（A 真实代码 / B javadoc / C 行注释）+ git 提交时间线核实 + Decision 理由见 `docs/plans/2026-07-27-0823-1-r1d-r10-r6-compliance-baseline-adjudication.md` §Phase 1 Evidence。checker 复跑全 16 规则 actual ≤ baseline（R1d=17≤17 / R6=2≤2 / R10=6≤6），R1d CI red 解除，CI green 恢复。
+
+**纪律强化引用**：checker 注释排除校准是测量口径修正（非基线放水），对齐 `docs/analysis/governed-path-cost-evaluation.md §基线漂移复发防护 + checker 校准范式`（R3 orm.xml 白名单 + R8 排除集 + R8 per-mutation 排除 + 本计划 R1d/R6/R10 注释排除四先例构成的 checker 校准范式矩阵）。校准后基线语义清晰反映真实代码站点，未来注释增减不再触发虚假漂移。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -164,7 +184,7 @@ R2a/R2b/R2d 不变（per-mutation Processor 不是 BizModel 故不命中 R2a/R2b
 R1a: 0
 R1b: 0
 R1c: 0
-R1d: 23
+R1d: 17
 R2a: 37
 R2b: 315
 R2c: 1228
@@ -172,10 +192,10 @@ R2d: 28
 R3: 5
 R4: 0
 R5: 0
-R6: 7
+R6: 2
 R7: 0
 R8: 42
-R10: 51
+R10: 6
 R11: 0
 R12a: 69
 R12b: 66
