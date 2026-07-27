@@ -17,6 +17,7 @@
 | `2026-07-27-1015-arm-ma1-bc-tier-orm.md` | MA1 | ORM 模型规范 | master-data / cs+contract+b2b+maintenance+drp / aps+logistics+notify（A1.7/A1.8/A1.9） | done |
 | `2026-07-27-1227-arm-ma1-cross-module-dag.md` | MA1 | 跨模块依赖/DAG | 全 19 域跨域（A1.10） | done |
 | `2026-07-27-1227-arm-ma1-platform-conformance-s-tier.md` | MA1 | Nop 平台合规 | finance / manufacturing / hr（A1.11） | done |
+| `2026-07-27-1227-arm-ma1-platform-conformance-a-tier-core.md` | MA1 | Nop 平台合规 | purchase / sales / assets / inventory（A1.12） | done |
 
 ## P0 发现追踪（即时通道）
 
@@ -24,11 +25,11 @@
 
 | Finding ID | 报告 | 描述 | 修复路径 | 修复 plan | 修复状态 |
 |-----------|------|------|---------|----------|---------|
-| _（MA1 ORM 审计全域 0 P0，无即时通道触发）_ | | | | | |
+| `P0-MA1-021` | ma1-platform-conformance-a-tier-core | inventory `CostAdjustmentPostingDispatcher.markOriginalVoucherReversed:127-141` 跨模块写 `ErpFinVoucher`（`voucherDao.updateEntity(voucher)` 置 `isReversed=true`），绕过 `IErpFinVoucherBiz.reverse()`（业财一体写绕过 I\*Biz，plan P0 类别）。触及 finance 凭证保护区域。 | 选项 A（推荐）：替换为 `IErpFinVoucherBiz.reverse(billHeadCode, ErpFinBusinessType.COST_ADJUSTMENT)` 由 finance 走完整红冲；选项 B：在 `IErpFinVoucherBiz` 新增 `markReversed(voucherId, ...)` I\*Biz 写方法 | 待起草（建议命名 `docs/plans/YYYY-MM-DD-HHmm-arm-fix-p0-ma1-021-inv-cost-adjust-voucher-writeback.md`） | `fix-plan-required (protected area gate)` |
 
 ## P1 发现汇总（待 MR 批量修复）
 
-> MA1 ORM 审计全域共 51 项 P1（S 级 1 + A 级 42 + B+C 级 9 - 重复计 1：maintenance propId 在 A/BC 报告中分类归属一致）+ MA1 跨模块依赖审计 3 项 P1（文档 2 + 代码 1）+ MA1 平台合规审计 S 级 1 项 P1（finance enum↔dict 漂移），统一登记如下。目标 MR1（依赖 MA1+MA2 done，由 R1.0 展开机制转化为具体修复工作项行）。
+> MA1 ORM 审计全域共 51 项 P1（S 级 1 + A 级 42 + B+C 级 9 - 重复计 1：maintenance propId 在 A/BC 报告中分类归属一致）+ MA1 跨模块依赖审计 3 项 P1（文档 2 + 代码 1）+ MA1 平台合规审计 S 级 1 项 P1（finance enum↔dict 漂移）+ MA1 平台合规审计 A 级核心 1 项 P1（跨域只读 IDaoProvider 通用模式），统一登记如下。目标 MR1（依赖 MA1+MA2 done，由 R1.0 展开机制转化为具体修复工作项行）。
 
 ### P1 类型分布
 
@@ -40,6 +41,7 @@
 | **owner doc §5.6.2 数值偏差** | 1 | docs（全域） | major | MR1 用脚本核验值（625 to-one / 111 external）更新 owner doc §5.6.2 + 每域明细表 |
 | **finance IDaoProvider 跨域 DAO 查询** | 1 | finance（ErpFinAccountingPeriodProcessor.reverseDepreciation） | major | MR1 改为 `IErpAstDepreciationScheduleBiz.findList()` 等价 I*Biz 只读方法 |
 | **owner doc §3.2/§4.4 finance 纯读规则不完整** | 1 | docs（finance） | major | MR1 补注期末结账 command 编排例外（ORM 层纯读 vs I*Biz 层 command 编排分层） |
+| **pur/sal/ast/inv 跨域只读 IDaoProvider 模式** | ~14 文件 | pur + sal + ast + inv（Processor/Dispatcher Helper 跨域 `daoFor(ErpMd*)` / `daoFor(ErpFin*)` / `daoFor(ErpPurReceive)` 只读，与 P1-MA1-016 同根因；Dashboard facade read-only 聚合永久接受） | major | MR1 裁决：方案 A（在 master-data/finance I*Biz 补便捷只读方法后迁移 Processor/Dispatcher 调用）或方案 B（永久接受为 Helper 合法模式，登记 §设计例外） |
 
 ### P1 详细清单
 
@@ -57,6 +59,7 @@
 | `P1-MA1-016` | ma1-cross-module-dag | finance | `ErpFinAccountingPeriodProcessor.reverseDepreciation`（line ~389）使用 `daoProvider.daoFor(ErpAstDepreciationSchedule.class).findAllByQuery(q)` 直接跨域 DAO 查询 assets 实体，违反 `AGENTS.md "跨实体访问"` + `data-dependency-matrix.md §5.3` 规则（跨域查询必须经 I*Biz 接口）。应改为 `IErpAstDepreciationScheduleBiz.findList()` 或等价 I*Biz 只读方法 | MR1 | todo |
 | `P1-MA1-017` | ma1-cross-module-dag | docs（finance） | owner doc `data-dependency-matrix.md §3.2/§4.4` "finance 对业务域纯读不回写"规则不完整：未覆盖期末结账期间的跨域 command/request 编排（finance 调 `IErpAstDepreciationScheduleBiz.executeBatchDepreciation/reverseDepreciation` + `IErpInvCostingBiz.reclosePeriodCosts`）。需补注："纯读"指 ORM 层无反向 to-one；期间结账的 command 编排在 I*Biz 层合法（业务域自管实体的写） | MR1 | todo |
 | `P1-MA1-018` | ma1-platform-conformance-s-tier | finance | `ErpFinBusinessType` enum 名 ↔ dict `erp-fin/business-type` value 漂移 4 项：`MANUFACTURING_COST_CLOSE(100)`↔`PRODUCTION_COST` / `PROJECT_COST_COLLECTION(110)`↔`PROJECT_COST` / `PERIOD_CLOSE(120)`↔`PERIOD_CLOSING` / `EXCHANGE_GAIN_LOSS(130)`↔`FX_REVALUATION`。代码以 `enum.name()` 持久化（如 `ExchangeRevaluationService:152,213`、`ProfitLossClosingService:152`），UI dict 下拉值与 DB 存储值不符，筛选查询漏命中。owner doc `posting.md §业务类型映射` 明示「常量 code 与字典数值逐一一致」。修复方案 A（推荐 enum 重命名对齐 dict）或方案 B（dict 改值+数据迁移） | MR1 | todo |
+| `P1-MA1-022` | ma1-platform-conformance-a-tier-core | pur+sal+ast+inv | 跨域只读访问经 `IDaoProvider.daoFor(OtherModuleEntity)` 而非 I\*Biz（与 P1-MA1-016 同根因，跨 4 域 ~14 文件合并登记）：pur（`ErpPurOrderProcessor:302,314` ErpMdSubject/ErpFinAccountingPeriod + `ErpPurPaymentProcessor:228,240`）+ sal（`ErpSalOrderProcessor:377,389`）+ ast（`ErpAstDepreciationScheduleProcessor:290` ErpFinAccountingPeriod + 9 个 posting dispatcher ErpMdSubject）+ inv（`ErpInvLandedCostProcessor:267,473,477` ErpPurReceive + `StandardCostResolver:99` / `CostMethodResolver:61,70` / `CostAdjustmentService:291` ErpMd*）。Dashboard facade read-only 聚合永久接受。修复方案 A（推荐：master-data/finance I\*Biz 补便捷只读方法后迁移）或方案 B（永久接受为 Helper 合法模式） | MR1 | todo |
 
 > 去重说明：P1-MA1-011 与 P1-MA1-013 是同一组 finding（maintenance propId），在 A 与 BC 报告中均出现，因 maintenance 既属 A 级合并（A1.5 assets+inventory）边缘又属 B 级合并（A1.8 cs+contract+b2b+maintenance+drp）——本次审计按 roadmap 工作项边界在两份报告中各登记一次。MR1 实际修复只处理一次。
 
@@ -68,6 +71,10 @@
 |-----------|------|---|------|------|
 | `P2-MA1-019` | ma1-platform-conformance-s-tier | finance | `ErpFinBusinessType.fromCode:86` 抛 `IllegalArgumentException`（应 `NopException`，skill 异常处理规则）+ 同文件 `ErpFinVoucherTemplateBizModel:95` 用 `LocalDate.now()`（应 `CoreMetrics.currentDate()`，R7 同性质残留）。programmer-error 路径，非 GraphQL 面向，严重性 P2 | watch-only，MR1 顺手收敛或永久接受 |
 | `P2-MA1-020` | ma1-platform-conformance-s-tier | hr | 残留 orphan dict `erp-hr/salary-approval-status`（6 态 PENDING/REVIEWED/APPROVED_FINANCE/APPROVED_MANAGER/PAID/VOID）在 `app-erp-hr.orm.xml:77-83` + i18n。owner doc `payroll.md §审批状态标准化` 明示已废弃（拆为 `wf/approve-status` 4 态），实际 column 已正确引用 wf/approve-status；orphan dict 仅在 i18n + javadoc 残留引用，无运行时影响 | watch-only，MR1 顺手清理（删除 orphan dict 定义 + i18n + javadoc 引用） |
+| `P2-MA1-023` | ma1-platform-conformance-a-tier-core | assets | owner doc `state-machine.md §1` 资产状态定义列 5 态（DRAFT/IN_SERVICE/IDLE/SCRAPPED/SOLD），代码 `app-erp-assets.orm.xml:66-72` dict 含 6 态（多 `DISPOSED`，由 split-merge 功能引入）。兄弟 owner doc `split-merge.md:103-104` 已文档化 DISPOSED；state-machine.md 漏更新。owner doc 内部不一致，无运行时影响 | watch-only，MR1 顺手更新 `state-machine.md §1` 状态表追加 DISPOSED 行 + §2 迁移图标注 |
+| `P2-MA1-024` | ma1-platform-conformance-a-tier-core | assets | owner doc `state-machine.md §折旧计划条目状态` 列 3 态（PENDING/EXECUTED/REVERSED），代码 `app-erp-assets.orm.xml:84-88` dict 含 4 态（多 `CANCELLED`）。owner doc 漏更新，无运行时影响 | watch-only，MR1 顺手更新 `state-machine.md §折旧计划条目状态` 追加 CANCELLED 行 |
+| `P2-MA1-025` | ma1-platform-conformance-a-tier-core | inventory | owner doc `state-machine.md §盘点单状态机` 用 `COUNTING` 命名「盘点中」，代码 `app-erp-inventory.orm.xml:695` `ErpInvStockTake.docStatus` 实际用 dict `erp-inv/move-status` 中 `CONFIRMED`（盘点单复用 move-status）。兄弟 owner doc `ui-patterns.md:136` 表述正确。owner doc 内部不一致 | watch-only，MR1 顺手更新 `state-machine.md §盘点单状态机` 将 `COUNTING` 改为 `CONFIRMED` |
+| `P2-MA1-026` | ma1-platform-conformance-a-tier-core | purchase | `app-erp-purchase.orm.xml:451` column `status ext:dict="erp-pur/scorecard-status" defaultValue="10"`，dict value 为 `DRAFT`/`FINALIZED`（string）但 defaultValue 残留 int 数值「10」。属 D1（int→string 已知 deferred）复现 | watch-only，**不重复裁决 D1**；MR1 D1 整体修复时一并处理 |
 
 ## 跨维度发现（待 MR4 裁决）
 
