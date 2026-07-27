@@ -104,7 +104,14 @@ echo "$R1C_N" > "$TMPDIR/r1c"
 
 echo ""
 echo "▸ R1d: dao().findAllByQuery() — 应用 findList(query, null, context)"
-R1D=$(rgrep_bizmodel 'dao()\.findAllByQuery' | grep -v '_gen/' || true)
+# 测量口径校准（plan 2026-07-27-0823-1 Phase 2 Decision 1 option b）：
+# 原 grep 不区分代码行与 javadoc/注释行，~11/28 命中为 javadoc `*` / 行注释 `//` 引用
+# （`* 经 dao().findAllByQuery 绕过 findList 管道` 类说明）。校准=管道后追加注释行排除过滤
+# （per-rule，不动 rgrep_bizmodel helper，避免影响已稳定的 R1a/R1b/R1c/R2a/R2b）。
+# 排除：javadoc 续行（`*`）+ 行注释（`//`）+ 块注释开闭（`/*`/`*/`）+ {@code}/{@link 安全网。
+# 残留风险：块注释 `/* ... */` 跨行命中（无 `*` 续行前缀）漏排除——实测为 0；未来出现则升级 AST。
+R1D=$(rgrep_bizmodel 'dao()\.findAllByQuery' | grep -v '_gen/' \
+  | grep -vE ':[0-9]+:[[:space:]]*(\*|//|/\*|\*/)' | grep -vE '\{@code|\{@link' || true)
 R1D_N=$(cnt "$R1D")
 [[ $R1D_N -gt 0 ]] && echo "$R1D" | sed 's/^/  /'
 echo "  → 命中: $R1D_N 处"
@@ -226,7 +233,11 @@ echo "$R5_N" > "$TMPDIR/r5"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "[R6] 🟢 低 — @Transactional 在 BizModel 上"
-R6=$(rgrep_bizmodel '@Transactional' | grep -v '_gen/' || true)
+# 测量口径校准（plan 2026-07-27-0823-1 Phase 2 Decision 1 option b）：
+# 原 grep 不区分代码行与 javadoc/注释行，~5/7 命中为 javadoc `*` / 行注释 `//` 引用
+# （`* 不叠加 {@code @Transactional}` / `// nop-check: allow @Transactional` 类）。校准=同 R1d。
+R6=$(rgrep_bizmodel '@Transactional' | grep -v '_gen/' \
+  | grep -vE ':[0-9]+:[[:space:]]*(\*|//|/\*|\*/)' | grep -vE '\{@code|\{@link' || true)
 R6_N=$(cnt "$R6")
 [[ $R6_N -gt 0 ]] && echo "$R6" | sed 's/^/  /'
 echo "  → 命中: $R6_N 处（需逐个判断是否有意的 REQUIRES_NEW）"
@@ -317,7 +328,14 @@ echo "$R8_N" > "$TMPDIR/r9"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "[R10] 🟡 中 — REQUIRES_NEW 事务"
-R10=$(rgrep_prodjava 'REQUIRES_NEW' | grep -v '_gen/' || true)
+# 测量口径校准（plan 2026-07-27-0823-1 Phase 2 Decision 1 option b）：
+# 原 grep 不区分代码行与 javadoc/注释行，~45/51 命中为跨 11 域 *PostingExecutor/*PostingDispatcher
+# 的 javadoc `* ...{@code REQUIRES_NEW} 承接...` 引用 + `// nop-check:` / `// 容错...` 行注释。
+# 真实代码站点仅 6 处（ErpFinVoucherBizModel post/reverse + ErpFinPostingExceptionRecorder/
+# ErpFinDeferredPostingRetryHelper 的 runInTransaction），全部为 processor-extension-pattern.md
+# 硬规则 1 文档化的合法跨域失败隔离事务边界。校准=同 R1d（per-rule 注释行排除）。
+R10=$(rgrep_prodjava 'REQUIRES_NEW' | grep -v '_gen/' \
+  | grep -vE ':[0-9]+:[[:space:]]*(\*|//|/\*|\*/)' | grep -vE '\{@code|\{@link' || true)
 R10_N=$(cnt "$R10")
 [[ $R10_N -gt 0 ]] && echo "$R10" | sed 's/^/  /'
 echo "  → 命中: $R10_N 处"
