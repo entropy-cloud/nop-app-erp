@@ -27,15 +27,15 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| A1.1 | finance ORM 模型审计（48 实体，S 级整域——机械检查） | todo | `docs/design/finance/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
-| A1.2 | manufacturing ORM 模型审计（41 实体，S 级整域） | todo | `docs/design/manufacturing/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
-| A1.3 | hr ORM 模型审计（42 实体，S 级整域） | todo | `docs/design/human-resource/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
-| A1.4 | purchase+sales ORM 模型审计（A 级，机械维度允许 2 域合并） | todo | `docs/design/purchase/`+`sales/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
-| A1.5 | assets+inventory ORM 模型审计（A 级） | todo | `docs/design/assets/`+`inventory/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
-| A1.6 | crm+quality+projects ORM 模型审计（A 级） | todo | 各域 README | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
-| A1.7 | master-data ORM 模型审计（B 级，DAG 根域单独） | todo | `docs/design/master-data/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
-| A1.8 | cs+contract+b2b+maintenance+drp ORM 审计（B 级合并） | todo | 各域 README | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
-| A1.9 | aps+logistics+notify ORM 审计（C 级合并） | todo | 各域 README | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
+| A1.1 | finance ORM 模型审计（48 实体，S 级整域——机械检查） | done | `docs/design/finance/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
+| A1.2 | manufacturing ORM 模型审计（41 实体，S 级整域） | done | `docs/design/manufacturing/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
+| A1.3 | hr ORM 模型审计（42 实体，S 级整域） | done | `docs/design/human-resource/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
+| A1.4 | purchase+sales ORM 模型审计（A 级，机械维度允许 2 域合并） | done | `docs/design/purchase/`+`sales/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
+| A1.5 | assets+inventory ORM 模型审计（A 级） | done | `docs/design/assets/`+`inventory/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
+| A1.6 | crm+quality+projects ORM 模型审计（A 级） | done | 各域 README | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
+| A1.7 | master-data ORM 模型审计（B 级，DAG 根域单独） | done | `docs/design/master-data/` | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
+| A1.8 | cs+contract+b2b+maintenance+drp ORM 审计（B 级合并） | done | 各域 README | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
+| A1.9 | aps+logistics+notify ORM 审计（C 级合并） | done | 各域 README | 0.3 | `docs/skills/orm-model-audit-prompt.md` |
 | A1.10 | 跨模块依赖与 DAG 审计（全域跨域） | todo | `docs/architecture/data-dependency-matrix.md` | 0.3 | `docs/skills/cross-module-dependency-audit-prompt.md` |
 | A1.11 | Nop 平台合规审计 — finance+mfg+hr（S 级） | todo | `../nop-entropy/docs-for-ai/` | 0.3 | `docs/skills/nop-platform-conformance-audit-prompt.md` |
 | A1.12 | Nop 平台合规审计 — pur+sal+assets+inv（A 级核心） | todo | 同上 | 0.3 | `docs/skills/nop-platform-conformance-audit-prompt.md` |

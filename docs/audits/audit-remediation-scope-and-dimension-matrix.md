@@ -84,10 +84,12 @@
 
 ### 2.1 MA1 — 结构与架构层
 
+> MA1 ORM 审计（A1.1–A1.9）已于 2026-07-27 完成（详见 `docs/audits/2026-07-27-1015-arm-ma1-{s,a,bc}-tier-orm.md`）。下表反映终态：10 域 ✅（9 维度全通过或仅 P2 watch-only）、9 域 ⚠️（有 P1 待 MR1）、0 域 ❓、0 blocker。`S拆` 后缀用于行为维度（MA2 状态机），ORM 机械维度已不再拆分。
+
 | 维度 | finance | mfg | hr | assets | pur | sal | qa | crm | prj | cs | ct | b2b | inv | md | mnt | drp | aps | log | notify | Skill |
 |------|---------|-----|----|----|------|-----|----|----|----|----|----|-----|-----|-----|-----|-----|-----|-----|--------|-------|
-| ORM 模型规范 | ❓S拆 | ❓S拆 | ❓S拆 | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ⚠️ | ❓ | ❓ | ❓ | ❓ | ❓ | orm-model-audit |
-| 跨模块依赖/DAG | ⚠️ | ⚠️ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ⚠️ | ❓ | ⚠️ | ❓ | ❓ | ❓ | cross-module-dep-audit |
+| ORM 模型规范 | ✅ | ⚠️P1 | ✅ | ⚠️P1 | ✅ | ✅ | ⚠️P1 | ⚠️P1 | ⚠️P1 | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️P1 | ⚠️P1 | ✅ | ✅ | ✅ | orm-model-audit |
+| 跨模块依赖/DAG | ⚠️ | ⚠️ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ⚠️F1half | ⚠️ | ⚠️F4✅ | ❓ | ⚠️F7✅ | ❓ | ❓ | ⚠️F5✅ | cross-module-dep-audit |
 | Nop 平台合规 | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | nop-conformance-audit |
 | 架构治理（daoFor/字典/共享内核/guard） | ⚠️F1residual | ⚠️F6✅ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ⚠️F1half | ⚠️ | ⚠️F4✅ | ❓ | ⚠️F7✅ | ❓ | ❓ | ⚠️F5✅ | 参考arch-gov-review |
 
@@ -161,10 +163,12 @@
 
 ### 3.2 残留风险与 deferred successor（审计输入）
 
+> MA1 ORM 审计（A1.1–A1.9）已于 2026-07-27 完成对 §3.2 进入 MA1 项的覆盖。结论登记在"处理"列。
+
 | 来源 | 描述 | 严重性 | 处理 |
 |------|------|--------|------|
 | arch-gov §残留风险 1 | daoFor `findAllByQuery` Type 1 watch-only residual（113 处站点，机械替换候选 <10） | P2 | watch-only，不在本 roadmap |
-| arch-gov §残留风险 1 | daoFor Type 4 设计边界错误（~10-30 处）阻塞 successor | P1 | 进入 MA1 审计 |
+| arch-gov §残留风险 1 | daoFor Type 4 设计边界错误（~10-30 处）阻塞 successor | P1 | **MA1 已覆盖**：ORM 审计 dim 7（跨模块引用一致性）全域 0 blocker——所有跨模块 refEntityName 经机制 B（notGenCode 外部实体）正确声明。daoFor Type 4 在 ORM 层无残留；下游 codegen/daoFor 调用层若仍有问题，归 MA4 代码质量审计（A4.5） |
 | arch-gov §残留风险 1 | b2b→pur 跨域写 ErpB2bAsnBizModel 收敛条件（待 pur 提供 createFromAsn） | P2 | deferred |
 | arch-gov §残留风险 2 | finance 77 mutation 的 owner doc 背书未逐项核对 | P1 | 进入 MA2/MA3 审计 |
 | arch-gov §残留风险 3 | §5.6.3 禁止清单是否增列 mfg→inv/drp→inv/mnt→ast 待业务裁决 | P2 | deferred |
