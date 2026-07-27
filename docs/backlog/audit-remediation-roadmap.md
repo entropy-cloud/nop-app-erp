@@ -1,6 +1,6 @@
 # 审计-修复路线图
 
-> 最后更新：2026-07-27（v5 — A2.3 期末结账端到端审计完成：1 项 P0 P0-MA2-016 汇兑损益费用类余额未结转至本年利润 [即时通道 fix plan 2026-07-27-1949-arm-fix-p0-ma2-016 ✅ done — 汇兑损益费用类余额已正常结转至本年利润，全 154 模块 mvn test 绿色] + 6 项 P1 + 3 项 P2 watch-only；MA1 finding P1-MA1-016/017/018 运行时复核无升级；C-11 已自然消解；并发敏感点交接 A2.17；MA2 业财端到端 P2P+O2C+期末结账三条主链已完成，A2.4 库存核算一致性为下一工作项）
+> 最后更新：2026-07-27（v6 — A2.4 库存核算一致性审计完成：零 P0；2 项新 P1 P1-MA2-023 SPECIFIC 历史成本守卫缺失 / P1-MA2-024 STANDARD 红冲成本不变量跨重估破缺 + 5 项 P2 watch-only P2-MA2-026~030；三方对账「成本层+余额+流水」在正常路径成立；MA1/MA2 finding P1-MA1-022/P0-MA1-021 done/P1-MA2-017/P1-MA2-002 运行时复核无升级；并发敏感点 3 处交接 A2.17；MA2 业财端到端 P2P+O2C+期末结账+库存核算四条主链均已完成。v5 — A2.3 期末结账端到端审计完成：1 项 P0 P0-MA2-016 [即时通道 fix plan ✅ done] + 6 项 P1 + 3 项 P2 watch-only）
 > 来源：`docs/skills/audit-remediation-roadmap-authoring-prompt.md`
 > 范围文档：`docs/audits/audit-remediation-scope-and-dimension-matrix.md`
 > 审查记录：3 路独立子代理（规范合规 / 覆盖面 / 可执行性），发现 S 级未拆分 / R*.x 占位符卡死 / 并发维度缺失 / 流水线退化等问题，本版全部修订
@@ -51,7 +51,7 @@
 | A2.1 | 采购到付款端到端（PO→Receive→Invoice→Pay） | done | `docs/design/flow-overview.md`+`purchase/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A2.2 | 销售到收款端到端（SO→Delivery→Invoice→Receipt） | done | `docs/design/flow-overview.md`+`sales/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A2.3 | 期末结账端到端（期间+结转+坏账+成本） | done | `docs/design/finance/period-close.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A2.4 | 库存核算一致性（成本+余额+流水三方对账） | ready | `docs/design/inventory/`+`finance/costing-methods.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A2.4 | 库存核算一致性（成本+余额+流水三方对账） | done | `docs/design/inventory/`+`finance/costing-methods.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A2.5a | finance 状态机审查 — 过账与凭证（S 级拆分 1/3） | ready | `docs/design/finance/posting.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.5b | finance 状态机审查 — 预算与期间（S 级拆分 2/3） | todo | `docs/design/finance/budget.md`+`period-close.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.5c | finance 状态机审查 — AR/AP 核销（S 级拆分 3/3） | todo | `docs/design/finance/` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |

@@ -23,6 +23,7 @@
 | `2026-07-27-1949-arm-ma2-procure-to-pay-e2e.md` | MA2 | 业财端到端（多维） | purchase + finance（A2.1 P2P） | done |
 | `2026-07-27-1949-arm-ma2-order-to-cash-e2e.md` | MA2 | 业财端到端（多维） | sales + finance（A2.2 O2C） | done |
 | `2026-07-27-1949-arm-ma2-period-close-e2e.md` | MA2 | 业财端到端（多维） | finance / 期间结账（A2.3） | done |
+| `2026-07-27-2211-arm-ma2-inventory-costing-consistency.md` | MA2 | 库存核算一致性（多维） | inventory / 存货成本核算（A2.4） | done |
 
 ## P0 发现追踪（即时通道）
 
@@ -35,7 +36,7 @@
 
 ## P1 发现汇总（待 MR 批量修复）
 
-> MA1 ORM 审计全域共 51 项 P1（S 级 1 + A 级 42 + B+C 级 9 - 重复计 1：maintenance propId 在 A/BC 报告中分类归属一致）+ MA1 跨模块依赖审计 3 项 P1（文档 2 + 代码 1）+ MA1 平台合规审计 S 级 1 项 P1（finance enum↔dict 漂移）+ MA1 平台合规审计 A 级核心 1 项 P1（跨域只读 IDaoProvider 通用模式，A1.13 扩展至 9 域）+ MA1 平台合规审计 BC 合并 0 项新 P1（5 域扩展 P1-MA1-022 至 9 域，无新 ID）+ MA1 架构治理复审 1 项新 P1（P1-MA1-029 ErpCtInvoicePlanBizModel 跨域写半治理），统一登记如下。**MA2 业务正确性审计 A2.1 P2P 端到端新增 3 项 P1**（P1-MA2-001 暂估冲回缺失 / P1-MA2-002 多币种 P2P 本位币凭证路径未验证 / P1-MA2-003 付款核销缺三单匹配完成态复核，零 P0）。**A2.2 O2C 端到端新增 1 项 P1**（P1-MA2-009 多币种 O2C + 收款核销汇兑损益未实现，零 P0；P1-MA2-009 与 P1-MA2-002 同根因但 O2C 侧更严重——收款核销汇兑损益完全未实现而非仅未验证，MR1 一并裁决）。**A2.3 期末结账端到端新增 6 项 P1**（P1-MA2-017 auto-post-on-close 阻断分级不一致 / P1-MA2-018 年初余额 populate 非累计 / P1-MA2-019 辅助账对账作用域不匹配 / P1-MA2-020 反结账 approval kill-switch / P1-MA2-021 CLOSED_FINAL 凭证锁定未实现 / P1-MA2-022 FX 重估无前期 reversal，**1 项 P0** P0-MA2-016 已注入即时通道 fix plan）。目标 MR1（依赖 MA1+MA2 done，由 R1.0 展开机制转化为具体修复工作项行）。
+> MA1 ORM 审计全域共 51 项 P1（S 级 1 + A 级 42 + B+C 级 9 - 重复计 1：maintenance propId 在 A/BC 报告中分类归属一致）+ MA1 跨模块依赖审计 3 项 P1（文档 2 + 代码 1）+ MA1 平台合规审计 S 级 1 项 P1（finance enum↔dict 漂移）+ MA1 平台合规审计 A 级核心 1 项 P1（跨域只读 IDaoProvider 通用模式，A1.13 扩展至 9 域）+ MA1 平台合规审计 BC 合并 0 项新 P1（5 域扩展 P1-MA1-022 至 9 域，无新 ID）+ MA1 架构治理复审 1 项新 P1（P1-MA1-029 ErpCtInvoicePlanBizModel 跨域写半治理），统一登记如下。**MA2 业务正确性审计 A2.1 P2P 端到端新增 3 项 P1**（P1-MA2-001 暂估冲回缺失 / P1-MA2-002 多币种 P2P 本位币凭证路径未验证 / P1-MA2-003 付款核销缺三单匹配完成态复核，零 P0）。**A2.2 O2C 端到端新增 1 项 P1**（P1-MA2-009 多币种 O2C + 收款核销汇兑损益未实现，零 P0；P1-MA2-009 与 P1-MA2-002 同根因但 O2C 侧更严重——收款核销汇兑损益完全未实现而非仅未验证，MR1 一并裁决）。**A2.3 期末结账端到端新增 6 项 P1**（P1-MA2-017 auto-post-on-close 阻断分级不一致 / P1-MA2-018 年初余额 populate 非累计 / P1-MA2-019 辅助账对账作用域不匹配 / P1-MA2-020 反结账 approval kill-switch / P1-MA2-021 CLOSED_FINAL 凭证锁定未实现 / P1-MA2-022 FX 重估无前期 reversal，**1 项 P0** P0-MA2-016 已注入即时通道 fix plan）。**A2.4 库存核算一致性审计新增 2 项 P1**（P1-MA2-023 SPECIFIC 历史成本守卫缺失 / P1-MA2-024 STANDARD 红冲成本不变量跨重估破缺，零 P0）。目标 MR1（依赖 MA1+MA2 done，由 R1.0 展开机制转化为具体修复工作项行）。
 
 ### P1 类型分布
 
@@ -77,8 +78,14 @@
 | `P1-MA2-020` | ma2-period-close-e2e | finance | **反结账 approval 为 kill-switch 无审批流**：`ErpFinAccountingPeriodProcessor.reverseClose:278-281` 默认 config `reverse-close-approval-required=true` 时直接 throw，反结账完全不可用；置 false 则无条件放行无审批。owner doc `§反结账约束` 要求「管理员+审批」，实现无审批流（仅 kill-switch）。修复方式：MR1 裁决——实现审批流（反结账申请→审批→执行）或 owner doc 标注「当前 config kill-switch，审批流 successor」 | MR1 | todo |
 | `P1-MA2-021` | ma2-period-close-e2e | finance | **CLOSED_FINAL 期间凭证锁定未实现**：owner doc `§期间控制` CLOSED_FINAL「可修改凭证=否」，`ErpFinVoucherBizModel.postVoucher/reverseVoucher:88-114` 仅校验凭证自身 `docStatus`（DRAFT/POSTED），不校验期间状态；继承的 CrudBizModel 默认 update/delete 同样不检查期间状态。CLOSED_FINAL 凭证可被修改/红冲。「承诺但无证据」控制点。修复方式：MR1 补期间状态守卫（postVoucher/reverseVoucher/update/delete 前校验 period.status != CLOSED/CLOSED_FINAL）或 owner doc 标注「锁定语义经期间状态机 + 操作权限间接保证」 | MR1 | todo |
 | `P1-MA2-022` | ma2-period-close-e2e | finance | **FX 重估无前期 reversal + 无期间过滤（累计漂移）**：`ExchangeRevaluationService.revalueArAp:106-108` 查询所有未核销外币项不按期间过滤（重估所有开放项），重估后不更新 `openAmountFunctional`、不 reversal 前期 FX 凭证。每月结账对同一批开放项按新汇率重估，前期汇兑损益不冲回，累计漂移（非 IAS 21 spot-rate「前期重估期末自动 reversal」语义）。config-gated。修复方式：MR1 裁决——实现前期 FX 凭证期末自动 reversal + 期间过滤，或 owner doc 标注「当期 spot-rate 重估，无前期 reversal」为已知简化 | MR1 | todo |
+| `P1-MA2-023` | ma2-inventory-costing-consistency | inventory | **SPECIFIC 历史成本守卫缺失**：`SpecificCostingStrategy.findSpecificLayers:168-188` 无 `le(incomingDate, businessDate)` 过滤（FIFO:199/LIFO:185/BATCH:190 均有）。同 batchNo 的 future-dated 入库成本层可能被今日出库消耗，违反历史成本原则（出库应只消耗出库日及之前入库的成本）。specifies 用于贵重物品/唯一标识商品，同 batchNo 多次入库 + future-dated 场景狭窄；余额数量/金额仍守恒（仅 unitCost 取值时点错误）。修复方式：MR1 在 `findSpecificLayers` 增 `businessDate` 参数 + `le(incomingDate, businessDate)` 过滤（对齐其他 3 层基方法）+ `onOutgoing:92-93` 调用传入 `move.getBusinessDate()` + 补 future-dated 同 batchNo 场景测试 | MR1 | todo |
+| `P1-MA2-024` | ma2-inventory-costing-consistency | inventory | **STANDARD 红冲成本不变量跨重估破缺**：`StandardCostingStrategy.onIncoming:43` 忽略传入的 `unitCost` 参数，经 `standardCostResolver.resolve()` 重解析当前 FIRMED rollup。若红冲期间 FIRMED rollup 经 STANDARD_REVALUATION 变更（`CostAdjustmentService.publishFirmedRollup:206-230`），反向入库用新标准成本，与原出库扣减的旧标准成本不一致，balance.totalCost 漂移 `(newStd-oldStd)×qty`。`StandardCostingStrategy.onOutgoing:63-87` 也不刷新 `line.unitCost`（其他层基策略均刷新），故 `ErpInvStockMoveProcessor.reverse:144 rl.setUnitCost(ol.getUnitCost())` 对 STANDARD 无效。无 STANDARD 红冲测试。修复方式：MR1 裁决——方案 A（推荐）`onIncoming` 优先用传入的 `unitCost`（非 null 且 > 0 时）fallback 重解析 + `onOutgoing` 刷新 `line.unitCost`；方案 B owner doc 标注「STANDARD 红冲跨重估为已知简化」。补 STANDARD 红冲不变量测试 | MR1 | todo |
 
 > 去重说明：P1-MA1-011 与 P1-MA1-013 是同一组 finding（maintenance propId），在 A 与 BC 报告中均出现，因 maintenance 既属 A 级合并（A1.5 assets+inventory）边缘又属 B 级合并（A1.8 cs+contract+b2b+maintenance+drp）——本次审计按 roadmap 工作项边界在两份报告中各登记一次。MR1 实际修复只处理一次。
+
+### A2.4 库存核算一致性审计新增项（2026-07-27）
+
+**A2.4 库存核算三方对账多维审计已于 2026-07-27 完成**（详见 `docs/audits/2026-07-27-2211-arm-ma2-inventory-costing-consistency.md`）。库存核算链路组件齐备（7 costMethod 策略 + 子计算器注入模式 + 成本调整 + 到岸成本 + PPV + reclose 兜底），三方对账（成本层 + 余额 + 流水）在正常路径成立且经证据确认，**零 P0**；**新增 2 项 P1**（P1-MA2-023 SPECIFIC 历史成本守卫缺失 / P1-MA2-024 STANDARD 红冲成本不变量跨重估破缺）；**新增 5 项 P2** watch-only（P2-MA2-026 ~ P2-MA2-030）；MA1/MA2 finding（P1-MA1-022 / P0-MA1-021 done / P1-MA2-017 / P1-MA2-002）运行时复核**无升级**；并发敏感点 3 处交接 A2.17。
 
 ## P2 发现汇总（watch-only / 待 MR 顺手收敛）
 
@@ -109,6 +116,11 @@
 | `P2-MA2-023` | ma2-period-close-e2e | finance | 反结账 `reverseClose` 未清除 `populateTrialBalanceForAllSchemas` 写入的 `ErpFinTrialBalance` 快照行，反结账后期间残留 CLOSED 态试算平衡快照。重新结账时 `populateTrialBalanceForAllSchemas:467-471` 先清后写覆盖，影响有限。 | watch-only，MR1 顺手在 reverseClose 补 TB 清理 |
 | `P2-MA2-024` | ma2-period-close-e2e | finance | `ExchangeRevaluationService.aggregateBankSubjectBookFunctional:236` `findAllByQuery(new QueryBean())` 加载全部 VoucherLine 后 Java 过滤 `voucherIds.contains`，大数据量性能崩溃。应 `in("voucherId", voucherIds)` 下推。 | watch-only，MR1 顺手改查询过滤下推 |
 | `P2-MA2-025` | ma2-period-close-e2e | finance | `ErpFinAccountingPeriodProcessor.closePeriod:157-158` 连续 setStatus(CLOSING) 再 setStatus(CLOSED)，CLOSING 中间态永不在 flush 前对外可见，并发结账同一期间无法靠 CLOSING 态互斥。owner doc `§期间约束` 定义 CLOSING 为真实态，实现未体现并发互斥语义。 | watch-only，归 A2.17 并发与乐观锁系统性审计 |
+| `P2-MA2-026` | ma2-inventory-costing-consistency | inventory | **三方对账聚合不变量测试缺失**：当前仅 `TestErpInvFifoCosting.testReverseRestoresCostInvariant` 单次断言 Σ layer remaining×unitCost == balance.totalCost（容差 0.01）。Σ ledger quantity/totalCost vs balance 无任何测试断言。LIFO/BATCH/SPECIFIC/STANDARD 无聚合不变量测试。 | watch-only，MR1 顺手补混合操作后三方对账聚合断言测试（逐方法） |
+| `P2-MA2-027` | ma2-inventory-costing-consistency | inventory | **跨仓调拨成本桥层基方法未测试**：`StockMoveBookkeeper:113-115` 内部调拨分支先 `onOutgoing` 取 `carriedCost` 再 `onIncoming`，仅 MA 经 `testInternalTransferCarriesCostAcrossWarehouses:128-149` 覆盖。FIFO/LIFO/BATCH/SPECIFIC/STANDARD 的跨仓 carriedCost 往返无测试。 | watch-only，MR1 顺手补 FIFO 跨仓调拨 E2E（源仓出库加权 unitCost → 目标仓追加新层，两仓余额合计 + 层合计断言） |
+| `P2-MA2-028` | ma2-inventory-costing-consistency | inventory | **红冲使用 today() 而非原 businessDate**：`ErpInvStockMoveProcessor.reverse:128 reverseReq.setBusinessDate(CoreMetrics.today())`。FIFO 反向入库新层 incomingDate=today，若原出库在 T-10，红冲后新层排在 FIFO 队列末尾（today）。若后续出库日期介于 T-10 与 today 之间（如 T-5），`le(incomingDate, businessDate=T-5)` 过滤排除 today 的反向层 → 可能 ERR_COST_NOT_AVAILABLE。owner doc §FIFO 红冲 Decision (a) 已文档化「追加新层」语义，但 incomingDate=today 的 FIFO 排序副作用未述。 | watch-only，MR1 裁决：方案 A（推荐）`reverseReq.setBusinessDate(original.getBusinessDate())` 保持队列时序；方案 B owner doc 标注「红冲新层 incomingDate=today，FIFO 队列末尾」为已知简化 |
+| `P2-MA2-029` | ma2-inventory-costing-consistency | inventory | **CostAdjustment FIFO 红冲三方一致性未测试**：`TestErpInvCostAdjust.testReverseRollsBackBalanceAndVoucher:262-296` 仅 MA 路径（无层）。FIFO 物料成本调整的 delta 调整层（`incomingMoveId=-lineId` 哨兵）经 `removeFifoAdjustLayer:194-202` 物理删除——若该调整层已部分被后续出库消耗，物理删除可能破坏已扣减层。costing-methods.md:66 已登记 successor。 | watch-only，归 costing-methods.md:66 已文档化 successor（触发条件：实际启用 FIFO 物料的成本调整红冲遇此场景时） |
+| `P2-MA2-030` | ma2-inventory-costing-consistency | inventory | **reclosePeriodCosts 不覆盖 MOVING_AVERAGE/STANDARD 的 null/zero unitCost 边缘**：若 MA/STANDARD 流水因上游异常出现 `unitCost=null/0`，reclose 不兜底（`LAYER_BASED_METHODS` + WEIGHTED_AVERAGE 分支排除 MA/STANDARD）。属设计边界（DONE 时应已正确），非缺陷。 | watch-only，MR1 顺手在 owner doc 补注「reclose 职责边界：MA/STANDARD 在 DONE 时即最终，上游异常 unitCost 不兜底」 |
 
 ## 跨维度发现（待 MR4 裁决）
 
