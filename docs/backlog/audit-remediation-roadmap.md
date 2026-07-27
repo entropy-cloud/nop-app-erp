@@ -1,6 +1,6 @@
 # 审计-修复路线图
 
-> 最后更新：2026-07-27（v2 — 经 3 路独立子代理审查后修订）
+> 最后更新：2026-07-27（v2 — 经 3 路独立子代理审查后修订；A1.13 完成 — MA1 平台合规维度全域 19 列收尾）
 > 来源：`docs/skills/audit-remediation-roadmap-authoring-prompt.md`
 > 范围文档：`docs/audits/audit-remediation-scope-and-dimension-matrix.md`
 > 审查记录：3 路独立子代理（规范合规 / 覆盖面 / 可执行性），发现 S 级未拆分 / R*.x 占位符卡死 / 并发维度缺失 / 流水线退化等问题，本版全部修订
@@ -39,7 +39,7 @@
 | A1.10 | 跨模块依赖与 DAG 审计（全域跨域） | done | `docs/architecture/data-dependency-matrix.md` | 0.3 | `docs/skills/cross-module-dependency-audit-prompt.md` |
 | A1.11 | Nop 平台合规审计 — finance+mfg+hr（S 级） | done | `../nop-entropy/docs-for-ai/` | 0.3 | `docs/skills/nop-platform-conformance-audit-prompt.md` |
 | A1.12 | Nop 平台合规审计 — pur+sal+assets+inv（A 级核心） | done | 同上 | 0.3 | `docs/skills/nop-platform-conformance-audit-prompt.md` |
-| A1.13 | Nop 平台合规审计 — crm+qa+prj+cs+ct+b2b+mnt+drp+md+aps+log+notify（A+B+C 合并） | todo | 同上 | 0.3 | `docs/skills/nop-platform-conformance-audit-prompt.md` |
+| A1.13 | Nop 平台合规审计 — crm+qa+prj+cs+ct+b2b+mnt+drp+md+aps+log+notify（A+B+C 合并） | done | 同上 | 0.3 | `docs/skills/nop-platform-conformance-audit-prompt.md` |
 | A1.14 | 架构治理复审（daoFor Type 4 残留 / 字典真相 / 共享内核守卫 / CI guard） | todo | `docs/audits/2026-07-23-0000-architecture-governance-review.md` | 0.3 | 参考arch-gov-review方法 |
 
 ### Milestone MA2 — 业务正确性层审计
@@ -212,7 +212,7 @@
 ### MA1（结构审计，14 工作项）
 - A1.1-A1.9：ORM 按域复杂度分批（S 级整域——ORM 审计是机械性字段/类型检查不需功能拆分；A 级 2 域合并；B/C 级多域合并）
 - A1.10：跨模块 DAG 审计 — **done**（plan 2026-07-27-1227-1 closure audit PASS：DAG 零循环零禁止方向、外部声明 108/108=100% 覆盖、0 P0；3 项 P1 [owner doc §5.6.2 数值偏差 / finance IDaoProvider 跨域 DAO 查询 / owner doc §3.2 finance 纯读规则不完整] 登记 MR1；owner doc §5.6.2 自述偏低 69% 已由审计脚本 `docs/audits/scripts/cross-module-dep-extract.py` 闭合提供权威值；F1–F9 全部已闭包确认）
-- A1.11-A1.13：Nop 平台合规审计按 S/A/B+C 三批
+- A1.11-A1.13：Nop 平台合规审计按 S/A/B+C 三批。**全部 done**：A1.11（S 级 finance+mfg+hr 45/45 维度合规，1 项 P1 + 2 项 P2）、A1.12（A 级核心 pur+sal+assets+inv 59/60 维度合规 + P0-MA1-021 已闭包 + 1 项 P1 跨域合并 + 4 项 P2）、A1.13（A+B+C 合并 12 域 179/180 维度合规，0 P0 + 0 新 P1（5 域扩展 P1-MA1-022 至 9 域）+ 2 项 P2 owner-doc drift）。**MA1 平台合规维度全域 19 列全部 ✅/⚠️(P1)/⚠️(P2)，无 ❓**
 - A1.14：架构治理复审
 
 ### MA2（业务审计，20 工作项）
