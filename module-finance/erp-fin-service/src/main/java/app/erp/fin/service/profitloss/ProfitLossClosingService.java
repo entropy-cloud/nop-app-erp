@@ -72,7 +72,7 @@ public class ProfitLossClosingService {
         if (voucherIds.isEmpty()) {
             return null;
         }
-        // 本期分录（排除 close 类分录自身：PERIOD_CLOSE/FX，避免重复结转；Java 过滤以 null 安全）。
+        // 本期分录（仅排除 PERIOD_CLOSE 自身分录防重复结转；汇兑损益 EXCHANGE_GAIN_LOSS 须结转，见下方）。
         IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("voucherId", voucherIds));
@@ -85,9 +85,10 @@ public class ProfitLossClosingService {
             if (l.getSubjectId() == null) {
                 continue;
             }
+            // 仅排除 PERIOD_CLOSE（结转凭证自身分录，防重复结转）。汇兑重估凭证（EXCHANGE_GAIN_LOSS）的汇兑损益
+            // （费用类）须正常结转至本年利润，否则结账后汇兑损益科目余额不归零（period-close.md §步骤5）。
             String bt = l.getBusinessType();
-            if (bt != null && (Objects.equals(bt, ErpFinBusinessType.PERIOD_CLOSE.name())
-                    || Objects.equals(bt, ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name()))) {
+            if (bt != null && Objects.equals(bt, ErpFinBusinessType.PERIOD_CLOSE.name())) {
                 continue;
             }
             ErpMdSubject subject = subjectCache.computeIfAbsent(l.getSubjectId(), this::loadSubject);
