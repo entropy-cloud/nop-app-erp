@@ -1,6 +1,6 @@
 # 2026-07-27-1949-3-audit-remediation-ma2-period-close-e2e MA2 期末结账端到端审计（A2.3）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: audit-remediation
 > Work Item: A2.3 期末结账端到端（期间+结转+坏账+成本）
 > Last Reviewed: 2026-07-27
@@ -77,73 +77,73 @@
 
 ### Phase 1 - 期末结账全链多维审计
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/.../service/entity/ErpFinAccountingPeriodBizModel.java`+`ErpFinAccountingPeriodStatusBizModel.java`+`ErpFinBadDebtBizModel.java`；`ErpFinAccountingPeriodProcessor`（reverseDepreciation，P1-MA1-016）；`ExchangeRevaluationService`；损益结转/年度结转服务；finance 过账 Provider（PERIOD_CLOSE/EXCHANGE_GAIN_LOSS/PROFIT_TO_RETAINED_EARNINGS，P1-MA1-018 enum 漂移点）；`docs/design/finance/period-close.md`+`flow-overview.md §一 L4/§六`+`bad-debt.md`+`budget.md §结转`；`TestErpFinPeriodPreCheck`+`TestErpFinProfitLossClosing`+`TestErpFinPeriodCloseEndToEnd`+`fin-period-close-wizard.action.spec.ts`
 Skill: `multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA1 done（P1-MA1-016/017/018 已登记待 MR1 供本审计复核运行时影响）；A2.1/A2.2 done（推荐前置——AR/AP 辅助账期末未核销项是本审计前置检查输入，但非硬阻塞：本审计可基于既有辅助账实现独立核验前置检查逻辑）
 
-- [ ] 维度「需求正确性」：对照 `period-close.md` 前置检查 6 项 + 8 步结账 + 反结账 8 步 + 年度结转，确认实现声明的流程与范围不偏离；找「承诺但无证据」的控制点（如「CLOSED_FINAL 期间凭证锁定」是否真正禁止修改）。
+- [x] 维度「需求正确性」：对照 `period-close.md` 前置检查 6 项 + 8 步结账 + 反结账 8 步 + 年度结转，确认实现声明的流程与范围不偏离；找「承诺但无证据」的控制点（如「CLOSED_FINAL 期间凭证锁定」是否真正禁止修改）。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「owner-doc 对齐」：`period-close.md` 期间状态机（OPEN/CLOSING/CLOSED/CLOSED_FINAL + 反结账）/ 反结账 8 步 / 年度结转步骤映射（向导 §步骤映射）/ `bad-debt.md` allowance 门控 / `budget.md` 结转与 commitment，逐条核对实现是否符合 owner doc；复核 P1-MA1-017（owner doc §3.2/§4.4 finance 跨域 command 编排规则不完整）的合法性——command 编排在 I*Biz 层合法（业务域自管实体的写）。
+- [x] 维度「owner-doc 对齐」：`period-close.md` 期间状态机（OPEN/CLOSING/CLOSED/CLOSED_FINAL + 反结账）/ 反结账 8 步 / 年度结转步骤映射（向导 §步骤映射）/ `bad-debt.md` allowance 门控 / `budget.md` 结转与 commitment，逐条核对实现是否符合 owner doc；复核 P1-MA1-017（owner doc §3.2/§4.4 finance 跨域 command 编排规则不完整）的合法性——command 编排在 I*Biz 层合法（业务域自管实体的写）。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「业务正确性 — 前置检查完整性」：核验 `preCheck` 是否覆盖全 6 项（posted 全过账 / 凭证全审核 / AR-AP 核销提示 / 坏账 allowance 门控 / 折旧已执行 / 成本核算完成）+ 阻断 vs 提示分级与 owner doc 一致（坏账 shortfall 阻断、AR-AP 未核销仅提示）；结构化 `PeriodPreCheckReport` 字段完整性。
+- [x] 维度「业务正确性 — 前置检查完整性」：核验 `preCheck` 是否覆盖全 6 项（posted 全过账 / 凭证全审核 / AR-AP 核销提示 / 坏账 allowance 门控 / 折旧已执行 / 成本核算完成）+ 阻断 vs 提示分级与 owner doc 一致（坏账 shortfall 阻断、AR-AP 未核销仅提示）；结构化 `PeriodPreCheckReport` 字段完整性。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「业务正确性 — 模块关账顺序与隔离性」：核验 closePeriod 编排 AR→AP→INV→AST→GL 顺序依赖；中途某模块关账失败时的事务边界（单库事务 REQUIRED）与已关账模块的回滚/残留；per-module status（arStatus/apStatus/invStatus/glStatus/assetStatus）的状态转移正确性。
+- [x] 维度「业务正确性 — 模块关账顺序与隔离性」：核验 closePeriod 编排 AR→AP→INV→AST→GL 顺序依赖；中途某模块关账失败时的事务边界（单库事务 REQUIRED）与已关账模块的回滚/残留；per-module status（arStatus/apStatus/invStatus/glStatus/assetStatus）的状态转移正确性。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「业务正确性 — 损益结转」：核验收入→本年利润（贷）、费用→本年利润（借）的科目分类与结转金额；结转后收入/费用科目余额归零的验证路径；结转凭证的借贷平衡。
+- [x] 维度「业务正确性 — 损益结转」：核验收入→本年利润（贷）、费用→本年利润（借）的科目分类与结转金额；结转后收入/费用科目余额归零的验证路径；结转凭证的借贷平衡。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「业务正确性 — 汇兑重估」：核验 AR/AP/银行存款外币余额按期末汇率重估的差额计算（currentBalance×期末汇率 vs 科目账面本位币聚合）；EXCHANGE_GAIN_LOSS 凭证借贷平衡；复核 P1-MA1-018 enum↔dict 漂移（PERIOD_CLOSE/EXCHANGE_GAIN_LOSS）是否导致期末对账（凭证汇总 vs 总账）漏算——代码以 `enum.name()` 持久化与 UI dict 筛选值不符的运行时影响。
+- [x] 维度「业务正确性 — 汇兑重估」：核验 AR/AP/银行存款外币余额按期末汇率重估的差额计算（currentBalance×期末汇率 vs 科目账面本位币聚合）；EXCHANGE_GAIN_LOSS 凭证借贷平衡；复核 P1-MA1-018 enum↔dict 漂移（PERIOD_CLOSE/EXCHANGE_GAIN_LOSS）是否导致期末对账（凭证汇总 vs 总账）漏算——代码以 `enum.name()` 持久化与 UI dict 筛选值不符的运行时影响。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「业务正确性 — 反结账完整性」：核验反结账 8 步概念模型实现完整性（红冲结转凭证 + 折旧凭证 + 成本凭证 + 解锁业务单据 + 重开期间）；反结账后期间内单据重新过账的一致性；**复核 P1-MA1-016 `ErpFinAccountingPeriodProcessor.reverseDepreciation` 跨域 DAO 查询（line ~389）的运行时正确性**——应仅治理问题（只读查询语义正确），不产生数据错误。
+- [x] 维度「业务正确性 — 反结账完整性」：核验反结账 8 步概念模型实现完整性（红冲结转凭证 + 折旧凭证 + 成本凭证 + 解锁业务单据 + 重开期间）；反结账后期间内单据重新过账的一致性；**复核 P1-MA1-016 `ErpFinAccountingPeriodProcessor.reverseDepreciation` 跨域 DAO 查询（line ~389）的运行时正确性**——应仅治理问题（只读查询语义正确），不产生数据错误。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「业务正确性 — 年度结转」：核验本年利润→未分配利润结转凭证（本年利润清零，PROFIT_TO_RETAINED_EARNINGS）；次年 `ErpFinGlBalance.yearOpeningDebit/Credit` populate 与上年期末余额一致；辅助账跨年对账门控（AR/AP 辅助账合计 vs 总账科目余额，config-gated）；`generateNextYearPeriods` 幂等性（`erp-fin.period-generate-skip-existing`）；反结账覆盖年度结转凭证红冲 + 次年期间已创建时阻止反结账。
+- [x] 维度「业务正确性 — 年度结转」：核验本年利润→未分配利润结转凭证（本年利润清零，PROFIT_TO_RETAINED_EARNINGS）；次年 `ErpFinGlBalance.yearOpeningDebit/Credit` populate 与上年期末余额一致；辅助账跨年对账门控（AR/AP 辅助账合计 vs 总账科目余额，config-gated）；`generateNextYearPeriods` 幂等性（`erp-fin.period-generate-skip-existing`）；反结账覆盖年度结转凭证红冲 + 次年期间已创建时阻止反结账。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「业务正确性 — 期间状态机纪律」：核验 OPEN→CLOSING→CLOSED→CLOSED_FINAL 转移合法性；CLOSED_FINAL 期间凭证锁定（不可修改）；反结账阻止条件（次年期间已创建 / 已上报税务等下游引用）；高权限+审批门控。
+- [x] 维度「业务正确性 — 期间状态机纪律」：核验 OPEN→CLOSING→CLOSED→CLOSED_FINAL 转移合法性；CLOSED_FINAL 期间凭证锁定（不可修改）；反结账阻止条件（次年期间已创建 / 已上报税务等下游引用）；高权限+审批门控。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「架构或边界影响」：复核期末结账跨域编排（finance→assets `executeBatchDepreciation/reverseDepreciation` + finance→inventory `reclosePeriodCosts`）的 DAG 合法性与事务隔离（`flow-overview.md §六.1` 单库事务 REQUIRED vs `§八.2` 业财过账 Facade REQUIRES_NEW）；核对 C-11（flow-overview:499 分布式事务描述过时）对事务边界理解的影响。
+- [x] 维度「架构或边界影响」：复核期末结账跨域编排（finance→assets `executeBatchDepreciation/reverseDepreciation` + finance→inventory `reclosePeriodCosts`）的 DAG 合法性与事务隔离（`flow-overview.md §六.1` 单库事务 REQUIRED vs `§八.2` 业财过账 Facade REQUIRES_NEW）；核对 C-11（flow-overview:499 分布式事务描述过时）对事务边界理解的影响。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「验证充分性」：对期末结账 E2E（`TestErpFinPeriodPreCheck`+`TestErpFinProfitLossClosing`+`TestErpFinPeriodCloseEndToEnd`+`fin-period-close-wizard.action.spec.ts`）的每个验收断言，问「如果它假了，我怎么知道？」；核验断言是否覆盖反结账红冲完整性、年初余额 populate 一致性、辅助账对账门控、汇兑重估借贷平衡等关键路径。
+- [x] 维度「验证充分性」：对期末结账 E2E（`TestErpFinPeriodPreCheck`+`TestErpFinProfitLossClosing`+`TestErpFinPeriodCloseEndToEnd`+`fin-period-close-wizard.action.spec.ts`）的每个验收断言，问「如果它假了，我怎么知道？」；核验断言是否覆盖反结账红冲完整性、年初余额 populate 一致性、辅助账对账门控、汇兑重估借贷平衡等关键路径。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「回归风险」：寻找「仅偶然通过狭窄验证」的期末结账代码——如年度结转仅在 12 月单期间测试通过、反结账仅在无次年期间场景验证、汇兑重估仅在单一外币场景验证、模块关账顺序失败回滚仅在第一模块失败验证。
+- [x] 维度「回归风险」：寻找「仅偶然通过狭窄验证」的期末结账代码——如年度结转仅在 12 月单期间测试通过、反结账仅在无次年期间场景验证、汇兑重估仅在单一外币场景验证、模块关账顺序失败回滚仅在第一模块失败验证。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「路由和技能选择正确性」：复核期末结账向导（纯 UI 编排既有 Facade mutation）+ Facade mutation（preCheck/closePeriod/finalizePeriod/reverseClose/generateNextYearPeriods）+ 跨域 command 编排的任务路由与技能选择是否与工作类型匹配。
+- [x] 维度「路由和技能选择正确性」：复核期末结账向导（纯 UI 编排既有 Facade mutation）+ Facade mutation（preCheck/closePeriod/finalizePeriod/reverseClose/generateNextYearPeriods）+ 跨域 command 编排的任务路由与技能选择是否与工作类型匹配。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「待办或自主权策略漂移」：复核 period-close.md 实现范围注记声明的 Non-Goal 裁定（BATCH/LIFO/费用摊销/年度报表/利润分配/多账套结转/历史追溯）是否在代码中无声扩大或缩窄范围。
+- [x] 维度「待办或自主权策略漂移」：复核 period-close.md 实现范围注记声明的 Non-Goal 裁定（BATCH/LIFO/费用摊销/年度报表/利润分配/多账套结转/历史追溯）是否在代码中无声扩大或缩窄范围。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 复核已登记 MA1 finding 运行时影响：P1-MA1-016（reverseDepreciation 跨域 DAO，应仅治理）/ P1-MA1-017（owner doc 文字缺陷）/ P1-MA1-018（enum↔dict 漂移致期末对账漏算风险，本审计须确认是否升级为运行时缺陷）/ C-11（事务描述过时）。标注每项终态。
+- [x] 复核已登记 MA1 finding 运行时影响：P1-MA1-016（reverseDepreciation 跨域 DAO，应仅治理）/ P1-MA1-017（owner doc 文字缺陷）/ P1-MA1-018（enum↔dict 漂移致期末对账漏算风险，本审计须确认是否升级为运行时缺陷）/ C-11（事务描述过时）。标注每项终态。
       - Skill: none
-- [ ] 产出审计报告 `docs/audits/2026-07-27-1949-arm-ma2-period-close-e2e.md`（含：链路覆盖矩阵、各维度通过/失败裁决、finding 按 P0/P1/P2 分级、MA1 finding 运行时影响复核表 [P1-MA1-016/017/018 + C-11]、并发敏感点交接 A2.17、残留风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-27-1949-arm-ma2-period-close-e2e.md`（含：链路覆盖矩阵、各维度通过/失败裁决、finding 按 P0/P1/P2 分级、MA1 finding 运行时影响复核表 [P1-MA1-016/017/018 + C-11]、并发敏感点交接 A2.17、残留风险）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 期末结账全链 7 个已识别控制点（前置检查 / 模块关账顺序与隔离 / 损益结转余额归零 / 汇兑重估借贷平衡 / 反结账完整性 / 年度结转 / 期间状态机纪律）均有通过/失败裁决与证据
-- [ ] 每个多维审计维度（至少 7 维 + 项目特定期末结账维度）至少一句裁决（含「本维度无发现」）
-- [ ] MA1 finding（P1-MA1-016 / P1-MA1-017 / P1-MA1-018）+ C-11 运行时影响复核结论已记录（含 P1-MA1-018 enum 漂移是否升级为运行时对账缺陷的裁决）
+- [x] 期末结账全链 7 个已识别控制点（前置检查 / 模块关账顺序与隔离 / 损益结转余额归零 / 汇兑重估借贷平衡 / 反结账完整性 / 年度结转 / 期间状态机纪律）均有通过/失败裁决与证据
+- [x] 每个多维审计维度（至少 7 维 + 项目特定期末结账维度）至少一句裁决（含「本维度无发现」）
+- [x] MA1 finding（P1-MA1-016 / P1-MA1-017 / P1-MA1-018）+ C-11 运行时影响复核结论已记录（含 P1-MA1-018 enum 漂移是否升级为运行时对账缺陷的裁决）
 
 ### Phase 2 - P0 即时通道处理 + P1 汇总交接 MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 期末结账审计发现的 P0/P1 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.2
 Skill: none
 
 - Item Types: `Fix | Add | Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] P0 finding 即时处理：每个 P0（结账后余额不归零 / 年初余额 populate 错误 / 反结账数据残留 / 汇兑重估借贷失衡 / 模块关账顺序致脏数据 / 期间状态机非法转移）当即就地修复（改源文件 + `mvn clean install -DskipTests` + 该修复独立审计 + 人工确认触及会计保护区域）或异步注入 fix plan（`docs/plans/YYYY-MM-DD-HHmm-arm-fix-*.md`）。P0 永不进入 MR 批量修复。每个 P0 在报告中标注修复路径与状态。
+- [x] P0 finding 即时处理：每个 P0（结账后余额不归零 / 年初余额 populate 错误 / 反结账数据残留 / 汇兑重估借贷失衡 / 模块关账顺序致脏数据 / 期间状态机非法转移）当即就地修复（改源文件 + `mvn clean install -DskipTests` + 该修复独立审计 + 人工确认触及会计保护区域）或异步注入 fix plan（`docs/plans/YYYY-MM-DD-HHmm-arm-fix-*.md`）。P0 永不进入 MR 批量修复。每个 P0 在报告中标注修复路径与状态。
       - Skill: none
-- [ ] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA2-NNN`、报告、描述、目标 MR1、修复状态 todo），供 R1.0 展开机制转化为具体修复工作项行。注意：本审计对 P1-MA1-016/017/018 只复核运行时影响不重复登记根因；若发现新 P1（如 P1-MA1-018 enum 漂移升级为对账缺陷）按新 finding ID 登记。
+- [x] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA2-NNN`、报告、描述、目标 MR1、修复状态 todo），供 R1.0 展开机制转化为具体修复工作项行。注意：本审计对 P1-MA1-016/017/018 只复核运行时影响不重复登记根因；若发现新 P1（如 P1-MA1-018 enum 漂移升级为对账缺陷）按新 finding ID 登记。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.2 "业财端到端" 行 finance/期间结账 相关列终态标记（`❓` → `✅`/`⚠️(P1)`）。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.2 "业财端到端" 行 finance/期间结账 相关列终态标记（`❓` → `✅`/`⚠️(P1)`）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
-- [ ] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
-- [ ] arm-index 报告清单 + scope matrix §2.2 已反映审计结论
+- [x] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
+- [x] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
+- [x] arm-index 报告清单 + scope matrix §2.2 已反映审计结论
 
 ## Draft Review Record
 
@@ -153,14 +153,14 @@ Exit Criteria:
 
 > 本计划主体是审计（不改代码）。完整仓库验证在此处运行一次（确认审计期间任何 P0 即时修复未引入回归）。若无 P0 即时修复（仅 P1 登记），则 build/test 门控为回归基线确认。期末结账触及会计保护区域，P0 即时修复须额外人工确认。
 
-- [ ] 范围内行为完成（A2.3 期末结账全链多维审计报告产出 + arm-index 更新 + scope matrix §2.2 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix、period-close/flow-overview/bad-debt/budget owner doc 结论已反映）
-- [ ] 已运行验证：零 P0 即时修复 → 全量 `mvn clean install -DskipTests` + `mvn test` 作回归基线确认；若有 P0 即时修复则该修复子切片独立验证 + 人工确认
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1；P0 不得降级为 MR）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A2.3 期末结账全链多维审计报告产出 + arm-index 更新 + scope matrix §2.2 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix、period-close/flow-overview/bad-debt/budget owner doc 结论已反映）
+- [x] 已运行验证：零 P0 即时修复 → 全量 `mvn clean install -DskipTests`（BUILD SUCCESS，154 模块 reactor，01:43 min）+ `mvn test -pl module-finance/erp-fin-service -am`（BUILD SUCCESS，285 tests，0 failures / 0 errors / 0 skipped，含 TestErpFinPeriodPreCheck / TestErpFinProfitLossClosing / TestErpFinPeriodCloseEndToEnd）作回归基线确认
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1；P0 注入即时通道 fix plan，不降级为 MR）
+- [x] 独立草案审查已完成并记录（Draft Review Record iteration 1 = accept，`ses_05c913099`）
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（独立子代理 `ses_05c22e06cffem3zmo2erC21twr`，VERDICT = PASS，见下方 Closure Audit Evidence）
+- [x] 结束证据存在于文件中（见下方 Closure Audit Evidence）
 
 ## Deferred But Adjudicated
 
@@ -196,14 +196,17 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _（待执行 + 独立 closure audit 后填充）_
+Status Note: A2.3 期末结账端到端多维审计完成。Phase 1（多维审计报告产出）+ Phase 2（P0 即时通道 fix plan 注入 + P1/P2 登记 + 索引/矩阵/路线图更新）全 2 Phase 完成。发现 1 项 P0（P0-MA2-016 汇兑损益费用类余额未结转至本年利润）+ 6 项 P1（P1-MA2-017~022）+ 3 项 P2 watch-only。MA1 finding [P1-MA1-016/017/018] 运行时复核无升级；C-11 已自然消解。P0 经独立 closure audit 确认缺陷链真实（FX line businessType=EXCHANGE_GAIN_LOSS → ProfitLossClosingService:88-92 过度排除 → 汇兑损益残留 → 本年利润少计），按会计保护区域纪律注入独立 fix plan（待人工确认 + 独立 plan-audit）。
 
 Closure Audit Evidence:
 
-- _（待独立子代理 closure audit 填充）_
+- 独立结束审计：`ses_05c22e06cffem3zmo2erC21twr`（fresh-context general 子代理，只读复核，2026-07-27）。**VERDICT = PASS**，0 blocker。
+- 8 项核查全部 ✅：(1) 审计报告存在且 substantive（14 维度裁决 + 7 控制点 PASS/FAIL + MA1 运行时复核表）；(2) P0 fix plan 已注入 `2026-07-27-1949-arm-fix-p0-ma2-016-fx-gain-loss-pl-closing.md`（status=active，定位 ProfitLossClosingService:88-92，声明保护区域门控）；(3) **P0 缺陷链逐行核实为真**——`ProfitLossClosingService:88-92` 排除 EXCHANGE_GAIN_LOSS + `CloseVoucherWriter:125` FX line 写入 businessType + `PeriodCloseTestSupport:52` 6603 seeded EXPENSE + 两测试均未断言 6603 归零 → 缺陷未被捕获（非虚构）；(4) arm-index 报告行 + P0-MA2-016 + P1-MA2-017~022 + P2-MA2-023~025 + P1 头部计数一致；(5) scope matrix §2.2 finance `⚠️P0→fix-plan+P1` + 顶部说明含 A2.3 段；(6) roadmap A2.3 `done` + header v5；(7) 计划文本一致（Phase 1/2 全 [x]，无遗留 [ ] phase item）；(8) `git status` 仅 docs markdown 变更，零 `module-*/` Java / `*.orm.xml` 代码变更。
+- 回归基线确认（audit-only，零代码变更）：`mvn clean install -DskipTests` BUILD SUCCESS（154 模块，01:43 min）；`mvn test -pl module-finance/erp-fin-service -am` BUILD SUCCESS（285 tests，0 failures / 0 errors / 0 skipped）。
+- 唯一机械项 B1（Plan Status / Closure Gates 未填）已由本 Closure 填充解决。
 
 Follow-up:
 
-- P1 finding 经 R1.0 展开机制进入 MR1（P1-MA1-016/017/018 运行时影响复核结论回填 arm-index）
-- 成本核算交接 A2.4 / 折旧交接 A4.3 / 期间状态机交接 A2.5b / commitment 交接 A2.16 / 并发交接 A2.17
-- 若 P0 即时修复注入 fix plan，该 fix plan 独立 closure + 人工确认（会计保护区域）
+- P0-MA2-016 fix plan `2026-07-27-1949-arm-fix-p0-ma2-016-fx-gain-loss-pl-closing.md` 待人工确认（会计保护区域）+ 独立 plan-audit + closure-audit 后执行；闭包时回填 arm-index P0 状态 `done` + scope matrix finance `⚠️(P0→fix-plan + P1)` → `⚠️(P1)`。
+- P1 finding 经 R1.0 展开机制进入 MR1（P1-MA1-016/017/018 + P1-MA2-017~022 运行时影响复核结论已回填 arm-index）
+- 成本核算交接 A2.4 / 折旧交接 A4.3 / 期间状态机交接 A2.5b / commitment 交接 A2.16 / 并发交接 A2.17（P2-MA2-025 + reverseClose/generateNextYearPeriods 并发敏感点）
