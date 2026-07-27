@@ -1,6 +1,6 @@
 # 2026-07-27-1227-2-audit-remediation-ma1-platform-conformance-s-tier MA1 Nop 平台合规审计 — finance+mfg+hr（S 级，A1.11）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: audit-remediation
 > Work Item: A1.11 Nop 平台合规审计 — finance+mfg+hr（S 级）
 > Last Reviewed: 2026-07-27
@@ -57,53 +57,56 @@ S 级三域是全域最高复杂度域，平台合规风险密度最高（scope 
 
 ### Phase 1 - finance + manufacturing + hr 平台合规 15 维度审计（含自动化 grep + 语义抽样）
 
-Status: planned
+Status: completed
 Targets: `module-finance/`、`module-manufacturing/`、`module-hr/` 下全 `{domain}-service`/`{domain}-dao`/`{domain}-web` Java 文件（scope matrix §1.1 指标 finance 331 / mfg 246 / hr 127；含 `_gen/` 实测 find 计数更高——438/311/182，MV 验证里程碑需重跑 §1.1 数据）；各域 `*.orm.xml`、`*.xbiz.xml`、`docs/design/<domain>/`
 Skill: `nop-platform-conformance-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线 + compliance 锚点）；A1.1–A1.3 S 级 ORM 审计 done（ORM 层已 0 blocker，本计划在其上做实现层平台合规审计）
 
-- [ ] 自动化 grep 扫描三域源码，覆盖 skill 列出的机械化规则：`extends RuntimeException`（应 NopException）、`@Inject private`（应非 private）、`@Transactional` 与 `@BizMutation` 共存（冗余）、`System.currentTimeMillis`（应 CoreMetrics）、`IDaoProvider` 直接注入（应 I*Biz）、`_gen/` 是否被手改（git diff）、跨模块 refEntityName 无 notGenCode 声明、`__XGEN_FORCE_OVERRIDE__` 手改。产出三域反模式实例清单。
+- [x] 自动化 grep 扫描三域源码，覆盖 skill 列出的机械化规则：`extends RuntimeException`（应 NopException）、`@Inject private`（应非 private）、`@Transactional` 与 `@BizMutation` 共存（冗余）、`System.currentTimeMillis`（应 CoreMetrics）、`IDaoProvider` 直接注入（应 I*Biz）、`_gen/` 是否被手改（git diff）、跨模块 refEntityName 无 notGenCode 声明、`__XGEN_FORCE_OVERRIDE__` 手改。产出三域反模式实例清单。
       - Skill: `nop-platform-conformance-audit-prompt.md`
-- [ ] finance 15 维度审计：维度 1 决策顺序（Model→Delta→Java，能模型化却硬编码 Java）/ 2 跨实体访问（@Inject I*Biz vs IDaoProvider）/ 3 异常处理（NopException + ErrorCode）/ 4 IoC 与事务（@Inject 非 private、@BizMutation 不重复 @Transactional）/ 5 平台辅助工具 / 6 标准服务模式（CrudBizModel + @BizQuery/@BizMutation + @BizLoader）/ 7 机制 B / 8 状态机与规则引擎（科目映射用 nop-rule）/ 9 审批流与作业（nop-wf/nop-job）/ 10 定制能力顺序（Delta ext）/ 11 多租户与本地化 / 12 测试 / 13 codegen 产物安全 / 14 聚合完整性（app.action-auth.xml x:extends）。重点关注业财过账三件套与多币种四件套的平台规范遵循。
+- [x] finance 15 维度审计：维度 1 决策顺序（Model→Delta→Java，能模型化却硬编码 Java）/ 2 跨实体访问（@Inject I*Biz vs IDaoProvider）/ 3 异常处理（NopException + ErrorCode）/ 4 IoC 与事务（@Inject 非 private、@BizMutation 不重复 @Transactional）/ 5 平台辅助工具 / 6 标准服务模式（CrudBizModel + @BizQuery/@BizMutation + @BizLoader）/ 7 机制 B / 8 状态机与规则引擎（科目映射用 nop-rule）/ 9 审批流与作业（nop-wf/nop-job）/ 10 定制能力顺序（Delta ext）/ 11 多租户与本地化 / 12 测试 / 13 codegen 产物安全 / 14 聚合完整性（app.action-auth.xml x:extends）。重点关注业财过账三件套与多币种四件套的平台规范遵循。
       - Skill: `nop-platform-conformance-audit-prompt.md`
-- [ ] manufacturing 15 维度审计（同上维度集）。重点关注工单状态机（声明式 vs if-else）、MRP/BOM 计算引擎的平台辅助工具使用、制造-质量跨域事件（nop-message）。
+- [x] manufacturing 15 维度审计（同上维度集）。重点关注工单状态机（声明式 vs if-else）、MRP/BOM 计算引擎的平台辅助工具使用、制造-质量跨域事件（nop-message）。
       - Skill: `nop-platform-conformance-audit-prompt.md`
-- [ ] hr 15 维度审计（同上维度集）。重点关注工资核算（扣税规则用 nop-rule）、排班引擎、员工/组织双表（`erp_hr_employee` vs `erp_md_employee` 已登记 deferred）。
+- [x] hr 15 维度审计（同上维度集）。重点关注工资核算（扣税规则用 nop-rule）、排班引擎、员工/组织双表（`erp_hr_employee` vs `erp_md_employee` 已登记 deferred）。
       - Skill: `nop-platform-conformance-audit-prompt.md`
-- [ ] 维度 15 owner-doc→代码漂移抽样：finance（`docs/design/finance/posting.md` + `state-machine.md` 各抽 2 断言）、mfg（`docs/design/manufacturing/` + `mrp.md` 各抽 2 断言）、hr（`docs/design/human-resource/` 抽 2 owner doc × 2 断言）。对照 orm.xml 字典值 / BizModel 常量 / `*Errors.java` 核验。不一致即报 Major；若单域 ≥2 处漂移扩大抽样。
+- [x] 维度 15 owner-doc→代码漂移抽样：finance（`docs/design/finance/posting.md` + `state-machine.md` 各抽 2 断言）、mfg（`docs/design/manufacturing/` + `mrp.md` 各抽 2 断言）、hr（`docs/design/human-resource/` 抽 2 owner doc × 2 断言）。对照 orm.xml 字典值 / BizModel 常量 / `*Errors.java` 核验。不一致即报 Major；若单域 ≥2 处漂移扩大抽样。
       - Skill: `nop-platform-conformance-audit-prompt.md`
-- [ ] 产出审计报告 `docs/audits/2026-07-27-1227-arm-ma1-platform-conformance-s-tier.md`（按 finance/mfg/hr 组织，含：15 维度合规率、反模式实例清单、owner-doc 漂移核查点记录、finding 按 P0/P1/P2 分级、残留风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-27-1227-arm-ma1-platform-conformance-s-tier.md`（按 finance/mfg/hr 组织，含：15 维度合规率、反模式实例清单、owner-doc 漂移核查点记录、finding 按 P0/P1/P2 分级、残留风险）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] finance/mfg/hr 三域 15 维度均有结论，自动化 grep 清单 + 语义抽样均产出
-- [ ] 维度 15 每域 ≥4 核查点已记录（或发现 ≥2 漂移已扩大抽样）
-- [ ] 报告产出，解除 MA2 业务审计对实现层平台合规的依赖
+- [x] finance/mfg/hr 三域 15 维度均有结论，自动化 grep 清单 + 语义抽样均产出
+- [x] 维度 15 每域 ≥4 核查点已记录（或发现 ≥2 漂移已扩大抽样）
+- [x] 报告产出，解除 MA2 业务审计对实现层平台合规的依赖
 
 ### Phase 2 - P0 即时通道处理 + P1 汇总交接 MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 三域平台合规审计发现的 P0/P1 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.1
 Skill: none
 
 - Item Types: `Fix | Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] P0 finding 即时处理：每个 P0（手改生成代码 / 跨模块写反向 / 业务异常不扩展 NopException / @Inject private 致 IoC 失败）当即就地修复（改保留层源 + `mvn clean install -DskipTests` + 该修复独立审计，保护区域修复须额外授权）或异步注入 fix plan。P0 永不进入 MR。每个 P0 在报告中标注修复路径与状态。
+- [x] P0 finding 即时处理：每个 P0（手改生成代码 / 跨模块写反向 / 业务异常不扩展 NopException / @Inject private 致 IoC 失败）当即就地修复（改保留层源 + `mvn clean install -DskipTests` + 该修复独立审计，保护区域修复须额外授权）或异步注入 fix plan。P0 永不进入 MR。每个 P0 在报告中标注修复路径与状态。
       - Skill: none
-- [ ] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA1-NNN`，续 MA1 ORM 批次序号），供 R1.0 展开机制转化为具体修复工作项行。
+      - **结论**：三域本审计 P0 = 0（无手改生成代码 / 无跨模块写反向 / 无业务异常不扩展 NopException / 无 @Inject private 致 IoC 失败）。无需即时通道触发。
+- [x] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA1-NNN`，续 MA1 ORM 批次序号），供 R1.0 展开机制转化为具体修复工作项行。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.1 "Nop 平台合规" 行 finance/mfg/hr 三列 `❓` → `✅`/`⚠️(P1)`。
+      - **结论**：新增 1 项 `P1-MA1-018`（finance `ErpFinBusinessType` enum 名 ↔ dict value 漂移 4 项）已登记 `arm-index.md` §P1 详细清单。另登记 2 项 P2 watch-only（`P2-MA1-019` / `P2-MA1-020`）至 `arm-index.md` §P2 发现汇总。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.1 "Nop 平台合规" 行 finance/mfg/hr 三列 `❓` → `✅`/`⚠️(P1)`。
       - Skill: none
+      - **结论**：`arm-index.md` 报告清单新增本报告行（status=done）+ §P1 详细清单新增 P1-MA1-018 + §P2 发现汇总新建并登记 P2-MA1-019/020；`audit-remediation-scope-and-dimension-matrix.md §2.1` Nop 平台合规行 finance=`⚠️(P1)` / mfg=`✅` / hr=`⚠️(P2)`，§2.1 顶部说明同步更新。
 
 Exit Criteria:
 
-- [ ] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
-- [ ] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
-- [ ] arm-index 报告清单 + scope matrix §2.1 已反映审计结论
+- [x] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
+- [x] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
+- [x] arm-index 报告清单 + scope matrix §2.1 已反映审计结论
 
 ## Draft Review Record
 
@@ -113,14 +116,15 @@ Exit Criteria:
 
 > 本计划主体是审计（不改代码）。完整仓库验证在此处运行一次（确认审计期间任何 P0 即时修复未引入回归）。若无 P0 即时修复（仅 P1 登记），则 build/test 门控为回归基线确认。
 
-- [ ] 范围内行为完成（A1.11 finance/mfg/hr 三域平台合规 15 维度审计报告产出 + arm-index 更新 + scope matrix §2.1 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix 已反映审计结论）
-- [ ] 已运行验证：零 P0 即时修复 → 全量 `mvn clean install -DskipTests` + `mvn test` 作回归基线确认；若有 P0 即时修复则该修复子切片独立验证
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1；P0 不得降级为 MR）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志都一致
-- [ ] 独立结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A1.11 finance/mfg/hr 三域平台合规 15 维度审计报告产出 + arm-index 更新 + scope matrix §2.1 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix 已反映审计结论）
+- [x] 已运行验证：零 P0 即时修复 → 全量 `mvn clean install -DskipTests` + `mvn test` 作回归基线确认；若有 P0 即时修复则该修复子切片独立验证
+  - 验证证据：`mvn test -pl app-erp-all -am` → BUILD SUCCESS（08:39 min），Tests run: 全模块汇总 0 failures / 0 errors / 1 skipped（`ErpAllWebPagesCollectTest @Disabled`，compliance-baseline.md M0 锚点已知接受项）。本审计零代码变更，build/test 仅作回归基线确认，与 M0 锚点（HEAD=0e963531d）状态一致。
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1；P0 不得降级为 MR）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志都一致
+- [x] 独立结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -138,11 +142,15 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _（待执行后填充）_
+Status Note: A1.11（finance + manufacturing + hr 三域 Nop 平台合规 15 维度审计）执行完成。45/45 维度合规；P0=0（无即时通道触发）；P1=1（P1-MA1-018 finance enum↔dict 漂移，已登记 MR1）；P2=2（P2-MA1-019 finance IllegalArgumentException+LocalDate.now、P2-MA1-020 hr orphan dict，watch-only）。三域跨模块外部实体引用全部经机制 B notGenCode 声明，与 A1.10 一致。报告产出 `docs/audits/2026-07-27-1227-arm-ma1-platform-conformance-s-tier.md`，arm-index + scope matrix §2.1 已同步。零代码变更，回归基线 build/test 全绿（与 M0 锚点一致）。独立结束审计由独立子代理执行通过（见下 Closure Audit Evidence）。
 
 Closure Audit Evidence:
 
-- _（待独立结束审计后填充）_
+- 执行证据：`docs/audits/2026-07-27-1227-arm-ma1-platform-conformance-s-tier.md`（按域组织，15 维度合规表 + grep 清单 + owner-doc 抽样核查 + P0/P1/P2 finding + 残留风险 + deferred 复核）
+- 索引同步：`docs/audits/arm-index.md`（报告清单新增行 status=done + §P1 详细清单新增 P1-MA1-018 + §P2 发现汇总新建）
+- 矩阵同步：`docs/audits/audit-remediation-scope-and-dimension-matrix.md §2.1`（Nop 平台合规行 finance=`⚠️(P1)` / mfg=`✅` / hr=`⚠️(P2)`，顶部说明同步）
+- 验证证据：`mvn test -pl app-erp-all -am` → BUILD SUCCESS（0 failures / 0 errors / 1 skipped = M0 锚点已知接受项）
+- 独立结束审计：独立 closure auditor 子代理（新会话，不重用执行者上下文）执行 5 点语义核验通过：(1) Phase 状态与项目一致——Phase 1 / Phase 2 全 `[x]`、Exit Criteria 全 `[x]`；(2) Exit Criteria 对照 live repo 核实——`docs/audits/2026-07-27-1227-arm-ma1-platform-conformance-s-tier.md`（202 行）15 维度合规表全 45 项落地，`docs/audits/arm-index.md` 报告清单 line 19 + §P1 详细清单 P1-MA1-018 + §P2 发现汇总 P2-MA1-019/020 三处同步落地，`docs/audits/audit-remediation-scope-and-dimension-matrix.md §2.1` line 93 `| Nop 平台合规 | ⚠️(P1) | ✅ | ⚠️(P2) | ❓ ...` 与 §2.1 顶部说明 line 87 同步落地；(3) Anti-Hollow——P1-MA1-018 实测 `ErpFinBusinessType.java:22-25` enum 名（`MANUFACTURING_COST_CLOSE/PROJECT_COST_COLLECTION/PERIOD_CLOSE/EXCHANGE_GAIN_LOSS`）vs `app-erp-finance.orm.xml:70-73` dict value（`PRODUCTION_COST/PROJECT_COST/PERIOD_CLOSING/FX_REVALUATION`）4 项漂移真实存在 + `fromCode:86` IllegalArgumentException 真实 + hr.orm.xml:77-83 orphan dict 6 态真实，5 处 `businessType` column `ext:dict="erp-fin/business-type"` 确认 UI 筛选漏命中影响成立；(4) 五点一致性——Plan Status / 两 Phase Status / 两 Phase Exit Criteria / Closure Gates / Closure Evidence 全 `completed`；(5) Deferred 诚实——D1 + hr 双员工表均带 successor 显式记录非隐藏缺陷，P0=0 经 grep 实测确认。审计报告产出真实证据，scope matrix/arm-index/log/roadmap 同步落地，无 hollow 残留。
 
 Follow-up:
 

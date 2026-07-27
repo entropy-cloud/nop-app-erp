@@ -84,13 +84,13 @@
 
 ### 2.1 MA1 — 结构与架构层
 
-> MA1 ORM 审计（A1.1–A1.9）已于 2026-07-27 完成（详见 `docs/audits/2026-07-27-1015-arm-ma1-{s,a,bc}-tier-orm.md`）；MA1 跨模块依赖/DAG 审计（A1.10）已于 2026-07-27 完成（详见 `docs/audits/2026-07-27-1227-arm-ma1-cross-module-dag.md`）。下表反映终态：跨模块依赖/DAG 行全域 `✅`/`⚠️(P1)`（DAG 零循环零禁止方向、外部声明 100% 覆盖；3 项 P1 待 MR1 文档+代码修复）。ORM 模型规范行：10 域 ✅（9 维度全通过或仅 P2 watch-only）、9 域 ⚠️（有 P1 待 MR1）、0 域 ❓、0 blocker。`S拆` 后缀用于行为维度（MA2 状态机），ORM 机械维度已不再拆分。
+> MA1 ORM 审计（A1.1–A1.9）已于 2026-07-27 完成（详见 `docs/audits/2026-07-27-1015-arm-ma1-{s,a,bc}-tier-orm.md`）；MA1 跨模块依赖/DAG 审计（A1.10）已于 2026-07-27 完成（详见 `docs/audits/2026-07-27-1227-arm-ma1-cross-module-dag.md`）；MA1 平台合规审计 S 级三域（A1.11 finance+mfg+hr）已于 2026-07-27 完成（详见 `docs/audits/2026-07-27-1227-arm-ma1-platform-conformance-s-tier.md`）。下表反映终态：跨模块依赖/DAG 行全域 `✅`/`⚠️(P1)`（DAG 零循环零禁止方向、外部声明 100% 覆盖；3 项 P1 待 MR1 文档+代码修复）。ORM 模型规范行：10 域 ✅（9 维度全通过或仅 P2 watch-only）、9 域 ⚠️（有 P1 待 MR1）、0 域 ❓、0 blocker。Nop 平台合规行：mfg ✅（15 维度全通过）/ finance ⚠️(P1)（1 项 P1-MA1-018 enum↔dict 漂移 + 1 项 P2）/ hr ⚠️(P2)（1 项 P2 orphan dict，无 P1），其余 16 域 ❓（A1.12/A1.13 后续）。`S拆` 后缀用于行为维度（MA2 状态机），ORM 机械维度已不再拆分。
 
 | 维度 | finance | mfg | hr | assets | pur | sal | qa | crm | prj | cs | ct | b2b | inv | md | mnt | drp | aps | log | notify | Skill |
 |------|---------|-----|----|----|------|-----|----|----|----|----|----|----|-----|-----|-----|-----|-----|-----|--------|-------|
 | ORM 模型规范 | ✅ | ⚠️P1 | ✅ | ⚠️P1 | ✅ | ✅ | ⚠️P1 | ⚠️P1 | ⚠️P1 | ✅ | ✅ | ✅ | ✅ | ⚠️ | ⚠️P1 | ⚠️P1 | ✅ | ✅ | ✅ | orm-model-audit |
 | 跨模块依赖/DAG | ⚠️(P1) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | cross-module-dep-audit |
-| Nop 平台合规 | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | nop-conformance-audit |
+| Nop 平台合规 | ⚠️(P1) | ✅ | ⚠️(P2) | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | nop-conformance-audit |
 | 架构治理（daoFor/字典/共享内核/guard） | ⚠️F1residual | ⚠️F6✅ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ⚠️F1half | ⚠️ | ⚠️F4✅ | ❓ | ⚠️F7✅ | ❓ | ❓ | ⚠️F5✅ | 参考arch-gov-review |
 
 ### 2.2 MA2 — 业务正确性层
