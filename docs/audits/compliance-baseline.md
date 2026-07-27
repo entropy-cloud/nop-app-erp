@@ -113,6 +113,10 @@ R2a 不变（=37）。本批收尾后 `getEntityById(FK)` **chained + variable-s
 
 **校准实施位置**：`docs/audits/nop-compliance-checker.sh` R3 段（构建 ENTITY_WHITELIST + 逐行 cls 提取 + `grep -qxF` 白名单比对）。全仓 `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）+ 受影响域 `mvn test` 全绿（fin 264 / md 109）+ checker 复跑 R3=5 / R7=0。
 
+## R3 同步注记（plan 2026-07-26-0300-1，F2(#3) doc-status successor）
+
+`2026-07-26-0300-1`（doc-status 共享字典统一）将 6 域 28 列 ORM `ext:dict="erp-<domain>/doc-status"` 统一为 `erp/doc-status` + 共享 dict 创建于 `module-common-service` + 6 处内联 `<dict>` 移除 + 6 份 per-domain YAML 删除 + logistics stale 清理 + `ErpMntDaoConstants extends ErpMntDocStatus` 兼容链修复。该变更**不引入任何 `new Erp*()` 实体构造**（纯 ORM ext:dict 属性值变更 + 内联 dict 定义删除 + YAML 删除 + 一处 extends 子句扩展），故 R3 基线 **不变（=5）**。checker 实测 R3=5 与基线一致，无回归。其余 15 规则均 ≤ 基线（本计划未触及 BizModel/Processor Java 代码，R1d=28 的 +5 漂移来自前序未同步基线的计划，与本计划无关）。
+
 ## R2b/R2c/R2d 基线裁决性上调注记 + R8 checker 校准（plan 2026-07-25-1057-1）
 
 `2026-07-25-1057-1`（合规基线漂移裁决，CI red fix）处理基线门控上线后（`2026-07-24-0930-1` 之后）由已审计深化计划引入的 daoFor 漂移 + R8 抽象基类 false positive。**漂移源全部来自已经独立草案审查 + 结束审计的计划**，其生产代码变更已经审计验证为合法跨域编排。

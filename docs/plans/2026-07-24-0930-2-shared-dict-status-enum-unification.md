@@ -202,7 +202,9 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: ORM `ext:dict` 变更属 ask-first 保护区域。approve-status：inventory 5 处 + cs 1 处特化引用可保留（值相同，仅 dict key 不同）。doc-status：7 域值集合相同（ACTIVE/CANCELLED/DRAFT）为合并候选，但合并需统一 ORM ext:dict 到共享 dict key（保护区域）
 - Successor Required: `yes`（触发条件：ORM 变更授权 + 强制统一 dict key 引用需求）
-- **RELEASED（inventory approve-status 子项）by `2026-07-24-1600-1`**：触发条件已满足（ORM 变更人工批准 + 计划 §Approval & Execution Status）。inventory 5 列 `ext:dict="erp-inv/approve-status"` → `wf/approve-status` + 内联 `<dict name="erp-inv/approve-status">` 移除 + `erp-inv/approve-status.dict.yaml` 删除 + `ErpInvDaoConstants extends ErpInvDocStatus` 兼容；154 模块 BUILD SUCCESS + inv 114 测试 0 失败 + checker 零回归。**仍 Deferred**：cs `erp-cs/time-entry-approve-status`（1 处特化保留）+ doc-status 7 域合并（需统一 ORM ext:dict 授权）
+- **RELEASED（inventory approve-status 子项）by `2026-07-24-1600-1`**：触发条件已满足（ORM 变更人工批准 + 计划 §Approval & Execution Status）。inventory 5 列 `ext:dict="erp-inv/approve-status"` → `wf/approve-status` + 内联 `<dict name="erp-inv/approve-status">` 移除 + `erp-inv/approve-status.dict.yaml` 删除 + `ErpInvDaoConstants extends ErpInvDocStatus` 兼容；154 模块 BUILD SUCCESS + inv 114 测试 0 失败 + checker 零回归。
+- **RELEASED（doc-status 子项）by `2026-07-26-0300-1`**：触发条件已满足（ORM 变更人工批准 + 计划 §Approval & Execution Status，路径 a 会话内确认）。6 域 28 列 `ext:dict="erp-<domain>/doc-status"` → `erp/doc-status` + 共享 dict 创建于 `module-common-service/src/main/resources/_vfs/dict/erp/doc-status.dict.yaml`（选址候选 (c)：6 域 service 均依赖 common-service）+ 6 处内联 `<dict>` 移除 + 6 份 per-domain YAML 删除 + logistics stale 清理（内联 dict + YAML + en i18n label）+ `ErpMntDaoConstants extends ErpMntDocStatus` 兼容（maintenance 13 处直接引用）；154 模块 BUILD SUCCESS + 6 域+logistics 7 service 测试 0 失败 + checker 零回归（R3=5 不变）。
+- **cs `time-entry-approve-status`——永久裁决特化（Successor: no）**：值集合 PENDING/APPROVED/REJECTED ≠ wf/approve-status UNSUBMITTED/SUBMITTED/APPROVED/REJECTED，为合法特化非冗余，不统一
 
 ## Closure
 
