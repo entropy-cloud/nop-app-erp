@@ -6,6 +6,8 @@
 **审查依据**：`C:\can\nop\attractor-guided-engineering-template\docs\skills\architecture-governance-prompt.md`（8 核心问题 + Design Review Matrix + 9 Rot Indicators + Review Rules）
 **审查对象**：`nop-app-erp` 全仓（19 个 `module-*/` + `app-erp-all` + `docs/`）
 
+> **复审注记（2026-07-27 14:30，plan `2026-07-27-1430-3` A1.14）**：本首审报告已经 MA1 架构治理维度复审（详见 `docs/audits/2026-07-27-1430-arm-ma1-architecture-governance-review.md`）。**复审结论：F1–F9 残留全部未回退；自首审以来 5 天密集审计-修复计划落地未引入新 P0；CI guard 19 规则 actual ≤ M0.3 锚点基线（R2c 实际下降 -2 合规改善）；R12 共享内核 import 零增长（69/66/38 精确等于基线）；scope matrix §2.1 架构治理行全域 19 列补全（0 ❓）**。复审发现 **0 P0 + 1 新 P1**（`P1-MA1-029` ErpCtInvoicePlanBizModel 跨域写半治理——首审 line 130/144 已识别为 "bypass rationale 文件"，闭包时仅补登 ErpB2bAsnBizModel，本次复审登记进入 MR1）。daoFor Type 4 残留 + governed path 平台解耦维持首审 deferred successor。**MA1 里程碑（A1.1–A1.14）全部 done**。
+
 ---
 
 ## v1 → v2 修订摘要

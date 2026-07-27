@@ -19,6 +19,7 @@
 | `2026-07-27-1227-arm-ma1-platform-conformance-s-tier.md` | MA1 | Nop 平台合规 | finance / manufacturing / hr（A1.11） | done |
 | `2026-07-27-1227-arm-ma1-platform-conformance-a-tier-core.md` | MA1 | Nop 平台合规 | purchase / sales / assets / inventory（A1.12） | done |
 | `2026-07-27-1430-arm-ma1-platform-conformance-bc-tier.md` | MA1 | Nop 平台合规 | crm / quality / projects / cs / contract / b2b / maintenance / drp / master-data / aps / logistics / notify（A1.13） | done |
+| `2026-07-27-1430-arm-ma1-architecture-governance-review.md` | MA1 | 架构治理（daoFor Type 4 残留 / 字典真相 / 共享内核守卫 / CI guard） | 全 19 域跨域（A1.14 复审） | done |
 
 ## P0 发现追踪（即时通道）
 
@@ -30,7 +31,7 @@
 
 ## P1 发现汇总（待 MR 批量修复）
 
-> MA1 ORM 审计全域共 51 项 P1（S 级 1 + A 级 42 + B+C 级 9 - 重复计 1：maintenance propId 在 A/BC 报告中分类归属一致）+ MA1 跨模块依赖审计 3 项 P1（文档 2 + 代码 1）+ MA1 平台合规审计 S 级 1 项 P1（finance enum↔dict 漂移）+ MA1 平台合规审计 A 级核心 1 项 P1（跨域只读 IDaoProvider 通用模式，A1.13 扩展至 9 域）+ MA1 平台合规审计 BC 合并 0 项新 P1（5 域扩展 P1-MA1-022 至 9 域，无新 ID），统一登记如下。目标 MR1（依赖 MA1+MA2 done，由 R1.0 展开机制转化为具体修复工作项行）。
+> MA1 ORM 审计全域共 51 项 P1（S 级 1 + A 级 42 + B+C 级 9 - 重复计 1：maintenance propId 在 A/BC 报告中分类归属一致）+ MA1 跨模块依赖审计 3 项 P1（文档 2 + 代码 1）+ MA1 平台合规审计 S 级 1 项 P1（finance enum↔dict 漂移）+ MA1 平台合规审计 A 级核心 1 项 P1（跨域只读 IDaoProvider 通用模式，A1.13 扩展至 9 域）+ MA1 平台合规审计 BC 合并 0 项新 P1（5 域扩展 P1-MA1-022 至 9 域，无新 ID）+ MA1 架构治理复审 1 项新 P1（P1-MA1-029 ErpCtInvoicePlanBizModel 跨域写半治理），统一登记如下。目标 MR1（依赖 MA1+MA2 done，由 R1.0 展开机制转化为具体修复工作项行）。
 
 ### P1 类型分布
 
@@ -61,6 +62,7 @@
 | `P1-MA1-017` | ma1-cross-module-dag | docs（finance） | owner doc `data-dependency-matrix.md §3.2/§4.4` "finance 对业务域纯读不回写"规则不完整：未覆盖期末结账期间的跨域 command/request 编排（finance 调 `IErpAstDepreciationScheduleBiz.executeBatchDepreciation/reverseDepreciation` + `IErpInvCostingBiz.reclosePeriodCosts`）。需补注："纯读"指 ORM 层无反向 to-one；期间结账的 command 编排在 I*Biz 层合法（业务域自管实体的写） | MR1 | todo |
 | `P1-MA1-018` | ma1-platform-conformance-s-tier | finance | `ErpFinBusinessType` enum 名 ↔ dict `erp-fin/business-type` value 漂移 4 项：`MANUFACTURING_COST_CLOSE(100)`↔`PRODUCTION_COST` / `PROJECT_COST_COLLECTION(110)`↔`PROJECT_COST` / `PERIOD_CLOSE(120)`↔`PERIOD_CLOSING` / `EXCHANGE_GAIN_LOSS(130)`↔`FX_REVALUATION`。代码以 `enum.name()` 持久化（如 `ExchangeRevaluationService:152,213`、`ProfitLossClosingService:152`），UI dict 下拉值与 DB 存储值不符，筛选查询漏命中。owner doc `posting.md §业务类型映射` 明示「常量 code 与字典数值逐一一致」。修复方案 A（推荐 enum 重命名对齐 dict）或方案 B（dict 改值+数据迁移） | MR1 | todo |
 | `P1-MA1-022` | ma1-platform-conformance-a-tier-core + ma1-platform-conformance-bc-tier | pur+sal+ast+inv+mnt+prj+qa+drp+aps（**9 域合并**） | 跨域只读访问经 `IDaoProvider.daoFor(OtherModuleEntity)` 而非 I\*Biz（与 P1-MA1-016 同根因）。**A1.12 4 域**：pur（`ErpPurOrderProcessor:302,314` ErpMdSubject/ErpFinAccountingPeriod + `ErpPurPaymentProcessor:228,240`）+ sal（`ErpSalOrderProcessor:377,389`）+ ast（`ErpAstDepreciationScheduleProcessor:290` ErpFinAccountingPeriod + 9 个 posting dispatcher ErpMdSubject）+ inv（`ErpInvLandedCostProcessor:267,473,477` ErpPurReceive + `StandardCostResolver:99` / `CostMethodResolver:61,70` / `CostAdjustmentService:291` ErpMd*）。**A1.13 扩展 5 域**：mnt（`MaintenanceLaborPostingDispatcher:127` ErpFinVoucherBillR + `MaintenanceIssuePostingDispatcher` ErpInvStockMove/ErpInvStockLedger + ErpMdAcctSchema）+ prj（`TimesheetPostingDispatcher` ErpMdSubject）+ qa（`NcrPostingDispatcher`/`NcrReturnOrchestrator` ErpInvStockBalance + `ErpQaReportBizModel` ErpMdMaterial）+ drp（`DrpDemandAggregator`/`DrpReleaseService` ErpInvTransferOrder/ErpPurOrder/ErpMfgForecast/ErpMdMaterial/ErpMdCurrency）+ aps（`ErpApsAtpCtpServiceImpl`/`ErpApsSchedulingProcessor` ErpInvReservation/ErpInvStockBalance/ErpMfgBom/ErpMfgBomOperation）。Dashboard facade read-only 聚合永久接受。修复方案 A（推荐：master-data/finance/inventory/manufacturing I\*Biz 补便捷只读方法后迁移）或方案 B（永久接受为 Helper 合法模式） | MR1 | todo |
+| `P1-MA1-029` | ma1-architecture-governance-review | contract | `ErpCtInvoicePlanBizModel`（contract→pur/sal）跨域写半治理——`ErpCtInvoicePlanBizModel.java:159,196` 经 `daoProvider().daoFor(ErpPurInvoiceLine/ErpSalInvoiceLine.class).saveEntity(...)` 跨域持久化目标域发票行实体（绕过 `IErpPurInvoiceBiz`/`IErpSalInvoiceBiz` 审批管道）。文件 Javadoc（line 41-45）已有显式 bypass rationale（"避免服务依赖级联"），但 `docs/architecture/posting-exemptions.md` 未登记该豁免——与首审 F1 闭包项 #2（ErpB2bAsnBizModel）同型半治理。首审报告（`2026-07-23-0000-architecture-governance-review.md` line 130/144）已识别该文件为 "bypass rationale 文件" 但闭包时仅补登 ErpB2bAsnBizModel。A1.14 复审经实仓 grep `daoFor\(Erp[A-Za-z]+\.class\)\.saveEntity` 同行链式调用检出 | MR1 | todo |
 
 > 去重说明：P1-MA1-011 与 P1-MA1-013 是同一组 finding（maintenance propId），在 A 与 BC 报告中均出现，因 maintenance 既属 A 级合并（A1.5 assets+inventory）边缘又属 B 级合并（A1.8 cs+contract+b2b+maintenance+drp）——本次审计按 roadmap 工作项边界在两份报告中各登记一次。MR1 实际修复只处理一次。
 
@@ -78,6 +80,7 @@
 | `P2-MA1-026` | ma1-platform-conformance-a-tier-core | purchase | `app-erp-purchase.orm.xml:451` column `status ext:dict="erp-pur/scorecard-status" defaultValue="10"`，dict value 为 `DRAFT`/`FINALIZED`（string）但 defaultValue 残留 int 数值「10」。属 D1（int→string 已知 deferred）复现 | watch-only，**不重复裁决 D1**；MR1 D1 整体修复时一并处理 |
 | `P2-MA1-027` | ma1-platform-conformance-bc-tier | contract | owner doc `state-machine.md §1`（经 L-5 plan 2026-07-20-2200-1 补）列合同 7 态含 `CANCELLED`（DRAFT→CANCELLED 草稿废弃迁移），但代码 `app-erp-contract.orm.xml` dict `erp-ct/contract-status` 仅 6 态（无 CANCELLED），`ErpCtConstants.java` 无 `CONTRACT_STATUS_CANCELLED` 常量，BizModel 仅实现 ACTIVE→TERMINATED，DRAFT 废弃实际走 `useLogicalDelete=true`。owner doc 与代码漂移，无运行时影响 | watch-only，MR1 顺手更新 `state-machine.md`：删除 §1/§2/§3/§4 中 CANCELLED 相关描述（DRAFT 废弃走逻辑删除而非状态迁移） |
 | `P2-MA1-028` | ma1-platform-conformance-bc-tier | maintenance | owner doc `state-machine.md §适用对象二` 描述维护请求 5 态（OPEN/ACCEPTED/COMPLETED/REJECTED/CANCELLED），代码 `app-erp-maintenance.orm.xml` dict `erp-mnt/request-status` 含 **6 态**（多 `IN_PROGRESS` 维修中——ACCEPTED→COMPLETED 之间中间态）。owner doc 漏 IN_PROGRESS 态，无运行时影响 | watch-only，MR1 顺手更新 `state-machine.md §适用对象二`：§2 ASCII 图 ACCEPTED 后插入 IN_PROGRESS 中间态 + 状态定义表追加 IN_PROGRESS 行 + 迁移表追加 ACCEPTED→IN_PROGRESS/IN_PROGRESS→COMPLETED/IN_PROGRESS→REJECTED 行 |
+| `P2-MA1-030` | ma1-architecture-governance-review | master-data | `ErpMdCurrencyBizModel:60` 新增 `LocalDate.now()` 直调（programmer-error 路径，应 `CoreMetrics.currentDate()`，R7 同性质残留）。与 P2-MA1-019（`ErpFinVoucherTemplateBizModel:95` `LocalDate.now()` + `ErpFinBusinessType.fromCode:86` `IllegalArgumentException`）同性质合并处理 | watch-only，与 P2-MA1-019 合并：MR1 顺手收敛或永久接受（programmer-error 路径，非 GraphQL 面向，无 checker 规则约束 LocalDate.now） |
 
 ## 跨维度发现（待 MR4 裁决）
 
