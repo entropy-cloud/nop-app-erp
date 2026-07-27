@@ -21,6 +21,7 @@
 | `2026-07-27-1430-arm-ma1-platform-conformance-bc-tier.md` | MA1 | Nop 平台合规 | crm / quality / projects / cs / contract / b2b / maintenance / drp / master-data / aps / logistics / notify（A1.13） | done |
 | `2026-07-27-1430-arm-ma1-architecture-governance-review.md` | MA1 | 架构治理（daoFor Type 4 残留 / 字典真相 / 共享内核守卫 / CI guard） | 全 19 域跨域（A1.14 复审） | done |
 | `2026-07-27-1949-arm-ma2-procure-to-pay-e2e.md` | MA2 | 业财端到端（多维） | purchase + finance（A2.1 P2P） | done |
+| `2026-07-27-1949-arm-ma2-order-to-cash-e2e.md` | MA2 | 业财端到端（多维） | sales + finance（A2.2 O2C） | done |
 
 ## P0 发现追踪（即时通道）
 
@@ -32,7 +33,7 @@
 
 ## P1 发现汇总（待 MR 批量修复）
 
-> MA1 ORM 审计全域共 51 项 P1（S 级 1 + A 级 42 + B+C 级 9 - 重复计 1：maintenance propId 在 A/BC 报告中分类归属一致）+ MA1 跨模块依赖审计 3 项 P1（文档 2 + 代码 1）+ MA1 平台合规审计 S 级 1 项 P1（finance enum↔dict 漂移）+ MA1 平台合规审计 A 级核心 1 项 P1（跨域只读 IDaoProvider 通用模式，A1.13 扩展至 9 域）+ MA1 平台合规审计 BC 合并 0 项新 P1（5 域扩展 P1-MA1-022 至 9 域，无新 ID）+ MA1 架构治理复审 1 项新 P1（P1-MA1-029 ErpCtInvoicePlanBizModel 跨域写半治理），统一登记如下。**MA2 业务正确性审计 A2.1 P2P 端到端新增 3 项 P1**（P1-MA2-001 暂估冲回缺失 / P1-MA2-002 多币种 P2P 本位币凭证路径未验证 / P1-MA2-003 付款核销缺三单匹配完成态复核，零 P0）。目标 MR1（依赖 MA1+MA2 done，由 R1.0 展开机制转化为具体修复工作项行）。
+> MA1 ORM 审计全域共 51 项 P1（S 级 1 + A 级 42 + B+C 级 9 - 重复计 1：maintenance propId 在 A/BC 报告中分类归属一致）+ MA1 跨模块依赖审计 3 项 P1（文档 2 + 代码 1）+ MA1 平台合规审计 S 级 1 项 P1（finance enum↔dict 漂移）+ MA1 平台合规审计 A 级核心 1 项 P1（跨域只读 IDaoProvider 通用模式，A1.13 扩展至 9 域）+ MA1 平台合规审计 BC 合并 0 项新 P1（5 域扩展 P1-MA1-022 至 9 域，无新 ID）+ MA1 架构治理复审 1 项新 P1（P1-MA1-029 ErpCtInvoicePlanBizModel 跨域写半治理），统一登记如下。**MA2 业务正确性审计 A2.1 P2P 端到端新增 3 项 P1**（P1-MA2-001 暂估冲回缺失 / P1-MA2-002 多币种 P2P 本位币凭证路径未验证 / P1-MA2-003 付款核销缺三单匹配完成态复核，零 P0）。**A2.2 O2C 端到端新增 1 项 P1**（P1-MA2-009 多币种 O2C + 收款核销汇兑损益未实现，零 P0；P1-MA2-009 与 P1-MA2-002 同根因但 O2C 侧更严重——收款核销汇兑损益完全未实现而非仅未验证，MR1 一并裁决）。目标 MR1（依赖 MA1+MA2 done，由 R1.0 展开机制转化为具体修复工作项行）。
 
 ### P1 类型分布
 
@@ -67,6 +68,7 @@
 | `P1-MA2-001` | ma2-procure-to-pay-e2e | purchase+finance | **暂估应付冲回缺失**：PURCHASE_INPUT（receive，借 1401 存货/贷 2202 暂估应付）与 AP_INVOICE（invoice，借 1403 在途物资+借 2221 进项税/贷 2202 应付）在「先入库后开票」黄金路径无自动冲回；GL 2202 双计暂估+正式应付，1403 在途物资与 1401 库存商品双计存货，无清理分录。辅助账层（ErpFinArApItem）不受影响（ErpFinArApItemGenerator.resolveProfile 明确不处理 PURCHASE_INPUT）。owner doc returns.md §暂估应付冲减 仅在退货链实现冲回，正向 receive→invoice 冲回未实现。修复方式：MR1 裁决——实现 GRNI 自动冲回（invoice approve 时红冲关联 receive 的 PURCHASE_INPUT 凭证）或登记为期末人工清理的 documented simplification + 更新 owner doc | MR1 | todo |
 | `P1-MA2-002` | ma2-procure-to-pay-e2e | purchase+finance | **多币种 P2P 本位币凭证路径未验证**：`VoucherFact`（module-finance/erp-fin-service/.../service/posting/VoucherFact.java）仅单一 `amount` 字段（无 amountSource/amountFunctional 分离）；PurAcctDocProvider.createFacts 将 source-currency TOTAL_* 直接写入 fact.amount，本位币折算依赖过账引擎装配 ErpFinVoucherLine 时按 PostingEvent.exchangeRate 转换——该路径在 P2P 链无 E2E 证据。E2E（TestErpPurProcureToPayEnd/TestErpPurReturnRefundEndToEnd）均单币种（exchangeRate=ONE）。owner doc posting.md §多币种处理 契约在 P2P GL 层落实无测试证据。修复方式：MR1 补多币种 P2P E2E + 核实引擎折算路径 + 必要时 VoucherFact 增 amountSource/amountFunctional 双字段 | MR1 | todo |
 | `P1-MA2-003` | ma2-procure-to-pay-e2e | purchase | **付款核销缺发票三单匹配完成态复核**：`PaymentSettler.settle`（module-purchase/erp-pur-service/.../service/entity/PaymentSettler.java）仅校验发票 approveStatus=APPROVED，不复核三单匹配完成态。owner doc three-way-match.md §匹配时机:48「付款前最终校验：付款核销时确认发票已完成三单匹配」未落实。非严格默认模式（match=warn+放行）下价格严重超容差发票 APPROVED 后付款核销无二次门禁。修复方式：MR1 裁决——settle 前复核 invoice 三单匹配状态标记，或显式接受「APPROVED 即匹配通过」并更新 owner doc §匹配时机 | MR1 | todo |
+| `P1-MA2-009` | ma2-order-to-cash-e2e | sales+finance | **多币种 O2C 端到端 + 收款核销汇兑损益未实现**：(a) `VoucherFact`（module-finance/erp-fin-service/.../service/posting/VoucherFact.java）仅单一 `amount` 字段（无 amountSource/amountFunctional 分离），`SalAcctDocProvider.createFacts` 将 source-currency TOTAL_* 直接写入 fact.amount，本位币折算依赖过账引擎装配 ErpFinVoucherLine 时按 PostingEvent.exchangeRate 转换——该路径在 O2C 链无 E2E 证据；(b) **收款核销汇兑损益完全未实现**：`SalAcctDocProvider.RECEIPT` 只生成 借银行存款/贷应收（同金额），无 6051 汇兑损益科目插平；`ErpFinArApItemGenerator` + `ErpFinReconciliationBizModel` 不计算外币 AR 与外币 RECEIPT 的汇率差 plug。当前实现假设 invoice 与 receipt 同币种同汇率。E2E 测试（TestErpSalOrderToCashEnd/TestErpSalReturnRefundEndToEnd）均单币种（setExchangeRate(BigDecimal.ONE)）。owner doc `posting.md §多币种处理` + `flow-overview.md §4.3` 契约在 O2C GL 层与核销层落实无测试证据 + 部分未实现。**比 P1-MA2-002 更严重**：P2P 是「未验证」，O2C 是「未实现」（收款核销汇兑损益 plug 缺失）。修复方式：MR1 补多币种 O2C E2E + 核实引擎折算路径 + 在 RECEIPT 过账与核销环节补 6051 汇兑损益 plug + 必要时 VoucherFact 增 amountSource/amountFunctional 双字段（与 P1-MA2-002 一并裁决） | MR1 | todo |
 
 > 去重说明：P1-MA1-011 与 P1-MA1-013 是同一组 finding（maintenance propId），在 A 与 BC 报告中均出现，因 maintenance 既属 A 级合并（A1.5 assets+inventory）边缘又属 B 级合并（A1.8 cs+contract+b2b+maintenance+drp）——本次审计按 roadmap 工作项边界在两份报告中各登记一次。MR1 实际修复只处理一次。
 
@@ -90,6 +92,12 @@
 | `P2-MA2-006` | ma2-procure-to-pay-e2e | docs+purchase | owner doc `returns.md §红字发票处理` 描述「已开票退货→红字 ErpPurInvoice」流程；实现以 PURCHASE_RETURN 过账 + 负 ArApItem credit memo 替代（功能等价于 AP 余额回减，但 GL 冲暂估侧非 formal 侧）。owner doc 与实现偏离 | watch-only，MR1 更新 owner doc 反映 credit-memo-via-return 实现（与 P1-MA2-001 一并裁决） |
 | `P2-MA2-007` | ma2-procure-to-pay-e2e | purchase | `flow-overview.md §2.1`「订单审核锁定价格」控制点在 `ErpPurOrderProcessor.approve` 无服务端价格字段锁，依赖 CrudBizModel 常规更新约束。「承诺但无证据」控制点。无运行时影响（three-way-match 读当前 orderPrice，改价不破坏匹配完整性） | watch-only，MR1 顺手补 approve 后置价格守卫或更新 owner doc 标注「锁定」语义 |
 | `P2-MA2-008` | ma2-procure-to-pay-e2e | purchase | `PaymentSettler.settle`（module-purchase/erp-pur-service/.../service/entity/PaymentSettler.java:82-94）「读 invoiceBalance→写 PaymentLine」无悲观/乐观锁，并发核销同一发票可双读双写过付；recomputeInvoicePaid 事后聚合不能阻止中间态过付 | watch-only，归 A2.17 并发与乐观锁系统性审计 |
+| `P2-MA2-010` | ma2-order-to-cash-e2e | sales | `flow-overview.md §2.2 关键控制点 发票金额超过订单金额需审批` 在 `ErpSalInvoiceProcessor.validateBusinessRulesForApprove` 无订单-发票金额比对守卫（只校验客户启用 + 信用冻结）。「承诺但无证据」控制点（与 P2-MA2-007 同型）。 | watch-only，MR1 顺手补 approve 后置金额守卫或更新 owner doc 标注「审核信任前置订单价格」 |
+| `P2-MA2-011` | ma2-order-to-cash-e2e | docs+sales | `returns.md §红字发票处理` 描述「已开票退货→红字 ErpSalInvoice（金额取负）→ 红字凭证」；实现以 SALES_RETURN 过账 + 负 ArApItem credit memo 替代（功能等价于 AR 余额回减，但 GL 冲成本/存货侧非收入/应收侧）。owner doc 与实现偏离（与 P2-MA2-006 同型对称偏离）。 | watch-only，MR1 更新 owner doc 反映 credit-memo-via-return 实现 |
+| `P2-MA2-012` | ma2-order-to-cash-e2e | docs（sales） | `flow-overview.md §2.2 关键控制点 销售订单审核时检查客户信用额度` 仅描述订单审核环节；实现已扩展至出库/发票审核（`CreditLimitChecker.checkCreditHold`，config-gated `erp-sal.credit-check-on-delivery/on-invoice` 默认 false）+ 三级策略（SOFT_WARNING/HARD_BLOCK/SPECIAL_APPROVAL）+ AR 辅助账余额联动。owner doc 漏述该扩展点。 | watch-only，MR1 顺手更新 owner doc 反映信用冻结扩展点 + 三级策略 |
+| `P2-MA2-013` | ma2-order-to-cash-e2e | docs+sales | `flow-overview.md §2.2 关键控制点 收款核销按订单/发票维度` 描述订单 + 发票双维度；实现 `SettlementAllocation`（master-data）+ `ReceiptSettler` 仅按 invoiceId 维度核销，订单维度（receipt prepayment against order before invoice）未实现。owner doc 与实现偏离。 | watch-only，MR1 裁决：实现订单维度核销或更新 owner doc 标注「本期仅发票维度，预收款归独立 successor」 |
+| `P2-MA2-014` | ma2-order-to-cash-e2e | sales | `ReceiptSettler.settle:55-111`「读 invoiceBalance→写 ReceiptLine→recompute」无悲观/乐观锁，并发核销同一发票可双读双写过收；`recomputeInvoiceReceived:161-177` 事后聚合不能阻止中间态过收（与 P2-MA2-008 同型对称并发缺口）。 | watch-only，归 A2.17 并发与乐观锁系统性审计 |
+| `P2-MA2-015` | ma2-order-to-cash-e2e | docs（sales+finance） | `flow-overview.md §2.2 + §L3 + §L4` 描述出库（SALES_OUTPUT）与开票（AR_INVOICE）两阶段，但未显式声明：(a) 跨月出库-开票（成本在 X 月，收入在 X+1 月）月度毛利不配比，需期末结账摊平；(b) 已开票退货 GL 层不冲收入/应收，仅期末通过辅助账 credit memo + 期末结账完成。owner doc §八「流程设计特点」可补注期间配比语义。 | watch-only，MR1 顺手在 owner doc 标注「期间配比经期末结账完成」 |
 
 ## 跨维度发现（待 MR4 裁决）
 

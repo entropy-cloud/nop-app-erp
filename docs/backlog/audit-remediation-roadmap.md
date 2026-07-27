@@ -1,6 +1,6 @@
 # 审计-修复路线图
 
-> 最后更新：2026-07-27（v3 — A1.14 完成；MA1 全部 done — 结构与架构层审计 14 工作项全部闭合；进入 MA2 业务正确性层）
+> 最后更新：2026-07-27（v4 — A2.2 O2C 端到端审计完成：零 P0 + 1 项 P1 P1-MA2-009 多币种 O2C + 收款核销汇兑损益未实现 + 6 项 P2 watch-only；MA2 业财端到端 P2P+O2C 两条主链已完成，A2.3 期末结账为下一工作项）
 > 来源：`docs/skills/audit-remediation-roadmap-authoring-prompt.md`
 > 范围文档：`docs/audits/audit-remediation-scope-and-dimension-matrix.md`
 > 审查记录：3 路独立子代理（规范合规 / 覆盖面 / 可执行性），发现 S 级未拆分 / R*.x 占位符卡死 / 并发维度缺失 / 流水线退化等问题，本版全部修订
@@ -49,7 +49,7 @@
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
 | A2.1 | 采购到付款端到端（PO→Receive→Invoice→Pay） | done | `docs/design/flow-overview.md`+`purchase/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A2.2 | 销售到收款端到端（SO→Delivery→Invoice→Receipt） | ready | `docs/design/flow-overview.md`+`sales/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A2.2 | 销售到收款端到端（SO→Delivery→Invoice→Receipt） | done | `docs/design/flow-overview.md`+`sales/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A2.3 | 期末结账端到端（期间+结转+坏账+成本） | ready | `docs/design/finance/period-close.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A2.4 | 库存核算一致性（成本+余额+流水三方对账） | todo | `docs/design/inventory/`+`finance/costing-methods.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A2.5a | finance 状态机审查 — 过账与凭证（S 级拆分 1/3） | todo | `docs/design/finance/posting.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
