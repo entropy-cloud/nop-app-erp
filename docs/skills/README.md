@@ -47,6 +47,7 @@
 | `nop-platform-conformance-audit-prompt.md` | 项目设计与实现对 Nop Platform 最佳实践的遵循度审计 | 业务设计审计（用 design-doc-audit）、ORM 字段审计（用 orm-model-audit） | `../nop-entropy/docs-for-ai/` 全部、项目 architecture 文档 | 12 维度合规率 + 反模式清单 + 裁决 |
 | `development-wisdom-gate-prompt.md` | AI 开发过程中自检：假设面出、深度充电、跨层一致性、意图忠实度、生态约束、第一性原理验证，使用通用开发通识在声称完成前系统性挑战产出 | 审计特定对象需要针对性工具（plan-audit、multi-dimensional-audit 等） | 当前产出（设计/计划/代码）、项目 owner docs | 6 维度裁决 + 综合通过/不通过 |
 | `remove-ai-flavor-prompt.md` | 技术文章/文档有 AI 生成痕迹——读起来太整洁、像教科书定义、流程太完美 | 只需要事实校对或格式修正 | 目标文档 | 逐段的去 AI 味修改 + 自检确认 |
+| `audit-remediation-roadmap-authoring-prompt.md` | 为已多次审计但体量巨大的复杂项目设计**可由 Mission Driver 自主执行的全面审计-修复 roadmap**（流水线模式：P0 即时止血 + P1 维度内批量修复；ORM 变更已授权） | 单一对象窄审计、直接执行审计、体量小用平面待办即可 | 项目上下文、Mission Driver 文档、roadmap 规范、已有 skill 库、已有审计记录、项目愿景与设计基线 | `docs/backlog/audit-remediation-roadmap.md` + `missions/audit-remediation.json` + 审计维度矩阵文档（含报告归档规范） |
 
 ## 入门技能
 
@@ -69,6 +70,8 @@
 - `nop-platform-conformance-audit-prompt.md`
 - `code-refactor-prompt.md`
 - `development-wisdom-gate-prompt.md`
+- `remove-ai-flavor-prompt.md`
+- `audit-remediation-roadmap-authoring-prompt.md`
 
 ## 与工具原生技能的关系
 

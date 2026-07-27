@@ -1,0 +1,20 @@
+{
+  "name": "audit-remediation",
+  "description": "nop-app-erp 全面审计与 P0/P1 彻底修复（流水线模式：P0 即时止血 + P1 维度内批量修复）。基于已有 19 skill + 残留风险新维度，按复杂度分析驱动工作项拆分（S 级域按功能模块拆分），ORM 变更已授权。",
+  "roadmapPath": "docs/backlog/audit-remediation-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "auditsDir": "docs/audits",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "test": "mvn test",
+    "build": "mvn clean install -DskipTests",
+    "compliance": "bash docs/audits/nop-compliance-checker.sh"
+  },
+  "prompts": {
+    "multiAuditPrompt": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAuditPrompt": "docs/skills/open-ended-audit-prompt.md"
+  },
+  "commitFormat": "<type>: <description>"
+}

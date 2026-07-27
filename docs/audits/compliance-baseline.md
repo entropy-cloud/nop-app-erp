@@ -176,6 +176,37 @@ R2a/R2b/R2d 不变（per-mutation Processor 不是 BizModel 故不命中 R2a/R2b
 
 **纪律强化引用**：checker 注释排除校准是测量口径修正（非基线放水），对齐 `docs/analysis/governed-path-cost-evaluation.md §基线漂移复发防护 + checker 校准范式`（R3 orm.xml 白名单 + R8 排除集 + R8 per-mutation 排除 + 本计划 R1d/R6/R10 注释排除四先例构成的 checker 校准范式矩阵）。校准后基线语义清晰反映真实代码站点，未来注释增减不再触发虚假漂移。
 
+## M0 锚点注记（审计-修复回归起点，plan 2026-07-27-1015-1）
+
+> 本段是 `audit-remediation-roadmap.md` M0.3 工作项实测落锚：为 MA1–MA7 审计与 MR 修复提供可对比的回归起点。MV 验证里程碑（V.1/V.2）将对比此锚点。
+
+| 字段 | 值 |
+|------|----|
+| 锚定日期 | 2026-07-27 |
+| HEAD commit | `0e963531d4b07d44b593828a7aab048ea0c9d3db` |
+| 工作树状态 | dirty（仅文档变更：scope matrix / arm-index / 本文件 M0 段 / roadmap / 计划；零 Java/ORM/契约变更） |
+| compliance checker | `bash docs/audits/nop-compliance-checker.sh` → 全 19 规则 actual ≤ baseline（精确匹配，0 漂移） |
+| mvn build | `mvn clean install -DskipTests` → BUILD SUCCESS（156 reactor 模块，0 errors） |
+| mvn test | `mvn test` → BUILD SUCCESS（**0 failures / 0 errors / 1 skipped** = 已知 `ErpAllWebPagesCollectTest` `@Disabled`，见 `known-good-baselines.md §Known Failures (Accepted)`） |
+
+**Compliance 规则汇总快照**（与上文 BASELINE machine-readable 块逐行精确一致，0 漂移）：
+
+| 规则 | Baseline | Actual（HEAD=0e963531d） | 状态 |
+|------|----------|--------------------------|------|
+| R1a/R1b/R1c | 0/0/0 | 0/0/0 | ✅ |
+| R1d | 17 | 17 | ✅ |
+| R2a/R2b/R2c/R2d | 37/315/1228/28 | 37/315/1228/28 | ✅ |
+| R3 | 5 | 5 | ✅ |
+| R4/R5 | 0/0 | 0/0 | ✅ |
+| R6 | 2 | 2 | ✅ |
+| R7 | 0 | 0 | ✅ |
+| R8 | 42 | 42 | ✅ |
+| R10 | 6 | 6 | ✅ |
+| R11 | 0 | 0 | ✅ |
+| R12a/R12b/R12c | 69/66/38 | 69/66/38 | ✅ |
+
+**测试计数说明**：本次实测 `mvn test` 单元测试方法计数 = **1756**（surefire per-module 汇总，per-module 0 failures / 0 errors / 1 skipped）。roadmap `§框架/平台复用` 与 `§当前基线` 中历史引用的「~2890 测试」与实测不符（1756）—— 该数字应理解为起草期粗估，已被本次实测修正。MV V.1 验证里程碑以本注记的 1756 为对比起点，不依赖 ~2890。该项为文档计数漂移（非 CI red），后续 roadmap / project-context 文案修正归 G.4（已知失败模式与基线文案更新工作项）处理，不阻塞 M0 闭包。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。

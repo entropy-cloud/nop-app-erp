@@ -44,6 +44,7 @@
 | 审查审计工作流或所需草案审查/结束审计规则 | `docs/audits/00-audit-execution-guide.md` | `docs/skills/` 中的相关提示 |
 | 审计业务状态机的正确性和可达性 | `docs/skills/state-machine-business-review-prompt.md` | 定义状态机的 owner doc |
 | 将设计文档审计为应用层行为基线 | `docs/skills/design-doc-audit-prompt.md` | `docs/design/README.md`、存在时的 `docs/design/domain-design-guidelines.md` |
+| 为复杂项目规划可由 Mission Driver 驱动的全面审计-修复 roadmap | `docs/skills/audit-remediation-roadmap-authoring-prompt.md` | `docs/articles/mission-driver--loop-engineering.md`、`docs/backlog/00-roadmap-authoring-guide.md`、已有 `docs/audits/` 记录、`docs/skills/README.md` 全部 skill |
 | 了解哪些文档应使用日期文件名与稳定名称 | `docs/references/document-naming-and-timeliness.md` | 目标目录中的相关指南 |
 | 快速复制推荐的文件名模式用于新的日期文档 | `docs/references/document-naming-and-timeliness.md` | `Quick Copy Set` 部分 |
 | 复制现成的日期文档骨架 | `docs/examples/README.md` | 重命名最接近的 `.example.md` 文件 |
