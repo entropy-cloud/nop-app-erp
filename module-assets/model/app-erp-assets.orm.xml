@@ -96,11 +96,6 @@
             <option code="SCRAPPED" label="报废" value="SCRAPPED" i18n-en:label='Scrap'/>
             <option code="SOLD" label="出售" value="SOLD" i18n-en:label='Sale'/>
         </dict>
-        <dict label="单据状态" name="erp-ast/doc-status" valueType="string" i18n-en:label='Doc Status'>
-            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
-            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label='Effective'/>
-            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
-        </dict>
         <dict label="资本化来源类型" name="erp-ast/capitalization-source-type" valueType="string" i18n-en:label='Capitalization Source Type'>
             <option code="INVENTORY" label="库存" value="INVENTORY" i18n-en:label='Inventory'/>
             <option code="CIP" label="在建工程" value="CIP" i18n-en:label='CIP'/>
@@ -413,7 +408,7 @@
                 <column name="fromLocationId" code="FROM_LOCATION_ID" displayName="原使用地点" propId="12" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='From Location' />
                 <column name="toLocationId" code="TO_LOCATION_ID" displayName="新使用地点" propId="13" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='To Location' />
                 <column name="handlerId" code="HANDLER_ID" displayName="经办人" propId="14" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Handler' />
-                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="15" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="15" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp/doc-status" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="16" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="200" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
                 <column name="approvedAt" displayName="审核时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="201" i18n-en:displayName='Approved At'  ui:show="R"/>
@@ -525,7 +520,7 @@
                 <column name="adjustmentType" code="ADJUSTMENT_TYPE" displayName="调整类型" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/adjustment-type" i18n-en:displayName='Adjustment Type' />
                 <column name="adjustmentAmount" code="ADJUSTMENT_AMOUNT" displayName="调整金额" propId="9" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" mandatory="true" i18n-en:displayName='Adjustment Amount' />
                 <column name="reason" code="REASON" displayName="调整原因" propId="10" stdSqlType="VARCHAR" precision="500" i18n-en:displayName='Reason' />
-                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp/doc-status" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="13" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted'  ui:show="R"/>
                 <column name="postedAt" tagSet="clock" code="POSTED_AT" displayName="过账时间" propId="14" stdSqlType="TIMESTAMP" i18n-en:displayName='Posted At'  ui:show="R"/>
@@ -593,7 +588,7 @@
                 <column name="businessDate" code="BUSINESS_DATE" displayName="处置日期" propId="9" stdSqlType="DATE" mandatory="true" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="gainLoss" code="GAIN_LOSS" displayName="损益" propId="10" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Gain Loss' />
                 <column name="reason" code="REASON" displayName="处置原因" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" ext:dict="erp-ast/disposal-reason" i18n-en:displayName='Reason' />
-                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp/doc-status" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="14" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted'  ui:show="R"/>
                 <column name="postedAt" tagSet="clock" code="POSTED_AT" displayName="过账时间" propId="15" stdSqlType="TIMESTAMP" i18n-en:displayName='Posted At'  ui:show="R"/>
@@ -662,7 +657,7 @@
                 <column name="originalValue" code="ORIGINAL_VALUE" displayName="原值" propId="9" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" mandatory="true" i18n-en:displayName='Original Value' />
                 <column name="sourceType" code="SOURCE_TYPE" displayName="来源类型" propId="10" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/capitalization-source-type" i18n-en:displayName='Source Type' />
                 <column name="sourceCode" code="SOURCE_CODE" displayName="来源单号" propId="11" stdSqlType="VARCHAR" precision="50" i18n-en:displayName='Source Code' />
-                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp/doc-status" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="13" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="14" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted'  ui:show="R"/>
                 <column name="postedAt" tagSet="clock" code="POSTED_AT" displayName="过账时间" propId="15" stdSqlType="TIMESTAMP" i18n-en:displayName='Posted At'  ui:show="R"/>
@@ -908,7 +903,7 @@
                 <column name="businessDate" code="BUSINESS_DATE" displayName="拆分日期" propId="5" stdSqlType="DATE" mandatory="true" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="currencyId" code="CURRENCY_ID" displayName="币种" propId="6" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="splitReason" code="SPLIT_REASON" displayName="拆分原因" propId="7" stdSqlType="VARCHAR" precision="500" i18n-en:displayName='Split Reason' />
-                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp/doc-status" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="10" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted'  ui:show="R"/>
                 <column name="postedAt" tagSet="clock" code="POSTED_AT" displayName="过账时间" propId="11" stdSqlType="TIMESTAMP" i18n-en:displayName='Posted At'  ui:show="R"/>
@@ -973,7 +968,7 @@
                 <column name="businessDate" code="BUSINESS_DATE" displayName="合并日期" propId="5" stdSqlType="DATE" mandatory="true" tagSet="clock" i18n-en:displayName='Business Date' />
                 <column name="currencyId" code="CURRENCY_ID" displayName="币种" propId="6" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Currency' />
                 <column name="mergeReason" code="MERGE_REASON" displayName="合并原因" propId="7" stdSqlType="VARCHAR" precision="500" i18n-en:displayName='Merge Reason' />
-                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp-ast/doc-status" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" code="DOC_STATUS" displayName="单据状态" propId="8" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="erp/doc-status" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" code="APPROVE_STATUS" displayName="审核状态" propId="9" stdSqlType="VARCHAR" precision="20" stdDataType="string" mandatory="true" ext:dict="wf/approve-status" i18n-en:displayName='Approve Status' />
                 <column name="posted" code="POSTED" displayName="已过账" propId="10" stdSqlType="BOOLEAN" stdDataType="boolean" defaultValue="false" i18n-en:displayName='Posted'  ui:show="R"/>
                 <column name="postedAt" tagSet="clock" code="POSTED_AT" displayName="过账时间" propId="11" stdSqlType="TIMESTAMP" i18n-en:displayName='Posted At'  ui:show="R"/>

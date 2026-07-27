@@ -48,11 +48,6 @@
             <option code="SCRAPPED" label="报废" value="SCRAPPED" i18n-en:label="Scrap"/>
             <option code="SOLD" label="出售" value="SOLD" i18n-en:label="Sale"/>
         </dict>
-        <dict label="单据状态" name="erp-ast/doc-status" valueType="string" i18n-en:label="Doc Status">
-            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
-            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
-        </dict>
         <dict label="资本化来源类型" name="erp-ast/capitalization-source-type" valueType="string"
               i18n-en:label="Capitalization Source Type">
             <option code="INVENTORY" label="库存" value="INVENTORY" i18n-en:label="Inventory"/>
@@ -527,7 +522,7 @@
                 <column code="HANDLER_ID" displayName="经办人" name="handlerId" propId="14" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Handler"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -710,7 +705,7 @@
                 <column code="REASON" displayName="调整原因" name="reason" precision="500" propId="10" stdDataType="string"
                         stdSqlType="VARCHAR" i18n-en:displayName="Reason"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
+                        propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -823,7 +818,7 @@
                 <column code="REASON" displayName="处置原因" name="reason" precision="20" propId="11" stdDataType="string"
                         stdSqlType="VARCHAR" ext:dict="erp-ast/disposal-reason" i18n-en:displayName="Reason"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -940,7 +935,7 @@
                 <column code="SOURCE_CODE" displayName="来源单号" name="sourceCode" precision="50" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Code"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -1338,7 +1333,7 @@
                 <column code="SPLIT_REASON" displayName="拆分原因" name="splitReason" precision="500" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Split Reason"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
-                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -1443,7 +1438,7 @@
                 <column code="MERGE_REASON" displayName="合并原因" name="mergeReason" precision="500" propId="7"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Merge Reason"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
-                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ast/doc-status"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"

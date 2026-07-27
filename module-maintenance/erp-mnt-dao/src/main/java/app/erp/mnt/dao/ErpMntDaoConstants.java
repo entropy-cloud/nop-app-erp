@@ -1,5 +1,7 @@
 package app.erp.mnt.dao;
 
-public interface ErpMntDaoConstants extends _ErpMntDaoConstants{
+import app.erp.mnt.dao.constants.ErpMntDocStatus;
+
+public interface ErpMntDaoConstants extends _ErpMntDaoConstants, ErpMntDocStatus {
 
 }

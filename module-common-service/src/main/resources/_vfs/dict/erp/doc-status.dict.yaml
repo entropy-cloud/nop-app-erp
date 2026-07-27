@@ -2,18 +2,17 @@
 label: 单据状态
 locale: zh-CN
 valueType: string
-description: 
+description:
 options:
 
   - label: 草稿
     value: DRAFT
-    description: 
-  
+    description:
+
   - label: 已生效
     value: ACTIVE
-    description: 
-  
+    description:
+
   - label: 已作废
     value: CANCELLED
-    description: 
-  
+    description:

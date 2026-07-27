@@ -4,21 +4,6 @@ package app.erp.pur.dao;
 public interface _ErpPurDaoConstants {
     
     /**
-     * 单据状态: 草稿 
-     */
-    String DOC_STATUS_DRAFT = "DRAFT";
-                    
-    /**
-     * 单据状态: 已生效 
-     */
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-                    
-    /**
-     * 单据状态: 已作废 
-     */
-    String DOC_STATUS_CANCELLED = "CANCELLED";
-                    
-    /**
      * 付款进度: 未付款 
      */
     String PAID_STATUS_UNPAID = "UNPAID";

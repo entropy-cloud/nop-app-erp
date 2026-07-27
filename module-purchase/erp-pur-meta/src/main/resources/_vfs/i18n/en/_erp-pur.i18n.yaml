@@ -627,7 +627,6 @@ prop:
       criteria: Criteria
 dict:
   label:
-    erp-pur/doc-status: Doc Status
     erp-pur/paid-status: Payment Status
     erp-pur/receive-status: Receive Status
     erp-pur/biz-type: Purchase Doc Type
@@ -637,10 +636,6 @@ dict:
     erp-pur/supplier-standing: Supplier Standing
     erp-pur/scorecard-status: Scorecard Status
 dict.option.label:
-  erp-pur/doc-status:
-    DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided
   erp-pur/paid-status:
     UNPAID: Unpaid
     PARTIAL: Partially Paid

@@ -469,7 +469,6 @@ dict:
     erp-qa/inspection-result: Inspection Result
     erp-qa/ncr-status: NCR Status
     erp-qa/action-type: Corrective Action Type
-    erp-qa/doc-status: Doc Status
     erp-qa/severity: Non-conformance Severity
     erp-qa/action-status: Corrective Action Status
     erp-qa/risk-status: Risk Status
@@ -505,10 +504,6 @@ dict.option.label:
     CORRECTIVE: Correction
     PREVENTIVE: Preventive
     CAPA: Corrective & Preventive
-  erp-qa/doc-status:
-    DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided
   erp-qa/severity:
     LOW: Low
     NORMAL: General

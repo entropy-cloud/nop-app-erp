@@ -309,7 +309,6 @@ dict:
     erp-mnt/recurrence-type: Recurrence Type
     erp-mnt/priority: Priority
     erp-mnt/visit-task-status: Maintenance Task Status
-    erp-mnt/doc-status: Doc Status
     erp-mnt/calibration-result: Calibration Result
     erp-mnt/visit-type: Maintenance Type
     erp-mnt/visit-result: Execution Result
@@ -353,10 +352,6 @@ dict.option.label:
     COMPLETED: Completed
     SKIPPED: Skipped
     FAILED: Failed
-  erp-mnt/doc-status:
-    DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided
   erp-mnt/calibration-result:
     PASS: Conforming
     FAIL: Non-conforming

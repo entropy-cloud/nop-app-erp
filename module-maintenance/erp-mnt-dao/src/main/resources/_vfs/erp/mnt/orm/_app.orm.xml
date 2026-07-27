@@ -61,11 +61,6 @@
             <option code="SKIPPED" label="已跳过" value="SKIPPED" i18n-en:label="Skipped"/>
             <option code="FAILED" label="失败" value="FAILED" i18n-en:label="Failed"/>
         </dict>
-        <dict label="单据状态" name="erp-mnt/doc-status" valueType="string" i18n-en:label="Doc Status">
-            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
-            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
-        </dict>
         <dict label="校准结果" name="erp-mnt/calibration-result" valueType="string" i18n-en:label="Calibration Result">
             <option code="PASS" label="合格" value="PASS" i18n-en:label="Conforming"/>
             <option code="FAIL" label="不合格" value="FAIL" i18n-en:label="Non-conforming"/>
@@ -821,7 +816,7 @@
                         precision="20" propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Total Amt"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="10" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mnt/doc-status"
+                        propId="10" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="11" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -1027,7 +1022,7 @@
                 <column code="CALIBRATED_BY" displayName="校准人(职员)" name="calibratedBy" propId="12" stdDataType="long"
                         stdSqlType="BIGINT" i18n-en:displayName="Calibrated By"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mnt/doc-status"
+                        propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="14" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"

@@ -207,7 +207,6 @@ dict:
     erp-log/shipment-status: Shipment Status
     erp-log/settlement-status: Settlement Status
     erp-log/gateway-action: Gateway Action
-    erp-log/doc-status: Doc Status
 dict.option.label:
   erp-log/carrier-type:
     EXPRESS: Express
@@ -234,7 +233,3 @@ dict.option.label:
     ADVISE: Advise Pickup
     TRACK: Track
     CANCEL: Cancel
-  erp-log/doc-status:
-    DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided

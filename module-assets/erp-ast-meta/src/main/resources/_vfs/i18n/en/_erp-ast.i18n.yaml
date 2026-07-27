@@ -642,7 +642,6 @@ dict:
     erp-ast/depreciation-schedule-status: Depreciation Schedule Status
     erp-ast/adjustment-type: Adjustment Type
     erp-ast/disposal-type: Disposal Type
-    erp-ast/doc-status: Doc Status
     erp-ast/capitalization-source-type: Capitalization Source Type
     erp-ast/disposal-reason: Disposal Reason
     erp-ast/cip-status: CIP Status
@@ -680,10 +679,6 @@ dict.option.label:
   erp-ast/disposal-type:
     SCRAPPED: Scrap
     SOLD: Sale
-  erp-ast/doc-status:
-    DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided
   erp-ast/capitalization-source-type:
     INVENTORY: Inventory
     CIP: CIP

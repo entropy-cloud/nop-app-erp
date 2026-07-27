@@ -55,11 +55,6 @@
             <option code="PREVENTIVE" label="预防" value="PREVENTIVE" i18n-en:label='Preventive'/>
             <option code="CAPA" label="纠正预防" value="CAPA" i18n-en:label='Corrective &amp; Preventive'/>
         </dict>
-        <dict label="单据状态" name="erp-qa/doc-status" valueType="string" i18n-en:label='Doc Status'>
-            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
-            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label='Effective'/>
-            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
-        </dict>
         <dict label="不合格严重程度" name="erp-qa/severity" valueType="string" i18n-en:label='Non-conformance Severity'>
             <option code="LOW" label="低" value="LOW" i18n-en:label='Low'/>
             <option code="NORMAL" label="一般" value="NORMAL" i18n-en:label='General'/>
@@ -191,7 +186,7 @@
                 <column name="sampleQuantity" displayName="抽样数量" domain="quantity" code="SAMPLE_QUANTITY" propId="16" stdSqlType="DECIMAL" precision="20" scale="4" i18n-en:displayName='Sample Quantity' />
                 <column name="inspectorId" displayName="检验员(职员)" stdSqlType="BIGINT" code="INSPECTOR_ID" propId="17" stdDataType="long" i18n-en:displayName='Inspector' />
                 <column name="result" displayName="质检结果" ext:dict="erp-qa/inspection-result" mandatory="true" code="RESULT" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Result' />
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="19" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp/doc-status" mandatory="true" code="DOC_STATUS" propId="19" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="20" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="posted" displayName="已过账(质量结论已回写业务单据)" stdSqlType="BOOLEAN" defaultValue="false" code="POSTED" propId="21" stdDataType="boolean" i18n-en:displayName='Posted'  ui:show="R"/>
                 <column name="postedAt" displayName="过账时间" tagSet="clock" stdSqlType="TIMESTAMP" code="POSTED_AT" propId="22" i18n-en:displayName='Posted At'  ui:show="R"/>
@@ -547,7 +542,7 @@
                 <column name="participants" displayName="参与人员" stdSqlType="VARCHAR" precision="500" code="PARTICIPANTS" propId="8" stdDataType="string" i18n-en:displayName='Participants' />
                 <column name="conclusion" displayName="评审结论" stdSqlType="VARCHAR" precision="2000" code="CONCLUSION" propId="9" stdDataType="string" i18n-en:displayName='Conclusion' />
                 <column name="actionRequired" displayName="是否需要措施" stdSqlType="INTEGER" defaultValue="0" code="ACTION_REQUIRED" propId="10" stdDataType="int" i18n-en:displayName='Action Required' />
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp/doc-status" mandatory="true" code="DOC_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="12" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="200" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
                 <column name="approvedAt" displayName="审核时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="201" i18n-en:displayName='Approved At'  ui:show="R"/>
@@ -622,7 +617,7 @@
                 <column name="result" displayName="校准结果" ext:dict="erp-qa/inspection-result" mandatory="true" code="RESULT" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Result' />
                 <column name="nextCalibrationDate" displayName="下次校准日期" stdSqlType="DATE" code="NEXT_CALIBRATION_DATE" propId="12" i18n-en:displayName='Next Calibration Date' />
                 <column name="calibratedBy" displayName="校准人(职员)" stdSqlType="BIGINT" code="CALIBRATED_BY" propId="13" stdDataType="long" i18n-en:displayName='Calibrated By' />
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp/doc-status" mandatory="true" code="DOC_STATUS" propId="14" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="15" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="approvedBy" stdDomain="userId" displayName="审核人" stdSqlType="VARCHAR" precision="36" code="APPROVED_BY" propId="200" stdDataType="string" i18n-en:displayName='Approved By'  ui:show="R"/>
                 <column name="approvedAt" displayName="审核时间" tagSet="clock" stdSqlType="TIMESTAMP" code="APPROVED_AT" propId="201" i18n-en:displayName='Approved At'  ui:show="R"/>
@@ -780,7 +775,7 @@
                 <column name="cl" displayName="中心线(CL)" domain="specLimit" code="CL" propId="18" stdSqlType="DECIMAL" precision="20" scale="6" stdDataType="decimal" i18n-en:displayName='CL' />
                 <column name="calcStatus" displayName="计算状态" ext:dict="erp-qa/spc-calc-status" mandatory="true" defaultValue="PENDING" code="CALC_STATUS" propId="19" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Calc Status' />
                 <column name="isActive" displayName="是否启用" stdSqlType="BOOLEAN" defaultValue="true" code="IS_ACTIVE" propId="20" stdDataType="boolean" i18n-en:displayName='Active' />
-                <column name="docStatus" displayName="单据状态" ext:dict="erp-qa/doc-status" mandatory="true" code="DOC_STATUS" propId="21" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
+                <column name="docStatus" displayName="单据状态" ext:dict="erp/doc-status" mandatory="true" code="DOC_STATUS" propId="21" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Doc Status' />
                 <column name="approveStatus" displayName="审核状态" ext:dict="wf/approve-status" mandatory="true" code="APPROVE_STATUS" propId="22" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Approve Status' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="23" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="24" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>

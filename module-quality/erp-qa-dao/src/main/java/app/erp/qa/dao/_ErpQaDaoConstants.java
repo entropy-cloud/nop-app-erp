@@ -84,21 +84,6 @@ public interface _ErpQaDaoConstants {
     String ACTION_TYPE_CAPA = "CAPA";
                     
     /**
-     * 单据状态: 草稿 
-     */
-    String DOC_STATUS_DRAFT = "DRAFT";
-                    
-    /**
-     * 单据状态: 已生效 
-     */
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-                    
-    /**
-     * 单据状态: 已作废 
-     */
-    String DOC_STATUS_CANCELLED = "CANCELLED";
-                    
-    /**
      * 不合格严重程度: 低 
      */
     String SEVERITY_LOW = "LOW";
