@@ -55,7 +55,7 @@
 | A2.5a | finance 状态机审查 — 过账与凭证（S 级拆分 1/3） | done | `docs/design/finance/posting.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.5b | finance 状态机审查 — 预算与期间（S 级拆分 2/3） | done | `docs/design/finance/budget.md`+`period-close.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.5c | finance 状态机审查 — AR/AP 核销（S 级拆分 3/3） | done | `docs/design/finance/` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
-| A2.6a | manufacturing 状态机审查 — 工单与报工（S 级拆分 1/2） | todo | `docs/design/manufacturing/` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
+| A2.6a | manufacturing 状态机审查 — 工单与报工（S 级拆分 1/2） | done | `docs/design/manufacturing/` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.6b | manufacturing 状态机审查 — MRP/BOM（S 级拆分 2/2） | todo | `docs/design/manufacturing/mrp.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.7a | hr 状态机审查 — 员工与组织（S 级拆分 1/2） | todo | `docs/design/human-resource/` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.7b | hr 状态机审查 — 考勤与工资（S 级拆分 2/2） | todo | `docs/design/human-resource/` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
