@@ -48,9 +48,9 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| A2.1 | 采购到付款端到端（PO→Receive→Invoice→Pay） | todo | `docs/design/flow-overview.md`+`purchase/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A2.2 | 销售到收款端到端（SO→Delivery→Invoice→Receipt） | todo | `docs/design/flow-overview.md`+`sales/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A2.3 | 期末结账端到端（期间+结转+坏账+成本） | todo | `docs/design/finance/period-close.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A2.1 | 采购到付款端到端（PO→Receive→Invoice→Pay） | done | `docs/design/flow-overview.md`+`purchase/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A2.2 | 销售到收款端到端（SO→Delivery→Invoice→Receipt） | ready | `docs/design/flow-overview.md`+`sales/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A2.3 | 期末结账端到端（期间+结转+坏账+成本） | ready | `docs/design/finance/period-close.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A2.4 | 库存核算一致性（成本+余额+流水三方对账） | todo | `docs/design/inventory/`+`finance/costing-methods.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A2.5a | finance 状态机审查 — 过账与凭证（S 级拆分 1/3） | todo | `docs/design/finance/posting.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.5b | finance 状态机审查 — 预算与期间（S 级拆分 2/3） | todo | `docs/design/finance/budget.md`+`period-close.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |

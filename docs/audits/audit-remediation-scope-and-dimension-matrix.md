@@ -95,9 +95,11 @@
 
 ### 2.2 MA2 — 业务正确性层
 
+> MA2 业务正确性审计 A2.1 P2P 端到端已于 2026-07-27 完成（详见 `docs/audits/2026-07-27-1949-arm-ma2-procure-to-pay-e2e.md`）。下表「业财端到端」行 finance/purchase 列由 `❓` 推进至 `⚠️(P1)`（P2P 链路组件齐备、E2E 覆盖黄金路径+反向冲销，零 P0；3 项 P1 待 MR1：P1-MA2-001 暂估冲回缺失 / P1-MA2-002 多币种 P2P 本位币凭证路径未验证 / P1-MA2-003 付款核销缺三单匹配完成态复核；MA1 finding 运行时复核无升级）。
+
 | 维度 | finance | mfg | hr | assets | pur | sal | qa | crm | prj | cs | ct | b2b | inv | md | mnt | drp | aps | log | notify | Skill |
 |------|---------|-----|----|----|------|-----|----|----|----|----|----|-----|-----|-----|-----|-----|-----|-----|--------|-------|
-| 业财端到端 | ❓S拆 | ❓ | N/A | ❓ | ❓ | ❓ | N/A | N/A | ❓ | N/A | ❓ | N/A | ❓ | N/A | ❓ | N/A | N/A | N/A | N/A | 新维度+flow-overview |
+| 业财端到端 | ⚠️P1 | ❓ | N/A | ❓ | ⚠️P1 | ❓ | N/A | N/A | ❓ | N/A | ❓ | N/A | ❓ | N/A | ❓ | N/A | N/A | N/A | N/A | 新维度+flow-overview |
 | 状态机正确性 | ❓S拆 | ❓S拆 | ❓S拆 | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | N/A | ❓ | N/A | ❓ | ❓ | N/A | state-machine-review |
 | 库存核算一致性 | ❓S拆 | ❓ | N/A | N/A | ❓ | ❓ | N/A | N/A | N/A | N/A | N/A | N/A | ❓ | N/A | ❓ | ❓ | N/A | N/A | N/A | 新维度 |
 | 预算与承付 | ❓S拆 | N/A | N/A | N/A | ❓ | ❓ | N/A | N/A | ❓ | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | 新维度 |
