@@ -3,20 +3,15 @@ package app.erp.inv.service.posting;
 import app.erp.fin.biz.IErpFinVoucherBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
-import app.erp.fin.dao.entity.ErpFinVoucher;
-import app.erp.fin.dao.entity.ErpFinVoucherBillR;
-import app.erp.fin.service.ErpFinConstants;
 import app.erp.inv.dao.entity.ErpInvCostAdjust;
 import app.erp.inv.dao.entity.ErpInvCostAdjustLine;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.md.dao.AcctSchemaResolver;
-import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
-import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +21,6 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-
-import static io.nop.api.core.beans.FilterBeans.and;
-import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
  * 成本调整过账派发器（plan 2026-07-05-2352-3）。
@@ -46,8 +37,6 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 public class CostAdjustmentPostingDispatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(CostAdjustmentPostingDispatcher.class);
-
-    private static final String POSTING_TYPE_NORMAL = ErpFinConstants.POSTING_TYPE_NORMAL;
 
     @Inject
     IErpFinVoucherBiz voucherBiz;
@@ -76,7 +65,6 @@ public class CostAdjustmentPostingDispatcher {
         try {
             IServiceContext context = ctx();
             voucherBiz.reverse(adjust.getCode(), ErpFinBusinessType.COST_ADJUSTMENT, context);
-            markOriginalVoucherReversed(adjust.getCode());
         } catch (Exception e) {
             if (e instanceof NopException) {
                 LOG.warn("成本调整红字冲销失败，调整单 {}：{}", adjust.getCode(), e.getMessage());
@@ -116,24 +104,6 @@ public class CostAdjustmentPostingDispatcher {
         }
         event.setBillData(billData);
         return event;
-    }
-
-    private void markOriginalVoucherReversed(String billHeadCode) {
-        IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
-        QueryBean q = new QueryBean();
-        q.addFilter(and(eq("billCode", billHeadCode),
-                eq("businessType", ErpFinBusinessType.COST_ADJUSTMENT.name())));
-        List<ErpFinVoucherBillR> links = linkDao.findAllByQuery(q);
-        IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
-        for (ErpFinVoucherBillR link : links) {
-            ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
-            if (voucher != null && Objects.equals(voucher.getDocStatus(), ErpFinConstants.VOUCHER_STATUS_POSTED)
-                    && !Boolean.TRUE.equals(voucher.getIsReversed())
-                    && (voucher.getPostingType() == null || Objects.equals(voucher.getPostingType(), POSTING_TYPE_NORMAL))) {
-                voucher.setIsReversed(true);
-                voucherDao.updateEntity(voucher);
-            }
-        }
     }
 
     private IServiceContext ctx() {

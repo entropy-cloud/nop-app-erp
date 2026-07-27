@@ -65,6 +65,7 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
     static final Long ACCT_SCHEMA_ID = 7501L;
     static final String PERIOD_CODE = "2026-07";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
+    static final String POSTING_TYPE_NORMAL = "NORMAL";
 
     static final String SUBJECT_INVENTORY = "1401";
     static final String SUBJECT_COST_VARIANCE = "6603";
@@ -282,6 +283,13 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
             ErpInvStockBalance afterReverse = findBalance(materialId);
             assertEquals(0, afterReverse.getAvgCost().compareTo(new BigDecimal("10")), "avgCost 回退为 10");
             assertEquals(0, afterReverse.getTotalCost().compareTo(new BigDecimal("100")), "totalCost 回退为 100");
+
+            // 防回归（plan 2026-07-27-1430-1）：inventory 侧冗余写已移除，原 NORMAL 凭证 isReversed=true
+            // 必须仍由 finance 侧 IErpFinVoucherBiz.reverse → ErpFinPostingProcessor.markOriginalVoucherReversed 承担
+            ErpFinVoucher originalVoucher = findOriginalNormalVoucherByBillCode("CA-REV");
+            assertNotNull(originalVoucher, "红冲前应存在 NORMAL 过账凭证");
+            assertTrue(Boolean.TRUE.equals(originalVoucher.getIsReversed()),
+                    "红冲后原 NORMAL 凭证 isReversed=true（finance 侧 I*Biz 承担标记）");
         } finally {
             setApprovalRequired(true);
         }
@@ -523,6 +531,22 @@ public class TestErpInvCostAdjust extends JunitAutoTestCase {
             return null;
         }
         return daoProvider.daoFor(ErpFinVoucher.class).getEntityById(links.get(0).getVoucherId());
+    }
+
+    private ErpFinVoucher findOriginalNormalVoucherByBillCode(String billCode) {
+        IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("billCode", billCode));
+        List<ErpFinVoucherBillR> links = linkDao.findAllByQuery(q);
+        IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
+        for (ErpFinVoucherBillR link : links) {
+            ErpFinVoucher voucher = voucherDao.getEntityById(link.getVoucherId());
+            if (voucher != null && (voucher.getPostingType() == null
+                    || POSTING_TYPE_NORMAL.equals(voucher.getPostingType()))) {
+                return voucher;
+            }
+        }
+        return null;
     }
 
     private ErpFinVoucherLine findVoucherLine(Long voucherId, String subjectCode) {
