@@ -360,6 +360,7 @@ A1 已落地 `ErpFinGlMappingRule` 实体 + `IErpFinGlMappingResolver` 解析引
 - 业务单据作废/反审核时，业务域调用 `IErpFinPostingBiz.reverse(billHeadCode, businessType)`，按业财回链表反查关联的已过账凭证。
 - 引擎生成红字冲销凭证（金额取负），关联原凭证（`reversalOfVoucherId`）与作废的业务单据（新写一条业财回链）。
 - 红字凭证走正常"草稿→已过账"流程（平衡校验、期间门控、科目反查）。
+- **原凭证标记**：引擎在红字凭证落库后由 `ErpFinPostingProcessor.markOriginalVoucherReversed`（`reverseProcess` 末段）将原 NORMAL + POSTED + 未冲销凭证的 `isReversed` 置 `true`——这是引擎侧统一承担的标记责任，业务域**不应**绕过 `IErpFinVoucherBiz.reverse()` I*Biz 边界直接跨模块写 `ErpFinVoucher.isReversed`（参见 `integration-and-transaction-patterns.md` 业财一体写契约）。
 - 业务单据状态本就已由业务域在作废动作中回退，引擎无需再反写。
 
 ### 方向二：凭证红冲 → 业务单据回退（冲销反写闭环）

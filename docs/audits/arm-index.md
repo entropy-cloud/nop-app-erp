@@ -25,7 +25,7 @@
 
 | Finding ID | 报告 | 描述 | 修复路径 | 修复 plan | 修复状态 |
 |-----------|------|------|---------|----------|---------|
-| `P0-MA1-021` | ma1-platform-conformance-a-tier-core | inventory `CostAdjustmentPostingDispatcher.markOriginalVoucherReversed:127-141` 跨模块写 `ErpFinVoucher`（`voucherDao.updateEntity(voucher)` 置 `isReversed=true`），绕过 `IErpFinVoucherBiz.reverse()`（业财一体写绕过 I\*Biz，plan P0 类别）。触及 finance 凭证保护区域。 | 选项 A（推荐）：替换为 `IErpFinVoucherBiz.reverse(billHeadCode, ErpFinBusinessType.COST_ADJUSTMENT)` 由 finance 走完整红冲；选项 B：在 `IErpFinVoucherBiz` 新增 `markReversed(voucherId, ...)` I\*Biz 写方法 | 待起草（建议命名 `docs/plans/YYYY-MM-DD-HHmm-arm-fix-p0-ma1-021-inv-cost-adjust-voucher-writeback.md`） | `fix-plan-required (protected area gate)` |
+| `P0-MA1-021` | ma1-platform-conformance-a-tier-core | inventory `CostAdjustmentPostingDispatcher.markOriginalVoucherReversed:127-141` 跨模块写 `ErpFinVoucher`（`voucherDao.updateEntity(voucher)` 置 `isReversed=true`），绕过 `IErpFinVoucherBiz.reverse()`（业财一体写绕过 I\*Biz，plan P0 类别）。触及 finance 凭证保护区域。 | 选项 A（推荐）：替换为 `IErpFinVoucherBiz.reverse(billHeadCode, ErpFinBusinessType.COST_ADJUSTMENT)` 由 finance 走完整红冲；选项 B：在 `IErpFinVoucherBiz` 新增 `markReversed(voucherId, ...)` I\*Biz 写方法 | `docs/plans/2026-07-27-1430-1-arm-fix-p0-ma1-021-inv-cost-adjust-voucher-writeback.md` | `done (plan 2026-07-27-1430-1)` |
 
 ## P1 发现汇总（待 MR 批量修复）
 
