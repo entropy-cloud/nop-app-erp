@@ -90,7 +90,7 @@
 |---|-----------|--------|-----------|------|-------|
 | A4.1a | finance 代码质量审计 — 过账与凭证链路（S 级拆分 1/2） | done | `docs/design/finance/posting.md` | 0.3 | `docs/skills/code-quality-audit-prompt.md` |
 | A4.1b | finance 代码质量审计 — 预算/AR-AP/成本/期间（S 级拆分 2/2） | done | `docs/design/finance/` | 0.3 | `docs/skills/code-quality-audit-prompt.md` |
-| A4.2a | manufacturing 代码质量审计 — 工单/BOM（S 级拆分 1/2） | todo | `docs/design/manufacturing/` | 0.3 | `docs/skills/code-quality-audit-prompt.md` |
+| A4.2a | manufacturing 代码质量审计 — 工单/BOM（S 级拆分 1/2） | done | `docs/design/manufacturing/` | 0.3 | `docs/skills/code-quality-audit-prompt.md` |
 | A4.2b | manufacturing 代码质量审计 — MRP/质量集成（S 级拆分 2/2） | todo | `docs/design/manufacturing/mrp.md` | 0.3 | `docs/skills/code-quality-audit-prompt.md` |
 | A4.3 | **assets 折旧引擎与 Processor 链路专属审计**（48 Processor，全域最高密度） | todo | `docs/design/assets/` | 0.3 | `docs/skills/code-quality-audit-prompt.md` |
 | A4.4 | hr 代码质量审计（S 级，92 mutation） | todo | `docs/design/human-resource/` | 0.3 | `docs/skills/code-quality-audit-prompt.md` |
