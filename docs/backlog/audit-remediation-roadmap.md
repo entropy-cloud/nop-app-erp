@@ -67,7 +67,7 @@
 | A2.13 | projects 状态机审查（A 级单域，16 状态字段） | done | `docs/design/projects/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.14 | crm+cs+contract+b2b+maintenance 状态机审查（A+B 合并） | done | 各域 state-machine.md | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.15 | aps+logistics 状态机审查（C 级合并） | done | 各域 state-machine.md | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
-| A2.16 | 预算与承付正确性（commitment 释放路径完整性） | todo | `docs/design/finance/budget.md` §承付 | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A2.16 | 预算与承付正确性（commitment 释放路径完整性） | done | `docs/design/finance/budget.md` §承付 | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A2.17 | **并发与乐观锁审计**（并发库存扣减/发票核销/期间结账的 lost-update 风险 + @Version 覆盖） | todo | `docs/design/flow-overview.md` §事务边界 | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
 | A2.18 | **多账套/多公司隔离审计**（账套切换污染 / orgId 隔离彻底性） | todo | `docs/architecture/multi-company.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 
