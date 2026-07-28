@@ -100,7 +100,7 @@
 | 维度 | finance | mfg | hr | assets | pur | sal | qa | crm | prj | cs | ct | b2b | inv | md | mnt | drp | aps | log | notify | Skill |
 |------|---------|-----|----|----|------|-----|----|----|----|----|----|-----|-----|-----|-----|-----|-----|-----|--------|-------|
 | 业财端到端 | ⚠️P1 | ❓ | N/A | ❓ | ⚠️P1 | ⚠️P1 | N/A | N/A | ❓ | N/A | ❓ | N/A | ❓ | N/A | ❓ | N/A | N/A | N/A | N/A | 新维度+flow-overview |
-| 状态机正确性 | ⚠️P1 | ⚠️P1(A2.6a✅;A2.6b✅) | ⚠️P1(A2.7a✅;A2.7b✅) | ⚠️P1(A2.10✅) | ⚠️P1(A2.8✅) | ⚠️P1(A2.9✅) | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | N/A | ❓ | N/A | ❓ | ❓ | N/A | state-machine-review |
+| 状态机正确性 | ⚠️P1 | ⚠️P1(A2.6a✅;A2.6b✅) | ⚠️P1(A2.7a✅;A2.7b✅) | ⚠️P1(A2.10✅) | ⚠️P1(A2.8✅) | ⚠️P1(A2.9✅) | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ⚠️P1(A2.11✅) | N/A | ❓ | N/A | ❓ | ❓ | N/A | state-machine-review |
 | 库存核算一致性 | ⚠️P1 | ❓ | N/A | N/A | ❓ | ❓ | N/A | N/A | N/A | N/A | N/A | N/A | ⚠️P1 | N/A | ❓ | ❓ | N/A | N/A | N/A | 新维度 |
 | 预算与承付 | ⚠️P1 | N/A | N/A | N/A | ❓ | ❓ | N/A | N/A | ❓ | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | 新维度 |
 
