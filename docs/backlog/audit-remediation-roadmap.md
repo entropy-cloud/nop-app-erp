@@ -64,7 +64,7 @@
 | A2.10 | assets 状态机审查（A 级单域，18 状态字段） | done | `docs/design/assets/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.11 | inventory 状态机审查（A 级单域，19 状态字段） | done | `docs/design/inventory/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.12 | quality 状态机审查（A 级单域，16 状态字段） | done | `docs/design/quality/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
-| A2.13 | projects 状态机审查（A 级单域，16 状态字段） | todo | `docs/design/projects/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
+| A2.13 | projects 状态机审查（A 级单域，16 状态字段） | done | `docs/design/projects/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.14 | crm+cs+contract+b2b+maintenance 状态机审查（A+B 合并） | todo | 各域 state-machine.md | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.15 | aps+logistics 状态机审查（C 级合并） | todo | 各域 README | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.16 | 预算与承付正确性（commitment 释放路径完整性） | todo | `docs/design/finance/budget.md` §承付 | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |

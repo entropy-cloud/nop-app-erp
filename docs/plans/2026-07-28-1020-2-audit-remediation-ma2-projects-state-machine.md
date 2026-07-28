@@ -1,6 +1,6 @@
 # 2026-07-28-1020-2-audit-remediation-ma2-projects-state-machine MA2 projects 状态机审查（A2.13）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: audit-remediation
 > Work Item: A2.13 projects 状态机审查（A 级单域，16 状态字段）
 > Last Reviewed: 2026-07-28
@@ -84,67 +84,67 @@ projects（项目）域 A 级状态机审查（单域单工作项，16 状态字
 
 ### Phase 1 - projects 状态机系统性业务审查
 
-Status: planned
+Status: completed
 Targets: `module-projects/erp-prj-service/.../service/`（项目 status 迁移 DRAFT→OPEN→ON_HOLD/COMPLETED/CANCELLED + 立项守卫 + 完成前置校验任务已结束 + ON_HOLD 费用归集 config-gated）；`ErpPrjTaskBizModel`/`ErpPrjTask*Processor`（任务 4 态 + DAG 依赖 startTask/completeTask/blockTask/unblockTask + 成环检测上行链+HashSet+maxDepth）；`ErpPrjCostCollection*Processor`/`ErpPrjBilling*Processor`（成本归集/开票双轴审批 + 多币种）；`TimesheetPostingDispatcher`（工时成本凭证跨域过账 + daoFor(ErpMdSubject) + tryPost 容错）；里程碑状态迁移组件
 Skill: `state-machine-business-review-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA1 done（P1-MA1-010 propId + P1-MA1-022 跨域只读已登记，本审计复核状态机角度）；A2.1 P2P done（项目采购引用 projectId）；A2.2 O2C done（项目销售引用 projectId）；A2.5a done（finance 凭证 reverseApprove 红冲闭环 + tryPost 吞异常悬挂同型范式）；A2.11 done（inventory 状态机 posted 三件套 + tryPost 容错同型范式）
 
-- [ ] 维度「状态定义」：审查项目 status(erp-prj/project-status DRAFT/OPEN/ON_HOLD/COMPLETED/CANCELLED) 5 态清晰性；任务 status(erp-prj/task-status TODO/IN_PROGRESS/DONE/BLOCKED) 4 态清晰性；ON_HOLD（等待恢复决策 vs 做什么）；成本归集/开票/工时 approveStatus 轴；里程碑状态轴清晰性。
+- [x] 维度「状态定义」：审查项目 status(erp-prj/project-status DRAFT/OPEN/ON_HOLD/COMPLETED/CANCELLED) 5 态清晰性；任务 status(erp-prj/task-status TODO/IN_PROGRESS/DONE/BLOCKED) 4 态清晰性；ON_HOLD（等待恢复决策 vs 做什么）；成本归集/开票/工时 approveStatus 轴；里程碑状态轴清晰性。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「转换完整性」：项目生命周期迁移完整性（DRAFT→OPEN→ON_HOLD/COMPLETED/CANCELLED + ON_HOLD→OPEN）；**任务依赖 DAG 校验**（TODO→IN_PROGRESS 时校验前置完成，成环拒绝——task-dag.md 上行链+HashSet+maxDepth）；**项目完成需任务已结束**（owner doc §审查提示）；**ON_HOLD 费用归集暂停**（config-gated，owner doc §2）；**项目关闭后拒绝引用**（owner doc §7）。是否有非法跳转或缺失条件分支。
+- [x] 维度「转换完整性」：项目生命周期迁移完整性（DRAFT→OPEN→ON_HOLD/COMPLETED/CANCELLED + ON_HOLD→OPEN）；**任务依赖 DAG 校验**（TODO→IN_PROGRESS 时校验前置完成，成环拒绝——task-dag.md 上行链+HashSet+maxDepth）；**项目完成需任务已结束**（owner doc §审查提示）；**ON_HOLD 费用归集暂停**（config-gated，owner doc §2）；**项目关闭后拒绝引用**（owner doc §7）。是否有非法跳转或缺失条件分支。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「终端状态和恢复」：COMPLETED/CANCELLED 终态（不可直接恢复，重启新建项目）；已取消项目保留已归集成本不可删除（审计要求）；任务 DONE 终态；归档与活跃区分。
+- [x] 维度「终端状态和恢复」：COMPLETED/CANCELLED 终态（不可直接恢复，重启新建项目）；已取消项目保留已归集成本不可删除（审计要求）；任务 DONE 终态；归档与活跃区分。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「异常路径」：核验全覆盖——**完成时仍有未结束任务**（提示先关闭任务或确认剩余取消）；**暂停后仍有费用流入**（配置控制：暂停项目拒绝新费用归集或允许标记）；**预算超支**（警告或拦截按配置，不阻止状态迁移）；并发状态变更（乐观锁）；**项目删除**（草稿可删除；进行中及以后只能取消/完成）；**任务依赖成环**（DAG 拒绝）；**工时成本凭证过账失败悬挂**（TimesheetPostingDispatcher tryPost 容错，与 finance P1-MA2-032/hr P1-MA2-048 同型——升级评估）。
+- [x] 维度「异常路径」：核验全覆盖——**完成时仍有未结束任务**（提示先关闭任务或确认剩余取消）；**暂停后仍有费用流入**（配置控制：暂停项目拒绝新费用归集或允许标记）；**预算超支**（警告或拦截按配置，不阻止状态迁移）；并发状态变更（乐观锁）；**项目删除**（草稿可删除；进行中及以后只能取消/完成）；**任务依赖成环**（DAG 拒绝）；**工时成本凭证过账失败悬挂**（TimesheetPostingDispatcher tryPost 容错，与 finance P1-MA2-032/hr P1-MA2-048 同型——升级评估）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「可达性」：从 DRAFT 可达 OPEN→ON_HOLD/COMPLETED/CANCELLED；ON_HOLD 可回 OPEN；任务从 TODO 可达 IN_PROGRESS→DONE/BLOCKED→IN_PROGRESS；无不可达状态；无死锁（ON_HOLD↔OPEN 合法往复，退出条件 COMPLETED/CANCELLED）；里程碑状态轴可达性。
+- [x] 维度「可达性」：从 DRAFT 可达 OPEN→ON_HOLD/COMPLETED/CANCELLED；ON_HOLD 可回 OPEN；任务从 TODO 可达 IN_PROGRESS→DONE/BLOCKED→IN_PROGRESS；无不可达状态；无死锁（ON_HOLD↔OPEN 合法往复，退出条件 COMPLETED/CANCELLED）；里程碑状态轴可达性。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「角色和权限」：每个迁移绑定执行角色——立项/完成/取消（项目经理/管理员——影响报表与成本结转）；暂停/恢复（项目经理）；任务 startTask/completeTask/blockTask/unblockTask（任务负责人/项目经理）。
+- [x] 维度「角色和权限」：每个迁移绑定执行角色——立项/完成/取消（项目经理/管理员——影响报表与成本结转）；暂停/恢复（项目经理）；任务 startTask/completeTask/blockTask/unblockTask（任务负责人/项目经理）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「外部依赖」：采购/销售/费用单据引用项目（projectId 标注，项目关闭后拒绝引用）；工时触发成本凭证（经 IErpFinAcctDocProvider）；跨域经 I\*Biz Facade（IErpPurOrderBiz/IErpSalOrderBiz）。
+- [x] 维度「外部依赖」：采购/销售/费用单据引用项目（projectId 标注，项目关闭后拒绝引用）；工时触发成本凭证（经 IErpFinAcctDocProvider）；跨域经 I\*Biz Facade（IErpPurOrderBiz/IErpSalOrderBiz）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「TODO/任务策略」：DRAFT 产生 assigned（项目经理待立项）；OPEN 产生 monitor（进度监控）；ON_HOLD 产生 assigned（项目经理待决策恢复/取消）；COMPLETED/CANCELLED 否（终态）；任务 IN_PROGRESS 产生 TODO（执行）；BLOCKED 产生 assigned（解除阻塞决策）。**避免项目静默下沉**（owner doc §8）。
+- [x] 维度「TODO/任务策略」：DRAFT 产生 assigned（项目经理待立项）；OPEN 产生 monitor（进度监控）；ON_HOLD 产生 assigned（项目经理待决策恢复/取消）；COMPLETED/CANCELLED 否（终态）；任务 IN_PROGRESS 产生 TODO（执行）；BLOCKED 产生 assigned（解除阻塞决策）。**避免项目静默下沉**（owner doc §8）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「场景演练（最重要）」：端到端演练代表性场景——(a) 研发项目 happy path（DRAFT→OPEN→成本归集→COMPLETED→报表）；(b) **项目暂停与恢复**（OPEN→ON_HOLD→费用归集暂停→恢复）；(c) 项目取消（已归集成本保留）；(d) **任务依赖成环拒绝**（DAG 校验）；(e) **完成时仍有未结束任务**（提示先关闭或确认取消）；(f) **暂停后费用流入**（配置控制）；(g) **预算超支**（警告或拦截）；(h) **工时成本凭证过账**（TimesheetPostingDispatcher 跨域）；(i) **工时成本凭证过账失败悬挂**（tryPost 容错）；(j) **项目关闭后拒绝引用**。
+- [x] 维度「场景演练（最重要）」：端到端演练代表性场景——(a) 研发项目 happy path（DRAFT→OPEN→成本归集→COMPLETED→报表）；(b) **项目暂停与恢复**（OPEN→ON_HOLD→费用归集暂停→恢复）；(c) 项目取消（已归集成本保留）；(d) **任务依赖成环拒绝**（DAG 校验）；(e) **完成时仍有未结束任务**（提示先关闭或确认取消）；(f) **暂停后费用流入**（配置控制）；(g) **预算超支**（警告或拦截）；(h) **工时成本凭证过账**（TimesheetPostingDispatcher 跨域）；(i) **工时成本凭证过账失败悬挂**（tryPost 容错）；(j) **项目关闭后拒绝引用**。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「与设计文档一致性」：每个状态/转换在 `state-machine.md`/`task-dag.md`/`cost-collection.md`/`profitability.md` 是否有匹配——重点核验：(1) §2 ON_HOLD 费用归集暂停 config-gated 落实；(2) §任务依赖规则 DAG 成环校验（task-dag.md 上行链+HashSet+maxDepth）；(3) §审查提示 项目完成需任务已结束；(4) §7 项目关闭后拒绝引用；(5) §3 终态不可恢复 + 已取消保留成本；(6) §8 TODO 策略（DRAFT/OPEN/ON_HOLD 避免沉没）；(7) 多币种成本归集 owner doc 一致性。
+- [x] 维度「与设计文档一致性」：每个状态/转换在 `state-machine.md`/`task-dag.md`/`cost-collection.md`/`profitability.md` 是否有匹配——重点核验：(1) §2 ON_HOLD 费用归集暂停 config-gated 落实；(2) §任务依赖规则 DAG 成环校验（task-dag.md 上行链+HashSet+maxDepth）；(3) §审查提示 项目完成需任务已结束；(4) §7 项目关闭后拒绝引用；(5) §3 终态不可恢复 + 已取消保留成本；(6) §8 TODO 策略（DRAFT/OPEN/ON_HOLD 避免沉没）；(7) 多币种成本归集 owner doc 一致性。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 复核已登记 finding 项目状态机角度：P1-MA1-010（多币种四件套 propId——状态机角度复核）/ P1-MA1-022（TimesheetPostingDispatcher daoFor(ErpMdSubject) + ErpPrjReportBizModel facade——异常路径复核），标注终态。
+- [x] 复核已登记 finding 项目状态机角度：P1-MA1-010（多币种四件套 propId——状态机角度复核）/ P1-MA1-022（TimesheetPostingDispatcher daoFor(ErpMdSubject) + ErpPrjReportBizModel facade——异常路径复核），标注终态。
       - Skill: none
-- [ ] 产出审计报告 `docs/audits/2026-07-28-1020-arm-ma2-projects-state-machine.md`（含：项目状态图 + 任务状态图 + 成本归集/开票/工时/里程碑状态轴迁移矩阵、各维度通过/失败裁决、控制点 PASS/FAIL、ON_HOLD 费用归集/DAG 成环/完成前置/关闭后引用/工时凭证悬挂裁决、MA1 finding 运行时影响复核表、并发敏感点交接 A2.17、残留风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-28-1020-arm-ma2-projects-state-machine.md`（含：项目状态图 + 任务状态图 + 成本归集/开票/工时/里程碑状态轴迁移矩阵、各维度通过/失败裁决、控制点 PASS/FAIL、ON_HOLD 费用归集/DAG 成环/完成前置/关闭后引用/工时凭证悬挂裁决、MA1 finding 运行时影响复核表、并发敏感点交接 A2.17、残留风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] 项目状态图 + 任务状态图 + 成本归集/开票/工时/里程碑状态轴迁移矩阵产出，每个状态/转换有通过/失败裁决与证据
-- [ ] 已识别控制点（状态定义[含 ON_HOLD 语义 + 里程碑] / 转换完整性[含 DAG 成环 + 完成前置任务结束 + ON_HOLD 费用归集 + 关闭后引用] / 终端与恢复 / 异常路径[含工时凭证悬挂 + 任务成环] / 可达性 / 角色权限 / 外部依赖 / TODO 任务策略 / 场景演练）均有通过/失败裁决与证据
-- [ ] state-machine-business-review 10 维度至少一句裁决（含「本维度无发现」）
+- [x] 项目状态图 + 任务状态图 + 成本归集/开票/工时/里程碑状态轴迁移矩阵产出，每个状态/转换有通过/失败裁决与证据
+- [x] 已识别控制点（状态定义[含 ON_HOLD 语义 + 里程碑] / 转换完整性[含 DAG 成环 + 完成前置任务结束 + ON_HOLD 费用归集 + 关闭后引用] / 终端与恢复 / 异常路径[含工时凭证悬挂 + 任务成环] / 可达性 / 角色权限 / 外部依赖 / TODO 任务策略 / 场景演练）均有通过/失败裁决与证据
+- [x] state-machine-business-review 10 维度至少一句裁决（含「本维度无发现」）
 
 ### Phase 2 - P0 即时通道处理 + P1 汇总交接 MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 项目状态机审计发现的 P0/P1 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §状态机正确性 prj 列
 Skill: none
 
 - Item Types: `Fix | Add | Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] P0 finding 即时处理：每个 P0（**项目完成未强制任务已结束** [若破坏完成前置——owner doc §审查提示] / **任务依赖 DAG 成环校验缺失** [若破坏依赖不变量——owner doc §任务依赖规则] / **ON_HOLD 费用归集未暂停** [若破坏归集控制——owner doc §2] / **项目关闭后仍可被引用** [若破坏引用约束——owner doc §7] / **工时成本凭证过账失败悬挂无告警闭环** [若破坏业财一致——同型升级评估]）当即就地修复（改源文件 + `mvn clean install -DskipTests` + 该修复独立审计 + 人工确认触及会计保护区域）或异步注入 fix plan（`docs/plans/YYYY-MM-DD-HHmm-arm-fix-*.md`）。P0 永不进入 MR 批量修复。每个 P0 在报告中标注修复路径与状态。
+- [x] P0 finding 即时处理：每个 P0（**项目完成未强制任务已结束** [若破坏完成前置——owner doc §审查提示] / **任务依赖 DAG 成环校验缺失** [若破坏依赖不变量——owner doc §任务依赖规则] / **ON_HOLD 费用归集未暂停** [若破坏归集控制——owner doc §2] / **项目关闭后仍可被引用** [若破坏引用约束——owner doc §7] / **工时成本凭证过账失败悬挂无告警闭环** [若破坏业财一致——同型升级评估]）当即就地修复（改源文件 + `mvn clean install -DskipTests` + 该修复独立审计 + 人工确认触及会计保护区域）或异步注入 fix plan（`docs/plans/YYYY-MM-DD-HHmm-arm-fix-*.md`）。P0 永不进入 MR 批量修复。每个 P0 在报告中标注修复路径与状态。
       - Skill: none
-- [ ] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA2-NNN`、报告、描述、目标 MR1、修复状态 todo）。本审计对已登记 finding 只复核状态机运行时影响不重复登记根因；新 P1（如 ON_HOLD 费用归集缺口 / 完成前置任务校验缺口 / 里程碑死状态 [若确认]）按新 finding ID 登记。
+- [x] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA2-NNN`、报告、描述、目标 MR1、修复状态 todo）。本审计对已登记 finding 只复核状态机运行时影响不重复登记根因；新 P1（如 ON_HOLD 费用归集缺口 / 完成前置任务校验缺口 / 里程碑死状态 [若确认]）按新 finding ID 登记。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §状态机正确性 prj 列终态标记（`❓` → `✅`/`⚠️(P1)`）。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §状态机正确性 prj 列终态标记（`❓` → `✅`/`⚠️(P1)`）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
-- [ ] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论
+- [x] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
+- [x] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论
 
 ## Draft Review Record
 
@@ -154,14 +154,14 @@ Exit Criteria:
 
 > 本计划主体是审计（不改代码）。完整仓库验证在此处运行一次（确认审计期间任何 P0 即时修复未引入回归）。若无 P0 即时修复（仅 P1 登记），则 build/test 门控为回归基线确认。工时成本凭证触及会计保护区域，P0 即时修复须额外人工确认。xbiz 契约变更须人工确认。
 
-- [ ] 范围内行为完成（A2.13 projects 状态机系统性审查报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix、state-machine/task-dag/cost-collection/profitability owner doc 结论已反映）
-- [ ] 已运行验证：审计不改代码，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）；projects 域自上次 codegen + 后续 fix plans 已建立全绿基线
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A2.13 projects 状态机系统性审查报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix、state-machine/task-dag/cost-collection/profitability owner doc 结论已反映）
+- [x] 已运行验证：审计不改代码，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）；projects 域自上次 codegen + 后续 fix plans 已建立全绿基线
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -191,12 +191,21 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _（待执行 + 独立 closure audit）_
+Status Note: 执行完成（2026-07-28）。Phase 1 + Phase 2 全部 `[x]`。审计报告 `docs/audits/2026-07-28-1020-arm-ma2-projects-state-machine.md` 已产出（10 维度裁决 + 项目 5 态 + 任务 4 态 + DAG 成环检测 + 工时审批轴 + 项目结算三轴 + PnL 状态图 + 迁移矩阵 + MA1 finding 运行时影响复核表 + 5 处并发敏感点交接 A2.17 + 8 项残留风险）。**零 P0**（5 个候选 P0 经证据证伪或降级）。**4 项新 P1**（P1-MA2-067 closeProject 缺任务结束校验 / P1-MA2-068 工时过账 tryPost 容错悬挂同型 / P1-MA2-069 Milestone/Billing/CostCollection 字典语义复用偏移 + CRUD 桩死状态 / P1-MA2-070 startProject 缺前置校验 + cancelProject 多源）+ **2 项新 P2** watch-only（P2-MA2-065 owner doc 缺独立章节 / P2-MA2-066 §7 IErpFinAcctDocProvider vs 实现漂移）已登记 arm-index + scope matrix prj 列 `❓` → `⚠️P1(A2.13✅)`。回归基线确认：`mvn test -pl module-projects/erp-prj-service -am` BUILD SUCCESS（69 tests, 0 failures, 0 errors）。Verdict: pass（conditional — 主路径完整，P1 为契约漂移/同型悬挂/字典治理缺陷非数据破坏，MR1 修复后转 unconditional pass）。
 
 Closure Audit Evidence:
 
-- _（待执行后填充）_
+- 审计报告：`docs/audits/2026-07-28-1020-arm-ma2-projects-state-machine.md`（573 行，10 维度逐项裁决 + 迁移矩阵 + 场景演练 10 个 + 5 处并发敏感点交接 A2.17）
+- arm-index 更新：报告清单新增 `2026-07-28-1020-arm-ma2-projects-state-machine.md` 行（done）+ §P1 详细清单新增 P1-MA2-067/068/069/070 四行 + §A2.13 projects 状态机审查新增项段落 + §P2 watch-only 新增 P2-MA2-065/066 两行
+- scope matrix 更新：`audit-remediation-scope-and-dimension-matrix.md §2.2 状态机正确性`行 prj 列由 `❓` 推进至 `⚠️P1(A2.13✅)` + A2.13 narrative 注记追加
+- 回归基线：`mvn test -pl module-projects/erp-prj-service -am` BUILD SUCCESS（Tests run: 69, Failures: 0, Errors: 0, Skipped: 0；覆盖 TestErpPrjTaskDependency/TestErpPrjTimesheetCost/TestErpPrjBudgetAndCollection/TestErpPrjProjectSettlement/TestErpPrjProjectCrudSmoke/TestErpPrjProjectPnl/TestErpPrjExpenseAggregation/TestErpPrjAcctDocProviderAccountKey/TestErpPrjDashboard/TestErpPrjDashboardGrossMargin/TestErpPrjReportRendering/TestTaskDependencyValidator 等 12 测试类）
+- 上游基线对齐：MA1 done（P1-MA1-010 propId + P1-MA1-022 跨域只读 已登记，本审计复核状态机角度无升级）+ A2.5a done（reverse 红冲同型范式）+ A2.6a done（TimesheetPostingDispatcher 跨域过账同型）+ A2.11 done（posted 三件套 + tryPost 容错同型）+ A2.12 done（NCR 过账悬挂 + 跨域只读 + tryPost 同型范式）
+- 草案审查：iter 1 accept（独立 general 子代理，fresh-context，对照实时仓库逐项复核；1 项非阻塞已修订：移除不存在的 `ErpPrjDeliverable`/「交付物轴」引用）
 
 Follow-up:
 
-- _（待执行后填充非阻塞跟进项；已确认缺陷不得出现在此处）_
+- **MR1 整体裁决同型悬挂**（P1-MA2-068 工时过账 + finance P1-MA2-032 IGNORED + hr P1-MA2-048 salary + assets P1-MA2-060 Capitalization/Disposal + qa A2.12 MANUAL_POST NCR）—— 一并裁决方案 A（posted=false 告警闭环 + 不进终态）或方案 B（owner doc 标注容错设计）。触及会计保护区域，须独立 plan-audit + 人工确认。
+- **MR1 owner doc 契约对齐**（P1-MA2-067 closeProject 任务结束校验 + P1-MA2-070 startProject 前置校验）—— xbiz 契约变更须独立 plan-audit + 人工确认。
+- **MR1 字典治理**（P1-MA2-069 Milestone/Billing/CostCollection 字典语义复用偏移 + CRUD 桩死状态）—— 与 finance P1-MA1-018 enum↔dict 漂移 + mfg/hr/inv/qa dict 死状态合并整体裁决。
+- **A2.17 并发审计**：5 处并发敏感点交接（ErpPrjProject + ErpPrjTask + ErpPrjTimesheet + ErpPrjCostCollection 并发状态变更 + ProjectPostingExecutor.postEvent 并发同 timesheet.code）—— 依赖 @Version 透明乐观锁降级。
+- **Deferred successor**：Milestone/Billing 状态机实现（CRUD 桩→BizMutation）+ 任务 BLOCKED 自动通知（owner doc task-dag.md §8 Non-Goals）+ 多币种项目工时凭证折算（与 P1-MA2-002 + P1-MA2-009 一并）。
