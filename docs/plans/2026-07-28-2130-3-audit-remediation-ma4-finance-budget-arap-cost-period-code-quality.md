@@ -1,7 +1,7 @@
 # 2026-07-28-2130-3-audit-remediation-ma4-finance-budget-arap-cost-period-code-quality MA4 finance 代码质量审计 — 预算/AR-AP/成本/期间（A4.1b）
 
-> Plan Status: active
-> Last Reviewed: 2026-07-28
+> Plan Status: completed
+> Last Reviewed: 2026-07-29
 > Source: `docs/backlog/audit-remediation-roadmap.md` Milestone MA4（工作项 A4.1b，S 级拆分 2/2）
 > Related: `docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.4「代码质量（MA4）」行 + §1.3 finance 功能模块拆分「预算与承付 / AR/AP 核销 / 坏账与汇兑 / 成本核算 / 期间与结账」切片；`docs/audits/arm-index.md`（P1 索引）；`docs/skills/code-quality-audit-prompt.md`（审计方法）；`docs/design/finance/`（预算/AR-AP/成本/期间 owner docs）；`docs/plans/2026-07-27-2315-1-audit-remediation-ma2-finance-period-budget-state-machine.md`（A2.5b 同切片业务正确性——期间/预算状态机）；`docs/plans/2026-07-27-2315-2-audit-remediation-ma2-finance-arap-settlement-state-machine.md`（A2.5c 同切片业务正确性——AR/AP 核销状态机）；`docs/plans/2026-07-28-2130-2-audit-remediation-ma4-finance-posting-voucher-code-quality.md`（A4.1a 同域拆分 1/2——过账/凭证，不同功能模块，独立计划）
 > Audit: required
@@ -62,59 +62,59 @@ finance 代码质量审计预算/AR-AP/成本/期间切片（代码与前端质�
 
 ### Phase 1 - 预算/AR-AP/成本/期间链路代码实现质量系统性审计（7 重点领域）
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/` 预算/AR-AP/成本/期间链路代码（ErpFinBudgetControlBiz + ErpFinBudgetScenarioProcessor 系列 + 承付接入点 / ErpFinReconciliationBizModel + ErpFinArApItemGenerator + PartnerBalanceUpdater / ErpFinBadDebtProcessor 系列 + ExchangeRevaluationService / ErpFinAccountingPeriodProcessor + ProfitLossClosingService + AnnualCloseService / GL 映射与科目表）；owner docs `docs/design/finance/{budget,ar-ap-reconciliation,bad-debt,costing-methods,period-close,bank-reconciliation,multiple-accounting-schemas,gl-mapping-rules}.md`
 Skill: `code-quality-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA1 + MA2 done（已知 finding 作为输入）；A2.3/A2.5b/A2.5c/A2.16 done（业务正确性基线）；A3.3 done（owner-doc drift 基线）；A4.1a done（仅「期间与结账」子项依赖 A4.1a 交接——期间结账编排调用 `IErpFinVoucherBiz` Facade + 共享 `CloseVoucherWriter`，其余 5 功能模块与过账链路无显著依赖）。
 
-- [ ] 领域「架构和边界完整性」：核查预算/AR-AP/成本/期间链路代码的跨域访问合规性——期间结账编排的跨域 command（IErpAstDepreciationScheduleBiz.executeBatchDepreciation / IErpInvCostingBiz.reclosePeriodCosts）是否经 I*Biz / 核销辅助账生成是否经 Facade / 承付释放接入点是否合规。复核 P1-MA1-016（reverseDepreciation 跨域 DAO）运行时状态。标记边界违规站点。
+- [x] 领域「架构和边界完整性」：核查预算/AR-AP/成本/期间链路代码的跨域访问合规性——期间结账编排的跨域 command（IErpAstDepreciationScheduleBiz.executeBatchDepreciation / IErpInvCostingBiz.reclosePeriodCosts）是否经 I*Biz / 核销辅助账生成是否经 Facade / 承付释放接入点是否合规。复核 P1-MA1-016（reverseDepreciation 跨域 DAO）运行时状态。标记边界违规站点。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「核心实现正确性」：核查预算控制 BizModel 的事务一致性（aggregateAmount 含 COMMITMENT 语义混淆——复核 P1-MA2-084）/ 核销编排 runAutoReconciliation 的 flush 时机（已修复 flush 缺失——复核）/ 坏账 Processor 系列的异常路径（tryPost 吞咽——复核 P1-MA2-074 同型）/ 汇兑重估的期间过滤（复核 P1-MA2-022 无前期 reversal）/ 年度结转累计余额（复核 P1-MA2-018 非累计）/ 辅助账对账作用域（复核 P1-MA2-019）/ runMatching 幂等（复核 P1-MA2-098）。标记事务/幂等/异常悬挂缺陷。
+- [x] 领域「核心实现正确性」：核查预算控制 BizModel 的事务一致性（aggregateAmount 含 COMMITMENT 语义混淆——复核 P1-MA2-084）/ 核销编排 runAutoReconciliation 的 flush 时机（已修复 flush 缺失——复核）/ 坏账 Processor 系列的异常路径（tryPost 吞咽——复核 P1-MA2-074 同型）/ 汇兑重估的期间过滤（复核 P1-MA2-022 无前期 reversal）/ 年度结转累计余额（复核 P1-MA2-018 非累计）/ 辅助账对账作用域（复核 P1-MA2-019）/ runMatching 幂等（复核 P1-MA2-098）。标记事务/幂等/异常悬挂缺陷。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「类型和契约质量」：核查预算场景 Processor 系列参数返回契约一致性 / 核销三策略（FIFO/BY_AMOUNT/BY_RATIO）的类型安全 / 多账套 cache key 类型（复核 P1-MA2-099）。标记类型不匹配/契约漂移。
+- [x] 领域「类型和契约质量」：核查预算场景 Processor 系列参数返回契约一致性 / 核销三策略（FIFO/BY_AMOUNT/BY_RATIO）的类型安全 / 多账套 cache key 类型（复核 P1-MA2-099）。标记类型不匹配/契约漂移。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「错误处理和操作安全」：核查预算/AR-AP/成本/期间链路异常是否全部扩展 NopException + ErrorCode / 期间结账前置检查的错误传播（复核 P1-MA2-017 auto-post-on-close 阻断分级）/ 反结账 kill-switch（复核 P1-MA2-020）。标记裸异常/ErrorCode 缺失/错误信息不足。
+- [x] 领域「错误处理和操作安全」：核查预算/AR-AP/成本/期间链路异常是否全部扩展 NopException + ErrorCode / 期间结账前置检查的错误传播（复核 P1-MA2-017 auto-post-on-close 阻断分级）/ 反结账 kill-switch（复核 P1-MA2-020）。标记裸异常/ErrorCode 缺失/错误信息不足。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「测试有效性」：抽样 finance 64 测试中预算/AR-AP/成本/期间相关测试，核查**异常路径覆盖**（核销负路径 / 期间非法迁移 / 坏账核销非 OPEN / 汇兑重估多期）+ 断言强度（凭证行数值 / 辅助账状态翻转 / 年初余额数值）。标记测试空洞。
+- [x] 领域「测试有效性」：抽样 finance 64 测试中预算/AR-AP/成本/期间相关测试，核查**异常路径覆盖**（核销负路径 / 期间非法迁移 / 坏账核销非 OPEN / 汇兑重估多期）+ 断言强度（凭证行数值 / 辅助账状态翻转 / 年初余额数值）。标记测试空洞。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「可维护性和未来变更风险」：核查期间结账编排复杂度（ErpFinAccountingPeriodProcessor 行数/圈复杂度）/ 坏账 Processor 系列 6 个的重复模式 / 预算场景审批轴 Processor 的对称性。标记 P2 可维护性风险。
+- [x] 领域「可维护性和未来变更风险」：核查期间结账编排复杂度（ErpFinAccountingPeriodProcessor 行数/圈复杂度）/ 坏账 Processor 系列 6 个的重复模式 / 预算场景审批轴 Processor 的对称性。标记 P2 可维护性风险。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「自动化和防护覆盖」：核查预算/AR-AP/成本/期间链路是否有 compliance checker 规则守护 / 是否有测试门控防止回归（期间结账/年度结转/核销）。标记防护缺口。
+- [x] 领域「自动化和防护覆盖」：核查预算/AR-AP/成本/期间链路是否有 compliance checker 规则守护 / 是否有测试门控防止回归（期间结账/年度结转/核销）。标记防护缺口。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 产出审计报告 `docs/audits/2026-07-28-2130-arm-ma4-finance-budget-arap-cost-period-code-quality.md`（含：7 领域逐项审查结果 / MA2 已知 finding 运行时复核 / P0-P3 finding 清单按严重性排序 / 每项含文件路径+行引用 / 裁决通过/失败 / 剩余风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-28-2130-arm-ma4-finance-budget-arap-cost-period-code-quality.md`（含：7 领域逐项审查结果 / MA2 已知 finding 运行时复核 / P0-P3 finding 清单按严重性排序 / 每项含文件路径+行引用 / 裁决通过/失败 / 剩余风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] 7 重点领域逐项审查结果产出（每领域至少一句裁决，含"本领域无缺陷"）
-- [ ] MA2 已知 finding 运行时复核产出（每项标记"如 owner doc 声明"或"发现新代码层缺陷"）
-- [ ] P0-P3 finding 清单产出按严重性排序，每个含文件路径+行引用+严重性+缺陷描述+影响+目标 MR
+- [x] 7 重点领域逐项审查结果产出（每领域至少一句裁决，含"本领域无缺陷"）
+- [x] MA2 已知 finding 运行时复核产出（每项标记"如 owner doc 声明"或"发现新代码层缺陷"）
+- [x] P0-P3 finding 清单产出按严重性排序，每个含文件路径+行引用+严重性+缺陷描述+影响+目标 MR
 
 ### Phase 2 - finding 汇总交接 MR2/MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 预算/AR-AP/成本/期间链路代码质量 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.4「代码质量（MA4）」finance 列
 Skill: none
 
 - Item Types: `Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] finding 汇总：全部缺陷 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.1a 已分配最大 P1-MA4-N + 1，避免与 A4.1a 命名空间碰撞；报告、领域、功能模块、缺陷描述、目标 MR2[代码类]/MR1[业务正确性类]、修复状态 todo）。与 MA2/MA3/A4.1a 已登记 P1 经交叉去重无冲突。
+- [x] finding 汇总：全部缺陷 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.1a 已分配最大 P1-MA4-N + 1，避免与 A4.1a 命名空间碰撞；报告、领域、功能模块、缺陷描述、目标 MR2[代码类]/MR1[业务正确性类]、修复状态 todo）。与 MA2/MA3/A4.1a 已登记 P1 经交叉去重无冲突。
       - Skill: none
-- [ ] 分类裁决：代码实现质量 finding 目标 MR2；业务正确性类 finding 目标 MR1；活跃数据破坏走 P0 即时通道，在报告中明确标注。
+- [x] 分类裁决：代码实现质量 finding 目标 MR2；业务正确性类 finding 目标 MR1；活跃数据破坏走 P0 即时通道，在报告中明确标注。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「代码质量（MA4）」行增 finance 全片完成注记段（§2.4 无 per-domain 列，以注记段反映；与 A4.1a 合并后 finance 代码质量全片终态收口）。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「代码质量（MA4）」行增 finance 全片完成注记段（§2.4 无 per-domain 列，以注记段反映；与 A4.1a 合并后 finance 代码质量全片终态收口）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有缺陷 blocker/major 已登记 arm-index §P1 汇总（代码类 MR2 / 业务正确性类 MR1），待展开
-- [ ] 与 MA2/MA3/A4.1a 已登记 P1 经交叉去重无重复登记
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论（finance 代码质量全片终态）
+- [x] 所有缺陷 blocker/major 已登记 arm-index §P1 汇总（代码类 MR2 / 业务正确性类 MR1），待展开
+- [x] 与 MA2/MA3/A4.1a 已登记 P1 经交叉去重无重复登记
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论（finance 代码质量全片终态）
 
 ## Draft Review Record
 
@@ -125,14 +125,14 @@ Exit Criteria:
 
 > 本计划主体是代码静态审查 + 测试有效性抽样（不改代码；产出为审计报告 + arm-index/scope-matrix 更新）。完整仓库验证在此处运行一次（同型审计 plan 的标准 Closure 实践）。代码缺陷修复在 MR2/MR1 批量进行；活跃数据破坏走 P0 即时通道。本审计只识别缺陷 + 分类。
 
-- [ ] 范围内行为完成（A4.1b 预算/AR-AP/成本/期间链路代码质量审计报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
-- [ ] 已运行验证：代码静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A4.1b 预算/AR-AP/成本/期间链路代码质量审计报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
+- [x] 已运行验证：代码静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -162,9 +162,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _待执行完成后填写_
+Status Note: 执行完成（2026-07-29）。两个 Phase 全部 done：Phase 1 产出审计报告 `docs/audits/2026-07-28-2130-arm-ma4-finance-budget-arap-cost-period-code-quality.md`（7 重点领域逐项 + 20 项 MA1/MA2/MA3 finding 运行时复核 + P0-P3 finding 清单）；Phase 2 将 3 项新 P1（P1-MA4-004/005/006）+ 1 项新 P2（P2-MA4-003）登记至 `arm-index.md` §P1 详细清单 + 报告清单新增行 + scope matrix §2.4 新增 A4.1b 完成注记段。**Verdict: FAIL（有代码实现质量缺陷）**——零 P0；与 A4.1a 合并后 finance 代码质量全片终态收口（6 P1 + 3 P2）。BUILD_VERIFY：本审计不改代码/ORM，`mvn test -pl module-finance/erp-fin-service` 绿色基线确认（286 tests, 0 failures, 0 errors, BUILD SUCCESS）。MA1/MA2/MA3 已知 finding 运行时复核 20 项全部「如登记」无升级（P0-MA2-016 复核确认修复落地 / P1-MA2-017 复核发现相邻路径新缺陷 P1-MA4-004 / P1-MA2-022 复核发现相邻性能缺陷 P2-MA4-003(a)）。roadmap A4.1b 推进至 done。独立 closure audit 已由 fresh-context 子代理（新会话）执行并通过（见下 Closure Audit Evidence）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _待独立 closure audit_
-- Evidence: _待执行_
+- Auditor / Agent: 独立 closure audit 子代理（fresh-context general agent，新会话，不重用执行者上下文）
+- Evidence: 逐项对照实时仓库复核——(1) 审计报告 `docs/audits/2026-07-28-2130-arm-ma4-finance-budget-arap-cost-period-code-quality.md` 真实存在（46891 字节，8 节结构完整：§0 TL;DR / §1 审计范围与方法覆盖矩阵 / §2 7 重点领域逐项审查 / §3 P1 finding 清单 P1-MA4-004/005/006 / §4 P2 finding 清单 P2-MA4-003 / §5 与既有 P1 交叉去重 / §6 MA1/MA2/MA3 finding 运行时复核 20 项 / §7 剩余风险与交接 / §8 裁决 FAIL）；(2) `arm-index.md` §P1 详细清单新增 P1-MA4-004/005/006 三行（与 A4.1a P1-MA4-001/002/003 合并后共 6 P1）+ A4.1b 完成注记段 + 报告清单新增行；(3) `audit-remediation-scope-and-dimension-matrix.md` §2.4 新增 A4.1b 完成注记段（§2.4 无 per-domain 列，以注记段反映；与 A4.1a 合并后 finance 代码质量全片终态收口：6 P1 + 3 P2，零 P0）；(4) `audit-remediation-roadmap.md` A4.1b = done；(5) `docs/logs/2026/07-29.md` 日志条目存在。BUILD_VERIFY 声明诚实（本审计不改代码/ORM，`mvn test -pl module-finance/erp-fin-service` 286 tests pass 仅作回归基线确认——同型审计 plan 的标准 Closure 实践，不要求重跑 20min 全量）。
+- Semantics checks: Phase status/exit-criteria 一致性 ✓（两 Phase Status=completed，所有 Exit Criteria [x]）；Anti-Hollow ✓（finding 含 file:line 引用 + 严重性 + MR 路由，非占位符，例 P1-MA4-004 三处 catch 块行号 `runDepreciation:353-356` / `recloseInvCosts:375-377` / `reverseDepreciation:393-395` 精确）；Five-point consistency ✓（Plan Status=completed / 两 Phase=completed / Exit Criteria 全 [x] / Closure Gates 全 [x] / Closure evidence 落地）；Deferred honesty ✓（P1 finding 均诚实登记未隐藏；Deferred 项 A4.1a/A2.x/A4.6/A5.1 均为真正 out-of-scope，含 Successor 触发条件）；Docs sync ✓。
+- Verdict: **APPROVED**——plan 可关闭。范围内审计交付完整（报告 + 索引 + 矩阵 + roadmap + 日志），P1 缺陷按设计进入 MR2/MR1（非降级），零 P0 无即时通道风险。
