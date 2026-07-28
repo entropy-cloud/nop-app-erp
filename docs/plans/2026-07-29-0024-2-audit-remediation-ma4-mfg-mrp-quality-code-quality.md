@@ -1,6 +1,6 @@
 # 2026-07-29-0024-2-audit-remediation-ma4-mfg-mrp-quality-code-quality MA4 manufacturing 代码质量审计 — MRP/DRP 引擎 / 质量集成与 NCR（A4.2b）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-29
 > Source: `docs/backlog/audit-remediation-roadmap.md` Milestone MA4（工作项 A4.2b，S 级拆分 2/2）
 > Related: `docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.4「代码质量（MA4）」行 + §1.3 manufacturing 功能模块拆分「MRP/DRP 引擎 / 质量集成与 NCR」切片；`docs/audits/arm-index.md`（P1 索引）；`docs/skills/code-quality-audit-prompt.md`（审计方法）；`docs/design/manufacturing/mrp.md` + `simulation-engine.md` + `variance-analysis.md` + `batch-genealogy.md` + `subcontracting.md` + `crp.md`（owner doc 锚点）；`docs/plans/2026-07-28-0109-2-audit-remediation-ma2-mfg-mrp-bom-state-machine.md`（A2.6b 同切片业务正确性审计——MRP/BOM 状态机，本审计聚焦**代码实现质量**，互补不重叠）；`docs/plans/2026-07-29-0024-1-audit-remediation-ma4-mfg-work-order-bom-code-quality.md`（A4.2a 同域拆分 1/2——工单/BOM，不同功能模块，独立计划）；`docs/plans/2026-07-28-2130-3-audit-remediation-ma4-finance-budget-arap-cost-period-code-quality.md`（A4.1b finance——MA4 多功能模块合并范式参照）
@@ -64,59 +64,59 @@ manufacturing 代码质量审计 MRP/DRP 引擎 / 质量集成与 NCR 切片（�
 
 ### Phase 1 - MRP/DRP 引擎 / 质量集成与 NCR + 关联计算链路代码实现质量系统性审计（7 重点领域）
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/` MRP/质量/计算链路代码（MrpEngine + MrpReleaseService + SimulationMrpEngine + MRP 场景 BizModel 系列 / CostRollupService + ProductionVarianceCalculator + ProductionVarianceDispatcher + ProductionVarianceAcctDocProvider / BatchGenealogyTracer + BatchGenealogyWriter / CrpLoadCalculator + ErpMfgCrpRunJob / Forecast 系列 / SubcontractPostingDispatcher + 委外 AcctDocProvider 系列 / mfg 侧质量集成跨域 Facade 调用点）；owner docs `docs/design/manufacturing/{mrp,simulation-engine,variance-analysis,batch-genealogy,subcontracting,crp,material-reservation}.md`
 Skill: `code-quality-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA1 + MA2 + MA3 done（已知 finding 作为输入）；A2.6b done（状态机基线）；A3.4 done（owner-doc drift 基线）；A4.1b done（多功能模块合并范式参照）；A4.2a done（仅「质量集成门控」子项依赖 A4.2a 交接——质检门控逻辑在 WorkOrderProcessor，其余 MRP/计算功能模块与工单/BOM 无显著依赖）。
 
-- [ ] 领域「架构和边界完整性」：核查 MRP/质量/计算链路代码的跨域访问合规性——MrpReleaseService 释放采购单/委外单是否经 IErpPurOrderBiz/IErpMfgSubcontractOrderBiz（复核 P1-MA2-038 委外单 daoFor 直写半治理）/ 需求聚合 DemandAggregator 跨域读 ErpMfgForecast/ErpInvStockBalance/ErpMdMaterial 是否经 Facade / 差异过账是否经 IErpFinVoucherBiz Facade / 基因链读 ErpInvBatch 是否合规。复核 P1-MA1-022（aps/drp 读 ErpMfg* 跨域投影）运行时状态。标记边界违规站点。
+- [x] 领域「架构和边界完整性」：核查 MRP/质量/计算链路代码的跨域访问合规性——MrpReleaseService 释放采购单/委外单是否经 IErpPurOrderBiz/IErpMfgSubcontractOrderBiz（复核 P1-MA2-038 委外单 daoFor 直写半治理）/ 需求聚合 DemandAggregator 跨域读 ErpMfgForecast/ErpInvStockBalance/ErpMdMaterial 是否经 Facade / 差异过账是否经 IErpFinVoucherBiz Facade / 基因链读 ErpInvBatch 是否合规。复核 P1-MA1-022（aps/drp 读 ErpMfg* 跨域投影）运行时状态。标记边界违规站点。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「核心实现正确性」：核查 MrpEngine 净需求计算的算术正确性 + 低层码递归终止 / MrpReleaseService 多路径释放（采购/委外/生产）的事务边界与幂等 + 委外单 APPROVED 绕审批（复核 P1-MA2-038）/ SimulationMrpEngine 与 MrpEngine 代码复用一致性 / CostRollupService 卷积递归终止与成环检测 / ProductionVarianceCalculator 6 类差异算术正确性 + 阈值预警 dispatchVarianceAlertIfOverThreshold 错误传播 / BatchGenealogyWriter 基因链写入幂等一致性 / CrpLoadCalculator 负荷算术 / Subcontract/ProductionVariance posting dispatcher tryPost 吞咽悬挂（复核同型根因）/ Forecast 消费去重（复核 P1-MA2-036 CONSUMED 不回写）/ cron job 并发重复（复核 P1-MA2-086）。标记事务/幂等/异常悬挂/算术缺陷。
+- [x] 领域「核心实现正确性」：核查 MrpEngine 净需求计算的算术正确性 + 低层码递归终止 / MrpReleaseService 多路径释放（采购/委外/生产）的事务边界与幂等 + 委外单 APPROVED 绕审批（复核 P1-MA2-038）/ SimulationMrpEngine 与 MrpEngine 代码复用一致性 / CostRollupService 卷积递归终止与成环检测 / ProductionVarianceCalculator 6 类差异算术正确性 + 阈值预警 dispatchVarianceAlertIfOverThreshold 错误传播 / BatchGenealogyWriter 基因链写入幂等一致性 / CrpLoadCalculator 负荷算术 / Subcontract/ProductionVariance posting dispatcher tryPost 吞咽悬挂（复核同型根因）/ Forecast 消费去重（复核 P1-MA2-036 CONSUMED 不回写）/ cron job 并发重复（复核 P1-MA2-086）。标记事务/幂等/异常悬挂/算术缺陷。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「类型和契约质量」：核查 MrpReleaseService 多路径释放参数返回契约一致性 / 差异 6 类的 BigDecimal 类型安全 / 基因链 trace 返回结构契约 / 仿真引擎 What-If 入参契约。标记类型不匹配/契约漂移。
+- [x] 领域「类型和契约质量」：核查 MrpReleaseService 多路径释放参数返回契约一致性 / 差异 6 类的 BigDecimal 类型安全 / 基因链 trace 返回结构契约 / 仿真引擎 What-If 入参契约。标记类型不匹配/契约漂移。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「错误处理和操作安全」：核查 MRP/质量/计算链路异常是否全部扩展 NopException + ErrorCode（`erp.err.mfg.*`）/ 释放失败/卷积成环/差异过账失败/cron job 异常的错误传播。复核差异公式与 owner doc 一致性（P1-MA3-043）/ 预警实现与 doc Deferred 标注（P1-MA3-045）。标记裸异常/ErrorCode 缺失/错误信息不足。
+- [x] 领域「错误处理和操作安全」：核查 MRP/质量/计算链路异常是否全部扩展 NopException + ErrorCode（`erp.err.mfg.*`）/ 释放失败/卷积成环/差异过账失败/cron job 异常的错误传播。复核差异公式与 owner doc 一致性（P1-MA3-043）/ 预警实现与 doc Deferred 标注（P1-MA3-045）。标记裸异常/ErrorCode 缺失/错误信息不足。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「测试有效性」：抽样 manufacturing 30 测试中 MRP/质量/计算相关测试（TestErpMfgMrpEndToEnd / TestErpMfgMrpEngine / TestErpMfgMrpSimulation / TestErpMfgProductionVariance / TestErpMfgVarianceAlert / TestErpMfgVarianceRecomputeReversal / TestErpMfgBatchGenealogy / TestErpMfgCostRollup / TestErpMfgCostFlowEndToEnd / TestErpMfgCrpLoad / TestErpMfgForecastSource），核查**异常路径覆盖**（释放失败/卷积成环/差异过账悬挂/cron 并发重复/委外绕审批）+ 断言强度（是否仅断言 status 还是校验差异行数值/基因链/凭证行）。标记测试空洞。
+- [x] 领域「测试有效性」：抽样 manufacturing 30 测试中 MRP/质量/计算相关测试（TestErpMfgMrpEndToEnd / TestErpMfgMrpEngine / TestErpMfgMrpSimulation / TestErpMfgProductionVariance / TestErpMfgVarianceAlert / TestErpMfgVarianceRecomputeReversal / TestErpMfgBatchGenealogy / TestErpMfgCostRollup / TestErpMfgCostFlowEndToEnd / TestErpMfgCrpLoad / TestErpMfgForecastSource），核查**异常路径覆盖**（释放失败/卷积成环/差异过账悬挂/cron 并发重复/委外绕审批）+ 断言强度（是否仅断言 status 还是校验差异行数值/基因链/凭证行）。标记测试空洞。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「可维护性和未来变更风险」：核查 MrpEngine/CostRollupService 复杂度（行数/圈复杂度）/ SimulationMrpEngine 与 MrpEngine 重复模式 / 委外 AcctDocProvider 系列 4 个的对称性 / 预留子系统未实现的 owner doc 维护风险（P1-MA3-042）。标记 P2 可维护性风险。
+- [x] 领域「可维护性和未来变更风险」：核查 MrpEngine/CostRollupService 复杂度（行数/圈复杂度）/ SimulationMrpEngine 与 MrpEngine 重复模式 / 委外 AcctDocProvider 系列 4 个的对称性 / 预留子系统未实现的 owner doc 维护风险（P1-MA3-042）。标记 P2 可维护性风险。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「自动化和防护覆盖」：核查 MRP/质量/计算链路是否有 compliance checker 规则守护 / 是否有测试门控防止回归（释放/卷积/差异过账/基因链）。标记防护缺口。
+- [x] 领域「自动化和防护覆盖」：核查 MRP/质量/计算链路是否有 compliance checker 规则守护 / 是否有测试门控防止回归（释放/卷积/差异过账/基因链）。标记防护缺口。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 产出审计报告 `docs/audits/2026-07-29-0024-arm-ma4-mfg-mrp-quality-code-quality.md`（含：7 领域逐项审查结果 / MA1/MA2/MA3 已知 finding 运行时复核 / P0-P3 finding 清单按严重性排序 / 每项含文件路径+行引用 / 裁决通过/失败 / 剩余风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-29-0024-arm-ma4-mfg-mrp-quality-code-quality.md`（含：7 领域逐项审查结果 / MA1/MA2/MA3 已知 finding 运行时复核 / P0-P3 finding 清单按严重性排序 / 每项含文件路径+行引用 / 裁决通过/失败 / 剩余风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] 7 重点领域逐项审查结果产出（每领域至少一句裁决，含"本领域无缺陷"）
-- [ ] MA1/MA2/MA3 已知 finding 运行时复核产出（每项标记"如 owner doc 声明"或"发现新代码层缺陷"）
-- [ ] P0-P3 finding 清单产出按严重性排序，每个含文件路径+行引用+严重性+缺陷描述+影响+目标 MR
+- [x] 7 重点领域逐项审查结果产出（每领域至少一句裁决，含"本领域无缺陷"）
+- [x] MA1/MA2/MA3 已知 finding 运行时复核产出（每项标记"如 owner doc 声明"或"发现新代码层缺陷"）
+- [x] P0-P3 finding 清单产出按严重性排序，每个含文件路径+行引用+严重性+缺陷描述+影响+目标 MR
 
 ### Phase 2 - finding 汇总交接 MR2/MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: MRP/质量/计算链路代码质量 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.4「代码质量（MA4）」manufacturing 列
 Skill: none
 
 - Item Types: `Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] finding 汇总：全部缺陷 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.1a/A4.1b/A4.2a 已分配最大 P1-MA4-N + 1，避免命名空间碰撞；报告、领域、功能模块、缺陷描述、目标 MR2[代码类]/MR1[业务正确性类]、修复状态 todo）。与 MA2/MA3/A4.1a/A4.1b/A4.2a 已登记 P1 经交叉去重无冲突。
+- [x] finding 汇总：全部缺陷 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.1a/A4.1b/A4.2a 已分配最大 P1-MA4-N + 1，避免命名空间碰撞；报告、领域、功能模块、缺陷描述、目标 MR2[代码类]/MR1[业务正确性类]、修复状态 todo）。与 MA2/MA3/A4.1a/A4.1b/A4.2a 已登记 P1 经交叉去重无冲突。
       - Skill: none
-- [ ] 分类裁决：代码实现质量 finding 目标 MR2；业务正确性类 finding 目标 MR1；活跃数据破坏走 P0 即时通道，在报告中明确标注。
+- [x] 分类裁决：代码实现质量 finding 目标 MR2；业务正确性类 finding 目标 MR1；活跃数据破坏走 P0 即时通道，在报告中明确标注。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「代码质量（MA4）」行增 manufacturing 全片完成注记段（§2.4 无 per-domain 列；与 A4.2a 合并后 manufacturing 代码质量全片终态收口）。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「代码质量（MA4）」行增 manufacturing 全片完成注记段（§2.4 无 per-domain 列；与 A4.2a 合并后 manufacturing 代码质量全片终态收口）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有缺陷 blocker/major 已登记 arm-index §P1 汇总（代码类 MR2 / 业务正确性类 MR1），待展开
-- [ ] 与 MA2/MA3/A4.1a/A4.1b/A4.2a 已登记 P1 经交叉去重无重复登记
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论（manufacturing 代码质量全片终态）
+- [x] 所有缺陷 blocker/major 已登记 arm-index §P1 汇总（代码类 MR2 / 业务正确性类 MR1），待展开
+- [x] 与 MA2/MA3/A4.1a/A4.1b/A4.2a 已登记 P1 经交叉去重无重复登记
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论（manufacturing 代码质量全片终态）
 
 ## Draft Review Record
 
@@ -126,14 +126,14 @@ Exit Criteria:
 
 > 本计划主体是代码静态审查 + 测试有效性抽样（不改代码；产出为审计报告 + arm-index/scope-matrix 更新）。完整仓库验证在此处运行一次（同型审计 plan 的标准 Closure 实践）。代码缺陷修复在 MR2/MR1 批量进行；活跃数据破坏走 P0 即时通道。本审计只识别缺陷 + 分类。
 
-- [ ] 范围内行为完成（A4.2b MRP/DRP 引擎 / 质量集成与 NCR + 关联计算链路代码质量审计报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
-- [ ] 已运行验证：代码静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A4.2b MRP/DRP 引擎 / 质量集成与 NCR + 关联计算链路代码质量审计报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
+- [x] 已运行验证：代码静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -163,13 +163,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <填入关闭理由>
+Status Note: A4.2b MRP/DRP 引擎 + 质量集成与 NCR + 关联计算链路代码质量审计完成。审计报告 `docs/audits/2026-07-29-0024-arm-ma4-mfg-mrp-quality-code-quality.md` 产出（Verdict FAIL，零 P0，3 项新 P1 [P1-MA4-010/011/012] + 1 项 P2 watch-only [P2-MA4-005]）。MA1/MA2/MA3 已知 finding 运行时复核 9 项全部「如登记」无升级。arm-index 报告清单 + P1 汇总 + scope matrix §2.4 manufacturing 全片终态收口注记均已更新。`mvn clean install -DskipTests` + `mvn test` 全绿（BUILD SUCCESS，回归基线确认，代码静态审查无代码变更）。manufacturing 代码质量全片（A4.2a + A4.2b）终态：6 P1 + 2 P2，零 P0。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立 general 子代理（fresh-context，执行本计划 EXECUTE 阶段，与草案审查 `ses_056717ec8ffebXvF14upm74zv4` 独立）
+- Evidence: Phase 1/2 全部 `[x]`；审计报告产出；arm-index.md（报告清单 + A4.2b narrative + P1-MA4-010/011/012 三行）+ scope-matrix §2.4 A4.2b 注记段已更新；`mvn clean install -DskipTests` BUILD SUCCESS（01:32 min）+ `mvn test` BUILD SUCCESS（08:22 min，全 154 reactor 模块绿）
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 无非阻塞跟进项目（P1-MA4-010/011/012 已登记 arm-index 按 MR1/MR2 设计进入修复批次；P2-MA4-005 watch-only）
