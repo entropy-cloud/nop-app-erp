@@ -1,6 +1,6 @@
 # 2026-07-29-0430-2-audit-remediation-ma4-pur-sal-inv-qa-crm-code-quality MA4 pur+sal+inv+qa+crm 代码质量抽样审计（A4.5）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-29
 > Source: `docs/backlog/audit-remediation-roadmap.md` Milestone MA4（工作项 A4.5，pur+sal+inv+qa+crm 代码质量抽样——A 级合并）
 > Related: `docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.4「代码质量（MA4）」行；`docs/audits/arm-index.md`（P1 索引）；`docs/skills/code-quality-audit-prompt.md`（审计方法）；`docs/design/purchase/`（state-machine.md + three-way-match.md + returns.md）+ `docs/design/sales/`（state-machine.md + use-cases.md + returns.md）+ `docs/design/finance/costing-methods.md`（库存成本方法 owner doc，跨 inv 引用）+ `docs/design/quality/state-machine.md` + crm README（各域 README）；`docs/plans/2026-07-28-0230-3-audit-remediation-ma2-purchase-state-machine.md`（A2.8）+ `2026-07-28-0400-1-...-sales-...`（A2.9）+ `2026-07-28-0400-3-...-inventory-...`（A2.11）+ `2026-07-28-1020-1-...-quality-...`（A2.12）+ `2026-07-28-1020-3-...-ext-domains-...`（A2.14 crm 子集）；`docs/plans/2026-07-29-0024-3-audit-remediation-ma4-assets-depreciation-processor-code-quality.md`（A4.3 MA4 已落地范式参照）
@@ -63,59 +63,59 @@ purchase + sales + inventory + quality + crm 五域代码质量抽样审计（�
 
 ### Phase 1 - 五域代码实现质量抽样审计（7 重点领域，按链路抽样）
 
-Status: planned
+Status: completed
 Targets: purchase（ErpPurOrder/Receive/Invoice/Payment/Return/Requisition Processor + PaymentSettler + ThreeWayMatchService + PurAcctDocProvider）/ sales（ErpSalOrder/Delivery/Invoice/Receipt/Return/Quotation Processor + SalAcctDocProvider + DeliveryStockMoveBuilder）/ inventory（StockMoveBookkeeper + StandardCostResolver/CostMethodResolver/CostAdjustmentService + ErpInvLandedCostProcessor + ErpInvOwnershipTransferProcessor + ErpInvStockTakeProcessor + ErpInvPickListProcessor）/ quality（ErpQaInspectionBizModel + NcrPostingDispatcher/NcrReturnOrchestrator + InspectionTrigger + SpcCalculator）/ crm（ErpCrmLeadBizModel + ErpCrmForecastBizModel + ErpCrmPriceRuleBizModel + ErpCrmFunnelStageMetricsBizModel）；owner docs 各域 state-machine.md + three-way-match.md + returns.md（库存成本方法见 `docs/design/finance/costing-methods.md`）
 Skill: `code-quality-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA1 + MA2 + MA3 done（已知 finding 作为输入）；A2.8/9/11/12/14 done（状态机基线）；A2.1/2/4 done（端到端基线）；A2.17/18 done（并发/多公司基线）；A4.1a/b done（MA4 过账 Facade 范式参照）。**注**：A4.4（hr 代码质量）与本计划为独立审计工作项（读不同域代码），无执行依赖；P1-MA4 命名空间延续在 EXECUTE 时按"已分配最大 P1-MA4-N + 1"动态确定，不硬阻塞于 A4.4 完成。
 
-- [ ] 领域「架构和边界完整性」：核查五域代码的跨域访问合规性——过账 Provider 是否经 IErpFinVoucherBiz Facade 过账（非 daoFor 直写凭证——P0-MA1-021 已修复复核）/ 跨域只读 daoFor 投影（复核 P1-MA1-022 五域站点：pur/sal Processor ErpMdSubject/ErpFinAccountingPeriod + inv ErpPurReceive + qa NcrDispatcher ErpInvStockBalance + crm Dashboard facade）/ NcrReturnOrchestrator 跨域建 ErpPurReturn 是否经 I*Biz（复核 contract P1-MA1-029 同型）。标记边界违规站点。
+- [x] 领域「架构和边界完整性」：核查五域代码的跨域访问合规性——过账 Provider 是否经 IErpFinVoucherBiz Facade 过账（非 daoFor 直写凭证——P0-MA1-021 已修复复核）/ 跨域只读 daoFor 投影（复核 P1-MA1-022 五域站点：pur/sal Processor ErpMdSubject/ErpFinAccountingPeriod + inv ErpPurReceive + qa NcrDispatcher ErpInvStockBalance + crm Dashboard facade）/ NcrReturnOrchestrator 跨域建 ErpPurReturn 是否经 I*Biz（复核 contract P1-MA1-029 同型）。标记边界违规站点。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「核心实现正确性」：核查 PaymentSettler 核销算术与三单匹配门控（复核 P1-MA2-003）/ ThreeWayMatchService 匹配算法正确性（PO-Receive-Invoice 三方数量/价格/容差）/ 过账 Provider 多币种凭证路径（复核 P1-MA2-002/009 VoucherFact 单一 amount 字段——source-currency 直接写入）/ StockMoveBookkeeper upsertBalance 并发安全（复核 P0-MA2-020 UK 修复后的 ConstraintViolation→reload+retry 路径）/ 成本方法解析与调整算术（复核 P1-MA2-023 SPECIFIC 历史成本守卫 + P1-MA2-024 STANDARD 红冲成本不变量）/ ErpInvLandedCostProcessor 分摊算术 / NcrPostingDispatcher 过账异常吞咽悬挂（复核 hr P1-MA2-048 / assets P1-MA2-060 同型根因在 quality 侧）/ SpcCalculator 统计过程控制算术正确性（控制限/工序能力指数）。标记算术错误/事务/幂等/异常悬挂缺陷。
+- [x] 领域「核心实现正确性」：核查 PaymentSettler 核销算术与三单匹配门控（复核 P1-MA2-003）/ ThreeWayMatchService 匹配算法正确性（PO-Receive-Invoice 三方数量/价格/容差）/ 过账 Provider 多币种凭证路径（复核 P1-MA2-002/009 VoucherFact 单一 amount 字段——source-currency 直接写入）/ StockMoveBookkeeper upsertBalance 并发安全（复核 P0-MA2-020 UK 修复后的 ConstraintViolation→reload+retry 路径）/ 成本方法解析与调整算术（复核 P1-MA2-023 SPECIFIC 历史成本守卫 + P1-MA2-024 STANDARD 红冲成本不变量）/ ErpInvLandedCostProcessor 分摊算术 / NcrPostingDispatcher 过账异常吞咽悬挂（复核 hr P1-MA2-048 / assets P1-MA2-060 同型根因在 quality 侧）/ SpcCalculator 统计过程控制算术正确性（控制限/工序能力指数）。标记算术错误/事务/幂等/异常悬挂缺陷。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「类型和契约质量」：核查 crm DECIMAL↔Double 类型安全（复核 P1-MA1-009 ForecastAccuracy/PriceRule/LeadFunnel/FunnelStageMetrics 7 列浮点精度损失——参与比率计算）/ 过账金额 BigDecimal 类型安全 / 六 Processor 审批轴参数返回契约一致性 / INLINE vs Processor 路径契约漂移（复核 P1-MA2-050/057）。标记类型不匹配/契约漂移。
+- [x] 领域「类型和契约质量」：核查 crm DECIMAL↔Double 类型安全（复核 P1-MA1-009 ForecastAccuracy/PriceRule/LeadFunnel/FunnelStageMetrics 7 列浮点精度损失——参与比率计算）/ 过账金额 BigDecimal 类型安全 / 六 Processor 审批轴参数返回契约一致性 / INLINE vs Processor 路径契约漂移（复核 P1-MA2-050/057）。标记类型不匹配/契约漂移。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「错误处理和操作安全」：核查五域代码异常是否全部扩展 NopException + ErrorCode（`erp.err.pur.*` / `erp.err.sal.*` / `erp.err.inv.*` / `erp.err.qa.*` / `erp.err.crm.*`）/ 过账失败/核销超额/三单匹配容差/库存负数/质检不合格的错误传播 / 批量操作部分失败告警闭环。标记裸异常/ErrorCode 缺失。
+- [x] 领域「错误处理和操作安全」：核查五域代码异常是否全部扩展 NopException + ErrorCode（`erp.err.pur.*` / `erp.err.sal.*` / `erp.err.inv.*` / `erp.err.qa.*` / `erp.err.crm.*`）/ 过账失败/核销超额/三单匹配容差/库存负数/质检不合格的错误传播 / 批量操作部分失败告警闭环。标记裸异常/ErrorCode 缺失。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「测试有效性」：抽样五域测试，核查**异常路径覆盖**（多币种凭证路径 P1-MA2-002/009 零 E2E 证据 / 三单匹配容差边界 / SPECIFIC 历史成本守卫 / STANDARD 红冲不变量 / 到岸成本分摊精度 / NCR 过账悬挂 / SpcCalculator 控制限边界）+ 断言强度。标记测试空洞。
+- [x] 领域「测试有效性」：抽样五域测试，核查**异常路径覆盖**（多币种凭证路径 P1-MA2-002/009 零 E2E 证据 / 三单匹配容差边界 / SPECIFIC 历史成本守卫 / STANDARD 红冲不变量 / 到岸成本分摊精度 / NCR 过账悬挂 / SpcCalculator 控制限边界）+ 断言强度。标记测试空洞。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「可维护性和未来变更风险」：核查六 Processor 审批轴重复模式对称性（pur/sal 各 6 实体）/ 成本方法策略可扩展性 / crm DECIMAL↔Double 跨域影响范围。标记 P2 可维护性风险。
+- [x] 领域「可维护性和未来变更风险」：核查六 Processor 审批轴重复模式对称性（pur/sal 各 6 实体）/ 成本方法策略可扩展性 / crm DECIMAL↔Double 跨域影响范围。标记 P2 可维护性风险。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「自动化和防护覆盖」：核查五域代码是否有 compliance checker 规则守护（R8/R2）/ 是否有测试门控防止回归（核销算术/成本算术/匹配算法）。标记防护缺口。
+- [x] 领域「自动化和防护覆盖」：核查五域代码是否有 compliance checker 规则守护（R8/R2）/ 是否有测试门控防止回归（核销算术/成本算术/匹配算法）。标记防护缺口。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 产出审计报告 `docs/audits/2026-07-29-0430-arm-ma4-pur-sal-inv-qa-crm-code-quality.md`（含：7 领域逐项审查结果 / MA1/MA2/MA3 已知 finding 运行时复核 / P0-P3 finding 清单按严重性排序 / 每项含文件路径+行引用 / 裁决通过/失败 / 剩余风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-29-0430-arm-ma4-pur-sal-inv-qa-crm-code-quality.md`（含：7 领域逐项审查结果 / MA1/MA2/MA3 已知 finding 运行时复核 / P0-P3 finding 清单按严重性排序 / 每项含文件路径+行引用 / 裁决通过/失败 / 剩余风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] 7 重点领域逐项审查结果产出（每领域至少一句裁决，含"本领域无缺陷"）
-- [ ] MA1/MA2/MA3 已知 finding 运行时复核产出（每项标记"如 owner doc 声明"或"发现新代码层缺陷"）
-- [ ] P0-P3 finding 清单产出按严重性排序，每个含文件路径+行引用+严重性+缺陷描述+影响+目标 MR
+- [x] 7 重点领域逐项审查结果产出（每领域至少一句裁决，含"本领域无缺陷"）
+- [x] MA1/MA2/MA3 已知 finding 运行时复核产出（每项标记"如 owner doc 声明"或"发现新代码层缺陷"）
+- [x] P0-P3 finding 清单产出按严重性排序，每个含文件路径+行引用+严重性+缺陷描述+影响+目标 MR
 
 ### Phase 2 - finding 汇总交接 MR2/MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 五域代码质量 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.4「代码质量（MA4）」行
 Skill: none
 
 - Item Types: `Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] finding 汇总：全部缺陷 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.4 已分配最大 P1-MA4-N + 1，避免命名空间碰撞；报告、领域、缺陷描述、目标 MR2[代码类]/MR1[业务正确性类]、修复状态 todo）。与 MA1/MA2/MA3/A4.1a-A4.4 已登记 P1 经交叉去重无冲突。
+- [x] finding 汇总：全部缺陷 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.4 已分配最大 P1-MA4-N + 1，避免命名空间碰撞；报告、领域、缺陷描述、目标 MR2[代码类]/MR1[业务正确性类]、修复状态 todo）。与 MA1/MA2/MA3/A4.1a-A4.4 已登记 P1 经交叉去重无冲突。
       - Skill: none
-- [ ] 分类裁决：代码实现质量 finding 目标 MR2；业务正确性类 finding 目标 MR1；活跃数据破坏走 P0 即时通道（成本/核销算术错误直接影响财务报表，升级评估优先），在报告中明确标注。
+- [x] 分类裁决：代码实现质量 finding 目标 MR2；业务正确性类 finding 目标 MR1；活跃数据破坏走 P0 即时通道（成本/核销算术错误直接影响财务报表，升级评估优先），在报告中明确标注。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「代码质量（MA4）」行反映 pur/sal/inv/qa/crm 维度进度。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「代码质量（MA4）」行反映 pur/sal/inv/qa/crm 维度进度。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有缺陷 blocker/major 已登记 arm-index §P1 汇总（代码类 MR2 / 业务正确性类 MR1），待展开
-- [ ] 与 MA1/MA2/MA3/A4.1a-A4.4 已登记 P1 经交叉去重无重复登记
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论
+- [x] 所有缺陷 blocker/major 已登记 arm-index §P1 汇总（代码类 MR2 / 业务正确性类 MR1），待展开
+- [x] 与 MA1/MA2/MA3/A4.1a-A4.4 已登记 P1 经交叉去重无重复登记
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论
 
 ## Draft Review Record
 
@@ -127,14 +127,14 @@ Exit Criteria:
 
 > 本计划主体是代码静态审查 + 测试有效性抽样（不改代码；产出为审计报告 + arm-index/scope-matrix 更新）。完整仓库验证在此处运行一次（同型审计 plan 的标准 Closure 实践）。代码缺陷修复在 MR2/MR1 批量进行；活跃数据破坏走 P0 即时通道。本审计只识别缺陷 + 分类。
 
-- [ ] 范围内行为完成（A4.5 五域代码质量抽样审计报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
-- [ ] 已运行验证：代码静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A4.5 五域代码质量抽样审计报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
+- [x] 已运行验证：代码静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -158,12 +158,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: A4.5 pur+sal+inv+qa+crm 五域代码质量抽样审计完成。审计报告 `docs/audits/2026-07-29-0430-arm-ma4-pur-sal-inv-qa-crm-code-quality.md` 产出（7 重点领域逐项裁决 + MA1/MA2/MA3 已知 finding 运行时复核 20 项[17「如登记」+ 3「已确认修复」] + P0-P3 finding 清单）。**Verdict: ⚠️(P1)——零 P0**（无活跃数据破坏路径；核销/匹配/SPC 算术经主路径测试覆盖；upsertBalance UK+retry P0-MA2-020 已修复落地；状态守卫 P0-MA2-017 已修复落地；凭证直写 P0-MA1-021 已修复落地；多币种归 P1-MA2-002/009 deferred；业财悬挂归 finance sweep 兜底[reverse 方向除外→P1-MA4-020]）。**3 项新 P1**（P1-MA4-020 inventory 到岸成本反向过账悬挂[reverse 方向无 sweep 覆盖]——MR1；P1-MA4-021 pur+sal+inv 过账/核销/成本链路测试有效性系统性不足[多币种零覆盖+业财异常悬挂零覆盖+STANDARD 红冲成本不变量+SPECIFIC 成本调整+rollbackReceive 不对称+SalReversalListener 3/4 回退+settle 三单匹配二次门禁]——MR2；P1-MA4-022 pur+sal+inv Processor/过账链路跨域 daoFor 投影[同 P1-MA1-022 根因]——MR1 不重复计入 MR2）+ **4 项新 P2** watch-only（P2-MA4-010 五域可维护性热点合并 / P2-MA4-011 五域自动化防护[R2d 未覆盖 daoFor(ErpFin/ErpInv/ErpPur)] / P2-MA4-012 quality NCR/SPC 链路可观测性缺陷合并 / P2-MA4-013 crm Forecast 链路缺陷合并）。全部 P1/P2 登记至 `arm-index.md` §P1/§P2 汇总（与 MA1/MA2/MA3/A4.1a-A4.4 已登记 P1 交叉去重无重复登记）。arm-index 报告清单 + scope matrix §2.4「代码质量（MA4）」行反映五域维度进度。roadmap A4.5 推进至 done。代码静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的标准 Closure 实践）。**pur+sal+inv+qa+crm 五域 MA4 代码质量抽样终态在此收口：3 P1 + 4 P2，零 P0。MA4 代码质量维度后端代码片（A4.1a-A4.5）现已全部 done，剩余 A4.6-A4.8 view.xml drift 三批。** 独立结束审计（fresh-context 通用子代理）VERDICT: pass——所有 6 项交付物检查 PASS。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计后填写>
-- Evidence: <待独立结束审计后填写>
+- Auditor / Agent: independent general subagent（fresh-context closure audit，新会话，2026-07-29）
+- Evidence: Fresh-context walkthrough against live repo. VERDICT: pass. (1) Audit report `2026-07-29-0430-arm-ma4-pur-sal-inv-qa-crm-code-quality.md` complete — 7 code-quality domains each with verdict (PARTIAL/FAIL/PASS/FAIL/PASS/FAIL/PASS) + §3 MA1/MA2/MA3 re-review table (18 rows each with terminal-state verdict + evidence) + §4 P0-P3 findings sorted w/ file:line refs + §5 verdict/P0-assessment/remaining-risk/cross-dedup. (2) Spot-check P1-MA4-020 real — `ErpInvLandedCostProcessor.doReverseApprove:204-217` confirmed wraps `postingDispatcher.reverse` in catch-swallow with cost-layer reverse (`reverseCostAdjust:221`) running after GL REQUIRES_NEW commit; P1-MA4-022 real — `ErpPurOrderProcessor:302 daoFor(ErpMdSubject)` + `:314 daoFor(ErpFinAccountingPeriod)` confirmed. (3) IDs P1-MA4-020/021/022 + P2-MA4-010/011/012/013 collision-free (follow hr max P1-MA4-019 / P2-MA4-009; grep arm-index each new ID appears exactly once). (4) arm-index.md report row (done) + A4.5 summary paragraph + 3 P1 detail rows + 4 P2 detail rows all present. (5) scope-matrix A4.5 note paragraph present. (6) roadmap A4.5 = `done`. No blockers; one cosmetic note (§3 verdict text says "20 项" vs 18 table rows) is non-blocking. Plan deliverables substantively correct; closure gates satisfied; P1 findings correctly routed to MR1/MR2 and are deferred-by-design (not scope downgrades).
 
 Follow-up:
 
