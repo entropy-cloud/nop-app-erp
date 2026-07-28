@@ -401,6 +401,19 @@
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
                 <to-one name="owner" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Owner'><join><on leftProp="ownerId" rightProp="id"/></join></to-one>
             </relations>
+            <!--
+                 自然键唯一约束（plan 2026-07-28-1249 P0-MA2-020）：
+                 (orgId, materialId, skuId, warehouseId, locationId, batchNo, ownerId) 兜底防止
+                 并发首次 INSERT（新品上架并发收货 / 多仓并行初始化）产生重复余额行导致 silent split-quantity corruption。
+                 含 orgId 兼容多公司隔离（A2.18）。
+                 注：nullable 列（locationId/batchNo/ownerId）在 SQL 标准下 NULL≠NULL，
+                 故仅当全部键列非空时该约束才生效；全空场景由 StockMoveBookkeeper.upsertBalance 的
+                 INSERT-on-conflict-retry 兜底（捕获 ConstraintViolation → reload → 转更新路径）。
+                 constraint 属性触发 DDL 生成（仅 name 不生成 DB 约束，见 ddl.xlib AddUniqueKey）。
+            -->
+            <unique-keys>
+                <unique-key name="UK_INV_STOCK_BALANCE_NATURAL" constraint="UK_INV_STOCK_BALANCE_NATURAL" columns="orgId,materialId,skuId,warehouseId,locationId,batchNo,ownerId"/>
+            </unique-keys>
             <indexes>
                 <index name="IDX_INV_STOCK_BALANCE_MATERIAL_ID" unique="false">
                     <column name="materialId"/>

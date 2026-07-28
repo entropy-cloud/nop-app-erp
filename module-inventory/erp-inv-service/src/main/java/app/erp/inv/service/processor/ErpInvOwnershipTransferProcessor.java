@@ -158,14 +158,16 @@ public class ErpInvOwnershipTransferProcessor {
 
         // 目的 ownershipType 子余额 upsert（同库位，按 toOwnershipType + ownerId 拆行）
         ErpInvStockBalance target = upsertTargetBalance(transfer, line, transfer.getToOwnershipType());
-        target.setTotalQuantity(nz(target.getTotalQuantity()).add(qty));
-        target.setAvailableQuantity(nz(target.getAvailableQuantity()).add(qty));
-        target.setTotalCost(nz(target.getTotalCost()).add(movedCost));
-        if (nz(target.getTotalQuantity()).signum() > 0) {
-            target.setAvgCost(nz(target.getTotalCost()).divide(nz(target.getTotalQuantity()),
-                    BigDecimal.ROUND_HALF_UP));
-        }
-        daoProvider.daoFor(ErpInvStockBalance.class).saveOrUpdateEntity(target);
+        // 目的余额增量经 bookkeeper.updateBalanceWithRetry：捕获并发首次 INSERT 自然键冲突
+        // （plan 2026-07-28-1249 P0-MA2-020）+ MANAGED 路径乐观锁冲突，统一重试
+        bookkeeper.updateBalanceWithRetry(target, b -> {
+            b.setTotalQuantity(nz(b.getTotalQuantity()).add(qty));
+            b.setAvailableQuantity(nz(b.getAvailableQuantity()).add(qty));
+            b.setTotalCost(nz(b.getTotalCost()).add(movedCost));
+            if (nz(b.getTotalQuantity()).signum() > 0) {
+                b.setAvgCost(nz(b.getTotalCost()).divide(nz(b.getTotalQuantity()), BigDecimal.ROUND_HALF_UP));
+            }
+        });
     }
 
     protected ErpInvStockBalance findBalance(ErpInvOwnershipTransfer transfer,
@@ -214,6 +216,13 @@ public class ErpInvOwnershipTransferProcessor {
         if (existing != null) {
             return existing;
         }
+        // 并发首次 INSERT 兜底（plan 2026-07-28-1249 P0-MA2-020）：buildNewTargetBalance queue INSERT，
+        // 实际冲突捕获发生在调用方 reclassifyBalance 经 bookkeeper.updateBalanceWithRetry 的 flush 阶段。
+        return buildNewTargetBalance(transfer, line, ownershipType);
+    }
+
+    private ErpInvStockBalance buildNewTargetBalance(ErpInvOwnershipTransfer transfer,
+                                                     ErpInvOwnershipTransferLine line, String ownershipType) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
         ErpInvStockBalance balance = dao.newEntity();
         balance.setOrgId(transfer.getOrgId());

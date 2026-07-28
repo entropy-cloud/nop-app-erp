@@ -154,4 +154,7 @@ alter table erp_inv_picking_order_line add constraint PK_erp_inv_picking_order_l
 alter table erp_inv_stock_ledger drop constraint PK_erp_inv_stock_ledger;
 alter table erp_inv_stock_ledger add constraint PK_erp_inv_stock_ledger primary key (NOP_TENANT_ID, id);
 
+alter table erp_inv_stock_balance drop constraint UK_INV_STOCK_BALANCE_NATURAL;
+alter table erp_inv_stock_balance add constraint UK_INV_STOCK_BALANCE_NATURAL unique (NOP_TENANT_ID,org_id,material_id,sku_id,warehouse_id,location_id,batch_no,owner_id);
 
+                

@@ -22,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -188,6 +189,223 @@ public class TestErpInvConcurrentDeduct extends JunitBaseTestCase {
     public void testConcurrentDeductWithNegativeStockAllowed() throws Exception {
         runMultiThreadedConcurrentDeduct(new BigDecimal("2"), new BigDecimal("2"), 2, true,
                 new BigDecimal("-2"));
+    }
+
+    // ---------- 并发首次 INSERT 自然键冲突重试（plan 2026-07-28-1249 P0-MA2-020） ----------
+
+    /**
+     * 确定性单线程模拟：先在另一会话落地一条余额（全非空自然键），再让本会话用相同自然键的 SAVING 候选调用
+     * {@link StockMoveBookkeeper#updateBalanceWithRetry}。第一次 flush 的 INSERT 命中
+     * UK_INV_STOCK_BALANCE_NATURAL → 捕获 → evict + reload 已落地行 → applyDelta 在 MANAGED 行上重试 →
+     * tryUpdateWithVersionCheck 成功。
+     *
+     * <p>断言：无重复行（行数=1），totalQuantity 为两者之和（5+4=9），version 自增（0→1）。
+     *
+     * <p>注：使用全非空自然键（skuId/batchNo/ownerId 均设值），因 H2 默认 NULLS DISTINCT 语义下
+     * NULL 列不参与 UNIQUE 比较；全非空场景方可稳定触发 UK 冲突。
+     */
+    @Test
+    public void testConcurrentFirstMoveSameDimensionThrowsAndRetries() {
+        // 隔离会话：先落地一条全键余额 → totalQty=5, version=0
+        Long balanceId = persistBalanceDirectlyAllKeys(new BigDecimal("5"), new BigDecimal("5"));
+
+        ormTemplate.runInSession(testSession -> {
+            // 本会话构造 SAVING 候选（模拟并发首轮 findBalance==null → 新建候选），相同自然键
+            ErpInvStockBalance savingCandidate = buildSavingCandidateAllKeys();
+
+            // updateBalanceWithRetry 走 SAVING 分支 → flush 触发 INSERT → UK 冲突 → evict + reload → MANAGED 路径重试
+            ErpInvStockBalance updated = bookkeeper.updateBalanceWithRetry(savingCandidate, b -> {
+                b.setTotalQuantity(nz(b.getTotalQuantity()).add(new BigDecimal("4")));
+                b.setAvailableQuantity(nz(b.getAvailableQuantity()).add(new BigDecimal("4")));
+            });
+
+            assertEquals(0, updated.getTotalQuantity().compareTo(new BigDecimal("9")),
+                    "5 (已落地) + 4 (本会话增量) = 9");
+            assertTrue(updated.getVersion().compareTo(0) > 0, "tryUpdate 后 version 自增");
+            return null;
+        });
+
+        // 落盘验证：仅 1 行（无重复余额），total=9，version 自增
+        ormTemplate.runInSession(checkSession -> {
+            long matching = countRowsByNaturalKey();
+            assertEquals(1L, matching, "UK_INV_STOCK_BALANCE_NATURAL 兜底：同维度仅 1 行（无 split-quantity corruption）");
+
+            ErpInvStockBalance finalBalance = balanceDao().getEntityById(balanceId);
+            assertEquals(0, finalBalance.getTotalQuantity().compareTo(new BigDecimal("9")),
+                    "落盘 total = 5 + 4 = 9");
+            assertTrue(finalBalance.getVersion().compareTo(0) > 0, "version 自增");
+            return null;
+        });
+    }
+
+    /**
+     * 多线程并发首次写同维度（plan 2026-07-28-1249 P0-MA2-020）：
+     * 2 线程同时构造同自然键 SAVING 候选并调 {@link StockMoveBookkeeper#updateBalanceWithRetry}。
+     * 一线程成功 INSERT，另一线程命中 UK 冲突 → reload + update 路径成功。
+     *
+     * <p>断言（数据完整性）：最终仅 1 行余额（无重复行 / silent split），totalQuantity = threadCount × perQty。
+     *
+     * <p>使用全非空自然键以稳定触发 UK 冲突（H2 默认 NULLS DISTINCT）。
+     */
+    @Test
+    public void testConcurrentFirstMoveMultiThreadNoDuplicateRows() throws Exception {
+        int threadCount = 2;
+        BigDecimal perQty = new BigDecimal("5");
+        ExecutorService pool = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch startGate = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(threadCount);
+        AtomicReference<Throwable> firstError = new AtomicReference<>();
+
+        try {
+            for (int i = 0; i < threadCount; i++) {
+                pool.submit(() -> {
+                    ContextProvider.newContext();
+                    try {
+                        startGate.await();
+                        ormTemplate.runInSession(workerSession -> {
+                            // 每线程独立构造 SAVING 候选（同自然键），queue INSERT 后立即调 updateBalanceWithRetry
+                            ErpInvStockBalance candidate = buildSavingCandidateAllKeys();
+                            bookkeeper.updateBalanceWithRetry(candidate, b -> {
+                                b.setTotalQuantity(nz(b.getTotalQuantity()).add(perQty));
+                                b.setAvailableQuantity(nz(b.getAvailableQuantity()).add(perQty));
+                                b.setTotalCost(nz(b.getTotalCost()).add(perQty.multiply(new BigDecimal("5"))));
+                            });
+                            return null;
+                        });
+                    } catch (Throwable t) {
+                        firstError.compareAndSet(null, t);
+                    } finally {
+                        ContextProvider.instance().detachContext();
+                        doneLatch.countDown();
+                    }
+                });
+            }
+            startGate.countDown();
+            assertTrue(doneLatch.await(60, TimeUnit.SECONDS), "全部 worker 应在 60s 内完成");
+            if (firstError.get() != null) {
+                throw new AssertionError("worker 线程抛错: " + firstError.get().getMessage(), firstError.get());
+            }
+        } finally {
+            pool.shutdownNow();
+        }
+
+        // 落盘断言：仅 1 行（UK + retry 保证），total = threadCount × perQty = 10
+        ormTemplate.runInSession(checkSession -> {
+            long matching = countRowsByNaturalKey();
+            assertEquals(1L, matching,
+                    "并发首次 INSERT：UK + retry 保证无重复余额行（避免 silent split-quantity corruption）");
+
+            List<ErpInvStockBalance> rows = balanceDao().findAllByQuery(new io.nop.api.core.beans.query.QueryBean());
+            ErpInvStockBalance only = rows.stream()
+                    .filter(this::matchesNaturalKey)
+                    .findFirst().orElseThrow();
+            assertEquals(0, only.getTotalQuantity().compareTo(new BigDecimal("10")),
+                    "总入量 = 2 × 5 = 10（无丢失更新、无 split）");
+            return null;
+        });
+    }
+
+    /** 全非空自然键测试常量（避免与 persistBalanceDirectly 的 NULL-key 行混入）。 */
+    static final Long SKU_ID_ALL_KEY = 99001L;
+    static final String BATCH_NO_ALL_KEY = "BATCH-CONC-001";
+    static final Long OWNER_ID_ALL_KEY = 99002L;
+
+    /**
+     * 直接持久化一条全键余额（绕过 strategy），全非空自然键。立即提交可见于其他会话。
+     */
+    private Long persistBalanceDirectlyAllKeys(BigDecimal total, BigDecimal avgCost) {
+        ErpInvStockBalance balance = balanceDao().newEntity();
+        balance.setOrgId(ORG_ID);
+        balance.setMaterialId(MATERIAL_ID);
+        balance.setSkuId(SKU_ID_ALL_KEY);
+        balance.setWarehouseId(WAREHOUSE_ID);
+        balance.setLocationId(LOCATION_ID);
+        balance.setBatchNo(BATCH_NO_ALL_KEY);
+        balance.setOwnerId(OWNER_ID_ALL_KEY);
+        balance.setTotalQuantity(total);
+        balance.setReservedQuantity(BigDecimal.ZERO);
+        balance.setLockedQuantity(BigDecimal.ZERO);
+        balance.setAvailableQuantity(total);
+        balance.setCostMethod(ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
+        balance.setAvgCost(avgCost);
+        balance.setTotalCost(total.multiply(avgCost));
+        balance.setCurrencyId(CURRENCY_ID);
+        balance.setOwnershipType(ErpInvConstants.OWNERSHIP_TYPE_OWNED);
+        balanceDao().saveEntityDirectly(balance);
+        return balance.getId();
+    }
+
+    /**
+     * 构造一条全键 SAVING 候选（与 {@link #persistBalanceDirectlyAllKeys} 同自然键）。
+     * queue INSERT 后返回，模拟并发 findBalance==null → 新建候选 → 紧随 updateBalanceWithRetry。
+     */
+    private ErpInvStockBalance buildSavingCandidateAllKeys() {
+        ErpInvStockBalance candidate = balanceDao().newEntity();
+        candidate.setOrgId(ORG_ID);
+        candidate.setMaterialId(MATERIAL_ID);
+        candidate.setSkuId(SKU_ID_ALL_KEY);
+        candidate.setWarehouseId(WAREHOUSE_ID);
+        candidate.setLocationId(LOCATION_ID);
+        candidate.setBatchNo(BATCH_NO_ALL_KEY);
+        candidate.setOwnerId(OWNER_ID_ALL_KEY);
+        candidate.setTotalQuantity(BigDecimal.ZERO);
+        candidate.setReservedQuantity(BigDecimal.ZERO);
+        candidate.setLockedQuantity(BigDecimal.ZERO);
+        candidate.setAvailableQuantity(BigDecimal.ZERO);
+        candidate.setCostMethod(ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
+        candidate.setAvgCost(new BigDecimal("5"));
+        candidate.setTotalCost(BigDecimal.ZERO);
+        candidate.setCurrencyId(CURRENCY_ID);
+        candidate.setOwnershipType(ErpInvConstants.OWNERSHIP_TYPE_OWNED);
+        // queue INSERT，模拟 upsertBalance 的 findBalance==null 分支
+        balanceDao().saveEntity(candidate);
+        return candidate;
+    }
+
+    private boolean matchesNaturalKey(ErpInvStockBalance r) {
+        return Objects.equals(r.getOrgId(), ORG_ID)
+                && Objects.equals(r.getMaterialId(), MATERIAL_ID)
+                && Objects.equals(r.getSkuId(), SKU_ID_ALL_KEY)
+                && Objects.equals(r.getWarehouseId(), WAREHOUSE_ID)
+                && Objects.equals(r.getLocationId(), LOCATION_ID)
+                && Objects.equals(r.getBatchNo(), BATCH_NO_ALL_KEY)
+                && Objects.equals(r.getOwnerId(), OWNER_ID_ALL_KEY);
+    }
+
+    private long countRowsByNaturalKey() {
+        List<ErpInvStockBalance> rows = balanceDao().findAllByQuery(new io.nop.api.core.beans.query.QueryBean());
+        return rows.stream().filter(this::matchesNaturalKey).count();
+    }
+
+    private ErpInvStockMove newIncomingMove() {
+        ErpInvStockMove move = moveDao().newEntity();
+        move.setCode("MV-CONC-IN-" + UUID.randomUUID());
+        move.setMoveType(ErpInvConstants.MOVE_TYPE_INCOMING);
+        move.setOrgId(ORG_ID);
+        move.setBusinessDate(LocalDate.of(2026, 7, 28));
+        move.setDestWarehouseId(WAREHOUSE_ID);
+        move.setDestLocationId(LOCATION_ID);
+        move.setDocStatus(ErpInvConstants.DOC_STATUS_CONFIRMED);
+        move.setApproveStatus(ErpInvDaoConstants.APPROVE_STATUS_UNSUBMITTED);
+        move.setPosted(false);
+        return move;
+    }
+
+    private ErpInvStockMoveLine newIncomingLine(BigDecimal qty) {
+        ErpInvStockMoveLine line = lineDao().newEntity();
+        line.setLineNo(1);
+        line.setMaterialId(MATERIAL_ID);
+        line.setUoMId(UOM_ID);
+        line.setQuantity(qty);
+        line.setUnitCost(new BigDecimal("5"));
+        line.setTotalCost(qty.multiply(new BigDecimal("5")));
+        line.setCurrencyId(CURRENCY_ID);
+        line.setDestLocationId(LOCATION_ID);
+        return line;
+    }
+
+    private static BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
     }
 
     /**

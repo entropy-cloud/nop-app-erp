@@ -55,6 +55,13 @@ public interface ErpInvErrors {
             "库存余额 {balanceId} 并发扣减乐观锁冲突，重试 {attempts} 次后仍失败，请重试或检查并发负载",
             ARG_BALANCE_ID, ARG_ATTEMPTS);
 
+    // 并发首次 INSERT 自然键冲突重试耗尽（plan 2026-07-28-1249 P0-MA2-020；concurrency-and-transactions.md §模式四 INSERT 路径）
+    // 路径：upsertBalance/upsertTargetBalance 捕获 UK_INV_STOCK_BALANCE_NATURAL ConstraintViolation
+    //      → evict + reload + retry，超过 erp-inv.concurrent-deduct-max-retry 仍失败抛此码
+    ErrorCode ERR_INV_BALANCE_INSERT_CONFLICT = ErrorCode.define("erp.err.inv.balance-insert-conflict",
+            "库存余额首次 INSERT 自然键冲突，重试 {attempts} 次后仍未落地（物料 {materialId} / 仓库 {warehouseId}），请重试或检查并发负载",
+            ARG_MATERIAL_ID, ARG_WAREHOUSE_ID, ARG_ATTEMPTS);
+
     ErrorCode ERR_MOVE_NOT_FOUND = ErrorCode.define("erp.err.inv.move-not-found",
             "移动单 {moveId} 不存在", ARG_MOVE_ID);
 

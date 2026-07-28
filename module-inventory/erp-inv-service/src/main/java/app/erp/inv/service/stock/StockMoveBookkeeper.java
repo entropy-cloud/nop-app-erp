@@ -22,8 +22,10 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.commons.util.StringHelper;
+import io.nop.dao.DaoErrors;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.dao.exceptions.JdbcException;
 import io.nop.orm.IOrmSession;
 import io.nop.orm.IOrmTemplate;
 import io.nop.orm.OrmEntityState;
@@ -31,6 +33,7 @@ import io.nop.orm.dao.IOrmEntityDao;
 import jakarta.inject.Inject;
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -38,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.isNull;
 
 /**
  * 库存记账器：移动单 DONE 时按 {@code ErpMdMaterial.costMethod} 分派到 {@link CostingStrategy} 写不可变库存流水
@@ -133,6 +137,10 @@ public class StockMoveBookkeeper implements BookingContext {
      * <p>owner 维度（consignment.md §配置点）：{@code erp-inv.ownership-tracking-enabled=false}（默认关）时
      * ownerId 一律 null、不入键，与基线逐字节一致；启用时方按 ownerId 拆出独立子余额行。标准移动单不携带 ownerId，
      * 故 disabled 时透传 null（等价既有行为），enabled 时同样 null（标准移动单写 OWNED 余额，VMI 余额经转移单建立）。
+     *
+     * <p>并发首次 INSERT 兜底（plan 2026-07-28-1249 P0-MA2-020）：本方法仅 queue INSERT（不主动 flush，
+     * 保持版本号语义不变）。自然键 UK_INV_STOCK_BALANCE_NATURAL 冲突的实际捕获发生在紧随其后的
+     * {@link #updateBalanceWithRetry} 的 flush 阶段——见该方法的 SAVING 分支（evict + reload 已落地行 + 转更新路径）。
      */
     public ErpInvStockBalance upsertBalance(ErpInvStockMove move, ErpInvStockMoveLine line,
                                              Long warehouseId, Long locationId) {
@@ -144,8 +152,16 @@ public class StockMoveBookkeeper implements BookingContext {
         if (balance != null) {
             return balance;
         }
+        return buildNewBalanceForMove(move, line, warehouseId, locationId, ownerId);
+    }
+
+    /**
+     * 构造一条新余额行（未持久化）。仅在 INSERT 路径调用；冲突捕获由 {@link #updateBalanceWithRetry} 负责。
+     */
+    private ErpInvStockBalance buildNewBalanceForMove(ErpInvStockMove move, ErpInvStockMoveLine line,
+                                                       Long warehouseId, Long locationId, Long ownerId) {
         IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
-        balance = dao.newEntity();
+        ErpInvStockBalance balance = dao.newEntity();
         balance.setOrgId(move.getOrgId());
         balance.setMaterialId(line.getMaterialId());
         balance.setSkuId(line.getSkuId());
@@ -211,19 +227,27 @@ public class StockMoveBookkeeper implements BookingContext {
     /**
      * {@inheritDoc}
      *
-     * <p>实现要点（plan 2026-07-07-0024-2 / UC-INV-08 / concurrency-and-transactions.md §模式四）：
+     * <p>实现要点（plan 2026-07-07-0024-2 / UC-INV-08 / concurrency-and-transactions.md §模式四 +
+     * plan 2026-07-28-1249 P0-MA2-020 INSERT 路径扩展）：
      * <ul>
-     *   <li>新实体（TRANSIENT/SAVING，尚未持久化）：直接 {@link IEntityDao#saveEntity} 走 INSERT，无并发冲突可能。</li>
      *   <li>已 managed 实体：经 {@link io.nop.orm.dao.IOrmEntityDao#tryUpdateWithVersionCheck}
      *       提交（生成 {@code UPDATE WHERE id=? AND version=?}）。</li>
      *   <li>冲突（受影响行数=0，平台将实例置 readonly）：evict 旧实例 + {@link IEntityDao#requireEntityById}
      *       加载新实例（readonly=false），重新执行 {@code applyDelta}，重试。</li>
+     *   <li>新实体（TRANSIENT/SAVING，尚未持久化）：flush 触发 INSERT；若 flush 抛
+     *       {@link DaoErrors#ERR_SQL_DUPLICATE_KEY}（自然键 UK_INV_STOCK_BALANCE_NATURAL 冲突），
+     *       evict + 按自然键 reload 已落地的并发对方行 + 转入 MANAGED 路径重试 {@code applyDelta}
+     *       （典型并发首次移动单同维度场景）。</li>
      *   <li>重试上限 = {@code erp-inv.concurrent-deduct-max-retry}（默认 5）；耗尽抛
-     *       {@link ErpInvErrors#ERR_INV_CONCURRENT_DEDUCT_CONFLICT}。</li>
+     *       {@link ErpInvErrors#ERR_INV_CONCURRENT_DEDUCT_CONFLICT}（MANAGED 路径）或
+     *       {@link ErpInvErrors#ERR_INV_BALANCE_INSERT_CONFLICT}（INSERT 路径）。</li>
      * </ul>
      *
      * <p>注意：平台 {@code OrmEntity.orm_readonly(boolean)} 设置器将 readonly 视为粘性（一旦 true 不可复位），
      * 故必须 evict 后重新加载新实例，而非 orm_unload+getEntityById 复用同一实例——否则后续 flush 会跳过该实体。
+     *
+     * <p>版本号语义：happy path（INSERT 成功）的 version 仍为 0（与既有 snapshot 一致）；
+     * 仅当 INSERT 落地后再次同事务更新时 version 才自增。本方法不在 happy path 主动多 flush 一次。
      */
     @Override
     public ErpInvStockBalance updateBalanceWithRetry(ErpInvStockBalance initialBaseline,
@@ -239,36 +263,171 @@ public class StockMoveBookkeeper implements BookingContext {
             applyDelta.accept(current);
 
             OrmEntityState state = current.orm_state();
+            boolean conflict;
             if (state == OrmEntityState.MANAGED) {
-                boolean ok = dao.tryUpdateWithVersionCheck(current);
-                if (ok) {
-                    return current;
-                }
-                // 冲突，进入重试路径（下方）
+                conflict = !dao.tryUpdateWithVersionCheck(current);
             } else if (state == OrmEntityState.TRANSIENT) {
-                // 新余额从未入 session：queue INSERT
+                // 新余额从未入 session：queue INSERT + flush 触发 DB 落地（捕获 UK 冲突）
                 dao.saveEntity(current);
-                return current;
+                conflict = !flushAndCheckConflict(current);
+            } else if (state == OrmEntityState.SAVING) {
+                // 已 queue INSERT：flush 触发 DB 落地（捕获 UK 冲突）。applyDelta 的字段变更随 INSERT 一次落盘
+                conflict = !flushAndCheckConflict(current);
             } else {
-                // SAVING（已 queue INSERT）或其他非 MANAGED 态：当前字段值会在 flush 时随 INSERT 落盘
+                // 其他态（如 DELETED 等，理论不可达）：不 flush，直接返回
+                return current;
+            }
+
+            if (!conflict) {
                 return current;
             }
 
             attempts++;
             if (attempts > maxRetry) {
-                throw new NopException(ErpInvErrors.ERR_INV_CONCURRENT_DEDUCT_CONFLICT)
-                        .param(ErpInvErrors.ARG_BALANCE_ID, current.orm_id())
-                        .param(ErpInvErrors.ARG_ATTEMPTS, attempts);
+                throw buildConflictExhaustedEx(state, current, attempts);
             }
 
-            // 冲突：evict 当前实例（readonly 粘性，不可复用）+ 重新加载新实例
-            Object balanceId = current.orm_id();
+            // 冲突：捕获自然键，evict 失败实例，按自然键 reload
+            Long orgId = current.getOrgId();
+            Long materialId = current.getMaterialId();
+            Long skuId = current.getSkuId();
+            Long warehouseId = current.getWarehouseId();
+            Long locationId = current.getLocationId();
+            String batchNo = current.getBatchNo();
+            Long ownerId = current.getOwnerId();
+
             IOrmSession session = ormTemplate.currentSession();
             if (session != null) {
                 session.evict(current);
             }
-            current = dao.requireEntityById(balanceId);
+
+            if (state == OrmEntityState.MANAGED) {
+                // UPDATE 冲突：DB 行仍存在但版本前进；按主键 reload
+                current = dao.requireEntityById(current.orm_id());
+            } else {
+                // INSERT 冲突：DB 中已有并发对方行；按自然键 reload（找不到时退化为 newEntity 重试）
+                current = findBalanceByNaturalKey(orgId, materialId, skuId, warehouseId,
+                        locationId, batchNo, ownerId);
+                if (current == null) {
+                    // 极罕见：对方事务已回滚；构造新候选重试 INSERT
+                    current = newBlankBalance(orgId, materialId, skuId, warehouseId,
+                            locationId, batchNo, ownerId);
+                    dao.saveEntity(current);
+                }
+            }
         }
+    }
+
+    /**
+     * flush 当前会话。返回 true 表示无冲突（happy path），false 表示抛出并被捕获的 UK 冲突。
+     * 非 UK 异常向上原样抛出。
+     */
+    private boolean flushAndCheckConflict(ErpInvStockBalance candidate) {
+        try {
+            ormTemplate.flushSession();
+            return true;
+        } catch (Exception e) {
+            if (isUniqueConstraintViolation(e)) {
+                return false;
+            }
+            throw e;
+        }
+    }
+
+    /**
+     * 按自然键精确查询余额行。与 ORM UK 列对齐：orgId/materialId/skuId/warehouseId/locationId/batchNo/ownerId。
+     * nullable 列（skuId/locationId/batchNo/ownerId）使用 IS NULL 语义匹配。
+     */
+    private ErpInvStockBalance findBalanceByNaturalKey(Long orgId, Long materialId, Long skuId, Long warehouseId,
+                                                        Long locationId, String batchNo, Long ownerId) {
+        IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("orgId", orgId));
+        q.addFilter(eq("materialId", materialId));
+        if (skuId != null) {
+            q.addFilter(eq("skuId", skuId));
+        } else {
+            q.addFilter(isNull("skuId"));
+        }
+        q.addFilter(eq("warehouseId", warehouseId));
+        if (locationId != null) {
+            q.addFilter(eq("locationId", locationId));
+        } else {
+            q.addFilter(isNull("locationId"));
+        }
+        if (batchNo != null) {
+            q.addFilter(eq("batchNo", batchNo));
+        } else {
+            q.addFilter(isNull("batchNo"));
+        }
+        if (ownerId != null) {
+            q.addFilter(eq("ownerId", ownerId));
+        } else {
+            q.addFilter(isNull("ownerId"));
+        }
+        List<ErpInvStockBalance> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    /** 构造空白余额候选（用于极罕见的"对方事务回滚后重试 INSERT"场景）。 */
+    private ErpInvStockBalance newBlankBalance(Long orgId, Long materialId, Long skuId, Long warehouseId,
+                                                Long locationId, String batchNo, Long ownerId) {
+        IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
+        ErpInvStockBalance balance = dao.newEntity();
+        balance.setOrgId(orgId);
+        balance.setMaterialId(materialId);
+        balance.setSkuId(skuId);
+        balance.setWarehouseId(warehouseId);
+        balance.setLocationId(locationId);
+        balance.setBatchNo(batchNo);
+        balance.setTotalQuantity(BigDecimal.ZERO);
+        balance.setReservedQuantity(BigDecimal.ZERO);
+        balance.setLockedQuantity(BigDecimal.ZERO);
+        balance.setAvailableQuantity(BigDecimal.ZERO);
+        balance.setCostMethod(ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
+        balance.setAvgCost(BigDecimal.ZERO);
+        balance.setTotalCost(BigDecimal.ZERO);
+        balance.setOwnershipType(ErpInvConstants.OWNERSHIP_TYPE_OWNED);
+        if (isOwnershipTrackingEnabled()) {
+            balance.setOwnerId(ownerId);
+        }
+        return balance;
+    }
+
+    private static NopException buildConflictExhaustedEx(OrmEntityState state, ErpInvStockBalance current,
+                                                          int attempts) {
+        if (state == OrmEntityState.MANAGED) {
+            return new NopException(ErpInvErrors.ERR_INV_CONCURRENT_DEDUCT_CONFLICT)
+                    .param(ErpInvErrors.ARG_BALANCE_ID, current.orm_id())
+                    .param(ErpInvErrors.ARG_ATTEMPTS, attempts);
+        }
+        return new NopException(ErpInvErrors.ERR_INV_BALANCE_INSERT_CONFLICT)
+                .param(ErpInvErrors.ARG_MATERIAL_ID, current.getMaterialId())
+                .param(ErpInvErrors.ARG_WAREHOUSE_ID, current.getWarehouseId())
+                .param(ErpInvErrors.ARG_ATTEMPTS, attempts);
+    }
+
+    /**
+     * 判定异常链中是否含数据库唯一约束/主键冲突。
+     *
+     * <p>平台 JDBC 翻译器把 {@link java.sql.SQLIntegrityConstraintViolationException} 翻译为
+     * {@link JdbcException}，错误码为 {@link DaoErrors#ERR_SQL_DUPLICATE_KEY}（H2/PG/MySQL 唯一索引冲突）
+     * 或 {@link DaoErrors#ERR_SQL_DATA_INTEGRITY_VIOLATION}（其他完整性违例，少数驱动归类至此）。
+     * 遍历 cause 链以兼容包装异常（事务管理器 / IoC）。
+     */
+    static boolean isUniqueConstraintViolation(Throwable t) {
+        Throwable cur = t;
+        while (cur != null) {
+            if (cur instanceof JdbcException) {
+                String code = ((JdbcException) cur).getErrorCode();
+                if (DaoErrors.ERR_SQL_DUPLICATE_KEY.getErrorCode().equals(code)
+                        || DaoErrors.ERR_SQL_DATA_INTEGRITY_VIOLATION.getErrorCode().equals(code)) {
+                    return true;
+                }
+            }
+            cur = cur.getCause();
+        }
+        return false;
     }
 
     @Override

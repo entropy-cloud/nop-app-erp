@@ -260,6 +260,7 @@ CREATE TABLE erp_inv_stock_balance(
   UPDATE_TIME TIMESTAMP NOT NULL ,
   OWNER_ID NUMBER(20)  ,
   OWNERSHIP_TYPE VARCHAR2(20) default 'OWNED'   ,
+  constraint UK_INV_STOCK_BALANCE_NATURAL unique (ORG_ID,MATERIAL_ID,SKU_ID,WAREHOUSE_ID,LOCATION_ID,BATCH_NO,OWNER_ID),
   constraint PK_erp_inv_stock_balance primary key (ID)
 );
 
