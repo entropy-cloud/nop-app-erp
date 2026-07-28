@@ -169,7 +169,7 @@
 | **多账套/多公司隔离** ⚠️(P1) done | MA2（A2.18） | flow-overview §4.4 多套科目表并行；project-vision "产品化通用 ERP" 定位 | S 级域 + finance | `multi-dimensional-audit-prompt.md` |
 | **可定制性验证** ⚠️(P1) done | MA3（A3.8） | project-vision 核心价值"可定制"；需验证 Delta/扩展字段实际可用且不破坏基线 | 抽样 | `open-ended-audit-prompt.md` |
 | **保护区域纪律** | MA6（A6.4） | ai-autonomy-policy §保护区域 6 区域；accounting/data-deletion 是否有合规路径 | 全域 | `multi-dimensional-audit-prompt.md` |
-| **assets Processor 链路** | MA4（A4.3） | assets Proc=48 全域最高密度；折旧正确性直接影响财务报表 | assets 单域 | `code-quality-audit-prompt.md` |
+| **assets Processor 链路** ⚠️(P1) done | MA4（A4.3） | assets Proc=48 全域最高密度；折旧正确性直接影响财务报表 | assets 单域 | `code-quality-audit-prompt.md` |
 
 ## 3. 未闭包发现清单（步骤 2 产物）
 

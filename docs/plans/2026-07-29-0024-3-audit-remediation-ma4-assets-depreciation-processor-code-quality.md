@@ -1,6 +1,6 @@
 # 2026-07-29-0024-3-audit-remediation-ma4-assets-depreciation-processor-code-quality MA4 assets 折旧引擎与 Processor 链路专属审计（A4.3）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-29
 > Source: `docs/backlog/audit-remediation-roadmap.md` Milestone MA4（工作项 A4.3，assets 折旧引擎与 Processor 链路专属审计——scope matrix §1.2 assets 特殊处理独立工作项）
 > Related: `docs/audits/audit-remediation-scope-and-dimension-matrix.md` §1.2 assets 特殊处理 + §2.4「**assets Processor 链路专属（MA4 新增）**」行 + §2.5「assets Processor 链路」触发依据；`docs/audits/arm-index.md`（P1 索引）；`docs/skills/code-quality-audit-prompt.md`（审计方法）；`docs/design/assets/depreciation-and-posting.md` + `state-machine.md` + `split-merge.md` + `cip.md` + `inventory.md` + `maintenance.md`（owner doc 锚点）；`docs/plans/2026-07-28-0400-2-audit-remediation-ma2-assets-state-machine.md`（A2.10 同域业务正确性审计——状态机正确性，本审计聚焦**代码实现质量**，互补不重叠）；`docs/plans/2026-07-28-2130-2-audit-remediation-ma4-finance-posting-voucher-code-quality.md`（A4.1a finance 过账片——MA4 已落地的首例范式参照）
@@ -63,59 +63,59 @@ assets 折旧引擎与 Processor 链路代码质量专属审计（代码与前�
 
 ### Phase 1 - 折旧引擎与 Processor 链路代码实现质量系统性专属审计（7 重点领域）
 
-Status: planned
+Status: completed
 Targets: `module-assets/erp-ast-service/` 折旧引擎 + Processor 链路代码（DepreciationCalculator + ErpAstDepreciationScheduleProcessor / 8 类业务 Processor 审批轴 Capitalization/Disposal/ValueAdjustment/Split/Merge/Inventory/Maintenance/Cip / AssetPostingExecutor + 9 PostingDispatcher × AcctDocProvider 对 / 业务实体 BizModel ErpAstDepreciationScheduleBizModel/ErpAstDisposalBizModel/ErpAstValueAdjustmentBizModel/ErpAstAssetCapitalizationBizModel）；owner docs `docs/design/assets/{depreciation-and-posting,state-machine,split-merge,cip,inventory,maintenance}.md`
 Skill: `code-quality-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA1 + MA2 + MA3 done（已知 finding 作为输入）；A2.10 done（状态机基线）；A2.17 done（并发基线 P1-MA2-089）；A3.4 done（owner-doc drift 基线）；A4.1a done（MA4 过账 Facade 范式参照）。
 
-- [ ] 领域「架构和边界完整性」：核查折旧引擎/Processor 链路代码的跨域访问合规性——9 PostingDispatcher 是否经 IErpFinVoucherBiz Facade 过账（非 daoFor 直写凭证）/ 折旧引擎读 ErpFinAccountingPeriod 是否经 Facade（复核 P1-MA1-022 ErpAstDepreciationScheduleProcessor:290 跨域 DAO）/ Processor 读 ErpMdSubject 科目是否合规 / reverseDepreciation 被 finance 跨域调用点（finance 侧归 A4.1b，本审计复核 assets 侧接待实现质量）。标记边界违规站点。
+- [x] 领域「架构和边界完整性」：核查折旧引擎/Processor 链路代码的跨域访问合规性——9 PostingDispatcher 是否经 IErpFinVoucherBiz Facade 过账（非 daoFor 直写凭证）/ 折旧引擎读 ErpFinAccountingPeriod 是否经 Facade（复核 P1-MA1-022 ErpAstDepreciationScheduleProcessor:290 跨域 DAO）/ Processor 读 ErpMdSubject 科目是否合规 / reverseDepreciation 被 finance 跨域调用点（finance 侧归 A4.1b，本审计复核 assets 侧接待实现质量）。标记边界违规站点。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「核心实现正确性」：核查 DepreciationCalculator 多种折旧方法的算术正确性与精度（直线/工作量等——折旧正确性直接影响财务报表）/ executeBatchDepreciation 编排的事务边界与部分失败处理（一批资产中单个失败是否整批回滚还是部分提交）/ 9 PostingDispatcher × AcctDocProvider 对的过账异常吞咽与悬挂一致性（复核 P1-MA2-060 tryPost 同型根因是否在全部 9 对一致——检查返回值/posted/告警）/ reverseApprove 红冲闭环对称性（复核 P1-MA2-060 资产侧状态悬挂——posted=false 窗口期是否回滚资产）/ 并发首次折旧重复（复核 P1-MA2-089 executeDepreciation 缺 PENDING 守卫）/ auto-depreciation cron 触发链路（复核 P1-MA3-033 config 键名）。标记算术错误/事务/幂等/异常悬挂/并发缺陷。
+- [x] 领域「核心实现正确性」：核查 DepreciationCalculator 多种折旧方法的算术正确性与精度（直线/工作量等——折旧正确性直接影响财务报表）/ executeBatchDepreciation 编排的事务边界与部分失败处理（一批资产中单个失败是否整批回滚还是部分提交）/ 9 PostingDispatcher × AcctDocProvider 对的过账异常吞咽与悬挂一致性（复核 P1-MA2-060 tryPost 同型根因是否在全部 9 对一致——检查返回值/posted/告警）/ reverseApprove 红冲闭环对称性（复核 P1-MA2-060 资产侧状态悬挂——posted=false 窗口期是否回滚资产）/ 并发首次折旧重复（复核 P1-MA2-089 executeDepreciation 缺 PENDING 守卫）/ auto-depreciation cron 触发链路（复核 P1-MA3-033 config 键名）。标记算术错误/事务/幂等/异常悬挂/并发缺陷。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「类型和契约质量」：核查 8 类业务 Processor 审批轴的参数返回契约一致性 / 9 AcctDocProvider 科目文档构造的 BigDecimal 类型安全（折旧额/净值/残值）/ 折旧计划 schedule 行的金额精度。标记类型不匹配/契约漂移。
+- [x] 领域「类型和契约质量」：核查 8 类业务 Processor 审批轴的参数返回契约一致性 / 9 AcctDocProvider 科目文档构造的 BigDecimal 类型安全（折旧额/净值/残值）/ 折旧计划 schedule 行的金额精度。标记类型不匹配/契约漂移。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「错误处理和操作安全」：核查折旧引擎/Processor 链路异常是否全部扩展 NopException + ErrorCode（`erp.err.ast.*`）/ 折旧算术溢出/过账失败/并发冲突/资产状态非法迁移的错误传播 / 批量折旧部分失败的告警闭环。标记裸异常/ErrorCode 缺失/错误信息不足。
+- [x] 领域「错误处理和操作安全」：核查折旧引擎/Processor 链路异常是否全部扩展 NopException + ErrorCode（`erp.err.ast.*`）/ 折旧算术溢出/过账失败/并发冲突/资产状态非法迁移的错误传播 / 批量折旧部分失败的告警闭环。标记裸异常/ErrorCode 缺失/错误信息不足。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「测试有效性」：抽样 assets 14 测试中折旧/Processor 相关测试（TestErpAstDepreciation / TestErpAstDisposal / TestErpAstDisposalWorkflowApproval / TestErpAstValueAdjustment / TestErpAstCapitalization / TestErpAstPostingReverse / TestErpAstAcctDocProviderAccountKey），核查**异常路径覆盖**（过账悬挂/并发重复折旧/批量部分失败/红冲不对称/折旧算术边界[残值/期末]/折旧计划已执行重复执行）+ 断言强度（是否仅断言 posted=true 还是校验折旧额数值/累计折旧/净值/凭证行）。标记测试空洞——assets 测试/mutation 比 0.23 偏低，异常路径覆盖是重点。
+- [x] 领域「测试有效性」：抽样 assets 14 测试中折旧/Processor 相关测试（TestErpAstDepreciation / TestErpAstDisposal / TestErpAstDisposalWorkflowApproval / TestErpAstValueAdjustment / TestErpAstCapitalization / TestErpAstPostingReverse / TestErpAstAcctDocProviderAccountKey），核查**异常路径覆盖**（过账悬挂/并发重复折旧/批量部分失败/红冲不对称/折旧算术边界[残值/期末]/折旧计划已执行重复执行）+ 断言强度（是否仅断言 posted=true 还是校验折旧额数值/累计折旧/净值/凭证行）。标记测试空洞——assets 测试/mutation 比 0.23 偏低，异常路径覆盖是重点。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「可维护性和未来变更风险」：核查 48 Processor 的重复模式（8 类业务 × 审批轴 5-7 动作的对称性）/ DepreciationCalculator 折旧方法策略的可扩展性 / 9 AcctDocProvider 对的对称性。标记 P2 可维护性风险——48 Processor 全域最高密度，重复模式提取候选。
+- [x] 领域「可维护性和未来变更风险」：核查 48 Processor 的重复模式（8 类业务 × 审批轴 5-7 动作的对称性）/ DepreciationCalculator 折旧方法策略的可扩展性 / 9 AcctDocProvider 对的对称性。标记 P2 可维护性风险——48 Processor 全域最高密度，重复模式提取候选。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 领域「自动化和防护覆盖」：核查折旧引擎/Processor 链路是否有 compliance checker 规则守护（R8 Processor 无 xbiz / R2 daoFor 跨域）/ 是否有测试门控防止回归（折旧算术/过账/红冲）。标记防护缺口——折旧正确性直接影响财务报表，防护优先级高。
+- [x] 领域「自动化和防护覆盖」：核查折旧引擎/Processor 链路是否有 compliance checker 规则守护（R8 Processor 无 xbiz / R2 daoFor 跨域）/ 是否有测试门控防止回归（折旧算术/过账/红冲）。标记防护缺口——折旧正确性直接影响财务报表，防护优先级高。
       - Skill: `code-quality-audit-prompt.md`
-- [ ] 产出审计报告 `docs/audits/2026-07-29-0024-arm-ma4-assets-depreciation-processor-code-quality.md`（含：7 领域逐项审查结果 / MA1/MA2/MA3 已知 finding 运行时复核 / P0-P3 finding 清单按严重性排序 / 每项含文件路径+行引用 / 裁决通过/失败 / 剩余风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-29-0024-arm-ma4-assets-depreciation-processor-code-quality.md`（含：7 领域逐项审查结果 / MA1/MA2/MA3 已知 finding 运行时复核 / P0-P3 finding 清单按严重性排序 / 每项含文件路径+行引用 / 裁决通过/失败 / 剩余风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] 7 重点领域逐项审查结果产出（每领域至少一句裁决，含"本领域无缺陷"）
-- [ ] MA1/MA2/MA3 已知 finding 运行时复核产出（每项标记"如 owner doc 声明"或"发现新代码层缺陷"）
-- [ ] P0-P3 finding 清单产出按严重性排序，每个含文件路径+行引用+严重性+缺陷描述+影响+目标 MR
+- [x] 7 重点领域逐项审查结果产出（每领域至少一句裁决，含"本领域无缺陷"）
+- [x] MA1/MA2/MA3 已知 finding 运行时复核产出（每项标记"如 owner doc 声明"或"发现新代码层缺陷"）
+- [x] P0-P3 finding 清单产出按严重性排序，每个含文件路径+行引用+严重性+缺陷描述+影响+目标 MR
 
 ### Phase 2 - finding 汇总交接 MR2/MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 折旧引擎/Processor 链路代码质量 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.4「assets Processor 链路专属」行 + §2.5「assets Processor 链路」行
 Skill: none
 
 - Item Types: `Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] finding 汇总：全部缺陷 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.1a/A4.1b/A4.2a/A4.2b 已分配最大 P1-MA4-N + 1，避免命名空间碰撞；报告、领域、缺陷描述、目标 MR2[代码类]/MR1[业务正确性类]、修复状态 todo）。与 MA2/MA3/A4.1a/A4.1b/A4.2a/A4.2b 已登记 P1 经交叉去重无冲突。
+- [x] finding 汇总：全部缺陷 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.1a/A4.1b/A4.2a/A4.2b 已分配最大 P1-MA4-N + 1，避免命名空间碰撞；报告、领域、缺陷描述、目标 MR2[代码类]/MR1[业务正确性类]、修复状态 todo）。与 MA2/MA3/A4.1a/A4.1b/A4.2a/A4.2b 已登记 P1 经交叉去重无冲突。
       - Skill: none
-- [ ] 分类裁决：代码实现质量 finding 目标 MR2；业务正确性类 finding 目标 MR1；活跃数据破坏走 P0 即时通道（折旧算术错误/并发双计累计折旧直接影响财务报表，升级评估优先），在报告中明确标注。
+- [x] 分类裁决：代码实现质量 finding 目标 MR2；业务正确性类 finding 目标 MR1；活跃数据破坏走 P0 即时通道（折旧算术错误/并发双计累计折旧直接影响财务报表，升级评估优先），在报告中明确标注。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「assets Processor 链路专属（MA4 新增）」行 + §2.5「assets Processor 链路」行推进至完成（assets 域 MA4 代码质量终态收口）。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「assets Processor 链路专属（MA4 新增）」行 + §2.5「assets Processor 链路」行推进至完成（assets 域 MA4 代码质量终态收口）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有缺陷 blocker/major 已登记 arm-index §P1 汇总（代码类 MR2 / 业务正确性类 MR1），待展开
-- [ ] 与 MA2/MA3/A4.1a/A4.1b/A4.2a/A4.2b 已登记 P1 经交叉去重无重复登记
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论（assets Processor 链路终态）
+- [x] 所有缺陷 blocker/major 已登记 arm-index §P1 汇总（代码类 MR2 / 业务正确性类 MR1），待展开
+- [x] 与 MA2/MA3/A4.1a/A4.1b/A4.2a/A4.2b 已登记 P1 经交叉去重无重复登记
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论（assets Processor 链路终态）
 
 ## Draft Review Record
 
@@ -125,14 +125,14 @@ Exit Criteria:
 
 > 本计划主体是代码静态审查 + 测试有效性抽样（不改代码；产出为审计报告 + arm-index/scope-matrix 更新）。完整仓库验证在此处运行一次（同型审计 plan 的标准 Closure 实践）。代码缺陷修复在 MR2/MR1 批量进行；活跃数据破坏走 P0 即时通道。本审计只识别缺陷 + 分类。
 
-- [ ] 范围内行为完成（A4.3 折旧引擎与 Processor 链路代码质量专属审计报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
-- [ ] 已运行验证：代码静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A4.3 折旧引擎与 Processor 链路代码质量专属审计报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
+- [x] 已运行验证：代码静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -156,12 +156,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <填入关闭理由>
+Status Note: A4.3 assets 折旧引擎与 Processor 链路代码质量专属审计完成。审计报告 `docs/audits/2026-07-29-0024-arm-ma4-assets-depreciation-processor-code-quality.md` 产出（7 重点领域逐项裁决 + MA1/MA2/MA3 已知 finding 运行时复核 9 项「如登记」无升级 + P0-P3 finding 清单）。**Verdict: ⚠️(P1)——零 P0**（无活跃数据破坏；折旧算术经残值约束双重兜底 + 三方法主路径数值断言测试覆盖；并发双计 P1-MA2-089 已登记 deferred 待 MR1）。**3 项新 P1**（P1-MA4-013 折旧 dispatcher posted=false 业财悬挂无自动重试/告警——MR1；P1-MA4-014 折旧/Processor 链路测试有效性不足——MR2；P1-MA4-015 跨域 daoFor 绕 I\*Biz 同 P1-MA1-022 投影——MR1 不重复计入 MR2）+ **2 项新 P2** watch-only（P2-MA4-006 可维护性热点 / P2-MA4-007 自动化防护缺口）。全部 P1 登记至 `arm-index.md` §P1 汇总（与 MA2/MA3/A4.1a/A4.1b/A4.2a/A4.2b 已登记 P1 交叉去重无重复登记）。arm-index 报告清单 + scope matrix §2.4/§2.5「assets Processor 链路」行推进至 ⚠️(P1) done。roadmap A4.3 推进至 done。build/test 回归基线确认：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-assets/erp-ast-service -am` 90/90 全绿（代码静态审查无代码变更，门控仅作回归基线确认）。**assets 域 MA4 代码质量终态在此收口：3 P1 + 2 P2，零 P0。** 独立结束审计（fresh-context 通用子代理）VERDICT: 所有 7 项实质交付物 PASS——唯一 blocker 类（Closure Gates 8 项勾选 + 本 Status Note/Evidence 填写）已修复。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: independent general subagent（fresh-context closure audit，新会话，2026-07-29）
+- Evidence: Fresh-context walkthrough against live repo. (1) Report `docs/audits/2026-07-29-0024-arm-ma4-assets-depreciation-processor-code-quality.md` complete — 7 code-quality domains each with verdict, §3 MA1/MA2/MA3 known-findings runtime re-review (9 items all 「如登记」), §4 P0-P3 list sorted with file:line refs, §5 ⚠️(P1) verdict + zero P0 + remaining risks. (2) Spot-check P1-MA4-013 real — `DepreciationPostingDispatcher.tryPost:43-57` confirmed swallow-on-Exception→return null; no `DeferredPostingSweepJob` covers `ErpAstDepreciationSchedule` (grep *DeferredPosting*.java=0). (3) P1-MA4-014 real — `TestErpAstDepreciation` residualValue all `BigDecimal.ZERO` (6 sites); `TestErpAstPostingReverse` zero mock/concurrency/posted=false-window trigger. (4) P1-MA4-015 real — `ErpAstDepreciationScheduleProcessor.findPeriod:289-296` uses `daoFor(ErpFinAccountingPeriod)`. (5) Numbering collision-safe: P1-MA4-013/014/015 follow max prior 012; P2-MA4-006/007 follow max prior 005; cross-dedup vs P1-MA2-060 (different path) + P1-MA1-022 (root projection) explicit. (6) arm-index.md report row done + A4.3 summary + three P1 rows with correct columns. (7) scope matrix §2.5 "assets Processor 链路 ⚠️(P1) done". (8) roadmap A4.3 = done. Plan deliverables all PASS. Fix applied: 8 Closure Gates ticked + Status Note + this evidence line (was the only blocker category).
 
 Follow-up:
 
