@@ -1,6 +1,6 @@
 # 2026-07-28-1020-3-audit-remediation-ma2-ext-domains-state-machine MA2 crm+cs+contract+b2b+maintenance 状态机审查（A2.14）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: audit-remediation
 > Work Item: A2.14 crm+cs+contract+b2b+maintenance 状态机审查（A+B 合并）
 > Last Reviewed: 2026-07-28
@@ -81,67 +81,67 @@ crm + cs + contract + b2b + maintenance（CRM/客服/合同/B2B/维护）五域�
 
 ### Phase 1 - 五域状态机系统性业务审查
 
-Status: planned
+Status: completed
 Targets: `module-crm/`（Lead/Event/Opportunity/Forecast BizModel + stageId 迁移守卫 + IErpCrmConversionBiz Facade）；`module-cs/`（Ticket BizModel + SLA 计时器联动 + sla.md 达标/违约）；`module-contract/`（合同 BizModel ACTIVE→TERMINATED + cron-gated EXPIRED Job + ErpCtInvoicePlanBizModel 跨域写 pur/sal + 合同审批流）；`module-b2b/`（EDI BizModel 异步处理 + ASN BizModel + IErpPurReceiveBiz.createFromAsn Facade + nop-job 轮询）；`module-maintenance/`（visit/request BizModel + MaintenanceLaborPostingDispatcher/MaintenanceIssuePostingDispatcher 过账 + daoFor 只读）
 Skill: `state-machine-business-review-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA1 done（P1-MA1-009 crm DECIMAL + P1-MA1-011/013 maintenance propId + P1-MA1-022 5 域跨域只读 + P1-MA1-029 contract 半治理 + P2-MA1-027 contract CANCELLED drift + P2-MA1-028 maintenance IN_PROGRESS drift 已登记，本审计复核状态机角度）；A2.1 P2P done（b2b ASN→pur 收货 + ErpCtInvoicePlanBizModel P1-MA1-029 运行时复核）；A2.8 purchase done（三轴 + 跨域写同型）；A2.9 sales done（Contract reverseApprove + SalReversalListener 不对称同型）；A2.5a done（finance 凭证 reverseApprove 红冲 + tryPost 容错同型范式）；A2.10 assets done（linked visit maintenance 关联状态机角度）
 
-- [ ] 维度「状态定义」：审查 crm Lead 5 态 + stageId 阶段前移语义；cs Ticket 6 态（RESOLVED 等待客户确认 vs 做什么）；contract 合同 6 态（SUSPENDED 合同暂停语义）；b2b EDI 8 态（异步处理状态轴）+ ASN 4 态；maintenance visit 5 态 + request 6 态（IN_PROGRESS 维修中语义）。
+- [x] 维度「状态定义」：审查 crm Lead 5 态 + stageId 阶段前移语义；cs Ticket 6 态（RESOLVED 等待客户确认 vs 做什么）；contract 合同 6 态（SUSPENDED 合同暂停语义）；b2b EDI 8 态（异步处理状态轴）+ ASN 4 态；maintenance visit 5 态 + request 6 态（IN_PROGRESS 维修中语义）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「转换完整性」：crm Lead 迁移（NEW→QUALIFIED→CONVERTED/LOST + →CANCELLED）+ Event 迁移 + **stageId 单向递增守卫**；cs Ticket 迁移（NEW→ASSIGNED→IN_PROGRESS→RESOLVED→CLOSED + RESOLVED→IN_PROGRESS 客户驳回 + →CANCELLED）+ **SLA 计时联动**（startDateTime/deadlineDateTime/isSlaCompleted）；contract 合同迁移（DRAFT→NEGOTIATION→ACTIVE→SUSPENDED/EXPIRED/TERMINATED）+ InvoicePlan 版本/审批；b2b EDI 迁移（异步 SENT/ERROR/ACKNOWLEDGED + CANCELLED）+ ASN 迁移（RECEIVED→MATCHED→RECEIVED_TO_STOCK）；maintenance visit 迁移（DRAFT→SCHEDULED→IN_PROGRESS→COMPLETED + →CANCELLED）+ request 迁移（OPEN→ACCEPTED→IN_PROGRESS→COMPLETED/REJECTED + →CANCELLED）。是否有非法跳转或缺失条件分支。
+- [x] 维度「转换完整性」：crm Lead 迁移（NEW→QUALIFIED→CONVERTED/LOST + →CANCELLED）+ Event 迁移 + **stageId 单向递增守卫**；cs Ticket 迁移（NEW→ASSIGNED→IN_PROGRESS→RESOLVED→CLOSED + RESOLVED→IN_PROGRESS 客户驳回 + →CANCELLED）+ **SLA 计时联动**（startDateTime/deadlineDateTime/isSlaCompleted）；contract 合同迁移（DRAFT→NEGOTIATION→ACTIVE→SUSPENDED/EXPIRED/TERMINATED）+ InvoicePlan 版本/审批；b2b EDI 迁移（异步 SENT/ERROR/ACKNOWLEDGED + CANCELLED）+ ASN 迁移（RECEIVED→MATCHED→RECEIVED_TO_STOCK）；maintenance visit 迁移（DRAFT→SCHEDULED→IN_PROGRESS→COMPLETED + →CANCELLED）+ request 迁移（OPEN→ACCEPTED→IN_PROGRESS→COMPLETED/REJECTED + →CANCELLED）。是否有非法跳转或缺失条件分支。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「终端状态和恢复」：crm CONVERTED/LOST/CANCELLED 终态；cs CLOSED/CANCELLED 终态（RESOLVED→IN_PROGRESS 可恢复——客户驳回重处理）；contract EXPIRED/TERMINATED 终态；b2b ARCHIVED/CANCELLED 终态；maintenance COMPLETED/CANCELLED/REJECTED 终态。归档与活跃区分。
+- [x] 维度「终端状态和恢复」：crm CONVERTED/LOST/CANCELLED 终态；cs CLOSED/CANCELLED 终态（RESOLVED→IN_PROGRESS 可恢复——客户驳回重处理）；contract EXPIRED/TERMINATED 终态；b2b ARCHIVED/CANCELLED 终态；maintenance COMPLETED/CANCELLED/REJECTED 终态。归档与活跃区分。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「异常路径」：核验全覆盖——cs SLA 违约（超时）/客户驳回重处理/重复工单取消；b2b EDI 发送失败（ERROR）/网关超时/重复回调幂等/异步轮询重启；contract 合同到期（cron-gated Job + EXPIRED 迁移）；maintenance 工单重新调度/备件缺货/**工时过账失败悬挂**（MaintenanceLaborPostingDispatcher tryPost 容错，与 finance P1-MA2-032/hr P1-MA2-048/assets P1-MA2-060 同型——升级评估）；crm Lead 重新激活（LOST→QUALIFIED 是否合法）；**contract InvoicePlan 跨域写半治理异常路径**（P1-MA1-029）。
+- [x] 维度「异常路径」：核验全覆盖——cs SLA 违约（超时）/客户驳回重处理/重复工单取消；b2b EDI 发送失败（ERROR）/网关超时/重复回调幂等/异步轮询重启；contract 合同到期（cron-gated Job + EXPIRED 迁移）；maintenance 工单重新调度/备件缺货/**工时过账失败悬挂**（MaintenanceLaborPostingDispatcher tryPost 容错，与 finance P1-MA2-032/hr P1-MA2-048/assets P1-MA2-060 同型——升级评估）；crm Lead 重新激活（LOST→QUALIFIED 是否合法）；**contract InvoicePlan 跨域写半治理异常路径**（P1-MA1-029）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「可达性」：各域状态可达性；**contract CANCELLED 可达性**（P2-MA1-027——代码无 CANCELLED，owner doc 声明——复核 DRAFT 废弃走 useLogicalDelete）；**maintenance request IN_PROGRESS 可达性**（P2-MA1-028——代码有 IN_PROGRESS，owner doc 漏——复核 ACCEPTED→IN_PROGRESS→COMPLETED 迁移）；无死锁。
+- [x] 维度「可达性」：各域状态可达性；**contract CANCELLED 可达性**（P2-MA1-027——代码无 CANCELLED，owner doc 声明——复核 DRAFT 废弃走 useLogicalDelete）；**maintenance request IN_PROGRESS 可达性**（P2-MA1-028——代码有 IN_PROGRESS，owner doc 漏——复核 ACCEPTED→IN_PROGRESS→COMPLETED 迁移）；无死锁。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「角色和权限」：crm Lead 转化（销售员/销售主管）；cs 工单分派（系统自动/客服主管）+ 处理（处理人）+ 取消（客服主管）；contract 合同审批（合同管理员/法务）+ 终止（管理层）；b2b EDI 处理（系统/EDI 运维）；maintenance 工单调度（维修主管）+ 完成（维修员）。是否有危险操作对任何角色开放。
+- [x] 维度「角色和权限」：crm Lead 转化（销售员/销售主管）；cs 工单分派（系统自动/客服主管）+ 处理（处理人）+ 取消（客服主管）；contract 合同审批（合同管理员/法务）+ 终止（管理层）；b2b EDI 处理（系统/EDI 运维）；maintenance 工单调度（维修主管）+ 完成（维修员）。是否有危险操作对任何角色开放。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「外部依赖」：crm Lead 转化调用 sales/master-data（IErpCrmConversionBiz Facade）；cs 工单关联客户/订单（master-data/sales）；contract InvoicePlan 跨域写 pur/sal（IErpPurInvoiceBiz/IErpSalInvoiceBiz——P1-MA1-029 半治理）；b2b ASN 跨域写 pur（IErpPurReceiveBiz.createFromAsn——豁免已登记）+ EDI/MFT 网关 SPI；maintenance 备件消耗/工时过账（IErpInvStockMoveBiz/IErpFinVoucherBiz Facade + daoFor 只读）。
+- [x] 维度「外部依赖」：crm Lead 转化调用 sales/master-data（IErpCrmConversionBiz Facade）；cs 工单关联客户/订单（master-data/sales）；contract InvoicePlan 跨域写 pur/sal（IErpPurInvoiceBiz/IErpSalInvoiceBiz——P1-MA1-029 半治理）；b2b ASN 跨域写 pur（IErpPurReceiveBiz.createFromAsn——豁免已登记）+ EDI/MFT 网关 SPI；maintenance 备件消耗/工时过账（IErpInvStockMoveBiz/IErpFinVoucherBiz Facade + daoFor 只读）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「TODO/任务策略」：cs NEW→ASSIGNED 分派 TODO + IN_PROGRESS 处理 TODO + RESOLVED 客户确认 TODO（避免工单静默下沉——SLA 计时驱动）；contract ACTIVE 履约 TODO（到期/续约/里程碑）；maintenance SCHEDULED 派工 TODO + IN_PROGRESS 维修 TODO；crm Lead 分派/跟进 TODO。是否存在期望有人行动但不产生待办的状态。
+- [x] 维度「TODO/任务策略」：cs NEW→ASSIGNED 分派 TODO + IN_PROGRESS 处理 TODO + RESOLVED 客户确认 TODO（避免工单静默下沉——SLA 计时驱动）；contract ACTIVE 履约 TODO（到期/续约/里程碑）；maintenance SCHEDULED 派工 TODO + IN_PROGRESS 维修 TODO；crm Lead 分派/跟进 TODO。是否存在期望有人行动但不产生待办的状态。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「场景演练（最重要）」：端到端演练代表性场景——(a) crm Lead 转化 happy path（NEW→QUALIFIED→CONVERTED→生成报价单/客户）；(b) crm Lead 流失（QUALIFIED→LOST）；(c) cs 工单 happy path（NEW→ASSIGNED→IN_PROGRESS→RESOLVED→CLOSED + SLA 达标）；(d) **cs SLA 违约**（超时）+ **客户驳回重处理**（RESOLVED→IN_PROGRESS 恢复计时）；(e) contract 合同 happy path（DRAFT→NEGOTIATION→ACTIVE→履约→EXPIRED/续约）；(f) **contract 合同到期 cron-gated**（ACTIVE→EXPIRED）；(g) **contract InvoicePlan 跨域写**（P1-MA1-029 半治理）；(h) b2b EDI 异步处理（TO_SEND→SENT→ACKNOWLEDGED + ERROR 重试）；(i) **b2b ASN 跨域收货**（RECEIVED→MATCHED→RECEIVED_TO_STOCK→pur 入库）；(j) maintenance 工单 happy path（DRAFT→SCHEDULED→IN_PROGRESS→COMPLETED + 备件消耗/工时过账）+ **工时过账失败悬挂**（tryPost 容错——升级评估）。
+- [x] 维度「场景演练（最重要）」：端到端演练代表性场景——(a) crm Lead 转化 happy path（NEW→QUALIFIED→CONVERTED→生成报价单/客户）；(b) crm Lead 流失（QUALIFIED→LOST）；(c) cs 工单 happy path（NEW→ASSIGNED→IN_PROGRESS→RESOLVED→CLOSED + SLA 达标）；(d) **cs SLA 违约**（超时）+ **客户驳回重处理**（RESOLVED→IN_PROGRESS 恢复计时）；(e) contract 合同 happy path（DRAFT→NEGOTIATION→ACTIVE→履约→EXPIRED/续约）；(f) **contract 合同到期 cron-gated**（ACTIVE→EXPIRED）；(g) **contract InvoicePlan 跨域写**（P1-MA1-029 半治理）；(h) b2b EDI 异步处理（TO_SEND→SENT→ACKNOWLEDGED + ERROR 重试）；(i) **b2b ASN 跨域收货**（RECEIVED→MATCHED→RECEIVED_TO_STOCK→pur 入库）；(j) maintenance 工单 happy path（DRAFT→SCHEDULED→IN_PROGRESS→COMPLETED + 备件消耗/工时过账）+ **工时过账失败悬挂**（tryPost 容错——升级评估）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「与设计文档一致性」：每个状态/转换在各域 `state-machine.md` 是否有匹配——重点核验：(1) crm §stageId 迁移规则单向递增守卫 + Lead/Event 状态定义；(2) cs §SLA 计时联动（RESOLVED 停止 + RESOLVED→IN_PROGRESS 恢复累加）+ §3 终态；(3) contract §1 合同状态（**7 态 vs 6 态 CANCELLED drift P2-MA1-027**）；(4) b2b §适用对象 EDI 8 态 + ASN 4 态 + §6 异步处理；(5) maintenance §适用对象一 visit 5 态 + **§适用对象二 request 5 态 vs 6 态 IN_PROGRESS drift P2-MA1-028**。
+- [x] 维度「与设计文档一致性」：每个状态/转换在各域 `state-machine.md` 是否有匹配——重点核验：(1) crm §stageId 迁移规则单向递增守卫 + Lead/Event 状态定义；(2) cs §SLA 计时联动（RESOLVED 停止 + RESOLVED→IN_PROGRESS 恢复累加）+ §3 终态；(3) contract §1 合同状态（**7 态 vs 6 态 CANCELLED drift P2-MA1-027**）；(4) b2b §适用对象 EDI 8 态 + ASN 4 态 + §6 异步处理；(5) maintenance §适用对象一 visit 5 态 + **§适用对象二 request 5 态 vs 6 态 IN_PROGRESS drift P2-MA1-028**。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 复核已登记 finding 五域状态机角度：P1-MA1-009（crm DECIMAL↔double——无状态机影响）/ P1-MA1-011/013（maintenance propId——无状态机影响）/ P1-MA1-022（5 域跨域只读 daoFor——异常路径复核）/ P1-MA1-029（contract InvoicePlan 跨域写半治理——状态机迁移复核）/ P2-MA1-027（contract CANCELLED drift——可达性复核）/ P2-MA1-028（maintenance request IN_PROGRESS drift——可达性复核），标注终态。
+- [x] 复核已登记 finding 五域状态机角度：P1-MA1-009（crm DECIMAL↔double——无状态机影响）/ P1-MA1-011/013（maintenance propId——无状态机影响）/ P1-MA1-022（5 域跨域只读 daoFor——异常路径复核）/ P1-MA1-029（contract InvoicePlan 跨域写半治理——状态机迁移复核）/ P2-MA1-027（contract CANCELLED drift——可达性复核）/ P2-MA1-028（maintenance request IN_PROGRESS drift——可达性复核），标注终态。
       - Skill: none
-- [ ] 产出审计报告 `docs/audits/2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`（含：crm Lead/Event + cs Ticket/SLA + contract 合同/InvoicePlan + b2b EDI/ASN + maintenance visit/request 状态图与迁移矩阵、各维度通过/失败裁决、控制点 PASS/FAIL、SLA 计时联动/合同到期 Job/EDI 异步/InvoicePlan 跨域写/工时过账悬挂裁决、CANCELLED/IN_PROGRESS drift 可达性裁决、MA1 finding 运行时影响复核表、并发敏感点交接 A2.17、残留风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`（含：crm Lead/Event + cs Ticket/SLA + contract 合同/InvoicePlan + b2b EDI/ASN + maintenance visit/request 状态图与迁移矩阵、各维度通过/失败裁决、控制点 PASS/FAIL、SLA 计时联动/合同到期 Job/EDI 异步/InvoicePlan 跨域写/工时过账悬挂裁决、CANCELLED/IN_PROGRESS drift 可达性裁决、MA1 finding 运行时影响复核表、并发敏感点交接 A2.17、残留风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] crm/cs/contract/b2b/maintenance 五域状态图与迁移矩阵产出，每个状态/转换有通过/失败裁决与证据
-- [ ] 已识别控制点（状态定义[含 cs RESOLVED + contract SUSPENDED + maintenance IN_PROGRESS + b2b EDI 异步] / 转换完整性[含 SLA 计时联动 + stageId 守卫 + 合同到期 Job + ASN 跨域收货] / 终端与恢复[含 cs 恢复] / 异常路径[含 SLA 违约 + EDI ERROR + 工时过账悬挂 + InvoicePlan 跨域写] / 可达性[含 CANCELLED/IN_PROGRESS drift] / 角色权限 / 外部依赖 / TODO 任务策略 / 场景演练）均有通过/失败裁决与证据
-- [ ] state-machine-business-review 10 维度至少一句裁决（含「本维度无发现」）
+- [x] crm/cs/contract/b2b/maintenance 五域状态图与迁移矩阵产出，每个状态/转换有通过/失败裁决与证据
+- [x] 已识别控制点（状态定义[含 cs RESOLVED + contract SUSPENDED + maintenance IN_PROGRESS + b2b EDI 异步] / 转换完整性[含 SLA 计时联动 + stageId 守卫 + 合同到期 Job + ASN 跨域收货] / 终端与恢复[含 cs 恢复] / 异常路径[含 SLA 违约 + EDI ERROR + 工时过账悬挂 + InvoicePlan 跨域写] / 可达性[含 CANCELLED/IN_PROGRESS drift] / 角色权限 / 外部依赖 / TODO 任务策略 / 场景演练）均有通过/失败裁决与证据
+- [x] state-machine-business-review 10 维度至少一句裁决（含「本维度无发现」）
 
 ### Phase 2 - P0 即时通道处理 + P1 汇总交接 MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 五域状态机审计发现的 P0/P1 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §状态机正确性 crm/cs/ct/b2b/mnt 列
 Skill: none
 
 - Item Types: `Fix | Add | Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] P0 finding 即时处理：每个 P0（**cs SLA 计时恢复累加缺失致违约误判** [若破坏 SLA 不变量] / **contract 合同到期 Job 未触发致过期合同仍 ACTIVE** [若破坏生命周期] / **b2b EDI ERROR 无重试/告警闭环致文档悬挂** [若破坏异步处理] / **maintenance 工时过账失败悬挂无告警闭环** [若破坏业财一致——同型升级评估] / **crm stageId 可逆向跳转** [若破坏阶段前移不变量]）当即就地修复（改源文件 + `mvn clean install -DskipTests` + 该修复独立审计 + 人工确认触及会计保护区域）或异步注入 fix plan（`docs/plans/YYYY-MM-DD-HHmm-arm-fix-*.md`）。P0 永不进入 MR 批量修复。每个 P0 在报告中标注修复路径与状态。
+- [x] P0 finding 即时处理：每个 P0（**cs SLA 计时恢复累加缺失致违约误判** [若破坏 SLA 不变量] / **contract 合同到期 Job 未触发致过期合同仍 ACTIVE** [若破坏生命周期] / **b2b EDI ERROR 无重试/告警闭环致文档悬挂** [若破坏异步处理] / **maintenance 工时过账失败悬挂无告警闭环** [若破坏业财一致——同型升级评估] / **crm stageId 可逆向跳转** [若破坏阶段前移不变量]）当即就地修复（改源文件 + `mvn clean install -DskipTests` + 该修复独立审计 + 人工确认触及会计保护区域）或异步注入 fix plan（`docs/plans/YYYY-MM-DD-HHmm-arm-fix-*.md`）。P0 永不进入 MR 批量修复。每个 P0 在报告中标注修复路径与状态。
       - Skill: none
-- [ ] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA2-NNN`、报告、描述、目标 MR1、修复状态 todo）。本审计对已登记 finding 只复核状态机运行时影响不重复登记根因；新 P1（如 cs SLA 恢复缺口 / contract 到期 Job 缺口 / b2b EDI 重试缺口 / stageId 守卫缺口 / Deferred CRUD 空壳死状态 [若确认]）按新 finding ID 登记。
+- [x] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA2-NNN`、报告、描述、目标 MR1、修复状态 todo）。本审计对已登记 finding 只复核状态机运行时影响不重复登记根因；新 P1（如 cs SLA 恢复缺口 / contract 到期 Job 缺口 / b2b EDI 重试缺口 / stageId 守卫缺口 / Deferred CRUD 空壳死状态 [若确认]）按新 finding ID 登记。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §状态机正确性 crm/cs/ct/b2b/mnt 列终态标记（`❓` → `✅`/`⚠️(P1)`）。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §状态机正确性 crm/cs/ct/b2b/mnt 列终态标记（`❓` → `✅`/`⚠️(P1)`）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
-- [ ] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论
+- [x] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
+- [x] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论
 
 ## Draft Review Record
 
@@ -151,14 +151,14 @@ Exit Criteria:
 
 > 本计划主体是审计（不改代码）。完整仓库验证在此处运行一次（确认审计期间任何 P0 即时修复未引入回归）。若无 P0 即时修复（仅 P1 登记），则 build/test 门控为回归基线确认。maintenance 工时/备件过账 + contract InvoicePlan 跨域写触及会计保护区域，P0 即时修复须额外人工确认。xbiz 契约变更须人工确认。
 
-- [ ] 范围内行为完成（A2.14 crm+cs+contract+b2b+maintenance 状态机系统性审查报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix、五域 state-machine owner doc 结论已反映）
-- [ ] 已运行验证：审计不改代码，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）；五域自上次 codegen + 后续 fix plans 已建立全绿基线
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A2.14 crm+cs+contract+b2b+maintenance 状态机系统性审查报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix、五域 state-machine owner doc 结论已反映）
+- [x] 已运行验证：审计不改代码，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）；五域自上次 codegen + 后续 fix plans 已建立全绿基线
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -194,12 +194,15 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _（待执行 + 独立 closure audit）_
+Status Note: 执行完成（2026-07-28）。五域状态机系统性业务审查（A2.14）产出审计报告 `docs/audits/2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`（641 行，10 维度齐全 + Verdict §7.3），**零 P0**（5 个候选 P0 经证据证伪或降级：cs SLA 恢复累加缺失**证伪**——`ErpCsTicketBizModel.reopen:209-211` 保留 startDateTime 累加重算 / contract EXPIRED Job 降级 P1-MA2-071 manual expire 存在 + missing-automation 同型 / b2b EDI 自动化降级 P1-MA2-073 config-gated OFF 默认 + Mock transport Deferred / maintenance 过账悬挂降级 P1-MA2-074 同 finance/hr/assets/qa/projects tryPost 吞异常同型 / crm stageId 降级 P1-MA2-075 deliberate design + reporting skew 非数据破坏）。**6 项新 P1**（P1-MA2-071~076）+ **4 项新 P2** watch-only（P2-MA2-067~070）登记 arm-index；scope matrix §状态机正确性 crm/cs/ct/b2b/mnt 列 `❓`→`⚠️P1(A2.14✅)`/`✅(A2.14✅)`/`⚠️P1(A2.14✅)`/`⚠️P1(A2.14✅)`/`⚠️P1(A2.14✅)`（cs 域 zero P1 候选 P0 证伪）；roadmap A2.14 `todo`→`done`；6 项已登记 MA1 finding 运行时复核无升级；9 处并发敏感点交接 A2.17。审计 docs-only（零代码变更），build/test 门控按 plan Closure Gates + roadmap §其他纪律作回归基线确认（M0.3 锚点 HEAD=0e963531d 1756 测试全绿基线维持，无代码变更故无回归可能）。
 
 Closure Audit Evidence:
 
-- _（待执行后填充）_
+- 独立结束审计（fresh context subagent `ses_05904afd5`，对照实时仓库逐项复核 10 项）**VERDICT: pass，零 BLOCKER**。审计报告（641 行，10 维度齐全 + Verdict §7.3 + 零 P0/6 P1/4 P2）产出完整；arm-index.md 报告清单行（status=done）+ P1-MA2-071~076 详细清单 + P2-MA2-067~070 汇总均已登记，ID 连续无碰撞（前序 max=P1-MA2-070/P2-MA2-066）；scope matrix §状态机正确性 行 crm/cs/ct/b2b/mnt 列已由 `❓` 推进至终态标记；roadmap A2.14=done；`git status --short` 确认仅 3 个文档修改 + 1 个新报告，零代码变更（审计 docs-only）。抽样复核 P1-MA2-071（module-contract 无 Job 类/无 scheduler，expire 仅手工 @BizMutation）与 P1-MA2-075（ErpCrmLeadProcessor.doMoveStage 无 sequence 方向守卫 vs owner doc「不能跳级回退」）claim 与实仓一致；候选 P0「cs SLA 恢复累加缺失」经 `ErpCsTicketBizModel.reopen:209-211` 保留 startDateTime 证伪；P0 追踪表无新 A2.14 P0 行，与报告零 P0 一致。
 
 Follow-up:
 
-- _（待执行后填充非阻塞跟进项；已确认缺陷不得出现在此处）_
+- 6 项 P1（P1-MA2-071~076）待 MR1 经 R1.0 展开机制转化为具体修复工作项行（P1-MA2-074 maintenance 过账悬挂与 finance P1-MA2-032 + hr P1-MA2-048 + assets P1-MA2-060 + qa A2.12 + projects P1-MA2-068 一并整体裁决；P1-MA2-071/P1-MA2-073 missing-automation 同 finance P1-MA2-033 一并裁决）。
+- 4 项 P2 watch-only（P2-MA2-067~070）待 MR1/MR2 顺手收敛或永久接受。
+- bc-tier 审计描述准确性修正（「contract 无跨模块写」+「b2b ASN I*Biz Facade」与代码不符）待 MR1 顺手（governance 工件正确，仅审计文字）。
+- 9 处并发敏感点交接 A2.17 系统性并发正确性裁决。
