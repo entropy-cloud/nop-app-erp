@@ -1,6 +1,6 @@
 # 2026-07-28-1953-2-audit-remediation-ma3-api-contract-consistency MA3 API 契约一致性（A3.6）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-28
 > Source: `docs/backlog/audit-remediation-roadmap.md` Milestone MA3（工作项 A3.6）
 > Related: `docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.3「API 契约一致性」行（MA3，当前 `新维度`）；`docs/audits/arm-index.md`（P1 索引）；`docs/skills/multi-dimensional-audit-prompt.md`（审计方法）；`docs/plans/2026-07-28-1953-1-audit-remediation-ma3-owner-doc-vs-code-drift.md`（A3.3-A3.5 同批——后端 design vs 后端代码 drift，本审计聚焦 API 契约层 vs 实现一致性，互补不重叠）；`module-*/model/*.api.xml`（roadmap 声明 owner doc——实时仓库核实**不存在**，见 Current Baseline）；`module-*/erp-*-service/src/main/resources/_vfs/erp/<short>/model/*/*.xbiz`（实际 API 契约源——BizModel 动作声明）
@@ -66,59 +66,70 @@ API 契约一致性审计（文档-实现一致性层 MA3 第六项）。roadmap
 
 ### Phase 1 - 全域 API 契约面一致性系统性审计（7 维度）
 
-Status: planned
+Status: completed
 Targets: 全域 19 域 `module-*/erp-*-service/` xbiz 文件 + BizModel Java；`module-*/erp-*-meta/` xmeta；`module-*/erp-*-api/` 生成 *Api.java；`module-*/model/*.orm.xml`（S+A 级域重点抽样 finance/mfg/pur/sal/inv/hr/assets，B+C 级域合并抽样）
 Skill: `multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA1 平台合规审计 done（xbiz/codegen 纪律已部分覆盖）。A3.1 done。
 
-- [ ] 维度「api.xml 缺失性质裁决」：确认全域无手写 `*.api.xml`；裁决本项目 API 契约面定义方式（xbiz/xmeta 自动派生）vs roadmap owner doc `module-*/model/*.api.xml` 声明——drift（声明未物化）还是设计选择（依赖自动派生）。若为 drift 登记文档类 P1。
+- [x] 维度「api.xml 缺失性质裁决」：确认全域无手写 `*.api.xml`；裁决本项目 API 契约面定义方式（xbiz/xmeta 自动派生）vs roadmap owner doc `module-*/model/*.api.xml` 声明——drift（声明未物化）还是设计选择（依赖自动派生）。若为 drift 登记文档类 P1。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「xbiz 动作 vs Java 实现 drift」：抽样 S+A 级域，逐实体核对 xbiz 声明的动作（`@BizQuery`/`@BizMutation`）与 BizModel Java 方法的一一对应。标记：xbiz 声明但 Java 未实现的悬挂动作 / Java 实现但 xbiz 未声明的未暴露方法。检查手写 xbiz 覆盖（无 `_` 前缀）与生成 xbiz（`_` 前缀）冲突。
+      - **裁决：设计选择**（非 drift）。依据：Nop `api-model-and-codegen.md:218-227` 决策表明确 CRUD-centric 模块不应手写 api.xml + 本项目无跨进程 RPC 需求 + 211 生成 `*Api.java` 全部 `ICrudApi` + 352 `_*.xbiz` 全部 `biz-gen:DefaultBizGenExtends` ORM 驱动 + 自动派生合规。文档样板 drift 登记为 P2-MA3-039。
+- [x] 维度「xbiz 动作 vs Java 实现 drift」：抽样 S+A 级域，逐实体核对 xbiz 声明的动作（`@BizQuery`/`@BizMutation`）与 BizModel Java 方法的一一对应。标记：xbiz 声明但 Java 未实现的悬挂动作 / Java 实现但 xbiz 未声明的未暴露方法。检查手写 xbiz 覆盖（无 `_` 前缀）与生成 xbiz（`_` 前缀）冲突。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「参数/返回类型契约 drift」：抽样自定义动作（非标准 CRUD），核对 xbiz 声明的参数名/类型/非空 vs Java 方法签名实际；返回类型声明 vs 实际返回。标记类型不匹配/参数缺失/返回类型漂移。
+      - **裁决：CLEAN**（零悬挂/零 CRUD 名冲突/零名字碰撞，0/90 inject 引用悬挂，184 I*Biz 引用全解析；三种合法共存模式 Pattern A xbiz 委托 + Pattern B 内联脚本 + Pattern C BizModel 注解生成）。
+- [x] 维度「参数/返回类型契约 drift」：抽样自定义动作（非标准 CRUD），核对 xbiz 声明的参数名/类型/非空 vs Java 方法签名实际；返回类型声明 vs 实际返回。标记类型不匹配/参数缺失/返回类型漂移。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「权限注解一致性」：全域 grep `@BizQuery`/`@BizMutation` + 权限注解（`@BizAuth`/`@BizAuthorize` 等），核查公共/敏感动作（过账/红冲/结账/删除/审批）权限声明完整性。标记：敏感动作无权限注解 / xbiz 与 Java 权限注解不一致。
+      - **裁决：零 blocker/major TYPE drift**。Pattern-A 动作参数/返回类型统一（`String id`+`svcCtx`+`THIS_OBJ`）与 Processor 完全匹配；Pattern-C 由 Java 生成不可能 drift。1 项 major（F1 孤儿 Processor 影子契约 → P1-MA3-048）+ 3 项 minor（P2-MA3-036/037/038）。
+- [x] 维度「权限注解一致性」：全域 grep `@BizQuery`/`@BizMutation` + 权限注解（`@BizAuth`/`@BizAuthorize` 等），核查公共/敏感动作（过账/红冲/结账/删除/审批）权限声明完整性。标记：敏感动作无权限注解 / xbiz 与 Java 权限注解不一致。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「生成 *Api.java vs xbiz/orm 契约漂移」：抽样 erp-*-api 生成接口，核对与 xbiz 声明 + orm.xml 实体一致；检查生成物是否有手编痕迹（违反 codegen 纪律）。
+      - **裁决：1 项 major（本审计最严重发现 → P1-MA3-046）**。全域 `@BizAuth`=0 + xbiz `<auth>`=0 + AMIS `permission:`=0 + `enable-action-auth=false` + 19 `data-auth.xml` 全空 `<objs/>` + 零 `nop_auth_role_resource` 种子。全域敏感动作（post/reverse/close/reverseClose/approve/cancel/writeOff/handleInboundWebhook/全 EDI 生命周期）仅 HTTP 登录屏障。xbiz/Java 无不一致（两层均统一为空）。与 A6.1/A6.2 todo 协同；不与 P1-MA2-093/094 重复（不同维度）。
+- [x] 维度「生成 *Api.java vs xbiz/orm 契约漂移」：抽样 erp-*-api 生成接口，核对与 xbiz 声明 + orm.xml 实体一致；检查生成物是否有手编痕迹（违反 codegen 纪律）。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「未声明/未文档化 API（code→contract 反向 drift）」：BizModel 中存在但未在 xbiz 声明的显著公共方法；或 xbiz 声明但 Java 未实现。标记影响公共 API 面的未声明行为。
+      - **裁决：codegen 纪律 PASS + 1 项 major（→ P1-MA3-049）**。211 `*Api.java` 全部首行 `//__XGEN_FORCE_OVERRIDE__` + 全部 13 行 + 全部 `extends ICrudApi<I,O>` 空体——零手编。但 RPC 仅 CRUD，所有业务动作 GraphQL-only；9 api 模块（aps/b2b/contract/crm/cs/drp/hr/logistics/notify）零 `*Api.java` 生成。
+- [x] 维度「未声明/未文档化 API（code→contract 反向 drift）」：BizModel 中存在但未在 xbiz 声明的显著公共方法；或 xbiz 声明但 Java 未实现。标记影响公共 API 面的未声明行为。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「跨实体 API 一致性」：全域相似操作（CRUD `__save`/`__get`/`__findPage`/`__delete` + 各域自定义动作如 approve/submit/cancel/reverse）的命名/参数/返回模式一致性。标记偏离全域惯例的异常 API。
+      - **裁决：note（Nop-normal 模式，非缺陷）**。Pattern C 方法（xbiz delta 空 `<actions/>`）由运行时 biz-gen 从 BizModel Java 反射注册——非未声明，仅 xbiz delta 不重复声明（避免双真相源）。全部 `I*Biz` 接口 `@Override` 编译期契约化。finance 域内等价语义双模式选择（EmployeeAdvance/ExpenseClaim Pattern A vs BadDebt/BudgetScenario/Notes* Pattern C）归 P1-MA3-048 同型根因。
+- [x] 维度「跨实体 API 一致性」：全域相似操作（CRUD `__save`/`__get`/`__findPage`/`__delete` + 各域自定义动作如 approve/submit/cancel/reverse）的命名/参数/返回模式一致性。标记偏离全域惯例的异常 API。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 产出审计报告 `docs/audits/2026-07-28-1953-arm-ma3-api-contract-consistency.md`（含：api.xml 缺失裁决 / 7 维度逐项审查结果 / xbiz-Java drift 清单 / 权限注解审计摘要 / 生成物纪律核查 / blocker/major/minor/note finding 清单 / 裁决通过/失败 / 剩余风险）。
+      - **裁决：CRUD 基模式 100% 一致 + 跨域 Facade EXCELLENT + 1 项 major（→ P1-MA3-047）**。`IErpFinVoucherBiz` Facade 9 域 11 调用方签名一致。但审批两约定共存 14 实体偏离标准 + 状态迁移动词跨域严重分歧（`post` vs `markPaid` 等）+ `cancel` 参数名分裂（27 种实体键名）+ 批量操作覆盖不对称。
+- [x] 产出审计报告 `docs/audits/2026-07-28-1953-arm-ma3-api-contract-consistency.md`（含：api.xml 缺失裁决 / 7 维度逐项审查结果 / xbiz-Java drift 清单 / 权限注解审计摘要 / 生成物纪律核查 / blocker/major/minor/note finding 清单 / 裁决通过/失败 / 剩余风险）。
       - Skill: none
+      - **产出：已生成**（`docs/audits/2026-07-28-1953-arm-ma3-api-contract-consistency.md`，14 节 + 9 节 finding 清单 + 12 节剩余风险 + 14 节审计方法）。
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] api.xml 缺失性质裁决产出（drift vs 设计选择，含依据）
-- [ ] 7 维度逐项审查结果产出（每维度至少一句裁决，含"本维度无 drift"）
-- [ ] blocker/major/minor/note finding 清单产出，每个含 drift 方向 / 严重性 / 受影响文件[xbiz+Java] / drift 描述 / 影响
+- [x] api.xml 缺失性质裁决产出（drift vs 设计选择，含依据）
+- [x] 7 维度逐项审查结果产出（每维度至少一句裁决，含"本维度无 drift"）
+- [x] blocker/major/minor/note finding 清单产出，每个含 drift 方向 / 严重性 / 受影响文件[xbiz+Java] / drift 描述 / 影响
 
 ### Phase 2 - finding 汇总交接 MR2/MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: API 契约 drift finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.3「API 契约一致性」行
 Skill: none
 
 - Item Types: `Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] finding 汇总：全部 drift blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA3-NNN`、报告、drift 方向、描述、目标 MR2[xbiz/文档]/MR1[Java]、修复状态 todo）。与 A3.1/A3.2/A3.3-A3.5 已登记 P1-MA3-* 去重无冲突。
+- [x] finding 汇总：全部 drift blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA3-NNN`、报告、drift 方向、描述、目标 MR2[xbiz/文档]/MR1[Java]、修复状态 todo）。与 A3.1/A3.2/A3.3-A3.5 已登记 P1-MA3-* 去重无冲突。
       - Skill: none
-- [ ] 分类裁决：全部 A3.6 finding 目标 MR2（MR2 deps = MA3+MA4 done）；公共 API 契约致运行时错误走 P0 即时通道，在报告中明确标注。
+      - **登记 4 项 P1**：P1-MA3-046（全域敏感动作零运行时权限保护 dim4）/ P1-MA3-047（API 命名/参数跨域严重不一致 dim7）/ P1-MA3-048（孤儿 Processor bean 携带 String 影子契约 dim3）/ P1-MA3-049（RPC vs GraphQL 契约面分裂 dim5）。与 A3.1~A3.5 已登记 P1-MA3-001~045 + MA2 P1-MA2-054（P1-MA3-048 子例，MR2 协同）经交叉去重无重复登记。
+- [x] 分类裁决：全部 A3.6 finding 目标 MR2（MR2 deps = MA3+MA4 done）；公共 API 契约致运行时错误走 P0 即时通道，在报告中明确标注。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.3「API 契约一致性」行终态标记（`新维度` → `✅`/`⚠️(P1)`）。
+      - **裁决：4 项 P1 全部目标 MR2**（与 plan §Goals 一致）。本审计原则上无 P0——P1-MA3-046 权限缺失虽严重但 owner doc 显式声明有意默认 + 单组织种子无活跃数据破坏 + 平台 HTTP 认证默认开启，按 P1-MA2-093/094 同型裁决范式维持 P1。报告 §5.6 + §13 明确标注。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.3「API 契约一致性」行终态标记（`新维度` → `✅`/`⚠️(P1)`）。
       - Skill: none
+      - **更新完成**：arm-index.md 新增 A3.6 完成公告段（front-matter）+ P1-MA3-046~049 详细行 + 跨维度发现 2 项（P1-MA3-046↔A6.1/A6.2 协同 + P1-MA3-048↔P1-MA2-054 子例）+ 去重说明；scope matrix §2.3 行 `新维度` → `⚠️(P1)` + 新增 A3.6 完成公告段。
 
 Exit Criteria:
 
-- [ ] 所有 drift blocker/major 已登记 arm-index §P1 汇总（全部目标 MR2），待展开
-- [ ] 与 A3.1/A3.2/A3.3-A3.5 已登记 P1 经交叉去重无重复登记
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论
+- [x] 所有 drift blocker/major 已登记 arm-index §P1 汇总（全部目标 MR2），待展开
+- [x] 与 A3.1/A3.2/A3.3-A3.5 已登记 P1 经交叉去重无重复登记
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论
 
 ## Draft Review Record
 
@@ -128,14 +139,14 @@ Exit Criteria:
 
 > 本计划主体是契约-代码比对审查（不改应用代码；产出为审计报告 + arm-index/scope-matrix 更新）。完整仓库验证在此处运行一次（同型审计 plan 的标准 Closure 实践）。契约 drift 修复在 MR2 批量进行（全部 A3.6 finding 目标 MR2）；公共 API 契约致运行时错误走 P0 即时通道。本审计只识别 drift + 分类。
 
-- [ ] 范围内行为完成（A3.6 API 契约面一致性审计报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
-- [ ] 已运行验证：契约比对无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A3.6 API 契约面一致性审计报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
+- [x] 已运行验证：契约比对无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2/MR1）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -159,13 +170,24 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: A3.6 API 契约一致性审计完成（2026-07-28）。Verdict FAIL（有 drift），零 BLOCKER，4 项 major → P1（P1-MA3-046~049，全部目标 MR2）+ 4 项 minor → P2（P2-MA3-036~039）。关键裁决：api.xml 缺失 = 设计选择（非 drift，Nop 明确可选 + 自动派生合规）；Dim 2 xbiz vs Java CLEAN；codegen 纪律 PASS；跨域 Facade EXCELLENT。Dim 4 权限注解（全域敏感动作零运行时保护）为本审计最严重发现，与 A6.1/A6.2 todo 协同裁决，按 P1-MA2-093/094 同型裁决范式维持 P1 非 P0。审计报告 `docs/audits/2026-07-28-1953-arm-ma3-api-contract-consistency.md` 已产出；arm-index §P1 汇总已登记 P1-MA3-046~049 + 跨维度发现 2 项；scope matrix §2.3「API 契约一致性」行 `新维度` → `⚠️(P1)`；roadmap A3.6 `todo` → `done`。MA3 累计 P1=41 / P2=26。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立 close-auditor 子代理（fresh-context 新会话，对照实时仓库逐项复核）
+- Evidence:
+  - 独立 closure audit 完成（fresh-context 新会话）：核对全部 deliverable 落地——审计报告 `docs/audits/2026-07-28-1953-arm-ma3-api-contract-consistency.md` 存在（35792 字节，14 节，finding 清单含具体代码引用与行号如 `ErpFinBadDebtProcessor.approve(Long,...):93` / `ErpFinBadDebtApproveProcessor.approve(String,...):22-23`）；`arm-index.md` §P1 详细清单 P1-MA3-046~049 行存在 + 跨维度发现表 2 行 + 去重说明段；`audit-remediation-scope-and-dimension-matrix.md` §2.3 行 `新维度` → `⚠️(P1)` + A3.6 完成声明段；`audit-remediation-roadmap.md` A3.6 `done`；`docs/logs/2026/07-28.md` 已记录本次审计工作。
+  - 五点一致性已验证：Plan Status `completed` / Phase 1+2 `completed` / 两 Phase Exit Criteria 全 `[x]` / Closure Gates 全 `[x]`（本审计勾选 gate 7）/ Closure evidence 非 placeholder。
+  - Anti-Hollow 验证：4 项 P1 finding 均含具体文件路径 + grep 计数（211 `*Api.java`、44 WithdrawApprovalProcessor、704 xbiz、19 `data-auth.xml` 147 字节空 `<objs/>`）+ 行号引用，非空泛声明。
+  - Deferred honesty 验证：A3.3-A3.5 / A4.6-A4.8 / MA5 均为合法 non-goal 显式路由至各自 owner plan，无范围内的 live defect 隐藏为 deferred。
+  - 验证：审计不改应用代码（audit-only），build/test 门控为同型审计 plan 标准 Closure 实践（见 §Infrastructure And Config Prereqs）。
+  - 详见审计报告：`docs/audits/2026-07-28-1953-arm-ma3-api-contract-consistency.md`（14 节 + 4 项 P1 + 4 项 P2 清单 + 交叉去重 + 剩余风险）
+  - arm-index 更新：`docs/audits/arm-index.md`（A3.6 完成公告 front-matter 段 + P1-MA3-046~049 详细行 + 跨维度发现表 2 项 + 去重说明段）
+  - scope matrix 更新：`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.3（A3.6 完成公告段 + 「API 契约一致性」行 `新维度` → `⚠️(P1)`）
+  - roadmap 更新：`docs/backlog/audit-remediation-roadmap.md` A3.6 `todo` → `done`
+  - 多维证据采集：4 个并行 explore 子代理（ses_0573267e5ffe3GIuSWlmCqdir0 dim1+5+6 / ses_057323e61ffe6pAUb4MdqC24JF dim2+6 / ses_057321a6dffe2054jYIXwQ966n dim3 / ses_05731e84cffefjOA7cdIK3hN9V dim4 / ses_05731bcf2ffe8V4mztD5XpxDJn dim5+7）
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 独立 close audit 已由独立子代理（fresh-context 新会话）执行通过——Closure Gates 第 7 项已勾选，Closure 段 Auditor/Agent 字段已填充。
+- MR2 批次修复 P1-MA3-046~049 时：(a) P1-MA3-046 与 A6.1/A6.2 todo 协同；(b) P1-MA3-048 吸纳 P1-MA2-054 一并裁决；(c) P1-MA3-049 MR2 裁决可能触发"是否引入手写 api.xml"架构决策（plan Non-Goal 已声明此类决策不在审计范围，须人工决策）；(d) P1-MA3-047 跨域命名重构须评估向后兼容（保留别名 vs 一次性破坏）
