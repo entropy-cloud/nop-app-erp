@@ -77,9 +77,9 @@
 |---|-----------|--------|-----------|------|-------|
 | A3.1 | 设计文档作为行为基线审计（全域 docs/design/） | done | `docs/design/README.md` | 0.3 | `docs/skills/design-doc-audit-prompt.md` |
 | A3.2 | 设计完整性扫描（vs product-scope + erp-survey） | done | `docs/requirements/product-scope.md` | 0.3 | `docs/skills/design-completeness-scan-prompt.md` |
-| A3.3 | finance owner doc vs 代码 drift | todo | `docs/design/finance/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A3.4 | manufacturing owner doc vs 代码 drift | todo | `docs/design/manufacturing/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A3.5 | pur+sal+inv owner doc vs 代码 drift | todo | 各域 README | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A3.3 | finance owner doc vs 代码 drift | done | `docs/design/finance/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A3.4 | manufacturing owner doc vs 代码 drift | done | `docs/design/manufacturing/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A3.5 | pur+sal+inv owner doc vs 代码 drift | done | 各域 README | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A3.6 | API 契约（api.xml）vs 实现一致性（全域） | todo | `module-*/model/*.api.xml` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A3.7 | 索引路由有效性（docs/index.md + 子索引） | todo | `docs/index.md` | 0.3 | `docs/skills/index-routing-audit-prompt.md` |
 | A3.8 | **可定制性验证**（Delta 定制/扩展字段实际可用性 + 不破坏基线抽样） | todo | `docs/architecture/customization-capabilities.md` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
