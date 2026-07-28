@@ -149,10 +149,12 @@
 
 > 以下维度在 v1 中缺失，经覆盖面审查子代理发现后补充。
 
+> **A2.18 多账套/多公司隔离系统性审查（多维）已于 2026-07-28 完成**（详见 `docs/audits/2026-07-28-1510-arm-ma2-multi-company-isolation.md`）。下表「多账套/多公司隔离」行终态标记 `❓` → `⚠️(P1)`（核心结论：多公司/多账套隔离的**写路径 + 自然键层基本成立**——全域 ~70 事务单据 UK_*_CODE_ORG (code, orgId) 正确 + 多账套传播 stamp acctSchemaId + 法人根解析环形守卫存在 + 转移定价 cache 方向性正确 + CoA/CostMethod/折旧 cache SAFE；**读路径隔离机制全仓未落地**——平台仅支持 tenant 自动过滤而本项目 0 实体启用 useTenant + 19 模块 erp-{module}.data-auth.xml 全部 `<objs/>` 空规则 + 0 个自定义 IDataAuthChecker/IQueryTransformer + IServiceContext/IContext 均无 getOrgId() + 11 dashboard BizModel 经 IDaoProvider 直访绕过仅有的（空）认证管道；**单组织种子 176 行全部 orgId=2 完全掩盖跨组织泄漏**。A2.17 交接点复核收口：P0-MA2-018 维持 deferred（billR 无 acctSchemaId 列 + 加 orgId 不足修复——判别列 postingType/isReversed/acctSchemaId 全在 voucher 不在 billR）；P0-MA2-020 维持 completed（UK_INV_STOCK_BALANCE_NATURAL 已正确含 orgId）。**零 P0**（4 个候选 P0 经证据证伪或降级：orgId 跨组织泄漏降级 P1 单组织种子下无实际腐败 + 账套串户降级 P1 仅 multi-schema-enabled=true 时显现 + 法人根解析环形守卫证伪 + 合并抵消作用域误抵消仅理论）；**7 项新 P1** 登记 arm-index §P1 汇总待 MR1：P1-MA2-093 orgId 查询隔离全仓未落地 / P1-MA2-094 orgId 写入客户端可任意指定 / P1-MA2-095 acctSchemaId 读路径泄漏 / P1-MA2-096 ErpFinGlBalance 无 DB 强制自然键 / P1-MA2-097 跨公司配对 owner doc 算法漂移 + ErpFinIntercompanyMatch 审计列全空 / P1-MA2-098 runMatching 非幂等 / P1-MA2-099 GL 映射 cache 默认配置跨组织泄漏。多公司/多账套维度终态全域 ⚠️(P1)。**MA2 全部 18 个工作项（A2.1–A2.18）现已全部 done**——MR1 R1.0 可启动）。
+
 | 维度 | 里程碑 | 触发依据 | 覆盖范围 | Skill |
 |------|--------|---------|---------|-------|
-| **并发与乐观锁** | MA2（A2.17） | use-case-implementation-audit 标记 3 处并发缺口（UC-SAL-10 并发扣批次 / UC-INV-08 乐观锁 / UC-SAL-10 乐观锁）；ERP 核心并发风险（库存扣减/发票核销/期间结账） | S+A 级域 | `open-ended-audit-prompt.md` |
-| **多账套/多公司隔离** | MA2（A2.18） | flow-overview §4.4 多套科目表并行；project-vision "产品化通用 ERP" 定位 | S 级域 + finance | `multi-dimensional-audit-prompt.md` |
+| **并发与乐观锁** | MA2（A2.17）✅ done | use-case-implementation-audit 标记 3 处并发缺口（UC-SAL-10 并发扣批次 / UC-INV-08 乐观锁 / UC-SAL-10 乐观锁）；ERP 核心并发风险（库存扣减/发票核销/期间结账） | S+A 级域 | `open-ended-audit-prompt.md` |
+| **多账套/多公司隔离** ⚠️(P1) done | MA2（A2.18） | flow-overview §4.4 多套科目表并行；project-vision "产品化通用 ERP" 定位 | S 级域 + finance | `multi-dimensional-audit-prompt.md` |
 | **可定制性验证** | MA3（A3.8） | project-vision 核心价值"可定制"；需验证 Delta/扩展字段实际可用且不破坏基线 | 抽样 | `open-ended-audit-prompt.md` |
 | **保护区域纪律** | MA6（A6.4） | ai-autonomy-policy §保护区域 6 区域；accounting/data-deletion 是否有合规路径 | 全域 | `multi-dimensional-audit-prompt.md` |
 | **assets Processor 链路** | MA4（A4.3） | assets Proc=48 全域最高密度；折旧正确性直接影响财务报表 | assets 单域 | `code-quality-audit-prompt.md` |
