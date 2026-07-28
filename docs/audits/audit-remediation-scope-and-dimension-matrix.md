@@ -100,9 +100,11 @@
 | 维度 | finance | mfg | hr | assets | pur | sal | qa | crm | prj | cs | ct | b2b | inv | md | mnt | drp | aps | log | notify | Skill |
 |------|---------|-----|----|----|------|-----|----|----|----|----|----|-----|-----|-----|-----|-----|-----|-----|--------|-------|
 | 业财端到端 | ⚠️P1 | ❓ | N/A | ❓ | ⚠️P1 | ⚠️P1 | N/A | N/A | ❓ | N/A | ❓ | N/A | ❓ | N/A | ❓ | N/A | N/A | N/A | N/A | 新维度+flow-overview |
-| 状态机正确性 | ⚠️P1 | ⚠️P1(A2.6a✅;A2.6b✅) | ⚠️P1(A2.7a✅;A2.7b✅) | ⚠️P1(A2.10✅) | ⚠️P1(A2.8✅) | ⚠️P1(A2.9✅) | ❓ | ❓ | ❓ | ❓ | ❓ | ❓ | ⚠️P1(A2.11✅) | N/A | ❓ | N/A | ❓ | ❓ | N/A | state-machine-review |
+| 状态机正确性 | ⚠️P1 | ⚠️P1(A2.6a✅;A2.6b✅) | ⚠️P1(A2.7a✅;A2.7b✅) | ⚠️P1(A2.10✅) | ⚠️P1(A2.8✅) | ⚠️P1(A2.9✅) | ⚠️P0→fix-plan + P1(A2.12✅) | ❓ | ❓ | ❓ | ❓ | ❓ | ⚠️P1(A2.11✅) | N/A | ❓ | N/A | ❓ | ❓ | N/A | state-machine-review |
 | 库存核算一致性 | ⚠️P1 | ❓ | N/A | N/A | ❓ | ❓ | N/A | N/A | N/A | N/A | N/A | N/A | ⚠️P1 | N/A | ❓ | ❓ | N/A | N/A | N/A | 新维度 |
 | 预算与承付 | ⚠️P1 | N/A | N/A | N/A | ❓ | ❓ | N/A | N/A | ❓ | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | N/A | 新维度 |
+
+> **A2.12 quality 状态机审查（A 级单域，16 状态字段）已于 2026-07-28 完成**（详见 `docs/audits/2026-07-28-1020-arm-ma2-quality-state-machine.md`）。下表「状态机正确性」行 qa 列由 `❓` 推进至 `⚠️P0→fix-plan + P1(A2.12✅)`（质量状态机核心契约：NCR 5 态 + 召回 5 态 + CAPA 生命周期 + SPC 失控预警 + 强制质检门控 InspectionTrigger.enforceGate config-gated + NCR 过账 SCRAP/RETURN/CONCESSION 分派 + posted 三件套 + reverseNcr 红冲闭环对称 + 跨域写经 I\*Biz Facade 全合规 经证据逐项确认；**1 项 P0** P0-MA2-017 ErpQaInspectionBizModel passInspection/failInspection/reInspect 缺状态守卫致强制质检门控可绕过不合格品 silent 入库 [已注入异步 fix plan `2026-07-28-1020-arm-fix-p0-ma2-017-qa-inspection-state-guard`]；3 项新 P1：P1-MA2-064 业务单据作废联动取消质检单未落地 / P1-MA2-065 QualityGoal/RiskRegister/Calibration/Review/SPC-CalcStatus-STALE/CAPA-OVERDUE dict 死状态合并裁决 / P1-MA2-066 NCR resolve 允许无 CAPA 直接关闭闭环不变量缺口；2 项新 P2 watch-only：P2-MA2-063 state-machine.md 缺 8 状态承载实体独立章节 / P2-MA2-064 §审查提示「事件驱动」vs §实现偏离补注未同步；2 项已登记 MA1 finding [P1-MA1-012 propId / P1-MA1-022 跨域只读] 运行时复核无升级；MANUAL_POST NCR 过账悬挂窗口期同 finance P1-MA2-032 + hr P1-MA2-048 + assets P1-MA2-060 同型根因交接；并发敏感点 4 处交接 A2.17 含 @Version 透明乐观锁降级[4 个 quality 状态机实体均声明 versionProp]）。
 
 ### 2.3 MA3 — 文档-实现一致性层
 
