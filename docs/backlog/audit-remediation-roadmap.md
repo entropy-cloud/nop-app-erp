@@ -59,7 +59,7 @@
 | A2.6b | manufacturing 状态机审查 — MRP/BOM（S 级拆分 2/2） | done | `docs/design/manufacturing/mrp.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.7a | hr 状态机审查 — 员工与组织（S 级拆分 1/2） | done | `docs/design/human-resource/` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.7b | hr 状态机审查 — 考勤与工资（S 级拆分 2/2） | done | `docs/design/human-resource/` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
-| A2.8 | purchase 状态机审查（A 级单域，29 状态字段） | todo | `docs/design/purchase/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
+| A2.8 | purchase 状态机审查（A 级单域，29 状态字段） | done | `docs/design/purchase/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.9 | sales 状态机审查（A 级单域，25 状态字段） | todo | `docs/design/sales/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.10 | assets 状态机审查（A 级单域，18 状态字段） | todo | `docs/design/assets/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
 | A2.11 | inventory 状态机审查（A 级单域，19 状态字段） | todo | `docs/design/inventory/state-machine.md` | 0.3 | `docs/skills/state-machine-business-review-prompt.md` |
