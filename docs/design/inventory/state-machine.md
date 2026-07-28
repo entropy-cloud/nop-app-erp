@@ -64,6 +64,7 @@
 | 批次过期 | 出库时校验批次是否在有效期；过期批次拒绝出库（可配置放行） |
 | 序列号已售 | 出库时校验序列号状态；已售序列号拒绝再次出库 |
 | 并发扣减同一批次的可用量 | 乐观锁 + 扣减失败重试；重试仍失败则拒绝确认 |
+| 并发首次入库/初始化同维度（plan 2026-07-28-1249 P0-MA2-020） | DB 唯一约束 `UK_INV_STOCK_BALANCE_NATURAL` 兜底；`StockMoveBookkeeper.updateBalanceWithRetry` 的 SAVING 分支 flush 后捕获 ConstraintViolation → evict + 按自然键 reload 已落地行 + 转更新路径，重试上限 `erp-inv.concurrent-deduct-max-retry`（默认 5）。SQL NULL 语义限制：含 NULL 列的键不参与 UNIQUE 比较，仅由应用层 retry-on-conflict 兜底 |
 | 冲销反向单的可用量不足 | 冲销本质是反向移动（入库变出库/出库变入库），同样校验可用量 |
 | 重复触发（业务单据重复审核） | 幂等：同一业务单据对同一移动单的触发生成需幂等，已生成则不重复生成 |
 
