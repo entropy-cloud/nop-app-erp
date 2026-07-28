@@ -54,7 +54,7 @@
 | 工序开工时物料未齐套 | 在 PLANNED→IN_PROGRESS 前增加物料齐套校验（可选） |
 | 工作中心故障/停机（未在约束中登记） | 工单暂停，计划员手动调整（PLANNED→DRAFT 重排） |
 | 插单/急单 | 触发区间重排，受影响区间内的 OperationOrder 回退到 DRAFT |
-| 并发排产同一工作中心 | 乐观锁或资源锁防止产能双倍占用 |
+| 并发排产同一工作中心 | 乐观锁 + 资源锁防止产能双倍占用：`ErpApsSchedulingProcessor.persist` 在每个 PLANNED 工序落库前先向 `ErpApsCapacityReservation` 表 INSERT 一条时段预留，并由 `UK_APS_CAPACITY_RESERVATION_SLOT (machineId, plannedStartT, plannedEndT)` 作为 DB 兜底——两并发 `scheduleForward` 即使同时通过 in-memory pre-check（重叠区间查询），DB 唯一约束也只允许一条预留落地，第二条抛 `ERR_APS_CAPACITY_CONFLICT` 并回滚整个 `@BizMutation` 事务。`PLANNED→DRAFT` 重排时（插单区间重排）按 `operationOrderId` 硬删除原预留后再次申请新时段。PLANNED→IN_PROGRESS/FINISHED/CANCELLED 状态翻转的预留释放归 P1-MA2-077 MR1。|
 | 实际数量超过排产 qty | 系统不允许超过 qty，需拆开工单 |
 
 ### 5. 可达性
@@ -138,4 +138,4 @@
 - PLANNED→DRAFT 重排回退路径是否合法（仅 APS 引擎或计划员可执行）。
 - 插单重排的范围限定（区间重排而非全局重排）。
 - 执行中工序取消是否需要生产主管审批。
-- 工作中心产能的双重占用防止机制。
+- 工作中心产能的双重占用防止机制（`ErpApsCapacityReservation` UK + persist 重叠 pre-check，P0-MA2-019 fix）。

@@ -254,8 +254,8 @@
 - **影响**：生产计划产能预留穿透，车间过载，交付承诺破坏。
 - **修复路径**：方案 A（推荐）新增 `ErpApsCapacityReservation` 实体（workcenterId + plannedStartT + plannedEndT + orderId + versionProp + UK `(workcenterId, plannedStartT, plannedEndT)`）承载产能预留，排产引擎写入前校验重叠；方案 B 引入 `IErpSysLockBiz` 分布式锁按 workcenterId（须先实现 `IErpSysLockBiz` SPI——本仓库不存在）；方案 C 序列化排产到单 scheduler bean（性能损失大）。owner doc §4 须同步实际落地机制。
 - **保护区域**：触及 aps 排产引擎 + ORM ask-first（新实体/UK）→ 须独立 plan-audit + 人工确认。
-- **修复 plan**：`docs/plans/2026-07-28-1249-arm-fix-p0-ma2-019-aps-capacity-lock.md`（异步注入，Status: planned）
-- **修复状态**：`planned (plan 2026-07-28-1249-arm-fix-p0-ma2-019)`
+- **修复 plan**：`docs/plans/2026-07-28-1249-arm-fix-p0-ma2-019-aps-capacity-lock.md`（异步注入，Status: completed）
+- **修复状态**：`fixed (方案 A, plan 2026-07-28-1249-arm-fix-p0-ma2-019)`
 
 ### P0-MA2-020 — inventory 库存余额自然键无唯一约束（首次 INSERT 竞态）
 
