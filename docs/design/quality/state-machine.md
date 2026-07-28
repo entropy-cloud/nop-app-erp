@@ -30,10 +30,12 @@
 | PENDING→CONDITIONAL | 质检员 + 审批人 | 部分项不合格但经审批降级使用 | 继续流转，记录让步理由 |
 | PENDING→REJECTED | 质检员 | 关键项不合格或整体不达标 | 触发 NCR，反馈业务域 |
 
+> **silent flip 守卫**：所有 PENDING→终态迁移（`recordResult` / `passInspection` / `failInspection`）均守卫 `result==PENDING` 单一源态 + 设 `posted=true`；`failInspection` 同 `recordResult` REJECTED 分支触发 NCR 自动生成。终态（ACCEPTED/CONDITIONAL/REJECTED）直接调用上述方法抛 `ERR_INVALID_INSPECTION_STATUS_TRANSITION`，禁止 silent flip 绕过强制质检门控。
+
 ### 3. 终态与恢复
 
 - 终态：`合格（ACCEPTED）`、`让步接收（CONDITIONAL）`、`不合格（REJECTED）`。
-- 终态不可直接恢复；若需复检，新建质检单（关联原单与业务单据）。
+- 终态不可直接恢复；若需复检，**新建质检单**（经 `IErpQaInspectionBiz.createForBusinessBill` 关联原单与业务单据），原质检单 result 保持不变作为审计记录。`reInspect` 方法已废弃删除（P0-MA2-017）——禁止将终态直接翻回 PENDING。
 - 不合格（REJECTED）触发 NCR 流程，NCR 闭环是独立状态机。
 
 ### 4. 异常路径
@@ -186,4 +188,5 @@ NCR 关闭（RESOLVED）时，根据处置方式触发不同的财务处理：
 - **校准管理 / 风险登记 / 质量目标 / 评审（Non-Goal）**：`ErpQaCalibration`/`ErpQaRiskRegister`/`ErpQaQualityGoal`/`ErpQaReview` 实体存在但 BizModel 深化不落地（仅标准 CRUD 空壳）。触发条件：计量管理 / QMS 全面需求时。
 - **业务单据作废联动取消（未落地）**：设计 §4「业务单据作废时关联质检单自动取消」本期未接线（业务域 cancel 未回调 quality 取消质检单）。触发条件：作废联动需求时。
 - **行级评测规格类型**：`specMin/specMax/measuredValue` 列域为 DECIMAL（domain measuredValue/specLimit），非数值规格（外观「合格/不合格」）由 `InspectionResultEvaluator`「无规格上下限 + 实测非空即合格」分支处理；纯非数值实测值落库受域强转限制（须人工录入行结果覆盖）。
+- **✅ passInspection/failInspection 状态守卫 + reInspect 废弃（plan 2026-07-28-1020-arm-fix-p0-ma2-017，修 P0-MA2-017）**：`passInspection`/`failInspection` 增 `result==PENDING` 单一源态守卫 + 设 `posted=true`（postedAt/postedBy）+ `failInspection` 触发 `autoCreateNcrFromInspection`（与 `recordResult` REJECTED 分支对齐），堵住 silent flip REJECTED→ACCEPTED 绕过强制质检门控。`reInspect` 方法 + `IErpQaInspectionBiz.reInspect` 接口签名删除——终态不可直接翻回 PENDING，复检走 `createForBusinessBill` 新建关联质检单（§3）。
 
