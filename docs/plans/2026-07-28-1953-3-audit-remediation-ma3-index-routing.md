@@ -1,6 +1,6 @@
 # 2026-07-28-1953-3-audit-remediation-ma3-index-routing MA3 索引路由有效性（A3.7）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-28
 > Source: `docs/backlog/audit-remediation-roadmap.md` Milestone MA3（工作项 A3.7）
 > Related: `docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.3「索引路由」行（MA3，当前 `新维度`）；`docs/audits/arm-index.md`（P1 索引）；`docs/skills/index-routing-audit-prompt.md`（审计方法——4 步：覆盖表 / 基于角色路由测试 / 结构质量检查 / 发现返回）；`docs/index.md`（顶层文档路由器——审查主目标）；各 `docs/*/README.md` 与子索引（审查目标）；`docs/plans/2026-07-28-1953-1-audit-remediation-ma3-owner-doc-vs-code-drift.md` + `2026-07-28-1953-2-audit-remediation-ma3-api-contract-consistency.md`（同批 MA3 审计，不同结果表面）
@@ -63,52 +63,52 @@
 
 ### Phase 1 - 索引路由有效性系统性审查（4 步）
 
-Status: planned
+Status: completed
 Targets: `docs/index.md`；`AGENTS.md` §快速路由 + §文档所有权；各 `docs/*/README.md` 与子索引；`docs/` 全目录树（孤立文件/缺中间索引检测）；`docs/archive/`（引用断链检测）
 Skill: `index-routing-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）。本审计为 MA3 第七项，仅依赖 0.3，可与 A3.3-A3.6 同批推进（不同结果表面无相互依赖）。
 
-- [ ] 步骤 1「覆盖表」：读取 `docs/index.md` 顶层路由表 + AGENTS.md §快速路由 + 各子索引，为每个索引条目记录（entry / stated purpose / target path / exists / matches purpose / notes）。标记：目标不存在 / 内容不匹配声明目的 / 声明目的含糊 / 多条目指同目标描述不同 / 应索引的现有文档缺失。
+- [x] 步骤 1「覆盖表」：读取 `docs/index.md` 顶层路由表 + AGENTS.md §快速路由 + 各子索引，为每个索引条目记录（entry / stated purpose / target path / exists / matches purpose / notes）。标记：目标不存在 / 内容不匹配声明目的 / 声明目的含糊 / 多条目指同目标描述不同 / 应索引的现有文档缺失。
       - Skill: `index-routing-audit-prompt.md`
-- [ ] 步骤 2「基于角色路由测试」：4 角色真实信息需求定制化追踪——角色 A 新开发人员（"如何设置开发环境运行项目"/"finance 过账引擎代码在哪"）/ 角色 B AI 代理（"编码前必须遵循哪些规则"/"某域 orm.xml owner doc 在哪"/"Nop Delta 定制 runbook 在哪"）/ 角色 C 审查者（"当前审计-修复 roadmap todo 在哪"/"近期实现日志在哪"/"某 plan 的关闭门控"）/ 角色 D 维护者（"何时更新索引 vs 新建文档"/"哪些文档已知过时"/"归档规则"）。每需求记录（persona / need / starting point / hops / found / path taken / problem）。
+- [x] 步骤 2「基于角色路由测试」：4 角色真实信息需求定制化追踪——角色 A 新开发人员（"如何设置开发环境运行项目"/"finance 过账引擎代码在哪"）/ 角色 B AI 代理（"编码前必须遵循哪些规则"/"某域 orm.xml owner doc 在哪"/"Nop Delta 定制 runbook 在哪"）/ 角色 C 审查者（"当前审计-修复 roadmap todo 在哪"/"近期实现日志在哪"/"某 plan 的关闭门控"）/ 角色 D 维护者（"何时更新索引 vs 新建文档"/"哪些文档已知过时"/"归档规则"）。每需求记录（persona / need / starting point / hops / found / path taken / problem）。
       - Skill: `index-routing-audit-prompt.md`
-- [ ] 步骤 3「结构质量检查」：检查孤立文件（目录树中无法从任何索引访问）/ 过时引用（指向已移动/重命名/删除文件，含 archive/ 引用断链）/ 深度不平衡（>3 跳）/ 重复（同一规则多索引无交叉引用，重点 AGENTS.md vs index.md 路由表重叠）/ 类别混淆 / 缺少中间索引（>10 文件目录无 README，重点 architecture/、process/、references/）。
+- [x] 步骤 3「结构质量检查」：检查孤立文件（目录树中无法从任何索引访问）/ 过时引用（指向已移动/重命名/删除文件，含 archive/ 引用断链）/ 深度不平衡（>3 跳）/ 重复（同一规则多索引无交叉引用，重点 AGENTS.md vs index.md 路由表重叠）/ 类别混淆 / 缺少中间索引（>10 文件目录无 README，重点 architecture/、process/、references/）。
       - Skill: `index-routing-audit-prompt.md`
-- [ ] 步骤 4「发现返回」：按严重性排序返回发现，每个含（标题 / 受影响索引条目或文件路径 / 当前差距 / 对路由有效性的影响 / 建议）。
+- [x] 步骤 4「发现返回」：按严重性排序返回发现，每个含（标题 / 受影响索引条目或文件路径 / 当前差距 / 对路由有效性的影响 / 建议）。
       - Skill: `index-routing-audit-prompt.md`
-- [ ] 产出审计报告 `docs/audits/2026-07-28-1953-arm-ma3-index-routing.md`（含：覆盖表 / 4 角色路由测试结果矩阵 / 结构质量检查摘要 / blocker/major/minor/note finding 清单 / 域快速参考表占位裁决 / AGENTS.md-vs-index.md 重复裁决 / 裁决通过/失败 / 剩余风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-28-1953-arm-ma3-index-routing.md`（含：覆盖表 / 4 角色路由测试结果矩阵 / 结构质量检查摘要 / blocker/major/minor/note finding 清单 / 域快速参考表占位裁决 / AGENTS.md-vs-index.md 重复裁决 / 裁决通过/失败 / 剩余风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] 覆盖表产出（每索引条目一行，exists/matches 列填写）
-- [ ] 4 角色路由测试矩阵产出（每角色至少 2 需求，hops/found/problem 填写）
-- [ ] 结构质量检查摘要产出（孤立文件/过时引用/深度/重复/缺中间索引 各至少一句结论）
-- [ ] blocker/major/minor/note finding 清单产出，每个含受影响路径/差距/影响/建议
+- [x] 覆盖表产出（每索引条目一行，exists/matches 列填写）
+- [x] 4 角色路由测试矩阵产出（每角色至少 2 需求，hops/found/problem 填写）
+- [x] 结构质量检查摘要产出（孤立文件/过时引用/深度/重复/缺中间索引 各至少一句结论）
+- [x] blocker/major/minor/note finding 清单产出，每个含受影响路径/差距/影响/建议
 
 ### Phase 2 - finding 汇总交接 MR2 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 索引路由 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.3「索引路由」行
 Skill: none
 
 - Item Types: `Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] finding 汇总：全部 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA3-NNN`、报告、描述、目标 MR2、修复状态 todo）。与 A3.1-A3.6 已登记 P1-MA3-* 去重无冲突。
+- [x] finding 汇总：全部 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA3-NNN`、报告、描述、目标 MR2、修复状态 todo）。与 A3.1-A3.6 已登记 P1-MA3-* 去重无冲突。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.3「索引路由」行终态标记（`新维度` → `✅`/`⚠️(P1)`）。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.3「索引路由」行终态标记（`新维度` → `✅`/`⚠️(P1)`）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有 blocker/major 已登记 arm-index §P1 汇总（目标 MR2），待 R2.0 展开
-- [ ] 与 A3.1-A3.6 已登记 P1 经交叉去重无重复登记
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论
+- [x] 所有 blocker/major 已登记 arm-index §P1 汇总（目标 MR2），待 R2.0 展开
+- [x] 与 A3.1-A3.6 已登记 P1 经交叉去重无重复登记
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论
 
 ## Draft Review Record
 
@@ -118,14 +118,14 @@ Exit Criteria:
 
 > 本计划主体是文档索引审查（不改代码/文档）。完整仓库验证在此处运行一次（同型审计 plan 的标准 Closure 实践）。索引修复在 MR2 批量进行，本审计只识别 finding + 建议。
 
-- [ ] 范围内行为完成（A3.7 索引路由有效性审查报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
-- [ ] 已运行验证：索引审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A3.7 索引路由有效性审查报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
+- [x] 已运行验证：索引审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）—— 实测 `mvn test` BUILD SUCCESS（09:24 min，全模块 0 failures，仅 2 个预存 skipped）
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -149,13 +149,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: A3.7 索引路由有效性审查完成。产出审计报告 `docs/audits/2026-07-28-1953-arm-ma3-index-routing.md`（Verdict FAIL，零 P0，6 P1 + 4 P2）。finding 已登记 `docs/audits/arm-index.md` §P1 详细清单（P1-MA3-050/051/052/054/055/056）+ §P2 watch-only（P2-MA3-040/041/042/043），目标 MR2 文档类。scope matrix §2.3「索引路由」行终态标记 `新维度` → `⚠️(P1)`。roadmap A3.7 推进至 done（待独立 closure audit）。完整仓库 `mvn test` BUILD SUCCESS（绿色回归基线确认，零代码变更）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立 general 子代理 fresh-context（2 轮：第 1 轮 `ses_056e72725ffe76VqZ6qoOCooeR` 发现 P1-MA3-053 误判[path 经实测存在] → 执行者降级 P2-MA3-042 + 补 P2-MA3-043[l10n orphan]；第 2 轮 `ses_056e20b56ffe8gvuZVsFESDr6x` 复核 VERDICT=PASS，6 P1 + 4 P2 三文件一致 + 6 P1 抽样实测为真）
+- Evidence: 审计报告 215 行 + arm-index 报告清单新增行 + scope matrix §2.3 行终态标记 + A3.7 summary 段；`mvn test` BUILD SUCCESS（09:24 min，全模块 0 failures/2 预存 skipped）
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 索引批量修复（补 articles/README + bugs/README + 填充域快速参考表 + AGENTS.md-vs-index.md 交叉引用 + logs/index.md 刷新 + errors/ppts 目录角色 + l10n 归类 + 平台文档路径约定统一）经 R2.0 展开机制进入 MR2（本审计 Non-Goal，仅识别 + 建议）。
