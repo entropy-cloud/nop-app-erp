@@ -149,6 +149,8 @@
 | N+1 查询（MA7） | S 级域抽样 | `open-ended-audit-prompt.md` |
 | CI/guard 激活（MA7） | 全域合并 | compliance-checker |
 
+> **A4.1a finance 过账与凭证链路代码质量审计（MA4 S 级拆分 1/2）已于 2026-07-28 完成**（详见 `docs/audits/2026-07-28-2130-arm-ma4-finance-posting-voucher-code-quality.md`）。§2.4「代码质量（MA4）」行无 per-domain 列，本注记段反映 finance 过账片进度。按 `code-quality-audit-prompt.md` 7 重点领域审 ErpFinPostingProcessor / IErpFinVoucherBiz Facade / IErpFinAcctDocProvider SPI + ~20 实现 / VoucherFact / ErpFinDeferredPostingRetryHelper / CloseVoucherWriter / 凭证模板。**Verdict: FAIL（有代码实现质量缺陷）**——零 P0（无活跃数据破坏路径；alreadyPosted TOCTOU 是 P0-MA2-018 已登记 deferred）。编排健壮性 / Provider SPI 一致性 / 错误处理规范化三面扎实；失败恢复闭环（P1-MA4-001 重试耗尽 RETRYING 死状态）/ 测试有效性（P1-MA4-002 断言弱 + 异常路径零覆盖）/ 架构边界（P1-MA4-003 跨域 daoFor 绕 I\*Biz，同 P1-MA1-022 投影）三项 P1 缺陷。MA1/MA2/MA3 已知 finding 运行时复核 12 项全部「如登记」无升级（P1-MA2-032 复核发现相邻路径新缺陷 P1-MA4-001）。2 项 P2 watch-only（P2-MA4-001/002）。finance 代码质量全片终态在 A4.1b（预算/AR-AP/成本/期间）收口。
+
 ### 2.5 新增维度（v2 — 经独立子代理审查后补充）
 
 > 以下维度在 v1 中缺失，经覆盖面审查子代理发现后补充。
