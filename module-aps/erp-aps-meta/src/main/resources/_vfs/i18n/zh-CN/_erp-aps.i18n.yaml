@@ -1,5 +1,6 @@
 entity:
   label:
+    ErpApsCapacityReservation: 产能预留
     ErpApsConstraint: 排产约束
     ErpApsDispatchLog: 派工日志
     ErpApsDispatchRule: 自动派工规则
@@ -8,6 +9,19 @@ entity:
     ErpApsSchedule: 排产方案
 prop:
   label:
+    ErpApsCapacityReservation:
+      createTime: 创建时间
+      createdBy: 创建人
+      id: ID
+      machineId: 工作中心/设备
+      operationOrderId: 工序工单
+      orgId: 业务组织
+      plannedEndT: 预留结束时间
+      plannedStartT: 预留开始时间
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpApsConstraint:
       constraintType: 约束类型
       constraintType_label: 约束类型

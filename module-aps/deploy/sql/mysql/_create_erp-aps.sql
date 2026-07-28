@@ -5,6 +5,22 @@ CREATE TABLE erp_md_organization(
   constraint PK_erp_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_aps_capacity_reservation(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  MACHINE_ID BIGINT NOT NULL    COMMENT '工作中心/设备',
+  PLANNED_START_T DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '预留开始时间',
+  PLANNED_END_T DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '预留结束时间',
+  OPERATION_ORDER_ID BIGINT NOT NULL    COMMENT '工序工单',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_aps_capacity_reservation primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_aps_operation_order(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '编号',
@@ -154,6 +170,8 @@ CREATE TABLE erp_aps_dispatch_log(
 
 
    ALTER TABLE erp_md_organization COMMENT 'ErpMdOrganization';
+                
+   ALTER TABLE erp_aps_capacity_reservation COMMENT '产能预留';
                 
    ALTER TABLE erp_aps_operation_order COMMENT '工序工单';
                 

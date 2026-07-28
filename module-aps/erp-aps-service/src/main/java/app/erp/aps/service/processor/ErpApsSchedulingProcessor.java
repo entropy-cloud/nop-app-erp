@@ -1,6 +1,7 @@
 package app.erp.aps.service.processor;
 
 import app.erp.aps.biz.SchedulingResult;
+import app.erp.aps.dao.entity.ErpApsCapacityReservation;
 import app.erp.aps.dao.entity.ErpApsConstraint;
 import app.erp.aps.dao.entity.ErpApsOperationOrder;
 import app.erp.aps.dao.entity.ErpApsSchedule;
@@ -15,16 +16,21 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.dao.exceptions.JdbcException;
+import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
+import static io.nop.api.core.beans.FilterBeans.gt;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
+import static io.nop.api.core.beans.FilterBeans.lt;
 
 /**
  * APS 排产编排 Processor（{@code processor-extension-pattern.md} 两层结构）。
@@ -40,6 +46,9 @@ public class ErpApsSchedulingProcessor {
 
     @Inject
     IDaoProvider daoProvider;
+
+    @Inject
+    IOrmTemplate ormTemplate;
 
     // ---------- Facade 入口 ----------
 
@@ -99,6 +108,9 @@ public class ErpApsSchedulingProcessor {
             }
         }
         for (ErpApsOperationOrder op : toRevert) {
+            // 释放该工序在原 PLANNED 时段占用的产能预留（P0-MA2-019），按 operationOrderId 定位，
+            // 与 planned 字段是否已清空无关。释放先于 saveOrUpdateEntity 落库，确保回退原子可见。
+            releaseReservationsByOrder(op.getId());
             op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
             op.setPlannedStartDateT(null);
             op.setPlannedEndDateT(null);
@@ -194,9 +206,89 @@ public class ErpApsSchedulingProcessor {
     protected void persist(List<ErpApsOperationOrder> orders, SchedulingResult result) {
         IEntityDao<ErpApsOperationOrder> dao = opOrderDao();
         for (ErpApsOperationOrder op : orders) {
+            // P0-MA2-019：仅 PLANNED 且带有效时段/工作中心的工序才占产能预留。
+            // 引擎标记为 DRAFT（无可用时段/交期不可达）的工序不占预留，直接落库。
+            if (isPlannedScheduled(op)) {
+                acquireReservation(op);
+            }
             // 引擎已直接写回实体字段，此处统一落库；未排定的保持 DRAFT
             dao.saveOrUpdateEntity(op);
         }
+    }
+
+    private boolean isPlannedScheduled(ErpApsOperationOrder op) {
+        return ErpApsConstants.OP_STATUS_PLANNED.equals(op.getStatus())
+                && op.getMachineId() != null
+                && op.getPlannedStartDateT() != null
+                && op.getPlannedEndDateT() != null;
+    }
+
+    /**
+     * 获取（INSERT）一条产能预留（P0-MA2-019）。
+     *
+     * <p>两段防护：
+     * <ol>
+     *   <li>重叠 pre-check：查询 {@code erp_aps_capacity_reservation} 是否已有重叠时段。
+     *       命中即抛 {@link ErpApsErrors#ERR_APS_CAPACITY_CONFLICT}（友好错误，覆盖单会话/已提交并发场景）。</li>
+     *   <li>UK {@code UK_APS_CAPACITY_RESERVATION_SLOT (machineId, plannedStartT, plannedEndT)} 兜底：
+     *       两并发 scheduleForward 同时通过 pre-check（TOCTOU 窗口），DB 唯一约束保证只一行落地；
+     *       兜底触发时翻译为 {@link ErpApsErrors#ERR_APS_CAPACITY_CONFLICT}。</li>
+     * </ol>
+     *
+     * <p>每次 INSERT 后立即 {@code flushSession}：使 TOCTOU UK 违例在本方法边界内抛出并翻译为业务错误码，
+     * 而非在 {@code @BizMutation} 事务提交时以 {@code nop.err.dao.sql.data-integrity-violation} 透出到调用方。
+     */
+    protected void acquireReservation(ErpApsOperationOrder op) {
+        Timestamp start = op.getPlannedStartDateT();
+        Timestamp end = op.getPlannedEndDateT();
+        if (hasOverlappingReservation(op.getMachineId(), start, end)) {
+            throw new NopException(ErpApsErrors.ERR_APS_CAPACITY_CONFLICT)
+                    .param(ErpApsErrors.ARG_MACHINE_ID, op.getMachineId())
+                    .param(ErpApsErrors.ARG_OP_CODE, op.getCode());
+        }
+        ErpApsCapacityReservation r = capacityReservationDao().newEntity();
+        r.setMachineId(op.getMachineId());
+        r.setPlannedStartT(start);
+        r.setPlannedEndT(end);
+        r.setOperationOrderId(op.getId());
+        r.setOrgId(op.getOrgId());
+        try {
+            capacityReservationDao().saveEntity(r);
+            ormTemplate.flushSession();
+        } catch (JdbcException ex) {
+            // TOCTOU 兜底：两并发排产同时通过 pre-check，DB UK 仅允许一行落地。
+            throw new NopException(ErpApsErrors.ERR_APS_CAPACITY_CONFLICT, ex)
+                    .param(ErpApsErrors.ARG_MACHINE_ID, op.getMachineId())
+                    .param(ErpApsErrors.ARG_OP_CODE, op.getCode());
+        }
+    }
+
+    /** 区间重叠判定（边界可相切）：existing.start &lt; newEnd AND existing.end &gt; newStart。 */
+    protected boolean hasOverlappingReservation(Long machineId, Timestamp newStart, Timestamp newEnd) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("machineId", machineId));
+        q.addFilter(lt("plannedStartT", newEnd));
+        q.addFilter(gt("plannedEndT", newStart));
+        return !capacityReservationDao().findAllByQuery(q).isEmpty();
+    }
+
+    /** 释放某工序的全部产能预留（PLANNED→DRAFT/CANCELLED 重排前置）。ErpApsCapacityReservation 不启用逻辑删除，硬删除。
+     *  释放后立即 flushSession：确保后续 persist 的重叠 pre-check 查询能反映已删除行，避免幻读阻塞重排。 */
+    protected void releaseReservationsByOrder(Long operationOrderId) {
+        if (operationOrderId == null) {
+            return;
+        }
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("operationOrderId", operationOrderId));
+        IEntityDao<ErpApsCapacityReservation> dao = capacityReservationDao();
+        List<ErpApsCapacityReservation> toDelete = dao.findAllByQuery(q);
+        if (toDelete.isEmpty()) {
+            return;
+        }
+        for (ErpApsCapacityReservation r : toDelete) {
+            dao.deleteEntity(r);
+        }
+        ormTemplate.flushSession();
     }
 
     // ---------- 查询/校验辅助 ----------
@@ -247,5 +339,9 @@ public class ErpApsSchedulingProcessor {
 
     protected IEntityDao<ErpApsSchedule> scheduleDao() {
         return daoProvider.daoFor(ErpApsSchedule.class);
+    }
+
+    protected IEntityDao<ErpApsCapacityReservation> capacityReservationDao() {
+        return daoProvider.daoFor(ErpApsCapacityReservation.class);
     }
 }

@@ -1,6 +1,8 @@
 
     alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_aps_capacity_reservation add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_aps_operation_order add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_aps_schedule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -15,6 +17,9 @@ alter table erp_aps_dispatch_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT N
 
 alter table erp_md_organization drop primary key;
 alter table erp_md_organization add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_aps_capacity_reservation drop primary key;
+alter table erp_aps_capacity_reservation add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_aps_operation_order drop primary key;
 alter table erp_aps_operation_order add primary key (NOP_TENANT_ID, ID);

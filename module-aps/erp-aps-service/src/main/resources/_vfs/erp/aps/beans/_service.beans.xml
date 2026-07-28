@@ -5,6 +5,14 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+    <bean id="app.erp.aps.service.entity.ErpApsCapacityReservationBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpApsCapacityReservation" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.aps.biz.IErpApsCapacityReservationBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpApsCapacityReservation"/>
+    </bean>
+
     <bean id="app.erp.aps.service.entity.ErpApsOperationOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpApsOperationOrder" class="io.nop.biz.proxy.BizProxyFactoryBean"

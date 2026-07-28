@@ -5,6 +5,22 @@ CREATE TABLE erp_md_organization(
   constraint PK_erp_md_organization primary key (id)
 );
 
+CREATE TABLE erp_aps_capacity_reservation(
+  id INT8 NOT NULL ,
+  machine_id INT8 NOT NULL ,
+  planned_start_t TIMESTAMP NOT NULL ,
+  planned_end_t TIMESTAMP NOT NULL ,
+  operation_order_id INT8 NOT NULL ,
+  org_id INT8  ,
+  remark VARCHAR(1000)  ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_aps_capacity_reservation primary key (id)
+);
+
 CREATE TABLE erp_aps_operation_order(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -155,6 +171,32 @@ CREATE TABLE erp_aps_dispatch_log(
 
       COMMENT ON TABLE erp_md_organization IS 'ErpMdOrganization';
                 
+      COMMENT ON TABLE erp_aps_capacity_reservation IS '产能预留';
+                
+      COMMENT ON COLUMN erp_aps_capacity_reservation.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.machine_id IS '工作中心/设备';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.planned_start_t IS '预留开始时间';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.planned_end_t IS '预留结束时间';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.operation_order_id IS '工序工单';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_aps_capacity_reservation.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_aps_operation_order IS '工序工单';
                 
       COMMENT ON COLUMN erp_aps_operation_order.id IS 'ID';
