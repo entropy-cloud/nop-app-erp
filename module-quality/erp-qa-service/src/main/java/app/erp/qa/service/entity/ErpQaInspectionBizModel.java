@@ -254,11 +254,28 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
                 .param(ErpQaErrors.ARG_EXPECTED_STATUS, expected);
     }
 
+    // PENDING 单一源态守卫（对齐 recordResult）。终态 ACCEPTED/CONDITIONAL/REJECTED 不可直接恢复；
+    // 复检须新建质检单（createForBusinessBill 关联原单）。
+    private void requireInspectionPending(ErpQaInspection inspection) {
+        String current = inspection.getResult();
+        if (current != null && !Objects.equals(current, ErpQaConstants.INSPECTION_RESULT_PENDING)) {
+            throw illegalInspectionTransition(inspection, current, "PENDING（终态不可恢复，复检请新建质检单）");
+        }
+    }
+
+    private void markPosted(ErpQaInspection inspection, IServiceContext context) {
+        inspection.setPosted(Boolean.TRUE);
+        inspection.setPostedAt(CoreMetrics.currentTimestamp());
+        inspection.setPostedBy(context.getUserId());
+    }
+
     @Override
     @BizMutation
     public ErpQaInspection passInspection(@Name("inspectionId") Long inspectionId, IServiceContext context) {
         ErpQaInspection inspection = requireInspection(inspectionId, context);
+        requireInspectionPending(inspection);
         inspection.setResult(ErpQaConstants.INSPECTION_RESULT_ACCEPTED);
+        markPosted(inspection, context);
         updateEntity(inspection, null, context);
         return inspection;
     }
@@ -267,23 +284,20 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
     @BizMutation
     public ErpQaInspection failInspection(@Name("inspectionId") Long inspectionId, IServiceContext context) {
         ErpQaInspection inspection = requireInspection(inspectionId, context);
+        requireInspectionPending(inspection);
         inspection.setResult(ErpQaConstants.INSPECTION_RESULT_REJECTED);
+        markPosted(inspection, context);
         updateEntity(inspection, null, context);
-        return inspection;
-    }
-
-    @Override
-    @BizMutation
-    public ErpQaInspection reInspect(@Name("inspectionId") Long inspectionId, IServiceContext context) {
-        ErpQaInspection inspection = requireInspection(inspectionId, context);
-        inspection.setResult(ErpQaConstants.INSPECTION_RESULT_PENDING);
-        updateEntity(inspection, null, context);
+        ncrLifecycleService.autoCreateNcrFromInspection(inspection, loadLines(inspectionId), context);
         return inspection;
     }
 
     /**
      * F11 批量判定合格（plan 2026-07-22-0444-2 Phase 1）。逐行调 {@link #passInspection}；
      * 行级失败（result 非 PENDING 等）记入 {@link BatchOperationResult#getFailures()}，不阻塞其他行。
+     *
+     * <p>注：{@code reInspect} 已废弃（P0-MA2-017：终态不可直接恢复）。复检走
+     * {@link #createForBusinessBill} 新建关联质检单（owner doc state-machine.md §3）。
      */
     @Override
     @BizMutation

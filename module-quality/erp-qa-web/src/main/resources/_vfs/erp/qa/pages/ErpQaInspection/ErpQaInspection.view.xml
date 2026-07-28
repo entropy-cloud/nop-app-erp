@@ -139,14 +139,6 @@
                     </messages>
                     <visibleOn>${result == 'PENDING'}</visibleOn>
                 </action>
-                <action id="row-re-inspect-button" label="复检" i18n-en:label="Re-inspect" level="warning" icon="fa fa-undo">
-                    <api url="@mutation:ErpQaInspection__reInspect?inspectionId=$id"/>
-                    <confirmText>确认将此质检单重置为待检？</confirmText>
-                    <messages>
-                        <success>质检单已重置为待检</success>
-                    </messages>
-                    <visibleOn>${result != 'PENDING'}</visibleOn>
-                </action>
                 <action id="row-view-line-button" label="检验项明细" i18n-en:label="Inspection Lines" level="info" icon="fa fa-list"
                         actionType="drawer">
                     <drawer page="/erp/qa/pages/ErpQaInspectionLine/ref-inspection.page.yaml" size="xl">
