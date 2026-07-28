@@ -120,7 +120,7 @@
 
 | 维度 | 覆盖范围 | Skill |
 |------|---------|-------|
-| 设计文档基线 | 全域 docs/design/ | design-doc-audit |
+| 设计文档基线 | 全域 docs/design/（7 全局 + 18 域目录 + 18 跨域模式）。**终态：`⚠️(P1)`**——A3.1 已于 2026-07-28 完成（`docs/audits/2026-07-28-1510-arm-ma3-design-doc-baseline.md`）。Verdict FAIL：零 BLOCKER（功能覆盖度维度 PASS，95.8% 覆盖率 + 标配功能深度有 dedicated owner doc + 5 未覆盖项显式分级）；13 项 MAJOR → P1-MA3-001~013（目标 MR2，文档类：系统性实现状态泄漏 dim3 / finance+master-data+8 第二批扩展域 README owner-doc 边界 dim5 / logistics 缺 architecture 拆分 dim5 / 占位行为泄漏 dim2 / 角色冲突+8 域遗漏 dim6+9 / 8 域无角色基线 dim9 / product-scope 陈旧 dim4 / 危险操作审计+状态码目录重复 dim12）；8 项 P2 watch-only（P2-MA3-014~021）；MA2 owner-doc drift 复核全部确认分类一致 | design-doc-audit |
 | 设计完整性扫描 | 全域 vs product-scope | design-completeness-scan |
 | owner doc vs 代码 drift | S+A 级域抽样 | 新维度 |
 | API 契约一致性 | 全域 model/*.api.xml | 新维度 |

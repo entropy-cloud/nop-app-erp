@@ -75,7 +75,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| A3.1 | 设计文档作为行为基线审计（全域 docs/design/） | todo | `docs/design/README.md` | 0.3 | `docs/skills/design-doc-audit-prompt.md` |
+| A3.1 | 设计文档作为行为基线审计（全域 docs/design/） | done | `docs/design/README.md` | 0.3 | `docs/skills/design-doc-audit-prompt.md` |
 | A3.2 | 设计完整性扫描（vs product-scope + erp-survey） | todo | `docs/requirements/product-scope.md` | 0.3 | `docs/skills/design-completeness-scan-prompt.md` |
 | A3.3 | finance owner doc vs 代码 drift | todo | `docs/design/finance/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A3.4 | manufacturing owner doc vs 代码 drift | todo | `docs/design/manufacturing/` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |

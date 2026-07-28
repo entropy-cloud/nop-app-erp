@@ -1,6 +1,6 @@
 # 2026-07-28-1510-2-audit-remediation-ma3-design-doc-baseline MA3 设计文档作为行为基线审计（A3.1）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-28
 > Source: `docs/backlog/audit-remediation-roadmap.md` Milestone MA3（工作项 A3.1）
 > Related: `docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.3「设计文档基线」行（MA3）；`docs/audits/arm-index.md`（P1 索引）；`docs/skills/design-doc-audit-prompt.md`（审计方法——已有文档质量 12 维度 + 功能覆盖度外部基准）；`docs/design/README.md`（设计文档索引与编写规则 owner doc）；`docs/analysis/erp-survey/` + `docs/analysis/2026-06-30-1200-feature-coverage-matrix.md`（维度 1 外部对照基准）；`docs/plans/2026-07-28-1510-3-audit-remediation-ma3-design-completeness-scan.md`（A3.2 前瞻性缺口扫描——本审计审"存在的内容"，A3.2 找"缺失的内容"，互补不重叠）
@@ -76,72 +76,72 @@ owner doc `docs/design/README.md` 已规定设计文档结构与编写规则：
 
 ### Phase 1 - 设计文档行为基线系统性审查（12 维度 + 功能覆盖度）
 
-Status: planned
+Status: completed
 Targets: `docs/design/` 全部文件（全局文档 + 18 域目录 + 跨域模式文档）；`docs/requirements/product-scope.md`；`docs/analysis/erp-survey/` + `feature-coverage-matrix.md`（外部基准）
 Skill: `design-doc-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA2 A2.1–A2.17 done（owner-doc drift findings 已在 arm-index，本审计复核引用）。MA3 各项仅依赖 0.3（roadmap deps），A3.1 不依赖 A2.18 完成。本审计为 MA3 首项。
 
-- [ ] 维度「1 功能覆盖度（核心，外部基准）」：以 `docs/analysis/erp-survey/` + `feature-coverage-matrix.md` 为外部基准，核查已有文档**声称的覆盖**是否有实质设计支撑，并对照外部基准识别其未列入但应具备的能力。不仅查域存在，查功能深度（CRM lead scoring / 销售预测 / 替代工艺路线等开源标配）。缺失分级（核心标配 blocker / 重要 major / 长尾 note 建议声明"产品基线外"）。
+- [x] 维度「1 功能覆盖度（核心，外部基准）」：以 `docs/analysis/erp-survey/` + `feature-coverage-matrix.md` 为外部基准，核查已有文档**声称的覆盖**是否有实质设计支撑，并对照外部基准识别其未列入但应具备的能力。不仅查域存在，查功能深度（CRM lead scoring / 销售预测 / 替代工艺路线等开源标配）。缺失分级（核心标配 blocker / 重要 major / 长尾 note 建议声明"产品基线外"）。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「2 产品基线」：审查文档是否描述正式产品行为而非临时原型/演示/模拟/部分质量/后续重写；支付/退款/权限/数据删除/集成/账户管理行为是否定义为正式产品行为或显式路由需求澄清。
+- [x] 维度「2 产品基线」：审查文档是否描述正式产品行为而非临时原型/演示/模拟/部分质量/后续重写；支付/退款/权限/数据删除/集成/账户管理行为是否定义为正式产品行为或显式路由需求澄清。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「3 稳定与时间敏感责任」：审查文档是否回答"产品行为是什么"而非混入实现顺序/待办/计划状态/当前阻塞/活动工作/路线图排序（这些应在 backlog/plans）。
+- [x] 维度「3 稳定与时间敏感责任」：审查文档是否回答"产品行为是什么"而非混入实现顺序/待办/计划状态/当前阻塞/活动工作/路线图排序（这些应在 backlog/plans）。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「4 需求对齐」：审查设计声明与 `docs/requirements/product-scope.md` 对齐；原始输入/原型/历史审计文本不覆盖综合需求；矛盾分类（设计漂移/需求差距/有意基线变更/需人工决策）。
+- [x] 维度「4 需求对齐」：审查设计声明与 `docs/requirements/product-scope.md` 对齐；原始输入/原型/历史审计文本不覆盖综合需求；矛盾分类（设计漂移/需求差距/有意基线变更/需人工决策）。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「5 Owner-doc 边界」：审查设计是否重复表目录/逐字段 schema/字典/契约/生成代码/平台实现细节（应路由 orm.xml/architecture）；实现关注点（事务/锁/缓存/调度/集成协议/模块连接）是否路由到 architecture。
+- [x] 维度「5 Owner-doc 边界」：审查设计是否重复表目录/逐字段 schema/字典/契约/生成代码/平台实现细节（应路由 orm.xml/architecture）；实现关注点（事务/锁/缓存/调度/集成协议/模块连接）是否路由到 architecture。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「6 跨设计一致性」：审查 app-overview / feature-inventory / 域文档 / roles-and-permissions 在内容、谁可用、哪个 owner 控制细节上一致；同概念不多文件冲突命名/生命周期/所有权/资格规则。
+- [x] 维度「6 跨设计一致性」：审查 app-overview / feature-inventory / 域文档 / roles-and-permissions 在内容、谁可用、哪个 owner 控制细节上一致；同概念不多文件冲突命名/生命周期/所有权/资格规则。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「7 域语言与有界上下文」：审查每主要业务概念有自然所属域文档；面向业务语言不被表名/枚举码/类名/框架机制取代；跨域流程描述为业务工作流。
+- [x] 维度「7 域语言与有界上下文」：审查每主要业务概念有自然所属域文档；面向业务语言不被表名/枚举码/类名/框架机制取代；跨域流程描述为业务工作流。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「8 工作流与状态清晰度」：审查核心流程业务级序列细节；状态转换标识触发者/业务前提/结果；终端/异常/退款取消重试/超时/回退/集成失败路径在影响产品行为时业务级指定。**仅核验文档清晰度，不重做 MA2 状态机正确性裁决**。
+- [x] 维度「8 工作流与状态清晰度」：审查核心流程业务级序列细节；状态转换标识触发者/业务前提/结果；终端/异常/退款取消重试/超时/回退/集成失败路径在影响产品行为时业务级指定。**仅核验文档清晰度，不重做 MA2 状态机正确性裁决**。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「9 角色权限与受保护操作」：审查角色文档与功能/域文档一致；敏感行为（支付/退款/数据删除/账户管理/权限管理）有明确 owner-doc 基线或升级。
+- [x] 维度「9 角色权限与受保护操作」：审查角色文档与功能/域文档一致；敏感行为（支付/退款/数据删除/账户管理/权限管理）有明确 owner-doc 基线或升级。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「10 页面与交互行为」：审查重要页面/交互结果在业务级涵盖（所需验证/资格/空错误状态/用户可见反馈）；UI/原型细节非除非需求/设计已接受。
+- [x] 维度「10 页面与交互行为」：审查重要页面/交互结果在业务级涵盖（所需验证/资格/空错误状态/用户可见反馈）；UI/原型细节非除非需求/设计已接受。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「11 配置与操作语义」：审查面向业务配置与技术调度/存储/部署/集成机制分离；操作默认值/回退/管理员可见控件仅在影响支持应用行为时定义。
+- [x] 维度「11 配置与操作语义」：审查面向业务配置与技术调度/存储/部署/集成机制分离；操作默认值/回退/管理员可见控件仅在影响支持应用行为时定义。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] 维度「12 维护成本与重复」：审查设计事实是否有单一 owner doc；重复矩阵/功能状态列表/复制规则块视为风险（除非故意为单一所有者）。
+- [x] 维度「12 维护成本与重复」：审查设计事实是否有单一 owner doc；重复矩阵/功能状态列表/复制规则块视为风险（除非故意为单一所有者）。
       - Skill: `design-doc-audit-prompt.md`
-- [ ] MA2 已登记 owner-doc drift 复核：复核 MA2 审计中已标注的 owner-doc 不一致项（P1-MA2-067 closeProject owner doc 用词软门控 / P1-MA2-073 b2b state-machine.md 自动化承诺 vs README/MFT Deferred 文档不一致 / P2-MA2-065/067/068/069/070/071 多域 state-machine.md 缺多状态承载实体独立章节 等），确认其在本审计维度下的分类与归属。
+- [x] MA2 已登记 owner-doc drift 复核：复核 MA2 审计中已标注的 owner-doc 不一致项（P1-MA2-067 closeProject owner doc 用词软门控 / P1-MA2-073 b2b state-machine.md 自动化承诺 vs README/MFT Deferred 文档不一致 / P2-MA2-065/067/068/069/070/071 多域 state-machine.md 缺多状态承载实体独立章节 等），确认其在本审计维度下的分类与归属。
       - Skill: none
-- [ ] 产出审计报告 `docs/audits/2026-07-28-1510-arm-ma3-design-doc-baseline.md`（含：12 维度逐项裁决 + 功能覆盖度结论（外部基准缺口清单分级）、需求/设计冲突分类摘要、owner 边界摘要、域边界摘要、维护成本摘要、blocker/major/minor/note finding 清单、MA2 owner-doc drift 复核表、裁决通过/失败、剩余风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-28-1510-arm-ma3-design-doc-baseline.md`（含：12 维度逐项裁决 + 功能覆盖度结论（外部基准缺口清单分级）、需求/设计冲突分类摘要、owner 边界摘要、域边界摘要、维护成本摘要、blocker/major/minor/note finding 清单、MA2 owner-doc drift 复核表、裁决通过/失败、剩余风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] 12 维度逐项裁决产出（每维度至少一句裁决，含"本维度无发现"）
-- [ ] 功能覆盖度结论产出（外部基准缺口清单 + 分级 blocker/major/note），与文档质量结论分别给出
-- [ ] blocker/major/minor/note finding 清单产出，每个含严重性/受影响文件/问题/重要性/建议处理方式
-- [ ] MA2 已登记 owner-doc drift 复核表产出
+- [x] 12 维度逐项裁决产出（每维度至少一句裁决，含"本维度无发现"）
+- [x] 功能覆盖度结论产出（外部基准缺口清单 + 分级 blocker/major/note），与文档质量结论分别给出
+- [x] blocker/major/minor/note finding 清单产出，每个含严重性/受影响文件/问题/重要性/建议处理方式
+- [x] MA2 已登记 owner-doc drift 复核表产出
 
 ### Phase 2 - finding 汇总交接 MR2 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 设计文档审计 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.3「设计文档基线」行
 Skill: none
 
 - Item Types: `Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] finding 汇总：全部 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA3-NNN`、报告、描述、目标 MR2、修复状态 todo）。文档类 P1 目标 MR2（依赖 MA3+MA4 done，由 R2.0 展开机制转化为具体修复工作项行）。
+- [x] finding 汇总：全部 blocker/major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA3-NNN`、报告、描述、目标 MR2、修复状态 todo）。文档类 P1 目标 MR2（依赖 MA3+MA4 done，由 R2.0 展开机制转化为具体修复工作项行）。
       - Skill: none
-- [ ] 若发现致错误实现的高风险设计-代码背离，升级标注并交接 A3.3-A3.5（owner doc vs 代码 drift）+ A4.6-A4.8（view.xml drift），在报告中明确交接路径。
+- [x] 若发现致错误实现的高风险设计-代码背离，升级标注并交接 A3.3-A3.5（owner doc vs 代码 drift）+ A4.6-A4.8（view.xml drift），在报告中明确交接路径。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.3「设计文档基线」行终态标记（`❓` → `✅`/`⚠️(P1)`）。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.3「设计文档基线」行终态标记（`❓` → `✅`/`⚠️(P1)`）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有 blocker/major 已登记 arm-index §P1 汇总（目标 MR2），待 R2.0 展开
-- [ ] 高风险设计-代码背离已标注交接路径（A3.3-A3.5 / A4.6-A4.8）
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论
+- [x] 所有 blocker/major 已登记 arm-index §P1 汇总（目标 MR2），待 R2.0 展开
+- [x] 高风险设计-代码背离已标注交接路径（A3.3-A3.5 / A4.6-A4.8）
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论
 
 ## Draft Review Record
 
@@ -151,14 +151,14 @@ Exit Criteria:
 
 > 本计划主体是文档审查（不改应用代码；产出为审计报告 + arm-index/scope-matrix 更新）。完整仓库验证在此处运行一次（同型审计 plan 的标准 Closure 实践）。文档修复在 MR2 批量进行，本审计只识别 finding。
 
-- [ ] 范围内行为完成（A3.1 设计文档行为基线审查报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
-- [ ] 已运行验证：文档审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A3.1 设计文档行为基线审查报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix 结论已反映）
+- [x] 已运行验证：文档审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -182,13 +182,19 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待 closure>
+Status Note: 完成。A3.1 设计文档行为基线审计已执行完毕——产出审计报告 `docs/audits/2026-07-28-1510-arm-ma3-design-doc-baseline.md`（Verdict: FAIL——零 BLOCKER + 功能覆盖度维度 PASS；13 项 MAJOR → P1-MA3-001~013 目标 MR2 + 8 项 P2 watch-only + MA2 owner-doc drift 复核全部确认分类一致），13 项 P1 已登记 arm-index §P1 详细清单，scope matrix §2.3 终态标记 `⚠️(P1)`，roadmap A3.1 推进至 done。本审计为文档层，无代码变更（`git status` 仅 4 个 docs/ 文件），build/test 门控作回归基线确认（`mvn clean install -DskipTests` + `mvn test` 均 BUILD SUCCESS，0 failures/0 errors）。文档修复在 MR2 批量进行。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
-- Evidence: <待 closure>
+- Auditor / Agent: 独立结束审计（fresh-context general 子代理 `ses_057a9614cffeRlNps2QDQf9HvF`，2026-07-28）
+- Verdict: **passes closure audit**（无 BLOCKER / 1 MINOR）
+- Evidence: (1) Phase 1 & 2 checklist items 全 `- [x]` + Status `completed` + Exit Criteria 全 `- [x]`；(2) 交付物存在且实质——审计报告含 Verdict/12 维度裁决/维度 1 功能覆盖度结论/finding 清单/MA2 drift 复核表；arm-index 报告清单行 + §P1 详细清单 13 行 P1-MA3-001~013 + MA3 summary note；scope matrix §2.3 终态 `⚠️(P1)` 标注；(3) `git status` 确认仅 docs/ 下 4 文件变更，零 `module-*/`/`app-erp-all/`/`*.orm.xml`/`*.java`/`*.xbiz.xml` 触及（文档审查如声明）；(4) 验证范围：`mvn clean install -DskipTests`（154 模块 full reactor）+ `mvn test` 均 BUILD SUCCESS；(5) citation 抽查 3 项 MAJOR finding（P1-MA3-002/006/008）所引文件路径全部存在，0 非存在引用。
+- MINOR（已处置）：roadmap A3.1 闭包时仍 `todo`——执行者已在本 closure 中翻转为 `done`。
 
 Follow-up:
 
-- <待 closure>
+- **MR2（文档类 P1 批量修复）**：P1-MA3-001~013（13 项，依赖 MA3+MA4 done 后由 R2.0 展开机制转化为具体修复工作项行）+ P2-MA3-014~021（8 项 watch-only）。
+- **A3.2**（前瞻性缺失扫描，找「从未设计的整个功能」）——successor required，执行时复核本审计维度 1 结论。
+- **A3.3-A3.5**（owner doc vs 代码 drift 逐行核对）——successor required；本审计 §9 已标注交接路径（P1-MA2-067/073 + P2-MA2-067/069）。
+- **A4.6-A4.8**（view.xml drift）——本审计 §9 已标注交接（dashboards 指标表 vs 实现替代）。
+- **每日开发日志**：已更新 `docs/logs/2026/07-28.md`。
