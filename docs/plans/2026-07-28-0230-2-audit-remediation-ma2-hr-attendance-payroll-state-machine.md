@@ -1,6 +1,6 @@
 # 2026-07-28-0230-2-audit-remediation-ma2-hr-attendance-payroll-state-machine MA2 hr 状态机审查 — 考勤与工资（A2.7b）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: audit-remediation
 > Work Item: A2.7b hr 状态机审查 — 考勤与工资（S 级拆分 2/2）
 > Last Reviewed: 2026-07-28
@@ -94,84 +94,88 @@ hr（人力资源）域 S 级状态机审查拆分 2 片：**A2.7a = 员工与�
 
 ### Phase 1 - 考勤与工资状态机系统性业务审查
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/.../service/entity/ErpHrLeaveRequestBizModel.java`（submit:73-83/approve:86-98+shiftBiz.onLeaveApproved:96/reject:101-108/cancel:111-119+shiftBiz.onLeaveCancelled:117 + 守卫 requireStatus:136-143/checkLeaveBalance:145-165/checkDateOverlap:167-187/sumUsedDays:199-213）；`.../service/entity/ErpHrAttendanceBizModel.java`（clockIn:52-73 幂等:66-69/clockOut:76-88 守卫:80-83）；`.../service/entity/ErpHrTimesheetBizModel.java`（submit:35-46 守卫:38-42 + **硬编码字符串 DRAFT/SUBMITTED L38/L43 + approve/reject 未实现**）；`.../service/entity/ErpHrShiftAssignmentBizModel.java`（assignSingle:59-67 SCHEDULED + activeStatuses:171-177）；`.../service/entity/ErpHrShiftBizModel.java`（calcAttendance:55-110 写 ABSENT:74,86/PRESENT:103 + onLeaveApproved:124-136/onLeaveCancelled:139-154 leaveRequestId 匹配:146）；`.../service/entity/ErpHrShiftRotationPatternBizModel.java`（generateRotation:55-94 + deleteExistingAssignments:177-194 CANCELLED:190）；`.../service/entity/ErpHrShiftSwapRequestBizModel.java`（submit:49-75/approve:78-110 交换 shiftId:92-94+重置 SCHEDULED:101-102/reject:113-120/cancel:123-130 + assertTransition:134-142）；`.../service/entity/ErpHrSalaryBizModel.java`（calculateSalary:67-76/runPayroll:79-94 filter:232-238/markPaid:97-118 双守卫:100-111+postingDispatcher.tryPostPayment:112/voidSalary:121-131 守卫:124-127/generateBankFile:134-178 GENERATED:168 + findPayableSalaries:240）；`.../service/entity/ErpHrSalarySimulationBizModel.java`（createSimulation:70-95/submitForReview:385-402/approve:405-421/reject:424-439/convertToFormal:442-532 + per-employee skip:465,470/all-conflict throw:510-525）；`.../service/entity/ErpHrPayrollBankFileBizModel.java`（18 行 CRUD 桩无状态迁移）；`.../service/posting/SalaryPostingDispatcher.java`（tryPostAccrual:46/tryPostPayment:66 吞异常返回 boolean + javadoc:27-28 "无 posted 字段" drift）+`SalaryPostingExecutor.java`（IErpFinVoucherBiz.post REQUIRES_NEW）+`SalaryPostingProvider.java`（IErpFinAcctDocProvider:36）；`module-hr/model/app-erp-hr.orm.xml`（leave-status:50-56/timesheet-status:57-62/salary-payment-status:72-76/salary-approval-status orphan:77-84/simulation-status:148-154/bank-file-status:132-136/swap-status:166-171 + ErpHrLeaveRequest:481-530 status:493/ErpHrAttendance:665-711 isAbsent:677/ErpHrTimesheet:577-619 status:587/ErpHrShiftAssignment:1170-1228 status:1186 无 dict+isAbsent:1181/ErpHrShiftSwapRequest:1266-1324 status:1279/ErpHrSalary:714-782 approveStatus:736+paymentStatus:735+posted:758/ErpHrSalarySimulation:854-907 status:865/ErpHrPayrollBankFile:1095-1130 status:1106）；`docs/design/human-resource/state-machine.md`+`payroll.md`+`payroll-simulation.md`+`shift-scheduling.md`；服务层 `TestErpHrLeaveEngine`+`TestErpHrAttendanceEngine`+`TestErpHrShiftScheduling`+`TestErpHrSalaryWorkflowApproval`+`TestErpHrPayrollEngine`+`TestErpHrPayrollSimulation`
 Skill: `state-machine-business-review-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA1 done（P2-MA1-020 orphan dict + P1-MA1-022 跨域只读已登记待 MR1，本审计复核状态机角度）；A2.5a/b/c done（finance 状态机 dict 死状态 + posted 双轴 + 过账 tryPost 容错同型裁决范式 P1-MA2-031/032）；A2.6a/b done（mfg 状态机 posted 标记 + 过账 dispatcher tryPost 同型范式）；A2.7a done（员工 employmentStatus=ACTIVE/PROBATION 是 runPayroll 前置——A2.7a 复核员工侧）
 
-- [ ] 维度「状态定义」：审查考勤 isAbsent 布尔（无 enum——是否应建模为状态）；排班分配 status 无 dict（raw VARCHAR + 常量——清晰性缺陷）；工时单 APPROVED/REJECTED 等待点；工资双轴 approveStatus×paymentStatus 组合语义；仿真 CONVERTED 终态；银行文件 UPLOADED/CONFIRMED 等待点（桩未实现）。
+- [x] 维度「状态定义」：审查考勤 isAbsent 布尔（无 enum——是否应建模为状态）；排班分配 status 无 dict（raw VARCHAR + 常量——清晰性缺陷）；工时单 APPROVED/REJECTED 等待点；工资双轴 approveStatus×paymentStatus 组合语义；仿真 CONVERTED 终态；银行文件 UPLOADED/CONFIRMED 等待点（桩未实现）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「转换完整性」：列出工时单每个状态传入/传出——**DRAFT→SUBMITTED 实现 / SUBMITTED→APPROVED/REJECTED 未实现**（迁移缺失——重点）；排班分配多 writer 迁移矩阵（assign SCHEDULED / calcAttendance PRESENT/ABSENT / onLeaveApproved ABSENT / onLeaveCancelled SCHEDULED / regenerate CANCELLED / swap 交换）；换班 4 态全迁移 + approve 副作用（交换 shiftId + 重置 SCHEDULED）；工资支付轴 PENDING→PAID/VOID + 批量 generateBankFile + 审批轴委托平台；仿真 5 态全迁移；银行文件 **GENERATED→UPLOADED/CONFIRMED 未实现**（桩）；请假 5 态全迁移 + approve/cancel 触发排班联动。是否有非法跳转或缺失条件分支。
+- [x] 维度「转换完整性」：列出工时单每个状态传入/传出——**DRAFT→SUBMITTED 实现 / SUBMITTED→APPROVED/REJECTED 未实现**（迁移缺失——重点）；排班分配多 writer 迁移矩阵（assign SCHEDULED / calcAttendance PRESENT/ABSENT / onLeaveApproved ABSENT / onLeaveCancelled SCHEDULED / regenerate CANCELLED / swap 交换）；换班 4 态全迁移 + approve 副作用（交换 shiftId + 重置 SCHEDULED）；工资支付轴 PENDING→PAID/VOID + 批量 generateBankFile + 审批轴委托平台；仿真 5 态全迁移；银行文件 **GENERATED→UPLOADED/CONFIRMED 未实现**（桩）；请假 5 态全迁移 + approve/cancel 触发排班联动。是否有非法跳转或缺失条件分支。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「终端状态和恢复」：工资 PAID/VOID 终态（VOID 不可恢复？voidSalary 守卫拒已 PAID）；仿真 CONVERTED 终态（不可恢复）；请假 APPROVED→CANCELLED（cancel 红冲恢复 + 排班回退，非真终态）/ REJECTED 终态；排班分配 CANCELLED 终态；考勤打卡无终态（每日记录）。
+- [x] 维度「终端状态和恢复」：工资 PAID/VOID 终态（VOID 不可恢复？voidSalary 守卫拒已 PAID）；仿真 CONVERTED 终态（不可恢复）；请假 APPROVED→CANCELLED（cancel 红冲恢复 + 排班回退，非真终态）/ REJECTED 终态；排班分配 CANCELLED 终态；考勤打卡无终态（每日记录）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「异常路径」：核验全覆盖——请假余额不足（守卫拒绝）/ 日期重叠（守卫拒绝）/ 重复打卡（幂等）/ markPaid 未审批（双守卫拒绝）/ voidSalary 已 PAID（守卫拒绝）/ **工资过账 tryPostPayment 吞异常→posted=false 悬挂**（与 mfg posting dispatcher tryPost 同型容错——重点核验是否有悬挂告警闭环 / 期末结账前置检查兜底）/ 仿真 convertToFormal 冲突（per-employee skip + all-conflict throw）/ onLeaveCancelled leaveRequestId 不匹配（仅回退匹配项——部分回退？）/ runPayroll 批量单失败隔离。
+- [x] 维度「异常路径」：核验全覆盖——请假余额不足（守卫拒绝）/ 日期重叠（守卫拒绝）/ 重复打卡（幂等）/ markPaid 未审批（双守卫拒绝）/ voidSalary 已 PAID（守卫拒绝）/ **工资过账 tryPostPayment 吞异常→posted=false 悬挂**（与 mfg posting dispatcher tryPost 同型容错——重点核验是否有悬挂告警闭环 / 期末结账前置检查兜底）/ 仿真 convertToFormal 冲突（per-employee skip + all-conflict throw）/ onLeaveCancelled leaveRequestId 不匹配（仅回退匹配项——部分回退？）/ runPayroll 批量单失败隔离。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「可达性」：**重点——工时单 APPROVED/REJECTED 是否可达**（无 approve/reject writer → dict 死状态，同 finance P1-MA2-031 + mfg P1-MA2-035/036 同型裁决）；**银行文件 UPLOADED/CONFIRMED 是否可达**（桩无 writer → 死状态）；排班分配 CANCELLED 可达性（仅 regenerate）；工资 REJECTED approveStatus 可达性（平台审批动作）；仿真从 DRAFT 到 CONVERTED 可达性；是否有死循环或不可达终态。
+- [x] 维度「可达性」：**重点——工时单 APPROVED/REJECTED 是否可达**（无 approve/reject writer → dict 死状态，同 finance P1-MA2-031 + mfg P1-MA2-035/036 同型裁决）；**银行文件 UPLOADED/CONFIRMED 是否可达**（桩无 writer → 死状态）；排班分配 CANCELLED 可达性（仅 regenerate）；工资 REJECTED approveStatus 可达性（平台审批动作）；仿真从 DRAFT 到 CONVERTED 可达性；是否有死循环或不可达终态。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「角色和权限」：每个转换绑定执行角色——请假 submit（员工）/approve（主管）/工资 approve（财务主管）/markPaid（出纳）/runPayroll（HR）/换班 approve（主管）；危险操作（**markPaid 触发 finance 凭证过账跨域写会计保护区域** / voidSalary 已过账工资作废 / generateBankFile 批量付款影响资金）；多角色冲突（HR runPayroll vs 财务 approve vs 出纳 markPaid）。
+- [x] 维度「角色和权限」：每个转换绑定执行角色——请假 submit（员工）/approve（主管）/工资 approve（财务主管）/markPaid（出纳）/runPayroll（HR）/换班 approve（主管）；危险操作（**markPaid 触发 finance 凭证过账跨域写会计保护区域** / voidSalary 已过账工资作废 / generateBankFile 批量付款影响资金）；多角色冲突（HR runPayroll vs 财务 approve vs 出纳 markPaid）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「外部依赖」：**工资过账经 IErpFinVoucherBiz**（finance 凭证链 REQUIRES_NEW 跨域写会计保护区域——重点核验状态迁移与过账一致性 + tryPostPayment 吞异常语义）；工资计提/付款 IErpFinAcctDocProvider（Provider 反向注册）；员工净余额报表 IErpFinArApItemBiz（只读）；请假 approve→排班 onLeaveApproved（同域跨实体）；外部步骤失败是否阻断状态迁移（SalaryPostingDispatcher 吞异常——状态迁移与过账解耦）。
+- [x] 维度「外部依赖」：**工资过账经 IErpFinVoucherBiz**（finance 凭证链 REQUIRES_NEW 跨域写会计保护区域——重点核验状态迁移与过账一致性 + tryPostPayment 吞异常语义）；工资计提/付款 IErpFinAcctDocProvider（Provider 反向注册）；员工净余额报表 IErpFinArApItemBiz（只读）；请假 approve→排班 onLeaveApproved（同域跨实体）；外部步骤失败是否阻断状态迁移（SalaryPostingDispatcher 吞异常——状态迁移与过账解耦）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「TODO/任务策略」：每个非终端状态是否产生正确类型待办——请假 SUBMITTED 主管审批 TODO；工资 SUBMITTED 财务审批 TODO；银行文件 GENERATED 出纳上传 TODO（桩未实现——静默？）；工时单 SUBMITTED 审批 TODO（approve 未实现——长期 SUBMITTED 静默下沉？）；考勤缺卡 calcAttendance 置 ABSENT 是否告警；仿真 IN_REVIEW 审批 TODO；是否存在期望有人行动但不产生待办的状态。
+- [x] 维度「TODO/任务策略」：每个非终端状态是否产生正确类型待办——请假 SUBMITTED 主管审批 TODO；工资 SUBMITTED 财务审批 TODO；银行文件 GENERATED 出纳上传 TODO（桩未实现——静默？）；工时单 SUBMITTED 审批 TODO（approve 未实现——长期 SUBMITTED 静默下沉？）；考勤缺卡 calcAttendance 置 ABSENT 是否告警；仿真 IN_REVIEW 审批 TODO；是否存在期望有人行动但不产生待办的状态。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「场景演练（最重要）」：端到端演练代表性场景——(a) 请假快乐路径（DRAFT→submit→SUBMITTED→approve→APPROVED + 余额扣减 + 排班 ABSENT）；(b) 请假 reject/cancel（+ 排班回退 SCHEDULED）；(c) 考勤打卡（clockIn→clockOut + calcAttendance）；(d) **工时单审批**（DRAFT→SUBMITTED→APPROVED/REJECTED——**未实现，演练确认缺口**）；(e) 排班分配生命周期（SCHEDULED→PRESENT/ABSENT→regenerate CANCELLED）；(f) 换班（PENDING→approve→交换+重置）；(g) 工资双轴（UNSUBMITTED→平台审批→APPROVED→markPaid→PAID + 凭证 + generateBankFile）；(h) 工资 void（PENDING→VOID / 已 PAID 拒绝）；(i) 仿真全链（→CONVERTED + 创建正式工资）；(j) **银行文件**（GENERATED→UPLOADED→CONFIRMED——**桩未实现**）；(k) **工资过账失败**（tryPostPayment 吞异常→posted=false 悬挂？）；(l) 并发 markPaid 同工资（无 @Version，交接 A2.17）。
+- [x] 维度「场景演练（最重要）」：端到端演练代表性场景——(a) 请假快乐路径（DRAFT→submit→SUBMITTED→approve→APPROVED + 余额扣减 + 排班 ABSENT）；(b) 请假 reject/cancel（+ 排班回退 SCHEDULED）；(c) 考勤打卡（clockIn→clockOut + calcAttendance）；(d) **工时单审批**（DRAFT→SUBMITTED→APPROVED/REJECTED——**未实现，演练确认缺口**）；(e) 排班分配生命周期（SCHEDULED→PRESENT/ABSENT→regenerate CANCELLED）；(f) 换班（PENDING→approve→交换+重置）；(g) 工资双轴（UNSUBMITTED→平台审批→APPROVED→markPaid→PAID + 凭证 + generateBankFile）；(h) 工资 void（PENDING→VOID / 已 PAID 拒绝）；(i) 仿真全链（→CONVERTED + 创建正式工资）；(j) **银行文件**（GENERATED→UPLOADED→CONFIRMED——**桩未实现**）；(k) **工资过账失败**（tryPostPayment 吞异常→posted=false 悬挂？）；(l) 并发 markPaid 同工资（无 @Version，交接 A2.17）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 维度「与设计文档一致性」：每个状态/转换在 `state-machine.md`/`payroll.md`/`payroll-simulation.md`/`shift-scheduling.md` 是否有匹配——**重点漂移**：(1) **工时单 APPROVED/REJECTED owner doc 声明但未实现**（漂移）；(2) **银行文件 UPLOADED/CONFIRMED owner doc 声明但桩未实现**（漂移）；(3) **排班分配 status 无 dict**（owner doc 是否声明——清晰性缺陷）；(4) **工时单硬编码字符串** vs ErpHrConstants（不一致）；(5) orphan dict salary-approval-status 6 态 vs 实际 wf/approve-status 4 态（owner doc §审批状态标准化 已声明废弃——确认一致性）；(6) **SalaryPostingDispatcher javadoc L27-28 "无 posted 字段" vs ORM:758 posted**（doc/code drift——重点核验）；(7) 工资过账 tryPostPayment 吞异常 owner doc 是否声明容错语义。
+- [x] 维度「与设计文档一致性」：每个状态/转换在 `state-machine.md`/`payroll.md`/`payroll-simulation.md`/`shift-scheduling.md` 是否有匹配——**重点漂移**：(1) **工时单 APPROVED/REJECTED owner doc 声明但未实现**（漂移）；(2) **银行文件 UPLOADED/CONFIRMED owner doc 声明但桩未实现**（漂移）；(3) **排班分配 status 无 dict**（owner doc 是否声明——清晰性缺陷）；(4) **工时单硬编码字符串** vs ErpHrConstants（不一致）；(5) orphan dict salary-approval-status 6 态 vs 实际 wf/approve-status 4 态（owner doc §审批状态标准化 已声明废弃——确认一致性）；(6) **SalaryPostingDispatcher javadoc L27-28 "无 posted 字段" vs ORM:758 posted**（doc/code drift——重点核验）；(7) 工资过账 tryPostPayment 吞异常 owner doc 是否声明容错语义。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] 复核已登记 finding 考勤/工资状态机角度：P2-MA1-020（orphan dict——确认工资状态机无悬挂）/ P1-MA1-022（daoFor 跨域只读——状态机角度无升级）。标注终态（仅治理缺陷 / 产生运行时缺陷升级）。
+- [x] 复核已登记 finding 考勤/工资状态机角度：P2-MA1-020（orphan dict——确认工资状态机无悬挂）/ P1-MA1-022（daoFor 跨域只读——状态机角度无升级）。标注终态（仅治理缺陷 / 产生运行时缺陷升级）。
       - Skill: none
-- [ ] 产出审计报告 `docs/audits/2026-07-28-0230-arm-ma2-hr-attendance-payroll-state-machine.md`（含：请假/考勤/工时单/排班分配/换班/工资双轴/仿真/银行文件状态图、各维度通过/失败裁决、控制点 PASS/FAIL、MA1 finding 运行时影响复核表、并发敏感点交接 A2.17、残留风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-28-0230-arm-ma2-hr-attendance-payroll-state-machine.md`（含：请假/考勤/工时单/排班分配/换班/工资双轴/仿真/银行文件状态图、各维度通过/失败裁决、控制点 PASS/FAIL、MA1 finding 运行时影响复核表、并发敏感点交接 A2.17、残留风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。仅本阶段交付的本地化检查列在此。
 
-- [ ] 请假（5 态）+ 考勤（isAbsent）+ 工时单（4 态）+ 排班分配（4 值无 dict）+ 换班（4 态）+ 工资双轴（approveStatus 4+paymentStatus 3+posted）+ 仿真（5 态）+ 银行文件（3 态）的状态图与转换矩阵产出，每个状态/转换有通过/失败裁决与证据
-- [ ] 已识别控制点（状态定义 / 转换完整性[含工时单 approve/reject + 银行文件未实现] / 终端与恢复 / 异常路径[含工资过账吞异常悬挂] / 可达性[含工时单/银行文件死状态] / 角色权限 / 外部依赖[含工资过账跨域写] / TODO 任务策略 / 场景演练）均有通过/失败裁决与证据
-- [ ] state-machine-business-review 10 维度至少一句裁决（含「本维度无发现」）
+- [x] 请假（5 态）+ 考勤（isAbsent）+ 工时单（4 态）+ 排班分配（4 值无 dict）+ 换班（4 态）+ 工资双轴（approveStatus 4+paymentStatus 3+posted）+ 仿真（5 态）+ 银行文件（3 态）的状态图与转换矩阵产出，每个状态/转换有通过/失败裁决与证据
+- [x] 已识别控制点（状态定义 / 转换完整性[含工时单 approve/reject + 银行文件未实现] / 终端与恢复 / 异常路径[含工资过账吞异常悬挂] / 可达性[含工时单/银行文件死状态] / 角色权限 / 外部依赖[含工资过账跨域写] / TODO 任务策略 / 场景演练）均有通过/失败裁决与证据
+- [x] state-machine-business-review 10 维度至少一句裁决（含「本维度无发现」）
 
 ### Phase 2 - P0 即时通道处理 + P1 汇总交接 MR1 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: 考勤/工资状态机审计发现的 P0/P1 finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §状态机正确性 hr 列
 Skill: none
 
 - Item Types: `Fix | Add | Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] P0 finding 即时处理：每个 P0（**工时单 approve/reject 迁移完全缺失致 APPROVED/REJECTED 死状态** [按同型裁决 P1 dict 死状态非 P0，不破坏已实现主路径] / **工资过账 tryPostPayment 吞异常致 posted=false 悬挂无告警闭环** [若破坏业财一致——需核验期末结账前置检查是否兜底；若仅治理缺陷则 P1] / **银行文件 UPLOADED/CONFIRMED 未实现致付款文件生命周期断裂** [若影响资金流——config-gated/Deferred 则 P1]）当即就地修复（改源文件 + `mvn clean install -DskipTests` + 该修复独立审计 + 人工确认触及会计/资金保护区域）或异步注入 fix plan（`docs/plans/YYYY-MM-DD-HHmm-arm-fix-*.md`）。P0 永不进入 MR 批量修复。每个 P0 在报告中标注修复路径与状态。
+- [x] P0 finding 即时处理：每个 P0（**工时单 approve/reject 迁移完全缺失致 APPROVED/REJECTED 死状态** [按同型裁决 P1 dict 死状态非 P0，不破坏已实现主路径] / **工资过账 tryPostPayment 吞异常致 posted=false 悬挂无告警闭环** [若破坏业财一致——需核验期末结账前置检查是否兜底；若仅治理缺陷则 P1] / **银行文件 UPLOADED/CONFIRMED 未实现致付款文件生命周期断裂** [若影响资金流——config-gated/Deferred 则 P1]）当即就地修复（改源文件 + `mvn clean install -DskipTests` + 该修复独立审计 + 人工确认触及会计/资金保护区域）或异步注入 fix plan（`docs/plans/YYYY-MM-DD-HHmm-arm-fix-*.md`）。P0 永不进入 MR 批量修复。每个 P0 在报告中标注修复路径与状态。
       - Skill: none
-- [ ] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA2-NNN`、报告、描述、目标 MR1、修复状态 todo）。注意：本审计对已登记 finding（P2-MA1-020/P1-MA1-022）只复核状态机运行时影响不重复登记根因；若发现新 P1（如工时单 APPROVED/REJECTED 死状态 [同 finance P1-MA2-031 同型] / 银行文件 UPLOADED/CONFIRMED 死状态 / 排班分配 status 无 dict 清晰性缺陷 / 工时单硬编码字符串 / SalaryPostingDispatcher javadoc vs ORM posted drift / 工资过账 posted=false 悬挂无告警闭环 [同 finance P1-MA2-032 IGNORED 悬挂同型]）按新 finding ID 登记。
+- [x] P1 finding 汇总：全部 P1 登记至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA2-NNN`、报告、描述、目标 MR1、修复状态 todo）。注意：本审计对已登记 finding（P2-MA1-020/P1-MA1-022）只复核状态机运行时影响不重复登记根因；若发现新 P1（如工时单 APPROVED/REJECTED 死状态 [同 finance P1-MA2-031 同型] / 银行文件 UPLOADED/CONFIRMED 死状态 / 排班分配 status 无 dict 清晰性缺陷 / 工时单硬编码字符串 / SalaryPostingDispatcher javadoc vs ORM posted drift / 工资过账 posted=false 悬挂无告警闭环 [同 finance P1-MA2-032 IGNORED 悬挂同型]）按新 finding ID 登记。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §状态机正确性 hr 列终态标记（`⚠️(P1)(A2.7a✅;A2.7b❓)` → `⚠️(P1)(A2.7a✅;A2.7b✅)`）。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §状态机正确性 hr 列终态标记（`⚠️(P1)(A2.7a✅;A2.7b❓)` → `⚠️(P1)(A2.7a✅;A2.7b✅)`）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
-- [ ] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
-- [ ] arm-index 报告清单 + scope matrix 已反映审计结论
+- [x] 所有 P0 已即时处理（修复或注入 fix plan）并标注状态
+- [x] 所有 P1 已登记 arm-index §P1 汇总，待 R1.0 展开
+- [x] arm-index 报告清单 + scope matrix 已反映审计结论
 
 ## Draft Review Record
 
 - Independent draft review iteration 1: **accept**（`ses_05b35bef6ffepVtabT884kdpFx`，独立 general 子代理，fresh-context，对照实时仓库逐行复核）。VERDICT = accept，**无 BLOCKER**。核实要点：6 个 dict（leave-status:50-56/timesheet-status:57-62/salary-payment-status:72-76/simulation-status:148-154/bank-file-status:132-136/swap-status:166-171 + orphan salary-approval-status:77-84）行号精确 ✓；**ErpHrTimesheetBizModel 47 行仅 submit + 硬编码 "DRAFT"/"SUBMITTED" L38/L43 + 无 approve/reject** ✓；**ErpHrShiftAssignment.status:1186 无 ext:dict raw VARCHAR + 无 assignment-status.dict.yaml** ✓；**ErpHrPayrollBankFileBizModel 18 行 CRUD 桩无迁移** ✓；**Salary 3 列（approveStatus wf/approve-status:736 + paymentStatus:735 + posted:758）** ✓；**SalaryPostingDispatcher 155 行 tryPostPayment 吞异常返回 boolean + javadoc L27-28 "无 posted 字段" vs ORM L758 posted drift** ✓；module-hr 无 .xbiz.xml + 无 *Processor.java ✓；测试文件 + owner doc + 关联计划 + P2-MA1-020/P1-MA1-022 登记均存在 ✓。检查清单全 PASS（基线极其精确——行号逐一吻合；单一结果表面考勤与工资；Item 类型；技能匹配；反松弛无禁用词；不可降级项工时单/银行文件死 dict + posted 悬缺路由 P0/P1；结束门控含独立审计+全量验证在 Closure Gates；退出标准可观察）。**非阻塞说明**：scope matrix hr 列当前实仓为 `❓S拆`，本计划 Goals 写的 `⚠️(P1)(A2.7a✅;A2.7b❓)` 是 A2.7a 先执行后的前瞻状态（A2.7a 先执行将 `❓S拆`→`⚠️(P1)(A2.7a✅;A2.7b❓)`，本审计再推进至 `...A2.7b✅`），与 prereq 链一致无需修改。Plan Status 转 active。
 
+## Closure Audit Record
+
+- Independent closure audit iteration 1: **pass after blocker fix**（`ses_059fdadc2ffeo6hY19M2Oscivb`，独立 general 子代理，fresh-context，对照实时仓库逐项验证 closure gates）。初始 VERDICT = **fail**（1 BLOCKER：roadmap `docs/backlog/audit-remediation-roadmap.md` A2.7b 行未从 `todo` 推进至 `done` + header 未更新——执行者遗漏了 post-completion step 4b「roadmap 工作项 ❌→✅」）。其余 7 gates 全 PASS：审计报告 431 行实质内容 + Verdict pass 零 P0 + 8 组件全覆盖 + 10 维度表 + 6 P1 + 1 P2 + MA1 复核表 ✓；arm-index 报告行 done + P1-MA2-043~048 + P2-MA2-052 + A2.7b summary + intro 段 ✓；scope matrix hr 列 `⚠️P1(A2.7a✅;A2.7b✅)` + 叙述段 ✓；git status 仅 docs/ 修改零代码变更 ✓；BUILD SUCCESS 信任执行者证据 ✓；finding ID 连续无冲突（A2.7a 止 042/051 → A2.7b 起 043/052）✓。**Blocker 修复**：执行者将 roadmap A2.7b `todo`→`done` + header v10→v11 + 补 A2.7b 完成摘要。修复后 closure audit 判 pass，Closure Gates 8 项全 `[x]`。Plan Status `completed`。
+
 ## Closure Gates
 
 > 本计划主体是审计（不改代码）。完整仓库验证在此处运行一次（确认审计期间任何 P0 即时修复未引入回归）。若无 P0 即时修复（仅 P1 登记），则 build/test 门控为回归基线确认。工资过账触及会计/资金保护区域，P0 即时修复须额外人工确认。
 
-- [ ] 范围内行为完成（A2.7b 考勤与工资状态机系统性审查报告产出 + arm-index 更新 + scope matrix 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix、state-machine/payroll/payroll-simulation/shift-scheduling owner doc 结论已反映）
-- [ ] 已运行验证：零 P0 即时修复 → 全量 `mvn clean install -DskipTests` + `mvn test -pl module-hr/erp-hr-service -am` 作回归基线确认；若有 P0 即时修复，该修复模块测试全绿
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1；P0 注入即时通道 fix plan，不降级为 MR）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A2.7b 考勤与工资状态机系统性审查报告产出 + arm-index 更新 + scope matrix 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix、state-machine/payroll/payroll-simulation/shift-scheduling owner doc 结论已反映）
+- [x] 已运行验证：零 P0 即时修复 → 全量 `mvn clean install -DskipTests` + `mvn test -pl module-hr/erp-hr-service -am` 作回归基线确认；若有 P0 即时修复，该修复模块测试全绿
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR1；P0 注入即时通道 fix plan，不降级为 MR）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -198,3 +202,18 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: owner doc 已裁定为 Deferred/Non-Goal。本审计只确认其在状态机上不引入悬挂（死状态归状态定义清晰性维度裁决为 P1/P2 dict 死状态清理或 owner doc 标注 Deferred 而非实现）。
 - Successor Required: `yes`——各 successor 触发条件满足时（如银行回单自动对账上线 / 工时单自动审批 / 考勤 IoT / 个税精算）。
+
+## Closure
+
+Status Note: A2.7b hr 考勤与工资状态机系统性业务审查完成。八组件（请假 5 态 + 考勤布尔 + 工时单 4 态 + 排班分配 4 值 + 换班 4 态 + 工资双轴 approveStatus 4+paymentStatus 3+posted + 仿真 5 态 + 银行文件 3 态）核心契约经实仓逐项证据确认；零 P0（六个候选 P0 经证据证伪或按同型裁决降 P1）；6 项新 P1（P1-MA2-043~048）+ 1 项新 P2（P2-MA2-052）登记 arm-index 待 MR1；MA1 finding 运行时复核无升级。scope matrix §状态机正确性 hr 列推进至 `⚠️P1(A2.7a✅;A2.7b✅)`。Plan Status `completed`。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立 general 子代理（fresh-context），会话 `ses_059fdadc2ffeo6hY19M2Oscivb`（详见上方 `## Closure Audit Record` iteration 1）——初始 VERDICT = fail（1 BLOCKER：roadmap A2.7b 行未从 `todo` 推进至 `done` + header 未更新），执行者修复后复判 pass，Closure Gates 8 项全 `[x]`
+- Evidence: 审计报告 `docs/audits/2026-07-28-0230-arm-ma2-hr-attendance-payroll-state-machine.md`（53847 bytes，431+ 行，10 维度裁决表 + 8 组件状态图 + Verdict pass 零 P0）；arm-index.md:33 报告行 `done` + P1-MA2-043~048 + P2-MA2-052 登记（待 MR1）；scope matrix `audit-remediation-scope-and-dimension-matrix.md:103` hr 列 `⚠️P1(A2.7a✅;A2.7b✅)`；roadmap A2.7b 行 `todo`→`done` + header v10→v11；git status 仅 `docs/` 修改零代码变更；零 P0 即时修复 → 全量 `mvn clean install -DskipTests` + `mvn test -pl module-hr/erp-hr-service -am` 作回归基线确认 BUILD SUCCESS
+- Daily Log: `docs/logs/2026/07-28.md`（A2.7b 完成摘要已记录）
+
+Follow-up:
+
+- 6 项 P1（P1-MA2-043~048）+ 1 项 P2（P2-MA2-052）经 R1.0 展开机制进入 MR1 批量修复（已登记 arm-index §P1 汇总，非阻塞跟进）
+- 并发敏感点 5 处（markPaid/runPayroll 无 @Version / generateBankFile 批量 / 排班 calcAttendance 竞态 / 排班分配多 writer / 仿真 convertToFormal）交接 A2.17 系统性并发正确性裁决
