@@ -27,6 +27,10 @@ public interface ErpPrjConstants {
     String CONFIG_TASK_DEPENDENCY_MAX_DEPTH = "erp-prj.task-dependency-max-depth";
     /** 任务 startTask 前置任务完成强校验（默认 true=STRICT 拦截；false=仅 WARN 放行；对齐 task-dag.md §4.3）。 */
     String CONFIG_TASK_STRICT_PREDECESSOR_CHECK = "erp-prj.task-strict-predecessor-check";
+    /** closeProject 任务结束前置校验（默认 true=STRICT 拦截未结束任务；false=WARN 放行；对齐 state-machine.md §迁移完整性 OPEN→COMPLETED）。 */
+    String CONFIG_STRICT_PROJECT_TASK_COMPLETION_CHECK = "erp-prj.strict-project-task-completion-check";
+    /** startProject 字段前置校验（默认 true=STRICT 拦截缺必填字段；false=WARN 放行；对齐 state-machine.md §迁移完整性 DRAFT→OPEN）。 */
+    String CONFIG_STRICT_PROJECT_START_PRECHECK = "erp-prj.strict-project-start-precheck";
 
     /** 预算控制模式取值。 */
     String BUDGET_MODE_WARNING = "WARNING";

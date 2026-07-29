@@ -49,6 +49,10 @@ public interface ErpPrjErrors {
     String ARG_TASK_PROJECT_ID = "taskProjectId";
     String ARG_DEPENDS_ON_PROJECT_ID = "dependsOnProjectId";
 
+    // --- 项目状态机前置校验作用域参数键（P1-MA2-067/070） ---
+    String ARG_TASK_STATUSES = "taskStatuses";
+    String ARG_MISSING_FIELDS = "missingFields";
+
     // --- 工时状态机 ---
     ErrorCode ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.prj.timesheet.illegal-status-transition",
@@ -94,6 +98,14 @@ public interface ErpPrjErrors {
             "erp.err.prj.project-not-closable",
             "项目 {projectId} 当前状态={currentStatus}，不允许关闭（须为 OPEN）",
             ARG_PROJECT_ID, ARG_CURRENT_STATUS);
+    ErrorCode ERR_PROJECT_HAS_UNFINISHED_TASKS = ErrorCode.define(
+            "erp.err.prj.project-has-unfinished-tasks",
+            "项目 {projectId} 存在未结束任务（状态={taskStatuses}），不允许关闭（须先 completeTask 或取消剩余任务）",
+            ARG_PROJECT_ID, ARG_TASK_STATUSES);
+    ErrorCode ERR_PROJECT_START_PRECONDITION_FAILED = ErrorCode.define(
+            "erp.err.prj.project-start-precondition-failed",
+            "项目 {projectId} 立项前置校验失败：缺少必填字段 {missingFields}（项目名/起止日期/预算）",
+            ARG_PROJECT_ID, ARG_MISSING_FIELDS);
 
     // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，项目域独立错误码，不跨域 import） ---
 

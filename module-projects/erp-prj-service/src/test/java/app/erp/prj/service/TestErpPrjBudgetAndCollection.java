@@ -198,7 +198,7 @@ public class TestErpPrjBudgetAndCollection extends JunitAutoTestCase {
                     ErpPrjConstants.PROJECT_STATUS_OPEN, new BigDecimal("100000"));
             projectHolder[0] = projectId;
             Long activityTypeId = seedActivityType("DEV", "开发", "800", null);
-            Long taskId = seedTask(projectId, "任务-CLOSE", ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+            Long taskId = seedTask(projectId, "任务-CLOSE", ErpPrjConstants.TASK_STATUS_DONE);
             seedTimesheet("TS-CLOSE-001", projectId, taskId, activityTypeId,
                     "10", "800", ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
             return null;
