@@ -104,10 +104,10 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| A5.1 | finance 测试覆盖深度（64 测试 / 137 mutation，比 0.47） | todo | `docs/design/finance/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
-| A5.2 | manufacturing 测试覆盖深度（30 测试 / 74 mutation，比 0.41） | todo | `docs/design/manufacturing/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
-| A5.3 | hr 测试覆盖深度（15 测试 / 92 mutation，比 0.16 — 全域最低！） | todo | `docs/design/human-resource/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
-| A5.4 | assets 测试覆盖深度（14 测试 / 61 mutation，比 0.23） | todo | `docs/design/assets/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A5.1 | finance 测试覆盖深度（64 测试 / 137 mutation，比 0.47） | ready | `docs/design/finance/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A5.2 | manufacturing 测试覆盖深度（30 测试 / 74 mutation，比 0.41） | ready | `docs/design/manufacturing/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A5.3 | hr 测试覆盖深度（15 测试 / 92 mutation，比 0.16 — 全域最低！） | ready | `docs/design/human-resource/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A5.4 | assets 测试覆盖深度（14 测试 / 61 mutation，比 0.23） | ready | `docs/design/assets/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
 | A5.5 | 测试隔离性（全域合并 + 已知 5 项残留收敛） | todo | `docs/testing/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
 | A5.6 | E2E 测试有效性（抽样 260+ spec 业务断言强度） | todo | `tests/e2e/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
 
@@ -238,7 +238,7 @@
 - A4.9：i18n 完整性
 
 ### MA5（测试审计，6 工作项）
-- A5.1-A5.4：S 级域测试覆盖深度（finance/mfg/hr/assets）— hr 测试/mutation 比 0.16 全域最低
+- A5.1-A5.4：S 级域测试覆盖深度（finance/mfg/hr/assets）— **ready**（plan 2026-07-29-1430-1 四域报告产出 + arm-index 登记 11 P1[5 独立 + 6 归并] + 4 P2；0.16 全域最低比根因裁决：缺口为主 + 口径为辅；test-depth-classification.md 计数口径系统性过时 finance 46→64/mfg 19→29/hr 10→15 登记 MR3；待独立 closure audit 转 done）— hr 测试/mutation 比 0.16 全域最低
 - A5.5-A5.6：测试隔离性 + E2E 有效性
 
 ### MA6（安全审计，4 工作项）
