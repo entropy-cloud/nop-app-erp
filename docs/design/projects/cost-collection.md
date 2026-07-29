@@ -191,7 +191,11 @@
                     └─► 项目利润 = 收入 - 成本
 ```
 
+> **CostCollection.docStatus dict-value drift（P1-MA2-069 Deferred）**：`ErpPrjCostCollection.docStatus` 绑定 `erp-prj/project-status` 字典（DRAFT/OPEN/ON_HOLD/COMPLETED/CANCELLED），但 `ProjectCostAggregator`/`ExpenseCostAggregator` 经聚合器单一入口写入 `DOC_STATUS_APPROVED="APPROVED"`——该值**不在 project-status 字典内**，是已知 dict-value drift。归集行为正确（聚合器单一入口写入 + 幂等去重），仅按 dict 筛选层（如下拉过滤）失效。successor 独立 `erp-prj/cost-collection-status` 字典 + ORM `ext:dict` 改绑时收敛。详见 `state-machine.md §适用对象三 CRUD 桩实体状态机（Deferred）`。
+
 ### 4.3 项目关闭时的成本结转
+
+> **关闭前置（P1-MA2-067）**：`closeProject` 在成本结转前经 `validateTasksFinished` 校验项目下无未结束任务（task-status 为 TODO/IN_PROGRESS/BLOCKED），STRICT 模式（`erp-prj.strict-project-task-completion-check` 默认 true）抛 `ERR_PROJECT_HAS_UNFINISHED_TASKS`，WARN 模式 LOG.warn 放行。详见 `state-machine.md §迁移完整性 OPEN→COMPLETED`。
 
 ```
 项目关闭（COMPLETED/CANCELLED）
