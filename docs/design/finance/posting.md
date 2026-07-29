@@ -487,6 +487,14 @@ VoucherBillR（业财回链）
 - 汇率由主数据域提供；缺失汇率时报错而非静默使用默认值。
 - **汇率锁定时机**：本位币金额在业务单据创建时按业务日期汇率锁定，过账时不重新计算。汇率差异在期末汇兑损益调整中统一处理（见 `domain-design-guidelines.md` §十二）。
 
+### 实现契约（R1.9 / P1-MA2-002/009 / P1-MA3-039）
+
+- `VoucherFact` 双金额字段：Provider 显式填充 `amountSource`（源币种）+ `amountFunctional`（= source × `ctx.exchangeRate`）；`amount` 字段保留作功能金额（`balanceTotals`/`assertBalanced` 以本位币为准）。未设置新字段时 fallback 到 `amount`（单币种向后兼容）。
+- `ErpFinPostingProcessor.persistVoucher` 忠实写入 `line.amountSource`/`line.amountFunctional`/`line.debitAmount`/`line.creditAmount`（debit/credit 按本位币）。
+- `ErpFinArApItemGenerator` 按 `event.exchangeRate` 折算辅助账 `amountFunctional`（= source × rate），`amountSource` = 源币种金额。
+- P2P（`PurAcctDocProvider`）+ O2C（`SalAcctDocProvider`）已迁移双字段；其余域 Provider 单币种 fallback（全域迁移 successor，`Deferred But Adjudicated`）。
+- 收款核销汇兑损益 plug 见 `ar-ap-reconciliation.md §汇兑损益核销规则`。
+
 ## 多套科目表并行
 
 - 支持多套会计科目表（`AcctSchema`）：管理账、税务账、集团合并账等。

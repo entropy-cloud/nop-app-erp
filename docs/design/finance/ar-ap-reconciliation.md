@@ -282,6 +282,13 @@
 
 > 汇兑损益核销凭证示例：借：银行存款（本位币） / 贷：应收（本位币） + 借/贷：财务费用-汇兑损益。
 
+**实现契约（R1.9 / P1-MA2-009）**：已实现汇兑损益 plug 落在核销结算环节（`ErpFinReconciliationBizModel.post`），config-gate `erp-fin.recon-fx-gain-loss-enabled`（默认 false）：
+
+- `ReconciliationSettler.settleWithFx` 按 per-item functional（`settledSource × item.exchangeRate`）分别回写双方辅助账，差额 = Σ(payment.functionalSettled) − Σ(invoice.functionalSettled) → `head.fxGainLoss`。
+- 差额 ≠ 0 时生成 `EXCHANGE_GAIN_LOSS` 凭证（经 `CloseVoucherWriter` 直写，billHeadCode=`RECON-FX-{核销单 code}`），方向映射：应收 fx>0=收益（Dr 应收/Cr 汇兑损益）；应付 fx>0=损失（Dr 汇兑损益/Cr 应付）。科目经 `erp-fin.{ar,ap,exchange-gain-loss}-subject-code` 配置。
+- 核销红冲（`reverse`）经 `IErpFinVoucherBiz.reverse(RECON-FX-code, EXCHANGE_GAIN_LOSS)` 红冲 FX 凭证（存在时）。
+- 单币种（双方 rate 相同）差额=0，退化为既有 `settle` 行为（config 关闭时走 `settle`，行为完全不变）。
+
 > **期末汇兑重估承接**：核销时的汇兑差异（上方）与期末独立汇兑重估是两个时点。期末对外币 AR/AP 未核销项按期末汇率的独立重估（EXCHANGE_GAIN_LOSS 凭证）已由期末结账流程承接（见 `period-close.md §汇兑重估`，计划 `2026-07-02-1000-3`），由 `ExchangeRevaluationService` 在 GL 关账段（损益结转前）执行。
 
 ### 核销权限
