@@ -109,6 +109,30 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
                 "提示模式下未过账凭证不阻断结账");
     }
 
+    @Test
+    public void testOpenPeriodFromNeverOpened() {
+        // P1-MA2-033：NEVER_OPENED→OPEN 正向迁移。
+        Long periodId = seedReturn(() -> seedOpenPeriod("2026-10", 2026, 10,
+                LocalDate.of(2026, 10, 1), LocalDate.of(2026, 10, 31),
+                ErpFinConstants.PERIOD_STATUS_NEVER_OPENED));
+
+        ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodCloseBiz.openPeriod(periodId, CTX));
+        assertEquals(ErpFinConstants.PERIOD_STATUS_OPEN, period.getStatus(),
+                "NEVER_OPENED 经 openPeriod 迁移至 OPEN");
+    }
+
+    @Test
+    public void testOpenPeriodRejectsNonNeverOpened() {
+        // P1-MA2-033：非 NEVER_OPENED 状态调用 openPeriod 被守卫拒绝。
+        Long periodId = seedReturn(() -> seedOpenPeriod("2026-11", 2026, 11,
+                LocalDate.of(2026, 11, 1), LocalDate.of(2026, 11, 30),
+                ErpFinConstants.PERIOD_STATUS_OPEN));
+
+        assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> periodCloseBiz.openPeriod(periodId, CTX)),
+                "OPEN 状态不允许再次 openPeriod");
+    }
+
     // ---------- helpers ----------
 
     private void seed(Runnable action) {

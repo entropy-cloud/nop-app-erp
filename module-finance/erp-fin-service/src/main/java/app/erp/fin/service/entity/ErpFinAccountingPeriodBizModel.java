@@ -58,6 +58,12 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
 
     @Override
     @BizMutation
+    public ErpFinAccountingPeriod openPeriod(@Name("periodId") Long periodId, IServiceContext context) {
+        return periodProcessor.openPeriod(periodId, context);
+    }
+
+    @Override
+    @BizMutation
     public Integer generateNextYearPeriods(@Name("year") Integer year, IServiceContext context) {
         return periodProcessor.generateNextYearPeriods(year, context);
     }

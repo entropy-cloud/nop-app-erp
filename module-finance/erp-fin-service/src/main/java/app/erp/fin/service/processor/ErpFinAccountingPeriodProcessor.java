@@ -316,6 +316,18 @@ public class ErpFinAccountingPeriodProcessor {
         return period;
     }
 
+    /**
+     * 开启期间：NEVER_OPENED→OPEN（P1-MA2-033，兑现 {@code generateNextYearPeriods} 次年 2-12 月
+     * 「待自然月到达时由运营开启」契约）。仅 NEVER_OPENED 状态可开启。
+     */
+    public ErpFinAccountingPeriod openPeriod(Long periodId, IServiceContext context) {
+        ErpFinAccountingPeriod period = requirePeriod(periodId);
+        assertPeriodStatus(period, ErpFinConstants.PERIOD_STATUS_NEVER_OPENED, "开启");
+        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
+        orm().flushSession();
+        return period;
+    }
+
     // ===================== 模块关账（AR→AP→INV→AST→GL） =====================
 
     /** INV 模块关账：存货成本兜底重算（§步骤2，引用 inventory 域 IErpInvCostingBiz）→ 标记 invStatus=CLOSED。 */

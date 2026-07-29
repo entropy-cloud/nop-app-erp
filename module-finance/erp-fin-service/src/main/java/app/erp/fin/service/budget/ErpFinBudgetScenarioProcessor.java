@@ -1,6 +1,7 @@
 package app.erp.fin.service.budget;
 
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
+import app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus;
 import app.erp.fin.dao.entity.ErpFinBudgetCarryForwardLog;
 import app.erp.fin.dao.entity.ErpFinBudgetLine;
 import app.erp.fin.dao.entity.ErpFinBudgetRollforwardLog;
@@ -322,6 +323,54 @@ public class ErpFinBudgetScenarioProcessor {
                     .param("targetScenarioCode", target.getCode())
                     .param("rule", "cross orgId/acctSchemaId/currencyId");
         }
+        // 硬前置（P1-MA2-034，budget.md §结转算法 / period-close.md §预算结转与期间状态机）：
+        // 源 Scenario 所在年度的所有会计期间必须 CLOSED（glStatus=CLOSED）。
+        // daoProvider 直访同模块 ErpFinAccountingPeriod/ErpFinAccountingPeriodStatus（只读聚合校验，
+        // 无对应 IBiz 覆盖此跨期间查询语义）。
+        if (!isSourceFiscalYearFullyClosed(source)) {
+            throw new NopException(ErpFinErrors.ERR_BUDGET_CARRY_FORWARD_RULE_INVALID)
+                    .param(ErpFinErrors.ARG_SCENARIO_CODE, source.getCode())
+                    .param("targetScenarioCode", target.getCode())
+                    .param("rule", "source fiscalYear periods not all CLOSED")
+                    .param(ErpFinErrors.ARG_YEAR, source.getFiscalYear());
+        }
+    }
+
+    /**
+     * 校验源 Scenario 所在年度的全部会计期间 glStatus=CLOSED（年度已结账硬前置，P1-MA2-034）。
+     *
+     * <p>判定口径：按 {@code source.fiscalYear} 查询全部 {@link ErpFinAccountingPeriod}，对每个期间
+     * 查 {@link ErpFinAccountingPeriodStatus}（1:1，periodId 关联），要求 {@code glStatus == CLOSED}。
+     * 期间无 status 行（未结账过）或 glStatus 非 CLOSED 即视为未结账。
+     */
+    private boolean isSourceFiscalYearFullyClosed(ErpFinBudgetScenario source) {
+        Integer fiscalYear = source.getFiscalYear();
+        if (fiscalYear == null) {
+            return false;
+        }
+        IEntityDao<ErpFinAccountingPeriod> periodDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+        QueryBean periodQ = new QueryBean();
+        periodQ.addFilter(eq("year", fiscalYear));
+        List<ErpFinAccountingPeriod> periods = periodDao.findAllByQuery(periodQ);
+        if (periods.isEmpty()) {
+            return false;
+        }
+        IEntityDao<ErpFinAccountingPeriodStatus> statusDao =
+                daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
+        for (ErpFinAccountingPeriod p : periods) {
+            QueryBean sq = new QueryBean();
+            sq.addFilter(eq("periodId", p.getId()));
+            List<ErpFinAccountingPeriodStatus> statuses = statusDao.findAllByQuery(sq);
+            if (statuses.isEmpty()) {
+                return false;
+            }
+            for (ErpFinAccountingPeriodStatus s : statuses) {
+                if (!Objects.equals(s.getGlStatus(), ErpFinConstants.MODULE_CLOSE_CLOSED)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /** 聚合源方案的预算/实际净额（按 subjectId × costCenterId 维度），用于结转计算。 */

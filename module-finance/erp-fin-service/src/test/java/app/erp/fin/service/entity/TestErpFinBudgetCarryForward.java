@@ -2,6 +2,7 @@ package app.erp.fin.service.entity;
 
 import app.erp.fin.biz.IErpFinBudgetScenarioBiz;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
+import app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus;
 import app.erp.fin.dao.entity.ErpFinBudgetCarryForwardLog;
 import app.erp.fin.dao.entity.ErpFinBudgetLine;
 import app.erp.fin.dao.entity.ErpFinBudgetScenario;
@@ -9,9 +10,11 @@ import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
@@ -29,6 +32,7 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -155,6 +159,29 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
                 "NONE 不结转金额应为 0");
     }
 
+    @Test
+    public void testRejectsWhenSourceFiscalYearNotFullyClosed() {
+        // P1-MA2-034 负向：源年度留一个期间 glStatus=OPEN，carryForward 须抛 ERR_BUDGET_CARRY_FORWARD_RULE_INVALID。
+        Long[] ids = seedReturn(() -> {
+            Long pid = seedPeriodWithGlStatus("2024-CF-5", 2024, 6, ErpFinConstants.MODULE_CLOSE_CLOSED);
+            // 同年度另一期间 glStatus=OPEN → 触发硬前置拒绝。
+            seedPeriodWithGlStatus("2024-CF-5-OPEN", 2024, 7, ErpFinConstants.MODULE_CLOSE_OPEN);
+            ErpMdSubject expense = seedSubject("7705", "CF-EXP-5", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
+            Long sourceId = seedApprovedScenario("CF-SRC-5", pid, 2024, expense, new BigDecimal("1000"));
+            Long targetId = seedDraftScenario("CF-TGT-5", pid, 2024, expense);
+            return new Long[]{pid, sourceId, targetId};
+        });
+        Long sourceId = ids[1];
+        Long targetId = ids[2];
+
+        NopException ex = assertThrows(NopException.class, () ->
+                ormTemplate.runInSession(session ->
+                        scenarioBiz.carryForward(sourceId, targetId,
+                                ErpFinConstants.BUDGET_CARRY_FORWARD_REMAINING_FULL, CTX)));
+        assertEquals(ErpFinErrors.ERR_BUDGET_CARRY_FORWARD_RULE_INVALID.getErrorCode(), ex.getErrorCode(),
+                "源年度未全 CLOSED 时应抛 ERR_BUDGET_CARRY_FORWARD_RULE_INVALID");
+    }
+
     // ---------- helpers ----------
 
     private <T> T seedReturn(java.util.function.Supplier<T> action) {
@@ -162,6 +189,11 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
     }
 
     private Long seedOpenPeriod(String code, int year, int month) {
+        // P1-MA2-034：源年度期间 CLOSED 是 carryForward 硬前置，既有 4 happy path 改 seed CLOSED。
+        return seedPeriodWithGlStatus(code, year, month, ErpFinConstants.MODULE_CLOSE_CLOSED);
+    }
+
+    private Long seedPeriodWithGlStatus(String code, int year, int month, String glStatus) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         ErpFinAccountingPeriod p = new ErpFinAccountingPeriod();
         p.setCode(code);
@@ -171,8 +203,19 @@ public class TestErpFinBudgetCarryForward extends JunitAutoTestCase {
         p.setMonth(month);
         p.setStartDate(LocalDate.of(year, month, 1));
         p.setEndDate(LocalDate.of(year, month, 28));
-        p.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
+        p.setStatus(ErpFinConstants.PERIOD_STATUS_CLOSED);
         dao.saveEntity(p);
+
+        IEntityDao<ErpFinAccountingPeriodStatus> sDao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
+        ErpFinAccountingPeriodStatus s = new ErpFinAccountingPeriodStatus();
+        s.setPeriodId(p.getId());
+        s.setAcctSchemaId(1L);
+        s.setArStatus(glStatus);
+        s.setApStatus(glStatus);
+        s.setInvStatus(glStatus);
+        s.setGlStatus(glStatus);
+        s.setAssetStatus(glStatus);
+        sDao.saveEntity(s);
         return p.getId();
     }
 

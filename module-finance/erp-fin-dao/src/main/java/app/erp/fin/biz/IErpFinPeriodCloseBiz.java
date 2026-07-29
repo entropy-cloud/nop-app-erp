@@ -45,6 +45,13 @@ public interface IErpFinPeriodCloseBiz {
     ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId, IServiceContext context);
 
     /**
+     * 开启期间：NEVER_OPENED→OPEN（P1-MA2-033，兑现 {@code generateNextYearPeriods} 次年 2-12 月
+     * 「待自然月到达时由运营开启」契约）。仅 NEVER_OPENED 状态可开启；其余状态抛 {@code ERR_PERIOD_ILLEGAL_TRANSITION}。
+     */
+    @BizMutation
+    ErpFinAccountingPeriod openPeriod(@Name("periodId") Long periodId, IServiceContext context);
+
+    /**
      * 批量生成指定年度 1-12 月会计期间（年度结转规则步骤5，{@code period-close.md §年度结转规则}）。
      *
      * <p>幂等策略：同年期间已存在时，默认抛 {@code ERR_PERIODS_ALREADY_EXIST}；
