@@ -118,7 +118,7 @@
 | A6.1 | 全域 @BizMutation/@BizQuery 权限注解完整性 grep | ready | `docs/design/roles-and-permissions.md` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
 | A6.2 | finance+mfg+pur+sal 权限深度抽样 | ready | `docs/design/roles-and-permissions.md` | A6.1 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A6.3 | 数据权限运行验证（orgId/角色隔离抽样） | ready | `docs/design/roles-and-permissions.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A6.4 | **保护区域纪律审计**（accounting 过账 / data deletion 是否有 owner doc + 测试 + plan-audit 证据） | todo | `docs/context/ai-autonomy-policy.md` §保护区域 | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A6.4 | **保护区域纪律审计**（accounting 过账 / data deletion 是否有 owner doc + 测试 + plan-audit 证据） | ready | `docs/context/ai-autonomy-policy.md` §保护区域 | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 
 ### Milestone MA7 — 运维与性能层审计
 
@@ -242,8 +242,8 @@
 - A5.5-A5.6：测试隔离性 + E2E 有效性 — **done**（plan 2026-07-29-1430-2 两报告产出：A5.5 PASS[6 项已知污染物全 RESOLVED + JUnit 层平台级 localDb 结构性隔离 + E2E 层 cleanup 纪律收敛 + 零新活跃污染物] + A5.6 ⚠️(P1)[258 spec 断言强度矩阵 强66.3%/中8.5%/弱21.3%/工具2.7% + AMIS `$var` bug 已修复 successor 完整]；arm-index 登记 P1-MA5-012 + P2-MA5-005/006/007 已去重；独立 closure audit 通过 2026-07-29）— **MA5 测试层审计全部 6 工作项（A5.1-A5.6）现已全部 done/ready，MA5 里程碑完成**
 
 ### MA6（安全审计，4 工作项）
-- A6.1-A6.3：权限注解 + 数据权限
-- A6.4：**保护区域纪律审计**（新增——accounting/data deletion 是否有 owner doc + 测试 + plan-audit 证据）
+- A6.1-A6.3：权限注解 + 数据权限 — **ready**（plan 2026-07-29-1410-1 三报告产出 + arm-index 登记 P1-MA6-001/002 + 交叉去重；待独立 closure audit 转 done）
+- A6.4：**保护区域纪律审计** — **ready**（plan 2026-07-29-1410-2 报告产出 + arm-index 登记 P1-MA6-003/004/005 + P2-MA6-001 + 交叉去重；待独立 closure audit 转 done）——**MA6 安全与权限层审计 A6.1-A6.4 现已全部 ready，MA6 里程碑完成**
 
 ### MA7（运维审计，4 工作项）
 - A7.1-A7.4：错误码/索引/N+1/CI guard
