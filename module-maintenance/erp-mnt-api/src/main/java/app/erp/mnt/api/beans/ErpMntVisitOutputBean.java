@@ -260,94 +260,10 @@
         }
 
 
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=16)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
-        private Integer _version;
-
-    
-        @PropMeta(propId=17)
-    
-        public Integer getVersion(){
-            return _version;
-        }
-
-        public void setVersion(Integer value){
-            this._version = value;
-        }
-
-
-        private String _createdBy;
-
-    
-        @PropMeta(propId=18)
-    
-        public String getCreatedBy(){
-            return _createdBy;
-        }
-
-        public void setCreatedBy(String value){
-            this._createdBy = value;
-        }
-
-
-        private java.sql.Timestamp _createTime;
-
-    
-        @PropMeta(propId=19)
-    
-        public java.sql.Timestamp getCreateTime(){
-            return _createTime;
-        }
-
-        public void setCreateTime(java.sql.Timestamp value){
-            this._createTime = value;
-        }
-
-
-        private String _updatedBy;
-
-    
-        @PropMeta(propId=20)
-    
-        public String getUpdatedBy(){
-            return _updatedBy;
-        }
-
-        public void setUpdatedBy(String value){
-            this._updatedBy = value;
-        }
-
-
-        private java.sql.Timestamp _updateTime;
-
-    
-        @PropMeta(propId=21)
-    
-        public java.sql.Timestamp getUpdateTime(){
-            return _updateTime;
-        }
-
-        public void setUpdateTime(java.sql.Timestamp value){
-            this._updateTime = value;
-        }
-
-
         private Long _orgId;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=16)
     
         public Long getOrgId(){
             return _orgId;
@@ -361,7 +277,7 @@
         private java.time.LocalDate _businessDate;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=17)
     
         public java.time.LocalDate getBusinessDate(){
             return _businessDate;
@@ -375,7 +291,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=18)
     
         public Boolean getPosted(){
             return _posted;
@@ -389,7 +305,7 @@
         private java.sql.Timestamp _postedAt;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=19)
     
         public java.sql.Timestamp getPostedAt(){
             return _postedAt;
@@ -403,7 +319,7 @@
         private String _postedBy;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=20)
     
         public String getPostedBy(){
             return _postedBy;
@@ -411,6 +327,90 @@
 
         public void setPostedBy(String value){
             this._postedBy = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=21)
+    
+        public Long getDelVersion(){
+            return _delVersion;
+        }
+
+        public void setDelVersion(Long value){
+            this._delVersion = value;
+        }
+
+
+        private Integer _version;
+
+    
+        @PropMeta(propId=22)
+    
+        public Integer getVersion(){
+            return _version;
+        }
+
+        public void setVersion(Integer value){
+            this._version = value;
+        }
+
+
+        private String _createdBy;
+
+    
+        @PropMeta(propId=23)
+    
+        public String getCreatedBy(){
+            return _createdBy;
+        }
+
+        public void setCreatedBy(String value){
+            this._createdBy = value;
+        }
+
+
+        private java.sql.Timestamp _createTime;
+
+    
+        @PropMeta(propId=24)
+    
+        public java.sql.Timestamp getCreateTime(){
+            return _createTime;
+        }
+
+        public void setCreateTime(java.sql.Timestamp value){
+            this._createTime = value;
+        }
+
+
+        private String _updatedBy;
+
+    
+        @PropMeta(propId=25)
+    
+        public String getUpdatedBy(){
+            return _updatedBy;
+        }
+
+        public void setUpdatedBy(String value){
+            this._updatedBy = value;
+        }
+
+
+        private java.sql.Timestamp _updateTime;
+
+    
+        @PropMeta(propId=26)
+    
+        public java.sql.Timestamp getUpdateTime(){
+            return _updateTime;
+        }
+
+        public void setUpdateTime(java.sql.Timestamp value){
+            this._updateTime = value;
         }
 
 

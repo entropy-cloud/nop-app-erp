@@ -169,7 +169,7 @@
         private java.time.LocalDate _businessDate;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=15)
     
         public java.time.LocalDate getBusinessDate(){
             return _businessDate;
@@ -183,7 +183,7 @@
         private Long _currencyId;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=16)
     
         public Long getCurrencyId(){
             return _currencyId;
@@ -197,7 +197,7 @@
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=17)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -211,7 +211,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=18)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -225,7 +225,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=19)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;

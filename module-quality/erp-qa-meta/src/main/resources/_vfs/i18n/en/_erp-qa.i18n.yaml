@@ -59,6 +59,8 @@ prop:
       docStatus_label: null
       approveStatus: Approve Status
       approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
       remark: Remark
       delVersion: Del Flag
       version: Version
@@ -66,8 +68,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      approvedBy: Approved By
-      approvedAt: Approved At
       calibratedByEmployee: Calibrated By Employee
       calibratedByEmployee.name: Calibrated By Employee
       org: null
@@ -86,6 +86,7 @@ prop:
       supplierId: Supplier
       warehouseId: Warehouse
       batchNo: Batch No
+      businessDate: Business Date
       inspectionDate: Inspection Date
       lotQuantity: Lot Quantity
       sampleQuantity: Sample Quantity
@@ -108,7 +109,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      businessDate: Business Date
       material: Material
       material.name: Material
       template: Template
@@ -312,6 +312,8 @@ prop:
       docStatus_label: null
       approveStatus: Approve Status
       approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
       remark: Remark
       delVersion: Del Flag
       version: Version
@@ -319,8 +321,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      approvedBy: Approved By
-      approvedAt: Approved At
       org: null
       org.name: null
     ErpQaRiskRegister:

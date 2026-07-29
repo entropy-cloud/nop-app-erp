@@ -51,6 +51,12 @@
                 <!--审核状态-->
                 <col id="approveStatus" mandatory="true" sortable="true"/>
 
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
                 <!--已过账(库存已出库)-->
                 <col id="posted" sortable="true"/>
 
@@ -77,12 +83,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--审核人-->
-                <col id="approvedBy" sortable="true"/>
-
-                <!--审核时间-->
-                <col id="approvedAt" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -96,12 +96,12 @@
  equipmentId[设备ID] businessDate[消耗日期]
  warehouseId[领料仓库] totalAmount[金额合计]
  docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
  posted[已过账(库存已出库)] postedAt[过账时间]
  postedBy[过账人] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] approvedBy[审核人]
- approvedAt[审核时间] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-备件消耗" i18n-en:title="Add Spare Part Usage" x:prototype="edit"/>

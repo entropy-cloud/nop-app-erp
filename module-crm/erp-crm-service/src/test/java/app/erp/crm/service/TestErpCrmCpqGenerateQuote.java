@@ -109,7 +109,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
         seedCommons();
         seedConfigurator(CONFIGURATOR_ID, "CFG-002", true);
         seedPriceRule(3801L, "PROMOTIONAL", 1, PRODUCT_ID, null, null, null,
-                null, 10.0, null, CURRENCY_ID);
+                null, BigDecimal.valueOf(10.0), null, CURRENCY_ID);
         seedLead(LEAD_ID, "OPP-CPQ-002", ORG_ID, CUSTOMER_ID);
 
         Map<String, Object> features = new HashMap<>();
@@ -362,7 +362,7 @@ public class TestErpCrmCpqGenerateQuote extends JunitAutoTestCase {
 
     private void seedPriceRule(Long id, String ruleType, int priority, Long productId, Long customerId,
                                BigDecimal minQty, BigDecimal maxQty,
-                               BigDecimal priceOverride, Double discountPercent,
+                               BigDecimal priceOverride, BigDecimal discountPercent,
                                BigDecimal discountAmount, Long currencyId) {
         IEntityDao<ErpCrmPriceRule> dao = daoProvider.daoFor(ErpCrmPriceRule.class);
         ErpCrmPriceRule rule = new ErpCrmPriceRule();

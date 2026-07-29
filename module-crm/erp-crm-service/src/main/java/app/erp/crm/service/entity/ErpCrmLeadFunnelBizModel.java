@@ -11,6 +11,8 @@ import app.erp.crm.dao.entity.ErpCrmLostReason;
 import app.erp.crm.dao.entity.ErpCrmStage;
 import app.erp.crm.service.ErpCrmConfigs;
 import app.erp.crm.service.support.FunnelAggregationEngine;
+
+import java.math.BigDecimal;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -104,7 +106,7 @@ public class ErpCrmLeadFunnelBizModel extends CrudBizModel<ErpCrmLeadFunnel> imp
         funnel.setLostRevenue(snapshot.getLostRevenue());
         funnel.setWeightedRevenue(snapshot.getWeightedRevenue());
         funnel.setAvgDealSize(snapshot.getAvgDealSize());
-        funnel.setAvgSalesCycleDays(snapshot.getAvgSalesCycleDays());
+        funnel.setAvgSalesCycleDays(BigDecimal.valueOf(snapshot.getAvgSalesCycleDays()));
         funnel.setCalculatedAt(snapshot.getCalculatedAt() != null ? Timestamp.valueOf(snapshot.getCalculatedAt()) : null);
         saveEntity(funnel, null, context);
 

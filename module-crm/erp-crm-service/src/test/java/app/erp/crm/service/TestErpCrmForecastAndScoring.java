@@ -232,7 +232,7 @@ public class TestErpCrmForecastAndScoring extends JunitAutoTestCase {
         assertAmountEquals(new BigDecimal("1000"), accuracy.getCommitAmount(),
                 "commitAmount 来自预测行");
         // commit=1000, actual=1000 → accuracy=1.0
-        assertEquals(1.0, accuracy.getCommitAccuracy(), 0.001, "commit 与 actual 相等 → accuracy=1.0");
+        assertEquals(1.0, accuracy.getCommitAccuracy().doubleValue(), 0.001, "commit 与 actual 相等 → accuracy=1.0");
     }
 
     // ---------- rpc helpers ----------

@@ -85,7 +85,7 @@
         </prop>
         <prop name="avgSalesCycleDays" displayName="平均销售周期天数" propId="17" i18n-en:displayName="Avg Sales Cycle Days"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Double" precision="10" scale="2"/>
+            <schema type="java.math.BigDecimal" precision="10" scale="2"/>
         </prop>
         <prop name="calculatedAt" displayName="聚合计算时间" propId="18" i18n-en:displayName="Calculated At" tagSet="clock"
               queryable="true" sortable="true" insertable="true" updatable="true">

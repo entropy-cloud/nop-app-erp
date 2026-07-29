@@ -63,21 +63,6 @@
                 <!--备注-->
                 <col id="remark" sortable="true"/>
 
-                <!--逻辑删除版本-->
-                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
-
-                <!--创建人-->
-                <col id="createdBy" mandatory="true" sortable="true"/>
-
-                <!--创建时间-->
-                <col id="createTime" mandatory="true" sortable="true"/>
-
-                <!--修改人-->
-                <col id="updatedBy" mandatory="true" sortable="true"/>
-
-                <!--修改时间-->
-                <col id="updateTime" mandatory="true" sortable="true"/>
-
                 <!--业务组织-->
                 <col id="orgId" ui:number="true" sortable="true"/>
 
@@ -92,6 +77,21 @@
 
                 <!--过账人-->
                 <col id="postedBy" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -107,11 +107,11 @@
  startTime[开始时间] endTime[结束时间]
  totalMinutes[总分钟数] visitType[维护类型]
  result[执行结果] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] orgId[业务组织]
- businessDate[业务日期] posted[是否已过账]
- postedAt[过账时间] postedBy[过账人]
+ orgId[业务组织] businessDate[业务日期]
+ posted[是否已过账] postedAt[过账时间]
+ postedBy[过账人] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维护访问" i18n-en:title="Add Maintenance Visit" x:prototype="edit"/>

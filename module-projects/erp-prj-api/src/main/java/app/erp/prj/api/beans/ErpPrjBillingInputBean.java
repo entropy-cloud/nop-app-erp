@@ -184,7 +184,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=18)
     
         public String getRemark(){
             return _remark;
@@ -198,7 +198,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=202)
+        @PropMeta(propId=19)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -212,7 +212,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=203)
+        @PropMeta(propId=20)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;

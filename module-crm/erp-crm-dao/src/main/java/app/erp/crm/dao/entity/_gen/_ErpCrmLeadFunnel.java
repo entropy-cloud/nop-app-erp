@@ -279,7 +279,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     private java.math.BigDecimal _avgDealSize;
     
     /* 平均销售周期天数: AVG_SALES_CYCLE_DAYS */
-    private java.lang.Double _avgSalesCycleDays;
+    private java.math.BigDecimal _avgSalesCycleDays;
     
     /* 聚合计算时间: CALCULATED_AT */
     private java.sql.Timestamp _calculatedAt;
@@ -632,9 +632,9 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
             }
         
             case PROP_ID_avgSalesCycleDays:{
-               java.lang.Double typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toDouble(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_avgSalesCycleDays));
                }
                setAvgSalesCycleDays(typedValue);
@@ -854,7 +854,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
         
             case PROP_ID_avgSalesCycleDays:{
                onInitProp(propId);
-               this._avgSalesCycleDays = (java.lang.Double)value;
+               this._avgSalesCycleDays = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1235,7 +1235,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 平均销售周期天数: AVG_SALES_CYCLE_DAYS
      */
-    public final java.lang.Double getAvgSalesCycleDays(){
+    public final java.math.BigDecimal getAvgSalesCycleDays(){
          onPropGet(PROP_ID_avgSalesCycleDays);
          return _avgSalesCycleDays;
     }
@@ -1243,7 +1243,7 @@ public class _ErpCrmLeadFunnel extends DynamicOrmEntity{
     /**
      * 平均销售周期天数: AVG_SALES_CYCLE_DAYS
      */
-    public final void setAvgSalesCycleDays(java.lang.Double value){
+    public final void setAvgSalesCycleDays(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_avgSalesCycleDays,value)){
             this._avgSalesCycleDays = value;
             internalClearRefs(PROP_ID_avgSalesCycleDays);

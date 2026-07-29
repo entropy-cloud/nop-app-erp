@@ -84,6 +84,12 @@
                 <!--审核状态-->
                 <col id="approveStatus" mandatory="true" sortable="true"/>
 
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
                 <!--已过账-->
                 <col id="posted" sortable="true"/>
 
@@ -110,12 +116,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--审核人-->
-                <col id="approvedBy" sortable="true"/>
-
-                <!--审核时间-->
-                <col id="approvedAt" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -134,12 +134,12 @@
  retentionAmount[质保金/保留款] retentionDueDate[质保金到期]
  transferToAsset[是否转固定资产] assetCardId[转固资产卡片]
  settlementVoucherCode[结算凭证号] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
+ approveStatus[审核状态] approvedBy[审核人]
+ approvedAt[审核时间] posted[已过账]
  postedAt[过账时间] postedBy[过账人]
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-项目结算单" i18n-en:title="Add Project Settlement" x:prototype="edit"/>

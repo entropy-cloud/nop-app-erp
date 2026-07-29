@@ -158,6 +158,8 @@ CREATE TABLE erp_prj_budget(
   total_amount NUMERIC(20,4) default 0   ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20) NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -165,8 +167,6 @@ CREATE TABLE erp_prj_budget(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
   constraint PK_erp_prj_budget primary key (id)
 );
 
@@ -180,21 +180,21 @@ CREATE TABLE erp_prj_cost_collection(
   total_amount NUMERIC(20,4) default 0   ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20) NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
-  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_prj_cost_collection primary key (id)
 );
 
@@ -338,20 +338,20 @@ CREATE TABLE erp_prj_billing(
   total_amount NUMERIC(20,4) default 0   ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20) NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_prj_billing primary key (id)
 );
 
@@ -378,6 +378,8 @@ CREATE TABLE erp_prj_project_settlement(
   settlement_voucher_code VARCHAR(50)  ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20) NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(36)  ,
@@ -388,8 +390,6 @@ CREATE TABLE erp_prj_project_settlement(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
   constraint PK_erp_prj_project_settlement primary key (id)
 );
 
@@ -631,6 +631,10 @@ CREATE TABLE erp_prj_project_settlement_line(
                     
       COMMENT ON COLUMN erp_prj_budget.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_prj_budget.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_prj_budget.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_prj_budget.remark IS '备注';
                     
       COMMENT ON COLUMN erp_prj_budget.del_version IS '逻辑删除版本';
@@ -644,10 +648,6 @@ CREATE TABLE erp_prj_project_settlement_line(
       COMMENT ON COLUMN erp_prj_budget.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_prj_budget.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_prj_budget.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_prj_budget.approved_at IS '审核时间';
                     
       COMMENT ON TABLE erp_prj_cost_collection IS '项目成本归集';
                 
@@ -669,6 +669,10 @@ CREATE TABLE erp_prj_project_settlement_line(
                     
       COMMENT ON COLUMN erp_prj_cost_collection.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_prj_cost_collection.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_prj_cost_collection.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_prj_cost_collection.posted IS '已过账(已转成本凭证)';
                     
       COMMENT ON COLUMN erp_prj_cost_collection.posted_at IS '过账时间';
@@ -676,6 +680,12 @@ CREATE TABLE erp_prj_project_settlement_line(
       COMMENT ON COLUMN erp_prj_cost_collection.posted_by IS '过账人';
                     
       COMMENT ON COLUMN erp_prj_cost_collection.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_prj_cost_collection.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_prj_cost_collection.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_prj_cost_collection.amount_functional IS '本位币金额';
                     
       COMMENT ON COLUMN erp_prj_cost_collection.del_version IS '逻辑删除版本';
                     
@@ -688,16 +698,6 @@ CREATE TABLE erp_prj_project_settlement_line(
       COMMENT ON COLUMN erp_prj_cost_collection.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_prj_cost_collection.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_prj_cost_collection.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_prj_cost_collection.approved_at IS '审核时间';
-                    
-      COMMENT ON COLUMN erp_prj_cost_collection.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_prj_cost_collection.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_prj_cost_collection.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_prj_milestone IS '项目里程碑';
                 
@@ -949,6 +949,10 @@ CREATE TABLE erp_prj_project_settlement_line(
                     
       COMMENT ON COLUMN erp_prj_billing.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_prj_billing.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_prj_billing.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_prj_billing.posted IS '已过账';
                     
       COMMENT ON COLUMN erp_prj_billing.posted_at IS '过账时间';
@@ -956,6 +960,10 @@ CREATE TABLE erp_prj_project_settlement_line(
       COMMENT ON COLUMN erp_prj_billing.posted_by IS '过账人';
                     
       COMMENT ON COLUMN erp_prj_billing.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_prj_billing.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_prj_billing.amount_functional IS '本位币金额';
                     
       COMMENT ON COLUMN erp_prj_billing.del_version IS '逻辑删除版本';
                     
@@ -968,14 +976,6 @@ CREATE TABLE erp_prj_project_settlement_line(
       COMMENT ON COLUMN erp_prj_billing.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_prj_billing.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_prj_billing.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_prj_billing.approved_at IS '审核时间';
-                    
-      COMMENT ON COLUMN erp_prj_billing.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_prj_billing.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_prj_project_settlement IS '项目结算单';
                 
@@ -1023,6 +1023,10 @@ CREATE TABLE erp_prj_project_settlement_line(
                     
       COMMENT ON COLUMN erp_prj_project_settlement.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_prj_project_settlement.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_prj_project_settlement.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_prj_project_settlement.posted IS '已过账';
                     
       COMMENT ON COLUMN erp_prj_project_settlement.posted_at IS '过账时间';
@@ -1042,10 +1046,6 @@ CREATE TABLE erp_prj_project_settlement_line(
       COMMENT ON COLUMN erp_prj_project_settlement.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_prj_project_settlement.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_prj_project_settlement.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_prj_project_settlement.approved_at IS '审核时间';
                     
       COMMENT ON TABLE erp_prj_billing_line IS '项目开票行';
                 

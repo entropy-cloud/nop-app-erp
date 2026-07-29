@@ -194,24 +194,10 @@
         }
 
 
-        private String _remark;
-
-    
-        @PropMeta(propId=25)
-    
-        public String getRemark(){
-            return _remark;
-        }
-
-        public void setRemark(String value){
-            this._remark = value;
-        }
-
-
         private java.time.LocalDate _businessDate;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=19)
     
         public java.time.LocalDate getBusinessDate(){
             return _businessDate;
@@ -225,7 +211,7 @@
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=20)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -239,7 +225,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=21)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -253,7 +239,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=29)
+        @PropMeta(propId=22)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -261,6 +247,20 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=29)
+    
+        public String getRemark(){
+            return _remark;
+        }
+
+        public void setRemark(String value){
+            this._remark = value;
         }
 
 

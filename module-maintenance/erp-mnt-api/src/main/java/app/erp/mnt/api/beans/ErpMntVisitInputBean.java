@@ -226,7 +226,7 @@
         private Long _orgId;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=16)
     
         public Long getOrgId(){
             return _orgId;
@@ -240,7 +240,7 @@
         private java.time.LocalDate _businessDate;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=17)
     
         public java.time.LocalDate getBusinessDate(){
             return _businessDate;

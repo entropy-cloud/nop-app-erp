@@ -61,11 +61,11 @@
         </prop>
         <prop name="commitAccuracy" displayName="承诺准确率" propId="11" i18n-en:displayName="Commit Accuracy"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Double" precision="10" scale="4"/>
+            <schema type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="upsideAccuracy" displayName="乐观准确率" propId="12" i18n-en:displayName="Upside Accuracy"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Double" precision="10" scale="4"/>
+            <schema type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="deviationAmount" displayName="偏差绝对值" propId="13" i18n-en:displayName="Deviation Amount"
               queryable="true" sortable="true" insertable="true" updatable="true">

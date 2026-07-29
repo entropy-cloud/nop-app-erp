@@ -236,38 +236,10 @@
         }
 
 
-        private String _docVersion;
-
-    
-        @PropMeta(propId=20)
-    
-        public String getDocVersion(){
-            return _docVersion;
-        }
-
-        public void setDocVersion(String value){
-            this._docVersion = value;
-        }
-
-
-        private String _remark;
-
-    
-        @PropMeta(propId=27)
-    
-        public String getRemark(){
-            return _remark;
-        }
-
-        public void setRemark(String value){
-            this._remark = value;
-        }
-
-
         private Long _currencyId;
 
     
-        @PropMeta(propId=202)
+        @PropMeta(propId=22)
     
         public Long getCurrencyId(){
             return _currencyId;
@@ -281,7 +253,7 @@
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=203)
+        @PropMeta(propId=23)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -295,7 +267,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=204)
+        @PropMeta(propId=24)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -309,7 +281,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=205)
+        @PropMeta(propId=25)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -317,6 +289,34 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
+        }
+
+
+        private String _docVersion;
+
+    
+        @PropMeta(propId=26)
+    
+        public String getDocVersion(){
+            return _docVersion;
+        }
+
+        public void setDocVersion(String value){
+            this._docVersion = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=33)
+    
+        public String getRemark(){
+            return _remark;
+        }
+
+        public void setRemark(String value){
+            this._remark = value;
         }
 
 

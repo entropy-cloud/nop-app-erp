@@ -69,65 +69,65 @@ public class _ErpAstCip extends DynamicOrmEntity{
     public static final String PROP_NAME_status = "status";
     public static final int PROP_ID_status = 12;
     
-    /* 逻辑删除版本: DEL_VERSION BIGINT */
-    public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 13;
-    
-    /* 数据版本: VERSION INTEGER */
-    public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 14;
-    
-    /* 创建人: CREATED_BY VARCHAR */
-    public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 15;
-    
-    /* 创建时间: CREATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 16;
-    
-    /* 修改人: UPDATED_BY VARCHAR */
-    public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 17;
-    
-    /* 修改时间: UPDATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 18;
-    
-    /* 备注: REMARK VARCHAR */
-    public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 19;
-    
-    /* 关联项目(可空): PROJECT_ID BIGINT */
-    public static final String PROP_NAME_projectId = "projectId";
-    public static final int PROP_ID_projectId = 20;
-    
-    /* 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT VARCHAR */
-    public static final String PROP_NAME_cipAssetCategorySnapshot = "cipAssetCategorySnapshot";
-    public static final int PROP_ID_cipAssetCategorySnapshot = 21;
-    
     /* 是否已过账: POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 22;
+    public static final int PROP_ID_posted = 13;
     
     /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 23;
+    public static final int PROP_ID_postedAt = 14;
     
     /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 24;
+    public static final int PROP_ID_postedBy = 15;
     
     /* 汇率: EXCHANGE_RATE DECIMAL */
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
-    public static final int PROP_ID_exchangeRate = 25;
+    public static final int PROP_ID_exchangeRate = 16;
     
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 26;
+    public static final int PROP_ID_amountSource = 17;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 27;
+    public static final int PROP_ID_amountFunctional = 18;
+    
+    /* 关联项目(可空): PROJECT_ID BIGINT */
+    public static final String PROP_NAME_projectId = "projectId";
+    public static final int PROP_ID_projectId = 19;
+    
+    /* 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT VARCHAR */
+    public static final String PROP_NAME_cipAssetCategorySnapshot = "cipAssetCategorySnapshot";
+    public static final int PROP_ID_cipAssetCategorySnapshot = 20;
+    
+    /* 逻辑删除版本: DEL_VERSION BIGINT */
+    public static final String PROP_NAME_delVersion = "delVersion";
+    public static final int PROP_ID_delVersion = 21;
+    
+    /* 数据版本: VERSION INTEGER */
+    public static final String PROP_NAME_version = "version";
+    public static final int PROP_ID_version = 22;
+    
+    /* 创建人: CREATED_BY VARCHAR */
+    public static final String PROP_NAME_createdBy = "createdBy";
+    public static final int PROP_ID_createdBy = 23;
+    
+    /* 创建时间: CREATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_createTime = "createTime";
+    public static final int PROP_ID_createTime = 24;
+    
+    /* 修改人: UPDATED_BY VARCHAR */
+    public static final String PROP_NAME_updatedBy = "updatedBy";
+    public static final int PROP_ID_updatedBy = 25;
+    
+    /* 修改时间: UPDATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_updateTime = "updateTime";
+    public static final int PROP_ID_updateTime = 26;
+    
+    /* 备注: REMARK VARCHAR */
+    public static final String PROP_NAME_remark = "remark";
+    public static final int PROP_ID_remark = 27;
     
 
     private static int _PROP_ID_BOUND = 28;
@@ -189,6 +189,30 @@ public class _ErpAstCip extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_status] = PROP_NAME_status;
           PROP_NAME_TO_ID.put(PROP_NAME_status, PROP_ID_status);
       
+          PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
+          PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
+      
+          PROP_ID_TO_NAME[PROP_ID_postedAt] = PROP_NAME_postedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_postedAt, PROP_ID_postedAt);
+      
+          PROP_ID_TO_NAME[PROP_ID_postedBy] = PROP_NAME_postedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_postedBy, PROP_ID_postedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_exchangeRate] = PROP_NAME_exchangeRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_exchangeRate, PROP_ID_exchangeRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
+      
+          PROP_ID_TO_NAME[PROP_ID_projectId] = PROP_NAME_projectId;
+          PROP_NAME_TO_ID.put(PROP_NAME_projectId, PROP_ID_projectId);
+      
+          PROP_ID_TO_NAME[PROP_ID_cipAssetCategorySnapshot] = PROP_NAME_cipAssetCategorySnapshot;
+          PROP_NAME_TO_ID.put(PROP_NAME_cipAssetCategorySnapshot, PROP_ID_cipAssetCategorySnapshot);
+      
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
       
@@ -209,30 +233,6 @@ public class _ErpAstCip extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
-      
-          PROP_ID_TO_NAME[PROP_ID_projectId] = PROP_NAME_projectId;
-          PROP_NAME_TO_ID.put(PROP_NAME_projectId, PROP_ID_projectId);
-      
-          PROP_ID_TO_NAME[PROP_ID_cipAssetCategorySnapshot] = PROP_NAME_cipAssetCategorySnapshot;
-          PROP_NAME_TO_ID.put(PROP_NAME_cipAssetCategorySnapshot, PROP_ID_cipAssetCategorySnapshot);
-      
-          PROP_ID_TO_NAME[PROP_ID_posted] = PROP_NAME_posted;
-          PROP_NAME_TO_ID.put(PROP_NAME_posted, PROP_ID_posted);
-      
-          PROP_ID_TO_NAME[PROP_ID_postedAt] = PROP_NAME_postedAt;
-          PROP_NAME_TO_ID.put(PROP_NAME_postedAt, PROP_ID_postedAt);
-      
-          PROP_ID_TO_NAME[PROP_ID_postedBy] = PROP_NAME_postedBy;
-          PROP_NAME_TO_ID.put(PROP_NAME_postedBy, PROP_ID_postedBy);
-      
-          PROP_ID_TO_NAME[PROP_ID_exchangeRate] = PROP_NAME_exchangeRate;
-          PROP_NAME_TO_ID.put(PROP_NAME_exchangeRate, PROP_ID_exchangeRate);
-      
-          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
-          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
-      
-          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
-          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
       
     }
 
@@ -273,6 +273,30 @@ public class _ErpAstCip extends DynamicOrmEntity{
     /* 状态: STATUS */
     private java.lang.String _status;
     
+    /* 是否已过账: POSTED */
+    private java.lang.Boolean _posted;
+    
+    /* 过账时间: POSTED_AT */
+    private java.sql.Timestamp _postedAt;
+    
+    /* 过账人: POSTED_BY */
+    private java.lang.String _postedBy;
+    
+    /* 汇率: EXCHANGE_RATE */
+    private java.math.BigDecimal _exchangeRate;
+    
+    /* 源币种金额: AMOUNT_SOURCE */
+    private java.math.BigDecimal _amountSource;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL */
+    private java.math.BigDecimal _amountFunctional;
+    
+    /* 关联项目(可空): PROJECT_ID */
+    private java.lang.Long _projectId;
+    
+    /* 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT */
+    private java.lang.String _cipAssetCategorySnapshot;
+    
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
     
@@ -293,30 +317,6 @@ public class _ErpAstCip extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
-    
-    /* 关联项目(可空): PROJECT_ID */
-    private java.lang.Long _projectId;
-    
-    /* 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT */
-    private java.lang.String _cipAssetCategorySnapshot;
-    
-    /* 是否已过账: POSTED */
-    private java.lang.Boolean _posted;
-    
-    /* 过账时间: POSTED_AT */
-    private java.sql.Timestamp _postedAt;
-    
-    /* 过账人: POSTED_BY */
-    private java.lang.String _postedBy;
-    
-    /* 汇率: EXCHANGE_RATE */
-    private java.math.BigDecimal _exchangeRate;
-    
-    /* 源币种金额: AMOUNT_SOURCE */
-    private java.math.BigDecimal _amountSource;
-    
-    /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.math.BigDecimal _amountFunctional;
     
 
     public _ErpAstCip(){
@@ -428,6 +428,30 @@ public class _ErpAstCip extends DynamicOrmEntity{
             case PROP_ID_status:
                return getStatus();
         
+            case PROP_ID_posted:
+               return getPosted();
+        
+            case PROP_ID_postedAt:
+               return getPostedAt();
+        
+            case PROP_ID_postedBy:
+               return getPostedBy();
+        
+            case PROP_ID_exchangeRate:
+               return getExchangeRate();
+        
+            case PROP_ID_amountSource:
+               return getAmountSource();
+        
+            case PROP_ID_amountFunctional:
+               return getAmountFunctional();
+        
+            case PROP_ID_projectId:
+               return getProjectId();
+        
+            case PROP_ID_cipAssetCategorySnapshot:
+               return getCipAssetCategorySnapshot();
+        
             case PROP_ID_delVersion:
                return getDelVersion();
         
@@ -448,30 +472,6 @@ public class _ErpAstCip extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
-        
-            case PROP_ID_projectId:
-               return getProjectId();
-        
-            case PROP_ID_cipAssetCategorySnapshot:
-               return getCipAssetCategorySnapshot();
-        
-            case PROP_ID_posted:
-               return getPosted();
-        
-            case PROP_ID_postedAt:
-               return getPostedAt();
-        
-            case PROP_ID_postedBy:
-               return getPostedBy();
-        
-            case PROP_ID_exchangeRate:
-               return getExchangeRate();
-        
-            case PROP_ID_amountSource:
-               return getAmountSource();
-        
-            case PROP_ID_amountFunctional:
-               return getAmountFunctional();
         
            default:
               return super.orm_propValue(propId);
@@ -604,6 +604,86 @@ public class _ErpAstCip extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_posted:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_posted));
+               }
+               setPosted(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postedAt:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
+                       err-> newTypeConversionError(PROP_NAME_postedAt));
+               }
+               setPostedAt(typedValue);
+               break;
+            }
+        
+            case PROP_ID_postedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_postedBy));
+               }
+               setPostedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_exchangeRate:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_exchangeRate));
+               }
+               setExchangeRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_amountSource));
+               }
+               setAmountSource(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
+               }
+               setAmountFunctional(typedValue);
+               break;
+            }
+        
+            case PROP_ID_projectId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_projectId));
+               }
+               setProjectId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_cipAssetCategorySnapshot:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_cipAssetCategorySnapshot));
+               }
+               setCipAssetCategorySnapshot(typedValue);
+               break;
+            }
+        
             case PROP_ID_delVersion:{
                java.lang.Long typedValue = null;
                if(value != null){
@@ -671,86 +751,6 @@ public class _ErpAstCip extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_remark));
                }
                setRemark(typedValue);
-               break;
-            }
-        
-            case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
-                       err-> newTypeConversionError(PROP_NAME_projectId));
-               }
-               setProjectId(typedValue);
-               break;
-            }
-        
-            case PROP_ID_cipAssetCategorySnapshot:{
-               java.lang.String typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toString(value,
-                       err-> newTypeConversionError(PROP_NAME_cipAssetCategorySnapshot));
-               }
-               setCipAssetCategorySnapshot(typedValue);
-               break;
-            }
-        
-            case PROP_ID_posted:{
-               java.lang.Boolean typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBoolean(value,
-                       err-> newTypeConversionError(PROP_NAME_posted));
-               }
-               setPosted(typedValue);
-               break;
-            }
-        
-            case PROP_ID_postedAt:{
-               java.sql.Timestamp typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toTimestamp(value,
-                       err-> newTypeConversionError(PROP_NAME_postedAt));
-               }
-               setPostedAt(typedValue);
-               break;
-            }
-        
-            case PROP_ID_postedBy:{
-               java.lang.String typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toString(value,
-                       err-> newTypeConversionError(PROP_NAME_postedBy));
-               }
-               setPostedBy(typedValue);
-               break;
-            }
-        
-            case PROP_ID_exchangeRate:{
-               java.math.BigDecimal typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBigDecimal(value,
-                       err-> newTypeConversionError(PROP_NAME_exchangeRate));
-               }
-               setExchangeRate(typedValue);
-               break;
-            }
-        
-            case PROP_ID_amountSource:{
-               java.math.BigDecimal typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBigDecimal(value,
-                       err-> newTypeConversionError(PROP_NAME_amountSource));
-               }
-               setAmountSource(typedValue);
-               break;
-            }
-        
-            case PROP_ID_amountFunctional:{
-               java.math.BigDecimal typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBigDecimal(value,
-                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
-               }
-               setAmountFunctional(typedValue);
                break;
             }
         
@@ -847,6 +847,62 @@ public class _ErpAstCip extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_posted:{
+               onInitProp(propId);
+               this._posted = (java.lang.Boolean)value;
+               
+               break;
+            }
+        
+            case PROP_ID_postedAt:{
+               onInitProp(propId);
+               this._postedAt = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_postedBy:{
+               onInitProp(propId);
+               this._postedBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_exchangeRate:{
+               onInitProp(propId);
+               this._exchangeRate = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               onInitProp(propId);
+               this._amountSource = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               onInitProp(propId);
+               this._amountFunctional = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_projectId:{
+               onInitProp(propId);
+               this._projectId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_cipAssetCategorySnapshot:{
+               onInitProp(propId);
+               this._cipAssetCategorySnapshot = (java.lang.String)value;
+               
+               break;
+            }
+        
             case PROP_ID_delVersion:{
                onInitProp(propId);
                this._delVersion = (java.lang.Long)value;
@@ -892,62 +948,6 @@ public class _ErpAstCip extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
-               
-               break;
-            }
-        
-            case PROP_ID_projectId:{
-               onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
-               
-               break;
-            }
-        
-            case PROP_ID_cipAssetCategorySnapshot:{
-               onInitProp(propId);
-               this._cipAssetCategorySnapshot = (java.lang.String)value;
-               
-               break;
-            }
-        
-            case PROP_ID_posted:{
-               onInitProp(propId);
-               this._posted = (java.lang.Boolean)value;
-               
-               break;
-            }
-        
-            case PROP_ID_postedAt:{
-               onInitProp(propId);
-               this._postedAt = (java.sql.Timestamp)value;
-               
-               break;
-            }
-        
-            case PROP_ID_postedBy:{
-               onInitProp(propId);
-               this._postedBy = (java.lang.String)value;
-               
-               break;
-            }
-        
-            case PROP_ID_exchangeRate:{
-               onInitProp(propId);
-               this._exchangeRate = (java.math.BigDecimal)value;
-               
-               break;
-            }
-        
-            case PROP_ID_amountSource:{
-               onInitProp(propId);
-               this._amountSource = (java.math.BigDecimal)value;
-               
-               break;
-            }
-        
-            case PROP_ID_amountFunctional:{
-               onInitProp(propId);
-               this._amountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1187,6 +1187,158 @@ public class _ErpAstCip extends DynamicOrmEntity{
     }
     
     /**
+     * 是否已过账: POSTED
+     */
+    public final java.lang.Boolean getPosted(){
+         onPropGet(PROP_ID_posted);
+         return _posted;
+    }
+
+    /**
+     * 是否已过账: POSTED
+     */
+    public final void setPosted(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_posted,value)){
+            this._posted = value;
+            internalClearRefs(PROP_ID_posted);
+            
+        }
+    }
+    
+    /**
+     * 过账时间: POSTED_AT
+     */
+    public final java.sql.Timestamp getPostedAt(){
+         onPropGet(PROP_ID_postedAt);
+         return _postedAt;
+    }
+
+    /**
+     * 过账时间: POSTED_AT
+     */
+    public final void setPostedAt(java.sql.Timestamp value){
+        if(onPropSet(PROP_ID_postedAt,value)){
+            this._postedAt = value;
+            internalClearRefs(PROP_ID_postedAt);
+            
+        }
+    }
+    
+    /**
+     * 过账人: POSTED_BY
+     */
+    public final java.lang.String getPostedBy(){
+         onPropGet(PROP_ID_postedBy);
+         return _postedBy;
+    }
+
+    /**
+     * 过账人: POSTED_BY
+     */
+    public final void setPostedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_postedBy,value)){
+            this._postedBy = value;
+            internalClearRefs(PROP_ID_postedBy);
+            
+        }
+    }
+    
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final java.math.BigDecimal getExchangeRate(){
+         onPropGet(PROP_ID_exchangeRate);
+         return _exchangeRate;
+    }
+
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final void setExchangeRate(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_exchangeRate,value)){
+            this._exchangeRate = value;
+            internalClearRefs(PROP_ID_exchangeRate);
+            
+        }
+    }
+    
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final java.math.BigDecimal getAmountSource(){
+         onPropGet(PROP_ID_amountSource);
+         return _amountSource;
+    }
+
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final void setAmountSource(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_amountSource,value)){
+            this._amountSource = value;
+            internalClearRefs(PROP_ID_amountSource);
+            
+        }
+    }
+    
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final java.math.BigDecimal getAmountFunctional(){
+         onPropGet(PROP_ID_amountFunctional);
+         return _amountFunctional;
+    }
+
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final void setAmountFunctional(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_amountFunctional,value)){
+            this._amountFunctional = value;
+            internalClearRefs(PROP_ID_amountFunctional);
+            
+        }
+    }
+    
+    /**
+     * 关联项目(可空): PROJECT_ID
+     */
+    public final java.lang.Long getProjectId(){
+         onPropGet(PROP_ID_projectId);
+         return _projectId;
+    }
+
+    /**
+     * 关联项目(可空): PROJECT_ID
+     */
+    public final void setProjectId(java.lang.Long value){
+        if(onPropSet(PROP_ID_projectId,value)){
+            this._projectId = value;
+            internalClearRefs(PROP_ID_projectId);
+            
+        }
+    }
+    
+    /**
+     * 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT
+     */
+    public final java.lang.String getCipAssetCategorySnapshot(){
+         onPropGet(PROP_ID_cipAssetCategorySnapshot);
+         return _cipAssetCategorySnapshot;
+    }
+
+    /**
+     * 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT
+     */
+    public final void setCipAssetCategorySnapshot(java.lang.String value){
+        if(onPropSet(PROP_ID_cipAssetCategorySnapshot,value)){
+            this._cipAssetCategorySnapshot = value;
+            internalClearRefs(PROP_ID_cipAssetCategorySnapshot);
+            
+        }
+    }
+    
+    /**
      * 逻辑删除版本: DEL_VERSION
      */
     public final java.lang.Long getDelVersion(){
@@ -1315,158 +1467,6 @@ public class _ErpAstCip extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
-            
-        }
-    }
-    
-    /**
-     * 关联项目(可空): PROJECT_ID
-     */
-    public final java.lang.Long getProjectId(){
-         onPropGet(PROP_ID_projectId);
-         return _projectId;
-    }
-
-    /**
-     * 关联项目(可空): PROJECT_ID
-     */
-    public final void setProjectId(java.lang.Long value){
-        if(onPropSet(PROP_ID_projectId,value)){
-            this._projectId = value;
-            internalClearRefs(PROP_ID_projectId);
-            
-        }
-    }
-    
-    /**
-     * 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT
-     */
-    public final java.lang.String getCipAssetCategorySnapshot(){
-         onPropGet(PROP_ID_cipAssetCategorySnapshot);
-         return _cipAssetCategorySnapshot;
-    }
-
-    /**
-     * 转固时类别快照: CIP_ASSET_CATEGORY_SNAPSHOT
-     */
-    public final void setCipAssetCategorySnapshot(java.lang.String value){
-        if(onPropSet(PROP_ID_cipAssetCategorySnapshot,value)){
-            this._cipAssetCategorySnapshot = value;
-            internalClearRefs(PROP_ID_cipAssetCategorySnapshot);
-            
-        }
-    }
-    
-    /**
-     * 是否已过账: POSTED
-     */
-    public final java.lang.Boolean getPosted(){
-         onPropGet(PROP_ID_posted);
-         return _posted;
-    }
-
-    /**
-     * 是否已过账: POSTED
-     */
-    public final void setPosted(java.lang.Boolean value){
-        if(onPropSet(PROP_ID_posted,value)){
-            this._posted = value;
-            internalClearRefs(PROP_ID_posted);
-            
-        }
-    }
-    
-    /**
-     * 过账时间: POSTED_AT
-     */
-    public final java.sql.Timestamp getPostedAt(){
-         onPropGet(PROP_ID_postedAt);
-         return _postedAt;
-    }
-
-    /**
-     * 过账时间: POSTED_AT
-     */
-    public final void setPostedAt(java.sql.Timestamp value){
-        if(onPropSet(PROP_ID_postedAt,value)){
-            this._postedAt = value;
-            internalClearRefs(PROP_ID_postedAt);
-            
-        }
-    }
-    
-    /**
-     * 过账人: POSTED_BY
-     */
-    public final java.lang.String getPostedBy(){
-         onPropGet(PROP_ID_postedBy);
-         return _postedBy;
-    }
-
-    /**
-     * 过账人: POSTED_BY
-     */
-    public final void setPostedBy(java.lang.String value){
-        if(onPropSet(PROP_ID_postedBy,value)){
-            this._postedBy = value;
-            internalClearRefs(PROP_ID_postedBy);
-            
-        }
-    }
-    
-    /**
-     * 汇率: EXCHANGE_RATE
-     */
-    public final java.math.BigDecimal getExchangeRate(){
-         onPropGet(PROP_ID_exchangeRate);
-         return _exchangeRate;
-    }
-
-    /**
-     * 汇率: EXCHANGE_RATE
-     */
-    public final void setExchangeRate(java.math.BigDecimal value){
-        if(onPropSet(PROP_ID_exchangeRate,value)){
-            this._exchangeRate = value;
-            internalClearRefs(PROP_ID_exchangeRate);
-            
-        }
-    }
-    
-    /**
-     * 源币种金额: AMOUNT_SOURCE
-     */
-    public final java.math.BigDecimal getAmountSource(){
-         onPropGet(PROP_ID_amountSource);
-         return _amountSource;
-    }
-
-    /**
-     * 源币种金额: AMOUNT_SOURCE
-     */
-    public final void setAmountSource(java.math.BigDecimal value){
-        if(onPropSet(PROP_ID_amountSource,value)){
-            this._amountSource = value;
-            internalClearRefs(PROP_ID_amountSource);
-            
-        }
-    }
-    
-    /**
-     * 本位币金额: AMOUNT_FUNCTIONAL
-     */
-    public final java.math.BigDecimal getAmountFunctional(){
-         onPropGet(PROP_ID_amountFunctional);
-         return _amountFunctional;
-    }
-
-    /**
-     * 本位币金额: AMOUNT_FUNCTIONAL
-     */
-    public final void setAmountFunctional(java.math.BigDecimal value){
-        if(onPropSet(PROP_ID_amountFunctional,value)){
-            this._amountFunctional = value;
-            internalClearRefs(PROP_ID_amountFunctional);
             
         }
     }

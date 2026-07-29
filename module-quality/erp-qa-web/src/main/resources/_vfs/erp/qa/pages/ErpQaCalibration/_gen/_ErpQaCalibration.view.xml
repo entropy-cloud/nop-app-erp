@@ -63,6 +63,12 @@
                 <!--审核状态-->
                 <col id="approveStatus" mandatory="true" sortable="true"/>
 
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
                 <!--备注-->
                 <col id="remark" sortable="true"/>
 
@@ -80,12 +86,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--审核人-->
-                <col id="approvedBy" sortable="true"/>
-
-                <!--审核时间-->
-                <col id="approvedAt" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -101,10 +101,10 @@
  tolerance[允差] result[校准结果]
  nextCalibrationDate[下次校准日期] calibratedBy[校准人(职员)]
  docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- approvedBy[审核人] approvedAt[审核时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-量具校准" i18n-en:title="Add Gauge Calibration" x:prototype="edit"/>

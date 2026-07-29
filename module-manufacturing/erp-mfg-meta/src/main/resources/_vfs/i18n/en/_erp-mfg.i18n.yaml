@@ -378,22 +378,22 @@ prop:
       docStatus_label: null
       approveStatus: Approve Status
       approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
       posted: Posted
       postedAt: Posted At
       postedBy: Posted By
       remark: Remark
+      currencyId: Currency
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
       delVersion: Del Flag
       version: Version
       createdBy: Created By
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      approvedBy: Approved By
-      approvedAt: Approved At
-      currencyId: Currency
-      exchangeRate: Exchange Rate
-      amountSource: Amt (Source)
-      amountFunctional: Amt (Functional)
       workOrder: Work Order
       jobCard: Job Card
       warehouse: Warehouse
@@ -633,6 +633,8 @@ prop:
       docStatus_label: null
       approveStatus: Approve Status
       approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
       posted: Posted
       postedStatus: Posted Status
       postedStatus_label: null
@@ -647,8 +649,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      approvedBy: Approved By
-      approvedAt: Approved At
       workOrder: Work Order
       supplier: Supplier
       supplier.name: Supplier
@@ -714,24 +714,24 @@ prop:
       docStatus_label: null
       approveStatus: Approve Status
       approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
       priority: Priority
       priority_label: null
       posted: Posted
       postedAt: Posted At
       postedBy: Posted By
       remark: Remark
+      exchangeRate: Exchange Rate
+      amountSource: Amt (Source)
+      amountFunctional: Amt (Functional)
+      sourceScheduleId: Source Schedule Id
       delVersion: Del Flag
       version: Version
       createdBy: Created By
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      sourceScheduleId: Source Schedule Id
-      approvedBy: Approved By
-      approvedAt: Approved At
-      exchangeRate: Exchange Rate
-      amountSource: Amt (Source)
-      amountFunctional: Amt (Functional)
       bom: Bom
       routing: Routing
       productionVersion: Production Version

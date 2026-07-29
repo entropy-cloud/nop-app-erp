@@ -142,6 +142,8 @@ CREATE TABLE erp_qa_review(
   action_required INT4 default 0   ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20) NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -149,8 +151,6 @@ CREATE TABLE erp_qa_review(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
   constraint PK_erp_qa_review primary key (id)
 );
 
@@ -170,6 +170,8 @@ CREATE TABLE erp_qa_calibration(
   calibrated_by INT8  ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20) NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   remark VARCHAR(1000)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -177,8 +179,6 @@ CREATE TABLE erp_qa_calibration(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
   constraint PK_erp_qa_calibration primary key (id)
 );
 
@@ -195,6 +195,7 @@ CREATE TABLE erp_qa_inspection(
   supplier_id INT8  ,
   warehouse_id INT8  ,
   batch_no VARCHAR(50)  ,
+  business_date DATE NOT NULL ,
   inspection_date DATE NOT NULL ,
   lot_quantity NUMERIC(20,4)  ,
   sample_quantity NUMERIC(20,4)  ,
@@ -214,7 +215,6 @@ CREATE TABLE erp_qa_inspection(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  business_date DATE NOT NULL ,
   constraint PK_erp_qa_inspection primary key (id)
 );
 
@@ -634,6 +634,10 @@ CREATE TABLE erp_qa_recall_target(
                     
       COMMENT ON COLUMN erp_qa_review.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_qa_review.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_qa_review.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_qa_review.remark IS '备注';
                     
       COMMENT ON COLUMN erp_qa_review.del_version IS '逻辑删除版本';
@@ -647,10 +651,6 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_review.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_review.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_qa_review.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_qa_review.approved_at IS '审核时间';
                     
       COMMENT ON TABLE erp_qa_calibration IS '量具校准';
                 
@@ -684,6 +684,10 @@ CREATE TABLE erp_qa_recall_target(
                     
       COMMENT ON COLUMN erp_qa_calibration.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_qa_calibration.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_qa_calibration.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_qa_calibration.remark IS '备注';
                     
       COMMENT ON COLUMN erp_qa_calibration.del_version IS '逻辑删除版本';
@@ -697,10 +701,6 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_calibration.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_calibration.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_qa_calibration.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_qa_calibration.approved_at IS '审核时间';
                     
       COMMENT ON TABLE erp_qa_inspection IS '质检单';
                 
@@ -727,6 +727,8 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_inspection.warehouse_id IS '仓库';
                     
       COMMENT ON COLUMN erp_qa_inspection.batch_no IS '批号';
+                    
+      COMMENT ON COLUMN erp_qa_inspection.business_date IS '业务日期';
                     
       COMMENT ON COLUMN erp_qa_inspection.inspection_date IS '检验日期';
                     
@@ -765,8 +767,6 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_inspection.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_inspection.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_qa_inspection.business_date IS '业务日期';
                     
       COMMENT ON TABLE erp_qa_inspection_template_line IS '质检模板行';
                 

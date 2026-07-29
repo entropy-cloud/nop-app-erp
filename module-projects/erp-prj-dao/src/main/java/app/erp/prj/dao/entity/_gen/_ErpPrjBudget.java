@@ -57,44 +57,44 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 9;
     
-    /* 备注: REMARK VARCHAR */
-    public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 10;
-    
-    /* 逻辑删除版本: DEL_VERSION BIGINT */
-    public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 11;
-    
-    /* 数据版本: VERSION INTEGER */
-    public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 12;
-    
-    /* 创建人: CREATED_BY VARCHAR */
-    public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 13;
-    
-    /* 创建时间: CREATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 14;
-    
-    /* 修改人: UPDATED_BY VARCHAR */
-    public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 15;
-    
-    /* 修改时间: UPDATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 16;
-    
     /* 审核人: APPROVED_BY VARCHAR */
     public static final String PROP_NAME_approvedBy = "approvedBy";
-    public static final int PROP_ID_approvedBy = 200;
+    public static final int PROP_ID_approvedBy = 10;
     
     /* 审核时间: APPROVED_AT TIMESTAMP */
     public static final String PROP_NAME_approvedAt = "approvedAt";
-    public static final int PROP_ID_approvedAt = 201;
+    public static final int PROP_ID_approvedAt = 11;
+    
+    /* 备注: REMARK VARCHAR */
+    public static final String PROP_NAME_remark = "remark";
+    public static final int PROP_ID_remark = 12;
+    
+    /* 逻辑删除版本: DEL_VERSION BIGINT */
+    public static final String PROP_NAME_delVersion = "delVersion";
+    public static final int PROP_ID_delVersion = 13;
+    
+    /* 数据版本: VERSION INTEGER */
+    public static final String PROP_NAME_version = "version";
+    public static final int PROP_ID_version = 14;
+    
+    /* 创建人: CREATED_BY VARCHAR */
+    public static final String PROP_NAME_createdBy = "createdBy";
+    public static final int PROP_ID_createdBy = 15;
+    
+    /* 创建时间: CREATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_createTime = "createTime";
+    public static final int PROP_ID_createTime = 16;
+    
+    /* 修改人: UPDATED_BY VARCHAR */
+    public static final String PROP_NAME_updatedBy = "updatedBy";
+    public static final int PROP_ID_updatedBy = 17;
+    
+    /* 修改时间: UPDATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_updateTime = "updateTime";
+    public static final int PROP_ID_updateTime = 18;
     
 
-    private static int _PROP_ID_BOUND = 202;
+    private static int _PROP_ID_BOUND = 19;
 
     
     /* relation:  */
@@ -113,7 +113,7 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[202];
+    private static final String[] PROP_ID_TO_NAME = new String[19];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -144,6 +144,12 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_approveStatus] = PROP_NAME_approveStatus;
           PROP_NAME_TO_ID.put(PROP_NAME_approveStatus, PROP_ID_approveStatus);
       
+          PROP_ID_TO_NAME[PROP_ID_approvedBy] = PROP_NAME_approvedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedBy, PROP_ID_approvedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
+      
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
@@ -164,12 +170,6 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
-      
-          PROP_ID_TO_NAME[PROP_ID_approvedBy] = PROP_NAME_approvedBy;
-          PROP_NAME_TO_ID.put(PROP_NAME_approvedBy, PROP_ID_approvedBy);
-      
-          PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
-          PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
       
     }
 
@@ -201,6 +201,12 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
     /* 审核状态: APPROVE_STATUS */
     private java.lang.String _approveStatus;
     
+    /* 审核人: APPROVED_BY */
+    private java.lang.String _approvedBy;
+    
+    /* 审核时间: APPROVED_AT */
+    private java.sql.Timestamp _approvedAt;
+    
     /* 备注: REMARK */
     private java.lang.String _remark;
     
@@ -221,12 +227,6 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
-    
-    /* 审核人: APPROVED_BY */
-    private java.lang.String _approvedBy;
-    
-    /* 审核时间: APPROVED_AT */
-    private java.sql.Timestamp _approvedAt;
     
 
     public _ErpPrjBudget(){
@@ -329,6 +329,12 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
             case PROP_ID_approveStatus:
                return getApproveStatus();
         
+            case PROP_ID_approvedBy:
+               return getApprovedBy();
+        
+            case PROP_ID_approvedAt:
+               return getApprovedAt();
+        
             case PROP_ID_remark:
                return getRemark();
         
@@ -349,12 +355,6 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
-        
-            case PROP_ID_approvedBy:
-               return getApprovedBy();
-        
-            case PROP_ID_approvedAt:
-               return getApprovedAt();
         
            default:
               return super.orm_propValue(propId);
@@ -457,6 +457,26 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_approvedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedBy));
+               }
+               setApprovedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedAt));
+               }
+               setApprovedAt(typedValue);
+               break;
+            }
+        
             case PROP_ID_remark:{
                java.lang.String typedValue = null;
                if(value != null){
@@ -524,26 +544,6 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_updateTime));
                }
                setUpdateTime(typedValue);
-               break;
-            }
-        
-            case PROP_ID_approvedBy:{
-               java.lang.String typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toString(value,
-                       err-> newTypeConversionError(PROP_NAME_approvedBy));
-               }
-               setApprovedBy(typedValue);
-               break;
-            }
-        
-            case PROP_ID_approvedAt:{
-               java.sql.Timestamp typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toTimestamp(value,
-                       err-> newTypeConversionError(PROP_NAME_approvedAt));
-               }
-               setApprovedAt(typedValue);
                break;
             }
         
@@ -619,6 +619,20 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_approvedBy:{
+               onInitProp(propId);
+               this._approvedBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               onInitProp(propId);
+               this._approvedAt = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
@@ -664,20 +678,6 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
-               
-               break;
-            }
-        
-            case PROP_ID_approvedBy:{
-               onInitProp(propId);
-               this._approvedBy = (java.lang.String)value;
-               
-               break;
-            }
-        
-            case PROP_ID_approvedAt:{
-               onInitProp(propId);
-               this._approvedAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -860,6 +860,44 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
     }
     
     /**
+     * 审核人: APPROVED_BY
+     */
+    public final java.lang.String getApprovedBy(){
+         onPropGet(PROP_ID_approvedBy);
+         return _approvedBy;
+    }
+
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final void setApprovedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_approvedBy,value)){
+            this._approvedBy = value;
+            internalClearRefs(PROP_ID_approvedBy);
+            
+        }
+    }
+    
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final java.sql.Timestamp getApprovedAt(){
+         onPropGet(PROP_ID_approvedAt);
+         return _approvedAt;
+    }
+
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final void setApprovedAt(java.sql.Timestamp value){
+        if(onPropSet(PROP_ID_approvedAt,value)){
+            this._approvedAt = value;
+            internalClearRefs(PROP_ID_approvedAt);
+            
+        }
+    }
+    
+    /**
      * 备注: REMARK
      */
     public final java.lang.String getRemark(){
@@ -988,44 +1026,6 @@ public class _ErpPrjBudget extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
-            
-        }
-    }
-    
-    /**
-     * 审核人: APPROVED_BY
-     */
-    public final java.lang.String getApprovedBy(){
-         onPropGet(PROP_ID_approvedBy);
-         return _approvedBy;
-    }
-
-    /**
-     * 审核人: APPROVED_BY
-     */
-    public final void setApprovedBy(java.lang.String value){
-        if(onPropSet(PROP_ID_approvedBy,value)){
-            this._approvedBy = value;
-            internalClearRefs(PROP_ID_approvedBy);
-            
-        }
-    }
-    
-    /**
-     * 审核时间: APPROVED_AT
-     */
-    public final java.sql.Timestamp getApprovedAt(){
-         onPropGet(PROP_ID_approvedAt);
-         return _approvedAt;
-    }
-
-    /**
-     * 审核时间: APPROVED_AT
-     */
-    public final void setApprovedAt(java.sql.Timestamp value){
-        if(onPropSet(PROP_ID_approvedAt,value)){
-            this._approvedAt = value;
-            internalClearRefs(PROP_ID_approvedAt);
             
         }
     }

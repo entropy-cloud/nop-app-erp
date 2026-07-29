@@ -66,6 +66,12 @@
                 <!--审核状态-->
                 <col id="approveStatus" mandatory="true" sortable="true"/>
 
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
                 <!--已过账-->
                 <col id="posted" sortable="true"/>
 
@@ -74,6 +80,18 @@
 
                 <!--过账人-->
                 <col id="postedBy" sortable="true"/>
+
+                <!--币种-->
+                <col id="currencyId" ui:number="true" sortable="true"/>
+
+                <!--汇率-->
+                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--源币种金额-->
+                <col id="amountSource" ui:number="true" sortable="true"/>
+
+                <!--本位币金额-->
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
 
                 <!--单据版本-->
                 <col id="docVersion" mandatory="true" sortable="true"/>
@@ -95,24 +113,6 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
-
-                <!--审核人-->
-                <col id="approvedBy" sortable="true"/>
-
-                <!--审核时间-->
-                <col id="approvedAt" sortable="true"/>
-
-                <!--币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
-
-                <!--汇率-->
-                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
-
-                <!--源币种金额-->
-                <col id="amountSource" ui:number="true" sortable="true"/>
-
-                <!--本位币金额-->
-                <col id="amountFunctional" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -128,15 +128,15 @@
  fromStaffId[原使用人] toStaffId[新使用人]
  fromLocationId[原使用地点] toLocationId[新使用地点]
  handlerId[经办人] docStatus[单据状态]
- approveStatus[审核状态] posted[已过账]
+ approveStatus[审核状态] approvedBy[审核人]
+ approvedAt[审核时间] posted[已过账]
  postedAt[过账时间] postedBy[过账人]
+ currencyId[币种] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
  docVersion[单据版本] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- remark[备注] approvedBy[审核人]
- approvedAt[审核时间] currencyId[币种]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-资产移动" i18n-en:title="Add Asset Movement" x:prototype="edit"/>
@@ -149,10 +149,10 @@
  fromStaffId[原使用人] toStaffId[新使用人]
  fromLocationId[原使用地点] toLocationId[新使用地点]
  handlerId[经办人] docStatus[单据状态]
- approveStatus[审核状态] docVersion[单据版本]
- remark[备注] currencyId[币种]
+ approveStatus[审核状态] currencyId[币种]
  exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ amountFunctional[本位币金额] docVersion[单据版本]
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

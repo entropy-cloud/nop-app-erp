@@ -57,15 +57,15 @@
         </prop>
         <prop name="conversionRate" displayName="转化率" propId="10" i18n-en:displayName="Conversion Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Double" precision="10" scale="4"/>
+            <schema type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="dropOffRate" displayName="流失率" propId="11" i18n-en:displayName="Drop Off Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Double" precision="10" scale="4"/>
+            <schema type="java.math.BigDecimal" precision="10" scale="4"/>
         </prop>
         <prop name="avgDaysInStage" displayName="平均停留天数" propId="12" i18n-en:displayName="Avg Days In Stage"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Double" precision="10" scale="2"/>
+            <schema type="java.math.BigDecimal" precision="10" scale="2"/>
         </prop>
         <prop name="lostCount" displayName="本阶段丢失数" propId="13" i18n-en:displayName="Lost Count" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="0">

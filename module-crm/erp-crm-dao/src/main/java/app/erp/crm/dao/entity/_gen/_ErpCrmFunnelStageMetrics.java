@@ -227,13 +227,13 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     private java.lang.Integer _leadCountRemaining;
     
     /* 转化率: CONVERSION_RATE */
-    private java.lang.Double _conversionRate;
+    private java.math.BigDecimal _conversionRate;
     
     /* 流失率: DROP_OFF_RATE */
-    private java.lang.Double _dropOffRate;
+    private java.math.BigDecimal _dropOffRate;
     
     /* 平均停留天数: AVG_DAYS_IN_STAGE */
-    private java.lang.Double _avgDaysInStage;
+    private java.math.BigDecimal _avgDaysInStage;
     
     /* 本阶段丢失数: LOST_COUNT */
     private java.lang.Integer _lostCount;
@@ -507,9 +507,9 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
             }
         
             case PROP_ID_conversionRate:{
-               java.lang.Double typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toDouble(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_conversionRate));
                }
                setConversionRate(typedValue);
@@ -517,9 +517,9 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
             }
         
             case PROP_ID_dropOffRate:{
-               java.lang.Double typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toDouble(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_dropOffRate));
                }
                setDropOffRate(typedValue);
@@ -527,9 +527,9 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
             }
         
             case PROP_ID_avgDaysInStage:{
-               java.lang.Double typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toDouble(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_avgDaysInStage));
                }
                setAvgDaysInStage(typedValue);
@@ -710,21 +710,21 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
         
             case PROP_ID_conversionRate:{
                onInitProp(propId);
-               this._conversionRate = (java.lang.Double)value;
+               this._conversionRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_dropOffRate:{
                onInitProp(propId);
-               this._dropOffRate = (java.lang.Double)value;
+               this._dropOffRate = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_avgDaysInStage:{
                onInitProp(propId);
-               this._avgDaysInStage = (java.lang.Double)value;
+               this._avgDaysInStage = (java.math.BigDecimal)value;
                
                break;
             }
@@ -979,7 +979,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 转化率: CONVERSION_RATE
      */
-    public final java.lang.Double getConversionRate(){
+    public final java.math.BigDecimal getConversionRate(){
          onPropGet(PROP_ID_conversionRate);
          return _conversionRate;
     }
@@ -987,7 +987,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 转化率: CONVERSION_RATE
      */
-    public final void setConversionRate(java.lang.Double value){
+    public final void setConversionRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_conversionRate,value)){
             this._conversionRate = value;
             internalClearRefs(PROP_ID_conversionRate);
@@ -998,7 +998,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 流失率: DROP_OFF_RATE
      */
-    public final java.lang.Double getDropOffRate(){
+    public final java.math.BigDecimal getDropOffRate(){
          onPropGet(PROP_ID_dropOffRate);
          return _dropOffRate;
     }
@@ -1006,7 +1006,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 流失率: DROP_OFF_RATE
      */
-    public final void setDropOffRate(java.lang.Double value){
+    public final void setDropOffRate(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_dropOffRate,value)){
             this._dropOffRate = value;
             internalClearRefs(PROP_ID_dropOffRate);
@@ -1017,7 +1017,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 平均停留天数: AVG_DAYS_IN_STAGE
      */
-    public final java.lang.Double getAvgDaysInStage(){
+    public final java.math.BigDecimal getAvgDaysInStage(){
          onPropGet(PROP_ID_avgDaysInStage);
          return _avgDaysInStage;
     }
@@ -1025,7 +1025,7 @@ public class _ErpCrmFunnelStageMetrics extends DynamicOrmEntity{
     /**
      * 平均停留天数: AVG_DAYS_IN_STAGE
      */
-    public final void setAvgDaysInStage(java.lang.Double value){
+    public final void setAvgDaysInStage(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_avgDaysInStage,value)){
             this._avgDaysInStage = value;
             internalClearRefs(PROP_ID_avgDaysInStage);

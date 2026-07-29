@@ -54,30 +54,6 @@
                 <!--状态-->
                 <col id="status" mandatory="true" sortable="true"/>
 
-                <!--逻辑删除版本-->
-                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
-
-                <!--创建人-->
-                <col id="createdBy" mandatory="true" sortable="true"/>
-
-                <!--创建时间-->
-                <col id="createTime" mandatory="true" sortable="true"/>
-
-                <!--修改人-->
-                <col id="updatedBy" mandatory="true" sortable="true"/>
-
-                <!--修改时间-->
-                <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--备注-->
-                <col id="remark" sortable="true"/>
-
-                <!--关联项目(可空)-->
-                <col id="projectId" ui:number="true" sortable="true"/>
-
-                <!--转固时类别快照-->
-                <col id="cipAssetCategorySnapshot" sortable="true"/>
-
                 <!--是否已过账-->
                 <col id="posted" sortable="true"/>
 
@@ -95,6 +71,30 @@
 
                 <!--本位币金额-->
                 <col id="amountFunctional" ui:number="true" sortable="true"/>
+
+                <!--关联项目(可空)-->
+                <col id="projectId" ui:number="true" sortable="true"/>
+
+                <!--转固时类别快照-->
+                <col id="cipAssetCategorySnapshot" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -108,14 +108,14 @@
  currencyId[币种] businessDate[开工日期]
  estimatedCompletionDate[预计完工日期] accumulatedCost[累计归集成本]
  isCompleted[是否已转固] completedAssetId[完工转出资产]
- status[状态] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- remark[备注] projectId[关联项目(可空)]
- cipAssetCategorySnapshot[转固时类别快照] posted[是否已过账]
+ status[状态] posted[是否已过账]
  postedAt[过账时间] postedBy[过账人]
  exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ amountFunctional[本位币金额] projectId[关联项目(可空)]
+ cipAssetCategorySnapshot[转固时类别快照] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+ remark[备注] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-在建工程" i18n-en:title="Add CIP" x:prototype="edit"/>
@@ -126,10 +126,10 @@
  currencyId[币种] businessDate[开工日期]
  estimatedCompletionDate[预计完工日期] accumulatedCost[累计归集成本]
  isCompleted[是否已转固] completedAssetId[完工转出资产]
- status[状态] remark[备注]
+ status[状态] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
  projectId[关联项目(可空)] cipAssetCategorySnapshot[转固时类别快照]
- exchangeRate[汇率] amountSource[源币种金额]
- amountFunctional[本位币金额] 
+ remark[备注] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

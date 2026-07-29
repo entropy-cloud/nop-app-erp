@@ -170,7 +170,7 @@
         private String _batchNo;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=12)
     
         public String getBatchNo(){
             return _batchNo;
@@ -178,6 +178,20 @@
 
         public void setBatchNo(String value){
             this._batchNo = value;
+        }
+
+
+        private java.time.LocalDate _businessDate;
+
+    
+        @PropMeta(propId=13)
+    
+        public java.time.LocalDate getBusinessDate(){
+            return _businessDate;
+        }
+
+        public void setBusinessDate(java.time.LocalDate value){
+            this._businessDate = value;
         }
 
 
@@ -290,20 +304,6 @@
 
         public void setRemark(String value){
             this._remark = value;
-        }
-
-
-        private java.time.LocalDate _businessDate;
-
-    
-        @PropMeta(propId=33)
-    
-        public java.time.LocalDate getBusinessDate(){
-            return _businessDate;
-        }
-
-        public void setBusinessDate(java.time.LocalDate value){
-            this._businessDate = value;
         }
 
 

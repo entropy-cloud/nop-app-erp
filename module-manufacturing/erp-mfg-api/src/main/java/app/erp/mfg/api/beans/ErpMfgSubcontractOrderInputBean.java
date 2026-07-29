@@ -240,7 +240,7 @@
         private String _postedStatus;
 
     
-        @PropMeta(propId=18)
+        @PropMeta(propId=20)
     
         public String getPostedStatus(){
             return _postedStatus;
@@ -254,7 +254,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=23)
     
         public String getRemark(){
             return _remark;
@@ -268,7 +268,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=24)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -282,7 +282,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=25)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;

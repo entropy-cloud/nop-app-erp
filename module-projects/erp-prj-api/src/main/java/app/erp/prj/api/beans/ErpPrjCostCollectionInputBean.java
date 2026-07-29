@@ -142,7 +142,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=15)
     
         public String getRemark(){
             return _remark;
@@ -156,7 +156,7 @@
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=202)
+        @PropMeta(propId=16)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -170,7 +170,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=203)
+        @PropMeta(propId=17)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -184,7 +184,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=204)
+        @PropMeta(propId=18)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;

@@ -394,7 +394,7 @@
         private String _priority;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=30)
     
         public String getPriority(){
             return _priority;
@@ -408,7 +408,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=32)
+        @PropMeta(propId=34)
     
         public String getRemark(){
             return _remark;
@@ -419,24 +419,10 @@
         }
 
 
-        private Long _sourceScheduleId;
-
-    
-        @PropMeta(propId=39)
-    
-        public Long getSourceScheduleId(){
-            return _sourceScheduleId;
-        }
-
-        public void setSourceScheduleId(Long value){
-            this._sourceScheduleId = value;
-        }
-
-
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=202)
+        @PropMeta(propId=35)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -450,7 +436,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=203)
+        @PropMeta(propId=36)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -464,7 +450,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=204)
+        @PropMeta(propId=37)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -472,6 +458,20 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
+        }
+
+
+        private Long _sourceScheduleId;
+
+    
+        @PropMeta(propId=38)
+    
+        public Long getSourceScheduleId(){
+            return _sourceScheduleId;
+        }
+
+        public void setSourceScheduleId(Long value){
+            this._sourceScheduleId = value;
         }
 
 

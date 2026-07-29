@@ -99,6 +99,12 @@
                 <!--审核状态-->
                 <col id="approveStatus" sortable="true"/>
 
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
                 <!--优先级-->
                 <col id="priority" sortable="true"/>
 
@@ -114,6 +120,18 @@
                 <!--备注-->
                 <col id="remark" sortable="true"/>
 
+                <!--汇率-->
+                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--源币种金额-->
+                <col id="amountSource" ui:number="true" sortable="true"/>
+
+                <!--本位币金额-->
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
+
+                <!--APS排程来源(弱参照)-->
+                <col id="sourceScheduleId" ui:number="true" sortable="true"/>
+
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
 
@@ -128,24 +146,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--APS排程来源(弱参照)-->
-                <col id="sourceScheduleId" ui:number="true" sortable="true"/>
-
-                <!--审核人-->
-                <col id="approvedBy" sortable="true"/>
-
-                <!--审核时间-->
-                <col id="approvedAt" sortable="true"/>
-
-                <!--汇率-->
-                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
-
-                <!--源币种金额-->
-                <col id="amountSource" ui:number="true" sortable="true"/>
-
-                <!--本位币金额-->
-                <col id="amountFunctional" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -167,14 +167,14 @@
  overheadCost[制造费用] subcontractCost[委外成本]
  totalCost[总成本] unitCost[单位成本]
  docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
  priority[优先级] posted[已过账]
  postedAt[过账时间] postedBy[过账人]
- remark[备注] delVersion[逻辑删除版本]
+ remark[备注] exchangeRate[汇率]
+ amountSource[源币种金额] amountFunctional[本位币金额]
+ sourceScheduleId[APS排程来源(弱参照)] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
- sourceScheduleId[APS排程来源(弱参照)] approvedBy[审核人]
- approvedAt[审核时间] exchangeRate[汇率]
- amountSource[源币种金额] amountFunctional[本位币金额]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工单" i18n-en:title="Add Work Order" x:prototype="edit"/>
@@ -194,8 +194,8 @@
  totalCost[总成本] unitCost[单位成本]
  docStatus[单据状态] approveStatus[审核状态]
  priority[优先级] remark[备注]
- sourceScheduleId[APS排程来源(弱参照)] exchangeRate[汇率]
- amountSource[源币种金额] amountFunctional[本位币金额]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额] sourceScheduleId[APS排程来源(弱参照)]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

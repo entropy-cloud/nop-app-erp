@@ -428,10 +428,38 @@
         }
 
 
-        private String _priority;
+        private String _approvedBy;
 
     
         @PropMeta(propId=28)
+    
+        public String getApprovedBy(){
+            return _approvedBy;
+        }
+
+        public void setApprovedBy(String value){
+            this._approvedBy = value;
+        }
+
+
+        private java.sql.Timestamp _approvedAt;
+
+    
+        @PropMeta(propId=29)
+    
+        public java.sql.Timestamp getApprovedAt(){
+            return _approvedAt;
+        }
+
+        public void setApprovedAt(java.sql.Timestamp value){
+            this._approvedAt = value;
+        }
+
+
+        private String _priority;
+
+    
+        @PropMeta(propId=30)
     
         public String getPriority(){
             return _priority;
@@ -457,7 +485,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=29)
+        @PropMeta(propId=31)
     
         public Boolean getPosted(){
             return _posted;
@@ -471,7 +499,7 @@
         private java.sql.Timestamp _postedAt;
 
     
-        @PropMeta(propId=30)
+        @PropMeta(propId=32)
     
         public java.sql.Timestamp getPostedAt(){
             return _postedAt;
@@ -485,7 +513,7 @@
         private String _postedBy;
 
     
-        @PropMeta(propId=31)
+        @PropMeta(propId=33)
     
         public String getPostedBy(){
             return _postedBy;
@@ -499,7 +527,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=32)
+        @PropMeta(propId=34)
     
         public String getRemark(){
             return _remark;
@@ -510,136 +538,10 @@
         }
 
 
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=33)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
-        private Integer _version;
-
-    
-        @PropMeta(propId=34)
-    
-        public Integer getVersion(){
-            return _version;
-        }
-
-        public void setVersion(Integer value){
-            this._version = value;
-        }
-
-
-        private String _createdBy;
-
-    
-        @PropMeta(propId=35)
-    
-        public String getCreatedBy(){
-            return _createdBy;
-        }
-
-        public void setCreatedBy(String value){
-            this._createdBy = value;
-        }
-
-
-        private java.sql.Timestamp _createTime;
-
-    
-        @PropMeta(propId=36)
-    
-        public java.sql.Timestamp getCreateTime(){
-            return _createTime;
-        }
-
-        public void setCreateTime(java.sql.Timestamp value){
-            this._createTime = value;
-        }
-
-
-        private String _updatedBy;
-
-    
-        @PropMeta(propId=37)
-    
-        public String getUpdatedBy(){
-            return _updatedBy;
-        }
-
-        public void setUpdatedBy(String value){
-            this._updatedBy = value;
-        }
-
-
-        private java.sql.Timestamp _updateTime;
-
-    
-        @PropMeta(propId=38)
-    
-        public java.sql.Timestamp getUpdateTime(){
-            return _updateTime;
-        }
-
-        public void setUpdateTime(java.sql.Timestamp value){
-            this._updateTime = value;
-        }
-
-
-        private Long _sourceScheduleId;
-
-    
-        @PropMeta(propId=39)
-    
-        public Long getSourceScheduleId(){
-            return _sourceScheduleId;
-        }
-
-        public void setSourceScheduleId(Long value){
-            this._sourceScheduleId = value;
-        }
-
-
-        private String _approvedBy;
-
-    
-        @PropMeta(propId=200)
-    
-        public String getApprovedBy(){
-            return _approvedBy;
-        }
-
-        public void setApprovedBy(String value){
-            this._approvedBy = value;
-        }
-
-
-        private java.sql.Timestamp _approvedAt;
-
-    
-        @PropMeta(propId=201)
-    
-        public java.sql.Timestamp getApprovedAt(){
-            return _approvedAt;
-        }
-
-        public void setApprovedAt(java.sql.Timestamp value){
-            this._approvedAt = value;
-        }
-
-
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=202)
+        @PropMeta(propId=35)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -653,7 +555,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=203)
+        @PropMeta(propId=36)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -667,7 +569,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=204)
+        @PropMeta(propId=37)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -675,6 +577,104 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
+        }
+
+
+        private Long _sourceScheduleId;
+
+    
+        @PropMeta(propId=38)
+    
+        public Long getSourceScheduleId(){
+            return _sourceScheduleId;
+        }
+
+        public void setSourceScheduleId(Long value){
+            this._sourceScheduleId = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=39)
+    
+        public Long getDelVersion(){
+            return _delVersion;
+        }
+
+        public void setDelVersion(Long value){
+            this._delVersion = value;
+        }
+
+
+        private Integer _version;
+
+    
+        @PropMeta(propId=40)
+    
+        public Integer getVersion(){
+            return _version;
+        }
+
+        public void setVersion(Integer value){
+            this._version = value;
+        }
+
+
+        private String _createdBy;
+
+    
+        @PropMeta(propId=41)
+    
+        public String getCreatedBy(){
+            return _createdBy;
+        }
+
+        public void setCreatedBy(String value){
+            this._createdBy = value;
+        }
+
+
+        private java.sql.Timestamp _createTime;
+
+    
+        @PropMeta(propId=42)
+    
+        public java.sql.Timestamp getCreateTime(){
+            return _createTime;
+        }
+
+        public void setCreateTime(java.sql.Timestamp value){
+            this._createTime = value;
+        }
+
+
+        private String _updatedBy;
+
+    
+        @PropMeta(propId=43)
+    
+        public String getUpdatedBy(){
+            return _updatedBy;
+        }
+
+        public void setUpdatedBy(String value){
+            this._updatedBy = value;
+        }
+
+
+        private java.sql.Timestamp _updateTime;
+
+    
+        @PropMeta(propId=44)
+    
+        public java.sql.Timestamp getUpdateTime(){
+            return _updateTime;
+        }
+
+        public void setUpdateTime(java.sql.Timestamp value){
+            this._updateTime = value;
         }
 
 

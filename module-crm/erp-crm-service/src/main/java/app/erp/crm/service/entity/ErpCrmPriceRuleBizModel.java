@@ -68,8 +68,8 @@ public class ErpCrmPriceRuleBizModel extends CrudBizModel<ErpCrmPriceRule> imple
         }
     }
 
-    protected void validateDiscounts(Double percent, BigDecimal amount) {
-        if (percent != null && (percent < 0 || percent > 100)) {
+    protected void validateDiscounts(BigDecimal percent, BigDecimal amount) {
+        if (percent != null && (percent.signum() < 0 || percent.compareTo(BigDecimal.valueOf(100)) > 0)) {
             throw new NopException(ErpCrmErrors.ERR_CPQ_DISCOUNT_INCONSISTENT)
                     .param(ErpCrmErrors.ARG_DISCOUNT_TYPE, "discountPercent=" + percent);
         }

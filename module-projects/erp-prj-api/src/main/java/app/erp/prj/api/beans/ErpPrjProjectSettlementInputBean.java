@@ -324,7 +324,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=28)
     
         public String getRemark(){
             return _remark;
