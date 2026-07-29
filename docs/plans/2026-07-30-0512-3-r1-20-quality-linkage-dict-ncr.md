@@ -1,6 +1,6 @@
 # 2026-07-30-0512-3-r1-20-quality-linkage-dict-ncr quality 业务作废联动 + dict 死状态 Deferred + NCR 无 CAPA 闭环门控实现
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-30
 > Source: audit-remediation-roadmap R1.20（P1-MA2-064 + P1-MA2-065 + P1-MA2-066，源自 A2.12 quality 状态机审查）
 > Related: `docs/audits/2026-07-28-1020-arm-ma2-quality-state-machine.md`、`docs/audits/arm-index.md §P1-MA2-064/065/066`、`docs/design/quality/inspection-integration.md`；plan `2026-07-30-0143-3-r1-14-mfg-dict-dead-state-owner-doc-drift.md`、plan `2026-07-30-0341-1-r1-15-hr-state-machine-dict-dead-state.md`（同型裁决先例——**注意 R1.15 是选择性裁决：死状态 Deferred + 便宜真实缺陷实现**：039/040/041 Deferred 而 044/046 实现）
@@ -53,14 +53,14 @@
 
 ### Phase 1 - 三项 finding 裁决（Decision）
 
-Status: planned
+Status: completed
 Targets: 本计划（裁决记录）
 Skill: `none`
 
 - Item Types: `Decision`
 - Prereqs: none
 
-- [ ] **Decision**：三项 finding 处置方案逐项裁决（**选择性裁决**——对齐 R1.15 先例：死状态/跨表面 Deferred + 便宜真实缺陷实现）。
+- [x] **Decision**：三项 finding 处置方案逐项裁决（**选择性裁决**——对齐 R1.15 先例：死状态/跨表面 Deferred + 便宜真实缺陷实现）。
       - P1-MA2-064 业务作废联动取消：**Deferred**（owner doc 正式化）。**与 arm-index 推荐偏差声明**：arm-index §P1-MA2-064 推荐「实现 cancelForBusinessBill Facade + 业务域 wiring」；本计划裁决 Deferred，理由：方案A 属跨域 wiring（purchase/sales/mfg cancel Processor config-gated 调用）跨表面实现，与危害（TODO 噪音，不破坏主路径 + owner doc §实现偏离补注已声明 Deferred + 残留经 useLogicalDelete 手工清理）不成比例。successor：业务作废自动取消质检需求时。
       - P1-MA2-065 6 处 dict 死状态 + CRUD 桩：**Deferred + dict 保留为预留**。**与 arm-index 推荐偏差声明**：arm-index §P1-MA2-065 方案A 推荐「删除 dict 死状态项 + 删除常量」；本计划裁决保留 dict（不删除），理由：与 R1.13/R1.14/R1.15「保留 dict 死状态为预留语义入口」先例一致（保留优于删除——避免数据迁移 + 保留 successor 语义入口）；CRUD 空壳实体状态字段不参与主路径迁移判定。successor：计量管理/QMS 全面需求时。
       - P1-MA2-066 NCR resolve 无 CAPA 闭环门控：**实现（arm-index 推荐方向）**。理由（选择性裁决，对齐 R1.15 实现便宜真实缺陷 044/046 的范式）：(1) arm-index §P1-MA2-066 推荐实现（`noCapaReason` 列 + 空措施时抛 `ERR_NCR_RESOLVE_NO_CAPA`）；(2) 这是本批次最 containment 的实现（单方法门控 + 1 列 + 1 ErrorCode），且针对**闭环不变量**「CAPA 需效果验证才能关闭 NCR」而非死状态/TODO 噪音；(3) roadmap `§ORM 变更已授权` + R1.15 P1-MA2-046 已证 ORM ask-first 是可接受范围内修复；(4) roadmap 行 R1.20 本身标注 `[P1-MA2-066 方案A ORM ask-first]` 预期实现。残留风险：误开 NCR 无 CAPA resolve 现需显式填 noCapaReason（合法场景保留）→ 不禁止无 CAPA resolve，仅强制显式标注 + 测试迁移。
@@ -68,50 +68,50 @@ Skill: `none`
 
 Exit Criteria:
 
-- [ ] Phase 1 Decision 逐项记录选择 + 理由 + 与 arm-index 推荐偏差声明 + successor 触发条件；064/065 进 Phase 2（Deferred 标注），066 进 Phase 3（实现）。
+- [x] Phase 1 Decision 逐项记录选择 + 理由 + 与 arm-index 推荐偏差声明 + successor 触发条件；064/065 进 Phase 2（Deferred 标注），066 进 Phase 3（实现）。
 
 ### Phase 2 - quality owner doc Deferred 标注（P1-MA2-064 + P1-MA2-065）
 
-Status: planned
+Status: completed
 Targets: `docs/design/quality/state-machine.md`、`docs/design/quality/inspection-integration.md`
 Skill: `none`
 
 - Item Types: `Add`
 - Prereqs: Phase 1
 
-- [ ] state-machine.md §4 异常路径 + §实现偏离补注：业务作废联动取消由「本期未接线」正式化为「**Deferred**——残留质检单经 useLogicalDelete 手工清理；`IErpQaInspectionBiz.cancelForBusinessBill` Facade + 业务域 cancel Processor wiring 留 successor」；命名 successor 触发条件。
-- [ ] state-machine.md 新增「CRUD 桩实体状态机（Deferred）」补注段：合并标注 QualityGoal/RiskRegister/Calibration/Review/SPC-CalcStatus/CAPA-OVERDUE 各 dict 死状态为预留值（零 writer），CRUD 桩为主路径可用，完整状态机属 QMS 全面需求 successor；dict 值保留不删除；命名 successor 触发条件。
+- [x] state-machine.md §4 异常路径 + §实现偏离补注：业务作废联动取消由「本期未接线」正式化为「**Deferred**——残留质检单经 useLogicalDelete 手工清理；`IErpQaInspectionBiz.cancelForBusinessBill` Facade + 业务域 cancel Processor wiring 留 successor」；命名 successor 触发条件。
+- [x] state-machine.md 新增「CRUD 桩实体状态机（Deferred）」补注段：合并标注 QualityGoal/RiskRegister/Calibration/Review/SPC-CalcStatus/CAPA-OVERDUE 各 dict 死状态为预留值（零 writer），CRUD 桩为主路径可用，完整状态机属 QMS 全面需求 successor；dict 值保留不删除；命名 successor 触发条件。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] state-machine.md + inspection-integration.md 明确 064/065 Deferred，owner doc 与代码零 writer 一致；successor 触发事件已命名。
+- [x] state-machine.md + inspection-integration.md 明确 064/065 Deferred，owner doc 与代码零 writer 一致；successor 触发事件已命名。
 
 ### Phase 3 - NCR 无 CAPA resolve 闭环门控实现（P1-MA2-066）
 
-Status: planned
+Status: completed
 Targets: `module-quality/model/app-erp-quality.orm.xml`、`module-quality/erp-qa-service/.../ErpQaErrors.java`、`module-quality/erp-qa-service/.../entity/NcrLifecycleService.java`、`module-quality/erp-qa-service/.../entity/ErpQaNonConformanceBizModel.java`、`IErpQaNonConformanceBiz` 接口、`docs/design/quality/state-machine.md`（§NCR 与 CAPA）
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add`
 - Prereqs: Phase 1
 
-- [ ] **Add（ORM ask-first）**：`app-erp-quality.orm.xml` ErpQaNonConformance 增 `noCapaReason` 列（propId=33，`stdSqlType="VARCHAR" precision="500" stdDataType="string"`，可空，displayName「无 CAPA 原因（误开/降级 NCR 显式标注）」）；`mvn clean install -DskipTests` 增量 regen。
+- [x] **Add（ORM ask-first）**：`app-erp-quality.orm.xml` ErpQaNonConformance 增 `noCapaReason` 列（propId=33，`stdSqlType="VARCHAR" precision="500" stdDataType="string"`，可空，displayName「无 CAPA 原因（误开/降级 NCR 显式标注）」）；`mvn clean install -DskipTests` 增量 regen。
       - Skill: `nop-backend-dev`
-- [ ] **Add（ErrorCode）**：`ErpQaErrors.java` 增 `ERR_NCR_RESOLVE_NO_CAPA`（描述「NCR 无 CAPA 措施时 resolve 须提供 noCapaReason（误开/降级场景显式标注）」，i18n 中文描述 + ARG_NCR_CODE）。
+- [x] **Add（ErrorCode）**：`ErpQaErrors.java` 增 `ERR_NCR_RESOLVE_NO_CAPA`（描述「NCR 无 CAPA 措施时 resolve 须提供 noCapaReason（误开/降级场景显式标注）」，i18n 中文描述 + ARG_NCR_CODE）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（闭环门控）**：`NcrLifecycleService.allActionsCompletedAndVerified` 改签名带 `noCapaReason`：`actions.isEmpty()` 时返回 `StringHelper.isNotBlank(noCapaReason)`（非空才放行）；`requireResolveGate(ncrId, ncrCode, noCapaReason)` 失败抛 `ERR_NCR_RESOLVE_NO_CAPA`（有措施路径行为不变：全 COMPLETED + 验证人/验证日期）。
+- [x] **Fix（闭环门控）**：`NcrLifecycleService.allActionsCompletedAndVerified` 改签名带 `noCapaReason`：`actions.isEmpty()` 时返回 `StringHelper.isNotBlank(noCapaReason)`（非空才放行）；`requireResolveGate(ncrId, ncrCode, noCapaReason)` 失败抛 `ERR_NCR_RESOLVE_NO_CAPA`（有措施路径行为不变：全 COMPLETED + 验证人/验证日期）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（resolve 动作签名）**：`ErpQaNonConformanceBizModel.resolve` + `IErpQaNonConformanceBiz.resolve` 增可选参数 `@Name("noCapaReason") String noCapaReason`；调用 `requireResolveGate(ncrId, ncr.getCode(), noCapaReason)`；放行后 `ncr.setNoCapaReason(noCapaReason)` 落库（仅当非空）。
+- [x] **Fix（resolve 动作签名）**：`ErpQaNonConformanceBizModel.resolve` + `IErpQaNonConformanceBiz.resolve` 增可选参数 `@Optional @Name("noCapaReason") String noCapaReason`；调用 `requireResolveGate(ncrId, ncr.getCode(), noCapaReason)`；放行后 `ncr.setNoCapaReason(noCapaReason)` 落库（仅当非空）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：测试——(1) NCR 有 CAPA 全 COMPLETED+验证 → resolve 成功（noCapaReason 可空）；(2) NCR 无 CAPA + noCapaReason 空 → resolve assertThrows `ERR_NCR_RESOLVE_NO_CAPA`；(3) NCR 无 CAPA + noCapaReason 非空 → resolve 成功 + noCapaReason 落库；迁移现有依赖「无 CAPA 直接 resolve」的测试（补 noCapaReason 入参）。
+- [x] **Proof**：测试——(1) NCR 有 CAPA 全 COMPLETED+验证 → resolve 成功（noCapaReason 可空）；(2) NCR 无 CAPA + noCapaReason 空 → resolve assertThrows `ERR_NCR_RESOLVE_NO_CAPA`；(3) NCR 无 CAPA + noCapaReason 非空 → resolve 成功 + noCapaReason 落库；迁移现有依赖「无 CAPA 直接 resolve」的测试（补 noCapaReason 入参）。
       - Skill: `nop-backend-dev`
-- [ ] **Add（owner doc）**：state-machine.md §NCR 与 CAPA 的关系 更新为「无 CAPA 措施时 resolve 须显式提供 noCapaReason（误开/降级场景），否则抛 `ERR_NCR_RESOLVE_NO_CAPA`；有 CAPA 措施时必须全完成+效果验证」；inspection-integration.md §4.3 核对一致。
+- [x] **Add（owner doc）**：state-machine.md §NCR 与 CAPA 的关系 更新为「无 CAPA 措施时 resolve 须显式提供 noCapaReason（误开/降级场景），否则抛 `ERR_NCR_RESOLVE_NO_CAPA`；有 CAPA 措施时必须全完成+效果验证」；inspection-integration.md §4.3 核对一致。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] `allActionsCompletedAndVerified` 空措施路径经 noCapaReason 门控（grep 确认不再无条件 return true）；resolve 签名带 noCapaReason；ORM 列 propId=33 落地 regen；新增/迁移测试全绿（Closure Gates 跑全量 mvn）；owner doc §NCR 与 CAPA 与代码一致。
+- [x] `allActionsCompletedAndVerified` 空措施路径经 noCapaReason 门控（grep 确认不再无条件 return true）；resolve 签名带 noCapaReason；ORM 列 propId=33 落地 regen；新增/迁移测试全绿（Closure Gates 跑全量 mvn）；owner doc §NCR 与 CAPA 与代码一致。
 
 ## Draft Review Record
 
@@ -122,14 +122,14 @@ Exit Criteria:
 
 > 本计划含 ORM + 代码变更（P1-MA2-066），故 Closure Gates 含全量 `mvn` 验证（见执行时规则 7）。
 
-- [ ] 范围内行为/文档完成（064/065 Deferred 标注 + 066 闭环门控实现落地）
-- [ ] 相关文档对齐（quality/state-machine.md + inspection-integration.md）
-- [ ] 已运行验证（`mvn clean install -DskipTests` 全绿 + quality 域 `mvn test` 全绿 + compliance checker 本计划零新增命中；grep 验证 066 门控 + ORM 列 regen）
-- [ ] 无范围内项目降级为 deferred/follow-up（066 为范围内存活实现项；064/065 Deferred 是处置裁决 + 已命名 successor，非范围内缺陷隐瞒）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为/文档完成（064/065 Deferred 标注 + 066 闭环门控实现落地）
+- [x] 相关文档对齐（quality/state-machine.md + inspection-integration.md）
+- [x] 已运行验证（`mvn clean install -DskipTests` 全绿 + quality 域 `mvn test` 全绿 + compliance checker 本计划零新增命中；grep 验证 066 门控 + ORM 列 regen）
+- [x] 无范围内项目降级为 deferred/follow-up（066 为范围内存活实现项；064/065 Deferred 是处置裁决 + 已命名 successor，非范围内缺陷隐瞒）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -153,12 +153,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <plan 完成后填写>
+Status Note: 三项 finding 处置完成。064（业务作废联动取消）+ 065（dict 死状态/CRUD 桩）裁决 Deferred 并在 owner doc 正式化（含 arm-index 推荐偏差声明 + successor 触发条件）；066（NCR 无 CAPA resolve 闭环门控）实现落地——ORM `noCapaReason` 列(propId=33) + `ERR_NCR_RESOLVE_NO_CAPA` ErrorCode + `allActionsCompletedAndVerified`/`requireResolveGate` 签名带 `noCapaReason`（空措施路径不再无条件 `return true`）+ `resolve`/`IErpQaNonConformanceBiz.resolve` 增 `@Optional @Name("noCapaReason")` 参 + owner doc §NCR 与 CAPA + inspection-integration §4.3 + 3-case 测试。附带修复：qa-service pom 补 `app-erp-notify-service` test 依赖（修 finance→notify bean 注入的单域测试隔离缺口，对齐 finance/sales service 同型 test 依赖）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立子代理（新会话，task ses_05007067cffeJ50Z5O1D935wqL，explore agent，未执行本计划）
+- Evidence: CLOSURE_AUDIT: PASS。9/9 check 逐项经实仓 file:line 验证——(1) ORM noCapaReason propId=33；(2) 生成实体 getNoCapaReason/setNoCapaReason + PROP_ID=33；(3) ErrorCode ERR_NCR_RESOLVE_NO_CAPA + ARG_NCR_CODE；(4) allActionsCompletedAndVerified 空措施路径 isNotBlank(noCapaReason)（非无条件 return true）+ requireResolveGate 双错误码区分；(5) BizModel + IBiz resolve 签名带 @Optional @Name("noCapaReason") + setNoCapaReason 落库；(6) state-machine.md CRUD 桩 Deferred 段 + §NCR 与 CAPA noCapaReason + 业务作废联动 Deferred；(7) inspection-integration §4.3 门控注；(8) 计划 Plan Status=completed + 3 Phase 全 completed/[x]；(9) roadmap R1.20=done。无阻塞缺陷。
 
 Follow-up:
 
