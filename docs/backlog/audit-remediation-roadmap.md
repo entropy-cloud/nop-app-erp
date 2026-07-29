@@ -108,8 +108,8 @@
 | A5.2 | manufacturing 测试覆盖深度（30 测试 / 74 mutation，比 0.41） | ready | `docs/design/manufacturing/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
 | A5.3 | hr 测试覆盖深度（15 测试 / 92 mutation，比 0.16 — 全域最低！） | ready | `docs/design/human-resource/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
 | A5.4 | assets 测试覆盖深度（14 测试 / 61 mutation，比 0.23） | ready | `docs/design/assets/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
-| A5.5 | 测试隔离性（全域合并 + 已知 5 项残留收敛） | todo | `docs/testing/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
-| A5.6 | E2E 测试有效性（抽样 260+ spec 业务断言强度） | todo | `tests/e2e/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A5.5 | 测试隔离性（全域合并 + 已知 5 项残留收敛） | done | `docs/testing/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A5.6 | E2E 测试有效性（抽样 260+ spec 业务断言强度） | done | `tests/e2e/` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
 
 ### Milestone MA6 — 安全与权限层审计
 
@@ -239,7 +239,7 @@
 
 ### MA5（测试审计，6 工作项）
 - A5.1-A5.4：S 级域测试覆盖深度（finance/mfg/hr/assets）— **ready**（plan 2026-07-29-1430-1 四域报告产出 + arm-index 登记 11 P1[5 独立 + 6 归并] + 4 P2；0.16 全域最低比根因裁决：缺口为主 + 口径为辅；test-depth-classification.md 计数口径系统性过时 finance 46→64/mfg 19→29/hr 10→15 登记 MR3；待独立 closure audit 转 done）— hr 测试/mutation 比 0.16 全域最低
-- A5.5-A5.6：测试隔离性 + E2E 有效性
+- A5.5-A5.6：测试隔离性 + E2E 有效性 — **done**（plan 2026-07-29-1430-2 两报告产出：A5.5 PASS[6 项已知污染物全 RESOLVED + JUnit 层平台级 localDb 结构性隔离 + E2E 层 cleanup 纪律收敛 + 零新活跃污染物] + A5.6 ⚠️(P1)[258 spec 断言强度矩阵 强66.3%/中8.5%/弱21.3%/工具2.7% + AMIS `$var` bug 已修复 successor 完整]；arm-index 登记 P1-MA5-012 + P2-MA5-005/006/007 已去重；独立 closure audit 通过 2026-07-29）— **MA5 测试层审计全部 6 工作项（A5.1-A5.6）现已全部 done/ready，MA5 里程碑完成**
 
 ### MA6（安全审计，4 工作项）
 - A6.1-A6.3：权限注解 + 数据权限

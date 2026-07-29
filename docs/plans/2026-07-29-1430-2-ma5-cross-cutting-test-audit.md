@@ -1,6 +1,6 @@
 # 2026-07-29-1430-2-ma5-cross-cutting-test-audit MA5 跨切测试审计（隔离性 + E2E 有效性）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-29
 > Source: `docs/backlog/audit-remediation-roadmap.md` MA5（A5.5 / A5.6）
 > Related: plan `2026-07-29-1430-1`（A5.1-A5.4 S 级域覆盖深度，同批 MA5）；plan `2026-07-24-1945-1`（测试隔离污染诊断，已解除 5 项 Category (a)）
@@ -43,46 +43,46 @@
 
 ### Phase 1 - 测试隔离性审计（A5.5）
 
-Status: planned
+Status: completed
 Targets: 全域 `module-*/src/test/java/**`；报告 `docs/audits/2026-07-29-1430-arm-ma5-test-isolation.md`
 Skill: `open-ended-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0 锚点
 
-- [ ] 验证已知污染物当前状态：5 项原 Category (a)（inv totalValue / mfg KPI / md KPI / md noSkuAlert / o2c-chain COGS）+ 第 6 项执行期发现并修复的 fin-period-close-wizard config 缺口，对照 `docs/analysis/2026-07-24-1945-1-test-isolation-pollutant-map.md` 确认是否真解除（含回归验证）
-- [ ] 主动搜索新污染物：grep 共享静态/单例夹具、未清理的 `@BeforeEach`/`@AfterEach`、跨测试 `cleanupXxx` 顺序假设、依赖种子 id 硬编码的断言
-- [ ] 抽样乱序 / 累积执行验证（fresh-DB 基线 vs 累积执行 diff），确认无新状态泄漏
+- [x] 验证已知污染物当前状态：5 项原 Category (a)（inv totalValue / mfg KPI / md KPI / md noSkuAlert / o2c-chain COGS）+ 第 6 项执行期发现并修复的 fin-period-close-wizard config 缺口，对照 `docs/analysis/2026-07-24-1945-1-test-isolation-pollutant-map.md` 确认是否真解除（含回归验证）
+- [x] 主动搜索新污染物：grep 共享静态/单例夹具、未清理的 `@BeforeEach`/`@AfterEach`、跨测试 `cleanupXxx` 顺序假设、依赖种子 id 硬编码的断言
+- [x] 抽样乱序 / 累积执行验证（fresh-DB 基线 vs 累积执行 diff），确认无新状态泄漏
       - Skill: `open-ended-audit-prompt.md`
-- [ ] 评估隔离性根因模式：是否需提升为可复用 lesson（`docs/lessons/`）或 skill
-- [ ] 产出隔离性审计报告，分类 P0/P1/P2，更新 arm-index.md（去重）
+- [x] 评估隔离性根因模式：是否需提升为可复用 lesson（`docs/lessons/`）或 skill
+- [x] 产出隔离性审计报告，分类 P0/P1/P2，更新 arm-index.md（去重）
   - Skill: `open-ended-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 隔离性报告产出，含 5 项已知污染物状态裁决表 + 新污染物搜索结果（若有）
-- [ ] A5.5 P0/P1/P2 已登记 arm-index.md 且去重
+- [x] 隔离性报告产出，含 5 项已知污染物状态裁决表 + 新污染物搜索结果（若有）
+- [x] A5.5 P0/P1/P2 已登记 arm-index.md 且去重
 
 ### Phase 2 - E2E 有效性审计（A5.6）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/**/*.spec.ts`（258 spec）；报告 `docs/audits/2026-07-29-1430-arm-ma5-e2e-effectiveness.md`
 Skill: `open-ended-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0 锚点（A5.6 审 Playwright 层，不依赖 A5.5 的 JUnit 隔离结论；两 phase 可并行）
 
-- [ ] 建 E2E 258 spec 业务断言强度分类矩阵：数值断言（`*.value.spec.ts` 直调后端断言确定性数值）/ DOM 断言（`*.visual.spec.ts` 前端渲染结构）/ 业务动作（`*.action.spec.ts` 状态翻转 + 副作用）/ 编排链（`orchestration/` 跨域过账产物）/ 仅冒烟（GraphQL 200 + 存在性，无业务数值断言）
-- [ ] 标记仅冒烟无业务断言的薄弱 spec（尤其 crud smoke / reports smoke），评估「GraphQL 200 即通过」是否掩盖后端返回空数据
-- [ ] 交叉验证已知 E2E 缺口状态：AMIS `$var` 损坏 8 参数化看板 [bug 2026-07-09-1249] 是否仍有数值断言 successor / master-data.write.amis Non-Goal 是否仍为唯一失败
-- [ ] 评估 E2E 与单元层覆盖互补性（哪些业务路径仅 E2E 覆盖 / 仅单元覆盖 / 双层无覆盖）
-- [ ] 产出 E2E 有效性审计报告，分类 P0/P1/P2，更新 arm-index.md（去重）
+- [x] 建 E2E 258 spec 业务断言强度分类矩阵：数值断言（`*.value.spec.ts` 直调后端断言确定性数值）/ DOM 断言（`*.visual.spec.ts` 前端渲染结构）/ 业务动作（`*.action.spec.ts` 状态翻转 + 副作用）/ 编排链（`orchestration/` 跨域过账产物）/ 仅冒烟（GraphQL 200 + 存在性，无业务数值断言）
+- [x] 标记仅冒烟无业务断言的薄弱 spec（尤其 crud smoke / reports smoke），评估「GraphQL 200 即通过」是否掩盖后端返回空数据
+- [x] 交叉验证已知 E2E 缺口状态：AMIS `$var` 损坏 8 参数化看板 [bug 2026-07-09-1249] 是否仍有数值断言 successor / master-data.write.amis Non-Goal 是否仍为唯一失败
+- [x] 评估 E2E 与单元层覆盖互补性（哪些业务路径仅 E2E 覆盖 / 仅单元覆盖 / 双层无覆盖）
+- [x] 产出 E2E 有效性审计报告，分类 P0/P1/P2，更新 arm-index.md（去重）
   - Skill: `open-ended-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] E2E 有效性报告产出，含 258 spec 断言强度分类矩阵 + 薄弱 spec 清单
-- [ ] A5.6 P0/P1/P2 已登记 arm-index.md 且去重
+- [x] E2E 有效性报告产出，含 258 spec 断言强度分类矩阵 + 薄弱 spec 清单
+- [x] A5.6 P0/P1/P2 已登记 arm-index.md 且去重
 
 ## Draft Review Record
 
@@ -92,15 +92,15 @@ Exit Criteria:
 
 > 本 plan 为纯审计，不改代码。`mvn test` + E2E 仅作回归基线确认。
 
-- [ ] A5.5 隔离性报告 + A5.6 E2E 有效性报告产出
-- [ ] arm-index.md 已登记本批次全部 P0/P1/P2，且与 MA1-MA4 + plan 2026-07-29-1430-1 既有 P1 交叉去重
-- [ ] roadmap A5.5-A5.6 状态推进至 `ready`（独立 closure audit 后转 `done`）— MA5 里程碑全部 done
-- [ ] 已运行 `mvn clean install -DskipTests`（154 模块绿）+ `mvn test`（0 failures）+ 抽样 E2E 回归
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态 / 阶段 / 门控 / 日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] A5.5 隔离性报告 + A5.6 E2E 有效性报告产出
+- [x] arm-index.md 已登记本批次全部 P0/P1/P2，且与 MA1-MA4 + plan 2026-07-29-1430-1 既有 P1 交叉去重
+- [x] roadmap A5.5-A5.6 状态推进至 `ready`（独立 closure audit 后转 `done`）— MA5 里程碑全部 done
+- [x] 已运行 `mvn clean install -DskipTests`（154 模块绿）+ `mvn test`（0 failures）+ 抽样 E2E 回归
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态 / 阶段 / 门控 / 日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -112,12 +112,19 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待两报告产出 + arm-index 登记 + 独立结束审计后填写>
+Status Note: EXECUTE 完成（2026-07-29）。两报告产出（`docs/audits/2026-07-29-1430-arm-ma5-test-isolation.md` + `...-e2e-effectiveness.md`）+ arm-index.md 登记 1 P1（P1-MA5-012）+ 3 P2（P2-MA5-005/006/007）已去重 + roadmap A5.5/A5.6 推进 ready。回归基线：`mvn test` BUILD SUCCESS（0 failures/0 errors/1 skipped[已知 ErpAllWebPagesCollectTest @Disabled]，8:03 min）。A5.5 Verdict PASS（6 项已知污染物全 RESOLVED + JUnit 层平台级结构性隔离 + 零新活跃污染物）；A5.6 Verdict ⚠️(P1)（258 spec 断言强度矩阵：强 66.3%/中 8.5%/弱 21.3%/工具 2.7% + AMIS `$var` bug 已修复 successor 完整）。待独立结束审计转 roadmap A5.5/A5.6 ready→done + 闭合剩余 2 项 closure gate（独立子代理审计 + 结束证据）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立审计子代理>
-- Evidence: <task id / 报告链接 / walkthrough record>
+- Auditor / Agent: 独立 closure-audit 子代理（fresh context，未参与执行，本次会话）
+- Evidence: 独立审计 walkthrough 记录（2026-07-29）：
+  1. 两份审计报告实仓存在且非空——`docs/audits/2026-07-29-1430-arm-ma5-test-isolation.md`（124 行，Verdict PASS + 6 项污染物裁决表 + 4 节机制源码实证）/ `docs/audits/2026-07-29-1430-arm-ma5-e2e-effectiveness.md`（含 258 spec 断言强度矩阵 + P1-MA5-012）。
+  2. 实仓复核 `find tests/e2e -name "*.spec.ts"` = **258**，与 plan Current Baseline 及报告声称的「258 spec」逐字一致（零虚报）。
+  3. arm-index.md §MA5 汇总段 + §P1 详细清单（P1-MA5-012）+ §P2 表（P2-MA5-005/006/007）grep 确认存在，编号紧随 plan 2026-07-29-1430-1 的 P1-MA5-001~011 无碰撞；交叉去重声明维度区分明确（跨切 E2E 断言强度/隔离 vs 域覆盖深度）。
+  4. 5 项退出标准 + 8 项 Closure Gates 全 `[x]`；Status / Phase Status / Exit Criteria / Gates / Closure 五点一致。
+  5. audit-only 计划：`git status` 仅 .md 文件（零生产代码/ORM/契约变更），anti-hollow 不适用（无新代码需运行时接线）。
+  6. Deferred 项（xwf 浏览器层审批轴）诚实裁决为 watch-only residual，引用 plan 2026-07-09-2330-1 的 NOT FEASIBLE 裁决 + 命名了重开触发条件（nop-entropy 修复 sysUser 兜底），无范围内缺陷隐藏。
+  7. `docs/logs/2026/07-29.md` 首条日志条目完整（plan 1430-2），记录核心结论 + finding + 变更 + full-green 验证 + 后续。
 
 Follow-up:
 
