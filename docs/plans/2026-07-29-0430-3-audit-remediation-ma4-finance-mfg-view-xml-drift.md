@@ -1,6 +1,6 @@
 # 2026-07-29-0430-3-audit-remediation-ma4-finance-mfg-view-xml-drift MA4 finance+mfg view.xml vs 后端契约 drift 审计（A4.6）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-29
 > Source: `docs/backlog/audit-remediation-roadmap.md` Milestone MA4（工作项 A4.6，finance+mfg view.xml vs 后端契约 drift）
 > Related: `docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.4「view.xml drift（MA4）」行 + §残留风险 5「未覆盖：AMIS view.xml drift」；`docs/audits/arm-index.md`（P1 索引）；`docs/skills/multi-dimensional-audit-prompt.md`（审计方法）；`docs/design/finance/`（posting.md + period-close.md + state-machine.md 等 owner doc 锚点）+ `docs/design/manufacturing/`（mrp.md + state-machine.md 等）；`docs/plans/2026-07-28-2130-2-audit-remediation-ma4-finance-posting-voucher-code-quality.md`（A4.1a）+ `2026-07-29-0024-1-...-mfg-...`（A4.2a）+ `2026-07-29-0024-2-...-mfg-...`（A4.2b）（后端代码质量审计——本审计的前端契约对照基线）
@@ -59,59 +59,59 @@ finance + manufacturing 两域 view.xml vs 后端契约 drift 审计（代码与
 
 ### Phase 1 - finance+mfg view.xml vs 后端契约 7 维度 drift 系统性审计
 
-Status: planned
+Status: completed
 Targets: finance 72 view.xml + manufacturing 62 view.xml（`module-{finance,manufacturing}/erp-*-web/src/main/resources/_vfs/`）；后端真相源对照 `module-{finance,manufacturing}/erp-*-service/`（BizModel/xbiz）+ `*-meta/`（XMeta）+ `module-{finance,manufacturing}/model/app-erp-*.orm.xml`（ORM 字段/dict 绑定）；owner docs `docs/design/{finance,manufacturing}/state-machine.md` 等
 Skill: `multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: M0.3 done（绿色基线）；MA2 done（状态机 dict 死状态 finding 作为输入）；MA3 done（API 契约 finding 作为输入）；A4.1a/b + A4.2a/b done（后端代码质量审计已建立稳定契约真相源）；前端 UI-roadmap done（通用层 page.yaml 问题已修复，本审计审业务页面 view.xml）。
 
-- [ ] 维度「字段名一致性」：核查 finance 72 + mfg 62 view.xml grid/form 列引用的字段名 vs ORM/XMeta 实体字段——字段删除/重命名后 view.xml 未同步致页面报错/空白。重点关注 finance 凭证/期间/预算实体 + mfg 工单/BOM/MRP 实体的字段集稳定性（MA1 ORM 审计 P1-MA1-001/008/010 propId 缺失字段重编号是否影响 view.xml 引用）。标记悬挂字段引用。
+- [x] 维度「字段名一致性」：核查 finance 72 + mfg 62 view.xml grid/form 列引用的字段名 vs ORM/XMeta 实体字段——字段删除/重命名后 view.xml 未同步致页面报错/空白。重点关注 finance 凭证/期间/预算实体 + mfg 工单/BOM/MRP 实体的字段集稳定性（MA1 ORM 审计 P1-MA1-001/008/010 propId 缺失字段重编号是否影响 view.xml 引用）。标记悬挂字段引用。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「BizMutation/BizQuery 动作名一致性」：核查 view.xml 按钮调用的自定义动作（submitForApproval/approve/reject/post/reverse/executeBatchDepreciation/closePeriod/runMrp 等）vs BizModel/xbiz 声明的方法名——方法删除/重命名后按钮失效。重点关注 finance 过账/结账/预算 + mfg 工单/MRP 释放的自定义动作集合。标记悬挂动作引用。
+- [x] 维度「BizMutation/BizQuery 动作名一致性」：核查 view.xml 按钮调用的自定义动作（submitForApproval/approve/reject/post/reverse/executeBatchDepreciation/closePeriod/runMrp 等）vs BizModel/xbiz 声明的方法名——方法删除/重命名后按钮失效。重点关注 finance 过账/结账/预算 + mfg 工单/MRP 释放的自定义动作集合。标记悬挂动作引用。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「枚举值/状态值一致性」：核查 view.xml 状态映射/下拉绑定的枚举值 vs dict/常量——复核 MA2 状态机 dict 死状态（P1-MA2-031 DRAFT→CANCELLED / P1-MA2-032 IGNORED / P1-MA2-035 作业卡死状态 / P1-MA2-036 MRP CANCELLED+预测 CONSUMED / P1-MA2-037 RELEASED vs isFirmed / P1-MA2-038 委外 APPROVED）在 view.xml 状态映射层的投影——dict 死状态是否在 view.xml 映射为可见状态（误导用户）或映射为不可达状态（页面显示死选项）。标记枚举/dict drift。
+- [x] 维度「枚举值/状态值一致性」：核查 view.xml 状态映射/下拉绑定的枚举值 vs dict/常量——复核 MA2 状态机 dict 死状态（P1-MA2-031 DRAFT→CANCELLED / P1-MA2-032 IGNORED / P1-MA2-035 作业卡死状态 / P1-MA2-036 MRP CANCELLED+预测 CONSUMED / P1-MA2-037 RELEASED vs isFirmed / P1-MA2-038 委外 APPROVED）在 view.xml 状态映射层的投影——dict 死状态是否在 view.xml 映射为可见状态（误导用户）或映射为不可达状态（页面显示死选项）。标记枚举/dict drift。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「参数类型一致性」：核查 view.xml 传参类型 vs BizModel 方法签名——Long/String 混淆（复核 P1-MA2-050/057 INLINE 路径 Long↔String adapt 跨域不一致在 view 层投影）+ 日期序列化（前端 UI-roadmap 已修复 12 日期参数报表，本审计复核 finance/mfg 业务页面的日期字段、DatePicker 序列化残留）。标记参数类型 drift。
+- [x] 维度「参数类型一致性」：核查 view.xml 传参类型 vs BizModel 方法签名——Long/String 混淆（复核 P1-MA2-050/057 INLINE 路径 Long↔String adapt 跨域不一致在 view 层投影）+ 日期序列化（前端 UI-roadmap 已修复 12 日期参数报表，本审计复核 finance/mfg 业务页面的日期字段、DatePicker 序列化残留）。标记参数类型 drift。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「dict 绑定一致性」：核查 view.xml 下拉绑定的 dict 路径 vs 实际 dict yaml 存在性——复核 P1-MA2-046 排班分配无 dict 绑定同型在 finance/mfg view 层投影（status 字段无 ext:dict 致 UI 无法枚举合法值）。标记 dict 绑定缺失/路径错误。
+- [x] 维度「dict 绑定一致性」：核查 view.xml 下拉绑定的 dict 路径 vs 实际 dict yaml 存在性——复核 P1-MA2-046 排班分配无 dict 绑定同型在 finance/mfg view 层投影（status 字段无 ext:dict 致 UI 无法枚举合法值）。标记 dict 绑定缺失/路径错误。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「gen-control 内联脚本契约」：核查 view.xml `<gen-control>` 内联脚本引用的 API/字段 vs 后端契约——复核前端 UI-roadmap Phase 3 修复（notify-inbox 裸变量 data / ErpMdPartner 非法 GraphQL + adapt typo）在 finance/mfg 残留。标记内联脚本契约 drift（major/P2）。
+- [x] 维度「gen-control 内联脚本契约」：核查 view.xml `<gen-control>` 内联脚本引用的 API/字段 vs 后端契约——复核前端 UI-roadmap Phase 3 修复（notify-inbox 裸变量 data / ErpMdPartner 非法 GraphQL + adapt typo）在 finance/mfg 残留。标记内联脚本契约 drift（major/P2）。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 维度「跨实体字段引用」：核查 view.xml 引用关联实体的字段路径 vs ORM refEntityName 实际关系——refEntityName 重命名/关系变更后 view.xml 字段路径悬挂。标记跨实体字段引用 drift（P2）。
+- [x] 维度「跨实体字段引用」：核查 view.xml 引用关联实体的字段路径 vs ORM refEntityName 实际关系——refEntityName 重命名/关系变更后 view.xml 字段路径悬挂。标记跨实体字段引用 drift（P2）。
       - Skill: `multi-dimensional-audit-prompt.md`
-- [ ] 产出审计报告 `docs/audits/2026-07-29-0430-arm-ma4-finance-mfg-view-xml-drift.md`（含：7 维度逐项审查结果 / MA2/MA3/前端-roadmap 已知 finding view 层投影复核 / P0-P3 finding 清单按严重性排序 / 每项含 view.xml 文件路径+行引用 + 后端对照 / 裁决通过/失败 / 剩余风险）。
+- [x] 产出审计报告 `docs/audits/2026-07-29-0430-arm-ma4-finance-mfg-view-xml-drift.md`（含：7 维度逐项审查结果 / MA2/MA3/前端-roadmap 已知 finding view 层投影复核 / P0-P3 finding 清单按严重性排序 / 每项含 view.xml 文件路径+行引用 + 后端对照 / 裁决通过/失败 / 剩余风险）。
       - Skill: none
 
 Exit Criteria:
 
 > 审计报告是唯一可观察产物。完整仓库 `mvn test` 属 Closure Gates（见执行时规则 7）。
 
-- [ ] 7 维度逐项审查结果产出（每维度至少一句裁决，含"本维度无 drift"）
-- [ ] MA2 状态机 dict 死状态 + MA3 API 契约 + 前端-roadmap Phase 3 残留 view 层投影复核产出（每项标记"无 view 层投影"或"发现 view 层 drift"）
-- [ ] P0-P3 finding 清单产出按严重性排序，每个含 view.xml 文件路径+行引用+后端对照+严重性+缺陷描述+影响+目标 MR
+- [x] 7 维度逐项审查结果产出（每维度至少一句裁决，含"本维度无 drift"）
+- [x] MA2 状态机 dict 死状态 + MA3 API 契约 + 前端-roadmap Phase 3 残留 view 层投影复核产出（每项标记"无 view 层投影"或"发现 view 层 drift"）
+- [x] P0-P3 finding 清单产出按严重性排序，每个含 view.xml 文件路径+行引用+后端对照+严重性+缺陷描述+影响+目标 MR
 
 ### Phase 2 - finding 汇总交接 MR2 + 索引/矩阵更新
 
-Status: planned
+Status: completed
 Targets: finance+mfg view.xml drift finding；`docs/audits/arm-index.md`；`docs/audits/audit-remediation-scope-and-dimension-matrix.md` §2.4「view.xml drift（MA4）」行
 Skill: none
 
 - Item Types: `Follow-up`
 - Prereqs: Phase 1 完成（finding 全部识别）
 
-- [ ] finding 汇总：全部缺陷 major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.4/A4.5 已分配最大 P1-MA4-N + 1，避免命名空间碰撞；报告、领域、缺陷描述、目标 MR2[view.xml 代码类]、修复状态 todo）。与 MA2/MA3/A4.1a-A4.5 已登记 P1 经交叉去重无冲突。
+- [x] finding 汇总：全部缺陷 major 登记为 P1 至 `arm-index.md` §P1 发现汇总（Finding ID `P1-MA4-NNN`，起始编号 = A4.4/A4.5 已分配最大 P1-MA4-N + 1，避免命名空间碰撞；报告、领域、缺陷描述、目标 MR2[view.xml 代码类]、修复状态 todo）。与 MA2/MA3/A4.1a-A4.5 已登记 P1 经交叉去重无冲突。
       - Skill: none
-- [ ] 分类裁决：view.xml drift finding 目标 MR2（view.xml 修复属代码变更）；活跃数据破坏/页面完全不可用走 P0 即时通道（升级评估），在报告中明确标注。
+- [x] 分类裁决：view.xml drift finding 目标 MR2（view.xml 修复属代码变更）；活跃数据破坏/页面完全不可用走 P0 即时通道（升级评估），在报告中明确标注。
       - Skill: none
-- [ ] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「view.xml drift（MA4）」行 + arch-gov §残留风险 5 反映 finance+mfg 维度进度。
+- [x] 更新 arm-index 报告清单（新增本报告行）+ scope matrix §2.4「view.xml drift（MA4）」行 + arch-gov §残留风险 5 反映 finance+mfg 维度进度。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 所有缺陷 major 已登记 arm-index §P1 汇总（view.xml 代码类 MR2），待展开
-- [ ] 与 MA2/MA3/A4.1a-A4.5 已登记 P1 经交叉去重无重复登记
-- [ ] arm-index 报告清单 + scope matrix + arch-gov §残留风险 5 已反映审计结论
+- [x] 所有缺陷 major 已登记 arm-index §P1 汇总（view.xml 代码类 MR2），待展开
+- [x] 与 MA2/MA3/A4.1a-A4.5 已登记 P1 经交叉去重无重复登记
+- [x] arm-index 报告清单 + scope matrix + arch-gov §残留风险 5 已反映审计结论
 
 ## Draft Review Record
 
@@ -121,14 +121,14 @@ Exit Criteria:
 
 > 本计划主体是 view.xml 静态审查 + 后端契约交叉对照（不改代码；产出为审计报告 + arm-index/scope-matrix/arch-gov 更新）。完整仓库验证在此处运行一次（同型审计 plan 的标准 Closure 实践）。view.xml drift 修复在 MR2 批量进行。本审计只识别 drift + 分类。
 
-- [ ] 范围内行为完成（A4.6 finance+mfg view.xml drift 审计报告产出 + arm-index 更新 + scope matrix/arch-gov 标记完成）
-- [ ] 相关文档对齐（审计报告、arm-index、scope matrix、arch-gov §残留风险 5 结论已反映）
-- [ ] 已运行验证：view.xml 静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
-- [ ] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证（状态、阶段、门控、日志都一致）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（A4.6 finance+mfg view.xml drift 审计报告产出 + arm-index 更新 + scope matrix/arch-gov 标记完成）
+- [x] 相关文档对齐（审计报告、arm-index、scope matrix、arch-gov §残留风险 5 结论已反映）
+- [x] 已运行验证：view.xml 静态审查无代码变更，build/test 门控仅作回归基线确认（同型审计 plan 的相同 Closure 实践）
+- [x] 无范围内项目降级为 deferred/follow-up（P1 不属降级——按设计进入 MR2）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证（状态、阶段、门控、日志都一致）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -158,13 +158,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: A4.6 finance+mfg view.xml vs 后端契约 drift 审计（S 级第一批，134 view.xml）已完成。Verdict FAIL（零 P0）：1 P1（P1-MA4-023 ErpMfgWorkOrder Close 按钮引用不存在的 STARTED 状态值）+ 2 P2 watch-only（P2-MA4-014 系统性 ACTIVE 死状态 badge / P2-MA4-015 跨域通用调色板）。7 维度审计：动作名/字段名/dict 绑定/参数类型/跨实体字段 5 维度 PASS（delta 层 bounded-merge 自愈 + xbiz/Processor 正式接线 + ORM ext:dict 三道防线有效），drift 集中在枚举值 + gen-control 内联脚本 2 维度。MA2/MA3/前端-roadmap 已知 finding view 层投影复核全部「无 view 层 drift」。drift 密度 0.75%（1 P1/134 view.xml）属低密度。审计报告 + arm-index（P1-MA4-023 + P2-MA4-014/015 登记）+ scope matrix §2.4 + arch-gov §残留风险 5（部分覆盖）+ roadmap A4.6（todo→done）全部已更新。验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test` BUILD SUCCESS（全绿回归基线确认；审计无代码变更）。view.xml drift 修复在 MR2 批量进行。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计后填写>
-- Evidence: <待独立结束审计后填写>
+- Auditor / Agent: 独立 general 子代理 fresh-context（ses_054e63c91ffez6Zi8eGJEb7WZB，2026-07-29，未参与本计划执行）。
+- Evidence: CLOSURE_AUDIT: pass——7 项核验全部通过：(1) 审计报告完整（7 维度逐项裁决 + P0-P3 finding 表 + Verdict + MA2/MA3/前端-roadmap 投影复核 + 剩余风险）；(2) 关键 finding P1-MA4-023 实仓可复现（ErpMfgWorkOrder.view.xml:234 字面 `'STARTED'` + work-order-status dict 无 STARTED + ErpMfgConstants 无 STARTED + grep 确认 STARTED 仅 view 2 处代码/dict/constants 零定义）；(3) arm-index 登记（报告清单行 done + P1-MA4-023 紧随 P1-MA4-022 + P2-MA4-014/015 + A4.6 narrative；编号无碰撞——前序最大 P1-MA4=022/P2-MA4=013）；(4) scope matrix §2.4 完成注记 + arch-gov §残留风险 5 部分覆盖；(5) roadmap A4.6 done；(6) Phase 1/2 Status: completed 且全部 [ ]→[x]；(7) git status 仅 docs 变更零代码改动。子代理发现 1 项非阻塞 cosmetic（报告 §5 P2 编号 typo 014/007→已修正为 015）。验证 `mvn clean install -DskipTests` + `mvn test` 均 BUILD SUCCESS（executor 执行，全绿基线）。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 无非阻塞跟进项目（P1-MA4-023 + P2-MA4-014/015 按设计进入 MR2 批量修复，A4.7/A4.8 view.xml drift 后续批次已在 Deferred But Adjudicated 登记且 successor required）。
