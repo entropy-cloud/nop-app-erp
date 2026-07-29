@@ -62,11 +62,11 @@ MRP（Material Requirements Planning）根据独立需求（销售订单、预�
 ## 建议单释放
 
 ```
-ErpMfgPlannedOrder
+ErpMfgPlannedOrder / ErpMfgMrpPlanLine
   │
   ├─ orderType=MANUFACTURING → 一键生成 ErpMfgWorkOrder（工单）
-  ├─ orderType=PURCHASE      → 一键生成 ErpPurPurchaseOrder（采购订单）
-  └─ 释放后建议单状态标记为 RELEASED，不再参与下次 MRP
+  ├─ orderType=PURCHASE      → 一键生成 ErpPurOrder（采购订单）
+  └─ 释放后：行级 isFirmed=true（MrpReleaseService.markFirmed）；全部行 firmed 后计划头 → FIRMED（advancePlanToFirmedIfComplete），不再参与下次 MRP
 ```
 
 ## 配置选项
@@ -86,6 +86,8 @@ ErpMfgPlannedOrder
 本期实现相对上方设计描述的已知偏离（均为计划内 Non-Goal 或必要实现细节，已记录于计划 Task Route Decision / Deferred）：
 
 - **FORECAST 需求来源（已收口，2026-07-05，plan 2026-07-05-0427-1）**：实体 `ErpMfgForecast`/`ErpMfgForecastLine` 已落地（制造域）；`DemandAggregator.collectForecastDemands` 仅消费头 `status=APPROVED` 且区间与计划期相交的预测行，按物料聚合 `forecastQty`，`demandSource=FORECAST`，warehouseId 维度由 MRP 忽略（产品级需求）；config-gated `erp-mfg.forecast-consume-enabled`（默认 true）。状态机 `DRAFT→APPROVED`（approve）/ `→CANCELLED`（cancel）经 `ErpMfgForecastBizModel` 实现；`CONSUMED` 状态值预留但本期不自动迁移（plan 2026-07-05-0427-1 Deferred，触发条件：预测消费后状态回写需求落地）。
+- **MRP 计划 CANCELLED 死状态（预留/Deferred，audit P1-MA2-036）**：`erp-mfg/mrp-status` 字典 5 值含 `CANCELLED`，但 `MrpEngine` 仅 setStatus `RUNNING`/`COMPLETED`、`MrpReleaseService` 仅 setStatus `FIRMED`，`ErpMfgMrpPlanBizModel` 仅 `runMrp`，**无 cancelPlan/cancelMrp mutation，零 CANCELLED writer**（grep `MRP_STATUS_CANCELLED|cancelPlan|cancelMrp` 仅命中常量声明）。主路径 DRAFT→RUNNING→COMPLETED→FIRMED 完整覆盖。处置：采纳 Decision A（保留 dict 值为预留 + owner doc 标注 Deferred，对齐 forecast CONSUMED 先例），不从 ORM 删除。**Successor 触发条件**：MRP 计划取消需求落地时，实现 cancelPlan BizMutation + setStatus writer + 状态迁移守卫（须防 RUNNING 运算中取消的并发与已 FIRMED 释放单的回滚）。
+- **预测 CONSUMED 死状态（预留/Deferred，已自声明）**：`erp-mfg/forecast-status` 字典含 `CONSUMED`，`ErpMfgForecastBizModel` 仅 setStatus `APPROVED`/`CANCELLED`，`CONSUMED` 仅作 cancel 守卫只读引用（拒绝从 CONSUMED 取消）。`CONSUMED` Deferred 标注已完整存在于本文件上方 FORECAST 条目 + `ErpMfgForecastBizModel.java:21` Javadoc（plan 2026-07-05-0427-1 §Deferred）。主路径 DRAFT→APPROVED + →CANCELLED 完整覆盖。
 - **lot sizing 简化**：上方「固定批量/最小订货量/最大订货量」对应物料级 fixedLotSize/minOrderQty/maxOrderQty 列在 ORM 不存在。本期 lot-for-lot 为主 + 全局配置 `erp-mfg.default-lot-size`（>0 时按倍数取整）。触发条件：物料级批量精细化需求时（须 ask-first 加列）。
 - **低层码**：上方「低层编码」经 BomExpander DFS 层级标记实现（同物料取最低层级展开基准），不预计算物化 lowLevelCode 列（ORM 无此列）。
 - **可用量来源**：上方「在途采购/在制工单」未实时跨域汇总（purchase/manufacturing 复杂查询）。本期可用量 = `ErpInvStockBalance.availableQuantity`（既有预计算列 = total − reserved − locked；null 时回退计算）；在途/在制以 `ErpMfgMrpPlanLine.scheduledReceipt` 列承载（粗估，计划员录入或后续从在途汇总）。
@@ -93,6 +95,7 @@ ErpMfgPlannedOrder
 - **委外建议释放**：orderType=SUBCONTRACT_REQUEST 字典存在但委外流程独立面，本期不支持释放。触发条件：委外加工落地时。
 - **需求时界 / CRP / AUTO_SCHEDULED**：本期不区分需求时界、不做产能校验（CRP 见 2.8 独立面）、仅 MANUAL 触发。
 - **建议单释放耦合度**：上方「一键转为采购订单/生产工单」本期实现为释放直接持久化目标域实体（`ErpPurOrder`/`ErpPurOrderLine`、`ErpMfgWorkOrder`）——IErpPurOrderBiz/IErpMfgWorkOrderBiz 仅订单头级通用 CRUD 无 purpose-built `createFromMrpLine` 方法，故走 service-helper 范式直接落库（仅写 MRP 已知字段：物料/数量/日期/org）。释放分两个 purpose-built 方法（`releasePurchaseRequest` 须 supplierId/currencyId 因 ErpPurOrder ORM 必填；`releaseWorkRequest` 仅需 planLineId）。残留：生成的采购单单价/金额=0、币种由参数提供，须采购员后续补录。
+- **释放状态措辞更正：RELEASED → FIRMED/isFirmed（audit P1-MA2-037）**：上方「建议单释放」ASCII 图原文声明「释放后建议单状态标记为 RELEASED」——此为设计与实现的措辞漂移，**`erp-mfg/mrp-status` 字典无 RELEASED 值**，RELEASED 为幻影状态。实际机制：释放后行级 `ErpMfgMrpPlanLine.isFirmed=true`（`MrpReleaseService.markFirmed:129-133` 同步写 `convertedBillCode`），当该计划全部行均 `isFirmed=true` 时，`advancePlanToFirmedIfComplete:218-236` 将计划头 `ErpMfgMrpPlan.status` 置为 `FIRMED`。即「释放 = 行布尔 isFirmed + 计划头状态 FIRMED」两级，非单态 RELEASED。已按此修正上方 ASCII 图措辞。
 
 ### CRM 销售预测 vs 运营需求预测的关系（2026-07-05，plan 2026-07-05-0427-1）
 

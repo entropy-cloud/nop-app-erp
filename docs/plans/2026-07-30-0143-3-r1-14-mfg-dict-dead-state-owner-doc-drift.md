@@ -1,6 +1,6 @@
 # 2026-07-30-0143-3-r1-14-mfg-dict-dead-state-owner-doc-drift manufacturing 死状态 + owner doc 漂移修复
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-30
 > Source: audit-remediation-roadmap R1.14（P1-MA2-035 + P1-MA2-036 + P1-MA2-037，源自 A2.6a/A2.6b manufacturing 状态机审查）
 > Related: `docs/audits/2026-07-28-0109-arm-ma2-mfg-work-order-jobcard-state-machine.md`、`docs/audits/2026-07-28-0109-arm-ma2-mfg-mrp-bom-state-machine.md`、`docs/audits/2026-07-28-1953-arm-ma3-owner-doc-vs-code-drift.md`（MA3 复核确认 035/036/037 分类维持）
@@ -54,57 +54,57 @@
 
 ### Phase 1 - 作业卡 TRANSFERRED 死状态 owner doc 对齐（P1-MA2-035）
 
-Status: planned
+Status: completed
 Targets: `docs/design/manufacturing/state-machine.md`
 Skill: `none`
 
 - Item Types: `Decision | Add`
 - Prereqs: none
 
-- [ ] **Decision**：作业卡 PARTIALLY_TRANSFERRED + MATERIAL_TRANSFERRED 死状态处置。
+- [x] **Decision**：作业卡 PARTIALLY_TRANSFERRED + MATERIAL_TRANSFERRED 死状态处置。
       - 选择 A（推荐）：owner doc 标注 Deferred——保留 dict 两值为预留语义入口（转序/工序转移功能 successor），state-machine.md 作业卡图 + 补注块明确「两态本期无 setStatus writer，不可达；预留待转序功能上线」。
       - 选择 B：从 ORM 删除两 dict 值 + 常量 + AMIS successVals（ORM 变更 + regen + 多文件）。
       - 理由：对齐仓库既有先例（forecast CONSUMED 已按「保留 dict + mrp.md:88 Deferred 标注」处理）；转序是合理未来特性，删后重加是 churn；零数据（无 writer 即无行持此状态），保留为预留零运行时风险。采纳 A，B 作为替代记入。
       - Skill: `none`
-- [ ] state-machine.md `:188-198` 作业卡图两态标注「预留（Deferred，无 writer）」；补注块 `:167-178` 增一条转序死状态 Deferred 说明。
+- [x] state-machine.md `:188-198` 作业卡图两态标注「预留（Deferred，无 writer）」；补注块 `:167-178` 增一条转序死状态 Deferred 说明。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] state-machine.md 作业卡段明确 PARTIALLY_TRANSFERRED/MATERIAL_TRANSFERRED 为预留死状态（不可达），与代码零 writer 一致。
+- [x] state-machine.md 作业卡段明确 PARTIALLY_TRANSFERRED/MATERIAL_TRANSFERRED 为预留死状态（不可达），与代码零 writer 一致。
 
 ### Phase 2 - MRP CANCELLED + 预测 CONSUMED owner doc 对齐（P1-MA2-036）
 
-Status: planned
+Status: completed
 Targets: `docs/design/manufacturing/mrp.md`、`docs/design/manufacturing/state-machine.md`
 Skill: `none`
 
 - Item Types: `Add`
 - Prereqs: none
 
-- [ ] mrp.md 增 MRP CANCELLED Deferred 标注（无 cancelPlan mutation，dict 值预留待 MRP 取消功能 successor）；与 `:88` forecast CONSUMED 既有 Deferred 标注并列，补齐注记完整。
-- [ ] state-machine.md 增一行 MRP-plan/Forecast 死状态指引（指向 mrp.md Deferred 段；不展开完整章节——P2-MA2-052 watch-only）。
-- [ ] 核对 `ErpMfgForecastBizModel.java:21` Javadoc + mrp.md:88 的 forecast CONSUMED Deferred 标注已完整（无需改代码；若 mrp.md 措辞不完整则补全）。
+- [x] mrp.md 增 MRP CANCELLED Deferred 标注（无 cancelPlan mutation，dict 值预留待 MRP 取消功能 successor）；与 `:88` forecast CONSUMED 既有 Deferred 标注并列，补齐注记完整。
+- [x] state-machine.md 增一行 MRP-plan/Forecast 死状态指引（指向 mrp.md Deferred 段；不展开完整章节——P2-MA2-052 watch-only）。
+- [x] 核对 `ErpMfgForecastBizModel.java:21` Javadoc + mrp.md:88 的 forecast CONSUMED Deferred 标注已完整（无需改代码；若 mrp.md 措辞不完整则补全）。
 
 Exit Criteria:
 
-- [ ] mrp.md 明确 MRP CANCELLED + 预测 CONSUMED 均为预留/Deferred；owner doc 与代码零 writer 一致。
+- [x] mrp.md 明确 MRP CANCELLED + 预测 CONSUMED 均为预留/Deferred；owner doc 与代码零 writer 一致。
 
 ### Phase 3 - mrp.md RELEASED → FIRMED/isFirmed 措辞修正（P1-MA2-037）
 
-Status: planned
+Status: completed
 Targets: `docs/design/manufacturing/mrp.md`
 Skill: `none`
 
 - Item Types: `Fix`
 - Prereqs: none
 
-- [ ] mrp.md `:69` ASCII 图「释放后建议单状态标记为 RELEASED」修正为实际机制：行级 `isFirmed=true`（`MrpReleaseService.markFirmed`）+ 全部行 firmed 后 plan head → `FIRMED`（`advancePlanToFirmedIfComplete`）；补注块 `:84-95` 增一条 RELEASED→FIRMED/isFirmed 措辞更正说明。
+- [x] mrp.md `:69` ASCII 图「释放后建议单状态标记为 RELEASED」修正为实际机制：行级 `isFirmed=true`（`MrpReleaseService.markFirmed`）+ 全部行 firmed 后 plan head → `FIRMED`（`advancePlanToFirmedIfComplete`）；补注块 `:84-95` 增一条 RELEASED→FIRMED/isFirmed 措辞更正说明。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] mrp.md 释放段措辞与 `MrpReleaseService` 实际行为（isFirmed + FIRMED）一致，无 RELEASED 幻影状态。
+- [x] mrp.md 释放段措辞与 `MrpReleaseService` 实际行为（isFirmed + FIRMED）一致，无 RELEASED 幻影状态。
 
 ## Draft Review Record
 
@@ -112,14 +112,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内文档对齐完成（三项 finding 的 owner doc 漂移消除）
-- [ ] 相关文档对齐（state-machine.md / mrp.md）
-- [ ] 无范围内项目降级为 deferred/follow-up（Decision A 是处置裁决，已明确 successor；非范围内缺陷隐瞒）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
-- [ ] 本计划为纯文档（无代码/ORM 变更），Closure Gates 的验证命令门控删除——无 `mvn`/typecheck 适用（见执行时规则 7 + 模板说明）
+- [x] 范围内文档对齐完成（三项 finding 的 owner doc 漂移消除）
+- [x] 相关文档对齐（state-machine.md / mrp.md）
+- [x] 无范围内项目降级为 deferred/follow-up（Decision A 是处置裁决，已明确 successor；非范围内缺陷隐瞒）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
+- [x] 本计划为纯文档（无代码/ORM 变更），Closure Gates 的验证命令门控删除——无 `mvn`/typecheck 适用（见执行时规则 7 + 模板说明）
 
 ## Deferred But Adjudicated
 
@@ -137,13 +137,19 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _（待结束审计）_
+Status Note: 三项 finding（P1-MA2-035/036/037）owner doc 漂移均已消除；纯文档计划，零代码/ORM 变更，无 mvn/typecheck 门控。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _（独立子代理）_
-- Evidence: _（task id / walkthrough）_
+- Auditor / Agent: 独立子代理（新会话，task ses_0509f3f08ffeKGRzkkX00TlJOE），2026-07-30。
+- Verdict: PASS（0 Blocker / 0 Major / 1 Minor = 计划文件本身的书签勾选，非范围外代码变更）。
+- 逐项证据（均经实仓验证，非引用计划自述）：
+  - P1-MA2-035：`state-machine.md:190-191` 图标注 + `:200` Deferred 说明；`rg setStatus(JOB_CARD_STATUS_PARTIALLY_TRANSFERRED|MATERIAL_TRANSFERRED)` EXIT 1（零 writer 确认）；dict 值存于 orm:50-51；JobCard 主生命周期未破。
+  - P1-MA2-036：`mrp.md:89` MRP CANCELLED Deferred + `state-machine.md:275-282` 一行指针（不展开完整章节）；`rg setStatus(MRP_STATUS_CANCELLED)` EXIT 1；MrpEngine RUNNING/COMPLETED、MrpReleaseService FIRMED；forecast CONSUMED 已自声明（mrp.md:88 + ErpMfgForecastBizModel.java:21 Javadoc），仅 setStatus APPROVED/CANCELLED。
+  - P1-MA2-037：`mrp.md:69` ASCII 图改为 isFirmed + FIRMED；`:98` RELEASED 幻影态更正注；mrp-status dict（orm:72-78）无 RELEASED 值；purchase 实体名为 ErpPurOrder（核对 module-purchase，无新引入 typo）。
+- 文本一致性：全域 grep RELEASED 仅余 MaterialReservation.reservationStatus / lotStatus（无关）+ 本更正注。
+- git status：仅 docs/design/manufacturing/{mrp,state-machine}.md + 本计划文件变更。
 
 Follow-up:
 
-- _（非阻塞跟进；已确认缺陷不得出现在此处）_
+- _（非阻塞；successor 已在 Deferred But Adjudicated 命名触发条件）_

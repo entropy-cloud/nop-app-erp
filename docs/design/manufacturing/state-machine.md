@@ -187,8 +187,8 @@
 ```
 待开始 (OPEN)
   ├─ 开始作业 → 作业中 (WORK_IN_PROGRESS)
-  │              ├─ 部分转序 → 部分转序 (PARTIALLY_TRANSFERRED)
-  │              ├─ 转序 → 已转序 (MATERIAL_TRANSFERRED)
+  │              ├─ ⚠ 预留(Deferred) → 部分转序 (PARTIALLY_TRANSFERRED)  ← 本期无 writer，不可达
+  │              ├─ ⚠ 预留(Deferred) → 已转序 (MATERIAL_TRANSFERRED)      ← 本期无 writer，不可达
   │              ├─ 暂停 → 暂停 (ON_HOLD)
   │              │           └─ 恢复 → 作业中
   │              ├─ 提交 → 已提交 (SUBMITTED)
@@ -196,6 +196,8 @@
   │              └─ 取消 → 已取消 (CANCELLED)
   └─ （工单取消时联动取消）
 ```
+
+> **作业卡 TRANSFERRED 两态为预留死状态（Deferred，audit P1-MA2-035）**：`erp-mfg/job-card-status` 字典含 `PARTIALLY_TRANSFERRED`/`MATERIAL_TRANSFERRED` 两值（转序/工序转移语义入口），但 `ErpMfgJobCardProcessor` 与 `ErpMfgJobCardBizModel` 全 7 mutation（startJob/recordWork/submitJob/completeJob/holdJob/resumeJob/cancelJob）**零 setStatus writer**，两态本期不可达。处置：采纳 Decision A（保留 dict 值为预留 + owner doc 标注 Deferred，对齐 `mrp.md:88` forecast CONSUMED 既有先例），不从 ORM 删除。**Successor 触发条件**：转序/工序转移功能上线时，实现 setStatus writer + 状态迁移守卫，将两态接入作业卡主生命周期。
 
 作业卡承载工时记录（JobCardTimeLog）：作业员记录实际工时，用于成本核算。
 
@@ -267,4 +269,15 @@
 
 - 舍 PRODUCED（供应商确认属 Portal 协同 successor）与 RETURNED（退货 successor）。
 - 以委外订单为编排根，不引入独立 Issue/Receipt/Invoice 实体（对齐 Odoo mrp_subcontracting 范式）。
+
+---
+
+## 预留死状态指引：MRP 计划状态 / 预测状态（audit P1-MA2-036）
+
+> **不展开完整状态机章节**（归 P2-MA2-052 watch-only）。本节仅作死状态 Deferred 指引，权威详情见 `mrp.md §实现偏离补注`。
+
+- **MRP 计划状态（`erp-mfg/mrp-status`）**：DRAFT/RUNNING/COMPLETED/FIRMED 主路径完整；`CANCELLED` 为预留死状态（无 cancelPlan writer，Deferred，successor = MRP 取消需求）。
+- **预测状态（`erp-mfg/forecast-status`）**：DRAFT→APPROVED + →CANCELLED 主路径完整；`CONSUMED` 为预留死状态（无 writer，Deferred，successor = 预测消费回写需求）。
+
+以上两态均采纳 Decision A（保留 dict 值为预留 + owner doc 标注 Deferred，对齐仓库先例），不从 ORM 删除。
 
