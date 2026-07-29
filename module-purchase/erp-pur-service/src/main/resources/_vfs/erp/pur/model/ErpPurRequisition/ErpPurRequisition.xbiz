@@ -30,6 +30,12 @@
             </return>
             <source><![CDATA[
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
+                if (entity.docStatus === 'CANCELLED') {
+                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
+                        .param("bizObjName", thisObj.bizObjName)
+                        .param("bizObjId", entity.id)
+                        .param("action", "approve");
+                }
                 const status = entity.approveStatus;
 
                 if (status !== 'SUBMITTED') {
@@ -55,6 +61,12 @@
             </return>
             <source><![CDATA[
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
+                if (entity.docStatus === 'CANCELLED') {
+                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
+                        .param("bizObjName", thisObj.bizObjName)
+                        .param("bizObjId", entity.id)
+                        .param("action", "reject");
+                }
                 const status = entity.approveStatus;
 
                 if (status !== 'SUBMITTED') {
@@ -80,6 +92,12 @@
             </return>
             <source><![CDATA[
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
+                if (entity.docStatus === 'CANCELLED') {
+                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
+                        .param("bizObjName", thisObj.bizObjName)
+                        .param("bizObjId", entity.id)
+                        .param("action", "withdrawApproval");
+                }
                 const status = entity.approveStatus;
 
                 if (status !== 'SUBMITTED') {
