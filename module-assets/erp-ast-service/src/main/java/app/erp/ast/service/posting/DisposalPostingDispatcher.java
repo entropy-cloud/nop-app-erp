@@ -8,7 +8,10 @@ import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -36,6 +39,15 @@ public class DisposalPostingDispatcher {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_DISPOSAL_FAILURE = "ast.disposal-posting-failure";
+
+    /**
+     * <p>G2/G4 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-060）：Disposal 有 DeferredPostingSweepJob 兜底重试；
+     * posted=false 悬挂补 IErpSysNotificationBiz 告警使运营感知（reverseApprove 不对称见 state-machine.md 标注）。
+     */
     public Long tryPost(ErpAstDisposal disposal, ErpAstAsset asset, ErpAstAssetCategory category) {
         PostingEvent event = buildEvent(disposal, asset, category);
         try {
@@ -46,7 +58,27 @@ public class DisposalPostingDispatcher {
             } else {
                 LOG.error("处置过账异常，处置单 {} 保持 posted=false", disposal.getCode(), e);
             }
+            dispatchFailureAlert(disposal, e);
             return null;
+        }
+    }
+
+    /** 处置过账失败告警派发（G4；通知失败降级不阻断主流程）。 */
+    protected void dispatchFailureAlert(ErpAstDisposal disposal, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("billCode", disposal.getCode());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", disposal.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_DISPOSAL_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("处置过账失败告警派发失败（降级）：billCode={}, reason={}",
+                    disposal.getCode(), notifyErr.getMessage());
         }
     }
 

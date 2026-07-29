@@ -15,6 +15,7 @@ import app.erp.mfg.service.workorder.KitAvailabilityChecker;
 import app.erp.mfg.service.workorder.KitAvailabilityResult;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionTrigger;
 import app.erp.qa.dao.constants.ErpQaInspectionType;
@@ -24,6 +25,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -34,7 +36,9 @@ import java.util.Objects;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -68,6 +72,10 @@ public class ErpMfgWorkOrderProcessor {
     ProductionVarianceDispatcher productionVarianceDispatcher;
     @Inject
     BatchGenealogyWriter batchGenealogyWriter;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_VARIANCE_FAILURE = "mfg.production-variance-posting-failure";
 
     public ErpMfgWorkOrder submitForApproval(String id, IServiceContext context) {
         ErpMfgWorkOrder wo = requireWorkOrder(id, context);
@@ -222,8 +230,10 @@ public class ErpMfgWorkOrderProcessor {
         }
         workOrderDao().updateEntity(wo);
 
-        // 完工达量（willFinish）：config-gated 自动触发生产差异计算 + 过账。失败隔离仅记 ERROR 日志，
-        // 不阻断完工（异常工作台统一接入归 Deferred，见 plan 2026-07-05-1838-2 Deferred「cron 定时批量」）。
+        // 完工达量（willFinish）：config-gated 自动触发生产差异计算 + 过账。G3 错误传播分级（posting-log.md）：
+        // 「无 FIRMED 标准成本」（ERR_VARIANCE_NO_STANDARD_COST）容错跳过（差异未配置，非故障）；
+        // 其他失败（配置错误/真实故障）不阻断完工（已 COMPLETED）但派发 IErpSysNotificationBiz 告警，
+        // 使 GL 缺 PRODUCTION_VARIANCE 凭证的悬挂可被运营感知（手动重算入口存在）。
         if (willFinish && isVarianceAutoCalcEnabled()) {
             try {
                 // 重算幂等闭环（plan 2026-07-18-2251-1）：先红冲既有 PRODUCTION_VARIANCE 凭证 → 删差异旧行 → 重算 → 派发新凭证。
@@ -233,11 +243,45 @@ public class ErpMfgWorkOrderProcessor {
                 productionVarianceCalculator.calculateVariances(workOrderId);
                 productionVarianceDispatcher.dispatchIfApplicable(workOrderId);
             } catch (Exception e) {
-                LOG.error("工单 {} 完工触发生产差异计算/过账失败（不阻断完工，可经手动 calculateVariances 重算）",
-                        wo.getCode(), e);
+                if (isNoStandardCostError(e)) {
+                    LOG.warn("工单 {} 完工差异计算跳过（无 FIRMED 标准成本，非故障）：{}", wo.getCode(), e.getMessage());
+                } else {
+                    LOG.error("工单 {} 完工触发生产差异计算/过账失败（不阻断完工，可经手动 calculateVariances 重算，已派发告警）",
+                            wo.getCode(), e);
+                    dispatchVarianceFailureAlert(wo, e);
+                }
             }
         }
         return wo;
+    }
+
+    /** 判定是否为「无 FIRMED 标准成本」容错跳过场景（差异未配置，非故障）。 */
+    protected boolean isNoStandardCostError(Throwable e) {
+        if (e instanceof NopException) {
+            String code = ((NopException) e).getErrorCode();
+            return code != null && code.contains("VARIANCE_NO_STANDARD_COST");
+        }
+        return false;
+    }
+
+    /** 生产差异计算/过账失败告警派发（G3；通知失败降级不阻断主流程）。 */
+    protected void dispatchVarianceFailureAlert(ErpMfgWorkOrder wo, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("workOrderId", wo.getId());
+        ctx.put("workOrderCode", wo.getCode());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", wo.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_VARIANCE_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("生产差异过账失败告警派发失败（降级）：workOrderCode={}, reason={}",
+                    wo.getCode(), notifyErr.getMessage());
+        }
     }
 
     // ---------- step：审批迁移校验（protected，下游可逐个覆盖） ----------

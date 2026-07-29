@@ -12,6 +12,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.ErpFinPostingErrors;
 import app.erp.fin.service.posting.ErpFinPostingExceptionRecorder;
 import app.erp.fin.service.posting.ErpFinPostingMetrics;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -43,7 +44,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 过账异常工作台（{@code posting-log.md §过账异常处置}）。CRUD 之外承载三个处置动作：
  * {@link #retry}/{@link #ignore}/{@link #manualEntry}，处置状态机经 ErrorCode 守门。
  *
- * <p>期末结账前置检查经 {@link #countUnresolved} 扫描未处置（PENDING/RETRYING）记录阻止结账。
+ * <p>期末结账前置检查经 {@link #countUnresolved} 扫描未处置（PENDING/RETRYING/MANUAL 未补录）记录阻止结账。
  *
  * <p>事务/会话：{@link BizMutation} 默认事务；retry 内重新触发过账经 {@link IErpFinVoucherBiz#post}
  * 的 REQUIRES_NEW 独立事务（失败回滚不污染本工作台事务）。
@@ -57,6 +58,9 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
 
     @Inject
     ErpFinPostingMetrics postingMetrics;
+
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
 
     public ErpFinPostingExceptionBizModel() {
         setEntityName(ErpFinPostingException.class.getName());
@@ -114,7 +118,35 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
         entity.setResolvedBy(currentUserId());
         entity.setResolvedAt(CoreMetrics.currentTimestamp());
         updateEntity(entity, null, context);
+        // P1-MA2-032（G2 显式放弃态）：IGNORED 补告警——首次记录已有 dispatchNotify，
+        // 此处补放弃态告警使运营感知「异常被显式忽略」决策（posting-log.md §错误传播分级策略 G2）。
+        dispatchAbandonmentAlert(entity, resolutionNote);
         return entity;
+    }
+
+    /**
+     * IGNORED 放弃态告警派发（G2 错误传播分级策略；plan 2026-07-30-0341-2 P1-MA2-032）。
+     * 通知失败降级（warn）不阻断处置动作。
+     */
+    private void dispatchAbandonmentAlert(ErpFinPostingException entity, String resolutionNote) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("exceptionId", entity.getId());
+        ctx.put("billHeadCode", entity.getBillHeadCode());
+        ctx.put("businessType", entity.getBusinessType());
+        ctx.put("errorCode", entity.getErrorCode());
+        ctx.put("errorMessage", entity.getErrorMessage());
+        ctx.put("resolutionNote", resolutionNote);
+        ctx.put("postingNo", entity.getBillHeadCode());
+        try {
+            notificationBiz.notify(ErpFinConstants.NOTIFY_EVENT_POSTING_EXCEPTION, ctx, new io.nop.core.context.ServiceContextImpl());
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(ErpFinPostingExceptionBizModel.class)
+                    .warn("erp-fin-posting-exception-ignored-alert-failed: exceptionId={}, reason={}",
+                            entity.getId(), e.getMessage());
+        }
     }
 
     @Override
@@ -143,9 +175,12 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
     public long countUnresolved(IServiceContext context) {
         IEntityDao<ErpFinPostingException> dao = dao();
         QueryBean q = new QueryBean();
+        // MANUAL（G2 MAX_RETRY 升级）voucherId 为空即未补录，计入未处置；RETRIED/IGNORED 已决策不计入。
         q.addFilter(in("status", Arrays.asList(
                 ErpFinConstants.POSTING_EXCEPTION_STATUS_PENDING,
-                ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING)));
+                ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING,
+                ErpFinConstants.POSTING_EXCEPTION_STATUS_MANUAL)));
+        q.addFilter(io.nop.api.core.beans.FilterBeans.isNull("voucherId"));
         List<ErpFinPostingException> all = dao.findAllByQuery(q);
         return all.size();
     }

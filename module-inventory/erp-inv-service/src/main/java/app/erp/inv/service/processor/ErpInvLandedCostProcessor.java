@@ -9,6 +9,7 @@ import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.costing.CostAdjustmentService;
 import app.erp.inv.service.costing.LandedCostAllocationEngine;
 import app.erp.inv.service.posting.LandedCostPostingDispatcher;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import io.nop.api.core.auth.IUserContext;
@@ -16,6 +17,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
@@ -68,6 +70,11 @@ public class ErpInvLandedCostProcessor {
 
     @Inject
     LandedCostPostingDispatcher postingDispatcher;
+
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_LANDED_COST_REVERSE_FAILURE = "inv.landed-cost-reverse-failure";
 
     // ---------- 审核编排 ----------
 
@@ -214,6 +221,9 @@ public class ErpInvLandedCostProcessor {
                 LOG.error("到岸成本红冲 GL 凭证异常（吞异常保持幂等），单 {} billHeadCode={}",
                         landedCost.getCode(), landedCost.getCode(), e);
             }
+            // G4 错误传播分级（plan 2026-07-30-0341-2 P1-MA4-020）：到岸成本 reverse 方向无 sweep 覆盖，
+            // 失败派发 IErpSysNotificationBiz 告警使运营感知悬挂（自愈：手动重跑 reverseApprove）。
+            dispatchReverseFailureAlert(landedCost, e);
         }
 
         // 2. 反向应用 ErpInvCostAdjust(LANDED_COST_SUPPLEMENT) 成本层（按 Phase 1 Decision 复用既有 reverseCostAdjust）
@@ -513,6 +523,25 @@ public class ErpInvLandedCostProcessor {
             return ctx == null ? null : ctx.getUserId();
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /** 到岸成本 reverse 过账失败告警派发（G4；通知失败降级不阻断主流程）。 */
+    protected void dispatchReverseFailureAlert(ErpInvLandedCost landedCost, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("billCode", landedCost.getCode());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", landedCost.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_LANDED_COST_REVERSE_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("到岸成本 reverse 过账失败告警派发失败（降级）：billCode={}, reason={}",
+                    landedCost.getCode(), notifyErr.getMessage());
         }
     }
 

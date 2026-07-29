@@ -7,7 +7,10 @@ import app.erp.hr.dao.entity.ErpHrSalary;
 import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -45,10 +48,17 @@ public class SalaryPostingDispatcher {
     SalaryPostingExecutor executor;
     @Inject
     IDaoProvider daoProvider;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_SALARY_FAILURE = "hr.salary-posting-failure";
 
     /**
      * APPROVED_MANAGER 触发计提凭证（借 管理费用-工资 / 贷 应付职工薪酬）。
      * 成功返回 true；失败吞异常返回 false（不阻塞审批流）。
+     *
+     * <p>G3 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-048）：失败派发 IErpSysNotificationBiz 告警
+     * 使 posted=false 悬挂可被感知（tryPostAccrual 调用方接线归 R1.26）。
      *
      * <p><b>当前状态（P1-MA2-047）</b>：本方法为零调用方死代码——SALARY 计提过账链路尚未接线。
      * Successor = R1.26（P1-MA4-017）：接线计提 + 公司承担社保/公积金过账时由审批 {@code approve}
@@ -66,13 +76,14 @@ public class SalaryPostingDispatcher {
             } else {
                 LOG.error("薪酬计提过账异常，薪酬记录 {} 保持 APPROVED_MANAGER", salary.getId(), e);
             }
+            dispatchFailureAlert(salary, "计提", e);
             return false;
         }
     }
 
     /**
      * PAID 触发发放凭证（借 应付职工薪酬 / 贷 银行存款）。
-     * 失败吞异常返回 false（不阻塞 PAID 终态）。
+     * 失败吞异常返回 false（不阻塞 PAID 终态）+ 派发告警（G3 错误传播分级 P1-MA2-048）。
      */
     public boolean tryPostPayment(ErpHrSalary salary) {
         try {
@@ -85,7 +96,31 @@ public class SalaryPostingDispatcher {
             } else {
                 LOG.error("薪酬发放过账异常，薪酬记录 {} 已 PAID", salary.getId(), e);
             }
+            dispatchFailureAlert(salary, "发放", e);
             return false;
+        }
+    }
+
+    /** 薪酬过账失败告警派发（G3；通知失败降级不阻断主流程）。 */
+    protected void dispatchFailureAlert(ErpHrSalary salary, String stage, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("salaryId", salary.getId());
+        ctx.put("employeeId", salary.getEmployeeId());
+        ctx.put("year", salary.getYear());
+        ctx.put("month", salary.getMonth());
+        ctx.put("stage", stage);
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", buildBillCode(salary));
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_SALARY_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("薪酬过账失败告警派发失败（降级）：salaryId={}, reason={}",
+                    salary.getId(), notifyErr.getMessage());
         }
     }
 
