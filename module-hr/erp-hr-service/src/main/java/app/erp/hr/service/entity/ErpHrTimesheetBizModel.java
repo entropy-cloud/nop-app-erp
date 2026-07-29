@@ -9,6 +9,7 @@ import io.nop.biz.crud.CrudBizModel;
 
 import app.erp.hr.biz.IErpHrTimesheetBiz;
 import app.erp.hr.dao.entity.ErpHrTimesheet;
+import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
@@ -35,12 +36,12 @@ public class ErpHrTimesheetBizModel extends CrudBizModel<ErpHrTimesheet> impleme
     @BizMutation
     public ErpHrTimesheet submit(@Name("timesheetId") Long timesheetId, IServiceContext context) {
         ErpHrTimesheet timesheet = requireEntity(String.valueOf(timesheetId), null, context);
-        if (!Objects.equals(timesheet.getStatus(), "DRAFT")) {
+        if (!Objects.equals(timesheet.getStatus(), ErpHrConstants.TIMESHEET_STATUS_DRAFT)) {
             throw new NopException(ErpHrErrors.ERR_HR_TIMESHEET_ILLEGAL_TRANSITION)
                     .param(ErpHrErrors.ARG_TIMESHEET_ID, timesheetId)
                     .param(ErpHrErrors.ARG_CURRENT_STATUS, timesheet.getStatus());
         }
-        timesheet.setStatus("SUBMITTED");
+        timesheet.setStatus(ErpHrConstants.TIMESHEET_STATUS_SUBMITTED);
         updateEntity(timesheet, null, context);
         return timesheet;
     }
