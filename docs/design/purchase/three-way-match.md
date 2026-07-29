@@ -47,6 +47,18 @@
 - **发票时校验匹配**：发票审核时校验"发票行回链的入库行"数量与金额一致性。
 - **付款前最终校验**：付款核销时确认发票已完成三单匹配。
 
+#### 付款核销二次门控（R1.8 P1-MA2-003 方案 A 落地）
+
+「付款前最终校验」经 config-gated 二次门控落实，对齐本节「付款核销时确认发票已完成三单匹配」契约：
+
+| 配置 | 默认 | 说明 |
+|------|------|------|
+| `erp-pur.settle-recheck-three-way-match` | false | 启用后 `PaymentSettler.settle` 在发票 APPROVED 守卫后追加强制 strict 三单匹配复核；任一发票行数量超入库或价格超容差即抛 `erp.err.pur.settle-invoice-match-not-completed` 阻断核销 |
+
+- 默认 false 保护既有基线（非严格模式下 approve 已 warn 放行的发票仍可核销，不破坏既有行为）。
+- 启用后复核为**运行时重算**（invoice 无持久化 matchStatus 字段，避免 ORM 变更）——重算依赖 invoice/receive/order 行当前状态；APPROVED 发票回链不允许修改（见 §一致性规则），故重算结果与 approve 时一致。
+- 复核失败时原始匹配异常（`ERR_INVOICE_QTY_MISMATCH` / `ERR_INVOICE_PRICE_MISMATCH`）以 cause 链保留在 `ERR_SETTLE_INVOICE_MATCH_NOT_COMPLETED` 中，便于定位具体不匹配行。
+
 ## 差异处理
 
 ### 数量差异

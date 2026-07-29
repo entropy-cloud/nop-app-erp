@@ -91,6 +91,8 @@
 | 采购入库 | PURCHASE_INPUT | 借：存货 / 贷：暂估应付 | purchase | `purchase/README.md` |
 | 销售出库 | SALES_OUTPUT | 借：结转成本 / 贷：存货 | sales | `sales/README.md` |
 | 采购发票 | AP_INVOICE | 借：费用/采购 / 借：进项税 / 贷：应付 | purchase | `purchase/README.md` |
+
+> **GRNI 暂估冲回 documented simplification（R1.8 P1-MA2-001 裁决，plan 2026-07-29-2322-1）**：「先入库后开票」黄金路径下，`PURCHASE_INPUT`（receive）与 `AP_INVOICE`（invoice）各自独立过账——`PURCHASE_INPUT` 凭证 `billHeadCode = stockMove.code`，`AP_INVOICE` 凭证 `billHeadCode = invoice.code`，两者经不同 billHeadCode 落业财回链，**无自动冲回**（GL 2202 暂估应付双计 + 1403/1401 存货双计）。辅助账层（`ErpFinArApItem`）不受影响（`ErpFinArApItemGenerator.resolveProfile` 不处理 `PURCHASE_INPUT`）。**裁决为 documented simplification（非降级 deferred）**：完整自动冲回需双向钩子（approve 红冲 + reverseApprove 反冲回，后者需 inventory 域 `repostPurchaseInput` SPI）+ 部分开票覆盖判定（`reverse()` 仅全额红冲）+ 跨期语义，对参考应用不成比例；期末试算平衡可发现并手工清理。详见 `docs/design/purchase/returns.md §暂估应付冲减「正向 receive→invoice 暂估冲回」`。
 | 销售发票 | AR_INVOICE | 借：应收 / 贷：收入 / 贷：销项税 | sales | `sales/README.md` |
 | 付款 | PAYMENT | 借：应付 / 贷：银行存款 | purchase | `purchase/README.md` |
 | 收款 | RECEIPT | 借：银行存款 / 贷：应收 | sales | `sales/README.md` |
