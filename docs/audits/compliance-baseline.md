@@ -207,6 +207,24 @@ R2a/R2b/R2d 不变（per-mutation Processor 不是 BizModel 故不命中 R2a/R2b
 
 **测试计数说明**：本次实测 `mvn test` 单元测试方法计数 = **1756**（surefire per-module 汇总，per-module 0 failures / 0 errors / 1 skipped）。roadmap `§框架/平台复用` 与 `§当前基线` 中历史引用的「~2890 测试」与实测不符（1756）—— 该数字应理解为起草期粗估，已被本次实测修正。MV V.1 验证里程碑以本注记的 1756 为对比起点，不依赖 ~2890。该项为文档计数漂移（非 CI red），后续 roadmap / project-context 文案修正归 G.4（已知失败模式与基线文案更新工作项）处理，不阻塞 M0 闭包。
 
+## F15 i18n 基线注记（plan 2026-07-29-0749-3，A4.9 全域 i18n 完整性审计）
+
+> 本段是 F15 i18n regression gate 的回归门控基线，由 MA4 工作项 A4.9（全域 i18n 完整性审计）首次落锚。与本文件主体 F8 compliance checker（`nop-compliance-checker.sh`）不同，F15 由独立的 `docs/audits/i18n-coverage-checker.sh` 承载。MV 验证里程碑（V.1/V.2）对比此锚点。
+
+| 字段 | 值 |
+|------|----|
+| 锚定日期 | 2026-07-29 |
+| 审计工具 | `bash docs/audits/i18n-coverage-checker.sh`（quality + `--strict` 双模式） |
+| 扫描范围 | 全域 19 业务域手写 `*.view.xml` + `erp-*.action-auth.xml`（排除 `/target/` `/​_dump/` `/​_gen/`）= **373 文件**（354 view.xml + 19 action-auth.xml） |
+| quality 缺陷基线（DEFECTS） | **0** |
+| strict 覆盖缺口基线（COVERAGE GAPS） | **0** |
+| 域级覆盖率 | 19 域全域 ~100%（无系统性缺口域） |
+| 双模式 EXIT | 0（PASS） |
+
+**基线来源**：plan `2026-07-29-0749-3-audit-remediation-ma4-i18n-coverage.md` Phase 1 实测（独立复跑 `i18n-coverage-checker.sh` 双模式确认 frontend-ui-roadmap F15 英文化批次零基线稳定，与起草时实测一致无漂移）。报告详见 `docs/audits/2026-07-29-0749-arm-ma4-i18n-coverage.md`。
+
+**门控方向**：与 F8 同向收紧。quality 缺陷 > 0 或 strict 缺口 > 0 = 回归。**门控状态**：F15 checker 当前**未接入 CI workflow**（`.github/workflows/` 无 `i18n-coverage-checker.sh` 引用），属"可手动运行的回归门"。接入 CI 由 A7.4（CI/guard 激活审计）裁决（对齐 F8 `nop-compliance-checker.sh` 的 CI 接入模式）。本基线登记为 A7.4 持续激活验证的起点。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -240,3 +258,4 @@ R12c: 38
 - 源 finding: `docs/audits/2026-07-23-0000-architecture-governance-review.md` F8 + 闭包前必须项 #4
 - 计划: `docs/plans/2026-07-24-0930-1-compliance-guard-activation-ci-baseline.md`
 - daoFor 分类（为何 R2c 基线合理）: `docs/plans/2026-07-16-2134-1-ddd-entity-methods-daofor-convergence.md`
+- F15 i18n checker（独立门控，基线见上文 §F15 i18n 基线注记）: `docs/audits/i18n-coverage-checker.sh` + 审计 `docs/audits/2026-07-29-0749-arm-ma4-i18n-coverage.md` + 计划 `docs/plans/2026-07-29-0749-3-audit-remediation-ma4-i18n-coverage.md`（CI 接入待 A7.4 裁决）
