@@ -185,6 +185,10 @@
 危险操作：
 - **反结账**：需管理员权限 + 审批，因影响已出具报表与税务申报。
 
+> **P1-MA2-020 反结账审批已知简化**（R1.11 裁决）：当前 `reverse-close-approval-required`（默认 true）为**保护性 kill-switch**——true 时直接拒绝反结账，false 时由 @BizMutation 角色权限门控（无独立审批 action）。完整审批流（反结账申请→审批→执行）为 successor，解除条件见 §已知限制：浏览器层 xwf 审批路径。
+
+> **P1-MA2-021 CLOSED_FINAL 凭证锁定已实现**（R1.11 裁决）：`ErpFinVoucherBizModel.postVoucher`/`reverseVoucher` 前校验凭证所属期间状态，CLOSED/CLOSED_FINAL 时抛 `ERR_FIN_VOUCHER_PERIOD_LOCKED` 拒绝操作（对齐下方 §1 状态定义「CLOSED_FINAL 可修改凭证=否」）。
+
 ### 7. 外部依赖
 
 期间状态本身不依赖外部，但结账流程涉及：

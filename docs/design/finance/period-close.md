@@ -282,7 +282,7 @@
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `erp-fin.auto-post-on-close` | true | 结账时自动触发未过账单据过账 |
+| `erp-fin.auto-post-on-close` | false | 结账前置检查门控：false=未过账凭证/未处置异常阻断结账（安全默认），true=降级为提示放行结账。**未核销 AR-AP 始终为结构化提示不阻断**；**坏账准备 shortfall 始终硬阻断**（不受本 config 影响，见 bad-debt.md §期末 allowance 充足性门控） |
 | `erp-inv.allow-negative-stock (引用库存域)` | false | 结账时是否允许负库存 |
 | `erp-fin.auto-depreciation` | true | 结账时自动计提折旧 |
 | `erp-fin.closing-reminder-days` | 3 | 结账提醒提前天数 |
@@ -292,6 +292,47 @@
 | `erp-fin.period-generate-skip-existing` | false | 次年期间生成幂等策略：已存在同年期间时是否仅补缺失月份（false=抛错） |
 | `erp-fin.auxiliary-recon-gate-enabled` | true | 辅助账跨年对账门控（AR/AP 辅助账合计 vs 总账科目余额不一致阻止年度结账） |
 | `erp-fin.bank-fx-revaluation-enabled` | true | 银行存款外币汇兑重估开关 |
+
+## 已知简化与残留风险（R1.10+R1.11 审计修复裁决）
+
+> 以下为 P1-MA2-017~022 审计发现的裁决落地记录。实现项标注代码位置；documented simplification 项标注 successor 触发条件。
+
+### P1-MA2-017 auto-post-on-close 阻断分级（已实现）
+
+- `erp-fin.auto-post-on-close` 语义澄清为前置检查门控（非 auto-post 动作）：false=阻断未过账凭证/未处置异常（安全默认），true=降级为提示。
+- **未核销 AR-AP** 移出阻断集（`PeriodPreCheckReport.hasIssues()`），改为结构化提示（`hasReminders()`），不阻断结账（对齐 §结账前置检查「未核销=提示」）。
+- **坏账准备 shortfall** 独立硬阻断，不受 `auto-post-on-close` 影响（对齐 bad-debt.md shortfall 阻断）。
+- 代码位置：`ErpFinAccountingPeriodProcessor.closePeriod`、`PeriodPreCheckReport.hasIssues/hasReminders/hasAllowanceShortfall`。
+
+### P1-MA2-018 年初余额非累计（documented simplification）
+
+- `AnnualCloseService.populateNextYearOpening` 经 `aggregateYearSubjectActivity(year)` 仅聚合**本年度**分录净额写入次年 `ErpFinGlBalance.yearOpeningDebit/Credit`。
+- **资产负债类科目缺上年结转额**：第 2 年及以后年度结转年初余额不精确（首年期初为零故正确）。
+- 受 `ErpFinGlBalance` 未由过账引擎维护的架构限制约束（`AnnualCloseService` 注释明示）。
+- **Successor**：补 GL 余额维护（过账引擎在 postVoucher 时维护 opening/closing 余额），使年初余额 = 累计期末。
+
+### P1-MA2-019 辅助账跨年对账作用域（已修复作用域一致性 + documented simplification 残留）
+
+- **作用域修复**：`AnnualCloseService.sumArApOpenFunctional` 增年度过滤（businessDate 落在结账年度内），使辅助账与 GL 同为单年作用域，消除跨年假阳性/假阴性。
+- **残留简化**：当前为单年作用域对账，累计余额对账需 GL 余额维护 successor。
+
+### P1-MA2-020 反结账审批（documented simplification — kill-switch successor）
+
+- 当前 `reverse-close-approval-required`（默认 true）是**保护性 kill-switch**：true 时直接拒绝反结账（需管理员设 false 才能执行），false 时由 @BizMutation 角色权限门控。
+- **非完整审批流**：owner doc §反结账约束要求「管理员+审批」，实现为 config kill-switch + 角色权限（无独立审批 action）。
+- **Successor**：实现完整审批流（反结账申请→审批→执行）。解除条件见 `state-machine.md §已知限制：浏览器层 xwf 审批路径`。
+
+### P1-MA2-021 CLOSED_FINAL 凭证锁定（已实现）
+
+- `ErpFinVoucherBizModel.postVoucher`/`reverseVoucher` 前校验凭证所属期间状态：CLOSED/CLOSED_FINAL 时抛 `ERR_FIN_VOUCHER_PERIOD_LOCKED`。
+- 代码位置：`ErpFinVoucherBizModel.assertPeriodNotLocked`。
+
+### P1-MA2-022 FX 重估无前期 reversal（documented simplification — IAS 21 残留风险）
+
+- `ExchangeRevaluationService.revalueArAp` 查询所有未核销外币项（不按期间过滤），重估后不更新 `openAmountFunctional`、不 reversal 前期 FX 凭证。
+- **当前为当期 spot-rate 重估**：每月结账对同一批开放项按新汇率重估，前期汇兑损益不冲回，累计漂移。
+- **IAS 21 合规性残留风险**：非 IAS 21 spot-rate「前期重估期末自动 reversal」完整语义。config-gated（`erp-fin.exchange-revaluation-enabled` 可关闭）。
+- **Successor**：实现前期 FX 凭证期末自动 reversal + 期间过滤 + 更新 `openAmountFunctional`。
 
 ## 异常处理
 
