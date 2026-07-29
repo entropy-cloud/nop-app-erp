@@ -173,6 +173,12 @@ public interface ErpPurErrors {
             "核销金额 {settleAmount} 超过付款单 {paymentCode} 未核销余额 {paymentBalance}",
             ARG_SETTLE_AMOUNT, ARG_PAYMENT_CODE, ARG_PAYMENT_BALANCE);
 
+    // 付款核销三单匹配二次门控（R1.8 P1-MA2-003 方案 A）：config erp-pur.settle-recheck-three-way-match=true 时，
+    // settle 路径强制 strict 复核 invoice 三单匹配完成态；超容差/超入库数量时抛本错误码（cause 链保留原始匹配异常）。
+    ErrorCode ERR_SETTLE_INVOICE_MATCH_NOT_COMPLETED = ErrorCode.define("erp.err.pur.settle-invoice-match-not-completed",
+            "发票 {invoiceCode} 三单匹配未完成（数量/价格超容差），按配置 erp-pur.settle-recheck-three-way-match 不允许核销",
+            ARG_INVOICE_CODE);
+
     // --- 退货作用域错误码（消息文案绑定退货单参数，避免复用入库单/发票文案产生误导） ---
 
     ErrorCode ERR_RETURN_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.pur.return-illegal-status-transition",
