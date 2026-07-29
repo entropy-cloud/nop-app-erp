@@ -124,9 +124,9 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| A7.1 | 错误码完整性（全域 throw new 核对 ErrorCode） | todo | `docs/design/domain-design-guidelines.md §7.1` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
-| A7.2 | 索引完整性（ORM index vs 查询模式，S+A 级域） | todo | 各域 orm.xml | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
-| A7.3 | N+1 查询抽样（S 级域列表查询） | todo | 各域 BizModel | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A7.1 | 错误码完整性（全域 throw new 核对 ErrorCode） | ready | `docs/design/domain-design-guidelines.md §7.1` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A7.2 | 索引完整性（ORM index vs 查询模式，S+A 级域） | ready | 各域 orm.xml | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A7.3 | N+1 查询抽样（S 级域列表查询） | ready | 各域 BizModel | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
 | A7.4 | CI/guard 持续激活验证（compliance checker 基线漂移 + 19 web 测试 @Tag） | todo | `docs/audits/compliance-baseline.md` | 0.3 | compliance-checker |
 
 ### Milestone MR1 — P1 修复（结构 + 业务维度）
@@ -246,7 +246,8 @@
 - A6.4：**保护区域纪律审计** — **ready**（plan 2026-07-29-1410-2 报告产出 + arm-index 登记 P1-MA6-003/004/005 + P2-MA6-001 + 交叉去重；待独立 closure audit 转 done）——**MA6 安全与权限层审计 A6.1-A6.4 现已全部 ready，MA6 里程碑完成**
 
 ### MA7（运维审计，4 工作项）
-- A7.1-A7.4：错误码/索引/N+1/CI guard
+- A7.1-A7.3：错误码/索引/N+1 — **ready**（plan 2026-07-29-1708-1 三报告产出 + arm-index 登记 P1-MA7-001[ErpFinVoucherBillR 缺 (billCode, businessType) 索引] + 6 项 P2 watch-only[P2-MA7-001~006 含 P2-MA7-006 归并 P2-MA4-003 同族]；零 P0；交叉去重 P0-MA2-018 互补不重复 + P2-MA4-003 同族归并；待独立 closure audit 转 done）
+- A7.4：CI/guard 持续激活验证（由 plan `2026-07-29-1708-2` 覆盖）
 
 ### MR1-MR3（P1 修复）
 - R*.0 是"展开器"：读 arm-index.md 中对应 MA 批次的 P1 finding，排序后向 roadmap 追加具体修复工作项行（R*.1, R*.2...）。详见横切关注点 §R*.0 展开机制
