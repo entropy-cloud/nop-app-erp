@@ -71,6 +71,7 @@
 
 - **STANDARD（`StandardCostingStrategy`）**：入库按标准成本写 `ledger.unitCost/totalCost`（实际成本经 PPV 通道分离），出库 `unitCost=标准成本` 写 `ledger` 走既有 `InvPostingDispatcher` 拾取（COGS 通道零改动，同 FIFO 范式）。标准成本来源经 `StandardCostResolver` 解析：(1) 最近一条 `status=FIRMED` 的 `ErpMfgCostRollupLine.unitCost`（直接查 mfg-dao 实体，inventory→manufacturing 经 mfg-dao 编译期依赖）；(2) config-gated `erp-inv.standard-cost-fallback-to-material-master=true`（默认）时回退物料主数据 `standardCost` 列（当前 `ErpMdMaterial` 无此列，本路径恒 null，后续冗余发布列落地后自动生效）；均无抛 `ERR_STANDARD_COST_NOT_AVAILABLE`。`CostMethodResolver.isSupported` 增 STANDARD 码值识别与分派。
 - **采购价差（PPV）捕获**：采购入库 DONE 时（`InvPostingDispatcher.dispatchPurchasePriceVariance`），STANDARD 物料的实际入库 `line.unitCost` 与标准 `ledger.unitCost` 差额 × qty = PPV，config-gated `erp-inv.standard-cost-ppv-enabled`（默认 true）。PPV 经新业务类型 `PURCHASE_PRICE_VARIANCE` 过账（`PurchasePriceVarianceAcctDocProvider`）：实际>标准→借材料成本差异(1404)/贷暂估应付(2202)；实际<标准→借暂估应付(2202)/贷材料成本差异(1404)；金额=|实际−标准|×qty。
+- **红冲不变量（P1-MA2-024）**：STANDARD 红冲跨 STANDARD_REVALUATION 时 `balance.totalCost` 恢复依赖两点——(1) `onOutgoing` 刷新 `line.unitCost` 为出库时标准成本（`line.setUnitCost(ErpInvConfigs.roundCost(standardUnitCost))` + `saveOrUpdateEntity`，对齐 FIFO:131-132 范式），供 `ErpInvStockMoveProcessor.reverse:144` 透传给反向入库行；(2) `onIncoming` 在传入 `unitCost` 有效时采用之——但因正常采购入库 `line.unitCost` 持**实际采购价**（PPV 经 `dispatchPurchasePriceVariance:125` 读此值与标准成本比对），不可一律采用传入值，仅当本入库为冲销反向入库（`move.originReturnedMoveId != null`）且 `unitCost > 0` 时采用（原出库扣减的旧标准成本），否则重解析当前标准成本。跨重估时反向入库沿用旧标准成本，红冲后 `balance.totalCost` 恢复不变量（与 FIFO 红冲不变量对齐）。
 - **本期 Non-Goal**：~~生产差异（材料用量/人工效率/费率/产量/制造费用）归 `variance-analysis.md` 工单完工触发面~~（**已收口，见 plan 2026-07-05-1838-2 实现注记**：`ProductionVarianceCalculator` + 完工触发 + `ProductionVarianceDispatcher` 过账已落地）；~~标准成本更新/重估流程（成本调整单+审批+重估凭证）归 1538-1 Deferred「成本调整单」~~（**已收口，见 plan 2026-07-05-2352-3 实现注记**：`ErpInvCostAdjust` 头-行实体 + `CostAdjustmentService` 引擎 + 审批门控 + `CostAdjustmentAcctDocProvider` 过账 + `STANDARD_REVALUATION` 发布 FIRMED rollup 已落地；制造件标准成本重估归制造域 `rollupCost` successor）。
 
 ## 实现注记（计划 `2026-07-05-1838-2`）
@@ -313,6 +314,10 @@ FIFO 成本追溯
 ### 适用场景
 
 贵重物品（珠宝、贵金属）、唯一标识商品（艺术品、定制设备）、或需要精确追溯每笔出入库成本的场景。
+
+### 历史成本过滤契约（P1-MA2-023）
+
+出库仅消耗 `incomingDate <= businessDate` 的同 batchNo/serialNo 成本层（对齐 FIFO/LIFO/BATCH）——出库业务日期之后的入库成本层对本次出库不可见（历史成本原则）。`SpecificCostingStrategy.findSpecificLayers` 在 `businessDate != null` 时追加 `le("incomingDate", businessDate)` 过滤，调用处传入 `move.getBusinessDate()`。后果（修复前）：同 batchNo 的 future-dated 入库成本层会被今日出库消耗，违反历史成本原则。
 
 ### 出库成本计算
 
