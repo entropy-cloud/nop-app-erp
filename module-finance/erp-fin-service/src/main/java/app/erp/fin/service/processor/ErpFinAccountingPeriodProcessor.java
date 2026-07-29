@@ -132,6 +132,14 @@ public class ErpFinAccountingPeriodProcessor {
         assertPeriodStatus(period, ErpFinConstants.PERIOD_STATUS_OPEN, "结账");
 
         PeriodPreCheckReport report = preCheck(periodId, context);
+        // Allowance shortfall 是独立硬阻断——不受 auto-post-on-close 影响（bad-debt.md §期末 allowance 充足性门控）。
+        if (report.hasAllowanceShortfall()) {
+            throw new NopException(ErpFinErrors.ERR_PRE_CHECK_BLOCKED)
+                    .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode())
+                    .param(ErpFinErrors.ARG_ISSUE_COUNT, 1);
+        }
+        // 未核销 AR-AP 为结构化提示（hasReminders），不阻断结账（owner doc §结账前置检查「未核销=提示」）。
+        // 未过账凭证 + 未处置异常：auto-post-on-close=false 时阻断（安全默认），=true 时降级为提示。
         if (!isAutoPostOnClose() && report.hasIssues()) {
             throw new NopException(ErpFinErrors.ERR_PRE_CHECK_BLOCKED)
                     .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode())

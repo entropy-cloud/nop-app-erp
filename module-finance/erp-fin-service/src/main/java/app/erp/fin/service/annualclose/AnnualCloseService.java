@@ -31,8 +31,10 @@ import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.isNull;
+import static io.nop.api.core.beans.FilterBeans.le;
 import static io.nop.api.core.beans.FilterBeans.ne;
 import static io.nop.api.core.beans.FilterBeans.or;
 
@@ -187,6 +189,9 @@ public class AnnualCloseService {
      * 辅助账跨年对账门控（{@code period-close.md §年度结转规则} 步骤4 跨账对账）。
      * 校验 AR/AP 辅助账合计与总账 AR/AP 科目余额一致（差异超精度抛错阻止年度结账）。
      * 不做物理搬移——存货/AR-AP/资产辅助账天然跨年延续。
+     *
+     * <p>作用域统一（P1-MA2-019 修复）：辅助账与 GL 均按结账年度过滤——辅助账仅汇总 businessDate 落在结账年度内的开放项，
+     * GL 仅汇总本年度已过账分录净额。两者同作用域消除跨年假阳性/假阴性。当前为单年作用域对账（累计余额对账为 successor）。
      */
     public void assertAuxiliaryReconciles(ErpFinAccountingPeriod period) {
         Integer year = period.getYear();
@@ -195,9 +200,9 @@ public class AnnualCloseService {
         }
         BigDecimal precision = resolveReconcilePrecision();
 
-        // AR 辅助账：本年应收方向未核销项 openAmountFunctional 合计。
-        BigDecimal arAux = sumArApOpenFunctional(ErpFinConstants.DIRECTION_RECEIVABLE);
-        BigDecimal apAux = sumArApOpenFunctional(ErpFinConstants.DIRECTION_PAYABLE);
+        // AR 辅助账：本年应收方向未核销项 openAmountFunctional 合计（按年度过滤，P1-MA2-019）。
+        BigDecimal arAux = sumArApOpenFunctional(ErpFinConstants.DIRECTION_RECEIVABLE, year);
+        BigDecimal apAux = sumArApOpenFunctional(ErpFinConstants.DIRECTION_PAYABLE, year);
 
         // 总账 AR/AP 科目年末净余额。
         // 总账 AR/AP 科目年末净余额。subjectNetForYear 返回 credit−debit：
@@ -229,13 +234,18 @@ public class AnnualCloseService {
         }
     }
 
-    private BigDecimal sumArApOpenFunctional(String direction) {
+    private BigDecimal sumArApOpenFunctional(String direction, int year) {
         IEntityDao<app.erp.fin.dao.entity.ErpFinArApItem> dao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("direction", direction));
         q.addFilter(in("status", java.util.Arrays.asList(
                 ErpFinConstants.AR_AP_STATUS_OPEN, ErpFinConstants.AR_AP_STATUS_PARTIAL)));
+        // 按结账年度过滤（P1-MA2-019 作用域统一）：仅汇总 businessDate 落在结账年度内的开放项，
+        // 使辅助账与 GL（subjectNetForYear 同为单年）同作用域，消除跨年假阳性/假阴性。
+        java.time.LocalDate yearStart = java.time.LocalDate.of(year, 1, 1);
+        java.time.LocalDate yearEnd = java.time.LocalDate.of(year, 12, 31);
+        q.addFilter(and(ge("businessDate", yearStart), le("businessDate", yearEnd)));
         BigDecimal sum = BigDecimal.ZERO;
         for (app.erp.fin.dao.entity.ErpFinArApItem i : dao.findAllByQuery(q)) {
             BigDecimal open = i.getOpenAmountFunctional();

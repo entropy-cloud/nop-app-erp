@@ -438,6 +438,13 @@ public interface ErpFinErrors {
             "凭证[{voucherId}]当前状态[{currentStatus}]不允许此操作",
             ARG_VOUCHER_ID, ARG_CURRENT_STATUS);
 
+    String ARG_PERIOD_STATUS = "periodStatus";
+
+    ErrorCode ERR_FIN_VOUCHER_PERIOD_LOCKED = ErrorCode.define(
+            "erp.err.fin.voucher.period-locked",
+            "凭证[{voucherId}]所属会计期间已{periodStatus}，凭证已锁定，不允许过账或红冲操作",
+            ARG_VOUCHER_ID, ARG_PERIOD_STATUS);
+
     // --- 多公司运营深度作用域（A3，plan 2026-07-22-1000-1，multi-company.md） ---
 
     String ARG_FROM_ORG_ID = "fromOrgId";
