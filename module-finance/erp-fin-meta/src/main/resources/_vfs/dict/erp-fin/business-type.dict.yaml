@@ -42,19 +42,19 @@ options:
     description: 
   
   - label: 生产成本结转
-    value: PRODUCTION_COST
+    value: MANUFACTURING_COST_CLOSE
     description: 
   
   - label: 项目成本归集
-    value: PROJECT_COST
+    value: PROJECT_COST_COLLECTION
     description: 
   
   - label: 期末结转
-    value: PERIOD_CLOSING
+    value: PERIOD_CLOSE
     description: 
   
   - label: 汇兑损益
-    value: FX_REVALUATION
+    value: EXCHANGE_GAIN_LOSS
     description: 
   
   - label: 采购退货冲减

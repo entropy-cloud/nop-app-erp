@@ -1,13 +1,14 @@
 package app.erp.fin.dao;
 
 /**
- * 业财过账业务类型枚举。常量的 {@link #code} 与字典 {@code erp-fin/business-type} 的数值逐一一致，
- * 是过账引擎类型安全的门面（字典是数值权威源，本枚举是编译期类型安全包装）。
+ * 业财过账业务类型枚举。枚举 {@link #name()} 与字典 {@code erp-fin/business-type} 的 {@code value}
+ * 逐一一致——持久化值（{@code voucher_bill_r.businessType} 列）取 {@code enum.name()}，字典 value 即
+ * UI 下拉/审计筛选值，二者对齐保证 UI 筛选与持久化值命中。{@link #code} 是内部数值编码，字典不暴露 code。
  *
  * <p>本枚举位于 finance-dao（与 {@code IErpFinVoucherBiz} 跨域契约同层），供 facade 参数（
  * {@code post/reverse}）与各域过账派发器/Provider 跨模块引用；过账编排（finance-service）经 import 使用。
  *
- * <p>新增字典项时须同步追加枚举常量。
+ * <p>新增字典项时须同步追加枚举常量（枚举名须与 dict value 完全相同）。
  */
 public enum ErpFinBusinessType {
     PURCHASE_INPUT(10),

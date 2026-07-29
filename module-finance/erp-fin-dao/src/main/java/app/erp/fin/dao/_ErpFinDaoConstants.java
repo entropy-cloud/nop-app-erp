@@ -126,22 +126,22 @@ public interface _ErpFinDaoConstants {
     /**
      * 业务类型: 生产成本结转 
      */
-    String BUSINESS_TYPE_PRODUCTION_COST = "PRODUCTION_COST";
+    String BUSINESS_TYPE_MANUFACTURING_COST_CLOSE = "MANUFACTURING_COST_CLOSE";
                     
     /**
      * 业务类型: 项目成本归集 
      */
-    String BUSINESS_TYPE_PROJECT_COST = "PROJECT_COST";
+    String BUSINESS_TYPE_PROJECT_COST_COLLECTION = "PROJECT_COST_COLLECTION";
                     
     /**
      * 业务类型: 期末结转 
      */
-    String BUSINESS_TYPE_PERIOD_CLOSING = "PERIOD_CLOSING";
+    String BUSINESS_TYPE_PERIOD_CLOSE = "PERIOD_CLOSE";
                     
     /**
      * 业务类型: 汇兑损益 
      */
-    String BUSINESS_TYPE_FX_REVALUATION = "FX_REVALUATION";
+    String BUSINESS_TYPE_EXCHANGE_GAIN_LOSS = "EXCHANGE_GAIN_LOSS";
                     
     /**
      * 业务类型: 采购退货冲减 

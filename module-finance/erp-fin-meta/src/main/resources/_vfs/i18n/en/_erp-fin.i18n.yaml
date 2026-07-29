@@ -1233,10 +1233,10 @@ dict.option.label:
     DEPRECIATION: Depreciation
     CAPITALIZATION: Capitalization
     DISPOSAL: Disposal
-    PRODUCTION_COST: Prod Cost Transfer
-    PROJECT_COST: Project Cost Accrual
-    PERIOD_CLOSING: Period-End Closing
-    FX_REVALUATION: FX Gain/Loss
+    MANUFACTURING_COST_CLOSE: Prod Cost Transfer
+    PROJECT_COST_COLLECTION: Project Cost Accrual
+    PERIOD_CLOSE: Period-End Closing
+    EXCHANGE_GAIN_LOSS: FX Gain/Loss
     PURCHASE_RETURN: Purchase Return
     SALES_RETURN: Sales Return
     EXPENSE_CLAIM: Expense Claim
