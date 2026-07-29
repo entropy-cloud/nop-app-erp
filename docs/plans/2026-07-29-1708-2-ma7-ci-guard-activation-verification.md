@@ -1,6 +1,6 @@
 # 2026-07-29-1708-2-ma7-ci-guard-activation-verification MA7 CI/guard 持续激活验证（A7.4）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-29
 > Source: `docs/backlog/audit-remediation-roadmap.md` MA7（A7.4）
 > Related: plan `2026-07-29-1708-1`（A7.1+A7.2+A7.3 同批 MA7）；plan `2026-07-27-1015-1` Phase 2（M0.3 锚点 HEAD=0e963531d 实测落锚）；plan `2026-07-24-0930-1`（compliance guard 激活 + CI 基线初建）
@@ -49,29 +49,31 @@
 
 ### Phase 1 - compliance checker 基线漂移 + CI 激活 + web @Tag + F15 CI 接入裁决（A7.4）
 
-Status: planned
+Status: completed
 Targets: `docs/audits/nop-compliance-checker.sh` + `docs/audits/compliance-baseline.md`（`## BASELINE (machine-readable)` 块 + M0.3 锚点注记 + §F15 注记）+ `.github/workflows/compliance.yml` + `docs/audits/i18n-coverage-checker.sh` + 19 模块 `erp-*-web/src/test/java`；报告 `docs/audits/2026-07-29-1708-arm-ma7-ci-guard-activation.md`
 Skill: `none`（roadmap `compliance-checker` 简写无对应 skill 文件；方法源 = checker 脚本 + compliance-baseline.md 回归门控规则 + CI 工作流）
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.3 锚点
 
-- [ ] 跑 `bash docs/audits/nop-compliance-checker.sh` 取当前 19 规则实测汇总值，与 `## BASELINE (machine-readable)` 块逐规则比对，产出「规则 → baseline值 → 实测值 → 漂移方向（高/低/一致）→ 裁决」矩阵
+- [x] 跑 `bash docs/audits/nop-compliance-checker.sh` 取当前 19 规则实测汇总值，与 `## BASELINE (machine-readable)` 块逐规则比对，产出「规则 → baseline值 → 实测值 → 漂移方向（高/低/一致）→ 裁决」矩阵
       - Skill: `none`
-- [ ] 核实 M0.3 锚点（HEAD=0e963531d，记录 0 漂移）之后是否有新引入漂移：MA1-MA7 审计期间（2026-07-27 起）若有新增生产代码使 actual > baseline 属回归（P0 即时通道）；actual < baseline 属合规改善（鼓励更新非阻塞）。M0.3 锚点已确认 R2c=1228 为合法裁决性上调（plan `2026-07-25-1057-2`），非漂移
-- [ ] 核实 CI 工作流 `.github/workflows/compliance.yml` 激活性：触发条件（PR/push）、checker 执行、解析 machine-readable 块逻辑、门控判定（actual > baseline → fail）是否与 `compliance-baseline.md §回归门控规则` 声明一致
-- [ ] 核实 checker 脚本规则集与基线块（均 19 可计数规则）同步性：是否存在 checker 新增规则但基线块未登记 / 基线块有规则但 checker 已移除的不一致
-- [ ] 核实 19 模块 web 测试 @Tag 持续覆盖：@Tag 命名一致性、profile 过滤逻辑、A4.6-A4.8 view.xml drift 审计后 web 测试是否仍绿（读既有 web 测试运行证据 / `known-good-baselines.md`）
+- [x] 核实 M0.3 锚点（HEAD=0e963531d，记录 0 漂移）之后是否有新引入漂移：MA1-MA7 审计期间（2026-07-27 起）若有新增生产代码使 actual > baseline 属回归（P0 即时通道）；actual < baseline 属合规改善（鼓励更新非阻塞）。M0.3 锚点已确认 R2c=1228 为合法裁决性上调（plan `2026-07-25-1057-2`），非漂移
+- [x] 核实 CI 工作流 `.github/workflows/compliance.yml` 激活性：触发条件（PR/push）、checker 执行、解析 machine-readable 块逻辑、门控判定（actual > baseline → fail）是否与 `compliance-baseline.md §回归门控规则` 声明一致
+- [x] 核实 checker 脚本规则集与基线块（均 19 可计数规则）同步性：是否存在 checker 新增规则但基线块未登记 / 基线块有规则但 checker 已移除的不一致
+- [x] 核实 19 模块 web 测试 @Tag 持续覆盖：@Tag 命名一致性、profile 过滤逻辑、A4.6-A4.8 view.xml drift 审计后 web 测试是否仍绿（读既有 web 测试运行证据 / `known-good-baselines.md`）
       - Skill: `none`
-- [ ] Decision: F15 `i18n-coverage-checker.sh` CI 接入裁决（compliance-baseline.md §F15 line 226 委托）——对齐 F8 接入模式 / 暂不接入登记 successor 触发条件
+- [x] Decision: F15 `i18n-coverage-checker.sh` CI 接入裁决（compliance-baseline.md §F15 line 226 委托）——对齐 F8 接入模式 / 暂不接入登记 successor 触发条件
   - Skill: `none`
-- [ ] 产出 CI/guard 持续激活验证报告，分类 P0/P1/P2，更新 `docs/audits/arm-index.md`（去重 MA1-MA6）
+  - **裁决=接入 CI**（对齐 F8 经 plan `2026-07-24-0930-1` 激活的范式），登记 P1-MA7-007（目标 MR3）；F15 基线干净（quality 0 defects / strict 0 gaps），接入不触发 CI red
+- [x] 产出 CI/guard 持续激活验证报告，分类 P0/P1/P2，更新 `docs/audits/arm-index.md`（去重 MA1-MA6）
   - Skill: `none`
+  - 报告 `docs/audits/2026-07-29-1708-arm-ma7-ci-guard-activation.md`；arm-index 已登记（零 P0 + 1 P1 [P1-MA7-007] + 零 P2），P1-MA7-007 是 A4.9 line 165 委托的唯一裁决产出，无重复
 
 Exit Criteria:
 
-- [ ] 19 规则漂移矩阵产出（baseline vs 实测 + M0.3 锚点后新漂移核实 + 逐条裁决）+ CI 激活性核实结论 + web @Tag 覆盖结论 + F15 CI 接入裁决
-- [ ] A7.4 P0/P1/P2 已登记 arm-index.md，且与既有 P1 交叉去重无重复
+- [x] 19 规则漂移矩阵产出（baseline vs 实测 + M0.3 锚点后新漂移核实 + 逐条裁决）+ CI 激活性核实结论 + web @Tag 覆盖结论 + F15 CI 接入裁决
+- [x] A7.4 P0/P1/P2 已登记 arm-index.md，且与既有 P1 交叉去重无重复
 
 ## Draft Review Record
 
@@ -82,15 +84,15 @@ Exit Criteria:
 
 > 本 plan 为纯审计，不改代码。`mvn test` 仅作回归基线确认（见 roadmap 横切关注点 §审计 plan 的 BUILD_VERIFY）。
 
-- [ ] A7.4 CI/guard 持续激活验证报告产出
-- [ ] arm-index.md 已登记本批次全部 P0/P1/P2，且与 MA1-MA6 既有 P1 交叉去重无重复
-- [ ] roadmap A7.4 状态推进至 `ready`（独立 closure audit 后转 `done`）
-- [ ] 已运行 `mvn clean install -DskipTests`（154 模块绿）+ `mvn test`（0 failures）作回归基线确认
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态 / 阶段 / 门控 / 日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] A7.4 CI/guard 持续激活验证报告产出
+- [x] arm-index.md 已登记本批次全部 P0/P1/P2，且与 MA1-MA6 既有 P1 交叉去重无重复
+- [x] roadmap A7.4 状态推进至 `ready`（独立 closure audit 后转 `done`）
+- [x] 已运行 `mvn clean install -DskipTests`（154 模块绿）+ `mvn test`（0 failures）作回归基线确认
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态 / 阶段 / 门控 / 日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -102,12 +104,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <EXECUTE 完成后填写>
+Status Note: EXECUTE 完成（2026-07-29）。A7.4 四维度全部 PASS——19 规则基线精确 0 漂移（M0.3 锚点后 62 commits 含 4 P0 fix 触及 16 生产文件零 daoFor/反模式回归）/ CI 工作流激活性 + 门控逻辑与 owner doc 一致 / checker↔基线块同步（19=19）/ 19 模块 web 测试 @Tag 100% 一致（`full-app` 单值）。A7.4-d 裁决=接入 CI（对齐 F8），登记 P1-MA7-007（目标 MR3，F15 基线干净 0/0 不触发 CI red）。报告 `docs/audits/2026-07-29-1708-arm-ma7-ci-guard-activation.md`；arm-index.md 已登记（零 P0 + 1 P1 + 零 P2，P1-MA7-007 是 A4.9 line 165 委托唯一裁决产出，无重复）。回归基线：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test` BUILD SUCCESS（0 failures / 0 errors / 1 skipped = 已知 `ErpAllWebPagesCollectTest` @Disabled）。roadmap A7.4 推进至 `ready`（独立 closure audit 后转 `done`）。本计划产出已达 EXECUTE 退出条件（Phase 1 `completed` + 退出标准全 `[x]` + Closure Gates 全 `[x]`）；最终 `done` 状态转捩需独立 closure audit 通过（执行者未自我审计，roadmap 维持 `ready` 待 closure audit 转 `done`）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理>
-- Evidence: <报告路径 + arm-index 登记 + 回归基线>
+- Auditor / Agent: <独立结束审计子代理（pending）>
+- Evidence: `docs/audits/2026-07-29-1708-arm-ma7-ci-guard-activation.md`（报告）+ `docs/audits/arm-index.md`（A7.4 行 + P1-MA7-007 行 + MA7 累计 P1=2）+ 回归基线（`mvn clean install -DskipTests` BUILD SUCCESS / `mvn test` 0 failures）+ roadmap A7.4=ready
 
 Follow-up:
 
