@@ -369,6 +369,8 @@
 
 > **`posted` 字段实现状态（Deferred，P1-MA2-047，与 R1.26 协同）**：`ErpHrSalary.posted` 列存在（ORM，BOOLEAN，默认 false），但本期**无 `setPosted` writer**——`SalaryPostingDispatcher.tryPostPayment`（SALARY_PAYMENT 280）在 markPaid 时被调用但未回写 `posted`；`tryPostAccrual`（SALARY 计提）为零调用方死代码。`posted` 字段当前为 Deferred。**Successor = R1.26（P1-MA4-017）**：接线计提 SALARY + 公司承担社保/公积金（SOCIAL_INSURANCE_ER 290 / HOUSING_FUND_ER 300）过账链路时，激活计提调用方并写入 `posted=true`。本计划不写 posted writer（留给 R1.26）。
 
+> **过账失败告警（G3 错误传播分级，plan 2026-07-30-0341-2 P1-MA2-048）**：`SalaryPostingDispatcher.tryPostPayment`/`tryPostAccrual` 过账失败（吞异常保持终态不阻塞）现派发 `IErpSysNotificationBiz` 告警（`hr.salary-posting-failure`），使 GL 缺 SALARY_PAYMENT 凭证悬挂可被运营感知。posted=false 终态阻断由期末试算平衡人工发现（hr 不纳入期末前置检查覆盖矩阵，与 mfg/projects/maintenance 一致）。
+
 **多级审批链**（HR 复核 → 财务审批 → 经理审批）不在 `approveStatus` 中编码，而是通过 nop-wf 的 **WORKFLOW 模式**实现：
 - 实体标 `tagSet="use-approval"` + `useWorkflow="true"`
 - xmeta 配 `wf:wfName="salary-approval"`

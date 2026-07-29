@@ -286,11 +286,13 @@
 
 ### 7.2 错误处理
 
+> **错误传播分级**（`posting-log.md §错误传播分级策略`）：折旧/Cap/Disposal 过账失败均为 **G4 无 sweep 覆盖（折旧）/ G2 有 sweep 兜底（Cap/Disposal）**。失败派发 `IErpSysNotificationBiz` 告警（`ast.depreciation-posting-failure`/`ast.capitalization-posting-failure`/`ast.disposal-posting-failure`）使运营感知悬挂。**折旧 posted=false 自愈路径**：手动重跑 `executeDepreciation`（幂等重算+重试过账）或 `reverseDepreciation`。Cap/Disposal posted=false 经 `DeferredPostingSweepJob` 兜底重试。**reverseApprove 不对称**（`state-machine.md §实现偏离补注` 标注）：posted=false 窗口期 reverseApprove 仅设业务单据 REJECTED，资产保持终态——运营须先触发 sweep 重试或手工 reverse 凭证再 reverseApprove。
+
 | 错误类型 | 处理策略 |
 |----------|----------|
-| 科目映射缺失 | 记录错误，等待人工配置，兜底扫描重试 |
+| 科目映射缺失 | 记录错误，派发告警，等待人工配置/重跑自愈；Cap/Disposal 经 sweep 重试 |
 | 期间已结账 | 拒绝过账，提示反结账 |
-| 凭证生成失败 | 记录错误，异步重试（最多3次） |
+| 凭证生成失败 | 记录错误，派发告警；折旧手动重跑自愈；Cap/Disposal 异步重试（最多3次） |
 | 并发折旧 | 乐观锁冲突，重试 |
 
 ---

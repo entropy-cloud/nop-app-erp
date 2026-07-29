@@ -57,11 +57,15 @@
 | 折旧计提时已结账 | 拒绝计提，需反结账期间或计入当前开启期间 |
 | 折旧后账面净值低于残值 | 直线法按残值预计算，不会出现；其他方法需校验并截断 |
 | 处置时累计折旧与原值不符 | 拒绝处置，提示先核对折旧记录 |
-| 资本化凭证生成失败 | 资产保持草稿，`posted=false`，异步重试 |
-| 资产类别科目映射缺失 | 折旧/处置凭证报错，等待人工配置科目映射 |
+| 资本化凭证生成失败 | 资产保持草稿，`posted=false`，异步重试 + 派发 `ast.capitalization-posting-failure` 告警（G4 错误传播分级） |
+| 资产类别科目映射缺失 | 折旧/处置凭证报错，等待人工配置科目映射；派发告警 |
 | 期间结账后才发现折旧漏提 | 反结账补提，或在当前期间补提（补提凭证注明归属期间） |
 | 并发折旧同一资产 | 乐观锁 |
 | 重复折旧（幂等） | 同期已执行的折旧再次触发为空操作 |
+
+### 实现偏离补注：reverseApprove posted=false 窗口不对称（P1-MA2-060）
+
+资本化/处置 `reverseApprove` 仅在 `posted=true` 时回滚资产行为（资本化：资产→DRAFT + cancelSchedules；处置：资产→IN_SERVICE + restoreSchedules）。**posted=false 窗口期** reverseApprove 仅设业务单据 REJECTED，资产保持终态（IN_SERVICE/SCRAPPED/SOLD）+ schedules 保持 PENDING/CANCELLED。这是 deliberate 不对称（plan `2026-07-30-0341-2` Phase 3 方案 B 裁决）：posted=false 悬挂经 `DeferredPostingSweepJob`（Cap/Disposal）兜底重试 + `IErpSysNotificationBiz` 告警闭环；运营在悬挂窗口期需先触发 sweep 重试或手工 reverse 凭证再 reverseApprove。错误传播分级见 `posting-log.md §错误传播分级策略` G2/G4。
 
 ## 5. 可达性
 

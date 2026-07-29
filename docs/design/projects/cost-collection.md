@@ -259,6 +259,8 @@
         └─► 凭证过账状态反馈
 ```
 
+> **工时过账失败告警（G3 错误传播分级，plan 2026-07-30-0341-2 P1-MA2-068）**：`TimesheetPostingDispatcher.tryPost` 过账失败（吞异常保持 APPROVED+posted=false 不阻塞终态）现派发 `IErpSysNotificationBiz` 告警（`prj.timesheet-posting-failure`），使 GL 缺 PROJECT_COST_COLLECTION 凭证悬挂可被运营感知（业财不一致经期末试算平衡人工发现，projects 不纳入期末前置检查覆盖矩阵）。
+
 ### 6.2 与采购域协作
 
 ```

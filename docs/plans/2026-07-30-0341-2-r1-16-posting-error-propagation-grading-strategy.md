@@ -1,6 +1,6 @@
 # 2026-07-30-0341-2-r1-16-posting-error-propagation-grading-strategy 业财过账错误传播分级策略整体裁决
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-30
 > Source: audit-remediation-roadmap R1.16（P1-MA2-032/048/060/068/074/080 [6 MA2] + P1-MA4-001/004/007/010/013/020 [6 MA4] = 12 findings），源自 A2.5a/A2.16/A4.1a/A4.1b/A4.2a/A4.2b/A4.3/A4.5 状态机与代码质量审查
 > Related: `docs/design/finance/posting-log.md`、各域 `depreciation-and-posting.md`/`payroll.md`；plan R1.26（P1-MA4-017 hr 计提/公司承担过账接线，与本计划 P1-MA2-048 catch 侧协同）；plan `2026-07-28-1249-arm-fix-p0-ma2-018-voucher-bill-r-uk.md`（P0-MA2-018 deferred，与本计划 P1-MA2-087 CloseVoucherWriter 互补但本计划不覆盖 R1.28 范围）
@@ -52,14 +52,14 @@
 
 ### Phase 1 - 错误传播分级策略裁决 + posting-log.md 框架（Decision）
 
-Status: planned
+Status: completed
 Targets: `docs/design/finance/posting-log.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Add`
 - Prereqs: none
 
-- [ ] **Decision**：定义业财过账失败分级 taxonomy 与处置规则（owner doc posting-log.md 权威记录）。
+- [x] **Decision**：定义业财过账失败分级 taxonomy 与处置规则（owner doc posting-log.md 权威记录）。
       - **G1 瞬时可重试**（基础设施抖动/锁竞争）：经 DeferredPostingSweepJob PENDING→retry，保留现有行为。
       - **G2 永久性失败**（科目/模板配置缺失、Provider 固定抛错）：retryCount≥MAX_RETRY 升级 **MANUAL** 终态（非 RETRYING 死状态）+ 派发 IErpSysNotificationBiz 告警（P1-MA4-001）；IGNORED 显式放弃态同样补告警（P1-MA2-032）。
       - **G3 编排层跨域/异步步骤失败**（期间结账/完工触发差异/委外）：catch 收窄——「impl 未就绪」（bizObjectManager 解析失败）容错跳过；「配置错误/真实故障」（NopException ErrorCode）阻断或进 ErpFinPostingException 异常工作台 + 告警（P1-MA4-004/007/010）。
@@ -67,86 +67,86 @@ Skill: `nop-backend-dev`
       - **期末结账前置检查扩展**：`findUnresolvedPostingExceptionKeys` 扩展覆盖各域 posted=false（不仅扫 finance 异常工作台）。
       - 替代方案：维持现状（每域独立吞咽）——被拒绝（同型根因反复出现 12 站点证明需统一策略）。残留风险：G4 告警通道可能产生噪声 → 经 config-gated `erp-fin.posting-alert.min-severity` 控制。
       - Skill: `nop-backend-dev`
-- [ ] **Add**：posting-log.md 新增「§错误传播分级策略」段（G1-G4 + 处置规则 + 告警通道 + 期末前置检查覆盖矩阵），作为后续 Phase 权威。
+- [x] **Add**：posting-log.md 新增「§错误传播分级策略」段（G1-G4 + 处置规则 + 告警通道 + 期末前置检查覆盖矩阵），作为后续 Phase 权威。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] posting-log.md 含可执行的 G1-G4 分级规则；Phase 2-5 严格遵循分级裁决。
+- [x] posting-log.md 含可执行的 G1-G4 分级规则；Phase 2-5 严格遵循分级裁决。
 
 ### Phase 2 - finance 过账引擎核心（P1-MA4-001 MAX_RETRY + P1-MA2-032 IGNORED + P1-MA4-004 期间编排）
 
-Status: planned
+Status: completed
 Targets: `ErpFinDeferredPostingRetryHelper.java`、`ErpFinAccountingPeriodProcessor.java`、`docs/design/finance/posting-log.md`、`docs/design/finance/period-close.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix`
 - Prereqs: Phase 1
 
-- [ ] **Fix（P1-MA4-001，G2）**：retryCount≥MAX_RETRY 设 status=MANUAL（或新增 FAILED 终态）+ 派发 IErpSysNotificationBiz 告警；移除 RETRYING 死状态语义（或将其重新定义为 MANUAL 过渡）。
+- [x] **Fix（P1-MA4-001，G2）**：retryCount≥MAX_RETRY 设 status=MANUAL（或新增 FAILED 终态）+ 派发 IErpSysNotificationBiz 告警；移除 RETRYING 死状态语义（或将其重新定义为 MANUAL 过渡）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（P1-MA2-032，G2）**：IGNORED 显式放弃态补 IErpSysNotificationBiz 告警（首次记录已有 dispatchNotify，本项补放弃态告警）。
+- [x] **Fix（P1-MA2-032，G2）**：IGNORED 显式放弃态补 IErpSysNotificationBiz 告警（首次记录已有 dispatchNotify，本项补放弃态告警）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（P1-MA4-004，G3）**：`ErpFinAccountingPeriodProcessor` 三处 catch 收窄——区分「impl 未就绪」（容错跳过）vs「配置错误/真实故障」（NopException→阻断结账或进异常工作台 + 告警）；period-close.md §步骤2/3 标注错误传播分级。
+- [x] **Fix（P1-MA4-004，G3）**：`ErpFinAccountingPeriodProcessor` 三处 catch 收窄——区分「impl 未就绪」（容错跳过）vs「配置错误/真实故障」（NopException→阻断结账或进异常工作台 + 告警）；period-close.md §步骤2/3 标注错误传播分级。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（期末前置检查扩展，跨域收口）**：`findUnresolvedPostingExceptionKeys` 扩展覆盖各域 posted=false（assets 折旧 / logistics / inventory reverse / mfg / hr / projects / maintenance），使期末结账前置检查能阻断「域 dispatcher 静默悬挂」的带病关闭。此为 G3/G4 域 dispatcher 修复的统一兜底入口。
+- [x] **Fix（期末前置检查扩展，跨域收口）**：`findUnresolvedPostingExceptionKeys` 扩展覆盖各域 posted=false（assets 折旧 / logistics / inventory reverse / mfg / hr / projects / maintenance），使期末结账前置检查能阻断「域 dispatcher 静默悬挂」的带病关闭。此为 G3/G4 域 dispatcher 修复的统一兜底入口。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：单元测试——mock runDepreciation 抛 NopException(配置错误)→断言期间不 CLOSED 或进工作台 + 告警派发；MAX_RETRY 耗尽→断言 MANUAL + 告警。
+- [x] **Proof**：单元测试——mock runDepreciation 抛 NopException(配置错误)→断言期间不 CLOSED 或进工作台 + 告警派发；MAX_RETRY 耗尽→断言 MANUAL + 告警。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] finance 引擎 RETRYING 死状态消除（升级 MANUAL + 告警）；期间编排三处 catch 收窄可测；本阶段为后续 Phase 建立可复用告警 + 工作台 pattern。
+- [x] finance 引擎 RETRYING 死状态消除（升级 MANUAL + 告警）；期间编排三处 catch 收窄可测；本阶段为后续 Phase 建立可复用告警 + 工作台 pattern。
 
 ### Phase 3 - 无 sweep 覆盖的域 dispatcher 告警（assets 折旧 + inventory 到岸成本 reverse + logistics 网关）
 
-Status: planned
+Status: completed
 Targets: `DepreciationPostingDispatcher.java`、`ErpInvLandedCostProcessor.java`、`GatewayDispatcher.java`、各域 `depreciation-and-posting.md`/owner doc
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix`
 - Prereqs: Phase 1（+ Phase 2 告警 pattern 已建立）
 
-- [ ] **Fix（P1-MA4-013，G4）**：assets 折旧 posted=failure 派发 IErpSysNotificationBiz 告警 + owner doc depreciation-and-posting.md §错误处理 标注自愈路径（手动重跑 executeDepreciation / reverseDepreciation）；裁决折旧 posted=false 是否进 finance 异常工作台（按 Phase 1 G4 裁决）。
+- [x] **Fix（P1-MA4-013，G4）**：assets 折旧 posted=failure 派发 IErpSysNotificationBiz 告警 + owner doc depreciation-and-posting.md §错误处理 标注自愈路径（手动重跑 executeDepreciation / reverseDepreciation）；裁决折旧 posted=false 是否进 finance 异常工作台（按 Phase 1 G4 裁决）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（P1-MA2-060，G4）**：Cap/Disposal tryPost 吞咽补告警 + reverseApprove 对称（posted=false 窗口也回滚资产状态或文档化 deliberate 不对称）；assets state-machine.md 标注。
+- [x] **Fix（P1-MA2-060，G4）**：Cap/Disposal tryPost 吞咽补告警 + reverseApprove 对称（posted=false 窗口也回滚资产状态或文档化 deliberate 不对称）；assets state-machine.md 标注。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（P1-MA4-020，G4）**：inventory 到岸成本 reverse 方向过账悬挂——补告警 + 裁决 reverse 方向是否纳入 sweep/工作台覆盖；owner doc 标注。
+- [x] **Fix（P1-MA4-020，G4）**：inventory 到岸成本 reverse 方向过账悬挂——补告警 + 裁决 reverse 方向是否纳入 sweep/工作台覆盖；owner doc 标注。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（P1-MA2-080，G4）**：logistics 网关重试耗尽 + DELIVERED 运费过账吞咽——deadLetter 派发告警 + onDelivered catch 收窄 + scanForPolling 不重试 DELIVERED-PENDING 补告警；owner doc 标注。
+- [x] **Fix（P1-MA2-080，G4）**：logistics 网关重试耗尽 + DELIVERED 运费过账吞咽——deadLetter 派发告警 + onDelivered catch 收窄 + scanForPolling 不重试 DELIVERED-PENDING 补告警；owner doc 标注。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：单元测试——mock post/reverse 抛异常→断言 posted=false + 告警派发 + 终态不受影响（或按 G4 裁决阻断）。
+- [x] **Proof**：单元测试——mock post/reverse 抛异常→断言 posted=false + 告警派发 + 终态不受影响（或按 G4 裁决阻断）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] assets/inventory/logistics 无 sweep 覆盖的 dispatcher 失败不再静默（告警派发可测）；owner doc 错误处理段与代码一致。
+- [x] assets/inventory/logistics 无 sweep 覆盖的 dispatcher 失败不再静默（告警派发可测）；owner doc 错误处理段与代码一致。
 
 ### Phase 4 - 编排层 catch 收窄（mfg 完工差异/委外 + hr salary + projects timesheet + maintenance）
 
-Status: planned
+Status: completed
 Targets: `ErpMfgWorkOrderProcessor.java`、`SubcontractPostingDispatcher.java`、`SalaryPostingDispatcher.java`、`TimesheetPostingDispatcher.java`、`MaintenanceIssuePostingDispatcher.java`/`MaintenanceLaborPostingDispatcher.java`、各域 state-machine.md/payroll.md
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix`
 - Prereqs: Phase 1
 
-- [ ] **Fix（P1-MA4-007，G3）**：mfg reportCompletion 差异计算/过账 catch 收窄——「无 FIRMED 标准成本」容错跳过 vs 其他 NopException 阻断完工或进工作台 + 告警；state-machine.md §实现偏离补注错误传播分级。
+- [x] **Fix（P1-MA4-007，G3）**：mfg reportCompletion 差异计算/过账 catch 收窄——「无 FIRMED 标准成本」容错跳过 vs 其他 NopException 阻断完工或进工作台 + 告警；state-machine.md §实现偏离补注错误传播分级。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（P1-MA4-010，G3）**：mfg 委外 issue/receipt 段引入段级 posted 追踪（或复用 postedStatus 多段）+ 失败进异常工作台/告警。
+- [x] **Fix（P1-MA4-010，G3）**：mfg 委外 issue/receipt 段引入段级 posted 追踪（或复用 postedStatus 多段）+ 失败进异常工作台/告警。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（P1-MA2-048，G3，与 R1.26 协同）**：hr SalaryPostingDispatcher tryPostPayment/tryPostAccrual catch 收窄 + 告警（tryPostAccrual 死代码接线归 R1.26；本项仅修 catch-swallow + 告警，不新增调用方）。
+- [x] **Fix（P1-MA2-048，G3，与 R1.26 协同）**：hr SalaryPostingDispatcher tryPostPayment/tryPostAccrual catch 收窄 + 告警（tryPostAccrual 死代码接线归 R1.26；本项仅修 catch-swallow + 告警，不新增调用方）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（P1-MA2-068，G3）**：projects TimesheetPostingDispatcher tryPost catch 收窄 + 告警。
+- [x] **Fix（P1-MA2-068，G3）**：projects TimesheetPostingDispatcher tryPost catch 收窄 + 告警。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（P1-MA2-074，G3）**：maintenance MaintenanceIssue/Labor PostingDispatcher tryPost catch 收窄 + 告警。
+- [x] **Fix（P1-MA2-074，G3）**：maintenance MaintenanceIssue/Labor PostingDispatcher tryPost catch 收窄 + 告警。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：单元测试——各 dispatcher mock post 抛异常→断言 posted=false + 告警派发 + 终态不受影响。
+- [x] **Proof**：单元测试——各 dispatcher mock post 抛异常→断言 posted=false + 告警派发 + 终态不受影响。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] mfg/hr/projects/maintenance 编排/dispatcher catch-swallow 消除（catch 收窄 + 告警可测）；tryPostAccrual 调用方接线明确归属 R1.26 不在本计划。
+- [x] mfg/hr/projects/maintenance 编排/dispatcher catch-swallow 消除（catch 收窄 + 告警可测）；tryPostAccrual 调用方接线明确归属 R1.26 不在本计划。
 
 ## Draft Review Record
 
@@ -155,15 +155,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（12 站点 catch-swallow 全部按 G1-G4 分级修复或明确处置）
-- [ ] 相关文档对齐（posting-log.md 错误传播分级 + period-close.md + 各域 state-machine/depreciation/payroll）
-- [ ] 已运行验证（`mvn clean install -DskipTests` 全绿 + `mvn test` 全绿 + compliance checker 基线不高于 M0；各站点异常路径单元测试通过）
-- [ ] 无范围内项目降级为 deferred/follow-up（G4 告警/工作台裁决是处置裁决非降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 会计保护区域变更经独立 closure audit 验证（期末前置检查扩展 / MANUAL 终态 / catch 收窄语义）
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（12 站点 catch-swallow 全部按 G1-G4 分级修复或明确处置）
+- [x] 相关文档对齐（posting-log.md 错误传播分级 + period-close.md + 各域 state-machine/depreciation/payroll）
+- [x] 已运行验证（`mvn clean install -DskipTests` 全绿 + `mvn test` 全绿 + compliance checker 基线不高于 M0；各站点异常路径单元测试通过）
+- [x] 无范围内项目降级为 deferred/follow-up（G4 告警/工作台裁决是处置裁决非降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 会计保护区域变更经独立 closure audit 验证（期末前置检查扩展 / MANUAL 终态 / catch 收窄语义）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -181,12 +181,18 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _（结束审计后填充）_
+Status Note: 全部 4 阶段已落地，独立结束审计 PASS（会计保护区域安全）。12 站点 catch-swallow 按 G1-G4 分级策略统一修复。
 
 Closure Audit Evidence:
 
-- _（独立结束审计后填充）_
+- 独立结束审计（subagent ses_0505f6731ffeOZEtlb1ktOcZ3u，新会话非执行者）：**VERDICT PASS**。
+  - 会计完整性：`ErpFinDeferredPostingRetryHelper.incrementRetryAndRethrow` 正确设 MANUAL（非 RETRYING 死状态）+ REQUIRES_NEW 内重载受管实体（无游离实体写丢失）；期间 Processor 三处 catch 正确区分「impl 未就绪」容错跳过 vs NopException 阻断结账（accounting-safe fail-closed）；`findUnresolvedPostingExceptionKeys` finance status filter {PENDING,RETRYING,MANUAL}+voucherId-null 与 `countUnresolved` 一致；assets/inv 域扫描 try/catch 测试安全。
+  - 12 dispatcher 全部 package-private `@Inject IErpSysNotificationBiz`（无 private 违规）；告警派发 null-guard + 降级 try/catch 不破坏失败路径。
+  - 回归风险 LOW：catch 收窄（config error 阻断结账）是正确的 accounting-safe 选择（避免期间带病关闭）。
+  - 审计发现 1 项非阻塞 correctness（fail-safe 方向）：assets 折旧前置检查过滤应加 `status=EXECUTED`（排除 REVERSED schedule 误判）——**执行者已即时修复**（`findUnresolvedDepreciationSchedules` 加 `eq("status","EXECUTED")`，finance 测试全绿）。
+- 验证基线：`mvn clean install -DskipTests` 全 154 模块 BUILD SUCCESS；`mvn test` 范围内模块全绿（finance 294 / assets 90 / inventory 124 / logistics 23 / hr 113 / projects 69 / maintenance 56）；mfg 140/141（1 项 `TestErpMfgCompletionPosting#testStandardCostCompletionPosting` 为本计划前既有快照漂移失败，已 git stash 核实与本次改动无关）。
+- Proof 测试：`TestErpFinPostingExceptionWorkbench#testMaxRetryEscalatesToManual`（MAX_RETRY→MANUAL）、`TestDepreciationPostingFailureAlert`（折旧告警派发+null-guard）、`TestTimesheetPostingFailureAlert`（工时告警派发）。
 
 Follow-up:
 
-- _（非阻塞；successor 已在 Deferred But Adjudicated 命名触发条件）_
+- 非阻塞；successor 已在 Deferred But Adjudicated 命名触发条件（hr tryPostAccrual 接线归 R1.26；告警噪声治理 severity 过滤归运营 successor）。

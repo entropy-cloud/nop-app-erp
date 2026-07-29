@@ -175,6 +175,7 @@
 - **完工成本结转凭证已实现**：完工入库移动单生成（产成品入 destWarehouse）+ 产成品存货估值过账凭证（MANUFACTURING_RECEIPT 凭证类型：Dr 产成品存货 1401 / Cr WIP 1411）已由 plan 2026-07-10-1100-5 落地。完工入库移动单 posted=true。领料出库 GL 过账（MANUFACTURING_ISSUE：Dr WIP 1411 / Cr 原材料存货 1401）同步落地，领料单 posted=true。
 - **工时/实领数量列类型修正补注**：`ErpMfgJobCardTimeLog.durationMins`/`setupMins`/`runMins`/`hourlyRate`（VARCHAR→DECIMAL，对齐 domain）+ `ErpMfgMaterialIssueLine.issuedQuantity`（BOOLEAN→DECIMAL，对齐 domain）已修正，解除报工成本归集数值计算阻塞（同 plan 1538-2 工时/费率修正范式）。
 - **领料红冲实现注记（plan 2026-07-18-1745-2）**：领料单 DONE+posted=true 后如需回滚（"错误确认"纠错路径），新增 `ErpMfgMaterialIssue.reverseConfirm(@BizMutation)` 入口闭环：守卫 `posted=true + DONE` 态（未过账抛 `ERR_MATERIAL_ISSUE_NOT_POSTED`）→ 调 `ManufacturingIssuePostingDispatcher.reverse(issue)` 红冲 `MANUFACTURING_ISSUE` 凭证（billHeadCode=`issue.code + "-MI"` 与正向对称）+ 调 `IErpInvStockMoveBiz.reverse(moveId)` 反向 OUTGOING 移动单（生成 REVERSAL 反向冲销移动单，库存余额自动回滚）→ 翻 `posted=false / docStatus=CANCELLED`。红字凭证行同向取负（Dr 1411=-X / Cr 1401=-X）。库存反向移动单范式对齐 1934-1 委外红冲 + 1745-1 备件消耗红冲。
+- **完工触发差异/委外过账错误传播分级（plan 2026-07-30-0341-2 P1-MA4-007/010）**：`reportCompletion` 差异计算/过账 + `SubcontractPostingDispatcher` issue/receipt/fee 段失败按 **G3 错误传播分级**（`posting-log.md`）处置——「无 FIRMED 标准成本」（`ERR_VARIANCE_NO_STANDARD_COST`）容错跳过（差异未配置，非故障）；其他配置错误/真实故障不阻断完工（已 COMPLETED）但派发 `IErpSysNotificationBiz` 告警（`mfg.production-variance-posting-failure` / `mfg.subcontract-posting-failure`），使 GL 缺凭证悬挂可被运营感知（手动重算入口存在）。委外 issue/receipt 段段级过账状态经 `ErpFinVoucherBillR`（billHeadCode + businessType）判重可查。
 
 ---
 
