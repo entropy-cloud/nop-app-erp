@@ -49,7 +49,7 @@
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
-| `businessType` | `ErpFinBusinessType`（enum，登记的共享内核类型） | 业务类型枚举（如 PURCHASE_INPUT、AR_INVOICE）；常量 `code` 与字典 `erp-fin/business-type` 数值逐一一致 |
+| `businessType` | `ErpFinBusinessType`（enum，登记的共享内核类型） | 业务类型枚举（如 PURCHASE_INPUT、AR_INVOICE）；枚举 `name()` 与字典 `erp-fin/business-type` 的 `value` 逐一一致（持久化值 = enum.name() = dict value，UI 筛选与审计查询据此命中） |
 | `billHeadCode` | String | 业务单据编码（幂等键） |
 | `tenantId` | String | 租户 ID |
 | `acctSchemaId` | Long | 账套 ID |

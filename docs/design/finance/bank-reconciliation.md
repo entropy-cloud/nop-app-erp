@@ -113,7 +113,7 @@
 
 9. **期间控制**:对账单所属期间若已 CLOSED(ErpFinAccountingPeriodStatus.glStatus=CLOSED)不可再生成新调节表。
 
-10. **多币种**:外币账户对账时,未达账项调整凭证需考虑汇兑损益(关联 businessType=FX_REVALUATION 已有字典)。
+10. **多币种**:外币账户对账时,未达账项调整凭证需考虑汇兑损益(关联 businessType=EXCHANGE_GAIN_LOSS 已有字典)。
 
 ## 与现有实体的关系
 

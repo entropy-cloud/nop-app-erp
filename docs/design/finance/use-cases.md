@@ -228,7 +228,7 @@ CLOSED_FINAL → OPEN
 ```
 凭证行.本位币金额 == 源币金额 × 汇率
 若 汇率缺失 → 报错拒绝过账
-外币银行账户对账: 未达账项调整考虑汇兑损益(FX_REVALUATION)
+外币银行账户对账: 未达账项调整考虑汇兑损益(EXCHANGE_GAIN_LOSS)
 ```
 
 **涉及机制**:posting.md §多币种
