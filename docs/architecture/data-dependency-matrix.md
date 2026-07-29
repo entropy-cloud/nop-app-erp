@@ -158,6 +158,8 @@ L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）�
 | 制造工单完工 | `IErpMfgWorkOrderBiz` | 读工单完工量 |
 
 > **关键规则**：finance 对业务域是**纯读**——从不写业务表。业财一体是"业务→财务"单向 S 写，财务不回写业务。
+>
+> **"纯读"的精确边界**（消除"纯读"与"期末结账 finance 调业务域 I*Biz 方法"的表面矛盾）：finance 的"纯读/不回写业务表"指**ORM 层**——finance orm.xml 不声明任何 finance→业务域（inventory/assets 等）的反向 `<to-one>`（实测：fin→md 97 + fin→prj 6 = 103，零 fin→inv / fin→ast ORM 边），finance 也不对业务表执行 `saveEntity`/`updateEntity`。"纯读"**不否定** I*Biz 层的 **command 编排**：期末结账期间 finance 经 `IErpAstDepreciationScheduleBiz.executeBatchDepreciation` / `IErpAstDepreciationScheduleBiz.reverseDepreciation`（assets 域批量折旧/冲销）与 `IErpInvCostingBiz.reclosePeriodCosts`（inventory 域存货成本兜底重算）发起 command——此时 assets/inventory **自管实体写**（折旧计划、成本层归属各自域），finance 仅经 `IBizObjectManager` 代理发起 command、不持有业务表 ORM 引用、不回写业务单据表。command 失败仅告警不阻断结账（见 `ErpFinAccountingPeriodProcessor.runDepreciation`/`recloseInvCosts`/`reverseDepreciation`）。因此 ORM 层"纯读"与 I*Biz 层"command 编排"分属不同依赖类型，分层各自单向合法（对齐 §2.0 裁决原则 4）。
 
 ### 3.3 共享内核类型归属（代码层，非表层）
 
@@ -255,7 +257,7 @@ finance 域定义接口 + 注册中心，业务域提供 Provider Bean（Metasfr
 
 ### 4.4 同步修改的约束
 
-- **禁止反向 S 写**：finance 不回写业务表，inventory 不回写业务单据表。S 写严格单向（业务→财务）。
+- **禁止反向 S 写**：finance 不回写业务表，inventory 不回写业务单据表。S 写严格单向（业务→财务）。此处的"不回写业务表"指 ORM/S 写层——finance 不对业务单据表（`erp_pur_*`/`erp_sal_*`/`erp_ast_*`/`erp_inv_*` 业务实体）做 `saveEntity`/`updateEntity`、不持有反向 ORM 引用；**不否定**期末结账期间 finance 经 I*Biz 层 command 编排触发 assets/inventory 自管实体的写（`IErpAstDepreciationScheduleBiz.executeBatchDepreciation`/`reverseDepreciation`、`IErpInvCostingBiz.reclosePeriodCosts`），该编排中 finance 仅发起 command、由 assets/inventory 域写各自实体，精确边界见 §3.2"纯读的精确边界"。
 - **禁止跨域 private 字段**：`@Inject` 的 `I*Biz` 字段不能是 `private`（nop IoC 规则，见 `AGENTS.md`）。
 - **事务边界清晰**：所有 S 写必须在同一 `@BizMutation` 方法内，不依赖 `@Transactional` 显式传播（`@BizMutation` 自动包装）。
 - **异步过账是可选优化**：Metasfresh 把过账异步化到 `post-commit` EventBus。本工程**默认 SYNC**（同步调用 + `@Transactional(REQUIRES_NEW)` 独立事务承接，跨域失败经 `posted` 标志隔离 + 兜底扫描保证最终一致；事务语义详见 `flow-overview.md §6.1` 与 `posting.md §总体架构`），按 `(billType, acctSchemaId)` 可对个别高吞吐单据切 ASYNC（经 `txn().afterCommit()` 解耦），但**第①层库存写入恒定 SYNC、`posted` 字段兜底恒定生效**。完整可配边界见 `posting.md §稳定约束 vs 可配置策略`。
@@ -519,27 +521,29 @@ GROUP BY vl.subject.name
 
 每个业务域引用的 master-data 表（建立 to-one 关联）：
 
-| 业务域 | 引用的 master-data 表 | 跨业务域引用 |
-|---|---|---|
-| **inventory** | material / materialSku / warehouse / location / uom / currency / organization / acctSchema | — |
-| **purchase** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目采购成本） |
-| **sales** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目销售成本） |
-| **finance** | subject / acctSchema / currency / partner / organization / warehouse / material | **projects.project**（凭证行辅助核算 projectId） |
-| **assets** | organization / currency / employee / location / materialCategory / subject | — |
-| **projects** | organization / currency / employee / partner / subject | — |
-| **manufacturing** | material / materialSku / uom / warehouse / location / organization / currency / partner | **inventory.ErpInvBatch**（工序 `inputLot`/`outputLot`，投入/产出批次追溯，`app-erp-manufacturing.orm.xml:1495,1497`；manufacturing 依赖 inventory 已在 `module-boundaries.md:47` 登记，R 只读，批准保留） |
-| **quality** | organization / material / partner / warehouse / employee | — |
-| **maintenance** | organization / location / materialCategory / employee / material / uom / warehouse | **assets.ErpAstAsset**（设备 `asset`，equipment→asset 关联，`app-erp-maintenance.orm.xml:153`；maintenance 依赖 assets 已在 `module-boundaries.md:49` 登记，R 只读，批准保留） |
-| **crm** | organization / partner / employee / material 等（实测 31 to-one） | — |
-| **cs** | organization / partner 等（实测 5 to-one） | — |
-| **hr** | organization / employee / partner 等（实测 19 to-one） | — |
-| **aps** | organization / material / warehouse 等（实测 6 to-one） | — |
-| **contract** | organization / partner / currency 等（实测 10 to-one） | — |
-| **drp** | organization / material / warehouse 等（实测 7 to-one） | **inventory.ErpInvStockMove**（`ErpInvDrpCrossDock` 跨码头 `inboundMove`/`outboundMove`，`app-erp-drp.orm.xml:297,298`；drp→inv 单向合法 DAG，批准保留） |
-| **logistics** | organization / partner / material 等（实测 9 to-one） | — |
-| **b2b** | organization / partner / material 等（实测 15 to-one） | — |
+| 业务域 | 引用的 master-data 表 | 跨业务域引用 | 跨模块 to-one / 外部实体声明（实测¹） |
+|---|---|---|---|
+| **inventory** | material / materialSku / warehouse / location / uom / currency / organization / acctSchema | — | 85 / 10 |
+| **purchase** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目采购成本） | 58 / 12 |
+| **sales** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目销售成本） | 55 / 11 |
+| **finance** | subject / acctSchema / currency / partner / organization / warehouse / material | **projects.project**（凭证行辅助核算 projectId） | 103 / 12 |
+| **assets** | organization / currency / employee / location / materialCategory / subject | — | 50 / 6 |
+| **projects** | organization / currency / employee / partner / subject | — | 27 / 5 |
+| **manufacturing** | material / materialSku / uom / warehouse / location / organization / currency / partner | **inventory.ErpInvBatch**（工序 `inputLot`/`outputLot`，投入/产出批次追溯，`app-erp-manufacturing.orm.xml:1495,1497`；manufacturing 依赖 inventory 已在 `module-boundaries.md:47` 登记，R 只读，批准保留） | 58 / 10 |
+| **quality** | organization / material / partner / warehouse / employee | — | 19 / 5 |
+| **maintenance** | organization / location / materialCategory / employee / material / uom / warehouse | **assets.ErpAstAsset**（设备 `asset`，equipment→asset 关联，`app-erp-maintenance.orm.xml:153`；maintenance 依赖 assets 已在 `module-boundaries.md:49` 登记，R 只读，批准保留） | 13 / 8 |
+| **crm** | organization / partner / employee / material 等 | — | 38 / 5 |
+| **cs** | organization / partner 等 | — | 15 / 2 |
+| **hr** | organization / employee / partner 等 | **projects**（员工项目分配/工时归集，按 `projectId`/`taskId` 建 to-one，机制 B，projects 不反向） | 34 / 6 |
+| **aps** | organization / material / warehouse 等 | — | 6 / 1 |
+| **contract** | organization / partner / currency 等 | — | 13 / 4 |
+| **drp** | organization / material / warehouse 等 | **inventory.ErpInvStockMove**（`ErpInvDrpCrossDock` 跨码头 `inboundMove`/`outboundMove`，`app-erp-drp.orm.xml:297,298`；drp→inv 单向合法 DAG，批准保留） | 26 / 6 |
+| **logistics** | organization / partner / material 等 | — | 10 / 5 |
+| **b2b** | organization / partner / material 等 | — | 15 / 3 |
 
-> **终态统计**（全量核对）：17 个业务域（除 master-data 根域）orm.xml 共建立约 **369 个跨模块 to-one**（其中 inventory/purchase/sales/finance/assets/projects/manufacturing/quality/maintenance 共 267 个 + crm/cs/hr/aps/contract/drp/logistics/b2b 共约 102 个），引用约 68+ 个外部实体声明。所有业务域 ORM 层均引用 master-data；跨业务域 ORM 只读引用（机制 B 单向合法）：**finance → projects/assets**（凭证行辅助核算）+ **purchase/sales → projects**（项目采购/销售单按 `projectId` 建 to-one 归集项目成本）+ **hr → projects**（员工项目分配/工时归集，按 `projectId`/`taskId` 建 to-one，projects 不反向），零循环依赖。全量 to-one 总数与外部实体声明数待 codegen 后跑脚本精确统一。DAG 验证：所有引用边单向合法，零循环依赖。
+> ¹ 实测值由 `docs/audits/scripts/cross-module-dep-extract.py` 机器核验（A1.10 闭合）。to-one 列含该域全部跨模块 `<to-one>`（含跨业务域 to-one，如 purchase→projects 2、sal→projects 1、fin→projects 6、hr→projects 2）；外部实体声明列为该域 `<entity notGenCode="true">` 计数。`master-data`/`notify` 无出向引用，故不在表（to-one=0 / 外部实体声明=0）。
+
+> **终态统计**（机器核验，A1.10 闭合）：17 个业务域（除 master-data 根域）orm.xml 共建立 **625 个跨模块 to-one**（其中 inventory/purchase/sales/finance/assets/projects/manufacturing/quality/maintenance 共 **468** 个 + crm/cs/hr/aps/contract/drp/logistics/b2b 共 **157** 个）+ **0 个跨模块 to-many**，引用 **111 个外部实体声明**（核心 9 域 79 + 扩展 8 域 32）。所有业务域 ORM 层均引用 master-data；跨业务域 ORM 只读引用（机制 B 单向合法）：**finance → projects**（凭证行辅助核算，6）+ **purchase/sales → projects**（项目采购/销售单按 `projectId` 建 to-one 归集项目成本，2+1）+ **hr → projects**（员工项目分配/工时归集，按 `projectId`/`taskId` 建 to-one，projects 不反向，2），零循环依赖。权威值由 `docs/audits/scripts/cross-module-dep-extract.py` 产出，以本文 §5.6.2 实测清单为最高权威。DAG 验证：所有引用边单向合法（24 条唯一 (src,tgt) 边，7 条跨业务域边全部在 allow-list），零循环依赖。
 >
 > **关于 finance → assets**：assets 关联走 `voucher_bill_r` 弱指针（`billType=AST_DEPRECIATION` + `billHeadCode` 反查资产），不是固定 `assetId` 外键——因此 finance 不建到 assets 的 to-one（业务单据反查源单应用弱指针，见 §5.1）。
 >

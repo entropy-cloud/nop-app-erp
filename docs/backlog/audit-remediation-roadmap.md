@@ -139,7 +139,7 @@
 | R1.1 | **[ORM ask-first]** propId 缺失机械修复（多币种四件套补字段未重编号，~46 列）— P1-MA1-001/008/010/011/012/013（mfg+assets+projects+maintenance+quality）；修复=codegen 增量再生 or manual renumber | done | 各域 `model/*.orm.xml` | R1.0 | none |
 | R1.2 | **[ORM ask-first]** crm DECIMAL↔Double 类型偏离（7 列参与比率计算）— P1-MA1-009；修复=stdDataType double→decimal | done | `module-crm/model/*.orm.xml` | R1.0 | none |
 | R1.3 | **[ORM ask-first]** drp 实体命名异常（ErpInvDrp* 4 实体不符合 §19.1）— P1-MA1-014；修复=重命名 ErpDrp*/erp_drp_* 或登记 §19.2 例外 | done | `module-drp/model/*.orm.xml` | R1.0 | none |
-| R1.4 | owner doc data-dependency-matrix.md 数值偏差 + finance 纯读规则不完整 — P1-MA1-015（§5.6.2 数值 625/111）+ P1-MA1-017（§3.2/§4.4 command 编排分层注记）；修复=脚本核验值更新 owner doc | todo | `docs/architecture/data-dependency-matrix.md` | R1.0 | none |
+| R1.4 | owner doc data-dependency-matrix.md 数值偏差 + finance 纯读规则不完整 — P1-MA1-015（§5.6.2 数值 625/111）+ P1-MA1-017（§3.2/§4.4 command 编排分层注记）；修复=脚本核验值更新 owner doc | done | `docs/architecture/data-dependency-matrix.md` | R1.0 | none |
 | R1.5 | **跨域只读 daoFor 家族统一裁决** — P1-MA1-016 + P1-MA1-022（9 域）+ P1-MA4-003/006/008/012/015/022（6 投影）= 8 findings；修复=方案 A（md/fin/inv/mfg I\*Biz 补便捷只读方法后迁移）或方案 B（永久接受登记 posting-exemptions.md） | todo | `docs/architecture/posting-exemptions.md`+`data-dependency-matrix.md` | R1.0 | none |
 | R1.6 | finance ErpFinBusinessType enum↔dict 漂移（4 项不一致）— P1-MA1-018；修复=enum 重命名对齐 dict 或 dict 改值+数据迁移 | todo | `module-finance/model/*.orm.xml` dict + `ErpFinConstants` | R1.0 | none |
 | R1.7 | 跨域写半治理登记 posting-exemptions.md — P1-MA1-029（ErpCtInvoicePlanBizModel contract→pur/sal）+ P1-MA2-038（MrpReleaseService 委外单 O-4）；修复=补登豁免条目 | todo | `docs/architecture/posting-exemptions.md` | R1.0 | none |
