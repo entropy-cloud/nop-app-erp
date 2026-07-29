@@ -17,29 +17,30 @@
 |------|----------------------|--------|----------|
 | 草稿（DRAFT） | 等待过账 | 是 | 否 |
 | 已过账（POSTED） | 终态：已过账，参与总账汇总 | 否（需红冲） | 是 |
-| 已作废（CANCELLED） | 终态：作废（仅草稿可作废） | 否 | 否 |
+| 已作废（CANCELLED） | **预留语义入口**（dict 项保留，未启用迁移）。草稿凭证的废弃经 logical delete（`useLogicalDelete`）承载，不经 DRAFT→CANCELLED 状态迁移。 | 否 | 否 |
 
 ### 2. 迁移完整性
 
 ```
 草稿 (DRAFT)
   ├─ 过账 → 已过账 (POSTED)
-  │            └─ 红冲 → 生成红字凭证（新 DRAFT，金额取负）
-  └─ 作废 → 已作废（CANCELLED）
+  │            └─ 红冲 → 原凭证置 isReversed=true（保留 POSTED，单边标记，不建立双向回链）
+  └─ [预留] 作废 → 已作废（CANCELLED）
+       ↑ 未实现迁移：草稿废弃经 logical delete 承载，CANCELLED dict 项保留为未来显式作废工作流的语义入口
 ```
 
 | 迁移 | 触发人/系统 | 前置条件 | 结果 |
 |------|-------------|----------|------|
 | DRAFT → POSTED | 财务员 / 系统（业财自动触发） | 草稿状态、**借贷平衡**、**会计期间未结账**、科目有效、汇率存在（多币种） | 参与总账、凭证号按凭证字分类连续生成 |
-| POSTED → 红冲（生成红字凭证） | 财务员 | 已过账状态 | 不改原凭证；生成新红字凭证（金额取负，关联原凭证），走 DRAFT→POSTED |
-| DRAFT → CANCELLED | 财务员 | 草稿状态 | 直接作废（未影响总账，无需红冲） |
+| POSTED → 红冲（原凭证置 isReversed=true） | 财务员 | 已过账状态 | 原凭证保留 POSTED 终态；置 `isReversed=true` 单边标记（**已知简化**：不建立 `reversedVoucherId` 双向回链，红冲闭环功能完整，红字凭证经 `postingType=REVERSAL` 与原凭证关联） |
+| ~~DRAFT → CANCELLED~~（预留，未实现） | — | — | 草稿废弃经 logical delete（`useLogicalDelete`）承载；CANCELLED 作为预留 dict 项保留，待未来「保留审计轨迹的显式作废动作」PM 需求时实现 |
 
 ### 3. 终态与恢复
 
-- **终态**：`已过账（POSTED）`、`已作废（CANCELLED）`。
-- **已过账不可直接修改**：已影响总账，纠错只能红冲（生成红字凭证冲销）。
-- **红字凭证**：金额全部取负数，摘要注明"冲销 ×× 凭证"，关联原凭证（双向回链），走正常 DRAFT→POSTED 流程。原凭证保留审计轨迹。
-- **已作废不可恢复**：作废是终态（且仅草稿可作废）。
+- **终态**：`已过账（POSTED）`。CANCELLED 为预留 dict 项（未启用迁移，非活跃终态）。
+- **已过账不可直接修改**：已影响总账，纠错只能红冲（原凭证置 `isReversed=true`）。
+- **红字凭证（已知简化，对齐实现）**：红冲在原凭证上置 `isReversed=true` 单边标记（保留 POSTED），不建立 `reversedVoucherId` 双向回链。归档凭证（已红冲原凭证）与活动凭证（POSTED + `isReversed=false`）的区分经 `isReversed` + `postingType` 联合判定。红冲闭环功能完整（`reverseVoucher` / 业财回链红冲均已实现）。`reversedVoucherId` 双向回链为 successor（报表需求驱动时实现）。
+- **草稿废弃**：经 logical delete（`useLogicalDelete`）承载，不经状态迁移；CANCELLED dict 项保留为未来显式作废工作流的语义入口（successor）。
 
 ### 4. 异常路径
 
@@ -56,17 +57,18 @@
 
 ### 5. 可达性
 
-- 从 DRAFT 可达 POSTED 与 CANCELLED。
-- POSTED 的"红冲"是生成新凭证，不是状态回退。
-- 无死锁、无循环。DRAFT→POSTED 与 DRAFT→CANCELLED 是有向无环路径。
+- 从 DRAFT 可达 POSTED。
+- POSTED 的"红冲"是原凭证上置 `isReversed=true`（单边标记），不是状态回退，也不生成新状态。
+- CANCELLED 当前为预留 dict 项，无入边（草稿废弃经 logical delete 承载）；DRAFT→CANCELLED 迁移为 successor。
+- 无死锁、无循环。DRAFT→POSTED 是有向无环路径。
 
 ### 6. 角色与权限
 
 | 迁移 | 执行角色 |
 |------|----------|
 | 过账（DRAFT→POSTED） | 财务员 / 系统（业财自动） |
-| 红冲（生成红字凭证） | 财务员（需权限，因影响总账） |
-| 作废（DRAFT→CANCELLED） | 财务员 |
+| 红冲（原凭证置 isReversed=true） | 财务员（需权限，因影响总账） |
+| 作废（DRAFT→CANCELLED） | **预留**（未实现迁移；草稿废弃经 logical delete，权限由 delete action 承载） |
 
 危险操作：
 - **红冲已过账凭证**：需财务员权限，建议二次确认（因影响报表）。
@@ -244,7 +246,8 @@
 ## 审查提示
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
-- 红字凭证冲销路径是否完整（关联原凭证、双向回链）。
+- 红字凭证冲销路径是否完整（原凭证 `isReversed=true` 单边标记，**已知简化**：无 `reversedVoucherId` 双向回链——successor）。
+- CANCELLED 是否仍为预留 dict 项（无入边；草稿废弃经 logical delete 承载）。
 - 业务自动触发的凭证过账失败时是否产生异常 TODO（避免草稿滞留）。
 - 期间结账的前置校验（无未过账单据）是否落实。
 - 反结账权限是否严格（管理员 + 审批）。

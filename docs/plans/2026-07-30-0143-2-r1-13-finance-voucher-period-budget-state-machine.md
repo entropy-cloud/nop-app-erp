@@ -1,6 +1,6 @@
 # 2026-07-30-0143-2-r1-13-finance-voucher-period-budget-state-machine finance 凭证/期间/预算状态机修复
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-30
 > Source: audit-remediation-roadmap R1.13（P1-MA2-031 + P1-MA2-033 + P1-MA2-034，源自 A2.5a/A2.5b finance 状态机审查）
 > Related: `docs/audits/2026-07-27-2211-arm-ma2-finance-posting-voucher-state-machine.md`、`docs/audits/2026-07-27-2315-arm-ma2-finance-period-budget-state-machine.md`、`docs/audits/2026-07-28-1953-arm-ma3-owner-doc-vs-code-drift.md`（P1-MA3-024 CLOSED 语义三源冲突）
@@ -55,66 +55,66 @@
 
 ### Phase 1 - carryForward 源年度 CLOSED 前置（P1-MA2-034）
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/budget/ErpFinBudgetScenarioProcessor.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Proof`
 - Prereqs: none
 
-- [ ] 在 `validateCarryForwardPreconditions` 增源年度 CLOSED 校验：按 `source.getFiscalYear()` 查询全部 `ErpFinAccountingPeriodStatus`（或期间 + glStatus），任一 `glStatus != CLOSED` 抛 `NopException(ERR_BUDGET_CARRY_FORWARD_RULE_INVALID).param(rule,"source fiscalYear periods not all CLOSED").param(fiscalYear,...)`。查询走 `daoProvider().daoFor(ErpFinAccountingPeriodStatus.class)`（同模块只读聚合，加注释说明原因）或复用 ErpFinAccountingPeriodProcessor 既有按 year 查询模式。
+- [x] 在 `validateCarryForwardPreconditions` 增源年度 CLOSED 校验：按 `source.getFiscalYear()` 查询全部 `ErpFinAccountingPeriodStatus`（或期间 + glStatus），任一 `glStatus != CLOSED` 抛 `NopException(ERR_BUDGET_CARRY_FORWARD_RULE_INVALID).param(rule,"source fiscalYear periods not all CLOSED").param(fiscalYear,...)`。查询走 `daoProvider().daoFor(ErpFinAccountingPeriodStatus.class)`（同模块只读聚合，加注释说明原因）或复用 ErpFinAccountingPeriodProcessor 既有按 year 查询模式。
       - Skill: `nop-backend-dev`
-- [ ] Proof（单元）：`TestErpFinBudgetCarryForward` 现有 4 测试 seed 期间改为 glStatus=CLOSED（保持 happy path 绿）；新增负向测试——源年度留一个期间 glStatus=OPEN/CLOSING，断言 carryForward 抛 `ERR_BUDGET_CARRY_FORWARD_RULE_INVALID`。
+- [x] Proof（单元）：`TestErpFinBudgetCarryForward` 现有 4 测试 seed 期间改为 glStatus=CLOSED（保持 happy path 绿）；新增负向测试——源年度留一个期间 glStatus=OPEN/CLOSING，断言 carryForward 抛 `ERR_BUDGET_CARRY_FORWARD_RULE_INVALID`。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 源年度存在未 CLOSED 期间时 carryForward 抛指定 ErrorCode（负向测试通过）；既有 4 happy path 在 CLOSED seed 下仍绿。
+- [x] 源年度存在未 CLOSED 期间时 carryForward 抛指定 ErrorCode（负向测试通过）；既有 4 happy path 在 CLOSED seed 下仍绿。
 
 ### Phase 2 - openPeriod 期间开启 action（P1-MA2-033）
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-dao/src/main/java/app/erp/fin/biz/IErpFinPeriodCloseBiz.java`、`module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinPeriodCloseBizModel.java`（或对应 Processor）
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 无依赖。
 
-- [ ] **Decision**：方案 A（实现 `openPeriod`）vs 方案 B（owner doc 标注「NEVER_OPENED 仅标记，运营经 DB 直改/重新生成」为已知简化）。
+- [x] **Decision**：方案 A（实现 `openPeriod`）vs 方案 B（owner doc 标注「NEVER_OPENED 仅标记，运营经 DB 直改/重新生成」为已知简化）。
       - 选择 A（推荐）：审计推荐；是低风险加法状态迁移（开启一个从未开启的期间，不结账/不反结账）；兑现 `IErpFinPeriodCloseBiz:52` 契约，解除可达性死锁。
       - 选择 B：零代码，但留下「次年 2-12 月静默不可用」运营痛点，且未兑现接口 javadoc 契约。
       - 残留风险：A 需守卫 + 权限 + 测试；B 留运营缺口。采纳 A，理由记入计划。
       - Skill: `none`
-- [ ] 按强制顺序：先 `IErpFinPeriodCloseBiz` 声明 `@BizMutation openPeriod(@Name("periodId") Long periodId, IServiceContext context)`；再 BizModel/Processor 实现——`requireEntity` 取期间，守卫 `status==NEVER_OPENED`（否则抛 `ERR_FIN_PERIOD_ILLEGAL_TRANSITION` 或既有期间非法迁移码），置 `PERIOD_STATUS_OPEN` + `saveEntity`；`assertPeriodNotLocked` 复用。
+- [x] 按强制顺序：先 `IErpFinPeriodCloseBiz` 声明 `@BizMutation openPeriod(@Name("periodId") Long periodId, IServiceContext context)`；再 BizModel/Processor 实现——`requireEntity` 取期间，守卫 `status==NEVER_OPENED`（否则抛 `ERR_FIN_PERIOD_ILLEGAL_TRANSITION` 或既有期间非法迁移码），置 `PERIOD_STATUS_OPEN` + `saveEntity`；`assertPeriodNotLocked` 复用。
       - Skill: `nop-backend-dev`
-- [ ] Proof（单元）：测试 NEVER_OPENED→OPEN 成功 + 非 NEVER_OPENED 状态调用被守卫拒绝（抛异常）。
+- [x] Proof（单元）：测试 NEVER_OPENED→OPEN 成功 + 非 NEVER_OPENED 状态调用被守卫拒绝（抛异常）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] `openPeriod` 将 NEVER_OPENED 期间迁移至 OPEN（正向测试）；非法源状态被守卫拒绝（负向测试）；IBiz 接口先于实现声明（自检 P2）。
+- [x] `openPeriod` 将 NEVER_OPENED 期间迁移至 OPEN（正向测试）；非法源状态被守卫拒绝（负向测试）；IBiz 接口先于实现声明（自检 P2）。
 
 ### Phase 3 - 凭证 CANCELLED 死状态 + 红字凭证终态 owner doc 对齐（P1-MA2-031）
 
-Status: planned
+Status: completed
 Targets: `docs/design/finance/state-machine.md`
 Skill: `none`
 
 - Item Types: `Decision | Fix`
 - Prereqs: none（纯文档；P1-MA2-031 为已确认 owner-doc 漂移，故对齐动作为 `Fix` 而非 `Add`）。
 
-- [ ] **Decision**：凭证 DRAFT→CANCELLED 死状态处置。
+- [x] **Decision**：凭证 DRAFT→CANCELLED 死状态处置。
       - 选择 A（推荐）：owner doc 对齐现状——标注「草稿凭证废弃经 logical delete（useLogicalDelete）承载，不经 DRAFT→CANCELLED 状态迁移；CANCELLED dict 项保留为预留语义入口（未来显式作废工作流 successor）」。
       - 选择 B：实现 `cancelVoucher`（DRAFT→CANCELLED）mutation + 守卫 + 测试。
       - 选择 C：从 ORM 删除 CANCELLED dict 项 + 常量（ORM 变更 + regen）。
       - 理由：现有 reverseVoucher 已覆盖 POSTED 凭证红冲；草稿废弃 logical delete 已工作；无 PM 需求驱动新增会计 mutation。采纳 A（最低风险、消除契约漂移）。
       - Skill: `none`
-- [ ] 按 Decision 更新 `state-machine.md`：§1/§2/§3 标注 CANCELLED 为「预留（logical delete 承载草稿废弃）」；§3 红字凭证段对齐为「单边 `isReversed=true` 标记（原凭证保留 POSTED），不建立 reversedVoucherId 双向回链——已知简化」。
+- [x] 按 Decision 更新 `state-machine.md`：§1/§2/§3 标注 CANCELLED 为「预留（logical delete 承载草稿废弃）」；§3 红字凭证段对齐为「单边 `isReversed=true` 标记（原凭证保留 POSTED），不建立 reversedVoucherId 双向回链——已知简化」。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] `state-machine.md` 凭证段反映 CANCELLED 预留语义 + 红字凭证实际 isReversed 行为，与代码一致。
+- [x] `state-machine.md` 凭证段反映 CANCELLED 预留语义 + 红字凭证实际 isReversed 行为，与代码一致。
 
 ## Draft Review Record
 
@@ -122,14 +122,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（carryForward CLOSED 前置 + openPeriod 迁移 + 凭证状态机文档对齐）
-- [ ] 相关文档对齐（state-machine.md / period-close.md / budget.md）
-- [ ] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am`（聚焦 finance，`-am` 含 Phase 2 改动的 erp-fin-dao）+ Closure 时 `mvn clean install -DskipTests` 全绿
-- [ ] 无范围内项目降级为 deferred/follow-up（Phase 3 Decision A 的「预留 successor」是裁决后明确移出范围的语义入口，非范围内缺陷降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（carryForward CLOSED 前置 + openPeriod 迁移 + 凭证状态机文档对齐）
+- [x] 相关文档对齐（state-machine.md / period-close.md / budget.md）
+- [x] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am`（聚焦 finance，`-am` 含 Phase 2 改动的 erp-fin-dao）+ Closure 时 `mvn clean install -DskipTests` 全绿
+- [x] 无范围内项目降级为 deferred/follow-up（Phase 3 Decision A 的「预留 successor」是裁决后明确移出范围的语义入口，非范围内缺陷降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -147,13 +147,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _（待结束审计）_
+Status Note: 三 Phase 全 done（P1-MA2-034 carryForward 源年度 CLOSED 前置 + P1-MA2-033 openPeriod NEVER_OPENED→OPEN 迁移 + P1-MA2-031 凭证 CANCELLED/红字凭证 owner doc 对齐）。验证：`mvn test -pl module-finance/erp-fin-service -am` 293 测试全绿（含新增 1 carryForward 负向 + 2 openPeriod 测试）；`mvn clean install -DskipTests` 全工程绿。结束审计由独立子代理（新会话，无执行者上下文）执行通过。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _（独立子代理）_
-- Evidence: _（task id / walkthrough）_
+- Auditor / Agent: 独立结束审计子代理（新会话，不重用执行者上下文）
+- Evidence: 实时仓库复核确认三 Phase 落地——(1) P1-MA2-034：`ErpFinBudgetScenarioProcessor.validateCarryForwardPreconditions:326-337` 增源年度 CLOSED 硬前置 + `isSourceFiscalYearFullyClosed:346-372` helper（按 fiscalYear 查 ErpFinAccountingPeriod + ErpFinAccountingPeriodStatus，任一 glStatus≠CLOSED 抛 `ERR_BUDGET_CARRY_FORWARD_RULE_INVALID`，带 rule+fiscalYear 参数）；`TestErpFinBudgetCarryForward:164-182` 负向测试（源年度留一期间 glStatus=OPEN，断言抛指定 ErrorCode），既有 4 happy path seed 已改 glStatus=CLOSED（:192-217）。(2) P1-MA2-033：`IErpFinPeriodCloseBiz:52` 声明 `@BizMutation openPeriod` → `ErpFinAccountingPeriodBizModel:61` Facade → `ErpFinAccountingPeriodProcessor.openPeriod:323-329` 实现（requirePeriod + `assertPeriodStatus(NEVER_OPENED,"开启")` 守卫 + 置 PERIOD_STATUS_OPEN + flush）；`TestErpFinPeriodStateMachine:114-130` 正向（NEVER_OPENED→OPEN）+ 负向（非 NEVER_OPENED 被守卫拒绝）。IBiz 先于实现声明（自检 P2 通过）。(3) P1-MA2-031：`docs/design/finance/state-machine.md:20/27-29/35-36/40-43/61-62/70-71/95/249-250` CANCELLED 标注为预留 dict 项（草稿废弃经 logical delete 承载）+ 红字凭证对齐为单边 isReversed 简化，与代码 isReversed/reverseVoucher 行为一致。docs/logs/2026/07-30.md 记录完成。文本一致性：Plan Status=completed、三 Phase Status=completed、Exit Criteria 全 [x]、Closure Gates 全 [x] 一致。
 
 Follow-up:
 
-- _（非阻塞跟进；已确认缺陷不得出现在此处）_
+- _（非阻塞跟进；已确认缺陷不得出现在此处，详见上方 Deferred But Adjudicated）_
