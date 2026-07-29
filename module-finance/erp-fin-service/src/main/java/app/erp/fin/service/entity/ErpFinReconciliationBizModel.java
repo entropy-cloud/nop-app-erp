@@ -2,6 +2,8 @@
 package app.erp.fin.service.entity;
 
 import app.erp.fin.biz.IErpFinReconciliationBiz;
+import app.erp.fin.biz.IErpFinVoucherBiz;
+import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.dto.AutoReconResult;
 import app.erp.fin.dao.dto.DualSideDiffReport;
 import app.erp.fin.dao.dto.ReconciliationLineInput;
@@ -11,10 +13,13 @@ import app.erp.fin.dao.entity.ErpFinReconciliation;
 import app.erp.fin.dao.entity.ErpFinReconciliationLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.close.CloseVoucherWriter;
+import app.erp.fin.service.close.CloseVoucherWriter.Line;
 import app.erp.fin.service.reconciliation.AutoReconciliationEngine;
 import app.erp.fin.service.reconciliation.DualSideConsistencyChecker;
 import app.erp.fin.service.reconciliation.PartnerBalanceUpdater;
 import app.erp.fin.service.reconciliation.ReconciliationSettler;
+import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -64,6 +69,8 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     AutoReconciliationEngine autoReconciliationEngine;
     @Inject
     DualSideConsistencyChecker dualSideConsistencyChecker;
+    @Inject
+    IErpFinVoucherBiz voucherBiz;
 
     @Override
     @BizMutation
@@ -129,7 +136,12 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
             validateLine(head, line, precision);
         }
 
-        settler.settle(head, lines);
+        if (isReconFxGainLossEnabled()) {
+            BigDecimal fxGainLoss = settler.settleWithFx(head, lines);
+            generateReconFxVoucher(head, fxGainLoss);
+        } else {
+            settler.settle(head, lines);
+        }
         head.setDocStatus(ErpFinConstants.RECON_STATUS_POSTED);
         head.setPostedAt(CoreMetrics.currentTimestamp());
         head.setPostedBy(context.getUserContext() != null ? context.getUserContext().getUserId() : null);
@@ -149,6 +161,7 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
         List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);
 
         settler.reverseSettle(lines);
+        reverseReconFxVoucher(head, context);
         head.setDocStatus(ErpFinConstants.RECON_STATUS_REVERSED);
 
         flushBeforeBalance();
@@ -379,6 +392,98 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
         return new NopException(ErpFinErrors.ERR_RECONCILIATION_STATUS_INVALID)
                 .param(ErpFinErrors.ARG_RECONCILIATION_ID, head.getId())
                 .param(ErpFinErrors.ARG_DOC_STATUS, head.getDocStatus());
+    }
+
+    // ---------- 多币种核销汇兑损益（R1.9 / P1-MA2-009） ----------
+
+    protected boolean isReconFxGainLossEnabled() {
+        return Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_RECON_FX_GAIN_LOSS_ENABLED, Boolean.FALSE));
+    }
+
+    /**
+     * 核销结算后生成已实现汇兑损益凭证（{@code ar-ap-reconciliation.md §汇兑损益核销规则}）。差额=0 不生成。
+     * 经 {@link CloseVoucherWriter} 直写（对齐 {@code ExchangeRevaluationService} 范式）。
+     */
+    protected void generateReconFxVoucher(ErpFinReconciliation head, BigDecimal fxGainLoss) {
+        if (fxGainLoss == null || fxGainLoss.compareTo(BigDecimal.ZERO) == 0) {
+            return;
+        }
+        boolean isReceivable = ErpFinConstants.DIRECTION_RECEIVABLE.equals(head.getDirection());
+        ErpMdSubject counterpart = requireReconSubject(isReceivable
+                ? ErpFinConstants.CONFIG_AR_SUBJECT_CODE : ErpFinConstants.CONFIG_AP_SUBJECT_CODE);
+        ErpMdSubject fxSubject = requireReconSubject(ErpFinConstants.CONFIG_FX_GAIN_LOSS_SUBJECT_CODE);
+
+        // 收益：借往来 / 贷汇兑损益；损失：借汇兑损益 / 贷往来。AR gain=fx>0；AP gain=fx<0。
+        boolean gain = isReceivable == (fxGainLoss.compareTo(BigDecimal.ZERO) > 0);
+        BigDecimal abs = fxGainLoss.abs();
+        String counterpartDc = gain ? ErpFinConstants.DC_DEBIT : ErpFinConstants.DC_CREDIT;
+        String fxDc = gain ? ErpFinConstants.DC_CREDIT : ErpFinConstants.DC_DEBIT;
+
+        List<Line> lines = new ArrayList<>();
+        lines.add(new Line(counterpart.getId(), counterpart.getCode(), counterpart.getName(),
+                counterpartDc, abs, head.getPartnerId()));
+        lines.add(new Line(fxSubject.getId(), fxSubject.getCode(), fxSubject.getName(), fxDc, abs, null));
+
+        CloseVoucherWriter.writeVoucher(daoProvider(), "RFX",
+                RECON_FX_BILL_CODE_PREFIX + head.getCode(),
+                ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(),
+                head.getOrgId(), head.getAcctSchemaId(), resolvePeriodId(head.getBusinessDate()), head.getCurrencyId(),
+                head.getExchangeRate() != null ? head.getExchangeRate() : BigDecimal.ONE,
+                head.getBusinessDate(), lines, "核销已实现汇兑损益");
+    }
+
+    /** 红冲核销汇兑损益凭证（若存在）。无 FX 凭证时静默跳过（兼容 config 关闭或差额=0 场景）。 */
+    protected void reverseReconFxVoucher(ErpFinReconciliation head, IServiceContext context) {
+        if (!hasFxVoucher(head)) {
+            return;
+        }
+        voucherBiz.reverse(RECON_FX_BILL_CODE_PREFIX + head.getCode(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS, context);
+    }
+
+    /** 检查是否存在该核销单的已过账 FX 凭证（经业财回链反查）。 */
+    protected boolean hasFxVoucher(ErpFinReconciliation head) {
+        IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherBillR> dao =
+                daoProvider().daoFor(app.erp.fin.dao.entity.ErpFinVoucherBillR.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("billCode", RECON_FX_BILL_CODE_PREFIX + head.getCode()));
+        q.addFilter(eq("businessType", ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name()));
+        q.setLimit(1);
+        return !dao.findAllByQuery(q).isEmpty();
+    }
+
+    protected ErpMdSubject requireReconSubject(String configKey) {
+        String code = AppConfig.var(configKey, null);
+        if (code == null || code.isEmpty()) {
+            throw new NopException(ErpFinErrors.ERR_CLOSE_SUBJECT_NOT_CONFIGURED)
+                    .param(ErpFinErrors.ARG_CONFIG_KEY, configKey);
+        }
+        IEntityDao<ErpMdSubject> dao = daoProvider().daoFor(ErpMdSubject.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", code));
+        q.setLimit(1);
+        List<ErpMdSubject> list = dao.findAllByQuery(q);
+        if (list.isEmpty()) {
+            throw new NopException(ErpFinErrors.ERR_CLOSE_SUBJECT_NOT_CONFIGURED)
+                    .param(ErpFinErrors.ARG_CONFIG_KEY, configKey);
+        }
+        return list.get(0);
+    }
+
+    static final String RECON_FX_BILL_CODE_PREFIX = "RECON-FX-";
+
+    /** 按业务日期解析所属会计期间 ID（FX 凭证需要 periodId 非空）。无匹配期间返回 null。 */
+    protected Long resolvePeriodId(LocalDate businessDate) {
+        if (businessDate == null) {
+            return null;
+        }
+        IEntityDao<app.erp.fin.dao.entity.ErpFinAccountingPeriod> dao =
+                daoProvider().daoFor(app.erp.fin.dao.entity.ErpFinAccountingPeriod.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(io.nop.api.core.beans.FilterBeans.le("startDate", businessDate));
+        q.addFilter(io.nop.api.core.beans.FilterBeans.ge("endDate", businessDate));
+        q.setLimit(1);
+        List<app.erp.fin.dao.entity.ErpFinAccountingPeriod> periods = dao.findAllByQuery(q);
+        return periods.isEmpty() ? null : periods.get(0).getId();
     }
 
     private static BigDecimal nz(BigDecimal v) {

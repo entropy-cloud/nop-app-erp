@@ -83,13 +83,17 @@ public class ErpFinArApItemGenerator {
                     .param(ErpFinErrors.ARG_SOURCE_BILL_CODE, event.getBillHeadCode())
                     .param(ErpFinErrors.ARG_SOURCE_BILL_TYPE, profile.sourceBillType);
         }
-        BigDecimal amountFunctional = resolveAmountFunctional(data, profile.sourceBillType);
-        if (amountFunctional == null) {
+        BigDecimal sourceAmount = resolveAmountFunctional(data, profile.sourceBillType);
+        if (sourceAmount == null) {
             throw new NopException(ErpFinErrors.ERR_AR_AP_ITEM_AMOUNT_MISSING)
                     .param(ErpFinErrors.ARG_SOURCE_BILL_CODE, event.getBillHeadCode())
                     .param(ErpFinErrors.ARG_SOURCE_BILL_TYPE, profile.sourceBillType);
         }
-        BigDecimal amountSource = asAmount(data.get("amountSource"), amountFunctional);
+        // R1.9（P1-MA2-002/009）：billData 承载源币种金额（resolveAmountFunctional 实读 source，方法名为历史遗留）。
+        // 本位币 = source × event.exchangeRate（posting.md:488 文档锁定汇率）。单币种 rate=ONE 时 source==functional 行为不变。
+        BigDecimal rate = event.getExchangeRate() != null ? event.getExchangeRate() : BigDecimal.ONE;
+        BigDecimal amountFunctional = sourceAmount.multiply(rate);
+        BigDecimal amountSource = asAmount(data.get("amountSource"), sourceAmount);
         LocalDate businessDate = asLocalDate(data.get("businessDate"), event.getVoucherDate());
         LocalDate dueDate = asLocalDate(data.get("dueDate"), null);
 

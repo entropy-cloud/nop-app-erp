@@ -241,6 +241,13 @@ public interface ErpFinConstants extends ErpFinDocStatus {
      */
     String CONFIG_NOTES_FX_GAIN_LOSS_ENABLED = "erp-fin.notes-fx-gain-loss-enabled";
 
+    /**
+     * 核销汇兑损益开关（R1.9 / P1-MA2-009）。默认 false——核销时双方辅助账按 line.settledAmountFunctional 同额结算（单币种行为）。
+     * 启用时核销结算按 per-item functional（settledSource × item.exchangeRate）分别回写，差额生成 EXCHANGE_GAIN_LOSS 凭证
+     * 并回写 {@code ErpFinReconciliation.fxGainLoss}（ar-ap-reconciliation.md §汇兑损益核销规则）。
+     */
+    String CONFIG_RECON_FX_GAIN_LOSS_ENABLED = "erp-fin.recon-fx-gain-loss-enabled";
+
     // ---- notes-type ----
     String NOTES_TYPE_BANK_ACCEPTANCE = "BANK_ACCEPTANCE";
     String NOTES_TYPE_COMMERCIAL_ACCEPTANCE = "COMMERCIAL_ACCEPTANCE";

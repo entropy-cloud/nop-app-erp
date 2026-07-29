@@ -38,8 +38,10 @@ import static io.nop.api.core.beans.FilterBeans.or;
  * <p><b>余量计算</b>（均从 {@link ErpFinVoucherLine} 聚合，不写 GlBalance）：
  * <ul>
  *   <li>{@code budgetBalance} = 关联凭证 {@code postingType=BUDGET} 的行在匹配维度（subjectId + costCenterId + periodId）的净额</li>
- *   <li>{@code actualBalance} = 关联凭证 {@code postingType=NORMAL}（含 NULL）的行在匹配维度的净额</li>
- *   <li>{@code availableAmount} = budgetBalance − actualBalance</li>
+ *   <li>{@code actualBalance} = 关联凭证 {@code postingType≠BUDGET}（含 NORMAL/NULL/<b>COMMITMENT</b>）的行在匹配维度的净额。
+ *       即承付款经 {@code actualBalance} 通道隐式减去（{@code or(isNull, ne(BUDGET))} 过滤器放行 COMMITMENT），
+ *       与 {@code budget.md:17,59} 三项式 {@code available = budget − commitment − actual} 等价（P1-MA3-025 MR1 核实 / P1-MA2-084）。</li>
+ *   <li>{@code availableAmount} = budgetBalance − actualBalance（= budget − commitment − actual）</li>
  * </ul>
  *
  * <p><b>控制级别</b>（来自命中的 APPROVED 预算方案 {@link ErpFinBudgetScenario#getControlLevel()}）：

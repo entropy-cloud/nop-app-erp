@@ -668,6 +668,8 @@ public class ErpFinPostingProcessor {
             copy.setSubjectName(f.getSubjectName());
             copy.setDcDirection(f.getDcDirection());
             copy.setAmount(f.getAmount());
+            copy.setAmountSource(f.getAmountSource());
+            copy.setAmountFunctional(f.getAmountFunctional());
             copy.setAmountKey(f.getAmountKey());
             copy.setAccountKey(f.getAccountKey());
             copy.setMemo(f.getMemo());
@@ -803,6 +805,10 @@ public class ErpFinPostingProcessor {
         int lineNo = 1;
         for (VoucherFact fact : facts) {
             BigDecimal amt = fact.getAmount() == null ? BigDecimal.ZERO : fact.getAmount();
+            // R1.9 / P1-MA3-039：amountSource/amountFunctional 由 Provider 显式传递（方案 A）。
+            // 未设置时 fallback 到 amount（单币种向后兼容：source==functional==amount）。
+            BigDecimal amtSource = fact.getAmountSource() != null ? fact.getAmountSource() : amt;
+            BigDecimal amtFunctional = fact.getAmountFunctional() != null ? fact.getAmountFunctional() : amt;
             ErpFinVoucherLine line = lineDao.newEntity();
             line.setVoucherId(voucherId);
             line.setLineNo(lineNo++);
@@ -811,12 +817,13 @@ public class ErpFinPostingProcessor {
             line.setSubjectName(fact.getSubjectName());
             line.setDcDirection(fact.getDcDirection());
             boolean isCredit = fact.getDcDirection() != null && Objects.equals(fact.getDcDirection(), DC_CREDIT);
-            line.setDebitAmount(isCredit ? BigDecimal.ZERO : amt);
-            line.setCreditAmount(isCredit ? amt : BigDecimal.ZERO);
+            // GL 借贷按本位币（功能金额）记账——试算平衡以本位币为准。
+            line.setDebitAmount(isCredit ? BigDecimal.ZERO : amtFunctional);
+            line.setCreditAmount(isCredit ? amtFunctional : BigDecimal.ZERO);
             line.setCurrencyId(currencyId);
             line.setExchangeRate(exchangeRate);
-            line.setAmountSource(amt);
-            line.setAmountFunctional(amt);
+            line.setAmountSource(amtSource);
+            line.setAmountFunctional(amtFunctional);
             line.setAcctSchemaId(acctSchemaId);
             line.setMemo(fact.getMemo());
             line.setBusinessType(businessType != null ? businessType.name()
