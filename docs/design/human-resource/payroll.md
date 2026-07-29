@@ -367,6 +367,8 @@
 | 发放执行 | `paymentStatus` | PENDING / PAID / VOID | 业务代码（`markPaid`/`voidSalary`） |
 | 业财过账 | `posted` | boolean | `PostingDispatcher` |
 
+> **`posted` 字段实现状态（Deferred，P1-MA2-047，与 R1.26 协同）**：`ErpHrSalary.posted` 列存在（ORM，BOOLEAN，默认 false），但本期**无 `setPosted` writer**——`SalaryPostingDispatcher.tryPostPayment`（SALARY_PAYMENT 280）在 markPaid 时被调用但未回写 `posted`；`tryPostAccrual`（SALARY 计提）为零调用方死代码。`posted` 字段当前为 Deferred。**Successor = R1.26（P1-MA4-017）**：接线计提 SALARY + 公司承担社保/公积金（SOCIAL_INSURANCE_ER 290 / HOUSING_FUND_ER 300）过账链路时，激活计提调用方并写入 `posted=true`。本计划不写 posted writer（留给 R1.26）。
+
 **多级审批链**（HR 复核 → 财务审批 → 经理审批）不在 `approveStatus` 中编码，而是通过 nop-wf 的 **WORKFLOW 模式**实现：
 - 实体标 `tagSet="use-approval"` + `useWorkflow="true"`
 - xmeta 配 `wf:wfName="salary-approval"`
@@ -437,6 +439,8 @@
 ---
 
 ## 七、银行文件生成（ErpHrPayrollBankFile）
+
+> **实现状态（Deferred，P1-MA2-045）**：`ErpHrPayrollBankFileBizModel` 为 CrudBizModel 桩（18 行，零状态机 mutation）。`bankFileId` 关联与本节 §7.3 生成流程（`paymentStatus=PENDING 且 approveStatus=APPROVED` → 生成银行文件 → 标记 PAID）为**目标行为，未落地**。`status` 字段 dict 值 `GENERATED/UPLOADED/CONFIRMED` 为**预留死状态**——本期零 `setStatus` writer，无上传/确认 mutation。**Successor**：config-gated 银行文件生成/上传确认流落地时实现 setStatus writer + 状态迁移守卫。
 
 ### 7.1 实体
 
