@@ -850,3 +850,52 @@ quotation → order → delivery → invoice → receipt
 - `docs/design/finance/posting.md` — 业财一体过账机制（§4 的业务设计依据）
 - `docs/analysis/2026-06-22-0000-cross-domain-coupling-vs-microservice.md` §9 — 13 项目跨模块引用机制实测（本文 §5 的横向依据）
 - `<domain>/model/app-erp-<domain>.orm.xml` — 各域权威数据模型（本文 §3-6 的字段来源）
+
+## 9. 跨域只读访问裁决（daoFor 读侧治理）
+
+> **本节定位**：跨域 `IDaoProvider.daoFor(Other*).getEntityById/findAllByQuery`（只读直访）的统一治理裁决。
+> **来源**：MA1（A1.10 DAG / A1.14 架构治理复审）+ MA4（A4.1a-A4.5 代码质量）共 8 项读侧 P1 finding 的统一裁决（plan `2026-07-29-2225-1`）。
+> **裁决依据**：`docs/analysis/governed-path-cost-evaluation.md`（§3.1 裁决分支 b：I*Biz 强注入破坏单模块测试启动）+ 本节 §2.2/§5.6.2 的 Maven 依赖实测。
+> **范围边界**：本节仅登记**读侧**裁决。**写侧**跨域豁免登记在 `posting-exemptions.md`（保持纯写侧范围，不扩展）。
+
+### 9.1 裁决原则
+
+读侧 daoFor 直访按**目标域**分两类裁决：
+
+| 目标域类型 | governed-path 成本 | 裁决 | 依据 |
+|---|---|---|---|
+| **master-data**（DAG 根域） | 不适用（md 是根，无级联业务 service 依赖；md-service 已在多数域 compile-scope classpath） | **可迁移至 `IErpMd*Biz`** 便捷只读方法（命名 successor 计划条件，不在本节执行迁移） | governed-path eval §2.2：md 是 DAG 根，注入不触发级联依赖链 |
+| **finance/inventory/manufacturing/sales/assets**（业务域） | 适用分支 (b)（强注入破坏单模块测试启动） | **登记为永久只读豁免**（受平台 lazy/SPI 解耦阻塞） | governed-path eval §3.1 裁决分支 b |
+
+> **md-service classpath 实测校正**（2026-07-29）：md-service 在 **15 个业务域为 compile-scope**（pur/sal/inv/ast/mfg/mnt/qa/prj/drp/hr/crm/cs/ct/b2b/aps），**仅 finance-service 与 logistics-service 为 test-scope**（注释：「单域测试 ORM 模型可加载」）。因此 md-target 迁移对 finance/logistics 需额外前置条件（test→compile scope 提升），其余 13 域可直接迁移。
+
+### 9.2 读侧 8 项 P1 finding 分类裁决明细
+
+| Finding ID | 方向 | 目标域 | 处数¹ | 裁决 | Successor 条件 |
+|---|---|---|---|---|---|
+| **P1-MA1-016** | finance→assets | assets | 1（`ErpFinAccountingPeriodProcessor:385` `daoFor(ErpAstDepreciationSchedule).findAllByQuery`） | **永久只读豁免** | nop-entropy lazy/SPI 解耦后重新评估。注：该站点写已走 I*Biz（`bizObjectManager.getBizObject(...)` :383 发起 `reverseDepreciation` command），仅残留按期间查已过账折旧的 `findAllByQuery` 读 |
+| **P1-MA1-022** | 9 域→md/fin/inv/mfg | md（多数）+ fin/inv/mfg | md 子集 ~30+ / fin·inv·mfg 子集 ~10 | **md 子集=可迁移**（13 域 md-service compile-scope）/ **fin·inv·mfg 子集=永久只读豁免** | md 迁移 successor：开按域分批计划替换 `daoFor(ErpMd*)` → `@Inject IErpMd*Biz`；fin/inv/mfg successor：nop-entropy lazy/SPI |
+| **P1-MA4-003** | finance→md | md | ~6（VoucherFact ErpMdSubject 解析等过账链路投影） | **可迁移**（前置：fin-service md-service test→compile scope 提升） | successor：先提升 md-service scope（验证单模块测试仍绿，md 是根无级联），再迁移 6 站点为 `IErpMdSubjectBiz` |
+| **P1-MA4-006** | finance→md/pur/sal/ast | md + pur/sal + ast | md 子集 ~20（实测 31 站点含 budget/AR-AP/cost/period helpers）/ pur·sal 子集 2（`DualSideConsistencyChecker:133,141`）/ ast 子集 1（=P1-MA1-016） | **md 子集=可迁移**（同 P1-MA4-003 scope 前置）/ **pur·sal 子集=永久只读豁免** / **ast 子集=永久只读豁免**（与 P1-MA1-016 合并） | md 迁移 successor：同 P1-MA4-003；pur/sal/ast successor：nop-entropy lazy/SPI |
+| **P1-MA4-008** | mfg→inv/md | md + inv | md 子集 / inv 子集 ~5（`SubcontractPostingDispatcher:259,270` + `ManufacturingIssuePostingDispatcher:163,174` + `KitAvailabilityChecker:107`） | **md 子集=可迁移**（mfg-service md-service compile-scope）/ **inv 子集=永久只读豁免** | md 迁移 successor：按域分批；inv successor：nop-entropy lazy/SPI |
+| **P1-MA4-012** | mfg→inv/md/sal | md + inv + sal | md 子集 / inv 子集（`DemandAggregator:238` `MrpEngine:213` `SimulationMrpEngine:415`）/ sal 子集（`SubcontractPostingDispatcher`/`DemandAggregator` daoFor ErpSal*） | **md 子集=可迁移** / **inv·sal 子集=永久只读豁免** | md 迁移 successor：按域分批；inv/sal successor：nop-entropy lazy/SPI |
+| **P1-MA4-015** | assets→fin/md | fin + md | fin 子集 1（`ErpAstDepreciationScheduleProcessor:290` `daoFor(ErpFinAccountingPeriod)`）/ md 子集 ~9（9 dispatcher ErpMdSubject） | **fin 子集=永久只读豁免** / **md 子集=可迁移**（ast-service md-service compile-scope） | fin successor：nop-entropy lazy/SPI；md 迁移 successor：按域分批 |
+| **P1-MA4-022** | pur/sal/inv→md/fin | md + fin | md 子集 / fin 子集 | **md 子集=可迁移**（pur/sal/inv md-service compile-scope）/ **fin 子集=永久只读豁免** | md 迁移 successor：按域分批；fin successor：nop-entropy lazy/SPI |
+
+¹ 处数为裁决时实测估算（grep + 审计报告），精确计数由 successor 迁移计划落地时核实。Dashboard/Report facade 只读聚合维持既有「永久接受」裁决（无需额外登记）。
+
+### 9.3 裁决汇总
+
+| 裁决类别 | 目标域 | 估算处数 | Successor |
+|---|---|---|---|
+| **可迁移至 I*Biz** | master-data（DAG 根，13 域 compile-scope） | ~65+（8 finding 的 md 子集合计） | 开按域分批迁移计划（替换 `daoFor(ErpMd*)` → `@Inject IErpMd*Biz`） |
+| **可迁移（前置 scope 提升）** | master-data（finance/logistics test-scope） | ~26（P1-MA4-003/006 的 finance→md 子集） | successor 先提升 md-service test→compile，验证单模块测试，再迁移 |
+| **永久只读豁免** | finance/inventory/manufacturing/sales/assets | ~20（8 finding 的 fin/inv/mfg/sal/ast 子集） | nop-entropy 平台层 lazy/SPI 解耦后重新评估（governed-path eval §3.3） |
+
+### 9.4 选择记录与残留风险
+
+- **为何不全部迁移**：governed-path eval §3.1 实测裁决分支 (b)——fin/inv/mfg 目标域的 I*Biz 强注入破坏单模块测试启动（contract/aps 两域零跨域 I*Biz 注入→测试全绿；反事实：注入则级联依赖链致 `NoSuchBeanException`）。在 nop-entropy 提供平台 lazy/SPI 解耦前，这些目标域只能登记为永久豁免。
+- **为何 md 可迁移**：md 是 DAG 根域，md-service 无级联业务 service 依赖，注入 `IErpMd*Biz` 仅引入 md-service 自身（已在多数域 compile-scope），不触发级联失败。
+- **残留风险 1**：finance/logistics 的 md-target 迁移需先提升 md-service scope。虽 md 是根无级联，但 scope 提升可能引入测试期 bean 组装变化，须 successor 验证单模块测试全绿。
+- **残留风险 2**：md 迁移为 `IErpMd*Biz` 便捷只读方法时，若目标 I*Biz 缺少合适的只读方法（如 `findByCode`/`findByIds`），需在 `IErpMd*Biz` 接口新增（属 md-dao 接口扩展，需 owner doc 授权）。
+- **残留风险 3**：全部 8 项 finding 经 MA2 状态机运行时复核确认「仅治理缺陷，不破坏运行时正确性」——读侧 daoFor 返回的是托管实体，读语义与 I*Biz 等价，差异仅在「绕过目标域业务规则封装」（读侧业务规则通常为空或已由调用方保证）。
