@@ -158,7 +158,7 @@
 | R1.20 | **[P1-MA2-066 方案A ORM ask-first]** qa 业务作废联动取消未落地 + dict 死状态/CRUD 桩 + NCR resolve 允许无 CAPA — P1-MA2-064/065/066；修复=cancelForBusinessBill Facade+删 dict 死状态+NCR noCapaReason 门控 | done | `docs/design/quality/state-machine.md`+`inspection-integration.md` | R1.0 | none |
 | R1.21 | **[xbiz 契约]** prj closeProject 缺任务结束校验 + startProject 缺前置 + Milestone/Billing/CostCollection dict 死状态 — P1-MA2-067/069/070；修复=加任务结束前置+字段校验+dict 独立化 or owner doc Deferred | done | `docs/design/projects/state-machine.md` | R1.0 | none |
 | R1.22 | contract 自动到期 Job 缺失 + NEGOTIATION→TERMINATED 迁移缺失 — P1-MA2-071/072；修复=实现 ErpCtContractExpiryJob+扩展 terminate 守卫 or owner doc 标注 | done | `docs/design/contract/state-machine.md` | R1.0 | none |
-| R1.23 | b2b EDI 出站自动化全部缺失（config-gated OFF 默认）— P1-MA2-073；修复=owner doc Deferred 标注（MFT transport successor）or 实现 ErpB2bEdiOutboundJob | todo | `docs/design/b2b/state-machine.md` | R1.0 | none |
+| R1.23 | b2b EDI 出站自动化全部缺失（config-gated OFF 默认）— P1-MA2-073；修复=owner doc Deferred 标注（MFT transport successor）or 实现 ErpB2bEdiOutboundJob | done | `docs/design/b2b/state-machine.md` | R1.0 | none |
 | R1.24 | crm stageId 单向递增守卫未实现 + Event reminderMinutesBefore 死字段 — P1-MA2-075/076；修复=增 sequence 方向守卫+用 per-event reminderMinutesBefore or owner doc 更新 | todo | `docs/design/crm/state-machine.md` | R1.0 | none |
 | R1.25 | aps/logistics OperationOrder 缺状态守卫 + cancel 缺审批门控 + 部分签收未实现 — P1-MA2-077/078/079；修复=加 status 守卫+审批门控+owner doc Deferred | todo | `docs/design/{aps,logistics}/state-machine.md` | R1.0 | none |
 | R1.26 | **[会计+薪酬保护区域]** hr 个税高档税率 NPE + 累计数据静默吞 + 业财过账链路不完整（计提+公司承担 PostingEvent 永不生成）— P1-MA4-016/017/018；修复=null 防御+移除静默吞+接线 tryPostAccrual+ER event | todo | `docs/design/human-resource/payroll.md` | R1.0 | none |
