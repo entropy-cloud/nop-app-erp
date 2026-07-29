@@ -213,6 +213,7 @@ prop:
       postedAt: Posted At
       postedBy: Posted By
       returnCode: Related Return Code
+      noCapaReason: No Capa Reason
       actions: Actions
       inspection: Inspection
       material: null

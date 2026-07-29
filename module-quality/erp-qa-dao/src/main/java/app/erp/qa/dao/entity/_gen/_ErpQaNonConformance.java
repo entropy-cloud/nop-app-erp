@@ -149,8 +149,12 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     public static final String PROP_NAME_returnCode = "returnCode";
     public static final int PROP_ID_returnCode = 32;
     
+    /* 无 CAPA 原因(误开/降级 NCR 显式标注): NO_CAPA_REASON VARCHAR */
+    public static final String PROP_NAME_noCapaReason = "noCapaReason";
+    public static final int PROP_ID_noCapaReason = 33;
+    
 
-    private static int _PROP_ID_BOUND = 33;
+    private static int _PROP_ID_BOUND = 34;
 
     
     /* relation:  */
@@ -169,7 +173,7 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[33];
+    private static final String[] PROP_ID_TO_NAME = new String[34];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -269,6 +273,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_returnCode] = PROP_NAME_returnCode;
           PROP_NAME_TO_ID.put(PROP_NAME_returnCode, PROP_ID_returnCode);
       
+          PROP_ID_TO_NAME[PROP_ID_noCapaReason] = PROP_NAME_noCapaReason;
+          PROP_NAME_TO_ID.put(PROP_NAME_noCapaReason, PROP_ID_noCapaReason);
+      
     }
 
     
@@ -367,6 +374,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     
     /* 关联退货单号(RETURN 处置编排退货域后登记): RETURN_CODE */
     private java.lang.String _returnCode;
+    
+    /* 无 CAPA 原因(误开/降级 NCR 显式标注): NO_CAPA_REASON */
+    private java.lang.String _noCapaReason;
     
 
     public _ErpQaNonConformance(){
@@ -537,6 +547,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_returnCode:
                return getReturnCode();
+        
+            case PROP_ID_noCapaReason:
+               return getNoCapaReason();
         
            default:
               return super.orm_propValue(propId);
@@ -869,6 +882,16 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_noCapaReason:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_noCapaReason));
+               }
+               setNoCapaReason(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -1098,6 +1121,13 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             case PROP_ID_returnCode:{
                onInitProp(propId);
                this._returnCode = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_noCapaReason:{
+               onInitProp(propId);
+               this._noCapaReason = (java.lang.String)value;
                
                break;
             }
@@ -1712,6 +1742,25 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_returnCode,value)){
             this._returnCode = value;
             internalClearRefs(PROP_ID_returnCode);
+            
+        }
+    }
+    
+    /**
+     * 无 CAPA 原因(误开/降级 NCR 显式标注): NO_CAPA_REASON
+     */
+    public final java.lang.String getNoCapaReason(){
+         onPropGet(PROP_ID_noCapaReason);
+         return _noCapaReason;
+    }
+
+    /**
+     * 无 CAPA 原因(误开/降级 NCR 显式标注): NO_CAPA_REASON
+     */
+    public final void setNoCapaReason(java.lang.String value){
+        if(onPropSet(PROP_ID_noCapaReason,value)){
+            this._noCapaReason = value;
+            internalClearRefs(PROP_ID_noCapaReason);
             
         }
     }

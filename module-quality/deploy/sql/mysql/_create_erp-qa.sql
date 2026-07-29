@@ -325,6 +325,7 @@ CREATE TABLE erp_qa_non_conformance(
   POSTED_AT DATETIME(3) NULL    COMMENT '过账时间',
   POSTED_BY VARCHAR(36) NULL    COMMENT '过账人',
   RETURN_CODE VARCHAR(50) NULL    COMMENT '关联退货单号(RETURN 处置编排退货域后登记)',
+  NO_CAPA_REASON VARCHAR(500) NULL    COMMENT '无 CAPA 原因(误开/降级 NCR 显式标注)',
   constraint PK_erp_qa_non_conformance primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 

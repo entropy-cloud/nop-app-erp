@@ -150,6 +150,10 @@
               updatable="true">
             <schema type="java.lang.String" precision="50"/>
         </prop>
+        <prop name="noCapaReason" displayName="无 CAPA 原因(误开/降级 NCR 显式标注)" propId="33"
+              i18n-en:displayName="No Capa Reason" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
         <prop name="actions" i18n-en:displayName="Actions" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="ncrId" insertable="true"
               updatable="true" lazy="true">

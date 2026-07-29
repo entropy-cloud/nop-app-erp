@@ -195,6 +195,7 @@ prop:
       materialId: 物料
       measuredValue: 实测值
       ncrDate: 报告日期
+      noCapaReason: 无 CAPA 原因(误开/降级 NCR 显式标注)
       parameterName: 不合格参数
       posted: 已过账(报废处置已生成凭证)
       postedAt: 过账时间

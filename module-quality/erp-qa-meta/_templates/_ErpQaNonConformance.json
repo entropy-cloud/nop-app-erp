@@ -34,6 +34,7 @@
   "postedAt": "2000-01-01 14:00:00",
   "postedBy": "",
   "returnCode": "",
+  "noCapaReason": "",
   "actions": null,
   "inspection": null,
   "material": null,

@@ -380,6 +380,7 @@
                 <column name="postedAt" displayName="过账时间" tagSet="clock" stdSqlType="TIMESTAMP" code="POSTED_AT" propId="30" i18n-en:displayName='Posted At'  ui:show="R"/>
                 <column name="postedBy" stdDomain="userId" displayName="过账人" stdSqlType="VARCHAR" precision="36" code="POSTED_BY" propId="31" stdDataType="string" i18n-en:displayName='Posted By'  ui:show="R"/>
                 <column name="returnCode" displayName="关联退货单号(RETURN 处置编排退货域后登记)" stdSqlType="VARCHAR" precision="50" code="RETURN_CODE" propId="32" stdDataType="string" i18n-en:displayName='Related Return Code' />
+                <column name="noCapaReason" displayName="无 CAPA 原因(误开/降级 NCR 显式标注)" stdSqlType="VARCHAR" precision="500" code="NO_CAPA_REASON" propId="33" stdDataType="string" i18n-en:displayName='No Capa Reason' />
             </columns>
             <relations>
                 <to-many name="actions" refEntityName="app.erp.qa.dao.entity.ErpQaAction" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Actions' ext:estRows="10"><join><on leftProp="id" rightProp="ncrId"/></join></to-many>

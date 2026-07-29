@@ -325,6 +325,7 @@ CREATE TABLE erp_qa_non_conformance(
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(36)  ,
   return_code VARCHAR(50)  ,
+  no_capa_reason VARCHAR(500)  ,
   constraint PK_erp_qa_non_conformance primary key (id)
 );
 
@@ -963,6 +964,8 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_non_conformance.posted_by IS '过账人';
                     
       COMMENT ON COLUMN erp_qa_non_conformance.return_code IS '关联退货单号(RETURN 处置编排退货域后登记)';
+                    
+      COMMENT ON COLUMN erp_qa_non_conformance.no_capa_reason IS '无 CAPA 原因(误开/降级 NCR 显式标注)';
                     
       COMMENT ON TABLE erp_qa_spc_sample IS 'SPC 样本数据';
                 

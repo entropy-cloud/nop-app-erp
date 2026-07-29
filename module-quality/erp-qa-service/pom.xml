@@ -94,6 +94,15 @@
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <!-- test-only: quality→finance 编译依赖引入 ErpFinPostingExceptionBizModel（注入 IErpSysNotificationBiz）。
+             app-erp-all 聚合时由 app 层提供；单域测试需引入 notify-service 以注册 notify Bean，使容器初始化可解析
+             IErpSysNotificationBiz 注入（对齐 module-finance/erp-fin-service/pom.xml 同型 test 依赖）。 -->
+        <dependency>
+            <artifactId>app-erp-notify-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
         <!-- 注：不引入 app-erp-sales-service（test）——sales-service 已反向 test 依赖 quality-service，
              再引入会形成 reactor 环。召回批量退货测试改用 test-mock-sales.beans.xml 桩。 -->
 

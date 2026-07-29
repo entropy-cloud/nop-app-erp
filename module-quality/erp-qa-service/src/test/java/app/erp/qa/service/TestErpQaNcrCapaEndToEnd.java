@@ -75,8 +75,8 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
         rpcOk(mutation, "ErpQaNonConformance__submitReview", Map.of("ncrId", ncrId));
         assertEquals(ErpQaConstants.NCR_STATUS_IN_REVIEW, reloadNcr(ncrId).getStatus());
 
-        // 3. resolve 前无 CAPA → 门控通过？本实现：无措施允许 resolve（评审人保证）；但本场景不合格应有措施，
-        //    先验证「有未完成 CAPA 时 resolve 被拒」：创建一个 PENDING 措施后 resolve 应拒绝
+        // 3. 验证「有未完成 CAPA 时 resolve 被拒」：创建一个 PENDING 措施后 resolve 应拒绝
+        //    （无措施 resolve 门控见 testResolveNoCapaGate）
         Long actionId = seedAction(ncrId, ErpQaConstants.ACTION_STATUS_PENDING);
         ApiResponse<?> blocked = rpc(mutation, "ErpQaNonConformance__resolve",
                 Map.of("ncrId", ncrId, "resolution", "尝试解决"));
@@ -152,6 +152,33 @@ public class TestErpQaNcrCapaEndToEnd extends JunitAutoTestCase {
                 Map.of("ncrId", ncrId, "resolution", "x"));
         assertEquals(ErpQaErrors.ERR_INVALID_NCR_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
                 "OPEN→RESOLVED 非法");
+    }
+
+    @Test
+    public void testResolveNoCapaGate() {
+        // 无 CAPA 措施时 resolve 门控：须显式提供 noCapaReason（误开/降级场景）
+        Long insId = seedPendingInspection("INS-NOCAPA", "10", "20");
+        recordResult(insId, "5", false);
+        ErpQaNonConformance ncr = findNcrBySourceCode(
+                daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId).getCode());
+        Long ncrId = ncr.getId();
+        rpcOk(mutation, "ErpQaNonConformance__submitReview", Map.of("ncrId", ncrId));
+
+        // (2) 无 CAPA + noCapaReason 空 → ERR_NCR_RESOLVE_NO_CAPA
+        ApiResponse<?> blocked = rpc(mutation, "ErpQaNonConformance__resolve",
+                Map.of("ncrId", ncrId, "resolution", "误开关闭"));
+        assertEquals(ErpQaErrors.ERR_NCR_RESOLVE_NO_CAPA.getErrorCode(), blocked.getCode(),
+                "无 CAPA + 缺 noCapaReason 时 resolve 拒绝");
+
+        // (3) 无 CAPA + noCapaReason 非空 → resolve 成功 + noCapaReason 落库
+        Map<String, Object> okArgs = new LinkedHashMap<>();
+        okArgs.put("ncrId", ncrId);
+        okArgs.put("resolution", "误开 NCR，无 CAPA 关闭");
+        okArgs.put("noCapaReason", "误开：复检合格，无需纠正措施");
+        rpcOk(mutation, "ErpQaNonConformance__resolve", okArgs);
+        ErpQaNonConformance resolved = reloadNcr(ncrId);
+        assertEquals(ErpQaConstants.NCR_STATUS_RESOLVED, resolved.getStatus(), "resolve 成功");
+        assertEquals("误开：复检合格，无需纠正措施", resolved.getNoCapaReason(), "noCapaReason 落库");
     }
 
     // ---------- helpers ----------

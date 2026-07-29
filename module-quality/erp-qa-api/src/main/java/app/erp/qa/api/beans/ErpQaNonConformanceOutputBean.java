@@ -498,6 +498,20 @@
         }
 
 
+        private String _noCapaReason;
+
+    
+        @PropMeta(propId=33)
+    
+        public String getNoCapaReason(){
+            return _noCapaReason;
+        }
+
+        public void setNoCapaReason(String value){
+            this._noCapaReason = value;
+        }
+
+
         private List<Map<String,Object>> _actions;
 
         public List<Map<String,Object>> getActions(){

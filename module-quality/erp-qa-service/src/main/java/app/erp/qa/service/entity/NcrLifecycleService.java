@@ -9,6 +9,7 @@ import app.erp.qa.service.ErpQaErrors;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -28,7 +29,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * （NCR resolve 门控 + NCR 自动生成）。
  *
  * <p>本类为非 BizModel 服务助手（对齐 KitAvailabilityChecker 范式），直接用 {@link IDaoProvider}
- * 操作 NCR/Action 实体。resolve 门控经 {@link #allActionsCompletedAndVerified(Long)} 校验。
+ * 操作 NCR/Action 实体。resolve 门控经 {@link #allActionsCompletedAndVerified} 校验：
+ * 无 CAPA 措施时须显式提供 {@code noCapaReason}（误开/降级场景）才放行，否则抛
+ * {@code ERR_NCR_RESOLVE_NO_CAPA}；有措施时必须全 COMPLETED + 验证人/验证日期。
  */
 public class NcrLifecycleService {
 
@@ -92,13 +95,14 @@ public class NcrLifecycleService {
         return first ? "质检不合格" : sb.toString();
     }
 
-    boolean allActionsCompletedAndVerified(Long ncrId) {
-        List<ErpQaActionImpl> actions = loadActions(ncrId);
+    boolean allActionsCompletedAndVerified(Long ncrId, String noCapaReason) {
+        return actionsGatePassed(loadActions(ncrId), noCapaReason);
+    }
+
+    private boolean actionsGatePassed(List<ErpQaActionImpl> actions, String noCapaReason) {
         if (actions.isEmpty()) {
-            // 无 CAPA 措施：允许 resolve（NCR 可无措施直接关闭，如误开评审后作废场景由 cancel 走）
-            // 但 resolve 语义要求 CAPA 闭环——若确有不合格应有措施。这里允许无措施 resolve，
-            // 由评审人保证；有措施时必须全完成+验证。
-            return true;
+            // 无 CAPA 措施：须显式提供 noCapaReason（误开/降级场景）才放行；否则禁止无标注直接关闭。
+            return StringHelper.isNotBlank(noCapaReason);
         }
         for (ErpQaActionImpl a : actions) {
             if (a.status == null || !Objects.equals(a.status, ErpQaConstants.ACTION_STATUS_COMPLETED)) {
@@ -127,12 +131,18 @@ public class NcrLifecycleService {
         return result;
     }
 
-    /** 校验 NCR resolve 门控失败时抛异常。 */
-    public void requireResolveGate(Long ncrId, String ncrCode) {
-        if (!allActionsCompletedAndVerified(ncrId)) {
-            throw new NopException(ErpQaErrors.ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED)
+    /** 校验 NCR resolve 门控失败时抛异常：无措施缺 noCapaReason 抛 ERR_NCR_RESOLVE_NO_CAPA；有措施未完成/验证抛 ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED。 */
+    public void requireResolveGate(Long ncrId, String ncrCode, String noCapaReason) {
+        List<ErpQaActionImpl> actions = loadActions(ncrId);
+        if (actionsGatePassed(actions, noCapaReason)) {
+            return;
+        }
+        if (actions.isEmpty()) {
+            throw new NopException(ErpQaErrors.ERR_NCR_RESOLVE_NO_CAPA)
                     .param(ErpQaErrors.ARG_NCR_CODE, ncrCode);
         }
+        throw new NopException(ErpQaErrors.ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED)
+                .param(ErpQaErrors.ARG_NCR_CODE, ncrCode);
     }
 
     private static final class ErpQaActionImpl {

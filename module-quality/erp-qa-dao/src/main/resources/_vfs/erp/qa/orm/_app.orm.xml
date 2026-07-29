@@ -563,6 +563,9 @@
                         ui:show="R"/>
                 <column code="RETURN_CODE" displayName="关联退货单号(RETURN 处置编排退货域后登记)" name="returnCode" precision="50"
                         propId="32" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Related Return Code"/>
+                <column code="NO_CAPA_REASON" displayName="无 CAPA 原因(误开/降级 NCR 显式标注)" name="noCapaReason"
+                        precision="500" propId="33" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="No Capa Reason"/>
             </columns>
             <indexes>
                 <index name="IDX_QA_NON_CONFORMANCE_STATUS" unique="false">

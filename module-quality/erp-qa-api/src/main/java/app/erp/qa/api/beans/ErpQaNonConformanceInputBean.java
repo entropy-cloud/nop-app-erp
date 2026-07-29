@@ -335,6 +335,20 @@
         }
 
 
+        private String _noCapaReason;
+
+    
+        @PropMeta(propId=33)
+    
+        public String getNoCapaReason(){
+            return _noCapaReason;
+        }
+
+        public void setNoCapaReason(String value){
+            this._noCapaReason = value;
+        }
+
+
         private List<ErpQaActionInputBean> _actions;
 
         public List<ErpQaActionInputBean> getActions(){

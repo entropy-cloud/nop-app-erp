@@ -13,8 +13,10 @@ import app.erp.qa.service.posting.NcrReturnOrchestrator;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 import java.util.Objects;
@@ -84,14 +86,18 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
     @BizMutation
     public ErpQaNonConformance resolve(@Name("ncrId") Long ncrId,
                                        @Name("resolution") String resolution,
+                                       @Optional @Name("noCapaReason") String noCapaReason,
                                        IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
         requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_IN_REVIEW, "IN_REVIEW");
-        // CAPA 闭环门控：全部措施 COMPLETED + 验证人/验证日期已填
-        ncrLifecycleService.requireResolveGate(ncrId, ncr.getCode());
+        // CAPA 闭环门控：有措施须全 COMPLETED + 验证人/验证日期；无措施须显式提供 noCapaReason（误开/降级场景）
+        ncrLifecycleService.requireResolveGate(ncrId, ncr.getCode(), noCapaReason);
         ncr.setStatus(ErpQaConstants.NCR_STATUS_RESOLVED);
         if (resolution != null) {
             ncr.setResolution(resolution);
+        }
+        if (StringHelper.isNotBlank(noCapaReason)) {
+            ncr.setNoCapaReason(noCapaReason);
         }
         ncr.setResolvedAt(CoreMetrics.currentTimestamp());
         updateEntity(ncr, null, context);

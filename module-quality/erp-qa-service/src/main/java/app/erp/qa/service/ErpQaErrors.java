@@ -64,6 +64,11 @@ public interface ErpQaErrors {
             "NCR[{ncrCode}]存在未完成（含 PENDING/IN_PROGRESS）或未验证（缺验证人/验证日期）的 CAPA 措施，禁止解决",
             ARG_NCR_CODE);
 
+    ErrorCode ERR_NCR_RESOLVE_NO_CAPA = ErrorCode.define(
+            "erp.err.qa.ncr.resolve-no-capa",
+            "NCR[{ncrCode}]无 CAPA 措施时 resolve 须提供 noCapaReason（误开/降级场景显式标注），禁止无标注直接关闭",
+            ARG_NCR_CODE);
+
     ErrorCode ERR_ACTION_NOT_FOUND = ErrorCode.define(
             "erp.err.qa.action.not-found",
             "纠正措施不存在: {actionId}",
