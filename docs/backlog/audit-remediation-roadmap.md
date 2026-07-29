@@ -115,9 +115,9 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| A6.1 | 全域 @BizMutation/@BizQuery 权限注解完整性 grep | todo | `docs/design/roles-and-permissions.md` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
-| A6.2 | finance+mfg+pur+sal 权限深度抽样 | todo | `docs/design/roles-and-permissions.md` | A6.1 | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A6.3 | 数据权限运行验证（orgId/角色隔离抽样） | todo | `docs/design/roles-and-permissions.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A6.1 | 全域 @BizMutation/@BizQuery 权限注解完整性 grep | ready | `docs/design/roles-and-permissions.md` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
+| A6.2 | finance+mfg+pur+sal 权限深度抽样 | ready | `docs/design/roles-and-permissions.md` | A6.1 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A6.3 | 数据权限运行验证（orgId/角色隔离抽样） | ready | `docs/design/roles-and-permissions.md` | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A6.4 | **保护区域纪律审计**（accounting 过账 / data deletion 是否有 owner doc + 测试 + plan-audit 证据） | todo | `docs/context/ai-autonomy-policy.md` §保护区域 | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 
 ### Milestone MA7 — 运维与性能层审计
