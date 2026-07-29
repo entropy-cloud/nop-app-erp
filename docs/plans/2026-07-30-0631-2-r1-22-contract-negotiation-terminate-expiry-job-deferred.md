@@ -1,6 +1,6 @@
 # 2026-07-30-0631-2-r1-22-contract-negotiation-terminate-expiry-job-deferred contract NEGOTIATION→TERMINATED 迁移实现 + EXPIRED 自动到期 Job Deferred
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-30
 > Source: audit-remediation-roadmap R1.22（P1-MA2-071 + P1-MA2-072，源自 A2.14 contract 状态机审查）
 > Related: `docs/audits/2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`、`docs/audits/arm-index.md §P1-MA2-071/072`；plan `2026-07-30-0512-3-r1-20-quality-linkage-dict-ncr.md`（同型选择性裁决先例：便宜真实缺陷实现 + missing-automation Deferred）、plan `2026-07-30-0512-1-r1-18-assets-idle-state-machine-deferred.md`（Deferred 标注先例）；`docs/audits/arm-index.md §P1-MA2-033`（NEVER_OPENED→OPEN missing-automation P1 分级平行参照——该 finding 在 R1.13 中已实现 openPeriod，此处仅引用其 missing-automation P1 分类同型，非 Deferred 先例）
@@ -48,61 +48,61 @@
 
 ### Phase 1 - 两项 finding 裁决（Decision）
 
-Status: planned
+Status: completed
 Targets: 本计划（裁决记录）
 Skill: `none`
 
 - Item Types: `Decision`
 - Prereqs: none
 
-- [ ] **Decision**：两项 finding 处置方案逐项裁决（**选择性裁决**——对齐 R1.20 先例：便宜真实迁移缺陷实现 + missing-automation Deferred）。
+- [x] **Decision**：两项 finding 处置方案逐项裁决（**选择性裁决**——对齐 R1.20 先例：便宜真实迁移缺陷实现 + missing-automation Deferred）。
       - P1-MA2-072 NEGOTIATION→TERMINATED 迁移缺失：**实现（arm-index 推荐方向）**。理由：(1) arm-index §P1-MA2-072 方案A（推荐）即 `terminate` 守卫扩展为 `status∈{ACTIVE,NEGOTIATION}`；(2) containment 友好（terminate 单点守卫扩展 + javadoc 注明 NEGOTIATION 路径无 signDate/version 归档差异——NEGOTIATION 未生效无需签署归档）；(3) 针对 owner doc §2/§3 核心契约「NEGOTIATION 谈判破裂→TERMINATED 终态」非 missing-automation；(4) 消除「NEGOTIATION 失败仅经 useLogicalDelete 逃生丢失 TERMINATED 审计语义」。残留风险：NEGOTIATION→TERMINATED 无独立法务审批门控（与 ACTIVE→TERMINATED 一致，均经 @BizMutation 入口权限 + e-signature config 覆盖）。
       - P1-MA2-071 EXPIRED 自动到期 Job + 续期草稿缺失：**Deferred（owner doc 正式化）**。**与 arm-index 推荐偏差声明**：arm-index §P1-MA2-071 方案A（推荐）实现 `ErpCtContractExpiryJob`；本计划裁决 Deferred，理由：(1) 与 R1.18/R1.20 missing-automation Deferred 范式一致（P1-MA2-033 在 R1.13 中已实现 openPeriod，仅作 missing-automation P1 分类平行参照）；(2) `expire()` 手工 @BizMutation 路径存在（运营可触发）；(3) InvoicePlan 生成 unposted DRAFT（经人工审批可拦截，非 silent posted）；(4) 方案A 属新 Job 类 + scheduler + job.yaml 注册，与危害（状态悬挂非业财破坏）不成比例；(5) 不破坏业财一致（无 GL 数据错误）。successor：合同到期自动化需求时实现 `ErpCtContractExpiryJob` + config-gated auto-create-renewal-draft。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] Phase 1 Decision 逐项记录选择 + 理由 + 与 arm-index 推荐偏差声明 + successor 触发条件；072 进 Phase 2（实现），071 进 Phase 3（Deferred 标注）。
+- [x] Phase 1 Decision 逐项记录选择 + 理由 + 与 arm-index 推荐偏差声明 + successor 触发条件；072 进 Phase 2（实现），071 进 Phase 3（Deferred 标注）。
 
 ### Phase 2 - NEGOTIATION→TERMINATED 迁移实现（P1-MA2-072）
 
-Status: planned
+Status: completed
 Targets: `module-contract/erp-ct-service/.../entity/ErpCtContractBizModel.java`、`IErpCtContractBiz`、`docs/design/contract/state-machine.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add`
 - Prereqs: Phase 1
 
-- [ ] **Fix（terminate 守卫扩展）**：`ErpCtContractBizModel.terminate` 守卫扩展为接受 `status∈{ACTIVE,NEGOTIATION}`——将 `if (!Objects.equals(contract.getStatus(), CONTRACT_STATUS_ACTIVE))` 改为「既非 ACTIVE 也非 NEGOTIATION 时抛 `illegalTransition`」（illegalTransition helper 已存在，传入 expected 描述）。NEGOTIATION 路径行为：仅 `setStatus(TERMINATED) + updateEntity`（与 ACTIVE 路径一致——NEGOTIATION 未生效无需 signDate/version 归档差异；javadoc 注明「NEGOTIATION→TERMINATED 谈判破裂，未生效合同放弃，版本归档经 useLogicalDelete 既有语义」）。
+- [x] **Fix（terminate 守卫扩展）**：`ErpCtContractBizModel.terminate` 守卫扩展为接受 `status∈{ACTIVE,NEGOTIATION}`——将 `if (!Objects.equals(contract.getStatus(), CONTRACT_STATUS_ACTIVE))` 改为「既非 ACTIVE 也非 NEGOTIATION 时抛 `illegalTransition`」（illegalTransition helper 已存在，传入 expected 描述）。NEGOTIATION 路径行为：仅 `setStatus(TERMINATED) + updateEntity`（与 ACTIVE 路径一致——NEGOTIATION 未生效无需 signDate/version 归档差异；javadoc 注明「NEGOTIATION→TERMINATED 谈判破裂，未生效合同放弃，版本归档经 useLogicalDelete 既有语义」）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：测试——(1) ACTIVE 合同 terminate 成功（ACTIVE→TERMINATED，行为不变）；(2) NEGOTIATION 合同 terminate 成功（NEGOTIATION→TERMINATED）；(3) SUSPENDED/EXPIRED/TERMINATED/DRAFT 合同 terminate assertThrows `ERR_CT_ILLEGAL_STATUS_TRANSITION`。迁移现有 terminate 测试（若有）。
+- [x] **Proof**：测试——(1) ACTIVE 合同 terminate 成功（ACTIVE→TERMINATED，行为不变）；(2) NEGOTIATION 合同 terminate 成功（NEGOTIATION→TERMINATED）；(3) SUSPENDED/EXPIRED/TERMINATED/DRAFT 合同 terminate assertThrows `ERR_CT_ILLEGAL_STATUS_TRANSITION`。迁移现有 terminate 测试（若有）。
       - Skill: `nop-backend-dev`
-- [ ] **Add（owner doc）**：state-machine.md §2 L34 ASCII 图 + L51 迁移表核对一致——NEGOTIATION→TERMINATED 迁移落地（terminate 守卫扩展接受 NEGOTIATION 源态）；§实现偏离补注补「NEGOTIATION→TERMINATED 路径无 signDate/version 归档差异（NEGOTIATION 未生效，版本归档经 useLogicalDelete 既有语义）」。
+- [x] **Add（owner doc）**：state-machine.md §2 L34 ASCII 图 + L51 迁移表核对一致——NEGOTIATION→TERMINATED 迁移落地（terminate 守卫扩展接受 NEGOTIATION 源态）；§实现偏离补注补「NEGOTIATION→TERMINATED 路径无 signDate/version 归档差异（NEGOTIATION 未生效，版本归档经 useLogicalDelete 既有语义）」。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] terminate 守卫接受 NEGOTIATION 源态（grep 确认 NEGOTIATION 在守卫条件内）；ACTIVE 路径行为不变；新增/迁移测试全绿（Closure Gates 跑全量 mvn）；owner doc §2 + §实现偏离补注 与代码一致。
+- [x] terminate 守卫接受 NEGOTIATION 源态（grep 确认 NEGOTIATION 在守卫条件内）；ACTIVE 路径行为不变；新增/迁移测试全绿（Closure Gates 跑全量 mvn）；owner doc §2 + §实现偏离补注 与代码一致。
 
 ### Phase 3 - EXPIRED 自动到期 Job + 续期草稿 Deferred 标注（P1-MA2-071）
 
-Status: planned
+Status: completed
 Targets: `docs/design/contract/state-machine.md`
 Skill: `none`
 
 - Item Types: `Add`
 - Prereqs: Phase 1
 
-- [ ] state-machine.md §2 L47 ACTIVE→EXPIRED 由「系统自动 endDate<now」正式化为「**Deferred**——当前经运营手工 `expire()` 触发，自动到期 `ErpCtContractExpiryJob`（cron-gated 扫描 ACTIVE 且 endDate<now 合同批量 expire）留 successor」；§7 L99 合同到期提醒 同步标注 Deferred（nop-job 定时扫描 successor）；命名 successor 触发条件。
+- [x] state-machine.md §2 L47 ACTIVE→EXPIRED 由「系统自动 endDate<now」正式化为「**Deferred**——当前经运营手工 `expire()` 触发，自动到期 `ErpCtContractExpiryJob`（cron-gated 扫描 ACTIVE 且 endDate<now 合同批量 expire）留 successor」；§7 L99 合同到期提醒 同步标注 Deferred（nop-job 定时扫描 successor）；命名 successor 触发条件。
       - Skill: `none`
-- [ ] state-machine.md §4 L65 「endDate 到达自动创建续期草稿（auto-create-renewal-draft）」正式化为「**Deferred**——续期草稿自动创建（config `erp-ct.auto-create-renewal-draft` + `parentContractId` 关联）留 successor；`parentContractId` 字段保留为预留语义入口」；命名 successor 触发条件。
+- [x] state-machine.md §4 L65 「endDate 到达自动创建续期草稿（auto-create-renewal-draft）」正式化为「**Deferred**——续期草稿自动创建（config `erp-ct.auto-create-renewal-draft` + `parentContractId` 关联）留 successor；`parentContractId` 字段保留为预留语义入口」；命名 successor 触发条件。
       - Skill: `none`
-- [ ] state-machine.md §残留风险补注「过期 ACTIVE 合同 InvoicePlan 仍可生成 unposted DRAFT 发票（triggerInvoice 仅守卫 ACTIVE）——经人工审批管道兜底；EXPIRED Job successor 落地后收敛（expire 后 status=EXPIRED 被 triggerInvoice ACTIVE 守卫拒绝）」。
+- [x] state-machine.md §残留风险补注「过期 ACTIVE 合同 InvoicePlan 仍可生成 unposted DRAFT 发票（triggerInvoice 仅守卫 ACTIVE）——经人工审批管道兜底；EXPIRED Job successor 落地后收敛（expire 后 status=EXPIRED 被 triggerInvoice ACTIVE 守卫拒绝）」。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] state-machine.md 明确 071 Deferred（EXPIRED Job + 续期草稿 + 到期提醒），owner doc 与代码（expire 手工 @BizMutation + 无 Job）一致；successor 触发事件已命名；InvoicePlan 过期合同发票残留风险已标注。
+- [x] state-machine.md 明确 071 Deferred（EXPIRED Job + 续期草稿 + 到期提醒），owner doc 与代码（expire 手工 @BizMutation + 无 Job）一致；successor 触发事件已命名；InvoicePlan 过期合同发票残留风险已标注。
 
 ## Draft Review Record
 
@@ -112,14 +112,14 @@ Exit Criteria:
 
 > 本计划含代码变更（P1-MA2-072），故 Closure Gates 含全量 `mvn` 验证（见执行时规则 7）。
 
-- [ ] 范围内行为/文档完成（072 NEGOTIATION→TERMINATED 实现 + 071 Deferred 标注）
-- [ ] 相关文档对齐（contract/state-machine.md）
-- [ ] 已运行验证（`mvn clean install -DskipTests` 全绿 + contract 域 `mvn test` 全绿 + compliance checker 本计划零新增命中；grep 验证 072 守卫扩展）
-- [ ] 无范围内项目降级为 deferred/follow-up（072 为范围内存活实现项；071 Deferred 是处置裁决 + 已命名 successor，非范围内缺陷隐瞒）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为/文档完成（072 NEGOTIATION→TERMINATED 实现 + 071 Deferred 标注）
+- [x] 相关文档对齐（contract/state-machine.md）
+- [x] 已运行验证（`mvn clean install -DskipTests` 全绿 + contract 域 `mvn test` 全绿 + compliance checker 本计划零新增命中；grep 验证 072 守卫扩展）
+- [x] 无范围内项目降级为 deferred/follow-up（072 为范围内存活实现项；071 Deferred 是处置裁决 + 已命名 successor，非范围内缺陷隐瞒）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -137,11 +137,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 三阶段全执行完成。Phase 1 决策记录（072 实现 / 071 Deferred）+ Phase 2 实现 NEGOTIATION→TERMINATED 迁移（terminate 守卫扩展接受 ACTIVE/NEGOTIATION 两源态，ACTIVE 行为不变，新增 6 项 terminate 状态机测试）+ Phase 3 owner doc Deferred 标注（EXPIRED Job + 续期草稿 + 到期提醒 + InvoicePlan EXPIRED 残留风险）。验证：`mvn clean install -DskipTests` 全绿（154 reactor）+ contract 域 `mvn test` 43/43 全绿（含新增 6/6 terminate 测试）+ grep 确认 NEGOTIATION 在守卫内。无 ORM/会计/数据删除保护区域触及。
 
 Closure Audit Evidence:
 
-- <待独立结束审计填写>
+- 独立结束审计（fresh-session general subagent `ses_04fe12139ffeGiewfQfndqtIIb`，执行者未自我审计）VERDICT=PASS：7 项验证全过——(1) terminate 守卫接受 ACTIVE+NEGOTIATION 且其余状态抛 illegalTransition（`ErpCtContractBizModel.java:109-112`）；(2) 6 项 terminate 测试覆盖 ACTIVE/NEGOTIATION 成功 + DRAFT/SUSPENDED/EXPIRED/TERMINATED 拒绝，Tests run: 6, 0 failures；(3) state-machine.md §2/§3/§4/§7 Deferred 标注 + 残留风险注完整；(4) 确认 module-contract 全域零 Job/CronProvider/scheduler + ErpCtConfigs 无 auto-create-renewal-draft 键 + parentContractId 零业务 Java 使用；(5) 计划所有 [ ] 已勾 + 8 Closure Gates 全勾 + roadmap R1.22=done + 计划内零残留未勾项；(6) git status 确认无 ORM/.api.xml/会计/数据删除变更（仅 BizModel+IBiz+owner doc+plan+roadmap+新测试）；(7) `mvn test -pl module-contract/erp-ct-service` Tests run: 43, 0 failures, BUILD SUCCESS。
 
 Follow-up:
 
