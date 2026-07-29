@@ -130,14 +130,14 @@
 
 | Finding ID | 报告 | 域 | 描述 | 目标 MR | 修复状态 |
 |-----------|------|---|------|--------|---------|
-| `P1-MA1-001` | ma1-s-tier-orm | mfg | `ErpMfgWorkOrder`/`ErpMfgMaterialIssue` 多币种四件套 7 列 propId 缺失 | MR1 todo (R1.1) |
-| `P1-MA1-008` | ma1-a-tier-orm | assets | `ErpAstDepreciationSchedule`/`ErpAstMovement`/`ErpAstRevaluation`/`ErpAstSplit`/`ErpAstMerge`/`ErpAstDisposal`/`ErpAstCapitalization`/`ErpAstTransfer` 共 29 列 propId 缺失 | MR1 todo (R1.1) |
-| `P1-MA1-009` | ma1-a-tier-orm | crm | `ErpCrmForecastAccuracy.{commitAccuracy, upsideAccuracy}`/`ErpCrmPriceRule.discountPercent`/`ErpCrmLeadFunnel.avgSalesCycleDays`/`ErpCrmFunnelStageMetrics.{conversionRate, dropOffRate, avgDaysInStage}` 共 7 列 stdSqlType=DECIMAL vs stdDataType=double（浮点精度损失） | MR1 todo (R1.2) |
-| `P1-MA1-010` | ma1-a-tier-orm | projects | `ErpPrjCostCollection.{exchangeRate, amountSource, amountFunctional}`/`ErpPrjBilling.{amountSource, amountFunctional}` 共 5 列 propId 缺失 | MR1 todo (R1.1) |
-| `P1-MA1-011` | ma1-a-tier-orm + ma1-bc-tier-orm | maintenance | `ErpMntVisit.{orgId, businessDate, posted, postedAt, postedBy}` 共 5 列 propId 缺失 | MR1 todo (R1.1) |
-| `P1-MA1-012` | ma1-a-tier-orm | quality | `ErpQaInspection.businessDate` propId 缺失 | MR1 todo (R1.1) |
-| `P1-MA1-013` | ma1-bc-tier-orm | maintenance | （同 P1-MA1-011，BC 报告同步登记） | MR1 todo (R1.1) |
-| `P1-MA1-014` | ma1-bc-tier-orm | drp | `ErpInvDrpSafetyStockCalc`/`ErpInvDrpCrossDock`/`ErpInvDrpDockAppointment`/`ErpInvDrpLeadTimeRecord` 4 实体 className=`ErpInvDrp*` + tableName=`erp_inv_drp_*` 不符合 §19.1 命名规范 | MR1 todo (R1.3) |
+| `P1-MA1-001` | ma1-s-tier-orm | mfg | `ErpMfgWorkOrder`/`ErpMfgMaterialIssue` 多币种四件套 7 列 propId 缺失 | ✅ fixed（plan 2026-07-29-2005-1 Phase 1：propId 重编号为连续序列） |
+| `P1-MA1-008` | ma1-a-tier-orm | assets | `ErpAstDepreciationSchedule`/`ErpAstMovement`/`ErpAstRevaluation`/`ErpAstSplit`/`ErpAstMerge`/`ErpAstDisposal`/`ErpAstCapitalization`/`ErpAstTransfer` 共 29 列 propId 缺失 | ✅ fixed（plan 2026-07-29-2005-1 Phase 1：propId 重编号为连续序列） |
+| `P1-MA1-009` | ma1-a-tier-orm | crm | `ErpCrmForecastAccuracy.{commitAccuracy, upsideAccuracy}`/`ErpCrmPriceRule.discountPercent`/`ErpCrmLeadFunnel.avgSalesCycleDays`/`ErpCrmFunnelStageMetrics.{conversionRate, dropOffRate, avgDaysInStage}` 共 7 列 stdSqlType=DECIMAL vs stdDataType=double（浮点精度损失） | ✅ fixed（plan 2026-07-29-2005-1 Phase 2：stdDataType double→decimal，生成字段 BigDecimal，调用方适配。A4.5 建议降 P2 注记保留但修复已执行） |
+| `P1-MA1-010` | ma1-a-tier-orm | projects | `ErpPrjCostCollection.{exchangeRate, amountSource, amountFunctional}`/`ErpPrjBilling.{amountSource, amountFunctional}` 共 5 列 propId 缺失 | ✅ fixed（plan 2026-07-29-2005-1 Phase 1：propId 重编号为连续序列） |
+| `P1-MA1-011` | ma1-a-tier-orm + ma1-bc-tier-orm | maintenance | `ErpMntVisit.{orgId, businessDate, posted, postedAt, postedBy}` 共 5 列 propId 缺失 | ✅ fixed（plan 2026-07-29-2005-1 Phase 1：propId 重编号为连续序列） |
+| `P1-MA1-012` | ma1-a-tier-orm | quality | `ErpQaInspection.businessDate` propId 缺失 | ✅ fixed（plan 2026-07-29-2005-1 Phase 1：propId 重编号为连续序列） |
+| `P1-MA1-013` | ma1-bc-tier-orm | maintenance | （同 P1-MA1-011，BC 报告同步登记） | ✅ fixed（同 P1-MA1-011） |
+| `P1-MA1-014` | ma1-bc-tier-orm | drp | `ErpInvDrpSafetyStockCalc`/`ErpInvDrpCrossDock`/`ErpInvDrpDockAppointment`/`ErpInvDrpLeadTimeRecord` 4 实体 className=`ErpInvDrp*` + tableName=`erp_inv_drp_*` 不符合 §19.1 命名规范 | ✅ 经既有 F7 + §3:161 登记闭包（plan 2026-07-29-2005-1 Phase 3：phantom §19.1 引用勘误为 §3；双层命名例外登记已完整覆盖 4 实体，裁决确认无需 ORM/文档变更） |
 | `P1-MA1-015` | ma1-cross-module-dag | docs（全域） | owner doc `data-dependency-matrix.md §5.6.2` 自述数值偏低：声称 ~369 to-one / ~68 external，实测 **625 to-one + 0 to-many / 111 external**（+69% / +63%）。owner doc 文字已声明"待 codegen 后跑脚本精确统一"，本审计即该脚本。需用机器核验值更新 §5.6.2 数值与每域明细表 | MR1 todo (R1.4) |
 | `P1-MA1-016` | ma1-cross-module-dag | finance | `ErpFinAccountingPeriodProcessor.reverseDepreciation`（line ~389）使用 `daoProvider.daoFor(ErpAstDepreciationSchedule.class).findAllByQuery(q)` 直接跨域 DAO 查询 assets 实体，违反 `AGENTS.md "跨实体访问"` + `data-dependency-matrix.md §5.3` 规则（跨域查询必须经 I*Biz 接口）。应改为 `IErpAstDepreciationScheduleBiz.findList()` 或等价 I*Biz 只读方法 | MR1 todo (R1.5) |
 | `P1-MA1-017` | ma1-cross-module-dag | docs（finance） | owner doc `data-dependency-matrix.md §3.2/§4.4` "finance 对业务域纯读不回写"规则不完整：未覆盖期末结账期间的跨域 command/request 编排（finance 调 `IErpAstDepreciationScheduleBiz.executeBatchDepreciation/reverseDepreciation` + `IErpInvCostingBiz.reclosePeriodCosts`）。需补注："纯读"指 ORM 层无反向 to-one；期间结账的 command 编排在 I*Biz 层合法（业务域自管实体的写） | MR1 todo (R1.4) |
