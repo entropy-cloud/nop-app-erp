@@ -412,7 +412,7 @@ A1 已落地 `ErpFinGlMappingRule` 实体 + `IErpFinGlMappingResolver` 解析引
 | 域 | 源单类型（billType） | 回退目标态（posted=true → ?） | 依据 |
 |----|---------------------|------------------------------|------|
 | purchase | `AP_INVOICE`（ErpPurInvoice）/`PAYMENT`（ErpPurPayment）/`PUR_RETURN`（ErpPurReturn） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null` | `ErpPurInvoiceProcessor.doReverseApprove`/`ErpPurPaymentProcessor`/`ErpPurReturnProcessor` 同型：reverseApprove 后置 REJECTED |
-| purchase | `PURCHASE_INPUT`（ErpPurReceive） | 经库存 `ErpInvStockMove` 反冲已落地（receive 自身仅 posted=false，不回退 approveStatus——库存物理冲销已发生，单据终态保留 APPROVED 审计轨迹） | `ErpPurReceiveProcessor.ensureReversed` 已在 reverseApprove 链中调 `stockMoveBiz.reverse` |
+| purchase | `PURCHASE_INPUT`（ErpPurReceive） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null`（与 AP_INVOICE/PAYMENT/PUR_RETURN 对齐；库存物理冲销独立由业务侧 reverseApprove 链触发 `stockMoveBiz.reverse`） | `PurReversalListener.rollbackReceive`（plan 2026-07-30-0341-3-r1-17 对齐，原仅 posted=false 保留 APPROVED 的不对称已修复） |
 | sales | `AR_INVOICE`（ErpSalInvoice）/`RECEIPT`（ErpSalReceipt）/`SAL_RETURN`（ErpSalReturn） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null` | sales 域 `ErpSal*Processor.doReverseApprove` 同型镜像 purchase |
 | sales | `SALES_OUTPUT`（ErpSalDelivery） | 经库存 `ErpInvStockMove` 反冲已出库（delivery 自身仅 posted=false） | 同 purchase receive 语义 |
 | inventory | `OWNERSHIP_TRANSFER`（ErpInvOwnershipTransfer）/`INTER_TRANSFER`（ErpInvTransferOrder）/StockMove/StockTake | `posted=false`/`postedAt=null`/`postedBy=null`（inventory 单据无 approveStatus 状态机轴，仅 posted 翻转） | `ErpInvStockMoveProcessor` 既有 reversal 模式 |

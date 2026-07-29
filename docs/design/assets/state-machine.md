@@ -140,6 +140,18 @@
 - 业财打通机制见 `finance/posting.md`（businessType 含 DEPRECIATION/CAPITALIZATION/DISPOSAL）。
 - 期末折旧与会计期间结账的关系见 `finance/state-machine.md`。
 
+## 实现模式与守卫边界
+
+> 计划 `2026-07-30-0341-3-r1-17`（P1-MA2-058/059）补注：资产域移动单（ErpAstMovement）审批轴动作的实现模式。
+
+**PROC 路径**（资本化/处置/拆分/合并/价值调整 等 `ErpAst*Processor`）：含完整业务守卫 + 过账联动。
+
+**INLINE 路径**（Movement 全 5 动作：submitForApproval/approve/reject/reverseApprove/withdrawApproval）：直接在 xbiz `<source>` 脚本中实现，守卫边界为 **isCancelled + src 状态校验**（`entity.docStatus === 'CANCELLED'` 阻断 + `approveStatus` 源态校验）。Movement 无独立 cancel mutation，docStatus=CANCELLED 经 `useLogicalDelete` 承载，isCancelled 守卫为防御性（阻止逻辑删除单据的 approveStatus 副轴漂移）。
+
+### reversal listener 回退目标态
+
+资产域移动单无 posted 副作用（不过账、无凭证需 reverse），故无 reversal listener 回退；reverseApprove 目标态为 REJECTED（与其他域对齐，owner doc §16.4）。
+
 ## 折旧计划条目状态（简单）
 
 折旧计划按资产生成，每期一条条目，状态简单：

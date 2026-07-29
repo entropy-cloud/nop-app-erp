@@ -184,6 +184,27 @@
 - 业财打通的凭证生成见 `finance/posting.md`。
 - 全局流程编排见 `flow-overview.md` L2 状态映射。
 
+## 实现模式与守卫边界
+
+> 计划 `2026-07-30-0341-3-r1-17`（P1-MA2-049/050/051）补注：采购域审批轴动作分两类实现，守卫边界不同。
+
+**PROC 路径**（Receive/Invoice/Payment/Return/Requisition/Order 的 submitForApproval/approve/reverseApprove，及 Order/Return 的 reject）：由 `ErpPur*Processor` 编排，含完整业务守卫（`validateNotCancelled` + `requireSupplierActive` + `requireLinesNonEmpty` + 状态校验）。
+
+**INLINE 路径**（Quotation/Rfq 全 5 动作 + Receive/Invoice/Payment/Return 的 reject + Requisition 的 approve/reject + 全实体 withdrawApproval）：直接在 xbiz `<source>` 脚本中实现，守卫边界为 **isCancelled + src 状态校验**（`entity.docStatus === 'CANCELLED'` 阻断 + `approveStatus` 源态校验）。INLINE **不补** requireSupplier/Lines 等业务守卫——这些在 submit 时点已门控，审批时点重复校验冗余；危害限于 CANCELLED 单据 approveStatus 副轴漂移，isCancelled 守卫已消除主缺陷。
+
+> 残留风险：INLINE 守卫与 PROC 守卫非完全对齐（业务守卫不补）。若 INLINE 守卫边界被业务误用导致 CANCELLED 单据业务规则绕过，successor 迁移到完整大 Processor（见 plan Deferred But Adjudicated）。
+
+### reversal listener 回退目标态表
+
+财务侧红冲凭证（方向二）触发 `PurReversalListener` 回退采购源单状态：
+
+| 业务类型 | 源单 | 回退目标态 |
+|----------|------|-----------|
+| AP_INVOICE | ErpPurInvoice | posted=false + APPROVED→REJECTED |
+| PAYMENT | ErpPurPayment | posted=false + APPROVED→REJECTED |
+| PURCHASE_RETURN | ErpPurReturn | posted=false + APPROVED→REJECTED |
+| PURCHASE_INPUT | ErpPurReceive | posted=false + APPROVED→REJECTED（与其他三实体对齐，原保留 APPROVED 的不对称已修复） |
+
 ## 付款状态机（采购发票，派生状态）
 
 付款状态是**派生状态**，由付款单核销明细自动驱动，不是独立工作流：
