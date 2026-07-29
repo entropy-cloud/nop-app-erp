@@ -97,7 +97,7 @@
 | A4.5 | pur+sal+inv+qa+crm 代码质量抽样（A 级合并） | done | 各域 README | 0.3 | `docs/skills/code-quality-audit-prompt.md` |
 | A4.6 | finance+mfg view.xml vs 后端契约 drift | done | 各域 view.xml | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A4.7 | pur+sal+inv view.xml drift | done | 各域 view.xml | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A4.8 | crm+hr view.xml drift（view.xml 数 34+36 最多） | todo | 各域 view.xml | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A4.8 | crm+hr view.xml drift（view.xml 数 68+72=140） | done | 各域 view.xml | 0.3 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A4.9 | i18n 完整性（全域合并跑 checker） | todo | `docs/audits/i18n-coverage-checker.sh` | 0.3 | i18n-checker |
 
 ### Milestone MA5 — 测试层审计
