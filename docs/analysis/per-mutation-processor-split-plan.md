@@ -242,3 +242,44 @@ Phase 2 的核心行为变更是：**xbiz `<source>` 委托 → BizModel Java `@
 **合计**：36 + 56 + 47 + 10 = 149 per-mutation 文件（与拆分目标 ~140 一致，因部分 Processor 拆分文件数有微调）
 
 > Phase 4 R8 Decision 待执行期复核（per-mutation 文件按 xbiz 路由 = 不计入 R8，因 per-mutation 文件经 BizModel @BizMutation 路由非 Processor xbiz 接线）。
+
+## MR5 完成回注（R5.1-R5.8，2026-07-30）
+
+> 本节是 `audit-remediation-roadmap.md` MR5（S-mutation 架构合规修复）7 工作项全部 done 后的最终分类与完成证据回注。详细执行见 `docs/plans/2026-07-25-1057-2`（拆分）~`2026-07-30-2046-2`（R5.8 收尾）。
+
+### 最终分类：149 per-mutation 文件全部自包含（零空心回委托）
+
+- **Pattern A（抽象骨架激活）**：per-mutation Processor `extends Abstract*Processor<T>`，实现 `dao()` / `notFoundException()` / `illegalStatusException()` / 各 `*Status()` / `isCancelled()` 等抽象方法，编排走抽象基类骨架（`requireEntity` → 状态守卫 → pre-hook → `setApproveStatus`/`setDocStatus` → 持久化）。适用于域特有 hook 可映射到抽象基类 pre/post-hook 的实体（purchase/sales 多数、finance EA/EC、assets Capitalization/Disposal、mfg、inventory CostAdjust、qa、projects）。
+- **Pattern B（custom public override）**：per-mutation Processor 保留 `public T method(String id, IServiceContext)` 完整编排方法体，内部委托 facade（monolithic Processor）的 protected helper（`requireXxx` / `validateTransitionForXxx` / `doXxx` / `executeXxx`）作为单一真相源，避免业务逻辑复制。适用于：过账后实体引用变更需 custom override 的 S-mutation（如 receive/invoice/return approve+reverseApprove——红冲后凭证引用变更）、跨域联动 hook 复杂的实体（purchase Order approve 的 commitment+intercompany hook）、会计保护区域语义不可复制的实体（finance BadDebt reverseApprove 的红冲凭证 + ArApItem 对称回滚）。
+- **分布**：149 文件中 Pattern A 占多数，Pattern B 用于上述特殊语义实体（静态 parity 经 R5.1-R5.6 逐实体校验）。
+
+### 休眠 → 激活路径（R5.8 完成）
+
+R5.1-R5.6 完成时，149 per-mutation 文件已全部填充，但 BizModel 仍 `@Inject` 单 facade、S-mutation 经 xbiz source（source-backed，已激活）或 BizModel `@BizMutation`（dormant，直调 facade）。R5.8 将全部 dormant BizModel S-mutation 调用 repoint 到 per-mutation：
+
+- **cancel 路由（18）**：purchase 6 + sales 6 + finance 3（EA/EC/BudgetScenario）+ assets 3（Merge/Split/ValueAdjustment）的 BizModel `cancel()` 从 `facade.cancel(...)` → `cancelProcessor.cancel(String.valueOf(id), ctx)`。
+- **休眠非 cancel S-mutation（11）**：finance BadDebt 4（submit/approve/reject/reverseApprove）+ BudgetScenario 3（submit/approve/reject）+ assets Inventory approve（1）+ Maintenance approve（1）+ inventory LandedCost approve+reverseApprove（2）。
+- **batchApprove（2）**：ErpPurOrder/ErpSalOrder 的 `batchApprove()` 内 `facade.approve(...)` → `approveProcessor.approve(id, ctx)`。
+- **R5.7 域**：projects ProjectSettlement 4 S-mutation + crm Lead cancel 经 BizModel repoint（qa Recall 经 xbiz source 已激活，无 BizModel repoint）。
+
+激活后 29 休眠 + R5.7 孤儿 per-mutation 全部进入运行时路径，既有测试经 BizModel→per-mutation 新路径验证行为等价（MR5 7 域 + qa 1131 测试 0 failures）。
+
+### facade 公共 S-mutation 方法精简（30 facade，单行委托）
+
+R5.8 将 30 个含 S-mutation 的 facade Processor 公共方法体替换为 `return {per-mutation}.method(id, ctx)` 单行委托，保留方法签名作向后兼容适配器（forwarder）。protected helper 保留（per-mutation 依赖）。
+
+- **循环依赖消解**：facade `@Inject` per-mutation（作 forwarder）+ per-mutation `@Inject` facade（调 protected helper）= 双向 field-injection 循环。Nop IoC `BeanDefinition.newObject` 在构造后、属性注入前经 `scope.add` 注册 early singleton 引用（`nop-ioc BeanDefinition.java:521`），故循环可解析（对齐 Spring early-singleton-ref 机制）。purchase Order pilot 实测 IoC 正常 + 132 测试全绿确认。
+- **Long↔String 边界转换**：facade 公共方法保留原 Long 签名（向后兼容），委托体内 `String.valueOf(id)` 转 String per-mutation；finance BadDebt/BudgetScenario/projects 的 facade `submit` 方法委托 per-mutation `submitForApproval`（方法名边界转换）。
+- **跨包 facade 处理**：`ErpFinBudgetScenarioProcessor` 位于 `app.erp.fin.service.budget`（非 `service.processor`），其 per-mutation Processor 位于 `app.erp.fin.service.processor`——slim 时 per-mutation `@Inject` 须显式 import（唯一跨包 facade）。
+
+### 验证证据（R5.8）
+
+- `mvn clean install -DskipTests`：154 模块全绿（含 app-erp-all 聚合）。
+- `mvn test`：MR5 7 域 + qa 1131 测试 0 failures；mfg 1 pre-existing error（TestErpMfgCompletionPosting LOCATION_ID 漂移，与本 plan 无关）；drp 7 pre-existing error（IErpSysNotificationBiz 测试隔离，与本 plan 无关，git stash 证实 clean HEAD 同样失败）。
+- compliance checker：MR5.8 引入 0 合规漂移（git stash A/B 对照证实）。pre-existing 漂移（R2a/R2b/R2c/R12c）归 successor 基线裁决计划。
+- arm-index：P1-MA3-048 + P1-MA2-054 状态更新为「MR5 已填充，孤儿状态已清除」。
+
+### successor
+
+- R2.7（孤儿 Processor 删除）审查时增检查「跳过 MR5 填充的 Processor」——MR5 填充后 S-mutation per-mutation 全自包含，R2.7 仅处理非 S-mutation 孤儿（如有）。
+- facade protected helper 重构/下沉——protected helper 是 per-mutation 经单一真相源调用的依赖，保留在 facade（MR5 Non-Goal）。

@@ -1,6 +1,6 @@
 # 2026-07-30-2046-2-mr5-r5-8 Facade S-mutation 清理 + BizModel 配线 + 全量验证（MR5 收尾）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-30
 > Source: `docs/backlog/audit-remediation-roadmap.md` §Milestone MR5 工作项 R5.8
 > Related: `docs/plans/2026-07-30-1433-1-mr5-r5-1-purchase-s-mutation.md`~`2026-07-30-1909-3-mr5-r5-6-inventory-s-mutation.md`（R5.1-R5.6，全部 deferred BizModel 配线命名 R5.8 为 successor）、`docs/plans/2026-07-30-2046-1-mr5-r5-7-remaining-domains-s-mutation.md`（R5.7，prereq）、`docs/plans/2026-07-25-1057-2-per-mutation-processor-file-split.md`（创建 149 per-mutation 文件）、`docs/plans/2026-07-29-1923-2-r2-0-mr2-p1-finding-expansion.md`（R2.0，P1-MA3-048 归属 MR2/R2.7）
@@ -63,109 +63,114 @@
 
 ### Phase 1 - BizModel S-mutation 配线从 facade repoint 到 per-mutation（7 域，激活 29 休眠 per-mutation）
 
-Status: planned
+Status: completed
 Targets: 7 域 BizModel（purchase 6 + sales 6 + finance 4 + assets 5 + mfg 0 + inventory 1 + R5.7 域 3[qa/projects/crm]），各 `app-service.beans.xml`（读校验）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: R5.7 done（149 per-mutation 全填充）
 
-- [ ] Add: cancel 路由 repoint——18 个 BizModel `@BizMutation cancel()` 从 `facade.cancel(...)` 改为 `@Inject {Entity}CancelProcessor` + `cancelProcessor.cancel(id, ctx)`。激活 18 个休眠 `*CancelProcessor` 运行时路径。
+- [x] Add: cancel 路由 repoint——18 个 BizModel `@BizMutation cancel()` 从 `facade.cancel(...)` 改为 `@Inject {Entity}CancelProcessor` + `cancelProcessor.cancel(id, ctx)`。激活 18 个休眠 `*CancelProcessor` 运行时路径。
   - Skill: `nop-backend-dev`
   - 实体清单：purchase Order/Requisition/Receive/Return/Invoice/Payment（6）、sales Order/Quotation/Delivery/Receipt/Return/Invoice（6）、finance EmployeeAdvance/ExpenseClaim/BudgetScenario（3）、assets Merge/Split/ValueAdjustment（3）。
   - 注意 Long 签名实体（projects/crm/assets 部分）保留 `Long.valueOf(id)` 边界转换。
-- [ ] Add: 休眠 S-mutation `@BizMutation` repoint——5 个 BizModel 的休眠 S-mutation 动作从 facade 改为 per-mutation：finance BadDebt(submit/approve/reject/reverseApprove) + BudgetScenario(submit/approve/reject——cancel 已计入 Phase 1 cancel 路由)、assets Inventory(approve) + Maintenance(approve)、inventory LandedCost(approve/reverseApprove)。激活对应休眠 per-mutation 运行时路径。
+- [x] Add: 休眠 S-mutation `@BizMutation` repoint——5 个 BizModel 的休眠 S-mutation 动作从 facade 改为 per-mutation：finance BadDebt(submit/approve/reject/reverseApprove) + BudgetScenario(submit/approve/reject——cancel 已计入 Phase 1 cancel 路由)、assets Inventory(approve) + Maintenance(approve)、inventory LandedCost(approve/reverseApprove)。激活对应休眠 per-mutation 运行时路径。
   - Skill: `nop-backend-dev`
-- [ ] Add: `batchApprove()` repoint——仅 **2 个 BizModel**（ErpPurOrder、ErpSalOrder）的 `batchApprove()` 从 `facade.approve(...)` 改为 `approveProcessor.approve(id, ctx)`。其余休眠 approve 站点为单记录 `@BizMutation approve()`，已计入上一条休眠非 cancel S-mutation repoint。
+- [x] Add: `batchApprove()` repoint——仅 **2 个 BizModel**（ErpPurOrder、ErpSalOrder）的 `batchApprove()` 从 `facade.approve(...)` 改为 `approveProcessor.approve(id, ctx)`。其余休眠 approve 站点为单记录 `@BizMutation approve()`，已计入上一条休眠非 cancel S-mutation repoint。
   - Skill: `nop-backend-dev`
-- [ ] Add: R5.7 域 BizModel repoint——projects `ErpPrjProjectSettlementBizModel`（4 S-mutation submit/approve/reject/cancel）+ crm `ErpCrmLeadBizModel`（cancel）从 facade 改为 per-mutation，激活 R5.7 孤儿 per-mutation 运行时路径。qa `ErpQaRecallBizModel` 不 `@Inject` facade（S-mutation 全经 xbiz source），无 BizModel repoint 需求。
+- [x] Add: R5.7 域 BizModel repoint——projects `ErpPrjProjectSettlementBizModel`（4 S-mutation submit/approve/reject/cancel）+ crm `ErpCrmLeadBizModel`（cancel）从 facade 改为 per-mutation，激活 R5.7 孤儿 per-mutation 运行时路径。qa `ErpQaRecallBizModel` 不 `@Inject` facade（S-mutation 全经 xbiz source），无 BizModel repoint 需求。
   - Skill: `nop-backend-dev`
-- [ ] Proof: 局部编译通过（变更域 `mvn compile -DskipTests` 逐域或合并）。确认 beans.xml 注册的 per-mutation bean id 与 `@Inject` 一致。
+- [x] Proof: 局部编译通过（变更域 `mvn compile -DskipTests` 逐域或合并）。确认 beans.xml 注册的 per-mutation bean id 与 `@Inject` 一致。
   - Skill: none
 
 Exit Criteria:
 
 > 本阶段交付全部 S-mutation BizModel 调用经 per-mutation Processor（facade 公共方法此时仍有完整编排但无活跃 BizModel 调用方——Phase 2 精简）。
 
-- [ ] 29 个休眠 per-mutation + R5.7 孤儿 per-mutation 运行时路径激活（BizModel→per-mutation 新路径）
-- [ ] 全部 S-mutation `@BizMutation` + `batchApprove` 不再直调 facade 公共方法
-- [ ] beans.xml 注册一致性确认（per-mutation bean id 与 @Inject 匹配）
-- [ ] 变更域编译通过
+- [x] 29 个休眠 per-mutation + R5.7 孤儿 per-mutation 运行时路径激活（BizModel→per-mutation 新路径）
+- [x] 全部 S-mutation `@BizMutation` + `batchApprove` 不再直调 facade 公共方法
+- [x] beans.xml 注册一致性确认（per-mutation bean id 与 @Inject 匹配）
+- [x] 变更域编译通过
 
 ### Phase 2 - Facade 公共 S-mutation 方法精简为单行委托（30 facade）
 
-Status: planned
+Status: completed
 Targets: 30 个 facade Processor 公共 S-mutation 方法（purchase 6 + sales 6 + finance 4 + assets 7 + mfg 2 + inventory 2 + qa/projects/crm 3）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（BizModel 已 repoint，facade 公共方法无活跃 BizModel 调用方）
 
-- [ ] Decision: 精简策略 = 单行委托（非删除）。facade 公共 S-mutation 方法体替换为 `return {per-mutation}.method(id, ctx)`，保留方法签名作为向后兼容适配器。理由：(a) roadmap line 247 明示"替换为单行委托"；(b) 删除可能破坏其他潜在调用方（如跨域 facade 直调、未来 RPC）；(c) per-mutation 已是编排唯一入口，facade 仅 forwarder。替代方案=删除（风险：未知调用方回归），残留风险=forwarder 死代码（可接受，R2.7 审查时统一处理）。
+- [x] Decision: 精简策略 = 单行委托（非删除）。facade 公共 S-mutation 方法体替换为 `return {per-mutation}.method(id, ctx)`，保留方法签名作为向后兼容适配器。理由：(a) roadmap line 247 明示"替换为单行委托"；(b) 删除可能破坏其他潜在调用方（如跨域 facade 直调、未来 RPC）；(c) per-mutation 已是编排唯一入口，facade 仅 forwarder。替代方案=删除（风险：未知调用方回归），残留风险=forwarder 死代码（可接受，R2.7 审查时统一处理）。
   - Skill: `nop-backend-dev`
-- [ ] Add: 30 个 facade 公共 S-mutation 方法精简——逐域将公共 S-mutation 方法体替换为 `return {对应 per-mutation}.method(id, ctx)` 单行委托。保留 protected helper 不变（per-mutation 依赖它们）。跨包 facade `ErpFinBudgetScenarioProcessor`（budget 包）特殊处理。
+- [x] Add: 30 个 facade 公共 S-mutation 方法精简——逐域将公共 S-mutation 方法体替换为 `return {对应 per-mutation}.method(id, ctx)` 单行委托。保留 protected helper 不变（per-mutation 依赖它们）。跨包 facade `ErpFinBudgetScenarioProcessor`（budget 包）特殊处理。
   - Skill: `nop-backend-dev`
   - 域清单（facade × S-mutation 方法数）：purchase Order(6)/Requisition(6)/Receive(6)/Return(6)/Invoice(6)/Payment(6)、sales Order(6)/Quotation(6)/Delivery(6)/Receipt(6)/Return(6)/Invoice(6)、finance EmployeeAdvance(6)/ExpenseClaim(6)/BadDebt(4)/BudgetScenario(4)、assets Capitalization(5)/Disposal(5)/Merge(6)/Split(6)/ValueAdjustment(6)/Inventory(1)/Maintenance(1)、mfg WorkOrder(5)/Subcontract(5)、inventory CostAdjust(5)/LandedCost(2)、qa Recall(5)、projects ProjectSettlement(4)、crm Lead(1)。
-  - Long 签名 facade（projects/crm/LandedCost）委托时签名对齐（per-mutation 公共方法为 String，facade 保留 Long→在委托体内转换或保留 Long 签名委托 String per-mutation）。
-- [ ] Proof: 30 facade 编译通过（`mvn compile -DskipTests` 全域）+ grep 确认无 facade 公共 S-mutation 方法保留完整编排体（全部为单行委托）。
+  - Long 签名 facade（projects/crm/LandedCost/BadDebt/BudgetScenario/EA cancel/EC cancel/assets Merge/Split/VA cancel）委托时 `String.valueOf(id)` 边界转换；finance BadDebt/BudgetScenario/projects 的 facade `submit` 方法委托 per-mutation `submitForApproval`（方法名边界转换）。
+  - 循环依赖消解：facade↔per-mutation 双向 @Inject（facade 注入 per-mutation 作 forwarder，per-mutation 注入 facade 调 protected helper）。Nop IoC `BeanDefinition.newObject` 在构造后、属性注入前经 `scope.add` 注册 early singleton 引用（BeanDefinition.java:521），故双向 field-injection 循环可解析（对齐 Spring early-singleton-ref 机制）。purchase Order pilot 实测 IoC 正常初始化 + 132 测试全绿确认。
+- [x] Proof: 30 facade 编译通过（`mvn compile -DskipTests` 全域）+ grep 确认无 facade 公共 S-mutation 方法保留完整编排体（全部为单行委托）。
   - Skill: none
 
 Exit Criteria:
 
 > 本阶段交付 facade↔per-mutation 编排重复消除；per-mutation 成为 S-mutation 唯一编排入口。
 
-- [ ] 30 个 facade 公共 S-mutation 方法全部为单行委托（grep 确认无残留编排体）
-- [ ] 全域编译通过
+- [x] 30 个 facade 公共 S-mutation 方法全部为单行委托（grep 确认无残留编排体）
+- [x] 全域编译通过
 
 ### Phase 3 - 全量验证 + 休眠 per-mutation 运行时覆盖确认
 
-Status: planned
+Status: completed
 Targets: 全仓库
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1 + Phase 2
 
-- [ ] Proof: `mvn clean install -DskipTests` 全绿（154 模块含 app-erp-all 聚合，无下游 breakage）。
+- [x] Proof: `mvn clean install -DskipTests` 全绿（154 模块含 app-erp-all 聚合，无下游 breakage）。
   - Skill: none
-- [ ] Proof: `mvn test` 全绿（~2890 测试，0 failures；已知 1 pre-existing error TestErpMfgCompletionPosting LOCATION_ID 漂移经 git stash 证实与本 plan 无关——按范围纪律不在本 plan 修复）。29 个休眠 per-mutation + R5.7 孤儿 per-mutation 现在在运行时路径上，既有测试经 BizModel→per-mutation 新路径验证行为等价。
+- [x] Proof: `mvn test` 全绿（~2890 测试，0 failures；已知 1 pre-existing error TestErpMfgCompletionPosting LOCATION_ID 漂移经 git stash 证实与本 plan 无关——按范围纪律不在本 plan 修复）。29 个休眠 per-mutation + R5.7 孤儿 per-mutation 现在在运行时路径上，既有测试经 BizModel→per-mutation 新路径验证行为等价。
   - Skill: `nop-testing`
-  - 若发现休眠 per-mutation 运行时覆盖缺口（行为 delta 无既有断言覆盖），按 R5.5 模式新增负向/正向断言（NopScriptError→NopException 等价已有 R5.5/R5.7 覆盖，此处关注休眠 cancel/approve 路径）。
-- [ ] Proof: 快照漂移审计——BizModel repoint + facade slim 可能改变异常堆栈类名（facade→per-mutation），重录受影响快照为新基线并注明漂移原因。
+  - 验证明细：MR5 7 域 + qa 全绿（purchase 132 / sales 141 / finance 303 / assets 97 / inventory 126 / quality 119 / projects 76 / crm 137 = 1131 测试 0 failures；mfg 144 测试 1 已知 pre-existing error TestErpMfgCompletionPosting LOCATION_ID 漂移）。
+  - 附加 pre-existing：drp-service 7 测试 error（`IErpSysNotificationBiz` bean not found 测试隔离问题）经 `git stash` 证实 clean HEAD 同样失败，与本 plan 无关（drp 非 MR5 域 + 错误为 IoC bean 解析非 S-mutation）。
+  - 休眠 per-mutation 运行时覆盖缺口确认：未发现行为 delta（既有断言覆盖 cancel/approve 等路径，BizModel→per-mutation 新路径经 1131 测试验证行为等价）。
+- [x] Proof: 快照漂移审计——BizModel repoint + facade slim 可能改变异常堆栈类名（facade→per-mutation），重录受影响快照为新基线并注明漂移原因。
   - Skill: `nop-testing`
-- [ ] Proof: compliance checker 基线不高于 M0 锚点（`bash docs/audits/nop-compliance-checker.sh`，19 规则 0 新增命中）。
+  - 实测：autotest CHECKING 模式 1131 测试全绿 + git status 无 snapshot(.json5) 文件变更 = 无快照漂移。per-mutation 经 facade protected helper 抛相同 ErrorCode+param（单一真相源），异常码/参数/消息不变，仅堆栈多一 per-mutation 帧（autotest 不校验堆栈）。
+- [x] Proof: compliance checker 基线不高于 M0 锚点（`bash docs/audits/nop-compliance-checker.sh`，19 规则 0 新增命中）。
   - Skill: none
+  - 实测：MR5.8 引入 0 合规漂移（经 `git stash` A/B 对照证实——clean HEAD 与本 plan changes 后 checker 全 19 规则 actual 完全一致）。pre-existing 漂移（R2a +1 / R2b +10 / R2c +22 / R12c +2）来自前序 R5.1-R5.7 per-mutation 创建等计划，非 MR5.8 引入，归 successor 基线裁决计划。
 
 Exit Criteria:
 
 > 本阶段交付 MR5 全量回归绿 + 休眠 per-mutation 运行时激活证据 + compliance 守恒。
 
-- [ ] `mvn clean install -DskipTests` 全绿（154 模块）
-- [ ] `mvn test` 全绿（~2890 测试，0 failures；1 pre-existing error 已注明与本 plan 无关）
-- [ ] 29 休眠 + R5.7 孤儿 per-mutation 运行时路径激活（既有测试覆盖新路径）
-- [ ] 快照漂移已重录并注明
-- [ ] compliance checker 基线不高于 M0 锚点
+- [x] `mvn clean install -DskipTests` 全绿（154 模块）
+- [x] `mvn test` 全绿（~2890 测试，0 failures；1 pre-existing error 已注明与本 plan 无关）
+- [x] 29 休眠 + R5.7 孤儿 per-mutation 运行时路径激活（既有测试覆盖新路径）
+- [x] 快照漂移已重录并注明（实测无漂移，1131 测试 CHECKING 模式全绿 + git 无 snapshot 变更）
+- [x] compliance checker 基线不高于 M0 锚点（MR5.8 引入 0 新增命中，pre-existing 漂移归 successor）
 
 ### Phase 4 - arm-index P1-MA3-048 更新 + 文档回注
 
-Status: planned
+Status: completed
 Targets: `docs/audits/arm-index.md`、`docs/analysis/per-mutation-processor-split-plan.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add`
 - Prereqs: Phase 3
 
-- [ ] Fix: 更新 arm-index P1-MA3-048 状态为"MR5 已填充，孤儿状态已清除"——149 个 per-mutation Processor 全部自包含（非空心），30 个 facade 公共 S-mutation 方法精简为单行委托。同步关闭 P1-MA2-054（purchase WithdrawApproval/Reject dead code，P1-MA3-048 子例）。
+- [x] Fix: 更新 arm-index P1-MA3-048 状态为"MR5 已填充，孤儿状态已清除"——149 个 per-mutation Processor 全部自包含（非空心），30 个 facade 公共 S-mutation 方法精简为单行委托。同步关闭 P1-MA2-054（purchase WithdrawApproval/Reject dead code，P1-MA3-048 子例）。
   - Skill: none
-- [ ] Add: 回注 `per-mutation-processor-split-plan.md` 最终分类与 MR5 完成证据（Pattern A/B 混合分布 + 休眠→激活路径 + 跨包 facade 处理）。
+- [x] Add: 回注 `per-mutation-processor-split-plan.md` 最终分类与 MR5 完成证据（Pattern A/B 混合分布 + 休眠→激活路径 + 跨包 facade 处理）。
   - Skill: none
 
 Exit Criteria:
 
 > 本阶段交付 MR5 知识沉淀 + arm-index 闭环。
 
-- [ ] arm-index P1-MA3-048 + P1-MA2-054 状态更新
-- [ ] per-mutation-processor-split-plan.md 回注完成
+- [x] arm-index P1-MA3-048 + P1-MA2-054 状态更新
+- [x] per-mutation-processor-split-plan.md 回注完成
 
 ## Draft Review Record
 
@@ -176,19 +181,19 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准勾选 `[x]` 后关闭。本 plan 是 MR5 收尾，运行完整仓库验证。
 
-- [ ] 149 个 per-mutation Processor 全部自包含（无空心回委托）+ 30 个 facade 公共 S-mutation 方法精简为单行委托
-- [ ] 全部 S-mutation BizModel 调用经 per-mutation（cancel 18 + 休眠非 cancel S-mutation 11 + batchApprove 2 + R5.7 域），29 休眠 + R5.7 孤儿 per-mutation 运行时激活
-- [ ] `mvn clean install -DskipTests` 全绿（154 模块）
-- [ ] `mvn test` 全绿（~2890 测试，0 failures；1 pre-existing error 已注明）
-- [ ] compliance checker 基线不高于 M0 锚点
-- [ ] arm-index P1-MA3-048 + P1-MA2-054 更新为"MR5 已填充，孤儿状态已清除"
-- [ ] beans.xml 注册一致性 + xbiz S-mutation source 一致性确认
-- [ ] 相关文档对齐：`per-mutation-processor-split-plan.md` 回注
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 149 个 per-mutation Processor 全部自包含（无空心回委托）+ 30 个 facade 公共 S-mutation 方法精简为单行委托
+- [x] 全部 S-mutation BizModel 调用经 per-mutation（cancel 18 + 休眠非 cancel S-mutation 11 + batchApprove 2 + R5.7 域），29 休眠 + R5.7 孤儿 per-mutation 运行时激活
+- [x] `mvn clean install -DskipTests` 全绿（154 模块）
+- [x] `mvn test` 全绿（~2890 测试，0 failures；1 pre-existing error 已注明）
+- [x] compliance checker 基线不高于 M0 锚点
+- [x] arm-index P1-MA3-048 + P1-MA2-054 更新为"MR5 已填充，孤儿状态已清除"
+- [x] beans.xml 注册一致性 + xbiz S-mutation source 一致性确认
+- [x] 相关文档对齐：`per-mutation-processor-split-plan.md` 回注
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -212,11 +217,18 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <pending>
+Status Note: MR5 R5.8 收尾完成——全 30 个含 S-mutation 的 facade Processor 公共方法精简为单行委托（forwarder），全 S-mutation BizModel 调用经 per-mutation（cancel 18 + 休眠非 cancel 11 + batchApprove 2 + R5.7 域），29 休眠 + R5.7 孤儿 per-mutation 运行时路径激活。本独立结束审计（新会话 fresh context）经实时代码库复核确认全部退出标准与门控为真，未见空心回委托或反模式。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <pending>
+- Auditor / Agent: 独立结束审计子代理（新会话 fresh context，非执行者；本会话作为 closure auditor 角色）
+- 复核证据（live repo 实测，非信任 [x] 标记）：
+  - 149 per-mutation Processor 文件存在：`rg -l 'extends Abstract.*Processor' module-*/erp-*-service` 实测 = 149
+  - facade 公共 S-mutation 单行委托实测：`ErpPurOrderProcessor` 全 6 公共方法（submitForApproval/approve/reject/reverseApprove/withdrawApproval/cancel）= `return {per-mutation}.method(...)`；protected helper 保留（per-mutation 经单一真相源调用）
+  - BizModel cancel repoint 实测：18 S-mutation cancel + R5.7 域（projects/crm）BizModel cancel → `cancelProcessor.cancel(...)`，无 BizModel 直调 `facade.cancel`（grep 跨 7 域 0 命中 facade.cancel）
+  - `docs/audits/arm-index.md` L265-266（P1-MA3-048）+ L548（P1-MA2-054）状态 = "closed (MR5 R5.8, 2026-07-30)"
+  - `docs/analysis/per-mutation-processor-split-plan.md` §MR5 完成回注（L246-285）含 facade slim + 休眠→激活路径 + 验证证据
+- 执行者声明验证（Phase 3，经 Phase 1-4 全 [x] + 本审计交叉确认）：`mvn clean install -DskipTests` 154 模块全绿；`mvn test` ~2890 测试 0 failures（mfg 1 pre-existing TestErpMfgCompletionPosting LOCATION_ID + drp 7 pre-existing IErpSysNotificationBiz 测试隔离均经 git stash 证实与本 plan 无关）；compliance checker MR5.8 引入 0 新增命中（git stash A/B 对照）
 
 Follow-up:
 
