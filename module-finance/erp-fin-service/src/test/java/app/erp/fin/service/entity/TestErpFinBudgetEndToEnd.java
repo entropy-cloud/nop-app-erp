@@ -218,6 +218,67 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         assertEquals(0, row.getAvailableAmount().compareTo(new BigDecimal("600")), "余量=600");
     }
 
+    @Test
+    public void testAvailableDeductsCommitmentSeparately() {
+        // P1-MA2-084 三通道分离：available = budget − actual − commitment 显式三项式。
+        // 构造 BUDGET(1000) + ACTUAL/NORMAL(300) + COMMITMENT(200) → available 应 = 500。
+        Long[] ids = seedReturn(() -> {
+            Long pid = seedOpenPeriod("2024-12", 2024, 12);
+            ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
+            ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
+            Long scenarioId = seedBudgetScenario("BUD-2024-12", pid, 2024, ErpFinConstants.BUDGET_CONTROL_WARN,
+                    expense, income, new BigDecimal("1000"));
+            seedActualVoucher("V-ACT-12", pid, expense, income, new BigDecimal("300"));
+            // 承付凭证（postingType=COMMITMENT）：占用 expense 科目 200
+            seedCommitmentVoucher("V-CMT-12", pid, expense, new BigDecimal("200"));
+            return new Long[]{pid, scenarioId};
+        });
+        Long periodId = ids[0];
+        Long scenarioId = ids[1];
+        ErpMdSubject expense = findSubjectByCode("6601");
+
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
+
+        // amount=100 < available=500 → PASS，断言 available 精确为 500（= 1000 − 300 − 200）
+        BudgetCheckResult result = ormTemplate.runInSession(session -> budgetControlBiz.check(expense.getId(), null, periodId,
+                new BigDecimal("100"), "PURCHASE_ORDER", "PO-084-1", CTX));
+        assertEquals(BudgetCheckResult.ACTION_PASS, result.getActionResult());
+        assertEquals(0, result.getAvailableAmount().compareTo(new BigDecimal("500")),
+                "available 应 = budget(1000) − actual(300) − commitment(200) = 500（三通道分离）");
+    }
+
+    @Test
+    public void testCommitmentZeroEquivalentAndReservationCountsAsActual() {
+        // P1-MA2-084 回归：(a) commitment=0 时与旧公式等价（available = budget − actual）；
+        // (b) RESERVATION 凭证仍计入 actual 通道（不因三通道分离而漏算）。
+        Long[] ids = seedReturn(() -> {
+            Long pid = seedOpenPeriod("2025-01", 2025, 1);
+            ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
+            ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
+            Long scenarioId = seedBudgetScenario("BUD-2025-01", pid, 2025, ErpFinConstants.BUDGET_CONTROL_WARN,
+                    expense, income, new BigDecimal("1000"));
+            seedActualVoucher("V-ACT-01", pid, expense, income, new BigDecimal("300"));
+            // RESERVATION 凭证 100（应计入 actual 通道）
+            seedReservationVoucher("V-RSV-01", pid, expense, new BigDecimal("100"));
+            // 无 COMMITMENT 凭证（commitment=0）
+            return new Long[]{pid, scenarioId};
+        });
+        Long periodId = ids[0];
+        Long scenarioId = ids[1];
+        ErpMdSubject expense = findSubjectByCode("6601");
+
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
+
+        // available = 1000 − (actual 300 + RESERVATION 100) − commitment(0) = 600
+        BudgetCheckResult result = ormTemplate.runInSession(session -> budgetControlBiz.check(expense.getId(), null, periodId,
+                new BigDecimal("100"), "PURCHASE_ORDER", "PO-084-2", CTX));
+        assertEquals(BudgetCheckResult.ACTION_PASS, result.getActionResult());
+        assertEquals(0, result.getAvailableAmount().compareTo(new BigDecimal("600")),
+                "RESERVATION 应计入 actual：available = budget(1000) − actual(300+RESERVATION100) − commitment(0) = 600");
+    }
+
     // ---------- helpers ----------
 
     private <T> T seedReturn(java.util.function.Supplier<T> action) {
@@ -347,6 +408,50 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         c.setAmountFunctional(amount);
         c.setAcctSchemaId(1L);
         lDao.saveEntity(c);
+    }
+
+    /** 承付凭证（postingType=COMMITMENT）：借承付占用科目（P1-MA2-084 三通道测试种子）。 */
+    private void seedCommitmentVoucher(String code, Long periodId, ErpMdSubject subject, BigDecimal amount) {
+        seedSingleLineVoucher(code, periodId, subject, amount, ErpFinConstants.POSTING_TYPE_COMMITMENT);
+    }
+
+    /** 预留凭证（postingType=RESERVATION）：借 subject（P1-MA2-084 验证 RESERVATION 仍计入 actual 通道）。 */
+    private void seedReservationVoucher(String code, Long periodId, ErpMdSubject subject, BigDecimal amount) {
+        seedSingleLineVoucher(code, periodId, subject, amount, "RESERVATION");
+    }
+
+    /** 单边凭证（仅借方），用于三通道聚合测试。 */
+    private void seedSingleLineVoucher(String code, Long periodId, ErpMdSubject subject, BigDecimal amount, String postingType) {
+        IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
+        ErpFinVoucher v = new ErpFinVoucher();
+        v.setCode(code);
+        v.setVoucherType("TRANSFER");
+        v.setPostingType(postingType);
+        v.setVoucherDate(CoreMetrics.today());
+        v.setOrgId(1L);
+        v.setAcctSchemaId(1L);
+        v.setPeriodId(periodId);
+        v.setTotalDebit(amount);
+        v.setTotalCredit(BigDecimal.ZERO);
+        v.setIsReversed(false);
+        v.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
+        vDao.saveEntity(v);
+
+        IEntityDao<ErpFinVoucherLine> lDao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        ErpFinVoucherLine d = new ErpFinVoucherLine();
+        d.setVoucherId(v.getId());
+        d.setLineNo(1);
+        d.setSubjectId(subject.getId());
+        d.setSubjectCode(subject.getCode());
+        d.setDcDirection(ErpFinConstants.DC_DEBIT);
+        d.setDebitAmount(amount);
+        d.setCreditAmount(BigDecimal.ZERO);
+        d.setCurrencyId(1L);
+        d.setExchangeRate(BigDecimal.ONE);
+        d.setAmountSource(amount);
+        d.setAmountFunctional(amount);
+        d.setAcctSchemaId(1L);
+        lDao.saveEntity(d);
     }
 
     /** 聚合 BUDGET 凭证在该期间该科目的净预算额（借方科目=借−贷）。 */

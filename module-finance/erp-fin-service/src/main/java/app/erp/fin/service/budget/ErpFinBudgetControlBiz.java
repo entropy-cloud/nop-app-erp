@@ -29,20 +29,22 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.isNull;
-import static io.nop.api.core.beans.FilterBeans.ne;
+import static io.nop.api.core.beans.FilterBeans.notIn;
 import static io.nop.api.core.beans.FilterBeans.or;
 
 /**
  * 预算控制实现（{@code budget.md §业务规则2/4/8}）。在采购/付款/报销审核事务内同步校验预算余量。
  *
- * <p><b>余量计算</b>（均从 {@link ErpFinVoucherLine} 聚合，不写 GlBalance）：
+ * <p><b>余量计算</b>（均从 {@link ErpFinVoucherLine} 聚合，不写 GlBalance）——显式三通道分离（P1-MA2-084）：
  * <ul>
  *   <li>{@code budgetBalance} = 关联凭证 {@code postingType=BUDGET} 的行在匹配维度（subjectId + costCenterId + periodId）的净额</li>
- *   <li>{@code actualBalance} = 关联凭证 {@code postingType≠BUDGET}（含 NORMAL/NULL/<b>COMMITMENT</b>）的行在匹配维度的净额。
- *       即承付款经 {@code actualBalance} 通道隐式减去（{@code or(isNull, ne(BUDGET))} 过滤器放行 COMMITMENT），
- *       与 {@code budget.md:17,59} 三项式 {@code available = budget − commitment − actual} 等价（P1-MA3-025 MR1 核实 / P1-MA2-084）。</li>
- *   <li>{@code availableAmount} = budgetBalance − actualBalance（= budget − commitment − actual）</li>
+ *   <li>{@code actualBalance} = 关联凭证 {@code postingType∉{BUDGET, COMMITMENT}}（NORMAL/NULL/RESERVATION/ADJUSTMENT 等）的行在匹配维度的净额。
+ *       <b>承付款不计入 actual 通道</b>——由独立的 {@code commitmentBalance} 通道显式减去。</li>
+ *   <li>{@code commitmentBalance} = 关联凭证 {@code postingType=COMMITMENT} 的行在匹配维度的净额</li>
+ *   <li>{@code availableAmount} = budgetBalance − actualBalance − commitmentBalance（显式三项式，对齐 {@code budget.md:17,59}）</li>
  * </ul>
+ * <p>三通道分离数值上等价于旧 {@code available = budget − (actual + commitment)}，但消除「{@code actualBalance} 隐式含 commitment」
+ * 的变量名/javadoc 误导（维护者若误将 actual 通道「修正」为放行 COMMITMENT 会破坏预算控制——commitment 不再被减去，超预算放行）。
  *
  * <p><b>控制级别</b>（来自命中的 APPROVED 预算方案 {@link ErpFinBudgetScenario#getControlLevel()}）：
  * NONE → PASS；WARN → 不足时 WARNED 写日志放行；HARD → 不足时 BLOCKED 抛异常。
@@ -73,9 +75,10 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
 
         ErpMdSubject subject = loadSubject(subjectId);
         String direction = subject != null ? subject.getDirection() : ErpFinConstants.DC_DEBIT;
-        BigDecimal budgetBalance = aggregateAmount(periodId, subjectId, costCenterId, direction, true);
-        BigDecimal actualBalance = aggregateAmount(periodId, subjectId, costCenterId, direction, false);
-        BigDecimal available = budgetBalance.subtract(actualBalance);
+        BigDecimal budgetBalance = aggregateAmount(periodId, subjectId, costCenterId, direction, AmountChannel.BUDGET);
+        BigDecimal actualBalance = aggregateAmount(periodId, subjectId, costCenterId, direction, AmountChannel.ACTUAL);
+        BigDecimal commitmentBalance = aggregateAmount(periodId, subjectId, costCenterId, direction, AmountChannel.COMMITMENT);
+        BigDecimal available = budgetBalance.subtract(actualBalance).subtract(commitmentBalance);
 
         if (available.compareTo(amount) >= 0) {
             return new BudgetCheckResult(BudgetCheckResult.ACTION_PASS, available, match.line.getId());
@@ -100,8 +103,18 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
         return new BudgetCheckResult(BudgetCheckResult.ACTION_PASS, available, match.line.getId());
     }
 
-    /** 聚合指定维度的净额。budget=true 取 BUDGET 凭证行；budget=false 取实际凭证行（NORMAL/NULL）。 */
-    private BigDecimal aggregateAmount(Long periodId, Long subjectId, Long costCenterId, String direction, boolean budget) {
+    /**
+     * 聚合指定维度（subjectId + costCenterId + periodId）按通道过滤的凭证行净额（P1-MA2-084 三通道分离）。
+     *
+     * <ul>
+     *   <li>{@link AmountChannel#BUDGET}：取 {@code postingType=BUDGET} 的预算影子凭证行</li>
+     *   <li>{@link AmountChannel#COMMITMENT}：取 {@code postingType=COMMITMENT} 的承付凭证行</li>
+     *   <li>{@link AmountChannel#ACTUAL}：取实际凭证行（NORMAL/NULL/RESERVATION/ADJUSTMENT 等，
+     *       <b>排除 BUDGET 与 COMMITMENT</b>，保留既有 RESERVATION 等仍计入 actual 的行为）</li>
+     * </ul>
+     * <p>借方余额科目取「借 − 贷」，贷方余额科目取「贷 − 借」。
+     */
+    private BigDecimal aggregateAmount(Long periodId, Long subjectId, Long costCenterId, String direction, AmountChannel channel) {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean vq = new QueryBean();
         if (periodId != null) {
@@ -109,11 +122,7 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
         }
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         vq.addFilter(eq("isReversed", Boolean.FALSE));
-        if (budget) {
-            vq.addFilter(eq("postingType", ErpFinConstants.POSTING_TYPE_BUDGET));
-        } else {
-            vq.addFilter(or(isNull("postingType"), ne("postingType", ErpFinConstants.POSTING_TYPE_BUDGET)));
-        }
+        applyPostingTypeFilter(vq, channel);
         List<Long> voucherIds = voucherDao.findAllByQuery(vq).stream()
                 .map(ErpFinVoucher::getId).collect(java.util.stream.Collectors.toList());
         if (voucherIds.isEmpty()) {
@@ -136,6 +145,35 @@ public class ErpFinBudgetControlBiz implements IErpFinBudgetControlBiz {
             credit = credit.add(l.getCreditAmount() != null ? l.getCreditAmount() : BigDecimal.ZERO);
         }
         return ErpFinConstants.DC_CREDIT.equals(direction) ? credit.subtract(debit) : debit.subtract(credit);
+    }
+
+    /** 按通道附加凭证级 postingType 过滤（P1-MA2-084 三通道分离）。 */
+    private void applyPostingTypeFilter(QueryBean vq, AmountChannel channel) {
+        switch (channel) {
+            case BUDGET:
+                vq.addFilter(eq("postingType", ErpFinConstants.POSTING_TYPE_BUDGET));
+                break;
+            case COMMITMENT:
+                vq.addFilter(eq("postingType", ErpFinConstants.POSTING_TYPE_COMMITMENT));
+                break;
+            case ACTUAL:
+            default:
+                // actual = NORMAL/NULL/RESERVATION/ADJUSTMENT 等（排除 BUDGET 与 COMMITMENT）
+                vq.addFilter(or(isNull("postingType"),
+                        notIn("postingType", java.util.Arrays.asList(
+                                ErpFinConstants.POSTING_TYPE_BUDGET, ErpFinConstants.POSTING_TYPE_COMMITMENT))));
+                break;
+        }
+    }
+
+    /** 余量聚合通道（P1-MA2-084 三通道分离）。 */
+    private enum AmountChannel {
+        /** postingType=BUDGET 的预算影子凭证。 */
+        BUDGET,
+        /** postingType=COMMITMENT 的承付凭证。 */
+        COMMITMENT,
+        /** 其余实际凭证（NORMAL/NULL/RESERVATION/ADJUSTMENT 等，排除 BUDGET 与 COMMITMENT）。 */
+        ACTUAL
     }
 
     /** 查找命中的预算行（subjectId + costCenterId + periodId，所属方案 APPROVED）。无匹配返回 null。 */

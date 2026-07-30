@@ -1,10 +1,13 @@
 package app.erp.pur.service.processor;
 
+import app.erp.fin.biz.IErpFinBudgetCommitmentBiz;
+import app.erp.fin.service.ErpFinConstants;
 import app.erp.inv.biz.IErpInvStockMoveBiz;
 import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReturn;
 import app.erp.pur.dao.entity.ErpPurReturnLine;
@@ -23,6 +26,8 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 import java.util.ArrayList;
@@ -42,6 +47,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpPurReturnProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpPurReturnProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -63,6 +70,9 @@ public class ErpPurReturnProcessor {
 
     @Inject
     PurReturnPostingDispatcher postingDispatcher;
+
+    @Inject
+    IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
 
     public ErpPurReturn submitForApproval(String id, IServiceContext context) {
         ErpPurReturn returnOrder = requireReturn(id, context);
@@ -96,6 +106,7 @@ public class ErpPurReturnProcessor {
 
         returnOrder = returnDao().getEntityById(id);
         doApprove(returnOrder, posted, context);
+        runCommitmentReleaseOnReturnHook(returnOrder, context);
         return returnOrder;
     }
 
@@ -274,6 +285,48 @@ public class ErpPurReturnProcessor {
             return;
         }
         stockMoveBiz.reverse(original.getId(), context);
+    }
+
+    // ---------- 承付释放（release-on-return, budget.md §承付会计 §3 接入点 #4） ----------
+
+    /**
+     * 采购退货审核后置承付释放钩子（P1-MA2-082，budget.md §承付会计 §3 接入点 #4 release-on-return）。
+     *
+     * <p>退货减少实际采购量 → 同步释放原 PO 承付凭证（红冲 COMMITMENT）。config-gated
+     * （{@code erp-fin.commitment-release-on-return} 默认 false）+ 依赖承付总开关
+     * {@code erp-fin.budget-commitment-enabled}；调 {@link IErpFinBudgetCommitmentBiz#releaseIfPresent}
+     * 容错（无原承付凭证静默跳过，对齐 release-on-cancel 范式 budget.md §release hook 容错对称性）。
+     *
+     * <p><b>全额释放语义</b>：{@code releaseIfPresent} 走 {@code reverseCommitment} 全额红冲（无 amount 入参），
+     * 故<b>部分退货亦全额红冲整张 PO 承付</b>——剩余未开票数量失去承付保护，可能允许超预算放行新订单。
+     * 按比例部分释放归 successor（与 P1-MA2-081 方案B 同 successor）。声明见 budget.md §3。
+     */
+    protected void runCommitmentReleaseOnReturnHook(ErpPurReturn returnOrder, IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(
+                ErpFinConstants.CONFIG_BUDGET_COMMITMENT_RELEASE_ON_RETURN, Boolean.FALSE))) {
+            return;
+        }
+        String poCode = resolvePurchaseOrderCode(returnOrder);
+        if (poCode == null || poCode.isEmpty()) {
+            return;
+        }
+        try {
+            budgetCommitmentBiz.releaseIfPresent(
+                    ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, poCode, context);
+        } catch (NopException e) {
+            // 容错：无原承付凭证静默跳过，不阻断退货审核流（对齐 release-on-cancel 容错范式）
+            LOG.debug("commitment release-on-return skipped for return {}: {}", returnOrder.getCode(), e.getMessage());
+        }
+    }
+
+    /** 经 return.receiveId → receive.orderId → order.code 解析源采购订单 code（无法解析返回 null）。 */
+    protected String resolvePurchaseOrderCode(ErpPurReturn returnOrder) {
+        ErpPurReceive receive = returnOrder.getReceive();
+        if (receive == null) {
+            return null;
+        }
+        ErpPurOrder order = receive.getOrder();
+        return order == null ? null : order.getCode();
     }
 
     // ---------- 校验/查询辅助 ----------

@@ -215,6 +215,64 @@ public class TestErpFinBudgetCommitment extends JunitAutoTestCase {
         assertNotNull(purReversalId, "采购承付 release 应成功（billType 隔离未被 sales release 影响）");
     }
 
+    @Test
+    public void testMultiInvoiceFullReleaseProducesSingleReversal() {
+        // P1-MA2-081 全额释放语义 + 多发票容错：一张 PO 多次部分开票时，首张发票 approve 全额释放承付，
+        // 后续发票 approve 经容错守卫（ERR_BUDGET_COMMITMENT_ALREADY_RELEASED）跳过——实际占用产生时全额释放，
+        // 避免 actual + commitment 双重占用。断言：仅一张红冲凭证 + 第二张发票 release 抛守卫异常（被 Processor 容错吞掉）。
+        Long[] ids = seedReturn(() -> {
+            Long pid = seedOpenPeriod("2024-CM-6", 2024, 11);
+            ErpMdSubject subject = seedSubject("1408", "承付占用科目", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
+            return new Long[]{pid, subject.getId()};
+        });
+        Long periodId = ids[0];
+        Long subjectId = ids[1];
+
+        // PO approve → commit（全额）
+        Long originalId = ormTemplate.runInSession(session ->
+                commitmentBiz.commit(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-MULTI-INV",
+                        subjectId, null, periodId, new BigDecimal("1000"), CTX));
+        assertNotNull(originalId);
+
+        // invoice1 approve → 全额 release（首张发票释放整张 PO 承付）
+        Long reversalId = ormTemplate.runInSession(session ->
+                commitmentBiz.release(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-MULTI-INV", CTX));
+        assertNotNull(reversalId, "首张发票 approve 应全额红冲承付");
+
+        // 断言仅一张红冲凭证（全额释放，非按比例部分释放）
+        assertEquals(1, countCommitmentReversals("PO-MULTI-INV"),
+                "全额释放语义：仅一张承付红冲凭证（部分释放归 successor）");
+
+        // invoice2 approve → 重复 release 抛守卫异常（Processor 经 try-catch 容错吞掉，不阻断业务流）
+        NopException ex = assertThrows(NopException.class, () ->
+                ormTemplate.runInSession(session ->
+                        commitmentBiz.release(ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, "PO-MULTI-INV", CTX)),
+                "第二张发票 approve 应抛 ERR_BUDGET_COMMITMENT_ALREADY_RELEASED（容错守卫）");
+        assertEquals(ErpFinErrors.ERR_BUDGET_COMMITMENT_ALREADY_RELEASED.getErrorCode(), ex.getErrorCode(),
+                "应抛承付已释放守卫（invoice2 容错跳过）");
+
+        // 红冲凭证数量不变（invoice2 容错未产生新红冲）
+        assertEquals(1, countCommitmentReversals("PO-MULTI-INV"),
+                "invoice2 容错跳过后红冲凭证数量不变");
+    }
+
+    private int countCommitmentReversals(String billCode) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("billCode", billCode));
+        q.addFilter(eq("billType", ErpFinConstants.COMMITMENT_VOUCHER_BILL_TYPE));
+        List<ErpFinVoucherBillR> links = daoProvider.daoFor(ErpFinVoucherBillR.class).findAllByQuery(q);
+        int reversals = 0;
+        for (ErpFinVoucherBillR link : links) {
+            ErpFinVoucher v = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(link.getVoucherId());
+            if (v != null && Boolean.TRUE.equals(v.getIsReversed())
+                    && v.getReversalOfVoucherId() != null
+                    && ErpFinConstants.POSTING_TYPE_COMMITMENT.equals(v.getPostingType())) {
+                reversals++;
+            }
+        }
+        return reversals;
+    }
+
     // ---------- helpers ----------
 
     private <T> T seedReturn(java.util.function.Supplier<T> action) {
