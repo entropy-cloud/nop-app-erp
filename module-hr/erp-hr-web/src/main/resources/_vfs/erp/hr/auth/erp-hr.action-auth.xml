@@ -72,7 +72,14 @@
                         <resource id="ErpHrLeaveRequest-main" app:useCases="UC-HR-02"
                                   displayName="休假申请" i18n-en:displayName="Leave Request" icon="calendar-off"
                                   component="AMIS" resourceType="SUBM" orderNo="400"
-                                  url="/erp/hr/pages/ErpHrLeaveRequest/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrLeaveRequest/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpHrLeaveRequest:approve" displayName="审批休假" i18n-en:displayName="Approve Leave"
+                                          resourceType="FNPT" orderNo="40010" roles="HR 专员">
+                                    <permissions>ErpHrLeaveRequest:approve</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="hr-team-vacation-calendar" app:useCases="UC-HR-02" displayName="团队休假日历"
                                   i18n-en:displayName="Team Vacation Calendar" icon="calendar-days"
                                   component="AMIS" resourceType="SUBM" orderNo="405"
@@ -89,7 +96,18 @@
                         <resource id="ErpHrSalary-main" app:useCases="UC-HR-04,UC-HR-10"
                                   displayName="薪酬记录" i18n-en:displayName="Salary Record" icon="dollar-sign"
                                   component="AMIS" resourceType="SUBM" orderNo="500"
-                                  url="/erp/hr/pages/ErpHrSalary/main.page.yaml"/>
+                                  url="/erp/hr/pages/ErpHrSalary/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpHrSalary:approve" displayName="审批薪酬(机密)" i18n-en:displayName="Approve Salary"
+                                          resourceType="FNPT" orderNo="50010" roles="薪酬审批人">
+                                    <permissions>ErpHrSalary:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpHrSalary:markPaid" displayName="标记已发放" i18n-en:displayName="Mark Paid"
+                                          resourceType="FNPT" orderNo="50020" roles="薪酬审批人">
+                                    <permissions>ErpHrSalary:markPaid</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="hr-payroll-approval" app:useCases="UC-HR-04,UC-HR-10" displayName="薪酬核算审批"
                                   i18n-en:displayName="Payroll Approval" icon="clipboard-check"
                                   component="AMIS" resourceType="SUBM" orderNo="505"

@@ -18,7 +18,18 @@
                         <resource id="ErpFinVoucher-main" app:useCases="UC-FIN-01,UC-FIN-02,UC-FIN-12,UC-FIN-03,UC-FIN-04" displayName="会计凭证"
                                   i18n-en:displayName="Accounting Voucher" icon="book-up"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
-                                  url="/erp/fin/pages/ErpFinVoucher/main.page.yaml"/>
+                                  url="/erp/fin/pages/ErpFinVoucher/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpFinVoucher:post" displayName="过账凭证" i18n-en:displayName="Post Voucher"
+                                          resourceType="FNPT" orderNo="10010" roles="财务员">
+                                    <permissions>ErpFinVoucher:post</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinVoucher:reverse" displayName="红冲凭证" i18n-en:displayName="Reverse Voucher"
+                                          resourceType="FNPT" orderNo="10020" roles="财务员">
+                                    <permissions>ErpFinVoucher:reverse</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpFinVoucherTemplate-main" app:useCases="UC-FIN-01" displayName="凭证模板"
                                   i18n-en:displayName="Voucher Template" icon="book-template"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
@@ -36,7 +47,18 @@
                         <resource id="ErpFinAccountingPeriod-main" app:useCases="UC-FIN-06,UC-FIN-07" displayName="会计期间"
                                   i18n-en:displayName="Accounting Period" icon="calendar"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
-                                  url="/erp/fin/pages/ErpFinAccountingPeriod/main.page.yaml"/>
+                                  url="/erp/fin/pages/ErpFinAccountingPeriod/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpFinAccountingPeriod:closePeriod" displayName="期末结账" i18n-en:displayName="Close Period"
+                                          resourceType="FNPT" orderNo="20010" roles="财务员">
+                                    <permissions>ErpFinAccountingPeriod:closePeriod</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinAccountingPeriod:reverseClose" displayName="反结账(kill-switch)" i18n-en:displayName="Reverse Close"
+                                          resourceType="FNPT" orderNo="20020" roles="管理员">
+                                    <permissions>ErpFinAccountingPeriod:reverseClose</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <!-- F12 Tier C 期末结账向导（plan 2026-07-23-0818-2）：引导式驱动 preCheck→closePeriod→finalizePeriod + reverseClose，零后端 delta -->
                         <resource id="fin-period-close-wizard" app:useCases="UC-FIN-06,UC-FIN-07" displayName="期末结账向导"
                                   i18n-en:displayName="Period Close Wizard" icon="magic"
@@ -59,7 +81,18 @@
                         <resource id="ErpFinBadDebt-main" displayName="坏账准备单"
                                   i18n-en:displayName="Bad Debt Provision" icon="file-x"
                                   component="AMIS" resourceType="SUBM" orderNo="310"
-                                  url="/erp/fin/pages/ErpFinBadDebt/main.page.yaml"/>
+                                  url="/erp/fin/pages/ErpFinBadDebt/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpFinBadDebt:writeOff" displayName="坏账核销" i18n-en:displayName="Write Off"
+                                          resourceType="FNPT" orderNo="31010" roles="财务员">
+                                    <permissions>ErpFinBadDebt:writeOff</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinBadDebt:reverseApprove" displayName="反审核坏账单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="31020" roles="管理员">
+                                    <permissions>ErpFinBadDebt:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 核销 -->

@@ -18,7 +18,14 @@
                         <resource id="ErpInvStockMove-main" app:useCases="UC-INV-01,UC-INV-03,UC-INV-04,UC-INV-10,UC-MD-02,UC-INV-08,UC-INV-09" displayName="库存移动单"
                                   i18n-en:displayName="Stock Move" icon="arrow-left-right"
                                   component="AMIS" resourceType="SUBM" orderNo="100"
-                                  url="/erp/inv/pages/ErpInvStockMove/main.page.yaml"/>
+                                  url="/erp/inv/pages/ErpInvStockMove/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpInvStockMove:confirm" displayName="确认移动单" i18n-en:displayName="Confirm Move"
+                                          resourceType="FNPT" orderNo="10010" roles="库管员">
+                                    <permissions>ErpInvStockMove:confirm</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpInvPickingOrder-main" app:useCases="UC-INV-01" displayName="拣货单"
                                   i18n-en:displayName="Picking Order" icon="package-search"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
@@ -98,7 +105,14 @@
                         <resource id="ErpInvLandedCost-main" app:useCases="UC-INV-10" displayName="到岸成本单"
                                   i18n-en:displayName="Landed Cost" icon="ship"
                                   component="AMIS" resourceType="SUBM" orderNo="710"
-                                  url="/erp/inv/pages/ErpInvLandedCost/main.page.yaml"/>
+                                  url="/erp/inv/pages/ErpInvLandedCost/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpInvLandedCost:approve" displayName="审批到岸成本" i18n-en:displayName="Approve Landed Cost"
+                                          resourceType="FNPT" orderNo="71010" roles="库管员">
+                                    <permissions>ErpInvLandedCost:approve</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpInvCostAdjust-main" app:useCases="UC-INV-10" displayName="成本调整单"
                                   i18n-en:displayName="Cost Adjustment" icon="sliders-horizontal"
                                   component="AMIS" resourceType="SUBM" orderNo="720"
