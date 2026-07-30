@@ -42,7 +42,7 @@ public class StandardCostingStrategy implements CostingStrategy {
     public BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
                                  BigDecimal unitCost, BookingContext ctx) {
         Long warehouseId = move.getDestWarehouseId();
-        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestWarehouseId();
+        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
 
         // 红冲不变量（P1-MA2-024，Choice B）：正常采购入库 line.unitCost 持「实际采购价」（PPV 经
