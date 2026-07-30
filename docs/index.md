@@ -90,11 +90,11 @@
 
 ## 域快速参考（可选）
 
-当项目有多个域时，添加快速参考表，以便通过一次查找即可将更改路由到正确的 owner doc 和技能。这是可选的；小型项目可以跳过。从真实项目填充表并将其保存在 `AGENTS.md` 或本文件中。
+> **Decision（P1-MA3-056）**：本节不另起 18+1 域表格——`docs/design/README.md §业务域设计文档` 已维护权威域表（域目录 → 逻辑工程 → 权威模型 → 文档结构），重复填写会形成双维护点漂移。故改为**交叉引用**：多域路由一次直达该表，再按需选择技能。
 
-| 更改区域 | 首先阅读 | 要加载的技能 |
-| ----------- | ---------- | ------------- |
-| <area> | `docs/<path>` | `<skill-name \| none>` |
+**多域更改路由**：见 `docs/design/README.md` §业务域设计文档（每域一个目录，含 README + state-machine + cross-domain 等因域而异的文档）。ORM 模型真相见 `module-<domain>/model/app-erp-<domain>.orm.xml`（19 域清单见 `docs/context/codebase-map.md §ORM 模型清单`）；物理目录 ↔ 逻辑工程名映射见 `docs/architecture/domain-module-split-analysis.md §2.0`。技能选择见 `docs/skills/README.md`。
+
+> 注：`docs/ppts/` 为演示材料目录（非业务域），未纳入域表。
 
 ## 目录角色
 
@@ -110,6 +110,8 @@
 - `docs/references/` - 稳定的查找指南和维护辅助工具
 - `docs/articles/` - 面向外部的方法论和解释性文章
 - `docs/examples/` - 可复制的日期工作文档骨架
+- `docs/errors/` - 错误码集中索引（按域/模块登记 ErrorCode）
+- `docs/ppts/` - 演示材料（幻灯片大纲与 HTML 演示）
 - `docs/plans/` - 带有结束标准的执行计划
 - `docs/audits/` - 审计方法和可选存储的审计记录
 - `docs/skills/` - 可选可复用 AI 提示和审计/审查剧本

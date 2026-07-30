@@ -1,6 +1,6 @@
 # 2026-07-31-0310-3-r2-8-r2-9-doc-infra-customization-drift
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-31
 > Source: `docs/backlog/audit-remediation-roadmap.md` MR2 / R2.8（P1-MA3-050~052, 054~056）+ R2.9（P1-MA3-057~061）
 > Related: `docs/audits/2026-07-28-1953-arm-ma3-index-routing.md`（A3.7 审计报告）；`docs/audits/2026-07-28-2130-arm-ma3-customization-verification.md`（A3.8 审计报告）；`docs/audits/arm-index.md §P1-MA3-050~061`；`docs/architecture/customization-capabilities.md`（R2.9 单 owner doc）；plan `2026-07-31-0010-1-r2-1-design-doc-execution-status-leakage-cleanup.md`（R2.1 文档治理先例）
@@ -57,51 +57,53 @@
 
 ### Phase 1 - R2.8 索引路由有效性（P1-MA3-050~052, 054~056）
 
-Status: planned
+Status: completed
 Targets: `docs/articles/README.md`（新建）、`docs/bugs/README.md`（新建）、`AGENTS.md`（§快速路由）、`docs/index.md`（§目录角色 + §域快速参考）、`docs/logs/index.md`（Current 段）
 Skill: none
 
 - Item Types: `Fix | Decision`
 - Prereqs: none
 
-- [ ] `Fix`（050）：新建 `docs/articles/README.md`——列出 2 篇文章 + 目的 + 与 `docs/skills/` 边界（articles = 解释性方法论长文；skills = 可复用审查/审计方法）。
-- [ ] `Fix`（051）：新建 `docs/bugs/README.md`——回归笔记清单表（13 文件分类）+ 与 `00-bug-fix-note-writing-guide.md` 交叉引用。
-- [ ] `Fix`（052）：`AGENTS.md §快速路由` 顶部加交叉引用——"完整路由见 `docs/index.md`，本表仅列代理高频任务"+ 删除与 index.md 完全重叠的行（声明 index.md 为顶级路由器单一真相源）。
-- [ ] `Fix`（054）：`docs/logs/index.md`「Current:」段更新至最新日志日期（执行时确认 `docs/logs/2026/` 最新文件）+ 评估改为"按年/月自动列表"或"见 design/README.md 业务域表"机制避免再次过时（若改机制，记录 Decision）。
-- [ ] `Fix`（055）：`docs/index.md §目录角色` 补 `docs/errors/`（错误码集中索引）+ `docs/ppts/`（演示材料，可选）两行。
-- [ ] `Decision`（056）：§域快速参考表裁决 = **交叉引用 `docs/design/README.md` 业务域设计文档表**（推荐，避免重复真相源漂移）或填充 18+1 域表。记录选择 + 理由（design/README.md 已维护域表，重复填写会双维护点漂移）。
-- [ ] `Fix`（056）：按 Decision 执行——改 §域快速参考为"见 `docs/design/README.md` 业务域设计文档表"交叉引用并删占位，或填充 18+1 域（域 → design/<domain>/ owner doc → 推荐 skill）。
+- [x] `Fix`（050）：新建 `docs/articles/README.md`——列出 2 篇文章 + 目的 + 与 `docs/skills/` 边界（articles = 解释性方法论长文；skills = 可复用审查/审计方法）。
+- [x] `Fix`（051）：新建 `docs/bugs/README.md`——回归笔记清单表（13 文件分类）+ 与 `00-bug-fix-note-writing-guide.md` 交叉引用。
+- [x] `Fix`（052）：`AGENTS.md §快速路由` 顶部加交叉引用——"完整路由见 `docs/index.md`，本表仅列代理高频任务"+ 删除与 index.md 完全重叠的行（声明 index.md 为顶级路由器单一真相源）。
+  - `Decision`（052）：经核实 §快速路由 8 行均为"语义重叠"非"完全重叠"——每行"然后检查"列携带 index.md 未覆盖的 Nop 平台/代理导向指引（如 codegen 增量规则、`nop-entropy/docs-for-ai/` 路由），删除会损失代理高频便利路由。裁决：保留行 + 顶部加「路由权威」声明（index.md=顶级路由器单一真相源，本表=代理高频精简子集，漂移时以 index.md 修正）——此声明本身消除"无交叉引用→双维护漂移"根因，达成 finding 修复目标（方案 A 变体，理由已记录）。
+- [x] `Fix`（054）：`docs/logs/index.md`「Current:」段更新至最新日志日期（执行时确认 `docs/logs/2026/` 最新文件）+ 评估改为"按年/月自动列表"或"见 design/README.md 业务域表"机制避免再次过时（若改机制，记录 Decision）。
+  - `Decision`（054）：机制 = 目录指针（`docs/logs/2026/` 为真相源，`ls` 按日期自然排序）+ 最近若干条导航锚点。放弃逐条手工全量登记（曾致 06-25→07-31 漂移）。自动化逐日刷新生成脚本 = successor（超出 doc-only 范围）。理由已写入 logs/index.md「机制说明」注记。
+- [x] `Fix`（055）：`docs/index.md §目录角色` 补 `docs/errors/`（错误码集中索引）+ `docs/ppts/`（演示材料，可选）两行。
+- [x] `Decision`（056）：§域快速参考表裁决 = **交叉引用 `docs/design/README.md` 业务域设计文档表**（推荐，避免重复真相源漂移）或填充 18+1 域表。记录选择 + 理由（design/README.md 已维护域表，重复填写会双维护点漂移）。
+- [x] `Fix`（056）：按 Decision 执行——改 §域快速参考为"见 `docs/design/README.md` 业务域设计文档表"交叉引用并删占位，或填充 18+1 域（域 → design/<domain>/ owner doc → 推荐 skill）。
 
 Exit Criteria:
 
 > 阶段交付：索引路由无 404 / 无过时指针 / 重复表有交叉引用 / orphan 类别纳入 / 域导航可用。无代码变更。
 
-- [ ] `docs/articles/README.md` 存在 + 列 2 篇文章（index.md:28 指向不再 404）
-- [ ] `docs/bugs/README.md` 存在 + 含 13 文件清单
-- [ ] AGENTS.md §快速路由含 index.md 交叉引用 + 重叠行处理
-- [ ] logs/index.md Current 段指向最新日志
-- [ ] index.md §目录角色含 errors/ + ppts/
-- [ ] index.md §域快速参考占位已处理（交叉引用或填充）
+- [x] `docs/articles/README.md` 存在 + 列 2 篇文章（index.md:28 指向不再 404）
+- [x] `docs/bugs/README.md` 存在 + 含 13 文件清单
+- [x] AGENTS.md §快速路由含 index.md 交叉引用 + 重叠行处理（路由权威声明，行保留理由见 Decision）
+- [x] logs/index.md Current 段指向最新日志（07-31）+ 目录指针机制
+- [x] index.md §目录角色含 errors/ + ppts/
+- [x] index.md §域快速参考占位已处理（交叉引用 design/README.md）
 
 ### Phase 2 - R2.9 customization 实证状态注记（P1-MA3-057~061）
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/customization-capabilities.md`
 Skill: none
 
 - Item Types: `Fix | Decision`
 - Prereqs: none（与 Phase 1 不同文件，可并行，但同计划内顺序执行）
 
-- [ ] `Decision`: 修复方式 = **方案 A（追加实证状态注记，保留章节）**，不采纳方案 B（删除章节）。理由：保留设计意图 + 诚实标注实证状态优于删除；客户首项客户化场景落地时按 successor 验证。
-- [ ] `Fix`（057）：§能力一 Delta 4 业务场景表后追加"实证状态注记"——业务级 Delta = 0（保留层 + 模块化组装已覆盖产品基线定制需求）；合并机制经平台层 nop-auth view delta 实证可用；业务级实证为首项客户化场景落地时验证（successor）。
-- [ ] `Fix`（058）：§能力二 EAV 3 业务场景后追加实证注记——客户化字段经 codegen ORM 物理加列承载（如多币种四件套），EAV 路径未启用；机制经平台 nop-sys 可用；首个客户启用 EAV 时验证（successor）。
-- [ ] `Fix`（059）：§定制能力总览表增"实际启用"列（nop-dyn/task.xml/@BizLoader 标"⚠️ 平台能力，本项目未启用（codegen ORM/Processor 优先）"）+ §能力三 / §能力六 章节末实证注记。
-- [ ] `Fix`（060）：§能力六 §适用场景 3 业务示例追加实证注记（实际实现路径：未交量→SQL/Processor / 当前库存→StockBalance 实体 / 借贷平衡→balanceStatus + view.xml gen-control）+ §决策提示 修订为"普通扩展字段优先用 @BizLoader 或 view.xml gen-control，本项目当前路径选择 gen-control"。
-- [ ] `Fix`（061）：§升级路径保护 5 项机制各加"实证状态"——(1)(2)(3)"平台机制可用 / 项目零实证（successor）"+ (4)(5)"✅ 经项目实证落地"；§产品定位"不改基线源码"边界澄清（生成物 `_gen/`/`_*.xml` ≠ 基线源码；保留层手写是扩展 codegen 产物合法，改 `_gen/` 才违反硬规则）。
+- [x] `Decision`: 修复方式 = **方案 A（追加实证状态注记，保留章节）**，不采纳方案 B（删除章节）。理由：保留设计意图 + 诚实标注实证状态优于删除；客户首项客户化场景落地时按 successor 验证。（已写入 customization-capabilities.md 文首「声明-实证对齐原则」注记）
+- [x] `Fix`（057）：§能力一 Delta 4 业务场景表后追加"实证状态注记"——业务级 Delta = 0（保留层 + 模块化组装已覆盖产品基线定制需求）；合并机制经平台层 nop-auth view delta 实证可用；业务级实证为首项客户化场景落地时验证（successor）。
+- [x] `Fix`（058）：§能力二 EAV 3 业务场景后追加实证注记——客户化字段经 codegen ORM 物理加列承载（如多币种四件套），EAV 路径未启用；机制经平台 nop-sys 可用；首个客户启用 EAV 时验证（successor）。
+- [x] `Fix`（059）：§定制能力总览表增"实际启用"列（nop-dyn/task.xml/@BizLoader 标"⚠️ 平台能力，本项目未启用（codegen ORM/Processor 优先）"）+ §能力三 / §能力六 章节末实证注记。
+- [x] `Fix`（060）：§能力六 §适用场景 3 业务示例追加实证注记（实际实现路径：未交量→SQL/Processor / 当前库存→StockBalance 实体 / 借贷平衡→balanceStatus + view.xml gen-control）+ §决策提示 修订为"普通扩展字段优先用 @BizLoader 或 view.xml gen-control，本项目当前路径选择 gen-control"。
+- [x] `Fix`（061）：§升级路径保护 5 项机制各加"实证状态"——(1)(2)(3)"平台机制可用 / 项目零实证（successor）"+ (4)(5)"✅ 经项目实证落地"；§产品定位"不改基线源码"边界澄清（生成物 `_gen/`/`_*.xml` ≠ 基线源码；保留层手写是扩展 codegen 产物合法，改 `_gen/` 才违反硬规则）。
 
 Exit Criteria:
 
-- [ ] customization-capabilities.md §能力一/二/三/六 + §定制能力总览 + §升级路径保护 + §产品定位 各含实证状态注记；grep "实证状态" 覆盖 5 项 finding 对应章节
+- [x] customization-capabilities.md §能力一/二/三/六 + §定制能力总览 + §升级路径保护 + §产品定位 各含实证状态注记；grep "实证状态" 覆盖 5 项 finding 对应章节（实测：`实证状态` 字面 10 处 / `实证状态|实证注记` 合计 13 处，覆盖 057×1 / 058×1 / 059×2 / 060×1 / 061×2 + 总览综合说明 + 升级路径综合 + 文首原则 + §决策提示修订）
 
 ## Draft Review Record
 
@@ -111,14 +113,14 @@ Exit Criteria:
 
 > 纯文档计划：无代码变更，删除完整仓库 `build`/`test` 门控。保留交叉引用 + grep 一致性 + compliance checker（确认零新增命中）+ 独立审计门控。
 
-- [ ] 范围内行为/文档完成（R2.8 6 项 + R2.9 5 项 doc 对齐）
-- [ ] 相关文档对齐（index.md / AGENTS.md / articles/README / bugs/README / logs/index / customization-capabilities 内部一致 + 与实际仓库状态一致）
-- [ ] 已运行验证：`bash docs/audits/nop-compliance-checker.sh`（预期零新增命中——本计划不改代码）；doc 一致性 grep 复核（articles/README 存在 / bugs/README 存在 / AGENTS↔index 交叉引用 / logs Current 最新 / index §目录角色含 errors+ppts / 域快速参考占位处理 / customization 实证注记覆盖 5 项）
-- [ ] 无范围内项目降级为 deferred/follow-up（11 项 finding 均为范围内 doc 对齐存活项）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为/文档完成（R2.8 6 项 + R2.9 5 项 doc 对齐）
+- [x] 相关文档对齐（index.md / AGENTS.md / articles/README / bugs/README / logs/index / customization-capabilities 内部一致 + 与实际仓库状态一致）
+- [x] 已运行验证：`bash docs/audits/nop-compliance-checker.sh`（预期零新增命中——本计划不改代码）；doc 一致性 grep 复核（articles/README 存在 / bugs/README 存在 / AGENTS↔index 交叉引用 / logs Current 最新 / index §目录角色含 errors+ppts / 域快速参考占位处理 / customization 实证注记覆盖 5 项）
+- [x] 无范围内项目降级为 deferred/follow-up（11 项 finding 均为范围内 doc 对齐存活项）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -130,8 +132,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <结束审计通过后填充>
+Status Note: 纯文档两阶段计划（R2.8 索引路由 6 项 + R2.9 可定制性实证 5 项）全部交付并经独立结束审计 PASS。零代码变更（git 仅 .md），compliance checker 零新增命中，grep 一致性复核全 pass。customization 业务级实证为显式裁决的 watch-only residual + successor。
 
 Closure Audit Evidence:
 
-- <结束审计通过后填充>
+- Auditor / Agent: 独立结束审计子代理（新会话，fresh context，ses_04b3d8137ffe31P0AsBlpuyC9s）
+- Evidence: **VERDICT: PASS**。独立审计员在无先前执行上下文的全新会话中，对 plan `2026-07-31-0310-3` 的 11 项 finding（R2.8×6 + R2.9×5）逐项对照实时仓库验证：
+  - **Phase 1（R2.8 索引路由）**：`docs/articles/README.md` 已建（2 篇文章 + 目的 + skills 边界，index.md:28 不再 404）/ `docs/bugs/README.md` 已建（13 文件分类清单 + 写作指南交叉引用）/ `AGENTS.md:25` 路由权威声明 index.md=单一真相源（行保留 Decision 理由充分——「然后检查」列携带 index.md 未覆盖的 Nop 指引）/ `docs/logs/index.md:15` Current 指 07-31.md（实测最新）+ 目录指针机制 Decision / `docs/index.md:113-114` §目录角色含 errors/+ppts/ / §域快速参考占位移除交叉引用 design/README.md（grep `<area>`/`<path>` 零命中）。
+  - **Phase 2（R2.9 可定制性实证，方案 A 保留章节+注记）**：§能力一 Delta(L65 业务级=0+平台层实证+successor) / §能力二 EAV(L86 未启用+codegen ORM 加列+successor) / §定制能力总览(L24-33 实际启用列 ⚠️×3) + §能力三 nop-dyn(L112 实证注记) / §能力六 BizLoader(L192-197 三示例实际路径 + L200 决策提示修订 gen-control) / §升级路径保护(L226-230 五项 2✅+3△) + §产品定位(L18 生成物≠基线源码边界澄清)。
+  - **验证门控**：`nop-compliance-checker.sh` EXIT=0（基线 Java 模式，零新增命中）；`git status` 仅 7 改 + 2 新建全为 `.md`（零 `.java/.xml/.orm.xml/.api.xml`）。roadmap R2.8/R2.9=done；日志 `07-31.md` 条目存在；计划两 Phase Status=completed + 全 `[x]` + exit criteria `[x]`。P1-MA3-053=不存在的有意跳过 ID（已说明）；customization 业务级实证=显式裁决的 watch-only residual + successor（合理，非范围内缺陷隐瞒）。1 项非阻塞观察（exit criteria 中 grep 计数估算已修正为实测值）。
