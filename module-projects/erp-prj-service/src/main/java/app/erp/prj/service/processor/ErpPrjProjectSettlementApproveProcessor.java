@@ -9,9 +9,13 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpPrjProjectSettlement approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractApproveProcessor to activate the abstract base class; delegates to ErpPrjProjectSettlementProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpPrjProjectSettlement approve per-mutation Processor (plan 2026-07-30-2046-1 R5.7, Pattern B)。
+ * 自包含编排（会计保护区域）：requireSettlement → validateTransitionForApprove
+ * → [若 CLOSE+transferToAsset+assetCardId==null: createAndActivateAsset（转固）]
+ * → doPost（postingDispatcher 过账） → doApprove(APPROVED+docStatus=APPROVED+approvedBy/At) → save。
+ * 转固+过账经 facade protected helper（单一真相源），per-mutation 不复制会计规则。
+ * Long 签名边界：custom override 内 Long.valueOf(id) 转换。
+ * 运行时经 BizModel→facade 旧路径，R5.8 重配线后激活本路径。
  */
 public class ErpPrjProjectSettlementApproveProcessor extends AbstractApproveProcessor<ErpPrjProjectSettlement> {
 
@@ -20,7 +24,17 @@ public class ErpPrjProjectSettlementApproveProcessor extends AbstractApproveProc
 
     @Override
     public ErpPrjProjectSettlement approve(String id, IServiceContext context) {
-        return processor.approve(Long.valueOf(id), context);
+        Long longId = Long.valueOf(id);
+        ErpPrjProjectSettlement settlement = processor.requireSettlement(longId);
+        processor.validateTransitionForApprove(settlement);
+        if (ErpPrjConstants.SETTLEMENT_TYPE_CLOSE.equals(settlement.getSettlementType())
+                && Boolean.TRUE.equals(settlement.getTransferToAsset()) && settlement.getAssetCardId() == null) {
+            processor.createAndActivateAsset(settlement, context);
+        }
+        processor.doPost(settlement, context);
+        processor.doApprove(settlement, context);
+        processor.save(settlement);
+        return settlement;
     }
 
     @Override
