@@ -21,9 +21,10 @@ import java.util.List;
  * 工单 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。
  * 工单 10 态状态机 + 三轴审批 + 齐套校验 + 完工入库编排委托
  * {@link ErpMfgWorkOrderProcessor}（protected step 方法，下游可逐 step 覆盖）。
- * 标准审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）由平台
- * {@code approval-support.xbiz} 标准 source 提供；submit→SUBMITTED、approve→NOT_STARTED 的 docStatus 联动经
- * xbiz {@code <source x:override="replace">} 注入 {@link ErpMfgWorkOrderProcessor#onSubmit}/{@link ErpMfgWorkOrderProcessor#onApproved}。
+ * 标准审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）经实体自身
+ * {@code ErpMfgWorkOrder.xbiz} 的 {@code <source>} 委托 per-mutation Processor（{@code *Processor}，
+ * plan 2026-07-30-1909-2 R5.5），per-mutation 经 facade protected helper 单一真相源。submit→SUBMITTED、
+ * approve→NOT_STARTED 的 docStatus 联动经 facade {@code doSubmit}/{@code doApprove} 承载。
  * APS 排程→工序卡自动生成委托 {@link ErpMfgScheduleToJobCardProcessor}（plan 2026-07-05-0427-3）。
  *
  * <p>语义见 {@code docs/design/manufacturing/state-machine.md §适用对象一}。

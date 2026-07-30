@@ -194,9 +194,45 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
+    /**
+     * withdrawApproval 提取路径（plan 2026-07-30-1909-2 R5.5 Phase 3）。
+     * 原 xbiz withdrawApproval 为 inline-script（NopScriptError 守卫），提取为 per-mutation Processor
+     * custom public override（经 facade helper）。本测试建立错误码语义等价断言：
+     * 非 SUBMITTED withdrawApproval → ERR_INVALID_STATUS_TRANSITION（替代原 wf nop.err.wf.approve.invalid-status），
+     * 并验证 inline-script 提取激活了 per-mutation 运行时路径（submit→SUBMITTED→withdraw→UNSUBMITTED）。
+     */
+    @Test
+    public void testWithdrawApprovalGuardAndExtraction() {
+        seedComponentBomAndStock(bd("5"), bd("5"));
+        Long woId = seedWorkOrder("WO-WITHDRAW");
+
+        // 负向守卫：初始 UNSUBMITTED（null）withdrawApproval → ERR_INVALID_STATUS_TRANSITION
+        // （状态守卫阻断行为等价于原 wf nop.err.wf.approve.invalid-status）
+        ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
+                "非 SUBMITTED withdrawApproval 应拒绝（错误码等价）");
+
+        // 正向：submit → SUBMITTED → withdraw → 回到 UNSUBMITTED（验证 inline-script 提取激活 per-mutation 运行时路径）
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_SUBMITTED, approveStatusOf(woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED, approveStatusOf(woId),
+                "withdrawApproval 后 approveStatus 回到 UNSUBMITTED");
+
+        // 再次负向：UNSUBMITTED withdrawApproval → 拒绝（守卫幂等）
+        ApiResponse<?> resp2 = rpc(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION.getErrorCode(), resp2.getCode(),
+                "再次非 SUBMITTED withdrawApproval 应拒绝");
+    }
+
     private String statusOf(Long woId) {
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
         return wo.getDocStatus();
+    }
+
+    private String approveStatusOf(Long woId) {
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        return wo.getApproveStatus();
     }
 
     private void moveToInProcess(Long woId) {

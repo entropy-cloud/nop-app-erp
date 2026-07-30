@@ -191,9 +191,42 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
+    /**
+     * withdrawApproval 提取路径（plan 2026-07-30-1909-2 R5.5 Phase 3）。
+     * 原 xbiz withdrawApproval 为 inline-script（NopScriptError 守卫），提取为 per-mutation Processor
+     * custom public override（经 facade helper）。本测试建立错误码语义等价断言：
+     * 非 SUBMITTED withdrawApproval → ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION（替代原 wf
+     * nop.err.wf.approve.invalid-status），并验证提取激活 per-mutation 运行时路径。
+     */
+    @Test
+    public void testWithdrawApprovalGuardAndExtraction() {
+        seedPeriodAndSubjects();
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedMaterial(P, null);
+
+        Long orderId = seedSubcontractOrder("SUB-WD", bd("30"));
+
+        // 负向守卫：初始 UNSUBMITTED withdrawApproval → ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION
+        ApiResponse<?> resp = rpc(mutation, "ErpMfgSubcontractOrder__withdrawApproval", Map.of("id", String.valueOf(orderId)));
+        assertEquals(ErpMfgErrors.ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
+                "非 SUBMITTED withdrawApproval 应拒绝（错误码等价）");
+
+        // 正向：submit → SUBMITTED → withdraw → UNSUBMITTED（验证 inline-script 提取激活 per-mutation 运行时路径）
+        rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", String.valueOf(orderId)));
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_SUBMITTED, approveStatusOf(orderId));
+        rpcOk(mutation, "ErpMfgSubcontractOrder__withdrawApproval", Map.of("id", String.valueOf(orderId)));
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED, approveStatusOf(orderId),
+                "withdrawApproval 后 approveStatus 回到 UNSUBMITTED");
+    }
+
     private String statusOf(Long orderId) {
         ErpMfgSubcontractOrder order = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
         return order.getDocStatus();
+    }
+
+    private String approveStatusOf(Long orderId) {
+        ErpMfgSubcontractOrder order = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
+        return order.getApproveStatus();
     }
 
     private void seedPeriodAndSubjects() {

@@ -16,8 +16,9 @@ import java.util.List;
 
 /**
  * 委外加工单 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。
- * 审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）由平台
- * {@code approval-support.xbiz} 标准 source 提供并委托 {@link ErpMfgSubcontractOrderProcessor}。
+ * 审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）经实体自身
+ * {@code ErpMfgSubcontractOrder.xbiz} 的 {@code <source>} 委托 per-mutation Processor（{@code *Processor}，
+ * plan 2026-07-30-1909-2 R5.5），per-mutation 经 facade protected helper 单一真相源。
  * 委外生命周期三段（issueMaterials/receiveFinished/postProcessingFee）+ cancel + reverseCompletion 委托 Processor。
  *
  * <p>语义见 {@code docs/design/manufacturing/subcontracting.md}。
