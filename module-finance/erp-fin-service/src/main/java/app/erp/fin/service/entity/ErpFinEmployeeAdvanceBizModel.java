@@ -9,7 +9,7 @@ import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.EmployeeAdvancePostingDispatcher;
-import app.erp.fin.service.processor.ErpFinEmployeeAdvanceProcessor;
+import app.erp.fin.service.processor.ErpFinEmployeeAdvanceCancelProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -33,7 +33,8 @@ import static io.nop.api.core.beans.FilterBeans.like;
 
 /**
  * 员工借款单 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
- * withdrawApproval）经 xbiz 单行委托 {@link ErpFinEmployeeAdvanceProcessor} 全权处理。
+ * withdrawApproval）经 xbiz 单行委托 per-mutation Processor 全权处理；非审批动作（cancel）经
+ * per-mutation {@link ErpFinEmployeeAdvanceCancelProcessor}。
  *
  * <p>{@link #cashRepay} 为金额更新 + 凭证生成动作（非状态机迁移），BizModel Facade 直落（plan 2026-07-18-0718-2）。
  * {@link #reverseCashRepay} 反向现金还款红冲闭环（plan 2026-07-18-1745-3）。
@@ -44,7 +45,7 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
     private static final Logger LOG = LoggerFactory.getLogger(ErpFinEmployeeAdvanceBizModel.class);
 
     @Inject
-    ErpFinEmployeeAdvanceProcessor advanceProcessor;
+    ErpFinEmployeeAdvanceCancelProcessor cancelProcessor;
 
     @Inject
     EmployeeAdvancePostingDispatcher advancePostingDispatcher;
@@ -56,7 +57,7 @@ public class ErpFinEmployeeAdvanceBizModel extends CrudBizModel<ErpFinEmployeeAd
     @Override
     @BizMutation
     public ErpFinEmployeeAdvance cancel(@Name("advanceId") Long advanceId, IServiceContext context) {
-        return advanceProcessor.cancel(advanceId, context);
+        return cancelProcessor.cancel(String.valueOf(advanceId), context);
     }
 
     @Override

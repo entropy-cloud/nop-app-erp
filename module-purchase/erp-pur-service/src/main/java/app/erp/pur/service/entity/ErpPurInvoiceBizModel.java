@@ -3,7 +3,7 @@ package app.erp.pur.service.entity;
 
 import app.erp.pur.biz.IErpPurInvoiceBiz;
 import app.erp.pur.dao.entity.ErpPurInvoice;
-import app.erp.pur.service.processor.ErpPurInvoiceProcessor;
+import app.erp.pur.service.processor.ErpPurInvoiceCancelProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -15,14 +15,14 @@ import java.util.List;
 
 /**
  * 采购发票 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
- * withdrawApproval）由 xbiz 一行委托注入 Processor；非审批动作（cancel）在本类完成
- * Long→String 转换后委托 Processor。
+ * withdrawApproval）由 xbiz 一行委托注入 per-mutation Processor；非审批动作（cancel）在本类完成
+ * Long→String 转换后委托 per-mutation {@link ErpPurInvoiceCancelProcessor}。
  */
 @BizModel("ErpPurInvoice")
 public class ErpPurInvoiceBizModel extends CrudBizModel<ErpPurInvoice> implements IErpPurInvoiceBiz {
 
     @Inject
-    ErpPurInvoiceProcessor invoiceProcessor;
+    ErpPurInvoiceCancelProcessor cancelProcessor;
 
     public ErpPurInvoiceBizModel() {
         setEntityName(ErpPurInvoice.class.getName());
@@ -31,7 +31,7 @@ public class ErpPurInvoiceBizModel extends CrudBizModel<ErpPurInvoice> implement
     @Override
     @BizMutation
     public ErpPurInvoice cancel(@Name("invoiceId") Long invoiceId, IServiceContext context) {
-        return invoiceProcessor.cancel(String.valueOf(invoiceId), context);
+        return cancelProcessor.cancel(String.valueOf(invoiceId), context);
     }
 
 }

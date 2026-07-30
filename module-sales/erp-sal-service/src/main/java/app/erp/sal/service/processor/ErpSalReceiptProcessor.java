@@ -47,67 +47,46 @@ public class ErpSalReceiptProcessor {
     @Inject
     ReceiptSettler receiptSettler;
 
+    @Inject
+    ErpSalReceiptSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpSalReceiptApproveProcessor approveProcessor;
+
+    @Inject
+    ErpSalReceiptRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpSalReceiptReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpSalReceiptWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpSalReceiptCancelProcessor cancelProcessor;
+
     public ErpSalReceipt submitForApproval(String id, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(id, context);
-        validateNotCancelled(receipt, context);
-        validateTransitionForSubmit(receipt, context);
-        validateBusinessRulesForSubmit(receipt, context);
-        doSubmit(receipt, context);
-        return receipt;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpSalReceipt withdrawApproval(String id, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(id, context);
-        validateNotCancelled(receipt, context);
-        validateTransitionForWithdraw(receipt, context);
-        doWithdrawSubmit(receipt, context);
-        return receipt;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpSalReceipt approve(String id, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(id, context);
-        if (receipt.isApproved()) {
-            return receipt;
-        }
-        validateNotCancelled(receipt, context);
-        validateTransitionForApprove(receipt, context);
-        validateBusinessRulesForApprove(receipt, context);
-        doApprove(receipt, context);
-        return receipt;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpSalReceipt reject(String id, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(id, context);
-        validateNotCancelled(receipt, context);
-        validateTransitionForReject(receipt, context);
-        doReject(receipt, context);
-        return receipt;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpSalReceipt reverseApprove(String id, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(id, context);
-        if (receipt.isRejected()) {
-            return receipt;
-        }
-        validateTransitionForReverseApprove(receipt, context);
-        doReverseApprove(receipt, context);
-        return receipt;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpSalReceipt cancel(String receiptId, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(receiptId, context);
-        validateTransitionForCancel(receipt, context);
-        String approveStatus = receipt.getApproveStatus();
-        if (approveStatus != null && Objects.equals(approveStatus, ErpSalConstants.APPROVE_STATUS_APPROVED)
-                && Boolean.TRUE.equals(receipt.getPosted())) {
-            postingDispatcher.reverse(receipt);
-            receipt = receiptDao().getEntityById(receiptId);
-            receipt.setPosted(false);
-            receipt.setPostedAt(null);
-            receipt.setPostedBy(null);
-        }
-        doCancel(receipt, context);
-        return receipt;
+        return cancelProcessor.cancel(receiptId, context);
     }
 
     public ErpSalReceipt settle(String receiptId, List<SettlementAllocation> allocations, IServiceContext context) {

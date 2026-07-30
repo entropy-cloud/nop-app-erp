@@ -11,6 +11,10 @@ import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioApproveProcessor;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioCancelProcessor;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioRejectProcessor;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioSubmitForApprovalProcessor;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -63,45 +67,32 @@ public class ErpFinBudgetScenarioProcessor {
     @Inject
     BudgetVoucherGenerator budgetVoucherGenerator;
 
+    @Inject
+    ErpFinBudgetScenarioSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpFinBudgetScenarioApproveProcessor approveProcessor;
+
+    @Inject
+    ErpFinBudgetScenarioRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpFinBudgetScenarioCancelProcessor cancelProcessor;
+
     public ErpFinBudgetScenario submit(Long id, IServiceContext context) {
-        ErpFinBudgetScenario scenario = requireScenario(id);
-        validateTransition(scenario, ErpFinConstants.BUDGET_STATUS_SUBMITTED,
-                ErpFinConstants.BUDGET_STATUS_DRAFT, ErpFinConstants.BUDGET_STATUS_REJECTED);
-        scenario.setDocStatus(ErpFinConstants.BUDGET_STATUS_SUBMITTED);
-        scenario.setApproveStatus(ErpFinConstants.BUDGET_STATUS_SUBMITTED);
-        save(scenario);
-        return scenario;
+        return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
     }
 
     public ErpFinBudgetScenario approve(Long id, IServiceContext context) {
-        ErpFinBudgetScenario scenario = requireScenario(id);
-        validateTransition(scenario, ErpFinConstants.BUDGET_STATUS_APPROVED,
-                ErpFinConstants.BUDGET_STATUS_SUBMITTED);
-        generateBudgetVoucher(scenario, context);
-        scenario.setDocStatus(ErpFinConstants.BUDGET_STATUS_APPROVED);
-        scenario.setApproveStatus(ErpFinConstants.BUDGET_STATUS_APPROVED);
-        save(scenario);
-        return scenario;
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     public ErpFinBudgetScenario reject(Long id, IServiceContext context) {
-        ErpFinBudgetScenario scenario = requireScenario(id);
-        validateTransition(scenario, ErpFinConstants.BUDGET_STATUS_REJECTED,
-                ErpFinConstants.BUDGET_STATUS_SUBMITTED);
-        scenario.setDocStatus(ErpFinConstants.BUDGET_STATUS_REJECTED);
-        scenario.setApproveStatus(ErpFinConstants.BUDGET_STATUS_REJECTED);
-        save(scenario);
-        return scenario;
+        return rejectProcessor.reject(String.valueOf(id), context);
     }
 
     public ErpFinBudgetScenario cancel(Long id, IServiceContext context) {
-        ErpFinBudgetScenario scenario = requireScenario(id);
-        validateTransition(scenario, ErpFinConstants.BUDGET_STATUS_CANCELLED,
-                ErpFinConstants.BUDGET_STATUS_APPROVED);
-        reverseBudgetVoucher(scenario, context);
-        scenario.setDocStatus(ErpFinConstants.BUDGET_STATUS_CANCELLED);
-        save(scenario);
-        return scenario;
+        return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
     // ==================== A2 滚动预算自动复制 + 结转规则引擎（plan 2026-07-21-1206-2） ====================

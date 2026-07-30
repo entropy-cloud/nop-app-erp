@@ -72,63 +72,46 @@ public class ErpSalDeliveryProcessor {
     @Inject
     CreditLimitChecker creditLimitChecker;
 
+    @Inject
+    ErpSalDeliverySubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpSalDeliveryApproveProcessor approveProcessor;
+
+    @Inject
+    ErpSalDeliveryRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpSalDeliveryReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpSalDeliveryWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpSalDeliveryCancelProcessor cancelProcessor;
+
     public ErpSalDelivery submitForApproval(String id, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(id, context);
-        validateNotCancelled(delivery, context);
-        validateTransitionForSubmit(delivery, context);
-        validateBusinessRulesForSubmit(delivery, context);
-        doSubmit(delivery, context);
-        return delivery;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpSalDelivery withdrawApproval(String id, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(id, context);
-        validateNotCancelled(delivery, context);
-        validateTransitionForWithdraw(delivery, context);
-        doWithdrawSubmit(delivery, context);
-        return delivery;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpSalDelivery approve(String id, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(id, context);
-        if (delivery.isApproved()) {
-            return delivery;
-        }
-        validateNotCancelled(delivery, context);
-        validateTransitionForApprove(delivery, context);
-        validateBusinessRulesForApprove(delivery, context);
-        enforceInspectionGate(delivery, context);
-        doApprove(delivery, context);
-        return delivery;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpSalDelivery reject(String id, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(id, context);
-        validateNotCancelled(delivery, context);
-        validateTransitionForReject(delivery, context);
-        doReject(delivery, context);
-        return delivery;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpSalDelivery reverseApprove(String id, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(id, context);
-        if (delivery.isRejected()) {
-            return delivery;
-        }
-        validateTransitionForReverseApprove(delivery, context);
-        doReverseApprove(delivery, context);
-        return delivery;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpSalDelivery cancel(String deliveryId, IServiceContext context) {
-        ErpSalDelivery delivery = requireDelivery(deliveryId, context);
-        validateTransitionForCancel(delivery, context);
-        if (delivery.isApproved()) {
-            ensureReversed(delivery, context);
-            delivery = deliveryDao().getEntityById(deliveryId);
-        }
-        doCancel(delivery, context);
-        return delivery;
+        return cancelProcessor.cancel(deliveryId, context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------

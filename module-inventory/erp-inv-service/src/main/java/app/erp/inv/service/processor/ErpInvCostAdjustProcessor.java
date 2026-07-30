@@ -53,61 +53,41 @@ public class ErpInvCostAdjustProcessor {
     @Inject
     CostAdjustmentPostingDispatcher postingDispatcher;
 
+    @Inject
+    ErpInvCostAdjustSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpInvCostAdjustApproveProcessor approveProcessor;
+
+    @Inject
+    ErpInvCostAdjustRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpInvCostAdjustReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpInvCostAdjustWithdrawApprovalProcessor withdrawApprovalProcessor;
+
     // ---------- 审批状态机（DIRECT 模式标准 5 action） ----------
 
     public ErpInvCostAdjust submitForApproval(String id, IServiceContext context) {
-        ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        validateNotCancelled(adjust, context);
-        validateTransitionForSubmit(adjust);
-        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_SUBMITTED);
-        adjustDao().updateEntity(adjust);
-        return adjust;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpInvCostAdjust withdrawApproval(String id, IServiceContext context) {
-        ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        validateNotCancelled(adjust, context);
-        validateTransitionForWithdraw(adjust);
-        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_UNSUBMITTED);
-        adjustDao().updateEntity(adjust);
-        return adjust;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpInvCostAdjust approve(String id, IServiceContext context) {
-        ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        if (adjust.isApproved()) {
-            return adjust;
-        }
-        validateNotCancelled(adjust, context);
-        validateTransitionForApprove(adjust);
-        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_APPROVED);
-        adjust.setApprovedBy(currentUserId());
-        adjust.setApprovedAt(CoreMetrics.currentTimestamp());
-        adjustDao().updateEntity(adjust);
-        return adjust;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpInvCostAdjust reject(String id, IServiceContext context) {
-        ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        validateNotCancelled(adjust, context);
-        validateTransitionForReject(adjust);
-        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_REJECTED);
-        adjustDao().updateEntity(adjust);
-        return adjust;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpInvCostAdjust reverseApprove(String id, IServiceContext context) {
-        ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        if (adjust.isRejected()) {
-            return adjust;
-        }
-        validateTransitionForReverseApprove(adjust);
-        if (Boolean.TRUE.equals(adjust.getPosted())) {
-            throw illegalTransition(adjust, currentApproveStatus(adjust), "未过账（先冲销再反审）");
-        }
-        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_REJECTED);
-        adjustDao().updateEntity(adjust);
-        return adjust;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     // ---------- 域动作：apply / reverse ----------

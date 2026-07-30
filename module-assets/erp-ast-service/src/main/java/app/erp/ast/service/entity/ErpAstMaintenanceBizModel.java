@@ -3,6 +3,7 @@ package app.erp.ast.service.entity;
 
 import app.erp.ast.biz.IErpAstMaintenanceBiz;
 import app.erp.ast.dao.entity.ErpAstMaintenance;
+import app.erp.ast.service.processor.ErpAstMaintenanceApproveProcessor;
 import app.erp.ast.service.processor.ErpAstMaintenanceProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -27,6 +28,9 @@ public class ErpAstMaintenanceBizModel extends CrudBizModel<ErpAstMaintenance>
 
     @Inject
     ErpAstMaintenanceProcessor maintenanceProcessor;
+
+    @Inject
+    ErpAstMaintenanceApproveProcessor approveProcessor;
 
     public ErpAstMaintenanceBizModel() {
         setEntityName(ErpAstMaintenance.class.getName());
@@ -75,7 +79,7 @@ public class ErpAstMaintenanceBizModel extends CrudBizModel<ErpAstMaintenance>
     @Override
     @BizMutation
     public ErpAstMaintenance approve(@Name("id") Long id, IServiceContext context) {
-        return maintenanceProcessor.approve(id, context);
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     @Override

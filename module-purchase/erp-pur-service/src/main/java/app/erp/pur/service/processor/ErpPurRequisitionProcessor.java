@@ -43,56 +43,46 @@ public class ErpPurRequisitionProcessor {
     @Inject
     IErpPurOrderBiz orderBiz;
 
+    @Inject
+    ErpPurRequisitionSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpPurRequisitionApproveProcessor approveProcessor;
+
+    @Inject
+    ErpPurRequisitionRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpPurRequisitionReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpPurRequisitionWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpPurRequisitionCancelProcessor cancelProcessor;
+
     public ErpPurRequisition submitForApproval(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        validateTransitionForSubmit(req, context);
-        validateBusinessRulesForSubmit(req, context);
-        doSubmit(req, context);
-        return req;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpPurRequisition withdrawApproval(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        validateNotCancelled(req, context);
-        validateTransitionForWithdraw(req, context);
-        doWithdrawSubmit(req, context);
-        return req;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpPurRequisition approve(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        if (req.isApproved()) {
-            return req;
-        }
-        validateNotCancelled(req, context);
-        validateTransitionForApprove(req, context);
-        doApprove(req, context);
-        return req;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpPurRequisition reject(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        validateNotCancelled(req, context);
-        validateTransitionForReject(req, context);
-        doReject(req, context);
-        return req;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpPurRequisition reverseApprove(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        if (req.isRejected()) {
-            return req;
-        }
-        validateTransitionForReverseApprove(req, context);
-        doReverseApprove(req, context);
-        return req;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpPurRequisition cancel(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        validateTransitionForCancel(req, context);
-        doCancel(req, context);
-        return req;
+        return cancelProcessor.cancel(id, context);
     }
 
     public ErpPurOrder convertToOrder(String id, ConvertToOrderRequest request, IServiceContext context) {

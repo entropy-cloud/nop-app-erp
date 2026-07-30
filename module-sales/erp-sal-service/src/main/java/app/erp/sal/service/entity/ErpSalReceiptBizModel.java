@@ -4,6 +4,7 @@ package app.erp.sal.service.entity;
 import app.erp.sal.biz.IErpSalReceiptBiz;
 import app.erp.md.biz.SettlementAllocation;
 import app.erp.sal.dao.entity.ErpSalReceipt;
+import app.erp.sal.service.processor.ErpSalReceiptCancelProcessor;
 import app.erp.sal.service.processor.ErpSalReceiptProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -25,6 +26,9 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
     @Inject
     ErpSalReceiptProcessor receiptProcessor;
 
+    @Inject
+    ErpSalReceiptCancelProcessor cancelProcessor;
+
     public ErpSalReceiptBizModel() {
         setEntityName(ErpSalReceipt.class.getName());
     }
@@ -32,7 +36,7 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
     @Override
     @BizMutation
     public ErpSalReceipt cancel(@Name("receiptId") Long receiptId, IServiceContext context) {
-        return receiptProcessor.cancel(String.valueOf(receiptId), context);
+        return cancelProcessor.cancel(String.valueOf(receiptId), context);
     }
 
     @Override

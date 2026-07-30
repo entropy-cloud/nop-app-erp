@@ -35,6 +35,9 @@ public class ErpCrmLeadProcessor {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    ErpCrmLeadCancelProcessor cancelProcessor;
+
     public ErpCrmLead qualify(Long leadId, IServiceContext context) {
         ErpCrmLead lead = requireLead(leadId, context);
         validateTransitionForQualify(lead, context);
@@ -51,10 +54,7 @@ public class ErpCrmLeadProcessor {
     }
 
     public ErpCrmLead cancel(Long leadId, IServiceContext context) {
-        ErpCrmLead lead = requireLead(leadId, context);
-        validateTransitionForCancel(lead, context);
-        doCancel(lead, context);
-        return lead;
+        return cancelProcessor.cancel(String.valueOf(leadId), context);
     }
 
     public ErpCrmLead moveStage(Long leadId, Long toStageId, IServiceContext context) {

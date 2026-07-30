@@ -67,6 +67,16 @@ public class ErpMfgSubcontractOrderProcessor {
     SubcontractPostingDispatcher subcontractPostingDispatcher;
     @Inject
     MfgPostingExecutor mfgPostingExecutor;
+    @Inject
+    ErpMfgSubcontractOrderSubmitForApprovalProcessor submitForApprovalProcessor;
+    @Inject
+    ErpMfgSubcontractOrderApproveProcessor approveProcessor;
+    @Inject
+    ErpMfgSubcontractOrderRejectProcessor rejectProcessor;
+    @Inject
+    ErpMfgSubcontractOrderReverseApproveProcessor reverseApproveProcessor;
+    @Inject
+    ErpMfgSubcontractOrderWithdrawApprovalProcessor withdrawApprovalProcessor;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -87,38 +97,23 @@ public class ErpMfgSubcontractOrderProcessor {
     // ---------- 审批轴 ----------
 
     public ErpMfgSubcontractOrder submitForApproval(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForSubmit(order, context);
-        doSubmit(order, context);
-        return order;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpMfgSubcontractOrder withdrawApproval(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForWithdraw(order, context);
-        doWithdrawSubmit(order, context);
-        return order;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpMfgSubcontractOrder approve(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForApprove(order, context);
-        doApprove(order, context);
-        return order;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpMfgSubcontractOrder reject(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForReject(order, context);
-        doReject(order, context);
-        return order;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpMfgSubcontractOrder reverseApprove(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForReverseApprove(order, context);
-        doReverseApprove(order, context);
-        return order;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpMfgSubcontractOrder cancel(Long subcontractOrderId, IServiceContext context) {

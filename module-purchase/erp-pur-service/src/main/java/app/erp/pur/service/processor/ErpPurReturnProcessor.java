@@ -74,71 +74,46 @@ public class ErpPurReturnProcessor {
     @Inject
     IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
 
+    @Inject
+    ErpPurReturnSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpPurReturnApproveProcessor approveProcessor;
+
+    @Inject
+    ErpPurReturnRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpPurReturnReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpPurReturnWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpPurReturnCancelProcessor cancelProcessor;
+
     public ErpPurReturn submitForApproval(String id, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(id, context);
-        validateTransitionForSubmit(returnOrder, context);
-        validateBusinessRulesForSubmit(returnOrder, context);
-        doSubmit(returnOrder, context);
-        return returnOrder;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpPurReturn withdrawApproval(String id, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(id, context);
-        validateNotCancelled(returnOrder, context);
-        validateTransitionForWithdraw(returnOrder, context);
-        doWithdrawSubmit(returnOrder, context);
-        return returnOrder;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpPurReturn approve(String id, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(id, context);
-        if (returnOrder.isApproved()) {
-            return returnOrder;
-        }
-        validateNotCancelled(returnOrder, context);
-        validateTransitionForApprove(returnOrder, context);
-        validateBusinessRulesForApprove(returnOrder, context);
-
-        ErpInvStockMove move = triggerOutgoingMove(returnOrder, context);
-        ormTemplate.flushSession();
-
-        boolean posted = postingDispatcher.tryPost(returnOrder);
-
-        returnOrder = returnDao().getEntityById(id);
-        doApprove(returnOrder, posted, context);
-        runCommitmentReleaseOnReturnHook(returnOrder, context);
-        return returnOrder;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpPurReturn reject(String id, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(id, context);
-        validateNotCancelled(returnOrder, context);
-        validateTransitionForReject(returnOrder, context);
-        doReject(returnOrder, context);
-        return returnOrder;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpPurReturn reverseApprove(String id, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(id, context);
-        if (returnOrder.isRejected()) {
-            return returnOrder;
-        }
-        validateTransitionForReverseApprove(returnOrder, context);
-        ensureReversed(returnOrder, context);
-        returnOrder = returnDao().getEntityById(id);
-        doReverseApprove(returnOrder, context);
-        return returnOrder;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpPurReturn cancel(String id, IServiceContext context) {
-        ErpPurReturn returnOrder = requireReturn(id, context);
-        validateTransitionForCancel(returnOrder, context);
-        if (returnOrder.isApproved()) {
-            ensureReversed(returnOrder, context);
-            returnOrder = returnDao().getEntityById(id);
-        }
-        doCancel(returnOrder, context);
-        return returnOrder;
+        return cancelProcessor.cancel(id, context);
     }
 
     // ---------- step：迁移校验 ----------

@@ -54,6 +54,9 @@ public class ErpAstMaintenanceProcessor {
     @Inject
     IErpAstDepreciationScheduleBiz depreciationScheduleBiz;
 
+    @Inject
+    ErpAstMaintenanceApproveProcessor approveProcessor;
+
     // ---------- public actions ----------
 
     public ErpAstMaintenance createMaintenance(Long assetId, String code, String name, String businessDate,
@@ -136,17 +139,7 @@ public class ErpAstMaintenanceProcessor {
     }
 
     public ErpAstMaintenance approve(Long id, IServiceContext context) {
-        ErpAstMaintenance m = requireMaintenance(id, context);
-        if (Objects.equals(m.getStatus(), ErpAstConstants.MAINTENANCE_STATUS_POSTED)) {
-            return m;
-        }
-        if (!Objects.equals(m.getStatus(), ErpAstConstants.MAINTENANCE_STATUS_COMPLETED)) {
-            throw illegalTransition(m, m.getStatus(), "COMPLETED");
-        }
-        m.setApprovedBy(currentUserId());
-        m.setApprovedAt(CoreMetrics.currentTimestamp());
-        maintenanceDao().updateEntity(m);
-        return m;
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     public ErpAstMaintenance post(Long id, IServiceContext context) {

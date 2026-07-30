@@ -43,57 +43,46 @@ public class ErpSalQuotationProcessor {
     @Inject
     IErpSalOrderBiz orderBiz;
 
+    @Inject
+    ErpSalQuotationSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpSalQuotationApproveProcessor approveProcessor;
+
+    @Inject
+    ErpSalQuotationRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpSalQuotationReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpSalQuotationWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpSalQuotationCancelProcessor cancelProcessor;
+
     public ErpSalQuotation submitForApproval(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        validateNotCancelled(quotation, context);
-        validateTransitionForSubmit(quotation, context);
-        validateBusinessRulesForSubmit(quotation, context);
-        doSubmit(quotation, context);
-        return quotation;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpSalQuotation withdrawApproval(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        validateNotCancelled(quotation, context);
-        validateTransitionForWithdraw(quotation, context);
-        doWithdrawSubmit(quotation, context);
-        return quotation;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpSalQuotation approve(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        if (quotation.isApproved()) {
-            return quotation;
-        }
-        validateNotCancelled(quotation, context);
-        validateTransitionForApprove(quotation, context);
-        doApprove(quotation, context);
-        return quotation;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpSalQuotation reject(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        validateNotCancelled(quotation, context);
-        validateTransitionForReject(quotation, context);
-        doReject(quotation, context);
-        return quotation;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpSalQuotation reverseApprove(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        if (quotation.isRejected()) {
-            return quotation;
-        }
-        validateTransitionForReverseApprove(quotation, context);
-        doReverseApprove(quotation, context);
-        return quotation;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpSalQuotation cancel(String quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
-        validateTransitionForCancel(quotation, context);
-        doCancel(quotation, context);
-        return quotation;
+        return cancelProcessor.cancel(quotationId, context);
     }
 
     public ErpSalQuotation confirmCustomerAccepted(String quotationId, IServiceContext context) {

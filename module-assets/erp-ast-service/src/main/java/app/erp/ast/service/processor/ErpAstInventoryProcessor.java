@@ -61,6 +61,9 @@ public class ErpAstInventoryProcessor {
     @Inject
     IErpAstDisposalBiz disposalBiz;
 
+    @Inject
+    ErpAstInventoryApproveProcessor approveProcessor;
+
     // ---------- public actions ----------
 
     public ErpAstInventory createInventory(Long id, IServiceContext context) {
@@ -105,12 +108,7 @@ public class ErpAstInventoryProcessor {
     }
 
     public ErpAstInventory approve(Long id, IServiceContext context) {
-        ErpAstInventory inv = requireInventory(id, context);
-        validateReconciling(inv);
-        inv.setApprovedBy(currentUserId());
-        inv.setApprovedAt(CoreMetrics.currentTimestamp());
-        inventoryDao().updateEntity(inv);
-        return inv;
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     public ErpAstInventory post(Long id, IServiceContext context) {

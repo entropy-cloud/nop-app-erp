@@ -6,7 +6,11 @@ import app.erp.fin.dao.dto.BadDebtProvisionResult;
 import app.erp.fin.dao.dto.BadDebtProvisionReversalResult;
 import app.erp.fin.dao.entity.ErpFinBadDebt;
 import app.erp.fin.service.baddebt.BadDebtProvisionService;
+import app.erp.fin.service.processor.ErpFinBadDebtApproveProcessor;
 import app.erp.fin.service.processor.ErpFinBadDebtProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtRejectProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtReverseApproveProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtSubmitForApprovalProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -30,6 +34,14 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
     ErpFinBadDebtProcessor badDebtProcessor;
     @Inject
     BadDebtProvisionService badDebtProvisionService;
+    @Inject
+    ErpFinBadDebtSubmitForApprovalProcessor submitForApprovalProcessor;
+    @Inject
+    ErpFinBadDebtApproveProcessor approveProcessor;
+    @Inject
+    ErpFinBadDebtRejectProcessor rejectProcessor;
+    @Inject
+    ErpFinBadDebtReverseApproveProcessor reverseApproveProcessor;
 
     public ErpFinBadDebtBizModel() {
         setEntityName(ErpFinBadDebt.class.getName());
@@ -54,25 +66,25 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
     @Override
     @BizMutation
     public ErpFinBadDebt submit(@Name("id") Long id, IServiceContext context) {
-        return badDebtProcessor.submit(id, context);
+        return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpFinBadDebt approve(@Name("id") Long id, IServiceContext context) {
-        return badDebtProcessor.approve(id, context);
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpFinBadDebt reverseApprove(@Name("id") Long id, IServiceContext context) {
-        return badDebtProcessor.reverseApprove(id, context);
+        return reverseApproveProcessor.reverseApprove(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpFinBadDebt reject(@Name("id") Long id, IServiceContext context) {
-        return badDebtProcessor.reject(id, context);
+        return rejectProcessor.reject(String.valueOf(id), context);
     }
 
     @Override

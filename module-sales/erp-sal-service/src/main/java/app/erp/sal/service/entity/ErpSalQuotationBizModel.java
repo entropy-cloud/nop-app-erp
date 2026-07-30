@@ -4,6 +4,7 @@ package app.erp.sal.service.entity;
 import app.erp.sal.biz.IErpSalQuotationBiz;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalQuotation;
+import app.erp.sal.service.processor.ErpSalQuotationCancelProcessor;
 import app.erp.sal.service.processor.ErpSalQuotationProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -25,6 +26,9 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
     @Inject
     ErpSalQuotationProcessor quotationProcessor;
 
+    @Inject
+    ErpSalQuotationCancelProcessor cancelProcessor;
+
     public ErpSalQuotationBizModel() {
         setEntityName(ErpSalQuotation.class.getName());
     }
@@ -32,7 +36,7 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
     @Override
     @BizMutation
     public ErpSalQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.cancel(String.valueOf(quotationId), context);
+        return cancelProcessor.cancel(String.valueOf(quotationId), context);
     }
 
     @Override

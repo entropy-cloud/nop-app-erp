@@ -64,68 +64,46 @@ public class ErpPurReceiveProcessor {
     @Inject
     IErpQaInspectionBiz inspectionBiz;
 
+    @Inject
+    ErpPurReceiveSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpPurReceiveApproveProcessor approveProcessor;
+
+    @Inject
+    ErpPurReceiveRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpPurReceiveReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpPurReceiveWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpPurReceiveCancelProcessor cancelProcessor;
+
     public ErpPurReceive submitForApproval(String id, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(id, context);
-        validateTransitionForSubmit(receive, context);
-        validateBusinessRulesForSubmit(receive, context);
-        doSubmit(receive, context);
-        return receive;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpPurReceive withdrawApproval(String id, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(id, context);
-        validateNotCancelled(receive, context);
-        validateTransitionForWithdraw(receive, context);
-        doWithdrawSubmit(receive, context);
-        return receive;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpPurReceive approve(String id, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(id, context);
-        if (receive.isApproved()) {
-            return receive;
-        }
-        validateNotCancelled(receive, context);
-        validateTransitionForApprove(receive, context);
-        validateBusinessRulesForApprove(receive, context);
-        enforceInspectionGate(receive, context);
-
-        ErpInvStockMove move = triggerIncomingMove(receive, context);
-        receive = receiveDao().getEntityById(id);
-        doApprove(receive, move, context);
-        postProcessApprove(receive, context);
-        return receive;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpPurReceive reject(String id, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(id, context);
-        validateNotCancelled(receive, context);
-        validateTransitionForReject(receive, context);
-        doReject(receive, context);
-        return receive;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpPurReceive reverseApprove(String id, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(id, context);
-        if (receive.isRejected()) {
-            return receive;
-        }
-        validateTransitionForReverseApprove(receive, context);
-        ensureReversed(receive, context);
-        receive = receiveDao().getEntityById(id);
-        doReverseApprove(receive, context);
-        return receive;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpPurReceive cancel(String id, IServiceContext context) {
-        ErpPurReceive receive = requireReceive(id, context);
-        validateTransitionForCancel(receive, context);
-        if (receive.isApproved()) {
-            ensureReversed(receive, context);
-            receive = receiveDao().getEntityById(id);
-        }
-        doCancel(receive, context);
-        return receive;
+        return cancelProcessor.cancel(id, context);
     }
 
     // ---------- step：迁移校验 ----------

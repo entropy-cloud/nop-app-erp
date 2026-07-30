@@ -59,76 +59,46 @@ public class ErpPurPaymentProcessor {
     @Inject
     IErpFinBudgetControlBiz budgetControlBiz;
 
+    @Inject
+    ErpPurPaymentSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpPurPaymentApproveProcessor approveProcessor;
+
+    @Inject
+    ErpPurPaymentRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpPurPaymentReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpPurPaymentWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpPurPaymentCancelProcessor cancelProcessor;
+
     public ErpPurPayment submitForApproval(String id, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(id, context);
-        validateTransitionForSubmit(payment, context);
-        validateBusinessRulesForSubmit(payment, context);
-        doSubmit(payment, context);
-        return payment;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpPurPayment withdrawApproval(String id, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(id, context);
-        validateNotCancelled(payment, context);
-        validateTransitionForWithdraw(payment, context);
-        doWithdrawSubmit(payment, context);
-        return payment;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpPurPayment approve(String id, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(id, context);
-        if (payment.isApproved()) {
-            return payment;
-        }
-        validateNotCancelled(payment, context);
-        validateTransitionForApprove(payment, context);
-        validateBusinessRulesForApprove(payment, context);
-
-        boolean posted = doPosting(payment, context);
-        payment = paymentDao().getEntityById(id);
-        doApprove(payment, posted, context);
-        return payment;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpPurPayment reject(String id, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(id, context);
-        validateNotCancelled(payment, context);
-        validateTransitionForReject(payment, context);
-        doReject(payment, context);
-        return payment;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpPurPayment reverseApprove(String id, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(id, context);
-        if (payment.isRejected()) {
-            return payment;
-        }
-        validateTransitionForReverseApprove(payment, context);
-        if (Boolean.TRUE.equals(payment.getPosted())) {
-            postingDispatcher.reverse(payment);
-            payment = paymentDao().getEntityById(id);
-            payment.setPosted(false);
-            payment.setPostedAt(null);
-            payment.setPostedBy(null);
-        }
-        doReverseApprove(payment, context);
-        return payment;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpPurPayment cancel(String id, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(id, context);
-        validateTransitionForCancel(payment, context);
-        String approveStatus = payment.getApproveStatus();
-        if (approveStatus != null && Objects.equals(approveStatus, ErpPurConstants.APPROVE_STATUS_APPROVED)
-                && Boolean.TRUE.equals(payment.getPosted())) {
-            postingDispatcher.reverse(payment);
-            payment = paymentDao().getEntityById(id);
-            payment.setPosted(false);
-            payment.setPostedAt(null);
-            payment.setPostedBy(null);
-        }
-        doCancel(payment, context);
-        return payment;
+        return cancelProcessor.cancel(id, context);
     }
 
     public ErpPurPayment settle(String id, List<SettlementAllocation> allocations, IServiceContext context) {

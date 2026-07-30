@@ -74,41 +74,18 @@ public class ErpInvLandedCostProcessor {
     @Inject
     IErpSysNotificationBiz notificationBiz;
 
+    @Inject
+    ErpInvLandedCostApproveProcessor approveProcessor;
+
+    @Inject
+    ErpInvLandedCostReverseApproveProcessor reverseApproveProcessor;
+
     static final String NOTIFY_EVENT_LANDED_COST_REVERSE_FAILURE = "inv.landed-cost-reverse-failure";
 
     // ---------- 审核编排 ----------
 
     public ErpInvLandedCost approve(Long id, IServiceContext context) {
-        ErpInvLandedCost landedCost = requireLandedCost(id, context);
-
-        if (Objects.equals(landedCost.getApproveStatus(), ErpInvConstants.APPROVE_STATUS_APPROVED)) {
-            throw new NopException(ErpInvErrors.ERR_LANDED_COST_ALREADY_APPROVED)
-                    .param(ErpInvErrors.ARG_LANDED_COST_CODE, landedCost.getCode());
-        }
-
-        List<ErpInvLandedCostLine> costLines = loadCostLines(landedCost.getId());
-        if (costLines.isEmpty()) {
-            throw new NopException(ErpInvErrors.ERR_LANDED_COST_NO_LINES)
-                    .param(ErpInvErrors.ARG_LANDED_COST_CODE, landedCost.getCode());
-        }
-
-        ErpPurReceive receive = loadReceive(landedCost.getReceiveId());
-        validateReceiveApproved(receive);
-        // 并发 TOCTOU 收口（plan 2026-07-30-0841-2 R1.28 P1-MA2-085）：对 receive 行做悲观锁（SELECT ... FOR UPDATE），
-        // 串行化并发同 receiveId 两笔 approve。第二笔 lock 阻塞至第一笔提交，随后 validateNotAlreadyAllocated
-        // 看到第一笔已提交的 APPROVED 到岸成本单 → 抛 ERR_LANDED_COST_ALREADY_ALLOCATED，避免双 allocation 进 StockBalance。
-        lockReceiveForAllocation(receive);
-        validateNotAlreadyAllocated(landedCost.getReceiveId(), landedCost.getId());
-
-        List<ErpPurReceiveLine> receiveLines = loadReceiveLines(landedCost.getReceiveId());
-
-        List<LandedCostAllocationEngine.AllocationResult> allocations = doAllocate(landedCost, costLines, receiveLines);
-
-        ErpInvCostAdjust costAdjust = createAndApplyCostAdjust(landedCost, receive, allocations);
-
-        doPostApprove(landedCost, costAdjust, costLines, allocations, context);
-
-        return reload(id);
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     // ---------- 分摊预览（只读，不落库） ----------
@@ -186,15 +163,7 @@ public class ErpInvLandedCostProcessor {
      * 但本方法作为顶层 BizModel 入口语义更严格——异常向上抛由 GraphQL 表达，便于前端感知失败。
      */
     public ErpInvLandedCost reverseApprove(Long id, IServiceContext context) {
-        ErpInvLandedCost landedCost = requireLandedCost(id, context);
-        validateCanReverse(landedCost, context);
-
-        ErpInvCostAdjust costAdjust = findCostAdjustForLandedCost(landedCost.getCode());
-        List<ErpInvCostAdjustLine> adjustLines = costAdjust != null ? loadAdjustLines(costAdjust.getId()) : java.util.Collections.emptyList();
-
-        doReverseApprove(landedCost, costAdjust, adjustLines, context);
-
-        return reload(id);
+        return reverseApproveProcessor.reverseApprove(String.valueOf(id), context);
     }
 
     protected void validateCanReverse(ErpInvLandedCost landedCost, IServiceContext context) {

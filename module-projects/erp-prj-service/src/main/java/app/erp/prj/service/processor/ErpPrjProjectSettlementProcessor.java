@@ -59,6 +59,14 @@ public class ErpPrjProjectSettlementProcessor {
     ProjectSettlementPostingDispatcher postingDispatcher;
     @Inject
     IDaoProvider daoProvider;
+    @Inject
+    ErpPrjProjectSettlementSubmitForApprovalProcessor submitForApprovalProcessor;
+    @Inject
+    ErpPrjProjectSettlementApproveProcessor approveProcessor;
+    @Inject
+    ErpPrjProjectSettlementRejectProcessor rejectProcessor;
+    @Inject
+    ErpPrjProjectSettlementCancelProcessor cancelProcessor;
 
     public ErpPrjProjectSettlement createSettlement(Long projectId, String settlementType, IServiceContext context) {
         ErpPrjProject project = loadProject(projectId);
@@ -93,48 +101,19 @@ public class ErpPrjProjectSettlementProcessor {
     }
 
     public ErpPrjProjectSettlement submit(Long id, IServiceContext context) {
-        ErpPrjProjectSettlement settlement = requireSettlement(id);
-        validateTransitionForSubmit(settlement);
-        doSubmit(settlement, context);
-        save(settlement);
-        return settlement;
+        return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
     }
 
     public ErpPrjProjectSettlement approve(Long id, IServiceContext context) {
-        ErpPrjProjectSettlement settlement = requireSettlement(id);
-        validateTransitionForApprove(settlement);
-        if (ErpPrjConstants.SETTLEMENT_TYPE_CLOSE.equals(settlement.getSettlementType())
-                && Boolean.TRUE.equals(settlement.getTransferToAsset()) && settlement.getAssetCardId() == null) {
-            createAndActivateAsset(settlement, context);
-        }
-        doPost(settlement, context);
-        doApprove(settlement, context);
-        save(settlement);
-        return settlement;
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     public ErpPrjProjectSettlement reject(Long id, IServiceContext context) {
-        ErpPrjProjectSettlement settlement = requireSettlement(id);
-        validateTransitionForReject(settlement);
-        doReject(settlement, context);
-        save(settlement);
-        return settlement;
+        return rejectProcessor.reject(String.valueOf(id), context);
     }
 
     public ErpPrjProjectSettlement cancel(Long id, IServiceContext context) {
-        ErpPrjProjectSettlement settlement = requireSettlement(id);
-        validateTransitionForCancel(settlement);
-        if (Boolean.TRUE.equals(settlement.getPosted())) {
-            postingDispatcher.reverse(settlement);
-            rollbackAssetIfNeeded(settlement);
-            settlement = requireSettlement(id);
-            settlement.setPosted(false);
-            settlement.setPostedAt(null);
-            settlement.setPostedBy(null);
-        }
-        doCancel(settlement, context);
-        save(settlement);
-        return settlement;
+        return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
     public ErpPrjProjectSettlement reverseSettlement(Long settlementId, IServiceContext context) {

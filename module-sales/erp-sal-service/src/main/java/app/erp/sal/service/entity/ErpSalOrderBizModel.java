@@ -11,7 +11,8 @@ import app.erp.sal.dao.entity.ErpSalPricingRule;
 import app.erp.sal.dao.entity.ErpSalQuotation;
 import app.erp.sal.dao.entity.ErpSalQuotationLine;
 import app.erp.sal.service.ErpSalConstants;
-import app.erp.sal.service.processor.ErpSalOrderProcessor;
+import app.erp.sal.service.processor.ErpSalOrderApproveProcessor;
+import app.erp.sal.service.processor.ErpSalOrderCancelProcessor;
 import app.erp.sal.service.support.ErpSalPricingRuleEngine;
 import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -47,7 +48,10 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     QuotationToOrderConverter quotationToOrderConverter;
 
     @Inject
-    ErpSalOrderProcessor orderProcessor;
+    ErpSalOrderCancelProcessor cancelProcessor;
+
+    @Inject
+    ErpSalOrderApproveProcessor approveProcessor;
 
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
@@ -62,11 +66,11 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Override
     @BizMutation
     public ErpSalOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.cancel(String.valueOf(orderId), context);
+        return cancelProcessor.cancel(String.valueOf(orderId), context);
     }
 
     /**
-     * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）。逐行调 {@link ErpSalOrderProcessor#approve}；
+     * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）。逐行调 {@link ErpSalOrderApproveProcessor#approve}；
      * 行级失败（状态非 SUBMITTED / 业务规则不满足）记入 {@link BatchOperationResult#getFailures()}，不阻塞其他行。
      */
     @Override
@@ -78,7 +82,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         }
         for (String id : ids) {
             try {
-                orderProcessor.approve(id, context);
+                approveProcessor.approve(id, context);
                 result.recordSuccess();
             } catch (NopException e) {
                 result.recordFailure(id, e.getErrorCode(), e.getDescription());

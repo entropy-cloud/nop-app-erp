@@ -74,44 +74,37 @@ public class ErpMfgWorkOrderProcessor {
     BatchGenealogyWriter batchGenealogyWriter;
     @Inject
     IErpSysNotificationBiz notificationBiz;
+    @Inject
+    ErpMfgWorkOrderSubmitForApprovalProcessor submitForApprovalProcessor;
+    @Inject
+    ErpMfgWorkOrderApproveProcessor approveProcessor;
+    @Inject
+    ErpMfgWorkOrderRejectProcessor rejectProcessor;
+    @Inject
+    ErpMfgWorkOrderReverseApproveProcessor reverseApproveProcessor;
+    @Inject
+    ErpMfgWorkOrderWithdrawApprovalProcessor withdrawApprovalProcessor;
 
     static final String NOTIFY_EVENT_VARIANCE_FAILURE = "mfg.production-variance-posting-failure";
 
     public ErpMfgWorkOrder submitForApproval(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForSubmit(wo, context);
-        validateBusinessRulesForSubmit(wo, context);
-        doSubmit(wo, context);
-        return wo;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpMfgWorkOrder withdrawApproval(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForWithdraw(wo, context);
-        doWithdrawSubmit(wo, context);
-        return wo;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpMfgWorkOrder approve(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForApprove(wo, context);
-        validateBusinessRulesForApprove(wo, context);
-        doApprove(wo, context);
-        return wo;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpMfgWorkOrder reject(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForReject(wo, context);
-        doReject(wo, context);
-        return wo;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpMfgWorkOrder reverseApprove(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForReverseApprove(wo, context);
-        doReverseApprove(wo, context);
-        return wo;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpMfgWorkOrder checkAvailability(Long workOrderId, IServiceContext context) {

@@ -3,7 +3,9 @@ package app.erp.inv.service.entity;
 
 import app.erp.inv.biz.IErpInvLandedCostBiz;
 import app.erp.inv.dao.entity.ErpInvLandedCost;
+import app.erp.inv.service.processor.ErpInvLandedCostApproveProcessor;
 import app.erp.inv.service.processor.ErpInvLandedCostProcessor;
+import app.erp.inv.service.processor.ErpInvLandedCostReverseApproveProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -31,6 +33,12 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
     @Inject
     ErpInvLandedCostProcessor landedCostProcessor;
 
+    @Inject
+    ErpInvLandedCostApproveProcessor approveProcessor;
+
+    @Inject
+    ErpInvLandedCostReverseApproveProcessor reverseApproveProcessor;
+
     public ErpInvLandedCostBizModel() {
         setEntityName(ErpInvLandedCost.class.getName());
     }
@@ -38,7 +46,7 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
     @Override
     @BizMutation
     public ErpInvLandedCost approve(@Name("id") Long id, IServiceContext context) {
-        return landedCostProcessor.approve(id, context);
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     @Override
@@ -61,6 +69,6 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
     @Override
     @BizMutation
     public ErpInvLandedCost reverseApprove(@Name("id") Long id, IServiceContext context) {
-        return landedCostProcessor.reverseApprove(id, context);
+        return reverseApproveProcessor.reverseApprove(String.valueOf(id), context);
     }
 }

@@ -65,73 +65,46 @@ public class ErpPurOrderProcessor {
     @Inject
     IErpFinIntercompanyTransferBiz intercompanyTransferBiz;
 
+    @Inject
+    ErpPurOrderSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpPurOrderApproveProcessor approveProcessor;
+
+    @Inject
+    ErpPurOrderRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpPurOrderReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpPurOrderWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpPurOrderCancelProcessor cancelProcessor;
+
     public ErpPurOrder submitForApproval(String id, IServiceContext context) {
-        ErpPurOrder order = requireOrder(id, context);
-        validateTransitionForSubmit(order, context);
-        validateBusinessRulesForSubmit(order, context);
-        doSubmit(order, context);
-        return order;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpPurOrder withdrawApproval(String id, IServiceContext context) {
-        ErpPurOrder order = requireOrder(id, context);
-        validateNotCancelled(order, context);
-        validateTransitionForWithdraw(order, context);
-        doWithdrawSubmit(order, context);
-        return order;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpPurOrder approve(String id, IServiceContext context) {
-        ErpPurOrder order = requireOrder(id, context);
-        if (order.isApproved()) {
-            return order;
-        }
-        validateNotCancelled(order, context);
-        validateTransitionForApprove(order, context);
-        validateBusinessRulesForApprove(order, context);
-        doApprove(order, context);
-        // A2 承付 commit hook（plan 2026-07-21-1206-2，budget.md §承付会计 §3 接入点 #1）：
-        // 订单审核后置 → 生成 COMMITMENT 凭证。config-gated（erp-fin.budget-commitment-enabled 默认 false）。
-        runCommitmentCommitHook(order, context);
-        // 跨公司 PO intercompany 钩子（plan 2026-07-24-1351-2，multi-company.md §跨公司 PO/SO 触发路径）：
-        // 订单审核后置 → 跨法人时生成配对内部销售/采购凭证。config-gated；非阻塞（对齐 inventory confirm 范式）。
-        runIntercompanyApproveHook(order, context);
-        return order;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpPurOrder reject(String id, IServiceContext context) {
-        ErpPurOrder order = requireOrder(id, context);
-        validateNotCancelled(order, context);
-        validateTransitionForReject(order, context);
-        doReject(order, context);
-        return order;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpPurOrder reverseApprove(String id, IServiceContext context) {
-        ErpPurOrder order = requireOrder(id, context);
-        if (order.isRejected()) {
-            return order;
-        }
-        validateTransitionForReverseApprove(order, context);
-        // A2 承付 release-on-cancel hook（plan 2026-07-21-1206-2，budget.md §承付会计 §3 接入点 #2）：
-        // 订单反审核 → 红冲原 COMMITMENT 凭证。config-gated；无原凭证静默跳过（容错路径）。
-        runCommitmentReleaseHook(order, context);
-        // 跨公司 PO intercompany 红冲钩子（plan 2026-07-24-1351-2）：反审核 → 红冲原配对 intercompany 凭证。config-gated；非阻塞。
-        runIntercompanyReverseHook(order, context);
-        doReverseApprove(order, context);
-        return order;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpPurOrder cancel(String orderId, IServiceContext context) {
-        ErpPurOrder order = requireOrder(orderId, context);
-        validateTransitionForCancel(order, context);
-        // A2 承付 release-on-cancel hook（plan 2026-07-21-1206-2，budget.md §承付会计 §3 接入点 #2）：
-        // 订单作废 → 红冲原 COMMITMENT 凭证。config-gated；无原凭证静默跳过（容错路径）。
-        runCommitmentReleaseHook(order, context);
-        // 跨公司 PO intercompany 红冲钩子（plan 2026-07-24-1351-2）：作废 → 红冲原配对 intercompany 凭证。config-gated；非阻塞。
-        runIntercompanyReverseHook(order, context);
-        doCancel(order, context);
-        return order;
+        return cancelProcessor.cancel(orderId, context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------

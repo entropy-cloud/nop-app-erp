@@ -59,81 +59,46 @@ public class ErpPurInvoiceProcessor {
     @Inject
     IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
 
+    @Inject
+    ErpPurInvoiceSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpPurInvoiceApproveProcessor approveProcessor;
+
+    @Inject
+    ErpPurInvoiceRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpPurInvoiceReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpPurInvoiceWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpPurInvoiceCancelProcessor cancelProcessor;
+
     public ErpPurInvoice submitForApproval(String id, IServiceContext context) {
-        ErpPurInvoice invoice = requireInvoice(id, context);
-        validateTransitionForSubmit(invoice, context);
-        validateBusinessRulesForSubmit(invoice, context);
-        doSubmit(invoice, context);
-        return invoice;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpPurInvoice withdrawApproval(String id, IServiceContext context) {
-        ErpPurInvoice invoice = requireInvoice(id, context);
-        validateNotCancelled(invoice, context);
-        validateTransitionForWithdraw(invoice, context);
-        doWithdrawSubmit(invoice, context);
-        return invoice;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpPurInvoice approve(String id, IServiceContext context) {
-        ErpPurInvoice invoice = requireInvoice(id, context);
-        if (invoice.isApproved()) {
-            return invoice;
-        }
-        validateNotCancelled(invoice, context);
-        validateTransitionForApprove(invoice, context);
-        validateBusinessRulesForApprove(invoice, context);
-
-        boolean posted = doPosting(invoice, context);
-        invoice = invoiceDao().getEntityById(id);
-        doApprove(invoice, posted, context);
-        // A2 承付 release-on-invoice-approve hook（plan 2026-07-21-1206-2，budget.md §承付会计 §3 接入点 #3）：
-        // AP 发票过账 = 实际占用产生 = 释放承付。按关联订单 code 反查 COMMITMENT 凭证红冲。
-        // config-gated（erp-fin.budget-commitment-enabled 默认 false）；严格对齐 budget.md:78 "被发票接收时红冲"。
-        // **reject release-receive-complete**（ErpPurReceive 入库路径）——入库是库存移动不产生 AP ACTUAL 占用。
-        runCommitmentReleaseOnInvoiceApproveHook(invoice, context);
-        return invoice;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpPurInvoice reject(String id, IServiceContext context) {
-        ErpPurInvoice invoice = requireInvoice(id, context);
-        validateNotCancelled(invoice, context);
-        validateTransitionForReject(invoice, context);
-        doReject(invoice, context);
-        return invoice;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpPurInvoice reverseApprove(String id, IServiceContext context) {
-        ErpPurInvoice invoice = requireInvoice(id, context);
-        if (invoice.isRejected()) {
-            return invoice;
-        }
-        validateTransitionForReverseApprove(invoice, context);
-        if (Boolean.TRUE.equals(invoice.getPosted())) {
-            postingDispatcher.reverse(invoice);
-            invoice = invoiceDao().getEntityById(id);
-            invoice.setPosted(false);
-            invoice.setPostedAt(null);
-            invoice.setPostedBy(null);
-        }
-        doReverseApprove(invoice, context);
-        return invoice;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpPurInvoice cancel(String id, IServiceContext context) {
-        ErpPurInvoice invoice = requireInvoice(id, context);
-        validateTransitionForCancel(invoice, context);
-        String approveStatus = invoice.getApproveStatus();
-        if (approveStatus != null && Objects.equals(approveStatus, ErpPurConstants.APPROVE_STATUS_APPROVED)
-                && Boolean.TRUE.equals(invoice.getPosted())) {
-            postingDispatcher.reverse(invoice);
-            invoice = invoiceDao().getEntityById(id);
-            invoice.setPosted(false);
-            invoice.setPostedAt(null);
-            invoice.setPostedBy(null);
-        }
-        doCancel(invoice, context);
-        return invoice;
+        return cancelProcessor.cancel(id, context);
     }
 
     // ---------- step：迁移校验 ----------

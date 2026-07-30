@@ -39,34 +39,31 @@ public class ErpAstAssetCapitalizationProcessor {
     @Inject
     CapitalizationPostingDispatcher postingDispatcher;
 
+    @Inject
+    ErpAstAssetCapitalizationSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpAstAssetCapitalizationApproveProcessor approveProcessor;
+
+    @Inject
+    ErpAstAssetCapitalizationRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpAstAssetCapitalizationReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpAstAssetCapitalizationWithdrawApprovalProcessor withdrawApprovalProcessor;
+
     public ErpAstAssetCapitalization submitForApproval(String id, IServiceContext context) {
-        ErpAstAssetCapitalization cap = requireCap(id, context);
-        validateNotCancelled(cap, context);
-        validateTransitionForSubmit(cap, context);
-        validateForApproval(cap, context);
-        cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_SUBMITTED);
-        capDao().updateEntity(cap);
-        return cap;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpAstAssetCapitalization withdrawApproval(String id, IServiceContext context) {
-        ErpAstAssetCapitalization cap = requireCap(id, context);
-        validateNotCancelled(cap, context);
-        validateTransitionForWithdraw(cap, context);
-        cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
-        capDao().updateEntity(cap);
-        return cap;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpAstAssetCapitalization approve(String id, IServiceContext context) {
-        ErpAstAssetCapitalization cap = requireCap(id, context);
-        if (cap.isApproved()) {
-            return cap;
-        }
-        validateNotCancelled(cap, context);
-        validateTransitionForApprove(cap, context);
-        validateForApproval(cap, context);
-        return executeApprove(id, cap, context);
+        return approveProcessor.approve(id, context);
     }
 
     protected ErpAstAssetCapitalization executeApprove(String id, ErpAstAssetCapitalization cap, IServiceContext context) {
@@ -89,21 +86,11 @@ public class ErpAstAssetCapitalizationProcessor {
     }
 
     public ErpAstAssetCapitalization reject(String id, IServiceContext context) {
-        ErpAstAssetCapitalization cap = requireCap(id, context);
-        validateNotCancelled(cap, context);
-        validateTransitionForReject(cap, context);
-        cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
-        capDao().updateEntity(cap);
-        return cap;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpAstAssetCapitalization reverseApprove(String id, IServiceContext context) {
-        ErpAstAssetCapitalization cap = requireCap(id, context);
-        if (cap.isRejected()) {
-            return cap;
-        }
-        validateTransitionForReverseApprove(cap, context);
-        return executeReverseApprove(id, cap, context);
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     protected ErpAstAssetCapitalization executeReverseApprove(String id, ErpAstAssetCapitalization cap,

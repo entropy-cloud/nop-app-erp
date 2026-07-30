@@ -10,6 +10,8 @@ import app.erp.pur.dao.entity.ErpPurRequisition;
 import app.erp.pur.dao.entity.ErpPurRequisitionLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.processor.ErpPurOrderApproveProcessor;
+import app.erp.pur.service.processor.ErpPurOrderCancelProcessor;
 import app.erp.pur.service.processor.ErpPurOrderProcessor;
 import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -41,6 +43,12 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Inject
     ErpPurOrderProcessor orderProcessor;
 
+    @Inject
+    ErpPurOrderCancelProcessor cancelProcessor;
+
+    @Inject
+    ErpPurOrderApproveProcessor approveProcessor;
+
     public ErpPurOrderBizModel() {
         setEntityName(ErpPurOrder.class.getName());
     }
@@ -48,14 +56,14 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Override
     @BizMutation
     public ErpPurOrder cancel(@Name("orderId") Long orderId, IServiceContext context) {
-        return orderProcessor.cancel(String.valueOf(orderId), context);
+        return cancelProcessor.cancel(String.valueOf(orderId), context);
     }
 
     /**
-     * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）。逐行调 {@link ErpPurOrderProcessor#approve}；
+     * F11 批量审批（plan 2026-07-22-0444-2 Phase 1）。逐行调 {@link ErpPurOrderApproveProcessor#approve}；
      * 行级失败（状态非 SUBMITTED / 业务规则不满足）记入 {@link BatchOperationResult#getFailures()}，不阻塞其他行。
      *
-     * <p>逐行执行（模式 b）的理由见 Phase 0 决策记录；与单条审批共享同一 Processor，业务规则（供应商 active、
+     * <p>逐行执行（模式 b）的理由见 Phase 0 决策记录；与单条审批共享同一 per-mutation Processor，业务规则（供应商 active、
      * 预算校验、commitment hook）与权限检查完全一致。
      */
     @Override
@@ -67,7 +75,7 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
         }
         for (String id : ids) {
             try {
-                orderProcessor.approve(id, context);
+                approveProcessor.approve(id, context);
                 result.recordSuccess();
             } catch (NopException e) {
                 result.recordFailure(id, e.getErrorCode(), e.getDescription());

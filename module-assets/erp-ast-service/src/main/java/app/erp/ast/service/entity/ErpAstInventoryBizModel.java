@@ -3,6 +3,7 @@ package app.erp.ast.service.entity;
 
 import app.erp.ast.biz.IErpAstInventoryBiz;
 import app.erp.ast.dao.entity.ErpAstInventory;
+import app.erp.ast.service.processor.ErpAstInventoryApproveProcessor;
 import app.erp.ast.service.processor.ErpAstInventoryProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -22,6 +23,9 @@ public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> imple
 
     @Inject
     ErpAstInventoryProcessor inventoryProcessor;
+
+    @Inject
+    ErpAstInventoryApproveProcessor approveProcessor;
 
     public ErpAstInventoryBizModel() {
         setEntityName(ErpAstInventory.class.getName());
@@ -54,7 +58,7 @@ public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> imple
     @Override
     @BizMutation
     public ErpAstInventory approve(@Name("id") Long id, IServiceContext context) {
-        return inventoryProcessor.approve(id, context);
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     @Override

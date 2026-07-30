@@ -4,6 +4,10 @@ package app.erp.fin.service.entity;
 import app.erp.fin.biz.IErpFinBudgetScenarioBiz;
 import app.erp.fin.dao.entity.ErpFinBudgetScenario;
 import app.erp.fin.service.budget.ErpFinBudgetScenarioProcessor;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioApproveProcessor;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioCancelProcessor;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioRejectProcessor;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioSubmitForApprovalProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -24,6 +28,18 @@ public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScena
     @Inject
     ErpFinBudgetScenarioProcessor budgetScenarioProcessor;
 
+    @Inject
+    ErpFinBudgetScenarioSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpFinBudgetScenarioApproveProcessor approveProcessor;
+
+    @Inject
+    ErpFinBudgetScenarioRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpFinBudgetScenarioCancelProcessor cancelProcessor;
+
     public ErpFinBudgetScenarioBizModel() {
         setEntityName(ErpFinBudgetScenario.class.getName());
     }
@@ -31,25 +47,25 @@ public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScena
     @Override
     @BizMutation
     public ErpFinBudgetScenario submit(@Name("id") Long id, IServiceContext context) {
-        return budgetScenarioProcessor.submit(id, context);
+        return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpFinBudgetScenario approve(@Name("id") Long id, IServiceContext context) {
-        return budgetScenarioProcessor.approve(id, context);
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpFinBudgetScenario reject(@Name("id") Long id, IServiceContext context) {
-        return budgetScenarioProcessor.reject(id, context);
+        return rejectProcessor.reject(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpFinBudgetScenario cancel(@Name("id") Long id, IServiceContext context) {
-        return budgetScenarioProcessor.cancel(id, context);
+        return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
     @Override

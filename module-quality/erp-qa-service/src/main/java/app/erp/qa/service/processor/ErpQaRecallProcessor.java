@@ -28,41 +28,39 @@ public class ErpQaRecallProcessor {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    ErpQaRecallSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpQaRecallApproveProcessor approveProcessor;
+
+    @Inject
+    ErpQaRecallRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpQaRecallReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpQaRecallWithdrawApprovalProcessor withdrawApprovalProcessor;
+
     public ErpQaRecall submitForApproval(String id, IServiceContext context) {
-        ErpQaRecall recall = requireRecall(id, context);
-        validateTransitionForSubmit(recall, context);
-        validateBusinessRulesForSubmit(recall, context);
-        doSubmit(recall, context);
-        return recall;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpQaRecall withdrawApproval(String id, IServiceContext context) {
-        ErpQaRecall recall = requireRecall(id, context);
-        validateTransitionForWithdraw(recall, context);
-        doWithdrawSubmit(recall, context);
-        return recall;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpQaRecall approve(String id, IServiceContext context) {
-        ErpQaRecall recall = requireRecall(id, context);
-        validateTransitionForApprove(recall, context);
-        validateBusinessRulesForApprove(recall, context);
-        doApprove(recall, context);
-        return recall;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpQaRecall reject(String id, IServiceContext context) {
-        ErpQaRecall recall = requireRecall(id, context);
-        validateTransitionForReject(recall, context);
-        doReject(recall, context);
-        return recall;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpQaRecall reverseApprove(String id, IServiceContext context) {
-        ErpQaRecall recall = requireRecall(id, context);
-        validateTransitionForReverseApprove(recall, context);
-        doReverseApprove(recall, context);
-        return recall;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------

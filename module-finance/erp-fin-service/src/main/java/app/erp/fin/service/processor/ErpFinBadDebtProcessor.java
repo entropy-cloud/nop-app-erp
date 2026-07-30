@@ -56,6 +56,18 @@ public class ErpFinBadDebtProcessor {
     @Inject
     FinPostingExecutor finPostingExecutor;
 
+    @Inject
+    ErpFinBadDebtSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpFinBadDebtApproveProcessor approveProcessor;
+
+    @Inject
+    ErpFinBadDebtRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpFinBadDebtReverseApproveProcessor reverseApproveProcessor;
+
     // ===================== 创建坏账单 =====================
 
     public ErpFinBadDebt writeOff(Long arApItemId, String reason, IServiceContext context) {
@@ -84,26 +96,15 @@ public class ErpFinBadDebtProcessor {
     // ===================== 审批状态机 =====================
 
     public ErpFinBadDebt submit(Long badDebtId, IServiceContext context) {
-        ErpFinBadDebt debt = requireBadDebt(badDebtId);
-        validateTransitionForSubmit(debt);
-        doSubmit(debt);
-        return debt;
+        return submitForApprovalProcessor.submitForApproval(String.valueOf(badDebtId), context);
     }
 
     public ErpFinBadDebt approve(Long badDebtId, IServiceContext context) {
-        ErpFinBadDebt debt = requireBadDebt(badDebtId);
-        if (debt.isApproved()) {
-            return debt;
-        }
-        validateTransitionForApprove(debt);
-        return approveInternal(debt, loadArApItem(debt.getSourceArApItemId()), context);
+        return approveProcessor.approve(String.valueOf(badDebtId), context);
     }
 
     public ErpFinBadDebt reject(Long badDebtId, IServiceContext context) {
-        ErpFinBadDebt debt = requireBadDebt(badDebtId);
-        validateTransitionForReject(debt);
-        doReject(debt);
-        return debt;
+        return rejectProcessor.reject(String.valueOf(badDebtId), context);
     }
 
     // ===================== 反审核（红冲闭环，plan 2026-07-18-1745-3） =====================
@@ -122,13 +123,7 @@ public class ErpFinBadDebtProcessor {
      * 因为反审核是补救路径不是用户主路径，需要强保证无残留半状态）。
      */
     public ErpFinBadDebt reverseApprove(Long badDebtId, IServiceContext context) {
-        ErpFinBadDebt debt = requireBadDebt(badDebtId);
-        // 守卫：须已 APPROVED 且已生成凭证（ErpFinBadDebt 无 posted 字段，以 voucherId 非空作为已过账标志）
-        if (!debt.isApproved() || debt.getVoucherId() == null) {
-            throw new NopException(ErpFinErrors.ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED)
-                    .param(ErpFinErrors.ARG_BAD_DEBT_ID, badDebtId);
-        }
-        return executeReverseApprove(debt, context);
+        return reverseApproveProcessor.reverseApprove(String.valueOf(badDebtId), context);
     }
 
     /**

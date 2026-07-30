@@ -5,6 +5,7 @@ import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmTerritoryAssignmentRule;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.processor.ErpCrmConversionProcessor;
+import app.erp.crm.service.processor.ErpCrmLeadCancelProcessor;
 import app.erp.crm.service.processor.ErpCrmLeadProcessor;
 import app.erp.crm.service.support.LeadDuplicateChecker;
 import app.erp.crm.service.support.LeadScoringEngine;
@@ -42,6 +43,9 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
     ErpCrmLeadProcessor leadProcessor;
 
     @Inject
+    ErpCrmLeadCancelProcessor cancelProcessor;
+
+    @Inject
     ErpCrmConversionProcessor conversionProcessor;
 
     @Inject
@@ -77,7 +81,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
     @Override
     @BizMutation
     public ErpCrmLead cancel(@Name("leadId") Long leadId, IServiceContext context) {
-        return leadProcessor.cancel(leadId, context);
+        return cancelProcessor.cancel(String.valueOf(leadId), context);
     }
 
     @Override
