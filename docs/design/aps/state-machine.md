@@ -46,6 +46,7 @@
 - 终态：`已完成（FINISHED）`、`已取消（CANCELLED）`。
 - 终态不可直接恢复。若需修改，重新创建 OperationOrder。
 - 已 FINISHED 的 OperationOrder 不可重排或修改。
+- **非法迁移拦截（P1-MA2-077，plan `2026-07-30-0720-2`）**：start 仅接受 PLANNED 源态、complete 仅接受 IN_PROGRESS 源态、cancel 仅接受 DRAFT/PLANNED/IN_PROGRESS 源态；FINISHED/CANCELLED 终态→他态的非法迁移经 `ERR_APS_OP_ILLEGAL_TRANSITION`（`erp.err.aps.op-illegal-transition`）在 `ErpApsOperationOrderBizModel.start/complete/cancel` 入口处拦截。
 
 ### 4. 异常路径
 
@@ -74,7 +75,7 @@
 | PLANNED→DRAFT（重排） | APS 引擎 / 计划员 |
 
 危险操作：
-- **取消执行中的工序**：需生产主管审批，因已产生实际报工数据。
+- **取消执行中的工序**：需生产主管审批，因已产生实际报工数据。**Deferred（P1-MA2-078，plan `2026-07-30-0720-2`）**——当前 `cancel` @BizMutation 经 @BizMutation 入口权限覆盖（任意授权角色可执行），生产主管审批工作流（cancel-approve 动作 + 角色-resource 种子 + 审批 SPI）留 successor。cancel 操作本身业务正确（aps 纯排产不破坏库存/GL，副作用经下游 mfg 工单级联归 A2.6a 已 done 联动复核）；successor 触发条件：审批工作流 SPI 落地时实现 cancel-approve 动作（IN_PROGRESS 源态需审批令牌）+ config-gated 角色-resource 门控。
 - **重排已 PLANNED 的工序**：自动重排时影响范围需限定在区间内。
 
 ### 7. 外部依赖

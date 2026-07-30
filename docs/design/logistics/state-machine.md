@@ -37,7 +37,7 @@
 运输中 (IN_TRANSIT)
   ├─ 签收 → 已签收 (DELIVERED)
   ├─ 异常（货物退回） → 已取消 (CANCELLED)
-  └─ 部分签收 → 记录部分签收，状态保持 IN_TRANSIT（等待剩余）
+  └─ 部分签收 → 记录部分签收，状态保持 IN_TRANSIT（等待剩余）**[Deferred — P1-MA2-079，plan `2026-07-30-0720-2`：当前 `advanceTracking` 仅处理完整 TRACKING_EVENT_DELIVERED，承运商支持部分签收回调时实现 TRACKING_EVENT_PARTIAL 常量 + receivedQuantity/partialSignedQty 字段（须 ORM ask-first 加列）+ 累计签收判定，状态保持 IN_TRANSIT 直至全部签收]**
 ```
 
 | 迁移 | 触发人 | 前置条件 | 结果 |
@@ -48,7 +48,7 @@
 | DISPATCHED→IN_TRANSIT | 承运商回调/定时任务 | 网关追踪状态变为在途 | 更新追踪信息 |
 | IN_TRANSIT→DELIVERED | 承运商回调/签收确认 | 网关追踪状态变为已签收或人工确认 | 触发运费过账 |
 | DRAFT→CANCELLED | 发货员 | 无未完成网关调用 | 释放关联锁定 |
-| IN_TRANSIT→CANCELLED | 发货员+审批 | 货物退回、网关取消成功或人工确认 | 触发逆向物流流程 |
+| IN_TRANSIT→CANCELLED | 发货员+审批 | 货物退回、网关取消成功或人工确认 | 触发逆向物流流程。**Deferred（P1-MA2-078，plan `2026-07-30-0720-2`）**——当前 `cancelShipment` 经状态守卫 + 网关 `client.cancelShipment`（DISPATCHED+ 防承运商侧双发）覆盖，物流主管审批工作流（cancel-approve 动作 + 角色-resource 种子）留 successor；successor 触发条件：审批工作流 SPI 落地时实现 cancel-approve 动作（IN_TRANSIT 源态需审批令牌）+ config-gated 角色-resource 门控 |
 
 ### 3. 终态与恢复
 
@@ -63,7 +63,7 @@
 | 网关下单超时/失败 | 自动重试（最多 3 次，指数退避），重试耗尽后保留 ADVISED 状态，标记网关异常，人工干预 |
 | 承运商拒接 | 保留 ADVISED，通知发货员更换承运商或取消 |
 | 追踪长时间无更新（超过预计送达日期 3 天） | 系统自动标记"追踪异常"，通知物流主管人工跟进 |
-| 部分签收 | 记录签收明细，状态保持 IN_TRANSIT，等待剩余货物签收 |
+| 部分签收 | 记录签收明细，状态保持 IN_TRANSIT，等待剩余货物签收。**Deferred（P1-MA2-079，plan `2026-07-30-0720-2`）**——当前 `advanceTracking` 仅处理完整 TRACKING_EVENT_DELIVERED（承运商回调暂只发完整 DELIVERED 事件）；承运商支持部分签收回调时实现 TRACKING_EVENT_PARTIAL 常量 + receivedQuantity/partialSignedQty 字段（须 ORM ask-first 加列）+ 累计签收判定（状态保持 IN_TRANSIT 直至全部签收） |
 | 货物退回（Return to Sender） | 记录退回原因，进入 CANCELLED。如需要重新发运，新建发运单（含退回标记） |
 | 取消发运但网关不支持取消 | 标记"人工取消"，通知发货员联系承运商线下处理 |
 | 并发更新同一发运单 | 乐观锁 |
