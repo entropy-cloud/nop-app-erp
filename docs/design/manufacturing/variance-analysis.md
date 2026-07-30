@@ -86,7 +86,7 @@
 2. **差异计算** → `ProductionVarianceCalculator` 聚合实际成本（WorkOrder 四要素）与标准成本（FIRMED cost rollup）逐项对比，写 `ErpMfgCostVariance` 行（6 类差异：材料用量/人工效率/人工费率/制造费用/产量/委外费）
 3. **差异入账** → `ProductionVarianceDispatcher` 按成本要素汇总净差异组装 PostingEvent，经 `IErpFinVoucherBiz.post` 提交过账（`PRODUCTION_VARIANCE` 业务类型），成功回写 `posted=true`
 4. **分析报表** → 按维度查看差异分布（`ErpMfgCostVariance__findByWorkOrder` / `aggregateByType` 查询入口，报表渲染归 Deferred）
-5. **异常预警** → 差异超过阈值触发通知（Deferred，依赖通知派发通道）
+5. **异常预警** → 差异超过阈值触发通知（**已实现**：`ProductionVarianceCalculator.dispatchVarianceAlertIfOverThreshold` 按本位币净差异绝对值最大行判定，超 `erp-mfg.variance-alert-threshold` 时调 `IErpSysNotificationBiz.notify` 派发 `mfg.production-variance` 事件；`erp-mfg.variance-alert-enabled` 默认 true；通知失败降级 warn 不阻断差异计算结果）
 
 ## 重算幂等实现注记
 
@@ -113,6 +113,8 @@
 | 配置键 | 默认值 | 说明 |
 |--------|--------|------|
 | `erp-mfg.variance-auto-calc-enabled` | `false` | 工单完工达量（willFinish）时自动触发生产差异计算 + 过账；关闭时需手动经 `calculateVariances` 入口计算 |
+| `erp-mfg.variance-alert-enabled` | `true` | 生产差异阈值告警开关（plan 2026-07-06-0642-1 §Phase 3）；关闭时跳过 `IErpSysNotificationBiz.notify` 调用 |
+| `erp-mfg.variance-alert-threshold` | `100` | 生产差异告警阈值（本位币净金额绝对值；plan 2026-07-06-0642-1 §Phase 3）；超阈值时派发 `mfg.production-variance` 通知 |
 
 ## 涉及的领域机制
 

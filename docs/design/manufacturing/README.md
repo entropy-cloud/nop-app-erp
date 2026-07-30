@@ -33,8 +33,10 @@
 | 工序作业卡（JobCard） | 工单下的工序执行卡：工序、工作中心、计划/完成数量、工时记录 |
 | 工艺路线（Routing） | 工序序列定义（可被多个 BOM 引用） |
 | 工作中心（Workcenter） | 生产单元：产能、费率、工作时间 |
-| 生产计划（ProductionPlan） | 基于 MRP 的生产计划建议 |
-| 停机记录（DowntimeEntry） | 工作中心停机记录（影响排产） |
+| 生产计划（ProductionPlan）⚠ Deferred | 基于 MRP 的生产计划建议；当前 ORM 无 `ErpMfgProductionPlan`，最接近实体为 `ErpMfgMrpPlan`（MRP 计划）。独立生产计划实体为 successor |
+| 停机记录（DowntimeEntry）⚠ Deferred | 工作中心停机记录（影响排产）；当前 ORM 无 `ErpMfgDowntimeEntry`。停机扣减可用时段为 Non-Goal（见 `crp.md §实现约定`），successor = maintenance 停机事件 + 排产停机窗口联动 |
+
+> **实体清单一致性声明**：上表标注 ⚠ Deferred 的对象当前 ORM 未物化（`app-erp-manufacturing.orm.xml` 无 `ErpMfgProductionPlan`/`ErpMfgDowntimeEntry`）。生产计划语义由 `ErpMfgMrpPlan` 承载；停机记录与 maintenance 域停机事件联动为 successor（与 `crp.md §实现约定「maintenance 停机扣减可用时段为 Non-Goal」` 一致）。权威实体清单以 `model/app-erp-manufacturing.orm.xml` 为准。
 
 ### 工单与库存的关系
 

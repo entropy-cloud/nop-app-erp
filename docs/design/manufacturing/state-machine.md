@@ -68,7 +68,7 @@
 |----------|------|
 | 齐套校验时子件库存不足 | 进入 STOCK_PARTIAL，提示补料或强制开工 |
 | 领料时可用量不足（部分齐套开工后） | 拒绝本次领料，等待补库 |
-| 报工数量超过工单数量 | 拒绝（除非配置允许超产） |
+| 报工数量超过工单数量 | **当前硬编码拒绝**（`reportCompletion` 抛 `ERR_OVER_REPORT`，`ErpMfgErrors` 错误文案标注"未启用超产配置"）；可配置超产放行（config-gate）为 **successor，未落地**（`ErpMfgConstants` 无对应 config key） |
 | BOM 变更影响已开工工单 | 已开工工单不追溯 BOM 变更（快照）；新工单用新 BOM |
 | 工作中心停机 | 触发 DowntimeEntry，影响排产（人工决策停工或等待） |
 | 完工质检不合格 | quality 域反馈，触发返工（新建返工工单）或降级入库 |
@@ -154,13 +154,15 @@
 
 ### 质检对工单状态的约束声明
 
-质检判定（quality 域）直接影响工单从 INSPECTING 到终态的迁移，双方必须显式声明：
+> 工单状态字典（`erp-mfg/work-order-status`，10 态）**无 INSPECTING 态**。完工质检门控不引入独立工单状态，而是经 config-gated 钩子在 `reportCompletion` 达量时拦截完工（详见下方 §实现约定「INSPECTING 态字典缺失 → config-gated 钩子替代」）。质检判定（quality 域）影响的是"能否进入 COMPLETED"，门控阻塞期间工单保持 `IN_PROCESS`，无 INSPECTING 中间态。
 
-| 质检判定 | 对工单状态的影响 | 约束声明位置 |
-|----------|------------------|------------|
-| ACCEPTED（合格） | 工单可从 INSPECTING → COMPLETED | 本文 + `quality/README.md` |
-| CONDITIONAL（让步接收） | 工单可从 INSPECTING → COMPLETED（附让步记录） | 本文 + `quality/README.md` |
-| REJECTED（不合格） | 工单停留在 INSPECTING，触发返工工单 | 本文 + `quality/README.md` |
+质检判定对工单完工门控的影响：
+
+| 质检判定 | 对工单完工门控的影响 | 约束声明位置 |
+|----------|----------------------|------------|
+| ACCEPTED（合格） | 门控通过，完工达量 → COMPLETED | 本文 + `quality/README.md` |
+| CONDITIONAL（让步接收） | 门控通过（附让步记录），完工达量 → COMPLETED | 本文 + `quality/README.md` |
+| REJECTED（不合格） | 门控阻塞完工，工单保持 IN_PROCESS，触发返工工单（新建返工工单） | 本文 + `quality/README.md` |
 
 > 质检触发规则见 `quality/README.md` "质检对制造域的约束声明"节。双方文档都显式声明此约束。
 
@@ -168,7 +170,7 @@
 
 > 本节记录与上方状态机设计文档的实现偏离。
 
-- **INSPECTING 态字典缺失 → config-gated 钩子替代**：上方 §质检约束声明引用工单 INSPECTING 态，但 `erp-mfg/work-order-status` 字典（10 态）**无 INSPECTING 态**。以 config-gated 完工门控钩子替代（不加 ORM 字典态）：`reportCompletion` 时若 `ErpMfgBom.inspectionRequired=true` 且 `erp-mfg.inspection-gate-enabled=true`（默认 false）且完工达量，抛 `ERR_INSPECTION_REQUIRED` 拒绝 COMPLETED，工单保持 IN_PROCESS 待质检结果。**触发条件**：quality 就绪后 flip config=true 接线，并裁决是否需向字典补 INSPECTING 态。
+- **INSPECTING 态字典缺失 → config-gated 钩子替代**：`erp-mfg/work-order-status` 字典（10 态）**无 INSPECTING 态**，上方 §质检约束声明已据此对齐（无 INSPECTING 中间态）。完工质检门控以 config-gated 钩子替代（不加 ORM 字典态）：`reportCompletion` 时若 `ErpMfgBom.inspectionRequired=true` 且 `erp-mfg.inspection-gate-enabled=true`（默认 false）且完工达量，抛 `ERR_INSPECTION_REQUIRED` 拒绝 COMPLETED，工单保持 IN_PROCESS 待质检结果。**触发条件**：quality 就绪后 flip config=true 接线，并裁决是否需向字典补 INSPECTING 态。
 - **领料出库 moveType 用 OUTGOING(20) 而非 MANUFACTURING(40)**：库存域 `StockMoveBookkeeper.bookCompletion` 按 moveType 决定方向——MANUFACTURING(40) 视为入库（加库存），OUTGOING(20) 才扣减余额。故领料出库移动单用 `MOVE_TYPE_OUTGOING_ISSUE(20)`（relatedBillType=ERP_MFG_ISSUE）；完工入库移动单用 MANUFACTURING(40)（relatedBillType=ERP_MFG_WORK_ORDER）。计划原写「moveType=MANUFACTURE」为对库存域方向语义的假设偏差，已按库存域实际实现修正。
 - **齐套校验只读不写预留**：`checkAvailability`（NOT_STARTED→STOCK_RESERVED/STOCK_PARTIAL）仅读 `ErpInvStockBalance.availableQuantity` 置状态，不写库存预留记录（实际扣减由开工后领料出库移动单 DONE 完成，对齐 `inventory/cross-domain.md §余量校验规则`）。故 `cancel`（→CANCELLED）为纯状态迁移，无预留记录需释放。
 - **制造费用 overheadCost 经 config-gated 分配率应用**：工作中心仅有单一 `hourlyRate`（无独立制造费率分列）。成本卷算 `CostRollupService` 的 overhead 要素经 config-gated 分配率：关时（默认）`overheadCost`=0 向后兼容；开时按 `erp-mfg.overhead-allocation-mode`（MACHINE_HOUR=工序机器工时×rate / LABOR_RATIO=laborCost×rate）× `erp-mfg.overhead-allocation-rate` 计算。subcontract 委外费要素同步应用（`erp-mfg.subcontract-cost-aggregation-enabled` 开时按物料聚合已过账委外订单加工费按产量分摊）。**触发条件**：产品要求工作中心级精确人工/制造费率分列时拆 `ErpMfgWorkcenter` laborRate/overheadRate schema（ask-first ORM）。

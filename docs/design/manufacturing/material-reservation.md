@@ -6,7 +6,14 @@
 
 本文件是 `erpnext.md` 调研结论的落地设计，是 `manufacturing/README.md` 的详细展开。
 
-> **预留实体归属说明**：物料预留的持久化真相源是**库存域**的 `ErpInvReservation`/`ErpInvReservationLine`（见 `module-inventory/model/app-erp-inventory.orm.xml`），而非本域独立的 `ErpMfgMaterialReservation`。制造域工单通过库存域预留机制为子件创建预留记录（`ErpInvReservationLine` 关联工单）。下文出现的 `ErpMfgMaterialReservation` 及其字段（`reservedQty`/`pickedQty`/`releasedQty`/`reservationStatus`）为**业务语义说明**，实际落位以库存域 `ErpInvReservation*` 模型为准；预留量的读写跨域走 `IErpInvReservationBiz` 接口，不在制造域做 ORM 跨工程引用。预留量字段（`reservedQty`/可用量）的真相源是 `ErpInvStockBalance`。
+> **⚠ Deferred 实现说明（整节适用）**：本文件描述的完整物料预留子系统（`ErpMfgMaterialReservation` 实体 + 工单 `reservationStatus` 6 态 + 审核触发预留 / 领料扣减 / 预留释放写路径 + 5 个 `erp-mfg.reservation-*` config key）当前**均未落地**，属**设计意图（Deferred）**，仅供未来实现参考。已核实事实：
+>
+> - **持久化真相源** = 库存域 `ErpInvReservation`/`ErpInvReservationLine`（见 `module-inventory/model/app-erp-inventory.orm.xml`），**非**本域独立的 `ErpMfgMaterialReservation`（该实体未物化，仅在 `ErpMfgDashboardBizModel` 代码注释中作为 Non-Goal 引用）。下文出现的 `ErpMfgMaterialReservation` 及其字段（`reservedQty`/`pickedQty`/`releasedQty`/`reservationStatus`）为业务语义说明，实际落位以库存域 `ErpInvReservation*` 模型为准；预留量的读写跨域走 `IErpInvReservationBiz` 接口，不在制造域做 ORM 跨工程引用。预留量字段（`reservedQty`/可用量）的真相源是 `ErpInvStockBalance`。
+> - **当前实现边界**：制造域仅 `KitAvailabilityChecker` 做**只读齐套校验**（读 `ErpInvStockBalance.availableQuantity` 决定 `STOCK_RESERVED`/`STOCK_PARTIAL`），**不写预留**；实际扣减由开工后领料出库移动单 DONE 完成（对齐 `inventory/cross-domain.md §余量校验规则`、`state-machine.md §实现约定「齐套校验只读不写预留」`）。
+> - **未落地的工件**：`ErpMfgWorkOrder` 无 `reservationStatus` 字段；`ErpMfgConstants` 无 `erp-mfg.reservation-enabled` / `reservation-on-approve` / `over-pick-warning` / `auto-release-on-complete` 等 config key。
+> - **Successor 触发条件**：完整预留写路径（审核触发预留 + 领料扣减预留 + 预留释放）= 跨域 substantial slice，须库存域 `ErpInvReservation*` 写接口先行落地后，再于制造域接线（领料扣减/释放经 `IErpInvReservationBiz`）。在 successor 落地前，下文「物料预留模型 / 预留流程 / 预留释放 / 领料与预留 / 配置项」各节应整体视为**设计意图（Deferred）**。
+>
+> **为何保留本文档**：物料预留是 mfg 业务语义重要组成，删除会丢失设计意图；保留并标注 Deferred 使文档诚实反映"设计有、实现 Deferred"。
 
 ## 设计背景
 
@@ -56,6 +63,8 @@
 | 已释放 | RELEASED | 预留已释放 |
 
 ### 工单预留状态维度
+
+> **⚠ Deferred**：本节所述工单独立 `reservationStatus` 维度为设计意图，当前**未落地**——`ErpMfgWorkOrder` 无 `reservationStatus` 字段。齐套校验现以工单 `docStatus`（`STOCK_RESERVED`/`STOCK_PARTIAL`）承载，预留进度不独立追踪（successor 随库存域预留写接口落地后引入）。
 
 工单增加独立的预留状态维度 reservationStatus，与 docStatus（业务生命周期）、approveStatus（审批状态）组成三轴状态：
 
@@ -269,6 +278,8 @@
 - 预留缺口查询：筛选 availableQty < requiredQty 的记录（补料建议）
 
 ## 配置项
+
+> **⚠ Deferred**：下表 5 个 `erp-mfg.reservation-*` config key 当前**均未落地**（`ErpMfgConstants` 无对应常量）。物料预留整体为设计意图/Deferred，见文首「Deferred 实现说明」。仅 `ErpMfgBom.consumption`（齐套严格度）为已落地 ORM 字段。
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|

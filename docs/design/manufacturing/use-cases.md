@@ -219,12 +219,15 @@ KPI 卡片值 == 对应实体的实时聚合(按期间/orgId/权限过滤)
 
 **可验证断言**:
 ```
-工单完工过账 → 触发差异计算
+工单完工过账 → 触发差异计算（6 类，对齐 variance-analysis.md + ProductionVarianceCalculator）
 材料用量差异 = (实际用量 - 标准用量) × 标准单价
-材料价格差异 = (实际单价 - 标准单价) × 实际用量
 人工效率差异 = (实际工时 - 标准工时) × 标准小时费率
 人工费率差异 = (实际小时费率 - 标准小时费率) × 实际工时
-差异记录逐条写入 ErpMfgCostVariance（每差异类型一条）
+制造费用差异（OVERHEAD） = 实际制造费用 - 标准制造费用
+产量差异（VOLUME） = (实际产出 - 计划产出) × 标准单位成本
+委外费差异（SUBCONTRACT） = 实际委外费 - 标准委外费（标准 = rollupLine.subcontractCost × 完工量；实际 = wo.subcontractCost）
+（材料价格差异 PPV 归采购域：在采购入库 DONE 时由 inventory 域 InvPostingDispatcher.dispatchPurchasePriceVariance 捕获过账 PURCHASE_PRICE_VARIANCE，不在生产差异内，避免重复计入）
+差异记录逐条写入 ErpMfgCostVariance（每差异类型一条，varianceType = MATERIAL_USAGE / LABOR_EFFICIENCY / LABOR_RATE / OVERHEAD / VOLUME / SUBCONTRACT）
 差异报表可按工作中心/产品/期间/差异类型分组聚合
 ```
 
