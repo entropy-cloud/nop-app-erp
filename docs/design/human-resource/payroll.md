@@ -255,6 +255,10 @@
     └─► 当月应纳税额 = 累计应纳税额 − 累计已预扣税额
 ```
 
+> **实现注记（P1-MA4-016/018）**：
+> - **税率档解析**：`IncomeTaxCalculator.resolveBracket` 遍历七级累进税率表「跳过 income > rangeUpperLimit 的档位，选第一档 income ≤ rangeUpperLimit」。末档（>960000，45%）`rangeUpperLimit=null` 表「无上限」——income 超过所有有限上限时直接选末档（null 防御，消除 `compareTo(null)` NPE，避免高收入员工致 `runPayroll` 整批回滚）。
+> - **累计数据解析**：`IncomeTaxCalculator.parseCumulativeData` 解析 `cumulativeData` JSON 时，损坏 JSON（格式错误/字段类型不符/手工编辑出错）LOG.warn 记录 employeeId/year + 原始片段并抛 `ERR_HR_CUMULATIVE_DATA_CORRUPT`——累计损坏响亮失败，不静默重置致少预扣个税；`null`/空白 json 返回空 map（1 月无历史合法路径不变）。
+
 ### 4.6 员工专项附加扣除数据源
 
 - 员工通过个税 APP 申报 → 公司 HR 系统从自然人电子税务局（扣缴端）获取。
@@ -430,11 +434,13 @@
 
 ### 6.5 入账触发时机
 
+> **Deferred（P1-MA4-017，本表 SALARY 270/SOCIAL_INSURANCE_ER 290/HOUSING_FUND_ER 300 三行）**：当前 GL **仅收发放凭证 SALARY_PAYMENT(280)**（`markPaid` 触发 `SalaryPostingDispatcher.tryPostPayment`）。计提 SALARY(270) + 公司承担社保 SOCIAL_INSURANCE_ER(290) + 公积金 HOUSING_FUND_ER(300) 过账链路**留 successor**：`SalaryPostingDispatcher.tryPostAccrual` 当前为零调用方死代码（`approve` action 的 xbiz `<source append>` 未落地——hr 模块零 xbiz 文件）；290/300 event **永不生成**（无代码组装）；`posted` 字段 Deferred（无 `setPosted` writer，见 §6.1 posted 注）。**Successor**：独立计提+公司承担过账链路 plan——(1) 裁决公司承担金额持久化设计（ORM ask-first 加 `socialInsuranceER`/`housingFundER` 列 vs remark 暂存 vs 过账时重算）；(2) 接线 `tryPostAccrual`（`approve`→APPROVED 联动）；(3) 新增 `tryPostSocialInsuranceER`/`tryPostHousingFundER` 组装 290/300 event；(4) 激活 `posted` writer。**残留风险**：GL 永远仅收发放凭证 → 费用+应付职工薪酬低估+资产负债表失衡，直至期末试算平衡人工发现；员工实发工资正确（公司承担不影响个人 net）；过账悬挂告警闭环已由 R1.16（P1-MA2-048）落地，`posted=false` 终态悬挂可观测。
+
 | 动作 | 触发过账 | businessType | 说明 |
 |------|----------|-------------|------|
-| `approveStatus → APPROVED` | 计提 | SALARY(270) | 应付职工薪酬计提，由 `approve` action 的 xbiz `<source append>` 触发 |
-| `paymentStatus → PAID` | 发放 | SALARY_PAYMENT(280) | 银行发放凭证，由 `markPaid` 触发 |
-| 审批时联动 | 计提 | SOCIAL_INSURANCE_ER(290) / HOUSING_FUND_ER(300) | 公司承担部分，由 `approve` action 的 `append` 联动触发 |
+| `approveStatus → APPROVED` | 计提 | SALARY(270) | **Deferred**：应付职工薪酬计提，设计为由 `approve` action 的 xbiz `<source append>` 触发（当前未落地） |
+| `paymentStatus → PAID` | 发放 | SALARY_PAYMENT(280) | 银行发放凭证，由 `markPaid` 触发（已落地） |
+| 审批时联动 | 计提 | SOCIAL_INSURANCE_ER(290) / HOUSING_FUND_ER(300) | **Deferred**：公司承担部分，设计为由 `approve` action 的 `append` 联动触发（当前未落地） |
 
 详见 `§九` 和 `docs/design/finance/posting.md`。
 
@@ -536,10 +542,12 @@
 
 | businessType | 借方 | 贷方 | 触发时机 |
 |-------------|------|------|---------|
-| SALARY（计提） | 管理费用-工资/制造费用-工资 | 应付职工薪酬 | approveStatus → APPROVED（由 `approve` action 的 xbiz `<source append>` 触发） |
-| SALARY_PAYMENT（发放） | 应付职工薪酬 | 银行存款 | paymentStatus → PAID（由 `markPaid` 触发） |
-| SOCIAL_INSURANCE_ER（社保公司） | 管理费用-社保 | 应付职工薪酬-社保 | approveStatus → APPROVED 时联动计提 |
-| HOUSING_FUND_ER（公积金公司） | 管理费用-公积金 | 应付职工薪酬-公积金 | approveStatus → APPROVED 时联动计提 |
+| SALARY（计提） | 管理费用-工资/制造费用-工资 | 应付职工薪酬 | **Deferred（P1-MA4-017）**：设计为 approveStatus → APPROVED（由 `approve` action 的 xbiz `<source append>` 触发）；当前 `tryPostAccrual` 为零调用方死代码，SALARY(270) 凭证永不生成 |
+| SALARY_PAYMENT（发放） | 应付职工薪酬 | 银行存款 | paymentStatus → PAID（由 `markPaid` 触发，已落地） |
+| SOCIAL_INSURANCE_ER（社保公司） | 管理费用-社保 | 应付职工薪酬-社保 | **Deferred（P1-MA4-017）**：设计为 approveStatus → APPROVED 时联动计提；当前 290 event 永不生成 |
+| HOUSING_FUND_ER（公积金公司） | 管理费用-公积金 | 应付职工薪酬-公积金 | **Deferred（P1-MA4-017）**：设计为 approveStatus → APPROVED 时联动计提；当前 300 event 永不生成 |
+
+> **过账链路实现状态**：当前 GL **仅收发放凭证 SALARY_PAYMENT(280)**；计提 SALARY(270) + 公司承担社保(290)/公积金(300) 过账链路留 successor（裁决公司承担金额持久化设计 + 接线 `tryPostAccrual`/290/300 + approve action + 激活 `posted` writer，详见 §6.5）。残留风险：费用+应付职工薪酬低估+资产负债表失衡，直至期末试算平衡人工发现；员工实发工资正确（公司承担不影响个人 net）。
 
 > 科目映射在 finance/posting.md 中定义，HR 域通过 `IErpFinAcctDocProvider` 提供核算数据。
 > 🟢 Axelor `PayrollLine.xml` + `AccountingSituation.xml` 过账联动。

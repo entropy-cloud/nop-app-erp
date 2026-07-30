@@ -1,6 +1,6 @@
 # 2026-07-30-0720-3-r1-26-hr-payroll-tax-npe-silent-swallow hr 个税高档税率 NPE 修复 + 累计数据静默吞修复（计提+公司承担过账链路 Deferred）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-30
 > Source: audit-remediation-roadmap R1.26（P1-MA4-016 + P1-MA4-018 + P1-MA4-017，源自 A4.4 hr 代码质量审计）
 > Related: `docs/audits/2026-07-29-0430-arm-ma4-hr-code-quality.md`、`docs/audits/arm-index.md §P1-MA4-016/017/018`；plan `2026-07-30-0631-1-r1-21-projects-close-start-precondition-dict-deferred.md`（选择性裁决先例：便宜真实缺陷实现 + 重型功能 Deferred）、plan `2026-07-30-0341-2-r1-16-posting-error-propagation-grading-strategy.md`（业财过账链路裁决先例）；`docs/design/human-resource/payroll.md §6/§9.1`（计提+公司承担过账契约）
@@ -59,14 +59,14 @@
 
 ### Phase 1 - 三项 finding 裁决（Decision）
 
-Status: planned
+Status: completed
 Targets: 本计划（裁决记录）
 Skill: `none`
 
 - Item Types: `Decision`
 - Prereqs: none
 
-- [ ] **Decision**：三项 finding 处置方案逐项裁决（**选择性裁决**——016/018 实现薪酬算术缺陷修复[直接影响实发工资，containment 友好] + 017 Deferred[会计保护区域 + ORM 设计决策 + substantial slice]）。
+- [x] **Decision**：三项 finding 处置方案逐项裁决（**选择性裁决**——016/018 实现薪酬算术缺陷修复[直接影响实发工资，containment 友好] + 017 Deferred[会计保护区域 + ORM 设计决策 + substantial slice]）。
       - P1-MA4-016 个税高档 NPE：**实现（arm-index 推荐方向）**。理由：(1) NPE 致 runPayroll 整批回滚（全员工当月无薪酬）——直接影响实发工资；(2) containment 极友好（resolveBracket 末档 null 防御单点：compareTo 前判 `if(b.getRangeUpperLimit()==null){ selected=b; break; }`）；(3) 响亮崩溃修复，无数据迁移。
       - P1-MA4-018 parseCumulativeData 静默吞：**实现（arm-index 推荐方向）**。理由：(1) 静默吞致累计损坏时少预扣个税（员工实发偏高 + 税务合规风险）；(2) containment 友好（移除 catch-all + LOG.warn + 抛 ErrorCode ERR_HR_CUMULATIVE_DATA_CORRUPT，使损坏可观测）；(3) 同步修复测试 extractCumulativeData 静默吞。
       - P1-MA4-017 计提+公司承担过账链路：**Deferred（owner doc 正式化，方案B）**。**与 arm-index 推荐偏差声明**：arm-index §P1-MA4-017 方案A（推荐）实现过账链路；本计划裁决 Deferred，理由：(1) 会计保护区域 + ErpHrSalary 无 ER 列——方案A 须先裁决持久化设计（ORM ask-first 加列 vs remark 暂存 vs 过账时重算），属设计决策；(2) 多 event 过账链路 + approve 接线属 substantial slice 须独立 plan-audit + 人工确认；(3) 审计确认漏记可经试算平衡发现 + 员工实发工资正确；(4) 过账悬挂告警闭环已由 R1.16 落地。successor：独立计提+公司承担过账链路 plan。
@@ -74,71 +74,71 @@ Skill: `none`
 
 Exit Criteria:
 
-- [ ] Phase 1 Decision 逐项记录选择 + 理由 + 与 arm-index 推荐偏差声明 + successor 触发条件；016/018 进 Phase 2/3（实现），017 进 Phase 4（Deferred 标注）。
+- [x] Phase 1 Decision 逐项记录选择 + 理由 + 与 arm-index 推荐偏差声明 + successor 触发条件；016/018 进 Phase 2/3（实现），017 进 Phase 4（Deferred 标注）。
 
 ### Phase 2 - 个税高档 NPE 修复（P1-MA4-016）
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/.../payroll/IncomeTaxCalculator.java`、`docs/design/human-resource/payroll.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix`
 - Prereqs: Phase 1
 
-- [ ] **Fix（resolveBracket null 防御）**：`IncomeTaxCalculator.resolveBracket:204-214` 在 `compareTo` 前判末档无上限：循环中 `if (b.getRangeUpperLimit() == null) { selected = b; break; }`（末档表「无上限」，income 超过所有有限上限时直接选末档），消除 `compareTo(null)` NPE。补充 javadoc 注明末档 rangeUpperLimit=null 表「无上限」语义。
+- [x] **Fix（resolveBracket null 防御）**：`IncomeTaxCalculator.resolveBracket:204-214` 在 `compareTo` 前判末档无上限：循环中 `if (b.getRangeUpperLimit() == null) { selected = b; break; }`（末档表「无上限」，income 超过所有有限上限时直接选末档），消除 `compareTo(null)` NPE。补充 javadoc 注明末档 rangeUpperLimit=null 表「无上限」语义。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：测试——(1) 累计应纳税所得额 > 960000（如月薪 100000 员工多月累计）→ 命中末档 45% 正确计算（rate 0.45 − quickDeduction 181920），**非 NPE**；(2) 累计 ≤ 960000 命中前 6 档（行为不变）；(3) 边界值 = 960000（命中第 6 档上界）。seed tax_config 含末档 null rangeUpperLimit（对齐 TestErpHrPayrollEngine.seedTaxConfig:284）。
+- [x] **Proof**：测试——(1) 累计应纳税所得额 > 960000（如月薪 100000 员工多月累计）→ 命中末档 45% 正确计算（rate 0.45 − quickDeduction 181920），**非 NPE**；(2) 累计 ≤ 960000 命中前 6 档（行为不变）；(3) 边界值 = 960000（命中第 6 档上界）。seed tax_config 含末档 null rangeUpperLimit（对齐 TestErpHrPayrollEngine.seedTaxConfig:284）。
       - Skill: `nop-backend-dev`
-- [ ] **Add（owner doc）**：payroll.md §4.5 累计预扣法补注「resolveBracket 末档 rangeUpperLimit=null 表『无上限』，income 超过所有有限上限时选末档（null 防御，消除 compareTo(null) NPE）」。
+- [x] **Add（owner doc）**：payroll.md §4.5 累计预扣法补注「resolveBracket 末档 rangeUpperLimit=null 表『无上限』，income 超过所有有限上限时选末档（null 防御，消除 compareTo(null) NPE）」。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] resolveBracket 末档 null 防御落地（grep 确认 `getRangeUpperLimit()==null` 分支）；>960000 累计不再 NPE；新增测试全绿（Closure Gates 跑全量 mvn）；owner doc §4.5 与代码一致。
+- [x] resolveBracket 末档 null 防御落地（grep 确认 `getRangeUpperLimit()==null` 分支）；>960000 累计不再 NPE；新增测试全绿（Closure Gates 跑全量 mvn）；owner doc §4.5 与代码一致。
 
 ### Phase 3 - parseCumulativeData 静默吞修复（P1-MA4-018）
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/.../payroll/IncomeTaxCalculator.java`、`ErpHrErrors.java`、`ErpHrConstants.java`、测试 `TestErpHrPayrollEngine.extractCumulativeData`、`docs/design/human-resource/payroll.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add`
 - Prereqs: Phase 1
 
-- [ ] **Add（ErrorCode）**：`ErpHrErrors` 增 `ERR_HR_CUMULATIVE_DATA_CORRUPT`（`erp.err.hr.cumulative-data-corrupt`，描述「员工 {employeeId} 年度 {year} 累计薪酬数据 JSON 解析失败，请核对 cumulativeData 完整性」，复用 ARG_EMPLOYEE_ID + ARG_YEAR）。
+- [x] **Add（ErrorCode）**：`ErpHrErrors` 增 `ERR_HR_CUMULATIVE_DATA_CORRUPT`（`erp.err.hr.cumulative-data-corrupt`，描述「员工 {employeeId} 年度 {year} 累计薪酬数据 JSON 解析失败，请核对 cumulativeData 完整性」，复用 ARG_EMPLOYEE_ID + ARG_YEAR）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（移除静默吞）**：`IncomeTaxCalculator.parseCumulativeData:158-176` 移除 `catch(Exception ignored){}`——解析失败时 LOG.warn（记录 employeeId/year + 原始 json 片段）并抛 `NopException(ERR_HR_CUMULATIVE_DATA_CORRUPT)`（使累计损坏可观测、可拦截，而非静默重置致少预扣个税）。注意：parseCumulativeData 在 findPreviousCumulative 内调用历史月薪酬——历史月损坏抛错将阻断当月计算（符合「宁可响亮失败不静默错算」原则）；null/空 json 仍返回空 map（1 月无历史合法路径不变）。
+- [x] **Fix（移除静默吞）**：`IncomeTaxCalculator.parseCumulativeData:158-176` 移除 `catch(Exception ignored){}`——解析失败时 LOG.warn（记录 employeeId/year + 原始 json 片段）并抛 `NopException(ERR_HR_CUMULATIVE_DATA_CORRUPT)`（使累计损坏可观测、可拦截，而非静默重置致少预扣个税）。注意：parseCumulativeData 在 findPreviousCumulative 内调用历史月薪酬——历史月损坏抛错将阻断当月计算（符合「宁可响亮失败不静默错算」原则）；null/空 json 仍返回空 map（1 月无历史合法路径不变）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（测试同步）**：`TestErpHrPayrollEngine.extractCumulativeData:347-355` 移除同型静默吞——解析失败显式抛或断言，使缺陷对测试可见（闭合 A4.4 §测试也静默吞致缺陷不可见）。
+- [x] **Fix（测试同步）**：`TestErpHrPayrollEngine.extractCumulativeData:347-355` 移除同型静默吞——解析失败显式抛或断言，使缺陷对测试可见（闭合 A4.4 §测试也静默吞致缺陷不可见）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：测试——(1) seed 损坏 cumulativeData（非法 JSON）→ findPreviousCumulative/calculate 抛 `ERR_HR_CUMULATIVE_DATA_CORRUPT`（非静默重置；留意 :132-139 dead 循环先触发，行为正确）；(2) null/空 cumulativeData → 返回空 map（1 月无历史合法路径不变）；(3) 合法 JSON → 正常解析（行为不变）。
+- [x] **Proof**：测试——(1) seed 损坏 cumulativeData（非法 JSON）→ findPreviousCumulative/calculate 抛 `ERR_HR_CUMULATIVE_DATA_CORRUPT`（非静默重置；留意 :132-139 dead 循环先触发，行为正确）；(2) null/空 cumulativeData → 返回空 map（1 月无历史合法路径不变）；(3) 合法 JSON → 正常解析（行为不变）。
       - Skill: `nop-backend-dev`
-- [ ] **Add（owner doc）**：payroll.md §4.5 补注「parseCumulativeData 解析失败时 LOG.warn + 抛 ERR_HR_CUMULATIVE_DATA_CORRUPT（累计损坏响亮失败，不静默重置致少预扣个税）；null/空 json 返回空 map（1 月无历史合法）」。
+- [x] **Add（owner doc）**：payroll.md §4.5 补注「parseCumulativeData 解析失败时 LOG.warn + 抛 ERR_HR_CUMULATIVE_DATA_CORRUPT（累计损坏响亮失败，不静默重置致少预扣个税）；null/空 json 返回空 map（1 月无历史合法）」。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] parseCumulativeData 静默吞移除（grep 确认无 `catch.*ignored` + ERR_HR_CUMULATIVE_DATA_CORRUPT 抛出）；损坏 JSON 抛错；null/空合法路径不变；测试同步修复；新增测试全绿；owner doc §4.5 与代码一致。
+- [x] parseCumulativeData 静默吞移除（grep 确认无 `catch.*ignored` + ERR_HR_CUMULATIVE_DATA_CORRUPT 抛出）；损坏 JSON 抛错；null/空合法路径不变；测试同步修复；新增测试全绿；owner doc §4.5 与代码一致。
 
 ### Phase 4 - 计提+公司承担过账链路 owner doc Deferred 标注（P1-MA4-017）
 
-Status: planned
+Status: completed
 Targets: `docs/design/human-resource/payroll.md`
 Skill: `none`
 
 - Item Types: `Add`
 - Prereqs: Phase 1
 
-- [ ] payroll.md §6 表 L435/L437 + §9.1 L541-542 正式化为「**Deferred**——当前 GL 仅收发放凭证 SALARY_PAYMENT(280)（markPaid 触发 tryPostPayment）；计提 SALARY(270) + 公司承担社保 SOCIAL_INSURANCE_ER(290) + 公积金 HOUSING_FUND_ER(300) 过账链路（approve→APPROVED 联动 tryPostAccrual + 持久化 socialInsuranceER/housingFundER + 新增 tryPostSocialInsuranceER/tryPostHousingFundER）留 successor；tryPostAccrual 当前为零调用方死代码，posted 字段 Deferred（无 setPosted writer）」；命名 successor 触发条件 + 持久化设计决策点（ORM ask-first 加列 vs remark 暂存 vs 过账时重算）。
+- [x] payroll.md §6 表 L435/L437 + §9.1 L541-542 正式化为「**Deferred**——当前 GL 仅收发放凭证 SALARY_PAYMENT(280)（markPaid 触发 tryPostPayment）；计提 SALARY(270) + 公司承担社保 SOCIAL_INSURANCE_ER(290) + 公积金 HOUSING_FUND_ER(300) 过账链路（approve→APPROVED 联动 tryPostAccrual + 持久化 socialInsuranceER/housingFundER + 新增 tryPostSocialInsuranceER/tryPostHousingFundER）留 successor；tryPostAccrual 当前为零调用方死代码，posted 字段 Deferred（无 setPosted writer）」；命名 successor 触发条件 + 持久化设计决策点（ORM ask-first 加列 vs remark 暂存 vs 过账时重算）。
       - Skill: `none`
-- [ ] payroll.md §残留风险补注「GL 永远仅收发放凭证 → 费用+应付职工薪酬低估+资产负债表失衡，直至期末试算平衡人工发现；员工实发工资正确（公司承担不影响个人 net）」。
+- [x] payroll.md §残留风险补注「GL 永远仅收发放凭证 → 费用+应付职工薪酬低估+资产负债表失衡，直至期末试算平衡人工发现；员工实发工资正确（公司承担不影响个人 net）」。
       - Skill: `none`
-- [ ] **核对（非更新）**：SalaryPostingDispatcher javadoc :32-38/:56-66 + payroll.md §posted 字段 L370 已含 R1.26/P1-MA4-017 successor 标注（landing 于 R1.15/R1.16）——本项仅核对一致性，无须重复编辑（javadoc 侧已就绪）。
+- [x] **核对（非更新）**：SalaryPostingDispatcher javadoc :32-38/:56-66 + payroll.md §posted 字段 L370 已含 R1.26/P1-MA4-017 successor 标注（landing 于 R1.15/R1.16）——本项仅核对一致性，无须重复编辑（javadoc 侧已就绪）。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] payroll.md §6 表 + §9.1 明确 017 Deferred（计提+公司承担过账链路），owner doc 与代码（tryPostAccrual 死代码 + 290/300 永不生成 + posted 无 writer）一致；successor 触发事件 + 持久化设计决策点已命名；javadoc 侧标注核对一致（无须重复编辑）。
+- [x] payroll.md §6 表 + §9.1 明确 017 Deferred（计提+公司承担过账链路），owner doc 与代码（tryPostAccrual 死代码 + 290/300 永不生成 + posted 无 writer）一致；successor 触发事件 + 持久化设计决策点已命名；javadoc 侧标注核对一致（无须重复编辑）。
 
 ## Draft Review Record
 
@@ -148,14 +148,14 @@ Exit Criteria:
 
 > 本计划含代码变更（P1-MA4-016/018，触及薪酬保护区域），故 Closure Gates 含全量 `mvn` 验证（见执行时规则 7）。
 
-- [ ] 范围内行为/文档完成（016 NPE 修复 + 018 静默吞修复 + 017 Deferred 标注）
-- [ ] 相关文档对齐（payroll.md）
-- [ ] 已运行验证（`mvn clean install -DskipTests` 全绿 + hr 域 `mvn test` 全绿 + compliance checker 本计划零新增命中；grep 验证 016/018 落地）
-- [ ] 无范围内项目降级为 deferred/follow-up（016/018 为范围内存活实现项；017 Deferred 是处置裁决 + 已命名 successor + 持久化设计决策点，非范围内缺陷隐瞒）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为/文档完成（016 NPE 修复 + 018 静默吞修复 + 017 Deferred 标注）
+- [x] 相关文档对齐（payroll.md）
+- [x] 已运行验证（`mvn clean install -DskipTests` 全绿 + hr 域 `mvn test` 全绿 + compliance checker 本计划零新增命中；grep 验证 016/018 落地）
+- [x] 无范围内项目降级为 deferred/follow-up（016/018 为范围内存活实现项；017 Deferred 是处置裁决 + 已命名 successor + 持久化设计决策点，非范围内缺陷隐瞒）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -167,12 +167,18 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <结束审计后填充>
+Status Note: 全 4 Phase 落地完成，独立结束审计 PASS（2026-07-30）。016/018 计算层缺陷修复（null 防御 + 移除静默吞）+ 017 业财过账链路 Deferred（owner doc 正式化，successor + 持久化设计决策点已命名）。121 hr 测试全绿，全 workspace `mvn clean install -DskipTests` BUILD SUCCESS，compliance checker 零新增命中。
 
 Closure Audit Evidence:
 
-- <结束审计后填充>
+- 独立子代理（新会话，task ses_04f913108ffelnXYLDQT82ijtK）closure audit = **Verdict: PASS**（A-F 六段逐项经实仓 file:line 验证）：
+  - **A. 016 NPE 修复**：`IncomeTaxCalculator.java:231-234` null-guard `if (b.getRangeUpperLimit() == null) { selected = b; break; }` 在 `compareTo`（:235）之前，无遗留 null 接收路径。
+  - **B. 018 静默吞修复**：`ErpHrErrors.java:84-87` ERR_HR_CUMULATIVE_DATA_CORRUPT（`erp.err.hr.cumulative-data-corrupt`，复用 ARG_EMPLOYEE_ID + ARG_YEAR）；`IncomeTaxCalculator.java:184-190` 移除 catch-all→LOG.warn + 抛 NopException；null/空白 json :171-173 返回空 map；`TestErpHrPayrollEngine.java:384-393` 移除静默吞。
+  - **C. 测试**：`TestIncomeTaxCalculator.java`（>960000 命中 45% / 边界 960000 / 损坏抛错 / null 空 / 合法解析）+ `TestErpHrPayrollEngine.testCorruptCumulativeDataThrowsNotSilentReset:258-293`；审计者本人重跑 `mvn test -pl module-hr/erp-hr-service` = Tests run: 121, Failures: 0, Errors: 0, Skipped: 0 — BUILD SUCCESS。
+  - **D. 017 Deferred**：payroll.md §6.5:437 + §9.1:545-548 三过账类型 Deferred + successor + 持久化设计决策点；§4.5:258-260 实现注记；SalaryPostingDispatcher javadoc :32-38/:56-66 + §6.1 posted :374 核对一致。
+  - **E. 保护区域**：`git status --short` 零 `*.orm.xml`（无 ErpHrSalary 加列）；SalaryPostingDispatcher（凭证写路径）未在 diff（016/018 纯计算层）；017 Deferred But Adjudicated 命名 successor + ORM 设计决策点。
+  - **F. 一致性**：4 Phase 全 `Status: completed` + 全 checklist `- [x]`。
 
 Follow-up:
 
-- 非阻塞；successor 已在 Deferred But Adjudicated 命名触发条件。
+- 非阻塞；successor 已在 Deferred But Adjudicated + payroll.md §6.5/§9.1 双重命名触发条件。
