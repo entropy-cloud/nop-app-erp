@@ -1,0 +1,35 @@
+[
+  {
+    "lineNo": 1,
+    "subjectCode": "@var:ErpMdSubject@code",
+    "dcDirection": "DEBIT",
+    "currencyId": 2,
+    "exchangeRate": 6.50000000,
+    "amountSource": 100.0000,
+    "amountFunctional": 100.0000,
+    "debitAmount": 100.0000,
+    "creditAmount": 0.0000
+  },
+  {
+    "lineNo": 2,
+    "subjectCode": "@var:ErpMdSubject@code_1",
+    "dcDirection": "DEBIT",
+    "currencyId": 2,
+    "exchangeRate": 6.50000000,
+    "amountSource": 13.0000,
+    "amountFunctional": 13.0000,
+    "debitAmount": 13.0000,
+    "creditAmount": 0.0000
+  },
+  {
+    "lineNo": 3,
+    "subjectCode": "@var:ErpMdSubject@code_2",
+    "dcDirection": "CREDIT",
+    "currencyId": 2,
+    "exchangeRate": 6.50000000,
+    "amountSource": 113.0000,
+    "amountFunctional": 113.0000,
+    "debitAmount": 0.0000,
+    "creditAmount": 113.0000
+  }
+]
