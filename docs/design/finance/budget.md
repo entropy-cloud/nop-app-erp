@@ -11,9 +11,11 @@
 
 ## 设计范式
 
-对照 iDempiere `Fact.java:78-84` 的四种 PostingType(Actual/Budget/Commitment/Reservation)。**预算作为 PostingType=BUDGET 的"影子凭证"**,与实际凭证(PostingType=ACTUAL)并行入账,复用同一套凭证引擎、GlBalance、试算平衡机制,零特例。赤龙 ERP 无预算模块(反向印证走 iDempiere 范式)。
+对照 iDempiere `Fact.java:78-84` 的四种 PostingType(Actual/Budget/Commitment/Reservation)。**预算作为 PostingType=BUDGET 的"影子凭证"**,与实际凭证(postingType=NORMAL)并行入账,复用同一套凭证引擎、GlBalance、试算平衡机制,零特例。赤龙 ERP 无预算模块(反向印证走 iDempiere 范式)。
 
 预算执行数 = 同维度(科目×期间×成本中心×项目)的 Budget 凭证累计;预算余量 = 预算数 − 实际数 − 承付款,**无需新建预算余额表,复用 `ErpFinGlBalance` 的 `postingType` 维度即可**。
+
+> **余量公式实现注记（P1-MA3-025）**：code（`ErpFinBudgetControlBiz`）以**显式三通道分离**（P1-MA2-084）落地三项式 `available = budgetBalance − actualBalance − commitmentBalance`：`budgetBalance`=BUDGET 通道、`actualBalance`=NORMAL/非 BUDGET 非 COMMITMENT 通道（**承付款不计入 actual 通道**，由独立 commitmentBalance 通道减去）、`commitmentBalance`=COMMITMENT 通道。数值上等价 `budget − (actual + commitment)`，但消除「actual 隐式含 commitment」误导。文档「实际凭证」= postingType=NORMAL（默认），非字典值 ACTUAL（字典无 ACTUAL，见 §与现有实体的关系）。
 
 ## 实体清单
 
@@ -54,8 +56,8 @@
 | budgetAmountSource/budgetAmountFunctional | 预算金额(本位币 = source × rate) |
 | currencyId/exchangeRate | 多币种四件套 |
 | commitmentAmount | 累计承付款(PostingType=COMMITMENT 凭证汇总,派生) |
-| actualAmount | 累计实际发生(PostingType=ACTUAL 凭证汇总,派生) |
-| availableAmount | 预算余量(= budget − commitment − actual,派生,查询时计算不落库) |
+| actualAmount | 累计实际发生(postingType=NORMAL/非 BUDGET 非 COMMITMENT 凭证汇总,派生) |
+| availableAmount | 预算余量(= budget − commitment − actual，三通道分离派生，查询时计算不落库，见 §设计范式 余量公式实现注记) |
 
 ### ErpFinBudgetControlLog(预算控制日志,表 `erp_fin_budget_control_log`)
 
@@ -80,7 +82,7 @@
 
 3. **承付款生成**：采购订单 APPROVED 时生成 `postingType=COMMITMENT` 凭证；订单 CANCELLED 或被发票接收时红冲 COMMITMENT。budgetLine.commitmentAmount = Σ Commitment 凭证。销售订单承付（收入预算预留）语义对称（详见 §承付会计 §sales 承付扩展）。
 
-4. **实际数派生**:实际凭证 postingType=ACTUAL(现有所有凭证默认),actualAmount = Σ Actual 凭证在匹配维度的本位币金额。
+4. **实际数派生**:实际凭证 postingType=NORMAL(现有所有凭证默认),actualAmount = Σ Normal 凭证在匹配维度的本位币金额。
 
 5. **预算对比**:报表直接按 `(acctSchemaId, subjectId, periodId, costCenterId, projectId, postingType)` 分组 `ErpFinVoucherLine`,得到 Budget/Commitment/Actual 三列;无需独立预算余额表。
 
@@ -92,7 +94,7 @@
 
 ## 与现有实体的关系
 
-- **ErpFinVoucher/VoucherLine/GlBalance**:新增 `postingType` 列(dict `erp-fin/posting-type`:ACTUAL=10/BUDGET=20/COMMITMENT=30/RESERVATION=40),ACTUAL 为默认值,向后兼容。
+- **ErpFinVoucher/VoucherLine/GlBalance**:新增 `postingType` 列(dict `erp-fin/posting-type`：NORMAL/OPENING_BALANCE/ADJUSTMENT/CLOSING/REVERSAL/BUDGET/COMMITMENT，7 字符串值），NORMAL 为默认值（实际发生），向后兼容。预算/承付作为 BUDGET/COMMITMENT 影子凭证与 NORMAL 实际凭证并行入账。
 - **ErpMdSubject**:新增 `isBudgetable BOOLEAN` 控制是否参与预算。
 - **成本中心**:budgetLine.costCenterId 依赖 cost-center.md 的 ErpMdCostCenter。
 - **purchase/sales 域**:通过 IErpFinBudgetControlBiz 同步接口(强一致)。
@@ -276,10 +278,13 @@ A2 默认 **commitment 不结转**（与 actualAmount 合并记录在源 Scenari
 
 ### CommitmentAcctDocProvider
 
-新增 Provider（`app.erp.fin.service.posting.CommitmentAcctDocProvider`）实现 `IErpFinAcctDocProvider`：
-- 支持业务类型：`PURCHASE_ORDER_COMMITMENT`（commit 时生成）/ `PURCHASE_ORDER_COMMITMENT_REVERSAL`（release 时红冲）。
-- 生成 `List<VoucherFact>` 含 subjectCode（来自配置的承付科目）+ amount + postingType=COMMITMENT。
+新增 Provider（`app.erp.fin.service.posting.CommitmentAcctDocProvider`）实现 `IErpFinAcctDocProvider`（与 BUDGET 同型）：
+- **不走 Provider 路由**：`getSupportedBusinessTypes()` 返回**空集** → 注册中心不路由任何业务类型到此 Provider；`createFacts()` 返回**空列表**（仅为满足接口约定，不应被调用）。
+- **承付凭证直接由 `CommitmentVoucherGenerator` 写入**（与 `BudgetVoucherGenerator` 同型），不经 `ErpFinAcctDocRegistry` 路由。
+- Provider 存在仅为：文档化承付科目解析约定（`erp-fin.budget-commitment-subject-code` 配置）+ 满足接口约定（注册中心可发现）+ 为 successor（多维承付科目解析）保留接入点。
 - 科目解析：复用既有 Provider 机制（不强制接入 A1 GL Mapping Rule；如需 budgetScenarioId 维度规则，归 successor）。
+
+> 与 `posting.md §承付凭证 Provider` 描述一致（声明支持的业务类型集合为空，承付凭证由专用生成器直接写入）。
 
 ### `ErpFinVoucher.postingType = COMMITMENT`
 

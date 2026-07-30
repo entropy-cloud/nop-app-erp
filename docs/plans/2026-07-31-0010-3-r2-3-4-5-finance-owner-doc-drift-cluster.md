@@ -1,6 +1,6 @@
 # 2026-07-31-0010-3-r2-3-4-5-finance-owner-doc-drift-cluster
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-31
 > Source: `docs/backlog/audit-remediation-roadmap.md` MR2 / R2.3 + R2.4 + R2.5（P1-MA3-024~039 文档侧）
 > Related: `docs/audits/2026-07-28-1953-arm-ma3-owner-doc-vs-code-drift.md`（A3.3 finance drift 审计报告）；`docs/plans/2026-07-31-0010-1-r2-1-design-doc-execution-status-leakage-cleanup.md`（R2.1）；`docs/plans/2026-07-31-0010-2-r2-2-global-view-docs-extension-domains.md`（R2.2）
@@ -61,89 +61,100 @@
 
 ### Phase 1 — R2.3 finance 状态机/dict/字段语义 drift（P1-MA3-024 / 026 / 027 / 028 / 029）
 
-Status: planned
+Status: completed
 Targets: `docs/design/finance/state-machine.md`、`docs/design/finance/period-close.md`、`docs/design/finance/use-cases.md`、`docs/design/finance/budget.md`、`docs/design/finance/ar-ap-reconciliation.md`、`docs/design/finance/bank-reconciliation.md`、`docs/design/finance/intercompany-consolidation.md`
 Skill: none
 
 - Item Types: `Fix | Proof`
 - Prereqs: 无（可与 R2.1 顺序执行避免 finance 文档并发编辑）
 
-- [ ] [Proof] grep ORM `app-erp-finance.orm.xml` 确认 5 个 dict 的权威值集（accounting-period-status / postingType[如有 dict] / ar-ap-status / voucher-status / 合并抵消实体名），作为文档对齐基准
+- [x] [Proof] grep ORM `app-erp-finance.orm.xml` 确认 5 个 dict 的权威值集（accounting-period-status / postingType[如有 dict] / ar-ap-status / voucher-status / 合并抵消实体名），作为文档对齐基准
       - Skill: none
-- [ ] [Fix] P1-MA3-024：统一期间状态机三文档为 code 5 态（DRAFT/OPEN/CLOSED/NEVER_OPENED/CLOSED_FINAL），CLOSED=已结账；state-machine.md + period-close.md + use-cases.md 对齐；NEVER_OPENED→OPEN 迁移补充（与 P1-MA2-033 MR1 侧一致）
+      - 证据：`erp-fin/period-status`=OPEN/CLOSING/CLOSED/NEVER_OPENED/CLOSED_FINAL（5 态）；`erp-fin/posting-type`=NORMAL/OPENING_BALANCE/ADJUSTMENT/CLOSING/REVERSAL/BUDGET/COMMITMENT（7 字符串值）；`erp-fin/ar-ap-status`=OPEN/PARTIAL/SETTLED/CANCELLED/WRITTEN_OFF；`erp-fin/voucher-status`=DRAFT/POSTED/CANCELLED；无 bank-stmt-status dict；实体 ErpFinConsolidationElimination/ErpFinIntercompanyMatch（+ErpFinIntercompanyTransferPrice）
+- [x] [Fix] P1-MA3-024：统一期间状态机三文档为 code 5 态（DRAFT/OPEN/CLOSED/NEVER_OPENED/CLOSED_FINAL），CLOSED=已结账；state-machine.md + period-close.md + use-cases.md 对齐；NEVER_OPENED→OPEN 迁移补充（与 P1-MA2-033 MR1 侧一致）
       - Skill: none
-- [ ] [Fix] P1-MA3-026：postingType 单一真相源——doc 对齐 ORM 7 字符串值（NORMAL/OPENING_BALANCE/ADJUSTMENT/CLOSING/REVERSAL/BUDGET/COMMITMENT）；移除 budget.md:96 的数值码 ACTUAL=10/RESERVATION=40；补 OPENING_BALANCE/ADJUSTMENT/CLOSING 文档化
+- [x] [Fix] P1-MA3-026：postingType 单一真相源——doc 对齐 ORM 7 字符串值（NORMAL/OPENING_BALANCE/ADJUSTMENT/CLOSING/REVERSAL/BUDGET/COMMITMENT）；移除 budget.md:96 的数值码 ACTUAL=10/RESERVATION=40；补 OPENING_BALANCE/ADJUSTMENT/CLOSING 文档化
       - Skill: none
-- [ ] [Fix] P1-MA3-027：ar-ap-status doc 对齐 dict 实际命名（OPEN/PARTIAL/SETTLED/CANCELLED/WRITTEN_OFF）；移除 RECONCILED（实际 SETTLED）+ OVER（不存在，code 以错误码拒绝）
+- [x] [Fix] P1-MA3-027：ar-ap-status doc 对齐 dict 实际命名（OPEN/PARTIAL/SETTLED/CANCELLED/WRITTEN_OFF）；移除 RECONCILED（实际 SETTLED）+ OVER（不存在，code 以错误码拒绝）
       - Skill: none
-- [ ] [Fix] P1-MA3-028：bank-stmt-status 文档统一为复用 voucher-status（DRAFT/POSTED/CANCELLED），删除 bank-reconciliation.md:27,89 的独立 dict 声明（对齐 :145 撤回 + ORM 无此 dict + code 用 VOUCHER_STATUS_*）
+- [x] [Fix] P1-MA3-028：bank-stmt-status 文档统一为复用 voucher-status（DRAFT/POSTED/CANCELLED），删除 bank-reconciliation.md:27,89 的独立 dict 声明（对齐 :145 撤回 + ORM 无此 dict + code 用 VOUCHER_STATUS_*）
       - Skill: none
-- [ ] [Fix] P1-MA3-029：合并抵消实体命名 doc 对齐 code 2 实体（ErpFinConsolidationElimination/ErpFinIntercompanyMatch），移除 5 不存在名
+- [x] [Fix] P1-MA3-029：合并抵消实体命名 doc 对齐 code 2 实体（ErpFinConsolidationElimination/ErpFinIntercompanyMatch），移除 5 不存在名
       - Skill: none
-- [ ] [Proof] grep 确认 5 个 dict/状态机在 finance doc 中值集与 ORM 一致（ACTUAL/RESERVATION/RECONCILED/OVER/bank-stmt-status dict/5 幻影实体名 命中数 = 0）
+- [x] [Proof] grep 确认 5 个 dict/状态机在 finance doc 中值集与 ORM 一致（ACTUAL/RESERVATION/RECONCILED/OVER/bank-stmt-status dict/5 幻影实体名 命中数 = 0）
       - Skill: none
+      - 证据：`rg "ACTUAL=10|RESERVATION=40"` 命中 0；`rg "bank-stmt-status" bank-reconciliation.md` 仅命中 :145 撤回声明（正确保留，文档化「不新增 dict」决策）；`rg "UNRECONCILED|核销（RECONCILED|核销（OVER"` 命中 0；`rg "NOT_OPENED"` 命中 0；intercompany-consolidation.md 增 schema 落位注记显式列出 2 ORM 实体 + 标注 5 概念对象为「未建实体」
 
 Exit Criteria:
 
-- [ ] 5 项 dict/状态机/字段语义 drift 对齐 ORM/code，grep 证据记录
+- [x] 5 项 dict/状态机/字段语义 drift 对齐 ORM/code，grep 证据记录
 
 ### Phase 2 — R2.4 finance 过账/事务/承付/多币种 drift（P1-MA3-025 / 030 / 031 / 032 / 039，文档侧）
 
-Status: planned
+Status: completed
 Targets: `docs/design/finance/posting.md`、`docs/design/finance/posting-log.md`（REQUIRES_NEW 事务边界 + 过账异常悬挂语义与 P1-MA3-030 reverse 传播描述联动）、`docs/design/finance/budget.md`、`docs/design/finance/period-close.md`、`docs/design/finance/use-cases.md`
 Skill: none
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1（budget.md 在 Phase 1 已修 postingType，本阶段修公式段）
 
-- [ ] [Proof] grep code 确认 5 个 drift 点的实际行为作为文档对齐基准：(a) `ErpFinBudgetControlBiz.java` actualBalance 是否含 COMMITMENT——**R1.9 已核实（roadmap R1.9 done）**，执行者应读取 R1.9 owner doc 结论作为权威，本 Proof 仅复核确认；(b) `ErpFinVoucherBizModel.java:77-79` reverse() 传播；(c) `CommitmentAcctDocProvider.java:33-44` 返回值；(d) `ErpFinConstants.java:114` + `ErpFinAccountingPeriodProcessor.java:681-684` auto-post-on-close 默认值；(e) `ErpFinPostingProcessor.java:816-819` amountSource 行为
+- [x] [Proof] grep code 确认 5 个 drift 点的实际行为作为文档对齐基准：(a) `ErpFinBudgetControlBiz.java` actualBalance 是否含 COMMITMENT——**R1.9 已核实（roadmap R1.9 done）**，执行者应读取 R1.9 owner doc 结论作为权威，本 Proof 仅复核确认；(b) `ErpFinVoucherBizModel.java:77-79` reverse() 传播；(c) `CommitmentAcctDocProvider.java:33-44` 返回值；(d) `ErpFinConstants.java:114` + `ErpFinAccountingPeriodProcessor.java:681-684` auto-post-on-close 默认值；(e) `ErpFinPostingProcessor.java:816-819` amountSource 行为
       - Skill: none
-- [ ] [Fix] P1-MA3-025 MR2 侧：budget.md:59 + use-cases.md:212,253 公式更新为 R1.9 已核实的 code 实际语义（R1.9 裁决 actualBalance 是否含 COMMITMENT——按其结论对齐：若含则三项式措辞保留但澄清 actualBalance 通道含 COMMITMENT；若不含则改二项式 + 标注 commitment 释放独立路径）。执行者以 R1.9 owner doc 结论为准，不重新裁决
+      - 证据：(a) `ErpFinBudgetControlBiz.java:38-81` 显式三通道分离（actualBalance 不含 COMMITMENT，独立 commitmentBalance 通道减去），三项式 confirmed；(b) `ErpFinVoucherBizModel.java:79` reverse() 有 `@Transactional(REQUIRES_NEW)`（O-7）；(c) `CommitmentAcctDocProvider.java:33-44` getSupportedBusinessTypes=emptySet + createFacts=emptyList；(d) `ErpFinConstants.java:114` auto-post-on-close 默认 false；(e) `ErpFinPostingProcessor.java:812-815` amountSource/amountFunctional 由 Provider 显式传递，未设置 fallback amount（R1.9 方案 A）
+- [x] [Fix] P1-MA3-025 MR2 侧：budget.md:59 + use-cases.md:212,253 公式更新为 R1.9 已核实的 code 实际语义（R1.9 裁决 actualBalance 是否含 COMMITMENT——按其结论对齐：若含则三项式措辞保留但澄清 actualBalance 通道含 COMMITMENT；若不含则改二项式 + 标注 commitment 释放独立路径）。执行者以 R1.9 owner doc 结论为准，不重新裁决
       - Skill: none
-- [ ] [Fix] P1-MA3-030：posting.md:399 更新为反映 code 实际——reverse() 叠加 REQUIRES_NEW（与 post() 一致），红冲失败不回滚调用方主事务；补充跨域调用方（11 域 PostingExecutor/Dispatcher）的事务边界注意事项
+      - R1.9 结论：actualBalance **不含** COMMITMENT（独立三通道分离）。doc 三项式措辞保留 + 增「余量公式实现注记」澄清三通道分离；budget.md/use-cases.md「ACTUAL凭证」术语修正为 NORMAL（字典无 ACTUAL）
+- [x] [Fix] P1-MA3-030：posting.md:399 更新为反映 code 实际——reverse() 叠加 REQUIRES_NEW（与 post() 一致），红冲失败不回滚调用方主事务；补充跨域调用方（11 域 PostingExecutor/Dispatcher）的事务边界注意事项
       - Skill: none
-- [ ] [Fix] P1-MA3-031：统一 CommitmentAcctDocProvider 描述——budget.md:264-267 对齐 posting.md:541-543 + code：getSupportedBusinessTypes 返回 emptySet + createFacts 返回 emptyList + 承付凭证由 CommitmentVoucherGenerator 直接写入
+- [x] [Fix] P1-MA3-031：统一 CommitmentAcctDocProvider 描述——budget.md:264-267 对齐 posting.md:541-543 + code：getSupportedBusinessTypes 返回 emptySet + createFacts 返回 emptyList + 承付凭证由 CommitmentVoucherGenerator 直接写入
       - Skill: none
-- [ ] [Fix] P1-MA3-032：period-close.md:285 auto-post-on-close 默认值对齐 code false
+- [x] [Fix] P1-MA3-032：period-close.md:285 auto-post-on-close 默认值对齐 code false
       - Skill: none
-- [ ] [Fix] P1-MA3-039 MR2 侧：posting.md:481-484 多币种凭证折算路径文档化——反映 code persistVoucher amountSource=amountFunctional 实际行为（当前两者相等无币种折算）；标注多币种源币金额的 successor（R1.9 代码侧已核实）
+      - 证据：period-close.md:288 已为 false（与 `ErpFinConstants.java:114` 默认 false 一致，本基线已对齐，复核确认）
+- [x] [Fix] P1-MA3-039 MR2 侧：posting.md:481-484 多币种凭证折算路径文档化——反映 code persistVoucher amountSource=amountFunctional 实际行为（当前两者相等无币种折算）；标注多币种源币金额的 successor（R1.9 代码侧已核实）
       - Skill: none
-- [ ] [Proof] grep 确认 5 个 drift 点 doc 描述与 code 一致（reverse REQUIRES_NEW 描述匹配 / Provider 描述统一 / 默认值 false / 公式与 code javadoc 一致）
+      - 证据：posting.md:449-452 已描述 Provider 显式双金额 + fallback；增 P1-MA3-039 注记明确 persistVoucher 单币种 fallback（source==functional==amount）+ R1.9 全域迁移 successor
+- [x] [Proof] grep 确认 5 个 drift 点 doc 描述与 code 一致（reverse REQUIRES_NEW 描述匹配 / Provider 描述统一 / 默认值 false / 公式与 code javadoc 一致）
       - Skill: none
+      - 证据：`rg "不像.post..叠加.REQUIRES_NEW"` 命中 0（旧错误描述清除）；posting.md:357-358 新增 reverse() REQUIRES_NEW + 跨域调用方事务边界；budget.md:282 Provider 空集/空列表对齐 posting.md；auto-post-on-close=false；`rg "ACTUAL凭证|PostingType=ACTUAL"` budget/use-cases 命中 0
 
 Exit Criteria:
 
-- [ ] 5 项过账/事务/承付/多币种 drift 文档对齐 code，grep 证据记录
+- [x] 5 项过账/事务/承付/多币种 drift 文档对齐 code，grep 证据记录
 
 ### Phase 3 — R2.5 finance 配置键/门控 drift（P1-MA3-033 / 034 / 035 / 036 / 037 / 038）
 
-Status: planned
+Status: completed
 Targets: `docs/design/finance/period-close.md`、`docs/design/domain-design-guidelines.md`、`docs/design/finance/multiple-accounting-schemas.md`、`docs/design/finance/intercompany-consolidation.md`、`docs/design/finance/state-machine.md`、`docs/design/finance/expense-claim.md`、`docs/design/finance/ar-ap-reconciliation.md`
 Skill: none
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1（state-machine.md 在 Phase 1 已修状态，本阶段修 reverse-close 门控描述）
 
-- [ ] [Proof] grep `ErpFinConstants.java` 全量 config key 清单作为文档对齐基准（~120 key）
+- [x] [Proof] grep `ErpFinConstants.java` 全量 config key 清单作为文档对齐基准（~120 key）
       - Skill: none
-- [ ] [Fix] P1-MA3-033：doc config 表键名 auto-depreciation → auto-depreciation-on-close（period-close.md:287 + domain-design-guidelines.md:662）
+      - 证据：`ErpFinConstants.java` 全量读取（520 行），config key 实际清单：`auto-depreciation-on-close`/`multi-schema-enabled`/`default-schema-nature`/`intercompany-posting-enabled`/`consolidation-elimination-enabled`/`elimination-inventory-profit-enabled`/`expense-budget-check-enabled`(false)/`auto-recon-strategy`(FIFO/BY_AMOUNT/BY_RATIO)/`reverse-close-approval-required`(true, kill-switch)
+- [x] [Fix] P1-MA3-033：doc config 表键名 auto-depreciation → auto-depreciation-on-close（period-close.md:287 + domain-design-guidelines.md:662）
       - Skill: none
-- [ ] [Fix] P1-MA3-034：multiple-accounting-schemas.md:251-256 config 表更新为 code 实际——保留 multi-schema-enabled；default-schema → default-schema-nature 对齐键名；移除幻影键 schema-inheritance + auto-create-all-schemas（grep 零 code 引用）
+      - 附带：domain-design-guidelines.md:660 auto-post-on-close true→false（对齐 code 默认 false，与 P1-MA3-032 一致）
+- [x] [Fix] P1-MA3-034：multiple-accounting-schemas.md:251-256 config 表更新为 code 实际——保留 multi-schema-enabled；default-schema → default-schema-nature 对齐键名；移除幻影键 schema-inheritance + auto-create-all-schemas（grep 零 code 引用）
       - Skill: none
-- [ ] [Fix] P1-MA3-035：intercompany-consolidation.md:147-150 config 表更新为 code 实际 3 键（intercompany-posting-enabled / consolidation-elimination-enabled / elimination-inventory-profit-enabled）；移除 4 幻影键
+- [x] [Fix] P1-MA3-035：intercompany-consolidation.md:147-150 config 表更新为 code 实际 3 键（intercompany-posting-enabled / consolidation-elimination-enabled / elimination-inventory-profit-enabled）；移除 4 幻影键
       - Skill: none
-- [ ] [Fix] P1-MA3-036：state-machine.md:152-153,185-186 + period-close.md:165,287 reverse-close-approval-required 描述改为 code 实际（默认 true 时直接 throw，纯 kill-switch，无审批 action）+ 标注 P1-MA2-020 successor（审批流落地触发条件）
+- [x] [Fix] P1-MA3-036：state-machine.md:152-153,185-186 + period-close.md:165,287 reverse-close-approval-required 描述改为 code 实际（默认 true 时直接 throw，纯 kill-switch，无审批 action）+ 标注 P1-MA2-020 successor（审批流落地触发条件）
       - Skill: none
-- [ ] [Fix] P1-MA3-037：expense-claim.md:186 expense-budget-check-enabled 默认值对齐 code false；移除幻影键 imprest-topup-threshold
+      - 注：state-machine.md §6 角色表 + kill-switch 注记、period-close.md:165 迁移单元格 + §反结账审批 successor 注记均已在 Phase 1 同文件编辑时落地（P1-MA3-036 与 P1-MA3-024 共享 state-machine.md/period-close.md）
+- [x] [Fix] P1-MA3-037：expense-claim.md:186 expense-budget-check-enabled 默认值对齐 code false；移除幻影键 imprest-topup-threshold
       - Skill: none
-- [ ] [Fix] P1-MA3-038：ar-ap-reconciliation.md:122-127 自动核销规则 doc 4 键更新为 code 实际 1 策略枚举 auto-recon-strategy（FIFO/BY_AMOUNT/BY_RATIO）
+- [x] [Fix] P1-MA3-038：ar-ap-reconciliation.md:122-127 自动核销规则 doc 4 键更新为 code 实际 1 策略枚举 auto-recon-strategy（FIFO/BY_AMOUNT/BY_RATIO）
       - Skill: none
-- [ ] [Proof] grep 确认 finance doc 中 config 键名与 `ErpFinConstants.java` 一致（幻影键 schema-inheritance/auto-create-all-schemas/consolidation-currency/consolidation-method/intercompany-tolerance/consolidation-schedule/imprest-topup-threshold/auto-match-* 命中数 = 0；code 实际键在 doc 有文档化）
+- [x] [Proof] grep 确认 finance doc 中 config 键名与 `ErpFinConstants.java` 一致（幻影键 schema-inheritance/auto-create-all-schemas/consolidation-currency/consolidation-method/intercompany-tolerance/consolidation-schedule/imprest-topup-threshold/auto-match-* 命中数 = 0；code 实际键在 doc 有文档化）
       - Skill: none
+      - 证据：`rg` 全部幻影键字符串（schema-inheritance/auto-create-all-schemas/default-schema[非nature]/consolidation-currency/consolidation-method/intercompany-tolerance/consolidation-schedule/imprest-topup-threshold/auto-match-exact-amount/auto-match-by-ratio/priority-by-aging/priority-by-due-date）命中 0；`auto-depreciation` 全部为 `-on-close`；code 实际键（multi-schema-enabled/default-schema-nature/intercompany-posting-enabled/consolidation-elimination-enabled/elimination-inventory-profit-enabled/auto-recon-strategy/expense-budget-check-enabled）均已在对应 doc 文档化
 
 Exit Criteria:
 
-- [ ] 6 项 config 键/门控 drift 文档对齐 code，grep 证据记录
+- [x] 6 项 config 键/门控 drift 文档对齐 code，grep 证据记录
 
 ## Draft Review Record
 
@@ -154,15 +165,15 @@ Exit Criteria:
 
 > 本计划纯文档变更，无代码/ORM/契约变更。删除 typecheck/build/test 验证门控。以 doc↔code 一致性 grep 证据替代。
 
-- [ ] 范围内行为完成（16 findings 文档侧全部落地：P1-MA3-024~039）
-- [ ] 相关文档对齐（~11 份 finance owner doc + domain-design-guidelines config 段）
-- [ ] 文档一致性已验证（每个 drift 点 grep 确认 doc↔code 一致 + 幻影键/dict 死值清零）；无代码变更故无 typecheck/build/test
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
-- [ ] arm-index 中 P1-MA3-024~039 状态回填为已修复（文档侧）
+- [x] 范围内行为完成（16 findings 文档侧全部落地：P1-MA3-024~039）
+- [x] 相关文档对齐（~11 份 finance owner doc + domain-design-guidelines config 段）
+- [x] 文档一致性已验证（每个 drift 点 grep 确认 doc↔code 一致 + 幻影键/dict 死值清零）；无代码变更故无 typecheck/build/test
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+- [x] arm-index 中 P1-MA3-024~039 状态回填为已修复（文档侧）
 
 ## Deferred But Adjudicated
 
@@ -174,9 +185,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _待执行与结束审计后填写_
+Status Note: 纯文档计划（16 findings 文档侧全部落地，零代码/ORM/契约变更）。三阶段全 done，Phase 1/2/3 每项 grep 证据记录于各阶段。doc↔code 一致性经独立子代理结束审计复核通过（APPROVED，16/16 clean）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _待独立结束审计_
-- Evidence: _待填写_
+- Auditor / Agent: 独立结束审计子代理（新会话 ses_04b9704dfffe，fresh context，未参与实现）
+- Verdict: **APPROVED**（closure clean，零 CHANGES REQUESTED）
+- Evidence: 独立复核全部 16 findings 的 doc↔code 一致性——逐项 rg 验证 drift 已清除（NOT_OPENED/ACTUAL=10/RESERVATION=40/UNRECONCILED/RECONCILED/OVER/bank-stmt-status dict 声明/「不像 post() 叠加 REQUIRES_NEW」/schema-inheritance/auto-create-all-schemas/consolidation-currency/consolidation-method/intercompany-tolerance/consolidation-schedule/imprest-topup-threshold/auto-match-*/priority-by-* 全部 0 命中）；code 基线独立 spot-check（ErpFinVoucherBizModel.java:79 REQUIRES_NEW / CommitmentAcctDocProvider emptySet+emptyList / ErpFinBudgetControlBiz 三通道 / ErpFinConstants config keys / orm.xml dicts）一致；`git status` 确认仅 docs/*.md 变更（无 .java/.orm.xml/.xml）。`bank-reconciliation.md:145` 保留的 bank-stmt-status 为 P1-MA3-028 设计性撤回声明（「不新增 dict」），非残留 drift。
+- 关联回填：roadmap R2.3/R2.4/R2.5 → done；arm-index P1-MA3-024~039 → done（025/039 MR1 侧早前 resolved，MR2 侧本次 resolved）。

@@ -183,9 +183,10 @@
 
 | 配置项 | 默认值 | 说明 |
 |---|---|---|
-| `erp-fin.expense-budget-check-enabled` | true | 报销 APPROVED 前是否强制预算校验 |
-| `erp-fin.advance-auto-offset-on-expense` | true | 报销时是否自动抵扣同员工未还借款 |
-| `erp-fin.imprest-topup-threshold` | — | 备用金补足阈值（低于则触发补足提醒） |
+| `erp-fin.expense-budget-check-enabled` | false | 报销 APPROVED 前是否强制预算校验（对齐 `ErpFinConstants.CONFIG_EXPENSE_BUDGET_CHECK_ENABLED`；默认 false——预算模块未落地，钩子预留不实现，见 §实现约定 #2） |
+| `erp-fin.advance-auto-offset-on-expense` | true | 报销时是否自动抵扣同员工未还借款（对齐 `ErpFinConstants.CONFIG_ADVANCE_AUTO_OFFSET_ON_EXPENSE`） |
+
+> **配置键对齐注记（P1-MA3-037）**：上表对齐 code 实际键。早期版本误列 1 个幻影键（备用金补足阈值类，grep code 零引用，已移除）——备用金补足提醒经 `advanceType=IMPREST` 筛选 + 业务查询表达，非 config 键。
 
 ## 关键业务规则
 

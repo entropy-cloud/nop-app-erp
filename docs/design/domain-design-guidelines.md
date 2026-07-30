@@ -344,21 +344,24 @@ throw new RuntimeException("订单不存在"); // 禁止
 ### 10.2 期间状态机
 
 ```
-NOT_OPENED → OPEN → CLOSING → CLOSED
+NEVER_OPENED → OPEN → CLOSING → CLOSED → CLOSED_FINAL
 ```
 
 | 状态 | 含义 |
 |------|------|
-| `NOT_OPENED` | 预建但未开启的期间（初始态） |
+| `NEVER_OPENED` | 预建但未开启的期间（初始态） |
 | `OPEN` | 当前可操作期间 |
 | `CLOSING` | 正在结账中（禁止新单据） |
-| `CLOSED` | 已结账（禁止任何修改） |
+| `CLOSED` | 已结账（待复核，禁止任何修改） |
+| `CLOSED_FINAL` | 已复核（最终锁定） |
+
+> 5 态对齐 ORM dict `erp-fin/period-status` 与 `ErpFinConstants.PERIOD_STATUS_*`（详见 `finance/state-machine.md`）。
 
 ### 10.3 期间操作约束
 
 - 同一时刻只能有一个 `OPEN` 期间（当前期间）
 - 开启新期间前必须先结账当前期间
-- 反结账只能从 `CLOSED` 回退到 `OPEN`，需管理员权限
+- 反结账只能从 `CLOSED_FINAL` 回退到 `OPEN`，受 config kill-switch `erp-fin.reverse-close-approval-required` 门控（默认 true 直接拒绝，详见 `finance/period-close.md §反结账审批`）
 - 跨域期间校验：任何业务操作前校验 `businessDate` 所属期间是否为 `OPEN`
 
 ---
@@ -548,7 +551,7 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 | purchase/sales | 订单/出入库/发票/收付款 | `DRAFT` / `CANCELLED`（docStatus）+ `UNSUBMITTED` / `SUBMITTED` / `APPROVED` / `REJECTED`（approveStatus） | 通用业务单据，docStatus 与 approveStatus 双轴独立（新建单据 docStatus=DRAFT, approveStatus=UNSUBMITTED） |
 | inventory | 移动单/盘点单/拣货单 | `DRAFT` / `CONFIRMED` / `DONE` / `CANCELLED` | 作业类单据（无审批轴，作业确认即生效） |
 | finance | 凭证 | `DRAFT` / `POSTED` / `CANCELLED` | 凭证特殊：无 SUBMITTED，DRAFT 直接过账到 POSTED |
-| finance | 会计期间 | `NOT_OPENED` / `OPEN` / `CLOSING` / `CLOSED` | 时间窗口状态机（见 §十） |
+| finance | 会计期间 | `NEVER_OPENED` / `OPEN` / `CLOSING` / `CLOSED` / `CLOSED_FINAL` | 时间窗口状态机（对齐 ORM dict `erp-fin/period-status` 与 `ErpFinConstants.PERIOD_STATUS_*`；CLOSED=已结账待复核，CLOSED_FINAL=已复核最终锁定，见 §十与 `finance/state-machine.md`） |
 | assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
 | manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `NOT_STARTED` / `STOCK_PARTIAL` / `STOCK_RESERVED` / `IN_PROCESS` / `COMPLETED` / `STOPPED` / `CLOSED` / `CANCELLED` | 制造执行链（与 `manufacturing/state-machine.md` `erp-mfg/work-order-status` 10 态字典一致；质检门控经 config-gated 钩子，不加 INSPECTING 字典态，见 plan 2237-1） |
 | projects | 项目/任务 | `DRAFT` / `OPEN` / `ON_HOLD` / `COMPLETED` / `CANCELLED` | 项目生命周期。`ON_HOLD` 为项目独有暂停态（可恢复），见 `projects/state-machine.md` |
@@ -657,8 +660,8 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 | `erp-inv.negative-stock-alert-days` | 3 | 整数 | 全局 | 负库存告警阈值 |
 | `erp-inv.scrap-operation-type` | SCRAP | 作业类型编码 | 全局/按物料分类 | 报废出库作业类型 |
 | `erp-sal.credit-check-level` | SOFT_WARNING | SOFT_WARNING/SPECIAL_APPROVAL/HARD_BLOCK | 全局/按客户 | 信用额度检查级别 |
-| `erp-fin.auto-post-on-close` | true | true/false | 全局 | 结账时自动过账 |
-| `erp-fin.auto-depreciation` | true | true/false | 全局 | 结账时自动折旧 |
+| `erp-fin.auto-post-on-close` | false | true/false | 全局 | 结账前置检查门控（false=未过账阻断，对齐 `ErpFinConstants.CONFIG_AUTO_POST_ON_CLOSE`） |
+| `erp-fin.auto-depreciation-on-close` | true | true/false | 全局 | 结账时自动折旧（对齐 `ErpFinConstants.CONFIG_AUTO_DEPRECIATION_ON_CLOSE`） |
 | `erp-fin.reconcile-precision` | 0.01 | 正数 | 全局 | 核销金额精度 |
 | `erp-fin.allow-over-reconcile` | false | true/false | 全局 | 允许超额核销 |
 | `erp-md.uom-conversion-strict` | true | true/false | 全局/按物料 | 单位换算严格模式 |

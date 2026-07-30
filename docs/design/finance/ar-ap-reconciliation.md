@@ -117,14 +117,15 @@
 
 ### 自动核销规则
 
-支持配置自动核销规则，减少手工操作：
+支持配置自动核销规则，减少手工操作（对齐 `ErpFinConstants.CONFIG_AUTO_RECON_STRATEGY`，单策略枚举 `erp-fin.auto-recon-strategy`）：
 
-| 规则类型 | 说明 | 配置项 |
-|----------|------|--------|
-| 按金额自动核销 | 到款金额匹配发票金额时自动核销 | `auto-match-exact-amount` |
-| 按比例自动核销 | 按发票金额比例自动核销 | `auto-match-by-ratio` |
-| 按账龄自动核销 | 优先核销账龄长的发票 | `priority-by-aging` |
-| 按到期日自动核销 | 优先核销已到期的发票 | `priority-by-due-date` |
+| 策略 | 说明 | 取值 |
+|------|------|------|
+| 分摊策略（`erp-fin.auto-recon-strategy`） | 自动核销的分摊/排序策略 | `FIFO`（默认，按时间先后含账龄/到期排序）/ `BY_AMOUNT`（按金额匹配）/ `BY_RATIO`（按发票金额比例） |
+
+> 总开关 `erp-fin.auto-reconcile`（默认 false，对齐 `ErpFinConstants.CONFIG_AUTO_RECONCILE`）；定时调度 `erp-fin.ar-ap-auto-recon-cron`（见 §配置项）。
+
+> **配置键对齐注记（P1-MA3-038）**：早期版本误列 4 个独立规则幻影键（金额匹配/比例/账龄/到期排序类，grep code 零引用，已移除）；code 实际为单策略枚举 `auto-recon-strategy` 三取值——FIFO 含账龄/到期排序语义，BY_AMOUNT 含金额匹配语义，BY_RATIO 含比例语义。
 
 ### 自动核销触发
 
@@ -138,18 +139,22 @@
 
 | 状态 | 说明 | 计算方式 |
 |------|------|----------|
-| 未核销（UNRECONCILED） | 发票金额全部未核销 | `balance = invoiceAmount` |
+| 未核销（OPEN） | 发票金额全部未核销 | `balance = invoiceAmount` |
 | 部分核销（PARTIAL） | 发票金额部分核销 | `0 < balance < invoiceAmount` |
-| 已核销（RECONCILED） | 发票金额全部核销 | `balance = 0` |
-| 超额核销（OVER） | 核销金额超过发票金额 | `balance < 0`（异常） |
+| 已核销（SETTLED） | 发票金额全部核销 | `balance = 0` |
+| 已作废（CANCELLED） | 发票作废，退出核销 | `balance = 0`（不参与核销） |
+| 已坏账核销（WRITTEN_OFF） | 经坏账核销，退出核销 | `openAmount = 0`（见 bad-debt.md） |
+
+> 状态值对齐 ORM dict `erp-fin/ar-ap-status`（OPEN/PARTIAL/SETTLED/CANCELLED/WRITTEN_OFF）。**无 RECONCILED/OVER 值**——"已核销"对应 SETTLED；超额核销（`balance < 0`）不是独立状态，code 以错误码拒绝（`erp-fin.allow-over-reconcile` 默认 false，见 §配置项）。
 
 ### 收付款核销状态
 
 | 状态 | 说明 | 计算方式 |
 |------|------|----------|
-| 未核销（UNRECONCILED） | 收付款金额全部未核销 | `balance = receiptAmount` |
+| 未核销（OPEN） | 收付款金额全部未核销 | `balance = receiptAmount` |
 | 部分核销（PARTIAL） | 收付款金额部分核销 | `0 < balance < receiptAmount` |
-| 已核销（RECONCILED） | 收付款金额全部核销 | `balance = 0` |
+| 已核销（SETTLED） | 收付款金额全部核销 | `balance = 0` |
+| 已作废（CANCELLED） | 收付款作废，退出核销 | `balance = 0`（不参与核销） |
 
 ## 余额计算
 

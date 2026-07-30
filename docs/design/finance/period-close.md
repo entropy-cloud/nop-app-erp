@@ -98,7 +98,7 @@
         │      └─► 可选：生成余额调节表
         │
         ├─► 步骤7：标记期间结账
-        │      ├─► 更新会计期间状态为 CLOSED_FINAL
+         │      ├─► 更新会计期间状态为 CLOSED（待复核；CLOSED→CLOSED_FINAL 由 finalizePeriod 承接，见向导 Step 4）
         │      ├─► 锁定本期凭证不允许修改
         │      └─► 自动开启下一会计期间
         │
@@ -152,17 +152,20 @@
 
 | 状态 | 含义 | 可新增凭证 | 可修改凭证 |
 |------|------|------------|------------|
+| NEVER_OPENED（未开启） | 期间未到或已财务关闭 | 否 | 否 |
 | OPEN（已开启） | 正常核算中 | 是 | 是 |
 | CLOSING（结账中） | 正在执行结账 | 否 | 否 |
 | CLOSED（已结账） | 结账完成，待复核 | 否 | 否 |
 | CLOSED_FINAL（已复核） | 最终锁定 | 否 | 否 |
+
+> 5 态对齐 ORM dict `erp-fin/period-status` 与 `ErpFinConstants.PERIOD_STATUS_*`。`NEVER_OPENED→OPEN` 由年度结转「次年 1 月 OPEN、其余 NEVER_OPENED」与定时任务到达期间开始日期承载。
 
 ### 期间约束
 
 - **OPEN → CLOSING**：结账操作触发，自动锁定
 - **CLOSING → CLOSED**：结账完成，待生成报表
 - **CLOSED → CLOSED_FINAL**：报表生成后最终锁定
-- **CLOSED_FINAL → OPEN**：反结账操作（需高权限 + 审批）
+- **CLOSED_FINAL → OPEN**：反结账操作（config kill-switch `erp-fin.reverse-close-approval-required` 门控：默认 true 直接拒绝，false 由管理员角色权限放行；无独立审批 action，见 §反结账审批）
 
 ## 反结账流程
 
@@ -284,7 +287,7 @@
 |--------|--------|------|
 | `erp-fin.auto-post-on-close` | false | 结账前置检查门控：false=未过账凭证/未处置异常阻断结账（安全默认），true=降级为提示放行结账。**未核销 AR-AP 始终为结构化提示不阻断**；**坏账准备 shortfall 始终硬阻断**（不受本 config 影响，见 bad-debt.md §期末 allowance 充足性门控） |
 | `erp-inv.allow-negative-stock (引用库存域)` | false | 结账时是否允许负库存 |
-| `erp-fin.auto-depreciation` | true | 结账时自动计提折旧 |
+| `erp-fin.auto-depreciation-on-close` | true | 结账时自动计提折旧（键名对齐 `ErpFinConstants.CONFIG_AUTO_DEPRECIATION_ON_CLOSE`） |
 | `erp-fin.closing-reminder-days` | 3 | 结账提醒提前天数 |
 | `erp-fin.period-close-cron` | `0 0 22 L * ?` | 期末结账定时触发（每月最后一天 22:00）；登记于 `docs/architecture/job-scheduling.md` §3.1 `erp-fin-period-close` 作业，cron 接线归 follow-up |
 | `erp-fin.annual-close-enabled` | true | 年度结转总开关（12 月结账后是否执行本年利润→未分配利润 + 次年期间创建 + 年初余额 populate） |
@@ -319,7 +322,7 @@
 
 - 当前 `reverse-close-approval-required`（默认 true）是**保护性 kill-switch**：true 时直接拒绝反结账（需管理员设 false 才能执行），false 时由 @BizMutation 角色权限门控。
 - **非完整审批流**：owner doc §反结账约束要求「管理员+审批」，实现为 config kill-switch + 角色权限（无独立审批 action）。
-- **Successor**：实现完整审批流（反结账申请→审批→执行）。解除条件见 `state-machine.md §已知限制：浏览器层 xwf 审批路径`。
+- **Successor（P1-MA3-036 / P1-MA2-020）**：实现完整审批流（反结账申请→审批→执行）。解除条件见 `state-machine.md §已知限制：浏览器层 xwf 审批路径`。
 
 ### CLOSED_FINAL 凭证锁定
 

@@ -129,34 +129,39 @@
 
 | 状态 | 业务含义（等待什么） | 可新增凭证 | 可结账 |
 |------|----------------------|------------|--------|
-| 未开启（CLOSED） | 期间未到或已财务关闭 | 否 | — |
+| 未开启（NEVER_OPENED） | 期间未到或已财务关闭 | 否 | — |
 | 已开启（OPEN） | 当前可记账期间 | 是 | 是 |
 | 结账中（CLOSING） | 正在执行期末结账流程 | 否 | — |
-| 已结账（CLOSED_FINAL） | 终态：已完成期末结账 | 否 | 否（需反结账） |
+| 已结账（CLOSED） | 结账完成，待复核 | 否 | 否（需反结账） |
+| 已复核（CLOSED_FINAL） | 终态：报表复核后最终锁定 | 否 | 否（需反结账） |
+
+> **状态码权威来源**：5 态对齐 ORM dict `erp-fin/period-status`（`app-erp-finance.orm.xml`）与 `ErpFinConstants.PERIOD_STATUS_*`。`CLOSED`=已结账（待复核），`CLOSED_FINAL`=已复核（最终锁定），`NEVER_OPENED`=未开启。
 
 ### 2. 迁移完整性
 
 ```
-未开启 (CLOSED)
+未开启 (NEVER_OPENED)
   └─ 到达期间开始日期 → 已开启 (OPEN)
                         ├─ 新增凭证（正常业务）
                         ├─ 期末结账 → 结账中 (CLOSING)
-                        │              ├─ 结账成功 → 已结账 (CLOSED_FINAL)
+                        │              ├─ 结账成功 → 已结账 (CLOSED，待复核)
                         │              └─ 结账失败 → 回到已开启 (OPEN)
-                        └─ 反结账（已结账→已开启）→ 回到已开启
+                        ├─ 复核 → 已复核 (CLOSED_FINAL，最终锁定)
+                        └─ 反结账（已复核→已开启）→ 回到已开启
 ```
 
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|
-| CLOSED → OPEN | 系统（定时任务，到达期间开始日期） | 上一期间已结账或允许跨期 | 开启记账 |
+| NEVER_OPENED → OPEN | 系统（定时任务，到达期间开始日期） | 上一期间已结账或允许跨期 | 开启记账 |
 | OPEN → CLOSING | 财务员（发起期末结账） | 本期所有业务单据已审核、`posted=true`（无未过账单据） | 冻结新增凭证 |
-| CLOSING → CLOSED_FINAL | 系统（结账流程完成） | 成本核算、折旧/摊销、结转损益全部成功 | 标记已结账 |
+| CLOSING → CLOSED | 系统（结账流程完成） | 成本核算、折旧/摊销、结转损益全部成功 | 标记已结账（待复核） |
 | CLOSING → OPEN | 系统（结账失败） | 任一结账步骤失败 | 回退，允许修复后重试 |
+| CLOSED → CLOSED_FINAL | 财务员/系统（报表复核） | 试算平衡表快照生成 | 最终锁定 |
 | CLOSED_FINAL → OPEN（反结账） | 管理员（高权限） | 特殊情况需调整已结账期间 | 允许修改凭证后重新结账 |
 
 ### 3. 终态与恢复
 
-- **终态**：`已结账（CLOSED_FINAL）`。
+- **终态**：`已复核（CLOSED_FINAL）`。`已结账（CLOSED）` 为待复核中间态（结账完成但尚未最终锁定）。
 - **反结账恢复**：管理员可反结账回到 OPEN，修改凭证后重新结账。需严格权限控制（影响已出具报表）。
 - **结账失败的恢复**：CLOSING → OPEN（自动回退），修复问题后重新发起结账。
 
@@ -172,7 +177,7 @@
 
 ### 5. 可达性
 
-- CLOSED → OPEN → CLOSING → CLOSED_FINAL 是主路径。
+- NEVER_OPENED → OPEN → CLOSING → CLOSED → CLOSED_FINAL 是主路径。
 - CLOSING → OPEN（失败回退）与 CLOSED_FINAL → OPEN（反结账）是恢复路径。
 - 无死锁：CLOSED_FINAL 是终态，反结账是显式路径。
 
@@ -181,13 +186,13 @@
 | 迁移 | 执行角色 |
 |------|----------|
 | 发起结账（OPEN→CLOSING） | 财务员 |
-| 反结账（CLOSED_FINAL→OPEN） | **管理员**（高权限，严格审批） |
+| 反结账（CLOSED_FINAL→OPEN） | **管理员**（高权限；当前为 config kill-switch，非独立审批 action，见下方已知简化） |
 | 期间自动开启 | 系统 |
 
 危险操作：
-- **反结账**：需管理员权限 + 审批，因影响已出具报表与税务申报。
+- **反结账**：受 config kill-switch 门控（影响已出具报表与税务申报），完整审批流为 successor。
 
-> **反结账审批已知简化**：当前 `reverse-close-approval-required`（默认 true）为**保护性 kill-switch**——true 时直接拒绝反结账，false 时由 @BizMutation 角色权限门控（无独立审批 action）。完整审批流（反结账申请→审批→执行）为 successor，解除条件见 §已知限制：浏览器层 xwf 审批路径。
+> **反结账审批已知简化（P1-MA3-036）**：当前 `reverse-close-approval-required`（默认 true）为**保护性 kill-switch**——true 时 `reverseClose` 直接抛异常拒绝反结账（纯开关，无审批 action），false 时由 @BizMutation 角色权限门控（无独立审批 action）。owner doc 表述「管理员 + 审批」的实际落位 = kill-switch + 角色权限。完整审批流（反结账申请→审批→执行，解除条件见 §已知限制：浏览器层 xwf 审批路径）为 successor（P1-MA2-020 触发：审批流落地时实现）。
 
 > **CLOSED_FINAL 凭证锁定**：`ErpFinVoucherBizModel.postVoucher`/`reverseVoucher` 前校验凭证所属期间状态，CLOSED/CLOSED_FINAL 时抛 `ERR_FIN_VOUCHER_PERIOD_LOCKED` 拒绝操作（对齐下方 §1 状态定义「CLOSED_FINAL 可修改凭证=否」）。
 
@@ -204,8 +209,9 @@
 |------|---------------|-----------|
 | OPEN（月末） | 是 | assigned（财务员）—— 月末待结账提醒 |
 | CLOSING（失败回退） | 是 | assigned（财务员）—— 结账失败待处理 |
+| CLOSED（待复核） | 是 | assigned（财务员）—— 待复核最终锁定 |
 | CLOSED_FINAL | 否 | — |
-| CLOSED（未到期间） | 否 | — |
+| NEVER_OPENED（未到期间） | 否 | — |
 
 ### 9. 场景演练
 

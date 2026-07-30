@@ -354,7 +354,8 @@ A1 以 `ErpFinGlMappingRule` 实体 + `IErpFinGlMappingResolver` 解析引擎，
   - **可选 ASYNC**（与第②层 ASYNC 模式对齐）：经 post-commit 回调，红字凭证事务提交成功后再异步派发。
 - **平台能力核实**：
   - 进程内无 `IEventBus`/`@EventListener`；post-commit 回调能力存在（仅在事务提交成功时触发，回滚路径不执行）。
-  - `IErpFinVoucherBiz.reverse()` I*Biz Facade 跟随 `@BizMutation` 事务（REQUIRED），不像 `post()` 叠加 `REQUIRES_NEW`——财务侧直接红冲时事务边界由调用方 `@BizMutation` 承接，SYNC 同事务通知与 post-commit 派发在该边界均可用。
+  - `IErpFinVoucherBiz.reverse()` I*Biz Facade **对齐 `post()` 叠加 `@Transactional(REQUIRES_NEW)`**（O-7，见 `ErpFinVoucherBizModel`）——红冲凭证写操作以独立事务承接，红冲失败回滚独立事务，**不污染调用方主事务**（与 `post()` 一致的事务边界语义）。SYNC 同事务通知在该 REQUIRES_NEW 独立事务边界内；post-commit 派发在独立事务提交后触发。
+  - **跨域调用方事务边界注意事项**：跨域调用方（11 域 PostingExecutor/Dispatcher，如 purchase/sales/inventory/assets 域审核动作内的 `reverse()` 调用）在自身 `@BizMutation` 事务内调 `reverse()` 时，因 `reverse()` 叠加 REQUIRES_NEW，红冲凭证落库于独立事务——调用方主事务回滚**不会**回滚已过账红字凭证（凭证法律效力保护）；反之红冲失败抛 `NopException` 由调用方 try/catch 决定是否阻断自身业务流（域自治，见 `posting-log.md §错误传播分级策略` G3/G4）。
 - **替代方案（被拒）**：
   - 外部 MQ：破坏 SYNC 强一致默认 + 引入 infra 依赖，与"默认 SYNC"哲学冲突。
   - Spring `ApplicationEvent`：平台无该设施。
@@ -447,6 +448,7 @@ VoucherBillR（业财回链）
 
 - `VoucherFact` 双金额字段：Provider 显式填充 `amountSource`（源币种）+ `amountFunctional`（= source × `ctx.exchangeRate`）；`amount` 字段保留作功能金额（`balanceTotals`/`assertBalanced` 以本位币为准）。未设置新字段时 fallback 到 `amount`（单币种向后兼容）。
 - 引擎忠实写库 `line.amountSource`/`line.amountFunctional`/`line.debitAmount`/`line.creditAmount`（debit/credit 按本位币），实现细节见 `docs/architecture/processor-extension-pattern.md`。
+- **多币种折算路径注记（P1-MA3-039，R1.9 已核实）**：`ErpFinPostingProcessor.persistVoucher` 按 Provider 显式传递的 `fact.amountSource`/`fact.amountFunctional` 写库；Provider 未设置时 fallback 到 `fact.amount`（**单币种场景 source==functional==amount，三者相等无币种折算**）。P2P/O2C Provider 已显式传双字段（多币种折算生效）；其余域单币种 fallback。完整多币种源币金额的全域迁移 successor 见下条。
 - 辅助账项按 `event.exchangeRate` 折算 `amountFunctional`（= source × rate），`amountSource` = 源币种金额。
 - P2P（purchase 域 Provider）+ O2C（sales 域 Provider）已迁移双字段；其余域 Provider 单币种 fallback（全域迁移 successor，`Deferred But Adjudicated`）。
 - 收款核销汇兑损益 plug 见 `ar-ap-reconciliation.md §汇兑损益核销规则`。

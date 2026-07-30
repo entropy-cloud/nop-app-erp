@@ -24,12 +24,12 @@
 | openingBalance | 对账单期初余额 |
 | closingBalance | 对账单期末余额(银行侧) |
 | businessDate | 业务日期(取 statementDate) |
-| docStatus | dict `erp-fin/bank-stmt-status`:DRAFT/RECONCILING/RECONCILED/CANCELLED |
+| docStatus | dict `erp-fin/voucher-status`：DRAFT/POSTED/CANCELLED（复用凭证状态；RECONCILING 由「有未勾对行」派生表达，RECONCILED = POSTED，见 §schema 补注） |
 | approveStatus | dict `erp-fin/approve-status`:UNSUBMITTED/SUBMITTED/APPROVED/REJECTED |
 | posted/postedBy/postedAt | 业财三件套(已调节完成时 posted=true,触发未达账项调整凭证) |
 | 标准审计字段 | |
 
-**状态机**:`DRAFT → RECONCILING → RECONCILED`(终态,差异已处理且 posted=true);`RECONCILING → DRAFT`(重开,要求反 posted);`RECONCILED → CANCELLED`(红冲未达账项调整凭证)。
+**状态机**（docStatus 复用 `erp-fin/voucher-status`）：`DRAFT → POSTED`（终态，差异已处理且 `posted=true`；RECONCILING 非独立状态，由「有未勾对行」派生）；`POSTED → DRAFT`（重开，要求反 posted）；`POSTED → CANCELLED`（红冲未达账项调整凭证）。
 
 ### ErpFinBankStatementLine(银行流水明细,表 `erp_fin_bank_statement_line`)
 

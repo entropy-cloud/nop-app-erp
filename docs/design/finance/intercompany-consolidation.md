@@ -45,6 +45,12 @@
 | 合并调整凭证（ConsolidationAdjustment） | 合并抵消分录 | 头/行 |
 | 合并报表（ConsolidationReport） | 合并后财务报表 | 头/行 |
 
+> **schema 实现落位注记（P1-MA3-029）**：上表为设计期概念对象。实际 ORM 落地（`module-finance/model/app-erp-finance.orm.xml`）为 2 个抵消/配对实体 + 1 个转移定价规则实体，其余概念对象（ConsolidationScheme/Scope/Report）未建独立实体，由 config + Processor 批量计算承载（合并范围/参数经 `ErpSysConfig` + 组织树，合并报表经 nop-report 报表面）：
+> - `ErpFinIntercompanyMatch`（公司间配对记录）= 概念对象「内部交易对账」的落位（`generateEliminationCandidates` 扫描配对候选）。
+> - `ErpFinConsolidationElimination`（合并抵消候选）= 概念对象「合并调整凭证」的落位（`postElimination` 生成抵消分录草稿凭证，dict `erp-fin/elimination-type`/`erp-fin/elimination-status`）。
+> - `ErpFinIntercompanyTransferPrice`（跨法人转移定价规则）= 转移定价解析数据源（`IErpFinTransferPriceResolver` SPI，3 策略 cost-plus/market/negotiated）。
+> - **未建实体**：ConsolidationScheme / ConsolidationScope / ConsolidationReport（合并范围与参数经组织树 + `ErpSysConfig` 表达；合并报表属 nop-report 报表面，见 §实现落位提示）。
+
 ## 内部交易抵消机制
 
 ### 内部交易类型
@@ -144,10 +150,11 @@
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `erp-fin.consolidation-currency` | CNY | 合并报表记账本位币 |
-| `erp-fin.consolidation-method` | FULL | 合并方法（FULL/PARTIAL/EQUITY） |
-| `erp-fin.intercompany-tolerance` | 0.01 | 内部交易对账容差（金额差异） |
-| `erp-fin.consolidation-schedule` | MONTHLY | 合并频率（MONTHLY/QUARTERLY/YEARLY） |
+| `erp-fin.intercompany-posting-enabled` | false | 跨法人内部交易凭证生成总开关（对齐 `ErpFinConstants.CONFIG_INTERCOMPANY_POSTING_ENABLED`，默认关保护既有跨法人调拨测试） |
+| `erp-fin.consolidation-elimination-enabled` | false | 合并抵消候选识别总开关（对齐 `ErpFinConstants.CONFIG_CONSOLIDATION_ELIMINATION_ENABLED`，期末批处理启用） |
+| `erp-fin.elimination-inventory-profit-enabled` | false | 内部存货利润抵消识别开关（对齐 `ErpFinConstants.CONFIG_ELIMINATION_INVENTORY_PROFIT_ENABLED`，依赖未实现利润计算复杂度，试点门控） |
+
+> **配置键对齐注记（P1-MA3-035）**：上表对齐 code 实际 3 键（`ErpFinConstants`，A3 多公司运营）。早期版本误列 4 个幻影键（合并本位币/合并方法/对账容差/合并频率类，grep code 零引用，已移除）——这些维度经主数据组织树 + `ErpSysConfig` 业务配置承载，对账容差复用 `erp-fin.reconcile-precision`。
 
 ## 与其他文档的关系
 
