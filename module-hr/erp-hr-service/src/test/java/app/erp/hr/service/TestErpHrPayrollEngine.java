@@ -1,5 +1,7 @@
 package app.erp.hr.service;
 
+import app.erp.fin.dao.ErpFinBusinessType;
+import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.hr.biz.IErpHrSalaryBiz;
 import app.erp.hr.dao.entity.ErpHrEmployee;
 import app.erp.hr.dao.entity.ErpHrEmploymentContract;
@@ -30,12 +32,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -303,6 +307,166 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(opType, action, request);
         return graphQLEngine.executeRpc(ctx);
+    }
+
+    /**
+     * G1（P1-MA4-019 (a) 残差）高档税率集成级 E2E。月薪 100000 员工跨月累计使累计应纳税所得额 &gt;960000，
+     * 演练完整引擎流程（社保基数钳制 + 个税累计预扣跨月写回 + calculateSalary 链路），断言末档 45% 税率正确计算、
+     * 无 NPE、monthTax 为正。单元级 {@code TestIncomeTaxCalculator} 仅隔离 resolveBracket 末档 null，不演练引擎全链路；
+     * 既有集成测试员工月薪 ≤30000 永不触达末档。本测试补集成级高档残差。
+     */
+    @Test
+    public void testHighTaxBracketIntegrationE2e() {
+        Long employeeId = ormTemplate.runInSession(session -> {
+            seedTaxConfig(2026);
+            Long empId = seedEmployee("EMP-HIGH", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            seedContract(empId, "100000");
+            // 基数 100000 超上限 32694 → 钳到 32694（payroll.md §2.4）
+            seedSocialInsuranceBase(empId, "SHENZHEN", "100000", "100000");
+            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
+                    "0.15", "0.08", "6123", "32694");
+            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_HOUSING_FUND,
+                    "0.12", "0.12", "2360", "32694");
+            System.setProperty(ErpHrConstants.CONFIG_DEFAULT_PAYROLL_SUBJECT_ID, "2211");
+            return empId;
+        });
+
+        // 1-10 月逐月核算：累计应纳税所得额逐月累加（payroll.md §4.5 跨月累计预扣写回）
+        for (int m = 1; m <= 10; m++) {
+            int month = m;
+            ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, month, CTX));
+        }
+        // 11 月：累计应纳税所得额 >960000 → 命中末档 45%（payroll.md §4.2 第七级，rangeUpperLimit=null）
+        ErpHrSalary nov = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 11, CTX));
+
+        // 无 NPE（测试完整执行即证明）+ 末档 monthTax 为正
+        assertTrue(nov.getTaxAmount().signum() > 0, "末档月度个税 monthTax>0");
+
+        BigDecimal cumTaxableIncome = extractCumulativeField(nov.getCumulativeData(), "cumulativeTaxableIncome");
+        BigDecimal cumTaxAmount = extractCumulativeField(nov.getCumulativeData(), "cumulativeTaxAmount");
+        assertTrue(cumTaxableIncome.compareTo(new BigDecimal("960000")) > 0,
+                "累计应纳税所得额>960000 命中末档（实测=" + cumTaxableIncome + "）");
+
+        // 末档公式校验（payroll.md §4.2 第七级）：累计应纳税额 = 累计应纳税所得额 ×45% − 速算扣除数 181920
+        BigDecimal expectedCumTax = cumTaxableIncome.multiply(new BigDecimal("0.45"))
+                .subtract(new BigDecimal("181920"))
+                .setScale(2, RoundingMode.HALF_UP);
+        assertEquals(0, expectedCumTax.compareTo(cumTaxAmount),
+                "末档 45% 累计应纳税额公式正确（rate=0.45, quickDeduction=181920）");
+    }
+
+    /**
+     * G2（P1-MA4-019 (b)）过账悬挂 posted=false 窗口。{@code markPaid} 忽略 {@code tryPostPayment} 返回值
+     * （ErpHrSalaryBizModel markPaid），故过账失败时薪酬仍转 PAID 而 posted=false + 无发放凭证。
+     * 本测试清空应付职工薪酬科目配置使 buildPaymentEvent 抛 ERR_PAYROLL_SUBJECT_NOT_CONFIGURED
+     * （在 tryPostPayment 的 try 块内触发），断言 PAID + posted=false 可观测 + 无 SALARY_PAYMENT 凭证。
+     * 闭合 P1-MA2-048 测试可见性，依赖 R1.16 告警闭环（dispatchFailureAlert）。
+     */
+    @Test
+    public void testPostingSuspensionWindowPostedFalse() {
+        Long employeeId = ormTemplate.runInSession(session -> {
+            seedTaxConfig(2026);
+            Long empId = seedEmployee("EMP-SUSP", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            seedContract(empId, "12000");
+            seedSocialInsuranceBase(empId, "SHENZHEN", "12000", "12000");
+            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
+                    "0.15", "0.08", "6123", "32694");
+            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_HOUSING_FUND,
+                    "0.12", "0.12", "2360", "32694");
+            // 故意不设应付职工薪酬科目配置——markPaid 前再清空，触发 buildPaymentEvent 抛异常
+            return empId;
+        });
+
+        ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 3, CTX));
+        Long salaryId = salary.getId();
+        assertEquals(0, submitSalary(salaryId).getStatus(), "提交应成功");
+        assertEquals(0, approveSalary(salaryId).getStatus(), "审核应成功");
+
+        // 清空应付职工薪酬科目配置 → buildPaymentEvent 抛 ERR_PAYROLL_SUBJECT_NOT_CONFIGURED（触发悬挂）
+        System.clearProperty(ErpHrConstants.CONFIG_DEFAULT_PAYROLL_SUBJECT_ID);
+        try {
+            ErpHrSalary paid = ormTemplate.runInSession(session -> salaryBiz.markPaid(salaryId, CTX));
+            // markPaid 忽略 tryPostPayment 返回值 → 过账失败仍转 PAID（posted=false 悬挂窗口）
+            assertEquals(ErpHrConstants.PAYMENT_PAID, paid.getPaymentStatus(),
+                    "过账失败不阻塞发放终态：paymentStatus=PAID");
+            // posted 字段 Deferred（无 setPosted writer，见 SalaryPostingDispatcher javadoc + payroll.md §6.1）→ 始终非 true
+            ErpHrSalary reloaded = daoProvider.daoFor(ErpHrSalary.class).getEntityById(salaryId);
+            assertFalse(Boolean.TRUE.equals(reloaded.getPosted()),
+                    "posted=false 可观测：过账悬挂窗口（P1-MA2-048）");
+            // 无发放凭证生成（过账在 buildPaymentEvent 即抛，未达 executor.postEvent，GL 零写入）
+            String billCode = salaryBillCode(2026, 3, salaryId);
+            assertEquals(0L, countVoucherBillR(billCode, ErpFinBusinessType.SALARY_PAYMENT),
+                    "过账失败：无 SALARY_PAYMENT 发放凭证");
+        } finally {
+            // 恢复配置避免污染后续测试（其余测试依赖 2211）
+            System.setProperty(ErpHrConstants.CONFIG_DEFAULT_PAYROLL_SUBJECT_ID, "2211");
+        }
+    }
+
+    /**
+     * G3（P1-MA4-019 (d)+(e)）公司承担过账负向文档化。P1-MA4-017 Deferred：计提 SALARY(270) + 社保公司承担(290) +
+     * 公积金公司承担(300) 过账链路未实现——{@code tryPostAccrual} 为零调用方死代码，290/300 event 永不组装
+     * （payroll.md §6.5/§9.1 Deferred 标注）。本测试 approve+markPaid 后断言三类凭证当前未生成
+     * （负向文档化 017 缺口 + 注释引用 successor）+ 发放 markPaid→PAID 正常（正向基线，证明非假阴性）。
+     * 017 正向实现（接线 tryPostAccrual/290/300 + 激活 posted writer）属 Deferred successor，不在本测试有效性计划范围。
+     */
+    @Test
+    public void testCompanyBornePostingDeferredNegativeDocumentation() {
+        Long employeeId = ormTemplate.runInSession(session -> {
+            seedTaxConfig(2026);
+            Long empId = seedEmployee("EMP-DEFER", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            seedContract(empId, "15000");
+            seedSocialInsuranceBase(empId, "SHENZHEN", "15000", "15000");
+            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
+                    "0.15", "0.08", "6123", "32694");
+            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_HOUSING_FUND,
+                    "0.12", "0.12", "2360", "32694");
+            System.setProperty(ErpHrConstants.CONFIG_DEFAULT_PAYROLL_SUBJECT_ID, "2211");
+            return empId;
+        });
+
+        ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 4, CTX));
+        Long salaryId = salary.getId();
+        assertEquals(0, submitSalary(salaryId).getStatus(), "提交应成功");
+        assertEquals(0, approveSalary(salaryId).getStatus(), "审核应成功");
+        ErpHrSalary paid = ormTemplate.runInSession(session -> salaryBiz.markPaid(salaryId, CTX));
+
+        // 正向基线：发放 markPaid→PAID 正常完成（approve+markPaid 链路可达，证明下方负向非假阴性）
+        assertEquals(ErpHrConstants.PAYMENT_PAID, paid.getPaymentStatus(), "正向基线：发放正常 PAID");
+
+        // 负向文档化（P1-MA4-017 Deferred）：计提 270 + 公司承担 290/300 三类凭证当前未生成
+        String billCode = salaryBillCode(2026, 4, salaryId);
+        assertEquals(0L, countVoucherBillR(billCode, ErpFinBusinessType.SALARY),
+                "Deferred：计提 SALARY(270) 凭证未生成（tryPostAccrual 零调用方死代码，approve 未接线——017 successor）");
+        assertEquals(0L, countVoucherBillR(billCode, ErpFinBusinessType.SOCIAL_INSURANCE_ER),
+                "Deferred：社保公司承担 SOCIAL_INSURANCE_ER(290) event 永不组装（017 successor）");
+        assertEquals(0L, countVoucherBillR(billCode, ErpFinBusinessType.HOUSING_FUND_ER),
+                "Deferred：公积金公司承担 HOUSING_FUND_ER(300) event 永不组装（017 successor）");
+    }
+
+    /** 薪酬过账业财回链单据号（与 SalaryPostingDispatcher.buildBillCode 一致）。 */
+    private String salaryBillCode(int year, int month, Long salaryId) {
+        return "SAL-" + year + String.format("%02d", month) + "-" + salaryId;
+    }
+
+    /** 统计某单据号+业务类型的业财回链数（ErpFinVoucherBillR），用于断言凭证是否生成。 */
+    private long countVoucherBillR(String billCode, ErpFinBusinessType businessType) {
+        IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("billCode", billCode));
+        q.addFilter(eq("businessType", businessType.name()));
+        return dao.findAllByQuery(q).size();
+    }
+
+    /** 从 cumulativeData JSON 提取指定数值字段（payroll.md §4.5 累计数据结构）。 */
+    private BigDecimal extractCumulativeField(String json, String key) {
+        if (json == null || json.isEmpty()) return BigDecimal.ZERO;
+        Object parsed = io.nop.core.lang.json.JsonTool.parseNonStrict(json);
+        if (parsed instanceof Map) {
+            Object v = ((Map<String, Object>) parsed).get(key);
+            return v == null ? BigDecimal.ZERO : new BigDecimal(v.toString());
+        }
+        return BigDecimal.ZERO;
     }
 
     // ---------- seed helpers ----------
