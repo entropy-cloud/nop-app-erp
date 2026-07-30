@@ -47,30 +47,37 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 
 > **工程命名映射**：物理目录 `module-<domain>/` ↔ 逻辑工程名 `app-erp-<domain>` 的完整映射见 `docs/architecture/domain-module-split-analysis.md §2.0`。
 
-## 当前里程碑（代码生成已完成 - Post-Codegen 阶段）
+## 当前里程碑（业务逻辑深化与运营成熟度收尾阶段）
 
-- 产品摘要：18 域已全部通过 nop-cli 完成代码生成，共生成 2758 Java 文件、154 reactor 模块、447 实体，项目进入 post-codegen 阶段。
-- 用户：实施方（基于基线定制各领域 ERP）、开发人员（完善模型与生成链路、编写 BizModel 与 xbiz）
+> **里程碑对齐说明**：本节由 R2.2（P1-MA3-011）于 2026-07-31 与 `AGENTS.md §当前项目阶段` 对齐——AGENTS.md 已由人工确立当前阶段描述为权威，本节更新是对齐（reconciliation）而非新决策。若审查者认为里程碑框架需重新设计，可降级为 deferred（见 `docs/plans/2026-07-31-0010-2-r2-2-...md` Closure Gates 人工确认门控）。
+
+- 产品摘要：18 业务域 + 跨域通知派发子系统（共 19 个 `module-*/`）ORM 模型已设计完成，Maven 多模块结构由 `nop-cli gen` 生成。项目处于「业务逻辑深化与运营成熟度收尾」阶段。
+- 用户：实施方（基于基线定制各领域 ERP）、开发人员（完善模型与生成链路、BizModel/xbiz 与端到端验证）
 - 当前已完成：
-  - 18 份 `module-<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（447 实体）
-  - 18 域完整的代码生成工程骨架（model → codegen → dao → service → web → app）
-  - 18 域目录式设计文档（README + state-machine + 跨域协作等）
-  - 全局设计文档（app-overview/flow-overview/domain-glossary/roles-and-permissions/feature-inventory）
-  - 架构文档（system-baseline/module-boundaries/domain-module-split-analysis/customization-capabilities）
+  - 18 份 `module-<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（447 实体）+ notify 跨域通知派发子系统
+  - 18 域完整的代码生成工程骨架（model → codegen → dao → service → web → app → api），154 reactor 模块全绿
+  - CRUD 全 18 域（含冒烟测试）
+  - 核心业务逻辑：采购订单/销售订单 BizModel 审批-触发-过账三段（M1 全 done）
+  - 扩展 13 域业务逻辑（M2/M3 全 done）
+  - 业财一体端到端（M4 全 done：采购到付款/销售到收款/期末结账/成本核算/年度结转/坏账准备）
+  - 运营成熟度（M5 全 done：会计日志与可观测性/冲销反写闭环/运行监控/通知派发/审批抄送）
+  - 报表子系统（nop-report 接线 + 各域种子报表 + AMIS 菜单/页面）
+  - 看板子系统（各域后端聚合 API + AMIS 前端）
+  - 18 域目录式设计文档 + 全局设计文档 + 架构文档（多次审计验证）
   - 多租户策略明确（按平台标准，不在 orm.xml 预置 tenantId）
-- 下一步范围：
-  - 端到端业务循环验证（采购→入库→应付→凭证）
-  - 编写核心 BizModel 与 xbiz 业务逻辑
-  - 定制能力落地样例（Delta 定制 + 扩展字段各一个）
-  - 页面与视图开发（AMIS view.xml）
+- 下一步范围（当前重点）：
+  - 看板运行时视觉/浏览器回归
+  - 各域细化端到端验证
+  - 运行时权限注解落地（R2.7 + MA6，操作级拦截灰度启用）
 - 延迟范围：
   - SaaS 多租户启用（待业务确认）
   - 垂直行业扩展工程（待具体客户需求）
   - 外部集成（税控/银行/物流/电商）
-- 成功指标：
-  - 所有 154 模块可独立编译通过
-  - 首域端到端 CRUD 流程测试通过
-  - 第一个业务循环端到端测试通过
+- 成功指标（已达成）：
+  - 所有 154 模块可独立编译通过（`mvn clean install -DskipTests` 全绿）
+  - 全 18 域 CRUD 流程测试通过（含冒烟测试）
+  - 业财一体端到端业务循环测试通过（P2P / O2C / 期末结账 / 成本核算 / 年度结转 / 坏账准备）
+  - ~2890 单元测试 0 failures
 - 约束：
   - `model/*.orm.xml` 是 ask-first 保护区域
   - `nop-entropy` 父 POM 必须在 codegen 前构建
