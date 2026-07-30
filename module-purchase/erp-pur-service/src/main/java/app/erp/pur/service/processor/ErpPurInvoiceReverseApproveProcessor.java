@@ -2,25 +2,38 @@ package app.erp.pur.service.processor;
 
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.service.ErpPurConstants;
+import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractReverseApproveProcessor;
+import app.erp.pur.service.posting.PurInvoicePostingDispatcher;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
-/**
- * ErpPurInvoice reverseApprove per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractReverseApproveProcessor to activate the abstract base class; delegates to ErpPurInvoiceProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
- */
 public class ErpPurInvoiceReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpPurInvoice> {
 
     @Inject
     ErpPurInvoiceProcessor processor;
 
+    @Inject
+    PurInvoicePostingDispatcher postingDispatcher;
+
     @Override
     public ErpPurInvoice reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
+        ErpPurInvoice invoice = requireEntity(id);
+        if (invoice.isRejected()) {
+            return invoice;
+        }
+        processor.validateTransitionForReverseApprove(invoice, context);
+        if (Boolean.TRUE.equals(invoice.getPosted())) {
+            postingDispatcher.reverse(invoice);
+            invoice = dao().getEntityById(id);
+            invoice.setPosted(false);
+            invoice.setPostedAt(null);
+            invoice.setPostedBy(null);
+        }
+        processor.doReverseApprove(invoice, context);
+        return invoice;
     }
 
     @Override
@@ -30,12 +43,22 @@ public class ErpPurInvoiceReverseApproveProcessor extends AbstractReverseApprove
 
     @Override
     protected NopException notFoundException(String id) {
-        return defaultNotFoundException(id);
+        return new NopException(ErpPurErrors.ERR_INVOICE_NOT_FOUND)
+                .param(ErpPurErrors.ARG_INVOICE_ID, id);
+    }
+
+    @Override
+    protected NopException illegalStatusException(ErpPurInvoice entity, String current, String... expected) {
+        return new NopException(ErpPurErrors.ERR_INVOICE_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_INVOICE_CODE, entity.getCode())
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
     }
 
     @Override
     protected String getApproveStatus(ErpPurInvoice entity) {
-        return entity.getApproveStatus();
+        String status = entity.getApproveStatus();
+        return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
     }
 
     @Override

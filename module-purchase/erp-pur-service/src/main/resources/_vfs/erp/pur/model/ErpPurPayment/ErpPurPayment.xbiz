@@ -50,30 +50,9 @@
             <return>
                 <schema bizObjName="THIS_OBJ"/>
             </return>
-            <source><![CDATA[
-                const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
-                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reject");
-                }
-                const status = entity.approveStatus;
-
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reject")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
-
-                entity.approveStatus = 'REJECTED';
-                entity.approvedBy = svcCtx.getUserId();
-                entity.approvedAt = now();
-                return entity;
-            ]]></source>
+            <source><c:script><![CDATA[
+                return inject('app.erp.pur.service.processor.ErpPurPaymentRejectProcessor').reject(id, svcCtx);
+            ]]></c:script></source>
         </mutation>
         <mutation name="withdrawApproval">
             <arg name="id" type="String" mandatory="true"/>
@@ -81,28 +60,9 @@
             <return>
                 <schema bizObjName="THIS_OBJ"/>
             </return>
-            <source><![CDATA[
-                const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
-                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "withdrawApproval");
-                }
-                const status = entity.approveStatus;
-
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "withdrawApproval")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
-
-                entity.approveStatus = 'UNSUBMITTED';
-                return entity;
-            ]]></source>
+            <source><c:script><![CDATA[
+                return inject('app.erp.pur.service.processor.ErpPurPaymentWithdrawApprovalProcessor').withdrawApproval(id, svcCtx);
+            ]]></c:script></source>
         </mutation>
     </actions>
 </biz>

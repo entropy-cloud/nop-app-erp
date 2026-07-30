@@ -2,6 +2,7 @@ package app.erp.pur.service.processor;
 
 import app.erp.pur.dao.entity.ErpPurReturn;
 import app.erp.pur.service.ErpPurConstants;
+import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractSubmitForApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,8 +11,7 @@ import jakarta.inject.Inject;
 
 /**
  * ErpPurReturn submitForApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractSubmitForApprovalProcessor to activate the abstract base class; delegates to ErpPurReturnProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * Runs the AbstractSubmitForApprovalProcessor skeleton; delegates domain-specific hooks to ErpPurReturnProcessor.
  */
 public class ErpPurReturnSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpPurReturn> {
 
@@ -23,23 +23,39 @@ public class ErpPurReturnSubmitForApprovalProcessor extends AbstractSubmitForApp
     }
 
     @Override
-    public ErpPurReturn submitForApproval(String id, IServiceContext context) {
-        return processor.submitForApproval(id, context);
-    }
-
-    @Override
     protected IEntityDao<ErpPurReturn> dao() {
         return daoProvider.daoFor(ErpPurReturn.class);
     }
 
     @Override
     protected NopException notFoundException(String id) {
-        return defaultNotFoundException(id);
+        return new NopException(ErpPurErrors.ERR_RETURN_NOT_FOUND)
+                .param(ErpPurErrors.ARG_RETURN_ID, id);
+    }
+
+    @Override
+    protected NopException illegalStatusException(ErpPurReturn entity, String current, String... expected) {
+        return new NopException(ErpPurErrors.ERR_RETURN_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_RETURN_CODE, entity.getCode())
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
+    }
+
+    @Override
+    protected void validateNotCancelled(ErpPurReturn entity, IServiceContext context) {
+        processor.validateNotCancelled(entity, context);
+    }
+
+    @Override
+    protected void validateBusinessRules(ErpPurReturn entity, IServiceContext context) {
+        processor.requireLinesNonEmpty(entity, context);
+        processor.requireSupplierActive(entity, context);
     }
 
     @Override
     protected String getApproveStatus(ErpPurReturn entity) {
-        return entity.getApproveStatus();
+        String status = entity.getApproveStatus();
+        return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
     }
 
     @Override
