@@ -18,6 +18,7 @@ public interface ErpApsErrors {
     String ARG_DESIRED_DATE = "desiredDate";
     String ARG_EARLIEST_COMPLETION = "earliestCompletion";
     String ARG_CURRENT_STATUS = "currentStatus";
+    String ARG_EXPECTED_STATUS = "expectedStatus";
     String ARG_REASON = "reason";
     // O-11 扩展参数键
     String ARG_WORK_ORDER_ID = "workOrderId";
@@ -75,6 +76,12 @@ public interface ErpApsErrors {
             "erp.err.aps.op-order.not-found",
             "工序工单 {operationOrderId} 不存在",
             ARG_OP_ORDER_ID);
+
+    /** 工序工单状态迁移非法（违反 owner doc aps/state-machine.md §2 迁移图 + §3 终态不可恢复）。 */
+    ErrorCode ERR_APS_OP_ILLEGAL_TRANSITION = ErrorCode.define(
+            "erp.err.aps.op-illegal-transition",
+            "工序工单 {operationOrderCode} 非法状态迁移：当前={currentStatus}，期望={expectedStatus}",
+            ARG_OP_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 
     // ---------- O-11 扩展：排程/约束/资源/需求计划等细粒度错误码 ----------
 

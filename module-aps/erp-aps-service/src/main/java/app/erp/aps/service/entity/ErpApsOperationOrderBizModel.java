@@ -10,6 +10,7 @@ import app.erp.aps.biz.SchedulingResult;
 import app.erp.aps.biz.BatchOperationResult;
 import app.erp.aps.dao.entity.ErpApsOperationOrder;
 import app.erp.aps.service.ErpApsConstants;
+import app.erp.aps.service.ErpApsErrors;
 import app.erp.aps.service.processor.ErpApsSchedulingProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -108,10 +109,12 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     public ErpApsOperationOrder start(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
         ErpApsOperationOrder order = requireEntity(String.valueOf(operationOrderId), null, context);
         if (!Objects.equals(order.getStatus(), ErpApsConstants.OP_STATUS_PLANNED)) {
-            order.setStatus(ErpApsConstants.OP_STATUS_IN_PROGRESS);
-        } else {
-            order.setStatus(ErpApsConstants.OP_STATUS_IN_PROGRESS);
+            throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION)
+                    .param(ErpApsErrors.ARG_OP_CODE, order.getCode())
+                    .param(ErpApsErrors.ARG_CURRENT_STATUS, order.getStatus())
+                    .param(ErpApsErrors.ARG_EXPECTED_STATUS, ErpApsConstants.OP_STATUS_PLANNED);
         }
+        order.setStatus(ErpApsConstants.OP_STATUS_IN_PROGRESS);
         updateEntity(order, null, context);
         return order;
     }
@@ -120,6 +123,12 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     @BizMutation
     public ErpApsOperationOrder complete(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
         ErpApsOperationOrder order = requireEntity(String.valueOf(operationOrderId), null, context);
+        if (!Objects.equals(order.getStatus(), ErpApsConstants.OP_STATUS_IN_PROGRESS)) {
+            throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION)
+                    .param(ErpApsErrors.ARG_OP_CODE, order.getCode())
+                    .param(ErpApsErrors.ARG_CURRENT_STATUS, order.getStatus())
+                    .param(ErpApsErrors.ARG_EXPECTED_STATUS, ErpApsConstants.OP_STATUS_IN_PROGRESS);
+        }
         order.setStatus(ErpApsConstants.OP_STATUS_FINISHED);
         updateEntity(order, null, context);
         return order;
@@ -129,6 +138,18 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     @BizMutation
     public ErpApsOperationOrder cancel(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
         ErpApsOperationOrder order = requireEntity(String.valueOf(operationOrderId), null, context);
+        String status = order.getStatus();
+        if (!Objects.equals(status, ErpApsConstants.OP_STATUS_DRAFT)
+                && !Objects.equals(status, ErpApsConstants.OP_STATUS_PLANNED)
+                && !Objects.equals(status, ErpApsConstants.OP_STATUS_IN_PROGRESS)) {
+            throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION)
+                    .param(ErpApsErrors.ARG_OP_CODE, order.getCode())
+                    .param(ErpApsErrors.ARG_CURRENT_STATUS, status)
+                    .param(ErpApsErrors.ARG_EXPECTED_STATUS,
+                            ErpApsConstants.OP_STATUS_DRAFT + "/"
+                                    + ErpApsConstants.OP_STATUS_PLANNED + "/"
+                                    + ErpApsConstants.OP_STATUS_IN_PROGRESS);
+        }
         order.setStatus(ErpApsConstants.OP_STATUS_CANCELLED);
         updateEntity(order, null, context);
         return order;

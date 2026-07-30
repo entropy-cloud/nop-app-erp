@@ -70,7 +70,7 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
     ErpApsOperationOrder complete(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
 
     /**
-     * 作废工序工单：DRAFT/PLANNED→CANCELLED。
+     * 作废工序工单：DRAFT/PLANNED/IN_PROGRESS→CANCELLED。
      */
     @BizMutation
     ErpApsOperationOrder cancel(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
