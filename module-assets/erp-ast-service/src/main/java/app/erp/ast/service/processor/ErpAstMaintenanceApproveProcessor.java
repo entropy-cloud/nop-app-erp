@@ -7,11 +7,15 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.Objects;
 
 /**
- * ErpAstMaintenance approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractApproveProcessor to activate the abstract base class; delegates to ErpAstMaintenanceProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstMaintenance approve per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Maintenance 自有工单状态机（DRAFT→SUBMITTED→IN_PROGRESS→COMPLETED→POSTED），approve 仅盖审批人
+ * （前置校验 COMPLETED 态；POSTED 幂等返回）。
+ * Self-contained orchestration: require → idempotency → validateCompleted → set approvedBy/approvedAt → save.
+ * Domain logic via facade protected helpers (single source of truth).
+ * Dormant until R5.8 rewire（BizModel Java 直调 facade.approve，不经 xbiz 委托链）。
  */
 public class ErpAstMaintenanceApproveProcessor extends AbstractApproveProcessor<ErpAstMaintenance> {
 
@@ -20,7 +24,17 @@ public class ErpAstMaintenanceApproveProcessor extends AbstractApproveProcessor<
 
     @Override
     public ErpAstMaintenance approve(String id, IServiceContext context) {
-        return processor.approve(Long.valueOf(id), context);
+        ErpAstMaintenance m = processor.requireMaintenance(Long.valueOf(id), context);
+        if (Objects.equals(m.getStatus(), ErpAstConstants.MAINTENANCE_STATUS_POSTED)) {
+            return m;
+        }
+        if (!Objects.equals(m.getStatus(), ErpAstConstants.MAINTENANCE_STATUS_COMPLETED)) {
+            throw processor.illegalTransition(m, m.getStatus(), "COMPLETED");
+        }
+        m.setApprovedBy(currentUserId());
+        m.setApprovedAt(now());
+        processor.maintenanceDao().updateEntity(m);
+        return m;
     }
 
     @Override
@@ -40,17 +54,17 @@ public class ErpAstMaintenanceApproveProcessor extends AbstractApproveProcessor<
 
     @Override
     protected void setApproveStatus(ErpAstMaintenance entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        // not reached: Pattern B custom public override
     }
 
     @Override
     protected void setApprovedBy(ErpAstMaintenance entity, String userId) {
-        // not reached: main method delegates to monolithic Processor
+        // not reached: Pattern B custom public override
     }
 
     @Override
     protected void setApprovedAt(ErpAstMaintenance entity, java.sql.Timestamp ts) {
-        // not reached: main method delegates to monolithic Processor
+        // not reached: Pattern B custom public override
     }
 
     @Override

@@ -2,6 +2,7 @@ package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.entity.ErpAstMerge;
 import app.erp.ast.service.ErpAstConstants;
+import app.erp.ast.service.ErpAstErrors;
 import app.erp.common.service.AbstractReverseApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -9,9 +10,8 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstMerge reverseApprove per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractReverseApproveProcessor to activate the abstract base class; delegates to ErpAstMergeProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstMerge reverseApprove per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * 合并执行后不可撤销（owner doc split-merge.md §关键业务规则 5 不可逆契约）。require 后直接抛错。
  */
 public class ErpAstMergeReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpAstMerge> {
 
@@ -20,7 +20,9 @@ public class ErpAstMergeReverseApproveProcessor extends AbstractReverseApprovePr
 
     @Override
     public ErpAstMerge reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
+        ErpAstMerge merge = processor.requireMerge(id, context);
+        throw new NopException(ErpAstErrors.ERR_AST_MERGE_REVERSE_NOT_SUPPORTED)
+                .param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode());
     }
 
     @Override
@@ -35,22 +37,22 @@ public class ErpAstMergeReverseApproveProcessor extends AbstractReverseApprovePr
 
     @Override
     protected String getApproveStatus(ErpAstMerge entity) {
-        return null;
+        return entity.getApproveStatus();
     }
 
     @Override
     protected void setApproveStatus(ErpAstMerge entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApproveStatus(status);
     }
 
     @Override
     protected void setApprovedBy(ErpAstMerge entity, String userId) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApprovedBy(userId);
     }
 
     @Override
     protected void setApprovedAt(ErpAstMerge entity, java.sql.Timestamp ts) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApprovedAt(ts);
     }
 
     @Override
@@ -60,11 +62,11 @@ public class ErpAstMergeReverseApproveProcessor extends AbstractReverseApprovePr
 
     @Override
     protected String approvedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_APPROVED;
     }
 
     @Override
     protected String submittedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_SUBMITTED;
     }
 }

@@ -89,7 +89,11 @@ public class ErpAstSplitProcessor {
         validateSourceAsset(split, source, context);
         List<ErpAstSplitLine> lines = loadLines(split);
         validateLines(split, source, context);
+        return executeApprove(id, split, source, lines, context);
+    }
 
+    protected ErpAstSplit executeApprove(String id, ErpAstSplit split, ErpAstAsset source,
+                                           List<ErpAstSplitLine> lines, IServiceContext context) {
         // step 1: 幂等防护
         validateBeforeExecute(split, context);
 

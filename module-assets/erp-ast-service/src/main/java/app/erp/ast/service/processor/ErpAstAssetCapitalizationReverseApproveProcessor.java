@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstAssetCapitalization reverseApprove per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractReverseApproveProcessor to activate the abstract base class; delegates to ErpAstAssetCapitalizationProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstAssetCapitalization reverseApprove per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → idempotency → validateTransition → executeReverseApprove.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstAssetCapitalizationReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpAstAssetCapitalization> {
 
@@ -20,7 +20,12 @@ public class ErpAstAssetCapitalizationReverseApproveProcessor extends AbstractRe
 
     @Override
     public ErpAstAssetCapitalization reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
+        ErpAstAssetCapitalization cap = processor.requireCap(id, context);
+        if (cap.isRejected()) {
+            return cap;
+        }
+        processor.validateTransitionForReverseApprove(cap, context);
+        return processor.executeReverseApprove(id, cap, context);
     }
 
     @Override

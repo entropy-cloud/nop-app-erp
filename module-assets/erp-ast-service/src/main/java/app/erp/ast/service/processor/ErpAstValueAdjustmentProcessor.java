@@ -59,7 +59,11 @@ public class ErpAstValueAdjustmentProcessor {
         validateNotCancelled(adjustment, context);
         validateTransitionForApprove(adjustment, context);
         validateForApproval(adjustment, context);
+        return executeApprove(id, adjustment, context);
+    }
 
+    protected ErpAstValueAdjustment executeApprove(String id, ErpAstValueAdjustment adjustment,
+                                                     IServiceContext context) {
         ErpAstAsset asset = adjustment.getAsset();
         validateAssetAdjustable(asset, context);
 
@@ -103,6 +107,11 @@ public class ErpAstValueAdjustmentProcessor {
             return adjustment;
         }
         validateTransitionForReverseApprove(adjustment, context);
+        return executeReverseApprove(id, adjustment, context);
+    }
+
+    protected ErpAstValueAdjustment executeReverseApprove(String id, ErpAstValueAdjustment adjustment,
+                                                            IServiceContext context) {
         if (Boolean.TRUE.equals(adjustment.getPosted())) {
             postingDispatcher.reverse(adjustment);
             rollbackAssetValue(adjustment);

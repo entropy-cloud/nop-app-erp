@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstAssetCapitalization reject per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractRejectProcessor to activate the abstract base class; delegates to ErpAstAssetCapitalizationProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstAssetCapitalization reject per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransition → set REJECTED → save.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstAssetCapitalizationRejectProcessor extends AbstractRejectProcessor<ErpAstAssetCapitalization> {
 
@@ -20,7 +20,12 @@ public class ErpAstAssetCapitalizationRejectProcessor extends AbstractRejectProc
 
     @Override
     public ErpAstAssetCapitalization reject(String id, IServiceContext context) {
-        return processor.reject(id, context);
+        ErpAstAssetCapitalization cap = processor.requireCap(id, context);
+        processor.validateNotCancelled(cap, context);
+        processor.validateTransitionForReject(cap, context);
+        cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
+        processor.capDao().updateEntity(cap);
+        return cap;
     }
 
     @Override

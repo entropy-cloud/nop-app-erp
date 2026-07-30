@@ -9,9 +9,10 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstDisposal submitForApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractSubmitForApprovalProcessor to activate the abstract base class; delegates to ErpAstDisposalProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstDisposal submitForApproval per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransition → validateForApproval → set SUBMITTED → save.
+ * wf 启动语义保留在 xbiz inline wrapper（Disposal 是范围内唯一有 wf:wfName 的实体），本 Processor 仅处理状态迁移。
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstDisposalSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpAstDisposal> {
 
@@ -24,7 +25,13 @@ public class ErpAstDisposalSubmitForApprovalProcessor extends AbstractSubmitForA
 
     @Override
     public ErpAstDisposal submitForApproval(String id, IServiceContext context) {
-        return processor.submitForApproval(id, context);
+        ErpAstDisposal disposal = processor.requireDisposal(id, context);
+        processor.validateNotCancelled(disposal, context);
+        processor.validateTransitionForSubmit(disposal, context);
+        processor.validateForApproval(disposal, context);
+        disposal.setApproveStatus(ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        processor.disposalDao().updateEntity(disposal);
+        return disposal;
     }
 
     @Override

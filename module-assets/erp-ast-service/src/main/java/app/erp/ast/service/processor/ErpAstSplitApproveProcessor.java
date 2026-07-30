@@ -1,17 +1,20 @@
 package app.erp.ast.service.processor;
 
+import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstSplit;
+import app.erp.ast.dao.entity.ErpAstSplitLine;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.common.service.AbstractApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.util.List;
 
 /**
- * ErpAstSplit approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractApproveProcessor to activate the abstract base class; delegates to ErpAstSplitProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstSplit approve per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → idempotency → validateNotCancelled → validateTransition → validateSourceAsset → validateLines → executeApprove.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstSplitApproveProcessor extends AbstractApproveProcessor<ErpAstSplit> {
 
@@ -20,7 +23,17 @@ public class ErpAstSplitApproveProcessor extends AbstractApproveProcessor<ErpAst
 
     @Override
     public ErpAstSplit approve(String id, IServiceContext context) {
-        return processor.approve(id, context);
+        ErpAstSplit split = processor.requireSplit(id, context);
+        if (split.isApproved()) {
+            return split;
+        }
+        processor.validateNotCancelled(split, context);
+        processor.validateTransitionForApprove(split, context);
+        ErpAstAsset source = processor.loadSourceAsset(split);
+        processor.validateSourceAsset(split, source, context);
+        List<ErpAstSplitLine> lines = processor.loadLines(split);
+        processor.validateLines(split, source, context);
+        return processor.executeApprove(id, split, source, lines, context);
     }
 
     @Override
@@ -35,41 +48,41 @@ public class ErpAstSplitApproveProcessor extends AbstractApproveProcessor<ErpAst
 
     @Override
     protected String getApproveStatus(ErpAstSplit entity) {
-        return null;
+        return entity.getApproveStatus();
     }
 
     @Override
     protected void setApproveStatus(ErpAstSplit entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApproveStatus(status);
     }
 
     @Override
     protected void setApprovedBy(ErpAstSplit entity, String userId) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApprovedBy(userId);
     }
 
     @Override
     protected void setApprovedAt(ErpAstSplit entity, java.sql.Timestamp ts) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApprovedAt(ts);
     }
 
     @Override
     protected boolean isApproved(ErpAstSplit entity) {
-        return false;
+        return entity.isApproved();
     }
 
     @Override
     protected boolean isCancelled(ErpAstSplit entity) {
-        return false;
+        return entity.isCancelled();
     }
 
     @Override
     protected String submittedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_SUBMITTED;
     }
 
     @Override
     protected String approvedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_APPROVED;
     }
 }

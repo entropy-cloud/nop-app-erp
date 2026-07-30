@@ -74,11 +74,14 @@ public class ErpAstMergeProcessor {
         }
         validateNotCancelled(merge, context);
         validateTransitionForApprove(merge, context);
-
         List<ErpAstMergeLine> lines = loadLines(merge);
         List<ErpAstAsset> sources = loadSources(lines);
         validateSources(merge, lines, sources, context);
+        return executeApprove(id, merge, lines, sources, context);
+    }
 
+    protected ErpAstMerge executeApprove(String id, ErpAstMerge merge, List<ErpAstMergeLine> lines,
+                                           List<ErpAstAsset> sources, IServiceContext context) {
         // step 1: 幂等防护
         validateBeforeExecute(merge, context);
 

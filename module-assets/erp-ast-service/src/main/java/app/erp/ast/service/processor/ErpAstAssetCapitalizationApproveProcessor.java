@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstAssetCapitalization approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractApproveProcessor to activate the abstract base class; delegates to ErpAstAssetCapitalizationProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstAssetCapitalization approve per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → idempotency → validateNotCancelled → validateTransition → validateForApproval → executeApprove.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstAssetCapitalizationApproveProcessor extends AbstractApproveProcessor<ErpAstAssetCapitalization> {
 
@@ -20,7 +20,14 @@ public class ErpAstAssetCapitalizationApproveProcessor extends AbstractApprovePr
 
     @Override
     public ErpAstAssetCapitalization approve(String id, IServiceContext context) {
-        return processor.approve(id, context);
+        ErpAstAssetCapitalization cap = processor.requireCap(id, context);
+        if (cap.isApproved()) {
+            return cap;
+        }
+        processor.validateNotCancelled(cap, context);
+        processor.validateTransitionForApprove(cap, context);
+        processor.validateForApproval(cap, context);
+        return processor.executeApprove(id, cap, context);
     }
 
     @Override

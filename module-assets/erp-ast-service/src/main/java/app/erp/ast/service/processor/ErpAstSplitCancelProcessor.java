@@ -9,9 +9,10 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstSplit cancel per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractCancelProcessor to activate the abstract base class; delegates to ErpAstSplitProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstSplit cancel per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateTransitionForCancel → set CANCELLED → save.
+ * Domain logic via facade protected helpers (single source of truth).
+ * Dormant until R5.8 rewire（BizModel Java 直调 facade.cancel，不经 xbiz 委托链）。
  */
 public class ErpAstSplitCancelProcessor extends AbstractCancelProcessor<ErpAstSplit> {
 
@@ -20,7 +21,11 @@ public class ErpAstSplitCancelProcessor extends AbstractCancelProcessor<ErpAstSp
 
     @Override
     public ErpAstSplit cancel(String id, IServiceContext context) {
-        return processor.cancel(Long.valueOf(id), context);
+        ErpAstSplit split = processor.requireSplit(id, context);
+        processor.validateTransitionForCancel(split, context);
+        split.setDocStatus(ErpAstConstants.DOC_STATUS_CANCELLED);
+        processor.splitDao().updateEntity(split);
+        return split;
     }
 
     @Override
@@ -35,16 +40,16 @@ public class ErpAstSplitCancelProcessor extends AbstractCancelProcessor<ErpAstSp
 
     @Override
     protected String getDocStatus(ErpAstSplit entity) {
-        return null;
+        return entity.getDocStatus();
     }
 
     @Override
     protected void setDocStatus(ErpAstSplit entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setDocStatus(status);
     }
 
     @Override
     protected String cancelledDocStatus() {
-        return null;
+        return ErpAstConstants.DOC_STATUS_CANCELLED;
     }
 }

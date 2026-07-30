@@ -59,7 +59,10 @@ public class ErpAstDisposalProcessor {
         validateNotCancelled(disposal, context);
         validateTransitionForApprove(disposal, context);
         validateForApproval(disposal, context);
+        return executeApprove(id, disposal, context);
+    }
 
+    protected ErpAstDisposal executeApprove(String id, ErpAstDisposal disposal, IServiceContext context) {
         ErpAstAsset asset = disposal.getAsset();
         validateAssetDisposable(asset, context);
 
@@ -115,6 +118,10 @@ public class ErpAstDisposalProcessor {
             return disposal;
         }
         validateTransitionForReverseApprove(disposal, context);
+        return executeReverseApprove(id, disposal, context);
+    }
+
+    protected ErpAstDisposal executeReverseApprove(String id, ErpAstDisposal disposal, IServiceContext context) {
         if (Boolean.TRUE.equals(disposal.getPosted())) {
             postingDispatcher.reverse(disposal);
             ErpAstAsset asset = disposal.getAsset();

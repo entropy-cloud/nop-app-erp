@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstDisposal reverseApprove per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractReverseApproveProcessor to activate the abstract base class; delegates to ErpAstDisposalProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstDisposal reverseApprove per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → idempotency → validateTransition → executeReverseApprove.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstDisposalReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpAstDisposal> {
 
@@ -20,7 +20,12 @@ public class ErpAstDisposalReverseApproveProcessor extends AbstractReverseApprov
 
     @Override
     public ErpAstDisposal reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
+        ErpAstDisposal disposal = processor.requireDisposal(id, context);
+        if (disposal.isRejected()) {
+            return disposal;
+        }
+        processor.validateTransitionForReverseApprove(disposal, context);
+        return processor.executeReverseApprove(id, disposal, context);
     }
 
     @Override

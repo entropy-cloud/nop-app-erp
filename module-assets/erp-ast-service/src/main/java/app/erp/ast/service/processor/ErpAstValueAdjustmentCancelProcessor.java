@@ -9,9 +9,10 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstValueAdjustment cancel per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractCancelProcessor to activate the abstract base class; delegates to ErpAstValueAdjustmentProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstValueAdjustment cancel per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateTransitionForCancel → set CANCELLED → save.
+ * Domain logic via facade protected helpers (single source of truth).
+ * Dormant until R5.8 rewire（BizModel Java 直调 facade.cancel，不经 xbiz 委托链）。
  */
 public class ErpAstValueAdjustmentCancelProcessor extends AbstractCancelProcessor<ErpAstValueAdjustment> {
 
@@ -20,7 +21,11 @@ public class ErpAstValueAdjustmentCancelProcessor extends AbstractCancelProcesso
 
     @Override
     public ErpAstValueAdjustment cancel(String id, IServiceContext context) {
-        return processor.cancel(Long.valueOf(id), context);
+        ErpAstValueAdjustment adjustment = processor.requireAdjustment(id, context);
+        processor.validateTransitionForCancel(adjustment, context);
+        adjustment.setDocStatus(ErpAstConstants.DOC_STATUS_CANCELLED);
+        processor.adjustmentDao().updateEntity(adjustment);
+        return adjustment;
     }
 
     @Override

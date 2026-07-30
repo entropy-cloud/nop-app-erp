@@ -66,7 +66,10 @@ public class ErpAstAssetCapitalizationProcessor {
         validateNotCancelled(cap, context);
         validateTransitionForApprove(cap, context);
         validateForApproval(cap, context);
+        return executeApprove(id, cap, context);
+    }
 
+    protected ErpAstAssetCapitalization executeApprove(String id, ErpAstAssetCapitalization cap, IServiceContext context) {
         ErpAstAsset asset = createAndActivateAsset(cap, context);
         generateDepreciationSchedule(cap, asset, context);
         orm().flushSession();
@@ -100,6 +103,11 @@ public class ErpAstAssetCapitalizationProcessor {
             return cap;
         }
         validateTransitionForReverseApprove(cap, context);
+        return executeReverseApprove(id, cap, context);
+    }
+
+    protected ErpAstAssetCapitalization executeReverseApprove(String id, ErpAstAssetCapitalization cap,
+                                                                IServiceContext context) {
         if (Boolean.TRUE.equals(cap.getPosted())) {
             postingDispatcher.reverse(cap);
             ErpAstAsset asset = findAssetByCode(resolveAssetCode(cap));
