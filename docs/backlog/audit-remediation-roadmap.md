@@ -159,7 +159,7 @@
 | R1.21 | **[xbiz 契约]** prj closeProject 缺任务结束校验 + startProject 缺前置 + Milestone/Billing/CostCollection dict 死状态 — P1-MA2-067/069/070；修复=加任务结束前置+字段校验+dict 独立化 or owner doc Deferred | done | `docs/design/projects/state-machine.md` | R1.0 | none |
 | R1.22 | contract 自动到期 Job 缺失 + NEGOTIATION→TERMINATED 迁移缺失 — P1-MA2-071/072；修复=实现 ErpCtContractExpiryJob+扩展 terminate 守卫 or owner doc 标注 | done | `docs/design/contract/state-machine.md` | R1.0 | none |
 | R1.23 | b2b EDI 出站自动化全部缺失（config-gated OFF 默认）— P1-MA2-073；修复=owner doc Deferred 标注（MFT transport successor）or 实现 ErpB2bEdiOutboundJob | done | `docs/design/b2b/state-machine.md` | R1.0 | none |
-| R1.24 | crm stageId 单向递增守卫未实现 + Event reminderMinutesBefore 死字段 — P1-MA2-075/076；修复=增 sequence 方向守卫+用 per-event reminderMinutesBefore or owner doc 更新 | todo | `docs/design/crm/state-machine.md` | R1.0 | none |
+| R1.24 | crm stageId 单向递增守卫未实现 + Event reminderMinutesBefore 死字段 — P1-MA2-075/076；修复=增 sequence 方向守卫+用 per-event reminderMinutesBefore or owner doc 更新 | done | `docs/design/crm/state-machine.md` | R1.0 | none |
 | R1.25 | aps/logistics OperationOrder 缺状态守卫 + cancel 缺审批门控 + 部分签收未实现 — P1-MA2-077/078/079；修复=加 status 守卫+审批门控+owner doc Deferred | todo | `docs/design/{aps,logistics}/state-machine.md` | R1.0 | none |
 | R1.26 | **[会计+薪酬保护区域]** hr 个税高档税率 NPE + 累计数据静默吞 + 业财过账链路不完整（计提+公司承担 PostingEvent 永不生成）— P1-MA4-016/017/018；修复=null 防御+移除静默吞+接线 tryPostAccrual+ER event | todo | `docs/design/human-resource/payroll.md` | R1.0 | none |
 | R1.27 | **[会计保护区域]** 预算 commitment 释放路径完整性 — P1-MA2-081（部分开票释放语义）+ P1-MA2-082（退货未释放承付）+ P1-MA2-083（冲销后 commitment 未恢复）+ P1-MA2-084（aggregateAmount 语义混淆）；修复=owner doc 补语义+config-gated hooks+三通道分离 | todo | `docs/design/finance/budget.md` | R1.0 | none |
