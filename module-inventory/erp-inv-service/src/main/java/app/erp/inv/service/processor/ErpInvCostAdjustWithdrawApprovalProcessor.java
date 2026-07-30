@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpInvCostAdjust withdrawApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractWithdrawApprovalProcessor to activate the abstract base class; delegates to ErpInvCostAdjustProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpInvCostAdjust withdrawApproval per-mutation Processor (plan 2026-07-25-1057-2, R5.6 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransitionForWithdraw
+ * → set UNSUBMITTED → save. Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpInvCostAdjustWithdrawApprovalProcessor extends AbstractWithdrawApprovalProcessor<ErpInvCostAdjust> {
 
@@ -20,7 +20,12 @@ public class ErpInvCostAdjustWithdrawApprovalProcessor extends AbstractWithdrawA
 
     @Override
     public ErpInvCostAdjust withdrawApproval(String id, IServiceContext context) {
-        return processor.withdrawApproval(id, context);
+        ErpInvCostAdjust adjust = processor.requireAdjustment(id, context);
+        processor.validateNotCancelled(adjust, context);
+        processor.validateTransitionForWithdraw(adjust);
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_UNSUBMITTED);
+        processor.adjustDao().updateEntity(adjust);
+        return adjust;
     }
 
     @Override

@@ -9,9 +9,10 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpInvCostAdjust reject per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractRejectProcessor to activate the abstract base class; delegates to ErpInvCostAdjustProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpInvCostAdjust reject per-mutation Processor (plan 2026-07-25-1057-2, R5.6 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransitionForReject
+ * → set REJECTED (no approvedBy/approvedAt — preserves facade semantics, deviates from base skeleton) → save.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpInvCostAdjustRejectProcessor extends AbstractRejectProcessor<ErpInvCostAdjust> {
 
@@ -20,7 +21,12 @@ public class ErpInvCostAdjustRejectProcessor extends AbstractRejectProcessor<Erp
 
     @Override
     public ErpInvCostAdjust reject(String id, IServiceContext context) {
-        return processor.reject(id, context);
+        ErpInvCostAdjust adjust = processor.requireAdjustment(id, context);
+        processor.validateNotCancelled(adjust, context);
+        processor.validateTransitionForReject(adjust);
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_REJECTED);
+        processor.adjustDao().updateEntity(adjust);
+        return adjust;
     }
 
     @Override

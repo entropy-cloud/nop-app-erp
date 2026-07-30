@@ -9,9 +9,11 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpInvCostAdjust reverseApprove per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractReverseApproveProcessor to activate the abstract base class; delegates to ErpInvCostAdjustProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpInvCostAdjust reverseApprove per-mutation Processor (plan 2026-07-25-1057-2, R5.6 Pattern B).
+ * Self-contained orchestration: require → idempotency → validateTransitionForReverseApprove
+ * → posted guard (posted=true rejects with "先冲销再反审") → set REJECTED (not SUBMITTED, not clearing audit fields
+ * — preserves facade semantics, deviates from base skeleton) → save.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpInvCostAdjustReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpInvCostAdjust> {
 
@@ -20,7 +22,17 @@ public class ErpInvCostAdjustReverseApproveProcessor extends AbstractReverseAppr
 
     @Override
     public ErpInvCostAdjust reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
+        ErpInvCostAdjust adjust = processor.requireAdjustment(id, context);
+        if (adjust.isRejected()) {
+            return adjust;
+        }
+        processor.validateTransitionForReverseApprove(adjust);
+        if (Boolean.TRUE.equals(adjust.getPosted())) {
+            throw processor.illegalTransition(adjust, processor.currentApproveStatus(adjust), "未过账（先冲销再反审）");
+        }
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_REJECTED);
+        processor.adjustDao().updateEntity(adjust);
+        return adjust;
     }
 
     @Override
