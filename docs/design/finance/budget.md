@@ -247,13 +247,29 @@ A2 默认 **commitment 不结转**（与 actualAmount 合并记录在源 Scenari
 
 > budget.md §业务规则3 既有定义："采购订单 APPROVED 时生成 `postingType=COMMITMENT` 凭证；订单 CANCELLED 或被发票接收时红冲 COMMITMENT"。A2 落地此能力的实际过账逻辑。
 
-### 3 接入点（严格对齐 budget.md:78 业务规则）
+### 4 接入点（严格对齐 budget.md:78 业务规则 + P1-MA2-081/082/083 释放完整性声明）
 
 | # | hook 点 | 时机 | 动作 | 事务边界 |
 |---|---------|------|------|---------|
 | 1 | **commit** | `ErpPurOrder.approve` 后置 | 生成 COMMITMENT 凭证（Dr 预算占用科目 / Cr 应付-承付） | **SYNC 同事务**（与既有 `IErpFinBudgetControlBiz.check()` 强一致） |
 | 2 | **release-on-cancel** | `ErpPurOrder.reverseApprove` / `cancel`（订单取消路径） | 红冲原 COMMITMENT 凭证（金额取负） | 经 `IErpFinBudgetCommitmentBiz.release`（SYNC 同事务，与既有 reverseApprove 同事务） |
 | 3 | **release-on-invoice-approve** | `ErpPurInvoice.approve`（**AP 发票过账 = 实际占用产生 = 释放承付**） | 红冲原 COMMITMENT 凭证 | SYNC 同事务 |
+| 4 | **release-on-return** | `ErpPurReturn.approve` 后置（P1-MA2-082，config-gated `erp-fin.commitment-release-on-return` 默认 OFF） | 经 `IErpFinBudgetCommitmentBiz.releaseIfPresent(PURCHASE_ORDER, poCode)` 红冲原 PO 承付凭证 | SYNC 同事务 |
+
+#### 全额释放语义（P1-MA2-081/082）
+
+接入点 #3 与 #4 均为**全额释放语义**：`reverseCommitment` 按 `billCode`（订单 code）反查原承付凭证并**全额红冲**（无 `amount` 入参，不按开票/退货金额比例部分释放）。
+
+- **#3 多发票容错**：一张 PO 多次部分开票时，首张发票 `approve` 全额红冲承付（实际占用产生时即释放，避免 `actual + commitment` 双重占用预算）；后续发票 `approve` 经容错守卫 `hasUnreversedCommitment=false` 跳过（`ErpPurInvoiceProcessor.runCommitmentReleaseOnInvoiceApproveHook` catch `ERR_BUDGET_COMMITMENT_ALREADY_RELEASED` 静默跳过）。按开票金额比例的部分释放归 successor（触发条件：多组织预算硬约束启用 + 部分开票为常态业务路径）。
+- **#4 退货全额释放**：退货减少实际采购量 → 同步释放承付。`releaseIfPresent` 走全额红冲，故**部分退货亦全额红冲整张 PO 承付**——剩余未开票数量失去承付保护，可能允许超预算放行新订单（与 #3 同风险类）。按比例部分释放归 successor（与 #3 同 successor）。
+
+#### 冲销恢复语义（P1-MA2-083）
+
+**发票 `reverseApprove` / `cancel` 不恢复承付**（保守方向：保持已释放状态）。`ErpPurInvoiceProcessor.reverseApprove/cancel` 仅红冲 AP ACTUAL 凭证，不调 `commit()` 恢复承付；`ErpSalInvoiceProcessor` 同型。
+
+- **残留风险**：冲销后 `actual↓` + `commitment=0`（已释放）→ 余量偏高，可能允许超预算放行新订单。
+- **successor 触发条件**：多组织预算硬约束启用 + 冲销频率上升致超预算放行成为实际痛点时，实现 `commit()` 自动恢复（须跨实体反查原始 PO/SO + 处理部分冲销 + 跨期语义）。
+- sales 侧承付冲销恢复对称问题随本声明一并记录；sales 侧 hook 接线与 purchase 同型，归 successor（触发条件：sales 承付控制启用）。
 
 ### reject release-receive-complete（ErpPurReceive 入库路径）
 
@@ -290,6 +306,7 @@ Long release(String sourceBillType, String sourceBillCode, IServiceContext conte
 | `erp-fin.budget-commitment-enabled` | false | 总开关（默认关，保护既有 113 purchase 测试不触发承付凭证） |
 | `erp-fin.budget-commitment-subject-code` | （必配） | 采购承付占用科目编码（启用采购承付时必填） |
 | `erp-fin.budget-commitment-sales-subject-code` | （启用 sales 承付时必配） | 销售承付占用科目编码（plan 2026-07-24-1351-3，与采购科目独立；sales 承付用收入面科目） |
+| `erp-fin.commitment-release-on-return` | false | release-on-return 总开关（P1-MA2-082，接入点 #4；默认关。启用时退货审核全额红冲原 PO 承付，须同时开启 `budget-commitment-enabled`） |
 
 ---
 
