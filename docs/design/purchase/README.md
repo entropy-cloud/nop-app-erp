@@ -10,6 +10,7 @@
 - 本域不负责：物料/供应商主数据（master-data 域）；入库写库存（inventory 域，本域调用）；应付凭证生成（finance 域，本域单据触发）。
 - 持久化字段、字典、状态码以 `model/app-erp-purchase.orm.xml` 为准。
 - 跨域协作规则见 `../domain-design-guidelines.md`，全局流程见 `../flow-overview.md`。
+- API 命名约定（审批动作集/状态迁移动词/参数命名）见 `../domain-design-guidelines.md §16A`。
 
 ## 工程与模型
 

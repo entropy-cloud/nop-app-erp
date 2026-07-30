@@ -9,6 +9,7 @@
 - 本域负责：BOM（头/行/工艺/联副产品）、工单（WorkOrder）、工序作业卡（JobCard）、工艺路线（Routing）、工作中心（Workcenter）、生产计划、停机记录、外协。
 - 本域不负责：物料/SKU/仓库主数据（master-data）；库存写入（inventory 域，本域调用）；生产成本凭证生成（finance 域，本域触发）；设备实物维护（maintenance 域）；完工质检（quality 域）。
 - 持久化字段、字典、状态码以 `model/app-erp-manufacturing.orm.xml` 为准。
+- API 命名约定（审批动作集/状态迁移动词/参数命名）见 `../domain-design-guidelines.md §16A`。
 
 ## 工程与模型
 

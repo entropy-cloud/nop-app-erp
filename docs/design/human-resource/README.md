@@ -12,6 +12,7 @@
 - 本模块不负责：员工费用报销（finance/expense-claim 域）；培训/绩效/人才发展（远期扩展）；薪酬外部发放（银行接口属集成层）。
 - 持久化字段、字典、状态码以 `module-hr/model/app-erp-hr.orm.xml` 为准。
 - 跨域协作规则见 `../domain-design-guidelines.md`，全局流程见 `../flow-overview.md`。
+- API 命名约定（审批动作集/状态迁移动词/参数命名；hr `markPaid` 唯一性见 §16A.4）见 `../domain-design-guidelines.md §16A`。
 
 ## 工程与模型
 

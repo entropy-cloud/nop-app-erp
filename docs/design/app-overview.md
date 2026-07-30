@@ -89,6 +89,20 @@
 - 报表能力（nop-report，用于财务报表与库存报表）
 - 文件存储能力（nop-file，用于附件/单据影像）
 
+### RPC 通道语义
+
+nop-app-erp 对外提供**两条契约面**，集成方须区分：
+
+| 通道 | 契约载体 | 覆盖能力 | 不覆盖 |
+|------|---------|---------|--------|
+| **RPC（`*-api/` 模块的 `*Api.java`）** | codegen 生成的 `ICrudApi<InputBean, OutputBean>`（`//__XGEN_FORCE_OVERRIDE__`，零手编） | data-CRUD（findCount/findPage/findList/get/save/update/delete/batchModify 等约 25 方法） | 业务动作（approve/cancel/post/reverse/submitForApproval/跨聚合写 Facade 等） |
+| **GraphQL/xbiz** | BizModel `@BizMutation`/`@BizQuery` + 手写 `*.xbiz` delta | 全部业务行为 + CRUD（经 `ICrudBiz` 基类） | — |
+
+**裁决（A3.6 / P1-MA3-049）**：RPC = data-CRUD 通道，业务动作经 GraphQL/xbiz。**外部 RPC 集成方无法通过 RPC 触发 approve/cancel/post 等业务行为**——需改用 GraphQL。引入手写 `model/*.api.xml` 声明业务动作 RPC 契约属架构决策（successor，触发条件 = 外部 RPC 集成方需触发业务动作时）。
+
+- 19 域均生成 `*-api/` 模块的 CRUD `*Api.java`（R2.7 已补齐 9 个原缺失域：aps/b2b/contract/crm/cs/drp/hr/logistics/notify）。
+- API 命名约定（动词/参数/审批动作集）见 `domain-design-guidelines.md §16A`。
+
 ## 边界
 
 - 本文件负责应用层的界面范围、角色、流程和领域区域说明。

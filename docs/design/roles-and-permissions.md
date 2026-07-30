@@ -160,6 +160,31 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 
 > **行业参照**：Axelor 等 ERP 的 portal/模块权限也是"权限定义随模块安装生效、默认非全开"（见 `docs/analysis/erp-survey/2026-06-30-0000-axelor-open-suite.md`），"已定义≠默认开启"是行业常态。
 
+### action-level 权限声明层（R2.7 / P1-MA3-046，config-gated）
+
+> 来源：plan `2026-07-31-0310-2-r2-7-api-contract-consistency.md` Phase 4。A3.6 审计 P1-MA3-046 发现全域敏感动作零运行时权限保护 + FNPT 粒度粗（每实体仅 `{Entity}:query`/`{Entity}:mutation`，敏感动作坍缩进 `mutation` 桶）。本节建立 **per-action FNPT 声明层**，保持 enforcement OFF。
+
+**已落地（声明层，enforcement 仍 OFF）**：在高危域的 delta `erp-*.action-auth.xml`（`x:extends` 生成基，非生成文件）为最高危敏感动作声明**独立 per-action FNPT 权限点**（不坍缩进泛化 `mutation`），并用 `<resource ... roles="...">` 属性承载**静态 role-resource 种子**（Nop 原生静态映射，运行时并入 `permissionToRoles`，等价 `nop_auth_role_resource` 静态种子）：
+
+| 域 | 实体 | 独立 FNPT 点 | roles 种子（角色） |
+|----|------|-------------|------------------|
+| finance | ErpFinVoucher | `:post` / `:reverse` | 财务员 |
+| finance | ErpFinAccountingPeriod | `:closePeriod` / `:reverseClose`（反结账 kill-switch） | closePeriod=财务员 / reverseClose=管理员 |
+| finance | ErpFinBadDebt | `:writeOff` / `:reverseApprove` | writeOff=财务员 / reverseApprove=管理员 |
+| b2b | ErpB2bEdiDoc | `:markSent` / `:cancel` | markSent=B2B 对账员 / cancel=B2B 管理员 |
+| b2b | ErpB2bAsn | `:handleInboundWebhook`（入站 webhook 高危） | B2B 管理员 |
+| manufacturing | ErpMfgWorkOrder | `:start` / `:close` / `:cancel` | 生产主管 |
+| inventory | ErpInvStockMove | `:confirm` | 库管员 |
+| inventory | ErpInvLandedCost | `:approve` | 库管员 |
+| human-resource | ErpHrLeaveRequest | `:approve` | HR 专员 |
+| human-resource | ErpHrSalary | `:approve`（薪酬机密）/ `:markPaid` | 薪酬审批人 |
+
+**当前运行时行为不变**：`nop.auth.enable-action-auth=false` 保持——声明层仅"已就绪可授权"，不拦截任何调用。`roles` 属性在 enforcement OFF 时不生效，仅在翻转后并入 `permissionToRoles` 校验。
+
+**高危动作升级路径（successor）**：`reverseClose`（反结账）/ `writeOff`（坏账核销）/ `handleInboundWebhook`（B2B 入站）为最高危——其 FNPT 点已声明并 seed 给管理员/B2B 管理员，但**真正 enforcement 翻转**为 config-gated successor（见下方"Deferred"），须人工批准 + 灰度 + 负向隔离测试后分域启用。
+
+**灰度推进路线（staged rollout，successor）**：finance/b2b/mfg/inventory/hr 为首批落地（含全部 A3.6 点名的最高危动作：reverseClose/writeOff/handleInboundWebhook + 各域敏感状态迁移）；其余（pur/sal 审批集 / mfg approve subcontract / assets 处置 / 全 EDI 生命周期 等）的 per-action FNPT 声明随 enforcement 灰度分批补齐（触发条件 = 该域 `enable-action-auth=true` 灰度批准前）。新增高危实体应按本模式直接声明独立 FNPT 点（API 命名约定见 `domain-design-guidelines.md §16A`）。
+
 ### 浏览器层审批路径已知限制（xwf 4 实体）
 
 > 来源：plan `2026-07-09-2330-1` 权威裁决（NOT FEASIBLE）；M-2（plan `2026-07-20-2200-1`）落地补充。

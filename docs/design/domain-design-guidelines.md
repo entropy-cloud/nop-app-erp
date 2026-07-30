@@ -617,6 +617,86 @@ NEVER_OPENED → OPEN → CLOSING → CLOSED → CLOSED_FINAL
 
 ---
 
+## 十六·A、API 命名约定（契约层单一真相源）
+
+> **本节定位**：API 契约层（BizModel/`I*Biz` 方法名、参数、审批动作集）的跨域命名单一真相源。来源：A3.6 API 契约一致性审计（P1-MA3-047）。状态机命名见 §16，实体/表/字典命名见 §19。
+>
+> **范围边界**：本节约束**新增**实体/动作的命名。**存量偏离实体不强制重命名**（重命名破坏 AMIS 调用 + 测试 + 向后兼容，归 successor，见下方"已知偏离登记"）。
+
+### 16A.1 审批标准 5 动作集
+
+带审批流的单据实体，业务动作集**统一采用**以下 5 动作 + 参数约定（Pattern A）：
+
+| 动作名 | 语义 | 目标 approveStatus |
+|--------|------|-------------------|
+| `submitForApproval` | 提交审批 | UNSUBMITTED → SUBMITTED |
+| `approve` | 审批通过 | SUBMITTED → APPROVED |
+| `reject` | 审批拒绝 | SUBMITTED → REJECTED |
+| `reverseApprove` | 反审核（撤销审批） | APPROVED → REJECTED（见 §16.4） |
+| `withdrawApproval` | 撤回审批（提交人撤回） | SUBMITTED → UNSUBMITTED |
+
+**参数约定**：5 动作统一签名 `(@Name("id") String id, IServiceContext context)`。
+
+> 审批集**对称要求**：声明审批的单据应**完整提供 5 动作**，不允许只提供 `submit`+`approve` 子集。确需子集（如配置类单据仅审批不需反审）须在域 README 注明原因。
+
+### 16A.2 状态迁移动词矩阵
+
+跨域状态迁移用动词应遵循下表语义边界。**新增动作优先选用 bare 动词**（无实体后缀），仅在 bare 动词与同实体其他动作歧义时加限定后缀。
+
+| 语义 | 标准动词 | 语义边界 | 已知跨域变体（历史，不重命名） |
+|------|---------|---------|------------------------------|
+| 开始 | `start` | 进入执行态（工单开工/项目立项/施工开始） | `startConstruction`/`startProject`/`startTask`/`startRepair` |
+| 完成 | `complete` | 到达终态（完工/结项） | `completeJob`/`completeTask`/`completeShipment`/`reportCompletion` |
+| 过账/确认生效 | `post` | 生成会计凭证或确认业务生效 | `markPaid`（hr 唯一，见 16A.4）/ `postNcr`/`postSettlement` |
+| 反向/红冲 | `reverse` | 生成红字反向单据/凭证（业务纠错） | `reverse` 重载"撤销审批"语义时用 `reverseApprove` 区分（见 §16.4） |
+| 结账 | `close` + 限定 | 关闭时间窗口/单据 | `closePeriod`/`finalizePeriod`/`closeProject` |
+| 取消 | `cancel` | 单据作废至 CANCELLED | — |
+
+> **`reverse` 语义二义性警告**：`reverse` 在本项目同时表达"撤销审批"（`reverseApprove`）与"红字冲销"（业务纠错）。**新增动作必须用 `reverseApprove` 表达撤销审批，`reverse` 保留给红字冲销**。`reverse` 前缀加实体/操作限定（如 `reverseVoucher`/`reverseCostAdjust`）时仍归"红字冲销"语义。
+
+### 16A.3 参数命名规则：`id` vs `<entity>Id`
+
+| 场景 | 参数名 | 类型 |
+|------|--------|------|
+| 单据头实体操作（审批/状态迁移/取消） | `id` | **`String`**（对齐 `ICrudBiz.delete(String id)` 平台惯例） |
+| 跨实体引用参数（如按 orderId 查询行） | `<entity>Id`（如 `orderId`） | 与被引用实体主键一致 |
+| 批量操作 | `ids` | `Collection<String>` |
+
+> **新增单据头动作统一用 `@Name("id") String id`**。存量 Long id 实体不强制改（改 Long→String 破坏 BizModel 签名 + 测试），登记在"已知偏离"。
+
+### 16A.4 已知偏离登记（存量，不重命名）
+
+下列偏离在 A3.6 审计时已存在，**本约定不强制重命名**（重命名属 successor，触发条件见 plan `2026-07-31-0310-2` Deferred 节）。仅登记以便集成方知晓：
+
+| 偏离类型 | 涉及实体/动作 | 计数 | 原因注记 |
+|---------|--------------|------|---------|
+| `submit` 而非 `submitForApproval` | ~12 实体 | 12 | 早期生成沿用；新实体须用 `submitForApproval` |
+| `submitForReview` | `ErpHrSalarySimulation` | 1 | hr 唯一变体（复核语义） |
+| `Long id` 而非 `String id`（单据头动作） | ~13 实体（purchase/sales/mfg 部分） | 13 | 早期生成；新实体须用 `String id` |
+| `cancel` 参数名实体化（`orderId`/`paymentId`/`invoiceId`/...） | ~18 种实体键名 | 18 | 早期生成；新实体统一 `id` |
+| `markPaid` 而非 `post` | `IErpHrSalaryBiz.markPaid` | 1 | hr 唯一"过账/支付"动词；跨域集成（hr→finance voucher `post` Facade）语义入口与目标动词不一致，集成方须知晓 |
+| 审批集不对称（仅部分 5 动作子集） | `ErpInvLandedCost`/`ErpHrDevelopmentPlan`/`ErpHrTimesheet` 等 | 若干 | 早期生成；新审批单据须完整 5 动作集 |
+| `ErpMdSupplierApproval` 复用 `approve`/`reject` | 供应商准入生命周期（DRF→APP→PRS→SUS→REJ） | 1 | 非单据审批，是主数据生命周期——命名碰撞风险，新主数据生命周期动作避免复用审批动词 |
+
+### 16A.5 批量操作对称要求
+
+新增批量操作（`batch*`）须评估**对称覆盖**：
+
+- 已有：`batchApprove`（purchase/sales）、`batchPassInspection`（quality）、`batchScheduleForward`（aps）
+- **缺口**（successor）：`batchReject`/`batchCancel`/`batchReverse`/`batchPost`——UI 存在批量审批但无对称批量拒绝/取消。
+
+> 新增 `batch*` 动作统一签名：`(@Name("ids") Collection<String> ids, IServiceContext context) → BatchOperationResult`（对齐现有 4 个 batch 操作形状）。
+
+### 16A.6 集成方须知
+
+外部集成方调用 nop-app-erp 时须知晓：
+
+1. **RPC（`*Api.java`）= data-CRUD 通道**；业务动作（approve/cancel/post 等）**仅 GraphQL/xbiz 可达**。详见 `app-overview.md §RPC 通道语义`。
+2. 跨实体调用前查阅本节"已知偏离登记"，避免假设统一动词/参数。
+3. 本节约束**增量**；存量偏离在 successor 重命名前持续存在。
+
+---
+
 ## 十七、可配置点清单
 
 本节统一列出全部业务可配置项、默认值、可选值和作用域。

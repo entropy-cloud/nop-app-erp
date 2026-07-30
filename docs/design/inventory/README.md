@@ -10,6 +10,7 @@
 - 本域不负责：物料/仓库/库位主数据（master-data 域）；采购/销售单据本身（purchase/sales 域）；存货估值过账的凭证生成（finance 域，本域只提供流水数据）。
 - 持久化字段、字典、状态码以 `model/app-erp-inventory.orm.xml` 为准。
 - 跨域协作规则见 `../domain-design-guidelines.md`，全局流程见 `../flow-overview.md`。
+- API 命名约定（审批动作集/状态迁移动词/参数命名）见 `../domain-design-guidelines.md §16A`。
 
 ## 工程与模型
 
