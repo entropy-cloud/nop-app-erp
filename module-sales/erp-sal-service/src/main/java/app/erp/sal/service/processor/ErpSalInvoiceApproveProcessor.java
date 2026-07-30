@@ -2,6 +2,7 @@ package app.erp.sal.service.processor;
 
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.service.ErpSalConstants;
+import app.erp.sal.service.ErpSalErrors;
 import app.erp.common.service.AbstractApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -9,9 +10,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalInvoice approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractApproveProcessor to activate the abstract base class; delegates to ErpSalInvoiceProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpSalInvoice approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2).
+ * approve 触发 AR 发票过账 + applyPosted + commitment-release-on-invoice-approve hook（facade approve 流程），
+ * 需 custom public override（过账后实体引用变更）。对齐 R5.1 ErpPurInvoiceApproveProcessor 模式 B。
  */
 public class ErpSalInvoiceApproveProcessor extends AbstractApproveProcessor<ErpSalInvoice> {
 
@@ -20,7 +21,28 @@ public class ErpSalInvoiceApproveProcessor extends AbstractApproveProcessor<ErpS
 
     @Override
     public ErpSalInvoice approve(String id, IServiceContext context) {
-        return processor.approve(id, context);
+        ErpSalInvoice invoice = requireEntity(id);
+        if (isApproved(invoice)) {
+            return invoice;
+        }
+        processor.validateNotCancelled(invoice, context);
+        validateTransitionForApprove(invoice, context);
+        processor.validateBusinessRulesForApprove(invoice, context);
+
+        boolean posted = processor.doPosting(invoice, context);
+        invoice = dao().getEntityById(id);
+        setApproveStatus(invoice, approvedStatus());
+        setApprovedBy(invoice, currentUserId());
+        setApprovedAt(invoice, now());
+        if (posted) {
+            invoice.setPosted(true);
+            invoice.setPostedAt(now());
+            invoice.setPostedBy(currentUserId());
+        }
+        dao().updateEntity(invoice);
+
+        processor.runCommitmentReleaseOnInvoiceApproveHook(invoice, context);
+        return invoice;
     }
 
     @Override
@@ -30,12 +52,22 @@ public class ErpSalInvoiceApproveProcessor extends AbstractApproveProcessor<ErpS
 
     @Override
     protected NopException notFoundException(String id) {
-        return defaultNotFoundException(id);
+        return new NopException(ErpSalErrors.ERR_INVOICE_NOT_FOUND)
+                .param(ErpSalErrors.ARG_INVOICE_ID, id);
+    }
+
+    @Override
+    protected NopException illegalStatusException(ErpSalInvoice entity, String current, String... expected) {
+        return new NopException(ErpSalErrors.ERR_INVOICE_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpSalErrors.ARG_INVOICE_CODE, entity.getCode())
+                .param(ErpSalErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpSalErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
     }
 
     @Override
     protected String getApproveStatus(ErpSalInvoice entity) {
-        return entity.getApproveStatus();
+        String status = entity.getApproveStatus();
+        return status == null ? ErpSalConstants.APPROVE_STATUS_UNSUBMITTED : status;
     }
 
     @Override
