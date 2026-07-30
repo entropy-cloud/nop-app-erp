@@ -1477,6 +1477,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="orgId,acctSchemaId,periodId,subjectId,currencyId" name="UK_FIN_GL_BALANCE_NATURAL"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinTrialBalance" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="试算平衡表"
@@ -3862,10 +3865,6 @@
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
             </columns>
             <indexes>
-                <index name="IDX_FIN_INTERCOMPANY_MATCH_PAIR_PERIOD" unique="false">
-                    <column name="pairKey"/>
-                    <column name="periodId"/>
-                </index>
                 <index name="IDX_FIN_INTERCOMPANY_MATCH_PERIOD_STATUS" unique="false">
                     <column name="periodId"/>
                     <column name="status"/>
@@ -3917,6 +3916,7 @@
             </relations>
             <unique-keys>
                 <unique-key columns="code" name="UK_FIN_INTERCOMPANY_MATCH_CODE"/>
+                <unique-key columns="pairKey,periodId" name="UK_FIN_INTERCOMPANY_MATCH_PAIR_PERIOD"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.fin.dao.entity.ErpFinConsolidationElimination" createTimeProp="createTime"

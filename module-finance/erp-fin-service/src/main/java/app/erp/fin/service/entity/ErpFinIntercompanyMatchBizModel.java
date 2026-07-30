@@ -8,6 +8,7 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinIntercompanyMatch;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -59,11 +60,17 @@ public class ErpFinIntercompanyMatchBizModel extends CrudBizModel<ErpFinIntercom
         }
         assertPeriodOpen(periodId);
 
-        // 经 ErpFinVoucherBillR 反查 INTERCOMPANY_SALE/PURCHASE 凭证，按 billCode（调拨单 code）配对
+        // 经 ErpFinVoucherBillR 反查 INTERCOMPANY_SALE/PURCHASE 凭证，按 billCode（调拨/订单 code）配对
         java.util.Map<String, java.util.List<Long>> saleByBillCode = findIntercompanyVoucherIdsByBillCode(
                 ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, periodId);
         java.util.Map<String, java.util.List<Long>> purchaseByBillCode = findIntercompanyVoucherIdsByBillCode(
                 ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, periodId);
+
+        // 预加载所有相关凭证的 orgId（批量，避免逐 billCode 重复查）
+        java.util.Set<Long> allVoucherIds = new java.util.HashSet<>();
+        saleByBillCode.values().forEach(allVoucherIds::addAll);
+        purchaseByBillCode.values().forEach(allVoucherIds::addAll);
+        java.util.Map<Long, Long> voucherOrgMap = loadVoucherOrgMap(allVoucherIds);
 
         int count = 0;
         IEntityDao<ErpFinIntercompanyMatch> matchDao = daoProvider().daoFor(ErpFinIntercompanyMatch.class);
@@ -71,20 +78,43 @@ public class ErpFinIntercompanyMatchBizModel extends CrudBizModel<ErpFinIntercom
         allBillCodes.addAll(saleByBillCode.keySet());
         allBillCodes.addAll(purchaseByBillCode.keySet());
 
+        java.util.Set<String> existingPairKeys = findExistingPairKeys(periodId, allBillCodes);
+
         for (String billCode : allBillCodes) {
-            BigDecimal saleAmt = sumVoucherAmounts(saleByBillCode.get(billCode));
-            BigDecimal purchaseAmt = sumVoucherAmounts(purchaseByBillCode.get(billCode));
+            // 幂等（P1-MA2-098 前置去重）：同期同 pairKey 已配对则 skip，避免重复 runMatching 产生重复 Match 行
+            if (existingPairKeys.contains(billCode)) {
+                continue;
+            }
+
+            java.util.List<Long> saleIds = saleByBillCode.getOrDefault(billCode, java.util.Collections.emptyList());
+            java.util.List<Long> purchaseIds = purchaseByBillCode.getOrDefault(billCode, java.util.Collections.emptyList());
+            BigDecimal saleAmt = sumVoucherAmounts(saleIds);
+            BigDecimal purchaseAmt = sumVoucherAmounts(purchaseIds);
             BigDecimal matched = saleAmt.min(purchaseAmt);
             BigDecimal diff = saleAmt.subtract(purchaseAmt).abs();
             String status = diff.compareTo(new BigDecimal("0.01")) <= 0
                     ? ErpFinConstants.INTERCOMPANY_MATCH_MATCHED
                     : ErpFinConstants.INTERCOMPANY_MATCH_DIFF;
 
+            // 审计列填充（P1-MA2-097）：AR 侧 = SALE 凭证，AP 侧 = PURCHASE 凭证
+            Long arSideVoucherId = saleIds.isEmpty() ? null : saleIds.get(0);
+            Long apSideVoucherId = purchaseIds.isEmpty() ? null : purchaseIds.get(0);
+            Long arOrgId = arSideVoucherId != null ? voucherOrgMap.get(arSideVoucherId) : null;
+            Long apOrgId = apSideVoucherId != null ? voucherOrgMap.get(apSideVoucherId) : null;
+            Long materialId = resolveMaterialId(allVoucherIds);
+            // 移除 hardcoded orgId=1L：配对记录归属 AR 侧组织（卖方），AR 侧缺失时回落 AP 侧
+            Long recordOrgId = arOrgId != null ? arOrgId : (apOrgId != null ? apOrgId : null);
+
             ErpFinIntercompanyMatch record = matchDao.newEntity();
             record.setCode("MATCH-" + periodId + "-" + StringHelper.generateUUID().substring(0, 8));
-            record.setOrgId(1L);
+            record.setOrgId(recordOrgId);
             record.setPairKey(billCode);
             record.setPeriodId(periodId);
+            record.setArSideVoucherId(arSideVoucherId);
+            record.setArOrgId(arOrgId);
+            record.setApSideVoucherId(apSideVoucherId);
+            record.setApOrgId(apOrgId);
+            record.setMaterialId(materialId);
             record.setMatchedAmount(matched);
             record.setDiffAmount(diff);
             record.setStatus(status);
@@ -92,8 +122,57 @@ public class ErpFinIntercompanyMatchBizModel extends CrudBizModel<ErpFinIntercom
             count++;
         }
 
-        LOG.info("公司间配对完成：期间 {} 识别 {} 条配对记录", periodId, count);
+        LOG.info("公司间配对完成：期间 {} 识别 {} 条配对记录（去重 {} 条既有 pairKey）",
+                periodId, count, allBillCodes.size() - count);
         return count;
+    }
+
+    /** 同期同 pairKey 幂等去重：返回已存在 Match 记录的 pairKey 集合（P1-MA2-098）。 */
+    private java.util.Set<String> findExistingPairKeys(Long periodId, java.util.Set<String> pairKeys) {
+        if (pairKeys.isEmpty()) {
+            return java.util.Collections.emptySet();
+        }
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("periodId", periodId));
+        q.addFilter(in("pairKey", pairKeys));
+        java.util.Set<String> existing = new java.util.HashSet<>();
+        for (ErpFinIntercompanyMatch m : daoProvider().daoFor(ErpFinIntercompanyMatch.class).findAllByQuery(q)) {
+            if (m.getPairKey() != null) {
+                existing.add(m.getPairKey());
+            }
+        }
+        return existing;
+    }
+
+    /** 批量加载凭证 orgId（凭证的核算组织）。 */
+    private java.util.Map<Long, Long> loadVoucherOrgMap(java.util.Set<Long> voucherIds) {
+        if (voucherIds.isEmpty()) {
+            return java.util.Collections.emptyMap();
+        }
+        IEntityDao<ErpFinVoucher> voucherDao = daoProvider().daoFor(ErpFinVoucher.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(in("id", voucherIds));
+        java.util.Map<Long, Long> map = new HashMap<>();
+        for (ErpFinVoucher v : voucherDao.findAllByQuery(q)) {
+            map.put(v.getId(), v.getOrgId());
+        }
+        return map;
+    }
+
+    /** 从相关凭证行取首个非空 materialId（配对审计列，物料维度）。 */
+    private Long resolveMaterialId(java.util.Set<Long> voucherIds) {
+        if (voucherIds.isEmpty()) {
+            return null;
+        }
+        IEntityDao<ErpFinVoucherLine> lineDao = daoProvider().daoFor(ErpFinVoucherLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(in("voucherId", voucherIds));
+        for (ErpFinVoucherLine l : lineDao.findAllByQuery(q)) {
+            if (l.getMaterialId() != null) {
+                return l.getMaterialId();
+            }
+        }
+        return null;
     }
 
     /** 按 billType 反查凭证 ID，按 billCode 分组。 */

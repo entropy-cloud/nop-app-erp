@@ -74,7 +74,10 @@ public class ErpFinConsolidationEliminationBizModel extends CrudBizModel<ErpFinC
         for (ErpFinIntercompanyMatch m : matches) {
             ErpFinConsolidationElimination candidate = elimDao.newEntity();
             candidate.setCode("ELIM-" + periodId + "-" + StringHelper.generateUUID().substring(0, 8));
-            candidate.setOrgId(1L);
+            // 抵消候选归属 + 跨法人双方（P1-MA2-097）：移除 hardcoded orgId=1L，按配对审计列设置 from/toOrg
+            candidate.setOrgId(m.getArOrgId() != null ? m.getArOrgId() : m.getApOrgId());
+            candidate.setFromOrgId(m.getArOrgId());
+            candidate.setToOrgId(m.getApOrgId());
             candidate.setEliminationType(ErpFinConstants.ELIMINATION_TYPE_AR_AP);
             candidate.setPeriodId(periodId);
             candidate.setPairKey(m.getPairKey());
@@ -89,7 +92,9 @@ public class ErpFinConsolidationEliminationBizModel extends CrudBizModel<ErpFinC
         for (ErpFinIntercompanyMatch m : matches) {
             ErpFinConsolidationElimination candidate = elimDao.newEntity();
             candidate.setCode("ELIM-RC-" + periodId + "-" + StringHelper.generateUUID().substring(0, 8));
-            candidate.setOrgId(1L);
+            candidate.setOrgId(m.getArOrgId() != null ? m.getArOrgId() : m.getApOrgId());
+            candidate.setFromOrgId(m.getArOrgId());
+            candidate.setToOrgId(m.getApOrgId());
             candidate.setEliminationType(ErpFinConstants.ELIMINATION_TYPE_REVENUE_COST);
             candidate.setPeriodId(periodId);
             candidate.setPairKey(m.getPairKey());
@@ -105,7 +110,9 @@ public class ErpFinConsolidationEliminationBizModel extends CrudBizModel<ErpFinC
             for (ErpFinIntercompanyMatch m : matches) {
                 ErpFinConsolidationElimination candidate = elimDao.newEntity();
                 candidate.setCode("ELIM-IP-" + periodId + "-" + StringHelper.generateUUID().substring(0, 8));
-                candidate.setOrgId(1L);
+                candidate.setOrgId(m.getArOrgId() != null ? m.getArOrgId() : m.getApOrgId());
+                candidate.setFromOrgId(m.getArOrgId());
+                candidate.setToOrgId(m.getApOrgId());
                 candidate.setEliminationType(ErpFinConstants.ELIMINATION_TYPE_INVENTORY_PROFIT);
                 candidate.setPeriodId(periodId);
                 candidate.setPairKey(m.getPairKey());

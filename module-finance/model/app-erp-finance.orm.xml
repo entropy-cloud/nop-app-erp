@@ -952,6 +952,11 @@
                     <join><on leftProp="projectId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <!-- P1-MA2-096：GL 余额自然键（orgId+acctSchemaId+periodId+subjectId+currencyId）UK，防止重复余额行。
+                     [ORM ask-first] 辅助维度（partner/department/project/warehouse）当前未由过账引擎写入，故 5 列 UK 安全。 -->
+                <unique-key name="UK_FIN_GL_BALANCE_NATURAL" columns="orgId,acctSchemaId,periodId,subjectId,currencyId"/>
+            </unique-keys>
             <indexes>
                 <index name="IDX_FIN_GL_BALANCE_ACCT_SCHEMA_ID" unique="false">
                     <column name="acctSchemaId"/>
@@ -2159,12 +2164,10 @@
             </relations>
             <unique-keys>
                 <unique-key name="UK_FIN_INTERCOMPANY_MATCH_CODE" columns="code"/>
+                <!-- P1-MA2-098：(pairKey, periodId) UK 替换原非唯一 IDX，保证 runMatching 幂等（同期同 pairKey 唯一）。[ORM ask-first] -->
+                <unique-key name="UK_FIN_INTERCOMPANY_MATCH_PAIR_PERIOD" columns="pairKey,periodId"/>
             </unique-keys>
             <indexes>
-                <index name="IDX_FIN_INTERCOMPANY_MATCH_PAIR_PERIOD" unique="false">
-                    <column name="pairKey"/>
-                    <column name="periodId"/>
-                </index>
                 <index name="IDX_FIN_INTERCOMPANY_MATCH_PERIOD_STATUS" unique="false">
                     <column name="periodId"/>
                     <column name="status"/>

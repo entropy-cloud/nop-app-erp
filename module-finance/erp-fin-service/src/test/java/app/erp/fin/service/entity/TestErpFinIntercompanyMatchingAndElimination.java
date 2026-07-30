@@ -202,6 +202,99 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
                 "候选状态应翻转为 DRAFT_VOUCHER");
     }
 
+    // ---------- P1-MA2-097/098 增强验证 ----------
+
+    /** P1-MA2-097：runMatching 填充 5 审计列（arOrgId/apOrgId/arSideVoucherId/apSideVoucherId/materialId）。 */
+    @Test
+    public void testRunMatchingFillsAuditColumns() {
+        Long[] ids = seedReturn(() -> {
+            Long periodId = seedOpenPeriod("2026-AUDIT-1", 2026, 11);
+            seedIntercompanyVoucherWithMaterial(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 1L, periodId,
+                    new BigDecimal("1000"), "AUDIT-PAIR-1", 7777L);
+            seedIntercompanyVoucherWithMaterial(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 2L, periodId,
+                    new BigDecimal("1000"), "AUDIT-PAIR-1", 7777L);
+            return new Long[]{periodId};
+        });
+        Long periodId = ids[0];
+
+        ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
+
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("periodId", periodId));
+        q.addFilter(eq("pairKey", "AUDIT-PAIR-1"));
+        List<ErpFinIntercompanyMatch> records =
+                daoProvider.daoFor(ErpFinIntercompanyMatch.class).findAllByQuery(q);
+        assertEquals(1, records.size(), "应识别 1 条配对记录");
+        ErpFinIntercompanyMatch m = records.get(0);
+        assertEquals(1L, m.getArOrgId(), "arOrgId = SALE 凭证组织 1");
+        assertEquals(2L, m.getApOrgId(), "apOrgId = PURCHASE 凭证组织 2");
+        assertNotNull(m.getArSideVoucherId(), "arSideVoucherId 已填充");
+        assertNotNull(m.getApSideVoucherId(), "apSideVoucherId 已填充");
+        assertEquals(7777L, m.getMaterialId(), "materialId 从凭证行反查填充");
+        assertEquals(1L, m.getOrgId(), "配对记录归属 AR 侧组织（移除 hardcoded 1L 后按 arOrgId）");
+    }
+
+    /** P1-MA2-098：重复 runMatching 幂等（前置去重，无重复 Match 行）。 */
+    @Test
+    public void testRunMatchingIsIdempotent() {
+        Long[] ids = seedReturn(() -> {
+            Long periodId = seedOpenPeriod("2026-IDEM-1", 2026, 12);
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 1L, periodId,
+                    new BigDecimal("1000"), "IDEM-PAIR-1");
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 2L, periodId,
+                    new BigDecimal("1000"), "IDEM-PAIR-1");
+            return new Long[]{periodId};
+        });
+        Long periodId = ids[0];
+
+        int first = ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
+        int second = ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
+
+        assertEquals(1, first, "首次配对识别 1 条");
+        assertEquals(0, second, "二次 runMatching 幂等 skip（前置去重）");
+
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("periodId", periodId));
+        q.addFilter(eq("pairKey", "IDEM-PAIR-1"));
+        List<ErpFinIntercompanyMatch> records =
+                daoProvider.daoFor(ErpFinIntercompanyMatch.class).findAllByQuery(q);
+        assertEquals(1, records.size(), "重复 runMatching 不产生重复 Match 行");
+    }
+
+    /** P1-MA2-097：抵消候选设置 fromOrgId/toOrgId，草稿凭证 orgId per-pair。 */
+    @Test
+    public void testEliminationOrgPerPair() {
+        Long[] ids = seedReturn(() -> {
+            Long periodId = seedOpenPeriod("2026-ORG-1", 2027, 1);
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_SALE_BILL_TYPE, 3L, periodId,
+                    new BigDecimal("500"), "ORG-PAIR-1");
+            seedIntercompanyVoucher(ErpFinConstants.INTERCOMPANY_PURCHASE_BILL_TYPE, 4L, periodId,
+                    new BigDecimal("500"), "ORG-PAIR-1");
+            seedSubject("1131", "内部应收");
+            seedSubject("2202", "内部应付");
+            return new Long[]{periodId};
+        });
+        Long periodId = ids[0];
+
+        ormTemplate.runInSession(session -> matchBiz.runMatching(periodId, CTX));
+        ormTemplate.runInSession(session -> eliminationBiz.generateEliminationCandidates(periodId, CTX));
+
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("periodId", periodId));
+        q.addFilter(eq("eliminationType", ErpFinConstants.ELIMINATION_TYPE_AR_AP));
+        q.setLimit(1);
+        ErpFinConsolidationElimination candidate =
+                daoProvider.daoFor(ErpFinConsolidationElimination.class).findAllByQuery(q).get(0);
+        assertEquals(3L, candidate.getFromOrgId(), "fromOrgId = AR 侧组织 3");
+        assertEquals(4L, candidate.getToOrgId(), "toOrgId = AP 侧组织 4");
+        assertEquals(3L, candidate.getOrgId(), "候选归属 AR 侧组织 3（移除 hardcoded 1L）");
+
+        Long voucherId = ormTemplate.runInSession(session ->
+                eliminationBiz.postElimination(candidate.getId(), CTX));
+        ErpFinVoucher voucher = daoProvider.daoFor(ErpFinVoucher.class).getEntityById(voucherId);
+        assertEquals(3L, voucher.getOrgId(), "草稿抵消凭证 orgId per-pair = 候选组织 3");
+    }
+
     // ---------- helpers ----------
 
     private <T> T seedReturn(java.util.function.Supplier<T> action) {
@@ -226,6 +319,11 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
 
     private void seedIntercompanyVoucher(String billType, Long orgId, Long periodId, BigDecimal amount,
                                          String billCode) {
+        seedIntercompanyVoucherWithMaterial(billType, orgId, periodId, amount, billCode, null);
+    }
+
+    private void seedIntercompanyVoucherWithMaterial(String billType, Long orgId, Long periodId, BigDecimal amount,
+                                                     String billCode, Long materialId) {
         IEntityDao<ErpFinVoucher> voucherDao = daoProvider.daoFor(ErpFinVoucher.class);
         IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherBillR> billRDao =
                 daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinVoucherBillR.class);
@@ -242,6 +340,37 @@ public class TestErpFinIntercompanyMatchingAndElimination extends JunitAutoTestC
         voucher.setIsReversed(false);
         voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
         voucherDao.saveEntity(voucher);
+
+        // 凭证行（携带 materialId 供配对审计列反查；仅 material 维度场景创建）
+        if (materialId != null) {
+            IEntityDao<app.erp.md.dao.entity.ErpMdSubject> subjDao =
+                    daoProvider.daoFor(app.erp.md.dao.entity.ErpMdSubject.class);
+            app.erp.md.dao.entity.ErpMdSubject subj = subjDao.newEntity();
+            subj.setCode("1131-" + orgId);
+            subj.setName("内部应收");
+            subj.setSubjectClass(ErpFinConstants.SUBJECT_CLASS_EXPENSE);
+            subj.setDirection(ErpFinConstants.DC_DEBIT);
+            subj.setStatus("ACTIVE");
+            subjDao.saveEntity(subj);
+
+            IEntityDao<app.erp.fin.dao.entity.ErpFinVoucherLine> lineDao =
+                    daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinVoucherLine.class);
+            app.erp.fin.dao.entity.ErpFinVoucherLine line = lineDao.newEntity();
+            line.setVoucherId(voucher.getId());
+            line.setLineNo(1);
+            line.setSubjectId(subj.getId());
+            line.setSubjectCode("1131");
+            line.setDcDirection(ErpFinConstants.DC_DEBIT);
+            line.setDebitAmount(amount);
+            line.setCreditAmount(BigDecimal.ZERO);
+            line.setCurrencyId(1L);
+            line.setExchangeRate(BigDecimal.ONE);
+            line.setAmountFunctional(amount);
+            line.setAcctSchemaId(1L);
+            line.setOrgId(orgId);
+            line.setMaterialId(materialId);
+            lineDao.saveEntity(line);
+        }
 
         app.erp.fin.dao.entity.ErpFinVoucherBillR billR = billRDao.newEntity();
         billR.setVoucherId(voucher.getId());

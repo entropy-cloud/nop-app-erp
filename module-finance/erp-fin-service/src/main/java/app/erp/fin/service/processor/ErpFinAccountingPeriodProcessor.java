@@ -633,6 +633,15 @@ public class ErpFinAccountingPeriodProcessor {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(and(ge("businessDate", period.getStartDate()), le("businessDate", period.getEndDate())));
+        // 多账套/多组织读路径隔离（P1-MA2-095）：按期间所属组织 + 主账套限定 AR/AP 明细，避免跨组织/跨账套双计
+        Long orgId = period.getOrgId();
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            if (schemaId != null) {
+                q.addFilter(eq("acctSchemaId", schemaId));
+            }
+        }
         return dao.findAllByQuery(q).stream()
                 .filter(i -> i.getStatus() != null
                         && !Objects.equals(i.getStatus(), ErpFinConstants.AR_AP_STATUS_SETTLED)
@@ -763,15 +772,20 @@ public class ErpFinAccountingPeriodProcessor {
 
     protected ErpFinAccountingPeriodStatus findOrCreatePeriodStatus(ErpFinAccountingPeriod period) {
         IEntityDao<ErpFinAccountingPeriodStatus> dao = daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
+        Long scopeSchemaId = resolveAcctSchemaId(period);
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", period.getId()));
+        // 多账套读路径隔离（P1-MA2-095）：按主账套限定期间状态，避免多账套误取首个状态行
+        if (scopeSchemaId != null) {
+            q.addFilter(eq("acctSchemaId", scopeSchemaId));
+        }
         List<ErpFinAccountingPeriodStatus> list = dao.findAllByQuery(q);
         if (!list.isEmpty()) {
             return list.get(0);
         }
         ErpFinAccountingPeriodStatus status = dao.newEntity();
         status.setPeriodId(period.getId());
-        status.setAcctSchemaId(resolveAcctSchemaId(period));
+        status.setAcctSchemaId(scopeSchemaId);
         status.setTotalVouchers(0);
         status.setPostedVouchers(0);
         status.setUnpostedVouchers(0);

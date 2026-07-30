@@ -143,7 +143,7 @@ public class ErpFinPostingProcessor {
             run.isFallback = provider.isFallback();
 
             ErpFinAccountingPeriod period = timeStage("resolveOpenPeriod", run,
-                    () -> resolveOpenPeriod(event.getVoucherDate(), context));
+                    () -> resolveOpenPeriod(event.getVoucherDate(), event.getOrgId(), context));
             AcctDocContext primaryCtx = prepareContext(event, period, context);
             primaryCtx.setTraceId(run.traceId);
 
@@ -223,7 +223,7 @@ public class ErpFinPostingProcessor {
             Long primarySchemaId = originals.get(0).getAcctSchemaId();
             for (ErpFinVoucher original : originals) {
                 List<ErpFinVoucherLine> originalLines = loadLines(original.getId(), context);
-                ErpFinAccountingPeriod period = resolveOpenPeriod(original.getVoucherDate(), context);
+                ErpFinAccountingPeriod period = resolveOpenPeriod(original.getVoucherDate(), original.getOrgId(), context);
                 AcctDocContext ctx = prepareReversalContext(original, period, originalLines, context);
                 ctx.setTraceId(run.traceId);
 
@@ -492,11 +492,15 @@ public class ErpFinPostingProcessor {
         return provider;
     }
 
-    protected ErpFinAccountingPeriod resolveOpenPeriod(LocalDate voucherDate, IServiceContext context) {
+    protected ErpFinAccountingPeriod resolveOpenPeriod(LocalDate voucherDate, Long orgId, IServiceContext context) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean q = new QueryBean();
         if (voucherDate != null) {
             q.addFilter(and(le("startDate", voucherDate), ge("endDate", voucherDate)));
+        }
+        // 多账套/多组织读路径隔离（P1-MA2-095）：按过账组织限定期间，避免跨组织误匹配
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
         }
         List<ErpFinAccountingPeriod> periods = dao.findAllByQuery(q);
         if (periods.isEmpty()) {
