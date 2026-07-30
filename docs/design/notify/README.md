@@ -136,6 +136,7 @@
 ## Successor（超出本子系统当前范围）
 
 - **异步总线（`nop-message`）**：当前同步派发 + `txn().afterCommit` 满足单实例部署；生产部署/多实例/通知量需削峰时接入 Kafka/Pulsar（topic + partition + lease 消费者注册），归后继。
+- **scheduler 驱动通知的重复派发（plan 2026-07-30-0841-2 R1.28 P1-MA2-086 通知重复类，仅 document）**：cs（`cs.sla-overdue`/`cs.csat-reminder`/`cs.entitlement-expiry`）、crm（`crm.event-reminder`/`crm.sequence-overdue`）、hr（`hr.contract-expiry`）等 scheduler 触发的通知全部运行于 `nop-job-local` 单实例（非分布式，无 cluster leader 锁）。单实例下重复触发（cron 抖动/重试）的**实体级行副作用**已由各 job body 幂等收口（如 cs SLA 经 `hasEscalationAction` 去重）；但**通知派发本身**无跨调用去重键（通知频控为 `notificationType + "#" + recipientUserId` 窗口合并，非确定性幂等）。多实例部署切换时通知可能重复，通知去重键 successor（与 cron 平台级并发防护 successor 同触发条件）。
 - 全局 header 未读小角标（需修改全局 layout delta + WebSocket 推送）。
 - 通知偏好设置页（需新 ORM 实体）。
 - partnerId/deptId 精确路由（依赖 partner→user 映射落地）。

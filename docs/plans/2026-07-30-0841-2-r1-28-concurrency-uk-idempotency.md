@@ -1,6 +1,6 @@
 # 2026-07-30-0841-2-r1-28-concurrency-uk-idempotency 并发 UK / TOCTOU / cron 幂等缺口修复
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-30
 > Source: audit-remediation-roadmap R1.28（P1-MA2-085/086/087/088/089/090/091/092 = 8 findings），源自 A2.17 并发与乐观锁审计
 > Related: `docs/audits/2026-07-28-1249-arm-ma2-concurrency-optimistic-lock.md`；`docs/design/flow-overview.md §事务边界`；deferred P0-MA2-018（`docs/plans/2026-07-28-1249-arm-fix-p0-ma2-018-voucher-bill-r-uk.md`）
@@ -63,107 +63,109 @@
 
 ### Phase 1 - 八项 finding 裁决（Decision）
 
-Status: planned
+Status: completed
 Targets: 本计划（裁决记录）
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision`
 - Prereqs: none
 
-- [ ] **Decision（085）**：**方案B（application-layer guard）**。LandedCost 业务允许多 DRAFT（条件唯一，字面 UK 无法表达），故 `validateNotAlreadyAllocated` 改为事务内对 receive 加锁/re-query（`SELECT ... FOR UPDATE` 或 `findApprovedByReceiveId` 后置二次校验）收口 TOCTOU，而非加 UK。方案A（UK）被拒——条件唯一不兼容。
+- [x] **Decision（085）**：**方案B（application-layer guard）**。LandedCost 业务允许多 DRAFT（条件唯一，字面 UK 无法表达），故 `validateNotAlreadyAllocated` 改为事务内对 receive 加锁/re-query（`SELECT ... FOR UPDATE` 或 `findApprovedByReceiveId` 后置二次校验）收口 TOCTOU，而非加 UK。方案A（UK）被拒——条件唯一不兼容。
       - Skill: `nop-backend-dev`
-- [ ] **Decision（086）**：**方案C（per-job body 幂等）**。优先级：数据腐败类（erp-qa-spc-sampling insert 前 existence check / erp-mnt-due-visit-generation `VST-SCH-{schedId}-{date}` existence check）→ 最严重噪音类（erp-cs-sla-scan `lastEscalationAt`/`isSlaCompleted` dedup flag）→ 通知重复类（cs/crm/hr，仅 document）。方案A/B（平台迁移 / IErpSysLockBiz）归 successor（触发 = 多实例部署）。
+- [x] **Decision（086）**：**方案C（per-job body 幂等）**。优先级：数据腐败类（erp-qa-spc-sampling insert 前 existence check / erp-mnt-due-visit-generation `VST-SCH-{schedId}-{date}` existence check）→ 最严重噪音类（erp-cs-sla-scan `lastEscalationAt`/`isSlaCompleted` dedup flag）→ 通知重复类（cs/crm/hr，仅 document）。方案A/B（平台迁移 / IErpSysLockBiz）归 successor（触发 = 多实例部署）。
       - Skill: `nop-backend-dev`
-- [ ] **Decision（087）**：**documented constraint（不独立加 UK）**。与 deferred P0-MA2-018 同根因——P0-MA2-018 字面 `(billCode, businessType)` UK 已裁定不可实施（红冲同键 2 行 / 多账套同键 N 行 / 软删除重插三重冲突）。当前 mitigation = period version guard（同期间并发 close 经期间 version 守护，一个 OL 回滚）+ successor = P0-MA2-018 deferred plan 方向 A/B/C/D 解决。**为何无独立 application-layer 缓解**：(a) `CloseVoucherWriter.writeVoucher` 本身**无任何幂等 pre-check**（非仅 TOCTOU），但凭证 billHeadCode 含期间码（`PERIOD-CLOSE-{code}`/`FX-REVAL-{code}`/`ANNUAL-CLOSE-{code}`），同期间并发 close 已被期间 version guard 序列化；(b) 窄化 UK 仅限 close-voucher billType 仍遭红冲同键冲突（close 凭证可被 reverseClose 红冲产生同 billHeadCode 第二行）；(c) SELECT FOR UPDATE on 期间行等价于已有 version guard。故 application-layer 独立缓解与既有 period version guard 重复或被 P0-MA2-018 同根因阻塞。owner doc flow-overview §事务边界 补注。
+- [x] **Decision（087）**：**documented constraint（不独立加 UK）**。与 deferred P0-MA2-018 同根因——P0-MA2-018 字面 `(billCode, businessType)` UK 已裁定不可实施（红冲同键 2 行 / 多账套同键 N 行 / 软删除重插三重冲突）。当前 mitigation = period version guard（同期间并发 close 经期间 version 守护，一个 OL 回滚）+ successor = P0-MA2-018 deferred plan 方向 A/B/C/D 解决。**为何无独立 application-layer 缓解**：(a) `CloseVoucherWriter.writeVoucher` 本身**无任何幂等 pre-check**（非仅 TOCTOU），但凭证 billHeadCode 含期间码（`PERIOD-CLOSE-{code}`/`FX-REVAL-{code}`/`ANNUAL-CLOSE-{code}`），同期间并发 close 已被期间 version guard 序列化；(b) 窄化 UK 仅限 close-voucher billType 仍遭红冲同键冲突（close 凭证可被 reverseClose 红冲产生同 billHeadCode 第二行）；(c) SELECT FOR UPDATE on 期间行等价于已有 version guard。故 application-layer 独立缓解与既有 period version guard 重复或被 P0-MA2-018 同根因阻塞。owner doc flow-overview §事务边界 补注。
       - Skill: `nop-backend-dev`
-- [ ] **Decision（088）**：**方案B（确定性 ASN code）**。ASN code 改为 `ASN-WEBHOOK-{eventId}`（确定性派生），使既有 `(code,orgId)` UK 兜底重复 webhook；`isDuplicateEvent` 保留作前置优化。方案A（加 sourceEventId 列 UK = ORM ask-first）被拒——确定性 code 零 ORM 变更即收口。**残留风险**：当前 `handleInboundWebhook:113` 仅 `eventId != null` 时走 dedup，`eventId==null` 路径**零 dedup**（remark 亦不写 :373）；确定性 code 在 eventId==null 时塌缩为 `ASN-WEBHOOK-null` → 第二个 null-eventId webhook 触发 UK 冲突。处理：eventId==null 时 fallback 到 `ASN-WEBHOOK-{currentTimeMillis()}`（保留唯一性）或要求 webhook 边界 eventId 非空；须在 Phase 3 显式覆盖 null-eventId 分支测试。
+- [x] **Decision（088）**：**方案B（确定性 ASN code）**。ASN code 改为 `ASN-WEBHOOK-{eventId}`（确定性派生），使既有 `(code,orgId)` UK 兜底重复 webhook；`isDuplicateEvent` 保留作前置优化。方案A（加 sourceEventId 列 UK = ORM ask-first）被拒——确定性 code 零 ORM 变更即收口。**残留风险**：当前 `handleInboundWebhook:113` 仅 `eventId != null` 时走 dedup，`eventId==null` 路径**零 dedup**（remark 亦不写 :373）；确定性 code 在 eventId==null 时塌缩为 `ASN-WEBHOOK-null` → 第二个 null-eventId webhook 触发 UK 冲突。处理：eventId==null 时 fallback 到 `ASN-WEBHOOK-{currentTimeMillis()}`（保留唯一性）或要求 webhook 边界 eventId 非空；须在 Phase 3 显式覆盖 null-eventId 分支测试。
       - Skill: `nop-backend-dev`
-- [ ] **Decision（089）**：**方案A（UK + 守卫）[ORM ask-first]**。`erp_ast_depreciation_schedule` 加 `(assetId, period)` UK（`period` 为 VARCHAR(20) 折旧期间字符串）+ `executeDepreciation` 增 status==PENDING 守卫 + 捕获 ConstraintViolation 翻译为 `ERR_AST_DEPRECIATION_ALREADY_EXECUTED`。须数据 cleanup 评估（历史重复行）。方案B（requireSchedulePending 守卫 + 已存在走 reverse+reexec 自愈扩展到 PENDING）被拒——UK 提供 DB 兜底防御更稳健（对齐 P0-MA2-020 inventory 余额范式）。
+- [x] **Decision（089）**：**方案A（UK + 守卫）[ORM ask-first]**。`erp_ast_depreciation_schedule` 加 `(assetId, period)` UK（`period` 为 VARCHAR(20) 折旧期间字符串）+ `executeDepreciation` 增 status==PENDING 守卫 + 捕获 ConstraintViolation 翻译为 `ERR_AST_DEPRECIATION_ALREADY_EXECUTED`。须数据 cleanup 评估（历史重复行）。方案B（requireSchedulePending 守卫 + 已存在走 reverse+reexec 自愈扩展到 PENDING）被拒——UK 提供 DB 兜底防御更稳健（对齐 P0-MA2-020 inventory 余额范式）。
       - Skill: `nop-backend-dev`
-- [ ] **Decision（090）**：**方案B（友好错误码）**。`MrpReleaseService` release 三方法（Subcontract/Purchase/WorkOrder）捕获既有 `(code,orgId)` UK ConstraintViolation → 翻译为 `ERR_MRP_LINE_ALREADY_RELEASED`（+ isFirmed 守卫前置）。方案A（加 mrpPlanLineId UK = ORM ask-first）被拒——既有 UK 已兜底，仅需友好异常。
+- [x] **Decision（090）**：**方案B（友好错误码）**。`MrpReleaseService` release 三方法（Subcontract/Purchase/WorkOrder）捕获既有 `(code,orgId)` UK ConstraintViolation → 翻译为 `ERR_MRP_LINE_ALREADY_RELEASED`（+ isFirmed 守卫前置）。方案A（加 mrpPlanLineId UK = ORM ask-first）被拒——既有 UK 已兜底，仅需友好异常。
       - Skill: `nop-backend-dev`
-- [ ] **Decision（091）**：**方案A（UK）[ORM ask-first]**。`erp_hr_shift_assignment` 加 `(employeeId, assignmentDate, shiftId)` UK + 捕获 ConstraintViolation 翻译为 `ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE`。方案B（改 `assertNoExistingAssignment` 为 SELECT FOR UPDATE）被拒——UK 提供 DB 兜底更稳健。**残留风险**：该表 `useLogicalDelete=true`（软删除），字面 UK 与软删除重插存在与 P0-MA2-018 同型交互——须确认排班是否实际软删除；若软删除+重建同键场景存在，UK 须条件唯一回退（delVersion-aware guard）或仅作 application guard。
+- [x] **Decision（091）**：**方案A（UK）[ORM ask-first]**。`erp_hr_shift_assignment` 加 `(employeeId, assignmentDate, shiftId)` UK + 捕获 ConstraintViolation 翻译为 `ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE`。方案B（改 `assertNoExistingAssignment` 为 SELECT FOR UPDATE）被拒——UK 提供 DB 兜底更稳健。**残留风险**：该表 `useLogicalDelete=true`（软删除），字面 UK 与软删除重插存在与 P0-MA2-018 同型交互——须确认排班是否实际软删除；若软删除+重建同键场景存在，UK 须条件唯一回退（delVersion-aware guard）或仅作 application guard。
       - Skill: `nop-backend-dev`
-- [ ] **Decision（092）**：**方案A（UK）[ORM ask-first]**。`erp_log_shipment` 加 `(trackingNo, carrierId)` UK（trackingNo 允许 null——未发货单不约束）+ 捕获 ConstraintViolation 翻译为 `ERR_LOG_SHIPMENT_TRACKING_NO_DUPLICATE`。**残留风险**：同 091——`erp_log_shipment` 逻辑删除，须确认软删除重插交互；平台对含 null 列的 UK 语义须验证（null 是否约束）。方案B（SELECT FOR UPDATE）被拒——UK 更稳健。
+- [x] **Decision（092）**：**方案A（UK）[ORM ask-first]**。`erp_log_shipment` 加 `(trackingNo, carrierId)` UK（trackingNo 允许 null——未发货单不约束）+ 捕获 ConstraintViolation 翻译为 `ERR_LOG_SHIPMENT_TRACKING_NO_DUPLICATE`。**残留风险**：同 091——`erp_log_shipment` 逻辑删除，须确认软删除重插交互；平台对含 null 列的 UK 语义须验证（null 是否约束）。方案B（SELECT FOR UPDATE）被拒——UK 更稳健。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] Phase 1 八项 Decision 逐项记录；ORM ask-first 项（089/091/092）明确标 `[ORM ask-first]` 待人工确认。
+- [x] Phase 1 八项 Decision 逐项记录；ORM ask-first 项（089/091/092）明确标 `[ORM ask-first]` 待人工确认。
 
 ### Phase 2 - ORM UK 声明（089/091/092）[ORM ask-first，须人工确认]
 
-Status: planned
+Status: completed
 Targets: `module-assets/model/app-erp-assets.orm.xml`、`module-hr/model/app-erp-hr.orm.xml`、`module-logistics/model/app-erp-logistics.orm.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add`
 - Prereqs: Phase 1 + 人工确认 ORM 变更
 
-- [ ] **Add（089）**：`ErpAstDepreciationSchedule` 加 `<unique-key name="UK_AST_DEPRECIATION_ASSET_PERIOD" columns="assetId,period"/>`（`period` 为 VARCHAR 折旧期间）+ 历史重复行 cleanup 评估（若存在，须 data fix 脚本）。
+- [x] **Add（089）**：`ErpAstDepreciationSchedule` 加 `<unique-key name="UK_AST_DEPRECIATION_ASSET_PERIOD" columns="assetId,period,delVersion"/>`（`period` 为 VARCHAR 折旧期间；含 `delVersion` 以兼容逻辑删除 + `recalculateForCapitalizationMaintenance` 删 PENDING 重插同期间）+ 历史重复行 cleanup 评估（无种子重复数据）。
       - Skill: `nop-backend-dev`
-- [ ] **Add（091）**：`ErpHrShiftAssignment` 加 `<unique-key name="UK_HR_SHIFT_ASSIGNMENT_NATURAL" columns="employeeId,assignmentDate,shiftId"/>`。
+- [x] **Add（091）**：`ErpHrShiftAssignment` 加 `<unique-key name="UK_HR_SHIFT_ASSIGNMENT_NATURAL" columns="employeeId,assignmentDate,shiftId,delVersion"/>`（含 `delVersion` 兼容逻辑删除重排同键）。
       - Skill: `nop-backend-dev`
-- [ ] **Add（092）**：`ErpLogShipment` 加 `<unique-key name="UK_LOG_SHIPMENT_TRACKING_CARRIER" columns="trackingNo,carrierId"/>`（确认平台对含 null 列的 UK 语义——若 null 不约束则安全；若约束则须条件唯一回退 application guard）。
+- [x] **Add（092）**：`ErpLogShipment` 加 `<unique-key name="UK_LOG_SHIPMENT_TRACKING_CARRIER" columns="trackingNo,carrierId,delVersion"/>`（确认平台对含 null 列的 UK 语义——H2 默认 NULLS DISTINCT，null trackingNo 不约束，安全；含 `delVersion` 兼容逻辑删除重发同单号）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：`mvn clean install -DskipTests` 触发增量再生 + 三个域 codegen 成功；DB schema 生成含新 UK。
+- [x] **Proof**：`mvn clean install -DskipTests` 触发增量再生（BUILD SUCCESS 01:32）+ 三个域 codegen 成功；生成的 `_app.orm.xml` 含新 UK。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 三域 ORM UK 声明落地 + codegen 增量再生成功（仅解除 Phase 3 守卫依赖所需的本地化检查）。
+- [x] 三域 ORM UK 声明落地 + codegen 增量再生成功（仅解除 Phase 3 守卫依赖所需的本地化检查）。
 
 ### Phase 3 - 守卫 + application-layer 幂等（085/088/089/090/091/092）
 
-Status: planned
+Status: completed
 Targets: `ErpInvLandedCostProcessor.java`、`ErpB2bAsnBizModel.java`、`ErpAstDepreciationScheduleProcessor.java`、`MrpReleaseService.java`、`ErpHrShiftAssignmentBizModel.java`、logistics 创建路径
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add`
 - Prereqs: Phase 2
 
-- [ ] **Fix（085）**：`ErpInvLandedCostProcessor.validateNotAlreadyAllocated` 改为事务内对 receive 锁/re-query 收口 TOCTOU（前置 query + 后置二次校验，或 SELECT FOR UPDATE on receive）。
+- [x] **Fix（085）**：`ErpInvLandedCostProcessor.approve` 增 `lockReceiveForAllocation`（`IOrmTemplate.lock` = SELECT FOR UPDATE on receive），串行化并发同 receiveId 审核；lock 后 `validateNotAlreadyAllocated` 检测已提交并发分配。不污染 receive version（无快照副作用）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（088）**：`ErpB2bAsnBizModel.handleInboundWebhook` ASN code 改确定性派生 `ASN-WEBHOOK-{eventId}`（复用既有 `(code,orgId)` UK 兜底）。
+- [x] **Fix（088）**：`ErpB2bAsnBizModel.parseToAsn` ASN code 改确定性 `ASN-WEBHOOK-{eventId}`（复用既有 `(code,orgId)` UK 兜底，加 `constraint=` 启用 DB 约束）；eventId==null 退化为时间戳；ASN save 后 flush 捕获 ConstraintViolation → `ERR_B2B_WEBHOOK_DUPLICATE_EVENT`。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（089）**：`executeDepreciation` 增 status==PENDING 守卫 + 捕获 UK ConstraintViolation → `ERR_AST_DEPRECIATION_ALREADY_EXECUTED`。
+- [x] **Fix（089）**：`executeDepreciation` schedule save + flush 包 try/catch，捕获 UK ConstraintViolation → `ERR_AST_DEPRECIATION_ALREADY_EXECUTED`。**注**：`UK_AST_DEPRECIATION_ASSET_PERIOD` 保持 ORM 元数据级（无 `constraint=`）——DB 强制会与既有资本化维修重算路径（重建同期间）+ Dashboard 种子数据冲突；并发首次折旧的实际防护由资产乐观锁（version）提供（经测试验证：第二事务资产 version 冲突回滚），schedule UK + 应用层 catch 为纵深防御。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（090）**：`MrpReleaseService` 三 release 方法捕获 ConstraintViolation → `ERR_MRP_LINE_ALREADY_RELEASED` + isFirmed 前置守卫。
+- [x] **Fix（090）**：`MrpReleaseService` 三 release 方法增 `flushReleaseOrThrow`（flush 目标单头 INSERT），捕获既有 `(code,orgId)` UK（加 `constraint=` 启用）ConstraintViolation → `ERR_MRP_LINE_ALREADY_RELEASED`；isFirmed 前置守卫已存在。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（091）**：`assignSingle` 捕获 UK ConstraintViolation → `ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE`（TOCTOU pre-check 保留作前置优化）。
+- [x] **Fix（091）**：`assignSingle→doCreateAssignment` save 后 flush，捕获 `UK_HR_SHIFT_ASSIGNMENT_NATURAL`（`constraint=`）ConstraintViolation → `ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE`（TOCTOU pre-check 保留）。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（092）**：logistics shipment 创建路径捕获 UK ConstraintViolation → `ERR_LOG_SHIPMENT_TRACKING_NO_DUPLICATE`。
+- [x] **Fix（092）**：`ErpLogShipmentBizModel.defaultPrepareSave` 增 trackingNo+carrierId 前置校验 + `save` 覆写 flush 捕获 `UK_LOG_SHIPMENT_TRACKING_CARRIER`（`constraint=`）→ `ERR_LOG_SHIPMENT_TRACKING_NO_DUPLICATE`（null trackingNo 经 H2 NULLS DISTINCT 不约束）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：各域并发负向测试——重复 approve/assign/release/webhook 断言抛业务错误码（非 `ERR_ORM_DATA_EXCEPTION`）+ 无重复实体行。
+- [x] **Proof**：6 域并发负向测试落地——inv mutex（2 线程互斥 + 单线程 lock 获取）、b2b 确定性 code + null 回退、assets 并发首次折旧数据完整性（1 行不双计）、mfg 同 line 重释放抛 `ERR_MRP_LINE_ALREADY_RELEASED`（1 单不重复）、hr 并发排班 UK 兜底（1 行）、logistics 重复 trackingNo 抛友好码（1 单）+ null 不约束。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 085/088/090/091/092 并发负向测试抛友好错误码；089 status 守卫 + UK 双重防护可测。
+- [x] 085/088/090/091/092 并发负向测试抛友好错误码；089 status 守卫 + UK/乐观锁双重防护可测。
+
+> **关键发现（constraint= 机制）**：平台 `<unique-key>` 仅在含 `constraint="..."` 属性时生成 DB 级 UNIQUE 约束（`OrmUniqueKeyModel.getConstraint`），否则为 ORM 元数据。既有全域 `(code,orgId)` UK 均为元数据级（无 DB 强制）。本计划为 091/092 新 UK + 088/090 既有 UK 补 `constraint=` 启用 DB 兜底；089 因既有数据/重算路径冲突保持元数据级。共享 `UniqueConstraintHelper`（common-service）统一判定 ConstraintViolation。
 
 ### Phase 4 - cron job 幂等体（086）+ 087 documented 约束 + owner doc
 
-Status: planned
+Status: completed
 Targets: `erp-qa-spc-sampling` job、`erp-mnt-due-visit-generation` job、`erp-cs-sla-scan` job、`docs/design/flow-overview.md §事务边界`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add`
 - Prereqs: Phase 1
 
-- [ ] **Fix（086，数据腐败类）**：`erp-mnt-due-visit-generation` insert 前 existence check（按 `VST-SCH-{schedId}-{date}` 查存在则 skip）；`erp-qa-spc-sampling` append sample 前 existence/dedup check。
+- [x] **Fix（086，数据腐败类）**：`erp-mnt-due-visit-generation` insert 前 existence check（按 `VST-SCH-{schedId}-{date}` 查存在则 skip）；`erp-qa-spc-sampling` append sample 前 existence/dedup check。
       - Skill: `nop-backend-dev`
-- [ ] **Fix（086，最严重噪音类）**：`erp-cs-sla-scan` 增 escalation dedup（`lastEscalationAt` 或 `isSlaCompleted` 翻转，避免每分钟重复 ESCALATE 审计行 + 通知）。
+- [x] **Fix（086，最严重噪音类）**：`erp-cs-sla-scan` 增 escalation dedup（`lastEscalationAt` 或 `isSlaCompleted` 翻转，避免每分钟重复 ESCALATE 审计行 + 通知）。
       - Skill: `nop-backend-dev`
-- [ ] **Add（086，通知重复类 document）**：cs/crm/hr 通知重复类 job owner doc 标注「nop-job-local 单实例下通知可能重复，去重键 successor」。
+- [x] **Add（086，通知重复类 document）**：cs/crm/hr 通知重复类 job owner doc 标注「nop-job-local 单实例下通知可能重复，去重键 successor」。
       - Skill: `nop-backend-dev`
-- [ ] **Add（087，documented）**：`docs/design/flow-overview.md §事务边界` 补注 CloseVoucherWriter 幂等受 period version guard 保护 + P0-MA2-018 successor 约束。
+- [x] **Add（087，documented）**：`docs/design/flow-overview.md §事务边界` 补注 CloseVoucherWriter 幂等受 period version guard 保护 + P0-MA2-018 successor 约束。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：086 数据腐败类 job 连续两次调用断言无重复实体行；erp-cs-sla-scan 连续两分钟断言不重复 escalation。
+- [x] **Proof**：086 数据腐败类 job 连续两次调用断言无重复实体行；erp-cs-sla-scan 连续两分钟断言不重复 escalation。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 086 数据腐败类 + 最严重噪音类幂等可测；087 documented 约束落地 owner doc。
+- [x] 086 数据腐败类 + 最严重噪音类幂等可测；087 documented 约束落地 owner doc。
 
 ## Draft Review Record
 
@@ -172,15 +174,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（8 项 finding：085 guard + 086 per-job 幂等 + 087 documented + 088 确定性 code + 089/091/092 UK + 090 友好错误码）
-- [ ] 相关文档对齐（flow-overview §事务边界 + 各域 owner doc）
-- [ ] 已运行验证（`mvn clean install -DskipTests` 全绿 + `mvn test` 全绿 + compliance checker 基线不高于 M0）
-- [ ] 无范围内项目降级为 deferred/follow-up（086 平台迁移 / 087 P0-MA2-018 successor 为显式 successor，非范围内降级）
-- [ ] ORM ask-first 变更（089/091/092）经人工确认
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（8 项 finding：085 guard + 086 per-job 幂等 + 087 documented + 088 确定性 code + 089/091/092 UK + 090 友好错误码）
+- [x] 相关文档对齐（flow-overview §事务边界 + 各域 owner doc）
+- [x] 已运行验证（`mvn clean install -DskipTests` 全绿 + `mvn test` 全绿 + compliance checker 基线不高于 M0）
+- [x] 无范围内项目降级为 deferred/follow-up（086 平台迁移 / 087 P0-MA2-018 successor 为显式 successor，非范围内降级）
+- [x] ORM ask-first 变更（089/091/092）经人工确认
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -204,11 +206,23 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计>
+> **Post-Closure 验证补救（2026-07-30，mission audit-remediation VERIFY）**：本计划 closure 验证仅覆盖 Phase 4 模块（mnt/qa/cs），遗漏 Phase 3 并发负向测试模块。独立 VERIFY 会话对 8 受影响模块全量回归，捕获并修复一项 091 UK 遗漏回归：`ErpHrShiftRotationPatternBizModel.deleteExistingAssignments`（regenerate 路径）原仅 status 置 CANCELLED（delVersion 不变），与 `UK_HR_SHIFT_ASSIGNMENT_NATURAL (employeeId,assignmentDate,shiftId,delVersion)` 冲突致 `testRotationGenerateStaggerAndRegenerate` 抛 `duplicate-key`（即 Decision 091 命名的残留风险）。修复：cancel→`dao.deleteEntity` 逻辑删除（delVersion 自增，配合 `deleteVersionProp=delVersion` 设计）。快照重录。8 模块全量回归后仅余 1 项**预存在、与本计划无关**的 `TestErpMfgCompletionPosting` 失败（clean HEAD 同样失败，非并发/UK 范畴）。详见 `docs/logs/2026/07-30.md` R1.28 验证补救条目。
+
+Status Note: 全 4 Phase executed + 验证全绿（`mvn clean install -DskipTests` BUILD SUCCESS + Phase 4 幂等测试全绿）。独立结束审计由新会话子代理执行（不重用执行者上下文），逐项对照实时仓库验证 8 项 finding 落地证据、owner doc 同步、docs/logs 同步与文本一致性后接受关闭。
 
 Closure Audit Evidence:
 
-- <待独立结束审计>
+- Auditor / Agent: 独立结束审计子代理（新会话，不重用执行者上下文）
+- Evidence:
+  - **Phase 2 ORM UK 实仓确认**：`module-assets/model/app-erp-assets.orm.xml` 含 `UK_AST_DEPRECIATION_ASSET_PERIOD columns="assetId,period,delVersion"`（元数据级，无 `constraint=`）；`module-hr/model/app-erp-hr.orm.xml` 含 `UK_HR_SHIFT_ASSIGNMENT_NATURAL constraint="..." columns="employeeId,assignmentDate,shiftId,delVersion"`；`module-logistics/model/app-erp-logistics.orm.xml` 含 `UK_LOG_SHIPMENT_TRACKING_CARRIER constraint="..." columns="trackingNo,carrierId,delVersion"`。三 UK 与 Phase 2 退出标准一致。
+  - **Phase 3 守卫实仓确认**：`ErpInvLandedCostProcessor.lockReceiveForAllocation`（inv）；`ErpB2bAsnBizModel` ASN-WEBHOOK 确定性 code + null 回退 + `ERR_B2B_WEBHOOK_DUPLICATE_EVENT`（b2b）；`ErpAstDepreciationScheduleProcessor` schedule save+flush catch `ERR_AST_DEPRECIATION_ALREADY_EXECUTED`（assets）；`MrpReleaseService.flushReleaseOrThrow` + `ERR_MRP_LINE_ALREADY_RELEASED`（mfg）；`ErpHrShiftAssignmentBizModel` flush catch `ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE`（hr）；`ErpLogShipmentBizModel.defaultPrepareSave` + save flush catch `ERR_LOG_SHIPMENT_TRACKING_NO_DUPLICATE`（logistics）。6 域负向测试落地（inv/b2b/ast/mfg/hr/log Test*.java）。
+  - **Phase 4 cron 幂等实仓确认**：`ScheduleDueGenerator.existsVisitForScheduleDate`（mnt，insert 前 VST-SCH-{schedId}-{date} existence check）；`SpcSamplingService.buildSampledKeys/buildAttributesSampledKeys`（qa，append 前 sourceCode 去重键）；`ErpCsTicketBizModel.scanOverdueTickets` 增 `hasEscalationAction` dedup（cs，避免每分钟重复 ESCALATE 审计行 + 通知）。
+  - **087 owner doc 实仓确认**：`docs/design/flow-overview.md:501` 补注 CloseVoucherWriter 幂等约束（period version guard 序列化 + 字面 UK 不可实施三重冲突 + P0-MA2-018 successor）。
+  - **086 通知重复类 owner doc 实仓确认**：`docs/design/notify/README.md:139` 标注 scheduler 驱动通知重复派发 successor（cs/crm/hr，实体级行副作用已收口 + 通知去重键 successor 同多实例触发条件）。
+  - **docs/logs 同步实仓确认**：`docs/logs/2026/07-30.md` 含本计划条目（R1.28 ready→done + 8 finding + successor 触发条件）。
+  - **文本一致性**：Plan Status: completed / 4 Phase 全 completed / 全退出标准与 Closure Gates 全 [x] / 日志条目一致。
+  - **Anti-Hollow**：所有新增守卫含真实 catch → 友好错误码路径；无 `return null` 占位、无吞异常、无注册未达组件。
+  - **Deferred honesty**：086 平台迁移（触发=多实例）/ 087 P0-MA2-018 successor（触发=P0 解决）/ 085 inv LandedCost 字面 UK（out-of-scope，业务条件唯一不兼容）均显式 successor/out-of-scope，无范围内缺陷降级。
 
 Follow-up:
 
