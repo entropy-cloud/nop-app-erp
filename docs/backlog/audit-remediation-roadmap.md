@@ -237,7 +237,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| R5.1 | **purchase 域** S-mutation 逻辑下沉：ErpPurOrder/Requisition/Receive/Return/Invoice/Payment（6 实体 × 6 S-mutation = 36 个已有 per-mutation 文件） | todo | `docs/design/purchase/` | MR1 done | `docs/skills/nop-backend-dev` |
+| R5.1 | **purchase 域** S-mutation 逻辑下沉：ErpPurOrder/Requisition/Receive/Return/Invoice/Payment（6 实体 × 6 S-mutation = 36 个已有 per-mutation 文件） | done | `docs/design/purchase/` | MR1 done | `docs/skills/nop-backend-dev` |
 | R5.2 | **sales 域** S-mutation 逻辑下沉：ErpSalOrder/Quotation/Delivery/Receipt/Return/Invoice（6 实体 × 6 S-mutation = 36 文件） | todo | `docs/design/sales/` | MR1 done | `docs/skills/nop-backend-dev` |
 | R5.3 | **finance 域** S-mutation 逻辑下沉：ErpFinEmployeeAdvance/ExpenseClaim（各 6）+ ErpFinBadDebt（4：submit/approve/reject/reverseApprove）+ ErpFinBudgetScenario（4：submit/approve/reject/cancel）= 20 文件。**NotesPayable、NotesReceivable、AccountingPeriod 无标准审批 S-mutation，不在本里程碑范围** | todo | `docs/design/finance/` | MR1 done | `docs/skills/nop-backend-dev` |
 | R5.4 | **assets 域** S-mutation 逻辑下沉：ErpAstAssetCapitalization（5）+ Disposal（5）+ Merge（6）+ Split（6）+ ValueAdjustment（6）+ Inventory（1：approve）+ Maintenance（1：approve）= 30 文件。**ErpAstCip、DepreciationSchedule 纯 D-mutation，不在本里程碑范围** | todo | `docs/design/assets/` | MR1 done | `docs/skills/nop-backend-dev` |
