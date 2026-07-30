@@ -26,7 +26,10 @@
 
 ## 数据隔离
 
-- 所有业务单据按 `orgId` 隔离查询
+- 业务单据按 `orgId` 隔离查询——经 config-gated 全局 `IQueryTransformer`（`erp.multi-company.org-isolation-enabled`，默认 **false**）+ `IOrmInterceptor` 写路径 auto-stamp 实现（plan 2026-07-30-0841-3-r1-29 P1-MA2-093/094）。
+  - **默认关闭态（单组织基线）**：无自动 orgId 隔离，既有种子（orgId=2）与测试零回归。
+  - **多公司部署启用**：开启后 CrudBizModel 查询自动追加 `eq("orgId", currentOrgId)`，实体保存从上下文 stamp orgId（覆盖客户端传入）。`currentOrgId` 经 `IContext` attribute（`erp.currentOrgId`）解析；登录链路写入该 attribute（或扩展为 `IUserContext` → 组织映射）。
+  - **dashboard/report 经 `IDaoProvider` 直访绕过 CrudBizModel 管道**，不被 transformer 覆盖；其读路径隔离由各查询方法显式补 `acctSchemaId`+`orgId` filter（P1-MA2-095）承担。
 - 单据编号在 orgId 内唯一（见 `domain-design-guidelines.md` §14.1.1）
 - 库存按仓库隔离，仓库归属组织
 - 凭证按 `acctSchemaId`（账套）隔离
@@ -194,7 +197,9 @@
 
 ### Decision C — 配对识别键与一致性校验
 
-**配对键** = `(pairKey, periodId)`，其中 `pairKey = min(fromOrgId,toOrgId) + ":" + max(fromOrgId,toOrgId) + ":" + materialId`。
+**配对键** = `(pairKey, periodId)`，其中 `pairKey = billCode`（配对凭证共享同一业务单据 code，如跨法人调拨单/订单 code；plan 2026-07-30-0841-3-r1-29 P1-MA2-097 更正）。
+
+> **算法更正记录（P1-MA2-097）**：原文档声明 `pairKey = min/max org-pair hash + materialId`，但实现经 `ErpFinVoucherBillR.billCode` 反查配对凭证，配对凭证共享同一业务单据 code，故 `pairKey = billCode`。审计列 `arOrgId`/`apOrgId`/`arSideVoucherId`/`apSideVoucherId`/`materialId` 从 SALE/PURCHASE 凭证 + 凭证行反查填充。`ErpFinIntercompanyMatch` 加 `(pairKey, periodId)` UK 保证 `runMatching` 幂等（P1-MA2-098）。
 
 **`runMatching(periodId)` 算法**：
 1. 扫描本期 `ErpFinVoucher`（billType=INTERCOMPANY_SALE/PURCHASE，未红冲）按 pairKey 分组
@@ -248,6 +253,15 @@ CANDIDATE ──postElimination──► DRAFT_VOUCHER ──(人工过账)─�
 > A3 intercompany 的 `fromOrgId`/`toOrgId`（跨法人交易双方组织）语义不同——后者作为匹配维度仍 Deferred（需 ORM 新增列 +
 > ask-first）。多组织部署启用 org-dimension 后，不同组织可为同一 `(businessType, accountKey)` 配置不同 `targetSubjectCode`，
 > 自证多组织差异化科目映射需求。
+>
+> **⚠️ 多公司部署 checklist（plan 2026-07-30-0841-3-r1-29 P1-MA2-099）**：`erp-fin.gl-mapping.org-dimension-enabled` 默认 `false`
+> 时，`ErpFinGlMappingResolver` cacheKey 塌缩为 `"_"` 桶 + `matches()` 跳过 orgId 校验 → **orgA 规则可匹配 orgB 过账请求（跨组织泄漏）**。
+> 多公司/多组织部署 **必须** 显式设置：
+> 1. `erp.multi-company.org-isolation-enabled=true`（启用 093/094 orgId 读写隔离）；
+> 2. `erp-fin.gl-mapping.org-dimension-enabled=true`（启用 GL 映射 orgId 维度，避免跨组织科目映射泄漏）；
+> 3. 为每个法人组织配置独立的 `ErpFinGlMappingRule`（按 orgId 区分 targetSubjectCode）。
+>
+> 默认翻转 `org-dimension-enabled` 为 `true` 归 successor（破坏单组织向后兼容，须独立评估——见 plan Deferred But Adjudicated）。
 | A2 `CommitmentVoucherGenerator` | 影子凭证生成 | A3 `IntercompanyVoucherGenerator` 同型范式 |
 
 ## 反模式自检表
