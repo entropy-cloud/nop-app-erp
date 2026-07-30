@@ -80,6 +80,12 @@ public interface ErpHrErrors {
             "员工 {employeeId} 在 {year} 年 {month} 月已存在非 VOID 薪酬记录，禁止重复核算",
             ARG_EMPLOYEE_ID, ARG_YEAR, ARG_MONTH);
 
+    // --- 薪酬核算：累计数据完整性（payroll.md §4.5，P1-MA4-018） ---
+    ErrorCode ERR_HR_CUMULATIVE_DATA_CORRUPT = ErrorCode.define(
+            "erp.err.hr.cumulative-data-corrupt",
+            "员工 {employeeId} 年度 {year} 累计薪酬数据 JSON 解析失败，请核对 cumulativeData 完整性",
+            ARG_EMPLOYEE_ID, ARG_YEAR);
+
     // --- 审批状态机 ---
     ErrorCode ERR_SALARY_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.hr.salary.illegal-status-transition",

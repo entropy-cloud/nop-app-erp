@@ -15,6 +15,7 @@ import io.nop.api.core.context.ContextProvider;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
@@ -32,6 +33,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Map;
 
+import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -253,6 +255,43 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
         assertNotNull(updated.getPaymentBatchNo());
     }
 
+    @Test
+    public void testCorruptCumulativeDataThrowsNotSilentReset() {
+        Long employeeId = ormTemplate.runInSession(session -> {
+            seedTaxConfig(2026);
+            Long empId = seedEmployee("EMP-CORRUPT", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            seedContract(empId, "20000");
+            seedSocialInsuranceBase(empId, "SHENZHEN", "20000", "20000");
+            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
+                    "0.15", "0.08", "6123", "32694");
+            seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_HOUSING_FUND,
+                    "0.12", "0.12", "2360", "32694");
+            System.setProperty(ErpHrConstants.CONFIG_DEFAULT_PAYROLL_SUBJECT_ID, "2211");
+            return empId;
+        });
+
+        // 1 月正常核算（生成合法累计数据）
+        ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 1, CTX));
+
+        // 破坏 1 月 cumulativeData（模拟数据损坏/手工编辑出错）—— findPreviousCumulative 解析历史月时先经此
+        ormTemplate.runInSession(session -> {
+            IEntityDao<ErpHrSalary> dao = daoProvider.daoFor(ErpHrSalary.class);
+            QueryBean q = new QueryBean();
+            q.addFilter(eq("employeeId", employeeId));
+            q.addFilter(eq("year", 2026));
+            q.addFilter(eq("month", 1));
+            ErpHrSalary jan = dao.findAllByQuery(q).get(0);
+            jan.setCumulativeData("{corrupt-data-not-json");
+            // MANAGED 实体：ORM dirty tracking 在 session 关闭时 flush，无需 saveEntity
+            return null;
+        });
+
+        // 2 月核算 → findPreviousCumulative 解析损坏 JSON 抛 ERR_HR_CUMULATIVE_DATA_CORRUPT（非静默重置致少预扣）
+        NopException ex = assertThrows(NopException.class,
+                () -> ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 2, CTX)));
+        assertEquals(ErpHrErrors.ERR_HR_CUMULATIVE_DATA_CORRUPT.getErrorCode(), ex.getErrorCode());
+    }
+
     private ApiResponse<?> submitSalary(Long salaryId) {
         return executeRpc(mutation, "ErpHrSalary__submitForApproval", ApiRequest.build(Map.of("id", String.valueOf(salaryId))));
     }
@@ -344,13 +383,11 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
     private BigDecimal extractCumulativeData(String json) {
         if (json == null || json.isEmpty()) return BigDecimal.ZERO;
-        try {
-            Object parsed = io.nop.core.lang.json.JsonTool.parseNonStrict(json);
-            if (parsed instanceof java.util.Map) {
-                Object v = ((java.util.Map<String, Object>) parsed).get("cumulativeGross");
-                return v == null ? BigDecimal.ZERO : new BigDecimal(v.toString());
-            }
-        } catch (Exception ignored) {
+        // 不静默吞解析异常（P1-MA4-018）：corrupt JSON 直接抛，使缺陷对测试可见
+        Object parsed = io.nop.core.lang.json.JsonTool.parseNonStrict(json);
+        if (parsed instanceof java.util.Map) {
+            Object v = ((java.util.Map<String, Object>) parsed).get("cumulativeGross");
+            return v == null ? BigDecimal.ZERO : new BigDecimal(v.toString());
         }
         return BigDecimal.ZERO;
     }

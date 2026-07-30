@@ -11,6 +11,8 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -39,6 +41,8 @@ import static io.nop.api.core.beans.FilterBeans.lt;
  * </pre>
  */
 public class IncomeTaxCalculator {
+
+    private static final Logger LOG = LoggerFactory.getLogger(IncomeTaxCalculator.class);
 
     private static final String KEY_CUM_GROSS = "cumulativeGross";
     private static final String KEY_CUM_THRESHOLD = "cumulativeThreshold";
@@ -133,7 +137,7 @@ public class IncomeTaxCalculator {
             if (ErpHrConstants.PAYMENT_VOID.equals(s.getPaymentStatus())) {
                 continue;
             }
-            java.util.Map<String, BigDecimal> cd = parseCumulativeData(s.getCumulativeData());
+            java.util.Map<String, BigDecimal> cd = parseCumulativeData(s.getCumulativeData(), employeeId, year);
             // 历史月只保留「累计至该月」的快照，取最大 month 的快照作为累计基础
             // 简化：直接用最近一个月（最大 month）的 cumulativeData 作为累计基础
         }
@@ -148,14 +152,21 @@ public class IncomeTaxCalculator {
                 }
             }
             if (latest != null && latest.getCumulativeData() != null) {
-                result = parseCumulativeData(latest.getCumulativeData());
+                result = parseCumulativeData(latest.getCumulativeData(), employeeId, year);
             }
         }
         return result;
     }
 
+    /**
+     * 解析累计薪酬数据 JSON（payroll.md §4.5）。
+     *
+     * <p>{@code null} 或空白 json 返回空 map（1 月无历史合法路径不变）。损坏 JSON（格式错误/字段类型不符/
+     * 手工编辑出错）时 LOG.warn 记录 employeeId/year + 原始片段并抛 {@link ErpHrErrors#ERR_HR_CUMULATIVE_DATA_CORRUPT}
+     * ——累计损坏响亮失败，不静默重置致少预扣个税（P1-MA4-018）。
+     */
     @SuppressWarnings("unchecked")
-    static java.util.Map<String, BigDecimal> parseCumulativeData(String json) {
+    static java.util.Map<String, BigDecimal> parseCumulativeData(String json, Long employeeId, int year) {
         java.util.Map<String, BigDecimal> result = new java.util.HashMap<>();
         if (json == null || json.trim().isEmpty()) {
             return result;
@@ -170,7 +181,12 @@ public class IncomeTaxCalculator {
                     }
                 }
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            String snippet = json.length() > 200 ? json.substring(0, 200) : json;
+            LOG.warn("累计薪酬数据 JSON 解析失败：employeeId={}, year={}, json 片段={}", employeeId, year, snippet, e);
+            throw new NopException(ErpHrErrors.ERR_HR_CUMULATIVE_DATA_CORRUPT, e)
+                    .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
+                    .param(ErpHrErrors.ARG_YEAR, year);
         }
         return result;
     }
@@ -201,9 +217,21 @@ public class IncomeTaxCalculator {
         return total;
     }
 
+    /**
+     * 查累计应纳税所得额对应的税率档（payroll.md §4.2/§4.5）。遍历七级累进税率表，
+     * 跳过 income > rangeUpperLimit 的档位，选第一档 income ≤ rangeUpperLimit。
+     *
+     * <p>末档（&gt;960000，45%）rangeUpperLimit=null 表「无上限」（seed {@code erp_hr_tax_config}
+     * + {@link TaxBracketParser} 注释声明）。income 超过所有有限上限时（如累计应纳税所得额 &gt;960000）
+     * 直接选末档——此处 null 防御消除 {@code compareTo(null)} NPE。
+     */
     static TaxBracket resolveBracket(List<TaxBracket> brackets, BigDecimal cumulativeTaxableIncome) {
         TaxBracket selected = brackets.get(0);
         for (TaxBracket b : brackets) {
+            if (b.getRangeUpperLimit() == null) {
+                selected = b;
+                break;
+            }
             if (cumulativeTaxableIncome.compareTo(b.getRangeUpperLimit()) > 0) {
                 continue;
             }
