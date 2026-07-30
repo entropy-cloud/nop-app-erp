@@ -20,7 +20,11 @@ public class ErpFinExpenseClaimWithdrawApprovalProcessor extends AbstractWithdra
 
     @Override
     public ErpFinExpenseClaim withdrawApproval(String id, IServiceContext context) {
-        return processor.withdrawApproval(id, context);
+        ErpFinExpenseClaim claim = processor.requireClaim(id, context);
+        processor.validateNotCancelled(claim, context);
+        processor.validateTransitionForWithdraw(claim, context);
+        processor.doWithdrawSubmit(claim, context);
+        return claim;
     }
 
     @Override

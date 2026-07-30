@@ -20,7 +20,11 @@ public class ErpFinEmployeeAdvanceRejectProcessor extends AbstractRejectProcesso
 
     @Override
     public ErpFinEmployeeAdvance reject(String id, IServiceContext context) {
-        return processor.reject(id, context);
+        ErpFinEmployeeAdvance advance = processor.requireAdvance(id, context);
+        processor.validateNotCancelled(advance, context);
+        processor.validateTransitionForReject(advance, context);
+        processor.doReject(advance, context);
+        return advance;
     }
 
     @Override

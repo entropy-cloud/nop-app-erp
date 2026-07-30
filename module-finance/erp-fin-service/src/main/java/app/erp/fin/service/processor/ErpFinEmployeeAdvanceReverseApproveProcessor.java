@@ -20,7 +20,12 @@ public class ErpFinEmployeeAdvanceReverseApproveProcessor extends AbstractRevers
 
     @Override
     public ErpFinEmployeeAdvance reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
+        ErpFinEmployeeAdvance advance = processor.requireAdvance(id, context);
+        if (advance.isRejected()) {
+            return advance;
+        }
+        processor.validateTransitionForReverseApprove(advance, context);
+        return processor.doReverseApprove(id, advance, context);
     }
 
     @Override

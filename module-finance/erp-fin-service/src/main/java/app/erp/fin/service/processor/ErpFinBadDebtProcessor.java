@@ -128,7 +128,17 @@ public class ErpFinBadDebtProcessor {
             throw new NopException(ErpFinErrors.ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED)
                     .param(ErpFinErrors.ARG_BAD_DEBT_ID, badDebtId);
         }
+        return executeReverseApprove(debt, context);
+    }
 
+    /**
+     * 反审核生效体（plan 2026-07-30-1433-3 R5.3）：从公共 {@link #reverseApprove} 抽取，
+     * 供 per-mutation {@code ErpFinBadDebtReverseApproveProcessor} 复用，保证红冲 + ArApItem 对称回滚 + REJECTED
+     * 翻转的会计保护区域逻辑单一真相源（不复制到 per-mutation，避免会计语义漂移）。
+     *
+     * <p>前置：调用方已通过 {@code debt.isApproved() && voucherId != null} 守卫。
+     */
+    protected ErpFinBadDebt executeReverseApprove(ErpFinBadDebt debt, IServiceContext context) {
         // step 1：红冲凭证（billHeadCode = debt.code，对齐 writeBadDebtVoucher）
         ErpFinBusinessType businessType = Objects.equals(debt.getDocType(), ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF)
                 ? ErpFinBusinessType.BAD_DEBT_WRITE_OFF

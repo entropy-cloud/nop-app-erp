@@ -20,7 +20,11 @@ public class ErpFinEmployeeAdvanceWithdrawApprovalProcessor extends AbstractWith
 
     @Override
     public ErpFinEmployeeAdvance withdrawApproval(String id, IServiceContext context) {
-        return processor.withdrawApproval(id, context);
+        ErpFinEmployeeAdvance advance = processor.requireAdvance(id, context);
+        processor.validateNotCancelled(advance, context);
+        processor.validateTransitionForWithdraw(advance, context);
+        processor.doWithdrawSubmit(advance, context);
+        return advance;
     }
 
     @Override

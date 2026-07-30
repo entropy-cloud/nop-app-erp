@@ -20,7 +20,15 @@ public class ErpFinExpenseClaimApproveProcessor extends AbstractApproveProcessor
 
     @Override
     public ErpFinExpenseClaim approve(String id, IServiceContext context) {
-        return processor.approve(id, context);
+        ErpFinExpenseClaim claim = processor.requireClaim(id, context);
+        if (claim.isApproved()) {
+            return claim;
+        }
+        processor.validateNotCancelled(claim, context);
+        processor.validateTransitionForApprove(claim, context);
+        processor.validateForApproval(claim, context);
+        processor.runBudgetCheckHook(claim, context);
+        return processor.doApprove(id, claim, context);
     }
 
     @Override
