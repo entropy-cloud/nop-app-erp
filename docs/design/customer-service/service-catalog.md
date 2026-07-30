@@ -292,24 +292,13 @@ v2（草稿/待审批） → 审批通过后替换 v1
 | maintenance（Request） | 现场维修目录项跨域创建维护请求 |
 | master-data（ErpMdOrganization） | 服务目录按组织隔离 |
 
-## 九、实现注记（plan `2026-07-07-1430-1`）
+## 九、实现注记
 
 > 本节为本期实现范围收窄、表单字段映射与履行落地的稳定注记，非迁移历史。successor 接线完整履行编排时更新。
 
 ### 9.1 履行编排范围收窄（本期 vs successor）
 
-本期仅落地 CREATE_TICKET 首步 + 简单动作登记；完整多步履行编排归 successor（触发条件：跨团队履行工作流需求上线时）。这是对设计 §三（履行流程）的范围收窄实现注记：
-
-| actionType | 本期落地 | successor |
-|------------|---------|-----------|
-| CREATE_TICKET | DONE（工单已由 `createFromCatalog` 创建，登记审计） | — |
-| ASSIGN_TEAM / ASSIGN_AGENT | DONE 占位（登记 `assignToRole`，实际分派逻辑归 successor） | 技能匹配分派 |
-| NOTIFY_CUSTOMER | DONE 占位（登记审计） | 实际通知派发 |
-| UPDATE_STATUS / REQUEST_APPROVAL / CLOSE_TICKET | DONE 占位（登记审计） | 实际状态/审批/关闭逻辑 |
-| INVOKE_WORKFLOW | SKIPPED（归 successor） | 跨域工作流编排 |
-| CREATE_CHILD_TICKET | SKIPPED（归 successor） | 子工单拆分 |
-
-`executeStep` 为 `protected` 方法，作为产品化扩展点供下游覆盖实现真实编排。
+> **当前基线范围**：服务目录履行仅落地 **CREATE_TICKET 首步**（工单经 `createFromCatalog` 创建 + 审计登记）。多步履行编排（ASSIGN_TEAM/ASSIGN_AGENT/NOTIFY_CUSTOMER/UPDATE_STATUS/REQUEST_APPROVAL/CLOSE_TICKET/INVOKE_WORKFLOW/CREATE_CHILD_TICKET）为**产品基线外**——`executeStep` 为 `protected` 方法，作为产品化扩展点供下游覆盖实现真实编排。触发条件：跨团队履行工作流需求上线时。
 
 ### 9.2 表单字段映射（requestFormConfig → ErpCsTicket）
 

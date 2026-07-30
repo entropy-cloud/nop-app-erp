@@ -3,7 +3,6 @@
 > 本文档固化 nop-app-erp 列表页 `query` + `asideFilter` 双筛选面字段集、`filterOp` 配置、
 > 只读实体清单与「搜索 → 行点击 → 详情 dialog」范式。
 >
-> 来源 plan：`docs/plans/2026-07-20-0629-2-f8-f2-search-filter-and-readonly-views.md`。
 > 关联文档：`docs/architecture/view-and-page-strategy.md`、各域 `docs/design/<domain>/ui-patterns.md`、
 > `../nop-entropy/docs-for-ai/02-core-guides/page-customization.md`。
 
@@ -242,7 +241,7 @@ Nop codegen 为每个头实体生成两个独立筛选面，绑定到同一 `<cr
     <!-- 业务多维筛选字段 -->
 </form>
 <form id="query" editMode="query" title="查询条件">
-    <!-- 既有 query form（F3 P0 已落地）-->
+    <!-- 既有 query form -->
 </form>
 ```
 
@@ -285,9 +284,8 @@ Nop codegen 为每个头实体生成两个独立筛选面，绑定到同一 `<cr
 - **StockLedger source 列点击跳转源单据**：F9 跨单据导航范畴。本 plan source 列仅显示文本，不可点击。
 - **含零库存勾选框的 visibleOn 控制**（按钮显隐联动）：F7 cross-cutting visibleOn 范畴。本 plan 勾选框作为 query 字段，前端不引入 visibleOn 联动。
 
-## 7. ext 8 域 22 列表页双筛选面字段集冻结表（plan 2026-07-21-0330-2 §5）
+## 7. ext 8 域 22 列表页双筛选面字段集冻结表
 
-> 决策来自 plan `2026-07-21-0330-2-f8-f2-ext-domains-list-page-enhancement.md` Phase 1。
 > 22 列表页 = crm 3 + cs 2 + hr 4 + aps 3 + logistics 3 + b2b 3 + contract 2 + drp 2。
 > 字段集按各域 ui-patterns.md + 实时 ORM 字段核实冻结。plan 原稿中的部分字段（如 ErpB2bEdiDoc.direction / ErpDrpParameter.parameterType / ErpHrAttendance.shiftId）在实际 ORM 中不存在，按实际可用字段替代。
 
@@ -556,7 +554,7 @@ Nop codegen 为每个头实体生成两个独立筛选面，绑定到同一 `<cr
 | asideFilter | orgId | eq | 业务组织 |
 | query | preferredSourceWarehouseId | eq | 首选调出仓库 |
 
-## 8. 特殊筛选模式（plan 2026-07-21-0330-2 §6）
+## 8. 特殊筛选模式
 
 ### 8.1 leadType Tab/Chip 切换（Phase 0 (a) Decision A）
 
@@ -569,11 +567,11 @@ Nop codegen 为每个头实体生成两个独立筛选面，绑定到同一 `<cr
 
 - **场景**：crm Lead + cs Ticket 按「我的/团队/全部」3 态快捷过滤
 - **裁决**：**deferred-with-trigger**（前端无法可靠获取当前用户 ID）
-- **降级实现**：仅落地常规 `ownerId` 字段（asideFilter），用户手动选择负责人筛选
+- **降级方案**：仅保留常规 `ownerId` 字段（asideFilter），用户手动选择负责人筛选
 - **successor 触发**：F11 批量操作 plan 或后端 user-context 增强 plan 启动时
 - **后端 gap**：需新增 `@BizQuery findMyLeads` 或在 `__findPage` 注入当前用户上下文（触犯 Non-Goals 保护区域）
 
-### 8.3 异常筛选（Phase 0 (c) Decision A — landed）
+### 8.3 异常筛选（Phase 0 (c) Decision A）
 
 - **场景**：logistics Shipment 异常筛选「仅显示网关异常/追踪超期/退回」
 - **裁决**：**landed**（多选 status + `filterOp=in` 实现），「追踪超期」按钮 deferred
@@ -600,7 +598,7 @@ Nop codegen 为每个头实体生成两个独立筛选面，绑定到同一 `<cr
 
 ext 8 域本 plan 未引入新的 includeX 字段（已通过 status/date 范围覆盖业务需求）。
 
-## 9. ext 8 域只读实体清单（plan 2026-07-21-0330-2 §7）
+## 9. ext 8 域只读实体清单
 
 共 14 实体（Phase 0 Explore 裁决：3 个原 pending Explore 半只读实体均按「父表 sub-grid 编辑，独立页只读」语义归类为 confirmed readonly）：
 
@@ -673,8 +671,8 @@ ext 8 域本 plan 未引入新的 includeX 字段（已通过 status/date 范围
 | ErpCtApprovalRecord | `module-contract/erp-ct-web/.../ErpCtApprovalRecord.view.xml` | 6 | ✅ |
 | ErpCtConsumptionLine | `module-contract/erp-ct-web/.../ErpCtConsumptionLine.view.xml` | 3 | ✅ |
 
-## 11. ext 域 deferred 项（plan 2026-07-21-0330-2）
+## 11. ext 域 deferred 项
 
 - **My/Team/All 快捷过滤**（crm Lead + cs Ticket）：后端 user-context 缺失，归 Deferred。触发：F11 批量操作 plan 或后端 user-context 增强 plan 启动。
 - **追踪超期异常筛选**（logistics Shipment）：需后端派生字段计算。归 Deferred。触发：异常发运单数量 > 1000 时后端专用 `findExceptionList @BizQuery` plan 启动。
-- **核心域已有的列表页优化**（purchase/sales/inventory/finance 4 主域）：F8 核心 8 列表页已由 plan `2026-07-20-0629-2` 落地，本节仅扩展 ext 8 域。
+- **核心域已有的列表页优化**（purchase/sales/inventory/finance 4 主域）：F8 核心 8 列表页已覆盖，本节仅扩展 ext 8 域。

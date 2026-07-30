@@ -52,7 +52,7 @@
 |---|---|---|
 | MANUAL | 手动发起（质量主管） | 人工 |
 | GAUGE_NCR_UPGRADE | 量具超差 NCR 升级 | 🟢 Carbon 量具校准召回逻辑 |
-| BATCH_NCR_UPGRADE | 批次 NCR 升级（批次性不合格） | 裁决 D2 |
+| BATCH_NCR_UPGRADE | 批次 NCR 升级（批次性不合格） | 见 §NCR 升级召回实现 |
 | REGULATORY | 监管机构要求 | 合规 |
 
 **状态机**：
@@ -89,9 +89,9 @@
 
 > **serialNo 单件追溯（本期 Non-Goal）**：`batchTrace` 按批次聚合，不覆盖单件 serialNo 维度召回定位。本期召回对象以批次为主；serialNo 维度目标定位 config-gated 降级，待 inventory 单件追溯查询能力就绪后补齐（触发条件：单件追溯查询能力 + 单件召回需求）。
 
-## 裁决 D2：NCR 升级召回实现
+## NCR 升级召回实现
 
-**裁决**：NCR 升级召回 = **新增 NCR status 值 `ESCALATED_TO_RECALL`**（给字典 `erp-qa/ncr-status` 新增值），而非不改 NCR 状态仅建 Recall。
+NCR 升级召回 = **新增 NCR status 值 `ESCALATED_TO_RECALL`**（给字典 `erp-qa/ncr-status` 新增值），而非不改 NCR 状态仅建 Recall。
 
 理由：显式状态可查、便于审计。现有 `ErpQaNonConformance.status`（orm.xml:268，字典 `erp-qa/ncr-status`）现有值 OPEN/IN_REVIEW/RESOLVED/CANCELLED，新增 `ESCALATED_TO_RECALL` 表示该 NCR 已升级为召回事件（关联 ErpQaRecall）。
 
@@ -119,9 +119,9 @@
 | `erp-qua.recall-require-approval` | true | 召回是否强制审批 |
 | `erp-qua.recall-notify-required-to-close` | true | 关闭召回前是否强制要求通知所有受影响客户 |
 
-## Non-Goals（本期延后，已落地实现声明）
+## Non-Goals
 
-> 以下均为计划内显式 Non-Goal，非静默降级。本期召回事件聚合层不覆盖：
+> 以下均为显式 Non-Goal，非静默降级。本期召回事件聚合层不覆盖：
 
 - **召回财务过账**：召回事件本身不产生会计凭证（业务规则 1）。
 - **召回直接改库存余额**：召回产生的库存变动经标准销售退货移动单完成（移动单 DONE 写流水/更新余额），召回只登记编排，不绕过移动单直接改余额（业务规则 2 / 反模式警示）。
@@ -130,7 +130,7 @@
 
 ## 反模式警示
 
-- ⛔ **召回做成 NCR 的一个 status**——召回是**一对多批量**事件（一个召回影响多个客户/批次），NCR 是**单点不合格**；用 NCR.status 承载召回会丢失批量聚合。裁决 D2 是给 NCR 加"升级标记"状态值，召回本身独立成 ErpQaRecall 实体。
+- ⛔ **召回做成 NCR 的一个 status**——召回是**一对多批量**事件（一个召回影响多个客户/批次），NCR 是**单点不合格**；用 NCR.status 承载召回会丢失批量聚合。上述方案是给 NCR 加"升级标记"状态值，召回本身独立成 ErpQaRecall 实体。
 - ⛔ **召回直接改库存余额**——应走标准销售退货移动单（移动单 DONE 才写流水/余额），召回只登记编排。
 - ⛔ **召回无客户通知即关闭**——通知是合规必备动作（🟢 Carbon 范式）。
 

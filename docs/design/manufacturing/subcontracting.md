@@ -219,9 +219,9 @@ posted=false → 异步过账 → posted=true
 - Metasfresh 异步过账 EventBus 模式
 - iDempiere 多公司/多币种架构
 
-## 实现偏离补注（plan 2026-07-13-0455-1）
+## 实现约定
 
-> 本节记录 plan 0455-1 落地时与上方设计的实现偏离，供 successor 触发时裁决回填。
+> 本节记录与上方设计的实现偏离。
 
 - **状态机裁剪为 8 态核心可执行子集**：设计 §状态机定义列 10 态，本期落地 8 态（DRAFT/SUBMITTED/APPROVED/ISSUED/RECEIVED/COMPLETED/CANCELLED/REJECTED），舍 PRODUCED（供应商确认属 Portal 协同 successor）与 RETURNED（退货 successor）。`erp-mfg/subcontract-status` 字典已由 3 态（DRAFT/ACTIVE/CANCELLED）扩展为 8 态。
 - **以委外订单为编排根，非四业务对象**：设计 §核心业务对象列委外订单/发料单/收货单/发票四实体，本期不引入独立 Issue/Receipt/Invoice 实体。发料/收货经委外订单动作 + inventory StockMove 留痕（对齐 Odoo mrp_subcontracting 复用 stock.picking 范式）。独立单据实体归 successor。
@@ -229,14 +229,14 @@ posted=false → 异步过账 → posted=true
 - **业财过账 config-gated**：`erp-mfg.subcontract-posting-enabled`（默认 false 向后兼容）。新增 SUBCONTRACT_ISSUE(502)/RECEIPT(503)/FEE(504) 三个 ErpFinBusinessType + erp-fin/business-type 字典项 + COA 1408 委外物资科目。凭证科目分解：ISSUE Dr 1408 / Cr 1401；RECEIPT Dr 1405 / Cr 1408；FEE Dr 1408 / Cr 2202。
 - **MRP 委外释放 config-gated**：`erp-mfg.subcontract-release-enabled`（默认 false 向后兼容）。释放生成 APPROVED 委外单（跳过审批，对齐 MRP O-4 架构豁免）。
 - **加工费为订单头级单一金额**：设计描述按委外发票行金额分配，本期以订单头 `processingFee` 单一金额过账（精确行级加工费归集归 successor）。
-- **Successor 触发条件**：供应商 Portal 协同 / 来料质检触发 / 损耗核算 / 退货 / 批次序列号 / 独立单据实体 / 委外差异 / 浏览器层 E2E / 前端 AMIS 动作页面（见 plan 0455-1 Deferred But Adjudicated 各项）。
+- **Successor 触发条件**：供应商 Portal 协同 / 来料质检触发 / 损耗核算 / 退货 / 批次序列号 / 独立单据实体 / 委外差异 / 浏览器层 E2E / 前端 AMIS 动作页面。
 
-## 实现偏离补注：红冲完工（plan 2026-07-14-1825-1）
+## 实现约定：委外红冲完工
 
-> 本节记录 plan 1825-1 落地的委外红冲（reverse）能力。
+> 本节记录委外红冲（reverse）能力。
 
 - **红冲为全量撤销（COMPLETED→CANCELLED）**：`reverseCompletion` `@BizMutation` 动作一次性红冲三段 GL 凭证（SI/SR/SF 经 `IErpFinVoucherBiz.reverse`）+ 反向两段库存移动（issue/receipt 经 `IErpInvStockMoveBiz.reverse`）+ posted=false。复用既有 CANCELLED 状态（8 态之一），不新增 REVERSED 字典项。对齐 assets `reverseDepreciation` 全量范式。
-- **红冲 GL 以 posted==true 为前置（非 config flag）**：`erp-mfg.subcontract-posting-enabled` 仅门控正向过账；红冲始终尝试撤销已落地的 GL 凭证（posted==true 即有凭证须红冲），避免正向过账开启→红冲前关闭 config→GL 红冲被跳过致孤儿凭证。
+- **红冲 GL 以 posted==true 为前置（非 config flag）**：`erp-mfg.subcontract-posting-enabled` 仅门控正向过账；红冲始终尝试撤销已过账的 GL 凭证（posted==true 即有凭证须红冲），避免正向过账开启→红冲前关闭 config→GL 红冲被跳过致孤儿凭证。
 - **红冲库存移动幂等**：经 `findByRelatedBill(relatedBillType, relatedBillCode)` 反查原移动单，不存在则 no-op；`IErpInvStockMoveBiz.reverse` 生成反向冲销移动单（余额自动回滚）。
 - **财务侧冲销反写监听者（M5.2 覆盖 manufacturing 委外段）**：`MfgSubcontractReversalListener implements IErpFinVoucherReversedListener`，财务员直接红冲 SUBCONTRACT_ISSUE/RECEIPT/FEE 凭证时回退委外单 posted=false + docStatus→CANCELLED。镜像 `PurReversalListener` 范式，但回退字段不同：采购单回退 approveStatus（审批轴驱动），委外单回退 docStatus（COMPLETED 时 approveStatus 已 APPROVED 且 CANCELLED 为终态，无 approveStatus 回退）。billHeadCode 经去后缀（-SI/-SR/-SF）反查委外单 code。幂等安全（posted==false 时 no-op，与域级 reverseCompletion 无双重处理）。
 

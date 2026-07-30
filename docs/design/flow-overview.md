@@ -498,7 +498,7 @@ IErpFinAcctDocProvider.createFacts()
 | 单据审核 + 凭证生成 | 同步调用（REQUIRES_NEW 独立事务隔离） | 强一致性（跨域失败隔离） |
 | 期末结账 | 单库事务（REQUIRED） | 强一致性 |
 
-> **CloseVoucherWriter 幂等约束（plan 2026-07-30-0841-2 R1.28 P1-MA2-087）**：`CloseVoucherWriter.writeVoucher`（期末结账/汇兑重估/年度结转/坏账准备等直写凭证路径）本身无字面 `(billHeadCode, businessType)` UK 兜底，亦无独立 application-layer 幂等 pre-check。其并发安全**完全由期间乐观锁（period version guard）承接**：同期间并发 close 经期间实体 `version` 冲突序列化，一个事务回滚，不会产生重复 close 凭证。独立的字面 UK 不在本计划落地——与 deferred P0-MA2-018 同根因（红冲同键 2 行 / 多账套同键 N 行 / 软删除重插三重冲突，字面 UK 已裁定不可实施），归 P0-MA2-018 deferred plan 方向 A/B/C/D 解决。当前缓解充分（P1 非 P0：无活跃数据破坏，period version guard 已序列化并发 close）。
+> **CloseVoucherWriter 幂等约束**：`CloseVoucherWriter.writeVoucher`（期末结账/汇兑重估/年度结转/坏账准备等直写凭证路径）本身无字面 `(billHeadCode, businessType)` UK 兜底，亦无独立 application-layer 幂等 pre-check。其并发安全**完全由期间乐观锁（period version guard）承接**：同期间并发 close 经期间实体 `version` 冲突序列化，一个事务回滚，不会产生重复 close 凭证。独立的字面 UK 为 deferred 项（红冲同键 2 行 / 多账套同键 N 行 / 软删除重插三重冲突，字面 UK 已裁定不可实施），归后续解决方向 A/B/C/D。当前缓解充分（无活跃数据破坏，period version guard 已序列化并发 close）。
 
 ### 6.2 兜底机制
 

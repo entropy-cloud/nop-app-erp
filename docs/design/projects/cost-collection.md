@@ -55,7 +55,7 @@
 | 角色级别 | 中 | 某角色（如高级工程师）的成本率 |
 | 活动类型级别 | 低 | 某活动类型的默认成本率 |
 
-> **实现偏差（plan 2026-07-03-1018-2 §Task Route Decision）**：本期实现为「单填 &gt; 活动类型 &gt; 全局默认」优先级——
+> **实现约定**：本期实现为「单填 &gt; 活动类型 &gt; 全局默认」优先级——
 > `Timesheet.costRate`（按单填写）→ `ErpPrjActivityType.costRate`（活动类型默认）→ `erp-prj.default-labor-cost-rate`（全局 config）。
 > 用户级/角色级独立费率载体本期不存在（`ErpPrjProjectUser.role` 为纯文本无费率列），为 Non-Goal；
 > 待多级费率配置需求落地时新增用户费率实体（successor）。
@@ -110,7 +110,7 @@
 
 项目预算包含：项目编码、总预算、已使用预算、剩余预算（= 总预算 - 已使用预算）、控制模式（WARNING/STRICT）。
 
-> **实现偏差（plan 2026-07-03-1018-2 §Task Route Decision）**：本期以**项目级** `erp-prj.budget-control-mode`
+> **实现约定**：本期以**项目级** `erp-prj.budget-control-mode`
 > config（WARNING 默认 / STRICT）实现预算控制，而非预算头 `ErpPrjBudget.controlMode` 字段。
 > 总预算取 `ErpPrjProject.budget`，已使用 = 该项目所有归集行金额之和。行级 `committedAmount/actualAmount`
 > 仍记录备查但不参与拦截。待多预算行项目粒度需求落地时改为行级 STRICT（successor）。
@@ -165,7 +165,7 @@
 | 费用报销（[owner](../finance/expense-claim.md)） | 报销审核 | 借：项目费用 / 贷：现金/银行 |
 | 库存领料 | 领料单审核 | 借：项目成本 / 贷：存货 |
 
-> **实现偏差（plan 2026-07-03-1018-2 §Task Route Decision）**：本期费用报销归集为 **projects 驱动只读聚合**
+> **实现约定**：本期费用报销归集为 **projects 驱动只读聚合**
 > （`IErpPrjCostCollectionBiz.refreshExpenseCost` 经 `IErpFinExpenseClaimBiz` 只读 R 查报销单 + projects 自写
 > `erp_prj_cost_collection`），而非 finance 回写——对齐 `data-dependency-matrix.md §3.2:160`「finance 从不写业务表」
 > + `§4.2:217` 成本归集为 projects 触发 `confirmCollection()`。采购入库/领料归集为本期 Non-Goal（successor）。
@@ -263,7 +263,7 @@
         └─► 凭证过账状态反馈
 ```
 
-> **工时过账失败告警（G3 错误传播分级，plan 2026-07-30-0341-2 P1-MA2-068）**：`TimesheetPostingDispatcher.tryPost` 过账失败（吞异常保持 APPROVED+posted=false 不阻塞终态）现派发 `IErpSysNotificationBiz` 告警（`prj.timesheet-posting-failure`），使 GL 缺 PROJECT_COST_COLLECTION 凭证悬挂可被运营感知（业财不一致经期末试算平衡人工发现，projects 不纳入期末前置检查覆盖矩阵）。
+> **工时过账失败告警（G3 错误传播分级）**：`TimesheetPostingDispatcher.tryPost` 过账失败（吞异常保持 APPROVED+posted=false 不阻塞终态）现派发 `IErpSysNotificationBiz` 告警（`prj.timesheet-posting-failure`），使 GL 缺 PROJECT_COST_COLLECTION 凭证悬挂可被运营感知（业财不一致经期末试算平衡人工发现，projects 不纳入期末前置检查覆盖矩阵）。
 
 ### 6.2 与采购域协作
 
@@ -299,6 +299,6 @@
 
 预算检查在业务单据提交时执行，根据项目预算的控制模式（WARNING/STRICT）决定是否允许提交。
 
-> **实现偏差（plan 2026-07-03-1018-2 §Task Route Decision）**：设计原文写作 `PROJECT_LABOR_COST` 为命名偏差，
+> **实现约定**：设计原文写作 `PROJECT_LABOR_COST` 为命名偏差，
 > 实际复用既有 `ErpFinBusinessType.PROJECT_COST_COLLECTION(110)` 枚举（保持「不新增 finance 契约」边界）。
 > 工时/费用/采购归集共用同一 businessType，Provider 内按 `sourceBillType` 区分借方科目。

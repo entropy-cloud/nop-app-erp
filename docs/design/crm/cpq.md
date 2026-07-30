@@ -186,7 +186,7 @@ CPQ 配置完成 + 定价计算完成 →
   回写 lead.relatedBillType/Code
 ```
 
-> **实现注记（plan 2026-07-07-1430-2）**：
+> **实现注记**：
 > - `IErpSalQuotationBiz.createFromConfig` 在 sales 域不存在。本期 `IErpCrmProductConfiguratorBiz.generateQuote` 改用 `IErpSalQuotationBiz.save`（`ICrudBiz.save`，0549-2 Lead→Quotation 已验证范式）跨域建单，配置快照序列化为 JSON 写入 `quotation.remark`（截断 500 字符）。
 > - 配置规则引擎 `conditionExpression` 经 XLang 表达式评估（`XLang.newCompileTool().allowUnregisteredScopeVar(true).compileFullExpr(...)` + `IEvalScope.setLocalValue("selectedFeatures", ...)`），表达式形如 `selectedFeatures.CPU_TYPE == 'INTEL_XEON'`。`conditionExpression` 不为空时优先于单行 `sourceFeatureCode/Value` 匹配。
 > - 价格规则引擎按 ruleType rank（CUSTOMER_SPECIFIC=0 > PROMOTIONAL=1 > VOLUME=2）+ `priority` 数值小者排序；`priceOverride` 优先，否则基础价 × (1-discountPercent/100) 或 -discountAmount。

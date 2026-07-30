@@ -26,9 +26,9 @@
 - **成本追溯**：成本变化可追溯到具体移动单
 - **成本调整**：支持手工调整成本差异
 
-## 实现注记（计划 `2026-07-02-1538-1`）
+## 实现注记：MOVING_AVERAGE + FIFO + 期末成本兜底
 
-本设计已部分落地（MOVING_AVERAGE + FIFO），由 inventory 域记账器按物料 `costMethod` **策略分派**实现，权威源码：
+本设计覆盖 MOVING_AVERAGE + FIFO，由 inventory 域记账器按物料 `costMethod` **策略分派**实现，权威源码：
 
 - **记账器分派**：`StockMoveBookkeeper.bookCompletion`（inventory DONE 同事务记账器）按物料 costMethod 分派到 `CostingStrategy`；`CostMethodResolver` 解析顺序：`ErpMdMaterial.costMethod` → `ErpMdAcctSchema.costingMethod` → 配置 `erp-inv.default-cost-method`（默认 MOVING_AVERAGE）；`erp-inv.costing-enabled=false` 时退化为既有硬编码移动加权平均行为（向后兼容总开关）。
 - **MOVING_AVERAGE（`MovingAverageCostingStrategy`）**：抽取既有记账逻辑（入库重算 `balance.avgCost`/出库 `unitCost=avgCost`/写 `ledger.unitCost+totalCost`），行为字节级不变——移动加权平均端到端既有套件全绿为回归门控。
@@ -37,9 +37,9 @@
 - **FIFO 红冲**：`ErpInvStockMoveBizModel.reverse` 生成反向移动单重走正常 DONE 流程，反向入库按原出库刷新的加权 `unitCost` 追加新 cost layer（Decision (a)，避免直接恢复被消耗层致双计），保证红冲后成本不变量（Σ layer remaining×unitCost 恢复至原出库前）。
 - **期末成本兜底（period-close §步骤2）**：`IErpInvCostingBiz.reclosePeriodCosts(periodId,startDate,endDate)` 扫描本期 DONE 的 FIFO 移动单，对成本层缺失的入库补建、对 COGS 异常（`ledger.unitCost` 空/零）的出库按 FIFO 重算并刷新流水（正常路径补算数为 0；非 0 为历史/异常单据兜底修复）。finance 期末结账 INV 模块关账（`ErpFinAccountingPeriodBizModel.closeInvModule`）经 `IBizObjectManager` 跨模块调用（finance→inventory R，DAG 合法），config-gated `erp-fin.inv-costing-reclose-on-close`（默认 true），单域 finance 测试无 inv-service 时 try/catch 告警跳过。
 
-**Non-Goal（计划 `1538-1` Deferred But Adjudicated，已裁定留后继）**：BATCH（批次成本）/ INDIVIDUAL（个别计价，需出库指定批次 + FEFO 效期路由 + `ErpInvCostLayer.batchNo` 维度）、~~STANDARD（标准成本，依赖制造域 cost rollup N=2 产出到 `ErpMfgCostRollupLine.unitCost`）~~（**已收口，见下文 plan 2026-07-05-0427-2 实现注记**）、~~成本调整单 + 成本差异凭证（采购价格调整/成本差异/标准成本重估）~~（**已收口，见 plan 2026-07-05-2352-3 实现注记**）、全月一次加权平均（dict 20）/ LIFO（dict 40）、~~到岸成本（Landed Cost）分摊算法（成本调整单已预留 `adjustType=LANDED_COST_SUPPLEMENT` 码值供 successor）~~（**已收口，见 plan 2026-07-10-1100-3 实现注记**）、默认最低价/折扣叠加规则（取较低值的保守估计）、成本报表（存货成本明细/FIFO 队列/差异表，属 nop-report 报表面）、多账套并行成本、存货减值（成本与可变现净值孰低）。各 Non-Goal 均已命名 successor 触发条件，见计划 Deferred 章节。
+**Non-Goal（Deferred But Adjudicated，留后继）**：BATCH（批次成本）/ INDIVIDUAL（个别计价，需出库指定批次 + FEFO 效期路由 + `ErpInvCostLayer.batchNo` 维度）、~~STANDARD（标准成本，依赖制造域 cost rollup N=2 产出到 `ErpMfgCostRollupLine.unitCost`）~~（见 §实现注记：STANDARD 标准成本法）、~~成本调整单 + 成本差异凭证（采购价格调整/成本差异/标准成本重估）~~（见 §实现注记：成本调整）、全月一次加权平均（dict 20）/ LIFO（dict 40）、~~到岸成本（Landed Cost）分摊算法（成本调整单已预留 `adjustType=LANDED_COST_SUPPLEMENT` 码值供 successor）~~（见 §实现注记：到岸成本分摊算法）、默认最低价/折扣叠加规则（取较低值的保守估计）、成本报表（存货成本明细/FIFO 队列/差异表，属 nop-report 报表面）、多账套并行成本、存货减值（成本与可变现净值孰低）。各 Non-Goal 均已命名 successor 触发条件。
 
-## 实现注记（计划 `2026-07-10-1100-3`）
+## 实现注记：到岸成本分摊算法
 
 本节承接 `1538-1` Deferred「到岸成本（Landed Cost）分摊算法」，触发条件「costing-methods.md §到岸成本设计落地需求」已满足。
 
@@ -49,7 +49,7 @@
 - **过账（`LandedCostAcctDocProvider` + `LandedCostPostingDispatcher`）**：业务类型 `LANDED_COST`(490)。借：每入库行分摊金额 → 存货(1401)；贷：每费用要素 → 应付账款(2202, partnerId=费用行应付对象或采购供应商)。
 - **本期 Non-Goal**：多段到岸成本累计管理（同一入库单多次分摊）、到岸成本预估、logistics path-2 运费自动创建到岸成本单的完整编排——各归 successor。
 
-## logistics path-2 到岸成本自动创建衔接点（plan `2026-07-11-2329-1` 后端 + `2026-07-19-0849-2` 浏览器层）
+## logistics path-2 到岸成本自动创建衔接点
 
 到岸成本单可由 logistics 域 DELIVERED 事件自动创建（与销售域/采购域/财务域人工创建并列的**第 4 入口**）：
 
@@ -57,7 +57,7 @@
 - **结果面**：仅创建 DRAFT + UNSUBMITTED 单据，**不**触发分摊/CostAdjust/`LANDED_COST(490)` 过账（这些归人工审核入口 `approve`，由 plan `2026-07-10-1100-3` 提供）。logistics 侧成功后 `freightSettlementStatus` 翻 SETTLED。
 - **浏览器层 E2E**：经 `tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts`（plan `2026-07-19-0849-2`）覆盖正路径（DRAFT 头+行字段精确数值断言）+ freightAmount=0 边界（显式断言无 LandedCost 创建）。后端单测覆盖 path-2 失败重试/幂等（`TestErpLogPath2LandedCost`）。
 
-## 到岸成本红冲实现注记（计划 `2026-07-18-1745-2`）
+## 到岸成本红冲实现注记
 
 到岸成本审核过账后如需回滚（"错误审核"纠错路径），新增 `ErpInvLandedCost.reverseApprove(@BizMutation)` 入口闭环：
 
@@ -65,16 +65,16 @@
 - **红字凭证行**：`LANDED_COST` 红字凭证行同向取负（Dr 1401=-X / Cr 2202=-X，dcDirection 不变），与原凭证共用 billHeadCode（`voucher_bill_r` 回链按 `postingType=NORMAL|REVERSAL` 区分）。
 - **残留风险（Deferred）**：FIFO 调整层已部分被后续出库消耗时 `removeFifoAdjustLayer` 直接物理删除可能破坏已扣减层——已由 Phase 4 单测覆盖 MOVING_AVERAGE 主路径（FIFO 边界场景归 successor，触发条件：实际启用 FIFO 物料的到岸成本红冲遇此场景时）。
 
-## 实现注记（计划 `2026-07-05-0427-2`）
+## 实现注记：STANDARD 标准成本法
 
 本节承接 `1538-1` Deferred「STANDARD（标准成本）方法」，触发条件「N=2 BOM/工艺成本卷算 rollup 落地后」已满足（`2026-07-02-1538-2-manufacturing-bom-routing-rollup.md` 已完成并产出 `ErpMfgCostRollupLine.unitCost`）。
 
 - **STANDARD（`StandardCostingStrategy`）**：入库按标准成本写 `ledger.unitCost/totalCost`（实际成本经 PPV 通道分离），出库 `unitCost=标准成本` 写 `ledger` 走既有 `InvPostingDispatcher` 拾取（COGS 通道零改动，同 FIFO 范式）。标准成本来源经 `StandardCostResolver` 解析：(1) 最近一条 `status=FIRMED` 的 `ErpMfgCostRollupLine.unitCost`（直接查 mfg-dao 实体，inventory→manufacturing 经 mfg-dao 编译期依赖）；(2) config-gated `erp-inv.standard-cost-fallback-to-material-master=true`（默认）时回退物料主数据 `standardCost` 列（当前 `ErpMdMaterial` 无此列，本路径恒 null，后续冗余发布列落地后自动生效）；均无抛 `ERR_STANDARD_COST_NOT_AVAILABLE`。`CostMethodResolver.isSupported` 增 STANDARD 码值识别与分派。
 - **采购价差（PPV）捕获**：采购入库 DONE 时（`InvPostingDispatcher.dispatchPurchasePriceVariance`），STANDARD 物料的实际入库 `line.unitCost` 与标准 `ledger.unitCost` 差额 × qty = PPV，config-gated `erp-inv.standard-cost-ppv-enabled`（默认 true）。PPV 经新业务类型 `PURCHASE_PRICE_VARIANCE` 过账（`PurchasePriceVarianceAcctDocProvider`）：实际>标准→借材料成本差异(1404)/贷暂估应付(2202)；实际<标准→借暂估应付(2202)/贷材料成本差异(1404)；金额=|实际−标准|×qty。
 - **红冲不变量（P1-MA2-024）**：STANDARD 红冲跨 STANDARD_REVALUATION 时 `balance.totalCost` 恢复依赖两点——(1) `onOutgoing` 刷新 `line.unitCost` 为出库时标准成本（`line.setUnitCost(ErpInvConfigs.roundCost(standardUnitCost))` + `saveOrUpdateEntity`，对齐 FIFO:131-132 范式），供 `ErpInvStockMoveProcessor.reverse:144` 透传给反向入库行；(2) `onIncoming` 在传入 `unitCost` 有效时采用之——但因正常采购入库 `line.unitCost` 持**实际采购价**（PPV 经 `dispatchPurchasePriceVariance:125` 读此值与标准成本比对），不可一律采用传入值，仅当本入库为冲销反向入库（`move.originReturnedMoveId != null`）且 `unitCost > 0` 时采用（原出库扣减的旧标准成本），否则重解析当前标准成本。跨重估时反向入库沿用旧标准成本，红冲后 `balance.totalCost` 恢复不变量（与 FIFO 红冲不变量对齐）。
-- **本期 Non-Goal**：~~生产差异（材料用量/人工效率/费率/产量/制造费用）归 `variance-analysis.md` 工单完工触发面~~（**已收口，见 plan 2026-07-05-1838-2 实现注记**：`ProductionVarianceCalculator` + 完工触发 + `ProductionVarianceDispatcher` 过账已落地）；~~标准成本更新/重估流程（成本调整单+审批+重估凭证）归 1538-1 Deferred「成本调整单」~~（**已收口，见 plan 2026-07-05-2352-3 实现注记**：`ErpInvCostAdjust` 头-行实体 + `CostAdjustmentService` 引擎 + 审批门控 + `CostAdjustmentAcctDocProvider` 过账 + `STANDARD_REVALUATION` 发布 FIRMED rollup 已落地；制造件标准成本重估归制造域 `rollupCost` successor）。
+- **本期 Non-Goal**：~~生产差异（材料用量/人工效率/费率/产量/制造费用）归 `variance-analysis.md` 工单完工触发面~~（见 §实现注记：生产差异计算：`ProductionVarianceCalculator` + 完工触发 + `ProductionVarianceDispatcher` 过账）；~~标准成本更新/重估流程（成本调整单+审批+重估凭证）归 1538-1 Deferred「成本调整单」~~（见 §实现注记：成本调整：`ErpInvCostAdjust` 头-行实体 + `CostAdjustmentService` 引擎 + 审批门控 + `CostAdjustmentAcctDocProvider` 过账 + `STANDARD_REVALUATION` 发布 FIRMED rollup；制造件标准成本重估归制造域 `rollupCost` successor）。
 
-## 实现注记（计划 `2026-07-05-1838-2`）
+## 实现注记：生产差异计算
 
 本节承接 `0427-2` Deferred「生产差异」，触发条件「工单完工差异分析需求落地」（依据：`variance-analysis.md` 设计权威指定 + 技术前置就绪）。
 
@@ -83,18 +83,18 @@
 - **差异过账（`ProductionVarianceDispatcher`）**：差异计算后按成本要素（材料/人工/制造费用）汇总净差异，组装 PostingEvent 经 `IErpFinVoucherBiz.post` 提交（`PRODUCTION_VARIANCE` 业务类型，`ProductionVarianceAcctDocProvider` 方向相关借贷分解到差异科目/WIP 科目），成功回写 `posted=true`。
 - **手动入口**：`ErpMfgCostVariance__calculateVariances` @BizMutation（幂等：先删旧行再重算，仅 COMPLETED 工单允许）+ `findByWorkOrder` / `aggregateByType` @BizQuery 查询。
 
-## 实现注记（计划 `2026-07-13-0455-2`）
+## 实现注记：overhead/subcontract 成本要素
 
 本节承接 `2026-07-12-1504-1` 裁决 M-2（成本要素拆分 successor），闭合 `CostRollupService` overhead/subcontract 两要素恒 0 缺口。依赖 N=1（`2026-07-13-0455-1` 委外引擎）提供已过账委外订单加工费归集源。
 
 - **overhead 制造费用（config-gated 分配率）**：`CostRollupService` 经 `erp-mfg.overhead-allocation-enabled`（默认 false 向后兼容）控制。关时 `overheadCost`=0（行为不变）；开时按 `erp-mfg.overhead-allocation-mode` 选择分配模式：`MACHINE_HOUR`=Σ(工序 standardTime/60)×`erp-mfg.overhead-allocation-rate`（机器工时×费率）；`LABOR_RATIO`=laborCost×rate（人工成本比例）。工作中心 schema 拆分（`ErpMfgWorkcenter` laborRate/overheadRate 分列）为 successor（ask-first ORM 保护区域，触发条件：产品要求工作中心级精确费率）。
 - **subcontract 委外费（归集源 = N=1 已过账委外订单）**：`CostRollupService` 经 `erp-mfg.subcontract-cost-aggregation-enabled`（默认 false）控制。关时 `subcontractCost`=0；开时按物料聚合 `docStatus=COMPLETED` 委外订单（`ErpMfgSubcontractOrder.productId`）的 `processingFee`，按委外行产量（`ErpMfgSubcontractOrderLine.quantity`）分摊为单位委外成本。
 - **CostBreakdown 四要素**：`unitCost = material + labor + overhead + subcontract`（`CostRollupLineView` 补 `subcontractCost` 字段，`ErpMfgCostRollupLine` schema 四要素列已存在）。FIRMED rollup 行 unitCost 含四要素后经 `StandardCostResolver` 传播进存货 STANDARD 成本法（costing-methods.md:56 链路）。
-- **本期 Non-Goal**：工作中心 laborRate/overheadRate schema 拆分（精确工作中心级费率，ask-first successor）。~~subcontract 委外差异（`ProductionVarianceCalculator` SUBCONTRACT 差异类型 successor，5 类差异未含 SUBCONTRACT）~~（**已收口，见 plan 2026-07-14-0035-1 实现注记**：`ProductionVarianceCalculator` 第 6 类差异 SUBCONTRACT + `ProductionVarianceDispatcher` 第 4 要素桶 + 1416/1417 科目对已落地）。
+- **本期 Non-Goal**：工作中心 laborRate/overheadRate schema 拆分（精确工作中心级费率，ask-first successor）。~~subcontract 委外差异（`ProductionVarianceCalculator` SUBCONTRACT 差异类型 successor，5 类差异未含 SUBCONTRACT）~~（见 §实现注记：SUBCONTRACT 委外差异：`ProductionVarianceCalculator` 第 6 类差异 SUBCONTRACT + `ProductionVarianceDispatcher` 第 4 要素桶 + 1416/1417 科目对）。
 
-## 实现注记（计划 `2026-07-14-0035-1`）
+## 实现注记：SUBCONTRACT 委外差异
 
-本节承接 `0455-2` Deferred「subcontract 委外差异」，触发条件「委外差异分析业务需求落地」已满足（委外引擎 0455-1 + 委外费归集 0455-2 已落地，标准侧 `ErpMfgCostRollupLine.subcontractCost` 与实际侧 `ErpMfgWorkOrder.subcontractCost` 列均就位，差异引擎此前从未消费）。
+本节承接 `0455-2` Deferred「subcontract 委外差异」，触发条件「委外差异分析业务需求落地」已满足（委外引擎 0455-1 + 委外费归集 0455-2 就位，标准侧 `ErpMfgCostRollupLine.subcontractCost` 与实际侧 `ErpMfgWorkOrder.subcontractCost` 列均就位，差异引擎此前从未消费）。
 
 - **第 6 类差异 SUBCONTRACT（`ProductionVarianceCalculator`）**：标准 = `rollupLine.subcontractCost × 完工量`；实际 = `wo.subcontractCost`；`costElement = SUBCONTRACT` / `varianceType = SUBCONTRACT`。沿用既有「零差异不生成行」范式——仅当标准侧或实际侧 subcontractCost 非零时生成行，两侧均为零时跳过（不污染既有 5 类差异输出）。
 - **字典 + 常量**：`erp-mfg/variance-type` 字典补 `SUBCONTRACT`（委外费差异）码；`ErpMfgConstants.VARIANCE_TYPE_SUBCONTRACT` 同步。
@@ -462,9 +462,9 @@ FIFO 成本追溯
 </entity>
 ```
 
-### 实现注记（plan 2026-07-05-2352-3）
+### 实现注记：成本调整
 
-成本调整已落地，与上文设计草稿的偏离记录如下（权威实现 = `<domain>/model/*.orm.xml` + BizModel）：
+成本调整与上文设计草稿的偏离记录如下（权威实现 = `<domain>/model/*.orm.xml` + BizModel）：
 
 - **实体结构（Decision）**：采用头-行（`ErpInvCostAdjust` 头 + `ErpInvCostAdjustLine` 行），而非上文草稿的单层结构——成本调整常涉及多物料/多仓库一次调整，头-行 cascade 范式与全域头-行单据（采购订单/退货单）一致。头携带 code/adjustType(dict `erp-inv/adjust-type`)/docStatus/approveStatus/posted + 审计列；行携带 materialId/warehouseId/batchNo/oldUnitCost/newUnitCost/adjustQty/adjustAmount/adjustReason。
 - **adjustType 字典**：`PURCHASE_PRICE_ADJUST`（采购价格调整）/`COST_DIFFERENCE`（成本差异）/`STANDARD_REVALUATION`（标准成本重估）/`LANDED_COST_SUPPLEMENT`（到岸成本补录，本期 Non-Goal 预留码值）。
@@ -659,7 +659,7 @@ public BigDecimal findIncomingCost(Long moveId) {
 - `upsertBalance(move, line, warehouseId, locationId)`（`:22-23`）—— 余额维度 upsert（物料 × 仓库 × 库位 × 批次 × owner）。
 - `writeLedger(move, line, acctSchemaId, balance, warehouseId, locationId, signedQty, unitCost, signedTotalCost, costMethod)`（`:25-27`）—— 写不可变流水 `ErpInvStockLedger` + 结存快照。
 - `recomputeAvailable(balance)`（`:29`）—— 重算 available = total − reserved − locked。
-- `updateBalanceWithRetry(initialBaseline, applyDelta)`（`:46-47`）—— **乐观锁保护下的余额更新**（UC-INV-08 并发扣减加固，plan 2026-07-07-0024-2）：`applyDelta` 必须为纯函数，冲突时 evict + reload + 重试，重试上限 `erp-inv.concurrent-deduct-max-retry`（默认 5）。
+- `updateBalanceWithRetry(initialBaseline, applyDelta)`（`:46-47`）—— **乐观锁保护下的余额更新**（UC-INV-08 并发扣减加固）：`applyDelta` 必须为纯函数，冲突时 evict + reload + 重试，重试上限 `erp-inv.concurrent-deduct-max-retry`（默认 5）。
 - `daoProvider()`（`:49`）+ `ormTemplate()`（`:51`）—— 数据访问底层（策略内查 `ErpInvCostLayer` 等用）。
 
 **(2.5) 统一输出通道（COGS 通道零改动）**：
@@ -683,7 +683,7 @@ public BigDecimal findIncomingCost(Long moveId) {
 
 ### 4. 如何新增一个策略
 
-以「新增 INDIVIDUAL（个别计价）full 支持」为例（当前 `SpecificCostingStrategy` 已落地，此处仅作步骤示范）：
+以「新增 INDIVIDUAL（个别计价）full 支持」为例（当前 `SpecificCostingStrategy` 已存在，此处仅作步骤示范）：
 
 | 步骤 | 动作 | 文件位置 | 关键约束 |
 |------|------|---------|---------|

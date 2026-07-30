@@ -73,7 +73,7 @@
 
 > 双方文档都显式声明此约束，确保两个域的读者都能看到质检对工单状态的影响。
 >
-> **状态机对齐说明**：制造工单**不引入独立的 `INSPECTING` 状态**——质检判定经 config-gated 钩子在完工入库前阻塞/放行，工单状态仍停留在 `IN_PROCESS`。`manufacturing/state-machine.md` 的 10 态字典（`erp-mfg/work-order-status`）和 `domain-design-guidelines.md §16.2` manufacturing 行均已对齐。详见 plan 2237-1 偏离补注。
+> **状态机对齐说明**：制造工单**不引入独立的 `INSPECTING` 状态**——质检判定经 config-gated 钩子在完工入库前阻塞/放行，工单状态仍停留在 `IN_PROCESS`。`manufacturing/state-machine.md` 的 10 态字典（`erp-mfg/work-order-status`）和 `domain-design-guidelines.md §16.2` manufacturing 行均已对齐。详见 `manufacturing/state-machine.md §实现约定`。
 
 ## 关键业务规则
 

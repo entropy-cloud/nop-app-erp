@@ -76,7 +76,7 @@
 6. **批次/序列号校验**：启用批次/序列号的物料，移动单必须指定批次/序列号；出库校验批次在库、序列号未售。
 7. **上下游追溯**：移动单记录上游/下游移动单关联，支持全链路追溯（采购到货→生产领料→销售出库）。
 8. **作业类型参数化**：作业类型绑定默认库位与科目映射，供财务域过账使用。
-9. **余额行自然键唯一约束 + INSERT-on-conflict 兜底**：`ErpInvStockBalance` 在 `(orgId, materialId, skuId, warehouseId, locationId, batchNo, ownerId)` 上建 DB 唯一约束 `UK_INV_STOCK_BALANCE_NATURAL`（含 orgId 兼容多公司隔离），兜底防止并发首次 INSERT 产生重复余额行（silent split-quantity corruption）。`StockMoveBookkeeper.upsertBalance`/`updateBalanceWithRetry` 与 `ErpInvOwnershipTransferProcessor.upsertTargetBalance` 捕获 ConstraintViolation → evict + reload 已落地行 + 转更新路径，重试上限 `erp-inv.concurrent-deduct-max-retry`（默认 5）。
+9. **余额行自然键唯一约束 + INSERT-on-conflict 兜底**：`ErpInvStockBalance` 在 `(orgId, materialId, skuId, warehouseId, locationId, batchNo, ownerId)` 上建 DB 唯一约束 `UK_INV_STOCK_BALANCE_NATURAL`（含 orgId 兼容多公司隔离），兜底防止并发首次 INSERT 产生重复余额行（silent split-quantity corruption）。`StockMoveBookkeeper.upsertBalance`/`updateBalanceWithRetry` 与 `ErpInvOwnershipTransferProcessor.upsertTargetBalance` 捕获 ConstraintViolation → evict + reload 已存在行 + 转更新路径，重试上限 `erp-inv.concurrent-deduct-max-retry`（默认 5）。
    - **SQL NULL 语义限制**：H2/PostgreSQL/MySQL 默认 NULLS DISTINCT——nullable 列（locationId/batchNo/ownerId）取 NULL 时不参与 UNIQUE 比较。仅当全部键列非空时 DB 约束才生效；含 NULL 列的并发首次 INSERT 由应用层 retry-on-conflict 兜底（依赖 flush 暴露冲突）。
 
 ### 报废出库移动单
@@ -115,7 +115,7 @@
 
 | 作业 | 频率 | 配置键 | 入口 |
 |------|------|--------|------|
-| `erp-inv-stock-check`（库存余额对账） | 每日 03:00 | `erp-inv.stock-check-cron`（默认 `0 0 3 * * ?`） | 待实现（nop-batch candidate，大数据量迁移） |
+| `erp-inv-stock-check`（库存余额对账） | 每日 03:00 | `erp-inv.stock-check-cron`（默认 `0 0 3 * * ?`） | Deferred（nop-batch candidate，大数据量迁移） |
 
 > cron 接线（`scheduler.yaml` 注册）归 follow-up，触发条件见 `job-scheduling.md` §8。
 

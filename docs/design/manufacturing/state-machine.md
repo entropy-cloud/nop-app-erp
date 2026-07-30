@@ -164,18 +164,18 @@
 
 > 质检触发规则见 `quality/README.md` "质检对制造域的约束声明"节。双方文档都显式声明此约束。
 
-### 实现偏离补注（plan 2026-07-02-2237-1）
+### 实现约定
 
-> 本节记录 plan 2237-1 落地时与上方状态机设计文档的实现偏离，供 2.4 quality 落地后裁决回填。
+> 本节记录与上方状态机设计文档的实现偏离。
 
-- **INSPECTING 态字典缺失 → config-gated 钩子替代**：上方 §质检约束声明引用工单 INSPECTING 态，但 `erp-mfg/work-order-status` 字典（10 态）**无 INSPECTING 态**。plan 2237-1 以 config-gated 完工门控钩子替代（不加 ORM 字典态）：`reportCompletion` 时若 `ErpMfgBom.inspectionRequired=true` 且 `erp-mfg.inspection-gate-enabled=true`（默认 false）且完工达量，抛 `ERR_INSPECTION_REQUIRED` 拒绝 COMPLETED，工单保持 IN_PROCESS 待质检结果。**触发条件**：2.4 quality 落地后 flip config=true 接线，并裁决是否需向字典补 INSPECTING 态。
+- **INSPECTING 态字典缺失 → config-gated 钩子替代**：上方 §质检约束声明引用工单 INSPECTING 态，但 `erp-mfg/work-order-status` 字典（10 态）**无 INSPECTING 态**。以 config-gated 完工门控钩子替代（不加 ORM 字典态）：`reportCompletion` 时若 `ErpMfgBom.inspectionRequired=true` 且 `erp-mfg.inspection-gate-enabled=true`（默认 false）且完工达量，抛 `ERR_INSPECTION_REQUIRED` 拒绝 COMPLETED，工单保持 IN_PROCESS 待质检结果。**触发条件**：quality 就绪后 flip config=true 接线，并裁决是否需向字典补 INSPECTING 态。
 - **领料出库 moveType 用 OUTGOING(20) 而非 MANUFACTURING(40)**：库存域 `StockMoveBookkeeper.bookCompletion` 按 moveType 决定方向——MANUFACTURING(40) 视为入库（加库存），OUTGOING(20) 才扣减余额。故领料出库移动单用 `MOVE_TYPE_OUTGOING_ISSUE(20)`（relatedBillType=ERP_MFG_ISSUE）；完工入库移动单用 MANUFACTURING(40)（relatedBillType=ERP_MFG_WORK_ORDER）。计划原写「moveType=MANUFACTURE」为对库存域方向语义的假设偏差，已按库存域实际实现修正。
 - **齐套校验只读不写预留**：`checkAvailability`（NOT_STARTED→STOCK_RESERVED/STOCK_PARTIAL）仅读 `ErpInvStockBalance.availableQuantity` 置状态，不写库存预留记录（实际扣减由开工后领料出库移动单 DONE 完成，对齐 `inventory/cross-domain.md §余量校验规则`）。故 `cancel`（→CANCELLED）为纯状态迁移，无预留记录需释放。
-- **制造费用 overheadCost 经 config-gated 分配率应用**：工作中心仅有单一 `hourlyRate`（无独立制造费率分列，同 plan 1538-2）。成本卷算 `CostRollupService` 的 overhead 要素经 config-gated 分配率（plan 2026-07-13-0455-2）：关时（默认）`overheadCost`=0 向后兼容；开时按 `erp-mfg.overhead-allocation-mode`（MACHINE_HOUR=工序机器工时×rate / LABOR_RATIO=laborCost×rate）× `erp-mfg.overhead-allocation-rate` 计算。subcontract 委外费要素同步落地（`erp-mfg.subcontract-cost-aggregation-enabled` 开时按物料聚合已过账委外订单加工费按产量分摊）。**触发条件**：产品要求工作中心级精确人工/制造费率分列时拆 `ErpMfgWorkcenter` laborRate/overheadRate schema（ask-first ORM）。
-- **完工成本结转凭证已实现**：完工入库移动单生成（产成品入 destWarehouse）+ 产成品存货估值过账凭证（MANUFACTURING_RECEIPT 凭证类型：Dr 产成品存货 1401 / Cr WIP 1411）已由 plan 2026-07-10-1100-5 落地。完工入库移动单 posted=true。领料出库 GL 过账（MANUFACTURING_ISSUE：Dr WIP 1411 / Cr 原材料存货 1401）同步落地，领料单 posted=true。
-- **工时/实领数量列类型修正补注**：`ErpMfgJobCardTimeLog.durationMins`/`setupMins`/`runMins`/`hourlyRate`（VARCHAR→DECIMAL，对齐 domain）+ `ErpMfgMaterialIssueLine.issuedQuantity`（BOOLEAN→DECIMAL，对齐 domain）已修正，解除报工成本归集数值计算阻塞（同 plan 1538-2 工时/费率修正范式）。
-- **领料红冲实现注记（plan 2026-07-18-1745-2）**：领料单 DONE+posted=true 后如需回滚（"错误确认"纠错路径），新增 `ErpMfgMaterialIssue.reverseConfirm(@BizMutation)` 入口闭环：守卫 `posted=true + DONE` 态（未过账抛 `ERR_MATERIAL_ISSUE_NOT_POSTED`）→ 调 `ManufacturingIssuePostingDispatcher.reverse(issue)` 红冲 `MANUFACTURING_ISSUE` 凭证（billHeadCode=`issue.code + "-MI"` 与正向对称）+ 调 `IErpInvStockMoveBiz.reverse(moveId)` 反向 OUTGOING 移动单（生成 REVERSAL 反向冲销移动单，库存余额自动回滚）→ 翻 `posted=false / docStatus=CANCELLED`。红字凭证行同向取负（Dr 1411=-X / Cr 1401=-X）。库存反向移动单范式对齐 1934-1 委外红冲 + 1745-1 备件消耗红冲。
-- **完工触发差异/委外过账错误传播分级（plan 2026-07-30-0341-2 P1-MA4-007/010）**：`reportCompletion` 差异计算/过账 + `SubcontractPostingDispatcher` issue/receipt/fee 段失败按 **G3 错误传播分级**（`posting-log.md`）处置——「无 FIRMED 标准成本」（`ERR_VARIANCE_NO_STANDARD_COST`）容错跳过（差异未配置，非故障）；其他配置错误/真实故障不阻断完工（已 COMPLETED）但派发 `IErpSysNotificationBiz` 告警（`mfg.production-variance-posting-failure` / `mfg.subcontract-posting-failure`），使 GL 缺凭证悬挂可被运营感知（手动重算入口存在）。委外 issue/receipt 段段级过账状态经 `ErpFinVoucherBillR`（billHeadCode + businessType）判重可查。
+- **制造费用 overheadCost 经 config-gated 分配率应用**：工作中心仅有单一 `hourlyRate`（无独立制造费率分列）。成本卷算 `CostRollupService` 的 overhead 要素经 config-gated 分配率：关时（默认）`overheadCost`=0 向后兼容；开时按 `erp-mfg.overhead-allocation-mode`（MACHINE_HOUR=工序机器工时×rate / LABOR_RATIO=laborCost×rate）× `erp-mfg.overhead-allocation-rate` 计算。subcontract 委外费要素同步应用（`erp-mfg.subcontract-cost-aggregation-enabled` 开时按物料聚合已过账委外订单加工费按产量分摊）。**触发条件**：产品要求工作中心级精确人工/制造费率分列时拆 `ErpMfgWorkcenter` laborRate/overheadRate schema（ask-first ORM）。
+- **完工成本结转凭证**：完工入库移动单生成（产成品入 destWarehouse）+ 产成品存货估值过账凭证（MANUFACTURING_RECEIPT 凭证类型：Dr 产成品存货 1401 / Cr WIP 1411）。完工入库移动单 posted=true。领料出库 GL 过账（MANUFACTURING_ISSUE：Dr WIP 1411 / Cr 原材料存货 1401）同步，领料单 posted=true。
+- **工时/实领数量列类型修正补注**：`ErpMfgJobCardTimeLog.durationMins`/`setupMins`/`runMins`/`hourlyRate`（VARCHAR→DECIMAL，对齐 domain）+ `ErpMfgMaterialIssueLine.issuedQuantity`（BOOLEAN→DECIMAL，对齐 domain），解除报工成本归集数值计算阻塞。
+- **领料红冲实现注记**：领料单 DONE+posted=true 后如需回滚（"错误确认"纠错路径），新增 `ErpMfgMaterialIssue.reverseConfirm(@BizMutation)` 入口闭环：守卫 `posted=true + DONE` 态（未过账抛 `ERR_MATERIAL_ISSUE_NOT_POSTED`）→ 调 `ManufacturingIssuePostingDispatcher.reverse(issue)` 红冲 `MANUFACTURING_ISSUE` 凭证（billHeadCode=`issue.code + "-MI"` 与正向对称）+ 调 `IErpInvStockMoveBiz.reverse(moveId)` 反向 OUTGOING 移动单（生成 REVERSAL 反向冲销移动单，库存余额自动回滚）→ 翻 `posted=false / docStatus=CANCELLED`。红字凭证行同向取负（Dr 1411=-X / Cr 1401=-X）。库存反向移动单范式对齐委外红冲 + 备件消耗红冲。
+- **完工触发差异/委外过账错误传播分级**：`reportCompletion` 差异计算/过账 + `SubcontractPostingDispatcher` issue/receipt/fee 段失败按 **G3 错误传播分级**（`posting-log.md`）处置——「无 FIRMED 标准成本」（`ERR_VARIANCE_NO_STANDARD_COST`）容错跳过（差异未配置，非故障）；其他配置错误/真实故障不阻断完工（已 COMPLETED）但派发 `IErpSysNotificationBiz` 告警（`mfg.production-variance-posting-failure` / `mfg.subcontract-posting-failure`），使 GL 缺凭证悬挂可被运营感知（手动重算入口存在）。委外 issue/receipt 段段级过账状态经 `ErpFinVoucherBillR`（billHeadCode + businessType）判重可查。
 
 ---
 
@@ -198,20 +198,20 @@
   └─ （工单取消时联动取消）
 ```
 
-> **作业卡 TRANSFERRED 两态为预留死状态（Deferred，audit P1-MA2-035）**：`erp-mfg/job-card-status` 字典含 `PARTIALLY_TRANSFERRED`/`MATERIAL_TRANSFERRED` 两值（转序/工序转移语义入口），但 `ErpMfgJobCardProcessor` 与 `ErpMfgJobCardBizModel` 全 7 mutation（startJob/recordWork/submitJob/completeJob/holdJob/resumeJob/cancelJob）**零 setStatus writer**，两态本期不可达。处置：采纳 Decision A（保留 dict 值为预留 + owner doc 标注 Deferred，对齐 `mrp.md:88` forecast CONSUMED 既有先例），不从 ORM 删除。**Successor 触发条件**：转序/工序转移功能上线时，实现 setStatus writer + 状态迁移守卫，将两态接入作业卡主生命周期。
+> **作业卡 TRANSFERRED 两态为预留死状态（Deferred）**：`erp-mfg/job-card-status` 字典含 `PARTIALLY_TRANSFERRED`/`MATERIAL_TRANSFERRED` 两值（转序/工序转移语义入口），但 `ErpMfgJobCardProcessor` 与 `ErpMfgJobCardBizModel` 全 7 mutation（startJob/recordWork/submitJob/completeJob/holdJob/resumeJob/cancelJob）**零 setStatus writer**，两态本期不可达。处置：采纳 Decision A（保留 dict 值为预留 + owner doc 标注 Deferred，对齐 `mrp.md:88` forecast CONSUMED 既有先例），不从 ORM 删除。**Successor 触发条件**：转序/工序转移功能上线时，实现 setStatus writer + 状态迁移守卫，将两态接入作业卡主生命周期。
 
 作业卡承载工时记录（JobCardTimeLog）：作业员记录实际工时，用于成本核算。
 
-### APS 排程来源建卡（plan 2026-07-05-0427-3）
+### APS 排程来源建卡
 
-> **触发条件**：APS 排产引擎（plan 0831-1）已落地 + WorkOrder/JobCard 状态机（plan 2237-1）已落地，本节补注排程产物 → 工序卡的自动消费入口。
+> **触发条件**：APS 排产引擎 + WorkOrder/JobCard 状态机，本节补注排程产物 → 工序卡的自动消费入口。
 
 - **入口**：`ErpMfgWorkOrder__generateJobCardsFromSchedule(workOrderId)` @BizMutation。读取该工单关联的、已排程（`ErpApsOperationOrder.status=PLANNED`，`plannedStartT/plannedEndT` 非空）的工序，按工序生成 JobCard（一工序一卡），JobCard 初始状态 = `OPEN`（对齐本状态机入口），`plannedQuantity` = 工单计划生产量，`workcenterId` 来自 APS 排程。
 - **来源标记**：建卡时回写 `JobCard.sourceScheduleId` = 对应 `ErpApsOperationOrder.id`（弱参照），并标记 `WorkOrder.sourceOrderType=APS_SCHEDULE` + `WorkOrder.sourceScheduleId`。`sourceScheduleId`/`sourceOrderType` 为加性可选列/字典项（null/空 = 非排程生成，既有手工建卡流程不受影响）。
 - **幂等**：默认重复调用抛 `ERR_JOB_CARDS_ALREADY_GENERATED`；config `erp-mfg.jobcard-incremental-rebuild=true` 时仅补建缺失工序卡（已存在不重建不删，避免破坏已开工卡状态）。
 - **状态门**：仅允许在已审核且非终态的工单上建卡（`NOT_STARTED`/`STOCK_RESERVED`/`STOCK_PARTIAL`/`IN_PROCESS`/`STOPPED`）；`DRAFT`/`SUBMITTED`（未审核）/`COMPLETED`/`CLOSED`/`CANCELLED`（终态）拒绝（`ERR_WORK_ORDER_STATUS_NOT_ALLOWED_FOR_JOB_CARD_GEN`）。
 - **自动模式**：config-gated 批量入口 `ErpMfgWorkOrder__findWorkOrdersPendingJobCards` @BizQuery + `ErpMfgWorkOrder__generatePendingJobCards` @BizMutation，由 nop-job 双层门控（`erp-mfg.jobcard-auto-generate-cron` + `erp-mfg.jobcard-auto-generate-on-schedule`，默认均关）定时触发；手动入口为主、自动为辅。
-- **跨域读 APS**：复用 `IErpApsLoadSourceProvider` SPI（plan 0306-2 范式，声明于 mfg-dao、实现于 aps-service）；APS 模块缺失时 SPI 收集到空 list，`generateJobCardsFromSchedule` 抛 `ERR_NO_SCHEDULED_OPERATIONS`（行为降级）。
+- **跨域读 APS**：复用 `IErpApsLoadSourceProvider` SPI（既有范式，声明于 mfg-dao、实现于 aps-service）；APS 模块缺失时 SPI 收集到空 list，`generateJobCardsFromSchedule` 抛 `ERR_NO_SCHEDULED_OPERATIONS`（行为降级）。
 - **Non-Goal（后继触发条件）**：事件驱动实时自动（APS 排程完成广播事件→制造域订阅即时建卡）需事件总线基础设施，本期手动 + 轮询；JobCard 重排/同步（APS 重排后已生成卡时间自动更新）需冲突解决（已开工卡是否可改时间），本期仅首次生成。
 
 作业卡的其他维度（异常/角色/TODO）与工单类似，不重复展开；审查时同样使用提示词。
@@ -229,7 +229,7 @@
 
 ## 适用对象三：委外加工单（SubcontractOrder）
 
-> plan 2026-07-13-0455-1 落地。委外单状态机 8 态核心可执行子集（设计 `subcontracting.md` 定义 10 态，
+> 委外单状态机 8 态核心可执行子集（设计 `subcontracting.md` 定义 10 态，
 > 本期舍 PRODUCED/RETURNED 两态归 successor）。
 
 ### 状态定义
@@ -266,16 +266,16 @@
 - 外部依赖：发料/收货写库存经 `IErpInvStockMoveBiz`；加工费过账经 finance 域 SUBCONTRACT_FEE 凭证（config-gated `erp-mfg.subcontract-posting-enabled`）。
 - MRP 释放：SUBCONTRACT_REQUEST 经 `releaseSubcontractRequest` 生成 APPROVED 委外单（跳过审批，config-gated `erp-mfg.subcontract-release-enabled`）。
 
-### 实现偏离补注
+### 实现约定
 
 - 舍 PRODUCED（供应商确认属 Portal 协同 successor）与 RETURNED（退货 successor）。
 - 以委外订单为编排根，不引入独立 Issue/Receipt/Invoice 实体（对齐 Odoo mrp_subcontracting 范式）。
 
 ---
 
-## 预留死状态指引：MRP 计划状态 / 预测状态（audit P1-MA2-036）
+## 预留死状态指引：MRP 计划状态 / 预测状态
 
-> **不展开完整状态机章节**（归 P2-MA2-052 watch-only）。本节仅作死状态 Deferred 指引，权威详情见 `mrp.md §实现偏离补注`。
+> **不展开完整状态机章节**（watch-only）。本节仅作死状态 Deferred 指引，权威详情见 `mrp.md §实现约定`。
 
 - **MRP 计划状态（`erp-mfg/mrp-status`）**：DRAFT/RUNNING/COMPLETED/FIRMED 主路径完整；`CANCELLED` 为预留死状态（无 cancelPlan writer，Deferred，successor = MRP 取消需求）。
 - **预测状态（`erp-mfg/forecast-status`）**：DRAFT→APPROVED + →CANCELLED 主路径完整；`CONSUMED` 为预留死状态（无 writer，Deferred，successor = 预测消费回写需求）。

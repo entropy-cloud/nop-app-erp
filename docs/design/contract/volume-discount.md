@@ -156,7 +156,7 @@
 
 ### 结算流程
 
-> **实现落定（plan 2026-07-04-1115-1 Phase 1 Decision）**：贷项凭证复用既有
+> **实现约定**：贷项凭证复用既有
 > `IErpPurInvoiceBiz`/`IErpSalInvoiceBiz` 以**负额发票**表达，不新增 finance CreditMemo 实体。
 > `rebateType=PURCHASE`→AP 负额发票（冲减应付），`rebateType=SALES`→AR 负额发票（冲减应收）。
 > 经负额走标准 AP_INVOICE/AR_INVOICE 过账产生红字凭证 + 负 openAmount 辅助账

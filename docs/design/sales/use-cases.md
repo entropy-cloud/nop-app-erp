@@ -232,7 +232,7 @@ receivedStatus:  UNRECEIVED / PARTIAL / RECEIVED     // 收款轴(发票派生,�
 
 **场景**:维护销售价格清单与促销规则,订单取价时按优先级应用。
 
-> **已实现**（plan `2026-07-10-1100-1-sales-pricing-engine`）：`ErpSalPriceList`（头/行）+ `ErpSalPricingRule` + `ErpSalCustomerPriceResolver`（`IErpMdCustomerPriceResolver` SPI 实现）+ `ErpSalPricingRuleEngine`（纯函数式引擎）+ `ErpSalOrderBizModel.applyPricingRules`（订单促销应用）+ 订单行/报价行行级折扣字段（`discountRate`/`discountAmount`/`pricingSource`）+ `ErpMdPartner.customerGroup` 客户组维度。
+> **实现说明**：`ErpSalPriceList`（头/行）+ `ErpSalPricingRule` + `ErpSalCustomerPriceResolver`（`IErpMdCustomerPriceResolver` SPI 实现）+ `ErpSalPricingRuleEngine`（纯函数式引擎）+ `ErpSalOrderBizModel.applyPricingRules`（订单促销应用）+ 订单行/报价行行级折扣字段（`discountRate`/`discountAmount`/`pricingSource`）+ `ErpMdPartner.customerGroup` 客户组维度。
 
 **可验证断言**:
 ```

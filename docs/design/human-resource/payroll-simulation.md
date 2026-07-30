@@ -178,13 +178,13 @@ HR 选择"创建模拟"
 | 目标期间已有 PAID 正式薪酬 | 不允许转正式，提示先作废（`ERR_HR_SIMULATION_TARGET_PERIOD_CONFLICT`） |
 | 部分员工已在目标期间有薪酬 | 仅转换无冲突的员工（部分冲突仅转无冲突） |
 
-### 4.3 追溯方向（实现偏离补注）
+### 4.3 追溯方向
 
 - **单向追溯**：`Simulation.convertedSalaryId → ErpHrSalary`（已存在外键 + to-one 关系）。
 - **不在 `ErpHrSalary` 加 `convertedFromSimulationId` 列**（核心零污染——避免污染 0831-2 既有薪酬实体模型契约）。
 - **反向追溯**：经查询 `findSimulationsByConvertedSalary(salaryId)` 补全，而非外键导航。
 
-### 4.4 PayrollCalculator 覆盖重算（实现偏离补注）
+### 4.4 PayrollCalculator 覆盖重算
 
 - `SocialInsuranceCalculator` 深度耦合 master 读取（仅接受 employeeId，不接受入参覆盖）。
 - 故覆盖重算采用降级方案：克隆源 `ErpHrSalary` → 按 overrides 覆盖薪酬项目字段 → 重算 gross/tax/net。

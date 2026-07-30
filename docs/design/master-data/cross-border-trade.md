@@ -23,27 +23,21 @@
 
 > 关键约束：`ErpMdMaterial.defaultTaxRateId`（既有 FK→`ErpMdTaxRate`）保留作详细税率配置入口；本计划新增的 `vatRate`/`drawbackRate` 是**冗余快查字段**，二者并行，业务约定何时使用快查 vs 联查（见 §6 / `tax-framework.md` 物料层跨境税快查段）。
 
-## 2. 物料层跨境字段表
+## 2. 物料层跨境字段扩展
 
-下表对照 nop 当前 / Wimoor / OFBiz / ERP5 的物料层跨境字段集，给出本计划采纳决策。
+`ErpMdMaterial` 新增 9 个跨境贸易快查字段：`vatRate`（增值税率）、`drawbackRate`（退税率）、`customsHS`（海关 HS 编码）、`countryOfOrigin`（原产地 ISO 3166-1 alpha-2）、`preferenceCode`（FTA 优惠协定代码）、`customsNameCn`/`customsNameEn`（报关中/英文名）、`declarationUnit`（申报计量单位）、`supervisionCondition`（监管条件代码）。字段类型、精度、字典码与 UK/Index 约束以 `module-master-data/model/app-erp-master-data.orm.xml` 为权威源。
 
-| 字段（ErpMdMaterial） | code | 类型 / 精度 | 字典 | 默认 | 业务语义 | Wimoor | OFBiz | ERP5 | 采纳 |
-|----|----|----|----|----|----|----|----|----|----|
-| `vatRate`（增值税率） | VAT_RATE | DECIMAL(6,4) | — | null | 报关场景增值税率快查（如 0.13 表示 13%）。冗余于 `defaultTaxRateId→ErpMdTaxRate.rate`，避免报关高频场景联查；本字段优先级 > 联查值 | `vatrate` ✓ | — | — | ✅（Wimoor 对齐） |
-| `drawbackRate`（退税率） | DRAWBACK_RATE | DECIMAL(6,4) | — | null | 出口退税率快查（如 0.13 表示 13%）。中国出口退税核心字段 | `drawbackRate` ✓ | — | — | ✅（Wimoor 对齐） |
-| `customsHS`（海关 HS 编码） | CUSTOMS_HS | VARCHAR(12) | — | null | Harmonized System Code，国际贸易通用商品分类编码。国际标准 6 位 + 中国延伸 2/4 位（共 8/10 位）。**不做字典约束**（全集上万条，维护成本高），由业务方自行维护或集成第三方 HS 查询服务 | ✓ | ✓ | ✓ | ✅（VARCHAR(12) 不字典化，参考 Wimoor 设计） |
-| `countryOfOrigin`（原产地） | COUNTRY_OF_ORIGIN | VARCHAR(2) | — | null | ISO 3166-1 alpha-2 国家代码（如 `CN`/`US`/`VN`）。FTA 优惠协定判定依据。**不做字典约束**（国家全集 200+ 条，由 ISO 标准维护，业务方按需引用） | ✓ | — | ✓ | ✅（VARCHAR(2) ISO 标准） |
-| `preferenceCode`（优惠协定代码） | PREFERENCE_CODE | VARCHAR(20) | `erp-md/customs-preference-code` | null | FTA 优惠协定代码（东盟/RCEP/中韩/中澳/...）。**字典化**（FTA 协定数量有限约 15-20 个且变更慢适合字典化） | — | — | — | ✅（字典化，候选 1） |
-| `customsNameCn`（报关中文名） | CUSTOMS_NAME_CN | VARCHAR(200) | — | null | 报关单中文商品名称（中国海关申报用） | ✓ | — | — | ✅ |
-| `customsNameEn`（报关英文名） | CUSTOMS_NAME_EN | VARCHAR(200) | — | null | 报关单英文商品名称（Invoice/Packing List 用） | ✓ | — | — | ✅ |
-| `declarationUnit`（申报计量单位） | DECLARATION_UNIT | VARCHAR(20) | — | null | 报关法定计量单位（海关法定单位有时与内部 `ErpMdUoM` 字典不同——如海关"千克"法定单位 vs 内部库存单位"件"）。**VARCHAR 而非 FK→ErpMdUoM**，因海关法定单位字典与内部单位字典解耦 | ✓ | — | — | ✅（VARCHAR 解耦海关/内部单位字典） |
-| `supervisionCondition`（监管条件代码） | SUPERVISION_CONDITION | VARCHAR(10) | — | null | 中国海关监管条件代码（A/B/...标识进/出口监管要求）。**不做字典约束**（海关总署公布约 100+ 代码且频繁更新，自由 VARCHAR 由业务方维护或集成第三方服务） | — | — | — | ✅（VARCHAR 不字典化，候选 1） |
+**字典化决策（业务语义）**：
+
+- `preferenceCode` 字典化（FTA 协定数量有限约 15-20 个且变更慢，适合字典化），字典 `erp-md/customs-preference-code`。
+- `customsHS`/`countryOfOrigin`/`supervisionCondition`/`declarationUnit` **不**字典化：HS 编码全集上万条、监管条件 100+ 且频繁更新、国家全集 200+ 由 ISO 维护、海关法定单位与内部单位字典解耦——均用自由文本字段由业务方维护或集成第三方服务。
+
+**开源对齐**：`vatRate`/`drawbackRate`/`customsHS`/`countryOfOrigin`/`customsNameCn`/`customsNameEn`/`declarationUnit` 对齐 Wimoor 跨境字段集；`customsHS` 同时对齐 OFBiz/ERP5；`preferenceCode`/`supervisionCondition` 为本计划新增。
 
 **统一约束**：
 
-- 全部 `mandatory="false"` + 默认 null + 不 mandatory，**向后兼容**既有 INSERT/UPDATE 测试。
+- 全部字段向后兼容（默认 null，非 mandatory），不影响既有 INSERT/UPDATE。
 - `ui:show` 按字段语义：`vatRate`/`drawbackRate` 在 grid 列表显示（报关场景高频查询）；`customsNameCn`/`customsNameEn` 仅在 form 显示（避免 grid 列过宽）。
-- propId 从 26 起顺序分配（既有 ErpMdMaterial max propId=25 → 新字段从 26 起）。
 
 ### 字段冗余 vs 联查权衡（vatRate/drawbackRate）
 
@@ -60,47 +54,22 @@
 
 per-transaction 报关记录实体，每次报关独立记录报关单号、报关行、报关日期、申报数量/金额、关税/增值税金额、退税收据号、业务单据回链。
 
-### 字段表
+### 字段
 
-| 字段 | code | 类型 / 精度 | mandatory | 默认 | 业务语义 |
-|----|----|----|----|----|----|
-| `id` | ID | BIGINT | ✓ | seq-default | 主键 |
-| `code` | CODE | VARCHAR(50) | ✓ | — | 报关记录编码（业务编码，便于跨系统引用） |
-| `materialId` | MATERIAL_ID | BIGINT | ✓ | — | FK→`ErpMdMaterial.id` |
-| `declarationNo` | DECLARATION_NO | VARCHAR(50) | ✓ | — | 报关单号（海关分配，UK 强制全局唯一） |
-| `partnerId` | PARTNER_ID | BIGINT | — | null | FK→`ErpMdPartner.id`（报关行；Partner 类型必须为 `CUSTOMS_BROKER`，BizModel 校验） |
-| `declarationDate` | DECLARATION_DATE | DATE | ✓ | — | 报关日期 |
-| `qtyDeclared` | QTY_DECLARED | DECIMAL(20,4) | ✓ | — | 申报数量 |
-| `uomDeclared` | UOM_DECLARED | VARCHAR(20) | ✓ | — | 申报计量单位（海关法定单位，**VARCHAR 而非 FK→ErpMdUoM**，因海关法定单位字典与内部单位字典解耦——如"千克"法定单位 vs "件"内部单位） |
-| `amountDeclared` | AMOUNT_DECLARED | DECIMAL(18,2) | ✓ | — | 申报金额（原币） |
-| `currencyId` | CURRENCY_ID | BIGINT | — | null | FK→`ErpMdCurrency.id`（申报币种） |
-| `exchangeRate` | EXCHANGE_RATE | DECIMAL(20,8) | — | null | 报关日汇率（申报币种→本位币） |
-| `amountFunctional` | AMOUNT_FUNCTIONAL | DECIMAL(18,2) | — | null | 本位币金额 = `amountDeclared × exchangeRate` |
-| `dutyAmount` | DUTY_AMOUNT | DECIMAL(18,2) | — | null | 关税金额（由 finance successor 关税计算引擎填充；本计划仅落地字段） |
-| `vatAmount` | VAT_AMOUNT | DECIMAL(18,2) | — | null | 增值税金额（同上） |
-| `drawbackReceiptNo` | DRAWBACK_RECEIPT_NO | VARCHAR(50) | — | null | 退税收据号（税务部门分配） |
-| `sourceBillType` | SOURCE_BILL_TYPE | VARCHAR(50) | — | null | 业务单据类型（如 `PURCHASE_RECEIVE`/`SALES_SHIP`），与 `sourceBillCode` 二者至少一个非空 |
-| `sourceBillCode` | SOURCE_BILL_CODE | VARCHAR(50) | — | null | 业务单据编码（业务回链） |
-| `delFlag`/`version`/`createdBy`/`createTime`/`updatedBy`/`updateTime`/`remark` | (标准审计字段) | | | | tagSet `audit,audit-save` |
+`ErpMdMaterialCustoms` 定义约 20 个业务字段，涵盖：报关记录编码（`code`）、物料回链（`materialId`→ErpMdMaterial）、报关单号（`declarationNo`，海关分配全局唯一）、报关行回链（`partnerId`→ErpMdPartner，须为 `CUSTOMS_BROKER` 类型）、申报数量/单位/金额/币种/汇率/本位币金额、关税/增值税金额（`dutyAmount`/`vatAmount`，由 finance successor 填充）、退税收据号（`drawbackReceiptNo`）、业务单据回链（`sourceBillType`/`sourceBillCode`，二者至少一个非空）+ 标准审计字段。字段类型、精度、mandatory、字典码、UK 与 Index 约束以 `module-master-data/model/app-erp-master-data.orm.xml` 为权威源。
 
 ### Relations
 
-- `material`（to-one, FK `materialId`）→ `ErpMdMaterial`
-- `partner`（to-one, FK `partnerId`）→ `ErpMdPartner`（报关行）
-- `currency`（to-one, FK `currencyId`）→ `ErpMdCurrency`
+- `material`（to-one）→ `ErpMdMaterial`
+- `partner`（to-one）→ `ErpMdPartner`（报关行，须 `CUSTOMS_BROKER` 类型）
+- `currency`（to-one）→ `ErpMdCurrency`
 
-### UK + Index
+### 约束与查询索引
 
-- **UK**：`UK_MD_MATERIAL_CUSTOMS_DECL_NO`（`declarationNo`）—— 海关分配的报关单号全局唯一，DB 层强制
-- **Indexes**：
-  - `IDX_MD_MATERIAL_CUSTOMS_MATERIAL_ID`（`materialId`）—— 按物料查报关记录
-  - `IDX_MD_MATERIAL_CUSTOMS_PARTNER_ID`（`partnerId`）—— 按报关行查
-  - `IDX_MD_MATERIAL_CUSTOMS_DECL_DATE`（`declarationDate`）—— 按日期范围查
-  - `IDX_MD_MATERIAL_CUSTOMS_SOURCE_BILL`（`sourceBillType`, `sourceBillCode`）—— 业务单据回链查询
-
-### estRows
-
-`ext:estRows="100"` —— 按业务客户报关频次估算（日均 < 100 单/跨境客户），与既有 estRows 范式一致（如 `ErpMdMaterial.skus estRows="10"`）。
+- `declarationNo` 全局唯一（UK，DB 层强制）；
+- 按 `materialId`/`partnerId`/`declarationDate` 单字段索引 + `sourceBillType`+`sourceBillCode` 复合索引支持业务单据回链查询；
+- `ext:estRows` 按业务客户报关频次估算（日均 < 100 单/跨境客户）；
+- 完整 UK/Index/estRows 定义见 orm.xml。
 
 ### UK + 前置友好校验协同
 
@@ -109,19 +78,9 @@ per-transaction 报关记录实体，每次报关独立记录报关单号、报�
 - **sourceBillType/sourceBillCode 校验**：BizModel.defaultPrepareSave 校验二者之一非空（业务回链必填）；
 - **partnerId 报关行校验**：BizModel.defaultPrepareSave 校验 partnerId 引用的 Partner 类型必须为 `CUSTOMS_BROKER`（非此类型抛 `ERP_MD_PARTNER_NOT_CUSTOMS_BROKER`）。
 
-### 浏览器层验证（plan 2026-07-26-1500-1）
+### 浏览器层验证
 
-3 保存校验钩子（`enforceDeclarationNoUnique` / `enforcePartnerIsCustomsBroker` / `enforceSourceBillPresent`，经 `defaultPrepareSave`/`defaultPrepareUpdate` → `validateOnPersist` 统一触发）已补 Playwright 浏览器层 E2E 全栈验证（`tests/e2e/business-actions/md-material-customs-validation.action.spec.ts` 5 用例全绿），收口「JUnit 单层验证但零浏览器层 E2E」缺口（镜像 §8.6 C3 / §8.4 A2 范式）：
-
-- **写路径触发**：经 GraphQL `__save`/`__update` mutation 走 CrudBizModel `EntityData` 管道触发 `defaultPrepareSave`/`defaultPrepareUpdate` 钩子（对齐 `master-data.write.spec.ts` 写路径范式 + 0500-3 sales 日期范围校验同型先例；`updateEntity` 内部调用不触发钩子，对齐 C3 关键发现）。
-- **3 守卫 + 1 正路径 + `__update` 自身排除断言范式**：
-  - (1) 正路径合法 `__save`（declarationNo 唯一 + partnerId=CUSTOMS_BROKER partner + sourceBillType 非空）→ `data` 非空 + `__get` 反查持久化 declarationNo/partnerId/sourceBillType；
-  - (2) declarationNo 重复 → 拒绝（errors message 含「报关单号」token）；
-  - (3) partnerType 非 CUSTOMS_BROKER（种子 CUSTOMER）→ 拒绝（含「报关行」token）；
-  - (4) sourceBillType/sourceBillCode 均空 → 拒绝（含「业务单据」token，**非**「来源单据」——ErrorCode description 实测唯一稳定 token）；
-  - (5) `__update` 修改 remark（保持 declarationNo 不变）→ `enforceDeclarationNoUnique` 经 `entity.getId()` 排除自身通过（对齐 0500-3 `enforceMutex selfId` 范式）。
-- **自包含 setup**：种子 `erp_md_partner.csv` 0 CUSTOMS_BROKER 行 → 每测试经 `ErpMdPartner__save` 建 CUSTOMS_BROKER partner（唯一 `E2E-MC-BROKER-` code 前缀隔离）；materialId 复用种子 MAT_1=1（零物料基线污染）。
-- **拒绝路径断言原语**：`saveRaw`（裸 `__save` mutation 直取 `{data,errors,json}`）绕过 `createViaSave` 内置 `expect(errors).toBeNull()` 成功断言；GraphQL error envelope 仅 surface `message`（无 errorCode extension 路径），断言范式 `expect(JSON.stringify(errors)).toContain('<语义中文 token>')`。
+3 个保存校验钩子（报关单号唯一 / 报关行类型须 CUSTOMS_BROKER / 业务单据回链必填）经 `defaultPrepareSave`/`defaultPrepareUpdate` → `validateOnPersist` 统一触发，覆盖正路径 + 3 守卫拒绝路径 + update 自身排除范式。测试与性能基线见 `docs/testing/`。
 
 ## 4. 报关场景工作流
 
@@ -197,8 +156,8 @@ FTA 协定适用性判定（人工或第三方服务）
 | 直接修改 C1 `IErpPartyBiz` 接口签名或 `PartyRef` DTO | 仅在 `erp-md/partner-type` 字典追加 `CUSTOMS_BROKER` 选项 |
 | 在 `ErpMdMaterialCustoms.BizModel` 中跨域调用 finance 关税计算 | 本计划 Non-Goal：finance Provider 接入归 successor；BizModel 仅校验 sourceBill/partnerType + CRUD |
 | 在 `ErpMdMaterialCustoms` 实施 status 状态机字段 | 本计划 Non-Goal：状态机/审批流归 successor plan |
-| `uomDeclared` 用 FK→`ErpMdUoM` | 海关法定单位与内部单位字典解耦，用 VARCHAR(20) |
-| `customsHS`/`supervisionCondition` 字典化 | 全集过大（HS 上万条/监管条件 100+ 频繁更新），用自由 VARCHAR，业务方自行维护 |
+| `uomDeclared` 用 FK→`ErpMdUoM` | 海关法定单位与内部单位字典解耦，用自由文本字段（见 orm.xml） |
+| `customsHS`/`supervisionCondition` 字典化 | 全集过大（HS 上万条/监管条件 100+ 频繁更新），用自由文本字段，业务方自行维护 |
 | `vatRate`/`drawbackRate` 默认显示覆盖 `defaultTaxRate.rate` 联查值 | 默认显示联查值，本字段仅在报关场景显式覆盖 |
 | `countryOfOrigin` 按 orgId 隔离 | 候选 A：物料主数据层不隔离；per-transaction 差异由 `ErpMdMaterialCustoms` 覆盖 |
 | 在 `ErpMdMaterial` view.xml grid 列显示 `customsNameCn`/`customsNameEn` | grid 列过宽；仅 form 分组显示 |
@@ -208,11 +167,10 @@ FTA 协定适用性判定（人工或第三方服务）
 
 ## 8. 落地证据
 
-（本计划完成后填，见 `docs/plans/2026-07-21-1206-1-master-data-cross-border-trade-extensions.md` Phase 3 §deepening-roadmap.md §8.3 落地证据段落）
+（本计划已完成，见 `docs/plans/2026-07-21-1206-1-master-data-cross-border-trade-extensions.md`）
 
-- Plan: `docs/plans/2026-07-21-1206-1-master-data-cross-border-trade-extensions.md`（4 Phase 全 done）
+- Plan：`docs/plans/2026-07-21-1206-1-master-data-cross-border-trade-extensions.md`（4 Phase 全 done）
 - Owner Doc：本文件（8 节完整）
-- ORM 变更：`ErpMdMaterial` 增 9 字段（propId 26-34）+ 新建 `ErpMdMaterialCustoms` 实体 + `erp-md/customs-preference-code` 字典 + `erp-md/partner-type` 增 `CUSTOMS_BROKER`
-- Codegen 产物：ErpMdMaterialCustoms.java + Entity + DAO + BizModel + IBiz + xmeta + view.xml + page.yaml 骨架
-- 测试基线：`TestErpMdMaterialCustoms`（NEW，至少 3 场景：CRUD 生命周期 + partnerId 报关行类型校验 + sourceBillType/Code 业务回链校验）+ master-data service 既有测试无回归
+- ORM 变更：`ErpMdMaterial` 增 9 跨境字段 + 新建 `ErpMdMaterialCustoms` 实体 + `erp-md/customs-preference-code` 字典 + `erp-md/partner-type` 增 `CUSTOMS_BROKER`（权威源见 orm.xml）
+- 测试与性能基线见 `docs/testing/`。
 - Deferred successor：finance 关税/退税 Provider 接入 / b2b 海关 EDI 报文 / HS 编码字典全集 / ErpMdMaterialSku 跨境字段 / 海关申报完整业务流程编排 / 跨境报表实施 / 关税计算引擎

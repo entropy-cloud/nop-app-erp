@@ -102,6 +102,7 @@ ERP 业务按 18 个独立领域工程组织（见 `docs/architecture/domain-mod
 - 当文档需要持久化模型细节时，应引用 `model/app-erp-<domain>.orm.xml`，不要重复抄写 schema。
 - 当文档需要实现策略时，应引用 `docs/architecture/`，不要在这里混入平台实现细节。
 - 不要把设计文档当作 roadmap 或实施状态跟踪器；实施顺序应写入 `docs/backlog/` 或计划文件。
+- **执行状态不入稳定设计文档**：`已落地`/`待实现`/`plan YYYY-MM-DD-XXXX`/`裁决 N`/`实现偏离补注（plan XXX 落地）` 等执行状态标记会随时间腐烂，不应出现在 `docs/design/` 中。产品基线范围边界用稳定的 `Deferred`/`Non-Goal`/`out-of-baseline` 声明表达（描述产品排除什么，不随时间变化）。实现决策档案归 `docs/plans/` 或 `docs/architecture/`，执行证据归 `docs/logs/`/`docs/testing/`。
 - 跨域流程的主 owner 是 `flow-overview.md` 与触发域目录；相邻域只引用或摘要，不重复维护完整规则。
 
 ## 目录内文档组织约定

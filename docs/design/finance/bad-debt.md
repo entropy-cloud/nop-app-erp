@@ -60,7 +60,7 @@ Net Accounts Receivable (NRV)          ← 报表呈现
 - **性质**：**估计**，非核销决策。计提后应收辅助账项**仍在账龄表**（继续催收），不改变 `ErpFinArApItem.status`。
 - **businessType**：`BAD_DEBT_RESERVE`（建议新增，保护区域，见 §businessType 映射）。
 
-### 步骤 2b — 反向计提红冲（BAD_DEBT_RESERVE/RELEASE 反向，plan 2026-07-18-2251-2）
+### 步骤 2b — 反向计提红冲（BAD_DEBT_RESERVE/RELEASE 反向）
 
 > 闭环补齐：步骤 2 计提 / 步骤 5 释放期末执行后，原设计无反向入口（误选期间 / 误算 / 业务变化需重提时无法回滚）。
 > `ErpFinBadDebt.reverseBadDebtProvision(periodId)` 补齐反向红冲闭环，对齐 finance 域红冲一致性（参 `posting.md §冲销机制`）。
@@ -122,7 +122,7 @@ Net Accounts Receivable (NRV)          ← 报表呈现
 - **审批**：财务主管（直接 P&L 影响）。
 - **businessType**：`BAD_DEBT_RELEASE`。
 
-### 步骤 6 — 反审核红冲（BAD_DEBT_WRITE_OFF/RECOVERY 反向，plan 2026-07-18-1745-3）
+### 步骤 6 — 反审核红冲（BAD_DEBT_WRITE_OFF/RECOVERY 反向）
 
 > 闭环补齐：步骤 3 / 步骤 4a approve 即立即过账，原设计无反向入口。`ErpFinBadDebt.reverseApprove(id)` 补齐红冲闭环，对齐 finance 域红冲一致性（参 `posting.md §冲销机制`）。
 
@@ -185,7 +185,7 @@ NRV 是应收在资产负债表的列报价值（CAS 22"以预期信用损失为
 
 ## businessType 映射（保护区域建议）
 
-> **已落地**（plan `2026-07-05-0540-1`）：`BAD_DEBT_RESERVE`/`BAD_DEBT_WRITE_OFF`/`BAD_DEBT_RECOVERY`/`BAD_DEBT_RELEASE` 四码值已加入 `erp-fin/business-type` 字典 + `ErpFinBusinessType` 枚举（340/350/360/370）。凭证经 `CloseVoucherWriter` 直接持久化（与损益结转/汇兑重估同范式：分录来自余额/辅助账聚合，非来源单据，不走 Provider 模型，避免触发 ArApItem 生成）。
+> `BAD_DEBT_RESERVE`/`BAD_DEBT_WRITE_OFF`/`BAD_DEBT_RECOVERY`/`BAD_DEBT_RELEASE` 四码值已加入 `erp-fin/business-type` 字典 + `ErpFinBusinessType` 枚举（340/350/360/370）。凭证经 `CloseVoucherWriter` 直接持久化（与损益结转/汇兑重估同范式：分录来自余额/辅助账聚合，非来源单据，不走 Provider 模型，避免触发 ArApItem 生成）。
 
 | businessType | 步骤 | 借贷方向 | 触发动作 |
 |---|---|---|---|
@@ -212,7 +212,7 @@ Allowance 充足性检查：
 
 此检查接入 `period-close.md §结账前置检查`，与"posted=false 单据检查""未核销 AR/AP 检查"并列。NRV 是应收"#1 审计断言"（准确性/计价），未达标禁止结账。
 
-> **已落地**（plan `2026-07-05-0540-1`）：`ErpFinAccountingPeriodProcessor.preCheck` 新增 `populateAllowanceCheck`，经 `BadDebtProvisionService` 计算必需准备与 Allowance 账面，写入 `PeriodPreCheckReport.allowanceRequired/Balance/Shortfall/Excess`。shortfall > 0 阻断结账（`hasIssues()` 含此项）；excess > 0 仅提示（非阻断）。配置门控 `erp-fin.bad-debt-allowance-gate-enabled`（默认 true），科目未配置时告警跳过不阻塞未启用坏账模块的账套。
+> `ErpFinAccountingPeriodProcessor.preCheck` 新增 `populateAllowanceCheck`，经 `BadDebtProvisionService` 计算必需准备与 Allowance 账面，写入 `PeriodPreCheckReport.allowanceRequired/Balance/Shortfall/Excess`。shortfall > 0 阻断结账（`hasIssues()` 含此项）；excess > 0 仅提示（非阻断）。配置门控 `erp-fin.bad-debt-allowance-gate-enabled`（默认 true），科目未配置时告警跳过不阻塞未启用坏账模块的账套。
 
 ## SOX 控制启示
 
@@ -227,7 +227,7 @@ Allowance 充足性检查：
 
 ## 状态含义（应收辅助账扩展）
 
-> **已落地**（plan `2026-07-05-0540-1`）：`WRITTEN_OFF` 已加入 `erp-fin/ar-ap-status` 字典。`IN_COLLECTION`（催收中）属 Follow-up，未落地。
+> `WRITTEN_OFF` 已加入 `erp-fin/ar-ap-status` 字典。`IN_COLLECTION`（催收中）属 Follow-up，未落地。
 
 `ErpFinArApItem.status` 在 `ar-ap-reconciliation.md` 已有 OPEN/PARTIAL/SETTLED/CANCELLED 基础上，坏账维度新增：
 

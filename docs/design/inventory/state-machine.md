@@ -64,7 +64,7 @@
 | 批次过期 | 出库时校验批次是否在有效期；过期批次拒绝出库（可配置放行） |
 | 序列号已售 | 出库时校验序列号状态；已售序列号拒绝再次出库 |
 | 并发扣减同一批次的可用量 | 乐观锁 + 扣减失败重试；重试仍失败则拒绝确认 |
-| 并发首次入库/初始化同维度（plan 2026-07-28-1249 P0-MA2-020） | DB 唯一约束 `UK_INV_STOCK_BALANCE_NATURAL` 兜底；`StockMoveBookkeeper.updateBalanceWithRetry` 的 SAVING 分支 flush 后捕获 ConstraintViolation → evict + 按自然键 reload 已落地行 + 转更新路径，重试上限 `erp-inv.concurrent-deduct-max-retry`（默认 5）。SQL NULL 语义限制：含 NULL 列的键不参与 UNIQUE 比较，仅由应用层 retry-on-conflict 兜底 |
+| 并发首次入库/初始化同维度 | DB 唯一约束 `UK_INV_STOCK_BALANCE_NATURAL` 兜底；`StockMoveBookkeeper.updateBalanceWithRetry` 的 SAVING 分支 flush 后捕获 ConstraintViolation → evict + 按自然键 reload 已存在行 + 转更新路径，重试上限 `erp-inv.concurrent-deduct-max-retry`（默认 5）。SQL NULL 语义限制：含 NULL 列的键不参与 UNIQUE 比较，仅由应用层 retry-on-conflict 兜底 |
 | 冲销反向单的可用量不足 | 冲销本质是反向移动（入库变出库/出库变入库），同样校验可用量 |
 | 重复触发（业务单据重复审核） | 幂等：同一业务单据对同一移动单的触发生成需幂等，已生成则不重复生成 |
 
@@ -156,20 +156,20 @@
   └─ 取消 → 已取消 (CANCELLED)
 ```
 
-- **差异调整移动单的自动生成 = Deferred（owner doc 语义对齐，plan 2026-07-30-0512-2 R1.19 / P1-MA2-062）**：`ErpInvStockTakeBizModel.completeTake` 当前仅将盘点单置为 DONE（源态守卫 CONFIRMED → `DOC_STATUS_DONE` + `updateEntity`），**无任何 `StockTakeLine.qtyActual` vs `StockBalance.totalQuantity` 比对、无 `IErpInvStockMoveBiz.generateMove` 调用**——即不自动生成盘盈/盘亏移动单。差异调整当前经库管员**手工 `generateMove`** 处置（创建新 DRAFT 移动单，正数盘盈/负数盘亏），走下方移动单状态机流程。盘点单 DONE 后无悬挂数据（差异未自动入账但不阻塞盘点闭环）。
+- **差异调整移动单的自动生成 = Deferred（owner doc 语义对齐）**：`ErpInvStockTakeBizModel.completeTake` 当前仅将盘点单置为 DONE（源态守卫 CONFIRMED → `DOC_STATUS_DONE` + `updateEntity`），**无任何 `StockTakeLine.qtyActual` vs `StockBalance.totalQuantity` 比对、无 `IErpInvStockMoveBiz.generateMove` 调用**——即不自动生成盘盈/盘亏移动单。差异调整当前经库管员**手工 `generateMove`** 处置（创建新 DRAFT 移动单，正数盘盈/负数盘亏），走下方移动单状态机流程。盘点单 DONE 后无悬挂数据（差异未自动入账但不阻塞盘点闭环）。
 - **Successor 触发条件**：盘点闭环自动化需求落地时，在 `completeTake` 内自动比对 `qtyActual` vs `totalQuantity` → 经 `IErpInvStockMoveBiz.generateMove` Facade 生成差异移动单（实现路径与现有 Facade 可复用）。
 - 盘点完成的差异**不直接改余额**，而是经移动单（正数盘盈/负数盘亏）走移动单状态机流程才会影响余额。这一原则保留；当前唯一的偏差是「自动生成」降级为「手工入口」（Deferred）。
 - 这种设计保证所有余额变动都通过移动单流水可追溯，盘点只是发现差异的入口（差异入口当前为手工 `generateMove`，自动比对留 successor）。
 
 ## 拣货单生命周期（Deferred）
 
-> owner doc 语义对齐，plan 2026-07-30-0512-2 R1.19 / P1-MA2-063。拣货执行由 WMS successor 承载，本期无独立状态机章节，仅作预留与 Deferred 标注。
+> owner doc 语义对齐。拣货执行由 WMS successor 承载，本期无独立状态机章节，仅作预留与 Deferred 标注。
 
 - **dict 与代码现状**：dict `erp-inv/picking-status`（`module-inventory/model/app-erp-inventory.orm.xml`，4 值：PENDING/PICKING/PICKED/CANCELLED）保留为预留语义入口。`ErpInvPickingOrderBizModel` 为 `extends CrudBizModel<ErpInvPickingOrder>` 的 CRUD 桩（零 `setStatus`/`setDocStatus` writer）。
 - **可达与不可达**：
   - `PENDING`：可达——由 codegen 默认值承载（新建拣货单初值）。
   - `CANCELLED`：可达——经 `useLogicalDelete` 逻辑删除承载。
-  - `PICKING` / `PICKED`：**预留死状态（零 writer，不可达）**。全 `module-inventory/erp-inv-service` grep `PICKING_STATUS` / `setDocStatus.*PICKING` 零业务命中。dict 值保留不删除（对齐 R1.13/R1.14/R1.15「保留 dict 死状态为预留」先例）。
+  - `PICKING` / `PICKED`：**预留死状态（零 writer，不可达）**。全 `module-inventory/erp-inv-service` grep `PICKING_STATUS` / `setDocStatus.*PICKING` 零业务命中。dict 值保留不删除（对齐「保留 dict 死状态为预留」先例）。
 - **主路径可用性**：CRUD 桩为 PENDING 创建/查询/逻辑删除主路径可用，不破坏既有行为。
 - **Successor 触发条件**：WMS（仓储管理系统）上线时，实现 `startPicking`/`completePicking`/`cancelPicking` BizMutation（迁移 `PENDING→PICKING→PICKED` + `PENDING/PICKING→CANCELLED`）+ owner doc 新增「拣货单状态机」独立章节。
 

@@ -18,7 +18,7 @@
 
 ### SPI 接口
 
-> 本期实现（plan 2026-07-04-2200-2）：`app.erp.ct.service.spi.IErpCtSignatureProvider` + `ErpCtSignatureProviderRegistry`
+> 实现：`app.erp.ct.service.spi.IErpCtSignatureProvider` + `ErpCtSignatureProviderRegistry`
 > + `MockSignatureProvider`（providerCode="MOCK"，无外部 HTTP，全链可测试）。Registry 镜像 logistics
 > `ErpLogCarrierGatewayRegistry` / finance `ErpFinAcctDocRegistry` 的 List 注入 + 内部建图范式。真实三方供应商归 follow-up。
 
@@ -95,7 +95,7 @@ public interface IErpCtSignatureProvider {
 | `signing.completed` | 全部签署人完成签署 | 状态 → FULLY_SIGNED |
 | `signing.rejected` | 某签署人拒绝签署 | 状态 → REJECTED，记录原因 |
 | `signing.expired` | 签署邀请超时 | 状态 → EXPIRED |
-| `signing.declined` | 签署人拒签 | **折叠为 REJECTED**（状态机/字典无 DECLINED 态，按权威 6 态收敛；plan 2026-07-04-2200-2 偏离补注） |
+| `signing.declined` | 签署人拒签 | **折叠为 REJECTED**（状态机/字典无 DECLINED 态，按权威 6 态收敛） |
 
 > **webhook 回调经 `@BizMutation` GraphQL 入口**（`ErpCtSignatureRequestBizModel.handleSignatureCallback`，
 > 镜像 logistics `ErpLogShipmentBizModel.handleTrackingWebhook` 范式：HMAC-SHA256 校验 + eventId 幂等）。
@@ -197,15 +197,13 @@ PENDING_SIGNATURE ──(首签完成)──→ PARTIALLY_SIGNED ──(全部�
 
 ### 签名提供商字典 `erp-ct/sign-provider`
 
+> 产品基线仅含以下 3 个真实签署提供商。测试用 `MOCK`（value=99）仅在测试 profile / 测试 dict 启用，不进入生产 `sign-provider` 字典。
+
 | code | label | value |
 |------|-------|-------|
 | ESIGN_BAO | e签宝 | 10 |
 | DOCUSIGN | DocuSign | 20 |
 | TSIGN | Tsign | 30 |
-| MOCK | Mock(测试) | 99 |
-
-> MOCK 占位为本期 stub 测试新增（design 原 3 供应商之外）；真实供应商 HTTP 集成归 follow-up
-> （plan 2026-07-04-2200-2 Non-Goal）。
 
 ## 证据强度
 

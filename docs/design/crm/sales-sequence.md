@@ -223,7 +223,7 @@ NEGOTIATION（谈判跟进 21 天）:
 - `use-cases.md` §UC-CRM-14（序列管理用例）
 - `../../analysis/erp-survey/` — SalesLoft/Outreach 序列机制分析
 
-## 实现注记（plan 2026-07-07-1430-3）
+## 实现注记
 
 - **序列进度存储既定方案（方案 b）**：序列进度由既有 `ErpCrmLeadSequenceProgress` 关联表承载（currentStepIndex/status IN_PROGRESS/COMPLETED/SKIPPED/startedAt/completedAt），**不**在 `ErpCrmLead` 加 `currentSequenceId`/`sequenceStartedAt` 列。理由：关联表已支持多序列历史且避免 ORM ask-first 保护区域。残留风险：Lead 无单字段快速查当前序列，须经关联表 latest IN_PROGRESS 查询（可加索引）。上表"序列分配到 lead.currentSequenceId"为设计草案描述，实现已改用关联表方案。
 - **activityType TASK 字典口径**：`ErpCrmSequenceStep.activityType` 设计列含 TASK，但 ORM 字典 `erp-crm/activity-type` 仅含 NOTE/CALL/EMAIL/MEETING。`SequenceStepAdvancer` 将 TASK 步骤映射到 `erp-crm/event-type`（TASK 存在于该字典），不在 activity-type 字典补值（避免触动字典保护区域）。

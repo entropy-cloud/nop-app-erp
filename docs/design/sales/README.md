@@ -74,13 +74,13 @@
 
 销售订单审核（SUBMITTED→APPROVED）时由 `CreditLimitChecker` 检查客户信用额度，按可配策略处理：
 
-| 级别 | 策略 | 行为 | 状态 |
-|------|------|------|------|
-| SOFT_WARNING | 软警告 | 超额度时记录告警并放行审核 | ✅ 已实现（默认） |
-| HARD_BLOCK | 硬拦截 | 超额度时抛 `ERR_CREDIT_LIMIT_EXCEEDED` 拒绝审核 | ✅ 已实现 |
-| SPECIAL_APPROVAL | 特别审批 | 超额度时校验当前用户是否持有专项权限 `erp-sal:creditOverLimitApprove`（命令式 `IActionAuthChecker.isPermitted`），持有则放行，否则抛 `ERR_CREDIT_SPECIAL_APPROVAL_REQUIRED`。多级 `.xwf` 审批链归 Deferred | ✅ 已实现（DIRECT 模式 + 权限门控） |
+| 级别 | 策略 | 行为 |
+|------|------|------|
+| SOFT_WARNING（默认） | 软警告 | 超额度时记录告警并放行审核 |
+| HARD_BLOCK | 硬拦截 | 超额度时抛 `ERR_CREDIT_LIMIT_EXCEEDED` 拒绝审核 |
+| SPECIAL_APPROVAL | 特别审批 | 超额度时校验当前用户是否持有专项权限 `erp-sal:creditOverLimitApprove`（命令式 `IActionAuthChecker.isPermitted`），持有则放行，否则抛 `ERR_CREDIT_SPECIAL_APPROVAL_REQUIRED`。多级 `.xwf` 审批链归 Deferred |
 
-**已实现额度计算口径**：`available = 客户信用额度 − outstanding`，其中
+**额度计算口径**：`available = 客户信用额度 − outstanding`，其中
 `outstanding = Σ(totalAmountWithTax × exchangeRate) of ErpSalOrder where customerId=该客户 AND approveStatus=APPROVED AND deliveryStatus≠DELIVERED AND docStatus≠CANCELLED`
 **＋ Σ openAmountFunctional of ErpFinArApItem where partnerId=该客户 AND direction=RECEIVABLE AND status∈{OPEN,PARTIAL}**（AR 未核销余额本位币，经 `IErpFinArApItemBiz.findOpenItemsByPartner` 跨域只读查询）。
 本单含税亦按其 `exchangeRate` 折算为本位币（functional currency）后比较——**支持多币种订单与外币 AR**（外币订单/AR 经汇率换算到本位币后纳入 outstanding，与 `creditLimit` 同口径比较）。
@@ -97,7 +97,7 @@
 
 - **多级 `.xwf` 信用审批工作流链**（信用分析师→财务经理多步链）：本期 SPECIAL_APPROVAL 经 DIRECT 模式 + 权限门控实现"超额度需更高权限"核心语义；多步工作流定义（`useWorkflow="true"` + `wf:wfName` + 结束 listener）归 Deferred。
   - 触发条件：多级审批链业务需求落地时（承接 `docs/plans/2026-07-04-2050-1-use-approval-migration.md` Deferred 范式）。
-- **信用冻结（credit hold）实时拦截开票/出库**：✅ **已实现**（`CreditLimitChecker.checkCreditHold`，plan 2026-07-10-1100-2）。出库审核（`ErpSalDeliveryProcessor`）与发票审核（`ErpSalInvoiceProcessor`）在 `validateBusinessRulesForApprove` 中按 `erp-sal.credit-check-on-delivery`/`erp-sal.credit-check-on-invoice`（均默认 false，向后兼容）门控调用，检查客户当前是否已超额（`available < 0`，point-in-time，本单不叠加 outstanding），复用三级策略（HARD_BLOCK 抛 `ERR_CREDIT_HOLD_DELIVERY`/`ERR_CREDIT_HOLD_INVOICE`）。正式信用占用预留/释放生命周期（订单审核冻结额度→出库释放→开票转 AR 占用）仍归 Deferred。
+- **信用冻结（credit hold）实时拦截开票/出库**：出库审核（`ErpSalDeliveryProcessor`）与发票审核（`ErpSalInvoiceProcessor`）在 `validateBusinessRulesForApprove` 中按 `erp-sal.credit-check-on-delivery`/`erp-sal.credit-check-on-invoice`（均默认 false，向后兼容）门控调用 `CreditLimitChecker.checkCreditHold`，检查客户当前是否已超额（`available < 0`，point-in-time，本单不叠加 outstanding），复用三级策略（HARD_BLOCK 抛 `ERR_CREDIT_HOLD_DELIVERY`/`ERR_CREDIT_HOLD_INVOICE`）。正式信用占用预留/释放生命周期（订单审核冻结额度→出库释放→开票转 AR 占用）仍归 Deferred。
   - 触发条件（残留预留机制）：需精确额度预留会计的高信用管控场景落地时。
 - **客户风险评分体系联动信用额度动态调整**：依赖 CRM 客户信用评分。
   - 触发条件：CRM 客户风险评分体系落地时。
@@ -125,7 +125,7 @@
 
 ## 日期范围有效性校验（C3 交叉引用）
 
-sales 定价 3 实体（`ErpSalPriceList` / `ErpSalPriceListLine` / `ErpSalPricingRule`）已接入 C3 日期范围有效性模式（plan `2026-07-26-0315-1`，详见 `../date-ranged-validity-pattern.md` §7 sales 接入记录 + §10 follow-up 清单）。**重要声明：本接入仅增加保存时日期范围校验（防歧义），不改变定价引擎运行时取价逻辑——`ErpSalCustomerPriceResolver` 取价链不变。**
+sales 定价 3 实体（`ErpSalPriceList` / `ErpSalPriceListLine` / `ErpSalPricingRule`）已接入 C3 日期范围有效性模式（详见 `../date-ranged-validity-pattern.md` §7 sales 接入记录 + §10 follow-up 清单）。**重要声明：本接入仅增加保存时日期范围校验（防歧义），不改变定价引擎运行时取价逻辑——`ErpSalCustomerPriceResolver` 取价链不变。**
 
 | 实体 | 策略 | 维度键 | 校验时机 | 行为 |
 |------|------|--------|----------|------|

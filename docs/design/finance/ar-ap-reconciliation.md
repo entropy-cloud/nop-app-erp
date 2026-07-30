@@ -191,7 +191,7 @@
 
 > 账龄分级也是**坏账准备计提**的基础——每级账龄 × 历史损失率 = 必需准备，详见过账与核销展开 `bad-debt.md` §坏账准备计提方法。坏账核销/收回经本文件的 `ErpFinReconciliation` 核销单（`docStatus=REVERSED` 反向结算）+ `ErpFinArApItem.status=WRITTEN_OFF` 表达。
 
-> **状态扩展已落地**（plan `2026-07-05-0540-1`）：`erp-fin/ar-ap-status` 字典新增 `WRITTEN_OFF`（已坏账核销）。`ErpFinArApItemBizModel.findOpenItemsByPartner` 与 `aging` 仍按 OPEN/PARTIAL 取未核销项；坏账核销经 `ErpFinBadDebtBizModel.writeOff` 直接置 `status=WRITTEN_OFF` + `openAmount=0`（设计裁定：不新建独立坏账核销单行子表，核销对象即源 AR 辅助账项）。期末结账前置检查 `findUnsettledArApCodes` 已排除 `WRITTEN_OFF`（已核销项非"未核销"问题）。
+> **状态扩展**：`erp-fin/ar-ap-status` 字典新增 `WRITTEN_OFF`（已坏账核销）。`ErpFinArApItemBizModel.findOpenItemsByPartner` 与 `aging` 仍按 OPEN/PARTIAL 取未核销项；坏账核销经 `ErpFinBadDebtBizModel.writeOff` 直接置 `status=WRITTEN_OFF` + `openAmount=0`（设计裁定：不新建独立坏账核销单行子表，核销对象即源 AR 辅助账项）。期末结账前置检查 `findUnsettledArApCodes` 已排除 `WRITTEN_OFF`（已核销项非"未核销"问题）。
 
 ### 账龄计算基准
 
@@ -282,14 +282,14 @@
 
 > 汇兑损益核销凭证示例：借：银行存款（本位币） / 贷：应收（本位币） + 借/贷：财务费用-汇兑损益。
 
-**实现契约（R1.9 / P1-MA2-009）**：已实现汇兑损益 plug 落在核销结算环节（`ErpFinReconciliationBizModel.post`），config-gate `erp-fin.recon-fx-gain-loss-enabled`（默认 false）：
+**实现契约**：汇兑损益 plug 落在核销结算环节（`ErpFinReconciliationBizModel.post`），config-gate `erp-fin.recon-fx-gain-loss-enabled`（默认 false）：
 
 - `ReconciliationSettler.settleWithFx` 按 per-item functional（`settledSource × item.exchangeRate`）分别回写双方辅助账，差额 = Σ(payment.functionalSettled) − Σ(invoice.functionalSettled) → `head.fxGainLoss`。
 - 差额 ≠ 0 时生成 `EXCHANGE_GAIN_LOSS` 凭证（经 `CloseVoucherWriter` 直写，billHeadCode=`RECON-FX-{核销单 code}`），方向映射：应收 fx>0=收益（Dr 应收/Cr 汇兑损益）；应付 fx>0=损失（Dr 汇兑损益/Cr 应付）。科目经 `erp-fin.{ar,ap,exchange-gain-loss}-subject-code` 配置。
 - 核销红冲（`reverse`）经 `IErpFinVoucherBiz.reverse(RECON-FX-code, EXCHANGE_GAIN_LOSS)` 红冲 FX 凭证（存在时）。
 - 单币种（双方 rate 相同）差额=0，退化为既有 `settle` 行为（config 关闭时走 `settle`，行为完全不变）。
 
-> **期末汇兑重估承接**：核销时的汇兑差异（上方）与期末独立汇兑重估是两个时点。期末对外币 AR/AP 未核销项按期末汇率的独立重估（EXCHANGE_GAIN_LOSS 凭证）已由期末结账流程承接（见 `period-close.md §汇兑重估`，计划 `2026-07-02-1000-3`），由 `ExchangeRevaluationService` 在 GL 关账段（损益结转前）执行。
+> **期末汇兑重估承接**：核销时的汇兑差异（上方）与期末独立汇兑重估是两个时点。期末对外币 AR/AP 未核销项按期末汇率的独立重估（EXCHANGE_GAIN_LOSS 凭证）已由期末结账流程承接（见 `period-close.md §汇兑重估`），由 `ExchangeRevaluationService` 在 GL 关账段（损益结转前）执行。
 
 ### 核销权限
 

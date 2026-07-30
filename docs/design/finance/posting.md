@@ -15,7 +15,7 @@
 │ 第①层 底座：业务单据 + 库存（强制 SYNC，不可配置）                       │
 │   同一 @BizMutation 事务内原子提交：                                    │
 │     ├─ 业务单据状态变更（docStatus / approveStatus）                    │
-│     ├─ 库存写入（stock_move / stock_ledger / stock_balance）           │
+│     ├─ 库存写入（库存移动/流水/余额）                                    │
 │     └─ posted=false（待过账标志，与业务+库存同事务落盘）                 │
 │   约束：库存写入不参与"可配置时序"，永远是 SYNC。这是物理库存正确性的    │
 │         硬约束（iDempiere Doc.post / Metasfresh IPostingService 均如此）│
@@ -27,8 +27,8 @@
 │   方式 A（SYNC，默认）：与第①层同事务，立即生成凭证，业务+库存+凭证三强一致│
 │   方式 B（ASYNC）：经 txn().afterCommit() 解耦，post-commit 异步过账：   │
 │     ├─ 发布 PostingEvent（businessType, billHeadCode, ...）            │
-│     ├─ ErpFinAcctDocRegistry 按 businessType 路由 Provider              │
-│     ├─ IErpFinAcctDocProvider.createFacts() 生成分录                    │
+│     ├─ 注册中心按 businessType 路由 Provider                            │
+│     ├─ Provider 生成分录                                                │
 │     └─ 写入凭证 + 业财回链 + 更新 posted=true                           │
 │   切换依据：性能瓶颈出现时再对个别 billType 切 ASYNC（见 §异步过账）      │
 └─────────────────────────────────────────────────────────────────────┘
@@ -67,14 +67,14 @@
 
 ## businessType vs billType 分工
 
-`businessType` 与 `billType` 是**两个正交标识**，职责不同、非一对一，二者在业财回链表 `voucher_bill_r` 中同时落库：
+`businessType` 与 `billType` 是**两个正交标识**，职责不同、非一对一，二者在业财回链表（`ErpFinVoucherBillR`）中同时落库：
 
 | 标识 | 职责 | 取值来源 | 典型值 | 承载位置 |
 |------|------|----------|--------|----------|
 | `billType` | **源单识别 / 回链反查**（对应具体 ORM 实体/表） | `data-dependency-matrix.md §5.2` 枚举 | `PUR_RECEIVE`、`SAL_DELIVERY` | 弱指针三元组 `(billType, billHeadCode, lineCode)` |
 | `businessType` | **过账语义 / 凭证模板路由**（会计事件分类） | 本节 §业务类型映射（唯一权威源） | `PURCHASE_INPUT`、`AR_INVOICE` | `PostingEvent.businessType`、凭证模板路由键 |
 
-> **非 1:1 关系**：一个 `billType` 可映射多个 `businessType`。例如 `billType=PUR_RECEIVE`（采购入库单）在不同环节触发不同会计事件——入库时 `businessType=PURCHASE_INPUT`（暂估应付），收到发票时 `businessType=AP_INVOICE`（进项税+应付）。回链表 `voucher_bill_r` 同时存两者，便于"按源单反查"（用 billType）与"按会计语义聚合"（用 businessType）。
+> **非 1:1 关系**：一个 `billType` 可映射多个 `businessType`。例如 `billType=PUR_RECEIVE`（采购入库单）在不同环节触发不同会计事件——入库时 `businessType=PURCHASE_INPUT`（暂估应付），收到发票时 `businessType=AP_INVOICE`（进项税+应付）。回链表同时存两者，便于"按源单反查"（用 billType）与"按会计语义聚合"（用 businessType）。
 
 > **参考**：iDempiere 的 `C_DocTypeTarget_ID`/`DocBaseType`（单据类型/会计基类）与 `Fact_Acct.AD_Table_ID+Record_ID`（源单反查）正是这一分工的原型；Metasfresh 的 `AcctDocRegistry` 用 `docTableName`（识别实体）与 `Doc_Invoice.createFacts`（会计语义）同样分离。
 
@@ -92,7 +92,7 @@
 | 销售出库 | SALES_OUTPUT | 借：结转成本 / 贷：存货 | sales | `sales/README.md` |
 | 采购发票 | AP_INVOICE | 借：费用/采购 / 借：进项税 / 贷：应付 | purchase | `purchase/README.md` |
 
-> **GRNI 暂估冲回 documented simplification（R1.8 P1-MA2-001 裁决，plan 2026-07-29-2322-1）**：「先入库后开票」黄金路径下，`PURCHASE_INPUT`（receive）与 `AP_INVOICE`（invoice）各自独立过账——`PURCHASE_INPUT` 凭证 `billHeadCode = stockMove.code`，`AP_INVOICE` 凭证 `billHeadCode = invoice.code`，两者经不同 billHeadCode 落业财回链，**无自动冲回**（GL 2202 暂估应付双计 + 1403/1401 存货双计）。辅助账层（`ErpFinArApItem`）不受影响（`ErpFinArApItemGenerator.resolveProfile` 不处理 `PURCHASE_INPUT`）。**裁决为 documented simplification（非降级 deferred）**：完整自动冲回需双向钩子（approve 红冲 + reverseApprove 反冲回，后者需 inventory 域 `repostPurchaseInput` SPI）+ 部分开票覆盖判定（`reverse()` 仅全额红冲）+ 跨期语义，对参考应用不成比例；期末试算平衡可发现并手工清理。详见 `docs/design/purchase/returns.md §暂估应付冲减「正向 receive→invoice 暂估冲回」`。
+> **GRNI 暂估冲回 documented simplification**：「先入库后开票」黄金路径下，`PURCHASE_INPUT`（receive）与 `AP_INVOICE`（invoice）各自独立过账——`PURCHASE_INPUT` 凭证 `billHeadCode = 库存移动单号`，`AP_INVOICE` 凭证 `billHeadCode = 发票号`，两者经不同 billHeadCode 落业财回链，**无自动冲回**（GL 2202 暂估应付双计 + 1403/1401 存货双计）。辅助账层（`ErpFinArApItem`）不受影响（辅助账生成器不处理 `PURCHASE_INPUT`）。**裁决为 documented simplification（非降级 deferred）**：完整自动冲回需双向钩子（approve 红冲 + reverseApprove 反冲回，后者需 inventory 域 `repostPurchaseInput` SPI）+ 部分开票覆盖判定（`reverse()` 仅全额红冲）+ 跨期语义，对参考应用不成比例；期末试算平衡可发现并手工清理。详见 `docs/design/purchase/returns.md §暂估应付冲减「正向 receive→invoice 暂估冲回」`。
 | 销售发票 | AR_INVOICE | 借：应收 / 贷：收入 / 贷：销项税 | sales | `sales/README.md` |
 | 付款 | PAYMENT | 借：应付 / 贷：银行存款 | purchase | `purchase/README.md` |
 | 收款 | RECEIPT | 借：银行存款 / 贷：应收 | sales | `sales/README.md` |
@@ -191,71 +191,29 @@ autoCreateVoucher(billHeadCode, Double[]{amountSum, taxAmountSum, voucherAmount}
 
 ### 接口设计
 
-财务域定义凭证生成接口与注册中心：
-
-```
-IErpFinAcctDocProvider（凭证生成 Provider）
-  ├─ getSupportedBusinessTypes() → Set<BusinessType>
-  └─ createFacts(billData, acctSchema) → List<VoucherLine>
-
-ErpFinAcctDocRegistry（注册中心）
-  ├─ providerMap: Map<BusinessType, IErpFinAcctDocProvider>  // 编译期类型安全
-  ├─ @Inject List<IErpFinAcctDocProvider>  // 启动时收集所有 Provider Bean
-  └─ getProvider(businessType) → IErpFinAcctDocProvider  // O(1) Map 查找
-```
-
-> **类型安全注册**：参考 Metasfresh 的 `ImmutableMap<String, AcctDocFactory>` 模式。注册中心启动时遍历所有 Provider Bean，按 `getSupportedBusinessTypes()` 建立 `BusinessType → Provider` 映射。运行时按 `businessType` 直接 Map 查找（O(1)），而非遍历 List（O(n)）。重命名 Provider 类不会导致注册失败（无反射字符串依赖）。
+财务域定义凭证生成 Provider SPI（`IErpFinAcctDocProvider`）：每个业务域实现该接口、声明所支持的 `businessType` 集合并生成分录。注册中心在启动期按 `businessType` 建立 O(1) 类型安全映射（运行时按 `businessType` 直接 Map 查找，而非遍历 List），运行时按 `businessType` 路由到对应 Provider。接口签名、注册机制与类型安全约束（参考 Metasfresh `ImmutableMap<String, AcctDocFactory>` 范式）见 `docs/architecture/processor-extension-pattern.md`。
 
 ### 跨域自动聚合
 
-各业务域（purchase/sales/inventory）可各自实现 `IErpFinAcctDocProvider` 并注册为 Bean：
+各业务域（purchase/sales/inventory）各自实现 `IErpFinAcctDocProvider` 并注册为 Bean：
 
-- purchase 工程实现 `PurAcctDocProvider`（处理 AP_INVOICE/PAYMENT/PURCHASE_INPUT）。
-- sales 工程实现 `SalAcctDocProvider`（处理 AR_INVOICE/RECEIPT/SALES_OUTPUT）。
-- inventory 工程实现 `InvAcctDocProvider`（处理存货估值）。
+- purchase 域 Provider 处理 AP_INVOICE/PAYMENT/PURCHASE_INPUT。
+- sales 域 Provider 处理 AR_INVOICE/RECEIPT/SALES_OUTPUT。
+- inventory 域 Provider 处理存货估值。
 
-财务域的 `ErpFinAcctDocRegistry` 通过 `@Inject List<IErpFinAcctDocProvider>` 自动聚合所有 Provider，按 `businessType` 路由。
+财务域注册中心自动聚合所有 Provider，按 `businessType` 路由。
 
 **新增业务类型 = 新增 Provider Bean，零改动财务核心**——这是模块化业财一体的关键。
 
 ### 注册方式
 
-使用类型安全的 Map 注册（避免反射命名约定）：
-
-```
-ErpFinAcctDocRegistry 维护 ImmutableMap<BusinessType, IErpFinAcctDocProvider>
-  - 启动时收集所有 Provider Bean
-  - 按 getSupportedBusinessTypes() 建立 businessType → Provider 映射
-  - 运行时按 businessType 查 Provider
-```
+使用类型安全的 Map 注册（避免反射命名约定）：启动期收集所有 Provider Bean 并按 `businessType` 建立不可变映射，运行时 O(1) 查找。注册中心实现细节见 `docs/architecture/processor-extension-pattern.md`。
 
 ### 凭证写库前校验扩展点（IErpFinFactsValidator）
 
 > 参考 Metasfresh 的 `IFactsValidator` 扩展机制。允许第三方在凭证写库前对借贷分录行做业务校验或改写（如按租户定制借贷规则、按维度分摊、特殊行业调整）。
 
-**接口设计**：
-
-```
-IErpFinFactsValidator（凭证分录校验/改写扩展点）
-  ├─ validate(facts: List<VoucherLine>, context: AcctDocContext) → List<VoucherLine>
-  │   ├─ 可校验：借贷平衡、科目有效性、维度完整性
-  │   ├─ 可改写：调整分录行（如按部门分摊金额）、追加分录行（如计提附加税）
-  │   └─ 可拒绝：throw NopException 阻止过账（如不满足行业合规要求）
-  └─ getOrder() → int  // 多个 Validator 的执行顺序
-```
-
-**注册机制**（与 Provider 同模式）：
-
-```
-ErpFinAcctDocRegistry
-  ├─ @Inject List<IErpFinAcctDocProvider> providers   // 生成借贷分录
-  └─ @Inject List<IErpFinFactsValidator> validators   // 校验/改写分录（可选，可多个）
-
-过账流程：
-  1. Provider.createFacts() → 原始分录行
-  2. 按顺序调用所有 FactsValidator.validate() → 校验/改写后的分录行
-  3. 最终借贷平衡校验 → 写库
-```
+该扩展点 SPI（`IErpFinFactsValidator`）在 Provider 生成分录后、写库前按顺序执行：可校验（借贷平衡/科目有效性/维度完整性）、可改写（拆行/追加）、可拒绝（`NopException` 阻止过账）。与 Provider 同模式经 `@Inject List` 聚合，支持多个并按 `getOrder()` 排序。接口签名与注册机制见 `docs/architecture/processor-extension-pattern.md`。
 
 **典型应用场景**：
 
@@ -291,13 +249,13 @@ ErpFinAcctDocRegistry
 - 科目映射在数据库配置（规则表或元数据驱动），不是硬编码 if-else。
 - 支持多套会计科目表并行（管理账/税务账），同一业务在多套下各解析一组科目。
 
-### 规则表实现（A1，plan 2026-07-21-0827-1）
+### 规则表实现（A1）
 
-A1 已落地 `ErpFinGlMappingRule` 实体 + `IErpFinGlMappingResolver` 解析引擎，作为 Provider 之上的**可选多维覆盖层**：
+A1 以 `ErpFinGlMappingRule` 实体 + `IErpFinGlMappingResolver` 解析引擎，作为 Provider 之上的**可选多维覆盖层**：
 
-- **接入点**：`ErpFinPostingProcessor.resolveSubjects` 开头按 `VoucherFact.accountKey` 查规则表覆盖 `subjectCode`；其后既有 `code → ErpMdSubject` 查找流程不变。
+- **接入点**：引擎在科目解析开头按 `VoucherFact.accountKey` 查规则表覆盖 `subjectCode`；其后既有 `code → ErpMdSubject` 查找流程不变（实现细节见 `docs/architecture/processor-extension-pattern.md`）。
 - **优先级链算法**：`(priority DESC, 维度具体度 DESC)` 排序匹配；`priority=0` 为 default 兜底（全 NULL 维度），`priority≥100` 为精确规则惯例。详见 [`docs/design/finance/gl-mapping-rules.md` §3 优先级链算法](gl-mapping-rules.md#3-优先级链算法)。
-- **试点进度**：`PurAcctDocProvider × AP_INVOICE × 3 键`（PURCHASE/INPUT_VAT/ACCOUNTS_PAYABLE）已接入；其余 Provider（Sal/Inv/Assets/Hr/Maintenance）opt-in 接入归 Deferred successor。
+- **试点进度**：purchase 域 AP_INVOICE × 3 键（PURCHASE/INPUT_VAT/ACCOUNTS_PAYABLE）已接入；其余域 Provider（sales/inventory/assets/hr/maintenance）opt-in 接入归 Deferred successor。
 - **接入步骤模板 + 试点清单**：详见 [`docs/design/finance/gl-mapping-rules.md` §5 Provider opt-in 集成契约](gl-mapping-rules.md#5-provider-opt-in-集成契约)。
 - **与 `ErpMdSubjectMapping` 边界**：`ErpMdSubjectMapping` 是 post-resolution 跨账套转换（subjectId → subjectId）；`ErpFinGlMappingRule` 是 pre-resolution 多维业务规则（businessType+accountKey+dimensions → subjectCode）。三层职责不重叠。
 
@@ -342,10 +300,10 @@ A1 已落地 `ErpFinGlMappingRule` 实体 + `IErpFinGlMappingResolver` 解析引
 
 | 维度 | 稳定约束（恒定不变，不可配置） | 可配置策略（按需调整） |
 |------|-------------------------------|------------------------|
-| **库存一致性** | 第①层：业务单据 + 库存写入（stock_move/ledger/balance）永远在同一 `@BizMutation` 事务强一致 | ❌ 不可配（物理库存正确性硬约束） |
+| **库存一致性** | 第①层：业务单据 + 库存写入（库存移动/流水/余额）永远在同一 `@BizMutation` 事务强一致 | ❌ 不可配（物理库存正确性硬约束） |
 | **凭证时序** | 第②层最终一致（posted 标志 + 兜底保证） | ✅ 按 `(billType, acctSchemaId)` 切 SYNC 同事务 / ASYNC post-commit |
 | **幂等** | posted 标志前置检查，重复过账直接跳过 | ❌ 不可配 |
-| **业财回链** | `voucher_bill_r` 同时存 billType + businessType，双向可查 | ❌ 不可配 |
+| **业财回链** | `ErpFinVoucherBillR` 同时存 billType + businessType，双向可查 | ❌ 不可配 |
 | **物理锁定** | 过账中对单据加锁，防止并发过账 | ❌ 不可配 |
 | **可补偿** | 红字冲销（见 §冲销机制） | ❌ 不可配 |
 | **可审计** | 凭证 + 回链 + posted 翻转全程留痕 | ❌ 不可配 |
@@ -362,7 +320,7 @@ A1 已落地 `ErpFinGlMappingRule` 实体 + `IErpFinGlMappingResolver` 解析引
 - 业务单据作废/反审核时，业务域调用 `IErpFinPostingBiz.reverse(billHeadCode, businessType)`，按业财回链表反查关联的已过账凭证。
 - 引擎生成红字冲销凭证（金额取负），关联原凭证（`reversalOfVoucherId`）与作废的业务单据（新写一条业财回链）。
 - 红字凭证走正常"草稿→已过账"流程（平衡校验、期间门控、科目反查）。
-- **原凭证标记**：引擎在红字凭证落库后由 `ErpFinPostingProcessor.markOriginalVoucherReversed`（`reverseProcess` 末段）将原 NORMAL + POSTED + 未冲销凭证的 `isReversed` 置 `true`——这是引擎侧统一承担的标记责任，业务域**不应**绕过 `IErpFinVoucherBiz.reverse()` I*Biz 边界直接跨模块写 `ErpFinVoucher.isReversed`（参见 `integration-and-transaction-patterns.md` 业财一体写契约）。
+- **原凭证标记**：引擎在红字凭证落库后将原 NORMAL + POSTED + 未冲销凭证的 `isReversed` 置 `true`——这是引擎侧统一承担的标记责任，业务域**不应**绕过 `IErpFinVoucherBiz.reverse()` I*Biz 边界直接跨模块写 `ErpFinVoucher.isReversed`（实现细节见 `docs/architecture/processor-extension-pattern.md`，业财一体写契约见 `integration-and-transaction-patterns.md`）。
 - 业务单据状态本就已由业务域在作废动作中回退，引擎无需再反写。
 
 ### 方向二：凭证红冲 → 业务单据回退（冲销反写闭环）
@@ -387,36 +345,34 @@ A1 已落地 `ErpFinGlMappingRule` 实体 + `IErpFinGlMappingResolver` 解析引
 
 > 事件派发时机：红字凭证 `post()` 事务提交后（post-commit），与 `posting.md` §总体架构 第②层 ASYNC 模式一致。SYNC 模式下可在同事务内同步通知域监听器。
 
-#### 实现策略（计划 `2026-07-04-1452-2` Phase 1 裁决）
+#### 实现策略
 
-> 本节为已落地裁决。具体执行证据见该计划与 `docs/logs/`。
+##### 派发机制——finance 定义 SPI + 默认 SYNC 同事务通知
 
-##### 裁决 3：派发机制——finance 定义 SPI + `@Inject List` 聚合 + 默认 SYNC 同事务通知
-
-- **裁决**：finance 域定义 `IErpFinVoucherReversedListener` SPI（`void onVoucherReversed(VoucherReversedEvent, IServiceContext)`）；新 `ErpFinReversalListenerRegistry` 经 `@Inject List<IErpFinVoucherReversedListener>` 启动期聚合所有监听者 Bean（**镜像既有 `ErpFinAcctDocRegistry` 收集 `IErpFinAcctDocProvider` 的范式**）；`ErpFinPostingProcessor.reverseProcess()` 在红字凭证 + 业财回链 + `cancelOnReverse` 落库之后构造 `VoucherReversedEvent` 并按配置派发：
-  - **默认 SYNC**（与 `posting.md §总体架构` 默认 SYNC 强一致对齐）：在同事务内**同步遍历**监听者调用 `onVoucherReversed`——监听者与红字凭证原子提交，回退失败即整体回滚（保持业财强一致）。
-  - **可选 ASYNC**（与第②层 ASYNC 模式对齐）：经 `ITransactionTemplate.afterCommit(txnGroup, runnable)` 注册 post-commit 回调，红字凭证事务提交成功后再异步派发。
+- **裁决**：finance 域定义 `IErpFinVoucherReversedListener` SPI；监听者注册中心（镜像 Provider 聚合范式，见 `docs/architecture/processor-extension-pattern.md`）启动期聚合所有监听者 Bean；引擎在红字凭证 + 业财回链 + `cancelOnReverse` 落库之后构造 `VoucherReversedEvent` 并按配置派发：
+  - **默认 SYNC**（与 §总体架构 默认 SYNC 强一致对齐）：在同事务内同步遍历监听者——监听者与红字凭证原子提交，回退失败即整体回滚（保持业财强一致）。
+  - **可选 ASYNC**（与第②层 ASYNC 模式对齐）：经 post-commit 回调，红字凭证事务提交成功后再异步派发。
 - **平台能力核实**：
-  - 进程内**无** `IEventBus`/`@EventListener`（grep 平台源码确认）；`txn().afterCommit` **存在**（`ITransactionTemplate.java:87-94`，仅在事务提交成功时触发，回滚路径不执行）。
-  - `IErpFinVoucherBiz.reverse()` Facade（`ErpFinVoucherBizModel.reverse()`）跟随 `@BizMutation` 事务（REQUIRED），不像 `post()` 叠加 `REQUIRES_NEW`——财务侧直接红冲时事务边界由调用方 `@BizMutation` 承接，SYNC 同事务通知与 `afterCommit` 在该边界均可用。
+  - 进程内无 `IEventBus`/`@EventListener`；post-commit 回调能力存在（仅在事务提交成功时触发，回滚路径不执行）。
+  - `IErpFinVoucherBiz.reverse()` I*Biz Facade 跟随 `@BizMutation` 事务（REQUIRED），不像 `post()` 叠加 `REQUIRES_NEW`——财务侧直接红冲时事务边界由调用方 `@BizMutation` 承接，SYNC 同事务通知与 post-commit 派发在该边界均可用。
 - **替代方案（被拒）**：
-  - 外部 MQ（`nop-message-*`）：破坏 SYNC 强一致默认 + 引入 infra 依赖，与"默认 SYNC"哲学冲突。
+  - 外部 MQ：破坏 SYNC 强一致默认 + 引入 infra 依赖，与"默认 SYNC"哲学冲突。
   - Spring `ApplicationEvent`：平台无该设施。
-- **失败隔离裁决**：SYNC 同事务通知下，监听者抛 `NopException` 会回滚整张红字凭证事务——**违反"凭证一旦过账具有法律效力不回滚"原则**。故裁决：**派发循环对每个监听者 try/catch 包裹**，单个监听者抛错不中断其他监听者、不回滚已过账红字凭证；失败记录（源单类型+billHeadCode+ErrorCode+处置状态）落入 5.1 异常工作台（`ErpFinPostingException`，postingType=`REVERSAL`，failedStage=`notify-reversal-listener`）的 PENDING 队列供人工处置。该裁决使"红字凭证法律效力"与"监听者失败可见可处置"两者并存。
-- **代价**：finance-service 新增 1 SPI + 1 DTO + 1 Registry bean；业务域各加 1 监听者 bean（按需）。零 ORM 实体新增、零列新增。
+- **失败隔离裁决**：SYNC 同事务通知下，监听者抛 `NopException` 会回滚整张红字凭证事务——**违反"凭证一旦过账具有法律效力不回滚"原则**。故裁决：**派发循环对每个监听者 try/catch 包裹**，单个监听者抛错不中断其他监听者、不回滚已过账红字凭证；失败记录（源单类型+billHeadCode+ErrorCode+处置状态）落入 §过账异常处置 异常工作台（`ErpFinPostingException`，postingType=`REVERSAL`，failedStage=`notify-reversal-listener`）的 PENDING 队列供人工处置。该裁决使"红字凭证法律效力"与"监听者失败可见可处置"两者并存。
+- **代价**：finance-service 新增 1 SPI + 1 DTO + 1 注册中心 bean；业务域各加 1 监听者 bean（按需）。零 ORM 实体新增、零列新增。
 
-##### 裁决 4：各域回退目标态——逐域裁定，复用既有 reverseApprove 语义
+##### 各域回退目标态——逐域裁定，复用既有 reverseApprove 语义
 
-- **裁决**：监听者经 `ErpFinVoucherBillR` 反查源单（`billType`+`billCode`），按各域既有"业务侧反审核（reverseApprove）"已验证的状态回退逻辑回退自身状态——**不重复造回退逻辑**，直接复用各 `*Processor.reverseApprove/doReverseApprove` 中的状态迁移。
+- **裁决**：监听者经 `ErpFinVoucherBillR` 反查源单（`billType`+`billCode`），按各域既有"业务侧反审核（reverseApprove）"已验证的状态回退逻辑回退自身状态——**不重复造回退逻辑**，直接复用各域 reverseApprove 中已验证的状态迁移。
 
 | 域 | 源单类型（billType） | 回退目标态（posted=true → ?） | 依据 |
 |----|---------------------|------------------------------|------|
-| purchase | `AP_INVOICE`（ErpPurInvoice）/`PAYMENT`（ErpPurPayment）/`PUR_RETURN`（ErpPurReturn） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null` | `ErpPurInvoiceProcessor.doReverseApprove`/`ErpPurPaymentProcessor`/`ErpPurReturnProcessor` 同型：reverseApprove 后置 REJECTED |
-| purchase | `PURCHASE_INPUT`（ErpPurReceive） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null`（与 AP_INVOICE/PAYMENT/PUR_RETURN 对齐；库存物理冲销独立由业务侧 reverseApprove 链触发 `stockMoveBiz.reverse`） | `PurReversalListener.rollbackReceive`（plan 2026-07-30-0341-3-r1-17 对齐，原仅 posted=false 保留 APPROVED 的不对称已修复） |
-| sales | `AR_INVOICE`（ErpSalInvoice）/`RECEIPT`（ErpSalReceipt）/`SAL_RETURN`（ErpSalReturn） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null` | sales 域 `ErpSal*Processor.doReverseApprove` 同型镜像 purchase |
+| purchase | `AP_INVOICE`（ErpPurInvoice）/`PAYMENT`（ErpPurPayment）/`PUR_RETURN`（ErpPurReturn） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null` | 各域 reverseApprove 后置 REJECTED（实现见 `docs/architecture/processor-extension-pattern.md`） |
+| purchase | `PURCHASE_INPUT`（ErpPurReceive） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null`（与 AP_INVOICE/PAYMENT/PUR_RETURN 对齐；库存物理冲销独立由业务侧 reverseApprove 链触发） | 对齐 reverseApprove 后置 REJECTED（原仅 posted=false 保留 APPROVED 的不对称已修复） |
+| sales | `AR_INVOICE`（ErpSalInvoice）/`RECEIPT`（ErpSalReceipt）/`SAL_RETURN`（ErpSalReturn） | `approveStatus`: APPROVED → **REJECTED**；`posted=false`/`postedAt=null`/`postedBy=null` | sales 域 reverseApprove 镜像 purchase |
 | sales | `SALES_OUTPUT`（ErpSalDelivery） | 经库存 `ErpInvStockMove` 反冲已出库（delivery 自身仅 posted=false） | 同 purchase receive 语义 |
-| inventory | `OWNERSHIP_TRANSFER`（ErpInvOwnershipTransfer）/`INTER_TRANSFER`（ErpInvTransferOrder）/StockMove/StockTake | `posted=false`/`postedAt=null`/`postedBy=null`（inventory 单据无 approveStatus 状态机轴，仅 posted 翻转） | `ErpInvStockMoveProcessor` 既有 reversal 模式 |
-| manufacturing | `SUBCONTRACT_ISSUE`/`SUBCONTRACT_RECEIPT`/`SUBCONTRACT_FEE`（ErpMfgSubcontractOrder，三段共用同一委外单，billHeadCode = `orderCode + "-SI"/"-SR"/"-SF"`，监听者去后缀反查 code） | `docStatus`: COMPLETED → **CANCELLED**；`posted=false`/`postedAt=null`/`postedBy=null`（委外单为 docStatus 驱动，无 approveStatus 回退——COMPLETED 时 approveStatus 已 APPROVED 且 CANCELLED 为终态） | `MfgSubcontractReversalListener`（plan 2026-07-14-1825-1，镜像 `PurReversalListener` 范式，回退字段差异：docStatus vs approveStatus） |
+| inventory | `OWNERSHIP_TRANSFER`（ErpInvOwnershipTransfer）/`INTER_TRANSFER`（ErpInvTransferOrder）/StockMove/StockTake | `posted=false`/`postedAt=null`/`postedBy=null`（inventory 单据无 approveStatus 状态机轴，仅 posted 翻转） | inventory 域既有 reversal 模式 |
+| manufacturing | `SUBCONTRACT_ISSUE`/`SUBCONTRACT_RECEIPT`/`SUBCONTRACT_FEE`（ErpMfgSubcontractOrder，三段共用同一委外单，billHeadCode = `orderCode + "-SI"/"-SR"/"-SF"`，监听者去后缀反查 code） | `docStatus`: COMPLETED → **CANCELLED**；`posted=false`/`postedAt=null`/`postedBy=null`（委外单为 docStatus 驱动，无 approveStatus 回退——COMPLETED 时 approveStatus 已 APPROVED 且 CANCELLED 为终态） | 镜像 purchase receive 范式，回退字段差异：docStatus vs approveStatus |
 
 > **判定原则**：回退目标态由各域自治（设计 `posting.md §反写契约` "域自治、引擎不持有源实体"）。引擎只持 `VoucherReversedEvent` 快照（含 billType+billCode+businessType+traceId），不反向 import 业务域模块（保持 DAG 顶层约束）。
 
@@ -452,7 +408,7 @@ VoucherBillR（业财回链）
 ### 反写数据载体：`posted` 字段 + 业财回链
 
 - 反写语义由两个载体承载，**不引入独立反写记录表**：
-  - 源业务单据的 `posted` 字段：标识"是否已过账"（8 个业务域已落地）。
+  - 源业务单据的 `posted` 字段：标识"是否已过账"。
   - `ErpFinVoucherBillR` 业财回链：双向反查凭证与源单（凭证号 ↔ 单据号）。
 - 此设计与 iDempiere/Metasfresh/Odoo/ERPNext 一致——主流开源 ERP 均无独立反写记录表。
 
@@ -487,12 +443,12 @@ VoucherBillR（业财回链）
 - 汇率由主数据域提供；缺失汇率时报错而非静默使用默认值。
 - **汇率锁定时机**：本位币金额在业务单据创建时按业务日期汇率锁定，过账时不重新计算。汇率差异在期末汇兑损益调整中统一处理（见 `domain-design-guidelines.md` §十二）。
 
-### 实现契约（R1.9 / P1-MA2-002/009 / P1-MA3-039）
+### 实现契约
 
 - `VoucherFact` 双金额字段：Provider 显式填充 `amountSource`（源币种）+ `amountFunctional`（= source × `ctx.exchangeRate`）；`amount` 字段保留作功能金额（`balanceTotals`/`assertBalanced` 以本位币为准）。未设置新字段时 fallback 到 `amount`（单币种向后兼容）。
-- `ErpFinPostingProcessor.persistVoucher` 忠实写入 `line.amountSource`/`line.amountFunctional`/`line.debitAmount`/`line.creditAmount`（debit/credit 按本位币）。
-- `ErpFinArApItemGenerator` 按 `event.exchangeRate` 折算辅助账 `amountFunctional`（= source × rate），`amountSource` = 源币种金额。
-- P2P（`PurAcctDocProvider`）+ O2C（`SalAcctDocProvider`）已迁移双字段；其余域 Provider 单币种 fallback（全域迁移 successor，`Deferred But Adjudicated`）。
+- 引擎忠实写库 `line.amountSource`/`line.amountFunctional`/`line.debitAmount`/`line.creditAmount`（debit/credit 按本位币），实现细节见 `docs/architecture/processor-extension-pattern.md`。
+- 辅助账项按 `event.exchangeRate` 折算 `amountFunctional`（= source × rate），`amountSource` = 源币种金额。
+- P2P（purchase 域 Provider）+ O2C（sales 域 Provider）已迁移双字段；其余域 Provider 单币种 fallback（全域迁移 successor，`Deferred But Adjudicated`）。
 - 收款核销汇兑损益 plug 见 `ar-ap-reconciliation.md §汇兑损益核销规则`。
 
 ## 多套科目表并行
@@ -506,16 +462,16 @@ VoucherBillR（业财回链）
 
 | 对端域 | 协作内容 |
 |--------|----------|
-| purchase | purchase 实现 `PurAcctDocProvider`，处理采购相关凭证生成 |
-| sales | sales 实现 `SalAcctDocProvider`，处理销售相关凭证生成 |
-| inventory | inventory 实现 `InvAcctDocProvider`，处理存货估值凭证 |
+| purchase | purchase 实现 `IErpFinAcctDocProvider`，处理采购相关凭证生成 |
+| sales | sales 实现 `IErpFinAcctDocProvider`，处理销售相关凭证生成 |
+| inventory | inventory 实现 `IErpFinAcctDocProvider`，处理存货估值凭证 |
 | master-data | 引用科目表/科目/币种主数据 |
 
 财务域处于 DAG 顶层，不依赖具体业务域的实现细节，只通过 `IErpFinAcctDocProvider` 接口聚合各域的凭证生成规则。
 
-## 承付（COMMITMENT）实际过账（A2，plan 2026-07-21-1206-2）
+## 承付（COMMITMENT）实际过账（A2）
 
-> A2 落地 budget.md §业务规则3 既定义的承付过账逻辑：采购订单 APPROVED 时生成 postingType=COMMITMENT 凭证；订单 CANCELLED 或被发票接收时红冲。详见 [`budget.md §承付会计`](budget.md#承付会计a2plan-2026-07-21-1206-2)。
+> A2 实现 [`budget.md §业务规则3`](budget.md) 既定义的承付过账逻辑：采购订单 APPROVED 时生成 postingType=COMMITMENT 凭证；订单 CANCELLED 或被发票接收时红冲。详见 [`budget.md §承付会计`](budget.md#承付会计a2)。
 
 ### 3 接入点（严格对齐 budget.md:78 业务规则）
 
@@ -544,12 +500,12 @@ VoucherBillR（业财回链）
 承付过账经 `erp-fin.budget-commitment-enabled`（默认 false）控制：
 - 默认关闭：保护既有 113 purchase 测试不触发承付凭证（config-gated 回归安全）。
 - 启用时必配 `erp-fin.budget-commitment-subject-code`（采购承付占用科目编码）；缺失时抛 `ERR_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED`。
-- sales 承付（plan 2026-07-24-1351-3）经同一总开关启用，科目经 `erp-fin.budget-commitment-sales-subject-code` 独立配置（收入面科目）；billType 按 sourceBillType 派发（PURCHASE_ORDER → PURCHASE_ORDER_COMMITMENT，SALES_ORDER → SALES_ORDER_COMMITMENT），详见 [`budget.md §sales 承付扩展`](budget.md#sales-承付扩展plan-2026-07-24-1351-3)。
+- sales 承付经同一总开关启用，科目经 `erp-fin.budget-commitment-sales-subject-code` 独立配置（收入面科目）；billType 按 sourceBillType 派发（PURCHASE_ORDER → PURCHASE_ORDER_COMMITMENT，SALES_ORDER → SALES_ORDER_COMMITMENT），详见 [`budget.md §sales 承付扩展`](budget.md#sales-承付扩展)。
 
-### CommitmentAcctDocProvider
+### 承付凭证 Provider
 
-新增 Provider（`app.erp.fin.service.posting.CommitmentAcctDocProvider`）实现 `IErpFinAcctDocProvider`：
-- 与 BUDGET 同型：**不走 Provider 路由**（`getSupportedBusinessTypes()` 返回空集），承付凭证直接由 `CommitmentVoucherGenerator` 写入。
+承付凭证 Provider 实现 `IErpFinAcctDocProvider`：
+- 与 BUDGET 同型：**不走 Provider 路由**（声明支持的业务类型集合为空），承付凭证直接由专用生成器写入。
 - 存在仅为：文档化承付科目解析约定 + 满足接口约定 + 为 successor（多维承付科目解析）保留接入点。
 
 ### 错误码
@@ -559,23 +515,23 @@ VoucherBillR（业财回链）
 | `ERP_FIN_BUDGET_COMMITMENT_ALREADY_RELEASED` | 重复 release 守卫（原 COMMITMENT 凭证已红冲或不存在） |
 | `ERP_FIN_BUDGET_COMMITMENT_SUBJECT_NOT_CONFIGURED` | 启用承付但未配置承付科目编码 |
 
-### 浏览器层验证（plan 2026-07-26-0410-2）
+### 浏览器层验证
 
-承付过账三接入点经 `tests/e2e/business-actions/fin-commitment-accounting.action.spec.ts` 全栈浏览器层覆盖（4 用例：#1 commit / #2 release-on-cancel / #3 release-on-invoice-approve / 采购 release hook 容错回归）。验证范式：(A) order-only setup 隔离 #3 专测 #1+#2（commit 单行 CREDIT 科目 + 红冲 dcDirection 不变/debit-credit 互换）；(B) full-chain `runP2pChain`/`runO2cChain` 验证 #3（invoice approve → 承付原凭证 isReversed=true + 红冲凭证存在）。helper 扩展 `findCommitmentVoucherIdByCode` 镜像 BUDGET 范式（按 `reversalOfVoucherId` 区分正向/红冲）。详见 [`budget.md §承付会计 §浏览器层验证`](budget.md#浏览器层验证plan-2026-07-26-0410-2)。
+承付过账三接入点（commit / release-on-cancel / release-on-invoice-approve）经浏览器层全栈覆盖，验证范式与 BUDGET 同型（helper 按 `reversalOfVoucherId` 区分正向/红冲凭证）。详见 [`budget.md §承付会计 §浏览器层验证`](budget.md#浏览器层验证)。
 
-## 跨法人内部交易凭证（A3，plan 2026-07-22-1000-1）
+## 跨法人内部交易凭证（A3）
 
-> A3 落地 [`multi-company.md §跨公司交易生命周期状态机`](../architecture/multi-company.md) 既定义的跨法人调拨凭证生成逻辑。跨法人调拨 `ErpInvTransferOrder.confirm` 后置经 finance SPI 生成配对内部销售/采购凭证；同法人保持现状（仅库存移动）。
+> A3 实现 [`multi-company.md §跨公司交易生命周期状态机`](../architecture/multi-company.md) 既定义的跨法人调拨凭证生成逻辑。跨法人调拨 `ErpInvTransferOrder.confirm` 后置经 finance SPI 生成配对内部销售/采购凭证；同法人保持现状（仅库存移动）。
 
 ### 凭证生成路径（与 COMMITMENT 同型，不走 Provider 路由）
 
 | 机制 | 实现 | 说明 |
 |------|------|------|
-| 跨法人判定 | `ErpFinIntercompanyTransferBizModel.resolveLegalEntityRoot` | warehouse.orgId 沿 parentId 链向上找首个 orgType=COMPANY |
-| 转移定价解析 | `IErpFinTransferPriceResolver` | 3 策略 cost-plus/market/negotiated + 优先级链 + 缓存 |
-| 配对凭证生成 | `IntercompanyVoucherGenerator` | AR 侧（INTERCOMPANY_SALE）+ AP 侧（INTERCOMPANY_PURCHASE），各 2 行 Dr/Cr |
+| 跨法人判定 | finance SPI | warehouse.orgId 沿 parentId 链向上找首个 orgType=COMPANY |
+| 转移定价解析 | `IErpFinTransferPriceResolver` SPI | 3 策略 cost-plus/market/negotiated + 优先级链 + 缓存 |
+| 配对凭证生成 | 专用生成器 | AR 侧（INTERCOMPANY_SALE）+ AP 侧（INTERCOMPANY_PURCHASE），各 2 行 Dr/Cr |
 | 科目解析 | A1 `IErpFinGlMappingResolver` | 按 INTERCOMPANY_AR/AP/REVENUE/COST accountKey + intercompany 维度解析 |
-| `IntercompanyAcctDocProvider` | 文档化约定 | getSupportedBusinessTypes 返回空集，与 BUDGET/COMMITMENT 同型 |
+| intercompany 凭证 Provider | 文档化约定 | 声明支持的业务类型集合为空，与 BUDGET/COMMITMENT 同型 |
 
 ### config-gated 启用
 
@@ -583,16 +539,16 @@ VoucherBillR（业财回链）
 - 默认关闭：保护既有 inventory 调拨测试不触发自动凭证（config-gated 回归安全）。
 - 调拨确认失败不阻塞库存移动（凭证生成异常 try-catch 兜底，保持库存与凭证解耦）。
 
-### PO/SO 触发路径扩展（plan 2026-07-24-1351-2）
+### PO/SO 触发路径扩展
 
-> 将 intercompany 凭证生成从单一 inventory transfer confirm 扩展至跨公司 PO/SO approve/reverseApprove。完整生命周期设计与决策记录见 [`multi-company.md §跨公司 PO/SO 触发路径`](../architecture/multi-company.md#跨公司-poso-触发路径plan-2026-07-24-1351-2-expand)。
+> 将 intercompany 凭证生成从单一 inventory transfer confirm 扩展至跨公司 PO/SO approve/reverseApprove。完整生命周期设计与决策记录见 [`multi-company.md §跨公司 PO/SO 触发路径`](../architecture/multi-company.md#跨公司-poso-触发路径-expand)。
 
 **PO/SO 接入点表**：
 
 | 单据 | Processor | approve 钩子（后置） | reverseApprove 钩子（前置红冲） | 金额来源 | config-gate |
 |------|-----------|---------------------|-------------------------------|---------|-------------|
-| ErpPurOrder | `ErpPurOrderProcessor.approve` | `runIntercompanyApproveHook` | `runIntercompanyReverseHook` | `totalAmountWithTax`（本位币） | `erp-fin.intercompany-posting-enabled`（复用，默认 false） |
-| ErpSalOrder | `ErpSalOrderProcessor.approve` | `runIntercompanyApproveHook` | `runIntercompanyReverseHook` | `totalAmountWithTax`（本位币） | 同上 |
+| ErpPurOrder | approve 后置 | intercompany approve hook | intercompany reverse hook | `totalAmountWithTax`（本位币） | `erp-fin.intercompany-posting-enabled`（复用，默认 false） |
+| ErpSalOrder | approve 后置 | intercompany approve hook | intercompany reverse hook | `totalAmountWithTax`（本位币） | 同上 |
 
 **SPI 扩展**（`IErpFinIntercompanyTransferBiz`，向后兼容，`onTransferConfirmed` 不变）：
 
@@ -601,6 +557,6 @@ VoucherBillR（业财回链）
 | `onTradeDocumentApproved` | PO/SO approve 后置 | docType + docId + docCode + executingOrgId + amount + businessDate | 配对凭证 ID 列表（AR + AP） |
 | `onTradeDocumentReversed` | PO/SO reverseApprove 前置 | docType + docId + docCode | 红冲凭证 ID 列表 |
 
-**跨法人判定**（全在 finance 域，AP-7 合规）：执行方法人根 = `resolveLegalEntityRoot(order.orgId)`；对手方法人根 = 转移定价规则表反向查找（PO 查 toOrgId=执行方、SO 查 fromOrgId=执行方）。同法人 skip；钩子非阻塞 try-catch（对齐 inventory confirm 范式）。
+**跨法人判定**（全在 finance 域，AP-7 合规）：执行方法人根 = finance SPI 解析 `order.orgId`；对手方法人根 = 转移定价规则表反向查找（PO 查 toOrgId=执行方、SO 查 fromOrgId=执行方）。同法人 skip；钩子非阻塞 try-catch（对齐 inventory confirm 范式）。
 
 **receive/delivery 联级**：归 Deferred successor（订单级已表达跨法人交易，联级为增强，避免重复计量）。

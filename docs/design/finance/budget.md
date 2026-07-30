@@ -1,6 +1,5 @@
 # 预算管理(Budget)
 
-> 实现状态：✅ 已实现（计划 `2026-07-10-1100-4` completed；A2 多年度/结转/承付由计划 `2026-07-21-1206-2` completed 落地）。
 > 基线：ORM 3 实体 + postingType=BUDGET 影子凭证范式 + HARD/WARN/NONE 三级预算控制 SPI + 预算对比报表。
 > 余额统一从 `ErpFinVoucherLine` 聚合，不动 `ErpFinGlBalance`；实际数聚合（损益结转/坏账/年报/试算平衡/汇兑）已隔离 BUDGET 凭证。
 > **A2 新增能力**：多年度视图（`budgetGroupCode`）/ 滚动预算自动复制引擎（rollForward）/ 预算结转规则引擎（carryForward）/ 承付会计（COMMITMENT 凭证 + 占用释放 SPI）/ 滚动+结转日志实体（RollforwardLog / CarryForwardLog）。
@@ -79,7 +78,7 @@
 
 2. **预算控制钩子位置**:作为 `IErpFinFactsValidator` 之外的**业务校验扩展点**——在 purchase/sales 域审核动作的事务内同步调用 `IErpFinBudgetControlBiz.check(subjectId, costCenterId, periodId, amount, sourceBill)`。返回 BLOCKED → throw 阻断审核;WARN → 写日志放行;PASS → 静默。这是强一致校验(控制必须实时),不走事件。
 
-3. **承付款生成**：采购订单 APPROVED 时生成 `postingType=COMMITMENT` 凭证；订单 CANCELLED 或被发票接收时红冲 COMMITMENT。budgetLine.commitmentAmount = Σ Commitment 凭证。销售订单承付（收入预算预留）经 plan 2026-07-24-1351-3 落地，语义对称（详见 §承付会计 §sales 承付扩展）。
+3. **承付款生成**：采购订单 APPROVED 时生成 `postingType=COMMITMENT` 凭证；订单 CANCELLED 或被发票接收时红冲 COMMITMENT。budgetLine.commitmentAmount = Σ Commitment 凭证。销售订单承付（收入预算预留）语义对称（详见 §承付会计 §sales 承付扩展）。
 
 4. **实际数派生**:实际凭证 postingType=ACTUAL(现有所有凭证默认),actualAmount = Σ Actual 凭证在匹配维度的本位币金额。
 
@@ -114,7 +113,7 @@ finance 域「预算管理」分组:预算方案、预算明细、预算控制�
 
 ---
 
-## 多年度视图（A2，plan 2026-07-21-1206-2）
+## 多年度视图（A2）
 
 > 同一预算编制可能跨多个年度（如 3 年滚动预算、跨年度项目预算）。设计目标：保留单年度 Scenario 语义（与既有 `fiscalYear` int 字段、`parentScenarioId` 调整链不冲突）+ 提供跨年度聚合视图。
 
@@ -144,7 +143,7 @@ finance 域「预算管理」分组:预算方案、预算明细、预算控制�
 
 ---
 
-## 滚动预算自动复制引擎（A2，plan 2026-07-21-1206-2）
+## 滚动预算自动复制引擎（A2）
 
 > 字典 `erp-fin/budget-scenario-type` 中 `ROLLING` 已定义但 A2 之前无实现。A2 落地 `@BizMutation rollForward(scenarioId, newFiscalYear, strategy)`。
 
@@ -183,13 +182,13 @@ finance 域「预算管理」分组:预算方案、预算明细、预算控制�
 | `erp-fin.budget-rollforward-default-strategy` | FIXED_PERCENTAGE | 缺省策略 |
 | `erp-fin.budget-rollforward-incremental-rate` | 0.05 | INCREMENTAL 增长率 |
 
-### 浏览器层验证（A2，plan 2026-07-26-1407-2）
+### 浏览器层验证（A2）
 
 `rollForward` 三策略经 Playwright E2E 全栈验证（`fin-budget-rollforward-carryforward.action.spec.ts`，config-gate `erp-fin.budget-roll-forward-enabled=true` 经 `playwright.config.ts` webServer JVM arg 启用）。**自包含 setup**：经 GraphQL `ErpMdSubject__save`（唯一 code EXPENSE/DEBIT 隔离）+ `ErpFinAccountingPeriod__save`（source/target 年度两 OPEN 期间，同 month 使 `remapPeriodId` 命中）+ `ErpFinBudgetScenario__save` 直置 APPROVED（绕 submit/approve 状态机避免 BUDGET 影子凭证污染）+ `ErpFinBudgetLine__save`。三策略行金额确定性派生断言：FIXED_PERCENTAGE 1000→1000 / ZERO_BASED 1000→0 / INCREMENTAL 1000→1050（×(1+0.05)）；目标方案 fiscalYear/parentScenarioId/docStatus=DRAFT 经 `__get` 独立反查；RollforwardLog 写入经 `countBudgetRollforwardLogs >= 1` 断言。**voucher code precision 50 约束**：rollForward 目标方案 code = source.code + "-" + newFiscalYear，source code 用短前缀规避（同 1407-1 latent defect 范式）。
 
 ---
 
-## 结转规则引擎（A2，plan 2026-07-21-1206-2）
+## 结转规则引擎（A2）
 
 > 年度终了时，上年度预算剩余（或已用）按规则结转至下年度，避免年度切换导致预算归零。`@BizMutation carryForward(scenarioId, targetScenarioId, rule)`。
 
@@ -237,33 +236,33 @@ finance 域「预算管理」分组:预算方案、预算明细、预算控制�
 
 A2 默认 **commitment 不结转**（与 actualAmount 合并记录在源 Scenario 的余量计算中，结转后由源 Scenario 的 CLOSED 终态保留审计轨迹）。客户如有"未释放 commitment 一并结转至下年度"需求，归 successor（`commitment 一并结转` Deferred）。
 
-### 浏览器层验证（A2，plan 2026-07-26-1407-2）
+### 浏览器层验证（A2）
 
 `carryForward` 四规则经 Playwright E2E 全栈验证（`fin-budget-rollforward-carryforward.action.spec.ts`，config-gate `erp-fin.budget-carry-forward-enabled=true` 经 `playwright.config.ts` webServer JVM arg 启用）。**自包含 setup**：经 GraphQL `ErpMdSubject__save`（唯一 code EXPENSE/DEBIT，使 actual 聚合按 subjectId 隔离仅命中本 spec actual voucher）+ `ErpFinAccountingPeriod__save`（单一 OPEN 期间）+ `ErpFinBudgetScenario__save` 直置源 APPROVED / 目标 DRAFT + `ErpFinBudgetLine__save`（budget 1000）；REMAINING_FULL/RATIO/USED_FULL 三规则另经 `ErpFinVoucher__save` 直置 actual 凭证（postingType=NORMAL + POSTED + isReversed=false，`aggregateActualForLine` 排除 BUDGET/COMMITMENT）+ `ErpFinVoucherLine__save`（debitAmount=actual 400，DEBIT 科目 actual=debit−credit）。四规则结转金额确定性派生断言：REMAINING_FULL 1000−400=600 / REMAINING_RATIO (1000−400)×0.5=300 / USED_FULL=400 / NONE=0（carriedAmount=0 不增补行）；源方案 docStatus=CLOSED + closedAt 经 `__get` 独立反查；CarryForwardLog 写入经 `countBudgetCarryForwardLogs >= 1` 断言（NONE 规则同样写 Log）。**voucher code precision 50 约束**：结转凭证 code = "CARRY-FORWARD-"+sourceCode+"-"+targetCode+"-"+uuid8，source/target code 用单字符短前缀规避（同 1407-1 latent defect 范式）。
 
 ---
 
-## 承付会计（A2，plan 2026-07-21-1206-2）
+## 承付会计（A2）
 
 > budget.md §业务规则3 既有定义："采购订单 APPROVED 时生成 `postingType=COMMITMENT` 凭证；订单 CANCELLED 或被发票接收时红冲 COMMITMENT"。A2 落地此能力的实际过账逻辑。
 
-### 4 接入点（严格对齐 budget.md:78 业务规则 + P1-MA2-081/082/083 释放完整性声明）
+### 4 接入点（严格对齐 budget.md:78 业务规则 + 释放完整性声明）
 
 | # | hook 点 | 时机 | 动作 | 事务边界 |
 |---|---------|------|------|---------|
 | 1 | **commit** | `ErpPurOrder.approve` 后置 | 生成 COMMITMENT 凭证（Dr 预算占用科目 / Cr 应付-承付） | **SYNC 同事务**（与既有 `IErpFinBudgetControlBiz.check()` 强一致） |
 | 2 | **release-on-cancel** | `ErpPurOrder.reverseApprove` / `cancel`（订单取消路径） | 红冲原 COMMITMENT 凭证（金额取负） | 经 `IErpFinBudgetCommitmentBiz.release`（SYNC 同事务，与既有 reverseApprove 同事务） |
 | 3 | **release-on-invoice-approve** | `ErpPurInvoice.approve`（**AP 发票过账 = 实际占用产生 = 释放承付**） | 红冲原 COMMITMENT 凭证 | SYNC 同事务 |
-| 4 | **release-on-return** | `ErpPurReturn.approve` 后置（P1-MA2-082，config-gated `erp-fin.commitment-release-on-return` 默认 OFF） | 经 `IErpFinBudgetCommitmentBiz.releaseIfPresent(PURCHASE_ORDER, poCode)` 红冲原 PO 承付凭证 | SYNC 同事务 |
+| 4 | **release-on-return** | `ErpPurReturn.approve` 后置（config-gated `erp-fin.commitment-release-on-return` 默认 OFF） | 经 `IErpFinBudgetCommitmentBiz.releaseIfPresent(PURCHASE_ORDER, poCode)` 红冲原 PO 承付凭证 | SYNC 同事务 |
 
-#### 全额释放语义（P1-MA2-081/082）
+#### 全额释放语义
 
 接入点 #3 与 #4 均为**全额释放语义**：`reverseCommitment` 按 `billCode`（订单 code）反查原承付凭证并**全额红冲**（无 `amount` 入参，不按开票/退货金额比例部分释放）。
 
 - **#3 多发票容错**：一张 PO 多次部分开票时，首张发票 `approve` 全额红冲承付（实际占用产生时即释放，避免 `actual + commitment` 双重占用预算）；后续发票 `approve` 经容错守卫 `hasUnreversedCommitment=false` 跳过（`ErpPurInvoiceProcessor.runCommitmentReleaseOnInvoiceApproveHook` catch `ERR_BUDGET_COMMITMENT_ALREADY_RELEASED` 静默跳过）。按开票金额比例的部分释放归 successor（触发条件：多组织预算硬约束启用 + 部分开票为常态业务路径）。
 - **#4 退货全额释放**：退货减少实际采购量 → 同步释放承付。`releaseIfPresent` 走全额红冲，故**部分退货亦全额红冲整张 PO 承付**——剩余未开票数量失去承付保护，可能允许超预算放行新订单（与 #3 同风险类）。按比例部分释放归 successor（与 #3 同 successor）。
 
-#### 冲销恢复语义（P1-MA2-083）
+#### 冲销恢复语义
 
 **发票 `reverseApprove` / `cancel` 不恢复承付**（保守方向：保持已释放状态）。`ErpPurInvoiceProcessor.reverseApprove/cancel` 仅红冲 AP ACTUAL 凭证，不调 `commit()` 恢复承付；`ErpSalInvoiceProcessor` 同型。
 
@@ -305,12 +304,12 @@ Long release(String sourceBillType, String sourceBillCode, IServiceContext conte
 |----|--------|------|
 | `erp-fin.budget-commitment-enabled` | false | 总开关（默认关，保护既有 113 purchase 测试不触发承付凭证） |
 | `erp-fin.budget-commitment-subject-code` | （必配） | 采购承付占用科目编码（启用采购承付时必填） |
-| `erp-fin.budget-commitment-sales-subject-code` | （启用 sales 承付时必配） | 销售承付占用科目编码（plan 2026-07-24-1351-3，与采购科目独立；sales 承付用收入面科目） |
-| `erp-fin.commitment-release-on-return` | false | release-on-return 总开关（P1-MA2-082，接入点 #4；默认关。启用时退货审核全额红冲原 PO 承付，须同时开启 `budget-commitment-enabled`） |
+| `erp-fin.budget-commitment-sales-subject-code` | （启用 sales 承付时必配） | 销售承付占用科目编码（与采购科目独立；sales 承付用收入面科目） |
+| `erp-fin.commitment-release-on-return` | false | release-on-return 总开关（接入点 #4；默认关。启用时退货审核全额红冲原 PO 承付，须同时开启 `budget-commitment-enabled`） |
 
 ---
 
-## sales 承付扩展（plan 2026-07-24-1351-3）
+## sales 承付扩展
 
 > 将承付凭证生成从采购订单扩展至销售订单，使**收入预算预留**可经承付凭证表达。承付传统是支出面概念（采购占用支出预算），
 > 但在预算会计中收入面承付同样成立：销售订单 approve 时预留收入预算容量，销售发票过账（实际收入产生）时释放。
@@ -326,7 +325,7 @@ Long release(String sourceBillType, String sourceBillCode, IServiceContext conte
 
 ### Generator 泛化（billType 派发）
 
-`CommitmentVoucherGenerator` 的 billType/sourceBillType 从采购硬编码泛化为按 sourceBillType 派发（plan 2026-07-24-1351-3 §Phase 1 无条件泛化，即使 sales 承付否决也落地，消除硬编码耦合 + 为 successor 预留）：
+`CommitmentVoucherGenerator` 的 billType/sourceBillType 从采购硬编码泛化为按 sourceBillType 派发（无条件泛化，消除硬编码耦合 + 为 successor 预留）：
 
 | sourceBillType | 派发 billType | 适用场景 |
 |----------------|---------------|---------|
@@ -351,7 +350,7 @@ release-on-invoice 反查路径（镜像采购 invoiceLine→receiveLine→recei
 
 ---
 
-## 承付占用/释放 SPI（A2，plan 2026-07-21-1206-2）
+## 承付占用/释放 SPI（A2）
 
 ### 与既有 `IErpFinBudgetControlBiz.check()` 的协同
 
@@ -372,7 +371,7 @@ release-on-invoice 反查路径（镜像采购 invoiceLine→receiveLine→recei
 | `ERP_FIN_BUDGET_COMMITMENT_ALREADY_RELEASED` | 重复 release 守卫（原 COMMITMENT 凭证已红冲或不存在） |
 | `ERP_FIN_BUDGET_CARRY_FORWARD_RULE_INVALID` | rule 字典值校验失败 / 跨 orgId + acctSchemaId + currencyId |
 
-### 浏览器层验证（plan 2026-07-26-0410-2）
+### 浏览器层验证
 
 承付会计三接入点经 `tests/e2e/business-actions/fin-commitment-accounting.action.spec.ts` 全栈浏览器层覆盖（4 用例 + helper 扩展）：
 
@@ -381,13 +380,13 @@ release-on-invoice 反查路径（镜像采购 invoiceLine→receiveLine→recei
   - (A) **order-only setup**：`__save` 建订单 + `submitForApproval` + `approve`，**不创建发票**——隔离发票审核释放，专测接入点 #1（commit）+ #2（release-on-cancel）。head `totalAmountWithTax` 必填（commit hook 读此字段，null/0 时 commit SPI early-return 不产凭证）。
   - (B) **full-chain `runP2pChain`/`runO2cChain`**：链路末端发票 approve 触发接入点 #3 release——专测 #3 + 采购 release hook 容错回归（Phase 1 Fix）。helper 扩展 `cleanupP2p`/`cleanupO2c` 追加 `cleanupVoucherByBillCode(poCode/soCode)` 清理承付凭证回链（postingType-agnostic 已覆盖 COMMITMENT）。
 
-### release hook 容错对称性（plan 2026-07-26-0410-2 latent defect Fix）
+### release hook 容错对称性
 
 采购 `ErpPurOrderProcessor.runCommitmentReleaseHook` 原**无 try-catch**（与销售 `ErpSalOrderProcessor.runCommitmentReleaseHook:359-370` 不对称），承付已被接入点 #3（发票审核释放）红冲后，订单反审核/作废再次调 `release()` 抛 `ERR_BUDGET_COMMITMENT_ALREADY_RELEASED` 阻断业务流。Fix：补 try-catch（catch `NopException` + LOG.debug 静默跳过），镜像销售 hook 范式，恢复两域容错对称性。详见 `docs/bugs/2026-07-26-0410-pur-commitment-release-hook-tolerance-asymmetry.md`。
 
 ---
 
-## 版本审计链（A2，plan 2026-07-21-1206-2）
+## 版本审计链（A2）
 
 > A2 提供版本审计链的**字段基础**（`parentScenarioId` + `budgetGroupCode` + `closedAt` + RollforwardLog + CarryForwardLog）。前端多年度版本树形可视化归 frontend successor。
 
@@ -416,7 +415,7 @@ budgetGroupCode = "3Y-PLAN-2026"
 
 ---
 
-## 反模式自检表扩展（A2，plan 2026-07-21-1206-2）
+## 反模式自检表扩展（A2）
 
 > 在 budget.md 既有反模式基础上，A2 补充以下承付/结转/滚动特定反模式。
 

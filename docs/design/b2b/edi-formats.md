@@ -4,8 +4,8 @@
 
 详细说明 EDI 格式 SPI（IErpB2bEdiProvider）的接口契约、适用性派发机制、各标准格式（UBL/X12/EDIFACT）的设计要点、内外代码映射、以及 EDI 信封事务状态机。本设计是 `b2b/README.md` §SPI 契约 和 `architecture/b2b-integration.md` 的实施级深化。
 
-> **实现偏离补注（2026-07-04, plan 2200-1）**：
-> - `ErpB2bEdiLog` ORM 无 `actionType`/`httpStatus` 列（§8.1 列出但未落地）→ 动作语义编码到既有 `direction`+`resultCode`+`resultMsg` 列，不新增列。
+> **实现约定**：
+> - `ErpB2bEdiLog` ORM 无 `actionType`/`httpStatus` 列（§8.1 列出但 ORM 未包含）→ 动作语义编码到既有 `direction`+`resultCode`+`resultMsg` 列，不新增列。
 > - `ErpB2bEdiDoc.attachmentFileId` 为 OrmFileComponent（文件引用），不可存 raw payload → rawPayload 改存 `ErpB2bEdiLog.requestPayload`（CLOB）。
 > - X12/EDIFACT Provider 为 Non-Goal（本期仅 UBL 样例）；真实 AS2/SFTP/FTPS 协议库集成归 follow-up。
 
@@ -542,9 +542,9 @@ RECEIVED ──(解析处理)──→ ARCHIVED(终态)
 - `architecture/integration-pattern.md`（Webhook 复用）
 - `model/app-erp-b2b.orm.xml`（权威 ORM 模型）
 
-## 附录：`createReceiveFromAsn` 行级回填实现注记（plan 2026-07-19-0849-1）
+## 附录：`createReceiveFromAsn` 行级回填实现注记
 
-`ErpB2bAsnBizModel.createReceiveFromAsn(@Name("asnId") Long)` 早期实现仅建采购入库**头**（`ErpPurReceive`）。plan 2026-07-19-0849-1 扩展为迭代 `asn.lines` → 为每条 AsnLine 创建对应 `ErpPurReceiveLine`，使 ASN→采购入库链下游 approve/入库触发可达成（无 ReceiveLine 则后续链断裂）。
+`ErpB2bAsnBizModel.createReceiveFromAsn(@Name("asnId") Long)` 早期实现仅建采购入库**头**（`ErpPurReceive`）。扩展为迭代 `asn.lines` → 为每条 AsnLine 创建对应 `ErpPurReceiveLine`，使 ASN→采购入库链下游 approve/入库触发可达成（无 ReceiveLine 则后续链断裂）。
 
 ### 字段映射规则（权威）
 

@@ -1,6 +1,6 @@
 # MRP/DRP 仿真引擎（Simulation Engine）
 
-> Owner Doc（NEW，plan `2026-07-22-1000-2`）。落地于 `deepening-roadmap.md §Milestone B §B1`。
+> Owner Doc，对应 `deepening-roadmap.md §Milestone B §B1`。
 > 权威 ORM 源：`module-manufacturing/model/app-erp-manufacturing.orm.xml`、`module-drp/model/app-erp-drp.orm.xml`。
 > 单次确定性引擎基线：[`mrp.md`](mrp.md)、`drp/safety-stock-optimization.md`、`drp/use-cases.md`。
 
@@ -67,7 +67,7 @@ ErpMfgMrpScenario（场景，1）           ErpDrpScenario（DRP 同构）
 
 ### 物料级列缺失的处理（Decision B 记录）
 
-`mrp.md §实现偏离补注 line 89` 明确：物料级 `fixedLotSize`/`minOrderQty`/`maxOrderQty`/`safetyStock` 列在 ORM 不存在（lot sizing 简化为全局配置；safety stock 在 master-data 有列，lot size 列无）。
+`mrp.md §实现约定 line 89` 明确：物料级 `fixedLotSize`/`minOrderQty`/`maxOrderQty`/`safetyStock` 列在 ORM 不存在（lot sizing 简化为全局配置；safety stock 在 master-data 有列，lot size 列无）。
 
 **本计划处理**：
 - 仿真场景的 lot size 覆盖值承载于 `ErpMfgMrpScenarioParam.paramValue`（场景级），不修改 `ErpMdMaterial` 主数据
@@ -76,7 +76,7 @@ ErpMfgMrpScenario（场景，1）           ErpDrpScenario（DRP 同构）
 
 ### 参数变体解析（Strategy+registry 范式）
 
-`IErpMfgSimulationParamResolver` SPI（MRP）+ `IErpDrpSimulationParamResolver`（DRP），对齐 D3 plan `2026-07-21-2225-2` 的 `CostingStrategy` + A3 plan `2026-07-22-1000-1` 的 `IErpFinTransferPriceResolver` 范式：
+`IErpMfgSimulationParamResolver` SPI（MRP）+ `IErpDrpSimulationParamResolver`（DRP），对齐 D3 的 `CostingStrategy` + A3 的 `IErpFinTransferPriceResolver` 范式：
 
 - 输入：`scenarioId` + `materialId`（nullable）+ `paramType`
 - 输出：覆盖值（如未覆盖返回 `null`，调用方回退全局配置/主数据）
@@ -179,7 +179,7 @@ public class SimulationVersionComparator {
 
 ## 与既有 Forecast 输入边界
 
-`ErpMfgForecast`（运营需求预测，产品×时间桶）已落地（plan `2026-07-05-0427-1`）。仿真场景的需求数据**直接复用**既有 Forecast 行作为输入，不重复预测维度（`mrp.md §CRM 销售预测 vs 运营需求预测 line 97-104` 已裁决语义边界）。
+`ErpMfgForecast`（运营需求预测，产品×时间桶）。仿真场景的需求数据**直接复用**既有 Forecast 行作为输入，不重复预测维度（`mrp.md §CRM 销售预测 vs 运营需求预测 line 97-104` 已裁决语义边界）。
 
 **复用路径**：
 1. 仿真场景的基线 plan（`baseMrpPlanId`）在创建时已通过 `DemandAggregator.collectForecastDemands` 整合 APPROVED 预测行
@@ -256,7 +256,7 @@ DRP 侧与 MRP 侧完全同构，仅参数类型字典与覆盖目标不同：
 - `manufacturing/README.md`（回链）：本域文档表追加 `simulation-engine.md`
 - DRP 域 owner doc（回链）：追加 DRP 场景对应物段
 
-## 浏览器层验证实现注记（plan 2026-07-26-0500-2）
+## 浏览器层验证实现注记
 
 ### config-gate 启用
 

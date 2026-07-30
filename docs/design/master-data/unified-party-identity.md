@@ -1,8 +1,5 @@
 # 主数据统一 Party 身份查询（Unified Party Identity）
 
-> Owner Doc for `deepening-roadmap.md` §Milestone C §C1（plan `2026-07-21-0827-2-master-data-unified-party-identity-query.md`）。
-> Plan Status: active。本文件在 Plan Phase 0 落地，§6 试点记录在 Plan Phase 3 补齐。
-
 ## 1. 目的与范围
 
 主数据域现存三类"业务方"实体，分散在各自的 CRUD 页面与 `IErpMd*Biz` 接口中，跨实体检索需用户先判断目标类型再进入对应模块。本文件定义一个统一的 Party 查询抽象：单一关键字入口 + 跨实体投影 DTO + 跨域查询接口 + 联合 picker。
@@ -42,7 +39,7 @@
 | `displayName` | code + " - " + name | 同左 | 同左 | 拼接字符串 |
 | `extension` (Map) | `partnerType` | `position`, `orgId`, `partnerId` | `orgType`, `parentId`, `functionalCurrencyId` | 实体特定字段，容器兼容未来扩展 |
 
-**关键字检索范围**（Phase 0 Decision）：`code`/`name`/`phone`/`email` 4 字段 OR 模糊匹配（`LIKE '%keyword%'`）；Organization 仅匹配 `code`/`name`（无 phone/email 列）。keyword < 2 字符返回空（避免全表扫描）；SQL 注入防护经平台标准 `QueryBean` + 参数化查询。
+**关键字检索范围**：`code`/`name`/`phone`/`email` 4 字段 OR 模糊匹配（`LIKE '%keyword%'`）；Organization 仅匹配 `code`/`name`（无 phone/email 列）。keyword < 2 字符返回空（避免全表扫描）；SQL 注入防护经平台标准 `QueryBean` + 参数化查询。
 
 ### 2.2 Non-Goal 实体清单
 
@@ -66,7 +63,7 @@
 
 ### 3.2 决策
 
-**选定方案 (a) `IOrmTemplate` + 3 查询 + Java merge**（Phase 0 Decision 裁决依据）：
+**选定方案 (a) `IOrmTemplate` + 3 查询 + Java merge**：
 
 - 3 实体字段异构（Organization 无 phone/email），union SQL 投影复杂；
 - 3 次查询 + Java merge 可读性高 + 易于扩展新 Party 实体；
@@ -77,21 +74,15 @@
 
 ## 4. IErpPartyBiz 接口契约 + 非实体 BizModel 接口暴露约定
 
-### 4.1 接口签名
+### 4.1 接口契约
 
-```java
-public interface IErpPartyBiz {
-    List<PartyRef> findParties(String keyword, Set<ErpPartyType> partyTypes, int limit);
-    PartyRef getParty(ErpPartyType partyType, Long partyId);
-    Map<String, Long> findReferences(ErpPartyType partyType, Long partyId);
-}
-```
+统一 Party 查询经 `IErpPartyBiz` 暴露 3 个方法（签名见 erp-md-dao 模块）：
 
-- `findParties`：关键字跨实体检索；`partyTypes=null` 查所有 3 类；`limit` 默认经配置项控制（`erp-md.party-search.max-results=50`）。
-- `getParty`：单点查询；不存在抛 `ERP_MD_PARTY_NOT_FOUND`。
-- `findReferences`：跨实体引用计数预览，**返回类型与既有 `IErpMdPartnerReferenceChecker.countReferences` 一致** `Map<String, Long>`（Path A 严格同构；非 rich DTO）。
+- `findParties`：关键字跨实体检索；`partyTypes=null` 查所有 3 类；结果数上限经配置项 `erp-md.party-search.max-results` 控制。
+- `getParty`：单点查询；不存在抛业务异常。
+- `findReferences`：跨实体引用计数预览，返回 `Map<String, Long>`（key=引用域名 + value=引用计数），**与既有 `IErpMdPartnerReferenceChecker.countReferences` 严格同构**（Path A，非 rich DTO）。
 
-### 4.2 非实体 BizModel 接口暴露约定（Phase 0 Decision 5）
+### 4.2 非实体 BizModel 接口暴露约定
 
 本仓库有两种非实体 BizModel 范式：
 
@@ -148,16 +139,7 @@ picker 不需独立菜单项，经父页面引用 `/erp/md/pages/party-search/ma
 
 ### 6.1 F7 findReferences 扩展实施细节
 
-试点选型 = 候选 1（F7 `countReferences` 扩展为 `IErpPartyBiz.findReferences`）。Phase 2 落地：
-
-| 组件 | 路径 | 状态 |
-|------|------|------|
-| `IErpPartyBiz` 接口（含 `findReferences` 签名 `Map<String, Long>`） | `module-master-data/erp-md-dao/src/main/java/app/erp/md/biz/IErpPartyBiz.java` | **NEW** |
-| `ErpPartyBizModel.findReferences` 实现（按 `partyType` dispatch） | `module-master-data/erp-md-service/src/main/java/app/erp/md/service/party/ErpPartyBizModel.java` | **NEW** |
-| `IErpMdEmployeeReferenceChecker` SPI 端口（与既有 Partner SPI 严格同构） | `module-master-data/erp-md-dao/src/main/java/app/erp/md/spi/IErpMdEmployeeReferenceChecker.java` | **NEW** |
-| `IErpMdOrganizationReferenceChecker` SPI 端口 | `module-master-data/erp-md-dao/src/main/java/app/erp/md/spi/IErpMdOrganizationReferenceChecker.java` | **NEW** |
-| 既有 `IErpMdPartnerReferenceChecker` 复用 | （不变） | 既有 |
-| F7 兼容路径 `ErpMdPartnerBizModel.countReferences` | （不变，view.xml 仍调 `ErpMdPartner__countReferences`） | 既有 |
+试点选型 = 候选 1（F7 `countReferences` 扩展为 `IErpPartyBiz.findReferences`）。新增组件：`IErpPartyBiz` 接口 + `ErpPartyBizModel.findReferences` 实现（按 `partyType` dispatch）+ `IErpMdEmployeeReferenceChecker`/`IErpMdOrganizationReferenceChecker` 两个 SPI 端口（均与既有 Partner SPI 严格同构）；既有 `IErpMdPartnerReferenceChecker` 与 F7 兼容路径 `ErpMdPartnerBizModel.countReferences` 不变（实现文件路径见 erp-md-dao / erp-md-service 模块）。
 
 ### 6.2 数据流图
 
@@ -193,52 +175,21 @@ ErpPartyBizModel（service 模块，非实体 BizModel）
 
 | Party 类型 | SPI 端口 | 下游域实现状态 | 备注 |
 |-----------|---------|--------------|------|
-| PARTNER | `IErpMdPartnerReferenceChecker`（既有，F7 plan 2026-07-20-1020-2） | 既有 + Phase 2 复用 | F7 已落地，本计划复用 |
+| PARTNER | `IErpMdPartnerReferenceChecker`（既有） | 既有 + 复用 | 复用既有 |
 | EMPLOYEE | `IErpMdEmployeeReferenceChecker`（NEW） | **Deferred** | 触发：删除 Employee 前引用预览运维场景 / A2/A3 启动 |
-| ORGANIZATION | `IErpMdOrganizationReferenceChecker`（NEW） | **Deferred** | 触发：同上 + 注意 orgId 不纳入扫描（§Phase 2 Decision） |
+| ORGANIZATION | `IErpMdOrganizationReferenceChecker`（NEW） | **Deferred** | 触发：同上 + 注意 orgId 不纳入扫描 |
 
-### 6.4 性能数据（基线）
+### 6.4 测试与性能基线
 
-| 查询类型 | 实现方式 | 测试集数据量 | 单次响应时间 |
-|---------|---------|------------|------------|
-| `findParties`（关键字跨 3 实体） | IOrmTemplate 3 查询 + Java merge | 测试集（每实体 1-10 行） | < 30ms（含 ORM session + 投影） |
-| `getParty`（单点） | `daoProvider.daoFor().getEntityById()` | 测试集 | < 5ms |
-| `findReferences`（Partner 路径） | 单 SPI 调用 + HashMap | 测试集 | < 5ms |
+3 个查询方法（`findParties`/`getParty`/`findReferences`）经单元测试 + 浏览器层 E2E 验证，覆盖关键字跨实体检索（PARTNER/EMPLOYEE/ORGANIZATION）、partyTypes 过滤、keyword 长度守卫（< 2 字符返回空）、limit 截断、单点加载（ORGANIZATION phone/email=null 容忍）、引用计数 Map 结构可达性。测试文件、用例数与响应时间基线见 `docs/testing/`。
 
-生产基线触发条件：见 §7.2 物化视图 successor。
-
-### 6.5 测试基线
-
-| 测试类型 | 测试文件 | 场景数 | 状态 |
-|---------|---------|-------|------|
-| 单元测试 | `module-master-data/erp-md-service/src/test/java/app/erp/md/service/party/TestErpPartyBiz.java` | 8（含空数据集） | 全绿 |
-| Visual smoke | `tests/e2e/visual/party-search-picker.visual.spec.ts` | 3（findParties + getParty + findReferences wiring） | 2/3 绿（用例 3 因平台 GraphQL schema 演进为预存漂移——见 §6.6 已知问题） |
-| **浏览器层 E2E（plan 2026-07-26-1500-2）** | `tests/e2e/business-actions/md-party-query.action.spec.ts` | 6（findParties 多场景 + getParty + findReferences） | 全绿 |
-| md-service 全量回归 | `mvn test -pl module-master-data/erp-md-service` | 60 | 全绿 |
-| 工作空间全量构建 | `mvn clean install -DskipTests` | 154 模块 | BUILD SUCCESS |
-
-### 6.6 浏览器层验证（plan 2026-07-26-1500-2）
-
-**实现注记**：3 个 `@BizQuery`（`findParties`/`getParty`/`findReferences`）经 Playwright 浏览器层全栈 E2E 验证（`tests/e2e/business-actions/md-party-query.action.spec.ts`，6 用例覆盖）：
-
-- **findParties**（4 用例）：keyword 命中跨 PARTNER/EMPLOYEE/ORGANIZATION 三实体（经自包含 setup + 独占 keyword 隔离断言，非种子中文 name）+ 字段投影（partyType/code/name/status）+ partyTypes 过滤（仅 EMPLOYEE 排除 PARTNER/ORGANIZATION）+ keyword < 2 字符返回空 List（MIN_KEYWORD_LENGTH 守卫）+ limit 截断（三 setup 实体命中但 limit:2 截断 ≤2 可观测）
-- **getParty**（1 用例）：三类型单条加载 + ORGANIZATION phone/email=null 容忍（实体无对应列，BizModel 显式 setNull，对齐 §2.1 字段对齐表）
-- **findReferences**（1 用例）：Map 结构可达，断言 JSON 对象形态 + 非 null，不硬断言计数值（SPI 注册依赖运行时——PARTNER 经 `IErpMdPartnerReferenceChecker`，EMPLOYEE/ORGANIZATION SPI 注册状态运行时决定）
-
-**Setup 策略**：自包含默认（对齐 `2026-07-26-1407-3-exchange-rate-api-client-browser-e2e.md` Decision 3）——经 `__save` 建测试专用 partner（`E2E-PARTY-PN-{ts}`）+ employee（`E2E-PARTY-EMP-{ts}`）+ organization（`E2E-PARTY-ORG-{ts}`），三实体 name 共享独占 keyword `E2E-PARTY-KEY-{ts}`。断言针对自包含实体字段投影值，避免未来种子中文 name 编辑静默破坏字段投影断言无测试侧信号。Cleanup 按反依赖链 __delete（employee → partner FK 引用 + organization 独立）。
-
-**已知问题（pre-existing schema 漂移）**：`party-search-picker.visual.spec.ts` 用例 3「findReferences returns empty map for unregistered SPI」现失败——Nop GraphQL schema 对 `Map<String,Long>` 返回类型的序列化已改为 JSON 对象（实测 `{"employeeAdvance":0}` / `{}` 形态），不再支持 `{ k v }` selection set（错误："[Map]不是对象类型，不支持字段选择"）。本 spec 据实测调整为无 selection set 形式。Visual spec 修复（删除 `{ k v }` selection）归入后续平台 schema 同步任务（本计划范围外，本 spec 已用正确形态覆盖 findReferences 路径）。
+**已知问题（pre-existing schema 漂移）**：Nop GraphQL schema 对 `Map<String,Long>` 返回类型的序列化已改为 JSON 对象形态，不再支持 `{ k v }` selection set；visual spec 据此调整为无 selection set 形式，属平台 schema 同步任务（本计划范围外）。
 
 ## 7. 性能与扩展
 
 ### 7.1 EstRows 基线
 
-| 实体 | EstRows | 关键字查询 P95（基线目标） |
-|------|---------|--------------------------|
-| `ErpMdPartner` | < 10,000 | < 50ms |
-| `ErpMdEmployee` | < 1,000 | < 10ms |
-| `ErpMdOrganization` | < 100 | < 5ms |
-| **合计** | < 11,100 | < 65ms（3 查询顺序） |
+3 实体 EstRows 合计 < 11,100（Partner < 10K / Employee < 1K / Organization < 100），关键字查询 P95 目标 < 65ms（3 查询顺序合计）。精确 EstRows 与索引定义见 orm.xml。
 
 ### 7.2 物化视图 successor 触发条件
 

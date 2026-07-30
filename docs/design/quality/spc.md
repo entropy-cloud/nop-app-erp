@@ -19,7 +19,7 @@ SPC 只做**计量型数据的过程分析**,不做离线检验判定(判定归 
 | 字段 | 含义 |
 |---|---|
 | id/code/name/orgId | 标准 |
-| chartType | 图类型 dict `erp-qa/spc-chart-type`:X_BAR_R/X_BAR_S/X_MR/P/NP/C/U（**字符串枚举值**，对齐 `module-quality/erp-qa-meta/src/main/resources/_vfs/dict/erp-qa/spc-chart-type.dict.yaml valueType=string`，plan 2026-07-19-0120-2 修正原数字编码标注） |
+| chartType | 图类型 dict `erp-qa/spc-chart-type`:X_BAR_R/X_BAR_S/X_MR/P/NP/C/U（**字符串枚举值**，对齐 `module-quality/erp-qa-meta/src/main/resources/_vfs/dict/erp-qa/spc-chart-type.dict.yaml valueType=string`，修正原数字编码标注） |
 | materialId | 物料(→ErpMdMaterial notGenCode) |
 | inspectionTypeId | 关联质检模板 |
 | parameterId | 关键检验参数(被控质量特性,→ErpQaInspectionTemplateLine) |
@@ -46,8 +46,8 @@ SPC 只做**计量型数据的过程分析**,不做离线检验判定(判定归 
 | mean | 子组均值 X̄(计算字段) |
 | range | 子组极差 R(max−min) |
 | stdDev | 子组标准差 s |
-| defectCount | 缺陷数(计数型 P/NP/C/U；计量型 chart 此字段为 null。plan 2026-07-19-0120-2) |
-| inspectedCount | 检验数(计数型 P/NP/C/U；计量型 chart 此字段为 null。plan 2026-07-19-0120-2) |
+| defectCount | 缺陷数(计数型 P/NP/C/U；计量型 chart 此字段为 null) |
+| inspectedCount | 检验数(计数型 P/NP/C/U；计量型 chart 此字段为 null) |
 | sourceBillType/sourceCode/sourceLineCode | 数据来源三元组(反查 ErpQaInspection/ErpQaInspectionLine,凭证指针模式) |
 | inspectorId | 检验员(→ErpMdEmployee) |
 | violatedRules | 本子组违反的判异规则(如 "1,2",空表示受控) |
@@ -82,9 +82,9 @@ SPC 只做**计量型数据的过程分析**,不做离线检验判定(判定归 
 
 2. **控制图计算**:样本数≥20 子组后触发重算 chart.ucl/lcl/cl 与每个 sample.violatedRules/isOutOfControl。控制限系数 d2/D3/D4 等按 subgroupSize 内置常量表。
 
-   **计量型实现注记**（X_BAR_R/X_BAR_S/X_MR，plan 2026-07-07-0305-2 Phase 2）：`SpcControlLimitCalculator.recalculate` 按 X̄̄-R 范式计算 grandMean = mean(sample.mean), sigmaHat = R̄/d2, UCL/LCL = cl ± 3σ̂；clCenterType 三分支（AUTO_FROM_DATA=grandMean / MANUAL=chart.cl 当前值 / TARGET=(specMin+specMax)/2 规格中值）。
+   **计量型实现注记**（X_BAR_R/X_BAR_S/X_MR）：`SpcControlLimitCalculator.recalculate` 按 X̄̄-R 范式计算 grandMean = mean(sample.mean), sigmaHat = R̄/d2, UCL/LCL = cl ± 3σ̂；clCenterType 三分支（AUTO_FROM_DATA=grandMean / MANUAL=chart.cl 当前值 / TARGET=(specMin+specMax)/2 规格中值）。
 
-   **计数型实现注记**（P/NP/C/U，plan 2026-07-19-0120-2）：`SpcControlLimitCalculator.recalculate` 按 chartType 字符串值分支调 `AttributesControlLimitFormulas` 对应公式——
+   **计数型实现注记**（P/NP/C/U）：`SpcControlLimitCalculator.recalculate` 按 chartType 字符串值分支调 `AttributesControlLimitFormulas` 对应公式——
    - **P 图**：CL=p̄=Σdᵢ/Σnᵢ，UCL/LCL=p̄±3√(p̄(1−p̄)/n̄)，n̄=平均 inspectedCount；
    - **NP 图**：CL=n·p̄，UCL/LCL=n·p̄±3√(n·p̄(1−p̄))；
    - **C 图**：CL=c̄=Σcᵢ/k，UCL/LCL=c̄±3√c̄；

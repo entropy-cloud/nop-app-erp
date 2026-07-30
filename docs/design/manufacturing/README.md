@@ -85,11 +85,11 @@
 | `state-machine.md` | 工单与作业卡状态机 |
 | `bom-and-routing.md` | BOM 结构、工艺路线、展开规则、成本计算 |
 | `material-reservation.md` | 工单物料预留设计（预留量计算、齐套校验、预留释放） |
-| `simulation-engine.md` | MRP/DRP 仿真引擎（场景-版本模型、参数变体覆盖、结果对比、DRP 对应物；plan 2026-07-22-1000-2） |
+| `simulation-engine.md` | MRP/DRP 仿真引擎（场景-版本模型、参数变体覆盖、结果对比、DRP 对应物） |
 
-## MRP/DRP 仿真引擎（2026-07-22，plan 2026-07-22-1000-2）
+## MRP/DRP 仿真引擎
 
-本域已落地 MRP/DRP 多场景仿真引擎，详见 [`simulation-engine.md`](simulation-engine.md)。核心要点：
+本域 MRP/DRP 多场景仿真引擎，详见 [`simulation-engine.md`](simulation-engine.md)。核心要点：
 
 - **场景-版本模型**：`ErpMfgMrpScenario` 1:N `ErpMfgMrpScenarioVersion` + `ErpMfgMrpScenarioParam`（参数变体覆盖：LEAD_TIME/LOT_SIZE/SAFETY_STOCK）
 - **E2 fork 范式**：`SimulationMrpEngine` 复用 MrpEngine 算法但替换全局/主数据读取为场景覆盖值，**单次 MRP 路径零触及**（既有 200+ manufacturing 测试零回归）

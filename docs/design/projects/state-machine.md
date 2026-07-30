@@ -170,8 +170,8 @@
 ## 审查提示
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
-- 项目完成时未结束任务的处理是否明确（已实现：`validateTasksFinished` config-gated STRICT/WARN）。
-- 立项前置字段校验是否明确（已实现：`validateStartPreconditions` config-gated STRICT/WARN）。
+- 项目完成时未结束任务的处理是否明确（`validateTasksFinished` config-gated STRICT/WARN）。
+- 立项前置字段校验是否明确（`validateStartPreconditions` config-gated STRICT/WARN）。
 - 任务依赖成环是否校验（DAG）。
 - 暂停项目的费用归集控制是否配置化。
 - 工时成本凭证的触发是否覆盖（与 finance 的业财打通）。

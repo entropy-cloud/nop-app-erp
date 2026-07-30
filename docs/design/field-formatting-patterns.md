@@ -16,7 +16,7 @@
 **不包含**：
 - 编辑态表单字段（输入态保留原始值，避免千分位干扰输入）
 - 报表 / 看板金额字段（nop-report 走 `formatExpr` 独立机制）
-- 币种符号本地化（CNY ¥ / USD $，归 l10n successor——F15 i18n 文本标签层已落地 plan `2026-07-23-0818-1`，币种符号数值本地化属不同面，见本文件 §9 与 Deferred）
+- 币种符号本地化（CNY ¥ / USD $，归 l10n successor——F15 i18n 文本标签层与币种符号数值本地化属不同面，见本文件 §9 与 Deferred）
 - 负数红字显示（会计专用，归 F5 状态色继承/successor）
 
 ## 2. Phase 1 决策表
@@ -45,16 +45,16 @@
 - 域专用标签需通过应用层 `controlLib` 自定义 xlib 注册（修改面广，归方案 C successor）
 
 **Explore (d) 证据**（F5 inline gen-control 范式 + HR format= 先例）：
-- `module-purchase/erp-pur-web/src/main/resources/_vfs/erp/pur/pages/ErpPurOrder/ErpPurOrder.view.xml:16-31`（F5 落地的 docStatus gen-control，证明 `return {type:"tpl", tpl:...}` 经 putAll 注入到 AMIS col）
+- `module-purchase/erp-pur-web/src/main/resources/_vfs/erp/pur/pages/ErpPurOrder/ErpPurOrder.view.xml:16-31`（F5 docStatus gen-control，证明 `return {type:"tpl", tpl:...}` 经 putAll 注入到 AMIS col）
 - `module-hr/erp-hr-web/src/main/resources/_vfs/erp/hr/pages/ErpHrEmployee/ErpHrEmployee.view.xml:121-125` `<input-date format="YYYY-MM-DD">`：HR 用 form cell gen-control + `<input-date format=>` 嵌套控件方式；列表 grid col 不可直接复用（gen-control 包裹控件模式 vs col 直接 format 属性）
-- 决策：列表 grid col 采用方案 D（c:script 返回 `{type:'date', format:'YYYY-MM-DD'}` / `{type:'number', kilometer:true, precision:N}`），与 F5 范式一致；form cell 编辑态保留 codegen 默认（`edit-date`/`edit-datetime` 已正确 format），本计划不动 form 编辑态
+- 决策：列表 grid col 采用方案 D（c:script 返回 `{type:'date', format:'YYYY-MM-DD'}` / `{type:'number', kilometer:true, precision:N}`），与 F5 范式一致；form cell 编辑态保留 codegen 默认（`edit-date`/`edit-datetime` 已正确 format），不动 form 编辑态
 
 ### Decision (b): 格式化映射表 — 按 ORM domain 与字段语义
 
 | domain | ORM scale | 显示格式 | AMIS type | AMIS 关键属性 | 对齐 | 与 roadmap F6 偏差裁决 |
 | --- | --- | --- | --- | --- | --- | --- |
 | `amount` | 2-4 | 千分位 + 2 位小数 | `number` | `{kilometer:true, precision:2}` | 右对齐 | 一致 |
-| `quantity` | 4 | 千分位 + 4 位小数 | `number` | `{kilometer:true, precision:4}` | 右对齐 | 偏差：roadmap 给 `#,##0.###`（3 位）；本计划按 ORM scale=4 选 4 位避免丢精度 |
+| `quantity` | 4 | 千分位 + 4 位小数 | `number` | `{kilometer:true, precision:4}` | 右对齐 | 偏差：roadmap 给 `#,##0.###`（3 位）；按 ORM scale=4 选 4 位避免丢精度 |
 | `unitPrice` | 4 | 千分位 + 4 位小数 | `number` | `{kilometer:true, precision:4}` | 右对齐 | 一致 |
 | `taxRate` | 4 | 4 位小数（无千分位） | `number` | `{precision:4}` | 右对齐 | 偏差：roadmap 给 `0.0000`；税率值通常 < 1 千分位无意义，采纳 roadmap 不带千分位 |
 | `taxAmount` | 2-4 | 千分位 + 2 位小数 | `number` | `{kilometer:true, precision:2}` | 右对齐 | 一致 |
@@ -80,15 +80,15 @@
 
 ### Decision (d): 实施粒度与覆盖范围
 
-按 F5 实际落地经验（68 实体 ~150 列），本计划承诺：
+按 F5 实际经验（68 实体 ~150 列），覆盖承诺：
 - **Phase 2**：核心 4 域（purchase/sales/inventory/finance）头实体 + 主 Line 实体的金额/数量/单价/税率字段
 - **Phase 3**：汇率/百分比/日期/日期时间字段（全域）
 - **Phase 4**：13 扩展域剩余金额/数量/日期字段
 - **长尾字段**（低频、非业务核心）显式 defer 到 successor，记录于 plan
 
-### Decision (e): control.xlib 自动映射优先于 gen-control（plan 2026-07-25-1430-1 收敛）
+### Decision (e): control.xlib 自动映射优先于 gen-control
 
-> 上方 Decision (a) 方案 C（codegen `domain → format` 全局映射）原标 `✗（successor）`，现经项目级 `control.xlib`（`app-erp-all/src/main/resources/_vfs/erp/xlib/control.xlib`，`x:extends` 平台基线）**已落地为首选机制**。方案 D（inline gen-control）降级为「仅在 control.xlib 无法覆盖时使用」。
+> 上方 Decision (a) 方案 C（codegen `domain → format` 全局映射）原标 `✗（successor）`，现经项目级 `control.xlib`（`app-erp-all/src/main/resources/_vfs/erp/xlib/control.xlib`，`x:extends` 平台基线）**为首选机制**。方案 D（inline gen-control）降级为「仅在 control.xlib 无法覆盖时使用」。
 
 **约定**：标准金额/数量/单价/日期/日期时间格式化**必须**经 ORM `domain`（amount/quantity/unitPrice）或 `stdSqlType`（DATE/TIMESTAMP）→ 项目级 `control.xlib` 控件匹配链（`XuiHelper.getControlTag`：`{mode}-{domain}` / `{mode}-{stdDataType}`）自动选择控件，**不得**新写 `<gen-control>` 内联脚本。仅以下场景保留 gen-control：
 
@@ -214,7 +214,7 @@ view.xml <col> + <gen-control>
 
 ### 4.3 编辑态保留 codegen 默认
 
-`<form id="edit">` / `<form id="add">` / sub-grid-edit 中的 `<cell>` / `<col>` 保留 codegen 默认控件（`edit-decimal` 已设 `precision: scale`，`edit-date` 已设 `format:"YYYY-MM-DD"`）。本计划仅覆盖只读展示态。
+`<form id="edit">` / `<form id="add">` / sub-grid-edit 中的 `<cell>` / `<col>` 保留 codegen 默认控件（`edit-decimal` 已设 `precision: scale`，`edit-date` 已设 `format:"YYYY-MM-DD"`）。仅覆盖只读展示态。
 
 ## 5. 反模式自检表
 
@@ -263,9 +263,9 @@ view.xml <col> + <gen-control>
 
 | 后续项 | 触发条件 |
 | --- | --- |
-| 币种符号本地化（CNY ¥ / USD $） | l10n successor plan 启动时（F15 i18n 文本标签层已独立落地 plan `2026-07-23-0818-1`，币种符号属 l10n 数值格式面，与文本 label 解耦） |
+| 币种符号本地化（CNY ¥ / USD $） | l10n successor 启动时（币种符号属 l10n 数值格式面，与 F15 i18n 文本 label 解耦） |
 | 负数红字（会计专用借贷方向色） | F5 状态色继承 / finance 域专用方向色 plan 启动时 |
-| ~~F7 敏感字段脱敏~~ | ✅ 已落地（见 §9 敏感字段脱敏段） |
+| ~~F7 敏感字段脱敏~~ | 见 §9 敏感字段脱敏段 |
 | 报表金额字段格式化（nop-report formatExpr） | 报表格式化增强 plan / nop-report 模板统一审计启动时 |
 | nop-entropy 平台 codegen 全局 domain → format 映射扩展 | nop-entropy 平台 codegen 扩展提案被采纳时（方案 C successor） |
 | Form 字段编辑态格式化 | Phase 1 Explore (a) 验证 form 字段 format 支持时（编辑态保留默认是当前设计） |

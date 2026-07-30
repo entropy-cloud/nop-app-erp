@@ -1,7 +1,6 @@
 # 页面结构增强范式（Page Structure Patterns）
 
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F12（页面结构增强）、`docs/architecture/view-and-page-strategy.md`（页面策略）、`docs/design/child-table-editor-patterns.md`（F4 子表编辑范式，与本范式正交）
-> 落地计划：`docs/plans/2026-07-21-0330-3-f12-page-structure-tabs-wizards.md`（F12 Tier A 5 头实体 + Tier B 3 头实体）
 
 ## 1. 目的与范围
 
@@ -10,7 +9,7 @@
 **适用范围**：
 - 头+行单据需要按 section 分 tab 展示（基本信息 / 行明细 / 关联单据 / 审计信息）
 - 单实体多 group 仪表板（HR 员工档案 / AST 资产卡片 / MNT 设备详情）
-- 跨实体子表多 tab 详情（如 HR 员工 + 合同 + 考勤 + 休假）—— 本计划范围外，归 successor
+- 跨实体子表多 tab 详情（如 HR 员工 + 合同 + 考勤 + 休假）—— 范围外，归 successor
 
 **不适用**：
 - 子表行内编辑本身 → `child-table-editor-patterns.md`（F4）
@@ -143,7 +142,7 @@ AMIS `form` 的 `mode="inline"` + `<layout>` 中每行 2 cell（默认 `defaultC
 
 1. **既有 `@BizQuery` 专用聚合**（最佳）—— 例：`ErpMntReport__maintenanceHistoryData(equipmentId, startDate, endDate)` 已就绪，返回 visit×equipment 聚合。
 2. **既有实体 `findPage` + filter_** （降级）—— 例：`ErpAstDepreciationSchedule__findPage?filter_assetId=$id` 直接拉按 assetId 过滤的折旧计划行；接受可能 N+1。
-3. **新增后端 `@BizQuery` 聚合**（性能优化）—— 仅当数据量 > 1000 行或加载 > 2s 时触发，归 successor plan。本计划不实施。
+3. **新增后端 `@BizQuery` 聚合**（性能优化）—— 仅当数据量 > 1000 行或加载 > 2s 时触发，归 successor。
 
 **`@BizQuery` 返回 `List<Map>` vs `findPage` 的选择**：
 - `findPage` 天然适配 AMIS `<crud>` 的分页 API（`/findPage/{@pageSelection}`），**优先用于 crud tab**
@@ -152,7 +151,7 @@ AMIS `form` 的 `mode="inline"` + `<layout>` 中每行 2 cell（默认 `defaultC
 
 ### 完整仪表板 drawer（机制 B）真实样例
 
-本仓库 3 个生产落地（plan 2026-07-22-0845-1）：
+本仓库 3 个生产样例：
 
 | 头实体 | drawer tabs | ref-*.page.yaml |
 |--------|------------|-----------------|
@@ -237,7 +236,7 @@ x:gen-extends: |
 2. 头实体 view.xml 能引用跨工程实体的 `findPage`（API URL 用 `@query:ErpFinVoucherBillR__findPage`）
 3. **filter_ 字段必须在目标实体上存在**——若字段不存在（如 plan 描述的 `filter_sourceEntityType=ASSET` 在 ErpFinVoucherBillR 上不存在），降级为同域单 tab 或归跨域集成 successor
 
-本计划 ErpAstAsset → ErpFinVoucherBillR 因 ErpFinVoucherBillR 无 `assetId`/`sourceEntityType` 字段（实际字段为 `voucherId`/`billType`/`billCode`/`businessType`），按 assetId 反查凭证需 join depreciation/disposal/capitalization 等多张单据，降级为同域单 tab（仅折旧时间线）。
+ErpAstAsset → ErpFinVoucherBillR 因 ErpFinVoucherBillR 无 `assetId`/`sourceEntityType` 字段（实际字段为 `voucherId`/`billType`/`billCode`/`businessType`），按 assetId 反查凭证需 join depreciation/disposal/capitalization 等多张单据，降级为同域单 tab（仅折旧时间线）。
 
 ### 数据加载策略：一次 GraphQL 拉全部 vs 每 tab 独立拉取
 
@@ -250,11 +249,11 @@ x:gen-extends: |
 - 机制 A `layoutControl="tabs"` 走「一次拉全部」（form initApi 已含 gql:selection）
 - 机制 B `<pages><tabs>` 走「每 tab 独立拉」+ `mountOnEnter=true` + `unmountOnExit=false`（避免重复拉，但保留 DOM 状态）
 
-## 4. F12 落地清单
+## 4. F12 页面清单
 
-### 已落地（本仓库共 16 页面：Tier A/B 8 + Tier D 5 + Tier B 完整 drawer 3）
+### 覆盖范围（本仓库共 16 页面：Tier A/B 8 + Tier D 5 + Tier B 完整 drawer 3）
 
-#### F12 Tier A/B（plan 2026-07-21-0330-3，8 页面）
+#### F12 Tier A/B（8 页面）
 
 | 实体 | 域 | 机制 | tab 列表 |
 |------|----|------|---------|
@@ -267,7 +266,7 @@ x:gen-extends: |
 | ErpAstAsset | assets | A | 基本信息 / 价值信息 / 折旧信息 / 使用信息 / 审计信息 |
 | ErpMntEquipment | maintenance | A | 基本信息 / 审计信息 |
 
-#### F12 Tier D（plan 2026-07-22-0845-1，5 长尾头实体）
+#### F12 Tier D（5 长尾头实体）
 
 | 实体 | 域 | 机制 | tab 列表 | 子表 tab 状态 |
 |------|----|------|---------|--------------|
@@ -277,7 +276,7 @@ x:gen-extends: |
 | ErpPrjProject | projects | A | 基本信息 / 进度信息 / 财务信息 / 审计信息（4 tab） | tasks/budget Deferred（projects 域 F4 successor） |
 | ErpQaInspection | quality | A | 基本信息 / 检验信息 / 抽样信息 / 审计信息（4 tab） | lines/results Deferred（quality 域 F4 successor） |
 
-#### F12 Tier B 完整仪表板 drawer（plan 2026-07-22-0845-1，机制 B，3 drawer）
+#### F12 Tier B 完整仪表板 drawer（机制 B，3 drawer）
 
 | 头实体 | 域 | drawer tabs | row-action | ref-*.page.yaml |
 |--------|----|------------|-----------|-----------------|
@@ -289,20 +288,20 @@ x:gen-extends: |
 
 | 实体/能力 | 类别 | 触发条件 |
 |-----------|------|---------|
-| ErpFinAccountingPeriod 期末结账向导 | Tier C wizard | ✅ 已落地（plan `2026-07-23-0818-2`），见 §5 wizard 范式 |
+| ErpFinAccountingPeriod 期末结账向导 | Tier C wizard | 见 §5 wizard 范式 |
 | ErpMntVisit 任务+备件+停机 tabs / 4 步向导 | Tier C | maintenance F4 P2 successor 完成（child-table-editor 基线就绪）；本仓库 §5 wizard 范式已为先例 |
 | Tier D 域 F4 successor（crm Lead activities/quotations / projects tasks/budget / quality lines/results 子表基线补齐） | Tier D 子表 | 对应域 F4 successor plan 启动 |
 | ErpHrEmployee 完整档案 drawer 跨域凭证 tab（assets → finance ErpFinVoucherBillR） | 跨域集成 successor | ErpFinVoucherBillR 无 assetId/sourceEntityType 字段；跨域查询方案明确后（需 join depreciation/disposal/capitalization 等多张单据） |
 | 敏感字段脱敏（hr bankAccount / salaryBase / logistics API Key/Secret） | cross-cutting | 敏感字段脱敏独立 plan 启动 |
 | 仪表板后端专用 `@BizQuery` | 性能优化 | 仪表板数据量 > 1000 行或加载 > 2s 时 |
-| F16 低风险复杂页面（凭证录入完成 + 凭证模板配置 + 三单匹配联查 + 工单进度仪表板 + NCR 详情页） | F16 低风险批已完成 | ✅ 已落地（plan `2026-07-22-0845-2`），见 §8 F16 复杂页面范式 |
-| F16 高风险复杂页面（aps 甘特图 + mfg BOM 树） | F16 高风险批已完成 | ✅ 已落地（plan `2026-07-22-1400-1`），见 §8.7-§8.8 |
+| F16 低风险复杂页面（凭证录入完成 + 凭证模板配置 + 三单匹配联查 + 工单进度仪表板 + NCR 详情页） | F16 低风险批 | 见 §8 F16 复杂页面范式 |
+| F16 高风险复杂页面（aps 甘特图 + mfg BOM 树） | F16 高风险批 | 见 §8.7-§8.8 |
 | F16 高风险余项（inventory PDA 扫码 + maintenance 4 步向导） | F16 territory | inventory PDA 硬件 Non-Goal（归 Barcode/PDA cross-cutting successor）；maintenance 向导 BLOCKED（F4 child-table-editor 基线缺失） |
-| F16 P2（hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表） | F16 territory | ✅ 已落地（plan `2026-07-22-1400-2`），见 §8.9-§8.12 |
+| F16 P2（hr 薪酬/组织 + logistics 时间线 + b2b EDI/ASN + contract diff + drp 报表） | F16 territory | 见 §8.9-§8.12 |
 
-## 5. wizard 范式（F12 Tier C 落地，plan 2026-07-23-0818-2）
+## 5. wizard 范式
 
-Nop view.xdef 内置 `<wizard>` 元素（`xview.xdef:177-192`），但 **AMIS 渲染器仅实现了 `tabs`，未实现 `wizard`**（`layout-syntax-reference.md:288`）。故 view.xml `layoutControl="wizard"` 不可用，wizard 必须手写 `page.yaml`。本节为首个 wizard 落地（finance 期末结账向导）回填，供 maintenance 4 步向导 successor 等后续参考。
+Nop view.xdef 内置 `<wizard>` 元素（`xview.xdef:177-192`），但 **AMIS 渲染器仅实现了 `tabs`，未实现 `wizard`**（`layout-syntax-reference.md:288`）。故 view.xml `layoutControl="wizard"` 不可用，wizard 必须手写 `page.yaml`。本节以 finance 期末结账向导为首个 wizard 回填，供 maintenance 4 步向导 successor 等后续参考。
 
 ### 组件选型裁决
 
@@ -404,7 +403,7 @@ wizard = step + 顺序约束 + 状态守卫的 tabs。区别：
 | 用 page.yaml 独立 AMIS tabs 绕过 view.xml 抽象 | 优先 view.xml `layoutControl="tabs"`；仅跨实体多 crud 才用 page.yaml |
 | 在 form tabs 内移除 `<cell id="lines">` 的 sub-grid-edit | 保持 `<cell id="lines"><view path=... grid="sub-grid-edit|sub-grid-view"/></cell>` 不变，tabs 自动包装 |
 | 把 F9 关联单据 drawer 改为嵌入 tab | 保持 F9 row-action drawer 独立；本范式与 F9 正交可叠加 |
-| 在 wizard 范式 PoC 落地前直接在财务保护区域手写 AMIS wizard JSON | wizard 范式已落地（§5，plan `2026-07-23-0818-2`）；新 wizard 按图施工 |
+| 在 wizard 范式确立前直接在财务保护区域手写 AMIS wizard JSON | wizard 范式见 §5；新 wizard 按图施工 |
 | 把敏感字段脱敏放在 view.xml layout 隐藏（layout 移除 = 隐藏） | layout 移除仅前端不可见，sql 直查仍可见；完整脱敏需后端 `@Sensitive` 或 BizModel `@BizLoader` mask transformer |
 | 仪表板时间线直接 N+1 查询（每行 visit 单独拉 sparePartUsage） | 用后端 `@BizQuery` 聚合或 GraphQL `findPage` + `gql:selection` 批量预取 |
 | select 放 form 内导致同级 service 读不到值（form scope isolation） | select 置于 page body 共享 scope（见 §5 wizard 范式） |
@@ -523,7 +522,7 @@ wizard = step + 顺序约束 + 状态守卫的 tabs。区别：
 
 **场景**：排产甘特图——Y=工作中心 category 轴，X=时间轴（dataZoom 缩放），每道工序工单=一根甘特条（plannedStart→plannedEnd），颜色编码 status。
 
-**Phase 0 Explore (a) PoC 结论**：(1) Nop AMIS `type:chart` adaptor **可承载 echarts custom series**——qa dashboard 已证明 adaptor 返回 config 中的 JS 函数（`tooltip.formatter`/`renderItem`）被 AMIS 原样合并进 echarts option，不经 JSON 序列化。custom series 是 echarts 标准 series 类型，无需新平台机制。(2) **关键 schema 核实**：`_ErpApsOperationOrder` **无 scheduleId 字段**——经 `workOrderId`/`machineId`/`plannedStartDateT`/`plannedEndDateT`/`status` 表达，设计文档 `scheduling.md §8.3` 的 `IEtpApsGanttService`（含拖拽 `dragUpdateOperation` + 冲突报告）是**未来全实现 spec**，本范式仅落地只读甘特。(3) 数据量：按 date-between + machineId 过滤后典型 ≤ 200 行，客户端 reduce 分组性能充裕。
+**Phase 0 Explore (a) PoC 结论**：(1) Nop AMIS `type:chart` adaptor **可承载 echarts custom series**——qa dashboard 已证明 adaptor 返回 config 中的 JS 函数（`tooltip.formatter`/`renderItem`）被 AMIS 原样合并进 echarts option，不经 JSON 序列化。custom series 是 echarts 标准 series 类型，无需新平台机制。(2) **关键 schema 核实**：`_ErpApsOperationOrder` **无 scheduleId 字段**——经 `workOrderId`/`machineId`/`plannedStartDateT`/`plannedEndDateT`/`status` 表达，设计文档 `scheduling.md §8.3` 的 `IEtpApsGanttService`（含拖拽 `dragUpdateOperation` + 冲突报告）是**未来全实现 spec**，本范式仅做只读甘特。(3) 数据量：按 date-between + machineId 过滤后典型 ≤ 200 行，客户端 reduce 分组性能充裕。
 
 **落地范式（候选 (b)，前端 adaptor + 不新增后端 delta）**：
 - 独立 page.yaml 顶部 form（machineId + status + dateRange）+ `type:chart`

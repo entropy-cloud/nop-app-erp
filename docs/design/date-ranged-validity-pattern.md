@@ -1,12 +1,11 @@
 # 日期范围有效性模式（Date-Ranged Validity Pattern）
 
 > Owner docs: `docs/backlog/deepening-roadmap.md` §Milestone C / C3、`docs/design/master-data/README.md`、`docs/design/sales/`（价格/促销）、`docs/design/finance/budget.md`、`docs/design/human-resource/README.md`、`docs/architecture/l10n-strategy.md`（汇率有效期）
-> 落地计划：`docs/plans/2026-07-21-2225-1-date-ranged-validity-pattern.md`
 > 平台权威源：`../nop-entropy/docs-for-ai/02-core-guides/service-layer.md`（CrudBizModel + defaultPrepareSave/Update 钩子）、`../nop-entropy/docs-for-ai/03-runbooks/extend-crud-with-hooks.md`
 
 ## 1. 目的与范围
 
-固化「ERP 实体使用 `validFrom/validTo` 表达记录有效期」的统一约定：规范字段命名、区间查询语义、重叠策略分类、可复用查询 helper、重叠校验规则。供已落地的 10+ 域实体 + 后续新增实体按图施工。
+固化「ERP 实体使用 `validFrom/validTo` 表达记录有效期」的统一约定：规范字段命名、区间查询语义、重叠策略分类、可复用查询 helper、重叠校验规则。供 10+ 域实体 + 后续新增实体按图施工。
 
 **适用范围（记录有效期类）**：实体使用「生效日期 + 失效日期」表达**单条记录的业务有效期**（在区间内对该实体值有效，区间外无效）。典型场景：价格清单、促销规则、汇率、税率、薪酬档、社保配置、工作中心日历、客户分级、交付时间窗、报价单/合同有效期。
 
@@ -59,7 +58,7 @@
 - 既有命名变体不影响业务正确性（语义清晰）
 - 重命名收益（命名一致性）≈ 0 业务价值，成本（迁移风险）高
 
-**授权门控**：若后续业务驱动确需重命名（如客户要求统一字段名），必须按 `project-context.md §AI 阻塞条件` 取得明确人工批准 + 独立 ORM 变更计划。本计划不触发。
+**授权门控**：若后续业务驱动确需重命名（如客户要求统一字段名），必须按 `project-context.md §AI 阻塞条件` 取得明确人工批准 + 独立 ORM 变更计划。不触发。
 
 ## 3. 区间查询语义
 
@@ -100,13 +99,13 @@
 |---------|--------|---------|--------|
 | `ErpMdExchangeRate` | `fromCurrencyId, toCurrencyId, rateType` | **MUTEX** | `defaultPrepareSave` / `defaultPrepareUpdate` 钩子前置校验 |
 | `ErpMdTaxRate` | `taxType` | **MUTEX** | 同上 |
-| `ErpMdSupplierApproval` | `partnerId` | **MUTEX**（既有 AVL 状态机已隐式约束，本计划补 validFrom/validTo 维度） | 同上（status != REJECTED 时校验） |
+| `ErpMdSupplierApproval` | `partnerId` | **MUTEX**（既有 AVL 状态机已隐式约束，补 validFrom/validTo 维度） | 同上（status != REJECTED 时校验） |
 
-**`ErpSalPriceList`** 作为非试点 follow-up（PRIORITY 策略 + 跨域接入，留 successor）：同 partnerId/customerGroupCode 维度允许重叠，按 `priority` 取首。本计划不接入以避免跨域 service 测试扩散。
+**`ErpSalPriceList`** 作为非试点 follow-up（PRIORITY 策略 + 跨域接入，留 successor）：同 partnerId/customerGroupCode 维度允许重叠，按 `priority` 取首。不接入以避免跨域 service 测试扩散。
 
 **残留风险**：试点仅 3 个 MUTEX 实体；PRIORITY / STACKABLE 策略的运行时取值 helper（`pickHighestPriority`）属 Deferred successor，触发条件：业务方明确需求 + PRIORITY 实体接入。
 
-### 4.1 PRIORITY 策略运行时取值 helper（plan 2026-07-26-0315-1 落地）
+### 4.1 PRIORITY 策略运行时取值 helper
 
 **裁决**：`ErpDateRanges.pickHighestPriority(List<T extends IDateRange> effective, Comparator<T> priorityCmp)` —— 纯函数 + 调用方提供 Comparator，不假定优先级方向。
 
@@ -139,7 +138,7 @@ if (effective.size() >= 2) {
 | 运行时取值 | `effectiveOn` 返回 0/1 条 | `pickHighestPriority(effective, cmp)` 取首 |
 | 典型错误码 | `ERR_*_OVERLAP`（抛异常） | `ERR_*_PRIORITY_AMBIGUOUS`（warn-only，不抛） |
 
-### 4.2 STACKABLE 混合策略校验器（plan 2026-07-26-0315-1 落地）
+### 4.2 STACKABLE 混合策略校验器
 
 **裁决 (a)**：`stackable=true` 表达「我可被叠加」语义——可与任何规则重叠；仅当两侧均 `stackable=false` 且区间重叠时互斥。与促销引擎「满减+折扣+赠品」叠加场景一致（满减+折扣两 stackable=false 互斥，但任一可与 stackable=true 的赠品并行）。
 
@@ -241,7 +240,7 @@ public final class ErpDateRangeOverlapValidator {
 
 ## 7. 试点实施记录
 
-3 试点实体均已落地（plan 2026-07-21-2225-1 Phase 3，2026-07-21）：
+3 试点实体：
 
 | 实体 | 模块 | 策略 | 维度键 | 接入点 | 错误码 | 测试 |
 |------|------|------|--------|--------|--------|------|
@@ -265,7 +264,7 @@ public final class ErpDateRangeOverlapValidator {
 - 试点集成测试：`TestErpMdDateRangePilots`（10 场景，经 GraphQL RPC 触发 `__save` 走完整管道）
 - master-data service 全 108 测试全绿（98 既有 + 10 新增 pilot 集成测试）
 
-### sales 定价 3 实体接入记录（plan 2026-07-26-0315-1，2026-07-26）
+### sales 定价 3 实体接入记录
 
 C3 helper 扩展 PRIORITY（`pickHighestPriority`）+ STACKABLE（`enforceStackableAware`）后，sales 定价 3 实体接入：
 
@@ -285,7 +284,7 @@ C3 helper 扩展 PRIORITY（`pickHighestPriority`）+ STACKABLE（`enforceStacka
 - **STACKABLE 混合判定**：`ErpSalPricingRuleBizModel.enforceStackableAware` 调 helper 时 `isStackable = rule -> Boolean.TRUE.equals(rule.getStackable())`；双非 stackable 重叠抛异常，任一方 stackable=true 允许重叠（§4.2 Decision (a)）。
 - **依赖可达性修正**：sales-service 原仅 test-scope 依赖 `app-erp-master-data-service`（C3 helper 所在模块），plan baseline「传递依赖可达」不准——已提升为 compile-scope（master-data→sales 无依赖，DAG 无环）。
 
-### 浏览器层验证实现注记（plan 2026-07-26-0500-3，2026-07-26）
+### 浏览器层验证实现注记
 
 sales 定价 3 实体的 C3 保存钩子经 GraphQL `__save`/`__update` 写路径浏览器层 E2E 覆盖（`tests/e2e/business-actions/sal-date-range-validation.action.spec.ts`，4 用例全绿）。实现范式与关键约束：
 
@@ -324,13 +323,13 @@ sales 定价 3 实体的 C3 保存钩子经 GraphQL `__save`/`__update` 写路�
 
 ## 10. Follow-up 实体清单（Deferred successor）
 
-以下实体未在本计划试点，按业务驱动逐域接入。接入时按本文件 §3-6 范式施工。
+以下实体未试点，按业务驱动逐域接入。接入时按本文件 §3-6 范式施工。
 
 | 实体 | 域 | 命名变体 | 策略 | 接入触发条件 |
 |------|-----|---------|------|-------------|
-| `ErpSalPriceList` | sales | validFrom/validTo | PRIORITY | **RELEASED by 2026-07-26-0315-1** |
-| `ErpSalPriceListLine` | sales | validFrom/validTo | MUTEX（同 priceListId + materialId 维度） | **RELEASED by 2026-07-26-0315-1** |
-| `ErpSalPricingRule` | sales | validFrom/validTo (TIMESTAMP) | STACKABLE | **RELEASED by 2026-07-26-0315-1** |
+| `ErpSalPriceList` | sales | validFrom/validTo | PRIORITY | 见 §7 |
+| `ErpSalPriceListLine` | sales | validFrom/validTo | MUTEX（同 priceListId + materialId 维度） | 见 §7 |
+| `ErpSalPricingRule` | sales | validFrom/validTo (TIMESTAMP) | STACKABLE | 见 §7 |
 | `ErpSalQuotation` | sales | validFrom/validTo | PRIORITY | 报价转订单流程细化 |
 | `ErpSalContract` | sales | validFrom/validTo | MUTEX | 合同续签/废止流程 |
 | `ErpPurQuotation` | purchase | validFrom/validTo | PRIORITY | 采购定价引擎 |

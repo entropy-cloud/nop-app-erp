@@ -1,7 +1,6 @@
 # 子表行内编辑范式（Child Table Editor Patterns）
 
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F4 Phase 2、`docs/design/picker-patterns.md`（F4 Phase 1 picker 接线）、`docs/architecture/view-and-page-strategy.md`（view.xml 嵌套层次）
-> 落地计划：`docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md`（P0 8 对头行子表编辑）
 
 ## 1. 目的与范围
 
@@ -51,7 +50,7 @@
 
 示例：`ErpPurOrderLine` 的 `materialId` 列 → 关系 `material` → bizObjName=`ErpMdMaterial` + moduleId=`erp/md` → picker URL `/erp/md/pages/ErpMdMaterial/picker.page.yaml`。
 
-**已落地 picker（F4 Phase 1）**：物料/币种/科目/合作伙伴/员工/资产/仓库（仓库 pick-list 由本 Phase 2 补齐）。所有 FK 字段直接复用，**无需在本范式再接线**。
+**F4 Phase 1 picker**：物料/币种/科目/合作伙伴/员工/资产/仓库（仓库 pick-list 由本 Phase 2 补齐）。所有 FK 字段直接复用，**无需在本范式再接线**。
 
 **调用方局部 filter（机制 C）**：本 Phase 2 不实现，留到业务专用 picker 后续 plan。
 
@@ -148,7 +147,7 @@ input-table 自身已含 `needConfirm=false`，每次行内编辑都触发 `chan
 </cell>
 ```
 
-> **注**：AMIS 公式 `${SUM(arr, 'field')}` 是否原生支持须运行时核实；如不支持，改写为 `${lines|reduce:<lambda>}` 或在 AMIS adaptor 层补 helper。本范式 Phase 4 落地时验证。
+> **注**：AMIS 公式 `${SUM(arr, 'field')}` 是否原生支持须运行时核实；如不支持，改写为 `${lines|reduce:<lambda>}` 或在 AMIS adaptor 层补 helper。Phase 4 接入时验证。
 
 **后端权威源不变**：服务端 `persistTotalAmounts` 仍在 `__save` 时按 BigDecimal scale=4 重算头聚合，前端实时聚合仅为 UX 反馈，不替代后端校验。
 
@@ -210,7 +209,7 @@ input-table 自身已含 `needConfirm=false`，每次行内编辑都触发 `chan
 | 在 `_gen/_*.view.xml` 加 sub-grid-edit | 在保留层 `Line.view.xml` 加（手写） |
 | 头表单 form `view` 与 `edit` 模式共用一个 sub-grid | 分别引用 `sub-grid-view` 与 `sub-grid-edit` |
 
-## 10. 落地后影响与 successor
+## 10. 影响与 successor
 
 **直接 successor**：
 - F4 Phase 2 P1（inventory/finance 3 对）独立 plan
@@ -221,15 +220,13 @@ input-table 自身已含 `needConfirm=false`，每次行内编辑都触发 `chan
 - F9（跨单据导航）— 从订单导入行
 - F12（多子表 tabs 容器）— 头表单同时含多个子表
 
-## 11. 变更记录
+## 11. 覆盖范围概览
 
-| 日期 | 变更 | 来源 |
-|------|------|------|
-| 2026-07-19 | 初版落地（P0 8 对头行子表编辑范式 + 列集表 + onEvent 自动推算 + 头聚合机制 + 反模式自检表） | `docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md` |
-| 2026-07-20 | P1 扩展（inventory 3 头行对列集表 + 退化变体 + add 表单嵌入决策 + warehouse/location picker 补齐） | `docs/plans/2026-07-20-0629-1-f4p2-child-table-editor-p1-inventory.md` |
-| 2026-07-20 | P2 扩展（mfg/assets/projects 3 头行对列集表 + 减法变体 + ErpAstCip 不适用裁决 + ErpPrjProject picker 补齐） | `docs/plans/2026-07-20-1020-3-f4p2-child-table-editor-p2-mfg-assets-projects.md` |
-| 2026-07-21 | finance 凭证子表变体（ErpFinVoucher↔ErpFinVoucherLine + dcDirection 行内切换 visibleOn + 科目 picker 8 字段快照 + subject 驱动 6 维度 visibleOn + 多币种自动推算 + autoBalance 按钮触发头合计 + xview schema 适配裁决） | `docs/plans/2026-07-20-2059-3-f4p2-finance-voucher-child-table-editor.md` |
-| 2026-07-21 | P3 ext 8 域扩展（logistics/b2b/cs/hr/contract/drp 18 对 Tier 1 + Tier 2 9 对降级 + §17 6 子节：配置对无 cascade 退化 / 三级嵌套弹窗管理 fallback / EstRows≥100 性能策略 / 半只读 action log / 敏感字段脱敏 / hr 域完整 7 对清单） | `docs/plans/2026-07-21-0330-1-f4p2-child-table-editor-p3-ext-domains.md` |
+- **P0（初版）**：8 对头行子表编辑范式 + 列集表 + onEvent 自动推算 + 头聚合机制 + 反模式自检表
+- **P1 扩展**：inventory 3 头行对列集表 + 退化变体 + add 表单嵌入决策 + warehouse/location picker 补齐
+- **P2 扩展**：mfg/assets/projects 3 头行对列集表 + 减法变体 + ErpAstCip 不适用裁决 + ErpPrjProject picker 补齐
+- **finance 凭证子表变体**：ErpFinVoucher↔ErpFinVoucherLine + dcDirection 行内切换 visibleOn + 科目 picker 8 字段快照 + subject 驱动 6 维度 visibleOn + 多币种自动推算 + autoBalance 按钮触发头合计 + xview schema 适配裁决
+- **P3 ext 8 域扩展**：logistics/b2b/cs/hr/contract/drp 18 对 Tier 1 + Tier 2 9 对降级 + §17 6 子节：配置对无 cascade 退化 / 三级嵌套弹窗管理 fallback / EstRows≥100 性能策略 / 半只读 action log / 敏感字段脱敏 / hr 域完整 7 对清单
 
 ## 12. P1 inventory 3 头行对列集表
 
@@ -275,7 +272,7 @@ inventory 域 3 对头行子表编辑（F4 Phase 2 P1）：
 
 ### 12.4 inventory 头表单 picker 补齐
 
-F4 Phase 1 已落地 `ErpMdMaterial / ErpMdPartner / ErpMdCurrency / ErpMdSubject` picker 列集；本 P1 计划补齐 `ErpMdWarehouse` + `ErpMdLocation` picker（picker.page.yaml 已存在 codegen wrapper，本计划仅在 view.xml 层补 `pick-list` grid + `pick-query` filterForm）：
+F4 Phase 1 覆盖 `ErpMdMaterial / ErpMdPartner / ErpMdCurrency / ErpMdSubject` picker 列集；P1 补齐 `ErpMdWarehouse` + `ErpMdLocation` picker（picker.page.yaml 已存在 codegen wrapper，仅在 view.xml 层补 `pick-list` grid + `pick-query` filterForm）：
 
 | Picker | pick-list 列集 | pick-query 筛选字段 |
 |--------|---------------|---------------------|
@@ -297,7 +294,7 @@ F4 Phase 1 已落地 `ErpMdMaterial / ErpMdPartner / ErpMdCurrency / ErpMdSubjec
 | 在 inventory Line view.xml 复用 P0 的 taxRate/amountWithTax 列 | inventory Line 字段异构，按 xmeta 实际字段裁剪列集 |
 | add 表单不嵌入 lines cell 强迫两步流程 | add 表单与 edit 表单同构嵌入 lines cell |
 
-### 12.6 P1 落地证据（2026-07-20）
+### 12.6 P1 实施证据
 
 **实施范围**：
 - 3 inventory 头实体 view.xml 改造（`ErpInvStockMove` / `ErpInvLandedCost` / `ErpInvTransferOrder`），头表单 view + edit（+ LandedCost add）追加 lines 组 + `<cell id="lines">` 引用 sub-grid
@@ -339,14 +336,14 @@ P2 mfg/assets/projects 各取 1 对头行子表编辑（F4 Phase 2 P2），延�
 
 | Line 列 | 接线 picker | 备注 |
 |---------|-------------|------|
-| `ErpMfgWorkOrderLine.materialId` | `/erp/md/pages/ErpMdMaterial/picker.page.yaml`（F4 Phase 1 已落地） | WorkOrderLine.materialId 可指向任何物料，无需 filter |
+| `ErpMfgWorkOrderLine.materialId` | `/erp/md/pages/ErpMdMaterial/picker.page.yaml`（F4 Phase 1） | WorkOrderLine.materialId 可指向任何物料，无需 filter |
 | `ErpMfgWorkOrderLine.sourceWarehouseId` / `destWarehouseId` | `/erp/md/pages/ErpMdWarehouse/picker.page.yaml`（F4 P1 inventory 补齐 pick-list + pick-query） | 复用 P1 既有 pick-list |
-| `ErpAstInventoryLine.assetId` | `/erp/ast/pages/ErpAstAsset/picker.page.yaml`（F4 Phase 1 已落地，pick-list 含 6 业务列非空） | 资产 picker，**本计划无需补齐** |
+| `ErpAstInventoryLine.assetId` | `/erp/ast/pages/ErpAstAsset/picker.page.yaml`（F4 Phase 1，pick-list 含 6 业务列非空） | 资产 picker，**无需补齐** |
 | `ErpAstInventoryLine.categoryId` | `/erp/ast/pages/ErpAstAssetCategory/picker.page.yaml`（codegen 默认） | 资产类别 picker |
-| `ErpPrjCostCollectionLine.subjectId` | `/erp/md/pages/ErpMdSubject/picker.page.yaml`（F4 Phase 1 已落地） | 科目 picker |
+| `ErpPrjCostCollectionLine.subjectId` | `/erp/md/pages/ErpMdSubject/picker.page.yaml`（F4 Phase 1） | 科目 picker |
 | `ErpPrjCostCollectionLine.taskId` | `/erp/prj/pages/ErpPrjTask/picker.page.yaml`（codegen wrapper 存在） | 项目任务 picker |
 
-**P2 新补齐 picker**：`ErpPrjProject`（本计划 Phase 1 落地——view.xml 补非空 `<grid id="pick-list">` 7 列 + `<form id="pick-query">` 4 字段；picker.page.yaml wrapper 复用 codegen 既有产物），服务 ErpPrjCostCollection 头表 `projectId` 反向追溯。
+**P2 新补齐 picker**：`ErpPrjProject`（view.xml 补非空 `<grid id="pick-list">` 7 列 + `<form id="pick-query">` 4 字段；picker.page.yaml wrapper 复用 codegen 既有产物），服务 ErpPrjCostCollection 头表 `projectId` 反向追溯。
 
 ### 13.3 P2 头表单 lines cell 兼容性裁决
 
@@ -447,7 +444,7 @@ finance 域 ErpFinVoucher 凭证子表行内编辑（F4 Phase 2 P1 finance succe
 
 **字段名核实证据**（实时仓库 ORM `module-finance/model/app-erp-finance.orm.xml:361-441`）：`ErpFinVoucherLine` 29 列（含 6 辅助核算 FK + 1 businessType dict + 多币种 4 字段 + 科目快照 3 字段）。
 
-### 16.2 dcDirection 行内切换 visibleOn（F7 §8 预冻结表达式落地）
+### 16.2 dcDirection 行内切换 visibleOn（F7 §8 预冻结表达式）
 
 借方金额 cell `visibleOn="${dcDirection == 'DEBIT'}"`，贷方金额 cell `visibleOn="${dcDirection == 'CREDIT'}"`——切换 dcDirection 时对侧 cell 隐藏，`clearValueOnHidden=true` 自动清空防脏数据提交。
 
@@ -492,7 +489,7 @@ per §8.3 裁决：**禁止**额外 onEvent.change.setValue 清空对侧金额�
 </col>
 ```
 
-**机制裁决**：F9 plan `2026-07-20-0629-3` 已落地 `${selectedOrderLines | map: {...}}` 行映射范式（picker multi-select + 行映射）；本变体是其「单选 + 行内 scope」扩展。AMIS picker change event `event.data.selectedItem` 暴露选中项（`extractValue:true` 保留 value id 提交；selectedItem 经 AMIS 内部 __picker 维护）。
+**机制裁决**：`${selectedOrderLines | map: {...}}` 行映射范式（picker multi-select + 行映射）；本变体是其「单选 + 行内 scope」扩展。AMIS picker change event `event.data.selectedItem` 暴露选中项（`extractValue:true` 保留 value id 提交；selectedItem 经 AMIS 内部 __picker 维护）。
 
 ### 16.4 subject 驱动 6 维度 visibleOn（跨实体表达式 + 宽松兜底）
 
@@ -567,7 +564,7 @@ xview.xdef schema 限制 `<cell><view>` 元素仅允许 `<data>` 子节点，**o
 
 ## 17. ext 8 域子表变体（P3 扩展）
 
-ext 8 域（logistics/b2b/cs/hr/contract/drp/crm/aps）子表行内编辑收尾，引入 6 个新变体（嵌套子表降级 / 大数据量 / 半只读 action log / 配置型无 cascade 降级 / 敏感字段脱敏 / hr 多 cascade 子表）。落地计划：`docs/plans/2026-07-21-0330-1-f4p2-child-table-editor-p3-ext-domains.md`。
+ext 8 域（logistics/b2b/cs/hr/contract/drp/crm/aps）子表行内编辑收尾，引入 6 个新变体（嵌套子表降级 / 大数据量 / 半只读 action log / 配置型无 cascade 降级 / 敏感字段脱敏 / hr 多 cascade 子表）。
 
 ### 17.1 ext 域配置对（无 ORM cascade）的 sub-grid-edit 退化模式
 
@@ -591,7 +588,7 @@ ext 8 域（logistics/b2b/cs/hr/contract/drp/crm/aps）子表行内编辑收尾�
 | contract | ErpCtRebateAgreement | ErpCtRebateTier | 同上 |
 | aps | ErpApsSchedule | ErpApsOperationOrder | 同上 + 操作单为独立聚合根（Deferred） |
 
-**Successor 触发条件**：业务方明确要求头表单内联编辑 + ORM 修改批准后启动。届时按 P0/P1/P2 标准范式（sub-grid-edit + sub-grid-view）落地。
+**Successor 触发条件**：业务方明确要求头表单内联编辑 + ORM 修改批准后启动。届时按 P0/P1/P2 标准范式（sub-grid-edit + sub-grid-view）接入。
 
 ### 17.2 AMIS input-table 二级嵌套可行性结论 + 弹窗管理 fallback
 
@@ -603,17 +600,17 @@ ext 8 域（logistics/b2b/cs/hr/contract/drp/crm/aps）子表行内编辑收尾�
 
 **降级方案（已采纳）**：二级嵌套**不在头表单直接嵌 input-table**。改为「头表单 → 第一层 sub-grid-edit（标准范式）→ 第一层行级独立 CRUD 页面（嵌套第二层 sub-grid-edit）」。
 
-**ErpCtContractLine 的 invoicePlans/consumptionLines 落地**：
-- `ErpCtContract` 头表单 → `<cell id="lines">` sub-grid-edit（合同行可内联编辑）+ 二级嵌套经 ErpCtInvoicePlan/ErpCtConsumptionLine view.xml 单独定义 sub-grid-edit/sub-grid-view（本计划已落地）
+**ErpCtContractLine 的 invoicePlans/consumptionLines 处理**：
+- `ErpCtContract` 头表单 → `<cell id="lines">` sub-grid-edit（合同行可内联编辑）+ 二级嵌套经 ErpCtInvoicePlan/ErpCtConsumptionLine view.xml 单独定义 sub-grid-edit/sub-grid-view
 - 用户流程：合同表单 → 编辑合同行 → 进入 ErpCtInvoicePlan 独立 CRUD 页面（按 contractLineId 筛选）→ CRUD 开票计划
-- 替代方案：未来 F12 page 级 tabs 容器落地时，可在合同行 drawer 内挂 `[管理发票计划]` `[管理消耗]` 弹窗按钮
+- 替代方案：未来 F12 page 级 tabs 容器接入时，可在合同行 drawer 内挂 `[管理发票计划]` `[管理消耗]` 弹窗按钮
 
-**ErpHrSurveyResponse 的 answers 落地**：
+**ErpHrSurveyResponse 的 answers 处理**：
 - `ErpHrSurvey` 头表单 → `<cell id="questions">` + `<cell id="responses">` sub-grid-edit（题目与答卷可内联编辑）
-- `ErpHrSurveyAnswer` 的 sub-grid-edit/sub-grid-view 在 ErpHrSurveyAnswer.view.xml 单独定义（本计划已落地），供 ErpHrSurveyResponse 独立 CRUD 页面消费
+- `ErpHrSurveyAnswer` 的 sub-grid-edit/sub-grid-view 在 ErpHrSurveyAnswer.view.xml 单独定义，供 ErpHrSurveyResponse 独立 CRUD 页面消费
 - 用户流程：问卷表单 → 编辑答卷 → 进入 ErpHrSurveyAnswer 独立 CRUD 页面（按 responseId 筛选）→ CRUD 回答明细
 
-**Successor 触发条件**：F12 page 级 tabs/wizard 包装落地时，可补 `[管理子项]` 弹窗按钮（参考 P0 `ErpPurOrder` 的 `[关联入库单]` drawer 范式：`<action id="row-view-receive-button" actionType="drawer"><drawer page="...ref-order.page.yaml"/></action>`）。
+**Successor 触发条件**：F12 page 级 tabs/wizard 包装接入时，可补 `[管理子项]` 弹窗按钮（参考 P0 `ErpPurOrder` 的 `[关联入库单]` drawer 范式：`<action id="row-view-receive-button" actionType="drawer"><drawer page="...ref-order.page.yaml"/></action>`）。
 
 ### 17.3 大数据量（EstRows ≥ 50）input-table 性能策略
 
@@ -665,7 +662,7 @@ ext 8 域（logistics/b2b/cs/hr/contract/drp/crm/aps）子表行内编辑收尾�
 
 **机制裁决**：ORM 的 `cascade-delete,insertable,updatable` 是为支持头删除时级联清理日志（数据完整性约束），**并非允许前端直接 CRUD**。手工录入会破坏审计完整性（日志应由系统单向追加，不可手工修改/删除）。
 
-**降级方案（已采纳）**：action log 类实体**只落地 `sub-grid-view`**（无 sub-grid-edit）。头表单 `<cell id="actions/logs">` 引用 `sub-grid-view`，用户只能查看历史记录，不能新增/编辑/删除。
+**降级方案（已采纳）**：action log 类实体**只用 `sub-grid-view`**（无 sub-grid-edit）。头表单 `<cell id="actions/logs">` 引用 `sub-grid-view`，用户只能查看历史记录，不能新增/编辑/删除。
 
 **sub-grid-view 范式示例**（ErpCsTicketAction）：
 
@@ -736,15 +733,15 @@ ext 8 域（logistics/b2b/cs/hr/contract/drp/crm/aps）子表行内编辑收尾�
 **关键裁决**：
 - 7 对**均无乘法字段**（无可推算 amount = qty × unitPrice），全部走 P1 §12.2 退化变体规则——不写 onEvent.setValue 自动推算
 - ErpHrSurveyResponse.answers 是 hr 域唯一三级嵌套结构，按 §17.2 降级为独立 CRUD 页面管理
-- ErpHrAssessmentDetail.competencyId + ErpHrDevelopmentPlanItem.competencyId 共用 `ErpHrCompetency` picker（本计划已补齐 pick-list 6 列 + pick-query 4 字段）
+- ErpHrAssessmentDetail.competencyId + ErpHrDevelopmentPlanItem.competencyId 共用 `ErpHrCompetency` picker（补齐 pick-list 6 列 + pick-query 4 字段）
 
 **hr 域 picker 接线清单**：
-- `materialId` → ErpMdMaterial（F4 P1 已落地）
-- `employeeId` → ErpMdEmployee（F4 P1 已落地）
-- `projectId` → ErpPrjProject（F4 P2 已落地）
+- `materialId` → ErpMdMaterial（F4 P1）
+- `employeeId` → ErpMdEmployee（F4 P1）
+- `projectId` → ErpPrjProject（F4 P2）
 - `taskId` → ErpPrjTask（codegen 默认 wrapper）
-- `competencyId` → ErpHrCompetency（本计划补齐 pick-list + pick-query）
-- `mentorId` → ErpMdEmployee（F4 P1 已落地，复用）
+- `competencyId` → ErpHrCompetency（补齐 pick-list + pick-query）
+- `mentorId` → ErpMdEmployee（F4 P1，复用）
 
 **反模式自检（hr 域专用）**：
 - ❌ 对 ErpHrSurveyQuestion 强行写乘法 onEvent（无可乘字段）
@@ -785,7 +782,7 @@ SparePartUsage 是嵌套文档（有独立审批/过账生命周期：code/docSt
 | Line 列 | 接线 picker | 备注 |
 |---------|-------------|------|
 | `ErpMntVisitTask.completedBy` | `/erp/md/pages/ErpMdEmployee/picker.page.yaml` | 员工 picker（completedBy 无 ORM to-one 关系，需显式 picker gen-control） |
-| `ErpMntSparePartUsageLine.materialId` | `/erp/md/pages/ErpMdMaterial/picker.page.yaml` | 物料 picker（F4 P1 已落地） |
+| `ErpMntSparePartUsageLine.materialId` | `/erp/md/pages/ErpMdMaterial/picker.page.yaml` | 物料 picker（F4 P1） |
 | `ErpMntSparePartUsageLine.uoMId` | `/erp/md/pages/ErpMdUoM/picker.page.yaml` | 计量单位 picker |
 
 ### 18.4 反模式自检（maintenance 域专用）

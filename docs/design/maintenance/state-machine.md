@@ -153,14 +153,14 @@
 - 终态保护：endTime 非空（已 complete）不可再 record/complete。
 - `relatedJobOrderId` 仅存值（记录影响生产工单），不依赖 EQL 自引用导航（基线 refEntityName 自引用 bug，修复合规后续）。
 
-## 实现偏离与 Non-Goal（补注）
+## 实现约定与 Non-Goal
 
-> 以下为工作项 2.7（`docs/plans/2026-07-03-1018-3-maintenance-visit-request-sparepart-downtime.md`）落地时显式延后项，**明知偏离**目标架构，已带触发条件移交后继。
+> 以下为显式延后项，**明知偏离**目标架构，已带触发条件移交后继。
 
 | 偏离项 | 现状 | 目标架构 | 触发条件 |
 |--------|------|----------|----------|
 | 停机通知制造域（排产调整） | maintenance 不反向依赖 manufacturing（避免成环） | 事件驱动：maintenance 发布停机事件，制造域订阅调整排产（§7） | APS/排产停机窗口联动需求时 |
-| 维修费用过账（备件消耗/工时凭证） | ✅ 已实现（plan 2026-07-10-1100-6 + 2026-07-18-0949-1 + 2026-07-18-1745-1 红冲闭环）：备件消耗 confirm 后经 `MaintenanceIssuePostingDispatcher` 生成 MAINTENANCE_ISSUE(492) 凭证（Dr: 折旧费用 6602 / Cr: 存货 1403，config-gated `erp-mnt.spare-part-posting-enabled` 默认关）；维修工时费用化凭证已实现（plan 2026-07-18-0949-1）——visit complete 经 `MaintenanceLaborPostingDispatcher.postLabor` 生成 MAINTENANCE_LABOR(493) 凭证（Dr: 折旧费用 6602 / Cr: 应付职工薪酬 2211，config-gated `erp-mnt.labor-posting-enabled` 默认关，工时费率先经 config 全局费率 `erp-mnt.default-labor-hourly-rate` 派生，设备级/模板级/员工级费率物化归各自 successor）；**红冲闭环已实现（plan 2026-07-18-1745-1）**——visit cancel 经 `doCancel` 内嵌 `reverseLabor` 红冲 MAINTENANCE_LABOR 凭证（原凭证 isReversed=true + 红字凭证行同向取负），备件消耗经 `ErpMntSparePartUsageBizModel.reverseConfirm` 新 `@BizMutation` 红冲 MAINTENANCE_ISSUE 凭证 + 经 `IErpInvStockMoveBiz.reverse` 反向 OUTGOING 移动单（REVERSAL）+ posted=false/docStatus=CANCELLED；两路红冲均经 `MntPostingExecutor.reverse` → `IErpFinVoucherBiz.reverse` 跨域 Facade（platform 内置 billHeadCode+businessType 幂等守护，无凭证时安全 no-op），config-gated 与正向对称（未过账/未开启时零回归）。**过账失败告警（G3 错误传播分级，plan 2026-07-30-0341-2 P1-MA2-074）**：两路 dispatcher 失败现派发 `IErpSysNotificationBiz` 告警（`mnt.spare-part-posting-failure` / `mnt.labor-posting-failure`），使 GL 缺凭证悬挂可被运营感知（maintenance 不纳入期末前置检查覆盖矩阵，经期末试算平衡人工发现）。 | maintenance→finance S 写：维修领料过账 MAINTENANCE_ISSUE 凭证 + 维修工时费用化 MAINTENANCE_LABOR 凭证（`docs/architecture/data-dependency-matrix.md` 列为目标架构） | 设备级 / 模板级 / 员工级工时费率 successor |
+| 维修费用过账（备件消耗/工时凭证） | 备件消耗 confirm 后经 `MaintenanceIssuePostingDispatcher` 生成 MAINTENANCE_ISSUE(492) 凭证（Dr: 折旧费用 6602 / Cr: 存货 1403，config-gated `erp-mnt.spare-part-posting-enabled` 默认关）；维修工时费用化凭证——visit complete 经 `MaintenanceLaborPostingDispatcher.postLabor` 生成 MAINTENANCE_LABOR(493) 凭证（Dr: 折旧费用 6602 / Cr: 应付职工薪酬 2211，config-gated `erp-mnt.labor-posting-enabled` 默认关，工时费率先经 config 全局费率 `erp-mnt.default-labor-hourly-rate` 派生，设备级/模板级/员工级费率物化归各自 successor）；**红冲闭环**——visit cancel 经 `doCancel` 内嵌 `reverseLabor` 红冲 MAINTENANCE_LABOR 凭证（原凭证 isReversed=true + 红字凭证行同向取负），备件消耗经 `ErpMntSparePartUsageBizModel.reverseConfirm` 新 `@BizMutation` 红冲 MAINTENANCE_ISSUE 凭证 + 经 `IErpInvStockMoveBiz.reverse` 反向 OUTGOING 移动单（REVERSAL）+ posted=false/docStatus=CANCELLED；两路红冲均经 `MntPostingExecutor.reverse` → `IErpFinVoucherBiz.reverse` 跨域 Facade（platform 内置 billHeadCode+businessType 幂等守护，无凭证时安全 no-op），config-gated 与正向对称（未过账/未开启时零回归）。**过账失败告警（G3 错误传播分级）**：两路 dispatcher 失败派发 `IErpSysNotificationBiz` 告警（`mnt.spare-part-posting-failure` / `mnt.labor-posting-failure`），使 GL 缺凭证悬挂可被运营感知（maintenance 不纳入期末前置检查覆盖矩阵，经期末试算平衡人工发现）。 | maintenance→finance S 写：维修领料过账 MAINTENANCE_ISSUE 凭证 + 维修工时费用化 MAINTENANCE_LABOR 凭证（`docs/architecture/data-dependency-matrix.md` 列为目标架构） | 设备级 / 模板级 / 员工级工时费率 successor |
 | 预测性维护（PREDICTIVE） | `scheduleType=PREDICTIVE` 数据来源未就绪 | IoT/传感器数据驱动 | IoT 集成落地时 |
 | 校准管理全流程 | ErpMntCalibration 仅 CRUD 骨架 | 量具校准 + 下次校准日期推进（独立面） | 计量管理需求时 |
 | 设备-资产价值联动 | assets 域负责资产价值，maintenance 仅实物维护 | 跨域价值联动（折旧/资本化受维护影响） | 资产维护影响价值评估时 |

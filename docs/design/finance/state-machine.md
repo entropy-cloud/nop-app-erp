@@ -39,7 +39,7 @@
 
 - **终态**：`已过账（POSTED）`。CANCELLED 为预留 dict 项（未启用迁移，非活跃终态）。
 - **已过账不可直接修改**：已影响总账，纠错只能红冲（原凭证置 `isReversed=true`）。
-- **红字凭证（已知简化，对齐实现）**：红冲在原凭证上置 `isReversed=true` 单边标记（保留 POSTED），不建立 `reversedVoucherId` 双向回链。归档凭证（已红冲原凭证）与活动凭证（POSTED + `isReversed=false`）的区分经 `isReversed` + `postingType` 联合判定。红冲闭环功能完整（`reverseVoucher` / 业财回链红冲均已实现）。`reversedVoucherId` 双向回链为 successor（报表需求驱动时实现）。
+- **红字凭证（已知简化，对齐实现）**：红冲在原凭证上置 `isReversed=true` 单边标记（保留 POSTED），不建立 `reversedVoucherId` 双向回链。归档凭证（已红冲原凭证）与活动凭证（POSTED + `isReversed=false`）的区分经 `isReversed` + `postingType` 联合判定。红冲闭环功能完整（含 `reverseVoucher` 与业财回链红冲）。`reversedVoucherId` 双向回链为 successor（报表需求驱动时实现）。
 - **草稿废弃**：经 logical delete（`useLogicalDelete`）承载，不经状态迁移；CANCELLED dict 项保留为未来显式作废工作流的语义入口（successor）。
 
 ### 4. 异常路径
@@ -187,9 +187,9 @@
 危险操作：
 - **反结账**：需管理员权限 + 审批，因影响已出具报表与税务申报。
 
-> **P1-MA2-020 反结账审批已知简化**（R1.11 裁决）：当前 `reverse-close-approval-required`（默认 true）为**保护性 kill-switch**——true 时直接拒绝反结账，false 时由 @BizMutation 角色权限门控（无独立审批 action）。完整审批流（反结账申请→审批→执行）为 successor，解除条件见 §已知限制：浏览器层 xwf 审批路径。
+> **反结账审批已知简化**：当前 `reverse-close-approval-required`（默认 true）为**保护性 kill-switch**——true 时直接拒绝反结账，false 时由 @BizMutation 角色权限门控（无独立审批 action）。完整审批流（反结账申请→审批→执行）为 successor，解除条件见 §已知限制：浏览器层 xwf 审批路径。
 
-> **P1-MA2-021 CLOSED_FINAL 凭证锁定已实现**（R1.11 裁决）：`ErpFinVoucherBizModel.postVoucher`/`reverseVoucher` 前校验凭证所属期间状态，CLOSED/CLOSED_FINAL 时抛 `ERR_FIN_VOUCHER_PERIOD_LOCKED` 拒绝操作（对齐下方 §1 状态定义「CLOSED_FINAL 可修改凭证=否」）。
+> **CLOSED_FINAL 凭证锁定**：`ErpFinVoucherBizModel.postVoucher`/`reverseVoucher` 前校验凭证所属期间状态，CLOSED/CLOSED_FINAL 时抛 `ERR_FIN_VOUCHER_PERIOD_LOCKED` 拒绝操作（对齐下方 §1 状态定义「CLOSED_FINAL 可修改凭证=否」）。
 
 ### 7. 外部依赖
 

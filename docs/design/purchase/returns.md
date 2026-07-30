@@ -183,9 +183,9 @@ UNSUBMITTED
                └─ 标记为冲销凭证
 ```
 
-#### 正向 receive→invoice 暂估冲回（R1.8 P1-MA2-001 documented simplification）
+#### 正向 receive→invoice 暂估冲回（documented simplification）
 
-> **裁决（plan 2026-07-29-2322-1）**：正向「先入库后开票」黄金路径的暂估应付冲回本期**不实现自动冲回**，登记为 documented simplification（**非降级 deferred**——是真实架构裁决，非"延后处理"）。
+> **架构裁决**：正向「先入库后开票」黄金路径的暂估应付冲回本期**不实现自动冲回**，登记为 documented simplification（**非降级 deferred**——是真实架构裁决，非"延后处理"）。
 
 **当前行为（GL 影响）**：
 
@@ -198,7 +198,7 @@ UNSUBMITTED
 
 - 影响 bounded：仅 GL 2202 暂估应付双计 + 1403/1401 存货双计；辅助账与核销路径正确。
 - **期末人工清理**：期末试算平衡时，会计员识别 2202 暂估应付余额中已开票部分（经 `ErpFinVoucherBillR` 反查 receive→stockMove.code 关联的已红冲/未红冲 `PURCHASE_INPUT` 凭证 vs 已审核 `AP_INVOICE`），手工编制调整分录清理暂估侧。
-- 退货链已实现冲减（见上文「暂估应付冲减流程」），本节缺口仅限**正向** receive→invoice。
+- 退货链已含冲减（见上文「暂估应付冲减流程」），本节缺口仅限**正向** receive→invoice。
 
 **裁决理由（实现成本 vs 收益）**：
 
@@ -208,11 +208,11 @@ UNSUBMITTED
 2. **部分开票覆盖判定**：`IErpFinVoucherBiz.reverse()` 仅支持全额红冲——receive 100 单位、发票 50 单位时全额冲回会**少计暂估**（un-invoiced 50 单位丢失 accrual），引入新缺陷。
 3. **跨年度/跨账套语义**：发票跨期到达时冲回日期/期间归属需额外设计。
 
-**替代方案（被拒，记录供 successor）**：方案 A（config-gated `erp-pur.grni-auto-reverse-on-invoice` 自动冲回）——需先补齐 inventory 域 `repostPurchaseInput(stockMoveCode)` SPI + 部分开票覆盖判定 + reverseApprove 反冲回钩子。归 R1.9+ successor（与多币种 Non-Goal 正交，但共享凭证链路改造）。
+**替代方案（被拒，记录供 successor）**：方案 A（config-gated `erp-pur.grni-auto-reverse-on-invoice` 自动冲回）——需先补齐 inventory 域 `repostPurchaseInput(stockMoveCode)` SPI + 部分开票覆盖判定 + reverseApprove 反冲回钩子。归 successor（与多币种 Non-Goal 正交，但共享凭证链路改造）。
 
 ### 红字发票处理
 
-> **实现偏离记录（R1.8 P2-MA2-006 闭合）**：本节原描述「已开票退货 → 创建红字 ErpPurInvoice（金额取负）→ 审核红字发票 → 红字凭证」流程。**实现未生成红字 ErpPurInvoice 实体**，而是以 `PURCHASE_RETURN` 过账（反向 `PURCHASE_INPUT`：借暂估应付 / 贷存货，GL 层）+ 负 `ErpFinArApItem` credit memo（辅助账层，`ErpFinArApItemGenerator.resolveProfile` 的 `PURCHASE_RETURN` 分支生成 DIRECTION_PAYABLE 方向负 openAmount）替代。
+> **实现约定**：本节原描述「已开票退货 → 创建红字 ErpPurInvoice（金额取负）→ 审核红字发票 → 红字凭证」流程。**实现未生成红字 ErpPurInvoice 实体**，而是以 `PURCHASE_RETURN` 过账（反向 `PURCHASE_INPUT`：借暂估应付 / 贷存货，GL 层）+ 负 `ErpFinArApItem` credit memo（辅助账层，`ErpFinArApItemGenerator.resolveProfile` 的 `PURCHASE_RETURN` 分支生成 DIRECTION_PAYABLE 方向负 openAmount）替代。
 >
 > **功能等价性**：AP 余额回减经辅助账层 `sumOpen` 自然减计 `payableBalance`（标准 AP 贷项 credit memo 语义，与红字 ErpPurInvoice 金额取负在辅助账层等价）；GL 层只冲暂估应付（2202 暂估侧）/存货（1401），**不冲正式应付（2202 formal AP 侧，即 `AP_INVOICE` 已贷记的 formal AP）**——此为正向 receive→invoice 暂估冲回缺失（见 §暂估应付冲减「正向 receive→invoice 暂估冲回」documented simplification）的同根表现。已开票退货的「formal AP 侧红字」未单独生成，AP 余额回减经 credit memo 在辅助账层完成。
 >

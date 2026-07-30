@@ -128,9 +128,9 @@ inventory 域「所有权管理」分组：所有权转移单（owner 维度在�
 | 所有权转移自动触发 AP | ⚪ | 本项目自建（Odoo 不做），领域常识 |
 | 本项目 ErpInvStockBalance/StockLedger | 🟢 | `module-inventory/...orm.xml:229,184` 实测（当前无 ownerId） |
 
-## 实现偏离补注（plan 2026-07-04-0549-1 落地后）
+## 实现约定
 
-- **`transferType` 列精度**：字典值 `OWNERSHIP_TO_CUSTOMER`（21 字符）超出初始 VARCHAR(20)，落地时 `ErpInvOwnershipTransfer.transferType` 改为 VARCHAR(30)。`erp-inv/ownership-transfer-type` 字典的 `OWNERSHIP_TO_CUSTOMER` 保持不变（语义清晰优先）。
+- **`transferType` 列精度**：字典值 `OWNERSHIP_TO_CUSTOMER`（21 字符）超出初始 VARCHAR(20)，`ErpInvOwnershipTransfer.transferType` 列改为 VARCHAR(30)。`erp-inv/ownership-transfer-type` 字典的 `OWNERSHIP_TO_CUSTOMER` 保持不变（语义清晰优先）。
 - **本期 VMI_SUPPLIER 余额建立方式**：本期不实现 VMI 收货即寄售流（Non-Goal），VMI_SUPPLIER 余额经直接余额种子（测试）/ 手工建账（生产）建立；`VMI_CONSUME` 转移单仅负责消耗（`VMI_SUPPLIER → OWNED`），转移类型字典无创建 VMI 的语义。
 - **AP 辅助账 sourceBillType**：`OWNERSHIP_TRANSFER` 生成的应付辅助账 `sourceBillType=OWNERSHIP_TRANSFER`（新增，见 `ErpFinConstants.SOURCE_BILL_OWNERSHIP_TRANSFER`），与既有 `AP_INVOICE` 同为 `DIRECTION_PAYABLE`，可经既有核销链多对多核销。
 

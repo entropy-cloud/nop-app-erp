@@ -191,7 +191,7 @@ view.xml `<listActions>` 中 `batch="true"` 的 action 由 codegen 自动归入 
 | 9 | 全局触发型 mutation（如 runAutoReconciliation）使用 `batch="true"` | 不加 `batch="true"`，按钮始终可见；经 `<data>` 块传业务参数 |
 | 10 | `batchUpdate` 调用涉及业务联动（如 status 切换触发引用校验） | 改用模式 A 新增 batch mutation，确保状态机规则生效 |
 
-## 8. 落地证据（F11 plan 2026-07-22-0444-2）
+## 8. 实现约定
 
 ### 8.1 后端 batch mutation（模式 A）
 
