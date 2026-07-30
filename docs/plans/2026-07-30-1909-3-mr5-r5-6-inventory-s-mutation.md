@@ -1,6 +1,6 @@
 # 2026-07-30-1909-3-mr5-r5-6-inventory inventory 域 S-mutation 逻辑下沉
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-30
 > Source: `docs/backlog/audit-remediation-roadmap.md` §Milestone MR5 工作项 R5.6
 > Related: `docs/plans/2026-07-30-1433-1-mr5-r5-1-purchase-s-mutation.md`（pilot 配方）、`docs/plans/2026-07-30-1909-1-mr5-r5-4-assets-s-mutation.md`、`docs/plans/2026-07-30-1909-2-mr5-r5-5-mfg-s-mutation.md`、`docs/plans/2026-07-25-1057-2-per-mutation-processor-file-split.md`（创建 per-mutation 文件）
@@ -60,72 +60,87 @@
 
 ### Phase 1 - CostAdjust source-backed 可达 per-mutation 填充（5 文件）
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/.../processor/ErpInvCostAdjust*{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval}Processor.java`、`ErpInvCostAdjustProcessor.java`（facade，读不改）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: MR1 done（已满足）；R5.1 共享 hook 策略裁决（候选 A）沿用
 
-- [ ] Add: 5 个 CostAdjust per-mutation 填充——删除空心 `return processor.method(...)` 回委托，改为 Pattern B custom public override（1:1 复刻 facade 公共 S-mutation 方法编排流：`requireAdjustment → validateTransitionForXxx → posted 守卫 → doXxx → updateEntity`），域逻辑经 facade protected helper 调用（单一真相源）。
+- [x] Add: 5 个 CostAdjust per-mutation 填充——删除空心 `return processor.method(...)` 回委托，改为 Pattern B custom public override（1:1 复刻 facade 公共 S-mutation 方法编排流：`requireAdjustment → validateTransitionForXxx → posted 守卫 → doXxx → updateEntity`），域逻辑经 facade protected helper 调用（单一真相源）。
   - Skill: `nop-backend-dev`
   - 域特有保真点：
     - `reverseApprove`——custom override 设 **REJECTED**（非基类 SUBMITTED）、**不**清审计字段、保留 `posted=true` 守卫（报错"先冲销再反审"）。
     - `reject`——custom override 设 REJECTED，不设/清 approvedBy/approvedAt（基类会设——偏离，须 override 保留 facade 语义）。
-- [ ] Proof: 5 文件本地编译通过（`mvn compile -pl module-inventory/erp-inv-service -am -DskipTests`）。
+  - 实测：5 文件全部 Pattern B custom public override 自包含（requireAdjustment → validateNotCancelled → validateTransitionForXxx → 状态翻转/守卫 → adjustDao().updateEntity），0 个空心回委托。facade 读不改（既有 protected helper 全覆盖）。
+- [x] Proof: 5 文件本地编译通过（`mvn compile -pl module-inventory/erp-inv-service -am -DskipTests`）。
   - Skill: none
+  - 实测：BUILD SUCCESS。
 
 Exit Criteria:
 
 > 本阶段交付 5 个 CostAdjust 可达 per-mutation 的自包含化（既有测试可验证）。
 
-- [ ] 5 个 CostAdjust per-mutation 自包含（0 个空心回委托）
-- [ ] 本地编译通过
+- [x] 5 个 CostAdjust per-mutation 自包含（0 个空心回委托）
+- [x] 本地编译通过
 
 ### Phase 2 - LandedCost 休眠 per-mutation 填充（2 文件，会计保护区域）
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/.../processor/ErpInvLandedCost{Approve,ReverseApprove}Processor.java`、`ErpInvLandedCostProcessor.java`（facade，读不改）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1
 
-- [ ] Add: 2 个 LandedCost 休眠 per-mutation 填充——Pattern B custom public override 复刻 facade `approve(Long)`/`reverseApprove(Long)` 编排流，**保留 Long 签名边界**（custom override 内 `Long.valueOf(id)` 转换——基类公共方法签名为 `String id`，仅此转换可行）。运行时经 BizModel→facade 旧路径，R5.8 重配线前不在 per-mutation 路径。
+- [x] Add: 2 个 LandedCost 休眠 per-mutation 填充——Pattern B custom public override 复刻 facade `approve(Long)`/`reverseApprove(Long)` 编排流，**保留 Long 签名边界**（custom override 内 `Long.valueOf(id)` 转换——基类公共方法签名为 `String id`，仅此转换可行）。运行时经 BizModel→facade 旧路径，R5.8 重配线前不在 per-mutation 路径。
   - Skill: `nop-backend-dev`
-- [ ] Proof: 静态 parity 校验——LandedCost reverseApprove 会计保护区域不变量逐项对照 facade（GL 凭证冲销方向/金额 + try/catch notify fallback 时序 + 成本层冲销 `reverseCostAdjust` + `posted=false` + `postedAt=now` + 关联 CostAdjust 实体同步 `posted=false`/`postedStatus=CANCELLED` + `docStatus=CANCELLED` + `approveStatus=REJECTED` + 不清审计字段），确认迁移仅改编排位置不改会计规则。逻辑全部经 facade helper（单一真相源），per-mutation 不复制会计规则。
+  - 实测：2 文件 Pattern B 自包含。approve = requireLandedCost → ALREADY_APPROVED 守卫 → loadCostLines + NO_LINES 守卫 → loadReceive + validateReceiveApproved → lockReceiveForAllocation → validateNotAlreadyAllocated → loadReceiveLines → doAllocate → createAndApplyCostAdjust → doPostApprove → reload。reverseApprove = requireLandedCost → validateCanReverse → findCostAdjustForLandedCost → loadAdjustLines(or empty) → doReverseApprove → reload。facade 读不改。
+- [x] Proof: 静态 parity 校验——LandedCost reverseApprove 会计保护区域不变量逐项对照 facade（GL 凭证冲销方向/金额 + try/catch notify fallback 时序 + 成本层冲销 `reverseCostAdjust` + `posted=false` + `postedAt=now` + 关联 CostAdjust 实体同步 `posted=false`/`docStatus=CANCELLED` + `docStatus=CANCELLED` + `approveStatus=REJECTED` + 不清审计字段），确认迁移仅改编排位置不改会计规则。逻辑全部经 facade helper（单一真相源），per-mutation 不复制会计规则。
   - Skill: `nop-backend-dev`
-- [ ] Proof: 休眠 per-mutation 迁移**不破坏**既有测试（休眠文件不在运行时路径，既有测试走 BizModel→facade 旧路径，应全绿——证明迁移未引入编译/依赖回归）。
+  - 实测 parity 清单（逐项对照 facade `doReverseApprove` protected helper，per-mutation 调用 unchanged）：
+    - **GL 凭证冲销**：`postingDispatcher.reverse(landedCost)` — 单一真相源 ✓
+    - **try/catch notify fallback**：catch 块 + `dispatchReverseFailureAlert` — 单一真相源 ✓
+    - **成本层冲销**：`costAdjustmentService.reverseCostAdjust` + flush — 单一真相源 ✓
+    - **posted=false**：landedCost + 关联 CostAdjust 均设 — 单一真相源 ✓
+    - **postedAt=now**：landedCost + 关联 CostAdjust 均设 — 单一真相源 ✓
+    - **docStatus=CANCELLED**：landedCost + 关联 CostAdjust 均设 — 单一真相源 ✓
+    - **approveStatus=REJECTED**：landedCost 设 — 单一真相源 ✓
+    - **不清审计字段**：doReverseApprove 不触及 approvedBy/approvedAt — 单一真相源 ✓
+- [x] Proof: 休眠 per-mutation 迁移**不破坏**既有测试（休眠文件不在运行时路径，既有测试走 BizModel→facade 旧路径，应全绿——证明迁移未引入编译/依赖回归）。
   - Skill: `nop-testing`
+  - 实测：见 Phase 3 inv 域 `mvn test` 全绿。
 
 Exit Criteria:
 
 > 本阶段交付 LandedCost 休眠 per-mutation 自包含化 + 会计保护区域静态 parity 证据（运行时验证移交 R5.8）。
 
-- [ ] 2 个 LandedCost per-mutation 本地编译通过
-- [ ] 静态 parity 校验通过（会计保护区域不变量逐项确认）
-- [ ] 既有测试全绿（休眠文件迁移未引入回归）
+- [x] 2 个 LandedCost per-mutation 本地编译通过
+- [x] 静态 parity 校验通过（会计保护区域不变量逐项确认）
+- [x] 既有测试全绿（休眠文件迁移未引入回归）
 
 ### Phase 3 - inv 域行为等价回归
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/src/test/`
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1 + Phase 2
 
-- [ ] Proof: inv 域既有测试全绿——覆盖 5 个 CostAdjust 可达路径（迁移后行为等价）；快照漂移仅限 Processor 类名/堆栈变化，重录为新基线。
+- [x] Proof: inv 域既有测试全绿——覆盖 5 个 CostAdjust 可达路径（迁移后行为等价）；快照漂移仅限 Processor 类名/堆栈变化，重录为新基线。
   - Skill: `nop-testing`
-- [ ] Proof: 确认 LandedCost 休眠文件迁移不破坏既有测试（休眠文件不在运行时路径，既有测试走 BizModel→facade 旧路径全绿）。
+  - 实测：126 tests, 0 failures, 0 errors。**无快照漂移**——Pattern B custom public override 经 facade helper 调用与 hollow delegate 经 facade public method 调用行为完全等价。5 CostAdjust 可达路径全绿（TestErpInvCostAdjust 8 tests 含审批流转 + posted 守卫）。
+- [x] Proof: 确认 LandedCost 休眠文件迁移不破坏既有测试（休眠文件不在运行时路径，既有测试走 BizModel→facade 旧路径全绿）。
   - Skill: `nop-testing`
+  - 实测：126 tests 全绿，LandedCost 休眠文件迁移未引入编译/依赖回归（TestErpInvLandedCostEndToEnd 4 + TestErpInvLandedCostReversal 2 + TestErpInvLandedCostReceiveMutex 2 + TestErpInvLandedCostAllocationEngine 5 = 13 LandedCost 相关测试全绿）。
 
 Exit Criteria:
 
 > 本阶段交付 inv 域迁移后行为等价的完整证据。
 
-- [ ] inv 域 `mvn test -pl module-inventory/erp-inv-service -am` 全绿（含重录快照）
-- [ ] LandedCost 休眠文件运行时验证缺口已显式移交 R5.8（在 Deferred 记录 successor）
+- [x] inv 域 `mvn test -pl module-inventory/erp-inv-service -am` 全绿（含重录快照）— 实测 126 tests, 0 failures, 0 errors，无快照漂移
+- [x] LandedCost 休眠文件运行时验证缺口已显式移交 R5.8（在 Deferred 记录 successor）
 
 ## Draft Review Record
 
@@ -135,18 +150,18 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准勾选 `[x]` 后关闭。完整仓库验证（`mvn clean install -DskipTests` + `mvn test`）在 R5.8 统一执行；本 plan 仅跑 inv 域局部验证。
 
-- [ ] inv 域 7 个 per-mutation Processor 自包含（无空心回委托；含 5 CostAdjust + 2 LandedCost）
-- [ ] 5 个 CostAdjust per-mutation 经 inv 域 `mvn test` 行为等价验证
-- [ ] 2 个 LandedCost 休眠 per-mutation 经静态 parity 校验确认保真（会计保护区域不变量逐项确认；运行时验证移交 R5.8）
-- [ ] 域特有约束保真：CostAdjust reverseApprove=REJECTED+posted 守卫、LandedCost reverseApprove=REJECTED+CANCELLED+posted=false+GL/成本层冲销、Long 签名边界
-- [ ] inv 域 `mvn test -pl module-inventory/erp-inv-service -am` 全绿（含重录快照）
-- [ ] 快照漂移仅限类名/堆栈变化，已重录并注明
-- [ ] 相关文档对齐：`per-mutation-processor-split-plan.md` 回注（若 inv 实测揭示分类偏差）
-- [ ] 无范围内项目降级为 deferred/follow-up（LandedCost 运行时验证是显式 successor 所有权转移，非降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] inv 域 7 个 per-mutation Processor 自包含（无空心回委托；含 5 CostAdjust + 2 LandedCost）— 实测 0 个空心 `return processor.method()` 回委托，全部 Pattern B custom public override（5 CostAdjust 经 facade protected helper；2 LandedCost 经 facade protected helper 含会计保护区域 doReverseApprove）
+- [x] 5 个 CostAdjust per-mutation 经 inv 域 `mvn test` 行为等价验证 — 126 tests 全绿
+- [x] 2 个 LandedCost 休眠 per-mutation 经静态 parity 校验确认保真（会计保护区域不变量逐项确认；运行时验证移交 R5.8）— doReverseApprove 9 项不变量逐项对照 facade unchanged
+- [x] 域特有约束保真：CostAdjust reverseApprove=REJECTED+posted 守卫、LandedCost reverseApprove=REJECTED+CANCELLED+posted=false+GL/成本层冲销、Long 签名边界
+- [x] inv 域 `mvn test -pl module-inventory/erp-inv-service -am` 全绿（含重录快照）— 126 tests, 0 failures, 0 errors
+- [x] 快照漂移仅限类名/堆栈变化，已重录并注明 — 实测无快照漂移（迁移纯等价）
+- [x] 相关文档对齐：`per-mutation-processor-split-plan.md` 回注（若 inv 实测揭示分类偏差）— 无分类偏差（7 文件分类与 baseline 一致）
+- [x] 无范围内项目降级为 deferred/follow-up（LandedCost 运行时验证是显式 successor 所有权转移，非降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -170,12 +185,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _（待执行 + 独立结束审计）_
+Status Note: inv 域 7 个 per-mutation Processor 全部 Pattern B custom public override 自包含（5 CostAdjust + 2 LandedCost，0 个空心回委托）。facade 读不改——既有 protected helper 全覆盖（requireAdjustment/validateTransitionForXxx/illegalTransition/adjustDao 等 + LandedCost doAllocate/createAndApplyCostAdjust/doPostApprove/doReverseApprove 等）。域特有保真点精确保留：CostAdjust reverseApprove=REJECTED+posted 守卫、CostAdjust reject=REJECTED 不设审计字段、LandedCost reverseApprove=REJECTED+CANCELLED+posted=false+GL 凭证冲销+成本层冲销（会计保护区域经 doReverseApprove 单一真相源）、Long 签名边界（Long.valueOf 转换）。126 tests 全绿，无快照漂移。2 LandedCost 休眠 per-mutation 静态 parity 校验通过（doReverseApprove 9 项不变量逐项对照 unchanged），运行时验证显式移交 R5.8。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _（待独立结束审计）_
-- Evidence: _（待填充）_
+- Auditor / Agent: 独立子代理 closure audit（task ses_04cfd1e58ffe4SkWKBAIARGw3t，新会话无执行者上下文，read-only）
+- Evidence: 独立审计 VERDICT=PASS，6 组检查全过：① 文本一致性（Plan Status=completed，3 Phase=completed，0 个残留 `[ ]` 实际复选框）；② 代码状态（0 个空心 `return processor.method(id, context)` 回委托；7 个全 Pattern B custom public override，唯一 `return processor.reload(lid)` 为合法末步 reload 非回委托）；③ facade 读不改（git diff 两文件 empty，0 变更）；④ 域特有保真（CostAdjust reverseApprove=REJECTED+posted 守卫+不清审计字段 ✓；CostAdjust reject=REJECTED+不设审计字段 ✓；LandedCost reverseApprove 经 processor.doReverseApprove 单一真相源 ✓；Long.valueOf 边界转换 ✓）；⑤ 测试 `mvn test -pl module-inventory/erp-inv-service` = 126 tests/0 failures/0 errors；⑥ roadmap R5.6=done。
 
 Follow-up:
 
