@@ -162,8 +162,8 @@ Phase 2 的核心行为变更是：**xbiz `<source>` 委托 → BizModel Java `@
 | assets | ErpAstValueAdjustment | 5 | 5 | 0 | （全部 delegation） |
 | assets | ErpAstInventory | 5 | 0 | 0 | （无 Processor delegation，default approval-support） |
 | assets | ErpAstMaintenance | 5 | 0 | 0 | （无 Processor delegation） |
-| manufacturing | ErpMfgWorkOrder | 5 | 4 | 1 | withdrawApproval inline |
-| manufacturing | ErpMfgSubcontractOrder | 5 | 4 | 1 | withdrawApproval inline |
+| manufacturing | ErpMfgWorkOrder | 5 | 4 | 1 | withdrawApproval inline（R5.5 已验证分类准确，inline 已提取为 Java hook + xbiz delegation，见 plan 2026-07-30-1909-2） |
+| manufacturing | ErpMfgSubcontractOrder | 5 | 4 | 1 | withdrawApproval inline（R5.5 已验证分类准确，inline 已提取为 Java hook + xbiz delegation，见 plan 2026-07-30-1909-2） |
 | inventory | ErpInvCostAdjust | 5 | 5 | 0 | （全部 delegation） |
 | inventory | ErpInvLandedCost | 5 | 0 | 0 | （无 Processor delegation） |
 | quality | ErpQaRecall | 5 | 4 | 1 | withdrawApproval inline |
