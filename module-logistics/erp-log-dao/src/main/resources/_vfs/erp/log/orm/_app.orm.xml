@@ -399,6 +399,8 @@
             </relations>
             <unique-keys>
                 <unique-key columns="code,orgId" name="UK_LOG_SHIPMENT_CODE_ORG"/>
+                <unique-key columns="trackingNo,carrierId,delVersion" constraint="UK_LOG_SHIPMENT_TRACKING_CARRIER"
+                            name="UK_LOG_SHIPMENT_TRACKING_CARRIER"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.log.dao.entity.ErpLogShipmentLine" createTimeProp="createTime"

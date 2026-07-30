@@ -376,9 +376,14 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         }
 
         // 建 ASN
+        // 确定性 code（plan 2026-07-30-0841-2 R1.28 P1-MA2-088）：复用既有 (code,orgId) UK 作为重复 webhook 兜底。
+        // eventId 非空 → ASN-WEBHOOK-{eventId}（同事件重投命中 UK）；eventId==null → 退化为时间戳保证唯一（避免
+        // ASN-WEBHOOK-null 塌缩导致后续 null-eventId webhook 互撞）。
         ErpB2bAsn asn = newEntity();
         asn.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-        asn.setCode("ASN-" + CoreMetrics.currentTimeMillis());
+        asn.setCode(eventId != null
+                ? "ASN-WEBHOOK-" + eventId
+                : "ASN-WEBHOOK-" + CoreMetrics.currentTimeMillis());
         asn.setSourceEdiDocId(ediDoc.getId());
         asn.setPartnerId(profile.getPartnerId());
         asn.setRelatedBillType(ErpB2bConstants.RELATED_BILL_TYPE_PO_ORDER);
@@ -388,7 +393,20 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         if (parsed.getHeaders().get("estimatedArrivalDate") instanceof LocalDate) {
             asn.setEstimatedArrivalDate((LocalDate) parsed.getHeaders().get("estimatedArrivalDate"));
         }
-        daoProvider().daoFor(ErpB2bAsn.class).saveEntity(asn);
+        // flush 触发 INSERT，命中 (code,orgId) UK（确定性 code + 并发 TOCTOU 越过 isDuplicateEvent 时）→ 翻译为友好错误码
+        try {
+            daoProvider().daoFor(ErpB2bAsn.class).saveEntity(asn);
+            io.nop.orm.IOrmTemplate ormTemplate =
+                    ((io.nop.orm.dao.IOrmEntityDao<?>) daoProvider().daoFor(ErpB2bAsn.class)).getOrmTemplate();
+            ormTemplate.flushSession();
+        } catch (Exception e) {
+            if (app.erp.common.service.UniqueConstraintHelper.isUniqueConstraintViolation(e)) {
+                throw new NopException(ErpB2bErrors.ERR_B2B_WEBHOOK_DUPLICATE_EVENT)
+                        .param(ErpB2bErrors.ARG_EVENT_ID, eventId)
+                        .param(ErpB2bErrors.ARG_EDI_FORMAT_CODE, formatCode);
+            }
+            throw e;
+        }
 
         // 建 AsnLine(s) + 代码映射
         IEntityDao<ErpB2bAsnLine> lineDao = daoProvider().daoFor(ErpB2bAsnLine.class);

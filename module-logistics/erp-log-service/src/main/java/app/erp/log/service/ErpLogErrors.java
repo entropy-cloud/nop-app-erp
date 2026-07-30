@@ -89,4 +89,8 @@ public interface ErpLogErrors {
 
     ErrorCode ERR_LOG_WEBHOOK_EVENT_UNSUPPORTED = ErrorCode.define("erp.err.log.webhook-event-unsupported",
             "承运商 {carrierCode} 回调事件类型 {eventType} 不支持", ARG_CARRIER_CODE, "eventType");
+
+    // 并发重复 trackingNo 被既有 (code,orgId) + 新增 UK_LOG_SHIPMENT_TRACKING_CARRIER 兜底拦截（plan 2026-07-30-0841-2 R1.28 P1-MA2-092）
+    ErrorCode ERR_LOG_SHIPMENT_TRACKING_NO_DUPLICATE = ErrorCode.define("erp.err.log.shipment-tracking-no-duplicate",
+            "运单号 {trackingNo} 在承运商 {carrierId} 下已存在发运单，不可重复创建", ARG_TRACKING_NO, ARG_CARRIER_ID);
 }

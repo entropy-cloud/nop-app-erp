@@ -1206,6 +1206,9 @@
                 <to-one name="replacedByAssignment" ignoreDepends="true" refEntityName="app.erp.hr.dao.entity.ErpHrShiftAssignment" tagSet="pub" i18n-en:displayName='Replaced By'><join><on leftProp="replacedByAssignmentId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_SHIFT_ASSIGNMENT_NATURAL" constraint="UK_HR_SHIFT_ASSIGNMENT_NATURAL" columns="employeeId,assignmentDate,shiftId,delVersion"/>
+            </unique-keys>
             <indexes>
                 <index name="IDX_HR_SHIFT_ASSIGNMENT_ORG_STATUS" unique="false">
                     <column name="orgId"/>

@@ -1117,7 +1117,8 @@
                 </to-one>
             </relations>
             <unique-keys>
-                <unique-key columns="code,orgId" name="UK_MFG_WORK_ORDER_CODE_ORG"/>
+                <unique-key columns="code,orgId" constraint="UK_MFG_WORK_ORDER_CODE_ORG"
+                            name="UK_MFG_WORK_ORDER_CODE_ORG"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine" createTimeProp="createTime"
@@ -2134,7 +2135,8 @@
                 </to-one>
             </relations>
             <unique-keys>
-                <unique-key columns="code,orgId" name="UK_MFG_SUBCONTRACT_ORDER_CODE_ORG"/>
+                <unique-key columns="code,orgId" constraint="UK_MFG_SUBCONTRACT_ORDER_CODE_ORG"
+                            name="UK_MFG_SUBCONTRACT_ORDER_CODE_ORG"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine" createTimeProp="createTime"

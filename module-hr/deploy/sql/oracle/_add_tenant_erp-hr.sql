@@ -209,4 +209,7 @@ alter table erp_hr_shift_swap_request add constraint PK_erp_hr_shift_swap_reques
 alter table erp_hr_salary_simulation_item_adj drop constraint PK_erp_hr_salary_simulation_item_adj;
 alter table erp_hr_salary_simulation_item_adj add constraint PK_erp_hr_salary_simulation_item_adj primary key (NOP_TENANT_ID, ID);
 
+alter table erp_hr_shift_assignment drop constraint UK_HR_SHIFT_ASSIGNMENT_NATURAL;
+alter table erp_hr_shift_assignment add constraint UK_HR_SHIFT_ASSIGNMENT_NATURAL unique (NOP_TENANT_ID,EMPLOYEE_ID,ASSIGNMENT_DATE,SHIFT_ID,DEL_VERSION);
 
+                

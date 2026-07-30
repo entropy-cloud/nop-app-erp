@@ -108,13 +108,25 @@ public class ErpAstDepreciationScheduleProcessor {
         schedule.setExecutedAt(now);
         schedule.setPosted(false);
         schedule.setVoucherId(null);
-        scheduleDao.saveOrUpdateEntity(schedule);
+        // 已存在（含 PENDING）条目经 findSchedule 复用走 UPDATE；仅首次（schedule==null）走 INSERT。
+        // 并发首次折旧：两事务同时 findSchedule==null → 双 INSERT 命中 UK_AST_DEPRECIATION_ASSET_PERIOD，
+        // flush 时捕获 ConstraintViolation 翻译为友好错误码（plan 2026-07-30-0841-2 R1.28 P1-MA2-089）。
+        try {
+            scheduleDao.saveOrUpdateEntity(schedule);
 
-        // 资产卡片汇总列回写
-        asset.setAccumulatedDepreciation(newAccum);
-        asset.setNetBookValue(newNbv);
-        daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
-        orm().flushSession();
+            // 资产卡片汇总列回写
+            asset.setAccumulatedDepreciation(newAccum);
+            asset.setNetBookValue(newNbv);
+            daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
+            orm().flushSession();
+        } catch (Exception e) {
+            if (app.erp.common.service.UniqueConstraintHelper.isUniqueConstraintViolation(e)) {
+                throw new NopException(ErpAstErrors.ERR_AST_DEPRECIATION_ALREADY_EXECUTED)
+                        .param(ErpAstErrors.ARG_ASSET_ID, assetId)
+                        .param(ErpAstErrors.ARG_PERIOD, period);
+            }
+            throw e;
+        }
 
         // DEPRECIATION(70) 业财过账
         Long voucherId = postingDispatcher.tryPost(schedule, asset, category);

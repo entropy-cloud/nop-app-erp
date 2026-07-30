@@ -138,6 +138,20 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
         assignment.setIsAbsent(false);
         assignment.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_SCHEDULED);
         saveEntity(assignment, null, context);
+        // flush 触发 INSERT，命中 UK_HR_SHIFT_ASSIGNMENT_NATURAL（并发越过 assertNoExistingAssignment/existsActive 时）
+        // → 翻译为友好错误码（plan 2026-07-30-0841-2 R1.28 P1-MA2-091）
+        try {
+            ((io.nop.orm.dao.IOrmEntityDao<?>) daoProvider().daoFor(ErpHrShiftAssignment.class))
+                    .getOrmTemplate().flushSession();
+        } catch (Exception e) {
+            if (app.erp.common.service.UniqueConstraintHelper.isUniqueConstraintViolation(e)) {
+                throw new NopException(ErpHrErrors.ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE)
+                        .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
+                        .param(ErpHrErrors.ARG_ASSIGNMENT_DATE, date)
+                        .param(ErpHrErrors.ARG_SHIFT_ID, shiftId);
+            }
+            throw e;
+        }
         return assignment;
     }
 

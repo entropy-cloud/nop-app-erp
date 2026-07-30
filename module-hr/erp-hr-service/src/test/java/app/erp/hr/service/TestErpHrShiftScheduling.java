@@ -13,6 +13,8 @@ import app.erp.hr.dao.entity.ErpHrShiftRotationPattern;
 import app.erp.hr.dao.entity.ErpHrShiftSwapRequest;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.context.ContextProvider;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
@@ -28,7 +30,13 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static io.nop.api.core.beans.FilterBeans.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -86,6 +94,64 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         NopException ex = assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session -> assignmentBiz.assignSingle(empId, shiftId, date, CTX)));
         assertEquals(ErpHrErrors.ERR_SHIFT_DUPLICATE_ASSIGNMENT.getErrorCode(), ex.getErrorCode());
+    }
+
+    /**
+     * 并发首次排班 UK 兜底（plan 2026-07-30-0841-2 R1.28 P1-MA2-091）：2 线程同时为同员工同日同班次排班，
+     * UK_HR_SHIFT_ASSIGNMENT_NATURAL 保证仅 1 条 active 排班（无重复实体行）；冲突方抛友好错误码。
+     */
+    @Test
+    public void testConcurrentAssignSameEmployeeDayNoDuplicate() throws Exception {
+        Long[] ids = ormTemplate.runInSession(session -> {
+            Long empId = seedEmployee("EMP-UK091");
+            Long shiftId = seedShift("MORNING-UK091", "08:00", "17:00", true);
+            return new Long[]{empId, shiftId};
+        });
+        Long empId = ids[0];
+        Long shiftId = ids[1];
+        LocalDate date = LocalDate.of(2026, 7, 15);
+
+        int threads = 2;
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        CountDownLatch startGate = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(threads);
+        AtomicReference<Throwable> firstError = new AtomicReference<>();
+        try {
+            for (int i = 0; i < threads; i++) {
+                pool.submit(() -> {
+                    ContextProvider.newContext();
+                    try {
+                        startGate.await();
+                        ormTemplate.runInSession(s -> assignmentBiz.assignSingle(empId, shiftId, date, CTX));
+                    } catch (Throwable t) {
+                        firstError.compareAndSet(null, t);
+                    } finally {
+                        ContextProvider.instance().detachContext();
+                        doneLatch.countDown();
+                    }
+                });
+            }
+            startGate.countDown();
+            assertTrue(doneLatch.await(60, TimeUnit.SECONDS), "全部 worker 应在 60s 内完成");
+        } finally {
+            pool.shutdownNow();
+        }
+
+        // 数据完整性：UK 兜底保证仅 1 条 active 排班（无重复实体行）
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("employeeId", empId));
+        q.addFilter(eq("assignmentDate", date));
+        long count = daoProvider.daoFor(ErpHrShiftAssignment.class).findAllByQuery(q).size();
+        assertEquals(1L, count, "并发排班 UK 兜底：仅 1 条排班（无重复）");
+        // 若有线程抛错，应为友好错误码（非 ERR_ORM_DATA_EXCEPTION）
+        if (firstError.get() != null) {
+            Throwable c = firstError.get();
+            if (c instanceof NopException) {
+                assertEquals(ErpHrErrors.ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE.getErrorCode(),
+                        ((NopException) c).getErrorCode(),
+                        "并发冲突应抛友好错误码，实际: " + c);
+            }
+        }
     }
 
     @Test
@@ -157,7 +223,7 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         assertNull(ormTemplate.runInSession(session -> assignmentBiz.findByEmployeeAndDate(empB, LocalDate.of(2026, 7, 1), CTX)));
         assertNotNull(ormTemplate.runInSession(session -> assignmentBiz.findByEmployeeAndDate(empB, LocalDate.of(2026, 7, 2), CTX)));
 
-        // regenerate 同范围：旧的 SCHEDULELLED 应被取消，重新生成
+        // regenerate 同范围：旧 SCHEDULED 逻辑删除（delVersion 自增）后重新生成
         long countBefore = countAssignments(empA, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 4));
         List<ErpHrShiftAssignment> regenerated = ormTemplate.runInSession(session -> rotationBiz.generateRotation(patternId, Arrays.asList(empA, empB), 1,
                 LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 4),

@@ -94,6 +94,10 @@ public class ErpInvLandedCostProcessor {
 
         ErpPurReceive receive = loadReceive(landedCost.getReceiveId());
         validateReceiveApproved(receive);
+        // 并发 TOCTOU 收口（plan 2026-07-30-0841-2 R1.28 P1-MA2-085）：对 receive 行做悲观锁（SELECT ... FOR UPDATE），
+        // 串行化并发同 receiveId 两笔 approve。第二笔 lock 阻塞至第一笔提交，随后 validateNotAlreadyAllocated
+        // 看到第一笔已提交的 APPROVED 到岸成本单 → 抛 ERR_LANDED_COST_ALREADY_ALLOCATED，避免双 allocation 进 StockBalance。
+        lockReceiveForAllocation(receive);
         validateNotAlreadyAllocated(landedCost.getReceiveId(), landedCost.getId());
 
         List<ErpPurReceiveLine> receiveLines = loadReceiveLines(landedCost.getReceiveId());
@@ -434,6 +438,14 @@ public class ErpInvLandedCostProcessor {
             throw new NopException(ErpInvErrors.ERR_LANDED_COST_RECEIVE_NOT_APPROVED)
                     .param(ErpInvErrors.ARG_RECEIVE_ID, receive.getId());
         }
+    }
+
+    /**
+     * 对采购入库单行做悲观锁（SELECT ... FOR UPDATE，{@link IOrmTemplate#lock}），串行化并发同 receiveId 的到岸成本审核。
+     * 不修改 receive 字段（无 version/audit 污染）；lock 后由 {@link #validateNotAlreadyAllocated} 检测已提交的并发分配。
+     */
+    protected void lockReceiveForAllocation(ErpPurReceive receive) {
+        ormTemplate.lock(receive);
     }
 
     protected void validateNotAlreadyAllocated(Long receiveId, Long currentLandedCostId) {

@@ -39,12 +39,25 @@ public class ScheduleDueGenerator {
         List<ErpMntSchedule> dueSchedules = findDueSchedules(asOfDate);
         int count = 0;
         for (ErpMntSchedule schedule : dueSchedules) {
+            // 幂等去重（plan 2026-07-30-0841-2 R1.28 P1-MA2-086）：同 (schedule, asOfDate) 已生成访问则跳过，
+            // 避免重复触发（并发 job / 重试）产生重复 VST-SCH-{schedId}-{date} 行。
+            if (existsVisitForScheduleDate(schedule.getId(), asOfDate)) {
+                continue;
+            }
             generateVisitForSchedule(schedule, asOfDate, context);
             advanceNextDueDate(schedule, asOfDate);
             daoProvider.daoFor(ErpMntSchedule.class).updateEntity(schedule);
             count++;
         }
         return count;
+    }
+
+    protected boolean existsVisitForScheduleDate(Long scheduleId, LocalDate asOfDate) {
+        IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", "VST-SCH-" + scheduleId + "-" + asOfDate));
+        q.setLimit(1);
+        return !dao.findAllByQuery(q).isEmpty();
     }
 
     protected List<ErpMntSchedule> findDueSchedules(LocalDate asOfDate) {

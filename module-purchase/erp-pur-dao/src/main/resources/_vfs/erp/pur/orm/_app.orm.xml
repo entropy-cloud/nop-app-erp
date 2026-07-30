@@ -1080,7 +1080,7 @@
                 </to-many>
             </relations>
             <unique-keys>
-                <unique-key columns="code,orgId" name="UK_PUR_ORDER_CODE_ORG"/>
+                <unique-key columns="code,orgId" constraint="UK_PUR_ORDER_CODE_ORG" name="UK_PUR_ORDER_CODE_ORG"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurOrderLine" createTimeProp="createTime" createrProp="createdBy"

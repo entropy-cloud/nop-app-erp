@@ -222,6 +222,7 @@
             </relations>
             <unique-keys>
                 <unique-key name="UK_LOG_SHIPMENT_CODE_ORG" columns="code,orgId"/>
+                <unique-key name="UK_LOG_SHIPMENT_TRACKING_CARRIER" constraint="UK_LOG_SHIPMENT_TRACKING_CARRIER" columns="trackingNo,carrierId,delVersion"/>
             </unique-keys>
             <indexes>
                 <index name="IDX_LOG_SHIPMENT_ORG_STATUS" unique="false">

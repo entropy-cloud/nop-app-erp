@@ -365,6 +365,9 @@
                     <join><on leftProp="currencyId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_AST_DEPRECIATION_ASSET_PERIOD" columns="assetId,period,delVersion"/>
+            </unique-keys>
             <indexes>
                 <index name="IDX_AST_DEPRECIATION_SCHEDULE_ORG_STATUS" unique="false">
                     <column name="orgId"/>

@@ -246,6 +246,12 @@ public interface ErpHrErrors {
             "员工 {employeeId} 当日尚未签到，无法签退",
             ARG_EMPLOYEE_ID);
 
+    // 并发重复排班被 UK_HR_SHIFT_ASSIGNMENT_NATURAL 兜底拦截（plan 2026-07-30-0841-2 R1.28 P1-MA2-091）
+    ErrorCode ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE = ErrorCode.define(
+            "erp.err.hr.shift-assignment-duplicate",
+            "员工 {employeeId} 日期 {assignmentDate} 班次 {shiftId} 排班已由并发事务创建，不可重复排班",
+            ARG_EMPLOYEE_ID, ARG_ASSIGNMENT_DATE, ARG_SHIFT_ID);
+
     // --- 招聘状态机（use-cases.md UC-HR-05）---
     String ARG_RECRUITMENT_ID = "recruitmentId";
     ErrorCode ERR_RECRUITMENT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(

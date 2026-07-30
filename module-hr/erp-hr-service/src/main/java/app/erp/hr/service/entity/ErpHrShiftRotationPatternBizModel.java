@@ -186,9 +186,10 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
             return;
         }
         IEntityDao<ErpHrShiftAssignment> dao = daoProvider().daoFor(ErpHrShiftAssignment.class);
+        // 逻辑删除（deleteVersionProp=delVersion 自增）使 UK_HR_SHIFT_ASSIGNMENT_NATURAL 允许同键重排：
+        // 删除行 delVersion>0，重生成行 delVersion=0，互不冲突。仅状态置 CANCELLED 不变 delVersion 会触发 duplicate-key。
         for (ErpHrShiftAssignment a : existing) {
-            a.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_CANCELLED);
-            dao.updateEntity(a);
+            dao.deleteEntity(a);
         }
         dao.flushSession();
     }

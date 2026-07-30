@@ -583,7 +583,7 @@
                 <to-many name="lines" refEntityName="app.erp.pur.dao.entity.ErpPurOrderLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="orderId"/></join></to-many>
             </relations>
             <unique-keys>
-                <unique-key name="UK_PUR_ORDER_CODE_ORG" columns="code,orgId"/>
+                <unique-key name="UK_PUR_ORDER_CODE_ORG" constraint="UK_PUR_ORDER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
             <indexes>
                 <index name="IDX_PUR_ORDER_ORG_DOC_STATUS" unique="false">

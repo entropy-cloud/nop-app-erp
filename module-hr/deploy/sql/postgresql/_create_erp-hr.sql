@@ -698,6 +698,7 @@ CREATE TABLE erp_hr_shift_assignment(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   business_date DATE NOT NULL ,
+  constraint UK_HR_SHIFT_ASSIGNMENT_NATURAL unique (employee_id,assignment_date,shift_id,del_version),
   constraint PK_erp_hr_shift_assignment primary key (id)
 );
 

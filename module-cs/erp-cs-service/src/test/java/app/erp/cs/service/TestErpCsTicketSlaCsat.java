@@ -154,6 +154,26 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
                 "存在 ESCALATE 审计记录");
     }
 
+    /**
+     * SLA 扫描幂等去重（plan 2026-07-30-0841-2 R1.28 P1-MA2-086 最严重噪音类）：同一超时工单连续两次扫描
+     * 不应重复生成 ESCALATE 审计（避免每分钟重复升级噪音）。isSlaCompleted 仅 resolve 翻转，不随升级翻转，
+     * 故靠既有 ESCALATE 审计存在性去重。
+     */
+    @Test
+    public void testScanOverdueTicketsIdempotentNoDuplicateEscalation() {
+        Long ticketId = seedTicket("TK-OVERDUE-IDEM", ErpCsConstants.TICKET_STATUS_ASSIGNED,
+                CoreMetrics.currentDateTime().minusHours(2));
+
+        rpc(mutation, "ErpCsTicket__scanOverdueTickets", new java.util.HashMap<>());
+        assertEquals(1, countActionsByType(ticketId, ErpCsConstants.ACTION_TYPE_ESCALATE),
+                "首次扫描应生成 1 条 ESCALATE 审计");
+
+        // 再次扫描（模拟下一分钟 cron 触发）：去重跳过，无重复 ESCALATE
+        rpc(mutation, "ErpCsTicket__scanOverdueTickets", new java.util.HashMap<>());
+        assertEquals(1, countActionsByType(ticketId, ErpCsConstants.ACTION_TYPE_ESCALATE),
+                "重复扫描不应重复 ESCALATE（幂等去重，避免每分钟噪音）");
+    }
+
     @Test
     public void testSurveyCreatedOnResolveAndSubmitted() {
         Long ticketId = seedTicket("TK-CSAT", ErpCsConstants.TICKET_STATUS_NEW,
@@ -304,6 +324,13 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         q.addFilter(eq("actionType", actionType));
         q.setLimit(1);
         return !daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q).isEmpty();
+    }
+
+    private int countActionsByType(Long ticketId, String actionType) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("ticketId", ticketId));
+        q.addFilter(eq("actionType", actionType));
+        return daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q).size();
     }
 
     private ErpCsSurvey findSurveyByTicket(Long ticketId) {

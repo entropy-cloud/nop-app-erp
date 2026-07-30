@@ -17,6 +17,8 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.orm.IOrmTemplate;
+import io.nop.orm.dao.IOrmEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -148,6 +150,7 @@ public class MrpReleaseService {
         // O-4 架构豁免：MRP 自动释放不走人工审批管道，跨模块直接持久化采购单骨架草稿（单价/金额 0 待采购员补录）。
         // 理由/风险/补偿见 docs/architecture/posting-exemptions.md §MrpReleaseService
         orderDao.saveEntity(order);
+        flushReleaseOrThrow(line.getId());
 
         IEntityDao<ErpPurOrderLine> lineDao = daoProvider.daoFor(ErpPurOrderLine.class);
         ErpPurOrderLine poLine = lineDao.newEntity();
@@ -179,6 +182,7 @@ public class MrpReleaseService {
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_DRAFT);
         wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED);
         dao.saveEntity(wo);
+        flushReleaseOrThrow(line.getId());
         return code;
     }
 
@@ -201,6 +205,7 @@ public class MrpReleaseService {
         order.orm_propValueByName("postedStatus", "DRAFT");
         // O-4 架构豁免：MRP 自动释放不经人工审批管道，跨模块直接持久化委外单骨架（加工费 0 待采购员补录）。
         orderDao.saveEntity(order);
+        flushReleaseOrThrow(line.getId());
 
         IEntityDao<ErpMfgSubcontractOrderLine> lineDao = daoProvider.daoFor(ErpMfgSubcontractOrderLine.class);
         ErpMfgSubcontractOrderLine subLine = lineDao.newEntity();
@@ -261,6 +266,26 @@ public class MrpReleaseService {
 
     static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    private IOrmTemplate orm() {
+        return ((IOrmEntityDao<?>) daoProvider.daoFor(ErpMfgMrpPlanLine.class)).getOrmTemplate();
+    }
+
+    /**
+     * flush 目标单头 INSERT 命中既有 (code,orgId) UK（并发释放同 plan line 生成同 code）→ 翻译为友好错误码
+     * （plan 2026-07-30-0841-2 R1.28 P1-MA2-090）。前置 isFirmed 守卫见 {@link #requireReleasable}。
+     */
+    private void flushReleaseOrThrow(Long planLineId) {
+        try {
+            orm().flushSession();
+        } catch (Exception e) {
+            if (app.erp.common.service.UniqueConstraintHelper.isUniqueConstraintViolation(e)) {
+                throw new NopException(ErpMfgErrors.ERR_MRP_LINE_ALREADY_RELEASED)
+                        .param(ErpMfgErrors.ARG_MRP_LINE_ID, planLineId);
+            }
+            throw e;
+        }
     }
 
     private boolean isSubcontractReleaseEnabled() {

@@ -471,6 +471,7 @@ CREATE TABLE erp_mfg_work_order(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  constraint UK_MFG_WORK_ORDER_CODE_ORG unique (code,org_id),
   constraint PK_erp_mfg_work_order primary key (id)
 );
 
@@ -601,6 +602,7 @@ CREATE TABLE erp_mfg_subcontract_order(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  constraint UK_MFG_SUBCONTRACT_ORDER_CODE_ORG unique (code,org_id),
   constraint PK_erp_mfg_subcontract_order primary key (id)
 );
 

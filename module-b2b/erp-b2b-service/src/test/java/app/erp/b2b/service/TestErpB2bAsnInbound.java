@@ -176,6 +176,44 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
         assertNotNull(asnId, "签名非必填时应正常创建 ASN");
     }
 
+    /**
+     * 确定性 ASN code（plan 2026-07-30-0841-2 R1.28 P1-MA2-088）：eventId 非空 → ASN-WEBHOOK-{eventId}，
+     * 复用既有 (code,orgId) UK 作为重复 webhook 兜底。
+     */
+    @Test
+    public void testWebhookDeterministicAsnCode() {
+        AppConfig.getConfigProvider().assignConfigValue(ErpB2bConfigs.CONFIG_WEBHOOK_SIGNATURE_REQUIRED, false);
+        Long partnerId = seedPartner();
+        seedPartnerProfile("PARTNER-ASN-DET", partnerId, "webhook-secret-det");
+
+        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-DET",
+                null, "EVT-DET-001", UBL_DESPATCH_ADVICE_XML, CTX));
+        ErpB2bAsn asn = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId);
+        assertEquals("ASN-WEBHOOK-EVT-DET-001", asn.getCode(),
+                "eventId 非空时 ASN code 应确定性派生为 ASN-WEBHOOK-{eventId}");
+    }
+
+    /**
+     * eventId==null 回退（plan P1-MA2-088 残留风险）：确定性 code 在 eventId==null 时退化为时间戳，
+     * 避免多个 null-eventId webhook 塌缩为 ASN-WEBHOOK-null 互撞。两次 null-eventId webhook 应产生不同 code。
+     */
+    @Test
+    public void testWebhookNullEventIdFallbackDistinct() {
+        AppConfig.getConfigProvider().assignConfigValue(ErpB2bConfigs.CONFIG_WEBHOOK_SIGNATURE_REQUIRED, false);
+        Long partnerId = seedPartner();
+        seedPartnerProfile("PARTNER-ASN-NULL-1", partnerId, "webhook-secret-n1");
+        seedPartnerProfile("PARTNER-ASN-NULL-2", partnerId, "webhook-secret-n2");
+
+        Long asn1 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-NULL-1",
+                null, null, UBL_DESPATCH_ADVICE_XML, CTX));
+        Long asn2 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-NULL-2",
+                null, null, UBL_DESPATCH_ADVICE_XML, CTX));
+        String code1 = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asn1).getCode();
+        String code2 = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asn2).getCode();
+        assertTrue(code1.startsWith("ASN-WEBHOOK-"), "null-eventId code 仍以 ASN-WEBHOOK- 前缀");
+        assertTrue(!code1.equals(code2), "两次 null-eventId webhook 应产生不同 code（时间戳回退避免互撞）");
+    }
+
     // ---------- helpers ----------
 
     private Long seedPartner() {

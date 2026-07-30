@@ -249,6 +249,12 @@ public interface ErpMfgErrors {
             "释放委外建议行[{mrpLineId}]须提供供应商[supplierId]",
             ARG_MRP_LINE_ID);
 
+    // 并发重复释放被既有 (code,orgId) UK 兜底拦截（plan 2026-07-30-0841-2 R1.28 P1-MA2-090）
+    ErrorCode ERR_MRP_LINE_ALREADY_RELEASED = ErrorCode.define(
+            "erp.err.mfg.mrp-line.already-released",
+            "MRP 建议行[{mrpLineId}]已由并发事务释放，不可重复释放",
+            ARG_MRP_LINE_ID);
+
     ErrorCode ERR_SUBCONTRACT_CANNOT_REVERSE = ErrorCode.define(
             "erp.err.mfg.subcontract-order.cannot-reverse",
             "委外单[{subcontractOrderCode}]当前状态[{currentStatus}]不允许红冲，仅 COMPLETED 且已过账的委外单可红冲",

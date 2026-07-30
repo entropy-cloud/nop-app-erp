@@ -629,7 +629,7 @@
                 <to-one name="sourceMrpPlan" refEntityName="app.erp.mfg.dao.entity.ErpMfgMrpPlan" tagSet="pub" i18n-en:displayName='Source MRP Plan'><join><on leftProp="sourceMrpPlanId" rightProp="id"/></join></to-one>
             </relations>
             <unique-keys>
-                <unique-key name="UK_MFG_WORK_ORDER_CODE_ORG" columns="code,orgId"/>
+                <unique-key name="UK_MFG_WORK_ORDER_CODE_ORG" constraint="UK_MFG_WORK_ORDER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
             <indexes>
                 <index name="IDX_MFG_WORK_ORDER_ORG_DOC_STATUS" unique="false">
@@ -1143,7 +1143,7 @@
                 <to-one name="product" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub" i18n-en:displayName='Product'><join><on leftProp="productId" rightProp="id"/></join></to-one>
             </relations>
             <unique-keys>
-                <unique-key name="UK_MFG_SUBCONTRACT_ORDER_CODE_ORG" columns="code,orgId"/>
+                <unique-key name="UK_MFG_SUBCONTRACT_ORDER_CODE_ORG" constraint="UK_MFG_SUBCONTRACT_ORDER_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
             <indexes>
                 <index name="IDX_MFG_SUBCONTRACT_ORDER_ORG_DOC_STATUS" unique="false">

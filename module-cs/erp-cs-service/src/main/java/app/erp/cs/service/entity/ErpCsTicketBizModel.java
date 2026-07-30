@@ -352,6 +352,11 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         List<ErpCsTicket> overdue = doFindListByQueryDirectly(q, context);
         List<ErpCsTicket> escalated = new ArrayList<>();
         for (ErpCsTicket ticket : overdue) {
+            // 幂等去重（plan 2026-07-30-0841-2 R1.28 P1-MA2-086）：已存在 ESCALATE 审计则跳过，
+            // 避免每分钟重复 ESCALATE 审计行 + 通知噪音（isSlaCompleted 仅 resolve 翻转，不随升级翻转）。
+            if (hasEscalationAction(ticket.getId())) {
+                continue;
+            }
             // 创建 ESCALATE 审计 + 通知 escalationUserId（L1，config-gated；通知占位，实际发送属 nop-notification 独立面）
             writeAction(ticket, ErpCsConstants.ACTION_TYPE_ESCALATE, ticket.getStatus(), ticket.getStatus(),
                     "SLA 超时升级通知 escalationUserId", context);
@@ -360,6 +365,15 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
             escalated.add(ticket);
         }
         return escalated;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean hasEscalationAction(Long ticketId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("ticketId", ticketId));
+        q.addFilter(eq("actionType", ErpCsConstants.ACTION_TYPE_ESCALATE));
+        q.setLimit(1);
+        return !daoProvider().daoFor(ErpCsTicketAction.class).findAllByQuery(q).isEmpty();
     }
 
     @Override

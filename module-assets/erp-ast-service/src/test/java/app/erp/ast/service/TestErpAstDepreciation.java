@@ -8,6 +8,7 @@ import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.context.ContextProvider;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
@@ -22,6 +23,11 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -210,6 +216,71 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
                 .filter(v -> v != null && !Boolean.TRUE.equals(v.getIsReversed()))
                 .count();
         assertEquals(1, activeVouchers, "仅一条有效（未红冲）凭证");
+    }
+
+    /**
+     * 并发首次折旧 UK 兜底（plan 2026-07-30-0841-2 R1.28 P1-MA2-089）：2 线程同时为同资产同期首次计提，
+     * UK_AST_DEPRECIATION_ASSET_PERIOD 保证仅 1 条 active 计划行 + 累计折旧不双计；冲突方抛友好错误码。
+     */
+    @Test
+    public void testConcurrentFirstDepreciationNoDuplicate() throws Exception {
+        Long assetId = ormTemplate.runInSession(session -> {
+            seedBasics();
+            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-UK089", "UK089类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
+            return AstTestSupport.seedAsset(daoProvider, "AST-UK089", "UK089资产", categoryId, 1L,
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+        });
+        String period = START_PERIOD;
+
+        int threads = 2;
+        ExecutorService pool = Executors.newFixedThreadPool(threads);
+        CountDownLatch startGate = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(threads);
+        AtomicReference<Throwable> firstError = new AtomicReference<>();
+        try {
+            for (int i = 0; i < threads; i++) {
+                pool.submit(() -> {
+                    ContextProvider.newContext();
+                    try {
+                        startGate.await();
+                        ormTemplate.runInSession(s -> scheduleBiz.executeDepreciation(assetId, period, CTX));
+                    } catch (Throwable t) {
+                        firstError.compareAndSet(null, t);
+                    } finally {
+                        ContextProvider.instance().detachContext();
+                        doneLatch.countDown();
+                    }
+                });
+            }
+            startGate.countDown();
+            assertTrue(doneLatch.await(60, TimeUnit.SECONDS), "全部 worker 应在 60s 内完成");
+        } finally {
+            pool.shutdownNow();
+        }
+
+        // 数据完整性：UK 兜底 + 资产乐观锁共同保证仅 1 条 active 计划行 + 累计折旧不双计（单期 1000）。
+        // 注：同资产并发场景下资产 version 冲突（update-entity-not-found）会先于/协同 schedule UK 拦截第二事务，
+        // 二者均使第二事务回滚——schedule UK 作为纵深防御。
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("assetId", assetId), eq("period", period)));
+        long count = daoProvider.daoFor(ErpAstDepreciationSchedule.class).findAllByQuery(q).size();
+        assertEquals(1L, count, "并发首次折旧：仅 1 条计划行（无重复，UK + 乐观锁兜底）");
+        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
+        assertEquals(0, nz(asset.getAccumulatedDepreciation()).compareTo(new BigDecimal("1000")),
+                "累计折旧不双计（单期 1000）");
+        // 若有线程抛错，应为并发拒绝（schedule UK 友好码 或 资产乐观锁冲突），而非静默双计
+        if (firstError.get() != null) {
+            Throwable c = firstError.get();
+            String code = (c instanceof NopException) ? ((NopException) c).getErrorCode() : c.getClass().getName();
+            assertTrue(
+                    ErpAstErrors.ERR_AST_DEPRECIATION_ALREADY_EXECUTED.getErrorCode().equals(code)
+                            || code.contains("update-entity-not-found")
+                            || code.contains("version"),
+                    "并发冲突应被拦截（UK 友好码或乐观锁冲突），实际: " + code);
+        }
     }
 
     // ---------- helpers ----------

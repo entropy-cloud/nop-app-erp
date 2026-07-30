@@ -486,6 +486,9 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="assetId,period,delVersion" name="UK_AST_DEPRECIATION_ASSET_PERIOD"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.ast.dao.entity.ErpAstMovement" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="资产移动"
