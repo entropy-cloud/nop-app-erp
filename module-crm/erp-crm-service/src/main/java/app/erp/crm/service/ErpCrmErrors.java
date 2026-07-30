@@ -15,6 +15,8 @@ public interface ErpCrmErrors {
     String ARG_FROM_STAGE_ID = "fromStageId";
     String ARG_TO_STAGE_ID = "toStageId";
     String ARG_STAGE_ID = "stageId";
+    String ARG_FROM_SEQUENCE = "fromSequence";
+    String ARG_TO_SEQUENCE = "toSequence";
     String ARG_PARTNER_ID = "partnerId";
     String ARG_QUOTATION_CODE = "quotationCode";
     String ARG_DUPLICATE_COUNT = "duplicateCount";
@@ -74,6 +76,11 @@ public interface ErpCrmErrors {
 
     ErrorCode ERR_STAGE_NOT_FOUND = ErrorCode.define("erp.err.crm.stage-not-found",
             "漏斗阶段 {stageId} 不存在", ARG_STAGE_ID);
+
+    ErrorCode ERR_STAGE_BACKWARD_MOVE = ErrorCode.define("erp.err.crm.stage-backward-move",
+            "线索/商机 {leadCode} 不允许阶段回退：fromStage sequence={fromSequence} → toStage sequence={toSequence}"
+                    + "（如业务确需回退，设 erp-crm.allow-stage-backward=true）",
+            ARG_LEAD_CODE, ARG_FROM_SEQUENCE, ARG_TO_SEQUENCE);
 
     ErrorCode ERR_LEAD_STAGE_MISMATCH = ErrorCode.define("erp.err.crm.lead-stage-mismatch",
             "线索/商机 {leadCode} 当前阶段不匹配（期望 fromStageId={fromStageId}，实际 stageId={toStageId}）",
