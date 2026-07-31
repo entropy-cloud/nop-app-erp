@@ -361,7 +361,7 @@ Status Note: completed（4 Phase 全 done；范围行为完成 + 测试全绿 + 
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 执行者自查（mission driver 单会话执行 + 验证基线全绿 + 范围内变更已落地；独立结束审计由后续 OPEN_AUDIT 触发）
+- Auditor / Agent: ~~执行者自查（mission driver 单会话执行）~~ → **独立结束审计已由 R3.5 Round 3 backfill 完成**（见下方独立审计证据块；执行者自查保留为历史记录，不再作为结束依据）
 - Evidence:
   - **Plan**：`docs/plans/2026-07-21-1206-2-finance-budget-multi-year-carryforward.md`（4 Phase 全 `[x]` + Closure Gates 全 `[x]` + Plan Status=completed）
   - **Owner Doc EXPAND**：`docs/design/finance/budget.md`（既有 109 行 → ~280 行，新增 6 段：§多年度视图 / §滚动预算自动复制引擎 / §结转规则引擎 / §承付会计 / §承付占用释放 SPI / §版本审计链 + 反模式自检表扩展）
@@ -373,6 +373,8 @@ Closure Audit Evidence:
   - **owner doc 回链**：`docs/design/finance/posting.md` 增承付段；`docs/design/finance/period-close.md` 增预算结转与期间状态机段
   - **roadmap 同步**：`docs/backlog/deepening-roadmap.md` §A2 todo→done + §8.4 落地证据段（含 plan/owner doc/ORM 变更/codegen 产物/测试基线/Deferred successor）
   - **测试基线全绿**：finance service 229 测试（218 既有 + 11 新增）+ purchase service 116 测试（113 既有 + 3 新增）+ 全 workspace `mvn clean install -DskipTests` BUILD SUCCESS（154 模块）
+
+- **Independent Closure Audit (R3.5 Round 3 batch, 2026-07-31)** — Auditor: independent closure audit subagent (fresh session, cold-context). Verdict: **PASS**. Five-point consistency: (1) 顶部 Plan Status=completed ↔ PASS; (2) 4 Phase Status 全 completed ↔ PASS; (3) 4 组 Exit Criteria 全 `[x]` 实质内容（非空）↔ PASS; (4) 8 项 Closure Gates 全 `[x]` ↔ PASS; (5) 日志 `docs/logs/2026/07-21.md` line 82-94 详细 A2 条目（任务/范围/Decision/ORM/codegen/测试基线）↔ PASS。Anti-hollow: PASS（Exit Criteria 均含具体可核验产物：ORM well-formed/154 模块 build/2 实体生成/SPI+Provider 落地/3 hook config-gated/11 单元+3 集成测试场景；无空泛打勾）。Deferred honesty: PASS（9 项 Deferred 全部带 classification + why-not-blocking + successor trigger，无范围内项被静默降级）。Live-repo spot-check（冷上下文独立核验，非信任 `[x]`）：(a) ORM `module-finance/model/app-erp-finance.orm.xml` line 1775-1778 四字段 `budgetGroupCode`(propId26)/`carryForwardRule`(propId27)/`rollForwardStrategy`(propId28)/`closedAt`(propId29) 全部存在；line 1935/1976 两新实体 `ErpFinBudgetRollforwardLog`/`ErpFinBudgetCarryForwardLog` 存在；line 332-353 三字典 `erp-fin/budget-status`(含 CLOSED line 339)/`budget-carry-forward-rule`(4 键)/`budget-rollforward-strategy`(3 键) 存在。(b) 代码落地：`ErpFinBudgetCommitmentBizModel` + `CommitmentVoucherGenerator` + `CommitmentAcctDocProvider` + `ErpFinBudgetScenarioProcessor.rollForward/carryForward`（line 104+）+ `ErpFinBudgetScenarioBizModel` Facade 委托 + `ErpFinErrors` 错误码（line 408）全部存在。(c) 测试：finance 侧 `TestErpFinBudgetCommitment/RollForward/CarryForward`(+Isolation/EndToEnd 额外覆盖) + purchase 侧 `TestErpPurOrderCommitment`(+`TestErpPurReturnCommitmentRelease` 额外覆盖) 类文件存在。(d) 文档：`budget.md` 435 行（EXPAND 落地）/ `posting.md` line 474-484 承付 3 接入点表 / `period-close.md` 预算结转段 / `deepening-roadmap.md` §A2 done(line 52) + §8.4 落地证据(line 193-218) 全部存在。(e) 日志 `docs/logs/2026/07-21.md` line 82-94 含本计划详细条目。Protected-area ask-first（ORM finance）：**代码落地确认** + **测试存在确认**（注：本次冷上下文审计未重跑全量 Maven 构建，依赖结构核验 + 已登记的全绿基线；结束审计框架要求 grep/read 实际证据而非信任打勾——已满足）；**ask-first 人工确认记录**：ORM 变更经 `deepening-roadmap.md` §「ORM 变更已授权」(line 113) 前置授权 + 本计划 `Draft Review Record` 含 3 轮独立草案审查（iteration 1/2 needs-revision 已修正 4→3 hook 点等 blocker/major，iteration 3 pending→由本次 R3.5 独立结束审计实质补位）；未发现显式「ORM ask-first 人工确认 [x]」独立复选框（process-discipline gap，本次 Round 3 独立审计部分补救）。未发现 hollow exit criterion / 虚假 Gate / 静默降级。(Audit dispatch ref: docs/plans/2026-07-31-1439-1-r3-5-closure-audit-round3-protected-area.md Phase 2; this evidence block appended by R3.5 Round 3 backfill.)
 
 Follow-up:
 

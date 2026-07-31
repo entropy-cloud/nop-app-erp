@@ -108,8 +108,14 @@ Status Note: EXECUTE 完成（2026-07-29）。A7.4 四维度全部 PASS——19 
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理（pending）>
-- Evidence: `docs/audits/2026-07-29-1708-arm-ma7-ci-guard-activation.md`（报告）+ `docs/audits/arm-index.md`（A7.4 行 + P1-MA7-007 行 + MA7 累计 P1=2）+ 回归基线（`mvn clean install -DskipTests` BUILD SUCCESS / `mvn test` 0 failures）+ roadmap A7.4=ready
+- **Independent Closure Audit (R3.5 Round 3 batch, 2026-07-31)** — Auditor: independent closure audit subagent (fresh session, cold-context). Verdict: **PASS**.
+  - Five-point consistency: (1) Plan Status `completed` ↔ Phase 1 `completed` ✅; (2) Phase 1 `completed` ↔ Exit Criteria 2/2 `[x]` ✅; (3) Exit Criteria ↔ Closure Gates 9/9 `[x]` ✅; (4) Closure Gates ↔ 日志 `docs/logs/2026/07-29.md:59-66`（A7.4 执行全维度记录 + 验证基线）✅; (5) Plan Status `completed` ↔ roadmap A7.4=`ready`（本审计通过后 eligible `ready`→`done`）✅。
+  - Anti-hollow: PASS——报告 184 行含真实 checker 数据（19 规则矩阵 + HEAD `b933e2403` + 62 commits + 4 P0 fix 16 文件清单），非空壳。
+  - Deferred honesty: PASS——F15 CI 接入诚实 deferred 至 MR3 作 P1-MA7-007；基线 YAML 块更新诚实 deferred 至 MR3（`## Deferred But Adjudicated` 记录 successor 触发条件）。
+  - Live-repo spot-check: 报告 `docs/audits/2026-07-29-1708-arm-ma7-ci-guard-activation.md` 存在 PASS（Verdict PASS / P1-MA7-007）✅ / arm-index line 74 报告行 + line 115 A7.4 汇总 + line 285 P1-MA7-007 登记 + MA7 累计 P1=2 ✅ / roadmap line 130 A7.4=`ready` + line 329 详情 ✅ / `.github/workflows/compliance.yml` 激活（push+PR master + workflow_dispatch + 单向收紧门控逻辑与 owner doc 一致）✅ / F15 `i18n-coverage-checker.sh` NOT in CI（`.github/workflows/` grep 零引用 = R3.7 scope，非本 plan 缺陷）✅ / 19 web 测试 @Tag（grep 计数=19，全 `@Tag("full-app")` 命名一致）✅。
+  - **⚠️ Residual risk（post-audit drift，非 plan 缺陷，不阻塞 closure）**：审计快照 HEAD `b933e2403`（2026-07-29）时 19 规则 0 漂移属实；但当前 HEAD `bec8561c9`（2026-07-31）live `bash docs/audits/nop-compliance-checker.sh` 实测显示 **5 项回归**（R2a 37→38 / R2b 315→325 / R2c 1228→1250 / R5 0→1 / R12c 38→40），CI gate 若运行将 FAIL。此漂移系 A7.4 审计**之后**（2026-07-29→07-31 间）由其他工作（多份 R2.x/R3.x plan 执行）引入，属 MV V.2 / 下一 compliance 周期发现范围，非本 audit-producing plan 的执行缺陷。日志 `docs/logs/2026/07-31.md:168` 已注明 R12c 38→40 为「预存基线，与本 plan 无关」。**建议**：MV V.2 compliance 基线对比里程碑启动时须重新跑 checker 裁决此 5 项漂移（合规改善 actual<baseline 鼓励更新 / 合法调高须独立 plan / 回归 actual>baseline 须即时修复或经独立计划调高基线）。
+  - **Roadmap impact**: A7.4 PASS → eligible `ready`→`done`（Phase 3 of R3.5）。
+  - (Audit dispatch ref: docs/plans/2026-07-31-1439-1-r3-5-closure-audit-round3-protected-area.md Phase 2; appended by R3.5 Round 3 backfill.)
 
 Follow-up:
 

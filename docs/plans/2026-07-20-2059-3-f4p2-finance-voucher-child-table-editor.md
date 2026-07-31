@@ -299,8 +299,12 @@ Status Note: Phase 0–5 全部 done。本计划交付 ErpFinVoucher 凭证子�
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
-- Evidence: <待填写>
+- **Independent Closure Audit (R3.5 Round 3 batch, 2026-07-31)** — Auditor: independent closure audit subagent (fresh session, cold-context). Verdict: **PASS**.
+  - Five-point consistency: (1) Plan Status `completed` ↔ all 6 Phase (0–5) `Status: completed` + `[x]` items 一致；(2) Phase Exit Criteria 全 `[x]` 与 Phase Status 一致；(3) Closure Gates 7 项全 `[x]` 与 Exit Criteria 一致（Phase 5 D6 显式 Non-Goal successor 一致披露）；(4) 日志 `docs/logs/2026/07-21.md:490-522` 完整记录全 6 Phase 实施 + 3 处 xview schema 适配修复 + 验证基线 + 范式 successor，与 Gates 一致；(5) 日志 roadmap ✅ 更新 + plan Status 一致。全链一致。
+  - Anti-hollow: PASS — 实施证据含具体行号/控件类型/AMIS 表达式；live-repo 实证全部声称 feature。
+  - Deferred honesty: PASS — 5 项 Deferred（借贷平衡服务端校验 / 凭证模板快速导入 D6 / billLinks 子表 / F16 复杂页面 / 头合计实时 onEvent 聚合）均含 Classification + Why Not Blocking + Successor Required，无隐藏范围缩减；头聚合 onEvent deferral 与 P0/P1 既有行为对齐如实披露。
+  - Live-repo spot-check: (a) `module-finance/erp-fin-web/.../ErpFinVoucher.view.xml`（273 行）实测含 `@totalDebit`/`@totalCredit`（view+edit posting 组）+ `<cell id="lines">` 引用 sub-grid-{edit,view} + autoBalance button（onClick custom script 刷新头合计+平衡末行）+ row-post-button `<disabledOn>` + list `balanceStatus` virtual col（✓/✗ tpl）+ quickTemplate 导航链接占位（D6 允许的占位）；(b) `ErpFinVoucherLine.view.xml`（403 行）实测含 `<grid id="sub-grid-edit">` + `<grid id="sub-grid-view">` 各 17 列 + subjectId picker 8 字段快照（code/name + 6 isAuxiliary* via `event.data.selectedItem`）+ debitAmount/creditAmount `<visibleOn>` + gen-control 内 `clearValueOnHidden:true` + 6 辅助维度 col `<visibleOn>${!subjectId || isAuxiliaryXxx == true}</visibleOn>` + materialId 引用 isAuxiliaryProduct + exchangeRate/amountSource onEvent 推算 amountFunctional；(c) `docs/design/child-table-editor-patterns.md` §16 凭证子表变体（§16.1–16.9）+ `docs/design/visible-on-patterns.md` §8.4 subject 驱动辅助维度 visibleOn（§8.4.1–8.4.6）均存在；(d) 日志 07-21:508-512 记录验证：`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS（02:47 min）+ `mvn test` 全 reactor BUILD SUCCESS（12:02 min，0 failures/0 errors）+ ErpAllWebPagesCollectTest PAGE_ERROR_COUNT=0（effective full-build + 全 reactor 测试，满足强制验证范围规则）。注：plan 内引用的 view.xml 行号（如 :48-49/:84-119/:175-184）相对当前文件轻微漂移（文件增至 273 行，含后续 quickTemplate/balanceBadge 增补），但所声称内容全部存在，属装饰性漂移非虚假。浏览器抽样归后续 browser-regression plan（plan/log 一致声明，纯 view.xml 资源变更无 Java/ORM 逻辑变化）。
+  - (Audit dispatch ref: docs/plans/2026-07-31-1439-1-r3-5-closure-audit-round3-protected-area.md Phase 2; appended by R3.5 Round 3 backfill.)
 
 Follow-up:
 
