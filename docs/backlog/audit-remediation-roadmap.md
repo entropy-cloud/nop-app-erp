@@ -282,7 +282,7 @@
 | R6.1 | **finance 域** — 须拆 **40**（类别 B 21 + 类别 A 19，4 facade：ErpFinAccountingPeriodProcessor / ErpFinBadDebtProcessor / ErpFinNotesPayableProcessor / ErpFinNotesReceivableProcessor）；合法豁免 1（`ErpFinPostingException.manualEntry`）。注：原行枚举 41/catA 20 经 plan draft review 纠正为 40/catA 19——BadDebt `submit` 实测已是 MR5 S-mutation 单行委托（非 D-mutation），R6.0 triage 计数错误已回填。ErpFinPostingProcessor/ErpFinBudgetScenario 经 R6.0 实仓复核为 S-mutation 纯委托 facade（D=0），非类别 A 违规，已从本行移除。详见"R6.0 triage 展开 §R6.1" | done | `docs/design/finance/` + `docs/architecture/processor-extension-pattern.md`；plan `docs/plans/2026-07-31-2115-1-r6-1-finance-d-mutation-per-mutation-split.md` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.2 | **manufacturing 域** — 须拆 **29**（类别 B 11 + 类别 A 18，4 facade：ErpMfgWorkOrderProcessor / ErpMfgSubcontractOrderProcessor / ErpMfgJobCardProcessor / ErpMfgScheduleToJobCardProcessor）；合法豁免 4（ErpMfgForecast approve/cancel + ErpMfgWorkOrder.cancel + ErpMfgSubcontractOrder.cancel `:46`）。注：原行枚举 31/catA 20 经 plan draft review 纠正为 29/catA 18——SubcontractOrder 枚举含 2 行重复（issueMaterials/receiveFinished 各列 2 次）去重 + WorkOrder/SubcontractOrder `cancel` 登记 `:46` 豁免，R6.0 triage 计数错误已回填。详见"R6.0 triage 展开 §R6.2" | done | `docs/design/manufacturing/` + `docs/architecture/processor-extension-pattern.md`；plan `docs/plans/2026-07-31-2115-2-r6-2-manufacturing-d-mutation-per-mutation-split.md` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.3 | **assets 域** — 须拆 **22**（全部类别 A，4 facade：ErpAstCipProcessor / ErpAstDepreciationScheduleProcessor / ErpAstInventoryProcessor / ErpAstMaintenanceProcessor）；类别 B 0（assets BizModel 已委托 Processor）；合法豁免 0。注：原行枚举的 ErpAstDisposal/Merge/Split/ValueAdjustment/AssetCapitalization 经 R6.0 实仓复核为 S-mutation 纯委托 facade（D=0），非类别 A 违规，从本行移除（10→4 facade）。详见"R6.0 triage 展开 §R6.3" | done | `docs/design/assets/` | R6.0 | `docs/skills/nop-backend-dev` |
-| R6.4 | **inventory 域** — 须拆 **14**（类别 B 1 + 类别 A 13，4 facade：ErpInvStockMoveProcessor / ErpInvOwnershipTransferProcessor / ErpInvLandedCostProcessor / ErpInvCostAdjustProcessor）；合法豁免 3（ErpInvStockTake startTake/completeTake/cancelTake）。详见"R6.0 triage 展开 §R6.4" | todo | `docs/design/inventory/` | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.4 | **inventory 域** — 须拆 **11**（类别 B 1 + 类别 A 10，4 facade：ErpInvStockMoveProcessor / ErpInvOwnershipTransferProcessor [delete-after-extract] + ErpInvLandedCostProcessor / ErpInvCostAdjustProcessor [slim-to-S-delegation]）；合法豁免 4（ErpInvStockTake startTake/completeTake/cancelTake + ErpInvOwnershipTransfer.cancel）；@BizQuery 不在范围（StockMove trace × 4 + findByRelatedBill + LandedCost allocate）。**勘误（draft review iter1）**：R6.0 triage 原列 14，StockMove 4 trace 方法实测 `@BizQuery` 出范围（−4）+ cancel 补拆（+1）= 净 −3，故 14→11。详见"R6.0 triage 展开 §R6.4" | done | `docs/design/inventory/` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.5 | **purchase + sales 域** — 须拆 **7**（类别 B 1 + 类别 A 6，3 facade：ErpPurPaymentProcessor / ErpSalQuotationProcessor / ErpSalReceiptProcessor）；合法豁免 2（ErpPurQuotation.cancel / ErpPurRfq.cancel）。另 R6.8 backstop 单 D-mutation facade：ErpPurRequisitionProcessor.convertToOrder。详见"R6.0 triage 展开 §R6.5" | todo | `docs/design/{purchase,sales}/` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.6 | **扩展域批次 1**（crm + projects + quality + cs）— 须拆 **57**（类别 B 49 + 类别 A 8，3 facade：ErpCrmConversionProcessor / ErpCrmLeadProcessor / ErpPrjProjectSettlementProcessor）；合法豁免 26。详见"R6.0 triage 展开 §R6.6" | todo | 各域 owner doc | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.7 | **扩展域批次 2**（hr + contract + b2b + logistics + maintenance + aps + drp + notify + master-data）— 须拆 **84**（类别 B 81 + 类别 A 3，1 facade：ErpApsSchedulingProcessor）；合法豁免 36。详见"R6.0 triage 展开 §R6.7" | todo | 各域 owner doc | R6.0 | `docs/skills/nop-backend-dev` |
@@ -440,7 +440,9 @@
   - `ErpAstMaintenance.post` → `ErpAstMaintenancePostProcessor`
   - `ErpAstMaintenance.reverse` → `ErpAstMaintenanceReverseProcessor`
 
-#### R6.4（inventory）— 须拆 14（类别 B 1 + 类别 A 13，4 facade）
+#### R6.4（inventory）— 须拆 11（类别 B 1 + 类别 A 10，4 facade）
+
+> **勘误（R6.4 plan draft review iter1 实仓复核）**：R6.0 triage 原列须拆 14（catB 1 + catA 13）。实仓复核发现两处计数错误：(1) StockMove `forwardTrace`/`backwardTrace`/`returnTrace`/`batchTrace` 实测为 `@BizQuery`（`ErpInvStockMoveBizModel:75,81,87,93` 单行委托 `traceChainQuery`），按 MR6 完成判据不在范围（−4）；(2) StockMove `cancel`（`@BizMutation` 多步含条件跨实体 `releaseReservation`）triage 漏列须补拆（+1）。净 −3，catA 13→10、total 14→**11**。facade 处置标签同步勘误：StockMove/OwnershipTransfer 无 S-mutation = **delete-after-extract**（类保留为 helper 持有者），非 slim-to-S-delegation；仅 CostAdjust/LandedCost 是 slim-to-S-delegation。OwnershipTransfer.cancel（`:46` 单步翻转无跨实体写）登记 exemption registry 不拆。
 
 **类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
 
@@ -449,20 +451,18 @@
   - `ErpInvCostAdjust.reverseCostAdjust` → `ErpInvCostAdjustReverseCostAdjustProcessor`
 - `ErpInvLandedCostProcessor`（slim-to-S-delegation-facade）：
   - `ErpInvLandedCost.generateFreightLandedCost` → `ErpInvLandedCostGenerateFreightLandedCostProcessor`
-  - ≤2 步查询（:45 豁免，保留）：allocatePreview
-- `ErpInvOwnershipTransferProcessor`（slim-to-S-delegation-facade）：
+  - `allocate` 实测为 `@BizQuery`（`ErpInvLandedCostBizModel:53`），不在 MR6 范围；allocatePreview（:45 豁免，保留）
+- `ErpInvOwnershipTransferProcessor`（delete-after-extract）：
   - `ErpInvOwnershipTransfer.confirm` → `ErpInvOwnershipTransferConfirmProcessor`
   - `ErpInvOwnershipTransfer.done` → `ErpInvOwnershipTransferDoneProcessor`
-- `ErpInvStockMoveProcessor`（slim-to-S-delegation-facade）：
+  - `cancel`（:46 单步状态翻转豁免，保留 facade + 登记 registry）
+- `ErpInvStockMoveProcessor`（delete-after-extract）：
   - `ErpInvStockMove.generateMove` → `ErpInvStockMoveGenerateMoveProcessor`
   - `ErpInvStockMove.confirm` → `ErpInvStockMoveConfirmProcessor`
   - `ErpInvStockMove.complete` → `ErpInvStockMoveCompleteProcessor`
+  - `ErpInvStockMove.cancel` → `ErpInvStockMoveCancelProcessor`（triage 漏列补拆：CONFIRMED 时条件跨实体 releaseReservation）
   - `ErpInvStockMove.reverse` → `ErpInvStockMoveReverseProcessor`
-  - `ErpInvStockMove.forwardTrace` → `ErpInvStockMoveForwardTraceProcessor`
-  - `ErpInvStockMove.backwardTrace` → `ErpInvStockMoveBackwardTraceProcessor`
-  - `ErpInvStockMove.returnTrace` → `ErpInvStockMoveReturnTraceProcessor`
-  - `ErpInvStockMove.batchTrace` → `ErpInvStockMoveBatchTraceProcessor`
-  - ≤2 步查询（:45 豁免，保留）：findByRelatedBill
+  - `@BizQuery` 不在范围（保留 facade/helper 委托）：forwardTrace/backwardTrace/returnTrace/batchTrace；`@BizAction` 查询 findByRelatedBill（:45 豁免，保留）
 
 **类别 B 内联 `@BizMutation` 须拆（BizModel → `<Entity><Method>Processor` + 单行委托）：**
 

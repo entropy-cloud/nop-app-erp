@@ -190,6 +190,7 @@
 | crm | ErpCrmConversionProcessor | getCreatedOpportunity | :45 只读关联查询，保留 facade |
 | inventory | ErpInvStockMoveProcessor | findByRelatedBill | :45 只读溯源查询，保留 facade |
 | inventory | ErpInvLandedCostProcessor | allocatePreview | :45 只读分摊预览（无持久化），保留 facade |
+| inventory | ErpInvOwnershipTransferProcessor | cancel | :46 单步状态翻转（DRAFT/CONFIRMED→CANCELLED，无跨实体写），保留 facade（R6.4 新登记） |
 
 ## C. 边界争议 adjudication 记录
 
