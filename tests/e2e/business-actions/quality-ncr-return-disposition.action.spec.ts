@@ -65,7 +65,7 @@ test.describe('quality ErpQaNonConformance RETURN disposition cross-domain retur
 
       const resolved = await callMutationOk(
         page, 'ErpQaNonConformance', 'resolve',
-        { ncrId: ncr.id, resolution: 'RETURN to supplier' }, 'id status returnCode',
+        { ncrId: ncr.id, resolution: 'RETURN to supplier', noCapaReason: '退货处置，无需纠正措施' }, 'id status returnCode',
       );
       expect(resolved.status, 'resolve should transition IN_REVIEW → RESOLVED').toBe('RESOLVED');
       expect(resolved.returnCode, 'resolve RETURN should set returnCode').toBeTruthy();
@@ -117,7 +117,7 @@ test.describe('quality ErpQaNonConformance RETURN disposition cross-domain retur
 
       const resolved = await callMutationOk(
         page, 'ErpQaNonConformance', 'resolve',
-        { ncrId: ncr.id, resolution: 'concession accepted' }, 'id status returnCode',
+        { ncrId: ncr.id, resolution: 'concession accepted', noCapaReason: '让步接收，无需纠正措施' }, 'id status returnCode',
       );
       expect(resolved.status, 'resolve should transition IN_REVIEW → RESOLVED').toBe('RESOLVED');
       expect(resolved.returnCode, 'CONCESSION should have no return side-effect (returnCode=null)').toBeNull();
