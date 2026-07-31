@@ -8,6 +8,8 @@ import app.erp.hr.dao.entity.ErpHrDevelopmentPlanItem;
 import app.erp.hr.dao.entity.ErpHrGapAnalysis;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrDevelopmentPlanGenerateDevelopmentPlanProcessor;
+import app.erp.hr.service.processor.ErpHrDevelopmentPlanUpdatePlanItemStatusProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -50,6 +52,10 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
     IErpHrGapAnalysisBiz gapAnalysisBiz;
     @Inject
     IErpHrDevelopmentPlanItemBiz planItemBiz;
+    @Inject
+    ErpHrDevelopmentPlanGenerateDevelopmentPlanProcessor generateDevelopmentPlanProcessor;
+    @Inject
+    ErpHrDevelopmentPlanUpdatePlanItemStatusProcessor updatePlanItemStatusProcessor;
 
     public ErpHrDevelopmentPlanBizModel() {
         setEntityName(ErpHrDevelopmentPlan.class.getName());
@@ -68,26 +74,7 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
     @BizMutation
     public ErpHrDevelopmentPlan generateDevelopmentPlan(@Name("employeeId") Long employeeId,
                                                          IServiceContext context) {
-        List<ErpHrGapAnalysis> gaps = findActionableGaps(employeeId, context);
-        if (gaps.isEmpty()) {
-            return null;
-        }
-
-        ErpHrDevelopmentPlan plan = newEntity();
-
-        plan.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-        plan.setEmployeeId(employeeId);
-        plan.setPlanName("发展计划-" + employeeId + "-" + CoreMetrics.currentDate());
-        plan.setTargetDate(CoreMetrics.currentDate().plusMonths(3));
-        plan.setStatus(ErpHrConstants.DEV_PLAN_STATUS_IN_PROGRESS);
-        saveEntity(plan, null, context);
-
-        List<ErpHrGapAnalysis> sorted = sortByPriority(gaps);
-        for (ErpHrGapAnalysis gap : sorted) {
-            ErpHrDevelopmentPlanItem item = newPlanItem(plan.getId(), gap);
-            planItemBiz.saveEntity(item, null, context);
-        }
-        return plan;
+        return generateDevelopmentPlanProcessor.generateDevelopmentPlan(employeeId, context);
     }
 
     @Override
@@ -95,20 +82,7 @@ public class ErpHrDevelopmentPlanBizModel extends CrudBizModel<ErpHrDevelopmentP
     public ErpHrDevelopmentPlanItem updatePlanItemStatus(@Name("planItemId") Long planItemId,
                                                           @Name("status") String status,
                                                           IServiceContext context) {
-        ErpHrDevelopmentPlanItem item = requirePlanItem(planItemId, context);
-        String current = item.getStatus();
-        assertPlanItemTransition(current, status);
-        item.setStatus(status);
-        if (ErpHrConstants.PLAN_ITEM_STATUS_IN_PROGRESS.equals(status)
-                && item.getStartDate() == null) {
-            item.setStartDate(CoreMetrics.currentDate());
-        }
-        if (ErpHrConstants.PLAN_ITEM_STATUS_ACHIEVED.equals(status)
-                && item.getEndDate() == null) {
-            item.setEndDate(CoreMetrics.currentDate());
-        }
-        planItemBiz.updateEntity(item, null, context);
-        return item;
+        return updatePlanItemStatusProcessor.updatePlanItemStatus(planItemId, status, context);
     }
 
     @Override

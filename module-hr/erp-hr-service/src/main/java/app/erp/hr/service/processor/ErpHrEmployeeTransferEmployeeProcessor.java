@@ -1,70 +1,49 @@
-
-package app.erp.hr.service.entity;
+package app.erp.hr.service.processor;
 
 import app.erp.hr.biz.IErpHrDepartmentBiz;
-import app.erp.hr.biz.IErpHrEmployeeBiz;
 import app.erp.hr.biz.IErpHrEmploymentContractBiz;
 import app.erp.hr.biz.IErpHrLeaveRequestBiz;
 import app.erp.hr.biz.IErpHrPositionBiz;
-import app.erp.hr.dao.entity.ErpHrAttendance;
 import app.erp.hr.dao.entity.ErpHrDepartment;
 import app.erp.hr.dao.entity.ErpHrEmployee;
 import app.erp.hr.dao.entity.ErpHrEmploymentContract;
-import app.erp.hr.dao.entity.ErpHrLeaveRequest;
 import app.erp.hr.dao.entity.ErpHrPosition;
-import app.erp.hr.dao.entity.ErpHrSalary;
-import app.erp.hr.dao.entity.ErpHrTimesheet;
 import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
-import app.erp.hr.service.processor.ErpHrEmployeeTransferEmployeeProcessor;
-import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.biz.BizQuery;
-import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
-import io.nop.biz.crud.CrudBizModel;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
+import io.nop.dao.api.IDaoProvider;
+import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.dateBetween;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 员工主数据 BizModel（use-cases.md UC-HR-08 部门调动）。继承 {@link CrudBizModel} 标准 CRUD，
- * 扩展 {@link #transferEmployee} 单步直接更新调动（无审批/状态机）。
- *
- * <p>跨实体访问：
- * <ul>
- *   <li>{@link IErpHrDepartmentBiz}/{@link IErpHrPositionBiz}：校验目标部门/职位存在性；</li>
- *   <li>{@link IErpHrEmploymentContractBiz}：合同处理（原 ACTIVE→TERMINATED + 新建 ACTIVE）；</li>
- *   <li>{@link IErpHrLeaveRequestBiz}：查询 APPROVED 休假区间与调动生效日期冲突（告警不阻塞）。</li>
- * </ul>
+ * ErpHrEmployee transferEmployee per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
+ * 自包含员工调动编排（雇佣状态守卫 + 目标部门/职位校验 + 休假冲突告警 + 部门/职位/上级更新 + 合同处理）。
+ * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
-@BizModel("ErpHrEmployee")
-public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implements IErpHrEmployeeBiz {
+public class ErpHrEmployeeTransferEmployeeProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ErpHrEmployeeBizModel.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ErpHrEmployeeTransferEmployeeProcessor.class);
 
     /**
      * 调动后新合同 code 总长上限，对齐 {@code module-hr/model/app-erp-hr.orm.xml} domain
      * {@code code} precision=50（{@link ErpHrEmploymentContract#getCode() code} 列绑该 domain，
-     * 与 voucherCode 同精度，同 1430-1/1600-1 类 buildXxxCode overflow 缺陷）。BizModel 为 DAG 顶，
-     * 不反向依赖 ORM domain 元数据 API，故在此持有常量而非运行时读取 precision。
+     * 与 voucherCode 同精度，同 1430-1/1600-1 类 buildXxxCode overflow 缺陷）。Processor 不反向依赖 ORM domain
+     * 元数据 API，故在此持有常量而非运行时读取 precision。
      */
-    static final int SUCCESSOR_CONTRACT_CODE_MAX_LENGTH = 50;
+    private static final int SUCCESSOR_CONTRACT_CODE_MAX_LENGTH = 50;
 
     /**
      * 超限路径追加的 MD5 摘要长度（hex 字符）。保留全长 active.code 指纹，使两条不同长 active.code 即使头部相同
@@ -72,6 +51,11 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
      */
     private static final int SUCCESSOR_HASH_SUFFIX_LENGTH = 4;
 
+    static final LocalDate MIN_QUERY_DATE = LocalDate.of(1970, 1, 1);
+    static final LocalDate MAX_QUERY_DATE = LocalDate.of(2999, 12, 31);
+
+    @Inject
+    IDaoProvider daoProvider;
     @Inject
     IErpHrDepartmentBiz departmentBiz;
     @Inject
@@ -80,59 +64,40 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
     IErpHrEmploymentContractBiz employmentContractBiz;
     @Inject
     IErpHrLeaveRequestBiz leaveRequestBiz;
-    @Inject
-    ErpHrEmployeeTransferEmployeeProcessor transferEmployeeProcessor;
 
-    public ErpHrEmployeeBizModel() {
-        setEntityName(ErpHrEmployee.class.getName());
-    }
-
-    @Override
-    @BizMutation
-    public ErpHrEmployee transferEmployee(@Name("employeeId") Long employeeId,
-                                          @Name("targetDepartmentId") Long targetDepartmentId,
-                                          @Name("targetPositionId") Long targetPositionId,
-                                          @Name("targetSuperiorId") Long targetSuperiorId,
-                                          @Name("effectiveDate") LocalDate effectiveDate,
-                                          @Name("handleContract") String handleContract,
+    public ErpHrEmployee transferEmployee(Long employeeId,
+                                          Long targetDepartmentId,
+                                          Long targetPositionId,
+                                          Long targetSuperiorId,
+                                          LocalDate effectiveDate,
+                                          String handleContract,
                                           IServiceContext context) {
-        return transferEmployeeProcessor.transferEmployee(employeeId, targetDepartmentId,
-                targetPositionId, targetSuperiorId, effectiveDate, handleContract, context);
-    }
-
-    /**
-     * F7 §3 删除引用预览。统计 HR 域内引用本员工的业务单据。
-     *
-     * <p>实现说明：使用 {@code daoProvider().daoFor(...)} 做同域只读引用计数聚合（合同/工时/薪酬/考勤/休假），
-     * 对齐 {@code ErpPartyBizModel} 同域只读聚合范式（非跨实体业务写入，无需经 IBiz 管道）。
-     * ORM {@code useLogicalDelete} 自动过滤已逻辑删除行。
-     */
-    @Override
-    @BizQuery
-    public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context) {
-        Map<String, Long> refs = new LinkedHashMap<>();
-        if (id == null) {
-            return refs;
+        ErpHrEmployee employee = requireTransferableEmployee(employeeId, context);
+        ErpHrDepartment targetDept = requireTargetDepartment(targetDepartmentId, context);
+        if (targetPositionId != null) {
+            requireTargetPosition(targetPositionId, targetDept.getId(), context);
         }
-        refs.put("contract", countByEmployee(ErpHrEmploymentContract.class, id));
-        refs.put("timesheet", countByEmployee(ErpHrTimesheet.class, id));
-        refs.put("salary", countByEmployee(ErpHrSalary.class, id));
-        refs.put("attendance", countByEmployee(ErpHrAttendance.class, id));
-        refs.put("leave", countByEmployee(ErpHrLeaveRequest.class, id));
-        return refs;
-    }
 
-    // 同域只读引用计数（对齐 ErpPartyBizModel 同域聚合范式）
-    private <T extends io.nop.dao.api.IDaoEntity> long countByEmployee(Class<T> entityClass, Long employeeId) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("employeeId", employeeId));
-        return daoProvider().daoFor(entityClass).findAllByQuery(q).size();
+        warnIfLeaveConflict(employee.getId(), effectiveDate, context);
+
+        employee.setDepartmentId(targetDept.getId());
+        if (targetPositionId != null) {
+            employee.setPositionId(targetPositionId);
+        }
+        if (targetSuperiorId != null) {
+            employee.setSuperiorId(targetSuperiorId);
+        }
+        employeeDao().updateEntity(employee);
+
+        resolveHandleContract(handleContract, employee, effectiveDate, context);
+
+        return employee;
     }
 
     // ---------- validation gates ----------
 
-    ErpHrEmployee requireTransferableEmployee(Long employeeId, IServiceContext context) {
-        ErpHrEmployee employee = get(String.valueOf(employeeId), false, context);
+    protected ErpHrEmployee requireTransferableEmployee(Long employeeId, IServiceContext context) {
+        ErpHrEmployee employee = employeeDao().getEntityById(employeeId);
         if (employee == null) {
             throw new NopException(ErpHrErrors.ERR_EMPLOYEE_NOT_TRANSFERABLE)
                     .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
@@ -152,7 +117,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
                 || ErpHrConstants.EMPLOYMENT_PROBATION.equals(employmentStatus);
     }
 
-    ErpHrDepartment requireTargetDepartment(Long targetDepartmentId, IServiceContext context) {
+    protected ErpHrDepartment requireTargetDepartment(Long targetDepartmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", targetDepartmentId));
         q.setLimit(1);
@@ -164,7 +129,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         return dept;
     }
 
-    ErpHrPosition requireTargetPosition(Long targetPositionId, Long expectedDepartmentId, IServiceContext context) {
+    protected ErpHrPosition requireTargetPosition(Long targetPositionId, Long expectedDepartmentId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("id", targetPositionId));
         q.setLimit(1);
@@ -182,7 +147,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
 
     // ---------- leave conflict warn (config-gated, non-blocking) ----------
 
-    void warnIfLeaveConflict(Long employeeId, LocalDate effectiveDate, IServiceContext context) {
+    protected void warnIfLeaveConflict(Long employeeId, LocalDate effectiveDate, IServiceContext context) {
         if (!ErpHrConfigs.transferLeaveConflictWarn()) {
             return;
         }
@@ -204,13 +169,10 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         }
     }
 
-    static final LocalDate MIN_QUERY_DATE = LocalDate.of(1970, 1, 1);
-    static final LocalDate MAX_QUERY_DATE = LocalDate.of(2999, 12, 31);
-
     // ---------- contract handling ----------
 
-    void resolveHandleContract(String handleContract, ErpHrEmployee employee, LocalDate effectiveDate,
-                               IServiceContext context) {
+    protected void resolveHandleContract(String handleContract, ErpHrEmployee employee, LocalDate effectiveDate,
+                                         IServiceContext context) {
         String mode = normalizeHandleContract(handleContract);
         boolean shouldHandle;
         if (ErpHrConstants.TRANSFER_HANDLE_CONTRACT_YES.equals(mode)) {
@@ -244,7 +206,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         return ErpHrConstants.TRANSFER_HANDLE_CONTRACT_AUTO;
     }
 
-    ErpHrEmploymentContract findActiveContract(Long employeeId, IServiceContext context) {
+    protected ErpHrEmploymentContract findActiveContract(Long employeeId, IServiceContext context) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("employeeId", employeeId),
@@ -253,10 +215,10 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         return employmentContractBiz.findFirst(q, null, context);
     }
 
-    ErpHrEmploymentContract newContractFrom(ErpHrEmploymentContract active, ErpHrEmployee employee,
-                                            LocalDate effectiveDate) {
+    protected ErpHrEmploymentContract newContractFrom(ErpHrEmploymentContract active, ErpHrEmployee employee,
+                                                      LocalDate effectiveDate) {
         ErpHrEmploymentContract c = employmentContractBiz.newEntity();
-        c.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+        c.setBusinessDate(CoreMetrics.today());
         c.setCode(buildSuccessorCode(employee, active, effectiveDate));
         c.setEmployeeId(employee.getId());
         c.setContractType(active != null && active.getContractType() != null
@@ -314,13 +276,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         return base + "-" + head + hash;
     }
 
-    // ---------- helpers for tests ----------
-
-    List<String> nonTransferableStatuses() {
-        return Collections.unmodifiableList(Arrays.asList(
-                ErpHrConstants.EMPLOYMENT_RESIGNED,
-                ErpHrConstants.EMPLOYMENT_TERMINATED,
-                ErpHrConstants.EMPLOYMENT_RETIRED));
+    private IEntityDao<ErpHrEmployee> employeeDao() {
+        return daoProvider.daoFor(ErpHrEmployee.class);
     }
-
 }

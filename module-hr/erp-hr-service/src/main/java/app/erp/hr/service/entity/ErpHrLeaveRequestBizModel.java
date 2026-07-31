@@ -19,6 +19,9 @@ import app.erp.hr.dao.entity.ErpHrLeaveBalance;
 import app.erp.hr.dao.entity.ErpHrLeaveRequest;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrLeaveRequestApproveProcessor;
+import app.erp.hr.service.processor.ErpHrLeaveRequestCancelProcessor;
+import app.erp.hr.service.processor.ErpHrLeaveRequestSubmitProcessor;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -44,6 +47,12 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
     IErpHrLeaveBalanceBiz leaveBalanceBiz;
     @Inject
     IErpHrShiftBiz shiftBiz;
+    @Inject
+    ErpHrLeaveRequestSubmitProcessor submitProcessor;
+    @Inject
+    ErpHrLeaveRequestApproveProcessor approveProcessor;
+    @Inject
+    ErpHrLeaveRequestCancelProcessor cancelProcessor;
 
     public ErpHrLeaveRequestBizModel() {
         setEntityName(ErpHrLeaveRequest.class.getName());
@@ -72,29 +81,13 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
     @Override
     @BizMutation
     public ErpHrLeaveRequest submit(@Name("id") String id, IServiceContext context) {
-        ErpHrLeaveRequest leave = requireEntity(id, null, context);
-        requireStatus(leave, ErpHrConstants.LEAVE_STATUS_DRAFT, ErpHrConstants.LEAVE_STATUS_SUBMITTED);
-        computeDurationDays(leave);
-        checkLeaveBalance(leave, context);
-        checkDateOverlap(leave, context, false);
-        leave.setStatus(ErpHrConstants.LEAVE_STATUS_SUBMITTED);
-        updateEntity(leave, null, context);
-        return leave;
+        return submitProcessor.submit(id, context);
     }
 
     @Override
     @BizMutation
     public ErpHrLeaveRequest approve(@Name("id") String id, IServiceContext context) {
-        ErpHrLeaveRequest leave = requireEntity(id, null, context);
-        requireStatus(leave, ErpHrConstants.LEAVE_STATUS_SUBMITTED, ErpHrConstants.LEAVE_STATUS_APPROVED);
-        computeDurationDays(leave);
-        checkLeaveBalance(leave, context);
-        leave.setStatus(ErpHrConstants.LEAVE_STATUS_APPROVED);
-        leave.setApprovedAt(CoreMetrics.currentTimestamp());
-        leave.setApproverId(resolveApproverId(context));
-        updateEntity(leave, null, context);
-        shiftBiz.onLeaveApproved(leave.getId(), context);
-        return leave;
+        return approveProcessor.approve(id, context);
     }
 
     @Override
@@ -110,12 +103,7 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
     @Override
     @BizMutation
     public ErpHrLeaveRequest cancel(@Name("id") String id, IServiceContext context) {
-        ErpHrLeaveRequest leave = requireEntity(id, null, context);
-        requireStatus(leave, ErpHrConstants.LEAVE_STATUS_APPROVED, ErpHrConstants.LEAVE_STATUS_CANCELLED);
-        leave.setStatus(ErpHrConstants.LEAVE_STATUS_CANCELLED);
-        updateEntity(leave, null, context);
-        shiftBiz.onLeaveCancelled(leave.getId(), context);
-        return leave;
+        return cancelProcessor.cancel(id, context);
     }
 
     @Override
