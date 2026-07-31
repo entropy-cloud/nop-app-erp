@@ -6,6 +6,7 @@ import app.erp.sal.dao.entity.ErpSalQuotation;
 import app.erp.sal.dao.entity.ErpSalQuotationLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -207,6 +208,7 @@ public class ErpSalQuotationProcessor {
     }
 
     protected void doApprove(ErpSalQuotation quotation, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(quotation.getCreatedBy(), currentUserId(), ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR);
         quotation.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         quotation.setApprovedBy(currentUserId());
         quotation.setApprovedAt(CoreMetrics.currentTimestamp());

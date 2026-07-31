@@ -290,4 +290,12 @@ public interface ErpMfgErrors {
             "erp.err.mfg.simulation.versions-not-comparable",
             "MRP仿真版本[{scenarioVersionId}]与[{expectedStatus}]不可对比（须同 orgId / 同基线计划）",
             ARG_SCENARIO_VERSION_ID, ARG_EXPECTED_STATUS);
+
+    // --- 职责分离（SoD）守卫（plan 2026-07-31-1023-2 R3.3）：审核人与单据创建人不可为同一人 ---
+    String ARG_USER_ID = "userId";
+
+    ErrorCode ERR_MFG_APPROVER_IS_CREATOR = ErrorCode.define(
+            "erp.err.mfg.approver-is-creator",
+            "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
+            ARG_USER_ID);
 }

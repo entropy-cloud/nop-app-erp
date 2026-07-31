@@ -13,6 +13,7 @@ import app.erp.pur.dao.entity.ErpPurReturn;
 import app.erp.pur.dao.entity.ErpPurReturnLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.common.service.SoDGuard;
 import app.erp.pur.service.entity.ReturnQtyValidator;
 import app.erp.pur.service.entity.ReturnStockMoveBuilder;
 import app.erp.pur.service.posting.PurReturnPostingDispatcher;
@@ -193,6 +194,7 @@ public class ErpPurReturnProcessor {
     }
 
     protected void doApprove(ErpPurReturn returnOrder, boolean posted, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(returnOrder.getCreatedBy(), currentUserId(), ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
         returnOrder.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         returnOrder.setApprovedBy(currentUserId());
         returnOrder.setApprovedAt(CoreMetrics.currentTimestamp());

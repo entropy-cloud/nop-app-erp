@@ -5,8 +5,10 @@ import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
+import io.nop.auth.core.login.UserContextImpl;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -143,8 +145,7 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
     }
 
     @Test
-    public void testOrderCancelFromDraft() {
-        ErpPurOrder order = newOrder("PO-CANCEL-001");
+    public void testOrderCancelFromDraft() {        ErpPurOrder order = newOrder("PO-CANCEL-001");
         ormTemplate.runInSession(() -> {
             seedActiveSupplier(SUPPLIER_ID);
             saveOrderWithLine(order);
@@ -158,6 +159,46 @@ public class TestErpPurOrderApproval extends JunitAutoTestCase {
         ApiResponse<?> bad = submit(order.getId());
         assertEquals(ErpPurErrors.ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
                 "已作废订单不可提交，Processor.onSubmit 的 validateNotCancelled 经 xbiz prepend 拦截");
+    }
+
+    // ---------- SoD 守卫（plan 2026-07-31-1023-2 R3.3，Pattern A 基类 doApprove 单点） ----------
+
+    @Test
+    public void testSoDCreatorCannotSelfApprove() {
+        ErpPurOrder order = newOrder("PO-SOD-001");
+        ormTemplate.runInSession(() -> {
+            seedActiveSupplier(SUPPLIER_ID);
+            saveOrderWithLine(order);
+        });
+        assertEquals(0, submit(order.getId()).getStatus(), "提交应成功 → SUBMITTED");
+
+        // 创建人尝试自审：置 IUserContext.userId = 单据 createdBy（平台 auto-stamp 的 userRefNo）
+        String creator = daoProvider.daoFor(ErpPurOrder.class).getEntityById(order.getId()).getCreatedBy();
+        setApproverUserContext(creator);
+        ApiResponse<?> bad = approve(order.getId());
+        assertEquals(ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR.getErrorCode(), bad.getCode(),
+                "创建人=审核人 → SoD 守卫应抛 ERR_PUR_APPROVER_IS_CREATOR");
+    }
+
+    @Test
+    public void testSoDNullUserSkipsGuard() {
+        // null-user 语义验证（Pattern A）：IUserContext 为 null 时守卫放行，approve 成功。
+        // wf 回调路径同语义见 TestErpPurPaymentWorkflowApproval（既有用例，回调未填 IUserContext）。
+        ErpPurOrder order = newOrder("PO-SOD-NULL");
+        ormTemplate.runInSession(() -> {
+            seedActiveSupplier(SUPPLIER_ID);
+            saveOrderWithLine(order);
+        });
+        assertEquals(0, submit(order.getId()).getStatus());
+        IUserContext.set(null);
+        assertEquals(0, approve(order.getId()).getStatus(),
+                "null-user（wf 回调/测试默认）→ 守卫放行，approve 成功");
+    }
+
+    private void setApproverUserContext(String userId) {
+        UserContextImpl uc = new UserContextImpl();
+        uc.setUserId(userId);
+        IUserContext.set(uc);
     }
 
     // ---------- helpers ----------

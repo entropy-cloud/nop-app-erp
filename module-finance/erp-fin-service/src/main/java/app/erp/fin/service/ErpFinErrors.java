@@ -475,4 +475,11 @@ public interface ErpFinErrors {
 
     ErrorCode ERR_ELIMINATION_NO_CANDIDATES = ErrorCode.define("erp.err.fin.elimination.no-candidates",
             "会计期间 {periodId} 无可抵消候选（未识别到配对记录或候选已处理）", ARG_PERIOD_ID);
+
+    // --- 职责分离（SoD）守卫（plan 2026-07-31-1023-2 R3.3）：审核人与单据创建人不可为同一人 ---
+    String ARG_USER_ID = "userId";
+
+    ErrorCode ERR_FIN_APPROVER_IS_CREATOR = ErrorCode.define("erp.err.fin.approver-is-creator",
+            "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
+            ARG_USER_ID);
 }

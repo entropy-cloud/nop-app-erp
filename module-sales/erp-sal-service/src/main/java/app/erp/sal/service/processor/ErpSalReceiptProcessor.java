@@ -6,6 +6,7 @@ import app.erp.md.biz.SettlementAllocation;
 import app.erp.sal.dao.entity.ErpSalReceipt;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.common.service.SoDGuard;
 import app.erp.sal.service.entity.ReceiptSettler;
 import app.erp.sal.service.posting.SalReceiptPostingDispatcher;
 import io.nop.api.core.auth.IUserContext;
@@ -170,6 +171,7 @@ public class ErpSalReceiptProcessor {
     }
 
     protected void doApprove(ErpSalReceipt receipt, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(receipt.getCreatedBy(), currentUserId(), ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR);
         boolean posted = doPosting(receipt, context);
         receipt = receiptDao().getEntityById(receipt.getId());
         receipt.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);

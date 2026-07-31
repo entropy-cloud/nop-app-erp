@@ -8,6 +8,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.AdvanceOffsetOrchestrator;
 import app.erp.fin.service.posting.ExpenseClaimPostingDispatcher;
+import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.entity.ErpMdEmployee;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.auth.IUserContext;
@@ -248,6 +249,7 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected ErpFinExpenseClaim doApprove(String id, ErpFinExpenseClaim claim, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(claim.getCreatedBy(), currentUserId(), ErpFinErrors.ERR_FIN_APPROVER_IS_CREATOR);
         boolean posted = postingDispatcher.tryPost(claim);
         claim = reload(id);
         claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);

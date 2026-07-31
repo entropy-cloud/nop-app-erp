@@ -4,6 +4,8 @@ import app.erp.sal.dao.entity.ErpSalReceipt;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
 import app.erp.common.service.AbstractApproveProcessor;
+import app.erp.common.service.SoDGuard;
+import io.nop.api.core.exceptions.ErrorCode;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -25,6 +27,7 @@ public class ErpSalReceiptApproveProcessor extends AbstractApproveProcessor<ErpS
         if (isApproved(receipt)) {
             return receipt;
         }
+        SoDGuard.assertApproverNotCreator(getCreatedBy(receipt), currentUserId(), sodErrorCode());
         processor.validateNotCancelled(receipt, context);
         validateTransitionForApprove(receipt, context);
         processor.validateBusinessRulesForApprove(receipt, context);
@@ -101,5 +104,10 @@ public class ErpSalReceiptApproveProcessor extends AbstractApproveProcessor<ErpS
     @Override
     protected String approvedStatus() {
         return ErpSalConstants.APPROVE_STATUS_APPROVED;
+    }
+
+    @Override
+    protected ErrorCode sodErrorCode() {
+        return ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR;
     }
 }

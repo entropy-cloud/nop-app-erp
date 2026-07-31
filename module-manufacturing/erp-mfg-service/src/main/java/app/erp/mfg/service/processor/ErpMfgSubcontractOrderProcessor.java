@@ -12,6 +12,7 @@ import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.posting.MfgPostingExecutor;
 import app.erp.mfg.service.posting.SubcontractPostingDispatcher;
+import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.auth.IUserContext;
@@ -386,6 +387,7 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     protected void doApprove(ErpMfgSubcontractOrder order, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(order.getCreatedBy(), currentUserId(), ErpMfgErrors.ERR_MFG_APPROVER_IS_CREATOR);
         order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
         order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());

@@ -13,6 +13,7 @@ import app.erp.sal.dao.entity.ErpSalDeliveryLine;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.common.service.SoDGuard;
 import app.erp.sal.service.entity.CreditLimitChecker;
 import app.erp.sal.service.entity.DeliveryStockMoveBuilder;
 import io.nop.api.core.auth.IUserContext;
@@ -202,6 +203,7 @@ public class ErpSalDeliveryProcessor {
     }
 
     protected void doApprove(ErpSalDelivery delivery, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(delivery.getCreatedBy(), currentUserId(), ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR);
         ErpInvStockMove move = triggerOutgoingMove(delivery, context);
         applyPostingResult(delivery, move);
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);

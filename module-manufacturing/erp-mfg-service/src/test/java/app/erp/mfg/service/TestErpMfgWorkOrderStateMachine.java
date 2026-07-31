@@ -7,10 +7,12 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.auth.core.login.UserContextImpl;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -190,6 +192,27 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
         ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__reportCompletion", req);
         assertEquals(ErpMfgErrors.ERR_OVER_REPORT.getErrorCode(), resp.getCode(),
                 "超产（未启用超产配置）应拒绝");
+    }
+
+    // ---------- SoD 守卫（plan 2026-07-31-1023-2 R3.3，Pattern B facade doApprove） ----------
+
+    @Test
+    public void testSoDCreatorCannotSelfApprove() {
+        seedComponentBomAndStock(bd("5"), bd("5"));
+        Long woId = seedWorkOrder("WO-SOD");
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED, statusOf(woId), "提交应成功 → SUBMITTED");
+
+        // 创建人尝试自审：置 IUserContext.userId = 单据 createdBy
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        String creator = wo.getCreatedBy();
+        UserContextImpl uc = new UserContextImpl();
+        uc.setUserId(creator);
+        IUserContext.set(uc);
+
+        ApiResponse<?> bad = rpc(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgErrors.ERR_MFG_APPROVER_IS_CREATOR.getErrorCode(), bad.getCode(),
+                "创建人=审核人 → SoD 守卫应抛 ERR_MFG_APPROVER_IS_CREATOR");
     }
 
     // ---------- helpers ----------

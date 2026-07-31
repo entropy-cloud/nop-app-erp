@@ -11,6 +11,7 @@ import app.erp.sal.dao.entity.ErpSalInvoiceLine;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.common.service.SoDGuard;
 import app.erp.sal.service.entity.CreditLimitChecker;
 import app.erp.sal.service.posting.SalInvoicePostingDispatcher;
 import io.nop.api.core.auth.IUserContext;
@@ -191,6 +192,7 @@ public class ErpSalInvoiceProcessor {
     }
 
     protected void doApprove(ErpSalInvoice invoice, boolean posted, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(invoice.getCreatedBy(), currentUserId(), ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR);
         invoice.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         invoice.setApprovedBy(currentUserId());
         invoice.setApprovedAt(CoreMetrics.currentTimestamp());

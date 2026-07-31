@@ -13,6 +13,7 @@ import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.entity.ThreeWayMatcher;
 import app.erp.pur.service.posting.PurInvoicePostingDispatcher;
+import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -180,6 +181,7 @@ public class ErpPurInvoiceProcessor {
     }
 
     protected void doApprove(ErpPurInvoice invoice, boolean posted, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(invoice.getCreatedBy(), currentUserId(), ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
         invoice.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         invoice.setApprovedBy(currentUserId());
         invoice.setApprovedAt(CoreMetrics.currentTimestamp());

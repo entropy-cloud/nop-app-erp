@@ -12,6 +12,7 @@ import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.entity.PaymentSettler;
 import app.erp.pur.service.posting.PurPaymentPostingDispatcher;
+import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -233,6 +234,7 @@ public class ErpPurPaymentProcessor {
     }
 
     protected void doApprove(ErpPurPayment payment, boolean posted, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(payment.getCreatedBy(), currentUserId(), ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
         payment.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         payment.setApprovedBy(currentUserId());
         payment.setApprovedAt(CoreMetrics.currentTimestamp());

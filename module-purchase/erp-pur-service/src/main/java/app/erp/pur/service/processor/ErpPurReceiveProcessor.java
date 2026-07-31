@@ -11,6 +11,7 @@ import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.common.service.SoDGuard;
 import app.erp.pur.service.entity.ReceiveStockMoveBuilder;
 import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionTrigger;
@@ -179,6 +180,7 @@ public class ErpPurReceiveProcessor {
     }
 
     protected void doApprove(ErpPurReceive receive, ErpInvStockMove move, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(receive.getCreatedBy(), currentUserId(), ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
         receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         receive.setApprovedBy(currentUserId());
         receive.setApprovedAt(CoreMetrics.currentTimestamp());

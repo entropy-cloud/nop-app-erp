@@ -4,6 +4,7 @@ import app.erp.fin.dao.entity.ErpFinEmployeeAdvance;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.EmployeeAdvancePostingDispatcher;
+import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.entity.ErpMdEmployee;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.exceptions.NopException;
@@ -160,6 +161,7 @@ public class ErpFinEmployeeAdvanceProcessor {
     }
 
     protected ErpFinEmployeeAdvance doApprove(String id, ErpFinEmployeeAdvance advance, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(advance.getCreatedBy(), currentUserId(), ErpFinErrors.ERR_FIN_APPROVER_IS_CREATOR);
         boolean posted = postingDispatcher.tryPost(advance);
         advance = reload(id);
         advance.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);

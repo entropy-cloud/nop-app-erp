@@ -265,4 +265,11 @@ public interface ErpSalErrors {
     ErrorCode ERR_SAL_PRICE_LIST_PRIORITY_AMBIGUOUS = ErrorCode.define("erp.err.sal.price-list.priority-ambiguous",
             "价格清单 {entityName} 同 customerGroupCode+partnerId 维度存在多份相同优先级清单，取价可能产生歧义（warn-only，不阻断保存）",
             ErpDateRangeOverlapValidator.ARG_ENTITY_NAME);
+
+    // --- 职责分离（SoD）守卫（plan 2026-07-31-1023-2 R3.3）：审核人与单据创建人不可为同一人 ---
+    String ARG_USER_ID = "userId";
+
+    ErrorCode ERR_SAL_APPROVER_IS_CREATOR = ErrorCode.define("erp.err.sal.approver-is-creator",
+            "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
+            ARG_USER_ID);
 }

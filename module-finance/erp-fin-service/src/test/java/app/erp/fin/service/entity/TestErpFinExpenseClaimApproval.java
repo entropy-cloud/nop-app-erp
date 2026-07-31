@@ -4,11 +4,14 @@ import app.erp.fin.biz.IErpFinExpenseClaimBiz;
 import app.erp.fin.dao.entity.ErpFinExpenseClaim;
 import app.erp.fin.dao.entity.ErpFinExpenseClaimLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import app.erp.md.dao.entity.ErpMdEmployee;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
+import io.nop.auth.core.login.UserContextImpl;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -124,6 +127,27 @@ public class TestErpFinExpenseClaimApproval extends JunitAutoTestCase {
     public void testRejectAmountMismatch() {
         Long claimId = seedClaimAmountMismatch("EC-APP-008");
         assertTrue(submitForApproval(claimId).getStatus() != 0, "价税合计不匹配：submit 被前置校验拒绝");
+    }
+
+    // ---------- SoD 守卫（plan 2026-07-31-1023-2 R3.3，Pattern B facade doApprove） ----------
+
+    @Test
+    public void testSoDCreatorCannotSelfApprove() {
+        Long claimId = seedValidClaim("EC-SOD-001", ErpFinConstants.APPROVE_STATUS_UNSUBMITTED, null);
+        assertEquals(0, submitForApproval(claimId).getStatus(), "提交应成功 → SUBMITTED");
+
+        // 创建人尝试自审：置 IUserContext.userId = 单据 createdBy
+        String creator = fetchClaim(claimId).getCreatedBy();
+        setApproverUserContext(creator);
+        ApiResponse<?> bad = approve(claimId);
+        assertEquals(ErpFinErrors.ERR_FIN_APPROVER_IS_CREATOR.getErrorCode(), bad.getCode(),
+                "创建人=审核人 → SoD 守卫应抛 ERR_FIN_APPROVER_IS_CREATOR");
+    }
+
+    private void setApproverUserContext(String userId) {
+        UserContextImpl uc = new UserContextImpl();
+        uc.setUserId(userId);
+        IUserContext.set(uc);
     }
 
     // ---------- rpc helpers ----------

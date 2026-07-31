@@ -10,6 +10,7 @@ import app.erp.sal.dao.entity.ErpSalReturn;
 import app.erp.sal.dao.entity.ErpSalReturnLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.common.service.SoDGuard;
 import app.erp.sal.service.entity.ReturnQtyValidator;
 import app.erp.sal.service.entity.ReturnRefundOrchestrator;
 import app.erp.sal.service.entity.ReturnStockMoveBuilder;
@@ -190,6 +191,7 @@ public class ErpSalReturnProcessor {
     }
 
     protected void doApprove(ErpSalReturn returnOrder, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(returnOrder.getCreatedBy(), currentUserId(), ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR);
         triggerIncomingMove(returnOrder, context);
         ormTemplate.flushSession();
 

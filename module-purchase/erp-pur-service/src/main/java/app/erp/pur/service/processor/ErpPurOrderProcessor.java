@@ -12,6 +12,7 @@ import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -306,6 +307,7 @@ public class ErpPurOrderProcessor {
     }
 
     protected void doApprove(ErpPurOrder order, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(order.getCreatedBy(), currentUserId(), ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());
         order.setApprovedAt(CoreMetrics.currentTimestamp());

@@ -4,6 +4,7 @@ import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractApproveProcessor;
+import io.nop.api.core.exceptions.ErrorCode;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -93,5 +94,10 @@ public class ErpPurOrderApproveProcessor extends AbstractApproveProcessor<ErpPur
     @Override
     protected String approvedStatus() {
         return ErpPurConstants.APPROVE_STATUS_APPROVED;
+    }
+
+    @Override
+    protected ErrorCode sodErrorCode() {
+        return ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR;
     }
 }

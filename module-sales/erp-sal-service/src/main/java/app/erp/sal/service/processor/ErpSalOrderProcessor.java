@@ -11,6 +11,7 @@ import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.common.service.SoDGuard;
 import app.erp.sal.service.entity.CreditLimitChecker;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
@@ -181,6 +182,7 @@ public class ErpSalOrderProcessor {
     }
 
     protected void doApprove(ErpSalOrder order, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(order.getCreatedBy(), currentUserId(), ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR);
         order.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());
         order.setApprovedAt(CoreMetrics.currentTimestamp());

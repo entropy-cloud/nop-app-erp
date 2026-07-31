@@ -247,4 +247,11 @@ public interface ErpPurErrors {
     ErrorCode ERR_SUPPLIER_NOT_APPROVED = ErrorCode.define("erp.err.pur.supplier-not-approved",
             "供应商 {partnerId} 准入资格 {standing}，不可作为询价/报价收件人",
             ARG_PARTNER_ID, ARG_STANDING);
+
+    // --- 职责分离（SoD）守卫（plan 2026-07-31-1023-2 R3.3）：审核人与单据创建人不可为同一人 ---
+    String ARG_USER_ID = "userId";
+
+    ErrorCode ERR_PUR_APPROVER_IS_CREATOR = ErrorCode.define("erp.err.pur.approver-is-creator",
+            "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
+            ARG_USER_ID);
 }

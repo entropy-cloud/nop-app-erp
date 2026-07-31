@@ -13,6 +13,7 @@ import app.erp.mfg.service.genealogy.BatchGenealogyWriter;
 import app.erp.mfg.service.posting.ProductionVarianceDispatcher;
 import app.erp.mfg.service.workorder.KitAvailabilityChecker;
 import app.erp.mfg.service.workorder.KitAvailabilityResult;
+import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.notify.biz.IErpSysNotificationBiz;
@@ -342,6 +343,7 @@ public class ErpMfgWorkOrderProcessor {
     }
 
     protected void doApprove(ErpMfgWorkOrder wo, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(wo.getCreatedBy(), currentUserId(), ErpMfgErrors.ERR_MFG_APPROVER_IS_CREATOR);
         wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED);
         wo.setApprovedBy(currentUserId());
