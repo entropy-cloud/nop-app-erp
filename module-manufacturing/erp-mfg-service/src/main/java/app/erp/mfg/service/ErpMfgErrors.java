@@ -25,6 +25,7 @@ public interface ErpMfgErrors {
     String ARG_JOB_CARD_ID = "jobCardId";
     String ARG_COMPLETED_QTY = "completedQty";
     String ARG_PLANNED_QTY = "plannedQty";
+    String ARG_ISSUE_ID = "issueId";
 
     String ARG_MRP_PLAN_ID = "mrpPlanId";
     String ARG_MRP_LINE_ID = "mrpLineId";
@@ -103,6 +104,11 @@ public interface ErpMfgErrors {
             "erp.err.mfg.issue.lines-empty",
             "领料单[{workOrderCode}]无领料行，无法确认出库",
             ARG_WORK_ORDER_CODE);
+
+    ErrorCode ERR_ISSUE_NOT_FOUND = ErrorCode.define(
+            "erp.err.mfg.issue.not-found",
+            "领料单不存在: {issueId}",
+            ARG_ISSUE_ID);
 
     ErrorCode ERR_MATERIAL_ISSUE_NOT_POSTED = ErrorCode.define(
             "erp.err.mfg.issue.not-posted",
