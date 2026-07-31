@@ -27,4 +27,13 @@
         <constructor-arg index="0" ref="app.erp.notify.service.dispatch.NotificationRecipientResolver"/>
         <constructor-arg index="1" ref="app.erp.notify.service.dispatch.NotificationMergeCoordinator"/>
     </bean>
+
+    <!-- per-mutation Processor beans (R6.7，processor-extension-pattern.md 每 mutation 一 Processor)：
+         notify 域 3 须拆 mutation 全部拆为独立 Processor；域专属抽象基类（Abstract*）不注册。 -->
+    <bean id="app.erp.notify.service.processor.ErpSysNotificationNotifyProcessor"
+          class="app.erp.notify.service.processor.ErpSysNotificationNotifyProcessor"/>
+    <bean id="app.erp.notify.service.processor.ErpSysNotificationMarkReadProcessor"
+          class="app.erp.notify.service.processor.ErpSysNotificationMarkReadProcessor"/>
+    <bean id="app.erp.notify.service.processor.ErpSysNotificationMarkAllReadProcessor"
+          class="app.erp.notify.service.processor.ErpSysNotificationMarkAllReadProcessor"/>
 </beans>
