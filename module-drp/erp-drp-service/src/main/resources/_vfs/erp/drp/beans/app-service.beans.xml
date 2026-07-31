@@ -34,4 +34,30 @@
           class="app.erp.drp.service.simulation.SimulationDrpEngine"/>
     <bean id="app.erp.drp.service.simulation.DrpSimulationVersionComparator"
           class="app.erp.drp.service.simulation.DrpSimulationVersionComparator"/>
+
+    <!-- per-mutation Cat-B D-mutation Processor beans (R6.7)：每 mutation 独立自包含 Processor。
+         原 BizModel 内联 mutation body VERBATIM 迁移 + CrudBizModel 管道方法替换为 raw dao 等价；下游可经 Delta beans.xml 同名 bean id 覆盖。 -->
+    <bean id="app.erp.drp.service.processor.ErpDrpPlanRunDrpProcessor"
+          class="app.erp.drp.service.processor.ErpDrpPlanRunDrpProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpDrpPlanResetToDraftProcessor"
+          class="app.erp.drp.service.processor.ErpDrpPlanResetToDraftProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpDrpPlanApprovePlanProcessor"
+          class="app.erp.drp.service.processor.ErpDrpPlanApprovePlanProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpDrpScenarioRunSimulationProcessor"
+          class="app.erp.drp.service.processor.ErpDrpScenarioRunSimulationProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpDrpScenarioPromoteToFormalPlanProcessor"
+          class="app.erp.drp.service.processor.ErpDrpScenarioPromoteToFormalPlanProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpDrpLineReleaseLineProcessor"
+          class="app.erp.drp.service.processor.ErpDrpLineReleaseLineProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpDrpLineReleaseApprovedProcessor"
+          class="app.erp.drp.service.processor.ErpDrpLineReleaseApprovedProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpDrpLineRejectLineProcessor"
+          class="app.erp.drp.service.processor.ErpDrpLineRejectLineProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpDrpLineCancelLineProcessor"
+          class="app.erp.drp.service.processor.ErpDrpLineCancelLineProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpInvDrpSafetyStockCalcCalculateProcessor"
+          class="app.erp.drp.service.processor.ErpInvDrpSafetyStockCalcCalculateProcessor"/>
+    <bean id="app.erp.drp.service.processor.ErpInvDrpSafetyStockCalcConfirmWritebackProcessor"
+          class="app.erp.drp.service.processor.ErpInvDrpSafetyStockCalcConfirmWritebackProcessor"/>
+
 </beans>
