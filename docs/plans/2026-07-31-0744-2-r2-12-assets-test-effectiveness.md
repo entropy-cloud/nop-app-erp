@@ -1,6 +1,6 @@
 # 2026-07-31-0744-2-r2-12-assets-test-effectiveness R2.12 assets 折旧/Processor 链路测试有效性（残差补强）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-31
 > Source: `docs/backlog/audit-remediation-roadmap.md` §MR2 R2.12（P1-MA4-014 残差）
 > Related: `docs/audits/arm-index.md`（P1-MA4-014/013）、R1.16（业财悬挂统一裁决，已落地 DepreciationPostingDispatcher.dispatchFailureAlert 告警半侧）、R1.28（并发 UK 幂等，已落地并发首次折旧测试）、R2.10/R2.13（同族测试有效性残差范式）
@@ -51,22 +51,22 @@ P1-MA4-014（finding 写于 R1.16/R1.28 之前）的子项 (b) 并发双计 + (d
 
 ### Phase 1 - 折旧悬挂态 reverseApprove + 批量隔离 + 悬挂状态 + 非零残值算术（G1+G2+G3+G4）
 
-Status: planned
+Status: completed
 Targets: `module-assets/erp-ast-service/src/test/java/app/erp/ast/service/TestErpAstDepreciation.java`、`TestErpAstPostingReverse.java`（新增测试方法 + 对应 `_cases/` 快照/seed）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: R2.0 done（已 done）；R1.16 done（告警半侧）；R1.28 done（并发双计）
 
-- [ ] Add: G1 posted=false 窗口 reverseApprove 不对称测试 — seed 资本化/处置 schedule 于 posted=false 悬挂态（确定性诱导 post 失败：无会计期间/清空科目映射），调 reverseApprove，断言资产卡片/状态回滚行为（回滚 or 不回滚——按实际运行时行为断言并锁定为回归基线，闭合 P1-MA2-060 测试可见性）
+- [x] Add: G1 posted=false 窗口 reverseApprove 不对称测试 — seed 资本化/处置 schedule 于 posted=false 悬挂态（确定性诱导 post 失败：无会计期间/清空科目映射），调 reverseApprove，断言资产卡片/状态回滚行为（回滚 or 不回滚——按实际运行时行为断言并锁定为回归基线，闭合 P1-MA2-060 测试可见性）
   - Skill: `nop-testing`
-- [ ] Add: G2 批量折旧部分失败隔离测试 — seed 多资产 batch 含一确定性失败资产（如失败 GL post / 坏 category 配置），调 executeBatchDepreciation，断言其余资产仍计提 + processed 计数仅含成功 + 无整批事务回滚
+- [x] Add: G2 批量折旧部分失败隔离测试 — seed 多资产 batch 含一确定性失败资产（如失败 GL post / 坏 category 配置），调 executeBatchDepreciation，断言其余资产仍计提 + processed 计数仅含成功 + 无整批事务回滚
   - Skill: `nop-testing`
-- [ ] Add: G3 折旧 tryPost 悬挂状态测试 — 确定性诱导 DepreciationPostingDispatcher.tryPost 失败（seed 无会计期间/清空科目映射，复用 `TestErpInvPosting:107-115` 无 mock 范式），断言 ErpAstDepreciationSchedule 行 posted=false + voucherId=null 持续 + 后续重跑 executeDepreciation 自愈路径（闭合 P1-MA4-013 测试可见性）
+- [x] Add: G3 折旧 tryPost 悬挂状态测试 — 确定性诱导 DepreciationPostingDispatcher.tryPost 失败（seed 无会计期间/清空科目映射，复用 `TestErpInvPosting:107-115` 无 mock 范式），断言 ErpAstDepreciationSchedule 行 posted=false + voucherId=null 持续 + 后续重跑 executeDepreciation 自愈路径（闭合 P1-MA4-013 测试可见性）
   - Skill: `nop-testing`
-- [ ] Add: G4 非零残值折旧算术测试 — seed 残值≠0（如原值 12000/残值 2000），直线法多期折旧，断言末期净值=残值（2000）非 0 + 截断分支触发（DepreciationCalculator:71-73 nbv−amount<residual 截断）+ 已达残值返 0 分支（:32-34 nbv≤residual→ZERO）
+- [x] Add: G4 非零残值折旧算术测试 — seed 残值≠0（如原值 12000/残值 2000），直线法多期折旧，断言末期净值=残值（2000）非 0 + 截断分支触发（DepreciationCalculator:71-73 nbv−amount<residual 截断）+ 已达残值返 0 分支（:32-34 nbv≤residual→ZERO）
   - Skill: `nop-testing`
-- [ ] Proof: Phase 1 新增测试方法首次 RECORDING 后切 CHECKING 全绿
+- [x] Proof: Phase 1 新增测试方法首次 RECORDING 后切 CHECKING 全绿
   - `mvn test -pl module-assets/erp-ast-service -Dtest=TestErpAstDepreciation,TestErpAstPostingReverse`
   - Skill: none
 
@@ -74,8 +74,8 @@ Exit Criteria:
 
 > assets 悬挂态 reverseApprove + 批量隔离 + 悬挂状态 + 非零残值算术补齐，使 4 类缺陷对测试可观测。
 
-- [ ] G1（posted=false 窗口 reverseApprove 行为锁定）+ G2（批量失败隔离）+ G3（schedule posted=false+voucherId=null+自愈）+ G4（末期净值=残值非 0 + 截断/返 0 分支）测试在 CHECKING 模式绿
-- [ ] 若 G1/G3 测试发现与 owner doc 不符的真实行为缺陷，升级为独立 Fix 计划并记录（不静默改生产代码）
+- [x] G1（posted=false 窗口 reverseApprove 行为锁定）+ G2（批量失败隔离）+ G3（schedule posted=false+voucherId=null+自愈）+ G4（末期净值=残值非 0 + 截断/返 0 分支）测试在 CHECKING 模式绿
+- [x] 若 G1/G3 测试发现与 owner doc 不符的真实行为缺陷，升级为独立 Fix 计划并记录（不静默改生产代码）
 
 ## Draft Review Record
 
@@ -85,14 +85,14 @@ Exit Criteria:
 
 > 纯测试新增，无生产代码/ORM/view.xml 变更。完整仓库验证在此处一次。
 
-- [ ] 范围内行为完成（G1 + G2 + G3 + G4 残差测试方法落地并 CHECKING 绿）
-- [ ] 相关文档对齐（若 G1-G4 测试发现与 owner doc 不符的真实缺陷，已升级为独立 Fix 计划并记录；否则无 owner-doc 更新）
-- [ ] 已运行验证：`mvn clean install -DskipTests` 全绿 + `mvn test -pl module-assets/erp-ast-service` 全绿（含新测试）+ `bash docs/audits/nop-compliance-checker.sh` 零新增命中
-- [ ] 无范围内项目降级为 deferred/follow-up（发现的真实行为缺陷按不可降级规则升级 Fix，不降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（G1 + G2 + G3 + G4 残差测试方法落地并 CHECKING 绿）
+- [x] 相关文档对齐（若 G1-G4 测试发现与 owner doc 不符的真实缺陷，已升级为独立 Fix 计划并记录；否则无 owner-doc 更新）
+- [x] 已运行验证：`mvn clean install -DskipTests` 全绿 + `mvn test -pl module-assets/erp-ast-service` 全绿（含新测试）+ `bash docs/audits/nop-compliance-checker.sh` 零新增命中
+- [x] 无范围内项目降级为 deferred/follow-up（发现的真实行为缺陷按不可降级规则升级 Fix，不降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -104,13 +104,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <结束审计后填写>
+Status Note: 全 done。G1-G4 残差测试落地并 CHECKING 绿，零生产代码变更，行为与 owner-doc `depreciation-and-posting.md §7.2` 一致（无需升级 Fix）。独立结束审计 PASS（10 项全绿，无阻塞项）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: independent closure audit subagent（新会话 ses_04a53875dffepLyNWc8KvTTcZp）
+- Evidence: 10 项核验全 PASS — 零生产代码 diff（仅 src/test/ + docs）、G1 不对称断言（TestErpAstPostingReverse:117-168 资产保持 IN_SERVICE/计划保持 PENDING）、G2 批量隔离 processed==1（TestErpAstDepreciation:233-272）、G3 悬挂+自愈（:283-323）、G4 非零残值+截断/返 0 分支（:334-368 + TestDepreciationCalculator）、Tests run: 104 Failures: 0 Errors: 0、BUILD SUCCESS、零新增合规命中、roadmap R2.12 done、owner-doc §7.2 行为一致。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- P1-MA4-013 折旧 dispatcher 自动重试/告警闭环升级（沿用 R1.16 Deferred successor，属代码修复非测试，G3 仅测悬挂可观测）——触发条件：人工批准保护区域 owner doc 后，独立 plan。
