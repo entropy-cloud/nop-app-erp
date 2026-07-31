@@ -18,9 +18,9 @@
 | R1b | dao().updateEntity (BizModel) | 🔴 高 | 0 |
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 17 |
-| R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 37 |
-| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 315 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1228 |
+| R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 38 |
+| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 325 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1250 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 28 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -32,7 +32,7 @@
 | R11 | Processor 重复状态判断方法 | 🟡 中 | 0 |
 | R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 69 |
 | R12b | 共享内核 import PostingEvent | 🟡 中 | 66 |
-| R12c | 共享内核 import AcctSchemaResolver | 🟡 中 | 38 |
+| R12c | 共享内核 import AcctSchemaResolver | 🟡 中 | 40 |
 
 > R9（doReverseApprove 一致性）为**定性校验**（输出 ✓/✗ 清单，无数值计数），故不在上表参与数值门控；其输出仍由 checker 打印供人工查阅，CI 不对其做数值断言。
 
@@ -225,6 +225,26 @@ R2a/R2b/R2d 不变（per-mutation Processor 不是 BizModel 故不命中 R2a/R2b
 
 **门控方向**：与 F8 同向收紧。quality 缺陷 > 0 或 strict 缺口 > 0 = 回归。**门控状态**：F15 checker **已接入 CI workflow** `.github/workflows/compliance.yml` i18n job（R3.7，plan 2026-07-31-1439-3），live guard——defects>0 或 gaps>0 触发 CI red。接入对齐 F8 `nop-compliance-checker.sh` 的 CI 接入模式（option b「gate 逻辑在 CI / checker 保持纯 reporter」），由 A7.4（CI/guard 激活审计）裁决落地。本基线登记为 A7.4 持续激活验证的起点。
 
+## V.2 compliance 漂移裁决注记（plan 2026-07-31-1705-2，MV V.2）
+
+`2026-07-31-1705-2`（全量验证基线：构建/测试绿 + compliance 基线裁决）是审计-修复回归起点的**首次全量绿基线复确认**。V.1 落定：`mvn clean install -DskipTests` BUILD SUCCESS（**156 reactor 模块**——权威值，消除 154 vs 156 口径分歧，落定=156）+ `mvn test` 0 failures / 0 errors / **1 skipped**（`ErpAllWebPagesCollectTest @Disabled`）+ 单测方法计数 **1902**（M0 锚点 1756 +146，由 post-M0 R3.x/R3.4 等深化计划新增测试）。
+
+V.2 对照 M0 锚点（HEAD=`0e963531d`，全 19 规则 0 漂移）复跑 `nop-compliance-checker.sh` 实测 5 项 post-M0 漂移（与 A7.4 §残留风险「5 项 post-audit compliance 回归」一致，A7.4 已将其 deferred 至 MV V.2）。本计划逐项裁决：每项 `Fix`（驱动回降）或 `adjudicated baseline-raise`（经独立计划裁决上调 BASELINE 块 + per-site 证据）。**操作性门控基线**=本文件 §BASELINE 机器可读块（已含历次裁决性上调）；「M0 基线」是概念锚点。
+
+**裁决汇总表**：
+
+| 规则 | M0 锚点 | 漂移后实测 | 裁决 | 新基线 | 来源 |
+|------|---------|-----------|------|--------|------|
+| R5（@Inject private） | 0 | 1 | **Fix**（移除 `private` → 包级可见） | **0**（不变） | `module-common-service/.../auth/ErpRoleDataAuthChecker.java:30-31` `@Inject private IDaoProvider` 违反 Nop IoC 硬规则「@Inject 字段不能 private」（AGENTS.md + nop-backend-dev skill 反模式表），Fix 候选正确。R3.4（plan `2026-07-31-1023-3`）新增的 config-gated checker 经 `@Inject` 字段注入 IDaoProvider，setter `setDaoProvider` 并存——移除 `private` 修正为包级可见（对齐全仓 9+ 处 `@Inject IDaoProvider daoProvider;` 范式），setter 保持不变。Fix 后 checker 复跑 R5=0。 |
+| R2a（BizModel daoFor(ErpMd*)） | 37 | 38 | **baseline-raise** | **38** | +1 唯一新站点=`module-finance/.../entity/ErpFinReconciliationBizModel.java:460` `daoProvider().daoFor(ErpMdSubject.class)`（finance→master-data 跨域只读：AR/AP 核销读取 master-data 核算科目）。git diff 证伪另两候选文件（ErpB2bAsnBizModel:267 / ErpFinBudgetCommitmentBizModel:122,131）为 pre-existing（锚点已存在，仅行号偏移）。合法跨域只读聚合。 |
+| R2b（BizModel daoFor(Erp*)） | 315 | 325 | **baseline-raise** | **325** | 净 +10（+11 新增 −1 移除）。per-site 分类（git diff `*BizModel.java` 锚点..HEAD）：新增站点绝大多数为**同域内部实体访问**（b2b/ErpB2bAsnBizModel×2−1 / cs/ErpCsTicketBizModel ErpCsTicketAction / fin/ErpFinDashboardBizModel+ErpFinReportBizModel ErpFinAccountingPeriod / fin/ErpFinIntercompanyMatchBizModel ErpFinIntercompanyMatch+ErpFinVoucher+ErpFinVoucherLine / hr/ErpHrShiftAssignmentBizModel / log/ErpLogShipmentBizModel）+ 1 跨域只读（fin→md ErpMdSubject，即 R2a +1）。R2b 计数口径含同域 daoFor（checker 不区分同/跨域），均为合法 IDaoProvider 范式，无 B 类「重构为 I*Biz」候选。 |
+| R2c（全生产代码 daoFor() 总量） | 1228 | 1250 | **baseline-raise** | **1250** | 净 +22（=R2b BizModel 增量 + 非 BizModel 生产代码增量）。非 BizModel 新站点 per-site（git diff 锚点..HEAD，排除 test/）：aps/ErpApsSchedulingProcessor(ErpApsCapacityReservation 同域) / ast/ErpAstDepreciationScheduleProcessor(ErpAstAsset 同域) / common/ErpOrgIsolationQueryTransformer(generic daoFor(clazz)，R1.29 org 隔离查询转换器 config-gated) / fin/ErpFinBudgetScenarioProcessor(ErpFinAccountingPeriodStatus+ErpFinAccountingPeriod 同域×2) / fin/ErpFinDeferredPostingRetryHelper(ErpFinPostingException 同域) / fin/ErpFinAccountingPeriodProcessor(ErpFinPostingException 同域 + ErpInvLandedCost 跨域只读[期间结账清理] + ErpAstDepreciationSchedule 跨域只读[期间结账折旧清理]) / inv/StandardCostingStrategy(ErpInvStockMoveLine 同域) / inv/StockMoveBookkeeper(ErpInvStockBalance 同域×2) / mnt/ScheduleDueGenerator(ErpMntVisit 同域) / mfg/MrpReleaseService(ErpMfgMrpPlanLine 同域) / pur/PaymentSettler(ErpPurInvoiceLine 同域)。跨域站点（fin→inv/ast 期间结账清理只读）经 owner doc `processor-extension-pattern.md` + `data-dependency-matrix.md` 背书，无 B 类候选。 |
+| R12c（共享内核 import AcctSchemaResolver） | 38 | 40 | **baseline-raise** | **40** | +2 新 import（git diff 锚点..HEAD）：`module-finance/.../dashboard/ErpFinDashboardBizModel.java` + `module-finance/.../report/ErpFinReportBizModel.java`（finance 看板/报表消费共享内核 `AcctSchemaResolver` 做账套感知聚合）。R12 已裁决基线 69/66/38 为共享内核代价（`shared-kernel-extraction-decision.md` 背书分支 (b) 显式共享内核），新增消费方为合法跨域引用。 |
+
+**Fix 实施**：`ErpRoleDataAuthChecker.java:30-31` `private IDaoProvider daoProvider` → 包级可见（移除 `private`），`mvn compile -pl module-common-service -am` BUILD SUCCESS，checker 复跑 R5=0。
+
+**BASELINE 块更新**：仅 R2a/R2b/R2c/R12c 裁决性上调（R5 因 Fix 不动=0）。checker 复跑全 19 规则 actual ≤ baseline（零裸漂移）。本裁决纪律对齐 `1057-1`/`1057-2`/`0823-1` 先例（基线漂移须经独立计划裁决 + per-site 证据 + 显式更新 BASELINE 块）。逐站点 file:line + git 提交时间线核实见 `docs/plans/2026-07-31-1705-2-v1-v2-full-build-test-and-compliance-baseline-adjudication.md` §Phase 2 Evidence。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -234,9 +254,9 @@ R1a: 0
 R1b: 0
 R1c: 0
 R1d: 17
-R2a: 37
-R2b: 315
-R2c: 1228
+R2a: 38
+R2b: 325
+R2c: 1250
 R2d: 28
 R3: 5
 R4: 0
@@ -248,7 +268,7 @@ R10: 6
 R11: 0
 R12a: 69
 R12b: 66
-R12c: 38
+R12c: 40
 ```
 
 ## 关联
