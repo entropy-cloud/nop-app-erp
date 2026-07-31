@@ -278,14 +278,14 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| R6.0 | P1-MA3-062 类别 A 26 facade + 类别 B 89 BizModel/244 mutation triage 汇总，逐方法判定豁免边界并展开为 per-domain 修复工作项行 | todo | `docs/audits/arm-index.md` P1-MA3-062 | MR5 done | `docs/skills/nop-backend-dev` |
-| R6.1 | **finance 域** D-mutation + 内联多步拆分（类别 A facade：ErpFinPostingProcessor / ErpFinAccountingPeriodProcessor / ErpFinNotesPayable/Receivable / ErpFinBudgetScenario / ErpFinBadDebt 等 + 类别 B 内联 BizModel） | todo | `docs/design/finance/` + `docs/architecture/processor-extension-pattern.md` | R6.0 | `docs/skills/nop-backend-dev` |
-| R6.2 | **manufacturing 域**（ErpMfgWorkOrderProcessor / ErpMfgSubcontractOrderProcessor / ErpMfgJobCard / ErpMfgScheduleToJobCard + 内联 BizModel） | todo | `docs/design/manufacturing/` | R6.0 | `docs/skills/nop-backend-dev` |
-| R6.3 | **assets 域**（ErpAstCip / ErpAstDepreciationSchedule / ErpAstInventory / ErpAstMaintenance / ErpAstDisposal / ErpAstMerge / ErpAstSplit / ErpAstValueAdjustment / ErpAstAssetCapitalization 等 10 facade + 内联 BizModel） | todo | `docs/design/assets/` | R6.0 | `docs/skills/nop-backend-dev` |
-| R6.4 | **inventory 域**（ErpInvStockMove / ErpInvOwnershipTransfer / ErpInvLandedCost / ErpInvCostAdjust + 内联 BizModel） | todo | `docs/design/inventory/` | R6.0 | `docs/skills/nop-backend-dev` |
-| R6.5 | **purchase + sales 域**（ErpPurPayment/Requisition + ErpSalQuotation/Receipt 残留 D-mutation facade + 内联 BizModel） | todo | `docs/design/{purchase,sales}/` | R6.0 | `docs/skills/nop-backend-dev` |
-| R6.6 | **扩展域批次 1**（crm + projects + quality + cs：ErpCrmConversion/Lead + ErpPrjProjectSettlement + 内联 BizModel 含 ErpCsTicket/ErpQaNonConformance/ErpQaRecall 等） | todo | 各域 owner doc | R6.0 | `docs/skills/nop-backend-dev` |
-| R6.7 | **扩展域批次 2**（hr + contract + b2b + logistics + maintenance + aps + drp + notify + master-data：内联 BizModel 含 ErpHrSalarySimulation/ErpB2bEdiDoc/ErpCtSignatureRequest/ErpLogShipment 等） | todo | 各域 owner doc | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.0 | P1-MA3-062 类别 A 23 facade/92 D-mutation + 类别 B 88 BizModel/234 内联 mutation triage 汇总，逐方法判定豁免边界并展开为 per-domain 修复工作项行（须拆 256 = catB 164 + catA 92；合法豁免 77 = catB 70 + catA 7 查询；详见下方"R6.0 triage 展开"） | done | `docs/audits/arm-index.md` P1-MA3-062；豁免登记 `docs/architecture/processor-per-mutation-exemption-registry.md` | MR5 done | `docs/skills/nop-backend-dev` |
+| R6.1 | **finance 域** — 须拆 **41**（类别 B 21 + 类别 A 20，4 facade：ErpFinAccountingPeriodProcessor / ErpFinBadDebtProcessor / ErpFinNotesPayableProcessor / ErpFinNotesReceivableProcessor）；合法豁免 1（`ErpFinPostingException.manualEntry`）。注：原行枚举的 ErpFinPostingProcessor/ErpFinBudgetScenario 经 R6.0 实仓复核为 S-mutation 纯委托 facade（D=0），非类别 A 违规，从本行移除。详见"R6.0 triage 展开 §R6.1" | todo | `docs/design/finance/` + `docs/architecture/processor-extension-pattern.md` | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.2 | **manufacturing 域** — 须拆 **31**（类别 B 11 + 类别 A 20，4 facade：ErpMfgWorkOrderProcessor / ErpMfgSubcontractOrderProcessor / ErpMfgJobCardProcessor / ErpMfgScheduleToJobCardProcessor）；合法豁免 2（ErpMfgForecast approve/cancel）。详见"R6.0 triage 展开 §R6.2" | todo | `docs/design/manufacturing/` | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.3 | **assets 域** — 须拆 **22**（全部类别 A，4 facade：ErpAstCipProcessor / ErpAstDepreciationScheduleProcessor / ErpAstInventoryProcessor / ErpAstMaintenanceProcessor）；类别 B 0（assets BizModel 已委托 Processor）；合法豁免 0。注：原行枚举的 ErpAstDisposal/Merge/Split/ValueAdjustment/AssetCapitalization 经 R6.0 实仓复核为 S-mutation 纯委托 facade（D=0），非类别 A 违规，从本行移除（10→4 facade）。详见"R6.0 triage 展开 §R6.3" | todo | `docs/design/assets/` | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.4 | **inventory 域** — 须拆 **14**（类别 B 1 + 类别 A 13，4 facade：ErpInvStockMoveProcessor / ErpInvOwnershipTransferProcessor / ErpInvLandedCostProcessor / ErpInvCostAdjustProcessor）；合法豁免 3（ErpInvStockTake startTake/completeTake/cancelTake）。详见"R6.0 triage 展开 §R6.4" | todo | `docs/design/inventory/` | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.5 | **purchase + sales 域** — 须拆 **7**（类别 B 1 + 类别 A 6，3 facade：ErpPurPaymentProcessor / ErpSalQuotationProcessor / ErpSalReceiptProcessor）；合法豁免 2（ErpPurQuotation.cancel / ErpPurRfq.cancel）。另 R6.8 backstop 单 D-mutation facade：ErpPurRequisitionProcessor.convertToOrder。详见"R6.0 triage 展开 §R6.5" | todo | `docs/design/{purchase,sales}/` | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.6 | **扩展域批次 1**（crm + projects + quality + cs）— 须拆 **57**（类别 B 49 + 类别 A 8，3 facade：ErpCrmConversionProcessor / ErpCrmLeadProcessor / ErpPrjProjectSettlementProcessor）；合法豁免 26。详见"R6.0 triage 展开 §R6.6" | todo | 各域 owner doc | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.7 | **扩展域批次 2**（hr + contract + b2b + logistics + maintenance + aps + drp + notify + master-data）— 须拆 **84**（类别 B 81 + 类别 A 3，1 facade：ErpApsSchedulingProcessor）；合法豁免 36。详见"R6.0 triage 展开 §R6.7" | todo | 各域 owner doc | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.8 | **全量验证 + 完成判据核验**：R6.1-R6.7 完成后跑全量 `mvn clean install -DskipTests` + `mvn test` + compliance checker；核验"所有模块所有 BizModel 的 @BizMutation 调用满足 `processor-extension-pattern.md`"（grep 校验零裸 facade 多 mutation + 零 ≥3 步内联 mutation）；更新 arm-index P1-MA3-062 状态 + 重录快照（类名变） | todo | `docs/architecture/processor-extension-pattern.md` | R6.1-R6.7 done | `docs/skills/nop-backend-dev` |
 
 > **迁移模式**（与 MR5 一致 + D-mutation 适配）：
@@ -297,6 +297,362 @@
 > **测试策略**：每个 R6.x plan 迁移后跑分域 `mvn test`。类名变化致堆栈跟踪漂移→重录快照为新基线。无内联 xbiz `<source>` 转换（类别 B 是 Java→Processor，非脚本→Java），故无 `NopScriptError`→`NopException` 语义等价问题。
 >
 > **与 MR5 的关系**：MR5（S-mutation）状态保持 done——S-mutation 拆分确实完成且正确。MR6 仅承接 MR5 范围定义遗漏的 D-mutation + 内联多步。**不在本 milestone 重开 MR5**。
+
+
+### R6.0 triage 展开 — per-R6.x 须拆清单（plan 2026-07-31-2109-1）
+
+> 下列为 R6.0 对 P1-MA3-062 的逐方法 triage 结果。**须拆** mutation 按 `<Entity><Method>Processor` 命名新建 Processor（类别 A 从 facade 复制实现 + facade 瘦身/删除；类别 B BizModel 改 `@Inject` + 单行委托）。**合法豁免**清单见 `docs/architecture/processor-per-mutation-exemption-registry.md`。汇总：须拆 256（类别 B 164 + 类别 A 92）+ 合法豁免 77（类别 B 70 + 类别 A 7 查询）+ R6.8 backstop 单 D-mutation facade 1。
+
+
+#### R6.1（finance）— 须拆 41（类别 B 21 + 类别 A 20，4 facade）
+
+**类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
+
+- `ErpFinAccountingPeriodProcessor`（delete-after-extract）：
+  - `ErpFinAccountingPeriod.preCheck` → `ErpFinAccountingPeriodPreCheckProcessor`
+  - `ErpFinAccountingPeriod.closePeriod` → `ErpFinAccountingPeriodClosePeriodProcessor`
+  - `ErpFinAccountingPeriod.finalizePeriod` → `ErpFinAccountingPeriodFinalizePeriodProcessor`
+  - `ErpFinAccountingPeriod.generateNextYearPeriods` → `ErpFinAccountingPeriodGenerateNextYearPeriodsProcessor`
+  - `ErpFinAccountingPeriod.reverseClose` → `ErpFinAccountingPeriodReverseCloseProcessor`
+  - `ErpFinAccountingPeriod.openPeriod` → `ErpFinAccountingPeriodOpenPeriodProcessor`
+- `ErpFinBadDebtProcessor`（slim-to-S-delegation-facade）：
+  - `ErpFinBadDebt.writeOff` → `ErpFinBadDebtWriteOffProcessor`
+  - `ErpFinBadDebt.recover` → `ErpFinBadDebtRecoverProcessor`
+  - `ErpFinBadDebt.submit` → `ErpFinBadDebtSubmitProcessor`
+- `ErpFinNotesPayableProcessor`（delete-after-extract）：
+  - `ErpFinNotesPayable.issue` → `ErpFinNotesPayableIssueProcessor`
+  - `ErpFinNotesPayable.honor` → `ErpFinNotesPayableHonorProcessor`
+  - `ErpFinNotesPayable.dishonor` → `ErpFinNotesPayableDishonorProcessor`
+  - `ErpFinNotesPayable.writeOff` → `ErpFinNotesPayableWriteOffProcessor`
+- `ErpFinNotesReceivableProcessor`（delete-after-extract）：
+  - `ErpFinNotesReceivable.receive` → `ErpFinNotesReceivableReceiveProcessor`
+  - `ErpFinNotesReceivable.discount` → `ErpFinNotesReceivableDiscountProcessor`
+  - `ErpFinNotesReceivable.endorse` → `ErpFinNotesReceivableEndorseProcessor`
+  - `ErpFinNotesReceivable.collect` → `ErpFinNotesReceivableCollectProcessor`
+  - `ErpFinNotesReceivable.honor` → `ErpFinNotesReceivableHonorProcessor`
+  - `ErpFinNotesReceivable.dishonor` → `ErpFinNotesReceivableDishonorProcessor`
+  - `ErpFinNotesReceivable.writeOff` → `ErpFinNotesReceivableWriteOffProcessor`
+
+**类别 B 内联 `@BizMutation` 须拆（BizModel → `<Entity><Method>Processor` + 单行委托）：**
+
+| Entity.method | 目标 Processor |
+|---------------|---------------|
+| ErpFinBankReconciliationBizModel.generate | ErpFinBankReconciliationGenerateProcessor |
+| ErpFinBankReconciliationBizModel.post | ErpFinBankReconciliationPostProcessor |
+| ErpFinBankReconciliationBizModel.reverse | ErpFinBankReconciliationReverseProcessor |
+| ErpFinBankStatementBizModel.importStatement | ErpFinBankStatementImportStatementProcessor |
+| ErpFinBankStatementLineBizModel.autoMatch | ErpFinBankStatementLineAutoMatchProcessor |
+| ErpFinBankStatementLineBizModel.manualMatch | ErpFinBankStatementLineManualMatchProcessor |
+| ErpFinCashForecastBizModel.refreshForecast | ErpFinCashForecastRefreshForecastProcessor |
+| ErpFinConsolidationEliminationBizModel.generateEliminationCandidates | ErpFinConsolidationEliminationGenerateEliminationCandidatesProcessor |
+| ErpFinConsolidationEliminationBizModel.postElimination | ErpFinConsolidationEliminationPostEliminationProcessor |
+| ErpFinCreditFacilityBizModel.accrueInterest | ErpFinCreditFacilityAccrueInterestProcessor |
+| ErpFinCreditFacilityBizModel.releaseCredit | ErpFinCreditFacilityReleaseCreditProcessor |
+| ErpFinCreditFacilityBizModel.reserveCredit | ErpFinCreditFacilityReserveCreditProcessor |
+| ErpFinGlMappingRuleBizModel.refreshCache | ErpFinGlMappingRuleRefreshCacheProcessor |
+| ErpFinIntercompanyMatchBizModel.runMatching | ErpFinIntercompanyMatchRunMatchingProcessor |
+| ErpFinPostingExceptionBizModel.ignore | ErpFinPostingExceptionIgnoreProcessor |
+| ErpFinPostingExceptionBizModel.retry | ErpFinPostingExceptionRetryProcessor |
+| ErpFinReconciliationBizModel.create | ErpFinReconciliationCreateProcessor |
+| ErpFinReconciliationBizModel.post | ErpFinReconciliationPostProcessor |
+| ErpFinReconciliationBizModel.reverse | ErpFinReconciliationReverseProcessor |
+| ErpFinReconciliationBizModel.runAutoReconciliation | ErpFinReconciliationRunAutoReconciliationProcessor |
+| ErpFinVoucherTemplateBizModel.renderTemplate | ErpFinVoucherTemplateRenderTemplateProcessor |
+
+#### R6.2（manufacturing）— 须拆 31（类别 B 11 + 类别 A 20，4 facade）
+
+**类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
+
+- `ErpMfgJobCardProcessor`（delete-after-extract）：
+  - `ErpMfgJobCard.startJob` → `ErpMfgJobCardStartJobProcessor`
+  - `ErpMfgJobCard.recordWork` → `ErpMfgJobCardRecordWorkProcessor`
+  - `ErpMfgJobCard.submitJob` → `ErpMfgJobCardSubmitJobProcessor`
+  - `ErpMfgJobCard.completeJob` → `ErpMfgJobCardCompleteJobProcessor`
+  - `ErpMfgJobCard.holdJob` → `ErpMfgJobCardHoldJobProcessor`
+  - `ErpMfgJobCard.resumeJob` → `ErpMfgJobCardResumeJobProcessor`
+  - `ErpMfgJobCard.cancelJob` → `ErpMfgJobCardCancelJobProcessor`
+- `ErpMfgScheduleToJobCardProcessor`（delete-after-extract）：
+  - `ErpMfgScheduleToJobCard.generateJobCardsFromSchedule` → `ErpMfgScheduleToJobCardGenerateJobCardsFromScheduleProcessor`
+  - `ErpMfgScheduleToJobCard.generatePendingJobCards` → `ErpMfgScheduleToJobCardGeneratePendingJobCardsProcessor`
+  - ≤2 步查询（:45 豁免，保留）：findWorkOrdersPendingJobCards
+- `ErpMfgSubcontractOrderProcessor`（slim-to-S-delegation-facade）：
+  - `ErpMfgSubcontractOrder.issueMaterials` → `ErpMfgSubcontractOrderIssueMaterialsProcessor`
+  - `ErpMfgSubcontractOrder.issueMaterials` → `ErpMfgSubcontractOrderIssueMaterialsProcessor`
+  - `ErpMfgSubcontractOrder.receiveFinished` → `ErpMfgSubcontractOrderReceiveFinishedProcessor`
+  - `ErpMfgSubcontractOrder.receiveFinished` → `ErpMfgSubcontractOrderReceiveFinishedProcessor`
+  - `ErpMfgSubcontractOrder.postProcessingFee` → `ErpMfgSubcontractOrderPostProcessingFeeProcessor`
+  - `ErpMfgSubcontractOrder.reverseCompletion` → `ErpMfgSubcontractOrderReverseCompletionProcessor`
+- `ErpMfgWorkOrderProcessor`（slim-to-S-delegation-facade）：
+  - `ErpMfgWorkOrder.start` → `ErpMfgWorkOrderStartProcessor`
+  - `ErpMfgWorkOrder.stop` → `ErpMfgWorkOrderStopProcessor`
+  - `ErpMfgWorkOrder.resume` → `ErpMfgWorkOrderResumeProcessor`
+  - `ErpMfgWorkOrder.close` → `ErpMfgWorkOrderCloseProcessor`
+  - `ErpMfgWorkOrder.reportCompletion` → `ErpMfgWorkOrderReportCompletionProcessor`
+  - ≤2 步查询（:45 豁免，保留）：checkAvailability
+
+**类别 B 内联 `@BizMutation` 须拆（BizModel → `<Entity><Method>Processor` + 单行委托）：**
+
+| Entity.method | 目标 Processor |
+|---------------|---------------|
+| ErpMfgBomBizModel.rollupCost | ErpMfgBomRollupCostProcessor |
+| ErpMfgCostVarianceBizModel.calculateVariances | ErpMfgCostVarianceCalculateVariancesProcessor |
+| ErpMfgCrpLoadBizModel.calculateLoad | ErpMfgCrpLoadCalculateLoadProcessor |
+| ErpMfgMaterialIssueBizModel.confirm | ErpMfgMaterialIssueConfirmProcessor |
+| ErpMfgMaterialIssueBizModel.reverseConfirm | ErpMfgMaterialIssueReverseConfirmProcessor |
+| ErpMfgMrpPlanBizModel.runMrp | ErpMfgMrpPlanRunMrpProcessor |
+| ErpMfgMrpPlanLineBizModel.releasePurchaseRequest | ErpMfgMrpPlanLineReleasePurchaseRequestProcessor |
+| ErpMfgMrpPlanLineBizModel.releaseSubcontractRequest | ErpMfgMrpPlanLineReleaseSubcontractRequestProcessor |
+| ErpMfgMrpPlanLineBizModel.releaseWorkRequest | ErpMfgMrpPlanLineReleaseWorkRequestProcessor |
+| ErpMfgMrpScenarioBizModel.promoteToFormalPlan | ErpMfgMrpScenarioPromoteToFormalPlanProcessor |
+| ErpMfgMrpScenarioBizModel.runSimulation | ErpMfgMrpScenarioRunSimulationProcessor |
+
+#### R6.3（assets）— 须拆 22（类别 B 0 + 类别 A 22，4 facade）
+
+**类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
+
+- `ErpAstCipProcessor`（delete-after-extract）：
+  - `ErpAstCip.startConstruction` → `ErpAstCipStartConstructionProcessor`
+  - `ErpAstCip.addCostItem` → `ErpAstCipAddCostItemProcessor`
+  - `ErpAstCip.addProgressBilling` → `ErpAstCipAddProgressBillingProcessor`
+  - `ErpAstCip.transferToAsset` → `ErpAstCipTransferToAssetProcessor`
+  - `ErpAstCip.reverseTransfer` → `ErpAstCipReverseTransferProcessor`
+  - ≤2 步查询（:45 豁免，保留）：findCostItems, findProgressBillings
+- `ErpAstDepreciationScheduleProcessor`（delete-after-extract）：
+  - `ErpAstDepreciationSchedule.executeDepreciation` → `ErpAstDepreciationScheduleExecuteDepreciationProcessor`
+  - `ErpAstDepreciationSchedule.executeBatchDepreciation` → `ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor`
+  - `ErpAstDepreciationSchedule.reverseDepreciation` → `ErpAstDepreciationScheduleReverseDepreciationProcessor`
+  - `ErpAstDepreciationSchedule.recalculateForCapitalizationMaintenance` → `ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenanceProcessor`
+- `ErpAstInventoryProcessor`（slim-to-S-delegation-facade）：
+  - `ErpAstInventory.createInventory` → `ErpAstInventoryCreateInventoryProcessor`
+  - `ErpAstInventory.submitForCount` → `ErpAstInventorySubmitForCountProcessor`
+  - `ErpAstInventory.reconcile` → `ErpAstInventoryReconcileProcessor`
+  - `ErpAstInventory.processVariance` → `ErpAstInventoryProcessVarianceProcessor`
+  - `ErpAstInventory.post` → `ErpAstInventoryPostProcessor`
+  - `ErpAstInventory.reverse` → `ErpAstInventoryReverseProcessor`
+- `ErpAstMaintenanceProcessor`（slim-to-S-delegation-facade）：
+  - `ErpAstMaintenance.createMaintenance` → `ErpAstMaintenanceCreateMaintenanceProcessor`
+  - `ErpAstMaintenance.submit` → `ErpAstMaintenanceSubmitProcessor`
+  - `ErpAstMaintenance.startWork` → `ErpAstMaintenanceStartWorkProcessor`
+  - `ErpAstMaintenance.completeWork` → `ErpAstMaintenanceCompleteWorkProcessor`
+  - `ErpAstMaintenance.decideTreatment` → `ErpAstMaintenanceDecideTreatmentProcessor`
+  - `ErpAstMaintenance.post` → `ErpAstMaintenancePostProcessor`
+  - `ErpAstMaintenance.reverse` → `ErpAstMaintenanceReverseProcessor`
+
+#### R6.4（inventory）— 须拆 14（类别 B 1 + 类别 A 13，4 facade）
+
+**类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
+
+- `ErpInvCostAdjustProcessor`（slim-to-S-delegation-facade）：
+  - `ErpInvCostAdjust.applyCostAdjust` → `ErpInvCostAdjustApplyCostAdjustProcessor`
+  - `ErpInvCostAdjust.reverseCostAdjust` → `ErpInvCostAdjustReverseCostAdjustProcessor`
+- `ErpInvLandedCostProcessor`（slim-to-S-delegation-facade）：
+  - `ErpInvLandedCost.generateFreightLandedCost` → `ErpInvLandedCostGenerateFreightLandedCostProcessor`
+  - ≤2 步查询（:45 豁免，保留）：allocatePreview
+- `ErpInvOwnershipTransferProcessor`（slim-to-S-delegation-facade）：
+  - `ErpInvOwnershipTransfer.confirm` → `ErpInvOwnershipTransferConfirmProcessor`
+  - `ErpInvOwnershipTransfer.done` → `ErpInvOwnershipTransferDoneProcessor`
+- `ErpInvStockMoveProcessor`（slim-to-S-delegation-facade）：
+  - `ErpInvStockMove.generateMove` → `ErpInvStockMoveGenerateMoveProcessor`
+  - `ErpInvStockMove.confirm` → `ErpInvStockMoveConfirmProcessor`
+  - `ErpInvStockMove.complete` → `ErpInvStockMoveCompleteProcessor`
+  - `ErpInvStockMove.reverse` → `ErpInvStockMoveReverseProcessor`
+  - `ErpInvStockMove.forwardTrace` → `ErpInvStockMoveForwardTraceProcessor`
+  - `ErpInvStockMove.backwardTrace` → `ErpInvStockMoveBackwardTraceProcessor`
+  - `ErpInvStockMove.returnTrace` → `ErpInvStockMoveReturnTraceProcessor`
+  - `ErpInvStockMove.batchTrace` → `ErpInvStockMoveBatchTraceProcessor`
+  - ≤2 步查询（:45 豁免，保留）：findByRelatedBill
+
+**类别 B 内联 `@BizMutation` 须拆（BizModel → `<Entity><Method>Processor` + 单行委托）：**
+
+| Entity.method | 目标 Processor |
+|---------------|---------------|
+| ErpInvTransferOrderBizModel.confirm | ErpInvTransferOrderConfirmProcessor |
+
+#### R6.5（purchase+sales）— 须拆 7（类别 B 1 + 类别 A 6，3 facade）
+
+**类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
+
+- `ErpPurPaymentProcessor`（slim-to-S-delegation-facade）：
+  - `ErpPurPayment.settle` → `ErpPurPaymentSettleProcessor`
+  - `ErpPurPayment.reverseSettlement` → `ErpPurPaymentReverseSettlementProcessor`
+- `ErpSalQuotationProcessor`（slim-to-S-delegation-facade）：
+  - `ErpSalQuotation.confirmCustomerAccepted` → `ErpSalQuotationConfirmCustomerAcceptedProcessor`
+  - `ErpSalQuotation.convertToOrder` → `ErpSalQuotationConvertToOrderProcessor`
+- `ErpSalReceiptProcessor`（slim-to-S-delegation-facade）：
+  - `ErpSalReceipt.settle` → `ErpSalReceiptSettleProcessor`
+  - `ErpSalReceipt.reverseSettlement` → `ErpSalReceiptReverseSettlementProcessor`
+
+**类别 B 内联 `@BizMutation` 须拆（BizModel → `<Entity><Method>Processor` + 单行委托）：**
+
+| Entity.method | 目标 Processor |
+|---------------|---------------|
+| ErpPurSupplierScorecardBizModel.finalizeScorecard | ErpPurSupplierScorecardFinalizeScorecardProcessor |
+
+#### R6.6（crm+projects+quality+cs）— 须拆 57（类别 B 49 + 类别 A 8，3 facade）
+
+**类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
+
+- `ErpCrmConversionProcessor`（delete-after-extract）：
+  - `ErpCrmConversion.convertToCustomer` → `ErpCrmConversionConvertToCustomerProcessor`
+  - `ErpCrmConversion.convertToQuotation` → `ErpCrmConversionConvertToQuotationProcessor`
+  - ≤2 步查询（:45 豁免，保留）：getCreatedOpportunity
+- `ErpCrmLeadProcessor`（slim-to-S-delegation-facade）：
+  - `ErpCrmLead.qualify` → `ErpCrmLeadQualifyProcessor`
+  - `ErpCrmLead.lose` → `ErpCrmLeadLoseProcessor`
+  - `ErpCrmLead.moveStage` → `ErpCrmLeadMoveStageProcessor`
+- `ErpPrjProjectSettlementProcessor`（slim-to-S-delegation-facade）：
+  - `ErpPrjProjectSettlement.createSettlement` → `ErpPrjProjectSettlementCreateSettlementProcessor`
+  - `ErpPrjProjectSettlement.submit` → `ErpPrjProjectSettlementSubmitProcessor`
+  - `ErpPrjProjectSettlement.reverseSettlement` → `ErpPrjProjectSettlementReverseSettlementProcessor`
+
+**类别 B 内联 `@BizMutation` 须拆（BizModel → `<Entity><Method>Processor` + 单行委托）：**
+
+| Entity.method | 目标 Processor |
+|---------------|---------------|
+| ErpCrmEventBizModel.cancel | ErpCrmEventCancelProcessor |
+| ErpCrmEventBizModel.complete | ErpCrmEventCompleteProcessor |
+| ErpCrmForecastBizModel.refreshForecast | ErpCrmForecastRefreshForecastProcessor |
+| ErpCrmForecastPeriodBizModel.closePeriod | ErpCrmForecastPeriodClosePeriodProcessor |
+| ErpCrmLeadFunnelBizModel.refreshFunnel | ErpCrmLeadFunnelRefreshFunnelProcessor |
+| ErpCrmLeadScoreBizModel.recalculateScore | ErpCrmLeadScoreRecalculateScoreProcessor |
+| ErpCrmLeadSequenceProgressBizModel.advanceStep | ErpCrmLeadSequenceProgressAdvanceStepProcessor |
+| ErpCrmLeadSequenceProgressBizModel.assignSequence | ErpCrmLeadSequenceProgressAssignSequenceProcessor |
+| ErpCrmLeadSequenceProgressBizModel.switchSequence | ErpCrmLeadSequenceProgressSwitchSequenceProcessor |
+| ErpCrmProductConfiguratorBizModel.generateQuote | ErpCrmProductConfiguratorGenerateQuoteProcessor |
+| ErpCrmQuotaBizModel.distributeAnnualQuota | ErpCrmQuotaDistributeAnnualQuotaProcessor |
+| ErpCrmTerritoryBizModel.createChild | ErpCrmTerritoryCreateChildProcessor |
+| ErpCrmTerritoryBizModel.moveTerritory | ErpCrmTerritoryMoveTerritoryProcessor |
+| ErpCsCannedResponseBizModel.applyCannedResponse | ErpCsCannedResponseApplyCannedResponseProcessor |
+| ErpCsCatalogFulfillmentBizModel.executeFulfillmentSteps | ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor |
+| ErpCsEntitlementBizModel.deactivateExpiredEntitlements | ErpCsEntitlementDeactivateExpiredEntitlementsProcessor |
+| ErpCsServiceCatalogItemBizModel.createFromCatalog | ErpCsServiceCatalogItemCreateFromCatalogProcessor |
+| ErpCsSurveyBizModel.createSurvey | ErpCsSurveyCreateSurveyProcessor |
+| ErpCsTicketBizModel.matchAndAttachSla | ErpCsTicketMatchAndAttachSlaProcessor |
+| ErpCsTicketBizModel.reopen | ErpCsTicketReopenProcessor |
+| ErpCsTicketBizModel.resolve | ErpCsTicketResolveProcessor |
+| ErpCsTicketBizModel.scanOverdueTickets | ErpCsTicketScanOverdueTicketsProcessor |
+| ErpPrjCostCollectionBizModel.refreshExpenseCost | ErpPrjCostCollectionRefreshExpenseCostProcessor |
+| ErpPrjProjectBizModel.closeProject | ErpPrjProjectCloseProjectProcessor |
+| ErpPrjProjectBizModel.holdProject | ErpPrjProjectHoldProjectProcessor |
+| ErpPrjProjectBizModel.refreshActualCost | ErpPrjProjectRefreshActualCostProcessor |
+| ErpPrjProjectBizModel.resumeProject | ErpPrjProjectResumeProjectProcessor |
+| ErpPrjProjectPnlBizModel.refreshPnl | ErpPrjProjectPnlRefreshPnlProcessor |
+| ErpPrjTimesheetBizModel.approve | ErpPrjTimesheetApproveProcessor |
+| ErpPrjTimesheetBizModel.cancel | ErpPrjTimesheetCancelProcessor |
+| ErpPrjTimesheetBizModel.submit | ErpPrjTimesheetSubmitProcessor |
+| ErpQaInspectionBizModel.batchPassInspection | ErpQaInspectionBatchPassInspectionProcessor |
+| ErpQaInspectionBizModel.createForBusinessBill | ErpQaInspectionCreateForBusinessBillProcessor |
+| ErpQaInspectionBizModel.failInspection | ErpQaInspectionFailInspectionProcessor |
+| ErpQaInspectionBizModel.passInspection | ErpQaInspectionPassInspectionProcessor |
+| ErpQaInspectionBizModel.recordResult | ErpQaInspectionRecordResultProcessor |
+| ErpQaNonConformanceBizModel.postNcr | ErpQaNonConformancePostNcrProcessor |
+| ErpQaNonConformanceBizModel.resolve | ErpQaNonConformanceResolveProcessor |
+| ErpQaNonConformanceBizModel.reverseNcr | ErpQaNonConformanceReverseNcrProcessor |
+| ErpQaNonConformanceBizModel.upgradeToRecall | ErpQaNonConformanceUpgradeToRecallProcessor |
+| ErpQaRecallBizModel.close | ErpQaRecallCloseProcessor |
+| ErpQaRecallBizModel.generateReturns | ErpQaRecallGenerateReturnsProcessor |
+| ErpQaRecallBizModel.locateTargets | ErpQaRecallLocateTargetsProcessor |
+| ErpQaRecallBizModel.notifyCustomers | ErpQaRecallNotifyCustomersProcessor |
+| ErpQaRecallBizModel.register | ErpQaRecallRegisterProcessor |
+| ErpQaSpcCapabilityBizModel.calculateCapability | ErpQaSpcCapabilityCalculateCapabilityProcessor |
+| ErpQaSpcChartBizModel.collectSamples | ErpQaSpcChartCollectSamplesProcessor |
+| ErpQaSpcChartBizModel.evaluateRules | ErpQaSpcChartEvaluateRulesProcessor |
+| ErpQaSpcChartBizModel.recalculateControlLimit | ErpQaSpcChartRecalculateControlLimitProcessor |
+
+#### R6.7（hr+contract+b2b+logistics+maintenance+aps+drp+notify+master-data）— 须拆 84（类别 B 81 + 类别 A 3，1 facade）
+
+**类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
+
+- `ErpApsSchedulingProcessor`（delete-after-extract）：
+  - `ErpApsScheduling.scheduleForward` → `ErpApsSchedulingScheduleForwardProcessor`
+  - `ErpApsScheduling.scheduleBackward` → `ErpApsSchedulingScheduleBackwardProcessor`
+  - `ErpApsScheduling.insertRushOrder` → `ErpApsSchedulingInsertRushOrderProcessor`
+
+**类别 B 内联 `@BizMutation` 须拆（BizModel → `<Entity><Method>Processor` + 单行委托）：**
+
+| Entity.method | 目标 Processor |
+|---------------|---------------|
+| ErpB2bAsnBizModel.createReceiveFromAsn | ErpB2bAsnCreateReceiveFromAsnProcessor |
+| ErpB2bAsnBizModel.handleInboundWebhook | ErpB2bAsnHandleInboundWebhookProcessor |
+| ErpB2bAsnBizModel.matchPurchaseOrder | ErpB2bAsnMatchPurchaseOrderProcessor |
+| ErpB2bAsnBizModel.retryMatch | ErpB2bAsnRetryMatchProcessor |
+| ErpB2bEdiDocBizModel.createInbound | ErpB2bEdiDocCreateInboundProcessor |
+| ErpB2bEdiDocBizModel.createOutbound | ErpB2bEdiDocCreateOutboundProcessor |
+| ErpCtContractBizModel.activate | ErpCtContractActivateProcessor |
+| ErpCtContractBizModel.amend | ErpCtContractAmendProcessor |
+| ErpCtContractVersionBizModel.signVersion | ErpCtContractVersionSignVersionProcessor |
+| ErpCtInvoicePlanBizModel.triggerDuePlans | ErpCtInvoicePlanTriggerDuePlansProcessor |
+| ErpCtInvoicePlanBizModel.triggerInvoice | ErpCtInvoicePlanTriggerInvoiceProcessor |
+| ErpCtRebateAgreementBizModel.runAccrual | ErpCtRebateAgreementRunAccrualProcessor |
+| ErpCtRebateSettlementBizModel.postSettlement | ErpCtRebateSettlementPostSettlementProcessor |
+| ErpCtSignatureRequestBizModel.handleSignatureCallback | ErpCtSignatureRequestHandleSignatureCallbackProcessor |
+| ErpCtSignatureRequestBizModel.initSignatureRequest | ErpCtSignatureRequestInitSignatureRequestProcessor |
+| ErpCtSignatureRequestBizModel.queryAndUpdateStatus | ErpCtSignatureRequestQueryAndUpdateStatusProcessor |
+| ErpDrpLineBizModel.cancelLine | ErpDrpLineCancelLineProcessor |
+| ErpDrpLineBizModel.rejectLine | ErpDrpLineRejectLineProcessor |
+| ErpDrpLineBizModel.releaseApproved | ErpDrpLineReleaseApprovedProcessor |
+| ErpDrpLineBizModel.releaseLine | ErpDrpLineReleaseLineProcessor |
+| ErpDrpPlanBizModel.approvePlan | ErpDrpPlanApprovePlanProcessor |
+| ErpDrpPlanBizModel.resetToDraft | ErpDrpPlanResetToDraftProcessor |
+| ErpDrpPlanBizModel.runDrp | ErpDrpPlanRunDrpProcessor |
+| ErpDrpScenarioBizModel.promoteToFormalPlan | ErpDrpScenarioPromoteToFormalPlanProcessor |
+| ErpDrpScenarioBizModel.runSimulation | ErpDrpScenarioRunSimulationProcessor |
+| ErpHrAttendanceBizModel.clockIn | ErpHrAttendanceClockInProcessor |
+| ErpHrAttendanceBizModel.clockOut | ErpHrAttendanceClockOutProcessor |
+| ErpHrDevelopmentPlanBizModel.generateDevelopmentPlan | ErpHrDevelopmentPlanGenerateDevelopmentPlanProcessor |
+| ErpHrDevelopmentPlanBizModel.updatePlanItemStatus | ErpHrDevelopmentPlanUpdatePlanItemStatusProcessor |
+| ErpHrEmployeeBizModel.transferEmployee | ErpHrEmployeeTransferEmployeeProcessor |
+| ErpHrEmployeeAssessmentBizModel.completeAssessment | ErpHrEmployeeAssessmentCompleteAssessmentProcessor |
+| ErpHrEmploymentContractBizModel.expireOverdueContracts | ErpHrEmploymentContractExpireOverdueContractsProcessor |
+| ErpHrGapAnalysisBizModel.refreshGapAnalysis | ErpHrGapAnalysisRefreshGapAnalysisProcessor |
+| ErpHrGapAnalysisBizModel.refreshGapAnalysisWithLevels | ErpHrGapAnalysisRefreshGapAnalysisWithLevelsProcessor |
+| ErpHrLeaveRequestBizModel.approve | ErpHrLeaveRequestApproveProcessor |
+| ErpHrLeaveRequestBizModel.cancel | ErpHrLeaveRequestCancelProcessor |
+| ErpHrLeaveRequestBizModel.submit | ErpHrLeaveRequestSubmitProcessor |
+| ErpHrRecruitmentBizModel.hire | ErpHrRecruitmentHireProcessor |
+| ErpHrSalaryBizModel.calculateSalary | ErpHrSalaryCalculateSalaryProcessor |
+| ErpHrSalaryBizModel.generateBankFile | ErpHrSalaryGenerateBankFileProcessor |
+| ErpHrSalaryBizModel.markPaid | ErpHrSalaryMarkPaidProcessor |
+| ErpHrSalaryBizModel.runPayroll | ErpHrSalaryRunPayrollProcessor |
+| ErpHrSalarySimulationBizModel.adjustItem | ErpHrSalarySimulationAdjustItemProcessor |
+| ErpHrSalarySimulationBizModel.applyBatchAdjustment | ErpHrSalarySimulationApplyBatchAdjustmentProcessor |
+| ErpHrSalarySimulationBizModel.convertToFormal | ErpHrSalarySimulationConvertToFormalProcessor |
+| ErpHrSalarySimulationBizModel.createSimulation | ErpHrSalarySimulationCreateSimulationProcessor |
+| ErpHrShiftBizModel.calcAttendance | ErpHrShiftCalcAttendanceProcessor |
+| ErpHrShiftBizModel.onLeaveApproved | ErpHrShiftOnLeaveApprovedProcessor |
+| ErpHrShiftBizModel.onLeaveCancelled | ErpHrShiftOnLeaveCancelledProcessor |
+| ErpHrShiftAssignmentBizModel.assignBatch | ErpHrShiftAssignmentAssignBatchProcessor |
+| ErpHrShiftAssignmentBizModel.assignSingle | ErpHrShiftAssignmentAssignSingleProcessor |
+| ErpHrShiftAssignmentBizModel.copyFromPeriod | ErpHrShiftAssignmentCopyFromPeriodProcessor |
+| ErpHrShiftRotationPatternBizModel.generateRotation | ErpHrShiftRotationPatternGenerateRotationProcessor |
+| ErpHrShiftSwapRequestBizModel.approve | ErpHrShiftSwapRequestApproveProcessor |
+| ErpHrShiftSwapRequestBizModel.submit | ErpHrShiftSwapRequestSubmitProcessor |
+| ErpInvDrpSafetyStockCalcBizModel.calculate | ErpInvDrpSafetyStockCalcCalculateProcessor |
+| ErpInvDrpSafetyStockCalcBizModel.confirmWriteback | ErpInvDrpSafetyStockCalcConfirmWritebackProcessor |
+| ErpLogShipmentBizModel.advise | ErpLogShipmentAdviseProcessor |
+| ErpLogShipmentBizModel.cancelShipment | ErpLogShipmentCancelShipmentProcessor |
+| ErpLogShipmentBizModel.completeShipment | ErpLogShipmentCompleteShipmentProcessor |
+| ErpLogShipmentBizModel.handleTrackingWebhook | ErpLogShipmentHandleTrackingWebhookProcessor |
+| ErpLogShipmentBizModel.save | ErpLogShipmentSaveProcessor |
+| ErpLogShipmentBizModel.scanForPolling | ErpLogShipmentScanForPollingProcessor |
+| ErpMdCurrencyBizModel.refreshRatesFromApi | ErpMdCurrencyRefreshRatesFromApiProcessor |
+| ErpMntDowntimeEntryBizModel.complete | ErpMntDowntimeEntryCompleteProcessor |
+| ErpMntDowntimeEntryBizModel.record | ErpMntDowntimeEntryRecordProcessor |
+| ErpMntRequestBizModel.accept | ErpMntRequestAcceptProcessor |
+| ErpMntRequestBizModel.cancel | ErpMntRequestCancelProcessor |
+| ErpMntRequestBizModel.complete | ErpMntRequestCompleteProcessor |
+| ErpMntRequestBizModel.rejectRequest | ErpMntRequestRejectRequestProcessor |
+| ErpMntRequestBizModel.startRepair | ErpMntRequestStartRepairProcessor |
+| ErpMntScheduleBizModel.generateDueVisits | ErpMntScheduleGenerateDueVisitsProcessor |
+| ErpMntSparePartUsageBizModel.confirm | ErpMntSparePartUsageConfirmProcessor |
+| ErpMntSparePartUsageBizModel.reverseConfirm | ErpMntSparePartUsageReverseConfirmProcessor |
+| ErpMntVisitBizModel.cancel | ErpMntVisitCancelProcessor |
+| ErpMntVisitBizModel.complete | ErpMntVisitCompleteProcessor |
+| ErpMntVisitBizModel.schedule | ErpMntVisitScheduleProcessor |
+| ErpMntVisitBizModel.start | ErpMntVisitStartProcessor |
+| ErpSysNotificationBizModel.markAllRead | ErpSysNotificationMarkAllReadProcessor |
+| ErpSysNotificationBizModel.markRead | ErpSysNotificationMarkReadProcessor |
+| ErpSysNotificationBizModel.notify | ErpSysNotificationNotifyProcessor |
 
 ## 框架/平台复用
 
