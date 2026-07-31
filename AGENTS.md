@@ -154,7 +154,7 @@ codegen 后阶段规则：
 - Java 模块路径、包名、视图路径均已存在（`module-<domain>/erp-<short>-{dao,meta,service,web,app,api}/`）
 - ORM 模型变更后用 `mvn clean install -DskipTests` 触发增量重新生成（不要重跑 `nop-cli gen`）
 - 设计与讨论工作仍应集中在 `<domain>/model/*.orm.xml`（权威源）以及 `docs/design/`、`docs/architecture/`、`docs/requirements/`
-- `docs/context/project-context.md` 中的验证命令已可执行（154 reactor 模块全绿基线见 `docs/testing/known-good-baselines.md`）
+- `docs/context/project-context.md` 中的验证命令已可执行（156 reactor 模块全绿基线见 `docs/testing/known-good-baselines.md`）
 
 ## Nop Platform 特定规则
 

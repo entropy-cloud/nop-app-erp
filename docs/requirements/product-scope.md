@@ -55,7 +55,7 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 - 用户：实施方（基于基线定制各领域 ERP）、开发人员（完善模型与生成链路、BizModel/xbiz 与端到端验证）
 - 当前已完成：
   - 18 份 `module-<domain>/model/app-erp-<domain>.orm.xml` 权威源模型（447 实体）+ notify 跨域通知派发子系统
-  - 18 域完整的代码生成工程骨架（model → codegen → dao → service → web → app → api），154 reactor 模块全绿
+  - 18 域完整的代码生成工程骨架（model → codegen → dao → service → web → app → api），156 reactor 模块全绿
   - CRUD 全 18 域（含冒烟测试）
   - 核心业务逻辑：采购订单/销售订单 BizModel 审批-触发-过账三段（M1 全 done）
   - 扩展 13 域业务逻辑（M2/M3 全 done）
@@ -74,10 +74,10 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
   - 垂直行业扩展工程（待具体客户需求）
   - 外部集成（税控/银行/物流/电商）
 - 成功指标（已达成）：
-  - 所有 154 模块可独立编译通过（`mvn clean install -DskipTests` 全绿）
+  - 所有 156 模块可独立编译通过（`mvn clean install -DskipTests` 全绿）
   - 全 18 域 CRUD 流程测试通过（含冒烟测试）
   - 业财一体端到端业务循环测试通过（P2P / O2C / 期末结账 / 成本核算 / 年度结转 / 坏账准备）
-  - ~2890 单元测试 0 failures
+  - 1902 单元测试 0 failures
 - 约束：
   - `model/*.orm.xml` 是 ask-first 保护区域
   - `nop-entropy` 父 POM 必须在 codegen 前构建

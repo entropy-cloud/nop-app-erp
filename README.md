@@ -56,9 +56,11 @@ nop-app-erp 首先是 **Attractor-Guided Engineering (AGE)** 工作流在大型�
 
 ## 验证状态
 
+> 权威基线见 `docs/audits/compliance-baseline.md`（compliance guard 机器可读基线）与 `docs/context/project-context.md`（验证命令与已知失败模式速查），避免本段成为第二个漂移真相源。
+
 ```text
-mvn clean install -DskipTests  → BUILD SUCCESS（146 reactor 模块）
-mvn test                       → BUILD SUCCESS（312+ 测试，0 Failure / 0 Error）
+mvn clean install -DskipTests  → BUILD SUCCESS（156 reactor 模块）
+mvn test                       → BUILD SUCCESS（1902 测试，0 Failure / 0 Error）
 ```
 
 ---

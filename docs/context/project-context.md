@@ -81,3 +81,13 @@ AI 必须在继续之前停止并等待人工输入，当：
 - 构建需要 `nop-entropy` 父 POM 首先在本地 Maven 仓库中可用。
 - 跨域端到端循环（如采购→入库→凭证）需先编写计划（`plan-first`）。
 - 每个业务功能实现时，AI 自行根据 owner doc 和用例文档拟制对应测试。
+
+## 已知失败模式（速查）
+
+> 本段是简洁内联摘要，列出审计-修复任务中反复出现的失败模式，供代理在新工作开始时自检规避。详细 case study 与可复用审计方法见 `docs/lessons/` 与 `docs/skills/`。
+
+- **Compliance 基线漂移**：功能计划新增生产代码 daoFor/import 后，结束审计未核实 `nop-compliance-checker.sh` 是否触发 actual > baseline，导致 CI red。规避：任何生产代码变更的结束审计须复跑 checker；若漂移则在闭包前开独立基线裁决计划（Fix 或 baseline-raise 带 per-site 证据），或在 closure gates 显式登记「基线漂移已知，归 successor」。权威基线见 `docs/audits/compliance-baseline.md` §BASELINE 机器可读块。
+- **closure-pending 计划缺独立结束审计**：执行者自我声明完成但未由独立子代理（新会话）跑结束审计，留下 hollow 闭包。规避：每个计划完成前必须经独立结束审计（Closure Gates 硬门控），执行者不得自我审计。
+- **`@Inject private` 违反 Nop IoC**：在 Nop IoC 容器中给 `@Inject` 字段加 `private`（checker R5），破坏依赖注入。规避：`@Inject` 字段必须包级可见或以上（AGENTS.md 平台规则 + `nop-backend-dev` skill 反模式表）。
+- **业财过账吞异常致 posted 悬挂**：过账编排中用 `tryPost` 吞掉异常而未将单据回退至非已过账状态，导致 posted 标志与实际过账结果不一致（悬挂）。规避：过账失败必须显式回退单据状态并记录 `PostingException`，不得静默吞异常（owner doc `docs/architecture/processor-extension-pattern.md`）。
+

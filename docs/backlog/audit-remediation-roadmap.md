@@ -7,7 +7,7 @@
 
 ## 目的
 
-本路线图覆盖 nop-app-erp（19 域、154 模块）的全面审计与 P0/P1 彻底修复。引用 `docs/backlog/00-roadmap-authoring-guide.md` 作为规范。ORM 变更已授权。
+本路线图覆盖 nop-app-erp（19 域、156 模块）的全面审计与 P0/P1 彻底修复。引用 `docs/backlog/00-roadmap-authoring-guide.md` 作为规范。ORM 变更已授权。
 
 ## Work Item Status
 
@@ -226,10 +226,10 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| G.1 | compliance checker 基线更新 | todo | `docs/audits/compliance-baseline.md` | MV done | none |
+| G.1 | compliance checker 基线更新 | done | `docs/audits/compliance-baseline.md` | MV done | none |
 | G.2 | 新失败模式提升为 docs/lessons/ | todo | `docs/lessons/` | MV done | none |
 | G.3 | 重复审计维度提升为 docs/skills/ 新提示 | todo | `docs/skills/` | MV done | none |
-| G.4 | 更新 project-context.md + README.md 已知失败模式 | todo | context+skills | MV done | none |
+| G.4 | 更新 project-context.md + README.md 已知失败模式 | done | `docs/context/project-context.md`、`README.md` | MV done | none |
 
 ### Milestone MR5 — Processor S-mutation 架构合规修复（P1 结构性债务）
 
@@ -269,11 +269,11 @@
 | 19 个可复用审计 skill | `docs/skills/*-prompt.md`（orm-model-audit / cross-module-dependency / nop-platform-conformance / state-machine-business-review / design-doc-audit / design-completeness-scan / code-quality-audit / index-routing-audit / multi-dimensional-audit / open-ended-audit / closure-audit 等） |
 | Compliance checker（19 规则） | `docs/audits/nop-compliance-checker.sh` + CI `.github/workflows/compliance.yml` |
 | i18n 覆盖检查器 | `docs/audits/i18n-coverage-checker.sh` |
-| 测试基础设施 | JUnit（~2890 测试）+ Playwright E2E（260+ spec）|
+| 测试基础设施 | JUnit（1902 测试）+ Playwright E2E（260+ spec）|
 
 ## 当前基线
 
-- **验证基线**：`mvn clean install -DskipTests` 全绿（154 模块）；`mvn test` 全绿（~2890 测试，0 failures）
+- **验证基线**：`mvn clean install -DskipTests` 全绿（156 模块）；`mvn test` 全绿（1902 测试，0 failures）
 - **Compliance 基线**：见 `docs/audits/compliance-baseline.md`（19 规则）
 - **已有审计**：18 份历史审计；2026-07-23 架构治理审查 9 finding 全部已闭包
 - **残留风险**：见范围文档 §3.2
