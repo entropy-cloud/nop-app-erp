@@ -210,6 +210,34 @@ public class TestErpMfgMrpEngine extends JunitAutoTestCase {
         assertEquals(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS.getErrorCode(), resp.getCode());
     }
 
+    /**
+     * G4（plan 2026-07-31-0744-1-r2-11）：MrpEngine scheduledReceipt 断言——锁定 owner-doc 恒 0 语义回归基线。
+     *
+     * <p>owner-doc {@code docs/design/manufacturing/mrp.md:93} 明确：{@code scheduledReceipt} 为「粗估，计划员录入或
+     * 后续从在途汇总」的占位列，引擎不计算。{@code MrpEngine.processMaterial:113} 硬编码 {@code scheduled=ZERO}，
+     * {@code netRequirement = grossRequirement − availableQuantity（− 0）}。本测试 seed 库存 + 需求，
+     * 断言计划行 {@code scheduledReceipt=0} 且 {@code netRequirement} 不扣除 scheduledReceipt，锁定当前语义为回归基线
+     * （未来实现「在途汇总扣除」时本测试将转红，强制实现者更新断言）。
+     */
+    @Test
+    public void testScheduledReceiptAlwaysZeroBaseline() {
+        seedMaterial(M3, null, null);
+        seedBalance(M3, bd("2"));
+        Long planId = seedPlan("MRP-SCHED");
+        seedManualDemand(planId, M3, bd("10"), LocalDate.of(2026, 7, 20));
+
+        runMrpOk(planId);
+
+        ErpMfgMrpPlanLine line = findLine(linesOf(planId), M3, null);
+        assertNotNull(line, "M3 计划行应存在");
+        assertEquals(0, BigDecimal.ZERO.compareTo(line.getScheduledReceipt()),
+                "scheduledReceipt 当前恒 0（owner-doc mrp.md 占位列，在途汇总未实现）— 回归基线");
+        assertEquals(0, bd("10").compareTo(line.getGrossRequirement()), "grossRequirement=10");
+        assertEquals(0, bd("2").compareTo(line.getOnHand()), "onHand=availableQuantity=2");
+        assertEquals(0, bd("8").compareTo(line.getNetRequirement()),
+                "netRequirement = gross(10) − available(2)，不减 scheduledReceipt(0)");
+    }
+
     // ---------- helpers ----------
 
     private void runMrpOk(Long planId) {

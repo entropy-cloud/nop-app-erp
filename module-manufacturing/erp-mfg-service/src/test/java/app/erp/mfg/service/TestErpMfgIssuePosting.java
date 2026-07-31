@@ -41,6 +41,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -153,6 +154,35 @@ public class TestErpMfgIssuePosting extends JunitAutoTestCase {
         assertEquals(3, countVoucherLines(voucher.getId()), "2 贷 + 1 借 = 3 行");
     }
 
+    /**
+     * G1（plan 2026-07-31-0744-1-r2-11）：生产领料过账失败悬挂 posted=false 可观测（P1-MA4-007/010/009(a)）。
+     *
+     * <p>无 mock 确定性失败诱导范式（对齐 {@code TestErpInvPosting.testPostingFailureLeavesMoveDonePostedFalse}）：
+     * seed 账套+科目但故意不 seed 会计期间 → ManufacturingIssuePostingDispatcher 的 GL 过账找不到 OPEN 期间
+     * 抛异常被 try/catch 吞咽（LOG.warn 保持 posted=false），业务终态不受影响。
+     */
+    @Test
+    public void testPostingFailureLeavesIssueDonePostedFalse() {
+        seedAcctSchemaAndSubjectsOnly();
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedMaterial(P, null);
+        seedBom(9601L, P, M1, bd("2"));
+        generateIncoming(M1, "PR-IP-FAIL", bd("10"), bd("5"));
+
+        Long woId = seedWorkOrder("WO-IP-FAIL", 9601L);
+        Long wolId = seedWorkOrderLine(woId, M1, bd("2"));
+        Long issueId = seedIssue("MI-IP-FAIL", woId);
+        seedIssueLine(9704L, issueId, M1, bd("2"), wolId);
+
+        rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
+
+        ErpMfgMaterialIssue issue = daoProvider.daoFor(ErpMfgMaterialIssue.class).getEntityById(issueId);
+        assertEquals(ErpMfgConstants.ISSUE_STATUS_DONE, issue.getDocStatus(),
+                "过账失败不阻塞终态，领料单仍 DONE");
+        assertEquals(false, issue.getPosted(), "过账失败 posted=false（业财悬挂窗口对测试可观测）");
+        assertNull(findVoucher("MI-IP-FAIL-MI"), "过账失败不产生 MANUFACTURING_ISSUE 凭证");
+    }
+
     // ---------- seed helpers ----------
 
     private void seedPeriodAndSubjects() {
@@ -179,6 +209,26 @@ public class TestErpMfgIssuePosting extends JunitAutoTestCase {
             period.setEndDate(LocalDate.of(2026, 7, 31));
             period.orm_propValueByName("status", "OPEN");
             pdao.saveEntity(period);
+
+            seedSubject(SUBJECT_INVENTORY, "库存商品", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP, "在制品-WIP", "ASSET", "DEBIT");
+            seedSubject("2202", "应付账款-暂估", "LIABILITY", "CREDIT");
+        });
+    }
+
+    /** G1 失败诱导：seed 账套+科目但故意不 seed 会计期间 → GL 过账找不到 OPEN 期间 → 抛异常被 catch。 */
+    private void seedAcctSchemaAndSubjectsOnly() {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMdAcctSchema> asDao = daoProvider.daoFor(ErpMdAcctSchema.class);
+            ErpMdAcctSchema acctSchema = new ErpMdAcctSchema();
+            acctSchema.orm_propValueByName("id", ACCT_SCHEMA_ID);
+            acctSchema.setCode("ACCT-" + ORG_ID);
+            acctSchema.setName("账套 " + ORG_ID);
+            acctSchema.setOrgId(ORG_ID);
+            acctSchema.orm_propValueByName("nature", "FINANCIAL");
+            acctSchema.setFunctionalCurrencyId(CURRENCY_ID);
+            acctSchema.orm_propValueByName("status", "ACTIVE");
+            asDao.saveEntity(acctSchema);
 
             seedSubject(SUBJECT_INVENTORY, "库存商品", "ASSET", "DEBIT");
             seedSubject(SUBJECT_WIP, "在制品-WIP", "ASSET", "DEBIT");

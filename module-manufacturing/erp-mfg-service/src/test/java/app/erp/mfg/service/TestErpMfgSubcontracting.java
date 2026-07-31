@@ -13,6 +13,8 @@ import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.md.dao.entity.ErpMdSubject;
+import app.erp.notify.dao.entity.ErpSysNotification;
+import app.erp.notify.dao.entity.ErpSysNotificationTemplate;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
@@ -40,7 +42,6 @@ import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-
 /**
  * 委外加工生命周期 + GL 过账 + MRP 释放测试（plan 2026-07-13-0455-1 §Phase 5）。
  *
@@ -63,6 +64,7 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
     static final Long UOM_ID = 5601L;
     static final Long CURRENCY_ID = 6601L;
     static final Long ACCT_SCHEMA_ID = 7601L;
+    static final Long FX_FUNCTIONAL_CURRENCY_ID = 6501L; // 本位币（≠ 委外单币种 6601，构造多币种场景）
     static final Long SUPPLIER_ID = 4601L;
     static final Long P = 2401L;
     static final Long M1 = 2402L;
@@ -72,6 +74,8 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
     static final String SUBJECT_SUBCONTRACT = "1408";
     static final String SUBJECT_AP = "2202";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
+    static final String NOTIFY_EVENT_SUBCONTRACT_FAILURE = "mfg.subcontract-posting-failure";
+    static final String NOTIFY_RECIPIENT = "mfg-subcontract-failure-recipient";
 
     @Inject
     IDaoProvider daoProvider;
@@ -219,6 +223,94 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
                 "withdrawApproval 后 approveStatus 回到 UNSUBMITTED");
     }
 
+    /**
+     * G1（plan 2026-07-31-0744-1-r2-11）：委外加工费过账失败悬挂 posted=false 可观测 + dispatchFailureAlert 触发
+     * （P1-MA4-007/010/009(a)/011(b)；R1.16 已落地 Subcontract 告警）。
+     *
+     * <p>无 mock 确定性失败诱导：seed 账套+科目+告警模板但故意不 seed 会计期间 → SubcontractPostingDispatcher
+     * 三段（发料/收货/加工费）GL 过账找不到 OPEN 期间抛异常被 try/catch 吞咽 → 加工费段 posted=false 持续，
+     * dispatchFailureAlert 派发 {@code mfg.subcontract-posting-failure} 通知使悬挂对测试可观测，委外单终态不受影响。
+     */
+    @Test
+    public void testPostingFailureLeavesSubcontractPostedFalseAndAlerts() {
+        seedAcctSchemaAndSubjectsOnly();
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedMaterial(P, null);
+        generateIncoming(M1, "PR-SC-FAIL", bd("10"), bd("5"));
+        seedNotifyTemplateForSubcontractFailure();
+
+        Long orderId = seedSubcontractOrder("SUB-FAIL", bd("50"));
+        seedSubcontractLine(9811L, orderId, M1, bd("2"));
+
+        setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "true");
+        try {
+            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__issueMaterials",
+                    Map.of("subcontractOrderId", orderId, "sourceWarehouseId", WAREHOUSE_ID));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__receiveFinished",
+                    Map.of("subcontractOrderId", orderId, "receivedQty", bd("1"), "destWarehouseId", WAREHOUSE_ID));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__postProcessingFee", Map.of("subcontractOrderId", orderId));
+
+            ErpMfgSubcontractOrder order = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
+            assertEquals(ErpMfgConstants.SUBCONTRACT_STATUS_COMPLETED, order.getDocStatus(),
+                    "过账失败不影响委外单终态 COMPLETED");
+            assertEquals(false, order.getPosted(), "加工费过账失败 posted=false（业财悬挂窗口对测试可观测）");
+            assertTrue(countNotifications(NOTIFY_EVENT_SUBCONTRACT_FAILURE) > 0,
+                    "过账失败应派发 mfg.subcontract-posting-failure 告警（dispatchFailureAlert 触发）");
+            assertEquals(null, findVoucher("SUB-FAIL-SF", ErpFinBusinessType.SUBCONTRACT_FEE),
+                    "过账失败不产生 SUBCONTRACT_FEE 加工费凭证");
+        } finally {
+            setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "false");
+        }
+    }
+
+    /**
+     * G2（plan 2026-07-31-0744-1-r2-11）：委外加工费多币种凭证行级断言（闭合 P1-MA3-039 mfg 投影残差）。
+     *
+     * <p>seed 第 2 币种（functionalCurrency 6501 ≠ 委外单币种 6601）+ exchangeRate=6.5≠ONE。
+     * SubcontractPostingDispatcher 三段 event 透传 {@code order.exchangeRate}（:198/232/266），故凭证行
+     * {@code exchangeRate=6.5}、{@code currencyId=6601} 多币种维度对测试可观测。
+     *
+     * <p>P1-MA3-039 残差基线：SubcontractFeeAcctDocProvider.fact 仅 setAmount，未设置 amountSource/amountFunctional
+     * （GL 引擎不计算 functional=source×rate，由 Provider 显式传递「方案 A」）→ amountSource==amountFunctional。
+     * 本测试锁定当前行为为回归基线（successor Fix 实现折算后本断言转红，强制更新）。
+     */
+    @Test
+    public void testMultiCurrencyFeeVoucherLineBaseline() {
+        seedPeriodAndSubjectsFx();
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedMaterial(P, null);
+        generateIncoming(M1, "PR-SC-FX", bd("10"), bd("5"));
+
+        Long orderId = seedSubcontractOrderWithFx("SUB-FX", bd("50"), bd("6.5"));
+        seedSubcontractLine(9812L, orderId, M1, bd("2"));
+
+        setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "true");
+        try {
+            rpcOk(mutation, "ErpMfgSubcontractOrder__submitForApproval", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__approve", Map.of("id", String.valueOf(orderId)));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__issueMaterials",
+                    Map.of("subcontractOrderId", orderId, "sourceWarehouseId", WAREHOUSE_ID));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__receiveFinished",
+                    Map.of("subcontractOrderId", orderId, "receivedQty", bd("1"), "destWarehouseId", WAREHOUSE_ID));
+            rpcOk(mutation, "ErpMfgSubcontractOrder__postProcessingFee", Map.of("subcontractOrderId", orderId));
+
+            ErpFinVoucher feeVoucher = findVoucher("SUB-FX-SF", ErpFinBusinessType.SUBCONTRACT_FEE);
+            assertNotNull(feeVoucher, "应生成外币加工费凭证");
+            ErpFinVoucherLine drLine = findVoucherLine(feeVoucher.getId(), SUBJECT_SUBCONTRACT);
+            assertNotNull(drLine, "借方 委外物资行存在");
+            assertEquals(CURRENCY_ID, drLine.getCurrencyId(), "凭证行币种=外币 6601");
+            assertEquals(0, bd("6.5").compareTo(drLine.getExchangeRate()),
+                    "行汇率=6.5（SubcontractPostingDispatcher 透传 order.exchangeRate）");
+            assertEquals(0, bd("50").compareTo(drLine.getAmountSource()), "amountSource=加工费 50");
+            assertEquals(0, drLine.getAmountSource().compareTo(drLine.getAmountFunctional()),
+                    "P1-MA3-039 基线：Provider 未拆分 amountFunctional → == amountSource（successor Fix）");
+        } finally {
+            setConfig(ErpMfgConstants.CONFIG_SUBCONTRACT_POSTING_ENABLED, "false");
+        }
+    }
+
     private String statusOf(Long orderId) {
         ErpMfgSubcontractOrder order = daoProvider.daoFor(ErpMfgSubcontractOrder.class).getEntityById(orderId);
         return order.getDocStatus();
@@ -259,6 +351,109 @@ public class TestErpMfgSubcontracting extends JunitAutoTestCase {
             seedSubject(SUBJECT_SUBCONTRACT, "委外物资", "ASSET", "DEBIT");
             seedSubject(SUBJECT_AP, "应付账款", "LIABILITY", "CREDIT");
         });
+    }
+
+    /** G1 失败诱导：seed 账套+科目但故意不 seed 会计期间 → GL 过账找不到 OPEN 期间 → 抛异常被 catch。 */
+    private void seedAcctSchemaAndSubjectsOnly() {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMdAcctSchema> asDao = daoProvider.daoFor(ErpMdAcctSchema.class);
+            ErpMdAcctSchema acctSchema = new ErpMdAcctSchema();
+            acctSchema.orm_propValueByName("id", ACCT_SCHEMA_ID);
+            acctSchema.setCode("ACCT-" + ORG_ID);
+            acctSchema.setName("账套 " + ORG_ID);
+            acctSchema.setOrgId(ORG_ID);
+            acctSchema.orm_propValueByName("nature", "FINANCIAL");
+            acctSchema.setFunctionalCurrencyId(CURRENCY_ID);
+            acctSchema.orm_propValueByName("status", "ACTIVE");
+            asDao.saveEntity(acctSchema);
+
+            seedSubject(SUBJECT_RAW, "原材料", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_FINISHED, "库存商品", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_SUBCONTRACT, "委外物资", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_AP, "应付账款", "LIABILITY", "CREDIT");
+        });
+    }
+
+    private void seedNotifyTemplateForSubcontractFailure() {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
+            ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
+            t.orm_propValueByName("id", 7661L);
+            t.setNotificationType(NOTIFY_EVENT_SUBCONTRACT_FAILURE);
+            t.setName("委外过账失败告警");
+            t.setChannelSet("IN_APP");
+            t.setSubjectTpl("委外过账失败: ${subcontractCode} ${stage}");
+            t.setBodyTpl("委外单 ${subcontractCode} ${stage} 段过账失败：${errorCode} ${errorMessage}");
+            t.setRecipientResolver("USER_LIST");
+            t.setRecipientConfig("{\"userIds\":[\"" + NOTIFY_RECIPIENT + "\"]}");
+            t.setMergeWindowSeconds(60);
+            t.setMergeStrategy("MERGE_BY_USER_TYPE");
+            t.setStatus("ACTIVE");
+            dao.saveEntity(t);
+        });
+    }
+
+    private int countNotifications(String eventType) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("notificationType", eventType));
+        return daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q).size();
+    }
+
+    /** G2 多币种：functionalCurrency 6501 ≠ 委外单币种 6601。 */
+    private void seedPeriodAndSubjectsFx() {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMdAcctSchema> asDao = daoProvider.daoFor(ErpMdAcctSchema.class);
+            ErpMdAcctSchema acctSchema = new ErpMdAcctSchema();
+            acctSchema.orm_propValueByName("id", ACCT_SCHEMA_ID);
+            acctSchema.setCode("ACCT-FX-" + ORG_ID);
+            acctSchema.setName("多币种账套 " + ORG_ID);
+            acctSchema.setOrgId(ORG_ID);
+            acctSchema.orm_propValueByName("nature", "FINANCIAL");
+            acctSchema.setFunctionalCurrencyId(FX_FUNCTIONAL_CURRENCY_ID);
+            acctSchema.orm_propValueByName("status", "ACTIVE");
+            asDao.saveEntity(acctSchema);
+
+            IEntityDao<ErpFinAccountingPeriod> pdao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+            ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
+            period.setCode("2026-07-SC-FX");
+            period.setName("2026-07-SC-FX");
+            period.setOrgId(ORG_ID);
+            period.orm_propValueByName("year", 2026);
+            period.orm_propValueByName("month", 7);
+            period.setStartDate(LocalDate.of(2026, 7, 1));
+            period.setEndDate(LocalDate.of(2026, 7, 31));
+            period.orm_propValueByName("status", "OPEN");
+            pdao.saveEntity(period);
+
+            seedSubject(SUBJECT_RAW, "原材料", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_FINISHED, "库存商品", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_SUBCONTRACT, "委外物资", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_AP, "应付账款", "LIABILITY", "CREDIT");
+        });
+    }
+
+    /** G2 多币种：委外单币种=6601（≠ functional 6501），exchangeRate=rate≠ONE。 */
+    private Long seedSubcontractOrderWithFx(String code, BigDecimal processingFee, BigDecimal rate) {
+        Long id = 8700L + (long) Math.abs(code.hashCode() % 500);
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMfgSubcontractOrder> dao = daoProvider.daoFor(ErpMfgSubcontractOrder.class);
+            ErpMfgSubcontractOrder order = new ErpMfgSubcontractOrder();
+            order.orm_propValueByName("id", id);
+            order.setCode(code);
+            order.setOrgId(ORG_ID);
+            order.setSupplierId(SUPPLIER_ID);
+            order.setProductId(P);
+            order.setBusinessDate(LocalDate.of(2026, 7, 1));
+            order.setCurrencyId(CURRENCY_ID);
+            order.setExchangeRate(rate);
+            order.setProcessingFee(processingFee);
+            order.setTotalAmount(processingFee);
+            order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_DRAFT);
+            order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED);
+            order.orm_propValueByName("postedStatus", "DRAFT");
+            dao.saveEntity(order);
+        });
+        return id;
     }
 
     private void seedSubject(String code, String name, String subjectClass, String direction) {

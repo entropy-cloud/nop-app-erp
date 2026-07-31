@@ -295,6 +295,30 @@ public class TestErpMfgCostRollup extends JunitAutoTestCase {
         }
     }
 
+    /**
+     * G3（plan 2026-07-31-0744-1-r2-11）：CostRollupService.rollup 自有成环路径（不经 BomExpander.explode）。
+     *
+     * <p>{@code CostRollupService.computeUnit} 使用本地 {@code LinkedHashSet<Long> path} 递归检测环引用
+     * （:135-139），与 {@code TestErpMfgBomExplosion.testCycleDetection} 覆盖的 BomExpander.explode 路径独立。
+     * 构造 A→B→A 真环（A 的 BOM 含 B，B 的 BOM 含 A），断言 rollup 抛 {@code ERR_BOM_CYCLE}。
+     * DAG（共享子件）因 path.remove + computed 缓存不抛——本测试仅覆盖真环。
+     */
+    @Test
+    public void testRollupCycleDetectionThrows() {
+        Long A = 1010L;
+        Long B = 1011L;
+        seedMaterial(A);
+        seedMaterial(B);
+        Long bomA = seedBom(2801L, A, true, true, bd("1"));
+        seedLine(3801L, bomA, B, bd("1"), 10);
+        Long bomB = seedBom(2802L, B, true, true, bd("1"));
+        seedLine(3802L, bomB, A, bd("1"), 10);
+
+        NopException ex = assertThrows(NopException.class, () -> costRollupService.rollup(bomA));
+        assertEquals(ErpMfgErrors.ERR_BOM_CYCLE.getErrorCode(), ex.getCode(),
+                "CostRollupService 自有 path 成环检测应抛 ERR_BOM_CYCLE（不经 BomExpander.explode）");
+    }
+
     // ---------- helpers ----------
 
     private static BigDecimal unit(CostRollupResult r, Long mat) {

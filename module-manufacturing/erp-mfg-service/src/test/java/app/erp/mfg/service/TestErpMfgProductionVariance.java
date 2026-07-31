@@ -82,6 +82,7 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
 
     static final Long P = 1201L;
     static final Long ACCT_SCHEMA_ID = 7401L;
+    static final Long FX_FUNCTIONAL_CURRENCY_ID = 6499L; // 本位币（≠ 工单币种 6401，构造多币种场景）
 
     @Inject
     IDaoProvider daoProvider;
@@ -398,6 +399,76 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
         assertEquals(0, bd("1").compareTo(wipSubLine.getCreditAmount()), "在制品-委外贷方金额 = 1");
     }
 
+    /**
+     * G1（plan 2026-07-31-0744-1-r2-11）：生产差异过账失败悬挂 posted=false 可观测（P1-MA4-007/010/011(b)）。
+     *
+     * <p>无 mock 确定性失败诱导：seed 账套+科目但故意不 seed 会计期间 → ProductionVarianceDispatcher 的 GL 过账
+     * 找不到 OPEN 期间抛异常被 try/catch 吞咽（LOG.warn 保持差异行 posted=false），差异计算结果与工单终态不受影响。
+     */
+    @Test
+    public void testPostingFailureLeavesVariancePostedFalse() {
+        seedProduct(P);
+        seedWorkcenter(WC1, bd("20"));
+        Long bomId = seedBom(9211L, P);
+        seedBomOperation(4211L, bomId, WC1, bd("60"));
+        seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
+        seedAcctSchemaAndSubjectsOnly();
+
+        seedCompletedWorkOrder(8212L, "WO-PV-FAIL", bomId, P,
+                bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
+        seedTimeLog(5611L, 8212L, bd("150"));
+
+        ApiResponse<?> resp = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
+                ApiRequest.build(Map.of("workOrderId", 8212L)));
+        assertEquals(0, resp.getStatus(), "calculateVariances 应成功（过账失败不阻塞差异计算）");
+
+        List<ErpMfgCostVariance> lines = productionVarianceCalculator.findByWorkOrder(8212L);
+        assertFalse(lines.isEmpty(), "差异行应已计算");
+        assertTrue(lines.stream().noneMatch(l -> Boolean.TRUE.equals(l.getPosted())),
+                "过账失败 → 全部差异行 posted=false（业财悬挂窗口对测试可观测）");
+
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(8212L);
+        assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED, wo.getDocStatus(),
+                "过账失败不影响工单终态 COMPLETED");
+        assertNull(findVoucherByBillCode("WO-PV-FAIL-PV"), "过账失败不产生 PRODUCTION_VARIANCE 凭证");
+    }
+
+    /**
+     * G2（plan 2026-07-31-0744-1-r2-11）：生产差异多币种凭证行级断言残差（P1-MA3-039 mfg 投影）。
+     *
+     * <p>seed 第 2 币种（functionalCurrency 6499 ≠ 工单币种 6401）。ProductionVarianceDispatcher.buildEvent:164
+     * <b>硬编码 exchangeRate=ONE</b>（未读 wo.exchangeRate），且 ProductionVarianceAcctDocProvider 未设置
+     * amountSource/amountFunctional。本测试锁定当前行为为回归基线：凭证行 currencyId=外币但 exchangeRate=1、
+     * amountSource==amountFunctional（successor Fix 实现汇率透传+折算后本断言转红，强制更新）。
+     */
+    @Test
+    public void testMultiCurrencyVarianceVoucherLineBaseline() {
+        seedProduct(P);
+        seedWorkcenter(WC1, bd("20"));
+        Long bomId = seedBom(9212L, P);
+        seedBomOperation(4212L, bomId, WC1, bd("60"));
+        seedFirmedRollup(P, bd("10"), bd("10"), bd("5"), bd("25"));
+        seedPeriodAndSubjectsFx();
+
+        seedCompletedWorkOrder(8213L, "WO-PV-FX", bomId, P,
+                bd("2"), bd("2"), bd("25"), bd("35"), bd("8"));
+        seedTimeLog(5612L, 8213L, bd("150"));
+
+        ApiResponse<?> resp = executeRpc(mutation, "ErpMfgCostVariance__calculateVariances",
+                ApiRequest.build(Map.of("workOrderId", 8213L)));
+        assertEquals(0, resp.getStatus(), "calculateVariances（含过账）应成功");
+
+        ErpFinVoucher voucher = findVoucherByBillCode("WO-PV-FX-PV");
+        assertNotNull(voucher, "外币生产差异凭证应生成");
+        ErpFinVoucherLine matLine = findVoucherLine(voucher.getId(), SUBJECT_MATERIAL_VARIANCE);
+        assertNotNull(matLine, "材料差异科目行存在");
+        assertEquals(CURRENCY_ID, matLine.getCurrencyId(), "凭证行币种=工单外币 6401");
+        assertEquals(0, BigDecimal.ONE.compareTo(matLine.getExchangeRate()),
+                "P1-MA3-039 基线：ProductionVarianceDispatcher 硬编码 exchangeRate=ONE（successor Fix）");
+        assertEquals(0, matLine.getAmountSource().compareTo(matLine.getAmountFunctional()),
+                "P1-MA3-039 基线：Provider 未拆分 → amountSource==amountFunctional（successor Fix）");
+    }
+
     // ---------- query helpers ----------
 
     private ErpMfgCostVariance lineByType(List<ErpMfgCostVariance> lines, String type) {
@@ -656,6 +727,68 @@ public class TestErpMfgProductionVariance extends JunitAutoTestCase {
             ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
             period.setCode(PERIOD_CODE);
             period.setName(PERIOD_CODE);
+            period.setOrgId(ORG_ID);
+            period.orm_propValueByName("year", 2026);
+            period.orm_propValueByName("month", 7);
+            period.setStartDate(LocalDate.of(2026, 7, 1));
+            period.setEndDate(LocalDate.of(2026, 7, 31));
+            period.orm_propValueByName("status", "OPEN");
+            pdao.saveEntity(period);
+
+            seedSubject(SUBJECT_MATERIAL_VARIANCE, "制造差异-材料", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP_MATERIAL, "在制品-材料", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_LABOR_VARIANCE, "制造差异-人工", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP_LABOR, "在制品-人工", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_OVERHEAD_VARIANCE, "制造差异-制造费用", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP_OVERHEAD, "在制品-制造费用", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_SUBCONTRACT_VARIANCE, "制造差异-委外", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP_SUBCONTRACT, "在制品-委外", "ASSET", "DEBIT");
+        });
+    }
+
+    /** G1 失败诱导：seed 账套+差异科目但故意不 seed 会计期间 → 差异过账找不到 OPEN 期间 → 抛异常被 catch。 */
+    private void seedAcctSchemaAndSubjectsOnly() {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMdAcctSchema> asDao = daoProvider.daoFor(ErpMdAcctSchema.class);
+            ErpMdAcctSchema acctSchema = new ErpMdAcctSchema();
+            acctSchema.orm_propValueByName("id", ACCT_SCHEMA_ID);
+            acctSchema.setCode("ACCT-" + ORG_ID);
+            acctSchema.setName("账套 " + ORG_ID);
+            acctSchema.setOrgId(ORG_ID);
+            acctSchema.orm_propValueByName("nature", "FINANCIAL");
+            acctSchema.setFunctionalCurrencyId(CURRENCY_ID);
+            acctSchema.orm_propValueByName("status", "ACTIVE");
+            asDao.saveEntity(acctSchema);
+
+            seedSubject(SUBJECT_MATERIAL_VARIANCE, "制造差异-材料", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP_MATERIAL, "在制品-材料", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_LABOR_VARIANCE, "制造差异-人工", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP_LABOR, "在制品-人工", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_OVERHEAD_VARIANCE, "制造差异-制造费用", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP_OVERHEAD, "在制品-制造费用", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_SUBCONTRACT_VARIANCE, "制造差异-委外", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP_SUBCONTRACT, "在制品-委外", "ASSET", "DEBIT");
+        });
+    }
+
+    /** G2 多币种：functionalCurrency 6499 ≠ 工单币种 6401，含 OPEN 期间（过账成功以观察凭证行）。 */
+    private void seedPeriodAndSubjectsFx() {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMdAcctSchema> asDao = daoProvider.daoFor(ErpMdAcctSchema.class);
+            ErpMdAcctSchema acctSchema = new ErpMdAcctSchema();
+            acctSchema.orm_propValueByName("id", ACCT_SCHEMA_ID);
+            acctSchema.setCode("ACCT-FX-" + ORG_ID);
+            acctSchema.setName("多币种账套 " + ORG_ID);
+            acctSchema.setOrgId(ORG_ID);
+            acctSchema.orm_propValueByName("nature", "FINANCIAL");
+            acctSchema.setFunctionalCurrencyId(FX_FUNCTIONAL_CURRENCY_ID);
+            acctSchema.orm_propValueByName("status", "ACTIVE");
+            asDao.saveEntity(acctSchema);
+
+            IEntityDao<ErpFinAccountingPeriod> pdao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+            ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
+            period.setCode(PERIOD_CODE + "-FX");
+            period.setName(PERIOD_CODE + "-FX");
             period.setOrgId(ORG_ID);
             period.orm_propValueByName("year", 2026);
             period.orm_propValueByName("month", 7);
