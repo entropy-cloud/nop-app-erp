@@ -3,32 +3,21 @@ package app.erp.b2b.service.entity;
 
 import app.erp.b2b.biz.IErpB2bEdiDocBiz;
 import app.erp.b2b.dao.entity.ErpB2bEdiDoc;
-import app.erp.b2b.dao.entity.ErpB2bEdiFormat;
 import app.erp.b2b.dao.entity.ErpB2bEdiLog;
-import app.erp.b2b.service.ErpB2bConfigs;
 import app.erp.b2b.service.ErpB2bConstants;
 import app.erp.b2b.service.ErpB2bErrors;
-import app.erp.b2b.service.spi.ErpB2bEdiRegistry;
-import app.erp.b2b.service.spi.IErpB2bEdiProvider;
+import app.erp.b2b.service.processor.ErpB2bEdiDocCreateInboundProcessor;
+import app.erp.b2b.service.processor.ErpB2bEdiDocCreateOutboundProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.List;
-
-import static io.nop.api.core.beans.FilterBeans.eq;
-import static io.nop.api.core.beans.FilterBeans.and;
-import io.nop.biz.crud.EntityData;
 
 /**
  * EDI 事务信封聚合根 Biz。承载 EDI 信封状态机（{@code edi-formats.md §七}）：
@@ -44,10 +33,11 @@ import io.nop.biz.crud.EntityData;
  */
 @BizModel("ErpB2bEdiDoc")
 public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements IErpB2bEdiDocBiz {
-    private static final Logger LOG = LoggerFactory.getLogger(ErpB2bEdiDocBizModel.class);
 
     @Inject
-    ErpB2bEdiRegistry ediRegistry;
+    ErpB2bEdiDocCreateOutboundProcessor createOutboundProcessor;
+    @Inject
+    ErpB2bEdiDocCreateInboundProcessor createInboundProcessor;
 
     public ErpB2bEdiDocBizModel() {
         setEntityName(ErpB2bEdiDoc.class.getName());
@@ -67,37 +57,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
     public ErpB2bEdiDoc createOutbound(@Name("relatedBillType") String relatedBillType,
                                        @Name("relatedBillCode") String relatedBillCode,
                                        IServiceContext context) {
-        List<IErpB2bEdiProvider> providers = ediRegistry.findOutboundProviders(relatedBillType);
-        if (providers.isEmpty()) {
-            LOG.info("无适用出站 EDI 格式：relatedBillType={} relatedBillCode={}（静默跳过）", relatedBillType, relatedBillCode);
-            return null;
-        }
-
-        IErpB2bEdiProvider provider = providers.get(0);
-        ErpB2bEdiFormat format = findFormatByCode(provider.getCode());
-        if (format == null) {
-            LOG.warn("EDI 格式配置记录不存在：code={}（跳过）", provider.getCode());
-            return null;
-        }
-
-        checkDuplicate(format.getId(), relatedBillType, relatedBillCode);
-
-        String payload = provider.generatePayload(relatedBillType, relatedBillCode);
-
-        ErpB2bEdiDoc doc = newEntity();
-        doc.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-        doc.setCode("EDI-OUT-" + CoreMetrics.currentTimeMillis());
-        doc.setFormatId(format.getId());
-        doc.setRelatedBillType(relatedBillType);
-        doc.setRelatedBillCode(relatedBillCode);
-        doc.setState(ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
-        doc.setBlockingLevel(ErpB2bConstants.BLOCKING_LEVEL_INFO);
-        doc.setRetryCount(0);
-        daoProvider().daoFor(ErpB2bEdiDoc.class).saveEntity(doc);
-
-        writeLog(doc, ErpB2bConstants.DIRECTION_OUTBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
-                "SEND: 生成出站 EDI 报文，待发送", payload, null);
-        return doc;
+        return createOutboundProcessor.createOutbound(relatedBillType, relatedBillCode, context);
     }
 
     @Override
@@ -189,25 +149,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
                                       @Name("rawPayload") String rawPayload,
                                       @Name("formatCode") String formatCode,
                                       IServiceContext context) {
-        ErpB2bEdiFormat format = findFormatByCode(formatCode);
-        if (format != null) {
-            checkDuplicate(format.getId(), relatedBillType, relatedBillCode);
-        }
-
-        ErpB2bEdiDoc doc = newEntity();
-        doc.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-        doc.setCode("EDI-IN-" + CoreMetrics.currentTimeMillis());
-        doc.setFormatId(format != null ? format.getId() : null);
-        doc.setRelatedBillType(relatedBillType);
-        doc.setRelatedBillCode(relatedBillCode);
-        doc.setState(ErpB2bConstants.EDI_DOC_STATE_RECEIVED);
-        doc.setBlockingLevel(ErpB2bConstants.BLOCKING_LEVEL_INFO);
-        doc.setRetryCount(0);
-        daoProvider().daoFor(ErpB2bEdiDoc.class).saveEntity(doc);
-
-        writeLog(doc, ErpB2bConstants.DIRECTION_INBOUND, ErpB2bConstants.EDI_RESULT_SUCCESS,
-                "RECEIVE: 收到入站报文", rawPayload, null);
-        return doc;
+        return createInboundProcessor.createInbound(relatedBillType, relatedBillCode, rawPayload, formatCode, context);
     }
 
     @Override
@@ -234,30 +176,6 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
                     .param(ErpB2bErrors.ARG_EDI_DOC_ID, ediDocId);
         }
         return doc;
-    }
-
-    private void checkDuplicate(Long formatId, String relatedBillType, String relatedBillCode) {
-        QueryBean q = new QueryBean();
-        q.addFilter(and(
-                eq("formatId", formatId),
-                eq("relatedBillType", relatedBillType),
-                eq("relatedBillCode", relatedBillCode)));
-        // O-5：追加 id DESC 确保确定性
-        q.addOrderField("id", true);
-        ErpB2bEdiDoc existing = daoProvider().daoFor(ErpB2bEdiDoc.class).findFirstByQuery(q);
-        if (existing != null) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_EDI_DOC_ALREADY_PROCESSED)
-                    .param(ErpB2bErrors.ARG_RELATED_BILL_TYPE, relatedBillType)
-                    .param(ErpB2bErrors.ARG_RELATED_BILL_CODE, relatedBillCode);
-        }
-    }
-
-    private ErpB2bEdiFormat findFormatByCode(String code) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("code", code));
-        // O-5：追加 code 排序确保确定性
-        q.addOrderField("code", false);
-        return daoProvider().daoFor(ErpB2bEdiFormat.class).findFirstByQuery(q);
     }
 
     private NopException illegalTransition(ErpB2bEdiDoc doc, String current, String expected) {
