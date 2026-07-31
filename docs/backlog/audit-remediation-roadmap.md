@@ -210,7 +210,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| R4.1 | 跨维度发现裁决（多维度重复发现 / 修复方案冲突） | todo | `docs/audits/arm-index.md` §跨维度发现 | MR1+MR2+MR3 done | `docs/skills/multi-dimensional-audit-prompt.md` |
+| R4.1 | 跨维度发现裁决（多维度重复发现 / 修复方案冲突） | done | `docs/audits/arm-index.md` §跨维度发现 | MR1+MR2+MR3 done | `docs/skills/multi-dimensional-audit-prompt.md` |
 
 ### Milestone MV — 全量验证与跨维度一致性回归
 
@@ -332,7 +332,7 @@
 - R*.0 是"展开器"：读 arm-index.md 中对应 MA 批次的 P1 finding，排序后向 roadmap 追加具体修复工作项行（R*.1, R*.2...）。详见横切关注点 §R*.0 展开机制
 
 ### MR4-MG
-- R4.1：跨维度裁决（无冲突时直接 done 并注明）
+- R4.1：跨维度裁决（无冲突时直接 done 并注明）。**R4.1 done（2026-07-31，plan 2026-07-31-1705-1）**：裁决结论=**无跨维度冲突，3 条发现均已协同/独立闭合**——发现 1（四维度交叉）协同闭合（action-level R2.7 + data-row-orgId R1.29 + workflow-SoD R3.3 + data-row-role R3.4，四个控制层互补不重叠）；发现 2（双维度互补）互补不重复（R3.4 角色侧 vs R1.29 orgId，声明来源/过滤列/落点均不同）；发现 3（子例关系）维持 closed（MR5 R5.8）。冲突方向扫描=零矛盾方向（MR1–MR3 修复均为单向收紧，无放宽另一守卫）。arm-index §跨维度发现 已从「待 MR4 裁决」降级为「MR4 已裁决」。MV 里程碑阻塞解除。
 - V.1-V.5：全量验证 + closure audit + 索引校验
 - G.1-G.4：基线更新 + 知识沉淀
 
