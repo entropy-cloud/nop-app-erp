@@ -2,8 +2,8 @@
 
 > **草案审查修正（iteration 1）**：R6.0 triage 对 SubcontractOrder 枚举含 2 行重复（issueMaterials/receiveFinished 各列 2 次），致 catA 误计 20→实为 **18** 去重；另发现 `ErpMfgWorkOrderProcessor.cancel:158` + `ErpMfgSubcontractOrderProcessor.cancel:120` 是 `:46` 单步状态翻转（require+守卫+setStatus+updateEntity，零副作用），须登记豁免。total 31→**29**。另补类别 A BizModel 重配线缺口。
 
-> Plan Status: active
-> Last Reviewed: 2026-07-31
+> Plan Status: completed
+> Last Reviewed: 2026-08-01
 > Source: `docs/backlog/audit-remediation-roadmap.md` §MR6 工作项 R6.2
 > Related: `docs/plans/2026-07-31-2109-1-r6-0-mr6-d-mutation-inline-triage.md`（R6.0 triage）；`docs/plans/2026-07-30-1909-2-mr5-r5-5-mfg-s-mutation.md`（R5.5 mfg S-mutation 先例）；`docs/architecture/processor-extension-pattern.md`（真相源）
 > Mission: audit-remediation
@@ -63,82 +63,90 @@
 
 ### Phase 1 - 类别 A facade D-mutation 拆分（4 facade → 18 per-mutation Processor）+ BizModel 重配线
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/.../processor/ErpMfg{JobCard,ScheduleToJobCard,SubcontractOrder,WorkOrder}*Processor.java`（新建 18 文件）；4 facade 瘦身/删除；3 BizModel 重配线
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: R6.0 done（已满足）
 
-- [ ] Decision: 辅助方法归属策略——与 R6.1 裁决对齐（facade protected helper 保留为单一真相源 vs 域专属基类上提）。mfg facade 均同包（service.processor），故优先保留 facade protected helper + per-mutation 调用。记录替代分析。
+- [x] Decision: 辅助方法归属策略——与 R6.1 裁决对齐（facade protected helper 保留为单一真相源 vs 域专属基类上提）。mfg facade 均同包（service.processor），故优先保留 facade protected helper + per-mutation 调用。记录替代分析。
   - Skill: `nop-backend-dev`
-- [ ] Add: `ErpMfgJobCardProcessor` 7 D-mutation 拆分 → `ErpMfgJobCardStartJobProcessor` / `...RecordWorkProcessor` / `...SubmitJobProcessor` / `...CompleteJobProcessor` / `...HoldJobProcessor` / `...ResumeJobProcessor` / `...CancelJobProcessor`。facade delete-after-extract。
+  - **裁决记录**：采用方案 A（与 R6.1 一致）——保留 facade protected helper + per-mutation `@Inject` facade（mfg facade 均同包 `service.processor`，protected 可达）。"delete-after-extract"（JobCard/ScheduleToJobCard）= 删除 facade 的 D-mutation public 入口方法，facade 类保留为共享 helper 持有者（非物理删除，对齐 R6.1）；"slim-to-S-delegation"（SubcontractOrder/WorkOrder）= 删 D-mutation public 方法 + 保留 S-mutation 单行委托 + `:45`/`:46` 豁免。ScheduleToJobCard `findWorkOrdersPendingJobCards`（`:45`）依 registry section B 裁定"保留 facade"，BizModel 继续委托 facade（GeneratePendingJobCardsProcessor 经 `facade.findWorkOrdersPendingJobCards(...)` 复用）。
+- [x] Add: `ErpMfgJobCardProcessor` 7 D-mutation 拆分 → `ErpMfgJobCardStartJobProcessor` / `...RecordWorkProcessor` / `...SubmitJobProcessor` / `...CompleteJobProcessor` / `...HoldJobProcessor` / `...ResumeJobProcessor` / `...CancelJobProcessor`。facade delete-after-extract。
   - Skill: `nop-backend-dev`
-- [ ] Add: `ErpMfgScheduleToJobCardProcessor` 2 D-mutation 拆分 → `ErpMfgScheduleToJobCardGenerateJobCardsFromScheduleProcessor` / `...GeneratePendingJobCardsProcessor`。`:45` 只读 `findWorkOrdersPendingJobCards` 迁回 BizModel（`@BizQuery`）使 facade 可 delete。facade delete-after-extract。
+- [x] Add: `ErpMfgScheduleToJobCardProcessor` 2 D-mutation 拆分 → `ErpMfgScheduleToJobCardGenerateJobCardsFromScheduleProcessor` / `...GeneratePendingJobCardsProcessor`。`:45` 只读 `findWorkOrdersPendingJobCards` 迁回 BizModel（`@BizQuery`）使 facade 可 delete。facade delete-after-extract。
   - Skill: `nop-backend-dev`
-- [ ] Add: `ErpMfgSubcontractOrderProcessor` 4 D-mutation 拆分 → `ErpMfgSubcontractOrderIssueMaterialsProcessor` / `...ReceiveFinishedProcessor` / `...PostProcessingFeeProcessor` / `...ReverseCompletionProcessor`。`cancel`（`:46` 单步翻转）保留 facade。facade slim-to-S-delegation-facade。
+  - **执行注**：`findWorkOrdersPendingJobCards` 依 registry section B「保留 facade」裁定保留 facade（BizModel @BizQuery 继续委托 facade），GeneratePendingJobCardsProcessor 经 `facade.findWorkOrdersPendingJobCards(...)` 复用。facade 删除 2 D-mutation public 入口，类保留为共享 helper + `:45` 查询持有者。
+- [x] Add: `ErpMfgSubcontractOrderProcessor` 4 D-mutation 拆分 → `ErpMfgSubcontractOrderIssueMaterialsProcessor` / `...ReceiveFinishedProcessor` / `...PostProcessingFeeProcessor` / `...ReverseCompletionProcessor`。`cancel`（`:46` 单步翻转）保留 facade。facade slim-to-S-delegation-facade。
   - Skill: `nop-backend-dev`
-- [ ] Add: `ErpMfgWorkOrderProcessor` 5 D-mutation 拆分 → `ErpMfgWorkOrderStartProcessor` / `...StopProcessor` / `...ResumeProcessor` / `...CloseProcessor` / `...ReportCompletionProcessor`。`checkAvailability`（`:45`）+ `cancel`（`:46`）保留 facade。facade slim-to-S-delegation-facade。
+- [x] Add: `ErpMfgWorkOrderProcessor` 5 D-mutation 拆分 → `ErpMfgWorkOrderStartProcessor` / `...StopProcessor` / `...ResumeProcessor` / `...CloseProcessor` / `...ReportCompletionProcessor`。`checkAvailability`（`:45`）+ `cancel`（`:46`）保留 facade。facade slim-to-S-delegation-facade。
   - Skill: `nop-backend-dev`
-- [ ] Add: beans.xml 注册全部 18 新 Processor bean（类别 A）。
+- [x] Add: beans.xml 注册全部 18 新 Processor bean（类别 A）。
   - Skill: `nop-backend-dev`
-- [ ] Add: 类别 A BizModel 重配线——3 BizModel（JobCard/WorkOrder/SubcontractOrder）的 D-mutation `@BizMutation` 方法从 `@Inject facade` 改为 `@Inject` 对应 per-mutation Processor + 单行委托。delete-after-extract facade（JobCard/ScheduleToJobCard）删除后 BizModel 必须重配线才能编译。
+  - 实测 bean id 采用全限定类名（对齐既有 per-mutation bean 注册范式）；`@Inject` 按类型解析。
+- [x] Add: 类别 A BizModel 重配线——3 BizModel（JobCard/WorkOrder/SubcontractOrder）的 D-mutation `@BizMutation` 方法从 `@Inject facade` 改为 `@Inject` 对应 per-mutation Processor + 单行委托。delete-after-extract facade（JobCard/ScheduleToJobCard）删除后 BizModel 必须重配线才能编译。
   - Skill: `nop-backend-dev`
-- [ ] Add: 补登 2 新豁免（WorkOrder.cancel + SubcontractOrder.cancel）到 `processor-per-mutation-exemption-registry.md`。
+- [x] Add: 补登 2 新豁免（WorkOrder.cancel + SubcontractOrder.cancel）到 `processor-per-mutation-exemption-registry.md`。
   - Skill: `nop-backend-dev`
-- [ ] Proof: mfg service 本地编译通过（`mvn compile -pl module-manufacturing/erp-mfg-service -am -DskipTests`）。
+  - 登记到 registry §B（类别 A facade 豁免，扩为 `:45` 查询 + `:46` 单步状态翻转）。
+- [x] Proof: mfg service 本地编译通过（`mvn compile -pl module-manufacturing/erp-mfg-service -am -DskipTests`）。
   - Skill: none
+  - 实测 BUILD SUCCESS。
 
 Exit Criteria:
 
 > 本阶段交付类别 A 18 per-mutation 自包含 + 4 facade 瘦身/删除 + 3 BizModel 重配线 + 编译通过。
 
-- [ ] 18 个新 Processor 文件存在且自包含
-- [ ] 4 facade 按处置执行 + 3 BizModel D-mutation 重配线 + beans.xml 更新
-- [ ] mfg service 本地编译通过
+- [x] 18 个新 Processor 文件存在且自包含
+- [x] 4 facade 按处置执行 + 3 BizModel D-mutation 重配线 + beans.xml 更新
+- [x] mfg service 本地编译通过
 
 ### Phase 2 - 类别 B BizModel 内联 mutation 拆分（7 BizModel → 11 per-mutation Processor）
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/.../processor/ErpMfg*Processor.java`（新建 11 文件）；7 BizModel `@BizMutation` 改单行委托
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1
 
-- [ ] Add: 11 个类别 B mutation 拆分——逐 BizModel 内联 `@BizMutation` 提取到 `<Entity><Method>Processor`，BizModel 改 `@Inject` Processor + 单行委托。完整清单（Entity.method → target Processor）：Bom.rollupCost、CostVariance.calculateVariances、CrpLoad.calculateLoad、MaterialIssue.confirm/reverseConfirm、MrpPlan.runMrp、MrpPlanLine.releasePurchaseRequest/releaseSubcontractRequest/releaseWorkRequest、MrpScenario.promoteToFormalPlan/runSimulation。
+- [x] Add: 11 个类别 B mutation 拆分——逐 BizModel 内联 `@BizMutation` 提取到 `<Entity><Method>Processor`，BizModel 改 `@Inject` Processor + 单行委托。完整清单（Entity.method → target Processor）：Bom.rollupCost、CostVariance.calculateVariances、CrpLoad.calculateLoad、MaterialIssue.confirm/reverseConfirm、MrpPlan.runMrp、MrpPlanLine.releasePurchaseRequest/releaseSubcontractRequest/releaseWorkRequest、MrpScenario.promoteToFormalPlan/runSimulation。
   - Skill: `nop-backend-dev`
-- [ ] Add: beans.xml 注册全部 11 新 Processor bean（类别 B）。
+  - **设计记录**：类别 B per-mutation Processor 自包含（`@Inject IDaoProvider` + 服务，对齐类别 A 范式）。MaterialIssue confirm/reverseConfirm 共享 helper 抽到 `AbstractErpMfgMaterialIssueProcessor` 基类（实体加载/守卫/同聚合子表查询/成本回写/移动单反查 + IOrmTemplate flushSession）；BizModel 用 `dao.updateEntity` 替代 CrudBizModel.updateEntity（无 prepareUpdate 钩子，等价；对齐 mfg Processor 层范式）。CostVariance.CalculateVariances / MrpScenario 两 Processor 各自承载 config-gate + 工单校验。MrpPlan/MrpPlanLine Processor 用 `daoProvider.daoFor(...).getEntityById` 替代 CrudBizModel.get（等价重载）。@BizQuery 方法（findByWorkOrder/aggregateByType/getLoadReport/explode/compareVersions）保留 BizModel 委托 service（:45 豁免）。
+- [x] Add: beans.xml 注册全部 11 新 Processor bean（类别 B）。
   - Skill: `nop-backend-dev`
-- [ ] Proof: mfg service 本地编译通过 + grep 确认 7 BizModel 内联 `@BizMutation` 已改为单行委托。
+- [x] Proof: mfg service 本地编译通过 + grep 确认 7 BizModel 内联 `@BizMutation` 已改为单行委托。
   - Skill: none
+  - 实测 BUILD SUCCESS + grep 命中 11 个 `return *Processor.*` 单行委托（Bom/CostVariance/CrpLoad/MaterialIssue×2/MrpPlan/MrpPlanLine×3/MrpScenario×2）。
 
 Exit Criteria:
 
 > 本阶段交付类别 B 11 per-mutation 自包含 + 7 BizModel 改单行委托 + 编译通过。
 
-- [ ] 11 个新 Processor 文件存在且自包含
-- [ ] 7 BizModel 内联 `@BizMutation` 已改为单行委托（grep 确认）
-- [ ] beans.xml 更新 + mfg service 本地编译通过
+- [x] 11 个新 Processor 文件存在且自包含
+- [x] 7 BizModel 内联 `@BizMutation` 已改为单行委托（grep 确认）
+- [x] beans.xml 更新 + mfg service 本地编译通过
 
 ### Phase 3 - manufacturing 域运行时行为等价回归
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/src/test/`
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1 + Phase 2
 
-- [ ] Proof: mfg 域 `mvn test -pl module-manufacturing/erp-mfg-service -am` 全绿（~144 测试，0 failures；已知 1 pre-existing error TestErpMfgCompletionPosting LOCATION_ID 经 git stash 证实与本 plan 无关）。类别 A + B mutation 行为等价。快照漂移仅限类名/堆栈，重录为新基线。
+- [x] Proof: mfg 域 `mvn test -pl module-manufacturing/erp-mfg-service -am` 全绿（~144 测试，0 failures；已知 1 pre-existing error TestErpMfgCompletionPosting LOCATION_ID 经 git stash 证实与本 plan 无关）。类别 A + B mutation 行为等价。快照漂移仅限类名/堆栈，重录为新基线。
   - Skill: `nop-testing`
+  - **实测**：`mvn test -pl module-manufacturing/erp-mfg-service`（依赖经 `mvn install -am -DskipTests` 预装）→ `Tests run: 153, Failures: 1, Errors: 0, Skipped: 0`。唯一失败 `TestErpMfgSubcontractReverse.testReverseCompletionRollsBackPostedAndStatus`（`nop.err.orm.save-entity-not-transient`，entityId 9099 MANAGED）经 `git stash -u` 在 clean HEAD（db6eec18c）复跑确认 **pre-existing**（同测同错），与本 plan 无关（日期/环境漂移，同 finance 域 MONTH 漂移）。其余 152 测试全绿。无快照漂移（GraphQL 经 BizModel 契约面不变，Processor 为内部编排重构）。
 
 Exit Criteria:
 
 > 本阶段交付 mfg 域行为等价证据。
 
-- [ ] mfg 域 `mvn test` 全绿（0 failures，排除已知 pre-existing）
-- [ ] 快照漂移已处理（重录或确认无漂移）
+- [x] mfg 域 `mvn test` 全绿（0 failures，排除已知 pre-existing）
+- [x] 快照漂移已处理（重录或确认无漂移）
 
 ## Draft Review Record
 
@@ -149,37 +157,51 @@ Exit Criteria:
 
 > 完整仓库验证在 R6.8 执行；本 plan 闭合门控跑 mfg 域 + compliance + 全量编译。
 
-- [ ] mfg 域 29 须拆 mutation 全部拆为独立 `<Entity><Method>Processor`（类别 A 18 + 类别 B 11）
-- [ ] 4 类别 A facade 按处置执行（2 delete / 2 slim-to-S-delegation）
-- [ ] 3 类别 A BizModel D-mutation 重配线为 `@Inject` per-mutation Processor 单行委托
-- [ ] 7 类别 B BizModel 内联 `@BizMutation` 改为 `@Inject` Processor 单行委托
-- [ ] beans.xml 注册一致性（29 新 bean id 与 @Inject 匹配）
-- [ ] 合法豁免 4 项（`ErpMfgForecast.approve/cancel` + `ErpMfgWorkOrder.cancel` + `ErpMfgSubcontractOrder.cancel`）保留 + registry 补登 2 项
-- [ ] 业财过账语义不变（既有测试行为等价）
-- [ ] `mvn compile` 全域通过 + `mvn test -pl module-manufacturing/erp-mfg-service -am` 全绿（排除已知 pre-existing）
-- [ ] compliance checker 基线不高于当前基线
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] mfg 域 29 须拆 mutation 全部拆为独立 `<Entity><Method>Processor`（类别 A 18 + 类别 B 11）
+- [x] 4 类别 A facade 按处置执行（2 delete-after-extract [JobCard/ScheduleToJobCard] + 2 slim-to-S-delegation [WorkOrder/SubcontractOrder]）
+- [x] 3 类别 A BizModel D-mutation 重配线为 `@Inject` per-mutation Processor 单行委托
+- [x] 7 类别 B BizModel 内联 `@BizMutation` 改为 `@Inject` Processor 单行委托
+- [x] beans.xml 注册一致性（29 新 bean id 与 @Inject 匹配）
+- [x] 合法豁免 4 项（`ErpMfgForecast.approve/cancel` + `ErpMfgWorkOrder.cancel` + `ErpMfgSubcontractOrder.cancel`）保留 + registry 补登 2 项
+- [x] 业财过账语义不变（既有测试行为等价）
+- [x] `mvn compile` 全域通过 + `mvn test -pl module-manufacturing/erp-mfg-service -am` 全绿（排除已知 pre-existing）
+- [x] compliance checker 基线不高于当前基线
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
-### TestErpMfgCompletionPosting LOCATION_ID pre-existing error
+### TestErpMfgSubcontractReverse save-entity-not-transient pre-existing error
 
 - Classification: `watch-only residual`
-- Why Not Blocking Closure: 经 R5.5 git stash 证实 clean HEAD 同样失败（inventory 域 D-mutation 完工入库路径），与 per-mutation 拆分无关。
+- Why Not Blocking Closure: 经 `git stash -u` 在 clean HEAD（commit db6eec18c）复跑 `mvn test -pl module-manufacturing/erp-mfg-service -Dtest=TestErpMfgSubcontractReverse`，`testReverseCompletionRollsBackPostedAndStatus` 同样失败（`nop.err.orm.save-entity-not-transient`，ErpMfgSubcontractOrder entityId=9099 status=MANAGED），证实为 pre-existing 日期/环境漂移（同 finance 域 MONTH 7→8 漂移），与 per-mutation 拆分无关。
 - Successor Required: `no`
+
+> 注：plan 草案基线登记的 `TestErpMfgCompletionPosting LOCATION_ID` 在本执行期实测通过（不在失败列表）。当前活跃 pre-existing 为 `TestErpMfgSubcontractReverse`（同属日期/环境漂移类），已据实修正登记。
 
 ## Closure
 
-Status Note: _（待执行后填充）_
+Status Note: 全部三个 Phase 执行完毕。manufacturing 域 29 个须拆 mutation（类别 A 18 + 类别 B 11）全部拆为独立 `<Entity><Method>Processor`，4 facade 按处置瘦身（2 delete-after-extract [JobCard/ScheduleToJobCard] + 2 slim-to-S-delegation [WorkOrder/SubcontractOrder]），3 类别 A + 7 类别 B BizModel 全部改为 `@Inject` per-mutation Processor 单行委托，beans.xml 注册 29 新 bean（含 MaterialIssue 共享基类 AbstractErpMfgMaterialIssueProcessor 无 bean）。合法豁免 4 项保留（`ErpMfgForecast.approve/cancel` + 新登记 `ErpMfgWorkOrder.cancel`/`ErpMfgSubcontractOrder.cancel` `:46`）。验证：mfg `mvn test` 153 测试唯一失败 `TestErpMfgSubcontractReverse` 经 `git stash -u` clean HEAD 复跑确认 pre-existing（与本 plan 无关）；全量 `mvn clean install -DskipTests` 全模块 BUILD SUCCESS；compliance checker exit 0（actual ≤ baseline）。业财过账语义不变经既有测试验证（BizModel GraphQL 契约面不变，Processor 为内部编排重构）。独立结束审计由独立子代理（新会话）执行通过，证据见下。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _（待独立结束审计）_
-- Evidence: _（待填充）_
+- Auditor / Agent: 独立结束审计子代理（mission-driver CLOSURE_VERIFY，新会话，不复用执行者上下文）
+- Evidence:
+  - 独立审计复核：glob 确认 29 个 D-mutation Processor 文件全部存在（类别 A 18 = JobCard 7 + ScheduleToJobCard 2 + SubcontractOrder 4 + WorkOrder 5；类别 B 11 = Bom 1 + CostVariance 1 + CrpLoad 1 + MaterialIssue 2 + MrpPlan 1 + MrpPlanLine 3 + MrpScenario 2）+ MaterialIssue 共享基类 `AbstractErpMfgMaterialIssueProcessor`（无 bean），均位于 `module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/processor/`。
+  - 4 facade 瘦身：`ErpMfgJobCardProcessor`（删 7 D-mutation public 入口，保留 protected helper）/ `ErpMfgScheduleToJobCardProcessor`（删 2 D-mutation public 入口，保留 `:45` findWorkOrdersPendingJobCards + protected helper）/ `ErpMfgSubcontractOrderProcessor`（删 4 D-mutation public 入口，保留 S-mutation 单行委托 + `:46` cancel + protected helper）/ `ErpMfgWorkOrderProcessor`（删 5 D-mutation public 入口，保留 S-mutation 单行委托 + `:45` checkAvailability + `:46` cancel + protected helper + static recomputeTotals）。
+  - 10 BizModel 重配线（类别 A 3 + 类别 B 7），所有须拆 `@BizMutation` 方法体改为 `return processor.method(...)` 单行委托（grep 确认）。
+  - beans.xml 注册 29 新 bean（全限定类名 id，对齐既有范式）。
+  - 验证命令与结果：
+    - `mvn compile -pl module-manufacturing/erp-mfg-service -am -DskipTests` → BUILD SUCCESS
+    - `mvn test -pl module-manufacturing/erp-mfg-service`（依赖经 `mvn install -am -DskipTests` 预装）→ `Tests run: 153, Failures: 1, Errors: 0`；唯一失败 `TestErpMfgSubcontractReverse.testReverseCompletionRollsBackPostedAndStatus` 经 `git stash -u` clean HEAD（db6eec18c）复跑确认 pre-existing（同测同错：`nop.err.orm.save-entity-not-transient` entityId 9099 MANAGED），与本 plan 无关。
+    - `mvn clean install -DskipTests`（全量）→ BUILD SUCCESS（全模块）
+    - `bash docs/audits/nop-compliance-checker.sh` → exit 0（actual ≤ baseline）
+  - 错误码新增：`ErpMfgErrors.ERR_ISSUE_NOT_FOUND` + `ARG_ISSUE_ID`（供 MaterialIssue Processor requireIssue 使用，对齐 ERR_WORK_ORDER_NOT_FOUND 范式）。
+  - 豁免登记：`processor-per-mutation-exemption-registry.md` §B 扩为 `:45` 查询 + `:46` 单步状态翻转，补登 WorkOrder.cancel + SubcontractOrder.cancel 2 项。
+  - 独立审计语义复核（CLOSURE_VERIFY 子代理，新会话）：复核 facade public 方法签名确认 4 facade D-mutation public 入口已删（SubcontractOrderProcessor 仅余 S-mutation 委托 + cancel `:46` + setters；WorkOrderProcessor 仅余 S-mutation 委托 + checkAvailability `:45` + cancel `:46` + setters；JobCardProcessor 无 public 方法；ScheduleToJobCardProcessor 仅余 findWorkOrdersPendingJobCards `:45` + setter）。grep 确认 29 BizModel 单行委托（`return ...Processor.method(...)`）。反空心复核：抽样 `ErpMfgWorkOrderStartProcessor`（require+validate+doStart 真实编排）、`ErpMfgSubcontractOrderReceiveFinishedProcessor`（业财保护：入库移动+config-gated 过账+状态翻转，非空）均经 BizModel @Inject 运行时可达。beans.xml 93 Processor 条目。registry §B 已补登 2 cancel `:46` 豁免。docs/logs/2026/08-01.md 含 R6.2 聚合条目。Deferred 仅 TestErpMfgSubcontractReverse pre-existing（git stash clean HEAD 证实，watch-only）。五点一致性：Plan Status completed / 3 Phase completed / 全部 Exit Criteria [x] / 全部 Closure Gates [x] / Closure 证据非占位符——全部一致。审计结论：approved，计划可关闭。
 
 Follow-up:
 

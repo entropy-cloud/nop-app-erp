@@ -280,7 +280,7 @@
 |---|-----------|--------|-----------|------|-------|
 | R6.0 | P1-MA3-062 类别 A 23 facade/92 D-mutation + 类别 B 88 BizModel/234 内联 mutation triage 汇总，逐方法判定豁免边界并展开为 per-domain 修复工作项行（须拆 256 = catB 164 + catA 92；合法豁免 77 = catB 70 + catA 7 查询；详见下方"R6.0 triage 展开"） | done | `docs/audits/arm-index.md` P1-MA3-062；豁免登记 `docs/architecture/processor-per-mutation-exemption-registry.md` | MR5 done | `docs/skills/nop-backend-dev` |
 | R6.1 | **finance 域** — 须拆 **40**（类别 B 21 + 类别 A 19，4 facade：ErpFinAccountingPeriodProcessor / ErpFinBadDebtProcessor / ErpFinNotesPayableProcessor / ErpFinNotesReceivableProcessor）；合法豁免 1（`ErpFinPostingException.manualEntry`）。注：原行枚举 41/catA 20 经 plan draft review 纠正为 40/catA 19——BadDebt `submit` 实测已是 MR5 S-mutation 单行委托（非 D-mutation），R6.0 triage 计数错误已回填。ErpFinPostingProcessor/ErpFinBudgetScenario 经 R6.0 实仓复核为 S-mutation 纯委托 facade（D=0），非类别 A 违规，已从本行移除。详见"R6.0 triage 展开 §R6.1" | done | `docs/design/finance/` + `docs/architecture/processor-extension-pattern.md`；plan `docs/plans/2026-07-31-2115-1-r6-1-finance-d-mutation-per-mutation-split.md` | R6.0 | `docs/skills/nop-backend-dev` |
-| R6.2 | **manufacturing 域** — 须拆 **31**（类别 B 11 + 类别 A 20，4 facade：ErpMfgWorkOrderProcessor / ErpMfgSubcontractOrderProcessor / ErpMfgJobCardProcessor / ErpMfgScheduleToJobCardProcessor）；合法豁免 2（ErpMfgForecast approve/cancel）。详见"R6.0 triage 展开 §R6.2" | todo | `docs/design/manufacturing/` | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.2 | **manufacturing 域** — 须拆 **29**（类别 B 11 + 类别 A 18，4 facade：ErpMfgWorkOrderProcessor / ErpMfgSubcontractOrderProcessor / ErpMfgJobCardProcessor / ErpMfgScheduleToJobCardProcessor）；合法豁免 4（ErpMfgForecast approve/cancel + ErpMfgWorkOrder.cancel + ErpMfgSubcontractOrder.cancel `:46`）。注：原行枚举 31/catA 20 经 plan draft review 纠正为 29/catA 18——SubcontractOrder 枚举含 2 行重复（issueMaterials/receiveFinished 各列 2 次）去重 + WorkOrder/SubcontractOrder `cancel` 登记 `:46` 豁免，R6.0 triage 计数错误已回填。详见"R6.0 triage 展开 §R6.2" | done | `docs/design/manufacturing/` + `docs/architecture/processor-extension-pattern.md`；plan `docs/plans/2026-07-31-2115-2-r6-2-manufacturing-d-mutation-per-mutation-split.md` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.3 | **assets 域** — 须拆 **22**（全部类别 A，4 facade：ErpAstCipProcessor / ErpAstDepreciationScheduleProcessor / ErpAstInventoryProcessor / ErpAstMaintenanceProcessor）；类别 B 0（assets BizModel 已委托 Processor）；合法豁免 0。注：原行枚举的 ErpAstDisposal/Merge/Split/ValueAdjustment/AssetCapitalization 经 R6.0 实仓复核为 S-mutation 纯委托 facade（D=0），非类别 A 违规，从本行移除（10→4 facade）。详见"R6.0 triage 展开 §R6.3" | todo | `docs/design/assets/` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.4 | **inventory 域** — 须拆 **14**（类别 B 1 + 类别 A 13，4 facade：ErpInvStockMoveProcessor / ErpInvOwnershipTransferProcessor / ErpInvLandedCostProcessor / ErpInvCostAdjustProcessor）；合法豁免 3（ErpInvStockTake startTake/completeTake/cancelTake）。详见"R6.0 triage 展开 §R6.4" | todo | `docs/design/inventory/` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.5 | **purchase + sales 域** — 须拆 **7**（类别 B 1 + 类别 A 6，3 facade：ErpPurPaymentProcessor / ErpSalQuotationProcessor / ErpSalReceiptProcessor）；合法豁免 2（ErpPurQuotation.cancel / ErpPurRfq.cancel）。另 R6.8 backstop 单 D-mutation facade：ErpPurRequisitionProcessor.convertToOrder。详见"R6.0 triage 展开 §R6.5" | todo | `docs/design/{purchase,sales}/` | R6.0 | `docs/skills/nop-backend-dev` |
@@ -361,7 +361,7 @@
 | ErpFinReconciliationBizModel.runAutoReconciliation | ErpFinReconciliationRunAutoReconciliationProcessor |
 | ErpFinVoucherTemplateBizModel.renderTemplate | ErpFinVoucherTemplateRenderTemplateProcessor |
 
-#### R6.2（manufacturing）— 须拆 31（类别 B 11 + 类别 A 20，4 facade）
+#### R6.2（manufacturing）— 须拆 29（类别 B 11 + 类别 A 18，4 facade）— done
 
 **类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
 
@@ -379,11 +379,10 @@
   - ≤2 步查询（:45 豁免，保留）：findWorkOrdersPendingJobCards
 - `ErpMfgSubcontractOrderProcessor`（slim-to-S-delegation-facade）：
   - `ErpMfgSubcontractOrder.issueMaterials` → `ErpMfgSubcontractOrderIssueMaterialsProcessor`
-  - `ErpMfgSubcontractOrder.issueMaterials` → `ErpMfgSubcontractOrderIssueMaterialsProcessor`
-  - `ErpMfgSubcontractOrder.receiveFinished` → `ErpMfgSubcontractOrderReceiveFinishedProcessor`
   - `ErpMfgSubcontractOrder.receiveFinished` → `ErpMfgSubcontractOrderReceiveFinishedProcessor`
   - `ErpMfgSubcontractOrder.postProcessingFee` → `ErpMfgSubcontractOrderPostProcessingFeeProcessor`
   - `ErpMfgSubcontractOrder.reverseCompletion` → `ErpMfgSubcontractOrderReverseCompletionProcessor`
+  - 单步状态翻转（:46 豁免，保留）：cancel
 - `ErpMfgWorkOrderProcessor`（slim-to-S-delegation-facade）：
   - `ErpMfgWorkOrder.start` → `ErpMfgWorkOrderStartProcessor`
   - `ErpMfgWorkOrder.stop` → `ErpMfgWorkOrderStopProcessor`
@@ -391,6 +390,7 @@
   - `ErpMfgWorkOrder.close` → `ErpMfgWorkOrderCloseProcessor`
   - `ErpMfgWorkOrder.reportCompletion` → `ErpMfgWorkOrderReportCompletionProcessor`
   - ≤2 步查询（:45 豁免，保留）：checkAvailability
+  - 单步状态翻转（:46 豁免，保留）：cancel
 
 **类别 B 内联 `@BizMutation` 须拆（BizModel → `<Entity><Method>Processor` + 单行委托）：**
 

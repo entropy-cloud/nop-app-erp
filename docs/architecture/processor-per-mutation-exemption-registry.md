@@ -175,14 +175,16 @@
 | ErpQaNonConformance | ErpQaNonConformanceBizModel.submitReview | :46 单步状态翻转+守卫/审计字段（无跨域编排） |
 | ErpQaRecall | ErpQaRecallBizModel.cancel | :46 单步状态翻转+守卫/审计字段（无跨域编排） |
 
-## B. 类别 A facade ≤2 步查询豁免（7，:45）
+## B. 类别 A facade 豁免（:45 只读查询 + :46 单步状态翻转）
 
-> 这些是 facade Processor 中以查询语义命名（`find*`/`get*`/`*Preview`/`check*`）的公共入口方法，属纯查询/只读计算，对齐 `:45`（纯查询 ≤2 步），facade 拆分时保留 facade 或迁回 BizModel，不强制 per-mutation Processor。
+> 这些是 facade Processor 中以查询语义命名（`find*`/`get*`/`*Preview`/`check*`）的公共入口方法（属纯查询/只读计算，对齐 `:45`），或单步状态翻转（`require`+守卫+`setStatus`+`updateEntity`，对齐 `:46`）。facade 拆分时保留 facade 或迁回 BizModel，不强制 per-mutation Processor。
 
 | 域 | Facade | 方法 | 处置 |
 |----|--------|------|------|
 | manufacturing | ErpMfgWorkOrderProcessor | checkAvailability | :45 只读可用性校验，保留 facade |
 | manufacturing | ErpMfgScheduleToJobCardProcessor | findWorkOrdersPendingJobCards | :45 只读查询，保留 facade |
+| manufacturing | ErpMfgWorkOrderProcessor | cancel | :46 单步状态翻转（DRAFT/SUBMITTED/NOT_STARTED→CANCELLED，零副作用），保留 facade（R6.2 新登记） |
+| manufacturing | ErpMfgSubcontractOrderProcessor | cancel | :46 单步状态翻转（DRAFT/SUBMITTED/APPROVED→CANCELLED，零副作用），保留 facade（R6.2 新登记） |
 | assets | ErpAstCipProcessor | findCostItems | :45 只读子实体查询，保留 facade |
 | assets | ErpAstCipProcessor | findProgressBillings | :45 只读子实体查询，保留 facade |
 | crm | ErpCrmConversionProcessor | getCreatedOpportunity | :45 只读关联查询，保留 facade |
