@@ -4,7 +4,13 @@ package app.erp.ast.service.entity;
 import app.erp.ast.biz.IErpAstInventoryBiz;
 import app.erp.ast.dao.entity.ErpAstInventory;
 import app.erp.ast.service.processor.ErpAstInventoryApproveProcessor;
+import app.erp.ast.service.processor.ErpAstInventoryCreateInventoryProcessor;
+import app.erp.ast.service.processor.ErpAstInventoryPostProcessor;
+import app.erp.ast.service.processor.ErpAstInventoryProcessVarianceProcessor;
 import app.erp.ast.service.processor.ErpAstInventoryProcessor;
+import app.erp.ast.service.processor.ErpAstInventoryReconcileProcessor;
+import app.erp.ast.service.processor.ErpAstInventoryReverseProcessor;
+import app.erp.ast.service.processor.ErpAstInventorySubmitForCountProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -12,11 +18,10 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
-import java.util.List;
-
 /**
- * 资产盘点 BizModel（Facade）。所有动作经 xbiz 委托 {@link ErpAstInventoryProcessor} 全权处理。
- * 详见 owner doc {@code docs/design/assets/inventory.md}。
+ * 资产盘点 BizModel（Facade）。D-mutation 委托对应 per-mutation Processor（R6.3 拆分）；
+ * approve（S-mutation）委托 {@link ErpAstInventoryApproveProcessor}；cancel（`:45` 单步状态翻转豁免）保留委托
+ * {@link ErpAstInventoryProcessor}。详见 owner doc {@code docs/design/assets/inventory.md}。
  */
 @BizModel("ErpAstInventory")
 public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> implements IErpAstInventoryBiz {
@@ -27,6 +32,24 @@ public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> imple
     @Inject
     ErpAstInventoryApproveProcessor approveProcessor;
 
+    @Inject
+    ErpAstInventoryCreateInventoryProcessor createInventoryProcessor;
+
+    @Inject
+    ErpAstInventorySubmitForCountProcessor submitForCountProcessor;
+
+    @Inject
+    ErpAstInventoryReconcileProcessor reconcileProcessor;
+
+    @Inject
+    ErpAstInventoryProcessVarianceProcessor processVarianceProcessor;
+
+    @Inject
+    ErpAstInventoryPostProcessor postProcessor;
+
+    @Inject
+    ErpAstInventoryReverseProcessor reverseProcessor;
+
     public ErpAstInventoryBizModel() {
         setEntityName(ErpAstInventory.class.getName());
     }
@@ -34,25 +57,25 @@ public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> imple
     @Override
     @BizMutation
     public ErpAstInventory createInventory(@Name("id") Long id, IServiceContext context) {
-        return inventoryProcessor.createInventory(id, context);
+        return createInventoryProcessor.createInventory(id, context);
     }
 
     @Override
     @BizMutation
     public ErpAstInventory submitForCount(@Name("id") Long id, IServiceContext context) {
-        return inventoryProcessor.submitForCount(id, context);
+        return submitForCountProcessor.submitForCount(id, context);
     }
 
     @Override
     @BizMutation
     public ErpAstInventory reconcile(@Name("id") Long id, IServiceContext context) {
-        return inventoryProcessor.reconcile(id, context);
+        return reconcileProcessor.reconcile(id, context);
     }
 
     @Override
     @BizMutation
     public ErpAstInventory processVariance(@Name("id") Long id, IServiceContext context) {
-        return inventoryProcessor.processVariance(id, context);
+        return processVarianceProcessor.processVariance(id, context);
     }
 
     @Override
@@ -64,7 +87,7 @@ public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> imple
     @Override
     @BizMutation
     public ErpAstInventory post(@Name("id") Long id, IServiceContext context) {
-        return inventoryProcessor.post(id, context);
+        return postProcessor.post(id, context);
     }
 
     @Override
@@ -76,6 +99,6 @@ public class ErpAstInventoryBizModel extends CrudBizModel<ErpAstInventory> imple
     @Override
     @BizMutation
     public ErpAstInventory reverse(@Name("id") Long id, IServiceContext context) {
-        return inventoryProcessor.reverse(id, context);
+        return reverseProcessor.reverse(id, context);
     }
 }

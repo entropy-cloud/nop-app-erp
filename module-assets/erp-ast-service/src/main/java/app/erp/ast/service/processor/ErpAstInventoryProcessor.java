@@ -65,74 +65,12 @@ public class ErpAstInventoryProcessor {
     ErpAstInventoryApproveProcessor approveProcessor;
 
     // ---------- public actions ----------
-
-    public ErpAstInventory createInventory(Long id, IServiceContext context) {
-        ErpAstInventory inv = requireInventory(id, context);
-        validateTransition(inv, ErpAstConstants.INVENTORY_STATUS_DRAFT, "createInventory");
-        expandAssetsToLines(inv, context);
-        inv.setStatus(ErpAstConstants.INVENTORY_STATUS_DRAFT);
-        inventoryDao().updateEntity(inv);
-        return inv;
-    }
-
-    public ErpAstInventory submitForCount(Long id, IServiceContext context) {
-        ErpAstInventory inv = requireInventory(id, context);
-        validateTransition(inv, ErpAstConstants.INVENTORY_STATUS_DRAFT, "submitForCount");
-        if (findLines(inv.getId()).isEmpty()) {
-            throw new NopException(ErpAstErrors.ERR_AST_INVENTORY_RANGE_EMPTY)
-                    .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode());
-        }
-        inv.setStatus(ErpAstConstants.INVENTORY_STATUS_COUNTING);
-        inventoryDao().updateEntity(inv);
-        return inv;
-    }
-
-    public ErpAstInventory reconcile(Long id, IServiceContext context) {
-        ErpAstInventory inv = requireInventory(id, context);
-        validateTransition(inv, ErpAstConstants.INVENTORY_STATUS_COUNTING, "reconcile");
-        calculateVariance(inv, context);
-        inv.setStatus(ErpAstConstants.INVENTORY_STATUS_RECONCILING);
-        inventoryDao().updateEntity(inv);
-        return inv;
-    }
-
-    public ErpAstInventory processVariance(Long id, IServiceContext context) {
-        ErpAstInventory inv = requireInventory(id, context);
-        validateReconciling(inv);
-        List<ErpAstInventoryLine> lines = findLines(inv.getId());
-        for (ErpAstInventoryLine line : lines) {
-            handleLineVariance(inv, line, context);
-            lineDao().saveOrUpdateEntity(line);
-        }
-        return inv;
-    }
+    // D-mutation 公共入口（createInventory/submitForCount/reconcile/processVariance/post/reverse）已按 R6.3
+    // 拆为独立 per-mutation Processor。本 facade 处置 = slim-to-S-delegation-facade：
+    // 保留 approve（S-mutation 单行委托）+ cancel（`:45` 单步状态翻转豁免）+ protected helper（单一真相源）。
 
     public ErpAstInventory approve(Long id, IServiceContext context) {
         return approveProcessor.approve(String.valueOf(id), context);
-    }
-
-    public ErpAstInventory post(Long id, IServiceContext context) {
-        ErpAstInventory inv = requireInventory(id, context);
-        validateReconciling(inv);
-        if (isApprovalRequired() && inv.getApprovedAt() == null) {
-            throw new NopException(ErpAstErrors.ERR_AST_INVENTORY_NOT_RECONCILED)
-                    .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode())
-                    .param(ErpAstErrors.ARG_CURRENT_STATUS, inv.getStatus());
-        }
-        validateAllVarianceProcessed(inv);
-        validateShortageBlocks(inv);
-
-        Long voucherId = postingDispatcher.tryPost(inv);
-        inv = reload(id);
-        if (voucherId != null) {
-            Timestamp now = CoreMetrics.currentTimestamp();
-            inv.setPosted(true);
-            inv.setPostedAt(now);
-            inv.setPostedBy(currentUserId());
-            inv.setStatus(ErpAstConstants.INVENTORY_STATUS_POSTED);
-        }
-        inventoryDao().updateEntity(inv);
-        return inv;
     }
 
     public ErpAstInventory cancel(Long id, IServiceContext context) {
@@ -143,22 +81,6 @@ public class ErpAstInventoryProcessor {
             throw illegalTransition(inv, status, "非 DRAFT/COUNTING");
         }
         inv.setStatus(ErpAstConstants.INVENTORY_STATUS_CANCELLED);
-        inventoryDao().updateEntity(inv);
-        return inv;
-    }
-
-    public ErpAstInventory reverse(Long id, IServiceContext context) {
-        ErpAstInventory inv = requireInventory(id, context);
-        if (!Objects.equals(inv.getStatus(), ErpAstConstants.INVENTORY_STATUS_POSTED)
-                || !Boolean.TRUE.equals(inv.getPosted())) {
-            throw illegalTransition(inv, inv.getStatus(), "POSTED + posted=true");
-        }
-        postingDispatcher.reverse(inv);
-        inv = reload(id);
-        inv.setPosted(false);
-        inv.setPostedAt(null);
-        inv.setPostedBy(null);
-        inv.setStatus(ErpAstConstants.INVENTORY_STATUS_RECONCILING);
         inventoryDao().updateEntity(inv);
         return inv;
     }

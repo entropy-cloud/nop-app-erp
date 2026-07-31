@@ -5,7 +5,12 @@ import app.erp.ast.biz.IErpAstCipBiz;
 import app.erp.ast.dao.entity.ErpAstCip;
 import app.erp.ast.dao.entity.ErpAstCipCostItem;
 import app.erp.ast.dao.entity.ErpAstCipProgressBilling;
+import app.erp.ast.service.processor.ErpAstCipAddCostItemProcessor;
+import app.erp.ast.service.processor.ErpAstCipAddProgressBillingProcessor;
 import app.erp.ast.service.processor.ErpAstCipProcessor;
+import app.erp.ast.service.processor.ErpAstCipReverseTransferProcessor;
+import app.erp.ast.service.processor.ErpAstCipStartConstructionProcessor;
+import app.erp.ast.service.processor.ErpAstCipTransferToAssetProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -20,7 +25,8 @@ import java.util.List;
 
 /**
  * 在建工程（CIP）BizModel（Facade）。三态状态机 + 成本归集 + 进度付款 + 完工转固/部分转固 +
- * reverseTransfer 委托 {@link ErpAstCipProcessor}（protected step 方法，下游可逐 step 覆盖）。
+ * reverseTransfer 委托对应 per-mutation Processor（R6.3 拆分，protected step 方法，下游可逐 step 覆盖）。
+ * `:45` 只读查询（findCostItems/findProgressBillings）保留委托 {@link ErpAstCipProcessor}。
  *
  * <p>语义见 {@code docs/design/assets/cip.md}；状态字典 {@code erp-ast/cip-status}。
  */
@@ -30,6 +36,21 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
     @Inject
     ErpAstCipProcessor cipProcessor;
 
+    @Inject
+    ErpAstCipStartConstructionProcessor startConstructionProcessor;
+
+    @Inject
+    ErpAstCipAddCostItemProcessor addCostItemProcessor;
+
+    @Inject
+    ErpAstCipAddProgressBillingProcessor addProgressBillingProcessor;
+
+    @Inject
+    ErpAstCipTransferToAssetProcessor transferToAssetProcessor;
+
+    @Inject
+    ErpAstCipReverseTransferProcessor reverseTransferProcessor;
+
     public ErpAstCipBizModel() {
         setEntityName(ErpAstCip.class.getName());
     }
@@ -37,7 +58,7 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
     @Override
     @BizMutation
     public ErpAstCip startConstruction(@Name("cipId") Long cipId, IServiceContext context) {
-        return cipProcessor.startConstruction(cipId, context);
+        return startConstructionProcessor.startConstruction(cipId, context);
     }
 
     @Override
@@ -49,7 +70,7 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
                                          @Name("sourceBillCode") String sourceBillCode,
                                          @Name("remark") String remark,
                                          IServiceContext context) {
-        return cipProcessor.addCostItem(cipId, costType, amountFunctional, sourceBillType, sourceBillCode,
+        return addCostItemProcessor.addCostItem(cipId, costType, amountFunctional, sourceBillType, sourceBillCode,
                 remark, context);
     }
 
@@ -61,7 +82,7 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
                                                        @Name("amountFunctional") BigDecimal amountFunctional,
                                                        @Name("paymentVoucherCode") String paymentVoucherCode,
                                                        IServiceContext context) {
-        return cipProcessor.addProgressBilling(cipId, billingDate, billingMilestone, amountFunctional,
+        return addProgressBillingProcessor.addProgressBilling(cipId, billingDate, billingMilestone, amountFunctional,
                 paymentVoucherCode, context);
     }
 
@@ -86,7 +107,7 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
                                      @Name("costItemIds") List<Long> costItemIds,
                                      @Name("transferDate") LocalDate transferDate,
                                      IServiceContext context) {
-        return cipProcessor.transferToAsset(cipId, costItemIds, transferDate, context);
+        return transferToAssetProcessor.transferToAsset(cipId, costItemIds, transferDate, context);
     }
 
     @Override
@@ -94,6 +115,6 @@ public class ErpAstCipBizModel extends CrudBizModel<ErpAstCip> implements IErpAs
     public ErpAstCip reverseTransfer(@Name("cipId") Long cipId,
                                      @Name("capitalizationId") Long capitalizationId,
                                      IServiceContext context) {
-        return cipProcessor.reverseTransfer(cipId, capitalizationId, context);
+        return reverseTransferProcessor.reverseTransfer(cipId, capitalizationId, context);
     }
 }
