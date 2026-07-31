@@ -11,7 +11,9 @@ import app.erp.aps.biz.BatchOperationResult;
 import app.erp.aps.dao.entity.ErpApsOperationOrder;
 import app.erp.aps.service.ErpApsConstants;
 import app.erp.aps.service.ErpApsErrors;
-import app.erp.aps.service.processor.ErpApsSchedulingProcessor;
+import app.erp.aps.service.processor.ErpApsSchedulingInsertRushOrderProcessor;
+import app.erp.aps.service.processor.ErpApsSchedulingScheduleBackwardProcessor;
+import app.erp.aps.service.processor.ErpApsSchedulingScheduleForwardProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -30,7 +32,13 @@ import io.nop.biz.crud.EntityData;
 public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOrder> implements IErpApsOperationOrderBiz {
 
     @Inject
-    ErpApsSchedulingProcessor schedulingProcessor;
+    ErpApsSchedulingScheduleForwardProcessor scheduleForwardProcessor;
+
+    @Inject
+    ErpApsSchedulingScheduleBackwardProcessor scheduleBackwardProcessor;
+
+    @Inject
+    ErpApsSchedulingInsertRushOrderProcessor insertRushOrderProcessor;
 
     @Inject
     IErpApsAtpCtpService atpCtpService;
@@ -51,13 +59,13 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     @Override
     @BizMutation
     public SchedulingResult scheduleForward(@Name("scheduleId") Long scheduleId, IServiceContext context) {
-        return schedulingProcessor.scheduleForward(scheduleId, context);
+        return scheduleForwardProcessor.scheduleForward(scheduleId, context);
     }
 
     @Override
     @BizMutation
     public SchedulingResult scheduleBackward(@Name("scheduleId") Long scheduleId, IServiceContext context) {
-        return schedulingProcessor.scheduleBackward(scheduleId, context);
+        return scheduleBackwardProcessor.scheduleBackward(scheduleId, context);
     }
 
     /**
@@ -87,7 +95,7 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     @Override
     @BizMutation
     public SchedulingResult insertRushOrder(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
-        return schedulingProcessor.insertRushOrder(operationOrderId, context);
+        return insertRushOrderProcessor.insertRushOrder(operationOrderId, context);
     }
 
     @Override
