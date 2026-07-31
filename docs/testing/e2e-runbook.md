@@ -715,10 +715,11 @@ npx playwright show-trace test-results/<test-name>/trace.zip
 | 类别 | 缺口 | seed 状态 | 为何暂不闭合 | Successor 触发条件 |
 |------|------|-----------|--------------|-------------------|
 | CRUD 列表 | aps / b2b / contract / drp / logistics（5 域）+ cs-kb-suggestion（cs 子实体） | **未 seed** | 空数据是**正确**状态（无业务交易），list-value 会断言 `>=0` 恒真无意义；补 seed 是显式 Non-Goal | 任一域获得 seed 时，同一变更补 `*.list-value.spec.ts`（expectedCount≥1） |
-| 报表 | ast-disposal / fin-cash-flow / fin-period-close / mnt-downtime-summary / prj-timesheet / qa-ncr-capa（6 报表） | **已 seed** | 有 renderHtml 数值但仅有渲染存在性冒烟，无 value 强断言 → 真实残留盲区 | 补 6 报表 `*.value.spec.ts`（断言确定性数值 token）；或 `_helper.ts` 编辑保护解除后回头落地选项 B 增强冒烟层 |
+| 报表 | ~~fin-cash-flow / fin-period-close / mnt-downtime-summary / prj-timesheet / qa-ncr-capa（5 报表）~~ | **已 seed** | **已闭合（R3.2 successor plan `2026-07-31-2109-1`）**：5 报表均补并行 `*.value.spec.ts`（断言 renderHtml 确定性数值 token，空/全零即失败） | ✅ 已闭合 |
+| 报表 | ast-disposal | **未 seed（baseline 勘误）** | renderHtml 实跑证实 E2E seeded DB **无 disposal 行**（`_vfs/_init-data/` 无 `erp_ast_disposal.csv`，原"已 seed"声明勘误为未 seed）；本 plan Non-Goal 禁生产/seed 变更，故 ast-disposal value spec 采用**结构性 token**（报表标题，证明 disposal 报表经 renderHtml 真实渲染，强于冒烟的通用 200/DOM），空数据检测能力弱于数值 token | 补 `erp_ast_disposal` E2E seed 行 → 升级 ast-disposal `*.value.spec.ts` 为确定性数值 token 断言（或 `_helper.ts` 编辑保护解除后落地选项 B） |
 | 看板 | 无 | — | 10/10 域均有并行 value 层 | — |
 
-**冒烟 spec 计数权威**：仅冒烟（无并行强断言）spec = **53**（dashboards smoke×10 + reports smoke×24 + crud smoke×19）。注：`reports.download.spec.ts` + `reports.amis-download.spec.ts` **不计入冒烟**——二者属强断言（二进制魔数 + zip/PDF 解析 + 真实 AMIS 下载按钮驱动），非「GraphQL 200 + 关键词」冒烟（arm-index line 518 曾误分类，R3.2 已纠正，详见 `docs/audits/arm-index.md` §P1 P1-MA5-012 回填）。
+**冒烟 spec 计数权威**：仅冒烟（无并行强断言）spec = **47**（dashboards smoke×10 + reports smoke×18 + crud smoke×19）。注：原 53 → 47，因 R3.2 successor plan `2026-07-31-2109-1` 为 6 已 seed 仅冒烟报表各补并行 `*.value.spec.ts`（5 数值 + ast-disposal 结构性），6 报表获得并行 value 层后不再计入纯冒烟（reports smoke 24→18）。注：`reports.download.spec.ts` + `reports.amis-download.spec.ts` **不计入冒烟**——二者属强断言（二进制魔数 + zip/PDF 解析 + 真实 AMIS 下载按钮驱动），非「GraphQL 200 + 关键词」冒烟（arm-index line 518 曾误分类，R3.2 已纠正，详见 `docs/audits/arm-index.md` §P1 P1-MA5-012 回填）。
 
 ## 已知限制
 
