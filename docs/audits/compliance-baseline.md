@@ -223,7 +223,7 @@ R2a/R2b/R2d 不变（per-mutation Processor 不是 BizModel 故不命中 R2a/R2b
 
 **基线来源**：plan `2026-07-29-0749-3-audit-remediation-ma4-i18n-coverage.md` Phase 1 实测（独立复跑 `i18n-coverage-checker.sh` 双模式确认 frontend-ui-roadmap F15 英文化批次零基线稳定，与起草时实测一致无漂移）。报告详见 `docs/audits/2026-07-29-0749-arm-ma4-i18n-coverage.md`。
 
-**门控方向**：与 F8 同向收紧。quality 缺陷 > 0 或 strict 缺口 > 0 = 回归。**门控状态**：F15 checker 当前**未接入 CI workflow**（`.github/workflows/` 无 `i18n-coverage-checker.sh` 引用），属"可手动运行的回归门"。接入 CI 由 A7.4（CI/guard 激活审计）裁决（对齐 F8 `nop-compliance-checker.sh` 的 CI 接入模式）。本基线登记为 A7.4 持续激活验证的起点。
+**门控方向**：与 F8 同向收紧。quality 缺陷 > 0 或 strict 缺口 > 0 = 回归。**门控状态**：F15 checker **已接入 CI workflow** `.github/workflows/compliance.yml` i18n job（R3.7，plan 2026-07-31-1439-3），live guard——defects>0 或 gaps>0 触发 CI red。接入对齐 F8 `nop-compliance-checker.sh` 的 CI 接入模式（option b「gate 逻辑在 CI / checker 保持纯 reporter」），由 A7.4（CI/guard 激活审计）裁决落地。本基线登记为 A7.4 持续激活验证的起点。
 
 ## BASELINE (machine-readable)
 
@@ -258,4 +258,4 @@ R12c: 38
 - 源 finding: `docs/audits/2026-07-23-0000-architecture-governance-review.md` F8 + 闭包前必须项 #4
 - 计划: `docs/plans/2026-07-24-0930-1-compliance-guard-activation-ci-baseline.md`
 - daoFor 分类（为何 R2c 基线合理）: `docs/plans/2026-07-16-2134-1-ddd-entity-methods-daofor-convergence.md`
-- F15 i18n checker（独立门控，基线见上文 §F15 i18n 基线注记）: `docs/audits/i18n-coverage-checker.sh` + 审计 `docs/audits/2026-07-29-0749-arm-ma4-i18n-coverage.md` + 计划 `docs/plans/2026-07-29-0749-3-audit-remediation-ma4-i18n-coverage.md`（CI 接入待 A7.4 裁决）
+- F15 i18n checker（**已接入 CI**——`.github/workflows/compliance.yml` i18n job，R3.7，基线见上文 §F15 i18n 基线注记）: `docs/audits/i18n-coverage-checker.sh` + 审计 `docs/audits/2026-07-29-0749-arm-ma4-i18n-coverage.md` + 计划 `docs/plans/2026-07-29-0749-3-audit-remediation-ma4-i18n-coverage.md`（CI 接入经 A7.4 裁决，已由 R3.7 plan 2026-07-31-1439-3 落地）
