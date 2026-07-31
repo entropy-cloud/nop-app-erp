@@ -191,12 +191,18 @@
 
 ### Milestone MR3 — P1 修复（测试 + 安全 + 运维维度）
 
-> 依赖 MA5 + MA6 + MA7 完成。R3.0 同构展开机制。
+> 依赖 MA5 + MA6 + MA7 完成。R3.0 同构展开机制。**R3.0 done（2026-07-31，plan 2026-07-31-0958-1）**：13 项 MR3 归属 P1（MA5×6 + MA6×5 + MA7×2）展开为 7 个具体修复工作项行 R3.1~R3.7；P1-MA5-006 裁决为 successor 注记（被测功能 P1-MA3-042 物料预留未实现→无测试可补）；arm-index §P1 详细清单 13 项交叉引用回填 + 6 归并项标注随 MR2/MR1 parent 闭合；双向可追溯复核通过。
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| R3.0 | MA5+MA6+MA7 P1 发现汇总、排序并展开为具体修复工作项行 | todo | `docs/audits/arm-index.md` | MA5+MA6+MA7 done | none |
-| R3.x | _（R3.0 执行后自动展开：新增行初始 Status=todo）_ | （占位） | （见 R3.0） | R3.0 | （见 R3.0） |
+| R3.0 | MA5+MA6+MA7 P1 发现汇总、排序并展开为具体修复工作项行 | done | `docs/audits/arm-index.md` | MA5+MA6+MA7 done | none |
+| R3.1 | 测试计数文档刷新（机械文档更新，4 finding 合并）— P1-MA5-001（finance 46→64）+ P1-MA5-004（mfg 19→29）+ P1-MA5-007（hr 10→15）+ P1-MA5-010（assets 深度分类错浅1→浅0）；修复=`docs/testing/test-depth-classification.md` 四域计数 + 深度分类刷新 | todo | `docs/testing/test-depth-classification.md` | R3.0 | none |
+| R3.2 | E2E 仅冒烟盲区 — P1-MA5-012（55 仅冒烟 spec 结构性盲区，GraphQL 200+关键词无法检测后端空数据）；修复裁决属 R3.2：选项 A 为 6 无并行 CRUD 域补 list-value spec / 选项 B 增强 helper 加最小数据存在断言 / 选项 C 文档化依赖约定 | todo | `tests/e2e/`+`docs/testing/` | R3.0 | none |
+| R3.3 | 职责分离 SoD 强制（工作流级，独立于 action-level RBAC）— P1-MA6-001（4 S/A 域 approve 路径 `setApprovedBy(currentUserId())` 无 `createdBy` 比对，创建人可自审）；修复=finance/mfg/pur/sal Processor doApprove 增 createdById≠currentUserId() 守卫 + ErrorCode | todo | `docs/design/roles-and-permissions.md`+各域 `*-service/.../Processor.java` | R3.0 | none |
+| R3.4 | **[auth/permissions — 19 data-auth.xml + IUserContext]** 角色侧行级过滤 4 类规则落地（与 P1-MA2-093 orgId 维度互补不重复，MR3 协同）— P1-MA6-002（owner doc §数据权限 声明业务员/财务员/质检员/维护员 4 规则，19 data-auth.xml 全 `<objs/>` + 0 IDataAuthChecker，声明能力运行时未落地）；修复=填充 19 `erp-{module}.data-auth.xml` `<objs>` 规则 + IUserContext 暴露 createdById/assigneeId/deptId + 灰度 + 负向隔离测试 | todo | `docs/design/roles-and-permissions.md §数据权限`+各域 `*.data-auth.xml` | R3.0 | none |
+| R3.5 | 保护区域过程纪律 + closure-pending 补审计批次（同结果表面合并，P1-MA6-005 超集含 003/004 高优先级切片）— P1-MA6-003（ORM ask-first 5 计划缺独立 plan-audit/closure）+ P1-MA6-004（deployment+auth 2 计划缺独立 plan-audit/closure）+ P1-MA6-005（第三波 ~16 份 closure-pending「completed」计划超集）；修复=Round 3 独立子代理 closure-audit 批次回填 Closure Audit Evidence（含新浮现 closure-pending：MA5 A5.1-A5.4 经 plan 1430-1 + MA7 A7.4 经 plan 1708-2，不静默降级） | todo | `docs/plans/`（~16+2 份计划补 closure）+ `docs/audits/arm-index.md` | R3.0 | none |
+| R3.6 | **[ORM ask-first]** billR 缺 (billCode, businessType) 非唯一索引（与 P0-MA2-018 deferred UK 互补不重复 + P2-MA7-005 有界 N+1 批量加载协同）— P1-MA7-001（`ErpFinPostingProcessor.findBillLinks/alreadyPosted/reverseVoucher` 全表扫描，随凭证累积过账延迟线性增长）；修复=`app-erp-finance.orm.xml` ErpFinVoucherBillR `<indexes>` 增 `<index name="IDX_FIN_VOUCHER_BILL_R_BILL_CODE_BIZ_TYPE" unique="false">` on (billCode, businessType) + codegen 增量再生；触及 ORM ask-first 须独立 plan-audit + 人工确认 | todo | `module-finance/model/app-erp-finance.orm.xml`+`docs/design/finance/posting-log.md` | R3.0 | none |
+| R3.7 | F15 i18n-coverage-checker.sh 接入 CI workflow — P1-MA7-007（checker 仅可手动运行，`.github/workflows/` 零引用，基线干净 0/0 不触发 CI red）；修复=`.github/workflows/compliance.yml` 新增 job 执行 `bash docs/audits/i18n-coverage-checker.sh --strict` + 解析双模式基线（defects=0/gaps=0）单向收紧门控（对齐 F8 激活范式，关闭 F15「dead armor→live guard」最后一公里）；触及 CI 工作流修复须独立 plan | todo | `.github/workflows/compliance.yml`+`docs/audits/compliance-baseline.md §F15` | R3.0 | none |
 
 ### Milestone MR4 — 跨维度 P1 裁决
 
@@ -311,16 +317,16 @@
 - A4.9：i18n 完整性
 
 ### MA5（测试审计，6 工作项）
-- A5.1-A5.4：S 级域测试覆盖深度（finance/mfg/hr/assets）— **ready**（plan 2026-07-29-1430-1 四域报告产出 + arm-index 登记 11 P1[5 独立 + 6 归并] + 4 P2；0.16 全域最低比根因裁决：缺口为主 + 口径为辅；test-depth-classification.md 计数口径系统性过时 finance 46→64/mfg 19→29/hr 10→15 登记 MR3；待独立 closure audit 转 done）— hr 测试/mutation 比 0.16 全域最低
+- A5.1-A5.4：S 级域测试覆盖深度（finance/mfg/hr/assets）— **ready**（plan 2026-07-29-1430-1 四域报告产出 + arm-index 登记 11 P1[5 独立 + 6 归并] + 4 P2；0.16 全域最低比根因裁决：缺口为主 + 口径为辅；test-depth-classification.md 计数口径系统性过时 finance 46→64/mfg 19→29/hr 10→15 登记 MR3；独立 closure audit 仍 pending[执行者自查，独立 closure 推迟 CLOSURE_VERIFY 循环]——补审计路径显式列入 R3.5[R3.0 plan 2026-07-31-0958-1 Phase 1 核对]，保持 ready 不静默降级）— hr 测试/mutation 比 0.16 全域最低
 - A5.5-A5.6：测试隔离性 + E2E 有效性 — **done**（plan 2026-07-29-1430-2 两报告产出：A5.5 PASS[6 项已知污染物全 RESOLVED + JUnit 层平台级 localDb 结构性隔离 + E2E 层 cleanup 纪律收敛 + 零新活跃污染物] + A5.6 ⚠️(P1)[258 spec 断言强度矩阵 强66.3%/中8.5%/弱21.3%/工具2.7% + AMIS `$var` bug 已修复 successor 完整]；arm-index 登记 P1-MA5-012 + P2-MA5-005/006/007 已去重；独立 closure audit 通过 2026-07-29）— **MA5 测试层审计全部 6 工作项（A5.1-A5.6）现已全部 done/ready，MA5 里程碑完成**
 
 ### MA6（安全审计，4 工作项）
-- A6.1-A6.3：权限注解 + 数据权限 — **ready**（plan 2026-07-29-1410-1 三报告产出 + arm-index 登记 P1-MA6-001/002 + 交叉去重；待独立 closure audit 转 done）
-- A6.4：**保护区域纪律审计** — **ready**（plan 2026-07-29-1410-2 报告产出 + arm-index 登记 P1-MA6-003/004/005 + P2-MA6-001 + 交叉去重；待独立 closure audit 转 done）——**MA6 安全与权限层审计 A6.1-A6.4 现已全部 ready，MA6 里程碑完成**
+- A6.1-A6.3：权限注解 + 数据权限 — **done**（plan 2026-07-29-1410-1 三报告产出 + arm-index 登记 P1-MA6-001/002 + 交叉去重；独立 closure audit PASS 2026-07-29 独立子代理新会话——bookkeeping 经 R3.0 plan 2026-07-31-0958-1 转 done）
+- A6.4：**保护区域纪律审计** — **done**（plan 2026-07-29-1410-2 报告产出 + arm-index 登记 P1-MA6-003/004/005 + P2-MA6-001 + 交叉去重；独立 closure audit PASS 2026-07-29 独立子代理新会话 task ses_052f048faffeleNlxiXQWmzfk3——bookkeeping 经 R3.0 plan 2026-07-31-0958-1 转 done）——**MA6 安全与权限层审计 A6.1-A6.4 现已全部 done，MA6 里程碑完成**
 
 ### MA7（运维审计，4 工作项）
-- A7.1-A7.3：错误码/索引/N+1 — **ready**（plan 2026-07-29-1708-1 三报告产出 + arm-index 登记 P1-MA7-001[ErpFinVoucherBillR 缺 (billCode, businessType) 索引] + 6 项 P2 watch-only[P2-MA7-001~006 含 P2-MA7-006 归并 P2-MA4-003 同族]；零 P0；交叉去重 P0-MA2-018 互补不重复 + P2-MA4-003 同族归并；待独立 closure audit 转 done）
-- A7.4：CI/guard 持续激活验证 — **ready**（plan `2026-07-29-1708-2` 报告产出 + arm-index 登记 P1-MA7-007[F15 i18n-coverage-checker.sh 未接入 CI workflow，裁决接入对齐 F8 模式]；零 P0 + 零 P2；19 规则基线精确 0 漂移[M0.3 锚点后 62 commits 含 4 P0 fix 零回归] + CI 工作流激活性 PASS + checker↔基线块同步(19=19) + 19 模块 web 测试 @Tag 100% 一致；P1-MA7-007 是 A4.9 line 165 委托唯一裁决产出无重复；待独立 closure audit 转 done）——**MA7 里程碑（A7.1-A7.4）全部 done/ready，MA7 完成**
+- A7.1-A7.3：错误码/索引/N+1 — **done**（plan 2026-07-29-1708-1 三报告产出 + arm-index 登记 P1-MA7-001[ErpFinVoucherBillR 缺 (billCode, businessType) 索引] + 6 项 P2 watch-only[P2-MA7-001~006 含 P2-MA7-006 归并 P2-MA4-003 同族]；零 P0；交叉去重 P0-MA2-018 互补不重复 + P2-MA4-003 同族归并；独立 closure audit PASS 2026-07-29 独立子代理新会话——bookkeeping 经 R3.0 plan 2026-07-31-0958-1 转 done）
+- A7.4：CI/guard 持续激活验证 — **ready**（plan `2026-07-29-1708-2` 报告产出 + arm-index 登记 P1-MA7-007[F15 i18n-coverage-checker.sh 未接入 CI workflow，裁决接入对齐 F8 模式]；零 P0 + 零 P2；19 规则基线精确 0 漂移[M0.3 锚点后 62 commits 含 4 P0 fix 零回归] + CI 工作流激活性 PASS + checker↔基线块同步(19=19) + 19 模块 web 测试 @Tag 100% 一致；P1-MA7-007 是 A4.9 line 165 委托唯一裁决产出无重复；独立 closure audit 仍 pending[Auditor: <pending>]——补审计路径显式列入 R3.5[R3.0 plan 2026-07-31-0958-1 Phase 1 核对]，保持 ready 不静默降级）——**MA7 里程碑（A7.1-A7.4）全部 done/ready，MA7 完成**
 
 ### MR1-MR3（P1 修复）
 - R*.0 是"展开器"：读 arm-index.md 中对应 MA 批次的 P1 finding，排序后向 roadmap 追加具体修复工作项行（R*.1, R*.2...）。详见横切关注点 §R*.0 展开机制
