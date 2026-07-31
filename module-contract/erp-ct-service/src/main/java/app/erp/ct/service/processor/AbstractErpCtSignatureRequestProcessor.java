@@ -1,32 +1,25 @@
+package app.erp.ct.service.processor;
 
-package app.erp.ct.service.entity;
-
+import app.erp.contract.dao.entity.ErpCtContractVersion;
+import app.erp.contract.dao.entity.ErpCtSignatureRequest;
 import app.erp.ct.biz.IErpCtContractVersionBiz;
-import app.erp.ct.biz.IErpCtSignatureRequestBiz;
 import app.erp.ct.service.ErpCtConfigs;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
-import app.erp.ct.service.processor.ErpCtSignatureRequestHandleSignatureCallbackProcessor;
-import app.erp.ct.service.processor.ErpCtSignatureRequestInitSignatureRequestProcessor;
-import app.erp.ct.service.processor.ErpCtSignatureRequestQueryAndUpdateStatusProcessor;
 import app.erp.ct.service.spi.ErpCtSignatureProviderRegistry;
 import app.erp.ct.service.spi.IErpCtSignatureProvider;
 import app.erp.ct.service.spi.model.SignatureInitRequest;
 import app.erp.ct.service.spi.model.SignatureInitResponse;
 import app.erp.ct.service.spi.model.SignatureStatusQueryResponse;
-import app.erp.contract.dao.entity.ErpCtContractVersion;
-import app.erp.contract.dao.entity.ErpCtSignatureRequest;
-import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.biz.BizQuery;
-import io.nop.api.core.annotations.core.Name;
+import app.erp.ct.service.spi.model.Signer;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
-import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.lang.json.JsonTool;
+import io.nop.dao.api.IDaoProvider;
+import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import javax.crypto.Mac;
@@ -36,7 +29,6 @@ import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -44,135 +36,26 @@ import java.util.Objects;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 电子签章请求 BizModel（plan 2026-07-04-2200-2，design e-signature.md）。
+ * 电子签章请求状态机核心基类（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  *
- * <p>签章生命周期：
- * <ul>
- *   <li>{@link #initSignatureRequest}：FINALIZED 守门→建 PENDING_SIGNATURE 请求→调 Provider.initSignature
- *       回填 providerRequestId。config-gated {@code erp-ct.e-signature-enabled}（关则抛错，本期仅支持启用路径，
- *       线下签署附件上传走 ErpCtContractVersion.signVersion 直接接入）。</li>
- *   <li>{@link #handleSignatureCallback}：webhook 入口（@BizMutation 镜像 logistics handleTrackingWebhook 范式）。
- *       HMAC 校验 + eventId 幂等 + 按 event 推进状态机（signer.signed→PARTIALLY / signing.completed→FULLY
- *       +retrieveCertificate+调 signVersion / signing.rejected·declined→REJECTED / signing.expired→EXPIRED）。</li>
- *   <li>{@link #queryAndUpdateStatus}：轮询兜底，按 Provider.queryStatus 推进（与 callback 共用
- *       {@link #applyStatusTransition} 迁移核心）。</li>
- *   <li>{@link #cancelSignatureRequest}/{@link #rejectSignature}：终态迁移。</li>
- *   <li>{@link #findExpiringRequests}：到期查询（cron 注册归 Non-Goal）。</li>
- * </ul>
- *
- * <p>状态机（dict erp-ct/sign-status，design e-signature.md §状态机）：
- * PENDING_SIGNATURE→PARTIALLY_SIGNED（首签）→FULLY_SIGNED（全部）/→REJECTED/→EXPIRED/→CANCELLED。
- * 非法迁移抛 {@link ErpCtErrors#ERR_CT_SIGNATURE_ILLEGAL_TRANSITION}。
- *
- * <p>核心零污染：SignatureRequest→ContractVersion 单向 contractVersionId 引用（弱指针），不在
- * ErpCtContractVersion 加 signatureRequestId 列。FULLY_SIGNED 完成时调既有
- * {@link IErpCtContractVersionBiz#signVersion}（FINALIZED→SIGNED + isCurrent 翻转）。
+ * <p>3 个 D-mutation（{@code initSignatureRequest}/{@code handleSignatureCallback}/{@code queryAndUpdateStatus}）
+ * 共享状态机迁移核心（{@link #applyEventTransition}/{@link #applyStatusTransition}/{@link #completeFullySigned} 等）
+ * 及校验/解析辅助，按 helper 归属裁决（同实体多 mutation 共享 helper 显著时抽域专属基类）集中本类。
+ * 下游可经 Delta beans.xml 覆盖同名 bean id 的子类逐个覆盖 protected step。
  */
-@BizModel("ErpCtSignatureRequest")
-public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRequest>
-        implements IErpCtSignatureRequestBiz {
+public abstract class AbstractErpCtSignatureRequestProcessor {
 
     /** webhook HMAC 密钥（mock 测试可控；真实部署可扩展凭证配置）。 */
     public static final String WEBHOOK_SECRET = "erp-ct-signature-callback-secret";
+
+    @Inject
+    IDaoProvider daoProvider;
 
     @Inject
     IErpCtContractVersionBiz contractVersionBiz;
 
     @Inject
     ErpCtSignatureProviderRegistry providerRegistry;
-
-    @Inject
-    ErpCtSignatureRequestInitSignatureRequestProcessor initSignatureRequestProcessor;
-
-    @Inject
-    ErpCtSignatureRequestHandleSignatureCallbackProcessor handleSignatureCallbackProcessor;
-
-    @Inject
-    ErpCtSignatureRequestQueryAndUpdateStatusProcessor queryAndUpdateStatusProcessor;
-
-    public ErpCtSignatureRequestBizModel() {
-        setEntityName(ErpCtSignatureRequest.class.getName());
-    }
-
-    @Override
-    @BizMutation
-    public ErpCtSignatureRequest initSignatureRequest(@Name("contractVersionId") Long contractVersionId,
-                                                      @Name("signers") String signersJson,
-                                                      @Name("providerCode") String providerCode,
-                                                      IServiceContext context) {
-        return initSignatureRequestProcessor.initSignatureRequest(contractVersionId, signersJson, providerCode, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpCtSignatureRequest handleSignatureCallback(@Name("providerCode") String providerCode,
-                                                         @Name("signature") String signature,
-                                                         @Name("eventId") String eventId,
-                                                         @Name("payload") String payload,
-                                                         IServiceContext context) {
-        return handleSignatureCallbackProcessor.handleSignatureCallback(providerCode, signature, eventId, payload, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpCtSignatureRequest queryAndUpdateStatus(@Name("requestId") Long requestId,
-                                                      IServiceContext context) {
-        return queryAndUpdateStatusProcessor.queryAndUpdateStatus(requestId, context);
-    }
-
-    @Override
-    @BizMutation
-    public ErpCtSignatureRequest cancelSignatureRequest(@Name("requestId") Long requestId,
-                                                        IServiceContext context) {
-        ErpCtSignatureRequest request = requireEntity(String.valueOf(requestId), null, context);
-        String status = request.getStatus();
-        if (!ErpCtConstants.SIGNATURE_STATUS_PENDING.equals(status)
-                && !ErpCtConstants.SIGNATURE_STATUS_PARTIALLY.equals(status)) {
-            throw illegalTransition(request, ErpCtConstants.SIGNATURE_STATUS_PENDING
-                    + "/" + ErpCtConstants.SIGNATURE_STATUS_PARTIALLY);
-        }
-        request.setStatus(ErpCtConstants.SIGNATURE_STATUS_CANCELLED);
-        updateEntity(request, null, context);
-        return request;
-    }
-
-    @Override
-    @BizMutation
-    public ErpCtSignatureRequest rejectSignature(@Name("requestId") Long requestId,
-                                                 @Name("reason") String reason,
-                                                 IServiceContext context) {
-        ErpCtSignatureRequest request = requireEntity(String.valueOf(requestId), null, context);
-        String status = request.getStatus();
-        if (isTerminal(status)) {
-            throw illegalTransition(request, "non-terminal");
-        }
-        request.setStatus(ErpCtConstants.SIGNATURE_STATUS_REJECTED);
-        request.setErrorMsg(reason);
-        updateEntity(request, null, context);
-        return request;
-    }
-
-    @Override
-    @BizQuery
-    public List<ErpCtSignatureRequest> findExpiringRequests(@Name("asOfDate") LocalDate asOfDate,
-                                                            IServiceContext context) {
-        // 平台对 signingDeadline 仅允许 eq/in/dateBetween/dateTimeBetween（不支持 lt），
-        // 用 [epoch, asOfDate] 的 dateBetween 取所有早于/等于 asOfDate 的请求，再内存过滤非终态。
-        QueryBean query = new QueryBean();
-        query.addFilter(io.nop.api.core.beans.FilterBeans.dateBetween(
-                "signingDeadline", java.time.LocalDate.of(1970, 1, 1), asOfDate));
-        List<ErpCtSignatureRequest> all = findList(query, null, context);
-        if (all == null) {
-            return new ArrayList<>();
-        }
-        List<ErpCtSignatureRequest> result = new ArrayList<>();
-        for (ErpCtSignatureRequest r : all) {
-            if (!isTerminal(r.getStatus())) {
-                result.add(r);
-            }
-        }
-        return result;
-    }
 
     // ---------- state machine core ----------
 
@@ -309,7 +192,7 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
                 .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);
     }
 
-    // ---------- helpers ----------
+    // ---------- 校验/解析辅助 ----------
 
     /** Provider 中立状态码 → dict status（PENDING/PARTIALLY/COMPLETED/REJECTED/EXPIRED）。 */
     protected String mapProviderStatus(String providerStatus) {
@@ -363,7 +246,7 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
     }
 
     @SuppressWarnings("unchecked")
-    protected List<app.erp.ct.service.spi.model.Signer> parseSignersFromJson(String json) {
+    protected List<Signer> parseSignersFromJson(String json) {
         if (json == null || json.isEmpty()) {
             return Collections.emptyList();
         }
@@ -371,11 +254,11 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
         if (!(parsed instanceof List)) {
             return Collections.emptyList();
         }
-        List<app.erp.ct.service.spi.model.Signer> result = new ArrayList<>();
+        List<Signer> result = new ArrayList<>();
         for (Object o : (List<Object>) parsed) {
             if (o instanceof Map) {
                 Map<String, Object> m = (Map<String, Object>) o;
-                app.erp.ct.service.spi.model.Signer s = new app.erp.ct.service.spi.model.Signer();
+                Signer s = new Signer();
                 s.setName(asString(m.get("name")));
                 s.setEmail(asString(m.get("email")));
                 s.setPhone(asString(m.get("phone")));
@@ -385,14 +268,13 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
         return result;
     }
 
-    protected ErpCtSignatureRequest findRequestByProviderRequestId(String providerRequestId,
-                                                                   IServiceContext context) {
+    protected ErpCtSignatureRequest findRequestByProviderRequestId(String providerRequestId) {
         if (providerRequestId == null) {
             return null;
         }
         QueryBean query = new QueryBean();
         query.addFilter(eq("providerRequestId", providerRequestId));
-        return findFirst(query, null, context);
+        return dao().findFirstByQuery(query);
     }
 
     protected LocalDate resolveDefaultDeadline() {
@@ -438,4 +320,7 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
         return value == null ? null : value.toString();
     }
 
+    protected IEntityDao<ErpCtSignatureRequest> dao() {
+        return daoProvider.daoFor(ErpCtSignatureRequest.class);
+    }
 }

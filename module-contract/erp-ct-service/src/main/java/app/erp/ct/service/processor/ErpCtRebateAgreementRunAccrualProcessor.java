@@ -1,24 +1,18 @@
-
-package app.erp.ct.service.entity;
-
-import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.exceptions.NopException;
-import io.nop.api.core.time.CoreMetrics;
-import io.nop.biz.crud.CrudBizModel;
-import io.nop.core.context.IServiceContext;
+package app.erp.ct.service.processor;
 
 import app.erp.contract.dao.entity.ErpCtRebateAccrual;
 import app.erp.contract.dao.entity.ErpCtRebateAgreement;
-import app.erp.ct.biz.IErpCtRebateAgreementBiz;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
-import app.erp.ct.service.processor.ErpCtRebateAgreementRunAccrualProcessor;
 import app.erp.ct.service.rebate.RebateEngine;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.sal.dao.entity.ErpSalInvoice;
+import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
+import io.nop.core.context.IServiceContext;
+import io.nop.dao.api.IDaoProvider;
+import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -31,53 +25,59 @@ import java.util.Set;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.le;
-import io.nop.biz.crud.EntityData;
 
 /**
- * 返利协议 BizModel。返利计提引擎驱动
- * （对齐 {@code docs/design/contract/volume-discount.md} §年度返利协议 / §追溯调整）。
+ * ErpCtRebateAgreement runAccrual per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
+ * 自包含返利计提编排（聚合期间已过账 AP/AR 发票只读查询 + 逐张/期末喂 RebateEngine）。
  *
- * <p>{@code runAccrual} 聚合期间已过账 AP/AR 发票（只读查询，不跨域写），逐张喂
- * {@link RebateEngine#accrue}；PERIOD_END 一次性汇总喂入，PROGRESSIVE 逐张喂入。
- *
- * <p><b>跨实体访问方式偏离说明</b>：发票查询经 {@link IDaoProvider} 只读，而非注入
- * {@code IErpPurInvoiceBiz}/{@code IErpSalInvoiceBiz}（同 InvoicePlan，避免服务依赖级联）。
+ * <p><b>跨实体访问方式偏离说明</b>：发票查询经 {@link IDaoProvider} 只读（避免服务依赖级联）。
+ * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
-@BizModel("ErpCtRebateAgreement")
-public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreement>
-        implements IErpCtRebateAgreementBiz {
+public class ErpCtRebateAgreementRunAccrualProcessor {
+
+    @Inject
+    IDaoProvider daoProvider;
 
     @Inject
     RebateEngine rebateEngine;
 
-    @Inject
-    ErpCtRebateAgreementRunAccrualProcessor runAccrualProcessor;
-
-    public ErpCtRebateAgreementBizModel() {
-        setEntityName(ErpCtRebateAgreement.class.getName());
-    }
-
-    @Override
-    protected void defaultPrepareSave(EntityData<ErpCtRebateAgreement> entityData, IServiceContext context) {
-        super.defaultPrepareSave(entityData, context);
-        ErpCtRebateAgreement entity = entityData.getEntity();
-        if (entity.getBusinessDate() == null) {
-            entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
+    public ErpCtRebateAgreement runAccrual(Long agreementId, LocalDate asOfDate, IServiceContext context) {
+        ErpCtRebateAgreement agreement = requireAgreement(agreementId);
+        if (!Objects.equals(agreement.getStatus(), ErpCtConstants.REBATE_AGREEMENT_STATUS_ACTIVE)) {
+            throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_NOT_ACTIVE)
+                    .param(ErpCtErrors.ARG_REBATE_AGREEMENT_ID, agreementId)
+                    .param(ErpCtErrors.ARG_CURRENT_STATUS, agreement.getStatus());
         }
-    }
 
-    @Override
-    @BizMutation
-    public ErpCtRebateAgreement runAccrual(@Name("agreementId") Long agreementId,
-                                           @Name("asOfDate") LocalDate asOfDate,
-                                           IServiceContext context) {
-        return runAccrualProcessor.runAccrual(agreementId, asOfDate, context);
+        LocalDate periodStart = agreement.getStartDate();
+        LocalDate periodEnd = asOfDate == null ? CoreMetrics.today() : asOfDate;
+        Set<String> alreadyAccruedCodes = loadAccruedBillCodes(agreementId);
+
+        if (Objects.equals(agreement.getAccrualMethod(), ErpCtConstants.ACCRUAL_METHOD_PERIOD_END)) {
+            // 期末一次性：聚合期间全部新增发票金额，一次性喂入
+            BigDecimal periodTotal = sumPeriodInvoices(agreement, periodStart, periodEnd, alreadyAccruedCodes);
+            if (periodTotal.signum() != 0) {
+                rebateEngine.accruePeriodEnd(agreement, periodTotal, context);
+            }
+        } else {
+            // PROGRESSIVE：逐张已过账发票即时计提
+            for (Object invoice : findPeriodInvoices(agreement, periodStart, periodEnd)) {
+                BigDecimal amount = invoiceAmount(invoice);
+                String code = invoiceCode(invoice);
+                String billType = billTypeFor(agreement);
+                if (alreadyAccruedCodes.contains(code)) {
+                    continue;
+                }
+                rebateEngine.accrue(agreement, amount, billType, code, context);
+            }
+        }
+        return agreement;
     }
 
     // ---------- helpers ----------
 
-    protected ErpCtRebateAgreement requireAgreement(Long agreementId, IServiceContext context) {
-        ErpCtRebateAgreement agreement = get(String.valueOf(agreementId), false, context);
+    protected ErpCtRebateAgreement requireAgreement(Long agreementId) {
+        ErpCtRebateAgreement agreement = dao().getEntityById(agreementId);
         if (agreement == null) {
             throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_NOT_ACTIVE)
                     .param(ErpCtErrors.ARG_REBATE_AGREEMENT_ID, agreementId);
@@ -88,7 +88,7 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
     protected Set<String> loadAccruedBillCodes(Long agreementId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("rebateAgreementId", agreementId));
-        List<ErpCtRebateAccrual> accruals = daoProvider().daoFor(ErpCtRebateAccrual.class).findAllByQuery(q);
+        List<ErpCtRebateAccrual> accruals = daoProvider.daoFor(ErpCtRebateAccrual.class).findAllByQuery(q);
         Set<String> codes = new HashSet<>();
         for (ErpCtRebateAccrual a : accruals) {
             if (a.getSourceBillCode() != null) {
@@ -106,10 +106,10 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
         q.addFilter(le("businessDate", to));
         if (Objects.equals(agreement.getRebateType(), ErpCtConstants.REBATE_TYPE_PURCHASE)) {
             q.addFilter(eq("supplierId", agreement.getPartnerId()));
-            return daoProvider().daoFor(ErpPurInvoice.class).findAllByQuery(q);
+            return daoProvider.daoFor(ErpPurInvoice.class).findAllByQuery(q);
         } else {
             q.addFilter(eq("customerId", agreement.getPartnerId()));
-            return daoProvider().daoFor(ErpSalInvoice.class).findAllByQuery(q);
+            return daoProvider.daoFor(ErpSalInvoice.class).findAllByQuery(q);
         }
     }
 
@@ -155,4 +155,7 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
         return v == null ? BigDecimal.ZERO : v;
     }
 
+    protected IEntityDao<ErpCtRebateAgreement> dao() {
+        return daoProvider.daoFor(ErpCtRebateAgreement.class);
+    }
 }

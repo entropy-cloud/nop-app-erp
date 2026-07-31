@@ -16,6 +16,8 @@ import app.erp.ct.biz.IErpCtContractBiz;
 import app.erp.ct.biz.IErpCtContractVersionBiz;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.processor.ErpCtContractActivateProcessor;
+import app.erp.ct.service.processor.ErpCtContractAmendProcessor;
 import jakarta.inject.Inject;
 
 import java.util.List;
@@ -41,6 +43,12 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @Inject
     IErpCtContractVersionBiz contractVersionBiz;
 
+    @Inject
+    ErpCtContractActivateProcessor activateProcessor;
+
+    @Inject
+    ErpCtContractAmendProcessor amendProcessor;
+
     public ErpCtContractBizModel() {
         setEntityName(ErpCtContract.class.getName());
     }
@@ -57,22 +65,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @Override
     @BizMutation
     public ErpCtContract activate(@Name("contractId") Long contractId, IServiceContext context) {
-        ErpCtContract contract = requireContract(contractId, context);
-        if (!Objects.equals(contract.getStatus(), ErpCtConstants.CONTRACT_STATUS_NEGOTIATION)) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_NEGOTIATION);
-        }
-        validateTypeDirectionCombo(contract);
-
-        // 当前版本须已定稿（FINALIZED），则同步签署为 SIGNED；已签署则放行。
-        ErpCtContractVersion current = findCurrentVersion(contract.getId(), context);
-        if (current != null && Objects.equals(current.getStatus(), ErpCtConstants.VERSION_STATUS_FINALIZED)) {
-            contractVersionBiz.signVersion(current.getId(), context);
-        }
-
-        contract.setStatus(ErpCtConstants.CONTRACT_STATUS_ACTIVE);
-        contract.setSignDate(CoreMetrics.today());
-        updateEntity(contract, null, context);
-        return contract;
+        return activateProcessor.activate(contractId, context);
     }
 
     @Override
@@ -135,36 +128,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @Override
     @BizMutation
     public ErpCtContract amend(@Name("contractId") Long contractId, IServiceContext context) {
-        ErpCtContract contract = requireContract(contractId, context);
-        if (!Objects.equals(contract.getStatus(), ErpCtConstants.CONTRACT_STATUS_ACTIVE)) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE);
-        }
-
-        // 修订：新建版本（versionNo = max+1），原子翻转 isCurrent（旧版本 false，新版本 true）
-        List<ErpCtContractVersion> versions = findVersions(contract.getId(), context);
-        int maxVersionNo = 0;
-        for (ErpCtContractVersion v : versions) {
-            if (v.getVersionNo() != null && v.getVersionNo() > maxVersionNo) {
-                maxVersionNo = v.getVersionNo();
-            }
-            if (Boolean.TRUE.equals(v.getIsCurrent())) {
-                v.setIsCurrent(false);
-                contractVersionBiz.updateEntity(v, null, context);
-            }
-        }
-
-        ErpCtContractVersion newVersion = contractVersionBiz.newEntity();
-        newVersion.setContractId(contract.getId());
-        newVersion.setVersionNo(maxVersionNo + 1);
-        newVersion.setVersionDate(CoreMetrics.today());
-        newVersion.setIsCurrent(true);
-        newVersion.setStatus(ErpCtConstants.VERSION_STATUS_DRAFT);
-        contractVersionBiz.saveEntity(newVersion, null, context);
-
-        // amend 期间合同头回 DRAFT
-        contract.setStatus(ErpCtConstants.CONTRACT_STATUS_DRAFT);
-        updateEntity(contract, null, context);
-        return contract;
+        return amendProcessor.amend(contractId, context);
     }
 
     // ---------- helpers ----------
