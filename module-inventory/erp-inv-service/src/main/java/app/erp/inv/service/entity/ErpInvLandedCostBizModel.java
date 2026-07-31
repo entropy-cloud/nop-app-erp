@@ -4,6 +4,7 @@ package app.erp.inv.service.entity;
 import app.erp.inv.biz.IErpInvLandedCostBiz;
 import app.erp.inv.dao.entity.ErpInvLandedCost;
 import app.erp.inv.service.processor.ErpInvLandedCostApproveProcessor;
+import app.erp.inv.service.processor.ErpInvLandedCostGenerateFreightLandedCostProcessor;
 import app.erp.inv.service.processor.ErpInvLandedCostProcessor;
 import app.erp.inv.service.processor.ErpInvLandedCostReverseApproveProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -39,6 +40,9 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
     @Inject
     ErpInvLandedCostReverseApproveProcessor reverseApproveProcessor;
 
+    @Inject
+    ErpInvLandedCostGenerateFreightLandedCostProcessor generateFreightLandedCostProcessor;
+
     public ErpInvLandedCostBizModel() {
         setEntityName(ErpInvLandedCost.class.getName());
     }
@@ -62,7 +66,7 @@ public class ErpInvLandedCostBizModel extends CrudBizModel<ErpInvLandedCost> imp
                                                        @Name("freightCurrencyId") Long freightCurrencyId,
                                                        @Name("freightExchangeRate") BigDecimal freightExchangeRate,
                                                        IServiceContext context) {
-        return landedCostProcessor.generateFreightLandedCost(receiveCode, freightAmount,
+        return generateFreightLandedCostProcessor.generateFreightLandedCost(receiveCode, freightAmount,
                 freightCurrencyId, freightExchangeRate, context);
     }
 

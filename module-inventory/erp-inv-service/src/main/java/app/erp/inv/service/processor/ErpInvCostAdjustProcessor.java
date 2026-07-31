@@ -4,32 +4,30 @@ import app.erp.inv.dao.entity.ErpInvCostAdjust;
 import app.erp.inv.dao.entity.ErpInvCostAdjustLine;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
-import app.erp.inv.service.costing.CostAdjustmentService;
-import app.erp.inv.service.posting.CostAdjustmentPostingDispatcher;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
-import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
-import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * 成本调整单编排 Processor（plan 2026-07-05-2352-3）。
+ * 成本调整单编排 facade Processor（plan 2026-07-05-2352-3；R6.4 slim-to-S-delegation）。
  *
  * <p>承接 use-approval DIRECT 审批范式（plan 2050-1）：标准 5 action（submitForApproval/approve/
- * reject/reverseApprove/withdrawApproval）+ 域动作 {@code applyCostAdjust}/{@code reverseCostAdjust}。
- * 成本变更委托 {@link CostAdjustmentService}，过账委托 {@link CostAdjustmentPostingDispatcher}。
+ * reject/reverseApprove/withdrawApproval）单行委托对应 per-mutation Processor。
+ *
+ * <p>域动作 {@code applyCostAdjust}/{@code reverseCostAdjust} 已拆为独立 per-mutation Processor
+ * （{@link ErpInvCostAdjustApplyCostAdjustProcessor}/{@link ErpInvCostAdjustReverseCostAdjustProcessor}）。
+ * 成本变更/过账编排服务由各 per-mutation Processor 自包含持有，本 facade 仅保留审批门控判断、状态守卫、
+ * 查询加载等被多 mutation 共享的 protected helper（单一真相源）。
  *
  * <p>审批门控（config {@code erp-fin.cost-adjust-approval}，默认 true）：
  * <ul>
@@ -43,15 +41,6 @@ public class ErpInvCostAdjustProcessor {
 
     @Inject
     IDaoProvider daoProvider;
-
-    @Inject
-    IOrmTemplate ormTemplate;
-
-    @Inject
-    CostAdjustmentService costAdjustmentService;
-
-    @Inject
-    CostAdjustmentPostingDispatcher postingDispatcher;
 
     @Inject
     ErpInvCostAdjustSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -88,61 +77,6 @@ public class ErpInvCostAdjustProcessor {
 
     public ErpInvCostAdjust reverseApprove(String id, IServiceContext context) {
         return reverseApproveProcessor.reverseApprove(id, context);
-    }
-
-    // ---------- 域动作：apply / reverse ----------
-
-    public ErpInvCostAdjust applyCostAdjust(Long id, IServiceContext context) {
-        ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        validateNotCancelled(adjust, context);
-        if (Boolean.TRUE.equals(adjust.getPosted())) {
-            throw new NopException(ErpInvErrors.ERR_COST_ADJUST_ALREADY_APPLIED)
-                    .param(ErpInvErrors.ARG_ADJUST_CODE, adjust.getCode());
-        }
-        if (isApprovalRequired() && !Objects.equals(currentApproveStatus(adjust), ErpInvConstants.APPROVE_STATUS_APPROVED)) {
-            throw new NopException(ErpInvErrors.ERR_COST_ADJUST_NOT_APPROVED)
-                    .param(ErpInvErrors.ARG_ADJUST_CODE, adjust.getCode())
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, currentApproveStatus(adjust));
-        }
-
-        List<ErpInvCostAdjustLine> lines = loadLines(adjust.getId());
-        BigDecimal totalAdjustAmount = costAdjustmentService.applyCostAdjust(adjust, lines);
-        ormTemplate.flushSession();
-
-        Long voucherId = postingDispatcher.tryPost(adjust, lines, totalAdjustAmount);
-
-        adjust = reload(id);
-        Timestamp now = CoreMetrics.currentTimestamp();
-        adjust.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
-        if (voucherId != null) {
-            adjust.setPosted(true);
-            adjust.setPostedAt(now);
-            adjust.setPostedBy(currentUserId());
-        }
-        adjustDao().updateEntity(adjust);
-        return adjust;
-    }
-
-    public ErpInvCostAdjust reverseCostAdjust(Long id, IServiceContext context) {
-        ErpInvCostAdjust adjust = requireAdjustment(id, context);
-        if (!Boolean.TRUE.equals(adjust.getPosted())) {
-            throw new NopException(ErpInvErrors.ERR_COST_ADJUST_NOT_APPLIED)
-                    .param(ErpInvErrors.ARG_ADJUST_CODE, adjust.getCode());
-        }
-
-        List<ErpInvCostAdjustLine> lines = loadLines(adjust.getId());
-        costAdjustmentService.reverseCostAdjust(adjust, lines);
-        ormTemplate.flushSession();
-
-        postingDispatcher.reverse(adjust);
-
-        adjust = reload(id);
-        adjust.setPosted(false);
-        adjust.setPostedAt(null);
-        adjust.setPostedBy(null);
-        adjust.setDocStatus(ErpInvConstants.DOC_STATUS_CONFIRMED);
-        adjustDao().updateEntity(adjust);
-        return adjust;
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------

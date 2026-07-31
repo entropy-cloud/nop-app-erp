@@ -122,4 +122,28 @@
           class="app.erp.inv.service.processor.ErpInvLandedCostApproveProcessor"/>
     <bean id="app.erp.inv.service.processor.ErpInvLandedCostReverseApproveProcessor"
           class="app.erp.inv.service.processor.ErpInvLandedCostReverseApproveProcessor"/>
+
+    <!-- D-mutation per-mutation Processor beans (plan R6.4) -->
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustApplyCostAdjustProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustApplyCostAdjustProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustReverseCostAdjustProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustReverseCostAdjustProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvLandedCostGenerateFreightLandedCostProcessor"
+          class="app.erp.inv.service.processor.ErpInvLandedCostGenerateFreightLandedCostProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvOwnershipTransferConfirmProcessor"
+          class="app.erp.inv.service.processor.ErpInvOwnershipTransferConfirmProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvOwnershipTransferDoneProcessor"
+          class="app.erp.inv.service.processor.ErpInvOwnershipTransferDoneProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveGenerateMoveProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveGenerateMoveProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveConfirmProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveConfirmProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveCompleteProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveCompleteProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveCancelProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveCancelProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveReverseProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveReverseProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvTransferOrderConfirmProcessor"
+          class="app.erp.inv.service.processor.ErpInvTransferOrderConfirmProcessor"/>
 </beans>

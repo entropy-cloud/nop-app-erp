@@ -112,34 +112,6 @@ public class ErpInvLandedCostProcessor {
         return preview;
     }
 
-    // ---------- 自动创建（path-2 运费→到岸成本，plan 2026-07-11-2329-1） ----------
-
-    /**
-     * 按采购入库单 code + 运费数据自动创建 DRAFT 到岸成本单（FREIGHT 费用行）。
-     *
-     * <p>内部解析 receiveCode→receiveId（inventory-service 已 compile-scope 依赖 purchase-dao）。
-     * 幂等：同 receiveId 已有非 CANCELLED 到岸成本单时抛 {@link ErpInvErrors#ERR_LANDED_COST_DRAFT_EXISTS}。
-     */
-    public ErpInvLandedCost generateFreightLandedCost(String receiveCode, BigDecimal freightAmount,
-                                                       Long freightCurrencyId, BigDecimal freightExchangeRate,
-                                                       IServiceContext context) {
-        ErpPurReceive receive = loadReceiveByCode(receiveCode);
-        if (receive == null) {
-            throw new NopException(ErpInvErrors.ERR_LANDED_COST_RECEIVE_NOT_FOUND)
-                    .param("receiveCode", receiveCode);
-        }
-
-        validateNoDraftExists(receive.getId());
-
-        Long currencyId = freightCurrencyId != null ? freightCurrencyId : receive.getCurrencyId();
-        BigDecimal exchangeRate = resolveExchangeRate(freightExchangeRate, freightCurrencyId, receive);
-
-        ErpInvLandedCost landedCost = createLandedCostHead(receive, freightAmount, currencyId, exchangeRate);
-        createFreightLine(landedCost, freightAmount, receive.getSupplierId());
-
-        return landedCost;
-    }
-
     // ---------- 红冲（plan 2026-07-18-1745-2） ----------
 
     /**

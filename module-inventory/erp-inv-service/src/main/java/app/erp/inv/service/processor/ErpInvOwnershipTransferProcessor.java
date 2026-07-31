@@ -5,11 +5,9 @@ import app.erp.inv.dao.entity.ErpInvOwnershipTransferLine;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
-import app.erp.inv.service.posting.OwnershipTransferPostingDispatcher;
 import app.erp.inv.service.stock.StockMoveBookkeeper;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
-import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -47,43 +45,6 @@ public class ErpInvOwnershipTransferProcessor {
 
     @Inject
     StockMoveBookkeeper bookkeeper;
-
-    @Inject
-    OwnershipTransferPostingDispatcher postingDispatcher;
-
-    public ErpInvOwnershipTransfer confirm(Long transferId, IServiceContext context) {
-        ErpInvOwnershipTransfer transfer = requireTransfer(transferId, context);
-        assertStatus(transfer, ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DRAFT,
-                ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED);
-        validateInvariants(transfer);
-        transfer.setDocStatus(ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED);
-        transferDao().saveOrUpdateEntity(transfer);
-        return transfer;
-    }
-
-    public ErpInvOwnershipTransfer done(Long transferId, IServiceContext context) {
-        ErpInvOwnershipTransfer transfer = requireTransfer(transferId, context);
-        assertStatus(transfer, ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED,
-                ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DONE);
-        validateInvariants(transfer);
-        // owner 维度未启用不可调账（consignment.md §配置点）
-        if (!bookkeeper.isOwnershipTrackingEnabled()) {
-            throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRACKING_DISABLED)
-                    .param(ErpInvErrors.ARG_TRANSFER_CODE, transfer.getCode());
-        }
-
-        List<ErpInvOwnershipTransferLine> lines = loadLines(transfer.getId());
-        for (ErpInvOwnershipTransferLine line : lines) {
-            reclassifyBalance(transfer, line);
-        }
-
-        transfer.setDocStatus(ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DONE);
-        transferDao().saveOrUpdateEntity(transfer);
-
-        // 业财过账派发（VMI_CONSUME 且 vmi-auto-generate-ap 时生成应付；过账失败不阻塞终态，见 dispatcher）
-        postingDispatcher.dispatchIfApplicable(transfer, lines);
-        return transfer;
-    }
 
     public ErpInvOwnershipTransfer cancel(Long transferId, IServiceContext context) {
         ErpInvOwnershipTransfer transfer = requireTransfer(transferId, context);
