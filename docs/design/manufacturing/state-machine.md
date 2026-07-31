@@ -227,6 +227,10 @@
 - 完工质检不合格的返工路径（新建返工工单）。
 - BOM 变更对已开工工单的影响（快照原则）。
 
+## 职责分离（程序级强制）
+
+制造域工单（ErpMfgWorkOrder）与委外加工单（ErpMfgSubcontractOrder）的创建人与审核人不可为同一人：approve 守卫比对 `createdBy` 与审核人 userId，相等抛 `erp.err.mfg.approver-is-creator`（plan 2026-07-31-1023-2 R3.3）。
+
 ---
 
 ## 适用对象三：委外加工单（SubcontractOrder）

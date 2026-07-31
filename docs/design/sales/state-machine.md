@@ -93,7 +93,7 @@
 | 反审核 | 管理员（需冲销前置；目标态 REJECTED 非 UNSUBMITTED，见 `../domain-design-guidelines.md` §16.4） | 同 |
 | 作废 | 销售员（草稿阶段）/ 管理员（已审核后） | 同 |
 
-职责分离：销售员与审核人建议不可为同一人。角色名见 `roles-and-permissions.md`。
+职责分离：销售员与审核人不可为同一人（程序级强制：approve 守卫比对 createdBy 与审核人 userId，相等抛 `erp.err.sal.approver-is-creator`；plan 2026-07-31-1023-2 R3.3）。角色名见 `roles-and-permissions.md`。
 
 ## 7. 外部依赖
 

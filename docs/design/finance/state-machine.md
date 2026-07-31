@@ -259,6 +259,10 @@
 - 反结账权限是否严格（管理员 + 审批）。
 - 两类状态机的耦合约束（期间 vs 凭证）是否一致。
 
+## 职责分离（程序级强制）
+
+财务域审批单据（费用报销 ErpFinExpenseClaim、员工借款 ErpFinEmployeeAdvance 等）的创建人与审核人不可为同一人：approve 守卫比对 `createdBy` 与审核人 userId，相等抛 `erp.err.fin.approver-is-creator`（plan 2026-07-31-1023-2 R3.3）。注：会计凭证 `postVoucher` 为过账动作（非审批），不在 SoD 范围。
+
 ## 已知限制：浏览器层 xwf 审批路径
 
 > M-2（plan `2026-07-20-2200-1`）补充；权威裁决见 plan `2026-07-09-2330-1`。

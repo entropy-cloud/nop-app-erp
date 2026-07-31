@@ -40,11 +40,13 @@
 
 ## 权限规则
 
-### 职责分离（建议配置）
+### 职责分离（程序级强制）
 
 - 单据创建人与审核人不可为同一人（采购员/销售员创建 → 审核人审核）。
 - 质检员与让步接收审批人不可为同一人（质检员提建议 → 质量主管审批）。
 - 财务员与期末结账审批（若需）分离。
+
+> **程序级强制（plan 2026-07-31-1023-2 R3.3）**：purchase/sales/finance/manufacturing 4 域全部 approve 路径已落地 SoD 程序级守卫——比对单据 `createdBy` 与当前审核人 `userId`，相等抛 `erp.err.<domain>.approver-is-creator`。共享守卫 `app.erp.common.service.SoDGuard`；null-user（wf 回调）放行（保留回调既有行为）。扩展域 approve 路径为显式 successor（触发条件：扩展域 SoD 抽样审计或自审回归）。
 
 ### 高危操作权限
 
