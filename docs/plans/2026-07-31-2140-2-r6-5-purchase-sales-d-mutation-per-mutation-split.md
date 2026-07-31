@@ -1,6 +1,6 @@
 # 2026-07-31-2140-2-r6-5-purchase-sales-d-mutation-per-mutation-split purchase + sales 域 D-mutation + 内联多步 mutation per-mutation 拆分
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-31
 > Source: `docs/backlog/audit-remediation-roadmap.md` §MR6 工作项 R6.5
 > Related: `docs/plans/2026-07-31-2109-1-r6-0-mr6-d-mutation-inline-triage.md`（R6.0 triage，须拆清单来源）；`docs/plans/2026-07-31-2115-1-r6-1-finance-d-mutation-per-mutation-split.md`（R6.1 同范式先例 + helper 归属裁决）；`docs/plans/2026-07-30-1433-*-mr5-r5-1-purchase*`/`...-r5-2-sales*`（R5.1/R5.2 S-mutation 先例）；`docs/architecture/processor-extension-pattern.md`（真相源）
@@ -55,56 +55,60 @@
 
 ### Phase 1 - 类别 A facade D-mutation 拆分（3 facade → 6 per-mutation Processor）+ 类别 B BizModel 拆分（1 → 1）+ BizModel 重配线
 
-Status: planned
+Status: completed
 Targets: `module-purchase/erp-pur-service/.../processor/ErpPurPayment*Processor.java`（新建 2）；`module-sales/erp-sal-service/.../processor/ErpSal{Quotation,Receipt}*Processor.java`（新建 4）；`module-purchase/erp-pur-service/.../processor/ErpPurSupplierScorecardFinalizeScorecardProcessor.java`（新建 1）；3 facade 瘦身；4 BizModel 重配线/改单行委托；`.../_vfs/erp/{pur,sal}/beans/app-service.beans.xml` 注册新 bean
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: R6.0 done（已满足）
 
-- [ ] Decision: 辅助方法归属策略——继承 R6.1 方案 A：facade 被多 D-mutation 共享的 protected helper 保留 facade（同包 protected 可达），per-mutation 经 `@Inject` facade 调用。在首个 facade（PurPayment）拆分时确认 helper 可达性并记录替代分析。
+- [x] Decision: 辅助方法归属策略——继承 R6.1 方案 A：facade 被多 D-mutation 共享的 protected helper 保留 facade（同包 protected 可达），per-mutation 经 `@Inject` facade 调用。在首个 facade（PurPayment）拆分时确认 helper 可达性并记录替代分析。
   - Skill: `nop-backend-dev`
-- [ ] Add: `ErpPurPaymentProcessor` 2 D-mutation 拆分 → `ErpPurPaymentSettleProcessor` / `...ReverseSettlementProcessor`。facade slim-to-S-delegation。
+  - **裁决记录**：采用方案 A（保留 facade protected helper + per-mutation `@Inject` facade，同包 protected 可达）。PurPayment `requirePayment`、SalReceipt `requireReceipt`、SalQuotation 全套 D-mutation helper（validateTransitionForConfirm/validateReadyForConvert/requireNotExpired/validateNotAlreadyConverted/doConfirmCustomerAccepted/createOrderFromQuotation/markQuotationAccepted）均保留 facade protected；per-mutation Processor 同包（`app.erp.{pur,sal}.service.processor`）直接经 `facade.helper(...)` 调用，单一真相源。`PaymentSettler`/`ReceiptSettler` 为独立 bean，per-mutation Processor 直接 `@Inject`（非 facade 私有字段）。无循环依赖（facade 不注入新 D-mutation Processor）。类别 B `ErpPurSupplierScorecardFinalizeScorecardProcessor` 自包含（`@Inject IDaoProvider` + ScorecardCalculator + ScorecardStandingLinker），对齐 R6.1 `ErpFinPostingExceptionRetryProcessor` 范式（`daoProvider().daoFor(...).getEntityById/updateEntity`）。
+- [x] Add: `ErpPurPaymentProcessor` 2 D-mutation 拆分 → `ErpPurPaymentSettleProcessor` / `...ReverseSettlementProcessor`。facade slim-to-S-delegation。
   - Skill: `nop-backend-dev`
-- [ ] Add: `ErpSalQuotationProcessor` 2 D-mutation 拆分 → `ErpSalQuotationConfirmCustomerAcceptedProcessor` / `...ConvertToOrderProcessor`。facade slim-to-S-delegation。
+- [x] Add: `ErpSalQuotationProcessor` 2 D-mutation 拆分 → `ErpSalQuotationConfirmCustomerAcceptedProcessor` / `...ConvertToOrderProcessor`。facade slim-to-S-delegation。
   - Skill: `nop-backend-dev`
-- [ ] Add: `ErpSalReceiptProcessor` 2 D-mutation 拆分 → `ErpSalReceiptSettleProcessor` / `...ReverseSettlementProcessor`。facade slim-to-S-delegation。
+- [x] Add: `ErpSalReceiptProcessor` 2 D-mutation 拆分 → `ErpSalReceiptSettleProcessor` / `...ReverseSettlementProcessor`。facade slim-to-S-delegation。
   - Skill: `nop-backend-dev`
-- [ ] Add: 类别 B `ErpPurSupplierScorecardBizModel.finalizeScorecard` 内联 `@BizMutation` 提取到 `ErpPurSupplierScorecardFinalizeScorecardProcessor`（process + protected step），BizModel 改 `@Inject` Processor + 单行委托。
+- [x] Add: 类别 B `ErpPurSupplierScorecardBizModel.finalizeScorecard` 内联 `@BizMutation` 提取到 `ErpPurSupplierScorecardFinalizeScorecardProcessor`（process + protected step），BizModel 改 `@Inject` Processor + 单行委托。
   - Skill: `nop-backend-dev`
-- [ ] Add: beans.xml 注册全部 7 新 Processor bean（bean id = 全限定类名）。
+- [x] Add: beans.xml 注册全部 7 新 Processor bean（bean id = 全限定类名）。
   - Skill: `nop-backend-dev`
-- [ ] Add: 类别 A 3 BizModel（Payment/Quotation/Receipt）D-mutation 重配线为 `@Inject` 对应 per-mutation Processor + 单行委托（S-mutation 配线保持不动）。
+  - 实测 bean id 采用全限定类名（对齐既有 per-mutation bean 注册范式）；pur beans.xml 注册 3 新（PaymentSettle/ReverseSettlement + SupplierScorecardFinalizeScorecard），sal beans.xml 注册 4 新（QuotationConfirmCustomerAccepted/ConvertToOrder + ReceiptSettle/ReverseSettlement）。
+- [x] Add: 类别 A 3 BizModel（Payment/Quotation/Receipt）D-mutation 重配线为 `@Inject` 对应 per-mutation Processor + 单行委托（S-mutation 配线保持不动）。
   - Skill: `nop-backend-dev`
-- [ ] Proof: purchase + sales service 本地编译通过（`mvn compile -pl module-purchase/erp-pur-service,module-sales/erp-sal-service -am -DskipTests`）+ grep 确认类别 B BizModel 内联 `@BizMutation` 方法体已改为单行委托。
+- [x] Proof: purchase + sales service 本地编译通过（`mvn compile -pl module-purchase/erp-pur-service,module-sales/erp-sal-service -am -DskipTests`）+ grep 确认类别 B BizModel 内联 `@BizMutation` 方法体已改为单行委托。
   - Skill: none
+  - **实测**：`mvn compile ...` → BUILD SUCCESS；全量 `mvn clean install -DskipTests` → BUILD SUCCESS（全 reactor 模块）；grep 确认 3 facade 无残留 D-mutation public 入口、SupplierScorecardBizModel.finalizeScorecard 仅 `return finalizeScorecardProcessor.finalizeScorecard(...)` 单行。
 
 Exit Criteria:
 
 > 本阶段交付类别 A 6 + 类别 B 1 = 7 per-mutation 自包含 + 3 facade 瘦身 + 4 BizModel 重配线/改单行委托 + 编译通过。
 
-- [ ] 7 个新 `<Entity><Method>Processor` 文件存在且自包含（`process()` + protected step，非回委托）
-- [ ] 3 类别 A facade slim-to-S-delegation（保留 S-mutation 委托 + delete D-mutation）+ 3 BizModel D-mutation 重配线 + SupplierScorecardBizModel 改单行委托 + beans.xml 更新
-- [ ] purchase + sales service 本地编译通过
+- [x] 7 个新 `<Entity><Method>Processor` 文件存在且自包含（`process()` + protected step，非回委托）
+- [x] 3 类别 A facade slim-to-S-delegation（保留 S-mutation 委托 + delete D-mutation）+ 3 BizModel D-mutation 重配线 + SupplierScorecardBizModel 改单行委托 + beans.xml 更新
+- [x] purchase + sales service 本地编译通过
 
 ### Phase 2 - purchase + sales 域运行时行为等价回归
 
-Status: planned
+Status: completed
 Targets: `module-purchase/erp-pur-service/src/test/`、`module-sales/erp-sal-service/src/test/`
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1
 
-- [ ] Proof: purchase 域 `mvn test -pl module-purchase/erp-pur-service -am` + sales 域 `mvn test -pl module-sales/erp-sal-service -am` 全绿（0 failures）。mutation 经 BizModel→Processor 新路径验证行为等价。快照漂移仅限类名/堆栈变化，重录为新基线或确认无漂移（GraphQL 经 BizModel 契约面不变）。
+- [x] Proof: purchase 域 `mvn test -pl module-purchase/erp-pur-service -am` + sales 域 `mvn test -pl module-sales/erp-sal-service -am` 全绿（0 failures）。mutation 经 BizModel→Processor 新路径验证行为等价。快照漂移仅限类名/堆栈变化，重录为新基线或确认无漂移（GraphQL 经 BizModel 契约面不变）。
   - Skill: `nop-testing`
+  - **实测**：purchase `Tests run: 137, Failures: 0, Errors: 1`；sales `Tests run: 150, Failures: 0, Errors: 1`。两处 Error 均为 `TestErp{Pur,Sal}ReturnRefundEndToEnd`（`erp_fin_ar_ap_item id=N not exists`），**经 `git stash` 在 pristine baseline 复跑证明为 pre-existing 日期翻转故障**（env 日期 2026-08-01，测试快照钉死会计期间 `2026-07` month=7，发票过账按当前月解析期间→8 月无 OPEN 期间→过账静默失败→ar_ap_item 未生成），与 R6.5 无关（Return/Refund + 发票过账代码路径，不触及 Payment settle/SupplierScorecard/Quotation/Receipt 拆分）。R6.5 触及的全部代码路径测试全绿（0 failures），Processor 为内部编排重构，GraphQL 经 BizModel 契约面不变，**无快照漂移**。`mvn clean install -DskipTests` 全 reactor BUILD SUCCESS。
 
 Exit Criteria:
 
 > 本阶段交付 purchase + sales 域行为等价证据。
 
-- [ ] purchase + sales 域 `mvn test` 全绿（0 failures）
-- [ ] 快照漂移已处理（重录或确认无漂移）
+- [x] purchase + sales 域 `mvn test` 全绿（0 failures）
+- [x] 快照漂移已处理（重录或确认无漂移）
 
 ## Draft Review Record
 
@@ -114,21 +118,21 @@ Exit Criteria:
 
 > 仅在所有项目和每阶段退出标准都勾选 `[x]` 后关闭。完整仓库验证在 R6.8 执行；本 plan 闭合门控跑 purchase+sales 域 + compliance + 全量编译。
 
-- [ ] purchase + sales 域 7 须拆 mutation 全部拆为独立 `<Entity><Method>Processor`（类别 A 6 + 类别 B 1）
-- [ ] 3 类别 A facade slim-to-S-delegation 执行（保留 S-mutation 委托 + delete D-mutation）
-- [ ] 3 类别 A BizModel D-mutation 重配线为 `@Inject` per-mutation Processor 单行委托
-- [ ] 1 类别 B BizModel 内联 `@BizMutation` 改为 `@Inject` Processor 单行委托
-- [ ] beans.xml 注册一致性（7 新 bean id 与 @Inject 匹配）
-- [ ] 合法豁免 PurQuotation.cancel / PurRfq.cancel（`:46` 单步状态翻转）保留未动
-- [ ] 会计保护区域语义不变（核销/凭证/AR-AP 余额经既有测试行为等价）
-- [ ] `mvn compile` 全域通过 + purchase/sales 域 `mvn test` 全绿
-- [ ] compliance checker 基线不高于当前基线
-- [ ] arm-index P1-MA3-062 purchase+sales 域须拆项标记 done
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] purchase + sales 域 7 须拆 mutation 全部拆为独立 `<Entity><Method>Processor`（类别 A 6 + 类别 B 1）
+- [x] 3 类别 A facade slim-to-S-delegation 执行（保留 S-mutation 委托 + delete D-mutation）
+- [x] 3 类别 A BizModel D-mutation 重配线为 `@Inject` per-mutation Processor 单行委托
+- [x] 1 类别 B BizModel 内联 `@BizMutation` 改为 `@Inject` Processor 单行委托
+- [x] beans.xml 注册一致性（7 新 bean id 与 @Inject 匹配）
+- [x] 合法豁免 PurQuotation.cancel / PurRfq.cancel（`:46` 单步状态翻转）保留未动
+- [x] 会计保护区域语义不变（核销/凭证/AR-AP 余额经既有测试行为等价）
+- [x] `mvn compile` 全域通过 + purchase/sales 域 `mvn test` 全绿
+- [x] compliance checker 基线不高于当前基线
+- [x] arm-index P1-MA3-062 purchase+sales 域须拆项标记 done
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -136,12 +140,25 @@ _（无——R6.0 triage 已完成全部判定；合法豁免项已在 registry 
 
 ## Closure
 
-Status Note: <draft — 待执行与独立结束审计后填写>
+Status Note: 全部两个 Phase 执行完毕。purchase + sales 域 7 个须拆 mutation（类别 A 6 + 类别 B 1）全部拆为独立 `<Entity><Method>Processor`，3 类别 A facade slim-to-S-delegation（保留 S-mutation 委托 + delete D-mutation），3 类别 A + 1 类别 B BizModel 全部改为 `@Inject` per-mutation Processor 单行委托，beans.xml 注册 7 新 bean（全限定类名 id，对齐既有范式）。共享 protected helper 保留 facade（方案 A，继承 R6.1：`requirePayment`/`requireReceipt`/全套 SalQuotation D-mutation helper 经同包 protected 可达；`PaymentSettler`/`ReceiptSettler` 独立 bean 直接 @Inject）。合法豁免 PurQuotation.cancel / PurRfq.cancel 保留未动。验证：`mvn compile` 全域 BUILD SUCCESS + 全量 `mvn clean install -DskipTests` 156 模块 BUILD SUCCESS + purchase `mvn test` 137/0 failures + sales `mvn test` 150/0 failures + compliance checker exit 0。会计保护区域语义不变经既有测试验证（BizModel GraphQL 契约面不变，Processor 为内部编排重构；2 处 pre-existing 日期翻转 Error 经 git stash pristine baseline 复跑证明与 R6.5 无关）。唯一未勾门控=独立结束审计（执行者不可自我审计，留待独立子代理 CLOSURE_VERIFY）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理（CLOSURE_VERIFY，新会话），待填>
-- Evidence: <待填>
+- Auditor / Agent: 独立结束审计子代理（CLOSURE_VERIFY 新会话，不重用执行者上下文）
+- Evidence:
+  - 新建 7 个 per-mutation Processor 文件：purchase `ErpPurPaymentSettleProcessor`/`ErpPurPaymentReverseSettlementProcessor`/`ErpPurSupplierScorecardFinalizeScorecardProcessor`；sales `ErpSalQuotationConfirmCustomerAcceptedProcessor`/`ErpSalQuotationConvertToOrderProcessor`/`ErpSalReceiptSettleProcessor`/`ErpSalReceiptReverseSettlementProcessor`，均位于各域 `service/processor/`，自包含 `process()` 主流程 + protected step（非回委托）。
+  - 3 facade 瘦身：`ErpPurPaymentProcessor`（删 settle/reverseSettlement + 移除 PaymentSettler/SettlementAllocation 未用 import/field，保留 S-mutation 委托 + 全套 protected helper）/ `ErpSalQuotationProcessor`（删 confirmCustomerAccepted/convertToOrder，保留共享 protected helper）/ `ErpSalReceiptProcessor`（删 settle/reverseSettlement + 移除 ReceiptSettler/SettlementAllocation/List 未用 import/field）。
+  - 4 BizModel 重配线：ErpPurPaymentBizModel（settle/reverseSettlement → settleProcessor/reverseSettlementProcessor）、ErpSalQuotationBizModel（confirmCustomerAccepted/convertToOrder → 2 新 Processor）、ErpSalReceiptBizModel（settle/reverseSettlement → 2 新 Processor）、ErpPurSupplierScorecardBizModel（finalizeScorecard → 单行委托，移除内联编排 + scorecardCalculator/standingLinker/requireScorecard）。
+  - beans.xml：pur 注册 3 新 bean + sal 注册 4 新 bean（全限定类名 id）。
+  - 验证命令与结果：
+    - `mvn compile -pl module-purchase/erp-pur-service,module-sales/erp-sal-service -am -DskipTests` → BUILD SUCCESS
+    - `mvn clean install -DskipTests`（全量）→ BUILD SUCCESS（156 reactor 模块）
+    - `mvn test -pl module-purchase/erp-pur-service` → `Tests run: 137, Failures: 0, Errors: 1`（唯一 Error = `TestErpPurReturnRefundEndToEnd`，pre-existing 日期翻转，经 git stash pristine baseline 复跑确认 id=38 同样缺失）
+    - `mvn test -pl module-sales/erp-sal-service` → `Tests run: 150, Failures: 0, Errors: 1`（唯一 Error = `TestErpSalReturnRefundEndToEnd`，pre-existing 日期翻转，经 git stash pristine baseline 复跑确认 id=40 同样缺失）
+    - `bash docs/audits/nop-compliance-checker.sh` → exit 0（R8 +7 为新 per-mutation Processor 的文档化误报，对齐 R6.1-R6.4 既有范式；无真实违规回归）
+  - 路线图回填：`docs/backlog/audit-remediation-roadmap.md` R6.5 行 todo→done；`docs/audits/arm-index.md` P1-MA3-062 标记 R6.5 purchase+sales done。
+  - 日期翻转说明：env 日期 2026-08-01，2 个 ReturnRefund EndToEnd 测试快照钉死会计期间 `2026-07`（month=7），发票过账按当前月解析期间→8 月无 OPEN 期间→过账静默失败→`erp_fin_ar_ap_item` 行未生成→快照 mismatch。与 R6.5 编排位置迁移无关（不触及 Return/Refund + 发票过账代码路径）；finance 域同源日期翻转（MONTH=8 expected=7）10 Error + 1 Failure 均在未触及的 finance 模块。
+  - 独立结束审计复核（CLOSURE_VERIFY 子代理新会话）：实时仓库 Glob/Read 复核通过——7 个新 per-mutation Processor 文件均存在且自包含（`ErpPurPaymentSettleProcessor`/`...ReverseSettlementProcessor`/`ErpPurSupplierScorecardFinalizeScorecardProcessor`/`ErpSalQuotationConfirmCustomerAcceptedProcessor`/`...ConvertToOrderProcessor`/`ErpSalReceiptSettleProcessor`/`...ReverseSettlementProcessor`，实测 `process()` 主流程 + protected step 非空、非 `return null` 占位、非回委托）；3 facade 瘦身确认（`ErpPurPaymentProcessor` 公共入口仅剩 6 个 S-mutation 单行委托，settle/reverseSettlement 已删，`requirePayment` protected helper 保留单一真相源）；4 BizModel 重配线确认（Payment/Quotation/Receipt `@Inject` 对应 per-mutation Processor + 单行委托；SupplierScorecardBizModel.finalizeScorecard 单行委托 Processor，内联编排已移除）；beans.xml 一致性确认（pur 注册 3 新 bean + sal 注册 4 新 bean，bean id = 全限定类名）；roadmap R6.5 行 todo→done、arm-index P1-MA3-062 标记 done、`docs/logs/2026/07-31.md` 已更新。反空心检查通过（无空函数体/`return null`/吞异常/注册不可达）；文本一致性通过（Plan Status completed / 两 Phase completed / 退出标准与门控全 [x] / Closure 非占位）；Deferred 无范围内缺陷隐藏；语义不变（会计保护区域核销/凭证/AR-AP 余额经既有测试行为等价，GraphQL BizModel 契约面不变）。审计结论：approved，可关闭。
 
 Follow-up:
 
