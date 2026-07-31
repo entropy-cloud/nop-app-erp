@@ -70,4 +70,46 @@
           class="app.erp.qa.service.processor.ErpQaRecallReverseApproveProcessor"/>
     <bean id="app.erp.qa.service.processor.ErpQaRecallWithdrawApprovalProcessor"
           class="app.erp.qa.service.processor.ErpQaRecallWithdrawApprovalProcessor"/>
+
+    <!-- per-mutation Processor beans (R6.6 quality domain, processor-extension-pattern.md 每 mutation 一 Processor) -->
+    <bean id="app.erp.qa.service.processor.ErpQaInspectionRecordResultProcessor"
+          class="app.erp.qa.service.processor.ErpQaInspectionRecordResultProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaInspectionCreateForBusinessBillProcessor"
+          class="app.erp.qa.service.processor.ErpQaInspectionCreateForBusinessBillProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaInspectionPassInspectionProcessor"
+          class="app.erp.qa.service.processor.ErpQaInspectionPassInspectionProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaInspectionFailInspectionProcessor"
+          class="app.erp.qa.service.processor.ErpQaInspectionFailInspectionProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaInspectionBatchPassInspectionProcessor"
+          class="app.erp.qa.service.processor.ErpQaInspectionBatchPassInspectionProcessor"/>
+
+    <bean id="app.erp.qa.service.processor.ErpQaNonConformancePostNcrProcessor"
+          class="app.erp.qa.service.processor.ErpQaNonConformancePostNcrProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaNonConformanceResolveProcessor"
+          class="app.erp.qa.service.processor.ErpQaNonConformanceResolveProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaNonConformanceReverseNcrProcessor"
+          class="app.erp.qa.service.processor.ErpQaNonConformanceReverseNcrProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaNonConformanceUpgradeToRecallProcessor"
+          class="app.erp.qa.service.processor.ErpQaNonConformanceUpgradeToRecallProcessor"/>
+
+    <bean id="app.erp.qa.service.processor.ErpQaRecallCloseProcessor"
+          class="app.erp.qa.service.processor.ErpQaRecallCloseProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaRecallGenerateReturnsProcessor"
+          class="app.erp.qa.service.processor.ErpQaRecallGenerateReturnsProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaRecallLocateTargetsProcessor"
+          class="app.erp.qa.service.processor.ErpQaRecallLocateTargetsProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaRecallNotifyCustomersProcessor"
+          class="app.erp.qa.service.processor.ErpQaRecallNotifyCustomersProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaRecallRegisterProcessor"
+          class="app.erp.qa.service.processor.ErpQaRecallRegisterProcessor"/>
+
+    <bean id="app.erp.qa.service.processor.ErpQaSpcCapabilityCalculateCapabilityProcessor"
+          class="app.erp.qa.service.processor.ErpQaSpcCapabilityCalculateCapabilityProcessor"/>
+
+    <bean id="app.erp.qa.service.processor.ErpQaSpcChartCollectSamplesProcessor"
+          class="app.erp.qa.service.processor.ErpQaSpcChartCollectSamplesProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaSpcChartEvaluateRulesProcessor"
+          class="app.erp.qa.service.processor.ErpQaSpcChartEvaluateRulesProcessor"/>
+    <bean id="app.erp.qa.service.processor.ErpQaSpcChartRecalculateControlLimitProcessor"
+          class="app.erp.qa.service.processor.ErpQaSpcChartRecalculateControlLimitProcessor"/>
 </beans>
