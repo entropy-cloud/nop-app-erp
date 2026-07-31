@@ -50,4 +50,35 @@
     <!-- 维护域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /mnt/）。 -->
     <bean id="app.erp.mnt.service.report.ErpMntReportBizModel" ioc:type="@bean:id"/>
+
+    <!-- per-mutation Processor beans (R6.7，processor-extension-pattern.md 每 mutation 一 Processor)：
+         maintenance 域 14 须拆 mutation 全部拆为独立 Processor；域专属抽象基类（Abstract*）不注册。 -->
+    <bean id="app.erp.mnt.service.processor.ErpMntRequestAcceptProcessor"
+          class="app.erp.mnt.service.processor.ErpMntRequestAcceptProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntRequestStartRepairProcessor"
+          class="app.erp.mnt.service.processor.ErpMntRequestStartRepairProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntRequestCompleteProcessor"
+          class="app.erp.mnt.service.processor.ErpMntRequestCompleteProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntRequestRejectRequestProcessor"
+          class="app.erp.mnt.service.processor.ErpMntRequestRejectRequestProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntRequestCancelProcessor"
+          class="app.erp.mnt.service.processor.ErpMntRequestCancelProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntVisitScheduleProcessor"
+          class="app.erp.mnt.service.processor.ErpMntVisitScheduleProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntVisitStartProcessor"
+          class="app.erp.mnt.service.processor.ErpMntVisitStartProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntVisitCompleteProcessor"
+          class="app.erp.mnt.service.processor.ErpMntVisitCompleteProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntVisitCancelProcessor"
+          class="app.erp.mnt.service.processor.ErpMntVisitCancelProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntDowntimeEntryRecordProcessor"
+          class="app.erp.mnt.service.processor.ErpMntDowntimeEntryRecordProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntDowntimeEntryCompleteProcessor"
+          class="app.erp.mnt.service.processor.ErpMntDowntimeEntryCompleteProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntScheduleGenerateDueVisitsProcessor"
+          class="app.erp.mnt.service.processor.ErpMntScheduleGenerateDueVisitsProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntSparePartUsageConfirmProcessor"
+          class="app.erp.mnt.service.processor.ErpMntSparePartUsageConfirmProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntSparePartUsageReverseConfirmProcessor"
+          class="app.erp.mnt.service.processor.ErpMntSparePartUsageReverseConfirmProcessor"/>
 </beans>
