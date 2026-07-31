@@ -5,6 +5,7 @@ import app.erp.cs.dao.entity.ErpCsEntitlement;
 import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
+import app.erp.cs.service.processor.ErpCsEntitlementDeactivateExpiredEntitlementsProcessor;
 import app.erp.notify.biz.IErpSysNotificationBiz;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
@@ -57,6 +58,8 @@ public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> imp
     IErpSysNotificationBiz notificationBiz;
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
+    @Inject
+    ErpCsEntitlementDeactivateExpiredEntitlementsProcessor deactivateExpiredEntitlementsProcessor;
 
     public ErpCsEntitlementBizModel() {
         setEntityName(ErpCsEntitlement.class.getName());
@@ -134,26 +137,7 @@ public class ErpCsEntitlementBizModel extends CrudBizModel<ErpCsEntitlement> imp
     @Override
     @BizMutation
     public List<ErpCsEntitlement> deactivateExpiredEntitlements(IServiceContext context) {
-        LocalDate now = CoreMetrics.currentDateTime().toLocalDate();
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("isActive", Boolean.TRUE));
-        // endDate < now（已过期）；endDate 为 null（无固定到期日）永不自动停用
-        // endDate 为 DATE 列；用 lt + LocalDate（不用 isNotNull，因 null endDate 永不过期）
-        q.addFilter(io.nop.api.core.beans.FilterBeans.lt("endDate", now));
-        // 经 doFindListByQueryDirectly 绕过 endDate 字段 meta 的 lt 限制（同 ErpCsTicket.scanOverdueTickets 模式）
-        List<ErpCsEntitlement> expired = doFindListByQueryDirectly(q, context);
-        List<ErpCsEntitlement> deactivated = new ArrayList<>();
-        for (ErpCsEntitlement e : expired) {
-            try {
-                e.setIsActive(Boolean.FALSE);
-                updateEntity(e, null, context);
-                deactivated.add(e);
-            } catch (Exception ex) {
-                // 单条失败隔离，不阻断批量停用
-                LOG.warn("entitlement-deactivate-failed: id={}, reason={}", e.getId(), ex.getMessage());
-            }
-        }
-        return deactivated;
+        return deactivateExpiredEntitlementsProcessor.deactivateExpiredEntitlements(context);
     }
 
     // ============ 使用率聚合（entitlement.md §四） ============

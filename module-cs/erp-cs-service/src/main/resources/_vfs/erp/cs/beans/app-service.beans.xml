@@ -30,4 +30,23 @@
     <!-- 客服绩效聚合看板（plan 2026-07-11-1234-2 §Phase 3）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
           经 @BizQuery 暴露 getDashboardKpi/getTeamSlaRanking/getAgentCsatBreakdown。镜像 finance ErpFinDashboardBizModel。 -->
     <bean id="app.erp.cs.service.dashboard.ErpCsQualityDashboardBizModel" ioc:type="@bean:id"/>
+    <!-- per-mutation Cat-B D-mutation Processor beans (R6.6)：类别 B 内联 mutation 每 mutation 独立 Processor。 -->
+    <bean id="app.erp.cs.service.processor.ErpCsCannedResponseApplyCannedResponseProcessor"
+          class="app.erp.cs.service.processor.ErpCsCannedResponseApplyCannedResponseProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor"
+          class="app.erp.cs.service.processor.ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsEntitlementDeactivateExpiredEntitlementsProcessor"
+          class="app.erp.cs.service.processor.ErpCsEntitlementDeactivateExpiredEntitlementsProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsServiceCatalogItemCreateFromCatalogProcessor"
+          class="app.erp.cs.service.processor.ErpCsServiceCatalogItemCreateFromCatalogProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsSurveyCreateSurveyProcessor"
+          class="app.erp.cs.service.processor.ErpCsSurveyCreateSurveyProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsTicketMatchAndAttachSlaProcessor"
+          class="app.erp.cs.service.processor.ErpCsTicketMatchAndAttachSlaProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsTicketReopenProcessor"
+          class="app.erp.cs.service.processor.ErpCsTicketReopenProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsTicketResolveProcessor"
+          class="app.erp.cs.service.processor.ErpCsTicketResolveProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor"
+          class="app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor"/>
 </beans>
