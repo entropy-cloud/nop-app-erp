@@ -32,7 +32,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -219,6 +221,153 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
     }
 
     /**
+     * G2 批量折旧部分失败隔离（plan 2026-07-31-0744-2-r2-12 P1-MA4-014(c) 残差）。
+     *
+     * <p>seed 一资产持孤儿态 EXECUTED+posted=true 计划（posted=true 但无对应已过账凭证/业财回链——数据不一致）。
+     * 批量重执行该资产时，幂等前置红冲（{@code postingDispatcher.reverse}）因找不到原凭证抛
+     * {@code ERR_REVERSE_SOURCE_NOT_FOUND}（红冲为硬前置，向上抛出）。{@code executeBatchDepreciation} 的
+     * try/catch 隔离该失败：失败资产不计入 processed，其余资产仍正常计提，无整批事务回滚
+     * （{@code IErpFinVoucherBiz.reverse} 的 REQUIRES_NEW 子事务回滚独立，不影响外层批量事务）。
+     */
+    @Test
+    public void testBatchDepreciationIsolatesFailingAsset() {
+        ormTemplate.runInSession(session -> {
+            seedBasics();
+            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-BAT-ISO", "批量隔离类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null,
+                    AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
+                    AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
+            // 资产 A：IN_SERVICE 但持孤儿 EXECUTED+posted=true 计划（无凭证回链）→ 批量重执行触发红冲硬前置失败
+            Long assetA = AstTestSupport.seedAsset(daoProvider, "AST-BAT-FAIL", "批量失败资产", categoryId, 1L,
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            AstTestSupport.seedExecutedPostedSchedule(daoProvider, assetA, 1L, START_PERIOD,
+                    new BigDecimal("1000"), new BigDecimal("1000"), new BigDecimal("11000"));
+            // 资产 B：干净 IN_SERVICE → 正常计提并过账
+            AstTestSupport.seedAsset(daoProvider, "AST-BAT-OK", "批量正常资产", categoryId, 1L,
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+            return null;
+        });
+
+        int processed = ormTemplate.runInSession(session -> scheduleBiz.executeBatchDepreciation(START_PERIOD, CTX));
+        // 仅成功资产计入 processed；失败资产被隔离跳过（红冲硬前置异常被 try/catch 吞）
+        assertEquals(1, processed, "批量折旧隔离：仅正常资产计入 processed（失败资产跳过）");
+
+        // 正常资产 B：计提 + 过账成功
+        ErpAstDepreciationSchedule okSchedule = findSchedule("AST-BAT-OK", START_PERIOD);
+        assertNotNull(okSchedule, "正常资产生成折旧计划");
+        assertEquals(ErpAstConstants.SCHEDULE_STATUS_EXECUTED, okSchedule.getStatus());
+        assertTrue(Boolean.TRUE.equals(okSchedule.getPosted()), "正常资产过账成功 posted=true");
+        assertNotNull(okSchedule.getVoucherId(), "正常资产生成凭证");
+
+        // 失败资产 A：未被批量改写（红冲在写库前抛出，状态保持种子态）
+        ErpAstDepreciationSchedule failSchedule = findSchedule("AST-BAT-FAIL", START_PERIOD);
+        assertNotNull(failSchedule);
+        assertEquals(ErpAstConstants.SCHEDULE_STATUS_EXECUTED, failSchedule.getStatus(), "失败资产计划状态未变");
+        assertTrue(Boolean.TRUE.equals(failSchedule.getPosted()), "失败资产 posted 标志未被批量重置");
+        assertEquals(0, failSchedule.getActualAmount().compareTo(new BigDecimal("1000")), "失败资产折旧金额未被重算");
+    }
+
+    /**
+     * G3 折旧 tryPost 悬挂状态 + 重跑自愈（plan 2026-07-31-0744-2-r2-12 P1-MA4-014(d) 残差 / P1-MA4-013）。
+     *
+     * <p>确定性诱导 {@code DepreciationPostingDispatcher.tryPost} 失败（复用 inventory 无 mock 范式：
+     * seed OPEN 期间通过 BizModel 前置守卫 + 省略折旧费用/累计折旧科目映射致引擎 resolveSubjects 抛
+     * ERR_SUBJECT_NOT_FOUND → tryPost catch → 吞异常返回 null）。断言 schedule posted=false + voucherId=null
+     * 持续（悬挂态）。随后补齐科目映射重跑 executeDepreciation，自愈路径（幂等重算+重试过账）置 posted=true。
+     */
+    @Test
+    public void testDepreciationTryPostFailureLeavesSuspendedThenSelfHeals() {
+        Long assetId = ormTemplate.runInSession(session -> {
+            // seedBasicsNoDepSubjects：seed 会计账套 + OPEN 期间序列，但省略折旧科目 6602/1602
+            seedBasicsNoDepSubjects();
+            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-SUSP", "悬挂态类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
+            return AstTestSupport.seedAsset(daoProvider, "AST-SUSP", "悬挂态资产", categoryId, 1L,
+                    new BigDecimal("12000"), BigDecimal.ZERO,
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+        });
+
+        // 首次折旧：BizModel 守卫通过（期间 OPEN），计算并落库计划，但 tryPost 因科目缺失失败 → posted=false 悬挂
+        ErpAstDepreciationSchedule suspended = ormTemplate.runInSession(session ->
+                scheduleBiz.executeDepreciation(assetId, START_PERIOD, CTX));
+        assertEquals(ErpAstConstants.SCHEDULE_STATUS_EXECUTED, suspended.getStatus(), "折旧已执行（计算+落库）");
+        assertFalse(Boolean.TRUE.equals(suspended.getPosted()), "过账失败保持 posted=false（悬挂态）");
+        assertNull(suspended.getVoucherId(), "voucherId=null 持续（悬挂态）");
+        assertEquals(0, suspended.getActualAmount().compareTo(new BigDecimal("1000")), "折旧金额已计算 1000");
+
+        // 悬挂态持久：重新查询确认
+        ErpAstDepreciationSchedule persisted = findSchedule("AST-SUSP", START_PERIOD);
+        assertFalse(Boolean.TRUE.equals(persisted.getPosted()), "DB 中 posted=false 持续");
+        assertNull(persisted.getVoucherId(), "DB 中 voucherId=null 持续");
+
+        // 自愈路径：补齐科目映射后重跑 executeDepreciation（幂等：posted=false 不触发红冲，重算+重试过账）
+        ormTemplate.runInSession(session -> {
+            AstTestSupport.seedSubject(daoProvider, "6602", "管理费用");
+            AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧");
+            return null;
+        });
+        ErpAstDepreciationSchedule healed = ormTemplate.runInSession(session ->
+                scheduleBiz.executeDepreciation(assetId, START_PERIOD, CTX));
+        assertTrue(Boolean.TRUE.equals(healed.getPosted()), "自愈：重跑后 posted=true");
+        assertNotNull(healed.getVoucherId(), "自愈：重跑后生成凭证 voucherId");
+
+        // 资产累计折旧不双计（幂等重算，单期 1000）
+        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
+        assertEquals(0, nz(asset.getAccumulatedDepreciation()).compareTo(new BigDecimal("1000")),
+                "自愈后累计折旧不双计（单期 1000）");
+    }
+
+    /**
+     * G4 非零残值折旧算术集成测试（plan 2026-07-31-0744-2-r2-12 P1-MA4-014(e)）。
+     *
+     * <p>seed 残值≠0（原值 10000/残值 2000/3 期直线法）。直线法每期 (10000−2000)/3=2666.6667（HALF_UP 向上舍入），
+     * 第 3 期净值 4666.6666−2666.6667=1999.9999&lt;残值 2000 触发截断分支（DepreciationCalculator:71-73）→
+     * amount=nbv−残值=2666.6666，末期净值精确收敛到残值 2000（非 0）。闭合既有测试 residualValue 恒为 ZERO 的缺口。
+     * 截断/返 0 分支的纯函数覆盖见 {@code TestDepreciationCalculator}。
+     */
+    @Test
+    public void testNonZeroResidualStraightLineClampsToResidual() {
+        Long assetId = ormTemplate.runInSession(session -> {
+            seedBasics();
+            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-RES", "非零残值类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 3, null,
+                    AstTestSupport.seedSubject(daoProvider, "1602", "累计折旧"),
+                    AstTestSupport.seedSubject(daoProvider, "6602", "管理费用"));
+            return AstTestSupport.seedAsset(daoProvider, "AST-RES", "非零残值资产", categoryId, 1L,
+                    new BigDecimal("10000"), new BigDecimal("2000"),
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 3,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+        });
+
+        // 期 1、2：直线法等额 2666.6667（未触残值约束）
+        ErpAstDepreciationSchedule s1 = ormTemplate.runInSession(session ->
+                scheduleBiz.executeDepreciation(assetId, periodAt(0), CTX));
+        assertEquals(0, s1.getActualAmount().compareTo(new BigDecimal("2666.6667")), "期 1 直线法 2666.6667");
+        assertTrue(Boolean.TRUE.equals(s1.getPosted()));
+
+        ErpAstDepreciationSchedule s2 = ormTemplate.runInSession(session ->
+                scheduleBiz.executeDepreciation(assetId, periodAt(1), CTX));
+        assertEquals(0, s2.getActualAmount().compareTo(new BigDecimal("2666.6667")), "期 2 直线法 2666.6667");
+
+        // 期 3（末期）：截断分支触发，amount=2666.6666（非 2666.6667），净值精确=残值 2000
+        ErpAstDepreciationSchedule s3 = ormTemplate.runInSession(session ->
+                scheduleBiz.executeDepreciation(assetId, periodAt(2), CTX));
+        assertEquals(0, s3.getActualAmount().compareTo(new BigDecimal("2666.6666")),
+                "末期截断分支：amount=nbv−残值=2666.6666");
+        assertEquals(0, nz(s3.getNetBookValue()).compareTo(new BigDecimal("2000")), "末期净值=残值 2000（非 0）");
+
+        ErpAstAsset asset = daoProvider.daoFor(ErpAstAsset.class).getEntityById(assetId);
+        assertEquals(0, nz(asset.getNetBookValue()).compareTo(new BigDecimal("2000")), "资产净值收敛到残值 2000（非 0）");
+        assertEquals(0, nz(asset.getAccumulatedDepreciation()).compareTo(new BigDecimal("8000")),
+                "累计折旧=原值−残值=8000");
+    }
+
+    /**
      * 并发首次折旧 UK 兜底（plan 2026-07-30-0841-2 R1.28 P1-MA2-089）：2 线程同时为同资产同期首次计提，
      * UK_AST_DEPRECIATION_ASSET_PERIOD 保证仅 1 条 active 计划行 + 累计折旧不双计；冲突方抛友好错误码。
      */
@@ -312,6 +461,19 @@ public class TestErpAstDepreciation extends JunitAutoTestCase {
         AstTestSupport.seedSubject(daoProvider, "1601", "固定资产");
         AstTestSupport.seedSubject(daoProvider, "1002", "银行存款");
         // 默认开放期间序列（直线法/双倍余额递减各期所需）
+        for (int i = 0; i < 48; i++) {
+            YearMonth ym = YearMonth.parse(START_PERIOD).plusMonths(i);
+            AstTestSupport.seedPeriod(daoProvider, ym.toString(), ym.getYear(), ym.getMonthValue(),
+                    ErpAstConstants.PERIOD_STATUS_OPEN);
+        }
+    }
+
+    /**
+     * seed 会计账套 + OPEN 期间序列，但故意省略折旧费用/累计折旧科目（6602/1602），
+     * 确定性诱导 tryPost 失败（引擎 resolveSubjects 抛 ERR_SUBJECT_NOT_FOUND），构造 posted=false 悬挂态。
+     */
+    private void seedBasicsNoDepSubjects() {
+        AstTestSupport.seedAcctSchema(daoProvider, 1L);
         for (int i = 0; i < 48; i++) {
             YearMonth ym = YearMonth.parse(START_PERIOD).plusMonths(i);
             AstTestSupport.seedPeriod(daoProvider, ym.toString(), ym.getYear(), ym.getMonthValue(),
