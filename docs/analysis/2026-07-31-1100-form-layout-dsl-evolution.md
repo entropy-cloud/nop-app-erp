@@ -253,6 +253,8 @@ groups: [ group ]                          # ======>id[标题]====== 区块
 
 ## 11. page 层 complex 块组合（更对路的方案）
 
+> ⚠️ **认识纠正（见 `2026-07-31-1300-xview-schema-assessment.md`）**：complex 与 tab 内联组合早已是 xview.xdef 的既有 schema 能力（`xview.xdef:159 tab 是 UiContainer` / `:195 complex 含 aside`），问题是 codegen 未实现（无 `page_complex.xpl`、`impl_GenPage` 无 complex 分支、`page_tabs.xpl:9` 只 LoadPage 引用）。本节最初把 complex 当"新提案"，实为对既有 schema 的重新发明。真实改进 = **激活 codegen 实现既有 schema**，而非设计新 schema。本节其余分析（complex 优于 form.body、bind 随头提交挑战）仍有效，作为"激活后如何用"的参考。
+
 ### 11.1 动机
 
 前文 §3–§9 的 `<body>` 方案解决的是"单 form 内字段如何排版"。但 ERP 复杂页面（头表单 + 多子表 + 关联列表）的复杂性主要在 **page 层的块组合**，不在 form 内部字段排版。更对路的思路：**不动 form，在 `<pages>` 增加一个 `complex` 类型，把 section/crud/tabs 作为一等块自由组合**。
