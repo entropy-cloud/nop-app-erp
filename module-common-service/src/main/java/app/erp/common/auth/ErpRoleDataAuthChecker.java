@@ -28,7 +28,7 @@ import jakarta.inject.Inject;
 public class ErpRoleDataAuthChecker implements IDataAuthChecker {
 
     @Inject
-    private IDaoProvider daoProvider;
+    IDaoProvider daoProvider;
     private volatile DefaultDataAuthChecker delegate;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
