@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 全局数据权限规则聚合（plan 2026-07-31-1023-3-r3-4，P1-MA6-002）。
+     平台 DefaultDataAuthChecker 经 nop.auth.data-auth-config-path（默认 /nop/main/auth/app.data-auth.xml）读取此文件。
+     x:extends 用逗号分隔聚合各域 erp-*.data-auth.xml（与 app.action-auth.xml 聚合范式一致）。
+     新增域规则时在此追加 extends 路径（各域规则真相源为 erp-{module}/auth/erp-{module}.data-auth.xml）。
+
+     运行时激活条件（双层灰度，默认全关闭）：
+       1. nop.auth.enable-data-auth=true（平台 data-auth 管道开启，默认 false）；
+       2. erp.data-auth.role-row-filter-enabled=true（ErpRoleDataAuthChecker 委托开启，默认 false）。
+     单组织基线：两者皆 false → 零运行时过滤，零回归。 -->
+<data-auth x:extends="/erp/sal/auth/erp-sal.data-auth.xml,
+                 /erp/qa/auth/erp-qa.data-auth.xml"
+           x:schema="/nop/schema/data-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
+</data-auth>
