@@ -53,6 +53,16 @@ public interface ErpPrjErrors {
     String ARG_TASK_STATUSES = "taskStatuses";
     String ARG_MISSING_FIELDS = "missingFields";
 
+    // --- 实体未找到（R6.6 per-mutation Processor requireXxx 反查） ---
+    ErrorCode ERR_PROJECT_NOT_FOUND = ErrorCode.define(
+            "erp.err.prj.project-not-found",
+            "项目 {projectId} 不存在",
+            ARG_PROJECT_ID);
+    ErrorCode ERR_TIMESHEET_NOT_FOUND = ErrorCode.define(
+            "erp.err.prj.timesheet-not-found",
+            "工时单 {timesheetId} 不存在",
+            ARG_TIMESHEET_ID);
+
     // --- 工时状态机 ---
     ErrorCode ERR_TIMESHEET_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.prj.timesheet.illegal-status-transition",

@@ -3,6 +3,7 @@ package app.erp.prj.service.entity;
 import app.erp.prj.biz.IErpPrjProjectPnlBiz;
 import app.erp.prj.dao.entity.ErpPrjProjectPnl;
 import app.erp.prj.service.pnl.ProjectPnlCalculator;
+import app.erp.prj.service.processor.ErpPrjProjectPnlRefreshPnlProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -20,12 +21,17 @@ import java.util.List;
  *   <li>{@link #refreshPnl}：手工/批量触发经 {@link ProjectPnlCalculator} 聚合 Billing 收入 + CostCollection 四类成本。</li>
  *   <li>{@link #getProjectPnl}：返回最新 {@code calcStatus=CALCULATED} 快照（看板 successor 取数通道）。</li>
  * </ul>
+ *
+ * <p>R6.6：{@code refreshPnl} 已拆为独立 per-mutation Processor
+ * （{@code processor-extension-pattern.md}），本类仅作 facade 单行委托；{@code getProjectPnl} 保留内联。
  */
 @BizModel("ErpPrjProjectPnl")
 public class ErpPrjProjectPnlBizModel extends CrudBizModel<ErpPrjProjectPnl> implements IErpPrjProjectPnlBiz {
 
     @Inject
     ProjectPnlCalculator pnlCalculator;
+    @Inject
+    ErpPrjProjectPnlRefreshPnlProcessor refreshPnlProcessor;
 
     public ErpPrjProjectPnlBizModel() {
         setEntityName(ErpPrjProjectPnl.class.getName());
@@ -37,7 +43,7 @@ public class ErpPrjProjectPnlBizModel extends CrudBizModel<ErpPrjProjectPnl> imp
                                        @Name("periodFrom") LocalDate periodFrom,
                                        @Name("periodTo") LocalDate periodTo,
                                        IServiceContext context) {
-        return pnlCalculator.refreshPnl(projectId, periodFrom, periodTo);
+        return refreshPnlProcessor.refreshPnl(projectId, periodFrom, periodTo, context);
     }
 
     @Override
