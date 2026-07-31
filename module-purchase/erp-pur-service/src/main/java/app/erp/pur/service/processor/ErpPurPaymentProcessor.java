@@ -6,11 +6,9 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdSubject;
-import app.erp.md.biz.SettlementAllocation;
 import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
-import app.erp.pur.service.entity.PaymentSettler;
 import app.erp.pur.service.posting.PurPaymentPostingDispatcher;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
@@ -53,9 +51,6 @@ public class ErpPurPaymentProcessor {
 
     @Inject
     PurPaymentPostingDispatcher postingDispatcher;
-
-    @Inject
-    PaymentSettler paymentSettler;
 
     @Inject
     IErpFinBudgetControlBiz budgetControlBiz;
@@ -102,15 +97,7 @@ public class ErpPurPaymentProcessor {
         return cancelProcessor.cancel(id, context);
     }
 
-    public ErpPurPayment settle(String id, List<SettlementAllocation> allocations, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(id, context);
-        return paymentSettler.settle(payment, allocations);
-    }
-
-    public ErpPurPayment reverseSettlement(String id, Long invoiceId, IServiceContext context) {
-        ErpPurPayment payment = requirePayment(id, context);
-        return paymentSettler.reverseSettlement(payment, invoiceId);
-    }
+    // settle / reverseSettlement 迁出至 ErpPurPaymentSettleProcessor / ErpPurPaymentReverseSettlementProcessor（R6.5 per-mutation 拆分）。
 
     // ---------- step：迁移校验 ----------
 
