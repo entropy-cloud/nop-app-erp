@@ -4,6 +4,8 @@ import app.erp.crm.biz.IErpCrmEventBiz;
 import app.erp.crm.dao.entity.ErpCrmEvent;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.ErpCrmErrors;
+import app.erp.crm.service.processor.ErpCrmEventCancelProcessor;
+import app.erp.crm.service.processor.ErpCrmEventCompleteProcessor;
 import app.erp.crm.service.support.EventTimelineAggregator;
 import app.erp.crm.service.support.LeadActivityDerivationHelper;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -16,7 +18,6 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
-import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.sql.Timestamp;
@@ -49,7 +50,10 @@ public class ErpCrmEventBizModel extends CrudBizModel<ErpCrmEvent> implements IE
     EventTimelineAggregator timelineAggregator;
 
     @Inject
-    IOrmTemplate ormTemplate;
+    ErpCrmEventCompleteProcessor completeProcessor;
+
+    @Inject
+    ErpCrmEventCancelProcessor cancelProcessor;
 
     public ErpCrmEventBizModel() {
         setEntityName(ErpCrmEvent.class.getName());
@@ -58,26 +62,13 @@ public class ErpCrmEventBizModel extends CrudBizModel<ErpCrmEvent> implements IE
     @Override
     @BizMutation
     public ErpCrmEvent complete(@Name("eventId") Long eventId, IServiceContext context) {
-        ErpCrmEvent event = requireEvent(eventId, context);
-        validatePlanned(event, "complete");
-        event.setStatus(ErpCrmConstants.EVENT_STATUS_COMPLETED);
-        updateEntity(event, null, context);
-        // 派生查询需读取本轮 status 变更：显式 flush 使派生查询可见。
-        ormTemplate.flushSession();
-        deriveLeadFields(event.getRelatedLeadId());
-        return event;
+        return completeProcessor.complete(eventId, context);
     }
 
     @Override
     @BizMutation
     public ErpCrmEvent cancel(@Name("eventId") Long eventId, IServiceContext context) {
-        ErpCrmEvent event = requireEvent(eventId, context);
-        validatePlanned(event, "cancel");
-        event.setStatus(ErpCrmConstants.EVENT_STATUS_CANCELLED);
-        updateEntity(event, null, context);
-        ormTemplate.flushSession();
-        deriveLeadFields(event.getRelatedLeadId());
-        return event;
+        return cancelProcessor.cancel(eventId, context);
     }
 
     @Override

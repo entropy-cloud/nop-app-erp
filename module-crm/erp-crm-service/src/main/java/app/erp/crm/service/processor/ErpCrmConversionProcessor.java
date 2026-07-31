@@ -20,6 +20,10 @@ import java.util.Objects;
 /**
  * CRM 转化闭环 Processor（{@code processor-extension-pattern.md} Facade + Processor）。
  *
+ * <p>R6.6 delete-after-extract：{@code convertToCustomer}/{@code convertToQuotation} 两个 D-mutation 已拆为独立
+ * {@link ErpCrmConversionConvertToCustomerProcessor}/{@link ErpCrmConversionConvertToQuotationProcessor}。
+ * 本类保留为共享 protected helper 单一真相源 + {@code getCreatedOpportunity} 查询辅助（≤2 步豁免）。
+ *
  * <p>两条转化链（核心零污染：转化结果存在 CRM 侧弱指针，sales/master-data 实体零字段新增）：
  * <ul>
  *   <li>{@code convertToCustomer}：LEAD → 经 {@link IErpMdPartnerBiz} 建客户 + 新建 OPPORTUNITY lead + 原 lead 弱指针 + CONVERTED。</li>
@@ -40,28 +44,6 @@ public class ErpCrmConversionProcessor {
 
     @Inject
     IErpSalQuotationBiz quotationBiz;
-
-    public ErpMdPartner convertToCustomer(Long leadId, IServiceContext context) {
-        ErpCrmLead lead = requireLead(leadId, context);
-        validateNotConverted(lead, context);
-        validateLeadType(lead, ErpCrmConstants.LEAD_TYPE_LEAD, context);
-        ErpMdPartner partner = createPartnerFromLead(lead, context);
-        ErpCrmLead opportunity = createOpportunityFromLead(lead, partner, context);
-        markLeadConverted(lead, ErpCrmConstants.RELATED_BILL_TYPE_CRM_LEAD,
-                opportunity.getCode(), context);
-        return partner;
-    }
-
-    public ErpSalQuotation convertToQuotation(Long leadId, Map<String, Object> quotationData, IServiceContext context) {
-        ErpCrmLead lead = requireLead(leadId, context);
-        validateNotConverted(lead, context);
-        validateLeadType(lead, ErpCrmConstants.LEAD_TYPE_OPPORTUNITY, context);
-        requireOpportunityPartner(lead, context);
-        ErpSalQuotation quotation = createQuotationFromOpportunity(lead, quotationData, context);
-        markLeadConverted(lead, ErpCrmConstants.RELATED_BILL_TYPE_SALES_QUOTATION,
-                quotation.getCode(), context);
-        return quotation;
-    }
 
     public ErpCrmLead getCreatedOpportunity(Long leadId, IServiceContext context) {
         ErpCrmLead lead = requireLead(leadId, context);

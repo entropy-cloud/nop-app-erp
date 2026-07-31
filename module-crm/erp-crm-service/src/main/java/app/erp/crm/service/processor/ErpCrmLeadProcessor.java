@@ -20,6 +20,10 @@ import java.util.Objects;
 /**
  * 线索/商机状态机 + 漏斗阶段流转编排 Processor（{@code processor-extension-pattern.md} Facade + Processor）。
  *
+ * <p>R6.6 slim-to-S-delegation：{@code qualify}/{@code lose}/{@code moveStage} 三个 D-mutation 已拆为独立
+ * {@link ErpCrmLeadQualifyProcessor}/{@link ErpCrmLeadLoseProcessor}/{@link ErpCrmLeadMoveStageProcessor}。
+ * 本类保留为共享 protected helper 单一真相源 + {@code cancel} S-mutation 单行委托。
+ *
  * <p>状态机（docStatus）：{@code NEW → QUALIFIED}（入漏斗）、{@code NEW/QUALIFIED → LOST}（丢单原因必填）、
  * {@code NEW/QUALIFIED → CANCELLED}、{@code → CONVERTED}（终态，由转化 Processor 置位）。
  * 非法迁移被拒。每个 step 方法 protected，下游可逐 step 覆盖。
@@ -38,33 +42,8 @@ public class ErpCrmLeadProcessor {
     @Inject
     ErpCrmLeadCancelProcessor cancelProcessor;
 
-    public ErpCrmLead qualify(Long leadId, IServiceContext context) {
-        ErpCrmLead lead = requireLead(leadId, context);
-        validateTransitionForQualify(lead, context);
-        doQualify(lead, context);
-        return lead;
-    }
-
-    public ErpCrmLead lose(Long leadId, Long lostReasonId, String lostReasonDesc, IServiceContext context) {
-        ErpCrmLead lead = requireLead(leadId, context);
-        validateTransitionForLose(lead, context);
-        requireLostReason(lead, lostReasonId, context);
-        doLose(lead, lostReasonId, lostReasonDesc, context);
-        return lead;
-    }
-
     public ErpCrmLead cancel(Long leadId, IServiceContext context) {
         return cancelProcessor.cancel(String.valueOf(leadId), context);
-    }
-
-    public ErpCrmLead moveStage(Long leadId, Long toStageId, IServiceContext context) {
-        ErpCrmLead lead = requireLead(leadId, context);
-        validateMovable(lead, context);
-        ErpCrmStage toStage = requireStage(toStageId, context);
-        Long fromStageId = lead.getStageId();
-        validateStageDirection(lead, fromStageId, toStage, context);
-        doMoveStage(lead, toStage, fromStageId, context);
-        return lead;
     }
 
     // ---------- step：迁移校验 ----------

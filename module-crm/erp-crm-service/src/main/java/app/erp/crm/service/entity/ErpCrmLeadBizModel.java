@@ -4,9 +4,13 @@ import app.erp.crm.biz.IErpCrmLeadBiz;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmTerritoryAssignmentRule;
 import app.erp.crm.service.ErpCrmConstants;
+import app.erp.crm.service.processor.ErpCrmConversionConvertToCustomerProcessor;
+import app.erp.crm.service.processor.ErpCrmConversionConvertToQuotationProcessor;
 import app.erp.crm.service.processor.ErpCrmConversionProcessor;
 import app.erp.crm.service.processor.ErpCrmLeadCancelProcessor;
-import app.erp.crm.service.processor.ErpCrmLeadProcessor;
+import app.erp.crm.service.processor.ErpCrmLeadLoseProcessor;
+import app.erp.crm.service.processor.ErpCrmLeadMoveStageProcessor;
+import app.erp.crm.service.processor.ErpCrmLeadQualifyProcessor;
 import app.erp.crm.service.support.LeadDuplicateChecker;
 import app.erp.crm.service.support.LeadScoringEngine;
 import app.erp.crm.service.support.TerritoryAssignmentEngine;
@@ -40,10 +44,22 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErpCrmLeadBiz {
 
     @Inject
-    ErpCrmLeadProcessor leadProcessor;
+    ErpCrmLeadQualifyProcessor qualifyProcessor;
+
+    @Inject
+    ErpCrmLeadLoseProcessor loseProcessor;
+
+    @Inject
+    ErpCrmLeadMoveStageProcessor moveStageProcessor;
 
     @Inject
     ErpCrmLeadCancelProcessor cancelProcessor;
+
+    @Inject
+    ErpCrmConversionConvertToCustomerProcessor convertToCustomerProcessor;
+
+    @Inject
+    ErpCrmConversionConvertToQuotationProcessor convertToQuotationProcessor;
 
     @Inject
     ErpCrmConversionProcessor conversionProcessor;
@@ -64,7 +80,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
     @Override
     @BizMutation
     public ErpCrmLead qualify(@Name("leadId") Long leadId, IServiceContext context) {
-        return leadProcessor.qualify(leadId, context);
+        return qualifyProcessor.qualify(leadId, context);
     }
 
     @Override
@@ -75,7 +91,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
                            @io.nop.api.core.annotations.core.Optional
                            @Name("lostReasonDesc") String lostReasonDesc,
                            IServiceContext context) {
-        return leadProcessor.lose(leadId, lostReasonId, lostReasonDesc, context);
+        return loseProcessor.lose(leadId, lostReasonId, lostReasonDesc, context);
     }
 
     @Override
@@ -89,7 +105,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
     public ErpCrmLead moveStage(@Name("leadId") Long leadId,
                                 @Name("toStageId") Long toStageId,
                                 IServiceContext context) {
-        return leadProcessor.moveStage(leadId, toStageId, context);
+        return moveStageProcessor.moveStage(leadId, toStageId, context);
     }
 
     @Override
@@ -151,7 +167,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
     @Override
     @BizMutation
     public ErpMdPartner convertToCustomer(@Name("leadId") Long leadId, IServiceContext context) {
-        return conversionProcessor.convertToCustomer(leadId, context);
+        return convertToCustomerProcessor.convertToCustomer(leadId, context);
     }
 
     @Override
@@ -160,7 +176,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
                                               @io.nop.api.core.annotations.core.Optional
                                               @Name("quotationData") Map<String, Object> quotationData,
                                               IServiceContext context) {
-        return conversionProcessor.convertToQuotation(leadId, quotationData, context);
+        return convertToQuotationProcessor.convertToQuotation(leadId, quotationData, context);
     }
 
     @Override
