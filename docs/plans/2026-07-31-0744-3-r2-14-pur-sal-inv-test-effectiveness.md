@@ -1,6 +1,6 @@
 # 2026-07-31-0744-3-r2-14-pur-sal-inv-test-effectiveness R2.14 pur+sal+inv 过账/核销/成本链路测试有效性（残差补强）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-07-31
 > Source: `docs/backlog/audit-remediation-roadmap.md` §MR2 R2.14（P1-MA4-021 残差）
 > Related: `docs/audits/arm-index.md`（P1-MA4-021/020）、R1.8（三单匹配，已落地 settle recheck 测试）、R1.9（多币种，已落地 pur/sal 多币种凭证行级测试）、R1.12（成本方法，已落地 STANDARD 红冲不变量+SPECIFIC 历史成本测试）、R1.16（业财悬挂，已落地到岸成本 reverse 告警代码+InvPosting 悬挂测试）、R1.17（reverseApprove，已落地 PurReversalListener.rollbackReceive 测试）、R2.10/R2.13（同族测试有效性残差范式）
@@ -54,29 +54,29 @@ P1-MA4-021（finding 写于 R1.8/R1.9/R1.12/R1.16/R1.17 之前）的子项 (a)(c
 
 ### Phase 1 - dispatcher 悬挂 + SalReversalListener rollback + 到岸成本 reverse 悬挂（G1+G2+G3）
 
-Status: planned
+Status: completed
 Targets: pur/sal/inv 各域过账测试 + 新增 `TestSalReversalListenerRollback*.java`（listener 单元直调）+ `TestErpInvLandedCostReversal.java`（新增测试方法 + 对应 `_cases/` 快照/seed）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: R2.0 done（已 done）；R1.8/R1.9/R1.12 done（已闭合子项基线）；R1.16 done（到岸成本 reverse 告警代码已落地，InvPosting 悬挂测试范式）；R1.17 done（PurReversalListener.rollbackReceive 范式）
 
-- [ ] Add: G1 dispatcher tryPost 失败悬挂测试 — 确定性诱导 post 失败（seed 无会计期间/清空科目映射，复用 `TestErpInvPosting:107-115` 无 mock 范式），对 pur 3（Invoice/Payment/Return）+ sal 3（Invoice/Receipt/Return）+ inv 3（LandedCost/CostAdjust/OwnershipTransfer）dispatcher 各断言 posted=false 持续 + 业务单据终态不受影响；闭合 P1-MA4-021(b) + P1-MA2-032 family 测试可见性
+- [x] Add: G1 dispatcher tryPost 失败悬挂测试 — 确定性诱导 post 失败（subclass/Proxy 桩 executor/voucherBiz 抛 NopException，对齐 R1.16 TestDepreciationPostingFailureAlert 无 Mockito 范式；dispatcher 为 Facade 编排层，tryPost→false/null 即「posted=false 悬挂」可观测契约，happy-path posted=true 由既有集成测试覆盖），对 pur 3（Invoice/Payment/Return，`TestErpPurPostingDispatcherFailureHangs`）+ sal 3（Invoice/Receipt/Return，`TestErpSalPostingDispatcherFailureHangs`）+ inv 3（LandedCost/CostAdjust/OwnershipTransfer，`TestErpInvPostingDispatcherFailureHangs`）dispatcher 各断言悬挂返回 + 业务单据终态不受影响；闭合 P1-MA4-021(b) + P1-MA2-032 family 测试可见性
   - Skill: `nop-testing`
-- [ ] Add: G2 SalReversalListener rollback 对称测试 — 新建 TestSalReversalListener* 单元直调（复用 TestPurReversalListenerReceiveRollback Proxy-stub 范式），补 rollbackReceipt/rollbackReturn/rollbackDelivery 3 路径，断言 posted=false+APPROVE_STATUS_REJECTED 对齐 rollbackInvoice 行为（rollbackDelivery 标注 P2-MA2-057 watch-only 注释）
+- [x] Add: G2 SalReversalListener rollback 对称测试 — 新建 `TestSalReversalListenerRollback` 单元直调（复用 TestPurReversalListenerReceiveRollback 范式），补 rollbackReceipt/rollbackReturn（断言 posted=false+APPROVED→REJECTED 对齐 rollbackInvoice）+ rollbackDelivery（断言 posted=false、approveStatus 不变——库存物理冲销独立于凭证红冲，该不对称为 P2-MA2-057 watch-only 当前设计行为，非新缺陷）
   - Skill: `nop-testing`
-- [ ] Add: G3 到岸成本反向悬挂测试 — 确定性诱导 ErpInvLandedCostProcessor reverse 失败（**注**：无原始凭证时 reverse 为平台幂等 no-op 不抛异常，须 seed CLOSED_FINAL 期间或等效致 reverse posting engine 失败的条件，非"无凭证"路径），断言 posted=false + dispatchReverseFailureAlert 触发（断言告警事件类型）；闭合 P1-MA4-020 测试可见性
+- [x] Add: G3 到岸成本反向悬挂测试 — 子类桩 `LandedCostPostingDispatcher.reverse` 抛 NopException（避开「无原始凭证 reverse 为幂等 no-op」陷阱）驱动 `ErpInvLandedCostProcessor.doReverseApprove` + Proxy 桩 `IErpSysNotificationBiz` 捕获事件类型，断言 posted=false + approveStatus=REJECTED + 告警事件类型 `inv.landed-cost-reverse-failure`（`TestErpInvLandedCostReverseFailureAlert`，含 null notificationBiz 静默跳过用例）；闭合 P1-MA4-020 测试可见性
   - Skill: `nop-testing`
-- [ ] Proof: Phase 1 新增测试方法首次 RECORDING 后切 CHECKING 全绿
-  - `mvn test -pl module-purchase/erp-pur-service,module-sales/erp-sal-service,module-inventory/erp-inv-service -Dtest=<新增测试类>`
+- [x] Proof: Phase 1 新增测试方法 CHECKING 全绿（14 测试：pur 3 + sal 6 + inv 5）
+  - `mvn test -pl module-purchase/erp-pur-service,module-sales/erp-sal-service,module-inventory/erp-inv-service` 全绿（purchase 135 / sales 147 / inventory 全绿，含 14 新增测试）
   - Skill: none
 
 Exit Criteria:
 
 > pur+sal+inv 业财悬挂状态 + 销售 reversal rollback + 到岸成本 reverse 悬挂补齐，使 3 类缺陷对测试可观测。
 
-- [ ] G1（9 dispatcher posted=false 持续+终态不受影响）+ G2（SalReversalListener 3 rollback 路径对称）+ G3（到岸成本 reverse posted=false+告警）测试在 CHECKING 模式绿
-- [ ] 若 G1/G3 测试发现与 owner doc 不符的真实行为缺陷，升级为独立 Fix 计划并记录（不静默改生产代码）
+- [x] G1（9 dispatcher posted=false 持续+终态不受影响）+ G2（SalReversalListener 3 rollback 路径对称）+ G3（到岸成本 reverse posted=false+告警）测试在 CHECKING 模式绿
+- [x] 若 G1/G3 测试发现与 owner doc 不符的真实行为缺陷，升级为独立 Fix 计划并记录（不静默改生产代码）—— G2 rollbackDelivery「仅 posted=false 不翻 approveStatus」为 P2-MA2-057 既裁决 watch-only 当前设计行为（注释已标注），非新缺陷，无须升级；G1/G3 未发现与 owner doc 不符的真实缺陷
 
 ## Draft Review Record
 
@@ -86,14 +86,14 @@ Exit Criteria:
 
 > 纯测试新增，无生产代码/ORM/view.xml 变更。完整仓库验证在此处一次。
 
-- [ ] 范围内行为完成（G1 + G2 + G3 残差测试方法落地并 CHECKING 绿）
-- [ ] 相关文档对齐（若 G1-G3 测试发现与 owner doc 不符的真实缺陷，已升级为独立 Fix 计划并记录；否则无 owner-doc 更新）
-- [ ] 已运行验证：`mvn clean install -DskipTests` 全绿 + `mvn test -pl module-purchase/erp-pur-service,module-sales/erp-sal-service,module-inventory/erp-inv-service` 全绿（含新测试）+ `bash docs/audits/nop-compliance-checker.sh` 零新增命中
-- [ ] 无范围内项目降级为 deferred/follow-up（发现的真实行为缺陷按不可降级规则升级 Fix，不降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（G1 + G2 + G3 残差测试方法落地并 CHECKING 绿）
+- [x] 相关文档对齐（G1-G3 未发现与 owner doc 不符的真实缺陷，无须更新；G2 rollbackDelivery 不对称为 P2-MA2-057 既裁决 watch-only，已在测试注释标注）
+- [x] 已运行验证：`mvn clean install -DskipTests` 全绿（154 模块 BUILD SUCCESS） + `mvn test -pl module-purchase/erp-pur-service,module-sales/erp-sal-service,module-inventory/erp-inv-service` 全绿（purchase 135 / sales 147 / inventory 含 14 新增测试，0 失败 0 错误）+ `bash docs/audits/nop-compliance-checker.sh` 零新增命中（checker 经 `-type d -name test -prune` 仅扫生产代码，本计划纯测试新增无生产代码变更）
+- [x] 无范围内项目降级为 deferred/follow-up（G4 CostAdjustmentService SPECIFIC 分支为计划前既裁决 successor，非本次降级；pur/sal 6 dispatcher 告警 dispatch 为 R1.16 既裁决 watch-only successor，非本次降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -111,13 +111,15 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <结束审计后填写>
+Status Note: G1+G2+G3 三类残差闭合。新增 5 个测试类 14 个测试方法（pur 3 + sal 6 + inv 5），pur/sal/inv 9 dispatcher tryPost 失败悬挂 + SalReversalListener 3 rollback 路径对称 + 到岸成本 reverse 失败悬挂+告警对测试可观测。纯测试新增，无生产代码/ORM/view.xml 变更。验证：`mvn clean install -DskipTests` 154 模块 BUILD SUCCESS + 三模块 `mvn test` 全绿（purchase 135 / sales 147 / inventory，含 14 新增测试）+ compliance checker 零新增命中。G2 rollbackDelivery「仅 posted=false 不翻 approveStatus」确认为 P2-MA2-057 既裁决 watch-only 当前设计行为，非新缺陷。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立子代理 closure audit（新会话 ses_04a2fa1acffeOgnGD8vpgu615b，general agent）
+- Evidence: 独立审计逐项核实——(1) 5 个测试文件均为纯测试无生产代码改动；(2) G1 9 dispatcher 故障诱导+悬挂断言正确；(3) G2 rollback 路径与 SalReversalListener.java 生产行为一致（Receipt/Return→REJECTED，Delivery 仅 posted=false 配 P2-MA2-057 注释）；(4) G3 与 ErpInvLandedCostProcessor.doReverseApprove 一致（reverse 失败→posted=false + 告警事件 `inv.landed-cost-reverse-failure`）；(5) `git status` 仅计划 .md + 5 测试文件变更，零生产 Java/ORM/view.xml 触碰；(6) G4 + pur/sal 6 dispatcher 告警 successor 维持既裁决未降级。审计初轮标记 4 处文档占位符（Plan Status / Status Note / 证据 / Follow-up），已全部补齐后收敛 PASS。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 仅 §Deferred But Adjudicated 已裁决的非阻塞 successor（非本次范围、非缺陷降级）：
+  - G4 CostAdjustmentService SPECIFIC 分支（须先人工批准成本保护区域 owner doc 后独立实现+测试 plan）
+  - pur/sal 6 dispatcher 告警 dispatch（R1.16 watch-only；G1 测试已证 posted=false 悬挂，告警代码侧补齐触发独立 plan）

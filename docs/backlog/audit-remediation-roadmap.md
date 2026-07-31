@@ -186,7 +186,7 @@
 | R2.11 | **[代码]** mfg 工单/领料/BOM + MRP/成本/委外链路测试有效性 — P1-MA4-009（业财异常零覆盖 + 完工入库 GL 行级断言缺失）+ P1-MA4-011（多币种断言缺失 + 业财悬挂零覆盖 + CostRollup 成环无测试）；修复=dispatcher 过账悬挂测试 + 多币种 E2E + CostRollup 成环 assertThrows + CRP 边界 | done | `docs/design/manufacturing/` | R2.0 | none |
 | R2.12 | **[代码]** assets 折旧引擎/Processor 链路测试有效性 — P1-MA4-014（异常路径零覆盖 + 残值边界仅 residual=0）；修复=posted=false 窗口 reverseApprove 不对称测试 + 并发首次折旧重复 + 批量部分失败隔离 + 折旧过账悬挂 + 非零残值算术测试 | done | `docs/design/assets/` | R2.0 | none |
 | R2.13 | **[代码]** hr 薪酬/过账链路测试有效性 — P1-MA4-019（测试比 0.16 全域最低，异常路径零覆盖）；修复=个税高档边界测试 + 过账悬挂测试 + 累计 JSON 损坏测试 + 公司承担过账负向测试 | done | `docs/design/human-resource/payroll.md` | R2.0 | none |
-| R2.14 | **[代码]** pur+sal+inv 过账/核销/成本链路测试有效性 — P1-MA4-021（多币种零覆盖 + 业财异常悬挂零覆盖 + 成本不变量零覆盖 + 核销门禁零覆盖）；修复=多币种 P2P/O2C E2E + PostingDispatcher 过账悬挂 + STANDARD 红冲重估 + SPECIFIC 成本调整 + PurReversalListener 不对称 + SalReversalListener rollback + settle 三单匹配负向 + 到岸成本反向悬挂 | ready | `docs/design/{purchase,sales,inventory}/` | R2.0 | none |
+| R2.14 | **[代码]** pur+sal+inv 过账/核销/成本链路测试有效性 — P1-MA4-021（多币种零覆盖 + 业财异常悬挂零覆盖 + 成本不变量零覆盖 + 核销门禁零覆盖）；修复=多币种 P2P/O2C E2E + PostingDispatcher 过账悬挂 + STANDARD 红冲重估 + SPECIFIC 成本调整 + PurReversalListener 不对称 + SalReversalListener rollback + settle 三单匹配负向 + 到岸成本反向悬挂 | done | `docs/design/{purchase,sales,inventory}/` | R2.0 | none |
 | R2.15 | **[代码/view.xml drift — 须独立 plan-audit]** view.xml drift 三项 — P1-MA4-023（mfg WorkOrder 结案按钮 STARTED 死枚举引用）+ P1-MA4-024（pur Rfq 作废按钮 cancel 参数名 id vs rfqId）+ P1-MA4-025（hr Employee PII 掩码非法 LEFT/RIGHT 函数）；修复=view.xml visibleOn 状态值对齐 dict + cancel 参数名对齐 BizModel + PII 掩码改用 JS slice | done | 各域 `erp-*-web/.../*.view.xml`（mfg/pur/hr） | R2.0 | none |
 
 ### Milestone MR3 — P1 修复（测试 + 安全 + 运维维度）
