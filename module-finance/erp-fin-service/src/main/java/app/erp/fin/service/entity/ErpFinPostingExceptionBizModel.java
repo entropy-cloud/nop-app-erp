@@ -12,6 +12,8 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.ErpFinPostingErrors;
 import app.erp.fin.service.posting.ErpFinPostingExceptionRecorder;
 import app.erp.fin.service.posting.ErpFinPostingMetrics;
+import app.erp.fin.service.processor.ErpFinPostingExceptionIgnoreProcessor;
+import app.erp.fin.service.processor.ErpFinPostingExceptionRetryProcessor;
 import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -61,6 +63,10 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
 
     @Inject
     IErpSysNotificationBiz notificationBiz;
+    @Inject
+    ErpFinPostingExceptionRetryProcessor retryProcessor;
+    @Inject
+    ErpFinPostingExceptionIgnoreProcessor ignoreProcessor;
 
     public ErpFinPostingExceptionBizModel() {
         setEntityName(ErpFinPostingException.class.getName());
@@ -69,37 +75,7 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
     @Override
     @BizMutation
     public ErpFinPostingException retry(@Name("exceptionId") Long exceptionId, IServiceContext context) {
-        ErpFinPostingException entity = requirePending(exceptionId);
-        // 翻 RETRYING 并记重试次数；重新触发过账（独立事务，失败回滚不污染本事务）。
-        entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING);
-        entity.setRetryCount((entity.getRetryCount() == null ? 0 : entity.getRetryCount()) + 1);
-        entity.setResolution(ErpFinConstants.POSTING_EXCEPTION_RESOLUTION_RETRY);
-        entity.setResolvedBy(currentUserId());
-        entity.setResolvedAt(CoreMetrics.currentTimestamp());
-        updateEntity(entity, null, context);
-
-        if (!ErpFinConstants.POSTING_TYPE_REVERSAL.equals(entity.getPostingType())) {
-            // 正向过账重试：从 eventData 重建 PostingEvent 重新过账。
-            PostingEvent event = rebuildEvent(entity);
-            Long voucherId = voucherBiz.post(event, context);
-            if (voucherId != null) {
-                entity.setVoucherId(voucherId);
-                entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
-            } else {
-                // 幂等命中（源单已过账）也算重试成功。
-                entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
-            }
-        } else {
-            // 红冲重试：按回链重新红冲。
-            ErpFinBusinessType businessType = parseBusinessType(entity.getBusinessType());
-            Long voucherId = voucherBiz.reverse(entity.getBillHeadCode(), businessType, context);
-            if (voucherId != null) {
-                entity.setVoucherId(voucherId);
-                entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
-            }
-        }
-        updateEntity(entity, null, context);
-        return entity;
+        return retryProcessor.retry(exceptionId, context);
     }
 
     @Override
@@ -107,21 +83,7 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
     public ErpFinPostingException ignore(@Name("exceptionId") Long exceptionId,
                                          @Name("resolutionNote") String resolutionNote,
                                          IServiceContext context) {
-        ErpFinPostingException entity = requirePending(exceptionId);
-        if (resolutionNote == null || resolutionNote.trim().isEmpty()) {
-            throw new NopException(ErpFinPostingErrors.ERR_POSTING_EXCEPTION_IGNORE_REASON_REQUIRED)
-                    .param(ErpFinPostingErrors.ARG_EXCEPTION_ID, exceptionId);
-        }
-        entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_IGNORED);
-        entity.setResolution(ErpFinConstants.POSTING_EXCEPTION_RESOLUTION_IGNORE);
-        entity.setResolutionNote(resolutionNote);
-        entity.setResolvedBy(currentUserId());
-        entity.setResolvedAt(CoreMetrics.currentTimestamp());
-        updateEntity(entity, null, context);
-        // P1-MA2-032（G2 显式放弃态）：IGNORED 补告警——首次记录已有 dispatchNotify，
-        // 此处补放弃态告警使运营感知「异常被显式忽略」决策（posting-log.md §错误传播分级策略 G2）。
-        dispatchAbandonmentAlert(entity, resolutionNote);
-        return entity;
+        return ignoreProcessor.ignore(exceptionId, resolutionNote, context);
     }
 
     /**

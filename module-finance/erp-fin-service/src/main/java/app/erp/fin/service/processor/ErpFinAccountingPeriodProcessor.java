@@ -91,16 +91,6 @@ public class ErpFinAccountingPeriodProcessor {
     @Inject
     app.erp.fin.service.posting.SchemaPropagator schemaPropagator;
 
-    public PeriodPreCheckReport preCheck(Long periodId, IServiceContext context) {
-        ErpFinAccountingPeriod period = requirePeriod(periodId);
-        PeriodPreCheckReport report = new PeriodPreCheckReport();
-        report.setUnpostedVoucherCodes(findUnpostedVoucherCodes(period));
-        report.setUnsettledArApCodes(findUnsettledArApCodes(period));
-        report.setUnresolvedPostingExceptionKeys(findUnresolvedPostingExceptionKeys(period));
-        populateAllowanceCheck(period, report);
-        return report;
-    }
-
     /**
      * 坏账准备充足性门控（{@code bad-debt.md §期末 allowance 充足性门控}，对标 ar-close-engine C-R1）。
      * 必需准备（账龄分桶法）vs Allowance 账面：不足→阻止结账（shortfall &gt; 0）；超额→提示释放（excess &gt; 0，非阻断）。
@@ -127,72 +117,6 @@ public class ErpFinAccountingPeriodProcessor {
         }
     }
 
-    public ErpFinAccountingPeriod closePeriod(Long periodId, IServiceContext context) {
-        ErpFinAccountingPeriod period = requirePeriod(periodId);
-        assertPeriodStatus(period, ErpFinConstants.PERIOD_STATUS_OPEN, "结账");
-
-        PeriodPreCheckReport report = preCheck(periodId, context);
-        // Allowance shortfall 是独立硬阻断——不受 auto-post-on-close 影响（bad-debt.md §期末 allowance 充足性门控）。
-        if (report.hasAllowanceShortfall()) {
-            throw new NopException(ErpFinErrors.ERR_PRE_CHECK_BLOCKED)
-                    .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode())
-                    .param(ErpFinErrors.ARG_ISSUE_COUNT, 1);
-        }
-        // 未核销 AR-AP 为结构化提示（hasReminders），不阻断结账（owner doc §结账前置检查「未核销=提示」）。
-        // 未过账凭证 + 未处置异常：auto-post-on-close=false 时阻断（安全默认），=true 时降级为提示。
-        if (!isAutoPostOnClose() && report.hasIssues()) {
-            throw new NopException(ErpFinErrors.ERR_PRE_CHECK_BLOCKED)
-                    .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode())
-                    .param(ErpFinErrors.ARG_ISSUE_COUNT, report.issueCount());
-        }
-
-        ErpFinAccountingPeriodStatus status = findOrCreatePeriodStatus(period);
-        // 模块按序关账：AR→AP→INV→AST→GL。INV 内运行存货成本兜底重算，AST 内运行折旧，GL 内运行汇兑重估→损益结转（均在期间仍 OPEN 时）。
-        advanceModule(status, Module.AR);
-        advanceModule(status, Module.AP);
-        closeInvModule(period, status, context);
-        closeAssetModule(period, status, context);
-        closeGlModule(period, status, context);
-
-        // 年度结转分支（period-close.md §年度结转规则）：12 月/年末结账时，常规月度结账后追加——
-        // 辅助账对账门控 → 本年利润→未分配利润结转 → populate 次年年初余额 → 触发次年期间创建。
-        // config-gated erp-fin.annual-close-enabled。
-        if (isAnnualCloseEnabled() && isYearEnd(period)) {
-            closeAnnual(period, status, context);
-        }
-
-        // 期末凭证生成完成（期间仍 OPEN）后，状态簿记：CLOSING→CLOSED。flush 落库。
-        period.setStatus(ErpFinConstants.PERIOD_STATUS_CLOSING);
-        period.setStatus(ErpFinConstants.PERIOD_STATUS_CLOSED);
-        period.setClosedAt(CoreMetrics.currentTimestamp());
-        period.setClosedBy(currentUserId());
-        orm().flushSession();
-        return period;
-    }
-
-    /**
-     * 年度结转追加步骤（{@code period-close.md §年度结转规则} 步骤3-5）。各 step 为 protected 供下游覆盖：
-     * <ol>
-     *   <li>{@link #assertAuxiliaryReconciles}——辅助账跨年对账门控（config-gated）；</li>
-     *   <li>{@link AnnualCloseService#executeAnnualClose}——本年利润→未分配利润结转 + 次年年初余额 populate；</li>
-     *   <li>{@link #generateNextYearPeriods}——次年 12 期间创建（config-gated 是否自动触发）。</li>
-     * </ol>
-     * 执行顺序：先创建次年期间（使 populate 年初余额有目标期间），再执行结转与 populate。
-     */
-    protected void closeAnnual(ErpFinAccountingPeriod period, ErpFinAccountingPeriodStatus status,
-                               IServiceContext context) {
-        // 步骤4 对账门控（结转前校验辅助账与总账一致）。
-        if (isAuxiliaryReconGateEnabled()) {
-            annualCloseService.assertAuxiliaryReconciles(period);
-        }
-        // 步骤5 次年期间创建（先于 populate，使年初余额有目标期间）。
-        if (isAutoGenerateNextYearPeriods() && period.getYear() != null) {
-            generateNextYearPeriods(period.getYear() + 1, context);
-        }
-        // 步骤3 本年利润→未分配利润 + 步骤4 年初余额 populate。
-        annualCloseService.executeAnnualClose(period, context);
-    }
-
     /** 判定期间是否为年末（year 非空且 month=12）。 */
     protected boolean isYearEnd(ErpFinAccountingPeriod period) {
         return period.getYear() != null
@@ -209,123 +133,9 @@ public class ErpFinAccountingPeriodProcessor {
         return !dao.findAllByQuery(q).isEmpty();
     }
 
-    public ErpFinAccountingPeriod finalizePeriod(Long periodId, IServiceContext context) {
-        ErpFinAccountingPeriod period = requirePeriod(periodId);
-        assertPeriodStatus(period, ErpFinConstants.PERIOD_STATUS_CLOSED, "最终锁定");
-        period.setStatus(ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL);
-        orm().flushSession();
-        return period;
-    }
-
-    /**
-     * 批量生成指定年度 1-12 月会计期间（{@code period-close.md §年度结转规则} 步骤5）。
-     *
-     * <p>幂等策略（Decision）：同年期间已存在时，默认抛 {@code ERR_PERIODS_ALREADY_EXIST}；
-     * 配置 {@code erp-fin.period-generate-skip-existing=true} 时仅补建缺失月份。
-     * 状态分派：1 月 OPEN（假定次年即将开始核算），2-12 月 NEVER_OPENED（待运营按月开启）。
-     */
-    public Integer generateNextYearPeriods(Integer year, IServiceContext context) {
-        if (year == null) {
-            throw new NopException(ErpFinErrors.ERR_PERIOD_NOT_FOUND)
-                    .param(ErpFinErrors.ARG_YEAR, year);
-        }
-        IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
-        QueryBean existingQ = new QueryBean();
-        existingQ.addFilter(eq("year", year));
-        List<ErpFinAccountingPeriod> existing = dao.findAllByQuery(existingQ);
-
-        if (!existing.isEmpty() && !isPeriodGenerateSkipExisting()) {
-            throw new NopException(ErpFinErrors.ERR_PERIODS_ALREADY_EXIST)
-                    .param(ErpFinErrors.ARG_YEAR, year)
-                    .param(ErpFinErrors.ARG_EXISTING_PERIOD_COUNT, existing.size());
-        }
-
-        java.util.Set<Integer> existingMonths = existing.stream()
-                .map(ErpFinAccountingPeriod::getMonth)
-                .filter(java.util.Objects::nonNull)
-                .collect(Collectors.toSet());
-        Long orgId = existing.isEmpty() ? resolveDefaultOrgId() : existing.get(0).getOrgId();
-
-        int created = 0;
-        java.time.YearMonth ym = java.time.YearMonth.of(year, 1);
-        for (int month = 1; month <= 12; month++) {
-            if (existingMonths.contains(month)) {
-                continue;
-            }
-            java.time.YearMonth m = ym.withMonth(month);
-            ErpFinAccountingPeriod p = dao.newEntity();
-            String code = year + "-" + String.format("%02d", month);
-            p.setCode(code);
-            p.setName(code);
-            p.setOrgId(orgId);
-            p.setYear(year);
-            p.setMonth(month);
-            p.setStartDate(m.atDay(1));
-            p.setEndDate(m.atEndOfMonth());
-            p.setQuarter((month - 1) / 3 + 1);
-            p.setIsAdjustment(Boolean.FALSE);
-            // 1 月设为 OPEN（假定次年即将开始核算），其余 NEVER_OPENED 待运营开启。
-            p.setStatus(month == 1 ? ErpFinConstants.PERIOD_STATUS_OPEN
-                    : ErpFinConstants.PERIOD_STATUS_NEVER_OPENED);
-            dao.saveEntity(p);
-            created++;
-        }
-        orm().flushSession();
-        return created;
-    }
-
     protected Long resolveDefaultOrgId() {
         // 默认 1L（与 findOrCreatePeriodStatus 的 acctSchema fallback 同范式）。
         return 1L;
-    }
-
-    public ErpFinAccountingPeriod reverseClose(Long periodId, IServiceContext context) {
-        ErpFinAccountingPeriod period = requirePeriod(periodId);
-        assertPeriodStatus(period, ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL, "反结账");
-
-        if (isReverseCloseApprovalRequired()) {
-            throw new NopException(ErpFinErrors.ERR_REVERSE_CLOSE_APPROVAL_REQUIRED)
-                    .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode());
-        }
-
-        // 年度结转反结账门控：若该期间为年末且次年期间已创建，阻止反结账（须先删次年期间）。
-        if (isYearEnd(period) && period.getYear() != null && hasNextYearPeriods(period.getYear() + 1)) {
-            throw new NopException(ErpFinErrors.ERR_REVERSE_CLOSE_NEXT_YEAR_EXISTS)
-                    .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode())
-                    .param(ErpFinErrors.ARG_NEXT_YEAR, period.getYear() + 1);
-        }
-
-        // 先回开期间为 OPEN，使红冲可经引擎过账（resolveOpenPeriod 要求 OPEN）。
-        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
-
-        // 冲销本期结转 / 汇兑 / 年度结转（及条件折旧）凭证（红字）。
-        reverseCloseVoucher(period, PL_BILL_CODE_PREFIX + period.getCode(), ErpFinBusinessType.PERIOD_CLOSE, context);
-        reverseCloseVoucher(period, FX_BILL_CODE_PREFIX + period.getCode(), ErpFinBusinessType.EXCHANGE_GAIN_LOSS, context);
-        if (isYearEnd(period)) {
-            reverseCloseVoucher(period, ANNUAL_BILL_CODE_PREFIX + period.getCode(),
-                    ErpFinBusinessType.PROFIT_TO_RETAINED_EARNINGS, context);
-        }
-        if (isAutoDepreciationOnClose()) {
-            reverseDepreciation(period, context);
-        }
-
-        // 回开各模块状态。
-        ErpFinAccountingPeriodStatus status = findOrCreatePeriodStatus(period);
-        reopenModules(status);
-        orm().flushSession();
-        return period;
-    }
-
-    /**
-     * 开启期间：NEVER_OPENED→OPEN（P1-MA2-033，兑现 {@code generateNextYearPeriods} 次年 2-12 月
-     * 「待自然月到达时由运营开启」契约）。仅 NEVER_OPENED 状态可开启。
-     */
-    public ErpFinAccountingPeriod openPeriod(Long periodId, IServiceContext context) {
-        ErpFinAccountingPeriod period = requirePeriod(periodId);
-        assertPeriodStatus(period, ErpFinConstants.PERIOD_STATUS_NEVER_OPENED, "开启");
-        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
-        orm().flushSession();
-        return period;
     }
 
     // ===================== 模块关账（AR→AP→INV→AST→GL） =====================

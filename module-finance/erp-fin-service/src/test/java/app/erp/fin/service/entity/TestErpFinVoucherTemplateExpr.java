@@ -1,5 +1,6 @@
 package app.erp.fin.service.entity;
 
+import app.erp.fin.service.processor.ErpFinVoucherTemplateRenderTemplateProcessor;
 import io.nop.api.core.exceptions.NopException;
 import org.junit.jupiter.api.Test;
 
@@ -13,18 +14,19 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * 凭证模板金额表达式算术求值器单元测试（F16 P1，plan §Phase 2，Phase 0 Explore (b) 候选 (c)）。
  *
- * <p>纯逻辑测试（无 Nop 基座 / 无 DB），覆盖 {@link ErpFinVoucherTemplateBizModel.TemplateExprEvaluator} 的：
+ * <p>纯逻辑测试（无 Nop 基座 / 无 DB），覆盖 {@link ErpFinVoucherTemplateRenderTemplateProcessor} 的
+ * 模板表达式求值器：
  * <ul>
  *   <li>四则运算 + 括号 + 一元负号 + 优先级；</li>
  *   <li>变量引用（context Map）；</li>
- *   <li>字面量（既有 provider 兼容路径，由 BizModel resolveAmount 字面分支覆盖，此处不重复）；</li>
+ *   <li>字面量（既有 provider 兼容路径，由 Processor resolveAmount 字面分支覆盖，此处不重复）；</li>
  *   <li>错误处理：除零 / 未定义变量 / 非白名单字符 / 括号不匹配。</li>
  * </ul>
  */
 public class TestErpFinVoucherTemplateExpr {
 
     private static BigDecimal eval(String expr, Map<String, Object> ctx) {
-        return ErpFinVoucherTemplateBizModel.TemplateExprEvaluator.eval(expr, ctx);
+        return ErpFinVoucherTemplateRenderTemplateProcessor.evalTemplateExpr(expr, ctx);
     }
 
     private static BigDecimal bd(String v) {

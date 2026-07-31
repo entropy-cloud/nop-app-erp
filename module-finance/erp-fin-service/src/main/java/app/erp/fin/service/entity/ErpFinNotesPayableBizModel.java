@@ -3,7 +3,10 @@ package app.erp.fin.service.entity;
 
 import app.erp.fin.biz.IErpFinNotesPayableBiz;
 import app.erp.fin.dao.entity.ErpFinNotesPayable;
-import app.erp.fin.service.processor.ErpFinNotesPayableProcessor;
+import app.erp.fin.service.processor.ErpFinNotesPayableDishonorProcessor;
+import app.erp.fin.service.processor.ErpFinNotesPayableHonorProcessor;
+import app.erp.fin.service.processor.ErpFinNotesPayableIssueProcessor;
+import app.erp.fin.service.processor.ErpFinNotesPayableWriteOffProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -24,7 +27,13 @@ import java.util.List;
 public class ErpFinNotesPayableBizModel extends CrudBizModel<ErpFinNotesPayable> implements IErpFinNotesPayableBiz {
 
     @Inject
-    ErpFinNotesPayableProcessor notesPayableProcessor;
+    ErpFinNotesPayableIssueProcessor issueProcessor;
+    @Inject
+    ErpFinNotesPayableHonorProcessor honorProcessor;
+    @Inject
+    ErpFinNotesPayableDishonorProcessor dishonorProcessor;
+    @Inject
+    ErpFinNotesPayableWriteOffProcessor writeOffProcessor;
 
     public ErpFinNotesPayableBizModel() {
         setEntityName(ErpFinNotesPayable.class.getName());
@@ -33,25 +42,25 @@ public class ErpFinNotesPayableBizModel extends CrudBizModel<ErpFinNotesPayable>
     @Override
     @BizMutation
     public ErpFinNotesPayable issue(@Name("notesId") Long notesId, IServiceContext context) {
-        return notesPayableProcessor.issue(notesId, context);
+        return issueProcessor.issue(notesId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinNotesPayable honor(@Name("notesId") Long notesId, IServiceContext context) {
-        return notesPayableProcessor.honor(notesId, context);
+        return honorProcessor.honor(notesId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinNotesPayable dishonor(@Name("notesId") Long notesId, IServiceContext context) {
-        return notesPayableProcessor.dishonor(notesId, context);
+        return dishonorProcessor.dishonor(notesId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinNotesPayable writeOff(@Name("notesId") Long notesId, IServiceContext context) {
-        return notesPayableProcessor.writeOff(notesId, context);
+        return writeOffProcessor.writeOff(notesId, context);
     }
 
 }

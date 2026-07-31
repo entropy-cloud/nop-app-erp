@@ -68,31 +68,6 @@ public class ErpFinBadDebtProcessor {
     @Inject
     ErpFinBadDebtReverseApproveProcessor reverseApproveProcessor;
 
-    // ===================== 创建坏账单 =====================
-
-    public ErpFinBadDebt writeOff(Long arApItemId, String reason, IServiceContext context) {
-        ErpFinArApItem item = requireOpenArApItem(arApItemId);
-        ErpFinBadDebt debt = newBadDebt(ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF, item, item.getOpenAmountFunctional(), reason);
-        if (!isWriteOffApprovalRequired()) {
-            // 无需审批：先执行生效（变异 ArApItem + 凭证），再一次性保存（避免新建态 update 报错）。
-            executeWriteOff(debt, item, context);
-            debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
-        }
-        badDebtDao().saveEntity(debt);
-        return debt;
-    }
-
-    public ErpFinBadDebt recover(Long arApItemId, String reason, IServiceContext context) {
-        ErpFinArApItem item = requireWrittenOffArApItem(arApItemId);
-        ErpFinBadDebt debt = newBadDebt(ErpFinConstants.BAD_DEBT_TYPE_RECOVERY, item, debtAmountOf(item), reason);
-        if (!isWriteOffApprovalRequired()) {
-            executeRecovery(debt, item, context);
-            debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
-        }
-        badDebtDao().saveEntity(debt);
-        return debt;
-    }
-
     // ===================== 审批状态机 =====================
 
     public ErpFinBadDebt submit(Long badDebtId, IServiceContext context) {

@@ -7,10 +7,11 @@ import app.erp.fin.dao.dto.BadDebtProvisionReversalResult;
 import app.erp.fin.dao.entity.ErpFinBadDebt;
 import app.erp.fin.service.baddebt.BadDebtProvisionService;
 import app.erp.fin.service.processor.ErpFinBadDebtApproveProcessor;
-import app.erp.fin.service.processor.ErpFinBadDebtProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtRecoverProcessor;
 import app.erp.fin.service.processor.ErpFinBadDebtRejectProcessor;
 import app.erp.fin.service.processor.ErpFinBadDebtReverseApproveProcessor;
 import app.erp.fin.service.processor.ErpFinBadDebtSubmitForApprovalProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtWriteOffProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -31,9 +32,11 @@ import java.util.List;
 public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implements IErpFinBadDebtBiz {
 
     @Inject
-    ErpFinBadDebtProcessor badDebtProcessor;
-    @Inject
     BadDebtProvisionService badDebtProvisionService;
+    @Inject
+    ErpFinBadDebtWriteOffProcessor writeOffProcessor;
+    @Inject
+    ErpFinBadDebtRecoverProcessor recoverProcessor;
     @Inject
     ErpFinBadDebtSubmitForApprovalProcessor submitForApprovalProcessor;
     @Inject
@@ -52,7 +55,7 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
     public ErpFinBadDebt writeOff(@Name("arApItemId") Long arApItemId,
                                   @Name("reason") String reason,
                                   IServiceContext context) {
-        return badDebtProcessor.writeOff(arApItemId, reason, context);
+        return writeOffProcessor.writeOff(arApItemId, reason, context);
     }
 
     @Override
@@ -60,7 +63,7 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
     public ErpFinBadDebt recover(@Name("arApItemId") Long arApItemId,
                                  @Name("reason") String reason,
                                  IServiceContext context) {
-        return badDebtProcessor.recover(arApItemId, reason, context);
+        return recoverProcessor.recover(arApItemId, reason, context);
     }
 
     @Override

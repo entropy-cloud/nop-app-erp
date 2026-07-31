@@ -4,7 +4,12 @@ package app.erp.fin.service.entity;
 import app.erp.fin.biz.IErpFinAccountingPeriodBiz;
 import app.erp.fin.dao.PeriodPreCheckReport;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
-import app.erp.fin.service.processor.ErpFinAccountingPeriodProcessor;
+import app.erp.fin.service.processor.ErpFinAccountingPeriodClosePeriodProcessor;
+import app.erp.fin.service.processor.ErpFinAccountingPeriodFinalizePeriodProcessor;
+import app.erp.fin.service.processor.ErpFinAccountingPeriodGenerateNextYearPeriodsProcessor;
+import app.erp.fin.service.processor.ErpFinAccountingPeriodOpenPeriodProcessor;
+import app.erp.fin.service.processor.ErpFinAccountingPeriodPreCheckProcessor;
+import app.erp.fin.service.processor.ErpFinAccountingPeriodReverseCloseProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -26,7 +31,17 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
         implements IErpFinAccountingPeriodBiz {
 
     @Inject
-    ErpFinAccountingPeriodProcessor periodProcessor;
+    ErpFinAccountingPeriodPreCheckProcessor preCheckProcessor;
+    @Inject
+    ErpFinAccountingPeriodClosePeriodProcessor closePeriodProcessor;
+    @Inject
+    ErpFinAccountingPeriodFinalizePeriodProcessor finalizePeriodProcessor;
+    @Inject
+    ErpFinAccountingPeriodGenerateNextYearPeriodsProcessor generateNextYearPeriodsProcessor;
+    @Inject
+    ErpFinAccountingPeriodReverseCloseProcessor reverseCloseProcessor;
+    @Inject
+    ErpFinAccountingPeriodOpenPeriodProcessor openPeriodProcessor;
 
     public ErpFinAccountingPeriodBizModel() {
         setEntityName(ErpFinAccountingPeriod.class.getName());
@@ -35,36 +50,36 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
     @Override
     @BizQuery
     public PeriodPreCheckReport preCheck(@Name("periodId") Long periodId, IServiceContext context) {
-        return periodProcessor.preCheck(periodId, context);
+        return preCheckProcessor.preCheck(periodId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinAccountingPeriod closePeriod(@Name("periodId") Long periodId, IServiceContext context) {
-        return periodProcessor.closePeriod(periodId, context);
+        return closePeriodProcessor.closePeriod(periodId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinAccountingPeriod finalizePeriod(@Name("periodId") Long periodId, IServiceContext context) {
-        return periodProcessor.finalizePeriod(periodId, context);
+        return finalizePeriodProcessor.finalizePeriod(periodId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId, IServiceContext context) {
-        return periodProcessor.reverseClose(periodId, context);
+        return reverseCloseProcessor.reverseClose(periodId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinAccountingPeriod openPeriod(@Name("periodId") Long periodId, IServiceContext context) {
-        return periodProcessor.openPeriod(periodId, context);
+        return openPeriodProcessor.openPeriod(periodId, context);
     }
 
     @Override
     @BizMutation
     public Integer generateNextYearPeriods(@Name("year") Integer year, IServiceContext context) {
-        return periodProcessor.generateNextYearPeriods(year, context);
+        return generateNextYearPeriodsProcessor.generateNextYearPeriods(year, context);
     }
 }
