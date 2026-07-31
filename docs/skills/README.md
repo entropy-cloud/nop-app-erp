@@ -48,6 +48,8 @@
 | `development-wisdom-gate-prompt.md` | AI 开发过程中自检：假设面出、深度充电、跨层一致性、意图忠实度、生态约束、第一性原理验证，使用通用开发通识在声称完成前系统性挑战产出 | 审计特定对象需要针对性工具（plan-audit、multi-dimensional-audit 等） | 当前产出（设计/计划/代码）、项目 owner docs | 6 维度裁决 + 综合通过/不通过 |
 | `remove-ai-flavor-prompt.md` | 技术文章/文档有 AI 生成痕迹——读起来太整洁、像教科书定义、流程太完美 | 只需要事实校对或格式修正 | 目标文档 | 逐段的去 AI 味修改 + 自检确认 |
 | `audit-remediation-roadmap-authoring-prompt.md` | 为已多次审计但体量巨大的复杂项目设计**可由 Mission Driver 自主执行的全面审计-修复 roadmap**（流水线模式：P0 即时止血 + P1 维度内批量修复；ORM 变更已授权） | 单一对象窄审计、直接执行审计、体量小用平面待办即可 | 项目上下文、Mission Driver 文档、roadmap 规范、已有 skill 库、已有审计记录、项目愿景与设计基线 | `docs/backlog/audit-remediation-roadmap.md` + `missions/audit-remediation.json` + 审计维度矩阵文档（含报告归档规范） |
+| `compliance-baseline-drift-adjudication-prompt.md` | compliance checker 报出 `actual > baseline` 漂移时，逐站点 git diff 分类裁决「合法新增 baseline-raise」vs「真违规 Fix」 | 单文件低风险编辑不触及 checker 站点、平台最佳实践定性审计（用 nop-platform-conformance）、业务/ORM 规范审计 | `compliance-baseline.md`（§基线表+§BASELINE 块+§M0 锚点）、checker 脚本、锚点 HEAD、owner docs 背书（processor-extension-pattern/data-dependency-matrix/shared-kernel-extraction-decision） | `compliance-baseline.md` §基线表+§BASELINE 块同步更新 + 每条漂移规则的 per-site 裁决记录（baseline-raise/Fix + 证据） |
+| `closure-pending-detection-prompt.md` | 系统性检测「声称 completed 却缺独立 closure audit 证据」的计划，并批量编排独立子代理 fresh session 补 closure（检测+批量编排方法） | 审计**单个**已完成计划（用 closure-audit-prompt）、计划实施前拦截（用 plan-audit）、全新起草计划 | 计划集合、closure 证据判定标准（Independent Closure Audit + task 指针）、保护区域清单、closure-audit-prompt、可调度独立子代理能力 | closure-pending 候选清单 + 每份回填的 Independent Closure Audit 证据（auditor 指针+五点一致性+anti-hollow+deferred honesty）+ 统计 |
 
 ## 入门技能
 
@@ -72,6 +74,8 @@
 - `development-wisdom-gate-prompt.md`
 - `remove-ai-flavor-prompt.md`
 - `audit-remediation-roadmap-authoring-prompt.md`
+- `compliance-baseline-drift-adjudication-prompt.md`
+- `closure-pending-detection-prompt.md`
 
 ## 与工具原生技能的关系
 

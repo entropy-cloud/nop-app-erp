@@ -227,8 +227,8 @@
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
 | G.1 | compliance checker 基线更新 | done | `docs/audits/compliance-baseline.md` | MV done | none |
-| G.2 | 新失败模式提升为 docs/lessons/ | todo | `docs/lessons/` | MV done | none |
-| G.3 | 重复审计维度提升为 docs/skills/ 新提示 | todo | `docs/skills/` | MV done | none |
+| G.2 | 新失败模式提升为 docs/lessons/ | done | `docs/lessons/` | MV done | none |
+| G.3 | 重复审计维度提升为 docs/skills/ 新提示 | done | `docs/skills/` | MV done | none |
 | G.4 | 更新 project-context.md + README.md 已知失败模式 | done | `docs/context/project-context.md`、`README.md` | MV done | none |
 
 ### Milestone MR5 — Processor S-mutation 架构合规修复（P1 结构性债务）
