@@ -53,6 +53,19 @@
 - 规则命中日志 → 业务单据：`billHeadCode` + `businessType` 经 `ErpFinVoucherBillR` 反查源单。
 - 分布式追踪：`traceId` 串联业务域审核 → 事件派发 → 过账编排 → GL 写入全链路（`PostingEvent` 须携带 `traceId`）。
 
+## ErpFinVoucherBillR 索引与过账性能
+
+`ErpFinVoucherBillR`（业财回链表，`module-finance/model/app-erp-finance.orm.xml`）是过账回链的反向定位表——每张过账凭证按 `(billCode, businessType)` 反查关联源单。该前缀是过账/红冲的**热查询路径**：
+
+- `ErpFinPostingProcessor.findBillLinks`（`and(eq("billCode"), eq("businessType"))`）——被 `alreadyPosted` 过账幂等判定与 `markOriginalVoucherReversed` 红冲补标反复调用，**每次业财过账/红冲触发一次该前缀反查**。
+- `BankReconAdjustmentVoucherBuilder.countAdjustmentLinks`、`BadDebtProvisionService.findUnreversedProvisionVouchers` 同前缀模式。
+
+**索引裁决**：实体含两个非唯一索引——`IDX_FIN_VOUCHER_BILL_R_VOUCHER_ID`（on `voucherId`，凭证→回链方向）与 `IDX_FIN_VOUCHER_BILL_R_BILL_CODE_BIZ_TYPE`（on `(billCode, businessType)`，源单→回链方向）。列序 `(billCode, businessType)`：billCode（高基数据）为查询先导，businessType（枚举）次位。二者均 `unique="false"`。
+
+**性能含义**：随 `erp_fin_voucher_bill_r` 行数累积（每张凭证 N 行回链），无 `(billCode, businessType)` 索引时过账延迟线性增长（每次过账/红冲一次全表扫描）。该非唯一索引将反查收敛到索引范围扫描。
+
+**与 P0-MA2-018（deferred 字面 UK）的边界区分**：P0-MA2-018 裁决为 deferred 方向——字面唯一键 `(billCode, businessType, billLineCode)` 会与红冲（同 billCode 允许多张凭证）/ 多账套（acctSchemaId 维度）/ 软删除（delVersion）三重契约冲突。**本索引是 `unique="false"` 非唯一索引**——仅加速查询、**不施加唯一约束**，故不触发 P0-MA2-018 的三重冲突。与 P2-MA7-005（红冲有界 N+1 批量加载，watch-only）协同——本索引让该优化前提（单点查询高效）成立。
+
 ## 变更审计日志
 
 ### 记录内容
