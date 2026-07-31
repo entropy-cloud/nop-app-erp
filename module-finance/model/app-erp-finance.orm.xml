@@ -644,6 +644,10 @@
                 <index name="IDX_FIN_VOUCHER_BILL_R_VOUCHER_ID" unique="false">
                     <column name="voucherId"/>
                 </index>
+                <index name="IDX_FIN_VOUCHER_BILL_R_BILL_CODE_BIZ_TYPE" unique="false">
+                    <column name="billCode"/>
+                    <column name="businessType"/>
+                </index>
             </indexes>
         </entity>
 
