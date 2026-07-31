@@ -697,6 +697,29 @@ BASE_URL=http://127.0.0.1:8011 SKIP_WEBSERVER=1 \
 npx playwright show-trace test-results/<test-name>/trace.zip
 ```
 
+## 冒烟层数据存在性约定（R3.2 / P1-MA5-012）
+
+**问题背景**：冒烟层（`*.smoke.spec.ts` 经 `crud/_helper.ts#runCrudListSmoke` / `dashboards/_helper.ts#runDashboardSmoke` / `reports/_helper.ts`）按设计仅断言「页面 DOM 渲染 + 关键元素存在 + GraphQL `/graphql` 返回 200 + 无 console error」。它**不断言行数/数值/数据存在**：后端返回 `{total:0,items:[]}` 或 KPI 恒 0 时冒烟仍全绿——这正是 AMIS `$var` 绑定 bug（`docs/bugs/2026-07-09-1249*`）多日漏检的结构性根因（P1-MA5-012）。
+
+**闭合机制——分层并行强覆盖（约定）**：空数据可检测性**不靠冒烟层单层**，而靠与冒烟层并行的**数据驱动强断言层**提供，二者协同：
+- 看板（10 域）：冒烟层 `*.smoke.spec.ts` + 并行 `*.value.spec.ts`（`dashboards/_helper.ts#assertDashboardKpiValues` 断言 `Number(kpi[field]) === expected`，expected≠0 → 空数据/全 0 即失败）。
+- CRUD 列表（13 seeded 域）：冒烟层 `*.smoke.spec.ts` + 并行 `*.list-value.spec.ts`（`crud/_helper.ts#assertCrudListValues` 断言 `items.length >= expectedCount`，expectedCount≥1 → 空数据即失败）。
+- 报表（18 域）：冒烟层 `*.smoke.spec.ts` + 并行 `*.value.spec.ts`（断言 renderHtml 含确定性数值 token）+ 下载产物回归层 `reports.download.spec.ts` / `reports.amis-download.spec.ts`（断言二进制魔数 XLSX `PK\x03\x04` / PDF `%PDF` + 解析 zip/PDF 提取报表专属 token，**属强断言非冒烟**）。
+
+**约定义务**：任何已 seed 域的「冒烟层」必须同时存在并行的 value/list-value 强断言层。**新增/补 seed 一个域时，必须在同一变更中补并行 value/list-value 覆盖**，不得仅留冒烟层（否则该域退化为空数据漏检盲区）。
+
+**R3.2 修复裁决**：选项 B（增强 `runCrudListSmoke`/`runDashboardSmoke` 加条件性最小数据存在断言）因 `_helper.ts` 受 `**/_*` 编辑保护规则约束无法落地（已实测编辑被拒）；选项 A（补 5 域 list-value）对**未 seed** 的缺口域无效（expectedCount=0 断言恒真，检测不到空数据）。故采用选项 C：将「冒烟层空数据可检测性依赖并行强覆盖」固化为本文约定 + 缺口登记，把「系统性漏检」降为「已知登记的残留」。Successor 触发条件见下方缺口登记。
+
+**冒烟层空数据缺口登记（watch-only residual / successor）**
+
+| 类别 | 缺口 | seed 状态 | 为何暂不闭合 | Successor 触发条件 |
+|------|------|-----------|--------------|-------------------|
+| CRUD 列表 | aps / b2b / contract / drp / logistics（5 域）+ cs-kb-suggestion（cs 子实体） | **未 seed** | 空数据是**正确**状态（无业务交易），list-value 会断言 `>=0` 恒真无意义；补 seed 是显式 Non-Goal | 任一域获得 seed 时，同一变更补 `*.list-value.spec.ts`（expectedCount≥1） |
+| 报表 | ast-disposal / fin-cash-flow / fin-period-close / mnt-downtime-summary / prj-timesheet / qa-ncr-capa（6 报表） | **已 seed** | 有 renderHtml 数值但仅有渲染存在性冒烟，无 value 强断言 → 真实残留盲区 | 补 6 报表 `*.value.spec.ts`（断言确定性数值 token）；或 `_helper.ts` 编辑保护解除后回头落地选项 B 增强冒烟层 |
+| 看板 | 无 | — | 10/10 域均有并行 value 层 | — |
+
+**冒烟 spec 计数权威**：仅冒烟（无并行强断言）spec = **53**（dashboards smoke×10 + reports smoke×24 + crud smoke×19）。注：`reports.download.spec.ts` + `reports.amis-download.spec.ts` **不计入冒烟**——二者属强断言（二进制魔数 + zip/PDF 解析 + 真实 AMIS 下载按钮驱动），非「GraphQL 200 + 关键词」冒烟（arm-index line 518 曾误分类，R3.2 已纠正，详见 `docs/audits/arm-index.md` §P1 P1-MA5-012 回填）。
+
 ## 已知限制
 
 - **空库冒烟**：~~H2 文件库无业务数据，KPI 卡片渲染 DOM 但数值为 0/空。~~ **已解除**：webServer 默认含 `-Dnop.orm.init-database-data=true`（fresh-DB 重置 + 91 张 CSV 种子：21 主数据 + 23 P2P/O2C 交易单据 + 13 运营域表 + 4 制造域表 + 11 维护+质量域表 + 12 CRM/CS/HR 域表 + 3 质量域 SPC 表 + 4 制造域工作中心配置链+crp_load 表 + 3 处加性追加）。核心域（finance/sales/purchase）+ 运营域（inventory/assets/projects）+ 扩展域（manufacturing/maintenance/quality）看板 KPI 与报表数值经交易数据驱动**非空可观测**（含质量域 SPC 失控预警三计数器非空 + 制造域 CRP 负荷报表非空）；CRM/CS/HR 三域 5 报表经种子数据驱动**非空可观测**（三域无看板）。核心域 + 运营域 + 扩展域（manufacturing/maintenance/quality）+ 扩展域（CRM/CS/HR 纯报表域）+ 主数据域（master-data 看板/2 报表）均已叠加**数据驱动数值断言层**（28 `*.value.spec.ts`，见上方「数据驱动数值断言层」）；其余扩展域（logistics/b2b/contract/drp/aps）无看板无报表未 seed。
