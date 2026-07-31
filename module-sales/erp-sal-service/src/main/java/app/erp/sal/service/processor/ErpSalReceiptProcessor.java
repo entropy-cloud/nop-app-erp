@@ -2,12 +2,10 @@ package app.erp.sal.service.processor;
 
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
-import app.erp.md.biz.SettlementAllocation;
 import app.erp.sal.dao.entity.ErpSalReceipt;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
 import app.erp.common.service.SoDGuard;
-import app.erp.sal.service.entity.ReceiptSettler;
 import app.erp.sal.service.posting.SalReceiptPostingDispatcher;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.exceptions.NopException;
@@ -17,8 +15,6 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import java.util.Objects;
-
-import java.util.List;
 
 /**
  * 收款单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
@@ -44,9 +40,6 @@ public class ErpSalReceiptProcessor {
 
     @Inject
     SalReceiptPostingDispatcher postingDispatcher;
-
-    @Inject
-    ReceiptSettler receiptSettler;
 
     @Inject
     ErpSalReceiptSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -90,15 +83,7 @@ public class ErpSalReceiptProcessor {
         return cancelProcessor.cancel(receiptId, context);
     }
 
-    public ErpSalReceipt settle(String receiptId, List<SettlementAllocation> allocations, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(receiptId, context);
-        return receiptSettler.settle(receipt, allocations);
-    }
-
-    public ErpSalReceipt reverseSettlement(String receiptId, Long invoiceId, IServiceContext context) {
-        ErpSalReceipt receipt = requireReceipt(receiptId, context);
-        return receiptSettler.reverseSettlement(receipt, invoiceId);
-    }
+    // settle / reverseSettlement 迁出至 ErpSalReceiptSettleProcessor / ErpSalReceiptReverseSettlementProcessor（R6.5 per-mutation 拆分）。
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 

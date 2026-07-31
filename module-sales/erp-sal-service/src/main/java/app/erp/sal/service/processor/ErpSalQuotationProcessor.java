@@ -86,24 +86,8 @@ public class ErpSalQuotationProcessor {
         return cancelProcessor.cancel(quotationId, context);
     }
 
-    public ErpSalQuotation confirmCustomerAccepted(String quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
-        validateNotCancelled(quotation, context);
-        validateTransitionForConfirm(quotation, context);
-        requireNotExpired(quotation, context);
-        doConfirmCustomerAccepted(quotation, context);
-        return quotation;
-    }
-
-    public ErpSalOrder convertToOrder(String quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
-        validateReadyForConvert(quotation, context);
-        requireNotExpired(quotation, context);
-        validateNotAlreadyConverted(quotation, context);
-        ErpSalOrder order = createOrderFromQuotation(quotation, context);
-        markQuotationAccepted(quotationId, context);
-        return order;
-    }
+    // confirmCustomerAccepted / convertToOrder 迁出至 ErpSalQuotationConfirmCustomerAcceptedProcessor /
+    // ErpSalQuotationConvertToOrderProcessor（R6.5 per-mutation 拆分）。共享 protected helper 保留本类。
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
