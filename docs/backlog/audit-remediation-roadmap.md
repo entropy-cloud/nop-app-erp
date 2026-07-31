@@ -284,7 +284,7 @@
 | R6.3 | **assets 域** — 须拆 **22**（全部类别 A，4 facade：ErpAstCipProcessor / ErpAstDepreciationScheduleProcessor / ErpAstInventoryProcessor / ErpAstMaintenanceProcessor）；类别 B 0（assets BizModel 已委托 Processor）；合法豁免 0。注：原行枚举的 ErpAstDisposal/Merge/Split/ValueAdjustment/AssetCapitalization 经 R6.0 实仓复核为 S-mutation 纯委托 facade（D=0），非类别 A 违规，从本行移除（10→4 facade）。详见"R6.0 triage 展开 §R6.3" | done | `docs/design/assets/` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.4 | **inventory 域** — 须拆 **11**（类别 B 1 + 类别 A 10，4 facade：ErpInvStockMoveProcessor / ErpInvOwnershipTransferProcessor [delete-after-extract] + ErpInvLandedCostProcessor / ErpInvCostAdjustProcessor [slim-to-S-delegation]）；合法豁免 4（ErpInvStockTake startTake/completeTake/cancelTake + ErpInvOwnershipTransfer.cancel）；@BizQuery 不在范围（StockMove trace × 4 + findByRelatedBill + LandedCost allocate）。**勘误（draft review iter1）**：R6.0 triage 原列 14，StockMove 4 trace 方法实测 `@BizQuery` 出范围（−4）+ cancel 补拆（+1）= 净 −3，故 14→11。详见"R6.0 triage 展开 §R6.4" | done | `docs/design/inventory/` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.5 | **purchase + sales 域** — 须拆 **7**（类别 B 1 + 类别 A 6，3 facade：ErpPurPaymentProcessor / ErpSalQuotationProcessor / ErpSalReceiptProcessor）；合法豁免 2（ErpPurQuotation.cancel / ErpPurRfq.cancel）。另 R6.8 backstop 单 D-mutation facade：ErpPurRequisitionProcessor.convertToOrder。详见"R6.0 triage 展开 §R6.5" | done | `docs/design/{purchase,sales}/` | R6.0 | `docs/skills/nop-backend-dev` |
-| R6.6 | **扩展域批次 1**（crm + projects + quality + cs）— 须拆 **57**（类别 B 49 + 类别 A 8，3 facade：ErpCrmConversionProcessor / ErpCrmLeadProcessor / ErpPrjProjectSettlementProcessor）；合法豁免 26。详见"R6.0 triage 展开 §R6.6" | todo | 各域 owner doc | R6.0 | `docs/skills/nop-backend-dev` |
+| R6.6 | **扩展域批次 1**（crm + projects + quality + cs）— 须拆 **56**（类别 B 49 + 类别 A 7，3 facade：ErpCrmConversionProcessor / ErpCrmLeadProcessor / ErpPrjProjectSettlementProcessor）；合法豁免 26。**勘误**：R6.0 triage 原列 57/catA 8，ProjectSettlement.submit 实测 MR5 S-mutation 单行委托（非 D-mutation），catA 8→7 / total 57→56。详见"R6.0 triage 展开 §R6.6" | done | 各域 owner doc；plan `docs/plans/2026-07-31-2140-3-r6-6-crm-projects-quality-cs-d-mutation-per-mutation-split.md` | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.7 | **扩展域批次 2**（hr + contract + b2b + logistics + maintenance + aps + drp + notify + master-data）— 须拆 **84**（类别 B 81 + 类别 A 3，1 facade：ErpApsSchedulingProcessor）；合法豁免 36。详见"R6.0 triage 展开 §R6.7" | todo | 各域 owner doc | R6.0 | `docs/skills/nop-backend-dev` |
 | R6.8 | **全量验证 + 完成判据核验**：R6.1-R6.7 完成后跑全量 `mvn clean install -DskipTests` + `mvn test` + compliance checker；核验"所有模块所有 BizModel 的 @BizMutation 调用满足 `processor-extension-pattern.md`"（grep 校验零裸 facade 多 mutation + 零 ≥3 步内联 mutation）；更新 arm-index P1-MA3-062 状态 + 重录快照（类名变） | todo | `docs/architecture/processor-extension-pattern.md` | R6.1-R6.7 done | `docs/skills/nop-backend-dev` |
 
@@ -490,7 +490,7 @@
 |---------------|---------------|
 | ErpPurSupplierScorecardBizModel.finalizeScorecard | ErpPurSupplierScorecardFinalizeScorecardProcessor |
 
-#### R6.6（crm+projects+quality+cs）— 须拆 57（类别 B 49 + 类别 A 8，3 facade）
+#### R6.6（crm+projects+quality+cs）— 须拆 56（类别 B 49 + 类别 A 7，3 facade）
 
 **类别 A facade 处置（多 D-mutation 共用 → 每 D-mutation 一个 `<Entity><Method>Processor`）：**
 
