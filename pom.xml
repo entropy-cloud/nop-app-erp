@@ -48,4 +48,66 @@
         <!-- 顶层聚合 app:单体部署入口,聚合全部业务域 + 系统模块 -->
         <module>app-erp-all</module>
     </modules>
+
+    <!--
+        mutation profile (MQ Q1): 包裹 pitest-maven，默认不激活，保护常规 mvn test /
+        mvn clean install 基线不受影响。激活：mvn -Pmutation ... mutationCoverage。
+        实施契约：docs/architecture/quality-engineering/mutation-testing.md §3.3/§4.1。
+        限定三域首跑（finance/mfg/inv）；excludedClasses 排除全部生成包
+        （_gen 88 + api.beans 176 + api.crud 88 = 352 类）+ 测试类。
+        不配置 <mutators> = pitest 默认全集 DEFAULT（首跑建完整可比基线，降噪靠分类工作流）。
+    -->
+    <profiles>
+        <profile>
+            <id>mutation</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <!-- 1.25.8：支持至 Java 26 字节码（pitest issue #1439），CI Java 21 / 本地 Java 26 均兼容 -->
+                        <version>1.25.8</version>
+                        <configuration>
+                            <!-- 限定三域业务代码（域包通配） -->
+                            <targetClasses>
+                                <param>app.erp.fin.*</param>
+                                <param>app.erp.mfg.*</param>
+                                <param>app.erp.inv.*</param>
+                            </targetClasses>
+                            <!-- 排除全部生成包（_gen + api.beans + api.crud = 352 类）+ 测试类 + codegen -->
+                            <excludedClasses>
+                                <param>*.dao.entity._gen.*</param>
+                                <param>*.dao.entity._gen._*</param>
+                                <param>*.api.beans.*</param>
+                                <param>*.api.crud.*</param>
+                                <param>*.codegen.*</param>
+                                <param>*Test*</param>
+                                <param>*IT</param>
+                            </excludedClasses>
+                            <!-- 限定跑哪些测试去杀变异体（三域测试） -->
+                            <targetTests>
+                                <param>app.erp.fin.*Test*</param>
+                                <param>app.erp.mfg.*Test*</param>
+                                <param>app.erp.inv.*Test*</param>
+                            </targetTests>
+                            <outputFormats>
+                                <param>HTML</param>
+                                <param>XML</param>
+                            </outputFormats>
+                            <!-- 稳定输出路径便于基线对比 -->
+                            <timestampedReports>false</timestampedReports>
+                        </configuration>
+                        <dependencies>
+                            <!-- JUnit 5 测试执行器（项目测试栈为 junit-jupiter） -->
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>1.2.3</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

@@ -1,0 +1,148 @@
+name: Mutation Testing (nightly)
+
+# MQ Q1 — pitest 变异测试 nightly 软门控。
+# 设计契约：docs/architecture/quality-engineering/mutation-testing.md §6（裁决 C-2）。
+# 门控范式对齐 compliance.yml F8 option (b)：pitest = pure reporter（不判 pass/fail），
+# gate 逻辑在 CI（python 解析 pitest XML 报告提取 per-domain mutation score，与
+# docs/architecture/quality-engineering/mutation-baseline.md 的 BASELINE yaml 块对比）。
+# 方向：单向收紧——actual < baseline => fail（退化）；actual > baseline => 鼓励非强制。
+# 调度：nightly（per-commit 全量不现实，设计文档 §6.3 R1），错开 clock-rollover 的 0 3 * * *。
+
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+
+env:
+  CI: true
+
+jobs:
+  mutation:
+    name: pitest mutation score regression gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      # Step 1: 安装全部 156 模块到本地 .m2，使三域 service 的依赖可解析。
+      # 不带 pitest goal，仅构建安装。设计文档 §4.2 的 -am 会让 pitest goal 在上游模块
+      # 运行（无 config → junit5 plugin 缺失失败），故分两步：先 install，再 per-domain pitest。
+      - name: Install all modules (deps to .m2)
+        run: mvn -B install -DskipTests
+      # Step 2: 三域 pitest mutationCoverage（串行，单线程——测试用文件 H2 l:./db/test
+      # 并行会冲突）。每域产出 target/pit-reports/{mutations.xml, index.html}。
+      # targetClasses 限定三域 + excludedClasses 排除全部生成包（_gen + api.beans + api.crud）。
+      - name: Run pitest on finance
+        run: mvn -B -Pmutation -pl module-finance/erp-fin-service test-compile org.pitest:pitest-maven:mutationCoverage
+      - name: Run pitest on manufacturing
+        run: mvn -B -Pmutation -pl module-manufacturing/erp-mfg-service test-compile org.pitest:pitest-maven:mutationCoverage
+      - name: Run pitest on inventory
+        run: mvn -B -Pmutation -pl module-inventory/erp-inv-service test-compile org.pitest:pitest-maven:mutationCoverage
+      # Step 3: 门控——解析三域 mutations.xml 提取 mutation score，与 baseline yaml 对比。
+      # actual < baseline => exit 1（单向收紧）。baseline=-1（占位）时跳过该域门控（未建基线）。
+      - name: Enforce mutation score baseline gate
+        run: |
+          python3 - <<'PY'
+          import re, sys, pathlib, xml.etree.ElementTree as ET
+
+          DOMAINS = {
+              'finance': 'module-finance/erp-fin-service/target/pit-reports/mutations.xml',
+              'mfg': 'module-manufacturing/erp-mfg-service/target/pit-reports/mutations.xml',
+              'inv': 'module-inventory/erp-inv-service/target/pit-reports/mutations.xml',
+          }
+          baseline_text = pathlib.Path('docs/architecture/quality-engineering/mutation-baseline.md').read_text(encoding='utf-8', errors='replace')
+
+          # --- Parse BASELINE yaml block: lines like "finance: 42" or "finance: -1" ---
+          baseline = {}
+          m = re.search(r'```yaml\n(.*?)\n```', baseline_text, re.DOTALL)
+          if not m:
+              print('ERROR: cannot locate ```yaml baseline block in mutation-baseline.md')
+              sys.exit(2)
+          for row in m.group(1).splitlines():
+              row = row.strip()
+              if not row or row.startswith('#') or ':' not in row:
+                  continue
+              k, v = row.split(':', 1)
+              try:
+                  baseline[k.strip()] = int(v.strip())
+              except ValueError:
+                  pass
+
+          # --- Parse each domain mutations.xml; count mutation statuses ---
+          # Robust to partial/malformed XML (pitest writes incrementally; a run killed
+          # mid-analysis—e.g. by the known end-stage minion re-fork loop—leaves an unclosed
+          # root). Fall back to regex extraction of closed <mutation> status attrs.
+          DETECTED = {'KILLED', 'TIMED_OUT'}
+          STATUS_RE = re.compile(r'<mutation\b[^>]*status=[\'"]([A-Z_]+)[\'"]')
+          actual = {}
+          details = {}
+          for domain, xml_path in DOMAINS.items():
+              p = pathlib.Path(xml_path)
+              if not p.exists():
+                  print(f'WARN: {domain}: mutations.xml not found at {xml_path} (domain skipped)')
+                  actual[domain] = None
+                  continue
+              raw = p.read_text(encoding='utf-8', errors='replace')
+              counts = {}
+              try:
+                  root = ET.fromstring(raw)
+                  for mut in root.iter('mutation'):
+                      st = mut.get('status', 'UNKNOWN')
+                      counts[st] = counts.get(st, 0) + 1
+              except ET.ParseError:
+                  statuses = STATUS_RE.findall(raw)
+                  print(f'WARN: {domain}: mutations.xml malformed (partial run?) — regex-fallback extracted {len(statuses)} mutation records')
+                  for st in statuses:
+                      counts[st] = counts.get(st, 0) + 1
+              total = sum(counts.values())
+              if total == 0:
+                  print(f'WARN: {domain}: no mutation records parsed (domain skipped)')
+                  actual[domain] = None
+                  continue
+              detected = sum(c for st, c in counts.items() if st in DETECTED)
+              score = round(detected * 100 / total)
+              actual[domain] = score
+              details[domain] = (total, detected, counts)
+
+          print('===== mutation baseline gate result =====')
+          for domain in DOMAINS:
+              if actual.get(domain) is None:
+                  continue
+              total, detected, counts = details[domain]
+              base = baseline.get(domain, -1)
+              print(f'{domain}: generated={total} detected={detected} score={actual[domain]}% | baseline={base} | status_counts={counts}')
+
+          regressions = []
+          for domain, act in actual.items():
+              if act is None:
+                  continue
+              base = baseline.get(domain, -1)
+              if base < 0:
+                  print(f'{domain}: baseline={base} (placeholder/unset) — gate skipped')
+                  continue
+              if act < base:
+                  regressions.append((domain, base, act))
+          if regressions:
+              print('REGRESSIONS (actual < baseline => FAIL):')
+              for d, b, a in regressions:
+                  print(f'  {d}: baseline {b} -> actual {a}  ({a-b})')
+              print('')
+              print('To lower a baseline, open an independent plan and adjudicate (see mutation-baseline.md).')
+              sys.exit(1)
+          print('OK: no domain regressed below baseline. Gate PASSED.')
+          PY
+      - name: Upload pitest reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pitest-reports
+          path: |
+            module-finance/erp-fin-service/target/pit-reports/**
+            module-manufacturing/erp-mfg-service/target/pit-reports/**
+            module-inventory/erp-inv-service/target/pit-reports/**
+          retention-days: 30

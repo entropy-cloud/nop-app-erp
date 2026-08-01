@@ -140,4 +140,61 @@
             </plugin>
         </plugins>
     </build>
+
+    <!--
+        mutation profile (MQ Q1)：per-module 接入（候选 P1，设计文档 §3.4 R4 预设退路）。
+        R4 复核结论：app-erp 根 pom 仅为 reactor 聚合器——module-finance/pom.xml 的 <parent>
+        是 nop-entropy（非 app-erp），故根 pom 的 mutation profile 不在子模块 parent 链中、
+        无法继承。退回候选 P1：在三域 service 模块各声明 profile。配置与设计文档 §3.3 一致
+        （targetClasses 含三域通配；非本域类不在 classpath 上，pitest 0 命中无害）。
+        激活：mvn -Pmutation -pl module-finance/erp-fin-service -am test-compile
+              org.pitest:pitest-maven:mutationCoverage
+    -->
+    <profiles>
+        <profile>
+            <id>mutation</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>1.25.8</version>
+                        <configuration>
+                            <targetClasses>
+                                <param>app.erp.fin.*</param>
+                                <param>app.erp.mfg.*</param>
+                                <param>app.erp.inv.*</param>
+                            </targetClasses>
+                            <excludedClasses>
+                                <param>*.dao.entity._gen.*</param>
+                                <param>*.dao.entity._gen._*</param>
+                                <param>*.api.beans.*</param>
+                                <param>*.api.crud.*</param>
+                                <param>*.codegen.*</param>
+                                <param>*Test*</param>
+                                <param>*IT</param>
+                            </excludedClasses>
+                            <targetTests>
+                                <param>app.erp.fin.*Test*</param>
+                                <param>app.erp.mfg.*Test*</param>
+                                <param>app.erp.inv.*Test*</param>
+                            </targetTests>
+                            <outputFormats>
+                                <param>HTML</param>
+                                <param>XML</param>
+                            </outputFormats>
+                            <timestampedReports>false</timestampedReports>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>1.2.3</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
