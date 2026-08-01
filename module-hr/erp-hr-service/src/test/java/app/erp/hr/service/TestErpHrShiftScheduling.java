@@ -143,13 +143,17 @@ public class TestErpHrShiftScheduling extends JunitAutoTestCase {
         q.addFilter(eq("assignmentDate", date));
         long count = daoProvider.daoFor(ErpHrShiftAssignment.class).findAllByQuery(q).size();
         assertEquals(1L, count, "并发排班 UK 兜底：仅 1 条排班（无重复）");
-        // 若有线程抛错，应为友好错误码（非 ERR_ORM_DATA_EXCEPTION）
+        // 若有线程抛错，应为友好错误码（非 ERR_ORM_DATA_EXCEPTION）。
+        // 并发非确定性：失败方经同步预检命中 ERR_SHIFT_DUPLICATE_ASSIGNMENT（线程序列化），
+        // 或经 UK 兜底命中 ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE（真并发 TOCTOU），取决于调度，两者均为友好码。
         if (firstError.get() != null) {
             Throwable c = firstError.get();
             if (c instanceof NopException) {
-                assertEquals(ErpHrErrors.ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE.getErrorCode(),
-                        ((NopException) c).getErrorCode(),
-                        "并发冲突应抛友好错误码，实际: " + c);
+                String code = ((NopException) c).getErrorCode();
+                assertTrue(
+                        ErpHrErrors.ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE.getErrorCode().equals(code)
+                                || ErpHrErrors.ERR_SHIFT_DUPLICATE_ASSIGNMENT.getErrorCode().equals(code),
+                        "并发冲突应抛友好错误码（同步预检或 UK 兜底），实际: " + c);
             }
         }
     }
