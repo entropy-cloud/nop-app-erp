@@ -3,6 +3,7 @@ package app.erp.inv.service.costing;
 import app.erp.inv.biz.CostingRecloseReport;
 import app.erp.inv.biz.IErpInvCostingBiz;
 import app.erp.inv.service.costing.ErpInvCostingReclosePeriodCostsProcessor;
+import app.erp.inv.service.metrics.ErpInvConcurrencyMetrics;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -38,6 +39,8 @@ public class ErpInvCostingBizModel implements IErpInvCostingBiz {
                                                    @Name("startDate") LocalDate startDate,
                                                    @Name("endDate") LocalDate endDate,
                                                    IServiceContext context) {
+        // observability.md §5.1 指标 6 path=costing_reclose：期末成本兜底重算关键路径吞吐（app 层入口）
+        ErpInvConcurrencyMetrics.recordCostingReclosePathThroughput(null);
         return reclosePeriodCostsProcessor.reclosePeriodCosts(periodId, startDate, endDate, context);
     }
 }

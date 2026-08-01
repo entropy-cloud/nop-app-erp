@@ -6,6 +6,7 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.annualclose.AnnualCloseService;
+import app.erp.fin.service.metrics.ErpFinBusinessMetrics;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -31,6 +32,19 @@ public class ErpFinAccountingPeriodClosePeriodProcessor {
 
     public ErpFinAccountingPeriod closePeriod(Long periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = facade.requirePeriod(periodId);
+        // observability.md §5.1 指标 3（period_close_duration Timer）+ 指标 6 path=period_close：
+        // 编排方法入口计时 + path 吞吐计数（period 已加载用于 tag）
+        long closeBegin = CoreMetrics.nanoTime();
+        ErpFinBusinessMetrics.recordPeriodClosePathThroughput(null);
+        try {
+            return doClosePeriod(periodId, period, context);
+        } finally {
+            ErpFinBusinessMetrics.recordPeriodCloseDuration(null, period, CoreMetrics.nanoTimeDiff(closeBegin));
+        }
+    }
+
+    private ErpFinAccountingPeriod doClosePeriod(Long periodId, ErpFinAccountingPeriod period,
+                                                  IServiceContext context) {
         facade.assertPeriodStatus(period, ErpFinConstants.PERIOD_STATUS_OPEN, "结账");
 
         PeriodPreCheckReport report = preCheckProcessor.preCheck(periodId, context);

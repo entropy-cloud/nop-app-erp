@@ -11,6 +11,7 @@ import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.metrics.ErpFinBusinessMetrics;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -91,6 +92,8 @@ public class ErpFinReportBizModel {
     public String renderHtml(@Name("reportName") String reportName,
                              @Optional @Name("data") Map<String, Object> data,
                              IServiceContext context) {
+        // observability.md §5.1 指标 6 path=report_render：报表渲染关键路径吞吐（app 层入口，不触及 nop-entropy 源码）
+        ErpFinBusinessMetrics.recordReportRenderPathThroughput(null);
         String path = resolveReportPath(reportName);
         IEvalScope scope = XLang.newEvalScope();
         Map<String, Object> merged = mergeData(data);
@@ -105,6 +108,8 @@ public class ErpFinReportBizModel {
                                    @Name("renderType") String renderType,
                                    @Optional @Name("data") Map<String, Object> data,
                                    IServiceContext context) {
+        // observability.md §5.1 指标 6 path=report_render：报表下载/渲染关键路径吞吐
+        ErpFinBusinessMetrics.recordReportRenderPathThroughput(null);
         if (!ALLOWED_RENDER_TYPES.contains(renderType)) {
             throw new NopException(ErpFinErrors.ERR_REPORT_RENDER_TYPE_INVALID)
                     .param(ErpFinErrors.ARG_RENDER_TYPE, renderType);

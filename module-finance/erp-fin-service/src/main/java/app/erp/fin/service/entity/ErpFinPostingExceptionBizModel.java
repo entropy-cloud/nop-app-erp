@@ -12,6 +12,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.ErpFinPostingErrors;
 import app.erp.fin.service.posting.ErpFinPostingExceptionRecorder;
 import app.erp.fin.service.posting.ErpFinPostingMetrics;
+import app.erp.fin.service.metrics.ErpFinPostingExceptionBacklogGauge;
 import app.erp.fin.service.processor.ErpFinPostingExceptionIgnoreProcessor;
 import app.erp.fin.service.processor.ErpFinPostingExceptionRetryProcessor;
 import app.erp.notify.biz.IErpSysNotificationBiz;
@@ -25,10 +26,16 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.commons.concurrent.executor.GlobalExecutors;
+import io.nop.commons.metrics.GlobalMeterRegistry;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -37,6 +44,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
@@ -55,6 +65,21 @@ import static io.nop.api.core.beans.FilterBeans.in;
 public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingException>
         implements IErpFinPostingExceptionBiz {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ErpFinPostingExceptionBizModel.class);
+
+    /**
+     * observability.md §5.1 指标 5（{@code erp_fin_posting_exception_backlog} Gauge）：
+     * 进程级 once-only 注册 flag，避免多实例 / 容器重启叠加导致 Gauge 重复注册告警。
+     */
+    private static final AtomicBoolean BACKLOG_GAUGE_REGISTERED = new AtomicBoolean(false);
+
+    /** 5 分钟固定间隔（observability.md §5.1 指标 5 校正：避免 scrape 时才查 DB 引入抓取延迟）。 */
+    static final long BACKLOG_REFRESH_INITIAL_DELAY_MS = 30_000L;
+    static final long BACKLOG_REFRESH_PERIOD_MS = 5 * 60_000L;
+
+    /** backlog Gauge 当前缓存值（由后台刷新任务更新，Gauge 读取此值）。 */
+    private final AtomicLong postingExceptionBacklog = new AtomicLong(0L);
+
     @Inject
     IErpFinVoucherBiz voucherBiz;
 
@@ -70,6 +95,44 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
 
     public ErpFinPostingExceptionBizModel() {
         setEntityName(ErpFinPostingException.class.getName());
+    }
+
+    /**
+     * observability.md §5.1 指标 5 注册（{@code erp_fin_posting_exception_backlog} Gauge）。
+     *
+     * <p>进程级 once-only：经 {@code BACKLOG_GAUGE_REGISTERED} CAS 保证仅注册一次（多 BizModel 实例
+     * / Quarkus dev mode reload 场景）。Gauge 注册逻辑经 {@link ErpFinPostingExceptionBacklogGauge#register}
+     * 静态助手（亦可被单测针对 SimpleMeterRegistry 调用）。后台刷新任务复用 {@link #countUnresolved}
+     * 既有语义（PENDING/RETRYING/MANUAL 终态机计数），固定 5 分钟间隔。
+     */
+    @PostConstruct
+    public void initObservability() {
+        if (!BACKLOG_GAUGE_REGISTERED.compareAndSet(false, true)) {
+            return;
+        }
+        ErpFinPostingExceptionBacklogGauge.register(GlobalMeterRegistry.instance(), postingExceptionBacklog);
+        GlobalExecutors.globalTimer().scheduleAtFixedRate(
+                this::refreshPostingExceptionBacklog,
+                BACKLOG_REFRESH_INITIAL_DELAY_MS,
+                BACKLOG_REFRESH_PERIOD_MS,
+                TimeUnit.MILLISECONDS);
+        LOG.info("erp-fin-posting-exception-backlog-gauge-registered: initialDelayMs={}, periodMs={}",
+                BACKLOG_REFRESH_INITIAL_DELAY_MS, BACKLOG_REFRESH_PERIOD_MS);
+    }
+
+    /** 后台刷新一次 backlog 缓存（单测亦调用以避免等待 5 分钟调度）。异常隔离不向上抛。 */
+    public void refreshPostingExceptionBacklog() {
+        try {
+            long count = countUnresolved(new ServiceContextImpl());
+            postingExceptionBacklog.set(count);
+        } catch (Exception e) {
+            LOG.warn("erp-fin-posting-exception-backlog-refresh-failed: reason={}", e.getMessage());
+        }
+    }
+
+    /** 当前 backlog 缓存值（单测断言用）。 */
+    public long currentPostingExceptionBacklog() {
+        return postingExceptionBacklog.get();
     }
 
     @Override

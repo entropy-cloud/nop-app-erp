@@ -18,9 +18,12 @@ import app.erp.inv.service.costing.MovingAverageCostingStrategy;
 import app.erp.inv.service.costing.SpecificCostingStrategy;
 import app.erp.inv.service.costing.StandardCostingStrategy;
 import app.erp.inv.service.costing.WeightedAverageCostingStrategy;
+import app.erp.inv.service.metrics.ErpInvConcurrencyMetrics;
+import io.micrometer.core.instrument.Counter;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.commons.metrics.GlobalMeterRegistry;
 import io.nop.commons.util.StringHelper;
 import io.nop.dao.DaoErrors;
 import io.nop.dao.api.IDaoProvider;
@@ -282,8 +285,14 @@ public class StockMoveBookkeeper implements BookingContext {
                 return current;
             }
 
+            // observability.md §5.1 指标 4（erp_concurrency_optimistic_lock_failure_total Counter）：
+            // 每次乐观锁冲突（tryLock 失败 / INSERT UK 冲突）计数一次。tag=domain=inventory, operation=stock_balance_update
+            ErpInvConcurrencyMetrics.recordOptimisticLockFailure(null);
+
             attempts++;
             if (attempts > maxRetry) {
+                // 重试耗尽：额外计数一次（区分冲突频次 vs 最终放弃事件）
+                ErpInvConcurrencyMetrics.recordOptimisticLockFailureExhausted(null);
                 throw buildConflictExhaustedEx(state, current, attempts);
             }
 

@@ -9,6 +9,7 @@ import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.metrics.ErpFinBusinessMetrics;
 import app.erp.md.biz.IErpMdSubjectBiz;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.beans.query.QueryBean;
@@ -127,6 +128,8 @@ public class ErpFinPostingProcessor {
         ensureTraceId(event);
         PostingRun run = PostingRun.forPost(event);
         long processBegin = CoreMetrics.nanoTime();
+        // observability.md §5.1 指标 6 path=posting：凭证过账关键路径吞吐计数（入口埋点）
+        ErpFinBusinessMetrics.recordPostingPathThroughput(null);
 
         List<Long> targetSchemas = schemaPropagator.resolveTargetSchemas(event.getOrgId(), event.getAcctSchemaId());
 
@@ -189,13 +192,19 @@ public class ErpFinPostingProcessor {
             event.setAcctSchemaId(originalSchemaId);
 
             int voucherCount = targetSchemas.size();
-            postingMetrics.recordLatency(CoreMetrics.nanoTimeDiff(processBegin));
+            // observability.md §5.1 指标 1（Counter）+ 指标 2（Timer）：成功路径埋点
+            postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(processBegin));
+            postingMetrics.recordResult(run.businessType, true);
             LOG.info("过账成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, provider={}, fallback={}, template={}, timings(ms)={}",
                     run.traceId, run.billHeadCode, run.businessType, primaryVoucherId,
                     voucherCount, run.providerName, run.isFallback, run.templateDesc, run.timingsMillis());
             return primaryVoucherId;
         } catch (RuntimeException e) {
             event.setAcctSchemaId(event.getAcctSchemaId());
+            // observability.md §5.1 指标 1（Counter）+ 指标 2（Timer）：失败路径埋点
+            // （Timer 记录失败过账耗时，Counter 标记 result=failure；对齐 plan §5.1 metric 2 spec「单次过账端到端耗时」）
+            postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(processBegin));
+            postingMetrics.recordResult(run.businessType, false);
             logFailure(run, e);
             recordPostFailure(run, event, e);
             throw e;
@@ -244,12 +253,16 @@ public class ErpFinPostingProcessor {
             dispatchReversalEvent(run, finalPrimaryReversalId,
                     firstOriginalId, billHeadCode, businessType, context);
 
-            postingMetrics.recordLatency(CoreMetrics.nanoTimeDiff(reverseBegin));
+            postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(reverseBegin));
+            postingMetrics.recordResult(run.businessType, true);
             LOG.info("红冲成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, timings(ms)={}",
                     run.traceId, run.billHeadCode, run.businessType, primaryReversalId, originals.size(),
                     run.timingsMillis());
             return primaryReversalId;
         } catch (RuntimeException e) {
+            // observability.md §5.1 指标 1 + 指标 2：红冲失败路径埋点（与正向过账失败路径对齐）
+            postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(reverseBegin));
+            postingMetrics.recordResult(run.businessType, false);
             logFailure(run, e);
             recordReverseFailure(run, e);
             throw e;
