@@ -511,3 +511,12 @@ spotbugs_counts:
 **收敛结论**：2 轮审查后无残留 BLOCKER / 无残留 MAJOR（R1 的 3 MINOR + R2 的 2 MAJOR + 7 MINOR 全部修订；R2 实仓复核确认工具选型替代充分 + NVD 限速诚实评估 + 生成代码噪声引用准确 + 5 CI 无冲突 + 独立基线文件先例 + nop-entropy 边界零改动 + MA6 正交）。文档可作为 Phase 2 实现 plan 的实施契约。MINOR 不阻塞收敛。
 
 <!-- 审查者多样性已满足：R1（ses_0420d11e...）/ R2（ses_0420ce45...）两会话 task id 不同，均独立 fresh cold context，未复用作者上下文。 -->
+
+## 11. Phase 2 实施期发现回填（plan `2026-08-02-1121-1`，2026-08-02）
+
+> plan Closure Gates「实现与设计文档一致」要求：任何实施期发现回填设计文档 Review Record 而非静默偏离。
+
+- **includeFilterFile 机制澄清（对 §6.2 step 1 R2-MINOR-6 修正的精确化）**：§6.2 称 includeFilterFile「启用 FindSecBugs 安全规则」。Phase 2 实测（`mvn -Psecurity spotbugs:check -X`）发现 FindSecBugs 探测器经 `findsecbugs-plugin` JAR 依赖**自动注册**到 spotbugs classpath（debug 输出 `Adding to pluginArtifact -> com.h3xstream.findsecbugs:findsecbugs-plugin:jar:1.13.0`），无需 includeFilterFile 即运行。includeFilterFile 的真实作用是 **scope 报告到 FindSecBugs 安全 BugPattern**（从 `findsecbugs-plugin-1.13.0.jar!/findbugs.xml` 程序化提取 139 type 生成 `spotbugs-include.xml`），避免安全基线被 SpotBugs 通用代码质量规则（PERFORMANCE/STYLE/BAD_PRACTICE）稀释。此为机制精确化，非范围偏离——§6.2 的设计意图（安全基线聚焦 FindSecBugs 规则）不变，仅实现机制描述更精确。
+- **首跑实测结果（§1 现状的 Phase 2 验证）**：19 域 erp-*-service FindSecBugs 首跑**全部 0 命中**（spotbugs-maven-plugin 4.9.8.3 + spotbugs 4.9.8 + findsecbugs 1.13.0 + Java 26 本地首跑 BUILD SUCCESS）。ERP 业务代码经 Nop ORM 参数化查询 + 平台安全包装，无静态可检测注入/XSS/反序列化/硬编码密钥反模式。`spotbugs_counts` 基线为空（最严格：任何 FindSecBugs 命中 ⇒ gate fail）。
+- **NVD API key infra prereq 确认**：§4.3 裁决的「NVD API key 预期必需」在 Phase 2 实仓确认——本地无 key 全量首跑不可行（156 模块 aggregate + NVD ~1-2GB 下载，无 key 限速严苛）。CI nightly（`.github/workflows/security.yml`）经 `NVD_API_KEY` secret 注入执行真实首跑；`cve_allowlist` 基线为空至首跑分类完成（§5.4 Empty list on first run）。
+- **插件位置裁决 R2-MAJOR-2 Phase 2 复核**：SpotBugs per-module（候选 b）经 R4 同型复核确认——19 域 service pom 各声明 `<profile id="security">`，`mvn help:active-profiles -pl <module>`（-Psecurity）security active。根 pom profile 不继承到子模块（module-*/pom.xml `<parent>` 是 nop-entropy）。Dependency-Check aggregate（§6.1）经 reactor-root 核验生效（`mvn -Psecurity -N help:effective-pom` 含 dependency-check-maven + aggregate=true）。
