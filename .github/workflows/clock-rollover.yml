@@ -1,0 +1,46 @@
+name: Clock Rollover (month-start regression)
+
+# 设计文档 §6 裁决 C-2：月初时钟滚动 nightly CI 矩阵（plan 2026-08-01-1357-1 Phase 5）。
+# 用 faketime 将 runner 系统时钟参数化为跨月边界（月末当日 / 次月 1 日）跑 finance 套件，
+# 作为路径 C 冻结时钟根治后的持续回归层——防路径 C 实施遗漏 + 防未来新日期敏感测试回潮
+# （含直读 LocalDate.now() 旁路冻结机制者）。本地跨月证明由 TestClockRolloverFinance 在每次构建提供。
+
+on:
+  schedule:
+    # nightly 03:00 UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch:
+
+env:
+  CI: true
+
+jobs:
+  clock-rollover-finance:
+    name: Finance suite under faketime cross-month
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        # faketime 接受绝对日期（非日历表达式）。两边界日：月末当日 + 次月 1 日（原月初税活跃源）。
+        # 日期矩阵须随日历推进手动刷新（设计文档 §6.4）；冻结时钟使 finance 套件对这些日期确定。
+        fake-date:
+          - '2026-08-31 23:59:00'
+          - '2026-09-01 00:01:00'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      - name: Install faketime
+        run: sudo apt-get update && sudo apt-get install -y faketime
+      - name: Build dependencies (normal clock)
+        # 先在正常时钟下构建依赖链（faketime 仅作用于测试执行，避免构建产物时间戳偏移）
+        run: mvn -B install -DskipTests -pl module-finance/erp-fin-service -am
+      - name: Run finance suite under faketime ${{ matrix.fake-date }}
+        # faketime 在 System.currentTimeMillis() 层拦截，LocalDate.now()/CoreMetrics 经其派生应一致
+        # （设计文档 §6.3 R5 兼容性——此 step 即实测；不兼容则换 JVM -D 系统属性 / 测试内 mock，裁决落盘）
+        run: faketime '${{ matrix.fake-date }}' mvn -B test -pl module-finance/erp-fin-service

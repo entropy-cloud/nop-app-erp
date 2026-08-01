@@ -6,9 +6,9 @@ import app.erp.fin.dao.entity.ErpFinCreditFacility;
 import app.erp.fin.dao.entity.ErpFinNotesPayable;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.FinFrozenClockExtension;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdSubject;
-import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -20,6 +20,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 
@@ -36,6 +37,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
 
+    // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 4 B 组裁决 (a)）：seedBase 的 OPEN 期间与
+    // issue() 过账 voucherDate=CoreMetrics.today() 均冻结到 REFERENCE_DATE 所在月，二者一致、
+    // 输出确定性，回收 R6.9 的 checkOutput=false 退让（设计文档 §4.2）。
+    @RegisterExtension
+    static FinFrozenClockExtension finClock = new FinFrozenClockExtension();
+
     private static final IServiceContext CTX = new ServiceContextImpl();
 
     @Inject
@@ -45,7 +52,6 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
     @Inject
     IErpFinNotesPayableBiz notesPayableBiz;
 
-    @EnableSnapshot(checkOutput = false)
     @Test
     public void testIssueCommercialAcceptanceNoCreditCheck() {
         // 商业承兑不占用授信额度，直接开出。
@@ -58,7 +64,6 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         assertEquals(ErpFinConstants.NOTES_PAY_ISSUED, note.getStatus());
     }
 
-    @EnableSnapshot(checkOutput = false)
     @Test
     public void testIssueBankAcceptanceOccupiesCredit() {
         Long facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-001", new BigDecimal("1000"), BigDecimal.ZERO); });
@@ -84,7 +89,6 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         assertEquals(ErpFinErrors.ERR_CREDIT_FACILITY_INSUFFICIENT.getErrorCode(), ex.getErrorCode());
     }
 
-    @EnableSnapshot(checkOutput = false)
     @Test
     public void testHonorReleasesCredit() {
         Long facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-003", new BigDecimal("1000"), BigDecimal.ZERO); });
@@ -98,7 +102,6 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         assertEquals(0, BigDecimal.ZERO.compareTo(facility.getUsedAmount()), "兑付释放后已用归 0");
     }
 
-    @EnableSnapshot(checkOutput = false)
     @Test
     public void testWriteOffReleasesCredit() {
         Long facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-004", new BigDecimal("1000"), BigDecimal.ZERO); });
@@ -123,9 +126,9 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
     // ---------- seed helpers ----------
 
     private void seedBase() {
-        // 日期无关硬化（R6.9）：seed 当前运行月 OPEN 期间，使 issue() 过账 resolveOpenPeriod(voucherDate=today)
-        // 在任意运行月均能成功（原硬编码 "2026-07" 在月翻滚后无对应期间致过账失败）。
-        java.time.YearMonth now = java.time.YearMonth.now();
+        // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 4）：seed 期间改由冻结参考日派生（YearMonth.from(REFERENCE_DATE)），
+        // 使 issue() 过账 resolveOpenPeriod(voucherDate=today=冻结日) 在任意运行月均落在 seed OPEN 期间内。
+        java.time.YearMonth now = java.time.YearMonth.from(FinFrozenClockExtension.REFERENCE_DATE);
         int year = now.getYear();
         int month = now.getMonthValue();
         String code = year + "-" + String.format("%02d", month);

@@ -7,10 +7,11 @@ import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinBadDebt;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
-import app.erp.md.dao.entity.ErpMdCurrency;
-import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.FinFrozenClockExtension;
+import app.erp.md.dao.entity.ErpMdCurrency;
+import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
@@ -23,6 +24,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -53,6 +55,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE,
         testConfigFile = "classpath:bad-debt-test.yaml")
 public class TestErpFinBadDebtReversal extends JunitAutoTestCase {
+
+    // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 4 A 组）：seedOpenPeriodCurrentMonth 与
+    // reverseApprove 红冲 voucherDate 均读 CoreMetrics.today()，冻结到 seed 期间所在月使二者一致、
+    // 输出确定性，消除月初翻车税（设计文档 §4.2）。
+    @RegisterExtension
+    static FinFrozenClockExtension finClock = new FinFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 

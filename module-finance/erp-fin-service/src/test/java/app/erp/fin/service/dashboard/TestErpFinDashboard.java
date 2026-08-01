@@ -5,6 +5,7 @@ import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinFundAccount;
 import app.erp.fin.dao.entity.ErpFinGlBalance;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.FinFrozenClockExtension;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
@@ -18,6 +19,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -37,6 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinDashboard extends JunitAutoTestCase {
+
+    // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 4 B 组裁决 (a)）：getDashboardTrend 读 CoreMetrics.currentDate()
+    // 计算窗口，冻结到 REFERENCE_DATE 使窗口与 seed 期间对齐、输出确定性，回收 R6.9 的 checkOutput=false 退让（设计文档 §4.2）。
+    @RegisterExtension
+    static FinFrozenClockExtension finClock = new FinFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
@@ -90,12 +97,12 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
         assertEquals(0, ((BigDecimal) kpi.get("apBalance")).compareTo(new BigDecimal("400")));
     }
 
-    @EnableSnapshot(checkOutput = false)
+    @EnableSnapshot
     @Test
     public void testTrendMonthlySeries() {
-        // 日期无关硬化（R6.9）：seed 改为 YearMonth.now() 相对月（当月 + 上月），
-        // 使 getDashboardTrend(2) 近 2 月窗口在任意运行月均含 seed 数据（原硬编码 6/7 月在 8 月窗口={8,7}挤出 6 月）。
-        java.time.YearMonth now = java.time.YearMonth.now();
+        // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 4）：seed 改由冻结参考日派生（REFERENCE_DATE 当月 + 上月），
+        // 使 getDashboardTrend(2) 近 2 月窗口在任意运行月均含 seed 数据（窗口与 seed 同源冻结时钟）。
+        java.time.YearMonth now = java.time.YearMonth.from(FinFrozenClockExtension.REFERENCE_DATE);
         java.time.YearMonth prev = now.minusMonths(1);
         ormTemplate.runInSession(() -> {
             ErpMdSubject income = seedSubject(111L, "6001", "INCOME", ErpFinConstants.DC_CREDIT);
