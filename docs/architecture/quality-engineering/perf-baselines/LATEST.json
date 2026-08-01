@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "latestBaselineFile": "baseline-2026-08-02.json",
+  "capturedAt": "2026-08-02",
+  "design": "docs/architecture/quality-engineering/performance-baseline.md §5.3",
+  "note": "Soft pointer to the most recent baseline file. Update only via explicit commit (plan/author action); nightly perf-baseline.yml MUST NOT auto-overwrite (防退化悄悄写进基线, design doc §6.5).",
+  "regressionDetectionPolicy": {
+    "type": "relative-median-diff",
+    "thresholdPercent": 20.0,
+    "minimumNightlySamples": 14,
+    "currentPhase": "C-1-non-blocking",
+    "blockingPromotionCriteria": "≥30 nightly + runner 同构确认 + 团队同意 (design doc §6.2)"
+  }
+}
