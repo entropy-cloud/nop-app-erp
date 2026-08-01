@@ -676,7 +676,7 @@
 | Q3 | **属性测试**（jqwik）：财务/库存核心不变量形式化验证——借贷平衡 / 期间结账余额归零 / 成本层累加 = 余额表 / costMethod 切换总成本不变 | todo | `docs/architecture/quality-engineering/property-based-testing.md`（Phase 1 待编写 + 独立审查） | Q0 | none |
 | Q4 | **故障注入测试**：过账悬挂 / 期间结账 / 并发更新故障注入 harness——系统性验证 tryPost 吞异常同型根因族（P1-MA2-032/048/060/068/074/080 跨 6 域）的可恢复性 | todo | `docs/architecture/quality-engineering/fault-injection.md`（Phase 1 待编写 + 独立审查） | Q0 | none |
 | Q5 | **性能基线与回归门控**：关键路径性能基线（1000 凭证过账 / 期间结账 1 万行 / 库存核算 reclose / 报表渲染）+ CI 软门控（不允许退化 > 阈值） | todo | `docs/architecture/quality-engineering/performance-baseline.md`（Phase 1 待编写 + 独立审查） | Q0, Q6 | none |
-| Q6 | **时钟测试基础设施硬化**：CoreMetrics 全局静态 registerClock 并行安全根治 + 日期参数化（消灭月初翻车重录快照税） | todo | `docs/architecture/quality-engineering/clock-test-infrastructure.md`（Phase 1 待编写 + 独立审查） | Q0 | none |
+| Q6 | **时钟测试基础设施硬化**：CoreMetrics 全局静态 registerClock 并行安全根治 + 日期参数化（消灭月初翻车重录快照税） | todo (Phase 1 done) | `docs/architecture/quality-engineering/clock-test-infrastructure.md`（Phase 1 done——设计文档经 3 轮独立审查收敛，裁决路径 C 应用层 thread-local delegating clock；Phase 2 实现 plan 待起草） | Q0 | none |
 | Q7 | **可观测性补全评估**：nop-platform 无 Micrometer/Prometheus/OTel 的可行性确认 + Spring Boot Actuator 引入评估 + 业务自定义指标落地评估 | todo | `docs/architecture/quality-engineering/observability.md`（Phase 1 待编写 + 独立审查） | Q0 | none |
 
 ## 框架/平台复用
