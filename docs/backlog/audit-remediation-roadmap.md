@@ -671,7 +671,7 @@
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
 | Q0 | 质量深化范围矩阵 + 当前状态 gap analysis 正式化（确认 7 维度 NOT FOUND 证据 + 复杂度分级 + 实施顺序裁决 + `docs/architecture/quality-engineering/` 目录初始化 + README） | done | `docs/architecture/quality-engineering/README.md` | MG done | none |
-| Q1 | **变异测试有效性**（pitest）：finance/mfg/inv 三域 mutation score 基线 + 存活变异体分析 + CI 门控设计 | todo | `docs/architecture/quality-engineering/mutation-testing.md`（Phase 1 待编写 + 独立审查） | Q0 | none |
+| Q1 | **变异测试有效性**（pitest）：finance/mfg/inv 三域 mutation score 基线 + 存活变异体分析 + CI 门控设计 | todo (Phase 1 done) | `docs/architecture/quality-engineering/mutation-testing.md`（Phase 1 done——设计文档经 3 轮独立审查收敛，裁决 pitest 默认全集 + 父 pom `<profile><id>mutation</id>` 激活 + 排除全部生成包 `_gen`88+`api.beans`176+`api.crud`88=352 类 + 首跑 finance/mfg/inv 三域 + nightly 软门控 CI；Phase 2 实现 plan 待起草） | Q0 | none |
 | Q2 | **安全扫描流水线**：OWASP Dependency-Check（transitive CVE）+ SpotBugs FindSecBugs（静态安全规则）接入 CI + 基线建立 + 单向收紧门控 | todo | `docs/architecture/quality-engineering/security-scanning.md`（Phase 1 待编写 + 独立审查） | Q0 | none |
 | Q3 | **属性测试**（jqwik）：财务/库存核心不变量形式化验证——借贷平衡 / 期间结账余额归零 / 成本层累加 = 余额表 / costMethod 切换总成本不变 | todo | `docs/architecture/quality-engineering/property-based-testing.md`（Phase 1 待编写 + 独立审查） | Q0 | none |
 | Q4 | **故障注入测试**：过账悬挂 / 期间结账 / 并发更新故障注入 harness——系统性验证 tryPost 吞异常同型根因族（P1-MA2-032/048/060/068/074/080 跨 6 域）的可恢复性 | todo | `docs/architecture/quality-engineering/fault-injection.md`（Phase 1 待编写 + 独立审查） | Q0 | none |
