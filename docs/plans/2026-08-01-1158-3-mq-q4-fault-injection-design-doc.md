@@ -1,6 +1,6 @@
 # 2026-08-01-1158-3-mq-q4-fault-injection-design-doc 故障注入测试 Phase 1 设计文档
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-01
 > Mission: audit-remediation
 > Work Item: MQ Q4
@@ -67,63 +67,63 @@ No infra prereqs beyond existing baseline. 本计划纯文档，不涉及端口/
 
 ### Phase 1 - 编写 Q4 设计文档草稿
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/quality-engineering/fault-injection.md`（新建）
 Skill: none
 
 - Item Types: `Add | Decision`
 - Prereqs: Q0 done（已满足）；Q0 README §实施顺序裁决落盘（已满足）；MR1.16 单点修复已落地（已满足，作为 Q4 系统性保护的基线参照）
 
-- [ ] Add: 创建 `fault-injection.md`，含 MQ 文档先行工作流要求的 6 节骨架
+- [x] Add: 创建 `fault-injection.md`，含 MQ 文档先行工作流要求的 6 节骨架
       - Skill: none
-- [ ] Add: §现状评估 —— 引用（非重推导）Q0 README §Q4 + roadmap line 787 + MR1.16 + 本计划 Current Baseline 实仓复核：无通用化 harness（关键字零命中）**但**已有 per-point 过账悬挂测试先例（枚举 7 个测试类作为路径 A 起点证据）、6 域同型根因 finding ID（**设计文档须核对 arm-index 权威值，消解 qa 064-vs-080 漂移**）、MR1.16 单点修复边界、过账错误传播真相源 `posting-log.md` G1-G4。标注可复现核验命令 + 核验日期。
+- [x] Add: §现状评估 —— 引用（非重推导）Q0 README §Q4 + roadmap line 787 + MR1.16 + 本计划 Current Baseline 实仓复核：无通用化 harness（关键字零命中）**但**已有 per-point 过账悬挂测试先例（枚举 7 个测试类作为路径 A 起点证据）、6 域同型根因 finding ID（**设计文档须核对 arm-index 权威值，消解 qa 064-vs-080 漂移**）、MR1.16 单点修复边界、过账错误传播真相源 `posting-log.md` G1-G4。标注可复现核验命令 + 核验日期。
       - Skill: none
-- [ ] Add: §过账 SPI 注入点盘点 —— 盘点真实过账 SPI（各域具体 `*PostingDispatcher` / `*PostingExecutor` / `IErpFinVoucherBiz`），作为路径 A stub/override 的精确注入点清单（**核验 `IPostingDispatcher` 不存在**，纠正 roadmap line 786 / Q0 README 沿用名）
+- [x] Add: §过账 SPI 注入点盘点 —— 盘点真实过账 SPI（各域具体 `*PostingDispatcher` / `*PostingExecutor` / `IErpFinVoucherBiz`），作为路径 A stub/override 的精确注入点清单（**核验 `IPostingDispatcher` 不存在**，纠正 roadmap line 786 / Q0 README 沿用名）
       - Skill: none
-- [ ] Decision: §技术选型 —— 评估并裁决故障注入机制：
+- [x] Decision: §技术选型 —— 评估并裁决故障注入机制：
       - 路径 A：应用层 test-scope stub/override 各域具体 `*PostingDispatcher`/`*PostingExecutor` + finance facade `IErpFinVoucherBiz`（首选——既有 per-point 先例已证可行，应用层内闭环，避免跨仓库依赖）
       - 路径 B：平台层字节码插桩（触及 nop-entropy，跨仓库）
       - 路径 C：JUnit 5 `Extension` + 受控异常/超时/事务回滚注入点（轻量，但可能不足以覆盖各域 dispatcher SPI）
       - 记录候选 + 考虑的替代 + 残留风险（如路径 A 对真实过账链路保真度 + 跨域具体类盘点工作量、路径 B 的平台升级耦合、路径 C 的注入点覆盖范围）
       - Skill: none
-- [ ] Add: §可恢复性断言契约 —— 形式化定义"故障后系统进入可恢复状态而非静默悬挂"，**对齐真相源 `docs/design/finance/posting-log.md` §错误传播分级 G1-G4 的延迟重试模型**（**非"显式文档状态回退"**——posting-log.md 权威：G1 瞬时→`DeferredPostingSweepJob` 重试；G2 永久→MANUAL 终态 + 告警；G4 无 sweep 域→独立告警 + 期末前置检查兜底）。契约要素：故障后 posted 标志与实际过账结果一致 + PostingException 记录存在 + 单据可重试/可冲销或进异常工作台。
+- [x] Add: §可恢复性断言契约 —— 形式化定义"故障后系统进入可恢复状态而非静默悬挂"，**对齐真相源 `docs/design/finance/posting-log.md` §错误传播分级 G1-G4 的延迟重试模型**（**非"显式文档状态回退"**——posting-log.md 权威：G1 瞬时→`DeferredPostingSweepJob` 重试；G2 永久→MANUAL 终态 + 告警；G4 无 sweep 域→独立告警 + 期末前置检查兜底）。契约要素：故障后 posted 标志与实际过账结果一致 + PostingException 记录存在 + 单据可重试/可冲销或进异常工作台。
       - Skill: none
-- [ ] Add: §实施步骤 —— harness 落地位置 + 6 域过账悬挂路径覆盖清单（finance/hr/assets/qa/projects/maintenance）+ 与 Q1 盲区类清单的消费方式
+- [x] Add: §实施步骤 —— harness 落地位置 + 6 域过账悬挂路径覆盖清单（finance/hr/assets/qa/projects/maintenance）+ 与 Q1 盲区类清单的消费方式
       - Skill: none
-- [ ] Add: §验收判据 —— 6 域过账悬挂路径均有故障注入测试 + 可恢复性断言契约成立 + 不污染并行测试（注意与 Q6 时钟硬化的并行隔离协同）
+- [x] Add: §验收判据 —— 6 域过账悬挂路径均有故障注入测试 + 可恢复性断言契约成立 + 不污染并行测试（注意与 Q6 时钟硬化的并行隔离协同）
       - Skill: none
-- [ ] Add: §CI 门控设计 —— 裁决故障注入测试是否纳入 mandatory 回归层 + 与 `.github/workflows/compliance.yml` 集成方式
+- [x] Add: §CI 门控设计 —— 裁决故障注入测试是否纳入 mandatory 回归层 + 与 `.github/workflows/compliance.yml` 集成方式
       - Skill: none
-- [ ] Add: §与 Q1 协同接口 —— 声明消费 Q1 输出的盲区类清单（哪些类的存活变异体指向过账可恢复性路径），作为 Q4 Phase 2 优先覆盖目标
+- [x] Add: §与 Q1 协同接口 —— 声明消费 Q1 输出的盲区类清单（哪些类的存活变异体指向过账可恢复性路径），作为 Q4 Phase 2 优先覆盖目标
       - Skill: none
 
 Exit Criteria:
 
 > 本计划纯文档，零代码/ORM/CI 变更。完整仓库 `typecheck`/`build`/`test` 不适用（按 plan authoring guide，无代码更改的计划删除验证命令门控）。
 
-- [ ] `fault-injection.md` 落盘，含上述 6 节 + 可恢复性断言契约 + Q1 协同接口，技术选型 Decision 记录候选+替代+残留风险三要素
-- [ ] §现状评估每条证据标注可复现核验命令 + 核验日期
+- [x] `fault-injection.md` 落盘，含上述 6 节 + 可恢复性断言契约 + Q1 协同接口，技术选型 Decision 记录候选+替代+残留风险三要素
+- [x] §现状评估每条证据标注可复现核验命令 + 核验日期
 
 ### Phase 2 - 独立子代理设计文档审查循环（≥2 轮至收敛）
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/quality-engineering/fault-injection.md`（`## Review Record` 节）
 Skill: none
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 1 草稿落盘
 
-- [ ] Proof: 第 1 轮审查——**规范合规审查**，由独立子代理（新会话）执行。审查项：6 节结构完整性 / 与项目约定一致性 / 反模式检查（无双真相源、是否误把 MR1.16 单点修复当系统性保护、是否误把 per-point 先例当通用化 harness）/ owner doc 引用正确性（`posting-log.md` G1-G4 延迟重试模型 + `IPostingDispatcher` 不存在的实仓纠正）。输出 BLOCKER/MAJOR/MINOR。
+- [x] Proof: 第 1 轮审查——**规范合规审查**，由独立子代理（新会话）执行。审查项：6 节结构完整性 / 与项目约定一致性 / 反模式检查（无双真相源、是否误把 MR1.16 单点修复当系统性保护、是否误把 per-point 先例当通用化 harness）/ owner doc 引用正确性（`posting-log.md` G1-G4 延迟重试模型 + `IPostingDispatcher` 不存在的实仓纠正）。输出 BLOCKER/MAJOR/MINOR。
       - Skill: none
-- [ ] Proof: 第 2 轮审查——**覆盖面与可执行性审查**，由**另一个**独立子代理（不同 task id，新会话）执行。审查项：三路径替代是否充分评估 / 可恢复性断言契约是否可验证 / 6 域路径覆盖是否完整（核对 finding ID）/ 应用层 vs 平台层边界裁决是否避免跨仓库依赖 / 与 Q6 并行隔离是否冲突 / 与 Q1 协同接口是否可消费。输出 BLOCKER/MAJOR/MINOR。
+- [x] Proof: 第 2 轮审查——**覆盖面与可执行性审查**，由**另一个**独立子代理（不同 task id，新会话）执行。审查项：三路径替代是否充分评估 / 可恢复性断言契约是否可验证 / 6 域路径覆盖是否完整（核对 finding ID）/ 应用层 vs 平台层边界裁决是否避免跨仓库依赖 / 与 Q6 并行隔离是否冲突 / 与 Q1 协同接口是否可消费。输出 BLOCKER/MAJOR/MINOR。
       - Skill: none
-- [ ] Add: 作者据审查意见修订文档并重审，直至两轮均无 BLOCKER/MAJOR；`## Review Record` 节持久化两轮审查者 task id + 轮次 + 结论 + 修改摘要
+- [x] Add: 作者据审查意见修订文档并重审，直至两轮均无 BLOCKER/MAJOR；`## Review Record` 节持久化两轮审查者 task id + 轮次 + 结论 + 修改摘要
       - Skill: none
 
 Exit Criteria:
 
-- [ ] §Review Record 记录 ≥2 轮审查，两轮由不同子代理会话执行，无残留 BLOCKER/MAJOR
-- [ ] 可恢复性断言契约经审查后可验证（或据审查修订后可验证）
+- [x] §Review Record 记录 ≥2 轮审查，两轮由不同子代理会话执行，无残留 BLOCKER/MAJOR
+- [x] 可恢复性断言契约经审查后可验证（或据审查修订后可验证）
 
 ## Draft Review Record
 
@@ -134,15 +134,15 @@ Exit Criteria:
 
 > 本计划无代码/ORM/view/CI 变更（纯设计文档）。按 plan authoring guide §Closure Gates："对于无代码更改的计划（仅文档），删除验证命令门控并说明原因"——故不设 `mvn typecheck/build/test` 门控，原因：零 Java/ORM/CI 变更，全量构建无回归面。
 
-- [ ] 范围内行为完成：`fault-injection.md` 6 节 + 可恢复性断言契约 + Q1 协同接口落盘且 Review Record 收敛
-- [ ] 相关文档对齐：文档引用 Q0 README（无双真相源）；与 roadmap §MQ Q4 + `posting-log.md` G1-G4 一致
-- [ ] 无验证命令门控（纯文档计划，原因如上）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查（本计划本身）已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
-- [ ] `docs/logs/{year}/{month}-{day}.md` 追加本计划日志条目（计划级结束步骤）
+- [x] 范围内行为完成：`fault-injection.md` 6 节 + 可恢复性断言契约 + Q1 协同接口落盘且 Review Record 收敛
+- [x] 相关文档对齐：文档引用 Q0 README（无双真相源）；与 roadmap §MQ Q4 + `posting-log.md` G1-G4 一致
+- [x] 无验证命令门控（纯文档计划，原因如上）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查（本计划本身）已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+- [x] `docs/logs/{year}/{month}-{day}.md` 追加本计划日志条目（计划级结束步骤）
 
 ## Deferred But Adjudicated
 
@@ -160,12 +160,19 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填写>
+Status Note: 本计划为纯文档 Phase 1 设计（零代码/ORM/view/CI 变更）。Phase 1 设计文档草稿落盘，Phase 2 经 2 轮独立子代理审查收敛（R1 规范合规 accept 0/0/3 + R2 覆盖/可执行性 needs-revision 0/2/2，全部修订 resolved）。Q4 工作项 Phase 1 交付完成，转 done（Phase 2 实现 plan 待 Q1 Phase 2 盲区清单后起草，见 Deferred）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理，新会话 fresh cold context>
-- Evidence: <task id / 核验记录>
+- Auditor / Agent: 独立结束审计子代理，新会话 fresh cold context（task `ses_0442e274fffeA5gPK5iU17ItM1`，general 类型，未复用执行者上下文，不同于 2 轮文档审查 task id）
+- Evidence: PASS（6 项检查全部 live repo 核验通过）——
+  1. **计划内部一致性**：Plan Status=completed；Phase 1/Phase 2 Status=completed；所有 checkbox `[x]`（两处 `[ ]` 命中均为已勾选 item 内的描述性 prose「未将此留为 `[ ]`」/「无残留 `[ ]`」，非未勾选项），无 completed-phase-with-unchecked-items 不一致。
+  2. **交付物存在 + 必需内容**：`fault-injection.md` 落盘（55087 bytes）；含 6 必需节 + 可恢复性断言契约（§4 A1/A2/A3-unit/A4-alert）+ Q1 协同接口（§9）。
+  3. **Review Record 收敛**：2 轮不同 task id（R1 `ses_04434b8d6...` + R2 `ses_04434960b...`），无残留 BLOCKER/MAJOR（R2 的 2 MAJOR 全部修订：A3-sweep→A3-unit + A3-integration successor；G4 前置检查 over-generalize 按 posting-log.md line 136 修正）。
+  4. **实仓证据可复现性**：`IPostingDispatcher` 零命中确认；零故障注入基础设施确认；6 域 dispatcher 全部存在；`posting-log.md` G1-G4 分级确认（line 111-116）；finding ID 漂移消解（064=qa-cancel-linkage / 080=logistics / qa=A2.12 inline）。
+  5. **范围纪律（doc-only）**：仅 `.md` 文件变更（doc + plan + roadmap + log），零 Java/ORM/yml/xml 代码——Non-Goals 兑现。
+  6. **无伪造证据**：本结束审计 task id 独立于 4 个审查 task id（plan-draft R1/R2 + doc R1/R2），全部 5 个 task id 互异。
+  - 无 mvn 运行（按纯文档计划 Closure Gates 正确地排除在范围外）。
 
 Follow-up:
 
