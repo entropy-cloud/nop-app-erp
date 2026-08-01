@@ -1,6 +1,6 @@
 # 2026-08-01-1121-2-mq-q2-security-scanning-design-doc 安全扫描流水线 Phase 1 设计文档
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-01
 > Mission: audit-remediation
 > Work Item: MQ Q2
@@ -61,66 +61,66 @@ No infra prereqs beyond existing baseline. 本计划纯文档，不涉及端口/
 
 ### Phase 1 - 编写 Q2 设计文档草稿
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/quality-engineering/security-scanning.md`（新建）
 Skill: none
 
 - Item Types: `Add | Decision`
 - Prereqs: Q0 done（已满足）；Q0 README §实施顺序裁决落盘（已满足，Q2 位 5）；MA6 RBAC 基线已落地（已满足，作为 Q2 正交边界参照）
 
-- [ ] Add: 创建 `security-scanning.md`，含 MQ 文档先行工作流要求的 6 节骨架
+- [x] Add: 创建 `security-scanning.md`，含 MQ 文档先行工作流要求的 6 节骨架
       - Skill: none
-- [ ] Add: §现状评估 —— 引用（非重推导）Q0 README §Q2 + roadmap line 784-785 + 本计划 Current Baseline 实仓复核：零安全扫描（核验命令零命中）、5 CI job 清单、MA6 RBAC 基线边界（正交不重复）、单向收紧先例（compliance/i18n/fault-injection/mutation）。标注可复现核验命令 + 核验日期。
+- [x] Add: §现状评估 —— 引用（非重推导）Q0 README §Q2 + roadmap line 784-785 + 本计划 Current Baseline 实仓复核：零安全扫描（核验命令零命中）、5 CI job 清单、MA6 RBAC 基线边界（正交不重复）、单向收紧先例（compliance/i18n/fault-injection/mutation）。标注可复现核验命令 + 核验日期。
       - Skill: none
-- [ ] Decision: §技术选型 —— 评估并裁决安全扫描工具链：
+- [x] Decision: §技术选型 —— 评估并裁决安全扫描工具链：
       - **CVE 依赖扫描**：OWASP Dependency-Check（候选首选——开源本地可跑，Maven 插件 + CLI + aggregate 模式）vs Snyk（替代——需联网 + 商业许可）vs GitHub Dependabot（替代——平台内建但规则可控性低）
       - **静态安全规则**：SpotBugs + FindSecBugs（候选首选——开源，Maven 插件，注入/XSS/反序列化/硬编码密钥规则集）vs SonarQube（替代——重，需独立服务）
       - 记录候选 + 考虑的替代 + 残留风险（Dependency-Check NVD 限速 + 误报率 / Snyk 许可与离线 / FindSecBugs 规则集覆盖与误报 / SonarQube 运维成本）
       - Skill: none
-- [ ] Decision: §CI 调度裁决 —— 裁决 CVE 限速下的扫描调度策略（roadmap line 784 明示关键风险）：
+- [x] Decision: §CI 调度裁决 —— 裁决 CVE 限速下的扫描调度策略（roadmap line 784 明示关键风险）：
       - 路径 A：nightly aggregate 全量扫描（Dependency-Check aggregate 模式聚合 156 模块依赖树，一次 NVD 查询）+ per-commit 跳过
       - 路径 B：per-commit 增量扫描（仅 changed module，但 NVD 限速可能阻塞 PR）
       - 路径 C：weekly 全量 + per-commit 仅 FindSecBugs（静态规则不限速）
       - 记录候选 + 考虑的替代 + 残留风险（nightly 延迟发现 / per-commit 限速阻塞 / weekly 粒度）
       - Skill: none
-- [ ] Add: §基线建立策略 —— 首次扫描必然有发现 → 分类工作流（Critical/High/Medium/Low + 真实漏洞 vs 误报 vs 已接受风险）→ 基线落盘（对齐 compliance-baseline.md §BASELINE 机器可读块范式）→ 单向收紧（actual > baseline => CI red）。须裁决基线载体（独立文件 vs 复用 compliance-baseline.md 新增 §F 块）。
+- [x] Add: §基线建立策略 —— 首次扫描必然有发现 → 分类工作流（Critical/High/Medium/Low + 真实漏洞 vs 误报 vs 已接受风险）→ 基线落盘（对齐 compliance-baseline.md §BASELINE 机器可读块范式）→ 单向收紧（actual > baseline => CI red）。须裁决基线载体（独立文件 vs 复用 compliance-baseline.md 新增 §F 块）。
       - Skill: none
-- [ ] Add: §实施步骤 —— Dependency-Check Maven 插件配置（aggregate profile）+ FindSecBugs Maven 插件配置 + 首次扫描执行 + 发现分类 + 基线落盘 + CI job 落地
+- [x] Add: §实施步骤 —— Dependency-Check Maven 插件配置（aggregate profile）+ FindSecBugs Maven 插件配置 + 首次扫描执行 + 发现分类 + 基线落盘 + CI job 落地
       - Skill: none
-- [ ] Add: §验收判据 —— CVE 扫描 + 静态安全规则扫描均接入 CI + 基线落盘 + 单向收紧门控成立（actual > baseline => CI red）+ 不阻塞 per-commit 构建（nightly/weekly 调度）+ 与现有 5 CI job 不冲突
+- [x] Add: §验收判据 —— CVE 扫描 + 静态安全规则扫描均接入 CI + 基线落盘 + 单向收紧门控成立（actual > baseline => CI red）+ 不阻塞 per-commit 构建（nightly/weekly 调度）+ 与现有 5 CI job 不冲突
       - Skill: none
-- [ ] Add: §CI 门控设计 —— nightly/weekly job 设计 + 基线单向收紧门控 + 与 `compliance.yml` 集成方式（独立 job vs 复用）+ 发现分类工作流的自动化程度
+- [x] Add: §CI 门控设计 —— nightly/weekly job 设计 + 基线单向收紧门控 + 与 `compliance.yml` 集成方式（独立 job vs 复用）+ 发现分类工作流的自动化程度
       - Skill: none
-- [ ] Add: §与 MA6 的正交边界 —— 显式声明 Q2（依赖链 CVE + 静态代码安全）与 MA6（运行时 RBAC 授权）正交互补不重复
+- [x] Add: §与 MA6 的正交边界 —— 显式声明 Q2（依赖链 CVE + 静态代码安全）与 MA6（运行时 RBAC 授权）正交互补不重复
       - Skill: none
 
 Exit Criteria:
 
 > 本计划纯文档，零代码/ORM/CI 变更。完整仓库 `typecheck`/`build`/`test` 不适用（按 plan authoring guide，无代码更改的计划删除验证命令门控）。
 
-- [ ] `security-scanning.md` 落盘，含上述 6 节 + CVE 调度裁决 + 基线建立策略 + MA6 正交边界，两个 Decision 记录候选+替代+残留风险三要素
-- [ ] §现状评估每条证据标注可复现核验命令 + 核验日期
+- [x] `security-scanning.md` 落盘，含上述 6 节 + CVE 调度裁决 + 基线建立策略 + MA6 正交边界，两个 Decision 记录候选+替代+残留风险三要素
+- [x] §现状评估每条证据标注可复现核验命令 + 核验日期
 
 ### Phase 2 - 独立子代理设计文档审查循环（≥2 轮至收敛）
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/quality-engineering/security-scanning.md`（`## Review Record` 节）
 Skill: none
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 1 草稿落盘
 
-- [ ] Proof: 第 1 轮审查——**规范合规审查**，由独立子代理（新会话）执行。审查项：6 节结构完整性 / 与项目约定一致性 / 反模式检查（无双真相源、是否误把 MA6 RBAC 当安全扫描覆盖、单向收紧范式是否对齐 compliance-baseline）/ owner doc 引用正确性（compliance-baseline.md 范式 / roles-and-permissions.md MA6 边界）/ 5 CI job 清单准确性。输出 BLOCKER/MAJOR/MINOR。
+- [x] Proof: 第 1 轮审查——**规范合规审查**，由独立子代理（新会话）执行。审查项：6 节结构完整性 / 与项目约定一致性 / 反模式检查（无双真相源、是否误把 MA6 RBAC 当安全扫描覆盖、单向收紧范式是否对齐 compliance-baseline）/ owner doc 引用正确性（compliance-baseline.md 范式 / roles-and-permissions.md MA6 边界）/ 5 CI job 清单准确性。输出 BLOCKER/MAJOR/MINOR。
       - Skill: none
-- [ ] Proof: 第 2 轮审查——**覆盖面与可执行性审查**，由**另一个**独立子代理（不同 task id，新会话）执行。审查项：CVE 工具选型替代是否充分评估 / 静态规则工具选型是否充分 / nightly/per-commit/weekly 三调度路径是否可执行且充分评估限速风险 / 基线建立策略（首次发现分类工作流）是否可落地 / 单向收紧门控是否成立 / 与现有 5 CI job 是否冲突 / NVD 数据缓存策略。输出 BLOCKER/MAJOR/MINOR。
+- [x] Proof: 第 2 轮审查——**覆盖面与可执行性审查**，由**另一个**独立子代理（不同 task id，新会话）执行。审查项：CVE 工具选型替代是否充分评估 / 静态规则工具选型是否充分 / nightly/per-commit/weekly 三调度路径是否可执行且充分评估限速风险 / 基线建立策略（首次发现分类工作流）是否可落地 / 单向收紧门控是否成立 / 与现有 5 CI job 是否冲突 / NVD 数据缓存策略。输出 BLOCKER/MAJOR/MINOR。
       - Skill: none
-- [ ] Add: 作者据审查意见修订文档并重审，直至两轮均无 BLOCKER/MAJOR；`## Review Record` 节持久化两轮审查者 task id + 轮次 + 结论 + 修改摘要
+- [x] Add: 作者据审查意见修订文档并重审，直至两轮均无 BLOCKER/MAJOR；`## Review Record` 节持久化两轮审查者 task id + 轮次 + 结论 + 修改摘要
       - Skill: none
 
 Exit Criteria:
 
-- [ ] §Review Record 记录 ≥2 轮审查，两轮由不同子代理会话执行，无残留 BLOCKER/MAJOR
-- [ ] CVE 调度裁决 + 基线建立策略经审查后可执行（或据审查修订后可执行）
+- [x] §Review Record 记录 ≥2 轮审查，两轮由不同子代理会话执行，无残留 BLOCKER/MAJOR
+- [x] CVE 调度裁决 + 基线建立策略经审查后可执行（或据审查修订后可执行）
 
 ## Draft Review Record
 
@@ -130,15 +130,15 @@ Exit Criteria:
 
 > 本计划无代码/ORM/view/CI 变更（纯设计文档）。按 plan authoring guide §Closure Gates："对于无代码更改的计划（仅文档），删除验证命令门控并说明原因"——故不设 `mvn typecheck/build/test` 门控，原因：零 Java/ORM/CI 变更，全量构建无回归面。
 
-- [ ] 范围内行为完成：`security-scanning.md` 6 节 + CVE 调度裁决 + 基线建立策略 + MA6 正交边界落盘且 Review Record 收敛
-- [ ] 相关文档对齐：文档引用 Q0 README（无双真相源）；与 roadmap §MQ Q2 + compliance-baseline.md 范式一致
-- [ ] 无验证命令门控（纯文档计划，原因如上）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查（本计划本身）已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
-- [ ] `docs/logs/{year}/{month}-{day}.md` 追加本计划日志条目（计划级结束步骤）
+- [x] 范围内行为完成：`security-scanning.md` 6 节 + CVE 调度裁决 + 基线建立策略 + MA6 正交边界落盘且 Review Record 收敛
+- [x] 相关文档对齐：文档引用 Q0 README（无双真相源）；与 roadmap §MQ Q2 + compliance-baseline.md 范式一致
+- [x] 无验证命令门控（纯文档计划，原因如上）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查（本计划本身）已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+- [x] `docs/logs/{year}/{month}-{day}.md` 追加本计划日志条目（计划级结束步骤）
 
 ## Deferred But Adjudicated
 
@@ -156,12 +156,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: （计划完成时填写）
+Status Note: 计划完成。Phase 1 设计文档草稿（`security-scanning.md`，513 行，MQ 文档先行 6 节 + plan 要求的额外 Decision 节）+ Phase 2 独立子代理审查循环（2 轮：R1 规范合规 accept 0/0/3 + R2 覆盖面/可执行性 needs-revision 0/2/7，2 MAJOR + 10 MINOR 全部修订，无残留 BLOCKER/MAJOR）均完成。纯文档计划，零代码/ORM/CI 变更，无 mvn 门控（plan authoring guide 允许）。roadmap §MQ Q2 owner doc 注记已更新（Phase 1 done）。Q2 Phase 2 实现 plan 为 successor（触发条件已满足）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: （独立结束审计子代理，新会话 fresh cold context）
-- Evidence: （完成时填写）
+- Auditor / Agent: 独立结束审计子代理 `ses_042077b88ffe3G5HlXeugFBHnM`（新会话 fresh cold context）。
+- Evidence: 8 项判据核验——(1) 全部 `[ ]`→`[x]` 勾选（零残留）PASS；(2) `security-scanning.md` 落盘且 substantive（6 必需节 + §4/§5/§9 额外 Decision）PASS；(3) 6 个 Decision（§3.1/§3.2/§4.2/§5.2/§5.4/§8.3）均含候选+替代+残留风险三要素 PASS；(4) Review Record 2 轮不同 task id（`ses_0420d11e`/`ses_0420ce45`）+ R2 2 MAJOR 已修订（§5.4 基线格式裁决 + §6.1/§6.2 插件位置裁决）+ 无残留 BLOCKER/MAJOR PASS；(5) `git status` 仅 plan `.md` + `security-scanning.md` + log，零 `.java`/`*.orm.xml`/`.github/workflows/*.yml`/`pom.xml` 变更（Non-Goal 合规）PASS；(6) §1 引用（非重推导）Q0 README + roadmap PASS；(7) Plan Status=completed + Closure Gates 全勾选 PASS；(8) 纯文档无 mvn 门控（plan line 131 明示）PASS。审计初轮发现 2 项书挡缺陷（B1 日志条目缺失 / B2 Closure section 占位符），均已修订消除（日志已追加 `docs/logs/2026/08-01.md`，Closure section 已填本证据）。
 
 Follow-up:
 
