@@ -2,7 +2,7 @@
 
 > 来源：VERIFY 验证 `docs/plans/2026-08-01-1158-3-mq-q4-fault-injection-design-doc.md`（纯文档，零代码）时发现
 > 关联：`docs/plans/2026-07-30-0841-2` R1.28 P1-MA2-091（引入 UK 兜底 + flush 翻译友好错误码的本测试）
-> 状态：**open / 需独立计划修复**（非 Q4 引入，不阻塞 Q4 交付——Q4 为纯设计文档；HR 模块自 `2c4cb8b95` R6.7 起未变，Q1 全量验证同会话刚绿）
+> 状态：**fixed / resolved（2026-08-01）**——audit-remediation plan-2026-08-01-1357 Q4 VERIFY 阶段落地修复（放宽断言至任一友好码，见 §修复/§测试）。非 Q4 引入；原 open 记录：HR 模块自 `2c4cb8b95` R6.7 起未变，Q1 全量验证同会话刚绿
 
 ## 问题
 
@@ -30,7 +30,7 @@
 - 测试 `TestErpHrShiftScheduling:150` 的并发断言**只接受路径 2 的错误码**（`ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE`），未断言路径 1。当线程调度为顺序（线程 1 先提交，线程 2 进前置检查）时，失败方抛路径 1 的 `ERR_SHIFT_DUPLICATE_ASSIGNMENT`，断言失败。
 - 测试注释（line 146「若有线程抛错，应为友好错误码（非 ERR_ORM_DATA_EXCEPTION）」）的真实意图是验证错误被翻译为友好码，而非限定具体哪一条；`assertEquals` 单码过于狭窄。
 
-## 修复（待落地，需独立计划）
+## 修复（已落地 2026-08-01，audit-remediation plan-2026-08-01-1357 Q4 VERIFY 阶段）
 
 - 方向：放宽 `TestErpHrShiftScheduling:146-154` 的断言——任一友好错误码（`ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE` 或 `ERR_SHIFT_DUPLICATE_ASSIGNMENT`）均视为通过；两者都正确阻止重复且都是翻译后的友好码（非原始 `ERR_ORM_DATA_EXCEPTION`）。数据完整性断言（line 145 仅 1 条 active）是真正的不变量，已始终成立。
 - 备选：若要确定性验证 UK 碰撞路径（路径 2），须在两条路径之间插入同步栅栏强制真并发——复杂度高、本身又引入测试脆弱性，不推荐。
@@ -38,8 +38,9 @@
 
 ## 测试
 
-- 暂无新增自动化覆盖（修复未落地）。
-- 待落地后：连续重跑 `mvn test -pl module-hr/erp-hr-service -Dtest=TestErpHrShiftScheduling` 多次（如 10 次）确认零红，验证时序鲁棒性。
+- 落地验证（2026-08-01）：`TestErpHrShiftScheduling:146-155` 断言由单码 `assertEquals(ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE)` 改为 `assertTrue(ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE || ERR_SHIFT_DUPLICATE_ASSIGNMENT)`，接受两条友好码路径任一。
+- `mvn test -pl module-hr/erp-hr-service -am` → **127 tests / 0 failures / 0 errors**（含该并发用例 14/14 绿，BUILD SUCCESS）。
+- 6 过账域全量复核 `mvn test -pl module-{finance,assets,hr,maintenance,projects,quality}/erp-*-service -am` → **57 reactor 模块全 SUCCESS / BUILD SUCCESS**。
 
 ## 受影响的工件
 
