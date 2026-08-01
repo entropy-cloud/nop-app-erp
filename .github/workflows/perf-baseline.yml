@@ -1,0 +1,215 @@
+name: Performance Baseline (nightly)
+
+# MQ Q5 — Performance baseline nightly measurement + non-blocking regression trend.
+# 设计契约: docs/architecture/quality-engineering/performance-baseline.md §6 (Decision C-1: nightly 非阻塞测量 + 趋势记录)。
+#
+# 复现性协议 (设计文档 §4): K=2 untimed warmup + N=10 timed 测量, 方差比 = (max-min)/median。
+# 首期形态 (设计文档 §6.2 路径 C 首期): 非阻塞 nightly 测量 + 趋势记录, 不阻断合并。
+# 晋升阻塞门控 (successor): ≥30 nightly + runner 同构确认 + 团队同意 (设计文档 §6.2)。
+#
+# 调度裁决 (plan 2026-08-02-1121-2 Phase 6): cron `0 5 * * *` (05:00 UTC)。
+# 设计文档 §6.3 提议 `0 2 * * *`, 但该槽位被同批 Q2 security.yml 预定 (跨计划协调点)。
+# 既有 nightly: security 02:00 / clock-rollover 03:00 / mutation 04:00; 05:00 零重叠。
+# perf 测量长耗时 (单次预估 >10 分钟, 4 路径 × 多轮), 低峰 05:00 避免与既有 nightly 争抢 runner。
+#
+# 隔离机制 (plan Phase 1): perf 测试经 @Tag("perf") + 各 erp-*-service/pom.xml
+# <excludedGroups>perf</excludedGroups> 默认不进 per-commit maven.yml; nightly 用 -Pperf profile 翻转
+# 配置 (combine.self=override 清空 excludedGroups + 设 groups=perf)。
+# 注: 设计文档 §5.1 提示「-Dgroups=perf 或 -DexcludedGroups= 覆盖」经实测 surefire 3.x 用户属性不覆盖
+# pom 硬编码 <excludedGroups>, 须 profile 翻转 (见 erp-fin-service/erp-inv-service pom.xml perf profile)。
+#
+# 基线更新纪律 (设计文档 §6.5): nightly 仅记录 + 对比, 不自动覆盖 LATEST 基线。
+# 基线刷新须显式 commit 新 baseline-{date}.json + 更新 LATEST 指针 (人工/独立计划触发)。
+
+on:
+  schedule:
+    # nightly 05:00 UTC (跨计划协调裁决, 见上方注释)
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+env:
+  CI: true
+
+jobs:
+  perf-baseline:
+    name: 4-path perf measurement + non-blocking regression trend
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      # Step 1: 安装全部 156 模块到本地 .m2, 使 service 模块依赖可解析 + 编译产物就绪。
+      - name: Install all modules (compile + deps to .m2)
+        run: mvn -B install -DskipTests
+
+      # Step 2: 跑 4 路径 perf 测量 (K=2 warmup + N=10 timed per path)。
+      # -Pperf 翻转 fin-service + inv-service 的 surefire 配置: 清空 excludedGroups + 设 groups=perf。
+      # 4 测试类分别运行 (per-module -pl), 避免 cross-module surefire 上下文串扰。
+      # 测试 always() 继续——perf 测量即使某路径超时/失败, 仍捕获已成功路径的趋势数据。
+      - name: Run path 1 voucher-posting perf
+        id: path1
+        continue-on-error: true
+        run: |
+          mvn -B -Pperf test -pl module-finance/erp-fin-service \
+            -Dtest=TestErpFinVoucherPostingPerf 2>&1 | tee /tmp/path1.log
+      - name: Run path 2 period-close perf
+        id: path2
+        continue-on-error: true
+        run: |
+          mvn -B -Pperf test -pl module-finance/erp-fin-service \
+            -Dtest=TestErpFinPeriodClosePerf 2>&1 | tee /tmp/path2.log
+      - name: Run path 3 inv-reclose perf
+        id: path3
+        continue-on-error: true
+        run: |
+          mvn -B -Pperf test -pl module-inventory/erp-inv-service \
+            -Dtest=TestErpInvCostingReclosePerf 2>&1 | tee /tmp/path3.log
+      - name: Run path 4 report-render perf
+        id: path4
+        continue-on-error: true
+        run: |
+          mvn -B -Pperf test -pl module-finance/erp-fin-service \
+            -Dtest=TestErpFinReportRenderPerf 2>&1 | tee /tmp/path4.log
+
+      # Step 3: 解析 4 路径 [PERF] 输出行 + 生成 nightly-{date}.json + 对比 LATEST 计算退化比 + 非阻塞告警。
+      # 设计文档 §6.3 + §6.5: nightly 仅记录 + 对比, 不自动覆盖 LATEST; 退化 > 20% 开 issue (仍非阻塞)。
+      - name: Get current date
+        id: date
+        run: echo "today=$(date -u +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+      - name: Build nightly report + compare to LATEST (non-blocking)
+        id: report
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, re, sys
+
+          today = "$(date -u +'%Y-%m-%d')"
+          repo = pathlib.Path('.')
+          latest_path = repo / 'docs/architecture/quality-engineering/perf-baselines/LATEST.json'
+          baseline_dir = repo / 'docs/architecture/quality-engineering/perf-baselines'
+
+          # 解析 4 路径 [PERF] 输出行 (各模块 surefire TEST-*.xml 的 system-out 段, 或 tee 日志)。
+          perf_re = re.compile(r'\[PERF\]\s+(.*)$')
+          measurements = []
+          for log in ['/tmp/path1.log', '/tmp/path2.log', '/tmp/path3.log', '/tmp/path4.log']:
+              p = pathlib.Path(log)
+              if not p.exists():
+                  continue
+              for line in p.read_text(encoding='utf-8', errors='replace').splitlines():
+                  m = perf_re.search(line)
+                  if m:
+                      # 解析 key=val 对
+                      parts = m.group(1).split()
+                      entry = {}
+                      for part in parts:
+                          if '=' in part:
+                              k, v = part.split('=', 1)
+                              entry[k] = v
+                      if entry:
+                          measurements.append(entry)
+
+          # 加载 LATEST 基线
+          latest = None
+          if latest_path.exists():
+              try:
+                  latest_meta = json.loads(latest_path.read_text(encoding='utf-8'))
+                  baseline_file = baseline_dir / latest_meta.get('latestBaselineFile', '')
+                  if baseline_file.exists():
+                      latest = json.loads(baseline_file.read_text(encoding='utf-8'))
+              except Exception as e:
+                  print(f'WARN: load LATEST baseline failed: {e}')
+
+          # 构造 nightly report
+          nightly = {
+              'schemaVersion': 1,
+              'capturedAt': today,
+              'capturedBy': 'nightly perf-baseline.yml',
+              'measurements': measurements,
+              'regressions': [],
+          }
+
+          # 对比 LATEST 计算每路径退化比 (median 基准)
+          if latest:
+              paths_latest = latest.get('paths', {})
+              for m in measurements:
+                  path_key = m.get('path', '')
+                  # 匹配 LATEST 路径段 (e.g. "1-voucher-posting" 对应 path=1 ...)
+                  for lk, lv in paths_latest.items():
+                      if lk.startswith(path_key + '-'):
+                          try:
+                              nightly_median = float(m.get('medianMs', '0'))
+                              latest_median = float(lv.get('medianMillis', '0'))
+                              if latest_median > 0:
+                                  ratio = (nightly_median - latest_median) / latest_median * 100.0
+                                  m['regressionRatioPercent'] = ratio
+                                  if ratio > 20.0:
+                                      nightly['regressions'].append({
+                                          'path': lk,
+                                          'latestMedianMs': latest_median,
+                                          'nightlyMedianMs': nightly_median,
+                                          'regressionRatioPercent': ratio,
+                                      })
+                          except (ValueError, TypeError):
+                              pass
+                          break
+
+          # 写入 nightly-{date}.json
+          nightly_file = baseline_dir / f'nightly-{today}.json'
+          nightly_file.write_text(json.dumps(nightly, indent=2, ensure_ascii=False), encoding='utf-8')
+          print(f'Wrote {nightly_file}')
+
+          # 摘要 + 非阻塞告警
+          print('===== perf nightly summary =====')
+          print(f'measurements captured: {len(measurements)}')
+          print(f'regressions (>20% vs LATEST median): {len(nightly["regressions"])}')
+          for r in nightly['regressions']:
+              print(f'  REGRESSION {r["path"]}: {r["latestMedianMs"]:.3f}ms -> {r["nightlyMedianMs"]:.3f}ms (+{r["regressionRatioPercent"]:.1f}%)')
+
+          # 输出 summary 给后续 step 用 (开 issue 时引用)
+          if nightly['regressions']:
+              summary_lines = [f'- {r["path"]}: {r["latestMedianMs"]:.3f}ms -> {r["nightlyMedianMs"]:.3f}ms (+{r["regressionRatioPercent"]:.1f}%)' for r in nightly['regressions']]
+              summary = '\\n'.join(summary_lines)
+              print(f'::set-output name=regression_summary::{summary}')
+          else:
+              print('OK: no regression > 20% vs LATEST median. Non-blocking trend recorded.')
+          PY
+
+      # Step 4: 退化 > 20% 时开 issue (非阻塞, 不阻断合并) — 设计文档 §6.2 路径 B 晋升条件之一。
+      # 仅在累积 ≥ N=14 nightly 后才开 issue (设计文档 §6.2; 首期 cold-start 仅记录趋势, 避免 noise)。
+      - name: Open regression issue (if > 20% regression AND ≥14 nightly samples)
+        if: steps.report.outputs.regression_summary != ''
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          nightly_count=$(ls docs/architecture/quality-engineering/perf-baselines/nightly-*.json 2>/dev/null | wc -l)
+          if [ "$nightly_count" -lt 14 ]; then
+            echo "Skipping issue creation: only $nightly_count < 14 nightly samples (cold-start, design doc §6.2)"
+            exit 0
+          fi
+          gh issue create \
+            --title "Performance regression detected (nightly ${{ steps.date.outputs.today }})" \
+            --body "Nightly perf-baseline.yml detected regression > 20% vs LATEST median:
+
+          ${{ steps.report.outputs.regression_summary }}
+
+          See: docs/architecture/quality-engineering/perf-baselines/nightly-${{ steps.date.outputs.today }}.json
+
+          Triage: investigate whether the regression is trend (multiple commits accumulating) or single-mutation spike." \
+            --label "perf-regression" || echo "gh issue create failed (label may not exist); regression already logged in nightly JSON"
+
+      - name: Upload nightly perf reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: perf-nightly-${{ steps.date.outputs.today }}
+          path: |
+            docs/architecture/quality-engineering/perf-baselines/nightly-*.json
+            module-finance/erp-fin-service/target/surefire-reports/TEST-app.erp.fin.service.perf.*.xml
+            module-inventory/erp-inv-service/target/surefire-reports/TEST-app.erp.inv.service.perf.*.xml
+          retention-days: 60
+          if-no-files-found: ignore

@@ -142,6 +142,17 @@
 
     <build>
         <plugins>
+            <!--
+                perf 测试隔离（MQ Q5，plan 2026-08-02-1121-2 Phase 1 / 设计文档 §5.1）。
+                对齐 module-finance/erp-fin-service + 既有 @Tag("full-app") erp-*-web 先例。
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludedGroups>perf</excludedGroups>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
@@ -149,6 +160,29 @@
         </plugins>
     </build>
 
+    <!--
+        perf profile (MQ Q5，plan 2026-08-02-1121-2 Phase 1 / 设计文档 §5.1)：
+        默认 surefire <excludedGroups>perf</excludedGroups> 使 @Tag("perf") 测试不进 per-commit mvn test。
+        -Pperf 激活：清空 excludedGroups + 设 groups=perf，使 perf 测试唯一被执行。
+        详见 module-finance/erp-fin-service/pom.xml perf profile 说明。
+        激活命令：mvn -Pperf -pl module-inventory/erp-inv-service test。
+    -->
+    <profiles>
+        <profile>
+            <id>perf</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludedGroups combine.self="override"/>
+                            <groups>perf</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     <!--
         mutation profile (MQ Q1)：per-module 接入（候选 P1，设计文档 §3.4 R4 预设退路）。
         R4 复核结论：app-erp 根 pom 仅为 reactor 聚合器——module-inventory/pom.xml 的 <parent>
@@ -158,7 +192,6 @@
         激活：mvn -Pmutation -pl module-inventory/erp-inv-service -am test-compile
               org.pitest:pitest-maven:mutationCoverage
     -->
-    <profiles>
         <profile>
             <id>mutation</id>
             <build>
