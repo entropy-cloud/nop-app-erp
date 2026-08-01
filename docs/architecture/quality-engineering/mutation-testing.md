@@ -26,6 +26,8 @@ ERP 全仓无任何变异测试工具接入。1903 个测试的 mutation score�
 
 ### 1.2 测试/mutation 比历史快照（MA5 审计，非实时）
 
+> **⚠️ 已被 Phase 2 实测值取代（2026-08-01）**：下表 mutation 数为 MA5 pitest **估算值**，严重低估。Phase 2 首跑 pitest 实测：finance generated **4826**（估算 137 的 35 倍）/ mfg **~2580**（估算 74 的 35 倍）/ inv **1807**（首次基线）。实测 mutation score：finance **61%** / mfg **60%** / inv **59%**。权威基线见 `docs/architecture/quality-engineering/mutation-baseline.md`。本表保留仅作 MA5 历史快照引用（不删除以维持审计可追溯），**不再作为决策输入**。
+
 MA5 测试审计（`docs/audits/2026-07-29-1430-arm-ma5-*-test-coverage.md`，A5.1-A5.4 覆盖 finance/mfg/hr/assets 四 S 级域）记录了测试/mutation 比的历史估算。**重要诚实标注**：mutation 数来自 pitest **估算值**（未实际运行），文件数为 MA5 审计实测值。比值为快照、非实时，仅作为目标域选择与首跑预期的参考输入。**本表纯引用 MA5 已核验值，不重测、不引入第二组分子**（避免双真相源）。
 
 | 域 | 测试文件数（MA5 实测） | mutation 数（pitest 估算） | 测试/mutation 比 | 信号 |
