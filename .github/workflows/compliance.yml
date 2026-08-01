@@ -255,3 +255,52 @@ jobs:
               sys.exit(1)
           print(f'OK: {len(covered)} domains covered. Gate PASSED.')
           PY
+
+  property-test-coverage:
+    name: MQ Q3 property-test coverage gate (2 domains)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      # C-3 adjudication: introduce (plan 2026-08-02-1400-1 Phase 4 / design doc §8.3-§8.4 C-3).
+      # Domain-coverage grep gate mirroring the Q4 fault-injection-coverage paradigm above:
+      # resilient to class renames (greps by domain + @Property annotation, not hardcoded class names).
+      # Gate direction: one-way tightening — covered domains must not drop below baseline (2).
+      # Q3 Phase 2 baseline = finance + inventory (P1 debit-credit / P2 cost-layer / P3 budget-commitment).
+      # Aligns with F8/F15/Q4 architecture: checker=pure reporter, gate logic in CI.
+      - name: Enforce 2-domain property-test coverage
+        run: |
+          python3 - <<'PY'
+          import glob, pathlib, sys
+
+          DOMAINS = ['finance', 'inventory']
+          BASELINE = len(DOMAINS)  # 2 — one-way tightening: actual must not drop below
+          # jqwik @Property annotation is the canonical property-test marker (design doc §3.1.1).
+          MARKER = '@Property'
+
+          covered = []
+          uncovered = []
+          for domain in DOMAINS:
+              test_dirs = glob.glob(f'module-{domain}/erp-*-service/src/test/')
+              found = False
+              for test_dir in test_dirs:
+                  for p in pathlib.Path(test_dir).rglob('*.java'):
+                      text = p.read_text(encoding='utf-8', errors='replace')
+                      if MARKER in text:
+                          found = True
+                          break
+                  if found:
+                      break
+              (covered if found else uncovered).append(domain)
+
+          print('===== MQ Q3 property-test coverage gate =====')
+          print(f'covered domains ({len(covered)}/{BASELINE}): {covered}')
+          if uncovered:
+              print(f'UNCOVERED domains: {uncovered}')
+
+          if len(covered) < BASELINE:
+              print(f'FAIL: only {len(covered)} domains have @Property property tests; baseline is {BASELINE}.')
+              print('To lower the baseline, open an independent plan and adjudicate the domain removal.')
+              sys.exit(1)
+          print(f'OK: {len(covered)} domains covered. Gate PASSED.')
+          PY

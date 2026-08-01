@@ -119,6 +119,16 @@
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
+            属性测试（MQ Q3，plan 2026-08-02-1400-1 / 设计文档 property-based-testing.md §3.1.1 §6.1）。
+            test scope：P2 成本层累加属性 test 需要。同 module-finance/erp-fin-service jqwik 注记。
+        -->
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+            <version>1.10.1</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

@@ -117,6 +117,20 @@
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
+            属性测试（MQ Q3，plan 2026-08-02-1400-1 / 设计文档 property-based-testing.md §3.1.1 §6.1）。
+            test scope：jqwik 经 JUnit Platform ServiceLoader 注册 jqwik-engine，被 surefire 自动拾取，
+            纳入 maven.yml 的 mvn test per-commit 回归（设计文档 §8 C-1 主路径）。不污染生产 classpath。
+            版本 1.10.1：实施期裁决（设计文档 §3.1.1 原 1.8.x 指南基于 JUnit Platform 1.x；本项目测试栈
+            经 effective-pom 实测为 JUnit Jupiter/Platform 6.0.3，须最新 jqwik 以兼容 JUnit 6 平台 API——
+            见设计文档 Review Record 实施期注记）。Phase 1 首跑绿后种子经 @Property(seed=...) 固化（§8 R7）。
+        -->
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+            <version>1.10.1</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
