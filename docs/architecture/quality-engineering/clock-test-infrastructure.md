@@ -436,3 +436,13 @@ per-fork 注册载体（M2 时序约束）
 **收敛结论**：3 轮审查后无残留 BLOCKER / 无残留 MAJOR（R1/R2 的 8 项 finding 经 R3 逐条 live 复核 resolved；R3 的 1 NEW MAJOR + 1 MINOR 已修订）。文档可作为 Phase 2 实现 plan 的实施契约。MINOR 不阻塞收敛。
 
 <!-- 审查者多样性已满足：R1（ses_04475edf...）/ R2（ses_04475ab7...）/ R3（ses_0446e86d...）三会话 task id 不同，均独立 fresh cold context，未复用作者上下文。 -->
+
+### Phase 2 实施期回填（implementation-time revision）
+
+> Phase 2 实现（plan `2026-08-01-1357-1`）发现 §3.3 的「per-fork 一次性注册持久 + INSTALLED volatile 标志幂等」机制假设不成立，已修订实现（非静默偏离）。回填于此以维持「实现与设计文档一致」gate。
+
+- **发现**：平台 `NopJunitExtension.afterAll`（`../nop-entropy/nop-autotest/nop-autotest-junit/src/main/java/io/nop/autotest/junit/NopJunitExtension.java:64-66`）在每个测试类结束后执行 `CoreMetrics.registerClock(CoreMetrics.defaultClock())`，将全局静态时钟槽重置为系统真实时钟。此清理在每个 reused fork 内、每个测试类边界发生（非仅 fork 结束）。
+- **影响**：§3.3 / §4.1 step 1 假设「delegating clock 经 static {} 一次性注册即 per-fork 持久」被证伪——前一类的 afterAll 重置 s_clock 后，下一类的 `beforeAll` 若依赖 `INSTALLED` 标志幂等跳过则不再重新挂载 delegating clock（`INSTALLED=true` 但 `s_clock=defaultClock`），冻结失效。实测：finance 全模块跑（reuseForks）下 `TestErpFinEmployeeAdvanceCashRepayReversal` 跨类边界后产出系统 8 月而非冻结 7 月。
+- **修订**：`ThreadLocalFrozenClock.ensureRegistered()` 改为**每次调用均重新注册**（移除 `INSTALLED` 标志守卫）。安全依据：delegating clock 在 `REF_DATE` 未 set 时委托 `CoreMetrics.defaultClock()`（系统真实时钟），对非冻结测试无行为影响；`REF_DATE` 为静态 ThreadLocal，所有实例共享冻结值。各冻结扩展 `beforeAll` 调 `ensureRegistered()` 重新挂载后，`NopJunitExtension.afterAll` 的重置被下一类 beforeAll 覆盖。
+- **与 §3.4 裁决的关系**：路径 C 选型与范围不变（应用层 thread-local delegating clock，零平台改动）。仅「幂等机制」由 volatile 标志改为「无条件注册」（后者在效果上亦幂等——每次调用后 s_clock 必为 delegating clock）。设计文档 §1.1 已核验「平台无 `s_clock` 内省 API」，故无条件注册是无从内省时的最稳健选择。
+- **验证**：修订后 `mvn test` 全 reactor 1920 tests / 0 failures / 0 errors；finance 307 / hr 125 / assets 104 三域跨类边界均绿。
