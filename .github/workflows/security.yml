@@ -1,0 +1,194 @@
+name: Security Scanning (nightly)
+
+# MQ Q2 — Dependency-Check (CVE 依赖扫描) + SpotBugs/FindSecBugs (静态安全规则) nightly 门控。
+# 设计契约：docs/architecture/quality-engineering/security-scanning.md §8（裁决 C-1）+ §5.4（双语义基线）。
+# 门控范式对齐 compliance.yml F8 option (b) + mutation.yml：扫描工具 = pure reporter（failOnError=false，
+# 不判 pass/fail），gate 逻辑在 CI（python 解析 dependency-check-report.json + spotbugsXml.xml，
+# 与 docs/architecture/quality-engineering/security-baseline.md 的 BASELINE yaml 块对比）。
+# 双语义（§5.4）：
+#   cve_allowlist   -> set-membership（actual CVE 元组不在 allowlist ⇒ FAIL，防置换回归）
+#   spotbugs_counts -> per-type count（actual 某 type 计数 > baseline ⇒ FAIL，容忍行号漂移）
+# 调度：nightly `0 2 * * *`（与既有 nightly 不重叠：clock-rollover `0 3` / mutation `0 4`）。
+# CVE 扫描仅 nightly（NVD 限速，§4 裁决路径 A）；per-commit 不阻塞（maven.yml 不含 dependency-check）。
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+env:
+  CI: true
+
+jobs:
+  security:
+    name: Dependency-Check + SpotBugs/FindSecBugs baseline regression gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+      # NVD 数据库缓存（设计文档 §4.3 R2-MINOR-3）：cache-key 含日期触发增量更新 +
+      # restore-keys 前缀回退到最近缓存。NVD 数据库 ~1-2 GB，与 maven cache 合计 < 10 GB/repo。
+      - name: Get current date
+        id: date
+        run: echo "today=$(date +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+      - name: Cache NVD database
+        uses: actions/cache@v4
+        with:
+          path: target/nvd-data
+          key: dependency-check-nvd-${{ steps.date.outputs.today }}
+          restore-keys: |
+            dependency-check-nvd-
+      # Step 1: 安装全部 156 模块到本地 .m2，使 service 模块依赖可解析 + 编译产物就绪供 spotbugs 分析。
+      - name: Install all modules (compile + deps to .m2)
+        run: mvn -B install -DskipTests
+      # Step 2: Dependency-Check aggregate（reactor-root goal，§6.1）聚合 156 模块依赖树一次 NVD 查询。
+      # NVD_API_KEY 经 repo secret 注入（infra prereq，§4.3）。failOnError=false = pure reporter。
+      - name: Run Dependency-Check aggregate
+        env:
+          NVD_API_KEY: ${{ secrets.NVD_API_KEY }}
+        run: mvn -B -Psecurity dependency-check:aggregate
+      # Step 3: SpotBugs/FindSecBugs per-module（§6.2 裁决 per-module，对齐 Q1 pitest 先例）。
+      # 19 域 service 模块各声明 <profile id="security">；-pl 限定仅扫描 service 模块（业务代码所在）。
+      - name: Run SpotBugs/FindSecBugs on all service modules
+        run: |
+          mvn -B -Psecurity \
+            -pl module-master-data/erp-md-service,module-inventory/erp-inv-service,module-purchase/erp-pur-service,module-sales/erp-sal-service,module-finance/erp-fin-service,module-assets/erp-ast-service,module-projects/erp-prj-service,module-manufacturing/erp-mfg-service,module-quality/erp-qa-service,module-maintenance/erp-mnt-service,module-notify/erp-notify-service,module-crm/erp-crm-service,module-cs/erp-cs-service,module-hr/erp-hr-service,module-aps/erp-aps-service,module-logistics/erp-log-service,module-b2b/erp-b2b-service,module-contract/erp-ct-service,module-drp/erp-drp-service \
+            spotbugs:check
+      # Step 4: 门控——解析 dependency-check-report.json（CVE set-membership）+ spotbugsXml.xml
+      # （per-type count），与 security-baseline.md BASELINE yaml 块双语义对比（§5.4）。
+      # 任一回归 ⇒ exit 1（单向收紧）。对齐 F8 compliance.yml option (b) Python 内联范式。
+      - name: Enforce security baseline gate (CVE set-diff + SpotBugs per-type count)
+        run: |
+          python3 - <<'PY'
+          import re, sys, json, pathlib, glob, xml.etree.ElementTree as ET
+
+          repo = pathlib.Path('.')
+          baseline_text = (repo / 'docs/architecture/quality-engineering/security-baseline.md').read_text(encoding='utf-8', errors='replace')
+
+          # --- Parse baseline yaml block (cve_allowlist + spotbugs_counts, §5.4 schema) ---
+          m = re.search(r'```yaml\n(.*?)\n```', baseline_text, re.DOTALL)
+          if not m:
+              print('ERROR: cannot locate ```yaml baseline block in security-baseline.md')
+              sys.exit(2)
+          baseline_block = m.group(1)
+
+          cve_allowlist = set()
+          spotbugs_baseline = {}
+          section = None
+          entry_re = re.compile(r'^\s*-\s+(.+)$')
+          kv_re = re.compile(r'^\s*([A-Z_][A-Z0-9_]*)\s*:\s*(\d+)\s*$')
+          for line in baseline_block.splitlines():
+              s = line.rstrip()
+              if not s.strip() or s.lstrip().startswith('#'):
+                  continue
+              if re.match(r'^cve_allowlist\s*:', s):
+                  section = 'cve'; continue
+              if re.match(r'^spotbugs_counts\s*:', s):
+                  section = 'sb'; continue
+              if section == 'cve':
+                  mm = entry_re.match(s)
+                  if mm:
+                      cve_allowlist.add(mm.group(1).strip())
+              elif section == 'sb':
+                  mm = kv_re.match(s)
+                  if mm:
+                      spotbugs_baseline[mm.group(1)] = int(mm.group(2))
+
+          # --- Parse Dependency-Check JSON: extract (cveId, gav) tuples (§5.4 CVE set-membership) ---
+          dc_actual = set()
+          dc_report = repo / 'target/dependency-check-report/dependency-check-report.json'
+          if dc_report.exists():
+              try:
+                  data = json.loads(dc_report.read_text(encoding='utf-8', errors='replace'))
+                  for dep in data.get('dependencies', []):
+                      # Build a gav identifier: prefer Maven evidence, fall back to fileName.
+                      gav = dep.get('fileName', '') or dep.get('filePath', '')
+                      ev = dep.get('evidenceCollected', {}) or {}
+                      gid = aid = ver = None
+                      for key, label in (('vendorEvidence', 'groupId'), ('productEvidence', 'artifactId'), ('versionEvidence', 'version')):
+                          for e in ev.get(key, []) or []:
+                              if e.get('type') == label and e.get('value'):
+                                  if label == 'groupId': gid = e['value']
+                                  elif label == 'artifactId': aid = e['value']
+                                  else: ver = e['value']
+                      if gid and aid and ver:
+                          gav = f'{gid}:{aid}:{ver}'
+                      vulns = dep.get('vulnerabilities', []) or dep.get('vulnerableSoftware', []) or []
+                      for v in vulns:
+                          cve = v.get('id') or v.get('name') or v.get('vulnerabilityId') or ''
+                          cve = cve.strip()
+                          if cve.upper().startswith('CVE'):
+                              dc_actual.add(f'{cve} @ {gav}')
+                  print(f'Dependency-Check: parsed {len(dc_actual)} distinct (cveId, gav) tuples from report')
+              except Exception as e:
+                  print(f'WARN: dependency-check-report.json parse error: {e}; CVE gate skipped')
+          else:
+              print('WARN: dependency-check-report.json not found (NVD download failed/skipped?); CVE gate skipped')
+              print('       This is expected if NVD_API_KEY is unset or NVD rate-limited. SpotBugs gate still enforced.')
+
+          # CVE set-diff: any actual tuple NOT in allowlist => regression (防置换回归, §5.4)
+          cve_new = dc_actual - cve_allowlist
+
+          # --- Parse SpotBugs reports: aggregate per-BugPattern-type counts (§5.4 per-type count) ---
+          sb_actual = {}
+          sb_files = sorted(glob.glob('module-*/*-service/target/spotbugsXml.xml'))
+          for f in sb_files:
+              try:
+                  root = ET.parse(f).getroot()
+                  for b in root.iter('BugInstance'):
+                      t = b.get('type', '?')
+                      sb_actual[t] = sb_actual.get(t, 0) + 1
+              except Exception as e:
+                  print(f'WARN: parse {f}: {e}')
+          print(f'SpotBugs: parsed {len(sb_files)} module reports, {len(sb_actual)} distinct BugPattern types, {sum(sb_actual.values())} total findings')
+
+          # SpotBugs per-type count: actual > baseline => regression (unknown type = baseline 0)
+          sb_regressions = []
+          for t, cnt in sb_actual.items():
+              base = spotbugs_baseline.get(t, 0)
+              if cnt > base:
+                  sb_regressions.append((t, base, cnt))
+
+          # --- Verdict ---
+          print('===== security baseline gate result =====')
+          print(f'CVE (set-membership): actual={len(dc_actual)} | allowlist={len(cve_allowlist)} | new(not allowed)={len(cve_new)}')
+          print(f'SpotBugs (per-type count): actual_types={len(sb_actual)} | baseline_types={len(spotbugs_baseline)} | regressions={len(sb_regressions)}')
+
+          failed = False
+          if cve_new:
+              failed = True
+              print('REGRESSION (CVE finding not in cve_allowlist => FAIL):')
+              for c in sorted(cve_new)[:50]:
+                  print(f'  {c}')
+              if len(cve_new) > 50:
+                  print(f'  ... and {len(cve_new)-50} more')
+          if sb_regressions:
+              failed = True
+              print('REGRESSION (SpotBugs per-type count > baseline => FAIL):')
+              for t, b, a in sb_regressions:
+                  print(f'  {t}: baseline {b} -> actual {a}  (+{a-b})')
+
+          if failed:
+              print('')
+              print('To raise a baseline, open an independent plan and adjudicate each new finding')
+              print('(see docs/architecture/quality-engineering/security-baseline.md §单向收紧).')
+              sys.exit(1)
+          print('OK: no regression beyond baseline. Gate PASSED.')
+          PY
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-reports
+          path: |
+            target/dependency-check-report/**
+            module-*/*-service/target/spotbugsXml.xml
+            module-*/*-service/target/spotbugs.xml
+          retention-days: 30
+          if-no-files-found: ignore

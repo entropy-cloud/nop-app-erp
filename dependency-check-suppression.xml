@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    OWASP Dependency-Check 误报 suppression 文件（MQ Q2）。
+    实施契约：docs/architecture/quality-engineering/security-scanning.md §5.1 + §6.1 step 4。
+    作用：登记 B 类（误报）CVE 发现，使其在扫描阶段即被排除（不进入报告、不计入基线）。
+    每个 <suppress> 须注明理由（设计文档 §5.1：B 类处置 = suppression + 理由版本控制）。
+
+    当前状态：空（Dependency-Check 首跑受 NVD API key infra prereq 阻塞——设计文档 §4.3：
+    2024+ 无 key 限速严苛，156 模块 aggregate 首跑无 key 大概率超时。CI nightly 经
+    NVD_API_KEY secret 注入执行真实首跑 + 分类；首跑发现经四态分类后，B 类（误报）
+    追加到本文件并注明理由）。cve_allowlist 基线同步为空（设计文档 §5.4：Empty list on
+    first run before triage）。
+
+    suppression 语法（dependency-check）：
+      <suppress base="true|false">
+        <package regex="true">regex of GAV</package>
+        <cve>CVE-XXXX-YYYY</cve>
+        <cwe>CWE-NNN</cwe>
+      </suppress>
+-->
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+    <!-- B 类（误报）suppression 项在 Dependency-Check 首跑 + §5.1 分类后追加于此。 -->
+
+</suppressions>

@@ -151,4 +151,51 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            security profile (MQ Q2)：SpotBugs + FindSecBugs per-module 接入。
+            插件位置裁决（设计文档 §6.2 R2-MAJOR-2）：SpotBugs 分析每模块编译产物字节码，
+            与 Q1 pitest per-module instrumentation 同型——根 pom profile 继承失效
+            （根 pom app-erp 仅为 reactor 聚合器，子模块 <parent> 是 nop-entropy/app-erp-<domain>），
+            须 per-module 声明（对齐 Q1 pitest per-module 先例）。
+            激活：mvn -Psecurity -pl <this-module> spotbugs:check
+            effort=Max + threshold=Low + includeFilterFile（FindSecBugs 安全规则模式，§6.2 step 1）
+            + excludeFilterFile（排除 Nop 生成代码三类 _gen/api.beans/api.crud，D 类噪声）。
+            findsecbugs-plugin：作为 spotbugs 插件依赖注册 FindSecBugs 安全规则探测器。
+            failOnError=false：纯 reporter，gate 逻辑活在 CI（§5.3 单向收紧）。
+        -->
+        <profile>
+            <id>security</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <!-- 4.9.8.3：支持 Java 21-26 字节码（CI Java 21 / 本地 Java 26 均兼容） -->
+                        <version>4.9.8.3</version>
+                        <configuration>
+                            <effort>Max</effort>
+                            <threshold>Low</threshold>
+                            <!-- includeFilterFile：scope 报告到 FindSecBugs 安全规则模式（§6.2 step 1） -->
+                            <includeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-include.xml</includeFilterFile>
+                            <!-- excludeFilterFile：排除 Nop 生成代码三类（D 类噪声） -->
+                            <excludeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-exclude.xml</excludeFilterFile>
+                            <!-- 输出 XML 供 CI Python gate 解析（§5.4 spotbugs_counts per-type count） -->
+                            <xmlOutput>true</xmlOutput>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.h3xstream.findsecbugs</groupId>
+                                <artifactId>findsecbugs-plugin</artifactId>
+                                <!-- 1.13.0：兼容 SpotBugs 4.9.x；Java 21 字节码 Phase 2 首跑验证 -->
+                                <version>1.13.0</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
