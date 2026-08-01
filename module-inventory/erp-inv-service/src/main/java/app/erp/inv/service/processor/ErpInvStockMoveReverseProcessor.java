@@ -48,7 +48,7 @@ public class ErpInvStockMoveReverseProcessor {
         StockMoveRequest reverseReq = new StockMoveRequest();
         reverseReq.setMoveType(facade.inverseMoveType(original.getMoveType()));
         reverseReq.setOrgId(original.getOrgId());
-        reverseReq.setBusinessDate(CoreMetrics.today());
+        reverseReq.setBusinessDate(original.getBusinessDate() != null ? original.getBusinessDate() : CoreMetrics.today());
         reverseReq.setSourceWarehouseId(original.getDestWarehouseId());
         reverseReq.setSourceLocationId(original.getDestLocationId());
         reverseReq.setDestWarehouseId(original.getSourceWarehouseId());
