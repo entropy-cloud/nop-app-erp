@@ -4,8 +4,6 @@
     "partnerId": 1,
     "addressType": "BILLING",
     "addressType_label": "BILLING-账单地址",
-    "contactPerson": null,
-    "phone": null,
     "address": "冒烟测试-关系导航地址行",
     "isDefault": false,
     "delVersion": 0,
@@ -13,7 +11,9 @@
     "createdBy": "autotest-ref",
     "createTime": "@var:ErpMdPartnerAddress@updateTime",
     "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpMdPartnerAddress@updateTime"
+    "updateTime": "@var:ErpMdPartnerAddress@updateTime",
+    "contactPerson": null,
+    "phone": null
   },
   "status": 0
 }

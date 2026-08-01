@@ -1,0 +1,6 @@
+_chgType,ID,CODE,NAME,ORG_ID,POSITION,PHONE,EMAIL,PARTNER_ID,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,2001,@var:ErpMdEmployee@code,LIMIT-EMPLOYEE-1,,,,,,ACTIVE,@var:ErpMdEmployee@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,2002,@var:ErpMdEmployee@code_1,LIMIT-EMPLOYEE-2,,,,,,ACTIVE,@var:ErpMdEmployee@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,2003,@var:ErpMdEmployee@code_2,LIMIT-EMPLOYEE-3,,,,,,ACTIVE,@var:ErpMdEmployee@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,2004,@var:ErpMdEmployee@code_3,LIMIT-EMPLOYEE-4,,,,,,ACTIVE,@var:ErpMdEmployee@delVersion_4,0,autotest-ref,*,autotest-ref,*
+A,2005,@var:ErpMdEmployee@code_4,LIMIT-EMPLOYEE-5,,,,,,ACTIVE,@var:ErpMdEmployee@delVersion_4,0,autotest-ref,*,autotest-ref,*

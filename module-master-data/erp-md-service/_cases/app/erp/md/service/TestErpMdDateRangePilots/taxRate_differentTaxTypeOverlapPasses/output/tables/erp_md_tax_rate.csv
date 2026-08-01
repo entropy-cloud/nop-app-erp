@@ -1,0 +1,3 @@
+_chgType,ID,CODE,NAME,TAX_TYPE,RATE,IS_ZERO_RATED,IS_EXEMPT,VALID_FROM,VALID_TO,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpMdTaxRate@code,E2E-VAT-C3-5,VAT,13.00,false,false,2026-01-01,2026-12-31,ACTIVE,@var:ErpMdTaxRate@delVersion,0,autotest-ref,*,autotest-ref,*
+A,2,@var:ErpMdTaxRate@code_1,E2E-ST-C3-6,SALES_TAX,13.00,false,false,2026-01-01,2026-12-31,ACTIVE,@var:ErpMdTaxRate@delVersion,0,autotest-ref,*,autotest-ref,*

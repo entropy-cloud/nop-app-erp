@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,ORG_ID,POSITION,PHONE,EMAIL,PARTNER_ID,STATUS,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,201,@var:ErpMdEmployee@code,职员-ACROSS,,,,,,ACTIVE,@var:ErpMdEmployee@delVersion,0,autotest-ref,*,autotest-ref,*
