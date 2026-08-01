@@ -3,10 +3,11 @@ package app.erp.fin.service.entity;
 
 import app.erp.fin.biz.IErpFinBudgetScenarioBiz;
 import app.erp.fin.dao.entity.ErpFinBudgetScenario;
-import app.erp.fin.service.budget.ErpFinBudgetScenarioProcessor;
 import app.erp.fin.service.processor.ErpFinBudgetScenarioApproveProcessor;
 import app.erp.fin.service.processor.ErpFinBudgetScenarioCancelProcessor;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioCarryForwardProcessor;
 import app.erp.fin.service.processor.ErpFinBudgetScenarioRejectProcessor;
+import app.erp.fin.service.processor.ErpFinBudgetScenarioRollForwardProcessor;
 import app.erp.fin.service.processor.ErpFinBudgetScenarioSubmitForApprovalProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -18,15 +19,12 @@ import jakarta.inject.Inject;
 /**
  * 预算方案聚合根 Biz（Facade，{@code processor-extension-pattern.md} 两层结构）。
  * 状态机（DRAFT→SUBMITTED→APPROVED / →REJECTED / APPROVED→CANCELLED）与 BUDGET 凭证生成委托
- * {@link ErpFinBudgetScenarioProcessor}；{@code @BizMutation} 钉事务/会话边界。
+ * 对应 per-mutation Processor；{@code @BizMutation} 钉事务/会话边界。
  *
  * <p>语义见 {@code budget.md §ErpFinBudgetScenario}。
  */
 @BizModel("ErpFinBudgetScenario")
 public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScenario> implements IErpFinBudgetScenarioBiz {
-
-    @Inject
-    ErpFinBudgetScenarioProcessor budgetScenarioProcessor;
 
     @Inject
     ErpFinBudgetScenarioSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -39,6 +37,12 @@ public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScena
 
     @Inject
     ErpFinBudgetScenarioCancelProcessor cancelProcessor;
+
+    @Inject
+    ErpFinBudgetScenarioRollForwardProcessor rollForwardProcessor;
+
+    @Inject
+    ErpFinBudgetScenarioCarryForwardProcessor carryForwardProcessor;
 
     public ErpFinBudgetScenarioBizModel() {
         setEntityName(ErpFinBudgetScenario.class.getName());
@@ -74,7 +78,7 @@ public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScena
                                             @Name("newFiscalYear") Integer newFiscalYear,
                                             @Name("strategy") String strategy,
                                             IServiceContext context) {
-        return budgetScenarioProcessor.rollForward(id, newFiscalYear, strategy, context);
+        return rollForwardProcessor.rollForward(id, newFiscalYear, strategy, context);
     }
 
     @Override
@@ -83,6 +87,6 @@ public class ErpFinBudgetScenarioBizModel extends CrudBizModel<ErpFinBudgetScena
                                              @Name("targetScenarioId") Long targetScenarioId,
                                              @Name("rule") String rule,
                                              IServiceContext context) {
-        return budgetScenarioProcessor.carryForward(id, targetScenarioId, rule, context);
+        return carryForwardProcessor.carryForward(id, targetScenarioId, rule, context);
     }
 }

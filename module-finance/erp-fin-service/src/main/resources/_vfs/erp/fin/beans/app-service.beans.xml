@@ -274,6 +274,11 @@
           class="app.erp.fin.service.processor.ErpFinBudgetScenarioRejectProcessor"/>
     <bean id="app.erp.fin.service.processor.ErpFinBudgetScenarioCancelProcessor"
           class="app.erp.fin.service.processor.ErpFinBudgetScenarioCancelProcessor"/>
+    <!-- R6.9 BudgetScenario D-mutation per-mutation Processor beans：rollForward / carryForward（facade ErpFinBudgetScenarioProcessor 保留为 shared helper 持有者）。 -->
+    <bean id="app.erp.fin.service.processor.ErpFinBudgetScenarioRollForwardProcessor"
+          class="app.erp.fin.service.processor.ErpFinBudgetScenarioRollForwardProcessor"/>
+    <bean id="app.erp.fin.service.processor.ErpFinBudgetScenarioCarryForwardProcessor"
+          class="app.erp.fin.service.processor.ErpFinBudgetScenarioCarryForwardProcessor"/>
 
     <!-- per-mutation D-mutation Processor beans (R6.1)：每 D-mutation 独立 Processor，共享 protected helper 留在原 facade。
          类别 A（4 facade → 19 per-mutation）：AccountingPeriod 6 + BadDebt 2 + NotesPayable 4 + NotesReceivable 7。 -->

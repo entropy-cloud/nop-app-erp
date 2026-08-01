@@ -8,6 +8,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdSubject;
+import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.exceptions.NopException;
@@ -44,6 +45,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
     @Inject
     IErpFinNotesPayableBiz notesPayableBiz;
 
+    @EnableSnapshot(checkOutput = false)
     @Test
     public void testIssueCommercialAcceptanceNoCreditCheck() {
         // 商业承兑不占用授信额度，直接开出。
@@ -56,6 +58,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         assertEquals(ErpFinConstants.NOTES_PAY_ISSUED, note.getStatus());
     }
 
+    @EnableSnapshot(checkOutput = false)
     @Test
     public void testIssueBankAcceptanceOccupiesCredit() {
         Long facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-001", new BigDecimal("1000"), BigDecimal.ZERO); });
@@ -81,6 +84,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         assertEquals(ErpFinErrors.ERR_CREDIT_FACILITY_INSUFFICIENT.getErrorCode(), ex.getErrorCode());
     }
 
+    @EnableSnapshot(checkOutput = false)
     @Test
     public void testHonorReleasesCredit() {
         Long facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-003", new BigDecimal("1000"), BigDecimal.ZERO); });
@@ -94,6 +98,7 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
         assertEquals(0, BigDecimal.ZERO.compareTo(facility.getUsedAmount()), "兑付释放后已用归 0");
     }
 
+    @EnableSnapshot(checkOutput = false)
     @Test
     public void testWriteOffReleasesCredit() {
         Long facilityId = ormTemplate.runInSession(s -> { seedBase(); return seedCreditFacility("CF-004", new BigDecimal("1000"), BigDecimal.ZERO); });
@@ -118,7 +123,13 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
     // ---------- seed helpers ----------
 
     private void seedBase() {
-        seedOpenPeriod("2026-07", 2026, 7, java.time.LocalDate.of(2026, 7, 1), java.time.LocalDate.of(2026, 7, 31));
+        // 日期无关硬化（R6.9）：seed 当前运行月 OPEN 期间，使 issue() 过账 resolveOpenPeriod(voucherDate=today)
+        // 在任意运行月均能成功（原硬编码 "2026-07" 在月翻滚后无对应期间致过账失败）。
+        java.time.YearMonth now = java.time.YearMonth.now();
+        int year = now.getYear();
+        int month = now.getMonthValue();
+        String code = year + "-" + String.format("%02d", month);
+        seedOpenPeriod(code, year, month, now.atDay(1), now.atEndOfMonth());
         seedAcctSchema(1L);
         seedSubject("2202", "应付账款");
         seedSubject("2203", "应付票据");
