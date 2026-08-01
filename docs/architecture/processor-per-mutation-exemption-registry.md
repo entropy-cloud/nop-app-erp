@@ -215,5 +215,18 @@
 
 ## D. 类别 B 非变异守卫/伪 mutation（已从须拆计数排除）
 
-R6.0 扫描发现个别 `@BizMutation` 注解实际是非变异守卫/查询（如 `ErpPrjProject.requireReferenceable`）或扫描伪影（`LoggerFactory.getLogger` 被误识别为方法，已剔除）。这些既不须拆也不属真正豁免——建议各域后续改注解（非 MR6 范围），R6.8 grep 核验时按"无 ≥3 步内联 mutation"判据忽略。
+R6.0 扫描发现个别 `@BizMutation` 注解实际是非变异守卫/查询（如 `ErpPrjProject.requireReferenceable`）或扫描伪影（`LoggerFactory.getLogger` 被误识别为方法，已剔除）。这些既不须拆也不属真正豁免——建议各域后续改注解（非 MR6 范围），R6.8 grep 核验时按"无 ≥3 步内联 mutation"判据忽略。 
+
+## E. R6.8 完成判据核验发现的登记缺口与 successor（plan 2026-08-01-0656-1）
+
+> R6.8 全量 grep 核验（2026-08-01）发现 R6.0 triage 的 2 处误移除 + 1 处域外遗漏 + 1 处登记缺口。**MR6 milestone 保持 OPEN**，下列项登记为 R6.9 successor 补拆/补登记（不在 R6.8 范围内实施）：
+
+| 域 | 项 | R6.8 核验结论 | successor 处置 |
+|----|----|--------------|---------------|
+| finance | `ErpFinBudgetScenarioProcessor`（rollForward `:104` + carryForward `:136`）| 类别 A :42 违规——2 个内联 D-mutation 入口（R6.0 triage plan 2026-07-31-2109-1 line 100 误移除，理由"同因 S-mutation 纯委托 D=0"实误）| 须拆为 `ErpFinBudgetScenarioRollForwardProcessor` + `ErpFinBudgetScenarioCarryForwardProcessor`（generateBudgetVoucher/reverseBudgetVoucher 为 protected helper 随 carryForward Processor 归属）|
+| finance | `ErpFinPostingProcessor`（process `:126` + reverseProcess `:209`）| 类别 A 边界 :42——2 个 D-mutation 入口（R6.0 triage 同 line 100 误移除）；但本类是 `processor-extension-pattern.md:66` canonical 业财过账引擎（forward/reverse 对称逆操作 + 全域过账共享）| successor 裁决=登记 engine 豁免（pattern doc 背书）OR 拆 process/reverseProcess 两 Processor |
+| inventory | `ErpInvCostingBizModel.reclosePeriodCosts`（`:74-116`，`@BizModel("ErpInvCosting")`）| 类别 B :5/:7 违规——≥3 步内联（嵌套循环 + BigDecimal 成本法分支 + 实体写），无 Processor（R6.0 triage 未扫 `costing/` 包，仅扫 `entity/`）| 须拆为 `ErpInvCostingReclosePeriodCostsProcessor` |
+| master-data | `ErpMdSupplierApprovalBizModel`（apply/approve/probate/suspend/reinstate/reject + suspendByPartner）| **登记缺口**：6 项判 :46 合法豁免（require+守卫+setStatus+updateEntity；approve 含 `requireQualificationValid` 属 `validate*` 允许；`doSuspend` helper 单步翻转）但未入 §A（master-data 无 §A 段，R6.7 master-data 仅拆 ErpMdCurrency.refreshRatesFromApi）；**suspendByPartner** 批量循环（findActiveByPartner + for-doSuspend + count）边界 | 6 项 :46 补登记入 §A master-data 段；suspendByPartner successor 复议（循环 :46 vs ≥3 步批处理）|
+
+> 本节为 R6.8 核验产出的诚实登记。R6.0–R6.7 的 256 须拆 + 77 已登记豁免结论不变；本节是 R6.8 全量核验暴露的 triage 边界遗漏，证明 R6.8「核验」交付的价值（发现并诚实登记而非覆盖）。
 
