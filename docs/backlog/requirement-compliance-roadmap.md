@@ -43,7 +43,7 @@
 | A1.4 | **finance-F4 银行对账**（UC-FIN-09/14 标题重复[同为"银行对账与未达账项"]，0.2 清单化时裁决去重） | todo | `docs/design/finance/bank-reconciliation.md` | 0.2 | 同上 |
 | A1.5 | **finance-F5 成本核算**（UC-FIN-10） | done | `docs/design/finance/costing-methods.md` | 0.2 | 同上 |
 | A1.6 | **finance-F6 期间与结账**（UC-FIN-06/07） | done | `docs/design/finance/period-close.md` | 0.2 | 同上 |
-| A1.7 | **finance-F7 报表/看板/多账套**（UC-FIN-05/16/17） | todo | `docs/design/finance/` + `docs/design/dashboards.md`（全局） | 0.2 | 同上 |
+| A1.7 | **finance-F7 报表/看板/多账套**（UC-FIN-05/16/17） | done | `docs/design/finance/` + `docs/design/dashboards.md`（全局） | 0.2 | 同上 |
 | A1.8 | **mfg-F1 MRP/DRP 引擎**（UC-MFG-05/08） | todo | `docs/design/manufacturing/mrp.md` | 0.2 | 同上 |
 | A1.9 | **mfg-F2 工单与报工**（UC-MFG-01/03/04/06/07/09） | todo | `docs/design/manufacturing/` | 0.2 | 同上 |
 | A1.10 | **mfg-F3 BOM 与工艺路线**（UC-MFG-02/10） | todo | `docs/design/manufacturing/` | 0.2 | 同上 |
