@@ -208,12 +208,28 @@
                                 <param>app.erp.mfg.*Test*</param>
                                 <param>app.erp.inv.*Test*</param>
                             </targetTests>
-                            <!-- excludedTestClasses: 排除 order-dependent 测试类。
-                                 TestErpMfgWorkOrderEndToEnd 单独运行通过（surefire per-class fork 隔离），
-                                 但在 pitest 单 JVM 合并运行（全 32 mfg test class 共享 JVM/DB）时因跨类状态污染失败
-                                 （非变异导致的失败 → pitest 要求 green suite → 阻断）。属 mfg 测试隔离 pre-existing 缺陷
-                                 （fin/inv 测试有正确清理未触发），修复属后续 test-isolation successor，非 Q1 范围。
-                                 此排除为可复现 baseline 的受控 workaround，successor 修复隔离后应移除。 -->
+                            <!-- excludedTestClasses: adjudicated residual（plan 2026-08-02-1500-2 根因裁决）。
+                                 根因（平台级，经 live-repo 调查确认）：TestErpMfgWorkOrderEndToEnd 在 pitest 单 JVM
+                                 合并运行（全 32 mfg test class 共享 minion）时，其快照基线的 @var:ErpMfgXxx@updateTime_N
+                                 变量解析非确定性失败。机制：nop-orm 的 OrmTimestampHelper.onUpdate/onCreate 经
+                                 new Timestamp(CoreMetrics.currentTimeMillis()) 写入审计 updateTime（真实墙钟），
+                                 而 app 层 ThreadLocalFrozenClock 依设计【不】冻结 currentTimeMillis（保留单调时间真实，
+                                 供 ContextProvider 等使用），故审计时间戳始终为真实毫秒墙钟。AutoTestVars.addVar 按
+                                 捕获次数（putIfAbsent）累加 _N 后缀，录制时 output() 经 getNameByValue 按值反查 var 名。
+                                 当同类多次更新（JobCard/WorkOrder 多次 flush）落在同一毫秒→值碰撞→_N 索引与录制基线漂移，
+                                 getVar("@var:...updateTime_N") 偶发返回 null → check-output-fail。
+                                 【实证】surefire forkCount=1 复跑同对（CostFlowEndToEnd→EndToEnd）3 次：run1 FAIL（_2）、
+                                 run2 PASS、run3 FAIL（_2），确认【非确定性 / 时序敏感】，重录基线无法消除。
+                                 【为何仅本类触发】EndToEnd 的 recordWork 步骤使 JobCard/WorkOrder 更新次数最多
+                                 （updateTime 索引达 _2/_8），碰撞概率最高；fin/inv 及 mfg 其余 31 类更新次数少未触达。
+                                 【不可在本仓修】根因三要素（OrmTimestampHelper 用 currentTimeMillis、
+                                 ThreadLocalFrozenClock 不冻结 currentTimeMillis、AutoTestVars 按值/计数索引易挥发字段）
+                                 均在 nop-entropy，受 Non-Goal「不修改 nop-entropy」约束。
+                                 【平台 successor 触发】nop-entropy 侧任一修复落地后可移除本排除并重跑全 32 class 基线：
+                                   (a) OrmTimestampHelper 改用 CoreMetrics.currentDateTime()（可被冻结钟覆盖）；或
+                                   (b) ThreadLocalFrozenClock 增加冻结 currentTimeMillis 选项；或
+                                   (c) AutoTestVars 对时间戳类易挥发字段改用按名稳定索引（非按值反查/计数）。
+                                 本排除保留期间，mfg 基线 = 31/32 class（score 60% 不变，整数位不受 1 类缺失影响）。 -->
                             <excludedTestClasses>
                                 <param>*TestErpMfgWorkOrderEndToEnd*</param>
                             </excludedTestClasses>
