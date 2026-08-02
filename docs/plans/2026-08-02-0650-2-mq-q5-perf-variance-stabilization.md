@@ -225,8 +225,8 @@ Exit Criteria:
 - [x] 无范围内项目降级为 deferred/follow-up（残留方差须显式裁决 fallback 并记录，不可静默接受超阈值）
 - [x] 独立草案审查已完成并记录
 - [x] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项自我留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -260,7 +260,7 @@ Closure Audit Evidence:
   - 验证：`mvn clean install -DskipTests` 156 模块 BUILD SUCCESS；`mvn test` 全 reactor 仅 1 预存 master-data 日期漂移（零因果）；4 路径 `-Pperf` 重测全 BUILD SUCCESS。
   - 重测数据：path 1 median 31198ms variance 187.2%（absolute-tolerance fallback）；path 2 median 133.2ms variance **5.39% WITHIN**；path 3 median 648.9ms variance 115.0%（absolute-tolerance fallback）；path 4 absolute range 0.16-0.90ms（absolute-tolerance metric）。
   - 文档对齐：`performance-baseline.md` Review Record 实施期裁决回填；`baseline-2026-08-02.json` schemaVersion 2；`LATEST.json` schemaVersion 2 + perPathMetricAdjudication。
-- 独立结束审计：**待执行**（须独立子代理新会话，执行者未自我审计）。
+- 独立结束审计：**PASS**（独立子代理 fresh cold context，新会话 `MISSION_DRIVER:2026-08-02-065047-mission-driver`，不重用执行者上下文）。审计范围：(a) 5 点一致性（Plan Status completed / 4 Phase Status completed / 4 Phase Exit Criteria 全 `[x]` / 9 Closure Gates 全 `[x]` / 日志一致）；(b) 退出标准 vs 实仓——实仓复核 4 perf 测试类改造落地（path 1 `TestErpFinVoucherPostingPerf.java:155` per-round state reset 删 voucher+line+billR；path 2 `TestErpFinPeriodClosePerf.java:77` `GL_LINE_COUNT=6000` scale increase；path 3 `TestErpInvCostingReclosePerf.java:122-123` `resetCostLayers() + System.gc()` heap hint；path 4 `TestErpFinReportRenderPerf.java:109,119` `absoluteRangeMs` 报出）；`perf-baselines/baseline-2026-08-02.json` schemaVersion 2 + 4 路径 stabilizationStrategy + metricAdjudication 与计划 Phase 2/3 重测数据逐字符一致；`LATEST.json` schemaVersion 2 + `perPathMetricAdjudication` 段含 4 路径裁决 rationale；`performance-baseline.md:350` 「实施期裁决回填」Review Record 段含 §3.4 路径 C 升级结果 + §4 路径 4 度量裁决 + 逐路径稳定化结果表；`perf-baseline.yml`（10981 字节）存在未变 profile/测试类名；(c) Anti-Hollow——4 测试类改造均有真实计时逻辑 + per-round reset 逻辑（非空函数体），absolute-tolerance 裁决落地为 `LATEST.json` policy 字段（非 swallowed exception）；(d) Deferred honesty——per-commit 阻塞门控晋升 / 生产级压测 / 独立 perf module 3 项均 classification+successor trigger 完整，无范围内 live defect 隐藏；(e) Docs sync——`docs/logs/2026/08-02.md` 含本计划完整执行条目（Phase 1-4 全 + 验证状态 + bookkeeping）。审计结论：执行者据 Q5 Phase 2 首基线触发的 successor hook 正确逐路径裁决 + 稳定化 + 落盘；JMH 不引入裁决与设计文档 §3.4 line 125 + Phase 2 实测证据自洽；path 2 scale increase 使方差 43.7%→5.39% WITHIN 阈值；path 1/3/4 absolute-tolerance fallback 有 median 稳定佐证 + nightly relative-median-diff 20% 门控兼容性论证。无 BLOCKER / 无 MAJOR。
 
 Follow-up:
 
