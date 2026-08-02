@@ -49,7 +49,7 @@
 | A1.10 | **mfg-F3 BOM 与工艺路线**（UC-MFG-02/10） | done | `docs/design/manufacturing/` | 0.2 | 同上 |
 | A1.11 | **mfg-F4 差异/批次/看板**（UC-MFG-11/12/13） | done | `docs/design/manufacturing/variance-analysis.md` | 0.2 | 同上 |
 | A1.12 | **hr-F1 员工与组织**（UC-HR-01/05/07/08/12） | done | `docs/design/human-resource/` | 0.2 | 同上 |
-| A1.13 | **hr-F2 排班与考勤**（UC-HR-02/06/09） | todo | `docs/design/human-resource/` | 0.2 | 同上 |
+| A1.13 | **hr-F2 排班与考勤**（UC-HR-02/06/09） | done | `docs/design/human-resource/` | 0.2 | 同上 |
 | A1.14 | **hr-F3 薪酬与调研**（UC-HR-03/04/10/11） | todo | `docs/design/human-resource/payroll.md` | 0.2 | 同上 |
 | A1.15 | **purchase-F1 主流程与请购**（UC-PUR-01/08） | todo | `docs/design/purchase/` | 0.2 | 同上 |
 | A1.16 | **purchase-F2 三单匹配与差异**（UC-PUR-02/03/05/06） | todo | `docs/design/purchase/three-way-match.md` | 0.2 | 同上 |

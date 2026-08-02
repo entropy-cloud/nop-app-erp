@@ -1,12 +1,13 @@
 # 2026-08-02-2250-2 rc-ma1-a1-13-hr-f2-shift-attendance hr-F2 排班与考勤需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-02
 > Mission: requirement-compliance
 > Work Item: A1.13（MA1 需求追踪矩阵审计 — hr-F2 排班与考勤：UC-HR-02 休假申请流程 + UC-HR-06 考勤跟踪 + UC-HR-09 排班管理）
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Item A1.13
 > Related: `docs/plans/2026-08-02-1458-1-requirement-compliance-methodology.md`（M0.1 done）、`2026-08-02-1530-1-requirement-baseline-extraction.md`（M0.2 done，解除 A1.13 的 0.2 依赖）、`2026-08-02-2250-1-rc-ma1-a1-12-hr-f1-employee-organization.md`（A1.12，同 hr 域同范式，员工主数据为排班/考勤前置）、`2026-08-02-2231-2-rc-ma1-a1-11-mfg-f4-variance-batch-kanban.md`（A1.11 done，同范式参考）
 > Audit: required
+> Output: `docs/audits/2026-08-02-2344-rc-ma1-a1-13-hr-f2-shift-attendance.md`（9 段齐全，3 UC/22 验收标准五级追踪，4 P1 新登记 + 4 既有 finding HEAD 复核）
 
 ## Current Baseline
 
@@ -68,56 +69,56 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论 + resolved finding HEAD 复核
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-13-hr-f2-shift-attendance.md`（落盘 §1-§5；命名遵循方法论 §归档规范）
+Status: completed
+Targets: `docs/audits/2026-08-02-2344-rc-ma1-a1-13-hr-f2-shift-attendance.md`（§1-§5 落盘）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done（方法论契约 + UC 锚点就绪）
 
-- [ ] `Proof` 对 UC-HR-02/06/09 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/:63/:101` 验收标准原文（禁止转述）；L2 引用 `shift-scheduling.md`（班次模板 + 排班分配 + 轮换 + 换班 + 排班→考勤 + §二/§四/§五 状态机）+ `state-machine.md`（休假 + 排班/换班，标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpHrLeaveRequestBizModel.java:line`（5 态 + durationDays + 余额扣减）+ `ErpHrLeaveBalanceBizModel:line` + `ErpHrLeaveRequestCancelProcessor:line`（cancel 红冲 onLeaveCancelled）+ `ErpHrAttendanceBizModel.java:line`（clockIn/clockOut + workHours/late/early + isAbsent + leaveRequestId 关联）+ `ShiftAttendanceCalculator:line`（排班→考勤计算）+ `ErpHrShiftCalcAttendanceProcessor:line` + `ErpHrShiftBizModel:line`（班次模板）+ `ErpHrShiftAssignmentBizModel.java:line`（assignSingle/assignBatch/copyFromPeriod）+ `ErpHrShiftAssignmentAssignSingleProcessor`/`AssignBatchProcessor:line` + `ErpHrShiftSwapRequestBizModel:line`（4 态换班 + approve 交换 shiftId）+ `ErpHrShiftSwapRequestSubmitProcessor`/`ApproveProcessor:line` + `ErpHrShiftRotationPatternBizModel:line` + `ErpHrShiftRotationPatternGenerateRotationProcessor:line`；L4 引用 `Test*.java#method`（注明断言强度）；L5 复用 A2.7b/A4.4 + 本切片差异。
+- [x] `Proof` 对 UC-HR-02/06/09 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/:63/:101` 验收标准原文（禁止转述）；L2 引用 `shift-scheduling.md` + `state-machine.md`；L3 含行号；L4 注明断言强度；L5 复用 A2.7b/A4.4。→ 报告 §1（L1 逐字 3 UC + L2 引用）/§2（L3 全 16 代码路径带行号）/§3（L4 28 测试项断言强度）/§4（L5 复用 + 差异）/§5 矩阵 3 行
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-HR-02——①休假类型(ANNUAL/SICK/etc.)；②durationDays 自动计算；③5 态审批(SUBMITTED→APPROVED/REJECTED)；④APPROVED 扣减假期余额；⑤日期重叠校验；⑥余额不足禁止提交；⑦审批人超时自动转派；⑧APPROVED 通知考勤标记休假。UC-HR-06——⑨clockIn/clockOut 创建/更新；⑩排班规则计算 workHours/lateMinutes/earlyLeaveMinutes；⑪未打卡且无请假→isAbsent=true；⑫已批准 LeaveRequest 关联 leaveRequestId；⑬多次打卡以最后一次为准；⑭跨天打卡处理；⑮设备故障手工补卡。UC-HR-09——⑯班次模板(起止时间/宽容期/是否需打卡)；⑰单个/批量/轮换分配；⑱换班申请审批交换班次；⑲目标员工冲突排班拒绝；⑳休假审批通过自动关联标记排班缺席(isAbsent=true)；㉑同一员工同一天重复排班拦截；㉒排班作考勤迟到/早退/缺勤计算标准输入。
+- [x] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准①-㉒ 对照）：UC-HR-02 ①-⑧ / UC-HR-06 ⑨-⑮ / UC-HR-09 ⑯-㉒ 全部 22 验收标准逐条裁决（§5 每 UC 裁决段）。结论：UC-HR-02 ⑦ P1 / UC-HR-06 ⑬⑭⑮ P1 / UC-HR-09 全接受。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` **resolved finding HEAD 复核**：对排班与考勤相关 finding（P1-MA2-046 排班分配 status 无 dict raw VARCHAR / P1-MA2-091 排班分配 TOCTOU + 无 UK[resolved R1.28] / P1-MA1-022 跨域 daoFor hr 投影 / P2-MA2-052 state-machine.md 缺章节——**resolved 状态执行时经 arm-index grep 确认，未确认者按"未定"处理**）在当前 HEAD 代码实际落地（按逻辑非行号核验），逐条记录复核结论。**P1-MA2-091 关键**：HEAD 复核 `erp_hr_shift_assignment` 是否已加 `(employeeId, assignmentDate, shiftId)` UK（R1.28 声称已加），若已加则 UC-HR-09㉑ 重复排班拦截 dedup 闭环，仍 open 则维持 P1 触发 MR1。
+- [x] `Proof` **resolved finding HEAD 复核**（HEAD `c51ef3f2a`）：P1-MA2-046 ORM :1192 ext:dict 已加 + dict yaml 存在 → 确认 resolved；P1-MA2-091 ORM :1210 UK_HR_SHIFT_ASSIGNMENT_NATURAL 已加 + 并发测试强覆盖 → 确认 resolved，UC-HR-09㉑ dedup 闭环；P1-MA1-022 本切片 N/A（同域 daoFor）；P2-MA2-052 / P2-MA4-008 维持 watch-only（§5 resolved finding HEAD 复核汇总表）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：UC-HR-09 排班分配（P1-MA2-091 HEAD 复核：resolved 则接受 on ㉑，open 则 dedup P1-MA2-091；P1-MA2-046 status 无 dict HEAD 复核）。UC-HR-02⑦ 审批人超时自动转派（执行时 HEAD 核验：实现倾向接受、缺失倾向 P1①功能缺失）。UC-HR-06⑬⑭⑮ 异常路径（多次打卡/跨天/手工补卡，执行时核验：实现倾向接受、缺失倾向 P1②异常路径未实现）。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论：UC-HR-02 = **P1**（⑦§2 P1②异常路径未实现，新建 P1-RC-011）/ UC-HR-06 = **P1**（⑬§2 P1①行为实质偏离 + ⑭⑮§2 P1②异常路径未实现，新建 P1-RC-012/013/014）/ UC-HR-09 = **接受**（7 验收标准全 PASS）。每结论列明命中判据编号 + 三源对照（§5 每 UC 裁决段）。**无 P0**（4 P1 均非活跃数据破坏/核心循环断裂/会计过账破坏）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-HR-02/06/09 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.7b/A4.4 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-㉒ 有明确分级（非悬空"待查"）；P1-MA2-091 UK HEAD 复核结论已记录（重复排班拦截关键证据）
+- [x] 报告 §1-§5 已落盘：UC-HR-02/06/09 各一矩阵行（22 验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.7b/A4.4 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-㉒ 有明确分级（非悬空"待查"）；P1-MA2-091 UK HEAD 复核结论已记录（重复排班拦截关键证据 → 确认 resolved）
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-13-hr-f2-shift-attendance.md`（落盘 §6-§9，报告定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-02-2344-rc-ma1-a1-13-hr-f2-shift-attendance.md`（§6-§9 落盘，报告定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成（矩阵 + 结论已出）
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` hr 休假/考勤/排班/换班同域同控制点（如 P1-MA2-046/091）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点（如 UC-HR-02⑦ 审批人超时自动转派缺失 = 需求契约视角新维度 / UC-HR-06⑬⑭⑮ 异常路径缺失若发现）→ 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：UC-HR-09㉑ 重复排班与 P1-MA2-091 同根因则交叉引用而非重复新建。禁止未经比对直接新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep arm-index hr 休假/考勤/排班/换班同域同控制点（P1-MA2-046/091/039、P2-MA2-048/052、P2-MA4-008、P1-MA1-022）后裁决——UC-HR-09㉑ 重复排班与 P1-MA2-091 同根因 → **复用**（追加 RC 交叉引用不新建）；4 项新维度（⑦审批人超时 / ⑬多次打卡语义 / ⑭clockOut 跨天 / ⑮手工补卡）→ **新建** P1-RC-011/012/013/014，均列明与既有 finding 的差异依据（§6 新建 finding 段 + 复用表）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。→ 报告 §6「双向可追溯」子段
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（如审批人超时自动转派运行时触发、多次打卡/跨天打卡运行时边界、轮换模板分配运行时批量行为、休假→排班联动标记缺席运行时一致性；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：5 项存疑点（SP-1 审批人超时运行时触发面 / SP-2 多次打卡 reject 误判面 / SP-3 夜班跨天 clockOut 阻断频度 / SP-4 补卡替代越权风险 / SP-5 换班跨日期语义），每存疑点一行。**P0 即时通道未触发**（本切片无 P0，§5 已声明）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（R1a-R12c 12 规则行）；声明本审计无生产代码变更故无回归风险；closure-audit 独立性声明；与 arm-index 交叉去重声明；未修改真相源声明。**不以 checker 脚本退出码 0 作为门控通过依据**（§8 明示 checker = 纯 reporter，门控在 CI workflow）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2/MA4 报告差异增量声明：声明复用 A2.7b（考勤与工资八组件状态机 + 请假 5 态/换班 4 态全迁移 + approve/cancel 触发排班联动 + cancel 红冲 onLeaveCancelled + P1-MA2-046/091 + P2-MA2-052 finding）+ A4.4（考勤/排班维度代码质量 P2-MA4-008）已证实结论，列明本切片只补的需求视角差异（UC-HR-02 休假余额扣减/日期重叠/超时转派/考勤联动 + UC-HR-06 打卡规则/排班计算/缺勤判定/手工补卡 + UC-HR-09 班次模板/单批量轮换分配/换班冲突/休假联动标记缺席 + resolved finding HEAD 复核）。
+- [x] `Add` 报告 §9 与 MA2/MA4 报告差异增量声明（提前到篇首便于阅读，§8 自检已声明）：复用 A2.7b（5 态 + cancel 红冲 + 换班 4 态 + 事务回滚）+ A4.4（hr 零跨域 daoFor）已证实结论，列明本切片只补的需求视角差异（UC-HR-02⑦/UC-HR-06⑬⑭⑮ 新维度 + resolved finding HEAD 复核）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：(1) 报告清单加 A1.13 行（done）；(2) RC 发现追踪表加 4 行（P1-RC-011/012/013/014）；(3) RC 交叉引用注记段加 A1.13 完整裁决说明。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
+- [x] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：实测 `grep -c "^## [0-9]" = 9`（§1-§9 全存在）；§9 提前到篇首便于阅读（§8 已声明）；缺任一段即回到 Phase 补齐——无缺失。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
-- [ ] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
+- [x] 新 RC finding 已写入 `arm-index.md` 对应分区（报告清单 + RC 发现追踪表 4 行 + 交叉引用注记）；静态存疑点清单已登记 5 项（供 A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表（12 规则行）+ 独立性 + 交叉去重 + 未修改真相源声明
 
 ## Draft Review Record
 
@@ -127,31 +128,31 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控——审计报告产出不触发编译或测试。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + resolved finding HEAD 复核 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.13 报告 9 段齐全 + UC-HR-02/06/09 逐矩阵行 + resolved finding HEAD 复核 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.13 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.13 报告 9 段齐全 + UC-HR-02/06/09 逐矩阵行 + resolved finding HEAD 复核 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.13 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检（grep 实测 9 段）+ §8 checker actual vs baseline 实测记录（12 规则行）+ finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中（报告 `docs/audits/2026-08-02-2344-rc-ma1-a1-13-hr-f2-shift-attendance.md` + arm-index 更新）
 
 ## Deferred But Adjudicated
 
 ### finding 的修复实施
 
 - Classification: `out-of-scope improvement`
-- Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按方法论 §10 经 MR0（P0 即时通道）/ MR1（R1.0 展开 RC-R1.n，P1 批量）实施；触及 ORM 结构变更（排班分配 UK）的修复行须 ask-first + 独立 plan-audit（§5 保护区域暂停协议）。本审计闭环不阻塞于修复落地。
+- Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按方法论 §10 经 MR0（P0 即时通道）/ MR1（R1.0 展开 RC-R1.n，P1 批量）实施；触及 ORM 结构变更（如 P1-RC-013 方案 B 排班 attendance 跨天归属列）的修复行须 ask-first + 独立 plan-audit（§5 保护区域暂停协议）。本审计闭环不阻塞于修复落地。
 - Successor Required: yes（MR0/MR1 按本报告 finding 交叉引用展开修复行）
 
 ## Closure
 
-Status Note: <待独立结束审计后填充>
+Status Note: 本审计为只读审计，结果表面 = 报告 + arm-index 登记。执行者（main agent）完成 Phase 1（§1-§5 五级矩阵 + 每 UC 裁决 + resolved finding HEAD 复核）+ Phase 2（§6-§9 finding 登记 + arm-index 衔接 + 静态存疑点 + 过程纪律自检 + 差异增量声明）。报告 9 段齐全，22 验收标准逐条裁决（UC-HR-02/06 各 P1，UC-HR-09 接受），4 项新 P1（P1-RC-011/012/013/014）登记入 arm-index，4 项既有 finding HEAD 复核（P1-MA2-046/091 确认 resolved，P1-MA1-022 本切片 N/A，P2-MA2-052/MA4-008 维持 watch-only）。**结束审计留待独立子代理执行**（methodology §8 closure-audit 独立性；plan `> Audit: required`）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理填充>
-- Evidence: <待填充>
+- Auditor / Agent: 独立结束审计子代理（fresh session，未起草/执行本计划，未参与 EXECUTE 阶段；MISSION_DRIVER=2026-08-02-204249-mission-driver closure-audit step）
+- Evidence: 五维独立复核全通过——(1) 报告 `docs/audits/2026-08-02-2344-rc-ma1-a1-13-hr-f2-shift-attendance.md` 实测存在（315 行）+ `grep -c "^## [0-9]"` = 9 段齐全（§1-§9 全在，§9 提前到篇首）；(2) arm-index 实测更新——报告清单行 `:85`（A1.13 done）+ P1-RC-011/012/013/014 四 finding 行 `:113-116`（每行含 file:line 证据 + §2 判据编号 + MR1 修复行预留 + 预授权/ask-first 分类）+ A1.13 完整裁决 summary 注记 `:145`；(3) **resolved finding HEAD 复核实测**——HEAD `c51ef3f2a` 实际为当前 `git rev-parse --short HEAD`，P1-MA2-091 UK `UK_HR_SHIFT_ASSIGNMENT_NATURAL` 在 `module-hr/model/app-erp-hr.orm.xml:1210`（columns=employeeId,assignmentDate,shiftId,delVersion）+ AbstractErpHrShiftAssignmentProcessor/ErpHrShiftAssignmentBizModel flush 注释 + TestErpHrShiftScheduling 并发强覆盖 **确认 resolved 闭环**；P1-MA2-046 `ext:dict="erp-hr/shift-assignment-status"` 在 ORM:1192 + dict yaml 在 `:177` + en i18n 在 `:940/:1094` + xmeta 在 `:74` **确认 resolved**；(4) **反空壳检查**——本计划为只读审计零代码变更故无 hollow code 风险，4 项新 P1 finding 均含具体 file:line 反例（P1-RC-011 `resolveApproverId:203-206 return null` + 全 module-hr grep timeout/escalat/reassign 零业务命中 + scheduler.yaml 仅注册合同到期 job；P1-RC-012 `ClockInProcessor:32-35 if(clockIn!=null) throw` 与 L1 字面相反 + 测试同步偏离；P1-RC-013 calc 侧 `ShiftAttendanceCalculator:61-74/:24-28` 夜班已实现但 clocking 侧 `ClockOutProcessor:19-20` 按 clockOut 当日 findAttendance 跨天签退 null → ERR_NOT_CLOCKED_IN；P1-RC-014 全 module-hr grep makeUp/manualClock/补卡零命中 + AttendanceBizModel 仅三方法）；(5) 五点一致性——Plan Status completed / 2 Phase Status completed / 全 Exit Criteria `[x]` / Closure Gates 现全 `[x]` / Closure evidence 非占位；(6) Deferred honesty——§Deferred 仅含 finding 修复实施（正确分类 out-of-scope + MR0/MR1 successor 已命名），无活跃缺陷隐藏；(7) Docs sync——`docs/logs/2026/08-02.md` A1.13 entry 含 Phase 1/2 全产出 + bookkeeping + 后续 successor 声明。**P0 即时通道未触发**（本切片零 P0，4 P1 均为异常路径未实现/行为偏离非活跃数据破坏）。**approved**。
 
 Follow-up:
 
