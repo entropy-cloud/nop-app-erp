@@ -1,6 +1,6 @@
 # 2026-08-02-2042-3 rc-ma1-a1-9-mfg-f2-work-order-reporting mfg-F2 工单与报工需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-02
 > Mission: requirement-compliance
 > Work Item: A1.9（MA1 需求追踪矩阵审计 — mfg-F2 工单与报工：UC-MFG-01 工单正常生产全流程 + UC-MFG-03 齐套校验 + UC-MFG-04 部分齐套强制开工 + UC-MFG-06 领料扣减 + UC-MFG-07 完工入库与成本结转 + UC-MFG-09 完工质检不合格→返工）
@@ -76,56 +76,56 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论 + resolved finding HEAD 复核
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-9-mfg-f2-work-order-reporting.md`（新建，先填 §1-§5；命名遵循方法论 §归档规范）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done（方法论契约 + UC 锚点就绪）
 
-- [ ] `Proof` 对 UC-MFG-01/03/04/06/07/09 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:18/:59/:75/:107/:125/:160` 验收标准原文（禁止转述）；L2 引用 `state-machine.md`（§1/§2/§4/§6/§质检约束/§实现偏离补注）+ `bom-and-routing.md`（§成本计算/§展开）+ `material-reservation.md`（§齐套 `:120`，预留写路径交叉引用 A1.8 Deferred）对应 section（标注"设计参考，冲突以 L1 为准"）；L3 引用 `module-manufacturing/erp-mfg-service/.../entity/ErpMfgWorkOrderBizModel.java:line` + `processor/ErpMfgWorkOrderProcessor.java:line`（10 态状态机 + 步骤化 protected 方法）+ `ErpMfgMaterialIssueBizModel.java:line` + 作业卡报工 + 完工成本结转/差异过账链（调用链列全）；L4 引用 `Test*.java#method`（注明断言强度）；L5 复用 A2.6a/A4.2a + 本切片差异。
+- [x] `Proof` 对 UC-MFG-01/03/04/06/07/09 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:18/:59/:75/:107/:125/:160` 验收标准原文（禁止转述）；L2 引用 `state-machine.md`（§1/§2/§4/§6/§质检约束/§实现偏离补注）+ `bom-and-routing.md`（§成本计算/§展开）+ `material-reservation.md`（§齐套 `:120`，预留写路径交叉引用 A1.8 Deferred）对应 section（标注"设计参考，冲突以 L1 为准"）；L3 引用 `module-manufacturing/erp-mfg-service/.../entity/ErpMfgWorkOrderBizModel.java:line` + `processor/ErpMfgWorkOrderProcessor.java:line`（10 态状态机 + 步骤化 protected 方法）+ `ErpMfgMaterialIssueBizModel.java:line` + 作业卡报工 + 完工成本结转/差异过账链（调用链列全）；L4 引用 `Test*.java#method`（注明断言强度）；L5 复用 A2.6a/A4.2a + 本切片差异。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-MFG-01——①全链状态流转 DRAFT→...→COMPLETED；②完工入库 库存余额+=；③成本结转凭证；UC-MFG-03——④齐套校验决定 STOCK_RESERVED/STOCK_PARTIAL；⑤consumption 配置（STRICT）；UC-MFG-04——⑥部分齐套强制开工条件（consumption!=STRICT 或主管权限 + config `erp-mfg.allow-partial-kit-start`）；UC-MFG-06——⑦领料扣减（**L1 字面"超预留拒绝/警告 + pickedQty+=/reservedQty-="，预留写 Deferred → 核验库存侧现有量扣减是否等价 + 超领是否有出口，交叉 A1.8**）；UC-MFG-07——⑧完工单位成本=(材料+人工+制造费用)/完工数量；⑨存货估值凭证（借产成品贷WIP）；⑩三成本要素计算（JobCard 工时×费率 / 工序工时×费率）；UC-MFG-09——⑪完工质检门控（config-gated + inspection_required）；⑫返工工单（关联原工单 + 原工单终态）。
+- [x] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-MFG-01——①全链状态流转 DRAFT→...→COMPLETED；②完工入库 库存余额+=；③成本结转凭证；UC-MFG-03——④齐套校验决定 STOCK_RESERVED/STOCK_PARTIAL；⑤consumption 配置（STRICT）；UC-MFG-04——⑥部分齐套强制开工条件（consumption!=STRICT 或主管权限 + config `erp-mfg.allow-partial-kit-start`）；UC-MFG-06——⑦领料扣减（**L1 字面"超预留拒绝/警告 + pickedQty+=/reservedQty-="，预留写 Deferred → 核验库存侧现有量扣减是否等价 + 超领是否有出口，交叉 A1.8**）；UC-MFG-07——⑧完工单位成本=(材料+人工+制造费用)/完工数量；⑨存货估值凭证（借产成品贷WIP）；⑩三成本要素计算（JobCard 工时×费率 / 工序工时×费率）；UC-MFG-09——⑪完工质检门控（config-gated + inspection_required）；⑫返工工单（关联原工单 + 原工单终态）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` **resolved finding HEAD 复核**：对工单相关 finding（P1-MA2-035 作业卡 TRANSFERRED 死状态 / P1-MA4-007 完工编排吞异常 / P1-MA4-008 跨域 daoFor / P1-MA4-009 测试有效性 / P1-MA3-040/041/044/048 owner-doc drift——**resolved 状态执行时经 arm-index grep 确认，未确认者按"未定"处理**）在当前 HEAD 代码实际落地（按逻辑非行号核验），逐条记录复核结论（已落地/回退/部分落地/documented simplification 仍 open successor）。
+- [x] `Proof` **resolved finding HEAD 复核**：对工单相关 finding（P1-MA2-035 作业卡 TRANSFERRED 死状态 / P1-MA4-007 完工编排吞异常 / P1-MA4-008 跨域 daoFor / P1-MA4-009 测试有效性 / P1-MA3-040/041/044/048 owner-doc drift——**resolved 状态执行时经 arm-index grep 确认，未确认者按"未定"处理**）在当前 HEAD 代码实际落地（按逻辑非行号核验），逐条记录复核结论（已落地/回退/部分落地/documented simplification 仍 open successor）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：UC-MFG-06 领料扣减（预留 Deferred 关联，按 §4 Q1 L1 为准 + 是否功能等价裁决）；UC-MFG-07 完工成本结转凭证完整性（P1-MA4-007 吞异常是否致凭证悬挂，会计正确性类 Q4 无例外）；UC-MFG-09 返工路径（config-gated 质检门控偏离 owner doc 已记录倾向接受）；作业卡死状态（P1-MA2-035 dict 治理）。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：UC-MFG-06 领料扣减（预留 Deferred 关联，按 §4 Q1 L1 为准 + 是否功能等价裁决）；UC-MFG-07 完工成本结转凭证完整性（P1-MA4-007 吞异常是否致凭证悬挂，会计正确性类 Q4 无例外）；UC-MFG-09 返工路径（config-gated 质检门控偏离 owner doc 已记录倾向接受）；作业卡死状态（P1-MA2-035 dict 治理）。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-MFG-01/03/04/06/07/09 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.6a/A4.2a 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-⑫ 有明确分级（非悬空"待查"）；resolved finding HEAD 复核结论已记录
+- [x] 报告 §1-§5 已落盘：UC-MFG-01/03/04/06/07/09 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.6a/A4.2a 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-⑫ 有明确分级（非悬空"待查"）；resolved finding HEAD 复核结论已记录
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-9-mfg-f2-work-order-reporting.md`（补 §6-§9，报告定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成（矩阵 + 结论已出）
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` mfg 工单/领料/完工/质检同域同控制点（如 P1-MA2-035、P1-MA4-007/008/009、P1-MA3-040/041/044/048）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：UC-MFG-06 领料扣减若与 A1.8 预留 Deferred 同根因则交叉引用而非重复新建。禁止未经比对直接新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` mfg 工单/领料/完工/质检同域同控制点（如 P1-MA2-035、P1-MA4-007/008/009、P1-MA3-040/041/044/048）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：UC-MFG-06 领料扣减若与 A1.8 预留 Deferred 同根因则交叉引用而非重复新建。禁止未经比对直接新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（如完工成本结转运行时凭证完整性、差异过账失败运行时悬挂、config-gated 质检门控运行时行为；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（如完工成本结转运行时凭证完整性、差异过账失败运行时悬挂、config-gated 质检门控运行时行为；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
+- [x] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2/MA4 报告差异增量声明：声明复用 A2.6a（工单/作业卡/领料/委外状态机 + 事务回滚 + 红冲闭环）+ A4.2a（工单/BOM 代码质量 finding）已证实结论，列明本切片只补的需求视角差异（UC-MFG-06 领料扣减预留符合性 / UC-MFG-07 成本结转凭证完整性 / UC-MFG-09 返工路径 / resolved finding HEAD 复核）。
+- [x] `Add` 报告 §9 与 MA2/MA4 报告差异增量声明：声明复用 A2.6a（工单/作业卡/领料/委外状态机 + 事务回滚 + 红冲闭环）+ A4.2a（工单/BOM 代码质量 finding）已证实结论，列明本切片只补的需求视角差异（UC-MFG-06 领料扣减预留符合性 / UC-MFG-07 成本结转凭证完整性 / UC-MFG-09 返工路径 / resolved finding HEAD 复核）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
+- [x] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
-- [ ] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
+- [x] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -135,14 +135,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控——审计报告产出不触发编译或测试。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + resolved finding HEAD 复核 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.9 报告 9 段齐全 + UC-MFG-01/03/04/06/07/09 逐矩阵行 + resolved finding HEAD 复核 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.9 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.9 报告 9 段齐全 + UC-MFG-01/03/04/06/07/09 逐矩阵行 + resolved finding HEAD 复核 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.9 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -151,3 +151,23 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按方法论 §10 经 MR0（P0 即时通道）/ MR1（R1.0 展开 RC-R1.n，P1 批量）实施；触及会计过账逻辑（完工成本结转凭证/差异过账）的修复行须 ask-first + 独立 plan-audit（§5 保护区域暂停协议）。本审计闭环不阻塞于修复落地。
 - Successor Required: yes（MR0/MR1 按本报告 finding 交叉引用展开修复行）
+
+## Closure
+
+Status Note: A1.9 切片需求-实现符合性五级追踪审计闭环。结果表面 = `docs/audits/2026-08-02-2042-3-rc-ma1-a1-9-mfg-f2-work-order-reporting.md`（9 段齐全，382 行）+ `docs/audits/arm-index.md` 衍生登记。本计划为只读审计，无代码/ORM/api.xml/view.xml/真相源变更，故无需仓库验证命令门控（见 Closure Gates 删门控理由）。6 UC 全部出结论（5 接受/倾向接受 + 1 UC-MFG-06 领料扣减预留 P1 **复用** A1.8 `P1-RC-008` 不新建 finding ID），零 P0；resolved finding HEAD 复核 8/8 维持（HEAD `3c4beba78`，含 P1-MA4-007 修复落地确认）。报告与方法论 §1-§10 + §去重协议一致；§8 checker 19 规则全 actual==baseline 零裸漂移。UC-MFG-09 返工路径运行时存疑点 SP-2 已登记入 §7 交 MA4 A4.1/A4.2 展开（非阻塞 follow-up）。文本一致性已验证：Plan Status completed / 2 Phase completed / 所有 Exit Criteria `[x]` / Closure Gates 8/8 `[x]` / `docs/logs/2026/08-02.md` 同步。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立结束审计子代理（fresh session，本审计执行者上下文外，由 mission-driver 调度）。本审计执行者未自我审计，Closure Gates 第 7 项已声明独立子代理会话要求。
+- Evidence:
+  - 审计报告产物：`docs/audits/2026-08-02-2042-3-rc-ma1-a1-9-mfg-f2-work-order-reporting.md`（382 行，§1-§9 + Verdict 段齐全；§5.1 五级追踪矩阵 6 UC 行；§5.3 候选缺口逐条分级；§5.4 resolved finding HEAD 复核 8/8；§6 arm-index 衔接含 grep 比对证据；§8 actual vs baseline 实测表；Verdict 段整体 ⚠️(P1)）
+  - arm-index 衍生登记：`docs/audits/arm-index.md` A1.9 报告清单登记 + `P1-RC-008` 行追加 RC A1.9 UC-MFG-06 领料扣减预留投影复用注记 + A1.9 summary 注记
+  - HEAD 锚点：`3c4beba78`（resolved finding 复核基准，§5.4 + §8 实测表）
+  - 日志同步：`docs/logs/2026/08-02.md:5-10`（A1.9 EXECUTE 条目 + bookkeeping + roadmap 状态同步）
+  - draft review 证据：`## Draft Review Record`（独立子代理 `ses_03d4ef6d9ffePMQggYCtjxqEz`，fresh session，逐项实测核验全 PASS）
+  - 只读审计零回归证明：本切片无生产代码变更（`docs/audits/nop-compliance-checker.sh` 19 规则零裸漂移，仅作 reporter）
+
+Follow-up:
+
+- UC-MFG-09 返工工单操作员驱动简化路径运行时操作流程存疑点（SP-2）→ MA4 A4.1/A4.2 运行时展开（已登记报告 §7）
+- UC-MFG-06 领料扣减预留追踪侧缺失 → 复用 A1.8 `P1-RC-008`，按方法论 §10 经 MR1 R1.0 展开 RC-R1.n 修复（不在本审计计划实施）

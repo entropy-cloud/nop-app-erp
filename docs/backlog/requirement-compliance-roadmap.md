@@ -45,7 +45,7 @@
 | A1.6 | **finance-F6 期间与结账**（UC-FIN-06/07） | done | `docs/design/finance/period-close.md` | 0.2 | 同上 |
 | A1.7 | **finance-F7 报表/看板/多账套**（UC-FIN-05/16/17） | done | `docs/design/finance/` + `docs/design/dashboards.md`（全局） | 0.2 | 同上 |
 | A1.8 | **mfg-F1 MRP/DRP 引擎**（UC-MFG-05/08） | done | `docs/design/manufacturing/mrp.md` | 0.2 | 同上 |
-| A1.9 | **mfg-F2 工单与报工**（UC-MFG-01/03/04/06/07/09） | todo | `docs/design/manufacturing/` | 0.2 | 同上 |
+| A1.9 | **mfg-F2 工单与报工**（UC-MFG-01/03/04/06/07/09） | done | `docs/design/manufacturing/` | 0.2 | 同上 |
 | A1.10 | **mfg-F3 BOM 与工艺路线**（UC-MFG-02/10） | todo | `docs/design/manufacturing/` | 0.2 | 同上 |
 | A1.11 | **mfg-F4 差异/批次/看板**（UC-MFG-11/12/13） | todo | `docs/design/manufacturing/variance-analysis.md` | 0.2 | 同上 |
 | A1.12 | **hr-F1 员工与组织**（UC-HR-01/05/07/08/12） | todo | `docs/design/human-resource/` | 0.2 | 同上 |
