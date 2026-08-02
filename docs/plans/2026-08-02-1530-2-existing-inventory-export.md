@@ -1,6 +1,6 @@
 # 2026-08-02-1530-2 existing-inventory-export 存量清单导出（方案 B / successor 三源对账）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-02
 > Mission: requirement-compliance
 > Work Item: 0.3（M0 审计编排基线 — 存量清单导出）
@@ -53,74 +53,75 @@
 
 ### Phase 1 - arm-index 方案 B 关闭项导出 + 分区映射（源 1）
 
-Status: planned
+Status: completed
 Targets: 产出文件 `docs/audits/rc-existing-inventory.md`（新建，方案 B 全集 + 分区 + 复杂度）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: M0.1 done（方法论 §4 三判据 / §7 衔接可用）
 
-- [ ] `Add` 按导出口径解析 `docs/audits/arm-index.md` 全部 finding 行：按 resolved 注记关闭方式标签筛行——**保留** `方案 B 裁决（documented simplification）` / `documented simplification` / `Deferred` 标签行；**排除** `resolved (R*.n done)` / `fixed`（实现修复项）；每保留行提取 finding ID / 域 / 关闭方式标签 / owner doc 锚点 / 复杂度
+- [x] `Add` 按导出口径解析 `docs/audits/arm-index.md` 全部 finding 行：按 resolved 注记关闭方式标签筛行——**保留** `方案 B 裁决（documented simplification）` / `documented simplification` / `Deferred` 标签行；**排除** `resolved (R*.n done)` / `fixed`（实现修复项）；每保留行提取 finding ID / 域 / 关闭方式标签 / owner doc 锚点 / 复杂度
       - Skill: none
-- [ ] `Add` 按 roadmap MA2 表 A2.1-A2.9 分区为每条方案 B finding ID 映射主分区（A2.1 finance 会计保护区域 / A2.2 finance 非保护 / A2.3 mfg / A2.4 hr / A2.5 purchase+sales / A2.6 assets+inventory / A2.7 projects+quality / A2.8 扩展域 / A2.9 跨域）；跨域项按主域归属并显式标注跨域涉及域
+- [x] `Add` 按 roadmap MA2 表 A2.1-A2.9 分区为每条方案 B finding ID 映射主分区（A2.1 finance 会计保护区域 / A2.2 finance 非保护 / A2.3 mfg / A2.4 hr / A2.5 purchase+sales / A2.6 assets+inventory / A2.7 projects+quality / A2.8 扩展域 / A2.9 跨域）；跨域项按主域归属并显式标注跨域涉及域
       - Skill: none
-- [ ] `Proof` 校验分区完整性：每个方案 B finding ID 恰好归属一个 A2.x 行（无重叠、无遗漏），校验失败则在产出文件记录未分区项
+- [x] `Proof` 校验分区完整性：每个方案 B finding ID 恰好归属一个 A2.x 行（无重叠、无遗漏），校验失败则在产出文件记录未分区项
       - Skill: none
-- [ ] `Add` 复用 `docs/audits/audit-remediation-scope-and-dimension-matrix.md §1.2` 域复杂度分级（S/A/B/C）对每条方案 B 项按所属域继承等级（跨域项按主域），落盘产出文件"§方案 B 全集清单"段（按 A2.x 分区 + 域 S/A/B/C + 影响面排序）
+- [x] `Add` 复用 `docs/audits/audit-remediation-scope-and-dimension-matrix.md §1.2` 域复杂度分级（S/A/B/C）对每条方案 B 项按所属域继承等级（跨域项按主域），落盘产出文件"§方案 B 全集清单"段（按 A2.x 分区 + 域 S/A/B/C + 影响面排序）
       - Skill: none
-- [ ] `Add` 产出文件"§导出口径自检"段：声明筛行规则（保留/排除标签）+ 保留项计数 + 排除项计数 + 未分区项计数（须为 0）
+- [x] `Add` 产出文件"§导出口径自检"段：声明筛行规则（保留/排除标签）+ 保留项计数 + 排除项计数 + 未分区项计数（须为 0）
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 产出文件 `docs/audits/rc-existing-inventory.md` 存在，含"§方案 B 全集清单"段（每行 finding ID/域/关闭方式标签/owner doc 锚点/复杂度/A2.x 分区）
-- [ ] 分区校验通过：每个方案 B finding ID 恰好一个 A2.x 分区（产出文件"§导出口径自检"段记录未分区项 = 0）
+- [x] 产出文件 `docs/audits/rc-existing-inventory.md` 存在，含"§方案 B 全集清单"段（每行 finding ID/域/关闭方式标签/owner doc 锚点/复杂度/A2.x 分区）
+- [x] 分区校验通过：每个方案 B finding ID 恰好一个 A2.x 分区（产出文件"§导出口径自检"段记录未分区项 = 0）
 
 ### Phase 2 - successor 三源对账（源 1+2+3）
 
-Status: planned
+Status: completed
 Targets: `docs/audits/rc-existing-inventory.md`（补 §successor 三源对账清单）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 完成（方案 B 全集已建立，successor 声明常与方案 B 项关联）
 
-- [ ] `Add` 提取 successor **源 1**：arm-index 行内 successor 声明（grep successor/触发条件关键词）
+- [x] `Add` 提取 successor **源 1**：arm-index 行内 successor 声明（grep successor/触发条件关键词）
       - Skill: none
-- [ ] `Add` 提取 successor **源 2**：owner doc 内嵌 successor/Deferred 声明（如 `costing-methods.md:66` FIFO 红冲、`period-close.md §已知简化` successor 触发条件、`mrp.md §实现偏离补注` Deferred），跨 owner doc 扫描
+- [x] `Add` 提取 successor **源 2**：owner doc 内嵌 successor/Deferred 声明（如 `costing-methods.md:66` FIFO 红冲、`period-close.md §已知简化` successor 触发条件、`mrp.md §实现偏离补注` Deferred），跨 owner doc 扫描
       - Skill: none
-- [ ] `Add` 提取 successor **源 3**：`docs/backlog/README.md` 既有追踪行（81 行 successor/deferred 提及）
+- [x] `Add` 提取 successor **源 3**：`docs/backlog/README.md` 既有追踪行（81 行 successor/deferred 提及）
       - Skill: none
-- [ ] `Proof` 三源对账：逐 successor 项核对三源覆盖（仅源 1 / 仅源 2 / 仅源 3 / 多源一致）、触发条件是否已满足、当前归属（已 done / 待 MA1 / 待 R1.0 / backlog README 登记但从未触发）；消歧计数（修正 roadmap "41 = arm-index 内嵌数"口径为实测三源并集）
+- [x] `Proof` 三源对账：逐 successor 项核对三源覆盖（仅源 1 / 仅源 2 / 仅源 3 / 多源一致）、触发条件是否已满足、当前归属（已 done / 待 MA1 / 待 R1.0 / backlog README 登记但从未触发）；消歧计数（修正 roadmap "41 = arm-index 内嵌数"口径为实测三源并集）
       - Skill: none
-- [ ] `Add` 落盘产出文件"§successor 三源对账清单"段：每行含 successor 项 / 三源覆盖标记 / 触发条件摘要 / 是否已满足 / 当前归属 / 复杂度，按域与影响面排序
+- [x] `Add` 落盘产出文件"§successor 三源对账清单"段：每行含 successor 项 / 三源覆盖标记 / 触发条件摘要 / 是否已满足 / 当前归属 / 复杂度，按域与影响面排序
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 产出文件含"§successor 三源对账清单"段（每行 successor 项/三源覆盖/触发条件/是否满足/当前归属/复杂度）
-- [ ] 三源对账差异已记录（计数口径修正、单源项、backlog 登记从未触发项）
+- [x] 产出文件含"§successor 三源对账清单"段（每行 successor 项/三源覆盖/触发条件/是否满足/当前归属/复杂度）
+- [x] 三源对账差异已记录（计数口径修正、单源项、backlog 登记从未触发项）
 
 ### Phase 3 - 集成排序 + 对账差异登记 + MA2/MA3 消费说明
 
-Status: planned
+Status: completed
 Targets: `docs/audits/rc-existing-inventory.md`（补 §集成排序 + §对账差异登记 + §MA2/MA3 消费说明）
 Skill: none
 
 - Item Types: `Add | Decision`
+
 - Prereqs: Phase 2 完成（两份清单已建立）
 
-- [ ] `Add` 按域 + 影响面（复杂度 + 会计保护区域优先）对全集排序，产出 MA2 A2.1-A2.9 与 MA3 A3.1-A3.5 可直接消费的待复查全集视图
+- [x] `Add` 按域 + 影响面（复杂度 + 会计保护区域优先）对全集排序，产出 MA2 A2.1-A2.9 与 MA3 A3.1-A3.5 可直接消费的待复查全集视图
       - Skill: none
-- [ ] `Add` "§对账差异登记"段：记录三源对账中发现的所有差异（计数口径偏差 / 单源遗漏 / backlog 登记从未触发 / owner doc 内嵌但 arm-index 无行），交 MA2/MA3 复查时关注，**不回写源文件**
+- [x] `Add` "§对账差异登记"段：记录三源对账中发现的所有差异（计数口径偏差 / 单源遗漏 / backlog 登记从未触发 / owner doc 内嵌但 arm-index 无行），交 MA2/MA3 复查时关注，**不回写源文件**
       - Skill: none
-- [ ] `Decision` "§MA2/MA3 消费说明"段：明确 MA2 逐 A2.x 行复查范围 = §方案 B 全集清单对应分区行；MA3 逐 A3.x 行复查范围 = §successor 三源对账清单对应域分组；声明 0.3 仅导出不评判（复查裁决属 MA2/MA3）
+- [x] `Decision` "§MA2/MA3 消费说明"段：明确 MA2 逐 A2.x 行复查范围 = §方案 B 全集清单对应分区行；MA3 逐 A3.x 行复查范围 = §successor 三源对账清单对应域分组；声明 0.3 仅导出不评判（复查裁决属 MA2/MA3）
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 产出文件含集成排序视图（按域 + 影响面）、"§对账差异登记"段、"§MA2/MA3 消费说明"段
-- [ ] MA2 A2.x 分区与方案 B 全集行一一对应；MA3 A3.x 域分组与 successor 清单域归属一致
+- [x] 产出文件含集成排序视图（按域 + 影响面）、"§对账差异登记"段、"§MA2/MA3 消费说明"段
+- [x] MA2 A2.x 分区与方案 B 全集行一一对应；MA3 A3.x 域分组与 successor 清单域归属一致
 
 ## Draft Review Record
 
@@ -131,14 +132,14 @@ Exit Criteria:
 
 > 本计划为**只读提取 + 清单产出**工作项（无代码/ORM/api.xml/view.xml 变更，不修改 arm-index/owner doc/backlog），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控——清单产出不触发编译或测试。验证 = 产出文件完整性 + 分区校验 + 三源对账可追溯 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：方案 B 全集清单（按 A2.x 分区）+ successor 三源对账清单 + 集成排序 + 对账差异登记全部落地
-- [ ] 相关文档对齐：产出文件与方法论 §2/§4（三判据）/§7（衔接）一致；导出口径与 roadmap M0.3 详情 + MA2 分区表一致
-- [ ] 已运行验证：方案 B 筛行口径自检（保留/排除标签 + 计数）+ 分区完整性校验（未分区项=0）+ 三源对账覆盖可追溯（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：方案 B 全集清单（按 A2.x 分区）+ successor 三源对账清单 + 集成排序 + 对账差异登记全部落地
+- [x] 相关文档对齐：产出文件与方法论 §2/§4（三判据）/§7（衔接）一致；导出口径与 roadmap M0.3 详情 + MA2 分区表一致
+- [x] 已运行验证：方案 B 筛行口径自检（保留/排除标签 + 计数）+ 分区完整性校验（未分区项=0）+ 三源对账覆盖可追溯（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -150,12 +151,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填充>
+Status Note: 全部三个 Phase 已完成。产出文件 `docs/audits/rc-existing-inventory.md`（300 行）含方案 B 全集清单（10 项，A2.x 分区无重叠无遗漏，未分区项=0）+ successor 三源对账清单 + 集成排序 + 对账差异登记（6 项）+ MA2/MA3 消费说明。只读纪律遵守——git status 仅本计划文件 + 新产出文件变更，无真相源/ORM/Java 修改。本计划为纯清单产出无代码变更，故 Closure Gates 删除 build/test 门控（按 plan 既定声明）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理或审查者>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立子代理 ses_03e8c7f4dffeQye65SYIIIpyIB（fresh session，cold-context，未执行本计划）
+- Evidence: 9 门控全 PASS——(1) 7 必需段落齐全；(2) 方案 B 全集恰 10 项 + 自检保留项计数=10/未分区项=0；(3) 分区无重叠（A2.1=6/A2.2=1/A2.3=1/A2.8=1/A2.9=1/A2.4-A2.7=0）；(4) 导出口径可追溯（P1-MA2-001=方案 B 裁决 / P1-MA2-018=documented simplification / P0-MA2-018=deferred / P1-MA2-002 正确排除）经 arm-index 实测确认；(5) 复杂度分级来源 §1.2 正确（finance/mfg=S，contract=A）经矩阵文件确认；(6) 三源对账含三源 + 计数差异登记；(7) plan 文件一致性——Plan Status=completed + 三 Phase completed + 全 [x] 无残留 [ ]；(8) anti-hollow——300 行实质内容 + 对账差异登记 6 条；(9) read-only 纪律——git status 仅 plan 文件 + 产出文件，无真相源修改。2 项 minor NOTES（Closure 占位符待回填[本步骤即回填] + 「41」计数来源间接）非阻塞。
 
 Follow-up:
 
