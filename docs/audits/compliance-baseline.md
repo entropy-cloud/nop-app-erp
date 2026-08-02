@@ -259,6 +259,36 @@ V.2 对照 M0 锚点（HEAD=`0e963531d`，全 19 规则 0 漂移）复跑 `nop-c
 
 逐站点 file:line + 漂移分类 + Decision 理由见 `docs/plans/2026-08-01-0656-1-r6-8-mr6-full-verification-completion-criteria.md` §Phase 1 Evidence。checker 复跑全 19 规则 actual ≤ baseline（R8=0≤0 / R2c=1380≤1380 / R2d=32≤32 / R1d=14≤14 / R2a=34≤34 / R2b=240≤240），exit 0，CI green。
 
+## post-R6.8 compliance 基线漂移裁决注记（plan 2026-08-02-0651-1）
+
+`2026-08-02-0651-1`（post-R6.8 compliance 基线漂移裁决，CI red fix）处理 R6.9 per-mutation Processor 补拆（plan `2026-08-01-0803-1`，MR6 closure successor）引入的 compliance 漂移。漂移源全部来自已经独立草案审查 + 结束审计的 R6.9 计划（MR6 已 CLOSED），其生产代码变更已经审计验证为合法 per-mutation 架构。
+
+**漂移源对账**（`git diff 252a6a387..HEAD -- '*.java' ':!*/src/test/*'`，锚定 R6.8 基线 commit `252a6a387`）：
+
+| 文件 | 角色 | ADD | RM | 净 | 源 commit |
+|------|------|-----|----|----|-----------|
+| `ErpFinBudgetScenarioRollForwardProcessor`（fin，新） | per-mutation Processor | 5 | 0 | +5 | `fb5e7d5c3` |
+| `ErpFinBudgetScenarioCarryForwardProcessor`（fin，新） | per-mutation Processor | 9 | 0 | +9 | `fb5e7d5c3` |
+| `ErpFinBudgetScenarioProcessor`（fin，facade） | 旧 monolithic Processor | 0 | 14 | −14 | `fb5e7d5c3`（rollForward/carryForward 内联逻辑下移到 2 新 Processor） |
+| `ErpInvCostingReclosePeriodCostsProcessor`（inv，新） | per-mutation Processor | 11 | 0 | +11 | `99c42f6da` |
+| `ErpInvCostingBizModel`（inv） | BizModel | 0 | 11 | −11 | `99c42f6da`（reclosePeriodCosts D-mutation 下移到 Processor） |
+| `ErpMdSupplierApprovalSuspendByPartnerProcessor`（md，新） | per-mutation Processor | 2 | 0 | +2 | `6aaaf6bcb` |
+| **合计** | | **27** | **25** | **+2** | 与 checker R2c delta (+1382−1380=+2) 精确吻合 |
+
+**基线裁决**（逐项合法性分类，源计划 `2026-08-01-0803-1` 已审计）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2d | 32 | **34** | 34 | **baseline-raise**（+2） | +2 net-new 站点全部 = `ErpMdSupplierApprovalSuspendByPartnerProcessor:47,74`（2 处 `daoFor(ErpMdSupplierApproval.class)`），**同域** master-data Processor 读取本域实体（非跨域违规——R2d 原始语义关注的是跨域 Processor 读 master-data，本处为 master-data 域内）。类 javadoc 明示 daoProvider 选择理由：BizModel 已 `@Inject` 本 Processor，反向注入 `IErpMdSupplierApprovalBiz` 形成循环依赖；按 partnerId+status 的批量查询非 FK 导航，无 ORM `<to-one>` getter 可替代；Processor 非 CrudBizModel 子类故无 `dao()` 方法。比 R6.8 接受的 32 处跨域 ErpMd* 站点更轻（同域 vs 跨域）。 |
+| R2c | 1380 | **1382** | 1382 | **baseline-raise**（+2 净） | R2c +2 净 **全部来自** 上表 R2d 的 2 处同域 daoFor（master-data SupplierApproval）。finance BudgetScenario（+14/−14=0 净）与 inventory InvCosting（+11/−11=0 净）为完美平衡的 per-mutation 拆分迁移，0 净贡献。对齐 R6.8 +130 / 1057-2 +149 先例：per-mutation Processor `daoProvider.daoFor(<EntityClass>)` 是 Nop 平台读取托管实体 DAO 的标准方式，非业务跨域编排。无 B 类「应重构为 I*Biz」候选。 |
+| R2b | 240 | **229** | 229 | **改善回写**（−11） | 11 处 `daoFor(ErpInv*)` 从 `ErpInvCostingBizModel` 下移到 `ErpInvCostingReclosePeriodCostsProcessor`（全部 ErpInv* 同域库存实体：StockLedger×3/StockBalance×2/StockMove/StockMoveLine/CostLayer×4）。BizModel→Processor 下移是 per-mutation 架构的合法重构（对齐 R6.8 产生 R2b 325→240 的 −85 改善先例）。门控方向为单向收紧（下降自动 PASS），回写基线反映真实代码计数（鼓励）。 |
+
+**为何 R6.9 closure 未捕获**：各 R6.9 closure 日志记录「compliance exit 0」指的是 checker 脚本退出码——checker 是**纯 reporter**（`compliance-baseline.md §回归门控规则` + `compliance.yml` 注释：option b「gate 逻辑在 CI / checker 保持纯 reporter」），脚本退出码恒为 0，不反映 actual vs baseline。真正的门控判定在 `compliance.yml` `Enforce baseline gate` step（python 解析 actual > baseline => `sys.exit(1)`）。R6.9 closure 误把脚本退出码当作门控通过，致 R2c/R2d +2 漂移累积——即 `project-context.md §已知失败模式（Compliance 基线漂移）` 描述的复发模式。本裁决是闭合回路复跑 checker 后的集中裁决，对齐 3 先例（`1057-1` / `1705-2` / `0656-1`）。
+
+**0 处 Fix 候选**：R2d +2 同域站点无 ORM `<to-one>` getter 可替代（非 FK 导航）+ 无 I*Biz 可注入（循环依赖），全部裁定 baseline-raise。本裁决纯基线对账 + 文档更新，零生产代码变更（Non-Goals 守约）。
+
+逐站点 file:line + 漂移分类 + Decision 理由（含替代方案否决理由 + 残留风险）见 `docs/plans/2026-08-02-0651-1-compliance-baseline-drift-adjudication.md` §Phase 1 Evidence。checker 复跑全 19 规则 actual ≤ updated baseline（R2b=229≤229 / R2c=1382≤1382 / R2d=34≤34，其余=基线），exit 0，CI green 恢复。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -269,9 +299,9 @@ R1b: 0
 R1c: 0
 R1d: 14
 R2a: 34
-R2b: 240
-R2c: 1380
-R2d: 32
+R2b: 229
+R2c: 1382
+R2d: 34
 R3: 5
 R4: 0
 R5: 0
