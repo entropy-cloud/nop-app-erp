@@ -1,6 +1,6 @@
 # 2026-08-03-0407-3 rc-ma1-a1-20-sales-f3-returns-family sales-F3 退货族需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-03
 > Mission: requirement-compliance
 > Work Item: A1.20（MA1 需求追踪矩阵审计 — sales-F3 退货族）
@@ -76,54 +76,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-20-sales-f3-returns-family.md`（新建，先填 §1-§5）
+Status: completed
+Targets: `docs/audits/2026-08-03-0630-rc-ma1-a1-20-sales-f3-returns-family.md`（已落盘 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-SAL-04/05/06/07/09 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:99/:132/:149/:165/:200` 验收标准原文；L2 引用 `returns.md` 对应 section（§红字发票/§退款处理/§退货类型/§退货成本处理/§异常处理，标注"设计参考，冲突以 L1 为准"，注意 `:213-241` 红字发票 doc drift、`:88-93` returnStatus drift 注记）；L3 引用 `module-sales/.../processor/ErpSalReturnProcessor.java:<line>` / `ErpSalReturnApproveProcessor` / `ReturnStockMoveBuilder` / `SalReturnPostingDispatcher` / `ReturnRefundOrchestrator` / `ReceiptSettler.reverseSettlement` / `ReturnQtyValidator`（含跨域 `IErpInvStockMoveBiz`/`IErpFinVoucherBiz`）；L4 引用 `TestErpSalReturn*.java#method` / E2E spec（注明断言强度）；L5 复用 MA2 A2.9/O2C + E2E。
+- [x] `Proof` 对 UC-SAL-04/05/06/07/09 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:99/:132/:149/:165/:200` 验收标准原文；L2 引用 `returns.md` 对应 section（§红字发票/§退款处理/§退货类型/§退货成本处理/§异常处理，标注"设计参考，冲突以 L1 为准"，注意 `:213-241` 红字发票 doc drift、`:88-93` returnStatus drift 注记）；L3 引用 `module-sales/.../processor/ErpSalReturnProcessor.java:<line>` / `ErpSalReturnApproveProcessor` / `ReturnStockMoveBuilder` / `SalReturnPostingDispatcher` / `ReturnRefundOrchestrator` / `ReceiptSettler.reverseSettlement` / `ReturnQtyValidator`（含跨域 `IErpInvStockMoveBiz`/`IErpFinVoucherBiz`）；L4 引用 `TestErpSalReturn*.java#method` / E2E spec（注明断言强度）；L5 复用 MA2 A2.9/O2C + E2E。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-SAL-04 库存恢复（可用量+=退货，已实现 `TestErpSalReturnInventory` 行级）；②#1 红字发票 credit-memo 替代（`SalReturnPostingDispatcher:84-103` SALES_RETURN posting + 负向 ArApItem，**非**红字 `ErpSalInvoice` 实体，GL 击成本/存货侧非收入/AR 侧——复核 P2-MA2-011 是否满足 §4 三判据）；③#2 无独立退款单（仅负向 ReceiptLine，`ReturnRefundOrchestrator:79-99`）；④UC-SAL-04 退款核销反向（已实现 `TestErpSalReturnRefund` 行级）；⑤#3 UC-SAL-05 未交货量更新缺失（无 undeliveredQty 字段/逻辑）；⑥#4 UC-SAL-05 暂估应收条件冲减缺失（`buildEvent:84-103` 无分支）；⑦#5 UC-SAL-06 换货完全缺失（无 returnType 列 `app-erp-sales.orm.xml:857-934`，无换货分支）；⑧#6 UC-SAL-07 退货成本策略 1/3（仅原出库成本 `ReturnStockMoveBuilder:65`，配置键 `erp-sal.return-cost-method` 未声明 `ErpSalConstants:74-76`）；⑨#7 UC-SAL-09 已核销发票 pre-approve 守卫缺失（无 `ERR_RETURN_INVOICE_SETTLED`，改 post-approve 静默反向 `reverseSettlementsForInvoice:79-99`）；⑩#8 UC-SAL-09 期间 CLOSED 守卫缺失（无 `requirePeriodOpen`/`ERR_RETURN_PERIOD_CLOSED`）；⑪UC-SAL-09 数量守卫已实现（`ReturnQtyValidator:46-66` 强）；⑫#9 returnStatus/refundStatus 非 ORM（复核 P2-MA2-058 三判据）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-SAL-04 库存恢复（可用量+=退货，已实现 `TestErpSalReturnInventory` 行级）；②#1 红字发票 credit-memo 替代（`SalReturnPostingDispatcher:84-103` SALES_RETURN posting + 负向 ArApItem，**非**红字 `ErpSalInvoice` 实体，GL 击成本/存货侧非收入/AR 侧——复核 P2-MA2-011 是否满足 §4 三判据）；③#2 无独立退款单（仅负向 ReceiptLine，`ReturnRefundOrchestrator:79-99`）；④UC-SAL-04 退款核销反向（已实现 `TestErpSalReturnRefund` 行级）；⑤#3 UC-SAL-05 未交货量更新缺失（无 undeliveredQty 字段/逻辑）；⑥#4 UC-SAL-05 暂估应收条件冲减缺失（`buildEvent:84-103` 无分支）；⑦#5 UC-SAL-06 换货完全缺失（无 returnType 列 `app-erp-sales.orm.xml:857-934`，无换货分支）；⑧#6 UC-SAL-07 退货成本策略 1/3（仅原出库成本 `ReturnStockMoveBuilder:65`，配置键 `erp-sal.return-cost-method` 未声明 `ErpSalConstants:74-76`）；⑨#7 UC-SAL-09 已核销发票 pre-approve 守卫缺失（无 `ERR_RETURN_INVOICE_SETTLED`，改 post-approve 静默反向 `reverseSettlementsForInvoice:79-99`）；⑩#8 UC-SAL-09 期间 CLOSED 守卫缺失（无 `requirePeriodOpen`/`ERR_RETURN_PERIOD_CLOSED`）；⑪UC-SAL-09 数量守卫已实现（`ReturnQtyValidator:46-66` 强）；⑫#9 returnStatus/refundStatus 非 ORM（复核 P2-MA2-058 三判据）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#5 换货完全缺失（UC-SAL-06 整个 UC 缺失）属"功能完全缺失"——倾向 P1（须人工确认是否为范围裁剪，若 product-scope 含换货则 P1 强制实现）；#6 退货成本策略 1/3（UC-SAL-07 功能实质偏离）属"行为实质偏离验收标准"——倾向 P1；#3 未交货量更新缺失（UC-SAL-05 派生断言不可满足）——倾向 P1；#7/#8 守卫缺失（UC-SAL-09 异常路径/期间控制未实现）——倾向 P1（期间控制涉会计正确性）；#1/#9 复核既有 documented simplification 是否满足 §4 三判据（人工批准记录证据标准），不满足则重新打开并入 MR1；#2/#4/#10 倾向 P2。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#5 换货完全缺失（UC-SAL-06 整个 UC 缺失）属"功能完全缺失"——倾向 P1（须人工确认是否为范围裁剪，若 product-scope 含换货则 P1 强制实现）；#6 退货成本策略 1/3（UC-SAL-07 功能实质偏离）属"行为实质偏离验收标准"——倾向 P1；#3 未交货量更新缺失（UC-SAL-05 派生断言不可满足）——倾向 P1；#7/#8 守卫缺失（UC-SAL-09 异常路径/期间控制未实现）——倾向 P1（期间控制涉会计正确性）；#1/#9 复核既有 documented simplification 是否满足 §4 三判据（人工批准记录证据标准），不满足则重新打开并入 MR1；#2/#4/#10 倾向 P2。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-SAL-04/05/06/07/09 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.9/O2C 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#10 有明确分级（非悬空"待查"）；#1/#9 documented simplification 复核结论已记录（满足/不满足 §4 三判据）
+- [x] 报告 §1-§5 已落盘：UC-SAL-04/05/06/07/09 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.9/O2C 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#10 有明确分级（非悬空"待查"）；#1/#9 documented simplification 复核结论已记录（满足/不满足 §4 三判据）
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-20-sales-f3-returns-family.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-03-0630-rc-ma1-a1-20-sales-f3-returns-family.md`（已补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` sales 退货同域同控制点（如 P2-MA2-011 红字发票、P2-MA2-058 returnStatus、P1-MA4-021 测试覆盖）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 列明差异依据。#3/#5/#6/#7/#8 为**未登记**缺口，须新建并 grep 比对。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` sales 退货同域同控制点（如 P2-MA2-011 红字发票、P2-MA2-058 returnStatus、P1-MA4-021 测试覆盖）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 列明差异依据。#3/#5/#6/#7/#8 为**未登记**缺口，须新建并 grep 比对。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）；记录 #1/#9 documented simplification 复核结论（满足三判据则维持 P2 watch-only；不满足则按 §4 重新打开为 P1 入 MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）；记录 #1/#9 documented simplification 复核结论（满足三判据则维持 P2 watch-only；不满足则按 §4 重新打开为 P1 入 MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如负向 ArApItem credit memo 实际对客户应收余额的净效果、退货成本在不同库存策略下 CostLayer 实际取值、期间 CLOSED 下退货审核实际是否被拦截等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如负向 ArApItem credit memo 实际对客户应收余额的净效果、退货成本在不同库存策略下 CostLayer 实际取值、期间 CLOSED 下退货审核实际是否被拦截等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-sales-state-machine.md`（退货状态机 + 退款闭环 PASS）+ `2026-07-27-1949-...-order-to-cash-e2e.md`（P2-MA2-011 红字发票 doc drift）+ `2026-07-29-0430-...-code-quality.md`（代码质量 PASS + P1-MA4-021 resolved），列明只补的需求视角差异（换货缺失 / 未交货量缺失 / 成本策略 1/3 / 守卫缺失 / 暂估应收冲减缺失 / documented simplification 复核结论）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-sales-state-machine.md`（退货状态机 + 退款闭环 PASS）+ `2026-07-27-1949-...-order-to-cash-e2e.md`（P2-MA2-011 红字发票 doc drift）+ `2026-07-29-0430-...-code-quality.md`（代码质量 PASS + P1-MA4-021 resolved），列明只补的需求视角差异（换货缺失 / 未交货量缺失 / 成本策略 1/3 / 守卫缺失 / 暂估应收冲减缺失 / documented simplification 复核结论）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；既有行（P2-MA2-011/P2-MA2-058）追加 RC 复核注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；既有行（P2-MA2-011/P2-MA2-058）追加 RC 复核注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据；#1/#9 复核结论已记录
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据；#1/#9 复核结论已记录
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -133,14 +133,36 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.20 报告 9 段齐全 + 5 UC 逐矩阵行 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议 + §4 三判据一致；与 rc-requirement-baseline-inventory A1.20 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯 + documented simplification 复核结论可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.20 报告 9 段齐全 + 5 UC 逐矩阵行 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议 + §4 三判据一致；与 rc-requirement-baseline-inventory A1.20 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯 + documented simplification 复核结论可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+
+## Closure
+
+Status Note: 审计报告 `docs/audits/2026-08-03-0630-rc-ma1-a1-20-sales-f3-returns-family.md` 9 段齐全（§1-§9），5 UC（UC-SAL-04/05/06/07/09）逐矩阵行落盘，10 候选缺口分级完成（6 P1 新建 P1-RC-023..028 + 1 P2 新建 P2-RC-022 + 2 复用 P2-MA2-011/P2-MA2-058 + 1 derivative 不新建），arm-index 已登记全部新 finding + 复用 finding 追加 RC 交叉引用注记。本计划为只读审计（无代码/ORM/api.xml/真相源变更），无回归风险。独立结束审计已验证报告证据与实时仓库一致（anti-hollow spot check：ORM `app-erp-sales.orm.xml` 无 `returnType`/`undeliveredQty`/`redInvoiceId` 列确认；`ErpSalConstants` 无 `CONFIG_RETURN_COST_METHOD` 确认；`ErpSalErrors` 无 `ERR_RETURN_PERIOD_CLOSED`/`ERR_RETURN_INVOICE_SETTLED` 确认；sales 生产代码无 `换货`/`exchange.*return` 匹配确认）。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立子代理（新会话 closure auditor，未重用执行者上下文）
+- Evidence:
+  - 报告存在且 9 段齐全：`docs/audits/2026-08-03-0630-rc-ma1-a1-20-sales-f3-returns-family.md`（grep `^## [0-9]\.` = 9 命中确认）
+  - arm-index 新 finding 已登记：`P1-RC-023/024/025/026/027/028` + `P2-RC-022`（arm-index.md:139-145）
+  - arm-index 复用 finding 已追加 RC 注记：`P2-MA2-011` + `P2-MA2-058`（arm-index.md:159 RC 交叉引用注记段）
+  - §8 过程纪律自检含 checker actual vs baseline 实测表（全 16 规则 actual ≤ baseline 精确匹配 0 漂移）+ closure-audit 独立性声明 + 交叉去重声明
+  - §4 三判据复核结论已记录（P2-MA2-011/P2-MA2-058 §4 (i) 满足维持 watch-only + 严格解释残留风险记录供 MR1 人工批准 backfill）
+  - Anti-hollow 验证：报告声称的代码缺口（returnType/undeliveredQty/redInvoiceId 列缺失 + CONFIG_RETURN_COST_METHOD 未声明 + ERR_RETURN_PERIOD_CLOSED/INVOICE_SETTLED 未声明 + 换货/exchange.*return 零匹配）经独立 grep 实时仓库全部确认成立
+  - §9 MA2 差异增量声明 + §7 静态存疑点清单（5 项 SP-1..SP-5）已落盘供 MA4 展开
+  - Draft Review Record: 独立草案审查 iteration 1 = accept（ses_03be5cf5bffetJmaRM2UoK4BNJ，fresh session）
+
+Follow-up:
+
+- finding 修复属 MR0（P0）/MR1（P1 R1.0 → RC-R1.n）实施义务，非本审计计划范围（见 Deferred But Adjudicated）
+- P1-RC-025 换货缺失须人工确认 product-scope 是否范围裁剪
 
 ## Deferred But Adjudicated
 

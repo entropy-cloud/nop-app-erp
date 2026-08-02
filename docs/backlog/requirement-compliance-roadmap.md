@@ -56,7 +56,7 @@
 | A1.17 | **purchase-F3 退货与业财**（UC-PUR-04/07） | done | `docs/design/purchase/returns.md` | 0.2 | 同上 |
 | A1.18 | **sales-F1 主流程与价格**（UC-SAL-01/11） | done | `docs/design/sales/` | 0.2 | 同上 |
 | A1.19 | **sales-F2 出库与并发**（UC-SAL-02/03/10） | done | `docs/design/sales/` | 0.2 | 同上 |
-| A1.20 | **sales-F3 退货族**（UC-SAL-04/05/06/07/09） | todo | `docs/design/sales/returns.md` | 0.2 | 同上 |
+| A1.20 | **sales-F3 退货族**（UC-SAL-04/05/06/07/09） | done | `docs/design/sales/returns.md` | 0.2 | 同上 |
 | A1.21 | **sales-F4 赠品与看板**（UC-SAL-08/12） | todo | `docs/design/sales/` + `docs/design/dashboards.md`（全局） | 0.2 | 同上 |
 | A1.22 | **assets-F1 折旧引擎**（UC-AST-02/07/08） | todo | `docs/design/assets/` | 0.2 | 同上 |
 | A1.23 | **assets-F2 处置**（UC-AST-04/05） | todo | `docs/design/assets/` | 0.2 | 同上 |
