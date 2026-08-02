@@ -9,9 +9,11 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpCrmLead cancel per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractCancelProcessor to activate the abstract base class; delegates to ErpCrmLeadProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpCrmLead cancel per-mutation Processor (plan 2026-07-30-2046-1 R5.7, Pattern B)。
+ * 自包含编排：requireLead → validateTransitionForCancel → doCancel(docStatus=CANCELLED)。
+ * Long 签名边界：custom override 内 Long.valueOf(id) 转换；域逻辑经 facade
+ * {@link ErpCrmLeadProcessor} protected helper（单一真相源）。
+ * 运行时经 BizModel→facade 旧路径，R5.8 重配线后激活本路径。
  */
 public class ErpCrmLeadCancelProcessor extends AbstractCancelProcessor<ErpCrmLead> {
 
@@ -20,7 +22,11 @@ public class ErpCrmLeadCancelProcessor extends AbstractCancelProcessor<ErpCrmLea
 
     @Override
     public ErpCrmLead cancel(String id, IServiceContext context) {
-        return processor.cancel(Long.valueOf(id), context);
+        Long longId = Long.valueOf(id);
+        ErpCrmLead lead = processor.requireLead(longId, context);
+        processor.validateTransitionForCancel(lead, context);
+        processor.doCancel(lead, context);
+        return lead;
     }
 
     @Override

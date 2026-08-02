@@ -21,7 +21,7 @@
 
 | 类型 | 用途 | 触发点 | 对标 Metasfresh |
 |---|---|---|---|
-| 规则命中日志 | 排障：为何这笔单据命中（或未命中）某模板/Provider | `ErpFinPostingService.post()` 完成 Provider 解析与模板匹配后 | `Fact_Acct_Log` |
+| 规则命中日志 | 排障：为何这笔单据命中（或未命中）某模板/Provider | `post()` 完成 Provider 解析与模板匹配后 | `Fact_Acct_Log` |
 | 变更审计日志 | 合规：模板/规则/科目映射被谁何时改了什么 | `ErpFinVoucherTemplate` / `ErpFinVoucherTemplateLine` 增改删 | `Fact_Acct_UserChange` |
 | 过账异常记录 | 处置：过账失败的凭证与原因，供异常工作台重试/忽略/补录 | `post()` / `reverse()` 抛 `NopException` 时 | `Fact_Acct_Log`（错误分支） |
 | 运行监控指标 | 运营：自动化记账率/时延/异常率/成功率 | `post()` / `reverse()` 入口与出口 | （开源未覆盖，运营基础设施） |
@@ -52,6 +52,19 @@
 - 凭证 → 规则命中日志：`ErpFinVoucher.voucherId` 反查。
 - 规则命中日志 → 业务单据：`billHeadCode` + `businessType` 经 `ErpFinVoucherBillR` 反查源单。
 - 分布式追踪：`traceId` 串联业务域审核 → 事件派发 → 过账编排 → GL 写入全链路（`PostingEvent` 须携带 `traceId`）。
+
+## ErpFinVoucherBillR 索引与过账性能
+
+`ErpFinVoucherBillR`（业财回链表，`module-finance/model/app-erp-finance.orm.xml`）是过账回链的反向定位表——每张过账凭证按 `(billCode, businessType)` 反查关联源单。该前缀是过账/红冲的**热查询路径**：
+
+- `ErpFinPostingProcessor.findBillLinks`（`and(eq("billCode"), eq("businessType"))`）——被 `alreadyPosted` 过账幂等判定与 `markOriginalVoucherReversed` 红冲补标反复调用，**每次业财过账/红冲触发一次该前缀反查**。
+- `BankReconAdjustmentVoucherBuilder.countAdjustmentLinks`、`BadDebtProvisionService.findUnreversedProvisionVouchers` 同前缀模式。
+
+**索引裁决**：实体含两个非唯一索引——`IDX_FIN_VOUCHER_BILL_R_VOUCHER_ID`（on `voucherId`，凭证→回链方向）与 `IDX_FIN_VOUCHER_BILL_R_BILL_CODE_BIZ_TYPE`（on `(billCode, businessType)`，源单→回链方向）。列序 `(billCode, businessType)`：billCode（高基数据）为查询先导，businessType（枚举）次位。二者均 `unique="false"`。
+
+**性能含义**：随 `erp_fin_voucher_bill_r` 行数累积（每张凭证 N 行回链），无 `(billCode, businessType)` 索引时过账延迟线性增长（每次过账/红冲一次全表扫描）。该非唯一索引将反查收敛到索引范围扫描。
+
+**与 P0-MA2-018（deferred 字面 UK）的边界区分**：P0-MA2-018 裁决为 deferred 方向——字面唯一键 `(billCode, businessType, billLineCode)` 会与红冲（同 billCode 允许多张凭证）/ 多账套（acctSchemaId 维度）/ 软删除（delVersion）三重契约冲突。**本索引是 `unique="false"` 非唯一索引**——仅加速查询、**不施加唯一约束**，故不触发 P0-MA2-018 的三重冲突。与 P2-MA7-005（红冲有界 N+1 批量加载，watch-only）协同——本索引让该优化前提（单点查询高效）成立。
 
 ## 变更审计日志
 
@@ -85,16 +98,58 @@
 
 任何过账节点失败（事件解析、规则匹配、平衡校验、期间门控、科目反查、落库）**必须**留下异常记录，不允许静默吞掉。期末结账前置检查（见 `period-close.md`）会扫描未处置的异常记录，阻止结账。
 
+## 错误传播分级策略
+
+> 本节是全域业财过账错误传播的**权威裁决**。各域 dispatcher / 编排层的 catch 处置必须遵循本分级。消除「catch-swallow → 静默悬挂」反模式的统一基线。
+
+### 分级 taxonomy 与处置规则
+
+过账失败按**可恢复性**分四级，每级有明确的处置通道与终态语义：
+
+| 分级 | 含义 | 典型场景 | 处置规则 |
+|---|---|---|---|
+| **G1 瞬时可重试** | 基础设施抖动 / 锁竞争，下次重试可成功 | DB 死锁、瞬时连接失败、主数据延迟 | 经 `DeferredPostingSweepJob`（finance `ErpFinPostingException` 工作台）PENDING→retry；retryCount < MAX_RETRY 自动重选。保留现有行为。 |
+| **G2 永久性失败** | 配置缺失 / Provider 固定抛错，重试不可恢复 | 科目未配置、模板缺失、`ErrorCode` 业务校验失败 | retryCount ≥ MAX_RETRY(3) 升级 **MANUAL** 终态（**非 RETRYING 死状态**——RETRYING 永不被 sweep 重新选中）+ 派发 `IErpSysNotificationBiz` 告警（`fin.posting-exception`）。IGNORED（人工显式放弃）同样补告警。 |
+| **G3 编排层跨域/异步步骤失败** | 期末结账 / 完工触发 / 委外编排层的集成步骤失败 | 期间结账折旧/成本重算、完工差异计算、委外过账 | catch 收窄：**「impl 未就绪」**（`bizObjectManager` 解析失败、配置门控关闭）容错跳过（告警不阻断）；**「配置错误 / 真实故障」**（`NopException` + `ErrorCode`）阻断编排或进 `ErpFinPostingException` 异常工作台 + 告警。 |
+| **G4 无 sweep 覆盖的域 dispatcher** | 域 dispatcher 失败但不在 finance sweep 范围内 | assets 折旧（无 sweep）、logistics 网关（无 sweep）、inventory 到岸成本 reverse（sweep 不覆盖 reverse）、hr/projects/maintenance dispatcher | 派发 `IErpSysNotificationBiz` 告警 + owner doc 错误处理段标注自愈路径；**期末结账前置检查扩展**（见下）作为统一兜底入口，使带病关闭可被发现。 |
+
+> **G4 裁决——哪些进 finance 异常工作台 vs 独立告警：** assets Cap/Disposal **有** `DeferredPostingSweepJob` 兜底重试（仅 `reverseApprove` 在 posted=false 窗口不对称需对齐）；assets 折旧、logistics 网关、inventory reverse、hr/projects/maintenance dispatcher **无 sweep 覆盖**——采用独立 `IErpSysNotificationBiz` 告警 + 期末前置检查兜底（不强行接入 finance sweep，避免 sweep 责任膨胀）。
+
+### 告警通道
+
+- **统一通道**：`IErpSysNotificationBiz.notify(eventType, context, serviceCtx)`（notify 跨域通知派发子系统）。
+- **finance 引擎**：`fin.posting-exception`（异常记录器经 REQUIRES_NEW 独立事务派发告警，config-gated `erp-fin.posting-exception-notify-enabled`）。
+- **域 dispatcher**：各域 `@Inject IErpSysNotificationBiz`，失败路径调 `notify`（降级 try/catch，不阻断主流程）。event type 约定 `<domain>.posting-failure`（如 `ast.depreciation-posting-failure`、`log.gateway-dead-letter`、`inv.landed-cost-reverse-failure`）。
+- **噪声治理**：config-gated `erp-fin.posting-alert.min-severity`（successor，批量折旧/物流高并发场景调节；详见 Deferred But Adjudicated）。
+
+### 期末结账前置检查覆盖矩阵
+
+期末结账前置检查扩展为覆盖各域 posted=false 悬挂（不仅扫 finance 异常工作台 PENDING/RETRYING），作为 G3/G4 域 dispatcher 静默悬挂的统一兜底入口：
+
+| 域 | 扫描实体 | 过滤条件 | 阻断结账 |
+|---|---|---|---|
+| finance | `ErpFinPostingException` | status ∈ {PENDING, RETRYING, MANUAL} 且 voucherDate 落本期 | auto-post-on-close=false 时阻断 |
+| assets | `ErpAstDepreciationSchedule` | posted=false 且 EXECUTED | 阻断（折旧凭证缺失致累计折旧/费用低估） |
+| inventory | `ErpInvLandedCost` | posted=false 且 approveStatus=APPROVED | 阻断（到岸成本凭证缺失致存货价值漂移） |
+| logistics | `ErpLogShipment` | freightSettlementStatus=PENDING 且 status=DELIVERED | 阻断（运费过账悬挂） |
+
+> mfg / hr / projects / maintenance dispatcher 失败经 `IErpSysNotificationBiz` 告警闭环，不纳入前置检查（这些域 posted=false 经期末试算平衡人工发现，避免前置检查与 finance 异常工作台职责重叠）。
+
+### 替代方案与裁决
+
+- **被拒绝**：维持现状（每域独立吞咽）——12 站点同型根因反复出现，证明需统一策略而非逐域修补。
+- **残留风险**：G4 告警通道可能产生噪声 → 经 config-gated `erp-fin.posting-alert.min-severity` 控制（successor）。
+
 ## 运行监控指标
 
-四个核心指标。**nop-platform 无内建 metrics API**（`CoreMetrics` 仅时钟；全仓无 Micrometer/Prometheus/Actuator 依赖），故采用**应用级指标快照**落地：自动化记账率/异常率/闭环成功率经 SQL 聚合 `ErpFinVoucher`+`ErpFinPostingException` 由查询接口呈现；凭证生成时延经进程内窗口采样（复用 §裁决 2 各阶段 `nanoTimeDiff`）呈现。阈值 config-gated，越限可检出。完整落地裁决见 §实现策略 裁决 3。
+四个核心指标。**nop-platform 无内建 metrics API**（`CoreMetrics` 仅时钟；全仓无 Micrometer/Prometheus/Actuator 依赖），故采用**应用级指标快照**落地：自动化记账率/异常率/闭环成功率经 SQL 聚合 `ErpFinVoucher`+`ErpFinPostingException` 由查询接口呈现；凭证生成时延经进程内窗口采样（复用 §规则命中日志载体 各阶段 `nanoTimeDiff`）呈现。阈值 config-gated，越限可检出。完整落地说明见 §实现策略 §运行监控落地路径。
 
 | 指标 | 定义 | 目标 | 低于阈值的含义 |
 |---|---|---|---|
 | 自动化记账率 | 自动生成凭证数 ÷ (自动凭证数 + 手工补录异常数) | ≥95% | 下降说明有新业务场景未被规则覆盖，需补模板/Provider |
 | 凭证生成时延 | 业务事件触发到凭证过账耗时（P99，进程内窗口采样） | <30s | 升高说明规则匹配效率下降或 GL 写入瓶颈 |
 | 过账异常率 | 过账失败或规则未命中占比 | <1% | 走高说明业务系统数据质量问题或规则配置需更新 |
-| 业财闭环成功率 | 源单据 `posted=true` 翻转成功数 ÷ 过账成功数（SYNC 默认下为代理值，见裁决 3 残留风险） | ≥99.5% | 走低说明域调用方未正确置位 `posted`，需联合排查 |
+| 业财闭环成功率 | 源单据 `posted=true` 翻转成功数 ÷ 过账成功数（SYNC 默认下为代理值，见 §运行监控落地路径 残留风险） | ≥99.5% | 走低说明域调用方未正确置位 `posted`，需联合排查 |
 
 > 第四个指标（业财闭环成功率）替代了通用文章的"反写成功率"——本项目反写由域自治置位 `posted`（见 `posting.md` §反写契约），故监控"源单据 `posted` 翻转与凭证过账的一致性"，而非引擎主动反写的成功率。
 
@@ -108,10 +163,10 @@
 
 ## 实现策略
 
-> 本节为已落地裁决（计划 `2026-07-04-1452-1` Phase 1 Decision）。具体执行证据见该计划与 `docs/logs/`。
-> 运行监控（第四类日志）归 5.3 计划 `2026-07-04-1452-3`；本节不涉及，避免与 5.3 owner-doc 修订撞节。
+> 本节为实现策略与裁决依据。具体执行证据见 `docs/logs/`。
+> 运行监控（第四类日志）见 §运行监控指标；本节聚焦前三类日志。
 
-### 裁决 1：变更审计日志载体——复用平台 `NopSysChangeLog`
+### 变更审计日志载体——复用平台 `NopSysChangeLog`
 
 - **裁决**：`ErpFinVoucherTemplate` / `ErpFinVoucherTemplateLine` 声明 `tagSet` 增加 `audit`（头）+ `audit-save`（含初始保存全量）；模板头设 `orm:bizKeyProp="code"` 使 `NopSysChangeLog.bizKey` 可读。
 - **平台能力核实**：`OrmEntityChangeLogInterceptor`（`nop-sys-dao`）在 ORM 层兜底所有写路径——`postUpdate` 用 `orm_forEachDirtyProp` 只遍历已变更字段记 old→new；`postSave` 记初始全量；`postDelete` 记删除标志。开关 `nop.orm.audit.enabled` 默认启用（`app-dao.beans.xml` 的 `feature:on`，空值或 true 即注册拦截器 bean）。
@@ -119,21 +174,21 @@
 - **残留风险**：平台 `NopSysChangeLog` 无内建 TTL 清理（与 iDempiere `AD_ChangeLog_Delete_Old` 的 `keepDays` Job 不同），表会无限增长。**Follow-up**：注册 nop-job 定期删除超期变更日志（见计划 Deferred「日志 TTL 清理 nop-job」，不阻塞本计划闭合）。
 - **代价**：零 ORM 实体新增、零列新增；仅 `tagSet` 声明（低影响模型声明，非新增受保护结构）。
 
-### 裁决 2：规则命中日志载体——成功用结构化日志，失败用持久化异常记录
+### 规则命中日志载体——成功用结构化日志，失败用持久化异常记录
 
 - **裁决**：混合方案。
-  - **成功路径**：在 `ErpFinPostingProcessor` 各 protected step 埋 SLF4J 结构化日志（`traceId`+`billHeadCode`+`businessType`+`voucherId`+命中 Provider/模板+各阶段耗时），**不持久化**（避免凭证表外的高频写放大；排障经日志聚合系统检索）。
+  - **成功路径**：在引擎各阶段埋 SLF4J 结构化日志（`traceId`+`billHeadCode`+`businessType`+`voucherId`+命中 Provider/模板+各阶段耗时），**不持久化**（避免凭证表外的高频写放大；排障经日志聚合系统检索）。
   - **失败路径**：新增 finance ORM 实体 `ErpFinPostingException` 持久化失败记录（`traceId`+`billHeadCode`+`businessType`+`ErrorCode`+失败阶段+时间+处置状态+重试次数），供异常工作台查询与处置。
 - **平台能力核实**：平台**无**任务/异常队列表可承载过账异常——`nop-job` 是调度引擎、`nop-task` 是流程编排、`NopAuthOpLog` 是用户操作审计，均非"业务异常处置队列"。故复用平台能力不可行，需新增 finance ORM 实体。
-- **`txn().afterCommit` 语义核实**（修正项目日志 `docs/logs/2026/07-04.md:55` 的事实错误）：`ITransactionTemplate.afterCommit` 注册 `onAfterCommit` 监听器，**仅在事务提交成功时触发**；主事务回滚时不触发（见 `nop-entropy/.../txn/ITransactionTemplate.java:87-94`）。故**失败记录持久化不可依赖 `afterCommit`**——须用独立 session / `REQUIRES_NEW` 事务写入，确保不随主事务回滚丢失。
+- **`txn().afterCommit` 语义核实**（修正项目日志 `docs/logs/2026/07-04.md` 的事实错误）：`afterCommit` 注册 `onAfterCommit` 监听器，**仅在事务提交成功时触发**；主事务回滚时不触发（平台事务模板语义，见 `nop-entropy/docs-for-ai/`）。故**失败记录持久化不可依赖 `afterCommit`**——须用独立 session / `REQUIRES_NEW` 事务写入，确保不随主事务回滚丢失。
 - **替代方案（被拒绝）**：全量持久化规则命中日志（成功也建表）。被拒理由：成功路径高频（每笔过账一条），写放大且与凭证本身信息冗余；排障主要诉求是"失败为何失败"，成功路径结构化日志 + 日志聚合已足够。
 - **保护区域影响**：新增 `ErpFinPostingException` 实体触及 finance ORM 保护区域（`model/*.orm.xml` 模式 = ask first，required evidence = design doc + plan audit）。本计划已经独立草案审计（见计划 `Draft Review Record`），且回滚策略为模型增量随重新生成移除、无数据迁移。owner-doc（本文件 §过账异常处置）已描述该实体的业务语义与处置状态机。
 
-### 裁决 3：运行监控落地路径——应用级指标快照 + 内存时延采样
+### 运行监控落地路径——应用级指标快照 + 内存时延采样
 
 - **裁决**：四指标以**应用级快照**落地，零新依赖、零 ORM 保护区域触及。
   - **自动化记账率**：SQL 聚合 `ErpFinVoucher`（自动凭证数）÷（`ErpFinVoucher` + `ErpFinPostingException.resolution=MANUAL`）。手工补录（`manualEntry`）代表规则未覆盖需人工干预的事件，计入分母。
-  - **凭证生成时延 P99**：进程内窗口采样（`ErpFinPostingMetrics` 环形缓冲），复用 §裁决 2 各阶段 `nanoTimeDiff` 求和为单次过账时延。**不持久化**——事件触发时间未入库，SQL 不可行；持久化须加列触保护区域，无充分理由。
+  - **凭证生成时延 P99**：进程内窗口采样（环形缓冲采样组件），复用 §规则命中日志载体 各阶段 `nanoTimeDiff` 求和为单次过账时延。**不持久化**——事件触发时间未入库，SQL 不可行；持久化须加列触保护区域，无充分理由。
   - **过账异常率**：SQL 聚合 `ErpFinPostingException` ÷（`ErpFinVoucher` + `ErpFinPostingException`）。
   - **业财闭环成功率**：**代理值**——`posted` 翻转在源域单据（purchase/sales/inventory/...），finance 不可见。SYNC 默认下 post 成功隐含源单 posted 翻转（域自治强一致），故代理 = 过账成功数÷过账成功数 = 1.0；查询结果标注 `loopbackProxyMode=true`。
 - **平台能力核实**：nop-platform **无** metrics 埋点 API——`CoreMetrics` 仅时钟（`currentTimeMillis`/`nanoTime`/`nanoTimeDiff`/`nanoToMillis`），全仓无 Micrometer/Prometheus/Actuator 依赖。可用"监控面"仅 `/q/health*`、`/q/metrics*` 平台信息端点（非业务指标埋点）。故"接入平台监控大盘"在本平台不可行，须应用级自建查询接口。

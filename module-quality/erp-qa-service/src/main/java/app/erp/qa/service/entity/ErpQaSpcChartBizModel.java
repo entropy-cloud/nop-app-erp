@@ -4,9 +4,9 @@ import app.erp.qa.biz.IErpQaSpcChartBiz;
 import app.erp.qa.biz.IErpQaSpcSampleBiz;
 import app.erp.qa.dao.entity.ErpQaSpcChart;
 import app.erp.qa.dao.entity.ErpQaSpcSample;
-import app.erp.qa.service.spc.SpcControlLimitCalculator;
-import app.erp.qa.service.spc.SpcRuleEngine;
-import app.erp.qa.service.spc.SpcSamplingService;
+import app.erp.qa.service.processor.ErpQaSpcChartCollectSamplesProcessor;
+import app.erp.qa.service.processor.ErpQaSpcChartEvaluateRulesProcessor;
+import app.erp.qa.service.processor.ErpQaSpcChartRecalculateControlLimitProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -21,37 +21,25 @@ import java.util.List;
 import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
- * SPC 控制图配置 BizModel（{@code docs/design/quality/spc.md}，plan 2026-07-07-0305-2 Phase 2/3）。
- *
- * <p>采样/控制限/规则评估委托给 {@link SpcSamplingService}/{@link SpcControlLimitCalculator}/
- * {@link SpcRuleEngine}。失控样本查询经注入的 {@link IErpQaSpcSampleBiz}（实体类型隔离）。
+ * SPC 控制图配置 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构；
+ * {@code docs/design/quality/spc.md}，plan 2026-07-07-0305-2 Phase 2/3）。采样/控制限/规则评估多步 mutation
+ * 委托 per-mutation Processor，下游可经 Delta beans.xml 同名 bean id 覆盖。失控样本查询经注入的
+ * {@link IErpQaSpcSampleBiz}（实体类型隔离）。
  */
 @BizModel("ErpQaSpcChart")
 public class ErpQaSpcChartBizModel extends CrudBizModel<ErpQaSpcChart> implements IErpQaSpcChartBiz {
 
     @Inject
-    SpcSamplingService spcSamplingService;
+    ErpQaSpcChartCollectSamplesProcessor collectSamplesProcessor;
     @Inject
-    SpcControlLimitCalculator spcControlLimitCalculator;
+    ErpQaSpcChartEvaluateRulesProcessor evaluateRulesProcessor;
     @Inject
-    SpcRuleEngine spcRuleEngine;
+    ErpQaSpcChartRecalculateControlLimitProcessor recalculateControlLimitProcessor;
     @Inject
     IErpQaSpcSampleBiz spcSampleBiz;
 
     public ErpQaSpcChartBizModel() {
         setEntityName(ErpQaSpcChart.class.getName());
-    }
-
-    public void setSpcSamplingService(SpcSamplingService spcSamplingService) {
-        this.spcSamplingService = spcSamplingService;
-    }
-
-    public void setSpcControlLimitCalculator(SpcControlLimitCalculator spcControlLimitCalculator) {
-        this.spcControlLimitCalculator = spcControlLimitCalculator;
-    }
-
-    public void setSpcRuleEngine(SpcRuleEngine spcRuleEngine) {
-        this.spcRuleEngine = spcRuleEngine;
     }
 
     public void setSpcSampleBiz(IErpQaSpcSampleBiz spcSampleBiz) {
@@ -61,19 +49,19 @@ public class ErpQaSpcChartBizModel extends CrudBizModel<ErpQaSpcChart> implement
     @Override
     @BizMutation
     public Integer collectSamples(@Name("chartId") Long chartId, IServiceContext context) {
-        return spcSamplingService.collectSamples(chartId, context);
+        return collectSamplesProcessor.collectSamples(chartId, context);
     }
 
     @Override
     @BizMutation
     public Boolean recalculateControlLimit(@Name("chartId") Long chartId, IServiceContext context) {
-        return spcControlLimitCalculator.recalculate(chartId);
+        return recalculateControlLimitProcessor.recalculateControlLimit(chartId, context);
     }
 
     @Override
     @BizMutation
     public Integer evaluateRules(@Name("chartId") Long chartId, IServiceContext context) {
-        return spcRuleEngine.evaluate(chartId, context);
+        return evaluateRulesProcessor.evaluateRules(chartId, context);
     }
 
     @Override

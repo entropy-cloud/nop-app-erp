@@ -2,6 +2,7 @@ package app.erp.pur.service.processor;
 
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.service.ErpPurConstants;
+import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractSubmitForApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,8 +11,7 @@ import jakarta.inject.Inject;
 
 /**
  * ErpPurOrder submitForApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractSubmitForApprovalProcessor to activate the abstract base class; delegates to ErpPurOrderProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * Runs the AbstractSubmitForApprovalProcessor skeleton; delegates domain-specific hooks to ErpPurOrderProcessor.
  */
 public class ErpPurOrderSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpPurOrder> {
 
@@ -23,23 +23,39 @@ public class ErpPurOrderSubmitForApprovalProcessor extends AbstractSubmitForAppr
     }
 
     @Override
-    public ErpPurOrder submitForApproval(String id, IServiceContext context) {
-        return processor.submitForApproval(id, context);
-    }
-
-    @Override
     protected IEntityDao<ErpPurOrder> dao() {
         return daoProvider.daoFor(ErpPurOrder.class);
     }
 
     @Override
     protected NopException notFoundException(String id) {
-        return defaultNotFoundException(id);
+        return new NopException(ErpPurErrors.ERR_ORDER_NOT_FOUND)
+                .param(ErpPurErrors.ARG_ORDER_CODE, id);
+    }
+
+    @Override
+    protected NopException illegalStatusException(ErpPurOrder entity, String current, String... expected) {
+        return new NopException(ErpPurErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_ORDER_CODE, entity.getCode())
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
+    }
+
+    @Override
+    protected void validateNotCancelled(ErpPurOrder entity, IServiceContext context) {
+        processor.validateNotCancelled(entity, context);
+    }
+
+    @Override
+    protected void validateBusinessRules(ErpPurOrder entity, IServiceContext context) {
+        processor.requireLinesNonEmpty(entity, context);
+        processor.requireSupplierActive(entity, context);
     }
 
     @Override
     protected String getApproveStatus(ErpPurOrder entity) {
-        return entity.getApproveStatus();
+        String status = entity.getApproveStatus();
+        return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
     }
 
     @Override

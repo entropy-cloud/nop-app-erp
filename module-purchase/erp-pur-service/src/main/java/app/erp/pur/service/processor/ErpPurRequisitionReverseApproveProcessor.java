@@ -2,6 +2,7 @@ package app.erp.pur.service.processor;
 
 import app.erp.pur.dao.entity.ErpPurRequisition;
 import app.erp.pur.service.ErpPurConstants;
+import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractReverseApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,18 +11,12 @@ import jakarta.inject.Inject;
 
 /**
  * ErpPurRequisition reverseApprove per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractReverseApproveProcessor to activate the abstract base class; delegates to ErpPurRequisitionProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * Runs the AbstractReverseApproveProcessor skeleton; delegates domain-specific hooks to ErpPurRequisitionProcessor.
  */
 public class ErpPurRequisitionReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpPurRequisition> {
 
     @Inject
     ErpPurRequisitionProcessor processor;
-
-    @Override
-    public ErpPurRequisition reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
-    }
 
     @Override
     protected IEntityDao<ErpPurRequisition> dao() {
@@ -30,12 +25,22 @@ public class ErpPurRequisitionReverseApproveProcessor extends AbstractReverseApp
 
     @Override
     protected NopException notFoundException(String id) {
-        return defaultNotFoundException(id);
+        return new NopException(ErpPurErrors.ERR_REQ_NOT_FOUND)
+                .param(ErpPurErrors.ARG_REQUISITION_ID, id);
+    }
+
+    @Override
+    protected NopException illegalStatusException(ErpPurRequisition entity, String current, String... expected) {
+        return new NopException(ErpPurErrors.ERR_REQ_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_REQUISITION_CODE, entity.getCode())
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
     }
 
     @Override
     protected String getApproveStatus(ErpPurRequisition entity) {
-        return entity.getApproveStatus();
+        String status = entity.getApproveStatus();
+        return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
     }
 
     @Override
@@ -66,5 +71,12 @@ public class ErpPurRequisitionReverseApproveProcessor extends AbstractReverseApp
     @Override
     protected String submittedStatus() {
         return ErpPurConstants.APPROVE_STATUS_SUBMITTED;
+    }
+
+    @Override
+    protected void doReverseApprove(ErpPurRequisition entity, IServiceContext context) {
+        setApproveStatus(entity, ErpPurConstants.APPROVE_STATUS_REJECTED);
+        setApprovedBy(entity, null);
+        setApprovedAt(entity, null);
     }
 }

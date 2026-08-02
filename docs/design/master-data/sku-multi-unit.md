@@ -31,44 +31,11 @@
 
 ### 物料（Material）
 
-物料承载基础属性：
-
-| 属性 | 说明 |
-|------|------|
-| materialCode | 物料编码（全局唯一） |
-| materialName | 物料名称 |
-| materialType | 物料类型（商品/原材料/产成品/服务） |
-| category | 物料分类 |
-| brand | 品牌 |
-| spec | 规格 |
-| model | 型号 |
-| baseUnitId | 基本单位 |
-| shelfLife | 保质期（天） |
-| shelfLifeRule | 效期规则（按生产日期/入库日期） |
-| batchManaged | 是否批次管理 |
-| serialManaged | 是否序列号管理 |
-| weight | 重量 |
-| volume | 体积 |
-| status | 启用/停用 |
+物料承载基础属性：编码（全局唯一）、名称、类型（商品/原材料/产成品/服务）、分类、品牌、规格、型号、基本单位、保质期与效期规则、批次/序列号管理标志、重量、体积、启停状态。字段定义以 `module-master-data/model/app-erp-master-data.orm.xml`（`ErpMdMaterial` 实体）为权威源。
 
 ### SKU（MaterialSku）
 
-SKU 承载销售/库存属性：
-
-| 属性 | 说明 |
-|------|------|
-| materialId | 关联物料 |
-| skuCode | SKU 编码（物料内唯一） |
-| skuName | SKU 名称 |
-| unitId | 包装单位 |
-| barcode | 条码（SKU 级别） |
-| conversionFactor | 换算系数（包装单位→基本单位） |
-| purchasePrice | 采购价 |
-| wholesalePrice | 批发价 |
-| retailPrice | 零售价 |
-| minPrice | 最低价 |
-| defaultFlag | 是否默认 SKU |
-| status | 启用/停用 |
+SKU 承载销售/库存属性：物料回链（materialId）、SKU 编码（物料内唯一）、名称、包装单位、条码、换算系数（包装单位→基本单位）、四档价格（采购/批发/零售/最低）、默认 SKU 标志、启停状态。字段定义以 orm.xml（`ErpMdMaterialSku` 实体）为权威源。
 
 ### 物料与 SKU 关系
 
@@ -132,34 +99,7 @@ SKU 承载销售/库存属性：
 
 ### 数量换算逻辑
 
-```java
-/**
- * SKU 数量换算
- */
-public BigDecimal convertQty(Long skuId, BigDecimal qty, Long targetUnitId) {
-    MaterialSku sku = skuDao.findById(skuId);
-    Long sourceUnitId = sku.getUnitId();
-    
-    // 获取换算系数
-    BigDecimal sourceFactor = getConversionFactor(sku.getMaterialId(), sourceUnitId);
-    BigDecimal targetFactor = getConversionFactor(sku.getMaterialId(), targetUnitId);
-    
-    // 换算公式：目标数量 = 源数量 × 源系数 ÷ 目标系数
-    return qty.multiply(sourceFactor).divide(targetFactor, 4, RoundingMode.HALF_UP);
-}
-
-/**
- * 获取换算系数（包装单位→基本单位）
- */
-public BigDecimal getConversionFactor(Long materialId, Long unitId) {
-    Material material = materialDao.findById(materialId);
-    if (unitId.equals(material.getBaseUnitId())) {
-        return BigDecimal.ONE;
-    }
-    UoMConversion conversion = conversionDao.findByMaterialAndUnit(materialId, unitId);
-    return conversion.getConversionFactor();
-}
-```
+换算公式：**目标数量 = 源数量 × 源系数 ÷ 目标系数**（系数 = 包装单位→基本单位的换算系数；基本单位自身系数 = 1，精度 4 位四舍五入）。实现见 erp-md-service 模块。
 
 ### 业务场景换算
 
@@ -198,32 +138,11 @@ public BigDecimal getConversionFactor(Long materialId, Long unitId) {
 
 ### 条码唯一约束
 
-```xml
-<entity name="ErpMdMaterialSku">
-    <column name="barcode" type="String" length="20"/>
-    <index name="idx_barcode" columns="barcode" unique="true" condition="barcode is not null"/>
-</entity>
-```
+`barcode` 全局唯一（允许 null，仅非 null 时强制唯一）。约束定义以 orm.xml（`ErpMdMaterialSku` 实体）为权威源。
 
 ### 条码查询
 
-```java
-/**
- * 按条码查询 SKU
- */
-public MaterialSku findSkuByBarcode(String barcode) {
-    return skuDao.findByBarcode(barcode);
-}
-
-/**
- * 按条码查询物料
- */
-public Material findMaterialByBarcode(String barcode) {
-    MaterialSku sku = findSkuByBarcode(barcode);
-    if (sku == null) return null;
-    return materialDao.findById(sku.getMaterialId());
-}
-```
+支持按条码查询 SKU，以及按条码查询所属物料（经 SKU 回链 materialId）。查询接口见 erp-md-service 模块。
 
 ### 条码生成规则
 
@@ -331,24 +250,7 @@ SKU 支持四档可配置价格：
 
 ### 默认 SKU 查询
 
-```java
-/**
- * 查询物料的默认 SKU
- */
-public MaterialSku findDefaultSku(Long materialId) {
-    return skuDao.findDefaultSku(materialId);
-}
-
-/**
- * 业务单据未指定 SKU 时使用默认 SKU
- */
-public MaterialSku resolveSku(Long materialId, Long unitId) {
-    if (unitId != null) {
-        return skuDao.findByMaterialAndUnit(materialId, unitId);
-    }
-    return findDefaultSku(materialId);
-}
-```
+`resolveSku(materialId, unitId)`：指定单位时按 物料+单位 匹配 SKU；未指定单位时回退到物料的默认 SKU（defaultFlag=true）。实现见 erp-md-service 模块。
 
 ## SKU 状态管理
 
@@ -373,46 +275,13 @@ SKU 启停规则
 
 ### SKU 状态校验
 
-```java
-/**
- * 停用 SKU 前校验
- */
-public void validateSkuDeactivation(Long skuId) {
-    MaterialSku sku = skuDao.findById(skuId);
-    
-    // 校验是否为默认 SKU
-    if (sku.getDefaultFlag()) {
-        // 查询是否有其他可用 SKU
-        MaterialSku otherSku = skuDao.findOtherActiveSku(sku.getMaterialId(), skuId);
-        if (otherSku == null) {
-            throw new NopException("不能停用唯一的默认 SKU，请先设置其他 SKU 为默认");
-        }
-    }
-    
-    // 校验是否被未完成单据引用
-    if (hasUnfinishedReference(skuId)) {
-        throw new NopException("SKU 被未完成单据引用，不能停用");
-    }
-}
-```
+停用 SKU 前校验两条业务规则：(1) 若为默认 SKU，必须存在其他可用 SKU 可接替默认标志，否则拒绝；(2) 若被未完成业务单据引用，则拒绝停用。校验逻辑见 erp-md-service 模块。
 
 ## 业务单据 SKU 引用
 
 ### 单据行 SKU 引用
 
-业务单据行引用 SKU：
-
-```xml
-<entity name="ErpPurOrderLine">
-    <column name="materialId" type="Long" mandatory="true"/>
-    <column name="skuId" type="Long" mandatory="true"/>
-    <column name="unitId" type="Long" mandatory="true"/>
-    <column name="qty" type="Decimal" mandatory="true"/>
-    <column name="baseQty" type="Decimal" mandatory="true"/> <!-- 基本单位数量 -->
-    <column name="price" type="Decimal"/>
-    <column name="amount" type="Decimal"/>
-</entity>
-```
+业务单据行同时引用物料（materialId）+ SKU（skuId）+ 单位（unitId），并记录包装单位数量（qty）与基本单位数量（baseQty，落账用）+ 价格/金额。各单据行的字段定义以所属域 orm.xml 为权威源（如采购订单行见 `module-purchase/model/`）。
 
 ### SKU 选择逻辑
 

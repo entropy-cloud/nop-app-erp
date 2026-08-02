@@ -37,7 +37,7 @@ NEW（新线索/新商机创建）
 | QUALIFIED→LOST | 销售员 | lostReasonId 必填 | 丢单归档 |
 | QUALIFIED→CANCELLED | 销售员/管理员 | — | 不可恢复 |
 
-**stageId 迁移规则**：stageId 是独立于 docStatus 的维度。docStatus=QUALIFIED 后，stageId 沿 ErpCrmStage.sequence 递增前移（不能跳级回退），isWonStage 到达时允许触发转化。
+**stageId 迁移规则**：stageId 是独立于 docStatus 的维度。docStatus=QUALIFIED 后，stageId 沿 ErpCrmStage.sequence 递增前移（不能跳级回退），isWonStage 到达时允许触发转化。阶段回退（toStage.sequence < fromStage.sequence）经 `ErpCrmLeadProcessor.validateStageDirection` 守卫拦截：STRICT 模式（`erp-crm.allow-stage-backward` 默认 false）抛 `ERR_STAGE_BACKWARD_MOVE`；业务确需回退（销售流程阶段反复）时设 `erp-crm.allow-stage-backward`=true 放行（LOG.warn + 仍写 convLog 审计留痕）。fromStageId 为 null（首次入漏斗）跳过方向校验。
 
 ### 3. 终态与恢复
 
@@ -53,7 +53,7 @@ NEW（新线索/新商机创建）
 | LOST 不填丢单原因 | 拒绝迁移：lostReasonId 必填 |
 | 重复线索提交 | 查重服务提示合并/跳过，不阻塞创建 |
 | 并发更新同一 Lead | 乐观锁 |
-| 阶段跳级（跳过 sequence 递增） | 拒绝：只能前移到下一阶段 |
+| 阶段跳级（跳过 sequence 递增） | 拒绝：只能前移到下一阶段。回退（toSeq<fromSeq）由 `validateStageDirection` 守卫：STRICT 默认抛 `ERR_STAGE_BACKWARD_MOVE`；`erp-crm.allow-stage-backward`=true 放行 |
 | 已转化的 Lead 创建新 Event | 允许（保留活动历史），但不可修改 stageId |
 
 ### 5. 可达性
@@ -86,6 +86,8 @@ NEW（新线索/新商机创建）
 | Lead 转化时创建客户 | 调用 `IErpCrmConversionBiz.convertToCustomer()` → 在 master-data 域创建 ErpMdPartner |
 | 线索查重 | 查询同企业名/邮箱/电话的已有 Lead，提示用户处理 |
 | 事件提醒 Job | nop-job 定时查询 ErpCrmEvent（PLANNED + startDateTime 临近），发送通知 |
+
+> 漏斗/转化率报表（`FunnelAggregationEngine`）按 stage `sequence` 排序假设 monotonic progression。STRICT 守卫（`erp-crm.allow-stage-backward` 默认 false）保护该不变量；allow-backward=true 放行回退时，转化率/dropOffRate 按 sequence 排序为近似值（历史 convLog 仍全量留痕，审计不丢）。
 
 外部触发渠道：
 - 销售员手动创建/编辑（主要渠道）。
@@ -165,7 +167,7 @@ PLANNED
 
 ### 7. 外部依赖
 
-- 事件提醒 Job 读取 PLANNED 事件，按 reminderMinutesBefore 发送通知（邮件/站内信）。
+- 事件提醒 Job 读取 PLANNED 事件，按 per-event reminderMinutesBefore 计算到期窗口（reminderMinutesBefore 非 null 时用它，否则 fallback 全局 windowMinutes 默认 60）发送通知（邮件/站内信）。
 - Event 可关联 ErpCrmLead（relatedLeadId）、ErpMdPartner（partnerId）实现多态弱指针。
 
 ### 8. TODO / 任务策略
@@ -191,5 +193,5 @@ PLANNED
 - Lead 从 QUALIFIED 回退到 NEW 是否被禁止。
 - LOST 时 lostReasonId 必填是否落实。
 - 转化（CONVERTED）的不可逆确认机制。
-- 阶段迁移（stageId）的 sequence 单向递增约束。
+- 阶段迁移（stageId）的 sequence 单向递增约束（`ErpCrmLeadProcessor.validateStageDirection`：STRICT 默认 `erp-crm.allow-stage-backward`=false 拦截回退，true 放行）。
 - 事件提醒 Job 与 Event 状态的联动（PLANNED 才触发提醒）。

@@ -103,19 +103,4 @@ public interface _ErpLogDaoConstants {
      */
     String GATEWAY_ACTION_CANCEL = "CANCEL";
                     
-    /**
-     * 单据状态: 草稿 
-     */
-    String DOC_STATUS_DRAFT = "DRAFT";
-                    
-    /**
-     * 单据状态: 已生效 
-     */
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-                    
-    /**
-     * 单据状态: 已作废 
-     */
-    String DOC_STATUS_CANCELLED = "CANCELLED";
-                    
 }

@@ -10,6 +10,7 @@ import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.dao.entity.ErpFinVoucherTemplate;
 import app.erp.fin.dao.entity.ErpFinVoucherTemplateLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -232,6 +233,55 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
                 "无已过账凭证应抛 NopException");
     }
 
+    /**
+     * G1（P1-MA4-002 残差 / P1-MA3-039 通用过账路径测试可见性）：通用模板过账路径多币种 E2E。
+     *
+     * <p>构造非 ONE exchangeRate（6.5）+ 外币币种（USD）的 AP 发票 PostingEvent，调 {@code voucherBiz.post()}，
+     * 断言凭证行级 {@code amountSource/amountFunctional/exchangeRate/debitAmount/creditAmount}。
+     *
+     * <p>实测行为（对齐 {@code posting.md §多币种处理 §实现契约} + P1-MA3-039 R1.9 已核实）：
+     * 默认模板 Provider {@code ErpFinTemplateAcctDocProvider} 仅填充 {@code fact.amount}，未显式传双金额字段，
+     * {@code persistVoucher} 回退使 {@code amountSource == amountFunctional == amount}（单币种回退，非按汇率折算）；
+     * 而 {@code exchangeRate} 经 ctx 原样落库（非 ONE 折算率保留）。步断言使 P1-MA3-039（amountSource=amountFunctional）
+     * 在通用过账路径对测试可见（test-visibility）——完整多币种源币金额的全域迁移为 documented successor（见 owner doc），
+     * 不在本测试计划修复生产代码。
+     */
+    @Test
+    public void testMultiCurrencyPostingLineLevelAssertions() {
+        LocalDate voucherDate = LocalDate.of(2026, 6, 15);
+        BigDecimal rate = new BigDecimal("6.5");
+        seed(() -> {
+            seedOpenPeriod("2026-06", 2026, 6, LocalDate.of(2026, 6, 1), LocalDate.of(2026, 6, 30),
+                    PERIOD_STATUS_OPEN);
+            seedSubject("6602", "管理费用");
+            seedSubject("2221", "应交税费-进项税");
+            seedSubject("2202", "应付账款");
+            seedCurrency(2L, "USD");
+            seedApInvoiceTemplate();
+        });
+
+        // 外币 AP 发票：源币金额 货款 100 / 税 13 / 价税合计 113，汇率 6.5（外币 USD，currencyId=2）。
+        PostingEvent event = apInvoiceEvent("AP-FX-001", voucherDate,
+                new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"), 2L, rate);
+
+        Long voucherId = ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
+        assertNotNull(voucherId, "多币种过账应生成凭证");
+
+        List<ErpFinVoucherLine> lines = linesOf(voucherId);
+        output("1_multiccy_line_level.json5", lineLevelState(lines));
+
+        for (ErpFinVoucherLine line : lines) {
+            assertEquals(0, line.getExchangeRate().compareTo(rate),
+                    "exchangeRate 经 ctx 原样落库（非 ONE 折算率保留）");
+            assertEquals(2L, line.getCurrencyId(), "行级币种为外币 USD(2)");
+        }
+
+        // 通用模板路径单币种回退（P1-MA3-039 通用过账路径测试可见性）：amountSource == amountFunctional == 源币金额。
+        assertTemplateFallbackLine(lineOfSubject(lines, "6602"), new BigDecimal("100"), DC_DEBIT);
+        assertTemplateFallbackLine(lineOfSubject(lines, "2221"), new BigDecimal("13"), DC_DEBIT);
+        assertTemplateFallbackLine(lineOfSubject(lines, "2202"), new BigDecimal("113"), DC_CREDIT);
+    }
+
     // ---------- helpers ----------
 
     private java.util.Map<String, Object> exceptionInfo(NopException ex) {
@@ -258,13 +308,18 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
 
     private PostingEvent apInvoiceEvent(String billHeadCode, LocalDate voucherDate, BigDecimal amount,
                                         BigDecimal tax, BigDecimal total) {
+        return apInvoiceEvent(billHeadCode, voucherDate, amount, tax, total, 1L, BigDecimal.ONE);
+    }
+
+    private PostingEvent apInvoiceEvent(String billHeadCode, LocalDate voucherDate, BigDecimal amount,
+                                        BigDecimal tax, BigDecimal total, Long currencyId, BigDecimal exchangeRate) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(billHeadCode);
         event.setAcctSchemaId(1L);
         event.setOrgId(1L);
-        event.setCurrencyId(1L);
-        event.setExchangeRate(BigDecimal.ONE);
+        event.setCurrencyId(currencyId);
+        event.setExchangeRate(exchangeRate);
         event.setVoucherDate(voucherDate);
         event.getBillData().put("AMOUNT", amount);
         event.getBillData().put("TAX", tax);
@@ -312,6 +367,67 @@ public class TestErpFinPostingService extends JunitAutoTestCase {
         subject.setDirection("DEBIT");
         subject.setStatus("ACTIVE");
         dao.saveEntity(subject);
+    }
+
+    private void seedCurrency(Long id, String code) {
+        IEntityDao<ErpMdCurrency> dao = daoProvider.daoFor(ErpMdCurrency.class);
+        ErpMdCurrency currency = new ErpMdCurrency();
+        currency.setId(id);
+        currency.setCode(code);
+        currency.setName(code);
+        currency.setIsFunctional(false);
+        dao.saveEntity(currency);
+    }
+
+    private List<ErpFinVoucherLine> linesOf(Long voucherId) {
+        IEntityDao<ErpFinVoucherLine> dao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("voucherId", voucherId));
+        List<ErpFinVoucherLine> lines = new java.util.ArrayList<>(dao.findAllByQuery(q));
+        lines.sort(java.util.Comparator.comparingInt(l -> l.getLineNo() == null ? Integer.MAX_VALUE : l.getLineNo()));
+        return lines;
+    }
+
+    private ErpFinVoucherLine lineOfSubject(List<ErpFinVoucherLine> lines, String subjectCode) {
+        return lines.stream().filter(l -> subjectCode.equals(l.getSubjectCode())).findFirst().orElseThrow();
+    }
+
+    private java.util.List<java.util.Map<String, Object>> lineLevelState(List<ErpFinVoucherLine> lines) {
+        java.util.List<java.util.Map<String, Object>> result = new java.util.ArrayList<>();
+        for (ErpFinVoucherLine l : lines) {
+            java.util.Map<String, Object> m = new java.util.LinkedHashMap<>();
+            m.put("lineNo", l.getLineNo());
+            m.put("subjectCode", l.getSubjectCode());
+            m.put("dcDirection", l.getDcDirection());
+            m.put("currencyId", l.getCurrencyId());
+            m.put("exchangeRate", l.getExchangeRate());
+            m.put("amountSource", l.getAmountSource());
+            m.put("amountFunctional", l.getAmountFunctional());
+            m.put("debitAmount", l.getDebitAmount());
+            m.put("creditAmount", l.getCreditAmount());
+            result.add(m);
+        }
+        return result;
+    }
+
+    /**
+     * 断言通用模板路径单币种回退（P1-MA3-039 通用过账路径测试可见性）：模板 Provider 未显式传双金额字段，
+     * persistVoucher 回退使 amountSource == amountFunctional == 源币金额；debit/credit 按 functional 记账。
+     */
+    private void assertTemplateFallbackLine(ErpFinVoucherLine line, BigDecimal sourceAmount, String dc) {
+        assertEquals(0, line.getAmountSource().compareTo(sourceAmount),
+                "amountSource = 源币金额（单币种回退，P1-MA3-039 可见）");
+        assertEquals(0, line.getAmountFunctional().compareTo(sourceAmount),
+                "amountFunctional = amountSource（未按汇率折算，P1-MA3-039 可见）");
+        assertEquals(0, line.getAmountSource().compareTo(line.getAmountFunctional()),
+                "amountSource == amountFunctional（P1-MA3-039 通用过账路径可见）");
+        if (DC_DEBIT.equals(dc)) {
+            assertEquals(0, line.getDebitAmount().compareTo(sourceAmount), "借方按 functional 记账");
+            assertEquals(0, line.getCreditAmount().compareTo(BigDecimal.ZERO), "借方行 credit=0");
+        } else {
+            assertEquals(0, line.getCreditAmount().compareTo(sourceAmount), "贷方按 functional 记账");
+            assertEquals(0, line.getDebitAmount().compareTo(BigDecimal.ZERO), "贷方行 debit=0");
+        }
     }
 
     private void seedOpenPeriod(String code, int year, int month, LocalDate start, LocalDate end, String status) {

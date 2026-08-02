@@ -17,29 +17,30 @@
 |------|----------------------|--------|----------|
 | 草稿（DRAFT） | 等待过账 | 是 | 否 |
 | 已过账（POSTED） | 终态：已过账，参与总账汇总 | 否（需红冲） | 是 |
-| 已作废（CANCELLED） | 终态：作废（仅草稿可作废） | 否 | 否 |
+| 已作废（CANCELLED） | **预留语义入口**（dict 项保留，未启用迁移）。草稿凭证的废弃经 logical delete（`useLogicalDelete`）承载，不经 DRAFT→CANCELLED 状态迁移。 | 否 | 否 |
 
 ### 2. 迁移完整性
 
 ```
 草稿 (DRAFT)
   ├─ 过账 → 已过账 (POSTED)
-  │            └─ 红冲 → 生成红字凭证（新 DRAFT，金额取负）
-  └─ 作废 → 已作废（CANCELLED）
+  │            └─ 红冲 → 原凭证置 isReversed=true（保留 POSTED，单边标记，不建立双向回链）
+  └─ [预留] 作废 → 已作废（CANCELLED）
+       ↑ 未实现迁移：草稿废弃经 logical delete 承载，CANCELLED dict 项保留为未来显式作废工作流的语义入口
 ```
 
 | 迁移 | 触发人/系统 | 前置条件 | 结果 |
 |------|-------------|----------|------|
 | DRAFT → POSTED | 财务员 / 系统（业财自动触发） | 草稿状态、**借贷平衡**、**会计期间未结账**、科目有效、汇率存在（多币种） | 参与总账、凭证号按凭证字分类连续生成 |
-| POSTED → 红冲（生成红字凭证） | 财务员 | 已过账状态 | 不改原凭证；生成新红字凭证（金额取负，关联原凭证），走 DRAFT→POSTED |
-| DRAFT → CANCELLED | 财务员 | 草稿状态 | 直接作废（未影响总账，无需红冲） |
+| POSTED → 红冲（原凭证置 isReversed=true） | 财务员 | 已过账状态 | 原凭证保留 POSTED 终态；置 `isReversed=true` 单边标记（**已知简化**：不建立 `reversedVoucherId` 双向回链，红冲闭环功能完整，红字凭证经 `postingType=REVERSAL` 与原凭证关联） |
+| ~~DRAFT → CANCELLED~~（预留，未实现） | — | — | 草稿废弃经 logical delete（`useLogicalDelete`）承载；CANCELLED 作为预留 dict 项保留，待未来「保留审计轨迹的显式作废动作」PM 需求时实现 |
 
 ### 3. 终态与恢复
 
-- **终态**：`已过账（POSTED）`、`已作废（CANCELLED）`。
-- **已过账不可直接修改**：已影响总账，纠错只能红冲（生成红字凭证冲销）。
-- **红字凭证**：金额全部取负数，摘要注明"冲销 ×× 凭证"，关联原凭证（双向回链），走正常 DRAFT→POSTED 流程。原凭证保留审计轨迹。
-- **已作废不可恢复**：作废是终态（且仅草稿可作废）。
+- **终态**：`已过账（POSTED）`。CANCELLED 为预留 dict 项（未启用迁移，非活跃终态）。
+- **已过账不可直接修改**：已影响总账，纠错只能红冲（原凭证置 `isReversed=true`）。
+- **红字凭证（已知简化，对齐实现）**：红冲在原凭证上置 `isReversed=true` 单边标记（保留 POSTED），不建立 `reversedVoucherId` 双向回链。归档凭证（已红冲原凭证）与活动凭证（POSTED + `isReversed=false`）的区分经 `isReversed` + `postingType` 联合判定。红冲闭环功能完整（含 `reverseVoucher` 与业财回链红冲）。`reversedVoucherId` 双向回链为 successor（报表需求驱动时实现）。
+- **草稿废弃**：经 logical delete（`useLogicalDelete`）承载，不经状态迁移；CANCELLED dict 项保留为未来显式作废工作流的语义入口（successor）。
 
 ### 4. 异常路径
 
@@ -56,17 +57,18 @@
 
 ### 5. 可达性
 
-- 从 DRAFT 可达 POSTED 与 CANCELLED。
-- POSTED 的"红冲"是生成新凭证，不是状态回退。
-- 无死锁、无循环。DRAFT→POSTED 与 DRAFT→CANCELLED 是有向无环路径。
+- 从 DRAFT 可达 POSTED。
+- POSTED 的"红冲"是原凭证上置 `isReversed=true`（单边标记），不是状态回退，也不生成新状态。
+- CANCELLED 当前为预留 dict 项，无入边（草稿废弃经 logical delete 承载）；DRAFT→CANCELLED 迁移为 successor。
+- 无死锁、无循环。DRAFT→POSTED 是有向无环路径。
 
 ### 6. 角色与权限
 
 | 迁移 | 执行角色 |
 |------|----------|
 | 过账（DRAFT→POSTED） | 财务员 / 系统（业财自动） |
-| 红冲（生成红字凭证） | 财务员（需权限，因影响总账） |
-| 作废（DRAFT→CANCELLED） | 财务员 |
+| 红冲（原凭证置 isReversed=true） | 财务员（需权限，因影响总账） |
+| 作废（DRAFT→CANCELLED） | **预留**（未实现迁移；草稿废弃经 logical delete，权限由 delete action 承载） |
 
 危险操作：
 - **红冲已过账凭证**：需财务员权限，建议二次确认（因影响报表）。
@@ -127,34 +129,39 @@
 
 | 状态 | 业务含义（等待什么） | 可新增凭证 | 可结账 |
 |------|----------------------|------------|--------|
-| 未开启（CLOSED） | 期间未到或已财务关闭 | 否 | — |
+| 未开启（NEVER_OPENED） | 期间未到或已财务关闭 | 否 | — |
 | 已开启（OPEN） | 当前可记账期间 | 是 | 是 |
 | 结账中（CLOSING） | 正在执行期末结账流程 | 否 | — |
-| 已结账（CLOSED_FINAL） | 终态：已完成期末结账 | 否 | 否（需反结账） |
+| 已结账（CLOSED） | 结账完成，待复核 | 否 | 否（需反结账） |
+| 已复核（CLOSED_FINAL） | 终态：报表复核后最终锁定 | 否 | 否（需反结账） |
+
+> **状态码权威来源**：5 态对齐 ORM dict `erp-fin/period-status`（`app-erp-finance.orm.xml`）与 `ErpFinConstants.PERIOD_STATUS_*`。`CLOSED`=已结账（待复核），`CLOSED_FINAL`=已复核（最终锁定），`NEVER_OPENED`=未开启。
 
 ### 2. 迁移完整性
 
 ```
-未开启 (CLOSED)
+未开启 (NEVER_OPENED)
   └─ 到达期间开始日期 → 已开启 (OPEN)
                         ├─ 新增凭证（正常业务）
                         ├─ 期末结账 → 结账中 (CLOSING)
-                        │              ├─ 结账成功 → 已结账 (CLOSED_FINAL)
+                        │              ├─ 结账成功 → 已结账 (CLOSED，待复核)
                         │              └─ 结账失败 → 回到已开启 (OPEN)
-                        └─ 反结账（已结账→已开启）→ 回到已开启
+                        ├─ 复核 → 已复核 (CLOSED_FINAL，最终锁定)
+                        └─ 反结账（已复核→已开启）→ 回到已开启
 ```
 
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|
-| CLOSED → OPEN | 系统（定时任务，到达期间开始日期） | 上一期间已结账或允许跨期 | 开启记账 |
+| NEVER_OPENED → OPEN | 系统（定时任务，到达期间开始日期） | 上一期间已结账或允许跨期 | 开启记账 |
 | OPEN → CLOSING | 财务员（发起期末结账） | 本期所有业务单据已审核、`posted=true`（无未过账单据） | 冻结新增凭证 |
-| CLOSING → CLOSED_FINAL | 系统（结账流程完成） | 成本核算、折旧/摊销、结转损益全部成功 | 标记已结账 |
+| CLOSING → CLOSED | 系统（结账流程完成） | 成本核算、折旧/摊销、结转损益全部成功 | 标记已结账（待复核） |
 | CLOSING → OPEN | 系统（结账失败） | 任一结账步骤失败 | 回退，允许修复后重试 |
+| CLOSED → CLOSED_FINAL | 财务员/系统（报表复核） | 试算平衡表快照生成 | 最终锁定 |
 | CLOSED_FINAL → OPEN（反结账） | 管理员（高权限） | 特殊情况需调整已结账期间 | 允许修改凭证后重新结账 |
 
 ### 3. 终态与恢复
 
-- **终态**：`已结账（CLOSED_FINAL）`。
+- **终态**：`已复核（CLOSED_FINAL）`。`已结账（CLOSED）` 为待复核中间态（结账完成但尚未最终锁定）。
 - **反结账恢复**：管理员可反结账回到 OPEN，修改凭证后重新结账。需严格权限控制（影响已出具报表）。
 - **结账失败的恢复**：CLOSING → OPEN（自动回退），修复问题后重新发起结账。
 
@@ -170,7 +177,7 @@
 
 ### 5. 可达性
 
-- CLOSED → OPEN → CLOSING → CLOSED_FINAL 是主路径。
+- NEVER_OPENED → OPEN → CLOSING → CLOSED → CLOSED_FINAL 是主路径。
 - CLOSING → OPEN（失败回退）与 CLOSED_FINAL → OPEN（反结账）是恢复路径。
 - 无死锁：CLOSED_FINAL 是终态，反结账是显式路径。
 
@@ -179,11 +186,15 @@
 | 迁移 | 执行角色 |
 |------|----------|
 | 发起结账（OPEN→CLOSING） | 财务员 |
-| 反结账（CLOSED_FINAL→OPEN） | **管理员**（高权限，严格审批） |
+| 反结账（CLOSED_FINAL→OPEN） | **管理员**（高权限；当前为 config kill-switch，非独立审批 action，见下方已知简化） |
 | 期间自动开启 | 系统 |
 
 危险操作：
-- **反结账**：需管理员权限 + 审批，因影响已出具报表与税务申报。
+- **反结账**：受 config kill-switch 门控（影响已出具报表与税务申报），完整审批流为 successor。
+
+> **反结账审批已知简化（P1-MA3-036）**：当前 `reverse-close-approval-required`（默认 true）为**保护性 kill-switch**——true 时 `reverseClose` 直接抛异常拒绝反结账（纯开关，无审批 action），false 时由 @BizMutation 角色权限门控（无独立审批 action）。owner doc 表述「管理员 + 审批」的实际落位 = kill-switch + 角色权限。完整审批流（反结账申请→审批→执行，解除条件见 §已知限制：浏览器层 xwf 审批路径）为 successor（P1-MA2-020 触发：审批流落地时实现）。
+
+> **CLOSED_FINAL 凭证锁定**：`ErpFinVoucherBizModel.postVoucher`/`reverseVoucher` 前校验凭证所属期间状态，CLOSED/CLOSED_FINAL 时抛 `ERR_FIN_VOUCHER_PERIOD_LOCKED` 拒绝操作（对齐下方 §1 状态定义「CLOSED_FINAL 可修改凭证=否」）。
 
 ### 7. 外部依赖
 
@@ -198,8 +209,9 @@
 |------|---------------|-----------|
 | OPEN（月末） | 是 | assigned（财务员）—— 月末待结账提醒 |
 | CLOSING（失败回退） | 是 | assigned（财务员）—— 结账失败待处理 |
+| CLOSED（待复核） | 是 | assigned（财务员）—— 待复核最终锁定 |
 | CLOSED_FINAL | 否 | — |
-| CLOSED（未到期间） | 否 | — |
+| NEVER_OPENED（未到期间） | 否 | — |
 
 ### 9. 场景演练
 
@@ -240,11 +252,16 @@
 ## 审查提示
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
-- 红字凭证冲销路径是否完整（关联原凭证、双向回链）。
+- 红字凭证冲销路径是否完整（原凭证 `isReversed=true` 单边标记，**已知简化**：无 `reversedVoucherId` 双向回链——successor）。
+- CANCELLED 是否仍为预留 dict 项（无入边；草稿废弃经 logical delete 承载）。
 - 业务自动触发的凭证过账失败时是否产生异常 TODO（避免草稿滞留）。
 - 期间结账的前置校验（无未过账单据）是否落实。
 - 反结账权限是否严格（管理员 + 审批）。
 - 两类状态机的耦合约束（期间 vs 凭证）是否一致。
+
+## 职责分离（程序级强制）
+
+财务域审批单据（费用报销 ErpFinExpenseClaim、员工借款 ErpFinEmployeeAdvance 等）的创建人与审核人不可为同一人：approve 守卫比对 `createdBy` 与审核人 userId，相等抛 `erp.err.fin.approver-is-creator`（plan 2026-07-31-1023-2 R3.3）。注：会计凭证 `postVoucher` 为过账动作（非审批），不在 SoD 范围。
 
 ## 已知限制：浏览器层 xwf 审批路径
 

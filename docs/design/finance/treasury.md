@@ -147,7 +147,7 @@
 | NOTES_PAYABLE_HONORED | 应付票据到期兑付 | 借：应付票据 / 贷：银行存款 |
 | CREDIT_FACILITY_INTEREST | 授信利息 | 借：财务费用-利息支出 / 贷：银行存款 |
 
-**CREDIT_FACILITY_INTEREST 实现注记**（plan 2026-07-18-0718-1）：
+**CREDIT_FACILITY_INTEREST 实现注记**：
 - **触发**：`ErpFinCreditFacilityBizModel.accrueInterest(creditFacilityId, fromDate, toDate)` `@BizMutation`（手动入口；定时执行归 successor）。
 - **计息公式**：`interest = usedAmount × rate × days / 360`（HALF_UP scale=4，对齐 `amount` domain precision=20 scale=4）；`usedAmount` 取 fromDate 时点值；`days = ChronoUnit.DAYS.between(fromDate, toDate) + 1`（闭区间）；360 天年化基准对齐票据贴现 `ErpFinNotesReceivableProcessor:231-234` 范式。
 - **rate 来源**：config `erp-fin.credit-facility-default-interest-rate`（全 facility 共享年化利率；默认 0=关闭门控，accrueInterest 抛 `ERR_CREDIT_FACILITY_INTEREST_RATE_NOT_CONFIGURED`）；per-facility 利率覆盖归 successor（需 ORM 加列）。
@@ -191,7 +191,7 @@
 |---|---|---|
 | `erp-fin.credit-check-on-issue` | true | 开银承前是否强制校验授信可用额度 |
 | `erp-fin.notes-discount-rate-default` | — | 默认贴现率（缺省时提示配置） |
-| `erp-fin.cash-forecast-cron` | —（默认不执行，运维启用配置键生效） | 现金预测定时刷新 cron（聚合 AR/AP + 票据到期）。SCHEDULED：`ErpFinCashForecastJob` + `scheduler.yaml` 已接线（plan 2026-07-05-0306-1），登记于 `docs/architecture/job-scheduling.md` §3.1 `erp-fin-cash-forecast-refresh`。空值=跳过门控 |
+| `erp-fin.cash-forecast-cron` | —（默认不执行，运维启用配置键生效） | 现金预测定时刷新 cron（聚合 AR/AP + 票据到期）。SCHEDULED：`ErpFinCashForecastJob` + `scheduler.yaml` 已接线，登记于 `docs/architecture/job-scheduling.md` §3.1 `erp-fin-cash-forecast-refresh`。空值=跳过门控 |
 | `erp-fin.cash-forecast-window-days` | 30 | 现金预测默认向前预测窗口（天），job 派生 [today, today+window] |
 
 ## 关键业务规则
@@ -203,7 +203,7 @@
 5. **现金预测派生**：`ErpFinCashForecast` 由定时任务（nop-job）聚合 AR/AP/票据到期数据生成，不手工录入。
    > **实现注（计划 1000-1）**：nop-job 定时基线未落地；当前提供手动触发的批量聚合方法 `IErpFinCashForecastBiz.refreshForecast(fromDate,toDate)`（聚合 ArApItem 未核销到期 + 票据到期，先清区间再写入），定时调度归 Follow-up（触发条件：nop-job 接线时）。拒付转应收的完整追索/坏账核销为 Non-Goal（见计划 1000-1 Deferred）。
    >
-   > **银行存款外币汇兑重估已落地**（plan `2026-07-05-0540-2`）：期末结账 GL 段 `ExchangeRevaluationService` 扩展重估外币 `ErpFinFundAccount` 银行存款余额（`currentBalance` × 期末汇率 vs 科目账面本位币聚合），差额生成 EXCHANGE_GAIN_LOSS 凭证（借/贷银行存款科目 / 贷/借汇兑损益），与 AR/AP 重估同业务类型同事务同汇率源，config-gated `erp-fin.bank-fx-revaluation-enabled`。本位币账户不重估。详见 `period-close.md §汇兑重估`。
+   > **银行存款外币汇兑重估**：期末结账 GL 段 `ExchangeRevaluationService` 扩展重估外币 `ErpFinFundAccount` 银行存款余额（`currentBalance` × 期末汇率 vs 科目账面本位币聚合），差额生成 EXCHANGE_GAIN_LOSS 凭证（借/贷银行存款科目 / 贷/借汇兑损益），与 AR/AP 重估同业务类型同事务同汇率源，config-gated `erp-fin.bank-fx-revaluation-enabled`。本位币账户不重估。详见 `period-close.md §汇兑重估`。
    >
    > **电子票据外部系统明确不在范围**：本项目票据模块聚焦**组织内部**的票据记账生命周期（收到/贴现/背书/托收/拒付/兑付/注销），**不对接任何外部电子票据系统**。人行 ECDS（电子商业汇票系统）已于 2024-07 正式下线关闭（被新一代票据系统取代），作为术语已废弃；新一代票据系统对接属银行/票交所接口集成，属强本地化运营层，本项目不承担。GitHub 实测亦证实开源 ERP（含国产 jsh/redragon/xingyun）均无电子票据系统对接实现。
 

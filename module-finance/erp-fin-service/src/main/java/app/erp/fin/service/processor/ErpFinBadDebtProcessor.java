@@ -56,54 +56,30 @@ public class ErpFinBadDebtProcessor {
     @Inject
     FinPostingExecutor finPostingExecutor;
 
-    // ===================== 创建坏账单 =====================
+    @Inject
+    ErpFinBadDebtSubmitForApprovalProcessor submitForApprovalProcessor;
 
-    public ErpFinBadDebt writeOff(Long arApItemId, String reason, IServiceContext context) {
-        ErpFinArApItem item = requireOpenArApItem(arApItemId);
-        ErpFinBadDebt debt = newBadDebt(ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF, item, item.getOpenAmountFunctional(), reason);
-        if (!isWriteOffApprovalRequired()) {
-            // 无需审批：先执行生效（变异 ArApItem + 凭证），再一次性保存（避免新建态 update 报错）。
-            executeWriteOff(debt, item, context);
-            debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
-        }
-        badDebtDao().saveEntity(debt);
-        return debt;
-    }
+    @Inject
+    ErpFinBadDebtApproveProcessor approveProcessor;
 
-    public ErpFinBadDebt recover(Long arApItemId, String reason, IServiceContext context) {
-        ErpFinArApItem item = requireWrittenOffArApItem(arApItemId);
-        ErpFinBadDebt debt = newBadDebt(ErpFinConstants.BAD_DEBT_TYPE_RECOVERY, item, debtAmountOf(item), reason);
-        if (!isWriteOffApprovalRequired()) {
-            executeRecovery(debt, item, context);
-            debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
-        }
-        badDebtDao().saveEntity(debt);
-        return debt;
-    }
+    @Inject
+    ErpFinBadDebtRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpFinBadDebtReverseApproveProcessor reverseApproveProcessor;
 
     // ===================== 审批状态机 =====================
 
     public ErpFinBadDebt submit(Long badDebtId, IServiceContext context) {
-        ErpFinBadDebt debt = requireBadDebt(badDebtId);
-        validateTransitionForSubmit(debt);
-        doSubmit(debt);
-        return debt;
+        return submitForApprovalProcessor.submitForApproval(String.valueOf(badDebtId), context);
     }
 
     public ErpFinBadDebt approve(Long badDebtId, IServiceContext context) {
-        ErpFinBadDebt debt = requireBadDebt(badDebtId);
-        if (debt.isApproved()) {
-            return debt;
-        }
-        validateTransitionForApprove(debt);
-        return approveInternal(debt, loadArApItem(debt.getSourceArApItemId()), context);
+        return approveProcessor.approve(String.valueOf(badDebtId), context);
     }
 
     public ErpFinBadDebt reject(Long badDebtId, IServiceContext context) {
-        ErpFinBadDebt debt = requireBadDebt(badDebtId);
-        validateTransitionForReject(debt);
-        doReject(debt);
-        return debt;
+        return rejectProcessor.reject(String.valueOf(badDebtId), context);
     }
 
     // ===================== 反审核（红冲闭环，plan 2026-07-18-1745-3） =====================
@@ -122,13 +98,17 @@ public class ErpFinBadDebtProcessor {
      * 因为反审核是补救路径不是用户主路径，需要强保证无残留半状态）。
      */
     public ErpFinBadDebt reverseApprove(Long badDebtId, IServiceContext context) {
-        ErpFinBadDebt debt = requireBadDebt(badDebtId);
-        // 守卫：须已 APPROVED 且已生成凭证（ErpFinBadDebt 无 posted 字段，以 voucherId 非空作为已过账标志）
-        if (!debt.isApproved() || debt.getVoucherId() == null) {
-            throw new NopException(ErpFinErrors.ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED)
-                    .param(ErpFinErrors.ARG_BAD_DEBT_ID, badDebtId);
-        }
+        return reverseApproveProcessor.reverseApprove(String.valueOf(badDebtId), context);
+    }
 
+    /**
+     * 反审核生效体（plan 2026-07-30-1433-3 R5.3）：从公共 {@link #reverseApprove} 抽取，
+     * 供 per-mutation {@code ErpFinBadDebtReverseApproveProcessor} 复用，保证红冲 + ArApItem 对称回滚 + REJECTED
+     * 翻转的会计保护区域逻辑单一真相源（不复制到 per-mutation，避免会计语义漂移）。
+     *
+     * <p>前置：调用方已通过 {@code debt.isApproved() && voucherId != null} 守卫。
+     */
+    protected ErpFinBadDebt executeReverseApprove(ErpFinBadDebt debt, IServiceContext context) {
         // step 1：红冲凭证（billHeadCode = debt.code，对齐 writeBadDebtVoucher）
         ErpFinBusinessType businessType = Objects.equals(debt.getDocType(), ErpFinConstants.BAD_DEBT_TYPE_WRITE_OFF)
                 ? ErpFinBusinessType.BAD_DEBT_WRITE_OFF

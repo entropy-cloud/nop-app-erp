@@ -8,7 +8,7 @@ import app.erp.crm.dao.entity.ErpCrmLeadScoreConfigLine;
 import app.erp.crm.dao.entity.ErpCrmLeadScoreLine;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.ErpCrmErrors;
-import app.erp.crm.service.processor.ErpCrmLeadProcessor;
+import app.erp.crm.service.processor.ErpCrmLeadQualifyProcessor;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -51,7 +51,7 @@ public class LeadScoringEngine {
     IDaoProvider daoProvider;
 
     @Inject
-    ErpCrmLeadProcessor leadProcessor;
+    ErpCrmLeadQualifyProcessor qualifyProcessor;
 
     /**
      * 重算指定线索的评分。无 active config 时返回 null（triggeredAction=NONE，不阻断 Lead 正常流程）。
@@ -81,7 +81,7 @@ public class LeadScoringEngine {
         }
 
         if (autoQualified) {
-            leadProcessor.qualify(leadId, context);
+            qualifyProcessor.qualify(leadId, context);
         }
         return score;
     }

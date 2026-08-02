@@ -9,6 +9,7 @@ import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.costing.CostAdjustmentService;
 import app.erp.inv.service.costing.LandedCostAllocationEngine;
 import app.erp.inv.service.posting.LandedCostPostingDispatcher;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import io.nop.api.core.auth.IUserContext;
@@ -16,6 +17,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
@@ -69,35 +71,21 @@ public class ErpInvLandedCostProcessor {
     @Inject
     LandedCostPostingDispatcher postingDispatcher;
 
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    @Inject
+    ErpInvLandedCostApproveProcessor approveProcessor;
+
+    @Inject
+    ErpInvLandedCostReverseApproveProcessor reverseApproveProcessor;
+
+    static final String NOTIFY_EVENT_LANDED_COST_REVERSE_FAILURE = "inv.landed-cost-reverse-failure";
+
     // ---------- 审核编排 ----------
 
     public ErpInvLandedCost approve(Long id, IServiceContext context) {
-        ErpInvLandedCost landedCost = requireLandedCost(id, context);
-
-        if (Objects.equals(landedCost.getApproveStatus(), ErpInvConstants.APPROVE_STATUS_APPROVED)) {
-            throw new NopException(ErpInvErrors.ERR_LANDED_COST_ALREADY_APPROVED)
-                    .param(ErpInvErrors.ARG_LANDED_COST_CODE, landedCost.getCode());
-        }
-
-        List<ErpInvLandedCostLine> costLines = loadCostLines(landedCost.getId());
-        if (costLines.isEmpty()) {
-            throw new NopException(ErpInvErrors.ERR_LANDED_COST_NO_LINES)
-                    .param(ErpInvErrors.ARG_LANDED_COST_CODE, landedCost.getCode());
-        }
-
-        ErpPurReceive receive = loadReceive(landedCost.getReceiveId());
-        validateReceiveApproved(receive);
-        validateNotAlreadyAllocated(landedCost.getReceiveId(), landedCost.getId());
-
-        List<ErpPurReceiveLine> receiveLines = loadReceiveLines(landedCost.getReceiveId());
-
-        List<LandedCostAllocationEngine.AllocationResult> allocations = doAllocate(landedCost, costLines, receiveLines);
-
-        ErpInvCostAdjust costAdjust = createAndApplyCostAdjust(landedCost, receive, allocations);
-
-        doPostApprove(landedCost, costAdjust, costLines, allocations, context);
-
-        return reload(id);
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     // ---------- 分摊预览（只读，不落库） ----------
@@ -124,34 +112,6 @@ public class ErpInvLandedCostProcessor {
         return preview;
     }
 
-    // ---------- 自动创建（path-2 运费→到岸成本，plan 2026-07-11-2329-1） ----------
-
-    /**
-     * 按采购入库单 code + 运费数据自动创建 DRAFT 到岸成本单（FREIGHT 费用行）。
-     *
-     * <p>内部解析 receiveCode→receiveId（inventory-service 已 compile-scope 依赖 purchase-dao）。
-     * 幂等：同 receiveId 已有非 CANCELLED 到岸成本单时抛 {@link ErpInvErrors#ERR_LANDED_COST_DRAFT_EXISTS}。
-     */
-    public ErpInvLandedCost generateFreightLandedCost(String receiveCode, BigDecimal freightAmount,
-                                                       Long freightCurrencyId, BigDecimal freightExchangeRate,
-                                                       IServiceContext context) {
-        ErpPurReceive receive = loadReceiveByCode(receiveCode);
-        if (receive == null) {
-            throw new NopException(ErpInvErrors.ERR_LANDED_COST_RECEIVE_NOT_FOUND)
-                    .param("receiveCode", receiveCode);
-        }
-
-        validateNoDraftExists(receive.getId());
-
-        Long currencyId = freightCurrencyId != null ? freightCurrencyId : receive.getCurrencyId();
-        BigDecimal exchangeRate = resolveExchangeRate(freightExchangeRate, freightCurrencyId, receive);
-
-        ErpInvLandedCost landedCost = createLandedCostHead(receive, freightAmount, currencyId, exchangeRate);
-        createFreightLine(landedCost, freightAmount, receive.getSupplierId());
-
-        return landedCost;
-    }
-
     // ---------- 红冲（plan 2026-07-18-1745-2） ----------
 
     /**
@@ -175,15 +135,7 @@ public class ErpInvLandedCostProcessor {
      * 但本方法作为顶层 BizModel 入口语义更严格——异常向上抛由 GraphQL 表达，便于前端感知失败。
      */
     public ErpInvLandedCost reverseApprove(Long id, IServiceContext context) {
-        ErpInvLandedCost landedCost = requireLandedCost(id, context);
-        validateCanReverse(landedCost, context);
-
-        ErpInvCostAdjust costAdjust = findCostAdjustForLandedCost(landedCost.getCode());
-        List<ErpInvCostAdjustLine> adjustLines = costAdjust != null ? loadAdjustLines(costAdjust.getId()) : java.util.Collections.emptyList();
-
-        doReverseApprove(landedCost, costAdjust, adjustLines, context);
-
-        return reload(id);
+        return reverseApproveProcessor.reverseApprove(String.valueOf(id), context);
     }
 
     protected void validateCanReverse(ErpInvLandedCost landedCost, IServiceContext context) {
@@ -214,6 +166,9 @@ public class ErpInvLandedCostProcessor {
                 LOG.error("到岸成本红冲 GL 凭证异常（吞异常保持幂等），单 {} billHeadCode={}",
                         landedCost.getCode(), landedCost.getCode(), e);
             }
+            // G4 错误传播分级（plan 2026-07-30-0341-2 P1-MA4-020）：到岸成本 reverse 方向无 sweep 覆盖，
+            // 失败派发 IErpSysNotificationBiz 告警使运营感知悬挂（自愈：手动重跑 reverseApprove）。
+            dispatchReverseFailureAlert(landedCost, e);
         }
 
         // 2. 反向应用 ErpInvCostAdjust(LANDED_COST_SUPPLEMENT) 成本层（按 Phase 1 Decision 复用既有 reverseCostAdjust）
@@ -426,6 +381,14 @@ public class ErpInvLandedCostProcessor {
         }
     }
 
+    /**
+     * 对采购入库单行做悲观锁（SELECT ... FOR UPDATE，{@link IOrmTemplate#lock}），串行化并发同 receiveId 的到岸成本审核。
+     * 不修改 receive 字段（无 version/audit 污染）；lock 后由 {@link #validateNotAlreadyAllocated} 检测已提交的并发分配。
+     */
+    protected void lockReceiveForAllocation(ErpPurReceive receive) {
+        ormTemplate.lock(receive);
+    }
+
     protected void validateNotAlreadyAllocated(Long receiveId, Long currentLandedCostId) {
         IEntityDao<ErpInvLandedCost> dao = landedCostDao();
         QueryBean q = new QueryBean();
@@ -513,6 +476,25 @@ public class ErpInvLandedCostProcessor {
             return ctx == null ? null : ctx.getUserId();
         } catch (Exception e) {
             return null;
+        }
+    }
+
+    /** 到岸成本 reverse 过账失败告警派发（G4；通知失败降级不阻断主流程）。 */
+    protected void dispatchReverseFailureAlert(ErpInvLandedCost landedCost, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("billCode", landedCost.getCode());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", landedCost.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_LANDED_COST_REVERSE_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("到岸成本 reverse 过账失败告警派发失败（降级）：billCode={}, reason={}",
+                    landedCost.getCode(), notifyErr.getMessage());
         }
     }
 

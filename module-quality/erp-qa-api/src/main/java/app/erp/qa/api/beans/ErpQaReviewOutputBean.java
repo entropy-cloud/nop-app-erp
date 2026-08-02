@@ -217,108 +217,10 @@
         }
 
 
-        private String _remark;
-
-    
-        @PropMeta(propId=13)
-    
-        public String getRemark(){
-            return _remark;
-        }
-
-        public void setRemark(String value){
-            this._remark = value;
-        }
-
-
-        private Long _delVersion;
-
-    
-        @PropMeta(propId=14)
-    
-        public Long getDelVersion(){
-            return _delVersion;
-        }
-
-        public void setDelVersion(Long value){
-            this._delVersion = value;
-        }
-
-
-        private Integer _version;
-
-    
-        @PropMeta(propId=15)
-    
-        public Integer getVersion(){
-            return _version;
-        }
-
-        public void setVersion(Integer value){
-            this._version = value;
-        }
-
-
-        private String _createdBy;
-
-    
-        @PropMeta(propId=16)
-    
-        public String getCreatedBy(){
-            return _createdBy;
-        }
-
-        public void setCreatedBy(String value){
-            this._createdBy = value;
-        }
-
-
-        private java.sql.Timestamp _createTime;
-
-    
-        @PropMeta(propId=17)
-    
-        public java.sql.Timestamp getCreateTime(){
-            return _createTime;
-        }
-
-        public void setCreateTime(java.sql.Timestamp value){
-            this._createTime = value;
-        }
-
-
-        private String _updatedBy;
-
-    
-        @PropMeta(propId=18)
-    
-        public String getUpdatedBy(){
-            return _updatedBy;
-        }
-
-        public void setUpdatedBy(String value){
-            this._updatedBy = value;
-        }
-
-
-        private java.sql.Timestamp _updateTime;
-
-    
-        @PropMeta(propId=19)
-    
-        public java.sql.Timestamp getUpdateTime(){
-            return _updateTime;
-        }
-
-        public void setUpdateTime(java.sql.Timestamp value){
-            this._updateTime = value;
-        }
-
-
         private String _approvedBy;
 
     
-        @PropMeta(propId=200)
+        @PropMeta(propId=13)
     
         public String getApprovedBy(){
             return _approvedBy;
@@ -332,7 +234,7 @@
         private java.sql.Timestamp _approvedAt;
 
     
-        @PropMeta(propId=201)
+        @PropMeta(propId=14)
     
         public java.sql.Timestamp getApprovedAt(){
             return _approvedAt;
@@ -340,6 +242,104 @@
 
         public void setApprovedAt(java.sql.Timestamp value){
             this._approvedAt = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=15)
+    
+        public String getRemark(){
+            return _remark;
+        }
+
+        public void setRemark(String value){
+            this._remark = value;
+        }
+
+
+        private Long _delVersion;
+
+    
+        @PropMeta(propId=16)
+    
+        public Long getDelVersion(){
+            return _delVersion;
+        }
+
+        public void setDelVersion(Long value){
+            this._delVersion = value;
+        }
+
+
+        private Integer _version;
+
+    
+        @PropMeta(propId=17)
+    
+        public Integer getVersion(){
+            return _version;
+        }
+
+        public void setVersion(Integer value){
+            this._version = value;
+        }
+
+
+        private String _createdBy;
+
+    
+        @PropMeta(propId=18)
+    
+        public String getCreatedBy(){
+            return _createdBy;
+        }
+
+        public void setCreatedBy(String value){
+            this._createdBy = value;
+        }
+
+
+        private java.sql.Timestamp _createTime;
+
+    
+        @PropMeta(propId=19)
+    
+        public java.sql.Timestamp getCreateTime(){
+            return _createTime;
+        }
+
+        public void setCreateTime(java.sql.Timestamp value){
+            this._createTime = value;
+        }
+
+
+        private String _updatedBy;
+
+    
+        @PropMeta(propId=20)
+    
+        public String getUpdatedBy(){
+            return _updatedBy;
+        }
+
+        public void setUpdatedBy(String value){
+            this._updatedBy = value;
+        }
+
+
+        private java.sql.Timestamp _updateTime;
+
+    
+        @PropMeta(propId=21)
+    
+        public java.sql.Timestamp getUpdateTime(){
+            return _updateTime;
+        }
+
+        public void setUpdateTime(java.sql.Timestamp value){
+            this._updateTime = value;
         }
 
 

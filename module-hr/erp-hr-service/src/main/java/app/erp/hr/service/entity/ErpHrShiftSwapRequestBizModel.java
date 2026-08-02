@@ -7,6 +7,8 @@ import app.erp.hr.dao.entity.ErpHrShiftAssignment;
 import app.erp.hr.dao.entity.ErpHrShiftSwapRequest;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrShiftSwapRequestApproveProcessor;
+import app.erp.hr.service.processor.ErpHrShiftSwapRequestSubmitProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -31,6 +33,10 @@ public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRe
 
     @Inject
     IErpHrShiftAssignmentBiz assignmentBiz;
+    @Inject
+    ErpHrShiftSwapRequestSubmitProcessor submitProcessor;
+    @Inject
+    ErpHrShiftSwapRequestApproveProcessor approveProcessor;
 
     public ErpHrShiftSwapRequestBizModel() {
         setEntityName(ErpHrShiftSwapRequest.class.getName());
@@ -51,62 +57,13 @@ public class ErpHrShiftSwapRequestBizModel extends CrudBizModel<ErpHrShiftSwapRe
                                         @Name("targetAssignmentId") Long targetAssignmentId,
                                         @Name("reason") String reason,
                                         IServiceContext context) {
-        ErpHrShiftAssignment source = assignmentBiz.requireEntity(String.valueOf(sourceAssignmentId), null, context);
-        ErpHrShiftAssignment target = targetAssignmentId != null
-                ? assignmentBiz.requireEntity(String.valueOf(targetAssignmentId), null, context)
-                : null;
-        // 目标员工目标日须有 assignment（一对一交换，shift-scheduling.md §5.2）
-        if (target == null) {
-            throw new NopException(ErpHrErrors.ERR_SHIFT_SWAP_TARGET_OCCUPIED)
-                    .param(ErpHrErrors.ARG_ASSIGNMENT_DATE, source.getAssignmentDate());
-        }
-        ErpHrShiftSwapRequest req = newEntity();
-        req.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-        req.setCode("SWAP-" + source.getId() + "-" + CoreMetrics.nanoTime());
-        req.setRequesterId(source.getEmployeeId());
-        req.setTargetEmployeeId(target.getEmployeeId());
-        req.setSourceAssignmentId(source.getId());
-        req.setTargetAssignmentId(target.getId());
-        req.setSwapDate(source.getAssignmentDate());
-        req.setReason(reason);
-        req.setStatus(ErpHrConstants.SWAP_STATUS_PENDING);
-        saveEntity(req, null, context);
-        return req;
+        return submitProcessor.submit(sourceAssignmentId, targetAssignmentId, reason, context);
     }
 
     @Override
     @BizMutation
     public ErpHrShiftSwapRequest approve(@Name("swapRequestId") Long swapRequestId, IServiceContext context) {
-        ErpHrShiftSwapRequest req = requireEntity(String.valueOf(swapRequestId), null, context);
-        assertTransition(req, ErpHrConstants.SWAP_STATUS_PENDING, ErpHrConstants.SWAP_STATUS_APPROVED);
-        ErpHrShiftAssignment source = assignmentBiz.requireEntity(
-                String.valueOf(req.getSourceAssignmentId()), null, context);
-        ErpHrShiftAssignment target = req.getTargetAssignmentId() != null
-                ? assignmentBiz.requireEntity(String.valueOf(req.getTargetAssignmentId()), null, context)
-                : null;
-        if (target == null) {
-            throw new NopException(ErpHrErrors.ERR_SHIFT_ASSIGNMENT_NOT_SWAPPABLE)
-                    .param(ErpHrErrors.ARG_SWAP_REQUEST_ID, swapRequestId);
-        }
-        // 互换班次（shift-scheduling.md §5.2）
-        Long sourceShiftId = source.getShiftId();
-        source.setShiftId(target.getShiftId());
-        target.setShiftId(sourceShiftId);
-        // 记录 swapRequestId + replacedByAssignmentId 双向追溯
-        source.setSwapRequestId(req.getId());
-        target.setSwapRequestId(req.getId());
-        source.setReplacedByAssignmentId(target.getId());
-        target.setReplacedByAssignmentId(source.getId());
-        // 重新置为 SCHEDULED，等待下次 calcAttendance 按新排班重算
-        source.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_SCHEDULED);
-        target.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_SCHEDULED);
-        IEntityDao<ErpHrShiftAssignment> dao = daoProvider().daoFor(ErpHrShiftAssignment.class);
-        dao.updateEntity(source);
-        dao.updateEntity(target);
-        req.setStatus(ErpHrConstants.SWAP_STATUS_APPROVED);
-        req.setApprovedById(context.getUserId());
-        updateEntity(req, null, context);
-        return req;
+        return approveProcessor.approve(swapRequestId, context);
     }
 
     @Override

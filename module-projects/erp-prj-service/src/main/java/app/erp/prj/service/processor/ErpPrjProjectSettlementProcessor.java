@@ -6,7 +6,6 @@ import app.erp.prj.biz.IErpPrjProjectPnlBiz;
 import app.erp.prj.dao.entity.ErpPrjBilling;
 import app.erp.prj.dao.entity.ErpPrjCostCollection;
 import app.erp.prj.dao.entity.ErpPrjProject;
-import app.erp.prj.dao.entity.ErpPrjProjectPnl;
 import app.erp.prj.dao.entity.ErpPrjProjectSettlement;
 import app.erp.prj.dao.entity.ErpPrjProjectSettlementLine;
 import app.erp.prj.service.ErpPrjConfigs;
@@ -22,7 +21,6 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +32,10 @@ import static io.nop.api.core.beans.FilterBeans.ne;
 /**
  * 项目结算单编排 Processor（{@code profitability.md §关键流程 2/3}，镜像 {@code ErpAstAssetCapitalizationProcessor}
  * 范式：Facade + Processor，protected step 方法支持下游逐个覆盖）。
+ *
+ * <p>R6.6 slim-to-S-delegation：{@code createSettlement}/{@code reverseSettlement} 两个 D-mutation 已拆为独立
+ * {@link ErpPrjProjectSettlementCreateSettlementProcessor}/{@link ErpPrjProjectSettlementReverseSettlementProcessor}。
+ * 本类保留为共享 protected helper 单一真相源 + {@code submit}/{@code approve}/{@code reject}/{@code cancel} S-mutation 单行委托。
  *
  * <p>三轴状态机（docStatus/approveStatus/posted）：
  * <ul>
@@ -59,100 +61,29 @@ public class ErpPrjProjectSettlementProcessor {
     ProjectSettlementPostingDispatcher postingDispatcher;
     @Inject
     IDaoProvider daoProvider;
-
-    public ErpPrjProjectSettlement createSettlement(Long projectId, String settlementType, IServiceContext context) {
-        ErpPrjProject project = loadProject(projectId);
-        ErpPrjProjectPnl snapshot = pnlBiz.getProjectPnl(projectId, context);
-        if (snapshot == null) {
-            throw new NopException(ErpPrjErrors.ERR_SETTLEMENT_PNL_SNAPSHOT_MISSING)
-                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId);
-        }
-
-        IEntityDao<ErpPrjProjectSettlement> dao = daoProvider.daoFor(ErpPrjProjectSettlement.class);
-        ErpPrjProjectSettlement settlement = dao.newEntity();
-        settlement.setCode("STL-" + projectId + "-" + CoreMetrics.currentTimeMillis());
-        settlement.setProjectId(projectId);
-        settlement.setOrgId(project.getOrgId());
-        settlement.setCustomerId(project.getCustomerId());
-        settlement.setBusinessDate(CoreMetrics.today());
-        settlement.setSettlementType(settlementType);
-        settlement.setPnlSnapshotId(snapshot.getId());
-        settlement.setCurrencyId(snapshot.getCurrencyId());
-        settlement.setExchangeRate(snapshot.getExchangeRate() != null ? snapshot.getExchangeRate() : BigDecimal.ONE);
-        settlement.setFinalRevenue(nz(snapshot.getRevenueAmount()));
-        settlement.setFinalCost(nz(snapshot.getTotalCost()));
-        settlement.setFinalProfit(nz(snapshot.getGrossProfit()));
-        settlement.setTransferToAsset(ErpPrjConstants.SETTLEMENT_TYPE_CLOSE.equals(settlementType));
-        settlement.setDocStatus(ErpPrjConstants.DOC_STATUS_DRAFT);
-        settlement.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
-        settlement.setPosted(false);
-        dao.saveEntity(settlement);
-
-        buildLines(settlement, context);
-        return settlement;
-    }
+    @Inject
+    ErpPrjProjectSettlementSubmitForApprovalProcessor submitForApprovalProcessor;
+    @Inject
+    ErpPrjProjectSettlementApproveProcessor approveProcessor;
+    @Inject
+    ErpPrjProjectSettlementRejectProcessor rejectProcessor;
+    @Inject
+    ErpPrjProjectSettlementCancelProcessor cancelProcessor;
 
     public ErpPrjProjectSettlement submit(Long id, IServiceContext context) {
-        ErpPrjProjectSettlement settlement = requireSettlement(id);
-        validateTransitionForSubmit(settlement);
-        doSubmit(settlement, context);
-        save(settlement);
-        return settlement;
+        return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
     }
 
     public ErpPrjProjectSettlement approve(Long id, IServiceContext context) {
-        ErpPrjProjectSettlement settlement = requireSettlement(id);
-        validateTransitionForApprove(settlement);
-        if (ErpPrjConstants.SETTLEMENT_TYPE_CLOSE.equals(settlement.getSettlementType())
-                && Boolean.TRUE.equals(settlement.getTransferToAsset()) && settlement.getAssetCardId() == null) {
-            createAndActivateAsset(settlement, context);
-        }
-        doPost(settlement, context);
-        doApprove(settlement, context);
-        save(settlement);
-        return settlement;
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     public ErpPrjProjectSettlement reject(Long id, IServiceContext context) {
-        ErpPrjProjectSettlement settlement = requireSettlement(id);
-        validateTransitionForReject(settlement);
-        doReject(settlement, context);
-        save(settlement);
-        return settlement;
+        return rejectProcessor.reject(String.valueOf(id), context);
     }
 
     public ErpPrjProjectSettlement cancel(Long id, IServiceContext context) {
-        ErpPrjProjectSettlement settlement = requireSettlement(id);
-        validateTransitionForCancel(settlement);
-        if (Boolean.TRUE.equals(settlement.getPosted())) {
-            postingDispatcher.reverse(settlement);
-            rollbackAssetIfNeeded(settlement);
-            settlement = requireSettlement(id);
-            settlement.setPosted(false);
-            settlement.setPostedAt(null);
-            settlement.setPostedBy(null);
-        }
-        doCancel(settlement, context);
-        save(settlement);
-        return settlement;
-    }
-
-    public ErpPrjProjectSettlement reverseSettlement(Long settlementId, IServiceContext context) {
-        ErpPrjProjectSettlement settlement = requireSettlement(settlementId);
-        if (!Boolean.TRUE.equals(settlement.getPosted())) {
-            throw new NopException(ErpPrjErrors.ERR_SETTLEMENT_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode())
-                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, "posted=false")
-                    .param(ErpPrjErrors.ARG_EXPECTED_STATUS, "posted=true");
-        }
-        postingDispatcher.reverse(settlement);
-        rollbackAssetIfNeeded(settlement);
-        settlement = requireSettlement(settlementId);
-        settlement.setPosted(false);
-        settlement.setPostedAt(null);
-        settlement.setPostedBy(null);
-        save(settlement);
-        return settlement;
+        return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
     // ---- protected step methods（下游可逐个覆盖） ----

@@ -1,0 +1,6 @@
+_chgType,ID,CODE,NAME,PARTNER_TYPE,STATUS,CONTACT_PERSON,PHONE,EMAIL,ADDRESS,TAX_NO,CREDIT_LIMIT,CREDIT_PERIOD_DAYS,RECEIVABLE_BALANCE,PAYABLE_BALANCE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,REMARK,CUSTOMER_GROUP
+A,1001,@var:ErpMdPartner@code,LIMIT-PARTNER-1,CUSTOMER,ACTIVE,,,,,,,,0,0,@var:ErpMdPartner@delVersion,0,autotest-ref,*,autotest-ref,*,,
+A,1002,@var:ErpMdPartner@code_1,LIMIT-PARTNER-2,CUSTOMER,ACTIVE,,,,,,,,0,0,@var:ErpMdPartner@delVersion,0,autotest-ref,*,autotest-ref,*,,
+A,1003,@var:ErpMdPartner@code_2,LIMIT-PARTNER-3,CUSTOMER,ACTIVE,,,,,,,,0,0,@var:ErpMdPartner@delVersion,0,autotest-ref,*,autotest-ref,*,,
+A,1004,@var:ErpMdPartner@code_3,LIMIT-PARTNER-4,CUSTOMER,ACTIVE,,,,,,,,0,0,@var:ErpMdPartner@delVersion,0,autotest-ref,*,autotest-ref,*,,
+A,1005,@var:ErpMdPartner@code_4,LIMIT-PARTNER-5,CUSTOMER,ACTIVE,,,,,,,,0,0,@var:ErpMdPartner@delVersion,0,autotest-ref,*,autotest-ref,*,,

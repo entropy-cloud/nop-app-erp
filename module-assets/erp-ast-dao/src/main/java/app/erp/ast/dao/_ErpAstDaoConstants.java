@@ -104,21 +104,6 @@ public interface _ErpAstDaoConstants {
     String DISPOSAL_TYPE_SOLD = "SOLD";
                     
     /**
-     * 单据状态: 草稿 
-     */
-    String DOC_STATUS_DRAFT = "DRAFT";
-                    
-    /**
-     * 单据状态: 已生效 
-     */
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-                    
-    /**
-     * 单据状态: 已作废 
-     */
-    String DOC_STATUS_CANCELLED = "CANCELLED";
-                    
-    /**
      * 资本化来源类型: 库存 
      */
     String CAPITALIZATION_SOURCE_TYPE_INVENTORY = "INVENTORY";

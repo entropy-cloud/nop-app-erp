@@ -4,12 +4,13 @@ package app.erp.fin.service.entity;
 import app.erp.fin.biz.IErpFinBankStatementBiz;
 import app.erp.fin.dao.dto.BankStatementLineInput;
 import app.erp.fin.dao.entity.ErpFinBankStatement;
-import app.erp.fin.service.bankrecon.BankStatementImporter;
+import app.erp.fin.service.processor.ErpFinBankStatementImportStatementProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
+import jakarta.inject.Inject;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -20,8 +21,8 @@ public class ErpFinBankStatementBizModel extends CrudBizModel<ErpFinBankStatemen
         setEntityName(ErpFinBankStatement.class.getName());
     }
 
-    @jakarta.inject.Inject
-    BankStatementImporter bankStatementImporter;
+    @Inject
+    ErpFinBankStatementImportStatementProcessor importStatementProcessor;
 
     @Override
     @BizMutation
@@ -29,7 +30,7 @@ public class ErpFinBankStatementBizModel extends CrudBizModel<ErpFinBankStatemen
                                                 @Name("statementDate") LocalDate statementDate,
                                                 @Name("lines") List<BankStatementLineInput> lines,
                                                 IServiceContext context) {
-        return bankStatementImporter.importStatement(fundAccountId, statementDate, lines);
+        return importStatementProcessor.importStatement(fundAccountId, statementDate, lines, context);
     }
 
 }

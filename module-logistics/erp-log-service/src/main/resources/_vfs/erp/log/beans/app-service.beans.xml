@@ -31,4 +31,22 @@
          处理 FREIGHT 业务类型——3.18 path-1 销售运费 借销售费用-运费/贷应付或银行存款）。 -->
     <bean id="app.erp.log.service.posting.LogisticsFreightProvider"
           class="app.erp.log.service.posting.LogisticsFreightProvider"/>
+
+    <!-- per-mutation Cat-B D-mutation Processor beans (R6.7)：logistics 域 ErpLogShipmentBizModel 6 个内联
+         @BizMutation 拆为独立 Processor。类别 B 自包含 body（VERBATIM 迁移 + CrudBizModel 管道方法替换为 raw dao 等价）；
+         下游可经 Delta beans.xml 同名 bean id 覆盖。handleTrackingWebhook / scanForPolling 共享
+         AbstractErpLogShipmentDeliveredProcessor（abstract，无需 bean）的 onDelivered 编排链。 -->
+    <bean id="app.erp.log.service.processor.ErpLogShipmentSaveProcessor"
+          class="app.erp.log.service.processor.ErpLogShipmentSaveProcessor"/>
+    <bean id="app.erp.log.service.processor.ErpLogShipmentAdviseProcessor"
+          class="app.erp.log.service.processor.ErpLogShipmentAdviseProcessor"/>
+    <bean id="app.erp.log.service.processor.ErpLogShipmentCompleteShipmentProcessor"
+          class="app.erp.log.service.processor.ErpLogShipmentCompleteShipmentProcessor"/>
+    <bean id="app.erp.log.service.processor.ErpLogShipmentCancelShipmentProcessor"
+          class="app.erp.log.service.processor.ErpLogShipmentCancelShipmentProcessor"/>
+    <bean id="app.erp.log.service.processor.ErpLogShipmentHandleTrackingWebhookProcessor"
+          class="app.erp.log.service.processor.ErpLogShipmentHandleTrackingWebhookProcessor"/>
+    <bean id="app.erp.log.service.processor.ErpLogShipmentScanForPollingProcessor"
+          class="app.erp.log.service.processor.ErpLogShipmentScanForPollingProcessor"/>
+
 </beans>

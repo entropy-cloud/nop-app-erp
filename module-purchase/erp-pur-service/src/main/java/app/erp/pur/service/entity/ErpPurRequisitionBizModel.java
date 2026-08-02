@@ -5,6 +5,7 @@ import app.erp.pur.biz.ConvertToOrderRequest;
 import app.erp.pur.biz.IErpPurRequisitionBiz;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurRequisition;
+import app.erp.pur.service.processor.ErpPurRequisitionCancelProcessor;
 import app.erp.pur.service.processor.ErpPurRequisitionProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -26,6 +27,9 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
     @Inject
     ErpPurRequisitionProcessor requisitionProcessor;
 
+    @Inject
+    ErpPurRequisitionCancelProcessor cancelProcessor;
+
     public ErpPurRequisitionBizModel() {
         setEntityName(ErpPurRequisition.class.getName());
     }
@@ -33,7 +37,7 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
     @Override
     @BizMutation
     public ErpPurRequisition cancel(@Name("requisitionId") Long requisitionId, IServiceContext context) {
-        return requisitionProcessor.cancel(String.valueOf(requisitionId), context);
+        return cancelProcessor.cancel(String.valueOf(requisitionId), context);
     }
 
     @Override

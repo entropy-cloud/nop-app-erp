@@ -24,12 +24,12 @@
 | openingBalance | 对账单期初余额 |
 | closingBalance | 对账单期末余额(银行侧) |
 | businessDate | 业务日期(取 statementDate) |
-| docStatus | dict `erp-fin/bank-stmt-status`:DRAFT/RECONCILING/RECONCILED/CANCELLED |
+| docStatus | dict `erp-fin/voucher-status`：DRAFT/POSTED/CANCELLED（复用凭证状态；RECONCILING 由「有未勾对行」派生表达，RECONCILED = POSTED，见 §schema 补注） |
 | approveStatus | dict `erp-fin/approve-status`:UNSUBMITTED/SUBMITTED/APPROVED/REJECTED |
 | posted/postedBy/postedAt | 业财三件套(已调节完成时 posted=true,触发未达账项调整凭证) |
 | 标准审计字段 | |
 
-**状态机**:`DRAFT → RECONCILING → RECONCILED`(终态,差异已处理且 posted=true);`RECONCILING → DRAFT`(重开,要求反 posted);`RECONCILED → CANCELLED`(红冲未达账项调整凭证)。
+**状态机**（docStatus 复用 `erp-fin/voucher-status`）：`DRAFT → POSTED`（终态，差异已处理且 `posted=true`；RECONCILING 非独立状态，由「有未勾对行」派生）；`POSTED → DRAFT`（重开，要求反 posted）；`POSTED → CANCELLED`（红冲未达账项调整凭证）。
 
 ### ErpFinBankStatementLine(银行流水明细,表 `erp_fin_bank_statement_line`)
 
@@ -113,7 +113,7 @@
 
 9. **期间控制**:对账单所属期间若已 CLOSED(ErpFinAccountingPeriodStatus.glStatus=CLOSED)不可再生成新调节表。
 
-10. **多币种**:外币账户对账时,未达账项调整凭证需考虑汇兑损益(关联 businessType=FX_REVALUATION 已有字典)。
+10. **多币种**:外币账户对账时,未达账项调整凭证需考虑汇兑损益(关联 businessType=EXCHANGE_GAIN_LOSS 已有字典)。
 
 ## 与现有实体的关系
 
@@ -136,11 +136,11 @@ finance 域「银行对账」分组:银行对账单、账面流水、余额调�
 - `docs/analysis/erp-survey/2026-06-22-0000-erpnext.md`(Bank Reconciliation)
 - `docs/design/finance/ar-ap-reconciliation.md`(核销机制,与银行对账的区别)
 
-## 实现权威 schema 补注（plan 2026-07-05-0115-2 落地）
+## schema 补注
 
-> 本节由 plan `2026-07-05-0115-2-finance-bank-reconciliation.md` 落地后补注，记录与上方设计草图的偏离。**ORM `module-finance/model/app-erp-finance.orm.xml` 是持久化层的唯一真相源**；以下补充说明实现选择。
+> 本节记录与上方设计草图的偏离。**ORM `module-finance/model/app-erp-finance.orm.xml` 是持久化层的唯一真相源**；以下补充说明实现选择。
 
-- **`ErpFinBankLedgerLine` 物化视图实体未采用**：本计划不新增物化视图实体，账面流水经查询已过账 `ErpFinVoucherLine`（按 `FundAccount.subjectId` 过滤命中资金账户科目）按需承载。勾对状态单点持久在 `ErpFinBankStatementLine.matchStatus` / `matchedLineId`。详见 plan Task Route D1。
+- **`ErpFinBankLedgerLine` 物化视图实体未采用**：本计划不新增物化视图实体，账面流水经查询已过账 `ErpFinVoucherLine`（按 `FundAccount.subjectId` 过滤命中资金账户科目）按需承载。勾对状态单点持久在 `ErpFinBankStatementLine.matchStatus` / `matchedLineId`。
 - **`matchStatus` 字典修正**：`ErpFinBankStatementLine.matchStatus` ext:dict 由 `erp-fin/ar-ap-status`（OPEN/PARTIAL/SETTLED/CANCELLED，语义错误）修正为新增的 `erp-fin/bank-match-status`（UNMATCHED/MATCHED/MANUAL_MATCHED/SUSPENSE）。修正前为契约漂移。
 - **`docStatus` 复用 `erp-fin/voucher-status`**：BankStatement / BankReconciliation 的 docStatus 均复用既有 `erp-fin/voucher-status`（DRAFT/POSTED/CANCELLED）。不新增 `bank-stmt-status` 字典——RECONCILING 由「有未勾对行」派生表达，RECONCILED = POSTED。
 - **`ErpFinBankReconciliation` 无 posted 三件套 + 无 `adjustVoucherId` 列**：过账态仅由 `docStatus=POSTED` 表达；未达账项调整凭证经 `ErpFinVoucherBillR.businessType=BANK_RECON_ADJ` + `billCode=调节表 code` 反查定位（对齐 `ErpFinPostingProcessor.findBillLinks` 既有范式），不持久化 FK。

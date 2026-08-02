@@ -20,7 +20,10 @@ public class ErpFinEmployeeAdvanceCancelProcessor extends AbstractCancelProcesso
 
     @Override
     public ErpFinEmployeeAdvance cancel(String id, IServiceContext context) {
-        return processor.cancel(Long.valueOf(id), context);
+        Long advanceId = Long.valueOf(id);
+        ErpFinEmployeeAdvance advance = processor.requireAdvance(advanceId, context);
+        processor.validateTransitionForCancel(advance, context);
+        return processor.doCancel(advanceId, advance, context);
     }
 
     @Override

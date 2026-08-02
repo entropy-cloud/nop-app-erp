@@ -32,34 +32,34 @@ public class ErpAstDisposalProcessor {
     @Inject
     DisposalPostingDispatcher postingDispatcher;
 
+    @Inject
+    ErpAstDisposalSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpAstDisposalApproveProcessor approveProcessor;
+
+    @Inject
+    ErpAstDisposalRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpAstDisposalReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpAstDisposalWithdrawApprovalProcessor withdrawApprovalProcessor;
+
     public ErpAstDisposal submitForApproval(String id, IServiceContext context) {
-        ErpAstDisposal disposal = requireDisposal(id, context);
-        validateNotCancelled(disposal, context);
-        validateTransitionForSubmit(disposal, context);
-        validateForApproval(disposal, context);
-        disposal.setApproveStatus(ErpAstConstants.APPROVE_STATUS_SUBMITTED);
-        disposalDao().updateEntity(disposal);
-        return disposal;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpAstDisposal withdrawApproval(String id, IServiceContext context) {
-        ErpAstDisposal disposal = requireDisposal(id, context);
-        validateNotCancelled(disposal, context);
-        validateTransitionForWithdraw(disposal, context);
-        disposal.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
-        disposalDao().updateEntity(disposal);
-        return disposal;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpAstDisposal approve(String id, IServiceContext context) {
-        ErpAstDisposal disposal = requireDisposal(id, context);
-        if (disposal.isApproved()) {
-            return disposal;
-        }
-        validateNotCancelled(disposal, context);
-        validateTransitionForApprove(disposal, context);
-        validateForApproval(disposal, context);
+        return approveProcessor.approve(id, context);
+    }
 
+    protected ErpAstDisposal executeApprove(String id, ErpAstDisposal disposal, IServiceContext context) {
         ErpAstAsset asset = disposal.getAsset();
         validateAssetDisposable(asset, context);
 
@@ -101,20 +101,14 @@ public class ErpAstDisposalProcessor {
     }
 
     public ErpAstDisposal reject(String id, IServiceContext context) {
-        ErpAstDisposal disposal = requireDisposal(id, context);
-        validateNotCancelled(disposal, context);
-        validateTransitionForReject(disposal, context);
-        disposal.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
-        disposalDao().updateEntity(disposal);
-        return disposal;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpAstDisposal reverseApprove(String id, IServiceContext context) {
-        ErpAstDisposal disposal = requireDisposal(id, context);
-        if (disposal.isRejected()) {
-            return disposal;
-        }
-        validateTransitionForReverseApprove(disposal, context);
+        return reverseApproveProcessor.reverseApprove(id, context);
+    }
+
+    protected ErpAstDisposal executeReverseApprove(String id, ErpAstDisposal disposal, IServiceContext context) {
         if (Boolean.TRUE.equals(disposal.getPosted())) {
             postingDispatcher.reverse(disposal);
             ErpAstAsset asset = disposal.getAsset();

@@ -59,10 +59,10 @@ test.describe('quality ErpQaNonConformance SCRAP posting voucher line assertion'
       );
       expect(reviewed.status, 'submitReview should transition OPEN → IN_REVIEW').toBe('IN_REVIEW');
 
-      // resolve: IN_REVIEW → RESOLVED（无 CAPA 空集放行）→ AUTO_POST 自动触发 SCRAP 过账
+      // resolve: IN_REVIEW → RESOLVED（无 CAPA 须显式 noCapaReason 放行，P0-MA2-017 门控）→ AUTO_POST 自动触发 SCRAP 过账
       const resolved = await callMutationOk(
         page, 'ErpQaNonConformance', 'resolve',
-        { ncrId: ncr.id, resolution: 'SCRAP disposed' }, 'id status posted',
+        { ncrId: ncr.id, resolution: 'SCRAP disposed', noCapaReason: '报废处置，无需纠正措施' }, 'id status posted',
       );
       expect(resolved.status, 'resolve should transition IN_REVIEW → RESOLVED').toBe('RESOLVED');
       expect(resolved.posted, 'AUTO_POST should set posted=true').toBe(true);

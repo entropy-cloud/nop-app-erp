@@ -59,4 +59,7 @@ alter table erp_log_shipment_parcel add constraint PK_erp_log_shipment_parcel pr
 alter table erp_log_shipment_log drop constraint PK_erp_log_shipment_log;
 alter table erp_log_shipment_log add constraint PK_erp_log_shipment_log primary key (NOP_TENANT_ID, id);
 
+alter table erp_log_shipment drop constraint UK_LOG_SHIPMENT_TRACKING_CARRIER;
+alter table erp_log_shipment add constraint UK_LOG_SHIPMENT_TRACKING_CARRIER unique (NOP_TENANT_ID,tracking_no,carrier_id,del_version);
 
+                

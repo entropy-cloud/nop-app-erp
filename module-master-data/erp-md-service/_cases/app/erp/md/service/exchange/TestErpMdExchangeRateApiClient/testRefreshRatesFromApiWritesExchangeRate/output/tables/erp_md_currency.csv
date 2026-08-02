@@ -1,0 +1,4 @@
+_chgType,ID,CODE,NAME,SYMBOL,DECIMAL_PLACES,IS_FUNCTIONAL,IS_ACTIVE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpMdCurrency@code,E2E-USD-RT-1,USD,2,false,true,@var:ErpMdCurrency@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,2,@var:ErpMdCurrency@code_1,E2E-CNY-RT-1,CNY,2,false,true,@var:ErpMdCurrency@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,3,@var:ErpMdCurrency@code_2,E2E-EUR-RT-1,EUR,2,false,true,@var:ErpMdCurrency@delVersion_2,0,autotest-ref,*,autotest-ref,*

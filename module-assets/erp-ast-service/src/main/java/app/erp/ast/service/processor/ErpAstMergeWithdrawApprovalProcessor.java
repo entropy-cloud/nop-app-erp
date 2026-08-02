@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstMerge withdrawApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractWithdrawApprovalProcessor to activate the abstract base class; delegates to ErpAstMergeProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstMerge withdrawApproval per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransition → set UNSUBMITTED → save.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstMergeWithdrawApprovalProcessor extends AbstractWithdrawApprovalProcessor<ErpAstMerge> {
 
@@ -20,7 +20,12 @@ public class ErpAstMergeWithdrawApprovalProcessor extends AbstractWithdrawApprov
 
     @Override
     public ErpAstMerge withdrawApproval(String id, IServiceContext context) {
-        return processor.withdrawApproval(id, context);
+        ErpAstMerge merge = processor.requireMerge(id, context);
+        processor.validateNotCancelled(merge, context);
+        processor.validateTransitionForWithdraw(merge, context);
+        merge.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
+        processor.mergeDao().updateEntity(merge);
+        return merge;
     }
 
     @Override
@@ -35,26 +40,26 @@ public class ErpAstMergeWithdrawApprovalProcessor extends AbstractWithdrawApprov
 
     @Override
     protected String getApproveStatus(ErpAstMerge entity) {
-        return null;
+        return entity.getApproveStatus();
     }
 
     @Override
     protected void setApproveStatus(ErpAstMerge entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApproveStatus(status);
     }
 
     @Override
     protected boolean isCancelled(ErpAstMerge entity) {
-        return false;
+        return entity.isCancelled();
     }
 
     @Override
     protected String unsubmittedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_UNSUBMITTED;
     }
 
     @Override
     protected String submittedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_SUBMITTED;
     }
 }

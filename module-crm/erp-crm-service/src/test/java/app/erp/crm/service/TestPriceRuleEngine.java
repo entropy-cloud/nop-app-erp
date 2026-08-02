@@ -40,7 +40,7 @@ public class TestPriceRuleEngine extends BaseTestCase {
 
         ErpCrmPriceRule promo = newRule("PROMOTIONAL", 10);
         promo.setProductId(PRODUCT_ID);
-        promo.setDiscountPercent(10.0);
+        promo.setDiscountPercent(BigDecimal.valueOf(10.0));
 
         ErpCrmPriceRule customerSpecific = newRule("CUSTOMER_SPECIFIC", 10);
         customerSpecific.setProductId(PRODUCT_ID);
@@ -81,7 +81,7 @@ public class TestPriceRuleEngine extends BaseTestCase {
     public void testPeriodExpired() {
         ErpCrmPriceRule r = newRule("PROMOTIONAL", 1);
         r.setProductId(PRODUCT_ID);
-        r.setDiscountPercent(20.0);
+        r.setDiscountPercent(BigDecimal.valueOf(20.0));
         r.setEffectiveFrom(TODAY.minusDays(10));
         r.setEffectiveTo(TODAY.minusDays(1));
         PriceRuleEngine.PriceResult result = engine.resolvePrice(PRODUCT_ID, null,
@@ -93,7 +93,7 @@ public class TestPriceRuleEngine extends BaseTestCase {
     public void testPeriodActive() {
         ErpCrmPriceRule r = newRule("PROMOTIONAL", 1);
         r.setProductId(PRODUCT_ID);
-        r.setDiscountPercent(20.0);
+        r.setDiscountPercent(BigDecimal.valueOf(20.0));
         r.setEffectiveFrom(TODAY.minusDays(1));
         r.setEffectiveTo(TODAY.plusDays(1));
         PriceRuleEngine.PriceResult result = engine.resolvePrice(PRODUCT_ID, null,
@@ -140,7 +140,7 @@ public class TestPriceRuleEngine extends BaseTestCase {
     public void testDiscountPercentApplied() {
         ErpCrmPriceRule r = newRule("PROMOTIONAL", 1);
         r.setProductId(PRODUCT_ID);
-        r.setDiscountPercent(15.0);
+        r.setDiscountPercent(BigDecimal.valueOf(15.0));
         PriceRuleEngine.PriceResult result = engine.resolvePrice(PRODUCT_ID, null,
                 BigDecimal.TEN, CURRENCY_ID, TODAY, BigDecimal.valueOf(1000), List.of(r));
         assertTrue(result.isMatched());

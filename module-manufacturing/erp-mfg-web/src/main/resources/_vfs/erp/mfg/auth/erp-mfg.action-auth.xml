@@ -44,7 +44,22 @@
                         <resource id="ErpMfgWorkOrder-main" app:useCases="UC-MFG-01,UC-MFG-03,UC-MFG-04,UC-MFG-07,UC-MFG-08,UC-MFG-09,UC-MFG-10,UC-MFG-05" displayName="工单"
                                   i18n-en:displayName="Work Order" icon="factory"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
-                                  url="/erp/mfg/pages/ErpMfgWorkOrder/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgWorkOrder/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpMfgWorkOrder:start" displayName="开工" i18n-en:displayName="Start Work Order"
+                                          resourceType="FNPT" orderNo="20010" roles="生产主管">
+                                    <permissions>ErpMfgWorkOrder:start</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMfgWorkOrder:close" displayName="关闭工单(部分完工)" i18n-en:displayName="Close Work Order"
+                                          resourceType="FNPT" orderNo="20020" roles="生产主管">
+                                    <permissions>ErpMfgWorkOrder:close</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMfgWorkOrder:cancel" displayName="取消工单" i18n-en:displayName="Cancel Work Order"
+                                          resourceType="FNPT" orderNo="20030" roles="生产主管">
+                                    <permissions>ErpMfgWorkOrder:cancel</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpMfgJobCard-main" app:useCases="UC-MFG-01,UC-MFG-07" displayName="作业卡"
                                   i18n-en:displayName="Job Card" icon="credit-card"
                                   component="AMIS" resourceType="SUBM" orderNo="210"

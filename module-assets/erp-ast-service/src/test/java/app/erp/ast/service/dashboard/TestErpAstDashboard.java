@@ -4,6 +4,7 @@ import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstAssetCategory;
 import app.erp.ast.dao.entity.ErpAstCip;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
+import app.erp.ast.service.AstFrozenClockExtension;
 import app.erp.ast.service.ErpAstConstants;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -16,6 +17,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -34,9 +36,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpAstDashboard extends JunitAutoTestCase {
 
+    @RegisterExtension
+    static AstFrozenClockExtension astClock = new AstFrozenClockExtension();
+
     private static final IServiceContext CTX = new ServiceContextImpl();
+    // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 3）：期间由冻结参考日派生为常量，
+    // 与 ErpAstDashboardBizModel 经 CoreMetrics.currentDate() 派生的当期一致，消除月初翻车税。
     private static final String CURRENT_PERIOD =
-            CoreMetrics.currentDate().getYear() + "-" + String.format("%02d", CoreMetrics.currentDate().getMonthValue());
+            AstFrozenClockExtension.REFERENCE_DATE.getYear() + "-" + String.format("%02d", AstFrozenClockExtension.REFERENCE_DATE.getMonthValue());
 
     @Inject
     IDaoProvider daoProvider;

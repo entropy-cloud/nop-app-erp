@@ -40,6 +40,18 @@ site:
       displayName: Voucher Business Link
     ErpFinVoucherTemplate-main:
       displayName: Voucher Template
+    FNPT:ErpFinAccountingPeriod:closePeriod:
+      displayName: Close Period
+    FNPT:ErpFinAccountingPeriod:reverseClose:
+      displayName: Reverse Close
+    FNPT:ErpFinBadDebt:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpFinBadDebt:writeOff:
+      displayName: Write Off
+    FNPT:ErpFinVoucher:post:
+      displayName: Post Voucher
+    FNPT:ErpFinVoucher:reverse:
+      displayName: Reverse Voucher
     ar-ap-aging:
       displayName: AR/AP Aging
     balance-sheet:

@@ -227,6 +227,10 @@ public interface ErpHrConstants {
     String LEAVE_STATUS_SUBMITTED = "SUBMITTED";
     String LEAVE_STATUS_REJECTED = "REJECTED";
 
+    // ---- erp-hr/timesheet-status（工时表状态，state-machine.md 适用对象三；本期仅 DRAFT→SUBMITTED 落地）----
+    String TIMESHEET_STATUS_DRAFT = "DRAFT";
+    String TIMESHEET_STATUS_SUBMITTED = "SUBMITTED";
+
     // ---- erp-hr/recruitment-status（UC-HR-05 招聘状态机）----
     String RECRUITMENT_STATUS_OPEN = "OPEN";
     String RECRUITMENT_STATUS_SCREENING = "SCREENING";

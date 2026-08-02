@@ -212,9 +212,9 @@
 - `use-cases.md` §UC-CRM-01（线索创建与分配衔接）
 - `docs/analysis/erp-survey/` — Salesforce/Odoo territory 机制分析
 
-## 实现注记（plan 2026-07-07-1100-1 落地结论）
+## 实现注记
 
-> 本节为 plan `2026-07-07-1100-1-crm-territory-quota` 实施后回写的实现注记。当 plan 与设计 §分配执行流程 / 业务规则 2 出现偏离时，本节为权威。
+> 本节为实施后回写的实现注记。当实现与设计 §分配执行流程 / 业务规则 2 出现偏离时，本节为权威。
 
 ### 1. Lead 加性列 `territoryId`
 

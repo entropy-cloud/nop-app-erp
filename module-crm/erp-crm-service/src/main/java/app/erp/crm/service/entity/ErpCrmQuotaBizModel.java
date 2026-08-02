@@ -5,6 +5,7 @@ import app.erp.crm.biz.IErpCrmQuotaBiz;
 import app.erp.crm.dao.entity.ErpCrmQuota;
 import app.erp.crm.dao.entity.ErpCrmTerritoryPipeline;
 import app.erp.crm.service.ErpCrmErrors;
+import app.erp.crm.service.processor.ErpCrmQuotaDistributeAnnualQuotaProcessor;
 import app.erp.crm.service.support.QuotaRollupCalculator;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -34,6 +35,9 @@ public class ErpCrmQuotaBizModel extends CrudBizModel<ErpCrmQuota> implements IE
 
     @Inject
     QuotaRollupCalculator quotaRollupCalculator;
+
+    @Inject
+    ErpCrmQuotaDistributeAnnualQuotaProcessor distributeAnnualQuotaProcessor;
 
     public ErpCrmQuotaBizModel() {
         setEntityName(ErpCrmQuota.class.getName());
@@ -76,7 +80,7 @@ public class ErpCrmQuotaBizModel extends CrudBizModel<ErpCrmQuota> implements IE
     public List<ErpCrmQuota> distributeAnnualQuota(@Name("quotaId") Long quotaId,
                                                      @Optional @Name("periodType") String periodType,
                                                      IServiceContext context) {
-        return quotaRollupCalculator.distributeAnnual(quotaId, periodType);
+        return distributeAnnualQuotaProcessor.distributeAnnualQuota(quotaId, periodType, context);
     }
 
     @Override

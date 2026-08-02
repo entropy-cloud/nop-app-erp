@@ -2,7 +2,12 @@ package app.erp.prj.service.entity;
 
 import app.erp.prj.biz.IErpPrjProjectSettlementBiz;
 import app.erp.prj.dao.entity.ErpPrjProjectSettlement;
-import app.erp.prj.service.processor.ErpPrjProjectSettlementProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectSettlementApproveProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectSettlementCancelProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectSettlementCreateSettlementProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectSettlementRejectProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectSettlementReverseSettlementProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectSettlementSubmitForApprovalProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -24,7 +29,22 @@ public class ErpPrjProjectSettlementBizModel extends CrudBizModel<ErpPrjProjectS
         implements IErpPrjProjectSettlementBiz {
 
     @Inject
-    ErpPrjProjectSettlementProcessor settlementProcessor;
+    ErpPrjProjectSettlementCreateSettlementProcessor createSettlementProcessor;
+
+    @Inject
+    ErpPrjProjectSettlementSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpPrjProjectSettlementApproveProcessor approveProcessor;
+
+    @Inject
+    ErpPrjProjectSettlementRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpPrjProjectSettlementCancelProcessor cancelProcessor;
+
+    @Inject
+    ErpPrjProjectSettlementReverseSettlementProcessor reverseSettlementProcessor;
 
     public ErpPrjProjectSettlementBizModel() {
         setEntityName(ErpPrjProjectSettlement.class.getName());
@@ -35,37 +55,37 @@ public class ErpPrjProjectSettlementBizModel extends CrudBizModel<ErpPrjProjectS
     public ErpPrjProjectSettlement createSettlement(@Name("projectId") Long projectId,
                                                     @Name("settlementType") String settlementType,
                                                     IServiceContext context) {
-        return settlementProcessor.createSettlement(projectId, settlementType, context);
+        return createSettlementProcessor.createSettlement(projectId, settlementType, context);
     }
 
     @Override
     @BizMutation
     public ErpPrjProjectSettlement submit(@Name("id") Long id, IServiceContext context) {
-        return settlementProcessor.submit(id, context);
+        return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpPrjProjectSettlement approve(@Name("id") Long id, IServiceContext context) {
-        return settlementProcessor.approve(id, context);
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpPrjProjectSettlement reject(@Name("id") Long id, IServiceContext context) {
-        return settlementProcessor.reject(id, context);
+        return rejectProcessor.reject(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpPrjProjectSettlement cancel(@Name("id") Long id, IServiceContext context) {
-        return settlementProcessor.cancel(id, context);
+        return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpPrjProjectSettlement reverseSettlement(@Name("settlementId") Long settlementId, IServiceContext context) {
-        return settlementProcessor.reverseSettlement(settlementId, context);
+        return reverseSettlementProcessor.reverseSettlement(settlementId, context);
     }
 
 }

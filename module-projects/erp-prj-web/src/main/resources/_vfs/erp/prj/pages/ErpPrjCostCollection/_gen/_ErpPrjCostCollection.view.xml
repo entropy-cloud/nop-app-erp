@@ -45,6 +45,12 @@
                 <!--审核状态-->
                 <col id="approveStatus" mandatory="true" sortable="true"/>
 
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
                 <!--已过账(已转成本凭证)-->
                 <col id="posted" sortable="true"/>
 
@@ -56,6 +62,15 @@
 
                 <!--备注-->
                 <col id="remark" sortable="true"/>
+
+                <!--汇率-->
+                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--源币种金额-->
+                <col id="amountSource" ui:number="true" sortable="true"/>
+
+                <!--本位币金额-->
+                <col id="amountFunctional" ui:number="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -71,21 +86,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--审核人-->
-                <col id="approvedBy" sortable="true"/>
-
-                <!--审核时间-->
-                <col id="approvedAt" sortable="true"/>
-
-                <!--汇率-->
-                <col id="exchangeRate" mandatory="true" ui:number="true" sortable="true"/>
-
-                <!--源币种金额-->
-                <col id="amountSource" ui:number="true" sortable="true"/>
-
-                <!--本位币金额-->
-                <col id="amountFunctional" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -98,13 +98,13 @@
  orgId[业务组织] businessDate[归集日期]
  currencyId[币种] totalAmount[归集金额合计]
  docStatus[单据状态] approveStatus[审核状态]
+ approvedBy[审核人] approvedAt[审核时间]
  posted[已过账(已转成本凭证)] postedAt[过账时间]
  postedBy[过账人] remark[备注]
- delVersion[逻辑删除版本] createdBy[创建人]
- createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] approvedBy[审核人]
- approvedAt[审核时间] exchangeRate[汇率]
- amountSource[源币种金额] amountFunctional[本位币金额]
+ exchangeRate[汇率] amountSource[源币种金额]
+ amountFunctional[本位币金额] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-项目成本归集" i18n-en:title="Add Project Cost Collection" x:prototype="edit"/>
@@ -136,7 +136,7 @@
             </table>
             <listActions>
                 <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
-                    <api url="@mutation:ErpPrjCostCollection__batchDelete?ids=$ids"/>
+                    <api url="@mutation:ErpPrjCostCollection__batchDelete?ids=${ids}"/>
                     <confirmText>@i18n:common.confirmBatchDelete</confirmText>
                 </action>
                 <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
@@ -151,7 +151,7 @@
                     <dialog page="update"/>
                 </action>
                 <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
-                    <api url="@mutation:ErpPrjCostCollection__delete?id=$id"/>
+                    <api url="@mutation:ErpPrjCostCollection__delete?id=${id}"/>
                     <confirmText>@i18n:common.confirmDelete</confirmText>
                 </action>
                 <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
@@ -159,7 +159,7 @@
                         <dialog page="update"/>
                     </action>
                     <action id="row-delete-button" label="@i18n:common.delete">
-                        <api url="@mutation:ErpPrjCostCollection__delete?id=$id"/>
+                        <api url="@mutation:ErpPrjCostCollection__delete?id=${id}"/>
                         <confirmText>@i18n:common.confirmDelete</confirmText>
                     </action>
                 </actionGroup>
@@ -174,11 +174,11 @@
             <api url="@mutation:ErpPrjCostCollection__save/id"/>
         </simple>
         <simple name="view" form="view">
-            <initApi url="@query:ErpPrjCostCollection__get?id=$id" gql:selection="{@formSelection}"/>
+            <initApi url="@query:ErpPrjCostCollection__get?id=${id}" gql:selection="{@formSelection}"/>
         </simple>
         <simple name="update" form="edit">
-            <initApi url="@query:ErpPrjCostCollection__get?id=$id" gql:selection="{@formSelection}"/>
-            <api url="@mutation:ErpPrjCostCollection__update/id?id=$id" withFormData="true"/>
+            <initApi url="@query:ErpPrjCostCollection__get?id=${id}" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpPrjCostCollection__update/id?id=${id}" withFormData="true"/>
         </simple>
     </pages>
 </view>

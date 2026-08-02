@@ -36,15 +36,17 @@
 | 角色 | 职责 | 说明 |
 |------|------|------|
 | 审核人 | 各业务域单据审核 | 按单据类型配置审批流（nop-wf），与单据创建人职责分离 |
-| 管理员 | 高危操作与系统管理 | 反审核已审核单据、作废已审核单据、反结账会计期间、负库存配置、强制部分齐套开工、资产报废/出售审批 |
+| 管理员 | 高危操作与系统管理 | = 平台 superuser（`nop.auth.skip-check-for-admin=true` 默认启用，跳过权限检查拥有全系统访问）。反审核已审核单据、作废已审核单据、反结账会计期间、负库存配置、强制部分齐套开工、资产报废/出售审批 |
 
 ## 权限规则
 
-### 职责分离（建议配置）
+### 职责分离（程序级强制）
 
 - 单据创建人与审核人不可为同一人（采购员/销售员创建 → 审核人审核）。
 - 质检员与让步接收审批人不可为同一人（质检员提建议 → 质量主管审批）。
 - 财务员与期末结账审批（若需）分离。
+
+> **程序级强制（plan 2026-07-31-1023-2 R3.3）**：purchase/sales/finance/manufacturing 4 域全部 approve 路径已落地 SoD 程序级守卫——比对单据 `createdBy` 与当前审核人 `userId`，相等抛 `erp.err.<domain>.approver-is-creator`。共享守卫 `app.erp.common.service.SoDGuard`；null-user（wf 回调）放行（保留回调既有行为）。扩展域 approve 路径为显式 successor（触发条件：扩展域 SoD 抽样审计或自审回归）。
 
 ### 高危操作权限
 
@@ -70,6 +72,15 @@
 - 质检员只能看分配给自己的质检任务。
 - 维护人员只能看分配给自己的维护访问。
 
+> **行级过滤落地状态（plan 2026-07-31-1023-3 R3.4，P1-MA6-002）**：角色侧行级过滤已落地为 `erp-*.data-auth.xml` 规则 + config-gated `ErpRoleDataAuthChecker`，**灰度默认 OFF**（双层门控：`nop.auth.enable-data-auth=false` + `erp.data-auth.role-row-filter-enabled=false`），单组织基线零回归。翻转至 enforcement 为 successor（须人工批准 + role 种子 + 灰度计划）。
+>
+> **过滤列与列域分类**（实测各域 orm.xml，已纠正 `createdById`/`assigneeId` 误称）：
+> - **userId 域列**（直接与 `${userContext.userId}` 比较，已落地规则）：sales `createdBy`（业务员×6 单据）；quality `ownerId`（质检员×ErpQaRiskRegister，VARCHAR stdDomain="userId"）。
+> - **employee-id 域列**（BIGINT 职员 id，须 user→employee 解析，**successor**）：quality `inspectorId`（ErpQaInspection，"检验员(职员)"）；maintenance `assignedTo`（ErpMntVisit/Request，"指派人"）。`ErpMdEmployee` 当前无 userId 列，user→employee 解析不可行，待模型扩展后补规则。
+> - **财务员"全见"**：finance 维持空 `<objs/>`（DefaultDataAuthChecker 对未声明 obj 返回 null = 无 filter = 全见，语义正确），为设计决定非巧合。
+>
+> **EL 表达式**：filter 用 `${userContext.userId}`（`DefaultDataAuthChecker.newEvalScope` 注入的 scope 变量 = `IUserContext`）。注意 `${$context.user.userId}` 无效——`$context` 解析为 `IContext`，`IContext` 无 `getUser()` 方法。
+
 ### 状态机绑定
 
 每个状态机的迁移都绑定执行角色（详见各域 `state-machine.md` 的"角色与权限"节）。角色名与本文档一致。新增状态机迁移时必须同步更新本文档。
@@ -88,7 +99,7 @@
 - **角色矩阵**：见本文"角色体系"——按业务职能划分，角色名与各域状态机迁移执行角色同源。
 - **操作权限资源点**：`*.action-auth.xml`（`TOPM`/`SUBM`/`FNPT`）由 codegen 自动产出，定义菜单与功能权限点。三层文件链与定制约定见 `app-overview.md §菜单权威源与定制约定`。
 - **角色→权限点映射**（粗粒度）：见下方"角色→权限点映射"节。权限点 ID 引用 `_erp-*.action-auth.xml` 生成文件为真相源（AGENTS.md 规则 7 ——不在散文重复生成文件定义）。FNPT 权限点模式：每实体约 2 个（query/mutation），格式 `<permissions>{EntityName}:{action}</permissions>`，详见各域 `_erp-*.action-auth.xml`。
-- **数据权限规则**：`data-auth.xml` 行级过滤——**独立于操作级开关，始终附加到查询条件**（平台机制见 `nop-entropy/docs-for-ai/02-core-guides/auth-and-permissions.md` 数据权限节）。
+- **数据权限规则**：`data-auth.xml` 行级过滤——设计能力独立于操作级开关（平台机制见 `nop-entropy/docs-for-ai/02-core-guides/auth-and-permissions.md` 数据权限节）。**运行时灰度**：本 app 经 config-gated `ErpRoleDataAuthChecker`（bean `nopDataAuthChecker`）门控，双层默认 OFF（`nop.auth.enable-data-auth=false` + `erp.data-auth.role-row-filter-enabled=false`）→ checker `getFilter` 返回 null → 不附加任何条件（单组织基线零回归）。翻转须同时开启两者（successor，见上方"行级过滤落地状态"）。
 
 ## 角色→权限点映射
 
@@ -118,7 +129,30 @@
 
 > **说明**：上表为粗粒度映射蓝图。实际权限配置在 `app.action-auth.xml` 按角色关联 SUBM 资源 + `_erp-*.action-auth.xml` 的 FNPT 权限点。当前运行基线 `nop.auth.enable-action-auth=false`（见"运行基线"节），启用操作级拦截后方生效。
 
-> **SUB 域（CRM/CS/HR/APS/Logistics/B2B/Contract/DRP）**：这些域的业务操作由对应角色（如客服人员、HR 专员等）在各自域内执行，尚未定义独立 ERP 角色映射。灰度启用操作级拦截时可按需为上述域的新建角色分配对应 SUBM 资源。
+### 第二批扩展域角色基线（CRM/CS/HR/APS/Logistics/B2B/Contract/DRP）
+
+> 第二批扩展域的角色基线按「是否承载敏感操作」分两类处理：敏感子集（HR 工资审批 / 合同审批电子签 / B2B EDI 对账）已定义角色；非敏感子集显式声明 deferred 范围边界（触发条件明确，非沉默「尚未定义」）。
+
+**A. 承载敏感操作的域（角色已定义）**：
+
+| 角色 | 职责域 | 主要操作 |
+|------|--------|----------|
+| HR 专员 | human-resource | 员工/合同/考勤/休假维护；提交薪酬核算 |
+| 薪酬审批人 | human-resource | 薪酬（Salary）审批（xwf/DIRECT 三轴审批，含个税/社保等薪酬机密数据）|
+| 合同专员 | contract | 合同起草/谈判/版本管理；提交合同审批 |
+| 合同审批人 | contract | 合同审批与电子签触发（e-signature，含 NEGOTIATION→ACTIVE 迁移门控）|
+| B2B 对账员 | b2b | EDI 事务处理、ASN 接收、代码映射维护、B2B 对账确认 |
+| B2B 管理员 | b2b | EDI 出站自动化配置、错误升级处理、归档管理 |
+
+> 敏感操作（薪酬审批 / 合同审批 / EDI 对账）的权限点在灰度启用 `enable-action-auth=true` 后按角色绑定 FNPT 资源。运行时权限注解落地归 R2.7（P1-MA3-046 代码侧）+ MA6，本表为角色基线语义锚点。
+
+**B. 非敏感操作的域（角色映射 deferred）**：
+
+CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处理 / 排产 / 发运 / 补货）暂未定义独立 ERP 角色映射。
+
+- **Deferred 触发条件**：该域深化部署，或多公司 / 多团队数据隔离需求出现时。
+- **当前基线范围边界**：这些域的 SUBM / FNPT 资源已由 codegen 产出（`_erp-*.action-auth.xml`），灰度启用操作级拦截时可按需为上述域的新建角色（如客服人员 / 排产计划员 / 物流调度员 / 补货计划员 / CRM 销售员）分配对应 SUBM 资源。
+- **数据权限独立于操作级开关**：行级 orgId / 角色侧过滤独立于 `enable-action-auth` 开关（见"数据权限"节），经独立灰度门控（默认 OFF，翻转 successor），保证多公司 / 多团队数据隔离不依赖角色映射落地。
 
 ## 运行基线（当前拦截状态）
 
@@ -126,7 +160,7 @@
 
 | 项 | 当前值 | 说明 |
 |----|---------|------|
-| `nop.auth.enable-action-auth` | `false`（默认） | 操作级拦截关闭：菜单与 FNPT 全量可见可操作。**数据权限不受此开关影响，始终启用**。 |
+| `nop.auth.enable-action-auth` | `false`（默认） | 操作级拦截关闭：菜单与 FNPT 全量可见可操作。数据权限不受此开关影响（有独立灰度门控，见"数据权限"节，默认 OFF）。 |
 | `nop.auth.skip-check-for-admin` | `true`（默认） | 管理员跳过权限检查 |
 
 **灰度启用操作级拦截的步骤**：
@@ -136,6 +170,31 @@
 4. 灰度范围建议：先对高危操作（反审核/作废/反结账/处置）开启，再逐步铺开。
 
 > **行业参照**：Axelor 等 ERP 的 portal/模块权限也是"权限定义随模块安装生效、默认非全开"（见 `docs/analysis/erp-survey/2026-06-30-0000-axelor-open-suite.md`），"已定义≠默认开启"是行业常态。
+
+### action-level 权限声明层（R2.7 / P1-MA3-046，config-gated）
+
+> 来源：plan `2026-07-31-0310-2-r2-7-api-contract-consistency.md` Phase 4。A3.6 审计 P1-MA3-046 发现全域敏感动作零运行时权限保护 + FNPT 粒度粗（每实体仅 `{Entity}:query`/`{Entity}:mutation`，敏感动作坍缩进 `mutation` 桶）。本节建立 **per-action FNPT 声明层**，保持 enforcement OFF。
+
+**已落地（声明层，enforcement 仍 OFF）**：在高危域的 delta `erp-*.action-auth.xml`（`x:extends` 生成基，非生成文件）为最高危敏感动作声明**独立 per-action FNPT 权限点**（不坍缩进泛化 `mutation`），并用 `<resource ... roles="...">` 属性承载**静态 role-resource 种子**（Nop 原生静态映射，运行时并入 `permissionToRoles`，等价 `nop_auth_role_resource` 静态种子）：
+
+| 域 | 实体 | 独立 FNPT 点 | roles 种子（角色） |
+|----|------|-------------|------------------|
+| finance | ErpFinVoucher | `:post` / `:reverse` | 财务员 |
+| finance | ErpFinAccountingPeriod | `:closePeriod` / `:reverseClose`（反结账 kill-switch） | closePeriod=财务员 / reverseClose=管理员 |
+| finance | ErpFinBadDebt | `:writeOff` / `:reverseApprove` | writeOff=财务员 / reverseApprove=管理员 |
+| b2b | ErpB2bEdiDoc | `:markSent` / `:cancel` | markSent=B2B 对账员 / cancel=B2B 管理员 |
+| b2b | ErpB2bAsn | `:handleInboundWebhook`（入站 webhook 高危） | B2B 管理员 |
+| manufacturing | ErpMfgWorkOrder | `:start` / `:close` / `:cancel` | 生产主管 |
+| inventory | ErpInvStockMove | `:confirm` | 库管员 |
+| inventory | ErpInvLandedCost | `:approve` | 库管员 |
+| human-resource | ErpHrLeaveRequest | `:approve` | HR 专员 |
+| human-resource | ErpHrSalary | `:approve`（薪酬机密）/ `:markPaid` | 薪酬审批人 |
+
+**当前运行时行为不变**：`nop.auth.enable-action-auth=false` 保持——声明层仅"已就绪可授权"，不拦截任何调用。`roles` 属性在 enforcement OFF 时不生效，仅在翻转后并入 `permissionToRoles` 校验。
+
+**高危动作升级路径（successor）**：`reverseClose`（反结账）/ `writeOff`（坏账核销）/ `handleInboundWebhook`（B2B 入站）为最高危——其 FNPT 点已声明并 seed 给管理员/B2B 管理员，但**真正 enforcement 翻转**为 config-gated successor（见下方"Deferred"），须人工批准 + 灰度 + 负向隔离测试后分域启用。
+
+**灰度推进路线（staged rollout，successor）**：finance/b2b/mfg/inventory/hr 为首批落地（含全部 A3.6 点名的最高危动作：reverseClose/writeOff/handleInboundWebhook + 各域敏感状态迁移）；其余（pur/sal 审批集 / mfg approve subcontract / assets 处置 / 全 EDI 生命周期 等）的 per-action FNPT 声明随 enforcement 灰度分批补齐（触发条件 = 该域 `enable-action-auth=true` 灰度批准前）。新增高危实体应按本模式直接声明独立 FNPT 点（API 命名约定见 `domain-design-guidelines.md §16A`）。
 
 ### 浏览器层审批路径已知限制（xwf 4 实体）
 

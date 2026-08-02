@@ -12,6 +12,10 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.posting.ErpFinPostingErrors;
 import app.erp.fin.service.posting.ErpFinPostingExceptionRecorder;
 import app.erp.fin.service.posting.ErpFinPostingMetrics;
+import app.erp.fin.service.metrics.ErpFinPostingExceptionBacklogGauge;
+import app.erp.fin.service.processor.ErpFinPostingExceptionIgnoreProcessor;
+import app.erp.fin.service.processor.ErpFinPostingExceptionRetryProcessor;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -22,10 +26,16 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.commons.concurrent.executor.GlobalExecutors;
+import io.nop.commons.metrics.GlobalMeterRegistry;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -34,6 +44,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
@@ -43,7 +56,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 过账异常工作台（{@code posting-log.md §过账异常处置}）。CRUD 之外承载三个处置动作：
  * {@link #retry}/{@link #ignore}/{@link #manualEntry}，处置状态机经 ErrorCode 守门。
  *
- * <p>期末结账前置检查经 {@link #countUnresolved} 扫描未处置（PENDING/RETRYING）记录阻止结账。
+ * <p>期末结账前置检查经 {@link #countUnresolved} 扫描未处置（PENDING/RETRYING/MANUAL 未补录）记录阻止结账。
  *
  * <p>事务/会话：{@link BizMutation} 默认事务；retry 内重新触发过账经 {@link IErpFinVoucherBiz#post}
  * 的 REQUIRES_NEW 独立事务（失败回滚不污染本工作台事务）。
@@ -52,50 +65,80 @@ import static io.nop.api.core.beans.FilterBeans.in;
 public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingException>
         implements IErpFinPostingExceptionBiz {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ErpFinPostingExceptionBizModel.class);
+
+    /**
+     * observability.md §5.1 指标 5（{@code erp_fin_posting_exception_backlog} Gauge）：
+     * 进程级 once-only 注册 flag，避免多实例 / 容器重启叠加导致 Gauge 重复注册告警。
+     */
+    private static final AtomicBoolean BACKLOG_GAUGE_REGISTERED = new AtomicBoolean(false);
+
+    /** 5 分钟固定间隔（observability.md §5.1 指标 5 校正：避免 scrape 时才查 DB 引入抓取延迟）。 */
+    static final long BACKLOG_REFRESH_INITIAL_DELAY_MS = 30_000L;
+    static final long BACKLOG_REFRESH_PERIOD_MS = 5 * 60_000L;
+
+    /** backlog Gauge 当前缓存值（由后台刷新任务更新，Gauge 读取此值）。 */
+    private final AtomicLong postingExceptionBacklog = new AtomicLong(0L);
+
     @Inject
     IErpFinVoucherBiz voucherBiz;
 
     @Inject
     ErpFinPostingMetrics postingMetrics;
 
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+    @Inject
+    ErpFinPostingExceptionRetryProcessor retryProcessor;
+    @Inject
+    ErpFinPostingExceptionIgnoreProcessor ignoreProcessor;
+
     public ErpFinPostingExceptionBizModel() {
         setEntityName(ErpFinPostingException.class.getName());
+    }
+
+    /**
+     * observability.md §5.1 指标 5 注册（{@code erp_fin_posting_exception_backlog} Gauge）。
+     *
+     * <p>进程级 once-only：经 {@code BACKLOG_GAUGE_REGISTERED} CAS 保证仅注册一次（多 BizModel 实例
+     * / Quarkus dev mode reload 场景）。Gauge 注册逻辑经 {@link ErpFinPostingExceptionBacklogGauge#register}
+     * 静态助手（亦可被单测针对 SimpleMeterRegistry 调用）。后台刷新任务复用 {@link #countUnresolved}
+     * 既有语义（PENDING/RETRYING/MANUAL 终态机计数），固定 5 分钟间隔。
+     */
+    @PostConstruct
+    public void initObservability() {
+        if (!BACKLOG_GAUGE_REGISTERED.compareAndSet(false, true)) {
+            return;
+        }
+        ErpFinPostingExceptionBacklogGauge.register(GlobalMeterRegistry.instance(), postingExceptionBacklog);
+        GlobalExecutors.globalTimer().scheduleAtFixedRate(
+                this::refreshPostingExceptionBacklog,
+                BACKLOG_REFRESH_INITIAL_DELAY_MS,
+                BACKLOG_REFRESH_PERIOD_MS,
+                TimeUnit.MILLISECONDS);
+        LOG.info("erp-fin-posting-exception-backlog-gauge-registered: initialDelayMs={}, periodMs={}",
+                BACKLOG_REFRESH_INITIAL_DELAY_MS, BACKLOG_REFRESH_PERIOD_MS);
+    }
+
+    /** 后台刷新一次 backlog 缓存（单测亦调用以避免等待 5 分钟调度）。异常隔离不向上抛。 */
+    public void refreshPostingExceptionBacklog() {
+        try {
+            long count = countUnresolved(new ServiceContextImpl());
+            postingExceptionBacklog.set(count);
+        } catch (Exception e) {
+            LOG.warn("erp-fin-posting-exception-backlog-refresh-failed: reason={}", e.getMessage());
+        }
+    }
+
+    /** 当前 backlog 缓存值（单测断言用）。 */
+    public long currentPostingExceptionBacklog() {
+        return postingExceptionBacklog.get();
     }
 
     @Override
     @BizMutation
     public ErpFinPostingException retry(@Name("exceptionId") Long exceptionId, IServiceContext context) {
-        ErpFinPostingException entity = requirePending(exceptionId);
-        // 翻 RETRYING 并记重试次数；重新触发过账（独立事务，失败回滚不污染本事务）。
-        entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING);
-        entity.setRetryCount((entity.getRetryCount() == null ? 0 : entity.getRetryCount()) + 1);
-        entity.setResolution(ErpFinConstants.POSTING_EXCEPTION_RESOLUTION_RETRY);
-        entity.setResolvedBy(currentUserId());
-        entity.setResolvedAt(CoreMetrics.currentTimestamp());
-        updateEntity(entity, null, context);
-
-        if (!ErpFinConstants.POSTING_TYPE_REVERSAL.equals(entity.getPostingType())) {
-            // 正向过账重试：从 eventData 重建 PostingEvent 重新过账。
-            PostingEvent event = rebuildEvent(entity);
-            Long voucherId = voucherBiz.post(event, context);
-            if (voucherId != null) {
-                entity.setVoucherId(voucherId);
-                entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
-            } else {
-                // 幂等命中（源单已过账）也算重试成功。
-                entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
-            }
-        } else {
-            // 红冲重试：按回链重新红冲。
-            ErpFinBusinessType businessType = parseBusinessType(entity.getBusinessType());
-            Long voucherId = voucherBiz.reverse(entity.getBillHeadCode(), businessType, context);
-            if (voucherId != null) {
-                entity.setVoucherId(voucherId);
-                entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRIED);
-            }
-        }
-        updateEntity(entity, null, context);
-        return entity;
+        return retryProcessor.retry(exceptionId, context);
     }
 
     @Override
@@ -103,18 +146,32 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
     public ErpFinPostingException ignore(@Name("exceptionId") Long exceptionId,
                                          @Name("resolutionNote") String resolutionNote,
                                          IServiceContext context) {
-        ErpFinPostingException entity = requirePending(exceptionId);
-        if (resolutionNote == null || resolutionNote.trim().isEmpty()) {
-            throw new NopException(ErpFinPostingErrors.ERR_POSTING_EXCEPTION_IGNORE_REASON_REQUIRED)
-                    .param(ErpFinPostingErrors.ARG_EXCEPTION_ID, exceptionId);
+        return ignoreProcessor.ignore(exceptionId, resolutionNote, context);
+    }
+
+    /**
+     * IGNORED 放弃态告警派发（G2 错误传播分级策略；plan 2026-07-30-0341-2 P1-MA2-032）。
+     * 通知失败降级（warn）不阻断处置动作。
+     */
+    private void dispatchAbandonmentAlert(ErpFinPostingException entity, String resolutionNote) {
+        if (notificationBiz == null) {
+            return;
         }
-        entity.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_IGNORED);
-        entity.setResolution(ErpFinConstants.POSTING_EXCEPTION_RESOLUTION_IGNORE);
-        entity.setResolutionNote(resolutionNote);
-        entity.setResolvedBy(currentUserId());
-        entity.setResolvedAt(CoreMetrics.currentTimestamp());
-        updateEntity(entity, null, context);
-        return entity;
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("exceptionId", entity.getId());
+        ctx.put("billHeadCode", entity.getBillHeadCode());
+        ctx.put("businessType", entity.getBusinessType());
+        ctx.put("errorCode", entity.getErrorCode());
+        ctx.put("errorMessage", entity.getErrorMessage());
+        ctx.put("resolutionNote", resolutionNote);
+        ctx.put("postingNo", entity.getBillHeadCode());
+        try {
+            notificationBiz.notify(ErpFinConstants.NOTIFY_EVENT_POSTING_EXCEPTION, ctx, new io.nop.core.context.ServiceContextImpl());
+        } catch (Exception e) {
+            org.slf4j.LoggerFactory.getLogger(ErpFinPostingExceptionBizModel.class)
+                    .warn("erp-fin-posting-exception-ignored-alert-failed: exceptionId={}, reason={}",
+                            entity.getId(), e.getMessage());
+        }
     }
 
     @Override
@@ -143,9 +200,12 @@ public class ErpFinPostingExceptionBizModel extends CrudBizModel<ErpFinPostingEx
     public long countUnresolved(IServiceContext context) {
         IEntityDao<ErpFinPostingException> dao = dao();
         QueryBean q = new QueryBean();
+        // MANUAL（G2 MAX_RETRY 升级）voucherId 为空即未补录，计入未处置；RETRIED/IGNORED 已决策不计入。
         q.addFilter(in("status", Arrays.asList(
                 ErpFinConstants.POSTING_EXCEPTION_STATUS_PENDING,
-                ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING)));
+                ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING,
+                ErpFinConstants.POSTING_EXCEPTION_STATUS_MANUAL)));
+        q.addFilter(io.nop.api.core.beans.FilterBeans.isNull("voucherId"));
         List<ErpFinPostingException> all = dao.findAllByQuery(q);
         return all.size();
     }

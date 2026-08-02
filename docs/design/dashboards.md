@@ -24,6 +24,27 @@
 
 ---
 
+## 看板覆盖范围声明
+
+> 本文件明确列出全部 18 业务域的看板覆盖状态，避免「沉默遗漏」（读者误判某域不属于管理壳）。第二批扩展域（CRM/CS/HR/APS/Contract/DRP/Logistics/B2B）当前无独立看板章节，显式声明为「产品基线外」并给出理由与触发条件，而非沉默缺位。
+
+| 域 | 看板状态 | 说明 |
+|---|---|---|
+| sales / purchase / inventory / finance / assets / projects / manufacturing / maintenance / quality / master-data | **已设计**（见下方 §1-§9 + 主数据看板） | 10 看板已在本文定义，指标可追溯到实体 |
+| crm | **产品基线外** | 触发条件：CRM 深化部署（线索漏斗转化率/活动达成/营销 ROI 看板）。当前 CRM 域有完整数据模型与状态机，看板为后续范围 |
+| cs | **产品基线外** | 触发条件：CS 深化部署（SLA 达成率/工单积压/CSAT 趋势看板）。当前 CS 域有 SLA 策略与满意度数据，看板为后续范围 |
+| hr | **产品基线外** | 触发条件：HR 深化部署（人头/薪酬成本/考勤异常/招聘漏斗看板）。当前 HR 域有员工/薪酬/考勤数据，看板为后续范围 |
+| aps | **产品基线外** | 触发条件：APS 深化部署（排产利用率/订单准时率/瓶颈工作中心看板）。APS 排产结果可复用 manufacturing 看板的工单准时率指标 |
+| contract | **产品基线外** | 触发条件：合同深化部署（到期/续约/执行率/用量计费看板） |
+| drp | **产品基线外** | 触发条件：DRP 深化部署（补货建议达成/库存预警/缺货率看板）。DRP 补货可复用库存看板的缺料预警指标 |
+| logistics | **产品基线外** | 触发条件：物流深化部署（发运准时率/承运商绩效/运费成本看板） |
+| b2b | **产品基线外** | 触发条件：B2B 深化部署（EDI 成功率/ASN 匹配率/异常处理看板） |
+| notify | **产品基线外** | 触发条件：通知深化部署（通知送达率/已读率看板）。notify 为跨域子系统，无独立经营指标 |
+
+> 任何第二批扩展域进入深化部署时，应在本文件补建对应看板章节（结构对齐 §1-§9：目的 + 指标表含数据源/计算口径/类型 + 涉及机制），并更新本范围声明表。
+
+---
+
 ## 1. 销售看板(Sales Dashboard)
 
 **目的**:监控销售业绩、客户应收、订单转化。
@@ -151,7 +172,7 @@
 | 齐套待产 | ErpMfgWorkOrder | count(STOCK_PARTIAL, 缺料待产) | KPI |
 | 工单状态分布 | ErpMfgWorkOrder | 按 status 聚合 | 占比图 |
 | 产成品产出趋势 | ErpMfgWorkOrder | 按周/月完工量 | 趋势图 |
-| **预警**:齐套不足 | ErpMfgMaterialReservation | 未齐套工单 + 缺件明细(见 material-reservation §齐套) | 预警列表 |
+| **预警**:齐套不足 | ErpMfgWorkOrder | 未齐套工单计数（`STOCK_PARTIAL` 状态）；缺件明细需物料预留实体（**产品基线外**——`ErpMfgMaterialReservation` 未物化，触发条件：物料预留实体落地时） | 预警列表 |
 | **预警**:工单延期 | ErpMfgWorkOrder | plannedDate < today 且 未 COMPLETED | 预警列表 |
 
 **涉及机制**:state-machine.md、material-reservation.md(齐套)、bom-and-routing.md
@@ -168,7 +189,7 @@
 | 运行中设备 | ErpMntEquipment | count(RUNNING) | KPI |
 | 待处理维护请求 | ErpMntRequest | count(OPEN) | KPI |
 | 本期维护访问数 | ErpMntVisit | count(期内 COMPLETED) | KPI |
-| 设备 OEE | equipment-integration §六 | 可用率×性能×质量(按设备/产线) | KPI |
+| 设备 OEE | equipment-integration §六 | 可用率×性能×质量（**产品基线外**——精确性能/质量分量需设备采集数据，本期仅交付设备计数/状态分布/停机预警；触发条件：设备 OEE 采集数据落地时） | KPI |
 | 设备状态分布 | ErpMntEquipment | 按 status 聚合 | 占比图 |
 | **预警**:设备停机 | ErpMntEquipment | status=DOWN + ErpMntDowntimeEntry 未恢复 | 预警卡片 |
 | **预警**:维护逾期 | ErpMntSchedule | 计划日期 < today 且 未生成 Visit(见 equipment-integration §五) | 预警列表 |
@@ -188,7 +209,7 @@
 | 不合格数 | ErpQaInspection | count(REJECTED) | KPI |
 | 开放 NCR 数 | ErpQaNonConformance | count(status in [OPEN, IN_REVIEW]) | KPI |
 | 合格率趋势 | ErpQaInspection | 按周/月合格率(近12期) | 趋势图 |
-| 不合格原因 TOP | ErpQaNonConformance | 按 defectType 聚合降序 | 占比图+列表 |
+| 不合格原因 TOP | ErpQaNonConformance | 按 `dispositionType` 聚合降序（`defectType` 未物化，以处置决定 SCRAP/RETURN/CONCESSION/DOWNGRADE 为最接近语义维度） | 占比图+列表 |
 | SPC 失控预警 | ErpQaSpcSample | isOutOfControl=true 的子组(见 spc.md) | 预警列表 |
 | **预警**:CAPA 逾期 | ErpQaAction | 计划完成日 < today 且 未 RESOLVED | 预警列表 |
 
@@ -219,30 +240,7 @@
 3. **权限过滤**:所有查询带 orgId/部门/成本中心过滤(行级权限自动注入)。
 4. **性能**:大表聚合(如 GlBalance 按12月)考虑物化或缓存;预警列表分页。
 5. **配置化**:阈值(如缺料安全库存、账龄预警天数、现金流下限)放系统配置(NopSysVariable),非硬编码。
-6. **AMIS 取数范式约定**(plan `2026-07-09-1728-1` 落地，修 P1 缺陷 `docs/bugs/2026-07-09-1249-dashboard-amis-var-mangling.md`):
-   - 看板/报表 page.yaml 中 `dataType: raw` 手写 GraphQL 查询字符串里的裸 `$var`（GraphQL 变量语法）**必须**以 `${'$'}` 转义（如 `query(${'$'}periodId:Long){ ...(periodId:${'$'}periodId) }`）。原因:amis-core `dataMapping` 对含 `$` 的字符串值经 `tokenize`(模板模式单趟解析)会把裸 `$var` 当模板变量替换为空,损坏查询致 KPI 恒 0。`${'$'}` 是 YAML 双引号安全的字面 `$` 输出(amis-formula `\$` 转义变体,单趟不回扫)。`variables` 中的 `${expr}` 模板不变。
-   - 不要改用平台 `@query:` URL 范式替代:`guessDefinition` 对整数推断 `Int`、浮点 `Float`,无法产出 BizModel 声明的 `Long`/`BigDecimal`,GraphQL 校验会拒绝(`Int` 用于 `Long` 位置)。`dataType: raw` + `${'$'}` 转义是覆盖全参数类型的纯前端方案。
-   - **报表渲染容器范式**:渲染 button 用 `actionType: reload target: "reportService"` 触发 form 内部的 `type: service`(name: reportService, initFetch: false),service 的 api 含 adaptor 将 `renderHtml` 返回 HTML 拍平为 `data.reportHtml`,body 为 `type: html html: "${reportHtml}"`。service 必须在 form **内部**(共享表单字段作用域;同级 service 取不到表单字段值)。**禁止**镜像旧 balance-sheet 的 `onEvent: setVariable(event.data.result)+setValue(target)` 范式——该范式运行时损坏(`event.data.result` 恒空、`target` 字段被忽略)。
-
-## 实现状态
-
-> **4 核心业务域后端聚合 API 已落地**（plan `2026-07-06-0935-1`）：销售/采购/库存/财务看板的 `getDashboardKpi`/`getDashboardTrend`/预警查询经 `@BizQuery` 暴露于专用看板 BizModel（`ErpXxxDashboardBizModel`），可独立验证。阈值经 `NopSysVariable` 配置化（`erp-dash.*` 配置键，默认值在代码常量中）。
-> **4 核心业务域前端 AMIS 页面已落地**（plan `2026-07-06-1247-2`）：财务/销售/库存看板替换占位 `main.page.yaml` + 采购域新建看板页面与 `pur-dashboard` 菜单组。每页经 `/api/GenericApi` GraphQL 消费 0935-1 已审计 `@BizQuery`，分层布局对齐 §实现约定（form 区间筛选 + service KPI 卡片 + chart 趋势/占比图 + crud 预警列表）。
-> **其余 6 域后端聚合 API 已落地**（plan `2026-07-06-1606-1`）：资产/项目/制造/维护/质量/主数据看板的 `getDashboardKpi`/`getDashboardTrend`/预警查询经 `@BizQuery` 暴露于各域专用看板 BizModel（`ErpAstDashboardBizModel`/`ErpPrjDashboardBizModel`/`ErpMfgDashboardBizModel`/`ErpMntDashboardBizModel`/`ErpQaDashboardBizModel`/`ErpMdDashboardBizModel`），镜像 0935-1 范式（`IDaoProvider`/`IOrmTemplate` + `QueryBean` + `ormTemplate.runInSession` 聚合）。阈值经 `NopSysVariable` 配置化（`erp-dash.mnt-maintenance-overdue-days`/`erp-dash.qa-capa-overdue-days`，默认 0=直接 `< today`）。
-> 
-> **三处设计文档指标原 Non-Goal 已解除**（数据源实体已物化）：
-> - §6 项目毛利率 → `ErpPrjProjectPnl` 已物化（plan 0305-1），看板后端接线 `ErpPrjDashboard__getProjectGrossMargin` 已落地（plan 1100-3）；
-> - §7 齐套不足缺件明细 → `ErpMfgMaterialReservation` 未物化，本期以 `STOCK_PARTIAL` 状态计数替代 KPI（触发条件：物料预留实体落地时）；
-> - §9 SPC 失控预警 → `ErpQaSpcSample` 已物化（plan 0305-2，含 `isOutOfControl`/`violatedRules` 样本列），看板后端接线 `ErpQaDashboard__getSpcOutOfControlWarning` 已落地（plan 1100-3）。
-> 
-> **§8 维护 OEE 精确计算为 Non-Goal**（设计文档引用 `equipment-integration §六` OEE 可用率×性能×质量；精确性能/质量分量需设备采集数据未落地，本期仅交付可得子集：设备计数/状态分布/停机预警；触发条件：设备 OEE 采集数据落地时）。
-> 
-> **§9 不合格原因 TOP** 字段 `defectType` 在 ORM 未物化，本期以 `ErpQaNonConformance.dispositionType`（处置决定：SCRAP/RETURN/CONCESSION/DOWNGRADE）为聚合维度（语义最接近且为规范枚举）。
-> 
-> **6 域看板前端 AMIS 页面已落地**（plan `2026-07-06-1606-2`）：资产/项目/制造/维护/质量/主数据看板替换 6 个占位 `main.page.yaml`。每页经 `/api/GenericApi` GraphQL 消费 1606-1 已审计 `@BizQuery`，分层布局对齐 §实现约定（form 区间筛选 + service KPI 卡片 + chart 趋势/占比图 + crud 预警列表；主数据看板无趋势图，仅 KPI + 预警，对齐 §说明「指标少且静态」）。6 域复用既有 `*-dashboard` action-auth 菜单组（仅替换占位页内容，不新建菜单组）。页面 `ErpXxxDashboard__*` 调用逐一映射到 1606-1 BizModel 真实 `@BizQuery` 方法（ast 4 / md 3 / prj 4 / mfg 4 / mnt 4 / qa 4）。质量 SPC 失控预警卡片与项目毛利率卡片后续由 plan 1100-3 补齐（数据源物化后）。
-> 
-> **6 域看板前端 AMIS 页面**为独立 successor（plan `2026-07-06-1606-2`，触发条件=本计划后端 API 落地后前端定制启动时）。
-> 报表渲染能力（`nop-report` + `IReportEngine` + `.xpt.*` 模板）已就绪（plan `2026-07-06-0504-2` 报表渲染子系统落地 `ErpFinReportBizModel` + 五张财务种子报表），看板聚合方法经同一 ORM 实体取数。
+6. **AMIS 取数范式**:看板/报表 page.yaml 中 GraphQL 查询的 `$var` 转义、`dataType: raw` 范式与报表渲染容器范式详见 [`docs/architecture/view-and-page-strategy.md §看板/报表 AMIS 取数范式约定`](../architecture/view-and-page-strategy.md)。
 
 ## 参考机制文档
 

@@ -153,7 +153,7 @@ public class PriceRuleEngine {
         }
         if (rule.getDiscountPercent() != null) {
             BigDecimal factor = BigDecimal.ONE.subtract(
-                    BigDecimal.valueOf(rule.getDiscountPercent()).divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP));
+                    rule.getDiscountPercent().divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP));
             return base.multiply(factor).setScale(base.scale() >= 0 ? base.scale() : 2, RoundingMode.HALF_UP);
         }
         if (rule.getDiscountAmount() != null) {

@@ -2,6 +2,7 @@ package app.erp.sal.service.processor;
 
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.service.ErpSalConstants;
+import app.erp.sal.service.ErpSalErrors;
 import app.erp.common.service.AbstractWithdrawApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -9,19 +10,15 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalDelivery withdrawApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractWithdrawApprovalProcessor to activate the abstract base class; delegates to ErpSalDeliveryProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpSalDelivery withdrawApproval per-mutation Processor (plan 2026-07-30-1433-2 R5.2)。
+ * 原 xbiz withdrawApproval inline-script 提取为抽象骨架 + hook override。
+ * NopScriptError → NopException 语义等价：doc-cancelled→ERR_ILLEGAL_DOC_STATUS_TRANSITION，
+ * invalid-status→ERR_ILLEGAL_STATUS_TRANSITION。
  */
 public class ErpSalDeliveryWithdrawApprovalProcessor extends AbstractWithdrawApprovalProcessor<ErpSalDelivery> {
 
     @Inject
     ErpSalDeliveryProcessor processor;
-
-    @Override
-    public ErpSalDelivery withdrawApproval(String id, IServiceContext context) {
-        return processor.withdrawApproval(id, context);
-    }
 
     @Override
     protected IEntityDao<ErpSalDelivery> dao() {
@@ -30,7 +27,21 @@ public class ErpSalDeliveryWithdrawApprovalProcessor extends AbstractWithdrawApp
 
     @Override
     protected NopException notFoundException(String id) {
-        return defaultNotFoundException(id);
+        return new NopException(ErpSalErrors.ERR_DELIVERY_NOT_FOUND)
+                .param(ErpSalErrors.ARG_DELIVERY_ID, id);
+    }
+
+    @Override
+    protected NopException illegalStatusException(ErpSalDelivery entity, String current, String... expected) {
+        return new NopException(ErpSalErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpSalErrors.ARG_DELIVERY_CODE, entity.getCode())
+                .param(ErpSalErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpSalErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
+    }
+
+    @Override
+    protected void validateNotCancelled(ErpSalDelivery entity, IServiceContext context) {
+        processor.validateNotCancelled(entity, context);
     }
 
     @Override

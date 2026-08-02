@@ -241,7 +241,7 @@
                 <to-many name="lines" refEntityName="app.erp.b2b.dao.entity.ErpB2bAsnLine" tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName='Lines' ext:estRows="30"><join><on leftProp="id" rightProp="asnId"/></join></to-many>
             </relations>
             <unique-keys>
-                <unique-key name="UK_B2B_ASN_CODE_ORG" columns="code,orgId"/>
+                <unique-key name="UK_B2B_ASN_CODE_ORG" constraint="UK_B2B_ASN_CODE_ORG" columns="code,orgId"/>
             </unique-keys>
             <indexes>
                 <index name="IDX_B2B_ASN_ORG_STATUS" unique="false">

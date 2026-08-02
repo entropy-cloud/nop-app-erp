@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <!-- 多公司 orgId 隔离基础设施（plan 2026-07-30-0841-3-r1-29，P1-MA2-093/094）。
+         config-gated 默认关闭（erp.multi-company.org-isolation-enabled=false），保护单组织基线零回归。
+
+         读路径：覆盖平台 nop/biz/beans/biz-defaults.beans.xml 的 EmptyQueryTransformer 默认（同 id 非 default 覆盖 default），
+         CrudBizModel 经 @Named("nopGlobalQueryTransformer") 自动注入并应用于全部 findPage/findList。 -->
+    <bean id="nopGlobalQueryTransformer"
+          class="app.erp.common.org.ErpOrgIsolationQueryTransformer"/>
+
+    <!-- 写路径 auto-stamp：nopOrmSessionFactory 经 collect-beans by-type=IOrmInterceptor 自动收集 -->
+    <bean id="erpOrgIsolationOrmInterceptor"
+          class="app.erp.common.org.ErpOrgIsolationOrmInterceptor"/>
+
+    <!-- 角色侧行级数据权限 checker（plan 2026-07-31-1023-3-r3-4，P1-MA6-002）。
+         覆盖平台 nop/auth/beans/auth-service.beans.xml 的 DefaultDataAuthChecker 默认（同 id 非 default 覆盖 default，
+         按 type 注入到 GraphQLEngine / DataAuthEntityFilterProvider）。
+         config-gated 默认关闭（erp.data-auth.role-row-filter-enabled=false）：getFilter→null、isPermitted→true，
+         单组织基线零回归。开启时委托 DefaultDataAuthChecker 应用 /nop/main/auth/app.data-auth.xml 规则。
+         二级保险：nop.auth.enable-data-auth 默认 false（data-auth 管道关闭）。 -->
+    <bean id="nopDataAuthChecker"
+          class="app.erp.common.auth.ErpRoleDataAuthChecker"/>
+</beans>

@@ -139,6 +139,22 @@ optionalFeatures:          # optional，有 config-gated 特性才声明
 
 错误码定义遵循项目约定（`erp.err.module-meta.*` 前缀，描述用中文，i18n 处理翻译）。
 
+### 4.4 浏览器层验证（plan 2026-07-27-0930-1）
+
+4 `@BizQuery` 诊断端点经 Playwright 浏览器层 GraphQL `/graphql` 全栈可达性验证 + seed 派生确定性断言（`tests/e2e/business-actions/all-module-meta-diagnostic.action.spec.ts`，1 用例 6 场景全绿，镜像 JUnit `TestModuleMetaReader` 7 场景 + 1500-2 C1 同型非实体 `@BizQuery` 读路径范式）：
+
+- **(1) listModules**：返回 List 经 `erp/*` 前缀过滤后精确 == 19（收紧 JUnit `>= 19`）+ 全部 `version="1.0.0"` + 含 `erp/md`（master-data DAG 根，`businessDependencies=null` 向后兼容）+ 含 `erp/pur`（businessDependencies 非空 6 项 + optionalFeatures 非空样本）。
+- **(2)-(4) getModule 三路径**：`erp/md`（DAG 根 businessDependencies=null）+ `erp/pur`（6 deps 含 `{erp/md,1.0.0}` + supplier-scorecard-red-gate 特性）+ `erp/nonexistent`（返回 null 容忍，对齐 `ModuleMetaReader.getModule:42-45`）。
+- **(5) checkDependencyIntegrity**：fresh-DB 19 域一致版本 1.0.0 + DAG 闭合 → `ok=true` + `missing=[]` + `mismatches=[]`。
+- **(6) listOptionalFeatures**：含 purchase `{feature:"supplier-scorecard-red-gate", configKey:"erp-pur.scorecard-prevent-on-red", defaultValue:true}`（`defaultValue` Object scalar 经 GraphQL 序列化为 JSON 布尔）。
+
+实现注记：
+
+- **无 config-gate**：4 `@BizQuery` 读路径无 config 门控（区别于 simulation/intercompany/exchange-rate-api 等 config-gated `@BizMutation`），fresh-DB 启动后即可经 GraphQL 可达。
+- **无 setup/cleanup**：模块元数据为运行时启动期 codegen 产物（`_module-meta.json` 经 `ModuleManager` 扫描 classpath），非数据库行；非实体 BizModel 无 `__save`/`__delete` 入口，不污染共享 DB 基线（区别于 1500-2 partner/employee/org 自包含 setup）。
+- **selection set 范式**：4 `@BizQuery` 全部返回复杂类型（List/Bean），`GraphQLClient.callQuery`（不带 selection set，仅适标量返回）不可用 → 经 `new GraphQLClient(page).raw()` 内联完整 query + selection set（镜像 cs-canned-response/fin-reconciliation selection set 范式）。
+- **负路径归 JUnit 单层**：`checkDependencyIntegrity` 负路径（缺失依赖/版本不匹配）经 `TestModuleMetaReader.testMissingDependency`/`testVersionMismatch` 已覆盖；浏览器层 fresh-DB 启动后 `_module-meta.json` 为 codegen 产物，非实体 BizModel 无 `__save` 入口无法经 GraphQL 写入制造缺失/不匹配场景，负路径浏览器层覆盖不可达（对齐 1407-3 RATE_LIMITED / 0410-1 strict-mode 范式）。
+
 ## 5. 与 ERP5 BT5 对照
 
 | BT5 概念 | ERP5 实现 | nop-app-erp 对应（本计划） |

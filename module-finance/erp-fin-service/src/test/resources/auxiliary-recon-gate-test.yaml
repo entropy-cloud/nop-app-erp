@@ -10,3 +10,4 @@ erp-fin:
   auxiliary-recon-gate-enabled: true
   ar-subject-code: "1122"
   ap-subject-code: "2202"
+  bad-debt-allowance-gate-enabled: false

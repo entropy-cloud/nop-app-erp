@@ -18,6 +18,7 @@ import app.erp.hr.dao.entity.ErpHrEmploymentContract;
 import app.erp.hr.dao.entity.ErpHrRecruitment;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrRecruitmentHireProcessor;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -45,6 +46,8 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
     IErpHrEmployeeBiz employeeBiz;
     @Inject
     IErpHrEmploymentContractBiz employmentContractBiz;
+    @Inject
+    ErpHrRecruitmentHireProcessor hireProcessor;
 
     public ErpHrRecruitmentBizModel() {
         setEntityName(ErpHrRecruitment.class.getName());
@@ -105,17 +108,7 @@ public class ErpHrRecruitmentBizModel extends CrudBizModel<ErpHrRecruitment> imp
     public ErpHrRecruitment hire(@Name("id") String id,
                                  @Name("hiredDate") LocalDate hiredDate,
                                  IServiceContext context) {
-        ErpHrRecruitment rec = requireEntity(id, null, context);
-        requireStatus(rec, ErpHrConstants.RECRUITMENT_STATUS_OFFERED, ErpHrConstants.RECRUITMENT_STATUS_HIRED);
-        rec.setHiredDate(hiredDate);
-        rec.setStatus(ErpHrConstants.RECRUITMENT_STATUS_HIRED);
-
-        ErpHrEmployee newEmployee = createEmployeeFromRecruitment(rec, hiredDate, context);
-        rec.setEmployeeId(newEmployee.getId());
-        updateEntity(rec, null, context);
-
-        createContractForNewEmployee(rec, newEmployee, hiredDate, context);
-        return rec;
+        return hireProcessor.hire(id, hiredDate, context);
     }
 
     @Override

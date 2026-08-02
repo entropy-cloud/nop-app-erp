@@ -284,13 +284,13 @@ public class TestErpFinBadDebt extends JunitAutoTestCase {
         assertTrue(provisionService.getReceivableTotal().compareTo(BigDecimal.ZERO) > 0, "NRV 正值");
         assertEquals(0, calc.getRequiredProvision().compareTo(new BigDecimal("400.000")), "必需 400");
 
-        // 期末门控经 preCheck 报告 shortfall
+        // 期末门控经 preCheck 报告 shortfall（P1-MA2-017: shortfall 独立硬阻断，不在 hasIssues 中）
         PeriodPreCheckReport report = ormTemplate.runInSession(session -> periodCloseBiz.preCheck(holder[0], CTX));
         assertTrue(report.getAllowanceShortfall().compareTo(BigDecimal.ZERO) > 0, "Allowance 缺口阻断");
-        assertTrue(report.hasIssues(), "前置检查未通过");
+        assertTrue(report.hasAllowanceShortfall(), "Allowance shortfall 独立硬阻断标记");
         java.util.Map<String, Object> preCheckState = new java.util.LinkedHashMap<>();
         preCheckState.put("allowanceShortfall", report.getAllowanceShortfall());
-        preCheckState.put("hasIssues", report.hasIssues());
+        preCheckState.put("hasAllowanceShortfall", report.hasAllowanceShortfall());
         output("1_pre_check_report.json5", preCheckState);
     }
 

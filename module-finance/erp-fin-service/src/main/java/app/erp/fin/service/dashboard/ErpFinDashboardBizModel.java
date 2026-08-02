@@ -5,6 +5,7 @@ import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinFundAccount;
 import app.erp.fin.dao.entity.ErpFinGlBalance;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -77,8 +78,8 @@ public class ErpFinDashboardBizModel {
             kpi.put("expense", expense);
             kpi.put("netProfit", revenue.subtract(expense));
             kpi.put("bankBalance", sumBankBalance());
-            kpi.put("arBalance", sumArApOpen(ErpFinConstants.DIRECTION_RECEIVABLE));
-            kpi.put("apBalance", sumArApOpen(ErpFinConstants.DIRECTION_PAYABLE));
+            kpi.put("arBalance", sumArApOpen(ErpFinConstants.DIRECTION_RECEIVABLE, periodId));
+            kpi.put("apBalance", sumArApOpen(ErpFinConstants.DIRECTION_PAYABLE, periodId));
             return kpi;
         });
     }
@@ -168,10 +169,12 @@ public class ErpFinDashboardBizModel {
             }
             QueryBean q = new QueryBean();
             q.addFilter(eq("periodId", latestPeriodId));
+            applyOrgAndSchemaScope(q, latestPeriodId);
             return dao.findAllByQuery(q);
         }
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
+        applyOrgAndSchemaScope(q, periodId);
         return dao.findAllByQuery(q);
     }
 
@@ -196,6 +199,15 @@ public class ErpFinDashboardBizModel {
         IEntityDao<ErpFinGlBalance> dao = daoProvider.daoFor(ErpFinGlBalance.class);
         QueryBean q = new QueryBean();
         q.addFilter(in("periodId", periodIds));
+        // 多账套隔离：按范围内首个期间的所属组织 + 主账套过滤（同期范围假定同组织）
+        Long orgId = periods.get(0).getOrgId();
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+            Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+            if (schemaId != null) {
+                q.addFilter(eq("acctSchemaId", schemaId));
+            }
+        }
         return dao.findAllByQuery(q);
     }
 
@@ -211,19 +223,47 @@ public class ErpFinDashboardBizModel {
         return sum;
     }
 
-    private BigDecimal sumArApOpen(String direction) {
+    private BigDecimal sumArApOpen(String direction, Long periodId) {
         IEntityDao<ErpFinArApItem> dao = daoProvider.daoFor(ErpFinArApItem.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("direction", direction));
         q.addFilter(in("status", Arrays.asList(
                 ErpFinConstants.AR_AP_STATUS_OPEN,
                 ErpFinConstants.AR_AP_STATUS_PARTIAL)));
+        applyOrgAndSchemaScope(q, periodId);
         List<ErpFinArApItem> items = dao.findAllByQuery(q);
         BigDecimal sum = BigDecimal.ZERO;
         for (ErpFinArApItem it : items) {
             sum = sum.add(DashboardUtil.nz(it.getOpenAmountFunctional()));
         }
         return sum;
+    }
+
+    // ===================== 多账套/多组织读路径隔离 scope（P1-MA2-095）=====================
+    // scope 不可解析时（period.orgId 为空等）跳过 filter，保护单组织基线零回归。
+
+    private Long resolvePeriodOrgId(Long periodId) {
+        if (periodId == null) {
+            Long latestPeriodId = findLatestPeriodId();
+            if (latestPeriodId == null) {
+                return null;
+            }
+            periodId = latestPeriodId;
+        }
+        ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
+        return period != null ? period.getOrgId() : null;
+    }
+
+    private void applyOrgAndSchemaScope(QueryBean q, Long periodId) {
+        Long orgId = resolvePeriodOrgId(periodId);
+        if (orgId == null) {
+            return;
+        }
+        q.addFilter(eq("orgId", orgId));
+        Long schemaId = AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId);
+        if (schemaId != null) {
+            q.addFilter(eq("acctSchemaId", schemaId));
+        }
     }
 
     private static BigDecimal periodActivity(ErpFinGlBalance b, ErpMdSubject s) {

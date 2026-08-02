@@ -99,7 +99,7 @@
 
 ### 组织类型与集团语义（A3）
 
-`ErpMdOrganization` 经 `parentId` 自引用表达集团层级，`orgType`（字典 `erp-md/org-type`）区分组织类型（A3，plan 2026-07-22-1000-1）：
+`ErpMdOrganization` 经 `parentId` 自引用表达集团层级，`orgType`（字典 `erp-md/org-type`）区分组织类型（A3）：
 
 - **GROUP（集团）**：顶层组织（parentId=null），法人根的父节点。一个集团含多个 COMPANY。
 - **COMPANY（公司）**：**法人根** —— 法定独立核算实体。跨法人调拨触发内部交易凭证（见 `../architecture/multi-company.md`）。
@@ -183,8 +183,8 @@
 
 | 作业 | 频率 | 配置键 | 入口 |
 |------|------|--------|------|
-| `erp-md-data-sync`（主数据缓存刷新） | 每小时 | `erp-md.data-sync-cron`（默认 `0 0 * * * ?`） | 待实现 |
-| `erp-md-exchange-rate-fetch`（汇率源拉取） | 每日 | — | 待实现（见 `exchange-rate-management.md:51`） |
+| `erp-md-data-sync`（主数据缓存刷新） | 每小时 | `erp-md.data-sync-cron`（默认 `0 0 * * * ?`） | 后续范围 |
+| `erp-md-exchange-rate-fetch`（汇率源拉取） | 每日 | — | 后续范围（见 `exchange-rate-management.md:51`） |
 
 > cron 接线（`scheduler.yaml` 注册）归 follow-up，触发条件见 `job-scheduling.md` §8。
 

@@ -189,7 +189,7 @@ nop-job 在 deadline 前 1h / 30min 发送预警通知给处理人
 
 ## 四、SLA 绩效报表
 
-> **实现状态**（plan `2026-07-11-1234-2`）：§4.1 关键指标 SLA 达标率/平均解决时长/超时工单数/团队排名已实现为 `ErpCsQualityDashboardBizModel` 看板 @BizQuery（经 `ErpCsQualityDashboard__getDashboardKpi/getTeamSlaRanking`）。§4.2 独立 .xpt.xml 报表模板（SLA 月报/超时明细/趋势图/工单类型分析）归 Deferred successor。
+> §4.1 关键指标 SLA 达标率/平均解决时长/超时工单数/团队排名经 `ErpCsQualityDashboardBizModel` 看板 @BizQuery（`ErpCsQualityDashboard__getDashboardKpi/getTeamSlaRanking`）。§4.2 独立 .xpt.xml 报表模板（SLA 月报/超时明细/趋势图/工单类型分析）归 Deferred successor。
 
 ### 4.1 关键指标
 
@@ -281,7 +281,7 @@ ErpHolidayCalendar（节假日日历）
 |--------|--------|------|
 | `erp-cs.sla-enabled` | true | 是否启用 SLA 计时 |
 | `erp-cs.sla-scan-interval` | 1（分钟） | SLA 超时检测 Job 扫描间隔（语义键） |
-| `erp-cs.sla-scan-cron` | —（默认不执行，运维启用配置键生效） | SLA 超时扫描 cron 门控。**SCHEDULED**（plan 2026-07-05-0306-1）：`ErpCsSlaScanJob` + `scheduler.yaml` 已接线，空值=跳过门控；非空时调 `IErpCsTicketBiz.scanOverdueTickets()` |
+| `erp-cs.sla-scan-cron` | —（默认不执行，运维启用配置键生效） | SLA 超时扫描 cron 门控。**SCHEDULED**：`ErpCsSlaScanJob` + `scheduler.yaml` 已接线，空值=跳过门控；非空时调 `IErpCsTicketBiz.scanOverdueTickets()` |
 | `erp-cs.sla-warning-before` | 60（分钟） | 超时预警提前时间 |
 | `erp-cs.escalation-l1-to-l2-hours` | 2 | 一级→二级升级等待小时数 |
 | `erp-cs.sla-default-working-hours` | 09:00-18:00 | 默认工作时间段 |
@@ -335,7 +335,7 @@ ErpHolidayCalendar（节假日日历）
 | master-data（ErpMdPartner） | 节假日日历（工作日模式依赖） |
 | CRM（ErpCrmLead） | 售后工单关联客户全生命周期 |
 
-## 实现偏离补注（2026-07-04 实现）
+## 实现约定
 
 > 权威计划：`docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md`。本节相对 §1-3 设计的实现取舍。
 

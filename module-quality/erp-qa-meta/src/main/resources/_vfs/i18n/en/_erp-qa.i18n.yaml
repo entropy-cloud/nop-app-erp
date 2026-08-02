@@ -59,6 +59,8 @@ prop:
       docStatus_label: null
       approveStatus: Approve Status
       approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
       remark: Remark
       delVersion: Del Flag
       version: Version
@@ -66,8 +68,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      approvedBy: Approved By
-      approvedAt: Approved At
       calibratedByEmployee: Calibrated By Employee
       calibratedByEmployee.name: Calibrated By Employee
       org: null
@@ -86,6 +86,7 @@ prop:
       supplierId: Supplier
       warehouseId: Warehouse
       batchNo: Batch No
+      businessDate: Business Date
       inspectionDate: Inspection Date
       lotQuantity: Lot Quantity
       sampleQuantity: Sample Quantity
@@ -108,7 +109,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      businessDate: Business Date
       material: Material
       material.name: Material
       template: Template
@@ -213,6 +213,7 @@ prop:
       postedAt: Posted At
       postedBy: Posted By
       returnCode: Related Return Code
+      noCapaReason: No Capa Reason
       actions: Actions
       inspection: Inspection
       material: null
@@ -312,6 +313,8 @@ prop:
       docStatus_label: null
       approveStatus: Approve Status
       approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
       remark: Remark
       delVersion: Del Flag
       version: Version
@@ -319,8 +322,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      approvedBy: Approved By
-      approvedAt: Approved At
       org: null
       org.name: null
     ErpQaRiskRegister:
@@ -469,7 +470,6 @@ dict:
     erp-qa/inspection-result: Inspection Result
     erp-qa/ncr-status: NCR Status
     erp-qa/action-type: Corrective Action Type
-    erp-qa/doc-status: Doc Status
     erp-qa/severity: Non-conformance Severity
     erp-qa/action-status: Corrective Action Status
     erp-qa/risk-status: Risk Status
@@ -505,10 +505,6 @@ dict.option.label:
     CORRECTIVE: Correction
     PREVENTIVE: Preventive
     CAPA: Corrective & Preventive
-  erp-qa/doc-status:
-    DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided
   erp-qa/severity:
     LOW: Low
     NORMAL: General

@@ -188,6 +188,13 @@
             <option code="LATE_NOT_CLOCKED" label="未打卡" value="LATE_NOT_CLOCKED" i18n-en:label="Late Not Clocked"/>
             <option code="OTHER" label="其他" value="OTHER" i18n-en:label="Other"/>
         </dict>
+        <dict label="排班分配状态" name="erp-hr/shift-assignment-status" valueType="string"
+              i18n-en:label="Shift Assignment Status">
+            <option code="SCHEDULED" label="已排班" value="SCHEDULED" i18n-en:label="Scheduled"/>
+            <option code="PRESENT" label="已到岗" value="PRESENT" i18n-en:label="Present"/>
+            <option code="ABSENT" label="缺勤" value="ABSENT" i18n-en:label="Absent"/>
+            <option code="CANCELLED" label="取消" value="CANCELLED" i18n-en:label="Cancelled"/>
+        </dict>
         <dict label="调研类型" name="erp-hr/survey-type" valueType="string" i18n-en:label="Survey Type">
             <option code="ANNUAL_ENGAGEMENT" label="年度敬业度调研" value="ANNUAL_ENGAGEMENT" i18n-en:label="Annual Engagement"/>
             <option code="PULSE" label="脉搏调研" value="PULSE" i18n-en:label="Pulse Survey"/>
@@ -2021,7 +2028,7 @@
                 <column code="REPLACED_BY_ASSIGNMENT_ID" displayName="被替换排班" name="replacedByAssignmentId" propId="12"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Replaced By"/>
                 <column code="STATUS" displayName="状态" name="status" precision="50" propId="13" stdDataType="string"
-                        stdSqlType="VARCHAR" i18n-en:displayName="Status"/>
+                        stdSqlType="VARCHAR" ext:dict="erp-hr/shift-assignment-status" i18n-en:displayName="Status"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="14" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="Del Flag" ui:show="R"/>
@@ -2105,6 +2112,10 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="employeeId,assignmentDate,shiftId,delVersion"
+                            constraint="UK_HR_SHIFT_ASSIGNMENT_NATURAL" name="UK_HR_SHIFT_ASSIGNMENT_NATURAL"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.hr.dao.entity.ErpHrShiftRotationPattern" createTimeProp="createTime"
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="轮换排班模板"

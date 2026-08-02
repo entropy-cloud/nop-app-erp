@@ -48,4 +48,20 @@
          被 EdiDocBizModel 出站发送委托调用（config-gated）。 -->
     <bean id="app.erp.b2b.service.spi.transport.TransportManager"
           class="app.erp.b2b.service.spi.transport.TransportManager"/>
+
+
+    <!-- per-mutation Cat-B D-mutation Processor beans (R6.7)：类别 B 内联 mutation 每 mutation 独立 Processor。
+         自包含 body（VERBATIM 迁移 + CrudBizModel 管道方法替换为 raw dao 等价）；下游可经 Delta beans.xml 同名 bean id 覆盖。 -->
+    <bean id="app.erp.b2b.service.processor.ErpB2bAsnHandleInboundWebhookProcessor"
+          class="app.erp.b2b.service.processor.ErpB2bAsnHandleInboundWebhookProcessor"/>
+    <bean id="app.erp.b2b.service.processor.ErpB2bAsnMatchPurchaseOrderProcessor"
+          class="app.erp.b2b.service.processor.ErpB2bAsnMatchPurchaseOrderProcessor"/>
+    <bean id="app.erp.b2b.service.processor.ErpB2bAsnCreateReceiveFromAsnProcessor"
+          class="app.erp.b2b.service.processor.ErpB2bAsnCreateReceiveFromAsnProcessor"/>
+    <bean id="app.erp.b2b.service.processor.ErpB2bAsnRetryMatchProcessor"
+          class="app.erp.b2b.service.processor.ErpB2bAsnRetryMatchProcessor"/>
+    <bean id="app.erp.b2b.service.processor.ErpB2bEdiDocCreateOutboundProcessor"
+          class="app.erp.b2b.service.processor.ErpB2bEdiDocCreateOutboundProcessor"/>
+    <bean id="app.erp.b2b.service.processor.ErpB2bEdiDocCreateInboundProcessor"
+          class="app.erp.b2b.service.processor.ErpB2bEdiDocCreateInboundProcessor"/>
 </beans>

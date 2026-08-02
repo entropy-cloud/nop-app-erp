@@ -231,7 +231,7 @@
                     <messages>
                         <success>工单已结案</success>
                     </messages>
-                    <visibleOn>${docStatus == 'STARTED' || docStatus == 'COMPLETED'}</visibleOn>
+                    <visibleOn>${docStatus == 'IN_PROCESS' || docStatus == 'STOPPED'}</visibleOn>
                 </action>
                 <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
                     <api url="@mutation:ErpMfgWorkOrder__cancel?workOrderId=$id"/>

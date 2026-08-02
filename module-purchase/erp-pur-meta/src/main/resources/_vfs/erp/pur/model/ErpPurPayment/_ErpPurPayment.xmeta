@@ -80,7 +80,7 @@
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="15" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-pur/doc-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp/doc-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="16" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

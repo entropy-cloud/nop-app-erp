@@ -10,7 +10,7 @@
 - 本模块不负责：员工主数据（master-data 域）；银行账户与对账（`bank-reconciliation.md`）；采购费用（purchase 域）。
 - 实体为**建议命名，待 ORM 计划落地**（`model/app-erp-finance.orm.xml` 是 ask-first 保护区域，本文件不复述 schema）。
 
-## 实现偏离补注（2026-07-02 计划 `2026-07-02-0700-2` 落地）
+## 实现约定
 
 落地时相对上文「设计依据」与「跨域协作」的偏离，已在此记录（plan Task Route Decision + Non-Goals）：
 
@@ -20,7 +20,7 @@
 4. **员工→partnerId 解析**：员工辅助账/核销单的 `partnerId` = **已解析的 `ErpMdEmployee.partnerId`**（即 `ErpMdPartner.id`），**非 `employee.id`**（员工与 partner 是不同 id 空间）。员工无 partner 记录时审核被拒（前置校验强制 `partnerId` 非空）。
 
 
-## 实现偏离补注（2026-07-04 补充：现金还款 Deferred 解除）
+## 实现约定：现金还款
 
 前述补注 #3「现金/银行转账还款为 Non-Goal」的 Deferred 条件**已解除**：
 
@@ -126,7 +126,7 @@
 
 凭证经业财过账引擎（`IErpFinAcctDocProvider`）生成，业财回链（`ErpFinVoucherBillR`）关联源借款单。**无需新建通用 finance 付款实体**——这是解除原 Deferred 的关键（参 hrms `make_return_entry` 模式：用 JE 承载，不依赖 Payment 实体）。
 
-### 实现注记（plan 2026-07-18-0718-2 落地）
+### 实现注记：现金还款
 
 - **入口**：`ErpFinEmployeeAdvanceBizModel.cashRepay(advanceId, amount, context)` `@BizMutation`（Java 自动暴露 GraphQL `ErpFinEmployeeAdvance__cashRepay` 端点，无需 xbiz action 注册）。
 - **守卫**：advance 须 `posted=true && approveStatus=APPROVED`（`ERR_EMPLOYEE_ADVANCE_NOT_REPAYABLE`）；`amount > 0`（`ERR_EMPLOYEE_ADVANCE_CASH_REPAY_AMOUNT_INVALID`）；`amount <= outstandingAmount`（`ERR_EMPLOYEE_ADVANCE_CASH_REPAY_EXCEEDS_OUTSTANDING`）。
@@ -183,9 +183,10 @@
 
 | 配置项 | 默认值 | 说明 |
 |---|---|---|
-| `erp-fin.expense-budget-check-enabled` | true | 报销 APPROVED 前是否强制预算校验 |
-| `erp-fin.advance-auto-offset-on-expense` | true | 报销时是否自动抵扣同员工未还借款 |
-| `erp-fin.imprest-topup-threshold` | — | 备用金补足阈值（低于则触发补足提醒） |
+| `erp-fin.expense-budget-check-enabled` | false | 报销 APPROVED 前是否强制预算校验（对齐 `ErpFinConstants.CONFIG_EXPENSE_BUDGET_CHECK_ENABLED`；默认 false——预算模块未落地，钩子预留不实现，见 §实现约定 #2） |
+| `erp-fin.advance-auto-offset-on-expense` | true | 报销时是否自动抵扣同员工未还借款（对齐 `ErpFinConstants.CONFIG_ADVANCE_AUTO_OFFSET_ON_EXPENSE`） |
+
+> **配置键对齐注记（P1-MA3-037）**：上表对齐 code 实际键。早期版本误列 1 个幻影键（备用金补足阈值类，grep code 零引用，已移除）——备用金补足提醒经 `advanceType=IMPREST` 筛选 + 业务查询表达，非 config 键。
 
 ## 关键业务规则
 
@@ -195,7 +196,7 @@
 4. **价税分离**：行级 untaxed/tax/total 保证进项税可抵扣，与采购发票一致。
 5. **红冲联动**：报销单/借款单 CANCELLED 时按业财回链红冲已过账凭证（posting.md 冲销机制）。
 
-   > **cashRepay 路径红冲联动已落地**（plan `2026-07-18-1745-3`）：`ErpFinEmployeeAdvance.reverseCashRepay(advanceId)` 反向现金还款闭环——经 `ErpFinVoucherBillR` 反查 advance 最近一笔未红冲的 cashRepay NORMAL 凭证（`billCode LIKE 'EA-CASH-REPAY-<advanceCode>-%'` + `businessType=EMPLOYEE_ADVANCE_SETTLE` + `isReversed=false`），调既有 `EmployeeAdvancePostingDispatcher.reverseSettle(billHeadCode)` 红冲 + 按原凭证 `totalDebit` 回退 advance 字段（`settledAmount-=amount` / `outstandingAmount+=amount`）。守卫：未找到 cashRepay 凭证抛 `ERR_EMPLOYEE_ADVANCE_CASH_REPAY_VOUCHER_NOT_FOUND`。兑现本节 l.196 红冲联动承诺于 cashRepay 路径（解除 owner-doc 漂移）。
+   > **cashRepay 路径红冲联动**：`ErpFinEmployeeAdvance.reverseCashRepay(advanceId)` 反向现金还款闭环——经 `ErpFinVoucherBillR` 反查 advance 最近一笔未红冲的 cashRepay NORMAL 凭证（`billCode LIKE 'EA-CASH-REPAY-<advanceCode>-%'` + `businessType=EMPLOYEE_ADVANCE_SETTLE` + `isReversed=false`），调既有 `EmployeeAdvancePostingDispatcher.reverseSettle(billHeadCode)` 红冲 + 按原凭证 `totalDebit` 回退 advance 字段（`settledAmount-=amount` / `outstandingAmount+=amount`）。守卫：未找到 cashRepay 凭证抛 `ERR_EMPLOYEE_ADVANCE_CASH_REPAY_VOUCHER_NOT_FOUND`。兑现本节 l.196 红冲联动承诺于 cashRepay 路径（解除 owner-doc 漂移）。
 
 ## 反模式警示
 

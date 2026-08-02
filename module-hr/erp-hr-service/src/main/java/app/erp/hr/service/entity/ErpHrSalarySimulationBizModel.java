@@ -10,6 +10,10 @@ import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.payroll.PayrollCalculator;
+import app.erp.hr.service.processor.ErpHrSalarySimulationAdjustItemProcessor;
+import app.erp.hr.service.processor.ErpHrSalarySimulationApplyBatchAdjustmentProcessor;
+import app.erp.hr.service.processor.ErpHrSalarySimulationConvertToFormalProcessor;
+import app.erp.hr.service.processor.ErpHrSalarySimulationCreateSimulationProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -52,6 +56,14 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
     PayrollCalculator payrollCalculator;
     @Inject
     IErpHrSalaryBiz salaryBiz;
+    @Inject
+    ErpHrSalarySimulationCreateSimulationProcessor createSimulationProcessor;
+    @Inject
+    ErpHrSalarySimulationAdjustItemProcessor adjustItemProcessor;
+    @Inject
+    ErpHrSalarySimulationApplyBatchAdjustmentProcessor applyBatchAdjustmentProcessor;
+    @Inject
+    ErpHrSalarySimulationConvertToFormalProcessor convertToFormalProcessor;
 
     public ErpHrSalarySimulationBizModel() {
         setEntityName(ErpHrSalarySimulation.class.getName());
@@ -75,23 +87,8 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
                                                    @Name("simulationName") String simulationName,
                                                    @Name("employeeScope") Map<String, Object> employeeScope,
                                                    IServiceContext context) {
-        List<ErpHrSalary> sourceSalaries = findSourceSalaries(sourceYear, sourceMonth, employeeScope, context);
-        if (sourceSalaries.isEmpty()) {
-            throw new NopException(ErpHrErrors.ERR_HR_SIMULATION_SOURCE_NOT_FOUND)
-                    .param(ErpHrErrors.ARG_SOURCE_PERIOD, sourceYear + "-" + sourceMonth);
-        }
-
-        ErpHrSalarySimulation simulation = newEntity();
-
-        simulation.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-        simulation.setCode(buildSimulationCode(simulationPeriodYear, simulationPeriodMonth));
-        simulation.setSourceSalaryId(sourceSalaries.get(0).getId());
-        simulation.setSimulationPeriodYear(simulationPeriodYear);
-        simulation.setSimulationPeriodMonth(simulationPeriodMonth);
-        simulation.setSimulationName(simulationName);
-        simulation.setStatus(ErpHrConstants.SIMULATION_STATUS_DRAFT);
-        saveEntity(simulation, null, context);
-        return simulation;
+        return createSimulationProcessor.createSimulation(sourceYear, sourceMonth,
+                simulationPeriodYear, simulationPeriodMonth, simulationName, employeeScope, context);
     }
 
     @Override
@@ -102,48 +99,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
                                   @Name("adjustedAmount") BigDecimal adjustedAmount,
                                   @Name("reason") String reason,
                                   IServiceContext context) {
-        ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
-        if (!ErpHrConstants.SIMULATION_STATUS_DRAFT.equals(simulation.getStatus())) {
-            throw new NopException(ErpHrErrors.ERR_HR_SIMULATION_ILLEGAL_TRANSITION)
-                    .param(ErpHrErrors.ARG_SIMULATION_ID, simulationId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, simulation.getStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, ErpHrConstants.SIMULATION_STATUS_DRAFT);
-        }
-
-        ErpHrSalary base = requireSourceSalary(employeeId, simulation);
-        BigDecimal originalAmount = readSalaryField(base, salaryItemCode);
-
-        // 先收集既有 overrides（避免 save 后未 flush 导致查询不可见）
-        Map<String, BigDecimal> overrides = collectOverrides(simulationId, employeeId);
-
-        ErpHrSalarySimulationItemAdjustment adj = findAdjustment(simulationId, employeeId, salaryItemCode);
-        boolean isNew = adj == null;
-        if (isNew) {
-            adj = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class).newEntity();
-            adj.setSimulationId(simulationId);
-            adj.setEmployeeId(employeeId);
-            adj.setSalaryItemCode(salaryItemCode);
-        }
-        adj.setOriginalAmount(originalAmount);
-        adj.setAdjustedAmount(adjustedAmount != null ? adjustedAmount : BigDecimal.ZERO);
-        adj.setAdjustmentReason(reason);
-        adj.setAdjustedBy(context.getUserId());
-        adj.setAdjustedAt(CoreMetrics.currentTimestamp());
-
-        IEntityDao<ErpHrSalarySimulationItemAdjustment> adjDao = daoProvider().daoFor(ErpHrSalarySimulationItemAdjustment.class);
-        if (isNew) {
-            adjDao.saveEntity(adj);
-        } else {
-            adjDao.updateEntity(adj);
-        }
-
-        // 合入本次调整后即时应变（不重查 DB——save 可能未 flush）
-        overrides.put(salaryItemCode, adj.getAdjustedAmount());
-        int targetYear = simulation.getSimulationPeriodYear() != null
-                ? simulation.getSimulationPeriodYear() : base.getYear();
-        int targetMonth = simulation.getSimulationPeriodMonth() != null
-                ? simulation.getSimulationPeriodMonth() : base.getMonth();
-        return payrollCalculator.recalculateWithOverrides(base, overrides, targetYear, targetMonth);
+        return adjustItemProcessor.adjustItem(simulationId, employeeId, salaryItemCode, adjustedAmount, reason, context);
     }
 
     @Override
@@ -282,62 +238,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
                                                      @Name("adjustType") String adjustType,
                                                      @Name("value") Object value,
                                                      IServiceContext context) {
-        ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
-        if (!ErpHrConstants.SIMULATION_STATUS_DRAFT.equals(simulation.getStatus())) {
-            throw new NopException(ErpHrErrors.ERR_HR_SIMULATION_ILLEGAL_TRANSITION)
-                    .param(ErpHrErrors.ARG_SIMULATION_ID, simulationId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, simulation.getStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, ErpHrConstants.SIMULATION_STATUS_DRAFT);
-        }
-
-        Map<String, BigDecimal> levelMap = ErpHrConstants.BATCH_ADJUST_TYPE_LEVEL_MAP.equals(adjustType)
-                ? toStringKeyedMap(value) : null;
-        BigDecimal numericValue = levelMap == null ? toBigDecimal(value) : null;
-
-        Map<Long, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
-        Map<Long, String> empGrades = loadEmployeeJobGrades(sims.keySet());
-
-        List<Long> targetEmployeeIds = filterByScope(new ArrayList<>(sims.keySet()), scope);
-
-        int targetYear = simulation.getSimulationPeriodYear() != null
-                ? simulation.getSimulationPeriodYear() : 0;
-        int targetMonth = simulation.getSimulationPeriodMonth() != null
-                ? simulation.getSimulationPeriodMonth() : 0;
-
-        BigDecimal totalGrossIncrease = BigDecimal.ZERO;
-        int affectedCount = 0;
-        for (Long empId : targetEmployeeIds) {
-            EmployeeSimResult r = sims.get(empId);
-            BigDecimal adjustment = resolveBatchAdjustment(adjustType, r.source, numericValue,
-                    levelMap, empGrades.get(empId));
-            if (adjustment == null) {
-                continue;
-            }
-            BigDecimal newBasic = nz(r.source.getBasicSalary()).add(adjustment);
-            if (newBasic.signum() < 0) {
-                newBasic = BigDecimal.ZERO;
-            }
-            recordAdjustment(simulationId, empId, "basicSalary",
-                    nz(r.source.getBasicSalary()), newBasic,
-                    ErpHrConstants.ADJUSTMENT_REASON_SALARY_CHANGE, context);
-
-            // 即时应变：合入本次调整后内存重算（避免 save 未 flush 导致重查不可见）
-            Map<String, BigDecimal> overrides = collectOverrides(simulationId, empId);
-            overrides.put("basicSalary", newBasic);
-            int ty = targetYear != 0 ? targetYear : r.source.getYear();
-            int tm = targetMonth != 0 ? targetMonth : (r.source.getMonth() != null ? r.source.getMonth() : 0);
-            ErpHrSalary newSim = payrollCalculator.recalculateWithOverrides(r.source, overrides, ty, tm);
-            totalGrossIncrease = totalGrossIncrease.add(nz(newSim.getGrossSalary()).subtract(nz(r.source.getGrossSalary())));
-            affectedCount++;
-        }
-
-        Map<String, Object> result = new LinkedHashMap<>();
-        result.put("affectedCount", affectedCount);
-        result.put("totalGrossIncrease", totalGrossIncrease);
-        result.put("avgIncrease", affectedCount > 0
-                ? totalGrossIncrease.divide(new BigDecimal(affectedCount), 2, RoundingMode.HALF_UP)
-                : BigDecimal.ZERO);
-        return result;
+        return applyBatchAdjustmentProcessor.applyBatchAdjustment(simulationId, scope, adjustType, value, context);
     }
 
     @Override
@@ -442,93 +343,7 @@ public class ErpHrSalarySimulationBizModel extends CrudBizModel<ErpHrSalarySimul
     @BizMutation
     public ErpHrSalarySimulation convertToFormal(@Name("simulationId") Long simulationId,
                                                  IServiceContext context) {
-        ErpHrSalarySimulation simulation = requireSimulation(simulationId, context);
-        if (!ErpHrConstants.SIMULATION_STATUS_APPROVED.equals(simulation.getStatus())) {
-            throw new NopException(ErpHrErrors.ERR_HR_SIMULATION_ILLEGAL_TRANSITION)
-                    .param(ErpHrErrors.ARG_SIMULATION_ID, simulationId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, simulation.getStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, ErpHrConstants.SIMULATION_STATUS_APPROVED);
-        }
-
-        Map<Long, EmployeeSimResult> sims = computeAllEmployeeSims(simulation, context);
-        int targetYear = simulation.getSimulationPeriodYear();
-        int targetMonth = simulation.getSimulationPeriodMonth();
-        String targetPeriod = periodLabel(targetYear, targetMonth);
-
-        Long firstConvertedId = null;
-        int convertedCount = 0;
-        List<Map<String, Object>> conflicts = new ArrayList<>();
-        for (Map.Entry<Long, EmployeeSimResult> e : sims.entrySet()) {
-            Long empId = e.getKey();
-            ErpHrSalary simulated = e.getValue().simulated;
-
-            if (hasPaidSalary(empId, targetYear, targetMonth)) {
-                conflicts.add(conflictEntry(empId, "PAID_CONFLICT",
-                        "目标期间 " + targetPeriod + " 已存在 PAID 正式薪酬"));
-                continue;
-            }
-            if (hasNonVoidSalary(empId, targetYear, targetMonth)) {
-                conflicts.add(conflictEntry(empId, "DUPLICATE",
-                        "员工 " + empId + " 在目标期间 " + targetPeriod + " 已存在正式薪酬"));
-                continue;
-            }
-
-            ErpHrSalary formal = salaryBiz.newEntity();
-
-            formal.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-            formal.setEmployeeId(simulated.getEmployeeId());
-            formal.setYear(targetYear);
-            formal.setMonth(targetMonth);
-            formal.setBasicSalary(simulated.getBasicSalary());
-            formal.setPositionAllowance(simulated.getPositionAllowance());
-            formal.setPerformanceBonus(simulated.getPerformanceBonus());
-            formal.setOvertimePay(simulated.getOvertimePay());
-            formal.setMealAllowance(simulated.getMealAllowance());
-            formal.setTransportAllowance(simulated.getTransportAllowance());
-            formal.setOtherAllowance(simulated.getOtherAllowance());
-            formal.setGrossSalary(simulated.getGrossSalary());
-            formal.setSocialInsurance(simulated.getSocialInsurance());
-            formal.setHousingFund(simulated.getHousingFund());
-            formal.setTaxAmount(simulated.getTaxAmount());
-            formal.setOtherDeductions(simulated.getOtherDeductions());
-            formal.setNetSalary(simulated.getNetSalary());
-            formal.setActualWorkDays(simulated.getActualWorkDays());
-            formal.setRequiredWorkDays(simulated.getRequiredWorkDays());
-            formal.setTotalOvertimeHours(simulated.getTotalOvertimeHours());
-            formal.setUnpaidLeaveDays(simulated.getUnpaidLeaveDays());
-            formal.setCumulativeData(simulated.getCumulativeData());
-            formal.setApproveStatus(ErpHrConstants.APPROVE_STATUS_UNSUBMITTED);
-            formal.setPaymentStatus(ErpHrConstants.PAYMENT_PENDING);
-            salaryBiz.saveEntity(formal, null, context);
-
-            if (firstConvertedId == null) {
-                firstConvertedId = formal.getId();
-            }
-            convertedCount++;
-        }
-
-        if (convertedCount == 0) {
-            // 全员冲突——按最严重错误抛出
-            boolean hasPaidConflict = false;
-            for (Map<String, Object> c : conflicts) {
-                if ("PAID_CONFLICT".equals(c.get("conflictType"))) {
-                    hasPaidConflict = true;
-                    break;
-                }
-            }
-            if (hasPaidConflict) {
-                throw new NopException(ErpHrErrors.ERR_HR_SIMULATION_TARGET_PERIOD_CONFLICT)
-                        .param(ErpHrErrors.ARG_TARGET_PERIOD, targetPeriod);
-            }
-            throw new NopException(ErpHrErrors.ERR_HR_SIMULATION_EMPLOYEE_DUPLICATE)
-                    .param(ErpHrErrors.ARG_TARGET_PERIOD, targetPeriod);
-        }
-
-        simulation.setStatus(ErpHrConstants.SIMULATION_STATUS_CONVERTED);
-        simulation.setConvertedSalaryId(firstConvertedId);
-        simulation.setConvertedAt(CoreMetrics.currentTimestamp());
-        updateEntity(simulation, null, context);
-        return simulation;
+        return convertToFormalProcessor.convertToFormal(simulationId, context);
     }
 
     @Override

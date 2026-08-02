@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 2,
+  "latestBaselineFile": "baseline-2026-08-02.json",
+  "capturedAt": "2026-08-02",
+  "design": "docs/architecture/quality-engineering/performance-baseline.md §5.3 + §3.4 path C successor adjudication",
+  "note": "Soft pointer to the most recent baseline file (schemaVersion 2 = variance-stabilized). Update only via explicit commit (plan/author action); nightly perf-baseline.yml MUST NOT auto-overwrite (防退化悄悄写进基线, design doc §6.5).",
+  "regressionDetectionPolicy": {
+    "type": "relative-median-diff",
+    "thresholdPercent": 20.0,
+    "minimumNightlySamples": 14,
+    "currentPhase": "C-1-non-blocking",
+    "blockingPromotionCriteria": "≥30 nightly + runner 同构确认 + 团队同意 (design doc §6.2)"
+  },
+  "perPathMetricAdjudication": {
+    "plan": "docs/plans/2026-08-02-0650-2-mq-q5-perf-variance-stabilization.md",
+    "rationale": "Variance ratio (max-min)/median is the REPRODUCIBILITY metric (design doc §4); regression DETECTION uses nightly relative-median-diff on stable medians (this policy). Paths whose variance ratio cannot reach §4 threshold due to inherent characteristics (GC/H2-jitter/sub-ms) gate on stable absolute medians — relative-median-diff 20% is the operative gate for ALL paths.",
+    "2-period-close": "variance-ratio-within-threshold (5.39% < 20%, scale increase 2000->6000 GL lines)",
+    "1-voucher-posting": "absolute-tolerance-fallback (variance 187% GC-dominated on 1000-voucher batch; median ~31s stable)",
+    "3-inv-reclose": "absolute-tolerance-fallback (variance 115% H2 query jitter; median ~649ms stable)",
+    "4-report-render": "absolute-tolerance-metric (variance 40-74% sub-ms inherent; absolute range 0.16-0.90ms, median stable for >5x detection)"
+  }
+}

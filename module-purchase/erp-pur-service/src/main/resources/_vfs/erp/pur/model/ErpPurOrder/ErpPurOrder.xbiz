@@ -48,22 +48,9 @@
             <return>
                 <schema bizObjName="THIS_OBJ"/>
             </return>
-            <source><![CDATA[
-                const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                const status = entity.approveStatus;
-
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "withdrawApproval")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
-
-                entity.approveStatus = 'UNSUBMITTED';
-                return entity;
-            ]]></source>
+            <source><c:script><![CDATA[
+                return inject('app.erp.pur.service.processor.ErpPurOrderWithdrawApprovalProcessor').withdrawApproval(id, svcCtx);
+            ]]></c:script></source>
         </mutation>
     </actions>
 </biz>

@@ -10,6 +10,7 @@ import app.erp.sal.dao.entity.ErpSalReturn;
 import app.erp.sal.dao.entity.ErpSalReturnLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.common.service.SoDGuard;
 import app.erp.sal.service.entity.ReturnQtyValidator;
 import app.erp.sal.service.entity.ReturnRefundOrchestrator;
 import app.erp.sal.service.entity.ReturnStockMoveBuilder;
@@ -72,62 +73,46 @@ public class ErpSalReturnProcessor {
     @Inject
     ReturnRefundOrchestrator refundOrchestrator;
 
+    @Inject
+    ErpSalReturnSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpSalReturnApproveProcessor approveProcessor;
+
+    @Inject
+    ErpSalReturnRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpSalReturnReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpSalReturnWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpSalReturnCancelProcessor cancelProcessor;
+
     public ErpSalReturn submitForApproval(String id, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(id, context);
-        validateNotCancelled(returnOrder, context);
-        validateTransitionForSubmit(returnOrder, context);
-        validateBusinessRulesForSubmit(returnOrder, context);
-        doSubmit(returnOrder, context);
-        return returnOrder;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpSalReturn withdrawApproval(String id, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(id, context);
-        validateNotCancelled(returnOrder, context);
-        validateTransitionForWithdraw(returnOrder, context);
-        doWithdrawSubmit(returnOrder, context);
-        return returnOrder;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpSalReturn approve(String id, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(id, context);
-        if (returnOrder.isApproved()) {
-            return returnOrder;
-        }
-        validateNotCancelled(returnOrder, context);
-        validateTransitionForApprove(returnOrder, context);
-        validateBusinessRulesForApprove(returnOrder, context);
-        doApprove(returnOrder, context);
-        return returnOrder;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpSalReturn reject(String id, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(id, context);
-        validateNotCancelled(returnOrder, context);
-        validateTransitionForReject(returnOrder, context);
-        doReject(returnOrder, context);
-        return returnOrder;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpSalReturn reverseApprove(String id, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(id, context);
-        if (returnOrder.isRejected()) {
-            return returnOrder;
-        }
-        validateTransitionForReverseApprove(returnOrder, context);
-        doReverseApprove(returnOrder, context);
-        return returnOrder;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpSalReturn cancel(String returnId, IServiceContext context) {
-        ErpSalReturn returnOrder = requireReturn(returnId, context);
-        validateTransitionForCancel(returnOrder, context);
-        if (returnOrder.isApproved()) {
-            ensureReversed(returnOrder, context);
-            returnOrder = returnDao().getEntityById(returnId);
-        }
-        doCancel(returnOrder, context);
-        return returnOrder;
+        return cancelProcessor.cancel(returnId, context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
@@ -206,6 +191,7 @@ public class ErpSalReturnProcessor {
     }
 
     protected void doApprove(ErpSalReturn returnOrder, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(returnOrder.getCreatedBy(), currentUserId(), ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR);
         triggerIncomingMove(returnOrder, context);
         ormTemplate.flushSession();
 

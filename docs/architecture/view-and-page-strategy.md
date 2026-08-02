@@ -86,6 +86,14 @@ URL 格式规范：`/erp/{appName}/pages/{EntityName}/main.page.yaml`
 - 手写页面的标签在 `i18n/en/erp-{xx}.i18n.yaml` 中追加（手写 Delta）
 - 中文为默认语言，英文从 i18n 文件加载
 
+## 看板/报表 AMIS 取数范式约定
+
+看板与报表 page.yaml 中手写 GraphQL 查询的 AMIS 取数机制：
+
+1. **`$var` 转义**：`dataType: raw` 手写 GraphQL 查询字符串里的裸 `$var`（GraphQL 变量语法）**必须**以 `${'$'}` 转义（如 `query(${'$'}periodId:Long){ ...(periodId:${'$'}periodId) }`）。原因：amis-core `dataMapping` 对含 `$` 的字符串值经 `tokenize`（模板模式单趟解析）会把裸 `$var` 当模板变量替换为空，损坏查询致 KPI 恒 0。`${'$'}` 是 YAML 双引号安全的字面 `$` 输出（amis-formula `\$` 转义变体，单趟不回扫）。`variables` 中的 `${expr}` 模板不变。
+2. **不要改用 `@query:` URL 范式**：`guessDefinition` 对整数推断 `Int`、浮点 `Float`，无法产出 BizModel 声明的 `Long`/`BigDecimal`，GraphQL 校验会拒绝（`Int` 用于 `Long` 位置）。`dataType: raw` + `${'$'}` 转义是覆盖全参数类型的纯前端方案。
+3. **报表渲染容器范式**：渲染 button 用 `actionType: reload target: "reportService"` 触发 form 内部的 `type: service`（name: reportService, initFetch: false），service 的 api 含 adaptor 将 `renderHtml` 返回 HTML 拍平为 `data.reportHtml`，body 为 `type: html html: "${reportHtml}"`。service 必须在 form **内部**（共享表单字段作用域；同级 service 取不到表单字段值）。**禁止**镜像旧 balance-sheet 的 `onEvent: setVariable(event.data.result)+setValue(target)` 范式——该范式运行时损坏。
+
 ## 参考
 
 - `nop-entropy/docs-for-ai/02-core-guides/view-and-page-customization.md`

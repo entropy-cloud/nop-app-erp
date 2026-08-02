@@ -44,6 +44,7 @@
 | 审查审计工作流或所需草案审查/结束审计规则 | `docs/audits/00-audit-execution-guide.md` | `docs/skills/` 中的相关提示 |
 | 审计业务状态机的正确性和可达性 | `docs/skills/state-machine-business-review-prompt.md` | 定义状态机的 owner doc |
 | 将设计文档审计为应用层行为基线 | `docs/skills/design-doc-audit-prompt.md` | `docs/design/README.md`、存在时的 `docs/design/domain-design-guidelines.md` |
+| 为复杂项目规划可由 Mission Driver 驱动的全面审计-修复 roadmap | `docs/skills/audit-remediation-roadmap-authoring-prompt.md` | `docs/articles/mission-driver--loop-engineering.md`、`docs/backlog/00-roadmap-authoring-guide.md`、已有 `docs/audits/` 记录、`docs/skills/README.md` 全部 skill |
 | 了解哪些文档应使用日期文件名与稳定名称 | `docs/references/document-naming-and-timeliness.md` | 目标目录中的相关指南 |
 | 快速复制推荐的文件名模式用于新的日期文档 | `docs/references/document-naming-and-timeliness.md` | `Quick Copy Set` 部分 |
 | 复制现成的日期文档骨架 | `docs/examples/README.md` | 重命名最接近的 `.example.md` 文件 |
@@ -89,11 +90,11 @@
 
 ## 域快速参考（可选）
 
-当项目有多个域时，添加快速参考表，以便通过一次查找即可将更改路由到正确的 owner doc 和技能。这是可选的；小型项目可以跳过。从真实项目填充表并将其保存在 `AGENTS.md` 或本文件中。
+> **Decision（P1-MA3-056）**：本节不另起 18+1 域表格——`docs/design/README.md §业务域设计文档` 已维护权威域表（域目录 → 逻辑工程 → 权威模型 → 文档结构），重复填写会形成双维护点漂移。故改为**交叉引用**：多域路由一次直达该表，再按需选择技能。
 
-| 更改区域 | 首先阅读 | 要加载的技能 |
-| ----------- | ---------- | ------------- |
-| <area> | `docs/<path>` | `<skill-name \| none>` |
+**多域更改路由**：见 `docs/design/README.md` §业务域设计文档（每域一个目录，含 README + state-machine + cross-domain 等因域而异的文档）。ORM 模型真相见 `module-<domain>/model/app-erp-<domain>.orm.xml`（19 域清单见 `docs/context/codebase-map.md §ORM 模型清单`）；物理目录 ↔ 逻辑工程名映射见 `docs/architecture/domain-module-split-analysis.md §2.0`。技能选择见 `docs/skills/README.md`。
+
+> 注：`docs/ppts/` 为演示材料目录（非业务域），未纳入域表。
 
 ## 目录角色
 
@@ -109,6 +110,8 @@
 - `docs/references/` - 稳定的查找指南和维护辅助工具
 - `docs/articles/` - 面向外部的方法论和解释性文章
 - `docs/examples/` - 可复制的日期工作文档骨架
+- `docs/errors/` - 错误码集中索引（按域/模块登记 ErrorCode）
+- `docs/ppts/` - 演示材料（幻灯片大纲与 HTML 演示）
 - `docs/plans/` - 带有结束标准的执行计划
 - `docs/audits/` - 审计方法和可选存储的审计记录
 - `docs/skills/` - 可选可复用 AI 提示和审计/审查剧本

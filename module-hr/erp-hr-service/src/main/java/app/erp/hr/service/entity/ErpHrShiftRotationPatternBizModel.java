@@ -9,6 +9,7 @@ import app.erp.hr.dao.entity.ErpHrShiftAssignment;
 import app.erp.hr.dao.entity.ErpHrShiftRotationPattern;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrShiftRotationPatternGenerateRotationProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -46,6 +47,8 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
     IErpHrShiftBiz shiftBiz;
     @Inject
     IErpHrShiftAssignmentBiz assignmentBiz;
+    @Inject
+    ErpHrShiftRotationPatternGenerateRotationProcessor generateRotationProcessor;
 
     public ErpHrShiftRotationPatternBizModel() {
         setEntityName(ErpHrShiftRotationPattern.class.getName());
@@ -60,37 +63,8 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
                                                        @Name("endDate") LocalDate endDate,
                                                        @Name("regenerate") boolean regenerate,
                                                        IServiceContext context) {
-        ErpHrShiftRotationPattern pattern = requireEntity(String.valueOf(patternId), null, context);
-        List<String> sequence = parseAndValidateSequence(pattern, context);
-        int cycleLength = sequence.size();
-        if (cycleLength == 0) {
-            throw new NopException(ErpHrErrors.ERR_SHIFT_ROTATION_PATTERN_INVALID)
-                    .param(ErpHrErrors.ARG_PATTERN_ID, patternId);
-        }
-        Map<String, Long> shiftCodeToId = buildShiftCodeMap(sequence, context);
-        if (regenerate) {
-            deleteExistingAssignments(groupMemberIds, startDate, endDate, context);
-        }
-        IEntityDao<ErpHrShiftAssignment> assignmentDao = daoProvider().daoFor(ErpHrShiftAssignment.class);
-        List<ErpHrShiftAssignment> result = new ArrayList<>();
-        for (int memberIdx = 0; memberIdx < groupMemberIds.size(); memberIdx++) {
-            Long employeeId = groupMemberIds.get(memberIdx);
-            long staggerOffset = (long) staggerDays * memberIdx;
-            LocalDate memberStart = startDate.plusDays(staggerOffset);
-            long dayIndex = 0;
-            for (LocalDate d = memberStart; !d.isAfter(endDate); d = d.plusDays(1)) {
-                String shiftCode = sequence.get((int) (dayIndex % cycleLength));
-                if (!ErpHrConstants.PATTERN_OFF_SHIFT_CODE.equals(shiftCode)) {
-                    Long shiftId = shiftCodeToId.get(shiftCode);
-                    if (shiftId != null && findActiveAssignment(assignmentDao, employeeId, d) == null) {
-                        ErpHrShiftAssignment assignment = newAssignment(assignmentDao, employeeId, shiftId, d);
-                        result.add(assignment);
-                    }
-                }
-                dayIndex++;
-            }
-        }
-        return result;
+        return generateRotationProcessor.generateRotation(patternId, groupMemberIds, staggerDays,
+                startDate, endDate, regenerate, context);
     }
 
     ErpHrShiftAssignment findActiveAssignment(IEntityDao<ErpHrShiftAssignment> dao, Long employeeId, LocalDate date) {
@@ -186,9 +160,10 @@ public class ErpHrShiftRotationPatternBizModel extends CrudBizModel<ErpHrShiftRo
             return;
         }
         IEntityDao<ErpHrShiftAssignment> dao = daoProvider().daoFor(ErpHrShiftAssignment.class);
+        // 逻辑删除（deleteVersionProp=delVersion 自增）使 UK_HR_SHIFT_ASSIGNMENT_NATURAL 允许同键重排：
+        // 删除行 delVersion>0，重生成行 delVersion=0，互不冲突。仅状态置 CANCELLED 不变 delVersion 会触发 duplicate-key。
         for (ErpHrShiftAssignment a : existing) {
-            a.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_CANCELLED);
-            dao.updateEntity(a);
+            dao.deleteEntity(a);
         }
         dao.flushSession();
     }

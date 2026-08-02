@@ -7,6 +7,9 @@ import app.erp.hr.dao.entity.ErpHrShift;
 import app.erp.hr.dao.entity.ErpHrShiftAssignment;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrShiftAssignmentAssignBatchProcessor;
+import app.erp.hr.service.processor.ErpHrShiftAssignmentAssignSingleProcessor;
+import app.erp.hr.service.processor.ErpHrShiftAssignmentCopyFromPeriodProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -41,6 +44,12 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
 
     @Inject
     IErpHrShiftBiz shiftBiz;
+    @Inject
+    ErpHrShiftAssignmentAssignSingleProcessor assignSingleProcessor;
+    @Inject
+    ErpHrShiftAssignmentAssignBatchProcessor assignBatchProcessor;
+    @Inject
+    ErpHrShiftAssignmentCopyFromPeriodProcessor copyFromPeriodProcessor;
 
     public ErpHrShiftAssignmentBizModel() {
         setEntityName(ErpHrShiftAssignment.class.getName());
@@ -61,9 +70,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
                                              @Name("shiftId") Long shiftId,
                                              @Name("assignmentDate") LocalDate assignmentDate,
                                              IServiceContext context) {
-        requireShift(shiftId, context);
-        assertNoExistingAssignment(employeeId, assignmentDate, context);
-        return doCreateAssignment(employeeId, shiftId, assignmentDate, context);
+        return assignSingleProcessor.assignSingle(employeeId, shiftId, assignmentDate, context);
     }
 
     @Override
@@ -73,20 +80,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
                                                    @Name("startDate") LocalDate startDate,
                                                    @Name("endDate") LocalDate endDate,
                                                    IServiceContext context) {
-        if (employeeIds == null || employeeIds.isEmpty()) {
-            return new ArrayList<>();
-        }
-        requireShift(shiftId, context);
-        List<ErpHrShiftAssignment> result = new ArrayList<>();
-        for (LocalDate d = startDate; !d.isAfter(endDate); d = d.plusDays(1)) {
-            for (Long empId : employeeIds) {
-                if (existsActiveAssignment(empId, d, context)) {
-                    continue;
-                }
-                result.add(doCreateAssignment(empId, shiftId, d, context));
-            }
-        }
-        return result;
+        return assignBatchProcessor.assignBatch(employeeIds, shiftId, startDate, endDate, context);
     }
 
     @Override
@@ -95,21 +89,7 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
                                                       @Name("sourceEndDate") LocalDate sourceEndDate,
                                                       @Name("targetStartDate") LocalDate targetStartDate,
                                                       IServiceContext context) {
-        QueryBean q = new QueryBean();
-        q.addFilter(and(
-                dateBetween("assignmentDate", sourceStartDate, sourceEndDate),
-                in("status", activeStatuses())));
-        List<ErpHrShiftAssignment> sources = findList(q, null, context);
-        List<ErpHrShiftAssignment> result = new ArrayList<>();
-        for (ErpHrShiftAssignment s : sources) {
-            long offset = s.getAssignmentDate().toEpochDay() - sourceStartDate.toEpochDay();
-            LocalDate target = targetStartDate.plusDays(offset);
-            if (existsActiveAssignment(s.getEmployeeId(), target, context)) {
-                continue;
-            }
-            result.add(doCreateAssignment(s.getEmployeeId(), s.getShiftId(), target, context));
-        }
-        return result;
+        return copyFromPeriodProcessor.copyFromPeriod(sourceStartDate, sourceEndDate, targetStartDate, context);
     }
 
     @Override
@@ -138,6 +118,20 @@ public class ErpHrShiftAssignmentBizModel extends CrudBizModel<ErpHrShiftAssignm
         assignment.setIsAbsent(false);
         assignment.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_SCHEDULED);
         saveEntity(assignment, null, context);
+        // flush 触发 INSERT，命中 UK_HR_SHIFT_ASSIGNMENT_NATURAL（并发越过 assertNoExistingAssignment/existsActive 时）
+        // → 翻译为友好错误码（plan 2026-07-30-0841-2 R1.28 P1-MA2-091）
+        try {
+            ((io.nop.orm.dao.IOrmEntityDao<?>) daoProvider().daoFor(ErpHrShiftAssignment.class))
+                    .getOrmTemplate().flushSession();
+        } catch (Exception e) {
+            if (app.erp.common.service.UniqueConstraintHelper.isUniqueConstraintViolation(e)) {
+                throw new NopException(ErpHrErrors.ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE)
+                        .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
+                        .param(ErpHrErrors.ARG_ASSIGNMENT_DATE, date)
+                        .param(ErpHrErrors.ARG_SHIFT_ID, shiftId);
+            }
+            throw e;
+        }
         return assignment;
     }
 

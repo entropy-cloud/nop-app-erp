@@ -2,7 +2,6 @@
 
 > Status: stable
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F7 §1+§3 + §跨切面 UI 模式 6/7、`docs/design/master-data/ui-patterns.md`、`docs/design/inventory/ui-patterns.md`、`docs/design/assets/ui-patterns.md`
-> 落地计划：`docs/plans/2026-07-20-1020-2-f7-non-status-visibleon-and-master-data-interactions.md`
 > 平台参考: `../nop-entropy/docs-for-ai/03-runbooks/replace-field-with-complex-control.md`（gen-control + visibleOn）、`../nop-entropy/docs-for-ai/03-runbooks/add-field-and-validation.md`（async validator + onEvent）、`nop-auth/pages/NopAuthResource/NopAuthResource.view.xml`（cell-level visibleOn + clearValueOnHidden 范例）
 
 ## 1. 范式目标
@@ -41,15 +40,15 @@ view.xml `<form>` 段的 `<cell>` 元素支持两个核心属性（见 `nop/sche
 
 ## 3. 字段值驱动 visibleOn 表达式库（约束式表格）
 
-下表为本计划落地范围 + F4 finance voucher successor 引用前置。**字段名均经实时仓库 ORM 核实**。
+下表为字段范围 + F4 finance voucher successor 引用前置。**字段名均经实时仓库 ORM 核实**。
 
-| 实体 | 字段 | 表达式 | clearValueOnHidden | 业务语义 | 落地状态 |
-|------|------|--------|-------------------|----------|---------|
-| `ErpInvStockMove` | `sourceLocationId` | `${moveType != 'INCOMING'}` | true | 入库（INCOMING）无内部来源库位（来源由外部供应商/生产单确定） | ✅ F7 |
-| `ErpInvStockMove` | `destLocationId` | `${moveType != 'OUTGOING'}` | true | 出库（OUTGOING）无内部去向库位（去向由外部客户/领用确定） | ✅ F7 |
-| `ErpAstMaintenance` | `capitalizedAmount` | `${treatment == 'CAPITALIZE'}` | true | 费用化（EXPENSE）时无资本化金额（直接计入当期费用） | ✅ F7 |
-| `ErpFinVoucherLine` | `debitAmount` | `${dcDirection == 'DEBIT'}` | true | 贷方分录无借方金额 | ✅ F4 finance successor 落地（plan `2026-07-20-2059-3`） |
-| `ErpFinVoucherLine` | `creditAmount` | `${dcDirection == 'CREDIT'}` | true | 借方分录无贷方金额 | ✅ F4 finance successor 落地（plan `2026-07-20-2059-3`） |
+| 实体 | 字段 | 表达式 | clearValueOnHidden | 业务语义 |
+|------|------|--------|-------------------|----------|
+| `ErpInvStockMove` | `sourceLocationId` | `${moveType != 'INCOMING'}` | true | 入库（INCOMING）无内部来源库位（来源由外部供应商/生产单确定） |
+| `ErpInvStockMove` | `destLocationId` | `${moveType != 'OUTGOING'}` | true | 出库（OUTGOING）无内部去向库位（去向由外部客户/领用确定） |
+| `ErpAstMaintenance` | `capitalizedAmount` | `${treatment == 'CAPITALIZE'}` | true | 费用化（EXPENSE）时无资本化金额（直接计入当期费用） |
+| `ErpFinVoucherLine` | `debitAmount` | `${dcDirection == 'DEBIT'}` | true | 贷方分录无借方金额 |
+| `ErpFinVoucherLine` | `creditAmount` | `${dcDirection == 'CREDIT'}` | true | 借方分录无贷方金额 |
 
 **dict 值核实**（实时仓库 ORM）：
 
@@ -187,7 +186,7 @@ public boolean isCodeUnique(@Name("code") String code,
 
 ### 6.1 覆盖范围裁决
 
-- **采纳方案 A**：本计划仅覆盖 `ErpMdPartner` + `ErpMdMaterial`（最高频引用）
+- **采纳方案 A**：仅覆盖 `ErpMdPartner` + `ErpMdMaterial`（最高频引用）
 - 引用域限定 purchase（Order/Receive/Invoice）+ sales（Order/Delivery/Invoice）+ inventory（StockMove）共 7 表 count
 - 长尾域引用（assets/projects/quality/maintenance/manufacturing/contract/drp 等）归 successor
 
@@ -289,15 +288,15 @@ public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext co
 | 删除时才查询引用 | 删除按钮点击时立即查询（dialog 前置） |
 | 引用预览 dialog 不阻断 | dialog 关闭后不调 __delete（condition 表达式守卫） |
 
-### 6.5 删除引用预览扩展：Employee / Organization（plan 2026-07-23-1145-2）
+### 6.5 删除引用预览扩展：Employee / Organization
 
-§6 范式从 Material/Partner 扩展到 Employee/Organization，落地三点裁决：
+§6 范式从 Material/Partner 扩展到 Employee/Organization，三点裁决如下：
 
-**裁决 1 — 范式对齐（blocker）**：Employee/Organization 删除复用 §6.3 的 reference-**blocker** dialog（有引用时弹 dialog 阻断 + "知道了"按钮，无引用时静默放行），与 Material/Partner 一致，不采用 preview-then-confirm（一致性优先于灵活性）。
+**范式对齐（blocker）**：Employee/Organization 删除复用 §6.3 的 reference-**blocker** dialog（有引用时弹 dialog 阻断 + "知道了"按钮，无引用时静默放行），与 Material/Partner 一致，不采用 preview-then-confirm（一致性优先于灵活性）。
 
-**裁决 2 — 实体身份纠正**：`ErpHrEmployee`（HR 完整人事档案，表 `erp_hr_employee`）与 `ErpMdEmployee`（master-data 业务经办人轻量引用，表 `erp_md_employee`）是**不同表**。删除按钮在 `ErpHrEmployee.view.xml`（HR），故其引用计数必须在 **HR 域内**统计（合同/工时/薪酬/考勤/休假 → `ErpHrEmployee`），经实体级 `@BizQuery ErpHrEmployee__countReferences` 调用——**不可**经 master-data 的 `ErpParty__findReferences(EMPLOYEE)` SPI（该 SPI 操作 `ErpMdEmployee` ID，实体错配）。`ErpMdOrganization` 删除同理走 master-data 实体级 `ErpMdOrganization__countReferences`。
+**实体身份纠正**：`ErpHrEmployee`（HR 完整人事档案，表 `erp_hr_employee`）与 `ErpMdEmployee`（master-data 业务经办人轻量引用，表 `erp_md_employee`）是**不同表**。删除按钮在 `ErpHrEmployee.view.xml`（HR），故其引用计数必须在 **HR 域内**统计（合同/工时/薪酬/考勤/休假 → `ErpHrEmployee`），经实体级 `@BizQuery ErpHrEmployee__countReferences` 调用——**不可**经 master-data 的 `ErpParty__findReferences(EMPLOYEE)` SPI（该 SPI 操作 `ErpMdEmployee` ID，实体错配）。`ErpMdOrganization` 删除同理走 master-data 实体级 `ErpMdOrganization__countReferences`。
 
-**裁决 3 — SPI 生产实现的落域**：
+**SPI 生产实现的落域**：
 
 | SPI 端口（master-data-dao 声明） | 生产实现落域 | 计数来源 | 依赖边合法性 |
 |---|---|---|---|
@@ -312,7 +311,7 @@ public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext co
 
 ### 7.1 覆盖范围裁决
 
-- **采纳方案 A**：本计划仅 `ErpMdMaterial` + `ErpMdPartner` 落地 Switch（2 高频实体）
+- **采纳方案 A**：仅 `ErpMdMaterial` + `ErpMdPartner` 配置 Switch（2 高频实体）
 - `ErpMdSubject` 有 status 字段但归 successor（触发条件「按域推进主数据 Switch 控件全覆盖」）
 - 理由：保持 3 实体唯一性 + 2 实体 Switch 的最小完整切片，避免范围蔓延
 
@@ -379,7 +378,7 @@ public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext co
 
 ## 8. ErpFinVoucherLine dcDirection 切换范式（F4 successor 前置）
 
-> **本节为 F4 finance voucher successor plan 预冻结表达式库**。ErpFinVoucher sub-grid-edit 落地本身属 F4 范畴；本节仅记录范式待引用。
+> **本节为 F4 finance voucher successor 预冻结表达式库**。ErpFinVoucher sub-grid-edit 属 F4 范畴；本节仅记录范式待引用。
 
 ### 8.1 业务语义
 
@@ -429,7 +428,7 @@ public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext co
 
 ### 8.4 ErpFinVoucherLine subject 驱动辅助维度 visibleOn（科目 picker 多字段快照）
 
-> **本节由 F4 finance voucher successor plan `2026-07-20-2059-3` 落地**——预冻结表达式库的「跨实体 subject 驱动维度显隐」扩展。
+> **本节为 F4 finance voucher successor 预冻结表达式库的「跨实体 subject 驱动维度显隐」扩展**。
 
 #### 8.4.1 业务语义
 
@@ -522,7 +521,7 @@ public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext co
 | 行 cell visibleOn 用严格 `${isAuxiliaryPartner == true}` | 宽松 `${!subjectId \|\| isAuxiliaryPartner == true}` 防快照失败时全隐 |
 | onEvent.change.setValue 清空对侧金额（违反 §8.3） | 仅依赖 `clearValueOnHidden`（金额 cell）+ visibleOn 隐藏（维度 cell，无 clearValueOnHidden 需求） |
 
-## 8.5 反审核冲销预览范式（previewReverse @BizQuery + dialog，plan 2026-07-23-1145-2）
+## 8.5 反审核冲销预览范式（previewReverse @BizQuery + dialog）
 
 删除引用预览（§6）是 **blocker** 范式（有引用阻断，无引用放行）；冲销预览是 **preview-then-confirm** 范式（展示影响 → 用户确认 → 执行 mutation）。二者均经 `@BizQuery` 前置查询 + AMIS dialog，但语义不同。
 

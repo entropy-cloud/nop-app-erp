@@ -201,7 +201,7 @@
 - 🟢 SAP SuccessFactors Competency Management 产品文档
 - 🟢 Cornerstone OnDemand 产品文档
 
-## 实现注记（plan 2026-07-07-1100-2）
+## 实现注记
 
 ### 缺类型重归一化 Decision
 

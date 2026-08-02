@@ -24,7 +24,13 @@ public class ErpFinEmployeeAdvanceSubmitForApprovalProcessor extends AbstractSub
 
     @Override
     public ErpFinEmployeeAdvance submitForApproval(String id, IServiceContext context) {
-        return processor.submitForApproval(id, context);
+        ErpFinEmployeeAdvance advance = processor.requireAdvance(id, context);
+        processor.validateNotCancelled(advance, context);
+        processor.validateTransitionForSubmit(advance, context);
+        processor.validateBusinessRulesForApproval(advance, context);
+        processor.deriveAmounts(advance, context);
+        processor.doSubmit(advance, context);
+        return advance;
     }
 
     @Override

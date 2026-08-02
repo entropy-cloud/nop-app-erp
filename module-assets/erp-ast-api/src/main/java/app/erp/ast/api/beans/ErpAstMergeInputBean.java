@@ -138,24 +138,10 @@
         }
 
 
-        private String _remark;
-
-    
-        @PropMeta(propId=21)
-    
-        public String getRemark(){
-            return _remark;
-        }
-
-        public void setRemark(String value){
-            this._remark = value;
-        }
-
-
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=15)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -169,7 +155,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=16)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -183,7 +169,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=17)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -191,6 +177,20 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=24)
+    
+        public String getRemark(){
+            return _remark;
+        }
+
+        public void setRemark(String value){
+            this._remark = value;
         }
 
 

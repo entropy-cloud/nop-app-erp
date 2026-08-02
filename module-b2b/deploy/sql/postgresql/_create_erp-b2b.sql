@@ -249,6 +249,7 @@ CREATE TABLE erp_b2b_asn(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   business_date DATE NOT NULL ,
+  constraint UK_B2B_ASN_CODE_ORG unique (code,org_id),
   constraint PK_erp_b2b_asn primary key (id)
 );
 

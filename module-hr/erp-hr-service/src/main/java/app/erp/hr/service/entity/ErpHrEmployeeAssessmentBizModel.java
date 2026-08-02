@@ -8,6 +8,7 @@ import app.erp.hr.dao.entity.ErpHrEmployeeAssessment;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.competency.AssessmentAggregator;
+import app.erp.hr.service.processor.ErpHrEmployeeAssessmentCompleteAssessmentProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -43,6 +44,8 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
     IErpHrGapAnalysisBiz gapAnalysisBiz;
     @Inject
     AssessmentAggregator assessmentAggregator;
+    @Inject
+    ErpHrEmployeeAssessmentCompleteAssessmentProcessor completeAssessmentProcessor;
 
     public ErpHrEmployeeAssessmentBizModel() {
         setEntityName(ErpHrEmployeeAssessment.class.getName());
@@ -80,27 +83,7 @@ public class ErpHrEmployeeAssessmentBizModel extends CrudBizModel<ErpHrEmployeeA
     @BizMutation
     public ErpHrEmployeeAssessment completeAssessment(@Name("assessmentId") Long assessmentId,
                                                        IServiceContext context) {
-        ErpHrEmployeeAssessment assessment = requireAssessment(assessmentId, context);
-        String status = assessment.getStatus();
-        if (!Objects.equals(status, ErpHrConstants.ASSESSMENT_STATUS_SUBMITTED)) {
-            throw illegalTransition(assessmentId, status, ErpHrConstants.ASSESSMENT_STATUS_COMPLETED);
-        }
-
-        List<ErpHrAssessmentDetail> details = findDetails(assessmentId, context);
-        if (details.isEmpty()) {
-            throw new NopException(ErpHrErrors.ERR_ASSESSMENT_NO_DETAILS)
-                    .param(ErpHrErrors.ARG_ASSESSMENT_ID, assessmentId);
-        }
-
-        java.util.Map<Long, Integer> aggregatedLevels = aggregateAndWriteBack(assessment, details, context);
-
-        assessment.setStatus(ErpHrConstants.ASSESSMENT_STATUS_COMPLETED);
-        updateEntity(assessment, null, context);
-
-        // 直传聚合后 levels 给差距刷新，避免二次查询跨事务可见性问题
-        gapAnalysisBiz.refreshGapAnalysisWithLevels(assessment.getEmployeeId(), aggregatedLevels, context);
-
-        return assessment;
+        return completeAssessmentProcessor.completeAssessment(assessmentId, context);
     }
 
     /**

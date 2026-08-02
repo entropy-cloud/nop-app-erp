@@ -262,10 +262,38 @@
         }
 
 
-        private Boolean _posted;
+        private String _approvedBy;
 
     
         @PropMeta(propId=17)
+    
+        public String getApprovedBy(){
+            return _approvedBy;
+        }
+
+        public void setApprovedBy(String value){
+            this._approvedBy = value;
+        }
+
+
+        private java.sql.Timestamp _approvedAt;
+
+    
+        @PropMeta(propId=18)
+    
+        public java.sql.Timestamp getApprovedAt(){
+            return _approvedAt;
+        }
+
+        public void setApprovedAt(java.sql.Timestamp value){
+            this._approvedAt = value;
+        }
+
+
+        private Boolean _posted;
+
+    
+        @PropMeta(propId=19)
     
         public Boolean getPosted(){
             return _posted;
@@ -279,7 +307,7 @@
         private String _postedStatus;
 
     
-        @PropMeta(propId=18)
+        @PropMeta(propId=20)
     
         public String getPostedStatus(){
             return _postedStatus;
@@ -305,7 +333,7 @@
         private java.sql.Timestamp _postedAt;
 
     
-        @PropMeta(propId=19)
+        @PropMeta(propId=21)
     
         public java.sql.Timestamp getPostedAt(){
             return _postedAt;
@@ -319,7 +347,7 @@
         private String _postedBy;
 
     
-        @PropMeta(propId=20)
+        @PropMeta(propId=22)
     
         public String getPostedBy(){
             return _postedBy;
@@ -333,7 +361,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=21)
+        @PropMeta(propId=23)
     
         public String getRemark(){
             return _remark;
@@ -347,7 +375,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=22)
+        @PropMeta(propId=24)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -361,7 +389,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=25)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -375,7 +403,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=26)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -389,7 +417,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=27)
     
         public Integer getVersion(){
             return _version;
@@ -403,7 +431,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=28)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -417,7 +445,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=29)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -431,7 +459,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=30)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -445,7 +473,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=29)
+        @PropMeta(propId=31)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;
@@ -453,34 +481,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private String _approvedBy;
-
-    
-        @PropMeta(propId=200)
-    
-        public String getApprovedBy(){
-            return _approvedBy;
-        }
-
-        public void setApprovedBy(String value){
-            this._approvedBy = value;
-        }
-
-
-        private java.sql.Timestamp _approvedAt;
-
-    
-        @PropMeta(propId=201)
-    
-        public java.sql.Timestamp getApprovedAt(){
-            return _approvedAt;
-        }
-
-        public void setApprovedAt(java.sql.Timestamp value){
-            this._approvedAt = value;
         }
 
 

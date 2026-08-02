@@ -15,11 +15,6 @@
     </x:gen-extends>
 
     <dicts>
-        <dict label="单据状态" name="erp-pur/doc-status" valueType="string" i18n-en:label="Doc Status">
-            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
-            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
-        </dict>
         <dict label="付款进度" name="erp-pur/paid-status" valueType="string" i18n-en:label="Payment Status">
             <option code="UNPAID" label="未付款" value="UNPAID" i18n-en:label="Unpaid"/>
             <option code="PARTIAL" label="部分付款" value="PARTIAL" i18n-en:label="Partially Paid"/>
@@ -108,7 +103,7 @@
                 <column code="REQUIRED_DATE" displayName="需求日期" name="requiredDate" propId="7" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Required Date"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="8"
-                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="9" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -295,7 +290,7 @@
                 <column code="VALID_UNTIL" displayName="报价有效期至" name="validUntil" propId="6" stdDataType="date"
                         stdSqlType="DATE" i18n-en:displayName="Valid Until"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20" propId="7"
-                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="8" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -466,7 +461,7 @@
                 <column code="IS_ACCEPTED" defaultValue="false" displayName="是否中标" name="isAccepted" propId="11"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is Accepted"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
+                        propId="12" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="13" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -965,7 +960,7 @@
                 <column code="SETTLEMENT_METHOD_ID" displayName="结算方式" name="settlementMethodId" propId="20"
                         stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Settlement Method"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="21" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
+                        propId="21" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="22" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -1085,7 +1080,7 @@
                 </to-many>
             </relations>
             <unique-keys>
-                <unique-key columns="code,orgId" name="UK_PUR_ORDER_CODE_ORG"/>
+                <unique-key columns="code,orgId" constraint="UK_PUR_ORDER_CODE_ORG" name="UK_PUR_ORDER_CODE_ORG"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.pur.dao.entity.ErpPurOrderLine" createTimeProp="createTime" createrProp="createdBy"
@@ -1268,7 +1263,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/receive-type"
                         i18n-en:displayName="Receive Type"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="17" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
+                        propId="17" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="18" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -1530,7 +1525,7 @@
                         precision="20" propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Paid Amount"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
+                        propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="17" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -1743,7 +1738,7 @@
                 <column code="PARTNER_BANK_ACCOUNT_ID" displayName="供应商收款账户(银行账户主数据)" name="partnerBankAccountId"
                         propId="14" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Partner Bank Account"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"
@@ -1954,7 +1949,7 @@
                         name="totalAmountWithTax" precision="20" propId="14" scale="4" stdDataType="decimal"
                         stdSqlType="DECIMAL" i18n-en:displayName="Total (Inc. Tax)"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-pur/doc-status"
+                        propId="15" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="16" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"

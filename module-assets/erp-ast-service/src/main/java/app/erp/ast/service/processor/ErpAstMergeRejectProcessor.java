@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstMerge reject per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractRejectProcessor to activate the abstract base class; delegates to ErpAstMergeProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstMerge reject per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransition → set REJECTED → save.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstMergeRejectProcessor extends AbstractRejectProcessor<ErpAstMerge> {
 
@@ -20,7 +20,12 @@ public class ErpAstMergeRejectProcessor extends AbstractRejectProcessor<ErpAstMe
 
     @Override
     public ErpAstMerge reject(String id, IServiceContext context) {
-        return processor.reject(id, context);
+        ErpAstMerge merge = processor.requireMerge(id, context);
+        processor.validateNotCancelled(merge, context);
+        processor.validateTransitionForReject(merge, context);
+        merge.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
+        processor.mergeDao().updateEntity(merge);
+        return merge;
     }
 
     @Override
@@ -35,22 +40,22 @@ public class ErpAstMergeRejectProcessor extends AbstractRejectProcessor<ErpAstMe
 
     @Override
     protected String getApproveStatus(ErpAstMerge entity) {
-        return null;
+        return entity.getApproveStatus();
     }
 
     @Override
     protected void setApproveStatus(ErpAstMerge entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApproveStatus(status);
     }
 
     @Override
     protected void setApprovedBy(ErpAstMerge entity, String userId) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApprovedBy(userId);
     }
 
     @Override
     protected void setApprovedAt(ErpAstMerge entity, java.sql.Timestamp ts) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApprovedAt(ts);
     }
 
     @Override
@@ -60,16 +65,16 @@ public class ErpAstMergeRejectProcessor extends AbstractRejectProcessor<ErpAstMe
 
     @Override
     protected boolean isCancelled(ErpAstMerge entity) {
-        return false;
+        return entity.isCancelled();
     }
 
     @Override
     protected String submittedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_SUBMITTED;
     }
 
     @Override
     protected String rejectedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_REJECTED;
     }
 }

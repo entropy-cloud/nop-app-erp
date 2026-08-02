@@ -103,6 +103,70 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
         assertTrue(isAllVouchersReversed("CAP-REV-001", "CAPITALIZATION"), "资本化凭证已红字冲销");
     }
 
+    /**
+     * G1 posted=false 窗口 reverseApprove 不对称（plan 2026-07-31-0744-2-r2-12 P1-MA4-014(a) / P1-MA2-060）。
+     *
+     * <p>owner-doc {@code depreciation-and-posting.md §7.2} 标注的 reverseApprove 不对称：posted=false 悬挂窗口
+     * （过账失败）下 reverseApprove 仅置业务单据 REJECTED+CANCELLED，资产保持终态 IN_SERVICE、折旧计划保持 PENDING
+     * （不回滚、不红冲、不取消计划）——运营须先触发 sweep 重试或手工 reverse 凭证再 reverseApprove。
+     *
+     * <p>确定性诱导资本化过账 posted=false：seed OPEN 期间 + 信用科目（1002）但省略固定资产科目 1601，
+     * 引擎 resolveSubjects 抛 ERR_SUBJECT_NOT_FOUND → CapitalizationPostingDispatcher.tryPost catch → posted=false。
+     * 本测试按实际运行时行为断言并锁定为回归基线（不对称是 owner-doc 既定语义，非缺陷）。
+     */
+    @Test
+    public void testCapitalizationReverseApproveOnSuspendedPostedFalseKeepsAssetInService() {
+        Long capId = ormTemplate.runInSession(session -> {
+            seedCoreBasics();
+            AstTestSupport.seedPeriod(daoProvider, "2026-06", 2026, 6, ErpAstConstants.PERIOD_STATUS_OPEN);
+            // 故意省略固定资产科目 1601（仅 seed 信用科目 1002 由 seedCoreBasics 提供），
+            // 使资本化过账 resolveSubjects 失败 → posted=false 悬挂。category.subjectId=null → 派发器回退默认 1601 仍缺失。
+            Long categoryId = AstTestSupport.seedCategory(daoProvider, "CAT-SUSP-CAP", "悬挂资本化类别",
+                    ErpAstConstants.DEPRECIATION_METHOD_STRAIGHT_LINE, 12, null, null, null);
+            return seedCapitalization("CAP-SUSP-001", categoryId,
+                    ErpAstConstants.SOURCE_TYPE_DIRECT_PURCHASE, new BigDecimal("12000"),
+                    LocalDate.of(2026, 6, 15), "AST-CAP-SUSP-001");
+        });
+
+        submitCap(capId);
+        approveCap(capId);
+
+        // 审核通过建卡（IN_SERVICE），但过账失败 → posted=false 悬挂态
+        ErpAstAsset assetBefore = findAsset("AST-CAP-SUSP-001");
+        assertEquals(ErpAstConstants.ASSET_STATUS_IN_SERVICE, assetBefore.getStatus(), "审核建卡 IN_SERVICE");
+        ErpAstAssetCapitalization capSuspended = daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capId);
+        assertFalse(Boolean.TRUE.equals(capSuspended.getPosted()),
+                "过账失败保持 posted=false（悬挂态）");
+        assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, capSuspended.getApproveStatus());
+
+        // 反审核：posted=false 窗口 → executeReverseApprove 跳过 if(posted) 块，仅置 REJECTED+CANCELLED
+        assertEquals(0, reverseApproveCap(capId).getStatus(), "反审核调用本身成功（状态迁移）");
+        ErpAstAssetCapitalization cap = daoProvider.daoFor(ErpAstAssetCapitalization.class).getEntityById(capId);
+        assertEquals(ErpAstConstants.APPROVE_STATUS_REJECTED, cap.getApproveStatus(), "单据置 REJECTED");
+        assertEquals(ErpAstConstants.DOC_STATUS_CANCELLED, cap.getDocStatus(), "单据置 CANCELLED");
+        assertFalse(Boolean.TRUE.equals(cap.getPosted()), "posted 仍 false（无凭证可红冲/清除）");
+
+        // 不对称：资产保持终态 IN_SERVICE，未回滚到 DRAFT；累计折旧/净值不变
+        ErpAstAsset assetAfter = findAsset("AST-CAP-SUSP-001");
+        assertEquals(ErpAstConstants.ASSET_STATUS_IN_SERVICE, assetAfter.getStatus(),
+                "不对称：悬挂态 reverseApprove 不回滚资产状态（保持 IN_SERVICE，非 DRAFT）");
+        assertEquals(0, nz(assetAfter.getAccumulatedDepreciation()).compareTo(BigDecimal.ZERO),
+                "资产累计折旧不变（未回滚）");
+        assertEquals(0, nz(assetAfter.getNetBookValue()).compareTo(new BigDecimal("12000")),
+                "资产净值不变=原值（未回滚）");
+
+        // 不对称：折旧计划保持 PENDING，未被取消（posted=false 路径不调 cancelSchedules）
+        List<ErpAstDepreciationSchedule> schedules = findSchedulesByAsset(assetAfter.getId());
+        assertFalse(schedules.isEmpty(), "审核期已生成折旧计划");
+        for (ErpAstDepreciationSchedule s : schedules) {
+            assertEquals(ErpAstConstants.SCHEDULE_STATUS_PENDING, s.getStatus(),
+                    "不对称：悬挂态 reverseApprove 不取消折旧计划（保持 PENDING，非 CANCELLED）");
+        }
+        // 无凭证可红冲：悬挂态本就 posted=false，不产生 CAPITALIZATION 业财回链
+        assertTrue(findBillLinks("CAP-SUSP-001", "CAPITALIZATION").isEmpty(),
+                "悬挂态无过账凭证/业财回链");
+    }
+
     @Test
     public void testDepreciationReverseRollsBackAssetCard() {
         Long assetId = ormTemplate.runInSession(session -> {
@@ -343,6 +407,13 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
             }
         }
         return true;
+    }
+
+    private List<ErpFinVoucherBillR> findBillLinks(String billCode, String businessType) {
+        IEntityDao<ErpFinVoucherBillR> linkDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(eq("billCode", billCode), eq("businessType", businessType)));
+        return linkDao.findAllByQuery(q);
     }
 
     private static BigDecimal nz(BigDecimal v) {

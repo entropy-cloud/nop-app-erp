@@ -37,7 +37,7 @@
 运输中 (IN_TRANSIT)
   ├─ 签收 → 已签收 (DELIVERED)
   ├─ 异常（货物退回） → 已取消 (CANCELLED)
-  └─ 部分签收 → 记录部分签收，状态保持 IN_TRANSIT（等待剩余）
+  └─ 部分签收 → 记录部分签收，状态保持 IN_TRANSIT（等待剩余）**[Deferred — P1-MA2-079，plan `2026-07-30-0720-2`：当前 `advanceTracking` 仅处理完整 TRACKING_EVENT_DELIVERED，承运商支持部分签收回调时实现 TRACKING_EVENT_PARTIAL 常量 + receivedQuantity/partialSignedQty 字段（须 ORM ask-first 加列）+ 累计签收判定，状态保持 IN_TRANSIT 直至全部签收]**
 ```
 
 | 迁移 | 触发人 | 前置条件 | 结果 |
@@ -48,7 +48,7 @@
 | DISPATCHED→IN_TRANSIT | 承运商回调/定时任务 | 网关追踪状态变为在途 | 更新追踪信息 |
 | IN_TRANSIT→DELIVERED | 承运商回调/签收确认 | 网关追踪状态变为已签收或人工确认 | 触发运费过账 |
 | DRAFT→CANCELLED | 发货员 | 无未完成网关调用 | 释放关联锁定 |
-| IN_TRANSIT→CANCELLED | 发货员+审批 | 货物退回、网关取消成功或人工确认 | 触发逆向物流流程 |
+| IN_TRANSIT→CANCELLED | 发货员+审批 | 货物退回、网关取消成功或人工确认 | 触发逆向物流流程。**Deferred（P1-MA2-078，plan `2026-07-30-0720-2`）**——当前 `cancelShipment` 经状态守卫 + 网关 `client.cancelShipment`（DISPATCHED+ 防承运商侧双发）覆盖，物流主管审批工作流（cancel-approve 动作 + 角色-resource 种子）留 successor；successor 触发条件：审批工作流 SPI 落地时实现 cancel-approve 动作（IN_TRANSIT 源态需审批令牌）+ config-gated 角色-resource 门控 |
 
 ### 3. 终态与恢复
 
@@ -63,7 +63,7 @@
 | 网关下单超时/失败 | 自动重试（最多 3 次，指数退避），重试耗尽后保留 ADVISED 状态，标记网关异常，人工干预 |
 | 承运商拒接 | 保留 ADVISED，通知发货员更换承运商或取消 |
 | 追踪长时间无更新（超过预计送达日期 3 天） | 系统自动标记"追踪异常"，通知物流主管人工跟进 |
-| 部分签收 | 记录签收明细，状态保持 IN_TRANSIT，等待剩余货物签收 |
+| 部分签收 | 记录签收明细，状态保持 IN_TRANSIT，等待剩余货物签收。**Deferred（P1-MA2-079，plan `2026-07-30-0720-2`）**——当前 `advanceTracking` 仅处理完整 TRACKING_EVENT_DELIVERED（承运商回调暂只发完整 DELIVERED 事件）；承运商支持部分签收回调时实现 TRACKING_EVENT_PARTIAL 常量 + receivedQuantity/partialSignedQty 字段（须 ORM ask-first 加列）+ 累计签收判定（状态保持 IN_TRANSIT 直至全部签收） |
 | 货物退回（Return to Sender） | 记录退回原因，进入 CANCELLED。如需要重新发运，新建发运单（含退回标记） |
 | 取消发运但网关不支持取消 | 标记"人工取消"，通知发货员联系承运商线下处理 |
 | 并发更新同一发运单 | 乐观锁 |
@@ -98,10 +98,10 @@
 | 承运商网关回调（追踪更新） | 本域暴露网关回调端点，更新发运单状态和 `ErpLogShipmentLog` |
 | 运费过账 | DELIVERED 后本域**直接调用** `IErpFinVoucherBiz.post(PostingEvent{businessType=FREIGHT})`（参 inventory `InvPostingExecutor` 范式），非事件订阅模型 |
 
-> **实现裁决补注（plan 2026-07-04-1115-3 + 2026-07-11-2329-1）**：原描述"DELIVERED 后本域发布 `ShipmentDeliveredEvent`，finance 域订阅执行过账"已调整为：
+> **实现约定**：原描述"DELIVERED 后本域发布 `ShipmentDeliveredEvent`，finance 域订阅执行过账"已调整为：
 > - **path-1（SALES_DELIVERY）**：**直接调用** `IErpFinVoucherBiz.post(PostingEvent{businessType=FREIGHT})`（参 inventory `InvPostingExecutor` 范式），与现有全域过账一致。
-> - **path-2（PURCHASE_RECEIPT 采购运费）**：已从事件占位升级为 config-gated **到岸成本自动编排**。`erp-log.path2-landed-cost-auto-create=true`（默认 false，向后兼容）时，DELIVERED 后调用 `IErpInvLandedCostBiz.generateFreightLandedCost(receiveCode, freightAmount, ...)` 创建 DRAFT 到岸成本单（FREIGHT 费用行），由用户人工审核触发分摊→成本层更新→`LANDED_COST(490)` 过账（引擎由 plan `2026-07-10-1100-3` 提供）。config 关闭时退化为事件占位 + SETTLED（向后兼容）。
-> - **path-2 浏览器层 E2E 覆盖（plan `2026-07-19-0849-2`）**：logistics path-2 完整链路（handleTrackingWebhook DELIVERED → onDelivered → handlePurchaseReceiptDelivered → generateFreightLandedCost → DRAFT ErpInvLandedCost）已有浏览器层 E2E 覆盖——`tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts` 2 用例（正路径 DRAFT 头+行字段精确数值断言 + freightAmount=0 边界显式断言无 LandedCost 创建），承接 2026-07-11-2329-1 后端落地 + TestErpLogPath2LandedCost 单测覆盖；freightAmount ≤ 0/null 分支由 path-1（SALES_DELIVERY）作代表验证 onDelivered 触发面。path-2 失败重试/scanForPolling 轮询驱动 DELIVERED + path-2 外币 freight 汇兑分支仍归 successor（不同结果面，见 2026-07-19-0849-2 Deferred But Adjudicated）。
+> - **path-2（PURCHASE_RECEIPT 采购运费）**：已从事件占位升级为 config-gated **到岸成本自动编排**。`erp-log.path2-landed-cost-auto-create=true`（默认 false，向后兼容）时，DELIVERED 后调用 `IErpInvLandedCostBiz.generateFreightLandedCost(receiveCode, freightAmount, ...)` 创建 DRAFT 到岸成本单（FREIGHT 费用行），由用户人工审核触发分摊→成本层更新→`LANDED_COST(490)` 过账（引擎由到岸成本编排模块提供）。config 关闭时退化为事件占位 + SETTLED（向后兼容）。
+> - **path-2 浏览器层 E2E 覆盖**：logistics path-2 完整链路（handleTrackingWebhook DELIVERED → onDelivered → handlePurchaseReceiptDelivered → generateFreightLandedCost → DRAFT ErpInvLandedCost）已有浏览器层 E2E 覆盖——`tests/e2e/business-actions/log-path2-landed-cost-auto-create.action.spec.ts` 2 用例（正路径 DRAFT 头+行字段精确数值断言 + freightAmount=0 边界显式断言无 LandedCost 创建），承接后端落地 + TestErpLogPath2LandedCost 单测覆盖；freightAmount ≤ 0/null 分支由 path-1（SALES_DELIVERY）作代表验证 onDelivered 触发面。path-2 失败重试/scanForPolling 轮询驱动 DELIVERED + path-2 外币 freight 汇兑分支仍归 successor（不同结果面，见 Deferred But Adjudicated）。
 
 外部触发渠道：
 - 用户手工创建发运单（主要渠道）。
@@ -123,6 +123,8 @@
 
 避免"草稿发运单长期滞留"：DRAFT 超过 24 小时产生升级 TODO，通知物流主管。
 避免"网关异常长期未处理"：ADVISED 网关异常标记后 4 小时升级通知。
+
+> **网关异常告警落地**（G4 错误传播分级，plan `2026-07-30-0341-2` Phase 3 P1-MA2-080）：`GatewayDispatcher.deadLetter` 派发 `IErpSysNotificationBiz` 告警（`log.gateway-dead-letter`），使 ADVISED 死信发运单不再静默悬挂。logistics 网关无 `DeferredPostingSweepJob` 覆盖（比 peer dispatcher 更严重），告警是失败恢复的唯一闭环入口；自愈路径为人工干预（修复网关配置 / 手工重发 webhook）。DELIVERED-PENDING 运费过账悬挂同理（onDelivered 失败派发告警，期末前置检查兜底）。
 
 ### 9. 场景演练
 

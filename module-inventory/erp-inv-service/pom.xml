@@ -119,6 +119,16 @@
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
+            属性测试（MQ Q3，plan 2026-08-02-1400-1 / 设计文档 property-based-testing.md §3.1.1 §6.1）。
+            test scope：P2 成本层累加属性 test 需要。同 module-finance/erp-fin-service jqwik 注记。
+        -->
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+            <version>1.10.1</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -129,14 +139,170 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>test</scope>
         </dependency>
+        <!-- test-only: IErpSysNotificationBiz Bean 实现（ErpSysNotificationBizModel + Dispatcher）注册。
+             到岸成本 reverse 过账失败告警经 notify 派发（G4 错误传播分级，plan 2026-07-30-0341-2 P1-MA4-020）。
+             app-erp-all 聚合时由 app 层提供；单域测试需引入以使 @Inject IErpSysNotificationBiz 可解析。 -->
+        <dependency>
+            <artifactId>app-erp-notify-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <!--
+                perf 测试隔离（MQ Q5，plan 2026-08-02-1121-2 Phase 1 / 设计文档 §5.1）。
+                对齐 module-finance/erp-fin-service + 既有 @Tag("full-app") erp-*-web 先例。
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludedGroups>perf</excludedGroups>
+                    <!--
+                        属性 test 类名约定 Property*（设计文档 §6.2）不匹配 surefire 默认 include 模式
+                       （Test*/*Test/*Tests/*TestCase），故显式增 **/Property*.java 使 jqwik @Property
+                        类经 mvn test 自动拾取（设计文档 §8.1/C-1 contract）。
+                        回填：plan 2026-08-02-0650-1 Phase 4 实施期发现。
+                    -->
+                    <includes>
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                        <include>**/*TestCase.java</include>
+                        <include>**/Property*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
+
+    <!--
+        perf profile (MQ Q5，plan 2026-08-02-1121-2 Phase 1 / 设计文档 §5.1)：
+        默认 surefire <excludedGroups>perf</excludedGroups> 使 @Tag("perf") 测试不进 per-commit mvn test。
+        -Pperf 激活：清空 excludedGroups + 设 groups=perf，使 perf 测试唯一被执行。
+        详见 module-finance/erp-fin-service/pom.xml perf profile 说明。
+        激活命令：mvn -Pperf -pl module-inventory/erp-inv-service test。
+    -->
+    <profiles>
+        <profile>
+            <id>perf</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <excludedGroups combine.self="override"/>
+                            <groups>perf</groups>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    <!--
+        mutation profile (MQ Q1)：per-module 接入（候选 P1，设计文档 §3.4 R4 预设退路）。
+        R4 复核结论：app-erp 根 pom 仅为 reactor 聚合器——module-inventory/pom.xml 的 <parent>
+        是 nop-entropy（非 app-erp），故根 pom 的 mutation profile 不在子模块 parent 链中、
+        无法继承。退回候选 P1：在三域 service 模块各声明 profile。配置与设计文档 §3.3 一致
+        （targetClasses 含三域通配；非本域类不在 classpath 上，pitest 0 命中无害）。
+        激活：mvn -Pmutation -pl module-inventory/erp-inv-service -am test-compile
+              org.pitest:pitest-maven:mutationCoverage
+    -->
+        <profile>
+            <id>mutation</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>1.25.8</version>
+                        <configuration>
+                            <targetClasses>
+                                <param>app.erp.fin.*</param>
+                                <param>app.erp.mfg.*</param>
+                                <param>app.erp.inv.*</param>
+                            </targetClasses>
+                            <excludedClasses>
+                                <param>*.dao.entity._gen.*</param>
+                                <param>*.dao.entity._gen._*</param>
+                                <param>*.api.beans.*</param>
+                                <param>*.api.crud.*</param>
+                                <param>*.codegen.*</param>
+                                <param>*Test*</param>
+                                <param>*IT</param>
+                            </excludedClasses>
+                            <targetTests>
+                                <param>app.erp.fin.*Test*</param>
+                                <param>app.erp.mfg.*Test*</param>
+                                <param>app.erp.inv.*Test*</param>
+                            </targetTests>
+                            <outputFormats>
+                                <param>HTML</param>
+                                <param>XML</param>
+                            </outputFormats>
+                            <timestampedReports>false</timestampedReports>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>1.2.3</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--
+            security profile (MQ Q2)：SpotBugs + FindSecBugs per-module 接入。
+            插件位置裁决（设计文档 §6.2 R2-MAJOR-2）：SpotBugs 分析每模块编译产物字节码，
+            与 Q1 pitest per-module instrumentation 同型——根 pom profile 继承失效
+            （根 pom app-erp 仅为 reactor 聚合器，子模块 <parent> 是 nop-entropy/app-erp-<domain>），
+            须 per-module 声明（对齐 Q1 pitest per-module 先例）。
+            激活：mvn -Psecurity -pl <this-module> spotbugs:check
+            effort=Max + threshold=Low + includeFilterFile（FindSecBugs 安全规则模式，§6.2 step 1）
+            + excludeFilterFile（排除 Nop 生成代码三类 _gen/api.beans/api.crud，D 类噪声）。
+            findsecbugs-plugin：作为 spotbugs 插件依赖注册 FindSecBugs 安全规则探测器。
+            failOnError=false：纯 reporter，gate 逻辑活在 CI（§5.3 单向收紧）。
+        -->
+        <profile>
+            <id>security</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <!-- 4.9.8.3：支持 Java 21-26 字节码（CI Java 21 / 本地 Java 26 均兼容） -->
+                        <version>4.9.8.3</version>
+                        <configuration>
+                            <effort>Max</effort>
+                            <threshold>Low</threshold>
+                            <!-- includeFilterFile：scope 报告到 FindSecBugs 安全规则模式（§6.2 step 1） -->
+                            <includeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-include.xml</includeFilterFile>
+                            <!-- excludeFilterFile：排除 Nop 生成代码三类（D 类噪声） -->
+                            <excludeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-exclude.xml</excludeFilterFile>
+                            <!-- 输出 XML 供 CI Python gate 解析（§5.4 spotbugs_counts per-type count） -->
+                            <xmlOutput>true</xmlOutput>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.h3xstream.findsecbugs</groupId>
+                                <artifactId>findsecbugs-plugin</artifactId>
+                                <!-- 1.13.0：兼容 SpotBugs 4.9.x；Java 21 字节码 Phase 2 首跑验证 -->
+                                <version>1.13.0</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

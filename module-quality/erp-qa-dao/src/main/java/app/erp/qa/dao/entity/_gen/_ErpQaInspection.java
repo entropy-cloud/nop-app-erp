@@ -67,7 +67,11 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     
     /* 批号: BATCH_NO VARCHAR */
     public static final String PROP_NAME_batchNo = "batchNo";
-    public static final int PROP_ID_batchNo = 13;
+    public static final int PROP_ID_batchNo = 12;
+    
+    /* 业务日期: BUSINESS_DATE DATE */
+    public static final String PROP_NAME_businessDate = "businessDate";
+    public static final int PROP_ID_businessDate = 13;
     
     /* 检验日期: INSPECTION_DATE DATE */
     public static final String PROP_NAME_inspectionDate = "inspectionDate";
@@ -145,12 +149,8 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 32;
     
-    /* 业务日期: BUSINESS_DATE DATE */
-    public static final String PROP_NAME_businessDate = "businessDate";
-    public static final int PROP_ID_businessDate = 33;
-    
 
-    private static int _PROP_ID_BOUND = 34;
+    private static int _PROP_ID_BOUND = 33;
 
     
     /* relation:  */
@@ -178,7 +178,7 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[34];
+    private static final String[] PROP_ID_TO_NAME = new String[33];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -217,6 +217,9 @@ public class _ErpQaInspection extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_batchNo] = PROP_NAME_batchNo;
           PROP_NAME_TO_ID.put(PROP_NAME_batchNo, PROP_ID_batchNo);
+      
+          PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
+          PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
       
           PROP_ID_TO_NAME[PROP_ID_inspectionDate] = PROP_NAME_inspectionDate;
           PROP_NAME_TO_ID.put(PROP_NAME_inspectionDate, PROP_ID_inspectionDate);
@@ -275,9 +278,6 @@ public class _ErpQaInspection extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
-          PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
-          PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
-      
     }
 
     
@@ -316,6 +316,9 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     
     /* 批号: BATCH_NO */
     private java.lang.String _batchNo;
+    
+    /* 业务日期: BUSINESS_DATE */
+    private java.time.LocalDate _businessDate;
     
     /* 检验日期: INSPECTION_DATE */
     private java.time.LocalDate _inspectionDate;
@@ -373,9 +376,6 @@ public class _ErpQaInspection extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
-    
-    /* 业务日期: BUSINESS_DATE */
-    private java.time.LocalDate _businessDate;
     
 
     public _ErpQaInspection(){
@@ -487,6 +487,9 @@ public class _ErpQaInspection extends DynamicOrmEntity{
             case PROP_ID_batchNo:
                return getBatchNo();
         
+            case PROP_ID_businessDate:
+               return getBusinessDate();
+        
             case PROP_ID_inspectionDate:
                return getInspectionDate();
         
@@ -543,9 +546,6 @@ public class _ErpQaInspection extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
-        
-            case PROP_ID_businessDate:
-               return getBusinessDate();
         
            default:
               return super.orm_propValue(propId);
@@ -675,6 +675,16 @@ public class _ErpQaInspection extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_batchNo));
                }
                setBatchNo(typedValue);
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               java.time.LocalDate typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLocalDate(value,
+                       err-> newTypeConversionError(PROP_NAME_businessDate));
+               }
+               setBusinessDate(typedValue);
                break;
             }
         
@@ -868,16 +878,6 @@ public class _ErpQaInspection extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_businessDate:{
-               java.time.LocalDate typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toLocalDate(value,
-                       err-> newTypeConversionError(PROP_NAME_businessDate));
-               }
-               setBusinessDate(typedValue);
-               break;
-            }
-        
            default:
               super.orm_propValue(propId,value);
         }
@@ -967,6 +967,13 @@ public class _ErpQaInspection extends DynamicOrmEntity{
             case PROP_ID_batchNo:{
                onInitProp(propId);
                this._batchNo = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_businessDate:{
+               onInitProp(propId);
+               this._businessDate = (java.time.LocalDate)value;
                
                break;
             }
@@ -1100,13 +1107,6 @@ public class _ErpQaInspection extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
-               
-               break;
-            }
-        
-            case PROP_ID_businessDate:{
-               onInitProp(propId);
-               this._businessDate = (java.time.LocalDate)value;
                
                break;
             }
@@ -1341,6 +1341,25 @@ public class _ErpQaInspection extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_batchNo,value)){
             this._batchNo = value;
             internalClearRefs(PROP_ID_batchNo);
+            
+        }
+    }
+    
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final java.time.LocalDate getBusinessDate(){
+         onPropGet(PROP_ID_businessDate);
+         return _businessDate;
+    }
+
+    /**
+     * 业务日期: BUSINESS_DATE
+     */
+    public final void setBusinessDate(java.time.LocalDate value){
+        if(onPropSet(PROP_ID_businessDate,value)){
+            this._businessDate = value;
+            internalClearRefs(PROP_ID_businessDate);
             
         }
     }
@@ -1702,25 +1721,6 @@ public class _ErpQaInspection extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
-            
-        }
-    }
-    
-    /**
-     * 业务日期: BUSINESS_DATE
-     */
-    public final java.time.LocalDate getBusinessDate(){
-         onPropGet(PROP_ID_businessDate);
-         return _businessDate;
-    }
-
-    /**
-     * 业务日期: BUSINESS_DATE
-     */
-    public final void setBusinessDate(java.time.LocalDate value){
-        if(onPropSet(PROP_ID_businessDate,value)){
-            this._businessDate = value;
-            internalClearRefs(PROP_ID_businessDate);
             
         }
     }

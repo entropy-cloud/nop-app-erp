@@ -30,10 +30,12 @@
 | PENDING→CONDITIONAL | 质检员 + 审批人 | 部分项不合格但经审批降级使用 | 继续流转，记录让步理由 |
 | PENDING→REJECTED | 质检员 | 关键项不合格或整体不达标 | 触发 NCR，反馈业务域 |
 
+> **silent flip 守卫**：所有 PENDING→终态迁移（`recordResult` / `passInspection` / `failInspection`）均守卫 `result==PENDING` 单一源态 + 设 `posted=true`；`failInspection` 同 `recordResult` REJECTED 分支触发 NCR 自动生成。终态（ACCEPTED/CONDITIONAL/REJECTED）直接调用上述方法抛 `ERR_INVALID_INSPECTION_STATUS_TRANSITION`，禁止 silent flip 绕过强制质检门控。
+
 ### 3. 终态与恢复
 
 - 终态：`合格（ACCEPTED）`、`让步接收（CONDITIONAL）`、`不合格（REJECTED）`。
-- 终态不可直接恢复；若需复检，新建质检单（关联原单与业务单据）。
+- 终态不可直接恢复；若需复检，**新建质检单**（经 `IErpQaInspectionBiz.createForBusinessBill` 关联原单与业务单据），原质检单 result 保持不变作为审计记录。`reInspect` 方法已废弃删除——禁止将终态直接翻回 PENDING。
 - 不合格（REJECTED）触发 NCR 流程，NCR 闭环是独立状态机。
 
 ### 4. 异常路径
@@ -45,7 +47,7 @@
 | 复检结果与原检冲突 | 以复检结果为准，原检记录保留（审计） |
 | 让步接收未经审批 | 拒绝迁移到 CONDITIONAL |
 | 并发录入同一质检单 | 乐观锁 |
-| 业务单据作废联动 | 关联业务单据作废时，未完成的质检单自动取消 |
+| 业务单据作废联动 | 关联业务单据作废时，未完成的质检单自动取消（**Deferred**——见 §实现约定 + §CRUD 桩实体状态机，残留经 useLogicalDelete 手工清理，successor：业务作废自动取消质检需求时） |
 
 ### 5. 可达性
 
@@ -142,7 +144,8 @@ NCR 状态机 5 态（含召回升级）：
 
 - NCR 是不合格事件的记录。
 - 针对 NCR 制定 CAPA（纠正预防措施）：纠正（即时修复）+ 预防（防止再发）。
-- CAPA 需效果验证才能关闭 NCR（闭环）。
+- 有 CAPA 措施时：CAPA 需全部完成（COMPLETED）+ 效果验证（验证人/验证日期）才能关闭 NCR（闭环）。
+- 无 CAPA 措施时 resolve：须显式提供 `noCapaReason`（误开/降级场景显式标注），否则抛 `ERR_NCR_RESOLVE_NO_CAPA`。
 
 NCR 的其他维度（异常/角色/TODO）与质检单类似，不重复展开；审查时同样使用提示词。
 
@@ -171,19 +174,35 @@ NCR 关闭（RESOLVED）时，根据处置方式触发不同的财务处理：
 
 ---
 
-## 实现偏离补注（计划 2026-07-02-2237-3，2026-07-03 落地）
+## 实现约定
 
-本期落地范围与上述设计的偏离（均为计划内 Non-Goal，留后继）：
+本期范围与上述设计的偏离（均为 Non-Goal，留后继）：
 
 - **质检结果反馈业务域**：设计 §7「事件驱动」本期改为**业务域查 quality 结果**（`IErpQaInspectionBiz.findByRelatedBill` / `isInspectionCleared`），quality 不反向依赖 business（DAG 无环）。业务域 Processor 在 confirm/DONE 前 config-gated 查询。残留风险：业务域须主动查。事件驱动留后继。
 - **强制质检阻塞机制**：设计 §4「强制质检的业务单据未经质检就流转 → 系统拦截」经 `erp-qua.mandatory-inspection-bill-types` config-gated（默认空=不强制）落地；purchase/sales/mfg BizModel 经 `InspectionTrigger.enforceGate`（business→quality 同步 I*Biz 写触发）——首次流转生成 PENDING 质检单并阻塞，质检合格/让步后再次流转放行。
 - **NCR 财务过账（Non-Goal）**：设计 §「NCR 财务影响规则」（退货红字/返工成本/报废损失/召回退货凭证）依赖 finance 域 NCR 驱动过账 Provider + purchase/sales 退货流程，属业财一体面，本期不落地。触发条件：NCR 驱动自动退货/报废过账 Provider 落地时（successor）。
-  - **✅ 已落地（plan 2026-07-05-2352-2）**：NCR 过账引擎已实现。SCRAP 处置 → 报废损失凭证（借 6711 营业外支出/贷 1401 库存商品，经 `NcrScrapAcctDocProvider` + `NcrPostingDispatcher`）；RETURN 处置 → 编排退货域（`IErpPurReturnBiz`/`IErpSalReturnBiz`，退货单自带红字过账，NCR 侧登记 `returnCode`）；CONCESSION/DOWNGRADE → 无凭证（`postNcr` 拒 `ERR_NCR_DISPOSITION_NOT_POSTABLE`）。`resolve` 按 `erp-qua.ncr-posting-mode`（AUTO_POST/MANUAL_POST）config-gated 分派，`postNcr`/`reverseNcr` 提供人工入口。posted 三件套（`posted`/`postedAt`/`postedBy`）+ `returnCode` 列加性新增到 `ErpQaNonConformance`。
+  - **NCR 过账引擎**：SCRAP 处置 → 报废损失凭证（借 6711 营业外支出/贷 1401 库存商品，经 `NcrScrapAcctDocProvider` + `NcrPostingDispatcher`）；RETURN 处置 → 编排退货域（`IErpPurReturnBiz`/`IErpSalReturnBiz`，退货单自带红字过账，NCR 侧登记 `returnCode`）；CONCESSION/DOWNGRADE → 无凭证（`postNcr` 拒 `ERR_NCR_DISPOSITION_NOT_POSTABLE`）。`resolve` 按 `erp-qua.ncr-posting-mode`（AUTO_POST/MANUAL_POST）config-gated 分派，`postNcr`/`reverseNcr` 提供人工入口。posted 三件套（`posted`/`postedAt`/`postedBy`）+ `returnCode` 列加性新增到 `ErpQaNonConformance`。
   - **实现偏离**：(1) 返工映射 Decision(b)——不加 REWORK 字典码值/NCR_REWORK 业务类型，返工经制造域返工工单自然归集成本，NCR 侧仅状态迁移不过账；(2) 退货编排 vs 直接过账 Decision——选编排退货域（单一过账来源原则），不建 `NcrReturnAcctDocProvider`；(3) posted 机制 Decision(a)——显式 posted-flag 三件套（与 `ErpQaInspection` 一致），非 voucher 反查；(4) 报废存货物理出库简化——NCR_SCRAP 凭证贷记存货已表达会计影响，物理库存量同步扣减属 inventory 域 successor（避免与 InvPostingDispatcher SALES_OUTPUT 双计）。
-- **召回事件（Non-Goal）**：NCR `ESCALATED_TO_RECALL` 为终态指向 `recall.md`；召回 `ErpQaRecall` 属工作项 2.11，本期仅状态迁移不触发召回流程。触发条件：2.11 落地时。
+- **召回事件（Non-Goal）**：NCR `ESCALATED_TO_RECALL` 为终态指向 `recall.md`；召回 `ErpQaRecall` 属工作项 2.11，本期仅状态迁移不触发召回流程。触发条件：工作项 2.11 就绪时。
 - **让步接收审批流（简化）**：设计 §2 让步 CONDITIONAL 需「让步审批」；本期以 `approveStatus=APPROVED`（质量主管审核）简化，完整多级让步审批工作流 Non-Goal。触发条件：多级审批需求时。
 - **抽检方案自动计算（Non-Goal）**：`ErpQaSamplingPlan` 实体存在但抽样数量自动计算（AQL/GB2828）不落地。触发条件：统计抽样需求时。
 - **校准管理 / 风险登记 / 质量目标 / 评审（Non-Goal）**：`ErpQaCalibration`/`ErpQaRiskRegister`/`ErpQaQualityGoal`/`ErpQaReview` 实体存在但 BizModel 深化不落地（仅标准 CRUD 空壳）。触发条件：计量管理 / QMS 全面需求时。
-- **业务单据作废联动取消（未落地）**：设计 §4「业务单据作废时关联质检单自动取消」本期未接线（业务域 cancel 未回调 quality 取消质检单）。触发条件：作废联动需求时。
+- **业务单据作废联动取消（Deferred）**：设计 §4「业务单据作废时关联质检单自动取消」**Deferred**——`IErpQaInspectionBiz.cancelForBusinessBill(billType, billCode)` Facade + 业务域 cancel Processor config-gated wiring 属跨域跨表面实现，本期不落地。残留质检单经 `useLogicalDelete` 手工清理（CANCELLED 业务单据不再流转，不破坏主路径）。**Successor 触发条件**：业务作废自动取消质检需求时，实现上述 Facade + purchase/sales/mfg cancel Processor config-gated 调用（PENDING→cancelled via useLogicalDelete）。
 - **行级评测规格类型**：`specMin/specMax/measuredValue` 列域为 DECIMAL（domain measuredValue/specLimit），非数值规格（外观「合格/不合格」）由 `InspectionResultEvaluator`「无规格上下限 + 实测非空即合格」分支处理；纯非数值实测值落库受域强转限制（须人工录入行结果覆盖）。
+- **passInspection/failInspection 状态守卫 + reInspect 废弃**：`passInspection`/`failInspection` 增 `result==PENDING` 单一源态守卫 + 设 `posted=true`（postedAt/postedBy）+ `failInspection` 触发 `autoCreateNcrFromInspection`（与 `recordResult` REJECTED 分支对齐），堵住 silent flip REJECTED→ACCEPTED 绕过强制质检门控。`reInspect` 方法 + `IErpQaInspectionBiz.reInspect` 接口签名删除——终态不可直接翻回 PENDING，复检走 `createForBusinessBill` 新建关联质检单（§3）。
+
+## CRUD 桩实体状态机（Deferred）
+
+> 以下实体的 dict 状态值为**预留语义入口（零 writer）**，CRUD 桩为主路径可用；完整状态机迁移属 QMS 全面需求 successor。dict 值保留不删除（「保留 dict 死状态为预留」先例一致）。
+
+| 实体 / dict | 死状态值（零 writer） | 现状 | Successor 触发条件 |
+|-------------|----------------------|------|-------------------|
+| `ErpQaQualityGoal` / QualityGoal 状态 | 全部（BizModel 为 CRUD 桩，零 `setStatus` writer） | 标准 CRUD 可用，状态字段不参与主路径迁移判定 | 质量目标管理（KPI 设定/考核闭环）需求时 |
+| `ErpQaReview` / Review 状态 | 全部（BizModel 为 CRUD 桩，零 `setStatus` writer） | 标准 CRUD 可用 | 管理评审流程需求时 |
+| `ErpQaCalibration` / Calibration 状态 | 全部（BizModel 为 CRUD 桩，零 `setStatus` writer） | 标准 CRUD 可用 | 计量器具校准管理需求时 |
+| `erp-qa/risk-status` | `MITIGATED`/`CLOSED` 死（仅 `SpcCapabilityCalculator` 写 `OPEN`） | `ErpQaRiskRegister` 状态字段预留 | 风险登记闭环管理需求时 |
+| `erp-qa/action-status` | `OVERDUE`（零 writer） | CAPA Action 状态机主路径 COMPLETED/PENDING 等可用 | 逾期自动监控需求时 |
+| `erp-qa/spc-calc-status` | `STALE`（零 writer） | SPC 计算状态主路径可用 | SPC 控制图失效自动重算需求时 |
+
+**Successor 触发条件**：计量管理 / QMS 全面需求时，实现上述各实体 `BizMutation` 状态机迁移（含 dict 死状态 writer 落地）。CRUD 空壳实体状态字段不参与质检单/NCR/召回三大主状态机迁移判定，故本期保留为预留值不影响主路径。
 

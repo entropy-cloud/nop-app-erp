@@ -64,4 +64,31 @@
           class="app.erp.prj.service.processor.ErpPrjProjectSettlementRejectProcessor"/>
     <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementCancelProcessor"
           class="app.erp.prj.service.processor.ErpPrjProjectSettlementCancelProcessor"/>
+
+    <!-- per-mutation D-mutation Processor beans (R6.6)：每 D-mutation 独立 Processor。
+         类别 A：ProjectSettlement 2（facade slim-to-S-delegation，submit 实测 MR5 S-mutation 不拆）。 -->
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementCreateSettlementProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectSettlementCreateSettlementProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementReverseSettlementProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectSettlementReverseSettlementProcessor"/>
+    <!-- per-mutation Processor beans (R6.6)：projects 9 个 D-mutation 拆分。
+         类别 B：CostCollection 1 + Project 4 + ProjectPnl 1 + Timesheet 3。 -->
+    <bean id="app.erp.prj.service.processor.ErpPrjCostCollectionRefreshExpenseCostProcessor"
+          class="app.erp.prj.service.processor.ErpPrjCostCollectionRefreshExpenseCostProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectCloseProjectProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectCloseProjectProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectHoldProjectProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectHoldProjectProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectRefreshActualCostProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectRefreshActualCostProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectResumeProjectProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectResumeProjectProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectPnlRefreshPnlProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectPnlRefreshPnlProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjTimesheetSubmitProcessor"
+          class="app.erp.prj.service.processor.ErpPrjTimesheetSubmitProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjTimesheetApproveProcessor"
+          class="app.erp.prj.service.processor.ErpPrjTimesheetApproveProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjTimesheetCancelProcessor"
+          class="app.erp.prj.service.processor.ErpPrjTimesheetCancelProcessor"/>
 </beans>

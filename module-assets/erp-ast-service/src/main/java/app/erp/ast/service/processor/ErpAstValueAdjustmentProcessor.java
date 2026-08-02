@@ -29,37 +29,38 @@ public class ErpAstValueAdjustmentProcessor {
     @Inject
     ValueAdjustmentPostingDispatcher postingDispatcher;
 
+    @Inject
+    ErpAstValueAdjustmentSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpAstValueAdjustmentApproveProcessor approveProcessor;
+
+    @Inject
+    ErpAstValueAdjustmentRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpAstValueAdjustmentReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpAstValueAdjustmentWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpAstValueAdjustmentCancelProcessor cancelProcessor;
+
     public ErpAstValueAdjustment submitForApproval(String id, IServiceContext context) {
-        ErpAstValueAdjustment adjustment = requireAdjustment(id, context);
-        validateNotCancelled(adjustment, context);
-        validateTransitionForSubmit(adjustment, context);
-        validateForApproval(adjustment, context);
-        if (!isApprovalRequired()) {
-            return doAutoApprove(id, adjustment, context);
-        }
-        adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_SUBMITTED);
-        adjustmentDao().updateEntity(adjustment);
-        return adjustment;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpAstValueAdjustment withdrawApproval(String id, IServiceContext context) {
-        ErpAstValueAdjustment adjustment = requireAdjustment(id, context);
-        validateNotCancelled(adjustment, context);
-        validateTransitionForWithdraw(adjustment, context);
-        adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
-        adjustmentDao().updateEntity(adjustment);
-        return adjustment;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpAstValueAdjustment approve(String id, IServiceContext context) {
-        ErpAstValueAdjustment adjustment = requireAdjustment(id, context);
-        if (adjustment.isApproved()) {
-            return adjustment;
-        }
-        validateNotCancelled(adjustment, context);
-        validateTransitionForApprove(adjustment, context);
-        validateForApproval(adjustment, context);
+        return approveProcessor.approve(id, context);
+    }
 
+    protected ErpAstValueAdjustment executeApprove(String id, ErpAstValueAdjustment adjustment,
+                                                     IServiceContext context) {
         ErpAstAsset asset = adjustment.getAsset();
         validateAssetAdjustable(asset, context);
 
@@ -89,20 +90,15 @@ public class ErpAstValueAdjustmentProcessor {
     }
 
     public ErpAstValueAdjustment reject(String id, IServiceContext context) {
-        ErpAstValueAdjustment adjustment = requireAdjustment(id, context);
-        validateNotCancelled(adjustment, context);
-        validateTransitionForReject(adjustment, context);
-        adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
-        adjustmentDao().updateEntity(adjustment);
-        return adjustment;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpAstValueAdjustment reverseApprove(String id, IServiceContext context) {
-        ErpAstValueAdjustment adjustment = requireAdjustment(id, context);
-        if (adjustment.isRejected()) {
-            return adjustment;
-        }
-        validateTransitionForReverseApprove(adjustment, context);
+        return reverseApproveProcessor.reverseApprove(id, context);
+    }
+
+    protected ErpAstValueAdjustment executeReverseApprove(String id, ErpAstValueAdjustment adjustment,
+                                                            IServiceContext context) {
         if (Boolean.TRUE.equals(adjustment.getPosted())) {
             postingDispatcher.reverse(adjustment);
             rollbackAssetValue(adjustment);
@@ -117,11 +113,7 @@ public class ErpAstValueAdjustmentProcessor {
     }
 
     public ErpAstValueAdjustment cancel(Long id, IServiceContext context) {
-        ErpAstValueAdjustment adjustment = requireAdjustment(id, context);
-        validateTransitionForCancel(adjustment, context);
-        adjustment.setDocStatus(ErpAstConstants.DOC_STATUS_CANCELLED);
-        adjustmentDao().updateEntity(adjustment);
-        return adjustment;
+        return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------

@@ -8,6 +8,17 @@ import io.nop.api.core.config.AppConfig;
  */
 public interface ErpCrmConfigs {
 
+    // ===== stageId 单向递增守卫（R1.24 / P1-MA2-075） =====
+
+    /**
+     * 是否允许 stageId 沿 sequence 回退（默认 false=STRICT 拦截回退，对齐 owner doc §stageId 迁移规则；
+     * 业务确需回退时设 true=放行 + LOG.warn 审计）。
+     */
+    static boolean allowStageBackward() {
+        return AppConfig.var(ErpCrmConstants.CONFIG_ALLOW_STAGE_BACKWARD,
+                ErpCrmConstants.DEFAULT_ALLOW_STAGE_BACKWARD);
+    }
+
     /** 单个配置器允许的最大规则数（默认 100）。 */
     static int cpqMaxRulesPerConfigurator() {
         return AppConfig.var(ErpCrmConstants.CONFIG_CPQ_MAX_RULES_PER_CONFIGURATOR, 100);

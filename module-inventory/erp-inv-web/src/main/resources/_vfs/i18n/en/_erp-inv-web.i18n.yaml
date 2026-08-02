@@ -26,6 +26,10 @@ site:
       displayName: Stock Take
     ErpInvTransferOrder-main:
       displayName: Transfer Order
+    FNPT:ErpInvLandedCost:approve:
+      displayName: Approve Landed Cost
+    FNPT:ErpInvStockMove:confirm:
+      displayName: Confirm Move
     erp-inv:
       displayName: Inventory
     inv-batch:

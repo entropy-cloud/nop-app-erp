@@ -12,6 +12,7 @@ import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.posting.MfgPostingExecutor;
 import app.erp.mfg.service.posting.SubcontractPostingDispatcher;
+import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.auth.IUserContext;
@@ -67,6 +68,16 @@ public class ErpMfgSubcontractOrderProcessor {
     SubcontractPostingDispatcher subcontractPostingDispatcher;
     @Inject
     MfgPostingExecutor mfgPostingExecutor;
+    @Inject
+    ErpMfgSubcontractOrderSubmitForApprovalProcessor submitForApprovalProcessor;
+    @Inject
+    ErpMfgSubcontractOrderApproveProcessor approveProcessor;
+    @Inject
+    ErpMfgSubcontractOrderRejectProcessor rejectProcessor;
+    @Inject
+    ErpMfgSubcontractOrderReverseApproveProcessor reverseApproveProcessor;
+    @Inject
+    ErpMfgSubcontractOrderWithdrawApprovalProcessor withdrawApprovalProcessor;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -87,38 +98,23 @@ public class ErpMfgSubcontractOrderProcessor {
     // ---------- 审批轴 ----------
 
     public ErpMfgSubcontractOrder submitForApproval(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForSubmit(order, context);
-        doSubmit(order, context);
-        return order;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpMfgSubcontractOrder withdrawApproval(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForWithdraw(order, context);
-        doWithdrawSubmit(order, context);
-        return order;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpMfgSubcontractOrder approve(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForApprove(order, context);
-        doApprove(order, context);
-        return order;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpMfgSubcontractOrder reject(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForReject(order, context);
-        doReject(order, context);
-        return order;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpMfgSubcontractOrder reverseApprove(String id, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(id, context);
-        validateTransitionForReverseApprove(order, context);
-        doReverseApprove(order, context);
-        return order;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpMfgSubcontractOrder cancel(Long subcontractOrderId, IServiceContext context) {
@@ -134,110 +130,8 @@ public class ErpMfgSubcontractOrderProcessor {
         return order;
     }
 
-    // ---------- 三段业务动作 ----------
-
-    /**
-     * 发料给供应商：APPROVED→ISSUED。按委外行逐行生成库存 OUTGOING 移动单（材料成本出库）。
-     */
-    public ErpMfgSubcontractOrder issueMaterials(Long subcontractOrderId, IServiceContext context) {
-        return issueMaterials(subcontractOrderId, null, context);
-    }
-
-    /**
-     * 发料给供应商：APPROVED→ISSUED。按委外行逐行生成库存 OUTGOING 移动单（材料成本出库）。
-     *
-     * @param sourceWarehouseId 发料源仓库（null 时由库存域默认仓库处理）
-     */
-    public ErpMfgSubcontractOrder issueMaterials(Long subcontractOrderId, Long sourceWarehouseId, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(String.valueOf(subcontractOrderId), context);
-        requireStatus(order, ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED, "APPROVED");
-
-        List<ErpMfgSubcontractOrderLine> lines = loadLines(subcontractOrderId);
-        if (lines.isEmpty()) {
-            throw new NopException(ErpMfgErrors.ERR_SUBCONTRACT_LINES_EMPTY)
-                    .param(ErpMfgErrors.ARG_SUBCONTRACT_ORDER_CODE, order.getCode());
-        }
-
-        generateIssueMove(order, lines, sourceWarehouseId, context);
-
-        if (isSubcontractPostingEnabled()) {
-            subcontractPostingDispatcher.dispatchIssuePosting(subcontractOrderId);
-        }
-
-        order = orderDao().getEntityById(subcontractOrderId);
-        order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_ISSUED);
-        orderDao().updateEntity(order);
-        return order;
-    }
-
-    /**
-     * 收回加工品入库：ISSUED→RECEIVED。生成库存 INCOMING 移动单（成品入库，含加工费成本归集）。
-     */
-    public ErpMfgSubcontractOrder receiveFinished(Long subcontractOrderId, BigDecimal receivedQty, IServiceContext context) {
-        return receiveFinished(subcontractOrderId, receivedQty, null, context);
-    }
-
-    /**
-     * 收回加工品入库：ISSUED→RECEIVED。生成库存 INCOMING 移动单（成品入库，含加工费成本归集）。
-     *
-     * @param destWarehouseId 收货目标仓库（null 时由库存域默认仓库处理）
-     */
-    public ErpMfgSubcontractOrder receiveFinished(Long subcontractOrderId, BigDecimal receivedQty,
-                                                   Long destWarehouseId, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(String.valueOf(subcontractOrderId), context);
-        requireStatus(order, ErpMfgConstants.SUBCONTRACT_STATUS_ISSUED, "ISSUED");
-
-        if (receivedQty == null || receivedQty.signum() <= 0) {
-            BigDecimal lineQty = sumLineQuantity(subcontractOrderId);
-            receivedQty = lineQty.signum() > 0 ? lineQty : BigDecimal.ONE;
-        }
-
-        generateReceiptMove(order, receivedQty, destWarehouseId, context);
-
-        if (isSubcontractPostingEnabled()) {
-            subcontractPostingDispatcher.dispatchReceiptPosting(subcontractOrderId);
-        }
-
-        order = orderDao().getEntityById(subcontractOrderId);
-        order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_RECEIVED);
-        orderDao().updateEntity(order);
-        return order;
-    }
-
-    /**
-     * 加工费过账：RECEIVED→COMPLETED。构造 SUBCONTRACT_FEE PostingEvent 经 Dispatcher 过账，
-     * 成功后 posted=true、docStatus→COMPLETED。config-gated {@code erp-mfg.subcontract-posting-enabled}。
-     */
-    public ErpMfgSubcontractOrder postProcessingFee(Long subcontractOrderId, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(String.valueOf(subcontractOrderId), context);
-        requireStatus(order, ErpMfgConstants.SUBCONTRACT_STATUS_RECEIVED, "RECEIVED");
-
-        if (isSubcontractPostingEnabled()) {
-            subcontractPostingDispatcher.dispatchFeePosting(subcontractOrderId);
-        }
-
-        order = orderDao().getEntityById(subcontractOrderId);
-        order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_COMPLETED);
-        orderDao().updateEntity(order);
-        return order;
-    }
-
-    /**
-     * 红冲完工：COMPLETED→CANCELLED。全量撤销已落地的 GL 凭证（SI/SR/SF）+ 反向两段库存移动
-     * （issue/receipt）+ posted=false。镜像 {@code postProcessingFee} Facade→Processor 范式，
-     * protected step 方法拆分供下游派生覆盖。
-     *
-     * <p>config-gate 裁决：红冲 GL 以 {@code posted==true} 为前置（非 config flag），避免正向过账开启→
-     * 红冲前关闭 config→GL 红冲被跳过致孤儿凭证（设计 subcontracting.md §实现偏离补注 §红冲）。
-     */
-    public ErpMfgSubcontractOrder reverseCompletion(Long subcontractOrderId, IServiceContext context) {
-        ErpMfgSubcontractOrder order = requireOrder(String.valueOf(subcontractOrderId), context);
-        validateCanReverse(order, context);
-        reverseGlPostings(order, context);
-        reverseInventoryMoves(order, context);
-        doReverseCompletion(order, context);
-        return order;
-    }
+    // ---------- 三段业务动作（R6.2 per-mutation 拆分：public 入口已迁入 ----------
+    // ----------   ErpMfgSubcontractOrder<Method>Processor，本类保留 protected step helper） ----------
 
     // ---------- step：红冲完工（protected，下游可逐个覆盖） ----------
 
@@ -391,6 +285,7 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     protected void doApprove(ErpMfgSubcontractOrder order, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(order.getCreatedBy(), currentUserId(), ErpMfgErrors.ERR_MFG_APPROVER_IS_CREATOR);
         order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
         order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());

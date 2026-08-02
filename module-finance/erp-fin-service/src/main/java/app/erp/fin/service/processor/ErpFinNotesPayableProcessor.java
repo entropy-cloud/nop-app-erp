@@ -40,41 +40,6 @@ public class ErpFinNotesPayableProcessor {
     @Inject
     NotesPostingDispatcher postingDispatcher;
 
-    public ErpFinNotesPayable issue(Long notesId, IServiceContext context) {
-        ErpFinNotesPayable note = requireNote(notesId, context);
-        // 幂等：已签发再次签发为空操作。
-        if (isAlreadyIssued(note)) {
-            return note;
-        }
-        validateNotTerminal(note, context);
-        requireAmountPositive(note, context);
-        reserveCreditIfNeeded(note, context);
-        return doIssue(notesId, note, context);
-    }
-
-    public ErpFinNotesPayable honor(Long notesId, IServiceContext context) {
-        ErpFinNotesPayable note = requireNote(notesId, context);
-        validateTransitionForHonor(note, context);
-        releaseOccupiedCredit(note, context);
-        return doHonor(notesId, note, context);
-    }
-
-    public ErpFinNotesPayable dishonor(Long notesId, IServiceContext context) {
-        ErpFinNotesPayable note = requireNote(notesId, context);
-        validateTransitionForHonor(note, context);
-        releaseOccupiedCredit(note, context);
-        doDishonor(note, context);
-        return note;
-    }
-
-    public ErpFinNotesPayable writeOff(Long notesId, IServiceContext context) {
-        ErpFinNotesPayable note = requireNote(notesId, context);
-        validateNotTerminal(note, context);
-        releaseOccupiedCredit(note, context);
-        doWriteOff(note, context);
-        return note;
-    }
-
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForHonor(ErpFinNotesPayable note, IServiceContext context) {

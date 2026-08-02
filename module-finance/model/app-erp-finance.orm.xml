@@ -67,10 +67,10 @@
             <option code="DEPRECIATION" label="折旧" value="DEPRECIATION" i18n-en:label='Depreciation'/>
             <option code="CAPITALIZATION" label="资本化" value="CAPITALIZATION" i18n-en:label='Capitalization'/>
             <option code="DISPOSAL" label="处置" value="DISPOSAL" i18n-en:label='Disposal'/>
-            <option code="PRODUCTION_COST" label="生产成本结转" value="PRODUCTION_COST" i18n-en:label='Prod Cost Transfer'/>
-            <option code="PROJECT_COST" label="项目成本归集" value="PROJECT_COST" i18n-en:label='Project Cost Accrual'/>
-            <option code="PERIOD_CLOSING" label="期末结转" value="PERIOD_CLOSING" i18n-en:label='Period-End Closing'/>
-            <option code="FX_REVALUATION" label="汇兑损益" value="FX_REVALUATION" i18n-en:label='FX Gain/Loss'/>
+            <option code="MANUFACTURING_COST_CLOSE" label="生产成本结转" value="MANUFACTURING_COST_CLOSE" i18n-en:label='Prod Cost Transfer'/>
+            <option code="PROJECT_COST_COLLECTION" label="项目成本归集" value="PROJECT_COST_COLLECTION" i18n-en:label='Project Cost Accrual'/>
+            <option code="PERIOD_CLOSE" label="期末结转" value="PERIOD_CLOSE" i18n-en:label='Period-End Closing'/>
+            <option code="EXCHANGE_GAIN_LOSS" label="汇兑损益" value="EXCHANGE_GAIN_LOSS" i18n-en:label='FX Gain/Loss'/>
             <option code="PURCHASE_RETURN" label="采购退货冲减" value="PURCHASE_RETURN" i18n-en:label='Purchase Return'/>
             <option code="SALES_RETURN" label="销售退货冲减" value="SALES_RETURN" i18n-en:label='Sales Return'/>
             <option code="EXPENSE_CLAIM" label="费用报销" value="EXPENSE_CLAIM" i18n-en:label='Expense Claim'/>
@@ -644,6 +644,10 @@
                 <index name="IDX_FIN_VOUCHER_BILL_R_VOUCHER_ID" unique="false">
                     <column name="voucherId"/>
                 </index>
+                <index name="IDX_FIN_VOUCHER_BILL_R_BILL_CODE_BIZ_TYPE" unique="false">
+                    <column name="billCode"/>
+                    <column name="businessType"/>
+                </index>
             </indexes>
         </entity>
 
@@ -952,6 +956,11 @@
                     <join><on leftProp="projectId" rightProp="id"/></join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <!-- P1-MA2-096：GL 余额自然键（orgId+acctSchemaId+periodId+subjectId+currencyId）UK，防止重复余额行。
+                     [ORM ask-first] 辅助维度（partner/department/project/warehouse）当前未由过账引擎写入，故 5 列 UK 安全。 -->
+                <unique-key name="UK_FIN_GL_BALANCE_NATURAL" columns="orgId,acctSchemaId,periodId,subjectId,currencyId"/>
+            </unique-keys>
             <indexes>
                 <index name="IDX_FIN_GL_BALANCE_ACCT_SCHEMA_ID" unique="false">
                     <column name="acctSchemaId"/>
@@ -2159,12 +2168,10 @@
             </relations>
             <unique-keys>
                 <unique-key name="UK_FIN_INTERCOMPANY_MATCH_CODE" columns="code"/>
+                <!-- P1-MA2-098：(pairKey, periodId) UK 替换原非唯一 IDX，保证 runMatching 幂等（同期同 pairKey 唯一）。[ORM ask-first] -->
+                <unique-key name="UK_FIN_INTERCOMPANY_MATCH_PAIR_PERIOD" columns="pairKey,periodId"/>
             </unique-keys>
             <indexes>
-                <index name="IDX_FIN_INTERCOMPANY_MATCH_PAIR_PERIOD" unique="false">
-                    <column name="pairKey"/>
-                    <column name="periodId"/>
-                </index>
                 <index name="IDX_FIN_INTERCOMPANY_MATCH_PERIOD_STATUS" unique="false">
                     <column name="periodId"/>
                     <column name="status"/>

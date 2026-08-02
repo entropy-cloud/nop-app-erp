@@ -4,6 +4,7 @@ package app.erp.fin.service.entity;
 import app.erp.fin.biz.IErpFinGlMappingRuleBiz;
 import app.erp.fin.dao.api.IErpFinGlMappingResolver;
 import app.erp.fin.dao.entity.ErpFinGlMappingRule;
+import app.erp.fin.service.processor.ErpFinGlMappingRuleRefreshCacheProcessor;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -31,6 +32,8 @@ public class ErpFinGlMappingRuleBizModel extends CrudBizModel<ErpFinGlMappingRul
 
     @Inject
     IErpFinGlMappingResolver glMappingResolver;
+    @Inject
+    ErpFinGlMappingRuleRefreshCacheProcessor refreshCacheProcessor;
 
     public ErpFinGlMappingRuleBizModel() {
         setEntityName(ErpFinGlMappingRule.class.getName());
@@ -85,6 +88,6 @@ public class ErpFinGlMappingRuleBizModel extends CrudBizModel<ErpFinGlMappingRul
     @Override
     @BizMutation
     public void refreshCache(IServiceContext context) {
-        glMappingResolver.invalidateCache();
+        refreshCacheProcessor.refreshCache(context);
     }
 }

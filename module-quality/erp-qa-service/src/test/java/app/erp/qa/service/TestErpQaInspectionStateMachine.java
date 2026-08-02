@@ -2,10 +2,13 @@ package app.erp.qa.service;
 
 import app.erp.qa.dao.entity.ErpQaInspection;
 import app.erp.qa.dao.entity.ErpQaInspectionLine;
+import app.erp.qa.dao.entity.ErpQaNonConformance;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
+import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
@@ -23,10 +26,13 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static io.nop.graphql.core.ast.GraphQLOperationType.query;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -115,6 +121,93 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
                 "终态不可恢复重复 recordResult 抛错");
     }
 
+    // ---------- P0-MA2-017：silent flip 守卫（passInspection/failInspection 终态拒绝）----------
+
+    @Test
+    public void testPassInspectionRejectsTerminalState() {
+        Long insId = seedInspection("INS-PASS-REJ", withLine("长度", "10", "20"));
+        recordMeasured(insId, false, lineInput(1, "5")); // 5 < min 10 → REJECTED（终态）
+        // silent flip REJECTED→ACCEPTED 必须被拒绝
+        ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__passInspection",
+                ApiRequest.build(Map.of("inspectionId", insId)));
+        assertEquals(ErpQaErrors.ERR_INVALID_INSPECTION_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
+                "REJECTED 终态 passInspection 应抛 illegal-status-transition");
+        assertEquals(ErpQaConstants.INSPECTION_RESULT_REJECTED, loadInspection(insId).getResult(),
+                "源单 result 保持 REJECTED 不被覆写");
+    }
+
+    @Test
+    public void testFailInspectionRejectsTerminalState() {
+        Long insId = seedInspection("INS-FAIL-ACC", withLine("长度", "10", "20"));
+        recordMeasured(insId, false, lineInput(1, "15")); // 15 ∈ [10,20] → ACCEPTED（终态）
+        // silent flip ACCEPTED→REJECTED 必须被拒绝
+        ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__failInspection",
+                ApiRequest.build(Map.of("inspectionId", insId)));
+        assertEquals(ErpQaErrors.ERR_INVALID_INSPECTION_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
+                "ACCEPTED 终态 failInspection 应抛 illegal-status-transition");
+        assertEquals(ErpQaConstants.INSPECTION_RESULT_ACCEPTED, loadInspection(insId).getResult(),
+                "源单 result 保持 ACCEPTED 不被覆写");
+    }
+
+    @Test
+    public void testPassInspectionFromPendingSetsPosted() {
+        Long insId = seedInspection("INS-PASS-OK", withLine("长度", "10", "20"));
+        ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__passInspection",
+                ApiRequest.build(Map.of("inspectionId", insId)));
+        assertEquals(0, resp.getStatus(), "PENDING→passInspection 应成功: " + resp);
+        ErpQaInspection ins = loadInspection(insId);
+        assertEquals(ErpQaConstants.INSPECTION_RESULT_ACCEPTED, ins.getResult(), "PENDING→ACCEPTED");
+        assertTrue(Boolean.TRUE.equals(ins.getPosted()), "passInspection 设 posted=true");
+        assertNotNull(ins.getPostedAt(), "passInspection 设 postedAt");
+        assertNotNull(ins.getPostedBy(), "passInspection 设 postedBy");
+    }
+
+    @Test
+    public void testFailInspectionFromPendingSetsPostedAndTriggersNcr() {
+        Long insId = seedInspection("INS-FAIL-NCR", withLine("长度", "10", "20"));
+        ApiResponse<?> resp = rpc(mutation, "ErpQaInspection__failInspection",
+                ApiRequest.build(Map.of("inspectionId", insId)));
+        assertEquals(0, resp.getStatus(), "PENDING→failInspection 应成功: " + resp);
+        ErpQaInspection ins = loadInspection(insId);
+        assertEquals(ErpQaConstants.INSPECTION_RESULT_REJECTED, ins.getResult(), "PENDING→REJECTED");
+        assertTrue(Boolean.TRUE.equals(ins.getPosted()), "failInspection 设 posted=true");
+        ErpQaNonConformance ncr = findNcrBySourceCode(ins.getCode());
+        assertNotNull(ncr, "failInspection 触发 autoCreateNcrFromInspection 建 NCR");
+        assertEquals(ErpQaConstants.NCR_STATUS_OPEN, ncr.getStatus(), "NCR 初始 OPEN");
+        assertEquals(ErpQaConstants.NCR_SOURCE_TYPE_INSPECTION, ncr.getSourceType(), "NCR sourceType=INSPECTION");
+    }
+
+    // ---------- P0-MA2-017 方案 A：reInspect 已删除 + 复检走新建关联质检单 ----------
+
+    @Test
+    public void testReInspectActionRemoved() {
+        Long insId = seedInspection("INS-REINSPECT-GONE", withLine("长度", "10", "20"));
+        // reInspect 方法 + 接口签名已删除：GraphQL action 不再注册，引擎抛 unknown-operation
+        NopException ex = assertThrows(NopException.class, () -> rpc(mutation, "ErpQaInspection__reInspect",
+                ApiRequest.build(Map.of("inspectionId", insId))));
+        assertEquals("nop.err.graphql.unknown-operation", ex.getErrorCode(), "reInspect action 已删除");
+        // 源单 result 保持 PENDING（无任何状态迁移发生）
+        assertEquals(ErpQaConstants.INSPECTION_RESULT_PENDING, loadInspection(insId).getResult(),
+                "reInspect 不存在，源单 result 不变");
+    }
+
+    @Test
+    public void testReinspectionViaNewIndependentInspection() {
+        // 复检语义（owner doc §3）：原单 REJECTED 终态保留，复检经新建独立质检单（关联同一业务单据）
+        Long originalId = seedInspection("INS-ORIG-REJ", withLine("长度", "10", "20"));
+        recordMeasured(originalId, false, lineInput(1, "5")); // 原单 → REJECTED（终态）
+
+        // 新建复检单（同一业务单据 ERP_PUR_RECEIPT/BILL-REINSPECT，独立 PENDING）
+        Long reinspectId = seedInspection("INS-REINSPECT-OK", withLine("长度", "10", "20"));
+        recordMeasured(reinspectId, false, lineInput(1, "15")); // 复检单 → ACCEPTED
+
+        // 两单 result 独立：原单保持 REJECTED，复检单 ACCEPTED
+        assertEquals(ErpQaConstants.INSPECTION_RESULT_REJECTED, loadInspection(originalId).getResult(),
+                "原单 REJECTED 终态不被复检覆写");
+        assertEquals(ErpQaConstants.INSPECTION_RESULT_ACCEPTED, loadInspection(reinspectId).getResult(),
+                "复检单独立结果 ACCEPTED");
+    }
+
     @Test
     public void testFindByRelatedBillReturnsResult() {
         Long insId = seedInspection("INS-FIND", withLine("长度", "10", "20"));
@@ -150,6 +243,14 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
 
     private ErpQaInspection loadInspection(Long insId) {
         return daoProvider.daoFor(ErpQaInspection.class).getEntityById(insId);
+    }
+
+    private ErpQaNonConformance findNcrBySourceCode(String sourceCode) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("sourceCode", sourceCode));
+        q.setLimit(1);
+        List<ErpQaNonConformance> list = daoProvider.daoFor(ErpQaNonConformance.class).findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     private void recordMeasured(Long insId, boolean allowConcession, Map<String, Object>... lines) {

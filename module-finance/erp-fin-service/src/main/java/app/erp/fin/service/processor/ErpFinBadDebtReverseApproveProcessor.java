@@ -2,6 +2,7 @@ package app.erp.fin.service.processor;
 
 import app.erp.fin.dao.entity.ErpFinBadDebt;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import app.erp.common.service.AbstractReverseApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -20,7 +21,14 @@ public class ErpFinBadDebtReverseApproveProcessor extends AbstractReverseApprove
 
     @Override
     public ErpFinBadDebt reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(Long.valueOf(id), context);
+        Long badDebtId = Long.valueOf(id);
+        ErpFinBadDebt debt = processor.requireBadDebt(badDebtId);
+        // 守卫：须已 APPROVED 且已生成凭证（ErpFinBadDebt 无 posted 字段，以 voucherId 非空作为已过账标志）
+        if (!debt.isApproved() || debt.getVoucherId() == null) {
+            throw new NopException(ErpFinErrors.ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED)
+                    .param(ErpFinErrors.ARG_BAD_DEBT_ID, badDebtId);
+        }
+        return processor.executeReverseApprove(debt, context);
     }
 
     @Override

@@ -6,6 +6,7 @@ import app.erp.md.dao.entity.ErpMdSupplierApproval;
 import app.erp.md.service.ErpMdConstants;
 import app.erp.md.service.ErpMdErrors;
 import app.erp.md.service.daterange.ErpDateRangeOverlapValidator;
+import app.erp.md.service.processor.ErpMdSupplierApprovalSuspendByPartnerProcessor;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -18,6 +19,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
+import jakarta.inject.Inject;
 import java.util.Objects;
 
 import java.time.LocalDate;
@@ -46,6 +48,9 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     public ErpMdSupplierApprovalBizModel() {
         setEntityName(ErpMdSupplierApproval.class.getName());
     }
+
+    @Inject
+    ErpMdSupplierApprovalSuspendByPartnerProcessor suspendByPartnerProcessor;
 
     @Override
     protected void defaultPrepareSave(EntityData<ErpMdSupplierApproval> entityData, IServiceContext context) {
@@ -141,14 +146,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
     @Override
     @BizMutation
     public int suspendByPartner(@Name("partnerId") Long partnerId, IServiceContext context) {
-        if (partnerId == null) {
-            return 0;
-        }
-        List<ErpMdSupplierApproval> active = findActiveByPartner(partnerId);
-        for (ErpMdSupplierApproval approval : active) {
-            doSuspend(approval, context);
-        }
-        return active.size();
+        return suspendByPartnerProcessor.suspendByPartner(partnerId, context);
     }
 
     @Override

@@ -173,4 +173,14 @@
           class="app.erp.sal.service.processor.ErpSalInvoiceWithdrawApprovalProcessor"/>
     <bean id="app.erp.sal.service.processor.ErpSalInvoiceCancelProcessor"
           class="app.erp.sal.service.processor.ErpSalInvoiceCancelProcessor"/>
+    <!-- Quotation D-mutation per-mutation Processor (R6.5) -->
+    <bean id="app.erp.sal.service.processor.ErpSalQuotationConfirmCustomerAcceptedProcessor"
+          class="app.erp.sal.service.processor.ErpSalQuotationConfirmCustomerAcceptedProcessor"/>
+    <bean id="app.erp.sal.service.processor.ErpSalQuotationConvertToOrderProcessor"
+          class="app.erp.sal.service.processor.ErpSalQuotationConvertToOrderProcessor"/>
+    <!-- Receipt D-mutation per-mutation Processor (R6.5) -->
+    <bean id="app.erp.sal.service.processor.ErpSalReceiptSettleProcessor"
+          class="app.erp.sal.service.processor.ErpSalReceiptSettleProcessor"/>
+    <bean id="app.erp.sal.service.processor.ErpSalReceiptReverseSettlementProcessor"
+          class="app.erp.sal.service.processor.ErpSalReceiptReverseSettlementProcessor"/>
 </beans>

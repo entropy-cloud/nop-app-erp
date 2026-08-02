@@ -11,6 +11,8 @@ import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.metrics.ErpFinBusinessMetrics;
+import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -90,6 +92,8 @@ public class ErpFinReportBizModel {
     public String renderHtml(@Name("reportName") String reportName,
                              @Optional @Name("data") Map<String, Object> data,
                              IServiceContext context) {
+        // observability.md §5.1 指标 6 path=report_render：报表渲染关键路径吞吐（app 层入口，不触及 nop-entropy 源码）
+        ErpFinBusinessMetrics.recordReportRenderPathThroughput(null);
         String path = resolveReportPath(reportName);
         IEvalScope scope = XLang.newEvalScope();
         Map<String, Object> merged = mergeData(data);
@@ -104,6 +108,8 @@ public class ErpFinReportBizModel {
                                    @Name("renderType") String renderType,
                                    @Optional @Name("data") Map<String, Object> data,
                                    IServiceContext context) {
+        // observability.md §5.1 指标 6 path=report_render：报表下载/渲染关键路径吞吐
+        ErpFinBusinessMetrics.recordReportRenderPathThroughput(null);
         if (!ALLOWED_RENDER_TYPES.contains(renderType)) {
             throw new NopException(ErpFinErrors.ERR_REPORT_RENDER_TYPE_INVALID)
                     .param(ErpFinErrors.ARG_RENDER_TYPE, renderType);
@@ -388,11 +394,13 @@ public class ErpFinReportBizModel {
             } else {
                 QueryBean q = new QueryBean();
                 q.addFilter(eq("periodId", latestPeriodId));
+                applyOrgAndSchemaScope(q, latestPeriodId);
                 list = dao.findAllByQuery(q);
             }
         } else {
             QueryBean q = new QueryBean();
             q.addFilter(eq("periodId", periodId));
+            applyOrgAndSchemaScope(q, periodId);
             list = dao.findAllByQuery(q);
         }
         list.sort((a, b) -> {
@@ -417,7 +425,10 @@ public class ErpFinReportBizModel {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
-        if (periodId != null) vq.addFilter(eq("periodId", periodId));
+        if (periodId != null) {
+            vq.addFilter(eq("periodId", periodId));
+            applyOrgAndSchemaScope(vq, periodId);
+        }
         List<ErpFinVoucher> vouchers = vDao.findAllByQuery(vq);
         if (vouchers.isEmpty()) return Collections.emptyList();
         Set<Long> voucherIds = new HashSet<>();
@@ -438,6 +449,7 @@ public class ErpFinReportBizModel {
     private ErpFinAccountingPeriodStatus loadPeriodStatus(Long periodId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("periodId", periodId));
+        applySchemaScope(q, periodId);
         List<ErpFinAccountingPeriodStatus> list =
                 daoProvider.daoFor(ErpFinAccountingPeriodStatus.class).findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
@@ -446,6 +458,7 @@ public class ErpFinReportBizModel {
     private int countBillR(Long periodId, String businessType) {
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("periodId", periodId));
+        applyOrgAndSchemaScope(vq, periodId);
         List<ErpFinVoucher> vouchers = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq);
         if (vouchers.isEmpty()) return 0;
         Set<Long> voucherIds = new HashSet<>();
@@ -454,6 +467,44 @@ public class ErpFinReportBizModel {
         bq.addFilter(eq("businessType", businessType));
         bq.addFilter(in("voucherId", voucherIds));
         return daoProvider.daoFor(ErpFinVoucherBillR.class).findAllByQuery(bq).size();
+    }
+
+    // ===================== 多账套/多组织读路径隔离 scope（P1-MA2-095）=====================
+    // 多账套部署下报表按 periodId 聚合会双计；按期间所属组织 + 主账套补 filter 使单账套不双计。
+    // scope 不可解析时（period.orgId 为空等）跳过 filter，保护单组织基线零回归。
+
+    private Long resolvePeriodOrgId(Long periodId) {
+        if (periodId == null) {
+            return null;
+        }
+        ErpFinAccountingPeriod period = daoProvider.daoFor(ErpFinAccountingPeriod.class).getEntityById(periodId);
+        return period != null ? period.getOrgId() : null;
+    }
+
+    private Long resolveOrgSchemaId(Long orgId) {
+        return orgId != null ? AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId) : null;
+    }
+
+    /** 适用于同时含 orgId + acctSchemaId 列的实体（GlBalance/Voucher）。 */
+    private void applyOrgAndSchemaScope(QueryBean q, Long periodId) {
+        Long orgId = resolvePeriodOrgId(periodId);
+        if (orgId == null) {
+            return;
+        }
+        q.addFilter(eq("orgId", orgId));
+        Long schemaId = resolveOrgSchemaId(orgId);
+        if (schemaId != null) {
+            q.addFilter(eq("acctSchemaId", schemaId));
+        }
+    }
+
+    /** 适用于仅含 acctSchemaId 列的实体（AccountingPeriodStatus）。 */
+    private void applySchemaScope(QueryBean q, Long periodId) {
+        Long orgId = resolvePeriodOrgId(periodId);
+        Long schemaId = resolveOrgSchemaId(orgId);
+        if (schemaId != null) {
+            q.addFilter(eq("acctSchemaId", schemaId));
+        }
     }
 
     /** 科目大类 → 资产负债表段（ASSET/LIABILITY/EQUITY），损益类返回 null。 */

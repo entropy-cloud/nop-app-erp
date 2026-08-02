@@ -204,4 +204,10 @@ alter table erp_mfg_batch_genealogy add constraint PK_erp_mfg_batch_genealogy pr
 alter table erp_mfg_material_issue_line drop constraint PK_erp_mfg_material_issue_line;
 alter table erp_mfg_material_issue_line add constraint PK_erp_mfg_material_issue_line primary key (NOP_TENANT_ID, id);
 
+alter table erp_mfg_work_order drop constraint UK_MFG_WORK_ORDER_CODE_ORG;
+alter table erp_mfg_work_order add constraint UK_MFG_WORK_ORDER_CODE_ORG unique (NOP_TENANT_ID,code,org_id);
 
+                alter table erp_mfg_subcontract_order drop constraint UK_MFG_SUBCONTRACT_ORDER_CODE_ORG;
+alter table erp_mfg_subcontract_order add constraint UK_MFG_SUBCONTRACT_ORDER_CODE_ORG unique (NOP_TENANT_ID,code,org_id);
+
+                

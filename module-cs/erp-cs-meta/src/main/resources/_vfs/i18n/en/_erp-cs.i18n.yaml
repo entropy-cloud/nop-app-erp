@@ -390,7 +390,6 @@ dict:
     erp-cs/ticket-type: Ticket Type
     erp-cs/sla-policy: SLA Policy
     erp-cs/action-type: Action Type
-    erp-cs/doc-status: Doc Status
     erp-cs/survey-channel: Survey Channel
     erp-cs/service-type: Service Type
     erp-cs/contract-type: Contract Type
@@ -436,10 +435,6 @@ dict.option.label:
     ESCALATE: Escalate
     CLOSE: Close
     CANCEL: Cancel
-  erp-cs/doc-status:
-    DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided
   erp-cs/survey-channel:
     EMAIL: Email
     PHONE: Phone

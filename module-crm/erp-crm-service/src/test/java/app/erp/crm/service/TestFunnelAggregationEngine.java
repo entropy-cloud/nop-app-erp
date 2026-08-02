@@ -152,9 +152,9 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
         assertEquals(1, qualM.getLeadCountOut(), "1 lead 流出 QUALIFIED（L1）");
         assertEquals(1, qualM.getLostCount(), "L4 在 QUALIFIED 丢失");
         // 转化率 = 进入 WON 的人数 / QUALIFIED 进入人数 = 1 / 3
-        assertEquals(0.3333, qualM.getConversionRate(), 0.001, "nextStageIn=1 / leadCountIn=3");
+        assertEquals(0.3333, qualM.getConversionRate().doubleValue(), 0.001, "nextStageIn=1 / leadCountIn=3");
         // 流失率 = lostCount / leadCountIn = 1 / 3
-        assertEquals(0.3333, qualM.getDropOffRate(), 0.001);
+        assertEquals(0.3333, qualM.getDropOffRate().doubleValue(), 0.001);
 
         // 丢失原因 TOP N：QUALIFIED 阶段有 1 条丢失（REASON_PRICE）
         assertNotNull(qualM.getLostReasonTop(), "丢失原因 JSON 已生成");
@@ -163,7 +163,7 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
         // WON 阶段：进入 1（L1），无流出，无丢失
         ErpCrmFunnelStageMetrics wonM = findByStageId(metrics, STAGE_WON);
         assertEquals(1, wonM.getLeadCountIn());
-        assertEquals(0, wonM.getConversionRate(), 0.0001, "无下一阶段 → 转化率 0");
+        assertEquals(0, wonM.getConversionRate().doubleValue(), 0.0001, "无下一阶段 → 转化率 0");
     }
 
     @Test
@@ -185,7 +185,7 @@ public class TestFunnelAggregationEngine extends BaseTestCase {
                 logs, Collections.singletonList(l1), stages, lostReasonMap(), 5);
 
         ErpCrmFunnelStageMetrics newM = findByStageId(snapshot.getStageMetrics(), STAGE_NEW);
-        assertEquals(2.0, newM.getAvgDaysInStage(), 0.01, "L1 在 NEW 停留 2 天");
+        assertEquals(2.0, newM.getAvgDaysInStage().doubleValue(), 0.01, "L1 在 NEW 停留 2 天");
     }
 
     @Test

@@ -1,26 +1,64 @@
 package app.erp.pur.service.processor;
 
+import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.pur.dao.entity.ErpPurReturn;
 import app.erp.pur.service.ErpPurConstants;
+import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.posting.PurReturnPostingDispatcher;
 import app.erp.common.service.AbstractApproveProcessor;
+import app.erp.common.service.SoDGuard;
+import io.nop.api.core.exceptions.ErrorCode;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
+import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 /**
  * ErpPurReturn approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractApproveProcessor to activate the abstract base class; delegates to ErpPurReturnProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * Overrides the public approve method to replicate the facade flow (outgoing move + flush + posting + commitment release),
+ * calling facade helper methods for each step. Downstream can override via Delta beans.xml with same bean id.
  */
 public class ErpPurReturnApproveProcessor extends AbstractApproveProcessor<ErpPurReturn> {
 
     @Inject
     ErpPurReturnProcessor processor;
 
+    @Inject
+    IOrmTemplate ormTemplate;
+
+    @Inject
+    PurReturnPostingDispatcher postingDispatcher;
+
     @Override
     public ErpPurReturn approve(String id, IServiceContext context) {
-        return processor.approve(id, context);
+        ErpPurReturn returnOrder = requireEntity(id);
+        if (isApproved(returnOrder)) {
+            return returnOrder;
+        }
+        SoDGuard.assertApproverNotCreator(getCreatedBy(returnOrder), currentUserId(), sodErrorCode());
+        processor.validateNotCancelled(returnOrder, context);
+        validateTransitionForApprove(returnOrder, context);
+        processor.validateBusinessRulesForApprove(returnOrder, context);
+
+        ErpInvStockMove move = processor.triggerOutgoingMove(returnOrder, context);
+        ormTemplate.flushSession();
+        boolean posted = postingDispatcher.tryPost(returnOrder);
+
+        returnOrder = dao().getEntityById(id);
+
+        setApproveStatus(returnOrder, approvedStatus());
+        setApprovedBy(returnOrder, currentUserId());
+        setApprovedAt(returnOrder, now());
+        if (posted) {
+            returnOrder.setPosted(true);
+            returnOrder.setPostedAt(now());
+            returnOrder.setPostedBy(currentUserId());
+        }
+        dao().updateEntity(returnOrder);
+
+        processor.runCommitmentReleaseOnReturnHook(returnOrder, context);
+        return returnOrder;
     }
 
     @Override
@@ -30,12 +68,27 @@ public class ErpPurReturnApproveProcessor extends AbstractApproveProcessor<ErpPu
 
     @Override
     protected NopException notFoundException(String id) {
-        return defaultNotFoundException(id);
+        return new NopException(ErpPurErrors.ERR_RETURN_NOT_FOUND)
+                .param(ErpPurErrors.ARG_RETURN_ID, id);
+    }
+
+    @Override
+    protected NopException illegalStatusException(ErpPurReturn entity, String current, String... expected) {
+        return new NopException(ErpPurErrors.ERR_RETURN_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_RETURN_CODE, entity.getCode())
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
+    }
+
+    @Override
+    protected void validateNotCancelled(ErpPurReturn entity, IServiceContext context) {
+        processor.validateNotCancelled(entity, context);
     }
 
     @Override
     protected String getApproveStatus(ErpPurReturn entity) {
-        return entity.getApproveStatus();
+        String status = entity.getApproveStatus();
+        return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
     }
 
     @Override
@@ -71,5 +124,10 @@ public class ErpPurReturnApproveProcessor extends AbstractApproveProcessor<ErpPu
     @Override
     protected String approvedStatus() {
         return ErpPurConstants.APPROVE_STATUS_APPROVED;
+    }
+
+    @Override
+    protected ErrorCode sodErrorCode() {
+        return ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR;
     }
 }

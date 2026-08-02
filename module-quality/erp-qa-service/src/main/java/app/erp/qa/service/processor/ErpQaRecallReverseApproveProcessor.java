@@ -9,9 +9,10 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpQaRecall reverseApprove per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractReverseApproveProcessor to activate the abstract base class; delegates to ErpQaRecallProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpQaRecall reverseApprove per-mutation Processor (plan 2026-07-30-2046-1 R5.7, Pattern B)。
+ * 自包含编排：requireRecall → validateTransitionForReverseApprove → doReverseApprove。
+ * 域特有保真（CRITICAL 偏离）：facade doReverseApprove 设 REJECTED（非基类 SUBMITTED）+ 清 approvedBy/approvedAt，
+ * 经 facade protected helper 精确保留语义（单一真相源）；Pattern B 绕过基类模板，零偏离风险。
  */
 public class ErpQaRecallReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpQaRecall> {
 
@@ -20,7 +21,10 @@ public class ErpQaRecallReverseApproveProcessor extends AbstractReverseApprovePr
 
     @Override
     public ErpQaRecall reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
+        ErpQaRecall recall = processor.requireRecall(id, context);
+        processor.validateTransitionForReverseApprove(recall, context);
+        processor.doReverseApprove(recall, context);
+        return recall;
     }
 
     @Override
@@ -35,36 +39,40 @@ public class ErpQaRecallReverseApproveProcessor extends AbstractReverseApprovePr
 
     @Override
     protected String getApproveStatus(ErpQaRecall entity) {
+        // not reached: Pattern B custom public override
         return null;
     }
 
     @Override
     protected void setApproveStatus(ErpQaRecall entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        // not reached: Pattern B custom public override
     }
 
     @Override
     protected void setApprovedBy(ErpQaRecall entity, String userId) {
-        // not reached: main method delegates to monolithic Processor
+        // not reached: Pattern B custom public override
     }
 
     @Override
     protected void setApprovedAt(ErpQaRecall entity, java.sql.Timestamp ts) {
-        // not reached: main method delegates to monolithic Processor
+        // not reached: Pattern B custom public override
     }
 
     @Override
     protected boolean isRejected(ErpQaRecall entity) {
+        // not reached: Pattern B custom public override
         return false;
     }
 
     @Override
     protected String approvedStatus() {
+        // not reached: Pattern B custom public override
         return null;
     }
 
     @Override
     protected String submittedStatus() {
+        // not reached: Pattern B custom public override
         return null;
     }
 }

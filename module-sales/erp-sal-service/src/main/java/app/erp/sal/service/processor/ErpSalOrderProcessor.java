@@ -11,6 +11,7 @@ import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.common.service.SoDGuard;
 import app.erp.sal.service.entity.CreditLimitChecker;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
@@ -65,75 +66,46 @@ public class ErpSalOrderProcessor {
     @Inject
     IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
 
+    @Inject
+    ErpSalOrderSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpSalOrderApproveProcessor approveProcessor;
+
+    @Inject
+    ErpSalOrderRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpSalOrderReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpSalOrderWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpSalOrderCancelProcessor cancelProcessor;
+
     public ErpSalOrder submitForApproval(String id, IServiceContext context) {
-        ErpSalOrder order = requireOrder(id, context);
-        validateNotCancelled(order, context);
-        validateTransitionForSubmit(order, context);
-        validateBusinessRulesForSubmit(order, context);
-        doSubmit(order, context);
-        return order;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpSalOrder withdrawApproval(String id, IServiceContext context) {
-        ErpSalOrder order = requireOrder(id, context);
-        validateNotCancelled(order, context);
-        validateTransitionForWithdraw(order, context);
-        doWithdrawSubmit(order, context);
-        return order;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpSalOrder approve(String id, IServiceContext context) {
-        ErpSalOrder order = requireOrder(id, context);
-        if (order.isApproved()) {
-            return order;
-        }
-        validateNotCancelled(order, context);
-        validateTransitionForApprove(order, context);
-        validateBusinessRulesForApprove(order, context);
-        auditPricingSourceDistribution(order, context);
-        doApprove(order, context);
-        // sales 承付 commit hook（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #1）：
-        // 订单审核后置 → 生成 COMMITMENT 凭证（billType=SALES_ORDER_COMMITMENT）。config-gated（erp-fin.budget-commitment-enabled 默认 false）。
-        runCommitmentCommitHook(order, context);
-        // 跨公司 SO intercompany 钩子（plan 2026-07-24-1351-2，multi-company.md §跨公司 PO/SO 触发路径）：
-        // 订单审核后置 → 跨法人时生成配对内部销售/采购凭证。config-gated；非阻塞（对齐 inventory confirm 范式）。
-        runIntercompanyApproveHook(order, context);
-        return order;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpSalOrder reject(String id, IServiceContext context) {
-        ErpSalOrder order = requireOrder(id, context);
-        validateNotCancelled(order, context);
-        validateTransitionForReject(order, context);
-        doReject(order, context);
-        return order;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpSalOrder reverseApprove(String id, IServiceContext context) {
-        ErpSalOrder order = requireOrder(id, context);
-        if (order.isRejected()) {
-            return order;
-        }
-        validateTransitionForReverseApprove(order, context);
-        // sales 承付 release-on-cancel hook（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #2）：
-        // 订单反审核 → 红冲原 COMMITMENT 凭证。config-gated；无原凭证静默跳过（容错路径）。
-        runCommitmentReleaseHook(order, context);
-        // 跨公司 SO intercompany 红冲钩子（plan 2026-07-24-1351-2）：反审核 → 红冲原配对 intercompany 凭证。config-gated；非阻塞。
-        runIntercompanyReverseHook(order, context);
-        doReverseApprove(order, context);
-        return order;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpSalOrder cancel(String orderId, IServiceContext context) {
-        ErpSalOrder order = requireOrder(orderId, context);
-        validateTransitionForCancel(order, context);
-        // sales 承付 release-on-cancel hook（plan 2026-07-24-1351-3，budget.md §sales 承付扩展 §接入点 #2）：
-        // 订单作废 → 红冲原 COMMITMENT 凭证。config-gated；无原凭证静默跳过（容错路径）。
-        runCommitmentReleaseHook(order, context);
-        // 跨公司 SO intercompany 红冲钩子（plan 2026-07-24-1351-2）：作废 → 红冲原配对 intercompany 凭证。config-gated；非阻塞。
-        runIntercompanyReverseHook(order, context);
-        doCancel(order, context);
-        return order;
+        return cancelProcessor.cancel(orderId, context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
@@ -210,6 +182,7 @@ public class ErpSalOrderProcessor {
     }
 
     protected void doApprove(ErpSalOrder order, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(order.getCreatedBy(), currentUserId(), ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR);
         order.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());
         order.setApprovedAt(CoreMetrics.currentTimestamp());

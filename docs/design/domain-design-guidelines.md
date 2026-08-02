@@ -17,6 +17,8 @@
 
 每个域只负责自己核心的业务能力，不越界处理其他域的职责：
 
+> 完整 18 业务域职责矩阵。第二批扩展域（CRM/CS/HR/APS/Contract/DRP/Logistics/B2B）与 notify 跨域通知派发子系统详见各自 `docs/design/<domain>/README.md`。
+
 | 域 | 核心职责 | 不负责 |
 |---|----------|--------|
 | master-data | 主数据维护（物料/SKU/往来单位/仓库/科目） | 业务单据、余额计算 |
@@ -29,6 +31,15 @@
 | projects | 项目、任务、工时 | 成本归集凭证 |
 | maintenance | 设备维护、计划、停机 | 资产折旧、备件库存出库 |
 | quality | 质检、NCR、CAPA | 退货/返工执行 |
+| crm | 线索/商机管理、漏斗阶段、营销活动（UTM）、活动/日历 | 报价单/订单/开票（sales 域）；客户主数据（master-data） |
+| cs | 客服工单、SLA 策略、知识库、满意度回访 | 设备维护执行（maintenance）；质量不合格处理（quality） |
+| hr | 员工/合同/考勤/工时、薪酬核算、休假、招聘 | 费用报销（finance）；培训/绩效（远期扩展） |
+| aps | 工序级有限产能排产（OperationOrder）、排产方案 | MRP 物料需求计算（manufacturing）；实际报工（manufacturing JobCard） |
+| contract | 合同起草/版本/审批/电子签、开票计划、用量计费 | 订单级执行（purchase/sales）；法律条款自动审核 |
+| drp | 多仓库补货计划、净需求计算、补货建议 | 制造端 MRP（manufacturing）；实际库存移动（inventory） |
+| logistics | 发运单、承运商配置、承运商网关 SPI、包裹/面单 | 库存出库写账（inventory/sales） |
+| b2b | EDI 事务/信封、ASN 入站、代码映射、EDI 日志 | 库存写入（ASN 仅通知，入库由 purchase 决定）；核心单据审核过账 |
+| notify | 跨域通知派发（通知模板/收件人/日志/已读） | 业务单据状态机（由各业务域维护） |
 
 ### 1.2 松耦合原则
 
@@ -220,13 +231,7 @@
 
 ### 6.3 危险操作审计
 
-所有危险操作必须记录审计日志：
-
-| 操作 | 审计内容 |
-|------|----------|
-| 反审核 | 操作人、时间、原状态、冲销凭证号 |
-| 反结账 | 操作人、时间、期间、审批人 |
-| 红字冲销 | 操作人、时间、原单据号、冲销原因 |
+所有危险操作（反审核/作废/反结账/红字冲销/资产处置等）必须记录审计日志。**权威定义**（操作清单、权限要求、审计内容）见 `roles-and-permissions.md §高危操作权限` + `§审批与审计要求`（单一 owner），本节不重复以避免多维护点漂移。
 
 ---
 
@@ -302,13 +307,7 @@ throw new RuntimeException("订单不存在"); // 禁止
 
 ### 8.4 危险操作审计
 
-除平台内置审计外，以下危险操作需额外定义业务级审计事件（记录操作理由、审批人等业务语义）：
-
-| 操作 | 额外审计内容 |
-|------|------------|
-| 反审核 | 操作人、时间、原状态、冲销凭证号、操作理由 |
-| 反结账 | 操作人、时间、期间、审批人、操作理由 |
-| 管理员强操作 | 操作人、时间、变更前后数据、操作理由 |
+除平台内置审计（nop-sys，见 §8.1）外，危险操作需额外记录业务级审计事件（操作理由、审批人等业务语义）。**权威操作清单、权限要求与审计内容**见 `roles-and-permissions.md §高危操作权限` + `§审批与审计要求`（单一 owner）；本节仅声明「业务级审计事件必须存在」这一要求，不重复操作清单。
 
 ---
 
@@ -345,21 +344,24 @@ throw new RuntimeException("订单不存在"); // 禁止
 ### 10.2 期间状态机
 
 ```
-NOT_OPENED → OPEN → CLOSING → CLOSED
+NEVER_OPENED → OPEN → CLOSING → CLOSED → CLOSED_FINAL
 ```
 
 | 状态 | 含义 |
 |------|------|
-| `NOT_OPENED` | 预建但未开启的期间（初始态） |
+| `NEVER_OPENED` | 预建但未开启的期间（初始态） |
 | `OPEN` | 当前可操作期间 |
 | `CLOSING` | 正在结账中（禁止新单据） |
-| `CLOSED` | 已结账（禁止任何修改） |
+| `CLOSED` | 已结账（待复核，禁止任何修改） |
+| `CLOSED_FINAL` | 已复核（最终锁定） |
+
+> 5 态对齐 ORM dict `erp-fin/period-status` 与 `ErpFinConstants.PERIOD_STATUS_*`（详见 `finance/state-machine.md`）。
 
 ### 10.3 期间操作约束
 
 - 同一时刻只能有一个 `OPEN` 期间（当前期间）
 - 开启新期间前必须先结账当前期间
-- 反结账只能从 `CLOSED` 回退到 `OPEN`，需管理员权限
+- 反结账只能从 `CLOSED_FINAL` 回退到 `OPEN`，受 config kill-switch `erp-fin.reverse-close-approval-required` 门控（默认 true 直接拒绝，详见 `finance/period-close.md §反结账审批`）
 - 跨域期间校验：任何业务操作前校验 `businessDate` 所属期间是否为 `OPEN`
 
 ---
@@ -549,20 +551,20 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 | purchase/sales | 订单/出入库/发票/收付款 | `DRAFT` / `CANCELLED`（docStatus）+ `UNSUBMITTED` / `SUBMITTED` / `APPROVED` / `REJECTED`（approveStatus） | 通用业务单据，docStatus 与 approveStatus 双轴独立（新建单据 docStatus=DRAFT, approveStatus=UNSUBMITTED） |
 | inventory | 移动单/盘点单/拣货单 | `DRAFT` / `CONFIRMED` / `DONE` / `CANCELLED` | 作业类单据（无审批轴，作业确认即生效） |
 | finance | 凭证 | `DRAFT` / `POSTED` / `CANCELLED` | 凭证特殊：无 SUBMITTED，DRAFT 直接过账到 POSTED |
-| finance | 会计期间 | `NOT_OPENED` / `OPEN` / `CLOSING` / `CLOSED` | 时间窗口状态机（见 §十） |
+| finance | 会计期间 | `NEVER_OPENED` / `OPEN` / `CLOSING` / `CLOSED` / `CLOSED_FINAL` | 时间窗口状态机（对齐 ORM dict `erp-fin/period-status` 与 `ErpFinConstants.PERIOD_STATUS_*`；CLOSED=已结账待复核，CLOSED_FINAL=已复核最终锁定，见 §十与 `finance/state-machine.md`） |
 | assets | 资产卡片 | `DRAFT` / `IN_SERVICE` / `IDLE` / `SCRAPPED` / `SOLD` | 资产生命周期 |
 | manufacturing | 工单 | `DRAFT` / `SUBMITTED` / `NOT_STARTED` / `STOCK_PARTIAL` / `STOCK_RESERVED` / `IN_PROCESS` / `COMPLETED` / `STOPPED` / `CLOSED` / `CANCELLED` | 制造执行链（与 `manufacturing/state-machine.md` `erp-mfg/work-order-status` 10 态字典一致；质检门控经 config-gated 钩子，不加 INSPECTING 字典态，见 plan 2237-1） |
 | projects | 项目/任务 | `DRAFT` / `OPEN` / `ON_HOLD` / `COMPLETED` / `CANCELLED` | 项目生命周期。`ON_HOLD` 为项目独有暂停态（可恢复），见 `projects/state-machine.md` |
-| quality | 质检/NCR/CAPA | 质检单 `PENDING` / `ACCEPTED` / `CONDITIONAL` / `REJECTED`；NCR `OPEN` / `IN_REVIEW` / `RESOLVED` / `ESCALATED_TO_RECALL` / `CANCELLED`；CAPA `OPEN` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程（与 `quality/state-machine.md` 一致；3 类单据各有独立状态机，非单一 docStatus）。M-4（plan 2026-07-20-2200-1）修正：§16.2 早期版本误用 `DRAFT/IN_PROGRESS/COMPLETED/CANCELLED` 通配所有质量单据——实际质检单初始态是 `PENDING` 而非 `DRAFT`，且三类单据状态集不同 |
+| quality | 质检/NCR/CAPA | 质检单 `PENDING` / `ACCEPTED` / `CONDITIONAL` / `REJECTED`；NCR `OPEN` / `IN_REVIEW` / `RESOLVED` / `ESCALATED_TO_RECALL` / `CANCELLED`；CAPA `OPEN` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 质量流程（与 `quality/state-machine.md` 一致；3 类单据各有独立状态机，非单一 docStatus）。修正：§16.2 早期版本误用 `DRAFT/IN_PROGRESS/COMPLETED/CANCELLED` 通配所有质量单据——实际质检单初始态是 `PENDING` 而非 `DRAFT`，且三类单据状态集不同 |
 | maintenance | 工单/请求 | `DRAFT` / `SCHEDULED` / `IN_PROGRESS` / `COMPLETED` / `CANCELLED` | 维护执行 |
 | crm | 线索 | `NEW` / `QUALIFIED` / `CONVERTED` / `LOST` / `CANCELLED` | 线索生命周期（与 `crm/state-machine.md` `erp-crm/lead-status` 一致；不含工单状态轴） |
 | cs | 工单 | `NEW` / `ASSIGNED` / `IN_PROGRESS` / `RESOLVED` / `CLOSED` / `CANCELLED` | 客服工单流程（与 `customer-service/README.md` `erp-cs/ticket-status` 一致；SLA 从 NEW 计时到 RESOLVED） |
 | hr | 请假/工时单 | `DRAFT` / `SUBMITTED` / `APPROVED` / `REJECTED` / `CANCELLED` | HR 审批类单据（与 `human-resource/README.md` 一致；招聘工单另用 `OPEN`/`SCREENING`/`INTERVIEW`/`OFFERED`/`HIRED`/`REJECTED`/`CLOSED`，员工在职状态 `employmentStatus` 用 `ACTIVE`/`PROBATION`/`RESIGNED`/`TERMINATED`/`RETIRED`，二者均非 docStatus） |
-| logistics | 发运单 | `DRAFT` / `ADVISED` / `DISPATCHED` / `IN_TRANSIT` / `DELIVERED` / `CANCELLED` | 物流发运流程（与 `logistics/state-machine.md` 一致）。M-4（plan 2026-07-20-2200-1）修正：§16.2 早期版本仅列 5 态漏 `ADVISED`（已预约）/`DISPATCHED`（已派发）——实际为 6 态 |
+| logistics | 发运单 | `DRAFT` / `ADVISED` / `DISPATCHED` / `IN_TRANSIT` / `DELIVERED` / `CANCELLED` | 物流发运流程（与 `logistics/state-machine.md` 一致）。修正：§16.2 早期版本仅列 5 态漏 `ADVISED`（已预约）/`DISPATCHED`（已派发）——实际为 6 态 |
 | b2b | EDI 事务 | `TO_SEND` / `SENT` / `ACKNOWLEDGED` / `RECEIVED` / `ARCHIVED` / `TO_CANCEL` / `CANCELLED` | EDI 报文生命周期（与 `b2b/state-machine.md` 一致；出/入站共用 docStatus） |
 | contract | 合同 | `DRAFT` / `NEGOTIATION` / `ACTIVE` / `SUSPENDED` / `EXPIRED` / `TERMINATED` | 合同全生命周期（与 `contract/state-machine.md` 一致；版本状态 `isCurrent`/`FINALIZED`/`SIGNED` 单独管理） |
-| drp | DRP 计划 | `DRAFT` / `COMPUTED` / `APPROVED` / `EXECUTED` | 分销需求计划（与 `drp/state-machine.md` 一致；明细行 `SUGGESTED`/`CONFIRMED` 是行级状态，非 docStatus）。M-4（plan 2026-07-20-2200-1）修正：§16.2 早期版本漏 `EXECUTED` 终态（补货单全部生成完毕）——实际为 4 态 |
-| aps | 工序订单 | `DRAFT` / `PLANNED` / `IN_PROGRESS` / `FINISHED` / `CANCELLED` | 排产执行（与 `aps/state-machine.md` `erp-aps/operation-order-status` 一致）。M-4（plan 2026-07-20-2200-1）修正：§16.2 早期版本误用 `COMPLETED`——实际工序订单完成态为 `FINISHED`，避免与 `work-order-status.COMPLETED` 工单完成态歧义 |
+| drp | DRP 计划 | `DRAFT` / `COMPUTED` / `APPROVED` / `EXECUTED` | 分销需求计划（与 `drp/state-machine.md` 一致；明细行 `SUGGESTED`/`CONFIRMED` 是行级状态，非 docStatus）。修正：§16.2 早期版本漏 `EXECUTED` 终态（补货单全部生成完毕）——实际为 4 态 |
+| aps | 工序订单 | `DRAFT` / `PLANNED` / `IN_PROGRESS` / `FINISHED` / `CANCELLED` | 排产执行（与 `aps/state-machine.md` `erp-aps/operation-order-status` 一致）。修正：§16.2 早期版本误用 `COMPLETED`——实际工序订单完成态为 `FINISHED`，避免与 `work-order-status.COMPLETED` 工单完成态歧义 |
 
 ### 16.3 approveStatus 取值约定（仅带审批的单据）
 
@@ -615,6 +617,86 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 
 ---
 
+## 十六·A、API 命名约定（契约层单一真相源）
+
+> **本节定位**：API 契约层（BizModel/`I*Biz` 方法名、参数、审批动作集）的跨域命名单一真相源。来源：A3.6 API 契约一致性审计（P1-MA3-047）。状态机命名见 §16，实体/表/字典命名见 §19。
+>
+> **范围边界**：本节约束**新增**实体/动作的命名。**存量偏离实体不强制重命名**（重命名破坏 AMIS 调用 + 测试 + 向后兼容，归 successor，见下方"已知偏离登记"）。
+
+### 16A.1 审批标准 5 动作集
+
+带审批流的单据实体，业务动作集**统一采用**以下 5 动作 + 参数约定（Pattern A）：
+
+| 动作名 | 语义 | 目标 approveStatus |
+|--------|------|-------------------|
+| `submitForApproval` | 提交审批 | UNSUBMITTED → SUBMITTED |
+| `approve` | 审批通过 | SUBMITTED → APPROVED |
+| `reject` | 审批拒绝 | SUBMITTED → REJECTED |
+| `reverseApprove` | 反审核（撤销审批） | APPROVED → REJECTED（见 §16.4） |
+| `withdrawApproval` | 撤回审批（提交人撤回） | SUBMITTED → UNSUBMITTED |
+
+**参数约定**：5 动作统一签名 `(@Name("id") String id, IServiceContext context)`。
+
+> 审批集**对称要求**：声明审批的单据应**完整提供 5 动作**，不允许只提供 `submit`+`approve` 子集。确需子集（如配置类单据仅审批不需反审）须在域 README 注明原因。
+
+### 16A.2 状态迁移动词矩阵
+
+跨域状态迁移用动词应遵循下表语义边界。**新增动作优先选用 bare 动词**（无实体后缀），仅在 bare 动词与同实体其他动作歧义时加限定后缀。
+
+| 语义 | 标准动词 | 语义边界 | 已知跨域变体（历史，不重命名） |
+|------|---------|---------|------------------------------|
+| 开始 | `start` | 进入执行态（工单开工/项目立项/施工开始） | `startConstruction`/`startProject`/`startTask`/`startRepair` |
+| 完成 | `complete` | 到达终态（完工/结项） | `completeJob`/`completeTask`/`completeShipment`/`reportCompletion` |
+| 过账/确认生效 | `post` | 生成会计凭证或确认业务生效 | `markPaid`（hr 唯一，见 16A.4）/ `postNcr`/`postSettlement` |
+| 反向/红冲 | `reverse` | 生成红字反向单据/凭证（业务纠错） | `reverse` 重载"撤销审批"语义时用 `reverseApprove` 区分（见 §16.4） |
+| 结账 | `close` + 限定 | 关闭时间窗口/单据 | `closePeriod`/`finalizePeriod`/`closeProject` |
+| 取消 | `cancel` | 单据作废至 CANCELLED | — |
+
+> **`reverse` 语义二义性警告**：`reverse` 在本项目同时表达"撤销审批"（`reverseApprove`）与"红字冲销"（业务纠错）。**新增动作必须用 `reverseApprove` 表达撤销审批，`reverse` 保留给红字冲销**。`reverse` 前缀加实体/操作限定（如 `reverseVoucher`/`reverseCostAdjust`）时仍归"红字冲销"语义。
+
+### 16A.3 参数命名规则：`id` vs `<entity>Id`
+
+| 场景 | 参数名 | 类型 |
+|------|--------|------|
+| 单据头实体操作（审批/状态迁移/取消） | `id` | **`String`**（对齐 `ICrudBiz.delete(String id)` 平台惯例） |
+| 跨实体引用参数（如按 orderId 查询行） | `<entity>Id`（如 `orderId`） | 与被引用实体主键一致 |
+| 批量操作 | `ids` | `Collection<String>` |
+
+> **新增单据头动作统一用 `@Name("id") String id`**。存量 Long id 实体不强制改（改 Long→String 破坏 BizModel 签名 + 测试），登记在"已知偏离"。
+
+### 16A.4 已知偏离登记（存量，不重命名）
+
+下列偏离在 A3.6 审计时已存在，**本约定不强制重命名**（重命名属 successor，触发条件见 plan `2026-07-31-0310-2` Deferred 节）。仅登记以便集成方知晓：
+
+| 偏离类型 | 涉及实体/动作 | 计数 | 原因注记 |
+|---------|--------------|------|---------|
+| `submit` 而非 `submitForApproval` | ~12 实体 | 12 | 早期生成沿用；新实体须用 `submitForApproval` |
+| `submitForReview` | `ErpHrSalarySimulation` | 1 | hr 唯一变体（复核语义） |
+| `Long id` 而非 `String id`（单据头动作） | ~13 实体（purchase/sales/mfg 部分） | 13 | 早期生成；新实体须用 `String id` |
+| `cancel` 参数名实体化（`orderId`/`paymentId`/`invoiceId`/...） | ~18 种实体键名 | 18 | 早期生成；新实体统一 `id` |
+| `markPaid` 而非 `post` | `IErpHrSalaryBiz.markPaid` | 1 | hr 唯一"过账/支付"动词；跨域集成（hr→finance voucher `post` Facade）语义入口与目标动词不一致，集成方须知晓 |
+| 审批集不对称（仅部分 5 动作子集） | `ErpInvLandedCost`/`ErpHrDevelopmentPlan`/`ErpHrTimesheet` 等 | 若干 | 早期生成；新审批单据须完整 5 动作集 |
+| `ErpMdSupplierApproval` 复用 `approve`/`reject` | 供应商准入生命周期（DRF→APP→PRS→SUS→REJ） | 1 | 非单据审批，是主数据生命周期——命名碰撞风险，新主数据生命周期动作避免复用审批动词 |
+
+### 16A.5 批量操作对称要求
+
+新增批量操作（`batch*`）须评估**对称覆盖**：
+
+- 已有：`batchApprove`（purchase/sales）、`batchPassInspection`（quality）、`batchScheduleForward`（aps）
+- **缺口**（successor）：`batchReject`/`batchCancel`/`batchReverse`/`batchPost`——UI 存在批量审批但无对称批量拒绝/取消。
+
+> 新增 `batch*` 动作统一签名：`(@Name("ids") Collection<String> ids, IServiceContext context) → BatchOperationResult`（对齐现有 4 个 batch 操作形状）。
+
+### 16A.6 集成方须知
+
+外部集成方调用 nop-app-erp 时须知晓：
+
+1. **RPC（`*Api.java`）= data-CRUD 通道**；业务动作（approve/cancel/post 等）**仅 GraphQL/xbiz 可达**。详见 `app-overview.md §RPC 通道语义`。
+2. 跨实体调用前查阅本节"已知偏离登记"，避免假设统一动词/参数。
+3. 本节约束**增量**；存量偏离在 successor 重命名前持续存在。
+
+---
+
 ## 十七、可配置点清单
 
 本节统一列出全部业务可配置项、默认值、可选值和作用域。
@@ -658,8 +740,8 @@ NOT_OPENED → OPEN → CLOSING → CLOSED
 | `erp-inv.negative-stock-alert-days` | 3 | 整数 | 全局 | 负库存告警阈值 |
 | `erp-inv.scrap-operation-type` | SCRAP | 作业类型编码 | 全局/按物料分类 | 报废出库作业类型 |
 | `erp-sal.credit-check-level` | SOFT_WARNING | SOFT_WARNING/SPECIAL_APPROVAL/HARD_BLOCK | 全局/按客户 | 信用额度检查级别 |
-| `erp-fin.auto-post-on-close` | true | true/false | 全局 | 结账时自动过账 |
-| `erp-fin.auto-depreciation` | true | true/false | 全局 | 结账时自动折旧 |
+| `erp-fin.auto-post-on-close` | false | true/false | 全局 | 结账前置检查门控（false=未过账阻断，对齐 `ErpFinConstants.CONFIG_AUTO_POST_ON_CLOSE`） |
+| `erp-fin.auto-depreciation-on-close` | true | true/false | 全局 | 结账时自动折旧（对齐 `ErpFinConstants.CONFIG_AUTO_DEPRECIATION_ON_CLOSE`） |
 | `erp-fin.reconcile-precision` | 0.01 | 正数 | 全局 | 核销金额精度 |
 | `erp-fin.allow-over-reconcile` | false | true/false | 全局 | 允许超额核销 |
 | `erp-md.uom-conversion-strict` | true | true/false | 全局/按物料 | 单位换算严格模式 |

@@ -194,24 +194,10 @@
         }
 
 
-        private String _remark;
-
-    
-        @PropMeta(propId=26)
-    
-        public String getRemark(){
-            return _remark;
-        }
-
-        public void setRemark(String value){
-            this._remark = value;
-        }
-
-
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=30)
+        @PropMeta(propId=19)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -225,7 +211,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=31)
+        @PropMeta(propId=20)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -233,6 +219,20 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=27)
+    
+        public String getRemark(){
+            return _remark;
+        }
+
+        public void setRemark(String value){
+            this._remark = value;
         }
 
 

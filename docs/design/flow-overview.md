@@ -279,39 +279,42 @@ IErpFinAcctDocProvider.createFacts()
 
 ### 3.1 审批状态映射（approveStatus）
 
-> 本表只描述审批轴（approveStatus）。`CANCELLED` 属于 docStatus 独立轴，见 §3.2。`SUBMITTED` 为"已提交待审批"态（提交到工作流后、审核人处理前），`domain-design-guidelines.md §16.3` 有统一定义。
+> **取值权威源**：approveStatus 各域取值集合（`UNSUBMITTED` / `SUBMITTED` / `APPROVED` / `REJECTED`）见 `domain-design-guidelines.md §16.3`（单一权威目录）；`CANCELLED` 属于 docStatus 独立轴，见 §3.2 指针。本节不重复逐单据字面值枚举，仅描述跨域派生语义。
 
-| 单据类型 | 初始状态 | 中间状态 | 终态 |
-|----------|----------|----------|------|
-| 采购订单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
-| 采购入库单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
-| 采购发票 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
-| 付款单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
-| 销售订单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
-| 销售出库单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
-| 销售发票 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
-| 收款单 | UNSUBMITTED | SUBMITTED | APPROVED / REJECTED |
-
-**收付款状态**（派生）：采购侧 UNPAID → PARTIAL → PAID；销售侧 UNRECEIVED → PARTIAL → RECEIVED。
+**跨域派生语义**：采购/销售 8 类单据（订单/出入库/发票/收付款）共享同一 approveStatus 轴；收付款状态（派生视图，非独立状态机）——采购侧 UNPAID → PARTIAL → PAID；销售侧 UNRECEIVED → PARTIAL → RECEIVED（持久化值见各域 orm.xml）。
 
 ### 3.2 业务生命周期映射（docStatus）
 
-| 单据类型 | 初始状态 | 中间状态 | 终态 |
-|----------|----------|----------|------|
-| 采购/销售 订单/出入库/发票/收付款 | DRAFT | — | CANCELLED |
-| 库存移动单 | DRAFT | CONFIRMED | DONE / CANCELLED |
-| 库存盘点单 | DRAFT | COUNTING | DONE / CANCELLED |
-| 会计凭证 | DRAFT | — | POSTED / CANCELLED |
-| 资产卡片 | DRAFT | IN_SERVICE, IDLE | SCRAPPED / SOLD |
-| 折旧计划条目 | PENDING | — | EXECUTED / REVERSED |
+> **取值权威源**：各域 docStatus 取值集合见 `domain-design-guidelines.md §16.2`（单一权威目录，按域×单据类型逐行列明）。本节不重复逐单据字面值枚举，仅描述跨域映射语义。
+
+**跨域映射语义**：采购/销售 订单/出入库/发票/收付款共享 `DRAFT → CANCELLED` 二态（终态作废）；inventory 作业单走 `DRAFT → CONFIRMED/DONE`（无审批轴）；finance 凭证特殊走 `DRAFT → POSTED`（无 SUBMITTED 中间态）。各单据具体状态值与迁移规则见 §16.2 + 各域 `state-machine.md`。
 
 ### 3.3 制造域状态映射（docStatus）
 
-| 单据类型 | 初始状态 | 中间状态 | 终态 |
-|----------|----------|----------|------|
-| 工单 | DRAFT | SUBMITTED → NOT_STARTED →（STOCK_PARTIAL/STOCK_RESERVED）→ IN_PROCESS（±STOPPED） | COMPLETED / CLOSED / CANCELLED |
+> **取值权威源**：manufacturing 工单 docStatus 取值集合（10 态）见 `domain-design-guidelines.md §16.2`（单一权威目录）。本节不重复字面值枚举。
 
-> 工单状态机共 10 态，权威定义见 `docs/design/manufacturing/state-machine.md`（无 INSPECTING 态——质检判定经 config-gated 钩子在完工入库前阻塞/放行，不引入独立工单状态）。
+**关键语义**：工单状态机共 10 态，权威定义见 `docs/design/manufacturing/state-machine.md`（无 INSPECTING 态——质检判定经 config-gated 钩子在完工入库前阻塞/放行，不引入独立工单状态）。
+
+### 3.4 扩展域状态映射（指针表）
+
+> §3.1-§3.3 覆盖核心 5 域 + manufacturing。本节补齐其余 12 个扩展域状态机引用，使全局状态视图覆盖全部 18 域。**完整状态值目录以** `domain-design-guidelines.md §16.2` **为单一权威**——本表「关键状态摘要」列仅给每域 1-3 行起始/终态用于快速定位（非完整目录），完整状态值集合与迁移规则见各域 `state-machine.md` + §16.2。
+
+| 域 | 核心状态轴 | 关键状态摘要 | 权威定义 |
+|---|---|---|---|
+| assets | 资产卡片 docStatus | DRAFT → IN_SERVICE（含 IDLE 暂停态）→ SCRAPPED / SOLD | `assets/state-machine.md` |
+| projects | 项目/任务 docStatus | DRAFT → OPEN（含 ON_HOLD 暂停态）→ COMPLETED / CANCELLED | `projects/state-machine.md` |
+| quality | 质检单 / NCR / CAPA 三轴 | 质检单 PENDING → ACCEPTED/CONDITIONAL/REJECTED；NCR OPEN → IN_REVIEW → RESOLVED（含 ESCALATED_TO_RECALL）；CAPA OPEN → IN_PROGRESS → COMPLETED | `quality/state-machine.md` |
+| maintenance | 维护访问 / 维护请求 docStatus | DRAFT → SCHEDULED → IN_PROGRESS → COMPLETED（或 CANCELLED）；设备状态联动停机记录 | `maintenance/state-machine.md` |
+| crm | 线索/商机 docStatus + 漏斗阶段（独立维度） | NEW → QUALIFIED → CONVERTED / LOST / CANCELLED；阶段（stageId）由 Stage 顺序驱动前移 | `crm/state-machine.md` |
+| cs | 工单 docStatus | NEW → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED（任一阶段可 CANCELLED）；SLA 从 IN_PROGRESS 计时到 RESOLVED | `customer-service/state-machine.md` |
+| hr | 休假/工时单 docStatus + 招聘工单 + 员工用工状态 | 休假 DRAFT → SUBMITTED → APPROVED / REJECTED；招聘 OPEN → SCREENING → INTERVIEW → OFFERED → HIRED；员工 employmentStatus ACTIVE/PROBATION → RESIGNED/TERMINATED/RETIRED | `human-resource/state-machine.md` |
+| aps | 工序工单 docStatus | DRAFT → PLANNED → IN_PROGRESS → FINISHED（或 CANCELLED） | `aps/state-machine.md` |
+| contract | 合同 docStatus + 版本状态 | DRAFT → NEGOTIATION → ACTIVE（含 SUSPENDED 暂停）→ EXPIRED / TERMINATED；版本状态 isCurrent/FINALIZED/SIGNED 独立管理 | `contract/state-machine.md` |
+| drp | DRP 计划 docStatus + 明细行状态 | 计划 DRAFT → COMPUTED → APPROVED → EXECUTED；明细行 SUGGESTED → CONFIRMED（行级状态） | `drp/state-machine.md` |
+| logistics | 发运单 docStatus + 运费结算状态 | DRAFT → ADVISED → DISPATCHED → IN_TRANSIT → DELIVERED（或 CANCELLED）；运费 PENDING → SETTLED | `logistics/state-machine.md` |
+| b2b | EDI 事务 docStatus + ASN 状态 | EDI TO_SEND → SENT → ACKNOWLEDGED（出站）/ RECEIVED → ARCHIVED（入站）；ASN RECEIVED → MATCHED → RECEIVED_TO_STOCK | `b2b/state-machine.md` |
+
+> **跨域状态映射**（哪个上游域 status 触发哪个下游域动作）见 `domain-design-guidelines.md §16.5`（跨域状态映射唯一权威表）。各域 `docStatus`/`approveStatus` 取值集合见 `domain-design-guidelines.md §16.2/§16.3`，本表不重复字面值。
 
 ---
 
@@ -497,6 +500,8 @@ IErpFinAcctDocProvider.createFacts()
 | 单据审核 + 库存变更 | 跨域事务（REQUIRED） | 强一致性 |
 | 单据审核 + 凭证生成 | 同步调用（REQUIRES_NEW 独立事务隔离） | 强一致性（跨域失败隔离） |
 | 期末结账 | 单库事务（REQUIRED） | 强一致性 |
+
+> **CloseVoucherWriter 幂等约束**：`CloseVoucherWriter.writeVoucher`（期末结账/汇兑重估/年度结转/坏账准备等直写凭证路径）本身无字面 `(billHeadCode, businessType)` UK 兜底，亦无独立 application-layer 幂等 pre-check。其并发安全**完全由期间乐观锁（period version guard）承接**：同期间并发 close 经期间实体 `version` 冲突序列化，一个事务回滚，不会产生重复 close 凭证。独立的字面 UK 为 deferred 项（红冲同键 2 行 / 多账套同键 N 行 / 软删除重插三重冲突，字面 UK 已裁定不可实施），归后续解决方向 A/B/C/D。当前缓解充分（无活跃数据破坏，period version guard 已序列化并发 close）。
 
 ### 6.2 兜底机制
 

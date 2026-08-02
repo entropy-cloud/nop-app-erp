@@ -8,3 +8,4 @@ erp-fin:
   reverse-close-approval-required: false
   auto-depreciation-on-close: false
   auto-post-on-close: true
+  bad-debt-allowance-gate-enabled: false

@@ -4,7 +4,9 @@ package app.erp.sal.service.entity;
 import app.erp.sal.biz.IErpSalQuotationBiz;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.dao.entity.ErpSalQuotation;
-import app.erp.sal.service.processor.ErpSalQuotationProcessor;
+import app.erp.sal.service.processor.ErpSalQuotationCancelProcessor;
+import app.erp.sal.service.processor.ErpSalQuotationConfirmCustomerAcceptedProcessor;
+import app.erp.sal.service.processor.ErpSalQuotationConvertToOrderProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -23,7 +25,13 @@ import java.util.List;
 public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> implements IErpSalQuotationBiz {
 
     @Inject
-    ErpSalQuotationProcessor quotationProcessor;
+    ErpSalQuotationConfirmCustomerAcceptedProcessor confirmCustomerAcceptedProcessor;
+
+    @Inject
+    ErpSalQuotationConvertToOrderProcessor convertToOrderProcessor;
+
+    @Inject
+    ErpSalQuotationCancelProcessor cancelProcessor;
 
     public ErpSalQuotationBizModel() {
         setEntityName(ErpSalQuotation.class.getName());
@@ -32,19 +40,19 @@ public class ErpSalQuotationBizModel extends CrudBizModel<ErpSalQuotation> imple
     @Override
     @BizMutation
     public ErpSalQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.cancel(String.valueOf(quotationId), context);
+        return cancelProcessor.cancel(String.valueOf(quotationId), context);
     }
 
     @Override
     @BizMutation
     public ErpSalQuotation confirmCustomerAccepted(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.confirmCustomerAccepted(String.valueOf(quotationId), context);
+        return confirmCustomerAcceptedProcessor.confirmCustomerAccepted(String.valueOf(quotationId), context);
     }
 
     @Override
     @BizMutation
     public ErpSalOrder convertToOrder(@Name("quotationId") Long quotationId, IServiceContext context) {
-        return quotationProcessor.convertToOrder(String.valueOf(quotationId), context);
+        return convertToOrderProcessor.convertToOrder(String.valueOf(quotationId), context);
     }
 
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。

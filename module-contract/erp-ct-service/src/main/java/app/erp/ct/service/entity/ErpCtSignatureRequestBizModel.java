@@ -6,6 +6,9 @@ import app.erp.ct.biz.IErpCtSignatureRequestBiz;
 import app.erp.ct.service.ErpCtConfigs;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.processor.ErpCtSignatureRequestHandleSignatureCallbackProcessor;
+import app.erp.ct.service.processor.ErpCtSignatureRequestInitSignatureRequestProcessor;
+import app.erp.ct.service.processor.ErpCtSignatureRequestQueryAndUpdateStatusProcessor;
 import app.erp.ct.service.spi.ErpCtSignatureProviderRegistry;
 import app.erp.ct.service.spi.IErpCtSignatureProvider;
 import app.erp.ct.service.spi.model.SignatureInitRequest;
@@ -78,6 +81,15 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
     @Inject
     ErpCtSignatureProviderRegistry providerRegistry;
 
+    @Inject
+    ErpCtSignatureRequestInitSignatureRequestProcessor initSignatureRequestProcessor;
+
+    @Inject
+    ErpCtSignatureRequestHandleSignatureCallbackProcessor handleSignatureCallbackProcessor;
+
+    @Inject
+    ErpCtSignatureRequestQueryAndUpdateStatusProcessor queryAndUpdateStatusProcessor;
+
     public ErpCtSignatureRequestBizModel() {
         setEntityName(ErpCtSignatureRequest.class.getName());
     }
@@ -88,47 +100,7 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
                                                       @Name("signers") String signersJson,
                                                       @Name("providerCode") String providerCode,
                                                       IServiceContext context) {
-        boolean enabled = AppConfig.var(ErpCtConfigs.CFG_E_SIGNATURE_ENABLED, false);
-        if (!enabled) {
-            throw new NopException(ErpCtErrors.ERR_CT_SIGNATURE_INIT_FAILED)
-                    .param(ErpCtErrors.ARG_PROVIDER_CODE, providerCode)
-                    .param("errorMsg", "erp-ct.e-signature-enabled=false，未启用电子签章（走线下签署）");
-        }
-
-        ErpCtContractVersion version = contractVersionBiz.get(String.valueOf(contractVersionId), false, context);
-        if (version == null || !Objects.equals(version.getStatus(), ErpCtConstants.VERSION_STATUS_FINALIZED)) {
-            throw new NopException(ErpCtErrors.ERR_CT_SIGNATURE_VERSION_NOT_FINALIZED)
-                    .param(ErpCtErrors.ARG_VERSION_ID, contractVersionId);
-        }
-
-        String effectiveProvider = providerCode != null ? providerCode
-                : AppConfig.var(ErpCtConfigs.CFG_SIGNATURE_DEFAULT_PROVIDER,
-                        ErpCtConfigs.DEFAULT_SIGNATURE_DEFAULT_PROVIDER);
-        IErpCtSignatureProvider provider = providerRegistry.getProvider(effectiveProvider);
-
-        ErpCtSignatureRequest request = newEntity();
-        request.setContractVersionId(contractVersionId);
-        request.setProvider(effectiveProvider);
-        request.setStatus(ErpCtConstants.SIGNATURE_STATUS_PENDING);
-        request.setSigners(signersJson != null ? signersJson : "[]");
-        request.setSigningDeadline(resolveDefaultDeadline());
-
-        SignatureInitRequest initReq = new SignatureInitRequest();
-        initReq.setContractVersionId(contractVersionId);
-        initReq.setSigners(parseSignersFromJson(signersJson));
-        initReq.setSigningOrder(ErpCtConstants.SIGNING_ORDER_SEQUENTIAL);
-        try {
-            SignatureInitResponse initResp = provider.initSignature(initReq);
-            request.setProviderRequestId(initResp.getProviderRequestId());
-            saveEntity(request, null, context);
-            return request;
-        } catch (NopException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new NopException(ErpCtErrors.ERR_CT_SIGNATURE_INIT_FAILED, e)
-                    .param(ErpCtErrors.ARG_PROVIDER_CODE, effectiveProvider)
-                    .param("errorMsg", e.getMessage());
-        }
+        return initSignatureRequestProcessor.initSignatureRequest(contractVersionId, signersJson, providerCode, context);
     }
 
     @Override
@@ -138,57 +110,14 @@ public class ErpCtSignatureRequestBizModel extends CrudBizModel<ErpCtSignatureRe
                                                          @Name("eventId") String eventId,
                                                          @Name("payload") String payload,
                                                          IServiceContext context) {
-        // providerCode 注册校验（先校验，确保未注册也走 ErrorCode 而非 NPE）
-        providerRegistry.getProvider(providerCode);
-
-        boolean required = AppConfig.var(ErpCtConfigs.CFG_SIGNATURE_CALLBACK_SIGNATURE_REQUIRED,
-                ErpCtConfigs.DEFAULT_SIGNATURE_CALLBACK_SIGNATURE_REQUIRED);
-        if (required && !verifySignature(payload, signature, WEBHOOK_SECRET)) {
-            throw new NopException(ErpCtErrors.ERR_CT_SIGNATURE_CALLBACK_SIGNATURE_INVALID)
-                    .param(ErpCtErrors.ARG_PROVIDER_CODE, providerCode);
-        }
-
-        Map<String, Object> event = parsePayload(payload);
-        String eventType = asString(event.get("eventType"));
-        String providerRequestId = asString(event.get("providerRequestId"));
-        String signerEmail = asString(event.get("signerEmail"));
-        String reason = asString(event.get("reason"));
-
-        ErpCtSignatureRequest request = findRequestByProviderRequestId(providerRequestId, context);
-        if (request == null) {
-            return null;
-        }
-
-        if (eventId != null && Objects.equals(eventId, request.getRemark())) {
-            throw new NopException(ErpCtErrors.ERR_CT_SIGNATURE_CALLBACK_DUPLICATE_EVENT)
-                    .param(ErpCtErrors.ARG_EVENT_ID, eventId)
-                    .param(ErpCtErrors.ARG_PROVIDER_CODE, providerCode);
-        }
-        if (eventId != null) {
-            request.setRemark(eventId);
-        }
-
-        applyEventTransition(request, eventType, signerEmail, reason, context);
-        updateEntity(request, null, context);
-        return request;
+        return handleSignatureCallbackProcessor.handleSignatureCallback(providerCode, signature, eventId, payload, context);
     }
 
     @Override
     @BizMutation
     public ErpCtSignatureRequest queryAndUpdateStatus(@Name("requestId") Long requestId,
                                                       IServiceContext context) {
-        ErpCtSignatureRequest request = requireEntity(String.valueOf(requestId), null, context);
-        if (isTerminal(request.getStatus())) {
-            return request;
-        }
-        IErpCtSignatureProvider provider = providerRegistry.getProvider(request.getProvider());
-        SignatureStatusQueryResponse resp = provider.queryStatus(request.getProviderRequestId());
-
-        String mappedStatus = mapProviderStatus(resp.getStatus());
-        applyStatusTransition(request, mappedStatus, resp.getSignedSignerEmails(),
-                resp.getErrorMsg(), context);
-        updateEntity(request, null, context);
-        return request;
+        return queryAndUpdateStatusProcessor.queryAndUpdateStatus(requestId, context);
     }
 
     @Override

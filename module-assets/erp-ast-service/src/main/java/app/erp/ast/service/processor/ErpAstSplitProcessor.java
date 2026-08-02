@@ -56,40 +56,38 @@ public class ErpAstSplitProcessor {
     @Inject
     AssetSplitPostingDispatcher postingDispatcher;
 
+    @Inject
+    ErpAstSplitSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpAstSplitApproveProcessor approveProcessor;
+
+    @Inject
+    ErpAstSplitRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpAstSplitReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpAstSplitWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpAstSplitCancelProcessor cancelProcessor;
+
     public ErpAstSplit submitForApproval(String id, IServiceContext context) {
-        ErpAstSplit split = requireSplit(id, context);
-        validateNotCancelled(split, context);
-        validateTransitionForSubmit(split, context);
-        ErpAstAsset source = loadSourceAsset(split);
-        validateSourceAsset(split, source, context);
-        validateLines(split, source, context);
-        split.setApproveStatus(ErpAstConstants.APPROVE_STATUS_SUBMITTED);
-        splitDao().updateEntity(split);
-        return split;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpAstSplit withdrawApproval(String id, IServiceContext context) {
-        ErpAstSplit split = requireSplit(id, context);
-        validateNotCancelled(split, context);
-        validateTransitionForWithdraw(split, context);
-        split.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
-        splitDao().updateEntity(split);
-        return split;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpAstSplit approve(String id, IServiceContext context) {
-        ErpAstSplit split = requireSplit(id, context);
-        if (split.isApproved()) {
-            return split;
-        }
-        validateNotCancelled(split, context);
-        validateTransitionForApprove(split, context);
+        return approveProcessor.approve(id, context);
+    }
 
-        ErpAstAsset source = loadSourceAsset(split);
-        validateSourceAsset(split, source, context);
-        List<ErpAstSplitLine> lines = loadLines(split);
-        validateLines(split, source, context);
-
+    protected ErpAstSplit executeApprove(String id, ErpAstSplit split, ErpAstAsset source,
+                                           List<ErpAstSplitLine> lines, IServiceContext context) {
         // step 1: 幂等防护
         validateBeforeExecute(split, context);
 
@@ -130,29 +128,18 @@ public class ErpAstSplitProcessor {
     }
 
     public ErpAstSplit reject(String id, IServiceContext context) {
-        ErpAstSplit split = requireSplit(id, context);
-        validateNotCancelled(split, context);
-        validateTransitionForReject(split, context);
-        split.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
-        splitDao().updateEntity(split);
-        return split;
+        return rejectProcessor.reject(id, context);
     }
 
     /**
      * 拆分执行后不可撤销（owner doc {@code split-merge.md} §关键业务规则 5）。错误更正走一般资产处置 + 新建流程。
      */
     public ErpAstSplit reverseApprove(String id, IServiceContext context) {
-        ErpAstSplit split = requireSplit(id, context);
-        throw new NopException(ErpAstErrors.ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED)
-                .param(ErpAstErrors.ARG_SPLIT_CODE, split.getCode());
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpAstSplit cancel(Long id, IServiceContext context) {
-        ErpAstSplit split = requireSplit(String.valueOf(id), context);
-        validateTransitionForCancel(split, context);
-        split.setDocStatus(ErpAstConstants.DOC_STATUS_CANCELLED);
-        splitDao().updateEntity(split);
-        return split;
+        return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------

@@ -2,15 +2,13 @@
 package app.erp.cs.service.entity;
 
 import app.erp.cs.biz.IErpCsCannedResponseBiz;
-import app.erp.cs.biz.IErpCsTicketActionBiz;
 import app.erp.cs.biz.IErpCsTicketBiz;
 import app.erp.cs.dao.entity.ErpCsCannedResponse;
 import app.erp.cs.dao.entity.ErpCsTicket;
-import app.erp.cs.dao.entity.ErpCsTicketAction;
 import app.erp.cs.service.CannedResponseRenderer;
 import app.erp.cs.service.ErpCsConfigs;
-import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
+import app.erp.cs.service.processor.ErpCsCannedResponseApplyCannedResponseProcessor;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -56,9 +54,9 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
     @Inject
     IErpCsTicketBiz ticketBiz;
     @Inject
-    IErpCsTicketActionBiz ticketActionBiz;
-    @Inject
     IErpMdPartnerBiz mdPartnerBiz;
+    @Inject
+    ErpCsCannedResponseApplyCannedResponseProcessor applyCannedResponseProcessor;
 
     public ErpCsCannedResponseBizModel() {
         setEntityName(ErpCsCannedResponse.class.getName());
@@ -66,10 +64,6 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
 
     public void setTicketBiz(IErpCsTicketBiz ticketBiz) {
         this.ticketBiz = ticketBiz;
-    }
-
-    public void setTicketActionBiz(IErpCsTicketActionBiz ticketActionBiz) {
-        this.ticketActionBiz = ticketActionBiz;
     }
 
     public void setMdPartnerBiz(IErpMdPartnerBiz mdPartnerBiz) {
@@ -139,20 +133,7 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
                                       @Name("ticketId") Long ticketId,
                                       @Optional @Name("customVariables") Map<String, String> customVariables,
                                       IServiceContext context) {
-        ErpCsCannedResponse resp = requireCannedResponse(cannedResponseId, context);
-        assertActive(resp);
-        Map<String, String> systemVars = resolveSystemVars(resp, ticketId, context);
-        String rendered = CannedResponseRenderer.render(resp.getContent(), resp.getVariableDefs(), systemVars, customVariables);
-
-        // usageCount +1 持久化
-        Integer cur = resp.getUsageCount();
-        resp.setUsageCount(cur == null ? 1 : cur + 1);
-        updateEntity(resp, null, context);
-
-        // 写 TicketAction NOTE 审计
-        writeNoteAction(ticketId, rendered, cannedResponseId, context);
-
-        return rendered;
+        return applyCannedResponseProcessor.applyCannedResponse(cannedResponseId, ticketId, customVariables, context);
     }
 
     // ===================== helpers =====================
@@ -266,18 +247,6 @@ public class ErpCsCannedResponseBizModel extends CrudBizModel<ErpCsCannedRespons
             return list;
         }
         return new ArrayList<>(list.subList(0, limit));
-    }
-
-    private void writeNoteAction(Long ticketId, String content, Long cannedResponseId, IServiceContext context) {
-        if (ticketId == null) {
-            return;
-        }
-        ErpCsTicketAction action = ticketActionBiz.newEntity();
-        action.setTicketId(ticketId);
-        action.setActionType(ErpCsConstants.ACTION_TYPE_NOTE);
-        action.setContent(content);
-        action.setOperatorId(context == null ? null : context.getUserId());
-        ticketActionBiz.saveEntity(action, null, context);
     }
 
     

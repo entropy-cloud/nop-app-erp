@@ -60,6 +60,7 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
     static final Long ACCT_SCHEMA_ID = 7501L;
     static final Long P = 1301L;
     static final Long M1 = 1302L;
+    static final Long FX_FUNCTIONAL_CURRENCY_ID = 6499L; // 本位币（≠ 工单/移动币种 6501，构造多币种场景）
     static final String MOVE_TYPE_INCOMING = "INCOMING";
     static final String VOUCHER_STATUS_POSTED = "POSTED";
     static final String SUBJECT_INVENTORY = "1401";
@@ -193,6 +194,59 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
         assertNotNull(voucher, "FIFO 凭证应生成");
     }
 
+    /**
+     * G2（plan 2026-07-31-0744-1-r2-11）：完工入库多币种凭证行级断言残差（P1-MA3-039 mfg 投影）。
+     *
+     * <p>seed 第 2 币种（functionalCurrency 6499 ≠ 工单/移动币种 6501）+ wo.exchangeRate=6.5≠ONE。
+     * 完工入库经 inventory 域 {@code InvPostingDispatcher.buildEvent:207} <b>硬编码 exchangeRate=ONE</b>
+     * （未读 move/ledger/wo 汇率），且 InvAcctDocProvider 未设置 amountSource/amountFunctional。
+     * 本测试锁定当前行为为回归基线：凭证行 currencyId=外币但 exchangeRate=1、amountSource==amountFunctional
+     * （successor Fix 实现汇率透传+折算后本断言转红，强制更新）。
+     */
+    @Test
+    public void testMultiCurrencyCompletionReceiptVoucherLineBaseline() {
+        seedPeriodAndSubjectsFx();
+        seedMaterial(P, null);
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedBom(9404L, P, M1, bd("2"));
+        generateIncoming(M1, "PR-CMP-FX", bd("10"), bd("5"));
+
+        Long woId = seedWorkOrder("WO-CMP-FX", 9404L);
+        ormTemplate.runInSession(() -> {
+            ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+            wo.orm_propValueByName("exchangeRate", bd("6.5"));
+        });
+        Long inputLineId = seedWorkOrderLine(woId, M1, bd("2"), "INPUT", null);
+        seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
+
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        rpcOk(mutation, "ErpMfgWorkOrder__checkAvailability", Map.of("workOrderId", woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__start", Map.of("workOrderId", woId));
+
+        Long issueId = seedIssue("MI-CMP-FX", woId);
+        seedIssueLine(9504L, issueId, M1, bd("2"), inputLineId);
+        rpcOk(mutation, "ErpMfgMaterialIssue__confirm", Map.of("issueId", issueId));
+
+        Map<String, Object> completeReq = new LinkedHashMap<>();
+        completeReq.put("workOrderId", woId);
+        completeReq.put("completedQty", bd("1"));
+        rpcOk(mutation, "ErpMfgWorkOrder__reportCompletion", completeReq);
+
+        ErpInvStockMove move = findMove(ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER, "WO-CMP-FX");
+        assertNotNull(move, "应生成完工入库移动单");
+        ErpFinVoucher voucher = findVoucherByMoveCode(move.getCode());
+        assertNotNull(voucher, "应生成外币 MANUFACTURING_RECEIPT 凭证");
+
+        ErpFinVoucherLine drLine = findVoucherLine(voucher.getId(), SUBJECT_INVENTORY);
+        assertNotNull(drLine, "借方 产成品存货行存在");
+        assertEquals(CURRENCY_ID, drLine.getCurrencyId(), "凭证行币种=外币 6501");
+        assertEquals(0, BigDecimal.ONE.compareTo(drLine.getExchangeRate()),
+                "P1-MA3-039 基线：InvPostingDispatcher 硬编码 exchangeRate=ONE（successor Fix）");
+        assertEquals(0, drLine.getAmountSource().compareTo(drLine.getAmountFunctional()),
+                "P1-MA3-039 基线：Provider 未拆分 → amountSource==amountFunctional（successor Fix）");
+    }
+
     // ---------- seed helpers ----------
 
     private void seedPeriodAndSubjects() {
@@ -227,6 +281,38 @@ public class TestErpMfgCompletionPosting extends JunitAutoTestCase {
         });
     }
 
+    /** G2 多币种：functionalCurrency 6499 ≠ 工单/移动币种 6501，含 OPEN 期间。 */
+    private void seedPeriodAndSubjectsFx() {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> asDao =
+                    daoProvider.daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class);
+            app.erp.md.dao.entity.ErpMdAcctSchema acctSchema = new app.erp.md.dao.entity.ErpMdAcctSchema();
+            acctSchema.orm_propValueByName("id", ACCT_SCHEMA_ID);
+            acctSchema.setCode("ACCT-FX-" + ORG_ID);
+            acctSchema.setName("多币种账套 " + ORG_ID);
+            acctSchema.setOrgId(ORG_ID);
+            acctSchema.orm_propValueByName("nature", "FINANCIAL");
+            acctSchema.setFunctionalCurrencyId(FX_FUNCTIONAL_CURRENCY_ID);
+            acctSchema.orm_propValueByName("status", "ACTIVE");
+            asDao.saveEntity(acctSchema);
+
+            IEntityDao<ErpFinAccountingPeriod> pdao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+            ErpFinAccountingPeriod period = new ErpFinAccountingPeriod();
+            period.setCode("2026-07-FX");
+            period.setName("2026-07-FX");
+            period.setOrgId(ORG_ID);
+            period.orm_propValueByName("year", 2026);
+            period.orm_propValueByName("month", 7);
+            period.setStartDate(LocalDate.of(2026, 7, 1));
+            period.setEndDate(LocalDate.of(2026, 7, 31));
+            period.orm_propValueByName("status", "OPEN");
+            pdao.saveEntity(period);
+
+            seedSubject(SUBJECT_INVENTORY, "库存商品", "ASSET", "DEBIT");
+            seedSubject(SUBJECT_WIP, "在制品-WIP", "ASSET", "DEBIT");
+            seedSubject("2202", "应付账款-暂估", "LIABILITY", "CREDIT");
+        });
+    }
     private void seedSubject(String code, String name, String subjectClass, String direction) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject subject = new ErpMdSubject();

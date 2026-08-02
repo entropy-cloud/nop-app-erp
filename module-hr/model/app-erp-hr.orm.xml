@@ -174,6 +174,12 @@
             <option code="LATE_NOT_CLOCKED" label="未打卡" value="LATE_NOT_CLOCKED" i18n-en:label='Late Not Clocked'/>
             <option code="OTHER" label="其他" value="OTHER" i18n-en:label='Other'/>
         </dict>
+        <dict label="排班分配状态" name="erp-hr/shift-assignment-status" valueType="string" i18n-en:label='Shift Assignment Status'>
+            <option code="SCHEDULED" label="已排班" value="SCHEDULED" i18n-en:label='Scheduled'/>
+            <option code="PRESENT" label="已到岗" value="PRESENT" i18n-en:label='Present'/>
+            <option code="ABSENT" label="缺勤" value="ABSENT" i18n-en:label='Absent'/>
+            <option code="CANCELLED" label="取消" value="CANCELLED" i18n-en:label='Cancelled'/>
+        </dict>
         <dict label="调研类型" name="erp-hr/survey-type" valueType="string" i18n-en:label='Survey Type'>
             <option code="ANNUAL_ENGAGEMENT" label="年度敬业度调研" value="ANNUAL_ENGAGEMENT" i18n-en:label='Annual Engagement'/>
             <option code="PULSE" label="脉搏调研" value="PULSE" i18n-en:label='Pulse Survey'/>
@@ -1183,7 +1189,7 @@
                 <column name="leaveRequestId" displayName="关联休假" stdSqlType="BIGINT" code="LEAVE_REQUEST_ID" propId="10" stdDataType="long" i18n-en:displayName='Leave Request' />
                 <column name="swapRequestId" displayName="关联调换" stdSqlType="BIGINT" code="SWAP_REQUEST_ID" propId="11" stdDataType="long" i18n-en:displayName='Swap Request' />
                 <column name="replacedByAssignmentId" displayName="被替换排班" stdSqlType="BIGINT" code="REPLACED_BY_ASSIGNMENT_ID" propId="12" stdDataType="long" i18n-en:displayName='Replaced By' />
-                <column name="status" displayName="状态" stdSqlType="VARCHAR" precision="50" code="STATUS" propId="13" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="status" displayName="状态" ext:dict="erp-hr/shift-assignment-status" stdSqlType="VARCHAR" precision="50" code="STATUS" propId="13" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
@@ -1200,6 +1206,9 @@
                 <to-one name="replacedByAssignment" ignoreDepends="true" refEntityName="app.erp.hr.dao.entity.ErpHrShiftAssignment" tagSet="pub" i18n-en:displayName='Replaced By'><join><on leftProp="replacedByAssignmentId" rightProp="id"/></join></to-one>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
             </relations>
+            <unique-keys>
+                <unique-key name="UK_HR_SHIFT_ASSIGNMENT_NATURAL" constraint="UK_HR_SHIFT_ASSIGNMENT_NATURAL" columns="employeeId,assignmentDate,shiftId,delVersion"/>
+            </unique-keys>
             <indexes>
                 <index name="IDX_HR_SHIFT_ASSIGNMENT_ORG_STATUS" unique="false">
                     <column name="orgId"/>

@@ -8,7 +8,10 @@ import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -37,8 +40,15 @@ public class DepreciationPostingDispatcher {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_DEPRECIATION_FAILURE = "ast.depreciation-posting-failure";
+
     /**
      * 折旧执行后调用。成功返回 voucherId（调用方据此置 posted=true + voucherId）；失败返回 null（保持 posted=false）。
+     * <p>G4 错误传播分级（posting-log.md）：折旧路径无 DeferredPostingSweepJob 覆盖——失败派发
+     * IErpSysNotificationBiz 告警使运营感知，自愈路径为手动重跑 executeDepreciation / reverseDepreciation。
      */
     public Long tryPost(ErpAstDepreciationSchedule schedule, ErpAstAsset asset, ErpAstAssetCategory category) {
         PostingEvent event = buildEvent(schedule, asset, category);
@@ -52,7 +62,32 @@ public class DepreciationPostingDispatcher {
                 LOG.error("折旧过账异常，资产 {} 期间 {} 保持 posted=false",
                         asset.getCode(), schedule.getPeriod(), e);
             }
+            dispatchFailureAlert(asset, schedule, e);
             return null;
+        }
+    }
+
+    /**
+     * 折旧过账失败告警派发（G4 错误传播分级；plan 2026-07-30-0341-2 P1-MA4-013）。
+     * 通知失败降级（warn）不阻断主流程。
+     */
+    protected void dispatchFailureAlert(ErpAstAsset asset, ErpAstDepreciationSchedule schedule, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("assetCode", asset.getCode());
+        ctx.put("assetId", asset.getId());
+        ctx.put("period", schedule.getPeriod());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("billHeadCode", billHeadCode(asset.getCode(), schedule.getPeriod()));
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_DEPRECIATION_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("折旧过账失败告警派发失败（降级）：assetCode={}, reason={}",
+                    asset.getCode(), notifyErr.getMessage());
         }
     }
 

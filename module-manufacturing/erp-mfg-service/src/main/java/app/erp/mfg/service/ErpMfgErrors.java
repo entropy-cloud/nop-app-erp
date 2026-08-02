@@ -25,6 +25,7 @@ public interface ErpMfgErrors {
     String ARG_JOB_CARD_ID = "jobCardId";
     String ARG_COMPLETED_QTY = "completedQty";
     String ARG_PLANNED_QTY = "plannedQty";
+    String ARG_ISSUE_ID = "issueId";
 
     String ARG_MRP_PLAN_ID = "mrpPlanId";
     String ARG_MRP_LINE_ID = "mrpLineId";
@@ -103,6 +104,11 @@ public interface ErpMfgErrors {
             "erp.err.mfg.issue.lines-empty",
             "领料单[{workOrderCode}]无领料行，无法确认出库",
             ARG_WORK_ORDER_CODE);
+
+    ErrorCode ERR_ISSUE_NOT_FOUND = ErrorCode.define(
+            "erp.err.mfg.issue.not-found",
+            "领料单不存在: {issueId}",
+            ARG_ISSUE_ID);
 
     ErrorCode ERR_MATERIAL_ISSUE_NOT_POSTED = ErrorCode.define(
             "erp.err.mfg.issue.not-posted",
@@ -249,6 +255,12 @@ public interface ErpMfgErrors {
             "释放委外建议行[{mrpLineId}]须提供供应商[supplierId]",
             ARG_MRP_LINE_ID);
 
+    // 并发重复释放被既有 (code,orgId) UK 兜底拦截（plan 2026-07-30-0841-2 R1.28 P1-MA2-090）
+    ErrorCode ERR_MRP_LINE_ALREADY_RELEASED = ErrorCode.define(
+            "erp.err.mfg.mrp-line.already-released",
+            "MRP 建议行[{mrpLineId}]已由并发事务释放，不可重复释放",
+            ARG_MRP_LINE_ID);
+
     ErrorCode ERR_SUBCONTRACT_CANNOT_REVERSE = ErrorCode.define(
             "erp.err.mfg.subcontract-order.cannot-reverse",
             "委外单[{subcontractOrderCode}]当前状态[{currentStatus}]不允许红冲，仅 COMPLETED 且已过账的委外单可红冲",
@@ -284,4 +296,12 @@ public interface ErpMfgErrors {
             "erp.err.mfg.simulation.versions-not-comparable",
             "MRP仿真版本[{scenarioVersionId}]与[{expectedStatus}]不可对比（须同 orgId / 同基线计划）",
             ARG_SCENARIO_VERSION_ID, ARG_EXPECTED_STATUS);
+
+    // --- 职责分离（SoD）守卫（plan 2026-07-31-1023-2 R3.3）：审核人与单据创建人不可为同一人 ---
+    String ARG_USER_ID = "userId";
+
+    ErrorCode ERR_MFG_APPROVER_IS_CREATOR = ErrorCode.define(
+            "erp.err.mfg.approver-is-creator",
+            "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
+            ARG_USER_ID);
 }

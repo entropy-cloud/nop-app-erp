@@ -25,7 +25,13 @@ public class ErpFinBudgetScenarioSubmitForApprovalProcessor extends AbstractSubm
 
     @Override
     public ErpFinBudgetScenario submitForApproval(String id, IServiceContext context) {
-        return processor.submit(Long.valueOf(id), context);
+        ErpFinBudgetScenario scenario = processor.requireScenario(Long.valueOf(id));
+        processor.validateTransition(scenario, ErpFinConstants.BUDGET_STATUS_SUBMITTED,
+                ErpFinConstants.BUDGET_STATUS_DRAFT, ErpFinConstants.BUDGET_STATUS_REJECTED);
+        scenario.setDocStatus(ErpFinConstants.BUDGET_STATUS_SUBMITTED);
+        scenario.setApproveStatus(ErpFinConstants.BUDGET_STATUS_SUBMITTED);
+        processor.save(scenario);
+        return scenario;
     }
 
     @Override

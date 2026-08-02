@@ -5,8 +5,10 @@ import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.dao.entity.ErpSalInvoiceLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
+import io.nop.auth.core.login.UserContextImpl;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -135,6 +137,31 @@ public class TestErpSalInvoiceApproval extends JunitAutoTestCase {
         ApiResponse<?> bad = submit(invoice.getId());
         assertEquals(ErpSalErrors.ERR_INVOICE_ILLEGAL_DOC_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
                 "已作废单据不可提交");
+    }
+
+    // ---------- SoD 守卫（plan 2026-07-31-1023-2 R3.3，Pattern C per-mutation approve inline） ----------
+
+    @Test
+    public void testSoDCreatorCannotSelfApprove() {
+        ErpSalInvoice invoice = newInvoice("SI-SOD-001");
+        ormTemplate.runInSession(() -> {
+            seedActiveCustomer(CUSTOMER_ID);
+            saveInvoiceWithLine(invoice);
+        });
+        assertEquals(0, submit(invoice.getId()).getStatus(), "提交应成功 → SUBMITTED");
+
+        // 创建人尝试自审：置 IUserContext.userId = 单据 createdBy
+        String creator = reload(invoice).getCreatedBy();
+        setApproverUserContext(creator);
+        ApiResponse<?> bad = approve(invoice.getId());
+        assertEquals(ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR.getErrorCode(), bad.getCode(),
+                "创建人=审核人 → SoD 守卫应抛 ERR_SAL_APPROVER_IS_CREATOR");
+    }
+
+    private void setApproverUserContext(String userId) {
+        UserContextImpl uc = new UserContextImpl();
+        uc.setUserId(userId);
+        IUserContext.set(uc);
     }
 
     // ---------- helpers ----------

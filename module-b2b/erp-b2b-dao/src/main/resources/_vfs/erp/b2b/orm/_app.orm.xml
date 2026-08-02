@@ -352,7 +352,7 @@
                 </to-many>
             </relations>
             <unique-keys>
-                <unique-key columns="code,orgId" name="UK_B2B_ASN_CODE_ORG"/>
+                <unique-key columns="code,orgId" constraint="UK_B2B_ASN_CODE_ORG" name="UK_B2B_ASN_CODE_ORG"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.b2b.dao.entity.ErpB2bAsnLine" createTimeProp="createTime" createrProp="createdBy"

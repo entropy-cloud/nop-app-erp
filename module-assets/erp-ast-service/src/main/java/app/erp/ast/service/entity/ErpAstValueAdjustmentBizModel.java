@@ -3,7 +3,7 @@ package app.erp.ast.service.entity;
 
 import app.erp.ast.biz.IErpAstValueAdjustmentBiz;
 import app.erp.ast.dao.entity.ErpAstValueAdjustment;
-import app.erp.ast.service.processor.ErpAstValueAdjustmentProcessor;
+import app.erp.ast.service.processor.ErpAstValueAdjustmentCancelProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -15,14 +15,15 @@ import java.util.List;
 
 /**
  * 资产价值调整 BizModel（Facade）。标准审批动作（submitForApproval/approve/reject/reverseApprove/
- * withdrawApproval）经 xbiz 单行委托 {@link ErpAstValueAdjustmentProcessor} 全权处理。
+ * withdrawApproval）经 xbiz 单行委托 per-mutation Processor 全权处理；非审批动作（cancel）经
+ * per-mutation {@link ErpAstValueAdjustmentCancelProcessor}。
  */
 @BizModel("ErpAstValueAdjustment")
 public class ErpAstValueAdjustmentBizModel extends CrudBizModel<ErpAstValueAdjustment>
         implements IErpAstValueAdjustmentBiz {
 
     @Inject
-    ErpAstValueAdjustmentProcessor adjustmentProcessor;
+    ErpAstValueAdjustmentCancelProcessor cancelProcessor;
 
     public ErpAstValueAdjustmentBizModel() {
         setEntityName(ErpAstValueAdjustment.class.getName());
@@ -31,6 +32,6 @@ public class ErpAstValueAdjustmentBizModel extends CrudBizModel<ErpAstValueAdjus
     @Override
     @BizMutation
     public ErpAstValueAdjustment cancel(@Name("id") Long id, IServiceContext context) {
-        return adjustmentProcessor.cancel(id, context);
+        return cancelProcessor.cancel(String.valueOf(id), context);
     }
 }

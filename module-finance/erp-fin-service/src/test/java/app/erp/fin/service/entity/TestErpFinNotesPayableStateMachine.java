@@ -6,6 +6,7 @@ import app.erp.fin.dao.entity.ErpFinCreditFacility;
 import app.erp.fin.dao.entity.ErpFinNotesPayable;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.FinFrozenClockExtension;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
@@ -19,6 +20,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 
@@ -34,6 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
+
+    // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 4 B 组裁决 (a)）：seedBase 的 OPEN 期间与
+    // issue() 过账 voucherDate=CoreMetrics.today() 均冻结到 REFERENCE_DATE 所在月，二者一致、
+    // 输出确定性，回收 R6.9 的 checkOutput=false 退让（设计文档 §4.2）。
+    @RegisterExtension
+    static FinFrozenClockExtension finClock = new FinFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
@@ -118,7 +126,13 @@ public class TestErpFinNotesPayableStateMachine extends JunitAutoTestCase {
     // ---------- seed helpers ----------
 
     private void seedBase() {
-        seedOpenPeriod("2026-07", 2026, 7, java.time.LocalDate.of(2026, 7, 1), java.time.LocalDate.of(2026, 7, 31));
+        // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 4）：seed 期间改由冻结参考日派生（YearMonth.from(REFERENCE_DATE)），
+        // 使 issue() 过账 resolveOpenPeriod(voucherDate=today=冻结日) 在任意运行月均落在 seed OPEN 期间内。
+        java.time.YearMonth now = java.time.YearMonth.from(FinFrozenClockExtension.REFERENCE_DATE);
+        int year = now.getYear();
+        int month = now.getMonthValue();
+        String code = year + "-" + String.format("%02d", month);
+        seedOpenPeriod(code, year, month, now.atDay(1), now.atEndOfMonth());
         seedAcctSchema(1L);
         seedSubject("2202", "应付账款");
         seedSubject("2203", "应付票据");

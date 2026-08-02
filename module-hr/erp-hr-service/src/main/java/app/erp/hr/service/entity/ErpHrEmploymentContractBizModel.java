@@ -18,6 +18,8 @@ import app.erp.hr.dao.entity.ErpHrEmploymentContract;
 import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrEmploymentContractExpireOverdueContractsProcessor;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,9 @@ public class ErpHrEmploymentContractBizModel extends CrudBizModel<ErpHrEmploymen
         implements IErpHrEmploymentContractBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpHrEmploymentContractBizModel.class);
+
+    @Inject
+    ErpHrEmploymentContractExpireOverdueContractsProcessor expireOverdueContractsProcessor;
 
     public ErpHrEmploymentContractBizModel() {
         setEntityName(ErpHrEmploymentContract.class.getName());
@@ -71,22 +76,7 @@ public class ErpHrEmploymentContractBizModel extends CrudBizModel<ErpHrEmploymen
     @Override
     @BizMutation
     public List<ErpHrEmploymentContract> expireOverdueContracts(IServiceContext context) {
-        LocalDate now = CoreMetrics.today();
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("status", ErpHrConstants.CONTRACT_STATUS_ACTIVE));
-        q.addFilter(lt("endDate", now));
-        List<ErpHrEmploymentContract> overdue = doFindListByQueryDirectly(q, context);
-        List<ErpHrEmploymentContract> expired = new ArrayList<>();
-        for (ErpHrEmploymentContract c : overdue) {
-            try {
-                c.setStatus(ErpHrConstants.CONTRACT_STATUS_EXPIRED);
-                updateEntity(c, null, context);
-                expired.add(c);
-            } catch (Exception ex) {
-                LOG.warn("contract-expire-failed: id={}, reason={}", c.getId(), ex.getMessage());
-            }
-        }
-        return expired;
+        return expireOverdueContractsProcessor.expireOverdueContracts(context);
     }
 
     @Override

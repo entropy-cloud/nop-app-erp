@@ -67,4 +67,20 @@ public interface IErpFinBudgetCommitmentBiz {
     Long release(@Name("sourceBillType") String sourceBillType,
                  @Name("sourceBillCode") String sourceBillCode,
                  IServiceContext context);
+
+    /**
+     * 容错释放：与 {@link #release} 同样红冲原 COMMITMENT 凭证，但<b>无原凭证可红冲时静默返回 null</b>
+     * （不抛 {@code ERR_BUDGET_COMMITMENT_ALREADY_RELEASED}）。
+     *
+     * <p>调用点：显式释放的容错路径——{@code ErpPurOrder.reverseApprove/cancel}（release-on-cancel）、
+     * {@code ErpPurReturn.approve}（release-on-return，P1-MA2-082，budget.md §承付会计 §3 接入点 #4）。
+     * 无原承付凭证时静默跳过而非阻断业务流（对齐 release-on-cancel 容错范式 budget.md §release hook 容错对称性）。
+     *
+     * <p>config-gated：依赖 {@code erp-fin.budget-commitment-enabled} 总开关；关闭时返回 null。
+     *
+     * @return 红冲凭证 ID（首个）；config-gated 关闭、无原凭证可红冲时返回 null
+     */
+    Long releaseIfPresent(@Name("sourceBillType") String sourceBillType,
+                          @Name("sourceBillCode") String sourceBillCode,
+                          IServiceContext context);
 }

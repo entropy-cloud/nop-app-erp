@@ -20,7 +20,11 @@ public class ErpFinExpenseClaimRejectProcessor extends AbstractRejectProcessor<E
 
     @Override
     public ErpFinExpenseClaim reject(String id, IServiceContext context) {
-        return processor.reject(id, context);
+        ErpFinExpenseClaim claim = processor.requireClaim(id, context);
+        processor.validateNotCancelled(claim, context);
+        processor.validateTransitionForReject(claim, context);
+        processor.doReject(claim, context);
+        return claim;
     }
 
     @Override

@@ -129,76 +129,76 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_approveStatus = "approveStatus";
     public static final int PROP_ID_approveStatus = 27;
     
-    /* 优先级: PRIORITY VARCHAR */
-    public static final String PROP_NAME_priority = "priority";
-    public static final int PROP_ID_priority = 28;
-    
-    /* 已过账: POSTED BOOLEAN */
-    public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 29;
-    
-    /* 过账时间: POSTED_AT TIMESTAMP */
-    public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 30;
-    
-    /* 过账人: POSTED_BY VARCHAR */
-    public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 31;
-    
-    /* 备注: REMARK VARCHAR */
-    public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 32;
-    
-    /* 逻辑删除版本: DEL_VERSION BIGINT */
-    public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 33;
-    
-    /* 数据版本: VERSION INTEGER */
-    public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 34;
-    
-    /* 创建人: CREATED_BY VARCHAR */
-    public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 35;
-    
-    /* 创建时间: CREATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 36;
-    
-    /* 修改人: UPDATED_BY VARCHAR */
-    public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 37;
-    
-    /* 修改时间: UPDATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 38;
-    
-    /* APS排程来源(弱参照): SOURCE_SCHEDULE_ID BIGINT */
-    public static final String PROP_NAME_sourceScheduleId = "sourceScheduleId";
-    public static final int PROP_ID_sourceScheduleId = 39;
-    
     /* 审核人: APPROVED_BY VARCHAR */
     public static final String PROP_NAME_approvedBy = "approvedBy";
-    public static final int PROP_ID_approvedBy = 200;
+    public static final int PROP_ID_approvedBy = 28;
     
     /* 审核时间: APPROVED_AT TIMESTAMP */
     public static final String PROP_NAME_approvedAt = "approvedAt";
-    public static final int PROP_ID_approvedAt = 201;
+    public static final int PROP_ID_approvedAt = 29;
+    
+    /* 优先级: PRIORITY VARCHAR */
+    public static final String PROP_NAME_priority = "priority";
+    public static final int PROP_ID_priority = 30;
+    
+    /* 已过账: POSTED BOOLEAN */
+    public static final String PROP_NAME_posted = "posted";
+    public static final int PROP_ID_posted = 31;
+    
+    /* 过账时间: POSTED_AT TIMESTAMP */
+    public static final String PROP_NAME_postedAt = "postedAt";
+    public static final int PROP_ID_postedAt = 32;
+    
+    /* 过账人: POSTED_BY VARCHAR */
+    public static final String PROP_NAME_postedBy = "postedBy";
+    public static final int PROP_ID_postedBy = 33;
+    
+    /* 备注: REMARK VARCHAR */
+    public static final String PROP_NAME_remark = "remark";
+    public static final int PROP_ID_remark = 34;
     
     /* 汇率: EXCHANGE_RATE DECIMAL */
     public static final String PROP_NAME_exchangeRate = "exchangeRate";
-    public static final int PROP_ID_exchangeRate = 202;
+    public static final int PROP_ID_exchangeRate = 35;
     
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 203;
+    public static final int PROP_ID_amountSource = 36;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 204;
+    public static final int PROP_ID_amountFunctional = 37;
+    
+    /* APS排程来源(弱参照): SOURCE_SCHEDULE_ID BIGINT */
+    public static final String PROP_NAME_sourceScheduleId = "sourceScheduleId";
+    public static final int PROP_ID_sourceScheduleId = 38;
+    
+    /* 逻辑删除版本: DEL_VERSION BIGINT */
+    public static final String PROP_NAME_delVersion = "delVersion";
+    public static final int PROP_ID_delVersion = 39;
+    
+    /* 数据版本: VERSION INTEGER */
+    public static final String PROP_NAME_version = "version";
+    public static final int PROP_ID_version = 40;
+    
+    /* 创建人: CREATED_BY VARCHAR */
+    public static final String PROP_NAME_createdBy = "createdBy";
+    public static final int PROP_ID_createdBy = 41;
+    
+    /* 创建时间: CREATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_createTime = "createTime";
+    public static final int PROP_ID_createTime = 42;
+    
+    /* 修改人: UPDATED_BY VARCHAR */
+    public static final String PROP_NAME_updatedBy = "updatedBy";
+    public static final int PROP_ID_updatedBy = 43;
+    
+    /* 修改时间: UPDATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_updateTime = "updateTime";
+    public static final int PROP_ID_updateTime = 44;
     
 
-    private static int _PROP_ID_BOUND = 205;
+    private static int _PROP_ID_BOUND = 45;
 
     
     /* relation:  */
@@ -232,7 +232,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[205];
+    private static final String[] PROP_ID_TO_NAME = new String[45];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -317,6 +317,12 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_approveStatus] = PROP_NAME_approveStatus;
           PROP_NAME_TO_ID.put(PROP_NAME_approveStatus, PROP_ID_approveStatus);
       
+          PROP_ID_TO_NAME[PROP_ID_approvedBy] = PROP_NAME_approvedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedBy, PROP_ID_approvedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
+      
           PROP_ID_TO_NAME[PROP_ID_priority] = PROP_NAME_priority;
           PROP_NAME_TO_ID.put(PROP_NAME_priority, PROP_ID_priority);
       
@@ -331,6 +337,18 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
+      
+          PROP_ID_TO_NAME[PROP_ID_exchangeRate] = PROP_NAME_exchangeRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_exchangeRate, PROP_ID_exchangeRate);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
+      
+          PROP_ID_TO_NAME[PROP_ID_sourceScheduleId] = PROP_NAME_sourceScheduleId;
+          PROP_NAME_TO_ID.put(PROP_NAME_sourceScheduleId, PROP_ID_sourceScheduleId);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -349,24 +367,6 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
-      
-          PROP_ID_TO_NAME[PROP_ID_sourceScheduleId] = PROP_NAME_sourceScheduleId;
-          PROP_NAME_TO_ID.put(PROP_NAME_sourceScheduleId, PROP_ID_sourceScheduleId);
-      
-          PROP_ID_TO_NAME[PROP_ID_approvedBy] = PROP_NAME_approvedBy;
-          PROP_NAME_TO_ID.put(PROP_NAME_approvedBy, PROP_ID_approvedBy);
-      
-          PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
-          PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
-      
-          PROP_ID_TO_NAME[PROP_ID_exchangeRate] = PROP_NAME_exchangeRate;
-          PROP_NAME_TO_ID.put(PROP_NAME_exchangeRate, PROP_ID_exchangeRate);
-      
-          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
-          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
-      
-          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
-          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
       
     }
 
@@ -452,6 +452,12 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     /* 审核状态: APPROVE_STATUS */
     private java.lang.String _approveStatus;
     
+    /* 审核人: APPROVED_BY */
+    private java.lang.String _approvedBy;
+    
+    /* 审核时间: APPROVED_AT */
+    private java.sql.Timestamp _approvedAt;
+    
     /* 优先级: PRIORITY */
     private java.lang.String _priority;
     
@@ -466,6 +472,18 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 汇率: EXCHANGE_RATE */
+    private java.math.BigDecimal _exchangeRate;
+    
+    /* 源币种金额: AMOUNT_SOURCE */
+    private java.math.BigDecimal _amountSource;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL */
+    private java.math.BigDecimal _amountFunctional;
+    
+    /* APS排程来源(弱参照): SOURCE_SCHEDULE_ID */
+    private java.lang.Long _sourceScheduleId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -484,24 +502,6 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
-    
-    /* APS排程来源(弱参照): SOURCE_SCHEDULE_ID */
-    private java.lang.Long _sourceScheduleId;
-    
-    /* 审核人: APPROVED_BY */
-    private java.lang.String _approvedBy;
-    
-    /* 审核时间: APPROVED_AT */
-    private java.sql.Timestamp _approvedAt;
-    
-    /* 汇率: EXCHANGE_RATE */
-    private java.math.BigDecimal _exchangeRate;
-    
-    /* 源币种金额: AMOUNT_SOURCE */
-    private java.math.BigDecimal _amountSource;
-    
-    /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.math.BigDecimal _amountFunctional;
     
 
     public _ErpMfgWorkOrder(){
@@ -658,6 +658,12 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             case PROP_ID_approveStatus:
                return getApproveStatus();
         
+            case PROP_ID_approvedBy:
+               return getApprovedBy();
+        
+            case PROP_ID_approvedAt:
+               return getApprovedAt();
+        
             case PROP_ID_priority:
                return getPriority();
         
@@ -672,6 +678,18 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_exchangeRate:
+               return getExchangeRate();
+        
+            case PROP_ID_amountSource:
+               return getAmountSource();
+        
+            case PROP_ID_amountFunctional:
+               return getAmountFunctional();
+        
+            case PROP_ID_sourceScheduleId:
+               return getSourceScheduleId();
         
             case PROP_ID_delVersion:
                return getDelVersion();
@@ -690,24 +708,6 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
-        
-            case PROP_ID_sourceScheduleId:
-               return getSourceScheduleId();
-        
-            case PROP_ID_approvedBy:
-               return getApprovedBy();
-        
-            case PROP_ID_approvedAt:
-               return getApprovedAt();
-        
-            case PROP_ID_exchangeRate:
-               return getExchangeRate();
-        
-            case PROP_ID_amountSource:
-               return getAmountSource();
-        
-            case PROP_ID_amountFunctional:
-               return getAmountFunctional();
         
            default:
               return super.orm_propValue(propId);
@@ -990,6 +990,26 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_approvedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedBy));
+               }
+               setApprovedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
+                       err-> newTypeConversionError(PROP_NAME_approvedAt));
+               }
+               setApprovedAt(typedValue);
+               break;
+            }
+        
             case PROP_ID_priority:{
                java.lang.String typedValue = null;
                if(value != null){
@@ -1037,6 +1057,46 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_remark));
                }
                setRemark(typedValue);
+               break;
+            }
+        
+            case PROP_ID_exchangeRate:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_exchangeRate));
+               }
+               setExchangeRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_amountSource));
+               }
+               setAmountSource(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
+               }
+               setAmountFunctional(typedValue);
+               break;
+            }
+        
+            case PROP_ID_sourceScheduleId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_sourceScheduleId));
+               }
+               setSourceScheduleId(typedValue);
                break;
             }
         
@@ -1097,66 +1157,6 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_updateTime));
                }
                setUpdateTime(typedValue);
-               break;
-            }
-        
-            case PROP_ID_sourceScheduleId:{
-               java.lang.Long typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
-                       err-> newTypeConversionError(PROP_NAME_sourceScheduleId));
-               }
-               setSourceScheduleId(typedValue);
-               break;
-            }
-        
-            case PROP_ID_approvedBy:{
-               java.lang.String typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toString(value,
-                       err-> newTypeConversionError(PROP_NAME_approvedBy));
-               }
-               setApprovedBy(typedValue);
-               break;
-            }
-        
-            case PROP_ID_approvedAt:{
-               java.sql.Timestamp typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toTimestamp(value,
-                       err-> newTypeConversionError(PROP_NAME_approvedAt));
-               }
-               setApprovedAt(typedValue);
-               break;
-            }
-        
-            case PROP_ID_exchangeRate:{
-               java.math.BigDecimal typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBigDecimal(value,
-                       err-> newTypeConversionError(PROP_NAME_exchangeRate));
-               }
-               setExchangeRate(typedValue);
-               break;
-            }
-        
-            case PROP_ID_amountSource:{
-               java.math.BigDecimal typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBigDecimal(value,
-                       err-> newTypeConversionError(PROP_NAME_amountSource));
-               }
-               setAmountSource(typedValue);
-               break;
-            }
-        
-            case PROP_ID_amountFunctional:{
-               java.math.BigDecimal typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBigDecimal(value,
-                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
-               }
-               setAmountFunctional(typedValue);
                break;
             }
         
@@ -1358,6 +1358,20 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_approvedBy:{
+               onInitProp(propId);
+               this._approvedBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_approvedAt:{
+               onInitProp(propId);
+               this._approvedAt = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
             case PROP_ID_priority:{
                onInitProp(propId);
                this._priority = (java.lang.String)value;
@@ -1389,6 +1403,34 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_exchangeRate:{
+               onInitProp(propId);
+               this._exchangeRate = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountSource:{
+               onInitProp(propId);
+               this._amountSource = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               onInitProp(propId);
+               this._amountFunctional = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_sourceScheduleId:{
+               onInitProp(propId);
+               this._sourceScheduleId = (java.lang.Long)value;
                
                break;
             }
@@ -1431,48 +1473,6 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
-               
-               break;
-            }
-        
-            case PROP_ID_sourceScheduleId:{
-               onInitProp(propId);
-               this._sourceScheduleId = (java.lang.Long)value;
-               
-               break;
-            }
-        
-            case PROP_ID_approvedBy:{
-               onInitProp(propId);
-               this._approvedBy = (java.lang.String)value;
-               
-               break;
-            }
-        
-            case PROP_ID_approvedAt:{
-               onInitProp(propId);
-               this._approvedAt = (java.sql.Timestamp)value;
-               
-               break;
-            }
-        
-            case PROP_ID_exchangeRate:{
-               onInitProp(propId);
-               this._exchangeRate = (java.math.BigDecimal)value;
-               
-               break;
-            }
-        
-            case PROP_ID_amountSource:{
-               onInitProp(propId);
-               this._amountSource = (java.math.BigDecimal)value;
-               
-               break;
-            }
-        
-            case PROP_ID_amountFunctional:{
-               onInitProp(propId);
-               this._amountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1997,6 +1997,44 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     }
     
     /**
+     * 审核人: APPROVED_BY
+     */
+    public final java.lang.String getApprovedBy(){
+         onPropGet(PROP_ID_approvedBy);
+         return _approvedBy;
+    }
+
+    /**
+     * 审核人: APPROVED_BY
+     */
+    public final void setApprovedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_approvedBy,value)){
+            this._approvedBy = value;
+            internalClearRefs(PROP_ID_approvedBy);
+            
+        }
+    }
+    
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final java.sql.Timestamp getApprovedAt(){
+         onPropGet(PROP_ID_approvedAt);
+         return _approvedAt;
+    }
+
+    /**
+     * 审核时间: APPROVED_AT
+     */
+    public final void setApprovedAt(java.sql.Timestamp value){
+        if(onPropSet(PROP_ID_approvedAt,value)){
+            this._approvedAt = value;
+            internalClearRefs(PROP_ID_approvedAt);
+            
+        }
+    }
+    
+    /**
      * 优先级: PRIORITY
      */
     public final java.lang.String getPriority(){
@@ -2087,6 +2125,82 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final java.math.BigDecimal getExchangeRate(){
+         onPropGet(PROP_ID_exchangeRate);
+         return _exchangeRate;
+    }
+
+    /**
+     * 汇率: EXCHANGE_RATE
+     */
+    public final void setExchangeRate(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_exchangeRate,value)){
+            this._exchangeRate = value;
+            internalClearRefs(PROP_ID_exchangeRate);
+            
+        }
+    }
+    
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final java.math.BigDecimal getAmountSource(){
+         onPropGet(PROP_ID_amountSource);
+         return _amountSource;
+    }
+
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final void setAmountSource(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_amountSource,value)){
+            this._amountSource = value;
+            internalClearRefs(PROP_ID_amountSource);
+            
+        }
+    }
+    
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final java.math.BigDecimal getAmountFunctional(){
+         onPropGet(PROP_ID_amountFunctional);
+         return _amountFunctional;
+    }
+
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final void setAmountFunctional(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_amountFunctional,value)){
+            this._amountFunctional = value;
+            internalClearRefs(PROP_ID_amountFunctional);
+            
+        }
+    }
+    
+    /**
+     * APS排程来源(弱参照): SOURCE_SCHEDULE_ID
+     */
+    public final java.lang.Long getSourceScheduleId(){
+         onPropGet(PROP_ID_sourceScheduleId);
+         return _sourceScheduleId;
+    }
+
+    /**
+     * APS排程来源(弱参照): SOURCE_SCHEDULE_ID
+     */
+    public final void setSourceScheduleId(java.lang.Long value){
+        if(onPropSet(PROP_ID_sourceScheduleId,value)){
+            this._sourceScheduleId = value;
+            internalClearRefs(PROP_ID_sourceScheduleId);
             
         }
     }
@@ -2201,120 +2315,6 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
-            
-        }
-    }
-    
-    /**
-     * APS排程来源(弱参照): SOURCE_SCHEDULE_ID
-     */
-    public final java.lang.Long getSourceScheduleId(){
-         onPropGet(PROP_ID_sourceScheduleId);
-         return _sourceScheduleId;
-    }
-
-    /**
-     * APS排程来源(弱参照): SOURCE_SCHEDULE_ID
-     */
-    public final void setSourceScheduleId(java.lang.Long value){
-        if(onPropSet(PROP_ID_sourceScheduleId,value)){
-            this._sourceScheduleId = value;
-            internalClearRefs(PROP_ID_sourceScheduleId);
-            
-        }
-    }
-    
-    /**
-     * 审核人: APPROVED_BY
-     */
-    public final java.lang.String getApprovedBy(){
-         onPropGet(PROP_ID_approvedBy);
-         return _approvedBy;
-    }
-
-    /**
-     * 审核人: APPROVED_BY
-     */
-    public final void setApprovedBy(java.lang.String value){
-        if(onPropSet(PROP_ID_approvedBy,value)){
-            this._approvedBy = value;
-            internalClearRefs(PROP_ID_approvedBy);
-            
-        }
-    }
-    
-    /**
-     * 审核时间: APPROVED_AT
-     */
-    public final java.sql.Timestamp getApprovedAt(){
-         onPropGet(PROP_ID_approvedAt);
-         return _approvedAt;
-    }
-
-    /**
-     * 审核时间: APPROVED_AT
-     */
-    public final void setApprovedAt(java.sql.Timestamp value){
-        if(onPropSet(PROP_ID_approvedAt,value)){
-            this._approvedAt = value;
-            internalClearRefs(PROP_ID_approvedAt);
-            
-        }
-    }
-    
-    /**
-     * 汇率: EXCHANGE_RATE
-     */
-    public final java.math.BigDecimal getExchangeRate(){
-         onPropGet(PROP_ID_exchangeRate);
-         return _exchangeRate;
-    }
-
-    /**
-     * 汇率: EXCHANGE_RATE
-     */
-    public final void setExchangeRate(java.math.BigDecimal value){
-        if(onPropSet(PROP_ID_exchangeRate,value)){
-            this._exchangeRate = value;
-            internalClearRefs(PROP_ID_exchangeRate);
-            
-        }
-    }
-    
-    /**
-     * 源币种金额: AMOUNT_SOURCE
-     */
-    public final java.math.BigDecimal getAmountSource(){
-         onPropGet(PROP_ID_amountSource);
-         return _amountSource;
-    }
-
-    /**
-     * 源币种金额: AMOUNT_SOURCE
-     */
-    public final void setAmountSource(java.math.BigDecimal value){
-        if(onPropSet(PROP_ID_amountSource,value)){
-            this._amountSource = value;
-            internalClearRefs(PROP_ID_amountSource);
-            
-        }
-    }
-    
-    /**
-     * 本位币金额: AMOUNT_FUNCTIONAL
-     */
-    public final java.math.BigDecimal getAmountFunctional(){
-         onPropGet(PROP_ID_amountFunctional);
-         return _amountFunctional;
-    }
-
-    /**
-     * 本位币金额: AMOUNT_FUNCTIONAL
-     */
-    public final void setAmountFunctional(java.math.BigDecimal value){
-        if(onPropSet(PROP_ID_amountFunctional,value)){
-            this._amountFunctional = value;
-            internalClearRefs(PROP_ID_amountFunctional);
             
         }
     }

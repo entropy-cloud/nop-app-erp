@@ -128,7 +128,7 @@
         private String _inspectionMethod;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=9)
     
         public String getInspectionMethod(){
             return _inspectionMethod;
@@ -142,7 +142,7 @@
         private Integer _sortNum;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=10)
     
         public Integer getSortNum(){
             return _sortNum;
@@ -156,7 +156,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=11)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -170,7 +170,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=12)
     
         public Integer getVersion(){
             return _version;
@@ -184,7 +184,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=13)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -198,7 +198,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=14)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -212,7 +212,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=16)
+        @PropMeta(propId=15)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -226,7 +226,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=17)
+        @PropMeta(propId=16)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;

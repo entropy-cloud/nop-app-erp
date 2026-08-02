@@ -9,9 +9,12 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstInventory approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractApproveProcessor to activate the abstract base class; delegates to ErpAstInventoryProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstInventory approve per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Inventory 自有非审批状态机（DRAFT→COUNTING→RECONCILING→POSTED），approve 仅盖 approvedBy/approvedAt
+ * （前置 validateReconciling 校验 RECONCILING 态）。
+ * Self-contained orchestration: require → validateReconciling → set approvedBy/approvedAt → save.
+ * Domain logic via facade protected helpers (single source of truth).
+ * Dormant until R5.8 rewire（BizModel Java 直调 facade.approve，不经 xbiz 委托链）。
  */
 public class ErpAstInventoryApproveProcessor extends AbstractApproveProcessor<ErpAstInventory> {
 
@@ -20,7 +23,12 @@ public class ErpAstInventoryApproveProcessor extends AbstractApproveProcessor<Er
 
     @Override
     public ErpAstInventory approve(String id, IServiceContext context) {
-        return processor.approve(Long.valueOf(id), context);
+        ErpAstInventory inv = processor.requireInventory(Long.valueOf(id), context);
+        processor.validateReconciling(inv);
+        inv.setApprovedBy(currentUserId());
+        inv.setApprovedAt(now());
+        processor.inventoryDao().updateEntity(inv);
+        return inv;
     }
 
     @Override
@@ -40,17 +48,17 @@ public class ErpAstInventoryApproveProcessor extends AbstractApproveProcessor<Er
 
     @Override
     protected void setApproveStatus(ErpAstInventory entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        // not reached: Pattern B custom public override
     }
 
     @Override
     protected void setApprovedBy(ErpAstInventory entity, String userId) {
-        // not reached: main method delegates to monolithic Processor
+        // not reached: Pattern B custom public override
     }
 
     @Override
     protected void setApprovedAt(ErpAstInventory entity, java.sql.Timestamp ts) {
-        // not reached: main method delegates to monolithic Processor
+        // not reached: Pattern B custom public override
     }
 
     @Override

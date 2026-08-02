@@ -159,7 +159,7 @@ IN_SERVICE → SOLD(出售)
 
 **涉及机制**:depreciation-and-posting.md §四(价值调整)、state-machine.md
 
-> **实现落位**（2026-07-07，plan 2026-07-07-0842-1）：全流程已落地。盘点单头/行实体 `ErpAstInventory`/`ErpAstInventoryLine` + 四态状态机（DRAFT/COUNTING/RECONCILING/POSTED + CANCELLED）+ `ErpAstInventoryProcessor`（差异引擎 + 盘盈建卡 + 盘亏 SCRAPPED）+ `ASSET_INVENTORY_ADJUSTMENT(460)` 过账 Provider（盘盈 借固定资产/贷营业外收入，盘亏 借营业外支出/贷固定资产）+ reverse 红冲。实现偏离（盘盈/盘亏处置链复用收窄为直接建卡/SCRAPPED，避免与 CAPITALIZATION/DISPOSAL 凭证双重过账）见 owner doc `inventory.md` §四/§八。
+> **实现落位**：盘点单头/行实体 `ErpAstInventory`/`ErpAstInventoryLine` + 四态状态机（DRAFT/COUNTING/RECONCILING/POSTED + CANCELLED）+ `ErpAstInventoryProcessor`（差异引擎 + 盘盈建卡 + 盘亏 SCRAPPED）+ `ASSET_INVENTORY_ADJUSTMENT(460)` 过账 Provider（盘盈 借固定资产/贷营业外收入，盘亏 借营业外支出/贷固定资产）+ reverse 红冲。实现偏离（盘盈/盘亏处置链复用收窄为直接建卡/SCRAPPED，避免与 CAPITALIZATION/DISPOSAL 凭证双重过账）见 owner doc `inventory.md` §四/§八。
 
 ---
 
@@ -178,7 +178,7 @@ IN_SERVICE → SOLD(出售)
 
 **涉及机制**:depreciation-and-posting.md §二(资本化)/§四、../maintenance
 
-> **实现落位**（2026-07-07，plan 2026-07-07-0842-2）：全流程已落地。维修工单头/费用行实体 `ErpAstMaintenance`/`ErpAstMaintenanceCost` + 六态状态机（DRAFT/SUBMITTED/IN_PROGRESS/COMPLETED/POSTED + CANCELLED）+ `ErpAstMaintenanceProcessor`（费用归集 + CAPITALIZE/EXPENSE 裁决 + 资本化原值增量/折旧重算 + 费用化防双重扣减分支）+ `MAINTENANCE_EXPENSE(470)`/`MAINTENANCE_CAPITALIZATION(480)` 过账 Provider + reverse 红冲。资本化路径经 `IErpAstDepreciationScheduleBiz.recalculateForCapitalizationMaintenance` 加性扩展重算折旧计划。详见 owner doc `maintenance.md`。
+> **实现落位**：维修工单头/费用行实体 `ErpAstMaintenance`/`ErpAstMaintenanceCost` + 六态状态机（DRAFT/SUBMITTED/IN_PROGRESS/COMPLETED/POSTED + CANCELLED）+ `ErpAstMaintenanceProcessor`（费用归集 + CAPITALIZE/EXPENSE 裁决 + 资本化原值增量/折旧重算 + 费用化防双重扣减分支）+ `MAINTENANCE_EXPENSE(470)`/`MAINTENANCE_CAPITALIZATION(480)` 过账 Provider + reverse 红冲。资本化路径经 `IErpAstDepreciationScheduleBiz.recalculateForCapitalizationMaintenance` 加性扩展重算折旧计划。详见 owner doc `maintenance.md`。
 
 ---
 

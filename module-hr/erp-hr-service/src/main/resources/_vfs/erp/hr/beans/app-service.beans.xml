@@ -42,4 +42,67 @@
 
     <!-- HR 合同到期扫描 Job Bean（UC-HR-07），由 scheduler.yaml 经 BeanMethodJobInvoker 反射调用 -->
     <bean id="erpHrContractExpiryJob" class="app.erp.hr.service.job.ErpHrContractExpiryJob"/>
+    <!-- per-mutation Processor beans (R6.7，processor-extension-pattern.md 每 mutation 一 Processor)：
+         hr 域 30 须拆 mutation 全部拆为独立 Processor；域专属抽象基类（Abstract*）不注册。 -->
+    <bean id="app.erp.hr.service.processor.ErpHrSalaryCalculateSalaryProcessor"
+          class="app.erp.hr.service.processor.ErpHrSalaryCalculateSalaryProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrSalaryRunPayrollProcessor"
+          class="app.erp.hr.service.processor.ErpHrSalaryRunPayrollProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrSalaryMarkPaidProcessor"
+          class="app.erp.hr.service.processor.ErpHrSalaryMarkPaidProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrSalaryGenerateBankFileProcessor"
+          class="app.erp.hr.service.processor.ErpHrSalaryGenerateBankFileProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrSalarySimulationCreateSimulationProcessor"
+          class="app.erp.hr.service.processor.ErpHrSalarySimulationCreateSimulationProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrSalarySimulationAdjustItemProcessor"
+          class="app.erp.hr.service.processor.ErpHrSalarySimulationAdjustItemProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrSalarySimulationApplyBatchAdjustmentProcessor"
+          class="app.erp.hr.service.processor.ErpHrSalarySimulationApplyBatchAdjustmentProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrSalarySimulationConvertToFormalProcessor"
+          class="app.erp.hr.service.processor.ErpHrSalarySimulationConvertToFormalProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrAttendanceClockInProcessor"
+          class="app.erp.hr.service.processor.ErpHrAttendanceClockInProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrAttendanceClockOutProcessor"
+          class="app.erp.hr.service.processor.ErpHrAttendanceClockOutProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrLeaveRequestSubmitProcessor"
+          class="app.erp.hr.service.processor.ErpHrLeaveRequestSubmitProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrLeaveRequestApproveProcessor"
+          class="app.erp.hr.service.processor.ErpHrLeaveRequestApproveProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrLeaveRequestCancelProcessor"
+          class="app.erp.hr.service.processor.ErpHrLeaveRequestCancelProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrShiftCalcAttendanceProcessor"
+          class="app.erp.hr.service.processor.ErpHrShiftCalcAttendanceProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrShiftOnLeaveApprovedProcessor"
+          class="app.erp.hr.service.processor.ErpHrShiftOnLeaveApprovedProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrShiftOnLeaveCancelledProcessor"
+          class="app.erp.hr.service.processor.ErpHrShiftOnLeaveCancelledProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrShiftAssignmentAssignSingleProcessor"
+          class="app.erp.hr.service.processor.ErpHrShiftAssignmentAssignSingleProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrShiftAssignmentAssignBatchProcessor"
+          class="app.erp.hr.service.processor.ErpHrShiftAssignmentAssignBatchProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrShiftAssignmentCopyFromPeriodProcessor"
+          class="app.erp.hr.service.processor.ErpHrShiftAssignmentCopyFromPeriodProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrShiftRotationPatternGenerateRotationProcessor"
+          class="app.erp.hr.service.processor.ErpHrShiftRotationPatternGenerateRotationProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrShiftSwapRequestSubmitProcessor"
+          class="app.erp.hr.service.processor.ErpHrShiftSwapRequestSubmitProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrShiftSwapRequestApproveProcessor"
+          class="app.erp.hr.service.processor.ErpHrShiftSwapRequestApproveProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrEmployeeTransferEmployeeProcessor"
+          class="app.erp.hr.service.processor.ErpHrEmployeeTransferEmployeeProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrEmployeeAssessmentCompleteAssessmentProcessor"
+          class="app.erp.hr.service.processor.ErpHrEmployeeAssessmentCompleteAssessmentProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrDevelopmentPlanGenerateDevelopmentPlanProcessor"
+          class="app.erp.hr.service.processor.ErpHrDevelopmentPlanGenerateDevelopmentPlanProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrDevelopmentPlanUpdatePlanItemStatusProcessor"
+          class="app.erp.hr.service.processor.ErpHrDevelopmentPlanUpdatePlanItemStatusProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrEmploymentContractExpireOverdueContractsProcessor"
+          class="app.erp.hr.service.processor.ErpHrEmploymentContractExpireOverdueContractsProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrGapAnalysisRefreshGapAnalysisProcessor"
+          class="app.erp.hr.service.processor.ErpHrGapAnalysisRefreshGapAnalysisProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrGapAnalysisRefreshGapAnalysisWithLevelsProcessor"
+          class="app.erp.hr.service.processor.ErpHrGapAnalysisRefreshGapAnalysisWithLevelsProcessor"/>
+    <bean id="app.erp.hr.service.processor.ErpHrRecruitmentHireProcessor"
+          class="app.erp.hr.service.processor.ErpHrRecruitmentHireProcessor"/>
+
 </beans>

@@ -4,21 +4,6 @@ package app.erp.sal.dao;
 public interface _ErpSalDaoConstants {
     
     /**
-     * 单据状态: 草稿 
-     */
-    String DOC_STATUS_DRAFT = "DRAFT";
-                    
-    /**
-     * 单据状态: 已生效 
-     */
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-                    
-    /**
-     * 单据状态: 已作废 
-     */
-    String DOC_STATUS_CANCELLED = "CANCELLED";
-                    
-    /**
      * 收款进度: 未收款 
      */
     String RECEIVED_STATUS_UNRECEIVED = "UNRECEIVED";

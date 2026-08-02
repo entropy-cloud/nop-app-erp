@@ -141,6 +141,7 @@ CREATE TABLE erp_log_shipment(
   UPDATE_TIME TIMESTAMP NOT NULL ,
   BUSINESS_DATE DATE NOT NULL ,
   POSTED CHAR(1) default 0   ,
+  constraint UK_LOG_SHIPMENT_TRACKING_CARRIER unique (TRACKING_NO,CARRIER_ID,DEL_VERSION),
   constraint PK_erp_log_shipment primary key (ID)
 );
 

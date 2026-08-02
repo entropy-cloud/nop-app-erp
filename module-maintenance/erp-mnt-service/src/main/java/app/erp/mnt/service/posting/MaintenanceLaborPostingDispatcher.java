@@ -9,11 +9,13 @@ import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.service.ErpMntConstants;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
@@ -65,6 +67,10 @@ public class MaintenanceLaborPostingDispatcher {
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_MAINTENANCE_LABOR_FAILURE = "mnt.labor-posting-failure";
 
     public void setExecutor(MntPostingExecutor executor) {
         this.executor = executor;
@@ -118,7 +124,29 @@ public class MaintenanceLaborPostingDispatcher {
                 LOG.error("维修工时费用化过账异常，访问 {} 保持 complete 终态（posted 语义不变）",
                         visit.getCode(), e);
             }
+            // G3 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-074）：失败派发告警使 GL 缺 MAINTENANCE_LABOR 凭证悬挂可被感知。
+            dispatchFailureAlert(visit, e);
             return false;
+        }
+    }
+
+    /** 维修工时费用化过账失败告警派发（G3；通知失败降级不阻断主流程）。 */
+    protected void dispatchFailureAlert(ErpMntVisit visit, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("visitCode", visit.getCode());
+        ctx.put("equipmentId", visit.getEquipmentId());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", visit.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_MAINTENANCE_LABOR_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("维修工时费用化过账失败告警派发失败（降级）：visitCode={}, reason={}",
+                    visit.getCode(), notifyErr.getMessage());
         }
     }
 

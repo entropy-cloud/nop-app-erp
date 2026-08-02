@@ -45,6 +45,10 @@ public interface ErpPurConstants extends ErpPurDocStatus {
     String CONFIG_MATCH_PRICE_TOLERANCE = "erp-pur.match-price-tolerance";
     String CONFIG_MATCH_STRICT_MODE = "erp-pur.match-strict-mode";
 
+    // 付款核销三单匹配二次门控（R1.8 P1-MA2-003 方案 A，three-way-match.md §匹配时机「付款前最终校验」）。
+    // 默认 false 保护既有测试基线；启用后 settle 路径强制 strict 复核 invoice 三单匹配完成态。
+    String CONFIG_SETTLE_RECHECK_THREE_WAY_MATCH = "erp-pur.settle-recheck-three-way-match";
+
     // 退货配置项（returns.md §配置项，缺失走默认，无需 .env）
     String CONFIG_RETURN_REASON_REQUIRED = "erp-pur.return-reason-required";
     String CONFIG_RETURN_APPROVAL_REQUIRED = "erp-pur.return-approval-required";

@@ -229,10 +229,10 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     private java.math.BigDecimal _actualClosedRevenue;
     
     /* 承诺准确率: COMMIT_ACCURACY */
-    private java.lang.Double _commitAccuracy;
+    private java.math.BigDecimal _commitAccuracy;
     
     /* 乐观准确率: UPSIDE_ACCURACY */
-    private java.lang.Double _upsideAccuracy;
+    private java.math.BigDecimal _upsideAccuracy;
     
     /* 偏差绝对值: DEVIATION_AMOUNT */
     private java.math.BigDecimal _deviationAmount;
@@ -510,9 +510,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_commitAccuracy:{
-               java.lang.Double typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toDouble(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_commitAccuracy));
                }
                setCommitAccuracy(typedValue);
@@ -520,9 +520,9 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
             }
         
             case PROP_ID_upsideAccuracy:{
-               java.lang.Double typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toDouble(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_upsideAccuracy));
                }
                setUpsideAccuracy(typedValue);
@@ -700,14 +700,14 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
         
             case PROP_ID_commitAccuracy:{
                onInitProp(propId);
-               this._commitAccuracy = (java.lang.Double)value;
+               this._commitAccuracy = (java.math.BigDecimal)value;
                
                break;
             }
         
             case PROP_ID_upsideAccuracy:{
                onInitProp(propId);
-               this._upsideAccuracy = (java.lang.Double)value;
+               this._upsideAccuracy = (java.math.BigDecimal)value;
                
                break;
             }
@@ -974,7 +974,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 承诺准确率: COMMIT_ACCURACY
      */
-    public final java.lang.Double getCommitAccuracy(){
+    public final java.math.BigDecimal getCommitAccuracy(){
          onPropGet(PROP_ID_commitAccuracy);
          return _commitAccuracy;
     }
@@ -982,7 +982,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 承诺准确率: COMMIT_ACCURACY
      */
-    public final void setCommitAccuracy(java.lang.Double value){
+    public final void setCommitAccuracy(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_commitAccuracy,value)){
             this._commitAccuracy = value;
             internalClearRefs(PROP_ID_commitAccuracy);
@@ -993,7 +993,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 乐观准确率: UPSIDE_ACCURACY
      */
-    public final java.lang.Double getUpsideAccuracy(){
+    public final java.math.BigDecimal getUpsideAccuracy(){
          onPropGet(PROP_ID_upsideAccuracy);
          return _upsideAccuracy;
     }
@@ -1001,7 +1001,7 @@ public class _ErpCrmForecastAccuracy extends DynamicOrmEntity{
     /**
      * 乐观准确率: UPSIDE_ACCURACY
      */
-    public final void setUpsideAccuracy(java.lang.Double value){
+    public final void setUpsideAccuracy(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_upsideAccuracy,value)){
             this._upsideAccuracy = value;
             internalClearRefs(PROP_ID_upsideAccuracy);

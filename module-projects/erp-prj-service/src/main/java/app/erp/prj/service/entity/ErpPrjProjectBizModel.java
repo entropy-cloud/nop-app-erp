@@ -5,8 +5,10 @@ import app.erp.prj.dao.entity.ErpPrjProject;
 import app.erp.prj.service.ErpPrjConfigs;
 import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
-import app.erp.prj.service.cost.ExpenseCostAggregator;
-import app.erp.prj.service.cost.ProjectCostAggregator;
+import app.erp.prj.service.processor.ErpPrjProjectCloseProjectProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectHoldProjectProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectRefreshActualCostProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectResumeProjectProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -14,25 +16,44 @@ import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
-import java.util.List;
-import java.util.Objects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * 项目 BizModel。CRUD 之上承载项目状态引用校验（{@code cost-collection.md §七}）与
  * 成本归集回写（{@code §4.2}）。
  *
- * <p>{@code closeProject} 实现 OPEN→COMPLETED 冻结（对齐 §4.3「项目关闭」）；关闭后
+ * <p>{@code closeProject} 实现 OPEN→COMPLETED 冻结（对齐 §4.3「项目关闭」）；关闭前经
+ * {@code validateTasksFinished} 校验任务已结束（config-gated STRICT/WARN，对齐
+ * {@code state-machine.md §迁移完整性 OPEN→COMPLETED}）；关闭后
  * {@link #requireReferenceable} 拒绝新单据引用，从而拒绝新归集。
+ *
+ * <p>{@code startProject} 实现 DRAFT→OPEN 迁移；迁移前经 {@code validateStartPreconditions}
+ * 校验必填字段（项目名/起止日期/预算，config-gated STRICT/WARN，对齐
+ * {@code state-machine.md §迁移完整性 DRAFT→OPEN}）。
+ *
+ * <p>R6.6：{@code closeProject}/{@code holdProject}/{@code refreshActualCost}/{@code resumeProject}
+ * 已拆为独立 per-mutation Processor（{@code processor-extension-pattern.md}），本类仅作 facade 单行委托。
  */
 @BizModel("ErpPrjProject")
 public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implements IErpPrjProjectBiz {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ErpPrjProjectBizModel.class);
+
     @Inject
-    ProjectCostAggregator costAggregator;
+    ErpPrjProjectCloseProjectProcessor closeProjectProcessor;
     @Inject
-    ExpenseCostAggregator expenseCostAggregator;
+    ErpPrjProjectHoldProjectProcessor holdProjectProcessor;
+    @Inject
+    ErpPrjProjectResumeProjectProcessor resumeProjectProcessor;
+    @Inject
+    ErpPrjProjectRefreshActualCostProcessor refreshActualCostProcessor;
 
     public ErpPrjProjectBizModel() {
         setEntityName(ErpPrjProject.class.getName());
@@ -54,50 +75,42 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
     @Override
     @BizMutation
     public BigDecimal refreshActualCost(@Name("projectId") Long projectId, IServiceContext context) {
-        return costAggregator.refreshActualCost(projectId);
+        return refreshActualCostProcessor.refreshActualCost(projectId, context);
     }
 
     @Override
     @BizMutation
     public ErpPrjProject closeProject(@Name("projectId") Long projectId, IServiceContext context) {
+        return closeProjectProcessor.closeProject(projectId, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpPrjProject startProject(@Name("projectId") Long projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
+        // 立项前校验必填字段（config-gated STRICT/WARN，对齐 state-machine.md §迁移完整性 DRAFT→OPEN）
+        validateStartPreconditions(project);
         String status = project.getStatus();
-        if (status == null || !Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_OPEN)) {
+        if (!Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_DRAFT)) {
             throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
                     .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
                     .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
         }
-        // 关闭前刷新实际成本（保证关账数据完整，对齐 §4.3）
-        costAggregator.refreshActualCost(projectId);
-        // 关闭前刷新费用报销归集（config-gated，保证关账费用完整，对齐计划 Phase 3 Decision）
-        if (ErpPrjConfigs.expenseAggregationEnabled()) {
-            expenseCostAggregator.refreshExpenseCost(projectId);
-        }
-        project = requireEntity(String.valueOf(projectId), null, context);
-        project.setStatus(ErpPrjConstants.PROJECT_STATUS_COMPLETED);
+        project.setStatus(ErpPrjConstants.PROJECT_STATUS_OPEN);
         updateEntity(project, null, context);
         return project;
     }
 
     @Override
     @BizMutation
-    public ErpPrjProject startProject(@Name("projectId") Long projectId, IServiceContext context) {
-        return transition(projectId, ErpPrjConstants.PROJECT_STATUS_DRAFT,
-                ErpPrjConstants.PROJECT_STATUS_OPEN, context);
-    }
-
-    @Override
-    @BizMutation
     public ErpPrjProject holdProject(@Name("projectId") Long projectId, IServiceContext context) {
-        return transition(projectId, ErpPrjConstants.PROJECT_STATUS_OPEN,
-                ErpPrjConstants.PROJECT_STATUS_ON_HOLD, context);
+        return holdProjectProcessor.holdProject(projectId, context);
     }
 
     @Override
     @BizMutation
     public ErpPrjProject resumeProject(@Name("projectId") Long projectId, IServiceContext context) {
-        return transition(projectId, ErpPrjConstants.PROJECT_STATUS_ON_HOLD,
-                ErpPrjConstants.PROJECT_STATUS_OPEN, context);
+        return resumeProjectProcessor.resumeProject(projectId, context);
     }
 
     @Override
@@ -116,17 +129,39 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
         return project;
     }
 
-    private ErpPrjProject transition(Long projectId, String expected, String target, IServiceContext context) {
-        ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
-        String status = project.getStatus();
-        if (!Objects.equals(status, expected)) {
-            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
-                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
-                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
+    /**
+     * 校验立项必填字段（项目名/起止日期/预算，且 startDate<=endDate）。STRICT 模式（默认）抛
+     * {@code ERR_PROJECT_START_PRECONDITION_FAILED}；WARN 模式 {@code LOG.warn} 放行。
+     */
+    private void validateStartPreconditions(ErpPrjProject project) {
+        List<String> missingFields = new ArrayList<>();
+        if (project.getName() == null || project.getName().trim().isEmpty()) {
+            missingFields.add("name");
         }
-        project.setStatus(target);
-        updateEntity(project, null, context);
-        return project;
+        LocalDate startDate = project.getStartDate();
+        LocalDate endDate = project.getEndDate();
+        if (startDate == null) {
+            missingFields.add("startDate");
+        }
+        if (endDate == null) {
+            missingFields.add("endDate");
+        }
+        if (startDate != null && endDate != null && startDate.isAfter(endDate)) {
+            missingFields.add("startDate>endDate");
+        }
+        if (project.getBudget() == null) {
+            missingFields.add("budget");
+        }
+        if (missingFields.isEmpty()) {
+            return;
+        }
+        if (ErpPrjConfigs.strictProjectStartPrecheck()) {
+            throw new NopException(ErpPrjErrors.ERR_PROJECT_START_PRECONDITION_FAILED)
+                    .param(ErpPrjErrors.ARG_PROJECT_ID, project.getId())
+                    .param(ErpPrjErrors.ARG_MISSING_FIELDS, missingFields);
+        }
+        LOG.warn("项目 {} 立项前置校验失败：缺少必填字段 {}（WARN 模式放行），state-machine.md §迁移完整性 DRAFT→OPEN",
+                project.getId(), missingFields);
     }
 
 }

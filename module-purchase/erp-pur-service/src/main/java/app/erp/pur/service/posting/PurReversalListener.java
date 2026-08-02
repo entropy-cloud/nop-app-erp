@@ -28,7 +28,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *   <li>{@link ErpFinBusinessType#AP_INVOICE} → {@link ErpPurInvoice}：posted=false + approveStatus APPROVED→REJECTED</li>
  *   <li>{@link ErpFinBusinessType#PAYMENT} → {@link ErpPurPayment}：posted=false + approveStatus APPROVED→REJECTED</li>
  *   <li>{@link ErpFinBusinessType#PURCHASE_RETURN} → {@link ErpPurReturn}：posted=false + approveStatus APPROVED→REJECTED</li>
- *   <li>{@link ErpFinBusinessType#PURCHASE_INPUT} → {@link ErpPurReceive}：仅 posted=false（库存物理冲销独立于凭证红冲）</li>
+ *   <li>{@link ErpFinBusinessType#PURCHASE_INPUT} → {@link ErpPurReceive}：posted=false + approveStatus APPROVED→REJECTED（与其他三实体对齐）</li>
  * </ul>
  *
  * <p>监听者失败经 {@code ErpFinReversalListenerRegistry.dispatch} 的 try/catch 隔离，不阻断其他域监听者、
@@ -114,11 +114,14 @@ public class PurReversalListener implements IErpFinVoucherReversedListener {
         if (receive == null || !Boolean.TRUE.equals(receive.getPosted())) {
             return;
         }
-        // 库存物理冲销独立于凭证红冲（由业务侧 reverseApprove 链触发 stockMoveBiz.reverse）；
-        // 财务侧红冲仅回退 posted 标志，保留 APPROVED 审计轨迹。
+        // 与 rollbackInvoice/Payment/Return 对齐：财务侧红冲回退 posted 标志 + approveStatus APPROVED→REJECTED。
+        // 库存物理冲销独立于凭证红冲（由业务侧 reverseApprove 链触发 stockMoveBiz.reverse）。
         receive.setPosted(false);
         receive.setPostedAt(null);
         receive.setPostedBy(null);
+        if (Objects.equals(receive.getApproveStatus(), ErpPurConstants.APPROVE_STATUS_APPROVED)) {
+            receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
+        }
         daoProvider.daoFor(ErpPurReceive.class).updateEntity(receive);
     }
 

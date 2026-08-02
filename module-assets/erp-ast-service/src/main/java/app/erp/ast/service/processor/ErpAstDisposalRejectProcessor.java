@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstDisposal reject per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractRejectProcessor to activate the abstract base class; delegates to ErpAstDisposalProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstDisposal reject per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransition → set REJECTED → save.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstDisposalRejectProcessor extends AbstractRejectProcessor<ErpAstDisposal> {
 
@@ -20,7 +20,12 @@ public class ErpAstDisposalRejectProcessor extends AbstractRejectProcessor<ErpAs
 
     @Override
     public ErpAstDisposal reject(String id, IServiceContext context) {
-        return processor.reject(id, context);
+        ErpAstDisposal disposal = processor.requireDisposal(id, context);
+        processor.validateNotCancelled(disposal, context);
+        processor.validateTransitionForReject(disposal, context);
+        disposal.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
+        processor.disposalDao().updateEntity(disposal);
+        return disposal;
     }
 
     @Override

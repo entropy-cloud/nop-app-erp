@@ -4,7 +4,7 @@
 >
 > Portal **不在当前产品基线**（`product-scope.md` 18 域正式范围不含 portal）。本文是方向性设计资产，保留供未来启用时参考。
 > - 实施前需 **plan-first + 人工批准**（portal 跨入 `ai-autonomy-policy.md` 受保护区域：支付、认证、外部集成）。
-> - 下文涉及的支付/SSO/与 `nop-app-mall` 复用论述均为 **`(future)` 占位性描述**，非已落地承诺。
+> - 下文涉及的支付/SSO/与 `nop-app-mall` 复用论述均为 **`(future)` 占位性描述**，非交付承诺。
 > - `/Users/abc/app/nop-app-mall` 实测不存在，故"复用 nop-app-mall"前提当前落空，相关论述待未来评估。
 > - 外部主体身份模型骨架见 `portal/identity-and-access.md`（future，不立即改 orm.xml）。
 

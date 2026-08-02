@@ -108,6 +108,42 @@ public class TestErpSalOrderApproval extends JunitAutoTestCase {
     }
 
     @Test
+    public void testOrderWithdrawApprovalNegativeStateGuards() {
+        ErpSalOrder order = newOrder("SO-WITHDRAW-GUARD-001", "100");
+        ormTemplate.runInSession(() -> {
+            seedActiveCustomer(CUSTOMER_ID, null);
+            saveOrderWithLine(order, "10");
+        });
+
+        // ① UNSUBMITTED 不可撤回：原 xbiz inline-script 抛 nop.err.wf.approve.invalid-status，
+        //    提取后走 per-mutation WithdrawApprovalProcessor.illegalStatusException → 域错误码 ERR_ORDER_ILLEGAL_STATUS_TRANSITION
+        //    （param 等价：orderCode/currentStatus/expectedStatus 替代原 wf bizObjName/bizObjId/action/currentStatus/expectedStatus）
+        ApiResponse<?> bad = withdrawSubmit(order.getId());
+        assertEquals(ErpSalErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "UNSUBMITTED withdrawApproval 应被状态守卫拒绝（域错误码等价，替代原 wf invalid-status）");
+
+        // submit → SUBMITTED → withdrawApproval 成功 → 回到 UNSUBMITTED
+        assertEquals(0, submit(order.getId()).getStatus(), "提交成功");
+        assertEquals(0, withdrawSubmit(order.getId()).getStatus(), "SUBMITTED 撤回应成功");
+        // 再次撤回（已 UNSUBMITTED）→ 状态守卫拒绝
+        bad = withdrawSubmit(order.getId());
+        assertEquals(ErpSalErrors.ERR_ORDER_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "UNSUBMITTED 再次 withdrawApproval 应被状态守卫拒绝");
+
+        // ② CANCELLED 单据不可撤回：原 xbiz inline-script 抛 nop.err.wf.approve.doc-cancelled，
+        //    提取后走 facade.validateNotCancelled（经 per-mutation validateNotCancelled 委托）→ 域错误码 ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION
+        //    （param 等价：orderCode/currentDocStatus/expectedDocStatus 替代原 wf bizObjName/bizObjId/action）
+        ormTemplate.runInSession(() -> {
+            ErpSalOrder o = daoProvider.daoFor(ErpSalOrder.class).getEntityById(order.getId());
+            o.setDocStatus(ErpSalConstants.DOC_STATUS_CANCELLED);
+            daoProvider.daoFor(ErpSalOrder.class).updateEntity(o);
+        });
+        bad = withdrawSubmit(order.getId());
+        assertEquals(ErpSalErrors.ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "CANCELLED 单据 withdrawApproval 应被 doc-cancelled 守卫拒绝（域错误码等价，替代原 wf doc-cancelled）");
+    }
+
+    @Test
     public void testOrderInactiveCustomerRejected() {
         ErpSalOrder order = newOrder("SO-INACTIVE-001", "100");
         ormTemplate.runInSession(() -> {

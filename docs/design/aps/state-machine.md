@@ -46,6 +46,7 @@
 - 终态：`已完成（FINISHED）`、`已取消（CANCELLED）`。
 - 终态不可直接恢复。若需修改，重新创建 OperationOrder。
 - 已 FINISHED 的 OperationOrder 不可重排或修改。
+- **非法迁移拦截（P1-MA2-077，plan `2026-07-30-0720-2`）**：start 仅接受 PLANNED 源态、complete 仅接受 IN_PROGRESS 源态、cancel 仅接受 DRAFT/PLANNED/IN_PROGRESS 源态；FINISHED/CANCELLED 终态→他态的非法迁移经 `ERR_APS_OP_ILLEGAL_TRANSITION`（`erp.err.aps.op-illegal-transition`）在 `ErpApsOperationOrderBizModel.start/complete/cancel` 入口处拦截。
 
 ### 4. 异常路径
 
@@ -54,7 +55,7 @@
 | 工序开工时物料未齐套 | 在 PLANNED→IN_PROGRESS 前增加物料齐套校验（可选） |
 | 工作中心故障/停机（未在约束中登记） | 工单暂停，计划员手动调整（PLANNED→DRAFT 重排） |
 | 插单/急单 | 触发区间重排，受影响区间内的 OperationOrder 回退到 DRAFT |
-| 并发排产同一工作中心 | 乐观锁或资源锁防止产能双倍占用 |
+| 并发排产同一工作中心 | 乐观锁 + 资源锁防止产能双倍占用：`ErpApsSchedulingProcessor.persist` 在每个 PLANNED 工序落库前先向 `ErpApsCapacityReservation` 表 INSERT 一条时段预留，并由 `UK_APS_CAPACITY_RESERVATION_SLOT (machineId, plannedStartT, plannedEndT)` 作为 DB 兜底——两并发 `scheduleForward` 即使同时通过 in-memory pre-check（重叠区间查询），DB 唯一约束也只允许一条预留落地，第二条抛 `ERR_APS_CAPACITY_CONFLICT` 并回滚整个 `@BizMutation` 事务。`PLANNED→DRAFT` 重排时（插单区间重排）按 `operationOrderId` 硬删除原预留后再次申请新时段。PLANNED→IN_PROGRESS/FINISHED/CANCELLED 状态翻转的预留释放归 P1-MA2-077 MR1。|
 | 实际数量超过排产 qty | 系统不允许超过 qty，需拆开工单 |
 
 ### 5. 可达性
@@ -74,7 +75,7 @@
 | PLANNED→DRAFT（重排） | APS 引擎 / 计划员 |
 
 危险操作：
-- **取消执行中的工序**：需生产主管审批，因已产生实际报工数据。
+- **取消执行中的工序**：需生产主管审批，因已产生实际报工数据。**Deferred（P1-MA2-078，plan `2026-07-30-0720-2`）**——当前 `cancel` @BizMutation 经 @BizMutation 入口权限覆盖（任意授权角色可执行），生产主管审批工作流（cancel-approve 动作 + 角色-resource 种子 + 审批 SPI）留 successor。cancel 操作本身业务正确（aps 纯排产不破坏库存/GL，副作用经下游 mfg 工单级联归 A2.6a 已 done 联动复核）；successor 触发条件：审批工作流 SPI 落地时实现 cancel-approve 动作（IN_PROGRESS 源态需审批令牌）+ config-gated 角色-resource 门控。
 - **重排已 PLANNED 的工序**：自动重排时影响范围需限定在区间内。
 
 ### 7. 外部依赖
@@ -138,4 +139,4 @@
 - PLANNED→DRAFT 重排回退路径是否合法（仅 APS 引擎或计划员可执行）。
 - 插单重排的范围限定（区间重排而非全局重排）。
 - 执行中工序取消是否需要生产主管审批。
-- 工作中心产能的双重占用防止机制。
+- 工作中心产能的双重占用防止机制（`ErpApsCapacityReservation` UK + persist 重叠 pre-check，P0-MA2-019 fix）。

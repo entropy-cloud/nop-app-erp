@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstValueAdjustment approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractApproveProcessor to activate the abstract base class; delegates to ErpAstValueAdjustmentProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstValueAdjustment approve per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → idempotency → validateNotCancelled → validateTransition → validateForApproval → executeApprove.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstValueAdjustmentApproveProcessor extends AbstractApproveProcessor<ErpAstValueAdjustment> {
 
@@ -20,7 +20,14 @@ public class ErpAstValueAdjustmentApproveProcessor extends AbstractApproveProces
 
     @Override
     public ErpAstValueAdjustment approve(String id, IServiceContext context) {
-        return processor.approve(id, context);
+        ErpAstValueAdjustment adjustment = processor.requireAdjustment(id, context);
+        if (adjustment.isApproved()) {
+            return adjustment;
+        }
+        processor.validateNotCancelled(adjustment, context);
+        processor.validateTransitionForApprove(adjustment, context);
+        processor.validateForApproval(adjustment, context);
+        return processor.executeApprove(id, adjustment, context);
     }
 
     @Override

@@ -1,17 +1,16 @@
 package app.erp.cs.service.entity;
 
-import app.erp.cs.biz.IErpCsEntitlementBiz;
-import app.erp.cs.biz.IErpCsSurveyBiz;
 import app.erp.cs.biz.IErpCsTicketActionBiz;
 import app.erp.cs.biz.IErpCsTicketBiz;
-import app.erp.cs.dao.entity.ErpCsEntitlement;
-import app.erp.cs.dao.entity.ErpCsSlaPolicy;
-import app.erp.cs.dao.entity.ErpCsSurvey;
 import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.dao.entity.ErpCsTicketAction;
 import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
+import app.erp.cs.service.processor.ErpCsTicketMatchAndAttachSlaProcessor;
+import app.erp.cs.service.processor.ErpCsTicketReopenProcessor;
+import app.erp.cs.service.processor.ErpCsTicketResolveProcessor;
+import app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.notify.biz.IErpSysNotificationBiz;
@@ -26,9 +25,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +33,6 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
-import static io.nop.api.core.beans.FilterBeans.lt;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.EntityData;
 
@@ -62,13 +58,17 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     @Inject
     IErpCsTicketActionBiz ticketActionBiz;
     @Inject
-    IErpCsSurveyBiz surveyBiz;
-    @Inject
     IErpMdPartnerBiz mdPartnerBiz;
     @Inject
     IErpSysNotificationBiz notificationBiz;
     @Inject
-    IErpCsEntitlementBiz entitlementBiz;
+    ErpCsTicketMatchAndAttachSlaProcessor matchAndAttachSlaProcessor;
+    @Inject
+    ErpCsTicketReopenProcessor reopenProcessor;
+    @Inject
+    ErpCsTicketResolveProcessor resolveProcessor;
+    @Inject
+    ErpCsTicketScanOverdueTicketsProcessor scanOverdueTicketsProcessor;
 
     public ErpCsTicketBizModel() {
         setEntityName(ErpCsTicket.class.getName());
@@ -87,20 +87,12 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         this.ticketActionBiz = ticketActionBiz;
     }
 
-    public void setSurveyBiz(IErpCsSurveyBiz surveyBiz) {
-        this.surveyBiz = surveyBiz;
-    }
-
     public void setMdPartnerBiz(IErpMdPartnerBiz mdPartnerBiz) {
         this.mdPartnerBiz = mdPartnerBiz;
     }
 
     public void setNotificationBiz(IErpSysNotificationBiz notificationBiz) {
         this.notificationBiz = notificationBiz;
-    }
-
-    public void setEntitlementBiz(IErpCsEntitlementBiz entitlementBiz) {
-        this.entitlementBiz = entitlementBiz;
     }
 
     // ---------- 状态机 ----------
@@ -145,35 +137,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     public ErpCsTicket resolve(@Name("ticketId") Long ticketId,
                                @Optional @Name("resolution") String resolution,
                                IServiceContext context) {
-        ErpCsTicket ticket = requireTicket(ticketId, context);
-        String from = ticket.getStatus();
-        if (!Objects.equals(from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS)) {
-            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
-        }
-        LocalDateTime now = CoreMetrics.currentDateTime();
-        // 停 SLA 计时算 duration（分钟）；startDateTime 为空时 duration 留空
-        if (ticket.getStartDateTime() != null) {
-            long minutes = SlaDeadlineCalculator.minutesBetween(ticket.getStartDateTime().toLocalDateTime(), now);
-            ticket.setDuration((int) minutes);
-        }
-        // 标记 isSlaCompleted = resolvedAt <= deadlineDateTime
-        LocalDateTime deadline = ticket.getDeadlineDateTime() != null ? ticket.getDeadlineDateTime().toLocalDateTime() : null;
-        boolean completed = deadline == null || !now.isAfter(deadline);
-        ticket.setIsSlaCompleted(completed);
-        ticket.setStatus(ErpCsConstants.TICKET_STATUS_RESOLVED);
-        if (resolution != null) {
-            ticket.setRemark(resolution);
-        }
-        updateEntity(ticket, null, context);
-        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_RESOLVED,
-                "标记解决: " + (resolution == null ? "" : resolution), context);
-
-        // CSAT 触发（config-gated）：trigger-status 默认 RESOLVED
-        if (ErpCsConfigs.isSurveyEnabled()
-                && Objects.equals(ErpCsConfigs.getSurveyTriggerStatus(), ErpCsConstants.TICKET_STATUS_RESOLVED)) {
-            surveyBiz.createSurvey(ticketId, context);
-        }
-        return ticket;
+        return resolveProcessor.resolve(ticketId, resolution, context);
     }
 
     @Override
@@ -201,20 +165,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     @Override
     @BizMutation
     public ErpCsTicket reopen(@Name("ticketId") Long ticketId, IServiceContext context) {
-        ErpCsTicket ticket = requireTicket(ticketId, context);
-        String from = ticket.getStatus();
-        if (!Objects.equals(from, ErpCsConstants.TICKET_STATUS_RESOLVED)) {
-            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_RESOLVED);
-        }
-        ticket.setStatus(ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
-        // 恢复计时：保留原 startDateTime（duration 在下次 resolve 时累加重算，因 startDateTime 不变）
-        updateEntity(ticket, null, context);
-        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS,
-                "驳回重开", context);
-
-        // reopen 时取消未响应的调查（避免误发）
-        cancelUnrespondedSurvey(ticketId, context);
-        return ticket;
+        return reopenProcessor.reopen(ticketId, context);
     }
 
     @Override
@@ -258,108 +209,13 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     @Override
     @BizMutation
     public ErpCsTicket matchAndAttachSla(@Name("ticketId") Long ticketId, IServiceContext context) {
-        if (!ErpCsConfigs.isSlaEnabled()) {
-            return requireTicket(ticketId, context);
-        }
-        ErpCsTicket ticket = requireTicket(ticketId, context);
-
-        // 权益集成（plan 2026-07-07-1430-1 §Phase 1 Decision）：config-gated
-        // 与 SLA 匹配同点装配（"为工单装配服务级别"语义一致，避免双触发）。
-        ErpCsEntitlement matched = matchAndConsumeEntitlement(ticket, context);
-        if (matched != null) {
-            // 权益级 SLA 覆盖优先：entitlement.slaPolicyId 覆盖工单类型默认
-            if (matched.getSlaPolicyId() != null) {
-                ticket.setSlaPolicyId(matched.getSlaPolicyId());
-            }
-            applyEntitlementSlaOverride(ticket, matched);
-            // 权益无独立 deadlineDateTime 列，沿用 SLA 策略 deadline 计算路径
-        }
-
-        ErpCsSlaPolicy policy = SlaPolicyMatcher.match(daoProvider(), ticket);
-        if (policy == null) {
-            // 无匹配策略：不挂策略，deadlineDateTime 留空
-            updateEntity(ticket, null, context);
-            return ticket;
-        }
-        // 权益未覆盖 slaPolicyId 时取 SLA 策略匹配结果
-        if (ticket.getSlaPolicyId() == null) {
-            ticket.setSlaPolicyId(policy.getId());
-        }
-        LocalDateTime deadline = SlaDeadlineCalculator.calculate(CoreMetrics.currentDateTime(), policy);
-        ticket.setDeadlineDateTime(Timestamp.valueOf(deadline));
-        // priority 变更重算时保留原 startDateTime（plan Phase 1 item 3）
-        updateEntity(ticket, null, context);
-        return ticket;
-    }
-
-    /**
-     * 权益匹配 + 扣减（config-gated by {@link ErpCsConfigs#isEntitlementCheckEnabled}）。
-     *
-     * <p>决策（plan §Phase 1 Decision）：与 SLA 匹配同事务、工单生命周期内单一触发点（matchAndAttachSla 入口），
-     * 避免在状态迁移时重复扣减。匹配返回权益时调 {@link IErpCsEntitlementBiz#consumeEntitlement}；
-     * 无匹配时按 {@link ErpCsConfigs#isAllowNoEntitlement} 放行或抛 {@link ErpCsErrors#ERR_ENTITLEMENT_NONE_ACTIVE}。
-     */
-    private ErpCsEntitlement matchAndConsumeEntitlement(ErpCsTicket ticket, IServiceContext context) {
-        if (!ErpCsConfigs.isEntitlementCheckEnabled() || entitlementBiz == null) {
-            return null;
-        }
-        ErpCsEntitlement matched = entitlementBiz.matchForCustomer(ticket.getCustomerId());
-        if (matched == null) {
-            if (!ErpCsConfigs.isAllowNoEntitlement()) {
-                throw new NopException(ErpCsErrors.ERR_ENTITLEMENT_NONE_ACTIVE)
-                        .param(ErpCsErrors.ARG_PARTNER_ID, ticket.getCustomerId());
-            }
-            // 放行：标记"无服务权益"（写 remark 仅在为空时，避免覆盖既有备注）
-            if (ticket.getRemark() == null || ticket.getRemark().isEmpty()) {
-                ticket.setRemark("无有效服务权益");
-            }
-            return null;
-        }
-        // 扣减（PAY_PER_TICKET 增计，其他类型仅记日志）
-        entitlementBiz.consumeEntitlement(matched.getId(), context);
-        return matched;
-    }
-
-    /**
-     * 应用权益级 SLA 覆盖：maxResolutionTime/maxResponseTime 不为空时覆盖策略默认值。
-     * 因 deadlineDateTime 沿用 SLA 策略计算路径，此处仅记录权益覆盖（如需精确覆盖可扩展 SlaDeadlineCalculator）。
-     */
-    private void applyEntitlementSlaOverride(ErpCsTicket ticket, ErpCsEntitlement entitlement) {
-        Integer overrideMinutes = EntitlementMatcher.resolveSlaOverrideMinutes(entitlement);
-        if (overrideMinutes != null && overrideMinutes > 0) {
-            LocalDateTime base = CoreMetrics.currentDateTime();
-            LocalDateTime overrideDeadline = base.plusMinutes(overrideMinutes);
-            // 权益级覆盖优先于 SLA 策略计算的 deadline（entitlement.md §三 优先级 1）
-            ticket.setDeadlineDateTime(Timestamp.valueOf(overrideDeadline));
-        }
+        return matchAndAttachSlaProcessor.matchAndAttachSla(ticketId, context);
     }
 
     @Override
     @BizMutation
     public List<ErpCsTicket> scanOverdueTickets(IServiceContext context) {
-        if (!ErpCsConfigs.isSlaEnabled()) {
-            return new ArrayList<>();
-        }
-        LocalDateTime now = CoreMetrics.currentDateTime();
-        QueryBean q = new QueryBean();
-        // status IN (ASSIGNED, IN_PROGRESS) AND deadlineDateTime < now AND isSlaCompleted=false
-        q.addFilter(in("status", java.util.Arrays.asList(
-                ErpCsConstants.TICKET_STATUS_ASSIGNED, ErpCsConstants.TICKET_STATUS_IN_PROGRESS)));
-        q.addFilter(lt("deadlineDateTime", now));
-        q.addFilter(eq("isSlaCompleted", Boolean.FALSE));
-        // deadlineDateTime 的 XMeta 仅允许 eq/in/dateBetween/dateTimeBetween（不支持 lt），
-        // 内部派生查询走 doFindListByQueryDirectly 绕过 meta 限制（同 ErpCrmEventBizModel.findDueReminders 模式）
-        List<ErpCsTicket> overdue = doFindListByQueryDirectly(q, context);
-        List<ErpCsTicket> escalated = new ArrayList<>();
-        for (ErpCsTicket ticket : overdue) {
-            // 创建 ESCALATE 审计 + 通知 escalationUserId（L1，config-gated；通知占位，实际发送属 nop-notification 独立面）
-            writeAction(ticket, ErpCsConstants.ACTION_TYPE_ESCALATE, ticket.getStatus(), ticket.getStatus(),
-                    "SLA 超时升级通知 escalationUserId", context);
-            // 通知派发（config-gated）：超时升级时通知客服主管/分派人，复用既有 erp-cs-sla-scan scheduler job 自动派发
-            notifySlaOverdue(ticket, context);
-            escalated.add(ticket);
-        }
-        return escalated;
+        return scanOverdueTicketsProcessor.scanOverdueTickets(context);
     }
 
     @Override
@@ -445,19 +301,6 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         action.setContent(content);
         action.setOperatorId(context.getUserId());
         ticketActionBiz.saveEntity(action, null, context);
-    }
-
-    private void cancelUnrespondedSurvey(Long ticketId, IServiceContext context) {
-        // 查找该工单未响应的调查（respondedAt 空），删除以避免误发
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("ticketId", ticketId));
-        q.setLimit(1);
-        List<ErpCsSurvey> list = surveyBiz.findList(q, null, context);
-        for (ErpCsSurvey survey : list) {
-            if (survey.getRespondedAt() == null) {
-                surveyBiz.delete(String.valueOf(survey.getId()), context);
-            }
-        }
     }
 
     

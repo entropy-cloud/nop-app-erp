@@ -169,4 +169,130 @@
             </plugin>
         </plugins>
     </build>
+
+    <!--
+        mutation profile (MQ Q1)：per-module 接入（候选 P1，设计文档 §3.4 R4 预设退路）。
+        R4 复核结论：app-erp 根 pom 仅为 reactor 聚合器——module-manufacturing/pom.xml 的 <parent>
+        是 nop-entropy（非 app-erp），故根 pom 的 mutation profile 不在子模块 parent 链中、
+        无法继承。退回候选 P1：在三域 service 模块各声明 profile。配置与设计文档 §3.3 一致
+        （targetClasses 含三域通配；非本域类不在 classpath 上，pitest 0 命中无害）。
+        激活：mvn -Pmutation -pl module-manufacturing/erp-mfg-service -am test-compile
+              org.pitest:pitest-maven:mutationCoverage
+    -->
+    <profiles>
+        <profile>
+            <id>mutation</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <version>1.25.8</version>
+                        <configuration>
+                            <targetClasses>
+                                <param>app.erp.fin.*</param>
+                                <param>app.erp.mfg.*</param>
+                                <param>app.erp.inv.*</param>
+                            </targetClasses>
+                            <excludedClasses>
+                                <param>*.dao.entity._gen.*</param>
+                                <param>*.dao.entity._gen._*</param>
+                                <param>*.api.beans.*</param>
+                                <param>*.api.crud.*</param>
+                                <param>*.codegen.*</param>
+                                <param>*Test*</param>
+                                <param>*IT</param>
+                            </excludedClasses>
+                            <targetTests>
+                                <param>app.erp.fin.*Test*</param>
+                                <param>app.erp.mfg.*Test*</param>
+                                <param>app.erp.inv.*Test*</param>
+                            </targetTests>
+                            <!-- excludedTestClasses: adjudicated residual（plan 2026-08-02-1500-2 根因裁决）。
+                                 根因（平台级，经 live-repo 调查确认）：TestErpMfgWorkOrderEndToEnd 在 pitest 单 JVM
+                                 合并运行（全 32 mfg test class 共享 minion）时，其快照基线的 @var:ErpMfgXxx@updateTime_N
+                                 变量解析非确定性失败。机制：nop-orm 的 OrmTimestampHelper.onUpdate/onCreate 经
+                                 new Timestamp(CoreMetrics.currentTimeMillis()) 写入审计 updateTime（真实墙钟），
+                                 而 app 层 ThreadLocalFrozenClock 依设计【不】冻结 currentTimeMillis（保留单调时间真实，
+                                 供 ContextProvider 等使用），故审计时间戳始终为真实毫秒墙钟。AutoTestVars.addVar 按
+                                 捕获次数（putIfAbsent）累加 _N 后缀，录制时 output() 经 getNameByValue 按值反查 var 名。
+                                 当同类多次更新（JobCard/WorkOrder 多次 flush）落在同一毫秒→值碰撞→_N 索引与录制基线漂移，
+                                 getVar("@var:...updateTime_N") 偶发返回 null → check-output-fail。
+                                 【实证】surefire forkCount=1 复跑同对（CostFlowEndToEnd→EndToEnd）3 次：run1 FAIL（_2）、
+                                 run2 PASS、run3 FAIL（_2），确认【非确定性 / 时序敏感】，重录基线无法消除。
+                                 【为何仅本类触发】EndToEnd 的 recordWork 步骤使 JobCard/WorkOrder 更新次数最多
+                                 （updateTime 索引达 _2/_8），碰撞概率最高；fin/inv 及 mfg 其余 31 类更新次数少未触达。
+                                 【不可在本仓修】根因三要素（OrmTimestampHelper 用 currentTimeMillis、
+                                 ThreadLocalFrozenClock 不冻结 currentTimeMillis、AutoTestVars 按值/计数索引易挥发字段）
+                                 均在 nop-entropy，受 Non-Goal「不修改 nop-entropy」约束。
+                                 【平台 successor 触发】nop-entropy 侧任一修复落地后可移除本排除并重跑全 32 class 基线：
+                                   (a) OrmTimestampHelper 改用 CoreMetrics.currentDateTime()（可被冻结钟覆盖）；或
+                                   (b) ThreadLocalFrozenClock 增加冻结 currentTimeMillis 选项；或
+                                   (c) AutoTestVars 对时间戳类易挥发字段改用按名稳定索引（非按值反查/计数）。
+                                 本排除保留期间，mfg 基线 = 31/32 class（score 60% 不变，整数位不受 1 类缺失影响）。 -->
+                            <excludedTestClasses>
+                                <param>*TestErpMfgWorkOrderEndToEnd*</param>
+                            </excludedTestClasses>
+                            <outputFormats>
+                                <param>HTML</param>
+                                <param>XML</param>
+                            </outputFormats>
+                            <timestampedReports>false</timestampedReports>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>1.2.3</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--
+            security profile (MQ Q2)：SpotBugs + FindSecBugs per-module 接入。
+            插件位置裁决（设计文档 §6.2 R2-MAJOR-2）：SpotBugs 分析每模块编译产物字节码，
+            与 Q1 pitest per-module instrumentation 同型——根 pom profile 继承失效
+            （根 pom app-erp 仅为 reactor 聚合器，子模块 <parent> 是 nop-entropy/app-erp-<domain>），
+            须 per-module 声明（对齐 Q1 pitest per-module 先例）。
+            激活：mvn -Psecurity -pl <this-module> spotbugs:check
+            effort=Max + threshold=Low + includeFilterFile（FindSecBugs 安全规则模式，§6.2 step 1）
+            + excludeFilterFile（排除 Nop 生成代码三类 _gen/api.beans/api.crud，D 类噪声）。
+            findsecbugs-plugin：作为 spotbugs 插件依赖注册 FindSecBugs 安全规则探测器。
+            failOnError=false：纯 reporter，gate 逻辑活在 CI（§5.3 单向收紧）。
+        -->
+        <profile>
+            <id>security</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.github.spotbugs</groupId>
+                        <artifactId>spotbugs-maven-plugin</artifactId>
+                        <!-- 4.9.8.3：支持 Java 21-26 字节码（CI Java 21 / 本地 Java 26 均兼容） -->
+                        <version>4.9.8.3</version>
+                        <configuration>
+                            <effort>Max</effort>
+                            <threshold>Low</threshold>
+                            <!-- includeFilterFile：scope 报告到 FindSecBugs 安全规则模式（§6.2 step 1） -->
+                            <includeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-include.xml</includeFilterFile>
+                            <!-- excludeFilterFile：排除 Nop 生成代码三类（D 类噪声） -->
+                            <excludeFilterFile>${maven.multiModuleProjectDirectory}/spotbugs-exclude.xml</excludeFilterFile>
+                            <!-- 输出 XML 供 CI Python gate 解析（§5.4 spotbugs_counts per-type count） -->
+                            <xmlOutput>true</xmlOutput>
+                            <failOnError>false</failOnError>
+                        </configuration>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.h3xstream.findsecbugs</groupId>
+                                <artifactId>findsecbugs-plugin</artifactId>
+                                <!-- 1.13.0：兼容 SpotBugs 4.9.x；Java 21 字节码 Phase 2 首跑验证 -->
+                                <version>1.13.0</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

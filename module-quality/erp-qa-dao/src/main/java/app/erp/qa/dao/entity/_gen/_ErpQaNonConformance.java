@@ -107,47 +107,51 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 23;
+    public static final int PROP_ID_remark = 22;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 24;
+    public static final int PROP_ID_delVersion = 23;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 25;
+    public static final int PROP_ID_version = 24;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 26;
+    public static final int PROP_ID_createdBy = 25;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 27;
+    public static final int PROP_ID_createTime = 26;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 28;
+    public static final int PROP_ID_updatedBy = 27;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 29;
+    public static final int PROP_ID_updateTime = 28;
     
     /* 已过账(报废处置已生成凭证): POSTED BOOLEAN */
     public static final String PROP_NAME_posted = "posted";
-    public static final int PROP_ID_posted = 30;
+    public static final int PROP_ID_posted = 29;
     
     /* 过账时间: POSTED_AT TIMESTAMP */
     public static final String PROP_NAME_postedAt = "postedAt";
-    public static final int PROP_ID_postedAt = 31;
+    public static final int PROP_ID_postedAt = 30;
     
     /* 过账人: POSTED_BY VARCHAR */
     public static final String PROP_NAME_postedBy = "postedBy";
-    public static final int PROP_ID_postedBy = 32;
+    public static final int PROP_ID_postedBy = 31;
     
     /* 关联退货单号(RETURN 处置编排退货域后登记): RETURN_CODE VARCHAR */
     public static final String PROP_NAME_returnCode = "returnCode";
-    public static final int PROP_ID_returnCode = 33;
+    public static final int PROP_ID_returnCode = 32;
+    
+    /* 无 CAPA 原因(误开/降级 NCR 显式标注): NO_CAPA_REASON VARCHAR */
+    public static final String PROP_NAME_noCapaReason = "noCapaReason";
+    public static final int PROP_ID_noCapaReason = 33;
     
 
     private static int _PROP_ID_BOUND = 34;
@@ -269,6 +273,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_returnCode] = PROP_NAME_returnCode;
           PROP_NAME_TO_ID.put(PROP_NAME_returnCode, PROP_ID_returnCode);
       
+          PROP_ID_TO_NAME[PROP_ID_noCapaReason] = PROP_NAME_noCapaReason;
+          PROP_NAME_TO_ID.put(PROP_NAME_noCapaReason, PROP_ID_noCapaReason);
+      
     }
 
     
@@ -367,6 +374,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
     
     /* 关联退货单号(RETURN 处置编排退货域后登记): RETURN_CODE */
     private java.lang.String _returnCode;
+    
+    /* 无 CAPA 原因(误开/降级 NCR 显式标注): NO_CAPA_REASON */
+    private java.lang.String _noCapaReason;
     
 
     public _ErpQaNonConformance(){
@@ -537,6 +547,9 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         
             case PROP_ID_returnCode:
                return getReturnCode();
+        
+            case PROP_ID_noCapaReason:
+               return getNoCapaReason();
         
            default:
               return super.orm_propValue(propId);
@@ -869,6 +882,16 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_noCapaReason:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_noCapaReason));
+               }
+               setNoCapaReason(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -1098,6 +1121,13 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
             case PROP_ID_returnCode:{
                onInitProp(propId);
                this._returnCode = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_noCapaReason:{
+               onInitProp(propId);
+               this._noCapaReason = (java.lang.String)value;
                
                break;
             }
@@ -1712,6 +1742,25 @@ public class _ErpQaNonConformance extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_returnCode,value)){
             this._returnCode = value;
             internalClearRefs(PROP_ID_returnCode);
+            
+        }
+    }
+    
+    /**
+     * 无 CAPA 原因(误开/降级 NCR 显式标注): NO_CAPA_REASON
+     */
+    public final java.lang.String getNoCapaReason(){
+         onPropGet(PROP_ID_noCapaReason);
+         return _noCapaReason;
+    }
+
+    /**
+     * 无 CAPA 原因(误开/降级 NCR 显式标注): NO_CAPA_REASON
+     */
+    public final void setNoCapaReason(java.lang.String value){
+        if(onPropSet(PROP_ID_noCapaReason,value)){
+            this._noCapaReason = value;
+            internalClearRefs(PROP_ID_noCapaReason);
             
         }
     }

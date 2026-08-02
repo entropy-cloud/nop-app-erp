@@ -85,11 +85,11 @@ DRAFT（草稿）
 4. **过账门控**：post 前所有 SURPLUS/SHORTAGE 行须有 disposition；config-gated approve 先决。
 5. **终态不可逆**：CANCELLED 不可恢复；POSTED 纠错走 reverse，不走 cancel。
 
-## 八、实现偏离补注（2026-07-07，计划 0842-1 落地）
+## 八、实现约定
 
 - **盘盈/盘亏处置链复用收窄**：§四所述，为避免与 ASSET_INVENTORY_ADJUSTMENT 凭证双重过账，盘盈建卡 / 盘亏 SCRAPPED 走直接 dao 操作，资本化/处置链的独立凭证暂不触发。`IErpAstAssetCapitalizationBiz` / `IErpAstDisposalBiz` 仍注入以保留后继完整复用入口。触发条件：盘盈/盘亏要求生成独立 CAPITALIZATION / DISPOSAL 凭证时。
-- **盘点 AMIS 工作台深度定制**：codegen 标准列表/编辑页满足本期功能验证；深度定制属前端面（见计划 Deferred But Adjudicated）。
-- **周期性自动盘点 / 扫码盘点**：本期 Non-Goal（见计划 Deferred But Adjudicated）。
+- **盘点 AMIS 工作台深度定制**：codegen 标准列表/编辑页满足本期功能验证；深度定制属前端面（Deferred）。
+- **周期性自动盘点 / 扫码盘点**：本期 Non-Goal（Deferred）。
 
 ## 参考机制文档
 

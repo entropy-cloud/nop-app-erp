@@ -200,3 +200,145 @@ export async function deleteByFilter(
 export async function deleteById(page: Page, entityName: string, id: string | number): Promise<void> {
   await gqlFor(page).deleteById(entityName, id);
 }
+
+// ---------- 公司间配对 + 合并抵消反查原语（plan 2026-07-26-1407-1） ----------
+
+/**
+ * 按 (pairKey + periodId) 反查首条 `ErpFinIntercompanyMatch` 记录（带 selection）。
+ *
+ * `runMatching(periodId)` 按 billCode 作 pairKey 写入配对记录；spec 经唯一 pairKey 隔离反查
+ * 断言 status(MATCHED/DIFF) + matchedAmount/diffAmount 精确数值。
+ */
+export async function findIntercompanyMatchByPairKey<T = any>(
+  page: Page,
+  pairKey: string,
+  periodId: number,
+  selection: string,
+): Promise<T | null> {
+  return gqlFor(page).findFirst<T>(
+    'ErpFinIntercompanyMatch',
+    andFilter(eqFilter('pairKey', pairKey), eqFilter('periodId', periodId)),
+    selection,
+  );
+}
+
+/**
+ * 按 (periodId) 反查全部 `ErpFinConsolidationElimination` 候选（带 selection）。
+ *
+ * `generateEliminationCandidates(periodId)` 为每条 MATCHED 记录生成 AR_AP + REVENUE_COST 两类
+ * CANDIDATE（INVENTORY_PROFIT config-gated off）；spec 断言两类候选均存在。
+ */
+export async function findEliminationCandidates<T = any>(
+  page: Page,
+  periodId: number,
+  selection: string,
+): Promise<T[]> {
+  return gqlFor(page).findItems<T>(
+    'ErpFinConsolidationElimination',
+    eqFilter('periodId', periodId),
+    selection,
+  );
+}
+
+/**
+ * 按 candidateId 反查 `ErpFinConsolidationElimination.draftVoucherId`（经 __get 权威查库）。
+ *
+ * `postElimination(candidateId)` 生成 DRAFT 抵消凭证并回写 draftVoucherId + 翻转 status=DRAFT_VOUCHER；
+ * spec 据此反查凭证断言 docStatus=DRAFT。
+ */
+export async function findEliminationVoucherId(
+  page: Page,
+  candidateId: number,
+): Promise<number | null> {
+  const cand = await verifyState(page, 'ErpFinConsolidationElimination', candidateId, 'draftVoucherId');
+  return cand?.draftVoucherId != null ? Number(cand.draftVoucherId) : null;
+}
+
+// ---------- 预算滚动复制 + 结转反查原语（plan 2026-07-26-1407-2） ----------
+
+/**
+ * 按 code 反查首条 `ErpFinBudgetScenario`（带 selection）。
+ *
+ * `rollForward` 返回的目标方案 code=`source.code+"-"+newFiscalYear`，spec 据此反查目标方案 id
+ * 供 `verifyState(__get)` 独立断言字段翻转（fiscalYear/parentScenarioId/docStatus）。
+ */
+export async function findBudgetScenarioByCode<T = any>(
+  page: Page,
+  code: string,
+  selection: string,
+): Promise<T | null> {
+  return gqlFor(page).findFirst<T>('ErpFinBudgetScenario', eqFilter('code', code), selection);
+}
+
+/**
+ * 按 (scenarioId + subjectCode) 聚合 `ErpFinBudgetLine.budgetAmountFunctional` 之和。
+ *
+ * rollForward 复制行保留源 `subjectCode`；carryForward 增补行 `subjectCode="CARRY-FORWARD-"+source.code`。
+ * spec 据此断言新方案行金额确定性派生（FIXED_PERCENTAGE/ZERO_BASED/INCREMENTAL + 4 结转规则）。
+ * 金额经 Number() 归一（BigDecimal 确定性派生，无浮点误差）。
+ */
+export async function findBudgetLineAmount(
+  page: Page,
+  scenarioId: string | number,
+  subjectCode: string,
+): Promise<number> {
+  const lines = await gqlFor(page).findItems<{ budgetAmountFunctional: string | number }>(
+    'ErpFinBudgetLine',
+    andFilter(eqFilter('scenarioId', Number(scenarioId)), eqFilter('subjectCode', subjectCode)),
+    'budgetAmountFunctional',
+  );
+  return lines.reduce((sum, l) => sum + Number(l.budgetAmountFunctional ?? 0), 0);
+}
+
+/**
+ * 按 sourceScenarioId 反查 `ErpFinBudgetRollforwardLog` 计数。
+ *
+ * `rollForward` 写 RollforwardLog（sourceScenarioId + targetScenarioId + strategy + amounts）；
+ * spec 据此断言审计写入（count >= 1）。
+ */
+export async function countBudgetRollforwardLogs(
+  page: Page,
+  sourceScenarioId: string | number,
+): Promise<number> {
+  return gqlFor(page).findPageTotal(
+    'ErpFinBudgetRollforwardLog',
+    eqFilter('sourceScenarioId', Number(sourceScenarioId)),
+  );
+}
+
+/**
+ * 按 sourceScenarioId 反查 `ErpFinBudgetCarryForwardLog` 计数。
+ *
+ * `carryForward` 写 CarryForwardLog（sourceScenarioId + targetScenarioId + rule + amounts）；
+ * spec 据此断言审计写入（count >= 1）。
+ */
+export async function countBudgetCarryForwardLogs(
+  page: Page,
+  sourceScenarioId: string | number,
+): Promise<number> {
+  return gqlFor(page).findPageTotal(
+    'ErpFinBudgetCarryForwardLog',
+    eqFilter('sourceScenarioId', Number(sourceScenarioId)),
+  );
+}
+
+// ---------- 汇率 API 客户端反查原语（plan 2026-07-26-1407-3） ----------
+
+/**
+ * 按 fromCurrencyId 反查 `ErpMdExchangeRate` 全部行（带 selection，关联 ErpMdCurrency code 字段断言）。
+ *
+ * `refreshRatesFromApi(baseCurrency)` 按 base 写入多条汇率行（USD→CNY / USD→EUR 等）；
+ * selection 须含 fromCurrency/toCurrency 关联字段（如 `fromCurrency{code} toCurrency{code} rate rateType validFrom`）
+ * 以独立反查持久化字段，对齐既有 value-spec 反查范式。
+ */
+export async function findExchangeRatesByBase<T = any>(
+  page: Page,
+  baseCurrencyId: string | number,
+  selection: string,
+): Promise<T[]> {
+  return gqlFor(page).findItems<T>(
+    'ErpMdExchangeRate',
+    eqFilter('fromCurrencyId', Number(baseCurrencyId)),
+    selection,
+  );
+}

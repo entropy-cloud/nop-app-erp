@@ -23,6 +23,7 @@ import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.gt;
+import static io.nop.api.core.beans.FilterBeans.le;
 
 /**
  * 个别计价（具体辨认）成本策略（{@code ErpInvConstants.COST_METHOD_INDIVIDUAL}=60）。
@@ -53,7 +54,7 @@ public class SpecificCostingStrategy implements CostingStrategy {
     public BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
                                  BigDecimal unitCost, BookingContext ctx) {
         Long warehouseId = move.getDestWarehouseId();
-        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestWarehouseId();
+        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
         BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = unitCost.multiply(qty);
@@ -90,7 +91,7 @@ public class SpecificCostingStrategy implements CostingStrategy {
         }
 
         List<ErpInvCostLayer> layers = findSpecificLayers(move.getOrgId(), line.getMaterialId(), line.getSkuId(),
-                warehouseId, line.getBatchNo(), line.getSerialNo(), acctSchemaId);
+                warehouseId, line.getBatchNo(), line.getSerialNo(), acctSchemaId, move.getBusinessDate());
         if (layers.isEmpty()) {
             throw new NopException(ErpInvErrors.ERR_COST_NOT_AVAILABLE)
                     .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId())
@@ -164,9 +165,13 @@ public class SpecificCostingStrategy implements CostingStrategy {
     /**
      * 按 batchNo 或 serialNo 精确匹配 SPECIFIC cost layer。
      * batchNo 优先；若 batchNo 为空则按 serialNo 匹配（serialNo 场景每层代表一件）。
+     *
+     * <p>历史成本过滤契约（对齐 FIFO/LIFO/BATCH）：当 {@code businessDate != null} 时仅返回
+     * {@code incomingDate <= businessDate} 的层——出库不可消耗业务日期之后的入库成本层（历史成本原则）。
      */
     private List<ErpInvCostLayer> findSpecificLayers(Long orgId, Long materialId, Long skuId, Long warehouseId,
-                                                     String batchNo, String serialNo, Long acctSchemaId) {
+                                                     String batchNo, String serialNo, Long acctSchemaId,
+                                                     java.time.LocalDate businessDate) {
         ormTemplate.flushSession();
         IEntityDao<ErpInvCostLayer> dao = daoProvider.daoFor(ErpInvCostLayer.class);
         QueryBean q = new QueryBean();
@@ -183,6 +188,9 @@ public class SpecificCostingStrategy implements CostingStrategy {
         }
         if (acctSchemaId != null) {
             q.addFilter(eq("acctSchemaId", acctSchemaId));
+        }
+        if (businessDate != null) {
+            q.addFilter(le("incomingDate", businessDate));
         }
         return dao.findAllByQuery(q);
     }

@@ -10,6 +10,7 @@
 - 本域不负责：科目表/科目主数据维护（master-data 域共享）；业务单据本身（purchase/sales/inventory 域）。
 - 持久化字段、字典、状态码以 `model/app-erp-finance.orm.xml` 为准。
 - 跨域协作规则见 `../domain-design-guidelines.md`，业财打通总览见 `../flow-overview.md` 的 L3 节，详细规则见 [`posting.md`](posting.md)。
+- API 命名约定（审批动作集/状态迁移动词/参数命名）见 `../domain-design-guidelines.md §16A`。
 
 ## 工程与模型
 

@@ -34,6 +34,12 @@ site:
       displayName: Work Order
     ErpMfgWorkcenter-main:
       displayName: Work Center
+    FNPT:ErpMfgWorkOrder:cancel:
+      displayName: Cancel Work Order
+    FNPT:ErpMfgWorkOrder:close:
+      displayName: Close Work Order
+    FNPT:ErpMfgWorkOrder:start:
+      displayName: Start Work Order
     crp-load-report:
       displayName: CRP Load Report
     erp-mfg:

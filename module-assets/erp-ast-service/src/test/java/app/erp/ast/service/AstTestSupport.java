@@ -107,4 +107,27 @@ final class AstTestSupport {
         s.setStatus(ErpAstConstants.SCHEDULE_STATUS_PENDING);
         dao.saveEntity(s);
     }
+
+    /**
+     * 种子一条已执行且 posted=true 的折旧计划（用于批量折旧错误隔离测试：构造悬挂/孤儿态使重执行触发
+     * 红冲硬前置抛 ERR_REVERSE_SOURCE_NOT_FOUND，验证 executeBatchDepreciation try/catch 隔离）。
+     */
+    static Long seedExecutedPostedSchedule(IDaoProvider daoProvider, Long assetId, Long orgId, String period,
+                                           BigDecimal actualAmount, BigDecimal accumDep, BigDecimal nbv) {
+        IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);
+        ErpAstDepreciationSchedule s = new ErpAstDepreciationSchedule();
+        s.setAssetId(assetId);
+        s.setOrgId(orgId);
+        s.setPeriod(period);
+        s.setPlannedAmount(actualAmount);
+        s.setActualAmount(actualAmount);
+        s.setAccumulatedDepreciation(accumDep);
+        s.setNetBookValue(nbv);
+        s.setBusinessDate(java.time.YearMonth.parse(period).atDay(1));
+        s.setStatus(ErpAstConstants.SCHEDULE_STATUS_EXECUTED);
+        s.setPosted(true);
+        s.setVoucherId(999_000L);
+        dao.saveEntity(s);
+        return s.getId();
+    }
 }

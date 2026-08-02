@@ -8,6 +8,10 @@ import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.payroll.PayrollCalculator;
 import app.erp.hr.service.posting.SalaryPostingDispatcher;
+import app.erp.hr.service.processor.ErpHrSalaryCalculateSalaryProcessor;
+import app.erp.hr.service.processor.ErpHrSalaryGenerateBankFileProcessor;
+import app.erp.hr.service.processor.ErpHrSalaryMarkPaidProcessor;
+import app.erp.hr.service.processor.ErpHrSalaryRunPayrollProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -49,6 +53,14 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
     PayrollCalculator payrollCalculator;
     @Inject
     SalaryPostingDispatcher postingDispatcher;
+    @Inject
+    ErpHrSalaryCalculateSalaryProcessor calculateSalaryProcessor;
+    @Inject
+    ErpHrSalaryRunPayrollProcessor runPayrollProcessor;
+    @Inject
+    ErpHrSalaryMarkPaidProcessor markPaidProcessor;
+    @Inject
+    ErpHrSalaryGenerateBankFileProcessor generateBankFileProcessor;
 
     public ErpHrSalaryBizModel() {
         setEntityName(ErpHrSalary.class.getName());
@@ -69,10 +81,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
                                        @Name("year") int year,
                                        @Name("month") int month,
                                        IServiceContext context) {
-        assertNotDuplicated(employeeId, year, month, context);
-        ErpHrSalary salary = payrollCalculator.calculate(employeeId, year, month);
-        saveEntity(salary, null, context);
-        return salary;
+        return calculateSalaryProcessor.calculateSalary(employeeId, year, month, context);
     }
 
     @Override
@@ -80,41 +89,13 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
     public List<ErpHrSalary> runPayroll(@Name("year") int year,
                                         @Name("month") int month,
                                         IServiceContext context) {
-        List<ErpHrEmployee> activeEmployees = findActiveEmployees();
-        List<ErpHrSalary> result = new ArrayList<>();
-        for (ErpHrEmployee emp : activeEmployees) {
-            if (existsNonVoidSalary(emp.getId(), year, month, context)) {
-                continue;
-            }
-            ErpHrSalary salary = payrollCalculator.calculate(emp.getId(), year, month);
-            saveEntity(salary, null, context);
-            result.add(salary);
-        }
-        return result;
+        return runPayrollProcessor.runPayroll(year, month, context);
     }
 
     @Override
     @BizMutation
     public ErpHrSalary markPaid(@Name("salaryId") Long salaryId, IServiceContext context) {
-        ErpHrSalary salary = requireSalary(salaryId, context);
-        if (!ErpHrConstants.APPROVE_STATUS_APPROVED.equals(salary.getApproveStatus())) {
-            throw new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpHrErrors.ARG_SALARY_ID, salaryId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, salary.getApproveStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, "APPROVED");
-        }
-        if (!ErpHrConstants.PAYMENT_PENDING.equals(salary.getPaymentStatus())) {
-            throw new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpHrErrors.ARG_SALARY_ID, salaryId)
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, salary.getPaymentStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, "PENDING(paymentStatus)");
-        }
-        postingDispatcher.tryPostPayment(salary);
-        salary = requireSalary(salaryId, context);
-        salary.setPaymentStatus(ErpHrConstants.PAYMENT_PAID);
-        salary.setPaymentDate(CoreMetrics.today());
-        updateEntity(salary, null, context);
-        return salary;
+        return markPaidProcessor.markPaid(salaryId, context);
     }
 
     @Override
@@ -136,45 +117,7 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
                                                  @Name("month") int month,
                                                  @Name("bankId") Long bankId,
                                                  IServiceContext context) {
-        List<ErpHrSalary> pending = findPayableSalaries(year, month, context);
-        if (pending.isEmpty()) {
-            throw new NopException(ErpHrErrors.ERR_NO_APPROVED_SALARY_FOR_BANK_FILE)
-                    .param(ErpHrErrors.ARG_BANK_ID, bankId);
-        }
-        String batchNo = "PAY-" + year + String.format("%02d", month) + "-" + CoreMetrics.nanoTime();
-        StringBuilder content = new StringBuilder();
-        BigDecimal total = BigDecimal.ZERO;
-        int count = 0;
-        for (ErpHrSalary s : pending) {
-            count++;
-            BigDecimal net = nz(s.getNetSalary());
-            total = total.add(net);
-            content.append(String.format("%03d", count)).append(",")
-                    .append(s.getEmployeeId()).append(",")
-                    .append(net.toPlainString()).append(",工资\n");
-            s.setPaymentBatchNo(batchNo);
-            s.setPaymentStatus(ErpHrConstants.PAYMENT_PAID);
-            s.setPaymentDate(CoreMetrics.today());
-            updateEntity(s, null, context);
-        }
-
-        ErpHrPayrollBankFile bankFile = daoProvider().daoFor(ErpHrPayrollBankFile.class).newEntity();
-        bankFile.setBatchNo(batchNo);
-        bankFile.setPaymentDate(CoreMetrics.today());
-        bankFile.setTotalAmount(total);
-        bankFile.setRecordCount(count);
-        bankFile.setFileFormat(ErpHrConstants.BANK_FILE_FORMAT_CSV);
-        bankFile.setFileContent(content.toString());
-        bankFile.setStatus(ErpHrConstants.BANK_FILE_STATUS_GENERATED);
-        bankFile.setBankId(bankId);
-        IEntityDao<ErpHrPayrollBankFile> bankFileDao = daoProvider().daoFor(ErpHrPayrollBankFile.class);
-        bankFileDao.saveEntity(bankFile);
-
-        for (ErpHrSalary s : pending) {
-            s.setBankFileId(bankFile.getId());
-            updateEntity(s, null, context);
-        }
-        return bankFile;
+        return generateBankFileProcessor.generateBankFile(year, month, bankId, context);
     }
 
     @Override

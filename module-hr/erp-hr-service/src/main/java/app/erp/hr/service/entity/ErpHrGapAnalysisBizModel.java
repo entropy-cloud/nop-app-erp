@@ -13,6 +13,8 @@ import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.competency.AssessmentAggregator;
 import app.erp.hr.service.competency.GapAnalysisCalculator;
+import app.erp.hr.service.processor.ErpHrGapAnalysisRefreshGapAnalysisProcessor;
+import app.erp.hr.service.processor.ErpHrGapAnalysisRefreshGapAnalysisWithLevelsProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -56,6 +58,10 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
     GapAnalysisCalculator gapAnalysisCalculator;
     @Inject
     AssessmentAggregator assessmentAggregator;
+    @Inject
+    ErpHrGapAnalysisRefreshGapAnalysisProcessor refreshGapAnalysisProcessor;
+    @Inject
+    ErpHrGapAnalysisRefreshGapAnalysisWithLevelsProcessor refreshGapAnalysisWithLevelsProcessor;
 
     public ErpHrGapAnalysisBizModel() {
         setEntityName(ErpHrGapAnalysis.class.getName());
@@ -65,8 +71,7 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
     @BizMutation
     public List<ErpHrGapAnalysis> refreshGapAnalysis(@Name("employeeId") Long employeeId,
                                                       IServiceContext context) {
-        Map<Long, Integer> aggregatedLevels = aggregateLatestAssessment(employeeId, context);
-        return refreshGapAnalysisWithLevels(employeeId, aggregatedLevels, context);
+        return refreshGapAnalysisProcessor.refreshGapAnalysis(employeeId, context);
     }
 
     @Override
@@ -74,25 +79,7 @@ public class ErpHrGapAnalysisBizModel extends CrudBizModel<ErpHrGapAnalysis>
     public List<ErpHrGapAnalysis> refreshGapAnalysisWithLevels(@Name("employeeId") Long employeeId,
                                                                 @Name("aggregatedLevels") Map<Long, Integer> aggregatedLevels,
                                                                 IServiceContext context) {
-        Map<Long, Integer> normalized = normalizeLevelMap(aggregatedLevels);
-
-        Long positionId = loadPositionId(employeeId);
-        List<ErpHrRoleCompetency> roleCompetencies = findRoleCompetencies(positionId, context);
-        if (roleCompetencies.isEmpty()) {
-            throw new NopException(ErpHrErrors.ERR_GAP_NO_ROLE_REQUIREMENT)
-                    .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId);
-        }
-
-        LocalDate assessmentDate = latestAssessmentDate(employeeId, context);
-
-        deleteExistingGaps(employeeId, context);
-
-        List<ErpHrGapAnalysis> gaps = gapAnalysisCalculator.calculate(roleCompetencies, normalized, assessmentDate);
-        gaps.forEach(g -> {
-            g.setEmployeeId(employeeId);
-            saveEntity(g, null, context);
-        });
-        return gaps;
+        return refreshGapAnalysisWithLevelsProcessor.refreshGapAnalysisWithLevels(employeeId, aggregatedLevels, context);
     }
 
     /**

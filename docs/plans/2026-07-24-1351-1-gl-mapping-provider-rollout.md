@@ -156,7 +156,7 @@ Exit Criteria:
 - [x] 无范围内项目降级为 deferred/follow-up
 - [x] 独立草案审查已完成并记录
 - [x] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
 - [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
@@ -194,7 +194,7 @@ Closure Audit Evidence:
 - owner doc EXPAND：`docs/design/finance/gl-mapping-rules.md` §8（accountKey 完整表 + 28 Provider 接入清单 + 接入步骤 + 反模式自检扩展）。
 - 独立结束审计：本项留 `[ ]`，待独立子代理（新会话）执行结束审计后勾选（执行者未自我审计此项）。
 
-Auditor / Agent: pending independent closure audit
+- **Independent Closure Audit (R3.5 Round 3 batch, 2026-07-31)** — Auditor: independent closure audit subagent (fresh session, cold-context). Verdict: **PASS**. Five-point consistency: (1) Plan Status `completed` ↔ (2) Phase 1-4 Status 全 `completed` ↔ (3) 所有 Exit Criteria `[x]` ↔ (4) Closure Gates 全 `[x]`（含本次勾选的本审计门 line 159）↔ (5) 日志 `docs/logs/2026/07-24.md` 含 1351-1 跨域过账深化批次 9 域 full-green 声明 — 全部一致。Anti-hollow: PASS（非空头声明，代码/测试/字典/owner doc 均有实体落地）。Deferred honesty: PASS（GL Distribution = `out-of-scope improvement` successor-required-yes 触发条件明确；orgId 维度激活 successor `2026-07-25-1016-2-gl-mapping-org-dimension-activation` 已确认存在且 `completed` 并自带独立结束审计；多节点分布式缓存一致性 = `optimization candidate` successor-required-yes 触发条件明确，分类诚实）。Live-repo spot-check: rg `setAccountKey` 命中全部 28 routing Provider（sales 1 / inventory 4 / mfg 5 / assets 9 / projects 1 / quality 1 / maintenance 2 / finance 5）+ 既有 Pur pilot/BankReconAdj/Template；`TestErpFinGlMappingResolver` 含 (a)-(j) 10 场景，(i) MANUFACTURING_WIP 命中 + (j) NOTES_RECEIVABLE 未命中 null 经行号核实；8 个 `TestErp*AcctDocProviderAccountKey` 单元测试（mnt/inv/qa/fin/prj/mfg/ast/sal）计数精确 8；`TestErpPurInvoicePosting.testGlMappingRuleOverrideChangesSubjectCode` 存在于 line 139；`account-key.dict.yaml` 精确 49 个 `value:` 键（26→49 声明核实）；owner doc `docs/design/finance/gl-mapping-rules.md` §8（§8.1 accountKey 完整表 / §8.2 28 routing Provider 接入清单 / §8.3 接入步骤 / §8.4 反模式自检）存在；种子规则 `docs/testing/gl-mapping-default-seed-rules.md`（82 条 default 规则覆盖全部 28 Provider）存在。Deployment protected-area: 代码落地确认（28 Provider setAccountKey + resolver 钩子）/ 测试绿确认（resolver 3 路径 + 8 域单元测试 + 端到端）/ plan-first 证据完整（owner doc §8 + 种子规则 + 日志）。(Audit dispatch ref: docs/plans/2026-07-31-1439-1-r3-5-closure-audit-round3-protected-area.md Phase 2; appended by R3.5 Round 3 backfill.)
 
 Follow-up:
 

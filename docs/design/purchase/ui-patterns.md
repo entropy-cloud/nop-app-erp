@@ -318,12 +318,11 @@
 
 所有 purchase Line 实体的 `<form id="query">` 至少含：`lineNo`（filterOp=eq）+ `materialId` + `warehouseId`（视实体而定）+ `orderId`/对应父头 ID + `businessDate`（filterOp=date-between，视实体是否含日期字段）。PaymentLine 等无 `businessDate` 的实体，沿用 `lineNo` + `invoiceId` 等替代字段达到 ≥5 字段基线。
 
-## 子表行内编辑（F4 Phase 2 P0 已落地）
+## 子表行内编辑（F4 Phase 2 P0）
 
 > Owner doc: `docs/design/child-table-editor-patterns.md`（范式权威）
-> 落地计划：`docs/plans/2026-07-19-2200-1-f4p2-child-table-editor-p0.md`
 
-purchase 域 4 P0 头行对（`ErpPurOrder/Receive/Invoice/Return` + 对应 Line）已落地头表单内嵌 AMIS input-table 子表编辑。
+purchase 域 4 P0 头行对（`ErpPurOrder/Receive/Invoice/Return` + 对应 Line）头表单内嵌 AMIS input-table 子表编辑。
 
 ### 范式摘要
 

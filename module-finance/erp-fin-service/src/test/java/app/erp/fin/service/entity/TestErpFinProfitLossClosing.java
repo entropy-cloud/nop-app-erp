@@ -98,6 +98,54 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
         assertTrue(!findTrialBalance(periodId).isEmpty(), "应生成试算平衡表快照");
     }
 
+    /**
+     * FX 场景（P0-MA2-016 回归）：汇兑重估凭证（businessType=EXCHANGE_GAIN_LOSS）的汇兑损益（费用类）
+     * 余额须正常结转至本年利润，结账后汇兑损益科目净额归零（period-close.md §步骤5）。
+     *
+     * <p>复现审计证据：外币 AR 重估产生汇兑收益 50（贷汇兑损益 50），结账后该费用类科目应被结转清零，
+     * 本年利润含该汇兑净额。
+     */
+    @Test
+    public void testProfitLossClosingIncludesFxGainLoss() {
+        Long periodId = seedReturn(() -> {
+            Long pid = seedOpenPeriod("2024-04", 2024, 4,
+                    LocalDate.of(2024, 4, 1), LocalDate.of(2024, 4, 30));
+            java.util.Map<String, ErpMdSubject> subjects = new java.util.HashMap<>();
+            subjects.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT));
+            subjects.put("6001", seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
+            subjects.put("1122", seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT));
+            subjects.put("6603", seedSubject("6603", "汇兑损益", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
+            subjects.put("4103", seedSubject("4103", "本年利润", "EQUITY", ErpFinConstants.DC_CREDIT));
+            // 收入 100
+            seedPostedVoucher("V-INCOME-FX-001", pid, LocalDate.of(2024, 4, 10), subjects,
+                    line("1001", "库存现金", ErpFinConstants.DC_DEBIT, "100"),
+                    line("6001", "主营业务收入", ErpFinConstants.DC_CREDIT, "100"));
+            // 汇兑重估凭证（模拟 ExchangeRevaluationService 产出）：AR 升值产生汇兑收益 50（贷汇兑损益）。
+            seedPostedVoucherBizType(ErpFinBusinessType.EXCHANGE_GAIN_LOSS.name(),
+                    "V-FX-001", pid, LocalDate.of(2024, 4, 30), subjects,
+                    line("1122", "应收账款", ErpFinConstants.DC_DEBIT, "50"),
+                    line("6603", "汇兑损益", ErpFinConstants.DC_CREDIT, "50"));
+            return pid;
+        });
+
+        ormTemplate.runInSession(() -> periodBiz.closePeriod(periodId, CTX));
+
+        // 汇兑损益（费用类）经结转后净额归零——P0-MA2-016 核心断言（修复前残留贷方余额 50）。
+        assertEquals(0, netDebit("6603", periodId).compareTo(BigDecimal.ZERO),
+                "汇兑损益科目结转后净额为 0（含 EXCHANGE_GAIN_LOSS 分录）");
+        // 收入科目结转后归零。
+        assertEquals(0, netCredit("6001", periodId).compareTo(BigDecimal.ZERO), "收入科目结转后净额为 0");
+
+        // 本年利润含汇兑净额：收入 100 + 汇兑收益 50 = 150（贷方余额）。
+        ErpMdSubject cyp = findSubjectByCode("4103");
+        BigDecimal cypNet = netCredit(cyp.getId(), periodId);
+        assertEquals(0, cypNet.compareTo(new BigDecimal("150")),
+                "本年利润净额含汇兑净额=收入100+汇兑收益50=150");
+
+        // 试算平衡表快照存在。
+        assertTrue(!findTrialBalance(periodId).isEmpty(), "应生成试算平衡表快照");
+    }
+
     // ---------- helpers ----------
 
     private void seedReturn(Runnable action) {
@@ -149,6 +197,11 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
 
     private void seedPostedVoucher(String code, Long periodId, LocalDate date,
                                    java.util.Map<String, ErpMdSubject> subjects, Object[]... lines) {
+        seedPostedVoucherBizType(null, code, periodId, date, subjects, lines);
+    }
+
+    private void seedPostedVoucherBizType(String businessType, String code, Long periodId, LocalDate date,
+                                          java.util.Map<String, ErpMdSubject> subjects, Object[]... lines) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         BigDecimal total = BigDecimal.ZERO;
         for (Object[] l : lines) {
@@ -187,6 +240,9 @@ public class TestErpFinProfitLossClosing extends JunitAutoTestCase {
             line.setAmountSource(amt);
             line.setAmountFunctional(amt);
             line.setAcctSchemaId(1L);
+            if (businessType != null) {
+                line.setBusinessType(businessType);
+            }
             lDao.saveEntity(line);
         }
     }

@@ -454,23 +454,24 @@ CREATE TABLE erp_mfg_work_order(
   unit_cost NUMERIC(20,4) default 0   ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20)  ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   priority VARCHAR(20)  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
+  source_schedule_id INT8  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  source_schedule_id INT8  ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
-  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
+  constraint UK_MFG_WORK_ORDER_CODE_ORG unique (code,org_id),
   constraint PK_erp_mfg_work_order primary key (id)
 );
 
@@ -586,6 +587,8 @@ CREATE TABLE erp_mfg_subcontract_order(
   total_amount NUMERIC(20,4) default 0   ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20) NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   posted BOOLEAN default false   ,
   posted_status VARCHAR(20) NOT NULL ,
   posted_at TIMESTAMP  ,
@@ -599,8 +602,7 @@ CREATE TABLE erp_mfg_subcontract_order(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
+  constraint UK_MFG_SUBCONTRACT_ORDER_CODE_ORG unique (code,org_id),
   constraint PK_erp_mfg_subcontract_order primary key (id)
 );
 
@@ -686,22 +688,22 @@ CREATE TABLE erp_mfg_material_issue(
   business_date DATE NOT NULL ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20) NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(36)  ,
   remark VARCHAR(1000)  ,
+  currency_id INT8  ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
-  currency_id INT8  ,
-  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_mfg_material_issue primary key (id)
 );
 
@@ -1431,6 +1433,10 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_work_order.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_mfg_work_order.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_mfg_work_order.priority IS '优先级';
                     
       COMMENT ON COLUMN erp_mfg_work_order.posted IS '已过账';
@@ -1440,6 +1446,14 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_work_order.posted_by IS '过账人';
                     
       COMMENT ON COLUMN erp_mfg_work_order.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order.amount_functional IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order.source_schedule_id IS 'APS排程来源(弱参照)';
                     
       COMMENT ON COLUMN erp_mfg_work_order.del_version IS '逻辑删除版本';
                     
@@ -1452,18 +1466,6 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_work_order.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_work_order.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_mfg_work_order.source_schedule_id IS 'APS排程来源(弱参照)';
-                    
-      COMMENT ON COLUMN erp_mfg_work_order.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_mfg_work_order.approved_at IS '审核时间';
-                    
-      COMMENT ON COLUMN erp_mfg_work_order.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_mfg_work_order.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_mfg_work_order.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_mfg_bom_line IS 'BOM行';
                 
@@ -1659,6 +1661,10 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_mfg_subcontract_order.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mfg_subcontract_order.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_mfg_subcontract_order.posted IS '已过账';
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.posted_status IS '过账状态';
@@ -1684,10 +1690,6 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_subcontract_order.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_subcontract_order.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_mfg_subcontract_order.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_mfg_subcontract_order.approved_at IS '审核时间';
                     
       COMMENT ON TABLE erp_mfg_job_card IS '作业卡';
                 
@@ -1835,6 +1837,10 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_material_issue.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_mfg_material_issue.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mfg_material_issue.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_mfg_material_issue.posted IS '已过账';
                     
       COMMENT ON COLUMN erp_mfg_material_issue.posted_at IS '过账时间';
@@ -1842,6 +1848,14 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_material_issue.posted_by IS '过账人';
                     
       COMMENT ON COLUMN erp_mfg_material_issue.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_mfg_material_issue.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_mfg_material_issue.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_mfg_material_issue.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_mfg_material_issue.amount_functional IS '本位币金额';
                     
       COMMENT ON COLUMN erp_mfg_material_issue.del_version IS '逻辑删除版本';
                     
@@ -1854,18 +1868,6 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_material_issue.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_material_issue.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_mfg_material_issue.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_mfg_material_issue.approved_at IS '审核时间';
-                    
-      COMMENT ON COLUMN erp_mfg_material_issue.currency_id IS '币种';
-                    
-      COMMENT ON COLUMN erp_mfg_material_issue.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_mfg_material_issue.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_mfg_material_issue.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_mfg_job_card_time_log IS '作业工时记录';
                 

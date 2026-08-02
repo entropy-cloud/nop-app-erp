@@ -105,50 +105,54 @@
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="2000"/>
         </prop>
-        <prop name="remark" displayName="备注" propId="23" i18n-en:displayName="Remark" queryable="true" sortable="true"
+        <prop name="remark" displayName="备注" propId="22" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
-        <prop name="delVersion" displayName="逻辑删除版本" propId="24" i18n-en:displayName="Del Flag" mandatory="true"
+        <prop name="delVersion" displayName="逻辑删除版本" propId="23" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
             <schema domain="delVersion" type="java.lang.Long"/>
         </prop>
-        <prop name="version" displayName="数据版本" propId="25" i18n-en:displayName="Version" mandatory="true"
+        <prop name="version" displayName="数据版本" propId="24" i18n-en:displayName="Version" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
             <schema domain="version" type="java.lang.Integer"/>
         </prop>
-        <prop name="createdBy" displayName="创建人" propId="26" i18n-en:displayName="Created By" mandatory="true"
+        <prop name="createdBy" displayName="创建人" propId="25" i18n-en:displayName="Created By" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createdBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="createTime" displayName="创建时间" propId="27" i18n-en:displayName="Create Time" mandatory="true"
+        <prop name="createTime" displayName="创建时间" propId="26" i18n-en:displayName="Create Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="createTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="updatedBy" displayName="修改人" propId="28" i18n-en:displayName="Updated By" mandatory="true"
+        <prop name="updatedBy" displayName="修改人" propId="27" i18n-en:displayName="Updated By" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updatedBy" type="java.lang.String" precision="50"/>
         </prop>
-        <prop name="updateTime" displayName="修改时间" propId="29" i18n-en:displayName="Update Time" mandatory="true"
+        <prop name="updateTime" displayName="修改时间" propId="28" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
-        <prop name="posted" displayName="已过账(报废处置已生成凭证)" propId="30" i18n-en:displayName="Posted" queryable="true"
+        <prop name="posted" displayName="已过账(报废处置已生成凭证)" propId="29" i18n-en:displayName="Posted" queryable="true"
               sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="false">
             <schema type="java.lang.Boolean"/>
         </prop>
-        <prop name="postedAt" displayName="过账时间" propId="31" i18n-en:displayName="Posted At" tagSet="clock"
+        <prop name="postedAt" displayName="过账时间" propId="30" i18n-en:displayName="Posted At" tagSet="clock"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema type="java.sql.Timestamp"/>
         </prop>
-        <prop name="postedBy" displayName="过账人" propId="32" i18n-en:displayName="Posted By" queryable="true"
+        <prop name="postedBy" displayName="过账人" propId="31" i18n-en:displayName="Posted By" queryable="true"
               sortable="true" insertable="false" updatable="false" ui:show="R">
             <schema stdDomain="userId" type="java.lang.String" precision="36"/>
         </prop>
-        <prop name="returnCode" displayName="关联退货单号(RETURN 处置编排退货域后登记)" propId="33"
+        <prop name="returnCode" displayName="关联退货单号(RETURN 处置编排退货域后登记)" propId="32"
               i18n-en:displayName="Related Return Code" queryable="true" sortable="true" insertable="true"
               updatable="true">
             <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="noCapaReason" displayName="无 CAPA 原因(误开/降级 NCR 显式标注)" propId="33"
+              i18n-en:displayName="No Capa Reason" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
         </prop>
         <prop name="actions" i18n-en:displayName="Actions" tagSet="pub,cascade-delete,insertable,updatable"
               ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="ncrId" insertable="true"

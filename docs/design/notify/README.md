@@ -75,12 +75,12 @@
 
 ### 接收人解析策略
 
-| 解析器 | 机制 | 当前状态 |
-|--------|------|----------|
-| `ROLE` | 角色名 → `NopAuthRole` → `NopAuthUserRole` → userId | ✅ 已落地（复用平台 nop-auth） |
-| `ORG` | `deptId` → `NopAuthUser` | ✅ 已落地 |
-| `USER_LIST` | 模板配置 userId 列表（静态 + 支持 `${var}` 从 context 插值，如提单人 `submitterUserId`） | ✅ 已落地 |
-| `PARTNER` | `partnerId` → 用户映射 | ⚠️ 占位（partner→user 映射未建立，WARN 返回空，config-gated） |
+| 解析器 | 机制 |
+|--------|------|
+| `ROLE` | 角色名 → `NopAuthRole` → `NopAuthUserRole` → userId（复用平台 nop-auth） |
+| `ORG` | `deptId` → `NopAuthUser` |
+| `USER_LIST` | 模板配置 userId 列表（静态 + 支持 `${var}` 从 context 插值，如提单人 `submitterUserId`） |
+| `PARTNER` | `partnerId` → 用户映射 — ⚠️ 占位（partner→user 映射未建立，WARN 返回空，config-gated） |
 
 ### 通道与失败语义
 
@@ -136,9 +136,10 @@
 ## Successor（超出本子系统当前范围）
 
 - **异步总线（`nop-message`）**：当前同步派发 + `txn().afterCommit` 满足单实例部署；生产部署/多实例/通知量需削峰时接入 Kafka/Pulsar（topic + partition + lease 消费者注册），归后继。
+- **scheduler 驱动通知的重复派发（仅 document）**：cs（`cs.sla-overdue`/`cs.csat-reminder`/`cs.entitlement-expiry`）、crm（`crm.event-reminder`/`crm.sequence-overdue`）、hr（`hr.contract-expiry`）等 scheduler 触发的通知全部运行于 `nop-job-local` 单实例（非分布式，无 cluster leader 锁）。单实例下重复触发（cron 抖动/重试）的**实体级行副作用**已由各 job body 幂等收口（如 cs SLA 经 `hasEscalationAction` 去重）；但**通知派发本身**无跨调用去重键（通知频控为 `notificationType + "#" + recipientUserId` 窗口合并，非确定性幂等）。多实例部署切换时通知可能重复，通知去重键 successor（与 cron 平台级并发防护 successor 同触发条件）。
 - 全局 header 未读小角标（需修改全局 layout delta + WebSocket 推送）。
 - 通知偏好设置页（需新 ORM 实体）。
-- partnerId/deptId 精确路由（依赖 partner→user 映射落地）。
+- partnerId/deptId 精确路由（依赖 partner→user 映射就绪）。
 - `markUnread` 反向操作；批量删除/归档 + 数据保留策略。
 - 审批类通知专用渲染（含「去审批」跳转，依赖 xwf 浏览器层可达性突破）。
 
@@ -146,5 +147,4 @@
 
 - 收件箱前端范式：[`inbox-patterns.md`](inbox-patterns.md)
 - 通知策略（类型/频控/通道/消费者清单）：`docs/architecture/notification-strategy.md`
-- 落地计划：`docs/plans/2026-07-06-0504-1-notification-dispatch-subsystem.md`（派发子系统）、`docs/plans/2026-07-19-2200-3-notify-inbox-page.md`（收件箱页面）
 - 模块边界：`docs/architecture/module-boundaries.md §Owner Docs`

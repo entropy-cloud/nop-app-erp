@@ -79,4 +79,7 @@ alter table erp_b2b_mft_log add primary key (NOP_TENANT_ID, ID);
 alter table erp_b2b_asn_line drop primary key;
 alter table erp_b2b_asn_line add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_b2b_asn drop constraint UK_B2B_ASN_CODE_ORG;
+alter table erp_b2b_asn add constraint UK_B2B_ASN_CODE_ORG unique (NOP_TENANT_ID,CODE,ORG_ID);
 
+                

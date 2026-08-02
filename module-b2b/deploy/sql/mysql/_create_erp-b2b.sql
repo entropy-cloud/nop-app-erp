@@ -249,6 +249,7 @@ CREATE TABLE erp_b2b_asn(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   BUSINESS_DATE DATE NOT NULL    COMMENT '业务日期',
+  constraint UK_B2B_ASN_CODE_ORG unique (CODE,ORG_ID),
   constraint PK_erp_b2b_asn primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 

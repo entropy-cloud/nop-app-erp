@@ -70,35 +70,48 @@ public class PurAcctDocProvider implements IErpFinAcctDocProvider {
     @Override
     public List<VoucherFact> createFacts(PostingEvent event, AcctDocContext ctx) {
         List<VoucherFact> facts = new ArrayList<>();
+        BigDecimal rate = resolveRate(ctx);
         if (event.getBusinessType() == ErpFinBusinessType.AP_INVOICE) {
             BigDecimal amount = readDecimal(event, KEY_TOTAL_AMOUNT);
             BigDecimal tax = readDecimal(event, KEY_TOTAL_TAX_AMOUNT);
             BigDecimal withTax = readDecimal(event, KEY_TOTAL_AMOUNT_WITH_TAX);
             // A1：设置 accountKey 让 GL 映射规则解析器有机会覆盖 subjectCode（plan 2026-07-21-0827-1）。
             // 既有 SUBJECT_* 常量保留作为 fallback（规则表无匹配时仍走既有，行为完全不变）。
-            facts.add(fact(SUBJECT_PURCHASE, "在途物资", DC_DEBIT, amount, event, ACCOUNT_KEY_PURCHASE));
-            facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, event, ACCOUNT_KEY_INPUT_VAT));
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_CREDIT, withTax, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+            facts.add(fact(SUBJECT_PURCHASE, "在途物资", DC_DEBIT, amount, rate, event, ACCOUNT_KEY_PURCHASE));
+            facts.add(fact(SUBJECT_INPUT_VAT, "应交税费-进项税额", DC_DEBIT, tax, rate, event, ACCOUNT_KEY_INPUT_VAT));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_CREDIT, withTax, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
         } else if (event.getBusinessType() == ErpFinBusinessType.PURCHASE_RETURN) {
             // 反向 PURCHASE_INPUT：借暂估应付 / 贷存货（不含税，对齐 InvAcctDocProvider.PURCHASE_INPUT 的 1401/2202）
             BigDecimal amount = readDecimal(event, KEY_TOTAL_AMOUNT);
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款-暂估", DC_DEBIT, amount, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
-            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, event, ACCOUNT_KEY_INVENTORY));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款-暂估", DC_DEBIT, amount, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+            facts.add(fact(SUBJECT_INVENTORY, "库存商品", DC_CREDIT, amount, rate, event, ACCOUNT_KEY_INVENTORY));
         } else { // PAYMENT
             BigDecimal total = readDecimal(event, KEY_TOTAL);
-            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, total, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, total, event, ACCOUNT_KEY_BANK_DEPOSIT));
+            facts.add(fact(SUBJECT_ACCOUNTS_PAYABLE, "应付账款", DC_DEBIT, total, rate, event, ACCOUNT_KEY_ACCOUNTS_PAYABLE));
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_CREDIT, total, rate, event, ACCOUNT_KEY_BANK_DEPOSIT));
         }
         return facts;
     }
 
-    private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event, String accountKey) {
+    /** R1.9：billData 承载源币种金额；本位币 = source × ctx.exchangeRate（posting.md:488 文档锁定汇率）。 */
+    private BigDecimal resolveRate(AcctDocContext ctx) {
+        return ctx != null && ctx.getExchangeRate() != null ? ctx.getExchangeRate() : BigDecimal.ONE;
+    }
+
+    /**
+     * 构造单行 fact（R1.9 双金额字段）。{@code sourceAmount} 为源币种金额；{@code amount}/{@code amountFunctional}
+     * = source × rate（GL 借贷与试算平衡以本位币为准）；{@code amountSource} = source。
+     */
+    private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal sourceAmount,
+                             BigDecimal rate, PostingEvent event, String accountKey) {
         VoucherFact fact = new VoucherFact();
+        BigDecimal functional = sourceAmount.multiply(rate);
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
-        fact.setAmount(amount);
+        fact.setAmount(functional);
+        fact.setAmountSource(sourceAmount);
+        fact.setAmountFunctional(functional);
         fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
         return fact;

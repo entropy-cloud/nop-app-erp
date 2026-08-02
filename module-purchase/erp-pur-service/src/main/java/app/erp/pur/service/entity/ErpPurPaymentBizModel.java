@@ -4,7 +4,9 @@ package app.erp.pur.service.entity;
 import app.erp.pur.biz.IErpPurPaymentBiz;
 import app.erp.md.biz.SettlementAllocation;
 import app.erp.pur.dao.entity.ErpPurPayment;
-import app.erp.pur.service.processor.ErpPurPaymentProcessor;
+import app.erp.pur.service.processor.ErpPurPaymentCancelProcessor;
+import app.erp.pur.service.processor.ErpPurPaymentReverseSettlementProcessor;
+import app.erp.pur.service.processor.ErpPurPaymentSettleProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -23,7 +25,13 @@ import java.util.List;
 public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implements IErpPurPaymentBiz {
 
     @Inject
-    ErpPurPaymentProcessor paymentProcessor;
+    ErpPurPaymentSettleProcessor settleProcessor;
+
+    @Inject
+    ErpPurPaymentReverseSettlementProcessor reverseSettlementProcessor;
+
+    @Inject
+    ErpPurPaymentCancelProcessor cancelProcessor;
 
     public ErpPurPaymentBizModel() {
         setEntityName(ErpPurPayment.class.getName());
@@ -32,7 +40,7 @@ public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implement
     @Override
     @BizMutation
     public ErpPurPayment cancel(@Name("paymentId") Long paymentId, IServiceContext context) {
-        return paymentProcessor.cancel(String.valueOf(paymentId), context);
+        return cancelProcessor.cancel(String.valueOf(paymentId), context);
     }
 
     @Override
@@ -40,7 +48,7 @@ public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implement
     public ErpPurPayment settle(@Name("paymentId") Long paymentId,
                                 @Name("allocations") List<SettlementAllocation> allocations,
                                 IServiceContext context) {
-        return paymentProcessor.settle(String.valueOf(paymentId), allocations, context);
+        return settleProcessor.settle(String.valueOf(paymentId), allocations, context);
     }
 
     @Override
@@ -48,7 +56,7 @@ public class ErpPurPaymentBizModel extends CrudBizModel<ErpPurPayment> implement
     public ErpPurPayment reverseSettlement(@Name("paymentId") Long paymentId,
                                            @Name("invoiceId") Long invoiceId,
                                            IServiceContext context) {
-        return paymentProcessor.reverseSettlement(String.valueOf(paymentId), invoiceId, context);
+        return reverseSettlementProcessor.reverseSettlement(String.valueOf(paymentId), invoiceId, context);
     }
 
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。

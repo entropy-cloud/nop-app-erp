@@ -112,7 +112,7 @@ WHERE input_lot_id = :inputLotId;
 - `../inventory/trace-chain.md` — 库存批次追溯（lot 主数据实体 `ErpInvBatch`，本计划基因链 FK `inputLot`/`outputLot` 指向它）
 - `../quality/inspection-integration.md` — 质检与批次隔离
 
-## 实施决策记录（plan 2026-07-07-0305-3）
+## 实施决策
 
 ### Decision 1：写入时机 —— 完工时一次性写入
 
@@ -138,6 +138,6 @@ WHERE input_lot_id = :inputLotId;
 - **替代方案**：强一致（失败传播回滚完工入库，被否决：追溯缺口可容忍，完工不可中断）。
 - **残留风险**：best-effort 下可能产生基因链缺口（部分完工无追溯行），由 config 开关 + 日志可观测性兜底。
 
-## recallReport 降级说明（plan 2026-07-07-0305-3 §Phase 2）
+## recallReport 降级说明
 
 当前 `IErpInvStockBalanceBiz`/`IErpInvBatchBiz` 仅暴露 CRUD（无按批次的当前库存位置/已售去向查询方法集），故 `recallReport` 降级为仅返回受影响成品批次集合（`RecallReport.degraded=true`）。位置/去向查询归 inventory successor（触发条件=inventory 暴露按批次的位置/去向查询方法集时）。

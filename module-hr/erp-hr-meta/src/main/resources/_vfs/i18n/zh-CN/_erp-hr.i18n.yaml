@@ -625,6 +625,7 @@ prop:
       shift: null
       shiftId: 班次
       status: 状态
+      status_label: 状态
       swapRequest: null
       swapRequestId: 关联调换
       updateTime: 修改时间

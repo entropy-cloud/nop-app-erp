@@ -20,7 +20,15 @@ public class ErpFinEmployeeAdvanceApproveProcessor extends AbstractApproveProces
 
     @Override
     public ErpFinEmployeeAdvance approve(String id, IServiceContext context) {
-        return processor.approve(id, context);
+        ErpFinEmployeeAdvance advance = processor.requireAdvance(id, context);
+        if (advance.isApproved()) {
+            return advance;
+        }
+        processor.validateNotCancelled(advance, context);
+        processor.validateTransitionForApprove(advance, context);
+        processor.validateBusinessRulesForApproval(advance, context);
+        processor.deriveAmounts(advance, context);
+        return processor.doApprove(id, advance, context);
     }
 
     @Override

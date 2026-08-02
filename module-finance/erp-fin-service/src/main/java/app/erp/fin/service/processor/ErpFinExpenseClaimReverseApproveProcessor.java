@@ -20,7 +20,12 @@ public class ErpFinExpenseClaimReverseApproveProcessor extends AbstractReverseAp
 
     @Override
     public ErpFinExpenseClaim reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
+        ErpFinExpenseClaim claim = processor.requireClaim(id, context);
+        if (claim.isRejected()) {
+            return claim;
+        }
+        processor.validateTransitionForReverseApprove(claim, context);
+        return processor.doReverseApprove(id, claim, context);
     }
 
     @Override

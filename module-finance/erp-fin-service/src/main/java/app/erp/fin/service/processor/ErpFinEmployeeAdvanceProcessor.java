@@ -4,6 +4,7 @@ import app.erp.fin.dao.entity.ErpFinEmployeeAdvance;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.EmployeeAdvancePostingDispatcher;
+import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.entity.ErpMdEmployee;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.exceptions.NopException;
@@ -26,57 +27,46 @@ public class ErpFinEmployeeAdvanceProcessor {
     @Inject
     EmployeeAdvancePostingDispatcher postingDispatcher;
 
+    @Inject
+    ErpFinEmployeeAdvanceSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpFinEmployeeAdvanceApproveProcessor approveProcessor;
+
+    @Inject
+    ErpFinEmployeeAdvanceRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpFinEmployeeAdvanceReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpFinEmployeeAdvanceWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpFinEmployeeAdvanceCancelProcessor cancelProcessor;
+
     public ErpFinEmployeeAdvance submitForApproval(String id, IServiceContext context) {
-        ErpFinEmployeeAdvance advance = requireAdvance(id, context);
-        validateNotCancelled(advance, context);
-        validateTransitionForSubmit(advance, context);
-        validateBusinessRulesForApproval(advance, context);
-        deriveAmounts(advance, context);
-        doSubmit(advance, context);
-        return advance;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpFinEmployeeAdvance withdrawApproval(String id, IServiceContext context) {
-        ErpFinEmployeeAdvance advance = requireAdvance(id, context);
-        validateNotCancelled(advance, context);
-        validateTransitionForWithdraw(advance, context);
-        doWithdrawSubmit(advance, context);
-        return advance;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpFinEmployeeAdvance approve(String id, IServiceContext context) {
-        ErpFinEmployeeAdvance advance = requireAdvance(id, context);
-        if (advance.isApproved()) {
-            return advance;
-        }
-        validateNotCancelled(advance, context);
-        validateTransitionForApprove(advance, context);
-        validateBusinessRulesForApproval(advance, context);
-        deriveAmounts(advance, context);
-        return doApprove(id, advance, context);
+        return approveProcessor.approve(id, context);
     }
 
     public ErpFinEmployeeAdvance reject(String id, IServiceContext context) {
-        ErpFinEmployeeAdvance advance = requireAdvance(id, context);
-        validateNotCancelled(advance, context);
-        validateTransitionForReject(advance, context);
-        doReject(advance, context);
-        return advance;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpFinEmployeeAdvance reverseApprove(String id, IServiceContext context) {
-        ErpFinEmployeeAdvance advance = requireAdvance(id, context);
-        if (advance.isRejected()) {
-            return advance;
-        }
-        validateTransitionForReverseApprove(advance, context);
-        return doReverseApprove(id, advance, context);
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpFinEmployeeAdvance cancel(Long advanceId, IServiceContext context) {
-        ErpFinEmployeeAdvance advance = requireAdvance(advanceId, context);
-        validateTransitionForCancel(advance, context);
-        return doCancel(advanceId, advance, context);
+        return cancelProcessor.cancel(String.valueOf(advanceId), context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
@@ -171,6 +161,7 @@ public class ErpFinEmployeeAdvanceProcessor {
     }
 
     protected ErpFinEmployeeAdvance doApprove(String id, ErpFinEmployeeAdvance advance, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(advance.getCreatedBy(), currentUserId(), ErpFinErrors.ERR_FIN_APPROVER_IS_CREATOR);
         boolean posted = postingDispatcher.tryPost(advance);
         advance = reload(id);
         advance.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);

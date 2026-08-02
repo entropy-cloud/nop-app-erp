@@ -29,11 +29,15 @@
 
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|
-| DRAFT → OPEN | 项目经理/管理员 | 项目信息完整、起止日期有效、预算已定 | 开放成本归集 |
+| DRAFT → OPEN | 项目经理/管理员 | 项目信息完整、起止日期有效、预算已定（`startProject` 经 `validateStartPreconditions` 校验：STRICT 模式 `erp-prj.strict-project-start-precheck` 默认 true，缺项目名/起止日期/预算或 startDate>endDate 时抛 `ERR_PROJECT_START_PRECONDITION_FAILED`；WARN 模式 LOG.warn 放行） | 开放成本归集 |
 | OPEN → ON_HOLD | 项目经理 | 进行中状态 | 暂停费用归集（可配置） |
 | ON_HOLD → OPEN | 项目经理 | 暂停状态 | 恢复 |
-| OPEN → COMPLETED | 项目经理/管理员 | 任务已结束（或确认剩余不再执行）、成本已归集 | 终态，可出项目成本/利润报表 |
+| OPEN → COMPLETED | 项目经理/管理员 | 任务已结束（或确认剩余不再执行）、成本已归集（`closeProject` 经 `validateTasksFinished` 校验：STRICT 模式 `erp-prj.strict-project-task-completion-check` 默认 true，存在未结束任务——status 为 TODO/IN_PROGRESS/BLOCKED——时抛 `ERR_PROJECT_HAS_UNFINISHED_TASKS`；WARN 模式 LOG.warn 放行） | 终态，可出项目成本/利润报表 |
 | OPEN → CANCELLED | 项目经理/管理员 | 进行中状态 | 终态，已归集成本保留 |
+| DRAFT → CANCELLED | 项目经理/管理员 | 草稿状态（业务扩展） | 终态，草稿无归集成本 |
+| ON_HOLD → CANCELLED | 项目经理/管理员 | 暂停状态（业务扩展，暂停项目最终决策为取消） | 终态，已归集成本保留 |
+
+> **cancelProject 多源声明（对齐代码 `cancelProject:105-117`）**：`cancelProject` 接受 DRAFT/OPEN/ON_HOLD 多源（仅拒绝 COMPLETED/CANCELLED 终态）。owner doc 原仅声明 OPEN 单源是文档漂移；DRAFT/ON_HOLD→CANCELLED 是 OPEN 取消的业务扩展（暂停项目最终决策为取消、草稿项目放弃立项）。
 
 ### 3. 终态与恢复
 
@@ -45,9 +49,10 @@
 
 | 异常场景 | 处理 |
 |----------|------|
-| 完成时仍有未结束任务 | 提示先关闭任务，或确认剩余任务取消 |
+| 完成时仍有未结束任务 | `closeProject` 经 `validateTasksFinished` 校验：STRICT 模式（`erp-prj.strict-project-task-completion-check` 默认 true）存在未结束任务（TODO/IN_PROGRESS/BLOCKED）时抛 `ERR_PROJECT_HAS_UNFINISHED_TASKS`，提示先 `completeTask` 或取消剩余任务；WARN 模式 LOG.warn 放行 |
 | 暂停后仍有费用流入 | 配置控制：暂停项目拒绝新费用归集（或允许但标记） |
 | 预算超支 | 警告或拦截（按配置），不阻止状态迁移 |
+| 立项时缺必填字段 | `startProject` 经 `validateStartPreconditions` 校验：STRICT 模式（`erp-prj.strict-project-start-precheck` 默认 true）缺项目名/起止日期/预算或 startDate>endDate 时抛 `ERR_PROJECT_START_PRECONDITION_FAILED`；WARN 模式 LOG.warn 放行 |
 | 并发状态变更 | 乐观锁 |
 | 项目删除 | 草稿可删除；进行中及以后只能取消/完成，不可删除 |
 
@@ -131,10 +136,42 @@
 
 > **详细机制**：依赖模型（单前置 vs 多前置 Decision）、成环检测算法（上行链 + HashSet + maxDepth）、状态迁移完整链（startTask/completeTask/blockTask/unblockTask）、配置点、错误码、Non-Goal 见 `task-dag.md`。
 
+---
+
+## 适用对象三：CRUD 桩实体状态机（Deferred）
+
+> **状态：Deferred（P1-MA2-069）**。以下实体的 `status`/`docStatus` 字段绑定字典，但当前为 CRUD 桩（零 BizMutation writer）或经单一聚合器入口写入，状态字段不参与主路径迁移判定。dict 死状态保留为预留语义入口（与 R1.13/R1.14/R1.15/R1.18-R1.20 先例一致——保留优于删除，避免 ORM `ext:dict` 改动触发 codegen 漂移与数据迁移）。
+
+### ErpPrjMilestone（里程碑）
+
+- `status` 绑定 `erp-prj/task-status` 字典（TODO/IN_PROGRESS/DONE/BLOCKED 四态）。
+- **零 writer**：`ErpPrjMilestoneBizModel` 为 18 行 CRUD 桩，无 `setStatus` 调用——四态全为 dict 死状态。
+- CRUD 桩为主路径可用（查询/编辑经 CRUD 管道）；完整状态机（startMilestone/achieveMilestone）属 successor。
+
+### ErpPrjBilling（项目开票）
+
+- `docStatus` 绑定 `erp-prj/project-status` 字典（DRAFT/OPEN/ON_HOLD/COMPLETED/CANCELLED 五态）。
+- **零 writer**：`ErpPrjBillingBizModel` 为 18 行 CRUD 桩，无 `setStatus` 调用——五态全为 dict 死状态。
+- CRUD 桩为主路径可用；完整状态机（submitForApproval/approve/reject）属 successor。
+
+### ErpPrjCostCollection（成本归集头）
+
+- `docStatus` 绑定 `erp-prj/project-status` 字典，但 `ProjectCostAggregator`/`ExpenseCostAggregator` 经单一聚合器入口写 `DOC_STATUS_APPROVED="APPROVED"`。
+- **dict-value drift**：`APPROVED` 不在 `erp-prj/project-status` 字典内（字典仅 DRAFT/OPEN/ON_HOLD/COMPLETED/CANCELLED）。归集行为正确（聚合器单一入口写入），仅按 dict 筛选层失效。
+- 详见 `cost-collection.md §4.2`。
+
+### Successor 触发条件
+
+当**项目管理全面状态机**需求落地时，实现：
+1. ErpPrjMilestone：`startMilestone`/`achieveMilestone` BizMutation + 独立字典（复用 task-status 或新增 milestone-status）。
+2. ErpPrjBilling：`submitForApproval`/`approve`/`reject` BizMutation + 独立字典。
+3. ErpPrjCostCollection：新增独立 `erp-prj/cost-collection-status` 字典 + ORM `ext:dict` 改绑，收敛 APPROVED drift。
+
 ## 审查提示
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
-- 项目完成时未结束任务的处理是否明确。
+- 项目完成时未结束任务的处理是否明确（`validateTasksFinished` config-gated STRICT/WARN）。
+- 立项前置字段校验是否明确（`validateStartPreconditions` config-gated STRICT/WARN）。
 - 任务依赖成环是否校验（DAG）。
 - 暂停项目的费用归集控制是否配置化。
 - 工时成本凭证的触发是否覆盖（与 finance 的业财打通）。

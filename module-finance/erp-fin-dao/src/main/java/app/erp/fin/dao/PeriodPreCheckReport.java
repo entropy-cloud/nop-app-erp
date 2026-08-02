@@ -87,16 +87,31 @@ public class PeriodPreCheckReport {
     }
 
     /**
-     * 是否存在任何阻断性前置检查问题（不含 Allowance 超额提示——超额非阻断）。
+     * 是否存在任何阻断性前置检查问题（不含未核销 AR-AP 提示——未核销=结构化提示非阻断，owner doc §结账前置检查；
+     * 不含 Allowance shortfall——shortfall 由 closePeriod 独立硬阻断，不受 auto-post-on-close 影响）。
      */
     public boolean hasIssues() {
-        return !unpostedVoucherCodes.isEmpty() || !unsettledArApCodes.isEmpty()
-                || !unresolvedPostingExceptionKeys.isEmpty()
-                || allowanceShortfall.compareTo(BigDecimal.ZERO) > 0;
+        return !unpostedVoucherCodes.isEmpty()
+                || !unresolvedPostingExceptionKeys.isEmpty();
+    }
+
+    /**
+     * 是否存在非阻断的结构化提示项（未核销 AR-AP + Allowance 超额）。
+     * 这些项列出供用户参考但不阻止结账（owner doc §结账前置检查「未核销=提示」）。
+     */
+    public boolean hasReminders() {
+        return !unsettledArApCodes.isEmpty()
+                || allowanceExcess.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    /**
+     * Allowance shortfall 是否 > 0（独立硬阻断条件，不受 auto-post-on-close 影响，bad-debt.md §期末 allowance 充足性门控）。
+     */
+    public boolean hasAllowanceShortfall() {
+        return allowanceShortfall.compareTo(BigDecimal.ZERO) > 0;
     }
 
     public int issueCount() {
-        return unpostedVoucherCodes.size() + unsettledArApCodes.size() + unresolvedPostingExceptionKeys.size()
-                + (allowanceShortfall.compareTo(BigDecimal.ZERO) > 0 ? 1 : 0);
+        return unpostedVoucherCodes.size() + unresolvedPostingExceptionKeys.size();
     }
 }

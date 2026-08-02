@@ -154,7 +154,7 @@
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `erp-crm.lead-scoring.auto-qualify` | true | 是否启用自动转商机（开关） |
-| `erp-crm.lead-scoring.schedule-cron` | —（默认不执行，运维启用配置键生效） | 定时批量评分 cron 门控（设计 `0 2 * * *` 每日凌晨 2 点）。**SCHEDULED**（plan 2026-07-05-0306-1）：`ErpCrmLeadScoringRecalcJob` + `scheduler.yaml` 已接线，空值=跳过；非空时迭代 active 线索逐条 `IErpCrmLeadScoreBiz.recalculateScore()`（triggerEvent=SCHEDULED，单线索失败隔离） |
+| `erp-crm.lead-scoring.schedule-cron` | —（默认不执行，运维启用配置键生效） | 定时批量评分 cron 门控（设计 `0 2 * * *` 每日凌晨 2 点）。**SCHEDULED**：`ErpCrmLeadScoringRecalcJob` + `scheduler.yaml` 已接线，空值=跳过；非空时迭代 active 线索逐条 `IErpCrmLeadScoreBiz.recalculateScore()`（triggerEvent=SCHEDULED，单线索失败隔离） |
 | `erp-crm.lead-scoring.recalc-on-lead-update` | true | 线索字段变更是否触发自动重新评分 |
 
 ## 状态机关联
@@ -207,6 +207,6 @@
 - `docs/design/crm/README.md` §业务规则 4（事件提醒 Job）
 - `docs/analysis/erp-survey/` — Odoo/ERPNext CRM 评分源码分析
 
-## 实现偏离补注
+## 实现约定
 
-> **实现偏离补注**（2026-07-04，plan 2026-07-04-0700-1 §3.3）：评分引擎实现于 `ErpCrmLeadScoreBizModel.recalculateScore`（GraphQL 动作 `ErpCrmLeadScore__recalculateScore`），核心逻辑在 support 类 `LeadScoringEngine`。偏离 `lead-scoring.md` "回写 lead.score" 的表述——Lead ORM 无 `score`/`scoreId` 列，Lead 当前分数由按 `leadId + calculatedAt DESC` 派生查询最新 `ErpCrmLeadScore.totalScore` 表达（Option B 不扩 ORM）。评分方法约定（首版）：LOOKUP 的 `formula` 字段指定 Lead 属性名（如 `jobTitle`/`companyName`），`lookupTable` 为 `[{"value":"x","score":N}]`；BOOLEAN 同 LOOKUP 匹配但命中取 `maxScore`；FORMULA 支持 `ENGAGEMENT_SCORE`（已完成事件计数，上限 `maxScore`）或字面量整数。多 `isActive=true` 配置抛 `ERR_MULTIPLE_ACTIVE_SCORE_CONFIG`（强制单一生效口径，符合业务规则8）；无 active 配置时 `recalculateScore` 返回 null（不阻断 Lead 流程，triggeredAction=NONE）。auto-qualify 经 `ErpCrmLeadProcessor.qualify`（复用 NEW→QUALIFIED）而非 `IErpCrmLeadBiz` 接口（避免 BizModel 间循环依赖）。recalc-on-lead-update 在 `ErpCrmLeadBizModel.defaultPrepareUpdate` 同步触发（config-gated）。归一化公式：`totalScore = Σ(rawScore × weight) / Σ(maxScore × weight) × 100`。
+> **实现约定（评分引擎）**：评分引擎实现于 `ErpCrmLeadScoreBizModel.recalculateScore`（GraphQL 动作 `ErpCrmLeadScore__recalculateScore`），核心逻辑在 support 类 `LeadScoringEngine`。偏离 `lead-scoring.md` "回写 lead.score" 的表述——Lead ORM 无 `score`/`scoreId` 列，Lead 当前分数由按 `leadId + calculatedAt DESC` 派生查询最新 `ErpCrmLeadScore.totalScore` 表达（Option B 不扩 ORM）。评分方法约定（首版）：LOOKUP 的 `formula` 字段指定 Lead 属性名（如 `jobTitle`/`companyName`），`lookupTable` 为 `[{"value":"x","score":N}]`；BOOLEAN 同 LOOKUP 匹配但命中取 `maxScore`；FORMULA 支持 `ENGAGEMENT_SCORE`（已完成事件计数，上限 `maxScore`）或字面量整数。多 `isActive=true` 配置抛 `ERR_MULTIPLE_ACTIVE_SCORE_CONFIG`（强制单一生效口径，符合业务规则8）；无 active 配置时 `recalculateScore` 返回 null（不阻断 Lead 流程，triggeredAction=NONE）。auto-qualify 经 `ErpCrmLeadProcessor.qualify`（复用 NEW→QUALIFIED）而非 `IErpCrmLeadBiz` 接口（避免 BizModel 间循环依赖）。recalc-on-lead-update 在 `ErpCrmLeadBizModel.defaultPrepareUpdate` 同步触发（config-gated）。归一化公式：`totalScore = Σ(rawScore × weight) / Σ(maxScore × weight) × 100`。

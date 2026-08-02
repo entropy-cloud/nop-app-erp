@@ -571,7 +571,6 @@ prop:
       deliveryLine: Delivery Line
 dict:
   label:
-    erp-sal/doc-status: Doc Status
     erp-sal/received-status: Received Status
     erp-sal/delivery-status: Delivery Status
     erp-sal/biz-type: Sales Doc Type
@@ -580,10 +579,6 @@ dict:
     erp-sal/pricing-rule-type: Pricing Rule Type
     erp-sal/pricing-target: Pricing Target
 dict.option.label:
-  erp-sal/doc-status:
-    DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided
   erp-sal/received-status:
     UNRECEIVED: Unreceived
     PARTIAL: Partially Received

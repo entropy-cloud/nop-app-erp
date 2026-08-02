@@ -54,6 +54,12 @@ site:
       displayName: Timesheet
     ErpHrTimesheetLine-main:
       displayName: Timesheet Line
+    FNPT:ErpHrLeaveRequest:approve:
+      displayName: Approve Leave
+    FNPT:ErpHrSalary:approve:
+      displayName: Approve Salary
+    FNPT:ErpHrSalary:markPaid:
+      displayName: Mark Paid
     employee-net-balance:
       displayName: Employee Net Balance
     erp-hr:

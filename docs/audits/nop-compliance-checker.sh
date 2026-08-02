@@ -104,7 +104,14 @@ echo "$R1C_N" > "$TMPDIR/r1c"
 
 echo ""
 echo "▸ R1d: dao().findAllByQuery() — 应用 findList(query, null, context)"
-R1D=$(rgrep_bizmodel 'dao()\.findAllByQuery' | grep -v '_gen/' || true)
+# 测量口径校准（plan 2026-07-27-0823-1 Phase 2 Decision 1 option b）：
+# 原 grep 不区分代码行与 javadoc/注释行，~11/28 命中为 javadoc `*` / 行注释 `//` 引用
+# （`* 经 dao().findAllByQuery 绕过 findList 管道` 类说明）。校准=管道后追加注释行排除过滤
+# （per-rule，不动 rgrep_bizmodel helper，避免影响已稳定的 R1a/R1b/R1c/R2a/R2b）。
+# 排除：javadoc 续行（`*`）+ 行注释（`//`）+ 块注释开闭（`/*`/`*/`）+ {@code}/{@link 安全网。
+# 残留风险：块注释 `/* ... */` 跨行命中（无 `*` 续行前缀）漏排除——实测为 0；未来出现则升级 AST。
+R1D=$(rgrep_bizmodel 'dao()\.findAllByQuery' | grep -v '_gen/' \
+  | grep -vE ':[0-9]+:[[:space:]]*(\*|//|/\*|\*/)' | grep -vE '\{@code|\{@link' || true)
 R1D_N=$(cnt "$R1D")
 [[ $R1D_N -gt 0 ]] && echo "$R1D" | sed 's/^/  /'
 echo "  → 命中: $R1D_N 处"
@@ -226,7 +233,11 @@ echo "$R5_N" > "$TMPDIR/r5"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "[R6] 🟢 低 — @Transactional 在 BizModel 上"
-R6=$(rgrep_bizmodel '@Transactional' | grep -v '_gen/' || true)
+# 测量口径校准（plan 2026-07-27-0823-1 Phase 2 Decision 1 option b）：
+# 原 grep 不区分代码行与 javadoc/注释行，~5/7 命中为 javadoc `*` / 行注释 `//` 引用
+# （`* 不叠加 {@code @Transactional}` / `// nop-check: allow @Transactional` 类）。校准=同 R1d。
+R6=$(rgrep_bizmodel '@Transactional' | grep -v '_gen/' \
+  | grep -vE ':[0-9]+:[[:space:]]*(\*|//|/\*|\*/)' | grep -vE '\{@code|\{@link' || true)
 R6_N=$(cnt "$R6")
 [[ $R6_N -gt 0 ]] && echo "$R6" | sed 's/^/  /'
 echo "  → 命中: $R6_N 处（需逐个判断是否有意的 REQUIRES_NEW）"
@@ -272,10 +283,39 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "[R8] 🔴 高 — Processor 缺少 xbiz 接线"
 echo "规则: service-layer-orchestration.md — Processor 需 xbiz 绑定"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+# 三次校准（plan 2026-08-01-0656-1 R6.8 Phase 2 Decision option a）：
+# MR6 的 256 per-mutation D-mutation Processor 是 self-contained（process() + protected step，
+# 不 extends Abstract*Processor），经 BizModel @Inject 路由（非 xbiz）。R8 原始语义「领域
+# Processor 缺少 xbiz 接线」不覆盖任何「被其他生产代码消费」的 Processor——无论 facade 还是
+# per-mutation，本项目接线路径统一为 BizModel Java 直接调用（processor-extension-pattern.md
+# §"Processor → BizModel 接线"），xbiz 非 Processor 契约层。校准=排除：
+#   (1) module-common-service（一次校准，1057-1）+ extends Abstract*Processor（二次校准，1057-2）
+#   (2) 域级 abstract 基类（R6.7 创建的 Abstract*Processor，非具体领域 Processor）
+#   (3) 被任何其他生产 .java 文件引用的 Processor（BizModel @Inject / 其他 Processor helper = 已路由）
+# 校准后 R8 = 真孤儿 Processor（无任何消费方），反映真实架构语义。2026-08-01 实测全域 0 孤儿。
+# 残留风险：(a) 自引用孤儿（仅在自身文件出现，uniq -c=1）仍会被计——正确；(b) 仅被 test 引用
+# 的 Processor 计为孤儿——正确（test-only = 未真正接线）；(c) 未来若需精确 BizModel 可达性分析
+# （含跨 Processor 传递消费），开独立 successor 升级。
+# 构建「被 ≥2 个不同生产文件引用」的 Processor 类名白名单（自身定义 + ≥1 消费方 = 被消费）
+# 注：每文件先 sort -u 去重（同文件多次引用只计 1），再 uniq -c 数文件数。grep 无匹配时
+# `|| true` 防 set -e/pipefail 中断（对齐脚本 rgrep helper 的 `|| true` idiom）。
+while IFS= read -r f; do
+  { grep -ohE '\b[A-Z][A-Za-z0-9_]*Processor\b' "$f" 2>/dev/null || true; } | sort -u
+done < <(eval "find '$REPO_ROOT' $PRUNE_DIRS -o -type d -name test -prune -o -name '*.java' -type f -print" 2>/dev/null || true) \
+  | sort | uniq -c | awk '$1 >= 2 {print $2}' > "$TMPDIR/consumed_processors"
 R8_N=0
 while IFS= read -r proc; do
   # 跳过 per-mutation Processor（继承 Abstract*Processor，经 BizModel 路由非 xbiz）
   if grep -qE 'extends Abstract[A-Z][a-zA-Z]*Processor' "$proc" 2>/dev/null; then
+    continue
+  fi
+  # 跳过域级 abstract 基类（R6.7 Abstract*Processor 等，非具体领域 Processor）
+  if grep -qE '^[[:space:]]*(public[[:space:]]+|protected[[:space:]]+|private[[:space:]]+)?abstract[[:space:]]+(class|interface)[[:space:]]' "$proc" 2>/dev/null; then
+    continue
+  fi
+  cls=$(basename "$proc" .java)
+  # 跳过被任何其他生产文件消费的 Processor（BizModel @Inject / 其他 Processor helper = 已路由）
+  if grep -qxF "$cls" "$TMPDIR/consumed_processors" 2>/dev/null; then
     continue
   fi
   base=$(basename "$proc" Processor.java)
@@ -285,7 +325,7 @@ while IFS= read -r proc; do
     R8_N=$((R8_N + 1))
   fi
 done < <(eval "find '$REPO_ROOT' $PRUNE_DIRS -o -type d -name test -prune -o -type d -name module-common-service -prune -o -name '*Processor.java' -type f -print" 2>/dev/null || true)
-echo "  → 命中: $R8_N 个 Processor 缺少 xbiz（已排除 module-common-service 抽象基类 + per-mutation 子类）"
+echo "  → 命中: $R8_N 个孤儿 Processor（已排除 module-common-service + extends Abstract*Processor + 域级 abstract 基类 + 被消费 Processor）"
 echo "$R8_N" > "$TMPDIR/r8"
 
 # ============================================================
@@ -317,7 +357,14 @@ echo "$R8_N" > "$TMPDIR/r9"
 echo ""
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 echo "[R10] 🟡 中 — REQUIRES_NEW 事务"
-R10=$(rgrep_prodjava 'REQUIRES_NEW' | grep -v '_gen/' || true)
+# 测量口径校准（plan 2026-07-27-0823-1 Phase 2 Decision 1 option b）：
+# 原 grep 不区分代码行与 javadoc/注释行，~45/51 命中为跨 11 域 *PostingExecutor/*PostingDispatcher
+# 的 javadoc `* ...{@code REQUIRES_NEW} 承接...` 引用 + `// nop-check:` / `// 容错...` 行注释。
+# 真实代码站点仅 6 处（ErpFinVoucherBizModel post/reverse + ErpFinPostingExceptionRecorder/
+# ErpFinDeferredPostingRetryHelper 的 runInTransaction），全部为 processor-extension-pattern.md
+# 硬规则 1 文档化的合法跨域失败隔离事务边界。校准=同 R1d（per-rule 注释行排除）。
+R10=$(rgrep_prodjava 'REQUIRES_NEW' | grep -v '_gen/' \
+  | grep -vE ':[0-9]+:[[:space:]]*(\*|//|/\*|\*/)' | grep -vE '\{@code|\{@link' || true)
 R10_N=$(cnt "$R10")
 [[ $R10_N -gt 0 ]] && echo "$R10" | sed 's/^/  /'
 echo "  → 命中: $R10_N 处"

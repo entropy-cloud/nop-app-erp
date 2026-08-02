@@ -17,6 +17,7 @@ import app.erp.hr.dao.entity.ErpHrTimesheet;
 import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrEmployeeTransferEmployeeProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -79,6 +80,8 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
     IErpHrEmploymentContractBiz employmentContractBiz;
     @Inject
     IErpHrLeaveRequestBiz leaveRequestBiz;
+    @Inject
+    ErpHrEmployeeTransferEmployeeProcessor transferEmployeeProcessor;
 
     public ErpHrEmployeeBizModel() {
         setEntityName(ErpHrEmployee.class.getName());
@@ -93,26 +96,8 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
                                           @Name("effectiveDate") LocalDate effectiveDate,
                                           @Name("handleContract") String handleContract,
                                           IServiceContext context) {
-        ErpHrEmployee employee = requireTransferableEmployee(employeeId, context);
-        ErpHrDepartment targetDept = requireTargetDepartment(targetDepartmentId, context);
-        if (targetPositionId != null) {
-            requireTargetPosition(targetPositionId, targetDept.getId(), context);
-        }
-
-        warnIfLeaveConflict(employee.getId(), effectiveDate, context);
-
-        employee.setDepartmentId(targetDept.getId());
-        if (targetPositionId != null) {
-            employee.setPositionId(targetPositionId);
-        }
-        if (targetSuperiorId != null) {
-            employee.setSuperiorId(targetSuperiorId);
-        }
-        updateEntity(employee, null, context);
-
-        resolveHandleContract(handleContract, employee, effectiveDate, context);
-
-        return employee;
+        return transferEmployeeProcessor.transferEmployee(employeeId, targetDepartmentId,
+                targetPositionId, targetSuperiorId, effectiveDate, handleContract, context);
     }
 
     /**

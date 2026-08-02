@@ -123,6 +123,48 @@ public class TestErpMfgMrpEndToEnd extends JunitAutoTestCase {
         assertEquals(ErpMfgErrors.ERR_MRP_LINE_ALREADY_FIRMED.getErrorCode(), again.getCode());
     }
 
+    /**
+     * 并发重复释放 UK 兜底（plan 2026-07-30-0841-2 R1.28 P1-MA2-090）：越过 isFirmed 前置守卫后再次释放同 line，
+     * 生成同 code（RELEASE_PO_CODE_PREFIX+lineId）的 INSERT 命中既有 (code,orgId) UK → 翻译为
+     * {@link ErpMfgErrors#ERR_MRP_LINE_ALREADY_RELEASED}，且仅 1 个采购单（无重复实体行）。
+     */
+    @Test
+    public void testConcurrentReleaseSameLineThrowsAlreadyReleased() {
+        seedMaterial(M1);
+        Long planId = seedPlan("MRP-UK090");
+        seedManualDemand(planId, M1, bd("5"), LocalDate.of(2026, 7, 20));
+        runMrpOk(planId);
+        ErpMfgMrpPlanLine line = findLine(linesOf(planId), M1, null);
+        assertNotNull(line);
+
+        // 首次释放成功 → 生成 PO-MRP-{lineId}
+        releasePurchaseOk(line.getId(), SUPPLIER_ID, CURRENCY_ID);
+        String poCode = ErpMfgConstants.RELEASE_PO_CODE_PREFIX + line.getId();
+        ErpPurOrder firstPo = findPurchaseOrder(poCode);
+        assertNotNull(firstPo, "首次释放应生成采购单");
+        assertNotNull(firstPo.getOrgId(), "释放生成的采购单应携带 orgId（UK (code,orgId) 兜底依赖非空 orgId）: " + firstPo.getCode());
+
+        // 模拟并发：重置 isFirmed=false（越过 requireReleasable 前置守卫），再次释放生成同 code
+        ormTemplate.runInSession(() -> {
+            ErpMfgMrpPlanLine managed = daoProvider.daoFor(ErpMfgMrpPlanLine.class).getEntityById(line.getId());
+            managed.setIsFirmed(Boolean.FALSE);
+            managed.setConvertedBillCode(null);
+            daoProvider.daoFor(ErpMfgMrpPlanLine.class).updateEntity(managed);
+        });
+
+        // 再次释放 → INSERT 命中既有 (code,orgId) UK → 翻译为 ERR_MRP_LINE_ALREADY_RELEASED
+        ApiResponse<?> resp = releasePurchase(line.getId(), SUPPLIER_ID, CURRENCY_ID);
+        assertTrue(resp.getStatus() != 0,
+                "同 code 重复释放应被 UK 拦截: resp=" + resp + " firstPo.orgId=" + firstPo.getOrgId());
+        assertEquals(ErpMfgErrors.ERR_MRP_LINE_ALREADY_RELEASED.getErrorCode(), resp.getCode());
+
+        // 仅 1 个 PO（UK 兜底：无重复实体行）
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", poCode));
+        long poCount = daoProvider.daoFor(ErpPurOrder.class).findAllByQuery(q).size();
+        assertEquals(1L, poCount, "UK 兜底：同 line 释放仅 1 个采购单（无重复）");
+    }
+
     @Test
     public void testReleasePurchaseRejectsWithoutSupplier() {
         seedMaterial(M1);

@@ -5,7 +5,9 @@ import app.erp.fin.dao.entity.ErpFinArApItem;
 import app.erp.fin.dao.entity.ErpFinFundAccount;
 import app.erp.fin.dao.entity.ErpFinGlBalance;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.FinFrozenClockExtension;
 import app.erp.md.dao.entity.ErpMdSubject;
+import io.nop.api.core.annotations.autotest.EnableSnapshot;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.config.AppConfig;
@@ -17,6 +19,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -36,6 +39,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpFinDashboard extends JunitAutoTestCase {
+
+    // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 4 B 组裁决 (a)）：getDashboardTrend 读 CoreMetrics.currentDate()
+    // 计算窗口，冻结到 REFERENCE_DATE 使窗口与 seed 期间对齐、输出确定性，回收 R6.9 的 checkOutput=false 退让（设计文档 §4.2）。
+    @RegisterExtension
+    static FinFrozenClockExtension finClock = new FinFrozenClockExtension();
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
@@ -89,17 +97,22 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
         assertEquals(0, ((BigDecimal) kpi.get("apBalance")).compareTo(new BigDecimal("400")));
     }
 
+    @EnableSnapshot
     @Test
     public void testTrendMonthlySeries() {
+        // 冻结时钟硬化（plan 2026-08-01-1357-1 Phase 4）：seed 改由冻结参考日派生（REFERENCE_DATE 当月 + 上月），
+        // 使 getDashboardTrend(2) 近 2 月窗口在任意运行月均含 seed 数据（窗口与 seed 同源冻结时钟）。
+        java.time.YearMonth now = java.time.YearMonth.from(FinFrozenClockExtension.REFERENCE_DATE);
+        java.time.YearMonth prev = now.minusMonths(1);
         ormTemplate.runInSession(() -> {
             ErpMdSubject income = seedSubject(111L, "6001", "INCOME", ErpFinConstants.DC_CREDIT);
-            ErpFinAccountingPeriod jun = seedPeriod(211L, 2026, 6);
-            ErpFinAccountingPeriod jul = seedPeriod(212L, 2026, 7);
-            seedGlBalance(311L, jun.getId(), income.getId(),
+            ErpFinAccountingPeriod prv = seedPeriod(211L, prev.getYear(), prev.getMonthValue());
+            ErpFinAccountingPeriod cur = seedPeriod(212L, now.getYear(), now.getMonthValue());
+            seedGlBalance(311L, prv.getId(), income.getId(),
                     BigDecimal.ZERO, BigDecimal.ZERO,
                     BigDecimal.ZERO, new BigDecimal("200"),
                     BigDecimal.ZERO, new BigDecimal("200"));
-            seedGlBalance(312L, jul.getId(), income.getId(),
+            seedGlBalance(312L, cur.getId(), income.getId(),
                     BigDecimal.ZERO, BigDecimal.ZERO,
                     BigDecimal.ZERO, new BigDecimal("300"),
                     BigDecimal.ZERO, new BigDecimal("300"));
@@ -107,22 +120,23 @@ public class TestErpFinDashboard extends JunitAutoTestCase {
 
         List<Map<String, Object>> trend = dashboardBiz.getDashboardTrend(2, CTX);
         assertEquals(2, trend.size(), "近 2 月序列长度");
-        // 仅断言包含数据月的关键字段，月份键按 LocalDate 计算
-        boolean hasJun = false, hasJul = false;
+        String prevSuffix = String.format("-%02d", prev.getMonthValue());
+        String currSuffix = String.format("-%02d", now.getMonthValue());
+        boolean hasPrev = false, hasCurr = false;
         for (Map<String, Object> row : trend) {
             String m = (String) row.get("month");
             BigDecimal rev = (BigDecimal) row.get("revenue");
-            if (m.endsWith("-06")) {
-                hasJun = true;
+            if (m.endsWith(prevSuffix)) {
+                hasPrev = true;
                 assertEquals(0, rev.compareTo(new BigDecimal("200")));
             }
-            if (m.endsWith("-07")) {
-                hasJul = true;
+            if (m.endsWith(currSuffix)) {
+                hasCurr = true;
                 assertEquals(0, rev.compareTo(new BigDecimal("300")));
             }
         }
-        assertTrue(hasJun, "趋势包含 6 月");
-        assertTrue(hasJul, "趋势包含 7 月");
+        assertTrue(hasPrev, "趋势包含上月");
+        assertTrue(hasCurr, "趋势包含当月");
     }
 
     @Test

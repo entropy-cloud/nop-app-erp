@@ -7,7 +7,10 @@ import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdSubject;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -39,8 +42,15 @@ public class CapitalizationPostingDispatcher {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_CAPITALIZATION_FAILURE = "ast.capitalization-posting-failure";
+
     /**
      * 资本化审核通过后调用。成功返回 true（调用方据此置 posted=true）；失败吞异常返回 false（保持 posted=false）。
+     * <p>G2/G4 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-060）：Cap 有 DeferredPostingSweepJob 兜底重试；
+     * posted=false 悬挂补 IErpSysNotificationBiz 告警使运营感知（reverseApprove 不对称见 state-machine.md 标注）。
      */
     public boolean tryPost(ErpAstAssetCapitalization cap) {
         PostingEvent event = buildEvent(cap);
@@ -53,7 +63,27 @@ public class CapitalizationPostingDispatcher {
             } else {
                 LOG.error("资本化过账异常，资本化单 {} 保持 APPROVED、posted=false", cap.getCode(), e);
             }
+            dispatchFailureAlert(cap, e);
             return false;
+        }
+    }
+
+    /** 资本化过账失败告警派发（G4；通知失败降级不阻断主流程）。 */
+    protected void dispatchFailureAlert(ErpAstAssetCapitalization cap, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("billCode", cap.getCode());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", cap.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_CAPITALIZATION_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("资本化过账失败告警派发失败（降级）：billCode={}, reason={}",
+                    cap.getCode(), notifyErr.getMessage());
         }
     }
 

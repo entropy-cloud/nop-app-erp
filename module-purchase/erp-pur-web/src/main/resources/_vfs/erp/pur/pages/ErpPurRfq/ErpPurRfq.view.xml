@@ -89,7 +89,7 @@
                     <visibleOn>${approveStatus == 'APPROVED'}</visibleOn>
                 </action>
                 <action id="row-cancel-button" label="作废" i18n-en:label="Void" level="danger" icon="fa fa-ban">
-                    <api url="@mutation:ErpPurRfq__cancel?id=$id"/>
+                    <api url="@mutation:ErpPurRfq__cancel?rfqId=$id"/>
                     <confirmText>确认作废此询价单？</confirmText>
                     <messages>
                         <success>询价单已作废</success>

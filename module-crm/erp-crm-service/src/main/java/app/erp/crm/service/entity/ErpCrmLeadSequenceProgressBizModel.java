@@ -2,7 +2,6 @@
 package app.erp.crm.service.entity;
 
 import app.erp.crm.biz.IErpCrmEventBiz;
-import app.erp.crm.biz.IErpCrmLeadBiz;
 import app.erp.crm.biz.IErpCrmLeadSequenceProgressBiz;
 import app.erp.crm.biz.IErpCrmSequenceAssignmentBiz;
 import app.erp.crm.biz.IErpCrmSequenceBiz;
@@ -11,19 +10,17 @@ import app.erp.crm.dao.entity.ErpCrmEvent;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmLeadSequenceProgress;
 import app.erp.crm.dao.entity.ErpCrmSequence;
-import app.erp.crm.dao.entity.ErpCrmSequenceAssignment;
 import app.erp.crm.dao.entity.ErpCrmSequenceStep;
 import app.erp.crm.service.ErpCrmConfigs;
 import app.erp.crm.service.ErpCrmConstants;
-import app.erp.crm.service.ErpCrmErrors;
-import app.erp.crm.service.support.SequenceAssignmentEngine;
-import app.erp.crm.service.support.SequenceStepAdvancer;
+import app.erp.crm.service.processor.ErpCrmLeadSequenceProgressAdvanceStepProcessor;
+import app.erp.crm.service.processor.ErpCrmLeadSequenceProgressAssignSequenceProcessor;
+import app.erp.crm.service.processor.ErpCrmLeadSequenceProgressSwitchSequenceProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
@@ -45,9 +42,9 @@ import static io.nop.api.core.beans.FilterBeans.in;
 import java.util.Collections;
 
 /**
- * 销售序列进度 BizModel。{@link #assignSequence} / {@link #advanceStep} / {@link #switchSequence} /
- * {@link #scanOverdueSteps} / {@link #getSequencePerformance} 委托纯函数式引擎
- * ({@link SequenceAssignmentEngine} / {@link SequenceStepAdvancer})。
+ * 销售序列进度 BizModel。{@link #assignSequence} / {@link #advanceStep} / {@link #switchSequence} 各自委托独立
+ * per-mutation Processor（R6.6，{@code processor-extension-pattern.md}）。{@link #scanOverdueSteps} /
+ * {@link #getSequencePerformance} 为只读查询保留在内联。
  *
  * <p>对齐 {@code docs/design/crm/sales-sequence.md}：
  * 序列自动分配（四 conditionType + default 兜底）/ 步骤推进（completionCondition 各值 + autoCreateEvent）/ 
@@ -62,19 +59,18 @@ public class ErpCrmLeadSequenceProgressBizModel
         implements IErpCrmLeadSequenceProgressBiz {
 
     @Inject
-    SequenceAssignmentEngine sequenceAssignmentEngine;
-    @Inject
-    SequenceStepAdvancer sequenceStepAdvancer;
-    @Inject
-    IErpCrmLeadBiz leadBiz;
-    @Inject
-    IErpCrmSequenceBiz sequenceBiz;
-    @Inject
     IErpCrmSequenceAssignmentBiz sequenceAssignmentBiz;
     @Inject
     IErpCrmSequenceStepBiz sequenceStepBiz;
     @Inject
     IErpCrmEventBiz eventBiz;
+
+    @Inject
+    ErpCrmLeadSequenceProgressAssignSequenceProcessor assignSequenceProcessor;
+    @Inject
+    ErpCrmLeadSequenceProgressAdvanceStepProcessor advanceStepProcessor;
+    @Inject
+    ErpCrmLeadSequenceProgressSwitchSequenceProcessor switchSequenceProcessor;
 
     public ErpCrmLeadSequenceProgressBizModel() {
         setEntityName(ErpCrmLeadSequenceProgress.class.getName());
@@ -83,43 +79,7 @@ public class ErpCrmLeadSequenceProgressBizModel
     @Override
     @BizMutation
     public ErpCrmLeadSequenceProgress assignSequence(@Name("leadId") Long leadId, IServiceContext context) {
-        ErpCrmLead lead = leadBiz.requireEntity(String.valueOf(leadId), null, context);
-
-        ErpCrmLeadSequenceProgress existing = findActiveProgress(leadId);
-        if (existing != null) {
-            throw new NopException(ErpCrmErrors.ERR_SEQUENCE_ALREADY_ASSIGNED)
-                    .param(ErpCrmErrors.ARG_LEAD_ID, leadId)
-                    .param(ErpCrmErrors.ARG_PROGRESS_ID, existing.getId());
-        }
-
-        List<ErpCrmSequenceAssignment> rules = loadAssignmentRules();
-        ErpCrmSequenceAssignment defaultRule = loadDefaultRule();
-        SequenceAssignmentEngine.AssignmentResult matched =
-                sequenceAssignmentEngine.assign(lead, rules, defaultRule);
-        if (matched == null || matched.getSequenceId() == null) {
-            throw new NopException(ErpCrmErrors.ERR_SEQUENCE_NO_MATCH)
-                    .param(ErpCrmErrors.ARG_LEAD_ID, leadId);
-        }
-
-        Long sequenceId = matched.getSequenceId();
-        ErpCrmLeadSequenceProgress progress = newEntity();
-        progress.setLeadId(leadId);
-        progress.setSequenceId(sequenceId);
-        progress.setOrgId(lead.getOrgId());
-        progress.setCurrentStepIndex(0);
-        progress.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_IN_PROGRESS);
-        progress.setStartedAt(CoreMetrics.currentTimestamp());
-        saveEntity(progress, null, context);
-
-        // 首步若 autoCreateEvent → 建排程 ErpCrmEvent
-        List<ErpCrmSequenceStep> steps = loadSteps(sequenceId);
-        if (!steps.isEmpty()) {
-            ErpCrmSequenceStep first = steps.get(0);
-            if (Boolean.TRUE.equals(first.getAutoCreateEvent())) {
-                createEventForStep(first, lead, progress, context);
-            }
-        }
-        return progress;
+        return assignSequenceProcessor.assignSequence(leadId, context);
     }
 
     @Override
@@ -127,26 +87,7 @@ public class ErpCrmLeadSequenceProgressBizModel
     public ErpCrmLeadSequenceProgress advanceStep(@Name("progressId") Long progressId,
                                                    @Name("eventId") Long eventId,
                                                    IServiceContext context) {
-        ErpCrmLeadSequenceProgress progress = requireEntity(String.valueOf(progressId), null, context);
-        ErpCrmEvent event = eventBiz.requireEntity(String.valueOf(eventId), null, context);
-        List<ErpCrmSequenceStep> steps = loadSteps(progress.getSequenceId());
-
-        SequenceStepAdvancer.AdvanceResult result =
-                sequenceStepAdvancer.advance(progress, event, steps);
-
-        progress.setCurrentStepIndex(result.getNewStepIndex());
-        if (result.isSequenceCompleted()) {
-            progress.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_COMPLETED);
-            progress.setCompletedAt(result.getCompletedAt() != null ? Timestamp.valueOf(result.getCompletedAt()) : null);
-        }
-        updateEntity(progress, null, context);
-
-        // 推进时若下一步 autoCreateEvent → 建下一步 Event
-        if (!result.isSequenceCompleted() && result.isEventCreationNeeded() && result.getNextStep() != null) {
-            ErpCrmLead lead = leadBiz.requireEntity(String.valueOf(progress.getLeadId()), null, context);
-            createEventForStep(result.getNextStep(), lead, progress, context);
-        }
-        return progress;
+        return advanceStepProcessor.advanceStep(progressId, eventId, context);
     }
 
     @Override
@@ -154,39 +95,7 @@ public class ErpCrmLeadSequenceProgressBizModel
     public ErpCrmLeadSequenceProgress switchSequence(@Name("leadId") Long leadId,
                                                       @Name("newSequenceId") Long newSequenceId,
                                                       IServiceContext context) {
-        ErpCrmLead lead = leadBiz.requireEntity(String.valueOf(leadId), null, context);
-        // 校验新序列存在且启用
-        ErpCrmSequence sequence = sequenceBiz.requireEntity(String.valueOf(newSequenceId), null, context);
-        if (!Boolean.TRUE.equals(sequence.getIsActive())) {
-            throw new NopException(ErpCrmErrors.ERR_SEQUENCE_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCrmErrors.ARG_SEQUENCE_ID, newSequenceId)
-                    .param(ErpCrmErrors.ARG_CURRENT_STATUS, "INACTIVE");
-        }
-
-        // 旧活跃序列 SKIPPED 快照
-        ErpCrmLeadSequenceProgress old = findActiveProgress(leadId);
-        if (old != null) {
-            old.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_SKIPPED);
-            old.setCompletedAt(CoreMetrics.currentTimestamp());
-            updateEntity(old, null, context);
-        }
-
-        // 新序列 stepIndex=0 进度
-        ErpCrmLeadSequenceProgress progress = newEntity();
-        progress.setLeadId(leadId);
-        progress.setSequenceId(newSequenceId);
-        progress.setOrgId(lead.getOrgId());
-        progress.setCurrentStepIndex(0);
-        progress.setStatus(ErpCrmConstants.SEQUENCE_PROGRESS_IN_PROGRESS);
-        progress.setStartedAt(CoreMetrics.currentTimestamp());
-        saveEntity(progress, null, context);
-
-        // 首步 autoCreateEvent
-        List<ErpCrmSequenceStep> steps = loadSteps(newSequenceId);
-        if (!steps.isEmpty() && Boolean.TRUE.equals(steps.get(0).getAutoCreateEvent())) {
-            createEventForStep(steps.get(0), lead, progress, context);
-        }
-        return progress;
+        return switchSequenceProcessor.switchSequence(leadId, newSequenceId, context);
     }
 
     @Override
@@ -278,7 +187,7 @@ public class ErpCrmLeadSequenceProgressBizModel
     // 以下 dao().findAllByQuery 调用均为同域只读内部辅助：
     // - findActiveProgress / loadAllInProgress / loadProgressBySequenceIds 用于序列推进引擎的
     //   状态查询，不走 CrudBizModel findList 管道以保留 setLimit(1) + stream 直接消费的简洁语义；
-    //   数据权限在调用方 @BizMutation 入口已校验。M-6（plan 2026-07-20-2200-1）补注释。
+    //   数据权限在调用方 @BizMutation 入口已校验。
 
     protected ErpCrmLeadSequenceProgress findActiveProgress(Long leadId) {
         QueryBean q = new QueryBean();
@@ -301,21 +210,6 @@ public class ErpCrmLeadSequenceProgressBizModel
         QueryBean q = new QueryBean();
         q.addFilter(in("sequenceId", sequenceIds));
         return dao().findAllByQuery(q);
-    }
-
-    protected List<ErpCrmSequenceAssignment> loadAssignmentRules() {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("isActive", Boolean.TRUE));
-        // 引擎内部过滤 isDefault=true 规则；default 单独经 loadDefaultRule 传入
-        return assignmentDao().findAllByQuery(q);
-    }
-
-    protected ErpCrmSequenceAssignment loadDefaultRule() {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("isActive", Boolean.TRUE));
-        q.addFilter(eq("isDefault", Boolean.TRUE));
-        q.setLimit(1);
-        return assignmentDao().findAllByQuery(q).stream().findFirst().orElse(null);
     }
 
     protected List<ErpCrmSequenceStep> loadSteps(Long sequenceId) {
@@ -397,10 +291,6 @@ public class ErpCrmLeadSequenceProgressBizModel
             return null;
         }
         return activityType;
-    }
-
-    protected IEntityDao<ErpCrmSequenceAssignment> assignmentDao() {
-        return daoProvider().daoFor(ErpCrmSequenceAssignment.class);
     }
 
     protected IEntityDao<ErpCrmSequenceStep> stepDao() {

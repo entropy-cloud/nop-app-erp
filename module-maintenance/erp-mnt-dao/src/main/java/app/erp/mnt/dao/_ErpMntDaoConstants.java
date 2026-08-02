@@ -164,21 +164,6 @@ public interface _ErpMntDaoConstants {
     String VISIT_TASK_STATUS_FAILED = "FAILED";
                     
     /**
-     * 单据状态: 草稿 
-     */
-    String DOC_STATUS_DRAFT = "DRAFT";
-                    
-    /**
-     * 单据状态: 已生效 
-     */
-    String DOC_STATUS_ACTIVE = "ACTIVE";
-                    
-    /**
-     * 单据状态: 已作废 
-     */
-    String DOC_STATUS_CANCELLED = "CANCELLED";
-                    
-    /**
      * 校准结果: 合格 
      */
     String CALIBRATION_RESULT_PASS = "PASS";

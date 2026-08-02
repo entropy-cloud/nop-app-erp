@@ -89,41 +89,41 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     public static final String PROP_NAME_approvedAt = "approvedAt";
     public static final int PROP_ID_approvedAt = 17;
     
-    /* 逻辑删除版本: DEL_VERSION BIGINT */
-    public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 18;
-    
-    /* 数据版本: VERSION INTEGER */
-    public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 19;
-    
-    /* 创建人: CREATED_BY VARCHAR */
-    public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 20;
-    
-    /* 创建时间: CREATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 21;
-    
-    /* 修改人: UPDATED_BY VARCHAR */
-    public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 22;
-    
-    /* 修改时间: UPDATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 23;
-    
-    /* 备注: REMARK VARCHAR */
-    public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 24;
-    
     /* 源币种金额: AMOUNT_SOURCE DECIMAL */
     public static final String PROP_NAME_amountSource = "amountSource";
-    public static final int PROP_ID_amountSource = 25;
+    public static final int PROP_ID_amountSource = 18;
     
     /* 本位币金额: AMOUNT_FUNCTIONAL DECIMAL */
     public static final String PROP_NAME_amountFunctional = "amountFunctional";
-    public static final int PROP_ID_amountFunctional = 26;
+    public static final int PROP_ID_amountFunctional = 19;
+    
+    /* 逻辑删除版本: DEL_VERSION BIGINT */
+    public static final String PROP_NAME_delVersion = "delVersion";
+    public static final int PROP_ID_delVersion = 20;
+    
+    /* 数据版本: VERSION INTEGER */
+    public static final String PROP_NAME_version = "version";
+    public static final int PROP_ID_version = 21;
+    
+    /* 创建人: CREATED_BY VARCHAR */
+    public static final String PROP_NAME_createdBy = "createdBy";
+    public static final int PROP_ID_createdBy = 22;
+    
+    /* 创建时间: CREATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_createTime = "createTime";
+    public static final int PROP_ID_createTime = 23;
+    
+    /* 修改人: UPDATED_BY VARCHAR */
+    public static final String PROP_NAME_updatedBy = "updatedBy";
+    public static final int PROP_ID_updatedBy = 24;
+    
+    /* 修改时间: UPDATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_updateTime = "updateTime";
+    public static final int PROP_ID_updateTime = 25;
+    
+    /* 备注: REMARK VARCHAR */
+    public static final String PROP_NAME_remark = "remark";
+    public static final int PROP_ID_remark = 26;
     
 
     private static int _PROP_ID_BOUND = 27;
@@ -197,6 +197,12 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_approvedAt] = PROP_NAME_approvedAt;
           PROP_NAME_TO_ID.put(PROP_NAME_approvedAt, PROP_ID_approvedAt);
       
+          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
+      
+          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
+          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
+      
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
       
@@ -217,12 +223,6 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
-      
-          PROP_ID_TO_NAME[PROP_ID_amountSource] = PROP_NAME_amountSource;
-          PROP_NAME_TO_ID.put(PROP_NAME_amountSource, PROP_ID_amountSource);
-      
-          PROP_ID_TO_NAME[PROP_ID_amountFunctional] = PROP_NAME_amountFunctional;
-          PROP_NAME_TO_ID.put(PROP_NAME_amountFunctional, PROP_ID_amountFunctional);
       
     }
 
@@ -278,6 +278,12 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     /* 审核时间: APPROVED_AT */
     private java.sql.Timestamp _approvedAt;
     
+    /* 源币种金额: AMOUNT_SOURCE */
+    private java.math.BigDecimal _amountSource;
+    
+    /* 本位币金额: AMOUNT_FUNCTIONAL */
+    private java.math.BigDecimal _amountFunctional;
+    
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
     
@@ -298,12 +304,6 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
-    
-    /* 源币种金额: AMOUNT_SOURCE */
-    private java.math.BigDecimal _amountSource;
-    
-    /* 本位币金额: AMOUNT_FUNCTIONAL */
-    private java.math.BigDecimal _amountFunctional;
     
 
     public _ErpAstValueAdjustment(){
@@ -430,6 +430,12 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
             case PROP_ID_approvedAt:
                return getApprovedAt();
         
+            case PROP_ID_amountSource:
+               return getAmountSource();
+        
+            case PROP_ID_amountFunctional:
+               return getAmountFunctional();
+        
             case PROP_ID_delVersion:
                return getDelVersion();
         
@@ -450,12 +456,6 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
-        
-            case PROP_ID_amountSource:
-               return getAmountSource();
-        
-            case PROP_ID_amountFunctional:
-               return getAmountFunctional();
         
            default:
               return super.orm_propValue(propId);
@@ -638,6 +638,26 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_amountSource:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_amountSource));
+               }
+               setAmountSource(typedValue);
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
+               }
+               setAmountFunctional(typedValue);
+               break;
+            }
+        
             case PROP_ID_delVersion:{
                java.lang.Long typedValue = null;
                if(value != null){
@@ -705,26 +725,6 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_remark));
                }
                setRemark(typedValue);
-               break;
-            }
-        
-            case PROP_ID_amountSource:{
-               java.math.BigDecimal typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBigDecimal(value,
-                       err-> newTypeConversionError(PROP_NAME_amountSource));
-               }
-               setAmountSource(typedValue);
-               break;
-            }
-        
-            case PROP_ID_amountFunctional:{
-               java.math.BigDecimal typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBigDecimal(value,
-                       err-> newTypeConversionError(PROP_NAME_amountFunctional));
-               }
-               setAmountFunctional(typedValue);
                break;
             }
         
@@ -856,6 +856,20 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_amountSource:{
+               onInitProp(propId);
+               this._amountSource = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_amountFunctional:{
+               onInitProp(propId);
+               this._amountFunctional = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
             case PROP_ID_delVersion:{
                onInitProp(propId);
                this._delVersion = (java.lang.Long)value;
@@ -901,20 +915,6 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
-               
-               break;
-            }
-        
-            case PROP_ID_amountSource:{
-               onInitProp(propId);
-               this._amountSource = (java.math.BigDecimal)value;
-               
-               break;
-            }
-        
-            case PROP_ID_amountFunctional:{
-               onInitProp(propId);
-               this._amountFunctional = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1249,6 +1249,44 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
     }
     
     /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final java.math.BigDecimal getAmountSource(){
+         onPropGet(PROP_ID_amountSource);
+         return _amountSource;
+    }
+
+    /**
+     * 源币种金额: AMOUNT_SOURCE
+     */
+    public final void setAmountSource(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_amountSource,value)){
+            this._amountSource = value;
+            internalClearRefs(PROP_ID_amountSource);
+            
+        }
+    }
+    
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final java.math.BigDecimal getAmountFunctional(){
+         onPropGet(PROP_ID_amountFunctional);
+         return _amountFunctional;
+    }
+
+    /**
+     * 本位币金额: AMOUNT_FUNCTIONAL
+     */
+    public final void setAmountFunctional(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_amountFunctional,value)){
+            this._amountFunctional = value;
+            internalClearRefs(PROP_ID_amountFunctional);
+            
+        }
+    }
+    
+    /**
      * 逻辑删除版本: DEL_VERSION
      */
     public final java.lang.Long getDelVersion(){
@@ -1377,44 +1415,6 @@ public class _ErpAstValueAdjustment extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
-            
-        }
-    }
-    
-    /**
-     * 源币种金额: AMOUNT_SOURCE
-     */
-    public final java.math.BigDecimal getAmountSource(){
-         onPropGet(PROP_ID_amountSource);
-         return _amountSource;
-    }
-
-    /**
-     * 源币种金额: AMOUNT_SOURCE
-     */
-    public final void setAmountSource(java.math.BigDecimal value){
-        if(onPropSet(PROP_ID_amountSource,value)){
-            this._amountSource = value;
-            internalClearRefs(PROP_ID_amountSource);
-            
-        }
-    }
-    
-    /**
-     * 本位币金额: AMOUNT_FUNCTIONAL
-     */
-    public final java.math.BigDecimal getAmountFunctional(){
-         onPropGet(PROP_ID_amountFunctional);
-         return _amountFunctional;
-    }
-
-    /**
-     * 本位币金额: AMOUNT_FUNCTIONAL
-     */
-    public final void setAmountFunctional(java.math.BigDecimal value){
-        if(onPropSet(PROP_ID_amountFunctional,value)){
-            this._amountFunctional = value;
-            internalClearRefs(PROP_ID_amountFunctional);
             
         }
     }

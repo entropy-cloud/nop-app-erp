@@ -8,6 +8,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.AdvanceOffsetOrchestrator;
 import app.erp.fin.service.posting.ExpenseClaimPostingDispatcher;
+import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.entity.ErpMdEmployee;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.auth.IUserContext;
@@ -46,56 +47,46 @@ public class ErpFinExpenseClaimProcessor {
     @Inject
     IErpFinBudgetControlBiz budgetControlBiz;
 
+    @Inject
+    ErpFinExpenseClaimSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpFinExpenseClaimApproveProcessor approveProcessor;
+
+    @Inject
+    ErpFinExpenseClaimRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpFinExpenseClaimReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpFinExpenseClaimWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpFinExpenseClaimCancelProcessor cancelProcessor;
+
     public ErpFinExpenseClaim submitForApproval(String id, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(id, context);
-        validateNotCancelled(claim, context);
-        validateTransitionForSubmit(claim, context);
-        validateForApproval(claim, context);
-        doSubmit(claim, context);
-        return claim;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpFinExpenseClaim withdrawApproval(String id, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(id, context);
-        validateNotCancelled(claim, context);
-        validateTransitionForWithdraw(claim, context);
-        doWithdrawSubmit(claim, context);
-        return claim;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpFinExpenseClaim approve(String id, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(id, context);
-        if (claim.isApproved()) {
-            return claim;
-        }
-        validateNotCancelled(claim, context);
-        validateTransitionForApprove(claim, context);
-        validateForApproval(claim, context);
-        runBudgetCheckHook(claim, context);
-        return doApprove(id, claim, context);
+        return approveProcessor.approve(id, context);
     }
 
     public ErpFinExpenseClaim reject(String id, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(id, context);
-        validateNotCancelled(claim, context);
-        validateTransitionForReject(claim, context);
-        doReject(claim, context);
-        return claim;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpFinExpenseClaim reverseApprove(String id, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(id, context);
-        if (claim.isRejected()) {
-            return claim;
-        }
-        validateTransitionForReverseApprove(claim, context);
-        return doReverseApprove(id, claim, context);
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpFinExpenseClaim cancel(Long claimId, IServiceContext context) {
-        ErpFinExpenseClaim claim = requireClaim(claimId, context);
-        validateTransitionForCancel(claim, context);
-        return doCancel(claimId, claim, context);
+        return cancelProcessor.cancel(String.valueOf(claimId), context);
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
@@ -258,6 +249,7 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected ErpFinExpenseClaim doApprove(String id, ErpFinExpenseClaim claim, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(claim.getCreatedBy(), currentUserId(), ErpFinErrors.ERR_FIN_APPROVER_IS_CREATOR);
         boolean posted = postingDispatcher.tryPost(claim);
         claim = reload(id);
         claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);

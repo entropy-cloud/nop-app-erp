@@ -87,6 +87,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     @BizMutation
     public ErpFinVoucher postVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
         ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
+        assertPeriodNotLocked(voucher);
         if (!Objects.equals(voucher.getDocStatus(), ErpFinConstants.VOUCHER_STATUS_DRAFT)) {
             throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION)
                     .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
@@ -103,6 +104,7 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     @BizMutation
     public ErpFinVoucher reverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
         ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
+        assertPeriodNotLocked(voucher);
         if (!Objects.equals(voucher.getDocStatus(), ErpFinConstants.VOUCHER_STATUS_POSTED)) {
             throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION)
                     .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
@@ -166,5 +168,29 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
 
     private static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /**
+     * 期间状态守卫（P1-MA2-021）：凭证所属期间已 CLOSED/CLOSED_FINAL 时禁止过账/红冲。
+     * owner doc state-machine.md §期间控制「CLOSED/CLOSED_FINAL 可修改凭证=否」。
+     */
+    private void assertPeriodNotLocked(ErpFinVoucher voucher) {
+        Long periodId = voucher.getPeriodId();
+        if (periodId == null) {
+            return;
+        }
+        IEntityDao<app.erp.fin.dao.entity.ErpFinAccountingPeriod> dao =
+                daoProvider().daoFor(app.erp.fin.dao.entity.ErpFinAccountingPeriod.class);
+        app.erp.fin.dao.entity.ErpFinAccountingPeriod period = dao.getEntityById(periodId);
+        if (period == null) {
+            return;
+        }
+        String status = period.getStatus();
+        if (ErpFinConstants.PERIOD_STATUS_CLOSED.equals(status)
+                || ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL.equals(status)) {
+            throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_PERIOD_LOCKED)
+                    .param(ErpFinErrors.ARG_VOUCHER_ID, voucher.getId())
+                    .param(ErpFinErrors.ARG_PERIOD_STATUS, status);
+        }
     }
 }

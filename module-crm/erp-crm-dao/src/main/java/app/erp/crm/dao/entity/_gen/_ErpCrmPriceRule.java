@@ -270,7 +270,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     private java.math.BigDecimal _priceOverride;
     
     /* 折扣百分比: DISCOUNT_PERCENT */
-    private java.lang.Double _discountPercent;
+    private java.math.BigDecimal _discountPercent;
     
     /* 折扣固定金额: DISCOUNT_AMOUNT */
     private java.math.BigDecimal _discountAmount;
@@ -602,9 +602,9 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
             }
         
             case PROP_ID_discountPercent:{
-               java.lang.Double typedValue = null;
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toDouble(value,
+                   typedValue = ConvertHelper.toBigDecimal(value,
                        err-> newTypeConversionError(PROP_NAME_discountPercent));
                }
                setDiscountPercent(typedValue);
@@ -833,7 +833,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
         
             case PROP_ID_discountPercent:{
                onInitProp(propId);
-               this._discountPercent = (java.lang.Double)value;
+               this._discountPercent = (java.math.BigDecimal)value;
                
                break;
             }
@@ -1178,7 +1178,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 折扣百分比: DISCOUNT_PERCENT
      */
-    public final java.lang.Double getDiscountPercent(){
+    public final java.math.BigDecimal getDiscountPercent(){
          onPropGet(PROP_ID_discountPercent);
          return _discountPercent;
     }
@@ -1186,7 +1186,7 @@ public class _ErpCrmPriceRule extends DynamicOrmEntity{
     /**
      * 折扣百分比: DISCOUNT_PERCENT
      */
-    public final void setDiscountPercent(java.lang.Double value){
+    public final void setDiscountPercent(java.math.BigDecimal value){
         if(onPropSet(PROP_ID_discountPercent,value)){
             this._discountPercent = value;
             internalClearRefs(PROP_ID_discountPercent);

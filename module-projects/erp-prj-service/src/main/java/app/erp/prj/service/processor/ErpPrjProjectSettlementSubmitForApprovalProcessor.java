@@ -9,9 +9,11 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpPrjProjectSettlement submitForApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractSubmitForApprovalProcessor to activate the abstract base class; delegates to ErpPrjProjectSettlementProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpPrjProjectSettlement submitForApproval per-mutation Processor (plan 2026-07-30-2046-1 R5.7, Pattern B)。
+ * 自包含编排：requireSettlement → validateTransitionForSubmit → doSubmit(SUBMITTED) → save。
+ * Long 签名边界：custom override 内 Long.valueOf(id) 转换；域逻辑经 facade
+ * {@link ErpPrjProjectSettlementProcessor} protected helper（单一真相源）。
+ * 运行时经 BizModel→facade 旧路径，R5.8 重配线（BizModel 改经 per-mutation）后激活本路径。
  */
 public class ErpPrjProjectSettlementSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpPrjProjectSettlement> {
 
@@ -24,7 +26,12 @@ public class ErpPrjProjectSettlementSubmitForApprovalProcessor extends AbstractS
 
     @Override
     public ErpPrjProjectSettlement submitForApproval(String id, IServiceContext context) {
-        return processor.submit(Long.valueOf(id), context);
+        Long longId = Long.valueOf(id);
+        ErpPrjProjectSettlement settlement = processor.requireSettlement(longId);
+        processor.validateTransitionForSubmit(settlement);
+        processor.doSubmit(settlement, context);
+        processor.save(settlement);
+        return settlement;
     }
 
     @Override

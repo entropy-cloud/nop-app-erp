@@ -1,0 +1,393 @@
+package app.erp.fin.service.processor;
+
+import app.erp.fin.dao.entity.ErpFinBudgetCarryForwardLog;
+import app.erp.fin.dao.entity.ErpFinBudgetLine;
+import app.erp.fin.dao.entity.ErpFinBudgetScenario;
+import app.erp.fin.dao.entity.ErpFinVoucher;
+import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
+import app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus;
+import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.budget.ErpFinBudgetScenarioProcessor;
+import app.erp.md.dao.entity.ErpMdSubject;
+import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
+import io.nop.commons.util.StringHelper;
+import io.nop.core.context.IServiceContext;
+import io.nop.dao.api.IDaoProvider;
+import io.nop.dao.api.IEntityDao;
+import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import static io.nop.api.core.beans.FilterBeans.eq;
+
+/**
+ * ErpFinBudgetScenario carryForward per-mutation Processor（R6.9，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
+ *
+ * <p>自包含预算结转编排（budget.md §结转规则引擎）。共享 protected helper 单一真相源留
+ * {@link ErpFinBudgetScenarioProcessor} facade（requireScenario / save / loadBudgetLines / resolveUserId），
+ * 本类按方案 A（facade-as-helper-holder）{@code @Inject} facade 调用共享 helper。下游可经 Delta beans.xml
+ * 同名 bean id 覆盖本类。
+ */
+public class ErpFinBudgetScenarioCarryForwardProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpFinBudgetScenarioCarryForwardProcessor.class);
+
+    @Inject
+    IDaoProvider daoProvider;
+
+    @Inject
+    ErpFinBudgetScenarioProcessor facade;
+
+    public ErpFinBudgetScenario carryForward(Long id, Long targetScenarioId, String rule, IServiceContext context) {
+        validateEnabled(id);
+        ErpFinBudgetScenario source = facade.requireScenario(id);
+        ErpFinBudgetScenario target = facade.requireScenario(targetScenarioId);
+        validateCarryForwardPreconditions(source, target);
+
+        String actualRule = resolveRule(rule);
+        Map<String, BigDecimal> aggregation = aggregateSourceAmounts(source);
+        BigDecimal sourceBudget = aggregation.getOrDefault("budget", BigDecimal.ZERO);
+        BigDecimal sourceActual = aggregation.getOrDefault("actual", BigDecimal.ZERO);
+        BigDecimal sourceRemaining = sourceBudget.subtract(sourceActual);
+
+        BigDecimal carriedAmount = computeCarriedAmount(actualRule, sourceBudget, sourceActual, sourceRemaining);
+
+        if (carriedAmount.signum() > 0) {
+            appendCarryForwardLines(source, target, actualRule, sourceRemaining, sourceActual, carriedAmount);
+            writeCarryForwardVoucher(source, target, carriedAmount);
+        }
+
+        closeSourceScenario(source);
+        writeCarryForwardLog(source, target, actualRule, sourceRemaining, sourceActual, carriedAmount, context);
+        LOG.info("预算结转：{} → {}（rule={}, sourceRemaining={}, carried={})",
+                source.getCode(), target.getCode(), actualRule, sourceRemaining, carriedAmount);
+        return source;
+    }
+
+    protected void validateEnabled(Long id) {
+        if (!isCarryForwardEnabled()) {
+            throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_NOT_APPROVED)
+                    .param(ErpFinErrors.ARG_SCENARIO_ID, id)
+                    .param("reason", "erp-fin.budget-carry-forward-enabled=false");
+        }
+    }
+
+    protected void closeSourceScenario(ErpFinBudgetScenario source) {
+        source.setDocStatus(ErpFinConstants.BUDGET_STATUS_CLOSED);
+        source.setClosedAt(CoreMetrics.currentTimestamp());
+        facade.save(source);
+    }
+
+    protected boolean isCarryForwardEnabled() {
+        return Boolean.TRUE.equals(
+                AppConfig.var(ErpFinConstants.CONFIG_BUDGET_CARRY_FORWARD_ENABLED, Boolean.FALSE));
+    }
+
+    protected String resolveRule(String rule) {
+        if (rule != null && !rule.isEmpty()) {
+            return rule;
+        }
+        return AppConfig.var(ErpFinConstants.CONFIG_BUDGET_CARRY_FORWARD_DEFAULT_RULE,
+                ErpFinConstants.BUDGET_CARRY_FORWARD_REMAINING_FULL);
+    }
+
+    protected void validateCarryForwardPreconditions(ErpFinBudgetScenario source, ErpFinBudgetScenario target) {
+        if (!Objects.equals(source.getDocStatus(), ErpFinConstants.BUDGET_STATUS_APPROVED)) {
+            throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_NOT_APPROVED)
+                    .param(ErpFinErrors.ARG_SCENARIO_CODE, source.getCode())
+                    .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, source.getDocStatus());
+        }
+        if (!Objects.equals(target.getDocStatus(), ErpFinConstants.BUDGET_STATUS_DRAFT)) {
+            throw new NopException(ErpFinErrors.ERR_BUDGET_CARRY_FORWARD_RULE_INVALID)
+                    .param(ErpFinErrors.ARG_SCENARIO_CODE, source.getCode())
+                    .param("targetScenarioCode", target.getCode())
+                    .param("rule", "target must be DRAFT");
+        }
+        if (!Objects.equals(source.getOrgId(), target.getOrgId())
+                || !Objects.equals(source.getAcctSchemaId(), target.getAcctSchemaId())
+                || !Objects.equals(source.getCurrencyId(), target.getCurrencyId())) {
+            throw new NopException(ErpFinErrors.ERR_BUDGET_CARRY_FORWARD_RULE_INVALID)
+                    .param(ErpFinErrors.ARG_SCENARIO_CODE, source.getCode())
+                    .param("targetScenarioCode", target.getCode())
+                    .param("rule", "cross orgId/acctSchemaId/currencyId");
+        }
+        // 硬前置（P1-MA2-034，budget.md §结转算法 / period-close.md §预算结转与期间状态机）：
+        // 源 Scenario 所在年度的所有会计期间必须 CLOSED（glStatus=CLOSED）。
+        // daoProvider 直访同模块 ErpFinAccountingPeriod/ErpFinAccountingPeriodStatus（只读聚合校验，
+        // 无对应 IBiz 覆盖此跨期间查询语义）。
+        if (!isSourceFiscalYearFullyClosed(source)) {
+            throw new NopException(ErpFinErrors.ERR_BUDGET_CARRY_FORWARD_RULE_INVALID)
+                    .param(ErpFinErrors.ARG_SCENARIO_CODE, source.getCode())
+                    .param("targetScenarioCode", target.getCode())
+                    .param("rule", "source fiscalYear periods not all CLOSED")
+                    .param(ErpFinErrors.ARG_YEAR, source.getFiscalYear());
+        }
+    }
+
+    /**
+     * 校验源 Scenario 所在年度的全部会计期间 glStatus=CLOSED（年度已结账硬前置，P1-MA2-034）。
+     *
+     * <p>判定口径：按 {@code source.fiscalYear} 查询全部 {@link ErpFinAccountingPeriod}，对每个期间
+     * 查 {@link ErpFinAccountingPeriodStatus}（1:1，periodId 关联），要求 {@code glStatus == CLOSED}。
+     * 期间无 status 行（未结账过）或 glStatus 非 CLOSED 即视为未结账。
+     */
+    protected boolean isSourceFiscalYearFullyClosed(ErpFinBudgetScenario source) {
+        Integer fiscalYear = source.getFiscalYear();
+        if (fiscalYear == null) {
+            return false;
+        }
+        IEntityDao<ErpFinAccountingPeriod> periodDao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+        QueryBean periodQ = new QueryBean();
+        periodQ.addFilter(eq("year", fiscalYear));
+        List<ErpFinAccountingPeriod> periods = periodDao.findAllByQuery(periodQ);
+        if (periods.isEmpty()) {
+            return false;
+        }
+        IEntityDao<ErpFinAccountingPeriodStatus> statusDao =
+                daoProvider.daoFor(ErpFinAccountingPeriodStatus.class);
+        for (ErpFinAccountingPeriod p : periods) {
+            QueryBean sq = new QueryBean();
+            sq.addFilter(eq("periodId", p.getId()));
+            List<ErpFinAccountingPeriodStatus> statuses = statusDao.findAllByQuery(sq);
+            if (statuses.isEmpty()) {
+                return false;
+            }
+            for (ErpFinAccountingPeriodStatus s : statuses) {
+                if (!Objects.equals(s.getGlStatus(), ErpFinConstants.MODULE_CLOSE_CLOSED)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /** 聚合源方案的预算/实际净额（按 subjectId × costCenterId 维度），用于结转计算。 */
+    protected Map<String, BigDecimal> aggregateSourceAmounts(ErpFinBudgetScenario source) {
+        List<ErpFinBudgetLine> lines = facade.loadBudgetLines(source.getId());
+        BigDecimal budget = BigDecimal.ZERO;
+        for (ErpFinBudgetLine l : lines) {
+            budget = budget.add(l.getBudgetAmountFunctional() != null
+                    ? l.getBudgetAmountFunctional() : BigDecimal.ZERO);
+        }
+        BigDecimal actual = aggregateActualForScenario(source);
+        Map<String, BigDecimal> map = new HashMap<>();
+        map.put("budget", budget);
+        map.put("actual", actual);
+        return map;
+    }
+
+    protected BigDecimal aggregateActualForScenario(ErpFinBudgetScenario source) {
+        List<ErpFinBudgetLine> lines = facade.loadBudgetLines(source.getId());
+        BigDecimal actual = BigDecimal.ZERO;
+        for (ErpFinBudgetLine l : lines) {
+            actual = actual.add(aggregateActualForLine(l));
+        }
+        return actual;
+    }
+
+    /** 从 ErpFinVoucherLine 聚合该 BudgetLine 维度的实际数（postingType != BUDGET/COMMITMENT）。 */
+    protected BigDecimal aggregateActualForLine(ErpFinBudgetLine line) {
+        if (line.getPeriodId() == null || line.getSubjectId() == null) {
+            return BigDecimal.ZERO;
+        }
+        ErpMdSubject subject = line.getSubject();
+        if (subject == null) {
+            return BigDecimal.ZERO;
+        }
+        QueryBean vq = new QueryBean();
+        vq.addFilter(eq("periodId", line.getPeriodId()));
+        vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
+        vq.addFilter(eq("isReversed", Boolean.FALSE));
+        List<ErpFinVoucher> vouchers = daoProvider.daoFor(ErpFinVoucher.class).findAllByQuery(vq);
+        if (vouchers.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        List<Long> voucherIds = new ArrayList<>(vouchers.size());
+        for (ErpFinVoucher v : vouchers) {
+            if (ErpFinConstants.POSTING_TYPE_BUDGET.equals(v.getPostingType())
+                    || ErpFinConstants.POSTING_TYPE_COMMITMENT.equals(v.getPostingType())) {
+                continue;
+            }
+            voucherIds.add(v.getId());
+        }
+        if (voucherIds.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        QueryBean lq = new QueryBean();
+        lq.addFilter(eq("subjectId", line.getSubjectId()));
+        if (line.getCostCenterId() != null) {
+            lq.addFilter(eq("costCenterId", line.getCostCenterId()));
+        }
+        List<ErpFinVoucherLine> vlines = daoProvider.daoFor(ErpFinVoucherLine.class).findAllByQuery(lq);
+        BigDecimal debit = BigDecimal.ZERO, credit = BigDecimal.ZERO;
+        for (ErpFinVoucherLine vl : vlines) {
+            if (!voucherIds.contains(vl.getVoucherId())) {
+                continue;
+            }
+            debit = debit.add(vl.getDebitAmount() != null ? vl.getDebitAmount() : BigDecimal.ZERO);
+            credit = credit.add(vl.getCreditAmount() != null ? vl.getCreditAmount() : BigDecimal.ZERO);
+        }
+        return ErpFinConstants.DC_CREDIT.equals(subject.getDirection())
+                ? credit.subtract(debit) : debit.subtract(credit);
+    }
+
+    protected BigDecimal computeCarriedAmount(String rule, BigDecimal budget, BigDecimal actual, BigDecimal remaining) {
+        switch (rule) {
+            case ErpFinConstants.BUDGET_CARRY_FORWARD_REMAINING_FULL:
+                return remaining.max(BigDecimal.ZERO);
+            case ErpFinConstants.BUDGET_CARRY_FORWARD_REMAINING_RATIO:
+                BigDecimal ratio = AppConfig.var(ErpFinConstants.CONFIG_BUDGET_CARRY_FORWARD_RATIO,
+                        ErpFinConstants.DEFAULT_BUDGET_CARRY_FORWARD_RATIO);
+                return remaining.max(BigDecimal.ZERO).multiply(ratio).setScale(4, RoundingMode.HALF_UP);
+            case ErpFinConstants.BUDGET_CARRY_FORWARD_USED_FULL:
+                return actual.max(BigDecimal.ZERO);
+            case ErpFinConstants.BUDGET_CARRY_FORWARD_NONE:
+            default:
+                return BigDecimal.ZERO;
+        }
+    }
+
+    /** 在目标方案增补结转 BudgetLine（按源方案 subjectId × costCenterId 维度合并；简化：单行总额写入）。 */
+    protected void appendCarryForwardLines(ErpFinBudgetScenario source, ErpFinBudgetScenario target,
+                                           String rule, BigDecimal remaining, BigDecimal actual, BigDecimal carried) {
+        IEntityDao<ErpFinBudgetLine> lineDao = daoProvider.daoFor(ErpFinBudgetLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("scenarioId", target.getId()));
+        List<ErpFinBudgetLine> existing = lineDao.findAllByQuery(q);
+        int maxLineNo = 0;
+        for (ErpFinBudgetLine l : existing) {
+            if (l.getLineNo() != null && l.getLineNo() > maxLineNo) {
+                maxLineNo = l.getLineNo();
+            }
+        }
+        ErpFinBudgetLine cl = lineDao.newEntity();
+        cl.setScenarioId(target.getId());
+        cl.setLineNo(maxLineNo + 1);
+        cl.setOrgId(target.getOrgId());
+        cl.setAcctSchemaId(target.getAcctSchemaId());
+        cl.setSubjectId(source.getId());
+        cl.setSubjectCode("CARRY-FORWARD-" + source.getCode());
+        cl.setBudgetAmountSource(carried);
+        cl.setBudgetAmountFunctional(carried);
+        cl.setCurrencyId(target.getCurrencyId());
+        cl.setExchangeRate(BigDecimal.ONE);
+        cl.setRemark("Carry-forward from " + source.getCode() + " (rule=" + rule + ")");
+        lineDao.saveEntity(cl);
+    }
+
+    /** 结转生成 BUDGET 凭证写入目标方案（简化：单边凭证，记录结转金额；实际部署可扩展为完整 Dr/Cr 分录）。 */
+    protected void writeCarryForwardVoucher(ErpFinBudgetScenario source, ErpFinBudgetScenario target,
+                                            BigDecimal carriedAmount) {
+        if (carriedAmount == null || carriedAmount.signum() == 0) {
+            return;
+        }
+        Long periodId = resolveFirstPeriodId(source);
+        IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
+        IEntityDao<ErpFinVoucherLine> lDao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        IEntityDao<ErpFinVoucherBillR> billRDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+
+        ErpFinVoucher v = vDao.newEntity();
+        v.setCode("CARRY-FORWARD-" + source.getCode() + "-" + target.getCode() + "-"
+                + StringHelper.generateUUID().substring(0, 8));
+        v.setVoucherType("TRANSFER");
+        v.setPostingType(ErpFinConstants.POSTING_TYPE_BUDGET);
+        v.setVoucherDate(CoreMetrics.today());
+        v.setOrgId(target.getOrgId());
+        v.setAcctSchemaId(target.getAcctSchemaId());
+        v.setPeriodId(periodId);
+        v.setTotalDebit(carriedAmount);
+        v.setTotalCredit(carriedAmount);
+        v.setIsReversed(false);
+        v.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
+        v.setPostedAt(CoreMetrics.currentTimestamp());
+        vDao.saveEntity(v);
+
+        ErpFinVoucherLine d = lDao.newEntity();
+        d.setVoucherId(v.getId());
+        d.setLineNo(1);
+        d.setSubjectId(source.getId());
+        d.setSubjectCode("CARRY-FORWARD-" + source.getCode());
+        d.setSubjectName("预算结转");
+        d.setDcDirection(ErpFinConstants.DC_DEBIT);
+        d.setDebitAmount(carriedAmount);
+        d.setCreditAmount(BigDecimal.ZERO);
+        d.setCurrencyId(target.getCurrencyId());
+        d.setExchangeRate(BigDecimal.ONE);
+        d.setAmountSource(carriedAmount);
+        d.setAmountFunctional(carriedAmount);
+        d.setAcctSchemaId(target.getAcctSchemaId());
+        d.setOrgId(target.getOrgId());
+        d.setBusinessType("BUDGET_SCENARIO_CARRY_FORWARD");
+        d.setMemo("预算结转：" + source.getCode() + " → " + target.getCode());
+        lDao.saveEntity(d);
+
+        ErpFinVoucherLine c = lDao.newEntity();
+        c.setVoucherId(v.getId());
+        c.setLineNo(2);
+        c.setSubjectId(source.getId());
+        c.setSubjectCode("CARRY-FORWARD-" + source.getCode());
+        c.setSubjectName("预算结转");
+        c.setDcDirection(ErpFinConstants.DC_CREDIT);
+        c.setDebitAmount(BigDecimal.ZERO);
+        c.setCreditAmount(carriedAmount);
+        c.setCurrencyId(target.getCurrencyId());
+        c.setExchangeRate(BigDecimal.ONE);
+        c.setAmountSource(carriedAmount);
+        c.setAmountFunctional(carriedAmount);
+        c.setAcctSchemaId(target.getAcctSchemaId());
+        c.setOrgId(target.getOrgId());
+        c.setBusinessType("BUDGET_SCENARIO_CARRY_FORWARD");
+        c.setMemo("预算结转：" + source.getCode() + " → " + target.getCode());
+        lDao.saveEntity(c);
+
+        ErpFinVoucherBillR billR = billRDao.newEntity();
+        billR.setVoucherId(v.getId());
+        billR.setBillType("BUDGET_SCENARIO_CARRY_FORWARD");
+        billR.setBillCode("CARRY-FORWARD-" + source.getCode() + "-" + target.getCode());
+        billR.setBusinessType("BUDGET_SCENARIO_CARRY_FORWARD");
+        billRDao.saveEntity(billR);
+    }
+
+    /** 取源方案第一个 BudgetLine 的 periodId（结转凭证期间归属）。 */
+    protected Long resolveFirstPeriodId(ErpFinBudgetScenario source) {
+        List<ErpFinBudgetLine> lines = facade.loadBudgetLines(source.getId());
+        for (ErpFinBudgetLine l : lines) {
+            if (l.getPeriodId() != null) {
+                return l.getPeriodId();
+            }
+        }
+        return null;
+    }
+
+    protected void writeCarryForwardLog(ErpFinBudgetScenario source, ErpFinBudgetScenario target,
+                                        String rule, BigDecimal remaining, BigDecimal actual,
+                                        BigDecimal carried, IServiceContext context) {
+        IEntityDao<ErpFinBudgetCarryForwardLog> dao = daoProvider.daoFor(ErpFinBudgetCarryForwardLog.class);
+        ErpFinBudgetCarryForwardLog log = dao.newEntity();
+        log.setOrgId(source.getOrgId());
+        log.setScenarioId(source.getId());
+        log.setSourceScenarioId(source.getId());
+        log.setTargetScenarioId(target.getId());
+        log.setRule(rule);
+        log.setSourceRemaining(remaining);
+        log.setSourceUsed(actual);
+        log.setCarriedAmount(carried);
+        log.setCarriedAt(CoreMetrics.currentTimestamp());
+        log.setCarriedBy(facade.resolveUserId(context));
+        dao.saveEntity(log);
+    }
+}

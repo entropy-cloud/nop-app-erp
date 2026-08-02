@@ -1,13 +1,12 @@
 package app.erp.b2b.service;
 
 import app.erp.common.test.AbstractFrozenClockExtension;
-import io.nop.api.core.time.CoreMetrics;
-import io.nop.api.core.time.IClock;
+import app.erp.common.test.ThreadLocalFrozenClock;
 import java.time.LocalDate;
 
 /**
  * 冻结 CoreMetrics 时钟到 b2b 域测试参考日。
- * 基类 AbstractFrozenClockExtension 提供冻结/恢复机制；本类仅声明参考日期。
+ * 基类 AbstractFrozenClockExtension 经 ThreadLocalFrozenClock 提供冻结/恢复机制；本类仅声明参考日期。
  */
 public final class B2bFrozenClockExtension extends AbstractFrozenClockExtension {
 
@@ -18,16 +17,11 @@ public final class B2bFrozenClockExtension extends AbstractFrozenClockExtension 
     }
 
     public static void installFrozenClock() {
-        CoreMetrics.registerClock(new io.nop.api.core.time.IClock() {
-            private final IClock system = CoreMetrics.defaultClock();
-            @Override public long currentTimeMillis() { return system.currentTimeMillis(); }
-            @Override public long nanoTime() { return system.nanoTime(); }
-            @Override public LocalDate currentDate() { return REFERENCE_DATE; }
-            @Override public java.time.LocalDateTime currentDateTime() { return REFERENCE_DATE.atStartOfDay(); }
-        });
+        ThreadLocalFrozenClock.ensureRegistered();
+        ThreadLocalFrozenClock.install(REFERENCE_DATE);
     }
 
     public static void restoreSystemClock() {
-        CoreMetrics.registerClock(CoreMetrics.defaultClock());
+        ThreadLocalFrozenClock.clear();
     }
 }

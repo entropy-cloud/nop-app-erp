@@ -2,76 +2,51 @@
 package app.erp.b2b.service.entity;
 
 import app.erp.b2b.biz.IErpB2bAsnBiz;
-import app.erp.b2b.biz.IErpB2bEdiDocBiz;
 import app.erp.b2b.dao.entity.ErpB2bAsn;
-import app.erp.b2b.dao.entity.ErpB2bAsnLine;
-import app.erp.b2b.dao.entity.ErpB2bEdiDoc;
-import app.erp.b2b.dao.entity.ErpB2bEdiLog;
-import app.erp.b2b.dao.entity.ErpB2bPartnerProfile;
-import app.erp.b2b.service.ErpB2bConfigs;
 import app.erp.b2b.service.ErpB2bConstants;
-import app.erp.b2b.service.ErpB2bErrors;
-import app.erp.b2b.service.codemapping.CodeMappingResolver;
-import app.erp.b2b.service.spi.ErpB2bEdiRegistry;
-import app.erp.b2b.service.spi.IErpB2bEdiProvider;
-import app.erp.b2b.service.spi.model.ParsedPayload;
-import app.erp.b2b.service.spi.model.ParsedPayload.ParsedLine;
-import app.erp.md.dao.entity.ErpMdMaterial;
-import app.erp.pur.dao.entity.ErpPurOrder;
-import app.erp.pur.dao.entity.ErpPurOrderLine;
-import app.erp.pur.dao.entity.ErpPurReceive;
-import app.erp.pur.dao.entity.ErpPurReceiveLine;
+import app.erp.b2b.service.processor.ErpB2bAsnCreateReceiveFromAsnProcessor;
+import app.erp.b2b.service.processor.ErpB2bAsnHandleInboundWebhookProcessor;
+import app.erp.b2b.service.processor.ErpB2bAsnMatchPurchaseOrderProcessor;
+import app.erp.b2b.service.processor.ErpB2bAsnRetryMatchProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.config.AppConfig;
-import io.nop.api.core.exceptions.NopException;
-import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
-import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.le;
-import io.nop.biz.crud.EntityData;
 
 /**
  * ASN 入站处理聚合根 Biz。承载 ASN 入站全流程（{@code asn-processing.md}）：
  *
- * <p>webhook 入站（{@link #handleInboundWebhook}）→ HMAC 校验 + 幂等 → 解析报文（{@link #parseToAsn}）
+ * <p>webhook 入站（{@link #handleInboundWebhook}）→ HMAC 校验 + 幂等 → 解析报文
  * → 建 ASN/AsnLine → 采购订单匹配（{@link #matchPurchaseOrder}，RECEIVED→MATCHED）
  * → config-gated 创建入库草稿（{@link #createReceiveFromAsn}，MATCHED→RECEIVED_TO_STOCK）。
  *
  * <p><b>核心零污染</b>：不在 {@code ErpPurReceive} 加 asnId 列，仅弱指针 orderId（→PO→ASN 经 relatedBillCode）。
  *
- * <p><b>跨域访问</b>：采购订单匹配 + 入库草稿创建经 {@link io.nop.dao.api.IDaoProvider} 只读/写
- * ErpPurOrder/ErpPurOrderLine/ErpPurReceive（purchase 域，参 logistics IDaoProvider 范式）。
+ * <p>编排已按 R6.7 每 mutation 一 Processor 拆分（Cat-B 自包含）。BizModel 仅保留 @BizMutation/@BizQuery 入口与单行委托。
  */
 @BizModel("ErpB2bAsn")
 public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2bAsnBiz {
-    private static final Logger LOG = LoggerFactory.getLogger(ErpB2bAsnBizModel.class);
 
     @Inject
-    ErpB2bEdiRegistry ediRegistry;
+    ErpB2bAsnHandleInboundWebhookProcessor handleInboundWebhookProcessor;
     @Inject
-    CodeMappingResolver codeMappingResolver;
+    ErpB2bAsnMatchPurchaseOrderProcessor matchPurchaseOrderProcessor;
     @Inject
-    IErpB2bEdiDocBiz ediDocBiz;
+    ErpB2bAsnCreateReceiveFromAsnProcessor createReceiveFromAsnProcessor;
+    @Inject
+    ErpB2bAsnRetryMatchProcessor retryMatchProcessor;
 
     public ErpB2bAsnBizModel() {
         setEntityName(ErpB2bAsn.class.getName());
@@ -94,244 +69,25 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
                                      @Name("eventId") String eventId,
                                      @Name("payload") String payload,
                                      IServiceContext context) {
-        // 1. 查 PartnerProfile → webhookSecret
-        ErpB2bPartnerProfile profile = findPartnerProfileByCode(partnerCode);
-        if (profile == null) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_WEBHOOK_SIGNATURE_INVALID)
-                    .param(ErpB2bErrors.ARG_PARTNER_CODE, partnerCode);
-        }
-
-        // 2. HMAC 校验
-        boolean required = AppConfig.var(ErpB2bConfigs.CONFIG_WEBHOOK_SIGNATURE_REQUIRED,
-                ErpB2bConfigs.DEFAULT_WEBHOOK_SIGNATURE_REQUIRED);
-        if (required && !verifySignature(payload, signature, profile.getWebhookSecret())) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_WEBHOOK_SIGNATURE_INVALID)
-                    .param(ErpB2bErrors.ARG_PARTNER_CODE, partnerCode);
-        }
-
-        // 3. 幂等检查（eventId+formatCode → EdiDoc.remark）
-        if (eventId != null && isDuplicateEvent(eventId, formatCode)) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_WEBHOOK_DUPLICATE_EVENT)
-                    .param(ErpB2bErrors.ARG_EVENT_ID, eventId)
-                    .param(ErpB2bErrors.ARG_EDI_FORMAT_CODE, formatCode);
-        }
-
-        // 4. 解析 + 建 ASN
-        Long asnId = parseToAsn(formatCode, payload, profile, eventId, context);
-        return asnId;
+        return handleInboundWebhookProcessor.handleInboundWebhook(formatCode, partnerCode, signature, eventId, payload, context);
     }
 
     @Override
     @BizMutation
     public ErpB2bAsn matchPurchaseOrder(@Name("asnId") Long asnId, IServiceContext context) {
-        ErpB2bAsn asn = requireAsn(asnId);
-        String status = asn.getStatus();
-        if (!ErpB2bConstants.ASN_STATUS_RECEIVED.equals(status)) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION)
-                    .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
-                    .param(ErpB2bErrors.ARG_CURRENT_STATE, status)
-                    .param(ErpB2bErrors.ARG_EXPECTED_STATE, ErpB2bConstants.ASN_STATUS_RECEIVED);
-        }
-
-        // 查采购订单
-        ErpPurOrder po = findPurchaseOrder(asn.getRelatedBillCode());
-        if (po == null) {
-            LOG.info("ASN {} 未匹配到采购订单 {}（保留 RECEIVED）", asn.getCode(), asn.getRelatedBillCode());
-            return asn;
-        }
-
-        // PO 已关闭/取消 → blockingLevel=ERROR
-        if (isPoClosedOrCancelled(po)) {
-            asn.setRemark("采购订单已关闭/取消：" + asn.getRelatedBillCode());
-            daoProvider().daoFor(ErpB2bAsn.class).saveOrUpdateEntity(asn);
-            markEdiDocError(asn.getSourceEdiDocId(), "PO_CLOSED: " + asn.getRelatedBillCode(), context);
-            LOG.warn("ASN {} 关联采购订单 {} 已关闭/取消", asn.getCode(), asn.getRelatedBillCode());
-            return asn;
-        }
-
-        // 逐行物料匹配 + 数量校验
-        List<ErpB2bAsnLine> asnLines = findAsnLines(asn.getId());
-        List<ErpPurOrderLine> poLines = findPoLines(po.getId());
-        boolean overQuantity = false;
-        for (ErpB2bAsnLine asnLine : asnLines) {
-            ErpPurOrderLine matchedPoLine = findMatchingPoLine(poLines, asnLine.getMaterialId());
-            if (matchedPoLine == null) {
-                LOG.warn("ASN {} 行物料 {} 未在 PO {} 中找到", asn.getCode(), asnLine.getMaterialId(), asn.getRelatedBillCode());
-                continue;
-            }
-            if (asnLine.getShippedQty() != null && matchedPoLine.getQuantity() != null) {
-                BigDecimal remaining = matchedPoLine.getQuantity().subtract(
-                        matchedPoLine.getReceivedQuantity() != null ? matchedPoLine.getReceivedQuantity() : BigDecimal.ZERO);
-                if (asnLine.getShippedQty().compareTo(remaining) > 0) {
-                    overQuantity = true;
-                }
-            }
-        }
-
-        // 匹配成功 → MATCHED
-        asn.setStatus(ErpB2bConstants.ASN_STATUS_MATCHED);
-        if (overQuantity) {
-            asn.setRemark("部分行超 PO 数量（blockingLevel=WARN）");
-        }
-        daoProvider().daoFor(ErpB2bAsn.class).saveOrUpdateEntity(asn);
-
-        // EdiDoc → ARCHIVED
-        try {
-            ediDocBiz.archive(asn.getSourceEdiDocId(), context);
-        } catch (Exception e) {
-            LOG.warn("ASN {} 归档 EdiDoc 失败（不阻塞匹配）：{}", asn.getCode(), e.getMessage());
-        }
-
-        LOG.info("ASN {} 匹配采购订单 {} 成功（MATCHED）", asn.getCode(), asn.getRelatedBillCode());
-        return asn;
+        return matchPurchaseOrderProcessor.matchPurchaseOrder(asnId, context);
     }
 
     @Override
     @BizMutation
     public ErpB2bAsn createReceiveFromAsn(@Name("asnId") Long asnId, IServiceContext context) {
-        boolean enabled = AppConfig.var(ErpB2bConfigs.CONFIG_ASN_AUTO_CREATE_RECEIVE,
-                ErpB2bConfigs.DEFAULT_ASN_AUTO_CREATE_RECEIVE);
-        if (!enabled) {
-            LOG.info("ASN→采购入库自动创建未启用（erp-b2b.asn-auto-create-receive=false），跳过");
-            return null;
-        }
-
-        ErpB2bAsn asn = requireAsn(asnId);
-        String status = asn.getStatus();
-        if (!ErpB2bConstants.ASN_STATUS_MATCHED.equals(status)) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION)
-                    .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
-                    .param(ErpB2bErrors.ARG_CURRENT_STATE, status)
-                    .param(ErpB2bErrors.ARG_EXPECTED_STATE, ErpB2bConstants.ASN_STATUS_MATCHED);
-        }
-
-        ErpPurOrder po = findPurchaseOrder(asn.getRelatedBillCode());
-        if (po == null) {
-            LOG.warn("ASN {} 创建入库失败：PO {} 不存在", asn.getCode(), asn.getRelatedBillCode());
-            return asn;
-        }
-
-        // 创建采购入库草稿（核心零污染：仅弱指针 orderId，不加 asnId 列）
-        ErpPurReceive receive = daoProvider().daoFor(ErpPurReceive.class).newEntity();
-        receive.setCode("RCV-FROM-ASN-" + asn.getCode());
-        receive.setOrderId(po.getId());
-        receive.setSupplierId(po.getSupplierId());
-        receive.setWarehouseId(po.getWarehouseId());
-        receive.setCurrencyId(po.getCurrencyId());
-        receive.setBusinessDate(CoreMetrics.today());
-        receive.setDocStatus("UNSUBMITTED");
-        receive.setApproveStatus("UNSUBMITTED");
-        receive.setReceiveStatus("NOT_RECEIVED");
-        receive.setRemark("由 ASN 自动创建（B2B_ASN 弱指针）");
-        daoProvider().daoFor(ErpPurReceive.class).saveEntity(receive);
-
-        // 行级回填：iterate AsnLine → ErpPurReceiveLine（plan 2026-07-19-0849-1 Phase 1 Decision）
-        fillReceiveLinesFromAsn(asn, receive, po);
-
-        // ASN → RECEIVED_TO_STOCK
-        asn.setStatus(ErpB2bConstants.ASN_STATUS_RECEIVED_TO_STOCK);
-        daoProvider().daoFor(ErpB2bAsn.class).saveOrUpdateEntity(asn);
-
-        LOG.info("ASN {} 创建采购入库草稿 {} 成功（RECEIVED_TO_STOCK）", asn.getCode(), receive.getCode());
-        return asn;
-    }
-
-    /**
-     * 按 Phase 1 Decision 落地行级回填。迭代 {@code asn.lines}，为每条 AsnLine 创建一条 {@link ErpPurReceiveLine}：
-     *
-     * <ul>
-     *   <li>materialId：透传 AsnLine.materialId；为 null 或 ErpMdMaterial 不存在 → 抛
-     *       {@link ErpB2bErrors#ERR_B2B_ASN_LINE_MATERIAL_REQUIRED} 守卫（Decision (f)）。</li>
-     *   <li>uoMId：materialId → ErpMdMaterial.uoMId 反查（mandatory 主数据必然有值，Decision (f)①）。</li>
-     *   <li>quantity：AsnLine.shippedQty 优先（实际发货数量），fallback AsnLine.quantity。</li>
-     *   <li>lineNo：透传 AsnLine.lineNo（Decision (c)①）。</li>
-     *   <li>unitPrice / taxRate / orderLineId：经 materialId 反查 PO line 透传（Decision (a)①）。</li>
-     *   <li>amount：派生 unitPrice × quantity（HALF_UP scale=4），任一为 null 则 null（Decision (b)①）。</li>
-     *   <li>warehouseId：复用 receive.warehouseId（Decision (d)②）。</li>
-     * </ul>
-     *
-     * <p><b>空白 AsnLine 边界</b>（Decision (e)①）：0 行合法，Receive 头仍创建，仅 LOG.warn 提示。
-     *
-     * <p><b>失败回滚</b>（Decision 实现策略 (b)）：任一行持久化失败或守卫触发 → 抛 NopException，@BizMutation
-     * 事务回滚，已写入的 Receive 头 + ReceiveLine 全部回滚（强一致）。
-     */
-    private void fillReceiveLinesFromAsn(ErpB2bAsn asn, ErpPurReceive receive, ErpPurOrder po) {
-        List<ErpB2bAsnLine> asnLines = findAsnLines(asn.getId());
-        if (asnLines.isEmpty()) {
-            LOG.warn("ASN {} 无 AsnLine 行，createReceiveFromAsn 仅建 Receive 头不回填行级", asn.getCode());
-            return;
-        }
-        // 一次性拉取 PO 行列表，O(N) 反查 unitPrice/taxRate/orderLineId（Decision (a)①）
-        List<ErpPurOrderLine> poLines = findPoLines(po.getId());
-        IEntityDao<ErpPurReceiveLine> lineDao = daoProvider().daoFor(ErpPurReceiveLine.class);
-        IEntityDao<ErpMdMaterial> materialDao = daoProvider().daoFor(ErpMdMaterial.class);
-
-        for (ErpB2bAsnLine asnLine : asnLines) {
-            Long materialId = asnLine.getMaterialId();
-            if (materialId == null) {
-                throw new NopException(ErpB2bErrors.ERR_B2B_ASN_LINE_MATERIAL_REQUIRED)
-                        .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
-                        .param(ErpB2bErrors.ARG_LINE_NO, asnLine.getLineNo())
-                        .param(ErpB2bErrors.ARG_MATERIAL_ID, null);
-            }
-            ErpMdMaterial material = materialDao.getEntityById(materialId);
-            if (material == null) {
-                throw new NopException(ErpB2bErrors.ERR_B2B_ASN_LINE_MATERIAL_REQUIRED)
-                        .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
-                        .param(ErpB2bErrors.ARG_LINE_NO, asnLine.getLineNo())
-                        .param(ErpB2bErrors.ARG_MATERIAL_ID, materialId);
-            }
-
-            ErpPurReceiveLine receiveLine = lineDao.newEntity();
-            receiveLine.setReceiveId(receive.getId());
-            receiveLine.setLineNo(asnLine.getLineNo());
-            receiveLine.setMaterialId(materialId);
-            receiveLine.setUoMId(material.getUoMId());
-
-            // quantity：shippedQty 优先（实际发货），fallback quantity
-            BigDecimal qty = asnLine.getShippedQty() != null ? asnLine.getShippedQty() : asnLine.getQuantity();
-            receiveLine.setQuantity(qty);
-
-            // PO line 反查（按 materialId）：unitPrice / taxRate / orderLineId 透传
-            ErpPurOrderLine matchedPoLine = findMatchingPoLine(poLines, materialId);
-            if (matchedPoLine != null) {
-                receiveLine.setOrderLineId(matchedPoLine.getId());
-                receiveLine.setUnitPrice(matchedPoLine.getUnitPrice());
-                receiveLine.setTaxRate(matchedPoLine.getTaxRate());
-                if (matchedPoLine.getUnitPrice() != null && qty != null) {
-                    receiveLine.setAmount(matchedPoLine.getUnitPrice().multiply(qty).setScale(4, RoundingMode.HALF_UP));
-                }
-            }
-
-            // warehouseId 复用 Receive 头（Decision (d)②）
-            receiveLine.setWarehouseId(receive.getWarehouseId());
-            receiveLine.setRemark("由 ASN AsnLine #" + asnLine.getLineNo() + " 自动回填");
-
-            try {
-                lineDao.saveEntity(receiveLine);
-            } catch (RuntimeException e) {
-                LOG.warn("ASN {} 行 {} 持久化 ReceiveLine 失败：{}", asn.getCode(), asnLine.getLineNo(), e.getMessage());
-                throw e;
-            }
-        }
-        LOG.info("ASN {} 行级回填完成：{} 行 ErpPurReceiveLine", asn.getCode(), asnLines.size());
+        return createReceiveFromAsnProcessor.createReceiveFromAsn(asnId, context);
     }
 
     @Override
     @BizMutation
     public ErpB2bAsn retryMatch(@Name("asnId") Long asnId, IServiceContext context) {
-        ErpB2bAsn asn = requireAsn(asnId);
-        // 幂等：已 MATCHED/RECEIVED_TO_STOCK 直接返回
-        if (ErpB2bConstants.ASN_STATUS_MATCHED.equals(asn.getStatus())
-                || ErpB2bConstants.ASN_STATUS_RECEIVED_TO_STOCK.equals(asn.getStatus())) {
-            return asn;
-        }
-        // 回到 RECEIVED 后重新匹配
-        if (!ErpB2bConstants.ASN_STATUS_RECEIVED.equals(asn.getStatus())) {
-            asn.setStatus(ErpB2bConstants.ASN_STATUS_RECEIVED);
-            daoProvider().daoFor(ErpB2bAsn.class).saveOrUpdateEntity(asn);
-        }
-        return matchPurchaseOrder(asnId, context);
+        return retryMatchProcessor.retryMatch(asnId, context);
     }
 
     @Override
@@ -346,193 +102,4 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
         q.setLimit(200);
         return dao.findAllByQuery(q);
     }
-
-    // ---------- parseToAsn (内部方法) ----------
-
-    Long parseToAsn(String formatCode, String payload, ErpB2bPartnerProfile profile,
-                    String eventId, IServiceContext context) {
-        IErpB2bEdiProvider provider;
-        ParsedPayload parsed;
-        try {
-            provider = ediRegistry.getProvider(formatCode);
-            parsed = provider.parsePayload(formatCode, payload);
-        } catch (NopException e) {
-            // 解析失败：建 EdiDoc(state=ERROR) + 保留 rawPayload
-            ErpB2bEdiDoc errorDoc = ediDocBiz.createInbound(
-                    ErpB2bConstants.RELATED_BILL_TYPE_ASN_INBOUND, null, payload, formatCode, context);
-            ediDocBiz.markError(errorDoc.getId(), e.getMessage(), context);
-            writeEdiLog(errorDoc, ErpB2bConstants.DIRECTION_INBOUND, true,
-                    payload, e.getMessage());
-            throw e;
-        }
-
-        // 成功：建 EdiDoc(state=RECEIVED)
-        ErpB2bEdiDoc ediDoc = ediDocBiz.createInbound(
-                parsed.getRelatedBillType() != null ? parsed.getRelatedBillType() : ErpB2bConstants.RELATED_BILL_TYPE_PO_ORDER,
-                parsed.getRelatedBillCode(), payload, formatCode, context);
-        if (eventId != null) {
-            ediDoc.setRemark("WEBHOOK eventId=" + eventId + " formatCode=" + formatCode);
-            daoProvider().daoFor(ErpB2bEdiDoc.class).saveOrUpdateEntity(ediDoc);
-        }
-
-        // 建 ASN
-        ErpB2bAsn asn = newEntity();
-        asn.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
-        asn.setCode("ASN-" + CoreMetrics.currentTimeMillis());
-        asn.setSourceEdiDocId(ediDoc.getId());
-        asn.setPartnerId(profile.getPartnerId());
-        asn.setRelatedBillType(ErpB2bConstants.RELATED_BILL_TYPE_PO_ORDER);
-        asn.setRelatedBillCode(parsed.getRelatedBillCode());
-        asn.setStatus(ErpB2bConstants.ASN_STATUS_RECEIVED);
-        asn.setShipmentDate(CoreMetrics.today());
-        if (parsed.getHeaders().get("estimatedArrivalDate") instanceof LocalDate) {
-            asn.setEstimatedArrivalDate((LocalDate) parsed.getHeaders().get("estimatedArrivalDate"));
-        }
-        daoProvider().daoFor(ErpB2bAsn.class).saveEntity(asn);
-
-        // 建 AsnLine(s) + 代码映射
-        IEntityDao<ErpB2bAsnLine> lineDao = daoProvider().daoFor(ErpB2bAsnLine.class);
-        int lineNo = 1;
-        for (ParsedLine parsedLine : parsed.getLines()) {
-            ErpB2bAsnLine line = lineDao.newEntity();
-            line.setAsnId(asn.getId());
-            line.setLineNo(lineNo++);
-            line.setSupplierPartNo(parsedLine.getSupplierPartNo());
-
-            // 代码映射：partnerId + MATERIAL + externalCode → internalCode
-            String internalMaterial = codeMappingResolver.resolveInbound(
-                    profile.getPartnerId(), ErpB2bConstants.MAPPING_TYPE_MATERIAL, parsedLine.getSupplierPartNo());
-            // internalMaterial 为物料 code 字符串，实际 materialId 需查 ErpMdMaterial。
-            // 本期保留 code 值到 supplierPartNo + 映射结果到 remark 供后续处理。
-            line.setRemark(internalMaterial);
-
-            line.setShippedQty(parsedLine.getShippedQty());
-            line.setQuantity(parsedLine.getQuantity());
-            lineDao.saveEntity(line);
-        }
-
-        writeEdiLog(ediDoc, ErpB2bConstants.DIRECTION_INBOUND, false, payload, null);
-        LOG.info("ASN 入站解析成功：asnCode={} partnerCode={} lines={}",
-                asn.getCode(), profile.getCode(), parsed.getLines().size());
-        return asn.getId();
-    }
-
-    // ---------- helpers ----------
-
-    private ErpB2bAsn requireAsn(Long asnId) {
-        ErpB2bAsn asn = daoProvider().daoFor(ErpB2bAsn.class).getEntityById(asnId);
-        if (asn == null) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION)
-                    .param(ErpB2bErrors.ARG_ASN_ID, asnId);
-        }
-        return asn;
-    }
-
-    private ErpB2bPartnerProfile findPartnerProfileByCode(String code) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("code", code));
-        // O-5：追加 id DESC 确保确定性
-        q.addOrderField("id", true);
-        return daoProvider().daoFor(ErpB2bPartnerProfile.class).findFirstByQuery(q);
-    }
-
-    private boolean isDuplicateEvent(String eventId, String formatCode) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("remark", "WEBHOOK eventId=" + eventId + " formatCode=" + formatCode));
-        // O-5：追加 id DESC 确保确定性
-        q.addOrderField("id", true);
-        return daoProvider().daoFor(ErpB2bEdiDoc.class).findFirstByQuery(q) != null;
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<ErpB2bAsnLine> findAsnLines(Long asnId) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("asnId", asnId));
-        return daoProvider().daoFor(ErpB2bAsnLine.class).findAllByQuery(q);
-    }
-
-    private ErpPurOrder findPurchaseOrder(String code) {
-        if (code == null) {
-            return null;
-        }
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("code", code));
-        // O-5：追加 id DESC 确保确定性
-        q.addOrderField("id", true);
-        return daoProvider().daoFor(ErpPurOrder.class).findFirstByQuery(q);
-    }
-
-    @SuppressWarnings("unchecked")
-    private List<ErpPurOrderLine> findPoLines(Long orderId) {
-        QueryBean q = new QueryBean();
-        q.addFilter(eq("orderId", orderId));
-        return daoProvider().daoFor(ErpPurOrderLine.class).findAllByQuery(q);
-    }
-
-    private ErpPurOrderLine findMatchingPoLine(List<ErpPurOrderLine> poLines, Long materialId) {
-        if (materialId == null) {
-            return null;
-        }
-        for (ErpPurOrderLine line : poLines) {
-            if (materialId.equals(line.getMaterialId())) {
-                return line;
-            }
-        }
-        return null;
-    }
-
-    private boolean isPoClosedOrCancelled(ErpPurOrder po) {
-        String docStatus = po.getDocStatus();
-        return "CANCELLED".equals(docStatus) || "CLOSED".equals(docStatus);
-    }
-
-    private void markEdiDocError(Long ediDocId, String error, IServiceContext context) {
-        if (ediDocId == null) {
-            return;
-        }
-        try {
-            ediDocBiz.markError(ediDocId, error, context);
-        } catch (Exception e) {
-            LOG.warn("回填 EdiDoc markError 失败：{}", e.getMessage());
-        }
-    }
-
-    private void writeEdiLog(ErpB2bEdiDoc doc, String direction, boolean error,
-                             String requestPayload, String errorMsg) {
-        IEntityDao<ErpB2bEdiLog> dao = daoProvider().daoFor(ErpB2bEdiLog.class);
-        ErpB2bEdiLog log = dao.newEntity();
-        log.setEdiDocId(doc.getId());
-        log.setOrgId(doc.getOrgId());
-        log.setDirection(direction);
-        log.setRequestPayload(requestPayload);
-        log.setResultCode(error ? ErpB2bConstants.EDI_RESULT_ERROR : ErpB2bConstants.EDI_RESULT_SUCCESS);
-        log.setResultMsg(error ? ("PARSE_FAILED: " + errorMsg) : "RECEIVE: 入站报文解析成功");
-        log.setLogTime(CoreMetrics.currentTimestamp());
-        dao.saveEntity(log);
-    }
-
-    private boolean verifySignature(String payload, String signature, String secret) {
-        if (signature == null || signature.isEmpty() || secret == null) {
-            return false;
-        }
-        try {
-            Mac mac = Mac.getInstance("HmacSHA256");
-            mac.init(new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
-            byte[] raw = mac.doFinal(payload.getBytes(StandardCharsets.UTF_8));
-            StringBuilder sb = new StringBuilder(raw.length * 2);
-            for (byte b : raw) {
-                sb.append(String.format("%02x", b));
-            }
-            String expected = sb.toString();
-            return MessageDigest.isEqual(expected.getBytes(StandardCharsets.UTF_8),
-                    signature.toLowerCase().getBytes(StandardCharsets.UTF_8));
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /** 内部占位接口，用于 writeEdiLog 的 errorCode 参数标记。 */
-    private interface ErrorCodeHolder {
-    }
-
 }

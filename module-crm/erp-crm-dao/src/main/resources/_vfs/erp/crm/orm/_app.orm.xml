@@ -1575,9 +1575,9 @@
                         precision="20" propId="10" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Actual Closed Revenue"/>
                 <column code="COMMIT_ACCURACY" displayName="承诺准确率" name="commitAccuracy" precision="10" propId="11"
-                        scale="4" stdDataType="double" stdSqlType="DECIMAL" i18n-en:displayName="Commit Accuracy"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Commit Accuracy"/>
                 <column code="UPSIDE_ACCURACY" displayName="乐观准确率" name="upsideAccuracy" precision="10" propId="12"
-                        scale="4" stdDataType="double" stdSqlType="DECIMAL" i18n-en:displayName="Upside Accuracy"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Upside Accuracy"/>
                 <column code="DEVIATION_AMOUNT" displayName="偏差绝对值" domain="amount" name="deviationAmount"
                         precision="20" propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Deviation Amount"/>
@@ -2186,7 +2186,7 @@
                         propId="13" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Price Override"/>
                 <column code="DISCOUNT_PERCENT" displayName="折扣百分比" name="discountPercent" precision="10" propId="14"
-                        scale="2" stdDataType="double" stdSqlType="DECIMAL" i18n-en:displayName="Discount Percent"/>
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Discount Percent"/>
                 <column code="DISCOUNT_AMOUNT" displayName="折扣固定金额" domain="amount" name="discountAmount" precision="20"
                         propId="15" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Discount Amount"/>
@@ -2561,7 +2561,7 @@
                         propId="16" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Avg Deal Size"/>
                 <column code="AVG_SALES_CYCLE_DAYS" displayName="平均销售周期天数" name="avgSalesCycleDays" precision="10"
-                        propId="17" scale="2" stdDataType="double" stdSqlType="DECIMAL"
+                        propId="17" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
                         i18n-en:displayName="Avg Sales Cycle Days"/>
                 <column code="CALCULATED_AT" displayName="聚合计算时间" name="calculatedAt" propId="18"
                         stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
@@ -2650,11 +2650,11 @@
                 <column code="LEAD_COUNT_REMAINING" defaultValue="0" displayName="期末仍在本阶段数" name="leadCountRemaining"
                         propId="9" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Lead Count Remaining"/>
                 <column code="CONVERSION_RATE" displayName="转化率" name="conversionRate" precision="10" propId="10"
-                        scale="4" stdDataType="double" stdSqlType="DECIMAL" i18n-en:displayName="Conversion Rate"/>
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Conversion Rate"/>
                 <column code="DROP_OFF_RATE" displayName="流失率" name="dropOffRate" precision="10" propId="11" scale="4"
-                        stdDataType="double" stdSqlType="DECIMAL" i18n-en:displayName="Drop Off Rate"/>
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Drop Off Rate"/>
                 <column code="AVG_DAYS_IN_STAGE" displayName="平均停留天数" name="avgDaysInStage" precision="10" propId="12"
-                        scale="2" stdDataType="double" stdSqlType="DECIMAL" i18n-en:displayName="Avg Days In Stage"/>
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Avg Days In Stage"/>
                 <column code="LOST_COUNT" defaultValue="0" displayName="本阶段丢失数" name="lostCount" propId="13"
                         stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Lost Count"/>
                 <column code="LOST_AMOUNT" displayName="本阶段丢失金额" domain="amount" name="lostAmount" precision="20"

@@ -44,62 +44,6 @@ public class ErpFinNotesReceivableProcessor {
     @Inject
     NotesPostingDispatcher postingDispatcher;
 
-    public ErpFinNotesReceivable receive(Long notesId, IServiceContext context) {
-        ErpFinNotesReceivable note = requireNote(notesId, context);
-        // 幂等：已收到再次收到为空操作。
-        if (isAlreadyReceived(note)) {
-            return note;
-        }
-        validateNotTerminal(note, context);
-        requireAmountPositive(note, context);
-        return doReceive(notesId, note, context);
-    }
-
-    public ErpFinNotesReceivable discount(Long notesId, LocalDate discountDate, Long bankId,
-                                          BigDecimal discountRate, BigDecimal exchangeRate, IServiceContext context) {
-        ErpFinNotesReceivable note = requireNote(notesId, context);
-        validateTransitionForDiscount(note, context);
-        requireDiscountInputs(note, discountDate, bankId, discountRate, exchangeRate, context);
-        ErpFinNotesDiscount discount = buildDiscount(note, discountDate, bankId, discountRate, exchangeRate);
-        return doDiscount(notesId, note, discount, context);
-    }
-
-    public ErpFinNotesReceivable endorse(Long notesId, Long endorsementFromId, IServiceContext context) {
-        ErpFinNotesReceivable note = requireNote(notesId, context);
-        validateTransitionForEndorse(note, context);
-        return doEndorse(notesId, note, endorsementFromId, context);
-    }
-
-    public ErpFinNotesReceivable collect(Long notesId, IServiceContext context) {
-        ErpFinNotesReceivable note = requireNote(notesId, context);
-        validateTransitionForCollect(note, context);
-        note.setStatus(ErpFinConstants.NOTES_RECV_COLLECTION_PENDING);
-        noteDao().updateEntity(note);
-        return note;
-    }
-
-    public ErpFinNotesReceivable honor(Long notesId, IServiceContext context) {
-        ErpFinNotesReceivable note = requireNote(notesId, context);
-        validateTransitionForHonorOrDishonor(note, context);
-        return doHonor(notesId, note, context);
-    }
-
-    public ErpFinNotesReceivable dishonor(Long notesId, IServiceContext context) {
-        ErpFinNotesReceivable note = requireNote(notesId, context);
-        validateTransitionForHonorOrDishonor(note, context);
-        // 拒付转应收（treasury.md §规则3）：仅标记终态，转挂应收账款科目；后续催收/坏账属信用管理面 Non-Goal。
-        note.setStatus(ErpFinConstants.NOTES_RECV_DISHONORED);
-        noteDao().updateEntity(note);
-        return note;
-    }
-
-    public ErpFinNotesReceivable writeOff(Long notesId, IServiceContext context) {
-        ErpFinNotesReceivable note = requireNote(notesId, context);
-        validateNotTerminal(note, context);
-        doWriteOff(note, context);
-        return note;
-    }
-
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
     protected void validateTransitionForDiscount(ErpFinNotesReceivable note, IServiceContext context) {

@@ -10,9 +10,12 @@ import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
@@ -55,6 +58,10 @@ public class SubcontractPostingDispatcher {
     IOrmTemplate ormTemplate;
     @Inject
     IErpInvStockLedgerBiz stockLedgerBiz;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_SUBCONTRACT_FAILURE = "mfg.subcontract-posting-failure";
 
     public void setExecutor(MfgPostingExecutor executor) {
         this.executor = executor;
@@ -115,6 +122,7 @@ public class SubcontractPostingDispatcher {
 
     /**
      * 委外加工费过账：读订单头加工费 → 装配 SUBCONTRACT_FEE 事件 → 过账 → 成功回写 posted=true。
+     * <p>G3 错误传播分级（plan 2026-07-30-0341-2 P1-MA4-010）：失败派发告警使 posted=false 悬挂可被感知。
      */
     public void dispatchFeePosting(Long subcontractOrderId) {
         ErpMfgSubcontractOrder order = loadOrder(subcontractOrderId);
@@ -140,6 +148,7 @@ public class SubcontractPostingDispatcher {
             } else {
                 LOG.error("委外加工费过账异常，委外单 {} 保持 posted=false", order.getCode(), e);
             }
+            dispatchFailureAlert(order, "加工费", e);
         }
     }
 
@@ -152,6 +161,29 @@ public class SubcontractPostingDispatcher {
             } else {
                 LOG.error("委外{}过账异常，委外单 {}", stageLabel, order.getCode(), e);
             }
+            // G3：issue/receipt 段无 posted 追踪（仅 fee 段 markPosted），段级过账状态经
+            // ErpFinVoucherBillR（billHeadCode+businessType）判重可查；失败派发告警闭环。
+            dispatchFailureAlert(order, stageLabel, e);
+        }
+    }
+
+    /** 委外过账失败告警派发（G3；通知失败降级不阻断主流程）。 */
+    protected void dispatchFailureAlert(ErpMfgSubcontractOrder order, String stageLabel, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("subcontractCode", order.getCode());
+        ctx.put("stage", stageLabel);
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", order.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_SUBCONTRACT_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("委外{}过账失败告警派发失败（降级）：subcontractCode={}, reason={}",
+                    stageLabel, order.getCode(), notifyErr.getMessage());
         }
     }
 

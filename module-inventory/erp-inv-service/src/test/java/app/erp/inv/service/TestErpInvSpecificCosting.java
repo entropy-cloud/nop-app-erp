@@ -28,6 +28,7 @@ import java.util.Map;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -119,6 +120,38 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
     }
 
     @Test
+    public void testOutgoingIgnoresFutureDatedSameBatchLayer() {
+        Long materialId = 2510L;
+        seedSpecificMaterial(materialId);
+
+        // 历史日入库：S01 10@100（incomingDate=2026-07-01）
+        generateIncoming(materialId, "PR-SPEC-010A", "S01", new BigDecimal("10"),
+                new BigDecimal("100"), "2026-07-01");
+        // 同 batchNo 的 future-dated 入库：S01 5@200（incomingDate=2026-08-15，晚于出库日）
+        generateIncoming(materialId, "PR-SPEC-010B", "S01", new BigDecimal("5"),
+                new BigDecimal("200"), "2026-08-15");
+
+        // 出库 S01 12 件，businessDate=2026-07-10。余额总量=15（≥12，预留量校验通过），
+        // 但历史成本过滤下仅历史层（10 件，incomingDate <= 2026-07-10）可见 → 12 > 10 → ERR_COST_NOT_AVAILABLE。
+        // 确定性回归守卫：无日期过滤时两层均可见（15 ≥ 12）→ 出库成功（消耗 10@100 + 2@200，unitCost≈116.67）；
+        // 有过滤时被拒，直接证明 future-dated 层被排除。
+        ApiResponse<?> resp = genMove(outgoingReq(materialId, "SS-SPEC-010", "S01",
+                new BigDecimal("12"), "2026-07-10"));
+        assertEquals(ErpInvErrors.ERR_COST_NOT_AVAILABLE.getErrorCode(), resp.getCode(),
+                "出库量(12)超过 businessDate 当日可见层(10)应返回 ERR_COST_NOT_AVAILABLE（future-dated 层不可见）");
+
+        // 拒绝路径不消耗任何层：历史层与 future-dated 层 remainingQuantity 均保持入库值
+        ErpInvCostLayer historyLayer = findCostLayerByBatchAndCost(materialId, "S01", new BigDecimal("100"));
+        ErpInvCostLayer futureLayer = findCostLayerByBatchAndCost(materialId, "S01", new BigDecimal("200"));
+        assertNotNull(historyLayer, "历史层应存在");
+        assertNotNull(futureLayer, "future-dated 层应存在");
+        assertEquals(0, historyLayer.getRemainingQuantity().compareTo(new BigDecimal("10")),
+                "拒绝路径不消耗历史层 → remainingQuantity=10");
+        assertEquals(0, futureLayer.getRemainingQuantity().compareTo(new BigDecimal("5")),
+                "future-dated 层 5@200 不受今日出库影响（历史成本过滤）");
+    }
+
+    @Test
     public void testOutgoingWithoutBatchOrSerialRejected() {
         Long materialId = 2504L;
         seedSpecificMaterial(materialId);
@@ -138,7 +171,13 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
     // ---------- helpers ----------
 
     private Long generateIncoming(Long materialId, String billCode, String batchNo, BigDecimal qty, BigDecimal unitCost) {
+        return generateIncoming(materialId, billCode, batchNo, qty, unitCost, "2026-07-01");
+    }
+
+    private Long generateIncoming(Long materialId, String billCode, String batchNo, BigDecimal qty,
+                                  BigDecimal unitCost, String businessDate) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_INCOMING);
+        req.put("businessDate", businessDate);
         req.put("destWarehouseId", WAREHOUSE_ID);
         req.put("destLocationId", LOCATION_ID);
         req.put("relatedBillType", "PUR_RECEIPT");
@@ -148,7 +187,13 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
     }
 
     private Long generateOutgoing(Long materialId, String billCode, String batchNo, BigDecimal qty) {
+        return generateOutgoing(materialId, billCode, batchNo, qty, "2026-07-01");
+    }
+
+    private Long generateOutgoing(Long materialId, String billCode, String batchNo, BigDecimal qty,
+                                  String businessDate) {
         Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
+        req.put("businessDate", businessDate);
         req.put("sourceWarehouseId", WAREHOUSE_ID);
         req.put("sourceLocationId", LOCATION_ID);
         req.put("relatedBillType", "SALES_SHIP");
@@ -164,6 +209,18 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
         req.put("relatedBillType", "SALES_SHIP");
         req.put("relatedBillCode", billCode);
         req.put("lines", Collections.singletonList(line(materialId, null, qty, null)));
+        return req;
+    }
+
+    private Map<String, Object> outgoingReq(Long materialId, String billCode, String batchNo,
+                                            BigDecimal qty, String businessDate) {
+        Map<String, Object> req = baseReq(ErpInvConstants.MOVE_TYPE_OUTGOING);
+        req.put("businessDate", businessDate);
+        req.put("sourceWarehouseId", WAREHOUSE_ID);
+        req.put("sourceLocationId", LOCATION_ID);
+        req.put("relatedBillType", "SALES_SHIP");
+        req.put("relatedBillCode", billCode);
+        req.put("lines", Collections.singletonList(line(materialId, batchNo, qty, null)));
         return req;
     }
 
@@ -217,6 +274,13 @@ public class TestErpInvSpecificCosting extends JunitAutoTestCase {
     private ErpInvCostLayer findCostLayerByBatch(Long materialId, String batchNo) {
         return findCostLayers(materialId).stream()
                 .filter(l -> batchNo.equals(l.getBatchNo())).findFirst().orElse(null);
+    }
+
+    private ErpInvCostLayer findCostLayerByBatchAndCost(Long materialId, String batchNo, BigDecimal unitCost) {
+        return findCostLayers(materialId).stream()
+                .filter(l -> batchNo.equals(l.getBatchNo())
+                        && l.getUnitCost() != null && l.getUnitCost().compareTo(unitCost) == 0)
+                .findFirst().orElse(null);
     }
 
     private ErpInvStockLedger findOutgoingLedger(Long materialId) {

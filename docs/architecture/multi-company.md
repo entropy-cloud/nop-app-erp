@@ -26,7 +26,10 @@
 
 ## 数据隔离
 
-- 所有业务单据按 `orgId` 隔离查询
+- 业务单据按 `orgId` 隔离查询——经 config-gated 全局 `IQueryTransformer`（`erp.multi-company.org-isolation-enabled`，默认 **false**）+ `IOrmInterceptor` 写路径 auto-stamp 实现（plan 2026-07-30-0841-3-r1-29 P1-MA2-093/094）。
+  - **默认关闭态（单组织基线）**：无自动 orgId 隔离，既有种子（orgId=2）与测试零回归。
+  - **多公司部署启用**：开启后 CrudBizModel 查询自动追加 `eq("orgId", currentOrgId)`，实体保存从上下文 stamp orgId（覆盖客户端传入）。`currentOrgId` 经 `IContext` attribute（`erp.currentOrgId`）解析；登录链路写入该 attribute（或扩展为 `IUserContext` → 组织映射）。
+  - **dashboard/report 经 `IDaoProvider` 直访绕过 CrudBizModel 管道**，不被 transformer 覆盖；其读路径隔离由各查询方法显式补 `acctSchemaId`+`orgId` filter（P1-MA2-095）承担。
 - 单据编号在 orgId 内唯一（见 `domain-design-guidelines.md` §14.1.1）
 - 库存按仓库隔离，仓库归属组织
 - 凭证按 `acctSchemaId`（账套）隔离
@@ -194,7 +197,9 @@
 
 ### Decision C — 配对识别键与一致性校验
 
-**配对键** = `(pairKey, periodId)`，其中 `pairKey = min(fromOrgId,toOrgId) + ":" + max(fromOrgId,toOrgId) + ":" + materialId`。
+**配对键** = `(pairKey, periodId)`，其中 `pairKey = billCode`（配对凭证共享同一业务单据 code，如跨法人调拨单/订单 code；plan 2026-07-30-0841-3-r1-29 P1-MA2-097 更正）。
+
+> **算法更正记录（P1-MA2-097）**：原文档声明 `pairKey = min/max org-pair hash + materialId`，但实现经 `ErpFinVoucherBillR.billCode` 反查配对凭证，配对凭证共享同一业务单据 code，故 `pairKey = billCode`。审计列 `arOrgId`/`apOrgId`/`arSideVoucherId`/`apSideVoucherId`/`materialId` 从 SALE/PURCHASE 凭证 + 凭证行反查填充。`ErpFinIntercompanyMatch` 加 `(pairKey, periodId)` UK 保证 `runMatching` 幂等（P1-MA2-098）。
 
 **`runMatching(periodId)` 算法**：
 1. 扫描本期 `ErpFinVoucher`（billType=INTERCOMPANY_SALE/PURCHASE，未红冲）按 pairKey 分组
@@ -203,6 +208,8 @@
 4. 差额 > precision → 写 `ErpFinIntercompanyMatch`（status=DIFF，diffAmount=差额）
 
 **`checkDualSideConsistency(pairKey, periodId)`**：返回 `DualSideDiffReport`（复用 `DualSideDiffReport.DualSideDiffRow` 结构范式，对齐 plan `2026-07-12-0204-2` `checkDualSideConsistency`）。
+
+**浏览器层验证**（plan 2026-07-26-1407-1）：`runMatching` + `checkDualSideConsistency` + `generateEliminationCandidates` + `postElimination` 四入口经 Playwright 浏览器层 E2E 全栈验证（`tests/e2e/business-actions/fin-intercompany-matching-elimination.action.spec.ts`，5 用例，镜像 JUnit `TestErpFinIntercompanyMatchingAndElimination` 5 场景）。**自包含直置配对凭证 setup 范式**：经 `ErpFinAccountingPeriod__save` 建测试专用 OPEN 期间（unique code+ts 使 `runMatching(myPeriodId)` 仅扫描本 spec 凭证，零跨 spec 干扰）+ `ErpFinVoucher__save` 直置 SALE/PURCHASE 配对凭证（voucherType=TRANSFER/docStatus=POSTED）+ `ErpFinVoucherBillR__save` 挂 billType/billCode（配对键）。**MATCHED/DIFF 两态精确数值断言**：金额一致（sale=purchase=1000）→ status=MATCHED + matchedAmount=min(sale,purchase) + diffAmount=0；金额不一致（sale=1000/purchase=800）→ status=DIFF + matchedAmount=800 + diffAmount=200。**scalar-returning @BizMutation `gql.raw` 范式**：`runMatching`/`generateEliminationCandidates` 返回 int + `postElimination` 返回 Long，无 GraphQL 选择集，对齐 `finance-voucher-post`/`fin-credit-facility-interest` 既有范式；`checkDualSideConsistency` 返回 DualSideDiffReport 复杂对象须显式 selection set（对齐 `fin-reconciliation.checkDualSideConsistency`）。**config-gate**：`erp-fin.consolidation-elimination-enabled=true`（playwright.config.ts webServer JVM arg，默认 false）启用 `generateEliminationCandidates`/`postElimination` 入口；`runMatching`/`checkDualSideConsistency` 无 config gate 不受影响。
 
 ## 合并抵消范围（A3 EXPAND）
 
@@ -229,6 +236,8 @@ CANDIDATE ──postElimination──► DRAFT_VOUCHER ──(人工过账)─�
 - **DRAFT_VOUCHER**：`postElimination` 生成的草稿抵消分录凭证（`ErpFinVoucher` docStatus=DRAFT）
 - **POSTED**：人工审核过账后（既有凭证过账路径，本计划不重复实现）
 
+**浏览器层验证**（plan 2026-07-26-1407-1）：抵消候选识别 + 草稿凭证生成经 Playwright 浏览器层 E2E 全栈验证（同 §公司间自动配对算法 spec，第 (4)/(5) 用例）。**两类常态候选断言**：MATCHED 配对（sale=purchase=3000/2000）→ `generateEliminationCandidates` 产 AR_AP + REVENUE_COST 两类 CANDIDATE（INVENTORY_PROFIT config-gated 默认 off，Non-Goal），全部初始 status=CANDIDATE + eliminationAmount=matchedAmount。**DRAFT 凭证 + 状态翻转断言**：`postElimination(candidateId)` 生成 ErpFinVoucher（voucherType=TRANSFER + docStatus=DRAFT + totalDebit=totalCredit=amount）+ candidate.draftVoucherId 回写 + status 翻转 CANDIDATE→DRAFT_VOUCHER（经 `__get` 权威查库）。**业财回链 billCode**：`writeDraftEliminationVoucher` 写 ErpFinVoucherBillR.billType=CONSOLIDATION_ELIMINATION + billCode=candidate.code（cleanup 经此反查 DRAFT 凭证 + 凭证行）。
+
 ## 与 Posting + GL Mapping 关系（A3 EXPAND）
 
 | 机制 | 职责 | 与 A3 关系 |
@@ -244,6 +253,15 @@ CANDIDATE ──postElimination──► DRAFT_VOUCHER ──(人工过账)─�
 > A3 intercompany 的 `fromOrgId`/`toOrgId`（跨法人交易双方组织）语义不同——后者作为匹配维度仍 Deferred（需 ORM 新增列 +
 > ask-first）。多组织部署启用 org-dimension 后，不同组织可为同一 `(businessType, accountKey)` 配置不同 `targetSubjectCode`，
 > 自证多组织差异化科目映射需求。
+>
+> **⚠️ 多公司部署 checklist（plan 2026-07-30-0841-3-r1-29 P1-MA2-099）**：`erp-fin.gl-mapping.org-dimension-enabled` 默认 `false`
+> 时，`ErpFinGlMappingResolver` cacheKey 塌缩为 `"_"` 桶 + `matches()` 跳过 orgId 校验 → **orgA 规则可匹配 orgB 过账请求（跨组织泄漏）**。
+> 多公司/多组织部署 **必须** 显式设置：
+> 1. `erp.multi-company.org-isolation-enabled=true`（启用 093/094 orgId 读写隔离）；
+> 2. `erp-fin.gl-mapping.org-dimension-enabled=true`（启用 GL 映射 orgId 维度，避免跨组织科目映射泄漏）；
+> 3. 为每个法人组织配置独立的 `ErpFinGlMappingRule`（按 orgId 区分 targetSubjectCode）。
+>
+> 默认翻转 `org-dimension-enabled` 为 `true` 归 successor（破坏单组织向后兼容，须独立评估——见 plan Deferred But Adjudicated）。
 | A2 `CommitmentVoucherGenerator` | 影子凭证生成 | A3 `IntercompanyVoucherGenerator` 同型范式 |
 
 ## 反模式自检表

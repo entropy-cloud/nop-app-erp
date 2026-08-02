@@ -15,6 +15,8 @@ import app.erp.contract.dao.entity.ErpCtContractVersion;
 import app.erp.ct.biz.IErpCtContractVersionBiz;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.processor.ErpCtContractVersionSignVersionProcessor;
+import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 @BizModel("ErpCtContractVersion")
 public class ErpCtContractVersionBizModel extends CrudBizModel<ErpCtContractVersion>
         implements IErpCtContractVersionBiz {
+
+    @Inject
+    ErpCtContractVersionSignVersionProcessor signVersionProcessor;
 
     public ErpCtContractVersionBizModel() {
         setEntityName(ErpCtContractVersion.class.getName());
@@ -52,31 +57,7 @@ public class ErpCtContractVersionBizModel extends CrudBizModel<ErpCtContractVers
     @Override
     @BizMutation
     public ErpCtContractVersion signVersion(@Name("versionId") Long versionId, IServiceContext context) {
-        ErpCtContractVersion version = requireVersion(versionId, context);
-        // 仅当前版本可签署
-        if (!Boolean.TRUE.equals(version.getIsCurrent())) {
-            throw new NopException(ErpCtErrors.ERR_CT_VERSION_NOT_CURRENT)
-                    .param(ErpCtErrors.ARG_CONTRACT_CODE, version.getContractId())
-                    .param(ErpCtErrors.ARG_VERSION_NO, version.getVersionNo());
-        }
-        if (!Objects.equals(version.getStatus(), ErpCtConstants.VERSION_STATUS_FINALIZED)) {
-            throw illegalTransition(version, ErpCtConstants.VERSION_STATUS_FINALIZED);
-        }
-
-        // 原子翻转：同合同其他版本 isCurrent=false
-        IEntityDao<ErpCtContractVersion> dao = dao();
-        for (ErpCtContractVersion sibling : findSiblings(version.getContractId(), context)) {
-            if (!Objects.equals(sibling.getId(), version.getId()) && Boolean.TRUE.equals(sibling.getIsCurrent())) {
-                sibling.setIsCurrent(false);
-                dao.updateEntity(sibling);
-            }
-        }
-
-        version.setStatus(ErpCtConstants.VERSION_STATUS_SIGNED);
-        version.setIsCurrent(true);
-        version.setApprovedAt(CoreMetrics.currentTimestamp());
-        dao.updateEntity(version);
-        return version;
+        return signVersionProcessor.signVersion(versionId, context);
     }
 
     // ---------- helpers ----------

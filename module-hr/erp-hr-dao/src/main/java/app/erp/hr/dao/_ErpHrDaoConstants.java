@@ -579,6 +579,26 @@ public interface _ErpHrDaoConstants {
     String ABSENCE_REASON_OTHER = "OTHER";
                     
     /**
+     * 排班分配状态: 已排班 
+     */
+    String SHIFT_ASSIGNMENT_STATUS_SCHEDULED = "SCHEDULED";
+                    
+    /**
+     * 排班分配状态: 已到岗 
+     */
+    String SHIFT_ASSIGNMENT_STATUS_PRESENT = "PRESENT";
+                    
+    /**
+     * 排班分配状态: 缺勤 
+     */
+    String SHIFT_ASSIGNMENT_STATUS_ABSENT = "ABSENT";
+                    
+    /**
+     * 排班分配状态: 取消 
+     */
+    String SHIFT_ASSIGNMENT_STATUS_CANCELLED = "CANCELLED";
+                    
+    /**
      * 调研类型: 年度敬业度调研 
      */
     String SURVEY_TYPE_ANNUAL_ENGAGEMENT = "ANNUAL_ENGAGEMENT";

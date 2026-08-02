@@ -616,6 +616,7 @@ prop:
       swapRequestId: Swap Request
       replacedByAssignmentId: Replaced By
       status: Status
+      status_label: null
       delVersion: Del Flag
       version: Version
       createdBy: Created By
@@ -936,6 +937,7 @@ dict:
     erp-hr/shift-type: Shift Type
     erp-hr/swap-status: Swap Status
     erp-hr/absence-reason: Absence Reason
+    erp-hr/shift-assignment-status: Shift Assignment Status
     erp-hr/survey-type: Survey Type
     erp-hr/survey-status: Survey Status
     erp-hr/question-type: Question Type
@@ -1089,6 +1091,11 @@ dict.option.label:
     LEAVE: Leave
     LATE_NOT_CLOCKED: Late Not Clocked
     OTHER: Other
+  erp-hr/shift-assignment-status:
+    SCHEDULED: Scheduled
+    PRESENT: Present
+    ABSENT: Absent
+    CANCELLED: Cancelled
   erp-hr/survey-type:
     ANNUAL_ENGAGEMENT: Annual Engagement
     PULSE: Pulse Survey

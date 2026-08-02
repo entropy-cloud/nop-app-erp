@@ -38,4 +38,12 @@
           被 ErpMdCurrencyBizModel.refreshRatesFromApi 注入调用；config-gated 默认 false。 -->
     <bean id="app.erp.md.service.exchange.ErpMdExchangeRateApiClientFactory"
           class="app.erp.md.service.exchange.ErpMdExchangeRateApiClientFactory"/>
+
+    <!-- per-mutation Processor beans (R6.7，processor-extension-pattern.md 每 mutation 一 Processor)：
+         master-data 域 1 须拆 mutation 拆为独立 Processor。 -->
+    <bean id="app.erp.md.service.processor.ErpMdCurrencyRefreshRatesFromApiProcessor"
+          class="app.erp.md.service.processor.ErpMdCurrencyRefreshRatesFromApiProcessor"/>
+    <!-- R6.9 ErpMdSupplierApproval suspendByPartner per-mutation Processor（批量挂起：循环内含写，不满足豁免条件 4）。 -->
+    <bean id="app.erp.md.service.processor.ErpMdSupplierApprovalSuspendByPartnerProcessor"
+          class="app.erp.md.service.processor.ErpMdSupplierApprovalSuspendByPartnerProcessor"/>
 </beans>

@@ -37,6 +37,9 @@
     <!-- 存货成本核算服务 BizModel（plan 2026-07-02-1538-1 Phase 3）：期末成本兜底重算，经 IBizObjectManager 跨模块调用 -->
     <bean id="app.erp.inv.service.costing.ErpInvCostingBizModel"
           class="app.erp.inv.service.costing.ErpInvCostingBizModel"/>
+    <!-- R6.9 InvCosting reclosePeriodCosts per-mutation Processor（ErpInvCostingBizModel 保留为 Facade 入口/事务边界）。 -->
+    <bean id="app.erp.inv.service.costing.ErpInvCostingReclosePeriodCostsProcessor"
+          class="app.erp.inv.service.costing.ErpInvCostingReclosePeriodCostsProcessor"/>
 
     <bean id="app.erp.inv.service.posting.InvPostingDispatcher"
           class="app.erp.inv.service.posting.InvPostingDispatcher"/>
@@ -122,4 +125,28 @@
           class="app.erp.inv.service.processor.ErpInvLandedCostApproveProcessor"/>
     <bean id="app.erp.inv.service.processor.ErpInvLandedCostReverseApproveProcessor"
           class="app.erp.inv.service.processor.ErpInvLandedCostReverseApproveProcessor"/>
+
+    <!-- D-mutation per-mutation Processor beans (plan R6.4) -->
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustApplyCostAdjustProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustApplyCostAdjustProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvCostAdjustReverseCostAdjustProcessor"
+          class="app.erp.inv.service.processor.ErpInvCostAdjustReverseCostAdjustProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvLandedCostGenerateFreightLandedCostProcessor"
+          class="app.erp.inv.service.processor.ErpInvLandedCostGenerateFreightLandedCostProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvOwnershipTransferConfirmProcessor"
+          class="app.erp.inv.service.processor.ErpInvOwnershipTransferConfirmProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvOwnershipTransferDoneProcessor"
+          class="app.erp.inv.service.processor.ErpInvOwnershipTransferDoneProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveGenerateMoveProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveGenerateMoveProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveConfirmProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveConfirmProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveCompleteProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveCompleteProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveCancelProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveCancelProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvStockMoveReverseProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockMoveReverseProcessor"/>
+    <bean id="app.erp.inv.service.processor.ErpInvTransferOrderConfirmProcessor"
+          class="app.erp.inv.service.processor.ErpInvTransferOrderConfirmProcessor"/>
 </beans>

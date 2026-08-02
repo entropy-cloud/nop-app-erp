@@ -159,4 +159,7 @@ alter table erp_pur_invoice_line add primary key (NOP_TENANT_ID, ID);
 alter table erp_pur_return_line drop primary key;
 alter table erp_pur_return_line add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_pur_order drop constraint UK_PUR_ORDER_CODE_ORG;
+alter table erp_pur_order add constraint UK_PUR_ORDER_CODE_ORG unique (NOP_TENANT_ID,CODE,ORG_ID);
 
+                

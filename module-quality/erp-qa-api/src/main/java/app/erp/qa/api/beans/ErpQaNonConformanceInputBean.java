@@ -310,7 +310,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=22)
     
         public String getRemark(){
             return _remark;
@@ -324,7 +324,7 @@
         private String _returnCode;
 
     
-        @PropMeta(propId=33)
+        @PropMeta(propId=32)
     
         public String getReturnCode(){
             return _returnCode;
@@ -332,6 +332,20 @@
 
         public void setReturnCode(String value){
             this._returnCode = value;
+        }
+
+
+        private String _noCapaReason;
+
+    
+        @PropMeta(propId=33)
+    
+        public String getNoCapaReason(){
+            return _noCapaReason;
+        }
+
+        public void setNoCapaReason(String value){
+            this._noCapaReason = value;
         }
 
 

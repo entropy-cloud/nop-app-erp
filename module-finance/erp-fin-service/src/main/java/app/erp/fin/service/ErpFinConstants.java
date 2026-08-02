@@ -241,6 +241,13 @@ public interface ErpFinConstants extends ErpFinDocStatus {
      */
     String CONFIG_NOTES_FX_GAIN_LOSS_ENABLED = "erp-fin.notes-fx-gain-loss-enabled";
 
+    /**
+     * 核销汇兑损益开关（R1.9 / P1-MA2-009）。默认 false——核销时双方辅助账按 line.settledAmountFunctional 同额结算（单币种行为）。
+     * 启用时核销结算按 per-item functional（settledSource × item.exchangeRate）分别回写，差额生成 EXCHANGE_GAIN_LOSS 凭证
+     * 并回写 {@code ErpFinReconciliation.fxGainLoss}（ar-ap-reconciliation.md §汇兑损益核销规则）。
+     */
+    String CONFIG_RECON_FX_GAIN_LOSS_ENABLED = "erp-fin.recon-fx-gain-loss-enabled";
+
     // ---- notes-type ----
     String NOTES_TYPE_BANK_ACCEPTANCE = "BANK_ACCEPTANCE";
     String NOTES_TYPE_COMMERCIAL_ACCEPTANCE = "COMMERCIAL_ACCEPTANCE";
@@ -414,6 +421,9 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     String CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE = "erp-fin.budget-commitment-subject-code";
     /** 销售承付占用科目编码（plan 2026-07-24-1351-3，与采购科目独立配置；sales 承付用收入面科目）。 */
     String CONFIG_BUDGET_COMMITMENT_SALES_SUBJECT_CODE = "erp-fin.budget-commitment-sales-subject-code";
+    /** 承付 release-on-return 总开关（P1-MA2-082，budget.md §承付会计 §3 接入点 #4；默认 false）。
+     *  采购退货审核后置是否红冲原 PO 承付凭证（全额释放语义，部分退货亦全额红冲——按比例部分释放归 successor）。 */
+    String CONFIG_BUDGET_COMMITMENT_RELEASE_ON_RETURN = "erp-fin.commitment-release-on-return";
     /** 预算结转总开关（默认 false）。 */
     String CONFIG_BUDGET_CARRY_FORWARD_ENABLED = "erp-fin.budget-carry-forward-enabled";
     /** 预算结转缺省规则（默认 REMAINING_FULL）。 */

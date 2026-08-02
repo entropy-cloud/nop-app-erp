@@ -7,6 +7,7 @@ import app.erp.pur.dao.entity.ErpPurRequisition;
 import app.erp.pur.dao.entity.ErpPurRequisitionLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -43,56 +44,46 @@ public class ErpPurRequisitionProcessor {
     @Inject
     IErpPurOrderBiz orderBiz;
 
+    @Inject
+    ErpPurRequisitionSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpPurRequisitionApproveProcessor approveProcessor;
+
+    @Inject
+    ErpPurRequisitionRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpPurRequisitionReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpPurRequisitionWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpPurRequisitionCancelProcessor cancelProcessor;
+
     public ErpPurRequisition submitForApproval(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        validateTransitionForSubmit(req, context);
-        validateBusinessRulesForSubmit(req, context);
-        doSubmit(req, context);
-        return req;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpPurRequisition withdrawApproval(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        validateNotCancelled(req, context);
-        validateTransitionForWithdraw(req, context);
-        doWithdrawSubmit(req, context);
-        return req;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpPurRequisition approve(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        if (req.isApproved()) {
-            return req;
-        }
-        validateNotCancelled(req, context);
-        validateTransitionForApprove(req, context);
-        doApprove(req, context);
-        return req;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpPurRequisition reject(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        validateNotCancelled(req, context);
-        validateTransitionForReject(req, context);
-        doReject(req, context);
-        return req;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpPurRequisition reverseApprove(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        if (req.isRejected()) {
-            return req;
-        }
-        validateTransitionForReverseApprove(req, context);
-        doReverseApprove(req, context);
-        return req;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpPurRequisition cancel(String id, IServiceContext context) {
-        ErpPurRequisition req = requireRequisition(id, context);
-        validateTransitionForCancel(req, context);
-        doCancel(req, context);
-        return req;
+        return cancelProcessor.cancel(id, context);
     }
 
     public ErpPurOrder convertToOrder(String id, ConvertToOrderRequest request, IServiceContext context) {
@@ -214,6 +205,7 @@ public class ErpPurRequisitionProcessor {
     }
 
     protected void doApprove(ErpPurRequisition req, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(req.getCreatedBy(), currentUserId(), ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
         req.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
         req.setApprovedBy(currentUserId());
         req.setApprovedAt(CoreMetrics.currentTimestamp());

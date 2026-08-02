@@ -11,6 +11,9 @@ import app.erp.hr.dao.entity.ErpHrShift;
 import app.erp.hr.dao.entity.ErpHrShiftAssignment;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrShiftCalcAttendanceProcessor;
+import app.erp.hr.service.processor.ErpHrShiftOnLeaveApprovedProcessor;
+import app.erp.hr.service.processor.ErpHrShiftOnLeaveCancelledProcessor;
 import app.erp.hr.service.scheduling.ShiftAttendanceCalculator;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -46,6 +49,12 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
     IErpHrAttendanceBiz attendanceBiz;
     @Inject
     IErpHrLeaveRequestBiz leaveRequestBiz;
+    @Inject
+    ErpHrShiftCalcAttendanceProcessor calcAttendanceProcessor;
+    @Inject
+    ErpHrShiftOnLeaveApprovedProcessor onLeaveApprovedProcessor;
+    @Inject
+    ErpHrShiftOnLeaveCancelledProcessor onLeaveCancelledProcessor;
 
     public ErpHrShiftBizModel() {
         setEntityName(ErpHrShift.class.getName());
@@ -56,57 +65,7 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
     public ErpHrAttendance calcAttendance(@Name("employeeId") Long employeeId,
                                           @Name("assignmentDate") LocalDate assignmentDate,
                                           IServiceContext context) {
-        ErpHrShiftAssignment assignment = assignmentBiz.findByEmployeeAndDate(employeeId, assignmentDate, context);
-        if (assignment == null) {
-            return null;
-        }
-        ErpHrShift shift = assignment.getShift();
-        if (shift == null) {
-            shift = get(String.valueOf(assignment.getShiftId()), false, context);
-        }
-        ErpHrAttendance attendance = findAttendanceByDate(employeeId, assignmentDate, context);
-
-        boolean isLeave = assignment.getLeaveRequestId() != null;
-        if (isLeave) {
-            attendance = upsertAttendanceForLeave(attendance, employeeId, assignmentDate, assignment, context);
-            assignment.setIsAbsent(true);
-            assignment.setAbsenceReason(ErpHrConstants.ABSENCE_REASON_LEAVE);
-            assignment.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_ABSENT);
-            updateAssignmentStatus(assignment);
-            return attendance;
-        }
-
-        java.time.LocalDateTime clockIn = attendance != null && attendance.getClockIn() != null ? attendance.getClockIn().toLocalDateTime() : null;
-        boolean absentByNoClock = shift != null
-                && ShiftAttendanceCalculator.isAbsentByNoClockIn(shift, clockIn);
-        if (absentByNoClock) {
-            attendance = upsertAttendanceForAbsent(attendance, employeeId, assignmentDate, context);
-            assignment.setIsAbsent(true);
-            assignment.setAbsenceReason(ErpHrConstants.ABSENCE_REASON_LATE_NOT_CLOCKED);
-            assignment.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_ABSENT);
-            updateAssignmentStatus(assignment);
-            return attendance;
-        }
-
-        int lateMinutes = 0;
-        int earlyLeaveMinutes = 0;
-        if (attendance != null && shift != null) {
-            lateMinutes = ShiftAttendanceCalculator.calcLateMinutes(shift, attendance.getClockIn() != null ? attendance.getClockIn().toLocalDateTime() : null, assignmentDate);
-            earlyLeaveMinutes = ShiftAttendanceCalculator.calcEarlyLeaveMinutes(shift, attendance.getClockOut() != null ? attendance.getClockOut().toLocalDateTime() : null, assignmentDate);
-            attendance.setLateMinutes(lateMinutes);
-            attendance.setEarlyLeaveMinutes(earlyLeaveMinutes);
-            attendance.setIsAbsent(false);
-            updateAttendance(attendance);
-        }
-        // 同步 assignment 状态：有打卡记录视为 PRESENT，否则保持 SCHEDULED
-        if (attendance != null && attendance.getClockIn() != null) {
-            assignment.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_PRESENT);
-            assignment.setIsAbsent(false);
-            assignment.setActualStartTime(attendance.getClockIn());
-            assignment.setActualEndTime(attendance.getClockOut());
-            updateAssignmentStatus(assignment);
-        }
-        return attendance;
+        return calcAttendanceProcessor.calcAttendance(employeeId, assignmentDate, context);
     }
 
     @Override
@@ -123,34 +82,13 @@ public class ErpHrShiftBizModel extends CrudBizModel<ErpHrShift> implements IErp
     @Override
     @BizMutation
     public void onLeaveApproved(@Name("leaveRequestId") Long leaveRequestId, IServiceContext context) {
-        ErpHrLeaveRequest leave = requireLeaveRequest(leaveRequestId, context);
-        List<ErpHrShiftAssignment> assignments = findAssignmentsByEmployeeRange(
-                leave.getEmployeeId(), leave.getStartDate(), leave.getEndDate(), context);
-        for (ErpHrShiftAssignment a : assignments) {
-            a.setIsAbsent(true);
-            a.setAbsenceReason(ErpHrConstants.ABSENCE_REASON_LEAVE);
-            a.setLeaveRequestId(leaveRequestId);
-            a.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_ABSENT);
-            updateAssignmentStatus(a);
-        }
+        onLeaveApprovedProcessor.onLeaveApproved(leaveRequestId, context);
     }
 
     @Override
     @BizMutation
     public void onLeaveCancelled(@Name("leaveRequestId") Long leaveRequestId, IServiceContext context) {
-        ErpHrLeaveRequest leave = requireLeaveRequest(leaveRequestId, context);
-        List<ErpHrShiftAssignment> assignments = findAssignmentsByEmployeeRange(
-                leave.getEmployeeId(), leave.getStartDate(), leave.getEndDate(), context);
-        for (ErpHrShiftAssignment a : assignments) {
-            // 仅解除由该休假标记的（leaveRequestId 匹配）
-            if (leaveRequestId.equals(a.getLeaveRequestId())) {
-                a.setIsAbsent(false);
-                a.setAbsenceReason(null);
-                a.setLeaveRequestId(null);
-                a.setStatus(ErpHrConstants.ASSIGNMENT_STATUS_SCHEDULED);
-                updateAssignmentStatus(a);
-            }
-        }
+        onLeaveCancelledProcessor.onLeaveCancelled(leaveRequestId, context);
     }
 
     ErpHrLeaveRequest requireLeaveRequest(Long leaveRequestId, IServiceContext context) {

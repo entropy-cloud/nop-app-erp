@@ -61,7 +61,7 @@ test.describe('quality ErpQaNonConformance reverseNcr red-character voucher line
 
       const resolved = await callMutationOk(
         page, 'ErpQaNonConformance', 'resolve',
-        { ncrId: ncr.id, resolution: 'SCRAP disposed' }, 'id status posted',
+        { ncrId: ncr.id, resolution: 'SCRAP disposed', noCapaReason: '报废处置，无需纠正措施' }, 'id status posted',
       );
       expect(resolved.status, 'resolve should transition IN_REVIEW → RESOLVED').toBe('RESOLVED');
       expect(resolved.posted, 'AUTO_POST should set posted=true').toBe(true);

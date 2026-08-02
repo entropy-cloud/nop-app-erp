@@ -213,7 +213,7 @@
 | 期末自动触发 | 财务期末结账时 | 常规月度折旧 |
 | 定时任务触发 | 每月固定时间 | 自动执行，无需人工干预 |
 
-> **定时作业登记**：批量折旧登记于 `docs/architecture/job-scheduling.md` §3.2 `erp-ast-depreciation`（每月 1 日 02:00，`erp-ast.depreciation-cron` 默认 `0 0 2 1 * ?`，nop-batch candidate）。**SCHEDULED**（plan 2026-07-05-0306-1）：`ErpAstDepreciationJob` + `app-service.beans.xml` `<bean>` + `scheduler.yaml` 条目已完成三件套接线，cron 配置键默认空=跳过门控（运维启用配置键即按设计 cronExpr 自动执行）。
+> **定时作业登记**：批量折旧登记于 `docs/architecture/job-scheduling.md` §3.2 `erp-ast-depreciation`（每月 1 日 02:00，`erp-ast.depreciation-cron` 默认 `0 0 2 1 * ?`，nop-batch candidate）。`ErpAstDepreciationJob` + `app-service.beans.xml` `<bean>` + `scheduler.yaml` 三件套接线，cron 配置键默认空=跳过门控（运维启用配置键即按设计 cronExpr 自动执行）。
 
 ### 折旧调度规则
 
@@ -286,11 +286,13 @@
 
 ### 7.2 错误处理
 
+> **错误传播分级**（`posting-log.md §错误传播分级策略`）：折旧/Cap/Disposal 过账失败均为 **G4 无 sweep 覆盖（折旧）/ G2 有 sweep 兜底（Cap/Disposal）**。失败派发 `IErpSysNotificationBiz` 告警（`ast.depreciation-posting-failure`/`ast.capitalization-posting-failure`/`ast.disposal-posting-failure`）使运营感知悬挂。**折旧 posted=false 自愈路径**：手动重跑 `executeDepreciation`（幂等重算+重试过账）或 `reverseDepreciation`。Cap/Disposal posted=false 经 `DeferredPostingSweepJob` 兜底重试。**reverseApprove 不对称**（`state-machine.md §实现约定` 标注）：posted=false 窗口期 reverseApprove 仅设业务单据 REJECTED，资产保持终态——运营须先触发 sweep 重试或手工 reverse 凭证再 reverseApprove。
+
 | 错误类型 | 处理策略 |
 |----------|----------|
-| 科目映射缺失 | 记录错误，等待人工配置，兜底扫描重试 |
+| 科目映射缺失 | 记录错误，派发告警，等待人工配置/重跑自愈；Cap/Disposal 经 sweep 重试 |
 | 期间已结账 | 拒绝过账，提示反结账 |
-| 凭证生成失败 | 记录错误，异步重试（最多3次） |
+| 凭证生成失败 | 记录错误，派发告警；折旧手动重跑自愈；Cap/Disposal 异步重试（最多3次） |
 | 并发折旧 | 乐观锁冲突，重试 |
 
 ---
@@ -334,13 +336,13 @@
 
 ---
 
-## 十、实现偏离补注（2026-07-02，计划 1000-2 落地）
+## 十、实现约定
 
-以下为已落地实现相对上文设计的明确偏离/收窄，均为计划内 Non-Goal，留后继计划：
+以下为实现相对上文设计的明确偏离/收窄，均为 Non-Goal：
 
-- **资产减值/重估（VALUE_ADJUSTMENT）**：§一/§四描述的减值/重估凭证已落地（plan 2026-07-05-0540-3）；`ErpAstValueAdjustmentBizModel` 实现三轴状态机（docStatus/approveStatus/posted）+ VALUE_ADJUSTMENT 过账 Provider（按 adjustmentType 分支科目分解）+ 资产净值/折旧基数联动 + 反向红冲。Deferred 仅余自动减值测试（可收回金额计算 + cron），触发条件：减值测试自动化需求 + 可收回金额数据源落地时。
-- **库存物料转固（INVENTORY 来源）**：§2.1 库存转固需跨域调 `IErpInvStockMoveBiz` 生成出库移动单，未实现；资本化 `sourceType` 仅支持 `DIRECT_PURCHASE(30)` + `CIP(20)`。触发条件：库存转固业务上线。
-- **nop-job 定时自动折旧**：§5.1 定时任务触发折旧未接线；本实现提供手动 `executeBatchDepreciation`，期末结账（1000-3）可经 I*Biz 调用。触发条件：nop-job 接线。
-- **业务类型码段**：§一/§7.1 旧表仍列 `DISPOSAL_SCRAP`/`DISPOSAL_SALE` 等业务类型——实际 `ErpFinBusinessType` 含单一 `DISPOSAL(90)`（报废/出售的科目分解差异由 `DisposalAcctDocProvider` 按 `disposalType=SCRAPPED/SOLD` 内部分支处理，不拆业务类型常量）；`DEPRECIATION(70)`/`CAPITALIZATION(80)`/`VALUE_ADJUSTMENT(390)` 已落地。§一/§7.1 的旧表行为最终正确（科目方向一致），仅部分业务类型命名过时（DISPOSAL_SCRAP/DISPOSAL_SALE 应理解为 DISPOSAL 的内部分支）。
+- **资产减值/重估（VALUE_ADJUSTMENT）**：§一/§四描述的减值/重估凭证；`ErpAstValueAdjustmentBizModel` 实现三轴状态机（docStatus/approveStatus/posted）+ VALUE_ADJUSTMENT 过账 Provider（按 adjustmentType 分支科目分解）+ 资产净值/折旧基数联动 + 反向红冲。Deferred 仅余自动减值测试（可收回金额计算 + cron），触发条件：减值测试自动化需求 + 可收回金额数据源就绪时。
+- **库存物料转固（INVENTORY 来源）**：§2.1 库存转固需跨域调 `IErpInvStockMoveBiz` 生成出库移动单，本期不支持；资本化 `sourceType` 仅支持 `DIRECT_PURCHASE(30)` + `CIP(20)`。触发条件：库存转固业务上线。
+- **nop-job 定时自动折旧**：§5.1 定时任务触发折旧本期 Deferred；本实现提供手动 `executeBatchDepreciation`，期末结账可经 I*Biz 调用。触发条件：nop-job 接线。
+- **业务类型码段**：§一/§7.1 旧表仍列 `DISPOSAL_SCRAP`/`DISPOSAL_SALE` 等业务类型——实际 `ErpFinBusinessType` 含单一 `DISPOSAL(90)`（报废/出售的科目分解差异由 `DisposalAcctDocProvider` 按 `disposalType=SCRAPPED/SOLD` 内部分支处理，不拆业务类型常量）；`DEPRECIATION(70)`/`CAPITALIZATION(80)`/`VALUE_ADJUSTMENT(390)`。§一/§7.1 的旧表行为最终正确（科目方向一致），仅部分业务类型命名过时（DISPOSAL_SCRAP/DISPOSAL_SALE 应理解为 DISPOSAL 的内部分支）。
 - **期间状态值**：实现以 `ErpFinAccountingPeriod.status` 判定（`OPEN=10` 可折旧，`CLOSED=30` 等非 OPEN 拒绝），非任何 `CLOSED_FINAL` 值。
 - **批量折旧并行/汇总**：§5.2 按类别分组并行 + 汇总单张凭证多行为性能优化；基线实现为按资产串行（错误隔离）+ 每资产单张凭证，留 Follow-up。

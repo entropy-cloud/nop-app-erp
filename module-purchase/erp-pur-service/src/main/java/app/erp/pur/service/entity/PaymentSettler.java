@@ -2,11 +2,13 @@ package app.erp.pur.service.entity;
 
 import app.erp.md.biz.SettlementAllocation;
 import app.erp.pur.dao.entity.ErpPurInvoice;
+import app.erp.pur.dao.entity.ErpPurInvoiceLine;
 import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.dao.entity.ErpPurPaymentLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -30,6 +32,11 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>核销约束（{@code state-machine.md §场景D}）：同供应商、双方 approveStatus=APPROVED、核销金额不超发票
  * 未付余额（{@code totalAmountWithTax − paidAmount}）与付款未核销余额。违例抛 {@link ErpPurErrors#ERR_SETTLE_*}。
  *
+ * <p>R1.8 P1-MA2-003 方案 A：付款核销三单匹配二次门控（{@code three-way-match.md §匹配时机「付款前最终校验」}）。
+ * 经 config {@code erp-pur.settle-recheck-three-way-match}（默认 false）启用后，{@code requireInvoiceForSettle}
+ * APPROVED 守卫后追加强制 strict 三单匹配复核——任何数量/价格超容差抛
+ * {@link ErpPurErrors#ERR_SETTLE_INVOICE_MATCH_NOT_COMPLETED}（cause 链保留原始匹配异常）。
+ *
  * <p>回写（派生状态，{@code state-machine.md §付款状态机}）：
  * <ul>
  *   <li>发票 {@code paidAmount} = 该发票全部 PaymentLine 金额之和（跨多付款单，含反向负金额行）；{@code paidStatus}
@@ -48,6 +55,9 @@ public class PaymentSettler {
 
     @Inject
     IOrmTemplate ormTemplate;
+
+    @Inject
+    ThreeWayMatcher threeWayMatcher;
 
     /**
      * 按分配明细核销付款到发票。返回更新后的付款单（余额/状态已回写）。
@@ -155,7 +165,37 @@ public class PaymentSettler {
                     .param(ErpPurErrors.ARG_INVOICE_CODE, invoice.getCode())
                     .param(ErpPurErrors.ARG_CURRENT_STATUS, invoice.getApproveStatus());
         }
+        // R1.8 P1-MA2-003 方案 A：付款核销三单匹配二次门控（three-way-match.md §匹配时机「付款前最终校验」）。
+        // config-gated 默认 false；启用后强制 strict 复核 invoice 三单匹配完成态。
+        // match 为只读校验（无状态变更），重算依赖 invoice/receive/order 行当前状态（APPROVED 发票回链不允许修改，见 three-way-match.md §一致性规则）。
+        if (isSettleRecheckEnabled()) {
+            recheckThreeWayMatchAtSettle(invoice);
+        }
         return invoice;
+    }
+
+    private boolean isSettleRecheckEnabled() {
+        return Boolean.TRUE.equals(AppConfig.var(ErpPurConstants.CONFIG_SETTLE_RECHECK_THREE_WAY_MATCH, Boolean.FALSE));
+    }
+
+    private void recheckThreeWayMatchAtSettle(ErpPurInvoice invoice) {
+        List<ErpPurInvoiceLine> lines = loadInvoiceLines(invoice.getId());
+        try {
+            // 强制 strict 复核：任何数量/价格超容差即抛 ERR_INVOICE_QTY_MISMATCH / ERR_INVOICE_PRICE_MISMATCH。
+            threeWayMatcher.match(invoice.getCode(), lines, Boolean.TRUE);
+        } catch (NopException e) {
+            // 包装为 settle 语境错误码，保留 cause 链（原始匹配异常携带 invoiceCode/lineNo/qty/price 参数）。
+            throw new NopException(ErpPurErrors.ERR_SETTLE_INVOICE_MATCH_NOT_COMPLETED, e)
+                    .param(ErpPurErrors.ARG_INVOICE_CODE, invoice.getCode());
+        }
+    }
+
+    private List<ErpPurInvoiceLine> loadInvoiceLines(Long invoiceId) {
+        ormTemplate.flushSession();
+        IEntityDao<ErpPurInvoiceLine> dao = daoProvider.daoFor(ErpPurInvoiceLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("invoiceId", invoiceId));
+        return new ArrayList<>(dao.findAllByQuery(q));
     }
 
     private void recomputeInvoicePaid(Long invoiceId) {

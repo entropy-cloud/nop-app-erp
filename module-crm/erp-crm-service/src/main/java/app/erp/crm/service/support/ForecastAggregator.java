@@ -193,8 +193,8 @@ public class ForecastAggregator {
         accuracy.setCommitAmount(commit);
         accuracy.setUpsideAmount(upside);
         accuracy.setActualClosedRevenue(actual);
-        accuracy.setCommitAccuracy(commitAccuracy.doubleValue());
-        accuracy.setUpsideAccuracy(upsideAccuracy.doubleValue());
+        accuracy.setCommitAccuracy(commitAccuracy);
+        accuracy.setUpsideAccuracy(upsideAccuracy);
         accuracy.setDeviationAmount(deviation);
         accuracy.setCalculatedAt(CoreMetrics.currentTimestamp());
         return accuracy;

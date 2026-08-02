@@ -48,4 +48,109 @@
         <!-- 顶层聚合 app:单体部署入口,聚合全部业务域 + 系统模块 -->
         <module>app-erp-all</module>
     </modules>
+
+    <!--
+        mutation profile (MQ Q1): 包裹 pitest-maven，默认不激活，保护常规 mvn test /
+        mvn clean install 基线不受影响。激活：mvn -Pmutation ... mutationCoverage。
+        实施契约：docs/architecture/quality-engineering/mutation-testing.md §3.3/§4.1。
+        限定三域首跑（finance/mfg/inv）；excludedClasses 排除全部生成包
+        （_gen 88 + api.beans 176 + api.crud 88 = 352 类）+ 测试类。
+        不配置 <mutators> = pitest 默认全集 DEFAULT（首跑建完整可比基线，降噪靠分类工作流）。
+    -->
+    <profiles>
+        <profile>
+            <id>mutation</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.pitest</groupId>
+                        <artifactId>pitest-maven</artifactId>
+                        <!-- 1.25.8：支持至 Java 26 字节码（pitest issue #1439），CI Java 21 / 本地 Java 26 均兼容 -->
+                        <version>1.25.8</version>
+                        <configuration>
+                            <!-- 限定三域业务代码（域包通配） -->
+                            <targetClasses>
+                                <param>app.erp.fin.*</param>
+                                <param>app.erp.mfg.*</param>
+                                <param>app.erp.inv.*</param>
+                            </targetClasses>
+                            <!-- 排除全部生成包（_gen + api.beans + api.crud = 352 类）+ 测试类 + codegen -->
+                            <excludedClasses>
+                                <param>*.dao.entity._gen.*</param>
+                                <param>*.dao.entity._gen._*</param>
+                                <param>*.api.beans.*</param>
+                                <param>*.api.crud.*</param>
+                                <param>*.codegen.*</param>
+                                <param>*Test*</param>
+                                <param>*IT</param>
+                            </excludedClasses>
+                            <!-- 限定跑哪些测试去杀变异体（三域测试） -->
+                            <targetTests>
+                                <param>app.erp.fin.*Test*</param>
+                                <param>app.erp.mfg.*Test*</param>
+                                <param>app.erp.inv.*Test*</param>
+                            </targetTests>
+                            <outputFormats>
+                                <param>HTML</param>
+                                <param>XML</param>
+                            </outputFormats>
+                            <!-- 稳定输出路径便于基线对比 -->
+                            <timestampedReports>false</timestampedReports>
+                        </configuration>
+                        <dependencies>
+                            <!-- JUnit 5 测试执行器（项目测试栈为 junit-jupiter） -->
+                            <dependency>
+                                <groupId>org.pitest</groupId>
+                                <artifactId>pitest-junit5-plugin</artifactId>
+                                <version>1.2.3</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <!--
+            security profile (MQ Q2): 包裹 dependency-check-maven（aggregate，reactor-root goal）
+            + spotbugs-maven-plugin（仅作规范配置锚点；spotbugs per-module 见各 erp-*-service pom），
+            默认不激活，保护常规 mvn test / mvn clean install 基线不受影响。
+            激活：mvn -Psecurity dependency-check:aggregate（CVE 扫描，根 reactor 聚合）
+                  mvn -Psecurity spotbugs:check（静态规则，per-module 经各 service pom 同名 profile）
+            实施契约：docs/architecture/quality-engineering/security-scanning.md §6.1/§6.2。
+            插件位置裁决（设计文档 §6.1）：dependency-check aggregate 是 reactor-root goal，
+            从根 pom 聚合全部子模块依赖树一次扫描，经根 profile 显式调用，
+            不经子模块 parent 链继承 → Q1 R4 根 pom 继承失效不适用（与 spotbugs per-module 不同）。
+            failOnError=false：首跑作纯 reporter，gate 逻辑活在 CI（对齐 F8 option b 单向收紧范式）。
+        -->
+        <profile>
+            <id>security</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.owasp</groupId>
+                        <artifactId>dependency-check-maven</artifactId>
+                        <!-- 12.1.0：Maven 3.9 / Java 21+ 兼容；CI Java 21 / 本地 Java 26 均兼容 -->
+                        <version>12.1.0</version>
+                        <configuration>
+                            <!-- aggregate = reactor-root goal：聚合 156 模块依赖树一次 NVD 查询（§4 NVD 限速应对） -->
+                            <aggregate>true</aggregate>
+                            <!-- HTML + JSON：JSON 供 CI Python gate 解析（§5.4 双语义 cve_allowlist set-diff） -->
+                            <format>ALL</format>
+                            <!-- 误报 suppression（B 类，§5.1 分类后落盘），repo 根版本控制 -->
+                            <suppressionFiles>
+                                <suppressionFile>${maven.multiModuleProjectDirectory}/dependency-check-suppression.xml</suppressionFile>
+                            </suppressionFiles>
+                            <!-- NVD 数据库本地缓存目录（CI 经 actions/cache 持久化，§4.3 cache-key 策略） -->
+                            <dataDirectory>${maven.multiModuleProjectDirectory}/target/nvd-data</dataDirectory>
+                            <!-- 免费 NVD API key（infra prereq，§4.3：2024+ 无 key 限速严苛）；env 注入，缺失不阻断（仅限速） -->
+                            <nvdApiKey>${env.NVD_API_KEY}</nvdApiKey>
+                            <!-- 首跑纯 reporter：不因 CVE 计数 fail build；gate 逻辑活在 CI（§5.3 单向收紧） -->
+                            <failOnError>false</failOnError>
+                            <!-- 稳定输出路径便于 CI 解析 -->
+                            <outputDirectory>${maven.multiModuleProjectDirectory}/target/dependency-check-report</outputDirectory>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

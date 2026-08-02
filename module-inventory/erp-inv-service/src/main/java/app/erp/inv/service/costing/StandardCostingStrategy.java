@@ -6,6 +6,8 @@ import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
+import io.nop.dao.api.IDaoProvider;
+import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -28,6 +30,9 @@ public class StandardCostingStrategy implements CostingStrategy {
     @Inject
     StandardCostResolver standardCostResolver;
 
+    @Inject
+    IDaoProvider daoProvider;
+
     @Override
     public String costMethod() {
         return ErpInvConstants.COST_METHOD_STANDARD;
@@ -40,7 +45,18 @@ public class StandardCostingStrategy implements CostingStrategy {
         Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
 
-        BigDecimal standardUnitCost = standardCostResolver.resolve(line.getMaterialId());
+        // 红冲不变量（P1-MA2-024，Choice B）：正常采购入库 line.unitCost 持「实际采购价」（PPV 经
+        // InvPostingDispatcher.dispatchPurchasePriceVariance:125 读此值与标准 ledger.unitCost 比对），
+        // 故不可一律采用传入 unitCost。仅当本入库为冲销反向入库（move.originReturnedMoveId != null，
+        // reverse:144 从原出库行透传、onOutgoing 已刷新为出库时标准成本）且传入值有效时，采用之——
+        // 跨 STANDARD_REVALUATION 时反向入库沿用原出库扣减的旧标准成本，保证 balance.totalCost 不变量。
+        // 其他场景（正常采购入库 / 内部调拨目的侧 originReturnedMoveId=null）一律重解析当前标准成本。
+        BigDecimal standardUnitCost;
+        if (move.getOriginReturnedMoveId() != null && unitCost != null && unitCost.signum() > 0) {
+            standardUnitCost = unitCost;
+        } else {
+            standardUnitCost = standardCostResolver.resolve(line.getMaterialId());
+        }
         BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = standardUnitCost.multiply(qty);
 
@@ -70,6 +86,11 @@ public class StandardCostingStrategy implements CostingStrategy {
         BigDecimal standardUnitCost = standardCostResolver.resolve(line.getMaterialId());
         BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = standardUnitCost.multiply(qty);
+
+        // 红冲不变量（P1-MA2-024）：刷回 line.unitCost 为出库时标准成本，供 reverse:144 透传给反向入库行
+        // （对齐 FIFO:131-132 onOutgoing 刷新加权 unitCost 的范式），跨 STANDARD_REVALUATION 时反向入库沿用此值。
+        line.setUnitCost(ErpInvConfigs.roundCost(standardUnitCost));
+        daoProvider.daoFor(ErpInvStockMoveLine.class).saveOrUpdateEntity(line);
 
         ErpInvStockBalance updated = ctx.updateBalanceWithRetry(balance, b -> {
             BigDecimal oldTotal = nz(b.getTotalQuantity());

@@ -7,10 +7,12 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.auth.core.login.UserContextImpl;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -192,11 +194,68 @@ public class TestErpMfgWorkOrderStateMachine extends JunitAutoTestCase {
                 "超产（未启用超产配置）应拒绝");
     }
 
+    // ---------- SoD 守卫（plan 2026-07-31-1023-2 R3.3，Pattern B facade doApprove） ----------
+
+    @Test
+    public void testSoDCreatorCannotSelfApprove() {
+        seedComponentBomAndStock(bd("5"), bd("5"));
+        Long woId = seedWorkOrder("WO-SOD");
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED, statusOf(woId), "提交应成功 → SUBMITTED");
+
+        // 创建人尝试自审：置 IUserContext.userId = 单据 createdBy
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        String creator = wo.getCreatedBy();
+        UserContextImpl uc = new UserContextImpl();
+        uc.setUserId(creator);
+        IUserContext.set(uc);
+
+        ApiResponse<?> bad = rpc(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgErrors.ERR_MFG_APPROVER_IS_CREATOR.getErrorCode(), bad.getCode(),
+                "创建人=审核人 → SoD 守卫应抛 ERR_MFG_APPROVER_IS_CREATOR");
+    }
+
     // ---------- helpers ----------
+
+    /**
+     * withdrawApproval 提取路径（plan 2026-07-30-1909-2 R5.5 Phase 3）。
+     * 原 xbiz withdrawApproval 为 inline-script（NopScriptError 守卫），提取为 per-mutation Processor
+     * custom public override（经 facade helper）。本测试建立错误码语义等价断言：
+     * 非 SUBMITTED withdrawApproval → ERR_INVALID_STATUS_TRANSITION（替代原 wf nop.err.wf.approve.invalid-status），
+     * 并验证 inline-script 提取激活了 per-mutation 运行时路径（submit→SUBMITTED→withdraw→UNSUBMITTED）。
+     */
+    @Test
+    public void testWithdrawApprovalGuardAndExtraction() {
+        seedComponentBomAndStock(bd("5"), bd("5"));
+        Long woId = seedWorkOrder("WO-WITHDRAW");
+
+        // 负向守卫：初始 UNSUBMITTED（null）withdrawApproval → ERR_INVALID_STATUS_TRANSITION
+        // （状态守卫阻断行为等价于原 wf nop.err.wf.approve.invalid-status）
+        ApiResponse<?> resp = rpc(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION.getErrorCode(), resp.getCode(),
+                "非 SUBMITTED withdrawApproval 应拒绝（错误码等价）");
+
+        // 正向：submit → SUBMITTED → withdraw → 回到 UNSUBMITTED（验证 inline-script 提取激活 per-mutation 运行时路径）
+        rpcOk(mutation, "ErpMfgWorkOrder__submitForApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_SUBMITTED, approveStatusOf(woId));
+        rpcOk(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED, approveStatusOf(woId),
+                "withdrawApproval 后 approveStatus 回到 UNSUBMITTED");
+
+        // 再次负向：UNSUBMITTED withdrawApproval → 拒绝（守卫幂等）
+        ApiResponse<?> resp2 = rpc(mutation, "ErpMfgWorkOrder__withdrawApproval", Map.of("id", String.valueOf(woId)));
+        assertEquals(ErpMfgErrors.ERR_INVALID_STATUS_TRANSITION.getErrorCode(), resp2.getCode(),
+                "再次非 SUBMITTED withdrawApproval 应拒绝");
+    }
 
     private String statusOf(Long woId) {
         ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
         return wo.getDocStatus();
+    }
+
+    private String approveStatusOf(Long woId) {
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        return wo.getApproveStatus();
     }
 
     private void moveToInProcess(Long woId) {

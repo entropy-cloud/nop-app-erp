@@ -1,5 +1,6 @@
 package app.erp.ast.service.processor;
 
+import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstSplit;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.common.service.AbstractSubmitForApprovalProcessor;
@@ -9,9 +10,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstSplit submitForApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractSubmitForApprovalProcessor to activate the abstract base class; delegates to ErpAstSplitProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstSplit submitForApproval per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransition → validateSourceAsset → validateLines → set SUBMITTED → save.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstSplitSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpAstSplit> {
 
@@ -24,7 +25,15 @@ public class ErpAstSplitSubmitForApprovalProcessor extends AbstractSubmitForAppr
 
     @Override
     public ErpAstSplit submitForApproval(String id, IServiceContext context) {
-        return processor.submitForApproval(id, context);
+        ErpAstSplit split = processor.requireSplit(id, context);
+        processor.validateNotCancelled(split, context);
+        processor.validateTransitionForSubmit(split, context);
+        ErpAstAsset source = processor.loadSourceAsset(split);
+        processor.validateSourceAsset(split, source, context);
+        processor.validateLines(split, source, context);
+        split.setApproveStatus(ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        processor.splitDao().updateEntity(split);
+        return split;
     }
 
     @Override
@@ -39,31 +48,31 @@ public class ErpAstSplitSubmitForApprovalProcessor extends AbstractSubmitForAppr
 
     @Override
     protected String getApproveStatus(ErpAstSplit entity) {
-        return null;
+        return entity.getApproveStatus();
     }
 
     @Override
     protected void setApproveStatus(ErpAstSplit entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setApproveStatus(status);
     }
 
     @Override
     protected boolean isCancelled(ErpAstSplit entity) {
-        return false;
+        return entity.isCancelled();
     }
 
     @Override
     protected String unsubmittedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_UNSUBMITTED;
     }
 
     @Override
     protected String submittedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_SUBMITTED;
     }
 
     @Override
     protected String rejectedStatus() {
-        return null;
+        return ErpAstConstants.APPROVE_STATUS_REJECTED;
     }
 }

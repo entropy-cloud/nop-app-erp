@@ -123,6 +123,8 @@
 
 ## 适用对象二：员工雇佣状态（EmploymentStatus）
 
+> **Deferred**：员工 `ACTIVE/PROBATION` 在职主路径 + `transferEmployee` 部门调动（不改 employmentStatus，保留 ACTIVE/PROBATION）。`RESIGNED/TERMINATED/RETIRED` 三态为**预留死状态**——`employmentStatus` 字段与 `erp-hr/employment-status` dict 值保留，但本期全模块无 `setEmploymentStatus(RESIGNED|TERMINATED|RETIRED)` writer，亦无 resignEmployee / retireEmployee / terminateEmployee / probationToRegular mutation。下方 §场景 D（离职）/§场景 E（转正）描述的是**目标行为，未接入**；三态目前仅出现在 `ErpHrEmployeeBizModel.nonTransferableStatuses()` 作只读调动守卫。**Successor**：PM 要求正式离职/退休/试用期转正工作流时实现上述 mutation（方案A 触及 nop-auth 用户禁用副作用，属保护区域，故 Deferred）。
+
 ### 1. 状态定义
 
 | 状态 | 业务含义（等待什么） |
@@ -173,6 +175,8 @@
 ---
 
 ## 适用对象三：工时表（Timesheet）
+
+> **Deferred**：`DRAFT→SUBMITTED`（`ErpHrTimesheetBizModel.submit`）主路径。`APPROVED/REJECTED`（及迁移图中的 `CANCELLED`）为**预留死状态**——`erp-hr/timesheet-status` dict 值保留，但无 approve/reject mutation writer。下方 §场景 F 中 `SUBMITTED→APPROVED / REJECTED` 审批与项目成本归集为**目标行为，未接入**。**Successor**：工时单审批流接入时实现 setStatus writer + 状态迁移守卫 + APPROVED 后工时归集到 `projects/cost-collection` 的触发机制。
 
 ### 1. 状态定义
 
@@ -259,6 +263,30 @@ APPROVED → SUBMITTED（reverseApprove，需配置门控）
 - 状态定义见 `payroll.md §五/§六`。
 - 状态码归 `wf/approve-status` 标准字典（nop-wf 模块统一定义），`ErpHrSalary.approveStatus` 字段引用 `ext:dict="wf/approve-status"`。
 - 业务覆盖：`docs/design/human-resource/payroll.md`
+
+## 适用对象五：预留状态（Deferred，dict 含值无状态机 writer）
+
+> 本节统一记录 hr 域内 **dict 含状态值但本期无 `setStatus` writer / 无状态迁移 mutation** 的组件。这些组件的主生命周期主路径完整可用（CRUD 桩为主路径可用），死状态保留为预留语义入口，归各组件审批/确认业务流的 successor。对齐 finance / mfg「保留为预留 + 文档 Deferred」先例，不从 ORM 删除任何 dict 值。
+
+### 合同（ErpHrEmploymentContract）
+
+- `erp-hr/contract-status` 含 `SUSPENDED`（合同中止）。
+- **实现状态（Deferred）**：`SUSPENDED` 为**预留死状态**——本期零 `setStatus(SUSPENDED)` writer，无 suspendContract mutation。合同主生命周期 `ACTIVE/TERMINATED/EXPIRED` 在合同到期扫描与调动联动中可用。
+- **Successor**：合同中止/恢复业务流落地时实现 suspend mutation + 状态迁移守卫。
+
+### 调查（ErpHrSurvey）
+
+- `erp-hr/survey-status` 含 `OPEN/CLOSED/ARCHIVED`。
+- **实现状态（Deferred）**：`ErpHrSurveyBizModel` 为 CrudBizModel 桩（18 行，零状态机 mutation），三态为**预留死状态**。
+- **Successor**：调查发布/关闭/归档业务流落地时实现 setStatus writer + 迁移守卫。
+
+### 发展计划（ErpHrDevelopmentPlan / ErpHrDevelopmentPlanItem）
+
+- `erp-hr/devplan-status` 含 `DRAFT/CANCELLED`；`erp-hr/plan-item-status` 含 `OVERDUE`。
+- **实现状态（Deferred）**：`DRAFT/CANCELLED` 与计划项 `OVERDUE` 为**预留死状态**——本期仅活态（IN_PROGRESS/COMPLETED/ACHIEVED 等）有写入，无 cancelPlan mutation，无 OVERDUE 自动 job。
+- **Successor**：发展计划取消流程落地时实现 cancelPlan mutation；计划项逾期判定落地时实现 OVERDUE 定时 job。
+
+---
 
 ## 审查提示
 

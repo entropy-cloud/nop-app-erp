@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstValueAdjustment withdrawApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractWithdrawApprovalProcessor to activate the abstract base class; delegates to ErpAstValueAdjustmentProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstValueAdjustment withdrawApproval per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransition → set UNSUBMITTED → save.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstValueAdjustmentWithdrawApprovalProcessor extends AbstractWithdrawApprovalProcessor<ErpAstValueAdjustment> {
 
@@ -20,7 +20,12 @@ public class ErpAstValueAdjustmentWithdrawApprovalProcessor extends AbstractWith
 
     @Override
     public ErpAstValueAdjustment withdrawApproval(String id, IServiceContext context) {
-        return processor.withdrawApproval(id, context);
+        ErpAstValueAdjustment adjustment = processor.requireAdjustment(id, context);
+        processor.validateNotCancelled(adjustment, context);
+        processor.validateTransitionForWithdraw(adjustment, context);
+        adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
+        processor.adjustmentDao().updateEntity(adjustment);
+        return adjustment;
     }
 
     @Override

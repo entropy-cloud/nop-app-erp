@@ -691,6 +691,10 @@
                     </join>
                 </to-one>
             </relations>
+            <unique-keys>
+                <unique-key columns="orgId,materialId,skuId,warehouseId,locationId,batchNo,ownerId"
+                            constraint="UK_INV_STOCK_BALANCE_NATURAL" name="UK_INV_STOCK_BALANCE_NATURAL"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.inv.dao.entity.ErpInvReservation" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="库存预留单"

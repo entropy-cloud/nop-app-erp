@@ -95,4 +95,46 @@
     <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
     <bean id="app.erp.crm.service.processor.ErpCrmLeadCancelProcessor"
           class="app.erp.crm.service.processor.ErpCrmLeadCancelProcessor"/>
+
+    <!-- per-mutation D-mutation Processor beans (R6.6)：每 D-mutation 独立 Processor。
+         类别 A：Conversion 2（facade delete-after-extract，类保留为 helper 持有者）+ Lead 3（facade slim-to-S-delegation）。 -->
+    <bean id="app.erp.crm.service.processor.ErpCrmConversionConvertToCustomerProcessor"
+          class="app.erp.crm.service.processor.ErpCrmConversionConvertToCustomerProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmConversionConvertToQuotationProcessor"
+          class="app.erp.crm.service.processor.ErpCrmConversionConvertToQuotationProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadQualifyProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadQualifyProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadLoseProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadLoseProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadMoveStageProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadMoveStageProcessor"/>
+
+    <!-- per-mutation Cat-B D-mutation Processor beans (R6.6)：类别 B 内联 mutation 每 mutation 独立 Processor。
+         自包含 body（VERBATIM 迁移 + CrudBizModel 管道方法替换为 raw dao 等价）；下游可经 Delta beans.xml 同名 bean id 覆盖。 -->
+    <bean id="app.erp.crm.service.processor.ErpCrmEventCompleteProcessor"
+          class="app.erp.crm.service.processor.ErpCrmEventCompleteProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmEventCancelProcessor"
+          class="app.erp.crm.service.processor.ErpCrmEventCancelProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmForecastRefreshForecastProcessor"
+          class="app.erp.crm.service.processor.ErpCrmForecastRefreshForecastProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmForecastPeriodClosePeriodProcessor"
+          class="app.erp.crm.service.processor.ErpCrmForecastPeriodClosePeriodProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadFunnelRefreshFunnelProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadFunnelRefreshFunnelProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadScoreRecalculateScoreProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadScoreRecalculateScoreProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadSequenceProgressAssignSequenceProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadSequenceProgressAssignSequenceProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadSequenceProgressAdvanceStepProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadSequenceProgressAdvanceStepProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmLeadSequenceProgressSwitchSequenceProcessor"
+          class="app.erp.crm.service.processor.ErpCrmLeadSequenceProgressSwitchSequenceProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmProductConfiguratorGenerateQuoteProcessor"
+          class="app.erp.crm.service.processor.ErpCrmProductConfiguratorGenerateQuoteProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmQuotaDistributeAnnualQuotaProcessor"
+          class="app.erp.crm.service.processor.ErpCrmQuotaDistributeAnnualQuotaProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmTerritoryCreateChildProcessor"
+          class="app.erp.crm.service.processor.ErpCrmTerritoryCreateChildProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmTerritoryMoveTerritoryProcessor"
+          class="app.erp.crm.service.processor.ErpCrmTerritoryMoveTerritoryProcessor"/>
 </beans>

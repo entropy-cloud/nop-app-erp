@@ -18,6 +18,7 @@
 
     <keys>
         <key name="UK_LOG_SHIPMENT_CODE_ORG" props="code,orgId"/>
+        <key name="UK_LOG_SHIPMENT_TRACKING_CARRIER" props="trackingNo,carrierId,delVersion"/>
     </keys>
 
     <props>

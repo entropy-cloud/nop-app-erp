@@ -66,6 +66,11 @@ public abstract class AbstractProcessor<T extends OrmEntity> {
         return value == null ? null : value.toString();
     }
 
+    protected String getCreatedBy(T entity) {
+        Object value = entity.orm_propValueByName("createdBy");
+        return value == null ? null : value.toString();
+    }
+
     protected String currentUserId() {
         try {
             IUserContext ctx = IUserContext.get();

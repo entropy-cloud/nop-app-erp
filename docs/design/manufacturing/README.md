@@ -9,6 +9,7 @@
 - 本域负责：BOM（头/行/工艺/联副产品）、工单（WorkOrder）、工序作业卡（JobCard）、工艺路线（Routing）、工作中心（Workcenter）、生产计划、停机记录、外协。
 - 本域不负责：物料/SKU/仓库主数据（master-data）；库存写入（inventory 域，本域调用）；生产成本凭证生成（finance 域，本域触发）；设备实物维护（maintenance 域）；完工质检（quality 域）。
 - 持久化字段、字典、状态码以 `model/app-erp-manufacturing.orm.xml` 为准。
+- API 命名约定（审批动作集/状态迁移动词/参数命名）见 `../domain-design-guidelines.md §16A`。
 
 ## 工程与模型
 
@@ -33,8 +34,10 @@
 | 工序作业卡（JobCard） | 工单下的工序执行卡：工序、工作中心、计划/完成数量、工时记录 |
 | 工艺路线（Routing） | 工序序列定义（可被多个 BOM 引用） |
 | 工作中心（Workcenter） | 生产单元：产能、费率、工作时间 |
-| 生产计划（ProductionPlan） | 基于 MRP 的生产计划建议 |
-| 停机记录（DowntimeEntry） | 工作中心停机记录（影响排产） |
+| 生产计划（ProductionPlan）⚠ Deferred | 基于 MRP 的生产计划建议；当前 ORM 无 `ErpMfgProductionPlan`，最接近实体为 `ErpMfgMrpPlan`（MRP 计划）。独立生产计划实体为 successor |
+| 停机记录（DowntimeEntry）⚠ Deferred | 工作中心停机记录（影响排产）；当前 ORM 无 `ErpMfgDowntimeEntry`。停机扣减可用时段为 Non-Goal（见 `crp.md §实现约定`），successor = maintenance 停机事件 + 排产停机窗口联动 |
+
+> **实体清单一致性声明**：上表标注 ⚠ Deferred 的对象当前 ORM 未物化（`app-erp-manufacturing.orm.xml` 无 `ErpMfgProductionPlan`/`ErpMfgDowntimeEntry`）。生产计划语义由 `ErpMfgMrpPlan` 承载；停机记录与 maintenance 域停机事件联动为 successor（与 `crp.md §实现约定「maintenance 停机扣减可用时段为 Non-Goal」` 一致）。权威实体清单以 `model/app-erp-manufacturing.orm.xml` 为准。
 
 ### 工单与库存的关系
 
@@ -85,11 +88,11 @@
 | `state-machine.md` | 工单与作业卡状态机 |
 | `bom-and-routing.md` | BOM 结构、工艺路线、展开规则、成本计算 |
 | `material-reservation.md` | 工单物料预留设计（预留量计算、齐套校验、预留释放） |
-| `simulation-engine.md` | MRP/DRP 仿真引擎（场景-版本模型、参数变体覆盖、结果对比、DRP 对应物；plan 2026-07-22-1000-2） |
+| `simulation-engine.md` | MRP/DRP 仿真引擎（场景-版本模型、参数变体覆盖、结果对比、DRP 对应物） |
 
-## MRP/DRP 仿真引擎（2026-07-22，plan 2026-07-22-1000-2）
+## MRP/DRP 仿真引擎
 
-本域已落地 MRP/DRP 多场景仿真引擎，详见 [`simulation-engine.md`](simulation-engine.md)。核心要点：
+本域 MRP/DRP 多场景仿真引擎，详见 [`simulation-engine.md`](simulation-engine.md)。核心要点：
 
 - **场景-版本模型**：`ErpMfgMrpScenario` 1:N `ErpMfgMrpScenarioVersion` + `ErpMfgMrpScenarioParam`（参数变体覆盖：LEAD_TIME/LOT_SIZE/SAFETY_STOCK）
 - **E2 fork 范式**：`SimulationMrpEngine` 复用 MrpEngine 算法但替换全局/主数据读取为场景覆盖值，**单次 MRP 路径零触及**（既有 200+ manufacturing 测试零回归）

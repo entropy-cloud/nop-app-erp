@@ -250,10 +250,10 @@
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `erp-fin.default-schema` | 财务账 | 默认生成的账套 |
-| `erp-fin.multi-schema-enabled` | false | 是否启用多账套 |
-| `erp-fin.schema-inheritance` | true | 是否支持账套继承 |
-| `erp-fin.auto-create-all-schemas` | true | 业务单据是否自动在所有账套生成凭证 |
+| `erp-fin.multi-schema-enabled` | false | 是否启用多套账并行传播（对齐 `ErpFinConstants.CONFIG_MULTI_SCHEMA_ENABLED`，单账套向后兼容） |
+| `erp-fin.default-schema-nature` | FINANCIAL | 默认会计账套 nature（启用多套账时主账套按此 nature 选取，对齐 `ErpFinConstants.CONFIG_DEFAULT_SCHEMA_NATURE`；取值 FINANCIAL/MANAGEMENT/TAX/CONSOLIDATION/BUDGET） |
+
+> **配置键对齐注记（P1-MA3-034）**：上表对齐 code 实际 2 键（`ErpFinConstants`）。早期版本误列 3 个幻影键（默认账套/账套继承/全账套自动生成类，grep code 零引用，已移除）——`default-schema-nature` 为 `default-schema` 的 code 实际命名；账套继承/科目复制经主数据 `ErpMdAcctSchema` 上级账套 + 手工配置承载，非 config 键。
 
 ## 性能优化
 

@@ -3,7 +3,9 @@ package app.erp.fin.service.entity;
 
 import app.erp.fin.biz.IErpFinBankReconciliationBiz;
 import app.erp.fin.dao.entity.ErpFinBankReconciliation;
-import app.erp.fin.service.bankrecon.BankReconciliationBuilder;
+import app.erp.fin.service.processor.ErpFinBankReconciliationGenerateProcessor;
+import app.erp.fin.service.processor.ErpFinBankReconciliationPostProcessor;
+import app.erp.fin.service.processor.ErpFinBankReconciliationReverseProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -21,24 +23,28 @@ public class ErpFinBankReconciliationBizModel extends CrudBizModel<ErpFinBankRec
     }
 
     @Inject
-    BankReconciliationBuilder bankReconciliationBuilder;
+    ErpFinBankReconciliationGenerateProcessor generateProcessor;
+    @Inject
+    ErpFinBankReconciliationPostProcessor postProcessor;
+    @Inject
+    ErpFinBankReconciliationReverseProcessor reverseProcessor;
 
     @Override
     @BizMutation
     public ErpFinBankReconciliation generate(@Name("statementId") Long statementId, IServiceContext context) {
-        return bankReconciliationBuilder.generate(statementId);
+        return generateProcessor.generate(statementId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinBankReconciliation post(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
-        return bankReconciliationBuilder.post(reconciliationId, context);
+        return postProcessor.post(reconciliationId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinBankReconciliation reverse(@Name("reconciliationId") Long reconciliationId, IServiceContext context) {
-        return bankReconciliationBuilder.reverse(reconciliationId, context);
+        return reverseProcessor.reverse(reconciliationId, context);
     }
 
 }

@@ -98,7 +98,9 @@ public class ErpFinBudgetCommitmentBizModel implements IErpFinBudgetCommitmentBi
         return reversalIds.get(0);
     }
 
-    /** 仅用于显式释放的容错路径（reverseApprove/cancel 调用，无原凭证时静默跳过而非抛错）。 */
+    /** 容错释放（{@link IErpFinBudgetCommitmentBiz#releaseIfPresent}）：无原承付凭证时静默返回 null，不抛守卫异常。
+     *  供 release-on-cancel / release-on-return（P1-MA2-082）容错路径调用。 */
+    @Override
     public Long releaseIfPresent(String sourceBillType, String sourceBillCode, IServiceContext context) {
         if (!isCommitmentEnabled()) {
             return null;

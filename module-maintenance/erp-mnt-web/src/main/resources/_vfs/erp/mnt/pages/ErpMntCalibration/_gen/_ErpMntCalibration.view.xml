@@ -60,6 +60,12 @@
                 <!--审核状态-->
                 <col id="approveStatus" mandatory="true" sortable="true"/>
 
+                <!--审核人-->
+                <col id="approvedBy" sortable="true"/>
+
+                <!--审核时间-->
+                <col id="approvedAt" sortable="true"/>
+
                 <!--备注-->
                 <col id="remark" sortable="true"/>
 
@@ -77,12 +83,6 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--审核人-->
-                <col id="approvedBy" sortable="true"/>
-
-                <!--审核时间-->
-                <col id="approvedAt" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -97,11 +97,11 @@
  targetValue[目标值] tolerance[允差]
  result[校准结果] nextCalibrationDate[下次校准日期]
  calibratedBy[校准人(职员)] docStatus[单据状态]
- approveStatus[审核状态] remark[备注]
+ approveStatus[审核状态] approvedBy[审核人]
+ approvedAt[审核时间] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] approvedBy[审核人]
- approvedAt[审核时间] 
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-校准记录" i18n-en:title="Add Calibration" x:prototype="edit"/>
@@ -133,7 +133,7 @@
             </table>
             <listActions>
                 <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
-                    <api url="@mutation:ErpMntCalibration__batchDelete?ids=$ids"/>
+                    <api url="@mutation:ErpMntCalibration__batchDelete?ids=${ids}"/>
                     <confirmText>@i18n:common.confirmBatchDelete</confirmText>
                 </action>
                 <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
@@ -148,7 +148,7 @@
                     <dialog page="update"/>
                 </action>
                 <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
-                    <api url="@mutation:ErpMntCalibration__delete?id=$id"/>
+                    <api url="@mutation:ErpMntCalibration__delete?id=${id}"/>
                     <confirmText>@i18n:common.confirmDelete</confirmText>
                 </action>
                 <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
@@ -156,7 +156,7 @@
                         <dialog page="update"/>
                     </action>
                     <action id="row-delete-button" label="@i18n:common.delete">
-                        <api url="@mutation:ErpMntCalibration__delete?id=$id"/>
+                        <api url="@mutation:ErpMntCalibration__delete?id=${id}"/>
                         <confirmText>@i18n:common.confirmDelete</confirmText>
                     </action>
                 </actionGroup>
@@ -171,11 +171,11 @@
             <api url="@mutation:ErpMntCalibration__save/id"/>
         </simple>
         <simple name="view" form="view">
-            <initApi url="@query:ErpMntCalibration__get?id=$id" gql:selection="{@formSelection}"/>
+            <initApi url="@query:ErpMntCalibration__get?id=${id}" gql:selection="{@formSelection}"/>
         </simple>
         <simple name="update" form="edit">
-            <initApi url="@query:ErpMntCalibration__get?id=$id" gql:selection="{@formSelection}"/>
-            <api url="@mutation:ErpMntCalibration__update/id?id=$id" withFormData="true"/>
+            <initApi url="@query:ErpMntCalibration__get?id=${id}" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpMntCalibration__update/id?id=${id}" withFormData="true"/>
         </simple>
     </pages>
 </view>

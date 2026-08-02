@@ -6,6 +6,7 @@ import app.erp.sal.dao.entity.ErpSalQuotation;
 import app.erp.sal.dao.entity.ErpSalQuotationLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -43,77 +44,50 @@ public class ErpSalQuotationProcessor {
     @Inject
     IErpSalOrderBiz orderBiz;
 
+    @Inject
+    ErpSalQuotationSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpSalQuotationApproveProcessor approveProcessor;
+
+    @Inject
+    ErpSalQuotationRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpSalQuotationReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpSalQuotationWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpSalQuotationCancelProcessor cancelProcessor;
+
     public ErpSalQuotation submitForApproval(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        validateNotCancelled(quotation, context);
-        validateTransitionForSubmit(quotation, context);
-        validateBusinessRulesForSubmit(quotation, context);
-        doSubmit(quotation, context);
-        return quotation;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpSalQuotation withdrawApproval(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        validateNotCancelled(quotation, context);
-        validateTransitionForWithdraw(quotation, context);
-        doWithdrawSubmit(quotation, context);
-        return quotation;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpSalQuotation approve(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        if (quotation.isApproved()) {
-            return quotation;
-        }
-        validateNotCancelled(quotation, context);
-        validateTransitionForApprove(quotation, context);
-        doApprove(quotation, context);
-        return quotation;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpSalQuotation reject(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        validateNotCancelled(quotation, context);
-        validateTransitionForReject(quotation, context);
-        doReject(quotation, context);
-        return quotation;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpSalQuotation reverseApprove(String id, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(id, context);
-        if (quotation.isRejected()) {
-            return quotation;
-        }
-        validateTransitionForReverseApprove(quotation, context);
-        doReverseApprove(quotation, context);
-        return quotation;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpSalQuotation cancel(String quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
-        validateTransitionForCancel(quotation, context);
-        doCancel(quotation, context);
-        return quotation;
+        return cancelProcessor.cancel(quotationId, context);
     }
 
-    public ErpSalQuotation confirmCustomerAccepted(String quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
-        validateNotCancelled(quotation, context);
-        validateTransitionForConfirm(quotation, context);
-        requireNotExpired(quotation, context);
-        doConfirmCustomerAccepted(quotation, context);
-        return quotation;
-    }
-
-    public ErpSalOrder convertToOrder(String quotationId, IServiceContext context) {
-        ErpSalQuotation quotation = requireQuotation(quotationId, context);
-        validateReadyForConvert(quotation, context);
-        requireNotExpired(quotation, context);
-        validateNotAlreadyConverted(quotation, context);
-        ErpSalOrder order = createOrderFromQuotation(quotation, context);
-        markQuotationAccepted(quotationId, context);
-        return order;
-    }
+    // confirmCustomerAccepted / convertToOrder 迁出至 ErpSalQuotationConfirmCustomerAcceptedProcessor /
+    // ErpSalQuotationConvertToOrderProcessor（R6.5 per-mutation 拆分）。共享 protected helper 保留本类。
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
@@ -218,6 +192,7 @@ public class ErpSalQuotationProcessor {
     }
 
     protected void doApprove(ErpSalQuotation quotation, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(quotation.getCreatedBy(), currentUserId(), ErpSalErrors.ERR_SAL_APPROVER_IS_CREATOR);
         quotation.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
         quotation.setApprovedBy(currentUserId());
         quotation.setApprovedAt(CoreMetrics.currentTimestamp());

@@ -17,6 +17,9 @@ import app.erp.contract.dao.entity.ErpCtContractLine;
 import app.erp.contract.dao.entity.ErpCtInvoicePlan;
 import app.erp.ct.biz.IErpCtInvoicePlanBiz;
 import app.erp.ct.service.ErpCtConfigs;
+import app.erp.ct.service.processor.ErpCtInvoicePlanTriggerDuePlansProcessor;
+import app.erp.ct.service.processor.ErpCtInvoicePlanTriggerInvoiceProcessor;
+import jakarta.inject.Inject;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
 import app.erp.pur.dao.entity.ErpPurInvoice;
@@ -47,6 +50,12 @@ import static io.nop.api.core.beans.FilterBeans.le;
 @BizModel("ErpCtInvoicePlan")
 public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> implements IErpCtInvoicePlanBiz {
 
+    @Inject
+    ErpCtInvoicePlanTriggerInvoiceProcessor triggerInvoiceProcessor;
+
+    @Inject
+    ErpCtInvoicePlanTriggerDuePlansProcessor triggerDuePlansProcessor;
+
     public ErpCtInvoicePlanBizModel() {
         setEntityName(ErpCtInvoicePlan.class.getName());
     }
@@ -54,40 +63,7 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
     @Override
     @BizMutation
     public ErpCtInvoicePlan triggerInvoice(@Name("planId") Long planId, IServiceContext context) {
-        ErpCtInvoicePlan plan = requirePlan(planId, context);
-
-        if (Boolean.TRUE.equals(plan.getIsInvoiced())) {
-            throw new NopException(ErpCtErrors.ERR_CT_INVOICE_PLAN_ALREADY_INVOICED)
-                    .param(ErpCtErrors.ARG_INVOICE_PLAN_ID, planId);
-        }
-
-        ErpCtContractLine line = plan.getContractLine();
-        ErpCtContract contract = line.getContract();
-        String status = contract.getStatus();
-        if (Objects.equals(status, ErpCtConstants.CONTRACT_STATUS_SUSPENDED)) {
-            throw new NopException(ErpCtErrors.ERR_CT_CONTRACT_SUSPENDED)
-                    .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
-        }
-        if (!Objects.equals(status, ErpCtConstants.CONTRACT_STATUS_ACTIVE)) {
-            throw new NopException(ErpCtErrors.ERR_CT_CONTRACT_NOT_ACTIVE)
-                    .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode())
-                    .param(ErpCtErrors.ARG_CURRENT_STATUS, status);
-        }
-
-        BigDecimal amount = nz(plan.getAmount());
-        String billCode = "CT-INV-" + plan.getId();
-        if (Objects.equals(contract.getContractDirection(), ErpCtConstants.CONTRACT_DIRECTION_INBOUND)) {
-            createApInvoiceDraft(billCode, plan, line, contract, amount);
-        } else {
-            createArInvoiceDraft(billCode, plan, line, contract, amount);
-        }
-
-        // 回写 isInvoiced/invoiceBillCode/invoiceDate
-        plan.setIsInvoiced(true);
-        plan.setInvoiceBillCode(billCode);
-        plan.setInvoiceDate(CoreMetrics.today());
-        updateEntity(plan, null, context);
-        return plan;
+        return triggerInvoiceProcessor.triggerInvoice(planId, context);
     }
 
     @Override
@@ -95,29 +71,7 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
     public int triggerDuePlans(@Name("contractId") Long contractId,
                                @Name("asOfDate") LocalDate asOfDate,
                                IServiceContext context) {
-        // config-gated：erp-ct.invoiceplan-auto-trigger 默认 true
-        if (!AppConfig.var(ErpCtConfigs.CFG_INVOICEPLAN_AUTO_TRIGGER, true)) {
-            return 0;
-        }
-        QueryBean query = new QueryBean();
-        query.addFilter(le("planDate", asOfDate));
-        query.addFilter(eq("isInvoiced", false));
-        // 经 dao() 直查绕过 XMeta 查询算子白名单（planDate 仅允许 [eq,in,dateBetween,dateTimeBetween]，
-        // 不支持 le；findList 会经 meta 安全层校验报错）。对齐同模块 loadAccruedBillCodes /
-        // findPeriodInvoices 经 daoProvider 直查的范式——内部批量逻辑不经外部 GraphQL 查询算子约束。
-        List<ErpCtInvoicePlan> due = daoProvider().daoFor(ErpCtInvoicePlan.class).findAllByQuery(query);
-        int triggered = 0;
-        for (ErpCtInvoicePlan plan : due) {
-            // 里程碑/完工条款需人工/上游事件确认；triggerInvoice 单点入口校验合同 ACTIVE
-            ErpCtContractLine line = plan.getContractLine();
-            if (line == null || line.getContractId() == null
-                    || !Objects.equals(line.getContractId(), contractId)) {
-                continue;
-            }
-            triggerInvoice(plan.getId(), context);
-            triggered++;
-        }
-        return triggered;
+        return triggerDuePlansProcessor.triggerDuePlans(contractId, asOfDate, context);
     }
 
     // ---------- 发票草稿生成（经 IDaoProvider 直接持久化） ----------

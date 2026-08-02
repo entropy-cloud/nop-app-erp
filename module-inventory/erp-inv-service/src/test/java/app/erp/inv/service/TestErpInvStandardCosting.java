@@ -196,6 +196,47 @@ public class TestErpInvStandardCosting extends JunitAutoTestCase {
         }
     }
 
+    @Test
+    public void testReverseRestoresCostInvariantAcrossRevaluation() {
+        Long materialId = 2406L;
+        seedStandardMaterial(materialId);
+        // 旧标准成本 = 10（businessDate 2026-06-01）
+        seedFirmedRollup(materialId, new BigDecimal("10"));
+        seedPeriodAndSubjects();
+
+        // 入库 20 @ 实际 12（标准 10）：balance qty=20, totalCost=200
+        generateIncoming(materialId, "PR-STD-REV-001", new BigDecimal("20"), new BigDecimal("12"));
+        BigDecimal totalCostBeforeOut = nz(findBalance(materialId).getTotalCost());
+        assertEquals(0, totalCostBeforeOut.compareTo(new BigDecimal("200")), "出库前余额 totalCost=200");
+
+        // 出库 8 @ 旧标准 10：扣 80 → balance qty=12, totalCost=120；onOutgoing 刷新 line.unitCost=10
+        Long outMoveId = generateOutgoing(materialId, "SS-STD-REV-001", new BigDecimal("8"));
+        BigDecimal oldStd = new BigDecimal("10");
+
+        // 发布新 FIRMED rollup（新标准 15，businessDate 晚于旧 rollup）→ StandardCostResolver 后续 resolve=15。
+        // 模拟制造域 re-rollup / STANDARD_REVALUATION 发布新 FIRMED rollup 后 reverse 跨重估场景。
+        seedFirmedRollup(materialId, new BigDecimal("15"), materialId * 10000 + 101L,
+                LocalDate.of(2026, 6, 2));
+
+        // 红冲出库：reverse 生成反向入库 8 行，line.unitCost=10（onOutgoing 刷新的旧标准，reverse 透传）
+        // → onIncoming 沿用 10（Choice B），加回 8×10=80 → balance totalCost 恢复至出库前 200，qty=20
+        reverseMove(outMoveId);
+
+        ErpInvStockBalance balance = findBalance(materialId);
+        assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("20")),
+                "红冲后余额 totalQuantity 恢复 20");
+        BigDecimal balanceCostDrift = nz(balance.getTotalCost()).subtract(totalCostBeforeOut).abs();
+        assertTrue(balanceCostDrift.compareTo(new BigDecimal("0.01")) < 0,
+                "红冲后余额 totalCost 应恢复至出库前 " + totalCostBeforeOut
+                        + "（容差 0.01，实际=" + balance.getTotalCost() + "）");
+
+        // 反向入库流水 unitCost = 旧标准 10（非新标准 15），直接证明 onIncoming 沿用了透传的旧标准成本
+        ErpInvStockLedger reverseInLedger = findLatestIncomingLedger(materialId);
+        assertNotNull(reverseInLedger, "应有红冲反向入库流水");
+        assertEquals(0, reverseInLedger.getUnitCost().compareTo(oldStd),
+                "红冲反向入库 ledger.unitCost = 旧标准 10（跨重估沿用原出库扣减成本，非新标准 15）");
+    }
+
     // ---------- move generation ----------
 
     private Long generateIncoming(Long materialId, String billCode, BigDecimal qty, BigDecimal unitCost) {
@@ -220,6 +261,12 @@ public class TestErpInvStandardCosting extends JunitAutoTestCase {
 
     private ApiResponse<?> genMove(Map<String, Object> req) {
         return executeRpc(mutation, "ErpInvStockMove__generateMove", ApiRequest.build(Map.of("request", req)));
+    }
+
+    private void reverseMove(Long moveId) {
+        ApiResponse<?> resp = executeRpc(mutation, "ErpInvStockMove__reverse",
+                ApiRequest.build(Map.of("moveId", moveId)));
+        assertEquals(0, resp.getStatus(), "reverse 应成功");
     }
 
     private Map<String, Object> outgoingReq(Long materialId, String billCode, BigDecimal qty) {
@@ -297,6 +344,17 @@ public class TestErpInvStandardCosting extends JunitAutoTestCase {
                 .orElse(null);
     }
 
+    private ErpInvStockLedger findLatestIncomingLedger(Long materialId) {
+        IEntityDao<ErpInvStockLedger> dao = daoProvider.daoFor(ErpInvStockLedger.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("materialId", materialId));
+        q.addFilter(eq("warehouseId", WAREHOUSE_ID));
+        return dao.findAllByQuery(q).stream()
+                .filter(l -> l.getQuantity() != null && l.getQuantity().signum() > 0)
+                .max(java.util.Comparator.comparing(l -> String.valueOf(l.orm_id())))
+                .orElse(null);
+    }
+
     private ErpFinVoucher findVoucherByBillCode(String billCode) {
         IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
         QueryBean q = new QueryBean();
@@ -327,6 +385,10 @@ public class TestErpInvStandardCosting extends JunitAutoTestCase {
                 .assignConfigValue(ErpInvConstants.CONFIG_STANDARD_COST_PPV_ENABLED, String.valueOf(value));
     }
 
+    private static BigDecimal nz(BigDecimal v) {
+        return v != null ? v : BigDecimal.ZERO;
+    }
+
     // ---------- seed ----------
 
     private void seedStandardMaterial(Long id) {
@@ -345,20 +407,23 @@ public class TestErpInvStandardCosting extends JunitAutoTestCase {
     }
 
     private void seedFirmedRollup(Long materialId, BigDecimal unitCost) {
+        seedFirmedRollup(materialId, unitCost, materialId * 10000 + 1, LocalDate.of(2026, 6, 1));
+    }
+
+    private void seedFirmedRollup(Long materialId, BigDecimal unitCost, long headerId, LocalDate businessDate) {
         ormTemplate.runInSession(() -> {
-            Long headerId = materialId * 10000 + 1;
             IEntityDao<ErpMfgCostRollup> headerDao = daoProvider.daoFor(ErpMfgCostRollup.class);
             ErpMfgCostRollup header = new ErpMfgCostRollup();
             header.orm_propValueByName("id", headerId);
-            header.setCode("ROLLUP-" + materialId);
+            header.setCode("ROLLUP-" + materialId + "-" + headerId);
             header.setOrgId(ORG_ID);
-            header.setBusinessDate(LocalDate.of(2026, 6, 1));
+            header.setBusinessDate(businessDate);
             header.orm_propValueByName("status", "FIRMED");
             headerDao.saveEntity(header);
 
             IEntityDao<ErpMfgCostRollupLine> lineDao = daoProvider.daoFor(ErpMfgCostRollupLine.class);
             ErpMfgCostRollupLine line = new ErpMfgCostRollupLine();
-            line.orm_propValueByName("id", materialId * 10000 + 2);
+            line.orm_propValueByName("id", headerId + 1);
             line.setCostRollupId(headerId);
             line.setLineNo(1);
             line.setMaterialId(materialId);

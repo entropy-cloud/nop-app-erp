@@ -304,6 +304,44 @@
             </indexes>
         </entity>
 
+        <!--
+            产能预留（P0-MA2-019 fix）：承载工作中心时段占用，由 ErpApsSchedulingProcessor.persist
+            在每个 PLANNED 工序写入前做重叠 pre-check，并由 UK_APS_CAPACITY_RESERVATION_SLOT 作为
+            TOCTOU 兜底——两个并发 scheduleForward 即使同时通过 pre-check，DB 唯一约束也只允许一行落地。
+            不使用逻辑删除：释放（PLANNED→DRAFT/CANCELLED）时硬删除，避免软删除行占据 UK 导致重排失败。
+        -->
+        <entity className="app.erp.aps.dao.entity.ErpApsCapacityReservation"
+                displayName="产能预留" ext:icon="lock" i18n-en:displayName="Capacity Reservation" name="app.erp.aps.dao.entity.ErpApsCapacityReservation"
+                tableName="erp_aps_capacity_reservation" tagSet="gid,erp.aps" registerShortName="true"
+                versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="machineId" displayName="工作中心/设备" stdSqlType="BIGINT" mandatory="true" code="MACHINE_ID" propId="2" stdDataType="long" i18n-en:displayName='Machine' />
+                <column name="plannedStartT" displayName="预留开始时间" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="PLANNED_START_T" propId="3" i18n-en:displayName='Planned Start' />
+                <column name="plannedEndT" displayName="预留结束时间" tagSet="clock" stdSqlType="TIMESTAMP" mandatory="true" code="PLANNED_END_T" propId="4" i18n-en:displayName='Planned End' />
+                <column name="operationOrderId" displayName="工序工单" stdSqlType="BIGINT" mandatory="true" code="OPERATION_ORDER_ID" propId="5" stdDataType="long" i18n-en:displayName='Operation Order' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="6" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="version" code="VERSION" displayName="数据版本" propId="8" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="9" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="10" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="11" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="12" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <unique-keys>
+                <!-- 同一工作中心同一时段至多一条预留（capacity=1 兜底，覆盖跨实体产能聚合不变量） -->
+                <unique-key name="UK_APS_CAPACITY_RESERVATION_SLOT" columns="machineId,plannedStartT,plannedEndT"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_APS_CAPACITY_RESERVATION_OP_ORDER_ID" unique="false">
+                    <column name="operationOrderId"/>
+                </index>
+                <index name="IDX_APS_CAPACITY_RESERVATION_MACHINE_ID" unique="false">
+                    <column name="machineId"/>
+                </index>
+            </indexes>
+        </entity>
+
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
         <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">

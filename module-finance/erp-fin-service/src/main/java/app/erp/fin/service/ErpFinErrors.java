@@ -438,6 +438,13 @@ public interface ErpFinErrors {
             "凭证[{voucherId}]当前状态[{currentStatus}]不允许此操作",
             ARG_VOUCHER_ID, ARG_CURRENT_STATUS);
 
+    String ARG_PERIOD_STATUS = "periodStatus";
+
+    ErrorCode ERR_FIN_VOUCHER_PERIOD_LOCKED = ErrorCode.define(
+            "erp.err.fin.voucher.period-locked",
+            "凭证[{voucherId}]所属会计期间已{periodStatus}，凭证已锁定，不允许过账或红冲操作",
+            ARG_VOUCHER_ID, ARG_PERIOD_STATUS);
+
     // --- 多公司运营深度作用域（A3，plan 2026-07-22-1000-1，multi-company.md） ---
 
     String ARG_FROM_ORG_ID = "fromOrgId";
@@ -468,4 +475,11 @@ public interface ErpFinErrors {
 
     ErrorCode ERR_ELIMINATION_NO_CANDIDATES = ErrorCode.define("erp.err.fin.elimination.no-candidates",
             "会计期间 {periodId} 无可抵消候选（未识别到配对记录或候选已处理）", ARG_PERIOD_ID);
+
+    // --- 职责分离（SoD）守卫（plan 2026-07-31-1023-2 R3.3）：审核人与单据创建人不可为同一人 ---
+    String ARG_USER_ID = "userId";
+
+    ErrorCode ERR_FIN_APPROVER_IS_CREATOR = ErrorCode.define("erp.err.fin.approver-is-creator",
+            "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
+            ARG_USER_ID);
 }

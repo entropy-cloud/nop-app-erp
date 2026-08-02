@@ -347,7 +347,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=23)
+        @PropMeta(propId=22)
     
         public String getRemark(){
             return _remark;
@@ -361,7 +361,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=24)
+        @PropMeta(propId=23)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -375,7 +375,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=24)
     
         public Integer getVersion(){
             return _version;
@@ -389,7 +389,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=25)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -403,7 +403,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=26)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -417,7 +417,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=28)
+        @PropMeta(propId=27)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -431,7 +431,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=29)
+        @PropMeta(propId=28)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;
@@ -445,7 +445,7 @@
         private Boolean _posted;
 
     
-        @PropMeta(propId=30)
+        @PropMeta(propId=29)
     
         public Boolean getPosted(){
             return _posted;
@@ -459,7 +459,7 @@
         private java.sql.Timestamp _postedAt;
 
     
-        @PropMeta(propId=31)
+        @PropMeta(propId=30)
     
         public java.sql.Timestamp getPostedAt(){
             return _postedAt;
@@ -473,7 +473,7 @@
         private String _postedBy;
 
     
-        @PropMeta(propId=32)
+        @PropMeta(propId=31)
     
         public String getPostedBy(){
             return _postedBy;
@@ -487,7 +487,7 @@
         private String _returnCode;
 
     
-        @PropMeta(propId=33)
+        @PropMeta(propId=32)
     
         public String getReturnCode(){
             return _returnCode;
@@ -495,6 +495,20 @@
 
         public void setReturnCode(String value){
             this._returnCode = value;
+        }
+
+
+        private String _noCapaReason;
+
+    
+        @PropMeta(propId=33)
+    
+        public String getNoCapaReason(){
+            return _noCapaReason;
+        }
+
+        public void setNoCapaReason(String value){
+            this._noCapaReason = value;
         }
 
 

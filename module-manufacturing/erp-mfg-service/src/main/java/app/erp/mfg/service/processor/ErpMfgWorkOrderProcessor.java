@@ -13,8 +13,10 @@ import app.erp.mfg.service.genealogy.BatchGenealogyWriter;
 import app.erp.mfg.service.posting.ProductionVarianceDispatcher;
 import app.erp.mfg.service.workorder.KitAvailabilityChecker;
 import app.erp.mfg.service.workorder.KitAvailabilityResult;
+import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionTrigger;
 import app.erp.qa.dao.constants.ErpQaInspectionType;
@@ -24,6 +26,7 @@ import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -34,7 +37,9 @@ import java.util.Objects;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -68,42 +73,39 @@ public class ErpMfgWorkOrderProcessor {
     ProductionVarianceDispatcher productionVarianceDispatcher;
     @Inject
     BatchGenealogyWriter batchGenealogyWriter;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+    @Inject
+    ErpMfgWorkOrderSubmitForApprovalProcessor submitForApprovalProcessor;
+    @Inject
+    ErpMfgWorkOrderApproveProcessor approveProcessor;
+    @Inject
+    ErpMfgWorkOrderRejectProcessor rejectProcessor;
+    @Inject
+    ErpMfgWorkOrderReverseApproveProcessor reverseApproveProcessor;
+    @Inject
+    ErpMfgWorkOrderWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    static final String NOTIFY_EVENT_VARIANCE_FAILURE = "mfg.production-variance-posting-failure";
 
     public ErpMfgWorkOrder submitForApproval(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForSubmit(wo, context);
-        validateBusinessRulesForSubmit(wo, context);
-        doSubmit(wo, context);
-        return wo;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpMfgWorkOrder withdrawApproval(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForWithdraw(wo, context);
-        doWithdrawSubmit(wo, context);
-        return wo;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpMfgWorkOrder approve(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForApprove(wo, context);
-        validateBusinessRulesForApprove(wo, context);
-        doApprove(wo, context);
-        return wo;
+        return approveProcessor.approve(id, context);
     }
 
     public ErpMfgWorkOrder reject(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForReject(wo, context);
-        doReject(wo, context);
-        return wo;
+        return rejectProcessor.reject(id, context);
     }
 
     public ErpMfgWorkOrder reverseApprove(String id, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(id, context);
-        validateTransitionForReverseApprove(wo, context);
-        doReverseApprove(wo, context);
-        return wo;
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpMfgWorkOrder checkAvailability(Long workOrderId, IServiceContext context) {
@@ -115,44 +117,13 @@ public class ErpMfgWorkOrderProcessor {
         return wo;
     }
 
-    public ErpMfgWorkOrder start(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
-        validateTransitionForStart(wo, context);
-        doStart(wo, context);
-        return wo;
-    }
+    // ---------- 工单操作（R6.2 per-mutation 拆分：start/stop/resume/close/reportCompletion 已迁入 ----------
+    // ----------   ErpMfgWorkOrder<Method>Processor，本类保留 :45 checkAvailability + :46 cancel + protected helper） ----------
 
-    public ErpMfgWorkOrder stop(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
-        requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, "IN_PROCESS");
-        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_STOPPED);
-        workOrderDao().updateEntity(wo);
-        return wo;
-    }
-
-    public ErpMfgWorkOrder resume(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
-        requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_STOPPED, "STOPPED");
-        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS);
-        workOrderDao().updateEntity(wo);
-        return wo;
-    }
-
-    public ErpMfgWorkOrder close(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
-        String status = wo.getDocStatus();
-        if (status == null || (!Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOPPED)
-                && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS))) {
-            throw illegalTransition(wo, status, "STOPPED 或 IN_PROCESS");
-        }
-        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_CLOSED);
-        if (wo.getActualEndDate() == null) {
-            wo.setActualEndDate(CoreMetrics.today());
-        }
-        workOrderDao().updateEntity(wo);
-        return wo;
-    }
-
+    /**
+     * 取消工单（:46 单步状态翻转豁免：require + 状态守卫 + setStatus + updateEntity，零副作用）。
+     * R6.2 登记豁免保留 facade，BizModel 继续委托本方法。
+     */
     public ErpMfgWorkOrder cancel(Long workOrderId, IServiceContext context) {
         ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
         String status = wo.getDocStatus();
@@ -166,78 +137,33 @@ public class ErpMfgWorkOrderProcessor {
         return wo;
     }
 
-    /**
-     * 完工入库：累加完工数量、生成产成品入库移动单（MANUFACTURING，库存域视为入库 → 加产成品库存）、
-     * 重算成本（totalCost = material+labor+overhead+subcontract；unitCost = total/completed），完工达量→COMPLETED。
-     */
-    public ErpMfgWorkOrder reportCompletion(Long workOrderId, BigDecimal completedQty, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
-        requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, "IN_PROCESS");
-        if (completedQty == null || completedQty.signum() < 0) {
-            completedQty = BigDecimal.ZERO;
+    /** 判定是否为「无 FIRMED 标准成本」容错跳过场景（差异未配置，非故障）。 */
+    protected boolean isNoStandardCostError(Throwable e) {
+        if (e instanceof NopException) {
+            String code = ((NopException) e).getErrorCode();
+            return code != null && code.contains("VARIANCE_NO_STANDARD_COST");
         }
-        BigDecimal planned = nz(wo.getPlannedQuantity());
-        BigDecimal newCompleted = nz(wo.getCompletedQuantity()).add(completedQty);
-        if (planned.signum() > 0 && newCompleted.compareTo(planned) > 0) {
-            throw new NopException(ErpMfgErrors.ERR_OVER_REPORT)
-                    .param(ErpMfgErrors.ARG_COMPLETED_QTY, newCompleted)
-                    .param(ErpMfgErrors.ARG_PLANNED_QTY, planned);
+        return false;
+    }
+
+    /** 生产差异计算/过账失败告警派发（G3；通知失败降级不阻断主流程）。 */
+    protected void dispatchVarianceFailureAlert(ErpMfgWorkOrder wo, Exception cause) {
+        if (notificationBiz == null) {
+            return;
         }
-
-        boolean willFinish = planned.signum() > 0 && newCompleted.compareTo(planned) >= 0;
-        if (willFinish && isInspectionGated(wo)) {
-            throw new NopException(ErpMfgErrors.ERR_INSPECTION_REQUIRED)
-                    .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("workOrderId", wo.getId());
+        ctx.put("workOrderCode", wo.getCode());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", wo.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_VARIANCE_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("生产差异过账失败告警派发失败（降级）：workOrderCode={}, reason={}",
+                    wo.getCode(), notifyErr.getMessage());
         }
-
-        if (willFinish && wo.getProductId() != null) {
-            int gate = InspectionTrigger.enforceGate(inspectionBiz, ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER,
-                    wo.getCode(), wo.getProductId(), ErpQaInspectionType.INSPECTION_TYPE_FINAL,
-                    newCompleted, null, null, null, context);
-            if (gate == InspectionTrigger.BLOCKED) {
-                throw new NopException(ErpMfgErrors.ERR_INSPECTION_REQUIRED)
-                        .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
-            }
-        }
-
-        wo.setCompletedQuantity(newCompleted);
-        recomputeTotals(wo);
-
-        generateCompletionMove(wo, completedQty, context);
-
-        // 完工入库成功后写入生产批次基因链（inputLot→outputLot 消耗行）。
-        // best-effort（BatchGenealogyWriter 内部 try/catch，不阻断完工入库）；
-        // config-gated erp-mfg.genealogy-write-enabled。作为 protected step，下游派生 Processor 可覆盖跳过/增强。
-        writeBatchGenealogy(wo, completedQty, context);
-
-        // generateCompletionMove 经 cross-BizModel generateMove 调用，其内部 GL 过账用 REQUIRES_NEW 事务，
-        // 成功过账后当前 session 实体可能被 evict。重新加载 wo 并重应用字段，避免 updateEntity 报 save-entity-not-transient。
-        wo = workOrderDao().getEntityById(workOrderId);
-        wo.setCompletedQuantity(newCompleted);
-        recomputeTotals(wo);
-
-        if (willFinish) {
-            wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED);
-            wo.setActualEndDate(CoreMetrics.today());
-        }
-        workOrderDao().updateEntity(wo);
-
-        // 完工达量（willFinish）：config-gated 自动触发生产差异计算 + 过账。失败隔离仅记 ERROR 日志，
-        // 不阻断完工（异常工作台统一接入归 Deferred，见 plan 2026-07-05-1838-2 Deferred「cron 定时批量」）。
-        if (willFinish && isVarianceAutoCalcEnabled()) {
-            try {
-                // 重算幂等闭环（plan 2026-07-18-2251-1）：先红冲既有 PRODUCTION_VARIANCE 凭证 → 删差异旧行 → 重算 → 派发新凭证。
-                // reverseIfExists 内部 try/catch 守护吞无原凭证异常（首次完工无原凭证场景安全 no-op）。
-                productionVarianceDispatcher.reverseIfExists(workOrderId);
-                productionVarianceCalculator.deleteByWorkOrder(workOrderId);
-                productionVarianceCalculator.calculateVariances(workOrderId);
-                productionVarianceDispatcher.dispatchIfApplicable(workOrderId);
-            } catch (Exception e) {
-                LOG.error("工单 {} 完工触发生产差异计算/过账失败（不阻断完工，可经手动 calculateVariances 重算）",
-                        wo.getCode(), e);
-            }
-        }
-        return wo;
     }
 
     // ---------- step：审批迁移校验（protected，下游可逐个覆盖） ----------
@@ -305,6 +231,7 @@ public class ErpMfgWorkOrderProcessor {
     }
 
     protected void doApprove(ErpMfgWorkOrder wo, IServiceContext context) {
+        SoDGuard.assertApproverNotCreator(wo.getCreatedBy(), currentUserId(), ErpMfgErrors.ERR_MFG_APPROVER_IS_CREATOR);
         wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED);
         wo.setApprovedBy(currentUserId());

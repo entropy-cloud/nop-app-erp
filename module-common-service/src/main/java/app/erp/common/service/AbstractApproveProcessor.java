@@ -1,5 +1,6 @@
 package app.erp.common.service;
 
+import io.nop.api.core.exceptions.ErrorCode;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -41,6 +42,10 @@ public abstract class AbstractApproveProcessor<T extends OrmEntity> extends Abst
     }
 
     protected void doApprove(T entity, IServiceContext context) {
+        ErrorCode sodCode = sodErrorCode();
+        if (sodCode != null) {
+            SoDGuard.assertApproverNotCreator(getCreatedBy(entity), currentUserId(), sodCode);
+        }
         setApproveStatus(entity, approvedStatus());
         setApprovedBy(entity, currentUserId());
         setApprovedAt(entity, CoreMetrics.currentTimestamp());
@@ -76,4 +81,13 @@ public abstract class AbstractApproveProcessor<T extends OrmEntity> extends Abst
     protected abstract String submittedStatus();
 
     protected abstract String approvedStatus();
+
+    /**
+     * 职责分离守卫错误码。返回非 null 时启用 SoD 程序级强制（创建人≠审核人）；返回 null 时该实体不启用守卫。
+     * 默认 null（未落地域保持原行为）；已落地域（purchase/sales/finance/manufacturing）子类覆盖返回域错误码。
+     * （plan 2026-07-31-1023-2 R3.3）
+     */
+    protected ErrorCode sodErrorCode() {
+        return null;
+    }
 }

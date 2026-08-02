@@ -117,6 +117,40 @@ public class TestErpQaRecallStateMachine extends JunitAutoTestCase {
                 "CRITICAL 召回正常审批");
     }
 
+    /**
+     * withdrawApproval inline-script 提取验证（plan 2026-07-30-2046-1 R5.7 Phase 3）。
+     * 原 xbiz withdrawApproval 为 inline {@code <c:script>}（NopScriptError），提取为 per-mutation
+     * {@link app.erp.qa.service.processor.ErpQaRecallWithdrawApprovalProcessor} Java hook + xbiz inject 委托。
+     *
+     * <p>验证两点：
+     * <ol>
+     *   <li>负向守卫：非 SUBMITTED 状态 withdraw → {@link ErpQaErrors#ERR_INVALID_RECALL_STATUS_TRANSITION}
+     *       （语义等价替代原 wf {@code nop.err.wf.approve.invalid-status}，param 键改为域 recallCode/
+     *       currentStatus/expectedStatus）。</li>
+     *   <li>正向激活：submit→SUBMITTED → withdraw→UNSUBMITTED，证明 inline 提取后 per-mutation 运行时路径生效。</li>
+     * </ol>
+     */
+    @Test
+    public void testWithdrawApprovalGuardAndExtraction() {
+        Long recallId = registerRecall("RC-WITHDRAW", ErpQaConstants.RECALL_SEVERITY_MEDIUM);
+
+        // 负向守卫：UNSUBMITTED → withdrawApproval 非法（须 SUBMITTED）
+        ApiResponse<?> guardResp = rpc(mutation, "ErpQaRecall__withdrawApproval",
+                Map.of("id", String.valueOf(recallId)));
+        assertEquals(ErpQaErrors.ERR_INVALID_RECALL_STATUS_TRANSITION.getErrorCode(), guardResp.getCode(),
+                "UNSUBMITTED→withdrawApproval 须抛域非法迁移错误码（替代原 wf invalid-status）");
+        assertEquals(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED, reload(recallId).getApproveStatus(),
+                "守卫拒绝不应改变状态");
+
+        // 正向激活：submit → SUBMITTED → withdraw → UNSUBMITTED
+        rpcOk(mutation, "ErpQaRecall__submitForApproval", Map.of("id", String.valueOf(recallId)));
+        assertEquals(ErpQaConstants.APPROVE_STATUS_SUBMITTED, reload(recallId).getApproveStatus(),
+                "submit→SUBMITTED");
+        rpcOk(mutation, "ErpQaRecall__withdrawApproval", Map.of("id", String.valueOf(recallId)));
+        assertEquals(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED, reload(recallId).getApproveStatus(),
+                "withdraw→UNSUBMITTED（inline 提取激活 per-mutation 运行时路径）");
+    }
+
     // ---------- helpers ----------
 
     private ErpQaRecall reload(Long recallId) {

@@ -46,8 +46,8 @@ import static io.nop.api.core.beans.FilterBeans.in;
  */
 public class ErpAstCipProcessor {
 
-    private static final int SCALE = 4;
-    private static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
+    protected static final int SCALE = 4;
+    protected static final BigDecimal ONE_HUNDRED = BigDecimal.valueOf(100);
 
     @Inject
     IDaoProvider daoProvider;
@@ -56,90 +56,9 @@ public class ErpAstCipProcessor {
     ErpAstAssetCapitalizationProcessor capitalizationProcessor;
 
     // ==================== Phase 2: 状态机 + 成本归集 + 进度付款 ====================
-
-    public ErpAstCip startConstruction(Long cipId, IServiceContext context) {
-        ErpAstCip cip = requireCip(cipId, context);
-        String current = cip.getStatus();
-        if (!Objects.equals(current, ErpAstConstants.CIP_STATUS_DRAFT)) {
-            throw illegalTransition(cip, current, ErpAstConstants.CIP_STATUS_IN_CONSTRUCTION);
-        }
-        validateCipInfoComplete(cip, context);
-        cip.setStatus(ErpAstConstants.CIP_STATUS_IN_CONSTRUCTION);
-        cipDao().saveOrUpdateEntity(cip);
-        orm().flushSession();
-        return cip;
-    }
-
-    public ErpAstCipCostItem addCostItem(Long cipId, String costType, BigDecimal amountFunctional,
-                                          String sourceBillType, String sourceBillCode, String remark,
-                                          IServiceContext context) {
-        ErpAstCip cip = requireCip(cipId, context);
-        requireInConstruction(cip);
-        validateCostType(costType, cip);
-        validateAmountPositive(amountFunctional, cip);
-        if (Objects.equals(costType, ErpAstConstants.CIP_COST_TYPE_INTEREST_CAPITALIZATION)
-                && !isInterestCapitalizationEnabled()) {
-            throw new NopException(ErpAstErrors.ERR_CIP_INTEREST_CAPITALIZATION_DISABLED)
-                    .param(ErpAstErrors.ARG_CIP_CODE, cip.getCode());
-        }
-
-        BigDecimal exchangeRate = nz(cip.getExchangeRate(), BigDecimal.ONE);
-        BigDecimal amountSource = amountFunctional.divide(exchangeRate, SCALE, RoundingMode.HALF_UP);
-
-        IEntityDao<ErpAstCipCostItem> dao = costItemDao();
-        ErpAstCipCostItem item = dao.newEntity();
-        item.setCipId(cip.getId());
-        item.setOrgId(cip.getOrgId());
-        item.setLineNo(nextCostItemLineNo(cip.getId()));
-        item.setCostType(costType);
-        item.setAmountFunctional(amountFunctional);
-        item.setExchangeRate(exchangeRate);
-        item.setAmountSource(amountSource);
-        item.setCurrencyId(cip.getCurrencyId());
-        item.setSourceBillType(sourceBillType);
-        item.setSourceBillCode(sourceBillCode);
-        item.setPostedTransferFlag(false);
-        item.setBusinessDate(CoreMetrics.today());
-        item.setRemark(remark);
-        dao.saveEntity(item);
-
-        cip.setAccumulatedCost(nz(cip.getAccumulatedCost(), BigDecimal.ZERO).add(amountFunctional));
-        cipDao().saveOrUpdateEntity(cip);
-        orm().flushSession();
-        return item;
-    }
-
-    public ErpAstCipProgressBilling addProgressBilling(Long cipId, LocalDate billingDate, String billingMilestone,
-                                                        BigDecimal amountFunctional, String paymentVoucherCode,
-                                                        IServiceContext context) {
-        ErpAstCip cip = requireCip(cipId, context);
-        requireInConstruction(cip);
-        validateAmountPositive(amountFunctional, cip);
-        if (billingDate == null) {
-            throw new NopException(ErpAstErrors.ERR_CIP_AMOUNT_INVALID)
-                    .param(ErpAstErrors.ARG_CIP_CODE, cip.getCode())
-                    .param(ErpAstErrors.ARG_AMOUNT, null);
-        }
-
-        BigDecimal exchangeRate = nz(cip.getExchangeRate(), BigDecimal.ONE);
-        BigDecimal amountSource = amountFunctional.divide(exchangeRate, SCALE, RoundingMode.HALF_UP);
-
-        IEntityDao<ErpAstCipProgressBilling> dao = progressBillingDao();
-        ErpAstCipProgressBilling billing = dao.newEntity();
-        billing.setCipId(cip.getId());
-        billing.setOrgId(cip.getOrgId());
-        billing.setLineNo(nextProgressBillingLineNo(cip.getId()));
-        billing.setBillingDate(billingDate);
-        billing.setBillingMilestone(billingMilestone);
-        billing.setAmountFunctional(amountFunctional);
-        billing.setExchangeRate(exchangeRate);
-        billing.setAmountSource(amountSource);
-        billing.setCurrencyId(cip.getCurrencyId());
-        billing.setPaymentVoucherCode(paymentVoucherCode);
-        billing.setPaidFlag(true);
-        dao.saveEntity(billing);
-        return billing;
-    }
+    // D-mutation 公共入口（startConstruction/addCostItem/addProgressBilling/transferToAsset/reverseTransfer）
+    // 已按 R6.3 拆为独立 per-mutation Processor；本 facade 保留 :45 只读查询（findCostItems/findProgressBillings）
+    // + protected helper（单一真相源），处置 = slim-to-query-only-facade。
 
     public List<ErpAstCipCostItem> findCostItems(Long cipId, boolean onlyUntransferred, IServiceContext context) {
         QueryBean q = new QueryBean();
@@ -159,59 +78,8 @@ public class ErpAstCipProcessor {
     }
 
     // ==================== Phase 3: 完工转固（全部 + 部分） + reverseTransfer ====================
-
-    /**
-     * CIP 完工转固。多步编排走 protected step 方法（下游可逐 step 覆盖）。
-     */
-    public ErpAstCip transferToAsset(Long cipId, List<Long> costItemIds, LocalDate transferDate,
-                                      IServiceContext context) {
-        ErpAstCip cip = requireCip(cipId, context);
-        List<ErpAstCipCostItem> costItems = resolveCostItems(cip, costItemIds);
-        validateTransferable(cip, costItems, context);
-        ErpAstAssetCapitalization cap = buildCapitalizationRequest(cip, costItems, transferDate, context);
-        ErpAstAssetCapitalization approved = doTransfer(cap, cip, costItems, context);
-        ErpAstCip managedCip = cipDao().getEntityById(cipId);
-        postProcess(managedCip, costItems, approved, context);
-        cipDao().saveOrUpdateEntity(managedCip);
-        orm().flushSession();
-        return managedCip;
-    }
-
-    /**
-     * CIP 转固红字冲销：委托 {@link ErpAstAssetCapitalizationProcessor#reverseApprove} 红冲凭证 +
-     * 资产卡片 status 回 DRAFT + 取消折旧计划 → 回退 CostItem.postedTransferFlag → CIP 状态回 IN_CONSTRUCTION。
-     *
-     * <p>本期仅支持全部红冲（部分红冲抛 {@link ErpAstErrors#ERR_CIP_PARTIAL_REVERSE_NOT_SUPPORTED}）。
-     */
-    public ErpAstCip reverseTransfer(Long cipId, Long capitalizationId, IServiceContext context) {
-        ErpAstCip cip = requireCip(cipId, context);
-        if (!Objects.equals(cip.getStatus(), ErpAstConstants.CIP_STATUS_TRANSFERRED)) {
-            throw illegalTransition(cip, cip.getStatus(), ErpAstConstants.CIP_STATUS_IN_CONSTRUCTION);
-        }
-
-        List<ErpAstCipCostItem> capCostItems = findCostItemsByCapitalization(capitalizationId);
-        List<ErpAstCipCostItem> allCipCostItems = findCostItems(cipId, false, context);
-        if (capCostItems.size() < allCipCostItems.size()) {
-            throw new NopException(ErpAstErrors.ERR_CIP_PARTIAL_REVERSE_NOT_SUPPORTED)
-                    .param(ErpAstErrors.ARG_CIP_CODE, cip.getCode());
-        }
-
-        capitalizationProcessor.reverseApprove(String.valueOf(capitalizationId), context);
-
-        IEntityDao<ErpAstCipCostItem> dao = costItemDao();
-        for (ErpAstCipCostItem item : capCostItems) {
-            ErpAstCipCostItem managed = dao.getEntityById(item.getId());
-            managed.setPostedTransferFlag(false);
-            managed.setCapitalizationId(null);
-        }
-
-        ErpAstCip managedCip = cipDao().getEntityById(cip.getId());
-        managedCip.setStatus(ErpAstConstants.CIP_STATUS_IN_CONSTRUCTION);
-        managedCip.setIsCompleted(false);
-        managedCip.setCompletedAssetId(null);
-        orm().flushSession();
-        return managedCip;
-    }
+    // transferToAsset / reverseTransfer D-mutation 已按 R6.3 拆为独立 per-mutation Processor
+    // （ErpAstCipTransferToAssetProcessor / ErpAstCipReverseTransferProcessor），调用本 facade 下列 protected step。
 
     // ---------- transferToAsset protected steps ----------
 

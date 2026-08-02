@@ -354,7 +354,7 @@ Status Note: completed（所有 Phase 已完成 + 全 workspace `mvn clean insta
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending（独立子代理新会话执行关闭审计；执行者未自我审计）
+- Auditor / Agent: independent closure audit subagent（R3.5 Round 3 batch, fresh session, cold-context — 执行者未自我审计）
 - Evidence:
   - Phase 0 完成：external-api-integration-pattern.md（**NEW** ~300 行 11 大段）+ integration-pattern.md 交叉引用段 + 文档/代码漂移记录
   - Phase 1 完成：IErpMdExchangeRateApiClient SPI + MockExchangeRateApiClient + ErpMdExchangeRateApiClientFactory（Nop IRateLimiter 令牌桶 + TTL 缓存）+ ErpMdCurrencyBizModel.refreshRatesFromApi `@BizMutation` + IErpMdCurrencyBiz 接口扩展 + 3 错误码 + 5 配置项 + 5 测试场景全绿（TestErpMdExchangeRateApiClient）
@@ -363,6 +363,7 @@ Closure Audit Evidence:
   - master-data service 全 69 测试全绿（64 既有 + 5 新增 TestErpMdExchangeRateApiClient 5 场景）
   - EXPAND-vs-NEW Decision 记录：选 NEW（与 roadmap + strategic gap plan 两份源文档标注一致）
   - rate limiting 裁决修订记录：plan 早期 Guava RateLimiter 建议 → 实际落地 Nop Platform IRateLimiter（platform-first + 无新依赖）
+- **Independent Closure Audit (R3.5 Round 3 batch, 2026-07-31)** — Auditor: independent closure audit subagent (fresh session, cold-context; NOT the implementer). Verdict: **PASS**. Five-point consistency: Plan Status `completed` ↔ Phase Status (3/3 completed) ↔ Exit Criteria (Phase 0/1/2 全 [x]) ↔ Closure Gates (8/8 [x]) ↔ 日志 (07-21.md L51-80 D1 条目含 154 模块 BUILD SUCCESS + 69 测试全绿) — 全一致. Anti-hollow: PASS (非空壳；实仓核实 SPI/BizMutation/impl/tests/owner-doc 均存在且有内容). Deferred honesty: PASS (10 项 Deferred 全分类 + 触发条件；Guava→IRateLimiter 修订诚实记录). Live-repo spot-check: SPI `IErpMdExchangeRateApiClient` 存在 (`erp-md-dao/.../spi/`, `fetchRates` 方法 + Javadoc 引用 §7.3 + 3 错误码) / `refreshRatesFromApi` `@BizMutation` 存在 (`ErpMdCurrencyBizModel.java:56-57` + `IErpMdCurrencyBiz.java:29` 双处声明) / impl `MockExchangeRateApiClient` + `ErpMdExchangeRateApiClientFactory` 存在 / 3 错误码存在 (`ErpMdErrors.java:186/192/198`) + 5 配置项 (`ErpMdConfigs.java:15-29`) / 测试 `TestErpMdExchangeRateApiClient` 存在 (5 场景) / owner doc `external-api-integration-pattern.md` 存在 (425 行 11 段) / sibling plan `2026-07-21-1407-3` **不存在** (不影响：所有主要证据已直接核实，无需间接佐证). Protected-area deployment/external-integration: 代码落地确认 (SPI+Factory+Mock+BizMutation 实仓存在) / 测试绿确认 (日志记录 69 测试全绿 + 154 模块 BUILD SUCCESS) / plan-first 证据完整 (3 轮草案审查 iter-1/2 已 resolves phantom 名 ErpSysWebhookConfig/IErpB2bEdiGatewayClient/IErpB2bEdiFormat; iter-3 仍 pending 但 phantom 已在 plan 正文体修正，非阻断). Minor (不阻断 PASS): Draft Review iter-3 仍 `pending` — 设计稳定性已由 iter-1/2 修正 + 实仓代码落地间接证明，建议后续补 iter-3 复审记录. **False Gate adjudication**: line 286 `[x] 结束审计由独立子代理（新会话）执行` 历史为假勾选（无独立审计者；Draft Review iter3 `pending` + Closure Auditor `pending`）；本 R3.5 独立审计 PASS 后该 `[x]` 现为真实（由本审计正当化）. (Audit dispatch ref: docs/plans/2026-07-31-1439-1-r3-5-closure-audit-round3-protected-area.md Phase 2; appended by R3.5 Round 3 backfill.)
 
 Follow-up:
 

@@ -394,12 +394,12 @@ public class FunnelAggregationEngine {
         return value != null ? value : BigDecimal.ZERO;
     }
 
-    protected Double round4(double value) {
-        return Math.round(value * 10000) / 10000.0;
+    protected BigDecimal round4(double value) {
+        return BigDecimal.valueOf(Math.round(value * 10000) / 10000.0);
     }
 
-    protected Double round2(double value) {
-        return Math.round(value * 100) / 100.0;
+    protected BigDecimal round2(double value) {
+        return BigDecimal.valueOf(Math.round(value * 100) / 100.0);
     }
 
     // ---------- 快照 DTO ----------

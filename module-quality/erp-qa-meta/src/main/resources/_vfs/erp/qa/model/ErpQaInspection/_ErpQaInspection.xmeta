@@ -65,9 +65,13 @@
               sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
             <schema type="java.lang.Long"/>
         </prop>
-        <prop name="batchNo" displayName="批号" propId="13" i18n-en:displayName="Batch No" queryable="true"
+        <prop name="batchNo" displayName="批号" propId="12" i18n-en:displayName="Batch No" queryable="true"
               sortable="true" insertable="true" updatable="true">
             <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="businessDate" displayName="业务日期" propId="13" i18n-en:displayName="Business Date" tagSet="clock"
+              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="inspectionDate" displayName="检验日期" propId="14" i18n-en:displayName="Inspection Date"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -91,7 +95,7 @@
         </prop>
         <prop name="docStatus" displayName="单据状态" propId="19" i18n-en:displayName="Doc Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="20" dict="erp-qa/doc-status"/>
+            <schema type="java.lang.String" precision="20" dict="erp/doc-status"/>
         </prop>
         <prop name="approveStatus" displayName="审核状态" propId="20" i18n-en:displayName="Approve Status" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -144,10 +148,6 @@
         <prop name="updateTime" displayName="修改时间" propId="32" i18n-en:displayName="Update Time" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
-        </prop>
-        <prop name="businessDate" displayName="业务日期" propId="33" i18n-en:displayName="Business Date" tagSet="clock"
-              mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.time.LocalDate"/>
         </prop>
         <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"

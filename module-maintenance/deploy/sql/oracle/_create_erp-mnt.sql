@@ -206,6 +206,8 @@ CREATE TABLE erp_mnt_calibration(
   CALIBRATED_BY NUMBER(20)  ,
   DOC_STATUS VARCHAR2(20) NOT NULL ,
   APPROVE_STATUS VARCHAR2(20) NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT TIMESTAMP  ,
   REMARK VARCHAR2(1000)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
@@ -213,8 +215,6 @@ CREATE TABLE erp_mnt_calibration(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
-  APPROVED_BY VARCHAR2(36)  ,
-  APPROVED_AT TIMESTAMP  ,
   constraint PK_erp_mnt_calibration primary key (ID)
 );
 
@@ -250,17 +250,17 @@ CREATE TABLE erp_mnt_visit(
   VISIT_TYPE VARCHAR2(20)  ,
   RESULT VARCHAR2(20)  ,
   REMARK VARCHAR2(1000)  ,
+  ORG_ID NUMBER(20)  ,
+  BUSINESS_DATE DATE  ,
+  POSTED CHAR(1) default 0   ,
+  POSTED_AT TIMESTAMP  ,
+  POSTED_BY VARCHAR2(50)  ,
   DEL_VERSION NUMBER(20) default 0  NOT NULL ,
   VERSION INTEGER default 0  NOT NULL ,
   CREATED_BY VARCHAR2(50) NOT NULL ,
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
-  ORG_ID NUMBER(20)  ,
-  BUSINESS_DATE DATE  ,
-  POSTED CHAR(1) default 0   ,
-  POSTED_AT TIMESTAMP  ,
-  POSTED_BY VARCHAR2(50)  ,
   constraint PK_erp_mnt_visit primary key (ID)
 );
 
@@ -294,6 +294,8 @@ CREATE TABLE erp_mnt_spare_part_usage(
   TOTAL_AMOUNT NUMBER(20,4) default 0   ,
   DOC_STATUS VARCHAR2(20) NOT NULL ,
   APPROVE_STATUS VARCHAR2(20) NOT NULL ,
+  APPROVED_BY VARCHAR2(36)  ,
+  APPROVED_AT TIMESTAMP  ,
   POSTED CHAR(1) default 0   ,
   POSTED_AT TIMESTAMP  ,
   POSTED_BY VARCHAR2(36)  ,
@@ -304,8 +306,6 @@ CREATE TABLE erp_mnt_spare_part_usage(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
-  APPROVED_BY VARCHAR2(36)  ,
-  APPROVED_AT TIMESTAMP  ,
   constraint PK_erp_mnt_spare_part_usage primary key (ID)
 );
 
@@ -582,6 +582,10 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                     
       COMMENT ON COLUMN erp_mnt_calibration.APPROVE_STATUS IS '审核状态';
                     
+      COMMENT ON COLUMN erp_mnt_calibration.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mnt_calibration.APPROVED_AT IS '审核时间';
+                    
       COMMENT ON COLUMN erp_mnt_calibration.REMARK IS '备注';
                     
       COMMENT ON COLUMN erp_mnt_calibration.DEL_VERSION IS '逻辑删除版本';
@@ -595,10 +599,6 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
       COMMENT ON COLUMN erp_mnt_calibration.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_mnt_calibration.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_mnt_calibration.APPROVED_BY IS '审核人';
-                    
-      COMMENT ON COLUMN erp_mnt_calibration.APPROVED_AT IS '审核时间';
                     
       COMMENT ON TABLE erp_mnt_maintenance_team_member IS '维护团队成员';
                 
@@ -658,6 +658,16 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                     
       COMMENT ON COLUMN erp_mnt_visit.REMARK IS '备注';
                     
+      COMMENT ON COLUMN erp_mnt_visit.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.POSTED IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.POSTED_AT IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_mnt_visit.POSTED_BY IS '过账人';
+                    
       COMMENT ON COLUMN erp_mnt_visit.DEL_VERSION IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_mnt_visit.VERSION IS '数据版本';
@@ -669,16 +679,6 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
       COMMENT ON COLUMN erp_mnt_visit.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_mnt_visit.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_mnt_visit.ORG_ID IS '业务组织';
-                    
-      COMMENT ON COLUMN erp_mnt_visit.BUSINESS_DATE IS '业务日期';
-                    
-      COMMENT ON COLUMN erp_mnt_visit.POSTED IS '是否已过账';
-                    
-      COMMENT ON COLUMN erp_mnt_visit.POSTED_AT IS '过账时间';
-                    
-      COMMENT ON COLUMN erp_mnt_visit.POSTED_BY IS '过账人';
                     
       COMMENT ON TABLE erp_mnt_visit_task IS '维护任务';
                 
@@ -734,6 +734,10 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                     
       COMMENT ON COLUMN erp_mnt_spare_part_usage.APPROVE_STATUS IS '审核状态';
                     
+      COMMENT ON COLUMN erp_mnt_spare_part_usage.APPROVED_BY IS '审核人';
+                    
+      COMMENT ON COLUMN erp_mnt_spare_part_usage.APPROVED_AT IS '审核时间';
+                    
       COMMENT ON COLUMN erp_mnt_spare_part_usage.POSTED IS '已过账(库存已出库)';
                     
       COMMENT ON COLUMN erp_mnt_spare_part_usage.POSTED_AT IS '过账时间';
@@ -753,10 +757,6 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
       COMMENT ON COLUMN erp_mnt_spare_part_usage.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_mnt_spare_part_usage.UPDATE_TIME IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_mnt_spare_part_usage.APPROVED_BY IS '审核人';
-                    
-      COMMENT ON COLUMN erp_mnt_spare_part_usage.APPROVED_AT IS '审核时间';
                     
       COMMENT ON TABLE erp_mnt_spare_part_usage_line IS '备件消耗行';
                 

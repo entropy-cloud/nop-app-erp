@@ -55,38 +55,38 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
     
     /* 检验方法: INSPECTION_METHOD VARCHAR */
     public static final String PROP_NAME_inspectionMethod = "inspectionMethod";
-    public static final int PROP_ID_inspectionMethod = 10;
+    public static final int PROP_ID_inspectionMethod = 9;
     
     /* 排序: SORT_NUM INTEGER */
     public static final String PROP_NAME_sortNum = "sortNum";
-    public static final int PROP_ID_sortNum = 11;
+    public static final int PROP_ID_sortNum = 10;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 12;
+    public static final int PROP_ID_delVersion = 11;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 13;
+    public static final int PROP_ID_version = 12;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 14;
+    public static final int PROP_ID_createdBy = 13;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 15;
+    public static final int PROP_ID_createTime = 14;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 16;
+    public static final int PROP_ID_updatedBy = 15;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 17;
+    public static final int PROP_ID_updateTime = 16;
     
 
-    private static int _PROP_ID_BOUND = 18;
+    private static int _PROP_ID_BOUND = 17;
 
     
     /* relation:  */
@@ -96,7 +96,7 @@ public class _ErpQaInspectionTemplateLine extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[18];
+    private static final String[] PROP_ID_TO_NAME = new String[17];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       

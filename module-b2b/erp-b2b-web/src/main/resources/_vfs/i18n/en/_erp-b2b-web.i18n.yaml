@@ -20,6 +20,12 @@ site:
       displayName: MFT Log
     ErpB2bPartnerProfile-main:
       displayName: Partner Profile
+    FNPT:ErpB2bAsn:handleInboundWebhook:
+      displayName: Handle Inbound Webhook
+    FNPT:ErpB2bEdiDoc:cancel:
+      displayName: Cancel EDI
+    FNPT:ErpB2bEdiDoc:markSent:
+      displayName: Mark Sent
     b2b-asn:
       displayName: ASN Management
     b2b-asn-flow:

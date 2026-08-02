@@ -28,10 +28,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
 
 /**
- * APS 排程 → 工序卡自动生成 Processor（plan 2026-07-05-0427-3）。
- *
- * <p>Facade {@code ErpMfgWorkOrderBizModel} 的 {@code generateJobCardsFromSchedule} /
- * {@code findWorkOrdersPendingJobCards} / {@code generatePendingJobCards} 委托本类。
+ * APS 排程 → 工序卡自动生成共享 helper 持有者（R6.2 per-mutation 拆分后 facade 瘦身：2 个 D-mutation public
+ * 入口已迁入 {@code ErpMfgScheduleToJobCard<Method>Processor}，本类仅保留 protected helper 供 per-mutation
+ * Processor 经同包调用；{@link #findWorkOrdersPendingJobCards} 为 :45 只读查询豁免保留）。
  *
  * <p>跨域读 APS 已排程工序：复用 {@link IErpApsLoadSourceProvider} SPI（plan 0306-2 范式，声明于 mfg-dao、
  * 实现于 aps-service，经 {@code ioc:collect-beans by-type} 收集）。选用理由：SPI 已暴露本计划所需的
@@ -39,8 +38,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * 且 APS 模块缺失时收集到空 list（行为降级为「无排程」），无需 mfg-service 新增对 aps-dao 实体的编译依赖，
  * 也无需向 {@code IErpApsOperationOrderBiz} 增加专用查询方法（避免扩大跨域 I*Biz 契约）。
  *
- * <p>同域持久化：{@link IDaoProvider}（对齐既有 {@code ErpMfgJobCardProcessor}/{@code ErpMfgWorkOrderProcessor}
- * 的 Processor 层范式——Processor 非 BizModel，同域实体读写用 IDaoProvider）。
+ * <p>同域持久化：{@link IDaoProvider}（对齐既有 Processor 层范式——Processor 非 BizModel，同域实体读写用 IDaoProvider）。
  *
  * <p>事务边界：跟随 Facade {@code @BizMutation} 事务，本类不带 {@code @Transactional}。
  */
@@ -70,31 +68,7 @@ public class ErpMfgScheduleToJobCardProcessor {
         this.apsLoadSourceProviders = apsLoadSourceProviders;
     }
 
-    public ErpMfgWorkOrder generateJobCardsFromSchedule(Long workOrderId, IServiceContext context) {
-        ErpMfgWorkOrder wo = requireWorkOrder(workOrderId);
-        validateStatusForJobCardGen(wo);
-
-        List<ApsLoadSlot> slots = fetchSlots(Collections.singletonList(workOrderId));
-        if (slots.isEmpty()) {
-            throw new NopException(ErpMfgErrors.ERR_NO_SCHEDULED_OPERATIONS)
-                    .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
-        }
-
-        List<ErpMfgJobCard> existing = findJobCardsForWorkOrder(workOrderId);
-        List<ApsLoadSlot> toBuild = resolveSlotsToBuild(slots, existing, wo);
-        if (toBuild.isEmpty()) {
-            return wo;
-        }
-
-        for (ApsLoadSlot slot : toBuild) {
-            ErpMfgJobCard jc = newJobCard(wo, slot);
-            jobCardDao().saveEntity(jc);
-        }
-
-        markWorkOrderScheduled(wo, slots);
-        workOrderDao().updateEntity(wo);
-        return wo;
-    }
+    // ---------- :45 只读查询豁免（保留 facade） ----------
 
     public List<ErpMfgWorkOrder> findWorkOrdersPendingJobCards(Integer limit, IServiceContext context) {
         if (apsLoadSourceProviders == null || apsLoadSourceProviders.isEmpty()) {
@@ -136,28 +110,6 @@ public class ErpMfgScheduleToJobCardProcessor {
             }
         }
         return result;
-    }
-
-    public Integer generatePendingJobCards(IServiceContext context) {
-        if (!isAutoGenerateEnabled()) {
-            LOG.info("erp-mfg-jobcard-auto-gen-skipped: erp-mfg.jobcard-auto-generate-on-schedule=false");
-            return 0;
-        }
-        List<ErpMfgWorkOrder> pending = findWorkOrdersPendingJobCards(DEFAULT_PENDING_LIMIT, context);
-        if (pending.isEmpty()) {
-            return 0;
-        }
-        int success = 0;
-        for (ErpMfgWorkOrder wo : pending) {
-            try {
-                generateJobCardsFromSchedule(wo.getId(), context);
-                success++;
-            } catch (Exception e) {
-                LOG.warn("erp-mfg-jobcard-auto-gen-failed: workOrderId={} code={}", wo.getId(), wo.getCode(), e);
-            }
-        }
-        LOG.info("erp-mfg-jobcard-auto-gen-done: total={} success={}", pending.size(), success);
-        return success;
     }
 
     // ---------- step：校验/解析（protected，下游可逐个覆盖） ----------

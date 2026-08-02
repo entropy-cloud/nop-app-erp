@@ -4,7 +4,6 @@
 > 持久化字段定义权威：`module-notify/model/app-erp-notify.orm.xml`（`ErpSysNotification` / `ErpSysNotificationRead`）。
 > 后端 BizModel 权威：`module-notify/erp-notify-service/.../ErpSysNotificationBizModel.java`。
 > 通知策略权威：`docs/architecture/notification-strategy.md`。
-> 落地计划：`docs/plans/2026-07-19-2200-3-notify-inbox-page.md`。
 
 ## 设计目标
 
@@ -126,4 +125,4 @@ private String resolveUserId(String userId, IServiceContext ctx) {
 - `markUnread` 反向操作（当前 BizModel 单向 markRead）
 - 通知批量删除 / 归档 + 数据保留策略
 - 审批类通知专用渲染（含「去审批」跳转按钮，依赖 xwf 浏览器层可达性突破）
-- i18n（`i18n-en:` 属性）—— ✅ 已落地（F15 plan `2026-07-23-0818-1`：notify inbox view.xml 手写层 `i18n-en:label`/`i18n-en:title` 全覆盖）
+- i18n（`i18n-en:` 属性）—— notify inbox view.xml 手写层 `i18n-en:label`/`i18n-en:title` 全覆盖

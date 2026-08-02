@@ -27,4 +27,29 @@
 
     <bean id="app.erp.ct.service.spi.mock.MockSignatureProvider"
           class="app.erp.ct.service.spi.mock.MockSignatureProvider"/>
+
+
+    <!-- per-mutation Cat-B D-mutation Processor beans (R6.7)：类别 B 内联 mutation 每 mutation 独立 Processor。
+         自包含 body（VERBATIM 迁移 + CrudBizModel 管道方法替换为 raw dao 等价）；下游可经 Delta beans.xml 同名 bean id 覆盖。 -->
+    <bean id="app.erp.ct.service.processor.ErpCtContractActivateProcessor"
+          class="app.erp.ct.service.processor.ErpCtContractActivateProcessor"/>
+    <bean id="app.erp.ct.service.processor.ErpCtContractAmendProcessor"
+          class="app.erp.ct.service.processor.ErpCtContractAmendProcessor"/>
+    <bean id="app.erp.ct.service.processor.ErpCtContractVersionSignVersionProcessor"
+          class="app.erp.ct.service.processor.ErpCtContractVersionSignVersionProcessor"/>
+    <bean id="app.erp.ct.service.processor.ErpCtInvoicePlanTriggerInvoiceProcessor"
+          class="app.erp.ct.service.processor.ErpCtInvoicePlanTriggerInvoiceProcessor"/>
+    <bean id="app.erp.ct.service.processor.ErpCtInvoicePlanTriggerDuePlansProcessor"
+          class="app.erp.ct.service.processor.ErpCtInvoicePlanTriggerDuePlansProcessor"/>
+    <bean id="app.erp.ct.service.processor.ErpCtRebateAgreementRunAccrualProcessor"
+          class="app.erp.ct.service.processor.ErpCtRebateAgreementRunAccrualProcessor"/>
+    <bean id="app.erp.ct.service.processor.ErpCtRebateSettlementPostSettlementProcessor"
+          class="app.erp.ct.service.processor.ErpCtRebateSettlementPostSettlementProcessor"/>
+    <!-- SignatureRequest 3 D-mutation 共享状态机核心，集中 AbstractErpCtSignatureRequestProcessor 基类 -->
+    <bean id="app.erp.ct.service.processor.ErpCtSignatureRequestInitSignatureRequestProcessor"
+          class="app.erp.ct.service.processor.ErpCtSignatureRequestInitSignatureRequestProcessor"/>
+    <bean id="app.erp.ct.service.processor.ErpCtSignatureRequestHandleSignatureCallbackProcessor"
+          class="app.erp.ct.service.processor.ErpCtSignatureRequestHandleSignatureCallbackProcessor"/>
+    <bean id="app.erp.ct.service.processor.ErpCtSignatureRequestQueryAndUpdateStatusProcessor"
+          class="app.erp.ct.service.processor.ErpCtSignatureRequestQueryAndUpdateStatusProcessor"/>
 </beans>

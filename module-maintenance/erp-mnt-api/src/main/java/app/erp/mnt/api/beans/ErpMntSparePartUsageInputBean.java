@@ -170,7 +170,7 @@
         private String _remark;
 
     
-        @PropMeta(propId=15)
+        @PropMeta(propId=17)
     
         public String getRemark(){
             return _remark;

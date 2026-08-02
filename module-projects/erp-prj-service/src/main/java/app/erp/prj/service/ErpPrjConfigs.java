@@ -24,6 +24,12 @@ public interface ErpPrjConfigs {
     /** 任务 startTask 前置任务完成强校验默认启用（STRICT 模式；对齐 task-dag.md §4.3）。 */
     boolean DEFAULT_TASK_STRICT_PREDECESSOR_CHECK = true;
 
+    /** closeProject 任务结束前置校验默认启用（STRICT 模式；对齐 state-machine.md §迁移完整性 OPEN→COMPLETED）。 */
+    boolean DEFAULT_STRICT_PROJECT_TASK_COMPLETION_CHECK = true;
+
+    /** startProject 字段前置校验默认启用（STRICT 模式；对齐 state-machine.md §迁移完整性 DRAFT→OPEN）。 */
+    boolean DEFAULT_STRICT_PROJECT_START_PRECHECK = true;
+
     static String budgetControlMode() {
         String mode = io.nop.api.core.config.AppConfig.var(
                 ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE, DEFAULT_BUDGET_CONTROL_MODE);
@@ -91,6 +97,20 @@ public interface ErpPrjConfigs {
         Boolean flag = io.nop.api.core.config.AppConfig.var(
                 ErpPrjConstants.CONFIG_TASK_STRICT_PREDECESSOR_CHECK,
                 ErpPrjConfigs.DEFAULT_TASK_STRICT_PREDECESSOR_CHECK);
+        return flag == null || flag;
+    }
+
+    static boolean strictProjectTaskCompletionCheck() {
+        Boolean flag = io.nop.api.core.config.AppConfig.var(
+                ErpPrjConstants.CONFIG_STRICT_PROJECT_TASK_COMPLETION_CHECK,
+                ErpPrjConfigs.DEFAULT_STRICT_PROJECT_TASK_COMPLETION_CHECK);
+        return flag == null || flag;
+    }
+
+    static boolean strictProjectStartPrecheck() {
+        Boolean flag = io.nop.api.core.config.AppConfig.var(
+                ErpPrjConstants.CONFIG_STRICT_PROJECT_START_PRECHECK,
+                ErpPrjConfigs.DEFAULT_STRICT_PROJECT_START_PRECHECK);
         return flag == null || flag;
     }
 }

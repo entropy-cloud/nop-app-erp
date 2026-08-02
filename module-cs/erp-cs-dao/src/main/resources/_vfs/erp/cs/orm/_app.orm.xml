@@ -57,11 +57,6 @@
             <option code="CLOSE" label="关闭" value="CLOSE" i18n-en:label="Close"/>
             <option code="CANCEL" label="取消" value="CANCEL" i18n-en:label="Cancel"/>
         </dict>
-        <dict label="单据状态" name="erp-cs/doc-status" valueType="string" i18n-en:label="Doc Status">
-            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label="Draft"/>
-            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label="Effective"/>
-            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label="Voided"/>
-        </dict>
         <dict label="调查发送渠道" name="erp-cs/survey-channel" valueType="string" i18n-en:label="Survey Channel">
             <option code="EMAIL" label="邮件" value="EMAIL" i18n-en:label="Email"/>
             <option code="PHONE" label="电话" value="PHONE" i18n-en:label="Phone"/>
@@ -182,7 +177,7 @@
                         stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/ticket-status"
                         i18n-en:displayName="Status"/>
                 <column code="DOC_STATUS" displayName="单据状态" mandatory="true" name="docStatus" precision="20"
-                        propId="20" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/doc-status"
+                        propId="20" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp/doc-status"
                         i18n-en:displayName="Doc Status"/>
                 <column code="APPROVE_STATUS" displayName="审核状态" mandatory="true" name="approveStatus" precision="20"
                         propId="21" stdDataType="string" stdSqlType="VARCHAR" ext:dict="wf/approve-status"

@@ -47,6 +47,51 @@ public class ReconciliationSettler {
     }
 
     /**
+     * 多币种过账结算（R1.9 / P1-MA2-009）：按 per-item functional（settledSource × item.exchangeRate）分别回写双方辅助账，
+     * 计算已实现汇兑差额 = Σ(payment.functionalSettled) − Σ(invoice.functionalSettled)。
+     *
+     * <p>head.totalAmountFunctional 取发票侧合计（AR/AP 清账口径）；head.fxGainLoss 记录汇兑差额（正=收益，负=损失）。
+     * 单币种（双方 rate 相同）时差额=0，退化为 {@link #settle} 行为。
+     *
+     * @return 已实现汇兑差额（payment − invoice；正=收益，负=损失）
+     */
+    public BigDecimal settleWithFx(ErpFinReconciliation head, List<ErpFinReconciliationLine> lines) {
+        Map<Long, ErpFinArApItem> cache = loadItems(lines);
+        BigDecimal totalInvoiceFunctional = BigDecimal.ZERO;
+        BigDecimal totalPaymentFunctional = BigDecimal.ZERO;
+        BigDecimal totalSource = BigDecimal.ZERO;
+        for (ErpFinReconciliationLine line : lines) {
+            BigDecimal settledSource = nz(line.getSettledAmountSource());
+            ErpFinArApItem paymentItem = cache.get(line.getPaymentItemId());
+            ErpFinArApItem invoiceItem = cache.get(line.getInvoiceItemId());
+            BigDecimal paymentFunctional = computeFunctionalSettled(paymentItem, settledSource);
+            BigDecimal invoiceFunctional = computeFunctionalSettled(invoiceItem, settledSource);
+            applySettlement(paymentItem, paymentFunctional, settledSource, false);
+            applySettlement(invoiceItem, invoiceFunctional, settledSource, false);
+            totalPaymentFunctional = totalPaymentFunctional.add(paymentFunctional);
+            totalInvoiceFunctional = totalInvoiceFunctional.add(invoiceFunctional);
+            totalSource = totalSource.add(settledSource);
+        }
+        BigDecimal fxGainLoss = totalPaymentFunctional.subtract(totalInvoiceFunctional);
+        head.setTotalAmountFunctional(totalInvoiceFunctional);
+        head.setTotalAmountSource(totalSource);
+        head.setFxGainLoss(fxGainLoss);
+        return fxGainLoss;
+    }
+
+    /**
+     * 按 item 自身汇率折算本位币结算额：settledSource × item.exchangeRate。
+     * item 无汇率时回退 line 提供的 settledAmountFunctional（向后兼容无汇率辅助账）。
+     */
+    protected BigDecimal computeFunctionalSettled(ErpFinArApItem item, BigDecimal settledSource) {
+        if (item == null) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal rate = item.getExchangeRate() != null ? item.getExchangeRate() : BigDecimal.ONE;
+        return settledSource.multiply(rate);
+    }
+
+    /**
      * 红冲结算：按原核销行的相反数恢复双方辅助账（settled-=amt / open+=amt / 状态降级回 OPEN 或 PARTIAL）。
      */
     public void reverseSettle(List<ErpFinReconciliationLine> lines) {

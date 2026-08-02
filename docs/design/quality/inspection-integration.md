@@ -168,6 +168,10 @@ CAPA 执行
         │           └─► 验证失败 → 返回重新制定措施
         │
         └─► 验证通过 → NCR 状态转为 RESOLVED（已解决）
+
+> **无 CAPA 措施的 resolve 门控**：当 NCR 无关联 CAPA 措施时，resolve 须显式提供 `noCapaReason`
+> （误开/降级场景显式标注），否则抛 `ERR_NCR_RESOLVE_NO_CAPA`。有 CAPA 措施时必须全部完成 +
+> 效果验证才能关闭 NCR（闭环）。
 ```
 
 ### 4.4 NCR 状态流转

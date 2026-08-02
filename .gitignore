@@ -34,6 +34,9 @@ tools/report/
 # Local database
 db/
 
+# jqwik property-test run database (failed-run memory, regenerated per test run)
+.jqwik-database
+
 # Windows artifact
 nul
 

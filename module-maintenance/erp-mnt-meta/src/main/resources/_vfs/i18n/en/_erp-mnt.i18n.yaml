@@ -32,6 +32,8 @@ prop:
       docStatus_label: null
       approveStatus: Approve Status
       approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
       remark: Remark
       delVersion: Del Flag
       version: Version
@@ -39,8 +41,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      approvedBy: Approved By
-      approvedAt: Approved At
       equipment: Equipment
       calibratedByEmployee: Calibrated By Employee
       calibratedByEmployee.name: Calibrated By Employee
@@ -205,6 +205,8 @@ prop:
       docStatus_label: null
       approveStatus: Approve Status
       approveStatus_label: null
+      approvedBy: Approved By
+      approvedAt: Approved At
       posted: Posted
       postedAt: Posted At
       postedBy: Posted By
@@ -215,8 +217,6 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      approvedBy: Approved By
-      approvedAt: Approved At
       visit: Visit
       request: Request
       equipment: Equipment
@@ -266,17 +266,17 @@ prop:
       result: Result
       result_label: null
       remark: Remark
+      orgId: Organization
+      businessDate: Business Date
+      posted: Posted
+      postedAt: Posted At
+      postedBy: Posted By
       delVersion: Del Flag
       version: Version
       createdBy: Created By
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
-      orgId: Organization
-      businessDate: Business Date
-      posted: Posted
-      postedAt: Posted At
-      postedBy: Posted By
       schedule: Schedule
       equipment: Equipment
       tasks: Tasks
@@ -309,7 +309,6 @@ dict:
     erp-mnt/recurrence-type: Recurrence Type
     erp-mnt/priority: Priority
     erp-mnt/visit-task-status: Maintenance Task Status
-    erp-mnt/doc-status: Doc Status
     erp-mnt/calibration-result: Calibration Result
     erp-mnt/visit-type: Maintenance Type
     erp-mnt/visit-result: Execution Result
@@ -353,10 +352,6 @@ dict.option.label:
     COMPLETED: Completed
     SKIPPED: Skipped
     FAILED: Failed
-  erp-mnt/doc-status:
-    DRAFT: Draft
-    ACTIVE: Effective
-    CANCELLED: Voided
   erp-mnt/calibration-result:
     PASS: Conforming
     FAIL: Non-conforming

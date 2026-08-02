@@ -180,52 +180,10 @@
         }
 
 
-        private String _remark;
-
-    
-        @PropMeta(propId=19)
-    
-        public String getRemark(){
-            return _remark;
-        }
-
-        public void setRemark(String value){
-            this._remark = value;
-        }
-
-
-        private Long _projectId;
-
-    
-        @PropMeta(propId=20)
-    
-        public Long getProjectId(){
-            return _projectId;
-        }
-
-        public void setProjectId(Long value){
-            this._projectId = value;
-        }
-
-
-        private String _cipAssetCategorySnapshot;
-
-    
-        @PropMeta(propId=21)
-    
-        public String getCipAssetCategorySnapshot(){
-            return _cipAssetCategorySnapshot;
-        }
-
-        public void setCipAssetCategorySnapshot(String value){
-            this._cipAssetCategorySnapshot = value;
-        }
-
-
         private java.math.BigDecimal _exchangeRate;
 
     
-        @PropMeta(propId=25)
+        @PropMeta(propId=16)
     
         public java.math.BigDecimal getExchangeRate(){
             return _exchangeRate;
@@ -239,7 +197,7 @@
         private java.math.BigDecimal _amountSource;
 
     
-        @PropMeta(propId=26)
+        @PropMeta(propId=17)
     
         public java.math.BigDecimal getAmountSource(){
             return _amountSource;
@@ -253,7 +211,7 @@
         private java.math.BigDecimal _amountFunctional;
 
     
-        @PropMeta(propId=27)
+        @PropMeta(propId=18)
     
         public java.math.BigDecimal getAmountFunctional(){
             return _amountFunctional;
@@ -261,6 +219,48 @@
 
         public void setAmountFunctional(java.math.BigDecimal value){
             this._amountFunctional = value;
+        }
+
+
+        private Long _projectId;
+
+    
+        @PropMeta(propId=19)
+    
+        public Long getProjectId(){
+            return _projectId;
+        }
+
+        public void setProjectId(Long value){
+            this._projectId = value;
+        }
+
+
+        private String _cipAssetCategorySnapshot;
+
+    
+        @PropMeta(propId=20)
+    
+        public String getCipAssetCategorySnapshot(){
+            return _cipAssetCategorySnapshot;
+        }
+
+        public void setCipAssetCategorySnapshot(String value){
+            this._cipAssetCategorySnapshot = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=27)
+    
+        public String getRemark(){
+            return _remark;
+        }
+
+        public void setRemark(String value){
+            this._remark = value;
         }
 
 

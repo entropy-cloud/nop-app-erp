@@ -127,6 +127,10 @@ CREATE TABLE erp_ast_asset_capitalization(
   posted_by VARCHAR(36)  ,
   approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
+  business_date DATE  ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
@@ -134,10 +138,6 @@ CREATE TABLE erp_ast_asset_capitalization(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
-  business_date DATE  ,
-  exchange_rate NUMERIC(20,8) NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_asset_capitalization primary key (id)
 );
 
@@ -191,17 +191,17 @@ CREATE TABLE erp_ast_depreciation_schedule(
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(36)  ,
   voucher_id INT8  ,
+  business_date DATE  ,
+  currency_id INT8  ,
+  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
-  business_date DATE  ,
-  currency_id INT8  ,
-  exchange_rate NUMERIC(20,8) default 1  NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_depreciation_schedule primary key (id)
 );
 
@@ -222,9 +222,15 @@ CREATE TABLE erp_ast_movement(
   handler_id INT8  ,
   doc_status VARCHAR(20) NOT NULL ,
   approve_status VARCHAR(20) NOT NULL ,
+  approved_by VARCHAR(36)  ,
+  approved_at TIMESTAMP  ,
   posted BOOLEAN default false   ,
   posted_at TIMESTAMP  ,
   posted_by VARCHAR(36)  ,
+  currency_id INT8  ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   doc_version VARCHAR(20) default '1'  NOT NULL ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
@@ -233,12 +239,6 @@ CREATE TABLE erp_ast_movement(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
-  approved_by VARCHAR(36)  ,
-  approved_at TIMESTAMP  ,
-  currency_id INT8  ,
-  exchange_rate NUMERIC(20,8) NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_movement primary key (id)
 );
 
@@ -260,6 +260,8 @@ CREATE TABLE erp_ast_value_adjustment(
   posted_by VARCHAR(36)  ,
   approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
@@ -267,8 +269,6 @@ CREATE TABLE erp_ast_value_adjustment(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_value_adjustment primary key (id)
 );
 
@@ -291,6 +291,8 @@ CREATE TABLE erp_ast_disposal(
   posted_by VARCHAR(36)  ,
   approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
@@ -299,8 +301,6 @@ CREATE TABLE erp_ast_disposal(
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
   nop_flow_id VARCHAR(32)  ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_disposal primary key (id)
 );
 
@@ -317,6 +317,14 @@ CREATE TABLE erp_ast_cip(
   is_completed BOOLEAN default false   ,
   completed_asset_id INT8  ,
   status VARCHAR(20) NOT NULL ,
+  posted BOOLEAN default false   ,
+  posted_at TIMESTAMP  ,
+  posted_by VARCHAR(50)  ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
+  project_id INT8  ,
+  cip_asset_category_snapshot VARCHAR(500)  ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
@@ -324,14 +332,6 @@ CREATE TABLE erp_ast_cip(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
-  project_id INT8  ,
-  cip_asset_category_snapshot VARCHAR(500)  ,
-  posted BOOLEAN default false   ,
-  posted_at TIMESTAMP  ,
-  posted_by VARCHAR(50)  ,
-  exchange_rate NUMERIC(20,8) NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_cip primary key (id)
 );
 
@@ -350,6 +350,9 @@ CREATE TABLE erp_ast_split(
   posted_by VARCHAR(36)  ,
   approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
@@ -357,9 +360,6 @@ CREATE TABLE erp_ast_split(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
-  exchange_rate NUMERIC(20,8) NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_split primary key (id)
 );
 
@@ -378,6 +378,9 @@ CREATE TABLE erp_ast_merge(
   posted_by VARCHAR(36)  ,
   approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
+  exchange_rate NUMERIC(20,8) NOT NULL ,
+  amount_source NUMERIC(20,4) default 0   ,
+  amount_functional NUMERIC(20,4) default 0   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,
@@ -385,9 +388,6 @@ CREATE TABLE erp_ast_merge(
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
   remark VARCHAR(1000)  ,
-  exchange_rate NUMERIC(20,8) NOT NULL ,
-  amount_source NUMERIC(20,4) default 0   ,
-  amount_functional NUMERIC(20,4) default 0   ,
   constraint PK_erp_ast_merge primary key (id)
 );
 
@@ -711,6 +711,14 @@ CREATE TABLE erp_ast_maintenance_cost(
                     
       COMMENT ON COLUMN erp_ast_asset_capitalization.approved_at IS '审核时间';
                     
+      COMMENT ON COLUMN erp_ast_asset_capitalization.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_ast_asset_capitalization.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_asset_capitalization.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_asset_capitalization.amount_functional IS '本位币金额';
+                    
       COMMENT ON COLUMN erp_ast_asset_capitalization.del_version IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_ast_asset_capitalization.version IS '数据版本';
@@ -724,14 +732,6 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_asset_capitalization.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_asset_capitalization.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_ast_asset_capitalization.business_date IS '业务日期';
-                    
-      COMMENT ON COLUMN erp_ast_asset_capitalization.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_ast_asset_capitalization.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_ast_asset_capitalization.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_inventory IS '资产盘点单';
                 
@@ -827,6 +827,16 @@ CREATE TABLE erp_ast_maintenance_cost(
                     
       COMMENT ON COLUMN erp_ast_depreciation_schedule.voucher_id IS '凭证ID';
                     
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_depreciation_schedule.amount_functional IS '本位币金额';
+                    
       COMMENT ON COLUMN erp_ast_depreciation_schedule.del_version IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_ast_depreciation_schedule.version IS '数据版本';
@@ -838,16 +848,6 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_depreciation_schedule.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_ast_depreciation_schedule.update_time IS '修改时间';
-                    
-      COMMENT ON COLUMN erp_ast_depreciation_schedule.business_date IS '业务日期';
-                    
-      COMMENT ON COLUMN erp_ast_depreciation_schedule.currency_id IS '币种';
-                    
-      COMMENT ON COLUMN erp_ast_depreciation_schedule.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_ast_depreciation_schedule.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_ast_depreciation_schedule.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_movement IS '资产移动';
                 
@@ -883,11 +883,23 @@ CREATE TABLE erp_ast_maintenance_cost(
                     
       COMMENT ON COLUMN erp_ast_movement.approve_status IS '审核状态';
                     
+      COMMENT ON COLUMN erp_ast_movement.approved_by IS '审核人';
+                    
+      COMMENT ON COLUMN erp_ast_movement.approved_at IS '审核时间';
+                    
       COMMENT ON COLUMN erp_ast_movement.posted IS '已过账';
                     
       COMMENT ON COLUMN erp_ast_movement.posted_at IS '过账时间';
                     
       COMMENT ON COLUMN erp_ast_movement.posted_by IS '过账人';
+                    
+      COMMENT ON COLUMN erp_ast_movement.currency_id IS '币种';
+                    
+      COMMENT ON COLUMN erp_ast_movement.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_movement.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_movement.amount_functional IS '本位币金额';
                     
       COMMENT ON COLUMN erp_ast_movement.doc_version IS '单据版本';
                     
@@ -904,18 +916,6 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_movement.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_movement.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_ast_movement.approved_by IS '审核人';
-                    
-      COMMENT ON COLUMN erp_ast_movement.approved_at IS '审核时间';
-                    
-      COMMENT ON COLUMN erp_ast_movement.currency_id IS '币种';
-                    
-      COMMENT ON COLUMN erp_ast_movement.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_ast_movement.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_ast_movement.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_value_adjustment IS '资产价值调整';
                 
@@ -953,6 +953,10 @@ CREATE TABLE erp_ast_maintenance_cost(
                     
       COMMENT ON COLUMN erp_ast_value_adjustment.approved_at IS '审核时间';
                     
+      COMMENT ON COLUMN erp_ast_value_adjustment.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_value_adjustment.amount_functional IS '本位币金额';
+                    
       COMMENT ON COLUMN erp_ast_value_adjustment.del_version IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_ast_value_adjustment.version IS '数据版本';
@@ -966,10 +970,6 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_value_adjustment.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_value_adjustment.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_ast_value_adjustment.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_ast_value_adjustment.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_disposal IS '资产处置';
                 
@@ -1009,6 +1009,10 @@ CREATE TABLE erp_ast_maintenance_cost(
                     
       COMMENT ON COLUMN erp_ast_disposal.approved_at IS '审核时间';
                     
+      COMMENT ON COLUMN erp_ast_disposal.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_disposal.amount_functional IS '本位币金额';
+                    
       COMMENT ON COLUMN erp_ast_disposal.del_version IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_ast_disposal.version IS '数据版本';
@@ -1024,10 +1028,6 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_disposal.remark IS '备注';
                     
       COMMENT ON COLUMN erp_ast_disposal.nop_flow_id IS '工作流实例';
-                    
-      COMMENT ON COLUMN erp_ast_disposal.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_ast_disposal.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_cip IS '在建工程';
                 
@@ -1055,6 +1055,22 @@ CREATE TABLE erp_ast_maintenance_cost(
                     
       COMMENT ON COLUMN erp_ast_cip.status IS '状态';
                     
+      COMMENT ON COLUMN erp_ast_cip.posted IS '是否已过账';
+                    
+      COMMENT ON COLUMN erp_ast_cip.posted_at IS '过账时间';
+                    
+      COMMENT ON COLUMN erp_ast_cip.posted_by IS '过账人';
+                    
+      COMMENT ON COLUMN erp_ast_cip.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_cip.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_cip.amount_functional IS '本位币金额';
+                    
+      COMMENT ON COLUMN erp_ast_cip.project_id IS '关联项目(可空)';
+                    
+      COMMENT ON COLUMN erp_ast_cip.cip_asset_category_snapshot IS '转固时类别快照';
+                    
       COMMENT ON COLUMN erp_ast_cip.del_version IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_ast_cip.version IS '数据版本';
@@ -1068,22 +1084,6 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_cip.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_cip.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_ast_cip.project_id IS '关联项目(可空)';
-                    
-      COMMENT ON COLUMN erp_ast_cip.cip_asset_category_snapshot IS '转固时类别快照';
-                    
-      COMMENT ON COLUMN erp_ast_cip.posted IS '是否已过账';
-                    
-      COMMENT ON COLUMN erp_ast_cip.posted_at IS '过账时间';
-                    
-      COMMENT ON COLUMN erp_ast_cip.posted_by IS '过账人';
-                    
-      COMMENT ON COLUMN erp_ast_cip.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_ast_cip.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_ast_cip.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_split IS '资产拆分单';
                 
@@ -1115,6 +1115,12 @@ CREATE TABLE erp_ast_maintenance_cost(
                     
       COMMENT ON COLUMN erp_ast_split.approved_at IS '审核时间';
                     
+      COMMENT ON COLUMN erp_ast_split.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_split.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_split.amount_functional IS '本位币金额';
+                    
       COMMENT ON COLUMN erp_ast_split.del_version IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_ast_split.version IS '数据版本';
@@ -1128,12 +1134,6 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_split.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_split.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_ast_split.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_ast_split.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_ast_split.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_merge IS '资产合并单';
                 
@@ -1165,6 +1165,12 @@ CREATE TABLE erp_ast_maintenance_cost(
                     
       COMMENT ON COLUMN erp_ast_merge.approved_at IS '审核时间';
                     
+      COMMENT ON COLUMN erp_ast_merge.exchange_rate IS '汇率';
+                    
+      COMMENT ON COLUMN erp_ast_merge.amount_source IS '源币种金额';
+                    
+      COMMENT ON COLUMN erp_ast_merge.amount_functional IS '本位币金额';
+                    
       COMMENT ON COLUMN erp_ast_merge.del_version IS '逻辑删除版本';
                     
       COMMENT ON COLUMN erp_ast_merge.version IS '数据版本';
@@ -1178,12 +1184,6 @@ CREATE TABLE erp_ast_maintenance_cost(
       COMMENT ON COLUMN erp_ast_merge.update_time IS '修改时间';
                     
       COMMENT ON COLUMN erp_ast_merge.remark IS '备注';
-                    
-      COMMENT ON COLUMN erp_ast_merge.exchange_rate IS '汇率';
-                    
-      COMMENT ON COLUMN erp_ast_merge.amount_source IS '源币种金额';
-                    
-      COMMENT ON COLUMN erp_ast_merge.amount_functional IS '本位币金额';
                     
       COMMENT ON TABLE erp_ast_maintenance IS '资产维修工单';
                 

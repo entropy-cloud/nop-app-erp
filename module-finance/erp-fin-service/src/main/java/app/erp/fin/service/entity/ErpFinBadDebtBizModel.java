@@ -6,7 +6,12 @@ import app.erp.fin.dao.dto.BadDebtProvisionResult;
 import app.erp.fin.dao.dto.BadDebtProvisionReversalResult;
 import app.erp.fin.dao.entity.ErpFinBadDebt;
 import app.erp.fin.service.baddebt.BadDebtProvisionService;
-import app.erp.fin.service.processor.ErpFinBadDebtProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtApproveProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtRecoverProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtRejectProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtReverseApproveProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtSubmitForApprovalProcessor;
+import app.erp.fin.service.processor.ErpFinBadDebtWriteOffProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -27,9 +32,19 @@ import java.util.List;
 public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implements IErpFinBadDebtBiz {
 
     @Inject
-    ErpFinBadDebtProcessor badDebtProcessor;
-    @Inject
     BadDebtProvisionService badDebtProvisionService;
+    @Inject
+    ErpFinBadDebtWriteOffProcessor writeOffProcessor;
+    @Inject
+    ErpFinBadDebtRecoverProcessor recoverProcessor;
+    @Inject
+    ErpFinBadDebtSubmitForApprovalProcessor submitForApprovalProcessor;
+    @Inject
+    ErpFinBadDebtApproveProcessor approveProcessor;
+    @Inject
+    ErpFinBadDebtRejectProcessor rejectProcessor;
+    @Inject
+    ErpFinBadDebtReverseApproveProcessor reverseApproveProcessor;
 
     public ErpFinBadDebtBizModel() {
         setEntityName(ErpFinBadDebt.class.getName());
@@ -40,7 +55,7 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
     public ErpFinBadDebt writeOff(@Name("arApItemId") Long arApItemId,
                                   @Name("reason") String reason,
                                   IServiceContext context) {
-        return badDebtProcessor.writeOff(arApItemId, reason, context);
+        return writeOffProcessor.writeOff(arApItemId, reason, context);
     }
 
     @Override
@@ -48,31 +63,31 @@ public class ErpFinBadDebtBizModel extends CrudBizModel<ErpFinBadDebt> implement
     public ErpFinBadDebt recover(@Name("arApItemId") Long arApItemId,
                                  @Name("reason") String reason,
                                  IServiceContext context) {
-        return badDebtProcessor.recover(arApItemId, reason, context);
+        return recoverProcessor.recover(arApItemId, reason, context);
     }
 
     @Override
     @BizMutation
     public ErpFinBadDebt submit(@Name("id") Long id, IServiceContext context) {
-        return badDebtProcessor.submit(id, context);
+        return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpFinBadDebt approve(@Name("id") Long id, IServiceContext context) {
-        return badDebtProcessor.approve(id, context);
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpFinBadDebt reverseApprove(@Name("id") Long id, IServiceContext context) {
-        return badDebtProcessor.reverseApprove(id, context);
+        return reverseApproveProcessor.reverseApprove(String.valueOf(id), context);
     }
 
     @Override
     @BizMutation
     public ErpFinBadDebt reject(@Name("id") Long id, IServiceContext context) {
-        return badDebtProcessor.reject(id, context);
+        return rejectProcessor.reject(String.valueOf(id), context);
     }
 
     @Override

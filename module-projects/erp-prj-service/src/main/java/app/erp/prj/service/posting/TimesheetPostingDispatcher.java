@@ -11,7 +11,10 @@ import app.erp.prj.dao.entity.ErpPrjTimesheet;
 import app.erp.prj.service.ErpPrjConfigs;
 import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -44,9 +47,15 @@ public class TimesheetPostingDispatcher {
     ProjectPostingExecutor executor;
     @Inject
     IDaoProvider daoProvider;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_TIMESHEET_FAILURE = "prj.timesheet-posting-failure";
 
     /**
      * 工时审批通过后调用。成功返回 true（调用方据此置 posted=true）；失败吞异常返回 false（保持 posted=false）。
+     * <p>G3 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-068）：失败派发 IErpSysNotificationBiz 告警
+     * 使 posted=false 悬挂可被感知。
      */
     public boolean tryPost(ErpPrjTimesheet timesheet) {
         PostingEvent event = buildEvent(timesheet);
@@ -59,7 +68,28 @@ public class TimesheetPostingDispatcher {
             } else {
                 LOG.error("工时过账异常，工时单 {} 保持 APPROVED、posted=false", timesheet.getCode(), e);
             }
+            dispatchFailureAlert(timesheet, e);
             return false;
+        }
+    }
+
+    /** 工时过账失败告警派发（G3；通知失败降级不阻断主流程）。 */
+    protected void dispatchFailureAlert(ErpPrjTimesheet timesheet, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("timesheetCode", timesheet.getCode());
+        ctx.put("projectId", timesheet.getProjectId());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", timesheet.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_TIMESHEET_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("工时过账失败告警派发失败（降级）：timesheetCode={}, reason={}",
+                    timesheet.getCode(), notifyErr.getMessage());
         }
     }
 

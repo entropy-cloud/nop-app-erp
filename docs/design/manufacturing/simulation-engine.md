@@ -1,6 +1,6 @@
 # MRP/DRP 仿真引擎（Simulation Engine）
 
-> Owner Doc（NEW，plan `2026-07-22-1000-2`）。落地于 `deepening-roadmap.md §Milestone B §B1`。
+> Owner Doc，对应 `deepening-roadmap.md §Milestone B §B1`。
 > 权威 ORM 源：`module-manufacturing/model/app-erp-manufacturing.orm.xml`、`module-drp/model/app-erp-drp.orm.xml`。
 > 单次确定性引擎基线：[`mrp.md`](mrp.md)、`drp/safety-stock-optimization.md`、`drp/use-cases.md`。
 
@@ -67,7 +67,7 @@ ErpMfgMrpScenario（场景，1）           ErpDrpScenario（DRP 同构）
 
 ### 物料级列缺失的处理（Decision B 记录）
 
-`mrp.md §实现偏离补注 line 89` 明确：物料级 `fixedLotSize`/`minOrderQty`/`maxOrderQty`/`safetyStock` 列在 ORM 不存在（lot sizing 简化为全局配置；safety stock 在 master-data 有列，lot size 列无）。
+`mrp.md §实现约定 line 89` 明确：物料级 `fixedLotSize`/`minOrderQty`/`maxOrderQty`/`safetyStock` 列在 ORM 不存在（lot sizing 简化为全局配置；safety stock 在 master-data 有列，lot size 列无）。
 
 **本计划处理**：
 - 仿真场景的 lot size 覆盖值承载于 `ErpMfgMrpScenarioParam.paramValue`（场景级），不修改 `ErpMdMaterial` 主数据
@@ -76,7 +76,7 @@ ErpMfgMrpScenario（场景，1）           ErpDrpScenario（DRP 同构）
 
 ### 参数变体解析（Strategy+registry 范式）
 
-`IErpMfgSimulationParamResolver` SPI（MRP）+ `IErpDrpSimulationParamResolver`（DRP），对齐 D3 plan `2026-07-21-2225-2` 的 `CostingStrategy` + A3 plan `2026-07-22-1000-1` 的 `IErpFinTransferPriceResolver` 范式：
+`IErpMfgSimulationParamResolver` SPI（MRP）+ `IErpDrpSimulationParamResolver`（DRP），对齐 D3 的 `CostingStrategy` + A3 的 `IErpFinTransferPriceResolver` 范式：
 
 - 输入：`scenarioId` + `materialId`（nullable）+ `paramType`
 - 输出：覆盖值（如未覆盖返回 `null`，调用方回退全局配置/主数据）
@@ -179,7 +179,7 @@ public class SimulationVersionComparator {
 
 ## 与既有 Forecast 输入边界
 
-`ErpMfgForecast`（运营需求预测，产品×时间桶）已落地（plan `2026-07-05-0427-1`）。仿真场景的需求数据**直接复用**既有 Forecast 行作为输入，不重复预测维度（`mrp.md §CRM 销售预测 vs 运营需求预测 line 97-104` 已裁决语义边界）。
+`ErpMfgForecast`（运营需求预测，产品×时间桶）。仿真场景的需求数据**直接复用**既有 Forecast 行作为输入，不重复预测维度（`mrp.md §CRM 销售预测 vs 运营需求预测 line 97-104` 已裁决语义边界）。
 
 **复用路径**：
 1. 仿真场景的基线 plan（`baseMrpPlanId`）在创建时已通过 `DemandAggregator.collectForecastDemands` 整合 APPROVED 预测行
@@ -255,3 +255,61 @@ DRP 侧与 MRP 侧完全同构，仅参数类型字典与覆盖目标不同：
 - `drp/safety-stock-optimization.md` / `drp/use-cases.md`（回链）：单次 DRP / SafetyStockEngine 不变，仿真包装经 `SimulationDrpEngine`
 - `manufacturing/README.md`（回链）：本域文档表追加 `simulation-engine.md`
 - DRP 域 owner doc（回链）：追加 DRP 场景对应物段
+
+## 浏览器层验证实现注记
+
+### config-gate 启用
+
+仿真三入口 config-gate 默认 false（`erp-mfg.simulation-enabled` / `erp-drp.simulation-enabled`），webServer JVM arg 追加 `=true` 启用浏览器层 E2E 路径。JUnit `TestErpMfgMrpSimulation` / `TestErpDrpSimulation` 经 `AppConfig.getConfigProvider().assignConfigValue` 运行时 toggle，浏览器层无此能力 → 全局启用（对齐 `b2b-asn` / `intercompany` 等 config-gated 特性的 webServer JVM arg 范式）。config-gate 关闭时的 `ERR_*_SIMULATION_DISABLED` 守卫经 JUnit 场景 1 已覆盖，浏览器层不重复。
+
+### 自包含基线 setup 范式
+
+无种子 `ErpMfgMrpPlan` / `ErpMfgMrpDemand` / `ErpDrpPlan` / `ErpDrpLine` / `ErpDrpParameter` CSV → 两 spec 各自经 GraphQL `__save` 建测试专用前置：
+
+- **MRP**（`tests/e2e/business-actions/mfg-mrp-simulation.action.spec.ts`）：1 物料（`code=E2E-MM-{tag}-{ts}-{seq}`，safetyStock 默认 null）+ baseline `ErpMfgMrpPlan`（DRAFT, orgId=2）+ `ErpMfgMrpDemand`（MANUAL, qty=25, requirementDate=2026-08-15）+ scenario + scenarioParam（LOT_SIZE=10）。
+- **DRP**（`tests/e2e/business-actions/drp-simulation.action.spec.ts`）：1 物料 + `ErpDrpParameter`（safetyStock=10, orgId=2, warehouseId=1）+ baseline `ErpDrpPlan`（DRAFT）+ scenario + scenarioParam（SAFETY_STOCK=20）。
+
+种子 org id=2 + warehouse id=1（WH-MAIN）+ uom id=1（PCS）经 `__save` FK 校验。物料 safetyStock 默认 null（MRP 不触发额外 SAFETY_STOCK demand；DRP 的 safetyStock 来自 ErpDrpParameter 而非 material）。
+
+**Code 长度约束**：`workOrderCode` / `orderCode` domain precision=50。baseline code 经 `-SIM-V{n}` (7) + `-PROMOTED-{n}` (11) 累加，baseline 须 ≤ 32 char。两 spec 用短前缀（`E2E-MP-` / `E2E-DP-`）+ 时间戳。
+
+### 参数变体覆盖断言
+
+| 实体 | 场景 | 公式 | 浏览器层断言 |
+|------|------|------|-------------|
+| MRP `runSimulation` | LOT_SIZE=10, demand qty=25, no stock | net=25; planned=ceil(25/10)*10=30 | `ErpMfgMrpPlanLine.plannedQuantity=30` (经 `__findPage` 反查) |
+| DRP `runSimulation` | SAFETY_STOCK override=20, baseline param SS=10, no stock | net=20-0=20; suggested=20 | `ErpDrpLine.suggestedQty=20` + `safetyStock=20` (经 `__findPage` 反查) |
+
+### diff DTO 结构（GraphQL 返回）
+
+**MRP `compareVersions`** → `SimulationDiffResult`（4 维 + 缺料集）：
+```
+{ versionIdA, versionIdB,
+  lineDiffs: [{ materialId, netRequirementA/B/Delta, plannedQuantityA/B/Delta }],
+  totalNetRequirementDelta, totalPlannedQuantityDelta, totalPurchaseAmountDelta,
+  shortageOnlyInA: [Long], shortageOnlyInB: [Long], shortageInBoth: [Long] }
+```
+
+**DRP `compareVersions`** → `DrpSimulationDiffResult`（2 维）：
+```
+{ versionIdA, versionIdB,
+  lineDiffs: [{ materialId, warehouseId, suggestedQtyA/B, replenishmentQtyDelta, safetyStockA/B/Delta }],
+  totalReplenishmentQtyDelta, totalSafetyStockDelta }
+```
+
+### promoteToFormalPlan 隔离清理
+
+转正产 DRAFT plan 行（`-PROMOTED-` 后缀），不清理会污染 MRP/DRP plan 基线。spec cleanup 经 `findItems(ErpMfgMrpScenarioVersion, scenarioId=...)` 反查每个 version 的 `computedMrpPlanId` + `promotedPlanId`，逐 plan 删 lines + plan 头（DRP 同构）。`promoteToFormalPlan` 重复守卫经 `errors[].message` 含中文 token `已转正式计划` 断言（GraphQL 返回 NopException description 非 ErrorCode）。
+
+### ParamResolver 缓存约束（浏览器层裁决）
+
+`ErpMfgSimulationParamResolver` / `ErpDrpSimulationParamResolver` 进程内 `Map<scenarioId, List<param>>` 缓存，`computeIfAbsent` 首次加载后不刷新（设计 AP-06：版本不可变）。CRUD 不主动失效（paramBizModel 是裸 CrudBizModel 无 hook）。浏览器层 webServer JVM 共享单实例，无 `invalidateCache()` mutation 可达。
+
+**裁决**：
+- (a) `runSimulation` 单版本断言（LOT_SIZE / SAFETY_STOCK 覆盖使 plannedQuantity / suggestedQty 变化）不受影响——首次加载缓存即用覆盖值。
+- (b) `compareVersions` 两版本断言降级为**结构非空**（lineDiffs 数组 + shortageInBoth / totalDelta 字段可达 + 行级定位 test_mat），精确 delta 值（+10 / +20）由 JUnit `testCompareVersionsProducesStructuredDiff` 已覆盖。两版本同 scenario 同 params（缓存），delta=0 但 DTO 结构完整可断言。
+- (c) 浏览器层精确 delta 覆盖为 successor（触发：paramResolver 缓存主动失效机制接入 + 浏览器层可达 invalidateCache mutation）。
+
+### 场景状态重置机制
+
+`runSimulation` 后 scenario status=COMPLETED。要再跑（compareVersions 需两版本），须先重置 DRAFT。无内置 mutation，spec 用 `ErpMfgMrpScenario__update(data:{id,status:"DRAFT"})` / `ErpDrpScenario__update(...)` 直接置位（对齐 JUnit `resetScenarioToDraft` 直写 DB 范式，绕过状态机）。

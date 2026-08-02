@@ -12,6 +12,15 @@
     <bean id="app.erp.aps.service.processor.ErpApsSchedulingProcessor"
           class="app.erp.aps.service.processor.ErpApsSchedulingProcessor"/>
 
+    <!-- per-mutation D-mutation Processor beans (R6.7)：类别 A 每 D-mutation 独立 Processor。
+         facade delete-after-extract（类保留为 helper 持有者），per-mutation 经 @Inject facade 调用共享 protected helper。 -->
+    <bean id="app.erp.aps.service.processor.ErpApsSchedulingScheduleForwardProcessor"
+          class="app.erp.aps.service.processor.ErpApsSchedulingScheduleForwardProcessor"/>
+    <bean id="app.erp.aps.service.processor.ErpApsSchedulingScheduleBackwardProcessor"
+          class="app.erp.aps.service.processor.ErpApsSchedulingScheduleBackwardProcessor"/>
+    <bean id="app.erp.aps.service.processor.ErpApsSchedulingInsertRushOrderProcessor"
+          class="app.erp.aps.service.processor.ErpApsSchedulingInsertRushOrderProcessor"/>
+
     <!-- ATP/CTP 交期承诺模拟服务（跨域 I*Biz 只读聚合 inventory + 工艺路线追溯 mfg） -->
     <bean id="app.erp.aps.service.atpctp.ErpApsAtpCtpService"
           class="app.erp.aps.service.atpctp.ErpApsAtpCtpServiceImpl"/>

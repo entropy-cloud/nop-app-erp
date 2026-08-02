@@ -11,6 +11,7 @@ import app.erp.fin.dao.entity.ErpFinPostingException;
 import app.erp.fin.dao.entity.ErpFinVoucherTemplate;
 import app.erp.fin.dao.entity.ErpFinVoucherTemplateLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.posting.ErpFinDeferredPostingRetryHelper;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -67,6 +68,8 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
     IErpFinPostingExceptionBiz postingExceptionBiz;
     @Inject
     IErpFinAccountingPeriodBiz periodBiz;
+    @Inject
+    ErpFinDeferredPostingRetryHelper retryHelper;
 
     @Test
     public void testFailedPostRecordsPendingExceptionAndPreCheckBlocks() {
@@ -206,6 +209,69 @@ public class TestErpFinPostingExceptionWorkbench extends JunitAutoTestCase {
     }
 
     // ---------- helpers ----------
+
+    /**
+     * G2 永久性失败（plan 2026-07-30-0341-2 P1-MA4-001）：MAX_RETRY 耗尽升级 MANUAL 终态（非 RETRYING 死状态）。
+     * seed PENDING + retryCount=2（近 MAX_RETRY=3）→ 重试失败 → retryCount=3 → status=MANUAL。
+     */
+    @Test
+    public void testMaxRetryEscalatesToManual() {
+        LocalDate voucherDate = LocalDate.of(2026, 7, 15);
+        seed(() -> {
+            seedPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31),
+                    PERIOD_STATUS_CLOSED);
+        });
+        // 直接 seed 一条 retryCount=2 的 PENDING 异常记录（近 MAX_RETRY）。
+        Long exceptionId = seedReturn(() -> seedPendingException("AP-EXC-RETRY-MAX-001", voucherDate, 2));
+
+        // 重试 → post 失败（期间关闭）→ incrementRetryAndRethrow → retryCount=3 → MANUAL（G2 升级）。
+        boolean ok = ormTemplate.runInSession(session -> retryHelper.retry(exceptionId, CTX));
+        assertFalse(ok, "重试应失败（期间关闭）");
+
+        ErpFinPostingException ex = findException("AP-EXC-RETRY-MAX-001");
+        assertNotNull(ex, "异常记录仍存在");
+        assertEquals(ErpFinConstants.POSTING_EXCEPTION_STATUS_MANUAL, ex.getStatus(),
+                "MAX_RETRY 耗尽应升级 MANUAL 终态（非 RETRYING 死状态）");
+        assertTrue(ex.getRetryCount() >= 3, "retryCount 应已达 MAX_RETRY");
+
+        // MANUAL 未补录（voucherId 为空）计入未处置 → 阻断结账（期末前置检查覆盖）。
+        assertTrue(ormTemplate.runInSession(session -> postingExceptionBiz.countUnresolved(CTX)) >= 1,
+                "MANUAL 未补录应计入未处置");
+    }
+
+    private <T> T seedReturn(java.util.function.Supplier<T> action) {
+        return ormTemplate.runInSession(session -> action.get());
+    }
+
+    private Long seedPendingException(String billHeadCode, LocalDate voucherDate, int retryCount) {
+        IEntityDao<ErpFinPostingException> dao = daoProvider.daoFor(ErpFinPostingException.class);
+        ErpFinPostingException ex = new ErpFinPostingException();
+        ex.setTraceId("trace-test-" + billHeadCode);
+        ex.setBillHeadCode(billHeadCode);
+        ex.setBusinessType(BUSINESS_TYPE_AP_INVOICE);
+        ex.setPostingType(ErpFinConstants.POSTING_TYPE_NORMAL);
+        ex.setErrorCode("erp.err.fin.posting.period-closed");
+        ex.setErrorMessage("期间关闭");
+        ex.setFailedStage("resolveOpenPeriod");
+        ex.setVoucherDate(voucherDate);
+        ex.setOrgId(1L);
+        ex.setAcctSchemaId(1L);
+        ex.setCurrencyId(1L);
+        ex.setExchangeRate(java.math.BigDecimal.ONE);
+        // eventData 使 rebuildEvent 重建有效事件→post 因期间关闭失败→incrementRetry→MAX_RETRY→MANUAL。
+        java.util.Map<String, Object> billData = new java.util.LinkedHashMap<>();
+        billData.put("AMOUNT", new java.math.BigDecimal("100"));
+        billData.put("TAX", new java.math.BigDecimal("13"));
+        billData.put("TOTAL", new java.math.BigDecimal("113"));
+        billData.put("partnerId", 1L);
+        billData.put("businessDate", voucherDate);
+        ex.setEventData(app.erp.fin.service.posting.ErpFinPostingExceptionRecorder.serializeEventData(billData));
+        ex.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_PENDING);
+        ex.setRetryCount(retryCount);
+        ex.setOccurrenceTime(io.nop.api.core.time.CoreMetrics.currentTimestamp());
+        dao.saveEntity(ex);
+        return ex.getId();
+    }
 
     private ErpFinPostingException findException(String billHeadCode) {
         IEntityDao<ErpFinPostingException> dao = daoProvider.daoFor(ErpFinPostingException.class);

@@ -9,9 +9,10 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstMerge cancel per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractCancelProcessor to activate the abstract base class; delegates to ErpAstMergeProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstMerge cancel per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateTransitionForCancel → set CANCELLED → save.
+ * Domain logic via facade protected helpers (single source of truth).
+ * Dormant until R5.8 rewire（BizModel Java 直调 facade.cancel，不经 xbiz 委托链）。
  */
 public class ErpAstMergeCancelProcessor extends AbstractCancelProcessor<ErpAstMerge> {
 
@@ -20,7 +21,11 @@ public class ErpAstMergeCancelProcessor extends AbstractCancelProcessor<ErpAstMe
 
     @Override
     public ErpAstMerge cancel(String id, IServiceContext context) {
-        return processor.cancel(Long.valueOf(id), context);
+        ErpAstMerge merge = processor.requireMerge(id, context);
+        processor.validateTransitionForCancel(merge, context);
+        merge.setDocStatus(ErpAstConstants.DOC_STATUS_CANCELLED);
+        processor.mergeDao().updateEntity(merge);
+        return merge;
     }
 
     @Override
@@ -35,16 +40,16 @@ public class ErpAstMergeCancelProcessor extends AbstractCancelProcessor<ErpAstMe
 
     @Override
     protected String getDocStatus(ErpAstMerge entity) {
-        return null;
+        return entity.getDocStatus();
     }
 
     @Override
     protected void setDocStatus(ErpAstMerge entity, String status) {
-        // not reached: main method delegates to monolithic Processor
+        entity.setDocStatus(status);
     }
 
     @Override
     protected String cancelledDocStatus() {
-        return null;
+        return ErpAstConstants.DOC_STATUS_CANCELLED;
     }
 }

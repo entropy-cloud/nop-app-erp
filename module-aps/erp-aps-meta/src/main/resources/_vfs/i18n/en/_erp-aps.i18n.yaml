@@ -1,5 +1,6 @@
 entity:
   label:
+    ErpApsCapacityReservation: Capacity Reservation
     ErpApsConstraint: Constraint
     ErpApsDispatchLog: Dispatch Log
     ErpApsDispatchRule: Dispatch Rule
@@ -8,6 +9,19 @@ entity:
     ErpApsSchedule: Schedule
 prop:
   label:
+    ErpApsCapacityReservation:
+      id: ID
+      machineId: Machine
+      plannedStartT: Planned Start
+      plannedEndT: Planned End
+      operationOrderId: Operation Order
+      orgId: Organization
+      remark: Remark
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
     ErpApsConstraint:
       id: ID
       machineId: Machine

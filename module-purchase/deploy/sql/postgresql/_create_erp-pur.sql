@@ -431,6 +431,7 @@ CREATE TABLE erp_pur_order(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  constraint UK_PUR_ORDER_CODE_ORG unique (code,org_id),
   constraint PK_erp_pur_order primary key (id)
 );
 

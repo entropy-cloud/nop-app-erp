@@ -93,7 +93,7 @@
 | 反审核 | 管理员（需冲销前置；目标态 REJECTED 非 UNSUBMITTED，见 `../domain-design-guidelines.md` §16.4） | 同 |
 | 作废 | 销售员（草稿阶段）/ 管理员（已审核后） | 同 |
 
-职责分离：销售员与审核人建议不可为同一人。角色名见 `roles-and-permissions.md`。
+职责分离：销售员与审核人不可为同一人（程序级强制：approve 守卫比对 createdBy 与审核人 userId，相等抛 `erp.err.sal.approver-is-creator`；plan 2026-07-31-1023-2 R3.3）。角色名见 `roles-and-permissions.md`。
 
 ## 7. 外部依赖
 
@@ -150,6 +150,16 @@
 - 状态码持久化值归 `module-sales/model/app-erp-sales.orm.xml`。
 - 业财打通见 `finance/posting.md`。
 - 可用量校验规则见 `inventory/cross-domain.md`。
+
+## 实现模式与守卫边界
+
+> 计划 `2026-07-30-0341-3-r1-17`（P1-MA2-056/057）补注：销售域审批轴动作分两类实现，守卫边界不同。
+
+**PROC 路径**（Delivery/Quotation/Return/Order/Invoice/Receipt 的 submitForApproval/approve/reject/reverseApprove）：由 `ErpSal*Processor` 编排，含完整业务守卫（`validateNotCancelled` + `requireCustomerActive` + `requireLinesNonEmpty` + 状态校验）。
+
+**INLINE 路径**（Contract 全 5 动作 + 6 实体的 withdrawApproval）：直接在 xbiz `<source>` 脚本中实现，守卫边界为 **isCancelled + src 状态校验**（`entity.docStatus === 'CANCELLED'` 阻断 + `approveStatus` 源态校验）。INLINE **不补** requireCustomer/Lines 等业务守卫——这些在 submit 时点已门控，审批时点重复校验冗余。
+
+> 残留风险：INLINE 守卫与 PROC 守卫非完全对齐。若被误用导致 CANCELLED 单据业务规则绕过，successor 迁移到完整大 Processor。
 
 ## 收款状态机（销售发票，派生状态）
 

@@ -2,6 +2,7 @@ package app.erp.pur.service.processor;
 
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.service.ErpPurConstants;
+import app.erp.pur.service.ErpPurErrors;
 import app.erp.common.service.AbstractReverseApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,8 +11,8 @@ import jakarta.inject.Inject;
 
 /**
  * ErpPurReceive reverseApprove per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractReverseApproveProcessor to activate the abstract base class; delegates to ErpPurReceiveProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * Overrides the public reverseApprove method to replicate the facade flow (stock move reversal + status),
+ * calling facade helper methods for each step. Downstream can override via Delta beans.xml with same bean id.
  */
 public class ErpPurReceiveReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpPurReceive> {
 
@@ -20,7 +21,19 @@ public class ErpPurReceiveReverseApproveProcessor extends AbstractReverseApprove
 
     @Override
     public ErpPurReceive reverseApprove(String id, IServiceContext context) {
-        return processor.reverseApprove(id, context);
+        ErpPurReceive receive = requireEntity(id);
+        if (isRejected(receive)) {
+            return receive;
+        }
+        validateTransitionForReverseApprove(receive, context);
+        processor.ensureReversed(receive, context);
+        receive = dao().getEntityById(id);
+
+        receive.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
+        receive.setApprovedBy(null);
+        receive.setApprovedAt(null);
+        dao().updateEntity(receive);
+        return receive;
     }
 
     @Override
@@ -30,12 +43,22 @@ public class ErpPurReceiveReverseApproveProcessor extends AbstractReverseApprove
 
     @Override
     protected NopException notFoundException(String id) {
-        return defaultNotFoundException(id);
+        return new NopException(ErpPurErrors.ERR_RECEIVE_NOT_FOUND)
+                .param(ErpPurErrors.ARG_RECEIVE_ID, id);
+    }
+
+    @Override
+    protected NopException illegalStatusException(ErpPurReceive entity, String current, String... expected) {
+        return new NopException(ErpPurErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_RECEIVE_CODE, entity.getCode())
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
     }
 
     @Override
     protected String getApproveStatus(ErpPurReceive entity) {
-        return entity.getApproveStatus();
+        String status = entity.getApproveStatus();
+        return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
     }
 
     @Override

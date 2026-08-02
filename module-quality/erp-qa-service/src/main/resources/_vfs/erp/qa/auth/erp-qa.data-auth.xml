@@ -1,5 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!-- 角色侧行级数据权限规则（plan 2026-07-31-1023-3-r3-4，P1-MA6-002）。
+     owner doc docs/design/roles-and-permissions.md §数据权限："质检员只能看分配给自己的质检任务"。
+
+     过滤列：ownerId（VARCHAR(36)，stdDomain="userId"，责任人）——quality 域唯一 userId 域列（实测 orm.xml），
+     直接与 userContext.userId 比较。EL 用 ${userContext.userId}（DefaultDataAuthChecker.newEvalScope 注入的
+     scope 变量 = IUserContext）；注意 ${$context.user.userId} 无效（$context→IContext 无 getUser()）。
+
+     scope 说明：owner doc"质检任务"语义对应 ErpQaInspection.inspectorId，但该列为 BIGINT employee-id 域
+     （须 user→employee 解析，ErpMdEmployee 无 userId 列 → 解析不可行，见 plan Phase 1 Decision-2），
+     故 employee-id 规则为显式 successor。本 plan 落地 userId 域 ErpQaRiskRegister.ownerId（责任人）规则。
+
+     role-auth 顺序语义（对齐平台 nop-auth.data-auth.xml 范式，详见 erp-sal.data-auth.xml 注释）：
+     同 priority（默认 100）按【声明顺序】首匹配——管理员首位无 filter → 质检员次位带 filter → user 末位兜底。
+
+     灰度：erp.data-auth.role-row-filter-enabled 默认 false（ErpRoleDataAuthChecker getFilter→null），
+     且 nop.auth.enable-data-auth 默认 false——双层默认关闭，单组织基线零回归。 -->
 <data-auth x:schema="/nop/schema/data-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
-    <objs/>
+    <objs>
+        <obj name="ErpQaRiskRegister">
+            <role-auths>
+                <role-auth id="admin" roleIds="管理员"></role-auth>
+                <role-auth id="inspector" roleIds="质检员">
+                    <filter><eq name="ownerId" value="${userContext.userId}"/></filter>
+                </role-auth>
+                <role-auth id="default" roleIds="user"></role-auth>
+            </role-auths>
+        </obj>
+    </objs>
 </data-auth>

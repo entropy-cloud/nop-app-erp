@@ -14,6 +14,16 @@ public class VoucherFact {
     private String subjectName;
     private String dcDirection;
     private BigDecimal amount;
+    /**
+     * 源币种金额（plan R1.9 / P1-MA2-002/009 / P1-MA3-039）。Provider 显式填充，{@code persistVoucher} 忠实写入
+     * {@code ErpFinVoucherLine.amountSource}。未设置（null）时 fallback 到 {@link #amount}（单币种向后兼容）。
+     */
+    private BigDecimal amountSource;
+    /**
+     * 本位币金额（plan R1.9）。{@code functional = source × exchangeRate}，由 Provider 按文档锁定汇率计算。
+     * 未设置（null）时 fallback 到 {@link #amount}。{@link #amount} 保留作 balanceTotals/assertBalanced 的功能金额。
+     */
+    private BigDecimal amountFunctional;
     private String amountKey;
     private String accountKey;
     private String memo;
@@ -65,6 +75,22 @@ public class VoucherFact {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public BigDecimal getAmountSource() {
+        return amountSource;
+    }
+
+    public void setAmountSource(BigDecimal amountSource) {
+        this.amountSource = amountSource;
+    }
+
+    public BigDecimal getAmountFunctional() {
+        return amountFunctional;
+    }
+
+    public void setAmountFunctional(BigDecimal amountFunctional) {
+        this.amountFunctional = amountFunctional;
     }
 
     public String getAmountKey() {

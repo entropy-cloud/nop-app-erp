@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpInvCostAdjust submitForApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractSubmitForApprovalProcessor to activate the abstract base class; delegates to ErpInvCostAdjustProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpInvCostAdjust submitForApproval per-mutation Processor (plan 2026-07-25-1057-2, R5.6 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransitionForSubmit
+ * → set SUBMITTED → save. Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpInvCostAdjustSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpInvCostAdjust> {
 
@@ -24,7 +24,12 @@ public class ErpInvCostAdjustSubmitForApprovalProcessor extends AbstractSubmitFo
 
     @Override
     public ErpInvCostAdjust submitForApproval(String id, IServiceContext context) {
-        return processor.submitForApproval(id, context);
+        ErpInvCostAdjust adjust = processor.requireAdjustment(id, context);
+        processor.validateNotCancelled(adjust, context);
+        processor.validateTransitionForSubmit(adjust);
+        adjust.setApproveStatus(ErpInvConstants.APPROVE_STATUS_SUBMITTED);
+        processor.adjustDao().updateEntity(adjust);
+        return adjust;
     }
 
     @Override

@@ -104,6 +104,92 @@ jobs:
           path: checker-output.txt
           retention-days: 30
 
+  i18n:
+    name: F15 i18n coverage regression gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run i18n-coverage-checker (strict)
+        # F15 i18n regression gate. Mirrors the F8 option (b) paradigm above: the checker
+        # script (docs/audits/i18n-coverage-checker.sh) stays a pure reporter; the gate logic
+        # (parse output + compare baseline) lives here in CI. The checker is run in --strict
+        # mode so coverage gaps are surfaced, but the pass/fail verdict is decided below
+        # against the baseline (not by the script's own exit code), keeping gate ownership in CI.
+        run: |
+          bash docs/audits/i18n-coverage-checker.sh --strict > i18n-output.txt 2>&1
+          echo "===== i18n checker output ====="
+          cat i18n-output.txt
+      - name: Enforce i18n baseline gate
+        # Phase 1 Decision: option (b) — gate logic in CI, checker script stays a pure reporter.
+        # Baseline source Decision (Phase 1, 方案 X): F15 baseline is DEFECTS=0 / COVERAGE GAPS=0,
+        # hardcoded here with a pointer to the authoritative human-readable table in
+        # docs/audits/compliance-baseline.md §"F15 i18n 基线注记" (NOT the main ```yaml block,
+        # which is F8-only). Baseline is 0/0 and stable (anchored by plan 2026-07-29-0749-3).
+        # Gate direction: one-way tightening. actual > baseline => fail. actual <= baseline => pass.
+        # Parse format (measured, Phase 1 Proof):
+        #   "DEFECTS (bad i18n-en values) : N"   <- colon has surrounding spaces
+        #   "COVERAGE GAPS (...): N in M files"  <- colon has NO preceding space
+        # fail-loud: unparseable output (no DEFECTS/GAPS line) => sys.exit(2), mirroring the
+        # F8 gate's exit(2) when the baseline block is missing (never silently pass).
+        run: |
+          python3 - <<'PY'
+          import re, sys, pathlib
+
+          out_text = pathlib.Path('i18n-output.txt').read_text(encoding='utf-8', errors='replace')
+
+          # F15 baseline — see docs/audits/compliance-baseline.md §"F15 i18n 基线注记".
+          BASELINE_DEFECTS = 0
+          BASELINE_GAPS = 0
+
+          # --- Parse checker summary lines (exact format, measured in Phase 1 Proof) ---
+          defects = None
+          gaps = None
+          defects_re = re.compile(r'^DEFECTS\b.*?:\s*(\d+)\s*$')
+          gaps_re = re.compile(r'^COVERAGE GAPS\b.*?:\s*(\d+)\s+in\s+\d+\s+files\s*$')
+          for line in out_text.splitlines():
+              m = defects_re.match(line)
+              if m and defects is None:
+                  defects = int(m.group(1))
+                  continue
+              m = gaps_re.match(line)
+              if m and gaps is None:
+                  gaps = int(m.group(1))
+                  continue
+
+          print('===== i18n baseline gate result =====')
+          print(f'baseline: DEFECTS={BASELINE_DEFECTS} | COVERAGE GAPS={BASELINE_GAPS}')
+          print(f'actual:   DEFECTS={defects} | COVERAGE GAPS={gaps}')
+
+          # --- fail-loud: unparseable output must never pass (mirrors F8 exit(2) discipline) ---
+          if defects is None or gaps is None:
+              print('ERROR: could not parse DEFECTS / COVERAGE GAPS lines from i18n-coverage-checker output')
+              sys.exit(2)
+
+          # --- one-way tightening: actual > baseline => fail ---
+          regressions = []
+          if defects > BASELINE_DEFECTS:
+              regressions.append(f'DEFECTS: baseline {BASELINE_DEFECTS} -> actual {defects} (+{defects - BASELINE_DEFECTS})')
+          if gaps > BASELINE_GAPS:
+              regressions.append(f'COVERAGE GAPS: baseline {BASELINE_GAPS} -> actual {gaps} (+{gaps - BASELINE_GAPS})')
+          if regressions:
+              print('REGRESSIONS (actual > baseline => FAIL):')
+              for r in regressions:
+                  print(f'  {r}')
+              print('')
+              print('To raise a baseline, open an independent plan and adjudicate each new hit')
+              print('(see docs/audits/compliance-baseline.md "回归门控规则").')
+              sys.exit(1)
+          print('OK: no defect/gap exceeds baseline. Gate PASSED.')
+          PY
+      - name: Upload i18n checker output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-checker-output
+          path: i18n-output.txt
+          retention-days: 30
+
   web-pages-validation:
     name: app-erp-all web pages validation
     runs-on: ubuntu-latest
@@ -122,3 +208,105 @@ jobs:
       # the suppression count; CI enforcement reuses this single aggregate test.
       - name: Run ErpAllWebPagesTest in app-erp-all
         run: mvn -B -pl app-erp-all -am test -Dtest=ErpAllWebPagesTest
+
+  fault-injection-coverage:
+    name: MQ Q4 fault-injection coverage gate (7 domains)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      # C-3 optional enhancement (design doc §7.4): grep 7-domain fault-injection test existence.
+      # Gate direction: one-way tightening — covered domains must not drop below baseline (7).
+      # Matches both Q4 harness tests (FaultInjection) and MR1.16 per-point precedents
+      # (FailureHangs/FailureAlert). Aligns with F8/F15 architecture: checker=pure reporter,
+      # gate logic in CI.
+      # Domain set: Q4 first round (finance/hr/assets/quality/projects/maintenance, 6) +
+      # logistics successor (plan 2026-08-02-1500-1, P1-MA2-080 freight posting alert closure).
+      - name: Enforce 7-domain fault-injection coverage
+        run: |
+          python3 - <<'PY'
+          import glob, pathlib, sys
+
+          DOMAINS = ['finance', 'hr', 'assets', 'quality', 'projects', 'maintenance', 'logistics']
+          BASELINE = len(DOMAINS)  # 7 — one-way tightening: actual must not drop below
+          patterns = ['FailureHangs', 'FailureAlert', 'FaultInjection']
+
+          covered = []
+          uncovered = []
+          for domain in DOMAINS:
+              test_dirs = glob.glob(f'module-{domain}/erp-*-service/src/test/')
+              found = False
+              for test_dir in test_dirs:
+                  for p in pathlib.Path(test_dir).rglob('*.java'):
+                      text = p.read_text(encoding='utf-8', errors='replace')
+                      if any(pat in text for pat in patterns):
+                          found = True
+                          break
+                  if found:
+                      break
+              (covered if found else uncovered).append(domain)
+
+          print('===== MQ Q4 fault-injection coverage gate =====')
+          print(f'covered domains ({len(covered)}/{BASELINE}): {covered}')
+          if uncovered:
+              print(f'UNCOVERED domains: {uncovered}')
+
+          if len(covered) < BASELINE:
+              print(f'FAIL: only {len(covered)} domains have fault-injection tests; baseline is {BASELINE}.')
+              print('To lower the baseline, open an independent plan and adjudicate the domain removal.')
+              sys.exit(1)
+          print(f'OK: {len(covered)} domains covered. Gate PASSED.')
+          PY
+
+  property-test-coverage:
+    name: MQ Q3 property-test coverage gate (3 domains)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      # C-3 adjudication: introduce (plan 2026-08-02-1400-1 Phase 4 / design doc §8.3-§8.4 C-3).
+      # Domain-coverage grep gate mirroring the Q4 fault-injection-coverage paradigm above:
+      # resilient to class renames (greps by domain + @Property annotation, not hardcoded class names).
+      # Gate direction: one-way tightening — covered domains must not drop below baseline.
+      # Q3 Phase 2 baseline (plan 2026-08-02-1400-1) = finance + inventory (P1 debit-credit / P2 cost-layer /
+      # P3 budget-commitment). Q3 successor (plan 2026-08-02-0650-1 Phase 4 CI gate adjudication) expanded to 3
+      # domains: + assets (P7 depreciation-residual). Adjudication: option (X) domain-coverage expansion chosen
+      # over option (Y) @Property-count gate — domain-coverage is resilient to class rename + new property add
+      # (aligns with C-3 paradigm, design doc §8.4); @Property-count is brittle (count changes per new property).
+      # Aligns with F8/F15/Q4 architecture: checker=pure reporter, gate logic in CI.
+      - name: Enforce 3-domain property-test coverage
+        run: |
+          python3 - <<'PY'
+          import glob, pathlib, sys
+
+          DOMAINS = ['finance', 'inventory', 'assets']
+          BASELINE = len(DOMAINS)  # 3 — one-way tightening: actual must not drop below
+          # jqwik @Property annotation is the canonical property-test marker (design doc §3.1.1).
+          MARKER = '@Property'
+
+          covered = []
+          uncovered = []
+          for domain in DOMAINS:
+              test_dirs = glob.glob(f'module-{domain}/erp-*-service/src/test/')
+              found = False
+              for test_dir in test_dirs:
+                  for p in pathlib.Path(test_dir).rglob('*.java'):
+                      text = p.read_text(encoding='utf-8', errors='replace')
+                      if MARKER in text:
+                          found = True
+                          break
+                  if found:
+                      break
+              (covered if found else uncovered).append(domain)
+
+          print('===== MQ Q3 property-test coverage gate =====')
+          print(f'covered domains ({len(covered)}/{BASELINE}): {covered}')
+          if uncovered:
+              print(f'UNCOVERED domains: {uncovered}')
+
+          if len(covered) < BASELINE:
+              print(f'FAIL: only {len(covered)} domains have @Property property tests; baseline is {BASELINE}.')
+              print('To lower the baseline, open an independent plan and adjudicate the domain removal.')
+              sys.exit(1)
+          print(f'OK: {len(covered)} domains covered. Gate PASSED.')
+          PY

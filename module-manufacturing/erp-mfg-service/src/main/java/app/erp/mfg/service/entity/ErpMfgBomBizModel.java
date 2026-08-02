@@ -19,14 +19,19 @@ import app.erp.mfg.biz.IErpMfgBomBiz;
 import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.bom.BomExpander;
-import app.erp.mfg.service.costing.CostRollupService;
+import app.erp.mfg.service.processor.ErpMfgBomRollupCostProcessor;
 
+/**
+ * BOM BizModel（Facade，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
+ * {@code rollupCost}（@BizMutation）委托 {@link ErpMfgBomRollupCostProcessor}（R6.2 per-mutation 拆分）；
+ * {@code findDefaultBom}/{@code explode} 为 :45 只读查询保留委托 {@link BomExpander}。
+ */
 @BizModel("ErpMfgBom")
 public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMfgBomBiz {
     @Inject
     BomExpander bomExpander;
     @Inject
-    CostRollupService costRollupService;
+    ErpMfgBomRollupCostProcessor rollupCostProcessor;
 
     public ErpMfgBomBizModel() {
         setEntityName(ErpMfgBom.class.getName());
@@ -34,10 +39,6 @@ public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMf
 
     public void setBomExpander(BomExpander bomExpander) {
         this.bomExpander = bomExpander;
-    }
-
-    public void setCostRollupService(CostRollupService costRollupService) {
-        this.costRollupService = costRollupService;
     }
 
     @Override
@@ -63,7 +64,7 @@ public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMf
     @Override
     @BizMutation
     public CostRollupResult rollupCost(@Name("bomId") Long bomId, IServiceContext context) {
-        return costRollupService.rollup(bomId);
+        return rollupCostProcessor.rollupCost(bomId, context);
     }
 
 }

@@ -22,6 +22,8 @@
 
 ## 快速路由
 
+> **路由权威**：`docs/index.md` 是顶级文档路由器（完整导航单一真相源）。本表仅列**代理高频任务**的精简子集——"然后检查"列携带 index.md 未覆盖的 Nop 平台/代理导向指引，故按需保留而非删除；与 index.md 语义重叠的导航以 index.md 为准，本表内容漂移时以 index.md 修正。
+
 | 如果你需要... | 从这里开始 | 然后检查 |
 | --- | --- | --- |
 | 了解产品基线 | `docs/requirements/product-scope.md` | `docs/design/app-overview.md` |
@@ -152,7 +154,7 @@ codegen 后阶段规则：
 - Java 模块路径、包名、视图路径均已存在（`module-<domain>/erp-<short>-{dao,meta,service,web,app,api}/`）
 - ORM 模型变更后用 `mvn clean install -DskipTests` 触发增量重新生成（不要重跑 `nop-cli gen`）
 - 设计与讨论工作仍应集中在 `<domain>/model/*.orm.xml`（权威源）以及 `docs/design/`、`docs/architecture/`、`docs/requirements/`
-- `docs/context/project-context.md` 中的验证命令已可执行（154 reactor 模块全绿基线见 `docs/testing/known-good-baselines.md`）
+- `docs/context/project-context.md` 中的验证命令已可执行（156 reactor 模块全绿基线见 `docs/testing/known-good-baselines.md`）
 
 ## Nop Platform 特定规则
 

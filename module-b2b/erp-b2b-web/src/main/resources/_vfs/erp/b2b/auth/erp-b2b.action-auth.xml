@@ -16,7 +16,18 @@
                         <resource id="ErpB2bEdiDoc-main" app:useCases="UC-B2B-002,UC-B2B-006"
                                   displayName="EDI事务" i18n-en:displayName="EDI Document" icon="file"
                                   component="AMIS" resourceType="SUBM" orderNo="110"
-                                  url="/erp/b2b/pages/ErpB2bEdiDoc/main.page.yaml"/>
+                                  url="/erp/b2b/pages/ErpB2bEdiDoc/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpB2bEdiDoc:markSent" displayName="标记EDI已发送" i18n-en:displayName="Mark Sent"
+                                          resourceType="FNPT" orderNo="11010" roles="B2B 对账员">
+                                    <permissions>ErpB2bEdiDoc:markSent</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpB2bEdiDoc:cancel" displayName="取消EDI事务" i18n-en:displayName="Cancel EDI"
+                                          resourceType="FNPT" orderNo="11020" roles="B2B 管理员">
+                                    <permissions>ErpB2bEdiDoc:cancel</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="b2b-edi-detail" app:useCases="UC-B2B-002,UC-B2B-005,UC-B2B-006" displayName="EDI事务详情"
                                   i18n-en:displayName="EDI Transaction Detail" icon="file-text"
                                   component="AMIS" resourceType="SUBM" orderNo="115"
@@ -29,7 +40,14 @@
                         <resource id="ErpB2bAsn-main" app:useCases="UC-B2B-003"
                                   displayName="提前发货通知" i18n-en:displayName="Advanced Shipping Notice" icon="truck"
                                   component="AMIS" resourceType="SUBM" orderNo="200"
-                                  url="/erp/b2b/pages/ErpB2bAsn/main.page.yaml"/>
+                                  url="/erp/b2b/pages/ErpB2bAsn/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpB2bAsn:handleInboundWebhook" displayName="处理入站Webhook(高危)" i18n-en:displayName="Handle Inbound Webhook"
+                                          resourceType="FNPT" orderNo="20010" roles="B2B 管理员">
+                                    <permissions>ErpB2bAsn:handleInboundWebhook</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="b2b-asn-flow" app:useCases="UC-B2B-003" displayName="ASN流程跟踪"
                                   i18n-en:displayName="ASN Flow Tracking" icon="git-branch"
                                   component="AMIS" resourceType="SUBM" orderNo="205"

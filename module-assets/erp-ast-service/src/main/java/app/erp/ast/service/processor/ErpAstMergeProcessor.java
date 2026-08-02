@@ -46,39 +46,38 @@ public class ErpAstMergeProcessor {
     @Inject
     AssetMergePostingDispatcher postingDispatcher;
 
+    @Inject
+    ErpAstMergeSubmitForApprovalProcessor submitForApprovalProcessor;
+
+    @Inject
+    ErpAstMergeApproveProcessor approveProcessor;
+
+    @Inject
+    ErpAstMergeRejectProcessor rejectProcessor;
+
+    @Inject
+    ErpAstMergeReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpAstMergeWithdrawApprovalProcessor withdrawApprovalProcessor;
+
+    @Inject
+    ErpAstMergeCancelProcessor cancelProcessor;
+
     public ErpAstMerge submitForApproval(String id, IServiceContext context) {
-        ErpAstMerge merge = requireMerge(id, context);
-        validateNotCancelled(merge, context);
-        validateTransitionForSubmit(merge, context);
-        List<ErpAstMergeLine> lines = loadLines(merge);
-        List<ErpAstAsset> sources = loadSources(lines);
-        validateSources(merge, lines, sources, context);
-        merge.setApproveStatus(ErpAstConstants.APPROVE_STATUS_SUBMITTED);
-        mergeDao().updateEntity(merge);
-        return merge;
+        return submitForApprovalProcessor.submitForApproval(id, context);
     }
 
     public ErpAstMerge withdrawApproval(String id, IServiceContext context) {
-        ErpAstMerge merge = requireMerge(id, context);
-        validateNotCancelled(merge, context);
-        validateTransitionForWithdraw(merge, context);
-        merge.setApproveStatus(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED);
-        mergeDao().updateEntity(merge);
-        return merge;
+        return withdrawApprovalProcessor.withdrawApproval(id, context);
     }
 
     public ErpAstMerge approve(String id, IServiceContext context) {
-        ErpAstMerge merge = requireMerge(id, context);
-        if (merge.isApproved()) {
-            return merge;
-        }
-        validateNotCancelled(merge, context);
-        validateTransitionForApprove(merge, context);
+        return approveProcessor.approve(id, context);
+    }
 
-        List<ErpAstMergeLine> lines = loadLines(merge);
-        List<ErpAstAsset> sources = loadSources(lines);
-        validateSources(merge, lines, sources, context);
-
+    protected ErpAstMerge executeApprove(String id, ErpAstMerge merge, List<ErpAstMergeLine> lines,
+                                           List<ErpAstAsset> sources, IServiceContext context) {
         // step 1: 幂等防护
         validateBeforeExecute(merge, context);
 
@@ -132,29 +131,18 @@ public class ErpAstMergeProcessor {
     }
 
     public ErpAstMerge reject(String id, IServiceContext context) {
-        ErpAstMerge merge = requireMerge(id, context);
-        validateNotCancelled(merge, context);
-        validateTransitionForReject(merge, context);
-        merge.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
-        mergeDao().updateEntity(merge);
-        return merge;
+        return rejectProcessor.reject(id, context);
     }
 
     /**
      * 合并执行后不可撤销（owner doc {@code split-merge.md} §关键业务规则 5）。错误更正走一般资产处置 + 新建流程。
      */
     public ErpAstMerge reverseApprove(String id, IServiceContext context) {
-        ErpAstMerge merge = requireMerge(id, context);
-        throw new NopException(ErpAstErrors.ERR_AST_MERGE_REVERSE_NOT_SUPPORTED)
-                .param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode());
+        return reverseApproveProcessor.reverseApprove(id, context);
     }
 
     public ErpAstMerge cancel(Long id, IServiceContext context) {
-        ErpAstMerge merge = requireMerge(String.valueOf(id), context);
-        validateTransitionForCancel(merge, context);
-        merge.setDocStatus(ErpAstConstants.DOC_STATUS_CANCELLED);
-        mergeDao().updateEntity(merge);
-        return merge;
+        return cancelProcessor.cancel(String.valueOf(id), context);
     }
 
     // ---------- step：迁移校验 ----------

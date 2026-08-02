@@ -16,6 +16,8 @@ import app.erp.hr.biz.IErpHrAttendanceBiz;
 import app.erp.hr.dao.entity.ErpHrAttendance;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.processor.ErpHrAttendanceClockInProcessor;
+import app.erp.hr.service.processor.ErpHrAttendanceClockOutProcessor;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -39,6 +41,11 @@ public class ErpHrAttendanceBizModel extends CrudBizModel<ErpHrAttendance> imple
         setEntityName(ErpHrAttendance.class.getName());
     }
 
+    @Inject
+    ErpHrAttendanceClockInProcessor clockInProcessor;
+    @Inject
+    ErpHrAttendanceClockOutProcessor clockOutProcessor;
+
     @Override
     protected void defaultPrepareSave(EntityData<ErpHrAttendance> entityData, IServiceContext context) {
         super.defaultPrepareSave(entityData, context);
@@ -51,40 +58,13 @@ public class ErpHrAttendanceBizModel extends CrudBizModel<ErpHrAttendance> imple
     @Override
     @BizMutation
     public ErpHrAttendance clockIn(@Name("employeeId") Long employeeId, IServiceContext context) {
-        LocalDate today = CoreMetrics.today();
-        ErpHrAttendance attendance = findAttendance(employeeId, today, context);
-        if (attendance == null) {
-            attendance = newEntity();
-            attendance.setBusinessDate(today);
-            attendance.setEmployeeId(employeeId);
-            attendance.setDate(today);
-            attendance.setSource(ErpHrConstants.ATTENDANCE_SOURCE_CARD);
-            attendance.setIsAbsent(false);
-            attendance.setLateMinutes(0);
-            attendance.setEarlyLeaveMinutes(0);
-        }
-        if (attendance.getClockIn() != null) {
-            throw new NopException(ErpHrErrors.ERR_ALREADY_CLOCKED_IN)
-                    .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId);
-        }
-        attendance.setClockIn(CoreMetrics.currentTimestamp());
-        saveOrUpdateAttendance(attendance, context);
-        return attendance;
+        return clockInProcessor.clockIn(employeeId, context);
     }
 
     @Override
     @BizMutation
     public ErpHrAttendance clockOut(@Name("employeeId") Long employeeId, IServiceContext context) {
-        LocalDate today = CoreMetrics.today();
-        ErpHrAttendance attendance = findAttendance(employeeId, today, context);
-        if (attendance == null || attendance.getClockIn() == null) {
-            throw new NopException(ErpHrErrors.ERR_NOT_CLOCKED_IN)
-                    .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId);
-        }
-        attendance.setClockOut(CoreMetrics.currentTimestamp());
-        attendance.setWorkHours(computeWorkHours(attendance.getClockIn().toLocalDateTime(), attendance.getClockOut().toLocalDateTime()));
-        saveOrUpdateAttendance(attendance, context);
-        return attendance;
+        return clockOutProcessor.clockOut(employeeId, context);
     }
 
     @Override

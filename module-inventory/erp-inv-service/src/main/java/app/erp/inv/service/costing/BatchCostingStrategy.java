@@ -58,7 +58,7 @@ public class BatchCostingStrategy implements CostingStrategy {
     public BigDecimal onIncoming(ErpInvStockMove move, ErpInvStockMoveLine line, Long acctSchemaId,
                                  BigDecimal unitCost, BookingContext ctx) {
         Long warehouseId = move.getDestWarehouseId();
-        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestWarehouseId();
+        Long locationId = line.getDestLocationId() != null ? line.getDestLocationId() : move.getDestLocationId();
         ErpInvStockBalance balance = ctx.upsertBalance(move, line, warehouseId, locationId);
         BigDecimal qty = nz(line.getQuantity());
         BigDecimal lineTotalCost = unitCost.multiply(qty);

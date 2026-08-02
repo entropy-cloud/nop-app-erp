@@ -24,7 +24,12 @@ public class ErpFinExpenseClaimSubmitForApprovalProcessor extends AbstractSubmit
 
     @Override
     public ErpFinExpenseClaim submitForApproval(String id, IServiceContext context) {
-        return processor.submitForApproval(id, context);
+        ErpFinExpenseClaim claim = processor.requireClaim(id, context);
+        processor.validateNotCancelled(claim, context);
+        processor.validateTransitionForSubmit(claim, context);
+        processor.validateForApproval(claim, context);
+        processor.doSubmit(claim, context);
+        return claim;
     }
 
     @Override

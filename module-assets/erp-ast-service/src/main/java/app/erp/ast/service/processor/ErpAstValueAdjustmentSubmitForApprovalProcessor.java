@@ -9,9 +9,10 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstValueAdjustment submitForApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractSubmitForApprovalProcessor to activate the abstract base class; delegates to ErpAstValueAdjustmentProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstValueAdjustment submitForApproval per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → validateNotCancelled → validateTransition → validateForApproval
+ * → auto-approve fast path（isApprovalRequired()=false 时 doAutoApprove）→ set SUBMITTED → save.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstValueAdjustmentSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpAstValueAdjustment> {
 
@@ -24,7 +25,16 @@ public class ErpAstValueAdjustmentSubmitForApprovalProcessor extends AbstractSub
 
     @Override
     public ErpAstValueAdjustment submitForApproval(String id, IServiceContext context) {
-        return processor.submitForApproval(id, context);
+        ErpAstValueAdjustment adjustment = processor.requireAdjustment(id, context);
+        processor.validateNotCancelled(adjustment, context);
+        processor.validateTransitionForSubmit(adjustment, context);
+        processor.validateForApproval(adjustment, context);
+        if (!processor.isApprovalRequired()) {
+            return processor.doAutoApprove(id, adjustment, context);
+        }
+        adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        processor.adjustmentDao().updateEntity(adjustment);
+        return adjustment;
     }
 
     @Override

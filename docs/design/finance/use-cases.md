@@ -7,8 +7,8 @@
 
 ```
 凭证状态:  DRAFT / POSTED / CANCELLED
-期间状态:  OPEN / CLOSING / CLOSED / CLOSED_FINAL
-核销状态:  未核销 / 部分 / 已核销 / 超额
+期间状态:  NEVER_OPENED / OPEN / CLOSING / CLOSED / CLOSED_FINAL
+核销状态(erp-fin/ar-ap-status):  OPEN(未核销) / PARTIAL(部分) / SETTLED(已核销) / CANCELLED(已作废) / WRITTEN_OFF(已坏账核销)
 ```
 
 ---
@@ -209,7 +209,7 @@ CLOSED_FINAL → OPEN
 ```
 采购订单.审核 →
   调用 IErpFinBudgetControlBiz.check(科目, 成本中心, 期间, 金额, 来源单)
-  预算余量 = 预算(BUDGET凭证) - 承付(COMMITMENT凭证) - 实际(ACTUAL凭证)
+  预算余量 = 预算(BUDGET凭证) - 承付(COMMITMENT凭证) - 实际(NORMAL凭证)
   若 余量 < 0 且 控制级别 == HARD:
     返回 BLOCKED → 审核抛异常, 订单保持 SUBMITTED
   若 == WARN: 写日志放行
@@ -228,7 +228,7 @@ CLOSED_FINAL → OPEN
 ```
 凭证行.本位币金额 == 源币金额 × 汇率
 若 汇率缺失 → 报错拒绝过账
-外币银行账户对账: 未达账项调整考虑汇兑损益(FX_REVALUATION)
+外币银行账户对账: 未达账项调整考虑汇兑损益(EXCHANGE_GAIN_LOSS)
 ```
 
 **涉及机制**:posting.md §多币种
@@ -249,7 +249,7 @@ CLOSED_FINAL → OPEN
 // 预算控制(采购订单审核时,强一致校验)
 采购订单.审核 →
   IErpFinBudgetControlBiz.check(科目, 成本中心, 期间, 金额, 来源单)
-  预算余量 = BUDGET凭证 - COMMITMENT凭证 - ACTUAL凭证(同维度)
+  预算余量 = BUDGET凭证 - COMMITMENT凭证 - NORMAL凭证(同维度)
   若 余量 < 0 且 控制级别==HARD: 返回 BLOCKED → 审核抛异常
   若 == WARN: 写 BudgetControlLog 放行
 

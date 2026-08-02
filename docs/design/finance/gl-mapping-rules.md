@@ -1,8 +1,6 @@
 # 科目映射规则（GL Mapping Rules）— A1
 
 > Owner Doc for `deepening-roadmap.md §A1`。
-> Plan: `docs/plans/2026-07-21-0827-1-finance-gl-mapping-rule-tables.md`。
-> 落地：2026-07-21。
 
 本文件是 `ErpFinGlMappingRule`（科目映射规则表）+ `IErpFinGlMappingResolver`（解析引擎）的应用层业务设计
 **稳定基线**，描述业务语义、优先级链算法、缓存策略、Provider 集成契约与反模式自检。字段集真相源在
@@ -21,9 +19,7 @@
 - 默认账套 + 原材料类别 → `1403 原材料`（更细颗粒）
 - 税务账套 + 默认物料类别 → `5001 库存商品`（税务口径不同于财务口径）
 
-Provider 既有路径直接硬编码最终 `subjectCode` 常量（如 `PurAcctDocProvider.SUBJECT_PURCHASE="1403"`），
-无法在不动 Java 代码的前提下按维度外部化覆盖。本规则表作为 **Provider 之上的可选多维覆盖层**，使运维
-能直接配置规则而非 redeploy。
+Provider 既有路径直接硬编码最终 `subjectCode` 常量（如 purchase 域 PURCHASE 键回落 `"1403"`），无法在不动 Java 代码的前提下按维度外部化覆盖。本规则表作为 **Provider 之上的可选多维覆盖层**，使运维能直接配置规则而非 redeploy。
 
 ### 1.2 与 `ErpMdSubjectMapping` 边界（关键裁决）
 
@@ -33,7 +29,7 @@ Provider 既有路径直接硬编码最终 `subjectCode` 常量（如 `PurAcctDo
 | **输入** | 已解析的 `sourceSubjectId` + 目标 `acctSchemaId` | `businessType` + `accountKey` + 业务维度 |
 | **输出** | `targetSubjectId`（同一业务科目在不同账套的编码映射） | `targetSubjectCode`（建议的科目编码字符串） |
 | **处理问题** | "同一业务科目在不同账套下用不同编码"（如管理账 `1403` → 税务账 `5001`） | "同一 businessType+accountKey 在不同业务维度下指向不同科目" |
-| **执行时机** | `ErpFinPostingProcessor.translateFactsForSchema`（facts 已 `resolveSubjects` 之后） | `ErpFinPostingProcessor.resolveSubjects` 开头（既有 code→subject 查找之前） |
+| **执行时机** | 科目解析之后（facts 已 resolveSubjects） | 科目解析开头（既有 code→subject 查找之前） |
 | **真相源** | `module-master-data/model/app-erp-master-data.orm.xml` `ErpMdSubjectMapping` | `module-finance/model/app-erp-finance.orm.xml` `ErpFinGlMappingRule` |
 
 **三层职责不重叠**：Provider 生成 `VoucherFact{subjectCode, accountKey}` →（A1）规则匹配覆盖 `subjectCode`
@@ -111,41 +107,16 @@ materialCategoryId=NULL, warehouseId=NULL, ...)` 匹配任意账套 + 任意 par
 
 ## §3 优先级链算法
 
-> **orgId 维度激活（plan 2026-07-25-1016-2）**：本节伪代码 `:118` `rulesByIndex.get((orgId, businessType, accountKey))` 与
-> `:192`「按 `(orgId, businessType, accountKey)` 索引」自 A1 起即为 owner doc 设计真相源，但代码（`ErpFinGlMappingResolver`）
-> 自 A1 起漂移——`resolveOrgIdFromDimensions` 硬编码 `return null`、cache key 丢弃 `rule.orgId`。**此 doc/code drift 已收口**：
-> 代码现与 `:118/192` 一致，经 config-gate `erp-fin.gl-mapping.org-dimension-enabled`（默认 `false`）激活：
-> 关闭态（默认）= org-agnostic（orgId 不参与 cache key 与匹配，向后兼容现状）；开启态 = org 精确匹配（cache 按
-> `(orgId, businessType, accountKey)` 分桶 + `matches` exact 校验 + `specificity` 含 orgId 计数）。orgId 维度仅做
-> exact 匹配（非通配），因 `orgId` 在 ORM 层 `mandatory="true"`。
+> **orgId 维度激活**：本节「按 `(orgId, businessType, accountKey)` 索引」自 A1 起即为 owner doc 设计真相源，但 resolver 实现自 A1 起漂移——orgId 解析硬编码返回 null、cache key 丢弃 `rule.orgId`。**此 doc/code drift 已收口**：代码现与设计一致，经 config-gate `erp-fin.gl-mapping.org-dimension-enabled`（默认 `false`）激活：关闭态（默认）= org-agnostic（orgId 不参与 cache key 与匹配，向后兼容现状）；开启态 = org 精确匹配（cache 按 `(orgId, businessType, accountKey)` 分桶 + exact 校验 + `specificity` 含 orgId 计数）。orgId 维度仅做 exact 匹配（非通配），因 `orgId` 在 ORM 层 `mandatory="true"`。
 
-### 3.1 算法（伪代码）
+### 3.1 算法
 
-```
-resolve(businessType, accountKey, dimensions, acctSchemaId):
-    candidates = rulesByIndex.get((orgId, businessType, accountKey))   // 启动期 eager load 全表
-    if candidates is null or empty: return null                        // 完全无配置 → null（保留 Provider fallback）
+解析按以下步骤（实现细节见 `docs/architecture/processor-extension-pattern.md`）：
 
-    matched = []
-    for rule in candidates:
-        if not rule.isActive: continue
-        if rule.acctSchemaId is not null and rule.acctSchemaId != acctSchemaId: continue
-        if rule.partnerGroupId is not null and rule.partnerGroupId != dimensions.partnerGroupId: continue
-        if rule.materialCategoryId is not null and rule.materialCategoryId != dimensions.materialCategoryId: continue
-        if rule.warehouseId is not null and rule.warehouseId != dimensions.warehouseId: continue
-        if rule.departmentId is not null and rule.departmentId != dimensions.departmentId: continue
-        if rule.projectId is not null and rule.projectId != dimensions.projectId: continue
-        matched.add(rule)
-
-    if matched is empty: return null
-
-    // 排序：(priority DESC, 维度具体度 DESC)
-    matched.sort(by priority DESC, then by specificity DESC)
-    return matched[0].targetSubjectCode
-
-specificity(rule) = 非 NULL 维度字段数（partnerGroupId/materialCategoryId/warehouseId/departmentId/projectId 计 5 维）
-                   + (acctSchemaId != null ? 1 : 0)
-```
+1. **候选集**：按 `(orgId, businessType, accountKey)` 索引取出候选规则（启动期 eager load 全表）。候选为空 → 返回 `null`（保留 Provider fallback）。
+2. **维度过滤**：逐条规则，跳过 `isActive=false`；对每个非 NULL 维度（acctSchemaId / partnerGroupId / materialCategoryId / warehouseId / departmentId / projectId）做相等匹配，不匹配则跳过。
+3. **排序**：命中规则按 `(priority DESC, 维度具体度 DESC)` 排序。维度具体度 = 非 NULL 维度字段数（5 业务维度）+（acctSchemaId 非 NULL ? 1 : 0）。
+4. **胜出**：取排序后首条的 `targetSubjectCode`。
 
 ### 3.2 priority 语义澄清
 
@@ -194,23 +165,20 @@ specificity(rule) = 非 NULL 维度字段数（partnerGroupId/materialCategoryId
 
 ## §4 缓存策略 + 失效机制
 
-> **orgId 分桶对齐（plan 2026-07-25-1016-2）**：cache 数据结构与 `:191` 规定一致——关闭态统一 `_` 桶（向后兼容），
+> **orgId 分桶对齐**：cache 数据结构与 `:191` 规定一致——关闭态统一 `_` 桶（向后兼容），
 > 开启态按 `(orgId, businessType, accountKey)` 分桶。`loadFromDb`（cache 禁用降级路径）同样按 orgId 精确过滤，
 > 避免绕过分桶。config-gate 见 §3 orgId 维度激活注记。
 
 ### 4.1 进程内缓存设计
 
-- **数据结构**：`ConcurrentHashMap<OrgId+BusinessType+AccountKey, List<Rule>>`
-- **加载方式**：`@PostConstruct` 启动期 eager load 全表 + 按 `(orgId, businessType, accountKey)` 索引；
-  EstRows < 1000，启动开销可忽略。
-- **TTL 配置项**：`erp-fin.gl-mapping.cache-ttl-seconds`（默认 `3600`，0 表示永久）。当前实现：进程内
-  缓存 + 主动失效，TTL 仅作降级fallback。
+- **数据结构**：按 `(orgId, businessType, accountKey)` 索引的并发映射（实现细节见 `docs/architecture/processor-extension-pattern.md`）。
+- **加载方式**：启动期 eager load 全表 + 按索引分桶；EstRows < 1000，启动开销可忽略。
+- **TTL 配置项**：`erp-fin.gl-mapping.cache-ttl-seconds`（默认 `3600`，0 表示永久）。当前实现：进程内缓存 + 主动失效，TTL 仅作降级 fallback。
 - **降级配置项**：`erp-fin.gl-mapping.cache-enabled`（默认 `true`）；`false` 时 `resolve` 每次查 DB。
 
 ### 4.2 主动失效机制
 
-- **触发点**：`ErpFinGlMappingRuleBizModel` 的 `save_`/`update_`/`delete_`/`deleteById_` 标准方法末尾
-  调 `resolver.invalidateCache()`。
+- **触发点**：规则 CRUD 标准方法（`save_`/`update_`/`delete_`/`deleteById_`）末尾触发缓存失效。
 - **失效方式**：**全量 reload**（简单可靠；EstRows < 1000，全量 reload 开销 < 50ms）。
 - **手动刷新入口**：`@BizMutation refreshCache()` — operator UI 工具栏按钮触发（多节点限制见 §6）。
 
@@ -247,30 +215,26 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 
 ### 5.2 既有 `VoucherFact.accountKey` 字段消费者清单（A1 落地前已存在）
 
-`VoucherFact.accountKey` 字段自初代过账引擎落地即存在（`VoucherFact.java:18,77-83`），A1 是**首个消费者**
-（不改字段定义）。既有生产者：
+`VoucherFact.accountKey` 字段自初代过账引擎落地即存在，A1 是**首个消费者**（不改字段定义）。既有生产者：
 
 | 生产者 | 路径 | accountKey 字面量 | A1 是否提供默认规则 |
 |--------|------|-------------------|---------------------|
-| `BankReconAdjAcctDocProvider:61,62,66,67` | 生产 Provider | `BANK_RECV` / `ADJ_BANK_RECV` / `ADJ_BANK_PAID` / `BANK_PAID` | 否（运维可后续按需添加） |
-| `ErpFinTemplateAcctDocProvider:90` | 默认模板 Provider | 复制 `ErpFinVoucherTemplateLine.accountKey`（运维自定义） | 否（模板路径独立解析，A1 不替换） |
-| `ErpFinPostingProcessor.translateFactsForSchema:602` | 跨账套传播 | （信息性复制，不再次触发 resolver） | – |
+| 银行对账调整 Provider | 生产 Provider | `BANK_RECV` / `ADJ_BANK_RECV` / `ADJ_BANK_PAID` / `BANK_PAID` | 否（运维可后续按需添加） |
+| 默认模板 Provider | 默认模板 Provider | 复制 `ErpFinVoucherTemplateLine.accountKey`（运维自定义） | 否（模板路径独立解析，A1 不替换） |
+| 跨账套传播 | 跨账套翻译阶段 | （信息性复制，不再次触发 resolver） | – |
 
-**A1 跨账套传播语义**（关键）：resolver **仅在 `resolveSubjects` 内运行一次**（pre-translation）；
-`translateFactsForSchema:602` 复制的 `accountKey` 在 translated fact 上**仅为信息性**（保留用于审计），
-**不再次触发 resolver**（避免双重解析）。如未来需在 target schema 下用不同规则重解析，需 successor plan
-扩展（默认 Non-Goal）。
+**A1 跨账套传播语义**（关键）：resolver **仅在科目解析阶段运行一次**（pre-translation）；跨账套翻译阶段复制的 `accountKey` 在 translated fact 上**仅为信息性**（保留用于审计），**不再次触发 resolver**（避免双重解析）。如未来需在 target schema 下用不同规则重解析，需 successor plan 扩展（默认 Non-Goal）。
 
 ### 5.3 试点接入清单
 
-| Provider | businessType | accountKey | 状态 |
+| 域 | businessType | accountKey | 状态 |
 |----------|--------------|------------|------|
-| `PurAcctDocProvider` | `AP_INVOICE` | `PURCHASE`（1403 在途物资） | ✅ 试点已接入 |
-| `PurAcctDocProvider` | `AP_INVOICE` | `INPUT_VAT`（2221 进项税） | ✅ 试点已接入 |
-| `PurAcctDocProvider` | `AP_INVOICE` | `ACCOUNTS_PAYABLE`（2202 应付账款） | ✅ 试点已接入 |
-| `SalAcctDocProvider` | 各 businessType | 各键 | ⏳ Deferred（试点稳定 ≥ 2 周后批量接入） |
-| `InvAcctDocProvider` | 各 businessType | 各键 | ⏳ Deferred |
-| `Assets/Hr/Maintenance AcctDocProvider` | 各 businessType | 各键 | ⏳ Deferred |
+| purchase | `AP_INVOICE` | `PURCHASE`（1403 在途物资） | 已接入 |
+| purchase | `AP_INVOICE` | `INPUT_VAT`（2221 进项税） | 已接入 |
+| purchase | `AP_INVOICE` | `ACCOUNTS_PAYABLE`（2202 应付账款） | 已接入 |
+| sales | 各 businessType | 各键 | ⏳ Deferred（试点稳定 ≥ 2 周后批量接入） |
+| inventory | 各 businessType | 各键 | ⏳ Deferred |
+| assets/hr/maintenance | 各 businessType | 各键 | ⏳ Deferred |
 
 ### 5.4 接入步骤模板（5 步）
 
@@ -288,8 +252,8 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 
 ### 5.5 试点边界（Non-Goals 重申）
 
-- 不批量改造其他 Provider（仅 `PurAcctDocProvider × AP_INVOICE × 3 键` 试点）。
-- 不替换 `ErpFinTemplateAcctDocProvider` 内部解析（模板路径独立；统一为 resolver 调用是 Deferred）。
+- 不批量改造其他 Provider（仅 purchase 域 AP_INVOICE × 3 键试点）。
+- 不替换默认模板 Provider 内部解析（模板路径独立；统一为 resolver 调用是 Deferred）。
 - 不解决 `amountKey` 占位符替换（仍由 Provider 内部完成）。
 - 不实现 GL Distribution（拆分一条分录为多条）。
 
@@ -319,7 +283,7 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 ### 6.3 缓存手动刷新按钮
 
 - **位置**：list grid toolbar
-- **触发**：`@BizMutation ErpFinGlMappingRuleBizModel.refreshCache()` → `resolver.invalidateCache()`
+- **触发**：`@BizMutation refreshCache()` → 触发缓存失效
 - **tooltip**："仅刷新本节点缓存；多节点生效请等待 TTL（默认 3600s）或重启"
 - **多节点限制**：见 §4.3（Deferred 强一致广播）
 
@@ -349,9 +313,9 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 
 ---
 
-## intercompany 维度接入（A3，plan 2026-07-22-1000-1）
+## intercompany 维度接入（A3）
 
-> A3 落地 [`multi-company.md §与 Posting+GL Mapping 关系`](../architecture/multi-company.md) 既定义的 intercompany 维度接入，解除本文件 §A3 Deferred「intercompany 维度规则」。
+> A3 承接 [`multi-company.md §与 Posting+GL Mapping 关系`](../architecture/multi-company.md) 既定义的 intercompany 维度接入，解除本文件 §A3 Deferred「intercompany 维度规则」。
 
 ### 维度扩展
 
@@ -359,7 +323,7 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 
 ### 新增 accountKey（4 键）
 
-`erp-fin/account-key` 字典增 4 INTERCOMPANY_* 键（由 `IntercompanyVoucherGenerator` 配对凭证设置）：
+`erp-fin/account-key` 字典增 4 INTERCOMPANY_* 键（由 intercompany 配对凭证生成器设置）：
 
 | accountKey | 用途 | 默认回落编码 |
 |------------|------|-------------|
@@ -372,11 +336,11 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 
 ### 消费路径
 
-`IntercompanyVoucherGenerator` 在生成配对凭证时直接调 `IErpFinGlMappingResolver.resolveSubjectCode(billType, accountKey, dims, acctSchemaId)`，不经 `ErpFinPostingProcessor.resolveSubjects` 钩子（因 INTERCOMPANY_* 不走 Provider 路由）。
+intercompany 配对凭证生成时直接调 `IErpFinGlMappingResolver.resolveSubjectCode(billType, accountKey, dims, acctSchemaId)`，不经科目解析钩子（因 INTERCOMPANY_* 不走 Provider 路由）。
 
 ---
 
-## §8 Provider 批量接入清单（plan 2026-07-24-1351-1）
+## §8 Provider 批量接入清单
 
 > A1 后续：将 GL Mapping Resolver 覆盖从 1 试点 Provider 扩展至全部 28 routing Provider。
 > 接入策略裁决（Phase 1 Decision）：**同一业务含义优先复用现有通用键**（INVENTORY/AP/AR/COGS/REVENUE/BANK_DEPOSIT/
@@ -392,82 +356,82 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 
 新增域专用键（23）：
 
-| accountKey | 中文标签 | 典型 fallback 编码 | 接入 Provider |
+| accountKey | 中文标签 | 典型 fallback 编码 | 接入域（场景） |
 |------------|----------|--------------------|---------------|
-| `COST_VARIANCE` | 成本差异 | 6603 | CostAdjustment |
-| `PURCHASE_PRICE_VARIANCE` | 材料成本差异(PPV) | 1404 | PurchasePriceVariance |
-| `MANUFACTURING_WIP` | 在制品(WIP) | 1411 | InvAcctDocProvider(MFG_RECEIPT) / ManufacturingIssue / ProductionVariance(WIP侧) |
-| `MANUFACTURING_VARIANCE` | 制造差异 | 1410~1416 | ProductionVariance(差异侧) |
-| `SUBCONTRACT_MATERIAL` | 委外物资 | 1408 | SubcontractIssue / SubcontractFee / SubcontractReceipt |
-| `FINISHED_GOODS` | 产成品 | 1405 | SubcontractReceipt |
-| `CIP` | 在建工程 | 1603 | Capitalization / ProjectSettlement(CLOSE转固) |
-| `IMPAIRMENT_LOSS` | 资产减值损失 | 6702 | ValueAdjustment |
-| `IMPAIRMENT_PROVISION` | 固定资产减值准备 | 1604 | ValueAdjustment |
-| `CAPITAL_RESERVE` | 资本公积 | 4002 | ValueAdjustment(重估增值) |
-| `NON_OPERATING_INCOME` | 营业外收入 | 6301 | AssetInventory(盘盈) |
-| `NON_OPERATING_EXPENSE` | 营业外支出 | 6711 | Disposal(清理损益) / AssetInventory(盘亏) / NcrScrap |
-| `PROJECT_COST` | 项目成本 | 5101 | ProjectSettlement |
-| `PROFIT_LOSS` | 本年利润 | 4103 | ProjectSettlement |
-| `MAINTENANCE_EXPENSE` | 维修费用 | 6602 | MaintenanceExpense / MaintenanceIssue / MaintenanceLabor |
-| `MAINTENANCE_CLEARING` | 维修中转清算 | 2502 | MaintenanceExpense / MaintenanceCapitalization |
-| `NOTES_RECEIVABLE` | 应收票据 | 1121 | NotesReceivable |
-| `NOTES_PAYABLE` | 应付票据 | 2203 | NotesPayable |
-| `EMPLOYEE_ADVANCE_RECEIVABLE` | 其他应收款-员工预支 | 1221 | EmployeeAdvance |
-| `EMPLOYEE_PAYABLE` | 其他应付款-员工 | 2241 | EmployeeAdvance(OFFSET) / ExpenseClaim |
-| `FINANCIAL_EXPENSE` | 财务费用-利息支出 | 6603 | CreditFacilityInterest / NotesReceivable(贴现息) |
-| `EXCHANGE_GAIN_LOSS` | 汇兑损益 | 6051 | NotesReceivable(贴现) |
-| `ADMIN_EXPENSE` | 管理费用 | 6602 | ExpenseClaim |
+| `COST_VARIANCE` | 成本差异 | 6603 | inventory（成本调整） |
+| `PURCHASE_PRICE_VARIANCE` | 材料成本差异(PPV) | 1404 | inventory（采购价差） |
+| `MANUFACTURING_WIP` | 在制品(WIP) | 1411 | inventory（完工入库）/ mfg（发料、差异 WIP 侧） |
+| `MANUFACTURING_VARIANCE` | 制造差异 | 1410~1416 | mfg（差异侧） |
+| `SUBCONTRACT_MATERIAL` | 委外物资 | 1408 | mfg（委外发料/费用/收货） |
+| `FINISHED_GOODS` | 产成品 | 1405 | mfg（委外收货） |
+| `CIP` | 在建工程 | 1603 | assets（资本化）/ projects（CLOSE 转固） |
+| `IMPAIRMENT_LOSS` | 资产减值损失 | 6702 | assets（减值） |
+| `IMPAIRMENT_PROVISION` | 固定资产减值准备 | 1604 | assets（减值） |
+| `CAPITAL_RESERVE` | 资本公积 | 4002 | assets（重估增值） |
+| `NON_OPERATING_INCOME` | 营业外收入 | 6301 | assets（盘盈） |
+| `NON_OPERATING_EXPENSE` | 营业外支出 | 6711 | assets（清理损益/盘亏）/ quality（报废） |
+| `PROJECT_COST` | 项目成本 | 5101 | projects（结算） |
+| `PROFIT_LOSS` | 本年利润 | 4103 | projects（结算） |
+| `MAINTENANCE_EXPENSE` | 维修费用 | 6602 | maintenance / assets（维修费用/发料/人工） |
+| `MAINTENANCE_CLEARING` | 维修中转清算 | 2502 | maintenance / assets（维修费用/资本化） |
+| `NOTES_RECEIVABLE` | 应收票据 | 1121 | finance（票据） |
+| `NOTES_PAYABLE` | 应付票据 | 2203 | finance（票据） |
+| `EMPLOYEE_ADVANCE_RECEIVABLE` | 其他应收款-员工预支 | 1221 | finance（员工借款） |
+| `EMPLOYEE_PAYABLE` | 其他应付款-员工 | 2241 | finance（员工借款抵扣 / 报销） |
+| `FINANCIAL_EXPENSE` | 财务费用-利息支出 | 6603 | finance（授信利息 / 票据贴现息） |
+| `EXCHANGE_GAIN_LOSS` | 汇兑损益 | 6051 | finance（票据贴现） |
+| `ADMIN_EXPENSE` | 管理费用 | 6602 | finance（报销） |
 
 > 编码冲突说明：`6602` 在折旧(DEPRECIATION_EXPENSE)/维修(MAINTENANCE_EXPENSE)/报销(ADMIN_EXPENSE)三场景含义不同，
 > `6603` 在成本差异(COST_VARIANCE)/利息(FINANCIAL_EXPENSE)两场景含义不同。accountKey 按语义拆分键以保留
 > 规则覆盖粒度；规则表无匹配时各自回落至 Provider 既有 fallback 编码（行为不变）。
 
-### 8.2 28 Provider × 业务类型 × accountKey 接入清单
+### 8.2 业务类型 × accountKey 接入清单（覆盖全部 28 routing Provider）
 
 下表覆盖全部 28 routing Provider（dormant 的 Commitment/Intercompany 不在范围）。`通用` = 复用既有键。
 
-| 域 | Provider | 业务类型 | fact.accountKey（按 Dr→Cr 顺序） |
-|----|----------|----------|----------------------------------|
-| purchase | PurAcctDocProvider | AP_INVOICE | PURCHASE / INPUT_VAT / ACCOUNTS_PAYABLE |
-| purchase | PurAcctDocProvider | PAYMENT | ACCOUNTS_PAYABLE / BANK_DEPOSIT |
-| purchase | PurAcctDocProvider | PURCHASE_RETURN | ACCOUNTS_PAYABLE / INVENTORY |
-| sales | SalAcctDocProvider | AR_INVOICE | AR / REVENUE / OUTPUT_TAX |
-| sales | SalAcctDocProvider | RECEIPT | BANK_DEPOSIT / AR |
-| sales | SalAcctDocProvider | SALES_RETURN | INVENTORY / COGS |
-| inventory | InvAcctDocProvider | PURCHASE_INPUT | INVENTORY / ACCOUNTS_PAYABLE |
-| inventory | InvAcctDocProvider | MANUFACTURING_RECEIPT | INVENTORY / MANUFACTURING_WIP |
-| inventory | InvAcctDocProvider | SALES_OUTPUT | COGS / INVENTORY |
-| inventory | CostAdjustmentAcctDocProvider | COST_ADJUSTMENT | INVENTORY↔COST_VARIANCE（方向相关） |
-| inventory | PurchasePriceVarianceAcctDocProvider | PURCHASE_PRICE_VARIANCE | PURCHASE_PRICE_VARIANCE↔ACCOUNTS_PAYABLE |
-| inventory | LandedCostAcctDocProvider | LANDED_COST | INVENTORY(借) / ACCOUNTS_PAYABLE(贷) |
-| mfg | ManufacturingIssueAcctDocProvider | MANUFACTURING_ISSUE | MANUFACTURING_WIP(汇总借) / INVENTORY(贷按物料) |
-| mfg | SubcontractIssueAcctDocProvider | SUBCONTRACT_ISSUE | SUBCONTRACT_MATERIAL(汇总借) / INVENTORY(贷按物料) |
-| mfg | SubcontractFeeAcctDocProvider | SUBCONTRACT_FEE | SUBCONTRACT_MATERIAL / ACCOUNTS_PAYABLE |
-| mfg | SubcontractReceiptAcctDocProvider | SUBCONTRACT_RECEIPT | FINISHED_GOODS(借按物料) / SUBCONTRACT_MATERIAL(汇总贷) |
-| mfg | ProductionVarianceAcctDocProvider | PRODUCTION_VARIANCE | MANUFACTURING_VARIANCE↔MANUFACTURING_WIP（4要素方向相关） |
-| assets | DepreciationAcctDocProvider | DEPRECIATION | DEPRECIATION_EXPENSE / ACCUMULATED_DEPRECIATION |
-| assets | DisposalAcctDocProvider | DISPOSAL | ACCUMULATED_DEPRECIATION + BANK_DEPOSIT + NON_OPERATING_EXPENSE + FIXED_ASSET |
-| assets | AssetInventoryAcctDocProvider | ASSET_INVENTORY_ADJUSTMENT | FIXED_ASSET↔NON_OPERATING_INCOME(盘盈) / NON_OPERATING_EXPENSE↔FIXED_ASSET(盘亏) |
-| assets | ValueAdjustmentAcctDocProvider | VALUE_ADJUSTMENT | IMPAIRMENT_LOSS↔IMPAIRMENT_PROVISION / FIXED_ASSET↔CAPITAL_RESERVE / IMPAIRMENT_LOSS↔FIXED_ASSET |
-| assets | CapitalizationAcctDocProvider | CAPITALIZATION | FIXED_ASSET / CIP 或 BANK_DEPOSIT（按 sourceType） |
-| assets | AssetSplitAcctDocProvider | ASSET_SPLIT | FIXED_ASSET(借/贷) |
-| assets | MaintenanceCapitalizationAcctDocProvider | MAINTENANCE_CAPITALIZATION | FIXED_ASSET / MAINTENANCE_CLEARING 或 BANK_DEPOSIT |
-| assets | AssetMergeAcctDocProvider | ASSET_MERGE | FIXED_ASSET(借/贷) |
-| assets | MaintenanceExpenseAcctDocProvider | MAINTENANCE_EXPENSE | MAINTENANCE_EXPENSE / MAINTENANCE_CLEARING 或 BANK_DEPOSIT |
-| projects | ProjectSettlementAcctDocProvider | PROJECT_SETTLEMENT | FIXED_ASSET/CIP(CLOSE转固) 或 PROJECT_COST+PROFIT_LOSS+REVENUE(结转) |
-| quality | NcrScrapAcctDocProvider | NCR_SCRAP | NON_OPERATING_EXPENSE / INVENTORY |
-| maintenance | MaintenanceLaborAcctDocProvider | MAINTENANCE_LABOR | MAINTENANCE_EXPENSE / SALARY_PAYABLE |
-| maintenance | MaintenanceIssueAcctDocProvider | MAINTENANCE_ISSUE | MAINTENANCE_EXPENSE(汇总借) / INVENTORY(贷按物料) |
-| finance | EmployeeAdvanceAcctDocProvider | EMPLOYEE_ADVANCE | EMPLOYEE_ADVANCE_RECEIVABLE / BANK_DEPOSIT |
-| finance | EmployeeAdvanceAcctDocProvider | EMPLOYEE_ADVANCE_SETTLE | BANK_DEPOSIT/EMPLOYEE_ADVANCE_RECEIVABLE(CASH) 或 EMPLOYEE_PAYABLE/EMPLOYEE_ADVANCE_RECEIVABLE(OFFSET) |
-| finance | ExpenseClaimAcctDocProvider | EXPENSE_CLAIM | ADMIN_EXPENSE / INPUT_VAT / EMPLOYEE_PAYABLE 或 BANK_DEPOSIT |
-| finance | NotesPayableAcctDocProvider | NOTES_PAYABLE_ISSUED | ACCOUNTS_PAYABLE / NOTES_PAYABLE |
-| finance | NotesPayableAcctDocProvider | NOTES_PAYABLE_HONORED | NOTES_PAYABLE / BANK_DEPOSIT |
-| finance | CreditFacilityInterestAcctDocProvider | CREDIT_FACILITY_INTEREST | FINANCIAL_EXPENSE / BANK_DEPOSIT |
-| finance | NotesReceivableAcctDocProvider | NOTES_RECEIVABLE_RECEIVED | NOTES_RECEIVABLE / AR |
-| finance | NotesReceivableAcctDocProvider | NOTES_RECEIVABLE_DISCOUNTED | BANK_DEPOSIT / FINANCIAL_EXPENSE / EXCHANGE_GAIN_LOSS / NOTES_RECEIVABLE |
-| finance | NotesReceivableAcctDocProvider | NOTES_RECEIVABLE_ENDORSED | ACCOUNTS_PAYABLE / NOTES_RECEIVABLE |
-| finance | NotesReceivableAcctDocProvider | NOTES_RECEIVABLE_COLLECTION | BANK_DEPOSIT / NOTES_RECEIVABLE |
+| 域 | 业务类型 | fact.accountKey（按 Dr→Cr 顺序） |
+|----|----------|----------------------------------|
+| purchase | AP_INVOICE | PURCHASE / INPUT_VAT / ACCOUNTS_PAYABLE |
+| purchase | PAYMENT | ACCOUNTS_PAYABLE / BANK_DEPOSIT |
+| purchase | PURCHASE_RETURN | ACCOUNTS_PAYABLE / INVENTORY |
+| sales | AR_INVOICE | AR / REVENUE / OUTPUT_TAX |
+| sales | RECEIPT | BANK_DEPOSIT / AR |
+| sales | SALES_RETURN | INVENTORY / COGS |
+| inventory | PURCHASE_INPUT | INVENTORY / ACCOUNTS_PAYABLE |
+| inventory | MANUFACTURING_RECEIPT | INVENTORY / MANUFACTURING_WIP |
+| inventory | SALES_OUTPUT | COGS / INVENTORY |
+| inventory | COST_ADJUSTMENT | INVENTORY↔COST_VARIANCE（方向相关） |
+| inventory | PURCHASE_PRICE_VARIANCE | PURCHASE_PRICE_VARIANCE↔ACCOUNTS_PAYABLE |
+| inventory | LANDED_COST | INVENTORY(借) / ACCOUNTS_PAYABLE(贷) |
+| mfg | MANUFACTURING_ISSUE | MANUFACTURING_WIP(汇总借) / INVENTORY(贷按物料) |
+| mfg | SUBCONTRACT_ISSUE | SUBCONTRACT_MATERIAL(汇总借) / INVENTORY(贷按物料) |
+| mfg | SUBCONTRACT_FEE | SUBCONTRACT_MATERIAL / ACCOUNTS_PAYABLE |
+| mfg | SUBCONTRACT_RECEIPT | FINISHED_GOODS(借按物料) / SUBCONTRACT_MATERIAL(汇总贷) |
+| mfg | PRODUCTION_VARIANCE | MANUFACTURING_VARIANCE↔MANUFACTURING_WIP（4要素方向相关） |
+| assets | DEPRECIATION | DEPRECIATION_EXPENSE / ACCUMULATED_DEPRECIATION |
+| assets | DISPOSAL | ACCUMULATED_DEPRECIATION + BANK_DEPOSIT + NON_OPERATING_EXPENSE + FIXED_ASSET |
+| assets | ASSET_INVENTORY_ADJUSTMENT | FIXED_ASSET↔NON_OPERATING_INCOME(盘盈) / NON_OPERATING_EXPENSE↔FIXED_ASSET(盘亏) |
+| assets | VALUE_ADJUSTMENT | IMPAIRMENT_LOSS↔IMPAIRMENT_PROVISION / FIXED_ASSET↔CAPITAL_RESERVE / IMPAIRMENT_LOSS↔FIXED_ASSET |
+| assets | CAPITALIZATION | FIXED_ASSET / CIP 或 BANK_DEPOSIT（按 sourceType） |
+| assets | ASSET_SPLIT | FIXED_ASSET(借/贷) |
+| assets | MAINTENANCE_CAPITALIZATION | FIXED_ASSET / MAINTENANCE_CLEARING 或 BANK_DEPOSIT |
+| assets | ASSET_MERGE | FIXED_ASSET(借/贷) |
+| assets | MAINTENANCE_EXPENSE | MAINTENANCE_EXPENSE / MAINTENANCE_CLEARING 或 BANK_DEPOSIT |
+| projects | PROJECT_SETTLEMENT | FIXED_ASSET/CIP(CLOSE转固) 或 PROJECT_COST+PROFIT_LOSS+REVENUE(结转) |
+| quality | NCR_SCRAP | NON_OPERATING_EXPENSE / INVENTORY |
+| maintenance | MAINTENANCE_LABOR | MAINTENANCE_EXPENSE / SALARY_PAYABLE |
+| maintenance | MAINTENANCE_ISSUE | MAINTENANCE_EXPENSE(汇总借) / INVENTORY(贷按物料) |
+| finance | EMPLOYEE_ADVANCE | EMPLOYEE_ADVANCE_RECEIVABLE / BANK_DEPOSIT |
+| finance | EMPLOYEE_ADVANCE_SETTLE | BANK_DEPOSIT/EMPLOYEE_ADVANCE_RECEIVABLE(CASH) 或 EMPLOYEE_PAYABLE/EMPLOYEE_ADVANCE_RECEIVABLE(OFFSET) |
+| finance | EXPENSE_CLAIM | ADMIN_EXPENSE / INPUT_VAT / EMPLOYEE_PAYABLE 或 BANK_DEPOSIT |
+| finance | NOTES_PAYABLE_ISSUED | ACCOUNTS_PAYABLE / NOTES_PAYABLE |
+| finance | NOTES_PAYABLE_HONORED | NOTES_PAYABLE / BANK_DEPOSIT |
+| finance | CREDIT_FACILITY_INTEREST | FINANCIAL_EXPENSE / BANK_DEPOSIT |
+| finance | NOTES_RECEIVABLE_RECEIVED | NOTES_RECEIVABLE / AR |
+| finance | NOTES_RECEIVABLE_DISCOUNTED | BANK_DEPOSIT / FINANCIAL_EXPENSE / EXCHANGE_GAIN_LOSS / NOTES_RECEIVABLE |
+| finance | NOTES_RECEIVABLE_ENDORSED | ACCOUNTS_PAYABLE / NOTES_RECEIVABLE |
+| finance | NOTES_RECEIVABLE_COLLECTION | BANK_DEPOSIT / NOTES_RECEIVABLE |
 
 ### 8.3 接入步骤（对齐 §5.4 五步模板）
 
@@ -487,56 +451,9 @@ A1 是 **Provider 之上的可选覆盖层**，向后兼容。Provider **不强�
 
 
 
-## §9 浏览器层路由验证（plan 2026-07-26-0410-1）
+## §9 路由验证
 
-> GL Mapping 路由（规则命中 → 科目覆盖）经 JUnit 单层验证（`TestErpFinGlMappingResolver` 8 场景 +
-> `TestErpPurInvoicePosting` 3 场景）已充分覆盖解析算法；本节记录补充的**浏览器层全栈路径**验证范式
-> （规则经 GraphQL `__save` 创建 → 链路审核触发过账 → `resolveSubjects` 调 resolver → 凭证行 subjectCode
-> 覆盖可观测），解除「零浏览器层 E2E」缺口。
-
-### 9.1 全栈验证路径
-
-`tests/e2e/business-actions/fin-gl-mapping-routing.action.spec.ts` 经 GraphQL `/graphql` 驱动完整路径：
-
-1. **规则创建**：`ErpFinGlMappingRule__save`（`isActive=true` + 测试专用 `targetSubjectCode`，区别种子默认
-   科目）→ `defaultPrepareSave` 注册 post-commit `invalidateCache`（§4.2），spec **无需手动刷缓存**。
-2. **链路审核过账**：复用 `runP2pChain`（AP_INVOICE 三 accountKey 覆盖面充分；AR_INVOICE 同机制不重复）
-   → Invoice approve → `ErpFinPostingProcessor.resolveSubjects:562` 无条件调 resolver。
-3. **凭证行覆盖观测**：`assertVoucherLines`（`tests/e2e/orchestration/_helper.ts`）按 voucherId 查
-   `ErpFinVoucherLine`，逐行匹配 subjectCode + dcDirection + 借贷金额 → 命中键被覆盖、未命中键保留默认。
-
-### 9.2 三组断言
-
-| 断言组 | 规则配置 | 期望凭证行（AP_INVOICE） |
-|--------|----------|-------------------------|
-| **命中覆盖** | orgId=2 + AP_INVOICE+PURCHASE → 1401 | Dr **1401**=50（覆盖）/ Dr 2221=6.5（不变）/ Cr 2202=56.5（不变） |
-| **控制对照** | 无规则（同一 runP2pChain 先于建规则运行） | Dr 1403=50 / Dr 2221=6.5 / Cr 2202=56.5（默认） |
-| **orgId 维度** | orgId=1（非匹配链路 org=2）+ AP_INVOICE+PURCHASE → 1401 | Dr 1403=50（默认保留，org 不匹配 → cache 按 orgId 分桶空 → null） |
-
-「命中覆盖」+「控制对照」同 spec 内连续运行同一 `runP2pChain`（先后两次，中间 `cleanupP2p`），证明覆盖非
-偶然；「orgId 维度」用规则 orgId 差异化（org=1 vs 链路 org=2）证明 `erp-fin.gl-mapping.org-dimension-enabled`
-开启态的 cache 分桶 + exact 匹配行为（§3 orgId 维度激活注记）。
-
-### 9.3 fresh-DB 缓存行为
-
-`@PostConstruct init()`（`ErpFinGlMappingResolver:68-78`）启动期 eager load 全表。fresh-DB 无
-`erp_fin_gl_mapping_rule.csv` 种子，启动期 cache 为空（0 规则）→ 首次 resolve 返回 null → 保留 Provider
-默认科目。**全局启用 `org-dimension-enabled=true` 对既有 spec 零回归**：空 cache 下 org-dimension 仅影响
-cache key 分桶，空集仍空集（`playwright.config.ts` webServer JVM arg 已追加，经 orchestration 20 + 
-business-actions 273 spec 回归 0 新增失败证实）。
-
-### 9.4 orgId 维度断言范式
-
-`runP2pChain`（`orchestration/_helper.ts:262`）固定 `orgId=SEED.ORG=2`，**不可 per-call 参数化**。orgId 维度
-断言无需参数化链路 orgId——通过**规则 orgId 差异化**即可：org-dimension-enabled=true 全局下，建 orgId=2
-规则（匹配 → 覆盖）vs orgId=1 规则（非匹配 → 保留默认），同一链路（org=2）双路径观测差异化。org 1
-（GROUP-HQ）+ org 2（ERP-CO）均存于种子 `erp_md_organization.csv`，规则 orgId FK 校验通过。
-
-### 9.5 覆盖目标科目选择
-
-spec 选用种子已有科目 `1401`（原材料，ASSET/DEBIT，`erp_md_subject.csv` id=9）作为 PURCHASE 覆盖目标
-（区别默认 `1403` 在途物资）。两者同向（DEBIT asset），覆盖后 `resolveSubjects` 的 `code → ErpMdSubject.findByCode`
-查找可达，方向语义一致；避免 spec 自行种子新科目（共享 DB 不可幂等）。
+GL Mapping 路由（规则命中 → 科目覆盖）经 JUnit 单层验证 + 浏览器层全栈路径覆盖。验证的**行为契约**：规则命中时对应 accountKey 的凭证行 `subjectCode` 被覆盖、未命中键保留 Provider 默认科目；orgId 维度开启态下 cache 按 `(orgId, businessType, accountKey)` 分桶，非匹配 org 保留默认（§3 orgId 维度激活注记）。测试用例与断言范式见 `tests/e2e/business-actions/fin-gl-mapping-routing.action.spec.ts` 与 resolver JUnit 测试。
 
 ---
 

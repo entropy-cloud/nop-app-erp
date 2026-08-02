@@ -18,6 +18,7 @@
 
     <keys>
         <key name="UK_FIN_INTERCOMPANY_MATCH_CODE" props="code"/>
+        <key name="UK_FIN_INTERCOMPANY_MATCH_PAIR_PERIOD" props="pairKey,periodId"/>
     </keys>
 
     <props>

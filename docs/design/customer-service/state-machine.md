@@ -143,7 +143,7 @@ NEW（新建）
 - 状态码归 `module-cs/model/app-erp-cs.orm.xml`（dict: erp-cs/ticket-status）。
 - 工单操作日志实体 ErpCsTicketAction 记录完整状态迁移历史。
 
-## 实现偏离补注（2026-07-04 实现）
+## 实现约定
 
 > 权威计划：`docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md`。本节相对 §1-2 设计的实现取舍。
 

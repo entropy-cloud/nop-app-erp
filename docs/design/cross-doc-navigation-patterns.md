@@ -1,7 +1,6 @@
 # 跨单据导航与关联回链范式（Cross-Doc Navigation Patterns）
 
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F9、`docs/design/purchase/ui-patterns.md`（跨单据导航链路设计 §Forward flow + §Reverse trace）、`docs/design/sales/ui-patterns.md`、`docs/design/inventory/ui-patterns.md`、`docs/design/manufacturing/ui-patterns.md`、`docs/design/child-table-editor-patterns.md`（copy-line-from-order 范畴说明）、`docs/architecture/view-and-page-strategy.md`、`../nop-entropy/docs-for-ai/02-core-guides/page-customization.md`
-> 落地计划：`docs/plans/2026-07-20-0629-3-f9-cross-document-navigation.md`（F9 4 核心域跨单据导航 + copy-line-from-order）
 
 ## 1. 目的与范围
 
@@ -16,7 +15,7 @@
 - 多级下钻（PO → Receive → StockMove → Ledger → Voucher 5 级链）→ F12 + F16 范畴
 - 关联单据自动刷新 + WebSocket 实时推送 → notify inbox successor
 - 后端 `copyLinesFromOrder` `@BizMutation`（优化候选，性能问题触发时再上）
-- 凭证回链详情页（ErpFinVoucher 跨域）→ 已落地，见 `voucher-back-link-patterns.md`（跨域字符串指针导航，本文件同域 FK 导航的对偶）
+- 凭证回链详情页（ErpFinVoucher 跨域）→ 见 `voucher-back-link-patterns.md`（跨域字符串指针导航，本文件同域 FK 导航的对偶）
 
 ## 2. 导航链路图（4 核心域）
 
@@ -27,7 +26,7 @@ inventory: StockMove → Source/Dest Bills → Related Moves → Ledger
 mfg:       WorkOrder → MaterialIssue → JobCard → Completion → Voucher
 ```
 
-每条链路上，本范式落地「1 级关联」：头实体详情/行 → 直接上下游单据查看/新建。
+每条链路上，本范式约定「1 级关联」：头实体详情/行 → 直接上下游单据查看/新建。
 
 ## 3. Phase 1 范式裁决（Explore + Decision 记录）
 
@@ -36,7 +35,7 @@ mfg:       WorkOrder → MaterialIssue → JobCard → Completion → Voucher
 **核实证据**（实时仓库 + 平台 xdef）：
 
 - `nop-entropy/docs-for-ai` 源 xdef：`nop-kernel/nop-xdefs/src/main/resources/_vfs/nop/schema/xui/grid.xdef:11-19`，`<grid>` 元素的子节点集合为 `cols / itemCheckableOn / prefixRow / affixRow / selection / filter / orderBy`，**无 `<headerToolbar>` / `<actions>` / `<actions>` 子元素定义**。
-- 抽样本项目 `module-purchase/erp-pur-web/src/main/resources/_vfs/erp/pur/pages/ErpPurReceiveLine/ErpPurReceiveLine.view.xml:52-162`（F4 P0 落地的 `<grid id="sub-grid-edit">`）— 仅含 `<cols>`，无 headerToolbar 先例。
+- 抽样本项目 `module-purchase/erp-pur-web/src/main/resources/_vfs/erp/pur/pages/ErpPurReceiveLine/ErpPurReceiveLine.view.xml:52-162`（F4 P0 的 `<grid id="sub-grid-edit">`）— 仅含 `<cols>`，无 headerToolbar 先例。
 - 全仓库 grep `actionType="link"` / `headerToolbar` 在所有 `*.xml` 中 0 命中（项目层无既存用法）。
 
 **裁决**：`<grid id="sub-grid-edit">` 在 nop xview.xdef 不支持 `<headerToolbar>` slot。copy-line-from-order 按钮放置采用 **fallback 方案 B：cell-level 自定义控件**（编辑态头表单 `lines` cell 上方追加 `<cell id="copyFromXxx" custom="true" notSubmit="true">` + `<gen-control>` 返回 AMIS button）。
@@ -97,9 +96,9 @@ mfg:       WorkOrder → MaterialIssue → JobCard → Completion → Voucher
 
 详细降级路径与实施证据见 §8「URL filter 降级路径（含实施证据）」。
 
-## 6. 各域落地实体清单
+## 6. 各域实体清单
 
-### 6.1 核心域（F9 先行，plan 2026-07-20-0629-3）
+### 6.1 核心域（F9 先行）
 
 | 域 | 头实体 | 关联单据 drawer | 一键跳转 link | copy-line 子表 |
 |----|--------|----------------|---------------|----------------|
@@ -108,9 +107,9 @@ mfg:       WorkOrder → MaterialIssue → JobCard → Completion → Voucher
 | inventory | ErpInvStockMove | ref-move.page.yaml in ErpInvStockLedger (fixedProps=moveId) | 「查看流水」→ `/ErpInvStockLedger-main?filter_moveId=${id}` | — |
 | mfg | ErpMfgWorkOrder | ref-work-order.page.yaml in ErpMfgMaterialIssue + ErpMfgJobCard (fixedProps=workOrderId) | 「查看完工入库」`link="/ErpInvStockMove-main"` **降级路径**（mfg→inv 跨域非 FK，Closure Evidence 命名实体 = `row-view-completion-move-button`） | — |
 
-### 6.2 长尾域（F9 successor，plan 2026-07-23-1408-1）
+### 6.2 长尾域（F9 successor）
 
-> 落地范式同 §3.2 方案 A（row-action drawer + `ref-*.page.yaml` + `fixedProps`）。copy-line 经 Phase 0 核实长尾域无双条件就绪域，范围=空集（见 plan Phase 1 裁决）。
+> 范式同 §3.2 方案 A（row-action drawer + `ref-*.page.yaml` + `fixedProps`）。copy-line 经 Phase 0 核实长尾域无双条件就绪域，范围=空集（见 Phase 1 裁决）。
 
 | 域 | 头实体 | 关联单据 drawer（ref 页面 / fixedProps） | 一键跳转 link（visibleOn） |
 |----|--------|------------------------------------------|---------------------------|
@@ -132,7 +131,7 @@ mfg:       WorkOrder → MaterialIssue → JobCard → Completion → Voucher
 
 **移出范围（低价值/无 FK，归 successor）**：hr ErpHrEmployee（无 to-many）、hr Assessment/DevelopmentPlan、drp Scenario、assets MaintenanceCost、projects BudgetLine、quality InspectionTemplateLine、aps ErpApsSchedule（零 to-many）。
 
-## 7. 实施证据（2026-07-20 Phase 2-4 落地）
+## 7. 实施证据
 
 **purchase 域**（4 文件）：
 - `module-purchase/erp-pur-web/.../ErpPurOrder.view.xml` — 新增 `row-create-receive-button`（link + visibleOn approved）+ `row-view-receive-button`（drawer）
@@ -186,7 +185,7 @@ mfg:       WorkOrder → MaterialIssue → JobCard → Completion → Voucher
 | mfg → inv 跨域按字符串字段（sourceBillCode）当作 FK 用 fixedProps | 降级为单纯 link 跳转，Closure Evidence 命名实体记录 |
 | 实体 X 的 view 内 drawer 指向生成 X 自身的 ref 页面（GenPage 自引用 cycle） | 改用 `link` 跳转（GenPage 不递归解析 link）——见 §11 |
 
-## 11. GenPage 自引用 cycle 规则（plan 2026-07-23-1408-1 踩坑）
+## 11. GenPage 自引用 cycle 规则
 
 **机制**：`ref-<role>.page.yaml` 经 `web:GenPage view="X.view.xml"` 生成实体 X 的 main 页。GenPage 会**递归解析** view 内 `<drawer page="...">` / `<dialog page="...">` 引用的子页面并内联生成。若实体 X 既是子实体（有 ref 页面生成 X）又是父实体（X 的 view 内含 drawer 指向生成 X 的 ref 页面），则形成无限递归：
 

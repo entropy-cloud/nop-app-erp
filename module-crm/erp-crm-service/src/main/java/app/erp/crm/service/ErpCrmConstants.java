@@ -29,6 +29,12 @@ public interface ErpCrmConstants {
     String CONFIG_AUTO_CONVERT_DUPLICATE_LEAD = "erp-crm.auto-convert-duplicate-lead";
     String CONFIG_DEFAULT_TEAM_ID = "erp-crm.default-team-id";
 
+    // ===== stageId 单向递增守卫（R1.24 / P1-MA2-075）配置点 =====
+    /** config 键：是否允许 stageId 沿 sequence 回退（默认 false=STRICT 拦截回退，对齐 owner doc §stageId 迁移规则）。 */
+    String CONFIG_ALLOW_STAGE_BACKWARD = "erp-crm.allow-stage-backward";
+    /** 默认值：false（STRICT 模式）。 */
+    Boolean DEFAULT_ALLOW_STAGE_BACKWARD = Boolean.FALSE;
+
     // ===== 活动提醒（3.2）配置点 =====
     String CONFIG_EVENT_REMINDER_ENABLED = "erp-crm.event-reminder-enabled";
 

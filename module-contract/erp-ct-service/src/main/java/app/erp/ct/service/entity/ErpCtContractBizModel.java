@@ -16,6 +16,8 @@ import app.erp.ct.biz.IErpCtContractBiz;
 import app.erp.ct.biz.IErpCtContractVersionBiz;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.processor.ErpCtContractActivateProcessor;
+import app.erp.ct.service.processor.ErpCtContractAmendProcessor;
 import jakarta.inject.Inject;
 
 import java.util.List;
@@ -29,7 +31,8 @@ import io.nop.biz.crud.EntityData;
  * （对齐 {@code docs/design/contract/state-machine.md}）。
  *
  * <p>状态迁移：DRAFT→NEGOTIATION→ACTIVE（签署）、ACTIVE↔SUSPENDED、
- * ACTIVE→DRAFT（amend 修订）、ACTIVE→EXPIRED/TERMINATED（终态）。
+ * ACTIVE→DRAFT（amend 修订）、ACTIVE→EXPIRED/TERMINATED（终态）、
+ * NEGOTIATION→TERMINATED（谈判破裂终态，未生效合同放弃）。
  * 非法迁移抛 {@link ErpCtErrors#ERR_CT_ILLEGAL_STATUS_TRANSITION}。
  *
  * <p>跨实体版本操作经注入 {@link IErpCtContractVersionBiz}（核心零污染 + 走权限管道）。
@@ -39,6 +42,12 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Inject
     IErpCtContractVersionBiz contractVersionBiz;
+
+    @Inject
+    ErpCtContractActivateProcessor activateProcessor;
+
+    @Inject
+    ErpCtContractAmendProcessor amendProcessor;
 
     public ErpCtContractBizModel() {
         setEntityName(ErpCtContract.class.getName());
@@ -56,22 +65,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @Override
     @BizMutation
     public ErpCtContract activate(@Name("contractId") Long contractId, IServiceContext context) {
-        ErpCtContract contract = requireContract(contractId, context);
-        if (!Objects.equals(contract.getStatus(), ErpCtConstants.CONTRACT_STATUS_NEGOTIATION)) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_NEGOTIATION);
-        }
-        validateTypeDirectionCombo(contract);
-
-        // 当前版本须已定稿（FINALIZED），则同步签署为 SIGNED；已签署则放行。
-        ErpCtContractVersion current = findCurrentVersion(contract.getId(), context);
-        if (current != null && Objects.equals(current.getStatus(), ErpCtConstants.VERSION_STATUS_FINALIZED)) {
-            contractVersionBiz.signVersion(current.getId(), context);
-        }
-
-        contract.setStatus(ErpCtConstants.CONTRACT_STATUS_ACTIVE);
-        contract.setSignDate(CoreMetrics.today());
-        updateEntity(contract, null, context);
-        return contract;
+        return activateProcessor.activate(contractId, context);
     }
 
     @Override
@@ -102,11 +96,18 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @BizMutation
     public ErpCtContract terminate(@Name("contractId") Long contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
-        if (!Objects.equals(contract.getStatus(), ErpCtConstants.CONTRACT_STATUS_ACTIVE)) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE);
+        String status = contract.getStatus();
+        // 守卫接受 ACTIVE（生效合同提前终止）与 NEGOTIATION（谈判破裂放弃）两类源态
+        // （对齐 state-machine.md §2 L34/L51 + §3 L58：NEGOTIATION 或后续态不可作废，只能 TERMINATED）。
+        if (!Objects.equals(status, ErpCtConstants.CONTRACT_STATUS_ACTIVE)
+                && !Objects.equals(status, ErpCtConstants.CONTRACT_STATUS_NEGOTIATION)) {
+            throw illegalTransition(contract,
+                    ErpCtConstants.CONTRACT_STATUS_ACTIVE + "/" + ErpCtConstants.CONTRACT_STATUS_NEGOTIATION);
         }
         // 作废语义：InvoicePlan 无独立状态列，合同头 TERMINATED 后未开票计划经合同头隐式失效
         // （triggerInvoice 校验合同 ACTIVE 即拒绝，isInvoiced=false 永不可再触发）。
+        // NEGOTIATION→TERMINATED 谈判破裂，未生效合同放弃，版本归档经 useLogicalDelete 既有语义
+        // （NEGOTIATION 未生效，无需 signDate/version 归档差异；与 ACTIVE 路径仅 setStatus+updateEntity 一致）。
         contract.setStatus(ErpCtConstants.CONTRACT_STATUS_TERMINATED);
         updateEntity(contract, null, context);
         return contract;
@@ -127,36 +128,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @Override
     @BizMutation
     public ErpCtContract amend(@Name("contractId") Long contractId, IServiceContext context) {
-        ErpCtContract contract = requireContract(contractId, context);
-        if (!Objects.equals(contract.getStatus(), ErpCtConstants.CONTRACT_STATUS_ACTIVE)) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE);
-        }
-
-        // 修订：新建版本（versionNo = max+1），原子翻转 isCurrent（旧版本 false，新版本 true）
-        List<ErpCtContractVersion> versions = findVersions(contract.getId(), context);
-        int maxVersionNo = 0;
-        for (ErpCtContractVersion v : versions) {
-            if (v.getVersionNo() != null && v.getVersionNo() > maxVersionNo) {
-                maxVersionNo = v.getVersionNo();
-            }
-            if (Boolean.TRUE.equals(v.getIsCurrent())) {
-                v.setIsCurrent(false);
-                contractVersionBiz.updateEntity(v, null, context);
-            }
-        }
-
-        ErpCtContractVersion newVersion = contractVersionBiz.newEntity();
-        newVersion.setContractId(contract.getId());
-        newVersion.setVersionNo(maxVersionNo + 1);
-        newVersion.setVersionDate(CoreMetrics.today());
-        newVersion.setIsCurrent(true);
-        newVersion.setStatus(ErpCtConstants.VERSION_STATUS_DRAFT);
-        contractVersionBiz.saveEntity(newVersion, null, context);
-
-        // amend 期间合同头回 DRAFT
-        contract.setStatus(ErpCtConstants.CONTRACT_STATUS_DRAFT);
-        updateEntity(contract, null, context);
-        return contract;
+        return amendProcessor.amend(contractId, context);
     }
 
     // ---------- helpers ----------

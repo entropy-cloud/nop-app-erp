@@ -1,0 +1,152 @@
+package app.erp.crm.service.processor;
+
+import app.erp.crm.dao.entity.ErpCrmTerritory;
+import app.erp.crm.service.ErpCrmConstants;
+import app.erp.crm.service.ErpCrmErrors;
+import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
+import io.nop.core.context.IServiceContext;
+import io.nop.dao.api.IDaoProvider;
+import io.nop.dao.api.IEntityDao;
+import io.nop.dao.exceptions.UnknownEntityException;
+import jakarta.inject.Inject;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static io.nop.api.core.beans.FilterBeans.eq;
+
+/**
+ * ErpCrmTerritory moveTerritory per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
+ * 自包含区域子树移动编排（成环校验 + 递归重算 level/fullPath + 深度校验）。
+ * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
+ */
+public class ErpCrmTerritoryMoveTerritoryProcessor {
+
+    @Inject
+    IDaoProvider daoProvider;
+
+    public ErpCrmTerritory moveTerritory(Long territoryId, Long newParentId, IServiceContext context) {
+        ErpCrmTerritory node = requireTerritory(territoryId);
+        if (newParentId == null) {
+            // move to root
+            applyMove(node, null, 0, null, context);
+            return node;
+        }
+        if (territoryId.equals(newParentId)) {
+            throw new NopException(ErpCrmErrors.ERR_TERRITORY_CYCLE)
+                    .param(ErpCrmErrors.ARG_TERRITORY_ID, territoryId)
+                    .param(ErpCrmErrors.ARG_PARENT_ID, newParentId);
+        }
+        // Cycle check: newParentId must not be in the subtree of node
+        Set<Long> subtree = collectSubtreeIds(territoryId);
+        if (subtree.contains(newParentId)) {
+            throw new NopException(ErpCrmErrors.ERR_TERRITORY_CYCLE)
+                    .param(ErpCrmErrors.ARG_TERRITORY_ID, territoryId)
+                    .param(ErpCrmErrors.ARG_PARENT_ID, newParentId);
+        }
+        ErpCrmTerritory newParent = requireTerritory(newParentId);
+        int maxDepth = maxDepth();
+        int newLevel = (newParent.getLevel() != null ? newParent.getLevel() : 0) + 1;
+        int subtreeDepth = maxSubtreeDepthFrom(territoryId);
+        if (newLevel + subtreeDepth > maxDepth) {
+            throw new NopException(ErpCrmErrors.ERR_TERRITORY_MAX_DEPTH_EXCEEDED)
+                    .param(ErpCrmErrors.ARG_CURRENT_LEVEL, newLevel + subtreeDepth)
+                    .param(ErpCrmErrors.ARG_MAX_LEVEL, maxDepth)
+                    .param(ErpCrmErrors.ARG_PARENT_ID, newParentId);
+        }
+        applyMove(node, newParentId, newLevel, newParent.getFullPath(), context);
+        return node;
+    }
+
+    // ---------- 内部辅助 ----------
+
+    protected ErpCrmTerritory requireTerritory(Long territoryId) {
+        ErpCrmTerritory territory = dao().getEntityById(territoryId);
+        if (territory == null) {
+            throw new UnknownEntityException(ErpCrmTerritory.class.getName(), territoryId);
+        }
+        return territory;
+    }
+
+    protected void applyMove(ErpCrmTerritory node, Long newParentId, int newLevel, String newParentFullPath,
+                             IServiceContext context) {
+        String oldFullPath = node.getFullPath();
+        String newFullPath = buildFullPath(newParentFullPath, node.getCode());
+        node.setParentId(newParentId);
+        node.setLevel(newLevel);
+        node.setFullPath(newFullPath);
+        dao().updateEntity(node);
+        // recursively update children's level / fullPath
+        if (oldFullPath != null && !oldFullPath.equals(newFullPath)) {
+            relocateChildren(node.getId(), oldFullPath, newFullPath, newLevel, context);
+        }
+    }
+
+    protected void relocateChildren(Long parentId, String oldPrefix, String newPrefix, int parentLevel,
+                                    IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("parentId", parentId));
+        List<ErpCrmTerritory> children = dao().findAllByQuery(q);
+        for (ErpCrmTerritory child : children) {
+            String oldChildPath = child.getFullPath();
+            String newChildPath = oldChildPath != null && oldChildPath.startsWith(oldPrefix)
+                    ? newPrefix + oldChildPath.substring(oldPrefix.length())
+                    : buildFullPath(newPrefix, child.getCode());
+            child.setFullPath(newChildPath);
+            child.setLevel(parentLevel + 1);
+            dao().updateEntity(child);
+            relocateChildren(child.getId(), oldChildPath, newChildPath, parentLevel + 1, context);
+        }
+    }
+
+    protected Set<Long> collectSubtreeIds(Long rootId) {
+        Set<Long> ids = new HashSet<>();
+        collectSubtreeIds(rootId, ids);
+        return ids;
+    }
+
+    /**
+     * 递归收集子树 id。经 {@code dao().findAllByQuery} 直接查询绕过 findList 管道——
+     * 树形结构递归遍历，每层只取直接子节点；同域只读，数据权限在调用方校验。
+     */
+    protected void collectSubtreeIds(Long rootId, Set<Long> acc) {
+        acc.add(rootId);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("parentId", rootId));
+        for (ErpCrmTerritory child : dao().findAllByQuery(q)) {
+            collectSubtreeIds(child.getId(), acc);
+        }
+    }
+
+    /**
+     * 计算子树最大深度（循环深度校验用）。同 {@link #collectSubtreeIds} 的 dao() 直接查询理由。
+     */
+    protected int maxSubtreeDepthFrom(Long rootId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("parentId", rootId));
+        List<ErpCrmTerritory> children = dao().findAllByQuery(q);
+        int maxChild = 0;
+        for (ErpCrmTerritory child : children) {
+            maxChild = Math.max(maxChild, 1 + maxSubtreeDepthFrom(child.getId()));
+        }
+        return maxChild;
+    }
+
+    protected String buildFullPath(String parentFullPath, String code) {
+        if (parentFullPath == null || parentFullPath.isEmpty() || "/".equals(parentFullPath)) {
+            return "/" + code;
+        }
+        return parentFullPath + "/" + code;
+    }
+
+    protected int maxDepth() {
+        return io.nop.api.core.config.AppConfig.var(
+                ErpCrmConstants.CONFIG_TERRITORY_MAX_DEPTH, 4);
+    }
+
+    private IEntityDao<ErpCrmTerritory> dao() {
+        return daoProvider.daoFor(ErpCrmTerritory.class);
+    }
+}

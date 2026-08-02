@@ -16,7 +16,7 @@ import app.erp.contract.dao.entity.ErpCtContract;
  *   <li>{@link #activate}：NEGOTIATION → ACTIVE（前置 contractType↔contractDirection 组合合法、当前版本定稿或同步签署）。</li>
  *   <li>{@link #suspend}：ACTIVE → SUSPENDED。</li>
  *   <li>{@link #resume}：SUSPENDED → ACTIVE。</li>
- *   <li>{@link #terminate}：ACTIVE → TERMINATED（终态，未开票 InvoicePlan 隐式作废）。</li>
+ *   <li>{@link #terminate}：ACTIVE/NEGOTIATION → TERMINATED（终态，未开票 InvoicePlan 隐式作废）。NEGOTIATION 源态对应谈判破裂放弃（未生效，版本归档经 useLogicalDelete 既有语义）。</li>
  *   <li>{@link #expire}：ACTIVE → EXPIRED（终态）。</li>
  *   <li>{@link #amend}：ACTIVE → DRAFT 修订，新建版本（versionNo 递增，原子翻转 isCurrent）。</li>
  * </ul>

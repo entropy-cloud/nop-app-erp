@@ -23,7 +23,17 @@
 - 制造管理：BOM、工单、作业卡、工艺路线、工作中心
 - 质量管理：质检单、质检模板、不符合项（NCR）、纠正预防措施
 - 设备维护：设备、维护计划、维护访问、维护请求、停机记录
+- 客户关系（CRM）：线索/商机、漏斗阶段、营销活动（UTM）、活动/日历
+- 客户服务（CS）：客服工单、SLA 策略、知识库、满意度回访
+- 人力资源（HR）：员工、劳动合同、考勤工时、薪酬、休假、招聘
+- 高级排程（APS）：工序工单、排产方案、排产约束
+- 合同管理：合同起草/版本、审批与电子签、开票计划、用量计费
+- 分销需求（DRP）：补货计划、仓库补货参数、净需求计算
+- 物流（Logistics）：发运单、承运商配置、承运商网关、包裹/面单
+- B2B 集成：EDI 事务、ASN、代码映射、EDI 日志
 - 系统管理：用户、角色、权限、组织、配置（复用 nop-auth/nop-sys）
+
+> 上述 18 业务域 + 跨域通知派发子系统（notify）+ 系统管理构成完整产品基线。菜单结构、页面入口与功能权限点（`TOPM`/`SUBM`/`FNPT` 三级资源）以每域的 `*.action-auth.xml` 为唯一真相源，本文档不重复菜单树细节。第二批扩展域（CRM/CS/HR/APS/Contract/DRP/Logistics/B2B）按 `product-scope.md §模块组装` 可按需裁剪组装。
 
 > 上面的分组仅用于产品概览，**不是菜单权威源**。菜单结构、页面入口与功能权限点（`TOPM`/`SUBM`/`FNPT` 三级资源）以每域的 `*.action-auth.xml` 为唯一真相源，遵循 AGENTS.md 第 7 条"持久化与契约真相保存在模型 XML、散文不复述"的同一原则，本文档不重复菜单树细节。
 
@@ -37,12 +47,15 @@
 
 ## 主要用户角色
 
-- 超级管理员：拥有全系统访问权限
+> 本节是 `roles-and-permissions.md` 的**严格子集**（仅列代表角色摘要，权威定义以 `roles-and-permissions.md` 为准）。
+
 - 采购员：维护采购订单、跟踪入库
 - 销售员：维护销售订单、跟踪出库
 - 库管员：审核出入库、管理库存、盘点
 - 财务员：审核发票、生成凭证、收付款核销、期末结账
-- 管理员：在分配职责范围内执行运营动作
+- 管理员：高危操作与系统管理（= 平台 superuser，`nop.auth.skip-check-for-admin=true` 默认启用，跳过权限检查拥有全系统访问）。承载反审核/作废/反结账等敏感操作
+
+> **管理员角色单一模型**：当前基线只有一级「管理员」（= superuser via `skip-check-for-admin=true`），不存在「限定职责范围的管理员」二级角色——平台未实现职责范围限定机制。若未来产品需限定管理员职责范围，需先实现平台机制再在本总览与 `roles-and-permissions.md` 同步新增二级角色定义。
 
 详细角色与权限模型见 `roles-and-permissions.md`。
 
@@ -75,6 +88,20 @@
 - 工作流能力（nop-wf，用于单据审批流，按需引入）
 - 报表能力（nop-report，用于财务报表与库存报表）
 - 文件存储能力（nop-file，用于附件/单据影像）
+
+### RPC 通道语义
+
+nop-app-erp 对外提供**两条契约面**，集成方须区分：
+
+| 通道 | 契约载体 | 覆盖能力 | 不覆盖 |
+|------|---------|---------|--------|
+| **RPC（`*-api/` 模块的 `*Api.java`）** | codegen 生成的 `ICrudApi<InputBean, OutputBean>`（`//__XGEN_FORCE_OVERRIDE__`，零手编） | data-CRUD（findCount/findPage/findList/get/save/update/delete/batchModify 等约 25 方法） | 业务动作（approve/cancel/post/reverse/submitForApproval/跨聚合写 Facade 等） |
+| **GraphQL/xbiz** | BizModel `@BizMutation`/`@BizQuery` + 手写 `*.xbiz` delta | 全部业务行为 + CRUD（经 `ICrudBiz` 基类） | — |
+
+**裁决（A3.6 / P1-MA3-049）**：RPC = data-CRUD 通道，业务动作经 GraphQL/xbiz。**外部 RPC 集成方无法通过 RPC 触发 approve/cancel/post 等业务行为**——需改用 GraphQL。引入手写 `model/*.api.xml` 声明业务动作 RPC 契约属架构决策（successor，触发条件 = 外部 RPC 集成方需触发业务动作时）。
+
+- 19 域均生成 `*-api/` 模块的 CRUD `*Api.java`（R2.7 已补齐 9 个原缺失域：aps/b2b/contract/crm/cs/drp/hr/logistics/notify）。
+- API 命名约定（动词/参数/审批动作集）见 `domain-design-guidelines.md §16A`。
 
 ## 边界
 

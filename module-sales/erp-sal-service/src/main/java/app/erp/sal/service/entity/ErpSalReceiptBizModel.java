@@ -4,7 +4,9 @@ package app.erp.sal.service.entity;
 import app.erp.sal.biz.IErpSalReceiptBiz;
 import app.erp.md.biz.SettlementAllocation;
 import app.erp.sal.dao.entity.ErpSalReceipt;
-import app.erp.sal.service.processor.ErpSalReceiptProcessor;
+import app.erp.sal.service.processor.ErpSalReceiptCancelProcessor;
+import app.erp.sal.service.processor.ErpSalReceiptReverseSettlementProcessor;
+import app.erp.sal.service.processor.ErpSalReceiptSettleProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -23,7 +25,13 @@ import java.util.List;
 public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implements IErpSalReceiptBiz {
 
     @Inject
-    ErpSalReceiptProcessor receiptProcessor;
+    ErpSalReceiptSettleProcessor settleProcessor;
+
+    @Inject
+    ErpSalReceiptReverseSettlementProcessor reverseSettlementProcessor;
+
+    @Inject
+    ErpSalReceiptCancelProcessor cancelProcessor;
 
     public ErpSalReceiptBizModel() {
         setEntityName(ErpSalReceipt.class.getName());
@@ -32,7 +40,7 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
     @Override
     @BizMutation
     public ErpSalReceipt cancel(@Name("receiptId") Long receiptId, IServiceContext context) {
-        return receiptProcessor.cancel(String.valueOf(receiptId), context);
+        return cancelProcessor.cancel(String.valueOf(receiptId), context);
     }
 
     @Override
@@ -40,7 +48,7 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
     public ErpSalReceipt settle(@Name("receiptId") Long receiptId,
                                 @Name("allocations") List<SettlementAllocation> allocations,
                                 IServiceContext context) {
-        return receiptProcessor.settle(String.valueOf(receiptId), allocations, context);
+        return settleProcessor.settle(String.valueOf(receiptId), allocations, context);
     }
 
     @Override
@@ -48,7 +56,7 @@ public class ErpSalReceiptBizModel extends CrudBizModel<ErpSalReceipt> implement
     public ErpSalReceipt reverseSettlement(@Name("receiptId") Long receiptId,
                                            @Name("invoiceId") Long invoiceId,
                                            IServiceContext context) {
-        return receiptProcessor.reverseSettlement(String.valueOf(receiptId), invoiceId, context);
+        return reverseSettlementProcessor.reverseSettlement(String.valueOf(receiptId), invoiceId, context);
     }
 
     // 经 orm().batchLoadProps 一次性批量加载 to-one 关系（DataLoader 机制），再读取名称。

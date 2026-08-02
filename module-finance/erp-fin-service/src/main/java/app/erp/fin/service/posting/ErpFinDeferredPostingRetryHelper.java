@@ -5,10 +5,12 @@ import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
 import app.erp.fin.dao.entity.ErpFinPostingException;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.annotations.txn.TransactionPropagation;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.dao.txn.ITransactionTemplate;
@@ -17,6 +19,7 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -43,6 +46,8 @@ public class ErpFinDeferredPostingRetryHelper {
     IOrmTemplate ormTemplate;
     @Inject
     IErpFinVoucherBiz voucherBiz;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -58,6 +63,10 @@ public class ErpFinDeferredPostingRetryHelper {
 
     public void setVoucherBiz(IErpFinVoucherBiz voucherBiz) {
         this.voucherBiz = voucherBiz;
+    }
+
+    public void setNotificationBiz(IErpSysNotificationBiz notificationBiz) {
+        this.notificationBiz = notificationBiz;
     }
 
     /**
@@ -127,21 +136,66 @@ public class ErpFinDeferredPostingRetryHelper {
     }
 
     protected void incrementRetryAndRethrow(ErpFinPostingException ex, Exception e) {
+        boolean escalatedToManual = false;
         try {
-            transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
+            escalatedToManual = transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, txn ->
                     ormTemplate.runInSession(session -> {
-                        ex.setRetryCount((ex.getRetryCount() == null ? 0 : ex.getRetryCount()) + 1);
-                        if (ex.getRetryCount() >= MAX_RETRY) {
-                            ex.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_RETRYING);
+                        // 在 REQUIRES_NEW session 内重新加载受管实体，避免外层（已回滚/挂起）session 的游离实体更新丢失。
+                        IEntityDao<ErpFinPostingException> dao = daoProvider.daoFor(ErpFinPostingException.class);
+                        ErpFinPostingException managed = dao.getEntityById(ex.getId());
+                        if (managed == null) {
+                            return false;
                         }
-                        daoProvider.daoFor(ErpFinPostingException.class).updateEntity(ex);
+                        int newCount = (managed.getRetryCount() == null ? 0 : managed.getRetryCount()) + 1;
+                        managed.setRetryCount(newCount);
+                        // G2 永久性失败：retryCount≥MAX_RETRY 升级 MANUAL 终态（非 RETRYING 死状态——
+                        // sweep loader filter status=PENDING，RETRYING 永不被重新选中；MANUAL 标记需人工处置）。
+                        if (newCount >= MAX_RETRY) {
+                            managed.setStatus(ErpFinConstants.POSTING_EXCEPTION_STATUS_MANUAL);
+                        }
+                        dao.updateEntity(managed);
                         session.flush();
-                        return null;
+                        return newCount >= MAX_RETRY;
                     }));
         } catch (Exception persistErr) {
             LOG.warn("erp-fin-deferred-posting-increment-retry-failed: exceptionId={}, reason={}",
                     ex.getId(), persistErr.getMessage());
         }
+        // 升级 MANUAL 后派发告警（G2 错误传播分级策略；独立 try 降级不阻断主异常传播）。
+        if (escalatedToManual) {
+            dispatchMaxRetryAlert(ex, e);
+        }
+    }
+
+    /**
+     * MAX_RETRY 耗尽升级 MANUAL 时派发告警（G2 永久性失败处置；plan 2026-07-30-0341-2 P1-MA4-001）。
+     * 通知失败降级（warn）不阻断主异常传播。
+     */
+    protected void dispatchMaxRetryAlert(ErpFinPostingException ex, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("exceptionId", ex.getId());
+        ctx.put("billHeadCode", ex.getBillHeadCode());
+        ctx.put("businessType", ex.getBusinessType());
+        ctx.put("errorCode", ex.getErrorCode());
+        ctx.put("errorMessage", cause != null ? truncate(cause.getMessage(), 200) : null);
+        ctx.put("postingNo", ex.getBillHeadCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(ErpFinConstants.NOTIFY_EVENT_POSTING_EXCEPTION, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("erp-fin-deferred-posting-max-retry-alert-failed: exceptionId={}, reason={}",
+                    ex.getId(), notifyErr.getMessage());
+        }
+    }
+
+    private static String truncate(String s, int max) {
+        if (s == null) {
+            return null;
+        }
+        return s.length() <= max ? s : s.substring(0, max);
     }
 
     protected ErpFinBusinessType parseBusinessType(String name) {

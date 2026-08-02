@@ -3,7 +3,13 @@ package app.erp.fin.service.entity;
 
 import app.erp.fin.biz.IErpFinNotesReceivableBiz;
 import app.erp.fin.dao.entity.ErpFinNotesReceivable;
-import app.erp.fin.service.processor.ErpFinNotesReceivableProcessor;
+import app.erp.fin.service.processor.ErpFinNotesReceivableCollectProcessor;
+import app.erp.fin.service.processor.ErpFinNotesReceivableDiscountProcessor;
+import app.erp.fin.service.processor.ErpFinNotesReceivableDishonorProcessor;
+import app.erp.fin.service.processor.ErpFinNotesReceivableEndorseProcessor;
+import app.erp.fin.service.processor.ErpFinNotesReceivableHonorProcessor;
+import app.erp.fin.service.processor.ErpFinNotesReceivableReceiveProcessor;
+import app.erp.fin.service.processor.ErpFinNotesReceivableWriteOffProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -27,7 +33,19 @@ import java.util.List;
 public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesReceivable> implements IErpFinNotesReceivableBiz {
 
     @Inject
-    ErpFinNotesReceivableProcessor notesReceivableProcessor;
+    ErpFinNotesReceivableReceiveProcessor receiveProcessor;
+    @Inject
+    ErpFinNotesReceivableDiscountProcessor discountProcessor;
+    @Inject
+    ErpFinNotesReceivableEndorseProcessor endorseProcessor;
+    @Inject
+    ErpFinNotesReceivableCollectProcessor collectProcessor;
+    @Inject
+    ErpFinNotesReceivableHonorProcessor honorProcessor;
+    @Inject
+    ErpFinNotesReceivableDishonorProcessor dishonorProcessor;
+    @Inject
+    ErpFinNotesReceivableWriteOffProcessor writeOffProcessor;
 
     public ErpFinNotesReceivableBizModel() {
         setEntityName(ErpFinNotesReceivable.class.getName());
@@ -36,7 +54,7 @@ public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesRecei
     @Override
     @BizMutation
     public ErpFinNotesReceivable receive(@Name("notesId") Long notesId, IServiceContext context) {
-        return notesReceivableProcessor.receive(notesId, context);
+        return receiveProcessor.receive(notesId, context);
     }
 
     @Override
@@ -47,7 +65,7 @@ public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesRecei
                                            @Name("discountRate") BigDecimal discountRate,
                                            @Optional @Name("exchangeRate") BigDecimal exchangeRate,
                                            IServiceContext context) {
-        return notesReceivableProcessor.discount(notesId, discountDate, bankId, discountRate, exchangeRate, context);
+        return discountProcessor.discount(notesId, discountDate, bankId, discountRate, exchangeRate, context);
     }
 
     @Override
@@ -55,31 +73,31 @@ public class ErpFinNotesReceivableBizModel extends CrudBizModel<ErpFinNotesRecei
     public ErpFinNotesReceivable endorse(@Name("notesId") Long notesId,
                                           @Name("endorsementFromId") Long endorsementFromId,
                                           IServiceContext context) {
-        return notesReceivableProcessor.endorse(notesId, endorsementFromId, context);
+        return endorseProcessor.endorse(notesId, endorsementFromId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinNotesReceivable collect(@Name("notesId") Long notesId, IServiceContext context) {
-        return notesReceivableProcessor.collect(notesId, context);
+        return collectProcessor.collect(notesId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinNotesReceivable honor(@Name("notesId") Long notesId, IServiceContext context) {
-        return notesReceivableProcessor.honor(notesId, context);
+        return honorProcessor.honor(notesId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinNotesReceivable dishonor(@Name("notesId") Long notesId, IServiceContext context) {
-        return notesReceivableProcessor.dishonor(notesId, context);
+        return dishonorProcessor.dishonor(notesId, context);
     }
 
     @Override
     @BizMutation
     public ErpFinNotesReceivable writeOff(@Name("notesId") Long notesId, IServiceContext context) {
-        return notesReceivableProcessor.writeOff(notesId, context);
+        return writeOffProcessor.writeOff(notesId, context);
     }
 
     // endorsementFromId（背书链路自引用）+ discountId（贴现明细，ErpFinNotesDiscount 无 code 列）保留原始 ID。

@@ -160,4 +160,12 @@
           class="app.erp.pur.service.processor.ErpPurPaymentWithdrawApprovalProcessor"/>
     <bean id="app.erp.pur.service.processor.ErpPurPaymentCancelProcessor"
           class="app.erp.pur.service.processor.ErpPurPaymentCancelProcessor"/>
+    <!-- Payment D-mutation per-mutation Processor (R6.5) -->
+    <bean id="app.erp.pur.service.processor.ErpPurPaymentSettleProcessor"
+          class="app.erp.pur.service.processor.ErpPurPaymentSettleProcessor"/>
+    <bean id="app.erp.pur.service.processor.ErpPurPaymentReverseSettlementProcessor"
+          class="app.erp.pur.service.processor.ErpPurPaymentReverseSettlementProcessor"/>
+    <!-- SupplierScorecard D-mutation per-mutation Processor (R6.5 类别 B) -->
+    <bean id="app.erp.pur.service.processor.ErpPurSupplierScorecardFinalizeScorecardProcessor"
+          class="app.erp.pur.service.processor.ErpPurSupplierScorecardFinalizeScorecardProcessor"/>
 </beans>

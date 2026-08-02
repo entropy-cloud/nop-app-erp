@@ -1,0 +1,7 @@
+{
+  "p1Diff": 50,
+  "p2Diff": 100,
+  "cumulativeBooked": 150,
+  "trueCumulativeMovement": 100.0,
+  "documentedDrift": 50.0
+}

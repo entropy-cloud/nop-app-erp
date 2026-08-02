@@ -9,9 +9,9 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpAstDisposal approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Extends AbstractApproveProcessor to activate the abstract base class; delegates to ErpAstDisposalProcessor
- * for behavior equivalence. Downstream can override via Delta beans.xml with same bean id.
+ * ErpAstDisposal approve per-mutation Processor (plan 2026-07-25-1057-2, R5.4 Pattern B).
+ * Self-contained orchestration: require → idempotency → validateNotCancelled → validateTransition → validateForApproval → executeApprove.
+ * Domain logic via facade protected helpers (single source of truth).
  */
 public class ErpAstDisposalApproveProcessor extends AbstractApproveProcessor<ErpAstDisposal> {
 
@@ -20,7 +20,14 @@ public class ErpAstDisposalApproveProcessor extends AbstractApproveProcessor<Erp
 
     @Override
     public ErpAstDisposal approve(String id, IServiceContext context) {
-        return processor.approve(id, context);
+        ErpAstDisposal disposal = processor.requireDisposal(id, context);
+        if (disposal.isApproved()) {
+            return disposal;
+        }
+        processor.validateNotCancelled(disposal, context);
+        processor.validateTransitionForApprove(disposal, context);
+        processor.validateForApproval(disposal, context);
+        return processor.executeApprove(id, disposal, context);
     }
 
     @Override

@@ -14,11 +14,13 @@ import app.erp.log.service.spi.model.DeliveryOrderRequest;
 import app.erp.log.service.spi.model.DeliveryOrderResult;
 import app.erp.log.service.spi.model.ParcelInfo;
 import app.erp.log.service.spi.model.TrackingResult;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmEntitySet;
@@ -27,7 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
@@ -49,6 +53,10 @@ public class GatewayDispatcher {
     ErpLogCarrierGatewayRegistry gatewayRegistry;
     @Inject
     IDaoProvider daoProvider;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
+    static final String NOTIFY_EVENT_GATEWAY_DEAD_LETTER = "log.gateway-dead-letter";
 
     /** DRAFT→ADVISED。幂等：已 ADVISED 直接返回。 */
     public ErpLogShipment advise(Long shipmentId) {
@@ -329,6 +337,30 @@ public class GatewayDispatcher {
         String code = retryable ? "GATEWAY_RETRY_EXHAUSTED" : "GATEWAY_NON_RETRYABLE";
         writeLog(shipment, actionType, request, null, httpStatusOf(failure), code, errMsg, false);
         LOG.error("承运商网关下单死信，运单 {} 保留 ADVISED：{}", shipment.getCode(), errMsg);
+        // G4 错误传播分级（plan 2026-07-30-0341-2 P1-MA2-080）：logistics 网关无 DeferredPostingSweepJob 覆盖，
+        // 死信派发 IErpSysNotificationBiz 告警使运营感知（ADVISED 静默悬挂→告警闭环）。
+        dispatchDeadLetterAlert(shipment, code, errMsg);
+    }
+
+    /** 网关死信告警派发（G4；通知失败降级不阻断主流程）。 */
+    protected void dispatchDeadLetterAlert(ErpLogShipment shipment, String errorCode, String errorMessage) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("shipmentCode", shipment.getCode());
+        ctx.put("carrierId", shipment.getCarrierId());
+        ctx.put("trackingNo", shipment.getTrackingNo());
+        ctx.put("errorCode", errorCode);
+        ctx.put("errorMessage", errorMessage);
+        ctx.put("postingNo", shipment.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_GATEWAY_DEAD_LETTER, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("网关死信告警派发失败（降级）：shipmentCode={}, reason={}",
+                    shipment.getCode(), notifyErr.getMessage());
+        }
     }
 
     private void writeLog(ErpLogShipment shipment, String actionType, Object request, Object response,

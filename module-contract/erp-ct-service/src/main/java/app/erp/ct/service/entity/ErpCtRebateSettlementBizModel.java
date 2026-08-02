@@ -20,6 +20,7 @@ import app.erp.contract.dao.entity.ErpCtRebateSettlement;
 import app.erp.ct.biz.IErpCtRebateSettlementBiz;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.processor.ErpCtRebateSettlementPostSettlementProcessor;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.dao.entity.ErpPurInvoiceLine;
 import app.erp.sal.dao.entity.ErpSalInvoice;
@@ -32,6 +33,7 @@ import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import io.nop.biz.crud.EntityData;
+import jakarta.inject.Inject;
 
 /**
  * 返利结算单 BizModel。结算过账 + 贷项凭证生成
@@ -46,6 +48,9 @@ import io.nop.biz.crud.EntityData;
 @BizModel("ErpCtRebateSettlement")
 public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettlement>
         implements IErpCtRebateSettlementBiz {
+
+    @Inject
+    ErpCtRebateSettlementPostSettlementProcessor postSettlementProcessor;
 
     public ErpCtRebateSettlementBizModel() {
         setEntityName(ErpCtRebateSettlement.class.getName());
@@ -63,57 +68,7 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
     @Override
     @BizMutation
     public ErpCtRebateSettlement postSettlement(@Name("settlementId") Long settlementId, IServiceContext context) {
-        ErpCtRebateSettlement settlement = requireSettlement(settlementId, context);
-        if (!Objects.equals(settlement.getStatus(), ErpCtConstants.SETTLEMENT_STATUS_DRAFT)) {
-            throw new NopException(ErpCtErrors.ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION)
-                    .param(ErpCtErrors.ARG_SETTLEMENT_ID, settlementId)
-                    .param(ErpCtErrors.ARG_CURRENT_STATUS, settlement.getStatus());
-        }
-
-        // 汇总关联未结算计提
-        List<ErpCtRebateAccrual> unsettled = findUnsettledAccruals(settlement.getRebateAgreementId());
-        BigDecimal total = BigDecimal.ZERO;
-        for (ErpCtRebateAccrual a : unsettled) {
-            total = total.add(nz(a.getAccruedRebate()));
-        }
-
-        ErpCtRebateAgreement agreement = daoProvider().daoFor(ErpCtRebateAgreement.class)
-                .getEntityById(settlement.getRebateAgreementId());
-
-        // 币种取自关联合同（发票 CURRENCY_ID NOT NULL）
-        Long currencyId = resolveCurrencyId(agreement);
-        // 贷项行 materialId/uoMId 取自关联合同首行及其主物料（返利为金额型；发票行 MATERIAL_ID/UO_M_ID NOT NULL）
-        Long materialId = resolveMaterialId(agreement);
-        Long uomId = resolveUoMId(materialId);
-
-        // 生成贷项凭证（负额发票）——Phase 1 Decision：复用既有发票实体以负额表达
-        String creditMemoCode = "CT-REBATE-" + settlement.getId();
-        BigDecimal creditAmount = total.negate(); // 贷项 = 负额
-        if (agreement != null && Objects.equals(agreement.getRebateType(), ErpCtConstants.REBATE_TYPE_PURCHASE)) {
-            createNegativeApInvoice(creditMemoCode, agreement, currencyId, materialId, uomId, creditAmount);
-            settlement.setCreditMemoBillType("AP_INVOICE");
-        } else if (agreement != null) {
-            createNegativeArInvoice(creditMemoCode, agreement, currencyId, materialId, uomId, creditAmount);
-            settlement.setCreditMemoBillType("AR_INVOICE");
-        }
-        settlement.setCreditMemoBillCode(creditMemoCode);
-
-        // 标记计提已结算
-        LocalDate today = CoreMetrics.today();
-        IEntityDao<ErpCtRebateAccrual> accrualDao = daoProvider().daoFor(ErpCtRebateAccrual.class);
-        for (ErpCtRebateAccrual a : unsettled) {
-            a.setIsSettled(true);
-            a.setSettledDate(today);
-            accrualDao.updateEntity(a);
-        }
-
-        // 结算单过账
-        settlement.setTotalRebateAmount(total);
-        settlement.setStatus(ErpCtConstants.SETTLEMENT_STATUS_POSTED);
-        settlement.setPostedAt(CoreMetrics.currentTimestamp());
-        settlement.setPostedBy(currentUserId());
-        updateEntity(settlement, null, context);
-        return settlement;
+        return postSettlementProcessor.postSettlement(settlementId, context);
     }
 
     // ---------- 贷项凭证生成（负额发票，经 IDaoProvider 直接持久化） ----------

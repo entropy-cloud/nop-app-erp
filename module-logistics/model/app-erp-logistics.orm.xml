@@ -55,11 +55,6 @@
             <option code="TRACK" label="追踪" value="TRACK" i18n-en:label='Track'/>
             <option code="CANCEL" label="取消" value="CANCEL" i18n-en:label='Cancel'/>
         </dict>
-        <dict label="单据状态" name="erp-log/doc-status" valueType="string" i18n-en:label='Doc Status'>
-            <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
-            <option code="ACTIVE" label="已生效" value="ACTIVE" i18n-en:label='Effective'/>
-            <option code="CANCELLED" label="已作废" value="CANCELLED" i18n-en:label='Voided'/>
-        </dict>
     </dicts>
 
     <domains>
@@ -227,6 +222,7 @@
             </relations>
             <unique-keys>
                 <unique-key name="UK_LOG_SHIPMENT_CODE_ORG" columns="code,orgId"/>
+                <unique-key name="UK_LOG_SHIPMENT_TRACKING_CARRIER" constraint="UK_LOG_SHIPMENT_TRACKING_CARRIER" columns="trackingNo,carrierId,delVersion"/>
             </unique-keys>
             <indexes>
                 <index name="IDX_LOG_SHIPMENT_ORG_STATUS" unique="false">

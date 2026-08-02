@@ -9,6 +9,7 @@ import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.metrics.ErpFinBusinessMetrics;
 import app.erp.md.biz.IErpMdSubjectBiz;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.beans.query.QueryBean;
@@ -127,6 +128,8 @@ public class ErpFinPostingProcessor {
         ensureTraceId(event);
         PostingRun run = PostingRun.forPost(event);
         long processBegin = CoreMetrics.nanoTime();
+        // observability.md §5.1 指标 6 path=posting：凭证过账关键路径吞吐计数（入口埋点）
+        ErpFinBusinessMetrics.recordPostingPathThroughput(null);
 
         List<Long> targetSchemas = schemaPropagator.resolveTargetSchemas(event.getOrgId(), event.getAcctSchemaId());
 
@@ -143,7 +146,7 @@ public class ErpFinPostingProcessor {
             run.isFallback = provider.isFallback();
 
             ErpFinAccountingPeriod period = timeStage("resolveOpenPeriod", run,
-                    () -> resolveOpenPeriod(event.getVoucherDate(), context));
+                    () -> resolveOpenPeriod(event.getVoucherDate(), event.getOrgId(), context));
             AcctDocContext primaryCtx = prepareContext(event, period, context);
             primaryCtx.setTraceId(run.traceId);
 
@@ -189,13 +192,19 @@ public class ErpFinPostingProcessor {
             event.setAcctSchemaId(originalSchemaId);
 
             int voucherCount = targetSchemas.size();
-            postingMetrics.recordLatency(CoreMetrics.nanoTimeDiff(processBegin));
+            // observability.md §5.1 指标 1（Counter）+ 指标 2（Timer）：成功路径埋点
+            postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(processBegin));
+            postingMetrics.recordResult(run.businessType, true);
             LOG.info("过账成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, provider={}, fallback={}, template={}, timings(ms)={}",
                     run.traceId, run.billHeadCode, run.businessType, primaryVoucherId,
                     voucherCount, run.providerName, run.isFallback, run.templateDesc, run.timingsMillis());
             return primaryVoucherId;
         } catch (RuntimeException e) {
             event.setAcctSchemaId(event.getAcctSchemaId());
+            // observability.md §5.1 指标 1（Counter）+ 指标 2（Timer）：失败路径埋点
+            // （Timer 记录失败过账耗时，Counter 标记 result=failure；对齐 plan §5.1 metric 2 spec「单次过账端到端耗时」）
+            postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(processBegin));
+            postingMetrics.recordResult(run.businessType, false);
             logFailure(run, e);
             recordPostFailure(run, event, e);
             throw e;
@@ -223,7 +232,7 @@ public class ErpFinPostingProcessor {
             Long primarySchemaId = originals.get(0).getAcctSchemaId();
             for (ErpFinVoucher original : originals) {
                 List<ErpFinVoucherLine> originalLines = loadLines(original.getId(), context);
-                ErpFinAccountingPeriod period = resolveOpenPeriod(original.getVoucherDate(), context);
+                ErpFinAccountingPeriod period = resolveOpenPeriod(original.getVoucherDate(), original.getOrgId(), context);
                 AcctDocContext ctx = prepareReversalContext(original, period, originalLines, context);
                 ctx.setTraceId(run.traceId);
 
@@ -244,12 +253,16 @@ public class ErpFinPostingProcessor {
             dispatchReversalEvent(run, finalPrimaryReversalId,
                     firstOriginalId, billHeadCode, businessType, context);
 
-            postingMetrics.recordLatency(CoreMetrics.nanoTimeDiff(reverseBegin));
+            postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(reverseBegin));
+            postingMetrics.recordResult(run.businessType, true);
             LOG.info("红冲成功：traceId={}, billHeadCode={}, businessType={}, voucherId={}, schemas={}, timings(ms)={}",
                     run.traceId, run.billHeadCode, run.businessType, primaryReversalId, originals.size(),
                     run.timingsMillis());
             return primaryReversalId;
         } catch (RuntimeException e) {
+            // observability.md §5.1 指标 1 + 指标 2：红冲失败路径埋点（与正向过账失败路径对齐）
+            postingMetrics.recordLatency(run.businessType, CoreMetrics.nanoTimeDiff(reverseBegin));
+            postingMetrics.recordResult(run.businessType, false);
             logFailure(run, e);
             recordReverseFailure(run, e);
             throw e;
@@ -492,11 +505,15 @@ public class ErpFinPostingProcessor {
         return provider;
     }
 
-    protected ErpFinAccountingPeriod resolveOpenPeriod(LocalDate voucherDate, IServiceContext context) {
+    protected ErpFinAccountingPeriod resolveOpenPeriod(LocalDate voucherDate, Long orgId, IServiceContext context) {
         IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
         QueryBean q = new QueryBean();
         if (voucherDate != null) {
             q.addFilter(and(le("startDate", voucherDate), ge("endDate", voucherDate)));
+        }
+        // 多账套/多组织读路径隔离（P1-MA2-095）：按过账组织限定期间，避免跨组织误匹配
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
         }
         List<ErpFinAccountingPeriod> periods = dao.findAllByQuery(q);
         if (periods.isEmpty()) {
@@ -668,6 +685,8 @@ public class ErpFinPostingProcessor {
             copy.setSubjectName(f.getSubjectName());
             copy.setDcDirection(f.getDcDirection());
             copy.setAmount(f.getAmount());
+            copy.setAmountSource(f.getAmountSource());
+            copy.setAmountFunctional(f.getAmountFunctional());
             copy.setAmountKey(f.getAmountKey());
             copy.setAccountKey(f.getAccountKey());
             copy.setMemo(f.getMemo());
@@ -803,6 +822,10 @@ public class ErpFinPostingProcessor {
         int lineNo = 1;
         for (VoucherFact fact : facts) {
             BigDecimal amt = fact.getAmount() == null ? BigDecimal.ZERO : fact.getAmount();
+            // R1.9 / P1-MA3-039：amountSource/amountFunctional 由 Provider 显式传递（方案 A）。
+            // 未设置时 fallback 到 amount（单币种向后兼容：source==functional==amount）。
+            BigDecimal amtSource = fact.getAmountSource() != null ? fact.getAmountSource() : amt;
+            BigDecimal amtFunctional = fact.getAmountFunctional() != null ? fact.getAmountFunctional() : amt;
             ErpFinVoucherLine line = lineDao.newEntity();
             line.setVoucherId(voucherId);
             line.setLineNo(lineNo++);
@@ -811,12 +834,13 @@ public class ErpFinPostingProcessor {
             line.setSubjectName(fact.getSubjectName());
             line.setDcDirection(fact.getDcDirection());
             boolean isCredit = fact.getDcDirection() != null && Objects.equals(fact.getDcDirection(), DC_CREDIT);
-            line.setDebitAmount(isCredit ? BigDecimal.ZERO : amt);
-            line.setCreditAmount(isCredit ? amt : BigDecimal.ZERO);
+            // GL 借贷按本位币（功能金额）记账——试算平衡以本位币为准。
+            line.setDebitAmount(isCredit ? BigDecimal.ZERO : amtFunctional);
+            line.setCreditAmount(isCredit ? amtFunctional : BigDecimal.ZERO);
             line.setCurrencyId(currencyId);
             line.setExchangeRate(exchangeRate);
-            line.setAmountSource(amt);
-            line.setAmountFunctional(amt);
+            line.setAmountSource(amtSource);
+            line.setAmountFunctional(amtFunctional);
             line.setAcctSchemaId(acctSchemaId);
             line.setMemo(fact.getMemo());
             line.setBusinessType(businessType != null ? businessType.name()

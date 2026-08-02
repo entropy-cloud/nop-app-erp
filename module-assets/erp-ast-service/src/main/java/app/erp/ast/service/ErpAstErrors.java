@@ -107,6 +107,11 @@ public interface ErpAstErrors {
             "erp.err.ast.schedule.illegal-status-transition",
             "折旧计划执行状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
             ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    // 并发首次折旧被 UK_AST_DEPRECIATION_ASSET_PERIOD 兜底拦截（plan 2026-07-30-0841-2 R1.28 P1-MA2-089）
+    ErrorCode ERR_AST_DEPRECIATION_ALREADY_EXECUTED = ErrorCode.define(
+            "erp.err.ast.depreciation.already-executed",
+            "资产 {assetId} 期间 {period} 折旧已由并发事务计提，不可重复计提",
+            ARG_ASSET_ID, ARG_PERIOD);
 
     // --- 处置 ---
     ErrorCode ERR_DISPOSAL_NOT_FOUND = ErrorCode.define(

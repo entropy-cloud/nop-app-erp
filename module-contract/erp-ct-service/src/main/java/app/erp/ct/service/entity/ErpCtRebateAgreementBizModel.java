@@ -15,6 +15,7 @@ import app.erp.contract.dao.entity.ErpCtRebateAgreement;
 import app.erp.ct.biz.IErpCtRebateAgreementBiz;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.processor.ErpCtRebateAgreementRunAccrualProcessor;
 import app.erp.ct.service.rebate.RebateEngine;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.sal.dao.entity.ErpSalInvoice;
@@ -49,6 +50,9 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
     @Inject
     RebateEngine rebateEngine;
 
+    @Inject
+    ErpCtRebateAgreementRunAccrualProcessor runAccrualProcessor;
+
     public ErpCtRebateAgreementBizModel() {
         setEntityName(ErpCtRebateAgreement.class.getName());
     }
@@ -67,36 +71,7 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
     public ErpCtRebateAgreement runAccrual(@Name("agreementId") Long agreementId,
                                            @Name("asOfDate") LocalDate asOfDate,
                                            IServiceContext context) {
-        ErpCtRebateAgreement agreement = requireAgreement(agreementId, context);
-        if (!Objects.equals(agreement.getStatus(), ErpCtConstants.REBATE_AGREEMENT_STATUS_ACTIVE)) {
-            throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_NOT_ACTIVE)
-                    .param(ErpCtErrors.ARG_REBATE_AGREEMENT_ID, agreementId)
-                    .param(ErpCtErrors.ARG_CURRENT_STATUS, agreement.getStatus());
-        }
-
-        LocalDate periodStart = agreement.getStartDate();
-        LocalDate periodEnd = asOfDate == null ? CoreMetrics.today() : asOfDate;
-        Set<String> alreadyAccruedCodes = loadAccruedBillCodes(agreementId);
-
-        if (Objects.equals(agreement.getAccrualMethod(), ErpCtConstants.ACCRUAL_METHOD_PERIOD_END)) {
-            // 期末一次性：聚合期间全部新增发票金额，一次性喂入
-            BigDecimal periodTotal = sumPeriodInvoices(agreement, periodStart, periodEnd, alreadyAccruedCodes);
-            if (periodTotal.signum() != 0) {
-                rebateEngine.accruePeriodEnd(agreement, periodTotal, context);
-            }
-        } else {
-            // PROGRESSIVE：逐张已过账发票即时计提
-            for (Object invoice : findPeriodInvoices(agreement, periodStart, periodEnd)) {
-                BigDecimal amount = invoiceAmount(invoice);
-                String code = invoiceCode(invoice);
-                String billType = billTypeFor(agreement);
-                if (alreadyAccruedCodes.contains(code)) {
-                    continue;
-                }
-                rebateEngine.accrue(agreement, amount, billType, code, context);
-            }
-        }
-        return agreement;
+        return runAccrualProcessor.runAccrual(agreementId, asOfDate, context);
     }
 
     // ---------- helpers ----------

@@ -54,147 +54,16 @@ public class ErpAstMaintenanceProcessor {
     @Inject
     IErpAstDepreciationScheduleBiz depreciationScheduleBiz;
 
+    @Inject
+    ErpAstMaintenanceApproveProcessor approveProcessor;
+
     // ---------- public actions ----------
-
-    public ErpAstMaintenance createMaintenance(Long assetId, String code, String name, String businessDate,
-                                                Long maintenanceVisitId, String reason, IServiceContext context) {
-        ErpAstAsset asset = requireAsset(assetId);
-        validateAssetNotTerminal(asset, context);
-
-        IEntityDao<ErpAstMaintenance> dao = maintenanceDao();
-        ErpAstMaintenance maintenance = dao.newEntity();
-        maintenance.setCode(code);
-        maintenance.setName(name);
-        maintenance.setOrgId(asset.getOrgId());
-        maintenance.setAssetId(assetId);
-        maintenance.setMaintenanceVisitId(maintenanceVisitId);
-        maintenance.setStatus(ErpAstConstants.MAINTENANCE_STATUS_DRAFT);
-        maintenance.setBusinessDate(parseDate(businessDate));
-        maintenance.setCurrencyId(asset.getCurrencyId());
-        maintenance.setCapitalizedAmount(BigDecimal.ZERO);
-        maintenance.setTotalCostAmount(BigDecimal.ZERO);
-        maintenance.setPosted(false);
-        maintenance.setReversed(false);
-        maintenance.setReason(reason);
-        dao.saveEntity(maintenance);
-        return maintenance;
-    }
-
-    public ErpAstMaintenance submit(Long id, IServiceContext context) {
-        ErpAstMaintenance m = requireMaintenance(id, context);
-        validateTransition(m, ErpAstConstants.MAINTENANCE_STATUS_DRAFT, "submit");
-        m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_SUBMITTED);
-        maintenanceDao().updateEntity(m);
-        return m;
-    }
-
-    public ErpAstMaintenance startWork(Long id, IServiceContext context) {
-        ErpAstMaintenance m = requireMaintenance(id, context);
-        validateTransition(m, ErpAstConstants.MAINTENANCE_STATUS_SUBMITTED, "startWork");
-        m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_IN_PROGRESS);
-        maintenanceDao().updateEntity(m);
-        return m;
-    }
-
-    public ErpAstMaintenance completeWork(Long id, IServiceContext context) {
-        ErpAstMaintenance m = requireMaintenance(id, context);
-        validateTransition(m, ErpAstConstants.MAINTENANCE_STATUS_IN_PROGRESS, "completeWork");
-        m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_COMPLETED);
-        maintenanceDao().updateEntity(m);
-        return m;
-    }
-
-    public ErpAstMaintenance decideTreatment(Long id, String treatment, BigDecimal capitalizedAmount,
-                                              IServiceContext context) {
-        ErpAstMaintenance m = requireMaintenance(id, context);
-        validateTransition(m, ErpAstConstants.MAINTENANCE_STATUS_COMPLETED, "decideTreatment");
-        if (!Objects.equals(treatment, ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE)
-                && !Objects.equals(treatment, ErpAstConstants.MAINTENANCE_TREATMENT_EXPENSE)) {
-            throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_TREATMENT_NOT_DECIDED)
-                    .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode())
-                    .param(ErpAstErrors.ARG_TREATMENT, treatment);
-        }
-        BigDecimal totalCost = aggregateCost(id);
-        BigDecimal capAmount = capitalizedAmount != null ? capitalizedAmount : totalCost;
-
-        if (Objects.equals(treatment, ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE)) {
-            BigDecimal threshold = AppConfig.var(ErpAstConstants.CONFIG_MAINTENANCE_CAPITALIZE_THRESHOLD,
-                    BigDecimal.ZERO);
-            if (threshold.signum() > 0 && capAmount.compareTo(threshold) < 0) {
-                throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_CAPITALIZE_BELOW_THRESHOLD)
-                        .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode())
-                        .param(ErpAstErrors.ARG_AMOUNT, capAmount)
-                        .param(ErpAstErrors.ARG_THRESHOLD, threshold);
-            }
-        }
-
-        m.setTreatment(treatment);
-        m.setCapitalizedAmount(capAmount);
-        m.setTotalCostAmount(totalCost);
-        maintenanceDao().updateEntity(m);
-        return m;
-    }
+    // D-mutation 公共入口（createMaintenance/submit/startWork/completeWork/decideTreatment/post/reverse）已按 R6.3
+    // 拆为独立 per-mutation Processor。本 facade 处置 = slim-to-S-delegation-facade：
+    // 保留 approve（S-mutation 单行委托）+ cancel（`:45` 单步状态翻转豁免）+ protected helper（单一真相源）。
 
     public ErpAstMaintenance approve(Long id, IServiceContext context) {
-        ErpAstMaintenance m = requireMaintenance(id, context);
-        if (Objects.equals(m.getStatus(), ErpAstConstants.MAINTENANCE_STATUS_POSTED)) {
-            return m;
-        }
-        if (!Objects.equals(m.getStatus(), ErpAstConstants.MAINTENANCE_STATUS_COMPLETED)) {
-            throw illegalTransition(m, m.getStatus(), "COMPLETED");
-        }
-        m.setApprovedBy(currentUserId());
-        m.setApprovedAt(CoreMetrics.currentTimestamp());
-        maintenanceDao().updateEntity(m);
-        return m;
-    }
-
-    public ErpAstMaintenance post(Long id, IServiceContext context) {
-        ErpAstMaintenance m = requireMaintenance(id, context);
-        validateTransition(m, ErpAstConstants.MAINTENANCE_STATUS_COMPLETED, "post");
-        if (Boolean.TRUE.equals(m.getPosted())) {
-            throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_ALREADY_POSTED)
-                    .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode());
-        }
-        if (m.getTreatment() == null) {
-            throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_TREATMENT_NOT_DECIDED)
-                    .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode());
-        }
-        if (isApprovalRequired()) {
-            if (m.getApprovedAt() == null) {
-                throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_TREATMENT_NOT_DECIDED)
-                        .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode());
-            }
-        }
-        BigDecimal totalCost = aggregateCost(id);
-        if (totalCost.signum() <= 0) {
-            throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_NO_COST)
-                    .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode());
-        }
-        m.setTotalCostAmount(totalCost);
-
-        ErpAstAsset asset = requireAsset(m.getAssetId());
-        ErpAstAssetCategory category = asset.getCategory();
-
-        Long voucherId;
-        if (Objects.equals(m.getTreatment(), ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE)) {
-            applyTreatmentCapitalize(m, asset, context);
-            orm().flushSession();
-            voucherId = capitalizationDispatcher.tryPost(m, asset, category);
-        } else {
-            voucherId = expenseDispatcher.tryPost(m, asset, category);
-        }
-
-        m = reload(id);
-        m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_POSTED);
-        Timestamp now = CoreMetrics.currentTimestamp();
-        if (voucherId != null) {
-            m.setPosted(true);
-            m.setPostedAt(now);
-            m.setPostedBy(currentUserId());
-        }
-        maintenanceDao().updateEntity(m);
-        return m;
+        return approveProcessor.approve(String.valueOf(id), context);
     }
 
     public ErpAstMaintenance cancel(Long id, IServiceContext context) {
@@ -205,33 +74,6 @@ public class ErpAstMaintenanceProcessor {
             throw illegalTransition(m, status, "DRAFT 或 SUBMITTED");
         }
         m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_CANCELLED);
-        maintenanceDao().updateEntity(m);
-        return m;
-    }
-
-    public ErpAstMaintenance reverse(Long id, IServiceContext context) {
-        ErpAstMaintenance m = requireMaintenance(id, context);
-        if (Boolean.TRUE.equals(m.getReversed())) {
-            throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_ALREADY_REVERSED)
-                    .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode());
-        }
-        if (!Boolean.TRUE.equals(m.getPosted())) {
-            throw illegalTransition(m, m.getStatus(), "POSTED");
-        }
-
-        if (Objects.equals(m.getTreatment(), ErpAstConstants.MAINTENANCE_TREATMENT_CAPITALIZE)) {
-            capitalizationDispatcher.reverse(m);
-            rollbackCapitalization(m, context);
-        } else {
-            expenseDispatcher.reverse(m);
-        }
-
-        m = reload(id);
-        m.setPosted(false);
-        m.setPostedAt(null);
-        m.setPostedBy(null);
-        m.setReversed(true);
-        m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_COMPLETED);
         maintenanceDao().updateEntity(m);
         return m;
     }

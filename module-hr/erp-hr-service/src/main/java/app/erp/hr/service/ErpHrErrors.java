@@ -80,6 +80,12 @@ public interface ErpHrErrors {
             "员工 {employeeId} 在 {year} 年 {month} 月已存在非 VOID 薪酬记录，禁止重复核算",
             ARG_EMPLOYEE_ID, ARG_YEAR, ARG_MONTH);
 
+    // --- 薪酬核算：累计数据完整性（payroll.md §4.5，P1-MA4-018） ---
+    ErrorCode ERR_HR_CUMULATIVE_DATA_CORRUPT = ErrorCode.define(
+            "erp.err.hr.cumulative-data-corrupt",
+            "员工 {employeeId} 年度 {year} 累计薪酬数据 JSON 解析失败，请核对 cumulativeData 完整性",
+            ARG_EMPLOYEE_ID, ARG_YEAR);
+
     // --- 审批状态机 ---
     ErrorCode ERR_SALARY_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
             "erp.err.hr.salary.illegal-status-transition",
@@ -239,6 +245,12 @@ public interface ErpHrErrors {
             "erp.err.hr.not-clocked-in",
             "员工 {employeeId} 当日尚未签到，无法签退",
             ARG_EMPLOYEE_ID);
+
+    // 并发重复排班被 UK_HR_SHIFT_ASSIGNMENT_NATURAL 兜底拦截（plan 2026-07-30-0841-2 R1.28 P1-MA2-091）
+    ErrorCode ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE = ErrorCode.define(
+            "erp.err.hr.shift-assignment-duplicate",
+            "员工 {employeeId} 日期 {assignmentDate} 班次 {shiftId} 排班已由并发事务创建，不可重复排班",
+            ARG_EMPLOYEE_ID, ARG_ASSIGNMENT_DATE, ARG_SHIFT_ID);
 
     // --- 招聘状态机（use-cases.md UC-HR-05）---
     String ARG_RECRUITMENT_ID = "recruitmentId";

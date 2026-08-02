@@ -127,7 +127,7 @@
         private String _inspectionMethod;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=9)
     
         public String getInspectionMethod(){
             return _inspectionMethod;
@@ -141,7 +141,7 @@
         private Integer _sortNum;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=10)
     
         public Integer getSortNum(){
             return _sortNum;
