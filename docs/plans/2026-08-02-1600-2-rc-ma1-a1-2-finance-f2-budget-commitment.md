@@ -1,10 +1,11 @@
 # 2026-08-02-1600-2 rc-ma1-a1-2-finance-f2-budget-commitment finance-F2 预算与承付需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-02
 > Mission: requirement-compliance
 > Work Item: A1.2（MA1 需求追踪矩阵审计 — finance-F2 预算与承付）
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Item A1.2
+> Report: `docs/audits/2026-08-02-1700-rc-ma1-a1-2-finance-f2-budget.md`
 > Related: `docs/plans/2026-08-02-1458-1-requirement-compliance-methodology.md`（M0.1 done）、`2026-08-02-1530-1-requirement-baseline-extraction.md`（M0.2 done，解除 A1.2 的 0.2 依赖）、`2026-08-02-1600-1-rc-ma1-a1-1-finance-f1-posting-engine.md`（A1.1 同批，先行——过账引擎是 BUDGET/COMMITMENT 凭证生成的基础，其结论影响本切片对"凭证是否生成"的判读）
 > Audit: required
 
@@ -73,54 +74,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-2-finance-f2-budget.md`（新建，先填 §1-§5）
+Status: completed
+Targets: `docs/audits/2026-08-02-1700-rc-ma1-a1-2-finance-f2-budget.md`（新建，先填 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-FIN-11/13 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:204/238` 验收标准原文；L2 引用 `budget.md`/`cost-center.md` 对应 section（标注"设计参考"）；L3 引用 `ErpFinBudgetControlBiz`/`BudgetVoucherGenerator`/`CommitmentVoucherGenerator`/`ErpFinBudgetCommitmentBizModel`/`ErpFinBudgetLineBizModel` `file:line` + 跨域承付钩子（`ErpPurOrderProcessor`/`ErpPurInvoiceProcessor`/`ErpPurReturnProcessor`）；L4 引用 `TestErpFinBudget*`/`TestErpPur*Commitment` + E2E spec（注明断言强度）；L5 复用 MA2/E2E 已证实行为 + 差异。
+- [x] `Proof` 对 UC-FIN-11/13 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:204/238` 验收标准原文；L2 引用 `budget.md`/`cost-center.md` 对应 section（标注"设计参考"）；L3 引用 `ErpFinBudgetControlBiz`/`BudgetVoucherGenerator`/`CommitmentVoucherGenerator`/`ErpFinBudgetCommitmentBizModel`/`ErpFinBudgetLineBizModel` `file:line` + 跨域承付钩子（`ErpPurOrderProcessor`/`ErpPurInvoiceProcessor`/`ErpPurReturnProcessor`）；L4 引用 `TestErpFinBudget*`/`TestErpPur*Commitment` + E2E spec（注明断言强度）；L5 复用 MA2/E2E 已证实行为 + 差异。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验已知注意点（逐验收标准对照）：①config 默认关闭（`isBudgetCheckEnabled`/`isCommitmentEnabled` 默认 false）是否与"审核即控制"契约冲突；②"actual"口径不一致（`getBudgetVsActual` vs `aggregateAmount`）是否影响三列对比报表正确性；③承付单行对称 vs 经典 Dr-准备/Cr-承付；UC-FIN-11 三通道余量公式（BUDGET−COMMITMENT−NORMAL）实现；UC-FIN-13 承付红冲触发（CANCELLED / 发票接收）。
+- [x] `Proof` 重点核验已知注意点（逐验收标准对照）：①config 默认关闭（`isBudgetCheckEnabled`/`isCommitmentEnabled` 默认 false）是否与"审核即控制"契约冲突；②"actual"口径不一致（`getBudgetVsActual` vs `aggregateAmount`）是否影响三列对比报表正确性；③承付单行对称 vs 经典 Dr-准备/Cr-承付；UC-FIN-11 三通道余量公式（BUDGET−COMMITMENT−NORMAL）实现；UC-FIN-13 承付红冲触发（CANCELLED / 发票接收）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给符合性结论（取最高）：config 默认关闭若构成"默认行为分歧/异常路径"→ P1② 或 P2；"actual"口径不一致若影响报表正确性 → P1④/P2①；承付单行对称若与需求契约冲突 → 按实测定级。每结论列 §2 判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给符合性结论（取最高）：config 默认关闭若构成"默认行为分歧/异常路径"→ P1② 或 P2；"actual"口径不一致若影响报表正确性 → P1④/P2①；承付单行对称若与需求契约冲突 → 按实测定级。每结论列 §2 判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：2 UC 各一矩阵行（L1 逐字、L3 含行号含跨域钩子、L4 注明断言强度、L5 标注 MA2 来源）
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；已知注意点①②③有明确分级（非悬空）
+- [x] 报告 §1-§5 已落盘：2 UC 各一矩阵行（L1 逐字、L3 含行号含跨域钩子、L4 注明断言强度、L5 标注 MA2 来源）
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；已知注意点①②③有明确分级（非悬空）
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-2-finance-f2-budget.md`（补 §6-§9 定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-02-1700-rc-ma1-a1-2-finance-f2-budget.md`（补 §6-§9 定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` finance 预算/承付同域同控制点（如承付释放相关行、P1-MA2-082/083 承付族跨域项等）后裁决复用 or 新建 `P0-RC-xxx`/`P1-RC-xxx`，列明差异依据；禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` finance 预算/承付同域同控制点（如承付释放相关行、P1-MA2-082/083 承付族跨域项等）后裁决复用 or 新建 `P0-RC-xxx`/`P1-RC-xxx`，列明差异依据；禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段（复用/新增裁决 + 双向可追溯）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段（复用/新增裁决 + 双向可追溯）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开；无则注明"无"）。若 Phase 1 定级 P0，按 §10 登记 + 记录"已触发 MR0 追加 R0.n"（本计划不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开；无则注明"无"）。若 Phase 1 定级 P0，按 §10 登记 + 记录"已触发 MR0 追加 R0.n"（本计划不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实跑 `bash docs/audits/nop-compliance-checker.sh` + actual vs baseline 表（无生产代码变更注明"无回归风险"）；closure-audit 独立性声明；交叉去重声明。**不以 checker 退出码 0 作门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实跑 `bash docs/audits/nop-compliance-checker.sh` + actual vs baseline 表（无生产代码变更注明"无回归风险"）；closure-audit 独立性声明；交叉去重声明。**不以 checker 退出码 0 作门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 差异增量声明（复用 period-budget / commitment-release MA2 已证实行为，列本切片需求视角差异）。
+- [x] `Add` 报告 §9 与 MA2 差异增量声明（复用 period-budget / commitment-release MA2 已证实行为，列本切片需求视角差异）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`（新 `P*-RC-xxx` 入分区；既有行追加 RC 交叉引用）。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`（新 `P*-RC-xxx` 入分区；既有行追加 RC 交叉引用）。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检（落盘前 §1-§9 全在）。
+- [x] `Proof` 报告 9 段完整性自检（落盘前 §1-§9 全在）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -130,14 +131,16 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.2 报告 9 段齐全 + 2 UC 逐矩阵行 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.2 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.2 报告 9 段齐全 + 2 UC 逐矩阵行 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.2 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+
+> **Closure Gate 说明**：第 7 项「结束审计由独立子代理执行」经独立结束审计子代理（general subagent，fresh session）冷上下文复核全部 10 步通过后勾选（执行者未自我审计）。其余 7 项已由本执行者核实完成。本审计为只读审计（无代码变更），报告 9 段完整性 + 五级矩阵 + finding 衔接 + checker 实测均已落盘于报告文件，独立结束审计证据见下 §Closure Audit Evidence。
 
 ## Deferred But Adjudicated
 
@@ -149,13 +152,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <结束审计通过后填写>
+Status Note: 已完成（2026-08-02）。A1.2 报告 `docs/audits/2026-08-02-1700-rc-ma1-a1-2-finance-f2-budget.md` 9 段齐全落盘；2 UC（UC-FIN-11/13）五级追踪矩阵填齐；UC-FIN-11 接受、UC-FIN-13 断言①②③接受 / 断言④ P1；新登记 P1-RC-003（三列对比报表未满足）写入 arm-index RC 分区 + 交叉引用 P1-MA2-084（姊妹站点）；3 项 plan baseline caveat（config 默认关闭 / actual 口径不一致 / 承付单行凭证）逐项分级落定（①接受 / ②P1-RC-003 / ③接受+L2 drift 归 MA3）；§8 checker 实测 actual=baseline 0 漂移；roadmap A1.2 todo→done。无 P0，不触发 MR0；P1 经 MR1 R1.0 展开。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理（新会话，cold-context）>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立子代理（general subagent，fresh session，task: independent-closure-audit-a1.2）
+- Evidence: 独立冷上下文复核全部 10 步通过：报告 9 段齐全；§1 UC-FIN-11/13 验收标准逐字引用对照 use-cases.md:204/238 一致；L3 抽查 8 处 file:line 全部真实可达（含 BudgetVsActualRow DTO 无 commitmentAmount 字段 = P1-RC-003 核心）；L4 `testGetBudgetVsActual` 不 seed COMMITMENT 且仅断言两列（三列需求零覆盖），`testAvailableDeductsCommitmentSeparately` 断言 available=500（控制引擎三通道正确，bug 隔离至报表）；分级 P1-RC-003 维持 P1 不升 P0 合理（报表正确性非活跃数据破坏，控制引擎独立正确）；arm-index 补 A1.2 行 + P1-RC-003 finding 行 + P1-MA2-084 姊妹站点交叉引用；roadmap A1.2 done；§8 checker 实测 12 项计数全等于报告所载（0 漂移）；git 仅变更 docs/audits+backlog+plans（无 .java/.orm.xml/api.xml/真相源）；anti-hollow：UC-FIN-13 四断言全入 §5.1 矩阵行。无阻塞。
 
 Follow-up:
 
-- 本报告 finding 由 MR0（P0）/ MR1 R1.0（P1）展开；静态存疑点由 A4.1 读取后追加 A4.1.n。
+- 本报告 finding（P1-RC-003）由 MR1 R1.0 展开（修复 = DTO 增 commitmentAmount + getBudgetVsActual 三通道化 + available=budget−actual−commitment + XPT 前端增 Commitment 列；纯 BizModel/DTO/XPT 代码逻辑修复，按 roadmap 预授权类目可自动执行，不触发 §5 ask-first）；静态存疑点（4 项）由 A4.1 读取后追加 A4.1.n。
