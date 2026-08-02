@@ -77,7 +77,7 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
   - 所有 156 模块可独立编译通过（`mvn clean install -DskipTests` 全绿）
   - 全 18 域 CRUD 流程测试通过（含冒烟测试）
   - 业财一体端到端业务循环测试通过（P2P / O2C / 期末结账 / 成本核算 / 年度结转 / 坏账准备）
-  - 1902 单元测试 0 failures
+  - 1903 单元测试 0 failures（与 `docs/backlog/requirement-compliance-roadmap.md §当前基线` 对齐，0.2 基线提取时校正陈旧计数）
 - 约束：
   - `model/*.orm.xml` 是 ask-first 保护区域
   - `nop-entropy` 父 POM 必须在 codegen 前构建
