@@ -1,6 +1,6 @@
 # 2026-08-02-2231-2 rc-ma1-a1-11-mfg-f4-variance-batch-kanban mfg-F4 差异/批次/看板需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-02
 > Mission: requirement-compliance
 > Work Item: A1.11（MA1 需求追踪矩阵审计 — mfg-F4 差异/批次/看板：UC-MFG-11 制造看板 + UC-MFG-12 生产成本差异分析 + UC-MFG-13 生产批次追溯）
@@ -69,56 +69,56 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论 + resolved finding HEAD 复核
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-11-mfg-f4-variance-batch-kanban.md`（新建，先填 §1-§5；命名遵循方法论 §归档规范）
+Status: completed
+Targets: `docs/audits/2026-08-02-2245-rc-ma1-a1-11-mfg-f4-variance-batch-kanban.md`（已落盘 §1-§5；命名遵循方法论 §归档规范）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done（方法论契约 + UC 锚点就绪）
 
-- [ ] `Proof` 对 UC-MFG-11/12/13 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:195/:216/:238` 验收标准原文（禁止转述）；L2 引用 `variance-analysis.md`（差异分类表 + 数据模型 + 计算逻辑 + 使用流程 + 重算幂等注记 + config 三键）+ `batch-genealogy.md`（追溯模型 + 数据模型 + 核心查询 + Decision 1/2/3 + recallReport 降级说明）+ `dashboards.md` §制造看板（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpMfgDashboardBizModel.java:line`（KPI 聚合）+ `ProductionVarianceCalculator:line`（6 类差异 + dispatchVarianceAlertIfOverThreshold）+ `ProductionVarianceDispatcher:line`（过账/红冲 + dispatchIfApplicable:111-117 catch 吞异常）+ `ErpMfgCostVarianceBizModel.calculateVariances:69`（重算四步）+ `BatchGenealogyTracer:line`/`BatchGenealogyWriter:line`/`ErpMfgBatchGenealogyBizModel:line`（recallReport 降级）；L4 引用 `Test*.java#method`（注明断言强度；业财异常路径零覆盖 + best-effort 写失败无测试）；L5 复用 A4.2a/A2.6a + 本切片差异。
+- [x] `Proof` 对 UC-MFG-11/12/13 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:195/:216/:238` 验收标准原文（禁止转述）；L2 引用 `variance-analysis.md`（差异分类表 + 数据模型 + 计算逻辑 + 使用流程 + 重算幂等注记 + config 三键）+ `batch-genealogy.md`（追溯模型 + 数据模型 + 核心查询 + Decision 1/2/3 + recallReport 降级说明）+ `dashboards.md` §制造看板（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpMfgDashboardBizModel.java:line`（KPI 聚合）+ `ProductionVarianceCalculator:line`（6 类差异 + dispatchVarianceAlertIfOverThreshold）+ `ProductionVarianceDispatcher:line`（过账/红冲 + dispatchIfApplicable:111-117 catch 吞异常）+ `ErpMfgCostVarianceCalculateVariancesProcessor:33-52`（重算四步）+ `BatchGenealogyTracer:line`/`BatchGenealogyWriter:line`/`ErpMfgBatchGenealogyBizModel:line`（recallReport 降级）；L4 引用 `Test*.java#method`（注明断言强度；业财异常路径零覆盖 + best-effort 写失败无测试）；L5 复用 A4.2a/A4.2b/A2.6a + 本切片差异。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-MFG-11——①KPI 卡片值实时聚合(非硬编码常量)；②预警阈值来自 config(非硬编码)；③行级权限(orgId/deptId/costCenter 过滤生效)。UC-MFG-12——④完工过账触发差异计算；⑤6 类差异(MATERIAL_USAGE/LABOR_EFFICIENCY/LABOR_RATE/OVERHEAD/VOLUME/SUBCONTRACT)逐条写 ErpMfgCostVariance；⑥PPV 归采购域不重复计入(PURCHASE_PRICE_VARIANCE 由 inventory InvPostingDispatcher.dispatchPurchasePriceVariance 捕获)；⑦多维分组聚合报表(工作中心/产品/期间/差异类型)。UC-MFG-13——⑧完工入库记录 input→output 关系；⑨前向追溯(outputLotId→inputLotId 全集)；⑩反向追溯(inputLotId→outputLotId 全集)；⑪多级递归追溯；⑫召回报告识别受影响成品批次（**降级版 RecallReport.degraded=true 是否满足"识别受影响成品批次"，位置/去向查询缺失裁决 successor**）。
+- [x] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-MFG-11——①KPI 卡片值实时聚合(非硬编码常量)；②预警阈值来自 config(非硬编码)；③行级权限(orgId/deptId/costCenter 过滤生效)。UC-MFG-12——④完工过账触发差异计算；⑤6 类差异(MATERIAL_USAGE/LABOR_EFFICIENCY/LABOR_RATE/OVERHEAD/VOLUME/SUBCONTRACT)逐条写 ErpMfgCostVariance；⑥PPV 归采购域不重复计入(PURCHASE_PRICE_VARIANCE 由 inventory InvPostingDispatcher.dispatchPurchasePriceVariance 捕获)；⑦多维分组聚合报表(工作中心/产品/期间/差异类型)。UC-MFG-13——⑧完工入库记录 input→output 关系；⑨前向追溯(outputLotId→inputLotId 全集)；⑩反向追溯(inputLotId→outputLotId 全集)；⑪多级递归追溯；⑫召回报告识别受影响成品批次（**降级版 RecallReport.degraded=true 是否满足"识别受影响成品批次"，位置/去向查询缺失裁决 successor**）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` **resolved finding HEAD 复核**：对差异/批次相关 finding（P1-MA4-007 完工编排差异过账吞异常 / P1-MA4-009 业财异常路径测试有效性 / P1-MA4-010 委外 issue/receipt 过账吞咽无闭环 / P1-MA4-011 CostRollup 测试有效性 / P1-MA4-012 跨域 daoFor 投影——**resolved 状态执行时经 arm-index grep 确认，未确认者按"未定"处理**）在当前 HEAD 代码实际落地（按逻辑非行号核验），逐条记录复核结论（已落地/回退/部分落地/documented simplification 仍 open successor）。**P1-MA4-007 为会计正确性类（差异凭证悬挂），Q4 无例外，HEAD 复核为关闭门控关键证据**。
+- [x] `Proof` **resolved finding HEAD 复核**：对差异/批次相关 finding（P1-MA4-007 完工编排差异过账吞异常 / P1-MA4-009 业财异常路径测试有效性 / P1-MA4-010 委外 issue/receipt 过账吞咽无闭环 / P1-MA4-011 CostRollup 测试有效性 / P1-MA4-012 跨域 daoFor 投影——**resolved 状态执行时经 arm-index grep 确认，未确认者按"未定"处理**）在当前 HEAD 代码实际落地（按逻辑非行号核验），逐条记录复核结论（已落地/回退/部分落地/documented simplification 仍 open successor）。**P1-MA4-007 为会计正确性类（差异凭证悬挂），Q4 无例外，HEAD 复核为关闭门控关键证据**。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：UC-MFG-12 P1-MA4-007 完工触发差异过账吞异常（会计正确性类 Q4 无例外 → dedup P1-MA4-007，HEAD 复核确认悬挂则维持 P1 触发 MR1；已 resolved 则记录闭环）；业财异常路径零覆盖（dedup P1-MA4-009）。UC-MFG-13 召回报告降级（按 §4 Q1 L1"识别所有受影响成品批次"——降级版满足"识别"→ 倾向接受/P2 successor；位置/去向为增强维度归 inventory successor，核验 successor 触发条件登记）；best-effort 写失败（Decision 3 可观测性兜底 → 存疑点交 MA4）。UC-MFG-11 KPI/阈值/权限（执行时 HEAD 核验：硬编码倾向 P1、权限缺失倾向 P0/P1 安全类）。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：UC-MFG-12 P1-MA4-007 完工触发差异过账吞异常（会计正确性类 Q4 无例外 → dedup P1-MA4-007，HEAD 复核确认悬挂则维持 P1 触发 MR1；已 resolved 则记录闭环）；业财异常路径零覆盖（dedup P1-MA4-009）。UC-MFG-13 召回报告降级（按 §4 Q1 L1"识别所有受影响成品批次"——降级版满足"识别"→ 倾向接受/P2 successor；位置/去向为增强维度归 inventory successor，核验 successor 触发条件登记）；best-effort 写失败（Decision 3 可观测性兜底 → 存疑点交 MA4）。UC-MFG-11 KPI/阈值/权限（执行时 HEAD 核验：硬编码倾向 P1、权限缺失倾向 P0/P1 安全类）。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-MFG-11/12/13 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度（含业财异常路径零覆盖 + best-effort 无测试标注）、L5 标注复用 A4.2a/A2.6a 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-⑫ 有明确分级（非悬空"待查"）；UC-MFG-13 召回报告降级结论含 §4 裁决；P1-MA4-007 HEAD 复核结论已记录（会计正确性类关键证据）
+- [x] 报告 §1-§5 已落盘：UC-MFG-11/12/13 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度（含业财异常路径零覆盖 + best-effort 无测试标注）、L5 标注复用 A4.2a/A2.6a 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-⑫ 有明确分级（非悬空"待查"）；UC-MFG-13 召回报告降级结论含 §4 裁决；P1-MA4-007 HEAD 复核结论已记录（会计正确性类关键证据）
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-11-mfg-f4-variance-batch-kanban.md`（补 §6-§9，报告定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-02-2245-rc-ma1-a1-11-mfg-f4-variance-batch-kanban.md`（已落盘 §6-§9，报告定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成（矩阵 + 结论已出）
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` mfg 差异/批次/看板同域同控制点（如 P1-MA4-007/P1-MA4-009）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点（如 UC-MFG-13 召回报告降级 = 需求契约视角新维度 / UC-MFG-11 看板 KPI 硬编码若发现）→ 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：UC-MFG-12 差异过账吞异常若与 A1.9/A4.2a P1-MA4-007 同根因则交叉引用而非重复新建。禁止未经比对直接新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` mfg 差异/批次/看板同域同控制点（如 P1-MA4-007/P1-MA4-009）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点（如 UC-MFG-13 召回报告降级 = 需求契约视角新维度 / UC-MFG-11 看板 KPI 硬编码若发现）→ 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：UC-MFG-12 差异过账吞异常若与 A1.9/A4.2a P1-MA4-007 同根因则交叉引用而非重复新建。禁止未经比对直接新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（如完工触发差异过账失败运行时 posted 悬挂、best-effort 基因链写失败运行时缺口、看板 KPI 运行时聚合 vs 硬编码、行级权限运行时过滤；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（如完工触发差异过账失败运行时 posted 悬挂、best-effort 基因链写失败运行时缺口、看板 KPI 运行时聚合 vs 硬编码、行级权限运行时过滤；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
+- [x] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2/MA4 报告差异增量声明：声明复用 A4.2a（ProductionVarianceDispatcher 调用点 + 完工触发编排 reportCompletion:227-239 + P1-MA4-007/009 finding）+ A4.2b（ProductionVarianceCalculator 6 类算术 PASS + dispatchVarianceAlertIfOverThreshold 降级 + BatchGenealogyWriter 幂等 + 重算幂等四步链 + P1-MA4-010/011/012 finding）+ A2.6a（完工 COMPLETED 触发点）已证实结论，列明本切片只补的需求视角差异（UC-MFG-11 看板 KPI/阈值/权限符合性 + UC-MFG-12 6 类完整性与 PPV 归属 + UC-MFG-13 追溯链完整性与召回报告降级 + resolved finding HEAD 复核）。
+- [x] `Add` 报告 §9 与 MA2/MA4 报告差异增量声明：声明复用 A4.2a（ProductionVarianceDispatcher 调用点 + 完工触发编排 reportCompletion:227-239 + P1-MA4-007/009 finding）+ A4.2b（ProductionVarianceCalculator 6 类算术 PASS + dispatchVarianceAlertIfOverThreshold 降级 + BatchGenealogyWriter 幂等 + 重算幂等四步链 + P1-MA4-010/011/012 finding）+ A2.6a（完工 COMPLETED 触发点）已证实结论，列明本切片只补的需求视角差异（UC-MFG-11 看板 KPI/阈值/权限符合性 + UC-MFG-12 6 类完整性与 PPV 归属 + UC-MFG-13 追溯链完整性与召回报告降级 + resolved finding HEAD 复核）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
+- [x] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
-- [ ] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
+- [x] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -129,14 +129,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控——审计报告产出不触发编译或测试。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + resolved finding HEAD 复核 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.11 报告 9 段齐全 + UC-MFG-11/12/13 逐矩阵行 + resolved finding HEAD 复核 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.11 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.11 报告 9 段齐全 + UC-MFG-11/12/13 逐矩阵行 + resolved finding HEAD 复核 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.11 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -148,13 +148,22 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <结束审计通过后填写>
+Status Note: A1.11 只读审计闭环达成。报告 9 段齐全（§1-§9），3 UC（UC-MFG-11/12/13）共 12 验收标准五级追踪全覆盖，finding 复用/新增裁决可追溯（§去重协议遵守），5 项 resolved finding HEAD `c9e87bbc4` 复核 5/5 落地无回退（含 P1-MA4-007 会计正确性类 G3 错误分级 + 告警派发闭环），4 项静态存疑点交 MA4，无 P0 触发 MR0，§8 checker 19 规则全绿零漂移（只读零回归）。结束审计由独立子代理（fresh session）执行——执行者未自我审计、未自勾门控。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理 fresh session>
-- Evidence: <报告产物 + arm-index 登记 + HEAD 锚点 + 日志同步 + draft review 证据 + 只读零回归证明>
+- Auditor / Agent: 独立结束审计子代理（fresh session，MISSION_DRIVER 2026-08-02-204249-mission-driver，未参与起草/草案审查/执行）
+- Evidence:
+  - 报告产物：`docs/audits/2026-08-02-2245-rc-ma1-a1-11-mfg-f4-variance-batch-kanban.md`（58KB，9 段齐全 §1-§9）— 实测 grep 确认 9 段标题全部存在（§1 需求契约逐字 / §2 L3 行号 / §3 L4 断言强度 / §4 L5 运行时行为 / §5 矩阵+HEAD 复核 / §6 arm-index 衔接 / §7 静态存疑 / §8 过程纪律自检 / §9 差异增量）
+  - finding 登记：`docs/audits/arm-index.md` 新增 `P1-RC-010`（UC-MFG-13 ⑫召回报告测试仅冒烟）+ `P2-RC-009`（UC-MFG-11 ②预警阈值非 config 驱动）两行 + A1.11 summary 注记（:134）+ P1-MA2-093 行追加 RC A1.7/A1.11 交叉引用注记（复用不新建）— 实测 grep 确认
+  - HEAD 锚点：审计基线 HEAD `c9e87bbc402f7fe088142fecbbce30406d1524cc`（报告 :6）；5 项 resolved finding HEAD 复核 5/5 落地无回退（P1-MA4-007 R1.16 G3 错误分级+告警派发 / P1-MA4-009 R2.11 / P1-MA4-010 R1.16 / P1-MA4-011 R2.11 / P1-MA4-012 plan 2026-07-29-2225-1）
+  - 日志同步：`docs/logs/2026/08-02.md`（:5/:7/:8/:10）含 Phase 1/2 完成记录 + 产出文件清单 + bookkeeping 声明 — 实测 grep 确认
+  - draft review 证据：iter1 needs revision（A4.2a/A4.2b 范围修正）+ iter2 acceptable as-is，两个 fresh session 子代理（ses_03d19fb47ffe3ZtNdx4KVu6nl1 / ses_03d15960cffe2at0KFGM8941f3）— 本计划 §Draft Review Record
+  - 只读零回归证明：本审计无代码/ORM/api.xml/view.xml/真相源变更；§8 checker 19 规则 actual==baseline 全绿零漂移（区分 reporter 退出码恒 0 vs CI workflow 门控）
+  - §4 三判据核验：UC-MFG-13 recallReport 降级（RecallReport.degraded=true）按 §4 Q1 裁决满足 L1⑫"识别受影响成品批次"，位置/去向查询为增强维度归 inventory 域 successor（SP-4）
+  - 真相源冻结遵守（§9）：未修改 product-scope / mfg use-cases / variance-analysis.md / batch-genealogy.md 需求契约段落；分歧记入报告不直改真相源
+  - 反松弛自检：无范围内项目降级 deferred/follow-up（finding 修复属 MR0/MR1 successor，已显式 adjudicated 在 §Deferred But Adjudicated）；无 in-scope 缺陷隐藏在 Deferred
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- finding 修复属 MR0（P0 即时通道，本切片未触发）/ MR1（R1.0 展开 RC-R1.n，P1-RC-010 测试补充 + P2-RC-009 阈值 config 化）successor，非阻塞本审计闭环（§Deferred But Adjudicated 已 adjudicated）
