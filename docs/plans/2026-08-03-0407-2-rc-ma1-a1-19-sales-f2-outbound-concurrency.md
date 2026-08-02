@@ -1,6 +1,6 @@
 # 2026-08-03-0407-2 rc-ma1-a1-19-sales-f2-outbound-concurrency sales-F2 出库与并发需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-03
 > Mission: requirement-compliance
 > Work Item: A1.19（MA1 需求追踪矩阵审计 — sales-F2 出库与并发）
@@ -79,54 +79,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-19-sales-f2-outbound-concurrency.md`（新建，先填 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-SAL-02/03/10 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:56/:76/:216` 验收标准原文；L2 引用 `state-machine.md §4` + `inventory/cross-domain.md §余量校验`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `module-sales/.../processor/ErpSalOrderProcessor.java:166-170`（订单审核，无库存调用）/ `ErpSalDeliveryProcessor.triggerOutgoingMove:241-245` / 跨域 `IErpInvStockMoveBiz.generateMove` → `ErpInvStockMoveProcessor.validateAvailable:116-136` / `ErpSalDeliveryProcessor.rollupOrderDeliveryStatus:270-310` / `ErpSalOrderBizModel.updateDeliveryStatus:242-254` / `ReceiptSettler.recomputeInvoiceReceived:161-177` / 库存 `StockMoveBookkeeper.updateBalanceWithRetry:255-328`；L4 引用 `TestErpSalDeliveryStockMove#*` / `TestErpInvConcurrentDeduct#*`（注明断言强度 + 单线程模拟 vs 真实多线程）；L5 复用 MA2 A2.17 + O2C + E2E。
+- [x] `Proof` 对 UC-SAL-02/03/10 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:56/:76/:216` 验收标准原文；L2 引用 `state-machine.md §4` + `inventory/cross-domain.md §余量校验`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `module-sales/.../processor/ErpSalOrderProcessor.java:166-170`（订单审核，无库存调用）/ `ErpSalDeliveryProcessor.triggerOutgoingMove:241-245` / 跨域 `IErpInvStockMoveBiz.generateMove` → `ErpInvStockMoveProcessor.validateAvailable:116-136` / `ErpSalDeliveryProcessor.rollupOrderDeliveryStatus:270-310` / `ErpSalOrderBizModel.updateDeliveryStatus:242-254` / `ReceiptSettler.recomputeInvoiceReceived:161-177` / 库存 `StockMoveBookkeeper.updateBalanceWithRetry:255-328`；L4 引用 `TestErpSalDeliveryStockMove#*` / `TestErpInvConcurrentDeduct#*`（注明断言强度 + 单线程模拟 vs 真实多线程）；L5 复用 MA2 A2.17 + O2C + E2E。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①G1 UC-SAL-02 订单审核不触发可用量校验（`ErpSalOrderProcessor.validateBusinessRulesForApprove:166-170` 仅客户+信用，L1 `:62-66` 要求订单级）；②UC-SAL-02 出库级回滚行为本身**已正确**（`TestErpSalDeliveryStockMove:121-155` 强证据，但订单级缺失）；③G2 `deliveredQuantity`（`app-erp-sales.orm.xml:402`）从不被服务代码写入（grep 仅生成 bean + ReturnQtyValidator 读），UC-SAL-03 `:89-90` 派生断言不可满足；④UC-SAL-03 头级 `deliveryStatus` rollup 正确（`rollupOrderDeliveryStatus:270-310`）；⑤UC-SAL-03 发票/收款侧 `receivedStatus` 派生正确（`recomputeInvoiceReceived:161-177`）；⑥G3 无 1 行×2 分批(60+40) 测试（现有为 2 行×1/行）；⑦UC-SAL-10 库存域乐观锁 + 重试 + UK 兜底完备（`updateBalanceWithRetry`/`UK_INV_STOCK_BALANCE_NATURAL`）；⑧G4 销售级并发测试为零（`ErpSalDelivery__approve` 无并发线程同批次测试）；⑨G5 MA2 审计文本 `2026-07-28-1249...:326-327` "无并发测试" 与现存 `TestErpInvConcurrentDeduct`（6 测试）矛盾——对账。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①G1 UC-SAL-02 订单审核不触发可用量校验（`ErpSalOrderProcessor.validateBusinessRulesForApprove:166-170` 仅客户+信用，L1 `:62-66` 要求订单级）；②UC-SAL-02 出库级回滚行为本身**已正确**（`TestErpSalDeliveryStockMove:121-155` 强证据，但订单级缺失）；③G2 `deliveredQuantity`（`app-erp-sales.orm.xml:402`）从不被服务代码写入（grep 仅生成 bean + ReturnQtyValidator 读），UC-SAL-03 `:89-90` 派生断言不可满足；④UC-SAL-03 头级 `deliveryStatus` rollup 正确（`rollupOrderDeliveryStatus:270-310`）；⑤UC-SAL-03 发票/收款侧 `receivedStatus` 派生正确（`recomputeInvoiceReceived:161-177`）；⑥G3 无 1 行×2 分批(60+40) 测试（现有为 2 行×1/行）；⑦UC-SAL-10 库存域乐观锁 + 重试 + UK 兜底完备（`updateBalanceWithRetry`/`UK_INV_STOCK_BALANCE_NATURAL`）；⑧G4 销售级并发测试为零（`ErpSalDelivery__approve` 无并发线程同批次测试）；⑨G5 MA2 审计文本 `2026-07-28-1249...:326-327` "无并发测试" 与现存 `TestErpInvConcurrentDeduct`（6 测试）矛盾——对账。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：G1（核心业务循环/异常路径 UC-SAL-02 订单级缺失）属"异常路径未实现"——定级（倾向 P1，须人工裁决 L1 措辞 vs 补订单级校验）；G2（状态迁移断言不可达/数据未持久化）属"行为实质偏离验收标准"——定级（倾向 P1）；G3/G4（断言强度/测试覆盖）倾向 P2；G5 对账结论记入报告。每结论须列明命中判据编号 + 三源对照；**G1 的 L1↔L2 冲突按 §4 + §9 记录为需求符合性分歧，不直改真相源**。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：G1（核心业务循环/异常路径 UC-SAL-02 订单级缺失）属"异常路径未实现"——定级（倾向 P1，须人工裁决 L1 措辞 vs 补订单级校验）；G2（状态迁移断言不可达/数据未持久化）属"行为实质偏离验收标准"——定级（倾向 P1）；G3/G4（断言强度/测试覆盖）倾向 P2；G5 对账结论记入报告。每结论须列明命中判据编号 + 三源对照；**G1 的 L1↔L2 冲突按 §4 + §9 记录为需求符合性分歧，不直改真相源**。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-SAL-02/03/10 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度与并发测试机制、L5 标注复用 A2.17 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 G1-G5 有明确分级（非悬空"待查"）；G1 L1↔L3 冲突已记录
+- [x] 报告 §1-§5 已落盘：UC-SAL-02/03/10 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度与并发测试机制、L5 标注复用 A2.17 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 G1-G5 有明确分级（非悬空"待查"）；G1 L1↔L3 冲突已记录
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-19-sales-f2-outbound-concurrency.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` sales 出库/可用量/并发同控制点（如 P0-MA2-020 UK、P2-MA2-014 ReceiptSettler 并发、arm-index :180 UC-SAL-10 交接项）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 列明差异依据。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` sales 出库/可用量/并发同控制点（如 P0-MA2-020 UK、P2-MA2-014 ReceiptSettler 并发、arm-index :180 UC-SAL-10 交接项）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 列明差异依据。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 UC-SAL-10 真实并发下销售→库存 Facade seam 的重试行为、负库存配置下并发结果、deliveredQuantity 查询实际返回值等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 UC-SAL-10 真实并发下销售→库存 Facade seam 的重试行为、负库存配置下并发结果、deliveredQuantity 查询实际返回值等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1249-arm-ma2-concurrency-optimistic-lock.md`（UC-SAL-10 库存域乐观锁 PASS）+ `2026-07-28-0400-arm-ma2-sales-state-machine.md`（出库级校验 PASS）+ `2026-07-27-1949-...-order-to-cash-e2e.md`，列明只补的需求视角差异（订单级校验缺失 / deliveredQuantity 不写入 / 销售级并发测试缺失 / 审计文本陈旧对账）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1249-arm-ma2-concurrency-optimistic-lock.md`（UC-SAL-10 库存域乐观锁 PASS）+ `2026-07-28-0400-arm-ma2-sales-state-machine.md`（出库级校验 PASS）+ `2026-07-27-1949-...-order-to-cash-e2e.md`，列明只补的需求视角差异（订单级校验缺失 / deliveredQuantity 不写入 / 销售级并发测试缺失 / 审计文本陈旧对账）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；既有行追加 RC 注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；既有行追加 RC 注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -136,14 +136,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.19 报告 9 段齐全 + 3 UC 逐矩阵行 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.19 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.19 报告 9 段齐全 + 3 UC 逐矩阵行 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.19 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -152,3 +152,23 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按 §10 经 MR0（P0）/ MR1（R1.0 展开 RC-R1.n，P1）实施；触及 ORM 结构（补 deliveredQuantity 写入）或并发扣减逻辑的修复行须 ask-first + 独立 plan-audit（§5）。G1（UC-SAL-02 订单级 vs 出库级）属 L1↔L2 真相源冲突，修复方向须人工裁决（改 L1 措辞 or 补订单级校验），非本审计可自决。
 - Successor Required: yes（MR0/MR1 按本报告 finding 交叉引用展开修复行；G1 待人工裁决真相源）
+
+## Closure
+
+Status Note: A1.19 sales-F2 出库与并发审计完成。3 UC（UC-SAL-02/03/10）五级追踪矩阵填充完毕，9 段报告落盘，finding 复用/新增裁决可追溯至 arm-index。本计划为只读审计（无代码/ORM/真相源变更），结果表面 = 报告 + arm-index 登记，二者均已落地。所有 3 个新 P2 finding 已分级（纯 Processor 修复或测试补充，按 roadmap 预授权类目可自动执行，不触发 §5 ask-first），reuse P1-RC-020 已对既有 arm-index 行追加 A1.19 RC 视角注记。G1 L1↔L2/L3 真相源冲突按 §9 冻结条款记入报告，不直改真相源，修复方向待人工裁决。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立子代理 ses_03bcaca9（fresh session，未执行本计划），Closure Gates 10 项门控中 9/10 substantive pass（独立结束审计不在执行会话内运行）。
+- Evidence:
+  - 审计报告产出：`docs/audits/2026-08-03-0530-rc-ma1-a1-19-sales-f2-outbound-concurrency.md`（§0 TL;DR + §1-§9 全 10 段齐全 + §10 Verdict，3 UC 矩阵行完整）。
+  - arm-index 登记：`docs/audits/arm-index.md:87`（A1.19 报告清单登记 MA1(RC) done）；`:129`（P1-RC-020 reuse 注记 — UC-SAL-02 订单级校验缺失与 A1.18 同根因同控制点）；`:135-137`（3 新 P2 finding：P2-RC-019 UC-SAL-03 deliveredQuantity 列存在零 writer / P2-RC-020 UC-SAL-03 1 行×2 分批测试缺失 / P2-RC-021 UC-SAL-10 sales seam 并发测试缺失）；`:149`（A1.19 RC 交叉引用注记段，含 G5 MA2 :326-327 陈旧文本对账结论）。
+  - 报告 §8 过程纪律自检实测：`docs/audits/nop-compliance-checker.sh` 全 19 规则 actual ≤ baseline（0 漂移，本审计无生产代码变更无回归风险）。
+  - 日志条目：`docs/logs/2026/08-03.md:5-11`（EXECUTE 摘要 + 2 Phase 完成记录 + 产出文件清单 + bookkeeping 声明 + 独立结束审计 subagent ses_03bcaca9 标注）。
+  - roadmap 同步：`docs/backlog/requirement-compliance-roadmap.md` MA1 表 A1.19 行 Status `todo`→`done`（日志 :11 记录）。
+  - MA2 复用声明（§9）：复用 `2026-07-28-1249-arm-ma2-concurrency-optimistic-lock.md`（UC-SAL-10 库存域乐观锁 PASS sustained）+ `2026-07-28-0400-arm-ma2-sales-state-machine.md`（出库级校验 PASS）+ `2026-07-27-1949-arm-ma2-order-to-cash-e2e.md`，仅补需求视角差异，不重跑历史行为审计。
+
+Follow-up:
+
+- finding 修复实施经 MR1（R1.0 展开 RC-R1.n）— P2-RC-019/020/021 三项纯 Processor 修复或测试补充（预授权类目自动执行），reuse P1-RC-020 修复行与 A1.18 合并。G1 L1↔L2/L3 真相源冲突（UC-SAL-02 订单级 vs 出库级）修复方向须人工裁决。
+- 5 项静态存疑点（UC-SAL-10 sales→inv Facade seam 真实并发运行时 / UC-SAL-02 订单级校验缺失运营频度 / 负库存配置下并发结果 / deliveredQuantity 查询实际返回值 / UC-SAL-03 1 行×2 分批运行时验证）交 MA4/A4.1 运行时展开。
