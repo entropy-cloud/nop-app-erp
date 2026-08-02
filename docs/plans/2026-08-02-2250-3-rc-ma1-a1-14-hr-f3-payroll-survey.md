@@ -1,6 +1,6 @@
 # 2026-08-02-2250-3 rc-ma1-a1-14-hr-f3-payroll-survey hr-F3 薪酬与调研需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-02
 > Mission: requirement-compliance
 > Work Item: A1.14（MA1 需求追踪矩阵审计 — hr-F3 薪酬与调研：UC-HR-03 工时表提交 + UC-HR-04 薪酬核算 + UC-HR-10 薪酬模拟 + UC-HR-11 员工调研）
@@ -70,56 +70,56 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论 + resolved finding HEAD 复核
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-14-hr-f3-payroll-survey.md`（落盘 §1-§5；命名遵循方法论 §归档规范）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done（方法论契约 + UC 锚点就绪）
 
-- [ ] `Proof` 对 UC-HR-03/04/10/11 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:27/:39/:113/:125` 验收标准原文（禁止转述）；L2 引用 `payroll.md`（薪酬核算 + §五/§六/§七 双轴状态机 + 计提 SALARY(270)+290+300 过账 + §6/§9.1 approve→APPROVED 联动）+ `payroll-simulation.md`（What-If + 5 态 + convertToFormal）+ `employee-survey.md`（匿名 + 驱动因子 + 聚合）+ `state-machine.md`（工时表 + 薪酬审批 + 仿真/银行文件，标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpHrTimesheetBizModel.java:line`（4 态 + submit + totalHours）+ `ErpHrTimesheetLineBizModel:line` + `ErpHrSalaryBizModel.java:line`（calculateSalary/runPayroll/markPaid）+ `ErpHrSalaryCalculateSalaryProcessor`/`RunPayrollProcessor:line` + `PayrollCalculator:line`（公式 + socialInsuranceER/housingFundER）+ `IncomeTaxCalculator.java:line`（累计预扣 + resolveBracket 末档 + parseCumulativeData）+ `SocialInsuranceCalculator:line`（基数钳制）+ `SalaryPostingDispatcher`/`SalaryPostingExecutor`/`SalaryPostingProvider:line`（四类 PostingEvent + REQUIRES_NEW Facade）+ `ErpHrSalarySimulationBizModel.java:line`（What-If 克隆 + readSalaryField/applyOverride + 5 态）+ `ErpHrSalarySimulationConvertToFormalProcessor:line`（双层容错 + PAID 守卫）+ `ErpHrSurveyBizModel.java:line`（CRUD + 类型 + 发布/截止）+ `ErpHrSurveyQuestionBizModel`/`ErpHrSurveyResponseBizModel`/`ErpHrSurveyAnswerBizModel`/`ErpHrSurveyResultBizModel:line`（匿名 respondentHash + aggregateResult + eNPS）；L4 引用 `Test*.java#method`（注明断言强度）；L5 复用 A2.7b/A4.4 + 本切片差异。
+- [x] `Proof` 对 UC-HR-03/04/10/11 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:27/:39/:113/:125` 验收标准原文（禁止转述）；L2 引用 `payroll.md`（薪酬核算 + §五/§六/§七 双轴状态机 + 计提 SALARY(270)+290+300 过账 + §6/§9.1 approve→APPROVED 联动）+ `payroll-simulation.md`（What-If + 5 态 + convertToFormal）+ `employee-survey.md`（匿名 + 驱动因子 + 聚合）+ `state-machine.md`（工时表 + 薪酬审批 + 仿真/银行文件，标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpHrTimesheetBizModel.java:line`（4 态 + submit + totalHours）+ `ErpHrTimesheetLineBizModel:line` + `ErpHrSalaryBizModel.java:line`（calculateSalary/runPayroll/markPaid）+ `ErpHrSalaryCalculateSalaryProcessor`/`RunPayrollProcessor:line` + `PayrollCalculator:line`（公式 + socialInsuranceER/housingFundER）+ `IncomeTaxCalculator.java:line`（累计预扣 + resolveBracket 末档 + parseCumulativeData）+ `SocialInsuranceCalculator:line`（基数钳制）+ `SalaryPostingDispatcher`/`SalaryPostingExecutor`/`SalaryPostingProvider:line`（四类 PostingEvent + REQUIRES_NEW Facade）+ `ErpHrSalarySimulationBizModel.java:line`（What-If 克隆 + readSalaryField/applyOverride + 5 态）+ `ErpHrSalarySimulationConvertToFormalProcessor:line`（双层容错 + PAID 守卫）+ `ErpHrSurveyBizModel.java:line`（CRUD + 类型 + 发布/截止）+ `ErpHrSurveyQuestionBizModel`/`ErpHrSurveyResponseBizModel`/`ErpHrSurveyAnswerBizModel`/`ErpHrSurveyResultBizModel:line`（匿名 respondentHash + aggregateResult + eNPS）；L4 引用 `Test*.java#method`（注明断言强度）；L5 复用 A2.7b/A4.4 + 本切片差异。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-HR-03——①TimesheetLine 分项目/任务/活动类型记录小时数；②同一日工时超过 24h 校验；③totalHours 汇总；④APPROVED 工时归集 cost-collection（跨域 projects 订阅）；⑤项目经理审批 APPROVED/驳回 REJECTED。UC-HR-04——⑥基本工资(合同月薪+出勤比例)；⑦加班费(overtimeMinutes×费率)；⑧绩效奖金；⑨社保扣除；⑩公积金扣除；⑪个税(累计预扣)；⑫实发=基本+加班+绩效-社保-公积金-个税；⑬合同/考勤数据读取；⑭paymentStatus=PENDING；⑮HR 审核发薪；⑯跨域财务过账 SALARY 凭证；⑰缺失配置跳过告警。UC-HR-10——⑱复制源快照(薪酬项目/累计个税/考勤)；⑲调整应变计算；⑳5 态审批(DRAFT/IN_REVIEW/APPROVED/REJECTED/CONVERTED)；㉑convertToFormal 创建正式 ErpHrSalary；㉒目标期间 PAID 不允许转正式。UC-HR-11——㉓调研类型(ANNUAL_ENGAGEMENT/PULSE/eNPS/ADHOC)；㉔题库(评分/选择/开放)；㉕驱动因子分类(GROWTH/RECOGNITION/MANAGEMENT/WELLBEING/ALIGNMENT)；㉖匿名模式 employeeId 不存储仅存 respondentHash 防重复；㉗发布(OPEN)/截止(CLOSED)；㉘自动聚合 ErpHrSurveyResult；㉙eNPS 得分 + 仪表盘(趋势/部门对比/驱动因子分析)。
+- [x] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-HR-03——①TimesheetLine 分项目/任务/活动类型记录小时数；②同一日工时超过 24h 校验；③totalHours 汇总；④APPROVED 工时归集 cost-collection（跨域 projects 订阅）；⑤项目经理审批 APPROVED/驳回 REJECTED。UC-HR-04——⑥基本工资(合同月薪+出勤比例)；⑦加班费(overtimeMinutes×费率)；⑧绩效奖金；⑨社保扣除；⑩公积金扣除；⑪个税(累计预扣)；⑫实发=基本+加班+绩效-社保-公积金-个税；⑬合同/考勤数据读取；⑭paymentStatus=PENDING；⑮HR 审核发薪；⑯跨域财务过账 SALARY 凭证；⑰缺失配置跳过告警。UC-HR-10——⑱复制源快照(薪酬项目/累计个税/考勤)；⑲调整应变计算；⑳5 态审批(DRAFT/IN_REVIEW/APPROVED/REJECTED/CONVERTED)；㉑convertToFormal 创建正式 ErpHrSalary；㉒目标期间 PAID 不允许转正式。UC-HR-11——㉓调研类型(ANNUAL_ENGAGEMENT/PULSE/eNPS/ADHOC)；㉔题库(评分/选择/开放)；㉕驱动因子分类(GROWTH/RECOGNITION/MANAGEMENT/WELLBEING/ALIGNMENT)；㉖匿名模式 employeeId 不存储仅存 respondentHash 防重复；㉗发布(OPEN)/截止(CLOSED)；㉘自动聚合 ErpHrSurveyResult；㉙eNPS 得分 + 仪表盘(趋势/部门对比/驱动因子分析)。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` **resolved finding HEAD 复核**（会计正确性类关键证据）：对薪酬与调研相关 finding 在当前 HEAD 实际落地（按逻辑非行号核验）。**P1-MA4-017 计提+公司承担过账链路（resolved R1.26）**——HEAD 复核 tryPostAccrual 是否已接线（xbiz source append 或 BizModel 覆盖 approve）+ socialInsuranceER/housingFundER 是否持久化 + 290/300 event 是否生成（会计正确性类 Q4 无例外，闭环关键证据）；**P1-MA4-016 个税高档 NPE（resolved R1.26）**——resolveBracket 末档 null 防御；**P1-MA4-018 parseCumulativeData 吞（resolved R1.26）**——静默吞移除；**P1-MA4-019 测试有效性（resolved R2.13）**——高档边界/过账悬挂/累计解析/公司承担负向断言补强；P1-MA2-043/044/045/047/048 状态机与吞异常 + P1-MA2-041 调研桩（resolved 状态经 arm-index grep 确认，未确认者按"未定"处理）。逐条记录复核结论（已落地/回退/部分落地/仍 open successor）。
+- [x] `Proof` **resolved finding HEAD 复核**（会计正确性类关键证据）：对薪酬与调研相关 finding 在当前 HEAD 实际落地（按逻辑非行号核验）。**P1-MA4-017 计提+公司承担过账链路（resolved R1.26）**——HEAD 复核 tryPostAccrual 是否已接线（xbiz source append 或 BizModel 覆盖 approve）+ socialInsuranceER/housingFundER 是否持久化 + 290/300 event 是否生成（会计正确性类 Q4 无例外，闭环关键证据）；**P1-MA4-016 个税高档 NPE（resolved R1.26）**——resolveBracket 末档 null 防御；**P1-MA4-018 parseCumulativeData 吞（resolved R1.26）**——静默吞移除；**P1-MA4-019 测试有效性（resolved R2.13）**——高档边界/过账悬挂/累计解析/公司承担负向断言补强；P1-MA2-043/044/045/047/048 状态机与吞异常 + P1-MA2-041 调研桩（resolved 状态经 arm-index grep 确认，未确认者按"未定"处理）。逐条记录复核结论（已落地/回退/部分落地/仍 open successor）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：UC-HR-04 业财过账（P1-MA4-017 HEAD 复核：resolved R1.26 则接受 on ⑯，仍 open 则 Q4 会计正确性类维持 P1 触发 MR1；P1-MA4-016/018 HEAD 复核 resolved 则接受，open 则 dedup；P1-MA4-019 测试有效性 HEAD 复核）。UC-HR-03 工时表（P1-MA2-043/044 HEAD 复核 + 24h 校验/cost-collection 归集执行时核验）。UC-HR-10 模拟（执行时 HEAD 核验 What-If/convertToFormal）。UC-HR-11 调研（P1-MA2-041 桩 HEAD 复核 + 匿名/聚合/驱动因子执行时核验：缺失倾向 P1①功能缺失）。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：UC-HR-04 业财过账（P1-MA4-017 HEAD 复核：resolved R1.26 则接受 on ⑯，仍 open 则 Q4 会计正确性类维持 P1 触发 MR1；P1-MA4-016/018 HEAD 复核 resolved 则接受，open 则 dedup；P1-MA4-019 测试有效性 HEAD 复核）。UC-HR-03 工时表（P1-MA2-043/044 HEAD 复核 + 24h 校验/cost-collection 归集执行时核验）。UC-HR-10 模拟（执行时 HEAD 核验 What-If/convertToFormal）。UC-HR-11 调研（P1-MA2-041 桩 HEAD 复核 + 匿名/聚合/驱动因子执行时核验：缺失倾向 P1①功能缺失）。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-HR-03/04/10/11 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.7b/A4.4 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-㉙ 有明确分级（非悬空"待查"）；**P1-MA4-017 计提+公司承担过账 HEAD 复核结论已记录（会计正确性类 Q4 关键证据）**；P1-MA4-016/018/019 + P1-MA2-043/044/041 HEAD 复核结论已记录
+- [x] 报告 §1-§5 已落盘：UC-HR-03/04/10/11 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.7b/A4.4 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-㉙ 有明确分级（非悬空"待查"）；**P1-MA4-017 计提+公司承担过账 HEAD 复核结论已记录（会计正确性类 Q4 关键证据）**；P1-MA4-016/018/019 + P1-MA2-043/044/041 HEAD 复核结论已记录
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-14-hr-f3-payroll-survey.md`（落盘 §6-§9，报告定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成（矩阵 + 结论已出）
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` hr 薪酬/工时/模拟/调研同域同控制点（如 P1-MA4-016/017/018/019、P1-MA2-043/044/045/047/048、P1-MA2-041）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点（如 UC-HR-11 调研匿名 respondentHash/聚合/eNPS = 需求契约视角新维度 / UC-HR-04 公式完整性若发现缺失）→ 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：UC-HR-04 业财过账与 P1-MA4-017 同根因则交叉引用而非重复新建；UC-HR-03 24h 校验/cost-collection 归集与 projects P1-MA2-068 不同控制点[hr 侧触发 vs projects dispatcher 吞异常]。禁止未经比对直接新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` hr 薪酬/工时/模拟/调研同域同控制点（如 P1-MA4-016/017/018/019、P1-MA2-043/044/045/047/048、P1-MA2-041）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点（如 UC-HR-11 调研匿名 respondentHash/聚合/eNPS = 需求契约视角新维度 / UC-HR-04 公式完整性若发现缺失）→ 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：UC-HR-04 业财过账与 P1-MA4-017 同根因则交叉引用而非重复新建；UC-HR-03 24h 校验/cost-collection 归集与 projects P1-MA2-068 不同控制点[hr 侧触发 vs projects dispatcher 吞异常]。禁止未经比对直接新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（如计提+公司承担过账运行时 approve→APPROVED 触发链、个税高档边界运行时触发、模拟 What-If 克隆隔离运行时不污染、调研匿名 respondentHash 运行时防重复、聚合 eNPS 运行时计算；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（如计提+公司承担过账运行时 approve→APPROVED 触发链、个税高档边界运行时触发、模拟 What-If 克隆隔离运行时不污染、调研匿名 respondentHash 运行时防重复、聚合 eNPS 运行时计算；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
+- [x] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2/MA4 报告差异增量声明：声明复用 A2.7b（考勤与工资八组件状态机 + 工资支付轴双守卫 + 仿真 5 态 + convertToFormal 双层容错 + markPaid REQUIRES_NEW Facade + P1-MA2-043/044/045/047/048 + P2-MA2-052 finding）+ A4.4（薪酬/过账/模拟引擎链路代码质量 + 七面扎实 + **P1-MA4-016/017/018/019 resolved R1.26/R2.13** + P2-MA4-008/009 finding）已证实结论，列明本切片只补的需求视角差异（UC-HR-03 工时表 24h 校验+cost-collection 归集 + UC-HR-04 薪酬核算公式完整性+合同/考勤读取 + UC-HR-10 模拟 What-If+convertToFormal + UC-HR-11 调研匿名+聚合+驱动因子 + **resolved finding HEAD 复核 R1.26/R2.13 落地确认**）。
+- [x] `Add` 报告 §9 与 MA2/MA4 报告差异增量声明：声明复用 A2.7b（考勤与工资八组件状态机 + 工资支付轴双守卫 + 仿真 5 态 + convertToFormal 双层容错 + markPaid REQUIRES_NEW Facade + P1-MA2-043/044/045/047/048 + P2-MA2-052 finding）+ A4.4（薪酬/过账/模拟引擎链路代码质量 + 七面扎实 + **P1-MA4-016/017/018/019 resolved R1.26/R2.13** + P2-MA4-008/009 finding）已证实结论，列明本切片只补的需求视角差异（UC-HR-03 工时表 24h 校验+cost-collection 归集 + UC-HR-04 薪酬核算公式完整性+合同/考勤读取 + UC-HR-10 模拟 What-If+convertToFormal + UC-HR-11 调研匿名+聚合+驱动因子 + **resolved finding HEAD 复核 R1.26/R2.13 落地确认**）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
+- [x] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
-- [ ] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
+- [x] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -129,14 +129,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控——审计报告产出不触发编译或测试。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + resolved finding HEAD 复核（含会计正确性类 P1-MA4-017）+ finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.14 报告 9 段齐全 + UC-HR-03/04/10/11 逐矩阵行 + resolved finding HEAD 复核（含 P1-MA4-017 会计正确性类）+ finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.14 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.14 报告 9 段齐全 + UC-HR-03/04/10/11 逐矩阵行 + resolved finding HEAD 复核（含 P1-MA4-017 会计正确性类）+ finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.14 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -148,12 +148,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待独立结束审计后填充>
+Status Note: 已完成（独立结束审计 pass，2026-08-03）。报告 `docs/audits/2026-08-03-0000-rc-ma1-a1-14-hr-f3-payroll-survey.md` 9 段齐全；UC-HR-03/04/10/11 逐矩阵行 + 验收标准 ①-㉙ 全枚举分级；resolved finding HEAD 复核（P1-MA4-017 方案B Deferred 在 Q4=(a) 下重开经 MR1 + P1-MA4-016/018/019 + P1-MA2-044/047/048 已落地）；2 项新 P1（P1-RC-015 UC-HR-03 24h/totalHours、P1-RC-016 UC-HR-11 匿名/聚合/eNPS）+ 3 项复用（P1-MA4-017/P1-MA2-043/P1-MA2-041）入 arm-index；§8 checker actual=baseline 全等。roadmap A1.14 推进至 done。finding 修复属 MR1 successor（R1.0 展开为 RC-R1.n），非阻塞本审计闭环。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理填充>
-- Evidence: <待填充>
+- Auditor / Agent: 独立子代理 `ses_03cc58c4cffefgbXgjCiCgQzhW`（新会话，未执行本计划）
+- Evidence: 独立核验 7 项全 pass——(1) 计划 Phase 1/2 全 [x] + Status completed；(2) 报告 §1-§9 齐全 + 4 UC 独立矩阵行 + L1 逐字 + L3 file:line + L4 断言强度；(3) **P1-MA4-017 HEAD 复核结论准确**（grep 确认 tryPostAccrual 零生产调用方 + 无 xbiz + 无 ORM ER 列 + R1.26 Phase 1 显式裁决方案B Deferred）；(4) P1-RC-015/016 入 arm-index + 3 复用 finding 交叉引用注记；(5) §8 checker actual=baseline 全等（独立复跑）；(6) L3 引用 spot-check（IncomeTaxCalculator:231-234 null 防御 / ErpHrSurveyBizModel 18 行桩 / Simulation 5 态迁移行号准确）；(7) git status 确认仅 docs/ 变更，零生产代码/ORM/api.xml/view.xml 修改。Verdict `passes closure audit`。P1-MA4-017 Q4 会计正确性类重开经方法论确认 sound（audit-remediation 方案B 不约束 requirement-compliance Q4=(a)）。
 
 Follow-up:
 
