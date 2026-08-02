@@ -53,7 +53,7 @@
 | A1.14 | **hr-F3 薪酬与调研**（UC-HR-03/04/10/11） | done | `docs/design/human-resource/payroll.md` | 0.2 | 同上 |
 | A1.15 | **purchase-F1 主流程与请购**（UC-PUR-01/08） | done | `docs/design/purchase/` | 0.2 | 同上 |
 | A1.16 | **purchase-F2 三单匹配与差异**（UC-PUR-02/03/05/06） | done | `docs/design/purchase/three-way-match.md` | 0.2 | 同上 |
-| A1.17 | **purchase-F3 退货与业财**（UC-PUR-04/07） | todo | `docs/design/purchase/returns.md` | 0.2 | 同上 |
+| A1.17 | **purchase-F3 退货与业财**（UC-PUR-04/07） | done | `docs/design/purchase/returns.md` | 0.2 | 同上 |
 | A1.18 | **sales-F1 主流程与价格**（UC-SAL-01/11） | todo | `docs/design/sales/` | 0.2 | 同上 |
 | A1.19 | **sales-F2 出库与并发**（UC-SAL-02/03/10） | todo | `docs/design/sales/` | 0.2 | 同上 |
 | A1.20 | **sales-F3 退货族**（UC-SAL-04/05/06/07/09） | todo | `docs/design/sales/returns.md` | 0.2 | 同上 |

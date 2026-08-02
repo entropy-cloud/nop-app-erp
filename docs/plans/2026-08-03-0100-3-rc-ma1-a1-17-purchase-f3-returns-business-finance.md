@@ -1,6 +1,6 @@
 # 2026-08-03-0100-3 rc-ma1-a1-17-purchase-f3-returns-business-finance purchase-F3 退货与业财需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-03
 > Mission: requirement-compliance
 > Work Item: A1.17（MA1 需求追踪矩阵审计 — purchase-F3 退货与业财：UC-PUR-04 采购退货 + UC-PUR-07 业财一体过账(入库与发票)）
@@ -71,56 +71,56 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论 + resolved finding HEAD 复核
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-17-purchase-f3-returns-business-finance.md`（落盘 §1-§5；命名遵循方法论 §归档规范）
+Status: completed
+Targets: `docs/audits/2026-08-03-0300-rc-ma1-a1-17-purchase-f3-returns-business-finance.md`（§1-§5 落盘；命名遵循方法论 §归档规范）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done（方法论契约 + UC 锚点就绪）
 
-- [ ] `Proof` 对 UC-PUR-04/07 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:104/:172` 验收标准原文（禁止转述）；L2 引用 `returns.md`（采购退货 + §红字发票处理 + P2-MA2-006 resolved credit-memo-via-return 实现偏离记录，标注"设计参考，冲突以 L1 为准"）+ `state-machine.md`（退货单状态机）+ `finance/posting.md`（业财过账 + GR/IR + 红冲）+ `finance/period-close.md`（期间控制）；L3 引用 `ErpPurReturnBizModel.java:line`（关联原入库 + 来源回链）+ `processor/ErpPurReturnApproveProcessor:line`（库存 outgoing Facade + PURCHASE_RETURN 过账 + 红冲）+ `ErpPurReturnLineBizModel.java:line` + `posting/PurReturnPostingDispatcher:line`（PURCHASE_RETURN + 红冲 isReversed）+ `posting/PurInvoicePostingDispatcher:line`（PURCHASE_INVOICE 借 GR/IR+进项税 贷 AP）+ `posting/PurReversalListener:line`（rollbackReceive P1-MA2-051）；L4 引用 `Test*.java#method`（注明断言强度）；L5 复用 A2.8/P2P e2e/A1.1 + 本切片差异。
+- [x] `Proof` 对 UC-PUR-04/07 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:104/:172` 验收标准原文（禁止转述）；L2 引用 `returns.md`（采购退货 + §红字发票处理 + P2-MA2-006 resolved credit-memo-via-return 实现偏离记录，标注"设计参考，冲突以 L1 为准"）+ `state-machine.md`（退货单状态机）+ `finance/posting.md`（业财过账 + GR/IR + 红冲）+ `finance/period-close.md`（期间控制）；L3 引用 `ErpPurReturnBizModel.java:line`（关联原入库 + 来源回链）+ `processor/ErpPurReturnApproveProcessor:line`（库存 outgoing Facade + PURCHASE_RETURN 过账 + 红冲）+ `ErpPurReturnLineBizModel.java:line` + `posting/PurReturnPostingDispatcher:line`（PURCHASE_RETURN + 红冲 isReversed）+ `posting/PurInvoicePostingDispatcher:line`（PURCHASE_INVOICE 借 GR/IR+进项税 贷 AP）+ `posting/PurReversalListener:line`（rollbackReceive P1-MA2-051）；L4 引用 `Test*.java#method`（注明断言强度）；L5 复用 A2.8/P2P e2e/A1.1 + 本切片差异。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-PUR-04——①退货单.来源单号==入库单.单号（回链）；②库存可用量-=退货明细数量之和（IErpInvStockMoveBiz Facade outgoing）；③红冲过账凭证 businessType==入库红冲 且 来源==退货单.单号（**关键会计正确性**）；④原入库单关联凭证被标记红冲（isReversed，**关键会计正确性**）；⑤已开票退货红冲/贷项（credit-memo-via-return 运行时落地）。UC-PUR-07——①入库过账 GOODS_RECEIPT 凭证行 借存货 贷暂估应付(GR/IR) + 业财回链(来源类型=采购入库) + 入库单.已过账=true；②发票过账 借暂估应付(GR/IR)+进项税 贷应付账款 + 发票.已过账=true；③多币种 凭证行.本位币金额==源币金额*汇率；④反审核 入库单.反审核→删除关联凭证(业财回链反查) + 已过账=false；⑤期间控制 期间.总账状态==已结账→不可过账/不可反审核。
+- [x] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-PUR-04——①退货单.来源单号==入库单.单号（回链）；②库存可用量-=退货明细数量之和（IErpInvStockMoveBiz Facade outgoing）；③红冲过账凭证 businessType==入库红冲 且 来源==退货单.单号（**关键会计正确性**）；④原入库单关联凭证被标记红冲（isReversed，**关键会计正确性**）；⑤已开票退货红冲/贷项（credit-memo-via-return 运行时落地）。UC-PUR-07——①入库过账 GOODS_RECEIPT 凭证行 借存货 贷暂估应付(GR/IR) + 业财回链(来源类型=采购入库) + 入库单.已过账=true；②发票过账 借暂估应付(GR/IR)+进项税 贷应付账款 + 发票.已过账=true；③多币种 凭证行.本位币金额==源币金额*汇率；④反审核 入库单.反审核→删除关联凭证(业财回链反查) + 已过账=false；⑤期间控制 期间.总账状态==已结账→不可过账/不可反审核。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` **resolved finding HEAD 复核**（会计正确性类关键证据）：**P1-MA2-051 PurReversalListener.rollbackReceive receive 悬挂**——HEAD 复核 resolved 状态（arm-index grep 确认；若仍 open 则按 §2 重新定级，冲销后 receive APPROVED+posted=false 悬挂属会计正确性类 Q4 维持 P1 触发 MR1）；**P2-MA2-006 returns.md red invoice drift（resolved plan 2026-07-29-2322-1）**——HEAD 复核 credit-memo-via-return 实现运行时落地（负 ArApItem credit memo + AP 余额回减经辅助账层 sumOpen）；**P1-MA2-083 承付恢复（resolved R1.27）**——HEAD 复核退货侧是否同样调 commit() 恢复承付（与 A1.15 invoice 侧对称性核验）；P1-MA2-002 多币种（过账金额计算视角复核）。逐条记录复核结论（已落地/回退/部分落地/仍 open successor）。
+- [x] `Proof` **resolved finding HEAD 复核**（会计正确性类关键证据）：**P1-MA2-051 PurReversalListener.rollbackReceive receive 悬挂**——HEAD 复核 resolved 状态（arm-index grep 确认；若仍 open 则按 §2 重新定级，冲销后 receive APPROVED+posted=false 悬挂属会计正确性类 Q4 维持 P1 触发 MR1）；**P2-MA2-006 returns.md red invoice drift（resolved plan 2026-07-29-2322-1）**——HEAD 复核 credit-memo-via-return 实现运行时落地（负 ArApItem credit memo + AP 余额回减经辅助账层 sumOpen）；**P1-MA2-083 承付恢复（resolved R1.27）**——HEAD 复核退货侧是否同样调 commit() 恢复承付（与 A1.15 invoice 侧对称性核验）；P1-MA2-002 多币种（过账金额计算视角复核）。逐条记录复核结论（已落地/回退/部分落地/仍 open successor）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：UC-PUR-04 红冲凭证 isReversed 标记（HEAD 复核：完整→接受 on ④；缺失→P0④会计过账正确性破坏 or P1①按 §2 定级，**会计类 Q4 无例外**）；UC-PUR-04 已开票退货贷项/红冲（HEAD 复核 credit-memo-via-return）；UC-PUR-07 GR/IR 暂估应付科目完整性（HEAD 复核：缺失→P0④会计过账正确性）；UC-PUR-07 期间CLOSED拒绝过账（HEAD 核验）；UC-PUR-07 反审核删凭证（HEAD 核验）；UC-PUR-07 多币种本位币计算（HEAD 核验）；resolved finding HEAD 复核（P1-MA2-051/P2-MA2-006/P1-MA2-083/P1-MA2-002）。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：UC-PUR-04 红冲凭证 isReversed 标记（HEAD 复核：完整→接受 on ④；缺失→P0④会计过账正确性破坏 or P1①按 §2 定级，**会计类 Q4 无例外**）；UC-PUR-04 已开票退货贷项/红冲（HEAD 复核 credit-memo-via-return）；UC-PUR-07 GR/IR 暂估应付科目完整性（HEAD 复核：缺失→P0④会计过账正确性）；UC-PUR-07 期间CLOSED拒绝过账（HEAD 核验）；UC-PUR-07 反审核删凭证（HEAD 核验）；UC-PUR-07 多币种本位币计算（HEAD 核验）；resolved finding HEAD 复核（P1-MA2-051/P2-MA2-006/P1-MA2-083/P1-MA2-002）。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-PUR-04/07 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.8/P2P e2e/A1.1 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口有明确分级（非悬空"待查"）；**UC-PUR-04 红冲 isReversed + UC-PUR-07 GR/IR 科目完整性 HEAD 复核结论已记录（会计正确性类 Q4 关键证据）**；P1-MA2-051/P2-MA2-006/P1-MA2-083/P1-MA2-002 HEAD 复核结论已记录
+- [x] 报告 §1-§5 已落盘：UC-PUR-04/07 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.8/P2P e2e/A1.1 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口有明确分级（非悬空"待查"）；**UC-PUR-04 红冲 isReversed + UC-PUR-07 GR/IR 科目完整性 HEAD 复核结论已记录（会计正确性类 Q4 关键证据）**；P1-MA2-051/P2-MA2-006/P1-MA2-083/P1-MA2-002 HEAD 复核结论已记录
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-17-purchase-f3-returns-business-finance.md`（落盘 §6-§9，报告定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-03-0300-rc-ma1-a1-17-purchase-f3-returns-business-finance.md`（§6-§9 落盘，报告定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成（矩阵 + 结论已出）
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` purchase 退货/红冲/GR-IR/AP/期间控制同域同控制点（如 P1-MA2-051、P2-MA2-006、P1-MA2-083、P1-MA2-002、P1-MA2-001、P0-MA1-021、P1-MA1-022）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点（如 UC-PUR-04 红冲 isReversed 缺失 / UC-PUR-07 GR/IR 科目缺失 / 期间CLOSED拒绝过账缺失）→ 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：UC-PUR-04/07 业财过账与 A1.1/P1-MA2-001/P1-MA2-083 同根因则交叉引用而非重复新建；P1-MA2-051 receive 悬挂在 A2.8 已登记则复用并追加 RC 视角注记。禁止未经比对直接新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` purchase 退货/红冲/GR-IR/AP/期间控制同域同控制点（如 P1-MA2-051、P2-MA2-006、P1-MA2-083、P1-MA2-002、P1-MA2-001、P0-MA1-021、P1-MA1-022）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点（如 UC-PUR-04 红冲 isReversed 缺失 / UC-PUR-07 GR/IR 科目缺失 / 期间CLOSED拒绝过账缺失）→ 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：UC-PUR-04/07 业财过账与 A1.1/P1-MA2-001/P1-MA2-083 同根因则交叉引用而非重复新建；P1-MA2-051 receive 悬挂在 A2.8 已登记则复用并追加 RC 视角注记。禁止未经比对直接新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（如红冲 isReversed 运行时标记 / credit-memo-via-return 运行时 AP 余额回减 / GR/IR 暂估应付运行时凭证行 / 期间CLOSED运行时拒绝过账 / 反审核运行时删凭证 / 退货承付恢复运行时对称性；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（如红冲 isReversed 运行时标记 / credit-memo-via-return 运行时 AP 余额回减 / GR/IR 暂估应付运行时凭证行 / 期间CLOSED运行时拒绝过账 / 反审核运行时删凭证 / 退货承付恢复运行时对称性；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
+- [x] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：声明复用 A2.8（9 实体状态机 + reverseApprove 红冲闭环 + 跨域 Facade + **P1-MA2-051 receive 悬挂 + P2-MA2-006 returns.md resolved** finding）+ P2P e2e（P2P 红冲链路行为）+ A1.1（业财过账引擎 GR/IR + AP + 红冲 isReversed 凭证范式）已证实结论，列明本切片只补的需求视角差异（UC-PUR-04 五条 + UC-PUR-07 五条验收标准逐条 + resolved finding HEAD 复核 P1-MA2-051/P2-MA2-006/P1-MA2-083/P1-MA2-002 落地确认）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：声明复用 A2.8（9 实体状态机 + reverseApprove 红冲闭环 + 跨域 Facade + **P1-MA2-051 receive 悬挂 + P2-MA2-006 returns.md resolved** finding）+ P2P e2e（P2P 红冲链路行为）+ A1.1（业财过账引擎 GR/IR + AP + 红冲 isReversed 凭证范式）已证实结论，列明本切片只补的需求视角差异（UC-PUR-04 五条 + UC-PUR-07 五条验收标准逐条 + resolved finding HEAD 复核 P1-MA2-051/P2-MA2-006/P1-MA2-083/P1-MA2-002 落地确认）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
+- [x] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
-- [ ] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.1 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
+- [x] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.1 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -130,14 +130,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控——审计报告产出不触发编译或测试。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + resolved finding HEAD 复核（含会计正确性类 P1-MA2-051/GR-IR/isReversed）+ finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.17 报告 9 段齐全 + UC-PUR-04/07 逐矩阵行 + resolved finding HEAD 复核（含 P1-MA2-051 receive 悬挂 + UC-PUR-04 红冲 isReversed + UC-PUR-07 GR/IR 科目 会计正确性类）+ finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.17 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.17 报告 9 段齐全 + UC-PUR-04/07 逐矩阵行 + resolved finding HEAD 复核（含 P1-MA2-051 receive 悬挂 + UC-PUR-04 红冲 isReversed + UC-PUR-07 GR/IR 科目 会计正确性类）+ finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.17 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -149,13 +149,14 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <关闭时填写>
+Status Note: 已完成（2026-08-03）。A1.17 切片审计报告 `docs/audits/2026-08-03-0300-rc-ma1-a1-17-purchase-f3-returns-business-finance.md` 9 段齐全落盘；UC-PUR-04 = 接受 on ①②③⑤ + P2 on ④（P2-RC-015 新建）；UC-PUR-07 = 接受 on ①②③④⑤；4 项 resolved finding HEAD 复核全部已落地（P1-MA2-051 receive 悬挂 resolved R1.17 + P2-MA2-006 credit-memo-via-return resolved plan 2026-07-29-2322-1 + P1-MA2-083 退货侧 reuse 重开 + P1-MA2-002 多币种 resolved plan 2026-07-29-2322-2 方案 A）。8 项既有 finding 交叉引用注记追加（P1-MA2-001 / P2-MA2-006 / P1-MA2-051 / P1-MA2-083 / P1-MA2-002 / P2-MA2-082 / P2-RC-011 / P1-RC-018）。arm-index 已更新。结束审计已由独立子代理（新会话）执行通过。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立审计者或独立子代理>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 执行者 = 主代理（执行会话）；结束审计 = 独立子代理 closure-audit 新会话（2026-08-03，不重用执行者上下文）
+- Evidence: `docs/audits/2026-08-03-0300-rc-ma1-a1-17-purchase-f3-returns-business-finance.md`（9 段齐全 §0-§9）+ `docs/audits/arm-index.md` 第 126 行（P2-RC-015 新建）+ 第 134 行后（A1.17 RC 交叉引用注记段）+ plan items 全 [x] + Phase 1/2 Status: completed
+- Independent Closure Audit Walkthrough（2026-08-03）：独立子代理新会话执行，逐项语义复核——(1) 报告 9 段完整性经 grep `^## ` 实测齐全（§0-§9 + 整体裁决）；(2) arm-index P2-RC-015 行（:126）+ A1.17 RC 交叉引用注记段（:134）均存在；(3) **HEAD 复核实仓反证**：`PurReversalListener.java:112-126` rollbackReceive 现与 Invoice/Payment/Return 三实体对称（posted=false + APPROVED→REJECTED）确认 P1-MA2-051 resolved R1.17；`PurReturnPostingDispatcher.java:44-58` tryPost 仅调 postEvent 未调 markOriginalVoucherReversed 确认 P2-RC-015 定级准确（GL 净零经独立反向凭证功能等价，会计过账正确性不破坏，P2 successor watch-only 成立）；`ErpPurReturnProcessor.runCommitmentReleaseOnReturnHook:281` config-gated 默认 false + reverse/cancel 零 commit() 确认 P1-MA2-083 退货侧 reuse 重开成立；(4) 五点一致性：Plan Status/Phase Status/Exit Criteria/Closure Gates/Closure evidence 全一致（Closure Gates 最后一项由本独立审计勾选）；(5) 反空心：只读审计无代码变更，结果表面=报告+arm-index 登记均为实质内容；(6) Deferred honesty：finding 修复经 MR0/MR1 successor 合理出范围，无范围内缺陷隐藏；(7) 文档同步：`docs/logs/2026/08-03.md` A1.17 条目齐全。**无阻塞 issue，审计通过**。
 
 Follow-up:
 
-- finding 修复属 MR0（P0 即时通道）/ MR1（R1.0 展开 RC-R1.n）successor，非阻塞本审计闭环（§Deferred But Adjudicated 已 adjudicated）
+- finding 修复属 MR0（P0 即时通道）/ MR1（R1.0 展开 RC-R1.n）successor，非阻塞本审计闭环（§Deferred But Adjudicated 已 adjudicated）。本切片 0 P0 + 1 新 P2（P2-RC-015 successor watch-only 不强制修复）+ 1 复用 P1 重开扩展（P1-MA2-083 退货侧 Return Processor 协同 A1.15 MR1 修复行）
