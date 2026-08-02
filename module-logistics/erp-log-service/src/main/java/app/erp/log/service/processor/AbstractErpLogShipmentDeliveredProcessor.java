@@ -13,10 +13,12 @@ import app.erp.log.service.ErpLogErrors;
 import app.erp.log.service.event.ShipmentDeliveredEvent;
 import app.erp.log.service.gateway.GatewayDispatcher;
 import app.erp.md.dao.AcctSchemaResolver;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -38,6 +40,8 @@ import java.util.Map;
 abstract class AbstractErpLogShipmentDeliveredProcessor {
     protected static final Logger LOG = LoggerFactory.getLogger(AbstractErpLogShipmentDeliveredProcessor.class);
 
+    static final String NOTIFY_EVENT_LOG_FREIGHT_POSTING_FAILURE = "log.freight-posting-failure";
+
     @Inject
     IDaoProvider daoProvider;
 
@@ -49,6 +53,9 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
 
     @Inject
     IErpInvLandedCostBiz landedCostBiz;
+
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
 
     /**
      * DELIVERED 触发运费过账/到岸成本编排入口（3.18 wiring + plan 2026-07-11-2329-1 path-2 升级）。
@@ -98,6 +105,9 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
             } else {
                 LOG.error("运费过账异常，运单 {} 保持 DELIVERED、freightSettlementStatus=PENDING", shipment.getCode(), e);
             }
+            // G4 错误传播分级（plan 2026-08-02-1500-1 P1-MA2-080）：logistics 无 finance sweep 兜底，
+            // 失败派发告警使运费过账悬挂可被感知（对齐 MaintenanceLaborPostingDispatcher.dispatchFailureAlert 范式）。
+            dispatchFreightFailureAlert(shipment, e);
         }
     }
 
@@ -144,6 +154,27 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
             } else {
                 LOG.error("path-2 到岸成本自动创建异常，运单 {} 保持 PENDING", shipment.getCode(), e);
             }
+        }
+    }
+
+    /** 运费过账失败告警派发（G4；通知失败降级不阻断主流程，对齐 GatewayDispatcher.dispatchDeadLetterAlert 范式）。 */
+    protected void dispatchFreightFailureAlert(ErpLogShipment shipment, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("shipmentCode", shipment.getCode());
+        ctx.put("carrierId", shipment.getCarrierId());
+        ctx.put("relatedBillCode", shipment.getRelatedBillCode());
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("postingNo", shipment.getCode());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_LOG_FREIGHT_POSTING_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("运费过账失败告警派发失败（降级）：shipmentCode={}, reason={}",
+                    shipment.getCode(), notifyErr.getMessage());
         }
     }
 

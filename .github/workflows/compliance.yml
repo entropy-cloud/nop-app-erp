@@ -210,23 +210,25 @@ jobs:
         run: mvn -B -pl app-erp-all -am test -Dtest=ErpAllWebPagesTest
 
   fault-injection-coverage:
-    name: MQ Q4 fault-injection coverage gate (6 domains)
+    name: MQ Q4 fault-injection coverage gate (7 domains)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
-      # C-3 optional enhancement (design doc §7.4): grep 6-domain fault-injection test existence.
-      # Gate direction: one-way tightening — covered domains must not drop below baseline (6).
+      # C-3 optional enhancement (design doc §7.4): grep 7-domain fault-injection test existence.
+      # Gate direction: one-way tightening — covered domains must not drop below baseline (7).
       # Matches both Q4 harness tests (FaultInjection) and MR1.16 per-point precedents
       # (FailureHangs/FailureAlert). Aligns with F8/F15 architecture: checker=pure reporter,
       # gate logic in CI.
-      - name: Enforce 6-domain fault-injection coverage
+      # Domain set: Q4 first round (finance/hr/assets/quality/projects/maintenance, 6) +
+      # logistics successor (plan 2026-08-02-1500-1, P1-MA2-080 freight posting alert closure).
+      - name: Enforce 7-domain fault-injection coverage
         run: |
           python3 - <<'PY'
           import glob, pathlib, sys
 
-          DOMAINS = ['finance', 'hr', 'assets', 'quality', 'projects', 'maintenance']
-          BASELINE = len(DOMAINS)  # 6 — one-way tightening: actual must not drop below
+          DOMAINS = ['finance', 'hr', 'assets', 'quality', 'projects', 'maintenance', 'logistics']
+          BASELINE = len(DOMAINS)  # 7 — one-way tightening: actual must not drop below
           patterns = ['FailureHangs', 'FailureAlert', 'FaultInjection']
 
           covered = []
