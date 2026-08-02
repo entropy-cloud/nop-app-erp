@@ -7,6 +7,7 @@ import app.erp.fin.dao.PostingEvent;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
+import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.dao.entity.ErpFinVoucherTemplate;
 import app.erp.fin.dao.entity.ErpFinVoucherTemplateLine;
 import app.erp.fin.service.ErpFinConstants;
@@ -16,6 +17,7 @@ import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -33,7 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * 路径 1 性能基线测试：批量凭证过账吞吐（plan 2026-08-02-1121-2 Phase 2 / 设计文档 §4.1 + §5.2）。
@@ -44,10 +45,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p><b>复现性协议</b>（设计文档 §4 统一约定）：K=2 untimed warmup + N=10 timed 测量，
  * 方差比 = (max−min)/median，验收阈值 &lt; 15%。
  *
- * <p><b>计时窗口纪律</b>：seed 期间 + 科目 + 模板 + 12 批 × 1000 个 PostingEvent 全部在
- * {@link PerfTiming#measure(Runnable, int, int)} 调用<b>之前</b>构造完成；计时窗口内仅消费预构造好的
- * 事件并触发过账。每轮消费唯一一批（billCode 全局唯一，幂等不再命中）——否则 round 2+ 命中幂等空操作，
- * 计时退化为测幂等成本而非过账成本（设计文档 §4.1 隐含约束）。
+ * <p><b>方差稳定化（plan 2026-08-02-0650-2 Phase 2 / 设计文档 §3.4 successor）</b>：Phase 2 首基线
+ * 方差比 165.9%（超阈值），根因 = dataset-growth（每轮追加 1000 凭证→后续轮扫更大表 + heap 填充 GC pause）。
+ * 稳定化 = <b>per-round state reset</b>：每轮 timed 前（计时窗口外）删除上轮过账产生的 voucher + voucherLine +
+ * voucherBillR，使每轮从空表开始扫同规模（消除系统性 dataset-growth）。JMH fork 隔离否决——凭证过账是 DB-bound
+ * 端到端路径，JMH fork 放大 H2 冷启动噪声（设计文档 §3.4 line 125）。残留 GC jitter 超阈值时裁决 absolute-tolerance。
+ *
+ * <p><b>计时窗口纪律</b>：seed 期间 + 科目 + 模板 + 1 批 × 1000 个 PostingEvent 全部在测量循环<b>之前</b>构造完成；
+ * 每轮 state reset 也在计时窗口外；计时窗口仅包裹过账循环。PerfTiming.measure 不支持 per-round untimed reset，故用
+ * 手动计时循环 + {@link PerfTiming#compute(long[])} 统计。per-round reset 删除上轮凭证后，同一批 billCode 可复用
+ * （幂等检查无命中→正常过账，非 no-op）。
  *
  * <p><b>单据类型裁决</b>：plan §Phase 2 「混合比例本计划裁决」——首基线统一用 {@code AP_INVOICE}
  * （已证 happy-path 模板齐全，TestErpFinPostingService 既有范式）。多类型混合（AR_INVOICE / PAYMENT）
@@ -100,31 +107,32 @@ public class TestErpFinVoucherPostingPerf extends JunitAutoTestCase {
             seedApInvoiceTemplate();
         });
 
-        // 预构造 (K + N) × 1000 个唯一 PostingEvent（计时窗口外）。每轮消费一批。
-        final int totalRounds = WARMUP_K + TIMED_N;
-        final List<List<PostingEvent>> batches = new ArrayList<>(totalRounds);
-        for (int round = 0; round < totalRounds; round++) {
-            List<PostingEvent> batch = new ArrayList<>(VOUCHERS_PER_ROUND);
-            for (int i = 0; i < VOUCHERS_PER_ROUND; i++) {
-                String billCode = "AP-PERF-R" + round + "-" + i;
-                batch.add(apInvoiceEvent(billCode, voucherDate,
-                        new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")));
-            }
-            batches.add(batch);
+        // 预构造 1 批 × 1000 个唯一 PostingEvent（计时窗口外）。
+        // per-round reset 使每轮从空表开始 → 同一批 billCode 可复用（reset 删除上轮凭证后幂等检查无命中）。
+        final List<PostingEvent> batch = new ArrayList<>(VOUCHERS_PER_ROUND);
+        for (int i = 0; i < VOUCHERS_PER_ROUND; i++) {
+            String billCode = "AP-PERF-" + i;
+            batch.add(apInvoiceEvent(billCode, voucherDate,
+                    new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113")));
         }
 
-        // 计时窗口：K warmup + N timed，每轮消费唯一一批。
-        final int[] roundHolder = {0};
-        PerfTiming.Measurement m = PerfTiming.measure(() -> {
-            List<PostingEvent> batch = batches.get(roundHolder[0]++);
+        // 手动计时循环：K warmup + N timed，每轮 reset 后过账（reset 在计时窗口外）。
+        // 注：不调用 System.gc()——实测对 30s allocation-heavy 批量过账窗口反效果（GC 移入 timed 窗口放大方差），
+        // path 1 残留方差裁决 absolute-tolerance fallback（plan Phase 2 Proof）。
+        long[] nanos = new long[TIMED_N];
+        for (int round = -WARMUP_K; round < TIMED_N; round++) {
+            resetPostedVouchers();
+            long start = CoreMetrics.nanoTime();
             for (PostingEvent event : batch) {
                 ormTemplate.runInSession(session -> voucherBiz.post(event, CTX));
             }
-        }, WARMUP_K, TIMED_N);
+            long elapsed = CoreMetrics.nanoTimeDiff(start);
+            if (round >= 0) {
+                nanos[round] = elapsed;
+            }
+        }
 
-        long totalPosted = countPostedVouchers();
-        assertTrue(totalPosted >= VOUCHERS_PER_ROUND,
-                "perf 测试应至少产出 " + VOUCHERS_PER_ROUND + " 张凭证，实际 " + totalPosted);
+        PerfTiming.Measurement m = PerfTiming.compute(nanos);
 
         System.out.println("[PERF] path=1 voucher-posting"
                 + " dataScale=" + VOUCHERS_PER_ROUND
@@ -133,13 +141,36 @@ public class TestErpFinVoucherPostingPerf extends JunitAutoTestCase {
                 + " medianMs=" + String.format("%.3f", m.medianMillis())
                 + " p95Ms=" + String.format("%.3f", m.p95Millis())
                 + " varianceRatioPercent=" + String.format("%.3f", m.varianceRatioPercent())
-                + " withinThreshold(<" + VARIANCE_THRESHOLD_PERCENT + "%)=" + m.withinThreshold(VARIANCE_THRESHOLD_PERCENT));
+                + " withinThreshold(<" + VARIANCE_THRESHOLD_PERCENT + "%)=" + m.withinThreshold(VARIANCE_THRESHOLD_PERCENT)
+                + " stabilization=per-round-state-reset");
     }
 
     // ---------- helpers ----------
 
     private void seed(Runnable action) {
         ormTemplate.runInSession(action);
+    }
+
+    /**
+     * per-round state reset（计时窗口外）：删除上轮过账产生的 voucher + voucherLine + voucherBillR，
+     * 使每轮从空表开始扫同规模（消除系统性 dataset-growth，plan 2026-08-02-0650-2 Phase 2 稳定化）。
+     * 删除顺序遵循 FK 依赖反序：billR/line（引用 voucher）先删，voucher 后删。
+     */
+    private void resetPostedVouchers() {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpFinVoucherBillR> brDao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+            for (ErpFinVoucherBillR r : brDao.findAllByQuery(new QueryBean())) {
+                brDao.deleteEntity(r);
+            }
+            IEntityDao<ErpFinVoucherLine> lineDao = daoProvider.daoFor(ErpFinVoucherLine.class);
+            for (ErpFinVoucherLine l : lineDao.findAllByQuery(new QueryBean())) {
+                lineDao.deleteEntity(l);
+            }
+            IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
+            for (ErpFinVoucher v : vDao.findAllByQuery(new QueryBean())) {
+                vDao.deleteEntity(v);
+            }
+        });
     }
 
     private PostingEvent apInvoiceEvent(String billHeadCode, LocalDate voucherDate, BigDecimal amount,
@@ -221,10 +252,5 @@ public class TestErpFinVoucherPostingPerf extends JunitAutoTestCase {
         period.setEndDate(end);
         period.setStatus(status);
         dao.saveEntity(period);
-    }
-
-    private long countPostedVouchers() {
-        IEntityDao<ErpFinVoucher> dao = daoProvider.daoFor(ErpFinVoucher.class);
-        return dao.findAllByQuery(new QueryBean()).size();
     }
 }

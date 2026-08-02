@@ -54,6 +54,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p><b>每轮重置纪律</b>（设计文档 §4.3 + §5.2）：reclose 是幂等的——首次补建后再次调用为 no-op。为使每轮
  * 测到非零补算成本，每轮 reclose 后须删除其补建的 cost layer（计时窗口外），重置到「全缺失」状态。
  *
+ * <p><b>方差稳定化（plan 2026-08-02-0650-2 Phase 2 / 设计文档 §3.4 successor）</b>：Phase 2 首基线方差比 117.2%
+ * （超阈值），根因 = H2 in-memory 查询方差（每轮 500×~4 查询≈2000 查询/轮，在 heap 压力下查询时间方差大）。
+ * 稳定化 = <b>per-round cost-layer reset（Phase 2 已落地，确认保留）+ heap-state stabilization（新增，计时窗口外
+ * GC hint 降低跨轮 heap 压力方差）</b>。JMH fork 隔离否决——reclose 本质 DB-heavy（设计文档 §3.4 line 125，
+ * §4.3「最可能 JMH 候选」假设经 Phase 2 实测反转）。残留 H2 查询方差超阈值时裁决 absolute-tolerance fallback。
+ *
  * <p><b>计时窗口纪律</b>：seed 期间 / 科目 / 物料 / 移动单 / ledgers 全部在测量循环<b>之前</b>构造完成；
  * 每轮 cost-layer 重置也在计时窗口外；计时窗口仅包裹 reclose 调用。PerfTiming.measure 不支持 per-round
  * untimed setup，故用手动计时循环 + {@link PerfTiming#compute(long[])} 统计。
@@ -114,6 +120,7 @@ public class TestErpInvCostingReclosePerf extends JunitAutoTestCase {
         long[] nanos = new long[TIMED_N];
         for (int round = -WARMUP_K; round < TIMED_N; round++) {
             resetCostLayers();
+            System.gc();
             long start = CoreMetrics.nanoTime();
             ApiResponse<?> resp = reclose(periodId);
             long elapsed = CoreMetrics.nanoTimeDiff(start);
@@ -134,7 +141,8 @@ public class TestErpInvCostingReclosePerf extends JunitAutoTestCase {
                 + " p95Ms=" + String.format("%.3f", m.p95Millis())
                 + " varianceRatioPercent=" + String.format("%.3f", m.varianceRatioPercent())
                 + " withinThreshold(<" + VARIANCE_THRESHOLD_PERCENT + "%)=" + m.withinThreshold(VARIANCE_THRESHOLD_PERCENT)
-                + " costLayersAfterLastRound=" + costLayerCount);
+                + " costLayersAfterLastRound=" + costLayerCount
+                + " stabilization=per-round-costlayer-reset+gc-hint");
 
         assertTrue(costLayerCount > 0, "reclose 应至少补建 1 个 cost layer");
     }

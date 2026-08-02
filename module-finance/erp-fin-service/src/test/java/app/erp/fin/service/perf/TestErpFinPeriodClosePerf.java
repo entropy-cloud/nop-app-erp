@@ -46,9 +46,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 计时循环 + {@link PerfTiming#compute(long[])} 统计。
  *
  * <p><b>数据规模裁决</b>：plan §Phase 5 引用设计文档 §4.2 + roadmap 工作项「1 万 GL 行/期」，并明示「具体在
- * Phase 2 plan 裁决」。首基线裁决 N=2000 GL 行——理由：H2 localDb 单测构建 1 万 GL 行 seed 耗时
- * 显著（每行 4-5 字段实体持久化），且 closePeriod 多阶段链路本身偏重（5 模块关账 + 损益结转 + 试算）。
- * N=2000 已能测到结账端到端成本，回归语义保持；生产规模 successor 见设计文档 §9。
+ * Phase 2 plan 裁决」。
+ *
+ * <p><b>方差稳定化（plan 2026-08-02-0650-2 Phase 3 / 设计文档 §3.4 successor）</b>：Phase 2 首基线
+ * N=2000 GL 行 median 32ms → sub-50ms 区间被 JIT/GC/scheduling jitter 主导，方差比 43.7%（超阈值）。
+ * 稳定化 = <b>scale increase（2000→6000 GL 行）</b>使 closePeriod median 升至 ~90ms+ 区间逃离 sub-50ms
+ * jitter floor（绝对抖动 ~14ms 在更大 median 上相对方差比下降）。close+reverseClose 每轮追加的损益/红冲凭证对
+ * 在 6000 GL 行基数下占比 &lt;1%（mild growth bias 可忽略）。残留超阈值时裁决 absolute-tolerance fallback。
+ * 裁决 6000（非 1 万）：H2 localDb 单测 seed 耗时约束（1 万 GL 行 seed ~50s+），6000 已能逃离 sub-50ms floor；
+ * 生产规模 successor 见设计文档 §9。
  *
  * <p><b>@Tag("perf")</b> + fin-service pom {@code <excludedGroups>perf</excludedGroups>}：默认不进 per-commit
  * {@code mvn test}，经 {@code -Pperf} 激活。
@@ -68,7 +74,7 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
     static final int WARMUP_K = 2;
     static final int TIMED_N = 10;
     static final double VARIANCE_THRESHOLD_PERCENT = 20.0;
-    static final int GL_LINE_COUNT = 2000;
+    static final int GL_LINE_COUNT = 6000;
     static final String PERIOD_CODE = "2025-06";
 
     @Inject
@@ -108,7 +114,8 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
                 + " medianMs=" + String.format("%.3f", m.medianMillis())
                 + " p95Ms=" + String.format("%.3f", m.p95Millis())
                 + " varianceRatioPercent=" + String.format("%.3f", m.varianceRatioPercent())
-                + " withinThreshold(<" + VARIANCE_THRESHOLD_PERCENT + "%)=" + m.withinThreshold(VARIANCE_THRESHOLD_PERCENT));
+                + " withinThreshold(<" + VARIANCE_THRESHOLD_PERCENT + "%)=" + m.withinThreshold(VARIANCE_THRESHOLD_PERCENT)
+                + " stabilization=scale-increase-2000to6000");
 
         assertTrue(periodId != null && periodId > 0, "perf 测试应 seed 有效期间");
     }
