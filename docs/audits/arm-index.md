@@ -72,6 +72,20 @@
 | `2026-07-29-1708-arm-ma7-index-completeness.md` | MA7 | 索引完整性 | S+A 10 域 / 947 索引声明覆盖矩阵 + Top-10 高频查询列 100% 覆盖 + ErpFinVoucherBillR 缺 (billCode, businessType) 索引热点 + 防御性 FK 索引冗余 + 复合升级候选（A7.2） | done |
 | `2026-07-29-1708-arm-ma7-nplus1-query-sampling.md` | MA7 | N+1 查询抽样 | S 级 4 域 / 10 列表查询站点全部单次批量 + 零无界 N+1 + finance 过账红冲有界 N+1（5 站点同族）+ dashboard/budget 载入后内存聚合（归并 P2-MA4-003）+ 零 DataLoader 基础设施结构性规避（A7.3） | done |
 | `2026-07-29-1708-arm-ma7-ci-guard-activation.md` | MA7 | CI/guard 持续激活验证 | 全仓 / 19 规则基线漂移精确 0 漂移（M0.3 锚点后 62 commits 含 4 P0 fix 零回归）+ CI 工作流激活性 PASS + checker↔基线块同步（19=19）+ 19 模块 web 测试 @Tag 100% 一致 + F15 i18n 基线干净（0/0）裁决接入 CI（A7.4） | done |
+| `2026-08-02-1645-rc-ma1-a1-1-finance-f1-posting.md` | MA1(RC) | 需求-实现符合性五级追踪 | finance / 过账引擎与凭证链路（A1.1 UC-FIN-01/02/03/04/12/15，6 UC） | done |
+
+## RC 发现追踪（requirement-compliance mission）
+
+> 来源：mission `requirement-compliance` MA1-A1.x 五级追踪审计。Finding 命名 `P<级别>-RC-<序号>`（§7），与 audit-remediation 的 `P*-MA*-xxx` 系列区分。新 finding 产出即写入本分区；修复经 MR0（P0 即时通道）/ MR1（R1.0 展开为 RC-R1.n，P1 批量）。**本分区为首份 RC 报告（A1.1）建立，随 MA1 各 A1.x 切片报告产出追加。**
+
+| Finding ID | 报告 | 域 | UC | 描述 | 分级判据 | 目标 MR | 修复状态 |
+|-----------|------|---|----|------|---------|--------|---------|
+| `P1-RC-001` | rc-ma1-a1-1-finance-f1-posting | finance | UC-FIN-04/15 | **科目分摊（GlDistribution）机制完全缺失**：L1（`use-cases.md:76,298`）要求 GlDistribution 规则拆行 + Σpercent!=100 拒绝过账 + 平衡保持 + `ErpFinGlDistributionValidator(IErpFinFactsValidator 实现)` Bean。L3 实仓：`ErpFinGlDistributionValidator` 类不存在（`rg "implements IErpFinFactsValidator"` 全仓零命中）；`ErpFinGlDistribution` ORM 实体不存在（`rg --glob *.orm.xml` 零命中）；FactsValidator 调用循环 `ErpFinPostingProcessor.java:563-565` 在无 Delta 注入时为死代码（`registry.getValidators()` 返回空列表）；"科目分摊"唯一痕迹是 UI 菜单 `erp-fin.action-auth.xml:189-196`。Σpercent!=100 拒绝 / 拆行平衡均未实现。不破坏现有数据（分摊未启用时主路径不受影响），但需求要求的功能完全缺失。 | §2 P1①（功能完全缺失） | MR1（R1.0 展开为 RC-R1.n） | todo（本审计仅登记，不实施修复；修复触及会计过账逻辑[新增 Validator 注入 FactsValidator 链] + 可能新增 ORM 实体[ErpFinGlDistribution]，须 ask-first + 独立 plan-audit） |
+| `P1-RC-002` | rc-ma1-a1-1-finance-f1-posting | finance | UC-FIN-12 断言② | **汇率缺失未拒绝过账（静默回退 rate=1）**：L1（`use-cases.md:230`）逐字「若 汇率缺失 → 报错拒绝过账」。L3 实仓：`ErpFinPostingProcessor.prepareContext:537` + `persistVoucher:817-820` 实现 `event.getExchangeRate() != null ? event.getExchangeRate() : EXCHANGE_RATE_DEFAULT`（`EXCHANGE_RATE_DEFAULT=new BigDecimal("1")` :78）——**静默回退到 1 继续过账，与「拒绝」直接冲突**。触发面依赖域调用方漏传 rate（caller bug，非默认活跃路径；当前各域 Provider 显式传 rate），故不构成 §2 P0④ 活跃数据破坏（与 P0 示例「期间 CLOSED 后禁止过账但实际可过」默认触发面不同）。与 MA2 §5.12 对多币种路径的 P1 分级一致。**与 P1-MA3-039 不同控制点**：P1-MA3-039 覆盖 UC-FIN-12 断言①（FX 折算缺失 / amountSource=amountFunctional），本 finding 覆盖断言②（rate 缺失守卫），不可合并。 | §2 P1②（异常路径未实现） | MR1（R1.0 展开为 RC-R1.n） | todo（本审计仅登记，不实施修复；修复触及会计过账逻辑[prepareContext 加 rate 缺失守卫]，须 ask-first + 独立 plan-audit） |
+
+> RC 交叉引用注记：
+> - **P1-MA3-039**（owner doc vs code drift，persistVoucher amountSource=amountFunctional）：本 RC A1.1 切片复核确认其覆盖 UC-FIN-12 **断言①**（FX 折算缺失），与本切片 **P1-RC-002**（断言② rate 缺失守卫）互补不重复（不同控制点：折算逻辑 vs 缺失守卫）。MR1 修复时协同。
+> - **P1-MA2-002 / P1-MA2-009**（多币种 P2P/O2C 本位币凭证路径 + 收款核销汇兑损益）：本 RC A1.1 切片 UC-FIN-12 断言①引用（FX 折算主题），不重复登记。注：P1-MA2-002/009 已 resolved（plan 2026-07-29-2322-2，VoucherFact 双字段迁移 + persistVoucher 忠实写入），但**通用模板 Provider 路径**（`ErpFinTemplateAcctDocProvider`）仍为单币种回退（amountSource=amountFunctional），P1-MA3-039 维持，本切片 P1-RC-002（守卫）独立成立。
 
 ## P0 发现追踪（即时通道）
 

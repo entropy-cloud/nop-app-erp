@@ -37,7 +37,7 @@
 
 | # | Work Item（功能切片 + UC 清单） | Status | Owner Doc | Deps | Skill |
 |---|--------------------------------|--------|-----------|------|-------|
-| A1.1 | **finance-F1 过账引擎与凭证链路**（UC-FIN-01/02/03/04/12/15） | todo | `docs/design/finance/use-cases.md` + `posting.md` | 0.2 | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A1.1 | **finance-F1 过账引擎与凭证链路**（UC-FIN-01/02/03/04/12/15） | done | `docs/design/finance/use-cases.md` + `posting.md` | 0.2 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A1.2 | **finance-F2 预算与承付**（UC-FIN-11/13） | todo | `docs/design/finance/budget.md` | 0.2 | 同上 |
 | A1.3 | **finance-F3 AR/AP 核销与坏账**（UC-FIN-08） | todo | `docs/design/finance/ar-ap-reconciliation.md` | 0.2 | 同上 |
 | A1.4 | **finance-F4 银行对账**（UC-FIN-09/14 标题重复[同为"银行对账与未达账项"]，0.2 清单化时裁决去重） | todo | `docs/design/finance/bank-reconciliation.md` | 0.2 | 同上 |
