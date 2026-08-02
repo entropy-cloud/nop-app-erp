@@ -1,6 +1,6 @@
 # 2026-08-02-1815-3 rc-ma1-a1-6-finance-f6-period-close finance-F6 期间与结账需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-02
 > Mission: requirement-compliance
 > Work Item: A1.6（MA1 需求追踪矩阵审计 — finance-F6 期间与结账：期末结账前置门禁 + 反结账）
@@ -70,56 +70,56 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论 + resolved finding HEAD 复核
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-6-finance-f6-period-close.md`（新建，先填 §1-§5；命名遵循方法论 §归档规范）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done（方法论契约 + UC 锚点就绪）
 
-- [ ] `Proof` 对 UC-FIN-06/07 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:110/:129` 验收标准原文（禁止转述）；L2 引用 `period-close.md` 对应 section（标注"设计参考，冲突以 L1 为准"，注意 AR/AP"提示 vs 拒绝"偏离 `:42-43`、反结账审批 kill-switch successor `:321-325`）；L3 引用 `module-finance/erp-fin-service/.../processor/<file>:line`（含 per-mutation Processor + `ErpFinAccountingPeriodProcessor` helper + `ErpFinVoucherBizModel.assertPeriodNotLocked` 调用链列全，注意 R6.1 行号偏移）；L4 引用 `Test*.java#method`（注明断言强度）；L5 复用 A2.3/A2.5b 已证实行为 + 本切片差异。
+- [x] `Proof` 对 UC-FIN-06/07 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:110/:129` 验收标准原文（禁止转述）；L2 引用 `period-close.md` 对应 section（标注"设计参考，冲突以 L1 为准"，注意 AR/AP"提示 vs 拒绝"偏离 `:42-43`、反结账审批 kill-switch successor `:321-325`）；L3 引用 `module-finance/erp-fin-service/.../processor/<file>:line`（含 per-mutation Processor + `ErpFinAccountingPeriodProcessor` helper + `ErpFinVoucherBizModel.assertPeriodNotLocked` 调用链列全，注意 R6.1 行号偏移）；L4 引用 `Test*.java#method`（注明断言强度）；L5 复用 A2.3/A2.5b 已证实行为 + 本切片差异。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-FIN-06——①未过账凭证 hard block（✓）；②未审核凭证（归①）；③未核销 AR/AP 实现为 reminder 非"拒绝"（偏离 L1，P1-MA2-017 resolved 有意设计）；④资产未折旧（间接 auto-execute，无显式 preCheck 字段）；⑤成本未算（间接，无显式字段）；UC-FIN-07——⑥高权限（仅 kill-switch，无 @BizAuth 角色强制）；⑦审批（缺失，documented simplification successor）；⑧状态迁移 CLOSED_FINAL→OPEN（✓）；⑨冲销结转/折旧/FX 凭证（✓）；冲销成本凭证（缺失 Non-Goal）；⑩解锁单据（间接）；⑪重新结账（✓ 幂等）；⑫**全程审计（操作人/原因）——缺失且无 finding，ORM 无 reversedBy/reverseCloseReason 列，reverseClose 无 reason 参数**。
+- [x] `Proof` 重点核验**候选缺口/偏离**（逐条验收标准对照）：UC-FIN-06——①未过账凭证 hard block（✓）；②未审核凭证（归①）；③未核销 AR/AP 实现为 reminder 非"拒绝"（偏离 L1，P1-MA2-017 resolved 有意设计）；④资产未折旧（间接 auto-execute，无显式 preCheck 字段）；⑤成本未算（间接，无显式字段）；UC-FIN-07——⑥高权限（仅 kill-switch，无 @BizAuth 角色强制）；⑦审批（缺失，documented simplification successor）；⑧状态迁移 CLOSED_FINAL→OPEN（✓）；⑨冲销结转/折旧/FX 凭证（✓）；冲销成本凭证（缺失 Non-Goal）；⑩解锁单据（间接）；⑪重新结账（✓ 幂等）；⑫**全程审计（操作人/原因）——缺失且无 finding，ORM 无 reversedBy/reverseCloseReason 列，reverseClose 无 reason 参数**。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` **resolved finding HEAD 复核**：对 arm-index 标记 resolved 的 period-close finding（P0-MA2-016 / P1-MA2-017/018/019/020/021/022/033 / P1-MA3-036 / P1-MA4-004/005）在当前 HEAD 代码实际落地（注意 R6.1 per-mutation 拆分导致行号偏移，按逻辑而非行号核验），逐条记录复核结论（已落地 / 回退 / 部分落地 / documented simplification 仍 open successor）。
+- [x] `Proof` **resolved finding HEAD 复核**：对 arm-index 标记 resolved 的 period-close finding（P0-MA2-016 / P1-MA2-017/018/019/020/021/022/033 / P1-MA3-036 / P1-MA4-004/005）在当前 HEAD 代码实际落地（注意 R6.1 per-mutation 拆分导致行号偏移，按逻辑而非行号核验），逐条记录复核结论（已落地 / 回退 / 部分落地 / documented simplification 仍 open successor）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：反结账审计轨迹缺失（⑫）若为"安全审计要求未实现"按 §2 定级（P1 候选，会计/数据安全类）；高权限无角色强制（⑥）若为"安全门控缺失"（P1 候选）；AR/AP reminder 偏离（③）为 owner-doc 裁决，记录分歧但倾向接受（L2 已记录有意设计）；其余按实测定级。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（P0/P1/P2/接受）：反结账审计轨迹缺失（⑫）若为"安全审计要求未实现"按 §2 定级（P1 候选，会计/数据安全类）；高权限无角色强制（⑥）若为"安全门控缺失"（P1 候选）；AR/AP reminder 偏离（③）为 owner-doc 裁决，记录分歧但倾向接受（L2 已记录有意设计）；其余按实测定级。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-FIN-06/07 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号（R6.1 后）、L4 注明断言强度、L5 标注复用 A2.3/A2.5b 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-⑫有明确分级（非悬空"待查"）；resolved finding HEAD 复核结论已记录
+- [x] 报告 §1-§5 已落盘：UC-FIN-06/07 各一矩阵行（验收标准全覆盖），L1 逐字引用、L3 含行号（R6.1 后）、L4 注明断言强度、L5 标注复用 A2.3/A2.5b 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；候选缺口 ①-⑫有明确分级（非悬空"待查"）；resolved finding HEAD 复核结论已记录
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-6-finance-f6-period-close.md`（补 §6-§9，报告定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成（矩阵 + 结论已出）
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` period-close 同域同控制点（如 P1-MA2-020 反结账审批 successor、P1-MA3-046 全域权限保护、P1-MA2-017 AR/AP 分级等行）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：反结账审计轨迹缺失若 arm-index 无同控制点 finding 则新建；高权限角色强制若 P1-MA3-046 已覆盖则复用并追加 RC 交叉引用。禁止未经比对直接新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：产出 finding 前 grep `arm-index.md` period-close 同域同控制点（如 P1-MA2-020 反结账审批 successor、P1-MA3-046 全域权限保护、P1-MA2-017 AR/AP 分级等行）后裁决——同根因同控制点 → 复用既有 ID（追加 RC 交叉引用注记，不新建）；新根因/新功能点 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 并列明与既有 finding 的差异依据。**特别注意**：反结账审计轨迹缺失若 arm-index 无同控制点 finding 则新建；高权限角色强制若 P1-MA3-046 已覆盖则复用并追加 RC 交叉引用。禁止未经比对直接新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 的复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记本切片 L5 无法静态定论、需运行时确认的点（每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 在报告登记并在本计划记录"已触发 MR0 追加 R0.n 实体行"（本计划不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
+- [x] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**（区分 reporter vs CI 门控）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：声明复用 `2026-07-27-1949-arm-ma2-period-close-e2e.md`（A2.3）/ `...-period-budget-state-machine.md`（A2.5b）等已证实行为，列明本切片只补的需求视角差异（反结账审计轨迹缺失 / 高权限无角色强制 / AR/AP reminder 偏离 L1 / resolved finding HEAD 复核结论 / R6.1 行号偏移说明等）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：声明复用 `2026-07-27-1949-arm-ma2-period-close-e2e.md`（A2.3）/ `...-period-budget-state-machine.md`（A2.5b）等已证实行为，列明本切片只补的需求视角差异（反结账审计轨迹缺失 / 高权限无角色强制 / AR/AP reminder 偏离 L1 / resolved finding HEAD 复核结论 / R6.1 行号偏移说明等）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（MA1 finding 区），既有行追加 RC 交叉引用注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
+- [x] `Proof` 报告 9 段完整性自检（§6 段落完整性自检）：落盘前自查 §1-§9 全部存在；缺任一段即回到 Phase 补齐。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
-- [ ] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.1 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据（无未经比对新建）
+- [x] 新 RC finding 已写入 `arm-index.md` 对应分区；静态存疑点清单已登记（供 A4.1 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -129,14 +129,32 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控——审计报告产出不触发编译或测试。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + resolved finding HEAD 复核 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。（§8 含 checker 实测记录，但 checker 是 reporter 非门控；门控真值在 CI workflow。）
 
-- [ ] 范围内行为完成：A1.6 报告 9 段齐全 + UC-FIN-06/07 逐矩阵行 + resolved finding HEAD 复核 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.6 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.6 报告 9 段齐全 + UC-FIN-06/07 逐矩阵行 + resolved finding HEAD 复核 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.6 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+
+> Closure Audit Record: 独立子代理 `ses_03d6198c9ffek420xRyqiFb4Cn`（fresh session，未起草本计划/未执行 Phase 1-2）于 2026-08-02 完成 closure audit。Verdict: **pass**。9 项核验全 PASS：plan 执行完整性、报告 9 段完整性、UC 完整枚举（UC-FIN-06 PC-1..PC-6 + UC-FIN-07 RC-1..RC-9）、L1 逐字引用、findings grep-before-create（P1-MA3-046 复用 + 3 新建均有 arm-index 比对依据）、11 项 resolved finding HEAD 复核（独立抽检 4 项准确）、7 项关键证据实测核验（reverseClose 无 reason 参数 / ORM 无反结账审计列 / @BizAuth 零命中 / testReverseCloseApprovalBlocked 测试存在 / ProfitLossClosingService 仅排除 PERIOD_CLOSE / assertPeriodNotLocked 存在 / OpenPeriodProcessor 存在）、roadmap A1.6 done、真相源冻结（git status use-cases.md/period-close.md/product-scope.md 干净）。无阻塞 issue。
+
+## Closure
+
+Status Note: A1.6 审计切片的两阶段（五级追踪矩阵填充 + finding 登记/完整性自检）均已完成，所有执行项 `[x]`、所有阶段退出标准 `[x]`、所有 Closure Gates `[x]`。审计报告 `docs/audits/2026-08-02-2100-rc-ma1-a1-6-finance-f6-period-close.md`（544 行，9 段齐全）已落盘；arm-index 新 finding 已登记；本计划为只读审计无代码变更故无构建/测试验证义务。独立结束审计由独立子代理（fresh session）执行并 verdict=pass，执行者未自我审计。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立子代理 `ses_03d6198c9ffek420xRyqiFb4Cn`（fresh session，未起草本计划/未执行 Phase 1-2），独立结束审计于 2026-08-02 完成
+- Evidence: Verdict=**pass**；9 项核验全 PASS（plan 执行完整性、报告 9 段完整性、UC 完整枚举 UC-FIN-06 PC-1..PC-6 + UC-FIN-07 RC-1..RC-9、L1 逐字引用、findings grep-before-create 含 P1-MA3-046 复用 + 3 新建均有 arm-index 比对、11 项 resolved finding HEAD 复核独立抽检 4 项准确、7 项关键证据实测核验、roadmap A1.6 done、真相源冻结 git status 干净）
+- Audit Report: `docs/audits/2026-08-02-2100-rc-ma1-a1-6-finance-f6-period-close.md`（544 行，方法论 §6 9 段齐全：UC 契约/实现证据/测试证据/运行时行为/五级矩阵/finding 裁决/存疑点/过程自检/MA2 差异增量）
+- arm-index 登记证据: 新建 finding `P1-RC-006`（UC-FIN-07 RC-9 反结账审计轨迹操作人/原因完全缺失）/ `P2-RC-006`（UC-FIN-06 PC-3 AR/AP reminder 偏离 L1 字面"拒绝"）/ `P2-RC-007`（UC-FIN-07 RC-6 反结账成本凭证冲销缺失 Non-Goal）已写入 `docs/audits/arm-index.md` MA1 finding 区（`:98-100`）；既有 `P1-MA3-046`（UC-FIN-07 RC-1 高权限无角色强制，复用非新建）追加 RC 交叉引用注记（`:110`）
+- 真相源冻结: `git status` 显示 `use-cases.md`/`period-close.md`/`product-scope.md` 干净，符合方法论 §9 冻结条款
+
+Follow-up:
+
+- finding 修复经 MR0（P0 即时通道）/ MR1（R1.0 展开 RC-R1.n）实施，触及会计过账或 ORM 结构的修复行须 ask-first + 独立 plan-audit（详见 `## Deferred But Adjudicated`）
 
 ## Deferred But Adjudicated
 
