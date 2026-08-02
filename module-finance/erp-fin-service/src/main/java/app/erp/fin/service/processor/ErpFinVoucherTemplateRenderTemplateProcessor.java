@@ -5,6 +5,7 @@ import app.erp.fin.dao.entity.ErpFinVoucherTemplateLine;
 import app.erp.fin.service.posting.ErpFinPostingErrors;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -72,7 +73,7 @@ public class ErpFinVoucherTemplateRenderTemplateProcessor {
         q.addFilter(eq("isActive", Boolean.TRUE));
         q.addFilter(or(eq("acctSchemaId", null), isNull("acctSchemaId")));
         List<ErpFinVoucherTemplate> candidates = dao.findAllByQuery(q);
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.today();
         ErpFinVoucherTemplate generic = null;
         for (ErpFinVoucherTemplate t : candidates) {
             if (!inValidRange(t, today)) {

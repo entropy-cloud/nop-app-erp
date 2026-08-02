@@ -6,6 +6,7 @@ import app.erp.md.service.ErpMdErrors;
 import app.erp.md.service.exchange.ErpMdExchangeRateApiClientFactory;
 import io.nop.api.core.beans.FilterBeans;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
@@ -36,7 +37,7 @@ public class ErpMdCurrencyRefreshRatesFromApiProcessor {
 
     public List<ErpMdExchangeRate> refreshRatesFromApi(String baseCurrency, IServiceContext context) {
         String base = baseCurrency != null ? baseCurrency : "USD";
-        LocalDate today = LocalDate.now();
+        LocalDate today = CoreMetrics.today();
 
         // 1. 查全部币种作为目标（同域实体访问：daoProvider() 来自父类 CrudBizModel；同域不同实体，与 ErpMdMaterialCustomsBizModel 同模式）
         IEntityDao<ErpMdCurrency> currencyDao = daoProvider.daoFor(ErpMdCurrency.class);

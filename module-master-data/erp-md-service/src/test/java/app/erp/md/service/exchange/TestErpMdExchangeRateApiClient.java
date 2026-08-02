@@ -6,6 +6,7 @@ import app.erp.md.dao.entity.ErpMdExchangeRate;
 import app.erp.md.service.ErpMdConfigs;
 import app.erp.md.service.ErpMdErrors;
 import app.erp.md.spi.IErpMdExchangeRateApiClient;
+import app.erp.common.test.ThreadLocalFrozenClock;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.config.AppConfig;
@@ -60,6 +61,17 @@ public class TestErpMdExchangeRateApiClient extends JunitAutoTestCase {
 
     private static final IServiceContext CTX = new ServiceContextImpl();
 
+    /**
+     * 冻结时钟参考日（Q6 时钟硬化，plan 2026-08-02-0650-1）。
+     *
+     * <p>场景 4 {@code testRefreshRatesFromApiWritesExchangeRate} 经 {@code refreshRatesFromApi} 读
+     * {@code CoreMetrics.today()} 作为 upsert 的 {@code validFrom}/{@code validTo}；未冻结时钟时该 DB 快照
+     * 随墙钟漂移（月初/日翻滚即红）。冻结到本参考日使 DB 快照（{@code output/tables/erp_md_exchange_rate.csv}
+     * 的 {@code VALID_FROM=2026-08-01}）确定性。域无关 {@link ThreadLocalFrozenClock}，无需 master-data 子类
+     * （plan non-goal）。场景 1-3/5 用显式日期或不触达 today()，不受冻结影响。
+     */
+    private static final LocalDate FROZEN_REFERENCE_DATE = LocalDate.of(2026, 8, 1);
+
     @Inject
     IDaoProvider daoProvider;
     @Inject
@@ -71,6 +83,9 @@ public class TestErpMdExchangeRateApiClient extends JunitAutoTestCase {
 
     @BeforeEach
     void resetState() {
+        // 冻结时钟（Q6 硬化）：使 refreshRatesFromApi 的 validFrom/validTo 走冻结日而非墙钟
+        ThreadLocalFrozenClock.ensureRegistered();
+        ThreadLocalFrozenClock.install(FROZEN_REFERENCE_DATE);
         // 默认启用 API（多数测试场景需要）；具体测试可覆盖
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpMdConfigs.CONFIG_EXCHANGE_RATE_API_ENABLED, Boolean.TRUE);
@@ -88,6 +103,8 @@ public class TestErpMdExchangeRateApiClient extends JunitAutoTestCase {
 
     @AfterEach
     void cleanup() {
+        // 解冻线程本地，防线程本地泄漏污染同 fork 后续测试类
+        ThreadLocalFrozenClock.clear();
         // 测试结束恢复默认（关闭 API），避免污染其他测试
         AppConfig.getConfigProvider().assignConfigValue(
                 ErpMdConfigs.CONFIG_EXCHANGE_RATE_API_ENABLED,
