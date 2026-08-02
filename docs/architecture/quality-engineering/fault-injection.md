@@ -75,6 +75,8 @@ ERP 全仓无任何通用化故障注入基础设施——无 `FaultInjector` �
 | maintenance | `P1-MA2-074` | Mnt dispatcher 吞异常 | ✅ resolved (R1.16) |
 
 > **logistics（P1-MA2-080）边界声明**：logistics 是同型根因的**第 7 个成员**（roadmap 工作项表 line 677 将其纳入 6 域清单——实际为 7 域族）。本计划 Q4 scope 为 **6 域（finance/hr/assets/qa/projects/maintenance）**，对齐 plan §Goals「覆盖 6 域过账悬挂路径」。logistics 作为 successor 扩展（§7）——其 `ErpLogShipmentBizModel.onDelivered` 吞异常 + `scanForPolling` 不重试 DELIVERED-PENDING 比 peer dispatcher 更严重（无 finance sweep 兜底），但 Q4 首轮 harness 沉淀后扩展更可控。
+>
+> **[2026-08-02 更新] logistics successor 已闭合**（plan `2026-08-02-1500-1`）：`onDelivered` 失败路径补 `IErpSysNotificationBiz.notify` 告警派发（`log.freight-posting-failure`，对齐 6 peer G4 域范式）+ 新增 `TestLogPostingFaultInjection`（A1+A2+A4-alert）+ CI 门控 baseline 6→7。详见 §5.2 logistics 行 + §8 successor 表。
 
 ### 1.4 MR1.16 单点修复的边界（Q4 是其系统性回归保护超集）
 
@@ -304,6 +306,7 @@ dispatcher.tryPost() 内 try { voucherBiz.post(...) } catch (Exception e) { /* �
 | qa | `NcrPostingDispatcher` | `IErpFinVoucherBiz.post` 抛 | G4（A4-alert） | A2.12 MANUAL_POST 路径，harness 首次覆盖；恢复经告警 + 试算平衡（无前置检查） |
 | projects | `TimesheetPostingDispatcher` | `IErpFinVoucherBiz.post` 抛 / `ProjectPostingExecutor.postEvent` 抛 | G4（A4-alert） | 既有先例 `TestTimesheetPostingFailureAlert`；恢复经告警 + 试算平衡（无前置检查） |
 | maintenance | `MaintenanceLaborPostingDispatcher` / `MaintenanceIssuePostingDispatcher` | `IErpFinVoucherBiz.post` 抛 / `MntPostingExecutor.postEvent` 抛 | G4（A4-alert） | harness 首次覆盖；恢复经告警 + 试算平衡（无前置检查） |
+| logistics | `AbstractErpLogShipmentDeliveredProcessor`（`ErpLogShipmentScanForPollingProcessor` / `ErpLogShipmentHandleTrackingWebhookProcessor` 继承） | `IErpFinVoucherBiz.post` 抛 + `IErpSysNotificationBiz` 录制 | G4（A4-alert） | **Q4 successor 已闭合**（plan `2026-08-02-1500-1`，P1-MA2-080 运费过账悬挂告警闭环）。原缺陷：`onDelivered` catch 仅 LOG 无告警派发；修复补 `dispatchFreightFailureAlert`（`log.freight-posting-failure`）+ `TestLogPostingFaultInjection`。logistics 无 sweep 兜底，恢复经告警 + **期末前置检查兜底**（posting-log.md 覆盖矩阵 line 127-136） |
 
 - **与 Q1 盲区类清单的消费方式**：Q4 Phase 2 起草时，若 Q1 Phase 2 已产出盲区类清单（§8），优先覆盖清单中属于上述 6 域过账 dispatcher/Processor 的盲区类。若 Q1 尚未产出（Q4 不阻塞于 Q1 全域完成），按本表代表性 dispatcher 覆盖。
 
@@ -399,7 +402,7 @@ dispatcher.tryPost() 内 try { voucherBiz.post(...) } catch (Exception e) { /* �
 | R5 | 无显式覆盖率门控则覆盖回潮 | CI 门控 | C-3 grep 门控作可选增强；或 successor（覆盖规模增长时） |
 | R6 | 故障注入测试与并行测试隔离 | Phase 2 实施约束 | §6 验收 4 核验 stub 局部性；与 Q6 thread-local clock 协同 |
 | —（successor） | Q4 Phase 2 实现 plan（harness + 6 域测试） | out-of-scope（本文档 Phase 1） | 本文档经 ≥2 轮独立审查收敛（§Review Record）+ 路径 A 裁决落定（§3.5）→ DRAFT_PLANS 起草 |
-| —（successor） | logistics（P1-MA2-080）过账悬挂覆盖 | out-of-scope improvement | Q4 首轮 6 域 harness 沉淀后扩展；logistics 无 sweep 兜底更严重，优先级高 |
+| —（successor） | logistics（P1-MA2-080）过账悬挂覆盖 | out-of-scope improvement | **已闭合（plan `2026-08-02-1500-1`）**：onDelivered 补 `log.freight-posting-failure` 告警派发 + `TestLogPostingFaultInjection`（A1+A2+A4-alert）+ CI 门控扩展 6→7 域。successor 触发条件（Q4 首轮 6 域 harness 沉淀）已满足并落地 |
 | —（successor） | 其余故障模式（并发冲突 / 超时 / 外部集成失败） | optimization candidate | 过账悬挂路径 harness 沉淀后扩展 |
 | —（successor） | 引擎内部端到端故障注入（路径 B 字节码插桩） | watch-only successor | Q4 首轮证明 SPI 边界故障不足以覆盖某类可恢复性场景时 |
 
