@@ -1,6 +1,6 @@
 # 2026-08-02-1600-3 rc-ma1-a1-3-finance-f3-arap-reconciliation finance-F3 AR/AP 核销与坏账需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-02
 > Mission: requirement-compliance
 > Work Item: A1.3（MA1 需求追踪矩阵审计 — finance-F3 AR/AP 核销与坏账）
@@ -75,54 +75,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-3-finance-f3-arap.md`（新建，先填 §1-§5）
+Status: completed
+Targets: `docs/audits/2026-08-02-1715-rc-ma1-a1-3-finance-f3-arap.md`（已落盘 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-FIN-08 **一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:147` 三条验收标准原文（核销明细 / 累计核销→部分|已核销 / 应收余额恒等式）；L2 引用 `ar-ap-reconciliation.md §核销流程/§状态/§余额计算`（标注"设计参考"）；L3 引用 `ErpFinReconciliationBizModel`/`ErpFinReconciliationPostProcessor`/`ReconciliationSettler`/`PartnerBalanceUpdater` `file:line` + 坏账 `ErpFinBadDebtProcessor` 调用链；L4 引用 `TestErpFinReconciliation`/`TestErpFinBadDebt*` + E2E spec（注明断言强度）；L5 复用 MA2/E2E 已证实行为 + 差异。
+- [x] `Proof` 对 UC-FIN-08 **一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:147` 三条验收标准原文（核销明细 / 累计核销→部分|已核销 / 应收余额恒等式）；L2 引用 `ar-ap-reconciliation.md §核销流程/§状态/§余额计算`（标注"设计参考"）；L3 引用 `ErpFinReconciliationBizModel`/`ErpFinReconciliationPostProcessor`/`ReconciliationSettler`/`PartnerBalanceUpdater` `file:line` + 坏账 `ErpFinBadDebtProcessor` 调用链；L4 引用 `TestErpFinReconciliation`/`TestErpFinBadDebt*` + E2E spec（注明断言强度）；L5 复用 MA2/E2E 已证实行为 + 差异。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验已知注意点（逐验收标准对照）：①核销本身不写 GL 凭证（契约是否要求，预计一致→接受）；②往来余额缓存字段与"Σ发票−Σ核销−Σ红字"恒等式是否一致（refresh 重算保证）；③WRITTEN_OFF 在期末门禁/FX 重估/坏账准备基线的一致排除；坏账 WRITTEN_OFF↔OPEN 状态轴派生（核销/收回/准备）覆盖。
+- [x] `Proof` 重点核验已知注意点（逐验收标准对照）：①核销本身不写 GL 凭证（契约是否要求，预计一致→接受）；②往来余额缓存字段与"Σ发票−Σ核销−Σ红字"恒等式是否一致（refresh 重算保证）；③WRITTEN_OFF 在期末门禁/FX 重估/坏账准备基线的一致排除；坏账 WRITTEN_OFF↔OPEN 状态轴派生（核销/收回/准备）覆盖。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据给符合性结论（取最高）：注意点①②③按实测定级（预计多为"接受"/P2，若发现状态派生或恒等式破坏则 P1）。每结论列 §2 判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据给符合性结论（取最高）：注意点①②③按实测定级（预计多为"接受"/P2，若发现状态派生或恒等式破坏则 P1）。每结论列 §2 判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-FIN-08 一矩阵行（L1 逐字、L3 含行号含坏账调用链、L4 注明断言强度、L5 标注 MA2 来源）+ 坏账状态轴衍生命题核查
-- [ ] 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；注意点①②③有明确分级（非悬空）
+- [x] 报告 §1-§5 已落盘：UC-FIN-08 一矩阵行（L1 逐字、L3 含行号含坏账调用链、L4 注明断言强度、L5 标注 MA2 来源）+ 坏账状态轴衍生命题核查
+- [x] 有符合性结论（P0/P1/P2/接受）+ §2 判据编号；注意点①②③有明确分级（非悬空）
 
 ### Phase 2 - finding 登记 / arm-index 补 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-3-finance-f3-arap.md`（补 §6-§9 定稿）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-02-1715-rc-ma1-a1-3-finance-f3-arap.md`（已落盘 §6-§9 定稿）；`docs/audits/arm-index.md`（A1.3 报告行 + RC 交叉引用注记已入）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` finance AR-AP 核销/坏账同域同控制点（如 AR/AP 结算状态机相关行）后裁决复用 or 新建 `P0-RC-xxx`/`P1-RC-xxx`，列明差异依据；禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` finance AR-AP 核销/坏账同域同控制点（如 AR/AP 结算状态机相关行）后裁决复用 or 新建 `P0-RC-xxx`/`P1-RC-xxx`，列明差异依据；禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段（复用/新增裁决 + 双向可追溯）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段（复用/新增裁决 + 双向可追溯）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开；无则注明"无"）。若 Phase 1 定级 P0，按 §10 登记 + 记录"已触发 MR0 追加 R0.n"（本计划不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开；无则注明"无"）。若 Phase 1 定级 P0，按 §10 登记 + 记录"已触发 MR0 追加 R0.n"（本计划不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实跑 `bash docs/audits/nop-compliance-checker.sh` + actual vs baseline 表（无生产代码变更注明"无回归风险"）；closure-audit 独立性声明；交叉去重声明。**不以 checker 退出码 0 作门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段（§8 模板）：实跑 `bash docs/audits/nop-compliance-checker.sh` + actual vs baseline 表（无生产代码变更注明"无回归风险"）；closure-audit 独立性声明；交叉去重声明。**不以 checker 退出码 0 作门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 差异增量声明（复用 arap-settlement-state-machine MA2 已证实行为，列本切片需求视角差异）。
+- [x] `Add` 报告 §9 与 MA2 差异增量声明（复用 arap-settlement-state-machine MA2 已证实行为，列本切片需求视角差异）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`（新 `P*-RC-xxx` 入分区；既有行追加 RC 交叉引用）。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`（新 `P*-RC-xxx` 入分区；既有行追加 RC 交叉引用）。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检（落盘前 §1-§9 全在）。
+- [x] `Proof` 报告 9 段完整性自检（落盘前 §1-§9 全在）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -132,14 +132,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.3 报告 9 段齐全 + UC-FIN-08 矩阵行 + 坏账状态轴命题核查 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.3 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.3 报告 9 段齐全 + UC-FIN-08 矩阵行 + 坏账状态轴命题核查 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.3 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录（19 规则 0 漂移） + finding 复用/新增裁决可追溯（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -151,13 +151,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <结束审计通过后填写>
+Status Note: 已完成（独立结束审计 PASSES closure audit）。A1.3 报告 `docs/audits/2026-08-02-1715-rc-ma1-a1-3-finance-f3-arap.md` 9 段齐全，UC-FIN-08 + 坏账状态轴 4 命题全接受（零 P0/P1/P2 新 finding），三项注意点全裁定"接受"，1 项静态存疑点交 MA4 A4.1。arm-index 已更新（报告行 + RC 交叉引用注记）。roadmap A1.3 → done。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理（新会话，cold-context）>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立子代理 ses_03e104802ffe9wsIX0gVDDvVT1（general agent，新会话 cold-context，未执行本计划）
+- Evidence: 8 项 closure gate 全 PASS——9 段完整性（§1-§9 全在）/ L1 逐字引用（UC-FIN-08 三验收标准 byte-identical，仅 CJK 全/半角括号归一化非转述）/ L3 file:line 抽查 5 处全部精确命中（含 PartnerBalanceUpdater.sumOpen notIn(SETTLED,CANCELLED) WRITTEN_OFF 缺席 + BadDebtProvisionService notIn WRITTEN_OFF 出席 的核心对比）/ §2 分级判据可辩护（caveat ① 契约未要求核销产 GL 凭证，"接受"非 silent 降级）/ §6 arm-index 衔接 grep 比对表 + 报告行 + 交叉引用注记均已落盘 / §8 checker actual vs baseline 19 规则 0 漂移 + 独立性 + 交叉去重声明 + 未以退出码 0 作门控 / 无真相源修改（git status 仅 docs/audits + docs/plans + docs/backlog）/ Phase 一致性（status + items 双全，无 EXECUTE↔CLOSURE_VERIFY loop）。3 项非阻塞观察（Closure 填写流程 / CJK 标点归一化 / 静态存疑点 #2#3 by-design 升级）。
 
 Follow-up:
 
-- 本报告 finding 由 MR0（P0）/ MR1 R1.0（P1）展开；静态存疑点由 A4.1 读取后追加 A4.1.n。
+- 本报告 finding 由 MR0（P0）/ MR1 R1.0（P1）展开；本切片零 P0/P1 故无 MR0/MR1 触发。静态存疑点由 A4.1 读取后追加 A4.1.n。

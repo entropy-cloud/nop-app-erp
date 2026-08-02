@@ -74,6 +74,7 @@
 | `2026-07-29-1708-arm-ma7-ci-guard-activation.md` | MA7 | CI/guard 持续激活验证 | 全仓 / 19 规则基线漂移精确 0 漂移（M0.3 锚点后 62 commits 含 4 P0 fix 零回归）+ CI 工作流激活性 PASS + checker↔基线块同步（19=19）+ 19 模块 web 测试 @Tag 100% 一致 + F15 i18n 基线干净（0/0）裁决接入 CI（A7.4） | done |
 | `2026-08-02-1645-rc-ma1-a1-1-finance-f1-posting.md` | MA1(RC) | 需求-实现符合性五级追踪 | finance / 过账引擎与凭证链路（A1.1 UC-FIN-01/02/03/04/12/15，6 UC） | done |
 | `2026-08-02-1700-rc-ma1-a1-2-finance-f2-budget.md` | MA1(RC) | 需求-实现符合性五级追踪 | finance / 预算与承付（A1.2 UC-FIN-11/13，2 UC） | done |
+| `2026-08-02-1715-rc-ma1-a1-3-finance-f3-arap.md` | MA1(RC) | 需求-实现符合性五级追踪 | finance / AR/AP 核销与坏账（A1.3 UC-FIN-08，1 UC + 坏账状态轴 4 命题） | done |
 
 ## RC 发现追踪（requirement-compliance mission）
 
@@ -90,6 +91,7 @@
 > - **P1-MA2-002 / P1-MA2-009**（多币种 P2P/O2C 本位币凭证路径 + 收款核销汇兑损益）：本 RC A1.1 切片 UC-FIN-12 断言①引用（FX 折算主题），不重复登记。注：P1-MA2-002/009 已 resolved（plan 2026-07-29-2322-2，VoucherFact 双字段迁移 + persistVoucher 忠实写入），但**通用模板 Provider 路径**（`ErpFinTemplateAcctDocProvider`）仍为单币种回退（amountSource=amountFunctional），P1-MA3-039 维持，本切片 P1-RC-002（守卫）独立成立。
 > - **P1-MA2-084**（A2.16，`ErpFinBudgetControlBiz.aggregateAmount` 实际聚合含 COMMITMENT，等价正确但脆弱）：A2.16 已 fix（控制引擎现三通道分离，`testAvailableDeductsCommitmentSeparately` 强断言 available=500 证实）。本 RC A1.2 切片新发现 **P1-RC-003** 是其**姊妹站点**——**报表** `ErpFinBudgetLineBizModel.getBudgetVsActual`（不同方法/不同类/不同控制点：控制决策 vs 报表展示）未同步修正，仍 `BUDGET OR NOT BUDGET` 把 COMMITMENT 计入 actual + DTO 无 commitmentAmount 字段（UC-FIN-13 断言④ 三列要求未满足）。P1-MA2-084 fix 时未同步修报表，MR1 修复 P1-RC-003 时须与 P1-MA2-084 已落地的三通道分离范式对齐。
 > - **P1-MA2-081 / P1-MA2-082 / P1-MA2-083**（A2.16，承付释放路径族：部分开票全额释放语义 / 采购退货未释放 / AP-AR 冲销后 commitment 未恢复）：本 RC A1.2 切片 UC-FIN-13 断言③ 承付释放路径完整性引用其 MA2 A2.16 行为证据（3+1 接入点齐全 + reject release-on-receive + 重复释放守卫 + 取消后再发票容错），**不重复登记**（不同维度：MA2 释放路径完整性 vs RC 需求契约报表列）。运行时复核无升级。
+> - **A1.3（UC-FIN-08 AR/AP 核销与坏账）零新 finding**：本 RC A1.3 切片（`2026-08-02-1715-rc-ma1-a1-3-finance-f3-arap.md`）对 UC-FIN-08 三条验收标准（核销明细生成 / 累计核销→状态派生 / 应收余额恒等式）+ 坏账 WRITTEN_OFF 状态轴 4 命题（核销/收回/反审核红冲闭环/准备+一致排除）五级追踪，**全部裁定"接受"**（零 P0/P1/P2 新 finding）。MA2 A2.5c 既有 6 项 P2 watch-only（P2-MA2-036/037/038/039/040/041）+ P1-MA2-009 经运行时复核**无升级**（不同维度：状态机/owner-doc-drift/多币种 FX plug vs 需求契约单币种语义）。观察：`DualSideConsistencyChecker.check:52-102` 已存在为只读 reporter（非 auto-repair guard），是否完整关闭 P2-MA2-038 属 audit-remediation 范畴，本 RC 不重开。1 项静态存疑点（`PartnerBalanceUpdater.sumOpen` 对 WRITTEN_OFF 的隐式排除依赖 openAmount=0 不变量）交 MA4 A4.1 运行时展开。
 
 ## P0 发现追踪（即时通道）
 

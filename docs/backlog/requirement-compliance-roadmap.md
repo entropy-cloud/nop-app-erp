@@ -39,7 +39,7 @@
 |---|--------------------------------|--------|-----------|------|-------|
 | A1.1 | **finance-F1 过账引擎与凭证链路**（UC-FIN-01/02/03/04/12/15） | done | `docs/design/finance/use-cases.md` + `posting.md` | 0.2 | `docs/skills/multi-dimensional-audit-prompt.md` |
 | A1.2 | **finance-F2 预算与承付**（UC-FIN-11/13） | done | `docs/design/finance/budget.md` | 0.2 | 同上 |
-| A1.3 | **finance-F3 AR/AP 核销与坏账**（UC-FIN-08） | todo | `docs/design/finance/ar-ap-reconciliation.md` | 0.2 | 同上 |
+| A1.3 | **finance-F3 AR/AP 核销与坏账**（UC-FIN-08） | done | `docs/design/finance/ar-ap-reconciliation.md` | 0.2 | 同上 |
 | A1.4 | **finance-F4 银行对账**（UC-FIN-09/14 标题重复[同为"银行对账与未达账项"]，0.2 清单化时裁决去重） | todo | `docs/design/finance/bank-reconciliation.md` | 0.2 | 同上 |
 | A1.5 | **finance-F5 成本核算**（UC-FIN-10） | todo | `docs/design/finance/costing-methods.md` | 0.2 | 同上 |
 | A1.6 | **finance-F6 期间与结账**（UC-FIN-06/07） | todo | `docs/design/finance/period-close.md` | 0.2 | 同上 |
