@@ -353,6 +353,7 @@ pitest-maven 插件配置（在 erp-*-service 模块的 pom，或经 profile 激
 | —（successor） | 其余 16 域 mutation score 基线（含 hr 0.16） | optimization candidate | 三域基线落盘 + 分类工作流沉淀后扩展；hr 优先级取决于其异常路径测试补强（MA5/MR3）进度 |
 | —（successor） | C-3 per-commit 增量变异测试 | watch-only successor | 三域基线稳定 + 团队 PR 节奏需更快反馈时 |
 | —（successor） | 真实盲区类修复（MR3-style 测试补强 / Q4 故障注入覆盖） | out-of-scope improvement | §4.3 分类工作流产出真实盲区清单后，由 Q4 Phase 2 + 后续测试补强 plan 消费 |
+| —（successor，adjudicated residual） | mfg `excludedTestClasses` workaround 移除（`TestErpMfgWorkOrderEndToEnd` 纳入基线） | 平台级 successor（根因在 nop-entropy，不可在本仓修） | **根因已裁决**（plan `2026-08-02-1500-2`）：平台级非确定性——`OrmTimestampHelper` 用 `CoreMetrics.currentTimeMillis()`（真实墙钟，app 层 `ThreadLocalFrozenClock` 依设计不冻结 `currentTimeMillis`）+ `AutoTestVars` 按捕获计数/按值反查索引易挥发时间戳→同类多次 flush 同毫秒碰撞→`@var:...@updateTime_N` 偶发 `null`→`check-output-fail`。实证非确定（3 次复跑 1 pass/2 fail）。**触发**：nop-entropy 侧任一修复落地——(a) `OrmTimestampHelper` 改用 `currentDateTime()`；(b) `ThreadLocalFrozenClock` 增冻结 `currentTimeMillis` 选项；(c) `AutoTestVars` 对时间戳易挥发字段改按名稳定索引 |
 
 ## 8. 与 Q4 协同接口
 
