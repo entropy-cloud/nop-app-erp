@@ -347,3 +347,22 @@ Q5 的测量确定性（被测路径的**日期/期间数据**不随墙钟漂移
 
 两轮独立子代理审查（不同 task id，fresh cold context）均 **0 BLOCKER / 0 残留 MAJOR**。所有 MAJOR/MINOR 已修订应用。文档结构完整、双 Decision 三要素齐备、无双真相源、owner doc 引用实存且行号准确、测量方法与 CI 门控 Decision 可执行、Q6 数据确定性依赖真实满足。**Phase 1 设计文档审查收敛**，可转 Phase 2 实现 plan 起草。
 
+### 实施期裁决回填（plan `2026-08-02-0650-2` 方差稳定化，2026-08-02）
+
+> Phase 2 首基线（plan `2026-08-02-1121-2`）实测全部 4 路径方差超 §4 阈值，触发 §3.4 路径 C successor hook。本段回填 successor 的逐路径裁决结果，供后续维护者参考。
+
+**§3.4 路径 C 升级结果（JMH 裁决）：JMH 不引入（全部 4 路径）。** Phase 2 实测证据确认 4 路径均为 DB-bound（路径 1/2/3）或 sub-ms（路径 4），无一为 JMH 设计目标的 CPU-bound 微基准。§3.4 line 125（JMH fork 隔离对 DB-bound 路径反效果——每次 fork 重建 DB 连接/warmup 放大冷启动噪声）适用于路径 1/2/3。§4.3 line 176「reclose 最可能 JMH 候选」假设经 Phase 2 实测反转：reclose 每轮 ~2000 H2 查询，本质 DB-I/O-bound 非 CPU-bound（§3.2 line 126 已承认「其本质仍是 DB-heavy」），JMH fork 隔离会放大 H2 冷查询方差。§9 路径 C 升级 successor hook 保留，触发条件 = 未来出现真正 CPU-bound 关键路径（当前 4 路径均不满足）。
+
+**§4 复现性阈值注记（路径 4 度量裁决）：路径 4 改用绝对容差退化检测。** 亚毫秒级报表渲染的 (max−min)/median 方差比度量本质放大绝对抖动（absolute range 0.16-0.90ms），无法靠 scale increase 逃离（聚合多次渲染掩盖单报表异常，§4.4）。§4.4 baseline notes 已确认「绝对计时足够稳定支持 >5x 退化检测」。裁决：方差比保留作**记录度量**（reproducibility record），回归**门控**用绝对 median——nightly `relative-median-diff` 20%（§6.2）天然兼容稳定绝对 median，无需新增门控逻辑。
+
+**逐路径稳定化结果：**
+
+| 路径 | 稳定化策略 | Phase 2 方差 | 稳定化后方差 | 阈值 | 裁决 |
+|------|-----------|-------------|-------------|------|------|
+| 1 凭证过账 | per-round state reset（消除 dataset-growth） | 165.9% | 187.2% | <15% | absolute-tolerance fallback（GC-dominated，median ~31s 稳定） |
+| 2 期间结账 | scale increase（2000→6000 GL 行，逃离 sub-50ms floor） | 43.7% | **5.39%** | <20% | **✅ WITHIN THRESHOLD** |
+| 3 reclose | per-round cost-layer reset + GC hint | 117.2% | 115.0% | <20% | absolute-tolerance fallback（H2 查询方差，median ~649ms 稳定） |
+| 4 报表渲染 | absolute-tolerance metric（sub-ms inherent） | 32-110% | 40-74% | <15% | absolute-tolerance metric（absolute range 0.16-0.90ms） |
+
+**门控可用性结论**：路径 2 稳定化至阈值内；路径 1/3/4 残留方差经裁决 absolute-tolerance fallback（median 稳定，nightly relative-median-diff 20% 有效）。基线对 per-path 回归门控可用——退化检测基于稳定 median，方差比作复现性记录。阻塞门控晋升（§6.2 successor）仍须 ≥30 nightly + runner 同构 + 团队同意。
+
