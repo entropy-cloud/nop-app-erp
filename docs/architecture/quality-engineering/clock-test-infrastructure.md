@@ -41,6 +41,8 @@ ERP 过账链路生产代码已统一通过 nop-entropy 平台 API 获取「今�
 
 > 范围裁决：上述 2 处生产 `LocalDate.now()` 残留登记为 watch-only successor（见 §7），不在 Q6 Phase 2 范围。理由：Q6 的月初翻车税根因在**测试侧未冻结时钟**（§1.4）+ 全局静态并行不安全（§1.2），非生产 `LocalDate.now()`；且改生产代码须独立保护区域评估（会计期间/模板有效期）。但 Phase 2 须在 §4.1 step 4 的 4 模块审计中复核这 2 处是否已被现有测试覆盖（避免遗漏）。
 
+> **闭合回填（2026-08-02，plan `2026-08-02-0650-1`）**：上述 2 处生产 `LocalDate.now()` 残留**已消解**。本期 successor plan 将两处直调替换为 `CoreMetrics.today()`（生产运行时行为零变更——非冻结时 `CoreMetrics.today()` 委托 `DEFAULT_CLOCK` == `LocalDate.now()`；唯一效果是使这两条路径在测试中可被 `ThreadLocalFrozenClock` 冻结为确定性日期），并补 2 个聚焦日期边界测试（`TestErpFinVoucherTemplateActiveByDate` / `TestErpMdCurrencyRefreshRatesDate`）覆盖此前零直接测试的日期敏感分支。闭合核验：`rg -rn "LocalDate\.now\(\)" --glob '*.java' module-finance/erp-fin-service/src/main/java module-master-data/erp-md-service/src/main/java` 返回 0 命中。§7 successor 对应行已翻转为「已闭合」。
+
 ### 1.2 测试侧冻结机制存在，但全局静态并行不安全
 
 冻结机制基类已存在，15 域子类复用：
@@ -404,7 +406,7 @@ per-fork 注册载体（M2 时序约束）
 | R6 | nightly 与 per-commit 漂移 | 接受 | nightly 频率合理，月初税非阻塞 |
 | R7 | 子类静态旁路迁移完整性（15×2 静态 + HR 调用点） | Phase 2 实施约束 | §5 验收 4 grep 闭环校验 |
 | —（successor） | Q6 Phase 2 实现 plan（按路径 C 实施） | out-of-scope（本文档 Phase 1） | 本文档经 ≥2 轮独立审查收敛（§Review Record）+ 技术选型裁决落定（§3.4）→ DRAFT_PLANS 起草 |
-| —（successor） | 生产 `LocalDate.now()` 残留 2 处（finance/master-data） | out-of-scope improvement | 独立生产侧日期硬化计划（触及会计期间/模板有效期保护区域，须独立评估）；触发：Q6 Phase 2 落地后或月初税在同族维度复现时 |
+| —（successor，**已闭合** 2026-08-02） | 生产 `LocalDate.now()` 残留 2 处（finance/master-data） | ~~out-of-scope improvement~~ → 已闭合 | **已由 plan `2026-08-02-0650-1` 消解**：2 处直调替换为 `CoreMetrics.today()` + 2 聚焦日期边界测试（`TestErpFinVoucherTemplateActiveByDate` / `TestErpMdCurrencyRefreshRatesDate`）；§1.1 闭合回填一致。原触发条件（Q6 Phase 2 落地后或月初税在同族维度复现）已满足并闭合。 |
 | —（successor） | C-3 并发 CI 矩阵 | watch-only successor | surefire 实际切 `parallel=methods` / `threadCount>1` 时 |
 | —（successor） | 路径 A 平台 scope API 上游贡献 | out-of-scope improvement | nop-entropy 消费方普遍需要 scoped clock 或本应用异步过账使 thread-local 不足时 |
 
