@@ -104,6 +104,17 @@
             <artifactId>junit-jupiter-params</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--
+            属性测试（MQ Q3，plan 2026-08-02-0650-1 / 设计文档 property-based-testing.md §3.1.1 §6.1）。
+            test scope：P7 资产折旧残值守恒属性 test 需要。同 module-finance/erp-fin-service
+            + module-inventory/erp-inv-service jqwik 注记（1.10.1 兼容 JUnit Jupiter/Platform 6.0.3）。
+        -->
+        <dependency>
+            <groupId>net.jqwik</groupId>
+            <artifactId>jqwik</artifactId>
+            <version>1.10.1</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -127,6 +138,25 @@
 
     <build>
         <plugins>
+            <!--
+                属性 test 类名约定 Property*（设计文档 §6.2）不匹配 surefire 默认 include 模式
+               （Test*/*Test/*Tests/*TestCase），故显式增 **/Property*.java 使 jqwik @Property
+                类经 mvn test 自动拾取（设计文档 §8.1/C-1 contract）。
+                回填：plan 2026-08-02-0650-1 Phase 4 实施期发现。
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                        <include>**/*TestCase.java</include>
+                        <include>**/Property*.java</include>
+                    </includes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>

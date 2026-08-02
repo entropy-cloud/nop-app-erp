@@ -161,6 +161,19 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <excludedGroups>perf</excludedGroups>
+                    <!--
+                        属性 test 类名约定 Property*（设计文档 §6.2）不匹配 surefire 默认 include 模式
+                       （Test*/*Test/*Tests/*TestCase），故显式增 **/Property*.java 使 jqwik @Property
+                        类经 mvn test 自动拾取（设计文档 §8.1/C-1 contract）。
+                        回填：plan 2026-08-02-0650-1 Phase 4 实施期发现。
+                    -->
+                    <includes>
+                        <include>**/Test*.java</include>
+                        <include>**/*Test.java</include>
+                        <include>**/*Tests.java</include>
+                        <include>**/*TestCase.java</include>
+                        <include>**/Property*.java</include>
+                    </includes>
                 </configuration>
             </plugin>
             <plugin>

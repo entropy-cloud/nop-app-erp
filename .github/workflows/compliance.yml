@@ -257,7 +257,7 @@ jobs:
           PY
 
   property-test-coverage:
-    name: MQ Q3 property-test coverage gate (2 domains)
+    name: MQ Q3 property-test coverage gate (3 domains)
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -265,16 +265,20 @@ jobs:
       # C-3 adjudication: introduce (plan 2026-08-02-1400-1 Phase 4 / design doc §8.3-§8.4 C-3).
       # Domain-coverage grep gate mirroring the Q4 fault-injection-coverage paradigm above:
       # resilient to class renames (greps by domain + @Property annotation, not hardcoded class names).
-      # Gate direction: one-way tightening — covered domains must not drop below baseline (2).
-      # Q3 Phase 2 baseline = finance + inventory (P1 debit-credit / P2 cost-layer / P3 budget-commitment).
+      # Gate direction: one-way tightening — covered domains must not drop below baseline.
+      # Q3 Phase 2 baseline (plan 2026-08-02-1400-1) = finance + inventory (P1 debit-credit / P2 cost-layer /
+      # P3 budget-commitment). Q3 successor (plan 2026-08-02-0650-1 Phase 4 CI gate adjudication) expanded to 3
+      # domains: + assets (P7 depreciation-residual). Adjudication: option (X) domain-coverage expansion chosen
+      # over option (Y) @Property-count gate — domain-coverage is resilient to class rename + new property add
+      # (aligns with C-3 paradigm, design doc §8.4); @Property-count is brittle (count changes per new property).
       # Aligns with F8/F15/Q4 architecture: checker=pure reporter, gate logic in CI.
-      - name: Enforce 2-domain property-test coverage
+      - name: Enforce 3-domain property-test coverage
         run: |
           python3 - <<'PY'
           import glob, pathlib, sys
 
-          DOMAINS = ['finance', 'inventory']
-          BASELINE = len(DOMAINS)  # 2 — one-way tightening: actual must not drop below
+          DOMAINS = ['finance', 'inventory', 'assets']
+          BASELINE = len(DOMAINS)  # 3 — one-way tightening: actual must not drop below
           # jqwik @Property annotation is the canonical property-test marker (design doc §3.1.1).
           MARKER = '@Property'
 
