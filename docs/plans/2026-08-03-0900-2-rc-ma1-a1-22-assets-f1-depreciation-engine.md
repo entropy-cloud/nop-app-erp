@@ -1,6 +1,6 @@
 # 2026-08-03-0900-2 rc-ma1-a1-22-assets-f1-depreciation-engine assets-F1 折旧引擎需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-03
 > Mission: requirement-compliance
 > Work Item: A1.22（MA1 需求追踪矩阵审计 — assets-F1 折旧引擎）
@@ -82,54 +82,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-22-assets-f1-depreciation-engine.md`（落盘 §1-§5）
+Status: completed
+Targets: `docs/audits/2026-08-03-0900-2-rc-ma1-a1-22-assets-f1-depreciation-engine.md`（落盘 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-AST-02/07/08 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:31/:116/:131` 验收标准原文；L2 引用 `depreciation-and-posting.md`（§1.2/§1.3 直线法、§五 批量容错、§十 实现约定 `:348` Deferred）+ `state-machine.md`（§1 状态定义、§4 漏提补提，标注"设计参考，冲突以 L1 为准"，注意 salvageValue↔residualValue 词汇漂移、方式A/B 是否 Deferred）；L3 引用 `module-assets/.../DepreciationCalculator.java:<line>` / `ErpAstDepreciationScheduleExecuteDepreciationProcessor` / `ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor` / `DepreciationPostingDispatcher` / `DepreciationAcctDocProvider` / `ErpAstErrors`（含跨域 `IErpFinVoucherBiz`/`IErpFinAccountingPeriodBiz`/`IErpSysNotificationBiz`）；L4 引用 `TestErpAstDepreciation.java#method` / `TestDepreciationCalculator` / `PropertyErpAstDepreciationResidual` / `TestDepreciationPostingFailureAlert`（注明断言强度）；L5 复用 MA2 A2.10 + MA4 + 单测。
+- [x] `Proof` 对 UC-AST-02/07/08 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:31/:116/:131` 验收标准原文；L2 引用 `depreciation-and-posting.md`（§1.2/§1.3 直线法、§五 批量容错、§十 实现约定 `:348` Deferred）+ `state-machine.md`（§1 状态定义、§4 漏提补提，标注"设计参考，冲突以 L1 为准"，注意 salvageValue↔residualValue 词汇漂移、方式A/B 是否 Deferred）；L3 引用 `module-assets/.../DepreciationCalculator.java:<line>` / `ErpAstDepreciationScheduleExecuteDepreciationProcessor` / `ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor` / `DepreciationPostingDispatcher` / `DepreciationAcctDocProvider` / `ErpAstErrors`（含跨域 `IErpFinVoucherBiz`/`IErpFinAccountingPeriodBiz`/`IErpSysNotificationBiz`）；L4 引用 `TestErpAstDepreciation.java#method` / `TestDepreciationCalculator` / `PropertyErpAstDepreciationResidual` / `TestDepreciationPostingFailureAlert`（注明断言强度）；L5 复用 MA2 A2.10 + MA4 + 单测。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-AST-02 直线法公式（已实现 `DepreciationCalculator:63-66`）；②UC-AST-02 残值约束（已实现 `:32-35,70-74`）；③UC-AST-02 凭证借贷（已实现 `DepreciationAcctDocProvider:48-54` 借 6602/贷 1602）；④UC-AST-02 计划迁移+卡片回写（已实现 `ExecuteDepreciationProcessor:91-100`）；⑤#1 UC-AST-07 方式B 当期一次性补提**完全缺失**（grep catchUp/backfill 0 生产匹配，executeDepreciation 每次单月）；⑥#2 UC-AST-07 方式A 反结账补提**未编排**（assets 无 reverseClose 调用）；⑦UC-AST-07 补提凭证归属期间标注（buildEvent voucherDate=businessDate `:119-121`）；⑧UC-AST-08 批量隔离（已实现 `ExecuteBatchDepreciationProcessor:46-53` per-asset try/catch）；⑨#3 UC-AST-08 失败资产无独立重试 API（仅手动重调幂等 + 告警派发 `:74-92`）；⑩#4 UC-AST-08 汇总成功凭证 Deferred（owner doc §十:348 显式 Deferred，复核 §4 三判据）；⑪salvageValue↔residualValue 词汇核对（L1 残值 `use-cases.md:39,40` = code residualValue displayName 残值 `orm.xml:186`，**同概念同术语无 drift**，Phase 1 逐字引用确认）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-AST-02 直线法公式（已实现 `DepreciationCalculator:63-66`）；②UC-AST-02 残值约束（已实现 `:32-35,70-74`）；③UC-AST-02 凭证借贷（已实现 `DepreciationAcctDocProvider:48-54` 借 6602/贷 1602）；④UC-AST-02 计划迁移+卡片回写（已实现 `ExecuteDepreciationProcessor:91-100`）；⑤#1 UC-AST-07 方式B 当期一次性补提**完全缺失**（grep catchUp/backfill 0 生产匹配，executeDepreciation 每次单月）；⑥#2 UC-AST-07 方式A 反结账补提**未编排**（assets 无 reverseClose 调用）；⑦UC-AST-07 补提凭证归属期间标注（buildEvent voucherDate=businessDate `:119-121`）；⑧UC-AST-08 批量隔离（已实现 `ExecuteBatchDepreciationProcessor:46-53` per-asset try/catch）；⑨#3 UC-AST-08 失败资产无独立重试 API（仅手动重调幂等 + 告警派发 `:74-92`）；⑩#4 UC-AST-08 汇总成功凭证 Deferred（owner doc §十:348 显式 Deferred，复核 §4 三判据）；⑪salvageValue↔residualValue 词汇核对（L1 残值 `use-cases.md:39,40` = code residualValue displayName 残值 `orm.xml:186`，**同概念同术语无 drift**，Phase 1 逐字引用确认）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：UC-AST-02 直线法+残值+凭证→**接受**（行为正确，测试强含属性测试）；UC-AST-07 方式B 补提缺失（倾向 **P1**——会计正确性：漏提额不补致累计折旧低估/净值高估，§2 P1①功能实质偏离 + §5 会计正确性无例外）须人工确认范围裁剪；UC-AST-07 方式A 未编排（须人工确认 owner doc 是否 Deferred 范围裁剪，复核 §4 三判据）；UC-AST-08 批量隔离→**接受**（行为正确）；UC-AST-08 失败重试 API→倾向 **P2**（手动幂等可达，watch-only）；UC-AST-08 汇总凭证→复核 §4 三判据（owner doc §十 Deferred 显式标注，复核人工批准证据）；L1↔code 残值术语一致无 drift（不产 finding）。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：UC-AST-02 直线法+残值+凭证→**接受**（行为正确，测试强含属性测试）；UC-AST-07 方式B 补提缺失（倾向 **P1**——会计正确性：漏提额不补致累计折旧低估/净值高估，§2 P1①功能实质偏离 + §5 会计正确性无例外）须人工确认范围裁剪；UC-AST-07 方式A 未编排（须人工确认 owner doc 是否 Deferred 范围裁剪，复核 §4 三判据）；UC-AST-08 批量隔离→**接受**（行为正确）；UC-AST-08 失败重试 API→倾向 **P2**（手动幂等可达，watch-only）；UC-AST-08 汇总凭证→复核 §4 三判据（owner doc §十 Deferred 显式标注，复核人工批准证据）；L1↔code 残值术语一致无 drift（不产 finding）。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-AST-02/07/08 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.10/A4 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#4 有明确分级（非悬空"待查"）；#4 documented simplification 复核结论已记录（满足/不满足 §4 三判据）；UC-AST-07 须人工确认范围裁剪已标注不自决；L1↔code 残值术语一致性已确认（不产 drift finding）
+- [x] 报告 §1-§5 已落盘：UC-AST-02/07/08 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.10/A4 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#4 有明确分级（非悬空"待查"）；#4 documented simplification 复核结论已记录（满足/不满足 §4 三判据）；UC-AST-07 须人工确认范围裁剪已标注不自决；L1↔code 残值术语一致性已确认（不产 drift finding）
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-22-assets-f1-depreciation-engine.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-03-0900-2-rc-ma1-a1-22-assets-f1-depreciation-engine.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` assets 折旧同域同控制点（P1-MA4-013 悬挂 / P1-MA2-089 并发双计 / P1-MA5-011 测试缺口 / P2-MA4-006 copy-paste）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P1-RC-xxx` 列明差异依据。#1 方式B 补提缺失 vs 013（013 是悬挂，本切片是能力完全缺失，不同根因）→ 新建。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` assets 折旧同域同控制点（P1-MA4-013 悬挂 / P1-MA2-089 并发双计 / P1-MA5-011 测试缺口 / P2-MA4-006 copy-paste）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P1-RC-xxx` 列明差异依据。#1 方式B 补提缺失 vs 013（013 是悬挂，本切片是能力完全缺失，不同根因）→ 新建。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）；记录 #4 documented simplification 复核结论（满足三判据则维持 P2 watch-only；不满足则 §4 重新打开为 P1 入 MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）；记录 #4 documented simplification 复核结论（满足三判据则维持 P2 watch-only；不满足则 §4 重新打开为 P1 入 MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如方式A 跨域 finance.reverseClose + ast.executeDepreciation 实际编排可达性及凭证期间效果 / 补提在多漏提期下的实际累计折旧偏差 / 批量隔离在 GL 科目部分缺失场景的实际跳过行为等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如方式A 跨域 finance.reverseClose + ast.executeDepreciation 实际编排可达性及凭证期间效果 / 补提在多漏提期下的实际累计折旧偏差 / 批量隔离在 GL 科目部分缺失场景的实际跳过行为等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-assets-state-machine.md`（折旧 happy path/残值/幂等/并发/批量隔离 PASS + 漏提"技术可达"）+ `2026-07-29-0024-...-code-quality.md`（P1-MA4-013/014 resolved），列明只补的需求视角差异（UC-AST-07 补提能力实质缺失按 Q4(a) 重审 / 批量重试 API 缺失 / 汇总凭证 Deferred 复核 / 词汇漂移）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-assets-state-machine.md`（折旧 happy path/残值/幂等/并发/批量隔离 PASS + 漏提"技术可达"）+ `2026-07-29-0024-...-code-quality.md`（P1-MA4-013/014 resolved），列明只补的需求视角差异（UC-AST-07 补提能力实质缺失按 Q4(a) 重审 / 批量重试 API 缺失 / 汇总凭证 Deferred 复核 / 词汇漂移）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（assets 首个 RC 切片）；既有行（P1-MA4-013/P1-MA2-089）追加 RC 复核注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区（assets 首个 RC 切片）；既有行（P1-MA4-013/P1-MA2-089）追加 RC 复核注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据；#4 复核结论已记录
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据；#4 复核结论已记录
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -139,14 +139,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.22 报告 9 段齐全 + 3 UC 逐矩阵行 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议 + §4 三判据一致；与 rc-requirement-baseline-inventory A1.22 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯 + documented simplification 复核结论可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.22 报告 9 段齐全 + 3 UC 逐矩阵行 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议 + §4 三判据一致；与 rc-requirement-baseline-inventory A1.22 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯 + documented simplification 复核结论可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -158,12 +158,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待完成后填写>
+Status Note: A1.22 切片审计完成。报告 `docs/audits/2026-08-03-0900-2-rc-ma1-a1-22-assets-f1-depreciation-engine.md` 9 段齐全落盘；3 UC（UC-AST-02/07/08）逐 UC 一矩阵行五级追踪完成；finding 登记：1 项新 P1（P1-RC-029 UC-AST-07 方式B 当期一次性补提缺失，会计正确性类 Q4 无例外，须人工确认 product-scope 范围裁剪）+ 2 项新 P2（P2-RC-025 UC-AST-08 独立重试 API watch-only / P2-RC-026 UC-AST-08 汇总凭证 Deferred §4 (i)/(ii) 满足）+ 1 项观察（方式A 未编排，能力存在 P2 watch-only 不单列 finding）+ 1 项不产 finding（残值术语核对无 drift）。arm-index 已更新（新 finding 入 RC 追踪分区 + A1.22 交叉引用注记 + 报告清单）。§8 checker actual vs baseline 实测全 16 规则精确匹配 0 漂移（无生产代码变更）。P0 即时通道未触发。4 项静态存疑点交 MA4 A4.1/A4.2 运行时展开。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计填写>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（closure-audit fresh session，MISSION_DRIVER:2026-08-02-204249-mission-driver，未参与起草/草案审查/执行）
+- Evidence: 独立会话内重新阅读完整计划 + 实仓核验：①报告落盘 `docs/audits/2026-08-03-0900-2-rc-ma1-a1-22-assets-f1-depreciation-engine.md`（54580 bytes，9 段齐全，§1-§9 完整）；②arm-index.md 实测 grep 确认 P1-RC-029 / P2-RC-025 / P2-RC-026 三条新 finding 入对应分区（arm-index.md:150,151,152）+ A1.22 交叉引用注记（:170）+ 报告清单登记（:90，status=done）；③Phase 1/2 全部执行项 `[x]` + Exit Criteria 全 `[x]`；④Closure Gates 8/8 已勾选（含本结束审计门控）；⑤Deferred But Adjudicated 仅含 finding 修复实施（out-of-scope，MR0/MR1 义务）+ UC-AST-07 范围裁剪人工确认（非降级项）；⑥反空心：本计划为只读审计，无代码变更故无未接线代码风险；⑦五点一致：Plan Status=completed / 两 Phase Status=completed / 两 Phase Exit Criteria 全 `[x]` / Closure Gates 全 `[x]` / Closure evidence 实落（本段）；⑧deferred honesty：UC-AST-07 方式B 缺失定级 P1（会计正确性 Q4 无例外）未隐藏于 Deferred，方式A/B 范围裁剪须人工确认已显式标注不自决；⑨Docs sync：本审计产出报告已落 `docs/audits/`，arm-index 已同步（审计无代码变更，无需更新 docs/logs/ 与 docs/architecture/）。审核通过，无阻塞。
 
 Follow-up:
 

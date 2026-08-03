@@ -58,7 +58,7 @@
 | A1.19 | **sales-F2 出库与并发**（UC-SAL-02/03/10） | done | `docs/design/sales/` | 0.2 | 同上 |
 | A1.20 | **sales-F3 退货族**（UC-SAL-04/05/06/07/09） | done | `docs/design/sales/returns.md` | 0.2 | 同上 |
 | A1.21 | **sales-F4 赠品与看板**（UC-SAL-08/12） | done | `docs/design/sales/` + `docs/design/dashboards.md`（全局） | 0.2 | 同上 |
-| A1.22 | **assets-F1 折旧引擎**（UC-AST-02/07/08） | ready | `docs/design/assets/` | 0.2 | 同上 |
+| A1.22 | **assets-F1 折旧引擎**（UC-AST-02/07/08） | done | `docs/design/assets/` | 0.2 | 同上 |
 | A1.23 | **assets-F2 处置**（UC-AST-04/05） | ready | `docs/design/assets/` | 0.2 | 同上 |
 | A1.24 | **assets-F3 资本化/拆分/盘点/维修/看板**（UC-AST-01/03/06/09/10/11/12） | ready | `docs/design/assets/` | 0.2 | 同上 |
 | A1.25 | **inventory-F1 移动单主链与追溯**（UC-INV-01/03/04/05） | ready | `docs/design/inventory/` | 0.2 | 同上 |
