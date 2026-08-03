@@ -168,6 +168,7 @@ Exit Criteria:
 
 - Independent draft review iteration 1: needs revision (ses_03a09865effeGbIWsmv7AUkINI) — SPC chart 扩展已实现(B1)、16 页清单不实(B2)、6 页无执行阶段(B3)、P3 未执行误述(B4)、盘点链引用错误(B5)；已全部修订
 - Independent draft review iteration 2: needs revision (ses_039fd32a4ffeaX2JnxTRus7cIK) — Goals 阶段引用残留（Phase 1/2/4→Phase 1/3 + 16 页覆盖表述）、Infra SPC 近似实现残留；已全部修订
+- Independent draft review iteration 3: accept (ses_039f02656ffeCdgCf0aPpC39Yu) — Goals/Phase 结构一致（3+7+4+2=16 无悬空）、Infra 残留已清、16 页清单贯穿一致、SPC referenceLines/band/markers 表述准确、两轮修订逐条落定；非阻塞注记（Phase 2 Prereqs 未显式列 Phase 0 归类、finance「需新增后端查询」页落地阶段未明写）留实施期
 
 ## Closure Gates
 
