@@ -1,6 +1,6 @@
 # 2026-08-03-1200-1 rc-ma1-a1-24-assets-f3-capitalization-idle-cip-inventory-maintenance-splitmerge-dashboard assets-F3 资本化/闲置/转固/盘点/维修/拆分合并/看板需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-03
 > Mission: requirement-compliance
 > Work Item: A1.24（MA1 需求追踪矩阵审计 — assets-F3 资本化/拆分/盘点/维修/看板）
@@ -77,54 +77,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-24-assets-f3-<slug>.md`（产出 §1-§5）
+Status: completed
+Targets: `docs/audits/2026-08-03-1200-1-rc-ma1-a1-24-assets-f3-capitalization-idle-cip-inventory-maintenance-splitmerge-dashboard.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-AST-01/03/06/09/10/11/12 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/:50/:101/:147/:166/:185/:213` 验收标准原文；L2 引用 `depreciation-and-posting.md` §二/§三/§四、`state-machine.md` §1/§2/§8、`inventory.md` §四/§八、`maintenance.md`、`split-merge.md` §关键业务规则 5、`dashboards.md` §资产看板（标注"设计参考，冲突以 L1 为准"）；L3 引用 `module-assets/.../ErpAstAssetCapitalizationBizModel.java` / `ErpAstAssetCapitalizationProcessor.java` / `ErpAstCipBizModel.java` / `ErpAstCipTransferToAssetProcessor.java` / `ErpAstInventoryBizModel.java` / `ErpAstInventoryProcessor.java` / `ErpAstMaintenanceBizModel.java` / `ErpAstMaintenanceProcessor.java` / `ErpAstSplitBizModel.java` / `ErpAstMergeBizModel.java` / `ErpAstSplitProcessor.java` / `ErpAstMergeProcessor.java` / `ErpAstDashboardBizModel.java`（含行号 + 跨域 `IErpFinVoucherBiz`/`IErpAstDepreciationScheduleBiz`/`IErpSysNotificationBiz`）；L4 引用 `TestErpAst*.java#method`（注明断言强度）；L5 复用 MA2 A2.10/A4.3/A5.4 + E2E。
+- [x] `Proof` 对 UC-AST-01/03/06/09/10/11/12 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/:50/:101/:147/:166/:185/:213` 验收标准原文；L2 引用 `depreciation-and-posting.md` §二/§三/§四、`state-machine.md` §1/§2/§8、`inventory.md` §四/§八、`maintenance.md`、`split-merge.md` §关键业务规则 5、`dashboards.md` §资产看板（标注"设计参考，冲突以 L1 为准"）；L3 引用 `module-assets/.../ErpAstAssetCapitalizationBizModel.java` / `ErpAstAssetCapitalizationProcessor.java` / `ErpAstCipBizModel.java` / `ErpAstCipTransferToAssetProcessor.java` / `ErpAstInventoryBizModel.java` / `ErpAstInventoryProcessor.java` / `ErpAstMaintenanceBizModel.java` / `ErpAstMaintenanceProcessor.java` / `ErpAstSplitBizModel.java` / `ErpAstMergeBizModel.java` / `ErpAstSplitProcessor.java` / `ErpAstMergeProcessor.java` / `ErpAstDashboardBizModel.java`（含行号 + 跨域 `IErpFinVoucherBiz`/`IErpAstDepreciationScheduleBiz`/`IErpSysNotificationBiz`）；L4 引用 `TestErpAst*.java#method`（注明断言强度）；L5 复用 MA2 A2.10/A4.3/A5.4 + E2E。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-AST-01 资本化入账（DRAFT→IN_SERVICE + 入账凭证 + 折旧计划生成，已实现 `ErpAstAssetCapitalizationProcessor:69-74`）；②#1 UC-AST-03 闲置停提（`ASSET_STATUS_IDLE` 零 writer + 无 BizMutation + 折旧引擎仅查 IN_SERVICE——复核 P1-MA2-061 R1.18 doc-only Deferred 是否满足 §4 三判据）；③UC-AST-06 转固（`ErpAstCipBizModel.transferToAsset:106` + 复用资本化链，已实现）；④#3 UC-AST-09 盘点实现偏离（盘盈直接建卡/盘亏 SCRAPPED，owner doc `inventory.md §四/§八` 显式记录偏离——复核是否 L1 允许）；⑤#5 UC-AST-10 维修资本化折旧重算（`recalculateForCapitalizationMaintenance` 加性扩展——复核是否满足 L1"折旧计划调整"语义）；⑥#2 UC-AST-11 拆分合并不可逆（`ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED`——L1 未要求 reverse，确认接受）；⑦UC-AST-11 拆分平衡（PROPORTION_TOLERANCE + max-item residual fix——复核 Σ平衡是否满足 L1）；⑧#4 UC-AST-12 看板行级权限（`loadInServiceAssets:176-181` 无 orgId scope——项目级 P1-MA2-093 覆盖，复核 assets 视角增量）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-AST-01 资本化入账（DRAFT→IN_SERVICE + 入账凭证 + 折旧计划生成，已实现 `ErpAstAssetCapitalizationProcessor:69-74`）；②#1 UC-AST-03 闲置停提（`ASSET_STATUS_IDLE` 零 writer + 无 BizMutation + 折旧引擎仅查 IN_SERVICE——复核 P1-MA2-061 R1.18 doc-only Deferred 是否满足 §4 三判据）；③UC-AST-06 转固（`ErpAstCipBizModel.transferToAsset:106` + 复用资本化链，已实现）；④#3 UC-AST-09 盘点实现偏离（盘盈直接建卡/盘亏 SCRAPPED，owner doc `inventory.md §四/§八` 显式记录偏离——复核是否 L1 允许）；⑤#5 UC-AST-10 维修资本化折旧重算（`recalculateForCapitalizationMaintenance` 加性扩展——复核是否满足 L1"折旧计划调整"语义）；⑥#2 UC-AST-11 拆分合并不可逆（`ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED`——L1 未要求 reverse，确认接受）；⑦UC-AST-11 拆分平衡（PROPORTION_TOLERANCE + max-item residual fix——复核 Σ平衡是否满足 L1）；⑧#4 UC-AST-12 看板行级权限（`loadInServiceAssets:176-181` 无 orgId scope——项目级 P1-MA2-093 覆盖，复核 assets 视角增量）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1 UC-AST-03 闲置 Deferred 复核 P1-MA2-061 §4 三判据——R1.18 resolution 为 owner doc Deferred 标注 only，须核实是否有人工批准痕迹（git log / commit message / 讨论文档），不满足 (i)/(ii) 则按 §4 重新打开为 P1 入 MR1（须人工确认是否 product-scope 范围裁剪）；#3 盘点偏离若有 owner doc 显式记录且 L1 未禁止则倾向 P2；#5 维修重算若语义等价则倾向接受；#2 不可逆性若 L1 无 reverse 要求则接受；#4 看板行级权限若 P1-MA2-093 已覆盖则 watch-only。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1 UC-AST-03 闲置 Deferred 复核 P1-MA2-061 §4 三判据——R1.18 resolution 为 owner doc Deferred 标注 only，须核实是否有人工批准痕迹（git log / commit message / 讨论文档），不满足 (i)/(ii) 则按 §4 重新打开为 P1 入 MR1（须人工确认是否 product-scope 范围裁剪）；#3 盘点偏离若有 owner doc 显式记录且 L1 未禁止则倾向 P2；#5 维修重算若语义等价则倾向接受；#2 不可逆性若 L1 无 reverse 要求则接受；#4 看板行级权限若 P1-MA2-093 已覆盖则 watch-only。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-AST-01/03/06/09/10/11/12 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.10/A4.3/A5.4 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#6 有明确分级（非悬空"待查"）；#1 P1-MA2-061 §4 三判据复核结论已记录（满足/不满足）
+- [x] 报告 §1-§5 已落盘：UC-AST-01/03/06/09/10/11/12 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.10/A4.3/A5.4 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#6 有明确分级（非悬空"待查"）；#1 P1-MA2-061 §4 三判据复核结论已记录（满足/不满足）
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-24-assets-f3-<slug>.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-03-1200-1-rc-ma1-a1-24-assets-f3-capitalization-idle-cip-inventory-maintenance-splitmerge-dashboard.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` assets 同域同控制点（如 P1-MA2-061 IDLE、P2-MA2-061 cancel 死代码、P2-MA1-023/024 状态机 drift）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 列明差异依据。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` assets 同域同控制点（如 P1-MA2-061 IDLE、P2-MA2-061 cancel 死代码、P2-MA1-023/024 状态机 drift）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P0-RC-xxx`/`P1-RC-xxx` 列明差异依据。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）；记录 #1 P1-MA2-061 §4 复核结论（满足三判据则维持 resolved watch-only；不满足则按 §4 重新打开为 P1 入 MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）；记录 #1 P1-MA2-061 §4 复核结论（满足三判据则维持 resolved watch-only；不满足则按 §4 重新打开为 P1 入 MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如资本化折旧计划末期残值修正的实际取值行为、维修资本化重算后折旧计划行 PENDING→EXECUTED 的迁移正确性、拆分 proportion tolerance 在极端比例下的平衡行为等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如资本化折旧计划末期残值修正的实际取值行为、维修资本化重算后折旧计划行 PENDING→EXECUTED 的迁移正确性、拆分 proportion tolerance 在极端比例下的平衡行为等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-assets-state-machine.md`（A2.10 状态机 + P1-MA2-061 IDLE resolved）+ `2026-07-29-0024-...-code-quality.md`（A4.3 代码质量 PASS）+ `2026-07-29-1430-...-test-coverage.md`（A5.4 测试覆盖），列明只补的需求视角差异（UC-AST-03 闲置 Deferred §4 复核 / 盘点偏离 / 维修重算 / 拆分平衡 / 看板行级权限 / 不可逆性）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-assets-state-machine.md`（A2.10 状态机 + P1-MA2-061 IDLE resolved）+ `2026-07-29-0024-...-code-quality.md`（A4.3 代码质量 PASS）+ `2026-07-29-1430-...-test-coverage.md`（A5.4 测试覆盖），列明只补的需求视角差异（UC-AST-03 闲置 Deferred §4 复核 / 盘点偏离 / 维修重算 / 拆分平衡 / 看板行级权限 / 不可逆性）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；既有行（P1-MA2-061）追加 RC 复核注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；既有行（P1-MA2-061）追加 RC 复核注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据；#1 复核结论已记录
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据；#1 复核结论已记录
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -134,14 +134,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.24 报告 9 段齐全 + 7 UC 逐矩阵行 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议 + §4 三判据一致；与 rc-requirement-baseline-inventory A1.24 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯 + documented simplification 复核结论可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.24 报告 9 段齐全 + 7 UC 逐矩阵行 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议 + §4 三判据一致；与 rc-requirement-baseline-inventory A1.24 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯 + documented simplification 复核结论可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -153,11 +153,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 全部 2 个 Phase 执行完成。A1.24 切片审计报告 `docs/audits/2026-08-03-1200-1-rc-ma1-a1-24-assets-f3-capitalization-idle-cip-inventory-maintenance-splitmerge-dashboard.md` 已落盘（9 段齐全，§1-§9）。7 UC 五级追踪矩阵填齐：UC-AST-01 接受 / UC-AST-03 P1（reuse P1-MA2-061 §4 复核倾向重开须人工确认）/ UC-AST-06 接受 / UC-AST-09 接受 on ①②⑤ + P2 on ③④（new P2-RC-028 watch-only）/ UC-AST-10 接受 / UC-AST-11 接受含 caveat（reuse P2-MA1-023 DISPOSED drift）/ UC-AST-12 接受 on ①② + ③ reuse P1-MA2-093。零 P0。arm-index 已更新（A1.24 报告行 + P2-RC-028 finding 行 + A1.24 RC 交叉引用注记）。§4 三判据复核 P1-MA2-061 结论：在"人工批准"意义上不满足（(i) AI 子代理审计 ≠ 人工批准 + (ii) 无人工批准痕迹 + (iii) product-scope 未裁剪）→ 倾向重开 P1 入 MR1，须人工确认 product-scope 是否裁剪 IDLE。纯审计报告（无代码/无 ORM），验证聚焦报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + checker actual vs baseline 实测 + finding 复用/新增裁决可追溯。独立结束审计已由独立子代理执行并通过（见下方 Closure Audit Evidence）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
+- Auditor / Agent: 独立结束审计子代理（closure auditor，fresh session，未起草本计划、未执行任何 Phase item）。本次为 SCRIPT_CHECK_RESULT=FAIL 触发的修正闭环（执行者依规则 12 不得自勾结束审计门控，正确保留为 `[ ]`；本会话以独立审计身份核实后勾选）。
+- Evidence: 6 项语义验证全通过——(1) **Phase 状态/项一致性**：Phase 1/2 全 `Status: completed`，阶段体内零残留 `- [ ]`（执行项 3+7 项 + Exit Criteria 2+3 项全 `[x]`；唯一历史 `- [ ]` 为本结束审计门控，由本独立会话勾选）；(2) **Exit Criteria vs 实时仓库**：报告 `docs/audits/2026-08-03-1200-1-rc-ma1-a1-24-assets-f3-capitalization-idle-cip-inventory-maintenance-splitmerge-dashboard.md` 存在且 §1-§9 9 段齐全（实测 grep）；arm-index.md 实测含 A1.24 报告清单行（`:92`）+ P2-RC-028 finding 行（`:157`）+ A1.24 RC 交叉引用注记段（`:179`）；关键代码断言 rg 复核全 CONFIRMED——`ErpAstConstants.java:67 ASSET_STATUS_IDLE="IDLE"` + `setStatus(*IDLE*)` src/main **零 writer**（rg 零命中）+ 3 read-only guard（`ErpAstValueAdjustmentProcessor:196`/`ErpAstInventoryProcessor:113`/`ErpAstDisposalProcessor:194`）+ `ErpAstSplitProcessor.java:48 PROPORTION_TOLERANCE=0.000001`/`:49 AMOUNT_TOLERANCE=0.01` + `ErpAstSplitReverseApproveProcessor:24 throw ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED` + `ErpAstMergeReverseApproveProcessor:24 throw ERR_AST_MERGE_REVERSE_NOT_SUPPORTED` + `ErpAstDashboardBizModel.java:176-181 loadInServiceAssets()` 仅 `eq("status", IN_SERVICE)` **无 orgId scope**（IServiceContext 收而不用）+ `recalculateForCapitalizationMaintenance` 经 `ErpAstMaintenanceProcessor:96` 实际调用；(3) **Anti-Hollow**：本计划为只读审计（无新代码），交付物=报告 + arm-index 登记，均含逐 UC/逐 finding 的实仓行号 + 三源对照 + 裁决依据，非 `{}`/`return null` 占位；§7 静态存疑点清单 5 项均带"静态结论 + A4.1 运行时展开计划"；(4) **五点一致性**：Plan Status=completed / Phase 1+2 Status=completed / 全 Exit Criteria `[x]` / Closure Gates（本审计后全 `[x]` 8/8）/ Closure 证据（Status Note 具体 + 本审计 evidence）全一致；(5) **Deferred honesty**：`Deferred But Adjudicated` 段诚实登记 finding 修复属 MR0/MR1 successor（Successor Required: yes），#1 UC-AST-03 IDLE P1 未隐藏于 Deferred 而是公开 reuse P1-MA2-061 + 显式标注"须人工确认 product-scope 是否裁剪"（裁剪→§4(iii) 改真相源非降级；未裁剪→P1 强制实现 suspend/resume），P2-RC-028 watch-only 公开登记；零范围内项目降级为 deferred/follow-up；(6) **Docs sync**：`docs/logs/2026/08-03.md` 已更新（5-12 行记录 EXECUTE Phase 1/2 + 产出文件 + bookkeeping + successor），本审计为只读故无 `docs/architecture/` 更新义务。结论：passes closure audit，批准关闭。
 
 Follow-up:
 
