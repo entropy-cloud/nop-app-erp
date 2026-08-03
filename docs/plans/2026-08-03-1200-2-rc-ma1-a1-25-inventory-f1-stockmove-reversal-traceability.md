@@ -1,6 +1,6 @@
 # 2026-08-03-1200-2 rc-ma1-a1-25-inventory-f1-stockmove-reversal-traceability inventory-F1 移动单主链与追溯需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-03
 > Mission: requirement-compliance
 > Work Item: A1.25（MA1 需求追踪矩阵审计 — inventory-F1 移动单主链与追溯）
@@ -71,54 +71,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-25-inventory-f1-stockmove-reversal-traceability.md`（产出 §1-§5）
+Status: completed
+Targets: `docs/audits/2026-08-03-0953-rc-ma1-a1-25-inventory-f1-stockmove-reversal-traceability.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-INV-01/03/04/05 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/:57/:76/:92` 验收标准原文；L2 引用 `state-machine.md` §1/§2/§3、`trace-chain.md` §追溯链模型/场景、`cross-domain.md` §与采购协作/余量校验/与财务协作（标注"设计参考，冲突以 L1 为准"）；L3 引用 `module-inventory/.../ErpInvStockMoveBizModel.java` / `ErpInvStockMoveGenerateMoveProcessor.java` / `ErpInvStockMoveProcessor.java` / `ErpInvStockMoveReverseProcessor.java` / `TraceChainQuery.java` / `StockMoveBookkeeper.java` / `InvPostingDispatcher.java`（含行号 + 跨域 `IErpInvStockMoveBiz` 被调用方）；L4 引用 `TestErpInvStockMove*.java#method`（注明断言强度）；L5 复用 MA2 A2.11/A4.5 + E2E。
+- [x] `Proof` 对 UC-INV-01/03/04/05 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/:57/:76/:92` 验收标准原文；L2 引用 `state-machine.md` §1/§2/§3、`trace-chain.md` §追溯链模型/场景、`cross-domain.md` §与采购协作/余量校验/与财务协作（标注"设计参考，冲突以 L1 为准"）；L3 引用 `module-inventory/.../ErpInvStockMoveBizModel.java` / `ErpInvStockMoveGenerateMoveProcessor.java` / `ErpInvStockMoveProcessor.java` / `ErpInvStockMoveReverseProcessor.java` / `TraceChainQuery.java` / `StockMoveBookkeeper.java` / `InvPostingDispatcher.java`（含行号 + 跨域 `IErpInvStockMoveBiz` 被调用方）；L4 引用 `TestErpInvStockMove*.java#method`（注明断言强度）；L5 复用 MA2 A2.11/A4.5 + E2E。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-INV-01 全链（generateMove idempotent + auto-DONE `GenerateMoveProcessor:28-47` + 余额 += `StockMoveBookkeeper:116-130`，已实现）；②#3 UC-INV-01 不可变流水余额快照（`writeLedger:217` 写 ErpInvStockLedger 含 batchNo——复核 L1"记录数量/单位成本/余额快照"中"余额快照"字段是否存在于 ledger entity）；③#4 UC-INV-01 异步凭证触发（`InvPostingDispatcher.dispatchIfApplicable`——复核是否 post-commit async 即 L1"DONE 发布事件→异步生成"）；④UC-INV-03 冲销（reverse 非状态回退 + 新反向单走 generateMove `ReverseProcessor:33-45`，已实现）；⑤#5 UC-INV-03 reverse businessDate（P2-MA2-028 R6.9 fixed `:51`——复核 HEAD 是否用 original.getBusinessDate()）；⑥UC-INV-03 原流水不可变（反向新增流水，原不删——`StockMoveBookkeeper` ledger 追加不改写）；⑦UC-INV-03 originReturnedMoveId 双向（`buildReverseRequest:47-77` set + `TraceChainQuery.returnTrace:135-162` 反查）；⑧UC-INV-04 forwardTrace（`TraceChainQuery:50-88` BFS + cycle detection + depth guard——已实现）；⑨#1 UC-INV-04 dedicated test 缺失（`TestErpInvStockMoveBizModel` 无 forwardTrace test——复核 P1-MA4-021 R2.14 是否覆盖）；⑩UC-INV-05 returnTrace（`TraceChainQuery:135-162` 双向——已实现）；⑪#2 UC-INV-05 dedicated test 缺失（跨域覆盖经 pur/sal——复核断言强度）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-INV-01 全链（generateMove idempotent + auto-DONE `GenerateMoveProcessor:28-47` + 余额 += `StockMoveBookkeeper:116-130`，已实现）；②#3 UC-INV-01 不可变流水余额快照（`writeLedger:217` 写 ErpInvStockLedger 含 batchNo——复核 L1"记录数量/单位成本/余额快照"中"余额快照"字段是否存在于 ledger entity）；③#4 UC-INV-01 异步凭证触发（`InvPostingDispatcher.dispatchIfApplicable`——复核是否 post-commit async 即 L1"DONE 发布事件→异步生成"）；④UC-INV-03 冲销（reverse 非状态回退 + 新反向单走 generateMove `ReverseProcessor:33-45`，已实现）；⑤#5 UC-INV-03 reverse businessDate（P2-MA2-028 R6.9 fixed `:51`——复核 HEAD 是否用 original.getBusinessDate()）；⑥UC-INV-03 原流水不可变（反向新增流水，原不删——`StockMoveBookkeeper` ledger 追加不改写）；⑦UC-INV-03 originReturnedMoveId 双向（`buildReverseRequest:47-77` set + `TraceChainQuery.returnTrace:135-162` 反查）；⑧UC-INV-04 forwardTrace（`TraceChainQuery:50-88` BFS + cycle detection + depth guard——已实现）；⑨#1 UC-INV-04 dedicated test 缺失（`TestErpInvStockMoveBizModel` 无 forwardTrace test——复核 P1-MA4-021 R2.14 是否覆盖）；⑩UC-INV-05 returnTrace（`TraceChainQuery:135-162` 双向——已实现）；⑪#2 UC-INV-05 dedicated test 缺失（跨域覆盖经 pur/sal——复核断言强度）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1/#2 dedicated 测试缺失若 P1-MA4-021 R2.14 未覆盖 trace chain 专门则倾向 P1（测试断言完全缺失或仅冒烟）；#3 余额快照若 ledger 无对应字段则倾向 P2（次要验收标准未满足）；#4 异步凭证若 dispatch 是同步则倾向 P2（主路径 OK，异步语义弱）；#5 若 HEAD 已 fix 则接受（既有 finding 已 resolved）。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1/#2 dedicated 测试缺失若 P1-MA4-021 R2.14 未覆盖 trace chain 专门则倾向 P1（测试断言完全缺失或仅冒烟）；#3 余额快照若 ledger 无对应字段则倾向 P2（次要验收标准未满足）；#4 异步凭证若 dispatch 是同步则倾向 P2（主路径 OK，异步语义弱）；#5 若 HEAD 已 fix 则接受（既有 finding 已 resolved）。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-INV-01/03/04/05 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.11/A4.5 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#5 有明确分级（非悬空"待查"）
+- [x] 报告 §1-§5 已落盘：UC-INV-01/03/04/05 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.11/A4.5 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#5 有明确分级（非悬空"待查"）
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-25-inventory-f1-stockmove-reversal-traceability.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-03-0953-rc-ma1-a1-25-inventory-f1-stockmove-reversal-traceability.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` inventory 同域同控制点（如 P1-MA4-021 测试覆盖、P2-MA2-028 reverse businessDate、P0-MA2-020 StockBalance UK）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P*-RC-xxx` 列明差异依据。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` inventory 同域同控制点（如 P1-MA4-021 测试覆盖、P2-MA2-028 reverse businessDate、P0-MA2-020 StockBalance UK）后裁决——同根因同控制点 → 复用（追加 RC 注记）；新根因 → 新建 `P*-RC-xxx` 列明差异依据。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）；记录既有 resolved finding（P2-MA2-028/P0-MA2-020）的 HEAD 复核结论。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）；记录既有 resolved finding（P2-MA2-028/P0-MA2-020）的 HEAD 复核结论。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 forwardTrace 在环链/超深链下的 truncated 行为、reverse move 在 available qty 不足时的实际拒绝行为、异步凭证 post-commit 的事务可见性等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 forwardTrace 在环链/超深链下的 truncated 行为、reverse move 在 available qty 不足时的实际拒绝行为、异步凭证 post-commit 的事务可见性等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-inventory-state-machine.md`（A2.11 冲销非回退 + 状态机 PASS）+ `2026-07-29-0430-...-code-quality.md`（A4.5 代码质量 PASS + P1-MA4-021 resolved），列明只补的需求视角差异（forwardTrace/returnTrace dedicated 测试缺失 / 余额快照断言强度 / 异步凭证语义 / reverse businessDate HEAD 复核）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-inventory-state-machine.md`（A2.11 冲销非回退 + 状态机 PASS）+ `2026-07-29-0430-...-code-quality.md`（A4.5 代码质量 PASS + P1-MA4-021 resolved），列明只补的需求视角差异（forwardTrace/returnTrace dedicated 测试缺失 / 余额快照断言强度 / 异步凭证语义 / reverse businessDate HEAD 复核）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；既有行追加 RC 复核注记。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；既有行追加 RC 复核注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -129,14 +129,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.25 报告 9 段齐全 + 4 UC 逐矩阵行 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.25 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.25 报告 9 段齐全 + 4 UC 逐矩阵行 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.25 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -148,7 +148,7 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 已完成（2026-08-03）。A1.25 inventory-F1 移动单主链与追溯需求符合性审计报告已落盘 `docs/audits/2026-08-03-0953-rc-ma1-a1-25-inventory-f1-stockmove-reversal-traceability.md`（9 段齐全）。整体裁决：4 UC（UC-INV-01/03/04/05）全接受，零 P0/零 P1/零新 P2 finding。5 候选缺口经 live-repo HEAD 实测全部 resolved/不成立：#1/#2 dedicated test 计划基线陈旧（HEAD 实仓 `TestErpInvTraceChain.java` 9 方法强覆盖 forward/backward/return/batch + 环检测 + depth guard）；#3 余额快照字段存在（`writeLedger:211-212` + ORM `:299-300` mandatory）；#4 L2↔L3 post-commit 漂移 L1 满足（SP-1 交 MA4）；#5 P2-MA2-028 R6.9 已 fix。5 resolved finding HEAD 复核全确认无回退（P2-MA2-028/P0-MA2-020/P1-MA4-021 范围澄清/P1-MA3-062/P1-MA4-020）。arm-index 已更新（报告清单 + RC 交叉引用注记）。checker 19 规则 actual ≤ baseline 全 ✅（只读审计无回归风险）。
 
 Closure Audit Evidence:
 
@@ -156,4 +156,4 @@ Closure Audit Evidence:
 
 Follow-up:
 
-- finding 修复属 MR0（P0）/MR1（P1 R1.0 → RC-R1.n）实施义务，非本审计计划范围
+- finding 修复属 MR0（P0）/MR1（P1 R1.0 → RC-R1.n）实施义务，非本审计计划范围。本切片零新 finding，故无 MR0/MR1 修复行追加。SP-1（InvPostingDispatcher post-commit 时序边缘风险）+ SP-2（forwardTrace 多分支超深链 truncated 行为）交 MA4 A4.1 运行时展开。
