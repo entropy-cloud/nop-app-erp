@@ -108,10 +108,10 @@
 | **影响域** | 质量 (`module-quality`) |
 | **场景** | X-bar R 图、P 图、U 图等统计过程控制图，含上下控制限、中心线、异常点标记 |
 | **核心交互** | 均值-极差双线图、控制限高亮、异常点自动标记（超出 UCL/LCL 红点）、规则违反指示（7 点同侧等） |
-| **设计文档** | `docs/design/quality/spc-analysis.md` |
-| **Flux 状态** | ❌ Chart 支持基础 bar/line/pie/scatter/area，但 SPC 需要：上下控制限区域填充（UCL/LCL 折线+区域阴影）、规则违反标记、中心线标注。这些是 chart 的增强模式，不是独立渲染器 |
+| **设计文档** | `docs/design/quality/spc.md` |
+| **Flux 状态** | ✅ **已覆盖**（2026-08-03 更新）：`type: "chart"` 支持 line/bar/area 的水平参考线（`referenceLines`：UCL/LCL/CL + 虚线/颜色/标签）、上下限阴影带（`band`）、异常点标记（`markers`，按数据行布尔标志 `dataKey` 或下标 `indices` 挑点，红点突出）。SPC 场景即：折线序列（均值/极差）+ 控制限参考线 + 阴影带 + 失控点标记。文档：`flux-guide/design-patterns/chart.md` |
 | **建议优先级** | **P3** — 质量域专项 |
-| **工作量** | 低 — Chart 扩展，增加控制限配置 + 规则标记 |
+| **工作量** | ~~低 — Chart 扩展~~ **已完成**（2026-08-03，chart 增强：控制限配置 + 规则标记） |
 
 ### 2.7 公式编辑器（Formula / Expression Input）
 
@@ -148,7 +148,7 @@
 | 排班日历 Calendar | **P2** | 3 | ✅ `type: "calendar"`（2026-07-22） | 零—直接使用 | HR 核心 |
 | 条码扫描 Barcode | **P3** | 4 | ✅ `type: "barcode-input"`（scheduling 包内置） | 零—直接使用 | PDA 场景 |
 | 版本对比 Diff | **P3** | 2 | ✅ `type: "diff-view"`（`flux-guide/design-patterns/diff-view.md`） | 零—直接使用 | 合同/B2B 专项 |
-| SPC 控制图 | **P3** | 1 | 🔶 Chart 需增强 | 低 | 质量专项 |
+| SPC 控制图 | **P3** | 1 | ✅ `type: "chart"` 增强（2026-08-03：referenceLines/band/markers） | 零—直接使用 | 质量专项 |
 | 公式编辑器 Formula | **P4** | 2 | ❌ 需新建 | 中 | 低频配置 |
 | 工单进度仪表板 | **P3** | 1 | 🔶 可组合现有 | 低 | 制造专项 |
 

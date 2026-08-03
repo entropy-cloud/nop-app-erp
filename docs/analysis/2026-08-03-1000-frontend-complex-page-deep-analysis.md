@@ -47,8 +47,8 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 | `layoutControl="tabs"` | 15 | form 内 tabs 分组（主单据/档案） |
 | `sub-grid-edit` | 60 | 子表行内编辑（头行单据） |
 | `sub-grid-view` | 73 | 子表只读视图 |
-| `actionType="drawer"` | 69 | 关联 drawer（35 个引用 ref-* page.yaml + voucher-by-bill×9 + bills-by-voucher） |
-| `gen-control` | 133 | 自定义列渲染（手写层全量 337 个块；status/docStatus/approveStatus 字典色块为主流用法，见 `analysis/gen-control-classification-audit.md`） |
+| `actionType="drawer"` | 69 | 关联 drawer（35 个 ref 页被 19 个 view.xml 接线 + voucher-by-bill×9 + bills-by-voucher） |
+| `gen-control` | 133 | 自定义列渲染（手写层 `<gen-control>` 元素块 337 个；status/docStatus/approveStatus 字典色块为主流用法。注意 `gen-control-classification-audit.md` 中的「337」为 966 总块的 C 类口径，数值相同、含义不同） |
 | `onEvent` | 24 | 行内自动推算/联动交互（ErpFinVoucherLine 9 处、ErpMdMaterial 6 处、ErpFinReconciliation 等） |
 | tree-list / `@TreeChildren` | 4 | 树形主数据（ErpMdMaterialCategory/ErpMdSubject/ErpHrDepartment/ErpCsServiceCatalogItem） |
 | `<pages><tabs>`（view.xml 层） | 3 | 机制 B 生产先例：ErpAstAsset:170 / ErpMntEquipment:235 / ErpHrEmployee:395（`mountOnEnter` + 多 simple/crud 子页）；整页 `type: tabs` 仅 notify inbox 一例 |
@@ -128,7 +128,7 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 
 **F. view.xml 层复杂视图（15 tabs + 60 子表对 + 4 树形）**：
 
-- tabs 视图 15：ErpPurOrder/ErpSalOrder/ErpInvStockMove/ErpMfgWorkOrder/ErpFinVoucher/ErpFinVoucherTemplate/ErpHrEmployee/ErpAstAsset/ErpMntEquipment/ErpPrjProject/ErpQaInspection/ErpQaNonConformance/ErpCrmLead/ErpCsTicket/ErpCtContract
+- tabs 视图 15：ErpPurOrder/ErpSalOrder/ErpInvStockMove/ErpMfgWorkOrder/ErpFinVoucher/ErpFinVoucherTemplate/ErpHrEmployee/ErpAstAsset/ErpMntEquipment/ErpPrjProject/ErpQaInspection/ErpQaNonConformance/ErpCrmLead/ErpCsTicket/ErpCtContract（60 个 sub-grid-edit 文件实为 67 个子表块）
 - 树形 4：ErpMdMaterialCategory、ErpMdSubject、ErpHrDepartment、ErpCsServiceCatalogItem
 
 ### 3.3 设计-实现对应矩阵（摘要）
@@ -143,6 +143,7 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 | 甘特图（§8.7） | ✅ 落地（只读，拖拽=Non-Goal） | `aps/dashboard/schedule-gantt.page.yaml` |
 | BOM 树（§8.8） | ✅ 落地 | `mfg/dashboard/bom-tree.page.yaml` |
 | 薪酬审批汇总页（§8.9） | ✅ 落地 | `hr/dashboard/payroll-approval.page.yaml` |
+| sales 价格清单/价格规则 | ⚠️ 薄页包装（实体目录外同名薄页），无深度交互 | `sal/pages/{pricing-rule,sales-price-list}/main.page.yaml` |
 | 合同版本 diff（§8.10） | ✅ 落地（元数据对比 + content 并排，字段级 diff 数据缺失降级） | `ct/dashboard/version-diff.page.yaml` |
 | drp 净需求报表（§8.11） | ✅ 落地 | `drp/dashboard/net-requirement.page.yaml` |
 | ASN 流程条（§8.12） | ✅ 落地（4 值字典为准） | `b2b/dashboard/asn-flow.page.yaml` |
@@ -168,7 +169,7 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 - **设计文档**：`docs/design/page-structure-patterns.md` §5（wizard 范式：select 置于 page body 共享 scope、预渲染 HTML 步骤指示器、`actionType:ajax` + reload、adaptor 探测 errors）；`docs/design/finance/period-close.md`（8 步概念）；`docs/design/finance/ui-patterns.md`（结账入口）
 - **实现**：`module-finance/erp-fin-web/.../pages/period-close-wizard/main.page.yaml`（416 行）
 - **复杂度特征**：零后端 delta 编排 4 个 @BizMutation；反结账 dialog 内二次确认（红冲影响预览）；年度结转仅 12 月可见（visibleOn 分支）；per-module 关账状态卡（arStatus/apStatus/invStatus/glStatus/assetStatus）
-- **关注点**：财务保护区域；`@BizQuery` 复杂返回必须显式 field selection；`hasIssues()` 等 has* 方法不被暴露为 GraphQL 字段（§5 反模式表）；12 月分支与年度结转联动是回归高发区
+- **关注点**：财务保护区域；`@BizQuery` 复杂返回必须显式 field selection；`hasIssues()` 等 has* 方法不被暴露为 GraphQL 字段（§5 反模式表）；12 月分支与年度结转联动是回归高发区；**反结账/反审核属高危操作，按钮可见性与确认流受 `docs/design/roles-and-permissions.md` 高危操作权限表约束**（需管理员或额外审批），前端 visibleOn 仅预拦截
 
 ### 4.2 finance：凭证录入 / 凭证模板 / 凭证↔单据联查
 
@@ -197,18 +198,18 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 ### 4.6 hr：组织架构图 / 薪酬审批 / 休假矩阵 / 员工档案
 
 - **设计文档**：`page-structure-patterns.md` §3（机制 B 员工档案 5 tab drawer + `mountOnEnter=true`/`unmountOnExit=false` 懒加载）、§8.9（薪酬审批：实体无 departmentId 用 orgId 分组、`filter_<field>` 简写不支持的 QueryBean 裁决）；`non-standard-views-patterns.md` §4.3（矩阵日历 custom table）；`human-resource/ui-patterns.md`
-- **实现**：`ref-employee.page.yaml`、`hr/dashboard/org-chart.page.yaml`（145 行，**AMIS tree 渲染器降级为 each+tpl 缩进**）、`payroll-approval.page.yaml`（208 行）、`team-vacation-calendar.page.yaml`、`ErpHrEmployee.view.xml`（6 tab 含敏感字段隐藏）
+- **实现**：`ErpHrEmployee.view.xml`（6 tab 含敏感字段隐藏，机制 B pages 级 tabs :395）、`hr/dashboard/org-chart.page.yaml`（145 行，**AMIS tree 渲染器降级为 each+tpl 缩进**）、`payroll-approval.page.yaml`（208 行）、`team-vacation-calendar.page.yaml`（注：`ref-employee.page.yaml` 为死文件，见 §6.1）
 - **关注点**：org-chart 是「设计用 AMIS tree、实现降级缩进列表」的代表——视觉差距最大；薪酬审批 `query:{limit:2000}` + 客户端过滤对大数据量有性能上限（successor 需后端 @BizQuery 聚合）
 
 ### 4.7 crm：商机看板 / 活动日历 / 时间线（F13 组件降级集中区）
 
-- **设计文档**：`non-standard-views-patterns.md` §2.2（动态列看板 service+each+每阶段 crud）、§3（原生 timeline 裁决）、§4.2（原生 calendar 裁决）；§5（mutation 契约：`ErpCrmLeadBizModel:84` moveStage + LeadProcessor 守卫）
+- **设计文档**：`non-standard-views-patterns.md` §2.2（动态列看板 service+each+每阶段 crud）、§3（原生 timeline 裁决）、§4.2（原生 calendar 裁决）；§5（mutation 契约：`ErpCrmLeadBizModel:105` moveStage + LeadProcessor 守卫）
 - **实现**：`opportunity-kanban.page.yaml`、`ErpCrmActivity/timeline.page.yaml`（83 行）、`ErpCrmActivity/calendar.page.yaml`（103 行）
 - **关注点**：**三处实现期组件降级未在范式文档中回填**——① crm 活动时间线与 ② cs 工单操作时间线：原生 `type: timeline` prop 契约经 service scope 失败，降级 each+tpl（cs 文件头注释明确记载「同 crm activity-timeline」）；③ crm 活动日历：原生 `type: calendar` React 渲染报错（Minified React error #130），降级按日分组卡片网格。`non-standard-views-patterns.md` §3.1/§4.1 仍宣称原生组件直接可用，与实现证据冲突，属**文档漂移**（见 §6.4）
 
 ### 4.8 cs：工单看板（6 列 + SLA）与客服绩效看板
 
-- **设计文档**：`non-standard-views-patterns.md` §2.2（6 列固定、SLA 超时 🔴 tpl、NEW 列 bg-warning-subtle）；§5.1（`ErpCsTicketBizModel:109-242` assign/start/resolve/close/reopen/cancel）；`customer-service/ui-patterns.md`
+- **设计文档**：`non-standard-views-patterns.md` §2.2（6 列固定、SLA 超时 🔴 tpl、NEW 列 bg-warning-subtle）；§5.1（`ErpCsTicketBizModel` assign/start/resolve/close/reopen/cancel 六态 mutation，行号以范式文档为准）；`customer-service/ui-patterns.md`
 - **实现**：`ErpCsTicket/kanban.page.yaml`（317 行，YAML anchor `&ticketApiTpl` 复用 6 列 API 定义）
 - **关注点**：SLA 违约 close 需 remark 的后端守卫与前端 dialog 的契约一致性；看板列数 = 字典值，字典变更会静默影响列结构
 
@@ -255,7 +256,7 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 | A1 单表 CRUD | ~85% 页面（352 view.xml 的大多数） | B1 单实体 | 完全模板化 |
 | A2 头行单据 | 15 tabs + 60 sub-grid-edit 对 | B2 随头提交（ORM cascade） | 「标准 ERP 单据页」= 最高价值抽象 |
 | A3 主从分屏 | 无（`crud.layoutMode="bottom-detail"` 平台休眠钩子未接线） | B6 | **布局缺口**，详见 §6.2 |
-| A4 tabs 工作台 | 15 form 级 tabs + inbox 页级 tabs + 3 ref drawer | B2/B5 | 页级 tabs 仅 1 个 page.yaml 实现 |
+| A4 tabs 工作台 | 15 form 级 tabs + 3 view.xml pages 级 tabs（AstAsset/MntEquipment/ErpHrEmployee）+ inbox 整页 tabs | B2/B5 | 机制 B 两形态均有先例 |
 | A5 树形 | 4 实体 | B1 | tree-list 三件套标准 |
 | A6 看板 | 3 kanban（prj/cs/crm） | B8 状态机写 | 拖拽降级为列式 crud + row-action |
 | A7 时间线/日历/甘特 | 2 timeline + 2 calendar + 1 gantt | B8/只读 | **3/5 组件级实现期降级**（timeline×2、calendar×1） |
@@ -268,8 +269,9 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 **关键洞察**：
 
 1. **12 布局中 11 种已有实现实例**，唯一零落地的是 A3 主从分屏（`layoutMode="bottom-detail"` 平台钩子未接线，见 `2026-07-31-1000` §8.3 方案 4）。
-2. **复杂度收敛**：30 个真实复杂页面中，A10 drawer + A2 头行 + A8 看板三类占绝对多数，与模式目录「标准 ERP 单据页模板覆盖半数页面」的判断一致。
-3. **组件级降级是最大实现风险面**：7 个 F13 页面中有 5 个做了组件降级（timeline/calendar/org-chart/树），其中 2 处降级（crm timeline/calendar）未回填范式文档。
+2. **复杂度收敛**：30 个核心复杂页面（A+B+C+D）中，A8 看板（11）+ B 特殊页（10）+ A6 看板（3）+ A9 向导（2）占绝大多数，与模式目录「标准 ERP 单据页模板覆盖半数页面」的判断一致（A2 头行/A10 drawer 作为 view.xml 层附属形态另有 60 子表对 + 69 drawer）。
+3. **组件级降级是最大实现风险面**：F13 的 7 个页面中 3 个为**实现期**组件降级（crm timeline / cs timeline / crm calendar），2 个为**设计裁决**降级（kanban 列式、矩阵 table）；加上 hr org-chart 共 4 处实现期降级，其中 3 处（crm/cs timeline、crm calendar）未回填范式文档。
+4. **交互类复杂度未被既有统计捕获**：24 个 onEvent 视图（行内推算/联动）与 133 个 gen-control 是页面「行为复杂度」的另一半，模式目录（A/B 维度）未完全覆盖。
 
 ---
 
@@ -279,8 +281,8 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 
 | 象限 | 页面 | 说明 |
 |---|---|---|
-| ✅ 完整落地 | 15 tabs 视图、60 子表对、3 kanban、2 wizard、11 看板、24 报表、38 ref drawer、三单匹配/BOM 树/甘特/diff 等 10 特殊页 | F12/F13/F16 主体已交付 |
-| ⚠️ 降级实现 | crm timeline（each+tpl）、crm calendar（卡片网格）、hr org-chart（缩进列表）、logistics 追踪（无地图）、合同 diff（无字段级）、aps 甘特（无拖拽） | 多数有文档裁决，2 处文档漂移 |
+| ✅ 完整落地 | 15 tabs 视图、60 子表对、3 kanban、2 wizard、11 看板、24 报表、35 接线 ref drawer（+3 死文件）、三单匹配/BOM 树/甘特/diff 等 10 特殊页 | F12/F13/F16 主体已交付 |
+| ⚠️ 降级实现 | crm/cs timeline（each+tpl）、crm calendar（卡片网格）、hr org-chart（缩进列表）、logistics 追踪（无地图）、合同 diff（无字段级）、aps 甘特（无拖拽） | 多数有文档裁决，3 处文档漂移（见 §6.4） |
 | 🅿️ 占位页面 | 16 个：SPC 三件套、expense-claim/gl-distribution/bank-reconciliation 等财务 7、project-pnl/settlement、cost-center、ncr-disposal、asset-stocktake/repair | 7 行 alert，菜单已挂或未挂 |
 | ❌ 未实现 | 资产处置 3 步向导、库存盘点 3 阶段流程 UI、crm 转化向导、cs 知识库、portal 客户/供应商门户 | 设计存在（ui-patterns/cpq.md/portal/），实现缺失 |
 
@@ -292,7 +294,8 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 4. **voucher-by-bill 跨域引用面最大**（9 drawer）：URL/字段契约变更影响面审计优先级最高
 5. **notify inbox 客户端 JS 过滤**：`findPage` 全量拉取 + 客户端过滤模式在数据量增长后需后端分页支持（inbox-patterns.md 已列反模式）
 6. **A3 主从分屏布局缺口**：`layoutMode="bottom-detail"` 平台钩子未接线（`2026-07-31-1000` §8.3），若未来需要（如银行流水核对）需平台补丁
-7. **party-search 非标准命名**：`main.picker.page.yaml` 与标准 `picker.page.yaml` 不同，工具链/审计脚本可能遗漏
+7. **非标准命名文件**：`party-search/main.picker.page.yaml`（与标准 `picker.page.yaml` 不同）与 `sales/pricing-rule`、`sales/sales-price-list` 等实体目录外同名薄页包装——工具链/审计脚本可能遗漏
+8. **死文件清理**：`ref-employee.page.yaml`、`ref-asset.page.yaml`、`ErpMntEquipment/ref-equipment.page.yaml` 三个 ref 页存在但零引用（机制 B 已改走 view.xml 内嵌 tabs），建议清理或接线
 
 ### 6.3 文档缺口
 
@@ -300,13 +303,14 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 |---|---|---|
 | notify 域无 ui-patterns.md | `2026-07-19` §2.3；`notify/inbox-patterns.md` 仅覆盖收件箱 | 通知模板管理、偏好设置的页面设计仍无 owner 文档 |
 | SPC 独立页交互设计浅 | `quality/spc.md` 偏数据模型，控件层仅分析文档提及 | 落地 SPC 页面前补交互设计（图表下钻/规则配置 UI） |
-| F13 组件降级文档漂移 | `non-standard-views-patterns.md` §3.1/§4.1 宣称原生 timeline/calendar 可用，实现证据相反 | 回填两处实现期裁决（timeline prop 失败 / calendar React #130） |
+| F13 组件降级文档漂移 | `non-standard-views-patterns.md` §3.1/§4.1 宣称原生 timeline/calendar 可用，实现证据相反 | 回填三处实现期裁决（crm/cs timeline prop 失败 + crm calendar React #130） |
 | 看板实现细节无文档 | `dashboards.md` 只定义指标，`view-and-page-strategy.md` §5 只定义取数范式 | 看板三段式 page.yaml 结构可考虑沉淀为范式（复用度 10+ 页） |
+| **page.yaml 层 i18n 空白** | `frontend-ui-roadmap.md` F15：view.xml 层 i18n 已完成（351 文件），但 **page.yaml 无 i18n 机制**（Deferred l10n）——本报告 30 个核心复杂页（向导/看板/收件箱/甘特）恰是 i18n 空白区 | 复杂页硬编码中文文案（title/remark/按钮）未来需 l10n 方案，属横切风险 |
 | portal 仅 placeholder | `portal/README.md`（future extension） | 明确基线外，避免误判为缺口 |
 
 ### 6.4 文档漂移清单（实现与文档冲突，需人工确认）
 
-1. **crm timeline / calendar**：范式文档「原生组件可用」vs 实现「降级 each+tpl / 卡片网格」——最明确的漂移
+1. **crm/cs timeline + crm calendar**：范式文档「原生组件可用」vs 实现「each+tpl / 卡片网格」——最明确的漂移（3 处）
 2. **hr org-chart**：`human-resource/ui-patterns.md` 设计 AMIS tree，实现降级缩进列表
 3. **aps 甘特**：`aps/ui-patterns.md` 设计含拖拽/右键菜单，实现只读（§8.7 已裁决 Non-Goal，但 ui-patterns 未同步标注）
 4. **b2b ASN 五阶段**：`b2b/ui-patterns.md` 若仍写五阶段则为笔误传播（§8.12 已裁决 4 值字典）
@@ -316,14 +320,15 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 ## 7. 结论与建议
 
 1. **项目复杂页面已高度体系化**：12 布局模式中 11 种有实现实例；30 个真实复杂页面均有设计文档支撑（范式文档 + 域 ui-patterns + 分析文档三层覆盖），「先设计后实现」的工作流在 F12/F13/F16 批次得到完整执行。
-2. **复杂度分布符合「少数模式反复组合」判断**：A2 头行单据（75 对子表）+ A10 drawer（69）+ A8 看板（11）+ A12 报表（24）占复杂页面绝大多数，与 `2026-07-31-1000` 的「标准 ERP 单据页模板」高价值抽象结论互相印证。
-3. **风险集中在三类**：① 组件级降级（5 处，其中 2 处文档漂移）；② 占位页面（16 个，SPC 三件套为后端就绪的显著缺口）；③ 高耦合页面（period-close-wizard 保护区域、voucher-by-bill 9 处跨域引用）。
+2. **复杂度分布符合「少数模式反复组合」判断**：A2 头行单据（60 对 sub-grid-edit）+ A10 drawer（69）+ A8 看板（11）+ A12 报表（24）占复杂页面绝大多数，与 `2026-07-31-1000` 的「标准 ERP 单据页模板」高价值抽象结论互相印证。
+3. **风险集中在三类**：① 组件级降级（4 处实现期，其中 3 处文档漂移）；② 占位页面（16 个，SPC 三件套为后端就绪的显著缺口）；③ 高耦合页面（period-close-wizard 保护区域、voucher-by-bill 9 处跨域引用）。
 4. **建议后续动作**（按优先级）：
-   - 回填 2 处 F13 文档漂移（crm timeline/calendar 实现期裁决）
+   - 回填 3 处 F13 文档漂移（crm/cs timeline、crm calendar 实现期裁决）
    - 落地 SPC 独立页（后端完整，可复用质量看板 echarts 范式）
    - 沉淀「看板三段式 page.yaml」与「标准单据页」为模板/范式（复用度最高）
-   - 审计 voucher-by-bill 跨域引用契约
+   - 审计 voucher-by-bill 跨域引用契约；清理 3 个死 ref 页
    - 明确 16 个占位页面与 4 个未实现设计项的去留（成功/取消/延后）
+   - 关注 page.yaml 层 i18n 空白对复杂页的影响（F15 延后项）
 
 ---
 
@@ -338,6 +343,8 @@ nop-app-erp 前端实现遵循「codegen 骨架 + 手写定制」双层结构：
 - `voucher-back-link-patterns.md` — 凭证回链双向导航
 - `picker-patterns.md` / `batch-operation-patterns.md` / `visible-on-patterns.md` / `query-filter-patterns.md` / `field-formatting-patterns.md` / `status-color-map.md` / `date-ranged-validity-pattern.md`
 - `dashboards.md` — 9 域看板指标定义
+- `roles-and-permissions.md` — 高危操作权限表（反审核/反结账守卫）
+- `app-overview.md` — 主要界面/导航模型/菜单权威源
 - `notify/inbox-patterns.md` — 收件箱范式
 - `portal/README.md` — 门户（future placeholder）
 
