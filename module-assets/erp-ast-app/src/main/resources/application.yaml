@@ -16,6 +16,7 @@ nop:
     data-auth-config-path: /erp/ast/auth/app.data-auth.xml
 
   web:
+    render-mode: flux
     validate-page-model: true
 
   orm:
