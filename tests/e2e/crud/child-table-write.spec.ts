@@ -241,7 +241,7 @@ test.describe('sales domain child-table write', () => {
 test.describe('AMIS input-table DOM verification', () => {
   test('ErpPurOrder edit form renders input-table for lines', async ({ page }) => {
     const engine = getEngine();
-    const crud = new CrudListPage(page, { entityRoute: 'ErpPurOrder' }, engine);
+    const crud = new CrudListPage(page, engine, { entityRoute: 'ErpPurOrder' });
 
     await crud.navigate();
     await crud.waitForList();

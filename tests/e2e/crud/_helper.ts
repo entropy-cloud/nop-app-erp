@@ -1,5 +1,5 @@
 import { test, expect, loginAndNavigate } from '../fixtures';
-import { CrudListPage, FormDialog, GraphQLClient, getEngine } from '../pages';
+import { CrudListPage, FormDialog, GraphQLClient, getEngine, getEngineType } from '../pages';
 
 export { test, expect, loginAndNavigate };
 
@@ -15,10 +15,15 @@ export function runCrudListSmoke(opts: CrudSmokeOptions): void {
   test.describe(`${domain} CRUD list/form smoke`, () => {
     test('renders list DOM, add button, GraphQL 200, and add form field', async ({ page }) => {
       const engine = getEngine();
-      const crud = new CrudListPage(page, { entityRoute, domain }, engine);
+      const engineType = getEngineType();
+      const crud = new CrudListPage(page, engine, { entityRoute, domain });
 
+      const rpcResponses: number[] = [];
       const graphqlResponses: number[] = [];
       page.on('response', (resp) => {
+        if (resp.url().includes('/r/')) {
+          rpcResponses.push(resp.status());
+        }
         if (resp.url().includes('/graphql')) {
           graphqlResponses.push(resp.status());
         }
@@ -30,12 +35,22 @@ export function runCrudListSmoke(opts: CrudSmokeOptions): void {
       const addBtn = await crud.getAddButton();
       await expect(addBtn, `${domain}: add button should be visible`).toBeVisible();
 
-      expect(
-        graphqlResponses.length,
-        `${domain}: should have at least one GraphQL call`,
-      ).toBeGreaterThan(0);
-      for (const status of graphqlResponses) {
-        expect(status, `${domain}: GraphQL should return 200`).toBe(200);
+      if (engineType === 'flux') {
+        expect(
+          rpcResponses.length,
+          `${domain}: flux mode should have at least one REST /r/ call`,
+        ).toBeGreaterThan(0);
+        for (const status of rpcResponses) {
+          expect(status, `${domain}: REST /r/ should return 200`).toBe(200);
+        }
+      } else {
+        expect(
+          graphqlResponses.length,
+          `${domain}: should have at least one GraphQL call`,
+        ).toBeGreaterThan(0);
+        for (const status of graphqlResponses) {
+          expect(status, `${domain}: GraphQL should return 200`).toBe(200);
+        }
       }
 
       await addBtn.click({ force: true });
@@ -173,7 +188,7 @@ export function runAmisFormWrite(opts: AmisFormWriteOptions): void {
   test.describe(`${entityName} AMIS form-button write cycle`, () => {
     test('UI add/edit/delete persists (form submit -> list -> row actions)', async ({ page }) => {
       const engine = getEngine();
-      const crud = new CrudListPage(page, { entityRoute: entityName }, engine);
+      const crud = new CrudListPage(page, engine, { entityRoute: entityName });
       const gql = new GraphQLClient(page);
 
       await crud.navigate();

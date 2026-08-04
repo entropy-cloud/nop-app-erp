@@ -186,7 +186,7 @@ test.describe('inventory domain child-table write', () => {
 test.describe('AMIS input-table DOM verification (inventory)', () => {
   test('ErpInvStockMove edit form renders input-table for lines', async ({ page }) => {
     const engine = getEngine();
-    const crud = new CrudListPage(page, { entityRoute: 'ErpInvStockMove' }, engine);
+    const crud = new CrudListPage(page, engine, { entityRoute: 'ErpInvStockMove' });
 
     await crud.navigate();
     await crud.waitForList();

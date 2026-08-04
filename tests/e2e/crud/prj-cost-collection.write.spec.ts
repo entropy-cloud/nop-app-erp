@@ -101,7 +101,7 @@ test.describe('AMIS input-table DOM verification (projects)', () => {
     await loginAndNavigate(page, '/ErpPrjCostCollection-main');
 
     const engine = getEngine();
-    const crud = new CrudListPage(page, { entityRoute: 'ErpPrjCostCollection' }, engine);
+    const crud = new CrudListPage(page, engine, { entityRoute: 'ErpPrjCostCollection' });
 
     const table = engine.table(page);
     await table.waitFor({ state: 'visible', timeout: 30_000 });

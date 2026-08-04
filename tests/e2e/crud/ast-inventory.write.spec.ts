@@ -112,7 +112,7 @@ test.describe('AMIS input-table DOM verification (assets)', () => {
     await loginAndNavigate(page, '/ErpAstInventory-main');
 
     const engine = getEngine();
-    const crud = new CrudListPage(page, { entityRoute: 'ErpAstInventory' }, engine);
+    const crud = new CrudListPage(page, engine, { entityRoute: 'ErpAstInventory' });
 
     const table = engine.table(page);
     await table.waitFor({ state: 'visible', timeout: 30_000 });

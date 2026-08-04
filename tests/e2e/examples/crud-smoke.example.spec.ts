@@ -20,7 +20,7 @@ function runCrudListSmokePageObject(opts: CrudSmokeExampleOptions): void {
 
   test.describe(`${domain} CRUD list/form smoke (PageObject)`, () => {
     test('renders list DOM, add button, GraphQL 200, and add form field', async ({ page, engine }) => {
-      const crud = new CrudListPage(page, { entityRoute, domain }, engine);
+      const crud = new CrudListPage(page, engine, { entityRoute, domain });
 
       const graphqlResponses: number[] = [];
       page.on('response', (resp) => {
