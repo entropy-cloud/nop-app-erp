@@ -56,7 +56,7 @@ URL 格式规范：`/erp/{appName}/pages/{EntityName}/main.page.yaml`
 2. **服务器渲染模式**：`app-erp-all` 的 `application.yaml` 固定 `nop.web.render-mode: flux`，使 `PageProvider__getPage` 对所有页面输出 flux JSON。
 3. **ORM 渲染标记（codegen 持久化的关键）**：每个实体必须带 `ext:web-renderer="flux"`。codegen 模板 `nop-kernel/nop-codegen/.../orm-web/.../_{moduleName}.action-auth.xml.xgen` 按 `objMeta['ext:web-renderer'] == 'flux' ? 'FLUX' : 'AMIS'` 生成菜单资源——缺此属性时 `mvn clean install` 增量 codegen 会把生成式 `_erp-{xx}.action-auth.xml` 重新生成回 AMIS（2026-08-03 实测）。由 `scripts/flip-orm-to-flux.sh` 幂等维护（19 个 orm.xml 全 477 实体），统一构建链 `scripts/rebuild-flux-chain.sh` 在 ERP 构建前自动执行。
 4. **页面模型**：标准 CRUD 页继续由 codegen（`page.yaml`）+ flux-web.xlib 生成器输出 flux JSON；`*.flux.yaml` 双文件回退优先于 `*.page.yaml`。
-5. **AMIS 残留**：29 个手写 AMIS 页（看板/向导/占位页等，清单见 `docs/plans/2026-08-03-1232-1-flux-crud-migration.md`）尚未 flux 化，按计划 1232-2/3/4 重写；重写前其菜单同样标记 `FLUX`，页面渲染失败属已知迁移期状态，处理路径见 `docs/testing/e2e-runbook.md` 的 flux 调试三路径。
+5. **AMIS 残留**：16 占位页已由计划 `2026-08-03-1232-4` 落地（12 页 flux 实现 + 4 页 Deferred 带理由），其余手写 AMIS 页（看板/向导等，清单见 `docs/plans/2026-08-03-1232-1-flux-crud-migration.md`）按计划 1232-2/3 重写；重写前其菜单同样标记 `FLUX`，页面渲染失败属已知迁移期状态，处理路径见 `docs/testing/e2e-runbook.md` 的 flux 调试三路径。
 
 ## 页面数据访问（/r/ REST 约定，强制）
 
