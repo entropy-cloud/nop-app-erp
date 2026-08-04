@@ -122,7 +122,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="EDI 格式配置"
                 name="app.erp.b2b.dao.entity.ErpB2bEdiFormat" registerShortName="true" tableName="erp_b2b_edi_format"
                 tagSet="gid,erp.b2b" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="file-type" i18n-en:displayName="EDI Format">
+                versionProp="version" ext:web-renderer="flux" ext:icon="file-type" i18n-en:displayName="EDI Format">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -177,7 +177,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="EDI 事务"
                 name="app.erp.b2b.dao.entity.ErpB2bEdiDoc" registerShortName="true" tableName="erp_b2b_edi_doc"
                 tagSet="gid,erp.b2b" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="file-text" i18n-en:displayName="EDI Document">
+                versionProp="version" ext:web-renderer="flux" ext:icon="file-text" i18n-en:displayName="EDI Document">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -264,7 +264,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="提前发货通知"
                 name="app.erp.b2b.dao.entity.ErpB2bAsn" registerShortName="true" tableName="erp_b2b_asn"
                 tagSet="gid,erp.b2b" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="truck" i18n-en:displayName="Advanced Shipping Notice">
+                versionProp="version" ext:web-renderer="flux" ext:icon="truck"
+                i18n-en:displayName="Advanced Shipping Notice">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -359,7 +360,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="ASN 明细行"
                 name="app.erp.b2b.dao.entity.ErpB2bAsnLine" registerShortName="true" tableName="erp_b2b_asn_line"
                 tagSet="gid,erp.b2b" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="list" i18n-en:displayName="ASN Line">
+                versionProp="version" ext:web-renderer="flux" ext:icon="list" i18n-en:displayName="ASN Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -421,8 +422,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="内外代码映射"
                 name="app.erp.b2b.dao.entity.ErpB2bCodeMapping" registerShortName="true"
                 tableName="erp_b2b_code_mapping" tagSet="gid,erp.b2b" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="shuffle"
-                i18n-en:displayName="Code Mapping">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="shuffle" i18n-en:displayName="Code Mapping">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -479,7 +480,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="EDI 交互日志"
                 name="app.erp.b2b.dao.entity.ErpB2bEdiLog" registerShortName="true" tableName="erp_b2b_edi_log"
                 tagSet="gid,erp.b2b" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="scroll-text" i18n-en:displayName="EDI Log">
+                versionProp="version" ext:web-renderer="flux" ext:icon="scroll-text" i18n-en:displayName="EDI Log">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -542,8 +543,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="合作伙伴档案"
                 name="app.erp.b2b.dao.entity.ErpB2bPartnerProfile" registerShortName="true"
                 tableName="erp_b2b_partner_profile" tagSet="gid,erp.b2b" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="building"
-                i18n-en:displayName="Partner Profile">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="building" i18n-en:displayName="Partner Profile">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -636,8 +637,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="伙伴凭证"
                 name="app.erp.b2b.dao.entity.ErpB2bPartnerCredential" registerShortName="true"
                 tableName="erp_b2b_partner_credential" tagSet="gid,erp.b2b" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="key"
-                i18n-en:displayName="Partner Credential">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="key" i18n-en:displayName="Partner Credential">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -692,8 +693,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="测试消息交换"
                 name="app.erp.b2b.dao.entity.ErpB2bTestExchange" registerShortName="true"
                 tableName="erp_b2b_test_exchange" tagSet="gid,erp.b2b" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="test-tube"
-                i18n-en:displayName="Test Exchange">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="test-tube" i18n-en:displayName="Test Exchange">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -756,8 +757,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="认证检查清单"
                 name="app.erp.b2b.dao.entity.ErpB2bCertificationChecklist" registerShortName="true"
                 tableName="erp_b2b_certification_checklist" tagSet="gid,erp.b2b" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="clipboard-list"
-                i18n-en:displayName="Certification Checklist">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="clipboard-list" i18n-en:displayName="Certification Checklist">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -813,7 +814,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="MFT 配置"
                 name="app.erp.b2b.dao.entity.ErpB2bMftConfig" registerShortName="true" tableName="erp_b2b_mft_config"
                 tagSet="gid,erp.b2b" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="upload-cloud" i18n-en:displayName="MFT Config">
+                versionProp="version" ext:web-renderer="flux" ext:icon="upload-cloud" i18n-en:displayName="MFT Config">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -919,8 +920,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="MFT 证书"
                 name="app.erp.b2b.dao.entity.ErpB2bMftCertificate" registerShortName="true"
                 tableName="erp_b2b_mft_certificate" tagSet="gid,erp.b2b" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="shield"
-                i18n-en:displayName="MFT Certificate">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="shield" i18n-en:displayName="MFT Certificate">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -995,7 +996,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="MFT 传输日志"
                 name="app.erp.b2b.dao.entity.ErpB2bMftLog" registerShortName="true" tableName="erp_b2b_mft_log"
                 tagSet="gid,erp.b2b" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="activity" i18n-en:displayName="MFT Log">
+                versionProp="version" ext:web-renderer="flux" ext:icon="activity" i18n-en:displayName="MFT Log">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1090,7 +1091,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="ErpMdPartner"
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -1100,7 +1101,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="ErpMdOrganization"
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -1110,7 +1111,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdMaterial" displayName="ErpMdMaterial"
                 name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>

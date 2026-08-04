@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-qa" component="layouts/default/index">
             <children>
                 <resource id="ErpQaAction-main" displayName="纠正预防措施" orderNo="10001"
-                          i18n-en:displayName="Corrective Action" icon="shield-alert" component="AMIS"
+                          i18n-en:displayName="Corrective Action" icon="shield-alert" component="FLUX"
                           resourceType="SUBM" url="/erp/qa/pages/ErpQaAction/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaAction:query" displayName="查询纠正预防措施"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaCalibration-main" displayName="量具校准" orderNo="10004"
-                          i18n-en:displayName="Gauge Calibration" icon="gauge" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Gauge Calibration" icon="gauge" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaCalibration/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaCalibration:query" displayName="查询量具校准"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaInspection-main" displayName="质检单" orderNo="10007" i18n-en:displayName="Inspection"
-                          icon="clipboard-check" component="AMIS" resourceType="SUBM"
+                          icon="clipboard-check" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaInspection/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaInspection:query" displayName="查询质检单"
@@ -53,7 +53,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaInspectionLine-main" displayName="质检单行" orderNo="10010"
-                          i18n-en:displayName="Inspection Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Inspection Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaInspectionLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaInspectionLine:query" displayName="查询质检单行"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaInspectionTemplate-main" displayName="质检模板" orderNo="10013"
-                          i18n-en:displayName="Inspection Template" icon="file-check-2" component="AMIS"
+                          i18n-en:displayName="Inspection Template" icon="file-check-2" component="FLUX"
                           resourceType="SUBM" url="/erp/qa/pages/ErpQaInspectionTemplate/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaInspectionTemplate:query" displayName="查询质检模板"
@@ -81,7 +81,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaInspectionTemplateLine-main" displayName="质检模板行" orderNo="10016"
-                          i18n-en:displayName="Inspection Template Line" icon="list" component="AMIS"
+                          i18n-en:displayName="Inspection Template Line" icon="list" component="FLUX"
                           resourceType="SUBM" url="/erp/qa/pages/ErpQaInspectionTemplateLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaInspectionTemplateLine:query" displayName="查询质检模板行"
@@ -97,7 +97,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaNonConformance-main" displayName="不合格品报告" orderNo="10019"
-                          i18n-en:displayName="Non-Conformance Report" icon="x-circle" component="AMIS"
+                          i18n-en:displayName="Non-Conformance Report" icon="x-circle" component="FLUX"
                           resourceType="SUBM" url="/erp/qa/pages/ErpQaNonConformance/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaNonConformance:query" displayName="查询不合格品报告"
@@ -112,7 +112,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaQualityGoal-main" displayName="质量目标" orderNo="10022"
-                          i18n-en:displayName="Quality Goal" icon="target" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Quality Goal" icon="target" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaQualityGoal/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaQualityGoal:query" displayName="查询质量目标"
@@ -126,7 +126,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaRecall-main" displayName="召回事件" orderNo="10025" i18n-en:displayName="Recall Event"
-                          icon="alert-octagon" component="AMIS" resourceType="SUBM"
+                          icon="alert-octagon" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaRecall/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaRecall:query" displayName="查询召回事件"
@@ -140,7 +140,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaRecallTarget-main" displayName="召回目标" orderNo="10028"
-                          i18n-en:displayName="Recall Target" icon="crosshair" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Recall Target" icon="crosshair" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaRecallTarget/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaRecallTarget:query" displayName="查询召回目标"
@@ -154,7 +154,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaReview-main" displayName="质量评审" orderNo="10031" i18n-en:displayName="Quality Review"
-                          icon="clipboard-list" component="AMIS" resourceType="SUBM"
+                          icon="clipboard-list" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaReview/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaReview:query" displayName="查询质量评审"
@@ -168,7 +168,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaRiskRegister-main" displayName="风险登记" orderNo="10034"
-                          i18n-en:displayName="Risk Register" icon="alert-triangle" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Risk Register" icon="alert-triangle" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaRiskRegister/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaRiskRegister:query" displayName="查询风险登记"
@@ -182,7 +182,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaSamplingPlan-main" displayName="抽样方案" orderNo="10037"
-                          i18n-en:displayName="Sampling Plan" icon="layers" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sampling Plan" icon="layers" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaSamplingPlan/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaSamplingPlan:query" displayName="查询抽样方案"
@@ -196,7 +196,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaSpcCapability-main" displayName="SPC 过程能力分析" orderNo="10040"
-                          i18n-en:displayName="SPC Capability" icon="bar-chart-3" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="SPC Capability" icon="bar-chart-3" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaSpcCapability/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaSpcCapability:query" displayName="查询SPC 过程能力分析"
@@ -210,7 +210,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaSpcChart-main" displayName="SPC 控制图配置" orderNo="10043"
-                          i18n-en:displayName="SPC Chart" icon="activity" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="SPC Chart" icon="activity" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaSpcChart/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaSpcChart:query" displayName="查询SPC 控制图配置"
@@ -224,7 +224,7 @@
                     </children>
                 </resource>
                 <resource id="ErpQaSpcSample-main" displayName="SPC 样本数据" orderNo="10046"
-                          i18n-en:displayName="SPC Sample" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="SPC Sample" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/qa/pages/ErpQaSpcSample/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpQaSpcSample:query" displayName="查询SPC 样本数据"

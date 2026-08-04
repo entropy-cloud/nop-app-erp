@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-sal" component="layouts/default/index">
             <children>
                 <resource id="ErpSalContract-main" displayName="销售合同" orderNo="10001"
-                          i18n-en:displayName="Sales Contract" icon="file-text" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Contract" icon="file-text" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalContract/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalContract:query" displayName="查询销售合同"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalDelivery-main" displayName="销售出库单" orderNo="10004"
-                          i18n-en:displayName="Sales Delivery" icon="package-minus" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Delivery" icon="package-minus" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalDelivery/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalDelivery:query" displayName="查询销售出库单"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalDeliveryLine-main" displayName="销售出库单行" orderNo="10007"
-                          i18n-en:displayName="Sales Delivery Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Delivery Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalDeliveryLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalDeliveryLine:query" displayName="查询销售出库单行"
@@ -53,7 +53,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalInvoice-main" displayName="销售发票" orderNo="10010" i18n-en:displayName="Sales Invoice"
-                          icon="receipt" component="AMIS" resourceType="SUBM"
+                          icon="receipt" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalInvoice/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalInvoice:query" displayName="查询销售发票"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalInvoiceLine-main" displayName="销售发票行" orderNo="10013"
-                          i18n-en:displayName="Sales Invoice Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Invoice Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalInvoiceLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalInvoiceLine:query" displayName="查询销售发票行"
@@ -81,7 +81,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalOrder-main" displayName="销售订单" orderNo="10016" i18n-en:displayName="Sales Order"
-                          icon="receipt" component="AMIS" resourceType="SUBM"
+                          icon="receipt" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalOrder/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalOrder:query" displayName="查询销售订单"
@@ -95,7 +95,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalOrderLine-main" displayName="销售订单行" orderNo="10019"
-                          i18n-en:displayName="Sales Order Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Order Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalOrderLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalOrderLine:query" displayName="查询销售订单行"
@@ -109,7 +109,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalPriceList-main" displayName="销售价格清单" orderNo="10022"
-                          i18n-en:displayName="Sales Price List" icon="tag" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Price List" icon="tag" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalPriceList/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalPriceList:query" displayName="查询销售价格清单"
@@ -123,7 +123,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalPriceListLine-main" displayName="销售价格清单行" orderNo="10025"
-                          i18n-en:displayName="Sales Price List Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Price List Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalPriceListLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalPriceListLine:query" displayName="查询销售价格清单行"
@@ -137,7 +137,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalPricingRule-main" displayName="销售促销规则" orderNo="10028"
-                          i18n-en:displayName="Sales Pricing Rule" icon="percent" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Pricing Rule" icon="percent" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalPricingRule/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalPricingRule:query" displayName="查询销售促销规则"
@@ -151,7 +151,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalQuotation-main" displayName="销售报价单" orderNo="10031"
-                          i18n-en:displayName="Sales Quotation" icon="file-sign" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Quotation" icon="file-sign" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalQuotation/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalQuotation:query" displayName="查询销售报价单"
@@ -165,7 +165,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalQuotationLine-main" displayName="销售报价单行" orderNo="10034"
-                          i18n-en:displayName="Sales Quotation Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Quotation Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalQuotationLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalQuotationLine:query" displayName="查询销售报价单行"
@@ -179,7 +179,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalReceipt-main" displayName="收款单" orderNo="10037" i18n-en:displayName="Receipt"
-                          icon="banknote" component="AMIS" resourceType="SUBM"
+                          icon="banknote" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalReceipt/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalReceipt:query" displayName="查询收款单" i18n-en:displayName="Query Receipt"
@@ -193,7 +193,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalReceiptLine-main" displayName="收款核销行" orderNo="10040"
-                          i18n-en:displayName="Receipt Settlement Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Receipt Settlement Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalReceiptLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalReceiptLine:query" displayName="查询收款核销行"
@@ -209,7 +209,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalReturn-main" displayName="销售退货单" orderNo="10043" i18n-en:displayName="Sales Return"
-                          icon="undo-2" component="AMIS" resourceType="SUBM"
+                          icon="undo-2" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalReturn/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalReturn:query" displayName="查询销售退货单"
@@ -223,7 +223,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSalReturnLine-main" displayName="销售退货单行" orderNo="10046"
-                          i18n-en:displayName="Sales Return Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Sales Return Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/sal/pages/ErpSalReturnLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSalReturnLine:query" displayName="查询销售退货单行"

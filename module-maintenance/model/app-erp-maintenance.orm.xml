@@ -14,7 +14,7 @@
     - appName:        app-erp-mnt
     - entityPackage:  app.erp.mnt.dao.entity
     - 实体类名:        ErpMnt<Entity>     （如 ErpMntEquipment、ErpMntSchedule、ErpMntVisit、ErpMntRequest）
-    - 表名:           erp_mnt_<entity>   （如 erp_mnt_equipment、erp_mnt_schedule、erp_mnt_visit）
+    - 表名:           erp_mnt_<entity ext:web-renderer="flux">   （如 erp_mnt_equipment、erp_mnt_schedule、erp_mnt_visit）
     - 字典命名空间:    erp-mnt/<dict-name>
 
   跨工程依赖：
@@ -116,7 +116,7 @@
 
     <entities>
         <!-- 设备 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntEquipment"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntEquipment"
                 displayName="设备" ext:icon="cog" i18n-en:displayName="Equipment" name="app.erp.mnt.dao.entity.ErpMntEquipment"
                 tableName="erp_mnt_equipment" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -178,7 +178,7 @@
         </entity>
 
         <!-- 设备分类 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
                 displayName="设备分类" ext:icon="folder-tree" i18n-en:displayName="Equipment Category" name="app.erp.mnt.dao.entity.ErpMntEquipmentCategory"
                 tableName="erp_mnt_equipment_category" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -208,7 +208,7 @@
         </entity>
 
         <!-- 维护计划 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntSchedule"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntSchedule"
                 displayName="维护计划" ext:icon="calendar-clock" i18n-en:displayName="Maintenance Schedule" name="app.erp.mnt.dao.entity.ErpMntSchedule"
                 tableName="erp_mnt_schedule" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -246,7 +246,7 @@
         </entity>
 
         <!-- 维护访问 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntVisit"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntVisit"
                 displayName="维护访问" ext:icon="clipboard-check" i18n-en:displayName="Maintenance Visit" name="app.erp.mnt.dao.entity.ErpMntVisit"
                 tableName="erp_mnt_visit" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -308,7 +308,7 @@
         </entity>
 
         <!-- 维护任务 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntVisitTask"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntVisitTask"
                 displayName="维护任务" ext:icon="list-checks" i18n-en:displayName="Maintenance Task" name="app.erp.mnt.dao.entity.ErpMntVisitTask"
                 tableName="erp_mnt_visit_task" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -341,7 +341,7 @@
         </entity>
 
         <!-- 维护请求 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntRequest"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntRequest"
                 displayName="维护请求" ext:icon="life-buoy" i18n-en:displayName="Maintenance Request" name="app.erp.mnt.dao.entity.ErpMntRequest"
                 tableName="erp_mnt_request" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -382,7 +382,7 @@
         </entity>
 
         <!-- 停机记录 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
                 displayName="停机记录" ext:icon="timer-off" i18n-en:displayName="Downtime Entry" name="app.erp.mnt.dao.entity.ErpMntDowntimeEntry"
                 tableName="erp_mnt_downtime_entry" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -418,7 +418,7 @@
         </entity>
 
         <!-- 维护团队 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
                 displayName="维护团队" ext:icon="users" i18n-en:displayName="Maintenance Team" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeam"
                 tableName="erp_mnt_maintenance_team" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -454,7 +454,7 @@
         </entity>
 
         <!-- 维护团队成员 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
                 displayName="维护团队成员" ext:icon="user-round" i18n-en:displayName="Maintenance Team Member" name="app.erp.mnt.dao.entity.ErpMntMaintenanceTeamMember"
                 tableName="erp_mnt_maintenance_team_member" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -486,7 +486,7 @@
         </entity>
 
         <!-- 备件消耗行（维修消耗备件触发 inventory 出库） -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
                 displayName="备件消耗" ext:icon="package-minus" i18n-en:displayName="Spare Part Usage" name="app.erp.mnt.dao.entity.ErpMntSparePartUsage"
                 tableName="erp_mnt_spare_part_usage" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -554,7 +554,7 @@
         </entity>
 
         <!-- 备件消耗行 -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
                 displayName="备件消耗行" ext:icon="list" i18n-en:displayName="Spare Part Usage Line" name="app.erp.mnt.dao.entity.ErpMntSparePartUsageLine"
                 tableName="erp_mnt_spare_part_usage_line" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -594,7 +594,7 @@
         </entity>
 
         <!-- 校准记录（量具/设备校准） -->
-        <entity className="app.erp.mnt.dao.entity.ErpMntCalibration"
+        <entity ext:web-renderer="flux" className="app.erp.mnt.dao.entity.ErpMntCalibration"
                 displayName="校准记录" ext:icon="gauge" i18n-en:displayName="Calibration" name="app.erp.mnt.dao.entity.ErpMntCalibration"
                 tableName="erp_mnt_calibration" tagSet="gid,erp.maintenance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -652,7 +652,7 @@
              平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
              这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
         ============================ -->
-        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -664,7 +664,7 @@
             </columns>
         </entity>
 
-        <entity displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
+        <entity ext:web-renderer="flux" displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_location">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -675,7 +675,7 @@
             </columns>
         </entity>
 
-        <entity displayName="物料分类" name="app.erp.md.dao.entity.ErpMdMaterialCategory"
+        <entity ext:web-renderer="flux" displayName="物料分类" name="app.erp.md.dao.entity.ErpMdMaterialCategory"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material_category">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -685,7 +685,7 @@
             </columns>
         </entity>
 
-        <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
+        <entity ext:web-renderer="flux" displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -696,7 +696,7 @@
             </columns>
         </entity>
 
-        <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -707,7 +707,7 @@
             </columns>
         </entity>
 
-        <entity displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
+        <entity ext:web-renderer="flux" displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_uom">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -718,7 +718,7 @@
             </columns>
         </entity>
 
-        <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
+        <entity ext:web-renderer="flux" displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_warehouse">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -729,7 +729,7 @@
                 <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
             </columns>
         </entity>
-        <entity displayName="资产" name="app.erp.ast.dao.entity.ErpAstAsset"
+        <entity ext:web-renderer="flux" displayName="资产" name="app.erp.ast.dao.entity.ErpAstAsset"
                 notGenCode="true" biz:moduleId="erp/ast" tableName="erp_ast_asset">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />

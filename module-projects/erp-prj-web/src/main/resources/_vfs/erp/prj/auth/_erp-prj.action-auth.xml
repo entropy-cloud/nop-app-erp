@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-prj" component="layouts/default/index">
             <children>
                 <resource id="ErpPrjActivityType-main" displayName="活动类型" orderNo="10001"
-                          i18n-en:displayName="Activity Type" icon="folder" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Activity Type" icon="folder" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjActivityType/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjActivityType:query" displayName="查询活动类型"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjBilling-main" displayName="项目开票" orderNo="10004"
-                          i18n-en:displayName="Project Billing" icon="receipt" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Project Billing" icon="receipt" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjBilling/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjBilling:query" displayName="查询项目开票"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjBillingLine-main" displayName="项目开票行" orderNo="10007"
-                          i18n-en:displayName="Project Billing Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Project Billing Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjBillingLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjBillingLine:query" displayName="查询项目开票行"
@@ -53,7 +53,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjBudget-main" displayName="项目预算" orderNo="10010" i18n-en:displayName="Project Budget"
-                          icon="wallet" component="AMIS" resourceType="SUBM"
+                          icon="wallet" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjBudget/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjBudget:query" displayName="查询项目预算"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjBudgetLine-main" displayName="项目预算行" orderNo="10013"
-                          i18n-en:displayName="Project Budget Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Project Budget Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjBudgetLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjBudgetLine:query" displayName="查询项目预算行"
@@ -81,7 +81,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjCostCollection-main" displayName="项目成本归集" orderNo="10016"
-                          i18n-en:displayName="Project Cost Collection" icon="coins" component="AMIS"
+                          i18n-en:displayName="Project Cost Collection" icon="coins" component="FLUX"
                           resourceType="SUBM" url="/erp/prj/pages/ErpPrjCostCollection/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjCostCollection:query" displayName="查询项目成本归集"
@@ -97,7 +97,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjCostCollectionLine-main" displayName="项目成本归集行" orderNo="10019"
-                          i18n-en:displayName="Project Cost Collection Line" icon="list" component="AMIS"
+                          i18n-en:displayName="Project Cost Collection Line" icon="list" component="FLUX"
                           resourceType="SUBM" url="/erp/prj/pages/ErpPrjCostCollectionLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjCostCollectionLine:query" displayName="查询项目成本归集行"
@@ -113,7 +113,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjMilestone-main" displayName="项目里程碑" orderNo="10022"
-                          i18n-en:displayName="Project Milestone" icon="flag" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Project Milestone" icon="flag" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjMilestone/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjMilestone:query" displayName="查询项目里程碑"
@@ -127,7 +127,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjProject-main" displayName="项目" orderNo="10025" i18n-en:displayName="Project"
-                          icon="briefcase" component="AMIS" resourceType="SUBM"
+                          icon="briefcase" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjProject/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjProject:query" displayName="查询项目" i18n-en:displayName="Query Project"
@@ -141,7 +141,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjProjectPnl-main" displayName="项目损益汇总" orderNo="10028"
-                          i18n-en:displayName="Project PnL" icon="chart-line" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Project PnL" icon="chart-line" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjProjectPnl/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjProjectPnl:query" displayName="查询项目损益汇总"
@@ -155,7 +155,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjProjectSettlement-main" displayName="项目结算单" orderNo="10031"
-                          i18n-en:displayName="Project Settlement" icon="file-invoice-dollar" component="AMIS"
+                          i18n-en:displayName="Project Settlement" icon="file-invoice-dollar" component="FLUX"
                           resourceType="SUBM" url="/erp/prj/pages/ErpPrjProjectSettlement/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjProjectSettlement:query" displayName="查询项目结算单"
@@ -169,7 +169,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjProjectSettlementLine-main" displayName="项目结算明细" orderNo="10034"
-                          i18n-en:displayName="Project Settlement Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Project Settlement Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjProjectSettlementLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjProjectSettlementLine:query" displayName="查询项目结算明细"
@@ -185,7 +185,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjProjectType-main" displayName="项目类型" orderNo="10037"
-                          i18n-en:displayName="Project Type" icon="folder" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Project Type" icon="folder" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjProjectType/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjProjectType:query" displayName="查询项目类型"
@@ -199,7 +199,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjProjectUser-main" displayName="项目成员" orderNo="10040"
-                          i18n-en:displayName="Project Member" icon="users" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Project Member" icon="users" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjProjectUser/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjProjectUser:query" displayName="查询项目成员"
@@ -213,7 +213,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjTask-main" displayName="任务" orderNo="10043" i18n-en:displayName="Task"
-                          icon="list-checks" component="AMIS" resourceType="SUBM"
+                          icon="list-checks" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjTask/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjTask:query" displayName="查询任务" i18n-en:displayName="Query Task"
@@ -227,7 +227,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPrjTimesheet-main" displayName="工时记录" orderNo="10046" i18n-en:displayName="Timesheet"
-                          icon="clock" component="AMIS" resourceType="SUBM"
+                          icon="clock" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjTimesheet/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjTimesheet:query" displayName="查询工时记录"

@@ -176,7 +176,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="物料"
                 name="app.erp.md.dao.entity.ErpMdMaterial" registerShortName="true" tableName="erp_md_material"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="package" i18n-en:displayName="Material">
+                versionProp="version" ext:web-renderer="flux" ext:icon="package" i18n-en:displayName="Material">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -311,8 +311,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="物料报关记录"
                 name="app.erp.md.dao.entity.ErpMdMaterialCustoms" registerShortName="true"
                 tableName="erp_md_material_customs" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="file-text"
-                i18n-en:displayName="Material Customs Declaration">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="file-text" i18n-en:displayName="Material Customs Declaration">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -412,8 +412,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="物料分类"
                 name="app.erp.md.dao.entity.ErpMdMaterialCategory" registerShortName="true"
                 tableName="erp_md_material_category" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="folder-tree"
-                i18n-en:displayName="Material Category">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="folder-tree" i18n-en:displayName="Material Category">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -471,7 +471,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="物料SKU"
                 name="app.erp.md.dao.entity.ErpMdMaterialSku" registerShortName="true" tableName="erp_md_material_sku"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="package-2" i18n-en:displayName="Material SKU">
+                versionProp="version" ext:web-renderer="flux" ext:icon="package-2" i18n-en:displayName="Material SKU">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -550,7 +550,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="往来单位"
                 name="app.erp.md.dao.entity.ErpMdPartner" registerShortName="true" tableName="erp_md_partner"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="users" i18n-en:displayName="Business Partner">
+                versionProp="version" ext:web-renderer="flux" ext:icon="users" i18n-en:displayName="Business Partner">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -635,8 +635,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="往来单位地址"
                 name="app.erp.md.dao.entity.ErpMdPartnerAddress" registerShortName="true"
                 tableName="erp_md_partner_address" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="map-pin"
-                i18n-en:displayName="Partner Address">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="map-pin" i18n-en:displayName="Partner Address">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -687,8 +687,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="往来单位联系人"
                 name="app.erp.md.dao.entity.ErpMdPartnerContact" registerShortName="true"
                 tableName="erp_md_partner_contact" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="contact"
-                i18n-en:displayName="Partner Contact">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="contact" i18n-en:displayName="Partner Contact">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -741,7 +741,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="仓库"
                 name="app.erp.md.dao.entity.ErpMdWarehouse" registerShortName="true" tableName="erp_md_warehouse"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="warehouse" i18n-en:displayName="Warehouse">
+                versionProp="version" ext:web-renderer="flux" ext:icon="warehouse" i18n-en:displayName="Warehouse">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -816,7 +816,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="库位"
                 name="app.erp.md.dao.entity.ErpMdLocation" registerShortName="true" tableName="erp_md_location"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="map-pin" i18n-en:displayName="Location">
+                versionProp="version" ext:web-renderer="flux" ext:icon="map-pin" i18n-en:displayName="Location">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -876,7 +876,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="计量单位"
                 name="app.erp.md.dao.entity.ErpMdUoM" registerShortName="true" tableName="erp_md_uom"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="ruler" i18n-en:displayName="Unit of Measure">
+                versionProp="version" ext:web-renderer="flux" ext:icon="ruler" i18n-en:displayName="Unit of Measure">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -912,8 +912,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="单位换算"
                 name="app.erp.md.dao.entity.ErpMdUoMConversion" registerShortName="true"
                 tableName="erp_md_uom_conversion" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="arrow-left-right"
-                i18n-en:displayName="UoM Conversion">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="arrow-left-right" i18n-en:displayName="UoM Conversion">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -978,7 +978,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="币种"
                 name="app.erp.md.dao.entity.ErpMdCurrency" registerShortName="true" tableName="erp_md_currency"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="coins" i18n-en:displayName="Currency">
+                versionProp="version" ext:web-renderer="flux" ext:icon="coins" i18n-en:displayName="Currency">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1018,7 +1018,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="汇率"
                 name="app.erp.md.dao.entity.ErpMdExchangeRate" registerShortName="true" tableName="erp_md_exchange_rate"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="trending-up" i18n-en:displayName="Exchange Rate">
+                versionProp="version" ext:web-renderer="flux" ext:icon="trending-up" i18n-en:displayName="Exchange Rate">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1077,7 +1077,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="税率"
                 name="app.erp.md.dao.entity.ErpMdTaxRate" registerShortName="true" tableName="erp_md_tax_rate"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="percent" i18n-en:displayName="Tax Rate">
+                versionProp="version" ext:web-renderer="flux" ext:icon="percent" i18n-en:displayName="Tax Rate">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1125,8 +1125,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="结算方式"
                 name="app.erp.md.dao.entity.ErpMdSettlementMethod" registerShortName="true"
                 tableName="erp_md_settlement_method" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="credit-card"
-                i18n-en:displayName="Settlement Method">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="credit-card" i18n-en:displayName="Settlement Method">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1173,7 +1173,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="银行账户"
                 name="app.erp.md.dao.entity.ErpMdBankAccount" registerShortName="true" tableName="erp_md_bank_account"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="land-bank" i18n-en:displayName="Bank Account">
+                versionProp="version" ext:web-renderer="flux" ext:icon="land-bank" i18n-en:displayName="Bank Account">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1226,7 +1226,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="职员"
                 name="app.erp.md.dao.entity.ErpMdEmployee" registerShortName="true" tableName="erp_md_employee"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="user-round" i18n-en:displayName="Employee">
+                versionProp="version" ext:web-renderer="flux" ext:icon="user-round" i18n-en:displayName="Employee">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1290,7 +1290,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="会计科目"
                 name="app.erp.md.dao.entity.ErpMdSubject" registerShortName="true" tableName="erp_md_subject"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="book-open-text" i18n-en:displayName="Accounting Subject">
+                versionProp="version" ext:web-renderer="flux" ext:icon="book-open-text"
+                i18n-en:displayName="Accounting Subject">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1389,7 +1390,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="会计核算表(账套)"
                 name="app.erp.md.dao.entity.ErpMdAcctSchema" registerShortName="true" tableName="erp_md_acct_schema"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="book-up" i18n-en:displayName="Accounting Schema">
+                versionProp="version" ext:web-renderer="flux" ext:icon="book-up" i18n-en:displayName="Accounting Schema">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1465,8 +1466,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="账套科目表"
                 name="app.erp.md.dao.entity.ErpMdAcctSchemaCoa" registerShortName="true"
                 tableName="erp_md_acct_schema_coa" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Chart of Accounts">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Chart of Accounts">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1510,8 +1511,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="科目映射"
                 name="app.erp.md.dao.entity.ErpMdSubjectMapping" registerShortName="true"
                 tableName="erp_md_subject_mapping" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="arrow-right-left"
-                i18n-en:displayName="Subject Mapping">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="arrow-right-left" i18n-en:displayName="Subject Mapping">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1570,7 +1571,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="组织"
                 name="app.erp.md.dao.entity.ErpMdOrganization" registerShortName="true" tableName="erp_md_organization"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="building-2" i18n-en:displayName="Organization">
+                versionProp="version" ext:web-renderer="flux" ext:icon="building-2" i18n-en:displayName="Organization">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1640,7 +1641,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="成本中心"
                 name="app.erp.md.dao.entity.ErpMdCostCenter" registerShortName="true" tableName="erp_md_cost_center"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="chart-pie" i18n-en:displayName="Cost Center">
+                versionProp="version" ext:web-renderer="flux" ext:icon="chart-pie" i18n-en:displayName="Cost Center">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1719,8 +1720,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="供应商准入资格"
                 name="app.erp.md.dao.entity.ErpMdSupplierApproval" registerShortName="true"
                 tableName="erp_md_supplier_approval" tagSet="gid,erp.master-data" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="badge-check"
-                i18n-en:displayName="Supplier Approval (AVL)">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="badge-check" i18n-en:displayName="Supplier Approval (AVL)">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1801,7 +1802,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="系统配置"
                 name="app.erp.md.dao.entity.ErpSysConfig" registerShortName="true" tableName="erp_sys_config"
                 tagSet="gid,erp.master-data" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="settings" i18n-en:displayName="System Config">
+                versionProp="version" ext:web-renderer="flux" ext:icon="settings" i18n-en:displayName="System Config">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>

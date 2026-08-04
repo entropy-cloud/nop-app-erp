@@ -13,7 +13,7 @@
     - appName:        app-erp-mfg
     - entityPackage:  app.erp.mfg.dao.entity
     - 实体类名:        ErpMfg<Entity>
-    - 表名:           erp_mfg_<entity>
+    - 表名:           erp_mfg_<entity ext:web-renderer="flux">
     - 字典命名空间:    erp-mfg/<dict-name>
 
   跨切面公共字段（见 docs/design/domain-design-guidelines.md "单据标准字段约定"）：
@@ -190,7 +190,7 @@
 
     <entities>
         <!-- BOM 头 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgBom"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgBom"
                 displayName="BOM" ext:icon="git-branch" i18n-en:displayName="BOM" name="app.erp.mfg.dao.entity.ErpMfgBom"
                 tableName="erp_mfg_bom" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -230,7 +230,7 @@
         </entity>
 
         <!-- BOM 行 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgBomLine"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgBomLine"
                 displayName="BOM行" ext:icon="list" i18n-en:displayName="BOM Line" name="app.erp.mfg.dao.entity.ErpMfgBomLine"
                 tableName="erp_mfg_bom_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -288,7 +288,7 @@
         </entity>
 
         <!-- BOM 工艺 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgBomOperation"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgBomOperation"
                 displayName="BOM工艺" ext:icon="git-fork" i18n-en:displayName="BOM Operation" name="app.erp.mfg.dao.entity.ErpMfgBomOperation"
                 tableName="erp_mfg_bom_operation" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -327,7 +327,7 @@
         </entity>
 
         <!-- BOM 联副产品 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgBomByproduct"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgBomByproduct"
                 displayName="BOM联副产品" ext:icon="copy" i18n-en:displayName="BOM By-product" name="app.erp.mfg.dao.entity.ErpMfgBomByproduct"
                 tableName="erp_mfg_bom_byproduct" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -372,7 +372,7 @@
         </entity>
 
         <!-- 工艺路线 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgRouting"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgRouting"
                 displayName="工艺路线" ext:icon="route" i18n-en:displayName="Routing" name="app.erp.mfg.dao.entity.ErpMfgRouting"
                 tableName="erp_mfg_routing" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -397,7 +397,7 @@
         </entity>
 
         <!-- 工艺路线工序 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgRoutingOperation"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgRoutingOperation"
                 displayName="工艺路线工序" ext:icon="list-ordered" i18n-en:displayName="Routing Operation" name="app.erp.mfg.dao.entity.ErpMfgRoutingOperation"
                 tableName="erp_mfg_routing_operation" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -434,7 +434,7 @@
         </entity>
 
         <!-- 工作中心 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgWorkcenter"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgWorkcenter"
                 displayName="工作中心" ext:icon="cog" i18n-en:displayName="Work Center" name="app.erp.mfg.dao.entity.ErpMfgWorkcenter"
                 tableName="erp_mfg_workcenter" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -460,7 +460,7 @@
         </entity>
 
         <!-- 工作中心日历/班次（CRP 产能四要素之一：时钟，出勤时段决定负荷上限） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgWorkcenterCalendar"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgWorkcenterCalendar"
                 displayName="工作中心日历" ext:icon="calendar" i18n-en:displayName="Work Center Calendar" name="app.erp.mfg.dao.entity.ErpMfgWorkcenterCalendar"
                 tableName="erp_mfg_workcenter_calendar" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -495,7 +495,7 @@
         </entity>
 
         <!-- 工作中心按产品产能（CRP 产能四要素之一：按产品并行产能/换模/清理/效率） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgWorkcenterCapacity"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgWorkcenterCapacity"
                 displayName="工作中心产能" ext:icon="gauge" i18n-en:displayName="Work Center Capacity" name="app.erp.mfg.dao.entity.ErpMfgWorkcenterCapacity"
                 tableName="erp_mfg_workcenter_capacity" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -532,7 +532,7 @@
         </entity>
 
         <!-- CRP 负荷快照行（workcenter×date 聚合的占用工时/换模工时） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgCrpLoad"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgCrpLoad"
                 displayName="CRP负荷" ext:icon="bar-chart-2" i18n-en:displayName="CRP Load" name="app.erp.mfg.dao.entity.ErpMfgCrpLoad"
                 tableName="erp_mfg_crp_load" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -567,7 +567,7 @@
         </entity>
 
         <!-- 工单 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrder"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgWorkOrder"
                 displayName="工单" ext:icon="factory" i18n-en:displayName="Work Order" name="app.erp.mfg.dao.entity.ErpMfgWorkOrder"
                 tableName="erp_mfg_work_order" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -665,7 +665,7 @@
         </entity>
 
         <!-- 工单行（多产出/多投入，替代单 productId 的弱表达） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine"
                 displayName="工单行" ext:icon="list" i18n-en:displayName="Work Order Line" name="app.erp.mfg.dao.entity.ErpMfgWorkOrderLine"
                 tableName="erp_mfg_work_order_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -720,7 +720,7 @@
         </entity>
 
         <!-- 生产版本（SAP 风格：产品 × BOM × 工艺路线 × 有效期） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgProductionVersion"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgProductionVersion"
                 displayName="生产版本" ext:icon="git-tag" i18n-en:displayName="Production Version" name="app.erp.mfg.dao.entity.ErpMfgProductionVersion"
                 tableName="erp_mfg_production_version" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -765,7 +765,7 @@
         </entity>
 
         <!-- MRP 计划头 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgMrpPlan"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgMrpPlan"
                 displayName="MRP计划" ext:icon="calendar-clock" i18n-en:displayName="MRP Plan" name="app.erp.mfg.dao.entity.ErpMfgMrpPlan"
                 tableName="erp_mfg_mrp_plan" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -804,7 +804,7 @@
         </entity>
 
         <!-- MRP 计划行/计划订单 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgMrpPlanLine"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgMrpPlanLine"
                 displayName="MRP计划行" ext:icon="list" i18n-en:displayName="MRP Plan Line" name="app.erp.mfg.dao.entity.ErpMfgMrpPlanLine"
                 tableName="erp_mfg_mrp_plan_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -853,7 +853,7 @@
         </entity>
 
         <!-- MRP 独立需求 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgMrpDemand"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgMrpDemand"
                 displayName="MRP独立需求" ext:icon="git-pull-request-arrow" i18n-en:displayName="MRP Demand" name="app.erp.mfg.dao.entity.ErpMfgMrpDemand"
                 tableName="erp_mfg_mrp_demand" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -893,7 +893,7 @@
         </entity>
 
         <!-- 需求预测头（运营需求预测：产品×时间桶，仓库维度可选以同时服务 MRP/DRP） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgForecast"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgForecast"
                 displayName="需求预测" ext:icon="chart-line" i18n-en:displayName="Demand Forecast" name="app.erp.mfg.dao.entity.ErpMfgForecast"
                 tableName="erp_mfg_forecast" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -928,7 +928,7 @@
         </entity>
 
         <!-- 需求预测行（materialId 必填；warehouseId 可选——空=产品级 MRP 消费，填=仓级 DRP 消费） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgForecastLine"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgForecastLine"
                 displayName="需求预测行" ext:icon="list" i18n-en:displayName="Demand Forecast Line" name="app.erp.mfg.dao.entity.ErpMfgForecastLine"
                 tableName="erp_mfg_forecast_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -973,7 +973,7 @@
         </entity>
 
         <!-- 领料单头（绑定工单/作业卡，触发库存出库） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgMaterialIssue"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgMaterialIssue"
                 displayName="领料单" ext:icon="package-minus" i18n-en:displayName="Material Issue" name="app.erp.mfg.dao.entity.ErpMfgMaterialIssue"
                 tableName="erp_mfg_material_issue" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1039,7 +1039,7 @@
         </entity>
 
         <!-- 领料单行 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine"
                 displayName="领料单行" ext:icon="list" i18n-en:displayName="Material Issue Line" name="app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine"
                 tableName="erp_mfg_material_issue_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1095,7 +1095,7 @@
         </entity>
 
         <!-- 委外加工单头 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
                 displayName="委外加工单" ext:icon="truck" i18n-en:displayName="Subcontract Order" name="app.erp.mfg.dao.entity.ErpMfgSubcontractOrder"
                 tableName="erp_mfg_subcontract_order" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1179,7 +1179,7 @@
         </entity>
 
         <!-- 委外加工单行 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine"
                 displayName="委外加工单行" ext:icon="list" i18n-en:displayName="Subcontract Order Line" name="app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine"
                 tableName="erp_mfg_subcontract_order_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1218,7 +1218,7 @@
         </entity>
 
         <!-- 标准成本滚算头 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgCostRollup"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgCostRollup"
                 displayName="标准成本滚算" ext:icon="calculator" i18n-en:displayName="Cost Rollup" name="app.erp.mfg.dao.entity.ErpMfgCostRollup"
                 tableName="erp_mfg_cost_rollup" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1256,7 +1256,7 @@
         </entity>
 
         <!-- 标准成本滚算行（按产品汇总 材料成本+人工+制造费用+委外） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgCostRollupLine"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgCostRollupLine"
                 displayName="标准成本滚算行" ext:icon="list" i18n-en:displayName="Cost Rollup Line" name="app.erp.mfg.dao.entity.ErpMfgCostRollupLine"
                 tableName="erp_mfg_cost_rollup_line" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1302,7 +1302,7 @@
         </entity>
 
         <!-- 作业卡 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgJobCard"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgJobCard"
                 displayName="作业卡" ext:icon="credit-card" i18n-en:displayName="Job Card" name="app.erp.mfg.dao.entity.ErpMfgJobCard"
                 tableName="erp_mfg_job_card" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1356,7 +1356,7 @@
         </entity>
 
         <!-- 作业工时记录（按操作员逐条，state-machine.md 引用） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog"
                 displayName="作业工时记录" ext:icon="clock" i18n-en:displayName="Job Card Time Log" name="app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog"
                 tableName="erp_mfg_job_card_time_log" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1401,7 +1401,7 @@
         </entity>
 
         <!-- 标准成本差异记录 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgCostVariance"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgCostVariance"
                 displayName="成本差异记录" ext:icon="bar-chart-2" i18n-en:displayName="Cost Variance" name="app.erp.mfg.dao.entity.ErpMfgCostVariance"
                 tableName="erp_mfg_cost_variance" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1457,7 +1457,7 @@
         </entity>
 
         <!-- 批次追溯记录 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgBatchGenealogy"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgBatchGenealogy"
                 displayName="批次追溯" ext:icon="git-commit" i18n-en:displayName="Batch Genealogy" name="app.erp.mfg.dao.entity.ErpMfgBatchGenealogy"
                 tableName="erp_mfg_batch_genealogy" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1531,7 +1531,7 @@
         <!-- ============================ MRP 仿真引擎（plan 2026-07-22-1000-2；权威：docs/design/manufacturing/simulation-engine.md） ============================ -->
 
         <!-- MRP 仿真场景头 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgMrpScenario"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgMrpScenario"
                 displayName="MRP仿真场景" ext:icon="flask-conical" i18n-en:displayName="MRP Simulation Scenario" name="app.erp.mfg.dao.entity.ErpMfgMrpScenario"
                 tableName="erp_mfg_mrp_scenario" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1569,7 +1569,7 @@
         </entity>
 
         <!-- MRP 仿真场景版本（一次计算快照） -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgMrpScenarioVersion"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgMrpScenarioVersion"
                 displayName="MRP仿真版本" ext:icon="git-branch" i18n-en:displayName="MRP Simulation Version" name="app.erp.mfg.dao.entity.ErpMfgMrpScenarioVersion"
                 tableName="erp_mfg_mrp_scenario_version" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1606,7 +1606,7 @@
         </entity>
 
         <!-- MRP 仿真场景参数变体覆盖 -->
-        <entity className="app.erp.mfg.dao.entity.ErpMfgMrpScenarioParam"
+        <entity ext:web-renderer="flux" className="app.erp.mfg.dao.entity.ErpMfgMrpScenarioParam"
                 displayName="MRP仿真参数" ext:icon="sliders-horizontal" i18n-en:displayName="MRP Simulation Param" name="app.erp.mfg.dao.entity.ErpMfgMrpScenarioParam"
                 tableName="erp_mfg_mrp_scenario_param" tagSet="gid,erp.manufacturing" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1647,7 +1647,7 @@
              平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
              这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
         ============================ -->
-        <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1658,7 +1658,7 @@
             </columns>
         </entity>
 
-        <entity displayName="物料SKU" name="app.erp.md.dao.entity.ErpMdMaterialSku"
+        <entity ext:web-renderer="flux" displayName="物料SKU" name="app.erp.md.dao.entity.ErpMdMaterialSku"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material_sku">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1669,7 +1669,7 @@
             </columns>
         </entity>
 
-        <entity displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
+        <entity ext:web-renderer="flux" displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_uom">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1680,7 +1680,7 @@
             </columns>
         </entity>
 
-        <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
+        <entity ext:web-renderer="flux" displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_warehouse">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1692,7 +1692,7 @@
             </columns>
         </entity>
 
-        <entity displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
+        <entity ext:web-renderer="flux" displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_location">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1703,7 +1703,7 @@
             </columns>
         </entity>
 
-        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1715,7 +1715,7 @@
             </columns>
         </entity>
 
-        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+        <entity ext:web-renderer="flux" displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1727,7 +1727,7 @@
             </columns>
         </entity>
 
-        <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1738,7 +1738,7 @@
                 <column name="creditLimit" code="CREDIT_LIMIT" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Credit Limit' />
             </columns>
         </entity>
-        <entity displayName="批次" name="app.erp.inv.dao.entity.ErpInvBatch"
+        <entity ext:web-renderer="flux" displayName="批次" name="app.erp.inv.dao.entity.ErpInvBatch"
                 notGenCode="true" biz:moduleId="erp/inv" tableName="erp_inv_batch">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1747,7 +1747,7 @@
             </columns>
         </entity>
 
-        <entity displayName="员工" name="app.erp.md.dao.entity.ErpMdEmployee"
+        <entity ext:web-renderer="flux" displayName="员工" name="app.erp.md.dao.entity.ErpMdEmployee"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />

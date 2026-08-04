@@ -49,7 +49,7 @@
 
     <entities>
         <!-- 通知模板 -->
-        <entity className="app.erp.notify.dao.entity.ErpSysNotificationTemplate"
+        <entity ext:web-renderer="flux" className="app.erp.notify.dao.entity.ErpSysNotificationTemplate"
                 displayName="通知模板" ext:icon="bell" i18n-en:displayName="Notification Template" name="app.erp.notify.dao.entity.ErpSysNotificationTemplate"
                 tableName="erp_sys_notification_template" tagSet="gid,erp.notify" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -83,7 +83,7 @@
         </entity>
 
         <!-- 通知实例 -->
-        <entity className="app.erp.notify.dao.entity.ErpSysNotification"
+        <entity ext:web-renderer="flux" className="app.erp.notify.dao.entity.ErpSysNotification"
                 displayName="通知实例" ext:icon="envelope" i18n-en:displayName="Notification" name="app.erp.notify.dao.entity.ErpSysNotification"
                 tableName="erp_sys_notification" tagSet="gid,erp.notify" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -128,7 +128,7 @@
         </entity>
 
         <!-- 通知已读记录 -->
-        <entity className="app.erp.notify.dao.entity.ErpSysNotificationRead"
+        <entity ext:web-renderer="flux" className="app.erp.notify.dao.entity.ErpSysNotificationRead"
                 displayName="通知已读记录" ext:icon="check-square" i18n-en:displayName="Notification Read" name="app.erp.notify.dao.entity.ErpSysNotificationRead"
                 tableName="erp_sys_notification_read" tagSet="gid,erp.notify" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>

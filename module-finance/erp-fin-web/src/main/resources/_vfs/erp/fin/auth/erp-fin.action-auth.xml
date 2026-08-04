@@ -17,7 +17,7 @@
                     <children>
                         <resource id="ErpFinVoucher-main" app:useCases="UC-FIN-01,UC-FIN-02,UC-FIN-12,UC-FIN-03,UC-FIN-04" displayName="会计凭证"
                                   i18n-en:displayName="Accounting Voucher" icon="book-up"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/fin/pages/ErpFinVoucher/main.page.yaml">
                             <children>
                                 <resource id="FNPT:ErpFinVoucher:post" displayName="过账凭证" i18n-en:displayName="Post Voucher"
@@ -32,11 +32,11 @@
                         </resource>
                         <resource id="ErpFinVoucherTemplate-main" app:useCases="UC-FIN-01" displayName="凭证模板"
                                   i18n-en:displayName="Voucher Template" icon="book-template"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/fin/pages/ErpFinVoucherTemplate/main.page.yaml"/>
                         <resource id="ErpFinVoucherBillR-main" app:useCases="UC-FIN-01,UC-FIN-02" displayName="业财回链"
                                   i18n-en:displayName="Voucher Business Link" icon="link"
-                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  component="FLUX" resourceType="SUBM" orderNo="120"
                                   url="/erp/fin/pages/ErpFinVoucherBillR/main.page.yaml"/>
                     </children>
                 </resource>
@@ -46,7 +46,7 @@
                     <children>
                         <resource id="ErpFinAccountingPeriod-main" app:useCases="UC-FIN-06,UC-FIN-07" displayName="会计期间"
                                   i18n-en:displayName="Accounting Period" icon="calendar"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/fin/pages/ErpFinAccountingPeriod/main.page.yaml">
                             <children>
                                 <resource id="FNPT:ErpFinAccountingPeriod:closePeriod" displayName="期末结账" i18n-en:displayName="Close Period"
@@ -62,11 +62,11 @@
                         <!-- F12 Tier C 期末结账向导（plan 2026-07-23-0818-2）：引导式驱动 preCheck→closePeriod→finalizePeriod + reverseClose，零后端 delta -->
                         <resource id="fin-period-close-wizard" app:useCases="UC-FIN-06,UC-FIN-07" displayName="期末结账向导"
                                   i18n-en:displayName="Period Close Wizard" icon="magic"
-                                  component="AMIS" resourceType="SUBM" orderNo="205"
+                                  component="FLUX" resourceType="SUBM" orderNo="205"
                                   url="/erp/fin/pages/period-close-wizard/main.page.yaml"/>
                         <resource id="ErpFinAccountingPeriodStatus-main" app:useCases="UC-FIN-06,UC-FIN-07" displayName="期间结账状态"
                                   i18n-en:displayName="Period Close Status" icon="calendar-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/erp/fin/pages/ErpFinAccountingPeriodStatus/main.page.yaml"/>
                     </children>
                 </resource>
@@ -76,11 +76,11 @@
                     <children>
                         <resource id="ErpFinArApItem-main" app:useCases="UC-FIN-08" displayName="应收应付明细账"
                                   i18n-en:displayName="AR/AP Subledger" icon="arrow-left-right"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/fin/pages/ErpFinArApItem/main.page.yaml"/>
                         <resource id="ErpFinBadDebt-main" displayName="坏账准备单"
                                   i18n-en:displayName="Bad Debt Provision" icon="file-x"
-                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  component="FLUX" resourceType="SUBM" orderNo="310"
                                   url="/erp/fin/pages/ErpFinBadDebt/main.page.yaml">
                             <children>
                                 <resource id="FNPT:ErpFinBadDebt:writeOff" displayName="坏账核销" i18n-en:displayName="Write Off"
@@ -101,7 +101,7 @@
                     <children>
                         <resource id="ErpFinReconciliation-main" app:useCases="UC-FIN-08" displayName="核销单"
                                   i18n-en:displayName="Reconciliation" icon="check-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  component="FLUX" resourceType="SUBM" orderNo="400"
                                   url="/erp/fin/pages/ErpFinReconciliation/main.page.yaml"/>
                     </children>
                 </resource>
@@ -111,16 +111,16 @@
                     <children>
                         <resource id="ErpFinGlBalance-main" app:useCases="UC-FIN-05,UC-FIN-11" displayName="总账余额"
                                   i18n-en:displayName="GL Balance" icon="scale"
-                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  component="FLUX" resourceType="SUBM" orderNo="500"
                                   url="/erp/fin/pages/ErpFinGlBalance/main.page.yaml"/>
                         <resource id="ErpFinTrialBalance-main" app:useCases="UC-FIN-01" displayName="试算平衡表"
                                   i18n-en:displayName="Trial Balance" icon="git-compare"
-                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  component="FLUX" resourceType="SUBM" orderNo="510"
                                   url="/erp/fin/pages/ErpFinTrialBalance/main.page.yaml"/>
                         <!-- A1（plan 2026-07-21-0827-1）：科目映射规则（多维业务规则覆盖层，运维配置） -->
                         <resource id="ErpFinGlMappingRule-main" displayName="科目映射规则"
                                   i18n-en:displayName="GL Mapping Rule" icon="arrow-right-left"
-                                  component="AMIS" resourceType="SUBM" orderNo="520"
+                                  component="FLUX" resourceType="SUBM" orderNo="520"
                                   url="/erp/fin/pages/ErpFinGlMappingRule/main.page.yaml"/>
                     </children>
                 </resource>
@@ -130,15 +130,15 @@
                     <children>
                         <resource id="ErpFinIntercompanyTransferPrice-main" displayName="跨法人转移定价规则"
                                   i18n-en:displayName="Intercompany Transfer Price" icon="tags"
-                                  component="AMIS" resourceType="SUBM" orderNo="550"
+                                  component="FLUX" resourceType="SUBM" orderNo="550"
                                   url="/erp/fin/pages/ErpFinIntercompanyTransferPrice/main.page.yaml"/>
                         <resource id="ErpFinIntercompanyMatch-main" displayName="公司间配对记录"
                                   i18n-en:displayName="Intercompany Match" icon="link"
-                                  component="AMIS" resourceType="SUBM" orderNo="560"
+                                  component="FLUX" resourceType="SUBM" orderNo="560"
                                   url="/erp/fin/pages/ErpFinIntercompanyMatch/main.page.yaml"/>
                         <resource id="ErpFinConsolidationElimination-main" displayName="合并抵消候选"
                                   i18n-en:displayName="Consolidation Elimination" icon="minus-circle"
-                                  component="AMIS" resourceType="SUBM" orderNo="570"
+                                  component="FLUX" resourceType="SUBM" orderNo="570"
                                   url="/erp/fin/pages/ErpFinConsolidationElimination/main.page.yaml"/>
                     </children>
                 </resource>
@@ -148,15 +148,15 @@
                     <children>
                         <resource id="ErpFinFundAccount-main" app:useCases="UC-FIN-09" displayName="资金账户"
                                   i18n-en:displayName="Fund Account" icon="wallet"
-                                  component="AMIS" resourceType="SUBM" orderNo="600"
+                                  component="FLUX" resourceType="SUBM" orderNo="600"
                                   url="/erp/fin/pages/ErpFinFundAccount/main.page.yaml"/>
                         <resource id="ErpFinCashForecast-main" displayName="现金预测"
                                   i18n-en:displayName="Cash Forecast" icon="trending-up"
-                                  component="AMIS" resourceType="SUBM" orderNo="610"
+                                  component="FLUX" resourceType="SUBM" orderNo="610"
                                   url="/erp/fin/pages/ErpFinCashForecast/main.page.yaml"/>
                         <resource id="ErpFinCreditFacility-main" displayName="银行授信额度"
                                   i18n-en:displayName="Credit Facility" icon="landmark"
-                                  component="AMIS" resourceType="SUBM" orderNo="620"
+                                  component="FLUX" resourceType="SUBM" orderNo="620"
                                   url="/erp/fin/pages/ErpFinCreditFacility/main.page.yaml"/>
                     </children>
                 </resource>
@@ -166,23 +166,23 @@
                     <children>
                         <resource id="balance-sheet" app:useCases="UC-FIN-16" displayName="资产负债表"
                                   i18n-en:displayName="Balance Sheet" icon="scale"
-                                  component="AMIS" resourceType="SUBM" orderNo="7010"
+                                  component="FLUX" resourceType="SUBM" orderNo="7010"
                                   url="/erp/fin/pages/report/balance-sheet.page.yaml"/>
                         <resource id="income-statement" app:useCases="UC-FIN-16" displayName="利润表"
                                   i18n-en:displayName="Income Statement" icon="trending-up"
-                                  component="AMIS" resourceType="SUBM" orderNo="7020"
+                                  component="FLUX" resourceType="SUBM" orderNo="7020"
                                   url="/erp/fin/pages/report/income-statement.page.yaml"/>
                         <resource id="cash-flow" app:useCases="UC-FIN-16" displayName="现金流量表"
                                   i18n-en:displayName="Cash Flow Statement" icon="banknote"
-                                  component="AMIS" resourceType="SUBM" orderNo="7030"
+                                  component="FLUX" resourceType="SUBM" orderNo="7030"
                                   url="/erp/fin/pages/report/cash-flow.page.yaml"/>
                         <resource id="ar-ap-aging" app:useCases="UC-FIN-08,UC-FIN-16" displayName="应收应付账龄"
                                   i18n-en:displayName="AR/AP Aging" icon="hourglass"
-                                  component="AMIS" resourceType="SUBM" orderNo="7040"
+                                  component="FLUX" resourceType="SUBM" orderNo="7040"
                                   url="/erp/fin/pages/report/ar-ap-aging.page.yaml"/>
                         <resource id="period-close-report" app:useCases="UC-FIN-06,UC-FIN-16" displayName="期末结账报告"
                                   i18n-en:displayName="Period Close Report" icon="calendar-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="7050"
+                                  component="FLUX" resourceType="SUBM" orderNo="7050"
                                   url="/erp/fin/pages/report/period-close-report.page.yaml"/>
                     </children>
                 </resource>
@@ -192,7 +192,7 @@
                     <children>
                         <resource id="gl-distribution" app:useCases="UC-FIN-04,UC-FIN-15" displayName="分摊规则"
                                   i18n-en:displayName="Distribution Rule" icon="split"
-                                  component="AMIS" resourceType="SUBM" orderNo="8010"
+                                  component="FLUX" resourceType="SUBM" orderNo="8010"
                                   url="/erp/fin/pages/gl-distribution/main.page.yaml"/>
                     </children>
                 </resource>
@@ -202,11 +202,11 @@
                     <children>
                         <resource id="expense-claim" app:useCases="UC-FIN-16" displayName="费用报销单"
                                   i18n-en:displayName="Expense Claim" icon="wallet-receipt"
-                                  component="AMIS" resourceType="SUBM" orderNo="9010"
+                                  component="FLUX" resourceType="SUBM" orderNo="9010"
                                   url="/erp/fin/pages/expense-claim/main.page.yaml"/>
                         <resource id="ErpFinEmployeeAdvance-main" displayName="员工借款单"
                                   i18n-en:displayName="Employee Advance" icon="hand-coins"
-                                  component="AMIS" resourceType="SUBM" orderNo="9020"
+                                  component="FLUX" resourceType="SUBM" orderNo="9020"
                                   url="/erp/fin/pages/ErpFinEmployeeAdvance/main.page.yaml"/>
                     </children>
                 </resource>
@@ -216,7 +216,7 @@
                     <children>
                         <resource id="fin-dashboard-main" app:useCases="UC-FIN-17" displayName="财务概览"
                                   i18n-en:displayName="Finance Overview" icon="pie-chart"
-                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  component="FLUX" resourceType="SUBM" orderNo="9990"
                                   url="/erp/fin/pages/dashboard/main.page.yaml"/>
                     </children>
                 </resource>
@@ -226,20 +226,20 @@
                     <children>
                         <resource id="budget-scenario" app:useCases="UC-FIN-13" displayName="预算方案"
                                   i18n-en:displayName="Budget Scenario" icon="wallet"
-                                  component="AMIS" resourceType="SUBM" orderNo="9100"
+                                  component="FLUX" resourceType="SUBM" orderNo="9100"
                                   url="/erp/fin/pages/ErpFinBudgetScenario/main.page.yaml"/>
                         <resource id="budget-control-log" app:useCases="UC-FIN-13" displayName="预算控制日志"
                                   i18n-en:displayName="Budget Control Log" icon="shield-alert"
-                                  component="AMIS" resourceType="SUBM" orderNo="9110"
+                                  component="FLUX" resourceType="SUBM" orderNo="9110"
                                   url="/erp/fin/pages/ErpFinBudgetControlLog/main.page.yaml"/>
                         <!-- A2 预算多年度/结转日志（plan 2026-07-21-1206-2，budget.md §版本审计链） -->
                         <resource id="budget-rollforward-log" app:useCases="UC-FIN-13" displayName="预算滚动复制日志"
                                   i18n-en:displayName="Budget Roll-Forward Log" icon="history"
-                                  component="AMIS" resourceType="SUBM" orderNo="9120"
+                                  component="FLUX" resourceType="SUBM" orderNo="9120"
                                   url="/erp/fin/pages/ErpFinBudgetRollforwardLog/main.page.yaml"/>
                         <resource id="budget-carry-forward-log" app:useCases="UC-FIN-13" displayName="预算结转日志"
                                   i18n-en:displayName="Budget Carry-Forward Log" icon="history"
-                                  component="AMIS" resourceType="SUBM" orderNo="9130"
+                                  component="FLUX" resourceType="SUBM" orderNo="9130"
                                   url="/erp/fin/pages/ErpFinBudgetCarryForwardLog/main.page.yaml"/>
                     </children>
                 </resource>
@@ -249,11 +249,11 @@
                     <children>
                         <resource id="ErpFinNotesReceivable-main" displayName="应收票据"
                                   i18n-en:displayName="Notes Receivable" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="9200"
+                                  component="FLUX" resourceType="SUBM" orderNo="9200"
                                   url="/erp/fin/pages/ErpFinNotesReceivable/main.page.yaml"/>
                         <resource id="ErpFinNotesPayable-main" displayName="应付票据"
                                   i18n-en:displayName="Notes Payable" icon="file-minus"
-                                  component="AMIS" resourceType="SUBM" orderNo="9210"
+                                  component="FLUX" resourceType="SUBM" orderNo="9210"
                                   url="/erp/fin/pages/ErpFinNotesPayable/main.page.yaml"/>
                     </children>
                 </resource>
@@ -263,15 +263,15 @@
                     <children>
                         <resource id="bank-statement" app:useCases="UC-FIN-14" displayName="银行对账单"
                                   i18n-en:displayName="Bank Statement" icon="receipt"
-                                  component="AMIS" resourceType="SUBM" orderNo="9300"
+                                  component="FLUX" resourceType="SUBM" orderNo="9300"
                                   url="/erp/fin/pages/bank-statement/main.page.yaml"/>
                         <resource id="bank-ledger-line" app:useCases="UC-FIN-14" displayName="账面流水"
                                   i18n-en:displayName="Bank Ledger Line" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="9310"
+                                  component="FLUX" resourceType="SUBM" orderNo="9310"
                                   url="/erp/fin/pages/bank-ledger-line/main.page.yaml"/>
                         <resource id="bank-reconciliation" app:useCases="UC-FIN-14" displayName="余额调节表"
                                   i18n-en:displayName="Bank Reconciliation" icon="scale"
-                                  component="AMIS" resourceType="SUBM" orderNo="9320"
+                                  component="FLUX" resourceType="SUBM" orderNo="9320"
                                   url="/erp/fin/pages/bank-reconciliation/main.page.yaml"/>
                     </children>
                 </resource>

@@ -86,7 +86,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购请购单"
                 name="app.erp.pur.dao.entity.ErpPurRequisition" registerShortName="true" tableName="erp_pur_requisition"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="file-text" i18n-en:displayName="Purchase Requisition">
+                versionProp="version" ext:web-renderer="flux" ext:icon="file-text"
+                i18n-en:displayName="Purchase Requisition">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -181,8 +182,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购请购单行"
                 name="app.erp.pur.dao.entity.ErpPurRequisitionLine" registerShortName="true"
                 tableName="erp_pur_requisition_line" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Purchase Requisition Line">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Purchase Requisition Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -275,7 +276,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购询价单"
                 name="app.erp.pur.dao.entity.ErpPurRfq" registerShortName="true" tableName="erp_pur_rfq"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="message-circle-question" i18n-en:displayName="Purchase RFQ">
+                versionProp="version" ext:web-renderer="flux" ext:icon="message-circle-question"
+                i18n-en:displayName="Purchase RFQ">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -366,7 +368,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购询价单行"
                 name="app.erp.pur.dao.entity.ErpPurRfqLine" registerShortName="true" tableName="erp_pur_rfq_line"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="list" i18n-en:displayName="Purchase RFQ Line">
+                versionProp="version" ext:web-renderer="flux" ext:icon="list" i18n-en:displayName="Purchase RFQ Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -435,7 +437,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="供应商报价单"
                 name="app.erp.pur.dao.entity.ErpPurQuotation" registerShortName="true" tableName="erp_pur_quotation"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="file-sign" i18n-en:displayName="Supplier Quotation">
+                versionProp="version" ext:web-renderer="flux" ext:icon="file-sign"
+                i18n-en:displayName="Supplier Quotation">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -548,8 +551,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="供应商报价单行"
                 name="app.erp.pur.dao.entity.ErpPurQuotationLine" registerShortName="true"
                 tableName="erp_pur_quotation_line" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Supplier Quotation Line">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Supplier Quotation Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -624,8 +627,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="供应商价格清单"
                 name="app.erp.pur.dao.entity.ErpPurSupplierPriceList" registerShortName="true"
                 tableName="erp_pur_supplier_price_list" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list-checks"
-                i18n-en:displayName="Supplier Price List">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list-checks" i18n-en:displayName="Supplier Price List">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -716,8 +719,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="供应商评分卡"
                 name="app.erp.pur.dao.entity.ErpPurSupplierScorecard" registerShortName="true"
                 tableName="erp_pur_supplier_scorecard" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="gauge"
-                i18n-en:displayName="Supplier Scorecard">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="gauge" i18n-en:displayName="Supplier Scorecard">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -800,8 +803,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="评分维度"
                 name="app.erp.pur.dao.entity.ErpPurSupplierScorecardCriteria" registerShortName="true"
                 tableName="erp_pur_supplier_scorecard_criteria" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="sliders-horizontal"
-                i18n-en:displayName="Scorecard Criteria">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="sliders-horizontal" i18n-en:displayName="Scorecard Criteria">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -861,8 +864,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="评分变量"
                 name="app.erp.pur.dao.entity.ErpPurSupplierScorecardVariable" registerShortName="true"
                 tableName="erp_pur_supplier_scorecard_variable" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="variable"
-                i18n-en:displayName="Scorecard Variable">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="variable" i18n-en:displayName="Scorecard Variable">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -908,7 +911,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购订单"
                 name="app.erp.pur.dao.entity.ErpPurOrder" registerShortName="true" tableName="erp_pur_order"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="shopping-cart" i18n-en:displayName="Purchase Order">
+                versionProp="version" ext:web-renderer="flux" ext:icon="shopping-cart"
+                i18n-en:displayName="Purchase Order">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1087,7 +1091,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购订单行"
                 name="app.erp.pur.dao.entity.ErpPurOrderLine" registerShortName="true" tableName="erp_pur_order_line"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="list" i18n-en:displayName="Purchase Order Line">
+                versionProp="version" ext:web-renderer="flux" ext:icon="list" i18n-en:displayName="Purchase Order Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1220,7 +1224,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购入库单"
                 name="app.erp.pur.dao.entity.ErpPurReceive" registerShortName="true" tableName="erp_pur_receive"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="package-plus" i18n-en:displayName="Purchase Receipt">
+                versionProp="version" ext:web-renderer="flux" ext:icon="package-plus"
+                i18n-en:displayName="Purchase Receipt">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1366,8 +1371,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购入库单行"
                 name="app.erp.pur.dao.entity.ErpPurReceiveLine" registerShortName="true"
                 tableName="erp_pur_receive_line" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Purchase Receipt Line">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Purchase Receipt Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1484,7 +1489,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购发票"
                 name="app.erp.pur.dao.entity.ErpPurInvoice" registerShortName="true" tableName="erp_pur_invoice"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="receipt" i18n-en:displayName="Purchase Invoice">
+                versionProp="version" ext:web-renderer="flux" ext:icon="receipt" i18n-en:displayName="Purchase Invoice">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1613,8 +1618,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购发票行"
                 name="app.erp.pur.dao.entity.ErpPurInvoiceLine" registerShortName="true"
                 tableName="erp_pur_invoice_line" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Purchase Invoice Line">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Purchase Invoice Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1703,7 +1708,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="付款单"
                 name="app.erp.pur.dao.entity.ErpPurPayment" registerShortName="true" tableName="erp_pur_payment"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                useWorkflow="true" versionProp="version" ext:icon="banknote" i18n-en:displayName="Payment">
+                useWorkflow="true" versionProp="version" ext:web-renderer="flux" ext:icon="banknote"
+                i18n-en:displayName="Payment">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1856,8 +1862,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="付款核销行"
                 name="app.erp.pur.dao.entity.ErpPurPaymentLine" registerShortName="true"
                 tableName="erp_pur_payment_line" tagSet="gid,erp.purchase" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Payment Settlement Line">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Payment Settlement Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1912,7 +1918,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购退货单"
                 name="app.erp.pur.dao.entity.ErpPurReturn" registerShortName="true" tableName="erp_pur_return"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="undo-2" i18n-en:displayName="Purchase Return">
+                versionProp="version" ext:web-renderer="flux" ext:icon="undo-2" i18n-en:displayName="Purchase Return">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2052,7 +2058,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="采购退货单行"
                 name="app.erp.pur.dao.entity.ErpPurReturnLine" registerShortName="true" tableName="erp_pur_return_line"
                 tagSet="gid,erp.purchase" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="list" i18n-en:displayName="Purchase Return Line">
+                versionProp="version" ext:web-renderer="flux" ext:icon="list" i18n-en:displayName="Purchase Return Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2152,7 +2158,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdMaterial" displayName="物料"
                 name="app.erp.md.dao.entity.ErpMdMaterial" notGenCode="true" tableName="erp_md_material"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2168,7 +2174,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdMaterialSku" displayName="物料SKU"
                 name="app.erp.md.dao.entity.ErpMdMaterialSku" notGenCode="true" tableName="erp_md_material_sku"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2184,7 +2190,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="往来单位"
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2202,7 +2208,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdWarehouse" displayName="仓库"
                 name="app.erp.md.dao.entity.ErpMdWarehouse" notGenCode="true" tableName="erp_md_warehouse"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2219,7 +2225,7 @@
             </columns>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdUoM" displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
-                notGenCode="true" tableName="erp_md_uom" biz:moduleId="erp/md">
+                notGenCode="true" tableName="erp_md_uom" ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2235,7 +2241,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdCurrency" displayName="币种"
                 name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2253,7 +2259,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="组织"
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2271,7 +2277,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdTaxRate" displayName="税率"
                 name="app.erp.md.dao.entity.ErpMdTaxRate" notGenCode="true" tableName="erp_md_tax_rate"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2287,7 +2293,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSettlementMethod" displayName="结算方式"
                 name="app.erp.md.dao.entity.ErpMdSettlementMethod" notGenCode="true"
-                tableName="erp_md_settlement_method" biz:moduleId="erp/md">
+                tableName="erp_md_settlement_method" ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2303,7 +2309,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdBankAccount" displayName="银行账户"
                 name="app.erp.md.dao.entity.ErpMdBankAccount" notGenCode="true" tableName="erp_md_bank_account"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2319,7 +2325,7 @@
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjProject" displayName="项目"
                 name="app.erp.prj.dao.entity.ErpPrjProject" notGenCode="true" tableName="erp_prj_project"
-                biz:moduleId="erp/prj">
+                ext:web-renderer="flux" biz:moduleId="erp/prj">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -2333,7 +2339,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdEmployee" displayName="员工"
                 name="app.erp.md.dao.entity.ErpMdEmployee" notGenCode="true" tableName="erp_md_employee"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>

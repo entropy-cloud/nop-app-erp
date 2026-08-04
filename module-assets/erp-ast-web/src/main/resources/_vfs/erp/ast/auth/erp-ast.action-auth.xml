@@ -17,11 +17,11 @@
                     <children>
                         <resource id="ErpAstAsset-main" app:useCases="UC-AST-01,UC-AST-02,UC-AST-03,UC-AST-04,UC-AST-05" displayName="固定资产"
                                   i18n-en:displayName="Fixed Asset" icon="truck"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/ast/pages/ErpAstAsset/main.page.yaml"/>
                         <resource id="ErpAstAssetCategory-main" app:useCases="UC-AST-01" displayName="资产类别"
                                   i18n-en:displayName="Asset Category" icon="folder-tree"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/ast/pages/ErpAstAssetCategory/main.page.yaml"/>
                     </children>
                 </resource>
@@ -31,7 +31,7 @@
                     <children>
                         <resource id="ErpAstDepreciationSchedule-main" app:useCases="UC-AST-02,UC-AST-07,UC-AST-08" displayName="折旧计划"
                                   i18n-en:displayName="Depreciation Schedule" icon="trending-down"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/ast/pages/ErpAstDepreciationSchedule/main.page.yaml"/>
                     </children>
                 </resource>
@@ -41,28 +41,28 @@
                     <children>
                         <resource id="ErpAstMovement-main" app:useCases="UC-AST-03" displayName="资产移动"
                                   i18n-en:displayName="Asset Movement" icon="move"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/ast/pages/ErpAstMovement/main.page.yaml"/>
                         <resource id="ErpAstValueAdjustment-main" app:useCases="UC-AST-02" displayName="资产价值调整"
                                   i18n-en:displayName="Asset Value Adjustment" icon="sliders-horizontal"
-                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  component="FLUX" resourceType="SUBM" orderNo="310"
                                   url="/erp/ast/pages/ErpAstValueAdjustment/main.page.yaml"/>
                         <resource id="ErpAstSplit-main" app:useCases="UC-AST-11" displayName="资产拆分单"
                                   i18n-en:displayName="Asset Split" icon="split"
-                                  component="AMIS" resourceType="SUBM" orderNo="320"
+                                  component="FLUX" resourceType="SUBM" orderNo="320"
                                   url="/erp/ast/pages/ErpAstSplit/main.page.yaml"/>
                         <resource id="ErpAstMerge-main" app:useCases="UC-AST-11" displayName="资产合并单"
                                   i18n-en:displayName="Asset Merge" icon="git-merge"
-                                  component="AMIS" resourceType="SUBM" orderNo="330"
+                                  component="FLUX" resourceType="SUBM" orderNo="330"
                                   url="/erp/ast/pages/ErpAstMerge/main.page.yaml"/>
                     
                         <resource id="ErpAstMaintenance-main" app:useCases="UC-AST-10" displayName="资产维修工单"
                                   i18n-en:displayName="Asset Maintenance" icon="wrench"
-                                  component="AMIS" resourceType="SUBM" orderNo="350"
+                                  component="FLUX" resourceType="SUBM" orderNo="350"
                                   url="/erp/ast/pages/ErpAstMaintenance/main.page.yaml"/>
                         <resource id="ErpAstMaintenanceCost-main" app:useCases="UC-AST-10" displayName="维修费用行"
                                   i18n-en:displayName="Maintenance Cost Line" icon="coins"
-                                  component="AMIS" resourceType="SUBM" orderNo="360"
+                                  component="FLUX" resourceType="SUBM" orderNo="360"
                                   url="/erp/ast/pages/ErpAstMaintenanceCost/main.page.yaml"/></children>
                 </resource>
                 <!-- 处置资本化 -->
@@ -71,15 +71,15 @@
                     <children>
                         <resource id="ErpAstDisposal-main" app:useCases="UC-AST-04,UC-AST-05" displayName="资产处置"
                                   i18n-en:displayName="Asset Disposal" icon="trash-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  component="FLUX" resourceType="SUBM" orderNo="400"
                                   url="/erp/ast/pages/ErpAstDisposal/main.page.yaml"/>
                         <resource id="ErpAstAssetCapitalization-main" app:useCases="UC-AST-01,UC-AST-06" displayName="资产资本化"
                                   i18n-en:displayName="Asset Capitalization" icon="badge-plus"
-                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  component="FLUX" resourceType="SUBM" orderNo="410"
                                   url="/erp/ast/pages/ErpAstAssetCapitalization/main.page.yaml"/>
                         <resource id="ErpAstCip-main" app:useCases="UC-AST-06" displayName="在建工程"
                                   i18n-en:displayName="CIP" icon="hard-hat"
-                                  component="AMIS" resourceType="SUBM" orderNo="420"
+                                  component="FLUX" resourceType="SUBM" orderNo="420"
                                   url="/erp/ast/pages/ErpAstCip/main.page.yaml"/>
                     </children>
                 </resource>
@@ -89,7 +89,7 @@
                     <children>
                         <resource id="ErpAstInventory-main" app:useCases="UC-AST-09" displayName="资产盘点单"
                                   i18n-en:displayName="Asset Stocktake" icon="clipboard-list"
-                                  component="AMIS" resourceType="SUBM" orderNo="6010"
+                                  component="FLUX" resourceType="SUBM" orderNo="6010"
                                   url="/erp/ast/pages/ErpAstInventory/main.page.yaml"/>
                     </children>
                 </resource>
@@ -99,11 +99,11 @@
                     <children>
                         <resource id="asset-depreciation-detail" app:useCases="UC-AST-02,UC-AST-07,UC-AST-12" displayName="资产折旧明细表"
                                   i18n-en:displayName="Asset Depreciation Detail" icon="trending-down"
-                                  component="AMIS" resourceType="SUBM" orderNo="7010"
+                                  component="FLUX" resourceType="SUBM" orderNo="7010"
                                   url="/erp/ast/pages/report/asset-depreciation-detail.page.yaml"/>
                         <resource id="asset-disposal-detail" app:useCases="UC-AST-04,UC-AST-12" displayName="资产处置明细表"
                                   i18n-en:displayName="Asset Disposal Detail" icon="trash-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="7020"
+                                  component="FLUX" resourceType="SUBM" orderNo="7020"
                                   url="/erp/ast/pages/report/asset-disposal-detail.page.yaml"/>
                     </children>
                 </resource>
@@ -113,7 +113,7 @@
                     <children>
                         <resource id="ast-dashboard-main" app:useCases="UC-AST-12" displayName="资产概览"
                                   i18n-en:displayName="Assets Overview" icon="truck"
-                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  component="FLUX" resourceType="SUBM" orderNo="9990"
                                   url="/erp/ast/pages/dashboard/main.page.yaml"/>
                     </children>
                 </resource>

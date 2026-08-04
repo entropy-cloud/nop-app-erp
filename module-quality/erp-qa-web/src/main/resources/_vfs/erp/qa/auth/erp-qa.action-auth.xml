@@ -17,7 +17,7 @@
                     <children>
                         <resource id="ErpQaInspection-main" app:useCases="UC-QA-01,UC-QA-02,UC-QA-03,UC-QA-04,UC-QA-06,UC-QA-08,UC-QA-11" displayName="质检单"
                                   i18n-en:displayName="Inspection" icon="clipboard-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/qa/pages/ErpQaInspection/main.page.yaml"/>
                     </children>
                 </resource>
@@ -27,11 +27,11 @@
                     <children>
                         <resource id="ErpQaInspectionTemplate-main" app:useCases="UC-QA-07" displayName="质检模板"
                                   i18n-en:displayName="Inspection Template" icon="file-check-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/qa/pages/ErpQaInspectionTemplate/main.page.yaml"/>
                         <resource id="ErpQaSamplingPlan-main" app:useCases="UC-QA-01" displayName="抽样方案"
                                   i18n-en:displayName="Sampling Plan" icon="layers"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/erp/qa/pages/ErpQaSamplingPlan/main.page.yaml"/>
                     </children>
                 </resource>
@@ -41,12 +41,12 @@
                     <children>
                         <resource id="ErpQaNonConformance-main" app:useCases="UC-QA-02,UC-QA-05,UC-QA-09" displayName="不合格品报告"
                                   i18n-en:displayName="Non-Conformance Report" icon="x-circle"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/qa/pages/ErpQaNonConformance/main.page.yaml"/>
                     
                         <resource id="ncr-disposal" app:useCases="UC-QA-02,UC-QA-05" displayName="不合格品处置单"
                                   i18n-en:displayName="NCR Disposal" icon="trash-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  component="FLUX" resourceType="SUBM" orderNo="310"
                                   url="/erp/qa/pages/ncr-disposal/main.page.yaml"/></children>
                 </resource>
                 <!-- 纠正预防 -->
@@ -55,11 +55,11 @@
                     <children>
                         <resource id="ErpQaAction-main" app:useCases="UC-QA-05,UC-QA-09" displayName="纠正预防措施"
                                   i18n-en:displayName="Corrective Action" icon="shield-alert"
-                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  component="FLUX" resourceType="SUBM" orderNo="400"
                                   url="/erp/qa/pages/ErpQaAction/main.page.yaml"/>
                         <resource id="ErpQaReview-main" app:useCases="UC-QA-05" displayName="质量评审"
                                   i18n-en:displayName="Quality Review" icon="clipboard-list"
-                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  component="FLUX" resourceType="SUBM" orderNo="410"
                                   url="/erp/qa/pages/ErpQaReview/main.page.yaml"/>
                     </children>
                 </resource>
@@ -69,15 +69,15 @@
                     <children>
                         <resource id="ErpQaQualityGoal-main" app:useCases="UC-QA-10" displayName="质量目标"
                                   i18n-en:displayName="Quality Goal" icon="target"
-                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  component="FLUX" resourceType="SUBM" orderNo="500"
                                   url="/erp/qa/pages/ErpQaQualityGoal/main.page.yaml"/>
                         <resource id="ErpQaRiskRegister-main" app:useCases="UC-QA-10" displayName="风险登记"
                                   i18n-en:displayName="Risk Register" icon="alert-triangle"
-                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  component="FLUX" resourceType="SUBM" orderNo="510"
                                   url="/erp/qa/pages/ErpQaRiskRegister/main.page.yaml"/>
                         <resource id="ErpQaCalibration-main" app:useCases="UC-QA-01" displayName="量具校准"
                                   i18n-en:displayName="Gauge Calibration" icon="gauge"
-                                  component="AMIS" resourceType="SUBM" orderNo="520"
+                                  component="FLUX" resourceType="SUBM" orderNo="520"
                                   url="/erp/qa/pages/ErpQaCalibration/main.page.yaml"/>
                     </children>
                 </resource>
@@ -87,11 +87,11 @@
                     <children>
                         <resource id="inspection-summary" app:useCases="UC-QA-01,UC-QA-03,UC-QA-12" displayName="质检合格率统计表"
                                   i18n-en:displayName="Inspection Summary" icon="clipboard-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="6010"
+                                  component="FLUX" resourceType="SUBM" orderNo="6010"
                                   url="/erp/qa/pages/report/inspection-summary.page.yaml"/>
                         <resource id="ncr-capa-summary" app:useCases="UC-QA-05,UC-QA-09,UC-QA-12" displayName="NCR-CAPA 统计表"
                                   i18n-en:displayName="NCR-CAPA Summary" icon="shield-alert"
-                                  component="AMIS" resourceType="SUBM" orderNo="6020"
+                                  component="FLUX" resourceType="SUBM" orderNo="6020"
                                   url="/erp/qa/pages/report/ncr-capa-summary.page.yaml"/>
                     </children>
                 </resource>
@@ -101,7 +101,7 @@
                     <children>
                         <resource id="qa-dashboard-main" app:useCases="UC-QA-12" displayName="质量概览"
                                   i18n-en:displayName="Quality Overview" icon="bar-chart-3"
-                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  component="FLUX" resourceType="SUBM" orderNo="9990"
                                   url="/erp/qa/pages/dashboard/main.page.yaml"/>
                     </children>
                 </resource>
@@ -111,15 +111,15 @@
                     <children>
                         <resource id="spc-chart" app:useCases="UC-QA-09,UC-QA-10,UC-QA-11" displayName="控制图配置"
                                   i18n-en:displayName="SPC Chart" icon="activity"
-                                  component="AMIS" resourceType="SUBM" orderNo="700"
+                                  component="FLUX" resourceType="SUBM" orderNo="700"
                                   url="/erp/qa/pages/spc-chart/main.page.yaml"/>
                         <resource id="spc-sample" app:useCases="UC-QA-09,UC-QA-11" displayName="样本数据"
                                   i18n-en:displayName="SPC Sample" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="710"
+                                  component="FLUX" resourceType="SUBM" orderNo="710"
                                   url="/erp/qa/pages/spc-sample/main.page.yaml"/>
                         <resource id="spc-capability" app:useCases="UC-QA-10" displayName="过程能力分析"
                                   i18n-en:displayName="SPC Capability" icon="bar-chart-3"
-                                  component="AMIS" resourceType="SUBM" orderNo="720"
+                                  component="FLUX" resourceType="SUBM" orderNo="720"
                                   url="/erp/qa/pages/spc-capability/main.page.yaml"/>
                     </children>
                 </resource>
@@ -129,7 +129,7 @@
                     <children>
                         <resource id="ErpQaRecall-main" app:useCases="UC-QA-05,UC-QA-09" displayName="召回事件"
                                   i18n-en:displayName="Recall Event" icon="undo-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="750"
+                                  component="FLUX" resourceType="SUBM" orderNo="750"
                                   url="/erp/qa/pages/ErpQaRecall/main.page.yaml"/>
                     </children>
                 </resource>

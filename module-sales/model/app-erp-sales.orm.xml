@@ -22,7 +22,7 @@
     - appName:        app-erp-sal
     - entityPackage:  app.erp.sal.dao.entity
     - 实体类名:        ErpSal<Entity>
-    - 表名:           erp_sal_<entity>
+    - 表名:           erp_sal_<entity ext:web-renderer="flux">
     - 字典命名空间:    erp-sal/<dict-name>
 -->
 <orm ext:registerShortName="true" ext:appName="erp-sal" ext:entityPackageName="app.erp.sal.dao.entity"
@@ -97,7 +97,7 @@
 
     <entities>
         <!-- 销售报价单头 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalQuotation"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalQuotation"
                 displayName="销售报价单" ext:icon="file-sign" i18n-en:displayName="Sales Quotation" name="app.erp.sal.dao.entity.ErpSalQuotation"
                 tableName="erp_sal_quotation" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -163,7 +163,7 @@
         </entity>
 
         <!-- 销售报价单行 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalQuotationLine"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalQuotationLine"
                 displayName="销售报价单行" ext:icon="list" i18n-en:displayName="Sales Quotation Line" name="app.erp.sal.dao.entity.ErpSalQuotationLine"
                 tableName="erp_sal_quotation_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -217,7 +217,7 @@
         </entity>
 
         <!-- 销售合同头 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalContract"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalContract"
                 displayName="销售合同" ext:icon="file-text" i18n-en:displayName="Sales Contract" name="app.erp.sal.dao.entity.ErpSalContract"
                 tableName="erp_sal_contract" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -281,7 +281,7 @@
         </entity>
 
         <!-- 销售订单头 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalOrder"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalOrder"
                 displayName="销售订单" ext:icon="receipt" i18n-en:displayName="Sales Order" name="app.erp.sal.dao.entity.ErpSalOrder"
                 tableName="erp_sal_order" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -379,7 +379,7 @@
         </entity>
 
         <!-- 销售订单行 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalOrderLine"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalOrderLine"
                 displayName="销售订单行" ext:icon="list" i18n-en:displayName="Sales Order Line" name="app.erp.sal.dao.entity.ErpSalOrderLine"
                 tableName="erp_sal_order_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -457,7 +457,7 @@
         </entity>
 
         <!-- 销售出库单头 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalDelivery"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalDelivery"
                 displayName="销售出库单" ext:icon="package-minus" i18n-en:displayName="Sales Delivery" name="app.erp.sal.dao.entity.ErpSalDelivery"
                 tableName="erp_sal_delivery" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -537,7 +537,7 @@
         </entity>
 
         <!-- 销售出库单行 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalDeliveryLine"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalDeliveryLine"
                 displayName="销售出库单行" ext:icon="list" i18n-en:displayName="Sales Delivery Line" name="app.erp.sal.dao.entity.ErpSalDeliveryLine"
                 tableName="erp_sal_delivery_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -605,7 +605,7 @@
         </entity>
 
         <!-- 销售发票头 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalInvoice"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalInvoice"
                 displayName="销售发票" ext:icon="receipt" i18n-en:displayName="Sales Invoice" name="app.erp.sal.dao.entity.ErpSalInvoice"
                 tableName="erp_sal_invoice" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -677,7 +677,7 @@
         </entity>
 
         <!-- 销售发票行 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalInvoiceLine"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalInvoiceLine"
                 displayName="销售发票行" ext:icon="list" i18n-en:displayName="Sales Invoice Line" name="app.erp.sal.dao.entity.ErpSalInvoiceLine"
                 tableName="erp_sal_invoice_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -730,7 +730,7 @@
         </entity>
 
         <!-- 收款单头 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalReceipt"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalReceipt"
                 displayName="收款单" ext:icon="banknote" i18n-en:displayName="Receipt" name="app.erp.sal.dao.entity.ErpSalReceipt"
                 tableName="erp_sal_receipt" tagSet="gid,erp.sales" useWorkflow="true" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -816,7 +816,7 @@
         </entity>
 
         <!-- 收款核销行（收款与发票多对多） -->
-        <entity className="app.erp.sal.dao.entity.ErpSalReceiptLine"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalReceiptLine"
                 displayName="收款核销行" ext:icon="list" i18n-en:displayName="Receipt Settlement Line" name="app.erp.sal.dao.entity.ErpSalReceiptLine"
                 tableName="erp_sal_receipt_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -854,7 +854,7 @@
         </entity>
 
         <!-- 销售退货单头 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalReturn"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalReturn"
                 displayName="销售退货单" ext:icon="undo-2" i18n-en:displayName="Sales Return" name="app.erp.sal.dao.entity.ErpSalReturn"
                 tableName="erp_sal_return" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -934,7 +934,7 @@
         </entity>
 
         <!-- 销售退货单行 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalReturnLine"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalReturnLine"
                 displayName="销售退货单行" ext:icon="list" i18n-en:displayName="Sales Return Line" name="app.erp.sal.dao.entity.ErpSalReturnLine"
                 tableName="erp_sal_return_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -997,7 +997,7 @@
         </entity>
 
         <!-- 销售价格清单头（UC-SAL-11 定价引擎） -->
-        <entity className="app.erp.sal.dao.entity.ErpSalPriceList"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalPriceList"
                 displayName="销售价格清单" ext:icon="tag" i18n-en:displayName="Sales Price List" name="app.erp.sal.dao.entity.ErpSalPriceList"
                 tableName="erp_sal_price_list" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -1050,7 +1050,7 @@
         </entity>
 
         <!-- 销售价格清单行 -->
-        <entity className="app.erp.sal.dao.entity.ErpSalPriceListLine"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalPriceListLine"
                 displayName="销售价格清单行" ext:icon="list" i18n-en:displayName="Sales Price List Line" name="app.erp.sal.dao.entity.ErpSalPriceListLine"
                 tableName="erp_sal_price_list_line" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -1103,7 +1103,7 @@
         </entity>
 
         <!-- 销售促销规则（UC-SAL-11 定价引擎） -->
-        <entity className="app.erp.sal.dao.entity.ErpSalPricingRule"
+        <entity ext:web-renderer="flux" className="app.erp.sal.dao.entity.ErpSalPricingRule"
                 displayName="销售促销规则" ext:icon="percent" i18n-en:displayName="Sales Pricing Rule" name="app.erp.sal.dao.entity.ErpSalPricingRule"
                 tableName="erp_sal_pricing_rule" tagSet="gid,erp.sales" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -1178,7 +1178,7 @@
              平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
              这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
         ============================ -->
-        <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1189,7 +1189,7 @@
             </columns>
         </entity>
 
-        <entity displayName="物料SKU" name="app.erp.md.dao.entity.ErpMdMaterialSku"
+        <entity ext:web-renderer="flux" displayName="物料SKU" name="app.erp.md.dao.entity.ErpMdMaterialSku"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material_sku">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1200,7 +1200,7 @@
             </columns>
         </entity>
 
-        <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1212,7 +1212,7 @@
             </columns>
         </entity>
 
-        <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
+        <entity ext:web-renderer="flux" displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_warehouse">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1224,7 +1224,7 @@
             </columns>
         </entity>
 
-        <entity displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
+        <entity ext:web-renderer="flux" displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_uom">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1235,7 +1235,7 @@
             </columns>
         </entity>
 
-        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+        <entity ext:web-renderer="flux" displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1247,7 +1247,7 @@
             </columns>
         </entity>
 
-        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1259,7 +1259,7 @@
             </columns>
         </entity>
 
-        <entity displayName="税率" name="app.erp.md.dao.entity.ErpMdTaxRate"
+        <entity ext:web-renderer="flux" displayName="税率" name="app.erp.md.dao.entity.ErpMdTaxRate"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_tax_rate">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1270,7 +1270,7 @@
             </columns>
         </entity>
 
-        <entity displayName="结算方式" name="app.erp.md.dao.entity.ErpMdSettlementMethod"
+        <entity ext:web-renderer="flux" displayName="结算方式" name="app.erp.md.dao.entity.ErpMdSettlementMethod"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_settlement_method">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1281,7 +1281,7 @@
             </columns>
         </entity>
 
-        <entity displayName="银行账户" name="app.erp.md.dao.entity.ErpMdBankAccount"
+        <entity ext:web-renderer="flux" displayName="银行账户" name="app.erp.md.dao.entity.ErpMdBankAccount"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_bank_account">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1292,7 +1292,7 @@
             </columns>
         </entity>
 
-        <entity displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
+        <entity ext:web-renderer="flux" displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
                 notGenCode="true" biz:moduleId="erp/prj" tableName="erp_prj_project">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />

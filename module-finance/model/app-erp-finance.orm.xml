@@ -18,7 +18,7 @@
     - appName:        app-erp-fin
     - entityPackage:  app.erp.fin.dao.entity
     - 实体类名:        ErpFin<Entity>
-    - 表名:           erp_fin_<entity>
+    - 表名:           erp_fin_<entity ext:web-renderer="flux">
     - 字典命名空间:    erp-fin/<dict-name>
 
   跨工程依赖：
@@ -408,7 +408,7 @@
 
     <entities>
         <!-- 会计凭证头 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinVoucher"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinVoucher"
                 displayName="会计凭证" ext:icon="book-up" i18n-en:displayName="Accounting Voucher" name="app.erp.fin.dao.entity.ErpFinVoucher"
                 tableName="erp_fin_voucher" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -469,7 +469,7 @@
         </entity>
 
         <!-- 凭证分录行 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinVoucherLine"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinVoucherLine"
                 displayName="凭证分录行" ext:icon="list" i18n-en:displayName="Voucher Line" name="app.erp.fin.dao.entity.ErpFinVoucherLine"
                 tableName="erp_fin_voucher_line" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -553,7 +553,7 @@
 
         <!-- 凭证模板头（tagSet audit+audit-save：复用平台 NopSysChangeLog 记字段级变更审计，见 posting-log.md §裁决1；
              orm:bizKeyProp=code 使变更日志 bizKey 可读） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinVoucherTemplate"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinVoucherTemplate"
                 displayName="凭证模板" ext:icon="book-template" i18n-en:displayName="Voucher Template" name="app.erp.fin.dao.entity.ErpFinVoucherTemplate"
                 tableName="erp_fin_voucher_template" tagSet="gid,erp.finance,audit,audit-save" orm:bizKeyProp="code" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -589,7 +589,7 @@
         </entity>
 
         <!-- 凭证模板行（tagSet audit+audit-save：复用平台 NopSysChangeLog 记字段级变更审计，见 posting-log.md §裁决1） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine"
                 displayName="凭证模板行" ext:icon="list" i18n-en:displayName="Voucher Template Line" name="app.erp.fin.dao.entity.ErpFinVoucherTemplateLine"
                 tableName="erp_fin_voucher_template_line" tagSet="gid,erp.finance,audit,audit-save" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -620,7 +620,7 @@
         </entity>
 
         <!-- 业财回链表 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinVoucherBillR"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinVoucherBillR"
                 displayName="业财回链" ext:icon="link" i18n-en:displayName="Voucher Business Link" name="app.erp.fin.dao.entity.ErpFinVoucherBillR"
                 tableName="erp_fin_voucher_bill_r" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -652,7 +652,7 @@
         </entity>
 
         <!-- 会计期间 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinAccountingPeriod"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinAccountingPeriod"
                 displayName="会计期间" ext:icon="calendar" i18n-en:displayName="Accounting Period" name="app.erp.fin.dao.entity.ErpFinAccountingPeriod"
                 tableName="erp_fin_accounting_period" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -694,7 +694,7 @@
         </entity>
 
         <!-- 期间结账状态（按账套 × 模块 AR/AP/INV/GL） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus"
                 displayName="期间结账状态" ext:icon="calendar-check" i18n-en:displayName="Period Close Status" name="app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus"
                 tableName="erp_fin_accounting_period_status" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -731,7 +731,7 @@
         </entity>
 
         <!-- 应收应付明细账（open-item 模型，逐笔核销） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinArApItem"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinArApItem"
                 displayName="应收应付明细账" ext:icon="arrow-left-right" i18n-en:displayName="AR/AP Subledger" name="app.erp.fin.dao.entity.ErpFinArApItem"
                 tableName="erp_fin_ar_ap_item" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -802,7 +802,7 @@
         </entity>
 
         <!-- 核销单头（付款/收款与发票多对多核销） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinReconciliation"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinReconciliation"
                 displayName="核销单" ext:icon="check-check" i18n-en:displayName="Reconciliation" name="app.erp.fin.dao.entity.ErpFinReconciliation"
                 tableName="erp_fin_reconciliation" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -863,7 +863,7 @@
         </entity>
 
         <!-- 核销单行（付款/收款项 ↔ 发票项多对多） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinReconciliationLine"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinReconciliationLine"
                 displayName="核销单行" ext:icon="list" i18n-en:displayName="Reconciliation Line" name="app.erp.fin.dao.entity.ErpFinReconciliationLine"
                 tableName="erp_fin_reconciliation_line" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -905,7 +905,7 @@
         </entity>
 
         <!-- 总账余额快照（按 账套×科目×期间×辅助维度 聚合） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinGlBalance"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinGlBalance"
                 displayName="总账余额" ext:icon="scale" i18n-en:displayName="GL Balance" name="app.erp.fin.dao.entity.ErpFinGlBalance"
                 tableName="erp_fin_gl_balance" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -990,7 +990,7 @@
         </entity>
 
         <!-- 试算平衡表快照（期末结账产出） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinTrialBalance"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinTrialBalance"
                 displayName="试算平衡表" ext:icon="git-compare" i18n-en:displayName="Trial Balance" name="app.erp.fin.dao.entity.ErpFinTrialBalance"
                 tableName="erp_fin_trial_balance" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1037,7 +1037,7 @@
         </entity>
 
         <!-- 资金账户 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinFundAccount"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinFundAccount"
                 displayName="资金账户" ext:icon="wallet" i18n-en:displayName="Fund Account" name="app.erp.fin.dao.entity.ErpFinFundAccount"
                 tableName="erp_fin_fund_account" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1086,7 +1086,7 @@
         </entity>
 
         <!-- 银行对账单 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBankStatement"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBankStatement"
                 displayName="银行对账单" ext:icon="file-text" i18n-en:displayName="Bank Statement" name="app.erp.fin.dao.entity.ErpFinBankStatement"
                 tableName="erp_fin_bank_statement" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1130,7 +1130,7 @@
         </entity>
 
         <!-- 银行对账单行 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBankStatementLine"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBankStatementLine"
                 displayName="银行对账单行" ext:icon="list" i18n-en:displayName="Bank Statement Line" name="app.erp.fin.dao.entity.ErpFinBankStatementLine"
                 tableName="erp_fin_bank_statement_line" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1173,7 +1173,7 @@
         </entity>
 
         <!-- 银行对账记录（余额调节表） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBankReconciliation"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBankReconciliation"
                 displayName="银行对账(余额调节表)" ext:icon="check-check" i18n-en:displayName="Bank Reconciliation" name="app.erp.fin.dao.entity.ErpFinBankReconciliation"
                 tableName="erp_fin_bank_reconciliation" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1224,7 +1224,7 @@
         </entity>
 
         <!-- 银行对账调整行（未达账项） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBankReconciliationLine"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBankReconciliationLine"
                 displayName="银行对账调整行" ext:icon="list" i18n-en:displayName="Bank Reconciliation Line" name="app.erp.fin.dao.entity.ErpFinBankReconciliationLine"
                 tableName="erp_fin_bank_reconciliation_line" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1255,7 +1255,7 @@
         </entity>
 
         <!-- 费用报销单头（员工费用报销，价税分离 + 项目/成本中心归集 + 业财过账） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinExpenseClaim"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinExpenseClaim"
                 displayName="费用报销单" ext:icon="receipt" i18n-en:displayName="Expense Claim" name="app.erp.fin.dao.entity.ErpFinExpenseClaim"
                 tableName="erp_fin_expense_claim" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1326,7 +1326,7 @@
         </entity>
 
         <!-- 费用报销单行（价税分离 + 项目/成本中心归集维度） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinExpenseClaimLine"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinExpenseClaimLine"
                 displayName="费用报销单行" ext:icon="list" i18n-en:displayName="Expense Claim Line" name="app.erp.fin.dao.entity.ErpFinExpenseClaimLine"
                 tableName="erp_fin_expense_claim_line" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1373,7 +1373,7 @@
         </entity>
 
         <!-- 员工借款单（预支/备用金/差旅借款，方向=其他应收款-员工预支） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
                 displayName="员工借款单" ext:icon="hand-coins" i18n-en:displayName="Employee Advance" name="app.erp.fin.dao.entity.ErpFinEmployeeAdvance"
                 tableName="erp_fin_employee_advance" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1437,7 +1437,7 @@
 
         <!-- ============================ 资金/票据（treasury.md） ============================ -->
 
-        <entity displayName="应收票据" ext:icon="receipt" i18n-en:displayName="Notes Receivable" name="app.erp.fin.dao.entity.ErpFinNotesReceivable"
+        <entity ext:web-renderer="flux" displayName="应收票据" ext:icon="receipt" i18n-en:displayName="Notes Receivable" name="app.erp.fin.dao.entity.ErpFinNotesReceivable"
                 tableName="erp_fin_notes_receivable" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
@@ -1479,7 +1479,7 @@
             </relations>
         </entity>
 
-        <entity displayName="应付票据" ext:icon="file-invoice-dollar" i18n-en:displayName="Notes Payable" name="app.erp.fin.dao.entity.ErpFinNotesPayable"
+        <entity ext:web-renderer="flux" displayName="应付票据" ext:icon="file-invoice-dollar" i18n-en:displayName="Notes Payable" name="app.erp.fin.dao.entity.ErpFinNotesPayable"
                 tableName="erp_fin_notes_payable" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
@@ -1519,7 +1519,7 @@
             </relations>
         </entity>
 
-        <entity displayName="票据贴现明细" ext:icon="percent" i18n-en:displayName="Notes Discount" name="app.erp.fin.dao.entity.ErpFinNotesDiscount"
+        <entity ext:web-renderer="flux" displayName="票据贴现明细" ext:icon="percent" i18n-en:displayName="Notes Discount" name="app.erp.fin.dao.entity.ErpFinNotesDiscount"
                 tableName="erp_fin_notes_discount" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
@@ -1551,7 +1551,7 @@
             </relations>
         </entity>
 
-        <entity displayName="银行授信额度" ext:icon="landmark" i18n-en:displayName="Credit Facility" name="app.erp.fin.dao.entity.ErpFinCreditFacility"
+        <entity ext:web-renderer="flux" displayName="银行授信额度" ext:icon="landmark" i18n-en:displayName="Credit Facility" name="app.erp.fin.dao.entity.ErpFinCreditFacility"
                 tableName="erp_fin_credit_facility" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
@@ -1579,7 +1579,7 @@
             </relations>
         </entity>
 
-        <entity displayName="现金预测" ext:icon="chart-line" i18n-en:displayName="Cash Forecast" name="app.erp.fin.dao.entity.ErpFinCashForecast"
+        <entity ext:web-renderer="flux" displayName="现金预测" ext:icon="chart-line" i18n-en:displayName="Cash Forecast" name="app.erp.fin.dao.entity.ErpFinCashForecast"
                 tableName="erp_fin_cash_forecast" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
                 <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
@@ -1609,7 +1609,7 @@
         <!-- 过账异常记录（异常工作台载体，见 posting-log.md §过账异常处置）。
              触发：post()/reverse() 抛 NopException 时，以独立 session/REQUIRES_NEW 写入（afterCommit 仅提交成功触发，
              回滚路径不执行，故失败记录须独立事务）。处置状态机经 ErrorCode 守门，期末结账前置检查扫描 PENDING/RETRYING。 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinPostingException"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinPostingException"
                 displayName="过账异常记录" ext:icon="triangle-exclamation" i18n-en:displayName="Posting Exception" name="app.erp.fin.dao.entity.ErpFinPostingException"
                 tableName="erp_fin_posting_exception" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1669,7 +1669,7 @@
         </entity>
 
         <!-- 坏账核销/收回单（头，承载 writeOff/recovery 事件，关联客户 + 源 AR 辅助账项 + 审批状态机；bad-debt.md） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBadDebt"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBadDebt"
                 displayName="坏账单" ext:icon="file-circle-xmark" i18n-en:displayName="Bad Debt" name="app.erp.fin.dao.entity.ErpFinBadDebt"
                 tableName="erp_fin_bad_debt" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1742,7 +1742,7 @@
              过账引擎本就不维护 ErpFinGlBalance，故预算不引入 GlBalance 结构变更。
         -->
         <!-- 预算方案头（版本：年度/滚动/调整，状态机 DRAFT→SUBMITTED→APPROVED→CANCELLED，APPROVED 生成 BUDGET 影子凭证） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBudgetScenario"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBudgetScenario"
                 displayName="预算方案" ext:icon="chart-pie" i18n-en:displayName="Budget Scenario" name="app.erp.fin.dao.entity.ErpFinBudgetScenario"
                 tableName="erp_fin_budget_scenario" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1813,7 +1813,7 @@
         </entity>
 
         <!-- 预算明细行（科目×期间×维度切分；commitmentAmount/actualAmount/availableAmount 派生不落库，查询时从 VoucherLine 聚合） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBudgetLine"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBudgetLine"
                 displayName="预算明细行" ext:icon="list" i18n-en:displayName="Budget Line" name="app.erp.fin.dao.entity.ErpFinBudgetLine"
                 tableName="erp_fin_budget_line" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1877,7 +1877,7 @@
         </entity>
 
         <!-- 预算控制日志（审计超预算拦截/放行记录） -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBudgetControlLog"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBudgetControlLog"
                 displayName="预算控制日志" ext:icon="clipboard-list" i18n-en:displayName="Budget Control Log" name="app.erp.fin.dao.entity.ErpFinBudgetControlLog"
                 tableName="erp_fin_budget_control_log" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1936,7 +1936,7 @@
 
         <!-- A2 滚动预算复制日志（plan 2026-07-21-1206-2，budget.md §版本审计链）：rollForward 操作审计记录。
              仅审计记录，不参与预算控制；控制始终从 ErpFinVoucherLine 聚合派生。 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBudgetRollforwardLog"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBudgetRollforwardLog"
                 displayName="预算滚动复制日志" ext:icon="history" i18n-en:displayName="Budget Roll-Forward Log" name="app.erp.fin.dao.entity.ErpFinBudgetRollforwardLog"
                 tableName="erp_fin_budget_rollforward_log" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1977,7 +1977,7 @@
 
         <!-- A2 预算结转日志（plan 2026-07-21-1206-2，budget.md §版本审计链）：carryForward 操作审计记录。
              仅审计记录，不参与预算控制；控制始终从 ErpFinVoucherLine 聚合派生。 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinBudgetCarryForwardLog"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinBudgetCarryForwardLog"
                 displayName="预算结转日志" ext:icon="history" i18n-en:displayName="Budget Carry-Forward Log" name="app.erp.fin.dao.entity.ErpFinBudgetCarryForwardLog"
                 tableName="erp_fin_budget_carry_forward_log" tagSet="gid,erp.finance" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -2020,7 +2020,7 @@
              开头消费 VoucherFact.accountKey；与 ErpMdSubjectMapping（post-resolution 跨账套转换）边界不重叠。
              tagSet audit+audit-save：复用平台 NopSysChangeLog 记字段级变更审计（运维改规则可追溯）。
              权威：docs/design/finance/gl-mapping-rules.md。 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinGlMappingRule"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinGlMappingRule"
                 displayName="科目映射规则" ext:icon="arrow-right-left" i18n-en:displayName="GL Mapping Rule" name="app.erp.fin.dao.entity.ErpFinGlMappingRule"
                 tableName="erp_fin_gl_mapping_rule" tagSet="gid,erp.finance,audit,audit-save" orm:bizKeyProp="code" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -2082,7 +2082,7 @@
              跨法人调拨经 IErpFinTransferPriceResolver 解析定价 → IntercompanyVoucherGenerator 生成配对凭证。
              validFrom/validTo 复用 C3 IDateRange MUTEX 语义；pricingMethod 三策略 cost-plus/market/negotiated。
              权威：docs/architecture/multi-company.md。 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice"
                 displayName="跨法人转移定价规则" ext:icon="tags" i18n-en:displayName="Intercompany Transfer Price" name="app.erp.fin.dao.entity.ErpFinIntercompanyTransferPrice"
                 tableName="erp_fin_intercompany_transfer_price" tagSet="gid,erp.finance,audit,audit-save" orm:bizKeyProp="code" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -2132,7 +2132,7 @@
 
         <!-- A3 公司间交易配对记录（plan 2026-07-22-1000-1，multi-company.md §公司间自动配对算法）：
              runMatching(periodId) 按 pairKey 扫描跨公司 AR/AP 凭证对写入；不冗余金额（经 bill_r 回链凭证）。 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinIntercompanyMatch"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinIntercompanyMatch"
                 displayName="公司间配对记录" ext:icon="link" i18n-en:displayName="Intercompany Match" name="app.erp.fin.dao.entity.ErpFinIntercompanyMatch"
                 tableName="erp_fin_intercompany_match" tagSet="gid,erp.finance,audit,audit-save" orm:bizKeyProp="code" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -2182,7 +2182,7 @@
         <!-- A3 合并抵消候选（plan 2026-07-22-1000-1，multi-company.md §合并抵消范围）：
              generateEliminationCandidates(periodId) 扫描配对候选写入；postElimination 生成抵消分录草稿凭证。
              抵消分录草稿经既有 ErpFinVoucher + billType 标记承载，不另设凭证表。 -->
-        <entity className="app.erp.fin.dao.entity.ErpFinConsolidationElimination"
+        <entity ext:web-renderer="flux" className="app.erp.fin.dao.entity.ErpFinConsolidationElimination"
                 displayName="合并抵消候选" ext:icon="minus-circle" i18n-en:displayName="Consolidation Elimination" name="app.erp.fin.dao.entity.ErpFinConsolidationElimination"
                 tableName="erp_fin_consolidation_elimination" tagSet="gid,erp.finance,audit,audit-save" orm:bizKeyProp="code" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -2233,7 +2233,7 @@
              平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
              这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
         ============================ -->
-        <entity displayName="会计科目" name="app.erp.md.dao.entity.ErpMdSubject"
+        <entity ext:web-renderer="flux" displayName="会计科目" name="app.erp.md.dao.entity.ErpMdSubject"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_subject">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2245,7 +2245,7 @@
             </columns>
         </entity>
 
-        <entity displayName="会计核算表(账套)" name="app.erp.md.dao.entity.ErpMdAcctSchema"
+        <entity ext:web-renderer="flux" displayName="会计核算表(账套)" name="app.erp.md.dao.entity.ErpMdAcctSchema"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_acct_schema">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2256,7 +2256,7 @@
             </columns>
         </entity>
 
-        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+        <entity ext:web-renderer="flux" displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2268,7 +2268,7 @@
             </columns>
         </entity>
 
-        <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2280,7 +2280,7 @@
             </columns>
         </entity>
 
-        <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
+        <entity ext:web-renderer="flux" displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2292,7 +2292,7 @@
             </columns>
         </entity>
 
-        <entity displayName="成本中心" name="app.erp.md.dao.entity.ErpMdCostCenter"
+        <entity ext:web-renderer="flux" displayName="成本中心" name="app.erp.md.dao.entity.ErpMdCostCenter"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_cost_center">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2302,7 +2302,7 @@
             </columns>
         </entity>
 
-        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2314,7 +2314,7 @@
             </columns>
         </entity>
 
-        <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
+        <entity ext:web-renderer="flux" displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_warehouse">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2326,7 +2326,7 @@
             </columns>
         </entity>
 
-        <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2338,7 +2338,7 @@
         </entity>
 
         <!-- 物料分类（plan 2026-07-21-0827-1 A1）：ErpFinGlMappingRule.materialCategoryId 维度的 FK 引用目标。 -->
-        <entity displayName="物料分类" name="app.erp.md.dao.entity.ErpMdMaterialCategory"
+        <entity ext:web-renderer="flux" displayName="物料分类" name="app.erp.md.dao.entity.ErpMdMaterialCategory"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material_category">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2348,7 +2348,7 @@
             </columns>
         </entity>
 
-        <entity displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
+        <entity ext:web-renderer="flux" displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
                 notGenCode="true" biz:moduleId="erp/prj" tableName="erp_prj_project">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -2359,7 +2359,7 @@
             </columns>
         </entity>
 
-        <entity displayName="固定资产" name="app.erp.ast.dao.entity.ErpAstAsset"
+        <entity ext:web-renderer="flux" displayName="固定资产" name="app.erp.ast.dao.entity.ErpAstAsset"
                 notGenCode="true" biz:moduleId="erp/ast" tableName="erp_ast_asset">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />

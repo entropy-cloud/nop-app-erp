@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-ast" component="layouts/default/index">
             <children>
                 <resource id="ErpAstAsset-main" displayName="固定资产" orderNo="10001" i18n-en:displayName="Fixed Asset"
-                          icon="truck" component="AMIS" resourceType="SUBM"
+                          icon="truck" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstAsset/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstAsset:query" displayName="查询固定资产"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstAssetCapitalization-main" displayName="资产资本化" orderNo="10004"
-                          i18n-en:displayName="Asset Capitalization" icon="badge-plus" component="AMIS"
+                          i18n-en:displayName="Asset Capitalization" icon="badge-plus" component="FLUX"
                           resourceType="SUBM" url="/erp/ast/pages/ErpAstAssetCapitalization/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstAssetCapitalization:query" displayName="查询资产资本化"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstAssetCategory-main" displayName="资产类别" orderNo="10007"
-                          i18n-en:displayName="Asset Category" icon="folder-tree" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Asset Category" icon="folder-tree" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstAssetCategory/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstAssetCategory:query" displayName="查询资产类别"
@@ -53,7 +53,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstCip-main" displayName="在建工程" orderNo="10010" i18n-en:displayName="CIP"
-                          icon="hard-hat" component="AMIS" resourceType="SUBM"
+                          icon="hard-hat" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstCip/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstCip:query" displayName="查询在建工程" i18n-en:displayName="Query CIP"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstCipCostItem-main" displayName="CIP成本归集行" orderNo="10013"
-                          i18n-en:displayName="CIP Cost Item" icon="coins" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="CIP Cost Item" icon="coins" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstCipCostItem/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstCipCostItem:query" displayName="查询CIP成本归集行"
@@ -81,7 +81,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstCipProgressBilling-main" displayName="CIP进度付款" orderNo="10016"
-                          i18n-en:displayName="CIP Progress Billing" icon="credit-card" component="AMIS"
+                          i18n-en:displayName="CIP Progress Billing" icon="credit-card" component="FLUX"
                           resourceType="SUBM" url="/erp/ast/pages/ErpAstCipProgressBilling/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstCipProgressBilling:query" displayName="查询CIP进度付款"
@@ -95,7 +95,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstDepreciationSchedule-main" displayName="折旧计划" orderNo="10019"
-                          i18n-en:displayName="Depreciation Schedule" icon="trending-down" component="AMIS"
+                          i18n-en:displayName="Depreciation Schedule" icon="trending-down" component="FLUX"
                           resourceType="SUBM" url="/erp/ast/pages/ErpAstDepreciationSchedule/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstDepreciationSchedule:query" displayName="查询折旧计划"
@@ -109,7 +109,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstDisposal-main" displayName="资产处置" orderNo="10022"
-                          i18n-en:displayName="Asset Disposal" icon="trash-2" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Asset Disposal" icon="trash-2" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstDisposal/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstDisposal:query" displayName="查询资产处置"
@@ -123,7 +123,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstInventory-main" displayName="资产盘点单" orderNo="10025"
-                          i18n-en:displayName="Asset Inventory" icon="clipboard-list" component="AMIS"
+                          i18n-en:displayName="Asset Inventory" icon="clipboard-list" component="FLUX"
                           resourceType="SUBM" url="/erp/ast/pages/ErpAstInventory/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstInventory:query" displayName="查询资产盘点单"
@@ -137,7 +137,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstInventoryLine-main" displayName="资产盘点行" orderNo="10028"
-                          i18n-en:displayName="Asset Inventory Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Asset Inventory Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstInventoryLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstInventoryLine:query" displayName="查询资产盘点行"
@@ -151,7 +151,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstMaintenance-main" displayName="资产维修工单" orderNo="10031"
-                          i18n-en:displayName="Asset Maintenance" icon="wrench" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Asset Maintenance" icon="wrench" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstMaintenance/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstMaintenance:query" displayName="查询资产维修工单"
@@ -165,7 +165,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstMaintenanceCost-main" displayName="维修费用行" orderNo="10034"
-                          i18n-en:displayName="Maintenance Cost Line" icon="coins" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Maintenance Cost Line" icon="coins" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstMaintenanceCost/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstMaintenanceCost:query" displayName="查询维修费用行"
@@ -179,7 +179,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstMerge-main" displayName="资产合并单" orderNo="10037" i18n-en:displayName="Asset Merge"
-                          icon="git-merge" component="AMIS" resourceType="SUBM"
+                          icon="git-merge" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstMerge/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstMerge:query" displayName="查询资产合并单"
@@ -193,7 +193,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstMergeLine-main" displayName="资产合并行" orderNo="10040"
-                          i18n-en:displayName="Asset Merge Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Asset Merge Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstMergeLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstMergeLine:query" displayName="查询资产合并行"
@@ -207,7 +207,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstMovement-main" displayName="资产移动" orderNo="10043"
-                          i18n-en:displayName="Asset Movement" icon="move" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Asset Movement" icon="move" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstMovement/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstMovement:query" displayName="查询资产移动"
@@ -221,7 +221,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstSplit-main" displayName="资产拆分单" orderNo="10046" i18n-en:displayName="Asset Split"
-                          icon="split" component="AMIS" resourceType="SUBM"
+                          icon="split" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstSplit/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstSplit:query" displayName="查询资产拆分单"
@@ -235,7 +235,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstSplitLine-main" displayName="资产拆分行" orderNo="10049"
-                          i18n-en:displayName="Asset Split Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Asset Split Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/ast/pages/ErpAstSplitLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstSplitLine:query" displayName="查询资产拆分行"
@@ -249,7 +249,7 @@
                     </children>
                 </resource>
                 <resource id="ErpAstValueAdjustment-main" displayName="资产价值调整" orderNo="10052"
-                          i18n-en:displayName="Asset Value Adjustment" icon="sliders-horizontal" component="AMIS"
+                          i18n-en:displayName="Asset Value Adjustment" icon="sliders-horizontal" component="FLUX"
                           resourceType="SUBM" url="/erp/ast/pages/ErpAstValueAdjustment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpAstValueAdjustment:query" displayName="查询资产价值调整"

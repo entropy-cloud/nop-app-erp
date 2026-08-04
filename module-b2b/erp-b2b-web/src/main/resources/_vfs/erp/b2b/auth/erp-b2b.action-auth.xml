@@ -11,11 +11,11 @@
                     <children>
                         <resource id="ErpB2bEdiFormat-main" app:useCases="UC-B2B-001"
                                   displayName="EDI格式" i18n-en:displayName="EDI Format" icon="file-type"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/b2b/pages/ErpB2bEdiFormat/main.page.yaml"/>
                         <resource id="ErpB2bEdiDoc-main" app:useCases="UC-B2B-002,UC-B2B-006"
                                   displayName="EDI事务" i18n-en:displayName="EDI Document" icon="file"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/b2b/pages/ErpB2bEdiDoc/main.page.yaml">
                             <children>
                                 <resource id="FNPT:ErpB2bEdiDoc:markSent" displayName="标记EDI已发送" i18n-en:displayName="Mark Sent"
@@ -30,7 +30,7 @@
                         </resource>
                         <resource id="b2b-edi-detail" app:useCases="UC-B2B-002,UC-B2B-005,UC-B2B-006" displayName="EDI事务详情"
                                   i18n-en:displayName="EDI Transaction Detail" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="115"
+                                  component="FLUX" resourceType="SUBM" orderNo="115"
                                   url="/erp/b2b/pages/dashboard/edi-detail.page.yaml"/>
                     </children>
                 </resource>
@@ -39,7 +39,7 @@
                     <children>
                         <resource id="ErpB2bAsn-main" app:useCases="UC-B2B-003"
                                   displayName="提前发货通知" i18n-en:displayName="Advanced Shipping Notice" icon="truck"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/b2b/pages/ErpB2bAsn/main.page.yaml">
                             <children>
                                 <resource id="FNPT:ErpB2bAsn:handleInboundWebhook" displayName="处理入站Webhook(高危)" i18n-en:displayName="Handle Inbound Webhook"
@@ -50,11 +50,11 @@
                         </resource>
                         <resource id="b2b-asn-flow" app:useCases="UC-B2B-003" displayName="ASN流程跟踪"
                                   i18n-en:displayName="ASN Flow Tracking" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="205"
+                                  component="FLUX" resourceType="SUBM" orderNo="205"
                                   url="/erp/b2b/pages/dashboard/asn-flow.page.yaml"/>
                         <resource id="ErpB2bAsnLine-main" displayName="ASN明细"
                                   i18n-en:displayName="ASN Line" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/erp/b2b/pages/ErpB2bAsnLine/main.page.yaml"/>
                     </children>
                 </resource>
@@ -63,7 +63,7 @@
                     <children>
                         <resource id="ErpB2bPartnerProfile-main" app:useCases="UC-B2B-007"
                                   displayName="合作伙伴档案" i18n-en:displayName="Partner Profile" icon="building"
-                                  component="AMIS" resourceType="SUBM" orderNo="50"
+                                  component="FLUX" resourceType="SUBM" orderNo="50"
                                   url="/erp/b2b/pages/ErpB2bPartnerProfile/main.page.yaml"/>
                     </children>
                 </resource>
@@ -72,15 +72,15 @@
                     <children>
                         <resource id="ErpB2bMftConfig-main" app:useCases="UC-B2B-008"
                                   displayName="MFT传输配置" i18n-en:displayName="MFT Config" icon="upload-cloud"
-                                  component="AMIS" resourceType="SUBM" orderNo="250"
+                                  component="FLUX" resourceType="SUBM" orderNo="250"
                                   url="/erp/b2b/pages/ErpB2bMftConfig/main.page.yaml"/>
                         <resource id="ErpB2bMftCertificate-main" app:useCases="UC-B2B-008"
                                   displayName="MFT证书" i18n-en:displayName="MFT Certificate" icon="shield"
-                                  component="AMIS" resourceType="SUBM" orderNo="260"
+                                  component="FLUX" resourceType="SUBM" orderNo="260"
                                   url="/erp/b2b/pages/ErpB2bMftCertificate/main.page.yaml"/>
                         <resource id="ErpB2bMftLog-main" app:useCases="UC-B2B-008"
                                   displayName="MFT传输日志" i18n-en:displayName="MFT Log" icon="activity"
-                                  component="AMIS" resourceType="SUBM" orderNo="270"
+                                  component="FLUX" resourceType="SUBM" orderNo="270"
                                   url="/erp/b2b/pages/ErpB2bMftLog/main.page.yaml"/>
                     </children>
                 </resource>
@@ -89,11 +89,11 @@
                     <children>
                         <resource id="ErpB2bCodeMapping-main" app:useCases="UC-B2B-004"
                                   displayName="代码映射" i18n-en:displayName="Code Mapping" icon="code"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/b2b/pages/ErpB2bCodeMapping/main.page.yaml"/>
                         <resource id="ErpB2bEdiLog-main" app:useCases="UC-B2B-005,UC-B2B-006"
                                   displayName="EDI日志" i18n-en:displayName="EDI Log" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  component="FLUX" resourceType="SUBM" orderNo="310"
                                   url="/erp/b2b/pages/ErpB2bEdiLog/main.page.yaml"/>
                     </children>
                 </resource>

@@ -11,15 +11,15 @@
                     <children>
                         <resource id="ErpHrDepartment-main" app:useCases="UC-HR-08"
                                   displayName="部门" i18n-en:displayName="Department" icon="building-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/hr/pages/ErpHrDepartment/main.page.yaml"/>
                         <resource id="hr-org-chart" app:useCases="UC-HR-08" displayName="组织架构图"
                                   i18n-en:displayName="Org Chart" icon="git-fork"
-                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  component="FLUX" resourceType="SUBM" orderNo="105"
                                   url="/erp/hr/pages/dashboard/org-chart.page.yaml"/>
                         <resource id="ErpHrPosition-main" displayName="职位"
                                   i18n-en:displayName="Position" icon="briefcase"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/hr/pages/ErpHrPosition/main.page.yaml"/>
                     </children>
                 </resource>
@@ -28,11 +28,11 @@
                     <children>
                         <resource id="ErpHrEmployee-main" app:useCases="UC-HR-01,UC-HR-08"
                                   displayName="员工主数据" i18n-en:displayName="Employee" icon="user-circle"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/hr/pages/ErpHrEmployee/main.page.yaml"/>
                         <resource id="ErpHrEmploymentContract-main" app:useCases="UC-HR-07"
                                   displayName="劳动合同" i18n-en:displayName="Employment Contract" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/erp/hr/pages/ErpHrEmploymentContract/main.page.yaml"/>
                     </children>
                 </resource>
@@ -41,15 +41,15 @@
                     <children>
                         <resource id="ErpHrAttendance-main" app:useCases="UC-HR-06"
                                   displayName="考勤记录" i18n-en:displayName="Attendance" icon="clock"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/hr/pages/ErpHrAttendance/main.page.yaml"/>
                         <resource id="ErpHrTimesheet-main" app:useCases="UC-HR-03"
                                   displayName="工时表" i18n-en:displayName="Timesheet" icon="clipboard-list"
-                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  component="FLUX" resourceType="SUBM" orderNo="310"
                                   url="/erp/hr/pages/ErpHrTimesheet/main.page.yaml"/>
                         <resource id="ErpHrTimesheetLine-main" app:useCases="UC-HR-03"
                                   displayName="工时明细" i18n-en:displayName="Timesheet Line" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="320"
+                                  component="FLUX" resourceType="SUBM" orderNo="320"
                                   url="/erp/hr/pages/ErpHrTimesheetLine/main.page.yaml"/>
                     </children>
                 </resource>
@@ -58,11 +58,11 @@
                     <children>
                         <resource id="ErpHrShift-main" app:useCases="UC-HR-09"
                                   displayName="班次模板" i18n-en:displayName="Shift" icon="clock"
-                                  component="AMIS" resourceType="SUBM" orderNo="350"
+                                  component="FLUX" resourceType="SUBM" orderNo="350"
                                   url="/erp/hr/pages/ErpHrShift/main.page.yaml"/>
                         <resource id="ErpHrShiftAssignment-main" app:useCases="UC-HR-09"
                                   displayName="排班分配" i18n-en:displayName="Shift Assignment" icon="calendar-days"
-                                  component="AMIS" resourceType="SUBM" orderNo="360"
+                                  component="FLUX" resourceType="SUBM" orderNo="360"
                                   url="/erp/hr/pages/ErpHrShiftAssignment/main.page.yaml"/>
                     </children>
                 </resource>
@@ -71,7 +71,7 @@
                     <children>
                         <resource id="ErpHrLeaveRequest-main" app:useCases="UC-HR-02"
                                   displayName="休假申请" i18n-en:displayName="Leave Request" icon="calendar-off"
-                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  component="FLUX" resourceType="SUBM" orderNo="400"
                                   url="/erp/hr/pages/ErpHrLeaveRequest/main.page.yaml">
                             <children>
                                 <resource id="FNPT:ErpHrLeaveRequest:approve" displayName="审批休假" i18n-en:displayName="Approve Leave"
@@ -82,11 +82,11 @@
                         </resource>
                         <resource id="hr-team-vacation-calendar" app:useCases="UC-HR-02" displayName="团队休假日历"
                                   i18n-en:displayName="Team Vacation Calendar" icon="calendar-days"
-                                  component="AMIS" resourceType="SUBM" orderNo="405"
+                                  component="FLUX" resourceType="SUBM" orderNo="405"
                                   url="/erp/hr/pages/ErpHrLeaveRequest/team-vacation-calendar.page.yaml"/>
                         <resource id="ErpHrLeaveBalance-main" displayName="休假额度"
                                   i18n-en:displayName="Leave Balance" icon="calendar-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  component="FLUX" resourceType="SUBM" orderNo="410"
                                   url="/erp/hr/pages/ErpHrLeaveBalance/main.page.yaml"/>
                     </children>
                 </resource>
@@ -95,7 +95,7 @@
                     <children>
                         <resource id="ErpHrSalary-main" app:useCases="UC-HR-04,UC-HR-10"
                                   displayName="薪酬记录" i18n-en:displayName="Salary Record" icon="dollar-sign"
-                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  component="FLUX" resourceType="SUBM" orderNo="500"
                                   url="/erp/hr/pages/ErpHrSalary/main.page.yaml">
                             <children>
                                 <resource id="FNPT:ErpHrSalary:approve" displayName="审批薪酬(机密)" i18n-en:displayName="Approve Salary"
@@ -110,15 +110,15 @@
                         </resource>
                         <resource id="hr-payroll-approval" app:useCases="UC-HR-04,UC-HR-10" displayName="薪酬核算审批"
                                   i18n-en:displayName="Payroll Approval" icon="clipboard-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="505"
+                                  component="FLUX" resourceType="SUBM" orderNo="505"
                                   url="/erp/hr/pages/dashboard/payroll-approval.page.yaml"/>
                         <resource id="ErpHrSalarySimulation-main" app:useCases="UC-HR-10"
                                   displayName="薪酬模拟" i18n-en:displayName="Salary Simulation" icon="calculator"
-                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  component="FLUX" resourceType="SUBM" orderNo="510"
                                   url="/erp/hr/pages/ErpHrSalarySimulation/main.page.yaml"/>
                         <resource id="ErpHrPayrollBankFile-main" displayName="银行代发文件"
                                   i18n-en:displayName="Payroll Bank File" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="520"
+                                  component="FLUX" resourceType="SUBM" orderNo="520"
                                   url="/erp/hr/pages/ErpHrPayrollBankFile/main.page.yaml"/>
                     </children>
                 </resource>
@@ -127,11 +127,11 @@
                     <children>
                         <resource id="ErpHrSocialInsuranceConfig-main" displayName="社保配置"
                                   i18n-en:displayName="Social Insurance Config" icon="settings"
-                                  component="AMIS" resourceType="SUBM" orderNo="530"
+                                  component="FLUX" resourceType="SUBM" orderNo="530"
                                   url="/erp/hr/pages/ErpHrSocialInsuranceConfig/main.page.yaml"/>
                         <resource id="ErpHrSocialInsuranceBase-main" displayName="员工社保基数"
                                   i18n-en:displayName="Social Insurance Base" icon="users"
-                                  component="AMIS" resourceType="SUBM" orderNo="540"
+                                  component="FLUX" resourceType="SUBM" orderNo="540"
                                   url="/erp/hr/pages/ErpHrSocialInsuranceBase/main.page.yaml"/>
                     </children>
                 </resource>
@@ -140,11 +140,11 @@
                     <children>
                         <resource id="ErpHrTaxConfig-main" displayName="个税配置"
                                   i18n-en:displayName="Tax Config" icon="settings"
-                                  component="AMIS" resourceType="SUBM" orderNo="560"
+                                  component="FLUX" resourceType="SUBM" orderNo="560"
                                   url="/erp/hr/pages/ErpHrTaxConfig/main.page.yaml"/>
                         <resource id="ErpHrTaxSpecialDeduction-main" displayName="专项附加扣除"
                                   i18n-en:displayName="Tax Special Deduction" icon="file-deduct"
-                                  component="AMIS" resourceType="SUBM" orderNo="570"
+                                  component="FLUX" resourceType="SUBM" orderNo="570"
                                   url="/erp/hr/pages/ErpHrTaxSpecialDeduction/main.page.yaml"/>
                     </children>
                 </resource>
@@ -153,15 +153,15 @@
                     <children>
                         <resource id="ErpHrSurvey-main" app:useCases="UC-HR-11"
                                   displayName="问卷模板" i18n-en:displayName="Survey Template" icon="file-question"
-                                  component="AMIS" resourceType="SUBM" orderNo="550"
+                                  component="FLUX" resourceType="SUBM" orderNo="550"
                                   url="/erp/hr/pages/ErpHrSurvey/main.page.yaml"/>
                         <resource id="ErpHrSurveyResponse-main" app:useCases="UC-HR-11"
                                   displayName="调研答卷" i18n-en:displayName="Survey Response" icon="file-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="560"
+                                  component="FLUX" resourceType="SUBM" orderNo="560"
                                   url="/erp/hr/pages/ErpHrSurveyResponse/main.page.yaml"/>
                         <resource id="ErpHrSurveyResult-main" app:useCases="UC-HR-11"
                                   displayName="结果分析" i18n-en:displayName="Survey Result" icon="bar-chart"
-                                  component="AMIS" resourceType="SUBM" orderNo="570"
+                                  component="FLUX" resourceType="SUBM" orderNo="570"
                                   url="/erp/hr/pages/ErpHrSurveyResult/main.page.yaml"/>
                     </children>
                 </resource>
@@ -170,23 +170,23 @@
                     <children>
                         <resource id="ErpHrCompetency-main" app:useCases="UC-HR-12"
                                   displayName="胜任力字典" i18n-en:displayName="Competency" icon="book-open"
-                                  component="AMIS" resourceType="SUBM" orderNo="650"
+                                  component="FLUX" resourceType="SUBM" orderNo="650"
                                   url="/erp/hr/pages/ErpHrCompetency/main.page.yaml"/>
                         <resource id="ErpHrRoleCompetency-main" app:useCases="UC-HR-12"
                                   displayName="岗位胜任力要求" i18n-en:displayName="Role Competency" icon="briefcase"
-                                  component="AMIS" resourceType="SUBM" orderNo="660"
+                                  component="FLUX" resourceType="SUBM" orderNo="660"
                                   url="/erp/hr/pages/ErpHrRoleCompetency/main.page.yaml"/>
                         <resource id="ErpHrEmployeeAssessment-main" app:useCases="UC-HR-12"
                                   displayName="员工评估" i18n-en:displayName="Employee Assessment" icon="clipboard-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="670"
+                                  component="FLUX" resourceType="SUBM" orderNo="670"
                                   url="/erp/hr/pages/ErpHrEmployeeAssessment/main.page.yaml"/>
                         <resource id="ErpHrGapAnalysis-main" app:useCases="UC-HR-12"
                                   displayName="差距分析" i18n-en:displayName="Gap Analysis" icon="triangle-alert"
-                                  component="AMIS" resourceType="SUBM" orderNo="680"
+                                  component="FLUX" resourceType="SUBM" orderNo="680"
                                   url="/erp/hr/pages/ErpHrGapAnalysis/main.page.yaml"/>
                         <resource id="ErpHrDevelopmentPlan-main" app:useCases="UC-HR-12"
                                   displayName="发展计划" i18n-en:displayName="Development Plan" icon="target"
-                                  component="AMIS" resourceType="SUBM" orderNo="690"
+                                  component="FLUX" resourceType="SUBM" orderNo="690"
                                   url="/erp/hr/pages/ErpHrDevelopmentPlan/main.page.yaml"/>
                     </children>
                 </resource>
@@ -195,7 +195,7 @@
                     <children>
                         <resource id="ErpHrRecruitment-main" app:useCases="UC-HR-05"
                                   displayName="招聘记录" i18n-en:displayName="Recruitment" icon="user-plus"
-                                  component="AMIS" resourceType="SUBM" orderNo="700"
+                                  component="FLUX" resourceType="SUBM" orderNo="700"
                                   url="/erp/hr/pages/ErpHrRecruitment/main.page.yaml"/>
                     </children>
                 </resource>
@@ -204,11 +204,11 @@
                     <children>
                         <resource id="employee-net-balance" app:useCases="UC-HR-04,UC-FIN-16" displayName="员工净余额"
                                   i18n-en:displayName="Employee Net Balance" icon="scale"
-                                  component="AMIS" resourceType="SUBM" orderNo="8010"
+                                  component="FLUX" resourceType="SUBM" orderNo="8010"
                                   url="/erp/hr/pages/report/employee-net-balance.page.yaml"/>
                         <resource id="payroll-simulation-comparison" app:useCases="UC-HR-10" displayName="薪酬模拟对比"
                                   i18n-en:displayName="Payroll Simulation Comparison" icon="calculator"
-                                  component="AMIS" resourceType="SUBM" orderNo="8020"
+                                  component="FLUX" resourceType="SUBM" orderNo="8020"
                                   url="/erp/hr/pages/report/payroll-simulation-comparison.page.yaml"/>
                     </children>
                 </resource>

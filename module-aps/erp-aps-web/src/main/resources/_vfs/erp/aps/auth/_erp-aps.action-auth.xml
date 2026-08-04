@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-aps" component="layouts/default/index">
             <children>
                 <resource id="ErpApsCapacityReservation-main" displayName="产能预留" orderNo="10001"
-                          i18n-en:displayName="Capacity Reservation" icon="lock" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Capacity Reservation" icon="lock" component="FLUX" resourceType="SUBM"
                           url="/erp/aps/pages/ErpApsCapacityReservation/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpApsCapacityReservation:query" displayName="查询产能预留"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpApsConstraint-main" displayName="排产约束" orderNo="10004" i18n-en:displayName="Constraint"
-                          icon="ban" component="AMIS" resourceType="SUBM"
+                          icon="ban" component="FLUX" resourceType="SUBM"
                           url="/erp/aps/pages/ErpApsConstraint/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpApsConstraint:query" displayName="查询排产约束"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpApsDispatchLog-main" displayName="派工日志" orderNo="10007"
-                          i18n-en:displayName="Dispatch Log" icon="scroll-text" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Dispatch Log" icon="scroll-text" component="FLUX" resourceType="SUBM"
                           url="/erp/aps/pages/ErpApsDispatchLog/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpApsDispatchLog:query" displayName="查询派工日志"
@@ -53,7 +53,7 @@
                     </children>
                 </resource>
                 <resource id="ErpApsDispatchRule-main" displayName="自动派工规则" orderNo="10010"
-                          i18n-en:displayName="Dispatch Rule" icon="play-circle" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Dispatch Rule" icon="play-circle" component="FLUX" resourceType="SUBM"
                           url="/erp/aps/pages/ErpApsDispatchRule/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpApsDispatchRule:query" displayName="查询自动派工规则"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="ErpApsOpRouting-main" displayName="替代工艺路线" orderNo="10013"
-                          i18n-en:displayName="OP Routing" icon="shuffle" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="OP Routing" icon="shuffle" component="FLUX" resourceType="SUBM"
                           url="/erp/aps/pages/ErpApsOpRouting/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpApsOpRouting:query" displayName="查询替代工艺路线"
@@ -81,7 +81,7 @@
                     </children>
                 </resource>
                 <resource id="ErpApsOperationOrder-main" displayName="工序工单" orderNo="10016"
-                          i18n-en:displayName="Operation Order" icon="cpu" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Operation Order" icon="cpu" component="FLUX" resourceType="SUBM"
                           url="/erp/aps/pages/ErpApsOperationOrder/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpApsOperationOrder:query" displayName="查询工序工单"
@@ -95,7 +95,7 @@
                     </children>
                 </resource>
                 <resource id="ErpApsSchedule-main" displayName="排产方案" orderNo="10019" i18n-en:displayName="Schedule"
-                          icon="calendar-check" component="AMIS" resourceType="SUBM"
+                          icon="calendar-check" component="FLUX" resourceType="SUBM"
                           url="/erp/aps/pages/ErpApsSchedule/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpApsSchedule:query" displayName="查询排产方案"

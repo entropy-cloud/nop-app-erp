@@ -13,7 +13,7 @@
     - appName:        app-erp-cs
     - entityPackage:  app.erp.cs.dao.entity
     - 实体类名:        ErpCs<Entity>
-    - 表名:           erp_cs_<entity>
+    - 表名:           erp_cs_<entity ext:web-renderer="flux">
     - 字典命名空间:    erp-cs/<dict-name>
 
   跨工程依赖：
@@ -140,7 +140,7 @@
 
     <entities>
         <!-- 客服工单 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsTicket"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsTicket"
                 displayName="客服工单" ext:icon="headset" i18n-en:displayName="Ticket" name="app.erp.cs.dao.entity.ErpCsTicket"
                 tableName="erp_cs_ticket" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -220,7 +220,7 @@
         </entity>
 
         <!-- 工单类型 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsTicketType"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsTicketType"
                 displayName="工单类型" ext:icon="tag" i18n-en:displayName="Ticket Type" name="app.erp.cs.dao.entity.ErpCsTicketType"
                 tableName="erp_cs_ticket_type" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -255,7 +255,7 @@
         </entity>
 
         <!-- SLA 策略 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsSlaPolicy"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsSlaPolicy"
                 displayName="SLA 策略" ext:icon="clock" i18n-en:displayName="SLA Policy" name="app.erp.cs.dao.entity.ErpCsSlaPolicy"
                 tableName="erp_cs_sla_policy" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -298,7 +298,7 @@
         </entity>
 
         <!-- 客服团队 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsTeam"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsTeam"
                 displayName="客服团队" ext:icon="users" i18n-en:displayName="CS Team" name="app.erp.cs.dao.entity.ErpCsTeam"
                 tableName="erp_cs_team" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -327,7 +327,7 @@
         </entity>
 
         <!-- 工单操作日志 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsTicketAction"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsTicketAction"
                 displayName="工单操作日志" ext:icon="list" i18n-en:displayName="Ticket Action" name="app.erp.cs.dao.entity.ErpCsTicketAction"
                 tableName="erp_cs_ticket_action" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -359,7 +359,7 @@
         </entity>
 
         <!-- 知识库 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsKnowledgeBase"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsKnowledgeBase"
                 displayName="知识库" ext:icon="book-open" i18n-en:displayName="Knowledge Base" name="app.erp.cs.dao.entity.ErpCsKnowledgeBase"
                 tableName="erp_cs_knowledge_base" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -394,7 +394,7 @@
         </entity>
 
         <!-- 预设应答分类 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsCannedCategory"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsCannedCategory"
                 displayName="预设应答分类" ext:icon="folder" i18n-en:displayName="Canned Category" name="app.erp.cs.dao.entity.ErpCsCannedCategory"
                 tableName="erp_cs_canned_category" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -429,7 +429,7 @@
         </entity>
 
         <!-- 预设应答模板 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsCannedResponse"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsCannedResponse"
                 displayName="预设应答模板" ext:icon="message-square" i18n-en:displayName="Canned Response" name="app.erp.cs.dao.entity.ErpCsCannedResponse"
                 tableName="erp_cs_canned_response" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -473,7 +473,7 @@
         </entity>
 
         <!-- 满意度调查 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsSurvey"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsSurvey"
                 displayName="满意度调查" ext:icon="star" i18n-en:displayName="CSAT Survey" name="app.erp.cs.dao.entity.ErpCsSurvey"
                 tableName="erp_cs_survey" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -509,7 +509,7 @@
         </entity>
 
         <!-- 客服费率 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsAgentRate"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsAgentRate"
                 displayName="客服费率" ext:icon="dollar-sign" i18n-en:displayName="Agent Rate" name="app.erp.cs.dao.entity.ErpCsAgentRate"
                 tableName="erp_cs_agent_rate" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -540,7 +540,7 @@
         </entity>
 
         <!-- 支持合同 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsContract"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsContract"
                 displayName="支持合同" ext:icon="file-text" i18n-en:displayName="Support Contract" name="app.erp.cs.dao.entity.ErpCsContract"
                 tableName="erp_cs_contract" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -593,7 +593,7 @@
         </entity>
 
         <!-- 服务权益 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsEntitlement"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsEntitlement"
                 displayName="服务权益" ext:icon="shield" i18n-en:displayName="Entitlement" name="app.erp.cs.dao.entity.ErpCsEntitlement"
                 tableName="erp_cs_entitlement" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -644,7 +644,7 @@
         </entity>
 
         <!-- 目录分类 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsCatalogCategory"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsCatalogCategory"
                 displayName="目录分类" ext:icon="folder" i18n-en:displayName="Catalog Category" name="app.erp.cs.dao.entity.ErpCsCatalogCategory"
                 tableName="erp_cs_catalog_category" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -680,7 +680,7 @@
         </entity>
 
         <!-- 服务目录项 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsServiceCatalogItem"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsServiceCatalogItem"
                 displayName="服务目录项" ext:icon="book" i18n-en:displayName="Service Catalog Item" name="app.erp.cs.dao.entity.ErpCsServiceCatalogItem"
                 tableName="erp_cs_service_catalog_item" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -739,7 +739,7 @@
         </entity>
 
         <!-- 目录项履行映射 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsCatalogFulfillment"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsCatalogFulfillment"
                 displayName="目录项履行映射" ext:icon="git-branch" i18n-en:displayName="Catalog Fulfillment" name="app.erp.cs.dao.entity.ErpCsCatalogFulfillment"
                 tableName="erp_cs_catalog_fulfillment" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -777,7 +777,7 @@
         </entity>
 
         <!-- 工单计时条目 -->
-        <entity className="app.erp.cs.dao.entity.ErpCsTimeEntry"
+        <entity ext:web-renderer="flux" className="app.erp.cs.dao.entity.ErpCsTimeEntry"
                 displayName="工单计时条目" ext:icon="clock" i18n-en:displayName="Time Entry" name="app.erp.cs.dao.entity.ErpCsTimeEntry"
                 tableName="erp_cs_time_entry" tagSet="gid,erp.cs" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -831,14 +831,14 @@
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
-        <entity displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
-        <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />

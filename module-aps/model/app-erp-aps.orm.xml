@@ -52,7 +52,7 @@
 
     <entities>
         <!-- 工序工单 -->
-        <entity className="app.erp.aps.dao.entity.ErpApsOperationOrder"
+        <entity ext:web-renderer="flux" className="app.erp.aps.dao.entity.ErpApsOperationOrder"
                 displayName="工序工单" ext:icon="cpu" i18n-en:displayName="Operation Order" name="app.erp.aps.dao.entity.ErpApsOperationOrder"
                 tableName="erp_aps_operation_order" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -114,7 +114,7 @@
         </entity>
 
         <!-- 排产方案 -->
-        <entity className="app.erp.aps.dao.entity.ErpApsSchedule"
+        <entity ext:web-renderer="flux" className="app.erp.aps.dao.entity.ErpApsSchedule"
                 displayName="排产方案" ext:icon="calendar-check" i18n-en:displayName="Schedule" name="app.erp.aps.dao.entity.ErpApsSchedule"
                 tableName="erp_aps_schedule" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -155,7 +155,7 @@
         </entity>
 
         <!-- 排产约束 -->
-        <entity className="app.erp.aps.dao.entity.ErpApsConstraint"
+        <entity ext:web-renderer="flux" className="app.erp.aps.dao.entity.ErpApsConstraint"
                 displayName="排产约束" ext:icon="ban" i18n-en:displayName="Constraint" name="app.erp.aps.dao.entity.ErpApsConstraint"
                 tableName="erp_aps_constraint" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -185,7 +185,7 @@
         </entity>
 
         <!-- 替代工艺路线 -->
-        <entity className="app.erp.aps.dao.entity.ErpApsOpRouting"
+        <entity ext:web-renderer="flux" className="app.erp.aps.dao.entity.ErpApsOpRouting"
                 displayName="替代工艺路线" ext:icon="shuffle" i18n-en:displayName="OP Routing" name="app.erp.aps.dao.entity.ErpApsOpRouting"
                 tableName="erp_aps_op_routing" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -224,7 +224,7 @@
         </entity>
 
         <!-- 自动派工规则 -->
-        <entity className="app.erp.aps.dao.entity.ErpApsDispatchRule"
+        <entity ext:web-renderer="flux" className="app.erp.aps.dao.entity.ErpApsDispatchRule"
                 displayName="自动派工规则" ext:icon="play-circle" i18n-en:displayName="Dispatch Rule" name="app.erp.aps.dao.entity.ErpApsDispatchRule"
                 tableName="erp_aps_dispatch_rule" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -263,7 +263,7 @@
         </entity>
 
         <!-- 派工日志 -->
-        <entity className="app.erp.aps.dao.entity.ErpApsDispatchLog"
+        <entity ext:web-renderer="flux" className="app.erp.aps.dao.entity.ErpApsDispatchLog"
                 displayName="派工日志" ext:icon="scroll-text" i18n-en:displayName="Dispatch Log" name="app.erp.aps.dao.entity.ErpApsDispatchLog"
                 tableName="erp_aps_dispatch_log" tagSet="gid,erp.aps" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -310,7 +310,7 @@
             TOCTOU 兜底——两个并发 scheduleForward 即使同时通过 pre-check，DB 唯一约束也只允许一行落地。
             不使用逻辑删除：释放（PLANNED→DRAFT/CANCELLED）时硬删除，避免软删除行占据 UK 导致重排失败。
         -->
-        <entity className="app.erp.aps.dao.entity.ErpApsCapacityReservation"
+        <entity ext:web-renderer="flux" className="app.erp.aps.dao.entity.ErpApsCapacityReservation"
                 displayName="产能预留" ext:icon="lock" i18n-en:displayName="Capacity Reservation" name="app.erp.aps.dao.entity.ErpApsCapacityReservation"
                 tableName="erp_aps_capacity_reservation" tagSet="gid,erp.aps" registerShortName="true"
                 versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
@@ -343,7 +343,7 @@
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
-        <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />

@@ -185,7 +185,7 @@
 
     <entities>
         <!-- 物料主数据 -->
-        <entity className="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdMaterial"
                 displayName="物料" ext:icon="package" i18n-en:displayName="Material" name="app.erp.md.dao.entity.ErpMdMaterial"
                 tableName="erp_md_material" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -265,7 +265,7 @@
         </entity>
 
         <!-- C2 跨境贸易扩展：per-transaction 报关记录实体（docs/design/master-data/cross-border-trade.md §3） -->
-        <entity className="app.erp.md.dao.entity.ErpMdMaterialCustoms"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdMaterialCustoms"
                 displayName="物料报关记录" ext:icon="file-text" i18n-en:displayName="Material Customs Declaration" name="app.erp.md.dao.entity.ErpMdMaterialCustoms"
                 tableName="erp_md_material_customs" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -329,7 +329,7 @@
         </entity>
 
         <!-- 物料分类（树形） -->
-        <entity className="app.erp.md.dao.entity.ErpMdMaterialCategory"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdMaterialCategory"
                 displayName="物料分类" ext:icon="folder-tree" i18n-en:displayName="Material Category" name="app.erp.md.dao.entity.ErpMdMaterialCategory"
                 tableName="erp_md_material_category" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -368,7 +368,7 @@
         </entity>
 
         <!-- 物料 SKU -->
-        <entity className="app.erp.md.dao.entity.ErpMdMaterialSku"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdMaterialSku"
                 displayName="物料SKU" ext:icon="package-2" i18n-en:displayName="Material SKU" name="app.erp.md.dao.entity.ErpMdMaterialSku"
                 tableName="erp_md_material_sku" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -419,7 +419,7 @@
         </entity>
 
         <!-- 往来单位 -->
-        <entity className="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdPartner"
                 displayName="往来单位" ext:icon="users" i18n-en:displayName="Business Partner" name="app.erp.md.dao.entity.ErpMdPartner"
                 tableName="erp_md_partner" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -466,7 +466,7 @@
         </entity>
 
         <!-- 往来单位地址 -->
-        <entity className="app.erp.md.dao.entity.ErpMdPartnerAddress"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdPartnerAddress"
                 displayName="往来单位地址" ext:icon="map-pin" i18n-en:displayName="Partner Address" name="app.erp.md.dao.entity.ErpMdPartnerAddress"
                 tableName="erp_md_partner_address" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -500,7 +500,7 @@
         </entity>
 
         <!-- 往来单位联系人 -->
-        <entity className="app.erp.md.dao.entity.ErpMdPartnerContact"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdPartnerContact"
                 displayName="往来单位联系人" ext:icon="contact" i18n-en:displayName="Partner Contact" name="app.erp.md.dao.entity.ErpMdPartnerContact"
                 tableName="erp_md_partner_contact" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -535,7 +535,7 @@
         </entity>
 
         <!-- 仓库 -->
-        <entity className="app.erp.md.dao.entity.ErpMdWarehouse"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdWarehouse"
                 displayName="仓库" ext:icon="warehouse" i18n-en:displayName="Warehouse" name="app.erp.md.dao.entity.ErpMdWarehouse"
                 tableName="erp_md_warehouse" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -581,7 +581,7 @@
         </entity>
 
         <!-- 库位 -->
-        <entity className="app.erp.md.dao.entity.ErpMdLocation"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdLocation"
                 displayName="库位" ext:icon="map-pin" i18n-en:displayName="Location" name="app.erp.md.dao.entity.ErpMdLocation"
                 tableName="erp_md_location" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -623,7 +623,7 @@
         </entity>
 
         <!-- 计量单位 -->
-        <entity className="app.erp.md.dao.entity.ErpMdUoM"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdUoM"
                 displayName="计量单位" ext:icon="ruler" i18n-en:displayName="Unit of Measure" name="app.erp.md.dao.entity.ErpMdUoM"
                 tableName="erp_md_uom" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -648,7 +648,7 @@
         </entity>
 
         <!-- 单位换算 -->
-        <entity className="app.erp.md.dao.entity.ErpMdUoMConversion"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdUoMConversion"
                 displayName="单位换算" ext:icon="arrow-left-right" i18n-en:displayName="UoM Conversion" name="app.erp.md.dao.entity.ErpMdUoMConversion"
                 tableName="erp_md_uom_conversion" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -692,7 +692,7 @@
         </entity>
 
         <!-- 币种 -->
-        <entity className="app.erp.md.dao.entity.ErpMdCurrency"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdCurrency"
                 displayName="币种" ext:icon="coins" i18n-en:displayName="Currency" name="app.erp.md.dao.entity.ErpMdCurrency"
                 tableName="erp_md_currency" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -719,7 +719,7 @@
         </entity>
 
         <!-- 汇率 -->
-        <entity className="app.erp.md.dao.entity.ErpMdExchangeRate"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdExchangeRate"
                 displayName="汇率" ext:icon="trending-up" i18n-en:displayName="Exchange Rate" name="app.erp.md.dao.entity.ErpMdExchangeRate"
                 tableName="erp_md_exchange_rate" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -759,7 +759,7 @@
         </entity>
 
         <!-- 税率主数据 -->
-        <entity className="app.erp.md.dao.entity.ErpMdTaxRate"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdTaxRate"
                 displayName="税率" ext:icon="percent" i18n-en:displayName="Tax Rate" name="app.erp.md.dao.entity.ErpMdTaxRate"
                 tableName="erp_md_tax_rate" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -789,7 +789,7 @@
         </entity>
 
         <!-- 结算方式 -->
-        <entity className="app.erp.md.dao.entity.ErpMdSettlementMethod"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdSettlementMethod"
                 displayName="结算方式" ext:icon="credit-card" i18n-en:displayName="Settlement Method" name="app.erp.md.dao.entity.ErpMdSettlementMethod"
                 tableName="erp_md_settlement_method" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -821,7 +821,7 @@
         </entity>
 
         <!-- 银行账户 -->
-        <entity className="app.erp.md.dao.entity.ErpMdBankAccount"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdBankAccount"
                 displayName="银行账户" ext:icon="land-bank" i18n-en:displayName="Bank Account" name="app.erp.md.dao.entity.ErpMdBankAccount"
                 tableName="erp_md_bank_account" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -856,7 +856,7 @@
         </entity>
 
         <!-- 职员 -->
-        <entity className="app.erp.md.dao.entity.ErpMdEmployee"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdEmployee"
                 displayName="职员" ext:icon="user-round" i18n-en:displayName="Employee" name="app.erp.md.dao.entity.ErpMdEmployee"
                 tableName="erp_md_employee" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -898,7 +898,7 @@
         </entity>
 
         <!-- 会计科目 -->
-        <entity className="app.erp.md.dao.entity.ErpMdSubject"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdSubject"
                 displayName="会计科目" ext:icon="book-open-text" i18n-en:displayName="Accounting Subject" name="app.erp.md.dao.entity.ErpMdSubject"
                 tableName="erp_md_subject" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -955,7 +955,7 @@
         </entity>
 
         <!-- 会计核算表（账套） -->
-        <entity className="app.erp.md.dao.entity.ErpMdAcctSchema"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdAcctSchema"
                 displayName="会计核算表(账套)" ext:icon="book-up" i18n-en:displayName="Accounting Schema" name="app.erp.md.dao.entity.ErpMdAcctSchema"
                 tableName="erp_md_acct_schema" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -1001,7 +1001,7 @@
         </entity>
 
         <!-- 账套科目表 -->
-        <entity className="app.erp.md.dao.entity.ErpMdAcctSchemaCoa"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdAcctSchemaCoa"
                 displayName="账套科目表" ext:icon="list" i18n-en:displayName="Chart of Accounts" name="app.erp.md.dao.entity.ErpMdAcctSchemaCoa"
                 tableName="erp_md_acct_schema_coa" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -1032,7 +1032,7 @@
         </entity>
 
         <!-- 跨账套科目映射（多套账传播时科目翻译） -->
-        <entity className="app.erp.md.dao.entity.ErpMdSubjectMapping"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdSubjectMapping"
                 displayName="科目映射" ext:icon="arrow-right-left" i18n-en:displayName="Subject Mapping" name="app.erp.md.dao.entity.ErpMdSubjectMapping"
                 tableName="erp_md_subject_mapping" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -1072,7 +1072,7 @@
         </entity>
 
         <!-- 组织 -->
-        <entity className="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdOrganization"
                 displayName="组织" ext:icon="building-2" i18n-en:displayName="Organization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 tableName="erp_md_organization" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -1118,7 +1118,7 @@
         </entity>
 
         <!-- 成本中心 -->
-        <entity className="app.erp.md.dao.entity.ErpMdCostCenter"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdCostCenter"
                 displayName="成本中心" ext:icon="chart-pie" i18n-en:displayName="Cost Center" name="app.erp.md.dao.entity.ErpMdCostCenter"
                 tableName="erp_md_cost_center" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -1169,7 +1169,7 @@
         </entity>
 
         <!-- 供应商准入资格 AVL（Approved Vendor List）——评分 standing=RED 触发 SUSPENDED 联动入口 -->
-        <entity className="app.erp.md.dao.entity.ErpMdSupplierApproval"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpMdSupplierApproval"
                 displayName="供应商准入资格" ext:icon="badge-check" i18n-en:displayName="Supplier Approval (AVL)" name="app.erp.md.dao.entity.ErpMdSupplierApproval"
                 tableName="erp_md_supplier_approval" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
@@ -1221,7 +1221,7 @@
         </entity>
 
         <!-- 系统配置（独立配置表，按 orgId 级联回退） -->
-        <entity className="app.erp.md.dao.entity.ErpSysConfig"
+        <entity ext:web-renderer="flux" className="app.erp.md.dao.entity.ErpSysConfig"
                 displayName="系统配置" ext:icon="settings" i18n-en:displayName="System Config" name="app.erp.md.dao.entity.ErpSysConfig"
                 tableName="erp_sys_config" tagSet="gid,erp.master-data" registerShortName="true"
                 useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion"

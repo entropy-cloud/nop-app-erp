@@ -13,7 +13,7 @@
     - appName:        app-erp-prj
     - entityPackage:  app.erp.prj.dao.entity
     - 实体类名:        ErpPrj<Entity>
-    - 表名:           erp_prj_<entity>
+    - 表名:           erp_prj_<entity ext:web-renderer="flux">
     - 字典命名空间:    erp-prj/<dict-name>
 
   跨工程依赖：
@@ -88,7 +88,7 @@
 
     <entities>
         <!-- 项目 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjProject"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjProject"
                 displayName="项目" ext:icon="briefcase" i18n-en:displayName="Project" name="app.erp.prj.dao.entity.ErpPrjProject"
                 tableName="erp_prj_project" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -155,7 +155,7 @@
         </entity>
 
         <!-- 任务 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjTask"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjTask"
                 displayName="任务" ext:icon="list-checks" i18n-en:displayName="Task" name="app.erp.prj.dao.entity.ErpPrjTask"
                 tableName="erp_prj_task" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -211,7 +211,7 @@
         </entity>
 
         <!-- 工时记录 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjTimesheet"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjTimesheet"
                 displayName="工时记录" ext:icon="clock" i18n-en:displayName="Timesheet" name="app.erp.prj.dao.entity.ErpPrjTimesheet"
                 tableName="erp_prj_timesheet" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -278,7 +278,7 @@
         </entity>
 
         <!-- 项目类型 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjProjectType"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjProjectType"
                 displayName="项目类型" ext:icon="folder" i18n-en:displayName="Project Type" name="app.erp.prj.dao.entity.ErpPrjProjectType"
                 tableName="erp_prj_project_type" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -308,7 +308,7 @@
         </entity>
 
         <!-- 活动类型 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjActivityType"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjActivityType"
                 displayName="活动类型" ext:icon="folder" i18n-en:displayName="Activity Type" name="app.erp.prj.dao.entity.ErpPrjActivityType"
                 tableName="erp_prj_activity_type" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -339,7 +339,7 @@
         </entity>
 
         <!-- 项目成员 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjProjectUser"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjProjectUser"
                 displayName="项目成员" ext:icon="users" i18n-en:displayName="Project Member" name="app.erp.prj.dao.entity.ErpPrjProjectUser"
                 tableName="erp_prj_project_user" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -371,7 +371,7 @@
         </entity>
 
         <!-- 项目预算头 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjBudget"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjBudget"
                 displayName="项目预算" ext:icon="wallet" i18n-en:displayName="Project Budget" name="app.erp.prj.dao.entity.ErpPrjBudget"
                 tableName="erp_prj_budget" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -426,7 +426,7 @@
         </entity>
 
         <!-- 项目预算行 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjBudgetLine"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjBudgetLine"
                 displayName="项目预算行" ext:icon="list" i18n-en:displayName="Project Budget Line" name="app.erp.prj.dao.entity.ErpPrjBudgetLine"
                 tableName="erp_prj_budget_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -468,7 +468,7 @@
         </entity>
 
         <!-- 项目成本归集头（汇总采购/工时/费用到项目） -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjCostCollection"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjCostCollection"
                 displayName="项目成本归集" ext:icon="coins" i18n-en:displayName="Project Cost Collection" name="app.erp.prj.dao.entity.ErpPrjCostCollection"
                 tableName="erp_prj_cost_collection" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -529,7 +529,7 @@
         </entity>
 
         <!-- 项目成本归集行 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
                 displayName="项目成本归集行" ext:icon="list" i18n-en:displayName="Project Cost Collection Line" name="app.erp.prj.dao.entity.ErpPrjCostCollectionLine"
                 tableName="erp_prj_cost_collection_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -571,7 +571,7 @@
         </entity>
 
         <!-- 项目里程碑 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjMilestone"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjMilestone"
                 displayName="项目里程碑" ext:icon="flag" i18n-en:displayName="Project Milestone" name="app.erp.prj.dao.entity.ErpPrjMilestone"
                 tableName="erp_prj_milestone" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -609,7 +609,7 @@
         </entity>
 
         <!-- 项目开票头 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjBilling"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjBilling"
                 displayName="项目开票" ext:icon="receipt" i18n-en:displayName="Project Billing" name="app.erp.prj.dao.entity.ErpPrjBilling"
                 tableName="erp_prj_billing" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -680,7 +680,7 @@
         </entity>
 
         <!-- 项目开票行 -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjBillingLine"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjBillingLine"
                 displayName="项目开票行" ext:icon="list" i18n-en:displayName="Project Billing Line" name="app.erp.prj.dao.entity.ErpPrjBillingLine"
                 tableName="erp_prj_billing_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -720,7 +720,7 @@
         </entity>
 
         <!-- 项目损益汇总（按项目+期间聚合 Billing 收入 + CostCollection 四类成本，毛利/毛利率/EAC） -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjProjectPnl"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjProjectPnl"
                 displayName="项目损益汇总" ext:icon="chart-line" i18n-en:displayName="Project PnL" name="app.erp.prj.dao.entity.ErpPrjProjectPnl"
                 tableName="erp_prj_project_pnl" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -781,7 +781,7 @@
         </entity>
 
         <!-- 项目结算单（FINAL/INTERIM/CLOSE 三类型 + 三轴状态机 docStatus/approveStatus/posted） -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjProjectSettlement"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjProjectSettlement"
                 displayName="项目结算单" ext:icon="file-invoice-dollar" i18n-en:displayName="Project Settlement" name="app.erp.prj.dao.entity.ErpPrjProjectSettlement"
                 tableName="erp_prj_project_settlement" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -852,7 +852,7 @@
         </entity>
 
         <!-- 项目结算明细（INCOME/COST 行 + 来源单据三元组） -->
-        <entity className="app.erp.prj.dao.entity.ErpPrjProjectSettlementLine"
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjProjectSettlementLine"
                 displayName="项目结算明细" ext:icon="list" i18n-en:displayName="Project Settlement Line" name="app.erp.prj.dao.entity.ErpPrjProjectSettlementLine"
                 tableName="erp_prj_project_settlement_line" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -891,7 +891,7 @@
              平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
              这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
         ============================ -->
-        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -903,7 +903,7 @@
             </columns>
         </entity>
 
-        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+        <entity ext:web-renderer="flux" displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -915,7 +915,7 @@
             </columns>
         </entity>
 
-        <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
+        <entity ext:web-renderer="flux" displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -926,7 +926,7 @@
             </columns>
         </entity>
 
-        <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -938,7 +938,7 @@
             </columns>
         </entity>
 
-        <entity displayName="会计科目" name="app.erp.md.dao.entity.ErpMdSubject"
+        <entity ext:web-renderer="flux" displayName="会计科目" name="app.erp.md.dao.entity.ErpMdSubject"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_subject">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />

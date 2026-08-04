@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-log" component="layouts/default/index">
             <children>
                 <resource id="ErpLogCarrier-main" displayName="承运商" orderNo="10001" i18n-en:displayName="Carrier"
-                          icon="truck" component="AMIS" resourceType="SUBM"
+                          icon="truck" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogCarrier/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogCarrier:query" displayName="查询承运商" i18n-en:displayName="Query Carrier"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpLogCarrierConfig-main" displayName="承运商配置" orderNo="10004"
-                          i18n-en:displayName="Carrier Config" icon="settings" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Carrier Config" icon="settings" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogCarrierConfig/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogCarrierConfig:query" displayName="查询承运商配置"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpLogDeliveryWindow-main" displayName="配送时间窗口" orderNo="10007"
-                          i18n-en:displayName="Delivery Window" icon="clock" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Delivery Window" icon="clock" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogDeliveryWindow/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogDeliveryWindow:query" displayName="查询配送时间窗口"
@@ -53,7 +53,7 @@
                     </children>
                 </resource>
                 <resource id="ErpLogShipment-main" displayName="发运单" orderNo="10010" i18n-en:displayName="Shipment"
-                          icon="package" component="AMIS" resourceType="SUBM"
+                          icon="package" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogShipment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogShipment:query" displayName="查询发运单"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="ErpLogShipmentLine-main" displayName="发运明细" orderNo="10013"
-                          i18n-en:displayName="Shipment Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Shipment Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogShipmentLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogShipmentLine:query" displayName="查询发运明细"
@@ -81,7 +81,7 @@
                     </children>
                 </resource>
                 <resource id="ErpLogShipmentLog-main" displayName="网关交互日志" orderNo="10016"
-                          i18n-en:displayName="Shipment Log" icon="file-text" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Shipment Log" icon="file-text" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogShipmentLog/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogShipmentLog:query" displayName="查询网关交互日志"
@@ -95,7 +95,7 @@
                     </children>
                 </resource>
                 <resource id="ErpLogShipmentParcel-main" displayName="包裹" orderNo="10019"
-                          i18n-en:displayName="Shipment Parcel" icon="package" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Shipment Parcel" icon="package" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogShipmentParcel/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogShipmentParcel:query" displayName="查询包裹"

@@ -17,23 +17,23 @@
                     <children>
                         <resource id="ErpMfgBom-main" app:useCases="UC-MFG-02,UC-MFG-10" displayName="BOM"
                                   i18n-en:displayName="BOM" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/mfg/pages/ErpMfgBom/main.page.yaml"/>
                         <resource id="mfg-bom-tree" app:useCases="UC-MFG-02,UC-MFG-10" displayName="BOM 展开树"
                                   i18n-en:displayName="BOM Tree" icon="list-tree"
-                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  component="FLUX" resourceType="SUBM" orderNo="105"
                                   url="/erp/mfg/pages/dashboard/bom-tree.page.yaml"/>
                         <resource id="ErpMfgRouting-main" app:useCases="UC-MFG-07" displayName="工艺路线"
                                   i18n-en:displayName="Routing" icon="route"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/mfg/pages/ErpMfgRouting/main.page.yaml"/>
                         <resource id="ErpMfgWorkcenter-main" app:useCases="UC-MFG-07" displayName="工作中心"
                                   i18n-en:displayName="Work Center" icon="cog"
-                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  component="FLUX" resourceType="SUBM" orderNo="120"
                                   url="/erp/mfg/pages/ErpMfgWorkcenter/main.page.yaml"/>
                         <resource id="ErpMfgProductionVersion-main" app:useCases="UC-MFG-02" displayName="生产版本"
                                   i18n-en:displayName="Production Version" icon="git-tag"
-                                  component="AMIS" resourceType="SUBM" orderNo="130"
+                                  component="FLUX" resourceType="SUBM" orderNo="130"
                                   url="/erp/mfg/pages/ErpMfgProductionVersion/main.page.yaml"/>
                     </children>
                 </resource>
@@ -43,7 +43,7 @@
                     <children>
                         <resource id="ErpMfgWorkOrder-main" app:useCases="UC-MFG-01,UC-MFG-03,UC-MFG-04,UC-MFG-07,UC-MFG-08,UC-MFG-09,UC-MFG-10,UC-MFG-05" displayName="工单"
                                   i18n-en:displayName="Work Order" icon="factory"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/mfg/pages/ErpMfgWorkOrder/main.page.yaml">
                             <children>
                                 <resource id="FNPT:ErpMfgWorkOrder:start" displayName="开工" i18n-en:displayName="Start Work Order"
@@ -62,11 +62,11 @@
                         </resource>
                         <resource id="ErpMfgJobCard-main" app:useCases="UC-MFG-01,UC-MFG-07" displayName="作业卡"
                                   i18n-en:displayName="Job Card" icon="credit-card"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/erp/mfg/pages/ErpMfgJobCard/main.page.yaml"/>
                         <resource id="ErpMfgMaterialIssue-main" app:useCases="UC-MFG-06" displayName="领料单"
                                   i18n-en:displayName="Material Issue" icon="package-minus"
-                                  component="AMIS" resourceType="SUBM" orderNo="220"
+                                  component="FLUX" resourceType="SUBM" orderNo="220"
                                   url="/erp/mfg/pages/ErpMfgMaterialIssue/main.page.yaml"/>
                     </children>
                 </resource>
@@ -76,15 +76,15 @@
                     <children>
                         <resource id="ErpMfgMrpPlan-main" app:useCases="UC-MFG-03" displayName="MRP计划"
                                   i18n-en:displayName="MRP Plan" icon="calendar-clock"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/mfg/pages/ErpMfgMrpPlan/main.page.yaml"/>
                         <resource id="ErpMfgMrpDemand-main" displayName="MRP独立需求"
                                   i18n-en:displayName="MRP Demand" icon="git-pull-request-arrow"
-                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  component="FLUX" resourceType="SUBM" orderNo="310"
                                   url="/erp/mfg/pages/ErpMfgMrpDemand/main.page.yaml"/>
                         <resource id="ErpMfgForecast-main" displayName="需求预测"
                                   i18n-en:displayName="Demand Forecast" icon="trending-up"
-                                  component="AMIS" resourceType="SUBM" orderNo="320"
+                                  component="FLUX" resourceType="SUBM" orderNo="320"
                                   url="/erp/mfg/pages/ErpMfgForecast/main.page.yaml"/>
                     </children>
                 </resource>
@@ -94,15 +94,15 @@
                     <children>
                         <resource id="ErpMfgMrpScenario-main" displayName="MRP仿真场景"
                                   i18n-en:displayName="MRP Simulation Scenario" icon="flask-conical"
-                                  component="AMIS" resourceType="SUBM" orderNo="350"
+                                  component="FLUX" resourceType="SUBM" orderNo="350"
                                   url="/erp/mfg/pages/ErpMfgMrpScenario/main.page.yaml"/>
                         <resource id="ErpMfgMrpScenarioVersion-main" displayName="MRP仿真版本"
                                   i18n-en:displayName="MRP Simulation Version" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="360"
+                                  component="FLUX" resourceType="SUBM" orderNo="360"
                                   url="/erp/mfg/pages/ErpMfgMrpScenarioVersion/main.page.yaml"/>
                         <resource id="ErpMfgMrpScenarioParam-main" displayName="MRP仿真参数"
                                   i18n-en:displayName="MRP Simulation Param" icon="sliders-horizontal"
-                                  component="AMIS" resourceType="SUBM" orderNo="370"
+                                  component="FLUX" resourceType="SUBM" orderNo="370"
                                   url="/erp/mfg/pages/ErpMfgMrpScenarioParam/main.page.yaml"/>
                     </children>
                 </resource>
@@ -112,7 +112,7 @@
                     <children>
                         <resource id="ErpMfgSubcontractOrder-main" app:useCases="UC-MFG-01" displayName="委外加工单"
                                   i18n-en:displayName="Subcontract Order" icon="truck"
-                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  component="FLUX" resourceType="SUBM" orderNo="400"
                                   url="/erp/mfg/pages/ErpMfgSubcontractOrder/main.page.yaml"/>
                     </children>
                 </resource>
@@ -122,11 +122,11 @@
                     <children>
                         <resource id="ErpMfgCostRollup-main" app:useCases="UC-MFG-07" displayName="标准成本滚算"
                                   i18n-en:displayName="Cost Rollup" icon="calculator"
-                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  component="FLUX" resourceType="SUBM" orderNo="500"
                                   url="/erp/mfg/pages/ErpMfgCostRollup/main.page.yaml"/>
                         <resource id="ErpMfgCostVariance-main" app:useCases="UC-MFG-12" displayName="成本差异分析"
                                   i18n-en:displayName="Cost Variance Analysis" icon="bar-chart-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  component="FLUX" resourceType="SUBM" orderNo="510"
                                   url="/erp/mfg/pages/ErpMfgCostVariance/main.page.yaml"/>
                     </children>
                 </resource>
@@ -136,7 +136,7 @@
                     <children>
                         <resource id="ErpMfgBatchGenealogy-main" app:useCases="UC-MFG-13" displayName="批次追溯"
                                   i18n-en:displayName="Batch Genealogy" icon="git-commit"
-                                  component="AMIS" resourceType="SUBM" orderNo="600"
+                                  component="FLUX" resourceType="SUBM" orderNo="600"
                                   url="/erp/mfg/pages/ErpMfgBatchGenealogy/main.page.yaml"/>
                     </children>
                 </resource>
@@ -146,15 +146,15 @@
                     <children>
                         <resource id="crp-load-report" app:useCases="UC-MFG-03,UC-MFG-11" displayName="CRP 负荷报表"
                                   i18n-en:displayName="CRP Load Report" icon="gauge"
-                                  component="AMIS" resourceType="SUBM" orderNo="7010"
+                                  component="FLUX" resourceType="SUBM" orderNo="7010"
                                   url="/erp/mfg/pages/report/crp-load-report.page.yaml"/>
                         <resource id="production-variance-report" app:useCases="UC-MFG-12" displayName="生产差异报表"
                                   i18n-en:displayName="Production Variance Report" icon="bar-chart-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="7020"
+                                  component="FLUX" resourceType="SUBM" orderNo="7020"
                                   url="/erp/mfg/pages/report/production-variance-report.page.yaml"/>
                         <resource id="forecast-variance-report" app:useCases="UC-MFG-03,UC-MFG-11" displayName="预测差异报表"
                                   i18n-en:displayName="Forecast Variance Report" icon="trending-down"
-                                  component="AMIS" resourceType="SUBM" orderNo="7030"
+                                  component="FLUX" resourceType="SUBM" orderNo="7030"
                                   url="/erp/mfg/pages/report/forecast-variance-report.page.yaml"/>
                     </children>
                 </resource>
@@ -164,7 +164,7 @@
                     <children>
                         <resource id="mfg-dashboard-main" app:useCases="UC-MFG-11" displayName="制造概览"
                                   i18n-en:displayName="Manufacturing Overview" icon="activity"
-                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  component="FLUX" resourceType="SUBM" orderNo="9990"
                                   url="/erp/mfg/pages/dashboard/main.page.yaml"/>
                     </children>
                 </resource>

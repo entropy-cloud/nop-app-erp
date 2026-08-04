@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-notify" component="layouts/default/index">
             <children>
                 <resource id="ErpSysNotification-main" displayName="通知实例" orderNo="10001"
-                          i18n-en:displayName="Notification" icon="envelope" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Notification" icon="envelope" component="FLUX" resourceType="SUBM"
                           url="/erp/notify/pages/ErpSysNotification/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSysNotification:query" displayName="查询通知实例"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSysNotificationRead-main" displayName="通知已读记录" orderNo="10004"
-                          i18n-en:displayName="Notification Read" icon="check-square" component="AMIS"
+                          i18n-en:displayName="Notification Read" icon="check-square" component="FLUX"
                           resourceType="SUBM" url="/erp/notify/pages/ErpSysNotificationRead/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSysNotificationRead:query" displayName="查询通知已读记录"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpSysNotificationTemplate-main" displayName="通知模板" orderNo="10007"
-                          i18n-en:displayName="Notification Template" icon="bell" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Notification Template" icon="bell" component="FLUX" resourceType="SUBM"
                           url="/erp/notify/pages/ErpSysNotificationTemplate/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSysNotificationTemplate:query" displayName="查询通知模板"

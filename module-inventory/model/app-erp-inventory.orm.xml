@@ -19,7 +19,7 @@
     - appName:        app-erp-inv
     - entityPackage:  app.erp.inv.dao.entity
     - 实体类名:        ErpInv<Entity>
-    - 表名:           erp_inv_<entity>
+    - 表名:           erp_inv_<entity ext:web-renderer="flux">
     - 字典命名空间:    erp-inv/<dict-name>
 
   跨工程依赖：
@@ -145,7 +145,7 @@
 
     <entities>
         <!-- 库存移动单头 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvStockMove"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvStockMove"
                 displayName="库存移动单" ext:icon="arrow-left-right" i18n-en:displayName="Stock Move" name="app.erp.inv.dao.entity.ErpInvStockMove"
                 tableName="erp_inv_stock_move" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -219,7 +219,7 @@
         </entity>
 
         <!-- 库存移动单行 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvStockMoveLine"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvStockMoveLine"
                 displayName="库存移动单行" ext:icon="list" i18n-en:displayName="Stock Move Line" name="app.erp.inv.dao.entity.ErpInvStockMoveLine"
                 tableName="erp_inv_stock_move_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -280,7 +280,7 @@
         </entity>
 
         <!-- 库存流水（不可变） -->
-        <entity className="app.erp.inv.dao.entity.ErpInvStockLedger"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvStockLedger"
                 displayName="库存流水" ext:icon="trending-up" i18n-en:displayName="Stock Ledger" name="app.erp.inv.dao.entity.ErpInvStockLedger"
                 tableName="erp_inv_stock_ledger" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -364,7 +364,7 @@
         </entity>
 
         <!-- 库存余额快照 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvStockBalance"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvStockBalance"
                 displayName="库存余额" ext:icon="scale" i18n-en:displayName="Stock Balance" name="app.erp.inv.dao.entity.ErpInvStockBalance"
                 tableName="erp_inv_stock_balance" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -437,7 +437,7 @@
         </entity>
 
         <!-- 库存预留单头（记录级预留，支撑可用量校验与按订单/工单预留） -->
-        <entity className="app.erp.inv.dao.entity.ErpInvReservation"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvReservation"
                 displayName="库存预留单" ext:icon="bookmark" i18n-en:displayName="Stock Reservation" name="app.erp.inv.dao.entity.ErpInvReservation"
                 tableName="erp_inv_reservation" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -482,7 +482,7 @@
         </entity>
 
         <!-- 库存预留单行 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvReservationLine"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvReservationLine"
                 displayName="库存预留单行" ext:icon="list" i18n-en:displayName="Stock Reservation Line" name="app.erp.inv.dao.entity.ErpInvReservationLine"
                 tableName="erp_inv_reservation_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -536,7 +536,7 @@
         </entity>
 
         <!-- 成本层（支撑 FIFO/批次/具体辨认的多层成本核算） -->
-        <entity className="app.erp.inv.dao.entity.ErpInvCostLayer"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvCostLayer"
                 displayName="成本层" ext:icon="layers" i18n-en:displayName="Cost Layer" name="app.erp.inv.dao.entity.ErpInvCostLayer"
                 tableName="erp_inv_cost_layer" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -594,7 +594,7 @@
         </entity>
 
         <!-- 调拨单 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvTransferOrder"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvTransferOrder"
                 displayName="调拨单" ext:icon="arrow-right-left" i18n-en:displayName="Transfer Order" name="app.erp.inv.dao.entity.ErpInvTransferOrder"
                 tableName="erp_inv_transfer_order" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -652,7 +652,7 @@
         </entity>
 
         <!-- 调拨单行 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
                 displayName="调拨单行" ext:icon="list" i18n-en:displayName="Transfer Order Line" name="app.erp.inv.dao.entity.ErpInvTransferOrderLine"
                 tableName="erp_inv_transfer_order_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -695,7 +695,7 @@
         </entity>
 
         <!-- 盘点单 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvStockTake"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvStockTake"
                 displayName="盘点单" ext:icon="clipboard-list" i18n-en:displayName="Stock Take" name="app.erp.inv.dao.entity.ErpInvStockTake"
                 tableName="erp_inv_stock_take" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -742,7 +742,7 @@
         </entity>
 
         <!-- 盘点单行 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvStockTakeLine"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvStockTakeLine"
                 displayName="盘点单行" ext:icon="list" i18n-en:displayName="Stock Take Line" name="app.erp.inv.dao.entity.ErpInvStockTakeLine"
                 tableName="erp_inv_stock_take_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -794,7 +794,7 @@
         </entity>
 
         <!-- 拣货单头 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvPickingOrder"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvPickingOrder"
                 displayName="拣货单" ext:icon="package-search" i18n-en:displayName="Picking Order" name="app.erp.inv.dao.entity.ErpInvPickingOrder"
                 tableName="erp_inv_picking_order" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -843,7 +843,7 @@
         </entity>
 
         <!-- 拣货单行 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
                 displayName="拣货单行" ext:icon="list" i18n-en:displayName="Picking Order Line" name="app.erp.inv.dao.entity.ErpInvPickingOrderLine"
                 tableName="erp_inv_picking_order_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -892,7 +892,7 @@
         </entity>
 
         <!-- 批次台账 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvBatch"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvBatch"
                 displayName="批次台账" ext:icon="boxes" i18n-en:displayName="Batch Ledger" name="app.erp.inv.dao.entity.ErpInvBatch"
                 tableName="erp_inv_batch" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -940,7 +940,7 @@
         </entity>
 
         <!-- 序列号台账 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvSerialNumber"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvSerialNumber"
                 displayName="序列号台账" ext:icon="hash" i18n-en:displayName="Serial Number Ledger" name="app.erp.inv.dao.entity.ErpInvSerialNumber"
                 tableName="erp_inv_serial_number" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -995,7 +995,7 @@
         </entity>
 
         <!-- 所有权转移单头（consignment.md §ErpInvOwnershipTransfer；法权变更，物理位置不变 sourceLocId=destLocId） -->
-        <entity className="app.erp.inv.dao.entity.ErpInvOwnershipTransfer"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvOwnershipTransfer"
                 displayName="所有权转移单" ext:icon="arrow-left-right" i18n-en:displayName="Ownership Transfer" name="app.erp.inv.dao.entity.ErpInvOwnershipTransfer"
                 tableName="erp_inv_ownership_transfer" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1063,7 +1063,7 @@
         </entity>
 
         <!-- 所有权转移单行 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvOwnershipTransferLine"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvOwnershipTransferLine"
                 displayName="所有权转移单行" ext:icon="list" i18n-en:displayName="Ownership Transfer Line" name="app.erp.inv.dao.entity.ErpInvOwnershipTransferLine"
                 tableName="erp_inv_ownership_transfer_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1109,7 +1109,7 @@
              平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
              这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
         ============================ -->
-        <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1120,7 +1120,7 @@
             </columns>
         </entity>
 
-        <entity displayName="物料SKU" name="app.erp.md.dao.entity.ErpMdMaterialSku"
+        <entity ext:web-renderer="flux" displayName="物料SKU" name="app.erp.md.dao.entity.ErpMdMaterialSku"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material_sku">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1131,7 +1131,7 @@
             </columns>
         </entity>
 
-        <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
+        <entity ext:web-renderer="flux" displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_warehouse">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1143,7 +1143,7 @@
             </columns>
         </entity>
 
-        <entity displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
+        <entity ext:web-renderer="flux" displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_location">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1154,7 +1154,7 @@
             </columns>
         </entity>
 
-        <entity displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
+        <entity ext:web-renderer="flux" displayName="计量单位" name="app.erp.md.dao.entity.ErpMdUoM"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_uom">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1165,7 +1165,7 @@
             </columns>
         </entity>
 
-        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+        <entity ext:web-renderer="flux" displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1177,7 +1177,7 @@
             </columns>
         </entity>
 
-        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1189,7 +1189,7 @@
             </columns>
         </entity>
 
-        <entity displayName="会计核算表(账套)" name="app.erp.md.dao.entity.ErpMdAcctSchema"
+        <entity ext:web-renderer="flux" displayName="会计核算表(账套)" name="app.erp.md.dao.entity.ErpMdAcctSchema"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_acct_schema">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1200,7 +1200,7 @@
             </columns>
         </entity>
 
-        <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1210,7 +1210,7 @@
             </columns>
         </entity>
 
-        <entity displayName="员工" name="app.erp.md.dao.entity.ErpMdEmployee"
+        <entity ext:web-renderer="flux" displayName="员工" name="app.erp.md.dao.entity.ErpMdEmployee"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1220,7 +1220,7 @@
         </entity>
 
         <!-- 成本调整单头（plan 2026-07-05-2352-3；costing-methods.md §成本调整） -->
-        <entity className="app.erp.inv.dao.entity.ErpInvCostAdjust"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvCostAdjust"
                 displayName="成本调整单" ext:icon="scale" i18n-en:displayName="Cost Adjustment" name="app.erp.inv.dao.entity.ErpInvCostAdjust"
                 tableName="erp_inv_cost_adjust" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1270,7 +1270,7 @@
         </entity>
 
         <!-- 成本调整单行 -->
-        <entity className="app.erp.inv.dao.entity.ErpInvCostAdjustLine"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvCostAdjustLine"
                 displayName="成本调整单行" ext:icon="list" i18n-en:displayName="Cost Adjustment Line" name="app.erp.inv.dao.entity.ErpInvCostAdjustLine"
                 tableName="erp_inv_cost_adjust_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1314,7 +1314,7 @@
         </entity>
 
         <!-- 到岸成本单头（plan 2026-07-10-1100-3；costing-methods.md §到岸成本） -->
-        <entity className="app.erp.inv.dao.entity.ErpInvLandedCost"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvLandedCost"
                 displayName="到岸成本单" ext:icon="scale" i18n-en:displayName="Landed Cost" name="app.erp.inv.dao.entity.ErpInvLandedCost"
                 tableName="erp_inv_landed_cost" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1363,7 +1363,7 @@
         </entity>
 
         <!-- 到岸成本费用要素行（plan 2026-07-10-1100-3） -->
-        <entity className="app.erp.inv.dao.entity.ErpInvLandedCostLine"
+        <entity ext:web-renderer="flux" className="app.erp.inv.dao.entity.ErpInvLandedCostLine"
                 displayName="到岸成本行" ext:icon="list" i18n-en:displayName="Landed Cost Line" name="app.erp.inv.dao.entity.ErpInvLandedCostLine"
                 tableName="erp_inv_landed_cost_line" tagSet="gid,erp.inventory" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>

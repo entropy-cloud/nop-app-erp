@@ -11,15 +11,15 @@
                     <children>
                         <resource id="ErpCtContract-main" app:useCases="UC-CT-01,UC-CT-02,UC-CT-05,UC-CT-06"
                                   displayName="合同" i18n-en:displayName="Contract" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/ct/pages/ErpCtContract/main.page.yaml"/>
                         <resource id="ct-version-diff" app:useCases="UC-CT-02,UC-CT-06" displayName="合同版本对比"
                                   i18n-en:displayName="Contract Version Diff" icon="git-compare"
-                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  component="FLUX" resourceType="SUBM" orderNo="105"
                                   url="/erp/ct/pages/dashboard/version-diff.page.yaml"/>
                         <resource id="ErpCtContractLine-main" displayName="合同行"
                                   i18n-en:displayName="Contract Line" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/ct/pages/ErpCtContractLine/main.page.yaml"/>
                     </children>
                 </resource>
@@ -28,7 +28,7 @@
                     <children>
                         <resource id="ErpCtTemplate-main" displayName="合同模板"
                                   i18n-en:displayName="Contract Template" icon="file"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/ct/pages/ErpCtTemplate/main.page.yaml"/>
                     </children>
                 </resource>
@@ -37,11 +37,11 @@
                     <children>
                         <resource id="ErpCtApprovalMatrix-main" app:useCases="UC-CT-07"
                                   displayName="审批矩阵" i18n-en:displayName="Approval Matrix" icon="check-square"
-                                  component="AMIS" resourceType="SUBM" orderNo="150"
+                                  component="FLUX" resourceType="SUBM" orderNo="150"
                                   url="/erp/ct/pages/ErpCtApprovalMatrix/main.page.yaml"/>
                         <resource id="ErpCtApprovalRecord-main" app:useCases="UC-CT-07"
                                   displayName="审批记录" i18n-en:displayName="Approval Record" icon="clipboard-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="160"
+                                  component="FLUX" resourceType="SUBM" orderNo="160"
                                   url="/erp/ct/pages/ErpCtApprovalRecord/main.page.yaml"/>
                     </children>
                 </resource>
@@ -50,15 +50,15 @@
                     <children>
                         <resource id="ErpCtVolumeDiscount-main" app:useCases="UC-CT-08"
                                   displayName="批量折扣" i18n-en:displayName="Volume Discount" icon="percent"
-                                  component="AMIS" resourceType="SUBM" orderNo="180"
+                                  component="FLUX" resourceType="SUBM" orderNo="180"
                                   url="/erp/ct/pages/ErpCtVolumeDiscount/main.page.yaml"/>
                         <resource id="ErpCtRebateAgreement-main" app:useCases="UC-CT-08"
                                   displayName="返利协议" i18n-en:displayName="Rebate Agreement" icon="gift"
-                                  component="AMIS" resourceType="SUBM" orderNo="190"
+                                  component="FLUX" resourceType="SUBM" orderNo="190"
                                   url="/erp/ct/pages/ErpCtRebateAgreement/main.page.yaml"/>
                         <resource id="ErpCtRebateSettlement-main" app:useCases="UC-CT-08"
                                   displayName="返利结算单" i18n-en:displayName="Rebate Settlement" icon="file-check"
-                                  component="AMIS" resourceType="SUBM" orderNo="195"
+                                  component="FLUX" resourceType="SUBM" orderNo="195"
                                   url="/erp/ct/pages/ErpCtRebateSettlement/main.page.yaml"/>
                     </children>
                 </resource>
@@ -67,7 +67,7 @@
                     <children>
                         <resource id="ErpCtSignatureRequest-main" app:useCases="UC-CT-09"
                                   displayName="签章请求" i18n-en:displayName="Signature Request" icon="file-signature"
-                                  component="AMIS" resourceType="SUBM" orderNo="170"
+                                  component="FLUX" resourceType="SUBM" orderNo="170"
                                   url="/erp/ct/pages/ErpCtSignatureRequest/main.page.yaml"/>
                     </children>
                 </resource>
@@ -76,7 +76,7 @@
                     <children>
                         <resource id="ErpCtDocument-main" app:useCases="UC-CT-10"
                                   displayName="合同文档" i18n-en:displayName="Contract Document" icon="archive"
-                                  component="AMIS" resourceType="SUBM" orderNo="175"
+                                  component="FLUX" resourceType="SUBM" orderNo="175"
                                   url="/erp/ct/pages/ErpCtDocument/main.page.yaml"/>
                     </children>
                 </resource>
@@ -85,11 +85,11 @@
                     <children>
                         <resource id="ErpCtInvoicePlan-main" app:useCases="UC-CT-03"
                                   displayName="开票计划" i18n-en:displayName="Invoice Plan" icon="calendar"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/ct/pages/ErpCtInvoicePlan/main.page.yaml"/>
                         <resource id="ErpCtConsumptionLine-main" app:useCases="UC-CT-04"
                                   displayName="消耗记录" i18n-en:displayName="Consumption Log" icon="bar-chart"
-                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  component="FLUX" resourceType="SUBM" orderNo="310"
                                   url="/erp/ct/pages/ErpCtConsumptionLine/main.page.yaml"/>
                     </children>
                 </resource>

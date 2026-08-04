@@ -11,19 +11,19 @@
                     <children>
                         <resource id="ErpDrpPlan-main" app:useCases="UC-DRP-01,UC-DRP-02"
                                   displayName="DRP计划" i18n-en:displayName="DRP Plan" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/drp/pages/ErpDrpPlan/main.page.yaml"/>
                         <resource id="ErpDrpLine-main" app:useCases="UC-DRP-02,UC-DRP-03,UC-DRP-04"
                                   displayName="计划明细" i18n-en:displayName="DRP Line" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/drp/pages/ErpDrpLine/main.page.yaml"/>
                         <resource id="drp-net-requirement" app:useCases="UC-DRP-02,UC-DRP-04" displayName="净需求计算报表"
                                   i18n-en:displayName="Net Requirement Report" icon="calculator"
-                                  component="AMIS" resourceType="SUBM" orderNo="115"
+                                  component="FLUX" resourceType="SUBM" orderNo="115"
                                   url="/erp/drp/pages/dashboard/net-requirement.page.yaml"/>
                         <resource id="ErpInvDrpCrossDock-main" app:useCases="UC-DRP-03"
                                   displayName="越库执行" i18n-en:displayName="Cross-Dock" icon="arrow-left-right"
-                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  component="FLUX" resourceType="SUBM" orderNo="120"
                                   url="/erp/drp/pages/ErpInvDrpCrossDock/main.page.yaml"/>
                     </children>
                 </resource>
@@ -33,15 +33,15 @@
                     <children>
                         <resource id="ErpDrpScenario-main" displayName="DRP仿真场景"
                                   i18n-en:displayName="DRP Simulation Scenario" icon="flask-conical"
-                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  component="FLUX" resourceType="SUBM" orderNo="120"
                                   url="/erp/drp/pages/ErpDrpScenario/main.page.yaml"/>
                         <resource id="ErpDrpScenarioVersion-main" displayName="DRP仿真版本"
                                   i18n-en:displayName="DRP Simulation Version" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="130"
+                                  component="FLUX" resourceType="SUBM" orderNo="130"
                                   url="/erp/drp/pages/ErpDrpScenarioVersion/main.page.yaml"/>
                         <resource id="ErpDrpScenarioParam-main" displayName="DRP仿真参数"
                                   i18n-en:displayName="DRP Simulation Param" icon="sliders-horizontal"
-                                  component="AMIS" resourceType="SUBM" orderNo="140"
+                                  component="FLUX" resourceType="SUBM" orderNo="140"
                                   url="/erp/drp/pages/ErpDrpScenarioParam/main.page.yaml"/>
                     </children>
                 </resource>
@@ -50,7 +50,7 @@
                     <children>
                         <resource id="ErpInvDrpSafetyStockCalc-main" app:useCases="UC-DRP-06"
                                   displayName="安全库存计算" i18n-en:displayName="Safety Stock Calc" icon="shield"
-                                  component="AMIS" resourceType="SUBM" orderNo="150"
+                                  component="FLUX" resourceType="SUBM" orderNo="150"
                                   url="/erp/drp/pages/ErpInvDrpSafetyStockCalc/main.page.yaml"/>
                     </children>
                 </resource>
@@ -59,7 +59,7 @@
                     <children>
                         <resource id="ErpInvDrpLeadTimeRecord-main" app:useCases="UC-DRP-08"
                                   displayName="提前期记录" i18n-en:displayName="Lead Time Record" icon="clock"
-                                  component="AMIS" resourceType="SUBM" orderNo="160"
+                                  component="FLUX" resourceType="SUBM" orderNo="160"
                                   url="/erp/drp/pages/ErpInvDrpLeadTimeRecord/main.page.yaml"/>
                     </children>
                 </resource>
@@ -68,7 +68,7 @@
                     <children>
                         <resource id="ErpDrpParameter-main" app:useCases="UC-DRP-05,UC-DRP-06,UC-DRP-07"
                                   displayName="仓库补货参数" i18n-en:displayName="Replenishment Parameter" icon="sliders"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/drp/pages/ErpDrpParameter/main.page.yaml"/>
                     </children>
                 </resource>

@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-b2b" component="layouts/default/index">
             <children>
                 <resource id="ErpB2bAsn-main" displayName="提前发货通知" orderNo="10001"
-                          i18n-en:displayName="Advanced Shipping Notice" icon="truck" component="AMIS"
+                          i18n-en:displayName="Advanced Shipping Notice" icon="truck" component="FLUX"
                           resourceType="SUBM" url="/erp/b2b/pages/ErpB2bAsn/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bAsn:query" displayName="查询提前发货通知"
@@ -27,7 +27,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bAsnLine-main" displayName="ASN 明细行" orderNo="10004" i18n-en:displayName="ASN Line"
-                          icon="list" component="AMIS" resourceType="SUBM"
+                          icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bAsnLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bAsnLine:query" displayName="查询ASN 明细行"
@@ -41,7 +41,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bCertificationChecklist-main" displayName="认证检查清单" orderNo="10007"
-                          i18n-en:displayName="Certification Checklist" icon="clipboard-list" component="AMIS"
+                          i18n-en:displayName="Certification Checklist" icon="clipboard-list" component="FLUX"
                           resourceType="SUBM" url="/erp/b2b/pages/ErpB2bCertificationChecklist/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bCertificationChecklist:query" displayName="查询认证检查清单"
@@ -57,7 +57,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bCodeMapping-main" displayName="内外代码映射" orderNo="10010"
-                          i18n-en:displayName="Code Mapping" icon="shuffle" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Code Mapping" icon="shuffle" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bCodeMapping/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bCodeMapping:query" displayName="查询内外代码映射"
@@ -71,7 +71,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bEdiDoc-main" displayName="EDI 事务" orderNo="10013" i18n-en:displayName="EDI Document"
-                          icon="file-text" component="AMIS" resourceType="SUBM"
+                          icon="file-text" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bEdiDoc/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bEdiDoc:query" displayName="查询EDI 事务"
@@ -85,7 +85,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bEdiFormat-main" displayName="EDI 格式配置" orderNo="10016"
-                          i18n-en:displayName="EDI Format" icon="file-type" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="EDI Format" icon="file-type" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bEdiFormat/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bEdiFormat:query" displayName="查询EDI 格式配置"
@@ -99,7 +99,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bEdiLog-main" displayName="EDI 交互日志" orderNo="10019" i18n-en:displayName="EDI Log"
-                          icon="scroll-text" component="AMIS" resourceType="SUBM"
+                          icon="scroll-text" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bEdiLog/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bEdiLog:query" displayName="查询EDI 交互日志"
@@ -113,7 +113,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bMftCertificate-main" displayName="MFT 证书" orderNo="10022"
-                          i18n-en:displayName="MFT Certificate" icon="shield" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="MFT Certificate" icon="shield" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bMftCertificate/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bMftCertificate:query" displayName="查询MFT 证书"
@@ -127,7 +127,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bMftConfig-main" displayName="MFT 配置" orderNo="10025"
-                          i18n-en:displayName="MFT Config" icon="upload-cloud" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="MFT Config" icon="upload-cloud" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bMftConfig/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bMftConfig:query" displayName="查询MFT 配置"
@@ -141,7 +141,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bMftLog-main" displayName="MFT 传输日志" orderNo="10028" i18n-en:displayName="MFT Log"
-                          icon="activity" component="AMIS" resourceType="SUBM"
+                          icon="activity" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bMftLog/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bMftLog:query" displayName="查询MFT 传输日志"
@@ -155,7 +155,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bPartnerCredential-main" displayName="伙伴凭证" orderNo="10031"
-                          i18n-en:displayName="Partner Credential" icon="key" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Partner Credential" icon="key" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bPartnerCredential/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bPartnerCredential:query" displayName="查询伙伴凭证"
@@ -169,7 +169,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bPartnerProfile-main" displayName="合作伙伴档案" orderNo="10034"
-                          i18n-en:displayName="Partner Profile" icon="building" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Partner Profile" icon="building" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bPartnerProfile/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bPartnerProfile:query" displayName="查询合作伙伴档案"
@@ -183,7 +183,7 @@
                     </children>
                 </resource>
                 <resource id="ErpB2bTestExchange-main" displayName="测试消息交换" orderNo="10037"
-                          i18n-en:displayName="Test Exchange" icon="test-tube" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Test Exchange" icon="test-tube" component="FLUX" resourceType="SUBM"
                           url="/erp/b2b/pages/ErpB2bTestExchange/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpB2bTestExchange:query" displayName="查询测试消息交换"

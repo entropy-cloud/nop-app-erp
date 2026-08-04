@@ -66,8 +66,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工序工单"
                 name="app.erp.aps.dao.entity.ErpApsOperationOrder" registerShortName="true"
                 tableName="erp_aps_operation_order" tagSet="gid,erp.aps" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="cpu"
-                i18n-en:displayName="Operation Order">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="cpu" i18n-en:displayName="Operation Order">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -176,7 +176,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="排产方案"
                 name="app.erp.aps.dao.entity.ErpApsSchedule" registerShortName="true" tableName="erp_aps_schedule"
                 tagSet="gid,erp.aps" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="calendar-check" i18n-en:displayName="Schedule">
+                versionProp="version" ext:web-renderer="flux" ext:icon="calendar-check" i18n-en:displayName="Schedule">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -245,7 +245,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="排产约束"
                 name="app.erp.aps.dao.entity.ErpApsConstraint" registerShortName="true" tableName="erp_aps_constraint"
                 tagSet="gid,erp.aps" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="ban" i18n-en:displayName="Constraint">
+                versionProp="version" ext:web-renderer="flux" ext:icon="ban" i18n-en:displayName="Constraint">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -298,7 +298,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="替代工艺路线"
                 name="app.erp.aps.dao.entity.ErpApsOpRouting" registerShortName="true" tableName="erp_aps_op_routing"
                 tagSet="gid,erp.aps" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="shuffle" i18n-en:displayName="OP Routing">
+                versionProp="version" ext:web-renderer="flux" ext:icon="shuffle" i18n-en:displayName="OP Routing">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -369,8 +369,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="自动派工规则"
                 name="app.erp.aps.dao.entity.ErpApsDispatchRule" registerShortName="true"
                 tableName="erp_aps_dispatch_rule" tagSet="gid,erp.aps" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="play-circle"
-                i18n-en:displayName="Dispatch Rule">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="play-circle" i18n-en:displayName="Dispatch Rule">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -444,8 +444,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="派工日志"
                 name="app.erp.aps.dao.entity.ErpApsDispatchLog" registerShortName="true"
                 tableName="erp_aps_dispatch_log" tagSet="gid,erp.aps" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="scroll-text"
-                i18n-en:displayName="Dispatch Log">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="scroll-text" i18n-en:displayName="Dispatch Log">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -518,8 +518,8 @@
         <entity className="app.erp.aps.dao.entity.ErpApsCapacityReservation" createTimeProp="createTime"
                 createrProp="createdBy" displayName="产能预留" name="app.erp.aps.dao.entity.ErpApsCapacityReservation"
                 registerShortName="true" tableName="erp_aps_capacity_reservation" tagSet="gid,erp.aps"
-                updateTimeProp="updateTime" updaterProp="updatedBy" versionProp="version" ext:icon="lock"
-                i18n-en:displayName="Capacity Reservation">
+                updateTimeProp="updateTime" updaterProp="updatedBy" versionProp="version" ext:web-renderer="flux"
+                ext:icon="lock" i18n-en:displayName="Capacity Reservation">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -563,7 +563,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="ErpMdOrganization"
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>

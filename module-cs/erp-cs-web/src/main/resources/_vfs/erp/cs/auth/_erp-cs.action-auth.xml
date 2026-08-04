@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-cs" component="layouts/default/index">
             <children>
                 <resource id="ErpCsAgentRate-main" displayName="客服费率" orderNo="10001" i18n-en:displayName="Agent Rate"
-                          icon="dollar-sign" component="AMIS" resourceType="SUBM"
+                          icon="dollar-sign" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsAgentRate/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsAgentRate:query" displayName="查询客服费率"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsCannedCategory-main" displayName="预设应答分类" orderNo="10004"
-                          i18n-en:displayName="Canned Category" icon="folder" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Canned Category" icon="folder" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsCannedCategory/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsCannedCategory:query" displayName="查询预设应答分类"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsCannedResponse-main" displayName="预设应答模板" orderNo="10007"
-                          i18n-en:displayName="Canned Response" icon="message-square" component="AMIS"
+                          i18n-en:displayName="Canned Response" icon="message-square" component="FLUX"
                           resourceType="SUBM" url="/erp/cs/pages/ErpCsCannedResponse/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsCannedResponse:query" displayName="查询预设应答模板"
@@ -53,7 +53,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsCatalogCategory-main" displayName="目录分类" orderNo="10010"
-                          i18n-en:displayName="Catalog Category" icon="folder" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Catalog Category" icon="folder" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsCatalogCategory/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsCatalogCategory:query" displayName="查询目录分类"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsCatalogFulfillment-main" displayName="目录项履行映射" orderNo="10013"
-                          i18n-en:displayName="Catalog Fulfillment" icon="git-branch" component="AMIS"
+                          i18n-en:displayName="Catalog Fulfillment" icon="git-branch" component="FLUX"
                           resourceType="SUBM" url="/erp/cs/pages/ErpCsCatalogFulfillment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsCatalogFulfillment:query" displayName="查询目录项履行映射"
@@ -81,7 +81,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsContract-main" displayName="支持合同" orderNo="10016"
-                          i18n-en:displayName="Support Contract" icon="file-text" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Support Contract" icon="file-text" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsContract/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsContract:query" displayName="查询支持合同"
@@ -95,7 +95,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsEntitlement-main" displayName="服务权益" orderNo="10019"
-                          i18n-en:displayName="Entitlement" icon="shield" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Entitlement" icon="shield" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsEntitlement/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsEntitlement:query" displayName="查询服务权益"
@@ -109,7 +109,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsKnowledgeBase-main" displayName="知识库" orderNo="10022"
-                          i18n-en:displayName="Knowledge Base" icon="book-open" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Knowledge Base" icon="book-open" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsKnowledgeBase/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsKnowledgeBase:query" displayName="查询知识库"
@@ -123,7 +123,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsServiceCatalogItem-main" displayName="服务目录项" orderNo="10025"
-                          i18n-en:displayName="Service Catalog Item" icon="book" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Service Catalog Item" icon="book" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsServiceCatalogItem/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsServiceCatalogItem:query" displayName="查询服务目录项"
@@ -137,7 +137,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsSlaPolicy-main" displayName="SLA 策略" orderNo="10028" i18n-en:displayName="SLA Policy"
-                          icon="clock" component="AMIS" resourceType="SUBM"
+                          icon="clock" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsSlaPolicy/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsSlaPolicy:query" displayName="查询SLA 策略"
@@ -151,7 +151,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsSurvey-main" displayName="满意度调查" orderNo="10031" i18n-en:displayName="CSAT Survey"
-                          icon="star" component="AMIS" resourceType="SUBM"
+                          icon="star" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsSurvey/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsSurvey:query" displayName="查询满意度调查"
@@ -165,7 +165,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsTeam-main" displayName="客服团队" orderNo="10034" i18n-en:displayName="CS Team"
-                          icon="users" component="AMIS" resourceType="SUBM" url="/erp/cs/pages/ErpCsTeam/main.page.yaml">
+                          icon="users" component="FLUX" resourceType="SUBM" url="/erp/cs/pages/ErpCsTeam/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsTeam:query" displayName="查询客服团队" i18n-en:displayName="Query CS Team"
                                   orderNo="10035" resourceType="FNPT">
@@ -178,7 +178,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsTicket-main" displayName="客服工单" orderNo="10037" i18n-en:displayName="Ticket"
-                          icon="headset" component="AMIS" resourceType="SUBM"
+                          icon="headset" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsTicket/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsTicket:query" displayName="查询客服工单" i18n-en:displayName="Query Ticket"
@@ -192,7 +192,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsTicketAction-main" displayName="工单操作日志" orderNo="10040"
-                          i18n-en:displayName="Ticket Action" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Ticket Action" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsTicketAction/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsTicketAction:query" displayName="查询工单操作日志"
@@ -206,7 +206,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsTicketType-main" displayName="工单类型" orderNo="10043" i18n-en:displayName="Ticket Type"
-                          icon="tag" component="AMIS" resourceType="SUBM"
+                          icon="tag" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsTicketType/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsTicketType:query" displayName="查询工单类型"
@@ -220,7 +220,7 @@
                     </children>
                 </resource>
                 <resource id="ErpCsTimeEntry-main" displayName="工单计时条目" orderNo="10046" i18n-en:displayName="Time Entry"
-                          icon="clock" component="AMIS" resourceType="SUBM"
+                          icon="clock" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsTimeEntry/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsTimeEntry:query" displayName="查询工单计时条目"

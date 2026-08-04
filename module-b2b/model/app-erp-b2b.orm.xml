@@ -9,7 +9,7 @@
     - appName:        app-erp-b2b
     - entityPackage:  app.erp.b2b.dao.entity
     - 实体类名:        ErpB2b<Entity>       （如 ErpB2bEdiFormat、ErpB2bEdiDoc）
-    - 表名:           erp_b2b_<entity>      （如 erp_b2b_edi_format、erp_b2b_edi_doc）
+    - 表名:           erp_b2b_<entity ext:web-renderer="flux">      （如 erp_b2b_edi_format、erp_b2b_edi_doc）
     - 字典命名空间:    erp-b2b/<dict-name>
 
   跨工程依赖：
@@ -131,7 +131,7 @@
 
     <entities>
         <!-- EDI 格式配置 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bEdiFormat"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bEdiFormat"
                 displayName="EDI 格式配置" ext:icon="file-type" i18n-en:displayName="EDI Format" name="app.erp.b2b.dao.entity.ErpB2bEdiFormat"
                 tableName="erp_b2b_edi_format" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -160,7 +160,7 @@
         </entity>
 
         <!-- EDI 信封/事务（核心状态机表） -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bEdiDoc"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bEdiDoc"
                 displayName="EDI 事务" ext:icon="file-text" i18n-en:displayName="EDI Document" name="app.erp.b2b.dao.entity.ErpB2bEdiDoc"
                 tableName="erp_b2b_edi_doc" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -210,7 +210,7 @@
         </entity>
 
         <!-- 提前发货通知（ASN）头 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bAsn"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bAsn"
                 displayName="提前发货通知" ext:icon="truck" i18n-en:displayName="Advanced Shipping Notice" name="app.erp.b2b.dao.entity.ErpB2bAsn"
                 tableName="erp_b2b_asn" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -262,7 +262,7 @@
         </entity>
 
         <!-- ASN 明细行 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bAsnLine"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bAsnLine"
                 displayName="ASN 明细行" ext:icon="list" i18n-en:displayName="ASN Line" name="app.erp.b2b.dao.entity.ErpB2bAsnLine"
                 tableName="erp_b2b_asn_line" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -296,7 +296,7 @@
         </entity>
 
         <!-- 内外代码映射 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bCodeMapping"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bCodeMapping"
                 displayName="内外代码映射" ext:icon="shuffle" i18n-en:displayName="Code Mapping" name="app.erp.b2b.dao.entity.ErpB2bCodeMapping"
                 tableName="erp_b2b_code_mapping" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -326,7 +326,7 @@
         </entity>
 
         <!-- EDI 交互日志 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bEdiLog"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bEdiLog"
                 displayName="EDI 交互日志" ext:icon="scroll-text" i18n-en:displayName="EDI Log" name="app.erp.b2b.dao.entity.ErpB2bEdiLog"
                 tableName="erp_b2b_edi_log" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -359,7 +359,7 @@
         </entity>
 
         <!-- 合作伙伴档案 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bPartnerProfile"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bPartnerProfile"
                 displayName="合作伙伴档案" ext:icon="building" i18n-en:displayName="Partner Profile" name="app.erp.b2b.dao.entity.ErpB2bPartnerProfile"
                 tableName="erp_b2b_partner_profile" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -409,7 +409,7 @@
         </entity>
 
         <!-- 伙伴凭证 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bPartnerCredential"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bPartnerCredential"
                 displayName="伙伴凭证" ext:icon="key" i18n-en:displayName="Partner Credential" name="app.erp.b2b.dao.entity.ErpB2bPartnerCredential"
                 tableName="erp_b2b_partner_credential" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -440,7 +440,7 @@
         </entity>
 
         <!-- 测试消息交换 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bTestExchange"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bTestExchange"
                 displayName="测试消息交换" ext:icon="test-tube" i18n-en:displayName="Test Exchange" name="app.erp.b2b.dao.entity.ErpB2bTestExchange"
                 tableName="erp_b2b_test_exchange" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -475,7 +475,7 @@
         </entity>
 
         <!-- 认证检查清单 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bCertificationChecklist"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bCertificationChecklist"
                 displayName="认证检查清单" ext:icon="clipboard-list" i18n-en:displayName="Certification Checklist" name="app.erp.b2b.dao.entity.ErpB2bCertificationChecklist"
                 tableName="erp_b2b_certification_checklist" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -507,7 +507,7 @@
         </entity>
 
         <!-- MFT 配置 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bMftConfig"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bMftConfig"
                 displayName="MFT 配置" ext:icon="upload-cloud" i18n-en:displayName="MFT Config" name="app.erp.b2b.dao.entity.ErpB2bMftConfig"
                 tableName="erp_b2b_mft_config" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -566,7 +566,7 @@
         </entity>
 
         <!-- MFT 证书 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bMftCertificate"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bMftCertificate"
                 displayName="MFT 证书" ext:icon="shield" i18n-en:displayName="MFT Certificate" name="app.erp.b2b.dao.entity.ErpB2bMftCertificate"
                 tableName="erp_b2b_mft_certificate" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -607,7 +607,7 @@
         </entity>
 
         <!-- MFT 传输日志 -->
-        <entity className="app.erp.b2b.dao.entity.ErpB2bMftLog"
+        <entity ext:web-renderer="flux" className="app.erp.b2b.dao.entity.ErpB2bMftLog"
                 displayName="MFT 传输日志" ext:icon="activity" i18n-en:displayName="MFT Log" name="app.erp.b2b.dao.entity.ErpB2bMftLog"
                 tableName="erp_b2b_mft_log" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -660,21 +660,21 @@
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
-        <entity displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
-        <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
-        <entity displayName="ErpMdMaterial" name="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" displayName="ErpMdMaterial" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />

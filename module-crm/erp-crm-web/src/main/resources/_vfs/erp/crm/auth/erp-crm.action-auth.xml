@@ -11,15 +11,15 @@
                     <children>
                         <resource id="ErpCrmLead-main" app:useCases="UC-CRM-01,UC-CRM-02,UC-CRM-03,UC-CRM-04,UC-CRM-06"
                                   displayName="线索/商机" i18n-en:displayName="Lead / Opportunity" icon="user-plus"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/crm/pages/ErpCrmLead/main.page.yaml"/>
                         <resource id="crm-opportunity-kanban" app:useCases="UC-CRM-03,UC-CRM-06" displayName="商机看板"
                                   i18n-en:displayName="Opportunity Kanban" icon="kanban"
-                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  component="FLUX" resourceType="SUBM" orderNo="105"
                                   url="/erp/crm/pages/ErpCrmLead/opportunity-kanban.page.yaml"/>
                         <resource id="ErpCrmLeadConvLog-main" app:useCases="UC-CRM-06"
                                   displayName="阶段流转记录" i18n-en:displayName="Stage Transition Log" icon="history"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/crm/pages/ErpCrmLeadConvLog/main.page.yaml"/>
                     </children>
                 </resource>
@@ -28,19 +28,19 @@
                     <children>
                         <resource id="ErpCrmCampaign-main" app:useCases="UC-CRM-07"
                                   displayName="营销活动" i18n-en:displayName="Campaign" icon="megaphone"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/crm/pages/ErpCrmCampaign/main.page.yaml"/>
                         <resource id="ErpCrmActivity-main" app:useCases="UC-CRM-05"
                                   displayName="活动记录" i18n-en:displayName="Activity" icon="activity"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/erp/crm/pages/ErpCrmActivity/main.page.yaml"/>
                         <resource id="crm-activity-timeline" app:useCases="UC-CRM-05" displayName="活动时间线"
                                   i18n-en:displayName="Activity Timeline" icon="git-commit-vertical"
-                                  component="AMIS" resourceType="SUBM" orderNo="220"
+                                  component="FLUX" resourceType="SUBM" orderNo="220"
                                   url="/erp/crm/pages/ErpCrmActivity/timeline.page.yaml"/>
                         <resource id="crm-activity-calendar" app:useCases="UC-CRM-05" displayName="活动日历"
                                   i18n-en:displayName="Activity Calendar" icon="calendar"
-                                  component="AMIS" resourceType="SUBM" orderNo="225"
+                                  component="FLUX" resourceType="SUBM" orderNo="225"
                                   url="/erp/crm/pages/ErpCrmActivity/calendar.page.yaml"/>
                     </children>
                 </resource>
@@ -49,11 +49,11 @@
                     <children>
                         <resource id="ErpCrmEvent-main" app:useCases="UC-CRM-05,UC-CRM-08"
                                   displayName="活动/事件" i18n-en:displayName="Event" icon="calendar"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/crm/pages/ErpCrmEvent/main.page.yaml"/>
                         <resource id="ErpCrmEventCategory-main" displayName="活动类别"
                                   i18n-en:displayName="Event Category" icon="folder"
-                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  component="FLUX" resourceType="SUBM" orderNo="310"
                                   url="/erp/crm/pages/ErpCrmEventCategory/main.page.yaml"/>
                     </children>
                 </resource>
@@ -62,19 +62,19 @@
                     <children>
                         <resource id="ErpCrmProductConfigurator-main" app:useCases="UC-CRM-13"
                                   displayName="产品配置器" i18n-en:displayName="Product Configurator" icon="settings-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  component="FLUX" resourceType="SUBM" orderNo="410"
                                   url="/erp/crm/pages/ErpCrmProductConfigurator/main.page.yaml"/>
                         <resource id="ErpCrmBundlePricing-main" app:useCases="UC-CRM-13"
                                   displayName="捆绑定价" i18n-en:displayName="Bundle Pricing" icon="package"
-                                  component="AMIS" resourceType="SUBM" orderNo="420"
+                                  component="FLUX" resourceType="SUBM" orderNo="420"
                                   url="/erp/crm/pages/ErpCrmBundlePricing/main.page.yaml"/>
                         <resource id="ErpCrmPriceRule-main" app:useCases="UC-CRM-13"
                                   displayName="价格规则" i18n-en:displayName="Price Rule" icon="dollar-sign"
-                                  component="AMIS" resourceType="SUBM" orderNo="430"
+                                  component="FLUX" resourceType="SUBM" orderNo="430"
                                   url="/erp/crm/pages/ErpCrmPriceRule/main.page.yaml"/>
                         <resource id="ErpCrmQuoteTemplate-main" app:useCases="UC-CRM-13"
                                   displayName="报价模板" i18n-en:displayName="Quote Template" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="440"
+                                  component="FLUX" resourceType="SUBM" orderNo="440"
                                   url="/erp/crm/pages/ErpCrmQuoteTemplate/main.page.yaml"/>
                     </children>
                 </resource>
@@ -83,7 +83,7 @@
                     <children>
                         <resource id="ErpCrmSequence-main" app:useCases="UC-CRM-14"
                                   displayName="销售序列" i18n-en:displayName="Sales Sequence" icon="list-ordered"
-                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  component="FLUX" resourceType="SUBM" orderNo="510"
                                   url="/erp/crm/pages/ErpCrmSequence/main.page.yaml"/>
                     </children>
                 </resource>
@@ -92,7 +92,7 @@
                     <children>
                         <resource id="ErpCrmLeadFunnel-main" app:useCases="UC-CRM-15"
                                   displayName="线索漏斗" i18n-en:displayName="Lead Funnel" icon="chart-bar"
-                                  component="AMIS" resourceType="SUBM" orderNo="710"
+                                  component="FLUX" resourceType="SUBM" orderNo="710"
                                   url="/erp/crm/pages/ErpCrmLeadFunnel/main.page.yaml"/>
                     </children>
                 </resource>
@@ -101,23 +101,23 @@
                     <children>
                         <resource id="ErpCrmForecast-main" app:useCases="UC-CRM-10"
                                   displayName="销售预测" i18n-en:displayName="Sales Forecast" icon="trending-up"
-                                  component="AMIS" resourceType="SUBM" orderNo="810"
+                                  component="FLUX" resourceType="SUBM" orderNo="810"
                                   url="/erp/crm/pages/ErpCrmForecast/main.page.yaml"/>
                         <resource id="ErpCrmLeadScore-main" app:useCases="UC-CRM-09"
                                   displayName="线索评分" i18n-en:displayName="Lead Score" icon="award"
-                                  component="AMIS" resourceType="SUBM" orderNo="820"
+                                  component="FLUX" resourceType="SUBM" orderNo="820"
                                   url="/erp/crm/pages/ErpCrmLeadScore/main.page.yaml"/>
                         <resource id="ErpCrmTerritory-main" app:useCases="UC-CRM-11"
                                   displayName="销售区域" i18n-en:displayName="Territory" icon="map"
-                                  component="AMIS" resourceType="SUBM" orderNo="830"
+                                  component="FLUX" resourceType="SUBM" orderNo="830"
                                   url="/erp/crm/pages/ErpCrmTerritory/main.page.yaml"/>
                         <resource id="ErpCrmQuota-main" app:useCases="UC-CRM-12"
                                   displayName="销售配额" i18n-en:displayName="Quota" icon="target"
-                                  component="AMIS" resourceType="SUBM" orderNo="840"
+                                  component="FLUX" resourceType="SUBM" orderNo="840"
                                   url="/erp/crm/pages/ErpCrmQuota/main.page.yaml"/>
                         <resource id="ErpCrmForecastPeriod-main" app:useCases="UC-CRM-10"
                                   displayName="预测期间" i18n-en:displayName="Forecast Period" icon="calendar"
-                                  component="AMIS" resourceType="SUBM" orderNo="850"
+                                  component="FLUX" resourceType="SUBM" orderNo="850"
                                   url="/erp/crm/pages/ErpCrmForecastPeriod/main.page.yaml"/>
                     </children>
                 </resource>
@@ -126,27 +126,27 @@
                     <children>
                         <resource id="ErpCrmStage-main" app:useCases="UC-CRM-06"
                                   displayName="漏斗阶段" i18n-en:displayName="Stage" icon="layers"
-                                  component="AMIS" resourceType="SUBM" orderNo="900"
+                                  component="FLUX" resourceType="SUBM" orderNo="900"
                                   url="/erp/crm/pages/ErpCrmStage/main.page.yaml"/>
                         <resource id="ErpCrmSource-main" app:useCases="UC-CRM-01"
                                   displayName="线索来源" i18n-en:displayName="Lead Source" icon="navigation"
-                                  component="AMIS" resourceType="SUBM" orderNo="910"
+                                  component="FLUX" resourceType="SUBM" orderNo="910"
                                   url="/erp/crm/pages/ErpCrmSource/main.page.yaml"/>
                         <resource id="ErpCrmLostReason-main" app:useCases="UC-CRM-04"
                                   displayName="丢单原因" i18n-en:displayName="Lost Reason" icon="thumbs-down"
-                                  component="AMIS" resourceType="SUBM" orderNo="920"
+                                  component="FLUX" resourceType="SUBM" orderNo="920"
                                   url="/erp/crm/pages/ErpCrmLostReason/main.page.yaml"/>
                         <resource id="ErpCrmLeadStatus-main" displayName="线索状态"
                                   i18n-en:displayName="Lead Status" icon="flag"
-                                  component="AMIS" resourceType="SUBM" orderNo="930"
+                                  component="FLUX" resourceType="SUBM" orderNo="930"
                                   url="/erp/crm/pages/ErpCrmLeadStatus/main.page.yaml"/>
                         <resource id="ErpCrmTeam-main" displayName="销售团队"
                                   i18n-en:displayName="Sales Team" icon="users"
-                                  component="AMIS" resourceType="SUBM" orderNo="940"
+                                  component="FLUX" resourceType="SUBM" orderNo="940"
                                   url="/erp/crm/pages/ErpCrmTeam/main.page.yaml"/>
                         <resource id="ErpCrmLeadScoreConfig-main" displayName="评分规则配置"
                                   i18n-en:displayName="Lead Score Config" icon="award"
-                                  component="AMIS" resourceType="SUBM" orderNo="950"
+                                  component="FLUX" resourceType="SUBM" orderNo="950"
                                   url="/erp/crm/pages/ErpCrmLeadScoreConfig/main.page.yaml"/>
                     </children>
                 </resource>
@@ -156,11 +156,11 @@
                     <children>
                         <resource id="lead-conversion-funnel" app:useCases="UC-CRM-06,UC-CRM-15" displayName="线索转化漏斗表"
                                   i18n-en:displayName="Lead Conversion Funnel" icon="filter"
-                                  component="AMIS" resourceType="SUBM" orderNo="10010"
+                                  component="FLUX" resourceType="SUBM" orderNo="10010"
                                   url="/erp/crm/pages/report/lead-conversion-funnel.page.yaml"/>
                         <resource id="forecast-accuracy" app:useCases="UC-CRM-10" displayName="销售预测准确率表"
                                   i18n-en:displayName="Forecast Accuracy" icon="trending-up"
-                                  component="AMIS" resourceType="SUBM" orderNo="10020"
+                                  component="FLUX" resourceType="SUBM" orderNo="10020"
                                   url="/erp/crm/pages/report/forecast-accuracy.page.yaml"/>
                     </children>
                 </resource>

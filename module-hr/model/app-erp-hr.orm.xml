@@ -268,7 +268,7 @@
 
     <entities>
         <!-- 员工主数据 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrEmployee"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrEmployee"
                 displayName="员工" ext:icon="user" i18n-en:displayName="Employee" name="app.erp.hr.dao.entity.ErpHrEmployee"
                 tableName="erp_hr_employee" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -346,7 +346,7 @@
         </entity>
 
         <!-- 部门 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrDepartment"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrDepartment"
                 displayName="部门" ext:icon="building-2" i18n-en:displayName="Department" name="app.erp.hr.dao.entity.ErpHrDepartment"
                 tableName="erp_hr_department" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -388,7 +388,7 @@
         </entity>
 
         <!-- 职位 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrPosition"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrPosition"
                 displayName="职位" ext:icon="badge" i18n-en:displayName="Position" name="app.erp.hr.dao.entity.ErpHrPosition"
                 tableName="erp_hr_position" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -422,7 +422,7 @@
         </entity>
 
         <!-- 劳动合同 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrEmploymentContract"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrEmploymentContract"
                 displayName="劳动合同" ext:icon="file-text" i18n-en:displayName="Employment Contract" name="app.erp.hr.dao.entity.ErpHrEmploymentContract"
                 tableName="erp_hr_employment_contract" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -484,7 +484,7 @@
         </entity>
 
         <!-- 休假申请 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrLeaveRequest"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrLeaveRequest"
                 displayName="休假申请" ext:icon="calendar-off" i18n-en:displayName="Leave Request" name="app.erp.hr.dao.entity.ErpHrLeaveRequest"
                 tableName="erp_hr_leave_request" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -537,7 +537,7 @@
 
         <!-- 休假额度/余额（镜像 ERPNext Leave Allocation 范式，UC-HR-02）。
              usedDays 不落库——由 BizModel 实时聚合 Σ approved LeaveRequest.durationDays（对齐 budget.md 派生字段范式）。 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrLeaveBalance"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrLeaveBalance"
                 displayName="休假额度" ext:icon="calendar-days" i18n-en:displayName="Leave Balance" name="app.erp.hr.dao.entity.ErpHrLeaveBalance"
                 tableName="erp_hr_leave_balance" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -580,7 +580,7 @@
         </entity>
 
         <!-- 工时表 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrTimesheet"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrTimesheet"
                 displayName="工时表" ext:icon="clock" i18n-en:displayName="Timesheet" name="app.erp.hr.dao.entity.ErpHrTimesheet"
                 tableName="erp_hr_timesheet" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -625,7 +625,7 @@
         </entity>
 
         <!-- 工时表明细 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrTimesheetLine"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrTimesheetLine"
                 displayName="工时表明细" ext:icon="list" i18n-en:displayName="Timesheet Line" name="app.erp.hr.dao.entity.ErpHrTimesheetLine"
                 tableName="erp_hr_timesheet_line" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -668,7 +668,7 @@
         </entity>
 
         <!-- 考勤记录 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrAttendance"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrAttendance"
                 displayName="考勤记录" ext:icon="fingerprint" i18n-en:displayName="Attendance" name="app.erp.hr.dao.entity.ErpHrAttendance"
                 tableName="erp_hr_attendance" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -717,7 +717,7 @@
         </entity>
 
         <!-- 薪酬记录 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSalary"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSalary"
                 displayName="薪酬记录" ext:icon="wallet" i18n-en:displayName="Salary Record" name="app.erp.hr.dao.entity.ErpHrSalary"
                 tableName="erp_hr_salary" tagSet="gid,erp.hr" useWorkflow="true" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -788,7 +788,7 @@
         </entity>
 
         <!-- 招聘记录 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrRecruitment"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrRecruitment"
                 displayName="招聘记录" ext:icon="user-plus" i18n-en:displayName="Recruitment" name="app.erp.hr.dao.entity.ErpHrRecruitment"
                 tableName="erp_hr_recruitment" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -857,7 +857,7 @@
         </entity>
 
         <!-- 薪酬模拟 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSalarySimulation"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSalarySimulation"
                 displayName="薪酬模拟" ext:icon="calculator" i18n-en:displayName="Salary Simulation" name="app.erp.hr.dao.entity.ErpHrSalarySimulation"
                 tableName="erp_hr_salary_simulation" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -913,7 +913,7 @@
         </entity>
 
         <!-- 薪酬模拟调整项（payroll-simulation.md §2.2） -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment"
                 displayName="薪酬模拟调整项" ext:icon="edit-3" i18n-en:displayName="Salary Simulation Item Adjustment" name="app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment"
                 tableName="erp_hr_salary_simulation_item_adj" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -949,7 +949,7 @@
                 </index>
             </indexes>
         </entity>
-        <entity className="app.erp.hr.dao.entity.ErpHrSalaryItem"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSalaryItem"
                 displayName="薪酬项目" ext:icon="list" i18n-en:displayName="Salary Item" name="app.erp.hr.dao.entity.ErpHrSalaryItem"
                 tableName="erp_hr_salary_item" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -982,7 +982,7 @@
         </entity>
 
         <!-- 社保配置 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSocialInsuranceConfig"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSocialInsuranceConfig"
                 displayName="社保配置" ext:icon="settings" i18n-en:displayName="Social Insurance Config" name="app.erp.hr.dao.entity.ErpHrSocialInsuranceConfig"
                 tableName="erp_hr_social_insurance_config" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1010,7 +1010,7 @@
         </entity>
 
         <!-- 员工社保基数 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSocialInsuranceBase"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSocialInsuranceBase"
                 displayName="员工社保基数" ext:icon="user-check" i18n-en:displayName="Social Insurance Base" name="app.erp.hr.dao.entity.ErpHrSocialInsuranceBase"
                 tableName="erp_hr_social_insurance_base" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1042,7 +1042,7 @@
         </entity>
 
         <!-- 个税配置 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrTaxConfig"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrTaxConfig"
                 displayName="个税配置" ext:icon="percent" i18n-en:displayName="Tax Config" name="app.erp.hr.dao.entity.ErpHrTaxConfig"
                 tableName="erp_hr_tax_config" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1066,7 +1066,7 @@
         </entity>
 
         <!-- 员工专项附加扣除 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrTaxSpecialDeduction"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrTaxSpecialDeduction"
                 displayName="员工专项附加扣除" ext:icon="receipt" i18n-en:displayName="Tax Special Deduction" name="app.erp.hr.dao.entity.ErpHrTaxSpecialDeduction"
                 tableName="erp_hr_tax_special_deduction" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1098,7 +1098,7 @@
         </entity>
 
         <!-- 银行代发文件 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrPayrollBankFile"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrPayrollBankFile"
                 displayName="银行代发文件" ext:icon="file-text" i18n-en:displayName="Payroll Bank File" name="app.erp.hr.dao.entity.ErpHrPayrollBankFile"
                 tableName="erp_hr_payroll_bank_file" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1136,7 +1136,7 @@
         </entity>
 
         <!-- 班次模板 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrShift"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrShift"
                 displayName="班次模板" ext:icon="clock" i18n-en:displayName="Shift" name="app.erp.hr.dao.entity.ErpHrShift"
                 tableName="erp_hr_shift" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1173,7 +1173,7 @@
         </entity>
 
         <!-- 排班分配 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrShiftAssignment"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrShiftAssignment"
                 displayName="排班分配" ext:icon="calendar-days" i18n-en:displayName="Shift Assignment" name="app.erp.hr.dao.entity.ErpHrShiftAssignment"
                 tableName="erp_hr_shift_assignment" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1237,7 +1237,7 @@
         </entity>
 
         <!-- 轮换排班模板 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrShiftRotationPattern"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrShiftRotationPattern"
                 displayName="轮换排班模板" ext:icon="rotate-cw" i18n-en:displayName="Shift Rotation Pattern" name="app.erp.hr.dao.entity.ErpHrShiftRotationPattern"
                 tableName="erp_hr_shift_rotation_pattern" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1272,7 +1272,7 @@
         </entity>
 
         <!-- 排班调换申请 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrShiftSwapRequest"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrShiftSwapRequest"
                 displayName="排班调换申请" ext:icon="arrows-left-right" i18n-en:displayName="Shift Swap Request" name="app.erp.hr.dao.entity.ErpHrShiftSwapRequest"
                 tableName="erp_hr_shift_swap_request" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1333,7 +1333,7 @@
         </entity>
 
         <!-- 问卷模板 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSurvey"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSurvey"
                 displayName="问卷模板" ext:icon="file-question" i18n-en:displayName="Survey" name="app.erp.hr.dao.entity.ErpHrSurvey"
                 tableName="erp_hr_survey" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1385,7 +1385,7 @@
         </entity>
 
         <!-- 问卷题目 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSurveyQuestion"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSurveyQuestion"
                 displayName="问卷题目" ext:icon="help-circle" i18n-en:displayName="Survey Question" name="app.erp.hr.dao.entity.ErpHrSurveyQuestion"
                 tableName="erp_hr_survey_question" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1419,7 +1419,7 @@
         </entity>
 
         <!-- 答卷 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSurveyResponse"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSurveyResponse"
                 displayName="答卷" ext:icon="file-check" i18n-en:displayName="Survey Response" name="app.erp.hr.dao.entity.ErpHrSurveyResponse"
                 tableName="erp_hr_survey_response" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1455,7 +1455,7 @@
         </entity>
 
         <!-- 回答明细 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSurveyAnswer"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSurveyAnswer"
                 displayName="回答明细" ext:icon="check-circle" i18n-en:displayName="Survey Answer" name="app.erp.hr.dao.entity.ErpHrSurveyAnswer"
                 tableName="erp_hr_survey_answer" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1487,7 +1487,7 @@
         </entity>
 
         <!-- 调研结果聚合 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrSurveyResult"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrSurveyResult"
                 displayName="调研结果" ext:icon="bar-chart" i18n-en:displayName="Survey Result" name="app.erp.hr.dao.entity.ErpHrSurveyResult"
                 tableName="erp_hr_survey_result" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1523,7 +1523,7 @@
         </entity>
 
         <!-- 胜任力字典 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrCompetency"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrCompetency"
                 displayName="胜任力字典" ext:icon="book-open" i18n-en:displayName="Competency" name="app.erp.hr.dao.entity.ErpHrCompetency"
                 tableName="erp_hr_competency" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1560,7 +1560,7 @@
         </entity>
 
         <!-- 胜任力等级 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrCompetencyLevel"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrCompetencyLevel"
                 displayName="胜任力等级" ext:icon="layers" i18n-en:displayName="Competency Level" name="app.erp.hr.dao.entity.ErpHrCompetencyLevel"
                 tableName="erp_hr_competency_level" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1588,7 +1588,7 @@
         </entity>
 
         <!-- 岗位胜任力要求 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrRoleCompetency"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrRoleCompetency"
                 displayName="岗位胜任力要求" ext:icon="briefcase" i18n-en:displayName="Role Competency" name="app.erp.hr.dao.entity.ErpHrRoleCompetency"
                 tableName="erp_hr_role_competency" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1620,7 +1620,7 @@
         </entity>
 
         <!-- 员工评估 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrEmployeeAssessment"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrEmployeeAssessment"
                 displayName="员工评估" ext:icon="clipboard-check" i18n-en:displayName="Employee Assessment" name="app.erp.hr.dao.entity.ErpHrEmployeeAssessment"
                 tableName="erp_hr_employee_assessment" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1666,7 +1666,7 @@
         </entity>
 
         <!-- 评估明细 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrAssessmentDetail"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrAssessmentDetail"
                 displayName="评估明细" ext:icon="list-checks" i18n-en:displayName="Assessment Detail" name="app.erp.hr.dao.entity.ErpHrAssessmentDetail"
                 tableName="erp_hr_assessment_detail" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1698,7 +1698,7 @@
         </entity>
 
         <!-- 差距分析 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrGapAnalysis"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrGapAnalysis"
                 displayName="差距分析" ext:icon="triangle-alert" i18n-en:displayName="Gap Analysis" name="app.erp.hr.dao.entity.ErpHrGapAnalysis"
                 tableName="erp_hr_gap_analysis" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1733,7 +1733,7 @@
         </entity>
 
         <!-- 发展计划 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrDevelopmentPlan"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrDevelopmentPlan"
                 displayName="发展计划" ext:icon="target" i18n-en:displayName="Development Plan" name="app.erp.hr.dao.entity.ErpHrDevelopmentPlan"
                 tableName="erp_hr_development_plan" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1773,7 +1773,7 @@
         </entity>
 
         <!-- 发展计划项 -->
-        <entity className="app.erp.hr.dao.entity.ErpHrDevelopmentPlanItem"
+        <entity ext:web-renderer="flux" className="app.erp.hr.dao.entity.ErpHrDevelopmentPlanItem"
                 displayName="发展计划项" ext:icon="list-todo" i18n-en:displayName="Development Plan Item" name="app.erp.hr.dao.entity.ErpHrDevelopmentPlanItem"
                 tableName="erp_hr_development_plan_item" tagSet="gid,erp.hr" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -1821,7 +1821,7 @@
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
-        <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
@@ -1829,7 +1829,7 @@
             </columns>
         </entity>
 
-        <entity displayName="银行账户" name="app.erp.md.dao.entity.ErpMdBankAccount"
+        <entity ext:web-renderer="flux" displayName="银行账户" name="app.erp.md.dao.entity.ErpMdBankAccount"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_bank_account">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1838,7 +1838,7 @@
             </columns>
         </entity>
 
-        <entity displayName="成本中心" name="app.erp.md.dao.entity.ErpMdCostCenter"
+        <entity ext:web-renderer="flux" displayName="成本中心" name="app.erp.md.dao.entity.ErpMdCostCenter"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_cost_center">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1847,7 +1847,7 @@
             </columns>
         </entity>
 
-        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+        <entity ext:web-renderer="flux" displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1856,7 +1856,7 @@
             </columns>
         </entity>
 
-        <entity displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
+        <entity ext:web-renderer="flux" displayName="项目" name="app.erp.prj.dao.entity.ErpPrjProject"
                 notGenCode="true" biz:moduleId="erp/prj" tableName="erp_prj_project">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -1865,7 +1865,7 @@
             </columns>
         </entity>
 
-        <entity displayName="任务" name="app.erp.prj.dao.entity.ErpPrjTask"
+        <entity ext:web-renderer="flux" displayName="任务" name="app.erp.prj.dao.entity.ErpPrjTask"
                 notGenCode="true" biz:moduleId="erp/prj" tableName="erp_prj_task">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />

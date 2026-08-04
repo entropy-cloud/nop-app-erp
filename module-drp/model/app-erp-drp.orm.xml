@@ -65,7 +65,7 @@
 
     <entities>
         <!-- DRP计划头 -->
-        <entity className="app.erp.drp.dao.entity.ErpDrpPlan"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpDrpPlan"
                 displayName="DRP计划" ext:icon="git-branch" i18n-en:displayName="DRP Plan" name="app.erp.drp.dao.entity.ErpDrpPlan"
                 tableName="erp_drp_plan" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -108,7 +108,7 @@
         </entity>
 
         <!-- DRP明细行 -->
-        <entity className="app.erp.drp.dao.entity.ErpDrpLine"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpDrpLine"
                 displayName="DRP明细" ext:icon="list" i18n-en:displayName="DRP Line" name="app.erp.drp.dao.entity.ErpDrpLine"
                 tableName="erp_drp_line" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -167,7 +167,7 @@
         </entity>
 
         <!-- 仓库补货参数 -->
-        <entity className="app.erp.drp.dao.entity.ErpDrpParameter"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpDrpParameter"
                 displayName="仓库补货参数" ext:icon="settings" i18n-en:displayName="DRP Parameter" name="app.erp.drp.dao.entity.ErpDrpParameter"
                 tableName="erp_drp_parameter" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -216,7 +216,7 @@
         </entity>
 
         <!-- 安全库存计算结果 -->
-        <entity className="app.erp.drp.dao.entity.ErpInvDrpSafetyStockCalc"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpInvDrpSafetyStockCalc"
                 displayName="安全库存计算" ext:icon="shield" i18n-en:displayName="Safety Stock Calc" name="app.erp.drp.dao.entity.ErpInvDrpSafetyStockCalc"
                 tableName="erp_inv_drp_safety_stock_calc" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -261,7 +261,7 @@
         </entity>
 
         <!-- 越库执行记录 -->
-        <entity className="app.erp.drp.dao.entity.ErpInvDrpCrossDock"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpInvDrpCrossDock"
                 displayName="越库执行记录" ext:icon="arrow-left-right" i18n-en:displayName="Cross Dock" name="app.erp.drp.dao.entity.ErpInvDrpCrossDock"
                 tableName="erp_inv_drp_cross_dock" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -325,7 +325,7 @@
         </entity>
 
         <!-- 月台预约 -->
-        <entity className="app.erp.drp.dao.entity.ErpInvDrpDockAppointment"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpInvDrpDockAppointment"
                 displayName="月台预约" ext:icon="dock" i18n-en:displayName="Dock Appointment" name="app.erp.drp.dao.entity.ErpInvDrpDockAppointment"
                 tableName="erp_inv_drp_dock_appointment" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -371,7 +371,7 @@
         </entity>
 
         <!-- 提前期跟踪记录 -->
-        <entity className="app.erp.drp.dao.entity.ErpInvDrpLeadTimeRecord"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpInvDrpLeadTimeRecord"
                 displayName="提前期记录" ext:icon="clock" i18n-en:displayName="Lead Time Record" name="app.erp.drp.dao.entity.ErpInvDrpLeadTimeRecord"
                 tableName="erp_inv_drp_lead_time_record" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -413,7 +413,7 @@
         <!-- ============================ DRP 仿真引擎（plan 2026-07-22-1000-2；权威：docs/design/manufacturing/simulation-engine.md §DRP 对应物） ============================ -->
 
         <!-- DRP 仿真场景头 -->
-        <entity className="app.erp.drp.dao.entity.ErpDrpScenario"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpDrpScenario"
                 displayName="DRP仿真场景" ext:icon="flask-conical" i18n-en:displayName="DRP Simulation Scenario" name="app.erp.drp.dao.entity.ErpDrpScenario"
                 tableName="erp_drp_scenario" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -451,7 +451,7 @@
         </entity>
 
         <!-- DRP 仿真场景版本（一次计算快照） -->
-        <entity className="app.erp.drp.dao.entity.ErpDrpScenarioVersion"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpDrpScenarioVersion"
                 displayName="DRP仿真版本" ext:icon="git-branch" i18n-en:displayName="DRP Simulation Version" name="app.erp.drp.dao.entity.ErpDrpScenarioVersion"
                 tableName="erp_drp_scenario_version" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -488,7 +488,7 @@
         </entity>
 
         <!-- DRP 仿真场景参数变体覆盖（materialId+warehouseId 双键定位补货参数） -->
-        <entity className="app.erp.drp.dao.entity.ErpDrpScenarioParam"
+        <entity ext:web-renderer="flux" className="app.erp.drp.dao.entity.ErpDrpScenarioParam"
                 displayName="DRP仿真参数" ext:icon="sliders-horizontal" i18n-en:displayName="DRP Simulation Param" name="app.erp.drp.dao.entity.ErpDrpScenarioParam"
                 tableName="erp_drp_scenario_param" tagSet="gid,erp.drp" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -530,7 +530,7 @@
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
-        <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
@@ -538,7 +538,7 @@
             </columns>
         </entity>
 
-        <entity displayName="库存移动" name="app.erp.inv.dao.entity.ErpInvStockMove"
+        <entity ext:web-renderer="flux" displayName="库存移动" name="app.erp.inv.dao.entity.ErpInvStockMove"
                 notGenCode="true" biz:moduleId="erp/inv" tableName="erp_inv_stock_move">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -546,7 +546,7 @@
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
-        <entity displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
+        <entity ext:web-renderer="flux" displayName="库位" name="app.erp.md.dao.entity.ErpMdLocation"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_location">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -555,7 +555,7 @@
             </columns>
         </entity>
 
-        <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -564,7 +564,7 @@
             </columns>
         </entity>
 
-        <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -573,7 +573,7 @@
             </columns>
         </entity>
 
-        <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
+        <entity ext:web-renderer="flux" displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_warehouse">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />

@@ -9,7 +9,7 @@
     - appName:        app-erp-log
     - entityPackage:  app.erp.log.dao.entity
     - 实体类名:        ErpLog<Entity>     （如 ErpLogCarrier、ErpLogShipment）
-    - 表名:           erp_log_<entity>   （如 erp_log_carrier、erp_log_shipment）
+    - 表名:           erp_log_<entity ext:web-renderer="flux">   （如 erp_log_carrier、erp_log_shipment）
     - 字典命名空间:    erp-log/<dict-name>
 
   跨工程依赖：
@@ -83,7 +83,7 @@
 
     <entities>
         <!-- 承运商 -->
-        <entity className="app.erp.log.dao.entity.ErpLogCarrier"
+        <entity ext:web-renderer="flux" className="app.erp.log.dao.entity.ErpLogCarrier"
                 displayName="承运商" ext:icon="truck" i18n-en:displayName="Carrier" name="app.erp.log.dao.entity.ErpLogCarrier"
                 tableName="erp_log_carrier" tagSet="gid,erp.logistics" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -125,7 +125,7 @@
         </entity>
 
         <!-- 承运商配置 -->
-        <entity className="app.erp.log.dao.entity.ErpLogCarrierConfig"
+        <entity ext:web-renderer="flux" className="app.erp.log.dao.entity.ErpLogCarrierConfig"
                 displayName="承运商配置" ext:icon="settings" i18n-en:displayName="Carrier Config" name="app.erp.log.dao.entity.ErpLogCarrierConfig"
                 tableName="erp_log_carrier_config" tagSet="gid,erp.logistics" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -162,7 +162,7 @@
         </entity>
 
         <!-- 发运单 -->
-        <entity className="app.erp.log.dao.entity.ErpLogShipment"
+        <entity ext:web-renderer="flux" className="app.erp.log.dao.entity.ErpLogShipment"
                 displayName="发运单" ext:icon="package" i18n-en:displayName="Shipment" name="app.erp.log.dao.entity.ErpLogShipment"
                 tableName="erp_log_shipment" tagSet="gid,erp.logistics" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -249,7 +249,7 @@
         </entity>
 
         <!-- 发运明细 -->
-        <entity className="app.erp.log.dao.entity.ErpLogShipmentLine"
+        <entity ext:web-renderer="flux" className="app.erp.log.dao.entity.ErpLogShipmentLine"
                 displayName="发运明细" ext:icon="list" i18n-en:displayName="Shipment Line" name="app.erp.log.dao.entity.ErpLogShipmentLine"
                 tableName="erp_log_shipment_line" tagSet="gid,erp.logistics" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -283,7 +283,7 @@
         </entity>
 
         <!-- 包裹 -->
-        <entity className="app.erp.log.dao.entity.ErpLogShipmentParcel"
+        <entity ext:web-renderer="flux" className="app.erp.log.dao.entity.ErpLogShipmentParcel"
                 displayName="包裹" ext:icon="package" i18n-en:displayName="Shipment Parcel" name="app.erp.log.dao.entity.ErpLogShipmentParcel"
                 tableName="erp_log_shipment_parcel" tagSet="gid,erp.logistics" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -317,7 +317,7 @@
         </entity>
 
         <!-- 网关交互日志 -->
-        <entity className="app.erp.log.dao.entity.ErpLogShipmentLog"
+        <entity ext:web-renderer="flux" className="app.erp.log.dao.entity.ErpLogShipmentLog"
                 displayName="网关交互日志" ext:icon="file-text" i18n-en:displayName="Shipment Log" name="app.erp.log.dao.entity.ErpLogShipmentLog"
                 tableName="erp_log_shipment_log" tagSet="gid,erp.logistics" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -356,7 +356,7 @@
         </entity>
 
         <!-- 配送时间窗口 -->
-        <entity className="app.erp.log.dao.entity.ErpLogDeliveryWindow"
+        <entity ext:web-renderer="flux" className="app.erp.log.dao.entity.ErpLogDeliveryWindow"
                 displayName="配送时间窗口" ext:icon="clock" i18n-en:displayName="Delivery Window" name="app.erp.log.dao.entity.ErpLogDeliveryWindow"
                 tableName="erp_log_delivery_window" tagSet="gid,erp.logistics" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -392,35 +392,35 @@
         </entity>
 
         <!-- 外部实体引用（notGenCode，不生成本模块 Entity 类） -->
-        <entity displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
-        <entity displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
-        <entity displayName="ErpMdEmployee" name="app.erp.md.dao.entity.ErpMdEmployee"
+        <entity ext:web-renderer="flux" displayName="ErpMdEmployee" name="app.erp.md.dao.entity.ErpMdEmployee"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
-        <entity displayName="ErpMdMaterial" name="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" displayName="ErpMdMaterial" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
-        <entity displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
+        <entity ext:web-renderer="flux" displayName="币种" name="app.erp.md.dao.entity.ErpMdCurrency"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_currency">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />

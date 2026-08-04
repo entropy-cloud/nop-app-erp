@@ -11,15 +11,15 @@
                     <children>
                         <resource id="ErpLogShipment-main" app:useCases="UC-LOG-01,UC-LOG-02,UC-LOG-03"
                                   displayName="发运单" i18n-en:displayName="Shipment" icon="truck"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/log/pages/ErpLogShipment/main.page.yaml"/>
                         <resource id="log-shipment-tracking" app:useCases="UC-LOG-02,UC-LOG-03" displayName="发运追踪时间线"
                                   i18n-en:displayName="Shipment Tracking" icon="route"
-                                  component="AMIS" resourceType="SUBM" orderNo="105"
+                                  component="FLUX" resourceType="SUBM" orderNo="105"
                                   url="/erp/log/pages/dashboard/shipment-tracking.page.yaml"/>
                         <resource id="ErpLogShipmentLine-main" displayName="发运明细"
                                   i18n-en:displayName="Shipment Line" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/log/pages/ErpLogShipmentLine/main.page.yaml"/>
                     </children>
                 </resource>
@@ -28,7 +28,7 @@
                     <children>
                         <resource id="ErpLogDeliveryWindow-main" app:useCases="UC-LOG-07" displayName="配送时间窗口"
                                   i18n-en:displayName="Delivery Window" icon="clock"
-                                  component="AMIS" resourceType="SUBM" orderNo="150"
+                                  component="FLUX" resourceType="SUBM" orderNo="150"
                                   url="/erp/log/pages/ErpLogDeliveryWindow/main.page.yaml"/>
                     </children>
                 </resource>
@@ -37,11 +37,11 @@
                     <children>
                         <resource id="ErpLogCarrier-main" displayName="承运商"
                                   i18n-en:displayName="Carrier" icon="building"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/log/pages/ErpLogCarrier/main.page.yaml"/>
                         <resource id="ErpLogCarrierConfig-main" displayName="承运商配置"
                                   i18n-en:displayName="Carrier Config" icon="settings"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/erp/log/pages/ErpLogCarrierConfig/main.page.yaml"/>
                     </children>
                 </resource>

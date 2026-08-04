@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-pur" component="layouts/default/index">
             <children>
                 <resource id="ErpPurInvoice-main" displayName="采购发票" orderNo="10001"
-                          i18n-en:displayName="Purchase Invoice" icon="receipt" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Purchase Invoice" icon="receipt" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurInvoice/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurInvoice:query" displayName="查询采购发票"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurInvoiceLine-main" displayName="采购发票行" orderNo="10004"
-                          i18n-en:displayName="Purchase Invoice Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Purchase Invoice Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurInvoiceLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurInvoiceLine:query" displayName="查询采购发票行"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurOrder-main" displayName="采购订单" orderNo="10007" i18n-en:displayName="Purchase Order"
-                          icon="shopping-cart" component="AMIS" resourceType="SUBM"
+                          icon="shopping-cart" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurOrder/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurOrder:query" displayName="查询采购订单"
@@ -53,7 +53,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurOrderLine-main" displayName="采购订单行" orderNo="10010"
-                          i18n-en:displayName="Purchase Order Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Purchase Order Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurOrderLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurOrderLine:query" displayName="查询采购订单行"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurPayment-main" displayName="付款单" orderNo="10013" i18n-en:displayName="Payment"
-                          icon="banknote" component="AMIS" resourceType="SUBM"
+                          icon="banknote" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurPayment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurPayment:query" displayName="查询付款单" i18n-en:displayName="Query Payment"
@@ -81,7 +81,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurPaymentLine-main" displayName="付款核销行" orderNo="10016"
-                          i18n-en:displayName="Payment Settlement Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Payment Settlement Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurPaymentLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurPaymentLine:query" displayName="查询付款核销行"
@@ -97,7 +97,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurQuotation-main" displayName="供应商报价单" orderNo="10019"
-                          i18n-en:displayName="Supplier Quotation" icon="file-sign" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Supplier Quotation" icon="file-sign" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurQuotation/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurQuotation:query" displayName="查询供应商报价单"
@@ -111,7 +111,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurQuotationLine-main" displayName="供应商报价单行" orderNo="10022"
-                          i18n-en:displayName="Supplier Quotation Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Supplier Quotation Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurQuotationLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurQuotationLine:query" displayName="查询供应商报价单行"
@@ -127,7 +127,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurReceive-main" displayName="采购入库单" orderNo="10025"
-                          i18n-en:displayName="Purchase Receipt" icon="package-plus" component="AMIS"
+                          i18n-en:displayName="Purchase Receipt" icon="package-plus" component="FLUX"
                           resourceType="SUBM" url="/erp/pur/pages/ErpPurReceive/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurReceive:query" displayName="查询采购入库单"
@@ -141,7 +141,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurReceiveLine-main" displayName="采购入库单行" orderNo="10028"
-                          i18n-en:displayName="Purchase Receipt Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Purchase Receipt Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurReceiveLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurReceiveLine:query" displayName="查询采购入库单行"
@@ -155,7 +155,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurRequisition-main" displayName="采购请购单" orderNo="10031"
-                          i18n-en:displayName="Purchase Requisition" icon="file-text" component="AMIS"
+                          i18n-en:displayName="Purchase Requisition" icon="file-text" component="FLUX"
                           resourceType="SUBM" url="/erp/pur/pages/ErpPurRequisition/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurRequisition:query" displayName="查询采购请购单"
@@ -169,7 +169,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurRequisitionLine-main" displayName="采购请购单行" orderNo="10034"
-                          i18n-en:displayName="Purchase Requisition Line" icon="list" component="AMIS"
+                          i18n-en:displayName="Purchase Requisition Line" icon="list" component="FLUX"
                           resourceType="SUBM" url="/erp/pur/pages/ErpPurRequisitionLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurRequisitionLine:query" displayName="查询采购请购单行"
@@ -185,7 +185,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurReturn-main" displayName="采购退货单" orderNo="10037"
-                          i18n-en:displayName="Purchase Return" icon="undo-2" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Purchase Return" icon="undo-2" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurReturn/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurReturn:query" displayName="查询采购退货单"
@@ -199,7 +199,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurReturnLine-main" displayName="采购退货单行" orderNo="10040"
-                          i18n-en:displayName="Purchase Return Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Purchase Return Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurReturnLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurReturnLine:query" displayName="查询采购退货单行"
@@ -213,7 +213,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurRfq-main" displayName="采购询价单" orderNo="10043" i18n-en:displayName="Purchase RFQ"
-                          icon="message-circle-question" component="AMIS" resourceType="SUBM"
+                          icon="message-circle-question" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurRfq/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurRfq:query" displayName="查询采购询价单"
@@ -227,7 +227,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurRfqLine-main" displayName="采购询价单行" orderNo="10046"
-                          i18n-en:displayName="Purchase RFQ Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Purchase RFQ Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurRfqLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurRfqLine:query" displayName="查询采购询价单行"
@@ -241,7 +241,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurSupplierPriceList-main" displayName="供应商价格清单" orderNo="10049"
-                          i18n-en:displayName="Supplier Price List" icon="list-checks" component="AMIS"
+                          i18n-en:displayName="Supplier Price List" icon="list-checks" component="FLUX"
                           resourceType="SUBM" url="/erp/pur/pages/ErpPurSupplierPriceList/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurSupplierPriceList:query" displayName="查询供应商价格清单"
@@ -255,7 +255,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurSupplierScorecard-main" displayName="供应商评分卡" orderNo="10052"
-                          i18n-en:displayName="Supplier Scorecard" icon="gauge" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Supplier Scorecard" icon="gauge" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurSupplierScorecard/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurSupplierScorecard:query" displayName="查询供应商评分卡"
@@ -269,7 +269,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurSupplierScorecardCriteria-main" displayName="评分维度" orderNo="10055"
-                          i18n-en:displayName="Scorecard Criteria" icon="sliders-horizontal" component="AMIS"
+                          i18n-en:displayName="Scorecard Criteria" icon="sliders-horizontal" component="FLUX"
                           resourceType="SUBM" url="/erp/pur/pages/ErpPurSupplierScorecardCriteria/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurSupplierScorecardCriteria:query" displayName="查询评分维度"
@@ -283,7 +283,7 @@
                     </children>
                 </resource>
                 <resource id="ErpPurSupplierScorecardVariable-main" displayName="评分变量" orderNo="10058"
-                          i18n-en:displayName="Scorecard Variable" icon="variable" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Scorecard Variable" icon="variable" component="FLUX" resourceType="SUBM"
                           url="/erp/pur/pages/ErpPurSupplierScorecardVariable/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPurSupplierScorecardVariable:query" displayName="查询评分变量"

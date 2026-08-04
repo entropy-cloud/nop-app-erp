@@ -4,7 +4,7 @@
 
     <objMeta>/erp/crm/model/ErpCrmLead/ErpCrmLead.xmeta</objMeta>
 
-    <controlLib>/nop/web/xlib/control.xlib</controlLib>
+    <controlLib>/nop/web/xlib/flux-control.xlib</controlLib>
 
     <x:gen-extends>
         <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>

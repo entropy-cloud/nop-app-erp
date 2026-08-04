@@ -11,7 +11,7 @@
                   resourceType="TOPM" orderNo="10000" routePath="/test-orm-erp-mnt" component="layouts/default/index">
             <children>
                 <resource id="ErpMntCalibration-main" displayName="校准记录" orderNo="10001"
-                          i18n-en:displayName="Calibration" icon="gauge" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Calibration" icon="gauge" component="FLUX" resourceType="SUBM"
                           url="/erp/mnt/pages/ErpMntCalibration/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntCalibration:query" displayName="查询校准记录"
@@ -25,7 +25,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntDowntimeEntry-main" displayName="停机记录" orderNo="10004"
-                          i18n-en:displayName="Downtime Entry" icon="timer-off" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Downtime Entry" icon="timer-off" component="FLUX" resourceType="SUBM"
                           url="/erp/mnt/pages/ErpMntDowntimeEntry/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntDowntimeEntry:query" displayName="查询停机记录"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntEquipment-main" displayName="设备" orderNo="10007" i18n-en:displayName="Equipment"
-                          icon="cog" component="AMIS" resourceType="SUBM"
+                          icon="cog" component="FLUX" resourceType="SUBM"
                           url="/erp/mnt/pages/ErpMntEquipment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntEquipment:query" displayName="查询设备"
@@ -53,7 +53,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntEquipmentCategory-main" displayName="设备分类" orderNo="10010"
-                          i18n-en:displayName="Equipment Category" icon="folder-tree" component="AMIS"
+                          i18n-en:displayName="Equipment Category" icon="folder-tree" component="FLUX"
                           resourceType="SUBM" url="/erp/mnt/pages/ErpMntEquipmentCategory/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntEquipmentCategory:query" displayName="查询设备分类"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntMaintenanceTeam-main" displayName="维护团队" orderNo="10013"
-                          i18n-en:displayName="Maintenance Team" icon="users" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Maintenance Team" icon="users" component="FLUX" resourceType="SUBM"
                           url="/erp/mnt/pages/ErpMntMaintenanceTeam/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntMaintenanceTeam:query" displayName="查询维护团队"
@@ -81,7 +81,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntMaintenanceTeamMember-main" displayName="维护团队成员" orderNo="10016"
-                          i18n-en:displayName="Maintenance Team Member" icon="user-round" component="AMIS"
+                          i18n-en:displayName="Maintenance Team Member" icon="user-round" component="FLUX"
                           resourceType="SUBM" url="/erp/mnt/pages/ErpMntMaintenanceTeamMember/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntMaintenanceTeamMember:query" displayName="查询维护团队成员"
@@ -97,7 +97,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntRequest-main" displayName="维护请求" orderNo="10019"
-                          i18n-en:displayName="Maintenance Request" icon="life-buoy" component="AMIS"
+                          i18n-en:displayName="Maintenance Request" icon="life-buoy" component="FLUX"
                           resourceType="SUBM" url="/erp/mnt/pages/ErpMntRequest/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntRequest:query" displayName="查询维护请求"
@@ -111,7 +111,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntSchedule-main" displayName="维护计划" orderNo="10022"
-                          i18n-en:displayName="Maintenance Schedule" icon="calendar-clock" component="AMIS"
+                          i18n-en:displayName="Maintenance Schedule" icon="calendar-clock" component="FLUX"
                           resourceType="SUBM" url="/erp/mnt/pages/ErpMntSchedule/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntSchedule:query" displayName="查询维护计划"
@@ -125,7 +125,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntSparePartUsage-main" displayName="备件消耗" orderNo="10025"
-                          i18n-en:displayName="Spare Part Usage" icon="package-minus" component="AMIS"
+                          i18n-en:displayName="Spare Part Usage" icon="package-minus" component="FLUX"
                           resourceType="SUBM" url="/erp/mnt/pages/ErpMntSparePartUsage/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntSparePartUsage:query" displayName="查询备件消耗"
@@ -139,7 +139,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntSparePartUsageLine-main" displayName="备件消耗行" orderNo="10028"
-                          i18n-en:displayName="Spare Part Usage Line" icon="list" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Spare Part Usage Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/mnt/pages/ErpMntSparePartUsageLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntSparePartUsageLine:query" displayName="查询备件消耗行"
@@ -153,7 +153,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntVisit-main" displayName="维护访问" orderNo="10031"
-                          i18n-en:displayName="Maintenance Visit" icon="clipboard-check" component="AMIS"
+                          i18n-en:displayName="Maintenance Visit" icon="clipboard-check" component="FLUX"
                           resourceType="SUBM" url="/erp/mnt/pages/ErpMntVisit/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntVisit:query" displayName="查询维护访问"
@@ -167,7 +167,7 @@
                     </children>
                 </resource>
                 <resource id="ErpMntVisitTask-main" displayName="维护任务" orderNo="10034"
-                          i18n-en:displayName="Maintenance Task" icon="list-checks" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="Maintenance Task" icon="list-checks" component="FLUX" resourceType="SUBM"
                           url="/erp/mnt/pages/ErpMntVisitTask/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMntVisitTask:query" displayName="查询维护任务"

@@ -17,19 +17,19 @@
                     <children>
                         <resource id="ErpPurRfq-main" app:useCases="UC-PUR-01" displayName="采购询价单"
                                   i18n-en:displayName="Purchase RFQ" icon="message-circle-question"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/pur/pages/ErpPurRfq/main.page.yaml"/>
                         <resource id="ErpPurQuotation-main" app:useCases="UC-PUR-01" displayName="供应商报价单"
                                   i18n-en:displayName="Supplier Quotation" icon="file-sign"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/erp/pur/pages/ErpPurQuotation/main.page.yaml"/>
                         <resource id="ErpPurSupplierPriceList-main" app:useCases="UC-PUR-05" displayName="供应商价格清单"
                                   i18n-en:displayName="Supplier Price List" icon="list-checks"
-                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  component="FLUX" resourceType="SUBM" orderNo="120"
                                   url="/erp/pur/pages/ErpPurSupplierPriceList/main.page.yaml"/>
                         <resource id="ErpPurSupplierScorecard-main" app:useCases="UC-PUR-05" displayName="供应商评分卡"
                                   i18n-en:displayName="Supplier Scorecard" icon="award"
-                                  component="AMIS" resourceType="SUBM" orderNo="130"
+                                  component="FLUX" resourceType="SUBM" orderNo="130"
                                   url="/erp/pur/pages/ErpPurSupplierScorecard/main.page.yaml"/>
                     </children>
                 </resource>
@@ -40,11 +40,11 @@
                     <children>
                         <resource id="ErpPurRequisition-main" app:useCases="UC-PUR-01,UC-PUR-08" displayName="采购请购单"
                                   i18n-en:displayName="Purchase Requisition" icon="file-text"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/pur/pages/ErpPurRequisition/main.page.yaml"/>
                         <resource id="ErpPurOrder-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-05,UC-PUR-06,UC-PUR-07,UC-PUR-08,UC-MD-01,UC-MD-02,UC-MD-05" displayName="采购订单"
                                   i18n-en:displayName="Purchase Order" icon="shopping-cart"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/erp/pur/pages/ErpPurOrder/main.page.yaml"/>
                     </children>
                 </resource>
@@ -55,7 +55,7 @@
                     <children>
                         <resource id="ErpPurReceive-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-07" displayName="采购入库单"
                                   i18n-en:displayName="Purchase Receipt" icon="package-plus"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/erp/pur/pages/ErpPurReceive/main.page.yaml"/>
                     </children>
                 </resource>
@@ -66,11 +66,11 @@
                     <children>
                         <resource id="ErpPurInvoice-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-05,UC-PUR-07" displayName="采购发票"
                                   i18n-en:displayName="Purchase Invoice" icon="receipt"
-                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  component="FLUX" resourceType="SUBM" orderNo="400"
                                   url="/erp/pur/pages/ErpPurInvoice/main.page.yaml"/>
                         <resource id="ErpPurPayment-main" app:useCases="UC-PUR-01" displayName="付款单"
                                   i18n-en:displayName="Payment" icon="banknote"
-                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  component="FLUX" resourceType="SUBM" orderNo="410"
                                   url="/erp/pur/pages/ErpPurPayment/main.page.yaml"/>
                     </children>
                 </resource>
@@ -81,7 +81,7 @@
                     <children>
                         <resource id="ErpPurReturn-main" app:useCases="UC-PUR-04,UC-INV-05" displayName="采购退货单"
                                   i18n-en:displayName="Purchase Return" icon="undo-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  component="FLUX" resourceType="SUBM" orderNo="500"
                                   url="/erp/pur/pages/ErpPurReturn/main.page.yaml"/>
                     </children>
                 </resource>
@@ -91,12 +91,12 @@
                     <children>
                         <resource id="pur-dashboard-main" app:useCases="UC-PUR-09" displayName="采购概览"
                                   i18n-en:displayName="Purchase Overview" icon="pie-chart"
-                                  component="AMIS" resourceType="SUBM" orderNo="9990"
+                                  component="FLUX" resourceType="SUBM" orderNo="9990"
                                   url="/erp/pur/pages/dashboard/main.page.yaml"/>
                         <!-- 三单匹配联查页（F16 P1，plan §Phase 3）：差异预警 + PO/Receive/Invoice 三表并列 -->
                         <resource id="pur-three-way-match" app:useCases="UC-PUR-09" displayName="三单匹配联查"
                                   i18n-en:displayName="Three-Way Match" icon="git-compare"
-                                  component="AMIS" resourceType="SUBM" orderNo="9991"
+                                  component="FLUX" resourceType="SUBM" orderNo="9991"
                                   url="/erp/pur/pages/dashboard/three-way-match.page.yaml"/>
                     </children>
                 </resource>

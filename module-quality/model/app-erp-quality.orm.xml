@@ -14,7 +14,7 @@
     - appName:        app-erp-qa
     - entityPackage:  app.erp.qa.dao.entity
     - 实体类名:        ErpQa<Entity>     （如 ErpQaInspection、ErpQaNonConformance、ErpQaAction）
-    - 表名:           erp_qa_<entity>   （如 erp_qa_inspection、erp_qa_non_conformance）
+    - 表名:           erp_qa_<entity ext:web-renderer="flux">   （如 erp_qa_inspection、erp_qa_non_conformance）
     - 字典命名空间:    erp-qa/<dict-name>
 
   跨工程依赖：
@@ -164,7 +164,7 @@
 
     <entities>
         <!-- 质检单 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaInspection"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaInspection"
                 displayName="质检单" ext:icon="clipboard-check" i18n-en:displayName="Inspection" name="app.erp.qa.dao.entity.ErpQaInspection"
                 tableName="erp_qa_inspection" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -241,7 +241,7 @@
         </entity>
 
         <!-- 质检单行 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaInspectionLine"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaInspectionLine"
                 displayName="质检单行" ext:icon="list" i18n-en:displayName="Inspection Line" name="app.erp.qa.dao.entity.ErpQaInspectionLine"
                 tableName="erp_qa_inspection_line" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -277,7 +277,7 @@
         </entity>
 
         <!-- 质检模板 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaInspectionTemplate"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaInspectionTemplate"
                 displayName="质检模板" ext:icon="file-check-2" i18n-en:displayName="Inspection Template" name="app.erp.qa.dao.entity.ErpQaInspectionTemplate"
                 tableName="erp_qa_inspection_template" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -312,7 +312,7 @@
         </entity>
 
         <!-- 质检模板行 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine"
                 displayName="质检模板行" ext:icon="list" i18n-en:displayName="Inspection Template Line" name="app.erp.qa.dao.entity.ErpQaInspectionTemplateLine"
                 tableName="erp_qa_inspection_template_line" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -344,7 +344,7 @@
         </entity>
 
         <!-- 不合格品报告 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaNonConformance"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaNonConformance"
                 displayName="不合格品报告" ext:icon="x-circle" i18n-en:displayName="Non-Conformance Report" name="app.erp.qa.dao.entity.ErpQaNonConformance"
                 tableName="erp_qa_non_conformance" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -412,7 +412,7 @@
         </entity>
 
         <!-- 纠正预防措施 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaAction"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaAction"
                 displayName="纠正预防措施" ext:icon="shield-alert" i18n-en:displayName="Corrective Action" name="app.erp.qa.dao.entity.ErpQaAction"
                 tableName="erp_qa_action" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -449,7 +449,7 @@
         </entity>
 
         <!-- 风险登记 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaRiskRegister"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaRiskRegister"
                 displayName="风险登记" ext:icon="alert-triangle" i18n-en:displayName="Risk Register" name="app.erp.qa.dao.entity.ErpQaRiskRegister"
                 tableName="erp_qa_risk_register" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -489,7 +489,7 @@
         </entity>
 
         <!-- 质量目标 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaQualityGoal"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaQualityGoal"
                 displayName="质量目标" ext:icon="target" i18n-en:displayName="Quality Goal" name="app.erp.qa.dao.entity.ErpQaQualityGoal"
                 tableName="erp_qa_quality_goal" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -529,7 +529,7 @@
         </entity>
 
         <!-- 质量评审 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaReview"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaReview"
                 displayName="质量评审" ext:icon="clipboard-list" i18n-en:displayName="Quality Review" name="app.erp.qa.dao.entity.ErpQaReview"
                 tableName="erp_qa_review" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -573,7 +573,7 @@
         </entity>
 
         <!-- 抽样方案（AQL） -->
-        <entity className="app.erp.qa.dao.entity.ErpQaSamplingPlan"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaSamplingPlan"
                 displayName="抽样方案" ext:icon="layers" i18n-en:displayName="Sampling Plan" name="app.erp.qa.dao.entity.ErpQaSamplingPlan"
                 tableName="erp_qa_sampling_plan" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -601,7 +601,7 @@
         </entity>
 
         <!-- 量具/检验设备校准 -->
-        <entity className="app.erp.qa.dao.entity.ErpQaCalibration"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaCalibration"
                 displayName="量具校准" ext:icon="gauge" i18n-en:displayName="Gauge Calibration" name="app.erp.qa.dao.entity.ErpQaCalibration"
                 tableName="erp_qa_calibration" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -652,7 +652,7 @@
         </entity>
 
         <!-- 召回事件头（2.11） -->
-        <entity className="app.erp.qa.dao.entity.ErpQaRecall"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaRecall"
                 displayName="召回事件" ext:icon="alert-octagon" i18n-en:displayName="Recall Event" name="app.erp.qa.dao.entity.ErpQaRecall"
                 tableName="erp_qa_recall" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -708,7 +708,7 @@
         </entity>
 
         <!-- 召回目标（受影响客户/批次，2.11） -->
-        <entity className="app.erp.qa.dao.entity.ErpQaRecallTarget"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaRecallTarget"
                 displayName="召回目标" ext:icon="crosshair" i18n-en:displayName="Recall Target" name="app.erp.qa.dao.entity.ErpQaRecallTarget"
                 tableName="erp_qa_recall_target" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -752,7 +752,7 @@
         </entity>
 
         <!-- SPC 控制图配置（2.4b，docs/design/quality/spc.md §实体清单） -->
-        <entity className="app.erp.qa.dao.entity.ErpQaSpcChart"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaSpcChart"
                 displayName="SPC 控制图配置" ext:icon="activity" i18n-en:displayName="SPC Chart" name="app.erp.qa.dao.entity.ErpQaSpcChart"
                 tableName="erp_qa_spc_chart" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -813,7 +813,7 @@
         </entity>
 
         <!-- SPC 样本数据（2.4b，docs/design/quality/spc.md §实体清单） -->
-        <entity className="app.erp.qa.dao.entity.ErpQaSpcSample"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaSpcSample"
                 displayName="SPC 样本数据" ext:icon="list" i18n-en:displayName="SPC Sample" name="app.erp.qa.dao.entity.ErpQaSpcSample"
                 tableName="erp_qa_spc_sample" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -864,7 +864,7 @@
         </entity>
 
         <!-- SPC 过程能力分析结果（2.4b，docs/design/quality/spc.md §实体清单） -->
-        <entity className="app.erp.qa.dao.entity.ErpQaSpcCapability"
+        <entity ext:web-renderer="flux" className="app.erp.qa.dao.entity.ErpQaSpcCapability"
                 displayName="SPC 过程能力分析" ext:icon="bar-chart-3" i18n-en:displayName="SPC Capability" name="app.erp.qa.dao.entity.ErpQaSpcCapability"
                 tableName="erp_qa_spc_capability" tagSet="gid,erp.quality" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
@@ -916,7 +916,7 @@
              平台依据：nop/schema/orm/entity.xdef @notGenCode + nop/orm/xlib/orm-gen.xlib:228
              这些实体由 master-data-dao（及 projects-dao/assets-dao）模块生成，本模块仅声明以建立 to-one 关联与 EQL 点导航。
         ============================ -->
-        <entity displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
+        <entity ext:web-renderer="flux" displayName="组织" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -928,7 +928,7 @@
             </columns>
         </entity>
 
-        <entity displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
+        <entity ext:web-renderer="flux" displayName="物料" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -939,7 +939,7 @@
             </columns>
         </entity>
 
-        <entity displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
+        <entity ext:web-renderer="flux" displayName="往来单位" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -951,7 +951,7 @@
             </columns>
         </entity>
 
-        <entity displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
+        <entity ext:web-renderer="flux" displayName="仓库" name="app.erp.md.dao.entity.ErpMdWarehouse"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_warehouse">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
@@ -962,7 +962,7 @@
                 <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
             </columns>
         </entity>
-        <entity displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
+        <entity ext:web-renderer="flux" displayName="职员" name="app.erp.md.dao.entity.ErpMdEmployee"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_employee">
             <columns>
                 <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />

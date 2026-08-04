@@ -78,7 +78,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目"
                 name="app.erp.prj.dao.entity.ErpPrjProject" registerShortName="true" tableName="erp_prj_project"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="briefcase" i18n-en:displayName="Project">
+                versionProp="version" ext:web-renderer="flux" ext:icon="briefcase" i18n-en:displayName="Project">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -220,7 +220,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="任务"
                 name="app.erp.prj.dao.entity.ErpPrjTask" registerShortName="true" tableName="erp_prj_task"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="list-checks" i18n-en:displayName="Task">
+                versionProp="version" ext:web-renderer="flux" ext:icon="list-checks" i18n-en:displayName="Task">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -338,7 +338,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工时记录"
                 name="app.erp.prj.dao.entity.ErpPrjTimesheet" registerShortName="true" tableName="erp_prj_timesheet"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="clock" i18n-en:displayName="Timesheet">
+                versionProp="version" ext:web-renderer="flux" ext:icon="clock" i18n-en:displayName="Timesheet">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -464,8 +464,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目类型"
                 name="app.erp.prj.dao.entity.ErpPrjProjectType" registerShortName="true"
                 tableName="erp_prj_project_type" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="folder"
-                i18n-en:displayName="Project Type">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="folder" i18n-en:displayName="Project Type">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -514,8 +514,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="活动类型"
                 name="app.erp.prj.dao.entity.ErpPrjActivityType" registerShortName="true"
                 tableName="erp_prj_activity_type" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="folder"
-                i18n-en:displayName="Activity Type">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="folder" i18n-en:displayName="Activity Type">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -566,8 +566,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成员"
                 name="app.erp.prj.dao.entity.ErpPrjProjectUser" registerShortName="true"
                 tableName="erp_prj_project_user" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="users"
-                i18n-en:displayName="Project Member">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="users" i18n-en:displayName="Project Member">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -624,7 +624,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目预算"
                 name="app.erp.prj.dao.entity.ErpPrjBudget" registerShortName="true" tableName="erp_prj_budget"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="wallet" i18n-en:displayName="Project Budget">
+                versionProp="version" ext:web-renderer="flux" ext:icon="wallet" i18n-en:displayName="Project Budget">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -718,7 +718,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目预算行"
                 name="app.erp.prj.dao.entity.ErpPrjBudgetLine" registerShortName="true" tableName="erp_prj_budget_line"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="list" i18n-en:displayName="Project Budget Line">
+                versionProp="version" ext:web-renderer="flux" ext:icon="list" i18n-en:displayName="Project Budget Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -795,8 +795,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成本归集"
                 name="app.erp.prj.dao.entity.ErpPrjCostCollection" registerShortName="true"
                 tableName="erp_prj_cost_collection" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="coins"
-                i18n-en:displayName="Project Cost Collection">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="coins" i18n-en:displayName="Project Cost Collection">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -907,8 +907,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目成本归集行"
                 name="app.erp.prj.dao.entity.ErpPrjCostCollectionLine" registerShortName="true"
                 tableName="erp_prj_cost_collection_line" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Project Cost Collection Line">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Project Cost Collection Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -983,7 +983,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目里程碑"
                 name="app.erp.prj.dao.entity.ErpPrjMilestone" registerShortName="true" tableName="erp_prj_milestone"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="flag" i18n-en:displayName="Project Milestone">
+                versionProp="version" ext:web-renderer="flux" ext:icon="flag" i18n-en:displayName="Project Milestone">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1047,7 +1047,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目开票"
                 name="app.erp.prj.dao.entity.ErpPrjBilling" registerShortName="true" tableName="erp_prj_billing"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="receipt" i18n-en:displayName="Project Billing">
+                versionProp="version" ext:web-renderer="flux" ext:icon="receipt" i18n-en:displayName="Project Billing">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1179,8 +1179,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目开票行"
                 name="app.erp.prj.dao.entity.ErpPrjBillingLine" registerShortName="true"
                 tableName="erp_prj_billing_line" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Project Billing Line">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Project Billing Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1249,7 +1249,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目损益汇总"
                 name="app.erp.prj.dao.entity.ErpPrjProjectPnl" registerShortName="true" tableName="erp_prj_project_pnl"
                 tagSet="gid,erp.projects" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="chart-line" i18n-en:displayName="Project PnL">
+                versionProp="version" ext:web-renderer="flux" ext:icon="chart-line" i18n-en:displayName="Project PnL">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1378,8 +1378,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目结算单"
                 name="app.erp.prj.dao.entity.ErpPrjProjectSettlement" registerShortName="true"
                 tableName="erp_prj_project_settlement" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="file-invoice-dollar"
-                i18n-en:displayName="Project Settlement">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="file-invoice-dollar" i18n-en:displayName="Project Settlement">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1529,8 +1529,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="项目结算明细"
                 name="app.erp.prj.dao.entity.ErpPrjProjectSettlementLine" registerShortName="true"
                 tableName="erp_prj_project_settlement_line" tagSet="gid,erp.projects" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Project Settlement Line">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Project Settlement Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1592,7 +1592,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="组织"
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -1610,7 +1610,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdCurrency" displayName="币种"
                 name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -1628,7 +1628,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdEmployee" displayName="职员"
                 name="app.erp.md.dao.entity.ErpMdEmployee" notGenCode="true" tableName="erp_md_employee"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -1644,7 +1644,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="往来单位"
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -1662,7 +1662,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdSubject" displayName="会计科目"
                 name="app.erp.md.dao.entity.ErpMdSubject" notGenCode="true" tableName="erp_md_subject"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>

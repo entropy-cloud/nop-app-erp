@@ -286,7 +286,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="员工"
                 name="app.erp.hr.dao.entity.ErpHrEmployee" registerShortName="true" tableName="erp_hr_employee"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="user" i18n-en:displayName="Employee">
+                versionProp="version" ext:web-renderer="flux" ext:icon="user" i18n-en:displayName="Employee">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -440,7 +440,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="部门"
                 name="app.erp.hr.dao.entity.ErpHrDepartment" registerShortName="true" tableName="erp_hr_department"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="building-2" i18n-en:displayName="Department">
+                versionProp="version" ext:web-renderer="flux" ext:icon="building-2" i18n-en:displayName="Department">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -519,7 +519,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="职位"
                 name="app.erp.hr.dao.entity.ErpHrPosition" registerShortName="true" tableName="erp_hr_position"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="badge" i18n-en:displayName="Position">
+                versionProp="version" ext:web-renderer="flux" ext:icon="badge" i18n-en:displayName="Position">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -580,8 +580,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="劳动合同"
                 name="app.erp.hr.dao.entity.ErpHrEmploymentContract" registerShortName="true"
                 tableName="erp_hr_employment_contract" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="file-text"
-                i18n-en:displayName="Employment Contract">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="file-text" i18n-en:displayName="Employment Contract">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -694,7 +694,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="休假申请"
                 name="app.erp.hr.dao.entity.ErpHrLeaveRequest" registerShortName="true" tableName="erp_hr_leave_request"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="calendar-off" i18n-en:displayName="Leave Request">
+                versionProp="version" ext:web-renderer="flux" ext:icon="calendar-off"
+                i18n-en:displayName="Leave Request">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -787,7 +788,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="休假额度"
                 name="app.erp.hr.dao.entity.ErpHrLeaveBalance" registerShortName="true" tableName="erp_hr_leave_balance"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="calendar-days" i18n-en:displayName="Leave Balance">
+                versionProp="version" ext:web-renderer="flux" ext:icon="calendar-days"
+                i18n-en:displayName="Leave Balance">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -861,7 +863,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工时表"
                 name="app.erp.hr.dao.entity.ErpHrTimesheet" registerShortName="true" tableName="erp_hr_timesheet"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="clock" i18n-en:displayName="Timesheet">
+                versionProp="version" ext:web-renderer="flux" ext:icon="clock" i18n-en:displayName="Timesheet">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -941,8 +943,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工时表明细"
                 name="app.erp.hr.dao.entity.ErpHrTimesheetLine" registerShortName="true"
                 tableName="erp_hr_timesheet_line" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list"
-                i18n-en:displayName="Timesheet Line">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list" i18n-en:displayName="Timesheet Line">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1023,7 +1025,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="考勤记录"
                 name="app.erp.hr.dao.entity.ErpHrAttendance" registerShortName="true" tableName="erp_hr_attendance"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="fingerprint" i18n-en:displayName="Attendance">
+                versionProp="version" ext:web-renderer="flux" ext:icon="fingerprint" i18n-en:displayName="Attendance">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1109,7 +1111,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬记录"
                 name="app.erp.hr.dao.entity.ErpHrSalary" registerShortName="true" tableName="erp_hr_salary"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                useWorkflow="true" versionProp="version" ext:icon="wallet" i18n-en:displayName="Salary Record">
+                useWorkflow="true" versionProp="version" ext:web-renderer="flux" ext:icon="wallet"
+                i18n-en:displayName="Salary Record">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1256,7 +1259,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="招聘记录"
                 name="app.erp.hr.dao.entity.ErpHrRecruitment" registerShortName="true" tableName="erp_hr_recruitment"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="user-plus" i18n-en:displayName="Recruitment">
+                versionProp="version" ext:web-renderer="flux" ext:icon="user-plus" i18n-en:displayName="Recruitment">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1380,8 +1383,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬模拟"
                 name="app.erp.hr.dao.entity.ErpHrSalarySimulation" registerShortName="true"
                 tableName="erp_hr_salary_simulation" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="calculator"
-                i18n-en:displayName="Salary Simulation">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="calculator" i18n-en:displayName="Salary Simulation">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1481,8 +1484,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬模拟调整项"
                 name="app.erp.hr.dao.entity.ErpHrSalarySimulationItemAdjustment" registerShortName="true"
                 tableName="erp_hr_salary_simulation_item_adj" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="edit-3"
-                i18n-en:displayName="Salary Simulation Item Adjustment">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="edit-3" i18n-en:displayName="Salary Simulation Item Adjustment">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1559,7 +1562,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="薪酬项目"
                 name="app.erp.hr.dao.entity.ErpHrSalaryItem" registerShortName="true" tableName="erp_hr_salary_item"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="list" i18n-en:displayName="Salary Item">
+                versionProp="version" ext:web-renderer="flux" ext:icon="list" i18n-en:displayName="Salary Item">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1623,8 +1626,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="社保配置"
                 name="app.erp.hr.dao.entity.ErpHrSocialInsuranceConfig" registerShortName="true"
                 tableName="erp_hr_social_insurance_config" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="settings"
-                i18n-en:displayName="Social Insurance Config">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="settings" i18n-en:displayName="Social Insurance Config">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1682,8 +1685,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="员工社保基数"
                 name="app.erp.hr.dao.entity.ErpHrSocialInsuranceBase" registerShortName="true"
                 tableName="erp_hr_social_insurance_base" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="user-check"
-                i18n-en:displayName="Social Insurance Base">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="user-check" i18n-en:displayName="Social Insurance Base">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1745,7 +1748,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="个税配置"
                 name="app.erp.hr.dao.entity.ErpHrTaxConfig" registerShortName="true" tableName="erp_hr_tax_config"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="percent" i18n-en:displayName="Tax Config">
+                versionProp="version" ext:web-renderer="flux" ext:icon="percent" i18n-en:displayName="Tax Config">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1792,8 +1795,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
                 displayName="员工专项附加扣除" name="app.erp.hr.dao.entity.ErpHrTaxSpecialDeduction" registerShortName="true"
                 tableName="erp_hr_tax_special_deduction" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="receipt"
-                i18n-en:displayName="Tax Special Deduction">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="receipt" i18n-en:displayName="Tax Special Deduction">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1855,8 +1858,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="银行代发文件"
                 name="app.erp.hr.dao.entity.ErpHrPayrollBankFile" registerShortName="true"
                 tableName="erp_hr_payroll_bank_file" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="file-text"
-                i18n-en:displayName="Payroll Bank File">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="file-text" i18n-en:displayName="Payroll Bank File">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1927,7 +1930,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="班次模板"
                 name="app.erp.hr.dao.entity.ErpHrShift" registerShortName="true" tableName="erp_hr_shift"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="clock" i18n-en:displayName="Shift">
+                versionProp="version" ext:web-renderer="flux" ext:icon="clock" i18n-en:displayName="Shift">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -1997,8 +2000,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="排班分配"
                 name="app.erp.hr.dao.entity.ErpHrShiftAssignment" registerShortName="true"
                 tableName="erp_hr_shift_assignment" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="calendar-days"
-                i18n-en:displayName="Shift Assignment">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="calendar-days" i18n-en:displayName="Shift Assignment">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2121,8 +2124,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="轮换排班模板"
                 name="app.erp.hr.dao.entity.ErpHrShiftRotationPattern" registerShortName="true"
                 tableName="erp_hr_shift_rotation_pattern" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="rotate-cw"
-                i18n-en:displayName="Shift Rotation Pattern">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="rotate-cw" i18n-en:displayName="Shift Rotation Pattern">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2186,8 +2189,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="排班调换申请"
                 name="app.erp.hr.dao.entity.ErpHrShiftSwapRequest" registerShortName="true"
                 tableName="erp_hr_shift_swap_request" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="arrows-left-right"
-                i18n-en:displayName="Shift Swap Request">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="arrows-left-right" i18n-en:displayName="Shift Swap Request">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2295,7 +2298,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="问卷模板"
                 name="app.erp.hr.dao.entity.ErpHrSurvey" registerShortName="true" tableName="erp_hr_survey"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="file-question" i18n-en:displayName="Survey">
+                versionProp="version" ext:web-renderer="flux" ext:icon="file-question" i18n-en:displayName="Survey">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2400,8 +2403,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="问卷题目"
                 name="app.erp.hr.dao.entity.ErpHrSurveyQuestion" registerShortName="true"
                 tableName="erp_hr_survey_question" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="help-circle"
-                i18n-en:displayName="Survey Question">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="help-circle" i18n-en:displayName="Survey Question">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2463,8 +2466,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="答卷"
                 name="app.erp.hr.dao.entity.ErpHrSurveyResponse" registerShortName="true"
                 tableName="erp_hr_survey_response" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="file-check"
-                i18n-en:displayName="Survey Response">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="file-check" i18n-en:displayName="Survey Response">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2537,7 +2540,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="回答明细"
                 name="app.erp.hr.dao.entity.ErpHrSurveyAnswer" registerShortName="true" tableName="erp_hr_survey_answer"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="check-circle" i18n-en:displayName="Survey Answer">
+                versionProp="version" ext:web-renderer="flux" ext:icon="check-circle"
+                i18n-en:displayName="Survey Answer">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2594,7 +2598,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="调研结果"
                 name="app.erp.hr.dao.entity.ErpHrSurveyResult" registerShortName="true" tableName="erp_hr_survey_result"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="bar-chart" i18n-en:displayName="Survey Result">
+                versionProp="version" ext:web-renderer="flux" ext:icon="bar-chart" i18n-en:displayName="Survey Result">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2660,7 +2664,7 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="胜任力字典"
                 name="app.erp.hr.dao.entity.ErpHrCompetency" registerShortName="true" tableName="erp_hr_competency"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="book-open" i18n-en:displayName="Competency">
+                versionProp="version" ext:web-renderer="flux" ext:icon="book-open" i18n-en:displayName="Competency">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2732,8 +2736,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="胜任力等级"
                 name="app.erp.hr.dao.entity.ErpHrCompetencyLevel" registerShortName="true"
                 tableName="erp_hr_competency_level" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="layers"
-                i18n-en:displayName="Competency Level">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="layers" i18n-en:displayName="Competency Level">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2781,8 +2785,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="岗位胜任力要求"
                 name="app.erp.hr.dao.entity.ErpHrRoleCompetency" registerShortName="true"
                 tableName="erp_hr_role_competency" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="briefcase"
-                i18n-en:displayName="Role Competency">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="briefcase" i18n-en:displayName="Role Competency">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2839,8 +2843,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="员工评估"
                 name="app.erp.hr.dao.entity.ErpHrEmployeeAssessment" registerShortName="true"
                 tableName="erp_hr_employee_assessment" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="clipboard-check"
-                i18n-en:displayName="Employee Assessment">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="clipboard-check" i18n-en:displayName="Employee Assessment">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2927,8 +2931,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="评估明细"
                 name="app.erp.hr.dao.entity.ErpHrAssessmentDetail" registerShortName="true"
                 tableName="erp_hr_assessment_detail" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list-checks"
-                i18n-en:displayName="Assessment Detail">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list-checks" i18n-en:displayName="Assessment Detail">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -2986,7 +2990,8 @@
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="差距分析"
                 name="app.erp.hr.dao.entity.ErpHrGapAnalysis" registerShortName="true" tableName="erp_hr_gap_analysis"
                 tagSet="gid,erp.hr" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
-                versionProp="version" ext:icon="triangle-alert" i18n-en:displayName="Gap Analysis">
+                versionProp="version" ext:web-renderer="flux" ext:icon="triangle-alert"
+                i18n-en:displayName="Gap Analysis">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -3050,8 +3055,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="发展计划"
                 name="app.erp.hr.dao.entity.ErpHrDevelopmentPlan" registerShortName="true"
                 tableName="erp_hr_development_plan" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="target"
-                i18n-en:displayName="Development Plan">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="target" i18n-en:displayName="Development Plan">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -3125,8 +3130,8 @@
                 createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="发展计划项"
                 name="app.erp.hr.dao.entity.ErpHrDevelopmentPlanItem" registerShortName="true"
                 tableName="erp_hr_development_plan_item" tagSet="gid,erp.hr" updateTimeProp="updateTime"
-                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:icon="list-todo"
-                i18n-en:displayName="Development Plan Item">
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list-todo" i18n-en:displayName="Development Plan Item">
             <columns>
                 <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
                         stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
@@ -3213,7 +3218,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdOrganization" displayName="ErpMdOrganization"
                 name="app.erp.md.dao.entity.ErpMdOrganization" notGenCode="true" tableName="erp_md_organization"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" mandatory="true" name="id" primary="true" propId="1" stdDataType="long"
                         stdSqlType="BIGINT" tagSet="seq-default"/>
@@ -3223,7 +3228,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdBankAccount" displayName="银行账户"
                 name="app.erp.md.dao.entity.ErpMdBankAccount" notGenCode="true" tableName="erp_md_bank_account"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -3235,7 +3240,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdCostCenter" displayName="成本中心"
                 name="app.erp.md.dao.entity.ErpMdCostCenter" notGenCode="true" tableName="erp_md_cost_center"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -3247,7 +3252,7 @@
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdCurrency" displayName="币种"
                 name="app.erp.md.dao.entity.ErpMdCurrency" notGenCode="true" tableName="erp_md_currency"
-                biz:moduleId="erp/md">
+                ext:web-renderer="flux" biz:moduleId="erp/md">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -3259,7 +3264,7 @@
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjProject" displayName="项目"
                 name="app.erp.prj.dao.entity.ErpPrjProject" notGenCode="true" tableName="erp_prj_project"
-                biz:moduleId="erp/prj">
+                ext:web-renderer="flux" biz:moduleId="erp/prj">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>
@@ -3270,7 +3275,7 @@
             </columns>
         </entity>
         <entity className="app.erp.prj.dao.entity.ErpPrjTask" displayName="任务" name="app.erp.prj.dao.entity.ErpPrjTask"
-                notGenCode="true" tableName="erp_prj_task" biz:moduleId="erp/prj">
+                notGenCode="true" tableName="erp_prj_task" ext:web-renderer="flux" biz:moduleId="erp/prj">
             <columns>
                 <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
                         i18n-en:displayName="ID"/>

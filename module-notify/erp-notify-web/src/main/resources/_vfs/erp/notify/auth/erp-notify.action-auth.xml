@@ -10,7 +10,7 @@
                   resourceType="TOPM" orderNo="9000" routePath="/notify-inbox" component="layouts/default/index">
             <children>
                 <resource id="ErpSysNotification-inbox" displayName="我的通知" orderNo="9001"
-                          i18n-en:displayName="My Notifications" icon="bell" component="AMIS" resourceType="SUBM"
+                          i18n-en:displayName="My Notifications" icon="bell" component="FLUX" resourceType="SUBM"
                           url="/erp/notify/pages/ErpSysNotification/inbox.page.yaml">
                     <children>
                         <resource id="FNPT:ErpSysNotification:inbox-query" displayName="查询我的通知"
