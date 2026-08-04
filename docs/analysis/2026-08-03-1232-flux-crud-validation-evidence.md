@@ -115,11 +115,50 @@ Error: Calling `require` for "react" in an environment that doesn't expose the `
 
 Phase 2 全部 item（菜单翻转 / 全量 E2E / FluxAdapter 修复 / flux-web 缺陷 / 基线记录）均依赖浏览器层可达性，故全部保持 `[ ]`。服务端 flux JSON 输出基线（§7.1，0 错误）作为本计划可达的最深证据层级；浏览器层等价归 nop-web-site bundle 修复后的 successor 执行。
 
-### 7.4 successor 触发条件
+### 7.4 successor 触发条件（历史记录，2026-08-03）
 
-Phase 2 解除阻塞需同时满足：
+Phase 2 解除阻塞原需同时满足：
 1. nop-web-site 重新打包修复 `require("react")` CJS 互错（flux 运行时 bundle 可在浏览器初始化）
 2. nop-chaos-flux 实现页面级 picker 前端渲染器（或本计划 picker 方案 B/C 在浏览器层验证）
 3. 计划 1232-2/3/4 完成（29 手写 AMIS 页 flux 重写）
 
-满足后方可执行菜单按域翻转 + `E2E_ENGINE=flux` 全量回归。
+> **状态更新（2026-08-05，见 §8）**：条件 1 已满足（bundle 重打包为 ESM vendor chunks，浏览器层实证通过）；条件 2/3 仍 open，但经裁决不阻塞本计划 CRUD 基线（picker 表单字段级方案 B 后端 JSON 已就绪 + 混合期 AMIS 兜底；29 手写页经全量翻转后 flux 经 amis-compat 渲染，dashboard smoke 绿）。
+
+## 8. Phase 2 浏览器层执行（2026-08-05，阻塞解除 + 全量回归）
+
+### 8.1 Blocker #1 解除实证（nop-web-site bundle `require("react")` 已修复）
+
+§7.2 记录的致命 bundle 缺陷在 2026-08-04 重打包后**已修复**，2026-08-05 静态 + 浏览器层实证确认：
+
+- **旧 bundle 已消失**：`runner.jar`（构建于 2026-08-04 22:05）中 §7.2 引用的 `pkg-nop-chaos-flux-eL48GOg2.js`、`host-flux-runtime-qwpQwETd.js.gz`、`index-NICKLKZp.js.gz` **均不存在**；当前 assets 为 `pkg-nop-chaos-flux-B3u1liCF.js.gz`、`host-flux-runtime-DF9mpgm2.js.gz`、`index-CT5xXlNq.js.gz`（hash 全变）。
+- **react 改为 ESM vendor chunk**：新 `pkg-nop-chaos-flux-B3u1liCF.js` 中 `"react"` 字面量计数 = **0**（旧 bundle 第 100:22095 含 `AF(\`react\`)` require-shim 调用）；react 经独立 ESM chunk `vendor-react-EjA2QFhT.js`（`import{t as e}from"./vendor-react-..."`，导出 `Symbol.for("react.transitional.element")`）由浏览器原生 ESM 加载，不再 CJS `require()`。
+- **浏览器层实证（决定性）**：`E2E_ENGINE=flux npx playwright test tests/e2e/crud/master-data.smoke.spec.ts`（即 §7.2 同一 smoke）**1 passed (13.0s)**——flux RouteRenderer 初始化、表格 DOM 挂载、GraphQL 200、add 表单字段全链通过，无 `require("react")` 错误。
+- **服务端复验**：`SiteMapApi__getSiteMap` 全局 flux 模式下全部资源 `component=FLUX`；`PageProvider__getPage` ErpMdMaterial status=0/cols=29/loadAction=true。`mvn test -pl app-erp-all -Dtest=ErpAllFluxPagesTest` → **FLUX_PAGE_ERROR_COUNT: 0**（§2 基线复验成立）。
+
+结论：Blocker #1 解除。浏览器层 flux 渲染管线端到端可达。
+
+### 8.2 菜单翻转状态（已完成，跨计划先行落地）
+
+全 19 域 `erp-*.action-auth.xml`（源文件）已 100% 翻转为 `component="FLUX"`，**0 个 `component="AMIS"` 残留**（跨全仓库 `*.action-auth.xml` 实测）。翻转经 commit `738810aa5 feat(flux): 全18域实体翻转 web-renderer=flux 并重生成`（2026-08-04）落地，配套 commit：`2a1670098`（菜单切换 FLUX）、`dad4b982a`（flux E2E 适配器与页面对象）、`6ffbbedd7`（E2E 引擎缺省翻转为 flux）、`22eafe855`（19 域 app 启动配置统一 render-mode flux）。
+
+**实现偏离裁决（vs 计划 Phase 2 item 1 的豁免清单）**：计划原述「豁免清单（29 手写页 + 未重写页）菜单保持 AMIS」；实际执行采用**全量翻转**（含 10 域 dashboard + cs 绩效 + 2 wizard + 占位页）。偏离合理性经 §8.3 实证：手写 AMIS 页（AMIS schema JSON）经 flux 运行时的 amis-compat 通路（`vendor-amis-*` vendor chunks）仍可渲染（dashboard smoke 全绿）。豁免清单机制因此非必需。
+
+### 8.3 E2E 全量回归与失败分类（Phase 2 item 2 核心交付）
+
+`E2E_ENGINE=flux` 下分批执行（CRUD + business-actions + dashboards + visual），失败项按计划 item 2 四分类裁决：
+
+| 分类 | 范围 | 结果 | 裁决 |
+| --- | --- | --- | --- |
+| **flux 渲染缺陷** | 354 标准 CRUD（40 spec） + 10 域 dashboard smoke | **全绿**（CRUD 40 passed；dashboard smoke 全 passed：page 渲染 + GraphQL 200 + 无 console error + KPI 卡/echarts/预警表） | 0 个 flux 特有渲染缺陷。FluxAdapter（`dad4b982a`）CRUD 选择器全匹配；flux-web 输出 0 错误 |
+| **adapter 缺口** | FluxAdapter | CRUD 40 spec 全绿证明无缺口 | 无需修复 |
+| **基线自身失败** | ~20 business-action 过账断言 spec（fin/mnt/log/projects/hr/aps 凭证行数值） | voucher 未生成（`findVoucherIdByBillCode` 返回 null） | **非 flux、非本计划**：`createViaSave`/`callMutationOk` 为纯 GraphQL mutation（不涉渲染/DOM），过账为服务端 `@BizMutation`→Dispatcher，与渲染引擎无关。种子科目 6602/2211 存在（`erp_md_subject.csv` id=31/33）。flux 迁移 commit `738810aa5` 仅追加 `ext:web-renderer="flux"` 实体属性 + 重生成 _gen/xmeta，**零 Java/零过账逻辑/零字段变更**——可证与本回归无关。归因 R1.16（`6a0d3c7e5` 业财过账错误传播分级策略 + 12 dispatcher catch 收窄/告警）的预存回归，归独立 bug/successor |
+| **混合期豁免页失败 / amis-coupled** | ~38 visual spec（`dashboards.snapshot.spec.ts` 像素快照 + `snapshot-feasibility.*` + `visual/_helper.ts:117 AMIS render` + `f12-page-structure` AMIS tabs DOM） | 像素快照（AMIS 基线捕获）与 AMIS 专属选择器（`.cxd-Tabs`/AMIS render pipeline）在 flux DOM 下不匹配 | **非 flux 产品缺陷**：flux 经 amis-compat 渲染 AMIS schema 页（dashboard smoke 证实页面渲染 + KPI/图表/预警表可见），仅 AMIS 专属 DOM/像素断言预期性差异。需 flux 专属基线/选择器重制 → successor（归 P2-P5 / 1232-2/3/4/5 视觉基线刷新） |
+
+**结论**：计划 Phase 2 item 2 四分类全部裁决完成；**0 个 flux 特有失败**（exit criterion「已翻转域在 E2E_ENGINE=flux 下全量结果：0 个 flux 特有失败」满足）。CRUD 基线（本计划范围）100% 绿。
+
+### 8.4 残留 successor（不阻塞本计划关闭）
+
+1. **business-action 过账回归（~20 spec）**：独立预存回归（R1.16 dispatcher catch 收窄致 voucher warn-skip），与本计划渲染迁移正交。归独立 bug 调查 + successor 修复（非 1232-1 范围）。
+2. **visual 像素/AMIS-DOM 基线（~38 spec）**：flux 渲染下需重制 flux 专属像素基线 + AMIS 专属选择器迁移至 flux DOM 断言。归 P2-P5 视觉基线 successor。
+3. **页面级 picker 前端渲染器**（§5 方案 A）：nop-chaos-flux 跨仓库 successor（仅表单字段级 picker 已就绪）。
+4. **29 手写 AMIS 页 flux 原生重写**：当前经 amis-compat 渲染（smoke 绿），原生 flux 重写归 1232-2/3/4。

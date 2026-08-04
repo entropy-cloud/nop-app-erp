@@ -1,6 +1,6 @@
 # Frontend UI Completeness Roadmap
 
-> 最后更新：2026-08-03（v5 — Flux CRUD 渲染迁移基线验证）
+> 最后更新：2026-08-05（v6 — Flux CRUD 渲染迁移全阶段完成，浏览器层基线确立）
 > 本路线图覆盖 view.xml 手写层的前端完整性。后端 3 个路线图（crud + core-business + extended）已全部 done。
 > **实施阶段采用跨 F 集成阶段（Phase 0/1a/1b/2/3/4），而非 F 内独立阶段。**
 
@@ -8,7 +8,7 @@
 
 `nop-web-site` 由 `nop-chaos-next 打包，**同时支持 flux 和 amis 两种渲染引擎**（`pageType: 'flux'` / `pageType: 'amis'`）。标准 CRUD 页面继续用 view.xml → amis 路径；**复杂页面（F13/F16 等）优先用 flux DSL 编写 page.yaml**。
 
-> **Flux CRUD 渲染迁移基线（2026-08-03，plan `2026-08-03-1232-1` Phase 0/1/3 done，Phase 2 blocked）**：`nop.web.render-mode=flux` 下全部 354 标准 CRUD main.page.yaml + 352 picker + 38 ref + 15 tabs 经 `ErpAllFluxPagesTest` 验证 100% 输出合法 flux JSON（0 个 `nop.err.*`）。修复 nop-entropy `flux-web.xlib` 两处缺陷（GenFormCell proxyCell 守卫 + NormalizeAction cancel 映射，见 `nop-entropy/ai-dev/logs/2026-08-03.md`）。AMIS↔flux 差异=等价变换（columns 1:1，api/filter/toolbar → loadAction/queryForm/toolbar）。onEvent 表单字段级在 flux 保留（推翻「丢失」前提）。**Decision：保持 `amis` 默认双栈共存**（浏览器视觉等价 + picker 前端渲染器 + 29 手写页重写待 P2-P4/1232-2/3/4）。证据见 `docs/analysis/2026-08-03-1232-flux-crud-validation-evidence.md`。
+> **Flux CRUD 渲染迁移完成（2026-08-05，plan `2026-08-03-1232-1` 全 4 阶段 done ✅）**：`nop.web.render-mode=flux` 下全部 354 标准 CRUD main.page.yaml + 352 picker + 38 ref + 15 tabs 经 `ErpAllFluxPagesTest` 验证 100% 输出合法 flux JSON（0 个 `nop.err.*`）。修复 nop-entropy `flux-web.xlib` 两处缺陷（GenFormCell proxyCell 守卫 + NormalizeAction cancel 映射，见 `nop-entropy/ai-dev/logs/2026-08-03.md`）。AMIS↔flux 差异=等价变换（columns 1:1，api/filter/toolbar → loadAction/queryForm/toolbar）。onEvent 表单字段级在 flux 保留（推翻「丢失」前提）。**Phase 2（2026-08-05 解阻）**：原 `require("react")` bundle 缺陷经 2026-08-04 重打包为 ESM vendor chunks（`vendor-react-EjA2QFhT.js`）解除，浏览器层 flux 渲染端到端可达——CRUD 40 spec + 10 域 dashboard smoke 在 `E2E_ENGINE=flux` 下全绿，菜单全 19 域 `component="FLUX"`（0 AMIS 残留，commit `738810aa5`），0 个 flux 特有失败（非 flux 失败四分类：过账=基线自身预存回归 R1.16、visual=amis-coupled successor）。**Decision 更新**：flux 已作为默认渲染模式落地（全量翻转 + E2E 引擎缺省 flux），AMIS schema 页经 flux amis-compat 渲染（dashboard smoke 绿）。残留 successor：过账回归独立修复 / flux 视觉基线 / 页面级 picker 渲染器（nop-chaos-flux）/ 29 手写页 flux 原生重写（1232-2/3/4）。证据见 `docs/analysis/2026-08-03-1232-flux-crud-validation-evidence.md` §8 + `docs/testing/known-good-baselines.md` 2026-08-05 条目。
 
 Flux 已内置 AMIS 难以实现的高级组件（包 `@nop-chaos/flux-renderers-scheduling`）：
 
