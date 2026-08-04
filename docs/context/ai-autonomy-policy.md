@@ -72,12 +72,18 @@ AI 编写或修改的文档（包括 owner docs）不能作为放宽自主权、
 | `accounting/finance` postings | plan-first | owner doc + tests |
 | `auth/permissions` | plan-first | owner doc + tests |
 | `deployment / external integrations` | plan-first | owner doc + tests |
+| nop-chaos-flux / nop-chaos-next / nop-entropy 外部仓库代码 | ask first（仅新增测试/复现用例除外） | 跨仓库 plan + audit |
 
 保护区域规则含义：
 
 - `ask first` - 规划或实施前需要人工批准。
 - `plan-first` - AI 可以起草计划，但实施需要计划审计加上表中的必需证据。如果审查者可用性为 `none`，实施保持阻塞。
 - `research-only` 或 `blocked` - AI 不得更改产品行为。
+
+**外部仓库代码边界**（nop-chaos-flux / nop-chaos-next / nop-entropy）：
+
+- 一般情况可以在 `nop-chaos-flux` 等兄弟仓库**增加测试/复现用例**（按各自项目自身流程，如 nop-chaos-flux 的 `flux-guide/13-testing.md` 测试设施）；
+- 原则上**不修改这些仓库的代码**，除非万不得已或确认为明确 bug——此时必须先问（ask first），并携带跨仓库 plan + 审计证据。
 
 ## 待办事项选择规则
 

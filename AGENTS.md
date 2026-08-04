@@ -33,7 +33,8 @@
 | 更改页面或视图 | 相关设计 owner doc | 各域 `erp-*-web` 下的 AMIS `.view.xml` 文件 |
 | 审查已计划或已完成的切片 | `docs/plans/` 下的相关计划 | 计划/结束审计提示；普通审计证据保留在计划中 |
 | 运行或验证项目 | `docs/context/project-context.md` | `docs/context/codebase-map.md` |
-| 编写或修改 E2E 用例 | `docs/testing/e2e-runbook.md` 的「E2E 编写规范（强制）」节 | nop-chaos-next `packages/e2e-shared/`、`docs/design/e2e-shared-infrastructure.md`；nop-entropy-e2e 各包作写法范本 |
+| 编写或修改 E2E 用例 | `docs/testing/e2e-runbook.md` 的「E2E 编写规范（强制）」节（**E2E 强制 flux 渲染模式运行**：`E2E_ENGINE` 缺省即 flux，见 runbook「渲染模式」节） | nop-chaos-next `packages/e2e-shared/`、`docs/design/e2e-shared-infrastructure.md`；nop-entropy-e2e 各包作写法范本 |
+| 排查前端渲染/控件问题（跨仓库） | `docs/testing/e2e-runbook.md` 的「渲染模式与 flux 调试三路径」节（**跨仓库原则**：可在 `nop-chaos-flux` 增测试/复现用例；不修改其代码，除非万不得已或明确 bug） | `docs/context/ai-autonomy-policy.md` 保护区域「外部仓库代码」（ask first） |
 | 起草、执行或审计 `docs/plans/` 下的计划 | `docs/plans/00-plan-authoring-and-execution-guide.md` | `docs/logs/00-log-writing-guide.md` |
 
 ### 计划起草与执行
