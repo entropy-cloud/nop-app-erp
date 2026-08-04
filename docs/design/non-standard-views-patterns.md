@@ -1,9 +1,25 @@
 # F13 非标准视图模式（看板 / 时间线 / 日历）
 
 > 设计 owner doc。**稳定产品基线**，非迁移历史或执行状态。
-> 实施计划：`docs/plans/2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar.md`
+> 实施计划：`docs/plans/2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar.md`（AMIS 降级批次）+ `docs/plans/2026-08-03-1232-2`（flux 原生重写批次，已落地）
 > 路线图：`docs/backlog/frontend-ui-roadmap.md` §F13（line 318-334 / 544）
 > 兄弟范式：`docs/design/page-structure-patterns.md`（F12/F16 标准页面结构）
+
+## 0. Flux 渲染权威模型（2026-08-03 全量迁移后最终形态）
+
+> **权威翻转**：用户 2026-08-03 决策——界面全面转向 nop-chaos-flux。F13 七页面（3 看板 + 2 时间线 + 2 日历）已全部以 flux 原生组件重写，**消除拖拽/原生渲染降级**（`2026-08-03-1232-2` P2 落地）。下文 §2-§4 的 AMIS 降级实现（列式 crud、each+tpl、卡片网格、矩阵 table）降级为**历史注记**，仅供迁移审计追溯。AMIS 拖拽降级先例（`web.xlib` 不含跨 crud 行拖拽、状态机相邻态守卫冲突）的裁决逻辑仍成立，但 flux kanban `draggable`/`onCardMove` 已原生支持。
+
+**flux 控件映射总表**（权威来源 `docs/design/flux-complex-pages.md` §3.3）：
+
+| 视图 | flux 控件 | schema 骨架 | 数据契约 | 事件持久化 |
+|------|----------|------------|---------|-----------|
+| 看板 | `kanban` | `{type:"kanban", data, draggable, wipStrict, columnWidth, onCardMove}` | 扁平图结构（root/column/card 节点） | onCardMove 按目标列路由 mutation |
+| 时间线 | `timeline` | `{type:"timeline", items:[{time,title,detail,level}], mode, orientation}` | `items:[{time,title,detail,level}]` | 只读（状态变更经独立 mutation） |
+| 日历 | `calendar` | `{type:"calendar", view, events, loadAction, onEventChange, onEventCreate}` | `events:[{id,title,start,end,status,color}]`（ISO） | onEventChange/onEventCreate → mutation |
+
+**拖拽持久化契约裁决**（`2026-08-03-1232-2` P2 Phase 0）：flux kanban `draggable` 为全局 boolean（无列级粒度）；onCardMove 按目标列路由状态机 mutation，非相邻态被后端守卫拒绝 → toast + reload 回退。flux calendar onEventChange/onEventCreate 提供 `${event.id}`/`${event.start}`/`${event.end}`。
+
+**complex 槽位组合模式**：页面外壳（布局/标题/工具栏/状态区）经 view.xml `<complex>` 四槽位定义；flux 专有控件（kanban/calendar/timeline）经槽位内 `<simple>` 包裹或 flux.yaml 直写内嵌。
 
 ## 1. 目的与范围
 
@@ -27,9 +43,11 @@
 - 新增 React/Vue 自定义组件——优先 AMIS 原生组件 + custom JSON 组装
 - 跨域聚合视图（如全公司看板）——本范式聚焦单域列表页的非标准视图
 
-## 2. 看板范式（含拖拽降级策略）
+## 2. 看板范式（flux 原生 kanban，最终形态）
 
-### 2.1 Phase 0 Explore (a) 裁决：拖拽不可用 → 列式 crud + row-action
+> **Flux 最终形态（`2026-08-03-1232-2` P2 Phase 1 落地）**：3 看板已以 flux 原生 `kanban` 重写，拖拽/SLA/动态列全部以原生能力实现。下文 §2.1（AMIS 拖拽降级裁决）与 §2.2（列式 crud 范式）降级为**历史注记**——AMIS 拖拽降级的先例理由（无跨 crud 拖拽组件 + 状态机守卫冲突）在 flux 下已失效。
+
+### 2.1 Flux kanban 拖拽持久化（列→mutation 路由，权威）
 
 **PoC 结论**：grep 实时仓库 `nop-entropy/nop-frontend-support/nop-web-site/target/classes/META-INF/resources/assets/` 证实 AMIS bundle **不含「跨 crud 行拖拽」原生组件**。vendor-amis-*.js 仅暴露行内 sortable + input-table 列拖拽。HTML5 drag-drop 在 AMIS React 渲染层下需手写大量 dnd 适配器，且**与状态机语义冲突**：
 
@@ -96,9 +114,11 @@ NEW 列 `className: "bg-warning-subtle"` 高亮（待分派闪烁语义）。
 
 ## 3. 时间线范式（原生 vs custom 组装）
 
-### 3.1 Phase 0 Explore (b) 裁决：原生 `type: timeline` 存在，直接使用
+### 3.1 渲染裁决：flux 原生 `timeline`（最终形态）
 
-**PoC 结论**：实时仓库 `assets/Timeline-Brcmgfvk.js` 注册 `TimelineRenderer`（`type: timeline`）。vendor-amis-*.js grep 确认 `U({type:\`timeline\`...})`。
+> 文档回填注记（`2026-08-03-1232-5` Phase 0）：本节早先 AMIS PoC 结论宣称「原生 `type: timeline` 存在，直接使用」，但 AMIS 实现期原生 timeline prop 绑定失败（crm/cs 时间线降级为 each+tpl），与实现证据冲突（`2026-08-03-1000` §6.4 漂移）。flux 全量迁移后已以 **flux 原生 `timeline`** 消除降级（`2026-08-03-1232-2` P2 Phase 2 落地），本节为最终形态。AMIS each+tpl 降级仅作历史注记。
+
+**flux `timeline` 能力**：`items`（time/title/detail/icon/level）、`mode`（left/right/alternate）、`orientation`（horizontal/vertical）、`reverse`。数据契约 `items:[{time,title,detail,level}]`。
 
 ### 3.2 落地范式（service + adaptor 映射 + 原生 timeline）
 
@@ -141,9 +161,11 @@ NEW 列 `className: "bg-warning-subtle"` 高亮（待分派闪烁语义）。
 
 ## 4. 日历范式（日/周/月 + 矩阵）
 
-### 4.1 Phase 0 Explore (b) 裁决：原生 calendar 用于标准视图，矩阵用 custom table
+### 4.1 渲染裁决：flux 原生 `calendar`（最终形态）
 
-**PoC 结论**：实时仓库 `assets/Calendar-BRmv1Joe.js` 注册 `CalendarRenderer`（`type: calendar`）。原生 calendar 支持 schedules（[{title, start, end, color, className}]）的日/周/月视图，但**不支持「行=员工，列=日期」矩阵范式**。
+> 文档回填注记（`2026-08-03-1232-5` Phase 0）：本节早先 AMIS PoC 结论宣称「原生 calendar 用于标准视图，矩阵用 custom table」，但 AMIS 实现期原生 calendar React 渲染报错（Minified React error #130），crm 活动日历降级为按日分组卡片网格、hr 团队休假日历降级为矩阵 table，与实现证据冲突（`2026-08-03-1000` §6.4 漂移）。flux 全量迁移后已以 **flux 原生 `calendar`** 消除降级（`2026-08-03-1232-2` P2 Phase 3 落地），本节为最终形态。AMIS 卡片网格/矩阵 table 降级仅作历史注记。
+
+**flux `calendar` 能力**：`view`（month/week/day）、`events`（id/title/start/end/status/color）、`resources`（嵌套+open）、`firstDayOfWeek`/`showWeekends`/`locale`、`onEventChange`/`onEventCreate`/`onEventClick`、`loadAction`。数据契约 `events:[{id,title,start,end,status,color}]`（ISO start/end）。
 
 ### 4.2 落地范式 A：原生 calendar（CRM 活动日历）
 
@@ -203,9 +225,9 @@ NEW 列 `className: "bg-warning-subtle"` 高亮（待分派闪烁语义）。
 
 | 实体 | 状态切换 mutation | 守卫 |
 |------|------------------|------|
-| ErpCrmLead | `moveStage(leadId, toStageId)` (`ErpCrmLeadBizModel:84`) | LeadProcessor 守卫 isWonStage 禁止拖出 + 阶段序列 |
-| ErpCsTicket | `assign`/`start`/`resolve`/`close`/`reopen`/`cancel` (`ErpCsTicketBizModel:109-242`) | 状态机严格：每个 mutation 校验前置态；close 守卫 SLA 违约需 remark；cancel 拒绝终态 |
-| ErpPrjTask | `startTask`/`completeTask`/`blockTask(blockReason)`/`unblockTask` (`ErpPrjTaskBizModel:103-163`) | 状态机严格：blockTask 守卫 `ERR_TASK_BLOCK_REASON_REQUIRED`；startTask 守卫前置任务完成（STRICT/WARN 模式） |
+| ErpCrmLead | `moveStage(leadId, toStageId)` (`ErpCrmLeadBizModel:112`) | LeadProcessor 守卫 isWonStage 禁止拖出 + 阶段序列 |
+| ErpCsTicket | `assign`/`start`/`resolve`/`close`/`reopen`/`cancel` (`ErpCsTicketBizModel:103-174`) | 状态机严格：每个 mutation 校验前置态；close 守卫 SLA 违约需 remark；cancel 拒绝终态 |
+| ErpPrjTask | `startTask`/`completeTask`/`blockTask(blockReason)`/`unblockTask` (`ErpPrjTaskBizModel:108-157`) | 状态机严格：blockTask 守卫 `ERR_TASK_BLOCK_REASON_REQUIRED`；startTask 守卫前置任务完成（STRICT/WARN 模式） |
 
 ### 5.2 GraphQL 调用契约（row-action 触发）
 
@@ -252,8 +274,8 @@ api:
   - `Calendar-BRmv1Joe.js`（CalendarRenderer 注册）
   - `vendor-amis-C3Fz2yFP.js.gz`（`U({type:\`timeline\`...})` + `U({type:\`calendar\`...})` 注册）
 - 状态机契约：
-  - `module-crm/erp-crm-service/.../ErpCrmLeadBizModel.java:84`（moveStage）
-  - `module-cs/erp-cs-service/.../ErpCsTicketBizModel.java:109-242`（assign/start/resolve/close/reopen/cancel）
-  - `module-projects/erp-prj-service/.../ErpPrjTaskBizModel.java:103-163`（startTask/completeTask/blockTask/unblockTask）
+  - `module-crm/erp-crm-service/.../ErpCrmLeadBizModel.java:112`（moveStage）
+  - `module-cs/erp-cs-service/.../ErpCsTicketBizModel.java:103-174`（assign/start/resolve/close/reopen/cancel）
+  - `module-projects/erp-prj-service/.../ErpPrjTaskBizModel.java:108-157`（startTask/completeTask/blockTask/unblockTask）
 - 实施 plan：`docs/plans/2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar.md`
 - 成功 successor（拖拽 UX 升级）：触发条件 = AMIS 原生拖拽组件可用 或 第三方 AMIS 拖拽扩展引入

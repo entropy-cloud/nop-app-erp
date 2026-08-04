@@ -4,6 +4,8 @@
 > 字段定义以 `module-cs/model/app-erp-cs.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`sla.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：工单看板→flux `kanban`（6 列 + onCardMove 列路由 assign/start/resolve/close/reopen + SLA `status` 红点）；操作时间线→flux `timeline`（原生，消除 each+tpl 降级）；绩效看板→flux 三段式（`page-structure-patterns.md` §3.0）；知识库→标准 CRUD（ErpCsKnowledgeBase）。范式见 `non-standard-views-patterns.md` §0。下文 AMIS 布局描述作为业务语义仍参考，AMIS 专属组件实现降级为历史注记。
+
 ## 设计原则
 
 1. **SLA 状态可视化**：每个工单关联的 SLA 状态通过颜色指示灯（绿/黄/红）在列表和详情页清晰展示。

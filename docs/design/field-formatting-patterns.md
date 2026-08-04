@@ -4,6 +4,8 @@
 > Owner: docs/design/field-formatting-patterns.md (单一真相源)
 > Plan: `docs/plans/2026-07-19-2200-2-f6-field-formatting-xmeta.md`
 
+> **Flux 控件映射**（2026-08-03 全量迁移后）：金额/数量/单价格式化经 flux-control.xlib domain→控件映射输出（edit-amount → flux `input-number`，kilometer/precision 经 ERP control.xlib 标签输出而非 GenGridCol pick 层，列键集 AMIS↔flux 一致）。列表/子表只读格式化经 flux-web GenGridCol 输出 flux 列。下文 xmeta `ext:displayFormat`/`precision`/`kilometer` 配置作为**模型层语义**仍权威（模型驱动、渲染器无关），AMIS tpl/kilometer 专属输出降级为历史注记。
+
 ## 1. 目的与范围
 
 为 ERP 18+1 业务域的金额、数量、单价、税率、汇率、百分比、日期、日期时间字段建立统一的显示格式化机制，将 codegen 默认的纯 BigDecimal / ISO 时间戳渲染升级为「千分位 + 固定小数位」或「友好日期格式」。

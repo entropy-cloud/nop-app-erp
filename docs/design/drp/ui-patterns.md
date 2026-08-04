@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-drp.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`net-requirement-calculation.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：净需求计算报表→flux `data-source`（后端聚合 `findNetReqGroups`）+ `loop` + `table`（嵌套分组，消除 AMIS service+adaptor 分组降级，`2026-08-03-1232-3` P3 落地）。范式见 `page-structure-patterns.md` §8.11。下文 AMIS 布局描述作为业务语义仍参考，AMIS 专属组件实现降级为历史注记。
+
 ## 设计原则
 
 1. **净需求计算可视化**：净需求计算过程的每一步（当前库存→已分配→在单量→预测需求→安全库存→净需求→建议补货量）在页面中逐列展示，支持用户追溯每个数字的来源。

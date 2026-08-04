@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-finance.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`posting.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：期末结账向导→flux `wizard`（4+1 步 + valuesPath 分区 + per-step commit mutation + 反结账 dialog + 响应式 gating，`2026-08-03-1232-3` P3 落地）；财务看板→flux 三段式（`page-structure-patterns.md` §3.0）；凭证录入→flux `input-table`（`child-table-editor-patterns.md` §0）；科目选择→flux `tree-select`。范式见 `page-structure-patterns.md` §5/§8.1。下文 AMIS 布局描述作为业务语义仍参考，AMIS 专属组件实现降级为历史注记。
+
 ## 设计原则
 
 1. **借贷平衡实时校验**：凭证录入时借方合计与贷方合计实时显示并对比，不平衡时过账按钮禁用并给出明确提示。

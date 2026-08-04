@@ -2,6 +2,22 @@
 
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F4 Phase 2、`docs/design/picker-patterns.md`（F4 Phase 1 picker 接线）、`docs/architecture/view-and-page-strategy.md`（view.xml 嵌套层次）
 
+## 0. Flux 渲染权威模型（2026-08-03 全量迁移后最终形态）
+
+> **权威翻转**：用户 2026-08-03 决策——界面全面转向 nop-chaos-flux。头行单据子表（60 对）经 view.xml `<grids>`/`<forms>` 模型 + flux-web.xlib `GenInputTable` 输出 flux `input-table`（零 view.xml 修改，`nop.web.render-mode=flux` 动态替换渲染标签）。下文 §3+ 的 AMIS `input-table`/`sub-grid-edit` 渲染细节（gen-control、onEvent.setValue、visibleOn 表达式）作为**view.xml 模型层语义**仍然权威（模型驱动，渲染器无关），但 AMIS 专属渲染输出（className 注入、AMIS action type）降级为**历史注记**。
+
+**flux input-table 数据契约与事件**（权威来源 `docs/design/flux-complex-pages.md` §4.7）：
+
+| 维度 | flux 实现 |
+|------|----------|
+| schema 骨架 | `{type:"input-table", name:"lines", columns, addable, removable, reorderable, item:[列模板]}` |
+| 头行提交 | `submitScope:"surface"` + `includeScope:"*"` 整表单（聚合根 `__save`） |
+| 行内公式 | 列模板 `item` 内 `${(qty ?? 0) * (price ?? 0)}`（flux 表达式）；`$Arr.sumField`/`$Arr.sumProducts`/`$Math` 需宿主注册（`flux-guide/11-host-integration.md`） |
+| 行内 picker | 表单字段级 `picker`（pickerPage 引用）；页面级 picker 渲染器缺口归 nop-chaos-flux successor |
+| 头合计刷新 | 独立按钮 `onSubmitSuccess → refreshNearest`（沿 scope.parent 找 CRUD/data-source） |
+
+**关键约束（flux 表达式运行时）**：flux 表达式仅支持箭头**表达式体**（无块体 `{}`、无 `while`/`forEach`/`if-return`），需块体的 reduce/栈算法移至后端聚合查询（见 `page-structure-patterns.md` §8.8 BOM/§8.9 薪酬/§8.11 净需求）。安全访问用 `?.`，空值兜底用 `??`。
+
 ## 1. 目的与范围
 
 固化「ERP 头行单据子表行内编辑」的标准范式，供后续域（P1 inventory/finance、P2 mfg/assets/projects、ext 8 域）按图施工。

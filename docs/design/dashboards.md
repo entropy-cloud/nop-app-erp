@@ -235,12 +235,12 @@
 
 ## 实现约定
 
-1. **页面实现**:各看板 page.yaml 用 AMIS 组合(crud/table + chart + card),数据通过 GraphQL 查询各域 BizModel 的聚合方法。看板 BizModel 方法命名 `getDashboardKpi`/`getDashboardTrend`。
+1. **页面实现**:各看板采用 **flux 三段式 page.yaml**（`data-source` + `card` + `chart` + `crud`，见 `docs/design/page-structure-patterns.md` §3.0 范式），数据通过 GraphQL 查询各域 BizModel 的聚合方法。看板 BizModel 方法命名 `getDashboardKpi`/`getDashboardTrend`/`getDashboardAlerts`。> 历史注记：早先为 AMIS 组合（crud/table + chart + card），flux 全量迁移后已统一为 flux 三段式。
 2. **聚合查询**:趋势/占比类用 EQL 聚合(group by + sum/count);KPI 卡片用单值查询;预警列表用带条件的 crud。
 3. **权限过滤**:所有查询带 orgId/部门/成本中心过滤(行级权限自动注入)。
 4. **性能**:大表聚合(如 GlBalance 按12月)考虑物化或缓存;预警列表分页。
 5. **配置化**:阈值(如缺料安全库存、账龄预警天数、现金流下限)放系统配置(NopSysVariable),非硬编码。
-6. **AMIS 取数范式**:看板/报表 page.yaml 中 GraphQL 查询的 `$var` 转义、`dataType: raw` 范式与报表渲染容器范式详见 [`docs/architecture/view-and-page-strategy.md §看板/报表 AMIS 取数范式约定`](../architecture/view-and-page-strategy.md)。
+6. **取数范式**:看板/报表 flux page.yaml 中 GraphQL 查询的 `$var` 转义、`data-source` 发布消费范式与报表渲染容器范式详见 [`docs/architecture/view-and-page-strategy.md §看板/报表 AMIS 取数范式约定`](../architecture/view-and-page-strategy.md)（flux 模式下 `data-source` 替代 AMIS service+adaptor，取数语义不变）。
 
 ## 参考机制文档
 

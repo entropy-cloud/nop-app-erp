@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-assets.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`depreciation-and-posting.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：资产处置 3 步向导→flux `wizard`（处置类型选择→清理损益预览→确认提交，`2026-08-03-1232-4` P4 落地）；资产详情→flux `tabs`（机制 B，折旧时间线）；资产看板→flux 三段式（`page-structure-patterns.md` §3.0）；资产盘点（asset-stocktake）→flux `crud`（DRAFT/IN_PROGRESS/DONE 状态色块）。
+
 ## 设计原则
 
 1. **一物一卡**：每项固定资产一张卡片，卡片集中展示资产全生命周期信息（原值、折旧、净值、状态）。

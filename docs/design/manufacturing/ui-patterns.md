@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-manufacturing.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`bom-and-routing.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：BOM 树形浏览→flux `tree`（`data` 绑定，嵌套重建经后端 `findBomTree` 聚合，消除 AMIS tree adaptor 栈算法降级）；工单进度仪表板→flux 三段式（`page-structure-patterns.md` §3.0/§8.4）。范式见 `page-structure-patterns.md` §8.8。下文 AMIS 布局描述作为业务语义仍参考，AMIS 专属组件实现降级为历史注记。
+
 ## 设计原则
 
 1. **BOM 树形可视化**：BOM 结构以树形展开（父物料→子件→子件的子件），支持多级 BOM 展开/折叠，显示每层用量。

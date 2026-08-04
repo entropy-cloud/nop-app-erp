@@ -4,6 +4,8 @@
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F4 Phase 1、`docs/architecture/view-and-page-strategy.md` §文件层次结构 / §picker.page.yaml 范式
 > 平台参考: `../nop-entropy/docs-for-ai/02-core-guides/view-and-page-customization.md`、`../nop-entropy/docs-for-ai/03-runbooks/customize-view.md`、`../nop-entropy/docs-for-ai/04-reference/safe-api-reference.md`（`__findList` / `__findPage` 端点）
 
+> **Flux 控件映射**（2026-08-03 全量迁移后）：表单字段级 picker 经 flux-control.xlib 输出 flux `picker`（`pickerPage` 引用 + `name`/`pickerDialog`）。**页面级 picker**：后端 `page_picker.xpl` 在 flux 模式 100% 输出合法 JSON（352 picker.page.yaml 0 错误），但 nop-chaos-flux 前端**无页面级 picker 渲染器**（缺口归跨仓库 successor，混合期表单字段级 picker + AMIS 兜底覆盖，`2026-08-03-1232-1` P1 Phase 0 方案 B/C 裁决）。下文 picker.page.yaml delta 写法作为**view.xml/模型层语义**仍权威，AMIS 专属输出降级为历史注记。
+
 ## 1. 范式目标
 
 本文档固化 ERP 系统 7 个高频关联 Picker 的列集、筛选字段、调用方 filter 注入约定，作为：

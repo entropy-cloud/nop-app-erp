@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-inventory.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`cross-domain.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：盘点 3 阶段流程→flux `crud`（盘点单列表）+ form action 按钮（startTake/completeTake/cancelTake mutation），流程止于 DONE 展示（盘盈/盘亏移动单生成归 watch-only residual，`2026-08-03-1232-4` P4 落地）；库存看板→flux 三段式（`page-structure-patterns.md` §3.0）。
+
 ## 设计原则
 
 1. **三层库存可见**：页面设计需让用户清晰感知移动单（计划）、流水（记录）、余额（结果）三层的对应关系。操作移动单时实时显示对余额的预期影响。

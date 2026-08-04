@@ -2,6 +2,8 @@
 
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F9、`docs/design/purchase/ui-patterns.md`（跨单据导航链路设计 §Forward flow + §Reverse trace）、`docs/design/sales/ui-patterns.md`、`docs/design/inventory/ui-patterns.md`、`docs/design/manufacturing/ui-patterns.md`、`docs/design/child-table-editor-patterns.md`（copy-line-from-order 范畴说明）、`docs/architecture/view-and-page-strategy.md`、`../nop-entropy/docs-for-ai/02-core-guides/page-customization.md`
 
+> **Flux 控件映射**（2026-08-03 全量迁移后）：view.xml row-action `actionType="drawer"` + `dialog page` 经 flux-web.xlib 输出 flux `drawer`/`dialog`；关联子表 drawer（ref-*.page.yaml）经 flux `crud` 渲染。copy-line-from-order 跨单据行导入经 flux `input-table` + 行公式。下文 AMIS drawer/fixedProps 写法作为**view.xml 模型层语义**仍权威（模型驱动、渲染器无关），AMIS 专属输出降级为历史注记。
+
 ## 1. 目的与范围
 
 固化「ERP 头实体详情页/列表页跨单据导航与关联回链」的标准范式，供 4 核心域（purchase / sales / inventory / manufacturing）以及长尾域后续按图施工。

@@ -4,6 +4,8 @@
 > Owner: docs/design/status-color-map.md (单一真相源)
 > Plan: `docs/plans/2026-07-19-1818-3-f5-status-tag-coloring.md`
 
+> **Flux 控件映射**（2026-08-03 全量迁移后）：状态列着色经 flux `status`（`labelMap`/`levelMap`/`iconMap`）或 `mapping`（两级回退）控件输出，替代 AMIS `type:tpl` + 三元表达式 + inline HTML span。§3 颜色映射权威表（label/level）作为**单一真相源**仍权威——flux `status` 的 labelMap/levelMap 直接消费该表。下文 AMIS gen-control `<c:script> return {type:"tpl"...}` 写法降级为历史注记。
+
 ## 1. 目的与范围
 
 为 ERP 18+1 业务域的所有主要业务实体的状态列（`docStatus` / `approveStatus` / 业务专用 `status`）建立统一的颜色映射，将 codegen 默认的纯文本渲染升级为彩色 label span。

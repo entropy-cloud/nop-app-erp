@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-maintenance.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`equipment-integration.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：维护访问执行→flux `wizard`（4 步：维护信息确认→备件消耗→执行结果→确认完成，`2026-08-03-1232-3` P3 落地）；设备详情→flux `tabs`（机制 B，维护时间线/备件消耗）；维护看板→flux 三段式（`page-structure-patterns.md` §3.0）。范式见 `page-structure-patterns.md` §5/§5.1。下文 AMIS 布局描述作为业务语义仍参考，AMIS 专属组件实现降级为历史注记。
+
 ## 设计原则
 
 1. **设备状态一目了然**：设备列表页以状态色块/图标展示设备当前运行状态（运行中/闲置/维护中/故障/已停用），支持按状态快速筛选。

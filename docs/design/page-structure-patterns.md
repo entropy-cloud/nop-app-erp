@@ -2,6 +2,27 @@
 
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F12（页面结构增强）、`docs/architecture/view-and-page-strategy.md`（页面策略）、`docs/design/child-table-editor-patterns.md`（F4 子表编辑范式，与本范式正交）
 
+## 0. Flux 渲染权威模型（2026-08-03 全量迁移后最终形态）
+
+> **权威翻转**：用户 2026-08-03 决策——界面全面转向 nop-chaos-flux，后续不再考虑 AMIS。本范式以「**view.xml 模型驱动 + flux-web.xlib 输出 flux schema**」为权威；下文 §1-§8 的 AMIS 渲染输出（`type: tabs` AMIS JSON、`layoutControl` AMIS 机制等）降级为**历史注记**，仅供迁移审计追溯，不再作为实现权威。实现证据见 `docs/plans/2026-08-03-1232-1`（CRUD 迁移）+ `2026-08-03-1232-3`（F16 重写）。
+
+**渲染管线**（`nop.web.render-mode=flux`，nop-entropy `web.xlib` 顶部 `x:post-extends` 引入 `impl_flux_mode.xpl`，五个 Gen* 标签被 `x:override=replace` 动态替换为 flux-web.xlib 版本）：
+
+| view.xml 模型 | flux 输出 | 数据契约 | 事件持久化 |
+|--------------|----------|---------|-----------|
+| `<pages><complex>` 四槽位（header/footer/aside/body） | flux `PageSchema`（type=page，空槽位不输出） | 各槽位容器独立 | 各槽位 `loadAction`/`submitAction` |
+| `<pages><tabs>` / `<form layoutControl="tabs">` | flux `tabs`（items + valueOwnership=scope） | 每 tab 独立 | per-tab mutation |
+| `<pages><wizard>` + `<step>` | flux `wizard`（steps + valuesPath 分区 + formId 校验闸） | step 分区数据 | per-step commit mutation（非单一 onComplete 聚合） |
+| `<pages><group>` | flux `grid`（columns/gap/autoFlow/alignItems/justifyItems） | — | — |
+| `<pages><crud>` | flux `crud`（columns + loadAction） | `{items, total}` | `loadAction`（query）/ `submitAction`（mutation） |
+
+**页面编写三路径**（决策矩阵，权威来源 `docs/design/flux-complex-pages.md` §2.4）：
+1. **view.xml + flux-web:GenPage**——标准 CRUD / tabs / wizard / group / complex 结构页（复用 view.xml，仅切换 xlib，零修改）
+2. **page.yaml/flux.yaml 直写 flux schema**——flux 专有控件（gantt/kanban/calendar/timeline/diff-view/tree）
+3. **flux.yaml 双文件共存**——需 flux 专属定义的页面新增同名 `*.flux.yaml`（flux 模式 `PageModelLoaderFactory` 优先加载，AMIS 版本保留直至退役）
+
+**complex 槽位内嵌 flux 专有控件组合模式**：页面外壳（布局/筛选区/状态区）经 view.xml `<complex>` 四槽位定义；flux 专有控件（gantt/kanban/calendar）经槽位内 `<simple>` 包裹或 flux.yaml 直写内嵌。
+
 ## 1. 目的与范围
 
 固化「ERP 复杂页面结构」的标准范式，覆盖 **tabs 容器** 与 **仪表板/多 tab 详情** 两类，供后续域（projects/quality/crm/cs/contract 等长尾页面 successor plan）按图施工。
@@ -130,11 +151,65 @@ body:
 - 需不同 tab 用不同 form/page 模板 → B
 - 仅希望把单 form 的多 group 分 tab 显示 → A（最小代价）
 
-## 3. 仪表板范式：双列布局 + 时间线 + 数据加载策略
+## 3. 仪表板范式：三段式 page.yaml + 双列布局 + 时间线 + 数据加载策略
 
-### 双列布局
+### 3.0 三段式看板 page.yaml 范式（flux 权威，复用度 11 页）
 
-AMIS `form` 的 `mode="inline"` + `<layout>` 中每行 2 cell（默认 `defaultColumnRatio=2`）天然形成双列。无需特殊配置，layout 写两字段一行即可。
+> **范式沉淀**（`2026-08-03-1232-5` Phase 1）：10 域经营看板 + cs 绩效看板（共 11 页）统一采用「**data-source + card + chart + crud**」三段式 flux page.yaml 结构。指标定义见 `docs/design/dashboards.md`（权威指标），本节沉淀其页面结构范式。
+
+**结构骨架**（flux schema，整页 page.yaml 直写）：
+
+```yaml
+type: page
+title: "销售看板"
+body:
+  # 段 1：data-source 区（每指标独立发布到 scope，dependsOn/sendOn 实现筛选联动）
+  - type: data-source
+    name: kpi
+    action: ajax
+    args: { url: "/r/ErpSalDashboard__getDashboardKpi" }
+  - type: data-source
+    name: trend
+    action: ajax
+    args: { url: "/r/ErpSalDashboard__getDashboardTrend" }
+  - type: data-source
+    name: alerts
+    action: ajax
+    args: { url: "/r/ErpSalDashboard__getDashboardAlerts" }
+  # 段 2：展示区（KPI 卡 + 趋势图）
+  - type: grid
+    columns:
+      - type: grid-col
+        span: 4
+        body:
+          - type: card
+            title: "销售额"
+            body:
+              - type: text
+                text: "${kpi.salesAmount ?? '-'}"
+  - type: chart
+    chartType: line
+    source: "${trend}"
+    xAxis: { dataKey: "date" }
+    yAxis: { label: "金额" }
+  # 段 3：预警列表（crud + status/mapping 字典色块）
+  - type: crud
+    source: "${alerts}"
+    columns:
+      - { name: "status", label: "状态", type: "status", labelMap: { OVERDUE: "超期" }, levelMap: { OVERDUE: "error" } }
+```
+
+**四要点**：
+1. **取数**：`data-source`（name 发布到 scope，兄弟节点 `${name.xxx}` 消费）；多指标并行不阻塞；`dependsOn`/`sendOn` 实现筛选联动
+2. **分页契约**：`{items, total}`；后端按 `page`/`perPage` 返回
+3. **预警列表**：`crud` + `status`（labelMap/levelMap/iconMap）/ `mapping`（两级回退）替代 gen-control 字典色块
+4. **轮询**：`data-source.interval` + `stopWhen`（替代 AMIS 手动 refresh）
+
+后端配套（仅新增只读聚合查询，无模型变更）：看板 BizModel 方法命名 `getDashboardKpi`/`getDashboardTrend`/`getDashboardAlerts`；趋势/占比类用 EQL 聚合（group by + sum/count），KPI 卡用单值查询，预警列表用带条件的 crud。权限过滤带 orgId/部门/成本中心（行级权限自动注入）。
+
+### 3.1 双列布局（历史注记）
+
+AMIS `form` 的 `mode="inline"` + `<layout>` 中每行 2 cell（默认 `defaultColumnRatio=2`）天然形成双列。无需特殊配置，layout 写两字段一行即可。flux 等价：`grid` + `grid-col span:6`。
 
 ### 时间线/凭证列表
 
@@ -301,6 +376,8 @@ ErpAstAsset → ErpFinVoucherBillR 因 ErpFinVoucherBillR 无 `assetId`/`sourceE
 
 ## 5. wizard 范式
 
+> **Flux 最终形态（`2026-08-03-1232-3` P3 Phase 1 落地）**：wizard 已以 flux 原生 `wizard` 控件重写——view.xml `<wizard>` + `<step>` 定义外壳，`steps`（key/title/body/visible/disabled/beforeEnter/beforeLeave/formId）、`linear`/`allowStepJump`/`mountOnEnter`/`statusPath`、`valuesPath` 分区 + `formId` 校验闸 + per-step commit mutation（`onChange`/`onStepCommit`/`onComplete`/`onStepError`）。期末结账响应式 gating：step `visible` 表达式按 data-source 发布的 `isDecember`/`periodStatus` 控制显隐，`linear:true` 下不可见步骤自动跳过。下文 AMIS 手写 page.yaml + 步骤指示器范式降级为**历史注记**（组件选型裁决表中 AMIS 候选的「未实现/不稳」结论在 flux 下已失效）。
+
 Nop view.xdef 内置 `<wizard>` 元素（`xview.xdef:177-192`），但 **AMIS 渲染器仅实现了 `tabs`，未实现 `wizard`**（`layout-syntax-reference.md:288`）。故 view.xml `layoutControl="wizard"` 不可用，wizard 必须手写 `page.yaml`。本节以 finance 期末结账向导为首个 wizard 回填，供 maintenance 4 步向导 successor 等后续参考。
 
 ### 组件选型裁决
@@ -465,6 +542,8 @@ wizard = step + 顺序约束 + 状态守卫的 tabs。区别：
 
 ### 8.3 多 doc 联查（purchase 三单匹配）
 
+> **Flux 最终形态（`2026-08-03-1232-3` P3 Phase 2 落地）**：三单匹配已以 flux 重写——`crud` ×4（差异预警 + 三表并列，与实况一致，源设计 §3.2「crud×3+card」的偏离已注记）+ `mapping`（差异色）+ `data-source` `dependsOn`/`sendOn` 筛选联动。下文 AMIS 3-crud 并列 + adaptor 范式降级为**历史注记**。
+
 **场景**：采购订单↔入库单↔发票三表联查，差异高亮，容差可视化。
 
 **PoC 结论（Phase 0 Explore (c)）**：`findThreeWayMatchDiffAlert` 返回扁平非分页 `List<Map>`（无 3-doc join 后端）。3-crud 并列候选最可行（各用标准 findPage + filter_supplierId）。
@@ -518,7 +597,9 @@ wizard = step + 顺序约束 + 状态守卫的 tabs。区别：
 
 **落地范式**：edit form 新增 `quickTemplate` cell button（`actionType:dialog`）：dialog 内 form 收集 businessType + DOC_TOTAL context → 调 §8.2 `renderTemplate` mutation → adaptor 转 `{previewLines}` → 预览 input-table → 「应用到凭证」按钮 `doAction(setValue,{lines:${previewLines}})` + `closeDialog` 写回头表单。AMIS setValue 于 dialog action 内写 dialog data scope，closeDialog 合并回父表单。
 
-### 8.7 甘特图（aps 排产，echarts custom series 只读）
+### 8.7 甘特图（aps 排产）
+
+> **Flux 最终形态（`2026-08-03-1232-3` P3 Phase 0 落地）**：甘特已以 flux 原生 `gantt` 重写——`{type:"gantt", tasks, links, defaultZoom:"week", draggable:true, editable:true, linkable:true, onTaskDragEnd}`。links 按「同 workOrder 按 sequence 相邻连边」（FS type=0）派生；拖拽持久化经 `ErpApsOperationOrder__updateSchedule(opOrderId,start,end)`；只读场景 `draggable:false`。下文 AMIS echarts custom series 只读范式降级为**历史注记**（拖拽 Non-Goal 结论在 flux 下已失效；右键菜单因 flux gantt 无 onContextMenu 仍为 successor）。
 
 **场景**：排产甘特图——Y=工作中心 category 轴，X=时间轴（dataZoom 缩放），每道工序工单=一根甘特条（plannedStart→plannedEnd），颜色编码 status。
 
@@ -540,7 +621,9 @@ wizard = step + 顺序约束 + 状态守卫的 tabs。区别：
 | custom series renderItem 不设 `encode:{x:[0,1],y:2}` | encode 声明 value 数组到 x(0,1)/y(2) 的映射，否则坐标错乱 |
 | 期望 AMIS chart adaptor 返回值经 JSON 序列化（函数丢失） | adaptor 返回 config 中的 JS 函数被原样保留（qa dashboard 已验证） |
 
-### 8.8 BOM 树（manufacturing，AMIS tree 重建）
+### 8.8 BOM 树（manufacturing）
+
+> **Flux 最终形态（`2026-08-03-1232-3` P3 Phase 2 落地）**：BOM 树已以 flux `tree` 重写——嵌套重建机制为**方案 A 后端聚合**（新增 `IErpMfgBom.findBomTree` @BizQuery 包装 `explode` 并在 Java 侧以栈算法 Deque+level 重建嵌套）。实施期发现 flux 表达式仅支持箭头表达式体（无块体 `{}`/`while`/`forEach`），原方案 B（formula 客户端栈算法 IIFE 块体）运行时无法解析，故移至后端。flux tree 直接 `data` 绑定返回的嵌套。下文 AMIS adaptor level 栈算法范式降级为**历史注记**。
 
 **场景**：BOM 多级展开树浏览——选 BOM → 调 `explode` 多级展开 → AMIS tree 多级展开/折叠。
 
@@ -571,7 +654,9 @@ for n in flat:
 | service auto-fetch 空 bomId 导致 GraphQL error 冒泡到页面 | adaptor 探测 `payload.data.errors` 优雅返回空 + 占位提示 |
 | 用臆测字段名（如 `nonConformanceId`） | 经实时仓库核实实际字段名（此处 FK 为 sourceBomId/level/materialId） |
 
-### 8.9 汇总审批页（hr 薪酬核算审批，plan `2026-07-22-1400-2`）
+### 8.9 汇总审批页（hr 薪酬核算审批）
+
+> **Flux 最终形态（`2026-08-03-1232-3` P3 Phase 2 落地）**：薪酬审批已以 flux 重写——`crud` + `input-table`（可编辑批改）+ `data-source` 聚合；分组聚合（findPayrollSummary）移至后端（flux 表达式无块体 reduce）。批量批准复用既有 mutation。下文 AMIS service 聚合 + 客户端 reduce 范式降级为**历史注记**（实现期 filter 语法裁决——erp 域实体不支持 `filter_<field>` 简写——在 flux data-source 下以 `query:{limit:N}` 内联 QueryBean 同口径适用）。
 
 **场景**：薪酬记录（ErpHrSalary）按期间过滤，前端聚合汇总卡片（人数/应发/社保/个税/实发）+ 明细 crud + 审批/发放 row-action。
 
@@ -594,7 +679,9 @@ for n in flat:
 | 用 `filter_<field>:val` 简写（erp 域实体不支持） | 用 `query:{limit:N}` 内联 + adaptor 客户端 filter |
 | visibleOn 双引号嵌套（`"${x == "Y"}"` → YAML 解析冲突） | 用单引号包裹 YAML 值（`'${x == "Y"}'`） |
 
-### 8.10 版本 diff 对比（contract 合同版本对比，plan `2026-07-22-1400-2`）
+### 8.10 版本 diff 对比（contract 合同版本对比）
+
+> **Flux 最终形态（`2026-08-03-1232-3` P3 Phase 2 落地）**：版本对比已以 flux `diff-view` 重写——`{type:"diff-view", oldContent, newContent, viewType:"split"|"unified", language, showInlineDiff}`。元数据对比表保留，content 双栏经 diff-view。**字段级 diff 仍受数据模型限制**（`ErpCtContractVersion` 仅 content blob + 元数据，无结构化业务字段），维持降级并注明（归 watch-only residual）。下文 AMIS 元数据对比表 + `<pre>` 并排范式降级为**历史注记**。
 
 **场景**：合同版本（ErpCtContractVersion）两版本对比，差异高亮。
 
@@ -614,7 +701,9 @@ for n in flat:
 | 用 `findSiblings`（protected helper，非 @BizQuery） | 用标准 `ErpCtContractVersion__findList(filter_contractId)` |
 | content diff 引入 code-level 高亮库（highlight.js） | 纯 `<pre>` 文本展示满足可读性（语法高亮库 = Non-Goal） |
 
-### 8.11 分组折叠报表（drp 净需求计算报表，plan `2026-07-22-1400-2`）
+### 8.11 分组折叠报表（drp 净需求计算报表）
+
+> **Flux 最终形态（`2026-08-03-1232-3` P3 Phase 2 落地）**：净需求报表已以 flux 重写——`data-source`（分组聚合 `findNetReqGroups`）+ `loop` + `table`（嵌套分组）。group-by 聚合移至后端（flux 表达式无块体 reduce）。下文 AMIS service + adaptor 分组 + each section 范式降级为**历史注记**。
 
 **场景**：净需求明细（ErpDrpLine）按物料分组，每组含 Σ 公式可视化 + 明细行。
 
@@ -632,7 +721,9 @@ for n in flat:
 | 用 AMIS crud groupBy column（无原生支持） | service + adaptor 分组 + each section + 嵌套 table |
 | Σ 公式硬编码数值（静态） | tpl 插值 `${totSafety} + ${totForecast} − ...` 动态展示分组聚合 |
 
-### 8.12 流程步骤条（b2b ASN 流程跟踪，plan `2026-07-22-1400-2`）
+### 8.12 流程步骤条（b2b ASN 流程跟踪）
+
+> **Flux 最终形态（`2026-08-03-1232-3` P3 Phase 2 落地）**：ASN 流程条已以 flux `steps` 重写——`{type:"steps", items:[{key,title,status}]}`，4 值字典（RECEIVED/MATCHED/RECEIVED_TO_STOCK/CANCELLED）status 驱动当前步骤高亮。下文 AMIS each+tpl 色块范式降级为**历史注记**。ASN 4 值字典的文档回填见 `docs/design/b2b/ui-patterns.md`。
 
 **场景**：ASN（ErpB2bAsn）状态流程条——三活跃阶段 RECEIVED→MATCHED→RECEIVED_TO_STOCK + CANCELLED 终态，当前阶段高亮。
 

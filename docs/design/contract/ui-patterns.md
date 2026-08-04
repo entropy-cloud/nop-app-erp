@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-contract.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`invoice-plan.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：合同版本对比→flux `diff-view`（oldContent/newContent + viewType split/unified；字段级 diff 受数据模型限制——`ErpCtContractVersion` 仅 content blob + 元数据——维持降级并注明，`2026-08-03-1232-3` P3 落地）。范式见 `page-structure-patterns.md` §8.10。下文 AMIS 布局描述作为业务语义仍参考，AMIS 专属组件实现降级为历史注记。
+
 ## 设计原则
 
 1. **版本可追溯**：每次合同条款变更创建新版本（ContractVersion），详情页集中管理版本列表，支持任意两版本差异对比。当前执行版本以 isCurrent 标记。

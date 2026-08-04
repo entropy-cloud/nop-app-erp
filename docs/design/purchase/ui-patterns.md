@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-purchase.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`three-way-match.md`、`returns.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：三单匹配→flux `crud` ×4（差异预警 + 三表并列）+ `mapping` 差异色 + `data-source` `dependsOn`/`sendOn` 筛选联动（`2026-08-03-1232-3` P3 落地）；采购看板→flux 三段式（`page-structure-patterns.md` §3.0）。范式见 `page-structure-patterns.md` §8.3。
+
 ## 设计原则
 
 1. **状态驱动UI**：操作按钮、可编辑字段、页面导航均受三轴状态（docStatus / approveStatus / paidStatus）控制，不依赖角色硬编码。

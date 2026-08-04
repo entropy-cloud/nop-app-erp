@@ -4,6 +4,8 @@
 > 字段定义以 `module-crm/model/app-erp-crm.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`marketing.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：商机看板→flux `kanban`（动态列 + onCardMove→`moveStage`）；活动时间线→flux `timeline`（原生，消除 each+tpl 降级）；活动日历→flux `calendar`（原生，消除卡片网格降级，onEventChange 改 activityDate）；转化向导→flux `wizard`（`2026-08-03-1232-4` P4 落地）。范式见 `non-standard-views-patterns.md` §0/`page-structure-patterns.md` §5。下文 AMIS 布局描述作为业务语义仍参考，AMIS 专属组件实现降级为历史注记。
+
 ## 设计原则
 
 1. **线索/商机统一视图**：单实体 + type 判别（LEAD/OPPORTUNITY），列表页通过筛选切换显示类型，不拆分两个页面。

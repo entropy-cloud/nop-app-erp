@@ -4,6 +4,8 @@
 > Owner docs: `docs/backlog/frontend-ui-roadmap.md` §F7 §1+§3 + §跨切面 UI 模式 6/7、`docs/design/master-data/ui-patterns.md`、`docs/design/inventory/ui-patterns.md`、`docs/design/assets/ui-patterns.md`
 > 平台参考: `../nop-entropy/docs-for-ai/03-runbooks/replace-field-with-complex-control.md`（gen-control + visibleOn）、`../nop-entropy/docs-for-ai/03-runbooks/add-field-and-validation.md`（async validator + onEvent）、`nop-auth/pages/NopAuthResource/NopAuthResource.view.xml`（cell-level visibleOn + clearValueOnHidden 范例）
 
+> **Flux 控件映射**（2026-08-03 全量迁移后）：view.xml `<cell visibleOn="...">` 经 flux-web.xlib 输出 flux `visible`/`when` 表达式（`visible` 仍参与校验 / `when` 不激活子树）；`clearValueOnHidden` 语义在 flux 下由 `when`（卸载子树）天然满足。onEvent.setValue/onEvent.change 行内联动在 flux 输出中保留（路径迁至 `onClick.args.body`，`2026-08-03-1232-1` P1 实测）。下文 AMIS visibleOn 表达式语法作为**view.xml 模型层语义**仍权威（表达式与渲染器无关），AMIS 专属属性降级为历史注记。
+
 ## 1. 范式目标
 
 本文档固化 ERP 系统中 **非状态驱动** 的智能 UI 交互范式，作为：

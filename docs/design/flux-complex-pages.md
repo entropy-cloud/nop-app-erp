@@ -1,37 +1,41 @@
 # Flux 复杂页面实现设计：nop-chaos-flux 控件落地方案
 
-> 状态：设计（未实施）
+> 状态：**已实施**（P1-P4 全部落地，`2026-08-03-1232-1/2/3/4`；本节为实施后一致版本，`2026-08-03-1232-5` Phase 3 回填）
 > 范围：nop-app-erp 30 个核心复杂页 + 附属形态（见 `docs/analysis/2026-08-03-1000-frontend-complex-page-deep-analysis.md`）的 Flux DSL 实现方案
-> 前置分析：`docs/analysis/2026-07-11-flux-integration-strategy-analysis.md`（集成策略）、`docs/analysis/2026-07-20-complex-ui-controls-inventory-for-flux.md`（控件盘点）、`docs/backlog/frontend-ui-roadmap.md`（Flux 渲染引擎备选决策）
+> 前置分析：`docs/analysis/2026-07-11-flux-integration-strategy-analysis.md`（集成策略）、`docs/analysis/2026-07-20-complex-ui-controls-inventory-for-flux.md`（控件盘点）、`docs/backlog/frontend-ui-roadmap.md`（Flux 全量迁移决策）
 > Flux 权威文档：`~/app/nop-chaos-flux/flux-guide/`（入口 `README.md`，cookbook 在 `design-patterns/`，类型定义在 `flux-types/*.d.ts`）
 
 ---
 
 ## 1. 背景与设计目标
 
-### 1.1 问题：AMIS 复杂页面的降级现状
+### 1.1 问题：AMIS 复杂页面的降级现状（历史，已全部消除）
 
-nop-app-erp 前端当前全部由 AMIS 渲染。深度分析（`2026-08-03-1000`）确认：30 个核心复杂页面均已实现，但存在**组件级降级**：
+> **实施后状态（`2026-08-03-1232-5` Phase 3 回填）**：下表所述 AMIS 降级已**全部由 flux 原生组件消除**（P2 `2026-08-03-1232-2` F13 + P3 `2026-08-03-1232-3` F16 + P4 `2026-08-03-1232-4` 占位页）。下表保留作历史背景参考，当前权威见 §3 控件映射总表。
 
-| 页面 | AMIS 实现 | 降级原因 |
-|------|----------|---------|
-| crm/cs 时间线（timeline.page.yaml） | each + tpl 手写 | 原生 `type: timeline` prop 契约经 service scope 失败 |
-| crm 活动日历（calendar.page.yaml） | 按日分组卡片网格 | 原生 `type: calendar` React 渲染报错（#130） |
-| hr 组织架构图（org-chart.page.yaml） | each + tpl 缩进列表 | AMIS tree 渲染器不适配 |
-| aps 排产甘特（schedule-gantt.page.yaml） | echarts custom series **只读** | AMIS 无拖拽/缩放组件 |
-| 合同版本对比（version-diff.page.yaml） | 元数据表 + `<pre>` 并排 | 数据模型无字段级 diff（此降级保留，与引擎无关） |
-| 3 个看板（prj/cs/crm kanban） | 列式 crud + row-action 按钮 | AMIS 无拖拽卡片 |
+nop-app-erp 前端原全部由 AMIS 渲染。深度分析（`2026-08-03-1000`）确认：30 个核心复杂页面均已实现，但存在**组件级降级**：
 
-另有 16 个占位页面（SPC 三件套等）与 4 个未实现设计项（资产处置向导等）等待落地。
+| 页面 | AMIS 实现（已废弃） | 降级原因 | flux 最终形态 |
+|------|----------|---------|---------|
+| crm/cs 时间线（timeline.page.yaml） | each + tpl 手写 | 原生 `type: timeline` prop 契约经 service scope 失败 | flux `timeline`（P2） |
+| crm 活动日历（calendar.page.yaml） | 按日分组卡片网格 | 原生 `type: calendar` React 渲染报错（#130） | flux `calendar`（P2） |
+| hr 组织架构图（org-chart.page.yaml） | each + tpl 缩进列表 | AMIS tree 渲染器不适配 | flux `tree`（P2） |
+| aps 排产甘特（schedule-gantt.page.yaml） | echarts custom series **只读** | AMIS 无拖拽/缩放组件 | flux `gantt`（P3，拖拽/缩放/依赖连线） |
+| 合同版本对比（version-diff.page.yaml） | 元数据表 + `<pre>` 并排 | 数据模型无字段级 diff（此降级保留，与引擎无关） | flux `diff-view`（content 双栏，字段级 diff 仍受数据模型限制） |
+| 3 个看板（prj/cs/crm kanban） | 列式 crud + row-action 按钮 | AMIS 无拖拽卡片 | flux `kanban`（P2，拖拽） |
 
-### 1.2 决策依据（roadmap 已定）
+另有 16 个占位页面（SPC 三件套等）与 4 个未实现设计项（资产处置向导等）已由 P4 落地（12 flux 实现 + 4 Deferred 带触发条件）。
 
-`frontend-ui-roadmap.md`「Flux 渲染引擎备选」段已确立：
+### 1.2 决策依据（Flux 全量迁移，2026-08-03 用户决策）
 
-- `nop-web-site` 由 `nop-chaos-next` 打包，**同时支持 flux 与 amis 双渲染引擎**（`pageType: 'flux'` / `pageType: 'amis'`）
-- 标准 CRUD 页面继续用 view.xml → amis 路径（97.6% 页面是零定制继承桩，无迁移收益）
-- **复杂页面（F13/F16 等）优先用 flux DSL 编写 page.yaml**，以获得拖拽/缩放等原生交互能力
-- 执行到 successor 或增强项时，**改用 flux DSL 重写**当前降级实现
+> **决策更新（`2026-08-03-1232-5` Phase 3 回填）**：本节原引用 roadmap「Flux 渲染引擎备选」段的旧决策——~~「标准 CRUD 页面继续用 view.xml → amis 路径（97.6% 页面是零定制继承桩，无迁移收益）」~~——已被用户 2026-08-03 决策推翻。**flux 为唯一权威渲染引擎，后续不再考虑 AMIS**。roadmap 已更新为「Flux 全量迁移」（见 `frontend-ui-roadmap.md`）。
+
+`frontend-ui-roadmap.md`「Flux 全量迁移」段现行决策：
+
+- `nop-web-site` 由 `nop-chaos-next` 打包，**flux 为唯一权威渲染引擎**（菜单全 19 域 `component="FLUX"`，`E2E_ENGINE` 缺省 flux）
+- **标准 CRUD 页面经 view.xml + flux-web.xlib 零修改输出 flux JSON**（`nop.web.render-mode=flux` 动态替换 5 个 Gen* 标签，354 CRUD + 352 picker 全量 0 错误）
+- **复杂页面（F13/F16 等）以 flux DSL 编写 page.yaml/flux.yaml**，获得拖拽/缩放等原生交互能力
+- AMIS schema 页经 flux amis-compat 通路仍可渲染（过渡期）；AMIS 退役路径触发条件见 roadmap
 
 ### 1.3 本设计文档的目标
 
@@ -45,16 +49,18 @@ nop-app-erp 前端当前全部由 AMIS 渲染。深度分析（`2026-08-03-1000`
 
 ## 2. Flux 渲染机制：nop-entropy 侧能力
 
-### 2.1 模式开关与页面回退
+### 2.1 模式开关与页面回退（P1 实测结论，`2026-08-03-1232-1`）
 
 | 机制 | 位置 | 说明 |
 |------|------|------|
 | 渲染模式配置 | `WebConfigs.CFG_WEB_RENDER_MODE`（`nop.web.render-mode`，默认 `amis`） | 设为 `flux` 时强制使用 flux-web 渲染管线 |
+| **render-mode 动态替换**（P1 实测） | `nop-web/.../xlib/web.xlib` 顶部 `x:post-extends` 引入 `impl_flux_mode.xpl` | `nop.web.render-mode=flux` 时，`GenPage/GenForm/GenGrid/GenInputTable/GenTable` 五标签被 `x:override=replace` 动态替换为 flux-web.xlib 版本——现有 page.yaml 的 `x:gen-extends: <web:GenPage .../>` **零修改**即输出 flux JSON |
 | flux.yaml 文件类型 | `page.register-model.xml` 注册 `flux.yaml` | 与 page.yaml 平行 |
 | 页面回退 | `PageModelLoaderFactory`：flux 模式下优先加载同名 `*.flux.yaml` | 若存在 `main.flux.yaml` 则优先于 `main.page.yaml` |
 | 页面结构修正 | `WebPageHelper.fixPage` flux 分支 | 跳过 AMIS 特有处理（className 注入、group.body 归一化） |
+| **菜单 component 翻转**（P1 实测） | `*.action-auth.xml` `component="AMIS"` → `component="FLUX"` | RouteRenderer 按 pageType 选渲染器：`pageType === 'flux'` → `FluxRouteEntry`（动态加载 flux 运行时）。全 19 域已翻转（0 AMIS 残留） |
 
-> 启动方式：`-Dnop.web.render-mode=flux`（或 application.yaml 配置）。回退语义：**同目录同名 `*.flux.yaml` 优先**，不存在时仍加载 `*.page.yaml`（此时 page.yaml 中 `x:gen-extends` 必须指向 flux-web.xlib 才能输出 flux JSON）。
+> 启动方式：`-Dnop.web.render-mode=flux`（或 application.yaml 配置）。回退语义：**同目录同名 `*.flux.yaml` 优先**，不存在时仍加载 `*.page.yaml`（此时 page.yaml 中 `x:gen-extends` 必须指向 flux-web.xlib 才能输出 flux JSON）。P1 实测：354 标准 CRUD + 352 picker + 38 ref + 15 tabs 在 flux 模式 100% 输出合法 JSON（`ErpAllFluxPagesTest` FLUX_PAGE_ERROR_COUNT=0）。
 
 ### 2.2 渲染标签库（nop-entropy 已实现）
 
@@ -237,7 +243,7 @@ nop-app-erp 前端当前全部由 AMIS 渲染。深度分析（`2026-08-03-1000`
 }
 ```
 
-- **持久化**：拖拽/编辑事件（onTaskDragEnd/onTaskDoubleClick/onLinkDragEnd）→ ajax mutation（后端 `IEtpApsGanttService.dragUpdateOperation` 已有 spec，见 `docs/design/aps/scheduling.md` §8.3）
+- **持久化**：拖拽/编辑事件（onTaskDragEnd/onTaskDoubleClick/onLinkDragEnd）→ ajax mutation。P3 实测裁决：新增 `ErpApsOperationOrder__updateSchedule(opOrderId, start, end)` `@BizMutation`（宿主=ErpApsOperationOrderBizModel，与 start/complete/cancel 同宿主），**不复用** `IEtpApsGanttService.dragUpdateOperation` 单参 spec（该 spec 仅设计理想未实现）；端点不内联产能校验（实体无资源分配粒度，归排程引擎 successor）
 - **撤销**：gantt 内部撤销栈 + `onMount` 时快照
 - 只读场景（计划对比）：`draggable: false, editable: false, linkable: false`
 
@@ -412,15 +418,16 @@ nop-app-erp 前端当前全部由 AMIS 渲染。深度分析（`2026-08-03-1000`
 
 | # | 问题 | 状态 | 建议 |
 |---|------|------|------|
-| 1 | **SPC 控制图**：flux `chart` 支持 bar/line/pie/scatter/area，缺 UCL/LCL 控制限区域填充与规则违反标记（无 AMIS 侧 markLine 能力，`flux-types/schema.d.ts` ChartSchema 仅 chartType/source/series/xAxis/yAxis/legend/stacked/grid/colors） | flux-guide 未含 SPC 扩展 | 阶段 1 以 flux chart 现有能力近似（line + 条件着色）；控制限区域填充与规则标记归 flux 侧 chart 扩展（与 `2026-07-20-complex-ui-controls-inventory-for-flux.md` §2.6 结论一致） |
+| 1 | **SPC 控制图**：~~flux `chart` 缺 UCL/LCL 控制限区域填充与规则违反标记~~ | **已解决（`2026-08-03-1232-4` P4 回填）**：nop-chaos-flux 于 2026-08-03 实现 chart `referenceLines`（UCL/LCL/CL 参考线）+ `band`（上下界阴影带）+ `markers`（失控点标记，dataKey 读 isOutOfControl）完整能力 + 9 单测 + schema.d.ts 重生成。SPC 三件套已以完整能力落地（无近似），见 `docs/design/quality/spc.md` §页面交互设计 |
 | 2 | **Formula-input**：flux 无公式编辑器（ConditionBuilder 是条件构建器非公式编辑器） | flux 缺口 | 低频 P4，暂不阻塞；薪酬公式配置沿用现有 textarea + 校验 |
 | 3 | **页面级 picker**：flux-web.xlib 不支持 picker 容器 | nop-entropy 侧已确认抛错 | party-search 需以表单字段级 `picker` 组件实现（pickerPage 引用），或扩展 flux-web.xlib |
 | 4 | **拖拽持久化契约**：gantt/kanban/calendar 拖拽事件 → 后端 mutation 的参数契约（event payload 字段）需在落地页逐一核对 | 设计待验证 | 每页落地时以 flux-types 事件 payload 为准 |
 | 5 | **`$Arr`/`$Math` 表达式扩展**：business-document-formula 依赖宿主注册 | nop-chaos-next 侧待确认 | 落地前确认 `nop-web-site` 宿主已注册 |
 | 6 | **字段级 diff**：合同版本对比受数据模型限制（ErpCtContractVersion 仅 content blob） | 与引擎无关 | 维持元数据对比 + diff-view（content 双栏） |
-| 7 | **i18n**：page.yaml 层无 i18n 机制（F15 延后项） | 与引擎无关 | flux 有 `12-i18n.md`（initFluxI18n + t()），复杂页迁移时一并处理 |
+| 7 | **i18n**：page.yaml 层无 i18n 机制（F15 延后项） | 与引擎无关 | **Follow-up 登记（`2026-08-03-1232-5` Phase 3）**：flux 有 `12-i18n.md`（`initFluxI18n` + `t()`），登记为**复杂页迁移横切要求**——触发条件 = P2/P3 页面重写（`2026-08-03-1232-2/3`）时随附处理复杂页硬编码中文文案（title/remark/按钮）。view.xml 层 i18n 已完成（351 文件），page.yaml 层全量实施随 P2/P3 页面重写落地 |
 | 8 | **测试**：flux 渲染 E2E 选择器契约与 AMIS 不同 | `13-testing.md` 有 selector 速查 | 迁移页按 flux selector 重写 spec；`E2E_ENGINE=flux` 已验证可用 |
-| 9 | **complex 槽位内嵌自定义控件**：view.xml `<complex>` 槽位（UiContainerModel）能否直接内嵌 gantt/kanban/calendar 等 flux 专有控件（非 UiContainerModel 子类型）待验证 | 设计待验证（平台 complex 能力 2026-08-01 新增） | 落地时验证 GenContainerModel 透传；若不可行，采用「complex 外壳 + `<simple>` 包自定义控件」或「整页 flux.yaml 直写 + complex 仅标准布局」两模式取舍裁决 |
+| 9 | **complex 槽位内嵌自定义控件**：view.xml `<complex>` 槽位能否直接内嵌 gantt/kanban/calendar 等 flux 专有控件 | **已解决（`2026-08-03-1232-2/3` 实施结论）**：flux 专有控件经 complex 槽位内 `<simple>` 包裹或 flux.yaml 直写内嵌（页面外壳 complex + 槽位内嵌控件的组合模式落地）；标准布局用 complex，专有控件直写 |
+| 10 | **flux 表达式运行时约束**（`2026-08-03-1232-3` P3 发现）：flux 表达式仅支持箭头**表达式体**（无块体 `{}`、无 `while`/`forEach`/`if-return`），需块体的 reduce/栈算法无法在 formula 客户端运行 | 实施期发现 | 移至后端聚合查询（BOM `findBomTree`/薪酬 `findPayrollSummary`/净需求 `findNetReqGroups` 均在 Java 侧完成 group-by/reduce）；安全访问用 `?.`，空值兜底用 `??`；grid 用 `columns:N + items:[{colSpan,body}]` |
 
 ---
 

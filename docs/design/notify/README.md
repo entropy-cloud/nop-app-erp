@@ -105,6 +105,12 @@
 
 `DRAFT` → `ACTIVE`。仅 `ACTIVE` 模板参与派发；业务事件无 ACTIVE 模板时 config-gated 静默跳过（WARN）。
 
+## 页面设计与缺口闭合（Decision：模板管理走标准 CRUD 范式）
+
+> 缺口闭合裁决（`2026-08-03-1232-5` Phase 2，方案 b）：notify 域**不新增独立 ui-patterns.md**。理由：notify 的前端复杂面集中在**收件箱**（已有 `inbox-patterns.md` 范式 owner doc 覆盖）；**通知模板管理**（`ErpSysNotificationTemplate`）是标准实体，页面为 codegen 生成的标准 CRUD（列表 + 弹窗编辑），其 `DRAFT→ACTIVE` 状态机与 `recipientResolver`/`mergeStrategy`/`channels` 配置均为实体字段（orm.xml 权威），无超出标准 CRUD 范式的特殊交互，遵循 `docs/design/page-structure-patterns.md` 标准 CRUD 范式即可，无需独立 owner 文档。**通知偏好设置页**按本文件 Successor 节标注 out-of-baseline（需新 ORM 实体，ask-first 保护区域）。
+
+**Flux 控件映射**（2026-08-03 全量迁移后）：收件箱→flux `tabs`（items + valueOwnership=scope）+ `crud` ×3 + `data-source`（countUnread 轮询，见 `flux-complex-pages.md` §4.6）；通知模板管理→flux 标准 `crud`（view.xml 模型驱动零修改）；`status`/`recipientResolver`/`channels` 列→flux `status`（labelMap/levelMap）/`mapping`。
+
 ## 与 18 业务域的关系（消费者接线）
 
 业务域通过 `IErpSysNotificationBiz.notify(eventType, context)` 接入派发链。已接线消费者（详见 `notification-strategy.md §业务消费者接线清单` + `§审批工作流通知接线`）：

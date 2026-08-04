@@ -163,18 +163,21 @@
 └──────────────────────────────────────────────────────────────┘
 ```
 
-**关键交互模式**：
-1. **拖拽调整**：鼠标拖拽甘特条水平移动改变工序开工/完工时间，垂直移动改变分配的工作中心。拖拽时显示对齐辅助线（按班次/小时粒度）
-2. **右键菜单**：右键甘特条显示快捷操作——[查看工序详情] [跳转主工单] [标记开工] [标记完工] [锁定] [颜色标记]
-3. **颜色编码系统**：
+**关键交互模式**（最终形态：flux 原生 `gantt`，`2026-08-03-1232-3` P3 Phase 0 落地）：
+1. **拖拽调整**：flux `gantt` `draggable:true/editable:true/linkable:true`（默认 true，含内部撤销栈）。鼠标拖拽甘特条水平移动改变工序开工/完工时间（onTaskDragEnd 提供 `${event.id}`/`${event.start}`/`${event.end}`），经 `ErpApsOperationOrder__updateSchedule(opOrderId,start,end)` 写 plannedStartDateT/plannedEndDateT 持久化；拉伸 resize 同源。只读对比场景可配 `draggable:false` 开关。
+2. **右键菜单（残留限制）**：flux `gantt` 未提供 `onContextMenu` 事件，APS 右键操作（重新排产/锁定/查看工序详情）属增强 successor，主交互（拖拽/双击跳转）已覆盖。
+3. **依赖连线（links 派生）**：`ErpApsOperationOrder` 无前置/依赖字段仅有 `sequence`，按「同 workOrder 按 sequence 相邻连边」规则（FS 依赖 type=0）派生；跨工单资源争用依赖不表达（归产能校验 successor）。
+4. **颜色编码系统**：
    - 蓝色 = 正常排程（交期内）
    - 黄色 = 接近交期（<2天）
    - 红色 = 已延期
    - 灰色斜纹 = 外协工序
    - 淡灰底色条 = 设备维护时段（不可排产）
-4. **缩放控制**：时间轴支持切换天/周/月视图，甘特条粗细自适应
-5. **约束叠加**：工作中心维护日历以半透明灰色遮罩叠加在工作中心行上
-6. **选择性显示**：支持按优先级/订单号/工单号过滤显示工序条
+5. **缩放控制**：flux `gantt` `zoomLevels`/`defaultZoom`（如 `defaultZoom:"week"`），时间轴支持天/周/月视图，甘特条粗细自适应
+6. **约束叠加**：工作中心维护日历以半透明灰色遮罩叠加在工作中心行上
+7. **选择性显示**：支持按优先级/订单号/工单号过滤显示工序条
+
+> 文档回填注记：早先设计含「拖拽 + 右键菜单」，AMIS 实现期为只读 echarts custom series 降级（拖拽/右键均不可用，`2026-08-03-1000` §8.7 裁决为 Non-Goal）。flux 全量迁移后拖拽已实现，右键菜单因 flux gantt 无 onContextMenu 残留为 successor。
 
 **数据联动**：
 - 甘特图的拖拽操作即时更新 ErpApsOperationOrder 的计划时间，触发排产方案"已修改未保存"标记

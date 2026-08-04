@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-sales.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`returns.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：销售看板→flux 三段式（data-source + card + chart + crud，`page-structure-patterns.md` §3.0）。标准单据（订单/退货/定价）→flux `crud` + `input-table`（view.xml 模型驱动零修改）。
+
 ## 设计原则
 
 1. **对称于采购**：销售域页面结构与采购域镜像对称（订单/出库/发票/收款/退货），差异点在于出库需要可用量校验、支持赠品/折扣行、退货涉及退款。

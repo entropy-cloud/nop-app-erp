@@ -4,6 +4,8 @@
 > 平台权威源：`../nop-entropy/docs-for-ai/03-runbooks/build-tree-crud-page.md`
 > 落地计划：`docs/plans/2026-07-20-1020-1-f10-tree-entity-views.md`（4 实体 tree CRUD + tree-select + add-child + tree picker）
 
+> **Flux 控件映射**（2026-08-03 全量迁移后）：view.xml tree-list grid + `<selection>children @TreeChildren</selection>` 模型经 flux-web.xlib 零修改输出 flux tree 表格；parentId 控件经 flux-control.xlib 输出 flux `tree-select`。复杂树形页面（BOM 树/组织架构图）以 flux 原生 `tree`（`data`/`labelField`/`keyField`/`childrenKey`/`searchable`/`initiallyExpanded`）渲染，懒加载用字段级 `tree-select`（`childrenSource`）。下文 AMIS tree-list/tree-select 渲染细节作为**view.xml 模型层语义**仍权威（模型驱动、渲染器无关），AMIS 专属输出降级为历史注记。
+
 ## 1. 目的与范围
 
 固化「ERP 自引用树形实体」的标准 CRUD 范式，供 P3/ext 域后续引入的树形实体按图施工。

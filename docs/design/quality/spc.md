@@ -111,6 +111,61 @@ SPC 只做**计量型数据的过程分析**,不做离线检验判定(判定归 
 
 quality 域「过程控制(SPC)」分组:控制图配置、样本数据、过程能力分析。
 
+## 页面交互设计（Flux 实现权威）
+
+> 本节补齐 SPC 独立页交互设计（`2026-08-03-1232-5` Phase 2 回填，输入来源 `flux-complex-pages.md` §7 #1 + `2026-08-03-1232-4` P4 实施结果）。SPC 三件套已以 flux 落地（消除原占位 alert），nop-chaos-flux 于 2026-08-03 实现 chart `referenceLines`/`band`/`markers` 完整能力，SPC 控制图无需近似。
+
+### 控制图页（spc-chart）
+
+**布局**：complex 外壳（header 筛选区 + body 主区），数据来自 `ErpQaDashboardBizModel.getSpcControlChartData`（既有 @BizQuery）。
+
+```yaml
+type: page
+body:
+  - type: select              # 控制图选择（chartId）
+    name: chartId
+    source: { ... ErpQaSpcChart__findPage ... }
+  - type: data-source         # 控制图数据（UCL/LCL/CL + 样本序列 + 失控点标记）
+    name: chartData
+    action: ajax
+    args: { url: "/r/ErpQaDashboard__getSpcControlChartData", params: { chartId: "${chartId}" } }
+  - type: chart               # 控制图主体
+    chartType: line
+    source: "${chartData.samples}"
+    xAxis: { dataKey: "subgroupNo" }
+    yAxis: { label: "均值 X̄" }
+    referenceLines:           # UCL/LCL/CL 控制限参考线（flux chart 原生能力）
+      - { yAxis: "${chartData.ucl}", label: "UCL ${chartData.ucl}", color: "#ef4444" }
+      - { yAxis: "${chartData.cl}", label: "CL ${chartData.cl}", color: "#3b82f6" }
+      - { yAxis: "${chartData.lcl}", label: "LCL ${chartData.lcl}", color: "#ef4444" }
+    band:                     # 上下界阴影带（控制限内区域）
+      { yFrom: "${chartData.lcl}", yTo: "${chartData.ucl}", color: "rgba(59,130,246,0.08)" }
+    markers:                  # 失控点标记（dataKey 读 isOutOfControl，红色高亮）
+      { dataKey: "isOutOfControl", color: "#ef4444", symbol: "circle", size: 8 }
+  - type: crud                # 样本明细列表
+    source: "${chartData.samples}"
+    columns:
+      - { name: "subgroupNo", label: "子组" }
+      - { name: "mean", label: "均值" }
+      - { name: "violatedRules", label: "违反规则", type: "mapping" }
+      - { name: "isOutOfControl", label: "失控", type: "status", labelMap: { true: "失控" }, levelMap: { true: "error" } }
+```
+
+**交互**：选择控制图 → data-source 重载控制限 + 样本序列；失控点（`isOutOfControl=true`）以红色 markers 高亮，控制限外区域直观可见；样本明细 crud 支持行级反查数据来源三元组（sourceBillType/sourceCode/sourceLineCode → ErpQaInspection）。
+
+### 过程能力页（spc-capability）
+
+`crud`（能力分析结果列表，含 cp/cpk/capabilityLevel）+ `chart`（bar 能力等级分布）。能力等级 `capabilityLevel` 经 flux `status`（labelMap：INADEQUATE=红/ACCEPTABLE=黄/CAPABLE=绿/EXCELLENT=深绿）着色。
+
+### 样本数据页（spc-sample）
+
+`crud`（样本列表）+ `chart`（line 样本均值趋势，X=subgroupNo/Y=mean，叠加控制限 referenceLines）。
+
+### 数据契约
+
+- 控制图：`getSpcControlChartData(chartId)` 返回 `{ ucl, lcl, cl, samples:[{subgroupNo, mean, range, stdDev, violatedRules, isOutOfControl}] }`
+- 能力/样本：标准 `findPage`（`{items, total}`）
+
 ## 参考
 
 - `docs/analysis/erp-survey/2026-06-22-0000-wmes.md`(MES 质量/SPC 边界)

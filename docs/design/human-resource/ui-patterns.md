@@ -139,7 +139,13 @@
 
 ### 3.3 实现方案
 
-AMIS 使用 `tree` 组件或 `formula` 控制 `crud` 的父子关系。
+以 **flux 原生 `tree` 控件**渲染（最终形态，`2026-08-03-1232-2` P2 Phase 4 落地）：
+
+- `{ type: "tree", data, labelField: "name", keyField: "id", searchable: true }`
+- `data` 经 `findDepartmentTree` 只读聚合查询返回嵌套结构（`ErpHrDepartment` parentId 自引用 + `ErpHrEmployee` departmentId 关联）
+- 支持折叠/展开/搜索高亮（flux tree 原生能力）
+
+> 文档回填注记：早先设计为「AMIS `tree` 组件或 `formula` 控制 crud 父子关系」，AMIS 实现期降级为 each+tpl 缩进列表（AMIS tree 渲染不稳）；flux 全量迁移后已以原生 `tree` 消除降级。AMIS 实现仅作历史注记保留参考。
 
 数据源：`ErpHrDepartment`（parentId 自引用）+ `ErpHrEmployee`（departmentId 关联）。
 
@@ -389,7 +395,7 @@ AMIS CRUD + `list` / `cards` 模式，或自定义 Kanban 插件。状态变更�
 
 | 实体 | tree-list grid 列集 | 域专用业务约束 |
 |------|---------------------|----------------|
-| `ErpHrDepartment` | `code` `name` `parentId` `manager` `costCenterId` `orgId` | 组织架构树，F16 复杂页面（节点嵌入员工 + 搜索高亮）successor |
+| `ErpHrDepartment` | `code` `name` `parentId` `manager` `costCenterId` `orgId` | 组织架构树，复杂页面（组织架构图）已以 flux `tree` 落地（见 §3.3） |
 
 ### 配置要点
 
@@ -399,9 +405,9 @@ AMIS CRUD + `list` / `cards` 模式，或自定义 Kanban 插件。状态变更�
 4. **parentId tree-select 控件**：edit/add 表单 `<cell id="parentId">` 升级为 `<tree-select>`，URL 加 `filter_id__ne=$id` 排除自身防循环引用
 5. **picker 升级**：picker.page.yaml table 改 tree 配置（`loadDataOnce + pager=none + filter_parentId=__null`）
 
-### 与 F16 组织架构图复杂页面的边界
+### 与组织架构图复杂页面的边界
 
-F10 仅做标准 tree CRUD（AMIS 内置 tree 表格 + tree-select + add-child）。F16 P2 successor 在此基础上构建复杂页面：节点嵌入员工缩略、搜索高亮、点击跳转员工详情，需自定义 AMIS 组件，不在本范式范围。
+F10 仅做标准 tree CRUD（tree 表格 + tree-select + add-child）。组织架构图复杂页面（`hr/dashboard/org-chart.page.yaml`，节点嵌入员工缩略、搜索高亮、点击跳转员工详情）已以 flux 原生 `tree` 落地（`2026-08-03-1232-2` P2 Phase 4），见 `docs/design/non-standard-views-patterns.md`。
 
 详细配置模板与反模式自检见 `docs/design/tree-entity-patterns.md`。
 

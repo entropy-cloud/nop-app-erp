@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-quality.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`inspection-integration.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3/§7）：SPC 控制图三件套→flux `chart`（**referenceLines 画 UCL/LCL/CL + band 阴影 + markers 失控点**，nop-chaos-flux 2026-08-03 已实现完整能力，数据来自 `getSpcControlChartData`，`2026-08-03-1232-4` P4 落地）+ `crud`（样本列表）；质量看板→flux 三段式（`page-structure-patterns.md` §3.0）。SPC 页面交互设计见 `docs/design/quality/spc.md` §交互设计。
+
 ## 设计原则
 
 1. **检验结果判定自动化**：质检读数录入后系统自动根据规格上下限判定合格/不合格，前端即时显示判定结果（绿色 PASS / 红色 FAIL）。

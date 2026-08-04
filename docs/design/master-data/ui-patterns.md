@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-master-data.orm.xml` 为准，业务语义见 `README.md`、`sku-multi-unit.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：成本中心（cost-center）→flux `crud`（parentId 层级展示，`2026-08-03-1232-4` P4 落地）；主数据看板→flux 三段式（`page-structure-patterns.md` §3.0）；物料/科目树→flux `tree`/`tree-select`。
+
 ## 设计原则
 
 1. **编码自动生成 + 人工覆盖**：主数据编码支持自动流水号生成，也允许人工录入覆盖。编码唯一性在前端输入时即校验（异步检查），不等到提交才报错。

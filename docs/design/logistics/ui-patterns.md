@@ -4,6 +4,8 @@
 > 字段定义以 `model/app-erp-logistics.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`carrier-integration.md`。
 > 调研引用格式 `[源项目#要点]`，参考 🟢 Metasfresh shipping UI 范式。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：发运追踪详情→flux `timeline`（shipment + logs 双查询，`data-source` ×2 `dependsOn` 级联，消除 AMIS 双 service 时间线）。位置地图→Non-Goal（无地图组件，归 successor）。范式见 `page-structure-patterns.md` §8.3 级联模式。下文 AMIS 布局描述作为业务语义仍参考，AMIS 专属组件实现降级为历史注记。
+
 ## 设计原则
 
 1. **状态驱动 UI**：操作按钮、可编辑字段、页面导航均受发运单状态（DRAFT/ADVISED/DISPATCHED/IN_TRANSIT/DELIVERED/CANCELLED）控制。

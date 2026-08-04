@@ -3,6 +3,8 @@
 > 本文档定义项目管理域关键业务页面的结构布局、交互模式与导航流程。
 > 字段定义以 `model/app-erp-projects.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`cost-collection.md`。
 
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：任务看板→flux `kanban`（4 列 + 相邻态受限拖拽 onCardMove 路由 startTask/completeTask/blockTask/unblockTask，消除列式 crud 降级，`2026-08-03-1232-2` P2 落地）；项目树→flux `tree`；项目成本分析→flux 三段式（`page-structure-patterns.md` §3.0）。范式见 `non-standard-views-patterns.md` §0。下文 AMIS 布局描述作为业务语义仍参考，AMIS 专属组件实现降级为历史注记。
+
 ## 设计原则
 
 1. **项目树与任务看板**：项目以树形展示（项目 → 任务 → 子任务），任务支持看板视图（按状态分组拖拽）。
