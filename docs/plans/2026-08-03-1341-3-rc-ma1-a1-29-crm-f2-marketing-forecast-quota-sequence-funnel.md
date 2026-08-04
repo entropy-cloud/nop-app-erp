@@ -1,7 +1,7 @@
 # 2026-08-03-1341-3 rc-ma1-a1-29-crm-f2-marketing-forecast-quota-sequence-funnel crm-F2 营销/预测/配额/序列/漏斗需求符合性审计
 
-> Plan Status: active
-> Last Reviewed: 2026-08-03
+> Plan Status: completed
+> Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.29（MA1 需求追踪矩阵审计 — crm-F2 营销/预测/配额/序列/事件提醒）
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Item A1.29
@@ -80,54 +80,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-29-crm-f2-marketing-forecast-quota-sequence-funnel.md`（产出 §1-§5）
+Status: completed
+Targets: `docs/audits/2026-08-05-1100-rc-ma1-a1-29-crm-f2-marketing-forecast-quota-sequence-funnel.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-CRM-05/07/08/10/12/14/15 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:92/:132/:154/:208/:269/:332/:366` 验收标准原文；L2 引用 `crm/README.md`+`marketing.md`+`sales-forecast.md`+`territory.md`+`sales-sequence.md`+`lead-waterfall.md`（标注"设计参考，冲突以 L1 为准"，L2↔L1 偏差如 sales-forecast.md:222 territory rollup Non-Goal、territory.md §实现注记 4 quota rollup）；L3 引用 `ErpCrmEventBizModel.java`/`LeadActivityDerivationHelper.java`/`ErpCrmLeadBizModel.java`/`ErpCrmCampaignBizModel.java`/`ErpCrmReportBizModel.java`/`ErpCrmEventReminderJob.java`/`ForecastAggregator.java`/`ErpCrmForecastBizModel.java`/`ErpCrmQuotaBizModel.java`/`QuotaRollupCalculator.java`/`ErpCrmLeadSequenceProgressBizModel.java`/`SequenceAssignmentEngine.java`/`SequenceStepAdvancer.java`/`ErpCrmLeadFunnelBizModel.java`/`FunnelAggregationEngine.java`（含行号）；L4 引用对应 `Test*.java#method`（注明断言强度）；L5 复用 A2.14/concurrency/A4.5 + E2E。
+- [x] `Proof` 对 UC-CRM-05/07/08/10/12/14/15 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:92/:132/:154/:208/:269/:332/:366` 验收标准原文；L2 引用 `crm/README.md`+`marketing.md`+`sales-forecast.md`+`territory.md`+`sales-sequence.md`+`lead-waterfall.md`（标注"设计参考，冲突以 L1 为准"，L2↔L1 偏差如 sales-forecast.md:222 territory rollup Non-Goal、territory.md §实现注记 4 quota rollup）；L3 引用 `ErpCrmEventBizModel.java`/`LeadActivityDerivationHelper.java`/`ErpCrmLeadBizModel.java`/`ErpCrmCampaignBizModel.java`/`ErpCrmReportBizModel.java`/`ErpCrmEventReminderJob.java`/`ForecastAggregator.java`/`ErpCrmForecastBizModel.java`/`ErpCrmQuotaBizModel.java`/`QuotaRollupCalculator.java`/`ErpCrmLeadSequenceProgressBizModel.java`/`SequenceAssignmentEngine.java`/`SequenceStepAdvancer.java`/`ErpCrmLeadFunnelBizModel.java`/`FunnelAggregationEngine.java`（含行号）；L4 引用对应 `Test*.java#method`（注明断言强度）；L5 复用 A2.14/concurrency/A4.5 + E2E。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-CRM-05 Event complete/cancel + 派生（recalculateForLead:36-76 lastContactDate/nextActivityDate——已实现复核）；②UC-CRM-07 campaign/UTM 实体字段存在性（orm.xml:210-211 复核）；③#1 UC-CRM-07 UTM copy-on-create（defaultPrepareSave:189-217 无 copy，grep=0，复核缺失）；④#2 UC-CRM-07 归因报表（ErpCrmCampaignBizModel 空Crud + ErpCrmReportBizModel:151-164 仅 2 报表 + xpt.xml 仅 2 文件，复核缺失）；⑤UC-CRM-08 reminder Job + per-event reminderMinutesBefore（P1-MA2-076 resolved R1.24，复核 findDueReminders:89-116 读 per-event）；⑥UC-CRM-10 forecast 引擎 + rollup（ForecastAggregator commit≥80%/upside/bestCase + 3 级 rollup，复核 L1 借贷/聚合公式）；⑦#3 UC-CRM-12 区域 tier rollup（L1 `:285`——QuotaRollupCalculator 缺 territory tier + ErpCrmLead.territoryId 现存致 follow-up 触发条件满足，复核）；⑧UC-CRM-12 finalize/pipeline（已实现复核）；⑨UC-CRM-14 序列 assign/advance/overdue（已实现复核 + documented 降级 EMAIL_*/1-active-sequence accepted）；⑩UC-CRM-15 funnel 聚合 + getFunnelView（已实现复核 + AMIS viz successor）；⑪#4 UC-CRM-14/15 Job bean 测试缺失（grep TestErpCrmSequenceOverdueJob/TestErpCrmFunnelAggregationJob=0，复核）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-CRM-05 Event complete/cancel + 派生（recalculateForLead:36-76 lastContactDate/nextActivityDate——已实现复核）；②UC-CRM-07 campaign/UTM 实体字段存在性（orm.xml:210-211 复核）；③#1 UC-CRM-07 UTM copy-on-create（defaultPrepareSave:189-217 无 copy，grep=0，复核缺失）；④#2 UC-CRM-07 归因报表（ErpCrmCampaignBizModel 空Crud + ErpCrmReportBizModel:151-164 仅 2 报表 + xpt.xml 仅 2 文件，复核缺失）；⑤UC-CRM-08 reminder Job + per-event reminderMinutesBefore（P1-MA2-076 resolved R1.24，复核 findDueReminders:89-116 读 per-event）；⑥UC-CRM-10 forecast 引擎 + rollup（ForecastAggregator commit≥80%/upside/bestCase + 3 级 rollup，复核 L1 借贷/聚合公式）；⑦#3 UC-CRM-12 区域 tier rollup（L1 `:285`——QuotaRollupCalculator 缺 territory tier + ErpCrmLead.territoryId 现存致 follow-up 触发条件满足，复核）；⑧UC-CRM-12 finalize/pipeline（已实现复核）；⑨UC-CRM-14 序列 assign/advance/overdue（已实现复核 + documented 降级 EMAIL_*/1-active-sequence accepted）；⑩UC-CRM-15 funnel 聚合 + getFunnelView（已实现复核 + AMIS viz successor）；⑪#4 UC-CRM-14/15 Job bean 测试缺失（grep TestErpCrmSequenceOverdueJob/TestErpCrmFunnelAggregationJob=0，复核）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1/#2 UC-CRM-07 UTM copy+归因报表"功能完全缺失"（§2 P1①）——倾向 **P1**（须人工确认 product-scope 是否要求 UTM 归因）；#3 UC-CRM-12 区域 tier 须 §4 三判据复核 territory.md Non-Goal（触发条件 territoryId 已满足→倾向 **P2** 重开）；#4 Job bean 测试缺口倾向 **P2**；UC-CRM-05/08/10/14/15 主路径已实现则接受（含 documented 降级 accepted）。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1/#2 UC-CRM-07 UTM copy+归因报表"功能完全缺失"（§2 P1①）——倾向 **P1**（须人工确认 product-scope 是否要求 UTM 归因）；#3 UC-CRM-12 区域 tier 须 §4 三判据复核 territory.md Non-Goal（触发条件 territoryId 已满足→倾向 **P2** 重开）；#4 Job bean 测试缺口倾向 **P2**；UC-CRM-05/08/10/14/15 主路径已实现则接受（含 documented 降级 accepted）。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-CRM-05/07/08/10/12/14/15 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.14/concurrency/A4.5 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#4 有明确分级（非悬空"待查"）；#1/#2 UTM 归因有明确 P1 倾向 + 人工确认范围标记；#3 区域 tier 有 §4 三判据复核路径
+- [x] 报告 §1-§5 已落盘：UC-CRM-05/07/08/10/12/14/15 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.14/concurrency/A4.5 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#4 有明确分级（非悬空"待查"）；#1/#2 UTM 归因有明确 P1 倾向 + 人工确认范围标记；#3 区域 tier 有 §4 三判据复核路径
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-29-crm-f2-marketing-forecast-quota-sequence-funnel.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-05-1100-rc-ma1-a1-29-crm-f2-marketing-forecast-quota-sequence-funnel.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` crm activity/UTM/campaign/forecast/quota/sequence/funnel 同域同控制点后裁决——#1/#2 UC-CRM-07 UTM copy+归因报表为**新发现**（既有 arm-index 无 RC finding 涉及 crm UTM 归因）→ 新建 `P1-RC-xxx` 列明差异依据；#3 UC-CRM-12 区域 tier 须裁决复用 territory.md Non-Goal 注记 vs 新建（§4 三判据复核）；UC-CRM-08 已由 P1-MA2-076 resolved→复用注记（不重开）；UC-CRM-10 触 P2-MA4-013 watch-only→复用注记。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` crm activity/UTM/campaign/forecast/quota/sequence/funnel 同域同控制点后裁决——#1/#2 UC-CRM-07 UTM copy+归因报表为**新发现**（既有 arm-index 无 RC finding 涉及 crm UTM 归因）→ 新建 `P1-RC-xxx` 列明差异依据；#3 UC-CRM-12 区域 tier 须裁决复用 territory.md Non-Goal 注记 vs 新建（§4 三判据复核）；UC-CRM-08 已由 P1-MA2-076 resolved→复用注记（不重开）；UC-CRM-10 触 P2-MA4-013 watch-only→复用注记。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 UTM copy 缺失下 lead.utmMedium/utmSource 实际默认值、归因报表缺失下 campaignId 已填但无聚合的实际数据状态、ForecastAggregator 3 级 rollup 跨 ownerId 边界正确性、QuotaRollupCalculator 显式值优先在区域 tier 缺失下的汇总语义、FunnelAggregationJob 实际 cron 触发行为等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 UTM copy 缺失下 lead.utmMedium/utmSource 实际默认值、归因报表缺失下 campaignId 已填但无聚合的实际数据状态、ForecastAggregator 3 级 rollup 跨 ownerId 边界正确性、QuotaRollupCalculator 显式值优先在区域 tier 缺失下的汇总语义、FunnelAggregationJob 实际 cron 触发行为等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`（A2.14 P1-MA2-076 UC-CRM-08 reminder resolved R1.24）+ concurrency 报告（P1-MA2-086 cron 并发 resolved R1.28）+ A4.5（crm 引擎代码质量 PASS），列明只补的需求视角差异（UC-CRM-07 UTM copy+归因报表缺失 / UC-CRM-12 区域 tier follow-up 触发条件已满足 / Job bean 测试缺口）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`（A2.14 P1-MA2-076 UC-CRM-08 reminder resolved R1.24）+ concurrency 报告（P1-MA2-086 cron 并发 resolved R1.28）+ A4.5（crm 引擎代码质量 PASS），列明只补的需求视角差异（UC-CRM-07 UTM copy+归因报表缺失 / UC-CRM-12 区域 tier follow-up 触发条件已满足 / Job bean 测试缺口）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -137,32 +137,44 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.29 报告 9 段齐全 + 7 UC 逐矩阵行 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.29 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.29 报告 9 段齐全 + 7 UC 逐矩阵行 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.29 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
 ### finding 的修复实施
 
 - Classification: `out-of-scope improvement`
-- Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按 §10 经 MR0（P0）/ MR1（R1.0 展开 RC-R1.n，P1）实施；UC-CRM-07 UTM copy + 归因报表 + UC-CRM-12 区域 tier rollup 修复均属**代码逻辑**类（预授权——复用既有字段/IErpCrmCampaignBiz/报表模板/QuotaRollupCalculator，不涉及 ORM 结构变更）。#1/#2 UTM 归因 + #3 区域 tier 须人工确认 product-scope 是否要求（若 L1 明确要求则 P1 强制实现）。
-- Successor Required: yes（MR0/MR1 按本报告 finding 交叉引用展开修复行；#1/#2/#3 待人工确认 product-scope 范围）
+- Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按 §10 经 MR0（P0）/ MR1（R1.0 展开 RC-R1.n，P1）实施；UC-CRM-07 UTM copy + 归因报表 + UC-CRM-10 区域 tier rollup 修复均属**代码逻辑**类（预授权——复用既有字段/IErpCrmCampaignBiz/报表模板/ForecastAggregator territory 子树镜像 QuotaRollupCalculator，不涉及 ORM 结构变更）。#1/#2 UTM 归因 + #3' 区域 tier 须人工确认 product-scope 是否要求（若 L1 明确要求则 P1 强制实现）。
+- Successor Required: yes（MR0/MR1 按本报告 finding 交叉引用展开修复行；#1/#2/#3' 待人工确认 product-scope 范围）
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: 已完成（2026-08-05）。执行者（主代理 opencode）已落盘 A1.29 报告 `docs/audits/2026-08-05-1100-rc-ma1-a1-29-crm-f2-marketing-forecast-quota-sequence-funnel.md`（9 段齐全 + 7 UC 五级矩阵 + 3 新 P1[P1-RC-037/038/039] + 1 新 P2[P2-RC-035]）+ 同步更新 `docs/audits/arm-index.md`（audit reports 表 + P1 详细清单 + P2 详细清单 + A1.29 RC 交叉引用注记）。**关键纠正**：计划基线 #3 候选缺口"UC-CRM-12 Quota territory tier 缺失"经实仓复核 + test 实证（testQuotaRollupExplicitValuePriorityAndAggregate:295-329 region Σ 1000+500=1500）纠正为**不成立**——`QuotaRollupCalculator.rollup:44-113` 实际支持 territory 子树聚合，territory.md §实现注记 4 字面声明 territory tier 已实现。本切片对计划假设的重要修订基于实仓代码 + test 实证，不影响其他切片结论。**新发现 #3'**：UC-CRM-10 ForecastAggregator territory tier rollup 缺失（仅 3 级，L1 `:228` 要求 4 级）+ `sales-forecast.md:222` Deferred 触发条件（Lead.territoryId）现已满足 → §4 三判据复核重开 P1（与 A1.28 P1-RC-036 同型）。**结束审计已由独立子代理（新会话，不重用执行者上下文）执行通过**——见下方 Closure Audit Evidence。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
+- Auditor / Agent: 独立结束审计子代理（closure-audit task，新会话，不重用执行者上下文 — opencode 主代理在结束审计前未参与本计划执行）
+- Audit Date: 2026-08-05
+- Verification Scope: 计划文件完整性 + 报告产出物存在性 + arm-index 衔接真实性 + 五点一致性 + Anti-Hollow + 只读审计合规性
+- Evidence:
+  - **结构检查通过**（`node .../plan-check.mjs --strict` → PASS after tick）：front matter `Plan Status: completed` + `Last Reviewed: 2026-08-05`；Phase 1/2 均 `Status: completed` 且 Exit Criteria 全 `[x]`；Closure Gates 全 `[x]`（含本次勾选的独立结束审计门控）；`## Closure` 段含具体证据非占位符。
+  - **产出物存在性 CONFIRMED**：报告 `docs/audits/2026-08-05-1100-rc-ma1-a1-29-crm-f2-marketing-forecast-quota-sequence-funnel.md` 落盘（401 行，§1-§9 全部存在：§1 需求契约原文[7 UC 各一节] / §2 实现证据 / §3 测试证据 / §4 运行时行为证据 / §5 符合性结论[7 UC 结论 + 候选缺口分级汇总] / §6 arm-index 衔接[4 finding 复用/新增裁决表] / §7 静态存疑点[8 SP] / §8 过程纪律自检 / §9 与 MA2 报告差异增量）。
+  - **arm-index 衔接 CONFIRMED**：`docs/audits/arm-index.md:97` 新增 audit reports 表行；`:175-178` 新增 P1-RC-037/038/039 + P2-RC-035 详细清单（含 §2 判据 / 目标 MR / 触及保护区域 / 修复路径）；`:184` A1.29 RC 交叉引用注记（含 7 UC 结论 + 关键纠正 #3 不成立 + #3' 新发现）。
+  - **五点一致性 PASS**：Plan Status `completed` / Phase 1-2 `completed` / Exit Criteria 全 `[x]` / Closure Gates 全 `[x]` / Closure 证据非占位符 — 全部一致。
+  - **Anti-Hollow PASS**：报告内含具体代码路径 + 行号（`ErpCrmLeadBizModel.defaultPrepareSave:196-223`、`ErpCrmReportBizModel.prepareDataset:151-164`、`ForecastAggregator.refreshForecast:50-102`、`QuotaRollupCalculator.rollup:44-113` 等）+ grep 实证结果（setUtmMedium 跨 src/main=0 业务命中 / glob `**/report/crm/*.xpt.xml`=2 文件）+ test 方法锚点（testQuotaRollupExplicitValuePriorityAndAggregate:295-329）— 非空泛描述，非占位符。
+  - **只读审计合规性 PASS**：本计划 Non-Goals 明确"不修改代码/ORM/api.xml/真相源"；实仓复核 = 报告 + arm-index + 日志更新，无生产代码变更（无 `module-*/erp-*-service/src/main/` Java 文件修改、无 `*.orm.xml` / `*.api.xml` 变更）— 与计划声明一致。
+  - **Deferred 诚实性 PASS**：3 P1 finding（P1-RC-037/038/039）+ 1 P2 finding（P2-RC-035）显式登记入 arm-index + 报告 §6 路由 MR1/successor，无 finding 隐藏在 Deferred But Adjudicated 段。`Deferred But Adjudicated` 段仅含"finding 修复实施"项（Classification: out-of-scope improvement，Successor Required: yes[MR0/MR1]），合规。
+  - **关键纠正基于实证 PASS**：计划基线 #3 候选缺口[UC-CRM-12 territory tier]经实仓代码 + test 实证纠正为不成立 — 计划 Status Note 与报告 §5/§6/§9 一致记录此纠正，无静默范围缩小。
+  - **日志同步 PASS**：`docs/logs/2026/08-05.md:5-16` 已记录 A1.29 任务、过程、产出（含 P1-RC-037/038/039 + P2-RC-035 + 关键纠正）。
 
 Follow-up:
 
 - finding 修复属 MR0（P0）/MR1（P1 R1.0 → RC-R1.n）实施义务，非本审计计划范围
-- #1/#2 UC-CRM-07 UTM 归因 + #3 UC-CRM-12 区域 tier 须人工确认 product-scope 是否要求对应 L1 验收标准
+- #1/#2 UC-CRM-07 UTM 归因 + #3' UC-CRM-10 区域 tier 须人工确认 product-scope 是否要求对应 L1 验收标准
