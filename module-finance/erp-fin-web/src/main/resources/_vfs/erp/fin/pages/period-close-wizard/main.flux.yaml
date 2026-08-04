@@ -1,0 +1,174 @@
+# 期末结账向导（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 1）。
+# flux wizard 原生组件（替换手写 page.yaml 步骤指示器 + adaptor）。
+# 编排既有 finance Facade mutation 链（零后端 delta，M4 已审计）：
+#   preCheck(只读) → closePeriod(月度+年度分支) → finalizePeriod(终关) + reverseClose(反结账)。
+# Phase 1 Decision：步骤 visible 按 period.status/month 响应式 gating；linear 模式过滤不可见步骤。
+# per-module 关账状态卡经 data-source（ErpFinAccountingPeriodStatus）。
+type: page
+title: 期末结账向导
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 6
+    items:
+    - colSpan: 4
+      body:
+      - type: select
+        name: periodId
+        label: 会计期间
+        required: true
+        clearable: true
+        placeholder: 选择要结账的会计期间
+        source:
+          action: ajax
+          args:
+            url: '@query:ErpFinAccountingPeriod__findPage'
+            method: post
+            data:
+              limit: 200
+            selection: items{ id year month status code } total
+    - colSpan: 2
+      body:
+      - type: button
+        label: 进入向导
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpFinAccountingPeriod__get'
+          method: post
+          data:
+            id: ${periodId ?? 0}
+          selection: id year month status code name
+        target: periodData
+        disabled: ${!periodId}
+- type: data-source
+  name: periodData
+  dependsOn:
+  - __wiz_load__
+  action: ajax
+  args:
+    url: '@query:ErpFinAccountingPeriod__get'
+    method: post
+    data:
+      id: ${periodId ?? 0}
+    selection: id year month status code name
+- type: data-source
+  name: statusRows
+  dependsOn:
+  - periodData
+  action: ajax
+  args:
+    url: '@query:ErpFinAccountingPeriodStatus__findPage'
+    method: post
+    data:
+      limit: 500
+      filter_periodId: ${periodId ?? null}
+    selection: items{ id periodId acctSchemaId arStatus apStatus invStatus glStatus assetStatus totalVouchers postedVouchers unpostedVouchers } total
+- type: text
+  text: ${"当前期间：" + (periodData?.code ?? "—") + "（" + (periodData?.year ?? "—") + "年" + (periodData?.month ?? "—") + "月）· 状态：" + (periodData?.status ?? "—")}
+  className: text-muted m-b
+- type: wizard
+  linear: true
+  mountOnEnter: true
+  statusPath: periodWizardStatus
+  steps:
+  - key: preCheck
+    title: 1. 前置检查
+    body:
+    - type: text
+      text: 扫描未过账凭证 / 未核销应收应付 / 未处置过账异常 / 坏账准备充足性。阻断项存在时禁止继续结账。
+      className: text-muted m-b
+    - type: data-source
+      name: preCheckReport
+      dependsOn: []
+      action: ajax
+      args:
+        url: '@query:ErpFinAccountingPeriod__preCheck'
+        method: post
+        data:
+          periodId: ${periodId ?? 0}
+        selection: unpostedVoucherCodes unsettledArApCodes unresolvedPostingExceptionKeys allowanceRequired allowanceBalance allowanceShortfall allowanceExcess
+    - type: text
+      text: ${"检查项：未过账凭证 " + (preCheckReport?.unpostedVoucherCodes ?? []).length + " · 未核销应收应付 " + (preCheckReport?.unsettledArApCodes ?? []).length + " · 未处置过账异常 " + (preCheckReport?.unresolvedPostingExceptionKeys ?? []).length + " · 坏账准备缺口 " + (preCheckReport?.allowanceShortfall ?? 0)}
+      className: m-b
+  - key: closePeriod
+    title: 2. 月度结账
+    body:
+    - type: text
+      text: '${"一次性同步编排 AR→AP→INV→AST→GL 模块关账 + 损益结转 + 汇兑重估。" + ((periodData?.month ?? 0) == 12 ? "本期间为 12 月，closePeriod 将一并执行年度结转分支（本年利润→未分配利润 + 次年期间生成）。" : "")}'
+      className: text-muted m-b
+    - type: button
+      label: 执行月度结账
+      actionType: ajax
+      action: ajax
+      args:
+        url: '@mutation:ErpFinAccountingPeriod__closePeriod'
+        method: post
+        data:
+          periodId: ${periodId}
+      confirmText: 确认结账此会计期间？结账后该期间凭证不可修改。
+      visible: ${periodData?.status == "OPEN" || periodData?.status == "CLOSING"}
+      target: periodData
+  - key: annualRollover
+    title: 3. 年度结转
+    visible: ${(periodData?.month ?? 0) == 12}
+    body:
+    - type: text
+      text: 12 月期间 closePeriod 已执行年度结转分支：本年利润→未分配利润结转凭证 + 次年年初余额 populate + 次年 12 期间自动创建。此步展示结果，非独立 mutation。
+      className: text-muted m-b
+    - type: data-source
+      name: nextYearPeriods
+      dependsOn: []
+      action: ajax
+      args:
+        url: '@query:ErpFinAccountingPeriod__findPage'
+        method: post
+        data:
+          limit: 200
+          filter_year: ${((periodData?.year ?? 0) + 1)}
+        selection: items{ id year month status code } total
+    - type: text
+      text: ${"次年 " + ((periodData?.year ?? 0) + 1) + " 共生成 " + (nextYearPeriods?.total ?? 0) + " 个期间"}
+      className: text-muted
+  - key: finalize
+    title: 4. 终关
+    body:
+    - type: text
+      text: CLOSED → CLOSED_FINAL，最终锁定期间。终关后只能经反结账回退。
+      className: text-muted m-b
+    - type: button
+      label: 执行终关
+      actionType: ajax
+      action: ajax
+      args:
+        url: '@mutation:ErpFinAccountingPeriod__finalizePeriod'
+        method: post
+        data:
+          periodId: ${periodId}
+      confirmText: 确认终关？终关后期间进入 CLOSED_FINAL 最终锁定态。
+      visible: ${periodData?.status == "CLOSED"}
+      target: periodData
+  - key: reverseClose
+    title: 反结账
+    body:
+    - type: text
+      text: 一次性执行反结账（红冲结转凭证 + 解锁业务单据 + 重开期间）。反结账后期间状态回退至 OPEN。
+      className: text-warning m-b
+    - type: button
+      label: 执行反结账
+      actionType: ajax
+      action: ajax
+      args:
+        url: '@mutation:ErpFinAccountingPeriod__reverseClose'
+        method: post
+        data:
+          periodId: ${periodId}
+      confirmText: 最后确认：执行反结账？此操作将红冲本期结转凭证并重开期间，不可撤销。
+      visible: ${periodData?.status == "CLOSED" || periodData?.status == "CLOSED_FINAL"}
+      target: periodData
+- type: text
+  text: '${(statusRows?.total ?? 0) > 0 ? "per-module 关账结果（ErpFinAccountingPeriodStatus）已加载，共 " + (statusRows?.total ?? 0) + " 条" : ""}'
+  className: text-muted m-t
+  visible: ${(statusRows?.total ?? 0) > 0}

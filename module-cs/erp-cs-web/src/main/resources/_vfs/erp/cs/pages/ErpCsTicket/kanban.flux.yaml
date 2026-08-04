@@ -2,78 +2,76 @@
 # flux kanban 原生组件 + 后端 findBoardData 聚合查询返回扁平图结构（6 列 + SLA 标记）。
 # 拖拽语义（Phase 0 Decision）：onCardMove 按目标列路由 mutation（assign/start/resolve/close/reopen）。
 type: page
-title: "工单看板"
+title: 工单看板
 body:
-  - type: data-source
-    name: boardData
-    dependsOn: ["__board_load__"]
+- type: data-source
+  name: boardData
+  dependsOn:
+  - __board_load__
+  action: ajax
+  args:
+    url: '@query:ErpCsTicket__findBoardData'
+    method: post
+    data:
+      customerId: ${customerId ?? null}
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 6
+    items:
+    - colSpan: 4
+      body:
+      - type: input-number
+        name: customerId
+        label: 客户ID
+        placeholder: 过滤客户
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: button
+        label: 刷新看板
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpCsTicket__findBoardData'
+          method: post
+          data:
+            customerId: ${customerId ?? null}
+        target: boardData
+- type: kanban
+  data: ${boardData}
+  draggable: true
+  columnWidth: 280
+  cardTemplate:
+  - type: text
+    text: ${card.data.title}
+    className: font-medium text-sm
+  - type: status
+    value: ${card.data.priority}
+    labelMap:
+      URGENT: 紧急
+      HIGH: 高
+      MEDIUM: 中
+      LOW: 低
+    levelMap:
+      URGENT: error
+      HIGH: error
+      MEDIUM: warning
+      LOW: default
+  - type: text
+    text: '${card.data.deadlineDateTime && !card.data.isSlaCompleted ? "🔴 SLA超时 " + card.data.deadlineDateTime : (card.data.deadlineDateTime ? card.data.deadlineDateTime : "")}'
+    className: text-xs text-red-500
+    visible: ${card.data.deadlineDateTime && !card.data.isSlaCompleted}
+  onCardMove:
     action: ajax
     args:
-      url: '@query:ErpCsTicket__findBoardData'
+      url: '${event.toColumnId === "col-ASSIGNED" ? "@mutation:ErpCsTicket__assign" : event.toColumnId === "col-IN_PROGRESS" ? (event.fromColumnId === "col-RESOLVED" ? "@mutation:ErpCsTicket__reopen" : "@mutation:ErpCsTicket__start") : event.toColumnId === "col-RESOLVED" ? "@mutation:ErpCsTicket__resolve" : event.toColumnId === "col-CLOSED" ? "@mutation:ErpCsTicket__close" : "@mutation:ErpCsTicket__start"}'
       method: post
       data:
-        customerId: ${customerId ?? null}
-
-  - type: form
-    submitScope: surface
-    body:
-      - type: grid
-        columns:
-          - type: grid-col
-            span: 4
-            body:
-              - type: input-number
-                name: customerId
-                label: "客户ID"
-                placeholder: "过滤客户"
-                clearable: true
-          - type: grid-col
-            span: 2
-            body:
-              - type: button
-                label: "刷新看板"
-                actionType: ajax
-                action: ajax
-                args:
-                  url: '@query:ErpCsTicket__findBoardData'
-                  method: post
-                  data:
-                    customerId: ${customerId ?? null}
-                target: boardData
-
-  - type: kanban
-    data: ${boardData}
-    draggable: true
-    columnWidth: 280
-    cardTemplate:
-      - type: text
-        text: '${card.data.title}'
-        className: "font-medium text-sm"
-      - type: status
-        value: '${card.data.priority}'
-        labelMap:
-          URGENT: "紧急"
-          HIGH: "高"
-          MEDIUM: "中"
-          LOW: "低"
-        levelMap:
-          URGENT: error
-          HIGH: error
-          MEDIUM: warning
-          LOW: default
-      - type: text
-        text: '${card.data.deadlineDateTime && !card.data.isSlaCompleted ? "🔴 SLA超时 " + card.data.deadlineDateTime : (card.data.deadlineDateTime ? card.data.deadlineDateTime : "")}'
-        className: "text-xs text-red-500"
-        visible: '${card.data.deadlineDateTime && !card.data.isSlaCompleted}'
-    onCardMove:
-      action: ajax
-      args:
-        url: '${event.toColumnId === "col-ASSIGNED" ? "@mutation:ErpCsTicket__assign" : event.toColumnId === "col-IN_PROGRESS" ? (event.fromColumnId === "col-RESOLVED" ? "@mutation:ErpCsTicket__reopen" : "@mutation:ErpCsTicket__start") : event.toColumnId === "col-RESOLVED" ? "@mutation:ErpCsTicket__resolve" : event.toColumnId === "col-CLOSED" ? "@mutation:ErpCsTicket__close" : "@mutation:ErpCsTicket__start"}'
-        method: post
-        data:
-          ticketId: ${event.cardId.substring(5)}
-    onCardClick:
-      action: notify
-      args:
-        level: info
-        message: '${"点击工单 " + event.cardId}'
+        ticketId: ${event.cardId.substring(5)}
+  onCardClick:
+    action: notify
+    args:
+      level: info
+      message: ${"点击工单 " + event.cardId}

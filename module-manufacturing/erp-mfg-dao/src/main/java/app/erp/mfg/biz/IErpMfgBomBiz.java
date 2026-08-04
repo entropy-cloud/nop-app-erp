@@ -11,6 +11,7 @@ import app.erp.mfg.dao.entity.ErpMfgBom;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 public interface IErpMfgBomBiz extends ICrudBiz<ErpMfgBom>{
 
@@ -36,6 +37,16 @@ public interface IErpMfgBomBiz extends ICrudBiz<ErpMfgBom>{
                                    @Name("qty") BigDecimal qty,
                                    @Name("useMultiLevel") Boolean useMultiLevel,
                                    IServiceContext context);
+
+    /**
+     * BOM 多级展开为嵌套树（plan 2026-08-03-1232-3 §Phase 2：flux tree 嵌套重建机制方案 A）。
+     * 调用 {@link #explode} 获取扁平 pre-order DFS 节点，按 level 栈算法重建嵌套结构返回给 flux tree 控件。
+     */
+    @BizQuery
+    List<Map<String, Object>> findBomTree(@Name("bomId") Long bomId,
+                                          @Name("qty") BigDecimal qty,
+                                          @Name("useMultiLevel") Boolean useMultiLevel,
+                                          IServiceContext context);
 
     /**
      * 成本卷算（Cost Rollup）。按低层码自下而上：采购件取默认 SKU {@code purchasePrice} 为基础成本；

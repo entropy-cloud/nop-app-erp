@@ -1,0 +1,141 @@
+# contract 合同版本对比（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 2）。
+# flux diff-view 原生组件（oldContent/newContent + viewType split/unified）。
+# 元数据对比表保留；content 双栏经 diff-view。
+# 数据源 ErpCtContractVersion__findPage（filter contractId）+ __get ×2（对比两版本）。
+# 字段级 diff 数据模型不支持（ErpCtContractVersion 仅 content blob + 元数据），维持降级并注明。
+type: page
+title: 合同版本对比
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 5
+    items:
+    - colSpan: 3
+      body:
+      - type: input-number
+        name: contractId
+        label: 合同ID
+        placeholder: 输入合同主键
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: button
+        label: 加载版本列表
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpCtContractVersion__findPage'
+          method: post
+          data:
+            limit: 5000
+            filter_contractId: ${contractId ?? null}
+          selection: items{ id contractId versionNo versionDate status approvedBy approvedAt isCurrent } total
+        target: versionList
+        disabled: ${!contractId}
+- type: data-source
+  name: versionList
+  dependsOn:
+  - __vdiff_load__
+  action: ajax
+  args:
+    url: '@query:ErpCtContractVersion__findPage'
+    method: post
+    data:
+      limit: 5000
+      filter_contractId: ${contractId ?? null}
+    selection: items{ id contractId versionNo versionDate status approvedBy approvedAt isCurrent } total
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 8
+    items:
+    - colSpan: 3
+      body:
+      - type: select
+        name: versionAId
+        label: 版本 A
+        source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? String(v.versionDate).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
+        clearable: true
+    - colSpan: 3
+      body:
+      - type: select
+        name: versionBId
+        label: 版本 B
+        source: '${(versionList?.items ?? []).map((v) => ({ label: "v" + v.versionNo + " (" + (v.versionDate ? String(v.versionDate).substring(0, 10) : "—") + ", " + v.status + (v.isCurrent ? ", 当前)" : ")"), value: v.id }))}'
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: button
+        label: 对比版本
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpCtContractVersion__get'
+          method: post
+          data:
+            id: ${versionAId ?? 0}
+          selection: id versionNo versionDate status approvedBy approvedAt isCurrent content remark
+        target: versionAData
+        disabled: ${!versionAId || !versionBId || versionAId == versionBId}
+- type: data-source
+  name: versionAData
+  dependsOn:
+  - versionAId
+  sendOn: ${versionAId != null}
+  action: ajax
+  args:
+    url: '@query:ErpCtContractVersion__get'
+    method: post
+    data:
+      id: ${versionAId ?? 0}
+    selection: id versionNo versionDate status approvedBy approvedAt isCurrent content remark
+- type: data-source
+  name: versionBData
+  dependsOn:
+  - versionBId
+  sendOn: ${versionBId != null}
+  action: ajax
+  args:
+    url: '@query:ErpCtContractVersion__get'
+    method: post
+    data:
+      id: ${versionBId ?? 0}
+    selection: id versionNo versionDate status approvedBy approvedAt isCurrent content remark
+- type: data-source
+  name: metaRows
+  formula: '${(!versionAData || !versionBData) ? [] : [{ key: "versionNo", label: "版本号", isDate: false, isBool: false }, { key: "versionDate", label: "版本日期", isDate: true, isBool: false }, { key: "status", label: "版本状态", isDate: false, isBool: false }, { key: "isCurrent", label: "是否当前版本", isDate: false, isBool: true }, { key: "approvedBy", label: "批准人", isDate: false, isBool: false }, { key: "approvedAt", label: "批准时间", isDate: true, isBool: false }, { key: "remark", label: "备注", isDate: false, isBool: false }].map((f) => ({ field: f.label, valueA: (versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : (f.isDate ? String(versionAData[f.key]).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionAData[f.key] === true || versionAData[f.key] === "true") ? "是" : "否") : String(versionAData[f.key]))), valueB: (versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : (f.isDate ? String(versionBData[f.key]).substring(0, 19).replace("T", " ") : (f.isBool ? ((versionBData[f.key] === true || versionBData[f.key] === "true") ? "是" : "否") : String(versionBData[f.key]))), changed: ((versionAData[f.key] == null || versionAData[f.key] === "") ? "—" : String(versionAData[f.key])) !== ((versionBData[f.key] == null || versionBData[f.key] === "") ? "—" : String(versionBData[f.key])) }))}'
+- type: text
+  text: '${versionAData && versionBData ? "版本元数据对比（v" + (versionAData?.versionNo ?? "—") + " vs v" + (versionBData?.versionNo ?? "—") + "）· 变更字段数：" + (metaRows ?? []).filter((r) => r.changed).length : "选择两个不同版本后点击「对比版本」。"}'
+  className: text-muted m-b
+- type: table
+  source: ${metaRows ?? []}
+  columns:
+  - name: field
+    label: 字段
+  - name: valueA
+    label: 版本 A
+  - name: valueB
+    label: 版本 B
+  - name: changed
+    label: 变更
+    type: status
+    labelMap:
+      'true': 已变更
+      'false': 一致
+    levelMap:
+      'true': warning
+      'false': default
+- type: text
+  text: 版本内容（content）对比 —— diff-view 双栏（字段级 diff 数据模型不支持，仅 content 文本快照）
+  className: text-muted m-t m-b
+  visible: ${versionAData && versionBData}
+- type: diff-view
+  oldContent: '${versionAData ? (versionAData?.content ?? "") : ""}'
+  newContent: '${versionBData ? (versionBData?.content ?? "") : ""}'
+  viewType: split
+  language: text
+  showInlineDiff: true
+  visible: ${versionAData && versionBData}

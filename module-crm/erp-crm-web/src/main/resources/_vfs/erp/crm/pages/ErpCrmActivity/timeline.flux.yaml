@@ -2,60 +2,56 @@
 # flux timeline 原生组件（替换 each+tpl 降级）。
 # 数据源 ErpCrmActivity__findPage，formula 映射 items。
 type: page
-title: "活动时间线"
+title: 活动时间线
 body:
-  - type: data-source
-    name: rawData
-    dependsOn: ["__tl_load__"]
-    action: ajax
-    args:
-      url: '@query:ErpCrmActivity__findPage'
-      method: post
-      data:
-        filter_leadId: ${leadId ?? null}
-        limit: 100
-        orderBy_field: activityDate
-        orderBy_dir: desc
-      selection: 'items{ id activityType activityDate summary leadId lead{ companyName } } total'
-
-  - type: data-source
-    name: timelineItems
-    formula: '${(rawData.items ?? []).map(a => ({ time: String(a.activityDate ?? ""), title: a.activityType === "CALL" ? "📞 通话" : a.activityType === "EMAIL" ? "✉️ 邮件" : a.activityType === "MEETING" ? "👥 会议" : a.activityType === "NOTE" ? "📝 备注" : String(a.activityType ?? ""), detail: (a.summary ?? "") + ((a.lead && a.lead.companyName) ? " · " + a.lead.companyName : ""), level: a.activityType === "MEETING" ? "success" : a.activityType === "CALL" ? "primary" : "default" }))}'
-
-  - type: form
-    submitScope: surface
-    body:
-      - type: grid
-        columns:
-          - type: grid-col
-            span: 4
-            body:
-              - type: input-number
-                name: leadId
-                label: "线索/商机ID"
-                placeholder: "过滤关联线索"
-                clearable: true
-          - type: grid-col
-            span: 2
-            body:
-              - type: button
-                label: "刷新时间线"
-                actionType: ajax
-                action: ajax
-                args:
-                  url: '@query:ErpCrmActivity__findPage'
-                  method: post
-                  data:
-                    filter_leadId: ${leadId ?? null}
-                    limit: 100
-                  selection: 'items{ id activityType activityDate summary leadId lead{ companyName } } total'
-                target: rawData
-
-  - type: text
-    text: '${"共 " + (rawData.total ?? 0) + " 条活动记录"}'
-    className: "text-muted m-b"
-
-  - type: timeline
-    items: ${timelineItems}
-    mode: left
-    orientation: vertical
+- type: data-source
+  name: rawData
+  dependsOn:
+  - __tl_load__
+  action: ajax
+  args:
+    url: '@query:ErpCrmActivity__findPage'
+    method: post
+    data:
+      filter_leadId: ${leadId ?? null}
+      limit: 100
+      orderBy_field: activityDate
+      orderBy_dir: desc
+    selection: items{ id activityType activityDate summary leadId lead{ companyName } } total
+- type: data-source
+  name: timelineItems
+  formula: '${(rawData.items ?? []).map(a => ({ time: String(a.activityDate ?? ""), title: a.activityType === "CALL" ? "📞 通话" : a.activityType === "EMAIL" ? "✉️ 邮件" : a.activityType === "MEETING" ? "👥 会议" : a.activityType === "NOTE" ? "📝 备注" : String(a.activityType ?? ""), detail: (a.summary ?? "") + ((a.lead && a.lead.companyName) ? " · " + a.lead.companyName : ""), level: a.activityType === "MEETING" ? "success" : a.activityType === "CALL" ? "primary" : "default" }))}'
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 6
+    items:
+    - colSpan: 4
+      body:
+      - type: input-number
+        name: leadId
+        label: 线索/商机ID
+        placeholder: 过滤关联线索
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: button
+        label: 刷新时间线
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpCrmActivity__findPage'
+          method: post
+          data:
+            filter_leadId: ${leadId ?? null}
+            limit: 100
+          selection: items{ id activityType activityDate summary leadId lead{ companyName } } total
+        target: rawData
+- type: text
+  text: ${"共 " + (rawData.total ?? 0) + " 条活动记录"}
+  className: text-muted m-b
+- type: timeline
+  items: ${timelineItems}
+  mode: left
+  orientation: vertical

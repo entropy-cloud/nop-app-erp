@@ -1,0 +1,102 @@
+# drp 净需求计算报表（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 2）。
+# data-source 后端分组聚合 ErpDrpLine__findNetReqGroups + loop + table（嵌套分组）。
+# flux 表达式仅支持箭头表达式体，分组聚合移至后端聚合查询。
+# Σ 公式：safetyStock + forecastDemand − currentStock + allocatedQty − onOrderQty = netRequirement。
+type: page
+title: 净需求计算报表
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 6
+    items:
+    - colSpan: 4
+      body:
+      - type: input-number
+        name: planId
+        label: DRP计划ID
+        placeholder: 输入 DRP 计划主键
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: button
+        label: 加载净需求
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpDrpLine__findNetReqGroups'
+          method: post
+          data:
+            planId: ${planId ?? null}
+        target: netReq
+        disabled: ${!planId}
+- type: data-source
+  name: planData
+  dependsOn:
+  - planId
+  sendOn: ${planId != null}
+  action: ajax
+  args:
+    url: '@query:ErpDrpPlan__get'
+    method: post
+    data:
+      id: ${planId ?? 0}
+    selection: id code planName status periodFrom periodTo
+- type: data-source
+  name: netReq
+  dependsOn:
+  - __netreq_load__
+  action: ajax
+  args:
+    url: '@query:ErpDrpLine__findNetReqGroups'
+    method: post
+    data:
+      planId: ${planId ?? null}
+- type: text
+  text: '${planData ? (planData.code ?? "—") + " · " + (planData.planName ?? "") + " · 状态: " + (planData.status ?? "—") + " · 周期: " + (planData.periodFrom ?? "—") + " ~ " + (planData.periodTo ?? "—") : "请输入有效的 DRP 计划ID 后点击「加载净需求」。"}'
+  className: text-muted m-b
+- type: text
+  text: '${"物料分组数: " + (netReq?.groupCount ?? 0) + " · 明细行数: " + (netReq?.totalLines ?? 0) + " · 净需求合计: " + (netReq?.grandNet ?? 0) + " · 建议补货合计: " + (netReq?.grandSuggested ?? 0)}'
+  className: text-muted m-b
+  visible: ${(netReq?.groupCount ?? 0) > 0}
+- type: loop
+  items: ${netReq?.groups ?? []}
+  itemName: group
+  body:
+  - type: text
+    text: '${"物料 #" + group.materialId + " · 明细 " + group.lineCount + " 行 · 净需求合计 " + group.totNet + " · 建议补货 " + group.totSuggested}'
+    className: font-medium m-t
+  - type: text
+    text: ${"Σ 公式：安全库存(" + group.totSafety + ") + 预测需求(" + group.totForecast + ") − 当前库存(" + group.totStock + ") + 已分配(" + group.totAlloc + ") − 在途(" + group.totOnOrder + ") = 净需求 " + group.totNet}
+    className: text-muted m-b
+  - type: table
+    source: ${group.detailRows}
+    columns:
+    - name: warehouseId
+      label: 仓库
+    - name: safetyStock
+      label: 安全库存
+    - name: forecastDemand
+      label: 预测需求
+    - name: currentStock
+      label: 当前库存
+    - name: allocatedQty
+      label: 已分配
+    - name: onOrderQty
+      label: 在途
+    - name: netRequirement
+      label: 净需求
+    - name: suggestedQty
+      label: 建议补货量
+    - name: replenishmentType
+      label: 补货类型
+      type: status
+      labelMap:
+        PURCHASE: 采购
+        TRANSFER: 调拨
+      levelMap:
+        PURCHASE: primary
+        TRANSFER: info
+    - name: status
+      label: 状态

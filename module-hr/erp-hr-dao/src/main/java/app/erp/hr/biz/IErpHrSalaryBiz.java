@@ -6,10 +6,12 @@ import app.erp.hr.dao.entity.ErpHrSalary;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 薪酬记录聚合根 Biz（payroll.md §五/§六/§七）。标准审批动作（submitForApproval/approve/reject/
@@ -70,4 +72,13 @@ public interface IErpHrSalaryBiz extends ICrudBiz<ErpHrSalary> {
                                   @Name("year") int year,
                                   @Name("upToMonth") int upToMonth,
                                   IServiceContext context);
+
+    /**
+     * 薪酬汇总聚合（plan 2026-08-03-1232-3 §Phase 2：flux 薪酬审批页 data-source 聚合）。
+     * 返回 {@code {count, totalGross, totalSocial, totalTax, totalNet, orgGroups:[{orgId,count,gross,social,tax,net}]}}。
+     */
+    @BizQuery
+    Map<String, Object> findPayrollSummary(@Optional @Name("year") Integer year,
+                                           @Optional @Name("month") Integer month,
+                                           IServiceContext context);
 }

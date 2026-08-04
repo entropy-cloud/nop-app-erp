@@ -2,45 +2,42 @@
 # flux calendar 原生组件（替换矩阵 table 降级）。
 # 休假（APPROVED）按日期范围映射为事件，leaveType 颜色编码。
 type: page
-title: "团队休假日历"
+title: 团队休假日历
 body:
-  - type: data-source
-    name: rawData
-    dependsOn: ["__cal_load__"]
-    action: ajax
-    args:
-      url: '@query:ErpHrLeaveRequest__findPage'
-      method: post
-      data:
-        filter_status: APPROVED
-        limit: 500
-      selection: 'items{ id employeeId leaveType startDate endDate reason employee{ employeeCode employeeName } } total'
-
-  - type: data-source
-    name: calendarEvents
-    formula: '${(rawData.items ?? []).map(r => ({ id: String(r.id), title: (r.employee && r.employee.employeeName ? r.employee.employeeName : "员工#" + r.employeeId) + " " + (r.leaveType === "ANNUAL" ? "年假" : r.leaveType === "SICK" ? "病假" : r.leaveType === "PERSONAL" ? "事假" : r.leaveType === "MARRIAGE" ? "婚假" : r.leaveType === "MATERNITY" ? "产假" : r.leaveType === "FUNERAL" ? "丧假" : r.leaveType === "COMPENSATORY" ? "调休" : String(r.leaveType ?? "")), start: String(r.startDate ?? "") + "T00:00", end: String(r.endDate ?? "") + "T23:59", color: r.leaveType === "ANNUAL" ? "#3b82f6" : r.leaveType === "SICK" ? "#f59e0b" : r.leaveType === "PERSONAL" ? "#f97316" : r.leaveType === "MARRIAGE" ? "#ec4899" : r.leaveType === "MATERNITY" ? "#8b5cf6" : r.leaveType === "FUNERAL" ? "#6b7280" : r.leaveType === "COMPENSATORY" ? "#06b6d4" : "#9ca3af" }))}'
-
-  - type: button
-    label: "刷新日历"
-    actionType: ajax
-    action: ajax
-    args:
-      url: '@query:ErpHrLeaveRequest__findPage'
-      method: post
-      data:
-        filter_status: APPROVED
-        limit: 500
-      selection: 'items{ id employeeId leaveType startDate endDate reason employee{ employeeCode employeeName } } total'
-    target: rawData
-    className: "m-3"
-
-  - type: text
-    text: '${"休假申请: " + (rawData.total ?? 0)}'
-    className: "text-muted m-b"
-
-  - type: calendar
-    view: month
-    events: ${calendarEvents}
-    firstDayOfWeek: 1
-    showWeekends: true
-    locale: zh-CN
+- type: data-source
+  name: rawData
+  dependsOn:
+  - __cal_load__
+  action: ajax
+  args:
+    url: '@query:ErpHrLeaveRequest__findPage'
+    method: post
+    data:
+      filter_status: APPROVED
+      limit: 500
+    selection: items{ id employeeId leaveType startDate endDate reason employee{ employeeCode employeeName } } total
+- type: data-source
+  name: calendarEvents
+  formula: '${(rawData.items ?? []).map(r => ({ id: String(r.id), title: (r.employee && r.employee.employeeName ? r.employee.employeeName : "员工#" + r.employeeId) + " " + (r.leaveType === "ANNUAL" ? "年假" : r.leaveType === "SICK" ? "病假" : r.leaveType === "PERSONAL" ? "事假" : r.leaveType === "MARRIAGE" ? "婚假" : r.leaveType === "MATERNITY" ? "产假" : r.leaveType === "FUNERAL" ? "丧假" : r.leaveType === "COMPENSATORY" ? "调休" : String(r.leaveType ?? "")), start: String(r.startDate ?? "") + "T00:00", end: String(r.endDate ?? "") + "T23:59", color: r.leaveType === "ANNUAL" ? "#3b82f6" : r.leaveType === "SICK" ? "#f59e0b" : r.leaveType === "PERSONAL" ? "#f97316" : r.leaveType === "MARRIAGE" ? "#ec4899" : r.leaveType === "MATERNITY" ? "#8b5cf6" : r.leaveType === "FUNERAL" ? "#6b7280" : r.leaveType === "COMPENSATORY" ? "#06b6d4" : "#9ca3af" }))}'
+- type: button
+  label: 刷新日历
+  actionType: ajax
+  action: ajax
+  args:
+    url: '@query:ErpHrLeaveRequest__findPage'
+    method: post
+    data:
+      filter_status: APPROVED
+      limit: 500
+    selection: items{ id employeeId leaveType startDate endDate reason employee{ employeeCode employeeName } } total
+  target: rawData
+  className: m-3
+- type: text
+  text: '${"休假申请: " + (rawData.total ?? 0)}'
+  className: text-muted m-b
+- type: calendar
+  view: month
+  events: ${calendarEvents}
+  firstDayOfWeek: 1
+  showWeekends: true
+  locale: zh-CN

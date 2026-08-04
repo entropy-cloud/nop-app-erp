@@ -2,59 +2,57 @@
 # flux kanban 原生组件 + 后端 findBoardData 聚合查询返回扁平图结构。
 # 拖拽语义（Phase 0 Decision）：相邻态受限拖拽，onCardMove 按目标列路由 mutation。
 type: page
-title: "任务看板"
+title: 任务看板
 body:
-  - type: data-source
-    name: boardData
-    dependsOn: ["__board_load__"]
+- type: data-source
+  name: boardData
+  dependsOn:
+  - __board_load__
+  action: ajax
+  args:
+    url: '@query:ErpPrjTask__findBoardData'
+    method: post
+    data:
+      projectId: ${projectId ?? null}
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 6
+    items:
+    - colSpan: 4
+      body:
+      - type: input-number
+        name: projectId
+        label: 项目ID
+        placeholder: 过滤项目
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: button
+        label: 刷新看板
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpPrjTask__findBoardData'
+          method: post
+          data:
+            projectId: ${projectId ?? null}
+        target: boardData
+- type: kanban
+  data: ${boardData}
+  draggable: true
+  columnWidth: 300
+  onCardMove:
     action: ajax
     args:
-      url: '@query:ErpPrjTask__findBoardData'
+      url: '${event.toColumnId === "col-IN_PROGRESS" ? "@mutation:ErpPrjTask__startTask" : event.toColumnId === "col-DONE" ? "@mutation:ErpPrjTask__completeTask" : event.toColumnId === "col-BLOCKED" ? "@mutation:ErpPrjTask__blockTask" : "@mutation:ErpPrjTask__unblockTask"}'
       method: post
       data:
-        projectId: ${projectId ?? null}
-
-  - type: form
-    submitScope: surface
-    body:
-      - type: grid
-        columns:
-          - type: grid-col
-            span: 4
-            body:
-              - type: input-number
-                name: projectId
-                label: "项目ID"
-                placeholder: "过滤项目"
-                clearable: true
-          - type: grid-col
-            span: 2
-            body:
-              - type: button
-                label: "刷新看板"
-                actionType: ajax
-                action: ajax
-                args:
-                  url: '@query:ErpPrjTask__findBoardData'
-                  method: post
-                  data:
-                    projectId: ${projectId ?? null}
-                target: boardData
-
-  - type: kanban
-    data: ${boardData}
-    draggable: true
-    columnWidth: 300
-    onCardMove:
-      action: ajax
-      args:
-        url: '${event.toColumnId === "col-IN_PROGRESS" ? "@mutation:ErpPrjTask__startTask" : event.toColumnId === "col-DONE" ? "@mutation:ErpPrjTask__completeTask" : event.toColumnId === "col-BLOCKED" ? "@mutation:ErpPrjTask__blockTask" : "@mutation:ErpPrjTask__unblockTask"}'
-        method: post
-        data:
-          taskId: ${event.cardId.substring(5)}
-          blockReason: '看板拖拽标记阻塞'
-    onCardClick:
-      action: notify
-      args:
-        level: info
-        message: '${"点击卡片 " + event.cardId}'
+        taskId: ${event.cardId.substring(5)}
+        blockReason: 看板拖拽标记阻塞
+  onCardClick:
+    action: notify
+    args:
+      level: info
+      message: ${"点击卡片 " + event.cardId}

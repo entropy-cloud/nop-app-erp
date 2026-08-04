@@ -1,0 +1,97 @@
+# b2b EDI 事务详情（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 2）。
+# flux timeline（状态流转）+ table（日志）+ collapse（报文 payload 开关）。
+# 数据源 ErpB2bEdiLog__findPage（filter ediDocId）+ ErpB2bEdiDoc__get。
+# 字段：ErpB2bEdiDoc.state（非 status）/code；ErpB2bEdiLog.ediDocId/direction/resultCode/resultMsg/logTime/requestPayload/responsePayload。
+type: page
+title: EDI 事务详情
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 7
+    items:
+    - colSpan: 3
+      body:
+      - type: input-number
+        name: ediDocId
+        label: EDI文档ID
+        placeholder: 输入 EDI 文档主键
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: switch
+        name: showPayload
+        label: 展开报文
+        value: false
+    - colSpan: 2
+      body:
+      - type: button
+        label: 查询详情
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpB2bEdiDoc__get'
+          method: post
+          data:
+            id: ${ediDocId ?? 0}
+          selection: id code state relatedBillType relatedBillCode formatId error retryCount sentAt acknowledgedAt
+        target: ediDoc
+        disabled: ${!ediDocId}
+- type: data-source
+  name: ediDoc
+  dependsOn:
+  - __edi_load__
+  action: ajax
+  args:
+    url: '@query:ErpB2bEdiDoc__get'
+    method: post
+    data:
+      id: ${ediDocId ?? 0}
+    selection: id code state relatedBillType relatedBillCode formatId error retryCount sentAt acknowledgedAt
+- type: data-source
+  name: logRaw
+  dependsOn:
+  - ediDocId
+  sendOn: ${ediDocId != null}
+  action: ajax
+  args:
+    url: '@query:ErpB2bEdiLog__findPage'
+    method: post
+    data:
+      limit: 5000
+      filter_ediDocId: ${ediDocId ?? null}
+    selection: items{ id ediDocId direction resultCode resultMsg requestPayload responsePayload logTime } total
+- type: data-source
+  name: timelineItems
+  formula: '${((raw) => ((raw && raw.items) ? raw.items : []).map((r) => { const ok = r.resultCode === "OK" || r.resultCode === "SUCCESS" || r.resultCode === "0"; const titleParts = ["[" + (r.direction || "?") + "]"]; if (r.resultCode) titleParts.push(r.resultCode); return { time: r.logTime, title: titleParts.join(" · "), detail: r.resultMsg ?? "", level: ok ? "success" : "error" }; }))(logRaw)}'
+- type: text
+  text: '${ediDoc ? (ediDoc?.code ?? "—") + " · 状态: " + (ediDoc?.state ?? "—") + " · 关联单据: " + (ediDoc?.relatedBillType ?? "—") + " / " + (ediDoc?.relatedBillCode ?? "—") + " · 重试次数: " + (ediDoc?.retryCount ?? 0) + " · 发送: " + (ediDoc?.sentAt ?? "—") + " · 确认: " + (ediDoc?.acknowledgedAt ?? "—") : "请输入有效的 EDI 文档ID 后点击「查询详情」。"}'
+  className: text-muted m-b
+- type: text
+  text: ${"交互日志数：" + (timelineItems ?? []).length + "（按 logTime 倒序）"}
+  className: text-muted m-b
+  visible: ${(timelineItems ?? []).length > 0}
+- type: timeline
+  items: ${timelineItems ?? []}
+  mode: left
+  orientation: vertical
+- type: collapse
+  visible: ${showPayload && (logRaw ?? []).length > 0}
+  items:
+  - key: payload
+    title: 报文详情（requestPayload / responsePayload，纯文本展示，语法高亮为 Non-Goal）
+    body:
+    - type: table
+      source: '${(logRaw && logRaw?.items) ? logRaw?.items.slice().reverse() : []}'
+      columns:
+      - name: direction
+        label: 方向
+      - name: resultCode
+        label: 结果
+      - name: logTime
+        label: 时间
+      - name: requestPayload
+        label: Request
+      - name: responsePayload
+        label: Response

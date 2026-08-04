@@ -11,7 +11,12 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import app.erp.mfg.biz.BomExplosionNode;
 import app.erp.mfg.biz.CostRollupResult;
@@ -59,6 +64,46 @@ public class ErpMfgBomBizModel extends CrudBizModel<ErpMfgBom> implements IErpMf
                                           @Name("useMultiLevel") Boolean useMultiLevel,
                                           IServiceContext context) {
         return bomExpander.explode(bomId, qty, Boolean.TRUE.equals(useMultiLevel));
+    }
+
+    @Override
+    @BizQuery
+    public List<Map<String, Object>> findBomTree(@Name("bomId") Long bomId,
+                                                 @Name("qty") BigDecimal qty,
+                                                 @Name("useMultiLevel") Boolean useMultiLevel,
+                                                 IServiceContext context) {
+        List<BomExplosionNode> flat = bomExpander.explode(bomId, qty, Boolean.TRUE.equals(useMultiLevel));
+        List<Map<String, Object>> roots = new ArrayList<>();
+        // 栈算法重建嵌套（explode 返回 pre-order DFS，父节点先于子节点）
+        Deque<Map<String, Object>> stack = new LinkedList<>();
+        Deque<Integer> levelStack = new LinkedList<>();
+        for (BomExplosionNode n : flat) {
+            Map<String, Object> node = new LinkedHashMap<>();
+            node.put("id", n.getMaterialId());
+            node.put("name", "物料 " + n.getMaterialId() + " [" + (n.isManufactured() ? "制造件" : "采购件")
+                    + "] ×" + n.getQuantity());
+            node.put("materialId", n.getMaterialId());
+            node.put("quantity", n.getQuantity());
+            node.put("operationId", n.getOperationId());
+            node.put("manufactured", n.isManufactured());
+            node.put("sourceBomId", n.getSourceBomId());
+            node.put("level", n.getLevel());
+            node.put("children", new ArrayList<Map<String, Object>>());
+            while (!stack.isEmpty() && levelStack.peek() != null && levelStack.peek() >= n.getLevel()) {
+                stack.pop();
+                levelStack.pop();
+            }
+            if (stack.isEmpty()) {
+                roots.add(node);
+            } else {
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> siblings = (List<Map<String, Object>>) stack.peek().get("children");
+                siblings.add(node);
+            }
+            stack.push(node);
+            levelStack.push(n.getLevel());
+        }
+        return roots;
     }
 
     @Override

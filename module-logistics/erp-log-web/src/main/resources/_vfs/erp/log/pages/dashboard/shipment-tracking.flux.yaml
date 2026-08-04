@@ -1,0 +1,72 @@
+# logistics 发运追踪时间线（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 2）。
+# flux timeline 原生组件（shipment + logs 双查询）+ data-source（dependsOn 级联）。
+# 数据源 ErpLogShipment__get + ErpLogShipmentLog__findPage（filter shipmentId）。
+# 注：flux 表达式仅支持箭头表达式体（无块体），故 timeline items 经单 .map() 表达式构造。
+type: page
+title: 发运追踪时间线
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 6
+    items:
+    - colSpan: 4
+      body:
+      - type: input-number
+        name: shipmentId
+        label: 发运单ID
+        placeholder: 输入发运单主键
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: button
+        label: 查询时间线
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpLogShipment__get'
+          method: post
+          data:
+            id: ${shipmentId ?? 0}
+          selection: id code estimatedDeliveryDate actualDeliveryDate status trackingNo carrierId totalParcels
+        target: shipmentData
+        disabled: ${!shipmentId}
+- type: data-source
+  name: shipmentData
+  dependsOn:
+  - __track_load__
+  action: ajax
+  args:
+    url: '@query:ErpLogShipment__get'
+    method: post
+    data:
+      id: ${shipmentId ?? 0}
+    selection: id code estimatedDeliveryDate actualDeliveryDate status trackingNo carrierId totalParcels
+- type: data-source
+  name: logRaw
+  dependsOn:
+  - shipmentId
+  sendOn: ${shipmentId != null}
+  action: ajax
+  args:
+    url: '@query:ErpLogShipmentLog__findPage'
+    method: post
+    data:
+      limit: 5000
+      filter_shipmentId: ${shipmentId ?? null}
+    selection: items{ id shipmentId actionType executedAt isSuccess httpStatus errorCode errorMessage requestBody responseBody } total
+- type: data-source
+  name: timelineItems
+  formula: '${(logRaw?.items ?? []).map((r) => ({ time: r.executedAt, title: "[" + (r.actionType ?? "EVENT") + "]" + (r.httpStatus != null ? " · HTTP " + r.httpStatus : "") + " · " + ((r.isSuccess === true || r.isSuccess === "true") ? "成功" : "失败"), detail: ((r.isSuccess === true || r.isSuccess === "true") ? "" : ((r.errorCode ? "错误码: " + r.errorCode : "") + (r.errorMessage ? " 信息: " + r.errorMessage : ""))), level: ((r.isSuccess === true || r.isSuccess === "true") ? "success" : "error") }))}'
+- type: text
+  text: '${shipmentData ? (shipmentData.code ?? "—") + " · 追踪号: " + (shipmentData.trackingNo ?? "—") + " · 状态: " + (shipmentData.status ?? "—") + " · 包裹数: " + (shipmentData.totalParcels ?? 0) + " · 预计送达: " + (shipmentData.estimatedDeliveryDate ?? "—") : "请输入有效的发运单ID后点击「查询时间线」。"}'
+  className: text-muted m-b
+- type: text
+  text: ${"事件数：" + (timelineItems ?? []).length + "（按 executedAt 倒序）"}
+  className: text-muted m-b
+  visible: ${(timelineItems ?? []).length > 0}
+- type: timeline
+  items: ${timelineItems ?? []}
+  mode: left
+  orientation: vertical

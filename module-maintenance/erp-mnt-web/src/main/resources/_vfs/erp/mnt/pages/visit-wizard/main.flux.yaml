@@ -1,0 +1,163 @@
+# 维护访问执行向导（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 1）。
+# flux wizard 原生组件（替换手写 page.yaml 步骤指示器 + adaptor）。
+# 编排既有 maintenance Facade mutation 链（零后端 delta，BizModel 状态机已就绪）：
+#   __start(SCHEDULED→IN_PROGRESS + 设备联动) → __save(结果字段) → __complete(IN_PROGRESS→COMPLETED) + __cancel。
+# 4 步：维护信息确认 → 备件消耗 → 执行结果 → 确认完成/取消。
+type: page
+title: 维护访问执行向导
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 6
+    items:
+    - colSpan: 4
+      body:
+      - type: select
+        name: visitId
+        label: 维护访问
+        required: true
+        clearable: true
+        placeholder: 选择要执行的维护访问
+        source:
+          action: ajax
+          args:
+            url: '@query:ErpMntVisit__findPage'
+            method: post
+            data:
+              limit: 200
+            selection: items{ id code status visitType visitDate equipmentId } total
+    - colSpan: 2
+      body:
+      - type: button
+        label: 进入向导
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpMntVisit__get'
+          method: post
+          data:
+            id: ${visitId ?? 0}
+          selection: id code status visitType visitDate equipmentId assignedTo result remark startTime endTime totalMinutes completedAt completedBy
+        target: visitData
+        disabled: ${!visitId}
+- type: data-source
+  name: visitData
+  dependsOn:
+  - __vwiz_load__
+  action: ajax
+  args:
+    url: '@query:ErpMntVisit__get'
+    method: post
+    data:
+      id: ${visitId ?? 0}
+    selection: id code status visitType visitDate equipmentId assignedTo result remark startTime endTime totalMinutes completedAt completedBy
+- type: data-source
+  name: spareParts
+  dependsOn:
+  - visitData
+  action: ajax
+  args:
+    url: '@query:ErpMntSparePartUsage__findPage'
+    method: post
+    data:
+      limit: 500
+    selection: items{ id code warehouseId totalAmount docStatus approveStatus posted } total
+- type: text
+  text: ${"维护访问：" + (visitData?.code ?? "—") + " · 状态：" + (visitData?.status ?? "—")}
+  className: text-muted m-b
+- type: wizard
+  linear: true
+  mountOnEnter: true
+  statusPath: visitWizardStatus
+  steps:
+  - key: info
+    title: 1. 维护信息确认
+    body:
+    - type: text
+      text: ${"维护类型：" + (visitData?.visitType ?? "—") + " · 访问日期：" + (visitData?.visitDate ?? "—") + " · 设备：" + (visitData?.equipmentId ?? "—") + " · 指派人：" + (visitData?.assignedTo ?? "—")}
+      className: text-muted m-b
+    - type: button
+      label: 开始执行
+      actionType: ajax
+      action: ajax
+      args:
+        url: '@mutation:ErpMntVisit__start'
+        method: post
+        data:
+          visitId: ${visitId}
+      confirmText: 确认开始执行？设备状态将联动为维护中。
+      visible: ${visitData?.status == "SCHEDULED"}
+      target: visitData
+  - key: spare
+    title: 2. 备件消耗
+    body:
+    - type: text
+      text: ${"备件消耗记录：" + (spareParts?.total ?? 0) + " 条（SparePartUsage 嵌套文档，经独立 CRUD 页面创建明细行）"}
+      className: text-muted m-b
+  - key: result
+    title: 3. 执行结果
+    body:
+    - type: form
+      id: resultForm
+      valuesPath: wizardData.result
+      submitScope: surface
+      body:
+      - type: button-group
+        name: resultValue
+        label: 维护结果
+        required: true
+        value: ${visitData?.result ?? ""}
+        options:
+        - label: 正常
+          value: NORMAL
+        - label: 异常
+          value: ABNORMAL
+        - label: 部分完成
+          value: PARTIAL
+      - type: textarea
+        name: remarkValue
+        label: 备注/建议
+        value: ${visitData?.remark ?? ""}
+        placeholder: 录入维护备注或建议
+      - type: button
+        label: 保存结果
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@mutation:ErpMntVisit__save'
+          method: post
+          data:
+            data:
+              id: ${visitId}
+              result: ${wizardData.result.resultValue ?? visitData?.result}
+              remark: ${wizardData.result.remarkValue ?? visitData?.remark}
+  - key: complete
+    title: 4. 确认完成
+    body:
+    - type: text
+      text: 确认完成将翻转状态为 COMPLETED 并恢复设备状态为运行中。
+      className: text-muted m-b
+    - type: button
+      label: 确认完成
+      actionType: ajax
+      action: ajax
+      args:
+        url: '@mutation:ErpMntVisit__complete'
+        method: post
+        data:
+          visitId: ${visitId}
+      confirmText: 确认完成？状态将翻转为 COMPLETED，设备恢复运行中。
+      target: visitData
+    - type: button
+      label: 取消访问
+      actionType: ajax
+      action: ajax
+      args:
+        url: '@mutation:ErpMntVisit__cancel'
+        method: post
+        data:
+          visitId: ${visitId}
+      confirmText: 确认取消？状态将翻转为 CANCELLED（终态），不可撤销。
+      target: visitData

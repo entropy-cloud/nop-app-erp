@@ -1,0 +1,144 @@
+# 采购三单匹配联查（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 2）。
+# crud ×4（差异预警 + 三表并列，与实况一致；对源设计 §3.2「crud×3+card」偏离注记：实况为 4 crud）+ mapping 差异色。
+# 数据源：ErpPurDashboard__findThreeWayMatchDiffAlert（差异预警）+ ErpPurOrder/Receive/Invoice__findPage（按 supplierId 过滤）。
+type: page
+title: 三单匹配联查
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 6
+    items:
+    - colSpan: 4
+      body:
+      - type: input-number
+        name: supplierId
+        label: 供应商ID
+        placeholder: 输入供应商ID过滤三表
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: button
+        label: 刷新联查
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpPurDashboard__findThreeWayMatchDiffAlert'
+          method: post
+        target: diffAlert
+- type: data-source
+  name: diffAlert
+  dependsOn:
+  - __twm_load__
+  action: ajax
+  args:
+    url: '@query:ErpPurDashboard__findThreeWayMatchDiffAlert'
+    method: post
+- type: text
+  text: ${"① 差异预警（发票单价 vs 订单单价超容差，阈值 5% erp-pur.match-price-tolerance）· " + (diffAlert ?? []).length + " 条"}
+  className: text-muted m-b
+- type: crud
+  source: ${diffAlert ?? []}
+  columns:
+  - name: invoiceCode
+    label: 发票号
+  - name: supplierName
+    label: 供应商
+  - name: varianceType
+    label: 差异类型
+    type: status
+    labelMap:
+      PRICE: 价格差异
+    levelMap:
+      PRICE: error
+- type: text
+  text: ② 采购订单 / ③ 采购入库单 / ④ 采购发票（按供应商过滤并列）
+  className: text-muted m-t m-b
+- type: data-source
+  name: poList
+  dependsOn:
+  - supplierId
+  sendOn: ${supplierId != null}
+  action: ajax
+  args:
+    url: '@query:ErpPurOrder__findPage'
+    method: post
+    data:
+      filter_supplierId: ${supplierId ?? null}
+      limit: 20
+    selection: items{ id code businessDate deliveryDate totalAmount docStatus approveStatus } total
+- type: data-source
+  name: receiveList
+  dependsOn:
+  - supplierId
+  sendOn: ${supplierId != null}
+  action: ajax
+  args:
+    url: '@query:ErpPurReceive__findPage'
+    method: post
+    data:
+      filter_supplierId: ${supplierId ?? null}
+      limit: 20
+    selection: items{ id code businessDate totalAmount docStatus approveStatus } total
+- type: data-source
+  name: invoiceList
+  dependsOn:
+  - supplierId
+  sendOn: ${supplierId != null}
+  action: ajax
+  args:
+    url: '@query:ErpPurInvoice__findPage'
+    method: post
+    data:
+      filter_supplierId: ${supplierId ?? null}
+      limit: 20
+    selection: items{ id code businessDate totalAmount docStatus approveStatus } total
+- type: crud
+  source: ${poList?.items ?? []}
+  columns:
+  - name: code
+    label: 订单号
+  - name: totalAmount
+    label: 订单金额
+    type: number
+    precision: 2
+  - name: docStatus
+    label: 状态
+    type: status
+    labelMap:
+      ACTIVE: 生效
+    levelMap:
+      ACTIVE: primary
+- type: crud
+  source: ${receiveList?.items ?? []}
+  columns:
+  - name: code
+    label: 入库单号
+  - name: totalAmount
+    label: 入库金额
+    type: number
+    precision: 2
+  - name: docStatus
+    label: 状态
+    type: status
+    labelMap:
+      ACTIVE: 生效
+    levelMap:
+      ACTIVE: primary
+- type: crud
+  source: ${invoiceList?.items ?? []}
+  columns:
+  - name: code
+    label: 发票号
+  - name: totalAmount
+    label: 发票金额
+    type: number
+    precision: 2
+  - name: docStatus
+    label: 状态
+    type: status
+    labelMap:
+      ACTIVE: 生效
+    levelMap:
+      ACTIVE: primary

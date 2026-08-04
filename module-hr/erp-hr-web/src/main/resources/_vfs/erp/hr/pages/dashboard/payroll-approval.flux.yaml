@@ -1,0 +1,191 @@
+# HR 薪酬核算审批（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 2）。
+# data-source 后端聚合 ErpHrSalary__findPayrollSummary（汇总 + 按组织分组）+ crud 明细（markPaid/voidSalary）。
+# flux 表达式仅支持箭头表达式体，分组聚合移至后端聚合查询。
+type: page
+title: 薪酬核算审批
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 6
+    items:
+    - colSpan: 2
+      body:
+      - type: input-number
+        name: year
+        label: 年份
+        value: 2026
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: select
+        name: month
+        label: 月份
+        value: 1
+        options:
+        - label: 1月
+          value: 1
+        - label: 2月
+          value: 2
+        - label: 3月
+          value: 3
+        - label: 4月
+          value: 4
+        - label: 5月
+          value: 5
+        - label: 6月
+          value: 6
+        - label: 7月
+          value: 7
+        - label: 8月
+          value: 8
+        - label: 9月
+          value: 9
+        - label: 10月
+          value: 10
+        - label: 11月
+          value: 11
+        - label: 12月
+          value: 12
+    - colSpan: 2
+      body:
+      - type: button
+        label: 刷新汇总与明细
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpHrSalary__findPayrollSummary'
+          method: post
+          data:
+            year: ${year ?? null}
+            month: ${month ?? null}
+        target: summary
+        refreshSource: salaryRaw
+- type: data-source
+  name: summary
+  dependsOn:
+  - __pay_load__
+  action: ajax
+  args:
+    url: '@query:ErpHrSalary__findPayrollSummary'
+    method: post
+    data:
+      year: ${year ?? null}
+      month: ${month ?? null}
+- type: data-source
+  name: salaryRaw
+  dependsOn:
+  - __pay_load__
+  action: ajax
+  args:
+    url: '@query:ErpHrSalary__findPage'
+    method: post
+    data:
+      limit: 2000
+      filter_year: ${year ?? null}
+      filter_month: ${month ?? null}
+    selection: items{ id year month orgId employeeId grossSalary netSalary taxAmount socialInsurance basicSalary paymentStatus approveStatus } total
+- type: grid
+  columns: 10
+  items:
+  - colSpan: 2
+    body:
+    - type: text
+      text: ${"人数\n" + (summary?.count ?? 0)}
+  - colSpan: 2
+    body:
+    - type: text
+      text: ${"应发合计\n" + (summary?.totalGross ?? 0)}
+  - colSpan: 2
+    body:
+    - type: text
+      text: ${"社保合计\n" + (summary?.totalSocial ?? 0)}
+  - colSpan: 2
+    body:
+    - type: text
+      text: ${"个税合计\n" + (summary?.totalTax ?? 0)}
+  - colSpan: 2
+    body:
+    - type: text
+      text: ${"实发合计\n" + (summary?.totalNet ?? 0)}
+- type: text
+  text: 按组织（orgId）分组聚合：
+  className: text-muted m-b
+- type: table
+  source: ${summary?.orgGroups ?? []}
+  columns:
+  - name: orgId
+    label: 组织ID
+  - name: count
+    label: 人数
+  - name: gross
+    label: 应发
+  - name: social
+    label: 社保
+  - name: tax
+    label: 个税
+  - name: net
+    label: 实发
+- type: text
+  text: 薪酬明细（按年月过滤）
+  className: text-muted m-t m-b
+- type: crud
+  source: ${salaryRaw?.items ?? []}
+  columns:
+  - name: id
+    label: ID
+  - name: employeeId
+    label: 员工ID
+  - name: orgId
+    label: 组织
+  - name: grossSalary
+    label: 应发
+    type: number
+    precision: 2
+  - name: socialInsurance
+    label: 社保
+    type: number
+    precision: 2
+  - name: taxAmount
+    label: 个税
+    type: number
+    precision: 2
+  - name: netSalary
+    label: 实发
+    type: number
+    precision: 2
+  - name: paymentStatus
+    label: 支付状态
+    type: status
+    labelMap:
+      PAID: 已发放
+      PENDING: 待发放
+      VOID: 作废
+    levelMap:
+      PAID: success
+      PENDING: warning
+      VOID: default
+  actions:
+  - label: 标记已发放
+    actionType: ajax
+    action: ajax
+    confirmText: 确认标记此薪酬记录为已发放？
+    args:
+      url: '@mutation:ErpHrSalary__markPaid'
+      method: post
+      data:
+        salaryId: ${$slot?.record?.id}
+    visible: ${$slot?.record?.paymentStatus == "PENDING"}
+    refreshSource: salaryRaw
+  - label: 作废
+    actionType: ajax
+    action: ajax
+    confirmText: 确认作废此薪酬记录？此操作不可逆。
+    args:
+      url: '@mutation:ErpHrSalary__voidSalary'
+      method: post
+      data:
+        salaryId: ${$slot?.record?.id}
+    visible: ${$slot?.record?.paymentStatus != "VOID"}
+    refreshSource: salaryRaw

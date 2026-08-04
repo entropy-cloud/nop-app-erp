@@ -5,12 +5,14 @@ import app.erp.aps.dao.entity.ErpApsOperationOrder;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Map;
 
 public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>{
 
@@ -74,4 +76,24 @@ public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>
      */
     @BizMutation
     ErpApsOperationOrder cancel(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+
+    /**
+     * 甘特图聚合查询（plan 2026-08-03-1232-3 Phase 0）：返回 flux gantt 契约
+     * {@code {tasks:[{id,text,start,end,type,progress,machineId,workOrderId,sequence,status}], links:[{source,target,type,lag}]}}。
+     * links 按 Phase 0 裁决=方案 A（同 workOrderId 按 sequence 相邻连边，FS type=0）。
+     */
+    @BizQuery
+    Map<String, Object> findGanttData(@Optional @Name("machineId") Long machineId,
+                                      @Optional @Name("status") String status,
+                                      IServiceContext context);
+
+    /**
+     * 甘特图拖拽持久化（plan 2026-08-03-1232-3 Phase 0 裁决）：写 plannedStartDateT/plannedEndDateT。
+     * 不内联产能校验（裁决：产能由排程引擎在下次运行暴露，见 plan Decision）。
+     */
+    @BizMutation
+    ErpApsOperationOrder updateSchedule(@Name("opOrderId") Long opOrderId,
+                                        @Name("start") LocalDateTime start,
+                                        @Name("end") LocalDateTime end,
+                                        IServiceContext context);
 }

@@ -1,0 +1,87 @@
+# APS 排产甘特图（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 0）。
+# flux gantt 原生组件（替换只读 echarts custom series 降级）。
+# 数据源 ErpApsOperationOrder__findGanttData（聚合查询，返回 {tasks, links}）。
+# links 派生（Phase 0 Decision 方案 A）：同 workOrderId 按 sequence 相邻连边（FS type=0）。
+# 拖拽持久化（Phase 0 Decision）：onTaskDragEnd → ErpApsOperationOrder__updateSchedule 写 plannedStart/EndDateT（无内联产能校验，裁决见 plan）。
+type: page
+title: 排产甘特图
+body:
+- type: data-source
+  name: ganttData
+  dependsOn:
+  - __gantt_load__
+  action: ajax
+  args:
+    url: '@query:ErpApsOperationOrder__findGanttData'
+    method: post
+    data:
+      machineId: ${machineId ?? null}
+      status: ${status ?? null}
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 8
+    items:
+    - colSpan: 3
+      body:
+      - type: input-number
+        name: machineId
+        label: 工作中心ID
+        placeholder: 留空=全部工作中心
+        clearable: true
+    - colSpan: 3
+      body:
+      - type: select
+        name: status
+        label: 状态
+        placeholder: 留空=全部状态
+        clearable: true
+        options:
+        - label: 草稿
+          value: DRAFT
+        - label: 已计划
+          value: PLANNED
+        - label: 进行中
+          value: IN_PROGRESS
+        - label: 已完成
+          value: FINISHED
+        - label: 已取消
+          value: CANCELLED
+    - colSpan: 2
+      body:
+      - type: button
+        label: 刷新甘特图
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpApsOperationOrder__findGanttData'
+          method: post
+          data:
+            machineId: ${machineId ?? null}
+            status: ${status ?? null}
+        target: ganttData
+- type: text
+  text: ${"共 " + (ganttData?.tasks ?? []).length + " 道工序 · 依赖边 " + (ganttData?.links ?? []).length + " 条（同工单按工序顺序派生）"}
+  className: text-muted m-b
+- type: gantt
+  tasks: ${ganttData?.tasks ?? []}
+  links: ${ganttData?.links ?? []}
+  defaultZoom: week
+  draggable: true
+  editable: true
+  linkable: true
+  onTaskDragEnd:
+    action: ajax
+    args:
+      url: '@mutation:ErpApsOperationOrder__updateSchedule'
+      method: post
+      data:
+        opOrderId: ${event.id}
+        start: ${event.start}
+        end: ${event.end}
+  onTaskClick:
+    action: notify
+    args:
+      level: info
+      message: ${"点击工序 " + event.id}

@@ -1,0 +1,83 @@
+# BOM 多级展开树（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 2）。
+# flux tree 原生组件（替换 AMIS tree + service adaptor）。
+# 嵌套重建机制（Phase 2 Decision 方案 A）：后端 ErpMfgBom__findBomTree 返回嵌套树（栈算法重建）。
+# flux 表达式仅支持箭头表达式体，嵌套重建（while 栈算法）移至后端聚合查询。
+type: page
+title: BOM 多级展开树
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 9
+    items:
+    - colSpan: 3
+      body:
+      - type: input-number
+        name: bomId
+        label: BOM ID
+        placeholder: 输入要展开的 BOM 主键
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: input-number
+        name: qty
+        label: 期望产出量
+        placeholder: 留空=标准批量
+        clearable: true
+    - colSpan: 2
+      body:
+      - type: switch
+        name: useMultiLevel
+        label: 多级展开
+        value: true
+    - colSpan: 2
+      body:
+      - type: button
+        label: 展开 BOM
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpMfgBom__findBomTree'
+          method: post
+          data:
+            bomId: ${bomId ?? null}
+            qty: ${qty ?? null}
+            useMultiLevel: ${useMultiLevel ?? true}
+        target: bomTree
+        disabled: ${!bomId}
+- type: data-source
+  name: bomTree
+  dependsOn:
+  - __bom_load__
+  action: ajax
+  args:
+    url: '@query:ErpMfgBom__findBomTree'
+    method: post
+    data:
+      bomId: ${bomId ?? null}
+      qty: ${qty ?? null}
+      useMultiLevel: ${useMultiLevel ?? true}
+- type: text
+  text: ${"展开节点数：" + (bomTree ?? []).length + "（多级展开/折叠，叶子节点 = 采购件；制造件可继续展开）"}
+  className: text-muted m-b
+  visible: ${(bomTree ?? []).length > 0}
+- type: text
+  text: 请输入 BOM ID 后点击「展开 BOM」。若已点击仍无数据，可能该 BOM 无明细行或不存在。
+  className: text-muted p-3
+  visible: ${(bomTree ?? []).length == 0}
+- type: tree
+  data: ${bomTree ?? []}
+  labelField: name
+  keyField: id
+  childrenKey: children
+  searchable: true
+  initiallyExpanded: 2
+  showGuideLine: true
+  node:
+  - type: text
+    text: ${node?.name}
+    className: font-medium
+  - type: text
+    text: '${node?.operationId ? " · 工序#" + node?.operationId : ""}'
+    className: text-xs text-gray-500

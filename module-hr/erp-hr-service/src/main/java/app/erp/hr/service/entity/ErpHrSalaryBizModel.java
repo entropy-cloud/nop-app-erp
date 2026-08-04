@@ -16,6 +16,7 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
@@ -192,6 +193,67 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
 
     static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    @Override
+    @BizQuery
+    public java.util.Map<String, Object> findPayrollSummary(@Optional @Name("year") Integer year,
+                                                            @Optional @Name("month") Integer month,
+                                                            IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.setLimit(2000);
+        if (year != null) {
+            q.addFilter(eq("year", year));
+        }
+        if (month != null) {
+            q.addFilter(eq("month", month));
+        }
+        List<ErpHrSalary> rows = findList(q, null, context);
+
+        BigDecimal totalGross = BigDecimal.ZERO;
+        BigDecimal totalSocial = BigDecimal.ZERO;
+        BigDecimal totalTax = BigDecimal.ZERO;
+        BigDecimal totalNet = BigDecimal.ZERO;
+        java.util.Map<Long, BigDecimal[]> orgMap = new java.util.LinkedHashMap<>();
+        java.util.List<Long> orgOrder = new ArrayList<>();
+        for (ErpHrSalary s : rows) {
+            totalGross = totalGross.add(nz(s.getGrossSalary()));
+            totalSocial = totalSocial.add(nz(s.getSocialInsurance()));
+            totalTax = totalTax.add(nz(s.getTaxAmount()));
+            totalNet = totalNet.add(nz(s.getNetSalary()));
+            Long key = s.getOrgId() != null ? s.getOrgId() : 0L;
+            BigDecimal[] agg = orgMap.get(key);
+            if (agg == null) {
+                agg = new BigDecimal[]{BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO};
+                orgMap.put(key, agg);
+                orgOrder.add(key);
+            }
+            agg[0] = agg[0].add(BigDecimal.ONE);
+            agg[1] = agg[1].add(nz(s.getGrossSalary()));
+            agg[2] = agg[2].add(nz(s.getSocialInsurance()));
+            agg[3] = agg[3].add(nz(s.getTaxAmount()));
+            agg[4] = agg[4].add(nz(s.getNetSalary()));
+        }
+        List<java.util.Map<String, Object>> orgGroups = new ArrayList<>();
+        for (Long key : orgOrder) {
+            BigDecimal[] agg = orgMap.get(key);
+            java.util.Map<String, Object> g = new java.util.LinkedHashMap<>();
+            g.put("orgId", key);
+            g.put("count", agg[0].intValue());
+            g.put("gross", agg[1].setScale(2, java.math.RoundingMode.HALF_UP));
+            g.put("social", agg[2].setScale(2, java.math.RoundingMode.HALF_UP));
+            g.put("tax", agg[3].setScale(2, java.math.RoundingMode.HALF_UP));
+            g.put("net", agg[4].setScale(2, java.math.RoundingMode.HALF_UP));
+            orgGroups.add(g);
+        }
+        java.util.Map<String, Object> result = new java.util.LinkedHashMap<>();
+        result.put("count", rows.size());
+        result.put("totalGross", totalGross.setScale(2, java.math.RoundingMode.HALF_UP));
+        result.put("totalSocial", totalSocial.setScale(2, java.math.RoundingMode.HALF_UP));
+        result.put("totalTax", totalTax.setScale(2, java.math.RoundingMode.HALF_UP));
+        result.put("totalNet", totalNet.setScale(2, java.math.RoundingMode.HALF_UP));
+        result.put("orgGroups", orgGroups);
+        return result;
     }
 
 }

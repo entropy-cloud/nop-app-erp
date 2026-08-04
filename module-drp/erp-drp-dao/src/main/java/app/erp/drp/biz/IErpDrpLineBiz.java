@@ -3,9 +3,13 @@ package app.erp.drp.biz;
 import app.erp.drp.dao.entity.ErpDrpLine;
 import app.erp.drp.dao.entity.ErpDrpPlan;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
+
+import java.util.Map;
 
 public interface IErpDrpLineBiz extends ICrudBiz<ErpDrpLine> {
 
@@ -39,4 +43,11 @@ public interface IErpDrpLineBiz extends ICrudBiz<ErpDrpLine> {
      */
     @BizMutation
     ErpDrpLine cancelLine(@Name("lineId") Long lineId, IServiceContext context);
+
+    /**
+     * 净需求分组聚合（plan 2026-08-03-1232-3 §Phase 2：flux 净需求页 data-source 分组聚合）。
+     * 按 materialId 分组返回 {@code {groups:[{materialId,lineCount,totSafety,...,detailRows:[...]}], groupCount, grandNet, grandSuggested}}。
+     */
+    @BizQuery
+    Map<String, Object> findNetReqGroups(@Optional @Name("planId") Long planId, IServiceContext context);
 }

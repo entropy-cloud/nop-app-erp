@@ -1,0 +1,138 @@
+# b2b ASN 流程跟踪（F16 flux 原生重写，plan 2026-08-03-1232-3 §Phase 2）。
+# flux steps 原生组件（items status 驱动，4 值字典 RECEIVED/MATCHED/RECEIVED_TO_STOCK/CANCELLED）。
+# 数据源 ErpB2bAsn__findPage（列表）+ __get + ErpB2bAsnLine__findPage（明细）。
+type: page
+title: ASN 流程跟踪
+body:
+- type: form
+  submitScope: surface
+  body:
+  - type: grid
+    columns: 5
+    items:
+    - colSpan: 3
+      body:
+      - type: select
+        name: statusFilter
+        label: 状态
+        clearable: true
+        options:
+        - label: 已接收 (RECEIVED)
+          value: RECEIVED
+        - label: 已匹配 (MATCHED)
+          value: MATCHED
+        - label: 已入库 (RECEIVED_TO_STOCK)
+          value: RECEIVED_TO_STOCK
+        - label: 已取消 (CANCELLED)
+          value: CANCELLED
+    - colSpan: 2
+      body:
+      - type: button
+        label: 刷新
+        actionType: ajax
+        action: ajax
+        args:
+          url: '@query:ErpB2bAsn__findPage'
+          method: post
+          data:
+            limit: 200
+            filter_status: ${statusFilter ?? null}
+          selection: items{ id code status partnerId sourceEdiDocId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode businessDate } total
+        target: asnList
+- type: data-source
+  name: asnList
+  dependsOn:
+  - __asn_load__
+  action: ajax
+  args:
+    url: '@query:ErpB2bAsn__findPage'
+    method: post
+    data:
+      limit: 200
+      filter_status: ${statusFilter ?? null}
+    selection: items{ id code status partnerId sourceEdiDocId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode businessDate } total
+- type: data-source
+  name: asnDetail
+  dependsOn:
+  - selectedAsnId
+  sendOn: ${selectedAsnId != null}
+  action: ajax
+  args:
+    url: '@query:ErpB2bAsn__get'
+    method: post
+    data:
+      id: ${selectedAsnId ?? 0}
+    selection: id code status partnerId shipmentDate estimatedArrivalDate trackingNo relatedBillType relatedBillCode
+- type: data-source
+  name: asnLines
+  dependsOn:
+  - selectedAsnId
+  sendOn: ${selectedAsnId != null}
+  action: ajax
+  args:
+    url: '@query:ErpB2bAsnLine__findPage'
+    method: post
+    data:
+      limit: 5000
+      filter_asnId: ${selectedAsnId ?? null}
+    selection: items{ id asnId lineNo materialId supplierPartNo quantity shippedQty } total
+- type: data-source
+  name: flowSteps
+  formula: '${!asnDetail ? [] : [{ key: "RECEIVED", title: "已接收" }, { key: "MATCHED", title: "已匹配" }, { key: "RECEIVED_TO_STOCK", title: "已入库" }].map((s, i) => ({ key: s.key, title: s.title, status: (asnDetail.status === "CANCELLED") ? "wait" : ((["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status) >= 0 && i < ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "finish" : ((i === ["RECEIVED", "MATCHED", "RECEIVED_TO_STOCK"].indexOf(asnDetail.status)) ? "process" : "wait")) }))}'
+- type: crud
+  source: ${asnList?.items ?? []}
+  columns:
+  - name: code
+    label: ASN编号
+  - name: status
+    label: 状态
+    type: status
+    labelMap:
+      RECEIVED: 已接收
+      MATCHED: 已匹配
+      RECEIVED_TO_STOCK: 已入库
+      CANCELLED: 已取消
+    levelMap:
+      RECEIVED_TO_STOCK: success
+      MATCHED: primary
+      RECEIVED: warning
+      CANCELLED: default
+  - name: partnerId
+    label: 合作伙伴
+  - name: shipmentDate
+    label: 发货日期
+  - name: trackingNo
+    label: 追踪号
+  rowClick:
+    action: set-value
+    args:
+      selectedAsnId: ${$slot?.record?.id}
+- type: text
+  text: '${asnDetail ? "ASN 流程：" + (asnDetail?.code ?? "—") + " · 合作伙伴: " + (asnDetail?.partnerId ?? "—") + " · 追踪号: " + (asnDetail?.trackingNo ?? "—") : "点击列表行查看 ASN 流程详情"}'
+  className: text-muted m-t m-b
+  visible: ${asnDetail != null}
+- type: steps
+  items: ${flowSteps ?? []}
+  visible: ${asnDetail != null}
+- type: text
+  text: 明细行匹配状态（quantity 订单数量 vs shippedQty 发货数量）
+  className: text-muted m-t m-b
+  visible: ${asnDetail != null}
+- type: table
+  source: ${asnLines?.items ?? []}
+  columns:
+  - name: lineNo
+    label: 行号
+  - name: materialId
+    label: 物料
+  - name: supplierPartNo
+    label: 供应商料号
+  - name: quantity
+    label: 订单数量
+    type: number
+    precision: 2
+  - name: shippedQty
+    label: 发货数量
+    type: number
+    precision: 2
+  visible: ${asnDetail != null}
