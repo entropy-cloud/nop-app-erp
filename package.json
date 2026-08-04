@@ -4,9 +4,9 @@
   "private": true,
   "description": "Playwright E2E smoke regression suite for nop-app-erp dashboards and reports",
   "scripts": {
-    "e2e": "playwright test",
-    "e2e:dashboards": "playwright test tests/e2e/dashboards/",
-    "e2e:reports": "playwright test tests/e2e/reports/",
+    "e2e": "E2E_ENGINE=flux playwright test",
+    "e2e:dashboards": "E2E_ENGINE=flux playwright test tests/e2e/dashboards/",
+    "e2e:reports": "E2E_ENGINE=flux playwright test tests/e2e/reports/",
     "report": "playwright show-report"
   },
   "devDependencies": {

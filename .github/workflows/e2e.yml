@@ -16,7 +16,7 @@ on:
         required: false
         default: 'false'
       e2e_engine:
-        description: 'E2E engine (amis/flux)'
+        description: 'E2E engine (default flux; amis only for migration comparison)'
         required: false
         default: ''
 

@@ -397,6 +397,7 @@ Playwright E2E 测试在本项目中有稳定的环境配置模式：
 ```
 BASE_URL=http://127.0.0.1:8011
 SKIP_WEBSERVER=1
+E2E_ENGINE=flux   # 缺省即 flux（本项目 flux-only 强制，engine.ts 缺省值）；E2E_ENGINE=amis 仅迁移期对照
 ```
 
 注意：`application.yaml` 中配置了 `quarkus.http.port=8011`（非默认 8080）。如果不设 `SKIP_WEBSERVER=1`，Playwright 的 webServer 配置会尝试自动启动 app（可能导致端口冲突）。

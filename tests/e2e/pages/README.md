@@ -19,14 +19,14 @@ tests/e2e/pages/
 
 ## 引擎切换
 
-所有测试通过环境变量 `E2E_ENGINE` 全局切换前端引擎，无需修改测试代码：
+本项目**唯一渲染目标是 flux**（flux-only，强制），所有测试经 `E2E_ENGINE` 环境变量选择引擎适配器，无需修改测试代码：
 
 ```bash
-# 默认：AMIS 引擎
-npx playwright test
-
-# Flux 引擎
+# 默认：Flux 引擎（缺省即 flux，2026-08-04 起强制）
 E2E_ENGINE=flux npx playwright test
+
+# 仅迁移期对照：AMIS 引擎（显式 opt-in，AMIS 已非渲染目标，禁止新增 AMIS 用例）
+E2E_ENGINE=amis npx playwright test
 ```
 
 引擎选择逻辑集中在 `pages/engine.ts` 的 `getEngine()` 函数中，由 `fixtures.ts` 自动注入为 Playwright fixture `engine`。所有 `_helper.ts` 和 PageObject 内部调用 `getEngine()`，不硬编码引擎实例。
@@ -135,16 +135,12 @@ test.describe('ErpMdPartner list seed values', () => {
 });
 ```
 
-## 迁移指南 — AMIS → Flux
+## 迁移指南 — AMIS → Flux（已完成）
 
-当前端切换到 Flux 引擎时，只需设置环境变量：
-
-```bash
-E2E_ENGINE=flux npx playwright test
-```
-
-`engine.ts` 的 `getEngine()` 会自动返回 `FluxAdapter`，所有 PageObject 和测试代码无需修改。
+Flux 已是缺省引擎（`engine.ts` 缺省返回 `FluxAdapter`），所有 PageObject 和测试代码无需修改。
 `GraphQLClient` 和 `Navigation` 完全引擎无关，不受影响。
+
+AMIS 适配器仅作为迁移期历史残留保留：显式 `E2E_ENGINE=amis` 可运行 AMIS adapter 作对照，但 AMIS 已非渲染目标，禁止产出新的 AMIS 用例。
 
 Flux 适配器预期使用以下 data 属性：
 - `[data-slot="crud-table"]` — CRUD 表格容器
