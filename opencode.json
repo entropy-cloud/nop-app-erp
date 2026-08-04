@@ -4,7 +4,10 @@
     "edit": {
       "*": "allow",
       "**/_*": "deny",
-      "**/_gen/**": "deny"
+      "**/_gen/**": "deny",
+      "tests/e2e/**/_helper.ts": "allow",
+      "**/__tests__/**": "allow",
+      "**/__mocks__/**": "allow"
     }
   }
 }

@@ -291,6 +291,10 @@ These techniques are part of systematic debugging and available in this director
 
 Nop 平台常见症状 → 根因速查表（EQL 列名错误、Bean 创建失败、类型转换等）。在 Phase 1（Root Cause）中如果症状匹配，优先查此表，不匹配再重新回溯。
 
+**Flux 页面问题（三层定位法，强制）：** 页面问题先定层再调试，不要从 DOM 现象直接跳改配置。定位依据与工具（`__fluxDebug`、`PageProvider__getPage` 抓 JSON、nop-web 单元测试先例、web.xlib vs flux-web.xlib 语义对比）见：
+- `nop-chaos-flux/flux-guide/17-debugging.md`（渲染层）
+- `../nop-entropy/docs-for-ai/02-core-guides/debugging-and-diagnostics.md`「页面生成调试/Flux 页面三层定位法」（生成层 + 配置层）
+
 **Related skills:**
 - **superpowers:test-driven-development** - For creating failing test case (Phase 4, Step 1)
 - **superpowers:verification-before-completion** - Verify fix worked before claiming success
