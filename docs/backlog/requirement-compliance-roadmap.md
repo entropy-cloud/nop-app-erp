@@ -63,7 +63,7 @@
 | A1.24 | **assets-F3 资本化/拆分/盘点/维修/看板**（UC-AST-01/03/06/09/10/11/12） | done | `docs/design/assets/` | 0.2 | 同上 |
 | A1.25 | **inventory-F1 移动单主链与追溯**（UC-INV-01/03/04/05） | done | `docs/design/inventory/` | 0.2 | 同上 |
 | A1.26 | **inventory-F2 批次与可用量**（UC-INV-02/06/09） | done | `docs/design/inventory/` | 0.2 | 同上 |
-| A1.27 | **inventory-F3 盘点/估值/并发/看板**（UC-INV-07/08/10/11） | todo | `docs/design/inventory/` | 0.2 | 同上 |
+| A1.27 | **inventory-F3 盘点/估值/并发/看板**（UC-INV-07/08/10/11） | done | `docs/design/inventory/` | 0.2 | 同上 |
 | A1.28 | **crm-F1 线索生命周期**（UC-CRM-01/02/03/04/09/11） | todo | `docs/design/crm/` | 0.2 | 同上 |
 | A1.29 | **crm-F2 营销/预测/配额/序列/事件提醒**（UC-CRM-05/07/08/10/12/14/15） | todo | `docs/design/crm/` | 0.2 | 同上 |
 | A1.30 | **crm-F3 CPQ/漏斗推进**（UC-CRM-06/13） | todo | `docs/design/crm/` | 0.2 | 同上 |

@@ -1,7 +1,7 @@
 # 2026-08-03-1341-1 rc-ma1-a1-27-inventory-f3-stocktake-valuation-concurrency-dashboard inventory-F3 盘点/估值/并发/看板需求符合性审计
 
-> Plan Status: active
-> Last Reviewed: 2026-08-03
+> Plan Status: completed
+> Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.27（MA1 需求追踪矩阵审计 — inventory-F3 盘点/估值/并发/看板）
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Item A1.27
@@ -72,54 +72,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-27-inventory-f3-stocktake-valuation-concurrency-dashboard.md`（产出 §1-§5）
+Status: completed
+Targets: `docs/audits/2026-08-05-0900-rc-ma1-a1-27-inventory-f3-stocktake-valuation-concurrency-dashboard.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-INV-07/08/10/11 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:122/:140/:171/:193` 验收标准原文；L2 引用 `state-machine.md` §盘点单状态机/§4 异常路径/§7、`cross-domain.md` §与财务域协作、`dashboards.md` §3（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpInvStockTakeBizModel.java`/`StockMoveBookkeeper.java`/`ErpInvStockMoveProcessor.java`/`InvPostingDispatcher.java`/`InvAcctDocProvider.java`/`ErpInvDashboardBizModel.java`/`ErpInvConstants.java`（含行号）；L4 引用 `TestErpInvConcurrentDeduct.java#method`/`TestErpInvPosting.java#method`/`TestErpInvDashboard.java#method`（注明断言强度）；L5 复用 A2.11/concurrency/A4.5/A6.3 + E2E。
+- [x] `Proof` 对 UC-INV-07/08/10/11 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:122/:140/:171/:193` 验收标准原文；L2 引用 `state-machine.md` §盘点单状态机/§4 异常路径/§7、`cross-domain.md` §与财务域协作、`dashboards.md` §3（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpInvStockTakeBizModel.java`/`StockMoveBookkeeper.java`/`ErpInvStockMoveProcessor.java`/`InvPostingDispatcher.java`/`InvAcctDocProvider.java`/`ErpInvDashboardBizModel.java`/`ErpInvConstants.java`（含行号）；L4 引用 `TestErpInvConcurrentDeduct.java#method`/`TestErpInvPosting.java#method`/`TestErpInvDashboard.java#method`（注明断言强度）；L5 复用 A2.11/concurrency/A4.5/A6.3 + E2E。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-INV-07 completeTake stub（`completeTake:40-50` 仅 setDocStatus(DONE) 无 diff 无 generateMove，#1 最高风险）；②#2 UC-INV-07 零 dedicated 测试；③#3 UC-INV-08 乐观锁+UK+重试+负库存语义（`updateBalanceWithRetry:255-328` + tryUpdateWithVersionCheck + UK 重试 + max-retry——复核 L1 "不出现负数除非允许"语义）；④UC-INV-10 posting 链路（`doComplete:113`→dispatchIfApplicable→createFacts，复核 L1 借贷方向+金额公式）；⑤#4 UC-INV-10 命名漂移（已登记 P2-RC-011/016）；⑥#5 UC-INV-10 时序漂移（同步 vs post-commit 异步——行为等价复核）；⑦#6 UC-INV-10 行级凭证断言缺失；⑧#7 UC-INV-11 行级权限（L1 `:207`——QueryBean 无显式 orgId filter，但全局 `ErpOrgIsolationQueryTransformer`（P1-MA2-093 R1.29 done）覆盖；复核 dashboard 直连路径运行时覆盖有效性 → 遵循 sibling 先例复用 P1-MA2-093 + 存疑点交 MA4，不新建 finding）；⑨#8 UC-INV-11 缺料阈值取 `material.safetyStock` 非 config（边界复核）；⑩UC-INV-11 KPI 实时聚合非硬编码（已实现复核）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-INV-07 completeTake stub（`completeTake:40-50` 仅 setDocStatus(DONE) 无 diff 无 generateMove，#1 最高风险）；②#2 UC-INV-07 零 dedicated 测试；③#3 UC-INV-08 乐观锁+UK+重试+负库存语义（`updateBalanceWithRetry:255-328` + tryUpdateWithVersionCheck + UK 重试 + max-retry——复核 L1 "不出现负数除非允许"语义）；④UC-INV-10 posting 链路（`doComplete:113`→dispatchIfApplicable→createFacts，复核 L1 借贷方向+金额公式）；⑤#4 UC-INV-10 命名漂移（已登记 P2-RC-011/016）；⑥#5 UC-INV-10 时序漂移（同步 vs post-commit 异步——行为等价复核）；⑦#6 UC-INV-10 行级凭证断言缺失；⑧#7 UC-INV-11 行级权限（L1 `:207`——QueryBean 无显式 orgId filter，但全局 `ErpOrgIsolationQueryTransformer`（P1-MA2-093 R1.29 done）覆盖；复核 dashboard 直连路径运行时覆盖有效性 → 遵循 sibling 先例复用 P1-MA2-093 + 存疑点交 MA4，不新建 finding）；⑨#8 UC-INV-11 缺料阈值取 `material.safetyStock` 非 config（边界复核）；⑩UC-INV-11 KPI 实时聚合非硬编码（已实现复核）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1 UC-INV-07 completeTake stub 属"功能完全缺失"（§2 P1①）——倾向 **P1**（须先按 §4 三判据复核 P1-MA2-062 方案 B 关闭合法性：R1.19 plan-audit 是否独立、owner doc Deferred 是否人工批准、product-scope 是否裁剪；三判据不满足则重开为 P1-RC-xxx，与 A1.26 P1-RC-031 同型）；#7 UC-INV-11 行级权限——P1-MA2-093 **已 resolved R1.29**（全局 transformer），L1 验收标准满足性取决于 dashboard 直连路径运行时覆盖有效性，倾向**复用 P1-MA2-093 + 登记存疑点交 MA4**（遵循 sibling 先例 A1.7/A1.11/A1.21/A1.24，不新建 P1-RC-xxx）；#3 UC-INV-08 已实现则接受；#4/#5/#6/#8 P2/watch-only 或接受。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1 UC-INV-07 completeTake stub 属"功能完全缺失"（§2 P1①）——倾向 **P1**（须先按 §4 三判据复核 P1-MA2-062 方案 B 关闭合法性：R1.19 plan-audit 是否独立、owner doc Deferred 是否人工批准、product-scope 是否裁剪；三判据不满足则重开为 P1-RC-xxx，与 A1.26 P1-RC-031 同型）；#7 UC-INV-11 行级权限——P1-MA2-093 **已 resolved R1.29**（全局 transformer），L1 验收标准满足性取决于 dashboard 直连路径运行时覆盖有效性，倾向**复用 P1-MA2-093 + 登记存疑点交 MA4**（遵循 sibling 先例 A1.7/A1.11/A1.21/A1.24，不新建 P1-RC-xxx）；#3 UC-INV-08 已实现则接受；#4/#5/#6/#8 P2/watch-only 或接受。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-INV-07/08/10/11 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.11/concurrency/A4.5/A6.3 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#8 有明确分级（非悬空"待查"）；#1 completeTake stub 有明确 P1 倾向 + §4 三判据复核路径；#7 行级权限有明确"复用 P1-MA2-093（resolved R1.29）+ 存疑点交 MA4"路径
+- [x] 报告 §1-§5 已落盘：UC-INV-07/08/10/11 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.11/concurrency/A4.5/A6.3 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#8 有明确分级（非悬空"待查"）；#1 completeTake stub 有明确 P1 倾向 + §4 三判据复核路径；#7 行级权限有明确"复用 P1-MA2-093（resolved R1.29）+ 存疑点交 MA4"路径
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-27-inventory-f3-stocktake-valuation-concurrency-dashboard.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-05-0900-rc-ma1-a1-27-inventory-f3-stocktake-valuation-concurrency-dashboard.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` inventory 盘点/并发/估值/看板同域同控制点后裁决——#1 UC-INV-07 vs P1-MA2-062（§4 三判据复核：方案 B 关闭是否合法，不合法则重开 P1-RC-xxx 列明差异依据）；#7 UC-INV-11 vs P1-MA2-093（P1-MA2-093 **resolved R1.29** 全局 transformer——遵循 sibling 先例 A1.7/A1.11/A1.21/A1.24 **复用注记 + 登记运行时覆盖存疑点交 MA4**，不新建 P1-RC-xxx）；UC-INV-08/10 已证实→复用注记。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` inventory 盘点/并发/估值/看板同域同控制点后裁决——#1 UC-INV-07 vs P1-MA2-062（§4 三判据复核：方案 B 关闭是否合法，不合法则重开 P1-RC-xxx 列明差异依据）；#7 UC-INV-11 vs P1-MA2-093（P1-MA2-093 **resolved R1.29** 全局 transformer——遵循 sibling 先例 A1.7/A1.11/A1.21/A1.24 **复用注记 + 登记运行时覆盖存疑点交 MA4**，不新建 P1-RC-xxx）；UC-INV-08/10 已证实→复用注记。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR0/MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 completeTake 置 DONE 后手工 generateMove 的实际余额影响、UC-INV-08 高并发下 max-retry 耗尽后的余额一致性、UC-INV-10 posting 失败留 posted=false 时 DeferredPostingSweepJob 兜底实际触发、**UC-INV-11 全局 ErpOrgIsolationQueryTransformer 对 dashboard 直连路径（daoProvider.findAllByQuery/ormTemplate.findListByQuery）的运行时覆盖有效性**等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 completeTake 置 DONE 后手工 generateMove 的实际余额影响、UC-INV-08 高并发下 max-retry 耗尽后的余额一致性、UC-INV-10 posting 失败留 posted=false 时 DeferredPostingSweepJob 兜底实际触发、**UC-INV-11 全局 ErpOrgIsolationQueryTransformer 对 dashboard 直连路径（daoProvider.findAllByQuery/ormTemplate.findListByQuery）的运行时覆盖有效性**等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-inventory-state-machine.md`（A2.11 UC-INV-08 并发 PASS + P1-MA2-062 方案 B 关闭）+ concurrency 报告（inventory 并发 sustained）+ A4.5（代码质量 PASS）+ A6.3/R1.29（P1-MA2-093 dashboard 行级权限 resolved 全局 transformer），列明只补的需求视角差异（UC-INV-07 自动生成 stub / UC-INV-10 命名+时序漂移 / UC-INV-11 dashboard 直连路径运行时覆盖存疑点）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-0400-arm-ma2-inventory-state-machine.md`（A2.11 UC-INV-08 并发 PASS + P1-MA2-062 方案 B 关闭）+ concurrency 报告（inventory 并发 sustained）+ A4.5（代码质量 PASS）+ A6.3/R1.29（P1-MA2-093 dashboard 行级权限 resolved 全局 transformer），列明只补的需求视角差异（UC-INV-07 自动生成 stub / UC-INV-10 命名+时序漂移 / UC-INV-11 dashboard 直连路径运行时覆盖存疑点）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -130,14 +130,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.27 报告 9 段齐全 + 4 UC 逐矩阵行 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.27 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.27 报告 9 段齐全 + 4 UC 逐矩阵行 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.27 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -149,11 +149,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: 只读审计执行完成。产出报告 `docs/audits/2026-08-05-0900-rc-ma1-a1-27-inventory-f3-stocktake-valuation-concurrency-dashboard.md`（9 段齐全 + 4 UC 五级矩阵 + 8 候选缺口分级）+ arm-index 更新（P2-RC-029/P2-RC-030 新建 + P1-MA2-062 RC 视角 §4 三判据复核注记 + A1.27 报告清单行）。整体裁决：零 P0、0 新 P1（#1 UC-INV-07 reuse P1-MA2-062 §4 三判据复核倾向重开须人工确认 product-scope，§7 同根因同控制点不新建编号，对齐 A1.24 P1-MA2-061 复用先例）、2 新 P2（P2-RC-029 UC-INV-10 JUnit 凭证行级断言 / P2-RC-030 UC-INV-11 缺料阈值 derivation）、3 reuse（P1-MA2-062 / P1-MA2-093 resolved R1.29 / P2-RC-011+P2-RC-016）；UC-INV-08 接受、UC-INV-10 接受含 caveat、UC-INV-11 接受 on ⑩+⑪滞销/批次效期 + ⑫reuse+存疑点交 MA4 + ⑬new P2。零生产代码变更（git status 仅 docs/audits/+docs/plans/ 变更），故无 build/test 回归风险；§8 checker actual vs baseline 实测（R2c/R2d +2 漂移为 pre-existing HEAD 状态非本审计所致），不以 checker 退出码 0 为门控通过依据。4 项静态存疑点交 MA4 A4.1 运行时展开。#1 UC-INV-07 须人工确认 product-scope 是否裁剪盘点自动生成（涉账实一致合规风险）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
+- Auditor / Agent: 独立结束审计由独立子代理（新会话 `ses_03103bccaffe4A4gyPZ4Yr7RC9`，fresh session，未执行本计划）执行。**Verdict: pass**（10/10 checks PASS，无 blocker）。关键独立验证：(1) 报告 9 段齐全 + §5 矩阵 4 UC 行无合并；(2) L1 逐字引用 anti-Q1；(3) L3 行号实测核对（`ErpInvStockTakeBizModel.java:40-50` STUB / `StockMoveBookkeeper.java:256/271` / `InvPostingDispatcher.java:57/152` / `InvAcctDocProvider.java:64/113`）；(4) §6.2 §4 三判据复核 R1.19 hollow closure **独立证实**（R1.19 plan:122 自承「执行代理（本会话）」）+ reuse P1-MA2-062 不新建遵循 A1.24 先例；(5) §6.1 grep-based 裁决表无未比对新建；(6) arm-index P2-RC-029/030 无编号碰撞（max existing=028）；(7) §8 checker 表 + 纯 reporter 声明 + 零生产代码变更；(8) §9 真相源冻结——git status 仅 docs/audits/+docs/plans/ 变更，未触 docs/design//docs/requirements//module-*；(9) 计划内部一致性——Plan Status completed / 双 Phase completed / 全 `[x]` 无遗留 `[ ]` / `> Source Audits:` 行缺失（roadmap-sourced 计划，source-audit-closing 步骤不适用）。结束审计门控（plan Closure Gates line 139）由本独立裁决满足。
 
 Follow-up:
 
