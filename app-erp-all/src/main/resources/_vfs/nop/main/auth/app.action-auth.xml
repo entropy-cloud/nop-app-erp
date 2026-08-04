@@ -44,7 +44,7 @@
                     <children>
                         <resource id="l10n-cn-vat-invoice" displayName="增值税发票"
                                   i18n-en:displayName="VAT Invoice" icon="receipt"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/l10n-cn/pages/ErpL10nCnVatInvoice/main.page.yaml"/>
                     </children>
                 </resource>
@@ -53,11 +53,11 @@
                     <children>
                         <resource id="l10n-cn-golden-tax-log" displayName="金税接口日志"
                                   i18n-en:displayName="Golden Tax Log" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/erp/l10n-cn/pages/ErpL10nCnGoldenTaxLog/main.page.yaml"/>
                         <resource id="l10n-cn-tax-rate" displayName="税率配置"
                                   i18n-en:displayName="Tax Rate" icon="percent"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/erp/l10n-cn/pages/ErpL10nCnTaxRate/main.page.yaml"/>
                     </children>
                 </resource>
@@ -74,27 +74,27 @@
                     <children>
                         <resource id="sys-user-main" displayName="用户管理"
                                   i18n-en:displayName="User" icon="user-round"
-                                  component="AMIS" resourceType="SUBM" orderNo="100"
+                                  component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/nop/auth/pages/NopAuthUser/main.page.yaml"/>
                         <resource id="sys-role-main" displayName="角色管理"
                                   i18n-en:displayName="Role" icon="shield"
-                                  component="AMIS" resourceType="SUBM" orderNo="110"
+                                  component="FLUX" resourceType="SUBM" orderNo="110"
                                   url="/nop/auth/pages/NopAuthRole/main.page.yaml"/>
                         <resource id="sys-dept-main" displayName="部门管理"
                                   i18n-en:displayName="Department" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="120"
+                                  component="FLUX" resourceType="SUBM" orderNo="120"
                                   url="/nop/auth/pages/NopAuthDept/main.page.yaml"/>
                         <resource id="sys-position-main" displayName="岗位管理"
                                   i18n-en:displayName="Position" icon="briefcase"
-                                  component="AMIS" resourceType="SUBM" orderNo="130"
+                                  component="FLUX" resourceType="SUBM" orderNo="130"
                                   url="/nop/auth/pages/NopAuthPosition/main.page.yaml"/>
                         <resource id="sys-group-main" displayName="用户组"
                                   i18n-en:displayName="User Group" icon="users"
-                                  component="AMIS" resourceType="SUBM" orderNo="140"
+                                  component="FLUX" resourceType="SUBM" orderNo="140"
                                   url="/nop/auth/pages/NopAuthGroup/main.page.yaml"/>
                         <resource id="sys-role-data-auth-main" displayName="数据权限"
                                   i18n-en:displayName="Data Auth" icon="database"
-                                  component="AMIS" resourceType="SUBM" orderNo="150"
+                                  component="FLUX" resourceType="SUBM" orderNo="150"
                                   url="/nop/auth/pages/NopAuthRoleDataAuth/main.page.yaml"/>
                     </children>
                 </resource>
@@ -105,11 +105,11 @@
                     <children>
                         <resource id="sys-resource-main" displayName="菜单资源"
                                   i18n-en:displayName="Menu Resource" icon="panels-top-left"
-                                  component="AMIS" resourceType="SUBM" orderNo="200"
+                                  component="FLUX" resourceType="SUBM" orderNo="200"
                                   url="/nop/auth/pages/NopAuthResource/main.page.yaml"/>
                         <resource id="sys-site-main" displayName="站点管理"
                                   i18n-en:displayName="Site" icon="globe-2"
-                                  component="AMIS" resourceType="SUBM" orderNo="210"
+                                  component="FLUX" resourceType="SUBM" orderNo="210"
                                   url="/nop/auth/pages/NopAuthSite/main.page.yaml"/>
                     </children>
                 </resource>
@@ -120,19 +120,19 @@
                     <children>
                         <resource id="sys-dict-main" displayName="数据字典"
                                   i18n-en:displayName="Dict" icon="book"
-                                  component="AMIS" resourceType="SUBM" orderNo="300"
+                                  component="FLUX" resourceType="SUBM" orderNo="300"
                                   url="/nop/sys/pages/NopSysDict/main.page.yaml"/>
                         <resource id="sys-dict-option-main" displayName="字典选项"
                                   i18n-en:displayName="Dict Option" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="310"
+                                  component="FLUX" resourceType="SUBM" orderNo="310"
                                   url="/nop/sys/pages/NopSysDictOption/main.page.yaml"/>
                         <resource id="sys-sequence-main" displayName="序列号规则"
                                   i18n-en:displayName="Sequence" icon="hash"
-                                  component="AMIS" resourceType="SUBM" orderNo="320"
+                                  component="FLUX" resourceType="SUBM" orderNo="320"
                                   url="/nop/sys/pages/NopSysSequence/main.page.yaml"/>
                         <resource id="sys-i18n-main" displayName="国际化"
                                   i18n-en:displayName="I18n" icon="languages"
-                                  component="AMIS" resourceType="SUBM" orderNo="330"
+                                  component="FLUX" resourceType="SUBM" orderNo="330"
                                   url="/nop/sys/pages/NopSysI18n/main.page.yaml"/>
                     </children>
                 </resource>
@@ -143,15 +143,15 @@
                     <children>
                         <resource id="sys-wf-definition-main" displayName="流程定义"
                                   i18n-en:displayName="Process Definition" icon="workflow"
-                                  component="AMIS" resourceType="SUBM" orderNo="400"
+                                  component="FLUX" resourceType="SUBM" orderNo="400"
                                   url="/nop/wf/pages/NopWfDefinition/main.page.yaml"/>
                         <resource id="sys-wf-instance-main" displayName="流程实例"
                                   i18n-en:displayName="Process Instance" icon="git-branch"
-                                  component="AMIS" resourceType="SUBM" orderNo="410"
+                                  component="FLUX" resourceType="SUBM" orderNo="410"
                                   url="/nop/wf/pages/NopWfInstance/main.page.yaml"/>
                         <resource id="sys-wf-workflow-main" displayName="我的待办"
                                   i18n-en:displayName="My Todo" icon="list-checks"
-                                  component="AMIS" resourceType="SUBM" orderNo="420"
+                                  component="FLUX" resourceType="SUBM" orderNo="420"
                                   url="/nop/wf/pages/WorkflowService/main.page.yaml"/>
                     </children>
                 </resource>
@@ -162,11 +162,11 @@
                     <children>
                         <resource id="sys-report-definition-main" displayName="报表定义"
                                   i18n-en:displayName="Report Definition" icon="file-bar-chart"
-                                  component="AMIS" resourceType="SUBM" orderNo="500"
+                                  component="FLUX" resourceType="SUBM" orderNo="500"
                                   url="/nop/report/pages/NopReportDefinition/main.page.yaml"/>
                         <resource id="sys-report-datasource-main" displayName="报表数据源"
                                   i18n-en:displayName="Report Datasource" icon="database"
-                                  component="AMIS" resourceType="SUBM" orderNo="510"
+                                  component="FLUX" resourceType="SUBM" orderNo="510"
                                   url="/nop/report/pages/NopReportDatasource/main.page.yaml"/>
                     </children>
                 </resource>
@@ -177,15 +177,15 @@
                     <children>
                         <resource id="sys-oplog-main" displayName="操作日志"
                                   i18n-en:displayName="Operation Log" icon="list"
-                                  component="AMIS" resourceType="SUBM" orderNo="700"
+                                  component="FLUX" resourceType="SUBM" orderNo="700"
                                   url="/nop/auth/pages/NopAuthOpLog/main.page.yaml"/>
                         <resource id="sys-session-main" displayName="在线会话"
                                   i18n-en:displayName="Session" icon="monitor"
-                                  component="AMIS" resourceType="SUBM" orderNo="710"
+                                  component="FLUX" resourceType="SUBM" orderNo="710"
                                   url="/nop/auth/pages/NopAuthSession/main.page.yaml"/>
                         <resource id="sys-extfield-main" displayName="扩展字段"
                                   i18n-en:displayName="Ext Field" icon="columns"
-                                  component="AMIS" resourceType="SUBM" orderNo="720"
+                                  component="FLUX" resourceType="SUBM" orderNo="720"
                                   url="/nop/sys/pages/NopSysExtField/main.page.yaml"/>
                     </children>
                 </resource>

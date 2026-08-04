@@ -12,6 +12,7 @@ nop:
       support-debug: true
   web:
     validate-page-model: true
+    render-mode: flux
   orm:
     init-database-schema: true
   datasource:
