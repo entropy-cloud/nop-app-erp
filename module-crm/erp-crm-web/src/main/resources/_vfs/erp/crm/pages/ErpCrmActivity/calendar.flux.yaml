@@ -1,0 +1,75 @@
+# CRM 活动日历（F13 flux 原生重写，plan 2026-08-03-1232-2 §Phase 3）。
+# flux calendar 原生组件（替换卡片网格降级）。
+# Phase 0 Decision：activityDate（DATE）映射到 event.start/end（按天对齐）。
+# onEventChange 拖拽改日期 → update mutation（activityDate 字段）。
+type: page
+title: "活动日历"
+body:
+  - type: data-source
+    name: rawData
+    dependsOn: ["__cal_load__"]
+    action: ajax
+    args:
+      url: '@query:ErpCrmActivity__findPage'
+      method: post
+      data:
+        filter_leadId: ${leadId ?? null}
+        limit: 500
+      selection: 'items{ id activityType activityDate summary leadId lead{ companyName } } total'
+
+  - type: data-source
+    name: calendarEvents
+    formula: '${(rawData.items ?? []).map(a => ({ id: String(a.id), title: (a.activityType === "CALL" ? "📞" : a.activityType === "EMAIL" ? "✉️" : a.activityType === "MEETING" ? "👥" : "📝") + " " + (a.summary ?? a.activityType ?? ""), start: String(a.activityDate ?? "") + "T09:00", end: String(a.activityDate ?? "") + "T10:00", type: a.activityType ?? "note" }))}'
+
+  - type: form
+    submitScope: surface
+    body:
+      - type: grid
+        columns:
+          - type: grid-col
+            span: 4
+            body:
+              - type: input-number
+                name: leadId
+                label: "线索/商机ID"
+                placeholder: "过滤关联线索（可选）"
+                clearable: true
+          - type: grid-col
+            span: 2
+            body:
+              - type: button
+                label: "刷新日历"
+                actionType: ajax
+                action: ajax
+                args:
+                  url: '@query:ErpCrmActivity__findPage'
+                  method: post
+                  data:
+                    filter_leadId: ${leadId ?? null}
+                    limit: 500
+                  selection: 'items{ id activityType activityDate summary leadId lead{ companyName } } total'
+                target: rawData
+
+  - type: text
+    text: '${(rawData.total ?? 0) + " 项活动"}'
+    className: "text-muted m-b"
+
+  - type: calendar
+    view: month
+    events: ${calendarEvents}
+    firstDayOfWeek: 1
+    showWeekends: true
+    locale: zh-CN
+    onEventChange:
+      action: ajax
+      args:
+        url: '@mutation:ErpCrmActivity__update'
+        method: post
+        data:
+          id: ${event.id}
+          activityDate: ${event.start.substring(0, 10)}
+    onEventClick:
+      action: notify
+      args:
+        level: info
+        message: '${"点击活动 " + event.id}'

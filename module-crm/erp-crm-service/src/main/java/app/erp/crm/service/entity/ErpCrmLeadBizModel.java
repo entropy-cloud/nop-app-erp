@@ -1,7 +1,9 @@
 package app.erp.crm.service.entity;
 
 import app.erp.crm.biz.IErpCrmLeadBiz;
+import app.erp.crm.biz.IErpCrmStageBiz;
 import app.erp.crm.dao.entity.ErpCrmLead;
+import app.erp.crm.dao.entity.ErpCrmStage;
 import app.erp.crm.dao.entity.ErpCrmTerritoryAssignmentRule;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.processor.ErpCrmConversionConvertToCustomerProcessor;
@@ -28,6 +30,8 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,6 +49,9 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Inject
     ErpCrmLeadQualifyProcessor qualifyProcessor;
+
+    @Inject
+    IErpCrmStageBiz stageBiz;
 
     @Inject
     ErpCrmLeadLoseProcessor loseProcessor;
@@ -256,6 +263,70 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     protected IEntityDao<ErpCrmTerritoryAssignmentRule> assignmentRuleDao() {
         return daoProvider().daoFor(ErpCrmTerritoryAssignmentRule.class);
+    }
+
+    @Override
+    @BizQuery
+    public Map<String, Object> findOpportunityBoardData(IServiceContext context) {
+        // 阶段列（按 sequence 排序）
+        QueryBean stageQuery = new QueryBean();
+        stageQuery.addOrderField("sequence", false);
+        List<ErpCrmStage> stages = stageBiz.findList(stageQuery, null, context);
+
+        // 商机（leadType=OPPORTUNITY）
+        QueryBean leadQuery = new QueryBean();
+        leadQuery.addFilter(eq("leadType", "OPPORTUNITY"));
+        leadQuery.setLimit(200);
+        List<ErpCrmLead> leads = findList(leadQuery, null, context);
+
+        Map<String, Object> board = new LinkedHashMap<>();
+        List<String> rootChildren = new ArrayList<>();
+        for (ErpCrmStage s : stages) {
+            rootChildren.add("col-" + s.getId());
+        }
+        board.put("root", boardNode("root", "root", null, rootChildren, null));
+
+        for (ErpCrmStage s : stages) {
+            String colId = "col-" + s.getId();
+            List<String> cardIds = new ArrayList<>();
+            for (ErpCrmLead l : leads) {
+                if (l.getStageId() != null && l.getStageId().equals(s.getId())) {
+                    cardIds.add("card-" + l.getId());
+                }
+            }
+            Map<String, Object> colData = new LinkedHashMap<>();
+            colData.put("title", s.getStageName() + (Boolean.TRUE.equals(s.getIsWonStage()) ? " 🏆" : ""));
+            colData.put("stageId", s.getId());
+            colData.put("isWonStage", s.getIsWonStage());
+            board.put(colId, boardNode(colId, "column", null, cardIds, colData));
+        }
+
+        for (ErpCrmLead l : leads) {
+            String cardId = "card-" + l.getId();
+            String colId = l.getStageId() != null ? "col-" + l.getStageId() : null;
+            Map<String, Object> cardData = new LinkedHashMap<>();
+            cardData.put("title", (l.getCompanyName() != null ? l.getCompanyName() : l.getCode()));
+            cardData.put("leadId", l.getId());
+            cardData.put("code", l.getCode());
+            cardData.put("companyName", l.getCompanyName());
+            cardData.put("expectedRevenue", l.getExpectedRevenue());
+            cardData.put("expectedCloseDate", l.getExpectedCloseDate());
+            cardData.put("probability", l.getProbability());
+            cardData.put("stageId", l.getStageId());
+            board.put(cardId, boardNode(cardId, "card", colId, new ArrayList<>(), cardData));
+        }
+        return board;
+    }
+
+    private static Map<String, Object> boardNode(String id, String type, String parentId,
+                                                   List<String> children, Map<String, Object> data) {
+        Map<String, Object> node = new LinkedHashMap<>();
+        node.put("id", id);
+        node.put("type", type);
+        if (parentId != null) node.put("parentId", parentId);
+        node.put("children", children);
+        if (data != null) node.put("data", data);
+        return node;
     }
 
     

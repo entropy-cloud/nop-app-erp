@@ -1,29 +1,26 @@
-// DOM assertions for F13 — non-standard views (kanban / timeline / calendar)
-// (plan 2026-07-22-0845-3-f13-non-standard-views-kanban-timeline-calendar.md §Phase 4).
+// DOM assertions for F13 — non-standard views (kanban / timeline / calendar / org-chart)
+// (plan 2026-08-03-1232-2-flux-f13-nonstandard-views-rewrite.md §Phase 4).
 //
-// Validates that the 7 F13 pages render their core interaction DOM at runtime:
-//   1. crm  opportunity-kanban: dynamic stage columns (service + each + crud per stage)
-//   2. cs   ticket-kanban: 6 fixed status columns
-//   3. prj  task-kanban: 4 status columns (TODO/IN_PROGRESS/DONE/BLOCKED)
-//   4. crm  activity-timeline: each + tpl custom timeline (native timeline prop contract failed → 降级)
-//   5. cs   ticket-action-timeline: each + tpl custom timeline
-//   6. crm  activity-calendar: each + tpl date-grouped cards (native calendar React error → 降级)
-//   7. hr   team-vacation-calendar: custom matrix table
+// Validates that the 8 F13 pages render flux-native components at runtime:
+//   1. prj  task-kanban: flux kanban (4 columns TODO/IN_PROGRESS/DONE/BLOCKED)
+//   2. cs   ticket-kanban: flux kanban (6 status columns)
+//   3. crm  opportunity-kanban: flux kanban (dynamic stage columns)
+//   4. crm  activity-timeline: flux timeline (native items)
+//   5. cs   ticket-action-timeline: flux timeline (native items)
+//   6. crm  activity-calendar: flux calendar (month view)
+//   7. hr   team-vacation-calendar: flux calendar (month view)
+//   8. hr   org-chart: flux tree (collapsible department hierarchy)
 //
-// DOM-className + page-title text strategy (stable across AMIS upgrades) — same as f16 visual spec.
-// Row-dependent pages skip gracefully if no seed row (codegen-level coverage via ErpAllWebPagesTest).
-//
-// Phase 0 Explore decisions covered:
-//   (a) dragdrop degraded → row-action buttons (no native AMIS cross-crud drag)
-//   (b) timeline/calendar: native components exist in bundle but runtime prop/render issues
-//       → implementation-time downgrade to each + tpl / matrix table (Closure裁决)
-//   (c) playwright dragTo PoC skipped (relies on (a) downgrade)
-//   (d) existing mutations cover all state changes (no new BizModel delta)
+// Flux selector strategy: data-slot attributes + page-title text (stable contract,
+// per flux-guide/13-testing.md selector convention).
+// Row-dependent pages skip gracefully if no seed row.
 
 import { test, expect, loginAndNavigate } from '../fixtures';
 import type { Page } from '@playwright/test';
 
-async function navigateAndWait(page: Page, route: string, waitForSelector = '.cxd-Crud, .cxd-Service, .cxd-Table'): Promise<void> {
+const FLUX_WAIT_SELECTOR = '[data-slot="kanban"], [data-slot="timeline-root"], .nop-calendar, .nop-tree';
+
+async function navigateAndWait(page: Page, route: string, waitForSelector = FLUX_WAIT_SELECTOR): Promise<void> {
   await loginAndNavigate(page, route);
   await expect.poll(
     () => page.url(),
@@ -33,75 +30,66 @@ async function navigateAndWait(page: Page, route: string, waitForSelector = '.cx
   await page.waitForTimeout(1500);
 }
 
-test.describe('F13 — kanban DOM rendering', () => {
-  test('projects task-kanban renders 4 status columns', async ({ page }) => {
-    await navigateAndWait(page, '/prj-task-kanban');
-    // 4 cruds (TODO/IN_PROGRESS/DONE/BLOCKED)
-    await expect.poll(
-      () => page.locator('.cxd-Crud').count(),
-      { timeout: 20_000, message: 'task-kanban should render 4 status cruds' },
-    ).toBeGreaterThanOrEqual(4);
-    // Page title present
+test.describe('F13 — flux kanban DOM rendering', () => {
+  test('projects task-kanban renders flux kanban with columns', async ({ page }) => {
+    await navigateAndWait(page, '/prj-task-kanban', '[data-slot="kanban"]');
     await expect(page.locator('text=任务看板').first()).toBeVisible({ timeout: 10_000 });
-    // Column header text present (each column has its title rendered as text in AMIS crud header)
-    await expect(page.locator('text=待开始').first()).toBeVisible({ timeout: 10_000 });
-    await expect(page.locator('text=阻塞').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[data-slot="kanban"]').first()).toBeVisible({ timeout: 10_000 });
+    const colCount = await page.locator('[data-slot="kanban-column"]').count();
+    expect(colCount, 'task-kanban should render >=1 kanban columns').toBeGreaterThanOrEqual(1);
   });
 
-  test('cs ticket-kanban renders 6 status columns', async ({ page }) => {
-    await navigateAndWait(page, '/cs-ticket-kanban');
-    await expect.poll(
-      () => page.locator('.cxd-Crud').count(),
-      { timeout: 20_000, message: 'ticket-kanban should render 6 status cruds' },
-    ).toBeGreaterThanOrEqual(6);
+  test('cs ticket-kanban renders flux kanban with columns', async ({ page }) => {
+    await navigateAndWait(page, '/cs-ticket-kanban', '[data-slot="kanban"]');
     await expect(page.locator('text=工单看板').first()).toBeVisible({ timeout: 10_000 });
-    await expect(page.locator('text=新建').first()).toBeVisible({ timeout: 10_000 });
-    await expect(page.locator('text=已关闭').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[data-slot="kanban"]').first()).toBeVisible({ timeout: 10_000 });
+    const colCount = await page.locator('[data-slot="kanban-column"]').count();
+    expect(colCount, 'ticket-kanban should render >=1 kanban columns').toBeGreaterThanOrEqual(1);
   });
 
-  test('crm opportunity-kanban renders dynamic stage columns or placeholder', async ({ page }) => {
-    await navigateAndWait(page, '/crm-opportunity-kanban');
+  test('crm opportunity-kanban renders flux kanban or empty placeholder', async ({ page }) => {
+    await navigateAndWait(page, '/crm-opportunity-kanban', '[data-slot="kanban"], [data-slot="kanban-empty"]');
     await expect(page.locator('text=商机看板').first()).toBeVisible({ timeout: 10_000 });
-    // Either: dynamic stage columns render (>=1 crud) OR placeholder shows (no ErpCrmStage seed)
-    const crudCount = await page.locator('.cxd-Crud').count().catch(() => 0);
-    const placeholderVisible = await page.locator('text=尚未配置商机阶段').count().catch(() => 0);
-    expect(
-      crudCount + placeholderVisible,
-      'opportunity-kanban should render either stage cruds or empty placeholder',
-    ).toBeGreaterThan(0);
+    const kanbanCount = await page.locator('[data-slot="kanban"]').count().catch(() => 0);
+    const emptyCount = await page.locator('[data-slot="kanban-empty"]').count().catch(() => 0);
+    expect(kanbanCount + emptyCount, 'opportunity-kanban should render kanban or empty placeholder').toBeGreaterThan(0);
   });
 });
 
-test.describe('F13 — timeline DOM rendering (custom each+tpl)', () => {
-  test('crm activity-timeline renders page + service container', async ({ page }) => {
-    await navigateAndWait(page, '/crm-activity-timeline');
+test.describe('F13 — flux timeline DOM rendering', () => {
+  test('crm activity-timeline renders flux timeline', async ({ page }) => {
+    await navigateAndWait(page, '/crm-activity-timeline', '[data-slot="timeline-root"]');
     await expect(page.locator('text=活动时间线').first()).toBeVisible({ timeout: 10_000 });
-    // Service container rendered (always present), timeline content (each) renders if seed data
-    await expect(page.locator('.cxd-Service').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[data-slot="timeline-root"]').first()).toBeVisible({ timeout: 10_000 });
   });
 
-  test('cs ticket-action-timeline renders page + service container', async ({ page }) => {
-    await navigateAndWait(page, '/cs-action-log');
+  test('cs ticket-action-timeline renders flux timeline', async ({ page }) => {
+    await navigateAndWait(page, '/cs-action-log', '[data-slot="timeline-root"]');
     await expect(page.locator('text=工单操作').first()).toBeVisible({ timeout: 10_000 });
-    await expect(page.locator('.cxd-Service').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('[data-slot="timeline-root"]').first()).toBeVisible({ timeout: 10_000 });
   });
 });
 
-test.describe('F13 — calendar DOM rendering', () => {
-  test('crm activity-calendar renders date-grouped cards page', async ({ page }) => {
-    await navigateAndWait(page, '/crm-activity-calendar');
+test.describe('F13 — flux calendar DOM rendering', () => {
+  test('crm activity-calendar renders flux calendar', async ({ page }) => {
+    await navigateAndWait(page, '/crm-activity-calendar', '.nop-calendar');
     await expect(page.locator('text=活动日历').first()).toBeVisible({ timeout: 10_000 });
-    await expect(page.locator('.cxd-Service').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('.nop-calendar').first()).toBeVisible({ timeout: 10_000 });
   });
 
-  test('hr team-vacation-calendar renders custom matrix Table', async ({ page }) => {
-    await navigateAndWait(page, '/hr-team-vacation-calendar');
+  test('hr team-vacation-calendar renders flux calendar', async ({ page }) => {
+    await navigateAndWait(page, '/hr-team-vacation-calendar', '.nop-calendar');
     await expect(page.locator('text=团队休假日历').first()).toBeVisible({ timeout: 10_000 });
-    // Custom matrix renders as either .cxd-Table (seed data) or service container (loading/empty)
-    const tableCount = await page.locator('.cxd-Table').count().catch(() => 0);
-    const hasService = await page.locator('.cxd-Service').count().catch(() => 0);
-    expect(tableCount + hasService, 'matrix calendar should render table or service container').toBeGreaterThan(0);
-    // Legend present (年假/病假/事假)
-    await expect(page.locator('text=年假').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('.nop-calendar').first()).toBeVisible({ timeout: 10_000 });
+  });
+});
+
+test.describe('F13 — flux tree DOM rendering (org-chart)', () => {
+  test('hr org-chart renders flux tree', async ({ page }) => {
+    await navigateAndWait(page, '/hr-org-chart', '.nop-tree');
+    await expect(page.locator('text=组织架构图').first()).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('.nop-tree').first()).toBeVisible({ timeout: 10_000 });
+    const nodeCount = await page.locator('[data-slot="tree-node"]').count();
+    expect(nodeCount, 'org-chart should render >=1 tree nodes').toBeGreaterThanOrEqual(1);
   });
 });

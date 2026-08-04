@@ -10,6 +10,8 @@ import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
@@ -22,7 +24,9 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Queue;
 import java.util.Set;
@@ -241,6 +245,75 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
     }
 
     // ============ helpers ============
+
+    @Override
+    @BizQuery
+    public Map<String, Object> findBoardData(@Optional @Name("projectId") Long projectId, IServiceContext context) {
+        QueryBean query = new QueryBean();
+        query.setLimit(200);
+        if (projectId != null) {
+            query.addFilter(eq("projectId", projectId));
+        }
+        List<ErpPrjTask> tasks = findList(query, null, context);
+
+        String[] statuses = {ErpPrjConstants.TASK_STATUS_TODO, ErpPrjConstants.TASK_STATUS_IN_PROGRESS,
+                ErpPrjConstants.TASK_STATUS_DONE, ErpPrjConstants.TASK_STATUS_BLOCKED};
+        String[] titles = {"待开始", "进行中", "已完成", "阻塞"};
+
+        Map<String, Object> board = new LinkedHashMap<>();
+        List<String> rootChildren = new ArrayList<>();
+        for (int i = 0; i < statuses.length; i++) {
+            rootChildren.add("col-" + statuses[i]);
+        }
+        board.put("root", boardNode("root", "root", null, rootChildren));
+
+        for (int i = 0; i < statuses.length; i++) {
+            String colId = "col-" + statuses[i];
+            List<String> cardIds = new ArrayList<>();
+            for (ErpPrjTask t : tasks) {
+                if (Objects.equals(t.getStatus(), statuses[i])) {
+                    cardIds.add("card-" + t.getId());
+                }
+            }
+            Map<String, Object> colData = new LinkedHashMap<>();
+            colData.put("title", titles[i]);
+            colData.put("status", statuses[i]);
+            board.put(colId, boardNode(colId, "column", null, cardIds, colData));
+        }
+
+        for (ErpPrjTask t : tasks) {
+            String cardId = "card-" + t.getId();
+            String colId = "col-" + t.getStatus();
+            Map<String, Object> cardData = new LinkedHashMap<>();
+            cardData.put("title", t.getTitle());
+            cardData.put("taskId", t.getId());
+            cardData.put("priority", t.getPriority());
+            cardData.put("status", t.getStatus());
+            cardData.put("plannedEndDate", t.getPlannedEndDate());
+            cardData.put("assigneeId", t.getAssigneeId());
+            if (t.getBlockReason() != null) {
+                cardData.put("blockReason", t.getBlockReason());
+            }
+            board.put(cardId, boardNode(cardId, "card", colId, new ArrayList<>(), cardData));
+        }
+        return board;
+    }
+
+    private static Map<String, Object> boardNode(String id, String type, String parentId,
+                                                   List<String> children) {
+        return boardNode(id, type, parentId, children, null);
+    }
+
+    private static Map<String, Object> boardNode(String id, String type, String parentId,
+                                                   List<String> children, Map<String, Object> data) {
+        Map<String, Object> node = new LinkedHashMap<>();
+        node.put("id", id);
+        node.put("type", type);
+        if (parentId != null) node.put("parentId", parentId);
+        node.put("children", children);
+        if (data != null) node.put("data", data);
+        return node;
+    }
 
     private ErpPrjTask loadTask(Long taskId) {
         if (taskId == null) {

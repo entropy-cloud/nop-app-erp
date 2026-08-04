@@ -1,0 +1,59 @@
+# CRM 商机看板（F13 flux 原生重写，plan 2026-08-03-1232-2 §Phase 1）。
+# flux kanban 原生组件 + 后端 findOpportunityBoardData 聚合查询返回扁平图结构（动态列 ErpCrmStage）。
+# 拖拽语义（Phase 0 Decision）：onCardMove 调用 ErpCrmLead__moveStage（LeadProcessor 守卫）。
+type: page
+title: "商机看板"
+body:
+  - type: data-source
+    name: boardData
+    dependsOn: ["__board_load__"]
+    action: ajax
+    args:
+      url: '@query:ErpCrmLead__findOpportunityBoardData'
+      method: post
+
+  - type: button
+    label: "刷新看板"
+    actionType: ajax
+    action: ajax
+    args:
+      url: '@query:ErpCrmLead__findOpportunityBoardData'
+      method: post
+    target: boardData
+    className: "m-3"
+
+  - type: kanban
+    data: ${boardData}
+    draggable: true
+    columnWidth: 300
+    cardTemplate:
+      - type: text
+        text: '${card.data.title}'
+        className: "font-medium text-sm"
+      - type: text
+        text: '${card.data.companyName ?? ""}'
+        className: "text-xs text-gray-500"
+      - type: text
+        text: '${card.data.expectedRevenue != null ? "¥" + card.data.expectedRevenue : ""}'
+        className: "text-xs"
+      - type: status
+        value: '${card.data.probability}'
+        labelMap:
+          90: "高概率"
+          50: "中概率"
+        levelMap:
+          90: success
+          50: warning
+    onCardMove:
+      action: ajax
+      args:
+        url: '@mutation:ErpCrmLead__moveStage'
+        method: post
+        data:
+          leadId: ${event.cardId.substring(5)}
+          toStageId: ${event.toColumnId.substring(4)}
+    onCardClick:
+      action: notify
+      args:
+        level: info
+        message: '${"点击商机 " + event.cardId}'

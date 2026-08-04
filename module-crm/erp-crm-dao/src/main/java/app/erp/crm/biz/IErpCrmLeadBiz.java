@@ -11,6 +11,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 线索/商机业务接口。除标准 CRUD 外，定义 docStatus 状态机（qualify/lose/cancel）+ 漏斗阶段流转（moveStage）
@@ -66,4 +67,11 @@ public interface IErpCrmLeadBiz extends ICrudBiz<ErpCrmLead>, IErpCrmConversionB
                              @Optional @Name("teamId") Long teamId,
                              @Optional @Name("ownerId") String ownerId,
                              IServiceContext context);
+
+    /**
+     * 商机看板扁平图结构聚合查询（flux kanban 原生渲染，动态列）。
+     * 列来自 ErpCrmStage（按 sequence 排序），卡片为 leadType=OPPORTUNITY 的线索。
+     */
+    @BizQuery
+    Map<String, Object> findOpportunityBoardData(IServiceContext context);
 }

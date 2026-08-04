@@ -26,6 +26,7 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -239,6 +240,71 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     }
 
     // ---------- helpers ----------
+
+    @Override
+    @BizQuery
+    public Map<String, Object> findBoardData(@Optional @Name("customerId") Long customerId, IServiceContext context) {
+        QueryBean query = new QueryBean();
+        query.setLimit(200);
+        if (customerId != null) {
+            query.addFilter(eq("customerId", customerId));
+        }
+        List<ErpCsTicket> tickets = findList(query, null, context);
+
+        String[] statuses = {ErpCsConstants.TICKET_STATUS_NEW, ErpCsConstants.TICKET_STATUS_ASSIGNED,
+                ErpCsConstants.TICKET_STATUS_IN_PROGRESS, ErpCsConstants.TICKET_STATUS_RESOLVED,
+                ErpCsConstants.TICKET_STATUS_CLOSED, ErpCsConstants.TICKET_STATUS_CANCELLED};
+        String[] titles = {"新建", "已分派", "处理中", "已解决", "已关闭", "已取消"};
+
+        Map<String, Object> board = new LinkedHashMap<>();
+        List<String> rootChildren = new ArrayList<>();
+        for (int i = 0; i < statuses.length; i++) {
+            rootChildren.add("col-" + statuses[i]);
+        }
+        board.put("root", boardNode("root", "root", null, rootChildren, null));
+
+        for (int i = 0; i < statuses.length; i++) {
+            String colId = "col-" + statuses[i];
+            List<String> cardIds = new ArrayList<>();
+            for (ErpCsTicket t : tickets) {
+                if (Objects.equals(t.getStatus(), statuses[i])) {
+                    cardIds.add("card-" + t.getId());
+                }
+            }
+            Map<String, Object> colData = new LinkedHashMap<>();
+            colData.put("title", titles[i]);
+            colData.put("status", statuses[i]);
+            board.put(colId, boardNode(colId, "column", null, cardIds, colData));
+        }
+
+        for (ErpCsTicket t : tickets) {
+            String cardId = "card-" + t.getId();
+            String colId = "col-" + t.getStatus();
+            Map<String, Object> cardData = new LinkedHashMap<>();
+            cardData.put("title", (t.getCode() != null ? t.getCode() : "") + " " + (t.getSubject() != null ? t.getSubject() : ""));
+            cardData.put("ticketId", t.getId());
+            cardData.put("code", t.getCode());
+            cardData.put("subject", t.getSubject());
+            cardData.put("priority", t.getPriority());
+            cardData.put("status", t.getStatus());
+            cardData.put("deadlineDateTime", t.getDeadlineDateTime());
+            cardData.put("isSlaCompleted", t.getIsSlaCompleted());
+            cardData.put("assignedToId", t.getAssignedToId());
+            board.put(cardId, boardNode(cardId, "card", colId, new ArrayList<>(), cardData));
+        }
+        return board;
+    }
+
+    private static Map<String, Object> boardNode(String id, String type, String parentId,
+                                                   List<String> children, Map<String, Object> data) {
+        Map<String, Object> node = new LinkedHashMap<>();
+        node.put("id", id);
+        node.put("type", type);
+        if (parentId != null) node.put("parentId", parentId);
+        node.put("children", children);
+        if (data != null) node.put("data", data);
+        return node;
+    }
 
     /**
      * SLA 通知派发（config-gated by {@link ErpCsConfigs#isSlaNotifyEnabled}）。

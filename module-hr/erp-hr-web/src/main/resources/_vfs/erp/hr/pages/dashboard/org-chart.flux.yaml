@@ -1,0 +1,61 @@
+# HR 组织架构图（F13 flux 原生重写，plan 2026-08-03-1232-2 §Phase 4）。
+# flux tree 原生组件（替换 each+tpl 缩进降级）。
+# 数据源 ErpHrDepartment__findDepartmentTree（嵌套树 + 员工计数）。
+type: page
+title: "组织架构图"
+body:
+  - type: data-source
+    name: deptTree
+    dependsOn: ["__tree_load__"]
+    action: ajax
+    args:
+      url: '@query:ErpHrDepartment__findDepartmentTree'
+      method: post
+      data:
+        keyword: ${keyword ?? null}
+
+  - type: form
+    submitScope: surface
+    body:
+      - type: grid
+        columns:
+          - type: grid-col
+            span: 4
+            body:
+              - type: input-text
+                name: keyword
+                label: "部门关键字"
+                placeholder: "输入部门名称/编码过滤"
+                clearable: true
+          - type: grid-col
+            span: 2
+            body:
+              - type: button
+                label: "重建架构图"
+                actionType: ajax
+                action: ajax
+                args:
+                  url: '@query:ErpHrDepartment__findDepartmentTree'
+                  method: post
+                  data:
+                    keyword: ${keyword ?? null}
+                target: deptTree
+
+  - type: tree
+    data: ${deptTree}
+    labelField: name
+    keyField: id
+    childrenKey: children
+    searchable: true
+    initiallyExpanded: 2
+    showGuideLine: true
+    node:
+      - type: text
+        text: '${node.name + " (" + (node.empCount ?? 0) + "人)"}'
+        className: "font-medium"
+      - type: text
+        text: '${node.code ? " · " + node.code : ""}'
+        className: "text-xs text-gray-500"
+      - type: text
+        text: '${node.managerId ? " · 负责人#" + node.managerId : ""}'
+        className: "text-xs text-gray-500"

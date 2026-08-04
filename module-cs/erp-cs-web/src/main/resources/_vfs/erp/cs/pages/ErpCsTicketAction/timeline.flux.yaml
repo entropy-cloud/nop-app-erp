@@ -1,0 +1,61 @@
+# CS 工单操作日志时间线（F13 flux 原生重写，plan 2026-08-03-1232-2 §Phase 2）。
+# flux timeline 原生组件（替换 each+tpl 降级）。
+# 数据源 ErpCsTicketAction__findPage，formula 映射 items（from→to 状态变迁）。
+type: page
+title: "工单操作日志时间线"
+body:
+  - type: data-source
+    name: rawData
+    dependsOn: ["__tl_load__"]
+    action: ajax
+    args:
+      url: '@query:ErpCsTicketAction__findPage'
+      method: post
+      data:
+        filter_ticketId: ${ticketId ?? null}
+        limit: 100
+        orderBy_field: createTime
+        orderBy_dir: desc
+      selection: 'items{ id ticketId actionType fromStatus toStatus operatorId content createTime } total'
+
+  - type: data-source
+    name: timelineItems
+    formula: '${(rawData.items ?? []).map(a => ({ time: String(a.createTime ?? ""), title: a.actionType === "ASSIGN" ? "分派" : a.actionType === "CLOSE" ? "关闭" : a.actionType === "CANCEL" ? "取消" : a.actionType === "ESCALATE" ? "升级" : a.actionType === "NOTE" ? "备注" : String(a.actionType ?? ""), detail: String((a.fromStatus ?? "—") + " → " + (a.toStatus ?? "—") + " · 操作人:" + (a.operatorId ?? "—") + " · " + (a.content ?? "")), level: a.actionType === "CLOSE" ? "success" : a.actionType === "CANCEL" ? "error" : a.actionType === "ESCALATE" ? "warning" : "default" }))}'
+
+  - type: form
+    submitScope: surface
+    body:
+      - type: grid
+        columns:
+          - type: grid-col
+            span: 4
+            body:
+              - type: input-number
+                name: ticketId
+                label: "工单ID"
+                placeholder: "过滤特定工单的操作历史"
+                clearable: true
+          - type: grid-col
+            span: 2
+            body:
+              - type: button
+                label: "刷新时间线"
+                actionType: ajax
+                action: ajax
+                args:
+                  url: '@query:ErpCsTicketAction__findPage'
+                  method: post
+                  data:
+                    filter_ticketId: ${ticketId ?? null}
+                    limit: 100
+                  selection: 'items{ id ticketId actionType fromStatus toStatus operatorId content createTime } total'
+                target: rawData
+
+  - type: text
+    text: '${"共 " + (rawData.total ?? 0) + " 条操作记录"}'
+    className: "text-muted m-b"
+
+  - type: timeline
+    items: ${timelineItems}
+    mode: left
+    orientation: vertical

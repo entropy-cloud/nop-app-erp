@@ -4,10 +4,12 @@ import app.erp.prj.dao.entity.ErpPrjTask;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 任务 Biz 契约（{@code task-dag.md}）。CRUD 之上承载：
@@ -67,4 +69,11 @@ public interface IErpPrjTaskBiz extends ICrudBiz<ErpPrjTask> {
      */
     @BizQuery
     List<ErpPrjTask> getDependencyChain(@Name("taskId") Long taskId, IServiceContext context);
+
+    /**
+     * 看板扁平图结构聚合查询（flux kanban 原生渲染）。返回 {@code id → BoardItem} 图：
+     * root 节点 + 4 列（TODO/IN_PROGRESS/DONE/BLOCKED）+ 每任务一个 card 节点。
+     */
+    @BizQuery
+    Map<String, Object> findBoardData(@Optional @Name("projectId") Long projectId, IServiceContext context);
 }
