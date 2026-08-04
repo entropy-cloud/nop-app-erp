@@ -11,6 +11,7 @@
 
 ## 顶层分析报告
 
+- `2026-08-04-0000-velpos-vs-mission-driver.md` — **外部 Agent 驱动器两种形态对比**：Velpos（交互式 Web 产品，人在环，驱动 Claude Code）vs Mission-Driver（无人值守 Headless 状态机，驱动 opencode）。结论：同赛道（均不实现 Agent 引擎、编排黑盒 CLI）的两个正交解——mission-driver 做"自治"（状态机/契约/审计门控），Velpos 做"交互"（流式/权限回传/IM/分支）。与自研 nop-ai-agent 不同层，不竞争。
 - `2026-07-19-1400-human-role-ai-autonomy-analysis.md` — **人类角色与AI自主权边界分析**：审查25天完整开发日志和258个计划执行记录，分析人类在研发中的实际角色性质。核心发现：人类全部输入（平台机制纠正/质量门控/领域常识）均属于可被另一AI agent替代的"可编码知识"，不存在"不可编码的人类判断"。根本原因在于nop-app-erp是产品化通用ERP骨架——没有真实客户约束、没有个人权威选择、所有设计决策由内在合理性和通用最佳实践决定。
 
 - `2026-07-01-1900-platform-best-practices-compliance-audit.md` — **平台最佳实践合规审计（4 维度并行子代理 + 主代理 grep 复核）**：对照 `nop-entropy/docs-for-ai/` + 本项目 `docs/architecture/`，审计已按 ERP roadmap 编写的代码（CRUD 18 域 + P1 业务逻辑 5 段）。综合 **7.3/10**：模块结构与 ORM 命名优秀（8.5/10、7.0/10），**自定义服务层为最集中短板（5.5/10）** —— 全项目 `@BizMutation/@BizQuery` 命中 0 次（用 `@Transactional` 代替，阻塞 GraphQL 暴露）、跨域访问用 `daoFor()` 绕过 I*Biz 管道、`requireEntity` 退化为 `getEntityById`、`new ErpXxx()` 直接构造。另发现：3 核心域金额族 122+ 字段 VARCHAR（sales 对照已 DECIMAL，未登记决策）、purchase/sales→projects 跨域 ORM 引用违反 DAG、DRP 菜单 3 处断链、单据状态机按钮全未接线。每条附 `文件:行号` 证据 + 规则出处。**执行计划**：`docs/plans/2026-07-01-1900-1-platform-compliance-remediation.md`。
