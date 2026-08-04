@@ -1,0 +1,119 @@
+# 盘点流程管理（plan 2026-08-03-1232-4 Phase 2）。
+#
+# 引导式流程驱动既有 inventory Facade mutation 链（零后端 delta）：
+#   ErpInvStockTakeBizModel.startTake（DRAFT→IN_PROGRESS）→ completeTake（IN_PROGRESS→DONE）→ cancelTake。
+#
+# 注：completeTake 仅翻转 DONE，未生成盘盈/盘亏移动单（Phase 0 核实结论）——流程页止于 DONE 展示。
+# 盘盈/盘亏移动单生成归 Deferred（watch-only residual，需后端行为变更 ask-first 评估）。
+type: page
+title: "盘点流程管理"
+body:
+  - type: tpl
+    className: m-3
+    tpl: '<div class="alert alert-info"><strong>盘点三阶段流程</strong>：DRAFT（待盘点）→ IN_PROGRESS（盘点中，startTake）→ DONE（已完成，completeTake）。盘盈/盘亏移动单生成归 Deferred。</div>'
+
+  - type: crud
+    name: stockTakeCrud
+    className: m-3
+    title: "盘点单"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpInvStockTake__findPage(query:{limit:${'$'}lim}){ items{ id code name status rangeDepartmentId responsibleById businessDate } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpInvStockTake__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - { name: code, label: "单号" }
+      - { name: name, label: "名称" }
+      - name: status
+        label: "状态"
+        type: tpl
+        tpl: '${status == "DRAFT" ? "<span class=\"label label-default\">待盘点</span>" : (status == "IN_PROGRESS" ? "<span class=\"label label-warning\">盘点中</span>" : (status == "DONE" ? "<span class=\"label label-success\">已完成</span>" : "<span class=\"label\">" + (status||"—") + "</span>"))}'
+      - { name: rangeDepartmentId, label: "盘点部门" }
+      - { name: responsibleById, label: "负责人" }
+      - { name: businessDate, label: "业务日期" }
+      - name: actions
+        label: "操作"
+        type: tpl
+        tpl: '${status == "DRAFT" ? "<span class=\"text-muted\">startTake →</span>" : (status == "IN_PROGRESS" ? "<span class=\"text-muted\">completeTake →</span>" : (status == "DONE" ? "<span class=\"text-success\">✓ 流程完成</span>" : ""))}'
+
+  - type: form
+    name: actionForm
+    title: "执行盘点操作"
+    className: m-3
+    mode: inline
+    wrapWithPanel: false
+    body:
+      - type: input-number
+        name: takeId
+        label: "盘点单ID"
+        placeholder: "输入盘点单ID"
+        required: true
+      - type: button
+        label: "开始盘点 (startTake)"
+        level: primary
+        icon: "fa fa-play"
+        actionType: ajax
+        confirmText: "确认开始盘点？状态将翻转为 IN_PROGRESS。"
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "mutation(${'$'}tid:Long){ ErpInvStockTake__startTake(takeId:${'$'}tid){ id status } }"
+            variables:
+              tid: "${takeId}"
+          adaptor: |
+            if (payload && payload.data && payload.data.errors) {
+              return { status: 1, msg: (payload.data.errors[0] || {}).message || 'startTake failed' };
+            }
+            return { status: 0, msg: '盘点已开始（IN_PROGRESS）' };
+        reload: "stockTakeCrud"
+      - type: button
+        label: "完成盘点 (completeTake)"
+        level: success
+        icon: "fa fa-check"
+        actionType: ajax
+        confirmText: "确认完成盘点？状态将翻转为 DONE（注：不生成盘盈/盘亏移动单）。"
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "mutation(${'$'}tid:Long){ ErpInvStockTake__completeTake(takeId:${'$'}tid){ id status } }"
+            variables:
+              tid: "${takeId}"
+          adaptor: |
+            if (payload && payload.data && payload.data.errors) {
+              return { status: 1, msg: (payload.data.errors[0] || {}).message || 'completeTake failed' };
+            }
+            return { status: 0, msg: '盘点已完成（DONE）' };
+        reload: "stockTakeCrud"
+      - type: button
+        label: "取消盘点 (cancelTake)"
+        level: danger
+        icon: "fa fa-times"
+        actionType: ajax
+        confirmText: "确认取消盘点？"
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "mutation(${'$'}tid:Long){ ErpInvStockTake__cancelTake(takeId:${'$'}tid){ id status } }"
+            variables:
+              tid: "${takeId}"
+          adaptor: |
+            if (payload && payload.data && payload.data.errors) {
+              return { status: 1, msg: (payload.data.errors[0] || {}).message || 'cancelTake failed' };
+            }
+            return { status: 0, msg: '盘点已取消' };
+        reload: "stockTakeCrud"

@@ -1,7 +1,10 @@
+# 分摊规则 — Deferred（plan 2026-08-03-1232-4 Phase 0 裁决）。
+# 原因：GL Distribution（按成本中心再分摊规则）在设计文档中明确 Deferred（cost-center.md/posting.md），无实体。
+# 触发条件：GL Distribution 实体与 IErpFinFactsValidator 实现就绪后落地。
 type: page
-title: "main"
+title: "分摊规则（Deferred）"
 body:
   - type: alert
-    body: "main — 待实现占位页面"
-    level: info
+    body: "本页为 Deferred——GL Distribution（按成本中心再分摊规则）在设计文档中明确 Deferred，无实体与后端链（ORM ask-first 保护区域）。实体就绪后落地。详见 plan 2026-08-03-1232-4。"
+    level: warning
     className: m-3

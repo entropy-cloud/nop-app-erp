@@ -54,3 +54,5 @@ site:
       displayName: Transfer
     inventory-trace-report:
       displayName: Inventory Trace Report
+    stock-take-flow:
+      displayName: Stock Take Flow

@@ -68,6 +68,10 @@
                                   i18n-en:displayName="Stock Take" icon="clipboard-list"
                                   component="FLUX" resourceType="SUBM" orderNo="400"
                                   url="/erp/inv/pages/ErpInvStockTake/main.page.yaml"/>
+                        <resource id="stock-take-flow" app:useCases="UC-INV-07" displayName="盘点流程管理"
+                                  i18n-en:displayName="Stock Take Flow" icon="git-branch"
+                                  component="FLUX" resourceType="SUBM" orderNo="401"
+                                  url="/erp/inv/pages/stock-take-flow/main.page.yaml"/>
                     </children>
                 </resource>
                 <!-- 预留 -->

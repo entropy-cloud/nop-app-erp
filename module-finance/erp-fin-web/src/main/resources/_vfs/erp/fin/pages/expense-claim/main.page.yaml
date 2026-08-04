@@ -1,7 +1,84 @@
+# 费用报销单工作台（plan 2026-08-03-1232-4 Phase 1）。
+# 数据来源：ErpFinExpenseClaim 实体 findPage。零后端 delta。
 type: page
-title: "main"
+title: "费用报销单"
 body:
-  - type: alert
-    body: "main — 待实现占位页面"
-    level: info
+  - type: service
+    name: kpiService
     className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpFinExpenseClaim__findPage(query:{limit:${'$'}lim}){ items{ id amountWithTax docStatus approveStatus } total } }"
+        variables:
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinExpenseClaim__findPage || { items: [], total: 0 };
+        const rows = page.items || [];
+        const total = rows.length;
+        const totalAmount = rows.reduce(function(s,r){ return s + (Number(r.amountWithTax)||0); }, 0);
+        const pending = rows.filter(function(r){ return (r.docStatus||'') === 'DRAFT'; }).length;
+        const approved = rows.filter(function(r){ return (r.approveStatus||'') === 'APPROVED'; }).length;
+        return { status: 0, msg: '', data: { total: total, totalAmount: totalAmount, pending: pending, approved: approved } };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>报销单总数</div>" }
+              - { type: tpl, tpl: "<span class='h3'>${total}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>报销总额</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-primary'>¥${totalAmount | round:2}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>待提交</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-warning'>${pending}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>已审核</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-success'>${approved}</span>" }
+
+  - type: crud
+    name: claimCrud
+    className: m-3
+    title: "报销单列表"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpFinExpenseClaim__findPage(query:{limit:${'$'}lim}){ items{ id code claimantId departmentId businessDate paymentMode amountWithTax settleAdvance reason docStatus approveStatus } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinExpenseClaim__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - { name: code, label: "单号" }
+      - { name: claimantId, label: "报销人" }
+      - { name: departmentId, label: "部门" }
+      - { name: businessDate, label: "业务日期" }
+      - { name: paymentMode, label: "付款方式" }
+      - { name: amountWithTax, label: "含税金额" }
+      - { name: settleAdvance, label: "抵扣借款" }
+      - { name: docStatus, label: "单据状态" }
+      - name: approveStatus
+        label: "审核状态"
+        type: tpl
+        tpl: '${approveStatus == "APPROVED" ? "<span class=\"label label-success\">已审核</span>" : (approveStatus == "REJECTED" ? "<span class=\"label label-danger\">已驳回</span>" : "<span class=\"label label-default\">" + (approveStatus || "—") + "</span>")}'
+      - { name: reason, label: "事由" }

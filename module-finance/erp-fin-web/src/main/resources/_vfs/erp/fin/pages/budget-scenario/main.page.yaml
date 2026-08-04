@@ -1,7 +1,76 @@
+# 预算方案工作台（plan 2026-08-03-1232-4 Phase 1）。
+# 数据来源：ErpFinBudgetScenario 实体 findPage。零后端 delta。
 type: page
-title: "Main"
+title: "预算方案"
 body:
-  - type: alert
-    body: "Main — 待实现占位页面(设计见 docs/design/...)"
-    level: info
+  - type: service
+    name: kpiService
     className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpFinBudgetScenario__findPage(query:{limit:${'$'}lim}){ items{ id amountFunctional docStatus approveStatus } total } }"
+        variables:
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinBudgetScenario__findPage || { items: [], total: 0 };
+        const rows = page.items || [];
+        const totalAmount = rows.reduce(function(s,r){ return s + (Number(r.amountFunctional)||0); }, 0);
+        const approved = rows.filter(function(r){ return (r.approveStatus||'') === 'APPROVED'; }).length;
+        return { status: 0, msg: '', data: { total: rows.length, totalAmount: totalAmount, approved: approved } };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>方案总数</div>" }
+              - { type: tpl, tpl: "<span class='h3'>${total}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>预算总额(本位币)</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-primary'>¥${totalAmount | round:2}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>已批准方案</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-success'>${approved}</span>" }
+
+  - type: crud
+    name: scenarioCrud
+    className: m-3
+    title: "预算方案列表"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpFinBudgetScenario__findPage(query:{limit:${'$'}lim}){ items{ id code name fiscalYear scenarioType budgetGroupCode amountFunctional controlLevel docStatus approveStatus } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinBudgetScenario__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - { name: code, label: "方案编码" }
+      - { name: name, label: "方案名称" }
+      - { name: fiscalYear, label: "预算年度" }
+      - { name: scenarioType, label: "方案类型" }
+      - { name: budgetGroupCode, label: "预算组" }
+      - { name: amountFunctional, label: "预算金额(本位币)" }
+      - { name: controlLevel, label: "控制级别" }
+      - { name: docStatus, label: "方案状态" }
+      - name: approveStatus
+        label: "审核状态"
+        type: tpl
+        tpl: '${approveStatus == "APPROVED" ? "<span class=\"label label-success\">已批准</span>" : (approveStatus == "REJECTED" ? "<span class=\"label label-danger\">已驳回</span>" : "<span class=\"label label-default\">" + (approveStatus || "—") + "</span>")}'

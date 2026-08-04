@@ -1,7 +1,79 @@
+# 项目结算单工作台（plan 2026-08-03-1232-4 Phase 3）。
+# 数据来源：ErpPrjProjectSettlement 实体 findPage（createSettlement→approve→posted 链已实现）。零后端 delta。
 type: page
-title: "Main"
+title: "项目结算单"
 body:
-  - type: alert
-    body: "Main — 待实现占位页面(设计见 docs/design/...)"
-    level: info
+  - type: service
+    name: kpiService
     className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpPrjProjectSettlement__findPage(query:{limit:${'$'}lim}){ items{ id finalRevenue finalCost finalProfit docStatus } total } }"
+        variables:
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpPrjProjectSettlement__findPage || { items: [], total: 0 };
+        const rows = page.items || [];
+        const totalRevenue = rows.reduce(function(s,r){ return s + (Number(r.finalRevenue)||0); }, 0);
+        const totalCost = rows.reduce(function(s,r){ return s + (Number(r.finalCost)||0); }, 0);
+        const totalProfit = rows.reduce(function(s,r){ return s + (Number(r.finalProfit)||0); }, 0);
+        return { status: 0, msg: '', data: { count: rows.length, totalRevenue: totalRevenue, totalCost: totalCost, totalProfit: totalProfit } };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>结算单数</div>" }
+              - { type: tpl, tpl: "<span class='h3'>${count}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>最终收入</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-success'>¥${totalRevenue | round:2}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>最终成本</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-danger'>¥${totalCost | round:2}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>最终利润</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-primary'>¥${totalProfit | round:2}</span>" }
+
+  - type: crud
+    name: settlementCrud
+    className: m-3
+    title: "结算单列表"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpPrjProjectSettlement__findPage(query:{limit:${'$'}lim}){ items{ id code projectId customerId businessDate settlementType finalRevenue finalCost finalProfit docStatus } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpPrjProjectSettlement__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - { name: code, label: "单号" }
+      - { name: projectId, label: "项目" }
+      - { name: customerId, label: "客户" }
+      - { name: businessDate, label: "业务日期" }
+      - { name: settlementType, label: "结算类型" }
+      - { name: finalRevenue, label: "最终收入" }
+      - { name: finalCost, label: "最终成本" }
+      - { name: finalProfit, label: "最终利润" }
+      - { name: docStatus, label: "状态" }

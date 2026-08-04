@@ -1,7 +1,77 @@
+# 成本中心工作台（plan 2026-08-03-1232-4 Phase 3）。
+# 数据来源：ErpMdCostCenter 实体 findPage（树形 parentId 支持层级）。零后端 delta。
 type: page
-title: "Main"
+title: "成本中心"
 body:
-  - type: alert
-    body: "Main — 待实现占位页面(设计见 docs/design/...)"
-    level: info
+  - type: service
+    name: kpiService
     className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpMdCostCenter__findPage(query:{limit:${'$'}lim}){ items{ id isBudgetable status } total } }"
+        variables:
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpMdCostCenter__findPage || { items: [], total: 0 };
+        const rows = page.items || [];
+        const budgetable = rows.filter(function(r){ return r.isBudgetable === true; }).length;
+        const active = rows.filter(function(r){ return (r.status||'') === 'ACTIVE'; }).length;
+        return { status: 0, msg: '', data: { count: rows.length, budgetable: budgetable, active: active } };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>成本中心数</div>" }
+              - { type: tpl, tpl: "<span class='h3'>${count}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>可预算</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-primary'>${budgetable}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>活跃</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-success'>${active}</span>" }
+
+  - type: crud
+    name: costCenterCrud
+    className: m-3
+    title: "成本中心列表"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpMdCostCenter__findPage(query:{limit:${'$'}lim}){ items{ id code name orgId managerId parentId isBudgetable status } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpMdCostCenter__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - { name: code, label: "编码" }
+      - { name: name, label: "名称" }
+      - { name: orgId, label: "所属组织" }
+      - { name: managerId, label: "负责人" }
+      - { name: parentId, label: "上级成本中心" }
+      - name: isBudgetable
+        label: "可预算"
+        type: tpl
+        tpl: '${isBudgetable ? "<span class=\"label label-primary\">是</span>" : "<span class=\"label label-default\">否</span>"}'
+      - name: status
+        label: "状态"
+        type: tpl
+        tpl: '${status == "ACTIVE" ? "<span class=\"label label-success\">活跃</span>" : "<span class=\"label label-default\">" + (status||"—") + "</span>"}'

@@ -1,7 +1,10 @@
+# 资产维修 — Deferred（plan 2026-08-03-1232-4 Phase 0 裁决）。
+# 原因：无 ErpAstRepair 实体，需 ORM 扩展（ask-first 保护区域）。资产维修功能当前由 ErpAstMaintenance 实体承载（CRUD 页已存在）。
+# 触发条件：ErpAstRepair 实体就绪后落地（若需与 ErpAstMaintenance 区分的独立维修工单实体）。
 type: page
-title: "main"
+title: "资产维修（Deferred）"
 body:
   - type: alert
-    body: "main — 待实现占位页面"
-    level: info
+    body: "本页为 Deferred——无 ErpAstRepair 实体，需 ORM 扩展（ask-first 保护区域）。资产维修功能当前由 ErpAstMaintenance 实体承载（CRUD 页已存在）。详见 plan 2026-08-03-1232-4。"
+    level: warning
     className: m-3

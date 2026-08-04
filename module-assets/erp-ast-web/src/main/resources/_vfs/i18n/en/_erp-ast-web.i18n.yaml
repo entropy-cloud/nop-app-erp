@@ -46,5 +46,7 @@ site:
       displayName: Assets Reports
     ast-stocktake:
       displayName: Asset Stocktake
+    disposal-wizard:
+      displayName: Disposal Wizard
     erp-ast:
       displayName: Fixed Assets

@@ -1,7 +1,79 @@
+# 项目损益汇总工作台（plan 2026-08-03-1232-4 Phase 3）。
+# 数据来源：ErpPrjProjectPnl 实体 findPage。零后端 delta。
 type: page
-title: "Main"
+title: "项目损益汇总"
 body:
-  - type: alert
-    body: "Main — 待实现占位页面(设计见 docs/design/...)"
-    level: info
+  - type: service
+    name: kpiService
     className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpPrjProjectPnl__findPage(query:{limit:${'$'}lim}){ items{ id revenueAmount totalCost grossProfit grossMarginPct } total } }"
+        variables:
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpPrjProjectPnl__findPage || { items: [], total: 0 };
+        const rows = page.items || [];
+        const totalRevenue = rows.reduce(function(s,r){ return s + (Number(r.revenueAmount)||0); }, 0);
+        const totalCost = rows.reduce(function(s,r){ return s + (Number(r.totalCost)||0); }, 0);
+        const totalProfit = rows.reduce(function(s,r){ return s + (Number(r.grossProfit)||0); }, 0);
+        return { status: 0, msg: '', data: { count: rows.length, totalRevenue: totalRevenue, totalCost: totalCost, totalProfit: totalProfit } };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>损益记录数</div>" }
+              - { type: tpl, tpl: "<span class='h3'>${count}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>总收入</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-success'>¥${totalRevenue | round:2}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>总成本</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-danger'>¥${totalCost | round:2}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>总毛利</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-primary'>¥${totalProfit | round:2}</span>" }
+
+  - type: crud
+    name: pnlCrud
+    className: m-3
+    title: "损益记录列表"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpPrjProjectPnl__findPage(query:{limit:${'$'}lim}){ items{ id code projectId periodFrom periodTo revenueAmount totalCost grossProfit grossMarginPct calcStatus } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpPrjProjectPnl__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - { name: code, label: "单号" }
+      - { name: projectId, label: "项目" }
+      - { name: periodFrom, label: "起始期间" }
+      - { name: periodTo, label: "结束期间" }
+      - { name: revenueAmount, label: "收入" }
+      - { name: totalCost, label: "成本" }
+      - { name: grossProfit, label: "毛利" }
+      - { name: grossMarginPct, label: "毛利率" }
+      - { name: calcStatus, label: "计算状态" }

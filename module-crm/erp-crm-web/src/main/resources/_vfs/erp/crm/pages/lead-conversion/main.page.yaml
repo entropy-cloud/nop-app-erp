@@ -1,0 +1,101 @@
+# 线索转化向导（plan 2026-08-03-1232-4 Phase 2）。
+#
+# 引导式流程驱动既有 crm Facade mutation 链（零后端 delta）：
+#   ErpCrmLeadBizModel.moveStage（ErpCrmLeadMoveStageProcessor）——stageId 沿 ErpCrmStage.sequence 单向递增。
+#
+# 三步：① 选择线索 → ② 选择目标阶段 → ③ 确认转化。
+type: page
+title: "线索转化向导"
+body:
+  - type: tpl
+    className: m-3
+    tpl: '<div class="alert alert-info"><strong>线索转化三步向导</strong>：选择线索 → 选择目标漏斗阶段 → 确认转化（moveStage，stageId 单向递增）。</div>'
+
+  # ── Step 1：选择线索 ──
+  - type: form
+    name: step1Form
+    title: "Step 1 · 选择线索"
+    className: m-3
+    mode: normal
+    body:
+      - type: select
+        name: leadId
+        label: "选择线索"
+        required: true
+        clearable: true
+        source:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}lim:Int){ ErpCrmLead__findPage(query:{limit:${'$'}lim}){ items{ id code leadType expectedRevenue probability stage{ id stageName sequence } partnerId } total } }"
+            variables:
+              lim: 200
+          adaptor: |
+            const d = payload.data || {};
+            const gql = d.data ? d.data : d;
+            const page = gql.ErpCrmLead__findPage || { items: [], total: 0 };
+            const opts = (page.items || []).map(function(l){
+              const stageName = (l.stage && l.stage.stageName) ? l.stage.stageName : '—';
+              return { label: (l.code || '') + ' · 预期收入:' + (l.expectedRevenue||0) + ' · 当前阶段:' + stageName, value: l.id };
+            });
+            return { options: opts };
+      - type: button
+        label: "下一步：选择目标阶段"
+        level: primary
+        icon: "fa fa-arrow-right"
+        actionType: reload
+        target: "stageService"
+        disabledOn: "${!leadId}"
+
+  # ── Step 2 + 3：选择目标阶段 + 确认转化 ──
+  - type: service
+    name: stageService
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpCrmStage__findPage(query:{limit:${'$'}lim}){ items{ id stageName sequence isWonStage defaultProbability } total } }"
+        variables:
+          lim: 100
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpCrmStage__findPage || { items: [], total: 0 };
+        const stages = (page.items || []).slice().sort(function(a,b){ return (a.sequence||0) - (b.sequence||0); });
+        return { status: 0, msg: '', data: { stages: stages } };
+    body:
+      - type: tpl
+        tpl: '<h5>Step 2 · 选择目标阶段</h5>'
+      - type: select
+        name: toStageId
+        label: "目标漏斗阶段"
+        required: true
+        source:
+          data: "${stages}"
+          labelField: "stageName"
+          valueField: "id"
+      - type: tpl
+        tpl: '<div class="text-muted">moveStage 按 ErpCrmStage.sequence 单向递增校验——目标阶段必须大于当前阶段。</div>'
+      - type: button
+        label: "Step 3 · 确认转化（moveStage）"
+        level: danger
+        icon: "fa fa-check"
+        actionType: ajax
+        confirmText: "确认将线索转化到目标阶段？"
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "mutation(${'$'}lid:Long,${'$'}sid:Long){ ErpCrmLead__moveStage(leadId:${'$'}lid,toStageId:${'$'}sid){ id code stage{ id stageName sequence } } }"
+            variables:
+              lid: "${leadId}"
+              sid: "${toStageId}"
+          adaptor: |
+            if (payload && payload.data && payload.data.errors) {
+              return { status: 1, msg: (payload.data.errors[0] || {}).message || 'moveStage failed' };
+            }
+            return { status: 0, msg: '线索转化成功' };

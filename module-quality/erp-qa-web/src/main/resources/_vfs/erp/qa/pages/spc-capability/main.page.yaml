@@ -1,7 +1,83 @@
+# SPC 过程能力分析页（plan 2026-08-03-1232-4 Phase 1）。
+#
+# 数据来源：ErpQaSpcCapability 实体（CRUD findPage）——cp/cpk/pp/ppk/capabilityLevel/isStable。
+# 能力分布图：bar chart 按 capabilityLevel 分组计数。零后端 delta，仅消费既有 @BizQuery。
 type: page
-title: "Main"
+title: "过程能力分析"
 body:
-  - type: alert
-    body: "Main — 待实现占位页面(设计见 docs/design/...)"
-    level: info
+  - type: chart
+    name: capabilityChart
     className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpQaSpcCapability__findPage(query:{limit:${'$'}lim}){ items{ id capabilityLevel cp cpk pp ppk isStable } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpQaSpcCapability__findPage || { items: [], total: 0 };
+        const rows = page.items || [];
+        const levels = ['EXCELLENT','ADEQUATE','INADEQUATE','UNDEFINED'];
+        const labels = { EXCELLENT: '充足', ADEQUATE: '尚可', INADEQUATE: '不足', UNDEFINED: '未定义' };
+        const counts = levels.map(function(lv){
+          return rows.filter(function(r){ return (r.capabilityLevel || 'UNDEFINED') === lv; }).length;
+        });
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            title: { text: '能力等级分布' },
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: levels.map(function(lv){ return labels[lv]; }) },
+            yAxis: { type: 'value', name: '数量' },
+            series: [{ type: 'bar', data: counts, itemStyle: { color: function(p){ return ['#22c55e','#3b82f6','#ef4444','#9ca3af'][p.dataIndex]; } } }]
+          }
+        };
+
+  - type: crud
+    name: capabilityCrud
+    className: m-3
+    title: "能力分析记录"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpQaSpcCapability__findPage(query:{limit:${'$'}lim}){ items{ id chartId periodFrom periodTo sampleCount cp cpk pp ppk capabilityLevel isStable } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpQaSpcCapability__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - name: chartId
+        label: "控制图ID"
+      - name: periodFrom
+        label: "起始期间"
+      - name: periodTo
+        label: "结束期间"
+      - name: sampleCount
+        label: "样本数"
+      - name: cp
+        label: "Cp"
+      - name: cpk
+        label: "Cpk"
+      - name: pp
+        label: "Pp"
+      - name: ppk
+        label: "Ppk"
+      - name: capabilityLevel
+        label: "能力等级"
+        type: tpl
+        tpl: '${capabilityLevel == "EXCELLENT" ? "<span class=\"label label-success\">充足</span>" : (capabilityLevel == "ADEQUATE" ? "<span class=\"label label-primary\">尚可</span>" : (capabilityLevel == "INADEQUATE" ? "<span class=\"label label-danger\">不足</span>" : "<span class=\"label label-default\">未定义</span>"))}'
+      - name: isStable
+        label: "稳定"
+        type: tpl
+        tpl: '${isStable ? "<span class=\"label label-success\">稳定</span>" : "<span class=\"label label-warning\">不稳定</span>"}'

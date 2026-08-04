@@ -1,7 +1,77 @@
+# SPC 样本数据页（plan 2026-08-03-1232-4 Phase 1）。
+#
+# 数据来源：ErpQaSpcSample 实体（CRUD findPage）——subgroupNo/sampleTime/mean/range/
+# stdDev/defectCount/inspectedCount/defectRate/isOutOfControl/violatedRules。
+# 样本趋势图：line chart 按子组号展示均值趋势。零后端 delta，仅消费既有 @BizQuery。
 type: page
-title: "Main"
+title: "SPC 样本数据"
 body:
-  - type: alert
-    body: "Main — 待实现占位页面(设计见 docs/design/...)"
-    level: info
+  - type: chart
+    name: sampleTrendChart
     className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpQaSpcSample__findPage(query:{limit:${'$'}lim}){ items{ id subgroupNo mean range isOutOfControl } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpQaSpcSample__findPage || { items: [], total: 0 };
+        const rows = (page.items || []).slice().sort(function(a,b){ return (a.subgroupNo||0) - (b.subgroupNo||0); });
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            title: { text: '样本均值趋势' },
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', name: '子组号', data: rows.map(function(r){ return r.subgroupNo; }) },
+            yAxis: { type: 'value', name: '均值' },
+            series: [{ type: 'line', data: rows.map(function(r){ return { value: r.mean, itemStyle: r.isOutOfControl ? {color:'red'} : undefined }; }) }]
+          }
+        };
+
+  - type: crud
+    name: sampleCrud
+    className: m-3
+    title: "样本记录"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpQaSpcSample__findPage(query:{limit:${'$'}lim}){ items{ id chartId subgroupNo sampleTime mean range stdDev defectCount inspectedCount defectRate isOutOfControl violatedRules } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpQaSpcSample__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - name: chartId
+        label: "控制图ID"
+      - name: subgroupNo
+        label: "子组号"
+      - name: sampleTime
+        label: "采样时间"
+      - name: mean
+        label: "均值"
+      - name: range
+        label: "极差"
+      - name: stdDev
+        label: "标准差"
+      - name: defectCount
+        label: "缺陷数"
+      - name: inspectedCount
+        label: "检验数"
+      - name: isOutOfControl
+        label: "失控"
+        type: tpl
+        tpl: '${isOutOfControl ? "<span class=\"label label-danger\">失控</span>" : "<span class=\"label label-success\">正常</span>"}'
+      - name: violatedRules
+        label: "违规规则"

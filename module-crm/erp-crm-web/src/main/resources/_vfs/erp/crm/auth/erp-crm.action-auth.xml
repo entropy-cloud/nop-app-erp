@@ -13,6 +13,10 @@
                                   displayName="线索/商机" i18n-en:displayName="Lead / Opportunity" icon="user-plus"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
                                   url="/erp/crm/pages/ErpCrmLead/main.page.yaml"/>
+                        <resource id="lead-conversion" app:useCases="UC-CRM-06" displayName="线索转化向导"
+                                  i18n-en:displayName="Lead Conversion Wizard" icon="git-merge"
+                                  component="FLUX" resourceType="SUBM" orderNo="101"
+                                  url="/erp/crm/pages/lead-conversion/main.page.yaml"/>
                         <resource id="crm-opportunity-kanban" app:useCases="UC-CRM-03,UC-CRM-06" displayName="商机看板"
                                   i18n-en:displayName="Opportunity Kanban" icon="kanban"
                                   component="FLUX" resourceType="SUBM" orderNo="105"

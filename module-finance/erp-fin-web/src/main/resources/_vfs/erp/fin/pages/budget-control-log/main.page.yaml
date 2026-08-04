@@ -1,7 +1,83 @@
+# 预算控制日志（plan 2026-08-03-1232-4 Phase 1）。
+# 数据来源：ErpFinBudgetControlLog 实体 findPage（只读审计日志）。零后端 delta。
 type: page
-title: "Main"
+title: "预算控制日志"
 body:
-  - type: alert
-    body: "Main — 待实现占位页面(设计见 docs/design/...)"
-    level: info
+  - type: service
+    name: kpiService
     className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpFinBudgetControlLog__findPage(query:{limit:${'$'}lim}){ items{ id actionResult requestedAmount } total } }"
+        variables:
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinBudgetControlLog__findPage || { items: [], total: 0 };
+        const rows = page.items || [];
+        const hardBlocked = rows.filter(function(r){ return (r.actionResult||'') === 'HARD'; }).length;
+        const warned = rows.filter(function(r){ return (r.actionResult||'') === 'WARN'; }).length;
+        const passed = rows.filter(function(r){ return (r.actionResult||'') === 'PASS'; }).length;
+        return { status: 0, msg: '', data: { total: rows.length, hardBlocked: hardBlocked, warned: warned, passed: passed } };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>日志总数</div>" }
+              - { type: tpl, tpl: "<span class='h3'>${total}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>硬阻断</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-danger'>${hardBlocked}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>警告放行</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-warning'>${warned}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>放行</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-success'>${passed}</span>" }
+
+  - type: crud
+    name: logCrud
+    className: m-3
+    title: "控制日志列表"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpFinBudgetControlLog__findPage(query:{limit:${'$'}lim}){ items{ id businessDate sourceBillType sourceBillCode subjectId requestedAmount availableAmount actionResult operatorId operatedAt reason } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinBudgetControlLog__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - { name: businessDate, label: "业务日期" }
+      - { name: sourceBillType, label: "单据类型" }
+      - { name: sourceBillCode, label: "单据号" }
+      - { name: subjectId, label: "科目" }
+      - { name: requestedAmount, label: "申请金额" }
+      - { name: availableAmount, label: "检查时余量" }
+      - name: actionResult
+        label: "控制结果"
+        type: tpl
+        tpl: '${actionResult == "HARD" ? "<span class=\"label label-danger\">硬阻断</span>" : (actionResult == "WARN" ? "<span class=\"label label-warning\">警告</span>" : "<span class=\"label label-success\">放行</span>")}'
+      - { name: operatorId, label: "操作人" }
+      - { name: operatedAt, label: "操作时间" }
+      - { name: reason, label: "原因" }

@@ -1,7 +1,73 @@
+# 银行对账单工作台（plan 2026-08-03-1232-4 Phase 1）。
+# 数据来源：ErpFinBankStatement 实体 findPage。零后端 delta。
 type: page
-title: "Main"
+title: "银行对账单"
 body:
-  - type: alert
-    body: "Main — 待实现占位页面(设计见 docs/design/...)"
-    level: info
+  - type: service
+    name: kpiService
     className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpFinBankStatement__findPage(query:{limit:${'$'}lim}){ items{ id beginningBalance endingBalance totalDebit totalCredit docStatus } total } }"
+        variables:
+          lim: 500
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinBankStatement__findPage || { items: [], total: 0 };
+        const rows = page.items || [];
+        const totalDebit = rows.reduce(function(s,r){ return s + (Number(r.totalDebit)||0); }, 0);
+        const totalCredit = rows.reduce(function(s,r){ return s + (Number(r.totalCredit)||0); }, 0);
+        return { status: 0, msg: '', data: { total: rows.length, totalDebit: totalDebit, totalCredit: totalCredit } };
+    body:
+      - type: grid
+        className: m-3
+        gap: 'sm'
+        columns:
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>对账单数</div>" }
+              - { type: tpl, tpl: "<span class='h3'>${total}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>借方合计</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-success'>¥${totalDebit | round:2}</span>" }
+          - type: wrapper
+            className: "border rounded p-3"
+            body:
+              - { type: tpl, tpl: "<div class='text-muted'>贷方合计</div>" }
+              - { type: tpl, tpl: "<span class='h3 text-danger'>¥${totalCredit | round:2}</span>" }
+
+  - type: crud
+    name: statementCrud
+    className: m-3
+    title: "对账单列表"
+    syncLocation: false
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}lim:Int){ ErpFinBankStatement__findPage(query:{limit:${'$'}lim}){ items{ id code orgId fundAccountId statementDate beginningBalance endingBalance totalDebit totalCredit docStatus } total } }"
+        variables:
+          lim: 200
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const page = gql.ErpFinBankStatement__findPage || { items: [], total: 0 };
+        return { status: 0, msg: '', data: { items: page.items || [], count: page.total || 0 } };
+    columns:
+      - { name: code, label: "单号" }
+      - { name: orgId, label: "业务组织" }
+      - { name: fundAccountId, label: "资金账户" }
+      - { name: statementDate, label: "对账单日期" }
+      - { name: beginningBalance, label: "期初余额" }
+      - { name: endingBalance, label: "期末余额" }
+      - { name: totalDebit, label: "借方合计" }
+      - { name: totalCredit, label: "贷方合计" }
+      - { name: docStatus, label: "状态" }

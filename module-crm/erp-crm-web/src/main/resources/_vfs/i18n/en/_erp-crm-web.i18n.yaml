@@ -74,5 +74,7 @@ site:
       displayName: Customer Relationship
     forecast-accuracy:
       displayName: Forecast Accuracy
+    lead-conversion:
+      displayName: Lead Conversion Wizard
     lead-conversion-funnel:
       displayName: Lead Conversion Funnel

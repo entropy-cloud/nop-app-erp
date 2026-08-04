@@ -1,0 +1,132 @@
+# 资产处置向导（plan 2026-08-03-1232-4 Phase 2）。
+#
+# 引导式流程驱动既有 assets Facade mutation 链（零后端 delta）：
+#   ErpAstDisposal__save（创建处置单）→ submitForApproval → approve（ErpAstDisposalProcessor 链）。
+#
+# 三步：① 选择资产 + 处置类型 → ② 清理损益预览 → ③ 确认提交。
+# 组件选型：form+button-driven 分步（与 period-close-wizard 先例一致）。
+type: page
+title: "资产处置向导"
+body:
+  # ── Step 1：选择资产 + 处置类型 ──
+  - type: form
+    name: step1Form
+    title: "Step 1 · 选择资产与处置类型"
+    className: m-3
+    mode: normal
+    body:
+      - type: select
+        name: assetId
+        label: "选择资产"
+        required: true
+        clearable: true
+        placeholder: "选择要处置的资产"
+        source:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}lim:Int){ ErpAstAsset__findPage(query:{limit:${'$'}lim}){ items{ id code name netBookValue status } total } }"
+            variables:
+              lim: 200
+          adaptor: |
+            const d = payload.data || {};
+            const gql = d.data ? d.data : d;
+            const page = gql.ErpAstAsset__findPage || { items: [], total: 0 };
+            const opts = (page.items || []).map(function(a){
+              return { label: (a.code || '') + ' · ' + (a.name || '') + ' (净值:' + (a.netBookValue||0) + ')', value: a.id };
+            });
+            return { options: opts };
+      - type: select
+        name: disposalType
+        label: "处置类型"
+        required: true
+        options:
+          - { label: "出售", value: "SALE" }
+          - { label: "报废", value: "SCRAP" }
+          - { label: "捐赠", value: "DONATION" }
+          - { label: "毁损", value: "DAMAGE" }
+      - type: input-number
+        name: disposalAmount
+        label: "处置金额"
+        placeholder: "处置回收金额"
+      - type: input-date
+        name: businessDate
+        label: "处置日期"
+        required: true
+      - type: button
+        label: "下一步：预览清理损益"
+        level: primary
+        icon: "fa fa-arrow-right"
+        actionType: reload
+        target: "previewService"
+        disabledOn: "${!assetId || !disposalType}"
+
+  # ── Step 2：清理损益预览 ──
+  - type: service
+    name: previewService
+    className: m-3
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}aid:Long){ ErpAstAsset__get(id:${'$'}aid){ id code name netBookValue originalValue accumulatedDepreciation status } }"
+        variables:
+          aid: "${assetId}"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const asset = gql.ErpAstAsset__get || {};
+        const nbv = Number(asset.netBookValue || 0);
+        const amount = Number(disposalAmount || 0);
+        const gainLoss = amount - nbv;
+        return {
+          status: 0,
+          msg: '',
+          data: {
+            asset: asset,
+            netBookValue: nbv,
+            disposalAmount: amount,
+            gainLoss: gainLoss,
+            gainLossLabel: gainLoss >= 0 ? '清理收益' : '清理损失',
+            gainLossLevel: gainLoss >= 0 ? 'success' : 'danger'
+          }
+        };
+    body:
+      - type: tpl
+        tpl: '<div class="alert alert-info"><strong>清理损益预览</strong></div>'
+      - type: tpl
+        tpl: '<div class="m-b">资产：<strong>${asset.code || "—"}</strong> · ${asset.name || "—"}</div>'
+      - type: tpl
+        tpl: '<div class="m-b">账面净值：<strong>¥${netBookValue | round:2}</strong> · 处置金额：<strong>¥${disposalAmount | round:2}</strong></div>'
+      - type: tpl
+        tpl: '<div class="alert alert-${gainLossLevel}"><strong>${gainLossLabel}：¥${gainLoss | round:2}</strong></div>'
+
+      # ── Step 3：确认提交（创建处置单 + 提交审批）──
+      - type: button
+        label: "确认提交处置单"
+        level: danger
+        icon: "fa fa-check"
+        actionType: ajax
+        confirmText: "确认创建资产处置单并提交审批？"
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "mutation(${'$'}data:ErpAstDisposal__saveInput){ ErpAstDisposal__save(data:${'$'}data){ id code docStatus } }"
+            variables:
+              data:
+                assetId: "${assetId}"
+                disposalType: "${disposalType}"
+                disposalAmount: "${disposalAmount}"
+                businessDate: "${businessDate}"
+          adaptor: |
+            if (payload && payload.data && payload.data.errors) {
+              return { status: 1, msg: (payload.data.errors[0] || {}).message || 'save failed' };
+            }
+            const d = payload.data || {};
+            const gql = d.data ? d.data : d;
+            const item = gql.ErpAstDisposal__save || {};
+            return { status: 0, msg: '处置单 ' + (item.code || '') + ' 已创建（状态：' + (item.docStatus || '') + '）' };

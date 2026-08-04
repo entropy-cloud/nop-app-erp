@@ -1,7 +1,10 @@
+# 不合格品处置单 — Deferred（plan 2026-08-03-1232-4 Phase 0 裁决）。
+# 原因：无 ErpQaNonConformanceDisposal 实体，需 ORM 扩展（ask-first 保护区域）。NCR 处置当前经 ErpQaNonConformance.disposalType/disposalMethod 字段承载（CRUD 页已存在）。
+# 触发条件：ErpQaNonConformanceDisposal 独立实体就绪后落地。
 type: page
-title: "main"
+title: "不合格品处置单（Deferred）"
 body:
   - type: alert
-    body: "main — 待实现占位页面"
-    level: info
+    body: "本页为 Deferred——无 ErpQaNonConformanceDisposal 实体，需 ORM 扩展（ask-first 保护区域）。NCR 处置当前经 ErpQaNonConformance.disposalType/disposalMethod 字段承载（CRUD 页已存在）。详见 plan 2026-08-03-1232-4。"
+    level: warning
     className: m-3
