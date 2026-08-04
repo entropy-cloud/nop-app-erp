@@ -7,16 +7,17 @@ import * as fs from 'fs';
 export function runReportSmoke(domain: string, route: string): void {
   test.describe(`${domain} report smoke`, () => {
     test('renders page with render button and GraphQL 200', async ({ page }) => {
-      const graphqlResponses: { status: number; body: string }[] = [];
+      const dataResponses: { status: number; body: string; url: string }[] = [];
       page.on('response', async (resp) => {
-        if (resp.url().includes('/graphql') && resp.request().method() === 'POST') {
+        const url = resp.url();
+        if ((url.includes('/graphql') && resp.request().method() === 'POST') || url.includes('/r/')) {
           let body = '';
           try {
             body = await resp.text();
           } catch {
             body = '';
           }
-          graphqlResponses.push({ status: resp.status(), body });
+          dataResponses.push({ status: resp.status(), body, url });
         }
       });
 
@@ -32,14 +33,14 @@ export function runReportSmoke(domain: string, route: string): void {
         await page.waitForTimeout(3000);
       }
 
-      expect(graphqlResponses.length, 'Should have GraphQL calls').toBeGreaterThan(0);
+      expect(dataResponses.length, 'Should have data (GraphQL or REST /r/) calls').toBeGreaterThan(0);
 
-      const renderCalls = graphqlResponses.filter(
-        (r) => r.body.includes('renderHtml') || r.body.includes('Report__')
+      const renderCalls = dataResponses.filter(
+        (r) => r.body.includes('renderHtml') || r.body.includes('Report__') || r.url.includes('renderHtml') || r.url.includes('Report__'),
       );
 
-      for (const r of graphqlResponses) {
-        expect(r.status, `GraphQL should return 200`).toBe(200);
+      for (const r of dataResponses) {
+        expect(r.status, `Data call should return 200`).toBe(200);
       }
 
       if (renderCalls.length > 0) {

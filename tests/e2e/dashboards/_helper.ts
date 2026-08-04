@@ -4,10 +4,11 @@ import { GraphQLClient } from '../pages';
 export function runDashboardSmoke(domain: string, route: string, kpiKeywords: string[] = []): void {
   test.describe(`${domain} dashboard smoke`, () => {
     test('renders page with GraphQL 200 and no console errors', async ({ page }) => {
-      const graphqlResponses: number[] = [];
+      const dataResponses: number[] = [];
       page.on('response', (resp) => {
-        if (resp.url().includes('/graphql')) {
-          graphqlResponses.push(resp.status());
+        const url = resp.url();
+        if (url.includes('/graphql') || url.includes('/r/')) {
+          dataResponses.push(resp.status());
         }
       });
 
@@ -21,9 +22,9 @@ export function runDashboardSmoke(domain: string, route: string, kpiKeywords: st
         expect(hasKpi, `Dashboard should contain one of KPI keywords: ${kpiKeywords.join(', ')}`).toBe(true);
       }
 
-      expect(graphqlResponses.length, 'Should have GraphQL calls').toBeGreaterThan(0);
-      for (const status of graphqlResponses) {
-        expect(status, `GraphQL should return 200`).toBe(200);
+      expect(dataResponses.length, 'Should have data (GraphQL or REST /r/) calls').toBeGreaterThan(0);
+      for (const status of dataResponses) {
+        expect(status, `Data call should return 200`).toBe(200);
       }
     });
   });

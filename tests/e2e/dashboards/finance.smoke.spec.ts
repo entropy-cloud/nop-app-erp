@@ -2,10 +2,11 @@ import { test, expect, loginAndNavigate } from '../fixtures';
 
 test.describe('Finance dashboard smoke', () => {
   test('renders KPI cards, chart, and alert table with GraphQL 200', async ({ page }) => {
-    const graphqlResponses: { status: number; url: string }[] = [];
+    const dataResponses: { status: number; url: string }[] = [];
     page.on('response', (resp) => {
-      if (resp.url().includes('/graphql')) {
-        graphqlResponses.push({ status: resp.status(), url: resp.url() });
+      const url = resp.url();
+      if (url.includes('/graphql') || url.includes('/r/')) {
+        dataResponses.push({ status: resp.status(), url });
       }
     });
 
@@ -21,9 +22,9 @@ test.describe('Finance dashboard smoke', () => {
       'Dashboard should contain KPI labels'
     ).toBe(true);
 
-    expect(graphqlResponses.length).toBeGreaterThan(0);
-    for (const r of graphqlResponses) {
-      expect(r.status, `GraphQL ${r.url} returned ${r.status}`).toBe(200);
+    expect(dataResponses.length).toBeGreaterThan(0);
+    for (const r of dataResponses) {
+      expect(r.status, `Data call ${r.url} returned ${r.status}`).toBe(200);
     }
   });
 });

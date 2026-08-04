@@ -1,5 +1,5 @@
 import { test, expect, loginAndNavigate } from './_helper';
-import { GraphQLClient, CrudListPage, getEngine } from '../pages';
+import { GraphQLClient, CrudListPage, getEngine, getEngineType } from '../pages';
 
 /**
  * F4 Phase 2 P1 — inventory 子表行内编辑写路径 E2E（plan 2026-07-20-0629-1 Phase 5）。
@@ -185,6 +185,7 @@ test.describe('inventory domain child-table write', () => {
  */
 test.describe('AMIS input-table DOM verification (inventory)', () => {
   test('ErpInvStockMove edit form renders input-table for lines', async ({ page }) => {
+    test.skip(getEngineType() === 'flux', 'AMIS-specific DOM assertion (.cxd-InputTable) not applicable under flux engine');
     const engine = getEngine();
     const crud = new CrudListPage(page, engine, { entityRoute: 'ErpInvStockMove' });
 

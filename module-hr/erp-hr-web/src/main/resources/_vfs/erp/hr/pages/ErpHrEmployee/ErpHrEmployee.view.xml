@@ -16,7 +16,7 @@
                 <col id="bankAccountId" label="工资卡账户" i18n-en:label="Payroll Bank Account">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '****${ String(bankAccountId).slice(-4) }' };
+                            return { type: 'tpl', tpl: '****${(bankAccountId || "").slice(-4)}' };
                         ]]></c:script>
                     </gen-control>
                 </col>
@@ -147,21 +147,21 @@
                 <cell id="idCardNo">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '${ String(idCardNo).slice(0,1) }******${ String(idCardNo).slice(-4) }' };
+                            return { type: 'tpl', tpl: '${(idCardNo || "").slice(0,1)}******${(idCardNo || "").slice(-4)}' };
                         ]]></c:script>
                     </gen-control>
                 </cell>
                 <cell id="mobilePhone">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '${ String(mobilePhone).slice(0,3) }****${ String(mobilePhone).slice(-4) }' };
+                            return { type: 'tpl', tpl: '${(mobilePhone || "").slice(0,3)}****${(mobilePhone || "").slice(-4)}' };
                         ]]></c:script>
                     </gen-control>
                 </cell>
                 <cell id="bankAccountId">
                     <gen-control>
                         <c:script><![CDATA[
-                            return { type: 'tpl', tpl: '****${ String(bankAccountId).slice(-4) }' };
+                            return { type: 'tpl', tpl: '****${(bankAccountId || "").slice(-4)}' };
                         ]]></c:script>
                     </gen-control>
                 </cell>

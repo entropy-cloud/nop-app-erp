@@ -99,7 +99,7 @@
                             return {
                                 type: 'tpl',
                                 className: 'mb-0',
-                                tpl: '<span class="label label-${' + 'Number(totalDebit) == Number(totalCredit) ? "success" : "danger' + '}"><i class="fa ${' + 'Number(totalDebit) == Number(totalCredit) ? "fa-check-circle" : "fa-exclamation-triangle' + '}"></i> ${' + 'Number(totalDebit) == Number(totalCredit) ? "借贷平衡" : "借贷不平衡（需点击下方刷新合计按钮）"' + '}</span>'
+                                tpl: '<span class="label label-${' + 'totalDebit == totalCredit ? "success" : "danger' + '}"><i class="fa ${' + 'totalDebit == totalCredit ? "fa-check-circle" : "fa-exclamation-triangle' + '}"></i> ${' + 'totalDebit == totalCredit ? "借贷平衡" : "借贷不平衡（需点击下方刷新合计按钮）"' + '}</span>'
                             };
                         ]]></c:script>
                     </gen-control>
@@ -206,7 +206,7 @@
                         <success>凭证已过账</success>
                     </messages>
                     <visibleOn>${docStatus == 'DRAFT'}</visibleOn>
-                    <disabledOn>${(Number(totalDebit) || 0) != (Number(totalCredit) || 0)}</disabledOn>
+                    <disabledOn>${(totalDebit || 0) != (totalCredit || 0)}</disabledOn>
                 </action>
                 <action id="row-reverse-button" label="红冲" i18n-en:label="Red Reverse" level="danger" icon="fa fa-undo">
                     <visibleOn>${docStatus == 'POSTED' &amp;&amp; !isReversed}</visibleOn>

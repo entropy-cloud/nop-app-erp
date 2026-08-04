@@ -1,5 +1,5 @@
 import { test, expect, loginAndNavigate } from './_helper';
-import { GraphQLClient, getEngine, CrudListPage } from '../pages';
+import { GraphQLClient, CrudListPage, getEngine, getEngineType } from '../pages';
 
 /**
  * F4 Phase 2 P2 — assets ErpAstInventory 子表行内编辑写路径 E2E
@@ -109,6 +109,7 @@ test.describe('assets domain child-table write', () => {
  */
 test.describe('AMIS input-table DOM verification (assets)', () => {
   test('ErpAstInventory edit form renders input-table for lines', async ({ page }) => {
+    test.skip(getEngineType() === 'flux', 'AMIS-specific DOM assertion (.cxd-InputTable) not applicable under flux engine');
     await loginAndNavigate(page, '/ErpAstInventory-main');
 
     const engine = getEngine();
