@@ -1,7 +1,7 @@
 # 2026-08-03-1341-2 rc-ma1-a1-28-crm-f1-lead-lifecycle crm-F1 线索生命周期需求符合性审计
 
-> Plan Status: active
-> Last Reviewed: 2026-08-03
+> Plan Status: completed
+> Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.28（MA1 需求追踪矩阵审计 — crm-F1 线索生命周期）
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Item A1.28
@@ -77,54 +77,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-28-crm-f1-lead-lifecycle.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-CRM-01/02/03/04/09/11 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/:33/:54/:74/:175/:239` 验收标准原文；L2 引用 `crm/README.md` §核心业务对象/§状态机/§衔接契约、`state-machine.md`、`lead-scoring.md`、`territory.md`（标注"设计参考，冲突以 L1 为准"，L2↔L1 冲突如 README.md:67-68 仅 convertToCustomer 路径丢直接升格、lead-scoring.md:157 失实声称 SCHEDULED 已接线）；L3 引用 `ErpCrmLeadBizModel.java`/`ErpCrmLeadProcessor.java`/`ErpCrmConversion*Processor.java`/`LeadScoringEngine.java`/`TerritoryAssignmentEngine.java`/`ConditionMatcher.java`（含行号）；L4 引用 `TestErpCrmLeadConversion.java#method`/`TestErpCrmForecastAndScoring.java#method`/`TestErpCrmTerritoryQuota.java#method`（注明断言强度）；L5 复用 A2.14/A1.13/A4.5 + E2E。
+- [x] `Proof` 对 UC-CRM-01/02/03/04/09/11 **逐 UC 一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/:33/:54/:74/:175/:239` 验收标准原文；L2 引用 `crm/README.md` §核心业务对象/§状态机/§衔接契约、`state-machine.md`、`lead-scoring.md`、`territory.md`（标注"设计参考，冲突以 L1 为准"，L2↔L1 冲突如 README.md:67-68 仅 convertToCustomer 路径丢直接升格、lead-scoring.md:157 失实声称 SCHEDULED 已接线）；L3 引用 `ErpCrmLeadBizModel.java`/`ErpCrmLeadProcessor.java`/`ErpCrmConversion*Processor.java`/`LeadScoringEngine.java`/`TerritoryAssignmentEngine.java`/`ConditionMatcher.java`（含行号）；L4 引用 `TestErpCrmLeadConversion.java#method`/`TestErpCrmForecastAndScoring.java#method`/`TestErpCrmTerritoryQuota.java#method`（注明断言强度）；L5 复用 A2.14/A1.13/A4.5 + E2E。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-CRM-01 qualify（doQualify:121-131 设 QUALIFIED+首stage+default probability）；②#8 UC-CRM-01 lastContactDate（L1 `:27`——doQualify 不设，复核）；③UC-CRM-02 convertToCustomer（createPartnerFromLead+createOpportunityFromLead+markLeadConverted，复核弱指针）；④#1 UC-CRM-02 直接升格分支（L1 `:44-46`——grep 直接升格=0，复核缺失）；⑤#2 UC-CRM-02 前置条件（不查 QUALIFIED，复核 NEW 可转化）；⑥UC-CRM-03 convertToQuotation + 零污染（testZeroPollutionAssertion 强断言复核）；⑦#3 UC-CRM-03 前置条件（不查 QUALIFIED + isWonStage，复核 isWonStage 是否被任何处消费）；⑧UC-CRM-04 lose + lostReason 必填（强测复核）；⑨UC-CRM-09 评分引擎核心（LOOKUP/FORMULA/BOOLEAN + 归一化 + auto-qualify，强测复核）；⑩#4 UC-CRM-09 SCHEDULED（无 job + 无 scheduler.yaml + L2 失实）；⑪#5 UC-CRM-09 NOTIFY_OWNER（无派发）；⑫UC-CRM-11 territory 引擎 4 conditionType + 默认 fallback（强测复核）；⑬#6 UC-CRM-11 ROUND_ROBIN/LOAD_BALANCED 降级（toResult:73-84 显式 MANUAL 降级）；⑭#7 UC-CRM-11 代理字段（GEOGRAPHY/INDUSTRY/CUSTOMER_SIZE 用 companyName/department/expectedRevenue）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①UC-CRM-01 qualify（doQualify:121-131 设 QUALIFIED+首stage+default probability）；②#8 UC-CRM-01 lastContactDate（L1 `:27`——doQualify 不设，复核）；③UC-CRM-02 convertToCustomer（createPartnerFromLead+createOpportunityFromLead+markLeadConverted，复核弱指针）；④#1 UC-CRM-02 直接升格分支（L1 `:44-46`——grep 直接升格=0，复核缺失）；⑤#2 UC-CRM-02 前置条件（不查 QUALIFIED，复核 NEW 可转化）；⑥UC-CRM-03 convertToQuotation + 零污染（testZeroPollutionAssertion 强断言复核）；⑦#3 UC-CRM-03 前置条件（不查 QUALIFIED + isWonStage，复核 isWonStage 是否被任何处消费）；⑧UC-CRM-04 lose + lostReason 必填（强测复核）；⑨UC-CRM-09 评分引擎核心（LOOKUP/FORMULA/BOOLEAN + 归一化 + auto-qualify，强测复核）；⑩#4 UC-CRM-09 SCHEDULED（无 job + 无 scheduler.yaml + L2 失实）；⑪#5 UC-CRM-09 NOTIFY_OWNER（无派发）；⑫UC-CRM-11 territory 引擎 4 conditionType + 默认 fallback（强测复核）；⑬#6 UC-CRM-11 ROUND_ROBIN/LOAD_BALANCED 降级（toResult:73-84 显式 MANUAL 降级）；⑭#7 UC-CRM-11 代理字段（GEOGRAPHY/INDUSTRY/CUSTOMER_SIZE 用 companyName/department/expectedRevenue）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1/#2/#3 行为实质偏离验收标准（§2 P1①）——倾向 **P1**（#6 UC-CRM-11 须先按 §4 三判据复核 territory.md Deferred，并标注"修复可能触及 ORM ask-first"）；#4 SCHEDULED 缺失+L2 失实（§2 P1①）——倾向 **P1**；#5/#7/#8/#9 倾向 **P2**；UC-CRM-04 已实现接受。每结论须列明命中判据编号 + 三源对照 + L2 失实记录。
+- [x] `Decision` 按 §2 判据对每 UC 给出符合性结论（取最高）：#1/#2/#3 行为实质偏离验收标准（§2 P1①）——倾向 **P1**（#6 UC-CRM-11 须先按 §4 三判据复核 territory.md Deferred，并标注"修复可能触及 ORM ask-first"）；#4 SCHEDULED 缺失+L2 失实（§2 P1①）——倾向 **P1**；#5/#7/#8/#9 倾向 **P2**；UC-CRM-04 已实现接受。每结论须列明命中判据编号 + 三源对照 + L2 失实记录。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-CRM-01/02/03/04/09/11 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.14/A1.13/A4.5 来源
-- [ ] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#9 有明确分级（非悬空"待查"）；#1/#2/#3/#4/#6 有明确 P1 倾向 + #6 标注 ORM ask-first 风险 + L2 失实（lead-scoring.md:157）记录
+- [x] 报告 §1-§5 已落盘：UC-CRM-01/02/03/04/09/11 各一矩阵行，L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.14/A1.13/A4.5 来源
+- [x] 每 UC 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 #1-#9 有明确分级（非悬空"待查"）；#1/#2/#3/#4/#6 有明确 P1 倾向 + #6 标注 ORM ask-first 风险 + L2 失实（lead-scoring.md:157）记录
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-28-crm-f1-lead-lifecycle.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` crm lead/opportunity/quote/scoring/territory 同域同控制点后裁决——#1-#9 均为 CRM 域**首个 RC 切片新发现**（既有 arm-index 无 RC finding 涉及 crm lead 生命周期/评分/territory 分配）→ 全部**新建 P1-RC-xxx / P2-RC-xxx** 列明差异依据；UC-CRM-04 已证实→复用注记。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` crm lead/opportunity/quote/scoring/territory 同域同控制点后裁决——#1-#9 均为 CRM 域**首个 RC 切片新发现**（既有 arm-index 无 RC finding 涉及 crm lead 生命周期/评分/territory 分配）→ 全部**新建 P1-RC-032~036 / P2-RC-031~034** 列明差异依据；UC-CRM-04 已证实→复用注记。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1；#6 标注"触及 ORM ask-first"）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1；#6 标注"触及 ORM ask-first"）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 NEW 状态 LEAD 实际能否被 convertToCustomer、任意 docStatus OPPORTUNITY 实际能否转报价单、LEAD_UPDATE 自动评分在并发更新下的触发时序、territory 引擎无匹配时 territoryId 实际留空行为、ROUND_ROBIN 降级 MANUAL 后 ownerId 实际值等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 NEW 状态 LEAD 实际能否被 convertToCustomer、任意 docStatus OPPORTUNITY 实际能否转报价单、LEAD_UPDATE 自动评分在并发更新下的触发时序、territory 引擎无匹配时 territoryId 实际留空行为、ROUND_ROBIN 降级 MANUAL 后 ownerId 实际值等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`（A2.14 Lead 状态机 + 跨域 Facade PASS）+ A1.13（平台合规）+ A4.5（代码质量），列明只补的需求视角差异（直接升格缺失/前置条件弱/SCHEDULED 缺失+L2 失实/ROUND_ROBIN 降级/lastContactDate 缺失/NOTIFY_OWNER 无派发/代理字段）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`（A2.14 Lead 状态机 + 跨域 Facade PASS）+ A1.13（平台合规）+ A4.5（代码质量），列明只补的需求视角差异（直接升格缺失/前置条件弱/SCHEDULED 缺失+L2 失实/ROUND_ROBIN 降级/lastContactDate 缺失/NOTIFY_OWNER 无派发/代理字段）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -134,14 +134,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐 UC 覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.28 报告 9 段齐全 + 6 UC 逐矩阵行 + finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.28 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.28 报告 9 段齐全 + 6 UC 逐矩阵行 + finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.28 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -153,11 +153,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: 执行完成（2026-08-05）+ 独立结束审计通过（2026-08-05，独立子代理新会话）。A1.28 报告 `docs/audits/2026-08-05-1030-rc-ma1-a1-28-crm-f1-lead-lifecycle.md` 已落盘（§1-§9 9 段齐全 + 6 UC 逐矩阵行 + 9 候选缺口分级[5 新 P1: P1-RC-032~036 / 4 新 P2: P2-RC-031~034 / 零 P0]）；arm-index.md 已同步（报告清单 + 9 finding 行 + A1.28 RC 交叉引用注记）；roadmap A1.28 已置 done；`docs/logs/2026/08-05.md` 已补 A1.28 条目。Phase 1/Phase 2 全 [x] + Status: completed + Plan Status: completed。本切片为 CRM 域首个 RC 切片，候选缺口均经 HEAD 实仓代码复核确认。只读审计无代码变更，不跑 build/test。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
+- Auditor / Agent: 独立结束审计子代理（新会话，未起草亦未执行本计划，fresh context）
+- Evidence: 头到尾复核全计划 + 实仓交叉核验：(1) 交付物落地确认——报告 `docs/audits/2026-08-05-1030-rc-ma1-a1-28-crm-f1-lead-lifecycle.md`（34KB）§1-§9 9 段齐全（grep `^## ` 命中 §1-§9）；`arm-index.md` 已登记 9 finding（P1-RC-032~036 + P2-RC-031~034）+ A1.28 报告清单行 + RC 交叉引用注记（:96/:165-173/:177）；`requirement-compliance-roadmap.md` A1.28 = done（:67）。(2) Anti-hollow 抽样核验（报告 finding ↔ live 代码）——①P1-RC-035 SCHEDULED 缺失 CONFIRMED：`module-crm/.../service/job/` 实测仅 4 jobs（ErpCrmForecastRecalc/ErpCrmEventReminder/ErpCrmSequenceOverdue/ErpCrmFunnelAggregation），无 LeadScoringRecalcJob；②P2-RC-033 lastContactDate 缺失 CONFIRMED：`grep setLastContactDate` 仅命中 `LeadActivityDerivationHelper:46`（UC-05 事件路径），qualify 路径无写入；③P1-RC-033 前置条件弱 CONFIRMED：`ErpCrmConversionConvertToCustomerProcessor.convertToCustomer:19-28` 仅 `validateNotConverted`+`validateLeadType(LEAD)`，无 docStatus==QUALIFIED 守卫；④P2-RC-031 NOTIFY_OWNER 无派发 CONFIRMED：`determineAction:164` 返回 NOTIFY_OWNER 但 `LeadScoringEngine` 无 `IErpSysNotificationBiz`/notify 调用（notify 仅见于 EventReminder/SequenceOverdue job）。(3) §8 过程纪律自检含 checker actual vs baseline 实测表 + 独立性声明 + 交叉去重声明 + 真相源未修改声明。(4) Deferred 诚实——finding 修复全部移入 MR0/MR1 successor（修复属后续实施义务），#6 ORM ask-first 风险明示，无范围内 live defect 隐藏为 follow-up。(5) 修复 docs-sync 缺口：补 `docs/logs/2026/08-05.md` A1.28 条目（执行者遗漏）。结论：范围完整、finding 真实、证据充分、文本一致——**approved**。
 
 Follow-up:
 
