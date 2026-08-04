@@ -1,6 +1,6 @@
 # 2026-08-03-1232-3-flux-f16-complex-pages-rewrite F16 特殊复杂页 Flux 原生重写（甘特/向导/B 族）
 
-> Plan Status: draft
+> Plan Status: active
 > Last Reviewed: 2026-08-03
 > Source: 用户决策（2026-08-03）——界面全面转向 nop-chaos-flux；`docs/design/flux-complex-pages.md` §3.2/§3.4/§4.2/§4.5（甘特/向导/B 族映射）
 > Related: `2026-08-03-1232-1`（CRUD 基础设施，前置）、`2026-08-03-1232-2`（F13，并行/前置）、`2026-08-03-1232-5`（文档范式）
@@ -32,9 +32,9 @@
 
 ## Goals
 
-- aps 排产甘特以 flux `gantt` 原生重写，**拖拽/缩放/依赖连线可用**（消除只读降级）；**links 派生规则裁决**（sequence 相邻连边 or 为空）；拖拽持久化经新增写端点（名称/宿主按 Phase 0 Decision，与 `IEtpApsGanttService` spec 对齐）
-- 2 个向导以 flux `wizard` 结构化重写（valuesPath 分区 + formId 校验 + statusPath + onComplete 聚合提交），消除 416 行手写 AMIS 的可维护性负担；**期末结账步骤响应式 gating 的 Decision**（linear:true 下不可见步骤/动态解锁的数据流）
-- B 族 8 页以 flux 原生控件重写：diff-view（版本对比）、tree（BOM，嵌套重建机制指明）、timeline（发运）、steps（ASN）、collapse+table（EDI）、crud×3+mapping（三单匹配）、data-source+loop+table（净需求）、crud+input-table（薪酬审批）
+- aps 排产甘特以 flux `gantt` 原生重写，**拖拽/缩放/依赖连线可用**（消除只读降级）；**links 派生规则裁决**（sequence 相邻连边 or 为空）；拖拽持久化经新增写端点（名称/宿主按 Phase 0 Decision，与 `IEtpApsGanttService` spec 对齐）；页面外壳经 view.xml `<complex>` 或 `<simple>` 定义，甘特控件经 page.yaml/flux.yaml 直写（complex 槽位内嵌）
+- 2 个向导以 **view.xml `<wizard>` 容器 + step 定义**为主（xview.xdef 已有 UiWizardModel：steps/startStep/api 等），valuesPath 分区 + formId 校验 + statusPath 若 view.xml 无法表达则以 flux.yaml 直写补充；**期末结账步骤响应式 gating 的 Decision**（linear:true 下不可见步骤/动态解锁的数据流）
+- B 族 8 页以 flux 原生控件重写：diff-view（版本对比）、tree（BOM，嵌套重建机制指明）、timeline（发运）、steps（ASN）、collapse+table（EDI）、crud×4+mapping（三单匹配——与实况一致，对源设计文档 §3.2「crud×3+card」的偏离注记）、data-source+loop+table（净需求）、crud+input-table（薪酬审批）；**整体布局经 view.xml `<complex>` 四槽位定义（header 筛选区/aside/body 主区），flux 控件经槽位内嵌或 flux.yaml 直写**
 - 复用既有后端查询/mutation；新增：甘特 `findGanttData` 聚合查询 + **甘特拖拽持久化写端点（名称/宿主按 Phase 0 Decision 裁决：新增 `ErpApsOperationOrder__updateSchedule` 或复用 `IEtpApsGanttService` spec）**（其余仅只读聚合查询）
 - E2E：无既有 spec 的 5 页**新写** spec（flux 引擎）；有 spec 者复用改造
 - 甘特拖拽校验语义（产能校验归属）Decision
@@ -98,11 +98,11 @@ Skill: `nop-frontend-dev`
 - Item Types: `Add`（flux wizard schema 重写）+ `Decision`（响应式 gating）
 - Prereqs: P1 完成；Phase 0 的 wizard 前置知识（valuesPath/formId 机制）并行
 
-- [ ] Decision: 期末结账步骤响应式 gating——flux wizard `linear:true` 下步骤 `visible`/`disabled` 如何随外部 data-source（period 状态）刷新联动、非 12 月不可见步骤在 linear 模式如何跳过（flux 文档未覆盖该数据流，以 E2E 实测为准）。记录理由与替代方案
+- [ ] Decision: 期末结账步骤响应式 gating——view.xml `<wizard>`（UiWizardModel：startStep/api/step.page）与 flux wizard `linear:true` 下步骤 `visible`/`disabled` 如何随外部 data-source（period 状态）刷新联动、非 12 月不可见步骤在 linear 模式如何跳过（flux 文档未覆盖该数据流，以 E2E 实测为准）。记录理由与替代方案
       - Skill: `nop-frontend-dev`
-- [ ] 期末结账向导重写：`{ type:"wizard", linear:true, mountOnEnter:true, statusPath:"wizardStatus", steps:[preCheck, closePeriod, annualRollover(12月可见), finalize] + 反结账 dialog, onComplete → closePeriod(periodId) }`；per-module 关账状态卡经 data-source
+- [ ] 期末结账向导：**优先 view.xml `<wizard>` + `<step>` 定义**（steps: preCheck/closePeriod/annualRollover/finalize + 反结账 dialog），flux-web:GenPage 输出 flux wizard；valuesPath/formId 校验闸若 view.xml 无法表达则以 flux.yaml 直写补充；per-module 关账状态卡经 data-source
       - Skill: `nop-frontend-dev`
-- [ ] 维护访问向导重写：4 步（维护信息确认→备件消耗→执行结果→确认完成，main.page.yaml:84-91 实况），valuesPath 分区 + formId 校验
+- [ ] 维护访问向导：view.xml `<wizard>` + `<step>`（维护信息确认→备件消耗→执行结果→确认完成，main.page.yaml:84-91 实况），valuesPath 分区 + formId 校验按需 flux.yaml 补充
       - Skill: `nop-frontend-dev`
 - [ ] Proof: 向导 E2E（flux 引擎）——分步导航断言 + 步骤校验拦截断言 + onComplete 提交断言（含反结账 dialog 二次确认）
       - Skill: `nop-testing`
@@ -138,7 +138,7 @@ Skill: `nop-frontend-dev`
       - Skill: `nop-frontend-dev`
 - [ ] EDI 详情：`timeline`（状态流转）+ `table`（日志）+ `collapse`（报文 payload 开关）
       - Skill: `nop-frontend-dev`
-- [ ] Proof: 8 页 E2E（flux 引擎）——判定标准 = 「**专属 action spec**」：实测 5 页（schedule-gantt/three-way-match/bom-tree/net-requirement/version-diff）无专属 action spec 且断言 AMIS DOM 的共享视觉 spec（f16-high-risk.visual.spec.ts/f16-complex-pages.visual.spec.ts/f16-p2-complex-pages.visual.spec.ts）**flux 重写后必然失效 → 这些共享视觉 spec 需重写为 flux 契约或退役**；4 页（payroll-approval/shipment-tracking/asn-flow/edi-detail）有专属 action spec（hr-payroll/log-shipment/b2b-asn-match-receive/b2b-edi-doc.action.spec.ts，动作为主页面级）→ 复用改造。各页关键交互断言（diff 切换/BOM 展开/分组折叠等）
+- [ ] Proof: 8 页 E2E（flux 引擎）——判定标准 = 「**专属 action spec**」：实测 5 页（schedule-gantt/three-way-match/bom-tree/net-requirement/version-diff）无专属 action spec 且断言 AMIS DOM 的共享视觉 spec（f16-high-risk.visual.spec.ts/f16-complex-pages.visual.spec.ts/f16-p2-complex-pages.visual.spec.ts）**flux 重写后必然失效 → 这些共享视觉 spec 需重写为 flux 契约或退役**（其中 schedule-gantt 计入 Phase 0，Phase 2 实为 4 页新写）；4 页（payroll-approval/shipment-tracking/asn-flow/edi-detail）有专属 action spec（hr-payroll/log-shipment/b2b-asn-match-receive/b2b-edi-doc.action.spec.ts，为 GraphQL 层动作测试不断言页面 DOM）→ 复用改造，DOM 覆盖由共享视觉 spec 重写兜底。各页关键交互断言（diff 切换/BOM 展开/分组折叠等）
       - Skill: `nop-testing`
 
 Exit Criteria:
@@ -170,6 +170,8 @@ Exit Criteria:
 - Independent draft review iteration 1: needs revision (ses_03a16a2b5ffeGOVDvkpC58iuI2) — 甘特 links 无数据源(B1)、BOM 嵌套未指明(B2)、updateSchedule 写端点口径(H1)、向导响应式 gating(H2)、§8 契约映射(M1)、拖拽宿主二义(M2)、E2E 无既有 spec(M3)、三单匹配 4 crud(L1)、visit 步骤(L2)；已全部修订
 - Independent draft review iteration 2: needs revision (ses_039fd3d69ffegdSe3r4q2i9nOz) — Task Route 写端点口径残留、Baseline 三单匹配 ×3 残留、Proof 页数口径不明、Goals vs Phase 0 软冲突；已全部修订
 - Independent draft review iteration 3: needs revision (ses_039f02eb9ffed0f4gJcuTRkEhK) — Task Route/Infra 写端点限定语残留、Proof 判定标准（共享视觉 spec 处置未交代）；已全部修订
+- Independent draft review iteration 4: needs revision (ses_039e3c4d3ffeFApt4nHjIi1GoQ) — Goals 三单匹配 crud×3 残留（→×4 + 源文档偏离注记）、Proof 页数算术（schedule-gantt 属 Phase 0）、action spec 为 GraphQL 层表述；已全部修订
+- Independent draft review iteration 5: accept (mission-driver 2026-08-02-204249) — 格式/完整度/范围/结束证据全通过；基线抽查确认（aps orm.xml 无依赖字段仅 sequence、period-close-wizard 实测 416 行）；页面数算术一致（P2 新写 4 + 复用 4 = 8）；Deferred 项均为非缺陷分类；无 Blocker/Major；Minor：Task Route Type 为 implementation-only 偏保守（契约已在 scheduling.md §8 预设计，可接受）。promote to active
 
 ## Closure Gates
 

@@ -1,6 +1,6 @@
 # 2026-08-03-1232-4-flux-placeholder-and-unimplemented-pages 占位页与未实现项 Flux 落地
 
-> Plan Status: draft
+> Plan Status: active
 > Last Reviewed: 2026-08-03
 > Source: 用户决策（2026-08-03）——界面全面转向 nop-chaos-flux；`2026-08-03-1000` 深度分析 §6.1-6.2（16 占位页 + 4 未实现项）
 > Related: `2026-08-03-1232-1`（CRUD 基础设施，前置）、`2026-08-03-1232-3`（F16）、`2026-08-03-1232-5`（文档范式）
@@ -27,9 +27,9 @@
 ## Goals
 
 - 16 个占位页逐页归类裁决（可立即落地/需新增后端查询/Deferred——每页理由明确，无模糊「待定」）
-- 可立即落地的占位页以 flux 实现替换 7 行 alert（含 SPC 三件套、finance/projects/assets/master-data 各可落地页），**16 页均有归类（Phase 1/3 落地 or Deferred+理由，无悬空）**
+- 可立即落地的占位页以 flux 实现替换 7 行 alert（含 SPC 三件套、finance/projects/assets/master-data 各可落地页），**16 页均有归类（Phase 1/3 落地 or Deferred+理由，无悬空）**；**标准 CRUD 型占位页（bank-ledger-line/cost-center 等）经 view.xml 模型定义（grids/forms/pages），SPC 图表页经 complex 外壳 + flux chart 控件**
 - SPC 三件套以 flux chart 完整能力实现（**referenceLines/band/markers 已由 nop-chaos-flux 提供**），数据来自既有后端
-- 4 个未实现设计项以 flux 原生实现（3 向导用 wizard + valuesPath；知识库用 crud/tree）
+- 4 个未实现设计项以 flux 原生实现（3 向导用 **view.xml `<wizard>` 容器优先** + flux.yaml 补充；知识库用 crud/tree）
 - 无法落地或超出当前基线的占位页显式裁决（Deferred/Non-Goal），不留模糊状态
 - inventory 盘点「零后端改动」断言核实：若 completeTake 未生成盘盈/盘亏移动单，裁决为 Deferred 或列入后端补充（ask-first 评估）
 
@@ -86,7 +86,7 @@ Skill: `nop-frontend-dev`
       - Skill: `nop-frontend-dev`
 - [ ] SPC capability/sample 页：`crud` + `chart`（能力分布）复用既有 BizModel
       - Skill: `nop-frontend-dev`
-- [ ] finance 占位页落地（按 Phase 0 归类中后端就绪者）：`crud`/`chart`/`wizard` 组合
+- [ ] finance 占位页落地（按 Phase 0 归类为可落地者——含后端就绪与需新增只读 query 两类）：`crud`/`chart`/`wizard` 组合
       - Skill: `nop-frontend-dev`
 - [ ] Proof: 落地页 E2E（flux 引擎）——渲染 + 数据断言
       - Skill: `nop-testing`
@@ -104,7 +104,7 @@ Targets: `module-{assets,inventory,crm,cs}-*/.../pages/`
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add`（flux 页面）+ `Fix`（设计→实现差距弥合）
-- Prereqs: P1 Phase 0-1
+- Prereqs: P1 Phase 0-1；本计划 Phase 0（inventory 盘点盘盈/盘亏核实结论供本阶段 inventory 项裁决）
 
 - [ ] assets 处置 3 步向导：`wizard`（处置类型选择→清理损益预览→确认提交）+ 既有处置 mutation（`ErpAstDisposalProcessor` 链）
       - Skill: `nop-frontend-dev`

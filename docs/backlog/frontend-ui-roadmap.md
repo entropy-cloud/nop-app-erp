@@ -1,12 +1,14 @@
 # Frontend UI Completeness Roadmap
 
-> 最后更新：2026-07-22（v4 — 补充 Flux 渲染引擎备选说明）
+> 最后更新：2026-08-03（v5 — Flux CRUD 渲染迁移基线验证）
 > 本路线图覆盖 view.xml 手写层的前端完整性。后端 3 个路线图（crud + core-business + extended）已全部 done。
 > **实施阶段采用跨 F 集成阶段（Phase 0/1a/1b/2/3/4），而非 F 内独立阶段。**
 
 ## Flux 渲染引擎备选（复杂页面优先路径）
 
-`nop-web-site` 由 `nop-chaos-next` 打包，**同时支持 flux 和 amis 两种渲染引擎**（`pageType: 'flux'` / `pageType: 'amis'`）。标准 CRUD 页面继续用 view.xml → amis 路径；**复杂页面（F13/F16 等）优先用 flux DSL 编写 page.yaml**。
+`nop-web-site` 由 `nop-chaos-next 打包，**同时支持 flux 和 amis 两种渲染引擎**（`pageType: 'flux'` / `pageType: 'amis'`）。标准 CRUD 页面继续用 view.xml → amis 路径；**复杂页面（F13/F16 等）优先用 flux DSL 编写 page.yaml**。
+
+> **Flux CRUD 渲染迁移基线（2026-08-03，plan `2026-08-03-1232-1` Phase 0/1/3 done，Phase 2 blocked）**：`nop.web.render-mode=flux` 下全部 354 标准 CRUD main.page.yaml + 352 picker + 38 ref + 15 tabs 经 `ErpAllFluxPagesTest` 验证 100% 输出合法 flux JSON（0 个 `nop.err.*`）。修复 nop-entropy `flux-web.xlib` 两处缺陷（GenFormCell proxyCell 守卫 + NormalizeAction cancel 映射，见 `nop-entropy/ai-dev/logs/2026-08-03.md`）。AMIS↔flux 差异=等价变换（columns 1:1，api/filter/toolbar → loadAction/queryForm/toolbar）。onEvent 表单字段级在 flux 保留（推翻「丢失」前提）。**Decision：保持 `amis` 默认双栈共存**（浏览器视觉等价 + picker 前端渲染器 + 29 手写页重写待 P2-P4/1232-2/3/4）。证据见 `docs/analysis/2026-08-03-1232-flux-crud-validation-evidence.md`。
 
 Flux 已内置 AMIS 难以实现的高级组件（包 `@nop-chaos/flux-renderers-scheduling`）：
 

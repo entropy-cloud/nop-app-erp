@@ -33,6 +33,7 @@
 | 更改页面或视图 | 相关设计 owner doc | 各域 `erp-*-web` 下的 AMIS `.view.xml` 文件 |
 | 审查已计划或已完成的切片 | `docs/plans/` 下的相关计划 | 计划/结束审计提示；普通审计证据保留在计划中 |
 | 运行或验证项目 | `docs/context/project-context.md` | `docs/context/codebase-map.md` |
+| 编写或修改 E2E 用例 | `docs/testing/e2e-runbook.md` 的「E2E 编写规范（强制）」节 | nop-chaos-next `packages/e2e-shared/`、`docs/design/e2e-shared-infrastructure.md`；nop-entropy-e2e 各包作写法范本 |
 | 起草、执行或审计 `docs/plans/` 下的计划 | `docs/plans/00-plan-authoring-and-execution-guide.md` | `docs/logs/00-log-writing-guide.md` |
 
 ### 计划起草与执行

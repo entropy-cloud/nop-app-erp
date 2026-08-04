@@ -1,6 +1,6 @@
 # 2026-08-03-1232-5-flux-docs-drift-and-patterns 前端范式文档 Flux 化与漂移回填
 
-> Plan Status: draft
+> Plan Status: active
 > Last Reviewed: 2026-08-03
 > Source: 用户决策（2026-08-03）——界面全面转向 nop-chaos-flux；`2026-08-03-1000` 深度分析 §6.3-6.4（文档缺口与漂移）
 > Related: `2026-08-03-1232-1/2/3/4`（实施计划，输入来源）
@@ -33,7 +33,7 @@
 ## Goals
 
 - 4 处文档漂移按各自最终形态回填（3 处 flux 原生——依赖 P2/P3 落地；b2b ASN 4 值——仅依赖 §8.12 裁决与实现证据，**不受 P2/P3 门控**），消除「文档宣称 vs 实现」冲突
-- 范式文档（page-structure-patterns/non-standard-views-patterns 等）以「flux 实现为权威」重构：每范式给出 flux schema 骨架 + 数据契约 + 事件持久化，AMIS 实现降级为历史注记（**无行号短摘要形态**，保留参考价值但不作为权威）
+- 范式文档（page-structure-patterns/non-standard-views-patterns 等）以「**view.xml 模型驱动 + flux 输出**」为权威重构：每范式给出 view.xml 模型定义（`<pages><complex>` 四槽位/tabs/group/wizard 容器 + grids/forms）+ flux schema 输出 + 数据契约 + 事件持久化；AMIS 实现降级为历史注记（**无行号短摘要形态**，保留参考价值但不作为权威）；flux 专有控件（gantt/kanban/calendar）给出 complex 槽位内嵌 + flux.yaml 直写组合模式
 - 18 域 ui-patterns 中涉及复杂页的条目更新为 flux 控件映射
 - 文档缺口补齐：notify 模板管理设计（或裁决走标准 CRUD 范式无需独立文档）、SPC 页面交互设计（基于 flux chart referenceLines/band/markers 能力）、看板三段式 page.yaml 范式沉淀
 - `frontend-ui-roadmap.md` 决策更新：全量 flux 迁移 + AMIS 退役路径（引用 P1 的 Follow-up）
@@ -149,6 +149,7 @@ Exit Criteria:
 - Independent draft review iteration 1: needs revision (ses_03a096aaefferF2yyn0Bj8dLwv) — b2b ASN 第 4 处漂移漏报(B1)、notify 缺口表述(B2)、Skill 与方法不匹配(M2)、前置条件声明(M1)；已全部修订
 - Independent draft review iteration 2: needs revision (ses_039fd27a1ffejAEBpdQidn5xUm) — Phase 0 回填项 Skill 残留（audit skill 仅给扫描项）、Task Route Skill Selection Basis 未说明取舍、b2b 锚点补 :160/:298；已全部修订
 - Independent draft review iteration 3: needs revision (ses_039f01d48ffeYukPBZ8OcAEkoT) — b2b 锚点漏 :259（全文穷尽证伪）、Baseline 锚点不对称、b2b 回填与 P2/P3 错误绑定、Goals 与 Phase 3 对齐 P1 Follow-up；已全部修订
+- Independent draft review iteration 4: accept (mission-driver review 2026-08-03-204249) — 格式合规、退出标准可测、范围内聚（单一结果表面）、结束证据已定义、doc-only 计划正确以文档一致性扫描替代代码验证门控；无 Blocker/Major。Minor（非阻塞，留待结束审计）：Phase 0 阶段级 Skill（document-audit-prompt）与回填项 Skill: none 不对称（Task Route 已说明意图）；Phase 0 Prereqs 行对 b2b 项过约束（已被「或与实施同步」+ 条目显式注软化）
 
 ## Closure Gates
 

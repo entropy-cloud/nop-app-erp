@@ -1,6 +1,6 @@
 # 2026-08-03-1232-2-flux-f13-nonstandard-views-rewrite F13 非标准视图 Flux 原生重写（降级消除）
 
-> Plan Status: draft
+> Plan Status: active
 > Last Reviewed: 2026-08-03
 > Source: 用户决策（2026-08-03）——界面全面转向 nop-chaos-flux；`docs/design/flux-complex-pages.md` §3.3/§4.3-4.4（看板/日历/时间线映射）
 > Related: `2026-08-03-1232-1`（CRUD 基础设施，前置）、`2026-08-03-1232-3`（F16）、`2026-08-03-1232-5`（文档漂移回填）
@@ -31,6 +31,7 @@
 ## Goals
 
 - 7 个 F13 页面（3 kanban + 2 timeline + 2 calendar）+ 1 个 org-chart 全部以 flux 原生组件重写，**消除拖拽/原生渲染降级**
+- **view.xml 模型化优先（用户方向）**：页面外壳（布局/标题/工具栏/状态区）尽量用 view.xml `<pages><complex>` 四槽位或 `<simple>`/`<tabs>` 容器定义；**flux 专有控件（kanban/calendar/timeline/tree）以 page.yaml/flux.yaml 直写承载**——两者组合：view.xml 定义外壳 + flux.yaml 直写交互控件（利用 complex 槽位内嵌 flux 控件的能力，落地时验证 GenContainerModel 对自定义控件的透传）
 - 看板拖拽持久化：**列→mutation 路由机制定义**（cs 四态 + crm moveStage + prj 相邻态受限拖拽的裁决），无效拖拽 UX（非相邻态被拒后的回退提示）与参数收集（assignedToId/remark）
 - 日历事件持久化：按实体实际数据模型裁决（crm DATE-only 字段的拖拽语义映射或受限；创建通道的 mandatory 字段收集表单）
 - 时间线以原生 timeline 渲染（items 数据契约），替换 each+tpl
@@ -80,7 +81,7 @@ Skill: `nop-frontend-dev`
 Exit Criteria:
 
 - [ ] 4 个 Decision 已记录理由与替代方案，拖拽持久化语义明确（无「flux 自由拖拽 vs 后端相邻态守卫」悬而未决）
-- [ ] 裁决结果反馈到 Phase 1/2 实现项（每页拖拽行为有定义）
+- [ ] 裁决结果反馈到 Phase 1/3 实现项（看板与日历的拖拽行为有定义）
 
 ### Phase 1 - 看板重写（3 页）
 
@@ -109,7 +110,7 @@ Exit Criteria:
 - [ ] 动态列（crm）与 SLA 标记（cs）行为等价于 AMIS 版本
 - [ ] 拖拽 E2E 证据（flux 引擎）通过
 
-### Phase 1 - 时间线重写（2 页）
+### Phase 2 - 时间线重写（2 页）
 
 Status: planned
 Targets: `module-{crm,cs}-*/.../timeline.page.yaml`
@@ -130,7 +131,7 @@ Exit Criteria:
 - [ ] 2 个时间线以 flux 原生 timeline 渲染（非 each+tpl）
 - [ ] 时间线 E2E 证据通过
 
-### Phase 2 - 日历重写（2 页）
+### Phase 3 - 日历重写（2 页）
 
 Status: planned
 Targets: `module-{crm,hr}-*/.../calendar.page.yaml`
@@ -153,14 +154,14 @@ Exit Criteria:
 - [ ] 2 个日历以 flux 原生 calendar 渲染（非卡片网格/矩阵 table）
 - [ ] 事件交互按 Phase 0 裁决语义实现，创建通道 mandatory 字段收集有 E2E 断言
 
-### Phase 3 - org-chart 与收口
+### Phase 4 - org-chart 与收口
 
 Status: planned
 Targets: `module-hr/.../dashboard/org-chart.page.yaml`、`tests/e2e/visual/f13-non-standard-views.visual.spec.ts`
 Skill: `nop-frontend-dev`
 
 - Item Types: `Fix`（缩进降级消除）+ `Fix`（E2E 选择器重写）+ `Proof`
-- Prereqs: Phase 2
+- Prereqs: Phase 3
 
 - [ ] hr 组织架构图：flux `tree`（data 绑定 ErpHrDepartment 树 + labelField/keyField）+ 搜索
       - Skill: `nop-frontend-dev`
@@ -181,6 +182,7 @@ Exit Criteria:
 
 - Independent draft review iteration 1: needs revision (ses_03a16bc0affeYwiSYAAhId3Fnw) — prj mutation 不存在(B1)、cs 列→mutation 路由(B2)、crm 日历 DATE-only(B3)、visual spec 需重写(M1)、onCardMove payload 契约(N1)、SLA 字段(N2)、hr mandatory 收集(N3)、crm 列来源(N4)；已全部修订
 - Independent draft review iteration 2: accept (ses_039fd49b2ffeyGb4WF5jcNdc4s) — 4 Decisions 与实测一致（prj 相邻态/cs 路由+cancelled 列/crm DATE-only/payload 无文档）、updateStage 引用已删、Baseline 重写精确、visual spec 重写项落定；非阻塞注记（close 无 remark 参数需先 update 再 close 的链路、moveStage 行号差 1、org-chart 需新增第 8 个 spec 用例）留实施期细化
+- Independent draft review iteration 3: accept + promoted to active (mission-driver review, 2026-08-03) — 修复重复 Phase 编号（时间线 Phase 1→2、日历 2→3、org-chart 3→4）并同步 Phase 0 Exit Criteria「Phase 1/2」→「Phase 1/3」与 org-chart Prereqs「Phase 2」→「Phase 3」的阶段引用；格式合规、范围/Non-Goals 清晰、Exit Criteria 可测、Closure Gates 证据完备（含 E2E_ENGINE=flux 验证与独立结束审计门控）
 
 ## Closure Gates
 

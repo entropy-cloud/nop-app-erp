@@ -7,7 +7,7 @@
 1. **CRUD 页面用 codegen 生成**：标准实体（18 模块 ~145 实体）的列表/表单页由 `nop-cli gen` 从 ORM 模型生成，手写层仅在需要时做 Delta 定制。
 2. **复杂业务页面手写**：凭证录入、库存移动确认、排产甘特图等复杂交互页面，手写 `view.xml` + `page.yaml`。
 3. **菜单结构在 action-auth.xml 定义**：已在各模块 `erp-{xx}.action-auth.xml` 中定义 TOPM/SUBM/FNPT 三级菜单。
-4. **AMIS 作为默认前端框架**：所有业务页面使用 AMIS 渲染，Nop 平台提供 `component="AMIS"` 支持。
+4. **flux 作为唯一前端渲染模式（flux-only）**：本项目界面设计全面转向 `nop-chaos-flux` 渲染，**后续不再考虑 AMIS 实现**。所有业务页面以 flux 渲染，菜单资源 `component` 一律 `"FLUX"`，服务器端 `nop.web.render-mode=flux` 强制生效。AMIS 仅作为迁移期历史残留（见 `docs/plans/2026-08-03-1232-{1..5}-*.md` 的豁免清单与重写计划），不作为新页面目标。
 
 ## 文件层次结构
 
@@ -45,10 +45,35 @@ erp-{xx}-web/src/main/resources/_vfs/erp/{xx}/
 
 ```xml
 <resource id="ErpCrmLead-main" displayName="线索/商机"
-          url="/erp/crm/pages/ErpCrmLead/main.page.yaml" component="AMIS"/>
+          url="/erp/crm/pages/ErpCrmLead/main.page.yaml" component="FLUX"/>
 ```
 
 URL 格式规范：`/erp/{appName}/pages/{EntityName}/main.page.yaml`
+
+## 渲染模式（flux-only，强制）
+
+1. **菜单资源**：`erp-{xx}.action-auth.xml` 中所有叶子 `resource` 的 `component` 必须为 `"FLUX"`。由脚本工具强制翻转并保持（见 `scripts/flip-menu-to-flux.sh`，幂等，AMIS→FLUX 单向）。
+2. **服务器渲染模式**：`app-erp-all` 的 `application.yaml` 固定 `nop.web.render-mode: flux`，使 `PageProvider__getPage` 对所有页面输出 flux JSON。
+3. **ORM 渲染标记（codegen 持久化的关键）**：每个实体必须带 `ext:web-renderer="flux"`。codegen 模板 `nop-kernel/nop-codegen/.../orm-web/.../_{moduleName}.action-auth.xml.xgen` 按 `objMeta['ext:web-renderer'] == 'flux' ? 'FLUX' : 'AMIS'` 生成菜单资源——缺此属性时 `mvn clean install` 增量 codegen 会把生成式 `_erp-{xx}.action-auth.xml` 重新生成回 AMIS（2026-08-03 实测）。由 `scripts/flip-orm-to-flux.sh` 幂等维护（19 个 orm.xml 全 477 实体），统一构建链 `scripts/rebuild-flux-chain.sh` 在 ERP 构建前自动执行。
+4. **页面模型**：标准 CRUD 页继续由 codegen（`page.yaml`）+ flux-web.xlib 生成器输出 flux JSON；`*.flux.yaml` 双文件回退优先于 `*.page.yaml`。
+5. **AMIS 残留**：29 个手写 AMIS 页（看板/向导/占位页等，清单见 `docs/plans/2026-08-03-1232-1-flux-crud-migration.md`）尚未 flux 化，按计划 1232-2/3/4 重写；重写前其菜单同样标记 `FLUX`，页面渲染失败属已知迁移期状态，处理路径见 `docs/testing/e2e-runbook.md` 的 flux 调试三路径。
+
+## 页面数据访问（/r/ REST 约定，强制）
+
+Flux 模式下的页面数据访问**不使用 GraphQL**，全部经 REST `/r/` 端点（`POST /r/OperationName`）。view.xml / page.yaml 中的 `api`/`url` 支持 `@query:`、`@mutation:`、`@rpc:` 前缀及显式 `/r/` 路径，由浏览器壳层（nop-chaos-next `apps/main/src/services/nopRpcResolver.ts` + `http.ts`）统一转换为 REST 调用：
+
+```text
+@mutation:ErpMdMaterial__batchUpdate   →  POST /r/ErpMdMaterial__batchUpdate
+@query:ErpMdMaterial__findPage?page=1  →  POST /r/ErpMdMaterial__findPage
+```
+
+配套约定（详见 `../nop-entropy/docs-for-ai/02-core-guides/flux-rendering.md`「数据访问约定（强制）：REST /r/，不使用 GraphQL」）：
+
+- `@selection` 参数裁剪返回字段；返回完整 Bean 的服务（如 DictProvider）无需 `@selection`。
+- 请求体递归过滤 `__`/`@`/`v_` 前缀键与顶层 `$` 系统键（如 `$form`）；内嵌 `$` 键（TreeBean 的 `$body`/`$type`）为业务结构，保留。
+- 表单数据不隐式携带，须显式 `includeScope` 或 `data` 模板映射。
+
+**测试含义**：浏览器层 E2E 对页面数据访问断言 REST `/r/` 调用（e2e-shared 的 `RpcClient`/`rpc()`），禁止在 flux 页面上断言 GraphQL 请求；GraphQL 断言仅限服务端集成测试或非页面路径。
 
 ## 代码生成 vs 手写边界
 
@@ -57,7 +82,7 @@ URL 格式规范：`/erp/{appName}/pages/{EntityName}/main.page.yaml`
 | 标准 CRUD 列表 | `nop-cli gen` 生成 `_view.xml` 和 `page.yaml` | `x:extends` 继承生成产物，覆盖字段/布局 |
 | 标准 CRUD 表单 | 嵌入 `_view.xml` 的 form | `view.xml` 中 delta 覆盖 form 段 |
 | 复杂表单（凭证/移动单） | 手写 `view.xml`，不依赖生成 | 纯手写 |
-| Dashboard | 手写 `page.yaml` | AMIS 页面 DSL |
+| Dashboard | 手写 `page.yaml` | flux 页面 DSL |
 | 选择器/弹出页 | codegen 生成 `picker.page.yaml` | 按需定制 |
 | 报表/图表 | codegen 或 `nop-report` 设计器 | 引用报表模板 |
 

@@ -87,8 +87,41 @@ nop-app-erp 前端当前全部由 AMIS 渲染。深度分析（`2026-08-03-1000`
 | 路径 | 适用 | 说明 |
 |------|------|------|
 | **view.xml + flux-web:GenPage** | 标准 CRUD、tabs/wizard/group 结构页 | 复用现有 view.xml，仅切换 xlib；97.6% 继承桩零修改 |
-| **page.yaml 直写 flux schema** | 复杂页面（看板/甘特/日历/向导/收件箱） | 本设计的核心路径；`x:gen-extends` 可继续用于 meta 推导 |
+| **page.yaml 直写 flux schema** | 复杂页面（看板/甘特/日历/收件箱） | 本设计的核心路径；`x:gen-extends` 可继续用于 meta 推导 |
 | **flux.yaml 文件** | 与 AMIS page.yaml 并存时 | flux 模式优先加载；适合「同页面双栈共存」过渡期 |
+
+### 2.5 complex 页面类型（view.xml 模型化优先，2026-08-01 平台新增）
+
+> 用户方向（2026-08-03）：**不删除 page.yaml，只新增 flux.yaml**；form/grid/页面整体布局尽量通过 view.xml 模型定义；利用 xview.xdef 新增的 complex 页面定义能力。
+
+`xview.xdef` `<pages>` 在 crud/picker/simple/tabs/wizard/group 之外新增 **`<complex>`**（提交 f7c45373d，2026-08-01）：
+
+```xml
+<pages>
+    <complex name="main" xdef:name="UiComplexPageModel">
+        <header><simple name="hdr" form="header-form"/></header>
+        <footer><simple name="ftr" form="footer-form"/></footer>
+        <aside><crud name="aside-crud" grid="list"><table name="t"><api url="@query:X__findPage"/></table></crud></aside>
+        <body><simple name="bdy" form="body-form"/></body>
+    </complex>
+</pages>
+```
+
+- **四槽位**：header/footer/aside/body（每槽位为 UiContainerModel 容器列表，可嵌套 crud/simple/tabs/wizard/group）
+- **输出**：`flux-web/impl_GenPage.xpl` complex 分派 → `page_complex.xpl` 输出 Flux PageSchema（type=page + 四槽位，空槽位不输出）
+- **group 容器**：已实现 GridSchema 映射（columns/gap/autoFlow/alignItems/justifyItems；responsiveColumns 暂不输出）
+- **测试**：TestFluxWebGen complex + group 用例（17→18 tests）+ `test-flux-complex.view.xml` 夹具
+
+**设计原则（本设计的页面实现分层）**：
+
+| 层 | 定义位置 | 覆盖 |
+|----|---------|------|
+| 页面外壳（四槽位布局/筛选区/状态区） | view.xml `<pages><complex>` + `<simple>`/`<tabs>`/`<group>` 容器 | 全部复杂页 |
+| 表单与网格（form/grid 结构） | view.xml `<forms>`/`<grids>` 模型 | 全部页面 |
+| flux 专有交互控件（gantt/kanban/calendar/timeline/tree/diff-view） | page.yaml/flux.yaml 直写（complex 槽位内嵌或整页直写） | 看板/甘特/日历/时间线/BOM/组织树/版本对比 |
+| flux.yaml 双文件共存 | 新增同名 `*.flux.yaml`（不删 page.yaml） | 需要 flux 专属定义的页面 |
+
+> 落地时需验证：`GenContainerModel` 对复杂槽位内自定义控件（非 UiContainerModel 子类型）的透传能力——候选通道：`<simple>` 容器的 `beforeForm`/`afterForm`（xjson 透传点，见 `container_simple.xpl`）；若槽位内无法直接内嵌 gantt/kanban，则采用「complex 外壳 + 槽位内 `<simple>` 包自定义控件」或「整页 flux.yaml 直写 + complex 仅用于标准布局」两种模式的取舍裁决（见 §7 未决问题 #9）。
 
 ---
 
@@ -387,6 +420,7 @@ nop-app-erp 前端当前全部由 AMIS 渲染。深度分析（`2026-08-03-1000`
 | 6 | **字段级 diff**：合同版本对比受数据模型限制（ErpCtContractVersion 仅 content blob） | 与引擎无关 | 维持元数据对比 + diff-view（content 双栏） |
 | 7 | **i18n**：page.yaml 层无 i18n 机制（F15 延后项） | 与引擎无关 | flux 有 `12-i18n.md`（initFluxI18n + t()），复杂页迁移时一并处理 |
 | 8 | **测试**：flux 渲染 E2E 选择器契约与 AMIS 不同 | `13-testing.md` 有 selector 速查 | 迁移页按 flux selector 重写 spec；`E2E_ENGINE=flux` 已验证可用 |
+| 9 | **complex 槽位内嵌自定义控件**：view.xml `<complex>` 槽位（UiContainerModel）能否直接内嵌 gantt/kanban/calendar 等 flux 专有控件（非 UiContainerModel 子类型）待验证 | 设计待验证（平台 complex 能力 2026-08-01 新增） | 落地时验证 GenContainerModel 透传；若不可行，采用「complex 外壳 + `<simple>` 包自定义控件」或「整页 flux.yaml 直写 + complex 仅标准布局」两模式取舍裁决 |
 
 ---
 

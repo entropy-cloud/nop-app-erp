@@ -26,6 +26,88 @@
 npm install
 ```
 
+## 渲染模式与 flux 调试三路径（必读）
+
+本项目界面设计**仅考虑 flux 渲染模式**（详见 `docs/architecture/view-and-page-strategy.md` "渲染模式（flux-only，强制）"）：
+
+- 菜单资源 `component` 一律 `"FLUX"`（由 `scripts/flip-menu-to-flux.sh` 幂等强制，AMIS 不再作为目标）
+- ORM 实体一律 `ext:web-renderer="flux"`（由 `scripts/flip-orm-to-flux.sh` 幂等维护，使 codegen 生成的 `_erp-{xx}.action-auth.xml` 持久 FLUX，`mvn clean install` 不会回翻）
+- 服务器端 `nop.web.render-mode: flux`（`app-erp-all/application.yaml`）使 `PageProvider__getPage` 输出 flux JSON
+- 浏览器壳层（nop-chaos-next SPA）按 site map `pageType=flux` 路由到 `FluxRouteEntry` 渲染
+
+当 E2E 失败且怀疑根因在**前端渲染/控件**时，按下列三路径定位（顺序执行，勿直接在本仓库修跨仓库前端产物）：
+
+1. **怀疑 flux 控件问题 → 先在 `nop-chaos-flux` 中做测试**：控件缺字段、表达式求值（如 `${ids | split:','}`）、渲染器行为（如 bulkActions `api.data` 求值时机）、样式/交互等，一律到 `nop-chaos-flux`（兄弟目录）按其 `flux-guide/13-testing.md` 测试设施与项目自身流程先复现、先修复、先补测试。失败用例可从本项目抽取最小 flux JSON schema 到 nop-chaos-flux 的测试 fixtures。
+2. **怀疑 `nop-chaos-next`（壳层/adapter/路由/页面注入）→ 在 nop-chaos-next 中跨项目调试**：采用「跨项目 E2E 调试方案」在 `nop-chaos-next` 项目内跑本项目的 E2E——`nop-chaos-next/docs/testing/02-cross-project-e2e-debugging.md` 的核心规则：**测试必须访问 nop-chaos-next 前端端口（Vite dev server，`BASE_URL=http://localhost:4173`），由 Vite proxy 把 `/r` `/graphql` `/p/` `/f/` `/q/` 转发到 Java 后端端口 8080**；绝不能把测试直接指向后端端口。用例：`fl 控件怀疑被排除 → 走此路径验证壳层渲染/适配器/路由逻辑。
+3. **诊断已清楚、需要让修改生效 → 执行统一重建脚本** `scripts/rebuild-flux-chain.sh`：从 flux 打包（nop-chaos-flux `build`+`pack:release`）→ nop-chaos-next 打包（`pnpm build`）→ 同步 `sync-site.sh` 到 nop-entropy `nop-web-site` 资源 → reinstall `nop-web-site`（Maven）→ 重建 ERP runner jar，必要时直接执行本脚本实现前端更新；支持 `--skip-flux` / `--skip-next` / `--skip-erp` 分段跳过。
+
+> 历史教训：2026-08-03 曾把「全部浏览器级 E2E 失败」误认为配置问题，实测根因是 nop-web-site 嵌入的旧 flux bundle 含 CJS `require("react")`（rolldown 打包失败产物），修复=重新同步 nop-chaos-next 干净 dist + clean 安装 nop-web-site，见 `docs/logs/2026/08-03.md` 与 nop-chaos-next `docs/bugs/26-flux-tarball-runtime-require-mismatch.md`。
+
+### flux 运行时调试机制（monitor 与落盘诊断，必读）
+
+flux 内置**运行时 monitor**（复用 env.notify/action 钩子，不修改 flux 代码）：`window.__FLUX_DEBUG__ = true` 开启后，flux env 的所有 ajax 请求/响应、monitor 错误、notify 消息追加到 `window.__fluxDebug`（环形缓冲 200 条）。**本项目 `tests/e2e/fixtures.ts` 的 page fixture 已默认注入该开关**（`page.addInitScript`，必须在导航前生效——flux env 首次渲染时读取）。测试可用：
+
+- `dumpFluxDebug(page)` → `{enabled, entryCount, entries, errors, requests}`（`errors` 过滤 phase=error / notify level=error）；
+- `dumpFluxDebugFor(page, urlFragment)` → 按 URL 片段过滤（如 `NopAuthResource__update`）；
+- `formatFluxDebug(dump)` → 可读文本（诊断脚本输出用）。
+
+**交互/弹窗不工作的排查顺序（强制，勿先猜 selector）**：
+
+1. **先查报错**：`dumpFluxDebug` 看 flux monitor 错误；`page.on('console'/'pageerror')` 捕获 JS 错误（注意：flux 错误走 env.notify 不一定进 console）；后台 `_tmp/e2e-server.log` 看服务端报错。
+2. **再落盘看数据**：
+   - `dumpPageSchemaToFile(page, schemaPath)`：RPC 拉 `PageProvider__getPage` 完整 JSON 保存到 `_tmp/e2e-debug/`（自动建目录；`_tmp/` 已 gitignore），返回 `{file, bytes, topKeys, bodyTypes}` 摘要；
+   - `dumpInnerHTMLToFile(page, scopeSelector?)`：保存 `document.body`（或指定 scope）innerHTML 到 `_tmp/e2e-debug/`，返回 `{file, bytes, slotCount, rendererCount, fieldCount}`。
+3. **大文件用子 agent 完整分析**：page schema / innerHTML 可能上百 KB，交给子 agent 按结构化任务分析（定位 add-button、统计 data-renderer/data-slot、对比工作页面），不要用 grep 片段猜。
+4. **定位用稳定属性，不猜 selector**：按 `name`/`id`/`data-field`/`data-renderer`/`data-slot`/class 从 innerHTML 实际内容确认元素；DOM 定位只发生在 adapter 层（下节规范），诊断脚本只用于确认状态，最终断言走 PageObject/adapter。
+
+> 历史教训（2026-08-03）：ERP 采购订单 add 弹窗打不开，flux monitor 显示点击后 0 条记录（openDialog 渲染不走 ajax/notify，monitor 为空是正常现象，不能据此判断 action 未执行），dialog DOM 0 渲染。排查过程：落盘 page schema + innerHTML → 子 agent 完整分析 → React props 检查（onClick 已绑定、直接调用无异常）→ 逐层二分到 array-editor column 的 `onEvent`（AMIS 事件映射格式 `{change:{actions:[{actionType}]}}`，flux 用 renderer 显式声明的 onChange/onClick，不支持事件映射）→ 根因是应用层 schema 问题 + flux 编译校验对 columns 不递归（已修，见 `nop-chaos-flux/docs/architecture/nested-schema-field-classification.md` §3.5.2）。排查全程未靠猜 selector。
+
+## E2E 编写规范（强制）
+
+新写、重写、修复 E2E 用例时，必须遵循以下规范（2026-08-03 起强制，逐步迁移存量 spec）：
+
+### 参考基线
+
+- **nop-entropy 中的 e2e**：`nop-entropy-wt/nop-entropy-master/nop-entropy-e2e/packages/`（`nop-auth-e2e` / `nop-code-e2e` / `nop-job-e2e` 等）——真实后端（Quarkus）+ 页面级测试的写法范本。
+- **共享基础设施 `@nop-chaos/e2e-shared`**：源码源在 `nop-chaos-next/packages/e2e-shared/`（PageObject 基类、AMIS/Flux 双引擎 adapter、`RpcClient`/`GraphQlClient`、登录与导航、fixtures），经 `nop-chaos-next/scripts/sync-e2e-shared.sh` 分发到 nop-entropy-e2e；设计文档 `nop-chaos-next/docs/design/e2e-shared-infrastructure.md`。**本项目不再自造平行基础设施**，需要新能力先到 e2e-shared 补，再同步回来。
+
+#### e2e-shared 修改流程（强制，2026-08-03 起）
+
+`@nop-chaos/e2e-shared` **源在 `nop-chaos-next/packages/e2e-shared/src/`**，所有项目（本仓库 `tests/e2e/pages/`、nop-entropy-e2e 各包）都是它的**分发副本**。需要新能力时的固定流程：
+
+1. **改源**：在 `nop-chaos-next/packages/e2e-shared/src/` 修改/新增（debug 工具、PageObject、adapter 方法等），`index.ts` 同步导出；`npx tsc --noEmit -p packages/e2e-shared/tsconfig.json` 通过；
+2. **分发**：`bash nop-chaos-next/scripts/sync-e2e-shared.sh <target>`（目标如 `nop-app-erp/tests/e2e/pages`）——rsync 覆盖 `src/`，写 `e2e-shared-version.txt` 版本标记 + `package.json` 的 `file:` 依赖；
+3. **目标项目核对**：同步后在本项目跑受影响的 e2e（或至少 tsc/类型检查），确认副本可用。
+
+**注意事项**：
+
+- 同步是**整体覆盖**：目标项目的本地适配文件（本项目历史上有 `Navigation.ts`/`fixtures.ts`/`index.ts` 等本地分歧版本）会被源版覆盖——本地特有改动要么并入源版，要么同步后重新应用（本项目的本地漂移清单见下文「已知差距」）；
+- 本项目 `tests/e2e/pages/package.json` 的 `@nop-chaos/e2e-shared` 是 `file:` 指向 nop-chaos-next 源目录的依赖，**`file:` 依赖不自动跟随源改动**，改源后必须显式重新分发；
+- 与 `nop-chaos-flux` 的分工：flux 控件/渲染器能力先进 `nop-chaos-flux`（测试+契约），adapter/PageObject 能力先进 e2e-shared 源版，最后同步回本项目（与下文「PageObject 模式」规则一致）。
+
+### PageObject 模式（强制）
+
+- 页面交互一律封装为 PageObject（`BasePage` → `CrudListPage` / `FormDialog` 等），spec 内**不得内联选择器**。
+- 引擎差异封装在底层 `EngineAdapter`（`AmisAdapter` / `FluxAdapter`）：spec 只见业务概念（`table()`、`addButton()`、`rows()`、`cellValue(fieldName)`、`formField(name)`），`E2E_ENGINE` 切换引擎只换 adapter 不换测试代码。
+- **selector 唯一合法出现位置是 adapter 层**：任何 DOM 细节（`data-slot`、`data-field`、`data-renderer`、`.cxd-*`、`data-testid`、`.nop-*`、`#id`、class 名）只允许出现在 `EngineAdapter` 实现（`AmisAdapter`/`FluxAdapter`）或 PageObject 内部，**不得出现在 spec 文件（含临时/调试 spec）**。
+- spec 需要新交互能力时：先在 adapter/PageObject 补充方法（flux 能力先进 `nop-chaos-flux` 测试与契约，再进 `e2e-shared` 源版，最后同步回本项目），禁止在 spec 里直接 `page.locator(...)` 绕过。
+- 调试脚本同规则：网络请求/console 事件观察（`page.on('request'/'response'/'console')`）是合法调试手段，但定位/断言仍须经 PageObject 与 adapter；禁止用裸选择器探查 DOM 代替 adapter 方法。
+
+### 选择器与定位约定
+
+- **e2e 测试代码禁止出现框架特定选择符**（`data-slot`、`.cxd-*`、`data-testid`、`.nop-*` 等一律不进 spec/PageObject 之外的业务代码）；这类 DOM 细节只能存在于 adapter 层。
+- **定位用业务名称**：form / grid 控件按 `name` 定位（`getByLabel` / `name` 属性）；表格单元格按列名经 `data-field` 定位，行操作按文本语义定位。
+- **存量 AMIS 遗留 spec 的定位**：本套件早期 spec 按 AMIS 语义编写（`.cxd-*`、`button:text("新增")` 等）。flux 为唯一渲染目标后，这些定位须经 `EngineAdapter` 翻译为对应引擎实现——**spec 文件保持业务语义（`新增/Add/添加` 文本、`row`、`cellValue`），不感知底层是 `.cxd-*` 还是 `data-slot`**；adapter 的 AMIS/Flux 两个实现各自承担 DOM 差异。禁止在 spec 里用 `.cxd-*` 或 `data-slot` 混写。
+- **flux 内置辅助定位属性**：`data-field`（单元格按列名）、`data-renderer`（渲染器标记）等为 flux 框架内置属性，契约见 `nop-chaos-flux/flux-guide/13-testing.md`「字段定位契约」；adapter 层的实现以该契约为准。
+
+### API 断言
+
+- 页面数据访问一律 REST `/r/`（见 `docs/architecture/view-and-page-strategy.md`「页面数据访问（/r/ REST 约定，强制）」）：用 e2e-shared 的 `RpcClient`/`rpc()` 断言 REST 调用；**禁止在 flux 页面断言 GraphQL 请求**（GraphQL 断言仅限服务端集成测试或非页面路径）。
+
+### 已知差距（迁移方向）
+
+本项目 `tests/e2e/pages/` 早期自建 adapter 与 e2e-shared 源版存在选择器漂移（如 `[data-slot="crud-table"]` + `[data-testid="btn-add"]` vs 源版 `.nop-crud` + 工具栏文本定位）。后续任务按上节规则对齐 e2e-shared 源版并删除本地漂移实现。
+
 ## 启动方式
 
 ### 方式 A：自动启动（推荐首次）
