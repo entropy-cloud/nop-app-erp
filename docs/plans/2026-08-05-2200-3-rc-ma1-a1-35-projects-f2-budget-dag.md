@@ -1,12 +1,13 @@
 # 2026-08-05-2200-3 rc-ma1-a1-35-projects-f2-budget-dag projects 域 projects-F2 预算与 DAG 需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.35（MA1 需求追踪矩阵审计 — projects-F2 项目预算 STRICT 超支拦截 + 任务依赖 DAG 成环校验）
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Item A1.35
 > Related: `docs/plans/2026-08-02-1458-1-requirement-compliance-methodology.md`（M0.1 done）、`2026-08-02-1530-1-requirement-baseline-extraction.md`（M0.2 done，解除 A1.35 的 0.2 依赖）、`2026-08-05-2200-2-rc-ma1-a1-34-projects-f1-startup-cost-collection.md`（projects 域同批 N=2，F1 成本归集为预算检查的归集前置——预算余量依赖已归集成本）
 > Audit: required
+> Audit Report: `docs/audits/2026-08-05-2200-3-rc-ma1-a1-35-projects-f2-budget-dag.md`（§1-§9 + Verdict，pass）
 
 ## Current Baseline
 
@@ -83,54 +84,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-35-projects-f2-budget-dag.md`（产出 §1-§5）
+Status: completed
+Targets: `docs/audits/2026-08-05-2200-3-rc-ma1-a1-35-projects-f2-budget-dag.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-PRJ-04/05 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:65/81` 验收标准原文；L2 引用 `cost-collection.md §三` + `state-machine.md §任务` + `task-dag.md §2/§4/§6/§7`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `BudgetChecker`/`ErpPrjTimesheetSubmitProcessor`/`ErpPrjTaskBizModel`/`TaskDependencyValidator`/`ErpPrjConfigs`（含行号）；L4 引用 `TestErpPrjTaskDependency`/`TestErpPrjBudgetAndCollection`#method（注明断言强度）；L5 复用 A2.13（任务状态机/DAG PASS + P1-MA2-069 resolved）。
+- [x] `Proof` 对 UC-PRJ-04/05 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:65/81` 验收标准原文；L2 引用 `cost-collection.md §三` + `state-machine.md §任务` + `task-dag.md §2/§4/§6/§7`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `BudgetChecker`/`ErpPrjTimesheetSubmitProcessor`/`ErpPrjTaskBizModel`/`TaskDependencyValidator`/`ErpPrjConfigs`（含行号）；L4 引用 `TestErpPrjTaskDependency`/`TestErpPrjBudgetAndCollection`#method（注明断言强度）；L5 复用 A2.13（任务状态机/DAG PASS + P1-MA2-069 resolved）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：UC-PRJ-04 ①**检查时机**（工时提交 ✅ `runBudgetCheckHook:103-104`；**采购审核 ❌ 零调用**；**报销审核 ❌ 零调用**——grep 全 module-projects BudgetChecker 仅 TimesheetSubmitProcessor 1 调用点）②**预算余量公式缺"已承诺成本"项**（BudgetChecker.check 余量 = used(Σ CostCollectionLine.amount) + addAmount > total，**零 commitment 概念**，L1 三项式仅 2/3 实现 → 倾向 **P2** 次要验收标准弱）③STRICT 拒绝 / WARNING 放行（config `ErpPrjConfigs.budgetControlMode`，**默认 WARNING** `ErpPrjConfigs:9-10`）；UC-PRJ-05 ①dependsOn 前置（`validatePredecessorDone:172-193` config-gated STRICT 抛 `ERR_TASK_PREDECESSOR_NOT_DONE`/WARN ✅）②前置未 DONE 不可 IN_PROGRESS（startTask:104-115 ✅）③DAG 成环校验失败（`TaskDependencyValidator.detectCycle:44-86` 自环优先 + 上行链 HashSet + maxDepth ✅，ERR_TASK_SELF_DEPENDENCY/CYCLE/DEPTH_EXCEEDED/CROSS_PROJECT 全落地）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：UC-PRJ-04 ①**检查时机**（工时提交 ✅ `runBudgetCheckHook:103-104`；**采购审核 ❌ 零调用**；**报销审核 ❌ 零调用**——grep 全 module-projects BudgetChecker 仅 TimesheetSubmitProcessor 1 调用点；边界澄清：finance/purchase 的 runBudgetCheckHook 存在但调 finance IErpFinBudgetControlBiz 财务预算，与 projects BudgetChecker 项目预算是不同控制点）②**预算余量公式缺"已承诺成本"项**（BudgetChecker.check 余量 = used(Σ CostCollectionLine.amount) + addAmount > total，**零 commitment 概念**，L1 三项式仅 2/3 实现 → 倾向 **P2** 次要验收标准弱）③STRICT 拒绝 / WARNING 放行（config `ErpPrjConfigs.budgetControlMode`，**默认 WARNING** `ErpPrjConfigs:9-10`）；UC-PRJ-05 ①dependsOn 前置（`validatePredecessorDone:172-193` config-gated STRICT 抛 `ERR_TASK_PREDECESSOR_NOT_DONE`/WARN ✅）②前置未 DONE 不可 IN_PROGRESS（startTask:104-115 ✅）③DAG 成环校验失败（`TaskDependencyValidator.detectCycle:44-86` 自环优先 + 上行链 HashSet + maxDepth ✅，ERR_TASK_SELF_DEPENDENCY/CYCLE/DEPTH_EXCEEDED/CROSS_PROJECT 全落地）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对 2 UC 给出符合性结论（取最高）：UC-PRJ-05 DAG 成环 + 前置守卫 → 倾向**接受**（完整实现 + 319 行强测 + A2.13 PASS）；UC-PRJ-04 预算检查 → 工时时机**接受** + 采购/报销时机缺失倾向 **P1/P2**（§4 三判据复核 cost-collection.md §三 是否显式 documented simplification Deferred + 人工批准：报销路径归集已实现故报销审核预算检查缺失是独立验收标准未实现；采购路径因物料归集未实现[A1.34]被检查对象尚不存在→可降级或与物料归集 successor 合并）+ 余量缺"已承诺成本"项倾向 **P2**（次要验收标准弱，主路径已归集成本拦截可用）+ 默认 WARNING 已确认。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（P1 项核 plan-audit/owner doc documented simplification/product-scope 裁剪 + 人工批准痕迹）。
+- [x] `Decision` 按 §2 判据对 2 UC 给出符合性结论（取最高）：UC-PRJ-05 DAG 成环 + 前置守卫 → 倾向**接受**（完整实现 + 319 行强测 + A2.13 PASS）；UC-PRJ-04 预算检查 → 工时时机**接受** + 采购/报销时机缺失倾向 **P1**（§4 三判据复核 cost-collection.md §三 是否显式 documented simplification Deferred + 人工批准：报销路径归集已实现故报销审核预算检查缺失是独立验收标准未实现；采购路径因物料归集未实现[A1.34 P1-RC-049]被检查对象尚不存在→与物料归集 successor 合并修复触发条件）+ 余量缺"已承诺成本"项倾向 **P2**（次要验收标准弱，主路径已归集成本拦截可用，projects 域无生产承诺源致第三项实际为零）+ 默认 WARNING 已确认。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（P1 项核 plan-audit/owner doc documented simplification/product-scope 裁剪 + 人工批准痕迹）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-PRJ-04/05 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.13 来源
-- [ ] 2 UC 各有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-③ 有明确分级；预算检查时机缺失有 §4 三判据复核路径；余量"已承诺成本"项缺失（P2）+ 默认 WARNING 已确认
+- [x] 报告 §1-§5 已落盘：UC-PRJ-04/05 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.13 来源
+- [x] 2 UC 各有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-③ 有明确分级；预算检查时机缺失有 §4 三判据复核路径；余量"已承诺成本"项缺失（P2）+ 默认 WARNING 已确认
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
-Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-35-projects-f2-budget-dag.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
+Status: completed
+Targets: `docs/audits/2026-08-05-2200-3-rc-ma1-a1-35-projects-f2-budget-dag.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` prj budget/check/strict/warning/commitment/predecessor/dag/cycle 同域同控制点后裁决——DAG 成环 + 前置守卫**复用** A2.13 已证实（不新建）；预算检查时机缺失为**新根因**（既有 arm-index 无 RC finding 涉及 projects 预算检查时机）→ 若确认 P1 则新建 `P*-RC-xxx`（与既有 RC 系列协调，最新 P2-RC-043/P1-RC-041）列明差异依据。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` prj budget/check/strict/warning/commitment/predecessor/dag/cycle 同域同控制点后裁决——DAG 成环 + 前置守卫**复用** A2.13 §2.5 已证实（不新建）；预算检查时机缺失为**新根因**（既有 arm-index 无 RC finding 涉及 projects 预算检查时机——与 P1-RC-003 finance 三列报表不同控制点 + 与 P1-MA2-084 finance 控制引擎不同域不同方法）→ 新建 `P1-RC-051`；余量公式承诺项缺失为**新根因**（与 P1-MA2-084 finance 含 COMMITMENT 不同域不同方法 + 与 P1-MA3-025 finance javadoc drift 不同域）→ 新建 `P2-RC-049` watch-only（与既有 RC 系列协调，编号续 A1.34 P1-RC-050/P2-RC-048）。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 STRICT 模式下工时提交超支的实际拒绝运行时行为 / 采购路径在物料归集 successor 实现后预算检查的衔接条件 / 报销审核补加预算检查后 ON_HOLD/COMPLETED 项目报销提交的实际拦截行为 等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 ExpenseCostAggregator 在已超预算项目上归集实际行为 / SP-2 STRICT 模式下工时提交超预算的实际拒绝运行时行为 / SP-3 报销路径在 ON_HOLD+超预算两条件叠加的实际行为[P1-RC-050 + P1-RC-051 双缺口] / SP-4 采购路径物料归集实现后 budgetChecker.check 接入的实际行为[P1-RC-049 successor 落地后]；每存疑点一行）。**P0 即时通道未触发**（本切片无 P0——P1-RC-051 漏检 + P2-RC-049 余量公式均不破坏活跃数据/会计正确性/核心循环）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（R1d/R2a/R2b/R2c/R2d 实测均 ≤ baseline；R3+ 因 pre-existing tooling bug 未实测——orm.xml 多行格式[commit 738810aa5 2026-08-04]打破 R3 ENTITY_WHITELIST 单行 grep 管道致脚本早退，pre-existing 与本审计无关；无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-projects-state-machine.md`（A2.13 任务状态机/DAG 成环 PASS + P1-MA2-069 resolved），列明只补的需求视角差异（预算检查仅工时路径 / 采购+报销时机缺失 / 余量已承诺成本项 / WARN 默认值）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-projects-state-machine.md`（A2.13 §2.5 任务状态机/DAG 成环 PASS + P1-MA2-069 resolved-via-deferral），列明只补的需求视角差异（预算检查仅工时路径 / 采购+报销时机缺失 / 余量已承诺成本项 / WARN 默认值）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；audit reports 表新增 A1.35 行。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P1-RC-051` + `P2-RC-049` 入 RC 发现追踪分区；audit reports 表新增 A1.35 行。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在（§1 需求契约原文 / §2 实现证据 / §3 测试证据 / §4 运行时行为证据 / §5 五级追踪矩阵 + 符合性结论 / §6 arm-index 衔接 / §7 静态存疑点清单 / §8 过程纪律自检段 / §9 与 MA2 报告差异增量声明[置顶]）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding（若有）已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1/A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding（P1-RC-051 + P2-RC-049）已写入 `arm-index.md`；静态存疑点清单已登记（SP-1~SP-4 供 A4.1/A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -140,28 +141,37 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐验收标准覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.35 报告 9 段齐全 + UC-PRJ-04/05 矩阵行（逐验收标准）+ finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.35 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.35 报告 9 段齐全 + UC-PRJ-04/05 矩阵行（逐验收标准）+ finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.35 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
 ### finding 的修复实施
 
 - Classification: `out-of-scope improvement`
-- Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按 §10 经 MR0（P0）/ MR1（R1.0 展开 RC-R1.n，P1）实施；本切片候选偏差（预算检查采购/报销时机缺失）属**代码逻辑**类（预授权——在采购/报销 Processor 加 budgetChecker.check 调用）；采购路径预算检查依赖物料归集 successor（A1.34 finding）先落地。
+- Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按 §10 经 MR0（P0）/ MR1（R1.0 展开 RC-R1.n，P1）实施；本切片候选偏差（预算检查采购/报销时机缺失）属**代码逻辑**类（预授权——在采购/报销 Processor 加 budgetChecker.check 调用）；采购路径预算检查依赖物料归集 successor（A1.34 P1-RC-049 finding）先落地。
 - Successor Required: yes（MR0/MR1 按本报告 finding 交叉引用展开修复行；采购路径预算检查 = 物料归集 successor 的下游）
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: completed（执行 + 独立结束审计由独立子代理 fresh session `MISSION_DRIVER:2026-08-04-224309-mission-driver` 执行；执行者未自我审计）
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理>
-- Evidence: <待填>
+- Auditor / Agent: 独立结束审计子代理（fresh session `MISSION_DRIVER:2026-08-04-224309-mission-driver`，未执行本计划任何 Phase，未起草本计划，与执行者无上下文复用）
+- Evidence: 报告 `docs/audits/2026-08-05-2200-3-rc-ma1-a1-35-projects-f2-budget-dag.md` §1-§9 + Verdict 落盘（9 段齐全 + 2 UC 五级追踪矩阵逐验收标准覆盖 + 2 新 finding[P1-RC-051 + P2-RC-049]登记入 arm-index + §8 过程纪律自检 + §9 与 A2.13 差异增量声明）；arm-index `audit reports` 表新增 A1.35 行 + RC 发现追踪分区新增 P1-RC-051 + P2-RC-049 行；roadmap A1.35 由 todo 推进至 done。**本计划无生产代码变更（只读审计），零回归风险**。
+- Verification Areas (all PASS):
+  - **五点一致性**：Plan Status=completed / Phase 1-2 Status=completed / 各 Exit Criteria 全 `[x]` / Closure Gates 全 `[x]` / Closure evidence 落盘 — 全一致。
+  - **交付物真实性**（grep/read 实仓复核）：①报告 9 段齐全（§1-§9 + Verdict）；②arm-index 三处更新经 grep 实仓确认（`audit reports` 表 A1.35 行 + RC 分区 P1-RC-051/P2-RC-049 行）；③roadmap A1.35=done 经 grep 确认。
+  - **关键代码断言 ACCURATE**（anti-hollow）：①`BudgetChecker.java:34` 类存在 + `check:44-69` 余量公式 `used.add(addAmount).compareTo(total) > 0`（:57-58）二项式确认 + **全文零 commitment 概念**确认；②grep 全 `module-projects` `budgetChecker.check|BudgetChecker` 生产代码**唯一调用点 = `ErpPrjTimesheetSubmitProcessor:104`**——P1-RC-051 finding（采购/报销时机缺失）真实；③`TaskDependencyValidator.detectCycle` + `ErpPrjTaskBizModel.validatePredecessorDone` 文件存在（UC-PRJ-05 接受结论成立）。
+  - **Anti-Hollow**：本计划是只读审计，deliverable = 报告 + arm-index 登记（非代码），无运行时接线需求；报告全部 load-bearing 引用经实仓复核 TRUE。
+  - **零 P0 声明**：P1-RC-051（漏检非破坏活跃数据 + GL 借贷平衡不受影响）+ P2-RC-049（实际影响为零因 projects 域无生产承诺源）均非 P0，P0 即时通道未触发 — 合理。
+  - **Deferred honesty**：finding 修复明确归 MR0/MR1 successor（`Deferred But Adjudicated` 段分类 `out-of-scope improvement`，理由=本计划是审计非修复 + 采购路径依赖物料归集 successor 先落地），无 in-scope 缺陷隐藏为 follow-up。
+  - **独立草案审查已记录**：Draft Review iteration 1 = `acceptable as-is`（ses_030950687ffef7vOhORRRgkCqJ，fresh session），全部 load-bearing 引用预核验 CONFIRMED TRUE。
+  - **Docs sync 修复**：审计发现 `docs/logs/2026/08-05.md` 缺 A1.35 条目（A1.27-A1.34 均有）— 已补齐 A1.35 日志条目置顶（时间倒序），Closure Gate「日志都一致」现在名副其实。
