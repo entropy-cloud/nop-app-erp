@@ -1,6 +1,6 @@
 # 需求-实现符合性审计路线图（骨架）
 
-> 最后更新：2026-08-02（v1.3 — Q1/Q4 已裁决：Q1=(c) 逐项对照需求真相源优先 / Q4=(a) P0/P1 必须实现禁止方案 B 无例外；M0 转 ready，解除执行阻塞。v1.2 经两轮独立子代理审查修订：MA1 完整枚举 51 切片；MA2 导出口径+分区约束；MR0/MR1 改执行时追加实体行；A4 展开器范式对齐 R1.0；Q1/Q4 硬门控；保护区域暂停协议+预授权声明；MA1↔既有审计去重协议；MA3 三源对账）
+> 最后更新：2026-08-07（v1.4 — A4.1 业财域存疑点运行时确认展开器 done：finance A1.1-A1.7 §7 存疑点全集[25 条]展开为 A4.1.1-A4.1.25 实体验证行；展开映射记录 `docs/audits/2026-08-07-0300-rc-ma4-a4-1-finance-expander.md`。v1.3 — Q1/Q4 已裁决：Q1=(c) 逐项对照需求真相源优先 / Q4=(a) P0/P1 必须实现禁止方案 B 无例外；M0 转 ready，解除执行阻塞。v1.2 经两轮独立子代理审查修订：MA1 完整枚举 51 切片；MA2 导出口径+分区约束；MR0/MR1 改执行时追加实体行；A4 展开器范式对齐 R1.0；Q1/Q4 硬门控；保护区域暂停协议+预授权声明；MA1↔既有审计去重协议；MA3 三源对账）
 > 来源：`docs/skills/audit-remediation-roadmap-authoring-prompt.md` 同型模式（需求-实现符合性变体）
 > 范围文档：`docs/discussions/2026-08-02-1700-requirement-implementation-compliance-audit.md`
 > **状态：可执行版本。Q1/Q4 已裁决（2026-08-02），M0 工作项转 ready，可启动 mission driver。**
@@ -123,7 +123,32 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| A4.1 | 业财域 MA1 存疑点运行时确认**展开器**（读取 MA1 业财切片报告全部存疑点清单，展开为本表 A4.1.n 实体验证行） | todo | `docs/design/flow-overview.md` + `tests/e2e/` | MA1 done | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A4.1 | 业财域 MA1 存疑点运行时确认**展开器**（读取 MA1 业财切片报告全部存疑点清单，展开为本表 A4.1.n 实体验证行） | done ✅ | `docs/design/flow-overview.md` + `tests/e2e/` | MA1 done | `docs/skills/multi-dimensional-audit-prompt.md` |
+| A4.1.1 | A1.1 §7-1 — UC-FIN-02 断言④「业务单据.posted=false」8 域 listener 回写覆盖率逐域核验 | todo | `2026-08-02-1645-...-a1-1-...md` §7 + `flow-overview.md` | A4.1 done | 同上 |
+| A4.1.2 | A1.1 §7-2 — UC-FIN-12 汇率缺失触发面实测（各域 Provider 外币场景是否显式传 rate 普查） | todo | 同上 §7 + `posting.md` | A4.1 done | 同上 |
+| A4.1.3 | A1.1 §7-3 — UC-FIN-03 PROJECT_SETTLEMENT businessType 是否已有 Provider 注册（实例普查） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.4 | A1.2 §7-1 — config 默认关闭 vs「开箱即用预算硬拦截」部署契约（核对 product-scope/部署文档） | todo | `2026-08-02-1700-...-a1-2-...md` §7 + `budget.md` | A4.1 done | 同上 |
+| A4.1.5 | A1.2 §7-2 — 承付凭证 header 借贷不平时报暴露（试算平衡/三表是否过滤 COMMITMENT 影子凭证） | todo | 同上 §7（A1.7 已静态证 BS/IS 安全） | A4.1 done | 同上 |
+| A4.1.6 | A1.2 §7-3 — `fin-budget-vs-actual.value.spec.ts` 是否断言 commitment 独立列（E2E 断言强度评估） | todo | 同上 §7 + `tests/e2e/` | A4.1 done | 同上 |
+| A4.1.7 | A1.2 §7-4 — 承付 release-on-return（接入点 #4）config 默认 off 实际启用状态（部署普查） | todo | 同上 §7 + `budget.md` | A4.1 done | 同上 |
+| A4.1.8 | A1.3 §7-1 — `PartnerBalanceUpdater.sumOpen` 对 WRITTEN_OFF 隐式排除（PARTIAL→WRITTEN_OFF 边界运行时未覆盖） | todo | `2026-08-02-1715-...-a1-3-...md` §7 | A4.1 done | 同上 |
+| A4.1.9 | A1.3 §7-2 — `TestErpFinBadDebt` 凭证 businessType 枚举断言强度（未断言 BAD_DEBT_WRITE_OFF） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.10 | A1.3 §7-3 — `TestErpFinAutoReconciliation` 禁用路径覆盖缺口（@NopTestConfig 限制） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.11 | A1.4 §7-1 — UC-FIN-09/14 对方账号缺失致错误 MATCHED 的实际触发率（关联 P1-RC-004） | todo | `2026-08-02-1815-...-a1-4-...md` §7 | A4.1 done | 同上 |
+| A4.1.12 | A1.4 §7-2 — UC-FIN-09/14 调整凭证行级 Dr/Cr/科目/金额正确性（`BankReconAdjAcctDocProvider.createFacts`） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.13 | A1.4 §7-3 — UC-FIN-09/14 跨多条 statement refNo 重复的实际检出（关联 P2-RC-001） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.14 | A1.4 §7-4 — UC-FIN-14 断言⑤ config key 默认 true 但无 scheduler 消费的运维认知（关联 P1-RC-005） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.15 | A1.5 §7-1 — FIFO 物料 + 到岸成本 delta 层 + 后续出库消耗数值正确性（关联 P2-RC-004；**触及成本过账行为探针**） | todo | `2026-08-02-2045-...-a1-5-...md` §7 + `costing-methods.md` | A4.1 done | 同上 |
+| A4.1.16 | A1.5 §7-2 — FIFO 物料到岸成本红冲 delta 层部分消耗后物理删除余额守恒（`removeFifoAdjustLayer`；**触及数据删除行为探针**） | todo | 同上 §7（复用 P2-MA2-029 子场景） | A4.1 done | 同上 |
+| A4.1.17 | A1.5 §7-3 — P1-MA2-085 SELECT FOR UPDATE 路径在真实 DB（PG/MySQL）的锁行为 | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.18 | A1.6 §7-1 — PC-3 AR/AP reminder 模式运行时行为（关联 P2-RC-006） | todo | `2026-08-02-2100-...-a1-6-...md` §7 + `period-close.md` | A4.1 done | 同上 |
+| A4.1.19 | A1.6 §7-2 — PC-4 资产折旧 auto-execute + 悬挂阻断交互（G3 rethrow vs 悬挂扫描双报） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.20 | A1.6 §7-3 — RC-9 反结账审计缺失实际合规影响（`updatedBy`/`updateTime` 是否被覆盖；关联 P1-RC-006） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.21 | A1.6 §7-4 — 年末反结账阻断边界（手动删次年期间后 ErpFinGlBalance/yearOpening 残留一致性） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.22 | A1.7 SP-1 — cash flow 读 VoucherLine 不过滤 postingType，BUDGET/COMMITMENT 影子凭证现金科目污染 | todo | `2026-08-02-2115-...-a1-7-...md` §7 | A4.1 done | 同上 |
+| A4.1.23 | A1.7 SP-2 — 多账套部署「每账套独立三表」运行时渲染（当前读路径取主账套非按账套切换） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.24 | A1.7 SP-3 — CLOSED 期间门控缺失的运行时数据完整性影响（OPEN 期间渲染报表误导；关联 P2-RC-008） | todo | 同上 §7 | A4.1 done | 同上 |
+| A4.1.25 | A1.7 SP-4 — 看板行级权限 `period.orgId` scope 跨组织泄漏（关联 P1-MA2-093） | todo | 同上 §7 + `dashboards.md` | A4.1 done | 同上 |
 | A4.2 | 扩展域 MA1 存疑点运行时确认**展开器**（读取 MA1 扩展域切片报告全部存疑点清单，展开为本表 A4.2.n 实体验证行） | todo | 各域 owner doc | MA1 done | 同上 |
 
 ### Milestone MR0 — P0 即时修复通道（发现即止血）
