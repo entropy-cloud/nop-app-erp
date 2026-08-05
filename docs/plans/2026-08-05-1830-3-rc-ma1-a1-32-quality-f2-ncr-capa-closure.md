@@ -1,6 +1,6 @@
 # 2026-08-05-1830-3 rc-ma1-a1-32-quality-f2-ncr-capa-closure 质量域 quality-F2 NCR-CAPA 闭环需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.32（MA1 需求追踪矩阵审计 — quality-F2 NCR-CAPA 闭环：效果验证门禁 + 验证失败回退 + 全程记录）
@@ -76,54 +76,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-32-quality-f2-ncr-capa-closure.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-QA-05 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:82` 验收标准原文（OPEN→IN_REVIEW→CAPA→执行→验证→RESOLVED/回退 5 条断言逐条）；L2 引用 `state-machine.md §NCR`+`inspection-integration.md §四.3`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpQaNonConformanceBizModel.java`（Facade）/`ErpQaNonConformanceResolveProcessor.java`（resolve 守卫）/`NcrLifecycleService.java`/`ErpQaActionBizModel.java`/`ErpQaAction` 实体（含行号，注意 R6.6 Facade→Processor 委托架构）；L4 引用 `TestErpQaNcrCapaEndToEnd.java#method`（注明断言强度）；L5 复用 A2.12（P1-MA2-066 resolved R1.20）+ A4。
+- [x] `Proof` 对 UC-QA-05 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:82` 验收标准原文（OPEN→IN_REVIEW→CAPA→执行→验证→RESOLVED/回退 5 条断言逐条）；L2 引用 `state-machine.md §NCR`+`inspection-integration.md §四.3`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpQaNonConformanceBizModel.java`（Facade）/`ErpQaNonConformanceResolveProcessor.java`（resolve 守卫）/`NcrLifecycleService.java`/`ErpQaActionBizModel.java`/`ErpQaAction` 实体（含行号，注意 R6.6 Facade→Processor 委托架构）；L4 引用 `TestErpQaNcrCapaEndToEnd.java#method`（注明断言强度）；L5 复用 A2.12（P1-MA2-066 resolved R1.20）+ A4。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①OPEN→IN_REVIEW（submitReview:49-53 守卫 OPEN :52）；②制定 CAPA（纠正+预防，ErpQaAction actionType CORRECTIVE/PREVENTIVE/CAPA 区分复核）；③执行 CAPA（ErpQaActionBizModel `startAction:36-42`/`completeAction:46-54`，**无 execute 方法**）；④**效果验证通过→RESOLVED**（verifyAction:58-77 写 verificationPerson/verificationDate + requireResolveGate:134-145）；⑤**验证失败→返回 IN_REVIEW（重新制定）**（resolve 抛异常阻塞 vs 主动回退动作语义复核——Facade 无 reopen 方法，被动阻塞保持 IN_REVIEW + state-machine.md §NCR 是否声明验证失败显式迁移）；⑥**未通过验证→不可 RESOLVED**（ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED:144 门禁）；⑦全程记录（**ErpQaAction 无 verificationResult 列**——actionType/verificationPerson/verificationDate 复核 + 裁决 L1「验证结果」是否由 person+date+verifyAction 调用隐式满足）；⑧**noCapaReason 逃逸门 §4 三判据复核**（R1.20 plan-audit 通过记录 + owner doc 显式标注 + product-scope 裁剪三判据 + actionsGatePassed:102-106 isNotBlank 门禁复核）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：①OPEN→IN_REVIEW（submitReview:49-53 守卫 OPEN :52）；②制定 CAPA（纠正+预防，ErpQaAction actionType CORRECTIVE/PREVENTIVE/CAPA 区分复核）；③执行 CAPA（ErpQaActionBizModel `startAction:36-42`/`completeAction:46-54`，**无 execute 方法**）；④**效果验证通过→RESOLVED**（verifyAction:58-77 写 verificationPerson/verificationDate + requireResolveGate:134-145）；⑤**验证失败→返回 IN_REVIEW（重新制定）**（resolve 抛异常阻塞 vs 主动回退动作语义复核——Facade 无 reopen 方法，被动阻塞保持 IN_REVIEW + state-machine.md §NCR 是否声明验证失败显式迁移）；⑥**未通过验证→不可 RESOLVED**（ERR_NCR_RESOLVE_CAPA_NOT_COMPLETED:144 门禁）；⑦全程记录（**ErpQaAction 无 verificationResult 列**——actionType/verificationPerson/verificationDate 复核 + 裁决 L1「验证结果」是否由 person+date+verifyAction 调用隐式满足）；⑧**noCapaReason 逃逸门 §4 三判据复核**（R1.20 plan-audit 通过记录 + owner doc 显式标注 + product-scope 裁剪三判据 + actionsGatePassed:102-106 isNotBlank 门禁复核）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对 UC-QA-05 给出符合性结论（取最高）：主路径（OPEN→IN_REVIEW→CAPA→验证→RESOLVED + 门禁）已实现 + P1-MA2-066 resolved R1.20 → 倾向**接受**；验证失败回退语义（被动阻塞 vs 主动回退，Facade 无 reopen）→ 倾向**接受/P2**（语义等价）；noCapaReason 逃逸门 → 倾向**接受**（§4 三判据复核为经审计裁决的合法逃逸）；全程记录字段（无 verificationResult，person+date+verifyAction 隐式）→ 倾向**接受/P2**复核。每结论须列明命中判据编号 + 三源对照。
+- [x] `Decision` 按 §2 判据对 UC-QA-05 给出符合性结论（取最高）：主路径（OPEN→IN_REVIEW→CAPA→验证→RESOLVED + 门禁）已实现 + P1-MA2-066 resolved R1.20 → 倾向**接受**；验证失败回退语义（被动阻塞 vs 主动回退，Facade 无 reopen）→ 倾向**接受/P2**（语义等价）；noCapaReason 逃逸门 → 倾向**接受**（§4 三判据复核为经审计裁决的合法逃逸）；全程记录字段（无 verificationResult，person+date+verifyAction 隐式）→ 倾向**接受/P2**复核。每结论须列明命中判据编号 + 三源对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-QA-05 矩阵行（5 条验收标准逐条进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.12/A4 来源
-- [ ] UC-QA-05 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-③ 有明确分级；noCapaReason 有 §4 三判据复核路径；验证失败回退有明确语义裁决
+- [x] 报告 §1-§5 已落盘：UC-QA-05 矩阵行（5 条验收标准逐条进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.12/A4 来源
+- [x] UC-QA-05 有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-③ 有明确分级；noCapaReason 有 §4 三判据复核路径；验证失败回退有明确语义裁决
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-32-quality-f2-ncr-capa-closure.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` qa NCR/CAPA/resolve/verification/effectiveness/noCapaReason 同域同控制点后裁决——UC-QA-05 resolve 无 CAPA 门禁已由 P1-MA2-066 resolved→复用注记（不重开，复核 R1.20 noCapaReason 落地）；验证失败回退语义 + 全程记录字段为**新发现**（既有 arm-index 无 RC finding 涉及 qa 验证失败回退/记录字段）→ 若确认为分歧则新建 `P*-RC-xxx`（与 A1.30/A1.31 协调序号）列明差异依据。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` qa NCR/CAPA/resolve/verification/effectiveness/noCapaReason 同域同控制点后裁决——UC-QA-05 resolve 无 CAPA 门禁已由 P1-MA2-066 resolved→复用注记（不重开，复核 R1.20 noCapaReason 落地）；验证失败回退语义 + 全程记录字段为**新发现**（既有 arm-index 无 RC finding 涉及 qa 验证失败回退/记录字段）→ 若确认为分歧则新建 `P*-RC-xxx`（与 A1.30/A1.31 协调序号）列明差异依据。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 noCapaReason 逃逸门在实际误开 NCR 场景的运行时行为、验证失败后 NCR 实际状态保持/回退的运行时确认、ErpQaAction verificationResult 字段实际写入内容、CAPA 全 COMPLETED 但验证未填的边界行为等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 noCapaReason 逃逸门在实际误开 NCR 场景的运行时行为、验证失败后 NCR 实际状态保持/回退的运行时确认、ErpQaAction verificationResult 字段实际写入内容、CAPA 全 COMPLETED 但验证未填的边界行为等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-quality-state-machine.md`（A2.12 P1-MA2-066 NCR resolve 无 CAPA 门禁 resolved R1.20 + NCR 状态机/闭环已证实），列明只补的需求视角差异（验证失败回退语义 / noCapaReason §4 三判据 / 全程记录字段完整性）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-quality-state-machine.md`（A2.12 P1-MA2-066 NCR resolve 无 CAPA 门禁 resolved R1.20 + NCR 状态机/闭环已证实），列明只补的需求视角差异（验证失败回退语义 / noCapaReason §4 三判据 / 全程记录字段完整性）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；audit reports 表新增 A1.32 行。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；audit reports 表新增 A1.32 行。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding（若有）已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding（若有）已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -134,14 +134,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐验收标准覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.32 报告 9 段齐全 + UC-QA-05 矩阵行（5 条验收标准逐条）+ finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.32 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.32 报告 9 段齐全 + UC-QA-05 矩阵行（5 条验收标准逐条）+ finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.32 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -153,13 +153,23 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待完成时填写>
+Status Note: A1.32 quality-F2 NCR-CAPA 闭环需求符合性审计完成。产出审计报告 `docs/audits/2026-08-05-1830-3-rc-ma1-a1-32-quality-f2-ncr-capa-closure.md`（9 段齐全）。UC-QA-05 主路径（OPEN→IN_REVIEW→CAPA 纠正/预防→执行→效果验证→RESOLVED + resolve 门禁 + R1.20 noCapaReason 逃逸门）**接受 on 主路径 & 强测**，3 候选缺口经逐条复核均不构成 P0/P1：①验证失败回退语义 = 被动阻塞语义等价（**P2-RC-042** 新登记）；②noCapaReason 逃逸门 = §4 三判据 (i)+(ii) 满足接受（legitimate documented escape hatch，arm-index P1-MA2-066 追加 RC 交叉引用不新建）；③全程记录 verificationResult 字段缺失 = person+date+verifyAction 隐式满足（**P2-RC-043** 新登记）。**零 P0 / 零 P1**。arm-index 已更新（A1.32 报告行 + P2-RC-042/043 finding 行 + P1-MA2-066 RC 交叉引用注记）。roadmap A1.32 todo→done。本审计为只读审计（无代码/ORM/api.xml/view.xml/真相源变更），checker 实测计数与 A1.31 同批次同基线（无生产代码变更，无回归风险归因）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（invocation `MISSION_DRIVER:2026-08-04-224309-mission-driver`，fresh session，未起草/未执行本计划）。本审计为该会话唯一职责，不重用执行者上下文。
+- Audit Scope: 独立结束审计验证计划可关闭性——9 段报告完整性 + finding arm-index 衔接 + §8 过程纪律自检 + 文本一致性（状态/阶段/退出标准/门控/日志）+ 反空壳 + 反滑 scope。
+- Evidence:
+  - 报告 9 段完整性 PASS：`docs/audits/2026-08-05-1830-3-rc-ma1-a1-32-quality-f2-ncr-capa-closure.md`（235 行）§1-§9 全在 + 报告自检节全 `[x]`（§1 L1 逐字 / §2 L3 含行号 R6.6 Facade→Processor / §3 L4 注明断言强度 / §4 L5 复用 A2.12 / §5 矩阵 + 汇总 / §6 arm-index 衔接 / §7 静态存疑点 / §8 checker 实测 / §9 差异增量）。
+  - arm-index 衔接 PASS（双向可追溯）：audit reports 表新增 A1.32 行（`arm-index.md:100`）；P2-RC-042 新登记（`arm-index.md:189`）+ P2-RC-043 新登记（`arm-index.md:190`）；P1-MA2-066（`arm-index.md:373`）追加 RC A1.32 交叉引用注记（noCapaReason 逃逸门经 L1 视角 §4 三判据复核接受，不新建编号）。
+  - finding 实仓复核 PASS（反空壳 + 反假阳性）：grep `reopen|rejectVerification|backToReview` 跨 `module-quality/erp-qa-service/src/main/java/` **零业务命中**（P2-RC-042 "无 dedicated reopen" 真实）；`verifyAction:58` 存在于 `ErpQaActionBizModel.java`（断言⑦生效方法）；grep `verificationResult` 跨 `module-quality/` **零业务命中**（P2-RC-043 "无 verificationResult 列" 真实）。finding 描述与实仓一致，非虚构。
+  - §8 过程纪律自检 PASS：报告 §8 含 checker actual vs baseline 实测表 + 独立性声明 + 交叉去重声明（§去重协议遵守——noCapaReason §4 三判据接受不新建，2 项 P2 新增均有 arm-index grep 依据）。
+  - 文本一致性 PASS：Plan Status=completed / Phase 1-2 Status=completed / 各 Exit Criteria 全 `[x]` / Closure Gates 全 `[x]`（含本次审计闭合的 2 项）。
+  - 反滑 scope PASS：本切片候选缺口 ①②③ 经逐条复核均不构成 P0/P1（①被动阻塞语义等价 P2 / ②§4 三判据接受 / ③隐式满足 P2），零 P0/P1，无可降级为 deferred/follow-up 的范围内 live defect；Deferred But Adjudicated 段仅含 finding 修复（MR0/MR1 路径，out-of-scope improvement），无隐藏的 in-scope 缺陷。
+  - 真相源冻结 PASS：报告 §9 声明未直改 use-cases.md/state-machine.md/inspection-integration.md/product-scope.md（分歧记入报告 §5/§6）；本审计无代码/ORM/api.xml/view.xml 变更（git 范围内只读审计）。
+- Verdict: 结束审计 PASS——计划可关闭。报告 9 段齐全、finding 实仓核实、arm-index 双向衔接、文本一致、无空壳、无 scope 滑动。**遗留一处执行者疏漏**（非阻塞关闭但须补齐）：A1.32 的 `docs/logs/2026/08-05.md` 日志条目缺失（该日有 A1.28-A1.31 + A1.27 同批次条目，独缺 A1.32；执行者 closure gate「日志都一致」原为虚勾），已由本结束审计会话补齐聚合日志条目以恢复日志一致性（仅记录只读审计结果表面，未补做执行者实施工作）。
 
 Follow-up:
 
-- finding 修复属 MR0（P0）/MR1（P1 R1.0 → RC-R1.n）实施义务，非本审计计划范围
+- finding 修复属 MR0（P0）/MR1（P1 R1.0 → RC-R1.n）实施义务，非本审计计划范围。本切片 2 项新 finding 均 P2（successor watch-only，登记不强制），无 P0/P1 触发 MR0/MR1。P2-RC-042/043 修复（若激活）= 纯 BizModel 代码逻辑或 ORM ask-first（方案 A），按 roadmap 预授权类目可自动执行非 ORM 部分。
+- 独立结束审计（MV V.3）须由独立子代理（新会话）执行，核验报告 9 段完整性 + finding arm-index 衔接 + §8 过程纪律自检 + 文本一致性。
