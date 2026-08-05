@@ -81,8 +81,8 @@
 | A1.42 | **maintenance-F1 调度与冲突**（UC-MAIN-01/02/09） | done | `docs/design/maintenance/` | 0.2 | 同上 |
 | A1.43 | **maintenance-F2 访问与备件**（UC-MAIN-03/04） | done | `docs/design/maintenance/` | 0.2 | 同上 |
 | A1.44 | **maintenance-F3 响应/联动/OEE/看板**（UC-MAIN-05/06/07/08/10/11） | done | `docs/design/maintenance/` | 0.2 | 同上 |
-| A1.45 | **contract-F1 生命周期与签署**（UC-CT-01/02/05/06/07/09） | todo | `docs/design/contract/` | 0.2 | 同上 |
-| A1.46 | **contract-F2 计费与返利**（UC-CT-03/04/08/10） | todo | `docs/design/contract/` | 0.2 | 同上 |
+| A1.45 | **contract-F1 生命周期与签署**（UC-CT-01/02/05/06/07/09） | done | `docs/design/contract/` | 0.2 | 同上 |
+| A1.46 | **contract-F2 计费与返利**（UC-CT-03/04/08/10） | done | `docs/design/contract/` | 0.2 | 同上 |
 | A1.47 | **b2b 全功能**（UC-B2B-001~008，8 UC） | todo | `docs/design/b2b/` | 0.2 | 同上 |
 | A1.48 | **drp 全功能**（UC-DRP-01~08，8 UC） | todo | `docs/design/drp/` | 0.2 | 同上 |
 | A1.49 | **logistics 全功能**（UC-LOG-01~07，7 UC；04/05/06 在 use-cases.md 用非标准 heading `## 用例X：…`，0.2 清单化时归一化） | todo | `docs/design/logistics/` | 0.2 | 同上 |
