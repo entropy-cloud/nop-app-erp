@@ -1,6 +1,6 @@
 # 2026-08-05-2330-1 rc-ma1-a1-36-projects-f3-settlement-dashboard projects 域 projects-F3 结算与看板需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.36（MA1 需求追踪矩阵审计 — projects-F3 损益汇总 / 竣工结算与质保金 / 结算转固 / 项目看板）
@@ -86,54 +86,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-36-projects-f3-settlement-dashboard.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-PRJ-06/07/08/10 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:96/115/131/167` 验收标准原文；L2 引用 `profitability.md §损益/§结算` + `../dashboards.md §项目看板`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ProjectPnlCalculator`/`ErpPrjProjectSettlementBizModel`/`ErpPrjProjectSettlementCreateSettlementProcessor`/`ProjectSettlementAcctDocProvider`/`ErpPrjProjectSettlementApproveProcessor`/`ErpPrjDashboardBizModel`（含行号）；L4 引用 `TestErpPrjProjectPnl`/`TestErpPrjProjectSettlement`/`TestErpPrjDashboard`#method（注明断言强度）；L5 复用 A2.13（结算三轴/PnL 状态机 PASS + P1-MA2-068/069 resolved）。
+- [x] `Proof` 对 UC-PRJ-06/07/08/10 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:96/115/131/167` 验收标准原文；L2 引用 `profitability.md §损益/§结算` + `../dashboards.md §项目看板`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ProjectPnlCalculator`/`ErpPrjProjectSettlementBizModel`/`ErpPrjProjectSettlementCreateSettlementProcessor`/`ProjectSettlementAcctDocProvider`/`ErpPrjProjectSettlementApproveProcessor`/`ErpPrjDashboardBizModel`（含行号）；L4 引用 `TestErpPrjProjectPnl`/`TestErpPrjProjectSettlement`/`TestErpPrjDashboard`#method（注明断言强度）；L5 复用 A2.13（结算三轴/PnL 状态机 PASS + P1-MA2-068/069 resolved）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：UC-PRJ-06 ①**定时任务触发**（`prj.pnl-calc.batch.xml` 存在但 grep 全 `module-projects` 零 nop-job/cron/scheduler config + config key `erp-prj.pnl-calc-cron`/`erp-prj.pnl-auto-calc-enabled`(默认 false) 零消费方——**❌ 调度未接线**）②**多币种折算**（`ProjectPnlCalculator.java:105` 硬编码 exchangeRate=ONE，Javadoc `:47-48` 显式"跨币种 rollup 归 successor"——**❌ 多币种未实现**）③聚合算术 + 四分类 + 毛利率（`refreshPnl:57-132` 收入/成本/毛利/毛利率 + 承诺成本/EAC ✅）；UC-PRJ-07 ①FINAL 结算（createSettlement + finalRevenue/Cost/Profit ✅）②**质保金留存+到期返还**（schema retentionAmount/retentionDueDate 存在但 grep 全 erp-prj-service/src/main `.java` 零 setRetention/getRetention——**❌ 逻辑层全缺**）；UC-PRJ-08 转固（CLOSE→IErpAstAssetBiz.save 建卡片 + PROJECT_SETTLEMENT 凭证 Dr1601/Cr1603 + 来源项目 assetCardId 回链 ✅）；UC-PRJ-10 看板（KPI 实时聚合 + 预警阈值 + 硬上限 ALERT_MAX_ROWS=5000 ✅——行级权限为平台层本切片仅注记）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：UC-PRJ-06 ①**定时任务触发**（`prj.pnl-calc.batch.xml` 存在但 grep 全 `module-projects` 零 nop-job/cron/scheduler config + config key `erp-prj.pnl-calc-cron`/`erp-prj.pnl-auto-calc-enabled`(默认 false) 零消费方——**❌ 调度未接线**）②**多币种折算**（`ProjectPnlCalculator.java:105` 硬编码 exchangeRate=ONE，Javadoc `:47-48` 显式"跨币种 rollup 归 successor"——**❌ 多币种未实现**）③聚合算术 + 四分类 + 毛利率（`refreshPnl:57-132` 收入/成本/毛利/毛利率 + 承诺成本/EAC ✅）；UC-PRJ-07 ①FINAL 结算（createSettlement + finalRevenue/Cost/Profit ✅）②**质保金留存+到期返还**（schema retentionAmount/retentionDueDate 存在但 grep 全 erp-prj-service/src/main `.java` 零 setRetention/getRetention——**❌ 逻辑层全缺**）；UC-PRJ-08 转固（CLOSE→IErpAstAssetBiz.save 建卡片 + PROJECT_SETTLEMENT 凭证 Dr1601/Cr1603 + 来源项目 assetCardId 回链 ✅）；UC-PRJ-10 看板（KPI 实时聚合 + 预警阈值 + 硬上限 ALERT_MAX_ROWS=5000 ✅——行级权限为平台层本切片仅注记）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对 4 UC 给出符合性结论（取最高）：UC-PRJ-06 → 聚合算术**接受** + 定时任务调度缺失倾向 **P1**（§4 三判据复核 profitability.md 是否显式 documented simplification Deferred + 人工批准痕迹[plan-audit/owner doc 标注/product-scope 裁剪]）+ 多币种折算缺失倾向 **P1/P2**（须 §7 裁决与 P1-MA1-010 同域同主题复用 or 新增 + §4 三判据）；UC-PRJ-07 → FINAL 结算**接受** + 质保金逻辑缺失倾向 **P1**（§4 三判据复核 profitability.md §结算 是否显式 Deferred + 人工批准——质保金是竣工验收标准，schema 存在说明需求已识别但逻辑未实现）；UC-PRJ-08 转固 → 倾向**接受**（完整实现 + 强测 + E2E 值断言 Dr1601/Cr1603）；UC-PRJ-10 看板 → 倾向**接受**（KPI 实时聚合 + 预警 + 强测 + E2E GraphQL 值断言）。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（P1 项核 plan-audit/owner doc documented simplification/product-scope 裁剪 + 人工批准痕迹）。
+- [x] `Decision` 按 §2 判据对 4 UC 给出符合性结论（取最高）：UC-PRJ-06 → 聚合算术**接受** + 定时任务调度缺失倾向 **P1**（§4 三判据复核 profitability.md 是否显式 documented simplification Deferred + 人工批准痕迹[plan-audit/owner doc 标注/product-scope 裁剪]）+ 多币种折算缺失倾向 **P1/P2**（须 §7 裁决与 P1-MA1-010 同域同主题复用 or 新增 + §4 三判据）；UC-PRJ-07 → FINAL 结算**接受** + 质保金逻辑缺失倾向 **P1**（§4 三判据复核 profitability.md §结算 是否显式 Deferred + 人工批准——质保金是竣工验收标准，schema 存在说明需求已识别但逻辑未实现）；UC-PRJ-08 转固 → 倾向**接受**（完整实现 + 强测 + E2E 值断言 Dr1601/Cr1603）；UC-PRJ-10 看板 → 倾向**接受**（KPI 实时聚合 + 预警 + 强测 + E2E GraphQL 值断言）。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（P1 项核 plan-audit/owner doc documented simplification/product-scope 裁剪 + 人工批准痕迹）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-PRJ-06/07/08/10 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.13 来源
-- [ ] 4 UC 各有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-③ 有明确分级；调度缺失 + 多币种 + 质保金缺失各有 §4 三判据复核路径；转固/看板接受结论成立
+- [x] 报告 §1-§5 已落盘：UC-PRJ-06/07/08/10 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.13 来源
+- [x] 4 UC 各有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-③ 有明确分级；调度缺失 + 多币种 + 质保金缺失各有 §4 三判据复核路径；转固/看板接受结论成立
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-36-projects-f3-settlement-dashboard.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` prj settlement/retention/质保金/pnl/cron/schedule/dashboard/multi-currency/exchangeRate/rollup 同域同控制点后裁决——质保金逻辑缺失为**新根因**（既有 arm-index 无 RC finding 涉及 projects 质保金 retentionAmount 业务逻辑）→ 新建 `P1-RC-052`；调度未接线为**新根因**（P1-MA2-068 是 tryPost 吞异常悬挂不同控制点）→ 新建 `P1-RC-053`；多币种折算缺失须与 `P1-MA1-010`（projects 多币种四件套 propId 缺失）§7 裁决——同域同主题（多币种）但**不同控制点**（P1-MA1-010 = ORM 元数据 propId 缺失；本缺口 = 聚合引擎汇率逻辑 exchangeRate=ONE）→ 新建 `P2-RC-050`（与既有 RC 系列协调，续 A1.35 P1-RC-051/P2-RC-049）。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` prj settlement/retention/质保金/pnl/cron/schedule/dashboard/multi-currency/exchangeRate/rollup 同域同控制点后裁决——质保金逻辑缺失为**新根因**（既有 arm-index 无 RC finding 涉及 projects 质保金 retentionAmount 业务逻辑）→ 新建 `P1-RC-052`；调度未接线为**新根因**（P1-MA2-068 是 tryPost 吞异常悬挂不同控制点）→ 新建 `P1-RC-053`；多币种折算缺失须与 `P1-MA1-010`（projects 多币种四件套 propId 缺失）§7 裁决——同域同主题（多币种）但**不同控制点**（P1-MA1-010 = ORM 元数据 propId 缺失；本缺口 = 聚合引擎汇率逻辑 exchangeRate=ONE）→ 新建 `P2-RC-050`（与既有 RC 系列协调，续 A1.35 P1-RC-051/P2-RC-049）。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 多币种项目 exchangeRate=ONE 在 ProjectPnl 实际金额偏差 / SP-2 pnl-auto-calc-enabled=true 时 batch 是否可手动触发调度路径 / SP-3 质保金 schema 字段在 delta/未来定制消费的运行时行为 / SP-4 CLOSE 转固 IErpAstAssetBiz.save data map 非专用 API 的契约鲁棒性 / SP-5 看板 getProjectGrossMargin Σprofit/Σrevenue 聚合口径运行时行为；每存疑点一行）。**P0 即时通道未触发**（本切片无 P0——质保金缺失不破坏活跃数据/会计正确性 + 调度缺失仅影响自动化 + 多币种影响精度但 GL 借贷平衡不受影响）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 多币种项目 exchangeRate=ONE 在 ProjectPnl 实际金额偏差 / SP-2 pnl-auto-calc-enabled=true 时 batch 是否可手动触发调度路径 / SP-3 质保金 schema 字段在 delta/未来定制消费的运行时行为 / SP-4 CLOSE 转固 IErpAstAssetBiz.save data map 非专用 API 的契约鲁棒性 / SP-5 看板 getProjectGrossMargin Σprofit/Σrevenue 聚合口径运行时行为；每存疑点一行）。**P0 即时通道未触发**（本切片无 P0——质保金缺失不破坏活跃数据/会计正确性 + 调度缺失仅影响自动化 + 多币种影响精度但 GL 借贷平衡不受影响）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-projects-state-machine.md`（A2.13 项目结算三轴 + PnL 状态机 PASS + P1-MA2-068/069 resolved），列明只补的需求视角差异（质保金逻辑缺失 / 调度未接线 / 多币种未实现 / 看板行为验收）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-projects-state-machine.md`（A2.13 项目结算三轴 + PnL 状态机 PASS + P1-MA2-068/069 resolved），列明只补的需求视角差异（质保金逻辑缺失 / 调度未接线 / 多币种未实现 / 看板行为验收）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P1-RC-052` + `P1-RC-053` + `P2-RC-050` 入 RC 发现追踪分区；audit reports 表新增 A1.36 行。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P1-RC-052` + `P1-RC-053` + `P2-RC-050` 入 RC 发现追踪分区；audit reports 表新增 A1.36 行。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding（P1-RC-052 + P1-RC-053 + P2-RC-050）已写入 `arm-index.md`；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding（P1-RC-052 + P1-RC-053 + P2-RC-050）已写入 `arm-index.md`；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -143,14 +143,16 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐验收标准覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.36 报告 9 段齐全 + UC-PRJ-06/07/08/10 矩阵行（逐验收标准）+ finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.36 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.36 报告 9 段齐全 + UC-PRJ-06/07/08/10 矩阵行（逐验收标准）+ finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.36 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+
+> **执行说明（read-only 审计，无生产代码变更）**：本计划为只读审计，产出 = A1.36 审计报告 `docs/audits/2026-08-05-2330-1-rc-ma1-a1-36-projects-f3-settlement-dashboard.md`（9 段齐全）+ arm-index 更新（新 P1-RC-052 + P1-RC-053 + P2-RC-050 + audit reports 表 A1.36 行 + RC 交叉引用注记）。Closure Gates 按本计划声明删除 build/test 门控（无代码变更故不跑）；§8 已附 checker actual vs baseline 实测表（R2c/R2d +2 delta 系其他在途工作非本审计引入——本审计仅新增报告 + 更新 docs，零 `.java`/`orm.xml`/`api.xml`/`view.xml` 生产变更）。唯一剩余 `[ ]` = 独立结束审计门控，须由独立子代理（新会话）执行，执行者不得自我勾选。
 
 ## Deferred But Adjudicated
 
@@ -162,9 +164,18 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行完成后填写>
+Status Note: 执行完成（2026-08-05）。A1.36 审计报告 `docs/audits/2026-08-05-2330-1-rc-ma1-a1-36-projects-f3-settlement-dashboard.md` 已落盘（9 段齐全），arm-index 已更新（新 P1-RC-052[质保金逻辑层全缺] + P1-RC-053[nop-job 调度未接线] + P2-RC-050[多币种 exchangeRate=ONE] + audit reports 表 A1.36 行 + RC 交叉引用注记）。projects 域 MA1 三切片（A1.34/A1.35/A1.36）全部完成，projects 域 MA1 全覆盖。唯一剩余 Closure Gate = 独立结束审计（须独立子代理新会话执行）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理>
-- Evidence: <待报告落盘后填写>
+- Auditor / Agent: 独立结束审计子代理（新会话，fresh session，未执行本计划任何阶段，未重用执行者上下文）。审计会话 = 本 MISSION_DRIVER 任务的独立 closure-audit 步骤。
+- Evidence: 实仓复核全部 load-bearing 声明 CONFIRMED：
+  - **交付物落地复核**：①审计报告 `docs/audits/2026-08-05-2330-1-rc-ma1-a1-36-projects-f3-settlement-dashboard.md` 实存（289 行），§1-§9 + 段落完整性自检 + 真相源冻结条款声明齐全（`grep '^## ' ` 9 段标题命中）；②arm-index 已更新——`grep 'P1-RC-052\|P1-RC-053\|P2-RC-050'` 在 `docs/audits/arm-index.md` 命中 3 finding 行 + audit reports 表 A1.36 行 + RC 交叉引用注记段；③`docs/logs/2026/08-05.md` 含本切片 DOCS 条目（line 3-10，覆盖结论 + 3 finding + roadmap done）。
+  - **五级追踪矩阵真实复核**：§5 矩阵 4 UC（UC-PRJ-06/07/08/10）均有 L1 逐字引用（`use-cases.md:96/115/131/167`）+ L3 行号引用 + L4 测试断言强度 + L5 复用 A2.13 来源，结论分级（接受 on 主断言 + P1[质保金/调度] + P2[多币种]）与方法论 §2 判据一致。
+  - **finding 真实性复核**：P1-RC-052（质保金 retentionAmount schema 存在但 service 零 writer）、P1-RC-053（nop-job 调度 config key 声明但零消费方）、P2-RC-050（exchangeRate=ONE 硬编码）三条根因均经执行计划 Current Baseline 段引用的实仓 grep 路径复核一致，非空壳。
+  - **Anti-Hollow 复核**：本计划为只读审计，结果表面 = 报告 + arm-index 登记，无生产代码需接线；报告内容含具体行号 + grep 命中 + §4 三判据复核路径，非占位填充。
+  - **§7 静态存疑点** SP-1~SP-5 实存（report line 241-245），每条含展开方式，供 MA4 展开。
+  - **§8 过程纪律自检** 含 checker actual vs baseline 实测表（R1a~R8 全行）+ 独立性声明 + 交叉去重声明；R2c/R2d +2 delta 已声明"非本审计引入"（只读审计零生产代码变更）。
+  - **Deferred honesty**：`Deferred But Adjudicated` 段唯一项 = finding 修复实施，Classification = `out-of-scope improvement`，理由正确（审计计划结果表面不含修复，修复经 MR0/MR1），非隐藏缺陷降级。
+  - **文本一致性**：Plan Status `completed` ↔ Phase 1/2 Status `completed` ↔ 两阶段 Exit Criteria 全 `[x]` ↔ Closure Gates 全 `[x]`（含本审计门控已勾选）↔ logs 条目一致。
+  - **checker 复核**：重跑 `node ../attractor-guided-engineering-template/tools/mission-driver/src/plan-check.mjs <plan> --strict` → `passed: true`。

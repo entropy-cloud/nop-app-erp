@@ -72,7 +72,7 @@
 | A1.33 | **quality-F3 SPC 与看板**（UC-QA-09/10/11/12） | done | `docs/design/quality/` | 0.2 | 同上 |
 | A1.34 | **projects-F1 立项与成本归集**（UC-PRJ-01/02/03/09） | done | `docs/design/projects/` | 0.2 | 同上 |
 | A1.35 | **projects-F2 预算与 DAG**（UC-PRJ-04/05） | done | `docs/design/projects/` | 0.2 | 同上 |
-| A1.36 | **projects-F3 结算与看板**（UC-PRJ-06/07/08/10） | todo | `docs/design/projects/` | 0.2 | 同上 |
+| A1.36 | **projects-F3 结算与看板**（UC-PRJ-06/07/08/10） | done | `docs/design/projects/` | 0.2 | 同上 |
 | A1.37 | **cs-F1 工单生命周期**（UC-CS-01/02/03/11） | todo | `docs/design/customer-service/` | 0.2 | 同上 |
 | A1.38 | **cs-F2 SLA 与升级**（UC-CS-04） | todo | `docs/design/customer-service/` | 0.2 | 同上 |
 | A1.39 | **cs-F3 知识库/质量联动/预设应答**（UC-CS-05/06/07） | todo | `docs/design/customer-service/` | 0.2 | 同上 |
