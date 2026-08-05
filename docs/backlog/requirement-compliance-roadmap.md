@@ -87,7 +87,7 @@
 | A1.48 | **drp 全功能**（UC-DRP-01~08，8 UC） | done | `docs/design/drp/` | 0.2 | 同上 |
 | A1.49 | **logistics 全功能**（UC-LOG-01~07，7 UC；04/05/06 在 use-cases.md 用非标准 heading `## 用例X：…`，0.2 清单化时归一化） | done | `docs/design/logistics/` | 0.2 | 同上 |
 | A1.50 | **aps 全功能**（UC-APS-01~07，7 UC） | done | `docs/design/aps/` | 0.2 | 同上 |
-| A1.51 | **notify 通知派发**（无 use-cases 文件，0.2 裁决后按功能点核验） | todo | `docs/design/notify/` | 0.2 | 同上 |
+| A1.51 | **notify 通知派发**（UC-SYS-01~07，7 UC，0.2 补写 use-cases 后纳入） | done | `docs/design/notify/` | 0.2 | 同上 |
 
 ### Milestone MA2 — 已裁决简化/Deferred 复查
 
