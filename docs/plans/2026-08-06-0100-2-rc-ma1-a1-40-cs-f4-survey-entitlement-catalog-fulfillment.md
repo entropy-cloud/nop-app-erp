@@ -1,6 +1,6 @@
 # 2026-08-06-0100-2 rc-ma1-a1-40-cs-f4-survey-entitlement-catalog-fulfillment 客服域 cs-F4 调查/权益/目录/履行需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A1.40（MA1 需求追踪矩阵审计 — cs-F4 满意度调查 CSAT / 服务权益校验 / 服务目录请求 / 服务目录履行流程：survey 延迟发送+token+取消 / entitlement 匹配+消费+到期 / catalog 建单+表单 / fulfillment 序列执行+actionType+重试）
@@ -92,54 +92,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0100-2-rc-ma1-a1-40-cs-f4-survey-entitlement-catalog-fulfillment.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-CS-08/09/10/12 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:145/165/184/223` 验收标准原文；L2 引用 `csat.md`/`entitlement.md`/`service-catalog.md`/`README.md`（标注"设计参考，冲突以 L1 为准"——履行 actionType/调查终态 Non-Goal 标注须 §4 三判据复核）；L3 引用 `ErpCsSurveyBizModel`/`ErpCsSurveyCreateSurveyProcessor`/`ErpCsTicketResolveProcessor`/`ErpCsTicketReopenProcessor`/`ErpCsEntitlementBizModel`/`EntitlementMatcher`/`ErpCsEntitlementExpiryJob`/`ErpCsServiceCatalogItemBizModel`/`ErpCsCatalogFulfillmentBizModel`/`ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor`/`ErpCsConfigs`/`ErpCsSurvey`+`ErpCsEntitlement`+`ErpCsCatalogFulfillment` ORM（含行号）；L4 引用 `TestErpCsTicketSlaCsat`#method + `TestErpCsEntitlement`#method + `TestErpCsServiceCatalog`#method + `TestEntitlementMatcher`（注明断言强度；UC-CS-12 弱断言）；L5 标注 A2.14 范围不含本切片 UC + P1-MA2-086 cron 接线复用。
+- [x] `Proof` 对 UC-CS-08/09/10/12 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:145/165/184/223` 验收标准原文；L2 引用 `csat.md`/`entitlement.md`/`service-catalog.md`/`README.md`（标注"设计参考，冲突以 L1 为准"——履行 actionType/调查终态 Non-Goal 标注须 §4 三判据复核）；L3 引用 `ErpCsSurveyBizModel`/`ErpCsSurveyCreateSurveyProcessor`/`ErpCsTicketResolveProcessor`/`ErpCsTicketReopenProcessor`/`ErpCsEntitlementBizModel`/`EntitlementMatcher`/`ErpCsEntitlementExpiryJob`/`ErpCsServiceCatalogItemBizModel`/`ErpCsCatalogFulfillmentBizModel`/`ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor`/`ErpCsConfigs`/`ErpCsSurvey`+`ErpCsEntitlement`+`ErpCsCatalogFulfillment` ORM（含行号）；L4 引用 `TestErpCsTicketSlaCsat`#method + `TestErpCsEntitlement`#method + `TestErpCsServiceCatalog`#method + `TestEntitlementMatcher`（注明断言强度；UC-CS-12 弱断言）；L5 标注 A2.14 范围不含本切片 UC + P1-MA2-086 cron 接线复用。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条对照）：UC-CS-08 ①**延迟发送**（PENDING 无 Job 消费 ❌）②**渠道派发链接**（surveyChannel 仅描述无派发 ❌）③**无鉴权访问**（submitSurvey 需认证 ⚠️）④CSAT/NPS/CES（字段在 ✅，NPS/CES config 默认 off）⑤COMPLETED/FAILED 终态（无 status 列 ❌）⑥重开取消（cancelUnrespondedSurvey ✅）⑦**失败重试**（无 ❌）；UC-CS-09 ①查询有效权益（matchForCustomer ✅）②最近到期（EntitlementMatcher ✅）③usedTickets+1（consumeEntitlement ✅）④30 天续约（scanExpiringEntitlements+Job ✅）⑤到期停用（deactivateExpiredEntitlements ✅）⑥超限拒绝（ERR_ENTITLEMENT_EXHAUSTED ✅）⑦**普通保存联动**（save 不自动调 matchAndAttachSla ⚠️ 复用 P1-RC-054）；UC-CS-10 ①分类树（实体+守卫 ✅，无独立浏览方法 ⚠️）②requestFormConfig（字段在未 schema 强制 ⚠️）③自动填充（buildTicketData ✅）④**必填校验**（无 ❌）⑤失败告警（仅 LOG.warn 无告警 ⚠️）；UC-CS-12 ①sequence 升序（✅）②**actionConfig 驱动**（从不解析 ❌）③5 种 actionType（ASSIGN_TEAM/REQUEST_APPROVAL 占位 ⚠️，NOTIFY_CUSTOMER/UPDATE_STATUS 无副作用 ❌，CREATE_CHILD_TICKET/INVOKE_WORKFLOW SKIPPED ❌）④**失败暂停**（循环不中断 ❌）⑤**重试 3 次**（无 ❌）⑥最终状态（不更新 ❌）。
+- [x] `Proof` 重点核验**候选缺口**（逐条对照）：UC-CS-08 ①**延迟发送**（PENDING 无 Job 消费 ❌）②**渠道派发链接**（surveyChannel 仅描述无派发 ❌）③**无鉴权访问**（submitSurvey 需认证 ⚠️）④CSAT/NPS/CES（字段在 ✅，NPS/CES config 默认 off）⑤COMPLETED/FAILED 终态（无 status 列 ❌）⑥重开取消（cancelUnrespondedSurvey ✅）⑦**失败重试**（无 ❌）；UC-CS-09 ①查询有效权益（matchForCustomer ✅）②最近到期（EntitlementMatcher ✅）③usedTickets+1（consumeEntitlement ✅）④30 天续约（scanExpiringEntitlements+Job ✅）⑤到期停用（deactivateExpiredEntitlements ✅）⑥超限拒绝（ERR_ENTITLEMENT_EXHAUSTED ✅）⑦**普通保存联动**（save 不自动调 matchAndAttachSla ⚠️ 复用 P1-RC-054）；UC-CS-10 ①分类树（实体+守卫 ✅，无独立浏览方法 ⚠️）②requestFormConfig（字段在未 schema 强制 ⚠️）③自动填充（buildTicketData ✅）④**必填校验**（无 ❌）⑤失败告警（仅 LOG.warn 无告警 ⚠️）；UC-CS-12 ①sequence 升序（✅）②**actionConfig 驱动**（从不解析 ❌）③5 种 actionType（ASSIGN_TEAM/REQUEST_APPROVAL 占位 ⚠️，NOTIFY_CUSTOMER/UPDATE_STATUS 无副作用 ❌，CREATE_CHILD_TICKET/INVOKE_WORKFLOW SKIPPED ❌）④**失败暂停**（循环不中断 ❌）⑤**重试 3 次**（无 ❌）⑥最终状态（不更新 ❌）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对 UC-CS-08/09/10/12 给出符合性结论（取最高）：UC-CS-12 → actionConfig 未解析+NOTIFY/UPDATE_STATUS 占位无副作用+失败不暂停+无重试+最终状态不更新倾向 **P1**（**§4 三判据关键裁决**：`use-cases.md:223-242` 全条无 Deferred 注记——核 service-catalog.md/README 是否标 Non-Goal：判据[i]plan-audit / [ii]owner doc 显式标注经**人工批准**痕迹（grep git log，AI 自标 ≠ 人工批准）/ [iii]product-scope 裁剪；CREATE_CHILD_TICKET/INVOKE_WORKFLOW 占位有 successor 注记须单独裁决——若为经批准的 successor 则接受/P2，否则并入 P1）；UC-CS-08 延迟发送/渠道派发/FAILED-重试缺失倾向 **P1/P2**（L1 ①②+后置+异常明确；无鉴权访问倾向 P2）；UC-CS-10 必填表单校验缺失倾向 **P1/P2**（L1 异常明确禁止），失败告警倾向 P2；UC-CS-09 普通保存联动**复用 P1-RC-054**（在既有行追加 A1.40 交叉引用，不新建）；UC-CS-09 核心 + UC-CS-08 创建/字段/取消 + UC-CS-10 建单/分类树/自动填充 + UC-CS-12 序列框架 → **接受**。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（**P1 项核 owner doc Non-Goal/Deferred 标注的人工批准痕迹**）。
+- [x] `Decision` 按 §2 判据对 UC-CS-08/09/10/12 给出符合性结论（取最高）：UC-CS-12 → actionConfig 未解析+NOTIFY/UPDATE_STATUS 占位无副作用+失败不暂停+无重试+最终状态不更新倾向 **P1**（**§4 三判据关键裁决**：`use-cases.md:223-242` 全条无 Deferred 注记——核 service-catalog.md/README 是否标 Non-Goal：判据[i]plan-audit / [ii]owner doc 显式标注经**人工批准**痕迹（grep git log，AI 自标 ≠ 人工批准）/ [iii]product-scope 裁剪；CREATE_CHILD_TICKET/INVOKE_WORKFLOW 占位有 successor 注记须单独裁决——若为经批准的 successor 则接受/P2，否则并入 P1）；UC-CS-08 延迟发送/渠道派发/FAILED-重试缺失倾向 **P1/P2**（L1 ①②+后置+异常明确；无鉴权访问倾向 P2）；UC-CS-10 必填表单校验缺失倾向 **P1/P2**（L1 异常明确禁止），失败告警倾向 P2；UC-CS-09 普通保存联动**复用 P1-RC-054**（在既有行追加 A1.40 交叉引用，不新建）；UC-CS-09 核心 + UC-CS-08 创建/字段/取消 + UC-CS-10 建单/分类树/自动填充 + UC-CS-12 序列框架 → **接受**。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（**P1 项核 owner doc Non-Goal/Deferred 标注的人工批准痕迹**）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-CS-08/09/10/12 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度（UC-CS-12 弱断言）、L5 标注 A2.14 不含 + P1-MA2-086 cron 复用
-- [ ] UC-CS-08/09/10/12 有符合性结论且列明 §2 判据编号；候选缺口有明确分级；UC-CS-12 P1 裁决须含 owner doc Non-Goal 标注的人工批准痕迹核查结论；UC-CS-09 普通保存联动复用 P1-RC-054 裁决成立
+- [x] 报告 §1-§5 已落盘：UC-CS-08/09/10/12 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度（UC-CS-12 弱断言）、L5 标注 A2.14 不含 + P1-MA2-086 cron 复用
+- [x] UC-CS-08/09/10/12 有符合性结论且列明 §2 判据编号；候选缺口有明确分级；UC-CS-12 P1 裁决须含 owner doc Non-Goal 标注的人工批准痕迹核查结论；UC-CS-09 普通保存联动复用 P1-RC-054 裁决成立
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0100-2-rc-ma1-a1-40-cs-f4-survey-entitlement-catalog-fulfillment.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` cs survey/csat/entitlement/catalog/fulfillment/delay/token/approval/child-ticket/notify/status/retry 同域同控制点后裁决——UC-CS-12 履行占位+无副作用+不暂停+无重试为**新根因** → 新建 P1-RC（UC-CS-12，续 N=1 之后最新编号）；UC-CS-08 延迟发送/渠道派发/FAILED-重试为**新根因** → 新建 P1/P2-RC（UC-CS-08）；UC-CS-10 必填校验为**新根因** → 新建 P1/P2-RC（UC-CS-10）；UC-CS-09 普通保存联动**复用 P1-RC-054**（既有行追加 A1.40 交叉引用，不新建）。执行时 grep arm-index 取 N=1 之后的最新续编号避免冲突。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` cs survey/csat/entitlement/catalog/fulfillment/delay/token/approval/child-ticket/notify/status/retry 同域同控制点后裁决——UC-CS-12 履行占位+无副作用+不暂停+无重试为**新根因** → 新建 P1-RC（UC-CS-12，续 N=1 之后最新编号）；UC-CS-08 延迟发送/渠道派发/FAILED-重试为**新根因** → 新建 P1/P2-RC（UC-CS-08）；UC-CS-10 必填校验为**新根因** → 新建 P1/P2-RC（UC-CS-10）；UC-CS-09 普通保存联动**复用 P1-RC-054**（既有行追加 A1.40 交叉引用，不新建）。执行时 grep arm-index 取 N=1 之后的最新续编号避免冲突。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）+ **UC-CS-08 survey 终态修复若加 status 列触及 ORM 须 ask-first** + **UC-CS-12 履行 actionType 实化须协调 notify 域（IErpSysNotificationBiz）/审批（nop-workflow）**。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）+ **UC-CS-08 survey 终态修复若加 status 列触及 ORM 须 ask-first** + **UC-CS-12 履行 actionType 实化须协调 notify 域（IErpSysNotificationBiz）/审批（nop-workflow）**。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 survey delayHours 默认 0 时 PENDING 路径是否实际可达 / SP-2 submitSurvey 经 token 调用在真实鉴权配置下是否拒绝匿名 / SP-3 entitlement-expiry/csat-reminder cron enabled=true 时幂等行为[P1-MA2-086 R1.28 复用] / SP-4 createFromCatalog 履行占位审计行在前端是否被误读为真实执行 / SP-5 requestFormConfig 当前数据是否含可驱动校验的 schema；每存疑点一行）。**P0 即时通道评估**（履行占位/调查缺是否破坏活跃数据/会计——倾向否：影响 SLA/客户体验不破坏数据；不触发 MR0）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 survey delayHours 默认 0 时 PENDING 路径是否实际可达 / SP-2 submitSurvey 经 token 调用在真实鉴权配置下是否拒绝匿名 / SP-3 entitlement-expiry/csat-reminder cron enabled=true 时幂等行为[P1-MA2-086 R1.28 复用] / SP-4 createFromCatalog 履行占位审计行在前端是否被误读为真实执行 / SP-5 requestFormConfig 当前数据是否含可驱动校验的 schema；每存疑点一行）。**P0 即时通道评估**（履行占位/调查缺是否破坏活跃数据/会计——倾向否：影响 SLA/客户体验不破坏数据；不触发 MR0）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：A2.14 范围不含 UC-CS-08/09/10/12，无可复用行为证据；P1-MA2-086（resolved R1.28）引作 entitlement-expiry/csat-reminder cron 接线证据（不重审并发维度），列明只补的需求视角差异（调查延迟/派发/FAILED / 目录必填 / 履行占位/不暂停/无重试）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：A2.14 范围不含 UC-CS-08/09/10/12，无可复用行为证据；P1-MA2-086（resolved R1.28）引作 entitlement-expiry/csat-reminder cron 接线证据（不重审并发维度），列明只补的需求视角差异（调查延迟/派发/FAILED / 目录必填 / 履行占位/不暂停/无重试）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 RC finding（UC-CS-12/08/10 视裁决）入 RC 发现追踪分区；P1-RC-054 行追加 A1.40 交叉引用（UC-CS-09）；audit reports 表新增 A1.40 行。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 RC finding（UC-CS-12/08/10 视裁决）入 RC 发现追踪分区；P1-RC-054 行追加 A1.40 交叉引用（UC-CS-09）；audit reports 表新增 A1.40 行。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；P1-RC-054 追加 A1.40 交叉引用；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；P1-RC-054 追加 A1.40 交叉引用；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -149,14 +149,18 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐验收标准覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.40 报告 9 段齐全 + UC-CS-08/09/10/12 矩阵行（逐验收标准）+ finding 登记入 arm-index（收尾 cs 域 4 切片）
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.40 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.40 报告 9 段齐全 + UC-CS-08/09/10/12 矩阵行（逐验收标准）+ finding 登记入 arm-index（收尾 cs 域 4 切片）
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.40 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
+
+## Closure Audit Record
+
+- Independent closure audit: `pass`（独立子代理 ses_02de5c7caffegP0t8OKAa2uYa3，fresh session，未起草/执行本计划）。7 项核查全 PASS：①报告 §1-§9 9 段齐全；②L1 逐字引用 UC-CS-08/09/10/12 与 `use-cases.md:145-242` 一致无语义漂移；③L3 代码锚点独立复核（UC-CS-08 `createSurvey:49` delay>0→surveySentAt=null + `CsatReminderJob` 仅消费 surveySentAt 非空 + grep delayedSend/markSurveyFailed/retryCount/pauseFlow 零 + `ErpCsSurvey` ORM 无 status 列；UC-CS-09 `EntitlementMatcher.match:52-54` min endDate nullsLast + `consumeEntitlement` ERR_ENTITLEMENT_EXHAUSTED + `auto-assign-on-create` 死 flag；UC-CS-10 `buildTicketData:146-156` 盲拷无 required 校验 + grep requiredField/validateForm/formSchema 零 + 失败 catch 仅 LOG.warn 无 notify；UC-CS-12 `executeStep:57-94` 从不读 getActionConfig + 占位仅写审计 + 循环:44-49 不中断 + ticket.status 不更新）；④§4 三判据 `git log` 全 `canonical`（AI）无人工批准痕迹 → 判据(ii) 不成立（与报告一致）；⑤finding 分级 3 新 P1 + 2 新 P2 + 1 reuse P1-RC-054（同根因同控制点 auto-assign 死 flag）合理；⑥arm-index 5 新 finding 各唯一 1 行 + A1.40 报告行 + P1-RC-054 A1.40 交叉引用；⑦`git status` 确认未改 cs 真相源/代码/ORM（仅新建报告 + 改 arm-index）。无阻塞项，结束证据 = 本记录 + 报告 §自检 + arm-index 行。
 
 ## Deferred But Adjudicated
 
@@ -165,3 +169,18 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按 §10 经 MR0（P0）/ MR1（R1.0 展开 RC-R1.n，P1）实施；本切片候选偏差（调查延迟/派发/FAILED-重试 / 目录必填校验 / 履行 actionType 实化/失败暂停/重试）属**代码逻辑**类（预授权——BizModel/Processor 逻辑 + cron Job 接线）；**UC-CS-08 survey status 列 / 无鉴权端点触及 ORM/鉴权配置须 ask-first + 独立 plan-audit**；UC-CS-12 履行实化须协调 notify 域 + 审批引擎。
 - Successor Required: yes（MR0/MR1 按本报告 finding 交叉引用展开修复行；UC-CS-09 普通保存联动修复随 P1-RC-054 修复行；UC-CS-12 履行实化须与 A1.39 UC-CS-06 notify 协同[若 UC-CS-06 修复引入 IErpSysNotificationBiz 模式可复用]）
+
+## Closure
+
+Status Note: A1.40 cs-F4（survey/entitlement/catalog/fulfillment）五级追踪审计报告 9 段齐全，UC-CS-08/09/10/12 逐验收标准矩阵行已落盘，finding 已登记入 arm-index，收尾 cs 域全部 4 切片（A1.37/38/39/40）证据缺口。本计划为只读审计，无代码/ORM/真相源变更（git status 已确认）。独立草案审查与独立结束审计均由独立子代理 fresh session 完成，无自我审计。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: independent closure auditor subagent ses_02de5c7caffegP0t8OKAa2uYa3（fresh session，未起草/执行本计划，详见 `## Closure Audit Record`）
+- Evidence: 7 项核查全 PASS —— 报告 §1-§9 9 段齐全；L1 逐字引用与 `use-cases.md:145-242` 一致；L3 代码锚点独立复核确认 UC-CS-08/09/10/12 候选缺口（delayedSend/markSurveyFailed/retryCount/pauseFlow/requiredField grep 零 + ErpCsSurvey 无 status 列 + executeStep 从不读 getActionConfig + 循环不中断 + ticket.status 不更新）；§4 三判据 `git log` 全 `canonical`（AI）无人工批准痕迹；finding 分级 3 新 P1 + 2 新 P2 + 1 reuse P1-RC-054 合理；arm-index 5 新 finding 各唯一 1 行 + A1.40 报告行 + P1-RC-054 A1.40 交叉引用；`git status` 确认未改 cs 真相源/代码/ORM。
+- 报告产物：`docs/audits/2026-08-06-0100-2-rc-ma1-a1-40-cs-f4-survey-entitlement-catalog-fulfillment.md`（§1-§9）
+- arm-index 更新：`docs/audits/arm-index.md`（RC 发现追踪分区 5 新行 + audit reports 表 A1.40 行 + P1-RC-054 交叉引用）
+
+Follow-up:
+
+- finding 修复属 MR0（P0）/ MR1（RC-R1.n，P1/P2）范围，按 §10 + `## Deferred But Adjudicated` 衔接，不在本审计计划实施
