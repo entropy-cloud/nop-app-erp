@@ -3,8 +3,17 @@
   "permission": {
     "edit": {
       "*": "allow",
-      "**/_*": "deny",
       "**/_gen/**": "deny",
+      "**/_templates/**": "deny",
+      "**/_*.java": "deny",
+      "**/_*.xmeta": "deny",
+      "**/_*.xbiz": "deny",
+      "**/_*.orm.xml": "deny",
+      "**/_*.beans.xml": "deny",
+      "**/_*.i18n.yaml": "deny",
+      "**/_*.action-auth.xml": "deny",
+      "**/_module": "deny",
+      "deploy/**/_*.sql": "deny",
       "tests/e2e/**/_helper.ts": "allow",
       "**/__tests__/**": "allow",
       "**/__mocks__/**": "allow"
