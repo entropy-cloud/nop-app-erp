@@ -67,7 +67,7 @@
 | A1.28 | **crm-F1 线索生命周期**（UC-CRM-01/02/03/04/09/11） | done | `docs/design/crm/` | 0.2 | 同上 |
 | A1.29 | **crm-F2 营销/预测/配额/序列/事件提醒**（UC-CRM-05/07/08/10/12/14/15） | done | `docs/design/crm/` | 0.2 | 同上 |
 | A1.30 | **crm-F3 CPQ/漏斗推进**（UC-CRM-06/13） | done | `docs/design/crm/` | 0.2 | 同上 |
-| A1.31 | **quality-F1 检验门控**（UC-QA-01/02/03/04/06/07/08） | todo | `docs/design/quality/` | 0.2 | 同上 |
+| A1.31 | **quality-F1 检验门控**（UC-QA-01/02/03/04/06/07/08） | done | `docs/design/quality/` | 0.2 | 同上 |
 | A1.32 | **quality-F2 NCR-CAPA 闭环**（UC-QA-05） | todo | `docs/design/quality/` | 0.2 | 同上 |
 | A1.33 | **quality-F3 SPC 与看板**（UC-QA-09/10/11/12） | todo | `docs/design/quality/` | 0.2 | 同上 |
 | A1.34 | **projects-F1 立项与成本归集**（UC-PRJ-01/02/03/09） | todo | `docs/design/projects/` | 0.2 | 同上 |
