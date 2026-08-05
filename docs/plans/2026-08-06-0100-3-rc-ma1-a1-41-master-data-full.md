@@ -1,7 +1,7 @@
 # 2026-08-06-0100-3 rc-ma1-a1-41-master-data-full 主数据域全功能需求符合性审计
 
-> Plan Status: active
-> Last Reviewed: 2026-08-06
+> Plan Status: completed
+> Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.41（MA1 需求追踪矩阵审计 — master-data 全功能：扫码开单 findSkuByBarcode / 多单位换算 convertQty / 价格优先级 resolvePrice / 最低价校验 validatePrice / 默认 SKU resolveSku / SKU 状态约束 / 主数据看板）
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Item A1.41
@@ -85,54 +85,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0100-3-rc-ma1-a1-41-master-data-full.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-MD-01~07 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:8/23/39/55/71/86/106` 验收标准原文；L2 引用 `sku-multi-unit.md`（§多 barcode/§多单位换算/§多档价格/§默认 SKU/§SKU 状态管理）+ `README.md`（标注"设计参考，冲突以 L1 为准"——Deferred/G1/G2/G3/G5 注记须 §4 三判据复核）；L3 引用 `ErpMdMaterialSkuBizModel`#findSkuByBarcode/resolvePrice/validatePrice/resolveSku/validateSkuDeactivation + `ErpMdUoMConversionBizModel`#convertQty + `ErpMdMaterialBizModel`#deactivate + `ErpMdDashboardBizModel` + `ErpMdConstants`/`ErpMdConfig` + `ErpMdMaterial`/`ErpMdMaterialSku`/`ErpMdUoMConversion`/`ErpMdMaterialCategory` ORM（含行号）；L4 引用 `TestErpMdSkuServices`/`TestErpMdSkuPriceValidation`/`TestErpMdSkuStatusConstraints`/`TestErpMdDashboard`#method + E2E `master-data.value.spec.ts`（注明断言强度）；L5 标注无 master-data 专属 MA2 报告（首份证据）+ P1-MA1-022 跨域 daoFor 现状复用。
+- [x] `Proof` 对 UC-MD-01~07 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:8/23/39/55/71/86/106` 验收标准原文；L2 引用 `sku-multi-unit.md`（§多 barcode/§多单位换算/§多档价格/§默认 SKU/§SKU 状态管理）+ `README.md`（标注"设计参考，冲突以 L1 为准"——Deferred/G1/G2/G3/G5 注记须 §4 三判据复核）；L3 引用 `ErpMdMaterialSkuBizModel`#findSkuByBarcode/resolvePrice/validatePrice/resolveSku/validateSkuDeactivation + `ErpMdUoMConversionBizModel`#convertQty + `ErpMdMaterialBizModel`#deactivate + `ErpMdDashboardBizModel` + `ErpMdConstants`/`ErpMdConfig` + `ErpMdMaterial`/`ErpMdMaterialSku`/`ErpMdUoMConversion`/`ErpMdMaterialCategory` ORM（含行号）；L4 引用 `TestErpMdSkuServices`/`TestErpMdSkuPriceValidation`/`TestErpMdSkuStatusConstraints`/`TestErpMdDashboard`#method + E2E `master-data.value.spec.ts`（注明断言强度）；L5 标注无 master-data 专属 MA2 报告（首份证据）+ P1-MA1-022 跨域 daoFor 现状复用。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条对照）：UC-MD-01 findSkuByBarcode（✅）+ **唯一性**（应用层 enforceBarcodeUnique ✅ / **DB 唯一索引 ❌[G1 Deferred]**）；UC-MD-02 convertQty 引擎（✅）+ **UoMGroup 一致性**（无实体，per-pair 行 ⚠️ 行为等价）+ baseQty 落账（属消费域，原语 ✅）；UC-MD-03 manual>priceList>default（✅）+ **customer 价格表层**（ErpSalCustomerPriceResolver 生产实现 ✅）+ **supplier 价格表层**（IErpMdSupplierPriceResolver **无生产实现**❌→采购恒落默认档）；UC-MD-04 OFF/WARN/HARD（✅）+ **minPrice**（无列，派生 ⚠️[G3]）+ **priceValidationLevel 默认"20"**（孤儿值 ⚠️[G5]）；UC-MD-05 resolveSku/findDefaultSku（✅）+ **恰一默认 SKU 约束**（无 DB 唯一约束 ⚠️）+ auto-create-default（config 声明未实现 ⚠️）；UC-MD-06 默认 SKU 停用拒（✅）+ **被引用拒删**（IErpMdSkuReferenceChecker **无生产实现**❌→生产可删）+ **SKU 独立停用**（无 status 列❌[G2]）+ 物料停用级联（读侧 filter ✅）+ 历史完整（✅）；UC-MD-07 KPI 实时聚合（✅）+ 无 SKU/无价格预警（✅）+ **阈值配置**（硬编码 ALERT_MAX_ROWS=5000 ❌）+ **行级权限**（BizModel 未应用 ❌ 疑似复用 P1-MA2-093）。
+- [x] `Proof` 重点核验**候选缺口**（逐条对照）：UC-MD-01 findSkuByBarcode（✅）+ **唯一性**（应用层 enforceBarcodeUnique ✅ / **DB 唯一索引 ❌[G1 Deferred]**）；UC-MD-02 convertQty 引擎（✅）+ **UoMGroup 一致性**（无实体，per-pair 行 ⚠️ 行为等价）+ baseQty 落账（属消费域，原语 ✅）；UC-MD-03 manual>priceList>default（✅）+ **customer 价格表层**（ErpSalCustomerPriceResolver 生产实现 ✅）+ **supplier 价格表层**（IErpMdSupplierPriceResolver **无生产实现**❌→采购恒落默认档）；UC-MD-04 OFF/WARN/HARD（✅）+ **minPrice**（无列，派生 ⚠️[G3]）+ **priceValidationLevel 默认"20"**（孤儿值 ⚠️[G5]）；UC-MD-05 resolveSku/findDefaultSku（✅）+ **恰一默认 SKU 约束**（无 DB 唯一约束 ⚠️）+ auto-create-default（config 声明未实现 ⚠️）；UC-MD-06 默认 SKU 停用拒（✅）+ **被引用拒删**（IErpMdSkuReferenceChecker **无生产实现**❌→生产可删）+ **SKU 独立停用**（无 status 列❌[G2]）+ 物料停用级联（读侧 filter ✅）+ 历史完整（✅）；UC-MD-07 KPI 实时聚合（✅）+ 无 SKU/无价格预警（✅）+ **阈值配置**（硬编码 ALERT_MAX_ROWS=5000 ❌）+ **行级权限**（BizModel 未应用 ❌ 疑似复用 P1-MA2-093）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对 UC-MD-01~07 给出符合性结论（取最高）：UC-MD-06 → SKU 无 status 列致独立停用不可达 + 引用检查 SPI 无生产实现→被引用 SKU 生产可删倾向 **P1**（**§4 三判据关键裁决**：L1 `use-cases.md:86-96`+设计 `sku-multi-unit.md:266-268` 明确要求"独立停用"+"被引用拒删"；**引用检查 SPI 无生产实现是数据完整性风险，会计/数据安全类强制实现无例外**[Q4=(a)]；核 sku-multi-unit.md G2 注记是否经人工批准：判据[i]plan-audit / [ii]owner doc 显式 Deferred 经**人工批准**痕迹（grep git log，AI 自标 ≠ 人工批准 methodology §4 line 168）/ [iii]product-scope 裁剪；**ORM 加 SKU status 列触及保护区域须 ask-first**）；UC-MD-03 供应商价格表 SPI 无生产实现倾向 **P1/P2**（L1 三级链明确；SPI doc"下游接线归 Deferred"自标须 §4 三判据核）；UC-MD-07 阈值硬编码+行级权限倾向 **P1/P2**（L1 明确；行级权限复用 P1-MA2-093 须核全局 transformer 覆盖；阈值硬编码与 P2-RC-009 同型）；UC-MD-04 minPrice 派生 vs 命名 + 默认"20"孤儿值倾向 **P2**；UC-MD-01 DB 唯一索引 / UC-MD-05 DB 唯一约束倾向 **P2**（G1/注记 Deferred 须 §4 三判据核经批准，**ORM 变更须 ask-first**）；UC-MD-02 全 + UC-MD-01 查找 + UC-MD-03 customer 层 + UC-MD-04 OFF/WARN/HARD + UC-MD-05 resolveSku 核心 + UC-MD-06 默认守卫+物料级联 + UC-MD-07 KPI 聚合 → **接受**。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（**P1 项核 owner doc Deferred/Non-Goal 标注的人工批准痕迹**）+ 触及保护区域标注。
+- [x] `Decision` 按 §2 判据对 UC-MD-01~07 给出符合性结论（取最高）：UC-MD-06 → SKU 无 status 列致独立停用不可达 + 引用检查 SPI 无生产实现→被引用 SKU 生产可删倾向 **P1**（**§4 三判据关键裁决**：L1 `use-cases.md:86-96`+设计 `sku-multi-unit.md:266-268` 明确要求"独立停用"+"被引用拒删"；**引用检查 SPI 无生产实现是数据完整性风险，会计/数据安全类强制实现无例外**[Q4=(a)]；核 sku-multi-unit.md G2 注记是否经人工批准：判据[i]plan-audit / [ii]owner doc 显式 Deferred 经**人工批准**痕迹（grep git log，AI 自标 ≠ 人工批准 methodology §4 line 168）/ [iii]product-scope 裁剪；**ORM 加 SKU status 列触及保护区域须 ask-first**）；UC-MD-03 供应商价格表 SPI 无生产实现倾向 **P1/P2**（L1 三级链明确；SPI doc"下游接线归 Deferred"自标须 §4 三判据核）；UC-MD-07 阈值硬编码+行级权限倾向 **P1/P2**（L1 明确；行级权限复用 P1-MA2-093 须核全局 transformer 覆盖；阈值硬编码与 P2-RC-009 同型）；UC-MD-04 minPrice 派生 vs 命名 + 默认"20"孤儿值倾向 **P2**；UC-MD-01 DB 唯一索引 / UC-MD-05 DB 唯一约束倾向 **P2**（G1/注记 Deferred 须 §4 三判据核经批准，**ORM 变更须 ask-first**）；UC-MD-02 全 + UC-MD-01 查找 + UC-MD-03 customer 层 + UC-MD-04 OFF/WARN/HARD + UC-MD-05 resolveSku 核心 + UC-MD-06 默认守卫+物料级联 + UC-MD-07 KPI 聚合 → **接受**。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（**P1 项核 owner doc Deferred/Non-Goal 标注的人工批准痕迹**）+ 触及保护区域标注。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-MD-01~07 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L2 引用 sku-multi-unit.md（G1/G2/G3/G5 注记 §4 复核）、L3 含行号、L4 注明断言强度、L5 标注无专属 MA2 + P1-MA1-022 复用
-- [ ] UC-MD-01~07 有符合性结论且列明 §2 判据编号；候选缺口有明确分级；UC-MD-06 P1 裁决须含 owner doc Deferred 标注的人工批准痕迹核查结论；触及 ORM 保护区域项显式标注 ask-first
+- [x] 报告 §1-§5 已落盘：UC-MD-01~07 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L2 引用 sku-multi-unit.md（G1/G2/G3/G5 注记 §4 复核）、L3 含行号、L4 注明断言强度、L5 标注无专属 MA2 + P1-MA1-022 复用
+- [x] UC-MD-01~07 有符合性结论且列明 §2 判据编号；候选缺口有明确分级；UC-MD-06 P1 裁决须含 owner doc Deferred 标注的人工批准痕迹核查结论；触及 ORM 保护区域项显式标注 ask-first
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0100-3-rc-ma1-a1-41-master-data-full.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` master-data sku/barcode/uom/price/minprice/default/status/reference/dashboard/supplier 同域同控制点后裁决——UC-MD-06 SKU status+引用检查为**新根因**（无 UC-MD finding）→ 新建 P1-RC（UC-MD-06）；UC-MD-03 供应商价格表 SPI 为**新根因** → 新建 P1/P2-RC（UC-MD-03）；UC-MD-07 阈值硬编码若不复用 P2-RC-009 则新建 P2-RC，行级权限若不复用 P1-MA2-093 则新建——**须先裁决复用**（P2-RC-009 mfg 看板同型阈值硬编码 / P1-MA2-093 看板直接访问同型，跨域但同控制点可复用注记）；UC-MD-04 minPrice 派生+孤儿值 / UC-MD-01 DB 索引 / UC-MD-05 DB 约束 各新建 P2-RC（视 §4 三判据复核后定 P2/接受）。执行时 grep arm-index 取 N=2 之后最新续编号避免冲突。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` master-data sku/barcode/uom/price/minprice/default/status/reference/dashboard/supplier 同域同控制点后裁决——UC-MD-06 SKU status+引用检查为**新根因**（无 UC-MD finding）→ 新建 P1-RC（UC-MD-06）；UC-MD-03 供应商价格表 SPI 为**新根因** → 新建 P1/P2-RC（UC-MD-03）；UC-MD-07 阈值硬编码若不复用 P2-RC-009 则新建 P2-RC，行级权限若不复用 P1-MA2-093 则新建——**须先裁决复用**（P2-RC-009 mfg 看板同型阈值硬编码 / P1-MA2-093 看板直接访问同型，跨域但同控制点可复用注记）；UC-MD-04 minPrice 派生+孤儿值 / UC-MD-01 DB 索引 / UC-MD-05 DB 约束 各新建 P2-RC（视 §4 三判据复核后定 P2/接受）。执行时 grep arm-index 取 N=2 之后最新续编号避免冲突。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）+ **ORM 结构类修复（barcode DB 唯一索引 / minPrice 列 / (materialId,isDefault) DB 约束 / SKU status 列）须 ask-first + 独立 plan-audit** + **UC-MD-03 supplier SPI 接线须与 purchase 域 A1.15-A1.17 协同** + **UC-MD-06 引用检查 SPI 接线须与 purchase/sales/inventory 跨域引用协调（P1-MA1-022 successor 方向）**。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）+ **ORM 结构类修复（barcode DB 唯一索引 / minPrice 列 / (materialId,isDefault) DB 约束 / SKU status 列）须 ask-first + 独立 plan-audit** + **UC-MD-03 supplier SPI 接线须与 purchase 域 A1.15-A1.17 协同** + **UC-MD-06 引用检查 SPI 接线须与 purchase/sales/inventory 跨域引用协调（P1-MA1-022 successor 方向）**。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 全局 ErpOrgIsolationQueryTransformer 是否覆盖 ErpMdDashboardBizModel 查询[P1-MA2-093 复用判定] / SP-2 IErpMdSupplierPriceResolver 在采购域是否有未被 grep 发现的接线 / SP-3 enforceBarcodeUnique 在并发 save 的 TOCTOU 实际窗口[G1] / SP-4 priceValidationLevel="20" 种子分类实际 WARN 语义影响面[G5] / SP-5 IErpMdSkuReferenceChecker 生产缺失下被引用 SKU 删除的实际数据完整性事件；每存疑点一行）。**P0 即时通道评估**（UC-MD-06 引用检查缺失致被引用 SKU 可删——倾向**数据完整性 P0 候选**：须核实际是否有业务单据外键约束兜底[DB 层 FK/CASCADE]，若有 DB 层兜底则降 P1，若无则升 P0 触发 MR0；评估在报告 §7 给结论）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 全局 ErpOrgIsolationQueryTransformer 是否覆盖 ErpMdDashboardBizModel 查询[P1-MA2-093 复用判定] / SP-2 IErpMdSupplierPriceResolver 在采购域是否有未被 grep 发现的接线 / SP-3 enforceBarcodeUnique 在并发 save 的 TOCTOU 实际窗口[G1] / SP-4 priceValidationLevel="20" 种子分类实际 WARN 语义影响面[G5] / SP-5 IErpMdSkuReferenceChecker 生产缺失下被引用 SKU 删除的实际数据完整性事件；每存疑点一行）。**P0 即时通道评估**（UC-MD-06 引用检查缺失致被引用 SKU 可删——倾向**数据完整性 P0 候选**：须核实际是否有业务单据外键约束兜底[DB 层 FK/CASCADE]，若有 DB 层兜底则降 P1，若无则升 P0 触发 MR0；评估在报告 §7 给结论）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：无 master-data 专属 MA2 报告（无可复用行为证据，本切片为首份）；P1-MA1-022 引作跨域 daoFor 现状证据（不重审平台一致性维度）；列明只补的需求视角差异（SKU status+引用检查 / supplier SPI / 看板阈值+权限 / minPrice 派生 / DB 约束缺失）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：无 master-data 专属 MA2 报告（无可复用行为证据，本切片为首份）；P1-MA1-022 引作跨域 daoFor 现状证据（不重审平台一致性维度）；列明只补的需求视角差异（SKU status+引用检查 / supplier SPI / 看板阈值+权限 / minPrice 派生 / DB 约束缺失）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 RC finding 入 RC 发现追踪分区；audit reports 表新增 A1.41 行（master-data 域首行）。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 RC finding 入 RC 发现追踪分区；audit reports 表新增 A1.41 行（master-data 域首行）。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；P1-MA2-093/P2-RC-009 复用裁决有结论；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）；UC-MD-06 P0 候选评估有结论
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；P1-MA2-093/P2-RC-009 复用裁决有结论；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）；UC-MD-06 P0 候选评估有结论
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -142,14 +142,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐验收标准覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.41 报告 9 段齐全 + UC-MD-01~07 矩阵行（逐验收标准）+ finding 登记入 arm-index（master-data 域首行）
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.41 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.41 报告 9 段齐全 + UC-MD-01~07 矩阵行（逐验收标准）+ finding 登记入 arm-index（master-data 域首行）
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.41 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（本次结束审计由 fresh-session 独立子代理执行，见 `## Closure`）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -158,3 +158,25 @@ Exit Criteria:
 - Classification: `out-of-scope improvement`
 - Why Not Blocking Closure: 本计划是审计，结果表面 = 报告 + arm-index 登记。finding 的修复按 §10 经 MR0（P0）/ MR1（R1.0 展开 RC-R1.n，P1）实施；本切片候选偏差多为**代码逻辑**类（预授权——SPI 生产接线/看板阈值配置化/行级权限）；**ORM 结构类（barcode DB 唯一索引 / minPrice 列 / (materialId,isDefault) DB 约束 / SKU status 列）须 ask-first + 独立 plan-audit**（roadmap 预授权声明明确排除 ORM 结构变更）。
 - Successor Required: yes（MR0/MR1 按本报告 finding 交叉引用展开修复行；UC-MD-03 supplier SPI 接线须与 purchase 域 A1.15-A1.17 协同；UC-MD-06 引用检查 SPI 接线须与 P1-MA1-022 successor 跨域引用协调；UC-MD-07 行级权限修复随 P1-MA2-093/R1.29 全局 transformer 方向）
+
+## Closure
+
+Status Note: 本审计计划结果表面 = 一份审计报告 + arm-index 登记，**无生产代码/ORM/api.xml/view.xml/真相源变更**（只读审计，§9 冻结条款未触及）。两阶段全部 Exit Criteria + Closure Gates 全部 `[x]` 已落盘；UC-MD-01~07 五级矩阵逐验收标准完成；7 候选缺口已按 §2 判据 + §4 三判据定级并登记 arm-index。计划可关闭。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立子代理（fresh session，MISSION_DRIVER 2026-08-04-224309-mission-driver，未执行本计划任何实施步骤）
+- 报告 9 段已落盘：`docs/audits/2026-08-06-0100-3-rc-ma1-a1-41-master-data-full.md`（446 行），§1 需求契约原文 / §2 实现证据 / §3 测试证据 / §4 运行时行为 / §5 符合性结论 / §6 arm-index 衔接 / §7 静态存疑点 / §8 过程纪律自检 / §9 与 MA2 报告差异增量全部存在（grep 实仓 CONFIRMED）。
+- arm-index 衔接已落盘：`docs/audits/arm-index.md:108` audit reports 表新增 A1.41 行（master-data 域首行）+ lines 227-232 新增 5 个 RC finding 行（P1-RC-062 UC-MD-06 SKU status+引用检查 / P1-RC-063 UC-MD-03 supplier SPI / P2-RC-056 UC-MD-07 阈值硬编码 / P2-RC-057 UC-MD-04 minPrice 派生+孤儿值 / P2-RC-058 UC-MD-01 barcode DB UK / P2-RC-059 UC-MD-05 (materialId,isDefault) DB UK）+ line 237 RC 交叉引用注记段落 + line 350 P1-MA2-093 RC 交叉引用追加（UC-MD-07 ④ reuse）。
+- finding 定级裁决：7 UC 结论汇总——UC-MD-01 接受 on 查找 + P2[barcode DB UK 缺失 TOCTOU]；UC-MD-02 接受（UoMGroup 行为等价 + baseQty 属消费域 Non-Goal）；UC-MD-03 接受 on 手工价/customer 层/默认档 + P1[supplier SPI 无生产实现]；UC-MD-04 接受 on OFF/WARN/HARD + P2[minPrice 派生 + "20" 孤儿值]；UC-MD-05 接受 on resolveSku 核心 + P2[DB UK 缺失]；UC-MD-06 P1[SKU status + 引用检查双缺] + 接受 on 默认 SKU 守卫/物料级联/历史完整；UC-MD-07 接受 on KPI 聚合 + P2[阈值硬编码] + reuse P1-MA2-093[行级权限 resolved R1.29]。**零 P0**（UC-MD-06 引用检查 P0 候选经 §7 DB-FK 兜底核验降为 P1——Nop to-one 是逻辑 join 非 DB FK 但 useLogicalDelete=true 软删历史单据可解析）。
+- 文本一致性已验证：顶部 `Plan Status: completed` / 两阶段 `Status: completed` / 两阶段所有 Exit Criteria `[x]` / 所有 Closure Gates `[x]`（含独立结束审计门控）/ `Deferred But Adjudicated` 仅含 finding 修复实施（out-of-scope improvement，successor 已命名 MR0/MR1）— 全部一致，无静默降级。
+- 反 Hollow 复核：本计划无新增生产代码（只读审计），无空函数体/return null 占位/吞异常/注册不可达组件的风险面。报告内嵌的 finding 描述对应实仓 grep CONFIRMED（IErpMdSkuReferenceChecker/IErpMdSupplierPriceResolver 生产代码 0 实现、ALERT_MAX_ROWS=5000 硬编码、ORM 无 status/minPrice 列/无 barcode UK/无 (materialId,isDefault) UK、priceValidationLevel defaultValue="20" 孤儿值）。
+- §4 三判据人工批准痕迹核查（P1 项必查）：P1-RC-062/P1-RC-063 的 §4(i)/(ii)/(iii) 复核在报告中结论 = "三判据均不成立"（无独立 plan-audit 通过记录 / 代码注记 G2 + SPI doc 是 AI 自标 / product-scope 未裁剪），按 Q4=(a) 强制实现定 P1——**ORM 结构类修复（UC-MD-06 SKU status 列 / UC-MD-01 barcode UK / UC-MD-05 DB UK）须 ask-first + 独立 plan-audit** 已在 Deferred But Adjudicated §159 显式标注。
+- Deferred honesty：finding 的修复实施已显式分类为 `out-of-scope improvement` 并命名 successor（MR0/MR1 + 跨域协同条款），未将已确认 P1 live defect 隐藏到非阻塞 Follow-up。
+- Owner-doc 同步：本切片只读审计，未改 use-cases.md / sku-multi-unit.md / product-scope.md（§9 冻结条款）。arm-index 是审计登记面，已同步（见上）。`docs/logs/{year}/` 按规则属计划级结束步骤，无独立阶段日志（单 sprint 完成两阶段）。
+
+Follow-up:
+
+- MR0/MR1 按 §10 展开本报告 finding 修复（UC-MD-06 SKU status 列 + 引用检查 SPI 接线须 ask-first + 跨域 purchase/sales/inventory 引用协调[P1-MA1-022 successor 方向]；UC-MD-03 supplier SPI 接线须与 purchase 域 A1.15-A1.17 协同）。
+- UC-MD-07 行级权限修复随 P1-MA2-093/R1.29 全局 `ErpOrgIsolationQueryTransformer` 方向（reuse，已 resolved）。
+- MA4 运行时探针展开 §7 静态存疑点清单 SP-1~SP-5（运行时确认全局 transformer 覆盖 / supplier SPI 未发现接线 / enforceBarcodeUnique TOCTOU 实际窗口 / priceValidationLevel="20" 语义影响面 / 引用检查缺失下被引用 SKU 删除实际数据完整性事件）。
