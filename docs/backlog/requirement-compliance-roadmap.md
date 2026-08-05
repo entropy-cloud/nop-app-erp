@@ -81,7 +81,7 @@
 | A1.41 | **master-data 全功能**（UC-MD-01~07，7 UC） | done | `docs/design/master-data/` | 0.2 | 同上 |
 | A1.42 | **maintenance-F1 调度与冲突**（UC-MAIN-01/02/09） | done | `docs/design/maintenance/` | 0.2 | 同上 |
 | A1.43 | **maintenance-F2 访问与备件**（UC-MAIN-03/04） | done | `docs/design/maintenance/` | 0.2 | 同上 |
-| A1.44 | **maintenance-F3 响应/联动/OEE/看板**（UC-MAIN-05/06/07/08/10/11） | todo | `docs/design/maintenance/` | 0.2 | 同上 |
+| A1.44 | **maintenance-F3 响应/联动/OEE/看板**（UC-MAIN-05/06/07/08/10/11） | done | `docs/design/maintenance/` | 0.2 | 同上 |
 | A1.45 | **contract-F1 生命周期与签署**（UC-CT-01/02/05/06/07/09） | todo | `docs/design/contract/` | 0.2 | 同上 |
 | A1.46 | **contract-F2 计费与返利**（UC-CT-03/04/08/10） | todo | `docs/design/contract/` | 0.2 | 同上 |
 | A1.47 | **b2b 全功能**（UC-B2B-001~008，8 UC） | todo | `docs/design/b2b/` | 0.2 | 同上 |
