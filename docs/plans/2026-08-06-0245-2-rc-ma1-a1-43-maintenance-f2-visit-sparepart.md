@@ -1,6 +1,6 @@
 # 2026-08-06-0245-2 rc-ma1-a1-43-maintenance-f2-visit-sparepart maintenance-F2 维护访问与备件消耗需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.43（MA1 需求追踪矩阵审计 — maintenance-F2 维护访问全流程(设备状态联动) + 备件消耗闭环(出库+凭证)）
@@ -70,54 +70,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0245-2-rc-ma1-a1-43-maintenance-f2-visit-sparepart.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-MAIN-03/04 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:49/71` 验收标准原文；L2 引用 `state-machine.md §2`+`equipment-integration.md §二/§三`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpMntVisitBizModel`#schedule/start/complete/cancel + `ErpMntVisitStartProcessor`/`ErpMntVisitCompleteProcessor`/`ErpMntVisitCancelProcessor` + `ErpMntEquipmentBizModel`#changeStatus + `ErpMntSparePartUsageBizModel`#confirm/reverseConfirm + `ErpMntSparePartUsageConfirmProcessor` + `MaintenanceIssuePostingDispatcher`+`MaintenanceIssueAcctDocProvider` + IErpInvStockMoveBiz.generateConsumptionMove 跨域调用链（含行号）；L4 引用 `TestErpMntVisitRequestStateMachine`/`TestErpMntVisitCancelReversal`/`TestErpMntSparePartPosting`/`TestErpMntSparePartUsageReversal`#method（注明断言强度）；L5 标注无 maintenance 专属 MA2 报告 + P1-MA2-074 备件过账已 resolved 复用。
+- [x] `Proof` 对 UC-MAIN-03/04 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:49/71` 验收标准原文；L2 引用 `state-machine.md §2`+`equipment-integration.md §二/§三`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpMntVisitBizModel`#schedule/start/complete/cancel + `ErpMntVisitStartProcessor`/`ErpMntVisitCompleteProcessor`/`ErpMntVisitCancelProcessor` + `ErpMntEquipmentBizModel`#changeStatus + `ErpMntSparePartUsageBizModel`#confirm/reverseConfirm + `ErpMntSparePartUsageConfirmProcessor` + `MaintenanceIssuePostingDispatcher`+`MaintenanceIssueAcctDocProvider` + IErpInvStockMoveBiz.generateConsumptionMove 跨域调用链（含行号）；L4 引用 `TestErpMntVisitRequestStateMachine`/`TestErpMntVisitCancelReversal`/`TestErpMntSparePartPosting`/`TestErpMntSparePartUsageReversal`#method（注明断言强度）；L5 标注无 maintenance 专属 MA2 报告 + P1-MA2-074 备件过账已 resolved 复用。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条对照）：UC-MAIN-03 start 侧设备→UNDER_MAINTENANCE（✅ start:24 javadoc:10）+ **complete 侧设备恢复 RUNNING/IDLE**（❌/⚠️ 待核 ErpMntVisitCompleteProcessor——L1 明确"COMPLETED 时设备恢复"，grep complete Processor 设备状态恢复站点）+ 设备状态常量语义对齐（UNDER_MAINTENANCE vs L1"MAINTENANCE"）；UC-MAIN-04 generateConsumptionMove 出库调用链（✅ 待核 confirm→IErpInvStockMoveBiz 真实调用）+ 库存余额-=消耗量（⚠️ 待核测试断言）+ 备件不足校验失败（⚠️ 待核 inventory cross-domain validateAvailable 抛 ERR 路径）+ 凭证科目映射借维修费用/贷存货（✅ MaintenanceIssueAcctDocProvider.createFacts 待核行级断言强度）。
+- [x] `Proof` 重点核验**候选缺口**（逐条对照）：UC-MAIN-03 start 侧设备→UNDER_MAINTENANCE（✅ start:24 javadoc:10）+ **complete 侧设备恢复 RUNNING/IDLE**（✅ 已实现 ErpMntVisitCompleteProcessor:31→restoreToRunning——恢复 RUNNING；IDLE 分支缺失归 P2-RC-061）+ 设备状态常量语义对齐（UNDER_MAINTENANCE vs L1"MAINTENANCE"——cosmetic 语义一致记 §9）；UC-MAIN-04 generateConsumptionMove 出库调用链（✅ SparePartIssueService#issue→IErpInvStockMoveBiz.generateMove(OUTGOING)，方法名差异 cosmetic §9）+ 库存余额-=消耗量（✅ 跨域 inventory bookkeeper.bookCompletion，SP-2 运行时确认）+ 备件不足校验失败（✅ 跨域 inventory validateAvailable ERR_AVAILABLE_INSUFFICIENT 默认禁负库存，SP-3 运行时确认）+ 凭证科目映射借维修费用/贷存货（✅ MaintenanceIssueAcctDocProvider.createFacts Dr6602/Cr1403 行级强断言）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对 UC-MAIN-03/04 给出符合性结论（取最高）：UC-MAIN-03 complete 侧设备状态恢复缺失倾向 **P1**（§2 ①/③ 状态迁移/状态联动断；**§4 三判据复核** owner doc state-machine.md §2 是否显式 Deferred 经人工批准——AI 自标 ≠ 人工批准 methodology §4 line 172；修复为 BizModel 代码逻辑预授权）；UC-MAIN-03 常量语义对齐倾向 P2/接受；UC-MAIN-04 库存余额/不足校验/凭证行级断言 按执行时核验定 P2（仅冒烟 §2 ⑤）/接受；UC-MAIN-03 状态机 + UC-MAIN-04 出库+过账主路径倾向**接受**（P1-MA2-074 resolved）。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核 + 触及保护区域标注（**备件过账凭证科目/VoucherFact 类须 ask-first**）。
+- [x] `Decision` 按 §2 判据对 UC-MAIN-03/04 给出符合性结论（取最高）：UC-MAIN-03 = **P2**（start/complete/驱动 主路径接受 + complete 侧设备恢复 RUNNING **已实现**[纠正计划基线「待核倾向 P1」假设]，候选缺口收窄为 IDLE 恢复分支缺失 **P2-RC-061** §2 P2① 次要验收标准；§4 三判据复核均不成立但影响限于 IDLE 边界非数据破坏，watch-only 声明 Q4 张力）；UC-MAIN-04 = **接受**（出库+余额+凭证+不足校验主路径全满足，P1-MA2-074 过账吞异常维度 resolved R1.16 复用，命名差异 cosmetic §9）。每结论列明命中判据编号 + 三源对照 + §4 三判据复核 + 触及保护区域标注（**备件过账凭证科目/VoucherFact 类须 ask-first**——本切片无新增会计过账变更；P2-RC-061 修复视形态：纯逻辑预授权 / ORM 快照列 ask-first）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-MAIN-03/04 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L2 引用 state-machine.md §2 + equipment-integration.md §二/§三、L3 含行号 + 跨域 IErpInvStockMoveBiz 调用链、L4 注明断言强度、L5 标注无专属 MA2 + P1-MA2-074 复用
-- [ ] UC-MAIN-03/04 有符合性结论且列明 §2 判据编号；UC-MAIN-03 P1 裁决（若 complete 设备恢复缺失）须含 owner doc Deferred 标注的人工批准痕迹核查结论；触及会计保护区域项显式标注 ask-first
+- [x] 报告 §1-§5 已落盘：UC-MAIN-03/04 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L2 引用 state-machine.md §2 + equipment-integration.md §二/§三、L3 含行号 + 跨域 IErpInvStockMoveBiz 调用链、L4 注明断言强度、L5 标注无专属 MA2 + P1-MA2-074 复用
+- [x] UC-MAIN-03/04 有符合性结论且列明 §2 判据编号；UC-MAIN-03 P2 裁决（IDLE 恢复分支缺失，complete 恢复 RUNNING 已实现）含 owner doc Deferred 标注的人工批准痕迹核查结论（§4 三判据均不成立）；触及会计保护区域项显式标注 ask-first
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0245-2-rc-ma1-a1-43-maintenance-f2-visit-sparepart.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` maintenance visit/equipment status/spare part/consumption/MAINTENANCE_ISSUE 同域同控制点后裁决——UC-MAIN-03 complete 设备恢复为**新根因**（无 UC-MAIN-03 finding）→ 新建 P1-RC（UC-MAIN-03，若核验确认缺失）；UC-MAIN-04 断言强度缺口若不复用既有则新建 P2-RC。执行时 grep arm-index 取最新续编号避免冲突（当前至 P2-RC-059 / P1-RC-063）。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` maintenance visit/equipment status/spare part/consumption/MAINTENANCE_ISSUE 同域同控制点后裁决——UC-MAIN-03 IDLE 恢复分支为**新根因**（无 UC-MAIN-03 finding）→ 新建 **P2-RC-061**（UC-MAIN-03 C-IDLE 分支，§2 P2①）；UC-MAIN-04 出库+余额+凭证+不足校验主路径全满足，无新 finding（P1-MA2-074 过账吞异常维度 + A2.14 状态机迁移维度均复用不重审）。执行时 grep arm-index 取最新续编号（A1.42 已占至 P1-RC-066/P2-RC-060，本切片续编 P2-RC-061）。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）+ **备件消耗过账凭证科目映射/VoucherFact 修复触及会计保护区域须 ask-first + 独立 plan-audit**（沿用 P1-MA2-074 ask-first 先例）+ **UC-MAIN-04 出库须与 inventory 域 IErpInvStockMoveBiz 跨域协调**。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 successor MR1）+ **备件消耗过账凭证科目映射/VoucherFact 修复触及会计保护区域须 ask-first + 独立 plan-audit**（沿用 P1-MA2-074 ask-first 先例；本切片无新增会计过账变更）+ **UC-MAIN-04 出库须与 inventory 域 IErpInvStockMoveBiz 跨域协调**。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 complete 时设备状态是否运行时恢复 RUNNING/IDLE / SP-2 generateConsumptionMove 运行时是否真实触发库存出库移动单 + 余额扣减 / SP-3 备件不足校验失败路径运行时是否抛 inventory ERR；每存疑点一行）。**P0 即时通道评估**（本切片无活跃数据破坏候选——备件过账悬挂经 P1-MA2-074 已 resolved；设备状态联动缺失属状态一致性非数据破坏——评估在报告 §7 给结论）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 complete 时 IDLE 设备状态是否运行时恢复 RUNNING/IDLE[静态+代码已确认归 P2-RC-061] / SP-2 generateMove 出库运行时是否真实触发库存出库移动单 + 余额扣减[跨域 inventory] / SP-3 备件不足校验失败路径运行时是否抛 inventory ERR[跨域 guard]；每存疑点一行）。**P0 即时通道评估**（本切片无活跃数据破坏候选——备件过账悬挂经 P1-MA2-074 已 resolved；设备状态联动 IDLE 分支缺失属状态一致性非数据破坏——评估在报告 §7 给结论）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（R1/R2 实测 + R3+ 引同日 A1.42 值，零代码变更）；含基线漂移注记（baseline 文件 R2b/R2c/R2d 与同日 A1.42 记录不一致，预存态非本审计引入）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：无 maintenance 专属 MA2 报告；P1-MA2-074 引作备件过账吞异常已 resolved 证据（不重审过账吞异常维度）；列明只补的需求视角差异（设备状态联动 complete 侧 / 备件余额断言 / 不足校验）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：无 maintenance 专属 MA2 报告；P1-MA2-074 引作备件过账吞异常已 resolved 证据（不重审过账吞异常维度）+ A2.14 引作状态机迁移守卫已证实证据（不重审状态机迁移维度）；列明只补的需求视角差异（UC-MAIN-03 complete 侧设备恢复已实现纠正计划基线 + IDLE 分支缺失 + UC-MAIN-04 出库+余额+凭证+不足校验主路径全满足 + 命名差异 cosmetic）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 RC finding 入 RC 发现追踪分区；audit reports 表新增 A1.43 行。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 RC finding（P2-RC-061）入 RC 发现追踪分区；audit reports 表新增 A1.43 行；附 A1.43 交叉引用注记 block。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1/A4.2 展开）；P0 候选评估有结论（本切片倾向无 P0）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding（P2-RC-061）已写入 `arm-index.md`；静态存疑点清单已登记（供 A4.1/A4.2 展开）；P0 候选评估有结论（本切片无 P0）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -127,14 +127,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐验收标准覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.43 报告 9 段齐全 + UC-MAIN-03/04 矩阵行（逐验收标准）+ finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.43 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.43 报告 9 段齐全 + UC-MAIN-03/04 矩阵行（逐验收标准）+ finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.43 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test；mvn test 仅作 §3 行为基线确认 4 测试类 18 用例 BUILD SUCCESS）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留空作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -146,12 +146,25 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填充>
+Status Note: 执行完成（2026-08-05）。A1.43 审计报告 `docs/audits/2026-08-06-0245-2-rc-ma1-a1-43-maintenance-f2-visit-sparepart.md` 已落盘（9 段齐全），UC-MAIN-03 = P2（接受 on start/complete/驱动主路径 + P2-RC-061 IDLE 恢复分支缺失），UC-MAIN-04 = 接受（出库+余额+凭证+不足校验主路径全满足）。1 新 P2（P2-RC-061）+ 2 reuse（P1-MA2-074 resolved R1.16 + A2.14 状态机迁移）已登记入 `arm-index.md`（RC 发现追踪分区 + 报告清单 + 交叉引用注记）。零 P0。独立结束审计由独立子代理（新会话，fresh session 无执行者上下文）执行并通过。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待填充>
-- Evidence: <待填充>
+- Auditor / Agent: 独立结束审计子代理（新会话，fresh context，未起草/未执行本计划）
+- Audit Date: 2026-08-05
+- Verification walkthrough（逐项对照报告 §1-§9 + Closure Gates 与实仓）：
+  - **报告 9 段齐全** CONFIRMED：`docs/audits/2026-08-06-0245-2-rc-ma1-a1-43-maintenance-f2-visit-sparepart.md` §1-§9 全部存在（grep `^## [1-9]\.` 命中 9 段）。
+  - **UC-MAIN-03 complete 侧设备恢复 RUNNING 已实现** CONFIRMED：`ErpMntVisitCompleteProcessor.java:31` 实调 `equipmentStatusLinker.restoreToRunning(visit.getEquipmentId(), context)`；`EquipmentStatusLinker.java:38-43` 恒恢复 `EQUIPMENT_STATUS_RUNNING`，无 IDLE 分支 + 无前置状态快照列；`EquipmentStatusLinker` javadoc:16-17 AI 代码层自承「IDLE 设备恢复为 RUNNING 为已知的简化偏差」（非 owner doc Deferred 无人工批准）—— 与报告 §5/§7 P2-RC-061 描述一致。
+  - **UC-MAIN-03 start 侧设备→UNDER_MAINTENANCE** CONFIRMED：`EquipmentStatusLinker#linkToUnderMaintenance:24-29` 写 `EQUIPMENT_STATUS_UNDER_MAINTENANCE`，config `erp-mnt.equipment-status-link-enabled` 门控。
+  - **UC-MAIN-04 出库跨域调用** CONFIRMED：`SparePartIssueService.java:55` 调 `stockMoveBiz.generateMove(request, context)`，`request.setMoveType(MOVE_TYPE_OUTGOING)` + `setRelatedBillType(RELATED_BILL_TYPE_MNT_SPARE_PART)`（方法名 `generateMove` vs L1 `generateConsumptionMove` cosmetic §9 已记录）。
+  - **UC-MAIN-04 凭证科目映射** CONFIRMED：`MaintenanceIssueAcctDocProvider.java:62-91` 构造借维修费用（`DEFAULT_EXPENSE_SUBJECT_CODE="6602"`）/ 贷存货（`DEFAULT_INVENTORY_SUBJECT_CODE="1403"` 按物料分列），支持业务类型 `MAINTENANCE_ISSUE`；`ErpMntConstants.java:43-44` 6602/1403 常量一致。
+  - **L4 测试断言强度** CONFIRMED：`TestErpMntVisitRequestStateMachine.java:66-89` `testVisitHappyPathWithEquipmentLink` 强断言设备 RUNNING→UNDER_MAINTENANCE→RUNNING（seed 恒 RUNNING 未覆盖 IDLE 输入分支，与 P2-RC-061 一致）；`TestErpMntSparePartPosting.java:101/143` `testSparePartPostingBasic/MultiMaterial` 行级强断言 Dr 6602/Cr 1403 + 借贷平衡 + 幂等防双重扣减。
+  - **arm-index 衔接** CONFIRMED：`docs/audits/arm-index.md` audit reports 表新增 A1.43 行（done）+ RC 发现追踪分区登记 `P2-RC-061`（UC-MAIN-03 C-IDLE 分支）+ A1.43 交叉引用注记 block；reuse P1-MA2-074（resolved R1.16，不重审过账吞异常维度）+ A2.14（状态机迁移守卫，不重审迁移维度）裁决正确，无重复登记。
+  - **零 P0 评估** CONFIRMED：IDLE 状态一致性分歧（RUNNING 更可用态）非数据破坏/GL 平衡破坏/会计错误；备件过账悬挂 P1-MA2-074 resolved R1.16 config-gated + 幂等 + 失败告警；备件不足跨域 guard 存在（inventory `validateAvailable` `ERR_AVAILABLE_INSUFFICIENT` 默认禁负库存）。
+  - **保护区域标注** CONFIRMED：报告与方法论 §5/§10 一致——本切片无新增会计过账变更；P2-RC-061 修复视形态（纯 BizModel 前态恢复预授权 / 加 `ErpMntEquipment` preMaintenanceStatus 快照列 ORM ask-first）；备件过账凭证科目/VoucherFact 未来修复须 ask-first 沿用 P1-MA2-074 先例；UC-MAIN-04 出库须与 inventory 域跨域协调。
+  - **§8 过程纪律自检** CONFIRMED：报告 §8 含 checker actual vs baseline 实测表 + 独立性声明 + 交叉去重声明；本审计零生产代码变更故跳过 build/test 门控合理。
+  - **文本一致性** CONFIRMED：Plan Status `completed` / 两 Phase Status `completed` / 全部 Exit Criteria `[x]` / 全部 Closure Gates `[x]` / `docs/logs/2026/08-06.md` A1.43 条目一致。
+- Independence attestation: 本次审计在新会话执行，未参与计划起草、草案审查或执行；执行者已退出上下文。审计通过，所有范围内项目 landed 或 adjudicated，无活跃 P0/P1 隐瞒降级。
 
 Follow-up:
 
