@@ -124,7 +124,7 @@
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
 | A4.1 | 业财域 MA1 存疑点运行时确认**展开器**（读取 MA1 业财切片报告全部存疑点清单，展开为本表 A4.1.n 实体验证行） | done ✅ | `docs/design/flow-overview.md` + `tests/e2e/` | MA1 done | `docs/skills/multi-dimensional-audit-prompt.md` |
-| A4.1.1 | A1.1 §7-1 — UC-FIN-02 断言④「业务单据.posted=false」8 域 listener 回写覆盖率逐域核验 | todo | `2026-08-02-1645-...-a1-1-...md` §7 + `flow-overview.md` | A4.1 done | 同上 |
+| A4.1.1 | A1.1 §7-1 — UC-FIN-02 断言④「业务单据.posted=false」8 域 listener 回写覆盖率逐域核验 | done ✅ | `2026-08-02-1645-...-a1-1-...md` §7 + `flow-overview.md` | A4.1 done | 同上 |
 | A4.1.2 | A1.1 §7-2 — UC-FIN-12 汇率缺失触发面实测（各域 Provider 外币场景是否显式传 rate 普查） | todo | 同上 §7 + `posting.md` | A4.1 done | 同上 |
 | A4.1.3 | A1.1 §7-3 — UC-FIN-03 PROJECT_SETTLEMENT businessType 是否已有 Provider 注册（实例普查） | todo | 同上 §7 | A4.1 done | 同上 |
 | A4.1.4 | A1.2 §7-1 — config 默认关闭 vs「开箱即用预算硬拦截」部署契约（核对 product-scope/部署文档） | todo | `2026-08-02-1700-...-a1-2-...md` §7 + `budget.md` | A4.1 done | 同上 |
