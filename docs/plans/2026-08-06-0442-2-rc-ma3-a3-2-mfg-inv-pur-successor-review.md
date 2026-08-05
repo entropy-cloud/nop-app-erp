@@ -1,6 +1,6 @@
 # 2026-08-06-0442-2 rc-ma3-a3-2-mfg-inv-pur-successor-review MA3 successor 追踪完整性与回队复查（mfg+inventory+purchase）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A3.2（mfg + inventory + purchase 域 successor 复查）
@@ -75,56 +75,56 @@
 
 ### Phase 1 - 7 项 successor 四任务逐项核证 + A3.1 跨域项接入
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma3-a3-2-mfg-inv-pur-successor-review.md`（新建，先填段 1-5）
 Skill: `docs/skills/open-ended-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.3 done（方法论契约 + successor 三源对账导出就绪）
 
-- [ ] `Proof` 对 7 项 successor 逐项核证任务①②③：① 触发条件是否已满足（grep 实仓代码/config/SPI 验证，如 #1 物料预留查 inventory `ErpInvReservation*` 写接口是否存在 + mfg `IErpInvReservationBiz` 是否接线、#2 委外收敛查委外域 `createFromMrpLine` 是否存在、#3 STANDARD 红冲查 FIFO 调整层红冲路径、#4 盘点自动移动单查 StockTake 状态机是否自动生成、#5 拣货单 WMS 状态机、#6/#7 md I*Biz 只读方法是否补齐）；② 是否该回队（已满足→回队 MR1 R1.0；未满足→维持 backlog）；③ 无触发条件的补登记（#3 仅 S2 owner doc 内嵌，arm-index 无独立行须核实是否补登记）。
+- [x] `Proof` 对 7 项 successor 逐项核证任务①②③：① 触发条件是否已满足（grep 实仓代码/config/SPI 验证，如 #1 物料预留查 inventory `ErpInvReservation*` 写接口是否存在 + mfg `IErpInvReservationBiz` 是否接线、#2 委外收敛查委外域 `createFromMrpLine` 是否存在、#3 STANDARD 红冲查 FIFO 调整层红冲路径、#4 盘点自动移动单查 StockTake 状态机是否自动生成、#5 拣货单 WMS 状态机、#6/#7 md I*Biz 只读方法是否补齐）；② 是否该回队（已满足→回队 MR1 R1.0；未满足→维持 backlog）；③ 无触发条件的补登记（#3 仅 S2 owner doc 内嵌，arm-index 无独立行须核实是否补登记）。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
-- [ ] `Proof` 核实 A3.1 deferred 跨域项：grep `module-inventory` `repostPurchaseInput` SPI 是否仍缺失（A3.1 §successor #1 GRNI 依赖）；结论记入 §9 差异增量（与 A3.1 结论交叉：GRNI successor=未满足→维持 backlog，inventory SPI 落地是前置）。
+- [x] `Proof` 核实 A3.1 deferred 跨域项：grep `module-inventory` `repostPurchaseInput` SPI 是否仍缺失（A3.1 §successor #1 GRNI 依赖）；结论记入 §9 差异增量（与 A3.1 结论交叉：GRNI successor=未满足→维持 backlog，inventory SPI 落地是前置）。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
-- [ ] `Proof` 任务④ `docs/backlog/README.md` 既有行覆盖与正确性复核：grep backlog README mfg/inv/pur successor 行，逐项核实覆盖（防「已登记但从未触发」）+ 正确性（触发条件描述与实仓一致）。差异记入报告（不回写 README）。
+- [x] `Proof` 任务④ `docs/backlog/README.md` 既有行覆盖与正确性复核：grep backlog README mfg/inv/pur successor 行，逐项核实覆盖（防「已登记但从未触发」）+ 正确性（触发条件描述与实仓一致）。差异记入报告（不回写 README）。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
-- [ ] `Decision` 对 7 项逐项给出复查结论（`回队 MR1` / `维持 backlog successor` / `补登记`），列明触发条件状态证据 + 三源覆盖 + 与 A2.x 关闭裁决的交叉关系（#2↔P1-MA2-038[A2.3] / #6+#7↔P1-MA1-022[A2.9]）。#1 物料预留结构性约束（mfg 多项前置）+ §对账差异 #6 单源遗漏风险须在结论中显式标注。
+- [x] `Decision` 对 7 项逐项给出复查结论（`回队 MR1` / `维持 backlog successor` / `补登记`），列明触发条件状态证据 + 三源覆盖 + 与 A2.x 关闭裁决的交叉关系（#2↔P1-MA2-038[A2.3] / #6+#7↔P1-MA1-022[A2.9]）。#1 物料预留结构性约束（mfg 多项前置）+ §对账差异 #6 单源遗漏风险须在结论中显式标注。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告段 1（7 项三源对账清单 + A3.1 GRNI 跨域项接入）+ 段 2（逐项四任务核证）已落盘，每项含触发条件状态 + 回队决策 + README 覆盖复核（非悬空「待查」）
-- [ ] §对账差异 #6（物料预留）+ #3（STANDARD 红冲仅 S2）已纳入核实；A3.1 GRNI 跨域项状态已交叉引用
+- [x] 报告段 1（7 项三源对账清单 + A3.1 GRNI 跨域项接入）+ 段 2（逐项四任务核证）已落盘，每项含触发条件状态 + 回队决策 + README 覆盖复核（非悬空「待查」）
+- [x] §对账差异 #6（物料预留）+ #3（STANDARD 红冲仅 S2）已纳入核实；A3.1 GRNI 跨域项状态已交叉引用
 
 ### Phase 2 - 报告定稿 / arm-index / 回队登记
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma3-a3-2-mfg-inv-pur-successor-review.md`（补段 6-9，报告定稿）；`docs/audits/arm-index.md`（successor 回队注记）
 Skill: `docs/skills/open-ended-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成（7 项结论已出）
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：successor 项均源自既有 arm finding，本复查原则上**复用既有 finding ID**追加 RC 注记；仅当发现新 successor（owner doc 内嵌但 arm-index 无行，如 #3 STANDARD 红冲）才新建/补登记，须 grep 后裁决。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：successor 项均源自既有 arm finding，本复查原则上**复用既有 finding ID**追加 RC 注记；仅当发现新 successor（owner doc 内嵌但 arm-index 无行，如 #3 STANDARD 红冲）才新建/补登记，须 grep 后裁决。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
-- [ ] `Add` 报告段 6 与 arm-index 衔接段：列明每项的复用/补登记裁决 + 双向可追溯（successor ↔ finding ID ↔ MR1 R1.0 预留展开行）。
+- [x] `Add` 报告段 6 与 arm-index 衔接段：列明每项的复用/补登记裁决 + 双向可追溯（successor ↔ finding ID ↔ MR1 R1.0 预留展开行）。
       - Skill: none
-- [ ] `Add` 报告段 7 静态存疑点清单（供 MA4 A4.1/A4.2 展开）：登记复查中需运行时确认的点（无则注明「无」）。
+- [x] `Add` 报告段 7 静态存疑点清单（供 MA4 A4.1/A4.2 展开）：登记复查中需运行时确认的点（无则注明「无」）。
       - Skill: none
-- [ ] `Proof` 报告段 8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**。
+- [x] `Proof` 报告段 8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告段 9 与既有审计差异增量声明：声明复用既有 arm 审计（successor 声明源自 arm-index + mfg/inv 状态机/成本一致性报告）+ A3.1 GRNI 跨域项交叉 + 本复查只补的「触发条件是否已满足 + 回队决策」差异。
+- [x] `Add` 报告段 9 与既有审计差异增量声明：声明复用既有 arm 审计（successor 声明源自 arm-index + mfg/inv 状态机/成本一致性报告）+ A3.1 GRNI 跨域项交叉 + 本复查只补的「触发条件是否已满足 + 回队决策」差异。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：回队项在既有 finding/successor 行追加「RC MA3 复查（A3.2）：触发条件已满足→回队 MR1」注记；补登记项（#3 若适用）入对应分区。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：回队项在既有 finding/successor 行追加「RC MA3 复查（A3.2）：触发条件已满足→回队 MR1」注记；补登记项（#3 若适用）入对应分区。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查段 1-9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查段 1-9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告段 6-9 已落盘，9 段齐全；successor 复用/补登记裁决均有 arm-index grep 依据
-- [ ] 回队项已写入 `arm-index.md`；静态存疑点清单已登记（供 MA4 展开）
-- [ ] 段 8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告段 6-9 已落盘，9 段齐全；successor 复用/补登记裁决均有 arm-index grep 依据
+- [x] 回队项已写入 `arm-index.md`；静态存疑点清单已登记（供 MA4 展开）
+- [x] 段 8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -134,14 +134,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 7 项逐项四任务核证 + A3.1 跨域项交叉 + successor arm-index 衔接 + 段 8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A3.2 报告 9 段齐全 + 7 项逐项四任务结论 + 回队项登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §4/§5/§6/§7 + §MA2↔MA3 协作 + §去重协议一致；与 rc-existing-inventory mfg+inv+pur successor 分组 + §对账差异登记 #3/#6 一致；#2/#6/#7 与 A2.3/A2.9 结论交叉一致
-- [ ] 已运行验证：报告 9 段完整性自检 + 段 8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A3.2 报告 9 段齐全 + 7 项逐项四任务结论 + 回队项登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §4/§5/§6/§7 + §MA2↔MA3 协作 + §去重协议一致；与 rc-existing-inventory mfg+inv+pur successor 分组 + §对账差异登记 #3/#6 一致；#2/#6/#7 与 A2.3/A2.9 结论交叉一致
+- [x] 已运行验证：报告 9 段完整性自检 + 段 8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -153,13 +153,26 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <关闭时填写>
+Status Note: mfg+inventory+purchase MA3 successor 复查（A3.2）完成。产出报告 `docs/audits/2026-08-06-0500-rc-ma3-a3-2-mfg-inv-pur-successor-review.md`（9 段齐全）+ arm-index.md 6 行注记（5 项既有 finding 行追加 RC MA3 复查注记 + 1 项 `P2-MA2-029` 行补登记 STANDARD 红冲 FIFO successor）。复查结论：**0 项回队 MR1**（7 项 successor 触发条件全部未满足）；**7 项维持 backlog successor**（#1-#7 全部）；**1 项补登记**（#3 STANDARD 红冲 FIFO 边界，§对账差异 #3）；本审计新发现 P0 = 0（无 MR0 即时通道）。结构性约束：#6/#7 同源归一（`P1-MA1-022` successor 子集两面，MR1 合并同一 RC-R1.n）；#1 mfg 多项前置 + 跨域依赖 + 触及 ORM 保护区域（ask-first）；#2 两面归一（`P1-MA2-038` A2.3）；#4 finding 重开独立通道（A1.27 RC A1.x→MR1，successor 维持 ≠ finding 不修复）；A3.1 GRNI 跨域依赖 inventory `repostPurchaseInput` SPI 仍缺失（与 A3.1 交叉一致）。纯只读审计——零生产代码变更，§9 真相源冻结遵守（arm-index 注记为追加非关闭事实改写）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理或独立审查者>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（fresh context，`ses_02c30f75affeETk2B1hgMtzJ7L`，新会话，未执行本 plan，仅 Read/Grep/Bash）
+- Verdict: **APPROVED**（计划可正式关闭）
+- 核实项（live repo 复核，非盲信 `[x]`）：
+  1. 报告 9 段完整性 PASS——段 1-9 全部存在（§1 successor 三源对账 / §2 逐项四任务 / §3 既有行为证据 / §4 运行时行为 / §5 复查结论 / §6 arm-index 衔接 / §7 静态存疑点 / §8 过程纪律 / §9 差异增量）。
+  2. 7 successor 四任务完整性 PASS——§2.1-§2.7 各含 ①②③④，无悬空「待查」；全集对齐 rc-existing-inventory §mfg+inv+pur successor 分组。触发条件 grep 证据 live 复核：#1 `IErpInvReservationBiz`/`IErpInvReservationLineBiz` generic ICrudBiz + mfg 零接线；#2 `createFromMrpLine` 仅 javadoc；#3 `removeFifoAdjustLayer` CostAdjustmentService:188,194；#4 `completeTake:40-50` 仅 setDocStatus DONE；#5 `ErpInvPickingOrderBizModel` 15 行 CRUD 桩；#6/#7 erp-md-api 零 `IErpMd*Biz.java`。
+  3. A3.1 GRNI 跨域项交叉 PASS——§9 明示 `repostPurchaseInput` 仍缺失，live grep `module-inventory repostPurchaseInput` 零命中，与 A3.1 结论交叉一致。
+  4. §对账差异 #3/#6 纳入 PASS——§1 显式标注 #3（STANDARD 红冲仅 S2 owner-doc 内嵌）+ #6（物料预留单源遗漏风险）。
+  5. 两面交叉一致 PASS——#2↔`P1-MA2-038`[A2.3] + #6/#7↔`P1-MA1-022`[A2.9]：A2.x「有意设计 §4(i) 成立」与 A3.2「successor 维持 backlog」共存不冲突（successor 维持 ≠ finding 重开）。
+  6. arm-index RC MA3 注记完整性 PASS——`rg -c "RC MA3 复查（A3.2"`= 6（P1-MA3-042/P1-MA2-038/P1-MA2-062/P1-MA2-063/P1-MA1-022/P2-MA2-029）；git diff 确认变更为追加注记（原 `✅ resolved` 关闭事实逐字保留）。
+  7. §8 checker 表 PASS——actual vs baseline 实测表含真实数值（R1a=0/R1b=0/R1c=0/R1d=14/R2a=34/R2b=229/R2c=1382/R2d=34），独立复核 checker 实测一致；报告显式声明 checker 为纯 reporter，不以退出码 0 作门控通过依据。
+  8. §9 真相源冻结 PASS——git status/diff 确认仅 docs/ 变更（arm-index.md + 本 plan 关闭标记 + 新报告），零 `module-*/`/`.java`/`.orm.xml`/`api.xml` 变更；arm-index 变更为追加注记。
+  9. 计划内部一致性 PASS——Plan Status=completed / 2 Phase Status=completed / Phase items + Exit Criteria + Closure Gates 全 [x]。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- #1 物料预留完整写路径：successor 落地顺序 = 库存域 `ErpInvReservation*` purpose-built 写接口先行 → mfg 经 `IErpInvReservationBiz` 接线；触及 ORM 结构变更 + 跨域架构变更，MR1 修复行须 ask-first + 独立 plan-audit。
+- #6/#7 md 跨域只读迁移：MR1 R1.0 展开为 RC-R1.n（md-api 补 `IErpMd*Biz` 只读方法 + 按域分批迁移 9 域 daoFor(ErpMd*) 站点；#6/#7 归一同一修复行）。
+- #4 盘点 completeTake：finding `P1-MA2-062` 重开决策归 A1.27 RC（A1.x→MR1 通道），若重开入 MR1 则 completeTake 自动生成移动单实现修复与 #4 successor 登记同步消解。
+- A3.1 GRNI 跨域：inventory `repostPurchaseInput` SPI 落地是 GRNI 回队前置，待 inventory 侧落地后 A3.1 #1 触发条件重评（归 A3.1 finance 分组）。

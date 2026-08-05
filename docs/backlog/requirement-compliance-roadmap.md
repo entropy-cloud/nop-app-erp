@@ -112,7 +112,7 @@
 | # | Work Item（域 × successor 清单） | Status | Owner Doc | Deps | Skill |
 |---|--------------------------------|--------|-----------|------|-------|
 | A3.1 | finance 域 successor 复查（如 GL 余额引擎 / 多账套 UK 升级 / 冲销恢复承付 / GRNI 自动冲回触发条件等） | done ✅ | `docs/audits/arm-index.md` + `docs/backlog/README.md` | 0.3 | `docs/skills/open-ended-audit-prompt.md` |
-| A3.2 | mfg + inventory + purchase 域 successor 复查（如物料预留实现 / STANDARD 红冲 / 拣货 WMS / 盘点自动移动单等） | todo | `docs/audits/arm-index.md` + `docs/backlog/README.md` | 0.3 | 同上 |
+| A3.2 | mfg + inventory + purchase 域 successor 复查（如物料预留实现 / STANDARD 红冲 / 拣货 WMS / 盘点自动移动单等） | done ✅ | `docs/audits/arm-index.md` + `docs/backlog/README.md` | 0.3 | 同上 |
 | A3.3 | sales + assets + projects + quality 域 successor 复查（如订单维度核销 / 资产转固 / employee-id 行过滤等） | todo | `docs/audits/arm-index.md` + `docs/backlog/README.md` | 0.3 | 同上 |
 | A3.4 | hr + crm + cs 域 successor 复查（如 recruitment 多实体 / 滞留升级 / 序列推进等） | todo | `docs/audits/arm-index.md` + `docs/backlog/README.md` | 0.3 | 同上 |
 | A3.5 | 扩展域 + 跨域 successor 复查（contract/b2b/logistics/drp/aps/maintenance/notify + 多公司/数据权限/SoD 铺开等） | todo | `docs/audits/arm-index.md` + `docs/backlog/README.md` | 0.3 | 同上 |
