@@ -1,6 +1,6 @@
 # 2026-08-06-0245-3 rc-ma1-a1-44-maintenance-f3-response-linkage-oee-dashboard maintenance-F3 响应/联动/OEE/看板需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.44（MA1 需求追踪矩阵审计 — maintenance-F3 报修响应 + 停机排产联动 + 额外故障 + 资产处置联动 + OEE + 维护看板）
@@ -80,54 +80,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0245-3-rc-ma1-a1-44-maintenance-f3-response-linkage-oee-dashboard.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-MAIN-05/06/07/08/10/11 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:88/103/121/136/166/187` 验收标准原文；L2 引用 `equipment-integration.md §一/§四/§六`+`state-machine.md §维护请求/§4`+`dashboards.md §维护看板`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpMntRequestBizModel`#accept/startRepair/complete/reject/cancel + 5 Request Processor + `ErpMntDowntimeEntryBizModel`#record/complete + `ErpMntDowntimeEntryRecordProcessor`/`CompleteProcessor` + `ErpMntEquipmentBizModel`#changeStatus + `ErpMntDashboardBizModel`#getDashboardKpi/getEquipmentStatusDistribution/findEquipmentDowntimeAlert/findMaintenanceOverdueAlert + grep OEE/event/disposal/additionalFault 站点（含行号）；L4 引用 `TestErpMntVisitRequestStateMachine`/`TestErpMntDowntimeAndE2E`/`dashboard/TestErpMntDashboard`#method + E2E `maintenance.value.spec.ts`（注明断言强度）；L5 标注无 maintenance 专属 MA2 报告 + P1-MA2-093 看板行级权限 reuse 候选。
+- [x] `Proof` 对 UC-MAIN-05/06/07/08/10/11 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:88/103/121/136/166/187` 验收标准原文；L2 引用 `equipment-integration.md §一/§四/§六`+`state-machine.md §维护请求/§4`+`dashboards.md §维护看板`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpMntRequestBizModel`#accept/startRepair/complete/reject/cancel + 5 Request Processor + `ErpMntDowntimeEntryBizModel`#record/complete + `ErpMntDowntimeEntryRecordProcessor`/`CompleteProcessor` + `ErpMntEquipmentBizModel`#changeStatus + `ErpMntDashboardBizModel`#getDashboardKpi/getEquipmentStatusDistribution/findEquipmentDowntimeAlert/findMaintenanceOverdueAlert + grep OEE/event/disposal/additionalFault 站点（含行号）；L4 引用 `TestErpMntVisitRequestStateMachine`/`TestErpMntDowntimeAndE2E`/`dashboard/TestErpMntDashboard`#method + E2E `maintenance.value.spec.ts`（注明断言强度）；L5 标注无 maintenance 专属 MA2 报告 + P1-MA2-093 看板行级权限 reuse 候选。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条对照）：UC-MAIN-05 请求状态机（✅ 5 Processor 完整）+ **accept 生成 visit 关联**（⚠️ 待核 AcceptProcessor）+ **visit complete 回写 request**（⚠️ 待核 VisitCompleteProcessor 联动 request）；UC-MAIN-06 DowntimeEntry record/complete（✅）+ **跨域事件发布/制造域排产暂停**（⚠️ 待核 grep `IErpSysEventBus|publish|notify.*event|mfg|pauseSchedule`）；UC-MAIN-07 **额外故障另开新请求**（⚠️ 待核 grep additionalFault/newRequest）；UC-MAIN-08 **资产处置联动→DECOMMISSIONED**（⚠️ 待核 grep DECOMMISSIONED/assetDisposal/onAssetDisposal + assets 域反向调用）；UC-MAIN-10 **OEE 计算**（❌ `ErpMntDashboardBizModel:49` javadoc Non-Goal + grep OEE/availability/performance 零实现 → 全 4 断言不可满足）；UC-MAIN-11 KPI 聚合（✅）+ 预警阈值 config（✅ `erp-dash.mnt-maintenance-overdue-days`）+ **OEE 卡片**（❌ reuse UC-MAIN-10）+ **行级权限**（❌ IDaoProvider 直访 reuse P1-MA2-093 候选）。
+- [x] `Proof` 重点核验**候选缺口**（逐条对照）：UC-MAIN-05 请求状态机（✅ 5 Processor 完整）+ **accept 生成 visit 关联**（⚠️ 待核 AcceptProcessor）+ **visit complete 回写 request**（⚠️ 待核 VisitCompleteProcessor 联动 request）；UC-MAIN-06 DowntimeEntry record/complete（✅）+ **跨域事件发布/制造域排产暂停**（⚠️ 待核 grep `IErpSysEventBus|publish|notify.*event|mfg|pauseSchedule`）；UC-MAIN-07 **额外故障另开新请求**（⚠️ 待核 grep additionalFault/newRequest）；UC-MAIN-08 **资产处置联动→DECOMMISSIONED**（⚠️ 待核 grep DECOMMISSIONED/assetDisposal/onAssetDisposal + assets 域反向调用）；UC-MAIN-10 **OEE 计算**（❌ `ErpMntDashboardBizModel:49` javadoc Non-Goal + grep OEE/availability/performance 零实现 → 全 4 断言不可满足）；UC-MAIN-11 KPI 聚合（✅）+ 预警阈值 config（✅ `erp-dash.mnt-maintenance-overdue-days`）+ **OEE 卡片**（❌ reuse UC-MAIN-10）+ **行级权限**（❌ IDaoProvider 直访 reuse P1-MA2-093 候选）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对 UC-MAIN-05/06/07/08/10/11 给出符合性结论（取最高）：UC-MAIN-10 OEE 完全缺失倾向 **P1**（**§4 三判据关键裁决**：核 dashboard javadoc + plan 2026-07-06-1606-1 Non-Goals 是否经**人工批准**——判据[i]plan-audit / [ii]owner doc 显式 Deferred 经**人工批准**痕迹（grep git log，AI 自标 ≠ 人工批准 methodology §4 line 172）/ [iii]product-scope 裁剪；L1 明确要求 OEE 且引用 mfg 报工 + qa 质检数据来源；**ORM 加 OEE/累计运行时长字段 触及保护区域须 ask-first**）；UC-MAIN-06 跨域事件 + UC-MAIN-08 资产联动（按执行时核验，缺失倾向 P1 §2 ①/④ 跨域契约行为不一致）；UC-MAIN-07 额外故障（按核验 P1/P2）；UC-MAIN-11 行级权限 **reuse P1-MA2-093**（核全局 transformer 覆盖则追加 RC 交叉引用不新建）+ OEE 卡片 **reuse UC-MAIN-10 finding** + 阈值维度接受；UC-MAIN-05 状态机 + UC-MAIN-11 KPI 聚合倾向**接受**。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（**P1 项核 owner doc/plan Deferred/Non-Goal 标注的人工批准痕迹**）+ 触及保护区域标注。
+- [x] `Decision` 按 §2 判据对 UC-MAIN-05/06/07/08/10/11 给出符合性结论（取最高）：UC-MAIN-10 OEE 完全缺失倾向 **P1**（**§4 三判据关键裁决**：核 dashboard javadoc + plan 2026-07-06-1606-1 Non-Goals 是否经**人工批准**——判据[i]plan-audit / [ii]owner doc 显式 Deferred 经**人工批准**痕迹（grep git log，AI 自标 ≠ 人工批准 methodology §4 line 172）/ [iii]product-scope 裁剪；L1 明确要求 OEE 且引用 mfg 报工 + qa 质检数据来源；**ORM 加 OEE/累计运行时长字段 触及保护区域须 ask-first**）；UC-MAIN-06 跨域事件 + UC-MAIN-08 资产联动（按执行时核验，缺失倾向 P1 §2 ①/④ 跨域契约行为不一致）；UC-MAIN-07 额外故障（按核验 P1/P2）；UC-MAIN-11 行级权限 **reuse P1-MA2-093**（核全局 transformer 覆盖则追加 RC 交叉引用不新建）+ OEE 卡片 **reuse UC-MAIN-10 finding** + 阈值维度接受；UC-MAIN-05 状态机 + UC-MAIN-11 KPI 聚合倾向**接受**。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（**P1 项核 owner doc/plan Deferred/Non-Goal 标注的人工批准痕迹**）+ 触及保护区域标注。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-MAIN-05/06/07/08/10/11 矩阵行（逐验收标准进入 L5 判读，6 UC 无跳号），L1 逐字引用、L2 引用 equipment-integration.md §一/§四/§六 + dashboards.md（Non-Goal 注记 §4 复核）、L3 含行号 + grep 事件/disposal/OEE 站点、L4 注明断言强度、L5 标注无专属 MA2 + P1-MA2-093 reuse 候选
-- [ ] UC-MAIN-05/06/07/08/10/11 有符合性结论且列明 §2 判据编号；UC-MAIN-10 P1 裁决须含 OEE Non-Goal 标注的人工批准痕迹核查结论；触及 ORM 保护区域项显式标注 ask-first
+- [x] 报告 §1-§5 已落盘：UC-MAIN-05/06/07/08/10/11 矩阵行（逐验收标准进入 L5 判读，6 UC 无跳号），L1 逐字引用、L2 引用 equipment-integration.md §一/§四/§六 + dashboards.md（Non-Goal 注记 §4 复核）、L3 含行号 + grep 事件/disposal/OEE 站点、L4 注明断言强度、L5 标注无专属 MA2 + P1-MA2-093 reuse 候选
+- [x] UC-MAIN-05/06/07/08/10/11 有符合性结论且列明 §2 判据编号；UC-MAIN-10 P1 裁决须含 OEE Non-Goal 标注的人工批准痕迹核查结论；触及 ORM 保护区域项显式标注 ask-first
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0245-3-rc-ma1-a1-44-maintenance-f3-response-linkage-oee-dashboard.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` maintenance request/downtime/event/disposal/OEE/dashboard/row-level 同域同控制点后裁决——UC-MAIN-10 OEE 为**新根因** → 新建 P1-RC（UC-MAIN-10）；UC-MAIN-06 跨域事件 / UC-MAIN-08 资产联动若独立缺口则新建 P1-RC（视核验）；UC-MAIN-07 额外故障新建 P1/P2-RC；UC-MAIN-11 行级权限 **reuse P1-MA2-093**（核全局 transformer 覆盖则追加 RC 交叉引用不新建）+ OEE 卡片 **reuse UC-MAIN-10 finding**。执行时 grep arm-index 取最新续编号避免冲突（当前至 P2-RC-059 / P1-RC-063）。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` maintenance request/downtime/event/disposal/OEE/dashboard/row-level 同域同控制点后裁决——UC-MAIN-10 OEE 为**新根因** → 新建 P1-RC（UC-MAIN-10）；UC-MAIN-06 跨域事件 / UC-MAIN-08 资产联动若独立缺口则新建 P1-RC（视核验）；UC-MAIN-07 额外故障新建 P1/P2-RC；UC-MAIN-11 行级权限 **reuse P1-MA2-093**（核全局 transformer 覆盖则追加 RC 交叉引用不新建）+ OEE 卡片 **reuse UC-MAIN-10 finding**。执行时 grep arm-index 取最新续编号避免冲突（当前至 P2-RC-059 / P1-RC-063）。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）+ **ORM 结构类修复（ErpMntEquipment 加累计运行时长/OEE 字段 / 可能新增 OEE 聚合实体）须 ask-first + 独立 plan-audit** + **UC-MAIN-06 跨域事件修复须与 manufacturing 域工单排产协调** + **UC-MAIN-08 资产处置联动须与 assets 域 IErpAstDisposalBiz 协调（双向）** + **UC-MAIN-10 OEE 数据来源须与 mfg 工单报工 + qa 质检跨域协调** + **UC-MAIN-11 行级权限随 P1-MA2-093/R1.29 全局 transformer 方向**。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）+ **ORM 结构类修复（ErpMntEquipment 加累计运行时长/OEE 字段 / 可能新增 OEE 聚合实体）须 ask-first + 独立 plan-audit** + **UC-MAIN-06 跨域事件修复须与 manufacturing 域工单排产协调** + **UC-MAIN-08 资产处置联动须与 assets 域 IErpAstDisposalBiz 协调（双向）** + **UC-MAIN-10 OEE 数据来源须与 mfg 工单报工 + qa 质检跨域协调** + **UC-MAIN-11 行级权限随 P1-MA2-093/R1.29 全局 transformer 方向**。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 accept 运行时是否生成 visit 关联 + complete 回写 request / SP-2 DowntimeEntry record 运行时是否发布跨域事件 + mfg 是否消费 / SP-3 资产 SCRAPPED/SOLD 运行时是否联动设备 DECOMMISSIONED / SP-4 额外故障运行时是否支持另开新请求 / SP-5 全局 ErpOrgIsolationQueryTransformer 是否覆盖 ErpMntDashboard 查询[P1-MA2-093 复用判定]；每存疑点一行）。**P0 即时通道评估**（本切片无活跃数据破坏候选——OEE 缺失属功能缺失类；跨域事件/资产联动缺失属状态一致性非数据破坏；行级权限 reuse P1-MA2-093 resolved——评估在报告 §7 给结论）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 accept 运行时是否生成 visit 关联 + complete 回写 request / SP-2 DowntimeEntry record 运行时是否发布跨域事件 + mfg 是否消费 / SP-3 资产 SCRAPPED/SOLD 运行时是否联动设备 DECOMMISSIONED / SP-4 额外故障运行时是否支持另开新请求 / SP-5 全局 ErpOrgIsolationQueryTransformer 是否覆盖 ErpMntDashboard 查询[P1-MA2-093 复用判定]；每存疑点一行）。**P0 即时通道评估**（本切片无活跃数据破坏候选——OEE 缺失属功能缺失类；跨域事件/资产联动缺失属状态一致性非数据破坏；行级权限 reuse P1-MA2-093 resolved——评估在报告 §7 给结论）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：无 maintenance 专属 MA2 报告；P1-MA2-093 引作看板行级权限同型现状（reuse 候选）；列明只补的需求视角差异（OEE 缺失 / 跨域事件联动 / 额外故障 / 资产处置联动 / OEE 卡片）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：无 maintenance 专属 MA2 报告；P1-MA2-093 引作看板行级权限同型现状（reuse 候选）；列明只补的需求视角差异（OEE 缺失 / 跨域事件联动 / 额外故障 / 资产处置联动 / OEE 卡片）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 RC finding 入 RC 发现追踪分区；audit reports 表新增 A1.44 行（maintenance 域收尾行——A1.42-44 done 标记 maintenance 域 11 UC 全覆盖完成）。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 RC finding 入 RC 发现追踪分区；audit reports 表新增 A1.44 行（maintenance 域收尾行——A1.42-44 done 标记 maintenance 域 11 UC 全覆盖完成）。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding 已写入 `arm-index.md`；UC-MAIN-11 行级权限 reuse P1-MA2-093 裁决有结论；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）；P0 候选评估有结论（本切片倾向无 P0）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding 已写入 `arm-index.md`；UC-MAIN-11 行级权限 reuse P1-MA2-093 裁决有结论；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）；P0 候选评估有结论（本切片倾向无 P0）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -137,14 +137,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐验收标准覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.44 报告 9 段齐全 + UC-MAIN-05/06/07/08/10/11 矩阵行（逐验收标准，6 UC 无跳号）+ finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.44 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.44 报告 9 段齐全 + UC-MAIN-05/06/07/08/10/11 矩阵行（逐验收标准，6 UC 无跳号）+ finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.44 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留作未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -156,12 +156,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填充>
+Status Note: 执行完成。两 Phase 全部 `[x]`，报告 9 段齐全落盘 `docs/audits/2026-08-06-0245-3-rc-ma1-a1-44-maintenance-f3-response-linkage-oee-dashboard.md`，5 新 P1-RC-067~071 + 2 reuse（P1-MA2-093 / P1-RC-071）登记入 arm-index，audit reports 表新增 A1.44 行（maintenance 域收尾行）。零 P0。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待填充>
-- Evidence: <待填充>
+- Auditor / Agent: 独立结束审计子代理（MISSION_DRIVER:2026-08-04-224309-mission-driver，fresh session，未执行本计划任何 Phase，未起草本计划）
+- Evidence: 独立会话实测复核——①报告 `docs/audits/2026-08-06-0245-3-rc-ma1-a1-44-maintenance-f3-response-linkage-oee-dashboard.md` 存在（38502 bytes）+ §1-§9 九段齐全（grep `^## ` 实测命中 §1 L1 真相源/§2 L3 代码证据/§3 L4 测试证据/§4 L5 运行时/§5 五级追踪矩阵+符合性结论/§6 arm-index 衔接/§7 静态存疑点/§8 过程纪律自检/§9 MA2 差异增量）；②arm-index A1.44 行落盘（audit reports 表）+ RC 交叉引用注记段（A1.44 maintenance 域收尾行）+ 5 新 finding 行 P1-RC-067/068/069/070/071（RC 发现追踪分区，每行含 §2 判据编号 + §4 三判据复核 + MR1 修复行 + todo 状态）；③P1-MA2-093 RC A1.44 交叉引用注记 + UC-MAIN-11-D 行级权限 reuse 裁决；④5 新 finding 均含 file:line 实仓引用（`ErpMntVisitCompleteProcessor#complete:27`/`ErpMntDowntimeEntryRecordProcessor#record:16`/`ErpMntEquipmentBizModel#changeStatus:20`/`ErpMntDashboardBizModel:49` 等）+ grep 实测站点（`publish|IErpSysEventBus` 跨 module-maintenance 零命中 / `additionalFault|openNewRequest` 零命中 / `OEE|availability|performance` 仅 javadoc 命中）——非空壳；⑤§4 三判据关键裁决（OEE Non-Goal）覆盖 (i)plan 2026-07-06-1606-1 AI 子代理≠人工批准 / (ii)dashboards.md §维护看板:192 git log 全 AI commits / (iii)product-scope 未裁剪 三项；⑥ORM 结构类修复（P1-RC-067 Visit requestId / P1-RC-071 ErpMntEquipment OEE 字段）全标 ask-first + 独立 plan-audit；跨域契约（P1-RC-068 mfg 排产 / P1-RC-070 assets 双向）全标 ask-first；⑦反空壳：报告 38KB 非 stub，每段含具体证据非 `return null`/`{}`/swallowed exception；⑧Deferred honesty：finding 修复正确归类 `out-of-scope improvement` + Successor Required=yes（MR0/MR1），无活跃缺陷隐藏；⑨零 P0 评估有结论（OEE 缺失=功能缺失类 / 跨域事件=状态一致性非数据破坏 / 行级权限 reuse P1-MA2-093 resolved）。两 Phase Status=completed 与全部 Exit Criteria `[x]` 一致；Closure Gates 全 `[x]`；文本一致性 PASS。
 
 Follow-up:
 
