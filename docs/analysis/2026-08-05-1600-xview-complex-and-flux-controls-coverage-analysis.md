@@ -5,7 +5,7 @@
 > 范围：view.xdef `<complex>` 页面类型（xview.xdef + flux-web.xlib 生成链）与 nop-chaos-flux 全部最新控件的组合能力边界，对本项目全部复杂页面的逐页覆盖判定
 > 方法：平台源码实证（xview.xdef / flux-web.xlib / 各 container_*.xpl / 测试夹具与单测）× 控件盘点（nop-chaos-flux 20+ 包 / flux-guide design-patterns）× 项目实现层逐页核查（20 个 flux.yaml + 24 报表 + 44 非标准 page.yaml）
 > 相关：`docs/design/flux-complex-pages.md`（30 复杂页实现设计）、`docs/analysis/2026-08-03-1000-frontend-complex-page-deep-analysis.md`（30 页全景）、`docs/analysis/2026-07-31-1300-xview-schema-assessment.md`（complex 休眠期评估，已被 2026-08-01 激活推翻）、`docs/backlog/frontend-ui-roadmap.md`（Flux 全量迁移决策）
-> **更新注记（rev.4，2026-08-05 定稿）**：`xview.xdef` 已定义 `<embed>`——既是 `UiContainerModel` 的**第七种子类型**（可置于 complex 四槽位 / tabs tab / wizard step / group body），也是 `<pages>` 的**页面级类型**（`<pages>` complex 兄弟，`path/page/grid` + `<data>`/`<override>`）。`WebPageHelper.applyViewOverride`（`JsonMerger` delta 合并原语）已落地。**渲染接线尚未实现**（`page_embed.xpl`/`container_embed.xpl`、impl_GenPage embed 分派、两端 GenDispView 的 override 消费，对应 nop-entropy 计划 `ai-dev/plans/331-xview-embed-page-type-and-view-override.md` draft）→ 下列「声明层全覆盖」判定为**设计可行性（prospective）**，非 live 已验证渲染。**bound**：embed 是「引用外部整页 + `<override>` delta 组合」通道，**不是**「任意 flux 节点内联写 JSON」通道——写死 inline JSON 走 `<simple>`/`<crud>` 的 `beforeForm`/`afterForm`/`beforeTable`/`afterTable` xjson 槽（schema 已声明，flux-web 待接线）。命名：**保持 `<embed>`**（见 §8）。
+> **更新注记（rev.5，2026-08-05 定稿）**：`xview.xdef` 已定义 `<embed>`——既是 `UiContainerModel` 的**第七种子类型**（可置于 complex 四槽位 / tabs tab / wizard step / group body），也是 `<pages>` 的**页面级类型**（`<pages>` complex 兄弟，`path/page/grid` + `<data>`/`<override>`）。`WebPageHelper.applyViewOverride`（`JsonMerger` delta 合并原语）已落地。**渲染接线尚未实现**（`page_embed.xpl`/`container_embed.xpl`、impl_GenPage embed 分派、两端 GenDispView 的 override 消费，对应 nop-entropy 计划 `ai-dev/plans/331-xview-embed-page-type-and-view-override.md` draft）→ 下列「声明层全覆盖」判定为**设计可行性（prospective）**，非 live 已验证渲染。**embed 的两种用法**：① `path` 非空 → 引用外部整页 + `<override>` delta 组合；② **`path` 为空 + `<override>` 提供完整内容 → `applyViewOverride(null, override)=override`，等价直接内联任意 JSON**（`<embed>` 因此也是 inline-JSON 通道，与 `beforeForm`/`afterForm`/`beforeTable`/`afterTable` xjson 槽同源，见 §6.3）。命名：**保持 `<embed>`**（见 §8）。
 
 
 ---
@@ -21,7 +21,7 @@
 | ✅ 页面级 `<embed>` | 单控交互页（kanban/gantt/calendar/timeline/tree/diff-view/steps/collapse/loop/页面级 picker/报表）：`<pages><embed>` 注册外部页面 | 页面级 embed + `<override>` 局部适配 |
 | ✅ form cell `<view>` | 字段级特殊控件（input-table 子表、树形选择、SPC chart cell） | 字段级 genControl/genView 通道（既有，flux-web.xlib:421/:512） |
 
-**根因（平台实证）**：`<complex>` 四槽位原本只能容纳 `UiContainerModel` 的 6 个子类型——`crud/picker/simple/tabs/wizard/group`（xview.xdef:61-217）。flux 专有控件不是其中任一。新增 `<embed>` 作为**第七子类型**补上「槽位内嵌外部页面」的声明层组合通道。**bound**：embed 是「引用外部整页 + `<override>` delta 组合」，**不是**「任意 flux 节点内联」——inline JSON 走 `beforeForm/afterForm/beforeTable/afterTable` xjson 槽（schema 已声明 :144-145，flux-web 未接线）。
+**根因（平台实证）**：`<complex>` 四槽位原本只能容纳 `UiContainerModel` 的 6 个子类型——`crud/picker/simple/tabs/wizard/group`（xview.xdef:61-217）。flux 专有控件不是其中任一。新增 `<embed>` 作为**第七子类型**补上「槽位内嵌外部页面」的声明层组合通道。**embed 的两种用法**：`path` 非空 = 引用外部整页 + `<override>` delta 组合；**`path` 为空 + `<override>` 完整 = 直接内联任意 JSON**（`applyViewOverride(null, override)=override`）。`beforeForm/afterForm/beforeTable/afterTable` xjson 槽（:144-145）是**另一**同源 inline-JSON 通道（表单/表格前后注入，已声明、未接线）。
 
 > **rev.3 作废注记**：报告曾按「embed 不存在」下修至 rev.3；经确认 embed 定义被接受，本 rev.4 恢复到「embed 存在 → 声明层可覆盖（prospective）」的正确立场，并保留 beforeForm/afterForm 与 embed 的语义区分（见 §6.2 / §8）。
 
@@ -179,7 +179,7 @@ wizard 是标准容器类型，基础向导理论可达；但全库最复杂的 
 
 ### 4.8 汇总统计
 
-> **rev.4 判据**：`<embed>`（UiContainerModel 第七子类型 + 页面级）已接受。**「覆盖」分两层**：**纯 complex**（已落地渲染）与 **view.xml 声明层** = complex 外壳 + 槽位 `<embed>`（组合）+ 页面级 `<embed>`（注册）+ form cell `<view>`（字段级）。声明层判定为**设计可行性（prospective）**——渲染接线待 plan 331。**inline JSON** 走 `beforeForm/afterForm/beforeTable/afterTable` xjson 槽（已声明、未接线）。
+> **rev.5 判据**：`<embed>`（UiContainerModel 第七子类型 + 页面级）已接受。**「覆盖」分两层**：**纯 complex**（已落地渲染）与 **view.xml 声明层** = complex 外壳 + 槽位 `<embed>`（组合）+ 页面级 `<embed>`（注册）+ form cell `<view>`（字段级）。声明层判定为**设计可行性（prospective）**——渲染接线待 plan 331。**inline JSON 通道**：`<embed>` 空 `path` + `<override>` 完整内容可直接内联任意 JSON；`beforeForm/afterForm/beforeTable/afterTable` xjson 槽为另一同源通道（已声明、未接线）。
 
 | 类别 | 数量 | 纯 complex | 声明层（complex+embed+cell view，prospective） | 叶子承载 |
 |---|---|---|---|---|
@@ -192,7 +192,7 @@ wizard 是标准容器类型，基础向导理论可达；但全库最复杂的 
 | 24 报表 | 24 | 0 | ✅ 页面级 embed（注册 amis-compat/flux 报表页） | 外部页面 |
 | 44 非标准页 | 44 | 0~2 | ✅ 页面级 embed / cell view | 外部页面/字段 |
 
-**rev.4 判定**：view.xml **声明层**可覆盖全部复杂页（A~F + 报表 + 非标准页，prospective）；「纯 complex 可覆盖」仍只覆盖结构复杂而控件标准的页（F + 基础批次，19 页）。**「声明层覆盖」与「复杂交互叶子」为「外壳-叶子」分工**——外壳（complex/slot）在 view.xml 声明，叶子（flux 专有控件行为）在被引用外部页面（多为 .flux.yaml）书写。**inline JSON**（任意 flux 片段直写槽位）仍不可走 embed，需 `beforeForm/afterForm/beforeTable/afterTable` xjson 槽的激活。
+**rev.5 判定**：view.xml **声明层**可覆盖全部复杂页（A~F + 报表 + 非标准页，prospective）；「纯 complex 可覆盖」仍只覆盖结构复杂而控件标准的页（F + 基础批次，19 页）。**「声明层覆盖」与「复杂交互叶子」为「外壳-叶子」分工**——外壳（complex/slot）在 view.xml 声明，叶子（flux 专有控件行为）在被引用外部页面（多为 .flux.yaml）书写。**inline JSON 直写**（槽位内写死任意 flux 片段）可经 **`<embed>` 空 `path` + `<override>` 完整内容**直接内联，或经 `beforeForm/afterForm/beforeTable/afterTable` xjson 槽（另一同源通道，已声明、未接线）。
 
 ### 4.9 embed vs xjson 槽（嵌入能力分工，覆盖重判）
 
@@ -200,7 +200,7 @@ wizard 是标准容器类型，基础向导理论可达；但全库最复杂的 
 2. **单控交互页（C、部分 B）**：页面级 `<pages><embed path="…kanban.flux.yaml"/>` 注册外部页面；差异时 `<override>` 调整。→ ✅ 声明层可达（等价「view.xml 注册 + 叶子独立」）。
 3. **高级 wizard（D）**：`valuesPath/formId 闸/statusPath/onComplete` 无法纯 complex 表达，但可整页 embed 引用已实现该语义的外部 wizard 页；基础向导仍可纯-complex。→ ✅ 声明层可达（透传叶子语义除外）。
 4. **页面级 picker（E）**：容器内 picker 抛错；现可 `<pages><picker>`（既有）或页面级 `<embed>` 引用外部 picker 页。→ ✅ 声明层可达。
-5. **inline JSON（仍不可走 embed）**：任意 flux 节点内联进 complex 槽位——embed 是「引用整页 + override delta」而非「节点内联」。局部片段只能：放外部页面经 embed 引用、以 form cell `<view>` 放字段级、或经 `beforeForm/afterForm` xjson 槽（已声明、待激活）。**`beforeForm/afterForm` 不需要「改造成 embed 格式」**——两者语义互补（inline JSON vs 引用外部整页），见 §6.2 / §8。
+5. **inline JSON 直写（可走 embed 空 path）**：想在一个槽位/页面直接写死任意 JSON 内容（不经外部文件），可用 **`<embed path="" ...><override>…完整 JSON…</override></embed>`**——`path` 为空时 base 为空，`applyViewOverride(null, override)=override`，override 即成为整段内容。**等价「以 web XML 内联任意 flux JSON」**。`beforeForm/afterForm`/`beforeTable/afterTable` xjson 槽（:144-145）是**另一同源** inline-JSON 通道（专为表单/表格前后注入）。两者**不需要互相改造**——语义互补、机制同源（都是 xjson + JsonMerger delta）。
 
 ---
 
@@ -221,12 +221,12 @@ wizard 是标准容器类型，基础向导理论可达；但全库最复杂的 
    - 「纯 `<complex>` + 标准容器」仍不能内联任意 flux 交互叶子（`UiContainerModel` 类型封闭未变）；
    - 但 `<embed>`（UiContainerModel 第七子类型 + 页面级）加入后，**view.xml 声明层（complex 外壳 + 槽位 embed + 页面级 embed + cell view）可覆盖全部复杂页**（prospective，渲染接线待 plan 331）。判定从 rev.1「不能」上修为「**声明层全覆盖，交互叶子由被引用外部页面维护**」。
 
-2. **`beforeForm`/`afterForm` 是否要改造成 embed？→ 不需要，二者语义互补**：
-   - `beforeForm/afterForm/beforeTable/afterTable` = 表单/表格前后**注入任意 JSON**（已声明的 inline JSON 通道，仅缺 flux-web render 消费）；
-   - `<embed>` = **引用外部整页** + `<override>` delta 组合（page 级组合通道）。
-   若要「view.xml 直接嵌入 JSON」，正确路径是**激活 `beforeForm/afterForm` 的 flux-web 消费**（改 `container_simple.xpl` / `container_crud.xpl`），而非把 before/after 改造成 embed 格式或并进 embed 语义。
+2. **`beforeForm`/`afterForm` 是否要改造成 embed？→ 不需要，二者语义互补（机制同源）**：
+   - `beforeForm/afterForm/beforeTable/afterTable` = 表单/表格**前后**注入任意 JSON（已声明的 inline-JSON 通道，仅缺 flux-web render 消费）；
+   - `<embed>` = 通用组合通道：`path` 引用外部整页 + `<override>` delta 组合；**`path` 为空时 override 即整段内容 = inline 任意 JSON**。
+   二者都是「xjson + `JsonMerger` delta 合并」机制，只是作用点不同（embed=槽位/页面组合，before/after=表单表格前后注入）。**无需互相改造**；若要「view.xml 直接嵌入任意 JSON」，embed 空 `path` + override 与 before/after 都能表达，按作用域选用即可。
 
-3. **embed 能否直接嵌入 JSON？→ 不能（按当前 embed 定义）**。embed 是「引用外部整页 + `<override>` delta 合并」，**不是写死 inline JSON 的通道**。要写死 inline JSON 只能走 `beforeForm/afterForm/beforeTable/afterTable` xjson 槽。
+3. **embed 能否直接嵌入 JSON？→ 能（空 `path` + `<override>` 完整内容）**。`applyViewOverride(null, override)=merge(null, override)=override`，故 **`<embed path="" ...><override>…整段 JSON…</override></embed>` 等价直接内联任意 JSON**。仅当需「引用外部整页再局部 delta 适配」时用非空 `path`。`beforeForm/afterForm/beforeTable/afterTable` xjson 槽是另一同源 inline-JSON 通道（作用点在表单/表格前后），两者按作用域选用，无需互斥。
 
 4. **正确分工（rev.4）**：
    - view.xml `complex` → 标准复杂**外壳**（四槽位 + crud/simple/tabs/wizard/group + 基础批次页）；
@@ -235,7 +235,7 @@ wizard 是标准容器类型，基础向导理论可达；但全库最复杂的 
    - `beforeForm/afterForm` xjson 槽 → 局部 inline JSON 片段注入（待激活消费）；
    - `.flux.yaml` / page.yaml 直写 → 仍作为**叶子内容的权威书写地**（embed 引用的外部页面主体）。
 
-5. **平台落地路径（rev.4）**：schema（xview.xdef `<embed>` + `<data>`/`<override>`）与 `WebPageHelper.applyViewOverride`（JsonMerger）已就位；渲染接线（`page_embed.xpl` / `container_embed.xpl` / `impl_GenPage` embed 分派 / 两端 GenDispView override 消费）待 nop-entropy 计划 `331-xview-embed-page-type-and-view-override.md` 执行。可选的补充增强：扩展 `container_simple.xpl`/`container_crud.xpl` 消费 `beforeForm/afterForm/beforeTable/afterTable`，让局部 inline JSON 也可模型化。两者收益与 20 个 flux.yaml 存量成本需权衡。
+5. **平台落地路径（rev.5）**：schema（xview.xdef `<embed>` + `<data>`/`<override>`）与 `WebPageHelper.applyViewOverride`（JsonMerger）已就位；渲染接线（`page_embed.xpl` / `container_embed.xpl` / `impl_GenPage` embed 分派 / 两端 GenDispView override 消费）待 nop-entropy 计划 `331-xview-embed-page-type-and-view-override.md` 执行。**inline-JSON 内联已可由 embed 空 `path` + `<override>` 表达**；可选的补充增强是扩展 `container_simple.xpl`/`container_crud.xpl` 消费 `beforeForm/afterForm/beforeTable/afterTable`，让「表单/表格前后注入」场景也可模型化。两者收益与 20 个 flux.yaml 存量成本需权衡。
 
 6. **文档修正项**（登记，非阻塞）：`flux-complex-pages.md` §2.5/§7#9 与 `non-standard-views-patterns.md` §0 的「complex 覆盖全部复杂页」表述应按 rev.4 校准为「complex 外壳 + embed + cell view 的声明层分工；交互叶子由被引用外部页面维护」。
 
@@ -269,7 +269,7 @@ wizard 是标准容器类型，基础向导理论可达；但全库最复杂的 
    - `beforeForm/afterForm`（xjson 槽）= **inline 任意 JSON** 注入表单前后。
    三者机制有交集（都可用 `path` 引用外部 + `<override>` delta 合并，`WebPageHelper.applyViewOverride` 统一承载 delta），但**语义不同**。文档按「字段级 = `<view>`、页面级/槽位级 = `<embed>`、inline JSON = `beforeForm/afterForm`」对齐为三个兄弟概念，无需统一改名。
 
-3. **embed 不承载 inline JSON 也不应当承载**：embed 是「引用外部整页 + delta」，**不是写死 JSON 的通道**；要 inline JSON 走 `beforeForm/afterForm`。若把 embed 扩展为直接写 JSON，会与 `beforeForm/afterForm` 职责重叠——不建议。
+3. **embed 同时承载「引用组合」与「inline JSON」**：`path` 非空 = 引用外部整页 + delta 适配；**`path` 为空 + `<override>` 完整 = 直接内联任意 JSON**（`applyViewOverride(null, override)=override`）。故 embed 与 `beforeForm/afterForm` 在 inline-JSON 能力上**重叠但作用点不同**——embed=槽位/页面整块，before/after=表单/表格前后注入。**不把 before/after 并进 embed 语义**（保持作用域清晰），但也不必为 inline JSON 另造通道（embed 空 path 已覆盖）。
 
 4. **成本**：plan 331 全链（xpl / helper / 测试 / 文档）已以 embed 命名；改名将引发连锁调整，收益有限。
 
