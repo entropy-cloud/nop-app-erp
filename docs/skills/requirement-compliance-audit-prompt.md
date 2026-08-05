@@ -19,7 +19,7 @@
 **必需输入**：
 - L1 use-cases：目标域 `docs/design/<domain>/use-cases.md`（UC 功能契约真相源，验收标准**逐字引用禁止转述**）
 - L2 owner docs：目标域机制 / 状态机 / 跨域协作契约（**设计参考非真相源**——与 L1 冲突时以 L1 为准）
-- L3 code：`module-<domain>/erp-<short>-service/.../Erp<Domain>*BizModel.java`（含行号，跨域调用链须列全）
+- L3 code：`module-<domain>/erp-<short>-service/.../Erp<Domain>*BizModel.java#<method>`（方法锚点 + 关键行为断言；行号仅写时实测导航，跨域调用链须列全）
 - L4 tests：单测 `Test*.java#<method>` + E2E `tests/e2e/<domain>/<spec>.spec.ts#<describe>`（注明断言强度）
 - L5 运行时：复用既有 MA2 报告已证实行为 + `tests/e2e/` + 临时探针（仅 MA4 展开项）
 - `docs/requirements/product-scope.md`（顶层范围真相源）

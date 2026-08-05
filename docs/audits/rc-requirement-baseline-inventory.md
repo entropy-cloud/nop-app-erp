@@ -400,12 +400,12 @@
 
 | UC 编号 | L1 use-case 需求契约 | L2 owner doc 契约 | L3 代码路径 | L4 测试断言 | L5 运行时行为 | 符合性结论 |
 |---------|---------------------|------------------|------------|------------|--------------|-----------|
-| UC-XXX-NN | `<use-cases.md>:<line>` 标题 + 验收标准原文（逐字引用，不转述） | `<owner-doc>:<section>`（设计参考，冲突以 L1 为准） | `module-<domain>/erp-<short>-service/.../<X>BizModel.java:<line>`（含行号，跨域调用链列全） | `<TestFile>.java#<method>` / `tests/e2e/<spec>.spec.ts#<describe>`（注明断言强度） | 行为证据（复用 MA2 报告 / E2E / 临时探针） | P0/P1/P2/接受（§2 判据） |
+| UC-XXX-NN | `<use-cases.md>` UC-XXX-NN 锚点 + 验收标准原文（逐字引用，不转述；`:line` 仅写时实测导航） | `<owner-doc>:<section>`（设计参考，冲突以 L1 为准） | `module-<domain>/erp-<short>-service/.../<X>BizModel.java#<method>`（方法锚点 + 关键行为断言，行号仅写时实测导航，跨域调用链列全） | `<TestFile>.java#<method>` / `tests/e2e/<spec>.spec.ts#<describe>`（注明断言强度） | 行为证据（复用 MA2 报告 / E2E / 临时探针） | P0/P1/P2/接受（§2 判据） |
 
 **填充纪律**（方法论 §1）：
 - L1 验收标准**逐字引用**，禁止转述（避免"代理转述已向实现妥协" Q1 根因）。
 - L2 与 L1 冲突时一律以 L1 为准，在"冲突裁决"列注明"以 L1 为准，L2 推定已向实现妥协"。
-- L3 必须**含行号**；跨域调用链须列全（Facade → Processor → 跨域 I*Biz）。
+- **L3 锚点 = 文件路径 + 方法名 + 关键行为断言**（如 `ErpPurchaseBizModel.java#submitPurchaseOrder` 守卫行为）；复核以"grep 方法名 → 读方法体 → 对照行为断言"为准，行号仅写时实测导航、漂移不构成引用失效；跨域调用链须列全（Facade → Processor → 跨域 I*Biz）。
 - L5 存疑点登记到该切片报告的"静态存疑点清单"段，交 MA4 展开。
 - 已被既有 MA2 报告证实的 L5 行为，注明"行为已证实（引用 MA2 报告）"，不重复验证。
 

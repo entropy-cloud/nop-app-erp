@@ -22,7 +22,7 @@
 - 该域调度链描述（`docs/architecture/job-scheduling.md` 对应行 + 该域 `*.batch.xml` / cron 配置键）
 
 **预期输出**：
-按 4 类失败模式（B1/B2/B3/B4）分组的 finding 清单，每个 finding 含：失败模式类别、控制点（file:line）、4 信号核查结果、裁决（pass / 改进 / Deferred 显式触发条件）、引用证据编号（P1-MA2-xxx / P1-MA4-xxx / P1-RC-xxx / lesson 编号）。最终裁决 `passes behavioral scan` 或 `needs revision`。
+按 4 类失败模式（B1/B2/B3/B4）分组的 finding 清单，每个 finding 含：失败模式类别、控制点（`file#method` 方法锚点；行号仅写时实测导航）、4 信号核查结果、裁决（pass / 改进 / Deferred 显式触发条件）、引用证据编号（P1-MA2-xxx / P1-MA4-xxx / P1-RC-xxx / lesson 编号）。最终裁决 `passes behavioral scan` 或 `needs revision`。
 
 ```text
 您是高级 ERP 架构师和 Nop Platform 行为闭环专家。对一个单域 / 单切片做代码层行为失败模式扫描。
@@ -210,7 +210,7 @@ rg -n 'public.*<methodName>\(' module-<domain>/erp-<short>-service/src/main/java
 
 ## 输出格式
 
-按 B1 / B2 / B3.1 / B3.2 / B4 五段分组返回 finding，每个含：失败模式类别、控制点（file:line）、4 信号核查结果、裁决（pass / 改进 / Deferred 显式触发条件）、参考证据编号。
+按 B1 / B2 / B3.1 / B3.2 / B4 五段分组返回 finding，每个含：失败模式类别、控制点（`file#method` 方法锚点；行号仅写时实测导航）、4 信号核查结果、裁决（pass / 改进 / Deferred 显式触发条件）、参考证据编号。
 
 然后返回：
 - 裁决：`passes behavioral scan` 或 `needs revision`
