@@ -1,6 +1,6 @@
 # 2026-08-07-0330-2 rc-ma4-a4-1-2-fx-rate-missing-trigger-surface UC-FIN-12 汇率缺失触发面运行时普查
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Mission: requirement-compliance
 > Work Item: A4.1.2（MA4 运行时行为验证 — A1.1 §7-2：UC-FIN-12 汇率缺失触发面实测，各域 Provider 外币场景是否显式传 rate 普查）
@@ -58,45 +58,45 @@
 
 ### Phase 1 - 各域 Provider 外币场景 setExchangeRate 调用面全集普查
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-0330-rc-ma4-a4-1-2-fx-rate-missing-trigger-surface.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done；A1.1 done（P1-RC-002 + §7 存疑点 2 已落盘）
 
-- [ ] `Proof` 枚举调用面全集：grep 所有 `IErpFinAcctDocProvider` 实现 + 构造/派发 `PostingEvent`（或过账事件）的调用方（含各域 BizModel/Executor），产出调用点清单（禁止抽样）。
+- [x] `Proof` 枚举调用面全集：grep 所有 `IErpFinAcctDocProvider` 实现 + 构造/派发 `PostingEvent`（或过账事件）的调用方（含各域 BizModel/Executor），产出调用点清单（禁止抽样）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 逐调用点核验：①文件:行 ②是否识别外币场景（currencyId != functionalCurrency 判定存在性）③外币场景是否显式 setExchangeRate（传 / 漏传 / 仅本位币不适用）④既有 JUnit 外币用例覆盖（引用 + 断言强度强/弱/无）。
+- [x] `Proof` 逐调用点核验：①文件:行 ②是否识别外币场景（currencyId != functionalCurrency 判定存在性）③外币场景是否显式 setExchangeRate（传 / 漏传 / 仅本位币不适用）④既有 JUnit 外币用例覆盖（引用 + 断言强度强/弱/无）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` P1-RC-002 P0 升级再评估（方法论 §2 P0④「活跃数据破坏」+ A1.1 §5.2 评估框架）：若普查发现某域 Provider 在外币场景漏传 rate 且该路径为默认活跃路径（非需 caller bug 前置）→ 升 P0；否则维持 P1。列明触发面证据 + 与 A1.1 §5.2 三条理由的对照。
+- [x] `Decision` P1-RC-002 P0 升级再评估（方法论 §2 P0④「活跃数据破坏」+ A1.1 §5.2 评估框架）：若普查发现某域 Provider 在外币场景漏传 rate 且该路径为默认活跃路径（非需 caller bug 前置）→ 升 P0；否则维持 P1。列明触发面证据 + 与 A1.1 §5.2 三条理由的对照。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 调用点全集矩阵落盘（每点 4 字段齐备），无遗漏
-- [ ] P1-RC-002 P0 升级再评估有明确裁决（升 P0 / 维持 P1）+ 触发面证据
+- [x] 调用点全集矩阵落盘（每点 4 字段齐备），无遗漏
+- [x] P1-RC-002 P0 升级再评估有明确裁决（升 P0 / 维持 P1）+ 触发面证据
 
 ### Phase 2 - MR0 触发/fishing 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-0330-rc-ma4-a4-1-2-fx-rate-missing-trigger-surface.md`（定稿）；`docs/audits/arm-index.md`（若新 finding）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 调用点矩阵 + P0 升级裁决完成
 
-- [ ] `Proof` P0 即时通道（方法论 §10）：若 Phase 1 升 P0 → 在报告登记 + 在本计划记录「已触发 MR0 追加 R0.n 实体行」（标注触及会计过账逻辑 → ask-first + 独立 plan-audit）。本验证不实施修复。
+- [x] `Proof` P0 即时通道（方法论 §10）：若 Phase 1 升 P0 → 在报告登记 + 在本计划记录「已触发 MR0 追加 R0.n 实体行」（标注触及会计过账逻辑 → ask-first + 独立 plan-audit）。本验证不实施修复。
       - Skill: none
-- [ ] `Add` 若发现新控制点（非 P1-RC-002 同根因）→ 按 §7 grep arm-index 同域同控制点裁决「复用 or 新建」`P*-RC-xxx`，写入 arm-index MA4 分区；finding → MR0/MR1 双向可追溯。
+- [x] `Add` 若发现新控制点（非 P1-RC-002 同根因）→ 按 §7 grep arm-index 同域同控制点裁决「复用 or 新建」`P*-RC-xxx`，写入 arm-index MA4 分区；finding → MR0/MR1 双向可追溯。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-002 / P1-MA2-002/009 / P1-MA3-039 的复用关系）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-002 / P1-MA2-002/009 / P1-MA3-039 的复用关系）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（调用点矩阵 + P0 升级裁决 + MR0 触发登记[若升 P0] + §8 自检齐全）
-- [ ] 新 finding（若有）已写入 arm-index MA4 分区并有 grep 依据
+- [x] 验证报告定稿（调用点矩阵 + P0 升级裁决 + MR0 触发登记[若升 P0] + §8 自检齐全）
+- [x] 新 finding（若有）已写入 arm-index MA4 分区并有 grep 依据（本验证无新 finding，全部归既有 finding）
 
 ## Draft Review Record
 
@@ -106,14 +106,14 @@ Exit Criteria:
 
 > 本计划为**只读运行时普查**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 调用点矩阵完整性（全集覆盖）+ P0 升级裁决 + MR0 触发登记 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.2 验证报告调用点矩阵齐全（全集）+ P0 升级裁决 + finding（若有）登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 P0④判据 + §10 MR0 + §去重协议一致；与 A1.1 §7-2 + P1-RC-002 一致
-- [ ] 已运行验证：调用点矩阵完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.2 验证报告调用点矩阵齐全（全集）+ P0 升级裁决 + finding（若有）登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 P0④判据 + §10 MR0 + §去重协议一致；与 A1.1 §7-2 + P1-RC-002 一致
+- [x] 已运行验证：调用点矩阵完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -125,4 +125,13 @@ Exit Criteria:
 
 ## Closure
 
-> （独立结束审计通过后填入）
+Status Note: 全部 Phase（1-2）已执行完毕并全 [x]：验证报告落盘 `docs/audits/2026-08-07-0330-rc-ma4-a4-1-2-fx-rate-missing-trigger-surface.md`（调用点全集矩阵 43 点 + P0 升级裁决=维持 P1 + §8 自检 + §去重）。裁决：P1-RC-002 维持 P1（不升 P0，不触发 MR0，无新 finding）——43 生产 PostingEvent 构造点无一漏传 setExchangeRate，`prepareContext:537` 静默回退为 dispatcher 路径死代码。
+
+Closure Audit Evidence:
+
+- Auditor / Agent: 独立结束审计子代理（fresh session，未参与起草/执行本计划，无执行者上下文）
+- Evidence: 实时仓库核验——①验证报告存在且完整（`docs/audits/2026-08-07-0330-rc-ma4-a4-1-2-fx-rate-missing-trigger-surface.md` 289 行，含 §0 TL;DR / §1 L1+L3 锚点 / §2 调用点全集矩阵 43 点 ×4 字段 / P0 升级裁决=维持 P1 / §去重[与 P1-MA2-002/009、P1-MA3-039、P2-RC-003 不同控制点] / §8 checker actual vs baseline 自检）；②日志条目 `docs/logs/2026/08-07.md:3-17` 记录 A4.1.2 完成；③roadmap `docs/backlog/requirement-compliance-roadmap.md` A4.1.2 todo→done；④Phase 1/2 全 [x]、Exit Criteria 全 [x]、Closure Gates 全 [x]；⑤文本一致性（Plan Status completed ↔ 两 Phase completed ↔ Closure Gates [x] ↔ 日志记录）已验证；⑥反 hollow：裁决基于真实 grep 全集（构造点 43 == setExchangeRate 43），无占位空体；⑦Deferred honesty：P1-RC-002 守卫修复（Successor Required: yes，经 MR1）如实登记于 §Deferred But Adjudicated，无范围内缺陷隐藏。审核通过，无阻塞。
+
+Follow-up:
+
+- P1-RC-002 汇率缺失守卫修复经 MR1（R1.0→RC-R1.n，P1 批量；触及会计过账逻辑须 ask-first + 独立 plan-audit）——本验证已确认其触发面无默认活跃错误路径，故维持 P1 批次优先级。
