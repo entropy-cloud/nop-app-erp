@@ -1,6 +1,6 @@
 # 2026-08-06-0442-3 rc-ma3-a3-3-sal-ast-prj-qa-successor-review MA3 successor 追踪完整性与回队复查（sales+assets+projects+quality）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A3.3（sales + assets + projects + quality 域 successor 复查）
@@ -72,56 +72,56 @@
 
 ### Phase 1 - 5 项 successor 四任务逐项核证
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma3-a3-3-sal-ast-prj-qa-successor-review.md`（新建，先填段 1-5）
 Skill: `docs/skills/open-ended-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.3 done（方法论契约 + successor 三源对账导出就绪）
 
-- [ ] `Proof` 对 5 项 successor 逐项核证任务①②③：① 触发条件是否已满足（grep 实仓代码/config/ORM 验证，如 #1 订单维度核销查 sales receipt prepayment 是否支持订单维度、#2 资产 IDLE 查 IN_SERVICE↔IDLE writer + 折旧引擎查询条件、#3 工时单查 approve/reject 状态机 + 工时成本凭证跨域过账路径、#4 质检联动查 quality cancel 回调是否接线、#5 employee-id 查 ErpMdEmployee 是否有 userId 列 + inspectorId/assignedTo 解析器）；② 是否该回队（已满足→回队 MR1 R1.0；未满足→维持 backlog）；③ 无触发条件的补登记。
+- [x] `Proof` 对 5 项 successor 逐项核证任务①②③：① 触发条件是否已满足（grep 实仓代码/config/ORM 验证，如 #1 订单维度核销查 sales receipt prepayment 是否支持订单维度、#2 资产 IDLE 查 IN_SERVICE↔IDLE writer + 折旧引擎查询条件、#3 工时单查 approve/reject 状态机 + 工时成本凭证跨域过账路径、#4 质检联动查 quality cancel 回调是否接线、#5 employee-id 查 ErpMdEmployee 是否有 userId 列 + inspectorId/assignedTo 解析器）；② 是否该回队（已满足→回队 MR1 R1.0；未满足→维持 backlog）；③ 无触发条件的补登记。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
-- [ ] `Proof` 核实 §对账差异登记 #5（实现修复项 successor 残留）：区分 P1-MA2-061（IDLE，已实现修复的 finding vs 仍待触发 successor）/ P1-MA2-064（质检联动）等项的「finding 已修复」与「successor 仍有效」，避免误将已修复 finding 重新纳入 MR1。
+- [x] `Proof` 核实 §对账差异登记 #5（实现修复项 successor 残留）：区分 P1-MA2-061（IDLE，已实现修复的 finding vs 仍待触发 successor）/ P1-MA2-064（质检联动）等项的「finding 已修复」与「successor 仍有效」，避免误将已修复 finding 重新纳入 MR1。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
-- [ ] `Proof` 任务④ `docs/backlog/README.md` 既有行覆盖与正确性复核：grep backlog README sales/assets/projects/quality successor 行，逐项核实覆盖（防「已登记但从未触发」）+ 正确性（触发条件描述与实仓一致）。差异记入报告（不回写 README）。
+- [x] `Proof` 任务④ `docs/backlog/README.md` 既有行覆盖与正确性复核：grep backlog README sales/assets/projects/quality successor 行，逐项核实覆盖（防「已登记但从未触发」）+ 正确性（触发条件描述与实仓一致）。差异记入报告（不回写 README）。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
-- [ ] `Decision` 对 5 项逐项给出复查结论（`回队 MR1` / `维持 backlog successor` / `补登记`），列明触发条件状态证据 + 三源覆盖。#3 工时归集与同型过账悬挂根因的关系 + #5 ORM ask-first 保护区域 + #5 跨 quality/maintenance 两域投影去重须在结论中显式标注。
+- [x] `Decision` 对 5 项逐项给出复查结论（`回队 MR1` / `维持 backlog successor` / `补登记`），列明触发条件状态证据 + 三源覆盖。#3 工时归集与同型过账悬挂根因的关系 + #5 ORM ask-first 保护区域 + #5 跨 quality/maintenance 两域投影去重须在结论中显式标注。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告段 1（5 项三源对账清单）+ 段 2（逐项四任务核证）已落盘，每项含触发条件状态 + 回队决策 + README 覆盖复核（非悬空「待查」）
-- [ ] §对账差异 #5（实现修复项 successor 残留）已核实；#5 跨域投影去重已裁决
+- [x] 报告段 1（5 项三源对账清单）+ 段 2（逐项四任务核证）已落盘，每项含触发条件状态 + 回队决策 + README 覆盖复核（非悬空「待查」）
+- [x] §对账差异 #5（实现修复项 successor 残留）已核实；#5 跨域投影去重已裁决
 
 ### Phase 2 - 报告定稿 / arm-index / 回队登记
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma3-a3-3-sal-ast-prj-qa-successor-review.md`（补段 6-9，报告定稿）；`docs/audits/arm-index.md`（successor 回队注记）
 Skill: `docs/skills/open-ended-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成（5 项结论已出）
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：successor 项均源自既有 arm finding，本复查原则上**复用既有 finding ID**追加 RC 注记；仅当发现新 successor（owner doc 内嵌但 arm-index 无行）才新建/补登记，须 grep 后裁决。#5 跨 quality/maintenance 按 §去重协议合并裁决（不同切片不同域投影，同一控制点）。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：successor 项均源自既有 arm finding，本复查原则上**复用既有 finding ID**追加 RC 注记；仅当发现新 successor（owner doc 内嵌但 arm-index 无行）才新建/补登记，须 grep 后裁决。#5 跨 quality/maintenance 按 §去重协议合并裁决（不同切片不同域投影，同一控制点）。
       - Skill: `docs/skills/open-ended-audit-prompt.md`
-- [ ] `Add` 报告段 6 与 arm-index 衔接段：列明每项的复用/补登记裁决 + 双向可追溯（successor ↔ finding ID ↔ MR1 R1.0 预留展开行）。
+- [x] `Add` 报告段 6 与 arm-index 衔接段：列明每项的复用/补登记裁决 + 双向可追溯（successor ↔ finding ID ↔ MR1 R1.0 预留展开行）。
       - Skill: none
-- [ ] `Add` 报告段 7 静态存疑点清单（供 MA4 A4.1/A4.2 展开）：登记复查中需运行时确认的点（无则注明「无」）。
+- [x] `Add` 报告段 7 静态存疑点清单（供 MA4 A4.1/A4.2 展开）：登记复查中需运行时确认的点（无则注明「无」）。
       - Skill: none
-- [ ] `Proof` 报告段 8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**。
+- [x] `Proof` 报告段 8 过程纪律自检段（§8 模板）：实际运行 `bash docs/audits/nop-compliance-checker.sh` 并附 actual vs baseline 汇总表（本审计无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 脚本退出码 0 作为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告段 9 与既有审计差异增量声明：声明复用既有 arm 审计（successor 声明源自 arm-index + sales/assets/projects/quality 状态机报告）+ 本复查只补的「触发条件是否已满足 + 回队决策」差异。
+- [x] `Add` 报告段 9 与既有审计差异增量声明：声明复用既有 arm 审计（successor 声明源自 arm-index + sales/assets/projects/quality 状态机报告）+ 本复查只补的「触发条件是否已满足 + 回队决策」差异。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：回队项在既有 finding/successor 行追加「RC MA3 复查（A3.3）：触发条件已满足→回队 MR1」注记；补登记项（若有）入对应分区。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：回队项在既有 finding/successor 行追加「RC MA3 复查（A3.3）：触发条件已满足→回队 MR1」注记；补登记项（若有）入对应分区。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查段 1-9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查段 1-9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告段 6-9 已落盘，9 段齐全；successor 复用/补登记裁决均有 arm-index grep 依据
-- [ ] 回队项已写入 `arm-index.md`；静态存疑点清单已登记（供 MA4 展开）
-- [ ] 段 8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告段 6-9 已落盘，9 段齐全；successor 复用/补登记裁决均有 arm-index grep 依据
+- [x] 回队项已写入 `arm-index.md`；静态存疑点清单已登记（供 MA4 展开）
+- [x] 段 8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -131,14 +131,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 5 项逐项四任务核证 + §对账差异 #5 核实 + successor arm-index 衔接 + 段 8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A3.3 报告 9 段齐全 + 5 项逐项四任务结论 + 回队项登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §4/§5/§6/§7 + §MA2↔MA3 协作 + §去重协议一致；与 rc-existing-inventory sal+ast+prj+qa successor 分组 + §对账差异登记 #5 一致
-- [ ] 已运行验证：报告 9 段完整性自检 + 段 8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A3.3 报告 9 段齐全 + 5 项逐项四任务结论 + 回队项登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §4/§5/§6/§7 + §MA2↔MA3 协作 + §去重协议一致；与 rc-existing-inventory sal+ast+prj+qa successor 分组 + §对账差异登记 #5 一致
+- [x] 已运行验证：报告 9 段完整性自检 + 段 8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -150,13 +150,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <关闭时填写>
+Status Note: A3.3 sales+assets+projects+quality successor 复查闭环完成——5 项 successor 逐项四任务核证齐全，全部维持 backlog（0 回队 MR1），5 项 RC MA3 注记已写入 arm-index 既有行（复用 P2-MA2-013/P1-MA2-061/P1-MA2-043/P1-MA2-064/P1-MA6-002，无新建 P*-RC-xxx）；§对账差异 #5 finding-fixed vs successor-pending 区分正确。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理或独立审查者>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（fresh session，ses_02bb0b3d9ffeh56zyUWigyaMev）
+- Evidence: 独立结束审计 10 项核查全 PASS（对照实仓 + arm-index + 方法论 §6-§9 逐项核验）：① 报告 9 段齐全（§1-§9）；② 5 项 successor 四任务（①触发条件状态 grep 实仓 / ②回队决策 / ③补登记 / ④README 覆盖）完整无抽样无悬空待查；③ §对账差异 #5 区分正确（#2 R1.18/#3 R1.15/#4 R1.20 resolved-via-deferral + #5 R3.4 部分实现，successor 触发条件均未满足，0 误纳 MR1）；④ grep 实仓验证三处全确认（#2 ASSET_STATUS_IDLE 零 writer 仅 3 只读引用 + #4 cancelForBusinessBill 跨 quality/purchase/sales/mfg 零命中 + #5 ErpMdEmployee 实测 15 列无 userId 列）；⑤ #5 跨 quality+maintenance 两域投影按 §去重协议合并裁决一次 + ORM ask-first 正确框定为 MR1 修复期非裁决期；⑥ arm-index 5 既有行 RC MA3 注记实测全部存在（:489/:503/:506/:598/:699）；⑦ Q4 边界正确（5 项触发条件全未满足→全维持 backlog，0 回队 MR1）；⑧ §8 checker actual vs baseline 表实测值与 compliance-baseline.md §BASELINE machine-readable :296-316 精确匹配 + 独立性声明 + 交叉去重声明齐全 + 不以 checker 退出码 0 为门控；⑨ §9 真相源冻结遵守（仅 arm-index 追加 successor 注记，未触 product-scope/use-cases/owner doc 需求契约段/backlog README/已关闭 finding 关闭事实）；⑩ 文本一致（Plan/Phase Status=completed + 全部 item/exit/gate [x]）。范式对齐 A3.1（finance）done report 结构一致。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 无阻塞跟进项。#5 maintenance 域投影已由本报告合并裁决并标注 A3.5 交叉引用（非阻塞，A3.5 执行时引用本 §2.5 结论即可）。
