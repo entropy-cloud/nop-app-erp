@@ -482,6 +482,7 @@
 /erp/aps/pages/ErpApsSchedule/_gen/_ErpApsSchedule.view.xml
 /erp/aps/pages/ErpApsSchedule/main.page.yaml
 /erp/aps/pages/ErpApsSchedule/picker.page.yaml
+/erp/aps/pages/dashboard/schedule-gantt.flux.yaml
 /erp/aps/pages/dashboard/schedule-gantt.page.yaml
 /erp/ast/_module
 /erp/ast/auth/_erp-ast.action-auth.xml
@@ -661,6 +662,7 @@
 /erp/ast/pages/asset-repair/main.page.yaml
 /erp/ast/pages/asset-stocktake/main.page.yaml
 /erp/ast/pages/dashboard/main.page.yaml
+/erp/ast/pages/disposal-wizard/main.page.yaml
 /erp/ast/pages/report/asset-depreciation-detail.page.yaml
 /erp/ast/pages/report/asset-disposal-detail.page.yaml
 /erp/b2b/_module
@@ -791,8 +793,12 @@
 /erp/b2b/pages/ErpB2bTestExchange/_gen/_ErpB2bTestExchange.view.xml
 /erp/b2b/pages/ErpB2bTestExchange/main.page.yaml
 /erp/b2b/pages/ErpB2bTestExchange/picker.page.yaml
+/erp/b2b/pages/dashboard/asn-flow.flux.yaml
 /erp/b2b/pages/dashboard/asn-flow.page.yaml
+/erp/b2b/pages/dashboard/edi-detail.flux.yaml
 /erp/b2b/pages/dashboard/edi-detail.page.yaml
+/erp/common/_module
+/erp/common/beans/app-service.beans.xml
 /erp/crm/_module
 /erp/crm/auth/_erp-crm.action-auth.xml
 /erp/crm/auth/erp-crm.action-auth.xml
@@ -943,10 +949,12 @@
 /erp/crm/pages/ErpCrmActivity/ErpCrmActivity.lib.xjs
 /erp/crm/pages/ErpCrmActivity/ErpCrmActivity.view.xml
 /erp/crm/pages/ErpCrmActivity/_gen/_ErpCrmActivity.view.xml
+/erp/crm/pages/ErpCrmActivity/calendar.flux.yaml
 /erp/crm/pages/ErpCrmActivity/calendar.page.yaml
 /erp/crm/pages/ErpCrmActivity/main.page.yaml
 /erp/crm/pages/ErpCrmActivity/picker.page.yaml
 /erp/crm/pages/ErpCrmActivity/ref-lead.page.yaml
+/erp/crm/pages/ErpCrmActivity/timeline.flux.yaml
 /erp/crm/pages/ErpCrmActivity/timeline.page.yaml
 /erp/crm/pages/ErpCrmBundlePricing/ErpCrmBundlePricing.lib.xjs
 /erp/crm/pages/ErpCrmBundlePricing/ErpCrmBundlePricing.view.xml
@@ -1008,6 +1016,7 @@
 /erp/crm/pages/ErpCrmLead/ErpCrmLead.view.xml
 /erp/crm/pages/ErpCrmLead/_gen/_ErpCrmLead.view.xml
 /erp/crm/pages/ErpCrmLead/main.page.yaml
+/erp/crm/pages/ErpCrmLead/opportunity-kanban.flux.yaml
 /erp/crm/pages/ErpCrmLead/opportunity-kanban.page.yaml
 /erp/crm/pages/ErpCrmLead/picker.page.yaml
 /erp/crm/pages/ErpCrmLeadConvLog/ErpCrmLeadConvLog.lib.xjs
@@ -1116,6 +1125,7 @@
 /erp/crm/pages/ErpCrmTerritoryAssignmentRule/_gen/_ErpCrmTerritoryAssignmentRule.view.xml
 /erp/crm/pages/ErpCrmTerritoryAssignmentRule/main.page.yaml
 /erp/crm/pages/ErpCrmTerritoryAssignmentRule/picker.page.yaml
+/erp/crm/pages/lead-conversion/main.page.yaml
 /erp/crm/pages/report/forecast-accuracy.page.yaml
 /erp/crm/pages/report/lead-conversion-funnel.page.yaml
 /erp/cs/_module
@@ -1257,6 +1267,7 @@
 /erp/cs/pages/ErpCsTicket/ErpCsTicket.lib.xjs
 /erp/cs/pages/ErpCsTicket/ErpCsTicket.view.xml
 /erp/cs/pages/ErpCsTicket/_gen/_ErpCsTicket.view.xml
+/erp/cs/pages/ErpCsTicket/kanban.flux.yaml
 /erp/cs/pages/ErpCsTicket/kanban.page.yaml
 /erp/cs/pages/ErpCsTicket/main.page.yaml
 /erp/cs/pages/ErpCsTicket/picker.page.yaml
@@ -1266,6 +1277,7 @@
 /erp/cs/pages/ErpCsTicketAction/main.page.yaml
 /erp/cs/pages/ErpCsTicketAction/picker.page.yaml
 /erp/cs/pages/ErpCsTicketAction/ref-ticket.page.yaml
+/erp/cs/pages/ErpCsTicketAction/timeline.flux.yaml
 /erp/cs/pages/ErpCsTicketAction/timeline.page.yaml
 /erp/cs/pages/ErpCsTicketType/ErpCsTicketType.lib.xjs
 /erp/cs/pages/ErpCsTicketType/ErpCsTicketType.view.xml
@@ -1426,6 +1438,7 @@
 /erp/ct/pages/ErpCtVolumeDiscount/_gen/_ErpCtVolumeDiscount.view.xml
 /erp/ct/pages/ErpCtVolumeDiscount/main.page.yaml
 /erp/ct/pages/ErpCtVolumeDiscount/picker.page.yaml
+/erp/ct/pages/dashboard/version-diff.flux.yaml
 /erp/ct/pages/dashboard/version-diff.page.yaml
 /erp/drp/_module
 /erp/drp/auth/_erp-drp.action-auth.xml
@@ -1529,6 +1542,7 @@
 /erp/drp/pages/ErpInvDrpSafetyStockCalc/_gen/_ErpInvDrpSafetyStockCalc.view.xml
 /erp/drp/pages/ErpInvDrpSafetyStockCalc/main.page.yaml
 /erp/drp/pages/ErpInvDrpSafetyStockCalc/picker.page.yaml
+/erp/drp/pages/dashboard/net-requirement.flux.yaml
 /erp/drp/pages/dashboard/net-requirement.page.yaml
 /erp/fin/_module
 /erp/fin/auth/_erp-fin.action-auth.xml
@@ -1875,6 +1889,7 @@
 /erp/fin/pages/dashboard/main.page.yaml
 /erp/fin/pages/expense-claim/main.page.yaml
 /erp/fin/pages/gl-distribution/main.page.yaml
+/erp/fin/pages/period-close-wizard/main.flux.yaml
 /erp/fin/pages/period-close-wizard/main.page.yaml
 /erp/fin/pages/report/ar-ap-aging.page.yaml
 /erp/fin/pages/report/balance-sheet.page.yaml
@@ -2102,6 +2117,7 @@
 /erp/hr/pages/ErpHrLeaveRequest/_gen/_ErpHrLeaveRequest.view.xml
 /erp/hr/pages/ErpHrLeaveRequest/main.page.yaml
 /erp/hr/pages/ErpHrLeaveRequest/picker.page.yaml
+/erp/hr/pages/ErpHrLeaveRequest/team-vacation-calendar.flux.yaml
 /erp/hr/pages/ErpHrLeaveRequest/team-vacation-calendar.page.yaml
 /erp/hr/pages/ErpHrPayrollBankFile/ErpHrPayrollBankFile.lib.xjs
 /erp/hr/pages/ErpHrPayrollBankFile/ErpHrPayrollBankFile.view.xml
@@ -2220,7 +2236,9 @@
 /erp/hr/pages/ErpHrTimesheetLine/_gen/_ErpHrTimesheetLine.view.xml
 /erp/hr/pages/ErpHrTimesheetLine/main.page.yaml
 /erp/hr/pages/ErpHrTimesheetLine/picker.page.yaml
+/erp/hr/pages/dashboard/org-chart.flux.yaml
 /erp/hr/pages/dashboard/org-chart.page.yaml
+/erp/hr/pages/dashboard/payroll-approval.flux.yaml
 /erp/hr/pages/dashboard/payroll-approval.page.yaml
 /erp/hr/pages/report/employee-net-balance.page.yaml
 /erp/hr/pages/report/payroll-simulation-comparison.page.yaml
@@ -2427,6 +2445,7 @@
 /erp/inv/pages/ErpInvTransferOrderLine/picker.page.yaml
 /erp/inv/pages/dashboard/main.page.yaml
 /erp/inv/pages/report/inventory-trace-report.page.yaml
+/erp/inv/pages/stock-take-flow/main.page.yaml
 /erp/log/_module
 /erp/log/auth/_erp-log.action-auth.xml
 /erp/log/auth/erp-log.action-auth.xml
@@ -2505,6 +2524,7 @@
 /erp/log/pages/ErpLogShipmentParcel/main.page.yaml
 /erp/log/pages/ErpLogShipmentParcel/picker.page.yaml
 /erp/log/pages/ErpLogShipmentParcel/ref-shipment.page.yaml
+/erp/log/pages/dashboard/shipment-tracking.flux.yaml
 /erp/log/pages/dashboard/shipment-tracking.page.yaml
 /erp/md/_module
 /erp/md/auth/_erp-md.action-auth.xml
@@ -2660,6 +2680,7 @@
 /erp/md/pages/ErpMdMaterial/ErpMdMaterial.lib.xjs
 /erp/md/pages/ErpMdMaterial/ErpMdMaterial.view.xml
 /erp/md/pages/ErpMdMaterial/_gen/_ErpMdMaterial.view.xml
+/erp/md/pages/ErpMdMaterial/main.flux.yaml
 /erp/md/pages/ErpMdMaterial/main.page.yaml
 /erp/md/pages/ErpMdMaterial/picker.page.yaml
 /erp/md/pages/ErpMdMaterialCategory/ErpMdMaterialCategory.lib.xjs
@@ -3039,6 +3060,7 @@
 /erp/mfg/pages/ErpMfgWorkcenterCapacity/_gen/_ErpMfgWorkcenterCapacity.view.xml
 /erp/mfg/pages/ErpMfgWorkcenterCapacity/main.page.yaml
 /erp/mfg/pages/ErpMfgWorkcenterCapacity/picker.page.yaml
+/erp/mfg/pages/dashboard/bom-tree.flux.yaml
 /erp/mfg/pages/dashboard/bom-tree.page.yaml
 /erp/mfg/pages/dashboard/main.page.yaml
 /erp/mfg/pages/report/crp-load-report.page.yaml
@@ -3174,6 +3196,7 @@
 /erp/mnt/pages/dashboard/main.page.yaml
 /erp/mnt/pages/report/downtime-summary.page.yaml
 /erp/mnt/pages/report/maintenance-history.page.yaml
+/erp/mnt/pages/visit-wizard/main.flux.yaml
 /erp/mnt/pages/visit-wizard/main.page.yaml
 /erp/notify/_module
 /erp/notify/auth/_erp-notify.action-auth.xml
@@ -3365,6 +3388,7 @@
 /erp/prj/pages/ErpPrjTask/ErpPrjTask.lib.xjs
 /erp/prj/pages/ErpPrjTask/ErpPrjTask.view.xml
 /erp/prj/pages/ErpPrjTask/_gen/_ErpPrjTask.view.xml
+/erp/prj/pages/ErpPrjTask/kanban.flux.yaml
 /erp/prj/pages/ErpPrjTask/kanban.page.yaml
 /erp/prj/pages/ErpPrjTask/main.page.yaml
 /erp/prj/pages/ErpPrjTask/picker.page.yaml
@@ -3574,6 +3598,7 @@
 /erp/pur/pages/ErpPurSupplierScorecardVariable/main.page.yaml
 /erp/pur/pages/ErpPurSupplierScorecardVariable/picker.page.yaml
 /erp/pur/pages/dashboard/main.page.yaml
+/erp/pur/pages/dashboard/three-way-match.flux.yaml
 /erp/pur/pages/dashboard/three-way-match.page.yaml
 /erp/qa/_module
 /erp/qa/auth/_erp-qa.action-auth.xml
@@ -4132,6 +4157,7 @@
 /nop/auth/pages/DemoPage/DemoPage.view.xml
 /nop/auth/pages/DemoPage/action.js
 /nop/auth/pages/DemoPage/demo-plain.page.yaml
+/nop/auth/pages/DemoPage/demo.flux.yaml
 /nop/auth/pages/DemoPage/demo.lib.js
 /nop/auth/pages/DemoPage/demo.lib.xjs
 /nop/auth/pages/DemoPage/demo.page.yaml
@@ -4183,6 +4209,7 @@
 /nop/auth/pages/NopAuthRole/NopAuthRole.lib.xjs
 /nop/auth/pages/NopAuthRole/NopAuthRole.view.xml
 /nop/auth/pages/NopAuthRole/_gen/_NopAuthRole.view.xml
+/nop/auth/pages/NopAuthRole/assign-auth.flux.yaml
 /nop/auth/pages/NopAuthRole/assign-auth.page.yaml
 /nop/auth/pages/NopAuthRole/main.page.yaml
 /nop/auth/pages/NopAuthRole/picker.page.yaml
@@ -4222,8 +4249,11 @@
 /nop/auth/pages/NopAuthUser/NopAuthUser_tenant.view.xml
 /nop/auth/pages/NopAuthUser/_gen/_NopAuthUser.view.xml
 /nop/auth/pages/NopAuthUser/_gen/_NopAuthUser_tenant.view.xml
+/nop/auth/pages/NopAuthUser/add.page.yaml
+/nop/auth/pages/NopAuthUser/change-self-pass.flux.yaml
 /nop/auth/pages/NopAuthUser/change-self-pass.page.yaml
 /nop/auth/pages/NopAuthUser/deleted.page.yaml
+/nop/auth/pages/NopAuthUser/demo.flux.yaml
 /nop/auth/pages/NopAuthUser/demo.page.yaml
 /nop/auth/pages/NopAuthUser/main.page.yaml
 /nop/auth/pages/NopAuthUser/picker.page.yaml
@@ -4371,6 +4401,7 @@
 /nop/http/beans/http-api.beans.xml
 /nop/http/beans/http-client-jdk.beans.xml
 /nop/job/_module
+/nop/job/beans/app-job-core.beans.xml
 /nop/job/beans/app-local-scheduler.beans.xml
 /nop/job/conf/erp-ast-depreciation.job.yaml
 /nop/job/conf/erp-crm-event-reminder.job.yaml
@@ -4393,6 +4424,7 @@
 /nop/job/conf/erp-qa-spc-sampling.job.yaml
 /nop/job/conf/scheduler.yaml
 /nop/main/auth/app.action-auth.xml
+/nop/main/auth/app.data-auth.xml
 /nop/main/report/ast/asset-depreciation-detail.xpt.xml
 /nop/main/report/ast/asset-disposal-detail.xpt.xml
 /nop/main/report/crm/forecast-accuracy.xpt.xml
@@ -4553,8 +4585,10 @@
 /nop/schema/ai/agent-plan.xdef
 /nop/schema/ai/agent.xdef
 /nop/schema/ai/chat-options.xdef
+/nop/schema/ai/llm-failover.xdef
 /nop/schema/ai/llm.xdef
 /nop/schema/ai/prompt.xdef
+/nop/schema/ai/recipe.xdef
 /nop/schema/ai/tool/available-skills.xdef
 /nop/schema/ai/tool/call-tools-response.xdef
 /nop/schema/ai/tool/call-tools.xdef
@@ -5026,15 +5060,23 @@
 /nop/web/xlib/control.xlib
 /nop/web/xlib/flux-control.xlib
 /nop/web/xlib/flux-web.xlib
+/nop/web/xlib/flux-web/container_crud.xpl
+/nop/web/xlib/flux-web/container_group.xpl
+/nop/web/xlib/flux-web/container_simple.xpl
+/nop/web/xlib/flux-web/container_tabs.xpl
+/nop/web/xlib/flux-web/container_wizard.xpl
 /nop/web/xlib/flux-web/grid_crud.xpl
 /nop/web/xlib/flux-web/impl_GenForm.xpl
 /nop/web/xlib/flux-web/impl_GenGrid.xpl
 /nop/web/xlib/flux-web/impl_GenPage.xpl
 /nop/web/xlib/flux-web/init_grid_gen_scope.xpl
+/nop/web/xlib/flux-web/page_complex.xpl
 /nop/web/xlib/flux-web/page_crud.xpl
+/nop/web/xlib/flux-web/page_group.xpl
 /nop/web/xlib/flux-web/page_picker.xpl
 /nop/web/xlib/flux-web/page_simple.xpl
 /nop/web/xlib/flux-web/page_tabs.xpl
+/nop/web/xlib/flux-web/page_wizard.xpl
 /nop/web/xlib/ofd-gen.xlib
 /nop/web/xlib/ofd-gen/impl_GenerateCss.xpl
 /nop/web/xlib/ofd-gen/impl_GenerateForm.xpl
@@ -5071,6 +5113,7 @@
 /nop/wf/beans/wf-core.beans.xml
 /nop/wf/beans/wf-dao.beans.xml
 /nop/wf/designer/demo-data.page.json
+/nop/wf/designer/designer.flux.yaml
 /nop/wf/designer/designer.page.yaml
 /nop/wf/designer/dingflow.graph-designer.xml
 /nop/wf/designer/dingflow.lib.js
