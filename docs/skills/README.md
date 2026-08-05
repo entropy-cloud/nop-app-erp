@@ -50,6 +50,9 @@
 | `audit-remediation-roadmap-authoring-prompt.md` | 为已多次审计但体量巨大的复杂项目设计**可由 Mission Driver 自主执行的全面审计-修复 roadmap**（流水线模式：P0 即时止血 + P1 维度内批量修复；ORM 变更已授权） | 单一对象窄审计、直接执行审计、体量小用平面待办即可 | 项目上下文、Mission Driver 文档、roadmap 规范、已有 skill 库、已有审计记录、项目愿景与设计基线 | `docs/backlog/audit-remediation-roadmap.md` + `missions/audit-remediation.json` + 审计维度矩阵文档（含报告归档规范） |
 | `compliance-baseline-drift-adjudication-prompt.md` | compliance checker 报出 `actual > baseline` 漂移时，逐站点 git diff 分类裁决「合法新增 baseline-raise」vs「真违规 Fix」 | 单文件低风险编辑不触及 checker 站点、平台最佳实践定性审计（用 nop-platform-conformance）、业务/ORM 规范审计 | `compliance-baseline.md`（§基线表+§BASELINE 块+§M0 锚点）、checker 脚本、锚点 HEAD、owner docs 背书（processor-extension-pattern/data-dependency-matrix/shared-kernel-extraction-decision） | `compliance-baseline.md` §基线表+§BASELINE 块同步更新 + 每条漂移规则的 per-site 裁决记录（baseline-raise/Fix + 证据） |
 | `closure-pending-detection-prompt.md` | 系统性检测「声称 completed 却缺独立 closure audit 证据」的计划，并批量编排独立子代理 fresh session 补 closure（检测+批量编排方法） | 审计**单个**已完成计划（用 closure-audit-prompt）、计划实施前拦截（用 plan-audit）、全新起草计划 | 计划集合、closure 证据判定标准（Independent Closure Audit + task 指针）、保护区域清单、closure-audit-prompt、可调度独立子代理能力 | closure-pending 候选清单 + 每份回填的 Independent Closure Audit 证据（auditor 指针+五点一致性+anti-hollow+deferred honesty）+ 统计 |
+| `configuration-audit-prompt.md` | ERP 配置设计的归类合理性与落地完整性审计（技术运维/系统开关/业务规则/用户偏好四分类 + ORM 字段落地核对） | 需求审计、状态机审计（用对应专项提示） | `domain-design-guidelines.md`、`docs/analysis/*configuration*`、所有 `<domain>/model/*.orm.xml`、`ioc-and-config.md` | 配置归类汇总表 + 业务规则配置的 ORM 字段覆盖清单 + 系统开关/技术配置/用户级配置清单 + 命名一致性结论 |
+| `behavioral-failure-mode-scan-prompt.md` | closure 前对单域/单切片做代码层行为失败模式扫描（B1 业财过账吞异常悬挂 / B2 dict 死状态 / B3 调度链断裂 / B4 守卫散点） | 设计层状态机图审查（用 state-machine-business-review）、单计划闭合（用 closure-audit）、平台规则合规（用 nop-platform-conformance）、多维整件挑战（用 multi-dimensional-audit） | 目标域范围、状态机 owner doc、ORM 模型、调度链描述（job-scheduling.md + batch.xml + cron 键） | 按 B1/B2/B3.1/B3.2/B4 分组的 finding 清单（含 4 信号核查 + 裁决 + 证据编号）+ 复用 or 新增裁决 |
+| `requirement-compliance-audit-prompt.md` | 需求→实现符合性审计的五级追踪矩阵（L1 use-cases → L5 运行时）+ §4 三判据核验 + 方案 B 关闭项复查（mission `requirement-compliance` 入口） | doc↔code 文本一致性（已由 audit-remediation MA1-MA7 收口）、单一对象窄审计、单域行为扫描（用 behavioral-failure-mode-scan）、需求本身的修订（须人工批准） | L1 use-cases + L2 owner doc + L3 代码 + L4 测试 + L5 运行时 + `product-scope.md` + `arm-index.md` | methodology §6 的 9 段落报告骨架 + 五级追踪矩阵 + P1-RC-xxx finding + arm-index 衔接（薄壳指向 methodology 主体） |
 
 ## 入门技能
 
@@ -76,6 +79,17 @@
 - `audit-remediation-roadmap-authoring-prompt.md`
 - `compliance-baseline-drift-adjudication-prompt.md`
 - `closure-pending-detection-prompt.md`
+- `configuration-audit-prompt.md`
+- `behavioral-failure-mode-scan-prompt.md`
+- `requirement-compliance-audit-prompt.md`
+
+## 关联文档
+
+技能库不替代方法论与执行章程——下列文档是技能的方法论主体或执行规范，技能文件是它们的可路由入口或审查提示：
+
+- `docs/audits/00-audit-execution-guide.md` — 审计执行章程（三个默认审计：文档审计 / 草案审查 / 结束审计；冷重播不是第二位审查者；持久审查证据规则）。`plan-audit-prompt` / `closure-audit-prompt` / `multi-dimensional-audit` / `open-ended-audit` 等技能均在此章程框架下运行。
+- `docs/audits/requirement-compliance-methodology.md` — 需求→实现符合性审计方法论主体（§1 五级追踪矩阵 / §2 P0-P2 分级判据 / §3 完整枚举纪律 / §4 真相源层级与冲突裁决 / §5 修复义务与保护区域暂停协议 / §6 报告 9 段落骨架 / §7 arm-index 命名衔接 / §8 过程纪律自检 / §9 真相源冻结条款 / §10 MR0 即时通道 + MR1 展开器机制）。`requirement-compliance-audit-prompt.md` 是其薄壳入口，冲突时以 methodology 为准。
+- `docs/lessons/07-11-*.md` + `docs/lessons/README.md` — 系统性行为失败模式来源（compliance 基线漂移 / closure-pending / 业财过账吞异常悬挂 / dict 死状态 / arm-index 状态不回填）。`behavioral-failure-mode-scan-prompt.md` 把 B1/B2 类固化为代码层 grep 程式；§已知失败模式 9-13 项是这些 lesson 的速查入口。
 
 ## 与工具原生技能的关系
 
@@ -130,6 +144,14 @@
 6. **`@Inject private`**：Nop IoC 中 `@Inject` 字段不能是 `private`。
 7. **字符串比较用 `==`/`!=`**：字典 String 比较一律 `Objects.equals()` / `.equals()`。
 8. **propId 编号断续**：orm.xml 列定义 `propId` 必须连续（gap 会触发平台校验失败）。
+
+**系统性行为失败模式（lessons 07-11，跨多轮审计反复复发，必须在对应阶段针对性检查）**：
+
+9. **Compliance 基线漂移（lesson 07）**：加深计划新增 `daoFor` / `import` / 状态字面量后，closure 未重跑 `nop-compliance-checker.sh` 核对基线，未把合法新增提升为 baseline-raise 也未把真违规 Fix。3 轮裁决（1057-1 / 0823-1 / V.2）才收敛。closure 前必跑 checker + per-site git diff 分类（合法 raise vs Fix）。
+10. **closure-pending（lesson 08）**：声称 `completed` 却缺独立子代理 closure audit 证据（执行者 / mission-driver 只勾 `[x]` + 自填 `## Closure`）。R3.5 第三波发现 14 份。mission-driver 自动推进的计划无论介质都须独立子代理 fresh session 跑 closure-audit 留 task 指针。
+11. **业财过账吞异常悬挂（lesson 09）**：宽 `catch(Exception)` 吞咽只 `log.warn` → 业务侧 `posted=false` 永久悬挂、无告警闭环。R1.16 跨 12 站点同族。详细 grep 程式与决策树见 `behavioral-failure-mode-scan-prompt.md §1`。
+12. **dict 死状态（lesson 10）**：dict 声明无 `setStatus` writer 的状态值（永不出现），owner doc 迁移图却声明进/出迁移。MR1 跨 finance/mfg/hr/inv/qa/prj/contract/aps/logistics 多域同型。详细 grep 程式与决策树见 `behavioral-failure-mode-scan-prompt.md §2`。
+13. **arm-index 状态不回填（lesson 11）**：修复在 roadmap 标 `done` + 计划 `completed`，但 arm-index finding 行 `修复状态` 仍 `todo (R*.x)`。V.5 发现 102 条陈旧标签批量回填。状态回填是闭合的一部分，不是事后清理。
 
 ---
 

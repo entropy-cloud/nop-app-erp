@@ -66,7 +66,13 @@
 
 10. 与设计文档的一致性
     - 每个状态在所有者文档中是否有匹配的页面、API、权限和业务注释？
-    - 是否存在"设计了但不在状态机中"或"在状态机中但未描述"的不一致？
+    - 是否存在“设计了但不在状态机中”或“在状态机中但未描述”的不一致？
+
+11. 代码层 dict 可达性核查（设计层提示，交叉引用 `behavioral-failure-mode-scan-prompt.md §2`）
+    - **本节是设计层提示**：迁移图正确性（可达性 / 终端 / 角色绑定）由维度 1-10 覆盖；dict 值在生产代码中是否有 `setStatus` writer 是代码层落地核查，详细 grep 程式与决策树见 `behavioral-failure-mode-scan-prompt.md §2`（避免重复）。
+    - **设计层应在此提示中做的一件事**：枚举该状态机的 dict 每个状态值，与 owner doc 迁移图的进/出迁移声明对照——迁移图声明了进入某值的迁移但代码无 `setStatus` writer 即「承诺漂移」（lesson 10 跨 finance/mfg/hr/inv/qa/prj/contract/aps/logistics 多域同型）。
+    - **裁决原则**：无 writer 的状态值强制三选一裁决（删 dict 项 / 实现迁移 BizMutation / Deferred 标注触发条件），**禁止沉默保留**。本节只做设计层对照裁决，代码层 grep 落地交 `behavioral-failure-mode-scan §2`。
+    - 参考证据：P1-MA2-031（finance voucher CANCELLED）/ P1-MA2-035/036（mfg）/ P1-MA2-039-045（hr）/ P1-MA2-063（inv PickingOrder）等 R1.13-25 系列。
 
 要检查的已知反模式：
 
