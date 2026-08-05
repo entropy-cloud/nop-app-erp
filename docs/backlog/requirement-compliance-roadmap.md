@@ -78,7 +78,7 @@
 | A1.39 | **cs-F3 知识库/质量联动/预设应答**（UC-CS-05/06/07） | done | `docs/design/customer-service/` | 0.2 | 同上 |
 | A1.40 | **cs-F4 调查/权益/目录/履行**（UC-CS-08/09/10/12） | done | `docs/design/customer-service/` | 0.2 | 同上 |
 | A1.41 | **master-data 全功能**（UC-MD-01~07，7 UC） | done | `docs/design/master-data/` | 0.2 | 同上 |
-| A1.42 | **maintenance-F1 调度与冲突**（UC-MAIN-01/02/09） | todo | `docs/design/maintenance/` | 0.2 | 同上 |
+| A1.42 | **maintenance-F1 调度与冲突**（UC-MAIN-01/02/09） | done | `docs/design/maintenance/` | 0.2 | 同上 |
 | A1.43 | **maintenance-F2 访问与备件**（UC-MAIN-03/04） | todo | `docs/design/maintenance/` | 0.2 | 同上 |
 | A1.44 | **maintenance-F3 响应/联动/OEE/看板**（UC-MAIN-05/06/07/08/10/11） | todo | `docs/design/maintenance/` | 0.2 | 同上 |
 | A1.45 | **contract-F1 生命周期与签署**（UC-CT-01/02/05/06/07/09） | todo | `docs/design/contract/` | 0.2 | 同上 |
