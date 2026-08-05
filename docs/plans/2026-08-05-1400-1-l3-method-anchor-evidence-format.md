@@ -1,6 +1,6 @@
 # 2026-08-05-1400-1-l3-method-anchor-evidence-format 审计证据引用锚点从行号改为方法名
 
-> Plan Status: closing
+> Plan Status: completed
 > Last Reviewed: 2026-08-05
 > Source: request（用户观察到文档中统计数字/行号频繁漂移，子代理 review/audit 大量纠错，问询减负方案）
 > Related: `docs/audits/requirement-compliance-methodology.md`、`docs/audits/rc-requirement-baseline-inventory.md`、`docs/skills/requirement-compliance-audit-prompt.md`、`docs/skills/behavioral-failure-mode-scan-prompt.md`
@@ -43,7 +43,7 @@
 
 ### Phase 1 - 修订方法论、填充模板与技能文件
 
-Status: in progress
+Status: completed
 Targets: `docs/audits/requirement-compliance-methodology.md`、`docs/audits/rc-requirement-baseline-inventory.md`、`docs/skills/requirement-compliance-audit-prompt.md`、`docs/skills/behavioral-failure-mode-scan-prompt.md`
 Skill: none（文档修订，无匹配技能；被修订对象本身是技能文件）
 
@@ -90,14 +90,14 @@ Exit Criteria:
 
 > 本计划为 **doc-only**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 文档修订落地 + grep 残留检查 + 文本一致性 + 独立草案审查 + 独立结束审计。
 
-- [ ] 范围内行为完成：4 个目标文件修订齐全，§1 锚点纪律已写入
-- [ ] 相关文档对齐：methodology §1/§6 与填充模板、两个技能文件措辞一致；无引用断裂
-- [ ] 已运行验证：grep `必须.{0,6}行号` 零残留 + `含行号`/`file:line`/`java:<method>` 强制格式零残留 + 抽查修订段落上下文
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：4 个目标文件修订齐全，§1 锚点纪律已写入
+- [x] 相关文档对齐：methodology §1/§6 与填充模板、两个技能文件措辞一致；无引用断裂
+- [x] 已运行验证：grep `必须.{0,6}行号` 零残留 + `含行号`/`file:line`/`java:<method>` 强制格式零残留 + 抽查修订段落上下文
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -115,13 +115,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending（执行 + 独立结束审计后回填）
+Status Note: doc-only 修订完成，独立结束审计 `passes closure audit`（0 blocker / 0 major / 1 minor：Phase Status in progress → completed 回填，已执行；Plan Status closing → completed）。4 目标文件修订落地 + 四类 grep 零残留 + 文本一致性核验通过。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 独立结束审计子代理（general agent，fresh session 冷上下文）
+- Evidence: `ses_02f6bb20cffeMNUhmY5ZBGnN6j`（逐项核实范围完整性 10 Fix + 1 Proof、四类残留 grep 零命中、Non-Goals diff 归属、治理字段；结论 `passes closure audit`）
 
 Follow-up:
 
-- 无（本计划无确认缺陷）
+- 无（本计划无确认缺陷；审计 1 minor 为状态回填，已随本回填处理）

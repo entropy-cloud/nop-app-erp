@@ -74,7 +74,7 @@
 | A1.35 | **projects-F2 预算与 DAG**（UC-PRJ-04/05） | done | `docs/design/projects/` | 0.2 | 同上 |
 | A1.36 | **projects-F3 结算与看板**（UC-PRJ-06/07/08/10） | done | `docs/design/projects/` | 0.2 | 同上 |
 | A1.37 | **cs-F1 工单生命周期**（UC-CS-01/02/03/11） | done | `docs/design/customer-service/` | 0.2 | 同上 |
-| A1.38 | **cs-F2 SLA 与升级**（UC-CS-04） | todo | `docs/design/customer-service/` | 0.2 | 同上 |
+| A1.38 | **cs-F2 SLA 与升级**（UC-CS-04） | done | `docs/design/customer-service/` | 0.2 | 同上 |
 | A1.39 | **cs-F3 知识库/质量联动/预设应答**（UC-CS-05/06/07） | todo | `docs/design/customer-service/` | 0.2 | 同上 |
 | A1.40 | **cs-F4 调查/权益/目录/履行**（UC-CS-08/09/10/12） | todo | `docs/design/customer-service/` | 0.2 | 同上 |
 | A1.41 | **master-data 全功能**（UC-MD-01~07，7 UC） | todo | `docs/design/master-data/` | 0.2 | 同上 |
