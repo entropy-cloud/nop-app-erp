@@ -86,7 +86,7 @@
 | A1.46 | **contract-F2 计费与返利**（UC-CT-03/04/08/10） | done | `docs/design/contract/` | 0.2 | 同上 |
 | A1.47 | **b2b 全功能**（UC-B2B-001~008，8 UC） | done | `docs/design/b2b/` | 0.2 | 同上 |
 | A1.48 | **drp 全功能**（UC-DRP-01~08，8 UC） | done | `docs/design/drp/` | 0.2 | 同上 |
-| A1.49 | **logistics 全功能**（UC-LOG-01~07，7 UC；04/05/06 在 use-cases.md 用非标准 heading `## 用例X：…`，0.2 清单化时归一化） | todo | `docs/design/logistics/` | 0.2 | 同上 |
+| A1.49 | **logistics 全功能**（UC-LOG-01~07，7 UC；04/05/06 在 use-cases.md 用非标准 heading `## 用例X：…`，0.2 清单化时归一化） | done | `docs/design/logistics/` | 0.2 | 同上 |
 | A1.50 | **aps 全功能**（UC-APS-01~07，7 UC） | todo | `docs/design/aps/` | 0.2 | 同上 |
 | A1.51 | **notify 通知派发**（无 use-cases 文件，0.2 裁决后按功能点核验） | todo | `docs/design/notify/` | 0.2 | 同上 |
 
