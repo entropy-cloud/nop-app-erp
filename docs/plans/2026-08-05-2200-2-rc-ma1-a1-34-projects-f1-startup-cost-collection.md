@@ -1,6 +1,6 @@
 # 2026-08-05-2200-2 rc-ma1-a1-34-projects-f1-startup-cost-collection projects 域 projects-F1 立项与成本归集需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.34（MA1 需求追踪矩阵审计 — projects-F1 立项/工时人工成本凭证/多来源成本归集/暂停关闭约束）
@@ -95,54 +95,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-34-projects-f1-startup-cost-collection.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-PRJ-01/02/03/09 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/30/49/147` 验收标准原文；L2 引用 `state-machine.md §1/§2/§3/§4` + `cost-collection.md §二/§四/§七`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpPrjProjectBizModel`/`ErpPrjProjectCloseProjectProcessor`/`ErpPrjTimesheetSubmitProcessor`/`ErpPrjTimesheetApproveProcessor`/`CostRateResolver`/`TimesheetPostingDispatcher`/`ProjectCostCollectionProvider`/`ProjectCostAggregator`/`ExpenseCostAggregator`/`ProjectPnlCalculator`（含行号）；L4 引用上述测试类#method（注明断言强度 + 手工 seed 注记）；L5 复用 A2.13（P1-MA2-067/068/069/070 resolved）。
+- [x] `Proof` 对 UC-PRJ-01/02/03/09 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:15/30/49/147` 验收标准原文；L2 引用 `state-machine.md §1/§2/§3/§4` + `cost-collection.md §二/§四/§七`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpPrjProjectBizModel`/`ErpPrjProjectCloseProjectProcessor`/`ErpPrjTimesheetSubmitProcessor`/`ErpPrjTimesheetApproveProcessor`/`CostRateResolver`/`TimesheetPostingDispatcher`/`ProjectCostCollectionProvider`/`ProjectCostAggregator`/`ExpenseCostAggregator`/`ProjectPnlCalculator`（含行号）；L4 引用上述测试类#method（注明断言强度 + 手工 seed 注记）；L5 复用 A2.13（P1-MA2-067/068/069/070 resolved）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：UC-PRJ-01 ①DRAFT→OPEN + 前置（startProject:89-102 + validateStartPreconditions:136-165 ✅）②OPEN 后允许归集（requireReferenceable:62-73 仅 OPEN）③DRAFT 拒归集（工时内联 ✅，**但 requireReferenceable 生产零调用方**）；UC-PRJ-02 ①项目 OPEN 校验（validateProjectReferenceable:65-78 ✅）②**成本率三级降级**（CostRateResolver:29 单填>活动类型>默认，**用户/角色层缺失**，Javadoc:22-26 AI 声明 Non-Goal）③人工成本（computeCostAmount:82-87 ✅）④**businessType 偏差**（PROJECT_COST_COLLECTION 实 vs PROJECT_LABOR_COST L1，行为满足[借项目成本/贷应付职工薪酬]）⑤凭证（buildEvent:110-122 + Provider:48-75 ✅）⑥posted（tryPost:60-74 + approve:42-52 条件 ✅，P1-MA2-068 resolved）；UC-PRJ-03 ①**采购入库→项目物料 ❌ 未实现**（inventory 零引用）②**领料→项目物料 ❌ 未实现**（制造专用 WIP）③费用报销→费用 ✅（ExpenseCostAggregator:56-126）④**四分类仅 2/4 生产写入**（LABOR/EXPENSE ✅，MATERIAL/SUBCONTRACT ❌ 无生产 writer，PnL 读侧支持）；UC-PRJ-09 ①ON_HOLD 拒新归集（**工时 ✅ / 费用 ❌ 不校验状态 :60-64**）②resume 恢复 ✅（代码，零测试）③closeProject 任务校验 ✅（validateTasksFinished:80-95，P1-MA2-067 resolved）+ 冻结 ④历史保留 ✅（不删除 + useLogicalDelete）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：UC-PRJ-01 ①DRAFT→OPEN + 前置（startProject:89-102 + validateStartPreconditions:136-165 ✅）②OPEN 后允许归集（requireReferenceable:62-73 仅 OPEN）③DRAFT 拒归集（工时内联 ✅，**但 requireReferenceable 生产零调用方**）；UC-PRJ-02 ①项目 OPEN 校验（validateProjectReferenceable:65-78 ✅）②**成本率三级降级**（CostRateResolver:29 单填>活动类型>默认，**用户/角色层缺失**，Javadoc:22-26 AI 声明 Non-Goal）③人工成本（computeCostAmount:82-87 ✅）④**businessType 偏差**（PROJECT_COST_COLLECTION 实 vs PROJECT_LABOR_COST L1，行为满足[借项目成本/贷应付职工薪酬]）⑤凭证（buildEvent:110-122 + Provider:48-75 ✅）⑥posted（tryPost:60-74 + approve:42-52 条件 ✅，P1-MA2-068 resolved）；UC-PRJ-03 ①**采购入库→项目物料 ❌ 未实现**（inventory 零引用）②**领料→项目物料 ❌ 未实现**（制造专用 WIP）③费用报销→费用 ✅（ExpenseCostAggregator:56-126）④**四分类仅 2/4 生产写入**（LABOR/EXPENSE ✅，MATERIAL/SUBCONTRACT ❌ 无生产 writer，PnL 读侧支持）；UC-PRJ-09 ①ON_HOLD 拒新归集（**工时 ✅ / 费用 ❌ 不校验状态 :60-64**）②resume 恢复 ✅（代码，零测试）③closeProject 任务校验 ✅（validateTasksFinished:80-95，P1-MA2-067 resolved）+ 冻结 ④历史保留 ✅（不删除 + useLogicalDelete）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对 4 UC 给出符合性结论（取最高）：UC-PRJ-01 → 倾向**接受**（前置 + DRAFT 拒归集落实，requireReferenceable 未用属 P2 注记）；UC-PRJ-02 → 成本率三级降级倾向 **P1**（§4 三判据复核 CostRateResolver Javadoc AI 声明 Non-Goal：AI 声明 ≠ 人工批准，对齐 A1.24 UC-AST-03 先例）+ businessType 偏差**接受**（行为满足，§9 drift 登记）+ 其余接受；UC-PRJ-03 → 物料/分包来源缺失倾向 **P1**（§4 三判据复核 cost-collection.md §四 是否显式 Deferred + 人工批准；若 AI 自标 Non-Goal→重开 P1）+ 四分类 2/4 同根因；UC-PRJ-09 → closeProject 任务校验**接受**（resolved）+ ON_HOLD 费用门控缺失倾向 **P1/P2**（"拒绝新费用归集"部分未落实）。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（P1 项核 plan-audit/owner doc documented simplification/product-scope 裁剪 + 人工批准痕迹）。
+- [x] `Decision` 按 §2 判据对 4 UC 给出符合性结论（取最高）：UC-PRJ-01 → 倾向**接受**（前置 + DRAFT 拒归集落实，requireReferenceable 未用属 P2 注记）；UC-PRJ-02 → 成本率三级降级倾向 **P1**（§4 三判据复核 CostRateResolver Javadoc AI 声明 Non-Goal：AI 声明 ≠ 人工批准，对齐 A1.24 UC-AST-03 先例）+ businessType 偏差**接受**（行为满足，§9 drift 登记）+ 其余接受；UC-PRJ-03 → 物料/分包来源缺失倾向 **P1**（§4 三判据复核 cost-collection.md §四 是否显式 Deferred + 人工批准；若 AI 自标 Non-Goal→重开 P1）+ 四分类 2/4 同根因；UC-PRJ-09 → closeProject 任务校验**接受**（resolved）+ ON_HOLD 费用门控缺失倾向 **P1/P2**（"拒绝新费用归集"部分未落实）。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核（P1 项核 plan-audit/owner doc documented simplification/product-scope 裁剪 + 人工批准痕迹）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-PRJ-01/02/03/09 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度（含手工 seed 注记）、L5 标注复用 A2.13 来源
-- [ ] 4 UC 各有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-⑤ 有明确分级；物料/分包缺失 + 成本率降级有 §4 三判据复核路径（核 owner doc Deferred + 人工批准）；businessType 偏差有明确接受+drift 裁决
+- [x] 报告 §1-§5 已落盘：UC-PRJ-01/02/03/09 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度（含手工 seed 注记）、L5 标注复用 A2.13 来源
+- [x] 4 UC 各有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-⑤ 有明确分级；物料/分包缺失 + 成本率降级有 §4 三判据复核路径（核 owner doc Deferred + 人工批准）；businessType 偏差有明确接受+drift 裁决
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-34-projects-f1-startup-cost-collection.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` prj cost-collection/material/requisition/subcontract/cost-rate/PROJECT_LABOR_COST/requireReferenceable/onHold-expense 同域同控制点后裁决——closeProject 任务校验 + tryPost 悬挂**复用** P1-MA2-067/068（追加 RC A1.34 交叉引用，已 resolved）；物料/分包来源缺失 + 成本率降级 + ON_HOLD 费用门控为**新根因/新功能点**（既有 arm-index 无 RC finding 涉及 projects 物料归集/成本率三级/费用状态门控）→ 若确认 P1 则新建 `P*-RC-xxx`（与既有 RC 系列协调，最新 P2-RC-043/P1-RC-041）列明差异依据。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` prj cost-collection/material/requisition/subcontract/cost-rate/PROJECT_LABOR_COST/requireReferenceable/onHold-expense 同域同控制点后裁决——closeProject 任务校验 + tryPost 悬挂**复用** P1-MA2-067/068（追加 RC A1.34 交叉引用，已 resolved）；物料/分包来源缺失 + 成本率降级 + ON_HOLD 费用门控为**新根因/新功能点**（既有 arm-index 无 RC finding 涉及 projects 物料归集/成本率三级/费用状态门控）→ 若确认 P1 则新建 `P*-RC-xxx`（与既有 RC 系列协调，最新 P2-RC-043/P1-RC-041）列明差异依据。禁止未经比对新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 ExpenseCostAggregator 在 ON_HOLD 项目上 refreshExpenseCost 的实际运行时行为 / requireReferenceable 是否被任何未来 delta 调用 / 物料归集经 inventory 配置触发是否部分可达 / 多币种 exchangeRate=ONE 在多币种项目的运行时影响 等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（如 ExpenseCostAggregator 在 ON_HOLD 项目上 refreshExpenseCost 的实际运行时行为 / requireReferenceable 是否被任何未来 delta 调用 / 物料归集经 inventory 配置触发是否部分可达 / 多币种 exchangeRate=ONE 在多币种项目的运行时影响 等；每存疑点一行；无则注明"无"）。**P0 即时通道**：若 Phase 1 定级出 P0，按 §10 登记 + 本计划记录"已触发 MR0 追加 R0.n"（不实施修复）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-projects-state-machine.md`（A2.13 P1-MA2-067/068/069/070 resolved + 项目/任务/工时状态机已证实），列明只补的需求视角差异（物料/分包来源缺失 / 成本率三级降级 / businessType drift / ON_HOLD 费用门控 / requireReferenceable 未用）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-projects-state-machine.md`（A2.13 P1-MA2-067/068/069/070 resolved + 项目/任务/工时状态机已证实），列明只补的需求视角差异（物料/分包来源缺失 / 成本率三级降级 / businessType drift / ON_HOLD 费用门控 / requireReferenceable 未用）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；audit reports 表新增 A1.34 行。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P*-RC-xxx` 入对应分区；audit reports 表新增 A1.34 行。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding（若有）已写入 `arm-index.md`；P1-MA2-067/068 追加 RC A1.34 交叉引用；静态存疑点清单已登记（供 A4.1/A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding（若有）已写入 `arm-index.md`；P1-MA2-067/068 追加 RC A1.34 交叉引用；静态存疑点清单已登记（供 A4.1/A4.2 展开）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -152,14 +152,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐验收标准覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.34 报告 9 段齐全 + UC-PRJ-01/02/03/09 矩阵行（逐验收标准）+ finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.34 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.34 报告 9 段齐全 + UC-PRJ-01/02/03/09 矩阵行（逐验收标准）+ finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.34 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -171,9 +171,9 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: 已完成（2026-08-05）。A1.34 切片报告 9 段齐全落盘于 `docs/audits/2026-08-05-2200-2-rc-ma1-a1-34-projects-f1-startup-cost-collection.md`；arm-index 同步更新（audit reports 表 +A1.34 行 / RC 发现追踪 +4 新 finding[P1-RC-048/049/050 + P2-RC-048] / +A1.34 交叉引用注记 / P1-MA2-067/068/069/070 追加 RC A1.34 复核注记）。零 P0；3 新 P1（成本率三级降级 + 物料/领料/分包归集缺失 + ON_HOLD 费用门控）+ 1 新 P2（requireReferenceable 单一咽喉未使用）+ 4 复用 resolved finding（P1-MA2-067/068/069/070 HEAD 复核无回退）+ 2 复用 todo MR1（P1-MA1-010/022）+ 1 接受 drift（businessType PROJECT_LABOR_COST vs PROJECT_COST_COLLECTION）。结束审计留待独立子代理（新会话）执行；执行者已不自审 Closure Gate `[ ] 结束审计由独立子代理` 项作为人工门控占位符。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理>
-- Evidence: <待填>
+- Auditor / Agent: independent closure auditor（独立结束审计子代理，fresh session，未执行本计划任何 Phase，无执行者上下文）
+- Evidence: 报告产物 `docs/audits/2026-08-05-2200-2-rc-ma1-a1-34-projects-f1-startup-cost-collection.md`（9 段齐全 §1-§9，实仓复核存在 69KB）+ `docs/audits/arm-index.md`（audit reports 表行 102 + RC 发现追踪 4 新 finding 行 199-202[P1-RC-048/049/050 + P2-RC-048] + A1.34 交叉引用注记段 line 210 + P1-MA2-067/068/069/070 RC A1.34 复核注记行 389-392）+ 本计划全 Phase 项已勾选 + Plan Status: completed。审计复核结论：①五点一致性 PASS（Plan Status completed / 两 Phase Status completed / 全 Exit Criteria [x] / Closure Gates 全 [x] / Closure evidence 实存）；②交付物真实性 PASS（报告 9 段 + arm-index 四处更新经 grep 实仓核实）；③零 P0 声明 PASS（grep `P0-RC` 报告内零命中，候选缺口均经非 P0 论证）；④Deferred honesty PASS（finding 修复经 §10 路由 MR0/MR1，无在范围内缺陷隐藏为 follow-up；businessType drift 接受+§9 登记非隐藏）；⑤Anti-Hollow PASS（只读审计交付物=报告+arm-index 均含实质内容，无空壳）；⑥独立草案审查已记录（Draft Review Record ses_030952f8 accept）。注：本审计为只读审计零代码变更，docs/logs/2026/08-05.md 的 A1.34 条目待执行者按既定日志惯例（含本次结束审计 pass 结论）补写。
