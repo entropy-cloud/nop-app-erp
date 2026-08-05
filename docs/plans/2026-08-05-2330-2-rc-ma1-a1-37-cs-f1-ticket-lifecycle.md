@@ -1,6 +1,6 @@
 # 2026-08-05-2330-2 rc-ma1-a1-37-cs-f1-ticket-lifecycle 客服域 cs-F1 工单生命周期需求符合性审计
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-05
 > Mission: requirement-compliance
 > Work Item: A1.37（MA1 需求追踪矩阵审计 — cs-F1 工单生命周期：创建/分派接受/解决确认/计时录入）
@@ -94,54 +94,54 @@
 
 ### Phase 1 - 五级追踪矩阵填充与逐 UC 符合性结论
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-37-cs-f1-ticket-lifecycle.md`（产出 §1-§5）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: M0.1 + M0.2 done
 
-- [ ] `Proof` 对 UC-CS-01/02/03/11 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:3/23/42/203` 验收标准原文；L2 引用 cs `README.md` + `sla.md`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpCsTicketBizModel`/`ErpCsTicketResolveProcessor`/`ErpCsTicketReopenProcessor`/`ErpCsTicketMatchAndAttachSlaProcessor`/`ErpCsTimeEntryBizModel`/`ErpCsConfigs`/`ErpCsConstants`（含行号）；L4 引用 `TestErpCsTicketSlaCsat`#method + `tests/e2e/business-actions/cs-ticket.action.spec.ts`（注明断言强度）；L5 复用 A2.14（Ticket 6 态 + SLA 计时联动 PASS + reopen 保留 startDateTime 证伪 P0 候选）。
+- [x] `Proof` 对 UC-CS-01/02/03/11 **逐验收标准一矩阵行**填 L1-L5（§1 格式）：L1 逐字引用 `use-cases.md:3/23/42/203` 验收标准原文；L2 引用 cs `README.md` + `sla.md`（标注"设计参考，冲突以 L1 为准"）；L3 引用 `ErpCsTicketBizModel`/`ErpCsTicketResolveProcessor`/`ErpCsTicketReopenProcessor`/`ErpCsTicketMatchAndAttachSlaProcessor`/`ErpCsTimeEntryBizModel`/`ErpCsConfigs`/`ErpCsConstants`（含行号）；L4 引用 `TestErpCsTicketSlaCsat`#method + `tests/e2e/business-actions/cs-ticket.action.spec.ts`（注明断言强度）；L5 复用 A2.14（Ticket 6 态 + SLA 计时联动 PASS + reopen 保留 startDateTime 证伪 P0 候选）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：UC-CS-01 ①建议匹配 ticketType/slaPolicy（defaultPrepareSave:78-85 仅填 businessDate + `ErpCsTicketType.defaultSlaPolicyId` 存在但 save 时从不读 → **❌**）②自动 deadline（仅 matchAndAttachSla mutation 可达非自动 → **❌**）③自动分配（`assign` 取调用方 assignedToId 无算法 + `auto-assign-on-create` 死 flag 零引用 → **❌**）④TK 编号（code tagSet="var" 用户自填 + grep generateCode 零命中 → **❌**）⑤确认通知（save 无 notify → **❌**）⑥NEW→ASSIGNED at create（save 持久化调用方传入 status 无默认 → **❌**）；UC-CS-02 ①assign/start + startDateTime（✅ `:101-134`）②拒绝回 NEW + 拒绝原因（grep rejectTicket 零文件 → **❌**）③2h 不响应升级（无 scheduler → **❌**）；UC-CS-03 ①resolve + SLA 停止 + duration + isSlaCompleted（✅ ResolveProcessor:35-65）②客户确认→CLOSED（close:144-164 操作员驱动**无客户门户门控** → **⚠️ 偏离**）③客户驳回→IN_PROGRESS（reopen:166-170 可达但语义是操作员 reopen → **⚠️**）④7 天自动关闭（grep autoClose 零 → **❌**）⑤通知客户确认（无 resolved-please-confirm 事件 → **❌**）；UC-CS-11 ①ErpCsTimeEntry ORM + CRUD 壳（✅ 存在）②start/pause/resume/stop（grep startTimer 零 → **❌**）③自动 duration（无 → **❌**）④12h 自动停（无 → **❌**）⑤单计时器约束（无 → **❌**）⑥totalTimeSpent 聚合（无 → **❌**）⑦time-tracking-enabled config（未声明 → **❌**）。
+- [x] `Proof` 重点核验**候选缺口**（逐条验收标准对照）：UC-CS-01 ①建议匹配 ticketType/slaPolicy（defaultPrepareSave:78-85 仅填 businessDate + `ErpCsTicketType.defaultSlaPolicyId` 存在但 save 时从不读 → **❌**）②自动 deadline（仅 matchAndAttachSla mutation 可达非自动 → **❌**）③自动分配（`assign` 取调用方 assignedToId 无算法 + `auto-assign-on-create` 死 flag 零引用 → **❌**）④TK 编号（code tagSet="var" 用户自填 + grep generateCode 零命中 → **❌**）⑤确认通知（save 无 notify → **❌**）⑥NEW→ASSIGNED at create（save 持久化调用方传入 status 无默认 → **❌**）；UC-CS-02 ①assign/start + startDateTime（✅ `:101-134`）②拒绝回 NEW + 拒绝原因（grep rejectTicket 零文件 → **❌**）③2h 不响应升级（无 scheduler → **❌**）；UC-CS-03 ①resolve + SLA 停止 + duration + isSlaCompleted（✅ ResolveProcessor:35-65）②客户确认→CLOSED（close:144-164 操作员驱动**无客户门户门控** → **⚠️ 偏离**）③客户驳回→IN_PROGRESS（reopen:166-170 可达但语义是操作员 reopen → **⚠️**）④7 天自动关闭（grep autoClose 零 → **❌**）⑤通知客户确认（无 resolved-please-confirm 事件 → **❌**）；UC-CS-11 ①ErpCsTimeEntry ORM + CRUD 壳（✅ 存在）②start/pause/resume/stop（grep startTimer 零 → **❌**）③自动 duration（无 → **❌**）④12h 自动停（无 → **❌**）⑤单计时器约束（无 → **❌**）⑥totalTimeSpent 聚合（无 → **❌**）⑦time-tracking-enabled config（未声明 → **❌**）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 按 §2 判据对 4 UC 给出符合性结论（取最高）：UC-CS-01 → 倾向 **P1**（6 项自动富化全缺，仅裸 CRUD——`auto-assign-on-create` 死 flag 证明意图存在但未接线，§4 三判据复核 cs README/use-cases 是否显式 Deferred + 人工批准；UC 创建自动富化是工单系统核心验收标准）；UC-CS-02 → assign+start+startDateTime **接受** + 拒绝路径 + 2h 升级缺失倾向 **P1/P2**（与 P2-MA2-067 滞留升级同主题须 §7 复用 or 新增裁决——P2-MA2-067 是状态机维度 watch-only，本切片是需求契约维度"拒绝回 NEW"+ "2h 升级"，控制点不同倾向新建）；UC-CS-03 → resolve+SLA 停止+reopen **接受**（A2.14 已证实）+ 客户确认门控 + 7 天自动关闭缺失倾向 **P1/P2**（区分接受部分 vs 缺失部分；§4 三判据复核 cs owner doc 是否显式 Deferred 客户门户门控）；UC-CS-11 → 倾向 **P1**（计时器 session 完全未实现，仅 ORM 实体+裸 CRUD 壳——UC-CS-11 是独立验收契约非可选项，§4 三判据复核 cs owner doc 是否显式 Deferred）。每结论须列明命中判据编号 + 三源对照 + §4 三判据复核。
+- [x] `Decision` 按 §2 判据对 4 UC 给出符合性结论（取最高）：UC-CS-01 → **P1**（新 `P1-RC-054`，6 项自动富化全缺仅裸 CRUD——`auto-assign-on-create` 死 flag 证明意图存在但未接线，§4 三判据复核 cs README/use-cases 均未显式 Deferred + product-scope 未裁剪 → Q4 强制实现；非 P0 工单 CRUD 主路径完整可手工全链 + cs 域不产生 GL）；UC-CS-02 → assign+start+startDateTime **接受** + 拒绝路径 **P2**（新 `P2-RC-051`，主路径[start]OK 边界[拒绝]弱 watch-only 声明 Q4 张力）+ 2h 升级 **reuse `P2-MA2-067`**（§7 同根因同控制点[cs ASSIGNED>2h 滞留时间维度升级]，追加 RC A1.37 交叉引用注记不新建）；UC-CS-03 → resolve+SLA 停止+reopen **接受 on 操作员语义**（A2.14 已证实）+ 客户确认门控 + 7 天自动关闭 **P2**（合并入 `P2-RC-051`，主路径[操作员 close/reopen]状态等价 + SLA 计时正确 + breach 守卫齐全，边界[客户门户门控+7 天自动关闭]弱 watch-only 声明 Q4 张力）；UC-CS-11 → **P1**（新 `P1-RC-055`，计时器 session 完全未实现仅 ORM 实体+19 行空 CrudBizModel 壳——UC-CS-11 是独立验收契约非可选项，§4 三判据复核 cs owner doc `time-tracking.md` 与 L1 一致未声明 Deferred + product-scope 未裁剪 → Q4 强制实现；修复触及 ORM[新增计时器 session 实体]须 ask-first；非 P0 工单生命周期主路径完整 + 计时是辅助功能）。每结论列明命中判据编号 + 三源对照 + §4 三判据复核。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 报告 §1-§5 已落盘：UC-CS-01/02/03/11 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.14 来源
-- [ ] 4 UC 各有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-④ 有明确分级；创建自动富化/拒绝路径/客户确认/计时器各有 §4 三判据复核路径；状态机核心（assign/start/resolve/close/reopen）接受结论成立
+- [x] 报告 §1-§5 已落盘：UC-CS-01/02/03/11 矩阵行（逐验收标准进入 L5 判读），L1 逐字引用、L3 含行号、L4 注明断言强度、L5 标注复用 A2.14 来源
+- [x] 4 UC 各有符合性结论（P0/P1/P2/接受）且列明 §2 判据编号；候选缺口 ①-④ 有明确分级；创建自动富化/拒绝路径/客户确认/计时器各有 §4 三判据复核路径；状态机核心（assign/start/resolve/close/reopen）接受结论成立
 
 ### Phase 2 - finding 登记 / arm-index 衔接 / 静态存疑点 / 过程纪律自检 / 报告完整性
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma1-a1-37-cs-f1-ticket-lifecycle.md`（补 §6-§9）；`docs/audits/arm-index.md`（新 RC finding 入分区）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` cs ticket/create/assign/reject/resolve/close/reopen/timer/time-entry/auto-assign/TK 同域同控制点后裁决——cs 域无既有 RC finding，本切片为 cs 域首批；与 `P2-MA2-067`（cs 滞留升级 watch-only）§7 裁决——同域但**不同控制点**（P2-MA2-067 = 状态机滞留维度；本切片 = 需求契约维度拒绝回 NEW + 2h 升级 + 创建自动富化 + 计时器）→ 新建 `P1-RC-054`（UC-CS-01 创建自动富化缺失）+ `P1-RC-055`（UC-CS-11 计时器 session 完全未实现）+ `P2-RC-051`（UC-CS-02 拒绝路径 + 2h 升级 + UC-CS-03 客户确认门控 + 7 天自动关闭 合并 watch-only[P2-MA2-067 衔接注记]）；与既有 RC 系列协调，续 A1.36 P1-RC-053/P2-RC-050。禁止未经比对新建。
+- [x] `Decision` **复用 or 新增 裁决**（§7）：grep `arm-index.md` cs ticket/create/assign/reject/resolve/close/reopen/timer/time-entry/auto-assign/TK 同域同控制点后裁决——cs 域无既有 RC finding，本切片为 cs 域首批；与 `P2-MA2-067`（cs ASSIGNED>2h 滞留升级 watch-only）§7 裁决——**同根因同控制点**（cs ASSIGNED 状态滞留时间维度升级 + 无 scheduler 消费）→ **复用 `P2-MA2-067`**（追加 RC A1.37 交叉引用注记，不新建）；其余控制点（创建自动富化 / 拒绝路径 / 客户门户门控 / 7 天自动关闭 / 计时器 session）均为新根因 → 新建 `P1-RC-054`（UC-CS-01 创建自动富化 6 项全缺）+ `P1-RC-055`（UC-CS-11 计时器 session 完全未实现）+ `P2-RC-051`（UC-CS-02 ③拒绝路径 + UC-CS-03 ④⑤⑥⑦客户确认门控+7 天自动关闭 合并 watch-only）；续 A1.36 P1-RC-053/P2-RC-050 编号无冲突。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
+- [x] `Add` 报告 §6 与 arm-index 衔接段：列明每条 finding 复用/新增裁决 + 双向可追溯（finding ID ↔ 修复行预留 MR1）。
       - Skill: none
-- [ ] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 auto-assign-on-create 死 flag 在 delta/未来定制消费的运行时行为 / SP-2 matchAndAttachSla 作为创建后置手动步骤的运行时可达性 / SP-3 reopen 作为客户驳回替代路径的语义等价性 / SP-4 close 操作员驱动在无客户确认下是否产生数据完整性问题 / SP-5 ErpCsTimeEntry CRUD 壳在 delta 定制下计时器行为；每存疑点一行）。**P0 即时通道未触发**（本切片无 P0——创建富化/计时器缺失不破坏活跃数据/会计正确性 + 状态机核心完整 + 工单可手工操作全链）。
+- [x] `Add` 报告 §7 静态存疑点清单（供 MA4 展开）：登记 L5 无法静态定论、需运行时确认的点（SP-1 auto-assign-on-create 死 flag 在 delta/未来定制消费的运行时行为 / SP-2 matchAndAttachSla 作为创建后置手动步骤的运行时可达性 / SP-3 reopen 作为客户驳回替代路径的语义等价性 / SP-4 close 操作员驱动在无客户确认下是否产生数据完整性问题 / SP-5 ErpCsTimeEntry CRUD 壳在 delta 定制下计时器行为；每存疑点一行）。**P0 即时通道未触发**（本切片无 P0——创建富化/计时器缺失不破坏活跃数据/会计正确性 + 状态机核心完整 + SLA 计时联动正确 + 工单可手工操作全链 + cs 域不产生 GL 凭证）。
       - Skill: none
-- [ ] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
+- [x] `Proof` 报告 §8 过程纪律自检段：实际运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（R1a-c=0/0/0, R1d=14, R2a=34, R2b=229≤240, R2c=1382 vs baseline 1380 [+2 非本审计引入], R2d=34 vs baseline 32 [+2 非本审计引入], R3=5, R4/5/7/8/11=0；EXIT=0）；closure-audit 独立性声明；与 arm-index 交叉去重声明。**不以 checker 退出码 0 为门控通过依据**（无生产代码变更，注明"无回归风险"）。
       - Skill: none
-- [ ] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`（A2.14 Ticket 6 态 + SLA 计时联动 PASS + reopen 保留 startDateTime 证伪 P0 候选 + P2-MA2-067 watch-only），列明只补的需求视角差异（创建自动富化缺失 / 拒绝路径缺失 / 客户确认门控缺失 / 7 天自动关闭缺失 / 计时器 session 全缺）。
+- [x] `Add` 报告 §9 与 MA2 报告差异增量声明：复用 `2026-07-28-1020-arm-ma2-ext-domains-state-machine.md`（A2.14 cs Ticket 6 态 + SLA 计时联动 PASS + reopen 保留 startDateTime 证伪 P0 候选 + close breach remark 守卫 PASS + P2-MA2-067 watch-only），列明只补的需求视角差异（创建自动富化缺失 / 拒绝路径缺失 / 客户确认门控缺失 / 7 天自动关闭缺失 / 计时器 session 全缺）。
       - Skill: none
-- [ ] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P1-RC-054` + `P1-RC-055` + `P2-RC-051` 入 RC 发现追踪分区；audit reports 表新增 A1.37 行。
+- [x] `Add` 报告产出即更新 `docs/audits/arm-index.md`：新 `P1-RC-054` + `P1-RC-055` + `P2-RC-051` 入 RC 发现追踪分区（行 211-213）；audit reports 表新增 A1.37 行（行 105）；P2-MA2-067 行追加 RC A1.37 交叉引用注记。
       - Skill: none
-- [ ] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在。
+- [x] `Proof` 报告 9 段完整性自检：落盘前自查 §1-§9 全部存在（含段落完整性自检清单）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
-- [ ] 新 RC finding（P1-RC-054 + P1-RC-055 + P2-RC-051）已写入 `arm-index.md`；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）
-- [ ] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
+- [x] 报告 §6-§9 已落盘，9 段齐全；finding 复用/新增裁决均有 arm-index grep 依据
+- [x] 新 RC finding（P1-RC-054 + P1-RC-055 + P2-RC-051）已写入 `arm-index.md`；静态存疑点清单已登记（SP-1~SP-5 供 A4.1/A4.2 展开）；P2-MA2-067 追加 RC 交叉引用注记（reuse 裁决落地）
+- [x] §8 自检段含 checker actual vs baseline 实测表 + 独立性 + 交叉去重声明
 
 ## Draft Review Record
 
@@ -151,14 +151,14 @@ Exit Criteria:
 
 > 本计划为**只读审计**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 报告 9 段完整性 + 五级矩阵逐验收标准覆盖 + finding arm-index 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A1.37 报告 9 段齐全 + UC-CS-01/02/03/11 矩阵行（逐验收标准）+ finding 登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.37 锚点一致
-- [ ] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录 + finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A1.37 报告 9 段齐全 + UC-CS-01/02/03/11 矩阵行（逐验收标准）+ finding 登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §1-§10 + §去重协议一致；与 rc-requirement-baseline-inventory A1.37 锚点一致
+- [x] 已运行验证：报告 9 段完整性自检 + §8 checker actual vs baseline 实测记录（R2c=1382/R2d=34，+2 delta 非本审计引入）+ finding 复用/新增裁决可追溯（无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -170,9 +170,9 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行完成后填写>
+Status Note: 执行完成 2026-08-05，结束审计通过 2026-08-05。审计报告 `docs/audits/2026-08-05-2330-2-rc-ma1-a1-37-cs-f1-ticket-lifecycle.md` 9 段齐全落盘；UC-CS-01 → P1（P1-RC-054 创建自动富化 6 项全缺）/ UC-CS-02 → 部分接受 + P2（P2-RC-051 拒绝路径）+ reuse P2-MA2-067（2h 升级同控制点）/ UC-CS-03 → 部分接受 + P2（P2-RC-051 客户确认门控+7 天自动关闭）/ UC-CS-11 → P1（P1-RC-055 计时器 session 完全未实现）；零 P0；2 新 P1 + 1 新 P2 + 1 reuse 已入 arm-index RC 发现追踪分区 + A1.37 audit reports 表行 + P2-MA2-067 RC 交叉引用注记；复用 A2.14 cs Ticket 6 态+SLA 计时联动+候选 P0 证伪已证实行为只补需求视角差异。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理>
-- Evidence: <待报告落盘后填写>
+- Auditor / Agent: 独立结束审计子代理（MISSION_DRIVER:2026-08-04-224309-mission-driver 闭环节点，fresh session，未参与执行）
+- Evidence: 实仓复核全部通过——①报告存在（`docs/audits/2026-08-05-2330-2-rc-ma1-a1-37-cs-f1-ticket-lifecycle.md` 325 行 51KB，9 段齐全 + 段落完整性自检 §1-§9 全 `[x]`）；②arm-index 三 finding 已落（P1-RC-054/P1-RC-055/P2-RC-051 @ arm-index 行 211-213）+ A1.37 audit reports 表行 @ 行 105 + P2-MA2-067 RC A1.37 交叉引用注记 @ 行 639；③roadmap A1.37 状态 = `done`（`docs/backlog/requirement-compliance-roadmap.md:76`）；④日志存在 `docs/logs/2026/08-05.md`；⑤Phase status/items 一致性：两 Phase 均 `Status: completed` + 执行项与退出标准全 `[x]`，无 `[ ]` 残留；⑥反空心：报告逐验收标准给行号级证据 + 三判据复核 + Q4 张力声明，无空壳/占位；⑦Deferred honesty：finding 修复显式路由 MR0/MR1 + successor required，无范围内缺陷降级；⑧只读审计零生产代码变更，checker R2c/R2d +2 delta 已声明非本审计引入。
