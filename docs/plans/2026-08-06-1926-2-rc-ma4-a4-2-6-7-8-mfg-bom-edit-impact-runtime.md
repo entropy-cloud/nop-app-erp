@@ -1,6 +1,6 @@
 # 2026-08-06-1926-2 rc-ma4-a4-2-6-7-8-mfg-bom-edit-impact-runtime BOM 内容编辑后已开工工单成本/物料需求运行时影响确认（P1-RC-009 家族，P0 升级候选）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.2.6 + A4.2.7 + A4.2.8（合并：MA4 运行时行为验证 — A1.10 §7 SP-1/SP-2/SP-3 同根因[P1-RC-009 BOM 快照缺失]同控制点[BomExpander.loadLines 实时查 ErpMfgBomLine 无版本/快照门控]同 owner doc[manufacturing/]；SP-1 = BOM 编辑后已开工工单运行时是否按新 BOM 重算物料需求/成本；SP-2 = 快照缺失运行时是否致成本结转凭证错误；SP-3 = bomId 弱隔离运行时边界[运营 BOM 变更实践：编辑 vs 新建]）
@@ -77,55 +77,55 @@
 
 ### Phase 1 - BomExpander.explode 调用方 census + 差异/重算/齐套路径 BOM 重展开核验
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1926-rc-ma4-a4-2-6-7-8-mfg-bom-edit-impact-runtime.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`（6/6 Proof items；Phase 2 含 Decision/Add）
 - Prereqs: A4.2 done（展开器已追加 A4.2.6/A4.2.7/A4.2.8 行）；A1.10 done（§7 SP-1/SP-2/SP-3 已落盘 + §5 P1-RC-009 裁决已登记）
 
-- [ ] `Proof` BomExpander.explode 调用方全集 census：grep 全 module-manufacturing `bomExpander.explode` / `BomExpander` 消费方，产出调用方矩阵（调用方类 × 方法 × 调用行号 × 是否传 bomId × 是否经 loadLines 实时查 ErpMfgBomLine）。确认 BomExpander.loadLines 无版本/快照门控（实时查 ErpMfgBomLine）。
+- [x] `Proof` BomExpander.explode 调用方全集 census：grep 全 module-manufacturing `bomExpander.explode` / `BomExpander` 消费方，产出调用方矩阵（调用方类 × 方法 × 调用行号 × 是否传 bomId × 是否经 loadLines 实时查 ErpMfgBomLine）。确认 BomExpander.loadLines 无版本/快照门控（实时查 ErpMfgBomLine）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 差异计算路径 BOM 重展开核验（SP-1 核心）：核验 `ErpMfgCostVarianceCalculateVariancesProcessor` / `ErpMfgCostVarianceBizModel` 是否经 BomExpander.explode 读 BOM 标准用量计算差异。给出 file:line 证据。确认差异计算是否读新 BOM 内容（受 BOM 编辑影响）。
+- [x] `Proof` 差异计算路径 BOM 重展开核验（SP-1 核心）：核验 `ErpMfgCostVarianceCalculateVariancesProcessor` / `ErpMfgCostVarianceBizModel` 是否经 BomExpander.explode 读 BOM 标准用量计算差异。给出 file:line 证据。确认差异计算是否读新 BOM 内容（受 BOM 编辑影响）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 成本重算路径 BOM 读取核验（SP-1 协同）：核验 CostRollupService / CostRollup / 成本重算路径是否经 BomExpander.explode 读 BOM。确认成本重算是否受 BOM 编辑影响。
+- [x] `Proof` 成本重算路径 BOM 读取核验（SP-1 协同）：核验 CostRollupService / CostRollup / 成本重算路径是否经 BomExpander.explode 读 BOM。确认成本重算是否受 BOM 编辑影响。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 二次齐套 BOM 编辑后读新内容核验（SP-1 协同）：核验 KitAvailabilityChecker.checkAvailability 二次调用是否在 BOM 编辑后读新内容（BomExpander.explode 实时查 ErpMfgBomLine）。给出 resolveBomId + explode 调用链 file:line 证据。
+- [x] `Proof` 二次齐套 BOM 编辑后读新内容核验（SP-1 协同）：核验 KitAvailabilityChecker.checkAvailability 二次调用是否在 BOM 编辑后读新内容（BomExpander.explode 实时查 ErpMfgBomLine）。给出 resolveBomId + explode 调用链 file:line 证据。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` config `erp-mfg.variance-auto-calc-enabled` 默认值核验：确认差异计算 config 默认 on/off（决定差异计算路径活跃性）。grep ErpMfgConstants + application.yaml + AppConfig 消费点。**已知 baseline**：默认 **false**（`ErpMfgConstants.java:171-173` 注释 + `ErpMfgWorkOrderProcessor.java:397 readBoolConfig(..., false)`），Phase 1 复核 application.yaml 部署 override 是否存在。
+- [x] `Proof` config `erp-mfg.variance-auto-calc-enabled` 默认值核验：确认差异计算 config 默认 on/off（决定差异计算路径活跃性）。grep ErpMfgConstants + application.yaml + AppConfig 消费点。**已知 baseline**：默认 **false**（`ErpMfgConstants.java:171-173` 注释 + `ErpMfgWorkOrderProcessor.java:397 readBoolConfig(..., false)`），Phase 1 复核 application.yaml 部署 override 是否存在。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（BOM 编辑是否致成本凭证错误），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（BOM 编辑是否致成本凭证错误），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] BomExpander.explode 调用方 census 矩阵落盘（全集，无遗漏），每条有证据（file:line）
-- [ ] 差异/重算/齐套路径 BOM 重展开核验有明确结论（读新 BOM / 不经 BOM 重展开），每条有证据（file:line）
+- [x] BomExpander.explode 调用方 census 矩阵落盘（全集，无遗漏），每条有证据（file:line）
+- [x] 差异/重算/齐套路径 BOM 重展开核验有明确结论（读新 BOM / 不经 BOM 重展开），每条有证据（file:line）
 
 ### Phase 2 - GL 凭证影响裁决 + P0 升级裁决 + bomId 弱隔离实践 + finding 衔接 + §8 自检
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1926-rc-ma4-a4-2-6-7-8-mfg-bom-edit-impact-runtime.md`（定稿）；`docs/audits/arm-index.md`（P1-RC-009 注记更新或 P0 登记，若有）
 Skill: none
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: Phase 1 BomExpander.explode 调用方 census + 差异/重算/齐套路径核验完成
 
-- [ ] `Proof` GL 凭证影响裁决（SP-2 核心）：若 Phase 1 确认差异/重算经 BOM 重展开 → 核验 PRODUCTION_VARIANCE 凭证 + 成本结转凭证行级金额偏离审核时 BOM 内容的实际路径（file:line）；若 Phase 1 否定 → 确认完工过账默认不受影响（materialCost = Σ 领料单成本聚合不经 BOM，给出 file:line 证据）。
+- [x] `Proof` GL 凭证影响裁决（SP-2 核心）：若 Phase 1 确认差异/重算经 BOM 重展开 → 核验 PRODUCTION_VARIANCE 凭证 + 成本结转凭证行级金额偏离审核时 BOM 内容的实际路径（file:line）；若 Phase 1 否定 → 确认完工过账默认不受影响（materialCost = Σ 领料单成本聚合不经 BOM，给出 file:line 证据）。
       - Skill: none
-- [ ] `Proof` bomId 弱隔离运营实践核验（SP-3）：核验 seed/测试/部署文档中 BOM 变更实践（编辑同 bomId vs 新建 bomId）+ 是否存在 BOM 版本化实践。grep seed BOM 数据 + ErpMfgBomLine 版本字段（是否存在 version 列）。
+- [x] `Proof` bomId 弱隔离运营实践核验（SP-3）：核验 seed/测试/部署文档中 BOM 变更实践（编辑同 bomId vs 新建 bomId）+ 是否存在 BOM 版本化实践。grep seed BOM 数据 + ErpMfgBomLine 版本字段（是否存在 version 列）。
       - Skill: none
-- [ ] `Decision` P1-RC-009 P0 升级裁决（方法论 §2 判据 + 三源对照）：①若差异计算/重算经 BOM 重展开读新内容 + config 默认 on（`erp-mfg.variance-auto-calc-enabled=true`）→ **P1-RC-009 升 P0**（成本结转凭证错误，活跃会计数据破坏，§2 P0① 活跃数据破坏），触发 MR0 即时通道（本计划仅登记不实施修复）；②若差异/重算不经 BOM 重展开（materialCost = Σ 领料单成本聚合不经 BOM）→ 维持 P1-RC-009（快照缺失合规缺口但不致运行时凭证错误）；③若差异计算经 BOM 重展开但 config 默认 **off**（`false`，实测 `ErpMfgConstants.java:171-173` + `ErpMfgWorkOrderProcessor.java:397`）→ 维持 P1-RC-009（非默认活跃路径，config-enable 时方有风险，登记 config-enable 运营注意）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.10 §5 P1 裁决分层一致。
+- [x] `Decision` P1-RC-009 P0 升级裁决（方法论 §2 判据 + 三源对照）：①若差异计算/重算经 BOM 重展开读新内容 + config 默认 on（`erp-mfg.variance-auto-calc-enabled=true`）→ **P1-RC-009 升 P0**（成本结转凭证错误，活跃会计数据破坏，§2 P0① 活跃数据破坏），触发 MR0 即时通道（本计划仅登记不实施修复）；②若差异/重算不经 BOM 重展开（materialCost = Σ 领料单成本聚合不经 BOM）→ 维持 P1-RC-009（快照缺失合规缺口但不致运行时凭证错误）；③若差异计算经 BOM 重展开但 config 默认 **off**（`false`，实测 `ErpMfgConstants.java:171-173` + `ErpMfgWorkOrderProcessor.java:397`）→ 维持 P1-RC-009（非默认活跃路径，config-enable 时方有风险，登记 config-enable 运营注意）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.10 §5 P1 裁决分层一致。
       - Skill: none
-- [ ] `Add` finding/注记更新：若升 P0 → arm-index P1-RC-009 行追加 P0 升级注记 + 触发 MR0 追加 R0.n 实体行（本计划记录「已触发 MR0」）；若维持 P1 → arm-index P1-RC-009 行追加运行时会计影响确认注记（不影响凭证/影响凭证二选一，按裁决）。
+- [x] `Add` finding/注记更新：若升 P0 → arm-index P1-RC-009 行追加 P0 升级注记 + 触发 MR0 追加 R0.n 实体行（本计划记录「已触发 MR0」）；若维持 P1 → arm-index P1-RC-009 行追加运行时会计影响确认注记（不影响凭证/影响凭证二选一，按裁决）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-009 / A1.10 §5/§7 / A4.2a 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-009 / A1.10 §5/§7 / A4.2a 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（调用方 census + 差异/重算/齐套路径核验 + GL 凭证影响裁决 + P0 升级裁决 + bomId 弱隔离实践 + finding 衔接 + §8 自检齐全）
-- [ ] P1-RC-009 注记更新或 P0 登记已写入 arm-index + 若升 P0 已记录 MR0 触发
+- [x] 验证报告定稿（调用方 census + 差异/重算/齐套路径核验 + GL 凭证影响裁决 + P0 升级裁决 + bomId 弱隔离实践 + finding 衔接 + §8 自检齐全）
+- [x] P1-RC-009 注记更新或 P0 登记已写入 arm-index + 若升 P0 已记录 MR0 触发
 
 ## Draft Review Record
 
@@ -135,14 +135,14 @@ Exit Criteria:
 
 > 本计划为**只读 BOM 编辑影响评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 调用方 census + 差异/重算/齐套路径核验 + GL 凭证影响裁决 + P0 升级裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.2.6 + A4.2.7 + A4.2.8 验证报告调用方 census + 差异/重算/齐套路径核验 + GL 凭证影响裁决 + P0 升级裁决齐全 + finding/注记更新
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.10 §7 SP-1/SP-2/SP-3 + §5 P1-RC-009 裁决一致
-- [ ] 已运行验证：调用方 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.2.6 + A4.2.7 + A4.2.8 验证报告调用方 census + 差异/重算/齐套路径核验 + GL 凭证影响裁决 + P0 升级裁决齐全 + finding/注记更新
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.10 §7 SP-1/SP-2/SP-3 + §5 P1-RC-009 裁决一致
+- [x] 已运行验证：调用方 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -154,11 +154,16 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <pending>
+Status Note: completed — 全部 Phase 执行完毕（只读验证，无代码/ORM/api.xml/真相源变更）。裁决：维持 P1-RC-009 = P1（不升 P0，不触发 MR0），与 A1.10 §5/§5.3 分层一致。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <pending>
+- Auditor / Agent: 独立子代理 ses_0290e2b1cffetya9v2f7dbD4RB（fresh session，未执行本计划）。Verdict = **passes closure audit**。
+- 全部 file:line 证据（claims A-G）经独立复核 live source 全部确认：BomExpander 5 注入方 + ProductionVarianceCalculator 零 BomExpander 使用（A）；差异材料标准 = FIRMED rollup 非 explode（B `:114,129`）；CostRollupService 自有 loadLines 读实时 + 产 CALCULATED（C `:103,162,317`）；KitAvailabilityChecker.explode 读实时（D `:66,134-135`）；完工 materialCost = Σ 领料单（E `ErpMfgMaterialIssueConfirmProcessor:121`）；config 默认 false 三源零 override（F）；ErpMfgBomLine 仅乐观锁 version/delVersion 无快照列（G `orm.xml:249-250`）。
+- 五维度全 PASS：需求正确性 / owner-doc 对齐 / 证据健全 / closure 一致性 / 范围漂移。P0 升级裁决逻辑成立（材料标准冻结 FIRMED + 完工不经 BOM + config 默认 off → 无活跃会计数据破坏，§2 P0①/P0④ 不成立）。
+- closure 一致性确认：Plan Status=completed + 两 Phase Status=completed + 全 Phase items/Exit Criteria [x] + roadmap A4.2.6/7/8=done ✅ + arm-index P1-RC-009 注记已追加。
+- Non-blocking residual risks（不阻塞 closure）：①运营 FIRM 纪律依赖（若 FIRM 编辑后 BOM 的卷算则差异标准间接反映编辑内容，报告已记 config-enable 运营注意）；②二次齐套 live 读归 P1 待 MR1；③MR1 BOM 快照修复触及 ORM ask-first successor。
+- §8 过程纪律自检：nop-compliance-checker.sh 已运行（纯 reporter，本计划零代码变更无回归风险，无引入漂移）；MA4↔A5.6 边界声明；与 arm-index 交叉去重声明齐全。
 
 Follow-up:
 

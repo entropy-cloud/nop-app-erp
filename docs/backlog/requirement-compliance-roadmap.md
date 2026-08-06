@@ -156,9 +156,9 @@
 | A4.2.3 | A1.8 SP-3 + A1.9 SP-3（合并：MR1 P1-RC-008 预留写路径 successor 同根因同控制点）— MR1 修复落地后 reservedQty/availableQuantity 实时一致性 + 跨工单并发预留 lost-update 防护 | todo | 同上 §7 + `2026-08-02-2042-3-...-a1-9-...md` §7 | A4.2 done | 同上 |
 | A4.2.4 | A1.9 SP-1 + A1.11 SP-1（合并：完工触发差异过账失败告警通道 notify 投递 successor 同根因同控制点）— IErpSysNotificationBiz.notify 投递成功率 + 运营响应闭环（P1-MA4-007 resolved R1.16 运行时落地） | todo | `2026-08-02-2042-3-...-a1-9-...md` §7 + `2026-08-02-2245-...-a1-11-...md` §7 | A4.2 done | 同上 |
 | A4.2.5 | A1.9 SP-2 + A1.31 SP-2（合并：UC-MFG-09 返工工单工作流 同根因同控制点）— REJECTED 工单 IN_PROCESS 操作员实际工作流 + 关联原工单可追溯性 | todo | 同上 §7 + `2026-08-05-1830-2-...-a1-31-...md` §7 | A4.2 done | 同上 |
-| A4.2.6 | A1.10 SP-1 — BOM 内容编辑后已开工工单运行时是否按新 BOM 重算物料需求/成本（P1-RC-009 运行时影响） | todo | `2026-08-02-2231-1-...-a1-10-...md` §7 | A4.2 done | 同上 |
-| A4.2.7 | A1.10 SP-2 — BOM 快照缺失运行时是否致成本结转凭证错误（P1-RC-009 GL 凭证金额偏差） | todo | 同上 §7（与 SP-1 协同） | A4.2 done | 同上 |
-| A4.2.8 | A1.10 SP-3 — bomId 弱隔离运行时边界（运营 BOM 变更实践：编辑 vs 新建） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.6 | A1.10 SP-1 — BOM 内容编辑后已开工工单运行时是否按新 BOM 重算物料需求/成本（P1-RC-009 运行时影响） | done ✅ | `2026-08-02-2231-1-...-a1-10-...md` §7 + `docs/audits/2026-08-06-1926-rc-ma4-a4-2-6-7-8-mfg-bom-edit-impact-runtime.md` | A4.2 done | 同上 |
+| A4.2.7 | A1.10 SP-2 — BOM 快照缺失运行时是否致成本结转凭证错误（P1-RC-009 GL 凭证金额偏差） | done ✅ | 同上 §7 + 同上验证报告（与 SP-1 协同） | A4.2 done | 同上 |
+| A4.2.8 | A1.10 SP-3 — bomId 弱隔离运行时边界（运营 BOM 变更实践：编辑 vs 新建） | done ✅ | 同上 §7 + 同上验证报告 | A4.2 done | 同上 |
 | A4.2.9 | A1.11 SP-2 — best-effort 基因链写失败运行时缺口可观测性（BatchGenealogyWriter catch 频率 + LOG.error 采集；P1-RC-010） | todo | `2026-08-02-2245-...-a1-11-...md` §7 | A4.2 done | 同上 |
 | A4.2.10 | A1.11 SP-3 + A1.21 SP-3 + A1.24 SP-4 + A1.27 SP-4 + A1.33 SP-1 + A1.36 SP-5 + A1.41 SP-1 + A1.44 SP-5（合并：8 域 dashboard orgId 行级权限 R1.29 ErpOrgIsolationQueryTransformer 对 IDaoProvider/IOrmTemplate 直访路径注入 同根因[P1-MA2-093]同控制点）— 多组织部署跨组织 dashboard 查询泄漏 | done ✅ | 同上 §7（8 切片 §7 交叉引用）+ `docs/audits/2026-08-06-1926-rc-ma4-dashboard-orgid-rowlevel-permission-leak.md`（与 A4.1.25 合并执行：维持 P1-MA2-093 resolved R1.29 + 新建 P2-RC-086 watch-only；8 扩展域[mfg/sal/ast/inv/qa/prj/mnt/master-data]直访路径 census 全覆盖，结论同 A4.1.25——R1.29 transformer 非覆盖直访 + 绝大多数零 orgId scope + config-gate 默认关闭无活跃泄漏 → §2 P2①） | A4.2 done | 同上 |
 | A4.2.11 | A1.11 SP-4 — 召回报告 degraded 模式运行时业务覆盖（受影响成品批次集合是否满足召回需求） | todo | 同上 §7 | A4.2 done | 同上 |
