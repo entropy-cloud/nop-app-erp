@@ -131,7 +131,7 @@
 | A4.1.5 | A1.2 §7-2 — 承付凭证 header 借贷不平时报暴露（试算平衡/三表是否过滤 COMMITMENT 影子凭证） | done ✅ | 同上 §7（A1.7 已静态证 BS/IS 安全） | A4.1 done | 同上 |
 | A4.1.6 | A1.2 §7-3 — `fin-budget-vs-actual.value.spec.ts` 是否断言 commitment 独立列（E2E 断言强度评估） | done ✅ | 同上 §7 + `tests/e2e/` + `docs/audits/2026-08-06-0847-rc-ma4-a4-1-6-budget-vs-actual-e2e-assertion-strength.md` | A4.1 done | 同上 |
 | A4.1.7 | A1.2 §7-4 — 承付 release-on-return（接入点 #4）config 默认 off 实际启用状态（部署普查） | done ✅ | 同上 §7 + `budget.md` + `docs/audits/2026-08-07-0944-rc-ma4-a4-1-7-commitment-release-on-return-config-deployment-census.md` | A4.1 done | 同上 |
-| A4.1.8 | A1.3 §7-1 — `PartnerBalanceUpdater.sumOpen` 对 WRITTEN_OFF 隐式排除（PARTIAL→WRITTEN_OFF 边界运行时未覆盖） | todo | `2026-08-02-1715-...-a1-3-...md` §7 | A4.1 done | 同上 |
+| A4.1.8 | A1.3 §7-1 — `PartnerBalanceUpdater.sumOpen` 对 WRITTEN_OFF 隐式排除（PARTIAL→WRITTEN_OFF 边界运行时未覆盖） | done ✅ | 同上 §7 + `docs/audits/2026-08-07-0944-rc-ma4-a4-1-8-partner-balance-written-off-implicit-exclusion.md` | A4.1 done | 同上 |
 | A4.1.9 | A1.3 §7-2 — `TestErpFinBadDebt` 凭证 businessType 枚举断言强度（未断言 BAD_DEBT_WRITE_OFF） | todo | 同上 §7 | A4.1 done | 同上 |
 | A4.1.10 | A1.3 §7-3 — `TestErpFinAutoReconciliation` 禁用路径覆盖缺口（@NopTestConfig 限制） | todo | 同上 §7 | A4.1 done | 同上 |
 | A4.1.11 | A1.4 §7-1 — UC-FIN-09/14 对方账号缺失致错误 MATCHED 的实际触发率（关联 P1-RC-004） | todo | `2026-08-02-1815-...-a1-4-...md` §7 | A4.1 done | 同上 |

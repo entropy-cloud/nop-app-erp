@@ -1,6 +1,6 @@
 # 2026-08-07-0944-2 rc-ma4-a4-1-8-partner-balance-written-off-implicit-exclusion PartnerBalanceUpdater.sumOpen 对 WRITTEN_OFF 隐式排除运行时核验
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Mission: requirement-compliance
 > Work Item: A4.1.8（MA4 运行时行为验证 — A1.3 §7-1：`PartnerBalanceUpdater.sumOpen` 对 WRITTEN_OFF 隐式排除的边界运行时核验，PARTIAL→WRITTEN_OFF 边缘场景）
@@ -68,45 +68,45 @@
 
 ### Phase 1 - PARTIAL→WRITTEN_OFF 边界 sumOpen 余额正确性核验
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-0944-rc-ma4-a4-1-8-partner-balance-written-off-implicit-exclusion.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done（展开器已追加 A4.1.8 行）；A1.3 done（§7 存疑点 1 已落盘 + §5.2 注意点②③接受）
 
-- [ ] `Proof` 隐式排除依赖链核验：给出 sumOpen 查询路径（`PartnerBalanceUpdater.java:46-62`，notIn 仅 SETTLED/CANCELLED :51-52）+ WRITTEN_OFF 进入查询但贡献 0 的机制（`executeWriteOff:168-169` open-=amount）+ 守卫链（`validateAmount:285-294` amount ≤ openAmountFunctional + amount > 0）。证实「PARTIAL→WRITTEN_OFF 时 open 经 open-=amount 归零」的静态推理。
+- [x] `Proof` 隐式排除依赖链核验：给出 sumOpen 查询路径（`PartnerBalanceUpdater.java:46-62`，notIn 仅 SETTLED/CANCELLED :51-52）+ WRITTEN_OFF 进入查询但贡献 0 的机制（`executeWriteOff:168-169` open-=amount）+ 守卫链（`validateAmount:285-294` amount ≤ openAmountFunctional + amount > 0）。证实「PARTIAL→WRITTEN_OFF 时 open 经 open-=amount 归零」的静态推理。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 既有测试边界覆盖核验：grep `module-finance/erp-fin-service/src/test/java/` 坏账 + 核销 + partner balance 联合测试，确认是否存在「先部分核销（PARTIAL）再坏账（WRITTEN_OFF）后断言 partner.receivableBalance」的边界用例。引用 `TestErpFinBadDebt` / `TestErpFinPartnerBalance` / `TestErpFinReconciliation` 全集，标注断言强度（强/弱/无该边界）。
+- [x] `Proof` 既有测试边界覆盖核验：grep `module-finance/erp-fin-service/src/test/java/` 坏账 + 核销 + partner balance 联合测试，确认是否存在「先部分核销（PARTIAL）再坏账（WRITTEN_OFF）后断言 partner.receivableBalance」的边界用例。引用 `TestErpFinBadDebt` / `TestErpFinPartnerBalance` / `TestErpFinReconciliation` 全集，标注断言强度（强/弱/无该边界）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA2 复用：引用 MA2 A2.5c §1.2/§2.1（WRITTEN_OFF 经 executeWriteOff 可达 + 5 态完整）+ §1.4（期末门禁排除 WRITTEN_OFF），声明本验证只补「PARTIAL→WRITTEN_OFF 边界 sumOpen 余额」差异，不重新核实状态机行为。
+- [x] `Proof` MA2 复用：引用 MA2 A2.5c §1.2/§2.1（WRITTEN_OFF 经 executeWriteOff 可达 + 5 态完整）+ §1.4（期末门禁排除 WRITTEN_OFF），声明本验证只补「PARTIAL→WRITTEN_OFF 边界 sumOpen 余额」差异，不重新核实状态机行为。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 边界符合性结论（方法论 §2 判据 + 三源对照）：①若静态守卫链证实 open 归零（边界成立）+ 既有测试覆盖该边界 → 接受；②若边界成立但既有测试未覆盖该边界 → P2（测试覆盖缺口，非行为缺陷，登记 successor 补边界测试）；③若发现不变量可被绕过（WRITTEN_OFF 项 openAmount 非 0 致余额虚高）→ P1（UC-FIN-08 断言③恒等式破坏）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.3 §5.2 注意点②③接受结论分层一致。
+- [x] `Decision` 边界符合性结论（方法论 §2 判据 + 三源对照）：①若静态守卫链证实 open 归零（边界成立）+ 既有测试覆盖该边界 → 接受；②若边界成立但既有测试未覆盖该边界 → P2（测试覆盖缺口，非行为缺陷，登记 successor 补边界测试）；③若发现不变量可被绕过（WRITTEN_OFF 项 openAmount 非 0 致余额虚高）→ P1（UC-FIN-08 断言③恒等式破坏）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.3 §5.2 注意点②③接受结论分层一致。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 隐式排除依赖链证据落盘（sumOpen 查询路径 + WRITTEN_OFF 贡献 0 机制 + 守卫链 file:line 齐备）
-- [ ] 边界符合性结论明确（接受 / P2 测试覆盖缺口 / P1 余额错误），与 A1.3 §5.2 注意点②③接受结论分层一致
+- [x] 隐式排除依赖链证据落盘（sumOpen 查询路径 + WRITTEN_OFF 贡献 0 机制 + 守卫链 file:line 齐备）
+- [x] 边界符合性结论明确（接受 / P2 测试覆盖缺口 / P1 余额错误），与 A1.3 §5.2 注意点②③接受结论分层一致
 
 ### Phase 2 - finding 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-0944-rc-ma4-a4-1-8-partner-balance-written-off-implicit-exclusion.md`（定稿）；`docs/audits/arm-index.md`（若新 finding/successor）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 边界核验 + 结论完成
 
-- [ ] `Add` 若定 P1/P2 → 按 §7 grep arm-index finance AR-AP 核销/坏账/往来余额同域同控制点裁决「复用 or 新建」`P*-RC-xxx` 或 successor 行，写入 arm-index MA4 分区；双向可追溯注记（finding → MR1 / successor 触发条件）。若接受 → 在报告登记「无新 finding，归 A1.3 §5.2 注意点②接受 + §7 存疑点 1 闭合」。禁止未经比对新建。
+- [x] `Add` 若定 P1/P2 → 按 §7 grep arm-index finance AR-AP 核销/坏账/往来余额同域同控制点裁决「复用 or 新建」`P*-RC-xxx` 或 successor 行，写入 arm-index MA4 分区；双向可追溯注记（finding → MR1 / successor 触发条件）。若接受 → 在报告登记「无新 finding，归 A1.3 §5.2 注意点②接受 + §7 存疑点 1 闭合」。禁止未经比对新建。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.3 §5.2 注意点②③ / MA2 A2.5c WRITTEN_OFF 一致排除 / P2-MA2-039 坏账状态机隔离 config-gated 的复用关系）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.3 §5.2 注意点②③ / MA2 A2.5c WRITTEN_OFF 一致排除 / P2-MA2-039 坏账状态机隔离 config-gated 的复用关系）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（依赖链 + 边界结论 + finding/successor 衔接 + §8 自检齐全）
-- [ ] 新 finding/successor（若有）已写入 arm-index MA4 分区并有 grep 依据（本验证若维持接受则无写入，本条 N/A 满足）
+- [x] 验证报告定稿（依赖链 + 边界结论 + finding/successor 衔接 + §8 自检齐全）
+- [x] 新 finding/successor（若有）已写入 arm-index MA4 分区并有 grep 依据（本验证若维持接受则无写入，本条 N/A 满足）
 
 ## Draft Review Record
 
@@ -116,14 +116,14 @@ Exit Criteria:
 
 > 本计划为**只读运行时核验**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 隐式排除依赖链完整性 + 边界结论 + finding/successor 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.8 验证报告依赖链 + 边界结论齐全 + finding/successor（若有）登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §去重协议一致；与 A1.3 §7-1 + §5.2 注意点②③ + MA2 A2.5c 一致
-- [ ] 已运行验证：依赖链 + 边界结论完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.8 验证报告依赖链 + 边界结论齐全 + finding/successor（若有）登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §去重协议一致；与 A1.3 §7-1 + §5.2 注意点②③ + MA2 A2.5c 一致
+- [x] 已运行验证：依赖链 + 边界结论完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -135,13 +135,15 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <（独立结束审计通过后填入）>
+Status Note: 独立结束审计（fresh session 子代理，不重用执行者上下文）通过。验证报告 `docs/audits/2026-08-07-0944-rc-ma4-a4-1-8-partner-balance-written-off-implicit-exclusion.md`（`> Audit Status: closed`，10 段齐全）依赖链 + 边界结论（接受 + P2-RC-082 测试覆盖缺口）+ §8 自检齐全；plan Phase 1+2 全 `[x]` + Status `completed`；roadmap A4.1.8 done；docs/logs/2026/08-07.md:3 已记录。审计性质 = 只读核验，无代码/ORM/api.xml/真相源变更，故删除 build/test 门控。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立子代理（fresh session，未起草/未执行本计划，仅做结束审计）
+- Evidence: 逐项复核 Phase 1 依赖链 file:line 命中实时代码——`PartnerBalanceUpdater.java#sumOpen:46-62`（`notIn("status",[SETTLED,CANCELLED]):51-52` **未显式排除 WRITTEN_OFF**，实测确认）；`ErpFinBadDebtWriteOffProcessor.java#writeOff:19-29`（`:22` 恒取 `item.getOpenAmountFunctional()` 全量剩余 open，报告"比计划认知更强"关键发现确认）；`ErpFinBadDebtProcessor.java#executeWriteOff:163-182`（open-=amount:168-169 / status=WRITTEN_OFF:170 / 凭证:173-181）+ `validateAmount:285-294`（amount ≤ 0 / amount > open 双守卫）+ `requireOpenArApItem:255-271`（仅 OPEN/PARTIAL 可达 writeOff）全部命中。静态推理链成立：PARTIAL→writeOff(全量 open)→executeWriteOff open-=amount→open 恒归零→WRITTEN_OFF 项 sumOpen 贡献 0。测试方法行号实测命中 5/5（testWriteOffSetsStatusAndVoucherNoPL:140 / testReceivableBalanceViaReconciliation:70 / testPayableBalanceDrivenByOpenAmount:46 / testRecoveryRestoresArApItem:179 / testProvisionExcludesNegativeAndWrittenOff:114），grep PARTIAL+writeOff+receivableBalance 组合零命中 → P2 测试覆盖缺口确认。
+- Evidence: Phase 2 衔接复核——`docs/audits/arm-index.md:294` P2-RC-082 entry 落盘且证据与报告一致（含"新根因"grep 比对 + 与 P2-MA2-039 不同控制点声明 + MR1 successor 触发条件）；§8 重跑 `bash docs/audits/nop-compliance-checker.sh` actual == baseline（R1a/R1b/R1c=0/0/0、R1d=14，finance 模块零命中，证实只读无回归风险）；docs/logs/2026/08-07.md:3 已记录 A4.1.8 完成条目。
+- Evidence: 五点一致性已验证——Plan Status: completed / Phase 1 Status: completed + Exit Criteria 2/2 [x] / Phase 2 Status: completed + Exit Criteria 2/2 [x] / Closure Gates 8/8 [x] / Closure 本节真实证据（非占位符）。反空洞：验证报告非空壳（10 段、212 行、file:line 锚点齐备且经独立复核命中实时代码）。延迟诚实：P2-RC-082 为 watch-only successor（纯测试代码补强，预授权类目，不触及 ORM/过账/数据迁移），无已确认缺陷隐藏为 follow-up。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- MR1（R1.0→RC-R1.n）按 P2-RC-082 successor 触发条件展开：补「PARTIAL 辅助账项 → writeOff(剩余 open) → 断言 partner.receivableBalance」边界测试用例（纯测试代码，roadmap 预授权类目，不阻塞本验证闭环）。
