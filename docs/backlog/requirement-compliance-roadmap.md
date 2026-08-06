@@ -138,7 +138,7 @@
 | A4.1.12 | A1.4 §7-2 — UC-FIN-09/14 调整凭证行级 Dr/Cr/科目/金额正确性（`BankReconAdjAcctDocProvider.createFacts`） | done ✅ | 同上 §7 + `docs/audits/2026-08-06-1044-rc-ma4-a4-1-12-bank-recon-adj-voucher-line-correctness.md` | A4.1 done | 同上 |
 | A4.1.13 | A1.4 §7-3 — UC-FIN-09/14 跨多条 statement refNo 重复的实际检出（关联 P2-RC-001） | done ✅ | 同上 §7 + `docs/audits/2026-08-07-1400-rc-ma4-a4-1-13-bank-recon-cross-statement-refno-dedup-detection.md` | A4.1 done | 同上 |
 | A4.1.14 | A1.4 §7-4 — UC-FIN-14 断言⑤ config key 默认 true 但无 scheduler 消费的运维认知（关联 P1-RC-005） | done ✅ | 同上 §7 + `docs/audits/2026-08-07-1400-rc-ma4-a4-1-14-bank-recon-auto-reverse-config-orphan-awareness.md` | A4.1 done | 同上 |
-| A4.1.15 | A1.5 §7-1 — FIFO 物料 + 到岸成本 delta 层 + 后续出库消耗数值正确性（关联 P2-RC-004；**触及成本过账行为探针**） | ready | `2026-08-02-2045-...-a1-5-...md` §7 + `costing-methods.md` | A4.1 done | 同上 |
+| A4.1.15 | A1.5 §7-1 — FIFO 物料 + 到岸成本 delta 层 + 后续出库消耗数值正确性（关联 P2-RC-004；**触及成本过账行为探针**） | done ✅ | 同上 §7 + `docs/audits/2026-08-07-1400-rc-ma4-a4-1-15-fifo-landed-cost-delta-layer-consumption-correctness.md`（**升级 P2-RC-004 = P1**：delta 层结构性永不被消耗，LC-L3 FIFO 路径未实现） | A4.1 done | 同上 |
 | A4.1.16 | A1.5 §7-2 — FIFO 物料到岸成本红冲 delta 层部分消耗后物理删除余额守恒（`removeFifoAdjustLayer`；**触及数据删除行为探针**） | todo | 同上 §7（复用 P2-MA2-029 子场景） | A4.1 done | 同上 |
 | A4.1.17 | A1.5 §7-3 — P1-MA2-085 SELECT FOR UPDATE 路径在真实 DB（PG/MySQL）的锁行为 | todo | 同上 §7 | A4.1 done | 同上 |
 | A4.1.18 | A1.6 §7-1 — PC-3 AR/AP reminder 模式运行时行为（关联 P2-RC-006） | todo | `2026-08-02-2100-...-a1-6-...md` §7 + `period-close.md` | A4.1 done | 同上 |

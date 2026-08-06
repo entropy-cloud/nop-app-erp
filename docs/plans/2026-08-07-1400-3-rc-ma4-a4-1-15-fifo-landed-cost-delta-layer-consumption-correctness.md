@@ -1,6 +1,6 @@
 # 2026-08-07-1400-3 rc-ma4-a4-1-15-fifo-landed-cost-delta-layer-consumption-correctness FIFO 物料到岸成本 delta 层后续出库消耗数值正确性评估
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Mission: requirement-compliance
 > Work Item: A4.1.15（MA4 运行时行为验证 — A1.5 §7-1：UC-FIN-10 LC-L3 FIFO 物料 + 到岸成本 delta 层 + 后续出库消耗的运行时数值正确性，关联 P2-RC-004；**触及成本过账行为探针**，但本验证为只读代码路径推理 + 既有测试覆盖普查，不修改成本过账核心路径代码）
@@ -71,47 +71,54 @@
 
 ### Phase 1 - FIFO delta 层消耗数值正确性与测试覆盖边界评估
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-1400-rc-ma4-a4-1-15-fifo-landed-cost-delta-layer-consumption-correctness.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done（展开器已追加 A4.1.15 行）；A1.5 done（§7 存疑点 1 已落盘 + §6 P2-RC-004 已登记 + §3 测试覆盖缺口已记录）
 
-- [ ] `Proof` delta 层追加逻辑核验：给出 `CostAdjustmentService.applyFifo:146` Δ 计算（`newUnitCost.subtract(oldUnitCost)`）→ `appendFifoAdjustLayer:149-171` delta 层追加逻辑（setUnitCost :162 + incomingMoveId=-lineId 哨兵 :168 + incomingDate=adjust.businessDate :165-166）证据（file:line）。证实 delta 层 unitCost=Δ + 时序键 incomingDate=adjust.businessDate。
+- [x] `Proof` delta 层追加逻辑核验：给出 `CostAdjustmentService.applyFifo:146` Δ 计算（`newUnitCost.subtract(oldUnitCost)`）→ `appendFifoAdjustLayer:149-171` delta 层追加逻辑（setUnitCost :162 + incomingMoveId=-lineId 哨兵 :168 + incomingDate=adjust.businessDate :165-166）证据（file:line）。证实 delta 层 unitCost=Δ + 时序键 incomingDate=adjust.businessDate。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` FIFO 升序消耗 delta 层核验：读取 `FifoCostingStrategy.findFifoLayers:178-205,202-203`（按 incomingDate 升序排序查找 FIFO 层含原入库层 + delta 层混合排序）+ `onOutgoing:105-120,114/118`（跨队列循环 + Σ 消耗量×单价）决策逻辑——评估 delta 层在正确时序被消耗（delta 层 incomingDate 晚于原入库层则后消耗）+ 多 delta 层 + 原入库层混合排序 Σ 累加正确性。证实「后续出库按更新单价」语义在 FIFO 路径下经 delta 层实现。
+      - 证据：报告 §2（`appendFifoAdjustLayer:160-161` remainingQuantity=onHand + `:162` unitCost=Δ + `:165-166` incomingDate=adjust.businessDate + `:168` incomingMoveId=-lineId）。**关键发现**：delta 层 `remainingQuantity=onHand`（全量现有量非增量）是缺陷根源。
+- [x] `Proof` FIFO 升序消耗 delta 层核验：读取 `FifoCostingStrategy.findFifoLayers:178-205,202-203`（按 incomingDate 升序排序查找 FIFO 层含原入库层 + delta 层混合排序）+ `onOutgoing:105-120,114/118`（跨队列循环 + Σ 消耗量×单价）决策逻辑——评估 delta 层在正确时序被消耗（delta 层 incomingDate 晚于原入库层则后消耗）+ 多 delta 层 + 原入库层混合排序 Σ 累加正确性。证实「后续出库按更新单价」语义在 FIFO 路径下经 delta 层实现。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 既有测试覆盖边界普查：grep `TestErpInvFifoCosting`（FIFO 多层 Σ 单测，覆盖正常入库层非 delta 层）+ `TestErpInvLandedCostEndToEnd`（到岸成本 E2E 仅 MA 路径，物料均 MOVING_AVERAGE :82-83）+ `TestErpInvCostAdjust`（成本调整单测 MA 路径间接覆盖 delta 层）全集，产出测试覆盖边界清单 + 标注 FIFO delta 层消耗 E2E 缺口。引用 A1.5 §3 已有评级依据。
+      - 证据：报告 §3。**裁决反转**：经数值推理证伪「delta 层在正确时序被消耗」假设——delta 层 `remainingQuantity=onHand` + `incomingDate≥原入库层` → 升序消耗循环在原入库层即中止（`:106-107`），delta 层结构性永不被到达（§3.3 静态证明 + §3.4 多层落中间场景 Σ 错位）。
+- [x] `Proof` 既有测试覆盖边界普查：grep `TestErpInvFifoCosting`（FIFO 多层 Σ 单测，覆盖正常入库层非 delta 层）+ `TestErpInvLandedCostEndToEnd`（到岸成本 E2E 仅 MA 路径，物料均 MOVING_AVERAGE :82-83）+ `TestErpInvCostAdjust`（成本调整单测 MA 路径间接覆盖 delta 层）全集，产出测试覆盖边界清单 + 标注 FIFO delta 层消耗 E2E 缺口。引用 A1.5 §3 已有评级依据。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（FIFO delta 层消耗数值是否正确），与 A5.6（audit-remediation）审「E2E 断言强度」（测试质量视角）边界按此执行（方法论 §去重协议 MA4↔A5.6）。本验证不重做 A5.6 E2E 断言强度审计，只评 delta 层消耗行为正确性 + 既有测试覆盖边界。
+      - 证据：报告 §5。增量发现：`TestErpInvCostAdjust#testFifoAppendsAdjustLayerAndOutgoingConsumes:167` 注释自承「COGS=10×10=100（先消耗原层）」即旧单价 + `:171` 仅弱断言 `unitCost>0` **掩盖缺陷**。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（FIFO delta 层消耗数值是否正确），与 A5.6（audit-remediation）审「E2E 断言强度」（测试质量视角）边界按此执行（方法论 §去重协议 MA4↔A5.6）。本验证不重做 A5.6 E2E 断言强度审计，只评 delta 层消耗行为正确性 + 既有测试覆盖边界。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` P2-RC-004 分级确认/调整（方法论 §2 判据 + 三源对照）：①若 delta 层追加 + FIFO 升序消耗逻辑静态正确（unitCost=Δ 累计正确 + 时序正确）+ MA 路径单测间接覆盖 → P2 测试覆盖补强维持（FIFO 交互 E2E 缺口属测试补强项非行为缺陷，A1.5 §5 接受维持）；②若发现 delta 层消耗数值有静态 bug → 升 P1 行为缺陷（触发 MR1 优先修复，触及成本过账核心路径须 ask-first）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.5 §5 LC-L3 接受 + P2-RC-004 P2 结论分层一致。
+      - 证据：报告 §6。
+- [x] `Decision` P2-RC-004 分级确认/调整（方法论 §2 判据 + 三源对照）：①若 delta 层追加 + FIFO 升序消耗逻辑静态正确（unitCost=Δ 累计正确 + 时序正确）+ MA 路径单测间接覆盖 → P2 测试覆盖补强维持（FIFO 交互 E2E 缺口属测试补强项非行为缺陷，A1.5 §5 接受维持）；②若发现 delta 层消耗数值有静态 bug → 升 P1 行为缺陷（触发 MR1 优先修复，触及成本过账核心路径须 ask-first）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.5 §5 LC-L3 接受 + P2-RC-004 P2 结论分层一致。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
+      - 裁决：**②成立 → 升 P2-RC-004 = P1**（§2 P1① 行为实质偏离 LC-L3）。报告 §7（§2 判据编号 + L1/L2/L3 三源 + 与 A1.5 §5 分层一致性 + §7.4 去重）。arm-index `:134` 已更新。
 
 Exit Criteria:
 
-- [ ] delta 层追加逻辑 + FIFO 升序消耗 + 测试覆盖边界证据落盘（全集，无遗漏），每条有证据（file:line）
-- [ ] P2-RC-004 分级确认/调整有明确结论（P2 测试覆盖补强维持 / 升 P1 行为缺陷），与 A1.5 §5 LC-L3 接受 + P2-RC-004 P2 结论分层一致
+- [x] delta 层追加逻辑 + FIFO 升序消耗 + 测试覆盖边界证据落盘（全集，无遗漏），每条有证据（file:line）
+- [x] P2-RC-004 分级确认/调整有明确结论（**P2 → P1 升级**），与 A1.5 §5 LC-L3 接受 + P2-RC-004 P2 结论分层一致（A1.5 接受前提被证伪，据新证据升级）
 
 ### Phase 2 - finding/successor 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-1400-rc-ma4-a4-1-15-fifo-landed-cost-delta-layer-consumption-correctness.md`（定稿）；`docs/audits/arm-index.md`（P2-RC-004 分级注记更新）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 数值正确性评估 + 分级确认完成
 
-- [ ] `Add` P2-RC-004 分级注记更新：若 P2 维持 → 在 arm-index `:134` P2-RC-004 行追加「A4.1.15 运行时数值正确性评估确认 P2 维持」注记（含 delta 层消耗数值正确性结论 + 测试覆盖边界证据 + file:line）；若升 P1 → 在 P2-RC-004 行标注升级 + 触发 MR1 优先修复（触及成本过账核心路径须 ask-first）。禁止未经比对新建重复 finding。若维持接受则登记「无新 finding，归 A1.5 §5 LC-L3 接受 + §7 存疑点 1 闭合」。
+- [x] `Add` P2-RC-004 分级注记更新：若 P2 维持 → 在 arm-index `:134` P2-RC-004 行追加「A4.1.15 运行时数值正确性评估确认 P2 维持」注记（含 delta 层消耗数值正确性结论 + 测试覆盖边界证据 + file:line）；若升 P1 → 在 P2-RC-004 行标注升级 + 触发 MR1 优先修复（触及成本过账核心路径须 ask-first）。禁止未经比对新建重复 finding。若维持接受则登记「无新 finding，归 A1.5 §5 LC-L3 接受 + §7 存疑点 1 闭合」。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.5 §6 P2-RC-004 / MA2 A2.4 costing 三方对账 / P2-MA2-029[reverse 路径物理删除，不同控制点] / A4.1.16[A1.5 §7-2 FIFO 红冲物理删除余额守恒] 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+      - 证据：arm-index `:134` P2-RC-004 行已更新——分级判据 `§2 P2①` → `§2 P1①（A4.1.15 升级）`，目标 MR `successor watch-only` → `MR1（R1.0→RC-R1.n）`，修复状态追加「触及成本过账核心路径须 ask-first + 独立 plan-audit」。无新建 finding（升级既有 P2-RC-004，§7.4 去重）。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.5 §6 P2-RC-004 / MA2 A2.4 costing 三方对账 / P2-MA2-029[reverse 路径物理删除，不同控制点] / A4.1.16[A1.5 §7-2 FIFO 红冲物理删除余额守恒] 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
+      - 证据：报告 §8（checker actual vs baseline 表 R1d=14/R2a=34/R2b=229/R2c=1382/R2d=34 全 0 delta + 独立性声明 + 交叉去重 + 真相源未修改 + 保护区域纪律）。
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（delta 层追加 + FIFO 消耗 + 测试覆盖边界 + 分级确认 + finding 衔接 + §8 自检齐全）
-- [ ] P2-RC-004 分级注记已更新入 arm-index（确认维持/升 P1）并有 grep 依据
+- [x] 验证报告定稿（delta 层追加 + FIFO 消耗 + 测试覆盖边界 + 分级确认 + finding 衔接 + §8 自检齐全）
+- [x] P2-RC-004 分级注记已更新入 arm-index（**升级 P2→P1**）并有 grep 依据
 
 ## Draft Review Record
 
@@ -122,32 +129,41 @@ Exit Criteria:
 
 > 本计划为**只读数值正确性评估**（无代码/ORM/api.xml/view.xml/真相源变更；成本过账核心路径代码经只读探针评估，不修改），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = delta 层追加逻辑 + FIFO 升序消耗 + 测试覆盖边界 + 分级确认 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.15 验证报告 delta 层追加 + FIFO 消耗 + 测试覆盖边界 + 分级确认齐全 + P2-RC-004 分级注记更新入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §去重协议（MA4↔A5.6 边界）一致；与 A1.5 §7-1 + §6 P2-RC-004 + §3 测试覆盖缺口 + §5 LC-L3 接受一致
-- [ ] 已运行验证：delta 层追加 + FIFO 消耗 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.15 验证报告 delta 层追加 + FIFO 消耗 + 测试覆盖边界 + 分级确认齐全 + P2-RC-004 分级注记更新入 arm-index（升级 P2→P1）
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §去重协议（MA4↔A5.6 边界）一致；与 A1.5 §7-1 + §6 P2-RC-004 + §3 测试覆盖缺口 + §5 LC-L3 接受一致（A1.5 接受前提被本验证证伪，据新证据升级，§7.3 分层一致性论证）
+- [x] 已运行验证：delta 层追加 + FIFO 消耗 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（P1 升级是验证**输出**，非范围内项目降级；修复归 MR1 在 §Deferred But Adjudicated 已预声明）
+- [x] 独立草案审查已完成并记录（Draft Review Record iter-1 needs revision + iter-2 accept）
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致（Phase 1/2 均 Status: completed + 全 [x]；Plan Status: completed）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中（验证报告 `docs/audits/2026-08-07-1400-rc-ma4-a4-1-15-fifo-landed-cost-delta-layer-consumption-correctness.md` + arm-index `:134` P2-RC-004 行更新）
+
+> **门控状态说明**：本计划 7/8 Closure Gates 由执行者据实勾选；第 7 项（独立结束审计）由独立结束审计子代理（新会话，不重用执行者上下文）执行并通过后勾选——执行者未自我审计（方法论过程纪律）。独立结束审计证据见下方 `Closure Audit Evidence`。
 
 ## Deferred But Adjudicated
 
-### P2-RC-004 FIFO + 到岸成本交互 E2E 测试补强
+### P2-RC-004 FIFO + 到岸成本交互 E2E 测试补强（A4.1.15 升级 P1 后修复归口）
 
-- Classification: `out-of-scope improvement`（已登记 P2-RC-004，修复归 MR1）
-- Why Not Blocking Closure: 本计划是数值正确性评估，结果表面 = 验证报告 + P2-RC-004 分级确认。UC-FIN-10 LC-L3 已接受（A1.5 §5）；FIFO delta 层消耗数值正确性经静态推理（delta 层追加逻辑正确 + FIFO 升序消耗保证时序）评估。补 FIFO + 到岸成本交互 E2E 测试经 MR1（R1.0→RC-R1.n，纯测试代码修复预授权类目）。若裁决为接受（数值正确性充分）则 successor 维持 P2 测试补强。本验证闭环不阻塞于修复落地。
-- Successor Required: yes（MR1 按本报告 P2-RC-004 分级确认展开修复；若维持 P2 不触发 MR0 即时通道）
+- Classification: `out-of-scope improvement`（A4.1.15 升级 P2-RC-004 = P1，修复归 MR1）
+- Why Not Blocking Closure: 本计划是数值正确性评估，结果表面 = 验证报告 + P2-RC-004 分级确认（**升级 P2→P1**）。UC-FIN-10 LC-L3 在 FIFO 路径下经数值推理证实未实现（delta 层结构性永不被消耗），MA 路径（默认 costMethod）正确。修复触及成本过账核心路径（CostAdjustmentService/FifoCostingStrategy），按 §5 须 ask-first + 独立 plan-audit，归 MR1（R1.0→RC-R1.n）。本验证闭环不阻塞于修复落地（修复是独立 plan）。
+- Successor Required: yes（MR1 按本报告 §9 修复方向[重述原层单价/ delta 层消耗配对]展开，须补深断言测试[更新单价 + 出库后余额守恒]替代当前 unitCost>0 弱断言）
 
 ## Closure
 
-Status Note: <待执行后填充>
+Status Note: 两 Phase 执行完毕。A1.5 §7 存疑点 1 经运行时数值正确性静态推理 **CONFIRMED 升级 P2-RC-004 = P1**——FIFO delta 层（remainingQuantity=onHand + incomingDate≥原入库层）在升序消耗循环中结构性永不被消耗，LC-L3「后续出库按更新后的队列单价计算」在 FIFO 物料路径下未实现，命中 §2 P1①（行为实质偏离验收标准）。验证报告落盘 `docs/audits/2026-08-07-1400-rc-ma4-a4-1-15-fifo-landed-cost-delta-layer-consumption-correctness.md`，arm-index `:134` P2-RC-004 行已更新（分级判据 §2 P1① + 目标 MR1 + 修复触及成本过账核心路径须 ask-first）。本验证不实施修复（保护区域 + 只读门控），修复归 MR1 独立 plan。MOVING_AVERAGE 默认路径不受影响（行为正确强测覆盖）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理（新会话），待执行后填充>
-- Evidence: <task id / log link / walkthrough record，待执行后填充>
+- Auditor / Agent: 独立结束审计子代理（新会话，mission-driver 2026-08-04-224309-mission-driver closure-audit step；不重用执行者上下文）。执行者未自我审计，第 7 项 Closure Gate 由本独立审计通过后勾选。
+- Evidence:
+  - **核心技术裁决独立复核（live repo file:line 精度）**：`CostAdjustmentService.applyFifo:146` 调 `appendFifoAdjustLayer(..., newUnitCost.subtract(oldUnitCost), ...)`（Δ 计算确认）；`appendFifoAdjustLayer:160-161` `setIncomingQuantity(onHand)`+`setRemainingQuantity(onHand)`（**全量现有量非增量——缺陷根源确认**）；`:165-166` `incomingDate=adjust.businessDate`、`:168` `incomingMoveId=-lineId` 哨兵；`FifoCostingStrategy.findFifoLayers:188` `remainingQuantity>0` 过滤 + `:199` `le(incomingDate,businessDate)` + `:202-203` 升序排序；`onOutgoing:105-107` `remaining.signum()<=0` 中止循环。独立数值推理确认：原入库层（更早 incomingDate + remaining=onHand）总是先于且独占地满足出库量 → delta 层结构性永不被消耗 → LC-L3 FIFO 路径未实现 → P2→P1 升级判据成立。
+  - **交付物存在性与实质**：验证报告 `docs/audits/2026-08-07-1400-rc-ma4-a4-1-15-fifo-landed-cost-delta-layer-consumption-correctness.md`（24791 字节，§1-§9 + 自检清单齐全）；arm-index `:134` P2-RC-004 行已更新（分级判据 `§2 P1①` + 目标 `MR1` + 触及成本过账核心路径须 ask-first + 独立 plan-audit）——grep `rg "A4\.1\.15" docs/audits/arm-index.md` 命中 `:134` 复核确认。
+  - **五点一致性**：Plan Status: completed / Phase 1-2 Status: completed + 全 [x] 退出标准 / Closure Gates 全 [x] / Closure 证据存在 — 全部一致。
+  - **Deferred honesty**：P2-RC-004 升级 P1 显式路由 MR1（§Deferred But Adjudicated 预声明 + Follow-up 登记），非隐藏；本验证只读门控未实施修复（保护区域纪律）。
+  - checker actual vs baseline（报告 §8 表，0 delta）；审计 HEAD `fe32f4c21`。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- MR1 修复 P2-RC-004（现 P1）：触及成本过账核心路径须 ask-first + 独立 plan-audit（§5 会计过账逻辑类）；修复时补深断言测试替代 unitCost>0 弱断言（见报告 §9）
+
+> 独立结束审计（Closure Gate 第 7 项）已由独立子代理新会话执行并通过，见上方 Closure Audit Evidence。
