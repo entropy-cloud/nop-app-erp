@@ -99,6 +99,8 @@ nop-app-erp 前端原全部由 AMIS 渲染。深度分析（`2026-08-03-1000`）
 ### 2.5 complex 页面类型（view.xml 模型化优先，2026-08-01 平台新增）
 
 > 用户方向（2026-08-03）：**不删除 page.yaml，只新增 flux.yaml**；form/grid/页面整体布局尽量通过 view.xml 模型定义；利用 xview.xdef 新增的 complex 页面定义能力。
+>
+> **实际取舍（2026-08-06 核对）**：该方向在「模型可表达」范围内已实现——标准 CRUD/tabs/60 子表/4 树形全部 view.xml 模型驱动；但 complex 槽位**无法承载 flux 专有控件**（见 §7 #9 平台能力核对），故 20 个复杂页（F13/F16/wizard/占位页）整体以 page.yaml/flux.yaml 整页直写落地。这是平台能力边界下的正确实现，偏离裁决见 `docs/retrospectives/2026-08-06-1400-flux-page-organization-deviation.md`。
 
 `xview.xdef` `<pages>` 在 crud/picker/simple/tabs/wizard/group 之外新增 **`<complex>`**（提交 f7c45373d，2026-08-01）：
 
@@ -118,16 +120,17 @@ nop-app-erp 前端原全部由 AMIS 渲染。深度分析（`2026-08-03-1000`）
 - **group 容器**：已实现 GridSchema 映射（columns/gap/autoFlow/alignItems/justifyItems；responsiveColumns 暂不输出）
 - **测试**：TestFluxWebGen complex + group 用例（17→18 tests）+ `test-flux-complex.view.xml` 夹具
 
-**设计原则（本设计的页面实现分层）**：
+**设计原则（本页的页面实现分层，2026-08-06 按实施实况修正）**：
 
 | 层 | 定义位置 | 覆盖 |
 |----|---------|------|
-| 页面外壳（四槽位布局/筛选区/状态区） | view.xml `<pages><complex>` + `<simple>`/`<tabs>`/`<group>` 容器 | 全部复杂页 |
-| 表单与网格（form/grid 结构） | view.xml `<forms>`/`<grids>` 模型 | 全部页面 |
-| flux 专有交互控件（gantt/kanban/calendar/timeline/tree/diff-view） | page.yaml/flux.yaml 直写（complex 槽位内嵌或整页直写） | 看板/甘特/日历/时间线/BOM/组织树/版本对比 |
+| 标准 CRUD / tabs / 头行子表 / 树形 | view.xml `<crud>`/`<tabs>` + `<forms>`/`<grids>` 模型经 flux-web.xlib 输出 | 354 CRUD + 352 picker + 15 tabs + 60 子表对 + 4 树形 |
+| 复杂页外壳（筛选区/状态区/主体组合） | **page.yaml/flux.yaml 整页直写**（`type: page` + body 数组；筛选经 body 顶部 `form`+`data-source` 承担） | F13/F16/wizard/占位页（20 flux.yaml，P2/P3/P4） |
+| flux 专有交互控件（gantt/kanban/calendar/timeline/tree/diff-view/wizard/steps） | page.yaml/flux.yaml 直写 | 看板/甘特/日历/时间线/BOM/组织树/版本对比/向导 |
+| **`<complex>` 四槽位（2026-08-01 平台新增 f7c45373d）** | view.xml `<pages><complex>` 定义 header/footer/aside/body | **仅承载标准容器**（crud/simple/tabs/wizard/group）；flux 专有控件**无槽内透传点**，生产 0 使用（测试夹具 `test-flux-complex.view.xml` 验证平台能力） |
 | flux.yaml 双文件共存 | 新增同名 `*.flux.yaml`（不删 page.yaml） | 需要 flux 专属定义的页面 |
 
-> 落地时需验证：`GenContainerModel` 对复杂槽位内自定义控件（非 UiContainerModel 子类型）的透传能力——候选通道：`<simple>` 容器的 `beforeForm`/`afterForm`（xjson 透传点，见 `container_simple.xpl`）；若槽位内无法直接内嵌 gantt/kanban，则采用「complex 外壳 + 槽位内 `<simple>` 包自定义控件」或「整页 flux.yaml 直写 + complex 仅用于标准布局」两种模式的取舍裁决（见 §7 未决问题 #9）。
+> **实施裁决（2026-08-06，`docs/retrospectives/2026-08-06-1400-flux-page-organization-deviation.md`）**：原设想的「complex 外壳 + 槽位内嵌自定义控件」候选通道未成立——`GenContainerModel` 仅对 crud/simple/tabs/wizard/group 五种容器分派，`container_simple.xpl` 仅输出整 `<form>`，**不存在 `beforeForm`/`afterForm` 之类的自定义控件透传点**。故复杂页一律「整页 page.yaml/flux.yaml 直写」（即原逃生通道「整页直写 + complex 仅用于标准布局」）；complex 槽位保留为平台能力，待槽位 arbitrary-node 透传能力落地后再评估（见 §7 #9）。
 
 ---
 
@@ -426,7 +429,7 @@ nop-app-erp 前端原全部由 AMIS 渲染。深度分析（`2026-08-03-1000`）
 | 6 | **字段级 diff**：合同版本对比受数据模型限制（ErpCtContractVersion 仅 content blob） | 与引擎无关 | 维持元数据对比 + diff-view（content 双栏） |
 | 7 | **i18n**：page.yaml 层无 i18n 机制（F15 延后项） | 与引擎无关 | **Follow-up 登记（`2026-08-03-1232-5` Phase 3）**：flux 有 `12-i18n.md`（`initFluxI18n` + `t()`），登记为**复杂页迁移横切要求**——触发条件 = P2/P3 页面重写（`2026-08-03-1232-2/3`）时随附处理复杂页硬编码中文文案（title/remark/按钮）。view.xml 层 i18n 已完成（351 文件），page.yaml 层全量实施随 P2/P3 页面重写落地 |
 | 8 | **测试**：flux 渲染 E2E 选择器契约与 AMIS 不同 | `13-testing.md` 有 selector 速查 | 迁移页按 flux selector 重写 spec；`E2E_ENGINE=flux` 已验证可用 |
-| 9 | **complex 槽位内嵌自定义控件**：view.xml `<complex>` 槽位能否直接内嵌 gantt/kanban/calendar 等 flux 专有控件 | **已解决（`2026-08-03-1232-2/3` 实施结论）**：flux 专有控件经 complex 槽位内 `<simple>` 包裹或 flux.yaml 直写内嵌（页面外壳 complex + 槽位内嵌控件的组合模式落地）；标准布局用 complex，专有控件直写 |
+| 9 | **complex 槽位内嵌自定义控件**：view.xml `<complex>` 槽位能否直接内嵌 gantt/kanban/calendar 等 flux 专有控件 | **能力缺口（2026-08-06 平台核对，纠正此前「已解决」误标）**：`GenContainerModel` 仅分派 5 种标准容器（crud/simple/tabs/wizard/group，`flux-web.xlib:45-61`）；`container_simple.xpl` 仅输出整 `<form>`，无 `beforeForm`/`afterForm` 透传点；`TestFluxWebGen` 与 `test-flux-complex.view.xml` 夹具均无自定义控件嵌入用例 → **生产复杂页全部采用「整页 page.yaml/flux.yaml 直写」**（20 个 flux.yaml，P2/P3/P4 落地，E2E 全绿），complex 槽位生产 0 使用。偏离裁决见 `docs/retrospectives/2026-08-06-1400-flux-page-organization-deviation.md`。**successor 触发条件**：nop-entropy 为 complex 槽位提供 arbitrary-node 透传能力（或有强复用价值的「筛选区+状态区」页面出现）时，对 B 族 dashboard 评估 complex 外壳重构 |
 | 10 | **flux 表达式运行时约束**（`2026-08-03-1232-3` P3 发现）：flux 表达式仅支持箭头**表达式体**（无块体 `{}`、无 `while`/`forEach`/`if-return`），需块体的 reduce/栈算法无法在 formula 客户端运行 | 实施期发现 | 移至后端聚合查询（BOM `findBomTree`/薪酬 `findPayrollSummary`/净需求 `findNetReqGroups` 均在 Java 侧完成 group-by/reduce）；安全访问用 `?.`，空值兜底用 `??`；grid 用 `columns:N + items:[{colSpan,body}]` |
 
 ---
