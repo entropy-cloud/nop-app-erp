@@ -1,6 +1,6 @@
 # 2026-08-06-2247-3 rc-ma4-a4-2-13-hr-contract-expiry-multi-tier-alert UC-HR-07 30/60/90 多档预警运行时配置确认（A1.12 §7-2）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.2.13（A1.12 §7-2：MA4 运行时行为验证 — UC-HR-07 合同到期 30/60/90 多档预警运行时配置，实现采用单一可配置阈值[默认 30 天] + warningDays 参数可覆盖，运行时是否有多档调度配置[如三个 Job 实例分别传 30/60/90]）
@@ -68,51 +68,51 @@
 
 ### Phase 1 - 单一阈值 + 参数覆盖机制 census + 自动化 Job 多档调用 + 多档调度配置普查
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-2247-rc-ma4-a4-2-13-hr-contract-expiry-multi-tier-alert.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`（Phase 1 全 Proof）
 - Prereqs: A4.2 done（展开器已追加 A4.2.13 行）；A1.12 done（§7-2 已落盘 + §5 UC-HR-07 接受裁决已登记）
 
-- [ ] `Proof` 单一阈值 + 参数覆盖机制 census：核验 `ErpHrEmploymentContractBizModel.scanExpiringContracts:65-67` 单一阈值 + warningDays 参数覆盖机制（参数非空覆盖 config 默认，为空用 config 默认 30）+ `ErpHrConfigs.contractExpiryWarningDays:171-173` config 驱动 + `ErpHrConstants.CONFIG_CONTRACT_EXPIRY_WARNING_DAYS:248` + DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS 默认值。给出 file:line 证据。
+- [x] `Proof` 单一阈值 + 参数覆盖机制 census：核验 `ErpHrEmploymentContractBizModel.scanExpiringContracts:65-67` 单一阈值 + warningDays 参数覆盖机制（参数非空覆盖 config 默认，为空用 config 默认 30）+ `ErpHrConfigs.contractExpiryWarningDays:171-173` config 驱动 + `ErpHrConstants.CONFIG_CONTRACT_EXPIRY_WARNING_DAYS:248` + DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS 默认值。给出 file:line 证据。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 自动化 Job 多档调用核验：核验 `ErpHrContractExpiryJob.execute:72` 调用 `scanExpiringContracts(null, ctx)` 是否传多档（30/60/90 三次调用）还是单一默认窗口（null → 30 天单次）。确认自动化 Job 是否实现多档预警（实测：传 null → 单一默认窗口）。
+- [x] `Proof` 自动化 Job 多档调用核验：核验 `ErpHrContractExpiryJob.execute:72` 调用 `scanExpiringContracts(null, ctx)` 是否传多档（30/60/90 三次调用）还是单一默认窗口（null → 30 天单次）。确认自动化 Job 是否实现多档预警（实测：传 null → 单一默认窗口）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 多档调度配置普查：grep nop-job `.job.yaml`（确认是否仅一个 `erp-hr-contract-expiry` 作业 vs 30/60/90 三个实例）+ 全 application.yaml/部署文档（`erp-hr.contract-expiry-warning-days` 非 30 override + 是否有多次调度配置）。给出站点级证据。
+- [x] `Proof` 多档调度配置普查：grep nop-job `.job.yaml`（确认是否仅一个 `erp-hr-contract-expiry` 作业 vs 30/60/90 三个实例）+ 全 application.yaml/部署文档（`erp-hr.contract-expiry-warning-days` 非 30 override + 是否有多次调度配置）。给出站点级证据。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` L1 多档语义满足度分析：核验单一阈值 + 单次调度（提前 30 天提醒一次）是否满足 L1 ⑳"30/60/90 提醒窗口"语义——30/60/90 各提前提醒一次 vs 仅提前 30 天提醒一次的差异分析 + warningDays 参数经 GraphQL 手工调用 scanExpiringContracts(60/90) 表达多档的可达性。
+- [x] `Proof` L1 多档语义满足度分析：核验单一阈值 + 单次调度（提前 30 天提醒一次）是否满足 L1 ⑳"30/60/90 提醒窗口"语义——30/60/90 各提前提醒一次 vs 仅提前 30 天提醒一次的差异分析 + warningDays 参数经 GraphQL 手工调用 scanExpiringContracts(60/90) 表达多档的可达性。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` A4.2.12 cron 接线前置声明：引用 A4.2.12（N=2）cron 接线 census 结论（Job 默认 disabled）作为多档调度前置——Job 默认 disabled 下多档调度更无从谈起，但多档配置维度独立于 cron 接线维度（即便 Job 启用，仍需评估是否多档），两计划不同控制点不重复。
+- [x] `Proof` A4.2.12 cron 接线前置声明：引用 A4.2.12（N=2）cron 接线 census 结论（Job 默认 disabled）作为多档调度前置——Job 默认 disabled 下多档调度更无从谈起，但多档配置维度独立于 cron 接线维度（即便 Job 启用，仍需评估是否多档），两计划不同控制点不重复。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（多档预警运行时配置），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（多档预警运行时配置），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 单一阈值 + 参数覆盖机制 census 有明确结论，每条有证据（file:line）
-- [ ] 自动化 Job 多档调用 + 多档调度配置普查有明确结论（多档 / 单一默认），每条有证据（file:line）
+- [x] 单一阈值 + 参数覆盖机制 census 有明确结论，每条有证据（file:line）
+- [x] 自动化 Job 多档调用 + 多档调度配置普查有明确结论（多档 / 单一默认），每条有证据（file:line）
 
 ### Phase 2 - 多档预警配置裁决 + finding 衔接 + §8 自检
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-2247-rc-ma4-a4-2-13-hr-contract-expiry-multi-tier-alert.md`（定稿）；`docs/audits/arm-index.md`（UC-HR-07 注记或多档 successor finding 登记，若有）
 Skill: none
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: Phase 1 单一阈值 + 参数覆盖机制 census + 自动化 Job 多档调用 + 多档调度配置普查完成
 
-- [ ] `Decision` UC-HR-07 多档预警运行时配置裁决（方法论 §2 判据 + 三源对照）：①自动化 Job 单一默认窗口（30 天单次）+ 无多档调度配置 + L1 多档概念可经 config/手工调用表达 → **维持 UC-HR-07 接受** + **登记多档调度 successor watch-only**（30/60/90 各提醒一次需多档调度配置，属增强 successor，§2 P2① 次要验收标准 + 主路径[单一阈值 config 驱动]OK）；②有多档调度配置（3 Job 实例）→ 闭合，UC-HR-07 接受维持；③单一阈值致 60/90 天预警完全缺失且不可表达 → 登记 finding（按 §2 判据分级）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.12 §5 UC-HR-07 接受裁决分层一致。
+- [x] `Decision` UC-HR-07 多档预警运行时配置裁决（方法论 §2 判据 + 三源对照）：①自动化 Job 单一默认窗口（30 天单次）+ 无多档调度配置 + L1 多档概念可经 config/手工调用表达 → **维持 UC-HR-07 接受** + **登记多档调度 successor watch-only**（30/60/90 各提醒一次需多档调度配置，属增强 successor，§2 P2① 次要验收标准 + 主路径[单一阈值 config 驱动]OK）；②有多档调度配置（3 Job 实例）→ 闭合，UC-HR-07 接受维持；③单一阈值致 60/90 天预警完全缺失且不可表达 → 登记 finding（按 §2 判据分级）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.12 §5 UC-HR-07 接受裁决分层一致。
       - Skill: none
-- [ ] `Add` finding/注记更新：若登记多档调度 successor → arm-index 新建 P2-RC watch-only finding 行（多档预警调度 successor）+ owner doc `recruitment.md` 补多档调度注记（预授权文档更新）；若 60/90 缺失不可表达 → arm-index 新建 finding 行 + 触发 MR1（归 R1.0 展开器）。
+- [x] `Add` finding/注记更新：若登记多档调度 successor → arm-index 新建 P2-RC watch-only finding 行（多档预警调度 successor）+ owner doc `recruitment.md` 补多档调度注记（预授权文档更新）；若 60/90 缺失不可表达 → arm-index 新建 finding 行 + 触发 MR1（归 R1.0 展开器）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 UC-HR-07 / A1.12 §5/§7 的复用关系 + A4.2.12 cron 接线前置 + 多档调度 successor + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 UC-HR-07 / A1.12 §5/§7 的复用关系 + A4.2.12 cron 接线前置 + 多档调度 successor + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（单一阈值 + 参数覆盖机制 census + 自动化 Job 多档调用 + 多档调度配置普查 + L1 多档语义满足度 + 多档配置裁决 + finding 衔接 + §8 自检齐全）
-- [ ] UC-HR-07 注记或多档 successor finding 登记 + 若归 MR1 已记录
+- [x] 验证报告定稿（单一阈值 + 参数覆盖机制 census + 自动化 Job 多档调用 + 多档调度配置普查 + L1 多档语义满足度 + 多档配置裁决 + finding 衔接 + §8 自检齐全）
+- [x] UC-HR-07 注记或多档 successor finding 登记 + 若归 MR1 已记录
 
 ## Draft Review Record
 
@@ -122,14 +122,14 @@ Exit Criteria:
 
 > 本计划为**只读多档预警配置评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 单一阈值 + 参数覆盖机制 census + 自动化 Job 多档调用 + 多档调度配置普查 + L1 多档语义满足度 + 多档配置裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.2.13 验证报告单一阈值 + 参数覆盖机制 census + 自动化 Job 多档调用 + 多档调度配置普查 + 多档配置裁决齐全 + finding/注记更新
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.12 §7-2 + §5 UC-HR-07 接受裁决一致
-- [ ] 已运行验证：单一阈值 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（登记的多档 successor/finding 是验证**输出**，非范围内项目降级；Deferred But Adjudicated 正确分类）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status / Phase Status / Exit Criteria / Closure Gates / 日志条目都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.2.13 验证报告单一阈值 + 参数覆盖机制 census + 自动化 Job 多档调用 + 多档调度配置普查 + 多档配置裁决齐全 + finding/注记更新
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.12 §7-2 + §5 UC-HR-07 接受裁决一致
+- [x] 已运行验证：单一阈值 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（登记的多档 successor/finding 是验证**输出**，非范围内项目降级；Deferred But Adjudicated 正确分类）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status / Phase Status / Exit Criteria / Closure Gates / 日志条目都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -141,12 +141,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <关闭时填写>
+Status Note: 已执行完毕（2026-08-06）。两 Phase 全 [x] + Plan Status: completed + 全 8 Closure Gates [x]。裁决 = 维持 UC-HR-07 接受（主路径[单一阈值 config 驱动 + 30 天自动窗口 + 跨域通知]完整，L1 ⑳ 解读 A 满足，单一阈值是配置简化非契约缺失，与 A1.12 §5 分层一致）+ 登记 P2-RC-087 多档调度 successor watch-only（§2 P2①——60/90 天档自动化派发缺失，主路径 OK 边界弱），不触发 MR0 / 不归 MR1。验证报告落盘 `docs/audits/2026-08-06-2247-rc-ma4-a4-2-13-hr-contract-expiry-multi-tier-alert.md`（Audit Status: closed）。arm-index 新建 P2-RC-087 watch-only 行（多档预警调度 successor）。部署运维文档 `docs/architecture/job-scheduling.md §3.15:229` 补多档调度注记 + warning-days config 说明（预授权文档更新；注记落 job-scheduling.md 而非 plan 字面 recruitment.md——recruitment.md 是招聘管理文档不含合同到期，job-scheduling.md §3.15 是合同到期作业登记锚点 + A4.2.12 已同位补 cron config 注记，一致性+可发现性，报告 §6.2 已透明记录此修正）。Phase 2 item 2 条件裁决：§2 = 主路径接受 + P2① 边界 → 登记 P2-RC-087 watch-only（非 P1 不触发 MR1，归部署/配置 successor）。独立结束审计已由独立子代理（fresh session，未重用执行者上下文）执行并通过，证据见下方 Closure Audit Evidence。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（fresh session，未重用执行者上下文；主代理执行不自我审计）
+- Evidence: 验证报告 `docs/audits/2026-08-06-2247-rc-ma4-a4-2-13-hr-contract-expiry-multi-tier-alert.md`（§0 TL;DR + §2 census[单一阈值+参数覆盖 §2.1 / 自动化 Job 单一默认窗口 §2.2 / 多档调度配置不存在 §2.3 / L1 ⑳ 多档语义满足度 §2.4] + §5 裁决[维持 UC-HR-07 接受 + P2-RC-087 watch-only §2 P2①] + §8 checker actual==baseline 全可计数规则精确匹配 + §9 结论）；arm-index P2-RC-087 新建 watch-only 行；`job-scheduling.md §3.15:229` 多档调度注记 + warning-days config 说明；checker actual==baseline（R1a=0/R1b=0/R1c=0/R1d=14/R2a=34/R2b=229/R2c=1382/R2d=34/R3=5/R8=0，与 A4.2.12 同一稳定基线）；本验证零生产代码变更（只读评估 + 文档注记）。结束审计走查核验项：①live 复核 `ErpHrEmploymentContractBizModel.java:65-67` 单一阈值 + 参数覆盖（`@Optional warningDays` + `:67` 三元）VERIFIED；②live 复核 `ErpHrConfigs.java:171-175` config 驱动 + `:47` DEFAULT=30 + `ErpHrConstants.java:248` config key VERIFIED；③live 复核 `ErpHrContractExpiryJob.java:72` `scanExpiringContracts(null, ctx)` 单一默认窗口 + Job 体内仅 1 处 scan 调用 VERIFIED；④live 复核 `.job.yaml` 仅 1 个作业实例 + grep `contract-expiry-warning-days` 跨 application.yaml 零命中 VERIFIED；⑤live 复核 arm-index P2-RC-087 行已落盘 + `job-scheduling.md §3.15:229` 多档注记已落盘；⑥反中空检查 pass（scanExpiringContracts 参数覆盖机制真实可达 + 多档可经 GraphQL 手工调用表达非空壳）；⑦Deferred 诚实性 pass（P2-RC-087 多档调度 successor 是验证输出非范围内降级，分类正确）；⑧文本一致性 pass（Plan Status completed / 两 Phase Status completed / 6+2 Phase1 + 3+2 Phase2 items 全 [x] / 8 Closure Gates 全 [x] / Closure 证据非占位符）
 
 Follow-up:
 
