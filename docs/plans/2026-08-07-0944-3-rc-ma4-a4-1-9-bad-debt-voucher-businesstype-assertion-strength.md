@@ -1,6 +1,6 @@
 # 2026-08-07-0944-3 rc-ma4-a4-1-9-bad-debt-voucher-businesstype-assertion-strength TestErpFinBadDebt 凭证 businessType 枚举断言强度评估
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Mission: requirement-compliance
 > Work Item: A4.1.9（MA4 运行时行为验证 — A1.3 §7-2：`TestErpFinBadDebt` 凭证 businessType 枚举断言强度评估，未断言 BAD_DEBT_WRITE_OFF）
@@ -68,45 +68,45 @@
 
 ### Phase 1 - 坏账凭证 businessType 断言强度评级
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-0944-rc-ma4-a4-1-9-bad-debt-voucher-businesstype-assertion-strength.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done（展开器已追加 A4.1.9 行）；A1.3 done（§7 存疑点 2 已落盘 + §3 测试证据 + §5.1 命题 W1 接受）
 
-- [ ] `Proof` 凭证 businessType 写入点核验：给出 `executeWriteOff:180` 显式传 `ErpFinBusinessType.BAD_DEBT_WRITE_OFF` 证据（file:line）+ 该 businessType 在过账引擎路由的角色（路由维度，区分核销/收回/反审核凭证类型）。证实生产代码正确写入。
+- [x] `Proof` 凭证 businessType 写入点核验：给出 `executeWriteOff:180` 显式传 `ErpFinBusinessType.BAD_DEBT_WRITE_OFF` 证据（file:line）+ 该 businessType 在过账引擎路由的角色（路由维度，区分核销/收回/反审核凭证类型）。证实生产代码正确写入。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 测试断言集全集核验：grep `TestErpFinBadDebt.java`（+ `TestErpFinBadDebtReversal.java`）全部凭证相关断言（科目/方向/金额/isReversed/行同向取负/status/openAmount/settledAmount），产出断言集清单 + 标注 businessType 枚举断言缺失。引用 A1.3 §3 已有「强」评级依据。
+- [x] `Proof` 测试断言集全集核验：grep `TestErpFinBadDebt.java`（+ `TestErpFinBadDebtReversal.java`）全部凭证相关断言（科目/方向/金额/isReversed/行同向取负/status/openAmount/settledAmount），产出断言集清单 + 标注 businessType 枚举断言缺失。引用 A1.3 §3 已有「强」评级依据。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（断言强度是否足以覆盖核销语义），与 A5.6（audit-remediation）审「E2E 断言强度」（测试质量视角）边界按此执行（方法论 §去重协议 MA4↔A5.6）。本验证不重做 A5.6 E2E 断言强度审计，只评单元测试 businessType 枚举断言。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（断言强度是否足以覆盖核销语义），与 A5.6（audit-remediation）审「E2E 断言强度」（测试质量视角）边界按此执行（方法论 §去重协议 MA4↔A5.6）。本验证不重做 A5.6 E2E 断言强度审计，只评单元测试 businessType 枚举断言。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 断言强度裁决（方法论 §2 判据 + 三源对照）：①若凭证科目/方向/金额断言已实质覆盖核销语义（businessType 为路由维度非 L1 验收标准，L1/L2 未要求枚举断言）→ 接受（断言强度足够，A1.3 §5.1 命题 W1 接受维持）；②若 businessType 枚举断言缺失削弱语义覆盖且属可回归保护点（如 future 凭证类型混入致误判）→ P2（测试覆盖补强 successor，非行为缺陷）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.3 §5.1 命题 W1 接受结论分层一致。
+- [x] `Decision` 断言强度裁决（方法论 §2 判据 + 三源对照）：①若凭证科目/方向/金额断言已实质覆盖核销语义（businessType 为路由维度非 L1 验收标准，L1/L2 未要求枚举断言）→ 接受（断言强度足够，A1.3 §5.1 命题 W1 接受维持）；②若 businessType 枚举断言缺失削弱语义覆盖且属可回归保护点（如 future 凭证类型混入致误判）→ P2（测试覆盖补强 successor，非行为缺陷）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.3 §5.1 命题 W1 接受结论分层一致。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 凭证 businessType 写入点 + 测试断言集清单落盘（全集，无遗漏），每条有证据（file:line）
-- [ ] 断言强度裁决有明确结论（接受 / P2 测试覆盖补强 successor），与 A1.3 §5.1 命题 W1 接受结论分层一致
+- [x] 凭证 businessType 写入点 + 测试断言集清单落盘（全集，无遗漏），每条有证据（file:line）
+- [x] 断言强度裁决有明确结论（接受 / P2 测试覆盖补强 successor），与 A1.3 §5.1 命题 W1 接受结论分层一致
 
 ### Phase 2 - finding/successor 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-0944-rc-ma4-a4-1-9-bad-debt-voucher-businesstype-assertion-strength.md`（定稿）；`docs/audits/arm-index.md`（若新 finding/successor）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 断言强度评级 + 裁决完成
 
-- [ ] `Add` 若定 P2 → 按 §7 grep arm-index finance 坏账/凭证 businessType/测试断言强度同域同控制点裁决「复用 or 新建」`P*-RC-xxx` 或 successor 行，写入 arm-index MA4 分区；双向可追溯注记（finding/successor → MR1）。若接受 → 在报告登记「无新 finding，归 A1.3 §5.1 命题 W1 接受 + §7 存疑点 2 闭合」。禁止未经比对新建。
+- [x] `Add` 若定 P2 → 按 §7 grep arm-index finance 坏账/凭证 businessType/测试断言强度同域同控制点裁决「复用 or 新建」`P*-RC-xxx` 或 successor 行，写入 arm-index MA4 分区；双向可追溯注记（finding/successor → MR1）。若接受 → 在报告登记「无新 finding，归 A1.3 §5.1 命题 W1 接受 + §7 存疑点 2 闭合」。禁止未经比对新建。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.3 §5.1 命题 W1 / MA2 A2.5c 坏账强测试 / A5.6 E2E 断言强度边界 的复用关系）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.3 §5.1 命题 W1 / MA2 A2.5c 坏账强测试 / A5.6 E2E 断言强度边界 的复用关系）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（写入点 + 断言集 + 裁决 + finding/successor 衔接 + §8 自检齐全）
-- [ ] 新 finding/successor（若有）已写入 arm-index MA4 分区并有 grep 依据（本验证若维持接受则无写入，本条 N/A 满足）
+- [x] 验证报告定稿（写入点 + 断言集 + 裁决 + finding/successor 衔接 + §8 自检齐全）
+- [x] 新 finding/successor（若有）已写入 arm-index MA4 分区并有 grep 依据（本验证若维持接受则无写入，本条 N/A 满足）
 
 ## Draft Review Record
 
@@ -116,14 +116,14 @@ Exit Criteria:
 
 > 本计划为**只读断言强度评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 凭证写入点 + 断言集完整性 + 裁决 + finding/successor 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.9 验证报告写入点 + 断言集 + 裁决齐全 + finding/successor（若有）登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §去重协议（MA4↔A5.6 边界）一致；与 A1.3 §7-2 + §3 测试证据 + §5.1 命题 W1 接受一致
-- [ ] 已运行验证：写入点 + 断言集完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.9 验证报告写入点 + 断言集 + 裁决齐全 + finding/successor（若有）登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §去重协议（MA4↔A5.6 边界）一致；与 A1.3 §7-2 + §3 测试证据 + §5.1 命题 W1 接受一致
+- [x] 已运行验证：写入点 + 断言集完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -135,12 +135,21 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <（独立结束审计通过后填入）>
+Status Note: 计划执行完成。A4.1.9 验证报告（`docs/audits/2026-08-07-0944-rc-ma4-a4-1-9-bad-debt-voucher-businesstype-assertion-strength.md`）落盘：凭证 businessType 写入点核验（`executeWriteOff:180` 显式传 `BAD_DEBT_WRITE_OFF` + `findBillLinks:908-912` reverse 路由依赖）+ 测试断言集全集核验（8 项强断言 + businessType 枚举缺失）+ MA4↔A5.6 边界声明 + 断言强度裁决 = **接受（断言强度足够）**（凭证内容断言实质覆盖核销语义 + businessType 为路由维度非 L1 验收标准 + 经 reverse 测试间接回归保护）+ 零新 finding / 零 successor + A1.3 §7 存疑点 2 正向消解为接受 + A1.3 §5.1 命题 W1 接受维持。只读评估，零生产代码变更，checker 全 19 规则 actual == baseline（0 漂移）。独立结束审计为最终门控（见 §Closure Gates）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（new session，未起草/未执行本计划）
+- Audit Mode: 语义审计（SCRIPT_CHECK_RESULT=FAIL → 8 项 Closure Gates 未勾选 + Closure 证据占位符）；本代理按 plan-guide 修正前对 live repo 逐项语义复核
+- Verification Walkthrough:
+  - 报告落盘核验：`docs/audits/2026-08-07-0944-rc-ma4-a4-1-9-bad-debt-voucher-businesstype-assertion-strength.md` 存在（`> Audit Status: closed`，11 段齐全，零 `*(pending)*` 占位符）
+  - 凭证 businessType 写入点（L3 live）：`ErpFinBadDebtProcessor.java#executeWriteOff:180` 确实显式传 `ErpFinBusinessType.BAD_DEBT_WRITE_OFF`；`writeBadDebtVoucher:208-214` 经 `CloseVoucherWriter.writeVoucher` 持久化 `businessType.name()`——与报告 §2.1 一致
+  - reverse 路由依赖（L3 live）：`ErpFinPostingProcessor.java#findBillLinks:908-912` 确实按 `(billCode, businessType.name())` 双键查 `ErpFinVoucherBillR`——与报告 §4.2 间接回归保护链一致
+  - 测试断言集（L4 live）：`TestErpFinBadDebt.java#testWriteOffSetsStatusAndVoucherNoPL:140-176` 确实断言 approvalStatus/voucherId/status==WRITTEN_OFF/openAmount==0/settledAmount==500/借Allowance(1231,DEBIT)/贷AR(1122,CREDIT)/无6701，**无 businessType 断言**——与报告 §3.1 一致
+  - 裁决一致性：报告 §5.1 = 接受（断言强度足够），零 P0/P1/P2，零新 finding，零 successor；与 A1.3 §5.1 命题 W1 接受分层一致；与 docs/logs/2026/08-07.md §A4.1.9 条目一致
+  - Anti-Hollow：纯只读评估计划，无生产代码变更（报告 §9 真相源冻结声明），「行为完整性」= 报告实质内容完整（非空壳）
+  - Docs sync：`docs/logs/2026/08-07.md` §A4.1.9 条目齐全（工作项 + 类型 + 产出 + 裁决 + §去重）
+- Script Re-check: 全部 8 项 Closure Gates 已勾选 `[x]` + Closure 证据占位符已替换为真实审计走查记录；`plan-check.mjs --strict` 复跑 PASS
 
 Follow-up:
 
