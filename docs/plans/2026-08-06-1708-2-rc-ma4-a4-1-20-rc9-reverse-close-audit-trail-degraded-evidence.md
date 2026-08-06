@@ -1,6 +1,6 @@
 # 2026-08-06-1708-2 rc-ma4-a4-1-20-rc9-reverse-close-audit-trail-degraded-evidence RC-9 反结账审计轨迹缺失实际合规影响与降级审计证据评估
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.1.20（MA4 运行时行为验证 — A1.6 §7 存疑点 3：UC-FIN-07 RC-9 反结账全程审计[操作人/原因]缺失——无操作人/原因/时间记录在外部审计/税务/SOX 合规场景下的可追溯性破坏程度；当前 `ErpFinAccountingPeriod` 通用 `updatedBy`/`updateTime` 审计列是否被反结账操作覆盖以提供降级审计证据，闭合 P1-RC-006 修复方案优先级裁决）
@@ -65,51 +65,60 @@
 
 ### Phase 1 - RC-9 降级审计证据与合规影响评估
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1708-rc-ma4-a4-1-20-rc9-reverse-close-audit-trail-degraded-evidence.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done（展开器已追加 A4.1.20 行）；A1.6 done（§7 存疑点 3 已落盘 + §2.11 RC-9 缺失 + §5.2 RC-9 P1 + §5.3 P1-RC-006 新建 + §6.1/§6.3 MR1[ORM ask-first]）
 
-- [ ] `Proof` reverseClose 审计字段写入核验：给出 `ErpFinAccountingPeriodReverseCloseProcessor.reverseClose:22-59` 证据（file:line）——无 reason 参数（签名）+ 无 `setReversedBy`/`setReverseCloseReason`/`setReverseCloseAt`（字段不存在）+ 无 `ReverseCloseLog` 写入 + 方法对 period 实体写入 = `:39 setStatus(OPEN)` + `:55-56 reopenModules` + `:57 flushSession`。证实 RC-9 专属审计完全缺失。
+- [x] `Proof` reverseClose 审计字段写入核验：给出 `ErpFinAccountingPeriodReverseCloseProcessor.reverseClose:22-59` 证据（file:line）——无 reason 参数（签名）+ 无 `setReversedBy`/`setReverseCloseReason`/`setReverseCloseAt`（字段不存在）+ 无 `ReverseCloseLog` 写入 + 方法对 period 实体写入 = `:39 setStatus(OPEN)` + `:55-56 reopenModules` + `:57 flushSession`。证实 RC-9 专属审计完全缺失。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 通用 `updatedBy`/`updateTime` 降级审计证据评估（本存疑点核心）：核验 `ErpFinAccountingPeriod` ORM `updateTimeProp="updateTime" updaterProp="updatedBy"`（orm.xml:657）→ 平台 `IDaoEntityListener`/审计拦截器自动填充机制——追踪 reverseClose 的 `setStatus(OPEN)` + `reopenModules` + `flushSession` **是否**触发 `updatedBy`/`updateTime` 被反结账操作覆盖（提供降级证据：操作人 from `IUserContext` + 时间戳 from `CoreMetrics`）。评估降级证据可靠性边界：①无 reason（reason 不可追）；②`updateTime` = 任意更新时间非反结账专属时间戳；③被任何后续无关更新覆盖（不可靠）；④entity tagSet `gid,erp.finance` 无 `audit,audit-save`（无结构化操作日志）。
+      - Evidence: 报告 §2.1（契约链 IErpFinPeriodCloseBiz:45 + BizModel:70-71 + Processor:22 一致无 reason 参数 + 方法体 setStatus:39 + reopenModules:55-56 + flushSession:57 + 无专属审计 setter + 无 ReverseCloseLog 写入）
+- [x] `Proof` 通用 `updatedBy`/`updateTime` 降级审计证据评估（本存疑点核心）：核验 `ErpFinAccountingPeriod` ORM `updateTimeProp="updateTime" updaterProp="updatedBy"`（orm.xml:657）→ 平台 `IDaoEntityListener`/审计拦截器自动填充机制——追踪 reverseClose 的 `setStatus(OPEN)` + `reopenModules` + `flushSession` **是否**触发 `updatedBy`/`updateTime` 被反结账操作覆盖（提供降级证据：操作人 from `IUserContext` + 时间戳 from `CoreMetrics`）。评估降级证据可靠性边界：①无 reason（reason 不可追）；②`updateTime` = 任意更新时间非反结账专属时间戳；③被任何后续无关更新覆盖（不可靠）；④entity tagSet `gid,erp.finance` 无 `audit,audit-save`（无结构化操作日志）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` ORM 审计列 + ReverseCloseLog grep 复核：核验 `app-erp-finance.orm.xml:655-694` 审计列实际存在（`closedBy`/`closedAt`/`updatedBy`/`updateTime`）+ `reversedBy`/`reverseCloseReason`/`reverseCloseAt` 列**不存在**（:659-677 列清单）+ 全仓 grep `reversedBy|reverseCloseReason|reverseCloseAt|ReverseCloseLog|reverseCloseLog` = 0 命中（live 复核 A1.6 §2.11）。证实 RC-9 专属审计列/实体完全缺失。
+      - Evidence: 报告 §2.2（平台机制 `OrmTimestampHelper.onUpdate:74-112`[nop-entropy] + `EntityPersisterImpl.queueUpdate:470-471` 调用点 + reverseClose setStatus:39/reopenModules:55-56/flushSession:57 触发覆盖 + 4 项可靠性边界 + orm-model-design.md §被动审计列 :631/:312 平台文档）
+- [x] `Proof` ORM 审计列 + ReverseCloseLog grep 复核：核验 `app-erp-finance.orm.xml:655-694` 审计列实际存在（`closedBy`/`closedAt`/`updatedBy`/`updateTime`）+ `reversedBy`/`reverseCloseReason`/`reverseCloseAt` 列**不存在**（:659-677 列清单）+ 全仓 grep `reversedBy|reverseCloseReason|reverseCloseAt|ReverseCloseLog|reverseCloseLog` = 0 命中（live 复核 A1.6 §2.11）。证实 RC-9 专属审计列/实体完全缺失。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` RC-9 实际合规影响程度评估：评估反结账无专属审计轨迹[操作人/原因/时间]在外部审计/税务/SOX 合规场景下的可追溯性破坏程度——降级证据[通用 updatedBy/updateTime]是否部分满足合规最低要求（操作人可追[from updatedBy] + 时间可追[from updateTime]但 reason 不可追 + 易被覆盖）vs 完全不可追。结合 L1 RC-9「全程审计[操作人/原因]」字面要求[操作人 + 原因均须]评估降级证据的合规缺口。
+      - Evidence: 报告 §2.3（orm.xml:670-677 审计列存在 + reversedBy/Reason/At 不存在 + grep HEAD `7aa9b7078` 排除 docs = 0 命中）
+- [x] `Proof` RC-9 实际合规影响程度评估：评估反结账无专属审计轨迹[操作人/原因/时间]在外部审计/税务/SOX 合规场景下的可追溯性破坏程度——降级证据[通用 updatedBy/updateTime]是否部分满足合规最低要求（操作人可追[from updatedBy] + 时间可追[from updateTime]但 reason 不可追 + 易被覆盖）vs 完全不可追。结合 L1 RC-9「全程审计[操作人/原因]」字面要求[操作人 + 原因均须]评估降级证据的合规缺口。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 既有测试覆盖边界普查：grep 反结账审计相关测试（`updatedBy`/`updateTime` 被反结账覆盖断言 + ReverseCloseLog 测试 + reverseClose reason 参数测试）全集，产出测试覆盖边界清单 + 标注降级证据断言缺口（零覆盖，功能缺失故零测试）。
+      - Evidence: 报告 §2.4（外部审计/税务/SOX 三场景合规缺口矩阵 + 降级证据部分满足合规最低要求[操作人+时间可追] BUT reason 不可追是合规硬伤）
+- [x] `Proof` 既有测试覆盖边界普查：grep 反结账审计相关测试（`updatedBy`/`updateTime` 被反结账覆盖断言 + ReverseCloseLog 测试 + reverseClose reason 参数测试）全集，产出测试覆盖边界清单 + 标注降级证据断言缺口（零覆盖，功能缺失故零测试）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（RC-9 审计轨迹是否符合 L1「全程审计[操作人/原因]」），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+      - Evidence: 报告 §3（`TestErpFinReverseClose:26-51` 无 updatedBy/updateTime 断言 + grep `getUpdatedBy|getUpdateTime` 跨 finance test = 0 命中 + ReverseCloseLog/reason 测试缺口 = 零覆盖）
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（RC-9 审计轨迹是否符合 L1「全程审计[操作人/原因]」），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` P1-RC-006 优先级裁决闭合（方法论 §2 判据 + 三源对照）：①确认 RC-9 专属审计完全缺失 → P1-RC-006 **P1 分级维持**（§2 P1① 功能完全缺失——降级证据是通用追踪非 RC-9 专属审计，不满足「全程审计[操作人/原因]」字面[reason 不可追是合规硬伤]，不降级 P2）；②评估降级证据存在性以指导 MR1 优先级（有降级证据[操作人+时间可追]→ P1 优先级可排在活跃数据破坏类 P0 之后，但 reason 不可追是合规硬伤故仍须实现，不延后至 P2）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.6 §5.3 P1-RC-006 P1 新建 + §6.3 MR1[ORM ask-first] 分层一致。
+      - Evidence: 报告 §2.5（需求契约视角 RC-9 审计轨迹评估 + 不重做 A5.6 + 降级证据断言缺口归 A5.6 测试质量 successor）
+- [x] `Decision` P1-RC-006 优先级裁决闭合（方法论 §2 判据 + 三源对照）：①确认 RC-9 专属审计完全缺失 → P1-RC-006 **P1 分级维持**（§2 P1① 功能完全缺失——降级证据是通用追踪非 RC-9 专属审计，不满足「全程审计[操作人/原因]」字面[reason 不可追是合规硬伤]，不降级 P2）；②评估降级证据存在性以指导 MR1 优先级（有降级证据[操作人+时间可追]→ P1 优先级可排在活跃数据破坏类 P0 之后，但 reason 不可追是合规硬伤故仍须实现，不延后至 P2）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.6 §5.3 P1-RC-006 P1 新建 + §6.3 MR1[ORM ask-first] 分层一致。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
+      - Evidence: 报告 §5.1（决策树分支①命中维持 P1 不降级[reason 不可追合规硬伤]）+ §5.2（降级证据指导 MR1 优先级：可排活跃数据破坏 P0 之后但须实现）+ §5.3（§2 P1①/⑤ 判据 + L1/L2/L3 三源 + 与 A1.6 §5.3/§6.3 分层一致）
 
 Exit Criteria:
 
-- [ ] reverseClose 审计写入 + 降级证据评估 + ORM grep 复核 + 合规影响 + 测试覆盖边界证据落盘（全集，无遗漏），每条有证据（file:line）
-- [ ] P1-RC-006 优先级裁决有明确结论（维持 P1 不降级 + 降级证据存在性指导 MR1 优先级），与 A1.6 §5.3 + §6.3 分层一致
+- [x] reverseClose 审计写入 + 降级证据评估 + ORM grep 复核 + 合规影响 + 测试覆盖边界证据落盘（全集，无遗漏），每条有证据（file:line）
+- [x] P1-RC-006 优先级裁决有明确结论（维持 P1 不降级 + 降级证据存在性指导 MR1 优先级），与 A1.6 §5.3 + §6.3 分层一致
 
 ### Phase 2 - finding 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1708-rc-ma4-a4-1-20-rc9-reverse-close-audit-trail-degraded-evidence.md`（定稿）；`docs/audits/arm-index.md`（P1-RC-006 优先级注记更新）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 RC-9 降级证据评估 + 优先级裁决闭合完成
 
-- [ ] `Add` P1-RC-006 优先级注记更新：在 arm-index P1-RC-006 行追加「A4.1.20 降级审计证据评估：通用 updatedBy/updateTime 经平台自动填充被反结账覆盖提供降级证据[操作人+时间可追]，但 reason 不可追 + 易被覆盖 + 非专属审计 → RC-9 验收标准仍功能完全缺失 → P1 维持不降级；降级证据指导 MR1 优先级（排活跃数据破坏 P0 之后，reason 不可追合规硬伤故仍须实现）」注记。P1-RC-006 分级/修复通道[MR1 ORM ask-first]不变。禁止未经比对新建重复 finding（P1-RC-006 已登记，本验证只更新注记）。
+- [x] `Add` P1-RC-006 优先级注记更新：在 arm-index P1-RC-006 行追加「A4.1.20 降级审计证据评估：通用 updatedBy/updateTime 经平台自动填充被反结账覆盖提供降级证据[操作人+时间可追]，但 reason 不可追 + 易被覆盖 + 非专属审计 → RC-9 验收标准仍功能完全缺失 → P1 维持不降级；降级证据指导 MR1 优先级（排活跃数据破坏 P0 之后，reason 不可追合规硬伤故仍须实现）」注记。P1-RC-006 分级/修复通道[MR1 ORM ask-first]不变。禁止未经比对新建重复 finding（P1-RC-006 已登记，本验证只更新注记）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.6 §2.11/§5.3 P1-RC-006 / §6.3 MR1 / A2.3 period-close E2E 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+      - Evidence: arm-index.md P1-RC-006 行末追加「【A4.1.20 降级审计证据评估 2026-08-06】」注记（grep `A4.1.20 降级审计证据评估` arm-index.md 命中 1 处）；分级/修复通道不变
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.6 §2.11/§5.3 P1-RC-006 / §6.3 MR1 / A2.3 period-close E2E 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
+      - Evidence: 报告 §8（checker actual vs baseline 表 R1a-R2d 全 = baseline 0 漂移 + EXIT=0 纯 reporter + 独立性声明 + 交叉去重声明[P1-RC-006 维持 + P1-MA2-020/P1-MA3-036/P1-MA3-046 不同控制点 + A2.3 复用 + MA4↔A5.6 边界]）
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（reverseClose 审计写入 + 降级证据评估 + ORM grep + 合规影响 + 测试覆盖边界 + 优先级裁决 + finding 衔接 + §8 自检齐全）
-- [ ] P1-RC-006 优先级注记已更新入 arm-index（维持 P1 + 降级证据指导 MR1 优先级）并有 grep 依据
+- [x] 验证报告定稿（reverseClose 审计写入 + 降级证据评估 + ORM grep + 合规影响 + 测试覆盖边界 + 优先级裁决 + finding 衔接 + §8 自检齐全）
+- [x] P1-RC-006 优先级注记已更新入 arm-index（维持 P1 + 降级证据指导 MR1 优先级）并有 grep 依据
 
 ## Draft Review Record
 
@@ -119,14 +128,14 @@ Exit Criteria:
 
 > 本计划为**只读 RC-9 降级审计证据与合规影响评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = reverseClose 审计写入 + 降级证据评估 + ORM grep + 合规影响 + 测试覆盖边界 + 优先级裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.20 验证报告 reverseClose 审计写入 + 降级证据评估 + ORM grep + 合规影响 + 测试覆盖边界 + 优先级裁决齐全 + P1-RC-006 优先级注记更新
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.6 §7-3 + §2.11 RC-9 缺失 + §5.3 P1-RC-006 + §6.3 MR1 一致
-- [ ] 已运行验证：reverseClose 审计写入 + 降级证据评估 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（P1-RC-006 修复归 MR1 在 §Deferred But Adjudicated 预声明，非范围内项目降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.20 验证报告 reverseClose 审计写入 + 降级证据评估 + ORM grep + 合规影响 + 测试覆盖边界 + 优先级裁决齐全 + P1-RC-006 优先级注记更新
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.6 §7-3 + §2.11 RC-9 缺失 + §5.3 P1-RC-006 + §6.3 MR1 一致
+- [x] 已运行验证：reverseClose 审计写入 + 降级证据评估 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（P1-RC-006 修复归 MR1 在 §Deferred But Adjudicated 预声明，非范围内项目降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -138,12 +147,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 完结（PASS）— 独立结束审计（新会话，task `ses_0297dae4cffeVbWRK0iHbKafba`，不重用执行者上下文）已对 LIVE repo HEAD `7aa9b7078` 零信任核验全 7 检查点：①计划完整性（Phase 1/2 全 `[x]` + Status completed + Plan Status completed + 无 `[ ]` 残留）；②报告 9 段骨架完整性（§0-§11 齐全，对齐 A4.1.18）；③file:line 零漂移（reverseClose:22 无 reason 参数 + setStatus:39 + reopenModules:55-56 + flushSession:57 + 契约链 IErpFinPeriodCloseBiz:45 + BizModel:70-71 一致无 reason / ORM orm.xml:657 updateTimeProp/updaterProp + tagSet=gid,erp.finance 无 audit + 审计列 closedBy:670/closedAt:671/updatedBy:676/updateTime:677 在 + reversedBy/Reason/At 缺 / 平台 OrmTimestampHelper.onUpdate:74-112 + EntityPersisterImpl.queueUpdate:470-471 自动填充机制 / grep reversedBy|ReverseCloseLog 排除 docs = 0 命中 / grep getUpdatedBy|getUpdateTime 跨 finance test = 0 命中）；④裁决逻辑健全（P1-RC-006 维持 P1 不降级，reason 不可追合规硬伤 → §2 P1① 成立；§2 P1①/⑤ 判据 + L1 use-cases.md:140 / L2 / L3 三源 + 与 A1.6 §5.3/§6.3 分层一致）；⑤arm-index P1-RC-006 行追加 A4.1.20 注记 + 分级/修复通道[MR1 ORM ask-first]不变 + roadmap A4.1.20 done ✅；⑥§8 checker R1a-R2d actual==baseline（R1d=14/R2a=34/R2b=229/R2c=1382/R2d=34）+ 独立性 + 交叉去重声明；⑦纪律（单一结果表面 + item typing Proof/Decision/Add 无 Fix + git status 仅 docs/.md 变更 + P1-RC-006 修复归 MR1 ask-first + 格式对齐 A4.1.18）。无 Blocker/Major。执行者已据审计 minor 修正报告 §8 退出码描述（实测退出码=1，非 0——checker `set -euo pipefail` + R3 既有特性，同型报告 A4.1.14 §8.1 已记；门控以 actual vs baseline 表为准非退出码，无结论影响）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（新会话 task `ses_0297dae4cffeVbWRK0iHbKafba`，general 类型，不重用执行者上下文）
+- Evidence: 独立零信任核验全 7 检查点 PASS（VERDICT: passes closure audit）—— 见 Status Note；file:line 经独立 open + grep 复核零漂移；gate 7「结束审计由独立子代理执行」据此 verdict 勾选 `[x]`
 
 Follow-up:
 
