@@ -1,8 +1,9 @@
 # 权限 enforcement 开启（测试环境）路线图
 
-> 最后更新：2026-08-05
-> 触发条件：RBAC 精细化 / 合规审计需求（`roles-and-permissions.md` §角色→权限点映射）+ 人工批准（2026-08-05，测试环境开启 enforcement）
+> 最后更新：2026-08-06
+> 触发条件：RBAC 精细化 / 合规审计需求（`roles-and-permissions.md` §角色→权限点映射）+ 人工批准（2026-08-05，测试环境开启 enforcement；2026-08-06，启动执行并委托全部实施决策）
 > 来源：`docs/backlog/README.md` + `docs/discussions/2026-08-05-1800-ai-mfg-rd-bom-and-procurement-confidentiality.md` §讨论点四 + `docs/design/roles-and-permissions.md`
+> 执行：mission driver（`./tools/mission-driver.sh run permissions-enforcement`）；roadmap 状态块为唯一动态状态真相源
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > 审查记录：独立子代理 3 路（规范合规 / 覆盖面 / 可执行性）review iteration 1 → 需修订（2 blocker / 10 major / 20 minor），本版合并修订；iteration 2 复核 → 需修订（0 blocker / 1 major / 13 minor），已并入本版；iteration 3 复核 → 需修订（0 blocker / 1 major / 6 minor），已并入本版；iteration 4 终审 → 通过（0 blocker / 0 major / 3 minor，信息性）；见文末「审查记录」。
 
@@ -14,18 +15,20 @@
 > - **范围限定**：本批准仅覆盖测试环境验证。生产环境（`application.yaml` 默认/真实部署）翻转为 successor，触发条件 = 测试环境全绿验收 + 生产灰度计划人工批准。
 > - **结构要求**：先做**全部准备工作**（P1–P2），再执行**全部后续内容**（E1–E4）。
 > - **非阻塞推进**：P1.2（Q1/Q4 裁决）若未决，仅阻塞 E3.2/E4.x，不阻塞 P 其余项与 E1/E2/E3.1 推进（E1/E2 与 E4 无依赖）。
+>
+> **执行授权（2026-08-06）**：人工授权启动执行，**全部实施决策按最合适方式自主作出**（含 P1.2 Q1/Q4 裁决的推荐决议，须经独立计划审计）；后续由 mission driver 直接执行本 roadmap。保护区域不变：auth/permissions 为 plan-first（每项须 owner doc + tests + 独立 plan-audit）；E2.2 ORM 扩展为 ask-first 可选路径（默认等效方案不触 ORM），触发时暂停等待人工确认；生产翻转不在授权范围。
 
 ## Work Item Status
 
-> 唯一的动态状态块。状态：`todo` / `ready` / `done`。初始全 `todo`。
+> 唯一的动态状态块。状态：`todo` / `ready` / `done`。初始全 `todo`；2026-08-06 执行授权后首波 P1.1/P1.2/P1.3 转 `ready`（门控满足，可被 DRAFT_PLANS 选取），其余保持 `todo` 直至 Deps 满足。
 
 ### Milestone P1 — 准备：权限矩阵与种子
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| P1.1 | 敏感字段与保密范围清单（五面：薪酬/合同/EDI/供应商价格/成本分解 + **F7 既有 PII 字段集确认**） | todo | `field-formatting-patterns.md` §9（F7）+ §9.4（后端脱敏 successor）+ `roles-and-permissions.md` | — | none |
-| P1.2 | 采购保密 Q1/Q4 裁决 + Q2/Q3 归属判定（Q2/Q3 属 AI 研发轨道，仅判归属域不实施） | todo | 讨论文档 §未解决问题 | — | none |
-| P1.3 | 细粒度权限映射裁决（收敛粒度：角色×SUBM + 敏感动作 per-action FNPT；含 **B 类扩展域 enforcement 行为裁决**） | todo | `roles-and-permissions.md` §角色→权限点映射 | P1.1（弱依赖，可并行） | none |
+| P1.1 | 敏感字段与保密范围清单（五面：薪酬/合同/EDI/供应商价格/成本分解 + **F7 既有 PII 字段集确认**） | ready | `field-formatting-patterns.md` §9（F7）+ §9.4（后端脱敏 successor）+ `roles-and-permissions.md` | — | none |
+| P1.2 | 采购保密 Q1/Q4 裁决 + Q2/Q3 归属判定（Q2/Q3 属 AI 研发轨道，仅判归属域不实施） | ready | 讨论文档 §未解决问题 | — | none |
+| P1.3 | 细粒度权限映射裁决（收敛粒度：角色×SUBM + 敏感动作 per-action FNPT；含 **B 类扩展域 enforcement 行为裁决**） | ready | `roles-and-permissions.md` §角色→权限点映射 | P1.1（弱依赖，可并行） | none |
 | P1.4a | per-action FNPT 声明补齐——purchase/sales 审批集 | todo | `roles-and-permissions.md` §action-level 声明层 | P1.3 | `nop-backend-dev` |
 | P1.4b | per-action FNPT 声明补齐——mfg approve subcontract + assets 处置 | todo | 同上 | P1.3 | `nop-backend-dev` |
 | P1.4c | per-action FNPT 声明补齐——b2b EDI 全生命周期 | todo | 同上 + `edi-formats.md` | P1.3 | `nop-backend-dev` |
@@ -172,6 +175,17 @@ graph LR
 4. 每工作项结束审计时更新 `roles-and-permissions.md` / `field-formatting-patterns.md` 等 owner doc 实现注记 + 日志。
 5. Q1/Q4（P1.2）为 E4 里程碑硬前置；**E1 硬前置 = P2.2a（admin 兜底就绪）+ P2.4（dry-run 门控通过）**。
 6. 生产环境翻转不在本 roadmap；验收标准 = 测试环境全 E2E 绿 + 负向隔离测试证明 enforcement 真拒绝。
+
+## 执行机制
+
+本路线图由 mission driver（`./tools/mission-driver.sh run permissions-enforcement`）自主驱动，逐项闭环：
+
+1. **逐项执行**：每个工作项由 mission driver DRAFT_PLANS → 独立草案审查（fresh-session 子代理，反复至共识）→ EXECUTE → 独立结束审计 → 写回 `done`。计划落盘 `docs/plans/`，命名遵循计划指南。
+2. **Deps 检查义务**：DRAFT_PLANS agent 必须逐行检查 Deps 列，仅 draft 其全部 Deps 已 `done` 的 `todo`/`ready` 工作项（Deps 与依赖图冲突时以表格为准）。
+3. **状态流转**：独立草案审查通过后 `todo`/`ready` → 计划 `active`；独立结束审计通过后工作项 `ready` → `done`。`ready` 仅表示门控满足可被 draft，不预置计划。
+4. **保护区域暂停协议**：触及 ORM（E2.2 可选路径）或财务/成本代码区域（E3.2 取值豁免）的工作项，plan 必须含显式 `ask-first 人工确认` checkbox；mission driver 执行到触及行时**暂停该行**等待人工批准记录（登记于 plan 文件），非触及行继续执行。auth/permissions 整体为 plan-first 区域，每项实施前须 owner doc + tests 证据 + 独立 plan-audit。
+5. **执行门控（已满足）**：人工批准（2026-08-05 测试环境 + 2026-08-06 启动执行）+ 触发条件满足 + 首波 P1.1/P1.2/P1.3 已转 `ready`，mission driver 可启动。**E1 硬前置 = P2.2a（admin 兜底就绪）+ P2.4（dry-run 门控通过）**；E1.x 依赖未满足前，DRAFT_PLANS 不得 draft E1-E4 工作项。
+6. **验证收口**：每工作项 closure 前分域 `mvn test` + compliance checker 对比 `known-good-baselines.md`；E1–E4 全 done 后全量 build/test 全绿 + 独立 closure audit，全绿基线记入 git commit message。
 
 ## Non-Goals
 
