@@ -1,6 +1,6 @@
 # 2026-08-06-1708-3 rc-ma4-a4-1-21-year-end-reverse-close-block-boundary 年末反结账阻断边界与 GlBalance yearOpening 残留一致性评估
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.1.21（MA4 运行时行为验证 — A1.6 §7 存疑点 4：UC-FIN-07 RC-4 年度结转凭证冲销 + RC-3 反结账——`ReverseCloseProcessor:32-36` 年末反结账阻断边界：次年期间已手动删除但 `ErpFinGlBalance` yearOpening 残留时，反结账红冲年度结转凭证是否致次年年初余额与凭证不一致）
@@ -71,51 +71,51 @@
 
 ### Phase 1 - 年末反结账阻断边界与 yearOpening 残留一致性评估
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1708-rc-ma4-a4-1-21-year-end-reverse-close-block-boundary.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done（展开器已追加 A4.1.21 行）；A1.6 done（§7 存疑点 4 已落盘 + §2.8 RC-3 + §2.9 RC-4 + §5.2 RC-3/RC-4 接受 + §3.6 测试）
 
-- [ ] `Proof` 年末反结账阻断逻辑核验：给出 `ReverseCloseProcessor:32-36`（`isYearEnd && hasNextYearPeriods(year+1) → ERR_REVERSE_CLOSE_NEXT_YEAR_EXISTS`）+ `hasNextYearPeriods:128-134`（查次年任意期间 setLimit(1)）+ `isYearEnd:121-125`（month==12）证据（file:line）。证实正常路径（次年期间存在 → 阻断）行为正确。
+- [x] `Proof` 年末反结账阻断逻辑核验：给出 `ReverseCloseProcessor:32-36`（`isYearEnd && hasNextYearPeriods(year+1) → ERR_REVERSE_CLOSE_NEXT_YEAR_EXISTS`）+ `hasNextYearPeriods:128-134`（查次年任意期间 setLimit(1)）+ `isYearEnd:121-125`（month==12）证据（file:line）。证实正常路径（次年期间存在 → 阻断）行为正确。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 手动删次年期间边界场景一致性评估（本存疑点核心）：核验边界场景运行时行为——运维手动删次年 `ErpFinAccountingPeriod` 12 行但 `ErpFinGlBalance` 次年 1 月 yearOpening 行残留 → ①`hasNextYearPeriods` 返回 false（次年期间已删）→ 年末阻断失效；②红冲年度结转凭证（恢复本年未分配利润）；③残留 yearOpening 孤立（keyed by 已删 nextJan.getId()，无所属期间）。评估残留 yearOpening 实际数据一致性影响：次年期间不存在则 yearOpening 无消费方（无即时数据破坏，报表读次年 periodId 取不到行）；次年重建时 populateNextYearOpening 幂等清快照（:156-160）是否覆盖残留[需核验清快照 filter 是否 by periodId=nextJan.getId() — 若 nextJan 重建为新 id 则旧残留不被清，错配风险]。
+- [x] `Proof` 手动删次年期间边界场景一致性评估（本存疑点核心）：核验边界场景运行时行为——运维手动删次年 `ErpFinAccountingPeriod` 12 行但 `ErpFinGlBalance` 次年 1 月 yearOpening 行残留 → ①`hasNextYearPeriods` 返回 false（次年期间已删）→ 年末阻断失效；②红冲年度结转凭证（恢复本年未分配利润）；③残留 yearOpening 孤立（keyed by 已删 nextJan.getId()，无所属期间）。评估残留 yearOpening 实际数据一致性影响：次年期间不存在则 yearOpening 无消费方（无即时数据破坏，报表读次年 periodId 取不到行）；次年重建时 populateNextYearOpening 幂等清快照（:156-160）是否覆盖残留[需核验清快照 filter 是否 by periodId=nextJan.getId() — 若 nextJan 重建为新 id 则旧残留不被清，错配风险]。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` yearOpening 存储与填充核验：给出 `ErpFinGlBalance` yearOpening 直接存储证据（orm.xml:924-925 yearOpeningDebit/Credit）+ `AnnualCloseService.populateNextYearOpening:137-184`（创建 gl 行 periodId=nextJan.getId() + 幂等清快照 :156-160 + nextJan 为空静默跳过 :142-146 + 数据源全年 VoucherLine 聚合排除 PROFIT_TO_RETAINED_EARNINGS :293-317）。证实 yearOpening 由年度结账填充，手动删次年期间不清 yearOpening 行（无级联删除——ErpFinGlBalance 与 ErpFinAccountingPeriod 无 DB FK 级联，删期间不影响 GlBalance 行）。
+- [x] `Proof` yearOpening 存储与填充核验：给出 `ErpFinGlBalance` yearOpening 直接存储证据（orm.xml:924-925 yearOpeningDebit/Credit）+ `AnnualCloseService.populateNextYearOpening:137-184`（创建 gl 行 periodId=nextJan.getId() + 幂等清快照 :156-160 + nextJan 为空静默跳过 :142-146 + 数据源全年 VoucherLine 聚合排除 PROFIT_TO_RETAINED_EARNINGS :293-317）。证实 yearOpening 由年度结账填充，手动删次年期间不清 yearOpening 行（无级联删除——ErpFinGlBalance 与 ErpFinAccountingPeriod 无 DB FK 级联，删期间不影响 GlBalance 行）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 年度结转凭证红冲核验：给出 `ReverseCloseProcessor:46-49`（`isYearEnd → reverseCloseVoucher(ANNUAL-CLOSE- + PROFIT_TO_RETAINED_EARNINGS)`）+ `reverseCloseVoucher:553-562`（按 billCode+businessType 反查 VoucherBillR，存在则 reverse，无则 no-op）证据（file:line）。证实红冲仅恢复本年未分配利润（PROFIT_TO_RETAINED_EARNINGS 凭证红冲），不触及次年 yearOpening 行（yearOpening 在次年 GlBalance，红冲操作本年凭证）。
+- [x] `Proof` 年度结转凭证红冲核验：给出 `ReverseCloseProcessor:46-49`（`isYearEnd → reverseCloseVoucher(ANNUAL-CLOSE- + PROFIT_TO_RETAINED_EARNINGS)`）+ `reverseCloseVoucher:553-562`（按 billCode+businessType 反查 VoucherBillR，存在则 reverse，无则 no-op）证据（file:line）。证实红冲仅恢复本年未分配利润（PROFIT_TO_RETAINED_EARNINGS 凭证红冲），不触及次年 yearOpening 行（yearOpening 在次年 GlBalance，红冲操作本年凭证）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 既有测试覆盖边界普查：grep `testReverseCloseBlockedWhenNextYearExists:77-85`（年末阻断覆盖，仅断言 NopException 未断言 ERR_REVERSE_CLOSE_NEXT_YEAR_EXISTS 错误码/ARG_NEXT_YEAR 参数）+ `testReverseCloseReversesAnnualVoucherWhenNoNextYear:89-96`（**名实不符**——方法名承诺"红冲"但仅断言年度凭证生成 count>=1，未调 reverseClose，未禁用次年创建[默认 auto-create]）+ 手动删次年边界场景测试 全集，产出测试覆盖边界清单 + 标注名实不符测试缺口 + 边界场景缺口（零覆盖）。
+- [x] `Proof` 既有测试覆盖边界普查：grep `testReverseCloseBlockedWhenNextYearExists:77-85`（年末阻断覆盖，仅断言 NopException 未断言 ERR_REVERSE_CLOSE_NEXT_YEAR_EXISTS 错误码/ARG_NEXT_YEAR 参数）+ `testReverseCloseReversesAnnualVoucherWhenNoNextYear:89-96`（**名实不符**——方法名承诺"红冲"但仅断言年度凭证生成 count>=1，未调 reverseClose，未禁用次年创建[默认 auto-create]）+ 手动删次年边界场景测试 全集，产出测试覆盖边界清单 + 标注名实不符测试缺口 + 边界场景缺口（零覆盖）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（年末反结账边界是否致数据不一致），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（年末反结账边界是否致数据不一致），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` RC-3/RC-4 边界场景运行时裁决（方法论 §2 判据 + 三源对照）：①若手动删次年期间非常规运维 + 残留 yearOpening 孤立无即时消费方（次年不存在则报表取不到行，无即时数据破坏）→ 登记 **P2 watch-only**（边界场景需手动删次年非常规操作 + 残留无即时消费方，主路径[次年存在阻断/无次年红冲]接受，§2 P2① 次要验收标准边界弱）；②若残留 yearOpening 在次年重建时错配致数据破坏（populateNextYearOpening 幂等清快照不覆盖旧残留）→ 登记 **P1**（触及一致性，归 MR1，§2 P1①）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.6 §5.2 RC-3/RC-4 接受[正常路径]分层一致（边界场景是正常路径之外的残留风险，不撤销正常路径接受）。
+- [x] `Decision` RC-3/RC-4 边界场景运行时裁决（方法论 §2 判据 + 三源对照）：①若手动删次年期间非常规运维 + 残留 yearOpening 孤立无即时消费方（次年不存在则报表取不到行，无即时数据破坏）→ 登记 **P2 watch-only**（边界场景需手动删次年非常规操作 + 残留无即时消费方，主路径[次年存在阻断/无次年红冲]接受，§2 P2① 次要验收标准边界弱）；②若残留 yearOpening 在次年重建时错配致数据破坏（populateNextYearOpening 幂等清快照不覆盖旧残留）→ 登记 **P1**（触及一致性，归 MR1，§2 P1①）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.6 §5.2 RC-3/RC-4 接受[正常路径]分层一致（边界场景是正常路径之外的残留风险，不撤销正常路径接受）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 年末阻断逻辑 + 边界场景一致性 + yearOpening 存储/填充 + 年度凭证红冲 + 测试覆盖边界证据落盘（全集，无遗漏），每条有证据（file:line）
-- [ ] RC-3/RC-4 边界场景运行时裁决有明确结论（P2 watch-only 或 P1 MR1），与 A1.6 §5.2 RC-3/RC-4 接受[正常路径]分层一致
+- [x] 年末阻断逻辑 + 边界场景一致性 + yearOpening 存储/填充 + 年度凭证红冲 + 测试覆盖边界证据落盘（全集，无遗漏），每条有证据（file:line）
+- [x] RC-3/RC-4 边界场景运行时裁决有明确结论（P2 watch-only 或 P1 MR1），与 A1.6 §5.2 RC-3/RC-4 接受[正常路径]分层一致
 
 ### Phase 2 - finding 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1708-rc-ma4-a4-1-21-year-end-reverse-close-block-boundary.md`（定稿）；`docs/audits/arm-index.md`（新 finding 或注记，若有）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 年末阻断边界评估 + 运行时裁决完成
 
-- [ ] `Add` finding/注记更新：若 P2 watch-only → 新建 finding（P2-RC-xxx，年末反结账边界 yearOpening 残留 watch-only，与既有 finding 不同控制点——arm-index period-close 分区无"年末反结账边界 yearOpening 残留"同控制点 finding）；若 P1 → 新建 finding（P1-RC-xxx，归 MR1）；若维持接受无新 finding（残留无即时消费方 + 主路径接受）→ 在 arm-index RC-3/RC-4 相关行追加边界场景注记。禁止未经比对新建重复 finding（grep arm-index 同域同控制点后裁决）。
+- [x] `Add` finding/注记更新：若 P2 watch-only → 新建 finding（P2-RC-xxx，年末反结账边界 yearOpening 残留 watch-only，与既有 finding 不同控制点——arm-index period-close 分区无"年末反结账边界 yearOpening 残留"同控制点 finding）；若 P1 → 新建 finding（P1-RC-xxx，归 MR1）；若维持接受无新 finding（残留无即时消费方 + 主路径接受）→ 在 arm-index RC-3/RC-4 相关行追加边界场景注记。禁止未经比对新建重复 finding（grep arm-index 同域同控制点后裁决）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.6 §2.8/§2.9/§5.2 RC-3/RC-4 / A2.3 period-close E2E 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.6 §2.8/§2.9/§5.2 RC-3/RC-4 / A2.3 period-close E2E 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（年末阻断 + 边界场景一致性 + yearOpening 存储/填充 + 年度凭证红冲 + 测试覆盖边界 + 运行时裁决 + finding 衔接 + §8 自检齐全）
-- [ ] 新 finding 或注记已登记入 arm-index（若有变更）或有明确「维持接受无变更」记录并有 grep 依据
+- [x] 验证报告定稿（年末阻断 + 边界场景一致性 + yearOpening 存储/填充 + 年度凭证红冲 + 测试覆盖边界 + 运行时裁决 + finding 衔接 + §8 自检齐全）
+- [x] 新 finding 或注记已登记入 arm-index（若有变更）或有明确「维持接受无变更」记录并有 grep 依据
 
 ## Draft Review Record
 
@@ -125,14 +125,14 @@ Exit Criteria:
 
 > 本计划为**只读年末反结账阻断边界一致性评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 年末阻断逻辑 + 边界场景一致性 + yearOpening 存储/填充 + 年度凭证红冲 + 测试覆盖边界 + 运行时裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.21 验证报告年末阻断 + 边界场景一致性 + yearOpening 存储/填充 + 年度凭证红冲 + 测试覆盖边界 + 运行时裁决齐全 + finding/注记更新（若有）
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.6 §7-4 + §2.8 RC-3 + §2.9 RC-4 + §5.2 RC-3/RC-4 接受 一致
-- [ ] 已运行验证：年末阻断 + 边界场景一致性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.21 验证报告年末阻断 + 边界场景一致性 + yearOpening 存储/填充 + 年度凭证红冲 + 测试覆盖边界 + 运行时裁决齐全 + finding/注记更新（若有）
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.6 §7-4 + §2.8 RC-3 + §2.9 RC-4 + §5.2 RC-3/RC-4 接受 一致
+- [x] 已运行验证：年末阻断 + 边界场景一致性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -144,12 +144,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 已完成。A4.1.21 验证报告落盘 `docs/audits/2026-08-06-1708-rc-ma4-a4-1-21-year-end-reverse-close-block-boundary.md`。核心结论：存疑点核心问题"反结账红冲年度结转凭证是否致次年年初余额与凭证不一致"答案 = 否（红冲仅涉本年 + 残留 yearOpening 孤立无消费方 + 次年重建错配不成立）；维持 RC-3/RC-4 接受[正常路径] + 新建 P2-RC-084 watch-only[边界场景残留孤立数据卫生/潜在风险]，arm-index 已登记。无 P0/P1，不触发 MR0/MR1。结束审计由独立子代理（新会话）执行。
 
 Closure Audit Evidence:
 
 - Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Evidence: 验证报告 `docs/audits/2026-08-06-1708-rc-ma4-a4-1-21-year-end-reverse-close-block-boundary.md`（§0 TL;DR + §2.1-§2.6 实现证据 + §3 测试证据 + §5.1 决策树分支①裁决 + §6.2 P2-RC-084 新建 + §8 checker actual vs baseline 实测 EXIT=0）；arm-index `docs/audits/arm-index.md` P2-RC-084 行（period-close 分区，P2-RC-007 后）；HEAD `2cf41032f` 实测；§8 checker R1/R2 actual == baseline（零代码变更无回归风险）。
 
 Follow-up:
 
