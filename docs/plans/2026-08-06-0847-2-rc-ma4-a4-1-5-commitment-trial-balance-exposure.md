@@ -1,6 +1,6 @@
 # 2026-08-06-0847-2 rc-ma4-a4-1-5-commitment-trial-balance-exposure 承付凭证借贷不平时报平衡暴露核对
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.1.5（MA4 运行时行为验证 — A1.2 §7-2：承付凭证 header 借贷不平时报暴露，试算平衡/三大报表是否过滤 COMMITMENT 影子凭证）
@@ -67,43 +67,43 @@
 
 ### Phase 1 - GL 路径 postingType 过滤面全集普查 + 平衡恒等式影响评估
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0847-rc-ma4-a4-1-5-commitment-trial-balance-exposure.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done；A1.2 done（§5.2 caveat ③ 接受 + §7 存疑点 2 已落盘）；A1.7 done（§7 SP-1 交叉）
 
-- [ ] `Proof` GL 路径全集枚举：grep 所有读取/聚合 `ErpFinVoucherLine` 或 `ErpFinVoucher` 且含 `postingType` 过滤表达式的 Java 文件（关键词 `ne("postingType"` / `notIn("postingType"` / `isNull("postingType"` / `eq("postingType"`），产出路径清单（禁止抽样）。须覆盖试算平衡快照 / 年度结转 / 损益结转 / 坏账准备 / 汇兑重估 / 预算对比报表 / 三大报表(BS/IS/CF) / GL 余额视图 / AR-AP 辅助账 / carryForward 等全部消费点。
+- [x] `Proof` GL 路径全集枚举：grep 所有读取/聚合 `ErpFinVoucherLine` 或 `ErpFinVoucher` 且含 `postingType` 过滤表达式的 Java 文件（关键词 `ne("postingType"` / `notIn("postingType"` / `isNull("postingType"` / `eq("postingType"`），产出路径清单（禁止抽样）。须覆盖试算平衡快照 / 年度结转 / 损益结转 / 坏账准备 / 汇兑重估 / 预算对比报表 / 三大报表(BS/IS/CF) / GL 余额视图 / AR-AP 辅助账 / carryForward 等全部消费点。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 逐路径过滤条件核验：每路径记录 ①文件:行 ②过滤条件分类（排除 BUDGET only / 排除 BUDGET+COMMITMENT / 排除其他 / 不过滤）③该路径是否参与 Dr==Cr 平衡聚合（试算平衡/三大报表=是；预算对比/控制=否）④config 开启承付时 COMMITMENT 单边 Dr 行是否进入该路径 ⑤既有 JUnit 承付场景覆盖（引用 + 断言强度）。
+- [x] `Proof` 逐路径过滤条件核验：每路径记录 ①文件:行 ②过滤条件分类（排除 BUDGET only / 排除 BUDGET+COMMITMENT / 排除其他 / 不过滤）③该路径是否参与 Dr==Cr 平衡聚合（试算平衡/三大报表=是；预算对比/控制=否）④config 开启承付时 COMMITMENT 单边 Dr 行是否进入该路径 ⑤既有 JUnit 承付场景覆盖（引用 + 断言强度）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 平衡恒等式破坏风险评估（方法论 §2 判据）：①试算平衡快照路径——config 开启承付 + PO approve 产生单边 Dr COMMITMENT 凭证 → 快照 closingDebit/closingCredit 求和失衡（Dr > Cr）→ **是否破坏平衡恒等式**（实测 + 既有 JUnit `TestErpFinProfitLossClosing` / `TestErpFinPeriodClosePerf` 是否在承付开启下运行）②三大报表路径——BS/IS/CF 是否独立过滤（A1.7 已证 BS/IS 安全；CF 归 A4.1.22）③若任一平衡聚合路径纳入单边 Dr 承付行 → 按 §2 定级（P1④跨组件契约不一致 / P2①边界场景弱）；若全部平衡聚合路径安全（config 默认关闭 + 平衡路径独立排除或承付不进）→ 维持接受。
+- [x] `Decision` 平衡恒等式破坏风险评估（方法论 §2 判据）：①试算平衡快照路径——config 开启承付 + PO approve 产生单边 Dr COMMITMENT 凭证 → 快照 closingDebit/closingCredit 求和失衡（Dr > Cr）→ **是否破坏平衡恒等式**（实测 + 既有 JUnit `TestErpFinProfitLossClosing` / `TestErpFinPeriodClosePerf` 是否在承付开启下运行）②三大报表路径——BS/IS/CF 是否独立过滤（A1.7 已证 BS/IS 安全；CF 归 A4.1.22）③若任一平衡聚合路径纳入单边 Dr 承付行 → 按 §2 定级（P1④跨组件契约不一致 / P2①边界场景弱）；若全部平衡聚合路径安全（config 默认关闭 + 平衡路径独立排除或承付不进）→ 维持接受。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] GL 路径过滤矩阵落盘（每路径 ≥5 字段齐备），无遗漏
-- [ ] 平衡恒等式破坏风险评估有明确裁决（维持接受 / 升级 finding）+ 路径证据 + config 默认关闭的运行时影响说明
+- [x] GL 路径过滤矩阵落盘（每路径 ≥5 字段齐备），无遗漏
+- [x] 平衡恒等式破坏风险评估有明确裁决（维持接受 / 升级 finding）+ 路径证据 + config 默认关闭的运行时影响说明
 
 ### Phase 2 - finding 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0847-rc-ma4-a4-1-5-commitment-trial-balance-exposure.md`（定稿）；`docs/audits/arm-index.md`（若新 finding）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 路径矩阵 + 风险裁决完成
 
-- [ ] `Add` 若裁决升级 → 按 §7 grep arm-index finance 试算平衡/三大报表/影子凭证过滤同域同控制点裁决「复用 or 新建」`P*-RC-xxx`。须与 A1.7 §7 SP-1（A4.1.22 CF 污染）+ P1-RC-003（预算对比报表口径）交叉去重——同根因家族（BUDGET-only 过滤漏 COMMITMENT）但不同控制点（试算平衡/三大报表 vs CF vs 预算对比报表），各自独立 finding。finding → MR1 双向可追溯，标注触及损益结转/试算平衡核心路径的 ask-first 评估。
+- [x] `Add` 若裁决升级 → 按 §7 grep arm-index finance 试算平衡/三大报表/影子凭证过滤同域同控制点裁决「复用 or 新建」`P*-RC-xxx`。须与 A1.7 §7 SP-1（A4.1.22 CF 污染）+ P1-RC-003（预算对比报表口径）交叉去重——同根因家族（BUDGET-only 过滤漏 COMMITMENT）但不同控制点（试算平衡/三大报表 vs CF vs 预算对比报表），各自独立 finding。finding → MR1 双向可追溯，标注触及损益结转/试算平衡核心路径的 ask-first 评估。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.2 §5.2 caveat ③ / A1.7 §7 SP-1 / P1-RC-003 / P1-MA2-084 的复用关系）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.2 §5.2 caveat ③ / A1.7 §7 SP-1 / P1-RC-003 / P1-MA2-084 的复用关系）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（路径矩阵 + 风险裁决 + finding 登记[若有] + §8 自检齐全 + 与 A1.7/A4.1.22 交叉去重声明）
-- [ ] 新 finding（若有）已写入 arm-index MA4 分区并有 grep 依据
+- [x] 验证报告定稿（路径矩阵 + 风险裁决 + finding 登记[若有] + §8 自检齐全 + 与 A1.7/A4.1.22 交叉去重声明）
+- [x] 新 finding（若有）已写入 arm-index MA4 分区并有 grep 依据
 
 ## Draft Review Record
 
@@ -113,14 +113,14 @@ Exit Criteria:
 
 > 本计划为**只读运行时核对**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 路径矩阵完整性 + 风险裁决 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.5 验证报告路径矩阵齐全（全集）+ 风险裁决 + finding（若有）登记入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §9 冻结一致；与 A1.2 §7-2 + §5.2 caveat ③ + A1.7 §7 SP-1 一致
-- [ ] 已运行验证：路径矩阵完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.5 验证报告路径矩阵齐全（全集）+ 风险裁决 + finding（若有）登记入 arm-index
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §9 冻结一致；与 A1.2 §7-2 + §5.2 caveat ③ + A1.7 §7 SP-1 一致
+- [x] 已运行验证：路径矩阵完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -138,12 +138,20 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <计划关闭时填写>
+Status Note: 两 Phase 全 done（路径矩阵全集 14 消费点 + 平衡恒等式风险裁决升级 P1-RC-091 + arm-index 登记 + §8 checker 实测 0 漂移）。6 项客观 closure gate [x]（范围完成/文档对齐/checker 实测/无降级/草案审查记录/文本一致性）。裁决升级为 P1-RC-091（试算平衡快照 + 4 GL 重分类/重估服务 BUDGET-only 过滤漏 COMMITMENT），经 MR1（R1.0→RC-R1.n），修复触及损益结转/试算平衡核心路径须 ask-first 评估。caveat ③ 凭证结构维持接受。独立结束审计由独立子代理（新会话）执行（gate 122/123 + Closure Audit Evidence 由其回填，执行者不自我审计）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理>
+- Auditor / Agent: 独立结束审计子代理（closure-verify 新会话，非执行者，未重用执行者上下文）。
+- Audit Type: 结构检查修复 + 语义复核（mission driver SCRIPT_CHECK_RESULT=FAIL 路径：修复 2 项未勾选结束门控 + 验证证据落地）。
+- Evidence:
+  - 验证报告落盘 `docs/audits/2026-08-06-0847-rc-ma4-a4-1-5-commitment-trial-balance-exposure.md`（实测存在，32772 字节，10 节齐全：§0 TL;DR / §1 L1 契约 / §2 L3 路径矩阵[14 消费点全集普查] / §3 L4 测试 / §4 L5 运行时 / §5 裁决矩阵 / §6 arm-index 衔接 / §7 存疑点 / §8 过程纪律自检 / §9 差异增量 / §10 Verdict）。
+  - 新 finding P1-RC-091 实测登记入 `docs/audits/arm-index.md:293`（finance 域 RC 发现追踪分区，5 GL 聚合路径 BUDGET-only 过滤漏 COMMITMENT）+ `:393` RC 交叉引用注记（首个 MA4 RC 运行时核对 finding）。
+  - Anti-hollow 复核：§2.1 全集普查完整性自检声明 grep `postingType` 全 finance 主代码命中 = #1-#11（#12-14 经 GlBalance/ArApItem 间接消费），非空话填充；§8 checker actual vs baseline 实测表落盘，诚实区分「checker 脚本纯 reporter 退出码 0」vs「CI workflow 真正门控」，未以退出码 0 冒充门控通过。
+  - 两 Phase 退出标准 [x] 与门控一致性：Phase 1（路径矩阵 + 平衡恒等式风险评估）+ Phase 2（finding 衔接 + §8 自检 + 报告定稿）全 [x]，与 Plan Status: completed 一致。
+  - 保护区域诚实：Deferred 区记录「过滤逻辑修复经 MR1，触及损益结转/试算平衡核心路径须 ask-first 评估」——未将保护区域风险隐藏为已完成。
+  - 脚本检查 `node tools/mission-driver/src/plan-check.mjs ... --strict` 经本次修复（门控 122/123 勾选 [x] + Closure 占位符替换为真实证据）后转 PASS。
 
 Follow-up:
 
-- <仅非阻塞跟进项目>
+- MR1 R1.0 展开为 RC-R1.n：P1-RC-091 修复（5 GL 路径过滤条件改 `notIn(BUDGET,COMMITMENT)`），触及损益结转/试算平衡核心路径按 §5 暂停协议显式裁决 ask-first。
