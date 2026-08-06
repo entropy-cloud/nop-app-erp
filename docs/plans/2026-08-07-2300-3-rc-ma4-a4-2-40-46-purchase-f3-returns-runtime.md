@@ -1,6 +1,6 @@
 # 2026-08-07-2300-3 rc-ma4-a4-2-40-46-purchase-f3-returns-runtime 采购退货/业财过账/红冲闭环运行时确认
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Items A4.2.40 / A4.2.41 / A4.2.42 / A4.2.43 / A4.2.44 / A4.2.45 / A4.2.46
 > Related: `docs/audits/2026-08-03-0300-rc-ma1-a1-17-purchase-f3-returns-business-finance.md`（A1.17 MA1 报告 §7 存疑点 1..7 + §6 P2-RC-015 新建 + P1-MA2-083 reuse 重开[退货侧] + P2-MA2-006 resolved 复核）、`docs/audits/2026-08-03-0630-...-a1-20-...md`（A1.20 §7 SP-3 跨域期间 CLOSED guard，与 A4.2.43 合并）、`docs/plans/2026-08-03-0300-1-rc-ma1-a1-17-purchase-f3-returns-business-finance.md`（A1.17 计划）
@@ -51,54 +51,54 @@ A4.2.43 为合并行（A1.17 §7-4 + A1.20 SP-3）：跨域期间 CLOSED guard �
 
 ### Phase 1 - 运行时证据采集与验证报告撰写（A4.2.40-A4.2.46）
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-2300-rc-ma4-a4-2-40-46-purchase-f3-returns-runtime.md`（新建验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: A4.2 done ✓；A1.17 done ✓
 
-- [ ] **A4.2.40 isReversed 标记运行时缺失确认（P2-RC-015）**：确认 `PurReturnPostingDispatcher.tryPost:44-58` 调 `executor.postEvent`（正向过账）不调 `executor.reverse`；确认 `ErpFinPostingProcessor.markOriginalVoucherReversed:252+933-947` 仅在 reverse() 路径触发——原入库 PURCHASE_INPUT 凭证保留 isReversed=false；确认 GL 净零经独立 PURCHASE_RETURN 反向凭证实现（功能等价）。**触及业财保护区域探针——只读确认，不改过账逻辑。** 裁决：维持 P2-RC-015 P2（GL 净零功能等价，documented simplification 满足 §4(i)，successor watch-only 不强制）。
+- [x] **A4.2.40 isReversed 标记运行时缺失确认（P2-RC-015）**：确认 `PurReturnPostingDispatcher.tryPost:44-58` 调 `executor.postEvent`（正向过账）不调 `executor.reverse`；确认 `ErpFinPostingProcessor.markOriginalVoucherReversed:252+933-947` 仅在 reverse() 路径触发——原入库 PURCHASE_INPUT 凭证保留 isReversed=false；确认 GL 净零经独立 PURCHASE_RETURN 反向凭证实现（功能等价）。**触及业财保护区域探针——只读确认，不改过账逻辑。** 裁决：维持 P2-RC-015 P2（GL 净零功能等价，documented simplification 满足 §4(i)，successor watch-only 不强制）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.41 credit-memo-via-return AP 余额回减复核（P2-MA2-006 resolved）**：确认 `ErpFinArApItemGenerator.resolveProfile:157-160` DIRECTION_PAYABLE + SOURCE_BILL_PUR_RETURN + 负 openAmount + sumOpen 自然减计；确认 `TestErpPurReturnRefundEndToEnd:188-189` sumOpen=-20 强断言覆盖。裁决：闭合，维持 P2-MA2-006 resolved。
+- [x] **A4.2.41 credit-memo-via-return AP 余额回减复核（P2-MA2-006 resolved）**：确认 `ErpFinArApItemGenerator.resolveProfile:157-160` DIRECTION_PAYABLE + SOURCE_BILL_PUR_RETURN + 负 openAmount + sumOpen 自然减计；确认 `TestErpPurReturnRefundEndToEnd:188-189` sumOpen=-20 强断言覆盖。裁决：闭合，维持 P2-MA2-006 resolved。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.42 GR/IR 暂估应付凭证行复核**：确认 `InvAcctDocProvider:22-30` 借 1401 存货/贷 2202 暂估应付 + `PurAcctDocProvider` 三行（1403/2221/2202）；确认 `TestErpPurReceiveStockMove:112` + `TestErpPurInvoicePosting:70-100` 强断言覆盖 UC-PUR-07 ①② 凭证行结构。裁决：闭合。
+- [x] **A4.2.42 GR/IR 暂估应付凭证行复核**：确认 `InvAcctDocProvider:22-30` 借 1401 存货/贷 2202 暂估应付 + `PurAcctDocProvider` 三行（1403/2221/2202）；确认 `TestErpPurReceiveStockMove:112` + `TestErpPurInvoicePosting:70-100` 强断言覆盖 UC-PUR-07 ①② 凭证行结构。裁决：闭合。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.43 跨域期间 CLOSED guard 运行时拒绝过账确认（A1.17 §7-4 + A1.20 SP-3 合并）**：确认 `ErpFinPostingProcessor.resolveOpenPeriod:524-527` period.status != OPEN 抛 ERR_PERIOD_CLOSED 对所有 businessType 全局生效；确认 purchase receive/invoice/return + sales return 过账路径经 finance 引擎间接拦截（采购侧无独立测试，finance 域测试覆盖；同根因同控制点合并确认）。裁决：主路径行为正确（间接守卫有效），闭合。
+- [x] **A4.2.43 跨域期间 CLOSED guard 运行时拒绝过账确认（A1.17 §7-4 + A1.20 SP-3 合并）**：确认 `ErpFinPostingProcessor.resolveOpenPeriod:524-527` period.status != OPEN 抛 ERR_PERIOD_CLOSED 对所有 businessType 全局生效；确认 purchase receive/invoice/return + sales return 过账路径经 finance 引擎间接拦截（采购侧无独立测试，finance 域测试覆盖；同根因同控制点合并确认）。裁决：主路径行为正确（间接守卫有效），闭合。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.44 反审核删凭证[红字冲销]复核**：确认 `ErpPurReturnProcessor.ensureReversed:245-265` 调 `postingDispatcher.reverse()` 经 IErpFinVoucherBiz Facade 红冲 + posted=false + 辅助账 cancelOnReverse；确认 `PurReversalListener.rollbackInvoice/Payment/Return/Receive:70-126` 四实体全部 posted=false + APPROVED→REJECTED；确认 `TestErpPurReturnPosting:122-148` + `TestErpPurFinanceReversalWriteback` 强断言覆盖。裁决：闭合。
+- [x] **A4.2.44 反审核删凭证[红字冲销]复核**：确认 `ErpPurReturnProcessor.ensureReversed:245-265` 调 `postingDispatcher.reverse()` 经 IErpFinVoucherBiz Facade 红冲 + posted=false + 辅助账 cancelOnReverse；确认 `PurReversalListener.rollbackInvoice/Payment/Return/Receive:70-126` 四实体全部 posted=false + APPROVED→REJECTED；确认 `TestErpPurReturnPosting:122-148` + `TestErpPurFinanceReversalWriteback` 强断言覆盖。裁决：闭合。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.45 承付恢复运行时对称性[退货侧]确认（P1-MA2-083 reuse 重开）**：确认 `runCommitmentReleaseOnReturnHook` release 已实现 + return reverseApprove/cancel 无 commit()（不对称）；构造 config-gated 启用（`erp-fin.budget-commitment-enabled=true` + `erp-fin.commitment-release-on-return=true`）+ return approve（释放）→ return reverseApprove（无 commit() 恢复）断言 commitment 余额不归位。裁决：维持 P1-MA2-083 P1（reuse 重开，退货侧修复行须扩展覆盖 Return Processor，调既有 commit() 入口纯 BizModel/Processor 预授权不触 ask-first）。config-gated 默认 false 确认非默认活跃。
+- [x] **A4.2.45 承付恢复运行时对称性[退货侧]确认（P1-MA2-083 reuse 重开）**：确认 `runCommitmentReleaseOnReturnHook` release 已实现 + return reverseApprove/cancel 无 commit()（不对称）；构造 config-gated 启用（`erp-fin.budget-commitment-enabled=true` + `erp-fin.commitment-release-on-return=true`）+ return approve（释放）→ return reverseApprove（无 commit() 恢复）断言 commitment 余额不归位。裁决：维持 P1-MA2-083 P1（reuse 重开，退货侧修复行须扩展覆盖 Return Processor，调既有 commit() 入口纯 BizModel/Processor 预授权不触 ask-first）。config-gated 默认 false 确认非默认活跃。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.46 多币种行级金额复核**：确认 `PurInvoicePostingDispatcher.buildEvent:78` exchangeRate 兜底 + `ErpFinPostingProcessor.prepareContext:537` + VoucherFact 行级 amountSource/amountFunctional 分离；确认 `TestErpPurMultiCurrencyPosting:70-132` source×rate==functional（100×7=700/13×7=91/113×7=791）强断言覆盖。裁决：闭合。
+- [x] **A4.2.46 多币种行级金额复核**：确认 `PurInvoicePostingDispatcher.buildEvent:78` exchangeRate 兜底 + `ErpFinPostingProcessor.prepareContext:537` + VoucherFact 行级 amountSource/amountFunctional 分离；确认 `TestErpPurMultiCurrencyPosting:70-132` source×rate==functional（100×7=700/13×7=91/113×7=791）强断言覆盖。裁决：闭合。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **验证报告撰写**：七项存疑点各出 §裁决（闭合 / 维持 P2 successor watch-only / 维持 P1 reuse 重开 / 触发 MR0）+ §与既有 finding 衔接（P2-RC-015 / P1-MA2-083 / P2-MA2-006 交叉引用）+ §过程纪律自检（checker 退出码门控——无代码变更 actual=baseline；closure-audit 独立性声明）+ §业财保护区域探针纪律声明 + §A4.2.43 合并声明（A1.17 §7-4 + A1.20 SP-3 同根因同控制点）。报告落盘。
+- [x] **验证报告撰写**：七项存疑点各出 §裁决（闭合 / 维持 P2 successor watch-only / 维持 P1 reuse 重开 / 触发 MR0）+ §与既有 finding 衔接（P2-RC-015 / P1-MA2-083 / P2-MA2-006 交叉引用）+ §过程纪律自检（checker 退出码门控——无代码变更 actual=baseline；closure-audit 独立性声明）+ §业财保护区域探针纪律声明 + §A4.2.43 合并声明（A1.17 §7-4 + A1.20 SP-3 同根因同控制点）。报告落盘。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
 > 本阶段为只读审计，无生产代码变更。A4.2.40 触及业财保护区域探针——只读确认 isReversed 标记，不改过账逻辑。
 
-- [ ] 验证报告落盘 `docs/audits/2026-08-07-2300-rc-ma4-a4-2-40-46-purchase-f3-returns-runtime.md`，含七项存疑点各自裁决 + file:line 证据 + §2 判据命中分支
-- [ ] 每项裁决明确：闭合 / 维持分级（P1 reuse 重开 / P2 successor watch-only）+ 运行时证据记录，或升级触发 MR0
-- [ ] A4.2.43 合并声明明确覆盖 A1.20 SP-3（同根因同控制点，roadmap 两处同步 done）
+- [x] 验证报告落盘 `docs/audits/2026-08-07-2300-rc-ma4-a4-2-40-46-purchase-f3-returns-runtime.md`，含七项存疑点各自裁决 + file:line 证据 + §2 判据命中分支
+- [x] 每项裁决明确：闭合 / 维持分级（P1 reuse 重开 / P2 successor watch-only）+ 运行时证据记录，或升级触发 MR0
+- [x] A4.2.43 合并声明明确覆盖 A1.20 SP-3（同根因同控制点，roadmap 两处同步 done）
 
 ### Phase 2 - Finding 衔接、roadmap/log 同步
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/requirement-compliance-roadmap.md`（A4.2.40-46 done）、`docs/audits/arm-index.md`（维持注记追加）、`docs/logs/2026/08-07.md`
 Skill: none
 
 - Item Types: `Decision | Add`
 - Prereqs: Phase 1 报告落盘
 
-- [ ] `Decision` arm-index 衔接裁决：P1-MA2-083 reuse 重开维持 P1（退货侧不对称确认，修复归 MR1 调既有 commit() 入口，不触 ask-first）；P2-RC-015 维持 P2 successor watch-only（GL 净零功能等价，不强制修复）；P2-MA2-006 维持 resolved（复核闭合）。无新 finding 新建（全部 reuse/维持）。
-- [ ] `Add` roadmap A4.2.40-A4.2.46 `todo → done`；`docs/logs/2026/08-07.md` 追加完成条目。
+- [x] `Decision` arm-index 衔接裁决：P1-MA2-083 reuse 重开维持 P1（退货侧不对称确认，修复归 MR1 调既有 commit() 入口，不触 ask-first）；P2-RC-015 维持 P2 successor watch-only（GL 净零功能等价，不强制修复）；P2-MA2-006 维持 resolved（复核闭合）。无新 finding 新建（全部 reuse/维持）。
+- [x] `Add` roadmap A4.2.40-A4.2.46 `todo → done`；`docs/logs/2026/08-07.md` 追加完成条目。
 
 Exit Criteria:
 
-- [ ] roadmap 七项状态已更新为 done 且与报告裁决一致
-- [ ] arm-index 维持注记已追加（无未经比对直接新建的 finding）
+- [x] roadmap 七项状态已更新为 done 且与报告裁决一致
+- [x] arm-index 维持注记已追加（无未经比对直接新建的 finding）
 
 ## Draft Review Record
 
@@ -108,14 +108,14 @@ Exit Criteria:
 
 > 本计划为只读审计（零生产代码/ORM/api.xml/view.xml/真相源变更）。closure 时确认 checker 未触发 actual > baseline。
 
-- [ ] 范围内行为完成（七项存疑点均有 file:line 运行时证据 + 明确裁决）
-- [ ] 相关文档对齐（报告落盘 + roadmap/log 同步 + arm-index 衔接裁决记录）
-- [ ] 已运行验证（checker actual=baseline 确认；无代码变更故无 build/test 回归风险）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（七项存疑点均有 file:line 运行时证据 + 明确裁决）
+- [x] 相关文档对齐（报告落盘 + roadmap/log 同步 + arm-index 衔接裁决记录）
+- [x] 已运行验证（checker actual=baseline 确认；无代码变更故无 build/test 回归风险）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -133,12 +133,20 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填写>
+Status Note: 只读审计计划（零生产代码/ORM/api.xml/view.xml/config/真相源变更），七项存疑点（A4.2.40-A4.2.46）运行时确认全部落地。五项主路径闭合（A4.2.41/42/43/44/46）+ 一项维持 P2 successor watch-only（A4.2.40 → P2-RC-015）+ 一项维持 P1 reuse 重开（A4.2.45 → P1-MA2-083 退货侧扩展）。A1.17 §7 静态判定无一翻转，零新 finding，不触发 MR0，修复义务明确归 MR1 R1.0 展开器（P1-MA2-083 调既有 commit() 入口纯 Processor 预授权）或 watch-only（P2-RC-015）。所有 Phase Status `completed` + Exit Criteria 全 `[x]` + Plan Status `completed` 文本一致。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理填写>
-- Evidence: <待填写>
+- Auditor / Agent: independent closure auditor（独立子代理，新会话，不重用执行者上下文）
+- Evidence:
+  - 验证报告落盘 `docs/audits/2026-08-07-2300-rc-ma4-a4-2-40-46-purchase-f3-returns-runtime.md`（249 行，`> Audit Status: closed`，9 段齐全，7 项裁决各附 L3 file:line + L4 强断言 + §裁决分支）
+  - live code 实测复核（反空洞自检）：`PurReturnPostingDispatcher.tryPost:44-47` 调 `executor.postEvent` 正向过账，`reverse():64-66` 为独立方法调 `executor.reverse`（确认 tryPost 不调 reverse→原 PURCHASE_INPUT 凭证 isReversed=false）；`ErpFinPostingProcessor.resolveOpenPeriod:508` + `ERR_PERIOD_CLOSED` 抛点 :525（全局生效）；`markOriginalVoucherReversed` 调用点 :252 位于 reverse() 内部 + 实现 :933（确认仅 reverse 路径触发）；`ErpPurReturnProcessor.ensureReversed:245` 调 `postingDispatcher.reverse:247`（红冲闭环）
+  - `git status` 确认零生产代码变更（仅 `docs/` 下 4 文件修改 + 1 新建报告：arm-index / roadmap / 08-07 log / 本 plan + 新报告），无 .java/.xml/.yaml 触及，确认只读审计承诺
+  - roadmap `requirement-compliance-roadmap.md:193-199` A4.2.40-A4.2.46 全 `done ✅` 且各行证据摘要与报告裁决一致（含 A4.2.43 A1.20 SP-3 合并声明两处同步 done）
+  - `docs/audits/arm-index.md` 已追加 RC A4.2.40-46 运行时确认注记（P2-RC-015 :163 / P2-MA2-006 :713 / P1-MA2-083 :546 维持既有分级不撤销，无新 finding）
+  - `docs/logs/2026/08-07.md` 已追加完成条目（七项存疑点逐项裁决摘要 + 裁决汇总 + 下一步）
+  - 文本一致性：Plan Status `completed` ↔ Phase 1/2 Status `completed` ↔ 全 Exit Criteria `[x]` ↔ Closure Gates 全 `[x]` ↔ log 条目一致
+  - 过程纪律：独立草案审查记录于 `## Draft Review Record`（acceptable-as-is，ses_02763e108ffe08kiZIQeToBelb）；本结束审计由独立子代理新会话执行，执行者未自我审计
 
 Follow-up:
 
