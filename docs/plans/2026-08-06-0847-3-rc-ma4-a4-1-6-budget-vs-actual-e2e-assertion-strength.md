@@ -1,6 +1,6 @@
 # 2026-08-06-0847-3 rc-ma4-a4-1-6-budget-vs-actual-e2e-assertion-strength 预算对比报表 E2E commitment 列断言强度评估
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.1.6（MA4 运行时行为验证 — A1.2 §7-3：UC-FIN-13 断言④ `fin-budget-vs-actual.value.spec.ts` 是否断言 commitment 独立列，E2E 断言强度评估）
@@ -64,45 +64,45 @@
 
 ### Phase 1 - E2E spec 断言强度运行时评估 + P1-RC-003 修复回归门控清单
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0847-rc-ma4-a4-1-6-budget-vs-actual-e2e-assertion-strength.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done；A1.2 done（§5.3 P1-RC-003 + §7 存疑点 3 + §3 测试证据已落盘）
 
-- [ ] `Proof` E2E spec 断言强度四维核验：①查询字段集（`getBudgetVsActual` GraphQL selection 是否含 commitmentAmount）②seed 数据覆盖（是否 seed COMMITMENT 凭证——PO commit 或直接 seed postingType=COMMITMENT voucher line）③断言语义（是否断言 commitment 独立列 + actual 不含 commitment + available=budget−actual−commitment）④与单测 `testGetBudgetVsActual` 同步性（两者是否同偏离 L1）。逐项给文件:行证据。
+- [x] `Proof` E2E spec 断言强度四维核验：①查询字段集（`getBudgetVsActual` GraphQL selection 是否含 commitmentAmount）②seed 数据覆盖（是否 seed COMMITMENT 凭证——PO commit 或直接 seed postingType=COMMITMENT voucher line）③断言语义（是否断言 commitment 独立列 + actual 不含 commitment + available=budget−actual−commitment）④与单测 `testGetBudgetVsActual` 同步性（两者是否同偏离 L1）。逐项给文件:行证据。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 与控制引擎强断言对照：`testAvailableDeductsCommitmentSeparately:222-249` seed 了 COMMITMENT 凭证且强断言三通道——确认"控制引擎有 commitment 覆盖，报表(E2E+单测)没有"的不对称（A1.2 §3 已记录，本验证复核 + 给 E2E 侧的差距量化）。
+- [x] `Proof` 与控制引擎强断言对照：`testAvailableDeductsCommitmentSeparately:222-249` seed 了 COMMITMENT 凭证且强断言三通道——确认"控制引擎有 commitment 覆盖，报表(E2E+单测)没有"的不对称（A1.2 §3 已记录，本验证复核 + 给 E2E 侧的差距量化）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` P1-RC-003 修复回归门控清单产出：P1-RC-003 修复（DTO 增 commitmentAmount + getBudgetVsActual 三通道 + available 公式）后，E2E spec 须补：①GraphQL selection 增 commitmentAmount ②seed COMMITMENT 凭证（PO commit 路径或直接 seed）③增三列增量断言（commitmentAmount=200 + actual 不含 commitment + available=budget−actual−commitment）。该清单作为 P1-RC-003 MR1 修复行的 E2E 回归义务登记。
+- [x] `Decision` P1-RC-003 修复回归门控清单产出：P1-RC-003 修复（DTO 增 commitmentAmount + getBudgetVsActual 三通道 + available 公式）后，E2E spec 须补：①GraphQL selection 增 commitmentAmount ②seed COMMITMENT 凭证（PO commit 路径或直接 seed）③增三列增量断言（commitmentAmount=200 + actual 不含 commitment + available=budget−actual−commitment）。该清单作为 P1-RC-003 MR1 修复行的 E2E 回归义务登记。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` finding 裁决（方法论 §7）：若 E2E 断言缺口归 P1-RC-003 修复范围（无独立新控制点）→ 不新建 finding，仅在 P1-RC-003 arm-index 行登记 E2E 补断言义务；若有独立新控制点（如 E2E 缺 seed 导致 actual 口径也无法运行时验证）→ 按 §7 grep arm-index 裁决新建。
+- [x] `Decision` finding 裁决（方法论 §7）：若 E2E 断言缺口归 P1-RC-003 修复范围（无独立新控制点）→ 不新建 finding，仅在 P1-RC-003 arm-index 行登记 E2E 补断言义务；若有独立新控制点（如 E2E 缺 seed 导致 actual 口径也无法运行时验证）→ 按 §7 grep arm-index 裁决新建。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] E2E spec 断言强度四维核验落盘（每维有文件:行证据），与单测同步性确认
-- [ ] P1-RC-003 修复回归门控清单落盘（commitmentAmount 查询 + seed + 断言三项）
+- [x] E2E spec 断言强度四维核验落盘（每维有文件:行证据），与单测同步性确认
+- [x] P1-RC-003 修复回归门控清单落盘（commitmentAmount 查询 + seed + 断言三项）
 
 ### Phase 2 - finding 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-0847-rc-ma4-a4-1-6-budget-vs-actual-e2e-assertion-strength.md`（定稿）；`docs/audits/arm-index.md`（P1-RC-003 行回填 E2E 义务 / 若新 finding）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 四维核验 + 门控清单完成
 
-- [ ] `Add` 若裁决不新建 → 在 arm-index P1-RC-003 行回填"E2E 补断言义务（A4.1.6 门控清单）"。若新建 → 按 §7 grep arm-index 裁决后写入 MA4 分区。finding/义务 → MR1 P1-RC-003 修复行双向可追溯。
+- [x] `Add` 若裁决不新建 → 在 arm-index P1-RC-003 行回填"E2E 补断言义务（A4.1.6 门控清单）"。若新建 → 按 §7 grep arm-index 裁决后写入 MA4 分区。finding/义务 → MR1 P1-RC-003 修复行双向可追溯。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-003 / P1-MA2-084 的复用关系 + A5.6 边界声明）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明"无回归风险"）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-003 / P1-MA2-084 的复用关系 + A5.6 边界声明）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（四维核验 + 门控清单 + finding/义务登记 + §8 自检齐全 + A5.6 边界声明）
-- [ ] 新 finding（若有）已写入 arm-index MA4 分区；P1-RC-003 行已回填 E2E 补断言义务
+- [x] 验证报告定稿（四维核验 + 门控清单 + finding/义务登记 + §8 自检齐全 + A5.6 边界声明）
+- [x] 新 finding（若有）已写入 arm-index MA4 分区；P1-RC-003 行已回填 E2E 补断言义务
 
 ## Draft Review Record
 
@@ -112,14 +112,14 @@ Exit Criteria:
 
 > 本计划为**只读运行时评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 四维核验完整性 + 门控清单 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.6 验证报告四维核验齐全 + P1-RC-003 修复门控清单 + finding/义务登记
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §7 衔接 + §去重协议 MA4↔A5.6 一致；与 A1.2 §7-3 + §5.3 P1-RC-003 + §3 测试证据一致
-- [ ] 已运行验证：四维核验完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.6 验证报告四维核验齐全 + P1-RC-003 修复门控清单 + finding/义务登记
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §7 衔接 + §去重协议 MA4↔A5.6 一致；与 A1.2 §7-3 + §5.3 P1-RC-003 + §3 测试证据一致
+- [x] 已运行验证：四维核验完整性 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -131,11 +131,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <计划关闭时填写>
+Status Note: 计划完成。A4.1.6 验证报告（`docs/audits/2026-08-06-0847-rc-ma4-a4-1-6-budget-vs-actual-e2e-assertion-strength.md`）落盘：E2E spec 断言强度四维核验齐全（查询字段无 commitmentAmount / seed 无 COMMITMENT / 断言仅两列 / 与单测同步偏离 L1）+ 控制引擎对照 + P1-RC-003 修复回归门控清单 3 项 + finding 裁决 fold-in P1-RC-003（零新 finding）+ arm-index P1-RC-003 行回填 E2E 补断言义务 + 交叉引用注记 + A1.2 §7 存疑点 3 收口。只读评估，零生产代码变更，checker 0 漂移。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理>
+- Auditor / Agent: 独立结束审计子代理 / fresh session（未执行本计划，未起草本报告；读盘逐项实测复核）
+- Verdict: passes closure audit（2026-08-06）
+- 复核结论：四维核验齐全（查询字段/seed 覆盖/断言语义/与单测同步性）逐维 file:line 实测命中 + 控制引擎对照 + P1-RC-003 门控清单 3 项 + fold-in 裁决健全（§7 同根因同控制点）+ arm-index P1-RC-003 行已回填 E2E 义务 + 交叉引用注记已追加（arm-index:395）+ 9 段骨架齐全 + MA4↔A5.6 边界声明 + §9 真相源冻结合规（git status 仅 docs .md 变更，零 .java/.orm.xml/.view.xml/真相源改动）。anti-hollow 抽查 10 项 claim 全部 CONFIRMED。无阻塞项。
 
 Follow-up:
 
