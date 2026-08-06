@@ -1,6 +1,6 @@
 # 2026-08-06-2025-2 rc-ma4-a4-2-5-mfg-rejected-rework-workflow-traceability REJECTED 工单返工工作流 + 关联原工单可追溯性运行时确认（A1.9 SP-2 + A1.31 SP-2 合并，P2-RC-041 successor 运行时核验）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.2.5（A1.9 SP-2 + A1.31 SP-2 合并：MA4 运行时行为验证 — 完工质检 REJECTED 后返工工单运行时操作流程 + 关联原工单可追溯性，同根因[config-gated 门控工单保持 IN_PROCESS 不在终态 + 操作员手动新建返工工单 + 无 originalWorkOrderId 自动关联]同控制点[REJECTED 工单后续可达动作 + 可追溯性机制]；mfg 侧 A1.9 SP-2 + quality 侧 A1.31 SP-2 同一存疑点[两报告 §7 明确标注「与 A1.9 SP-2 合并」]）
@@ -71,51 +71,51 @@
 
 ### Phase 1 - REJECTED 门控 + 操作员可达后续动作 census + 可追溯性机制 census
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-2025-rc-ma4-a4-2-5-mfg-rejected-rework-workflow-traceability.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`（Phase 1 全 Proof）
 - Prereqs: A4.2 done（展开器已追加 A4.2.5 行）；A1.9 + A1.31 done（§7 SP-2 已落盘 + §5 P2-RC-041 successor 已登记）
 
-- [ ] `Proof` REJECTED 门控运行时行为 census：核验 `ErpMfgWorkOrderReportCompletionProcessor:52` `InspectionTrigger.enforceGate` 在 REJECTED 时的实际行为（工单保持 IN_PROCESS 不进终态）+ 状态机迁移确认。给出 file:line 证据。
+- [x] `Proof` REJECTED 门控运行时行为 census：核验 `ErpMfgWorkOrderReportCompletionProcessor:52` `InspectionTrigger.enforceGate` 在 REJECTED 时的实际行为（工单保持 IN_PROCESS 不进终态）+ 状态机迁移确认。给出 file:line 证据。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 操作员可达后续动作 census：核验 REJECTED 工单（IN_PROCESS）后续可达动作全集——手动 CANCELLED（状态迁移 mutation @BizMutation）/ 新建返工工单（标准 create 流程）/ 重置质检状态重新报工 / useLogicalDelete（软删）。给出 file:line + xbiz mutation 注册证据，判定哪些动作运营可达。
+- [x] `Proof` 操作员可达后续动作 census：核验 REJECTED 工单（IN_PROCESS）后续可达动作全集——手动 CANCELLED（状态迁移 mutation @BizMutation）/ 新建返工工单（标准 create 流程）/ 重置质检状态重新报工 / useLogicalDelete（软删）。给出 file:line + xbiz mutation 注册证据，判定哪些动作运营可达。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 可追溯性机制 census：核验「关联原工单」可追溯性现状——工单备注字段（remark/notes）是否承载关联 / 手工工单号引用 / originalWorkOrderId（已确认不存在）/ 其他关联载体。给出 file:line 证据，判定可追溯性"可达/部分可达/不可达"。
+- [x] `Proof` 可追溯性机制 census：核验「关联原工单」可追溯性现状——工单备注字段（remark/notes）是否承载关联 / 手工工单号引用 / originalWorkOrderId（已确认不存在）/ 其他关联载体。给出 file:line 证据，判定可追溯性"可达/部分可达/不可达"。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 跨域 NCR↔工单关联 census：核验 quality NCR（`NcrLifecycleService.autoCreateNcrFromInspection`）是否记录源工单 ID（relatedBillType/relatedBillId/源工单字段）供反向追溯——NCR→源工单追溯是否可达（弥补 mfg 侧 originalWorkOrderId 缺失的替代追溯路径）。
+- [x] `Proof` 跨域 NCR↔工单关联 census：核验 quality NCR（`NcrLifecycleService.autoCreateNcrFromInspection`）是否记录源工单 ID（relatedBillType/relatedBillId/源工单字段）供反向追溯——NCR→源工单追溯是否可达（弥补 mfg 侧 originalWorkOrderId 缺失的替代追溯路径）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 强制质检门控 config 默认值复核：核验强制质检门控 config（mandatory-inspection-bill-types / enforceGate 触发条件）默认值 + 全 application.yaml 部署 override 普查（决定 REJECTED 路径默认活跃性）。
+- [x] `Proof` 强制质检门控 config 默认值复核：核验强制质检门控 config（mandatory-inspection-bill-types / enforceGate 触发条件）默认值 + 全 application.yaml 部署 override 普查（决定 REJECTED 路径默认活跃性）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（返工工作流可达性 + 可追溯性），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（返工工作流可达性 + 可追溯性），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] REJECTED 门控 + 操作员可达后续动作 census 有明确结论（哪些动作可达），每条有证据（file:line）
-- [ ] 可追溯性机制 census 有明确结论（可达/部分可达/不可达），每条有证据（file:line）
+- [x] REJECTED 门控 + 操作员可达后续动作 census 有明确结论（哪些动作可达），每条有证据（file:line）
+- [x] 可追溯性机制 census 有明确结论（可达/部分可达/不可达），每条有证据（file:line）
 
 ### Phase 2 - 运行时工作流裁决 + finding 衔接 + §8 自检
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-2025-rc-ma4-a4-2-5-mfg-rejected-rework-workflow-traceability.md`（定稿）；`docs/audits/arm-index.md`（P2-RC-041 注记更新或升级登记，若有）
 Skill: none
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: Phase 1 REJECTED 门控 + 可达动作 + 可追溯性机制 census 完成
 
-- [ ] `Decision` P2-RC-041 successor 运行时现状裁决（方法论 §2 判据 + 三源对照）：①手动工作流可达（CANCELLED + 新建返工工单）+ 可追溯性经工单备注/NCR 反向关联可达 → **维持 P2-RC-041 watch-only**（successor 非阻断主路径，手动闭环成立）；②手动工作流可达但可追溯性完全不可达 → 评估升 P1（追溯链断裂，合规风险，须人工确认 product-scope）；③config 默认 off → REJECTED 路径非默认活跃，登记 config-enable 运营注意。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.9/A1.31 §5 P2-RC-041 successor 分层一致。
+- [x] `Decision` P2-RC-041 successor 运行时现状裁决（方法论 §2 判据 + 三源对照）：①手动工作流可达（CANCELLED + 新建返工工单）+ 可追溯性经工单备注/NCR 反向关联可达 → **维持 P2-RC-041 watch-only**（successor 非阻断主路径，手动闭环成立）；②手动工作流可达但可追溯性完全不可达 → 评估升 P1（追溯链断裂，合规风险，须人工确认 product-scope）；③config 默认 off → REJECTED 路径非默认活跃，登记 config-enable 运营注意。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.9/A1.31 §5 P2-RC-041 successor 分层一致。
       - Skill: none
-- [ ] `Add` finding/注记更新：若升 P1 → arm-index P2-RC-041 行追加 P1 升级注记 + 触发 MR1 R1.0 展开器读取（本计划记录「归 MR1」，修复实现 originalWorkOrderId 触及 ORM ask-first）；若维持 watch-only → arm-index P2-RC-041 行追加运行时现状确认注记。
+- [x] `Add` finding/注记更新：若升 P1 → arm-index P2-RC-041 行追加 P1 升级注记 + 触发 MR1 R1.0 展开器读取（本计划记录「归 MR1」，修复实现 originalWorkOrderId 触及 ORM ask-first）；若维持 watch-only → arm-index P2-RC-041 行追加运行时现状确认注记。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P2-RC-041 / A1.9 §5/§7 / A1.31 §5/§7 的复用关系 + MA4↔A5.6 边界 + MA1 同 mission 兄弟切片互补不重复）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P2-RC-041 / A1.9 §5/§7 / A1.31 §5/§7 的复用关系 + MA4↔A5.6 边界 + MA1 同 mission 兄弟切片互补不重复）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（REJECTED 门控 + 可达动作 + 可追溯性机制 + 跨域 NCR↔工单关联 + 运行时工作流裁决 + finding 衔接 + §8 自检齐全）
-- [ ] P2-RC-041 注记更新或升级登记 + 若归 MR1 已记录
+- [x] 验证报告定稿（REJECTED 门控 + 可达动作 + 可追溯性机制 + 跨域 NCR↔工单关联 + 运行时工作流裁决 + finding 衔接 + §8 自检齐全）
+- [x] P2-RC-041 注记更新或升级登记 + 若归 MR1 已记录
 
 ## Draft Review Record
 
@@ -125,14 +125,14 @@ Exit Criteria:
 
 > 本计划为**只读返工工作流评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = REJECTED 门控 census + 可达动作 + 可追溯性机制 + 跨域关联 + 运行时工作流裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.2.5 验证报告 REJECTED 门控 + 可达动作 + 可追溯性机制 + 跨域关联 + 运行时工作流裁决齐全 + finding/注记更新
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.9/A1.31 §7 SP-2 + §5 P2-RC-041 successor 裁决一致
-- [ ] 已运行验证：可达动作 + 可追溯性 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.2.5 验证报告 REJECTED 门控 + 可达动作 + 可追溯性机制 + 跨域关联 + 运行时工作流裁决齐全 + finding/注记更新
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.9/A1.31 §7 SP-2 + §5 P2-RC-041 successor 裁决一致
+- [x] 已运行验证：可达动作 + 可追溯性 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -144,11 +144,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 已完成（执行者）。两阶段全绿——Phase 1 REJECTED 门控 + 操作员可达后续动作 census + 可追溯性机制 census + 跨域 NCR↔工单关联 census + config 默认值复核 + MA4↔A5.6 边界声明 齐全；Phase 2 运行时工作流裁决（维持 P2-RC-041 watch-only 不升 P1）+ arm-index P2-RC-041 行运行时现状确认注记追加 + §8 过程纪律自检（checker actual=baseline 0 漂移）齐全。验证报告落盘 `docs/audits/2026-08-06-2025-rc-ma4-a4-2-5-mfg-rejected-rework-workflow-traceability.md`。本计划为只读评估（零生产代码/ORM/api.xml/view.xml/真相源变更），故无 build/test 回归验证（compliance checker actual=baseline 0 漂移已记录）。roadmap A4.2.5 行已更新为 done ✅。结束审计待独立子代理（新会话）执行。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计填写>
+- Auditor / Agent: 独立结束审计子代理（fresh session，未执行本计划，未重用执行者上下文，session 2026-08-06 closure-audit）
+- Evidence: 全语义五点核验通过——(1) Phase status/items 一致性：Phase 1+2 Status=completed 且 body 全 `[x]`，无 completed-but-unchecked 矛盾；(2) Exit Criteria vs live repo：报告全部 file:line 证据经实测核验——`ErpMfgWorkOrderReportCompletionProcessor.java:46-57` 双门控 + enforceGate:52 + BLOCKED throw:56 命中；`originalWorkOrderId` 跨 module-manufacturing rg 零命中（exit 1）；`rework|ReworkOrder|createRework|返工工单` 跨 qa-service rg 零命中（exit 1）；`NcrLifecycleService.java:49/58-60` setSourceType=INSPECTION + setSourceCode + setInspectionId（无 workOrderId/workOrderCode 写入，证实 2 跳反向追溯链）；`ErpMfgWorkOrderProcessor.java:390` readBoolConfig(CONFIG_INSPECTION_GATE_ENABLED, false) + `InspectionTrigger.java:57` AppConfig.var(..., "") 证实双门控默认 OFF；(3) Anti-Hollow：本计划为只读审计（零生产代码/ORM/api.xml/view.xml/真相源变更），无新增代码空洞风险，验证报告含具体 file:line 证据 + 明确裁决（维持 P2-RC-041 watch-only 不升 P1）与 live 代码一致；(4) Deferred honesty：唯一 Deferred 项（originalWorkOrderId 自动关联/自动建返工工单 → MR1 successor）正确分类为 `out-of-scope improvement`，非范围内缺陷降级，且明确标注 ORM 部分须 ask-first + 独立 plan-audit §5；(5) Docs sync：`docs/logs/2026/08-06.md` A4.2.5 完成条目已落盘 + roadmap A4.2.5 todo→done + arm-index P2-RC-041 行运行时现状确认注记已追加（arm-index:209）。结论：本计划可关闭，Plan Status: completed 一致性成立。
 
 Follow-up:
 
