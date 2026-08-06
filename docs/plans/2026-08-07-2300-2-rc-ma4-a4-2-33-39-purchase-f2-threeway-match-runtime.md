@@ -1,6 +1,6 @@
 # 2026-08-07-2300-2 rc-ma4-a4-2-33-39-purchase-f2-threeway-match-runtime 三单匹配/容差/价格差异过账运行时确认
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Items A4.2.33 / A4.2.34 / A4.2.35 / A4.2.36 / A4.2.37 / A4.2.38 / A4.2.39
 > Related: `docs/audits/2026-08-03-0200-rc-ma1-a1-16-purchase-f2-three-way-match-variance.md`（A1.16 MA1 报告 §7 存疑点 1..7 + §6 P1-RC-018 新建[会计过账] + P1-RC-019 新建 + P2-RC-013/P2-RC-014 新建）、`docs/plans/2026-08-03-0200-1-rc-ma1-a1-16-purchase-f2-three-way-match-variance.md`（A1.16 计划）
@@ -49,53 +49,53 @@ A1.16（purchase-F2 三单匹配与差异）MA1 报告 §7 列出 7 个静态存
 
 ### Phase 1 - 运行时证据采集与验证报告撰写（A4.2.33-A4.2.39）
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-2300-rc-ma4-a4-2-33-39-purchase-f2-threeway-match-runtime.md`（新建验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: A4.2 done ✓；A1.16 done ✓
 
-- [ ] **A4.2.33 两次入库独立过账凭证数==2 确认**：确认 per-mutation approve 架构——每次 `ErpPurReceiveApproveProcessor.approve` 独立 `triggerIncomingMove`→`IErpInvStockMoveBiz.generateMove`→InvPostingDispatcher PURCHASE_INPUT 凭证；确认虽无"100→60→40→断言凭证数==2"专属测试，但 per-mutation approve 架构 + `applyPostingResult:221-227` per-mutation posted 回写隐含成立（复核 A2.8 状态机证据）。裁决：主路径行为正确，闭合。
+- [x] **A4.2.33 两次入库独立过账凭证数==2 确认**：确认 per-mutation approve 架构——每次 `ErpPurReceiveApproveProcessor.approve` 独立 `triggerIncomingMove`→`IErpInvStockMoveBiz.generateMove`→InvPostingDispatcher PURCHASE_INPUT 凭证；确认虽无"100→60→40→断言凭证数==2"专属测试，但 per-mutation approve 架构 + `applyPostingResult:221-227` per-mutation posted 回写隐含成立（复核 A2.8 状态机证据）。裁决：主路径行为正确，闭合。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.34 让步接收价格差异过账运行时缺失确认（P1-RC-018）**：确认 `PurAcctDocProvider.createFacts:74-82` AP_INVOICE 仅 3 行（1403 在途物资 / 2221 进项税 / 2202 应付账款）无价格差异（PPV）科目行；确认差异埋在 1403 在途物资金额中（按发票金额入账）未分集到 PPV 科目。确认 GL 仍平衡（debit 在途物资+进项税 == credit 应付）属管理会计可视性缺口非活跃数据破坏。**触及业财保护区域探针——只读确认，不改过账逻辑。** 裁决：维持 P1-RC-018 P1（Q4 会计类无例外，修复归 MR1 触 PurAcctDocProvider/VoucherFact 须 ask-first）。
+- [x] **A4.2.34 让步接收价格差异过账运行时缺失确认（P1-RC-018）**：确认 `PurAcctDocProvider.createFacts:74-82` AP_INVOICE 仅 3 行（1403 在途物资 / 2221 进项税 / 2202 应付账款）无价格差异（PPV）科目行；确认差异埋在 1403 在途物资金额中（按发票金额入账）未分集到 PPV 科目。确认 GL 仍平衡（debit 在途物资+进项税 == credit 应付）属管理会计可视性缺口非活跃数据破坏。**触及业财保护区域探针——只读确认，不改过账逻辑。** 裁决：维持 P1-RC-018 P1（Q4 会计类无例外，修复归 MR1 触 PurAcctDocProvider/VoucherFact 须 ask-first）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.35 三处理策略分支可达性确认（P1-RC-018）**：确认 `ThreeWayMatcher.match:62-107` 仅 strict 拒绝/非 strict warn（1/3 策略）；grep xbiz/审批流 config/Processor 覆盖确认"审批后接收"+"接收并过账差异"无隐藏接线（零命中）。裁决：维持 P1-RC-018 P1（两策略未实现，修复归 MR1）。
+- [x] **A4.2.35 三处理策略分支可达性确认（P1-RC-018）**：确认 `ThreeWayMatcher.match:62-107` 仅 strict 拒绝/非 strict warn（1/3 策略）；grep xbiz/审批流 config/Processor 覆盖确认"审批后接收"+"接收并过账差异"无隐藏接线（零命中）。裁决：维持 P1-RC-018 P1（两策略未实现，修复归 MR1）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.36 超收容差运行时门控缺失确认（P1-RC-019）**：确认 `ErpPurReceiveProcessor.validateBusinessRulesForApprove:166-168` 仅 requireSupplierActive，无 receive-vs-order qty 容差校验；确认 `ThreeWayMatcher.match` 只做 invoice-vs-receive；确认"订单10+入库20"approve 无门控通过。裁决：维持 P1-RC-019 P1（超收运行时无门控，修复归 MR1 纯 BizModel/Processor 预授权）。
+- [x] **A4.2.36 超收容差运行时门控缺失确认（P1-RC-019）**：确认 `ErpPurReceiveProcessor.validateBusinessRulesForApprove:166-168` 仅 requireSupplierActive，无 receive-vs-order qty 容差校验；确认 `ThreeWayMatcher.match` 只做 invoice-vs-receive；确认"订单10+入库20"approve 无门控通过。裁决：维持 P1-RC-019 P1（超收运行时无门控，修复归 MR1 纯 BizModel/Processor 预授权）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.37 短收超容差差异处理缺失确认（P2-RC-014）**：确认无 receive-vs-order 短收容差判定 + 无"差异处理"触发机制；确认"订单100+入库50"无差异处理触发（短收继续入库或手动关闭主路径 OK）。裁决：维持 P2-RC-014 P2（次要验收标准未完全满足，登记不强制，修复归 MR1 与 P1-RC-019 协同）。
+- [x] **A4.2.37 短收超容差差异处理缺失确认（P2-RC-014）**：确认无 receive-vs-order 短收容差判定 + 无"差异处理"触发机制；确认"订单100+入库50"无差异处理触发（短收继续入库或手动关闭主路径 OK）。裁决：维持 P2-RC-014 P2（次要验收标准未完全满足，登记不强制，修复归 MR1 与 P1-RC-019 协同）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.38 关闭释放预留 config-gated 行为确认**：确认 cancel 路径 commitment release 经 config-gated `erp-fin.budget-commitment-enabled` 默认 false 门控；确认与 A1.2/A1.15 已接受 config-gated 语义一致（config-gate = 部署启用决策非契约缺失）。裁决：主路径接受，闭合。
+- [x] **A4.2.38 关闭释放预留 config-gated 行为确认**：确认 cancel 路径 commitment release 经 config-gated `erp-fin.budget-commitment-enabled` 默认 false 门控；确认与 A1.2/A1.15 已接受 config-gated 语义一致（config-gate = 部署启用决策非契约缺失）。裁决：主路径接受，闭合。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.39 receivedQuantity 运行时值确认（P2-RC-013）**：确认 `rg setReceivedQuantity` 生产代码零 writer（仅 _gen 框架 setter）；确认 `rollupOrderReceiveStatus:244-284` 仅更新 header receiveStatus 不写 orderLine.receivedQuantity；确认两次入库后查询值始终 0（header 级进度跟踪 UNRECEIVED/PARTIAL/RECEIVED 主路径 OK）。裁决：维持 P2-RC-013 P2（次要验收标准未完全满足，登记不强制，修复归 MR1 纯 Processor 预授权）。
+- [x] **A4.2.39 receivedQuantity 运行时值确认（P2-RC-013）**：确认 `rg setReceivedQuantity` 生产代码零 writer（仅 _gen 框架 setter）；确认 `rollupOrderReceiveStatus:244-284` 仅更新 header receiveStatus 不写 orderLine.receivedQuantity；确认两次入库后查询值得 0（header 级进度跟踪 UNRECEIVED/PARTIAL/RECEIVED 主路径 OK）。裁决：维持 P2-RC-013 P2（次要验收标准未完全满足，登记不强制，修复归 MR1 纯 Processor 预授权）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **验证报告撰写**：七项存疑点各出 §裁决（主路径闭合 / 维持 P1 reuse 重开 + 运行时证据 / 维持 P2 / 触发 MR0）+ §与既有 finding 衔接（P1-RC-018 / P1-RC-019 / P2-RC-013 / P2-RC-014 交叉引用）+ §过程纪律自检（checker 退出码门控——无代码变更 actual=baseline；closure-audit 独立性声明）+ §业财保护区域探针纪律声明。报告落盘。
+- [x] **验证报告撰写**：七项存疑点各出 §裁决（主路径闭合 / 维持 P1 reuse 重开 + 运行时证据 / 维持 P2 / 触发 MR0）+ §与既有 finding 衔接（P1-RC-018 / P1-RC-019 / P2-RC-013 / P2-RC-014 交叉引用）+ §过程纪律自检（checker 退出码门控——无代码变更 actual=baseline；closure-audit 独立性声明）+ §业财保护区域探针纪律声明。报告落盘。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
 > 本阶段为只读审计，无生产代码变更。A4.2.34 触及业财保护区域探针——只读确认 PPV 行缺失，不改过账逻辑。
 
-- [ ] 验证报告落盘 `docs/audits/2026-08-07-2300-rc-ma4-a4-2-33-39-purchase-f2-threeway-match-runtime.md`，含七项存疑点各自裁决 + file:line 证据 + §2 判据命中分支
-- [ ] 每项裁决明确：主路径闭合 / 维持分级（P1 Q4 强制实现 / P2 登记）+ 运行时证据记录，或升级触发 MR0
+- [x] 验证报告落盘 `docs/audits/2026-08-07-2300-rc-ma4-a4-2-33-39-purchase-f2-threeway-match-runtime.md`，含七项存疑点各自裁决 + file:line 证据 + §2 判据命中分支
+- [x] 每项裁决明确：主路径闭合 / 维持分级（P1 Q4 强制实现 / P2 登记）+ 运行时证据记录，或升级触发 MR0
 
 ### Phase 2 - Finding 衔接、roadmap/log 同步
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/requirement-compliance-roadmap.md`（A4.2.33-39 done）、`docs/audits/arm-index.md`（维持注记追加）、`docs/logs/2026/08-07.md`
 Skill: none
 
 - Item Types: `Decision | Add`
 - Prereqs: Phase 1 报告落盘
 
-- [ ] `Decision` arm-index 衔接裁决：P1-RC-018 维持 P1（运行时确认 PPV 过账行缺失 + 两策略未实现，Q4 会计类无例外，修复归 MR1 触 PurAcctDocProvider/VoucherFact 须 ask-first）；P1-RC-019 维持 P1（运行时确认超收无门控，修复归 MR1 纯 BizModel/Processor 预授权）；P2-RC-013/P2-RC-014 维持 P2（登记不强制）。无新 finding 新建（全部维持）。
-- [ ] `Add` roadmap A4.2.33-A4.2.39 `todo → done`；`docs/logs/2026/08-07.md` 追加完成条目。
+- [x] `Decision` arm-index 衔接裁决：P1-RC-018 维持 P1（运行时确认 PPV 过账行缺失 + 两策略未实现，Q4 会计类无例外，修复归 MR1 触 PurAcctDocProvider/VoucherFact 须 ask-first）；P1-RC-019 维持 P1（运行时确认超收无门控，修复归 MR1 纯 BizModel/Processor 预授权）；P2-RC-013/P2-RC-014 维持 P2（登记不强制）。无新 finding 新建（全部维持）。
+- [x] `Add` roadmap A4.2.33-A4.2.39 `todo → done`；`docs/logs/2026/08-07.md` 追加完成条目。
 
 Exit Criteria:
 
-- [ ] roadmap 七项状态已更新为 done 且与报告裁决一致
-- [ ] arm-index 维持注记已追加（无未经比对直接新建的 finding）
+- [x] roadmap 七项状态已更新为 done 且与报告裁决一致
+- [x] arm-index 维持注记已追加（无未经比对直接新建的 finding）
 
 ## Draft Review Record
 
@@ -105,14 +105,14 @@ Exit Criteria:
 
 > 本计划为只读审计（零生产代码/ORM/api.xml/view.xml/真相源变更）。closure 时确认 checker 未触发 actual > baseline。
 
-- [ ] 范围内行为完成（七项存疑点均有 file:line 运行时证据 + 明确裁决）
-- [ ] 相关文档对齐（报告落盘 + roadmap/log 同步 + arm-index 衔接裁决记录）
-- [ ] 已运行验证（checker actual=baseline 确认；无代码变更故无 build/test 回归风险）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（七项存疑点均有 file:line 运行时证据 + 明确裁决）
+- [x] 相关文档对齐（报告落盘 + roadmap/log 同步 + arm-index 衔接裁决记录）
+- [x] 已运行验证（checker actual=baseline 确认；无代码变更故无 build/test 回归风险）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -124,12 +124,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填写>
+Status Note: 计划已完整执行。Phase 1（运行时证据采集与验证报告撰写）+ Phase 2（Finding 衔接、roadmap/log 同步）全数完成。七项静态存疑点（A4.2.33-A4.2.39）运行时行为全部确认成立，A1.16 静态判定无一翻转：两项主路径闭合（A4.2.33 per-mutation approve 架构凭证数==2 / A4.2.38 关闭释放预留 config-gated）+ 两项 P1 维持（A4.2.34/A4.2.35 P1-RC-018 / A4.2.36 P1-RC-019）+ 两项 P2 维持（A4.2.37 P2-RC-014 / A4.2.39 P2-RC-013）。0 新 finding / 不触发 MR0 / 不归 MR1（本审计）。验证报告落盘 `docs/audits/2026-08-07-2300-rc-ma4-a4-2-33-39-purchase-f2-threeway-match-runtime.md`（`Audit Status: closed`）；arm-index P1-RC-018/P1-RC-019/P2-RC-013/P2-RC-014 行追加 RC 交叉引用注记（维持既有分级不撤销）；roadmap A4.2.33-A4.2.39 `todo → done ✅`；log `docs/logs/2026/08-07.md` 追加完成条目。零生产代码变更（git status 仅 .md 文件），checker actual == baseline 无回归风险。 Closure Gates 中「结束审计由独立子代理执行」项已由独立结束审计子代理（新会话，无执行者上下文）核实并勾选。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理填写>
-- Evidence: <待填写>
+- Auditor / Agent: 独立结束审计子代理（新会话，非执行者上下文；closure-audit 任务）
+- Evidence: 独立核实通过——(1) 代码主张逐项复核活仓：`PurAcctDocProvider.createFacts:74-82` AP_INVOICE 仅 3 行[1403 在途物资 DEBIT / 2221 进项税 DEBIT / 2202 应付账款 CREDIT]无 PPV 行（A4.2.34 ✓）；`ThreeWayMatcher.match:62-107` 仅 strict 拒绝/非 strict warn 1/3 策略无"审批后接收"/"接收并过账差异"分支（A4.2.35 ✓）；`ErpPurReceiveProcessor.validateBusinessRulesForApprove:166-168` 仅 requireSupplierActive 无 receive-vs-order qty 容差校验（A4.2.36 ✓）；`rollupOrderReceiveStatus:244-284` 仅 `orderBiz.updateReceiveStatus:283` 更新 header receiveStatus 不写 orderLine.receivedQuantity + `setReceivedQuantity` 生产代码零 writer（A4.2.39 ✓）。(2) 产物落地核实：验证报告 `docs/audits/2026-08-07-2300-rc-ma4-a4-2-33-39-purchase-f2-threeway-match-runtime.md` 存在且 `Audit Status: closed`；roadmap A4.2.33-A4.2.39 全 `done ✅` 且裁决与报告一致；arm-index P1-RC-018/P1-RC-019/P2-RC-013/P2-RC-014（:159-162）均追加 RC 运行时确认交叉注记且维持既有分级不撤销；log `docs/logs/2026/08-07.md:3-23` 含七项 SP 裁决明细 + 聚合裁决条目。(3) 反空心核实：本计划为只读审计零生产代码变更，`git status` 仅 .md 文件改动（arm-index/roadmap/log/plan + 新建报告），checker actual==baseline 无回归风险。(4) 五点一致性：Plan Status completed / Phase 1-2 completed / 全 Exit Criteria [x] / 全 Closure Gates [x] / Closure 证据在文件中——均一致。(5) Deferred honesty：P1-RC-018/P1-RC-019/P2-RC-013/P2-RC-014 修复义务明确归 MR1（P1-RC-018 触 PurAcctDocProvider/VoucherFact 须 ask-first + 独立 plan-audit §5；其余纯 BizModel/Processor 预授权），无活缺陷隐藏于 Deferred/Follow-up。审计通过，无阻塞项。
 
 Follow-up:
 
