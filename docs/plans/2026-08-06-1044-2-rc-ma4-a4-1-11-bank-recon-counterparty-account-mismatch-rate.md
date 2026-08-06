@@ -1,6 +1,6 @@
 # 2026-08-06-1044-2 rc-ma4-a4-1-11-bank-recon-counterparty-account-mismatch-rate 银行对账对方账号缺失致错误 MATCHED 触发率评估
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.1.11（MA4 运行时行为验证 — A1.4 §7-1：UC-FIN-09/14 断言② 对方账号缺失致错误 MATCHED 的实际触发率，关联 P1-RC-004）
@@ -71,45 +71,45 @@
 
 ### Phase 1 - 对方账号缺失致错误 MATCHED 触发率与影响面评估
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1044-rc-ma4-a4-1-11-bank-recon-counterparty-account-mismatch-rate.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done（展开器已追加 A4.1.11 行）；A1.4 done（§7 存疑点 1 已落盘 + §6 P1-RC-004 已登记）
 
-- [ ] `Proof` 候选过滤逻辑核验：给出 `BankLedgerQuery.findCandidates:39-84` 过滤条件（subjectId + dcDirection + amount + voucherId 日期窗口，确无对方账号维度）+ `findOccupiedLineIds:105-123` 已勾对排除逻辑（减少重复但不解决跨 partner 同额）证据（file:line）。
+- [x] `Proof` 候选过滤逻辑核验：给出 `BankLedgerQuery.findCandidates:39-84` 过滤条件（subjectId + dcDirection + amount + voucherId 日期窗口，确无对方账号维度）+ `findOccupiedLineIds:105-123` 已勾对排除逻辑（减少重复但不解决跨 partner 同额）证据（file:line）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 匹配决策核验：读取 `BankStatementMatcher.autoMatch` 决策逻辑——单候选时是否自动 MATCHED / 多候选时是否拒绝留待手工，评估「同额同日不同 partner 且账面仅 1 候选」场景的匹配决策行为（是否产生错误 MATCHED）。
+- [x] `Proof` 匹配决策核验：读取 `BankStatementMatcher.autoMatch` 决策逻辑——单候选时是否自动 MATCHED / 多候选时是否拒绝留待手工，评估「同额同日不同 partner 且账面仅 1 候选」场景的匹配决策行为（是否产生错误 MATCHED）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 可逆性兜底核验：错误 MATCHED 后经 manualMatch 取消的可逆路径 + 余额恒等式下游兜底（`bank-reconciliation.md` 恒等式守卫）的运行时有效性。引用 A1.4 §5 P1-RC-004 已确认的「可经 manualMatch 取消可逆 + 余额恒等式下游兜底」结论。
+- [x] `Proof` 可逆性兜底核验：错误 MATCHED 后经 manualMatch 取消的可逆路径 + 余额恒等式下游兜底（`bank-reconciliation.md` 恒等式守卫）的运行时有效性。引用 A1.4 §5 P1-RC-004 已确认的「可经 manualMatch 取消可逆 + 余额恒等式下游兜底」结论。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` P1-RC-004 分级确认/调整（方法论 §2 判据 + 三源对照）：①若错误 MATCHED 实际触发率低 + 可逆 + 下游兜底有效 → P1 维持（对方账号维度缺失仍为合规缺陷但非 P0，A1.4 §5 维持）；②若实际触发率高且不可逆/无兜底 → 升 P0（活跃数据破坏，触发 MR0 即时修复）；③若触发率极低且仅影响边缘场景 → 维持 P1 或降 P2。裁决须列明 §2 判据编号 + 与 A1.4 §5 P1-RC-004 P1 结论分层一致 + 与 arm-index `:129` P1-RC-004 行衔接（更新分级注记或确认维持）。
+- [x] `Decision` P1-RC-004 分级确认/调整（方法论 §2 判据 + 三源对照）：①若错误 MATCHED 实际触发率低 + 可逆 + 下游兜底有效 → P1 维持（对方账号维度缺失仍为合规缺陷但非 P0，A1.4 §5 维持）；②若实际触发率高且不可逆/无兜底 → 升 P0（活跃数据破坏，触发 MR0 即时修复）；③若触发率极低且仅影响边缘场景 → 维持 P1 或降 P2。裁决须列明 §2 判据编号 + 与 A1.4 §5 P1-RC-004 P1 结论分层一致 + 与 arm-index `:129` P1-RC-004 行衔接（更新分级注记或确认维持）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 候选过滤逻辑 + 匹配决策 + 可逆性兜底证据落盘，每条有证据（file:line）
-- [ ] P1-RC-004 分级确认/调整有明确结论（P1 维持 / 升 P0 / 降 P2），与 A1.4 §5 P1-RC-004 P1 结论分层一致
+- [x] 候选过滤逻辑 + 匹配决策 + 可逆性兜底证据落盘，每条有证据（file:line）
+- [x] P1-RC-004 分级确认/调整有明确结论（P1 维持 / 升 P0 / 降 P2），与 A1.4 §5 P1-RC-004 P1 结论分层一致
 
 ### Phase 2 - finding/successor 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1044-rc-ma4-a4-1-11-bank-recon-counterparty-account-mismatch-rate.md`（定稿）；`docs/audits/arm-index.md`（P1-RC-004 分级注记更新）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 触发率评估 + 分级确认完成
 
-- [ ] `Add` P1-RC-004 分级注记更新：若 P1 维持 → 在 arm-index `:129` P1-RC-004 行追加「A4.1.11 运行时触发率评估确认 P1 维持」注记（含触发率结论 + 可逆性兜底证据 + file:line）；若升 P0 → 在 P1-RC-004 行标注升级 + 触发 MR0 即时通道（须 ask-first ORM 结构变更）；若降 P2 → 更新分级 + 列明降级依据。禁止未经比对新建重复 finding。
+- [x] `Add` P1-RC-004 分级注记更新：若 P1 维持 → 在 arm-index `:129` P1-RC-004 行追加「A4.1.11 运行时触发率评估确认 P1 维持」注记（含触发率结论 + 可逆性兜底证据 + file:line）；若升 P0 → 在 P1-RC-004 行标注升级 + 触发 MR0 即时通道（须 ask-first ORM 结构变更）；若降 P2 → 更新分级 + 列明降级依据。禁止未经比对新建重复 finding。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.4 §6 P1-RC-004 / MA2 A2.5c 银行对账解耦 / P2-RC-001 dedup scope 的复用关系）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.4 §6 P1-RC-004 / MA2 A2.5c 银行对账解耦 / P2-RC-001 dedup scope 的复用关系）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（过滤逻辑 + 匹配决策 + 触发率 + 可逆兜底 + 分级确认 + finding 衔接 + §8 自检齐全）
-- [ ] P1-RC-004 分级注记已更新入 arm-index（确认维持/升 P0/降 P2）并有 grep 依据
+- [x] 验证报告定稿（过滤逻辑 + 匹配决策 + 触发率 + 可逆兜底 + 分级确认 + finding 衔接 + §8 自检齐全）
+- [x] P1-RC-004 分级注记已更新入 arm-index（确认维持/升 P0/降 P2）并有 grep 依据
 
 ## Draft Review Record
 
@@ -119,14 +119,14 @@ Exit Criteria:
 
 > 本计划为**只读触发率评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 候选过滤 + 匹配决策 + 触发率影响面 + 可逆兜底 + 分级确认 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.11 验证报告过滤逻辑 + 匹配决策 + 触发率 + 分级确认齐全 + P1-RC-004 分级注记更新入 arm-index
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据一致；与 A1.4 §7-1 + §6 P1-RC-004 + §5 P1 结论一致
-- [ ] 已运行验证：过滤逻辑 + 匹配决策 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.11 验证报告过滤逻辑 + 匹配决策 + 触发率 + 分级确认齐全 + P1-RC-004 分级注记更新入 arm-index
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据一致；与 A1.4 §7-1 + §6 P1-RC-004 + §5 P1 结论一致
+- [x] 已运行验证：过滤逻辑 + 匹配决策 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -134,17 +134,18 @@ Exit Criteria:
 
 - Classification: `optimization candidate`（已登记 P1-RC-004，修复归 MR1）
 - Why Not Blocking Closure: 本计划是触发率评估，结果表面 = 验证报告 + P1-RC-004 分级确认。P1-RC-004 已登记为 P1，修复（ORM 增 counterpartyAccount 列 + 匹配算法增对方账号过滤）触及 ORM 结构变更须 ask-first + 独立 plan-audit，归 MR1（R1.0→RC-R1.n）。本验证闭环不阻塞于修复落地。
-- Successor Required: yes（MR1 按本报告 P1-RC-004 分级确认展开修复；若升 P0 则触发 MR0 即时通道）
+- Successor Required: yes（MR1 按本报告 P1-RC-004 分级确认展开修复；本验证确认维持 P1，不升 P0 故不触发 MR0 即时通道）
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 全部 Phase 执行完成。Phase 1（触发率与影响面评估）4 `Proof|Decision` 项 + 2 Exit Criteria 全 `[x]`；Phase 2（finding 衔接 + §8 自检 + 报告定稿）2 `Add|Proof` 项 + 2 Exit Criteria 全 `[x]`。验证报告 `docs/audits/2026-08-06-1044-rc-ma4-a4-1-11-bank-recon-counterparty-account-mismatch-rate.md` 落盘（10 段齐全）。裁决 = **维持 P1-RC-004 = P1，不升 P0，不降 P2，无新 finding，不触发 MR0**（触发面 CONFIRMED：单候选错误 MATCHED；P0④/P0① 不成立；两处兜底精化强化不可降 P2）。arm-index `:129` P1-RC-004 行追加 A4.1.11 注记（grep 依据确认）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立子代理（新会话 `ses_02a934bb2ffejS9oH7ixJ9Wm9i`，general 类型，未重用执行者上下文）
+- Verdict: **passes closure audit**（7 维度全 pass：scope completeness / evidence accuracy / classification soundness / §8 process discipline / §去重 protocol / arm-index annotation / read-only discipline）
+- Evidence: 独立核验报告全部关键 file:line 主张（`findCandidates:39-84` 无对方账号过滤 ✓ / `autoMatch:61-65` 单候选→MATCHED ✓ / `manualMatch:30-34` 守卫拒绝 MATCHED 行 ✓ / 余额恒等式同额错配无效推理逻辑成立 ✓）；确认 P0④/P0① 不成立 + 两处精化论证方向正确；§8/§去重/read-only 纪律齐全；无 blocking issue。2 项非阻塞 residual（行号区间 `:105-123` vs `:104-123` 微差[含 javadoc 行，方法论 §1 行号仅导航提示不构成失效]；§4.1 次级证据 `BizModel:30-42` 未独立读但主证据充分支撑）。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 无（P1-RC-004 修复归 MR1，已登记 successor；本验证确认维持 P1 不触发 MR0）。
