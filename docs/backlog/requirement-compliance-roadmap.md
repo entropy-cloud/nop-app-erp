@@ -197,15 +197,15 @@
 | A4.2.44 | A1.17 §7-5 — UC-PUR-07 ④ 反审核运行时删凭证（红字冲销；ErpPurReturnProcessor + PurReversalListener） | done ✅ | 同上 §7 + 同上验证报告（**主路径闭合**：`ErpPurReturnProcessor.ensureReversed:245-265` 调 `postingDispatcher.reverse` 经 IErpFinVoucherBiz Facade 红冲 + posted=false + `PurReversalListener:70-126` 四实体对称回退[posted=false + APPROVED→REJECTED，P1-MA2-051 resolved] + `TestErpPurReturnPosting:122-148` + `TestErpPurFinanceReversalWriteback:95-106` + `TestPurReversalListenerReceiveRollback:49-65` 强断言） | A4.2 done | 同上 |
 | A4.2.45 | A1.17 §7-6 — UC-PUR-04 承付恢复运行时对称性（reuse P1-MA2-083；return approve 释放 vs reverseApprove 不恢复） | done ✅ | 同上 §7 + `budget.md` + 同上验证报告（**维持 P1-MA2-083 reuse 重开[退货侧扩展]**：`ErpPurReturnApproveProcessor.approve:60` 调 `runCommitmentReleaseOnReturnHook` release[config-gated] + `ErpPurReturnReverseApproveProcessor.reverseApprove:23-37` + `ErpPurReturnCancelProcessor.cancel:23-33` 零 budgetCommitmentBiz.commit()[不对称] + config-gated 双默认 false[erp-fin.budget-commitment-enabled + erp-fin.commitment-release-on-return]→非默认活跃。与 A4.2.31 invoice 侧同型，MR1 修复行协同覆盖 Return Processor[调既有 commit() 入口纯 Processor 预授权不触 ask-first]） | A4.2 done | 同上 |
 | A4.2.46 | A1.17 §7-7 — UC-PUR-07 ③ 多币种行级金额运行时计算（PurInvoicePostingDispatcher.buildEvent exchangeRate） | done ✅ | 同上 §7 + 同上验证报告（**主路径闭合**：`PurInvoicePostingDispatcher.buildEvent:78` + `PurReturnPostingDispatcher.buildEvent:84` exchangeRate 兜底 + `ErpFinPostingProcessor.prepareContext:537` + `PurAcctDocProvider.fact:105-118` 行级 source/functional 分离[amountSource≠amountFunctional] + `TestErpPurMultiCurrencyPosting:67-132` source×rate==functional[100×7=700/13×7=91/113×7=791]强断言） | A4.2 done | 同上 |
-| A4.2.47 | A1.18 §7-1 + A1.19 §7-2（合并：订单级可用量校验缺失运行时影响 同根因[订单审核不调库存 Facade]同控制点）— 出库环节才发现库存不足的运行时频度/业务影响 | todo | `2026-08-03-0430-...-a1-18-...md` §7 + `2026-08-03-0530-...-a1-19-...md` §7 | A4.2 done | 同上 |
-| A4.2.48 | A1.18 §7-2 — UC-SAL-11 ⑥ 最低价校验缺失的实际触发面（促销配置是否致售价 < SKU.minPrice） | todo | 同上 §7 | A4.2 done | 同上 |
-| A4.2.49 | A1.18 §7-3 — UC-SAL-11 ⑦ 价税分离缺失的实际 GL 影响（recomputeLineAmount 不重算 taxAmount 数值偏差；P1-RC-022） | todo | 同上 §7 | A4.2 done | 同上 |
-| A4.2.50 | A1.18 §7-4 — UC-SAL-01 ⑨ 客户应收余额双层设计运行时一致性（归 P2-MA2-038 DualSideConsistencyChecker 跟踪） | todo | 同上 §7 | A4.2 done | 同上 |
-| A4.2.51 | A1.18 §7-5 — UC-SAL-11 ② 取价优先级链跨域协作运行时一致性（master-data 取价后 sales pricingSource 写入值） | todo | 同上 §7（与 A1.41 协同） | A4.2 done | 同上 |
-| A4.2.52 | A1.19 §7-1 — UC-SAL-10 销售级 seam 真实并发下的运行时行为（triggerOutgoingMove Facade seam 同事务/异常传播） | todo | `2026-08-03-0530-...-a1-19-...md` §7 | A4.2 done | 同上 |
-| A4.2.53 | A1.19 §7-3 — 负库存配置下并发结果（allow-negative-stock=true 下 sales 出库同批次并发最终余额边界） | todo | 同上 §7 | A4.2 done | 同上 |
-| A4.2.54 | A1.19 §7-4 — UC-SAL-03 deliveredQuantity 查询实际返回值（零 writer，UI/GraphQL 读取 0 vs null） | todo | 同上 §7 | A4.2 done | 同上 |
-| A4.2.55 | A1.19 §7-5 — UC-SAL-03 1 行×2 分批(60+40) 运行时验证（deliveryStatus + deliveredQuantity + 库存余额；P2-RC-019） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.47 | A1.18 §7-1 + A1.19 §7-2（合并：订单级可用量校验缺失运行时影响 同根因[订单审核不调库存 Facade]同控制点）— 出库环节才发现库存不足的运行时频度/业务影响 | done ✅ | `2026-08-03-0430-...-a1-18-...md` §7 + `2026-08-03-0530-...-a1-19-...md` §7 | A4.2 done | 同上 |
+| A4.2.48 | A1.18 §7-2 — UC-SAL-11 ⑥ 最低价校验缺失的实际触发面（促销配置是否致售价 < SKU.minPrice） | done ✅ | 同上 §7 | A4.2 done | 同上 |
+| A4.2.49 | A1.18 §7-3 — UC-SAL-11 ⑦ 价税分离缺失的实际 GL 影响（recomputeLineAmount 不重算 taxAmount 数值偏差；P1-RC-022） | done ✅ | 同上 §7 | A4.2 done | 同上 |
+| A4.2.50 | A1.18 §7-4 — UC-SAL-01 ⑨ 客户应收余额双层设计运行时一致性（归 P2-MA2-038 DualSideConsistencyChecker 跟踪） | done ✅ | 同上 §7 | A4.2 done | 同上 |
+| A4.2.51 | A1.18 §7-5 — UC-SAL-11 ② 取价优先级链跨域协作运行时一致性（master-data 取价后 sales pricingSource 写入值） | done ✅ | 同上 §7（与 A1.41 协同） | A4.2 done | 同上 |
+| A4.2.52 | A1.19 §7-1 — UC-SAL-10 销售级 seam 真实并发下的运行时行为（triggerOutgoingMove Facade seam 同事务/异常传播） | done ✅ | `2026-08-03-0530-...-a1-19-...md` §7 | A4.2 done | 同上 |
+| A4.2.53 | A1.19 §7-3 — 负库存配置下并发结果（allow-negative-stock=true 下 sales 出库同批次并发最终余额边界） | done ✅ | 同上 §7 | A4.2 done | 同上 |
+| A4.2.54 | A1.19 §7-4 — UC-SAL-03 deliveredQuantity 查询实际返回值（零 writer，UI/GraphQL 读取 0 vs null） | done ✅ | 同上 §7 | A4.2 done | 同上 |
+| A4.2.55 | A1.19 §7-5 — UC-SAL-03 1 行×2 分批(60+40) 运行时验证（deliveryStatus + deliveredQuantity + 库存余额；P2-RC-019） | done ✅ | 同上 §7 | A4.2 done | 同上 |
 | A4.2.56 | A1.20 SP-1 + A1.21 SP-1（合并：价税分离多档税率混合+促销叠加 GL 偏差 同根因[recomputeLineAmount/recomputeOrderTotals P1-RC-022]同控制点）— 税额偏差范围量化 | todo | `2026-08-03-0630-...-a1-20-...md` §7 + `2026-08-03-0900-...-a1-21-...md` §7 | A4.2 done | 同上 |
 | A4.2.57 | A1.20 SP-2 — P1-RC-026 退货成本在不同库存策略下数值偏差（ReturnStockMoveBuilder unitCost=line.unitPrice vs 当前库存成本） | todo | 同上 §7 | A4.2 done | 同上 |
 | A4.2.58 | A1.20 SP-4 — P1-RC-028 ReturnRefundOrchestrator post-approve 静默反向在已核销发票高并发场景下竞态 | todo | 同上 §7 | A4.2 done | 同上 |
