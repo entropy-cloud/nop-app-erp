@@ -4,6 +4,7 @@
 > 来源：`docs/skills/audit-remediation-roadmap-authoring-prompt.md`
 > 范围文档：`docs/audits/audit-remediation-scope-and-dimension-matrix.md`
 > 审查记录：3 路独立子代理（规范合规 / 覆盖面 / 可执行性），发现 S 级未拆分 / R*.x 占位符卡死 / 并发维度缺失 / 流水线退化等问题，本版全部修订
+> 关联路线图：`entity-state-machine-migration-roadmap.md` 负责实体级状态机 Bean 的后续迁移和矩阵完备性守卫；它不重开本路线图已完成的 MA2 状态机业务审计。
 
 ## 目的
 

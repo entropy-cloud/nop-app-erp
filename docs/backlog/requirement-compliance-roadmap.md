@@ -4,6 +4,7 @@
 > 来源：`docs/skills/audit-remediation-roadmap-authoring-prompt.md` 同型模式（需求-实现符合性变体）
 > 范围文档：`docs/discussions/2026-08-02-1700-requirement-implementation-compliance-audit.md`
 > **状态：可执行版本。Q1/Q4 已裁决（2026-08-02），M0 工作项转 ready，可启动 mission driver。**
+> 关联路线图：`entity-state-machine-migration-roadmap.md` 将提供状态轴迁移矩阵、dict/writer 对照和可达性证据；本路线图的 MA1 状态机证据可消费其已完成产物，但不等待其整体完成。
 
 ## 目的
 
