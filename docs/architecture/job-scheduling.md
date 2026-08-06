@@ -226,7 +226,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 | `erp-hr-payroll-calc` | 月度薪酬核算（累计个税 + 社保公积金） | 每月（默认关） | `IErpHrSalaryBiz.runPayroll()` | 中 | job | DEFERRED | `erp-hr.auto-generate-salary` | `docs/design/human-resource/payroll.md:21,275-285`；`plans/2026-07-04-0831-2:181` |
 | `erp-hr-payroll-sim-convert` | 模拟薪酬自动转正式 + 过期清理 | 定期 | `convertToFormal()` | 中 | job | DEFERRED | — | `plans/2026-07-04-2200-3:184-187` |
 | `erp-hr-shift-auto-generate` | 排班自动生成 + 提醒 | 未定 | （排班 BizModel callable） | 中 | job | DEFERRED | — | `plans/2026-07-04-0831-3:182,207` |
-| `erp-hr-contract-expiry-reminder` | 每日扫描到期劳动合同提醒续签/终止 | 每日 | （待实现） | 小 | job | DESIGN | — | `docs/design/human-resource/use-cases.md:75-85` |
+| `erp-hr-contract-expiry` | 每日扫描到期劳动合同提醒续签/终止（ACTIVE→EXPIRED + 跨域通知） | 每日 01:00（默认关） | `ErpHrContractExpiryJob.execute()` | 小 | job | DONE（config-gated 默认关） | `nop.job.erp-hr-contract-expiry.enabled`（nop-job 层，默认 false）+ `erp-hr.contract-expiry-cron`（in-job 层，默认空）—— **两层须同时设** | `docs/design/human-resource/use-cases.md:75-85`；`app-erp-all/src/main/resources/_vfs/nop/job/conf/erp-hr-contract-expiry.job.yaml`；`docs/audits/2026-08-06-2247-rc-ma4-a4-2-12-hr-contract-expiry-cron-wiring.md` |
 | `erp-hr-survey-competency-reminder` | 员工调查/能力评估周期提醒 | 季/半年/年 | （待实现） | 小 | job | DESIGN | `reminderDays` | `docs/design/human-resource/employee-survey.md:38,104` |
 
 ### 3.16 Contract（合同）

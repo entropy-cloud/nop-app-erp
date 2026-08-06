@@ -1,6 +1,6 @@
 # 2026-08-06-2247-2 rc-ma4-a4-2-12-hr-contract-expiry-cron-wiring UC-HR-07 合同到期 cron 运行时调度接线确认（A1.12 §7-1）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.2.12（A1.12 §7-1：MA4 运行时行为验证 — UC-HR-07 合同到期提醒 cron 运行时调度接线，`ErpHrContractExpiryJob.execute()` 经 nop-job `.job.yaml` 反射调用 + 两层 config 门控[nop-job enabled 默认 false + in-job contract-expiry-cron 空值跳过]运行时是否实际活跃）
@@ -75,49 +75,49 @@
 
 ### Phase 1 - nop-job 接线 census + 两层 config 门控默认值 + 全 application.yaml 部署 override 普查
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-2247-rc-ma4-a4-2-12-hr-contract-expiry-cron-wiring.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`（Phase 1 全 Proof）
 - Prereqs: A4.2 done（展开器已追加 A4.2.12 行）；A1.12 done（§7-1 已落盘 + §5 UC-HR-07 接受裁决已登记）
 
-- [ ] `Proof` nop-job 接线 census：核验 `erp-hr-contract-expiry.job.yaml`（`app-erp-all/.../nop/job/conf/`）完整接线——`enabled`/`cronExpr`/`invoker.bean`/`invoker.method` 各字段 + BeanMethodJobInvoker 反射调用链是否完整可达 `ErpHrContractExpiryJob.execute()`。给出 file:line 证据。确认 nop-job 调度层接线存在（vs §7-1 字面"scheduler.yaml 是否实际接线"疑问）。
+- [x] `Proof` nop-job 接线 census：核验 `erp-hr-contract-expiry.job.yaml`（`app-erp-all/.../nop/job/conf/`）完整接线——`enabled`/`cronExpr`/`invoker.bean`/`invoker.method` 各字段 + BeanMethodJobInvoker 反射调用链是否完整可达 `ErpHrContractExpiryJob.execute()`。给出 file:line 证据。确认 nop-job 调度层接线存在（vs §7-1 字面"scheduler.yaml 是否实际接线"疑问）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 两层 config 门控默认值 census：核验两层 config 门控默认值——①nop-job 层 `nop.job.erp-hr-contract-expiry.enabled`（`@cfg:...|false` 实测默认 false）+ `nop.job.erp-hr-contract-expiry.cron-expr`（默认 `0 0 1 * * ?`）；②in-job 层 `erp-hr.contract-expiry-cron`（`ErpHrContractExpiryJob.resolveCronConfig` + `ErpHrConstants.CONFIG_CONTRACT_EXPIRY_CRON`，默认空）。确认两层叠加下合同到期自动化是否默认活跃。
+- [x] `Proof` 两层 config 门控默认值 census：核验两层 config 门控默认值——①nop-job 层 `nop.job.erp-hr-contract-expiry.enabled`（`@cfg:...|false` 实测默认 false）+ `nop.job.erp-hr-contract-expiry.cron-expr`（默认 `0 0 1 * * ?`）；②in-job 层 `erp-hr.contract-expiry-cron`（`ErpHrContractExpiryJob.resolveCronConfig` + `ErpHrConstants.CONFIG_CONTRACT_EXPIRY_CRON`，默认空）。确认两层叠加下合同到期自动化是否默认活跃。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 全 application.yaml 部署 override 普查：grep 全 20 生产 application.yaml + 部署运维文档（README/seed/部署文档），确认是否有任何站点设 `nop.job.erp-hr-contract-expiry.enabled=true` 或 `erp-hr.contract-expiry-cron` 非空 override。给出站点级证据（哪站点设/未设）。
+- [x] `Proof` 全 application.yaml 部署 override 普查：grep 全 20 生产 application.yaml + 部署运维文档（README/seed/部署文档），确认是否有任何站点设 `nop.job.erp-hr-contract-expiry.enabled=true` 或 `erp-hr.contract-expiry-cron` 非空 override。给出站点级证据（哪站点设/未设）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` config key 命名一致性核验：核验两层 config key 命名（nop-job 层 `nop.job.erp-hr-contract-expiry.*` vs in-job 层 `erp-hr.contract-expiry-cron`）是否致运维混淆（运维只设一层而遗漏另一层的风险）+ module-meta.yaml configKey 声明完整性。
+- [x] `Proof` config key 命名一致性核验：核验两层 config key 命名（nop-job 层 `nop.job.erp-hr-contract-expiry.*` vs in-job 层 `erp-hr.contract-expiry-cron`）是否致运维混淆（运维只设一层而遗漏另一层的风险）+ module-meta.yaml configKey 声明完整性。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（cron 接线运行时活跃性），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（cron 接线运行时活跃性），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] nop-job 接线 census 有明确结论（接线完整 / 断裂），每条有证据（file:line）
-- [ ] 两层 config 门控默认值 + 全 application.yaml 部署 override 普查有明确结论（默认活跃 / 默认关闭 + 站点启用情况），每条有证据（file:line）
+- [x] nop-job 接线 census 有明确结论（接线完整 / 断裂），每条有证据（file:line）
+- [x] 两层 config 门控默认值 + 全 application.yaml 部署 override 普查有明确结论（默认活跃 / 默认关闭 + 站点启用情况），每条有证据（file:line）
 
 ### Phase 2 - cron 接线活跃性裁决 + finding 衔接 + §8 自检
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-2247-rc-ma4-a4-2-12-hr-contract-expiry-cron-wiring.md`（定稿）；`docs/audits/arm-index.md`（UC-HR-07 注记或 config-gate finding 登记，若有）
 Skill: none
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: Phase 1 nop-job 接线 census + 两层 config 门控默认值 + 部署 override 普查完成
 
-- [ ] `Decision` UC-HR-07 cron 接线运行时活跃性裁决（方法论 §2 判据 + 三源对照）：①两层 config 门控均默认关闭 + 无部署 override → 合同到期自动化运行时非默认活跃，但 cron-gated 机制本身存在（L1 ⑲"cron 调度"要求机制存在已满足）→ **维持 UC-HR-07 接受** + **登记 config-gate 部署启用注意**（watch-only/P2，对齐 A4.1.4 budget config 范式）；②有部署 override 启用 → 闭合，UC-HR-07 接受维持无额外注记；③接线断裂（.job.yaml 不存在或反射链断）→ 登记 finding（按 §2 判据分级，若致合同到期自动化完全缺失可能 P1②异常路径）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.12 §5 UC-HR-07 接受裁决分层一致。
+- [x] `Decision` UC-HR-07 cron 接线运行时活跃性裁决（方法论 §2 判据 + 三源对照）：①两层 config 门控均默认关闭 + 无部署 override → 合同到期自动化运行时非默认活跃，但 cron-gated 机制本身存在（L1 ⑲"cron 调度"要求机制存在已满足）→ **维持 UC-HR-07 接受** + **登记 config-gate 部署启用注意**（watch-only/P2，对齐 A4.1.4 budget config 范式）；②有部署 override 启用 → 闭合，UC-HR-07 接受维持无额外注记；③接线断裂（.job.yaml 不存在或反射链断）→ 登记 finding（按 §2 判据分级，若致合同到期自动化完全缺失可能 P1②异常路径）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.12 §5 UC-HR-07 接受裁决分层一致。
       - Skill: none
-- [ ] `Add` finding/注记更新：若登记 config-gate 部署启用注意 → arm-index 新建 P2-RC watch-only finding 行（合同到期自动化 config-gate 默认关闭，部署启用决策）+ owner doc `recruitment.md`/部署文档补 config 启用注记（预授权文档更新）；若接线断裂 → arm-index 新建 finding 行 + 触发 MR1（归 R1.0 展开器）。
+- [x] `Add` finding/注记更新：若登记 config-gate 部署启用注意 → arm-index 新建 P2-RC watch-only finding 行（合同到期自动化 config-gate 默认关闭，部署启用决策）+ owner doc `recruitment.md`/部署文档补 config 启用注记（预授权文档更新）；若接线断裂 → arm-index 新建 finding 行 + 触发 MR1（归 R1.0 展开器）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 UC-HR-07 / A1.12 §5/§7 的复用关系 + config-gate 范式与 A4.1.4 对比 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 UC-HR-07 / A1.12 §5/§7 的复用关系 + config-gate 范式与 A4.1.4 对比 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（nop-job 接线 census + 两层 config 门控 + 部署 override 普查 + 命名对账 + 活跃性裁决 + finding 衔接 + §8 自检齐全）
-- [ ] UC-HR-07 注记或 config-gate finding 登记 + 若归 MR1 已记录
+- [x] 验证报告定稿（nop-job 接线 census + 两层 config 门控 + 部署 override 普查 + 命名对账 + 活跃性裁决 + finding 衔接 + §8 自检齐全）
+- [x] UC-HR-07 注记或 config-gate finding 登记 + 若归 MR1 已记录
 
 ## Draft Review Record
 
@@ -128,14 +128,14 @@ Exit Criteria:
 
 > 本计划为**只读 cron 接线活跃性评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = nop-job 接线 census + 两层 config 门控默认值 + 部署 override 普查 + 命名对账 + 活跃性裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.2.12 验证报告 nop-job 接线 census + 两层 config 门控 + 部署 override 普查 + 命名对账 + 活跃性裁决齐全 + finding/注记更新
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.12 §7-1 + §5 UC-HR-07 接受裁决一致
-- [ ] 已运行验证：nop-job 接线 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（登记的 config-gate note/finding 是验证**输出**，非范围内项目降级；Deferred But Adjudicated 正确分类）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status / Phase Status / Exit Criteria / Closure Gates / 日志条目都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.2.12 验证报告 nop-job 接线 census + 两层 config 门控 + 部署 override 普查 + 命名对账 + 活跃性裁决齐全 + finding/注记更新
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.12 §7-1 + §5 UC-HR-07 接受裁决一致
+- [x] 已运行验证：nop-job 接线 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（登记的 config-gate note/finding 是验证**输出**，非范围内项目降级；Deferred But Adjudicated 正确分类）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status / Phase Status / Exit Criteria / Closure Gates / 日志条目都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符（本次结束审计由独立子代理于 fresh session 执行，未重用执行者上下文；见 ## Closure 的 Closure Audit Evidence）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -147,12 +147,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <关闭时填写>
+Status Note: 已执行完毕（2026-08-06）。两 Phase 全 [x] + Plan Status: completed + 全 8 Closure Gates [x]。裁决 = 维持 UC-HR-07 接受 + 登记 config-gate watch-only residual（两层 config 门控默认关闭是部署启用决策，对齐 A4.1.4 budget config 范式），0 新 finding / 不触发 MR0 / 不归 MR1。验证报告落盘 `docs/audits/2026-08-06-2247-rc-ma4-a4-2-12-hr-contract-expiry-cron-wiring.md`（Audit Status: closed）。部署运维文档修正 `docs/architecture/job-scheduling.md §3.15:229`（stale `erp-hr-contract-expiry-reminder` DESIGN → live `erp-hr-contract-expiry` DONE config-gated + 两层 config 启用注记）。Phase 2 item 2 条件裁决：§2 判据 = 接受（非 P2），故**不新建** arm-index P2-RC finding 行（对齐 A4.1.4 = 0 finding）；config-gate-default-off 事实已在 P1-MA2-086 arm-index 描述记录（§7 去重不重复登记），owner doc config 启用注记经 `job-scheduling.md` 修正落实。独立结束审计已由独立子代理（fresh session，未重用执行者上下文）执行并通过，证据见下方 Closure Audit Evidence。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（mission-driver CLOSURE_VERIFY 步骤；fresh session，未重用执行者上下文，未起草本计划，未参与草案审查 ses_028702bc0ffev9kqjRfXIn4aQ4 / ses_0286ceb6dffez0P1HmYBQw0Pit）
+- Evidence: 验证报告 `docs/audits/2026-08-06-2247-rc-ma4-a4-2-12-hr-contract-expiry-cron-wiring.md`（§0 TL;DR + §2 census + §5 裁决 + §8 checker actual==baseline 全 16 规则精确匹配 + §9 结论）；`job-scheduling.md §3.15:229` 修正；checker actual==baseline（R1d=14/R2a=34/R2b=229/R2c=1382/R2d=34/R3=5 等）；TestErpHrContractExpiry surefire 7 tests / 0 failures（L4 既有证据复用，本验证零代码变更）；独立结束审计走查核验项：①live 复核 `app-erp-all/src/main/resources/_vfs/nop/job/conf/erp-hr-contract-expiry.job.yaml` 接线完整（jobName/enabled 默认 false/cronExpr 默认 0 0 1 * * ?/invoker.bean=erpHrContractExpiryJob/invoker.method=execute 6 字段齐全）；②live 复核 `module-hr/erp-hr-service/.../ErpHrContractExpiryJob.java` 存在；③live 复核 `docs/architecture/job-scheduling.md:229` stale DESIGN → DONE config-gated 修正已落盘；④live 复核验证报告 Audit Status: closed + §0 TL;DR 裁决 = 维持 UC-HR-07 接受 + 0 新 finding；⑤反中空检查 pass（.job.yaml 反射链 invoker.bean→app-service.beans.xml:44 bean 注册→ErpHrContractExpiryJob.execute() 完整可达，无 return null / 空体 / 吞异常）；⑥Deferred 诚实性 pass（config-gate watch-only residual 是验证输出非范围内降级，分类正确）；⑦文本一致性 pass（Plan Status completed / 两 Phase Status completed / Exit Criteria 全 [x] / 8 Closure Gates 全 [x] / Closure 证据非占位符）
 
 Follow-up:
 
