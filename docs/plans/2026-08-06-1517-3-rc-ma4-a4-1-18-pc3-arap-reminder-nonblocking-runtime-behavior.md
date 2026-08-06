@@ -1,6 +1,6 @@
 # 2026-08-06-1517-3 rc-ma4-a4-1-18-pc3-arap-reminder-nonblocking-runtime-behavior PC-3 AR/AP reminder 非阻断模式运行时行为评估
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.1.18（MA4 运行时行为验证 — A1.6 §7-1：UC-FIN-06 PC-3 AR/AP reminder 模式运行时行为——auto-post-on-close=true 提示模式下未核销 AR/AP 经 `hasReminders()` 列出但 closePeriod 不阻断，是否实际符合用户对「前置门禁」的期望，关联 P2-RC-006）
@@ -65,51 +65,51 @@
 
 ### Phase 1 - PC-3 reminder 模式非阻断运行时行为与强制核销模式 config 状态评估
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1517-rc-ma4-a4-1-18-pc3-arap-reminder-nonblocking-runtime-behavior.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done（展开器已追加 A4.1.18 行）；A1.6 done（§7 存疑点 1 已落盘 + §5.3 P2-RC-006 新建 + §2.3 PC-3 偏离 L1 + §6.1 与 P1-MA2-017 不同控制点）
 
-- [ ] `Proof` reminder/hasIssues 分流逻辑核验：给出 `PeriodPreCheckReport.hasIssues():93-96`（= unpostedVoucherCodes + unresolvedPostingExceptionKeys，**不含未核销 AR/AP**）vs `hasReminders():102-105`（= unsettledArApCodes + allowanceExcess，含未核销 AR/AP）证据（file:line）+ `ErpFinAccountingPeriodClosePeriodProcessor:59`（`if (!facade.isAutoPostOnClose() && report.hasIssues())` 仅 hasIssues 阻断，hasReminders 永不阻断）+ :57 注释（未核销 AR-AP 结构化提示不阻断）。证实未核销 AR/AP 经 reminder 列出但 closePeriod 不阻断。
+- [x] `Proof` reminder/hasIssues 分流逻辑核验：给出 `PeriodPreCheckReport.hasIssues():93-96`（= unpostedVoucherCodes + unresolvedPostingExceptionKeys，**不含未核销 AR/AP**）vs `hasReminders():102-105`（= unsettledArApCodes + allowanceExcess，含未核销 AR/AP）证据（file:line）+ `ErpFinAccountingPeriodClosePeriodProcessor:59`（`if (!facade.isAutoPostOnClose() && report.hasIssues())` 仅 hasIssues 阻断，hasReminders 永不阻断）+ :57 注释（未核销 AR-AP 结构化提示不阻断）。证实未核销 AR/AP 经 reminder 列出但 closePeriod 不阻断。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 强制核销模式 config 消费点普查（闭合 P2-RC-006 关键变量）：grep 「强制核销模式」相关 config（`force-settle`/`mandatory-recon`/`force-recon`/`mandatory-settle`/`erp-fin.*settle`/`erp-fin.*recon` 变体）全集 + 默认值 + 是否被 `ClosePeriodProcessor`/`ErpFinAccountingPeriodProcessor`/`findUnsettledArApCodes` 消费切换为 hard block——确认 L1 PC-3 限定词「强制核销模式」是否实际存在 config + 默认是否启用 + 是否驱动 hasIssues（而非 hasReminders）。若 config 不存在或默认未启用，则 L1「强制核销模式→拒绝」的限定条件不活跃。
+- [x] `Proof` 强制核销模式 config 消费点普查（闭合 P2-RC-006 关键变量）：grep 「强制核销模式」相关 config（`force-settle`/`mandatory-recon`/`force-recon`/`mandatory-settle`/`erp-fin.*settle`/`erp-fin.*recon` 变体）全集 + 默认值 + 是否被 `ClosePeriodProcessor`/`ErpFinAccountingPeriodProcessor`/`findUnsettledArApCodes` 消费切换为 hard block——确认 L1 PC-3 限定词「强制核销模式」是否实际存在 config + 默认是否启用 + 是否驱动 hasIssues（而非 hasReminders）。若 config 不存在或默认未启用，则 L1「强制核销模式→拒绝」的限定条件不活跃。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` L1↔L2 冲突裁决（§4 Q1 L1 为准）：核验 L1 `use-cases.md:119`（PC-3，UC-FIN-06 heading :110）字面「若 存在未核销应收应付(强制核销模式) → 拒绝」要求（**强制核销模式启用时 hard block**）vs L2 `period-close.md:42-43`「未核销=提示」实现——按 §4 Q1=(c) L1 为准，L2 推定已向实现妥协。评估限定词「强制核销模式」对分歧活跃性的影响（config 未启用 → L1 限定条件不活跃 → 分歧倾向接受；config 已启用 → L1 限定条件活跃 → 分歧须实现 hard block）。
+- [x] `Proof` L1↔L2 冲突裁决（§4 Q1 L1 为准）：核验 L1 `use-cases.md:119`（PC-3，UC-FIN-06 heading :110）字面「若 存在未核销应收应付(强制核销模式) → 拒绝」要求（**强制核销模式启用时 hard block**）vs L2 `period-close.md:42-43`「未核销=提示」实现——按 §4 Q1=(c) L1 为准，L2 推定已向实现妥协。评估限定词「强制核销模式」对分歧活跃性的影响（config 未启用 → L1 限定条件不活跃 → 分歧倾向接受；config 已启用 → L1 限定条件活跃 → 分歧须实现 hard block）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` reminder 模式与「前置门禁」期望符合性评估：评估 auto-post-on-close=true 提示模式下大额未核销 AR/AP 不阻断 closePeriod 是否符合 UC-FIN-06「前置门禁」期望——若强制核销模式 config 未启用，reminder 模式是否仍提供足够的运营提示（unsettledArApCodes 列出可见）+ 强制核销模式启用路径是否可达（config-gated 切换 hard block 缺失面）。
+- [x] `Proof` reminder 模式与「前置门禁」期望符合性评估：评估 auto-post-on-close=true 提示模式下大额未核销 AR/AP 不阻断 closePeriod 是否符合 UC-FIN-06「前置门禁」期望——若强制核销模式 config 未启用，reminder 模式是否仍提供足够的运营提示（unsettledArApCodes 列出可见）+ 强制核销模式启用路径是否可达（config-gated 切换 hard block 缺失面）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 既有测试覆盖边界普查：grep `TestErpFinPeriodPreCheck#testPreCheckListsIssues:47-67`（PC-3 检出断言 unsettledArApCodes.size()>=1）+ `TestErpFinPeriodCloseEndToEnd#testFullChain`（reminder 不阻断显式断言缺口——A1.6 §4.4 已记仅断言检出未断言不阻断）+ 强制核销模式 config 启用场景测试（若有）全集，产出测试覆盖边界清单 + 标注 reminder-不阻断显式断言缺口 + 强制核销模式 hard block 测试缺口。
+- [x] `Proof` 既有测试覆盖边界普查：grep `TestErpFinPeriodPreCheck#testPreCheckListsIssues:47-67`（PC-3 检出断言 unsettledArApCodes.size()>=1）+ `TestErpFinPeriodCloseEndToEnd#testFullChain`（reminder 不阻断显式断言缺口——A1.6 §4.4 已记仅断言检出未断言不阻断）+ 强制核销模式 config 启用场景测试（若有）全集，产出测试覆盖边界清单 + 标注 reminder-不阻断显式断言缺口 + 强制核销模式 hard block 测试缺口。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（reminder 模式是否符合 L1 前置门禁），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（reminder 模式是否符合 L1 前置门禁），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` P2-RC-006 决策闭合（方法论 §2 判据 + §4 Q1 + 三源对照）：①若强制核销模式 config 未启用 + reminder 模式仅非强制场景生效 + unsettledArApCodes 列出可见 → P2-RC-006 维持 P2 watch-only（倾向接受，L1 限定条件「强制核销模式」不活跃 + reminder 提供运营提示）；②若强制核销模式 config 已启用但 reminder 仍不阻断 → 升 P1（L1「强制核销模式→拒绝」活跃分歧，须实现 hard block，按 §2 P1① 行为实质偏离）。裁决须列明 §2 判据编号 + §4 Q1 L1 为准 + L1/L2/L3 三源 + 与 A1.6 §5.3 P2-RC-006 倾向接受 + §6.1 P1-MA2-017（不同控制点）分层一致。
+- [x] `Decision` P2-RC-006 决策闭合（方法论 §2 判据 + §4 Q1 + 三源对照）：①若强制核销模式 config 未启用 + reminder 模式仅非强制场景生效 + unsettledArApCodes 列出可见 → P2-RC-006 维持 P2 watch-only（倾向接受，L1 限定条件「强制核销模式」不活跃 + reminder 提供运营提示）；②若强制核销模式 config 已启用但 reminder 仍不阻断 → 升 P1（L1「强制核销模式→拒绝」活跃分歧，须实现 hard block，按 §2 P1① 行为实质偏离）。裁决须列明 §2 判据编号 + §4 Q1 L1 为准 + L1/L2/L3 三源 + 与 A1.6 §5.3 P2-RC-006 倾向接受 + §6.1 P1-MA2-017（不同控制点）分层一致。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] reminder/hasIssues 分流逻辑 + 强制核销模式 config 消费点 + L1↔L2 冲突裁决 + 前置门禁期望符合性 + 测试覆盖边界证据落盘（全集，无遗漏），每条有证据（file:line）
-- [ ] P2-RC-006 决策闭合有明确结论（维持 P2 倾向接受 或 升 P1），与 A1.6 §5.3 + §6.1 P1-MA2-017（不同控制点）分层一致
+- [x] reminder/hasIssues 分流逻辑 + 强制核销模式 config 消费点 + L1↔L2 冲突裁决 + 前置门禁期望符合性 + 测试覆盖边界证据落盘（全集，无遗漏），每条有证据（file:line）
+- [x] P2-RC-006 决策闭合有明确结论（维持 P2 倾向接受 或 升 P1），与 A1.6 §5.3 + §6.1 P1-MA2-017（不同控制点）分层一致
 
 ### Phase 2 - finding 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1517-rc-ma4-a4-1-18-pc3-arap-reminder-nonblocking-runtime-behavior.md`（定稿）；`docs/audits/arm-index.md`（P2-RC-006 分级注记更新，若有）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 reminder 模式评估 + 决策闭合完成
 
-- [ ] `Add` P2-RC-006 分级注记更新：若维持 P2 → 在 arm-index P2-RC-006 行追加「A4.1.18 运行时行为评估确认 P2 维持（强制核销模式 config 未启用 → L1 限定条件不活跃 + reminder 提供运营提示）」注记；若升 P1 → 标注升级 + 触发 MR1（实现 config-gated 强制核销模式 hard block，BizModel 代码逻辑修复预授权类目）。禁止未经比对新建重复 finding（P2-RC-006 已登记，本验证只更新注记）。
+- [x] `Add` P2-RC-006 分级注记更新：若维持 P2 → 在 arm-index P2-RC-006 行追加「A4.1.18 运行时行为评估确认 P2 维持（强制核销模式 config 未启用 → L1 限定条件不活跃 + reminder 提供运营提示）」注记；若升 P1 → 标注升级 + 触发 MR1（实现 config-gated 强制核销模式 hard block，BizModel 代码逻辑修复预授权类目）。禁止未经比对新建重复 finding（P2-RC-006 已登记，本验证只更新注记）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.6 §5.3 P2-RC-006 / §6.1 P1-MA2-017[不同控制点不同维度] / A2.3 period-close E2E 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.6 §5.3 P2-RC-006 / §6.1 P1-MA2-017[不同控制点不同维度] / A2.3 period-close E2E 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（reminder 分流 + 强制核销 config + L1↔L2 冲突 + 前置门禁期望 + 测试覆盖边界 + 决策闭合 + finding 衔接 + §8 自检齐全）
-- [ ] P2-RC-006 分级注记已更新入 arm-index（若有变更）或有明确「维持 P2 无变更」记录并有 grep 依据
+- [x] 验证报告定稿（reminder 分流 + 强制核销 config + L1↔L2 冲突 + 前置门禁期望 + 测试覆盖边界 + 决策闭合 + finding 衔接 + §8 自检齐全）
+- [x] P2-RC-006 分级注记已更新入 arm-index（若有变更）或有明确「维持 P2 无变更」记录并有 grep 依据
 
 ## Draft Review Record
 
@@ -119,14 +119,14 @@ Exit Criteria:
 
 > 本计划为**只读 reminder 模式运行时行为评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = reminder 分流 + 强制核销 config + L1↔L2 冲突裁决 + 前置门禁期望 + 测试覆盖边界 + 决策闭合 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.18 验证报告 reminder 分流 + 强制核销 config + L1↔L2 冲突 + 前置门禁期望 + 测试覆盖边界 + 决策闭合齐全 + P2-RC-006 分级注记更新（若有）
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1[L1 为准] + §去重协议一致；与 A1.6 §7-1 + §5.3 P2-RC-006 + §6.1 P1-MA2-017（不同控制点）一致
-- [ ] 已运行验证：reminder 分流 + 强制核销 config + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（若升 P1 是验证**输出**，非范围内项目降级；修复归 MR1 在 §Deferred But Adjudicated 预声明）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.18 验证报告 reminder 分流 + 强制核销 config + L1↔L2 冲突 + 前置门禁期望 + 测试覆盖边界 + 决策闭合齐全 + P2-RC-006 分级注记更新（若有）
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1[L1 为准] + §去重协议一致；与 A1.6 §7-1 + §5.3 P2-RC-006 + §6.1 P1-MA2-017（不同控制点）一致
+- [x] 已运行验证：reminder 分流 + 强制核销 config + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（若升 P1 是验证**输出**，非范围内项目降级；修复归 MR1 在 §Deferred But Adjudicated 预声明）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -138,12 +138,22 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行完毕后填充>
+Status Note: 完结（PASS）— 独立结束审计（新会话）已对 LIVE repo 核验全 9 项审计点：强制核销模式 config census 三重核实零命中、reminder/hasIssues 分流 file:line 精确零漂移、L1/L2 冲突 + A1.6 §5.3/§6.1 分层一致、决策树分支①逻辑健全（维持 P2-RC-006）、arm-index 注记 + roadmap done 已落地、checker actual==baseline（R1d=14/R2a=34/R2b=229/R2d=34，EXIT 0）、只读纪律（仅 docs/.md 变更）。无 Blocker/Major/Minor。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理新会话，待填充>
-- Evidence: <待填充>
+- Auditor / Agent: 独立结束审计子代理（新会话，不重用执行者上下文）
+- Evidence: 对 LIVE repo 独立复核全 9 项审计点，零信任执行者断言：
+  1. **config census（决策关键证据）复核** — 独立重跑 `rg 'force-settle|mandatory-recon|force-recon|mandatory-settle|force-settlement|mandatory-settlement' module-finance/` = **0 命中**；`rg '强制核销|强制结算' module-finance/` = **0 命中**；`rg 'CONFIG_' ErpFinConstants.java` 全量枚举（reconcile-precision / allow-over-reconcile / auto-reconcile / auto-recon-strategy / ar-ap-auto-recon-cron / recon-fx-gain-loss-enabled / bank-recon-* / auxiliary-recon-gate-enabled 等仅核销精度/自动核销/银行对账语义键）**无「强制核销模式/mandatory settlement」语义键**。决策 hinge（config 不存在 → L1 限定词「强制核销模式」不活跃 → 分支①）**成立**。
+  2. **reminder/hasIssues 分流 file:line 准确性** — `PeriodPreCheckReport.hasIssues():93-96` = `!unpostedVoucherCodes.isEmpty() || !unresolvedPostingExceptionKeys.isEmpty()`（**不含 unsettledArApCodes**，javadoc :89-91 一致）；`hasReminders():102-105` = `!unsettledArApCodes.isEmpty() || allowanceExcess>0`（**含**，javadoc :98-100 一致）；`ClosePeriodProcessor:57` 注释「未核销 AR-AP 为结构化提示，不阻断」+ `:59` `if (!facade.isAutoPostOnClose() && report.hasIssues())`（**仅 hasIssues 阻断，hasReminders 永不阻断**）；`findUnsettledArApCodes:442-462` filter `status != SETTLED/CANCELLED/WRITTEN_OFF` **无 config-gated hard-block 分支**（无 AppConfig.var 读取）。报告引用全部零漂移。
+  3. **L1/L2 冲突引用** — `use-cases.md:119` 逐字「若 存在未核销应收应付(强制核销模式) → 拒绝」（heading :110）；`period-close.md:42-43`「提示：建议结账前完成核销」。确认 L1 限定词「强制核销模式」是分歧活跃性 hinge，L2 已向实现妥协。
+  4. **决策逻辑 + 分级一致性** — 分支①条件（config 不存在 + reminder 仅非强制场景 + unsettledArApCodes 列出可见）全部满足；§2 P2①（次要验收标准未完全满足，主路径 OK 边界弱，L2 documented design）与 A1.6 §5.3「倾向接受」+ §6.1「P2-RC-006 与 P1-MA2-017 不同控制点/不同维度（L1↔L2 字面契约冲突 vs doc↔code 阻断分级）」分层一致。决策**逻辑健全**。
+  5. **测试覆盖边界** — `testPreCheckListsIssues:65-66` 深断言 unsettledArApCodes.size()==1 + code 字符串（PC-3 检出覆盖）；`testFullChain:31` 仅检出断言 + :36-37 closePeriod 成功（reminder-不阻断经成功间接证实，**无显式 hard-block-非触发断言** = 报告所记缺口）。确认。
+  6. **arm-index 注记** — `arm-index.md:137` P2-RC-006 行已追加「【A4.1.18 运行时行为评估 2026-08-06】」注记（grep census 三重核实 + L1 限定词活跃性裁决 + 确认 P2 维持）；status/分级/修复通道（successor watch-only）**未变**。
+  7. **roadmap 更新** — `requirement-compliance-roadmap.md:144` A4.1.18 行已置「done ✅」+ 报告引用。
+  8. **§8 checker 实测** — 独立运行 `bash docs/audits/nop-compliance-checker.sh` EXIT=0；actual = R1d=14 / R2a=34 / R2b=229 / R2d=34，**全 == baseline**（`compliance-baseline.md`）。报告 §8 表 actual==baseline 记录准确。
+  9. **只读纪律** — `git status` + `git diff --stat` 仅 4 个 docs/.md 文件变更（arm-index.md / roadmap.md / 本 plan.md / 新报告.md）；**无任何生产代码（.java src/main）/ ORM（.orm.xml）/ api.xml / 冻结真相源（use-cases.md/product-scope.md）变更**。符合 plan Non-Goals 只读约束。
+  - **差异/异议**：无。决策正确，证据精确，无 Blocker/Major/Minor。
 
 Follow-up:
 
