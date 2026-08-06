@@ -1,6 +1,6 @@
 # 2026-08-06-1826-3 rc-ma4-a4-1-24-closed-period-gating-data-integrity 报表 CLOSED 期间门控缺失的运行时数据完整性影响确认
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.1.24（MA4 运行时行为验证 — A1.7 §7 存疑点 SP-3：UC-FIN-16 `loadGlBalances` 不校验 `period.status==CLOSED`，OPEN 期间可渲染三大报表，运行时数据完整性影响确认 — 关联 P2-RC-008）
@@ -66,49 +66,49 @@
 
 ### Phase 1 - CLOSED 期间门控数据完整性影响评估
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1826-rc-ma4-a4-1-24-closed-period-gating-data-integrity.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done（展开器已追加 A4.1.24 行）；A1.7 done（§7 SP-3 已落盘 + §2.2 CLOSED 门控 + §5.2 P2-RC-008）
 
-- [ ] `Proof` `loadGlBalances` 期间过滤逻辑核验：给出 `ErpFinReportBizModel.java:386-413`（periodId 缺省取最近 `:391`；非缺省 `eq("periodId", periodId):402` + `applyOrgAndSchemaScope:403`，**不校验 period.status**）+ BS/IS/cash flow 数据源链（`buildBalanceSheetDataset:269` → loadGlBalances:272 / `buildIncomeStatementDataset:284` → loadGlBalances:287 / `buildCashFlowDataset:299` → loadPostedVoucherLines:302）证据（file:line）。证实 OPEN/CLOSING/CLOSED 期间均按 periodId 取数，无状态门控。
+- [x] `Proof` `loadGlBalances` 期间过滤逻辑核验：给出 `ErpFinReportBizModel.java:386-413`（periodId 缺省取最近 `:391`；非缺省 `eq("periodId", periodId):402` + `applyOrgAndSchemaScope:403`，**不校验 period.status**）+ BS/IS/cash flow 数据源链（`buildBalanceSheetDataset:269` → loadGlBalances:272 / `buildIncomeStatementDataset:284` → loadGlBalances:287 / `buildCashFlowDataset:299` → loadPostedVoucherLines:302）证据（file:line）。证实 OPEN/CLOSING/CLOSED 期间均按 periodId 取数，无状态门控。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` GlBalance 与凭证过账时序核验：核验 GlBalance 由过账引擎在凭证 POSTED 时维护（`ErpFinPostingProcessor` → GlBalance 写入），未过账凭证（docStatus=DRAFT/SAVED）不入 GlBalance。确认 OPEN 期间若有未过账凭证 → GlBalance 缺该部分余额 → 报表数据不完整的机制成立。
+- [x] `Proof` GlBalance 与凭证过账时序核验：核验 GlBalance 由过账引擎在凭证 POSTED 时维护（`ErpFinPostingProcessor` → GlBalance 写入），未过账凭证（docStatus=DRAFT/SAVED）不入 GlBalance。确认 OPEN 期间若有未过账凭证 → GlBalance 缺该部分余额 → 报表数据不完整的机制成立。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` OPEN/CLOSING 期间数据完整性影响评估（本存疑点核心）：评估 OPEN 期间渲染报表的实际误导面 —— ①未过账凭证不入 GlBalance 致余额缺失的具体偏差（BS 资产==负债+权益恒等式是否仍成立[GlBalance 内部平衡——已过账凭证借贷必平] vs 余额绝对值偏低[未过账部分缺失]）；②CLOSING 期间（结账进行中）过渡态数据完整性；③实操中 OPEN 期间渲染报表的业务场景频率（月中查询未结账期间属常规运维 vs 误导决策）。评估是数据完整性偏差（余额偏低但恒等式成立）还是会计正确性破坏（恒等式破坏）。
+- [x] `Proof` OPEN/CLOSING 期间数据完整性影响评估（本存疑点核心）：评估 OPEN 期间渲染报表的实际误导面 —— ①未过账凭证不入 GlBalance 致余额缺失的具体偏差（BS 资产==负债+权益恒等式是否仍成立[GlBalance 内部平衡——已过账凭证借贷必平] vs 余额绝对值偏低[未过账部分缺失]）；②CLOSING 期间（结账进行中）过渡态数据完整性；③实操中 OPEN 期间渲染报表的业务场景频率（月中查询未结账期间属常规运维 vs 误导决策）。评估是数据完整性偏差（余额偏低但恒等式成立）还是会计正确性破坏（恒等式破坏）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 既有测试覆盖语义核验：核验 `TestErpFinReportRendering` 全程 seed `PERIOD_STATUS_OPEN`（`:266 p.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN)`）即渲染的实际语义 —— 测试隐含 OPEN 可渲染 = 当前行为预期，但与 L1「报表基于已 CLOSED 期间」不一致；标注 CLOSED 门控测试缺口（零覆盖）。产出测试覆盖边界清单。
+- [x] `Proof` 既有测试覆盖语义核验：核验 `TestErpFinReportRendering` 全程 seed `PERIOD_STATUS_OPEN`（`:266 p.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN)`）即渲染的实际语义 —— 测试隐含 OPEN 可渲染 = 当前行为预期，但与 L1「报表基于已 CLOSED 期间」不一致；标注 CLOSED 门控测试缺口（零覆盖）。产出测试覆盖边界清单。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（CLOSED 门控缺失是否致数据完整性破坏/误导），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（CLOSED 门控缺失是否致数据完整性破坏/误导），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` P2-RC-008 运行时裁决（方法论 §2 判据 + 三源对照）：①若 OPEN 期间渲染致余额偏低但恒等式仍成立（数据完整性偏差非会计正确性破坏）+ 实操属常规月中查询非误导决策主路径 → **维持 P2-RC-008 = P2 watch-only**（主路径[CLOSED 期间渲染]OK，边界[OPEN 期间数据偏低]弱，§2 P2①）；②若 OPEN 期间渲染致恒等式破坏或严重误导决策主路径 → **升级 P2-RC-008 = P1**（归 MR1，§2 P1①）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 P1-MA2-021[过账侧 CLOSED_FINAL 锁定]分层一致（本 finding = 报表渲染侧门控，非过账侧凭证锁定）。
+- [x] `Decision` P2-RC-008 运行时裁决（方法论 §2 判据 + 三源对照）：①若 OPEN 期间渲染致余额偏低但恒等式仍成立（数据完整性偏差非会计正确性破坏）+ 实操属常规月中查询非误导决策主路径 → **维持 P2-RC-008 = P2 watch-only**（主路径[CLOSED 期间渲染]OK，边界[OPEN 期间数据偏低]弱，§2 P2①）；②若 OPEN 期间渲染致恒等式破坏或严重误导决策主路径 → **升级 P2-RC-008 = P1**（归 MR1，§2 P1①）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 P1-MA2-021[过账侧 CLOSED_FINAL 锁定]分层一致（本 finding = 报表渲染侧门控，非过账侧凭证锁定）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] loadGlBalances 期间过滤 + GlBalance 过账时序 + OPEN/CLOSING 数据完整性影响 + 测试覆盖语义证据落盘（全集，无遗漏），每条有证据（file:line）
-- [ ] P2-RC-008 运行时裁决有明确结论（维持 P2 watch-only 或升级 P1），与 P1-MA2-021[过账侧]分层一致
+- [x] loadGlBalances 期间过滤 + GlBalance 过账时序 + OPEN/CLOSING 数据完整性影响 + 测试覆盖语义证据落盘（全集，无遗漏），每条有证据（file:line）
+- [x] P2-RC-008 运行时裁决有明确结论（维持 P2 watch-only 或升级 P1），与 P1-MA2-021[过账侧]分层一致
 
 ### Phase 2 - finding 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1826-rc-ma4-a4-1-24-closed-period-gating-data-integrity.md`（定稿）；`docs/audits/arm-index.md`（P2-RC-008 注记更新，若有升级/维持记录）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 CLOSED 门控数据完整性评估 + 运行时裁决完成
 
-- [ ] `Add` finding/注记更新：若维持 P2-RC-008 = P2 → 在 arm-index P2-RC-008 行（`:141`）追加「A4.1.24 运行时确认：OPEN 期间渲染余额偏低但恒等式成立，数据完整性偏差非会计正确性破坏，维持 P2 watch-only」注记；若升级 P1 → 更新 P2-RC-008 分级为 P1 + 归 MR1（按 §7 复用规则 grep 确认与 P1-MA2-021 不同控制点后裁决，不新建重复 finding）。
+- [x] `Add` finding/注记更新：若维持 P2-RC-008 = P2 → 在 arm-index P2-RC-008 行（`:141`）追加「A4.1.24 运行时确认：OPEN 期间渲染余额偏低但恒等式成立，数据完整性偏差非会计正确性破坏，维持 P2 watch-only」注记；若升级 P1 → 更新 P2-RC-008 分级为 P1 + 归 MR1（按 §7 复用规则 grep 确认与 P1-MA2-021 不同控制点后裁决，不新建重复 finding）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.7 §2.2/§5.2 P2-RC-008 / P1-MA2-021 过账侧 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.7 §2.2/§5.2 P2-RC-008 / P1-MA2-021 过账侧 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（loadGlBalances 期间过滤 + GlBalance 过账时序 + OPEN/CLOSING 数据完整性 + 测试覆盖语义 + 运行时裁决 + finding 衔接 + §8 自检齐全）
-- [ ] P2-RC-008 注记已更新入 arm-index（维持/升级记录）并有 grep 依据
+- [x] 验证报告定稿（loadGlBalances 期间过滤 + GlBalance 过账时序 + OPEN/CLOSING 数据完整性 + 测试覆盖语义 + 运行时裁决 + finding 衔接 + §8 自检齐全）
+- [x] P2-RC-008 注记已更新入 arm-index（维持/升级记录）并有 grep 依据
 
 ## Draft Review Record
 
@@ -118,14 +118,14 @@ Exit Criteria:
 
 > 本计划为**只读 CLOSED 期间门控数据完整性影响评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = loadGlBalances 期间过滤 + GlBalance 过账时序 + OPEN/CLOSING 数据完整性 + 测试覆盖语义 + 运行时裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.24 验证报告 loadGlBalances 期间过滤 + GlBalance 过账时序 + OPEN/CLOSING 数据完整性 + 测试覆盖语义 + 运行时裁决齐全 + P2-RC-008 注记更新
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.7 §7 SP-3 + §2.2 + §5.2 P2-RC-008 一致
-- [ ] 已运行验证：loadGlBalances 期间过滤 + GlBalance 过账时序 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.24 验证报告 loadGlBalances 期间过滤 + GlBalance 过账时序 + OPEN/CLOSING 数据完整性 + 测试覆盖语义 + 运行时裁决齐全 + P2-RC-008 注记更新
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.7 §7 SP-3 + §2.2 + §5.2 P2-RC-008 一致
+- [x] 已运行验证：loadGlBalances 期间过滤 + GlBalance 过账时序 + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -137,12 +137,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 完成。A4.1.24 运行时数据完整性影响验证经独立结束审计 PASS。裁决 = 维持 P2-RC-008 = P2 watch-only（不升 P0/P1 不降级，无新 finding，不触发 MR0）。本验证重要贡献 = 机制修正（证伪 plan/A1.7 §2.1 前提「GlBalance 由过账引擎维护」——5 处代码注释 + ORM 注记一致声明 GlBalance 当前未由过账引擎维护，仅年度结转 populate yearOpening 快照），强化数据完整性偏差归类并指导 MR1 真正提升方向（GlBalance 维护接线，触会计过账须 ask-first）。零代码/ORM/api.xml/真相源变更（只读评估）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立子代理 ses_02935f95cffexpVPy3Pdz9jy0C（新会话，零信任核对 live code，不重用执行者上下文）
+- Evidence: 独立结束审计 verdict = `passes closure audit`。逐项 zero-trust 核对：①loadGlBalances:386-413 仅 periodId+org/schema scope 无 status 门控 CONFIRMED（BS:269→272 / IS:284→287 / CF:299→302）；②机制修正 CONFIRMED（6 处逐字核对：ProfitLossClosingService:43 / AnnualCloseService:51-52 / BadDebtProvisionService:249 / BudgetVoucherGenerator:36 / ErpFinBudgetControlBiz:38 / orm.xml:1740-1742 + ErpFinAccountingPeriodProcessor:362-382 写 ErpFinTrialBalance 非 GlBalance）——plan/A1.7 §2.1 前提确实为假；③TestErpFinReportRendering:266 seed OPEN + :146-148 700==300+400 恒等式 + 无 CLOSED 门控测试 CONFIRMED；④use-cases.md:339 逐字 CONFIRMED；⑤裁决 SOUND（数据完整性非会计正确性 + L1 自承不完整 + 读侧非决策主路径）；⑥arm-index:142 注记追加且仍 P2 watch-only 未升 P1 + roadmap:150 done ✅ + git status 零 Java/ORM/api.xml 生产变更 CONFIRMED；⑦anti-hollow PASS（每条 file:line 证据 + 机制修正是真实贡献非干扰 + 无逻辑错误）；⑧§8 checker actual==baseline 记录齐全。1 non-blocking soft note（§4.1 step-4 「A==L+E 双式记账结构属性」表述略松——精确属性为 ΣDr==ΣCr 跨全科目，分区 A==L+E 严格需 P&L 结转或 NI-in-equity；不影裁决因机制修正显示 GlBalance 稀疏填充故现存数据恒等式平凡成立 + 测试 seed 结转后平衡数据 + 即使严格数学下仍为有界展示缺口非会计正确性破坏 + L1 自承不完整；草案审查已标记此 soft note）。
 
 Follow-up:
 
