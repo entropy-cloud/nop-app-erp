@@ -1,6 +1,6 @@
 # 2026-08-06-1826-2 rc-ma4-a4-1-23-multischema-per-ledger-statements-rendering 多账套部署「每账套独立三表」运行时渲染确认
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.1.23（MA4 运行时行为验证 — A1.7 §7 存疑点 SP-2：UC-FIN-16 多账套部署[`multi-schema-enabled=true`]下「每账套独立三表」运行时渲染 — 当前报表读路径 `balanceSheetData/incomeStatementData/cashFlowStatementData(periodId)` 无 acctSchemaId 参数，经 `applyOrgAndSchemaScope` 取主账套，非按账套切换渲染）
@@ -66,51 +66,51 @@
 
 ### Phase 1 - 多账套 per-ledger 三表渲染符合性评估
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1826-rc-ma4-a4-1-23-multischema-per-ledger-statements-rendering.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof | Decision`
 - Prereqs: A4.1 done（展开器已追加 A4.1.23 行）；A1.7 done（§7 SP-2 已落盘 + §2.4 多账套读路径隔离 + §5.1 UC-FIN-05 接受）
 
-- [ ] `Proof` 报表读入口签名核验：给出 `ErpFinReportBizModel.java:238-251`（`balanceSheetData/incomeStatementData/cashFlowStatementData(periodId)` 三个 `@BizQuery` 仅含 periodId 无 acctSchemaId 参数）+ `:269-323`（buildXxxDataset(periodId) 无 acctSchemaId）证据（file:line）。证实读入口无 per-ledger 切换参数。
+- [x] `Proof` 报表读入口签名核验：给出 `ErpFinReportBizModel.java:238-251`（`balanceSheetData/incomeStatementData/cashFlowStatementData(periodId)` 三个 `@BizQuery` 仅含 periodId 无 acctSchemaId 参数）+ `:269-323`（buildXxxDataset(periodId) 无 acctSchemaId）证据（file:line）。证实读入口无 per-ledger 切换参数。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 主账套 scope 解析核验：给出 `applyOrgAndSchemaScope:489-499`（`resolvePeriodOrgId:490` → `resolveOrgSchemaId:495` → `AcctSchemaResolver.resolvePrimarySchemaId:485` → `eq("acctSchemaId", schemaId):497` 仅取主账套）+ 注释 `:472-474`（多账套防双计 + scope 不可解析跳过 filter 保护单组织基线）+ `resolveOrgSchemaId:484-486` 证据。证实多账套部署恒取主账套三表，无按账套切换。
+- [x] `Proof` 主账套 scope 解析核验：给出 `applyOrgAndSchemaScope:489-499`（`resolvePeriodOrgId:490` → `resolveOrgSchemaId:495` → `AcctSchemaResolver.resolvePrimarySchemaId:485` → `eq("acctSchemaId", schemaId):497` 仅取主账套）+ 注释 `:472-474`（多账套防双计 + scope 不可解析跳过 filter 保护单组织基线）+ `resolveOrgSchemaId:484-486` 证据。证实多账套部署恒取主账套三表，无按账套切换。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` L1 涉及机制 vs 可验证断言判据力核验（本存疑点核心）：核验 `docs/design/finance/use-cases.md:342`（UC-FIN-16 **涉及机制**「多账套(每账套独立三表)」逐字）vs `:322-340` 可验证断言（5 条：数据来源/BS 恒等式/IS 公式/CF 分类+间接法/期间控制，均未提 per-ledger 切换）。按 methodology §4 Q1 真相源层级裁决「涉及机制」是否构成可符合性判定的验收义务（涉及机制 = 设计语境非约束力；可验证断言 = 符合性判据）。裁决 L1 是否要求「读入口暴露 per-ledger 切换」还是仅要求数据物理隔离可查。
+- [x] `Proof` L1 涉及机制 vs 可验证断言判据力核验（本存疑点核心）：核验 `docs/design/finance/use-cases.md:342`（UC-FIN-16 **涉及机制**「多账套(每账套独立三表)」逐字）vs `:322-340` 可验证断言（5 条：数据来源/BS 恒等式/IS 公式/CF 分类+间接法/期间控制，均未提 per-ledger 切换）。按 methodology §4 Q1 真相源层级裁决「涉及机制」是否构成可符合性判定的验收义务（涉及机制 = 设计语境非约束力；可验证断言 = 符合性判据）。裁决 L1 是否要求「读入口暴露 per-ledger 切换」还是仅要求数据物理隔离可查。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` L2 doc↔code drift 评估：核验 `docs/design/finance/multiple-accounting-schemas.md §账套查询与报表:149-169` 实际描述（多账套查询=凭证查询按账套过滤[财务账/管理账/全部账套 `:156-160`] + 账套对账 `:171`，**非**「每账套独立三表」措辞——该短语仅 L1 :342 涉及机制）与报表读入口差距。L2 描述的 per-ledger 过滤能力针对**凭证查询**（非报表三表读入口）：若 L2 仅约束凭证查询过滤（凭证查询是否已支持按账套过滤须核验）则与报表读入口无 drift；若解读为泛化 per-ledger 查询能力则报表侧缺切换入口为合理简化 successor。
+- [x] `Proof` L2 doc↔code drift 评估：核验 `docs/design/finance/multiple-accounting-schemas.md §账套查询与报表:149-169` 实际描述（多账套查询=凭证查询按账套过滤[财务账/管理账/全部账套 `:156-160`] + 账套对账 `:171`，**非**「每账套独立三表」措辞——该短语仅 L1 :342 涉及机制）与报表读入口差距。L2 描述的 per-ledger 过滤能力针对**凭证查询**（非报表三表读入口）：若 L2 仅约束凭证查询过滤（凭证查询是否已支持按账套过滤须核验）则与报表读入口无 drift；若解读为泛化 per-ledger 查询能力则报表侧缺切换入口为合理简化 successor。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 既有 MA3 successor 裁决交叉引用：核验 arm-index P1-MA2-095 行 successor 注记（MA3 A3.5 `2026-08-07-0430-rc-ma3-a3-5-...md` §2.6 已裁决「每账套独立三表运行时渲染」触发条件未满足→维持 backlog successor）。本验证的 successor 裁决须与既有 MA3 裁决对齐（避免重复裁决/冲突）—— 若维持接受/P2 watch-only 与 MA3「successor 触发条件未满足」一致；若裁决升级须说明触发条件变化。
+- [x] `Proof` 既有 MA3 successor 裁决交叉引用：核验 arm-index P1-MA2-095 行 successor 注记（MA3 A3.5 `2026-08-07-0430-rc-ma3-a3-5-...md` §2.6 已裁决「每账套独立三表运行时渲染」触发条件未满足→维持 backlog successor）。本验证的 successor 裁决须与既有 MA3 裁决对齐（避免重复裁决/冲突）—— 若维持接受/P2 watch-only 与 MA3「successor 触发条件未满足」一致；若裁决升级须说明触发条件变化。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（多账套 per-ledger 三表渲染是否符合 L1/L2），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（多账套 per-ledger 三表渲染是否符合 L1/L2），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` per-ledger 渲染维度运行时裁决（方法论 §2 判据 + §4 Q1 真相源层级 + 三源对照）：①若 L1 仅要求数据物理隔离可查（涉及机制=设计语境非约束力，可验证断言 `:322-340` 未提 per-ledger 切换）+ L2 仅约束凭证查询过滤（非报表读入口）→ 维持 UC-FIN-05 ② 接受 + UC-FIN-16 涉及机制满足，**维持接受无新 finding**（per-ledger 切换 successor，GlBalance 物理隔离已落地，与 MA3 A3.5 successor 裁决一致）；②若 L1/L2 解读为要求读入口暴露 per-ledger 切换而实现仅主账套 → 登记 **P2 watch-only**（合理简化 successor，§2 P2① 次要验收标准边界弱 + doc↔code drift 须 owner doc 标注）。裁决须列明 §2 判据编号 + §4 Q1 层级 + L1/L2/L3 三源 + 与 UC-FIN-05 ② 接受[写路径隔离] + P1-MA2-095 resolved[读路径双计] + MA3 A3.5 successor 裁决分层一致。注意：即便 L2 凭证查询过滤隐含报表侧切换，L1（§4 更高权威）未将其升为可验证断言，不构成 P1。
+- [x] `Decision` per-ledger 渲染维度运行时裁决（方法论 §2 判据 + §4 Q1 真相源层级 + 三源对照）：①若 L1 仅要求数据物理隔离可查（涉及机制=设计语境非约束力，可验证断言 `:322-340` 未提 per-ledger 切换）+ L2 仅约束凭证查询过滤（非报表读入口）→ 维持 UC-FIN-05 ② 接受 + UC-FIN-16 涉及机制满足，**维持接受无新 finding**（per-ledger 切换 successor，GlBalance 物理隔离已落地，与 MA3 A3.5 successor 裁决一致）；②若 L1/L2 解读为要求读入口暴露 per-ledger 切换而实现仅主账套 → 登记 **P2 watch-only**（合理简化 successor，§2 P2① 次要验收标准边界弱 + doc↔code drift 须 owner doc 标注）。裁决须列明 §2 判据编号 + §4 Q1 层级 + L1/L2/L3 三源 + 与 UC-FIN-05 ② 接受[写路径隔离] + P1-MA2-095 resolved[读路径双计] + MA3 A3.5 successor 裁决分层一致。注意：即便 L2 凭证查询过滤隐含报表侧切换，L1（§4 更高权威）未将其升为可验证断言，不构成 P1。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] 读入口签名 + 主账套 scope 解析 + L1 涉及机制判据力 + L2 doc↔code drift 证据落盘（全集，无遗漏），每条有证据（file:line）
-- [ ] per-ledger 渲染维度运行时裁决有明确结论（维持接受 或 P2 watch-only），与 UC-FIN-05 ② 接受 + P1-MA2-095 resolved 分层一致
+- [x] 读入口签名 + 主账套 scope 解析 + L1 涉及机制判据力 + L2 doc↔code drift 证据落盘（全集，无遗漏），每条有证据（file:line）
+- [x] per-ledger 渲染维度运行时裁决有明确结论（维持接受 或 P2 watch-only），与 UC-FIN-05 ② 接受 + P1-MA2-095 resolved 分层一致
 
 ### Phase 2 - finding 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1826-rc-ma4-a4-1-23-multischema-per-ledger-statements-rendering.md`（定稿）；`docs/audits/arm-index.md`（新 finding 或注记，若有）；`docs/design/finance/multiple-accounting-schemas.md`（doc drift 标注，若裁决 drift）
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 per-ledger 渲染符合性评估 + 运行时裁决完成
 
-- [ ] `Add` finding/注记更新：若 P2 watch-only → 新建 finding（P2-RC-xxx，per-ledger 三表切换读入口缺失 watch-only，与 P1-MA2-095 不同控制点[双计 vs 切换选择]）+ L2 owner doc drift 标注（若裁决 drift，按真相源冻结条款仅登记不直改真相源）；若维持接受无新 finding → 在 arm-index UC-FIN-05 ② / P1-MA2-095 相关行追加 per-ledger 渲染维度注记。禁止未经比对新建重复 finding（grep arm-index 同域同控制点后裁决）。
+- [x] `Add` finding/注记更新：若 P2 watch-only → 新建 finding（P2-RC-xxx，per-ledger 三表切换读入口缺失 watch-only，与 P1-MA2-095 不同控制点[双计 vs 切换选择]）+ L2 owner doc drift 标注（若裁决 drift，按真相源冻结条款仅登记不直改真相源）；若维持接受无新 finding → 在 arm-index UC-FIN-05 ② / P1-MA2-095 相关行追加 per-ledger 渲染维度注记。禁止未经比对新建重复 finding（grep arm-index 同域同控制点后裁决）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.7 §2.4/§5.1 UC-FIN-05 / P1-MA2-095 resolved R1.29 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 A1.7 §2.4/§5.1 UC-FIN-05 / P1-MA2-095 resolved R1.29 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（读入口签名 + 主账套 scope + L1 涉及机制判据力 + L2 drift + 运行时裁决 + finding 衔接 + §8 自检齐全）
-- [ ] 新 finding 或注记已登记入 arm-index（若有变更）或有明确「维持接受无变更」记录并有 grep 依据
+- [x] 验证报告定稿（读入口签名 + 主账套 scope + L1 涉及机制判据力 + L2 drift + 运行时裁决 + finding 衔接 + §8 自检齐全）
+- [x] 新 finding 或注记已登记入 arm-index（若有变更）或有明确「维持接受无变更」记录并有 grep 依据
 
 ## Draft Review Record
 
@@ -122,14 +122,14 @@ Exit Criteria:
 
 > 本计划为**只读多账套 per-ledger 三表渲染符合性评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = 读入口签名 + 主账套 scope + L1 涉及机制判据力 + L2 drift + 运行时裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.1.23 验证报告读入口签名 + 主账套 scope + L1 涉及机制判据力 + L2 drift + 运行时裁决齐全 + finding/注记更新（若有）
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §9 真相源冻结 + §去重协议一致；与 A1.7 §7 SP-2 + §2.4 + §5.1 UC-FIN-05 一致
-- [ ] 已运行验证：读入口签名 + 主账套 scope + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.1.23 验证报告读入口签名 + 主账套 scope + L1 涉及机制判据力 + L2 drift + 运行时裁决齐全 + finding/注记更新（若有）
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §9 真相源冻结 + §去重协议一致；与 A1.7 §7 SP-2 + §2.4 + §5.1 UC-FIN-05 一致
+- [x] 已运行验证：读入口签名 + 主账套 scope + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -141,12 +141,16 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 本计划（A4.1.23 多账套「每账套独立三表」运行时渲染符合性验证）**执行完成**——只读评估，零代码/ORM/api.xml/view.xml/真相源变更。两 Phase 全部完成：
+- Phase 1（per-ledger 渲染符合性评估）：6 Proof + 1 Decision 全部完成，验证报告落盘 `docs/audits/2026-08-06-1826-rc-ma4-a4-1-23-multischema-per-ledger-statements-rendering.md`。裁决 = **Decision 分支 ① 维持 UC-FIN-05 ② 接受 + UC-FIN-16 涉及机制满足，无新 finding**（L1 可验证断言 `:322-340` 未要求 per-ledger 切换[涉及机制 `:342`=设计语境非约束力] + L2 `§:149-169` 仅约束凭证查询过滤[非报表读入口]无 drift；读入口 `:238/244/250` 无 acctSchemaId 参数 + `applyOrgAndSchemaScope:489-499` + `AcctSchemaResolver.resolvePrimarySchemaId`[FINANCIAL=0] 恒取主账套）。
+- Phase 2（finding 衔接 + §8 自检 + 报告定稿）：2 item 完成。裁决「维持接受无新 finding」→ per-ledger 切换 successor 已在 arm-index `P1-MA2-095` 行（`:552`）经 MA3 A3.5 复查注记登记，本验证仅追加 MA4 A4.1.23 运行时裁决交叉引用注记（无新 finding，无 owner doc drift 标注——§5.2 裁决无 drift）。§8 checker actual vs baseline 全 ≤ baseline（R1d=14/R2a=34/R2b=229/R2c=1382/R2d=34 全等于 baseline），零代码变更故零回归风险。
+- 文档同步：roadmap A4.1.23 `todo`→`done ✅`（含报告路径 + 裁决摘要）；arm-index P1-MA2-095 行追加 RC MA4 A4.1.23 注记。
+- 分层一致性：与 UC-FIN-05 ② 接受[写路径隔离] + P1-MA2-095 resolved R1.29[读路径双计] + MA3 A3.5 §2.6 #6 successor[维持 backlog] 三层一致（per-ledger 渲染 = 切换选择维度，非双计，不撤销双计修复；无触发条件变化，与 MA3 裁决无冲突）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（新会话，MISSION_DRIVER 2026-08-04-224309-mission-driver closure-audit 轮，不重用执行者上下文）
+- Evidence: 完整重读计划 + 计划指南；live repo 交叉核实：①代码锚点 `ErpFinReportBizModel.java:238/244/250`（balanceSheetData/incomeStatementData/cashFlowStatementData 仅 periodId 无 acctSchemaId）+ `:269/284/299`（buildXxxDataset 仅 periodId）+ `applyOrgAndSchemaScope:489-499`（resolvePeriodOrgId:490 → resolveOrgSchemaId:495 → AcctSchemaResolver.resolvePrimarySchemaId → eq("acctSchemaId", schemaId):497）+ 注释 `:472-474` 全部一致；②验证报告 `docs/audits/2026-08-06-1826-rc-ma4-a4-1-23-multischema-per-ledger-statements-rendering.md`（25625 bytes，9 段齐全 + 完整性自检 + 裁决摘要 + §8 checker actual vs baseline 表 actual ≤ baseline）；③arm-index `P1-MA2-095` 行（`:552`）RC MA4 A4.1.23 注记已落（裁决=维持接受无新 finding，per-ledger 渲染=切换选择维度非双计）；④roadmap `requirement-compliance-roadmap.md:149` A4.1.23 `done ✅` 含报告路径 + 裁决摘要。文本一致性五点全绿（Plan Status completed / Phase 1-2 Status completed / 各 Exit Criteria 全 [x] / Closure Gates 全 [x] / Closure 证据非占位符）。无 hollow code（只读评估无代码变更）。Deferred 诚实（per-ledger 切换读入口诚实归 MR1 successor，非范围内项目降级）。无范围内的 doc drift 隐藏（§5.2 裁决无 drift）。
 
 Follow-up:
 
