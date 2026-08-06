@@ -1,6 +1,6 @@
 # 2026-08-06-1926-3 rc-ma4-a4-2-1-2-mfg-reservation-availability-runtime 预留量并发扣减与 STOCK_PARTIAL 齐套可用量运行时确认（reserved 恒为 0 当前行为）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.2.1 + A4.2.2（合并：MA4 运行时行为验证 — A1.8 §7 SP-1/SP-2 同 owner doc[manufacturing/mrp.md + material-reservation.md + flow-overview.md]同结果表面[预留写路径 Deferred 下当前 reserved=0 行为的运行时安全性确认]；SP-1 = 预留量并发扣减运行时行为[reserved 恒为 0，多工单并发领料 stock move bookkeeper negative-stock 防护兜底]；SP-2 = STOCK_PARTIAL 强制开工后领料 KitAvailabilityChecker 只读路径补料后可用量[无缓存/陈旧读]）
@@ -70,49 +70,57 @@
 
 ### Phase 1 - reservedQty writer census + negative-stock 防护并发兜底 + KitAvailabilityChecker 只读路径核验
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1926-rc-ma4-a4-2-1-2-mfg-reservation-availability-runtime.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`（5/5 Proof items；Phase 2 含 Decision/Add）
 - Prereqs: A4.2 done（展开器已追加 A4.2.1/A4.2.2 行）；A1.8 done（§7 SP-1/SP-2 已落盘 + §5 P1-RC-008 裁决已登记）
 
-- [ ] `Proof` reservedQty writer 全集 census（SP-1 前置）：grep 全 module-inventory + module-manufacturing `reservedQty` / `setReservedQty` writer，运行时复核确认 reserved 恒为 0（无 writer 或仅初始化为 0）。产出 writer census 矩阵（类 × 方法 × 行号 × 写/读）。同时核验 `availableQuantity` 派生公式（= onHand − reserved − locked）在 reserved=0 下退化为 onHand − locked。
+- [x] `Proof` reservedQty writer 全集 census（SP-1 前置）：grep 全 module-inventory + module-manufacturing `reservedQty` / `setReservedQty` writer，运行时复核确认 reserved 恒为 0（无 writer 或仅初始化为 0）。产出 writer census 矩阵（类 × 方法 × 行号 × 写/读）。同时核验 `availableQuantity` 派生公式（= onHand − reserved − locked）在 reserved=0 下退化为 onHand − locked。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` negative-stock 防护并发兜底核验（SP-1 核心）：核验 stock move bookkeeper 的 negative-stock 防护（P0-MA2-020 UK + 余额守恒）在多工单并发领料同一物料同一仓库场景下是否兜底。给出防护机制 file:line 证据（validateAvailable / bookkeeper 扣减路径）+ 并发场景推理（多工单同时通过齐套校验[reserved=0 故同时看到全部可用量]→并发领料→按到达顺序扣减→超量抛异常 vs silent split-quantity corruption 二选一裁决）。
+      - Evidence: 报告 §2（writer census 矩阵 W1-W5/R1-R3）+ §1（baseline 精化：字段实为 `reservedQuantity` 非 `reservedQty`；库存域 `ErpInvStockMoveProcessor.applyReservation:150` 有瞬时 writer，mfg 域零持久化 writer，mfg 领料经 stock move confirm net-zero apply-release 不持久化；`availableQuantity` 派生公式 `total − reserved − locked` 在 `StockMoveBookkeeper.recomputeAvailable:223-227` Java 层重算持久化）。
+- [x] `Proof` negative-stock 防护并发兜底核验（SP-1 核心）：核验 stock move bookkeeper 的 negative-stock 防护（P0-MA2-020 UK + 余额守恒）在多工单并发领料同一物料同一仓库场景下是否兜底。给出防护机制 file:line 证据（validateAvailable / bookkeeper 扣减路径）+ 并发场景推理（多工单同时通过齐套校验[reserved=0 故同时看到全部可用量]→并发领料→按到达顺序扣减→超量抛异常 vs silent split-quantity corruption 二选一裁决）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` KitAvailabilityChecker 只读路径可用量正确性核验（SP-2 核心）：核验 KitAvailabilityChecker.checkAvailability 查询 ErpInvStockBalance.availableQuantity 是否实时读（无缓存/无陈旧读）。给出查询路径 file:line 证据（checkAvailability → availableQuantity 查询 → ErpInvStockBalance 读取）。确认 STOCK_PARTIAL 强制开工后补料，二次齐套校验是否反映补料后的可用量。
+      - Evidence: 报告 §3（防护机制 4 层 file:line + 并发场景推理表）。裁决：**无 silent split-quantity corruption**（`updateBalanceWithRetry:256-328` versionProp 乐观锁 + P0-MA2-020 UK + 重试串行化，无 delta 丢失）；残留真并发 over-commitment 窗口归 A2.17 既有追踪（§去重协议）。
+- [x] `Proof` KitAvailabilityChecker 只读路径可用量正确性核验（SP-2 核心）：核验 KitAvailabilityChecker.checkAvailability 查询 ErpInvStockBalance.availableQuantity 是否实时读（无缓存/无陈旧读）。给出查询路径 file:line 证据（checkAvailability → availableQuantity 查询 → ErpInvStockBalance 读取）。确认 STOCK_PARTIAL 强制开工后补料，二次齐套校验是否反映补料后的可用量。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` config consumption 模式核验：确认 config consumption 默认值（STRICT vs 非 STRICT），决定 STOCK_PARTIAL 强制开工可达性 + 预留隔离模式。grep ErpMfgConstants + application.yaml + AppConfig 消费点。
+      - Evidence: 报告 §4（查询路径 4 步 file:line）。裁决：**无陈旧读**（`KitAvailabilityChecker.check:109` 每次 `findAllByQuery` 实时读，无缓存层）。SP-2 消解。
+- [x] `Proof` config consumption 模式核验：确认 config consumption 默认值（STRICT vs 非 STRICT），决定 STOCK_PARTIAL 强制开工可达性 + 预留隔离模式。grep ErpMfgConstants + application.yaml + AppConfig 消费点。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（并发领料是否致 silent corruption / 齐套是否陈旧读），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+      - Evidence: 报告 §5。精化：`ErpMfgBom.consumption` 是 per-BOM 字段（orm.xml:201 nullable 无 default，dict FLEXIBLE/WARNING/STRICT）运行时 service 零消费；STOCK_PARTIAL 强制开工实际由 `erp-mfg.allow-partial-kit-start`（默认 FALSE）门控（`validateTransitionForStart:256-267`）→ 默认不可达。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（并发领料是否致 silent corruption / 齐套是否陈旧读），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
+      - Evidence: 报告 §6（MA4↔A5.6 边界声明）。
 
 Exit Criteria:
 
-- [ ] reservedQty writer census 矩阵 + negative-stock 防护并发兜底 + KitAvailabilityChecker 只读路径证据落盘（全集，无遗漏），每条有证据（file:line）
-- [ ] 并发场景推理有明确结论（silent corruption 不存在/存在 + 陈旧读不存在/存在），与 P0-MA2-020[resolved] + P1-RC-008[P1]分层一致
+- [x] reservedQty writer census 矩阵 + negative-stock 防护并发兜底 + KitAvailabilityChecker 只读路径证据落盘（全集，无遗漏），每条有证据（file:line）
+- [x] 并发场景推理有明确结论（silent corruption 不存在/存在 + 陈旧读不存在/存在），与 P0-MA2-020[resolved] + P1-RC-008[P1]分层一致
 
 ### Phase 2 - 运行时安全性裁决 + finding 衔接 + §8 自检 + 报告定稿
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-1926-rc-ma4-a4-2-1-2-mfg-reservation-availability-runtime.md`（定稿）；`docs/audits/arm-index.md`（P1-RC-008 注记更新或新 finding，若有）
 Skill: none
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: Phase 1 reservedQty writer census + negative-stock 防护并发兜底 + KitAvailabilityChecker 只读路径核验完成
 
-- [ ] `Decision` P1-RC-008 当前 Deferred 状态运行时安全性裁决（方法论 §2 判据 + 三源对照）：①若 negative-stock 防护并发兜底完整 + KitAvailabilityChecker 实时读无陈旧 → 维持 P1-RC-008 P1（预留写路径 Deferred 合规缺口，但当前行为不致活跃数据破坏），登记 P2 watch-only（并发竞争下可用量超额承诺运营影响）或维持接受无新 finding；②若存在 silent split-quantity corruption 或陈旧读 → 登记 P1/P0（归 MR0/MR1）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 P1-RC-008[P1] + P0-MA2-020[resolved]分层一致。
+- [x] `Decision` P1-RC-008 当前 Deferred 状态运行时安全性裁决（方法论 §2 判据 + 三源对照）：①若 negative-stock 防护并发兜底完整 + KitAvailabilityChecker 实时读无陈旧 → 维持 P1-RC-008 P1（预留写路径 Deferred 合规缺口，但当前行为不致活跃数据破坏），登记 P2 watch-only（并发竞争下可用量超额承诺运营影响）或维持接受无新 finding；②若存在 silent split-quantity corruption 或陈旧读 → 登记 P1/P0（归 MR0/MR1）。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 P1-RC-008[P1] + P0-MA2-020[resolved]分层一致。
       - Skill: none
-- [ ] `Add` finding/注记更新：若 P2 watch-only → 新建 finding（P2-RC-xxx，并发竞争可用量超额承诺 watch-only）；若 P1/P0 → reopen 或新建 finding（P1-RC-xxx/P0-RC-xxx，归 MR0/MR1）；若维持接受无新 finding（防护完整 + 实时读）→ arm-index P1-RC-008 行追加运行时安全性确认注记。禁止未经比对新建重复 finding（grep arm-index 同域同控制点后裁决）。
+      - Evidence: 报告 §7（§2 判据三源复核表 + 三源对照 + 分层一致性）。裁决：**维持 P1-RC-008 P1，不升 P0，不降级，无新 finding**（无 silent corruption + 无陈旧读 → 当前 Deferred 状态运行时安全；残留并发归 A2.17）。
+- [x] `Add` finding/注记更新：若 P2 watch-only → 新建 finding（P2-RC-xxx，并发竞争可用量超额承诺 watch-only）；若 P1/P0 → reopen 或新建 finding（P1-RC-xxx/P0-RC-xxx，归 MR0/MR1）；若维持接受无新 finding（防护完整 + 实时读）→ arm-index P1-RC-008 行追加运行时安全性确认注记。禁止未经比对新建重复 finding（grep arm-index 同域同控制点后裁决）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-008[P1] / P0-MA2-020[resolved] / A1.8 §5/§7 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+      - Evidence: 报告 §8（grep arm-index 同域同控制点比对表 + arm-index P1-RC-008 行注记更新）。**不新建 finding**（残留并发 over-commitment 归 A2.17 既有追踪，§去重协议）；arm-index P1-RC-008 行已追加【MA4 A4.2.1+A4.2.2 运行时确认 done】注记（状态/分级/修复通道[MR1 ORM ask-first] 不变）。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-008[P1] / P0-MA2-020[resolved] / A1.8 §5/§7 的复用关系 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
+      - Evidence: 报告 §9（checker actual 计数 R1a=0/R1b=0/R1c=0/R1d=14/R2a=34/R2b=229/R2c=1382/R2d=34，零生产代码变更→零漂移无回归风险；closure-audit 独立性声明；arm-index 交叉去重声明；MA4↔A5.6 边界；保护区域声明）。
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（reservedQty writer census + negative-stock 防护并发兜底 + KitAvailabilityChecker 只读路径 + 运行时安全性裁决 + finding 衔接 + §8 自检齐全）
-- [ ] P1-RC-008 注记更新或新 finding 已登记入 arm-index（若有变更）或有明确「维持接受无变更」记录并有 grep 依据
+- [x] 验证报告定稿（reservedQty writer census + negative-stock 防护并发兜底 + KitAvailabilityChecker 只读路径 + 运行时安全性裁决 + finding 衔接 + §8 自检齐全）
+- [x] P1-RC-008 注记更新或新 finding 已登记入 arm-index（若有变更）或有明确「维持接受无变更」记录并有 grep 依据
 
 ## Draft Review Record
 
@@ -122,14 +130,14 @@ Exit Criteria:
 
 > 本计划为**只读预留/可用量运行时安全性评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = reservedQty writer census + negative-stock 防护并发兜底 + KitAvailabilityChecker 只读路径 + 运行时安全性裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.2.1 + A4.2.2 验证报告 reservedQty writer census + negative-stock 防护并发兜底 + KitAvailabilityChecker 只读路径 + 运行时安全性裁决齐全 + finding/注记更新（若有）
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.8 §7 SP-1/SP-2 + §5 P1-RC-008 裁决 + material-reservation.md Deferred 说明一致
-- [ ] 已运行验证：reservedQty writer census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.2.1 + A4.2.2 验证报告 reservedQty writer census + negative-stock 防护并发兜底 + KitAvailabilityChecker 只读路径 + 运行时安全性裁决齐全 + finding/注记更新（若有）
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.8 §7 SP-1/SP-2 + §5 P1-RC-008 裁决 + material-reservation.md Deferred 说明一致
+- [x] 已运行验证：reservedQty writer census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -141,11 +149,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <pending>
+Status Note: closed (independent closure audit passed)
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <pending>
+- Auditor / Agent: independent closure-audit subagent (fresh session, ses auto) — 全部关键证据锚点（updateBalanceWithRetry:256-328 / KitAvailabilityChecker.check:62-89+findAllByQuery:109 / validateAvailable:116-136 / applyReservation:150 / onOutgoing:73-84 / orm.xml versionProp:369+UK:415 / validateTransitionForStart:256-267 + isAllowPartialKitStart:385-387 default FALSE / setReservedQuantity 全集 grep）经实仓复核准确；裁决（维持 P1-RC-008 P1、零 P0、零新 finding、残留并发归 A2.17）逻辑成立且与 §2 判据+三源+P1-RC-008[P1]/P0-MA2-020[resolved] 分层一致；arm-index 注记仅追加运行时安全性确认未改状态/分级/修复通道；文本一致性（plan Status=completed / 双 Phase completed / 门控全 [x] / 报告 verdict）自洽
 
 Follow-up:
 
