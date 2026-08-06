@@ -1,6 +1,6 @@
 # 2026-08-07-0400-3 rc-ma4-a4-2-ext-domain-runtime-expander MA4 扩展域存疑点运行时确认展开器
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Mission: requirement-compliance
 > Work Item: A4.2（扩展域 MA1 存疑点运行时确认**展开器**）
@@ -57,47 +57,47 @@
 
 ### Phase 1 - 存疑点收集、去重、A4.2.n 行展开
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/requirement-compliance-roadmap.md`（MA4 表追加 A4.2.n 行）；`docs/audits/<执行时间戳>-rc-ma4-a4-2-ext-domain-expander.md`（展开映射记录）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Add | Decision`
 - Prereqs: MA1 done（扩展域 A1.8-A1.51 §7 存疑点清单已落盘）
 
-- [ ] `Add` 读取扩展域 MA1 报告 A1.8-A1.51 §7 存疑点清单全集，逐存疑点提取（原文摘要 + 来源切片 + 来源报告锚点）。无存疑点的切片显式标注「无」（不产生行）。
+- [x] `Add` 读取扩展域 MA1 报告 A1.8-A1.51 §7 存疑点清单全集，逐存疑点提取（原文摘要 + 来源切片 + 来源报告锚点）。无存疑点的切片显式标注「无」（不产生行）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Decision` 跨报告去重：同根因同控制点的存疑点合并为一行（显式标注合并依据 + 涉及切片）；不同根因/不同控制点各一行。与 A4.1 已展开的 finance 存疑点（A4.1.1-A4.1.25）不重复（扩展域存疑点不归 finance 切片，天然不重叠；若跨域存疑点引用 finance 行为，以其来源扩展域报告为锚）。
+- [x] `Decision` 跨报告去重：同根因同控制点的存疑点合并为一行（显式标注合并依据 + 涉及切片）；不同根因/不同控制点各一行。与 A4.1 已展开的 finance 存疑点（A4.1.1-A4.1.25）不重复（扩展域存疑点不归 finance 切片，天然不重叠；若跨域存疑点引用 finance 行为，以其来源扩展域报告为锚）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Add` 每条存疑点展开为 roadmap MA4 表内 A4.2.n 实体行（编号 A4.2.1, A4.2.2…），每行含：来源切片 + §7 存疑点摘要 + 运行时验证方法（复用 E2E/_helper 原语 / JUnit / 临时探针）+ 预期证实/证伪行为 + 触及保护区域标注（是/否 + 类别）+ Skill（`multi-dimensional-audit-prompt`）。
+- [x] `Add` 每条存疑点展开为 roadmap MA4 表内 A4.2.n 实体行（编号 A4.2.1, A4.2.2…），每行含：来源切片 + §7 存疑点摘要 + 运行时验证方法（复用 E2E/_helper 原语 / JUnit / 临时探针）+ 预期证实/证伪行为 + 触及保护区域标注（是/否 + 类别）+ Skill（`multi-dimensional-audit-prompt`）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 扩展域 A1.8-A1.51 §7 存疑点全集已提取，无遗漏（逐报告核对 §7 段落存在性，含「无」标注切片）
-- [ ] A4.2.n 实体行已追加到 roadmap MA4 表，每行含完整字段；去重合并有显式依据
+- [x] 扩展域 A1.8-A1.51 §7 存疑点全集已提取，无遗漏（逐报告核对 §7 段落存在性，含「无」标注切片）
+- [x] A4.2.n 实体行已追加到 roadmap MA4 表，每行含完整字段；去重合并有显式依据
 
 ### Phase 2 - 展开映射记录 + 计数自检 + A4.2 done
 
-Status: planned
+Status: completed
 Targets: `docs/audits/<执行时间戳>-rc-ma4-a4-2-ext-domain-expander.md`（定稿）；roadmap A4.2 状态 → done
 Skill: none
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 完成（A4.2.n 行已追加）
 
-- [ ] `Add` 产出展开映射记录：存疑点 → A4.2.n 行映射表 + 去重依据 + 来源报告锚点 + 触及保护区域标注汇总。
+- [x] `Add` 产出展开映射记录：存疑点 → A4.2.n 行映射表 + 去重依据 + 来源报告锚点 + 触及保护区域标注汇总。
       - Skill: none
-- [ ] `Proof` 计数自检：A4.2.n 行数 = 扩展域 §7 存疑点去重并集数；逐报告核对（A1.8-A1.51 各报告的 §7 存疑点均已纳入或显式标注「无」）。
+- [x] `Proof` 计数自检：A4.2.n 行数 = 扩展域 §7 存疑点去重并集数；逐报告核对（A1.8-A1.51 各报告的 §7 存疑点均已纳入或显式标注「无」）。
       - Skill: none
-- [ ] `Proof` 过程纪律自检（§8 模板）：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline（本展开器无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（展开器不新建 finding，A4.2.n 验证结论才新建/复用）。
+- [x] `Proof` 过程纪律自检（§8 模板）：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline（本展开器无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（展开器不新建 finding，A4.2.n 验证结论才新建/复用）。
       - Skill: none
-- [ ] `Add` 展开完成即 roadmap A4.2 状态标记 `done`（done 判据 = 全部 A4.2.n 行已追加，非验证完成）。
+- [x] `Add` 展开完成即 roadmap A4.2 状态标记 `done`（done 判据 = 全部 A4.2.n 行已追加，非验证完成）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 展开映射记录已落盘，含存疑点 → A4.2.n 映射 + 去重依据 + 计数自检通过
-- [ ] roadmap MA4 表 A4.2.n 行完整；A4.2 状态标记 done（展开完成）
+- [x] 展开映射记录已落盘，含存疑点 → A4.2.n 映射 + 去重依据 + 计数自检通过
+- [x] roadmap MA4 表 A4.2.n 行完整；A4.2 状态标记 done（展开完成）
 
 ## Draft Review Record
 
@@ -107,14 +107,14 @@ Exit Criteria:
 
 > 本计划为**展开器**（只读收集 + roadmap 表追加，无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = A4.2.n 行完整性（扩展域 §7 全集覆盖）+ 展开映射记录 + 计数自检 + 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.2.n 实体行已追加到 roadmap MA4 表（扩展域 A1.8-A1.51 §7 全集覆盖）；A4.2 状态 done（展开完成）
-- [ ] 相关文档对齐：展开映射记录与方法论 §MA4 + §去重协议一致；A4.2.n 行字段与 roadmap MA4 工作项规范一致；与 A4.1 范式同构
-- [ ] 已运行验证：计数自检（A4.2.n 行数 = 扩展域 §7 去重并集）+ §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.2.n 实体行已追加到 roadmap MA4 表（扩展域 A1.8-A1.51 §7 全集覆盖）；A4.2 状态 done（展开完成）
+- [x] 相关文档对齐：展开映射记录与方法论 §MA4 + §去重协议一致；A4.2.n 行字段与 roadmap MA4 工作项规范一致；与 A4.1 范式同构
+- [x] 已运行验证：计数自检（A4.2.n 行数 = 扩展域 §7 去重并集）+ §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、退出标准、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -126,13 +126,20 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <关闭时填写>
+Status Note: A4.2 展开器结果表面 = roadmap MA4 表追加 A4.2.1-A4.2.185 实体行（done 判据 = 展开完成而非验证完成，对齐 §MA4 + §10 R1.0 + A4.1 范式）。展开映射记录 `docs/audits/2026-08-07-0400-rc-ma4-a4-2-ext-domain-expander.md` 已落盘（Audit Status: closed）。本展开器零代码/ORM/api.xml/真相源变更（roadmap MA4 表追加属工作项追踪更新，非冻结真相源）；各 A4.2.n 的运行时验证属后续独立 plan（mission driver 逐项 DRAFT_PLANS → 验证），不阻塞本展开器闭环。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理（fresh session）>
-- Evidence: <关闭时填写>
+- Auditor / Agent: 独立结束审计子代理（fresh session，`MISSION_DRIVER:2026-08-04-224309-mission-driver`，未执行本计划任何阶段，未起草本计划）
+- Evidence:
+  - 实仓逐项核实（grep/read）零伪：roadmap MA4 表 A4.2 行状态 `done ✅`（`requirement-compliance-roadmap.md:152`），A4.2.n 行计数 = 185（`grep -c "^| A4\.2\." requirement-compliance-roadmap.md` → 185，与展开映射记录 §0 计数自检 200 原始条目 - 8 组合并减 15 = 185 一致）；A4.2.1（A1.8 SP-1）与 A4.2.185（A1.51 SP-4）首尾行逐字核实存在
+  - 展开映射记录 `docs/audits/2026-08-07-0400-rc-ma4-a4-2-ext-domain-expander.md`（334 行，Audit Status: closed）已落盘，含 §0 TL;DR + §1 逐报告 §7 存在性核对表（43 份报告覆盖 44 切片）+ 去重合并依据 + 计数自检 + 触及保护区域标注（0 行触及会计过账核心/数据删除/ORM 结构变更）
+  - 与 A4.1 范式同构（done 判据、Phase 结构、Closure Gates、Deferred 同形）；finance 业财域存疑点不重复展开（A4.1 已覆盖 A4.1.1-A4.1.25）
+  - 独立草案审查已记录（§Draft Review Record iteration 1 = accept，独立子代理 `ses_02ba94965ffeWmbz2adx3ULlSG`，baseline 主张逐项核实零伪，无 BLOCKER/MAJOR，1 non-blocking MINOR）
+  - 文本一致性 PASS：顶部 `Plan Status: completed` ↔ Phase 1/2 `Status: completed` ↔ 全部 Exit Criteria `[x]` ↔ Closure Gates 全部 `[x]` ↔ Deferred 但裁决项「out-of-scope improvement + Successor Required: yes（各 A4.2.n 实体行）」语义一致
+  - Anti-Hollow PASS：展开器为只读收集 + roadmap 表追加（无运行时调用逻辑），无空函数体/return null/吞异常；185 行均为追踪登记（验证探针属后续 A4.2.n 各自 plan）
+  - Deferred 诚实性 PASS：A4.2.n 运行时验证为「展开器范围外 by-design」（done 判据 = 展开完成），非隐藏的范围内缺陷/契约漂移；分类 `out-of-scope improvement` + Successor Required: yes（命名提升触发条件 = mission driver 逐项 DRAFT_PLANS）
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 各 A4.2.n 实体行运行时验证（185 项，各自独立 plan + 独立 done；mission driver 逐项 DRAFT_PLANS → 验证；触及会计过账/ORM/数据删除行为探针的行须 §5 保护区域 ask-first）

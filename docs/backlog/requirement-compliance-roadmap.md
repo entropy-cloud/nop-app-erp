@@ -1,6 +1,6 @@
 # 需求-实现符合性审计路线图（骨架）
 
-> 最后更新：2026-08-07（v1.4 — A4.1 业财域存疑点运行时确认展开器 done：finance A1.1-A1.7 §7 存疑点全集[25 条]展开为 A4.1.1-A4.1.25 实体验证行；展开映射记录 `docs/audits/2026-08-07-0300-rc-ma4-a4-1-finance-expander.md`。v1.3 — Q1/Q4 已裁决：Q1=(c) 逐项对照需求真相源优先 / Q4=(a) P0/P1 必须实现禁止方案 B 无例外；M0 转 ready，解除执行阻塞。v1.2 经两轮独立子代理审查修订：MA1 完整枚举 51 切片；MA2 导出口径+分区约束；MR0/MR1 改执行时追加实体行；A4 展开器范式对齐 R1.0；Q1/Q4 硬门控；保护区域暂停协议+预授权声明；MA1↔既有审计去重协议；MA3 三源对账。A4.1.2 done：UC-FIN-12 汇率缺失触发面运行时普查——43 生产 PostingEvent 构造点无一漏传 setExchangeRate，`prepareContext:537` 静默回退为 dispatcher 路径死代码，P1-RC-002 维持 P1 不升 P0/不触发 MR0/无新 finding，报告 `docs/audits/2026-08-07-0330-rc-ma4-a4-1-2-fx-rate-missing-trigger-surface.md`）
+> 最后更新：2026-08-07（v1.5 — A4.2 扩展域存疑点运行时确认展开器 done：扩展域 A1.8-A1.51 §7 存疑点全集[43 报告，200 条原始条目，跨报告去重 8 组合并→185 条]展开为 A4.2.1-A4.2.185 实体验证行；展开映射记录 `docs/audits/2026-08-07-0400-rc-ma4-a4-2-ext-domain-expander.md`。v1.4 — A4.1 业财域存疑点运行时确认展开器 done：finance A1.1-A1.7 §7 存疑点全集[25 条]展开为 A4.1.1-A4.1.25 实体验证行；展开映射记录 `docs/audits/2026-08-07-0300-rc-ma4-a4-1-finance-expander.md`。v1.3 — Q1/Q4 已裁决：Q1=(c) 逐项对照需求真相源优先 / Q4=(a) P0/P1 必须实现禁止方案 B 无例外；M0 转 ready，解除执行阻塞。v1.2 经两轮独立子代理审查修订：MA1 完整枚举 51 切片；MA2 导出口径+分区约束；MR0/MR1 改执行时追加实体行；A4 展开器范式对齐 R1.0；Q1/Q4 硬门控；保护区域暂停协议+预授权声明；MA1↔既有审计去重协议；MA3 三源对账。A4.1.2 done：UC-FIN-12 汇率缺失触发面运行时普查——43 生产 PostingEvent 构造点无一漏传 setExchangeRate，`prepareContext:537` 静默回退为 dispatcher 路径死代码，P1-RC-002 维持 P1 不升 P0/不触发 MR0/无新 finding，报告 `docs/audits/2026-08-07-0330-rc-ma4-a4-1-2-fx-rate-missing-trigger-surface.md`）
 > 来源：`docs/skills/audit-remediation-roadmap-authoring-prompt.md` 同型模式（需求-实现符合性变体）
 > 范围文档：`docs/discussions/2026-08-02-1700-requirement-implementation-compliance-audit.md`
 > **状态：可执行版本。Q1/Q4 已裁决（2026-08-02），M0 工作项转 ready，可启动 mission driver。**
@@ -150,7 +150,192 @@
 | A4.1.23 | A1.7 SP-2 — 多账套部署「每账套独立三表」运行时渲染（当前读路径取主账套非按账套切换） | todo | 同上 §7 | A4.1 done | 同上 |
 | A4.1.24 | A1.7 SP-3 — CLOSED 期间门控缺失的运行时数据完整性影响（OPEN 期间渲染报表误导；关联 P2-RC-008） | todo | 同上 §7 | A4.1 done | 同上 |
 | A4.1.25 | A1.7 SP-4 — 看板行级权限 `period.orgId` scope 跨组织泄漏（关联 P1-MA2-093） | todo | 同上 §7 + `dashboards.md` | A4.1 done | 同上 |
-| A4.2 | 扩展域 MA1 存疑点运行时确认**展开器**（读取 MA1 扩展域切片报告全部存疑点清单，展开为本表 A4.2.n 实体验证行） | todo | 各域 owner doc | MA1 done | 同上 |
+| A4.2 | 扩展域 MA1 存疑点运行时确认**展开器**（读取 MA1 扩展域切片报告全部存疑点清单，展开为本表 A4.2.n 实体验证行） | done ✅ | 各域 owner doc + `docs/audits/2026-08-07-0400-rc-ma4-a4-2-ext-domain-expander.md` | MA1 done | 同上 |
+| A4.2.1 | A1.8 SP-1 — 预留量并发扣减运行时行为（reserved 恒为 0，多工单并发领料 stock move bookkeeper negative-stock 防护兜底） | todo | `2026-08-02-2042-2-...-a1-8-...md` §7 + `flow-overview.md` | A4.2 done | 同上 |
+| A4.2.2 | A1.8 SP-2 — STOCK_PARTIAL 强制开工后领料 KitAvailabilityChecker 只读路径补料后可用量（无缓存/陈旧读） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.3 | A1.8 SP-3 + A1.9 SP-3（合并：MR1 P1-RC-008 预留写路径 successor 同根因同控制点）— MR1 修复落地后 reservedQty/availableQuantity 实时一致性 + 跨工单并发预留 lost-update 防护 | todo | 同上 §7 + `2026-08-02-2042-3-...-a1-9-...md` §7 | A4.2 done | 同上 |
+| A4.2.4 | A1.9 SP-1 + A1.11 SP-1（合并：完工触发差异过账失败告警通道 notify 投递 successor 同根因同控制点）— IErpSysNotificationBiz.notify 投递成功率 + 运营响应闭环（P1-MA4-007 resolved R1.16 运行时落地） | todo | `2026-08-02-2042-3-...-a1-9-...md` §7 + `2026-08-02-2245-...-a1-11-...md` §7 | A4.2 done | 同上 |
+| A4.2.5 | A1.9 SP-2 + A1.31 SP-2（合并：UC-MFG-09 返工工单工作流 同根因同控制点）— REJECTED 工单 IN_PROCESS 操作员实际工作流 + 关联原工单可追溯性 | todo | 同上 §7 + `2026-08-05-1830-2-...-a1-31-...md` §7 | A4.2 done | 同上 |
+| A4.2.6 | A1.10 SP-1 — BOM 内容编辑后已开工工单运行时是否按新 BOM 重算物料需求/成本（P1-RC-009 运行时影响） | todo | `2026-08-02-2231-1-...-a1-10-...md` §7 | A4.2 done | 同上 |
+| A4.2.7 | A1.10 SP-2 — BOM 快照缺失运行时是否致成本结转凭证错误（P1-RC-009 GL 凭证金额偏差） | todo | 同上 §7（与 SP-1 协同） | A4.2 done | 同上 |
+| A4.2.8 | A1.10 SP-3 — bomId 弱隔离运行时边界（运营 BOM 变更实践：编辑 vs 新建） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.9 | A1.11 SP-2 — best-effort 基因链写失败运行时缺口可观测性（BatchGenealogyWriter catch 频率 + LOG.error 采集；P1-RC-010） | todo | `2026-08-02-2245-...-a1-11-...md` §7 | A4.2 done | 同上 |
+| A4.2.10 | A1.11 SP-3 + A1.21 SP-3 + A1.24 SP-4 + A1.27 SP-4 + A1.33 SP-1 + A1.36 SP-5 + A1.41 SP-1 + A1.44 SP-5（合并：8 域 dashboard orgId 行级权限 R1.29 ErpOrgIsolationQueryTransformer 对 IDaoProvider/IOrmTemplate 直访路径注入 同根因[P1-MA2-093]同控制点）— 多组织部署跨组织 dashboard 查询泄漏 | todo | 同上 §7（8 切片 §7 交叉引用） | A4.2 done | 同上 |
+| A4.2.11 | A1.11 SP-4 — 召回报告 degraded 模式运行时业务覆盖（受影响成品批次集合是否满足召回需求） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.12 | A1.12 §7-1 — UC-HR-07 cron 运行时调度接线（scheduler.yaml + contract-expiry-cron config 非空） | todo | `2026-08-02-2328-...-a1-12-...md` §7 | A4.2 done | 同上 |
+| A4.2.13 | A1.12 §7-2 — UC-HR-07 30/60/90 多档预警运行时配置（单一阈值 config 多档调度） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.14 | A1.12 §7-3 — UC-HR-12 评估聚合权重运行时配置覆盖（assessment*Weight 默认 + AppConfig.var） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.15 | A1.12 §7-4 — UC-HR-08 handleContract 三态运行时行为（transferAutoHandleContract 默认 true 是否被覆盖） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.16 | A1.12 §7-5 — UC-HR-05 未到岗回退运行时处理（P2-RC-010 无 rollbackHire，HR close+重开处理） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.17 | A1.13 SP-1 — P1-RC-011 审批人超时自动转派缺失运行时影响面（SUBMITTED 休假悬挂量 vs 薪酬核算耦合） | todo | `2026-08-02-2344-...-a1-13-...md` §7 | A4.2 done | 同上 |
+| A4.2.18 | A1.13 SP-2 — P1-RC-012 多次打卡 reject 运行时误判面（员工误触逃生路径 + HR 手工 DB 修正频度） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.19 | A1.13 SP-3 — P1-RC-013 夜班跨天 clockOut 运行时阻断（夜班占比 + 补录临时运维） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.20 | A1.13 SP-4 — P1-RC-014 设备故障补卡运行时替代（标准 CRUD 绕过字段守卫越权风险） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.21 | A1.13 SP-5 — UC-HR-09⑲ 换班跨日期语义（ShiftSwapRequestSubmitProcessor 未校验同日期） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.22 | A1.14 §7-1 — UC-HR-04 ⑯ 计提+公司承担过账运行时触发链（approve→APPROVED SALARY(270)+290/300 是否生成） | todo | `2026-08-03-0000-...-a1-14-...md` §7 | A4.2 done | 同上 |
+| A4.2.23 | A1.14 §7-2 — UC-HR-04 公司承担金额运行时丢弃确认（socialInsuranceER/housingFundER 是否经 billData 传递） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.24 | A1.14 §7-3 — UC-HR-03 ②24h 校验运行时拦截（同日多条 TimesheetLine hours 之和 >24） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.25 | A1.14 §7-4 — UC-HR-11 ㉖匿名 respondentHash 运行时防重复（重复提交是否拦截） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.26 | A1.14 §7-5 — UC-HR-11 ㉘㉙ CLOSED 自动聚合 + eNPS 运行时计算（结果表是否永远空） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.27 | A1.15 §7-1 — UC-PUR-01 ④ GOODS_RECEIPT/PURCHASE_INPUT 运行时触发链（receive approve→triggerIncomingMove→posting 全链） | todo | `2026-08-03-0145-...-a1-15-...md` §7 + `flow-overview.md` | A4.2 done | 同上 |
+| A4.2.28 | A1.15 §7-2 — UC-PUR-01 ⑦ paidStatus 派生运行时一致性（多付款单跨单据核销同一发票 SUM） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.29 | A1.15 §7-3 — UC-PUR-01 ⑧ 应付余额辅助账聚合运行时一致性（ErpFinArApItem.openAmount 恒等式） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.30 | A1.15 §7-4 — UC-PUR-08 ⑫ 多供应商拆分运行时阻断（validateConsistentSupplier；P1-RC-017） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.31 | A1.15 §7-5 — P1-MA2-083 承付恢复运行时不对称（invoice approve→release, reverseApprove→AP 红冲但 commitment 不归位） | todo | 同上 §7 + `budget.md` | A4.2 done | 同上 |
+| A4.2.32 | A1.15 §7-6 — UC-PUR-08 ⑬ 取消后再转化运行时允许（cancel 全部衍生订单后再次转化；P2-RC-012） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.33 | A1.16 §7-1 — UC-PUR-03 ⑦ 两次入库独立过账凭证数==2 运行时确认（per-mutation approve 架构） | todo | `2026-08-03-0200-...-a1-16-...md` §7 | A4.2 done | 同上 |
+| A4.2.34 | A1.16 §7-2 — UC-PUR-05 ⑫ 让步接收价格差异过账运行时生成（PurAcctDocProvider.createFacts 无 PPV 行；P1-RC-018） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.35 | A1.16 §7-3 — UC-PUR-05 ⑪ 三处理策略运行时分支可达性（仅"拒绝"可达；P1-RC-018） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.36 | A1.16 §7-4 — UC-PUR-02 ② 超收容差运行时门控（receive approve 无 qty-vs-order 校验；P1-RC-019） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.37 | A1.16 §7-5 — UC-PUR-06 ⑮ 短收超容差运行时差异处理（无差异处理触发；P2-RC-014） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.38 | A1.16 §7-6 — UC-PUR-06 ⑰ 关闭释放预留运行时 config-gated 行为（budget-commitment-enabled 默认 false） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.39 | A1.16 §7-7 — UC-PUR-03 ⑤⑥ receivedQuantity 运行时值（列始终 0，零 writer；P2-RC-013） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.40 | A1.17 §7-1 — UC-PUR-04 ④ isReversed 标记运行时确认（PurReturnPostingDispatcher 不调 markOriginalVoucherReversed；P2-RC-015） | todo | `2026-08-03-0300-...-a1-17-...md` §7 | A4.2 done | 同上 |
+| A4.2.41 | A1.17 §7-2 — UC-PUR-04 ⑤ credit-memo-via-return 运行时 AP 余额回减（P2-MA2-006 resolved 复核） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.42 | A1.17 §7-3 — UC-PUR-07 ② GR/IR 暂估应付运行时凭证行（InvAcctDocProvider + PurAcctDocProvider） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.43 | A1.17 §7-4 + A1.20 SP-3（合并：跨域期间 CLOSED guard 间接拦截 同根因[finance resolveOpenPeriod]同控制点）— purchase receive/invoice/return + sales return 过账路径期间 CLOSED 守卫 | todo | 同上 §7 + `2026-08-03-0630-...-a1-20-...md` §7 | A4.2 done | 同上 |
+| A4.2.44 | A1.17 §7-5 — UC-PUR-07 ④ 反审核运行时删凭证（红字冲销；ErpPurReturnProcessor + PurReversalListener） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.45 | A1.17 §7-6 — UC-PUR-04 承付恢复运行时对称性（reuse P1-MA2-083；return approve 释放 vs reverseApprove 不恢复） | todo | 同上 §7 + `budget.md` | A4.2 done | 同上 |
+| A4.2.46 | A1.17 §7-7 — UC-PUR-07 ③ 多币种行级金额运行时计算（PurInvoicePostingDispatcher.buildEvent exchangeRate） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.47 | A1.18 §7-1 + A1.19 §7-2（合并：订单级可用量校验缺失运行时影响 同根因[订单审核不调库存 Facade]同控制点）— 出库环节才发现库存不足的运行时频度/业务影响 | todo | `2026-08-03-0430-...-a1-18-...md` §7 + `2026-08-03-0530-...-a1-19-...md` §7 | A4.2 done | 同上 |
+| A4.2.48 | A1.18 §7-2 — UC-SAL-11 ⑥ 最低价校验缺失的实际触发面（促销配置是否致售价 < SKU.minPrice） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.49 | A1.18 §7-3 — UC-SAL-11 ⑦ 价税分离缺失的实际 GL 影响（recomputeLineAmount 不重算 taxAmount 数值偏差；P1-RC-022） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.50 | A1.18 §7-4 — UC-SAL-01 ⑨ 客户应收余额双层设计运行时一致性（归 P2-MA2-038 DualSideConsistencyChecker 跟踪） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.51 | A1.18 §7-5 — UC-SAL-11 ② 取价优先级链跨域协作运行时一致性（master-data 取价后 sales pricingSource 写入值） | todo | 同上 §7（与 A1.41 协同） | A4.2 done | 同上 |
+| A4.2.52 | A1.19 §7-1 — UC-SAL-10 销售级 seam 真实并发下的运行时行为（triggerOutgoingMove Facade seam 同事务/异常传播） | todo | `2026-08-03-0530-...-a1-19-...md` §7 | A4.2 done | 同上 |
+| A4.2.53 | A1.19 §7-3 — 负库存配置下并发结果（allow-negative-stock=true 下 sales 出库同批次并发最终余额边界） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.54 | A1.19 §7-4 — UC-SAL-03 deliveredQuantity 查询实际返回值（零 writer，UI/GraphQL 读取 0 vs null） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.55 | A1.19 §7-5 — UC-SAL-03 1 行×2 分批(60+40) 运行时验证（deliveryStatus + deliveredQuantity + 库存余额；P2-RC-019） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.56 | A1.20 SP-1 + A1.21 SP-1（合并：价税分离多档税率混合+促销叠加 GL 偏差 同根因[recomputeLineAmount/recomputeOrderTotals P1-RC-022]同控制点）— 税额偏差范围量化 | todo | `2026-08-03-0630-...-a1-20-...md` §7 + `2026-08-03-0900-...-a1-21-...md` §7 | A4.2 done | 同上 |
+| A4.2.57 | A1.20 SP-2 — P1-RC-026 退货成本在不同库存策略下数值偏差（ReturnStockMoveBuilder unitCost=line.unitPrice vs 当前库存成本） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.58 | A1.20 SP-4 — P1-RC-028 ReturnRefundOrchestrator post-approve 静默反向在已核销发票高并发场景下竞态 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.59 | A1.20 SP-5 — P1-RC-025 换货功能完全缺失，product-scope 是否裁剪（须运行时确认真相源） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.60 | A1.21 SP-2 — UC-SAL-08 赠品成本多物料混合出库 totalCost abs() 求和是否正确含赠品 avgCost | todo | `2026-08-03-0900-...-a1-21-...md` §7 | A4.2 done | 同上 |
+| A4.2.61 | A1.21 SP-4 — P2-RC-024 AR 账龄 4 桶视图跨桶归类歧义 + 未到期项归 0-30 桶语义 | todo | 同上 §7 + `dashboards.md` | A4.2 done | 同上 |
+| A4.2.62 | A1.21 SP-5 — P2-RC-023 赠品行 UI 显式标记缺口在产品化部署场景下的实际影响 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.63 | A1.22 SP-1 — 方式A 编排可达性（finance.reverseClose + ast.executeDepreciation + finance.closePeriod 3 步链） | todo | `2026-08-03-0900-2-...-a1-22-...md` §7 | A4.2 done | 同上 |
+| A4.2.64 | A1.22 SP-2 — 方式B 补提在多漏提期下的累计折旧偏差（executeDepreciation 单月语义；P1-RC-029） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.65 | A1.22 SP-3 — 批量隔离在 GL 科目部分缺失场景的实际跳过行为（executeBatchDepreciation per-asset try/catch） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.66 | A1.22 SP-4 — 补提凭证显式"补提"marker（voucherDate=businessDate 无显式标注，审计维度按期间反查） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.67 | A1.23 SP-1 — P1-RC-029 出售补提缺失的运行时会计影响量化（月中出售累计折旧低估→NBV 高估→gainLoss 误算） | todo | `2026-08-03-0900-3-...-a1-23-...md` §7 | A4.2 done | 同上 |
+| A4.2.68 | A1.23 SP-2 — P1-RC-030 合并科目凭证在不同 disposalType 下实际行级结构（SCRAPPED/SOLD ±gainLoss 4 组合） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.69 | A1.23 SP-3 — posted=false 窗口 reverseApprove 实际行为（处置过账失败→reverseApprove→资产/计划/告警行为；R1.16 P1-MA2-060 运行时落地） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.70 | A1.24 SP-1 — UC-AST-01 资本化折旧计划末期残值修正取值行为（直线法末期补差非整除月数边界） | todo | `2026-08-03-1200-1-...-a1-24-...md` §7 | A4.2 done | 同上 |
+| A4.2.71 | A1.24 SP-2 — UC-AST-10 维修资本化重算后折旧计划 PENDING→EXECUTED 迁移（recalculateForCapitalization） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.72 | A1.24 SP-3 — UC-AST-11 拆分 proportion tolerance 极端比例下平衡行为（3+ 目标比例和=1.000001 边界） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.73 | A1.24 SP-5 — UC-AST-09 盘亏 SCRAPPED 资产折旧计划 CANCELLED 是否同步触发（ErpAstInventoryProcessor 直接 SCRAPPED） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.74 | A1.25 SP-1 — InvPostingDispatcher post-commit 时序边缘风险（REQUIRES_NEW 凭证 commit 后外层 rollback 致凭证孤立） | todo | `2026-08-03-0953-...-a1-25-...md` §7 | A4.2 done | 同上 |
+| A4.2.75 | A1.25 SP-2 — forwardTrace 在超深链/多分支链下 truncated 行为（max-depth 默认 10，BFS 边界） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.76 | A1.26 SP-1 — allow-negative-stock=true 下并发出库实际余额下限行为（validateAvailable 短路 + 极端并发深度为负） | todo | `2026-08-03-1200-3-...-a1-26-...md` §7 | A4.2 done | 同上 |
+| A4.2.77 | A1.26 SP-2 — batchTrace 跨域 move 链下聚合正确性（批次继承语义下聚合完整性） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.78 | A1.26 SP-3 — expiryDate 字段 ORM 存在但无 writer 时默认值行为（非 mfg 完工入库路径；为 P1-RC-031 null 语义设计输入） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.79 | A1.26 SP-4 — MR1 P1-RC-031 修复落地后 reserved/available 一致性（expiry check 拦截点选择 doConfirm vs doComplete） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.80 | A1.27 SP-1 — UC-INV-07 completeTake DONE 后手工 generateMove 处置差异的实际余额影响 | todo | `2026-08-05-0900-...-a1-27-...md` §7 | A4.2 done | 同上 |
+| A4.2.81 | A1.27 SP-2 — UC-INV-08 高并发下 max-retry 耗尽后移动单状态（极端竞争最终一致性） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.82 | A1.27 SP-3 — UC-INV-10 posting 失败留 posted=false 时 DeferredPostingSweepJob 兜底触发频率（P1-MA4-001 family 业财悬挂维度） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.83 | A1.28 SP-1 — P1-RC-033 NEW 状态 LEAD 实际能否被 convertToCustomer 转化（前置条件弱运行时触发面） | todo | `2026-08-05-1030-...-a1-28-...md` §7 | A4.2 done | 同上 |
+| A4.2.84 | A1.28 SP-2 — P1-RC-034 任意 docStatus OPPORTUNITY 实际能否转报价单（非 QUALIFIED 路径） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.85 | A1.28 SP-3 — LEAD_UPDATE 自动评分并发更新下触发时序（同步阻塞/重复 ErpCrmLeadScore 记录） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.86 | A1.28 SP-4 — territory 引擎无匹配时 territoryId 留空行为（assign:70 返回 null） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.87 | A1.28 SP-5 — ROUND_ROBIN 降级 MANUAL 后 ownerId 实际值（AssignmentResult.ownerId 永不设置） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.88 | A1.28 SP-6 — P1-RC-032 直接升格分支在其他未审计入口（GraphQL/Delta）补偿实现 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.89 | A1.29 SP-1 — UC-CRM-05 lastContactDate 按 COMPLETED 过滤的语义偏差（CANCELLED 是否算"联系过"） | todo | `2026-08-05-1100-...-a1-29-...md` §7 | A4.2 done | 同上 |
+| A4.2.90 | A1.29 SP-2 — UC-CRM-07 UTM copy 缺失下 lead.utmMedium/utmSource 实际默认值（影响归因报表） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.91 | A1.29 SP-3 — UC-CRM-07 归因报表缺失下 campaignId 已填但无聚合实际数据状态 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.92 | A1.29 SP-4 — UC-CRM-10 ForecastAggregator 3 级 rollup 跨 ownerId 边界正确性（团队迁移场景） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.93 | A1.29 SP-5 — UC-CRM-10 territory tier 缺失下跨区域预测汇总实际行为（Forecast 段 territory 级管道） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.94 | A1.29 SP-6 — UC-CRM-12 QuotaRollupCalculator 显式值优先 team+individual 共存时汇总 double-count（区域配额=Σ团队） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.95 | A1.29 SP-7 — UC-CRM-14/15 FunnelAggregationJob/SequenceOverdueJob cron enabled 默认 false 实际触发链路 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.96 | A1.29 SP-8 — UC-CRM-14 EMAIL_OPENED/EMAIL_REPLIED 降级 eventType=EMAIL 匹配的实际触发面 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.97 | A1.30 SP-1 — UC-CRM-06 ④ 等值边界运行时触发面（allow-stage-backward=true 放行等值 stage 移动；P2-RC-036） | todo | `2026-08-05-1830-...-a1-30-...md` §7 | A4.2 done | 同上 |
+| A4.2.98 | A1.30 SP-2 — UC-CRM-13 ⑩ configSnapshot JSON 实际落库字段与 quotation 关联（truncate 500 字符丢失关键配置；P2-RC-038） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.99 | A1.30 SP-3 — UC-CRM-13 ⑫ generateQuote 弱指针回写 relatedBillType 枚举值与 sales 域契约一致 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.100 | A1.30 SP-4 — UC-CRM-13 ② conditionExpression XLang 评估的失败模式（复杂表达式 compileFullExpr 行为） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.101 | A1.31 SP-1 — UC-QA-06 关键项否决缺失运行时触发面（allowConcession=true + 关键项数据录入机制） | todo | `2026-08-05-1830-2-...-a1-31-...md` §7 | A4.2 done | 同上 |
+| A4.2.102 | A1.31 SP-3 — UC-QA-07 类别级模板缺失的运行时影响面（物料无专属模板但有类别级模板的数据分布） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.103 | A1.31 SP-4 — UC-QA-08 业务作废联动 deferral 的残留质检单运行时累积（TODO 噪音 + 定期清理） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.104 | A1.31 SP-5 — UC-QA-01 强制质检门控 config-gated 默认值运行时生效（mandatory-inspection-bill-types 默认空） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.105 | A1.32 SP-1 — UC-QA-05 ⑤ 验证失败被动阻塞的运行时操作流程（CAPA completeAction 后发现验证不通过） | todo | `2026-08-05-1830-3-...-a1-32-...md` §7 | A4.2 done | 同上 |
+| A4.2.106 | A1.32 SP-2 — UC-QA-05 ⑦ verificationResult 隐式承载的运行时审计可用性（需联 person+date 推导） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.107 | A1.32 SP-3 — noCapaReason 逃逸门运行时实际触发面（误开/降级 NCR 经 noCapaReason resolve 频度） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.108 | A1.32 SP-4 — CAPA 全 COMPLETED 但 verificationPerson/verificationDate 部分缺失的边界行为（requireResolveGate 阻塞） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.109 | A1.33 SP-2 — UC-QA-09 AC-5 afterCommit 钩子在真实调度事务下 NCR 创建时序与并发幂等（SpcOutOfControlHandler post-commit 竞态窗口） | todo | `2026-08-05-2200-1-...-a1-33-...md` §7 | A4.2 done | 同上 |
+| A4.2.110 | A1.33 SP-3 — UC-QA-09 AC-4/5 P1-RC-042 修复后 batch→evaluateRules 缺失的运行时表现（样本永不被评估为 isOutOfControl） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.111 | A1.33 SP-4 — UC-QA-10 AC-5 QualityGoal 名称不匹配时回写静默 no-op（运维误以为回写成功） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.112 | A1.33 SP-5 — UC-QA-09 AC-6/7 CAPA 1:1 多违规规则场景下运行时业务影响（同样本违反多规则只生成 1 CAPA） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.113 | A1.34 SP-1 + A1.35 SP-1 + A1.35 SP-3（合并：ExpenseCostAggregator 状态/超预算归集缺口 同根因[P1-RC-050+P1-RC-051 同站点]同控制点）— ON_HOLD/超预算项目违规归集行累积 + closeProject 触发链路反向清理或仅累积 | todo | `2026-08-05-2200-2-...-a1-34-...md` §7 + `2026-08-05-2200-3-...-a1-35-...md` §7 | A4.2 done | 同上 |
+| A4.2.114 | A1.34 SP-2 — P2-RC-048 requireReferenceable 是否被任何 delta/未来定制消费（生产代码零调用方） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.115 | A1.34 SP-3 — P1-RC-049 物料归集经 inventory 配置触发是否部分可达（InvPostingDispatcher config-gated 路径） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.116 | A1.34 SP-4 — 多币种 exchangeRate=ONE 在多币种项目的运行时影响（工时过账硬编码；P1-MA1-010 投影） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.117 | A1.34 SP-5 — ON_HOLD→OPEN resumeProject 迁移 + resume 后归集恢复的实际运行时行为（UC-PRJ-09 AC-②） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.118 | A1.35 SP-2 — STRICT 模式下工时提交超预算的实际拒绝运行时行为（BudgetChecker.check 抛 ERR_BUDGET_EXCEEDED 事务回滚） | todo | `2026-08-05-2200-3-...-a1-35-...md` §7 | A4.2 done | 同上 |
+| A4.2.119 | A1.35 SP-4 — 采购路径物料归集实现后 budgetChecker.check 接入运行时行为（P1-RC-049 successor 落地后） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.120 | A1.36 SP-1 — 多币种项目 exchangeRate=ONE 在 ProjectPnl 实际金额偏差（P2-RC-050 + P1-MA1-010） | todo | `2026-08-05-2330-1-...-a1-36-...md` §7 | A4.2 done | 同上 |
+| A4.2.121 | A1.36 SP-2 — pnl-auto-calc-enabled=true 时 batch 是否可手动触发调度路径（config 默认 false；P1-RC-053） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.122 | A1.36 SP-3 — 质保金 schema 字段在 delta/未来定制消费的运行时行为（retentionAmount 零 writer；P1-RC-052） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.123 | A1.36 SP-4 — CLOSE 转固 IErpAstAssetBiz.save data map 非专用 API 的契约鲁棒性 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.124 | A1.37 SP-1 — auto-assign-on-create 死 flag 在 delta/未来定制消费的运行时行为（P1-RC-054） | todo | `2026-08-05-2330-2-...-a1-37-...md` §7 | A4.2 done | 同上 |
+| A4.2.125 | A1.37 SP-2 — matchAndAttachSla 作为创建后置手动步骤的运行时可达性（前端 AMIS 自动串联；P1-RC-054） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.126 | A1.37 SP-3 — reopen 作为客户驳回替代路径的语义等价性（操作员 vs 客户门户；P2-RC-051） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.127 | A1.37 SP-4 — close 操作员驱动在无客户确认下数据完整性（RBAC 限制；P2-RC-051） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.128 | A1.37 SP-5 — ErpCsTimeEntry CRUD 壳在 delta/未来定制下计时器行为（P1-RC-055） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.129 | A1.38 SP-1 — notifySlaOverdue context 用 assignedToId 经模板 ROLE 解析是否到达 escalationUserId 角色（A2.14:322 残留风险） | todo | `2026-08-05-2330-3-...-a1-38-...md` §7 | A4.2 done | 同上 |
+| A4.2.130 | A1.38 SP-2 — erp-cs-sla-scan enabled=true 时单实例每分钟扫描实际升级频率与噪声（R1.28 P1-MA2-086 + P1-RC-056） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.131 | A1.38 SP-3 — slaPolicy.escalationUserId 为 null 时 notifySlaOverdue 降级行为（matchAndAttachSla 不挂策略） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.132 | A1.38 SP-4 — reopen 不延长 deadline 致 RESOLVED 等待窗口计入下次 duration 的实际违约率影响（A2.14:115,584） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.133 | A1.39 SP-1 — searchKnowledge LIKE 匹配在大文章量下时延/相关性质量（use-cases.md:101 Deferred 触发条件） | todo | `2026-08-06-0100-1-...-a1-39-...md` §7 | A4.2 done | 同上 |
+| A4.2.134 | A1.39 SP-2 — suggestForTicket 取首 token 对多词 subject 的命中召回率 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.135 | A1.39 SP-3 — applyCannedResponse usageCount 并发递增是否经乐观锁保护（read-modify-write 非原子） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.136 | A1.39 SP-4 — ErpCsCannedCategory CRUD 是否实际驱动前端分类树选择（P2-RC-053） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.137 | A1.39 SP-5 — UC-CS-06 ⑤ESCALATE 审计字段借用冲突在 SLA + 质量双路径下运行时行为（P1-RC-057；R1.28 hasEscalationAction 守卫交互） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.138 | A1.40 SP-1 — UC-CS-08 survey-send-delay 默认 0 时 PENDING 路径是否实际可达 | todo | `2026-08-06-0100-2-...-a1-40-...md` §7 | A4.2 done | 同上 |
+| A4.2.139 | A1.40 SP-2 — UC-CS-08 submitSurvey 经 token 调用在真实鉴权配置下是否拒绝匿名调用 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.140 | A1.40 SP-3 — UC-CS-09 erp-cs-entitlement-expiry/erp-cs-csat-reminder cron enabled=true 时幂等行为（R1.28 复用） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.141 | A1.40 SP-4 — UC-CS-10/12 createFromCatalog 履行占位审计行前端/运维是否被误读为真实执行 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.142 | A1.40 SP-5 — UC-CS-10 requestFormConfig 当前生产数据是否含可驱动校验的 schema（fields[].required） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.143 | A1.41 SP-2 — UC-MD-03 ④ IErpMdSupplierPriceResolver 在 purchase 域是否有未被 grep 发现接线 | todo | `2026-08-06-0100-3-...-a1-41-...md` §7 | A4.2 done | 同上 |
+| A4.2.144 | A1.41 SP-3 — UC-MD-01 ③ enforceBarcodeUnique 并发 save 的 TOCTOU 实际窗口（无 DB UK 兜底） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.145 | A1.41 SP-4 — UC-MD-04 ① priceValidationLevel="20" 种子分类实际 WARN 语义影响面 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.146 | A1.41 SP-5 — UC-MD-06 ② IErpMdSkuReferenceChecker 生产缺失下被引用 SKU 删除的实际数据完整性事件（P1-RC-062） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.147 | A1.42 SP-1 — generateDueVisits 自动生成路径→schedule→conflict 检测端到端运行时确认（低优先级，静态已明确） | todo | `2026-08-06-0245-1-...-a1-42-...md` §7 | A4.2 done | 同上 |
+| A4.2.148 | A1.43 SP-1 — complete 时 IDLE 设备运行时是否变 RUNNING（IDLE 分支缺失；P2-RC-061） | todo | `2026-08-06-0245-2-...-a1-43-...md` §7 | A4.2 done | 同上 |
+| A4.2.149 | A1.43 SP-2 — generateMove(OUTGOING+relatedBillType) 运行时是否真实触发库存余额扣减（跨域 inventory 行为） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.150 | A1.43 SP-3 — 备件不足校验失败路径运行时是否抛 inventory ERR_AVAILABLE_INSUFFICIENT（跨域 guard） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.151 | A1.44 SP-1 — UC-MAIN-05 accept 运行时生成的 visit 是否经隐式机关联回 request | todo | `2026-08-06-0245-3-...-a1-44-...md` §7 | A4.2 done | 同上 |
+| A4.2.152 | A1.44 SP-2 — UC-MAIN-06 DowntimeEntry record/complete 运行时是否经隐式通道发布跨域事件 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.153 | A1.44 SP-3 — UC-MAIN-08 资产 SCRAPPED/SOLD 运行时是否反向调 IErpMntEquipmentBiz.changeStatus(DECOMMISSIONED) | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.154 | A1.44 SP-4 — UC-MAIN-07 额外故障运行时是否支持 visit remark/result + 手工创建 request 半自动流程 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.155 | A1.45-46 SP-1 — UC-CT-01 运行时合同创建是否经前端/XMeta 隐式校验 totalAmount=∑行金额 | todo | `2026-08-05-1400-1-...-a1-45-46-...md` §7 | A4.2 done | 同上 |
+| A4.2.156 | A1.45-46 SP-2 — UC-CT-01 运行时合同到 NEGOTIATION 是否经隐式机制创建 v1 版本 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.157 | A1.45-46 SP-3 — UC-CT-02 运行时 amend 后变更单是否经前端编排半自动复制原合同行 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.158 | A1.45-46 SP-4 — UC-CT-05 运行时是否有其他全局 job 扫描合同到期 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.159 | A1.45-46 SP-5 — UC-CT-06 运行时 terminate 后 InvoicePlan 是否经合同头 TERMINATED 状态隐式失效 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.160 | A1.45-46 SP-6 — UC-CT-07 运行时是否有其他全局审批引擎驱动合同审批 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.161 | A1.45-46 SP-7 — UC-CT-08 运行时 purchase/sales 订单行是否经隐式机制应用合同折扣 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.162 | A1.45-46 SP-8 — UC-CT-10 运行时是否有外部 OCR 服务处理 ErpCtDocument | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.163 | A1.47 SP-1 — UC-B2B-001 isActive=false 格式运行时是否仍被 Registry 派发（P2-RC-062） | todo | `2026-08-05-1400-2-...-a1-47-...md` §7 | A4.2 done | 同上 |
+| A4.2.164 | A1.47 SP-2 — UC-B2B-002 needsWebService=true Provider 运行时是否经隐式机制走异步队列（reuse P1-MA2-073） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.165 | A1.47 SP-3 — UC-B2B-003 入站 webhook 运行时 EdiDoc 是否经隐式 hook 自动 archive（P2-RC-064） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.166 | A1.47 SP-4 — UC-B2B-004 出站 UBL Invoice 运行时物料编码是否经 codeMappingResolver 映射（P2-RC-065） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.167 | A1.47 SP-5 — UC-B2B-006 ERROR+WARN blocking_level 运行时是否存在隐式自动重试调度（reuse P1-MA2-073） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.168 | A1.47 SP-6 — UC-B2B-007 activate 运行时是否可从 TESTING/CERTIFIED 直接跳 PRODUCTION 绕过门槛（P1-RC-080） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.169 | A1.47 SP-7 — UC-B2B-008 证书过期运行时是否经 scheduler 自动停用 MftConfig（P2-RC-068） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.170 | A1.48 SP-1 — UC-DRP-02 netReq≤0 生成的 0 值行经 approvePlan→releaseLine 是否产生 0 量 TransferOrder/PurchaseOrder | todo | `2026-08-05-1400-3-...-a1-48-...md` §7 | A4.2 done | 同上 |
+| A4.2.171 | A1.48 SP-2 — UC-DRP-02 forecast-consume-enabled 默认 true 下无 APPROVED 预测时 forecastDemand=0 无回归 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.172 | A1.48 SP-3 — UC-DRP-04 releaseApproved 批量释放单事务内某行失败 → 全批回滚 vs "该行标记错误"语义 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.173 | A1.48 SP-4 — UC-DRP-06 历史出库仅取 StockMove OUT 未取销售订单行对 SS 计算偏差 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.174 | A1.49 SP-1 — UC-LOG-01 重复发运→重复运费过账（双 shipment 同 relatedBillCode 均 DELIVERED；P1-RC-083） | todo | `2026-08-06-2243-1-...-a1-49-...md` §7 | A4.2 done | 同上 |
+| A4.2.175 | A1.49 SP-2 — UC-LOG-03 轮询缺失运行时影响（仅 webhook 驱动，DISPATCHED 运单滞留；P1-RC-085） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.176 | A1.49 SP-3 — UC-LOG-07 容量超卖运行时影响（ErpLogDeliveryBooking 不存在，当前无超卖风险；P1-RC-086） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.177 | A1.49 SP-4 — UC-LOG-04 path-1 AUTO + freightAmount=null 是否生成 0/null 金额凭证 | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.178 | A1.50 SP-1 — UC-APS-01 WorkOrder 事件缺失→CRP 负荷来源空（P1-RC-088） | todo | `2026-08-06-2243-2-...-a1-50-...md` §7 | A4.2 done | 同上 |
+| A4.2.179 | A1.50 SP-2 — UC-APS-06 路由缺失→主工作中心过载/备选闲置并存（P1-RC-089） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.180 | A1.50 SP-3 — UC-APS-07 派工缺失→物料齐套永不检查（P1-RC-090） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.181 | A1.50 SP-4 — UC-APS-03/05 sales 集成缺失→销售承诺不可达交期（P2-RC-079/080） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.182 | A1.51 SP-1 — ROLE resolver 运行时 roleName 匹配（平台 nop-auth 角色数据 roleName 字段一致性） | todo | `2026-08-06-2243-3-...-a1-51-...md` §7 | A4.2 done | 同上 |
+| A4.2.183 | A1.51 SP-2 — USER_LIST ${var} 动态插值运行时覆盖（多域消费者 submitterUserId 动态解析） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.184 | A1.51 SP-3 — ORG resolver deptId 精确匹配运行时（是否需子部门递归） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.185 | A1.51 SP-4 — erp-notify.enabled=false kill-switch 运行时行为（AppConfig.var 零消费，P2-RC-081） | todo | 同上 §7 | A4.2 done | 同上 |
 
 ### Milestone MR0 — P0 即时修复通道（发现即止血）
 
