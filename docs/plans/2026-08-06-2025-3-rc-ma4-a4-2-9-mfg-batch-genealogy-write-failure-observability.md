@@ -1,6 +1,6 @@
 # 2026-08-06-2025-3 rc-ma4-a4-2-9-mfg-batch-genealogy-write-failure-observability best-effort 基因链写失败运行时缺口可观测性确认（A1.11 SP-2，P1-RC-010 协同）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-06
 > Mission: requirement-compliance
 > Work Item: A4.2.9（A1.11 SP-2：MA4 运行时行为验证 — best-effort 基因链写失败运行时缺口可观测性，`BatchGenealogyWriter.writeOnCompletion` try/catch 不阻断完工的运行时可观测性 + 基因链缺口业务影响；与 P1-RC-010[UC-MFG-13 ⑫召回报告测试仅冒烟 + best-effort 写失败路径无测试]测试补充协同）
@@ -73,51 +73,51 @@
 
 ### Phase 1 - catch 分支可观测性 census + LOG 监控采集现状 + 基因链缺口业务影响
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-2025-rc-ma4-a4-2-9-mfg-batch-genealogy-write-failure-observability.md`（验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`（Phase 1 全 Proof）
 - Prereqs: A4.2 done（展开器已追加 A4.2.9 行）；A1.11 done（§7 SP-2 已落盘 + §5 P1-RC-010 裁决已登记）
 
-- [ ] `Proof` catch 分支可观测性 census：核验 `BatchGenealogyWriter.writeOnCompletion` catch 分支（约 :74-76）的可观测性现状——LOG.error 级别确认 + 是否有 notify 告警派发（`IErpSysNotificationBiz.notify`）/ 是否有失败标记持久化（基因链缺口标记字段）/ 是否有其他可观测通道。给出 file:line 证据，判定可观测性"仅日志/日志+告警/日志+告警+失败标记"。
+- [x] `Proof` catch 分支可观测性 census：核验 `BatchGenealogyWriter.writeOnCompletion` catch 分支（约 :74-76）的可观测性现状——LOG.error 级别确认 + 是否有 notify 告警派发（`IErpSysNotificationBiz.notify`）/ 是否有失败标记持久化（基因链缺口标记字段）/ 是否有其他可观测通道。给出 file:line 证据，判定可观测性"仅日志/日志+告警/日志+告警+失败标记"。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` LOG.error 监控采集现状 census：核验 `LOG.error("工单 {} 完工写入批次基因链失败...")` 是否被监控采集——是否有结构化日志/metrics/日志告警通道（运营实际感知路径）+ 与 A4.2.4 notify 通道家族对比（完工 best-effort 失败可观测性家族）。
+- [x] `Proof` LOG.error 监控采集现状 census：核验 `LOG.error("工单 {} 完工写入批次基因链失败...")` 是否被监控采集——是否有结构化日志/metrics/日志告警通道（运营实际感知路径）+ 与 A4.2.4 notify 通道家族对比（完工 best-effort 失败可观测性家族）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` 基因链缺口业务影响 census：核验部分完工无追溯行（基因链缺口）对 UC-MFG-13 召回报告的业务影响——RecallReport.degraded=true 降级 + 运营感知现状（降级是否被运营感知 / 召回场景下缺口致漏报受影响成品批次的合规风险）。给出 file:line 证据（RecallReport 构造 + degraded 标记 + affectedLots 聚合）。
+- [x] `Proof` 基因链缺口业务影响 census：核验部分完工无追溯行（基因链缺口）对 UC-MFG-13 召回报告的业务影响——RecallReport.degraded=true 降级 + 运营感知现状（降级是否被运营感知 / 召回场景下缺口致漏报受影响成品批次的合规风险）。给出 file:line 证据（RecallReport 构造 + degraded 标记 + affectedLots 聚合）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` config `erp-mfg.genealogy-write-enabled` 默认值复核：核验默认值（`ErpMfgConstants` / AppConfig.var 读取点）+ 全 application.yaml 部署 override 普查（决定 best-effort 写入路径默认活跃性）。
+- [x] `Proof` config `erp-mfg.genealogy-write-enabled` 默认值复核：核验默认值（`ErpMfgConstants` / AppConfig.var 读取点）+ 全 application.yaml 部署 override 普查（决定 best-effort 写入路径默认活跃性）。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` P1-RC-010 测试补充协同声明：核验 P1-RC-010（best-effort 写失败路径无测试）与本验证（运行时可观测性）的协同关系——P1-RC-010 测试补充属 MR1 修复（纯测试补充预授权），本验证评估运行时可观测性现状，二者不同控制点不同维度互补不重复。
+- [x] `Proof` P1-RC-010 测试补充协同声明：核验 P1-RC-010（best-effort 写失败路径无测试）与本验证（运行时可观测性）的协同关系——P1-RC-010 测试补充属 MR1 修复（纯测试补充预授权），本验证评估运行时可观测性现状，二者不同控制点不同维度互补不重复。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（best-effort 写失败可观测性），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
+- [x] `Proof` MA4↔A5.6 边界声明：本验证审「行为是否符合需求」（best-effort 写失败可观测性），与 A5.6 审「E2E 断言强度」边界按此执行。不重做 A5.6 E2E 断言强度审计。
       - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
-- [ ] catch 分支可观测性 census 有明确结论（仅日志/日志+告警/日志+告警+失败标记），每条有证据（file:line）
-- [ ] 基因链缺口业务影响 census 有明确结论（降级运营感知 / 召回漏报合规风险），每条有证据（file:line）
+- [x] catch 分支可观测性 census 有明确结论（仅日志/日志+告警/日志+告警+失败标记），每条有证据（file:line）
+- [x] 基因链缺口业务影响 census 有明确结论（降级运营感知 / 召回漏报合规风险），每条有证据（file:line）
 
 ### Phase 2 - 可观测性裁决 + 业务影响 + finding 衔接 + §8 自检
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-06-2025-rc-ma4-a4-2-9-mfg-batch-genealogy-write-failure-observability.md`（定稿）；`docs/audits/arm-index.md`（P1-RC-010 注记更新或 residual gap 登记，若有）
 Skill: none
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: Phase 1 catch 分支可观测性 census + 监控采集 + 业务影响 census 完成
 
-- [ ] `Decision` P1-RC-010 best-effort 写失败路径运行时可观测性裁决（方法论 §2 判据 + 三源对照）：①catch 仅 LOG.error + 无监控采集 + 缺口致召回报告降级无运营感知 → **维持 P1-RC-010**（测试补充义务）+ **登记 residual observability gap watch-only**（归 MR1，增强 catch 可观测性[notify 告警/失败标记]纯 BizModel 预授权不触 ask-first）；②catch 已有告警派发/失败标记 → 闭合可观测性，P1-RC-010 维持测试补充义务；③config 默认 off → 运行时风险限 config=true 部署，登记 config-enable 运营注意。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.11 §5 P1-RC-010 裁决分层一致。
+- [x] `Decision` P1-RC-010 best-effort 写失败路径运行时可观测性裁决（方法论 §2 判据 + 三源对照）：①catch 仅 LOG.error + 无监控采集 + 缺口致召回报告降级无运营感知 → **维持 P1-RC-010**（测试补充义务）+ **登记 residual observability gap watch-only**（归 MR1，增强 catch 可观测性[notify 告警/失败标记]纯 BizModel 预授权不触 ask-first）；②catch 已有告警派发/失败标记 → 闭合可观测性，P1-RC-010 维持测试补充义务；③config 默认 off → 运行时风险限 config=true 部署，登记 config-enable 运营注意。裁决须列明 §2 判据编号 + L1/L2/L3 三源 + 与 A1.11 §5 P1-RC-010 裁决分层一致。
       - Skill: none
-- [ ] `Add` finding/注记更新：若登记 residual observability gap → arm-index P1-RC-010 行追加运行时可观测性确认注记 + 触发 MR1 R1.0 展开器读取（本计划记录「归 MR1」）；若闭合 → arm-index P1-RC-010 行追加可观测性闭合注记（P1-RC-010 测试补充义务维持）。
+- [x] `Add` finding/注记更新：若登记 residual observability gap → arm-index P1-RC-010 行追加运行时可观测性确认注记 + 触发 MR1 R1.0 展开器读取（本计划记录「归 MR1」）；若闭合 → arm-index P1-RC-010 行追加可观测性闭合注记（P1-RC-010 测试补充义务维持）。
       - Skill: none
-- [ ] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-010 / A1.11 §5/§7 的复用关系 + P1-RC-010 测试补充协同 + A4.2.4 notify 通道家族对比 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
+- [x] `Proof` §8 过程纪律自检：运行 `bash docs/audits/nop-compliance-checker.sh` 附 actual vs baseline 表（无生产代码变更，注明「无回归风险」）；closure-audit 独立性声明；与 arm-index 交叉去重声明（与 P1-RC-010 / A1.11 §5/§7 的复用关系 + P1-RC-010 测试补充协同 + A4.2.4 notify 通道家族对比 + MA4↔A5.6 边界）。不以 checker 退出码 0 作为门控依据。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 验证报告定稿（catch 分支可观测性 census + 监控采集 + 业务影响 + 可观测性裁决 + finding 衔接 + §8 自检齐全）
-- [ ] P1-RC-010 注记更新或 residual gap 登记 + 若归 MR1 已记录
+- [x] 验证报告定稿（catch 分支可观测性 census + 监控采集 + 业务影响 + 可观测性裁决 + finding 衔接 + §8 自检齐全）
+- [x] P1-RC-010 注记更新或 residual gap 登记 + 若归 MR1 已记录
 
 ## Draft Review Record
 
@@ -127,14 +127,14 @@ Exit Criteria:
 
 > 本计划为**只读可观测性评估**（无代码/ORM/api.xml/view.xml/真相源变更），故删除完整仓库 `typecheck`/`build`/`lint`/`test` 验证命令门控。验证 = catch 分支可观测性 census + 监控采集 + 业务影响 + 可观测性裁决 + finding 衔接 + §8 过程纪律自检 + 独立草案审查 + 文本一致性 + 独立结束审计。
 
-- [ ] 范围内行为完成：A4.2.9 验证报告 catch 分支可观测性 census + 监控采集 + 业务影响 + 可观测性裁决齐全 + finding/注记更新
-- [ ] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.11 §7 SP-2 + §5 P1-RC-010 裁决一致
-- [ ] 已运行验证：catch 分支可观测性 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test）
-- [ ] 无范围内项目降级为 deferred/follow-up（若登记 finding 是验证**输出**，非范围内项目降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：A4.2.9 验证报告 catch 分支可观测性 census + 监控采集 + 业务影响 + 可观测性裁决齐全 + finding/注记更新
+- [x] 相关文档对齐：报告与方法论 §MA4 + §2 判据 + §4 Q1 + §去重协议一致；与 A1.11 §7 SP-2 + §5 P1-RC-010 裁决一致
+- [x] 已运行验证：catch 分支可观测性 census + §8 checker actual vs baseline 实测记录（本计划无代码变更故不跑 build/test；独立结束审计复跑 checker 确认 R2b=229/R2c=1382/R2d=34 与报告 §8 表逐项一致）
+- [x] 无范围内项目降级为 deferred/follow-up（登记的 residual observability gap 是验证**输出** finding，非范围内项目降级；Deferred But Adjudicated 正确分类为 out-of-scope improvement + Successor Required: yes 归 MR1）
+- [x] 独立草案审查已完成并记录（Draft Review Record iter-1 accept，独立子代理 ses_028f1a056ffe0ek87hABLZY8J6 fresh session，全 10 checklist 项 PASS 零 Blocker）
+- [x] 文本一致性已验证：Plan Status=completed / Phase 1+2 Status=completed / Exit Criteria 全 [x] / Closure Gates 全 [x] / 日志条目已补齐一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项保留为未勾选状态作为人工门控占位符
+- [x] 结束证据存在于文件中（见下 Closure Audit Evidence）
 
 ## Deferred But Adjudicated
 
@@ -146,12 +146,23 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: A4.2.9 只读运行时可观测性评估完成。验证报告（`docs/audits/2026-08-06-2025-rc-ma4-a4-2-9-mfg-batch-genealogy-write-failure-observability.md`）已落盘定稿（§0-§9 齐全），命中裁决分支①：维持 P1-RC-010（测试补充义务归 MR1）+ 登记 residual observability gap watch-only（归 MR1）。arm-index P1-RC-010 行已追加运行时可观测性确认注记。本计划无生产代码/ORM/api.xml/view.xml/真相源变更，故无回归风险，无 build/test 门控。所有 Phase 退出标准与 Closure Gates 均已独立结束审计核实。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计填写>
+- Auditor / Agent: 独立结束审计子代理（closure audit，fresh session，非计划执行者、非草案审查者 ses_028f1a056ffe0ek87hABLZY8J6）
+- Audit Method: 结构 + 语义双轴核对（SCRIPT_CHECK 修复 + Exit Criteria vs live repo + Anti-Hollow + 五点一致性 + Deferred honesty + Docs sync）
+- Live repo 核实（file:line 全部 VERIFIED 准确，非空泛）：
+  - `BatchGenealogyWriter.java:72-74` catch 分支**仅 LOG.error** —— grep `IErpSysNotificationBiz|notificationBiz|.notify(|dispatchVariance` 跨类零命中（仅 `CoreMetrics` 时间辅助命中，非 notify/metrics 计数器），无 notify 告警派发、无失败标记持久化 → 报告 §1「仅日志」裁决成立
+  - `BatchGenealogyWriter.java:239-249` `isWriteEnabled()` 默认 `"true"`，null/空/异常均回落 true → 报告 §4「默认活跃」成立
+  - `ErpMfgBatchGenealogyBizModel.recallReport` `setDegraded(true)` 结构性恒置 + `backwardTrace` 依赖 `ErpMfgBatchGenealogy` 边 → 报告 §3「缺口致静默漏报 + degraded 不反映缺口」成立
+  - config `erp-mfg.genealogy-write-enabled`：全 application.yaml **零 override**，仅 module-meta.yaml configKey 声明 → 报告 §4 成立
+- §8 Anti-Hollow 复核：独立结束审计复跑 `bash docs/audits/nop-compliance-checker.sh` → R2b=229 / R2c=1382 / R2d=34，与报告 §8 表**逐项一致**（报告 §8 numeric claims 非捏造）
+- arm-index Docs sync：`docs/audits/arm-index.md` P1-RC-010 行已含「RC 运行时可观测性确认注记（A4.2.9 SP-2 ...）」+ residual observability gap watch-only 登记
+- 文本一致性：Plan Status / Phase 1+2 Status / Exit Criteria（全 [x]）/ Closure Gates（全 [x]）/ 日志条目均一致
+- Deferred honesty：residual observability gap 为验证**输出** finding（归 MR1 successor），非范围内项目降级；Deferred But Adjudicated 分类的 out-of-scope improvement + Successor Required: yes 诚实记录
+- 日志：`docs/logs/2026/08-06.md` 已补 A4.2.9 执行条目（Docs sync gap 闭合）
 
 Follow-up:
 
-- MR1 修复 catch 分支可观测性增强 + P1-RC-010 测试补充（若登记 finding）
+- MR1 修复 catch 分支可观测性增强（notify 告警派发，对齐 A4.2.4 `dispatchVarianceFailureAlert` 范式，纯 BizModel 预授权不触 §5 ask-first）+ P1-RC-010 测试补充（若登记 finding）
