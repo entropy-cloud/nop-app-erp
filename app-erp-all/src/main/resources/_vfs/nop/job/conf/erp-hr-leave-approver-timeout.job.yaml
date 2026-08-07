@@ -1,0 +1,10 @@
+jobName: erp-hr-leave-approver-timeout
+enabled: "@cfg:nop.job.erp-hr-leave-approver-timeout.enabled|false"
+displayName: HR Leave Approver Timeout Escalation
+description: 每日 01:00 扫描超时未审批休假单（SUBMITTED 且 updateTime 超阈值）自动转派直接上级/部门负责人 + 派发通知；cron 经 erp-hr.leave-approver-timeout-cron 配置门控
+jobGroup: erp-hr
+trigger:
+  cronExpr: "@cfg:nop.job.erp-hr-leave-approver-timeout.cron-expr|0 0 1 * * ?"
+invoker:
+  bean: erpHrLeaveApproverTimeoutJob
+  method: execute

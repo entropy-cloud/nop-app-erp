@@ -42,6 +42,8 @@
 
     <!-- HR 合同到期扫描 Job Bean（UC-HR-07），由 scheduler.yaml 经 BeanMethodJobInvoker 反射调用 -->
     <bean id="erpHrContractExpiryJob" class="app.erp.hr.service.job.ErpHrContractExpiryJob"/>
+    <!-- HR 休假审批超时转派 Job Bean（UC-HR-02⑦），由 scheduler.yaml 经 BeanMethodJobInvoker 反射调用 -->
+    <bean id="erpHrLeaveApproverTimeoutJob" class="app.erp.hr.service.job.ErpHrLeaveApproverTimeoutJob"/>
     <!-- per-mutation Processor beans (R6.7，processor-extension-pattern.md 每 mutation 一 Processor)：
          hr 域 30 须拆 mutation 全部拆为独立 Processor；域专属抽象基类（Abstract*）不注册。 -->
     <bean id="app.erp.hr.service.processor.ErpHrSalaryCalculateSalaryProcessor"

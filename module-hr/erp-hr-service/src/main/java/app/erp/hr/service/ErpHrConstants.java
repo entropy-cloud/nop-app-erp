@@ -251,6 +251,14 @@ public interface ErpHrConstants {
     /** 合同到期预警通知事件。 */
     String NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING = "hr.contract-expiry-warning";
 
+    // ---- 休假审批超时自动转派配置项（UC-HR-02⑦，RC-R1.4）----
+    /** 休假审批超时阈值（小时，默认 72）。 */
+    String CONFIG_LEAVE_APPROVER_TIMEOUT_HOURS = "erp-hr.leave-approver-timeout-hours";
+    /** 休假审批超时扫描 cron 表达式（空值不调度）。 */
+    String CONFIG_LEAVE_APPROVER_TIMEOUT_CRON = "erp-hr.leave-approver-timeout-cron";
+    /** 休假审批超时转派通知事件。 */
+    String NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT = "hr.leave-approver-timeout";
+
     // ---- 无薪假扣减配置项（UC-HR-06）----
     /** 无薪假是否扣减基本工资（默认 false 向后兼容）。 */
     String CONFIG_DEDUCT_UNPAID_LEAVE = "erp-hr.deduct-unpaid-leave";

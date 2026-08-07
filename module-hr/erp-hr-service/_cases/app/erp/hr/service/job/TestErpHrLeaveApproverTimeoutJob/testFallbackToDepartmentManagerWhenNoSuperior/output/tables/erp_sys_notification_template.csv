@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7604,hr.leave-approver-timeout,TPL-hr.leave-approver-timeout,IN_APP,休假审批超时转派: ${leaveCode},休假单 ${leaveCode}（${leaveType}）审批超时，已转派上级审批，请及时处理,USER_LIST,"{""userIds"":[""${superiorUserId}""]}",0,NONE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*
