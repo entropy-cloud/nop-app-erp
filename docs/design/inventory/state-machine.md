@@ -70,6 +70,15 @@
 
 负库存配置：全局配置 `erp-inv.allow-negative-stock`（默认 false），开启时跳过可用量校验，允许余额为负（特殊业务场景如先发货后入库）。
 
+批次效期拦截实现注记（RC-R1.20 / P1-RC-031，UC-INV-06 ④，2026-08-08 落地）：
+
+- **拦截点**：`ErpInvStockMoveProcessor.validateAvailable`（`doConfirm` 内、`applyReservation` 之前）首行调用 `validateBatchExpiry`——拒绝路径不进入 `applyReservation`，`reservedQuantity`/余额不变（A4.2.79 验收一致性）。
+- **触发条件**：per-line 带 batchNo + 物料 `isBatchManaged=true` + 批次 `expiryDate < 当前日期` → 抛 `ERR_BATCH_EXPIRED`（`erp.err.inv.batch-expired`），确认失败。
+- **null 语义**（A4.2.78 设计输入）：`expiryDate == null` → 跳过拦截（视为永不过期）。
+- **可配置放行**（本条「可配置放行」落地）：`erp-inv.batch-expiry-check-enabled`（默认 true），false 时守卫整体放行。
+- **移动单类型范围**：仅出库（`OUTGOING`）与内部转移（`INTERNAL_TRANSFER`，即 `reservesOnConfirm` 命中类型）拦截；INCOMING 类移动单（采购入库/退货入库）不入拦截（收过期批次属质检域职责）。
+- **负库存不豁免**：效期守卫为合规门禁，先于 `isNegativeStockAllowed()` 短路执行，`allow-negative-stock=true` 不豁免过期拦截。
+
 ## 5. 可达性
 
 - **从 DRAFT 可达**：CONFIRMED、DONE、CANCELLED 全部可达。
