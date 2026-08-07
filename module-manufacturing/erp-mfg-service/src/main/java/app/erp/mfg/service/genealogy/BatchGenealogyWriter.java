@@ -7,10 +7,13 @@ import app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -23,7 +26,9 @@ import java.time.LocalDate;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -53,13 +58,20 @@ public class BatchGenealogyWriter {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
+
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
     }
 
+    public void setNotificationBiz(IErpSysNotificationBiz notificationBiz) {
+        this.notificationBiz = notificationBiz;
+    }
+
     /**
      * 完工入库后写入基因链。config-gated（{@code erp-mfg.genealogy-write-enabled}）。
-     * best-effort：内部任何异常仅记日志、不抛出（不阻断完工入库主流程）。
+     * best-effort：内部任何异常仅记日志 + 派发失败告警、不抛出（不阻断完工入库主流程）。
      */
     public void writeOnCompletion(ErpMfgWorkOrder wo, BigDecimal completedQty, IServiceContext context) {
         if (!isWriteEnabled()) {
@@ -72,6 +84,33 @@ public class BatchGenealogyWriter {
             doWrite(wo, completedQty, context);
         } catch (Exception e) {
             LOG.error("工单 {} 完工写入批次基因链失败（best-effort，不阻断完工入库）", wo.getCode(), e);
+            dispatchGenealogyWriteFailureAlert(wo, e);
+        }
+    }
+
+    /**
+     * 基因链写失败告警派发（G3；通知失败降级不阻断主流程）。镜像
+     * {@code ErpMfgWorkOrderProcessor.dispatchVarianceFailureAlert} 范式（A4.2.4）——消除
+     * A4.2.9 residual observability gap（catch 仅 LOG.error 无监控采集通道，运营不可感知）。
+     * 无 ACTIVE 模板时 notify config-gated 静默跳过（运营侧配置模板后生效，对齐
+     * {@code IErpSysNotificationBiz.notify} 契约）。
+     */
+    protected void dispatchGenealogyWriteFailureAlert(ErpMfgWorkOrder wo, Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("workOrderId", wo.getId());
+        ctx.put("workOrderCode", wo.getCode());
+        ctx.put("errorCode", cause instanceof NopException
+                ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("基因链写失败告警派发失败（降级）：workOrderCode={}, reason={}",
+                    wo.getCode(), notifyErr.getMessage());
         }
     }
 

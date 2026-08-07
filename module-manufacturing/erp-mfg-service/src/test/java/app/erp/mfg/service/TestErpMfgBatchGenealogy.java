@@ -8,13 +8,20 @@ import app.erp.mfg.dao.entity.ErpMfgMaterialIssue;
 import app.erp.mfg.dao.entity.ErpMfgMaterialIssueLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
+import app.erp.mfg.service.genealogy.BatchGenealogyWriter;
 import app.erp.md.dao.entity.ErpMdMaterial;
+import app.erp.notify.biz.IErpSysNotificationBiz;
+import app.erp.notify.dao.entity.ErpSysNotification;
+import app.erp.notify.dao.entity.ErpSysNotificationTemplate;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
+import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.graphql.core.IGraphQLExecutionContext;
@@ -26,6 +33,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +47,13 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 生产批次基因链追溯测试（plan 2026-07-07-0305-3 §Phase 3）。
+ * 生产批次基因链追溯测试（plan 2026-07-07-0305-3 §Phase 3 + RC-R1.3 P1-RC-010 补强）。
  *
  * <p>覆盖：完工写入基因链（带批次原料→基因行落库 + 数量正确 + 无批次原料跳过 + config 关闭不写）、
  * forwardTrace（成品→原料）、backwardTrace（原料→成品）、traceChain（多级递归 + 环路防护 + maxDepth ErrorCode）、
- * recallReport（受影响成品批次集合）。
+ * recallReport（受影响成品批次集合——强断言 affectedLots 内容/degraded/sourceLotId + REJECTED 批次排除）、
+ * best-effort 写失败路径（派生 Writer 抛错 → 完工不阻断 + catch 分支 notify 告警派发落库 + 无模板静默跳过 +
+ * config 关闭跳过）。
  *
  * <p>权威：{@code docs/design/manufacturing/batch-genealogy.md}。
  */
@@ -61,6 +71,7 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     static final Long CURRENCY_ID = 6601L;
     static final Long P = 1201L;     // 产成品（FG）
     static final Long M1 = 1202L;    // 原料1
+    static final String RECIPIENT = "mfg-genealogy-recipient";
 
     @Inject
     IDaoProvider daoProvider;
@@ -68,6 +79,8 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IGraphQLEngine graphQLEngine;
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
 
     @Test
     public void testWriteOnCompletionWithBatchMaterial() {
@@ -223,17 +236,128 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
         Long lotA = seedBatch(2020L, "LOT-RECALL-A", M1, bd("10"));
         Long lotB = seedBatch(2021L, "LOT-RECALL-B", P, bd("5"));
         Long lotC = seedBatch(2022L, "LOT-RECALL-C", P, bd("3"));
+        // REJECTED 产出批次：应被 collectAffectedIfFinishedGood 排除（不出现在 affectedLots）
+        Long lotRejected = seedBatch(2023L, "LOT-RECALL-REJ", P, bd("2"),
+                ErpMfgConstants.LOT_STATUS_REJECTED);
 
-        // 问题原料批次 lotA → 影响成品 lotB、lotC
+        // 问题原料批次 lotA → 影响成品 lotB、lotC（lotC → REJECTED 批次，后者应被排除）
         seedGenealogyRow(9420L, 8010L, lotA, M1, bd("10"), lotB, P, bd("5"));
         seedGenealogyRow(9421L, 8011L, lotB, P, bd("5"), lotC, P, bd("3"));
+        seedGenealogyRow(9422L, 8012L, lotC, P, bd("3"), lotRejected, P, bd("2"));
 
         ApiResponse<?> resp = rpc(query, "ErpMfgBatchGenealogy__recallReport",
                 Map.of("lotId", lotA));
         assertEquals(0, resp.getStatus(), "recallReport 应成功: " + resp);
         assertNotNull(resp.getData(), "recallReport 应返回数据");
-        // 数据结构为 RecallReport，含 affectedLots（lotB、lotC 均为产出成品）
-        // degraded=true（当前 inventory 域未暴露位置查询）
+
+        // 强断言（P1-RC-010 测试补充义务）：sourceLotId/degraded/affectedLots 内容
+        Map<String, Object> data = (Map<String, Object>) resp.getData();
+        assertEquals(lotA, ((Number) data.get("sourceLotId")).longValue(),
+                "sourceLotId 应为入参 lotA");
+        assertEquals(Boolean.TRUE, data.get("degraded"),
+                "degraded 应为 true（位置/去向归 inventory successor，结构性恒置）");
+
+        List<?> affectedLots = (List<?>) data.get("affectedLots");
+        assertEquals(2, affectedLots.size(),
+                "受影响成品批次应恰为 lotB/lotC（REJECTED 批次排除）");
+        Map<Long, Map<String, Object>> byLotId = new HashMap<>();
+        for (Object item : affectedLots) {
+            Map<String, Object> row = (Map<String, Object>) item;
+            byLotId.put(((Number) row.get("lotId")).longValue(), row);
+        }
+        assertAffectedLot(byLotId, lotB, "LOT-RECALL-B");
+        assertAffectedLot(byLotId, lotC, "LOT-RECALL-C");
+    }
+
+    @Test
+    public void testWriteOnCompletionFailureInjectedDispatchesAlert() {
+        seedMaterial(P, null);
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedBom(9430L, P, M1, bd("1"));
+        seedNotifyTemplate(7130L, RECIPIENT);
+
+        Long woId = seedWorkOrder("WO-BG-FAIL", 9430L, bd("1"));
+        Long inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
+        seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
+        Long issueId = seedIssue("MI-BG-FAIL", woId);
+        seedIssueLineWithBatch(9431L, issueId, M1, bd("1"), inputWolId, "BATCH-M1-FAIL");
+
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+
+        // 失败注入：同包子类派生 Writer 覆盖 doWrite 直接抛 NopException（不改生产代码加测试钩子）
+        BatchGenealogyWriter failingWriter = new ThrowingBatchGenealogyWriter();
+        failingWriter.setDaoProvider(daoProvider);
+        failingWriter.setNotificationBiz(notificationBiz);
+
+        int before = countNotifications(ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE);
+        // best-effort：writeOnCompletion 不 rethrow（完工不被阻断语义）
+        failingWriter.writeOnCompletion(wo, bd("1"), null);
+
+        // catch 分支 notify 告警派发：ErpSysNotification 行落库（eventType + recipient + status=SENT）
+        assertEquals(before + 1, countNotifications(ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE),
+                "写失败应派发 mfg.production-genealogy-write-failure 通知");
+        ErpSysNotification n = findNotification(ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE);
+        assertNotNull(n, "应存在基因链写失败通知行");
+        assertEquals(RECIPIENT, n.getRecipientUserId(), "接收人应匹配模板 USER_LIST");
+        assertEquals("SENT", n.getStatus(), "通知状态应为 SENT（ErpNotifyConstants.STATUS_SENT）");
+        assertNotNull(n.getPayloadJson(), "通知 payload 应含失败上下文");
+        assertTrue(n.getPayloadJson().contains("WO-BG-FAIL"), "payload 应含 workOrderCode");
+        assertTrue(n.getPayloadJson().contains(
+                        ErpMfgErrors.ERR_MFG_GENEALOGY_LOT_NOT_FOUND.getErrorCode()),
+                "payload 应含 errorCode");
+    }
+
+    @Test
+    public void testWriteOnCompletionFailureSilentlySkipsWithoutTemplate() {
+        seedMaterial(P, null);
+        seedMaterial(M1, "MOVING_AVERAGE");
+        seedBom(9432L, P, M1, bd("1"));
+        // 不 seed 通知模板 → notify config-gated 静默跳过（对齐 IErpSysNotificationBiz.notify 契约）
+
+        Long woId = seedWorkOrder("WO-BG-NOTPL", 9432L, bd("1"));
+        Long inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
+        seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
+        Long issueId = seedIssue("MI-BG-NOTPL", woId);
+        seedIssueLineWithBatch(9433L, issueId, M1, bd("1"), inputWolId, "BATCH-M1-NOTPL");
+
+        ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+        BatchGenealogyWriter failingWriter = new ThrowingBatchGenealogyWriter();
+        failingWriter.setDaoProvider(daoProvider);
+        failingWriter.setNotificationBiz(notificationBiz);
+
+        // 无 ACTIVE 模板 → 静默跳过不抛（完工不阻断语义保持）
+        failingWriter.writeOnCompletion(wo, bd("1"), null);
+        assertEquals(0, countNotifications(ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE),
+                "无 ACTIVE 模板应静默跳过不落库");
+    }
+
+    @Test
+    public void testWriteOnCompletionDisabledConfigSkipsWriteAndAlert() {
+        setWriteEnabled(false);
+        try {
+            seedMaterial(P, null);
+            seedMaterial(M1, "MOVING_AVERAGE");
+            seedBom(9434L, P, M1, bd("1"));
+            seedNotifyTemplate(7134L, RECIPIENT);
+
+            Long woId = seedWorkOrder("WO-BG-DISABLED", 9434L, bd("1"));
+            Long inputWolId = seedWorkOrderLine(woId, M1, bd("1"), "INPUT", null);
+            seedWorkOrderLine(woId, P, bd("1"), "OUTPUT", WAREHOUSE_ID);
+            Long issueId = seedIssue("MI-BG-DISABLED", woId);
+            seedIssueLineWithBatch(9435L, issueId, M1, bd("1"), inputWolId, "BATCH-M1-DISABLED");
+
+            ErpMfgWorkOrder wo = daoProvider.daoFor(ErpMfgWorkOrder.class).getEntityById(woId);
+            BatchGenealogyWriter failingWriter = new ThrowingBatchGenealogyWriter();
+            failingWriter.setDaoProvider(daoProvider);
+            failingWriter.setNotificationBiz(notificationBiz);
+
+            // config 关闭 → writeOnCompletion 提前返回：不写基因链、不派发告警、不抛错
+            failingWriter.writeOnCompletion(wo, bd("1"), null);
+            assertEquals(0, countNotifications(ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE),
+                    "config 关闭时应跳过写入与告警派发");
+        } finally {
+            setWriteEnabled(true);
+        }
     }
 
     // ---------- seed helpers ----------
@@ -278,6 +402,10 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
     }
 
     private Long seedBatch(Long id, String batchNo, Long materialId, BigDecimal qty) {
+        return seedBatch(id, batchNo, materialId, qty, ErpMfgConstants.INV_BATCH_STATUS_OPEN);
+    }
+
+    private Long seedBatch(Long id, String batchNo, Long materialId, BigDecimal qty, String status) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvBatch> dao = daoProvider.daoFor(ErpInvBatch.class);
             ErpInvBatch batch = new ErpInvBatch();
@@ -289,7 +417,7 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
             batch.setTotalQuantity(qty);
             batch.setAvailableQuantity(qty);
             batch.setProductionDate(LocalDate.of(2026, 7, 1));
-            batch.setStatus(ErpMfgConstants.INV_BATCH_STATUS_OPEN);
+            batch.setStatus(status);
             dao.saveEntity(batch);
         });
         return id;
@@ -400,6 +528,53 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
 
     // ---------- query helpers ----------
 
+    private void assertAffectedLot(Map<Long, Map<String, Object>> byLotId, Long lotId, String batchNo) {
+        Map<String, Object> row = byLotId.get(lotId);
+        assertNotNull(row, "受影响批次应包含 lotId=" + lotId);
+        assertEquals(batchNo, row.get("batchNo"), "batchNo 应匹配");
+        assertEquals(P, ((Number) row.get("materialId")).longValue(), "materialId 应为产成品 P");
+        assertEquals(ErpMfgConstants.LOT_STATUS_RELEASED, row.get("lotStatus"), "lotStatus 应为 RELEASED");
+    }
+
+    private void seedNotifyTemplate(Long id, String recipientUserId) {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpSysNotificationTemplate> dao = daoProvider.daoFor(ErpSysNotificationTemplate.class);
+            ErpSysNotificationTemplate t = new ErpSysNotificationTemplate();
+            t.orm_propValueByName("id", id);
+            t.setNotificationType(ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE);
+            t.setName("基因链写失败告警");
+            t.setChannelSet("IN_APP");
+            t.setSubjectTpl("基因链写失败告警: ${workOrderCode}");
+            t.setBodyTpl("工单 ${workOrderCode} 完工写入批次基因链失败（best-effort，不阻断完工入库）：errorCode=${errorCode}，errorMessage=${errorMessage}");
+            t.setRecipientResolver("USER_LIST");
+            t.setRecipientConfig("{\"userIds\":[\"" + recipientUserId + "\"]}");
+            t.setMergeWindowSeconds(60);
+            t.setMergeStrategy("MERGE_BY_USER_TYPE");
+            t.setStatus("ACTIVE");
+            dao.saveEntity(t);
+        });
+    }
+
+    private int countNotifications(String eventType) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("notificationType", eventType));
+        return daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q).size();
+    }
+
+    private ErpSysNotification findNotification(String eventType) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("notificationType", eventType));
+        q.addOrderField("createTime", true);
+        q.setLimit(1);
+        List<ErpSysNotification> list = daoProvider.daoFor(ErpSysNotification.class).findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    private void setWriteEnabled(boolean enabled) {
+        AppConfig.getConfigProvider().assignConfigValue(
+                ErpMfgConstants.CONFIG_GENEALOGY_WRITE_ENABLED, String.valueOf(enabled));
+    }
+
     private List<ErpMfgBatchGenealogy> findGenealogyByWorkOrder(Long woId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("workOrderId", woId));
@@ -418,5 +593,17 @@ public class TestErpMfgBatchGenealogy extends JunitAutoTestCase {
 
     private static BigDecimal bd(String v) {
         return new BigDecimal(v);
+    }
+
+    /**
+     * 失败注入派生 Writer：覆盖 {@code doWrite} 直接抛 NopException，触发 {@code writeOnCompletion}
+     * catch 分支（RC-R1.3 测试：不 rethrow + notify 告警派发）。同包子类可覆盖 protected doWrite。
+     */
+    static class ThrowingBatchGenealogyWriter extends BatchGenealogyWriter {
+        @Override
+        protected void doWrite(ErpMfgWorkOrder wo, BigDecimal completedQty, IServiceContext context) {
+            throw new NopException(ErpMfgErrors.ERR_MFG_GENEALOGY_LOT_NOT_FOUND)
+                    .param(ErpMfgErrors.ARG_LOT_ID, wo.getId());
+        }
     }
 }

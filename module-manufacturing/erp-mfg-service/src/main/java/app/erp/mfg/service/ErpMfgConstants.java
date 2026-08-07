@@ -247,6 +247,11 @@ public interface ErpMfgConstants extends ErpMfgDocStatus {
     /** 产出批次 batchNo 派生前缀（工单 code + 序号）。 */
     String GENEALOGY_OUTPUT_BATCH_PREFIX = "FG";
 
+    /** 通知事件类型：基因链写失败告警（对应 erp_sys_notification_template.notification_type；RC-R1.3，
+     *  A4.2.9 residual observability gap 修复——catch 分支经 notify 通道告警，消除 LOG.error 无监控采集通道缺口）。
+     *  无 ACTIVE 模板时 notify config-gated 静默跳过（运营侧配置模板后生效）。 */
+    String NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE = "mfg.production-genealogy-write-failure";
+
     // ---- 制造业财一体过账（plan 2026-07-10-1100-5） ----
 
     /** WIP 在制品科目编码配置项（默认 1411；完工入库 Cr / 领料出库 Dr 共用）。经 AppConfig.var 读取，NopSysVariable 可运行时覆盖。 */
