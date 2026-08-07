@@ -1,0 +1,13 @@
+jobName: erp-fin-bank-recon-adj-reverse
+enabled: "@cfg:nop.job.erp-fin-bank-recon-adj-reverse.enabled|false"
+displayName: Finance Bank Recon Adjustment Auto Reverse
+description: 每月 1 日扫描已过账且未红冲的银行调节表（reconciliationDate < 当月第一天）逐条红冲 BANK_RECON_ADJ 未达调整凭证；业务 config erp-fin.bank-recon-auto-reverse-next-month=false 时跳过；单条失败隔离（CLOSED 期间候选保持 POSTED 下月重试）
+jobGroup: erp-fin
+trigger:
+  cronExpr: "@cfg:nop.job.erp-fin-bank-recon-adj-reverse.cron-expr|0 30 1 1 * ?"
+invoker:
+  bean: nopBatchTaskRunner
+  method: executeAsync
+params:
+  taskPath: /nop/batch-task/fin/bank-recon-auto-reverse.batch.xml
+  params: {}

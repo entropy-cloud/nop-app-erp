@@ -1,0 +1,30 @@
+<batch taskName="fin.bank-recon-auto-reverse"
+       batchSize="50"
+       transactionScope="process"
+       saveState="true"
+       x:schema="/nop/schema/task/batch.xdef"
+       xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:c="c">
+
+    <!-- 扫描已过账且跨期未红冲的银行调节表（reconciliationDate 早于当月第一天），
+         逐条经 helper 红冲 BANK_RECON_ADJ 调整凭证；单条失败隔离由 helper 内 try/catch + WARN 日志承载。 -->
+    <loader>
+        <orm-reader entityName="app.erp.fin.dao.entity.ErpFinBankReconciliation">
+            <query>
+                <filter>
+                    <and>
+                        <eq name="docStatus" value="POSTED"/>
+                        <lt name="reconciliationDate" value="${java.time.LocalDate.now().withDayOfMonth(1)}"/>
+                    </and>
+                </filter>
+            </query>
+        </orm-reader>
+    </loader>
+
+    <processor name="process">
+        <source><![CDATA[
+            const helper = inject('erpFinBankReconAutoReverseHelper');
+            helper.reverseOne(item.id, batchChunkCtx.serviceContext);
+        ]]></source>
+    </processor>
+</batch>

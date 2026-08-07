@@ -215,6 +215,13 @@
     <bean id="app.erp.fin.service.bankrecon.BankReconAdjustmentVoucherBuilder"
           class="app.erp.fin.service.bankrecon.BankReconAdjustmentVoucherBuilder"/>
 
+    <!-- 银行对账自动红冲帮助类（plan 2026-08-07-1932-3 Phase 1，P1-RC-005 调度接线）：
+         供 nop-batch bank-recon-auto-reverse.batch.xml processor 按记录调用，消费
+         erp-fin.bank-recon-auto-reverse-next-month config 门控（默认 true，机制开关），
+         逐条 REQUIRES_NEW 红冲（仅调用既有 BankReconciliationBuilder.reverse 入口）+ 单条失败隔离。 -->
+    <bean id="erpFinBankReconAutoReverseHelper"
+          class="app.erp.fin.service.bankrecon.ErpFinBankReconAutoReverseHelper"/>
+
     <!-- 银行对账未达账项调整凭证 Provider（处理 BANK_RECON_ADJ，注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合）。 -->
     <bean id="app.erp.fin.service.bankrecon.BankReconAdjAcctDocProvider"
           class="app.erp.fin.service.bankrecon.BankReconAdjAcctDocProvider"/>
