@@ -248,6 +248,12 @@ notify 是已实现的跨域子系统但无 use-cases 文件。**Q1 裁决：0.2
 | **TRUTH-Q10 use-cases 命名对齐**（Q10=选项 A） | P2-RC-005/011/016/012 的真相源命名修订，经批准按 §9 流程登记（变更理由 + 影响面 + 批准人） | 其他真相源契约段修订仍须 §9 冻结人工批准 |
 
 > **Q1 裁决覆盖自动展开时机**：R1.0 展开器启动时机由同一报告 §5 Q1 约束——「**MA1-MA4 完成后不自动启动，保持 todo，待另行人工裁决**」。cold-start driver 读到本段应据此跳过自动展开。
+>
+> **§7 追加裁决（2026-08-08，同一讨论文档 §7）覆盖本段**：
+> - **R1.0-2026-08-08（A1）**：经人工裁决 **R1.0 分批启动**——第一批纯预授权类修复（A2 代码逻辑类），第二批越界项逐项暂停 ask-first。cold-start driver 据此展开 R1.0，不视为"自动展开"违规（Q1 已由 §7 A1 撤销挂起状态）。
+> - **P1-RC-091（A3）**：试算平衡 BUDGET/COMMITMENT 过滤**属会计核心路径**，须独立 plan-audit + ask-first，不自动执行。
+> - **P2-RC-061（A4）**：修复形态=**纯逻辑修复**（`EquipmentStatusLinker.restoreToRunning` 补 IDLE 分支），不改 ORM，按 A2 预授权。
+> - **P2-RC-057（A5）**：修复=ORM `ErpMdMaterialCategory.priceValidationLevel` defaultValue 改 `"WARN"`，纯收敛修复（不改表结构/既有数据/行为），按 ORM-Q3 纯加性类自动执行。
 
 ---
 

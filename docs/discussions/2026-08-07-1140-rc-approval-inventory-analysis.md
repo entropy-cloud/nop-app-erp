@@ -212,4 +212,22 @@
 - **Q4（收敛性会计修复批量授权）覆盖会计核心路径门**：限于 *使实现向 owner doc 契约收敛的修复*，**不得反向修改 owner doc 契约段**（§9 冻结不因此解除）；核心路径（VoucherFact / PostingProcessor）改动行为仍须独立 plan-audit。
 - **Q10 触发 §9 真相源修订流程**：P2-RC-005/011/016/012 use-cases 命名对齐修订按 §9 登记变更理由 + 影响面 + 批准人。
 - **不被废止的**：§3 A1-A4 预授权范围及其否定范围（Q3/Q4 的扩权仍受 §3 限制）；Q4=(a) P0/P1 强制实现禁方案 B；§5 其余行。
-- **后续动作**：MA4 完成后，driver 将本裁决回写 `docs/backlog/requirement-compliance-roadmap.md`（预授权声明追加 Q3/Q4 批量授权行 + MR1 R1.0 行标注「Q1 人工裁决：不自动启动，待另行裁决」），并更新 `docs/audits/requirement-compliance-methodology.md §5 预授权类目清单` 登记批量授权边界，确保 cold-start driver 只读 roadmap + methodology 即可读到本裁决。
+- **后续动作**：MA4 完成后，driver 将本裁决记录回写 `docs/backlog/requirement-compliance-roadmap.md`（预授权声明追加 Q3/Q4 批量授权行 + MR1 R1.0 行标注「Q1 人工裁决：不自动启动，待另行裁决」），并更新 `docs/audits/requirement-compliance-methodology.md §5 预授权类目清单` 登记批量授权边界，确保 cold-start driver 只读 roadmap + methodology 即可读到本裁决。
+
+---
+
+## §7 追加人工裁决（2026-08-08，R1.0 启动方式与越界项收口）
+
+> 批准人：用户（人工逐项裁决）；时间：2026-08-08。本段为 2026-08-07 Q1-Q10 后，MA4 全 done 时点的继裁决，覆盖 R1.0 启动方式与 MR1 执行中的越界项处理。生效即日。
+
+**裁决背景**：Q1（2026-08-07）裁决「R1.0 不自动启动，待另行人工裁决」；MA1-MA4 全部 done（185+ 实体行）后，用户于 2026-08-08 逐项裁决如下：
+
+| # | 裁决项 | 裁决（用户确认） | 执行含义 |
+|---|--------|----------------|---------|
+| A1 | R1.0 启动方式 | **分批启动** | 先执行纯预授权类修复（A2 代码逻辑类，约 30+ 项：P1-RC-003/010/017/019 等，不触 ORM/会计核心/删除），driver 自动逐项 DRAFT_PLANS → 审查 → EXECUTE → closure → done；越界项按 A2 逐项暂停 |
+| A2 | 越界项处理机制（Q3/Q4 批量授权覆盖之外） | **逐项暂停 ask-first** | 每个越界项仍走标准流程：独立 fix plan + 独立 plan-audit + plan 内 `- [ ] ask-first 人工确认` checkbox；driver 执行到越界行即暂停等待人工批准，非触及行继续。越界项指：改既有语义 ORM（P1-RC-006/092 等）、会计核心路径行为（VoucherFact/PostingProcessor）、数据删除链路（P1-RC-062 SKU 删除、P1-RC-079 purgeDate→delete）、真相源契约段修订 |
+| A3 | P1-RC-091（试算平衡 BUDGET/COMMITMENT 过滤）是否属会计核心路径 | **属核心路径，ask-first** | 虽为读侧过滤（BizModel/查询层），但涉及会计聚合正确性 + 与 P1-RC-007/085 关联 → 按核心路径独立 plan-audit + ask-first，不自动执行 |
+| A4 | P2-RC-061（IDLE 设备恢复分支缺失）修复形态 | **纯逻辑修复（预授权）** | `EquipmentStatusLinker.restoreToRunning` 补 IDLE 分支，纯 BizModel 逻辑，不改 ORM，按 A2 预授权自动执行 |
+| A5 | P2-RC-057（priceValidationLevel defaultValue="20" 孤儿非字典值）修复方案 | **ORM 默认值改 WARN** | `ErpMdMaterialCategory.priceValidationLevel` defaultValue 改 `WARN`；纯收敛修复（不改表结构/既有数据/行为），按 Q3 纯加性类自动执行 |
+
+> **生效与覆盖**：本段裁决自 2026-08-08 生效，是 R1.0 启动方式 + 越界项处理 + P1-RC-091/P2-RC-061/P2-RC-057 的权威登记。A1 覆盖 §6 Q1「不启动」的后续裁决（改分批启动，正式撤销「无限期挂起」状态）；A2-A5 不扩大 Q3/Q4 批量授权范围（越界项仍逐项暂停，本段仅确定处理机制）；Q4=(a) P0/P1 强制实现禁方案 B、§3 A1-A4 预授权范围、§5-Q10 真相源修订流程均不被废止。driver 按本段 + roadmap 执行 R1.0。
