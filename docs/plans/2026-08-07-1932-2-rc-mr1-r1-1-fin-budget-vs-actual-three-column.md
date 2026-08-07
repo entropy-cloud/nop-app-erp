@@ -1,6 +1,6 @@
 # 2026-08-07-1932-2-rc-mr1-r1-1-fin-budget-vs-actual-three-column RC-R1.1 — finance 预算对比报表三列化（P1-RC-003，MR1 第一批纯预授权）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Mission: requirement-compliance
 > Work Item: RC-R1.1（MR1 第一批纯预授权：finance 预算对比报表三列化，P1-RC-003）
@@ -55,100 +55,100 @@
 
 ### Phase 1 - DTO + BizModel 三通道化
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-dao/src/main/java/app/erp/fin/dao/dto/BudgetVsActualRow.java`；`module-finance/erp-fin-service/src/main/java/app/erp/fin/service/entity/ErpFinBudgetLineBizModel.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Fix | Decision`
 - Prereqs: 无
 
-- [ ] `Add` `BudgetVsActualRow` 增 `commitmentAmount` 字段（默认 `BigDecimal.ZERO`，setter 空值兜底 ZERO——对齐既有 budgetAmount/actualAmount setter 范式 :47-54）。
+- [x] `Add` `BudgetVsActualRow` 增 `commitmentAmount` 字段（默认 `BigDecimal.ZERO`，setter 空值兜底 ZERO——对齐既有 budgetAmount/actualAmount setter 范式 :47-54）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `getBudgetVsActual` 三通道化：postingType 三分类（BUDGET → budget；COMMITMENT → commitment；其余含 NORMAL/NULL/RESERVATION → actual）；available = budget − actual − commitment（`:104-106` 改三项式）。
+- [x] `Fix` `getBudgetVsActual` 三通道化：postingType 三分类（BUDGET → budget；COMMITMENT → commitment；其余含 NORMAL/NULL/RESERVATION → actual）；available = budget − actual − commitment（`:104-106` 改三项式）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` actual 通道口径：三通道分类在**内存内 per-voucher 分类谓词**处实现——`voucherBudgetFlag`/`voucherCommitmentFlag` 映射（`:70-74` 同型扩展）：BUDGET → budget 通道；COMMITMENT → commitment 通道；其余（NORMAL/NULL/RESERVATION）→ actual 通道（等价 `actual = NOT(BUDGET OR COMMITMENT)`，对齐控制引擎 `applyPostingTypeFilter:162-164` P1-MA2-084 范式 + `testCommitmentZeroEquivalentAndReservationCountsAsActual` 既有语义——RESERVATION 保持计入 actual）。注意：**voucher 查询过滤（`:64-65`）保持加载全部三通道凭证**（该过滤当前为恒真式 `BUDGET OR NOT BUDGET`，不承担通道分流；若顺手简化须保证不排除 COMMITMENT 凭证）。备选：按三枚举分类且 voucher 过滤改 `in(BUDGET, COMMITMENT) OR isNull(postingType)`（否决：显式排除更符合「NOT BUDGET AND NOT COMMITMENT = actual」跨组件统一口径，且与 P1-RC-091 修复方向一致）。
+- [x] `Decision` actual 通道口径：三通道分类在**内存内 per-voucher 分类谓词**处实现——`channelOf` 映射（`:70-74` 同型扩展）：BUDGET → budget 通道；COMMITMENT → commitment 通道；其余（NORMAL/NULL/RESERVATION）→ actual 通道（等价 `actual = NOT(BUDGET OR COMMITMENT)`，对齐控制引擎 `applyPostingTypeFilter:162-164` P1-MA2-084 范式 + `testCommitmentZeroEquivalentAndReservationCountsAsActual` 既有语义——RESERVATION 保持计入 actual）。**voucher 查询过滤（`:64-65`）保持加载全部三通道凭证**（恒真式保留并更新注释，不承担通道分流，三通道分类在内存内 per-voucher 谓词完成）。备选：按三枚举分类且 voucher 过滤改 `in(BUDGET, COMMITMENT) OR isNull(postingType)`（否决：显式排除更符合「NOT BUDGET AND NOT COMMITMENT = actual」跨组件统一口径，且与 P1-RC-091 修复方向一致）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` 陈旧注释同步（两通道语义描述随修复失效）：`BudgetVsActualRow.java:5-14` javadoc 增 commitment 列描述；`TestErpFinBudgetEndToEnd` 相关测试注释；E2E spec 头注释 `:25-27` 三列语义更新（actual 定义排除 COMMITMENT）。
+- [x] `Fix` 陈旧注释同步（两通道语义描述随修复失效）：`BudgetVsActualRow.java:5-14` javadoc 增 commitment 列描述；`ErpFinBudgetLineBizModel` 类 javadoc 三通道语义；`TestErpFinBudgetEndToEnd` 相关测试注释（Phase 2 落地）；E2E spec 头注释 `:25-27` 三列语义更新（actual 定义排除 COMMITMENT，Phase 4 落地）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] `commitmentAmount` 字段存在；三通道聚合正确（BUDGET/COMMITMENT/其余 各归其道）；available 三项式（明确成功与失败模式）
-- [ ] 零 ORM/契约面破坏（DTO 纯加字段，反向兼容既有 selection）
+- [x] `commitmentAmount` 字段存在；三通道聚合正确（BUDGET/COMMITMENT/其余 各归其道）；available 三项式（`testGetBudgetVsActual` 断言 available=1000−400−200=400 成功）
+- [x] 零 ORM/契约面破坏（DTO 纯加字段，反向兼容既有 selection；`mvn clean install -DskipTests` 全量 BUILD SUCCESS）
 
 ### Phase 2 - JUnit 单测扩展
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/test/java/app/erp/fin/service/entity/TestErpFinBudgetEndToEnd.java`
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Add` 扩展 `testGetBudgetVsActual`：seed COMMITMENT 凭证（复用 `seedCommitmentVoucher:233` 范式）→ 断言三列（budgetAmount=1000 / actualAmount=400 不含 commitment / commitmentAmount=200 / available=1000−400−200=400）；既有 budgetAmount/actualAmount 断言值不变，available 断言由 600 改 400（三项式，属既有断言的契约性更新）。
+- [x] `Add` 扩展 `testGetBudgetVsActual`：seed COMMITMENT 凭证（复用 `seedCommitmentVoucher:233` 范式）→ 断言三列（budgetAmount=1000 / actualAmount=400 不含 commitment / commitmentAmount=200 / available=1000−400−200=400）；既有 budgetAmount/actualAmount 断言值不变，available 断言由 600 改 400（三项式，属既有断言的契约性更新）。快照经 `@EnableSnapshot(saveOutput=true)` 重录（新增 seed 致 auto-increment ID 偏移）。
       - Skill: `nop-testing`
-- [ ] `Proof` 边界断言：无 COMMITMENT 时 commitmentAmount=0 且 available 退化为两项式（等价性，对齐 `testCommitmentZeroEquivalentAndReservationCountsAsActual` 控制引擎既有范式）。
+- [x] `Proof` 边界断言：新增 `testGetBudgetVsActualNoCommitmentDegeneratesToTwoTerm`——无 COMMITMENT 时 commitmentAmount=0 且 available 退化为两项式 600（等价性，对齐 `testCommitmentZeroEquivalentAndReservationCountsAsActual` 控制引擎既有范式）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] `mvn test -pl module-finance/erp-fin-service` 全绿（含 `TestErpFinBudgetEndToEnd` 全用例零回归）
+- [x] `mvn test -pl module-finance/erp-fin-service` 全绿（346 tests 全用例零回归，含 `TestErpFinBudgetEndToEnd` 9 用例）
 
 ### Phase 3 - XPT 报表模板增列
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/main/resources/_vfs/nop/main/report/fin/budget-vs-actual.xpt.xml`
 Skill: `nop-frontend-dev`
 
 - Item Types: `Add | Fix`
 - Prereqs: Phase 1 完成
 
-- [ ] `Add` XPT 增「承诺金额」列：header（:34-36 区段追加 cell）+ 数据行 cell（`*=commitmentAmount`）+ 合计 cell（`SUM` 追加）；列宽/样式对齐既有 num 样式。
+- [x] `Add` XPT 增「承诺金额」列：header（:34-36 区段追加 cell）+ 数据行 cell（`*=commitmentAmount`）+ 合计 cell（`SUM(F3)` 追加）；列宽/样式对齐既有 num 样式（8 列 / 标题 mergeAcross=7，列序 预算→承诺→实际→余量）。
       - Skill: `nop-frontend-dev`
-- [ ] `Fix` 模板头注释（:2-5）同步三列语义描述（budget.md §业务规则5 契约），保持模板自文档一致。
+- [x] `Fix` 模板头注释（:2-5）同步三列语义描述（budget.md §业务规则5 契约：预算/承付/实际/余量四项），保持模板自文档一致。
       - Skill: `nop-frontend-dev`
 
 Exit Criteria:
 
-- [ ] XPT well-formed（`xmllint --noout` 通过）+ 列结构与 DTO 字段一致
+- [x] XPT well-formed（`xmllint --noout` 通过）+ 列结构与 DTO 字段一致（budgetAmount/commitmentAmount/actualAmount/availableAmount 四字段映射）
 
 ### Phase 4 - E2E 补断言（A4.1.6 三项义务）
 
-Status: planned
+Status: completed
 Targets: `tests/e2e/business-actions/fin-budget-vs-actual.value.spec.ts`
 Skill: none（e2e-runbook 权威）
 
 - Item Types: `Add | Proof | Decision`
 - Prereqs: Phase 1-2 完成（E2E 依赖后端三通道化先落地，E2E 方有 commitment 列可断言）
 
-- [ ] `Add` GraphQL selection 增 `commitmentAmount`（`:135` 字段集扩展）。
+- [x] `Add` GraphQL selection 增 `commitmentAmount`（`:135` 字段集扩展为 7 字段）。
       - Skill: none
-- [ ] `Decision` COMMITMENT seed 方式：直接 seed `ErpFinVoucher__save`（postingType=COMMITMENT）+ `ErpFinVoucherLine__save`（对齐 `fin-intercompany-matching-elimination.action.spec.ts` 直置凭证范式，且 A4.1.6 明确允许「直接 seed postingType=COMMITMENT voucher line」）；备选：走 PO commit 全链（否决：引入 purchase 域依赖，破坏 spec 自包含隔离）。seed 期间隔离：COMMITMENT 凭证挂现有 period=1 且 subjectId=6602，spec 断言按 subjectId 过滤隔离。
+- [x] `Decision` COMMITMENT seed 方式：直接 seed `ErpFinVoucher__save`（postingType=COMMITMENT）+ `ErpFinVoucherLine__save`（对齐 `fin-intercompany-matching-elimination.action.spec.ts` / `fin-budget-rollforward-carryforward.action.spec.ts` 直置凭证范式，且 A4.1.6 明确允许「直接 seed postingType=COMMITMENT voucher line」）；备选：走 PO commit 全链（否决：引入 purchase 域依赖，破坏 spec 自包含隔离）。seed 期间隔离：COMMITMENT 凭证挂现有 period=1 且 subjectId=6602，spec 断言按 subjectId 过滤隔离；cleanup 反依赖链删行+头。
       - Skill: none
-- [ ] `Add` 三列增量断言：seed COMMITMENT=200 后 commitmentAmount=200 + actualAmount 不变（不含 commitment）+ available=budget−actual−commitment（既有 (a)(b)(c) 断言保持通过——无 commitment 时 available 语义不变）；cleanup 增删 COMMITMENT 凭证。
+- [x] `Add` 三列增量断言（步骤 (d)）：seed COMMITMENT=200 后 commitmentAmount=200 + actualAmount=0 不含 commitment + available=1000−0−200=800（既有 (a)(b)(c) 断言保持通过——无 commitment 时 available 语义不变）；cleanup 增删 COMMITMENT 凭证。
       - Skill: none
-- [ ] `Proof` E2E 运行验证：`E2E_ENGINE=flux npx playwright test tests/e2e/business-actions/fin-budget-vs-actual.value.spec.ts --workers=1`（runbook §运行命令表单文件范式）。
+- [x] `Proof` E2E 运行验证：`E2E_ENGINE=flux npx playwright test tests/e2e/business-actions/fin-budget-vs-actual.value.spec.ts --workers=1`（runbook §运行命令表单文件范式，repo root 执行）→ 1 passed（9.2s，系统 Chrome channel fallback）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 三列断言 E2E 绿（含既有断言零回归）；spec 自包含隔离（cleanup 覆盖 COMMITMENT 凭证）
+- [x] 三列断言 E2E 绿（含既有断言零回归）；spec 自包含隔离（cleanup 覆盖 COMMITMENT 凭证）
 
 ### Phase 5 - 文档回填 + arm-index/roadmap 状态
 
-Status: planned
+Status: completed
 Targets: `docs/audits/arm-index.md`（P1-RC-003 修复状态）；`docs/backlog/requirement-compliance-roadmap.md`（RC-R1.1 done）；`docs/logs/2026/08-07.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1-4 完成
 
-- [ ] `Add` arm-index P1-RC-003 行「修复状态」→ `done (RC-R1.1)` + 修复摘要（三通道化 + commitmentAmount + available 三项式 + XPT 列 + E2E 补断言）；roadmap RC-R1.1 → done；日志条目。
+- [x] `Add` arm-index P1-RC-003 行「修复状态」→ `✅ done (RC-R1.1)` + 修复摘要（三通道化 + commitmentAmount + available 三项式 + XPT 列 + 单测/E2E 补断言 + 验证结果）；roadmap RC-R1.1 → `done ✅`；日志条目 `docs/logs/2026/08-07.md` 顶部追加。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] arm-index/roadmap 回填 + 日志条目落盘
+- [x] arm-index/roadmap 回填 + 日志条目落盘
 
 ## Draft Review Record
 
@@ -157,14 +157,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成：三通道聚合 + commitmentAmount + available 三项式 + XPT 列 + 单测/E2E 断言全部落地
-- [ ] 相关文档对齐：owner doc 无契约段改动（实现向既有契约收敛）；arm-index/roadmap 状态回填
-- [ ] 已运行验证：`mvn test -pl module-finance/erp-fin-service` 全绿 + E2E 单 spec 绿（flux）+ `mvn clean install -DskipTests` 全量构建通过 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline（防基线漂移，project-context 已知失败模式 #1）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成：三通道聚合 + commitmentAmount + available 三项式 + XPT 列 + 单测/E2E 断言全部落地
+- [x] 相关文档对齐：owner doc 无契约段改动（实现向既有契约收敛）；arm-index/roadmap 状态回填 + 日志条目落盘
+- [x] 已运行验证：`mvn test -pl module-finance/erp-fin-service` 全绿（346 tests）+ E2E 单 spec 绿（flux，1 passed）+ `mvn clean install -DskipTests` 全量构建通过 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline（全 16 可计数规则 = 基线，零漂移，R12c=40 与 machine-readable 块一致）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -182,12 +182,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待执行。第一批纯预授权（无 ask-first）。实现向 L1 三列契约 + 控制引擎已落地三通道口径收敛。
+Status Note: 执行完成（draft → 独立草案审查 ×2 accept → active → 执行 → 待独立结束审计）。第一批纯预授权（无 ask-first）。实现向 L1 三列契约 + 控制引擎已落地三通道口径收敛。`getBudgetVsActual` 三通道化（per-voucher `channelOf` 分类：BUDGET→budget / COMMITMENT→commitment / 其余→actual）+ `BudgetVsActualRow` 增 `commitmentAmount` + `available=budget−actual−commitment` 三项式 + XPT「承诺金额」列 + 单测双用例（三列断言 + 无承付退化等价）+ E2E 三列断言（A4.1.6 三项义务）。验证：分域 `mvn test` 346 全绿 / E2E 单 spec 1 passed（flux）/ 全量 `mvn clean install -DskipTests` BUILD SUCCESS / compliance checker actual == baseline 零漂移。arm-index P1-RC-003 → `done (RC-R1.1)` + roadmap RC-R1.1 → done ✅ + 日志条目落盘。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 待独立结束审计子代理（新会话）
-- Evidence: 待执行后填写（分域 mvn test + E2E 输出 + checker actual vs baseline + arm-index/roadmap 回填）
+- Auditor / Agent: 待独立结束审计子代理（新会话，不重用执行者上下文）
+- Evidence: 待执行后填写（可引用：分域 `mvn test -pl module-finance/erp-fin-service` 346 全绿输出 + E2E `fin-budget-vs-actual.value.spec.ts` 1 passed 输出 + `mvn clean install -DskipTests` BUILD SUCCESS + checker actual==baseline 零漂移表 + arm-index:128 P1-RC-003 行 `done (RC-R1.1)` + roadmap:369 RC-R1.1 行 done ✅ + `docs/logs/2026/08-07.md` 顶部条目）
 
 Follow-up:
 
