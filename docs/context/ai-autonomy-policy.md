@@ -80,6 +80,8 @@ AI 编写或修改的文档（包括 owner docs）不能作为放宽自主权、
 - `plan-first` - AI 可以起草计划，但实施需要计划审计加上表中的必需证据。如果审查者可用性为 `none`，实施保持阻塞。
 - `research-only` 或 `blocked` - AI 不得更改产品行为。
 
+**人工扩展授权登记（2026-08-07 批准 / 2026-08-08 生效）**：`requirement-compliance` mission 存在用户逐项裁决 `docs/discussions/2026-08-07-1140-rc-approval-inventory-analysis.md` §5/§6，对 `model/*.orm.xml`（纯加性变更）与 `accounting/finance`（收敛性修复）两保护区域授予**有限批量授权**，边界判据见 `docs/audits/requirement-compliance-methodology.md §5`（Q3/Q4 人工扩展授权）+ `docs/backlog/requirement-compliance-roadmap.md` 文件头预授权声明。该授权限定于该 mission 已列明子集，不是对保护区域表的普遍放宽；超边界项仍按表中规则 ask first / blocked。另据同一裁决 Q1：该 mission 的 MR1 R1.0 **不自动启动**（保持 todo，待另行人工裁决），driver 在 MA4 完成后不得自动展开 R1.0。
+
 **外部仓库代码边界**（nop-chaos-flux / nop-chaos-next / nop-entropy）：
 
 - 一般情况可以在 `nop-chaos-flux` 等兄弟仓库**增加测试/复现用例**（按各自项目自身流程，如 nop-chaos-flux 的 `flux-guide/13-testing.md` 测试设施）；

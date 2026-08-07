@@ -17,6 +17,14 @@
 > - 会计过账逻辑变更（VoucherFact / PostingProcessor 核心路径）：**须 ask-first** + 独立 plan-audit
 > - 数据删除 / 数据迁移：**须 ask-first** + 独立 plan-audit
 > - 未列明的修复类目默认须 ask-first
+>
+> **2026-08-07 人工裁决登记**（`docs/discussions/2026-08-07-1140-rc-approval-inventory-analysis.md` §5/§6，批准人：用户，生效 2026-08-08）：
+> - **Q1**：MA1-MA4 完成后 **R1.0 不自动启动**，保持 `todo`，待另行人工裁决（覆盖 MR1 自动展开时机）
+> - **Q2**：类目 A1-A4（文档更新 + 代码逻辑 + P2 登记 + MA4 只读）确认自动执行
+> - **Q3**：**纯加性 ORM 变更批量授权**（加列/加 UK/新增实体，不改既有语义、无 NOT NULL 无默认列、无既有数据 UK 增设、无删除/迁移/索引改造），越界回落 ask-first
+> - **Q4**：**收敛性会计修复批量授权**（使实现向 owner doc 契约收敛，不反向改契约段落；不涉删除/迁移）；核心路径改动行为仍须独立 plan-audit
+> - **Q5-Q9**：P1-RC-025/029/031/062 + 表 E 重开族（P1-RC-008/009/056/061 + P1-MA2-071 + P1-RC-063）维持强制实现，Q4=(a) 无例外
+> - **Q10**：P2-RC-005/011/016/012 use-cases 真相源命名修订经批准登记（§9 流程）
 
 ## Work Item Status
 
@@ -293,10 +301,10 @@
 | A4.2.140 | A1.40 SP-3 — UC-CS-09 erp-cs-entitlement-expiry/erp-cs-csat-reminder cron enabled=true 时幂等行为（R1.28 复用） | done ✅ | 同上 §7 | A4.2 done | 同上验证报告（**维持 reuse R1.28/P1-MA2-086 resolved 注记**：两 cron job.yaml enabled 默认 false + cron 表达式接线[每日 01:30/02:00] + 全生产零 override + 幂等守卫经 R1.28 resolved；不重审并发维度，确认接线+守卫生效） |
 | A4.2.141 | A1.40 SP-4 — UC-CS-10/12 createFromCatalog 履行占位审计行前端/运维是否被误读为真实执行 | done ✅ | 同上 §7 | A4.2 done | 同上验证报告（**登记 watch-only**：writeAudit:96-106 actionType=履行类型 + content 含"占位"字样 + AMIS actionType 列无 badge 误导 + content 如实显示；建议前端区分占位 vs 真实执行 successor） |
 | A4.2.142 | A1.40 SP-5 — UC-CS-10 requestFormConfig 当前生产数据是否含可驱动校验的 schema（fields[].required） | done ✅ | 同上 §7 | A4.2 done | 同上验证报告（**维持 P1-RC-060 P1**：requestFormConfig 列存在[orm.xml:698 domain=json] + 种子/生产数据零 required schema 维护 + buildTicketData:146-156 盲拷 formData keys；必填校验缺失，修复归 MR1 纯 BizModel 预授权，须配套数据治理） |
-| A4.2.143 | A1.41 SP-2 — UC-MD-03 ④ IErpMdSupplierPriceResolver 在 purchase 域是否有未被 grep 发现接线 | todo | `2026-08-06-0100-3-...-a1-41-...md` §7 | A4.2 done | 同上 |
-| A4.2.144 | A1.41 SP-3 — UC-MD-01 ③ enforceBarcodeUnique 并发 save 的 TOCTOU 实际窗口（无 DB UK 兜底） | todo | 同上 §7 | A4.2 done | 同上 |
-| A4.2.145 | A1.41 SP-4 — UC-MD-04 ① priceValidationLevel="20" 种子分类实际 WARN 语义影响面 | todo | 同上 §7 | A4.2 done | 同上 |
-| A4.2.146 | A1.41 SP-5 — UC-MD-06 ② IErpMdSkuReferenceChecker 生产缺失下被引用 SKU 删除的实际数据完整性事件（P1-RC-062） | todo | 同上 §7 | A4.2 done | 同上 |
+| A4.2.143 | A1.41 SP-2 — UC-MD-03 ④ IErpMdSupplierPriceResolver 在 purchase 域是否有未被 grep 发现接线 | done ✅ | `2026-08-06-0100-3-...-a1-41-...md` §7 | A4.2 done | `2026-08-08-0015-rc-ma4-a4-2-143-146-master-data-runtime.md`（**维持 P1-RC-063 P1**：grep `implements IErpMdSupplierPriceResolver` 全生产代码 0 命中[仅测试桩] + beans.xml/delta/nop-dyn/Spring 注解全通道 census 零实现 + `ErpMdMaterialSkuBizModel.supplierPriceResolver:58-60` @Inject @Nullable 注入 null → `resolvePrice:147` 永假跳过 → 采购价格表层 no-op 恒落默认档；对照 customer SPI 经 `ErpSalCustomerPriceResolver.java:40` + beans.xml 注册证明机制成立；修复归 MR1 purchase 域 `ErpPurSupplierPriceResolver` 纯 SPI 实现预授权不触 ask-first，须与 A1.15-A1.17 协同） |
+| A4.2.144 | A1.41 SP-3 — UC-MD-01 ③ enforceBarcodeUnique 并发 save 的 TOCTOU 实际窗口（无 DB UK 兜底） | done ✅ | 同上 §7 | A4.2 done | 同上验证报告（**维持 P2-RC-058 P2**：`enforceBarcodeUnique:255-271` check-then-act[findList 查无 → saveEntity 无锁] + ORM `ErpMdMaterialSku` 无 `<unique-keys>` 块[仅 3 非唯一索引 :408-417] → 并发 save 同 barcode 双双落库唯一性失效窗口存在；单线程 `testBarcodeDuplicateRejected:182-214` 强测主路径 + 零并发测试；修复归 MR1 触 ORM UK 须 ask-first，登记不强制） |
+| A4.2.145 | A1.41 SP-4 — UC-MD-04 ① priceValidationLevel="20" 种子分类实际 WARN 语义影响面 | done ✅ | 同上 §7 | A4.2 done | 同上验证报告（**维持 P2-RC-057 P2 + 登记 watch-only**：ORM `ErpMdMaterialCategory.priceValidationLevel` defaultValue="20"（orm.xml:344）孤儿非字典值[dict 仅 OFF/WARN/HARD] + 全仓种子 csv/sql/json 零填充 → 新创建分类未显式赋值静默落 "20" → `resolvePriceValidationLevel:367-368` 非字典值统一 WARN → `validatePrice:201-202` passed=true+warning=true 警告但放行[与 dict WARN 行为对齐但违反字典契约]；修复方案 A[ORM defaultValue 改 "WARN" 须 ask-first]/B[文档预授权]归 MR1 人工裁决） |
+| A4.2.146 | A1.41 SP-5 — UC-MD-06 ② IErpMdSkuReferenceChecker 生产缺失下被引用 SKU 删除的实际数据完整性事件（P1-RC-062） | done ✅ | 同上 §7 | A4.2 done | 同上验证报告（**维持 P1-RC-062 P1**：grep `implements IErpMdSkuReferenceChecker` 生产 0 命中 → `skuReferenceChecker:66-68` 注入 null → `validateSkuDeactivation:220` 守卫永假 → 仅默认 SKU 守卫触发；被活跃 AP/AR 发票引用的非默认 SKU 经 AMIS delete[`_gen/_ErpMdMaterialSku.view.xml:131-140` @mutation:ErpMdMaterialSku__delete]→`defaultPrepareDelete:245-249` 实际删除成功；`useLogicalDelete=true`（orm.xml:371-374）软删保留物理行[历史 to-one 可解析]但 operational 查询消失[delVersion=0 过滤]；硬删路径 grep 零命中；**只读确认不改 ORM/删除路径，不触发 MR0**（软删主路径是设计简化非活跃物理破坏）；Q4 强制实现，修复归 MR1 触 ORM/删除路径须 ask-first） |
 | A4.2.147 | A1.42 SP-1 — generateDueVisits 自动生成路径→schedule→conflict 检测端到端运行时确认（低优先级，静态已明确） | todo | `2026-08-06-0245-1-...-a1-42-...md` §7 | A4.2 done | 同上 |
 | A4.2.148 | A1.43 SP-1 — complete 时 IDLE 设备运行时是否变 RUNNING（IDLE 分支缺失；P2-RC-061） | todo | `2026-08-06-0245-2-...-a1-43-...md` §7 | A4.2 done | 同上 |
 | A4.2.149 | A1.43 SP-2 — generateMove(OUTGOING+relatedBillType) 运行时是否真实触发库存余额扣减（跨域 inventory 行为） | todo | 同上 §7 | A4.2 done | 同上 |
@@ -348,10 +356,12 @@
 > **判据（Q4 已裁决=(a)，正式生效，无例外）**：P0/P1 需求分歧**必须实现**，**禁止用方案 B 关闭**；**无"技术不可行"例外通道**——技术不可行项（如 P0-MA2-018）须更深设计变更（如重构 billR 加判别列 + 对应 UK）；唯一出口 = 审计发现需求本身不合理时经人工批准修改 product-scope（需求变更非降级）；会计/数据安全类强制实现无例外（对齐 `ai-autonomy-policy.md`）；P2 登记不强制。R1.0 为展开器工作项（仿 audit-remediation 范式）；RC-R1.n 由 R1.0 按审计发现**自动展开**，mission driver 逐项 DRAFT_PLANS → 独立草案审查 → EXECUTE → 独立结束审计 → 写回 done，无需人工介入每个修复项（触及保护区域者除外，见横切关注点 #5）。
 >
 > **执行机制**：本里程碑**不预注册 RC-R1.n 占位行**。R1.0 展开时向本里程碑表内追加实体行（编号 RC-R1.1, RC-R1.2…，前缀 RC 避免与 audit-remediation 的 R1.x 系列混淆；每行含 finding ID 交叉引用/域/修复范围/触及保护区域标注/Skill），mission driver 按追加行正常执行。完成判据 = 本表全部实体行 done。
+>
+> **⚠ 人工裁决覆盖自动展开时机（2026-08-07 批准 / 2026-08-08 生效）**：依据 `docs/discussions/2026-08-07-1140-rc-approval-inventory-analysis.md` §5/§6 Q1 裁决，**MA4 done 后 R1.0 不自动启动，维持 `todo`，待另行人工裁决**。mission driver 按此跳过自动展开，不创建 RC-R1.n 行（当前属「已批准的不自动启动」，非 bug）。另：Q3/Q4 人工扩展授权（纯加性 ORM / 收敛性会计批量授权）见文件头预授权声明段，供 RC-R1.n 展开后按授权执行。
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| R1.0 | MA1-MA4 P0/P1 需求分歧汇总、排序并展开为具体修复工作项行（对每个分歧裁决"修复"或"登记"；触及保护区域行标注） | todo | MA1-MA4 报告 | MA1+MA2+MA3+MA4 done | none |
+| R1.0 | MA1-MA4 P0/P1 需求分歧汇总、排序并展开为具体修复工作项行（对每个分歧裁决"修复"或"登记"；触及保护区域行标注） | todo（**不自动启动，待另行人工裁决**——2026-08-07 Q1 裁决，见讨论文档 `2026-08-07-1140` §5/§6） | MA1-MA4 报告 | MA1+MA2+MA3+MA4 done | none |
 
 ### Milestone MV — 全量验证与跨维度一致性回归
 
