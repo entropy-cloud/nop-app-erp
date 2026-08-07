@@ -1,6 +1,6 @@
 # 2026-08-07-2340-3-rc-mr1-r1-4-hr-leave-approver-timeout RC-R1.4 — hr 休假审批超时自动转派（P1-RC-011，MR1 第一批纯预授权）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Mission: requirement-compliance
 > Work Item: RC-R1.4（MR1 第一批纯预授权：hr 休假审批超时自动转派，P1-RC-011）
@@ -50,68 +50,68 @@
 
 ### Phase 1 - config + job.yaml + Job bean + IoC 注册
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/src/main/java/app/erp/hr/service/ErpHrConstants.java`；`module-hr/erp-hr-service/src/main/java/app/erp/hr/service/job/ErpHrLeaveApproverTimeoutJob.java`（新建，镜像 `ErpHrContractExpiryJob`）；`module-hr/erp-hr-service/src/main/resources/_vfs/erp/hr/beans/app-service.beans.xml`（bean 注册，镜像 `erpHrContractExpiryJob` 注册先例 `:44`）；`app-erp-all/src/main/resources/_vfs/nop/job/conf/erp-hr-leave-approver-timeout.job.yaml`（新建）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Fix`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` 转派目标解析链（L2「转上级或代班人（可配置）」落地裁决）：主路径 = 直接上级（`ErpHrEmployee.superiorId`）；superiorId 为 null → 兜底部门负责人（`ErpHrDepartment.managerId`，经 employee.departmentId 关联）；两者均 null → 跳过并 LOG.warn（可观测，不静默）。代班人载体无 ORM 字段 → 不实施（Non-Goals + Deferred）。备选（否决）：仅 notify 不更新 approverId——否决理由：L1/L2 字面「转派」，approverId 是既有唯一转派记录载体（`ErpHrLeaveRequest.approverId`）；**残留风险记录**：`ErpHrLeaveRequestApproveProcessor.approve:27` 审批时 `setApproverId(resolveApproverId(context))` 会覆盖转派记录（且 `resolveApproverId` 现返回 null）——转派的**持久可追溯载体 = notify 落库行**（eventType + recipientUserId），approverId 为过程性转派标记；备选（否决）：跳过兜底——否决理由：上级缺失时部门负责人是既有组织载体，兜底可避免「上级缺失即整单漏转派」。
+- [x] `Decision` 转派目标解析链（L2「转上级或代班人（可配置）」落地裁决）：主路径 = 直接上级（`ErpHrEmployee.superiorId`）；superiorId 为 null → 兜底部门负责人（`ErpHrDepartment.managerId`，经 employee.departmentId 关联）；两者均 null → 跳过并 LOG.warn（可观测，不静默）。代班人载体无 ORM 字段 → 不实施（Non-Goals + Deferred）。备选（否决）：仅 notify 不更新 approverId——否决理由：L1/L2 字面「转派」，approverId 是既有唯一转派记录载体（`ErpHrLeaveRequest.approverId`）；**残留风险记录**：`ErpHrLeaveRequestApproveProcessor.approve:27` 审批时 `setApproverId(resolveApproverId(context))` 会覆盖转派记录（且 `resolveApproverId` 现返回 null）——转派的**持久可追溯载体 = notify 落库行**（eventType + recipientUserId），approverId 为过程性转派标记；备选（否决）：跳过兜底——否决理由：上级缺失时部门负责人是既有组织载体，兜底可避免「上级缺失即整单漏转派」。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` 超时基准时间与幂等守卫：基准 = `updateTime`（submit 更新时点，`CoreMetrics.currentTimestamp()` 对比；ORM 无 submittedAt 专列，updateTime 为 submit updateEntity 自动填充的最佳代理）；幂等 = `approverId != null && approverId == 目标人` 时跳过（首转派后 approverId 已记录 → 二次扫描不重复派发；对齐 hasEscalationAction 幂等守卫思想——不新增 ORM 字段，用既有 approverId 承载转派状态）。备选（否决）：新增 lastEscalationAt 字段——触 ORM ask-first 越界；approverId 承载已足够（转派目标唯一）。
+- [x] `Decision` 超时基准时间与幂等守卫：基准 = `updateTime`（submit 更新时点，`CoreMetrics.currentTimestamp()` 对比；ORM 无 submittedAt 专列，updateTime 为 submit updateEntity 自动填充的最佳代理）；幂等 = `approverId != null && approverId == 目标人` 时跳过（首转派后 approverId 已记录 → 二次扫描不重复派发；对齐 hasEscalationAction 幂等守卫思想——不新增 ORM 字段，用既有 approverId 承载转派状态）。备选（否决）：新增 lastEscalationAt 字段——触 ORM ask-first 越界；approverId 承载已足够（转派目标唯一）。
       - Skill: `nop-backend-dev`
-- [ ] `Add` `ErpHrConstants` 登记 config keys：`CONFIG_LEAVE_APPROVER_TIMEOUT_HOURS = "erp-hr.leave-approver-timeout-hours"`（默认 72）+ `CONFIG_LEAVE_APPROVER_TIMEOUT_CRON = "erp-hr.leave-approver-timeout-cron"`（默认空）+ notify event `NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT = "hr.leave-approver-timeout"`（对齐 `NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING` 命名）。
+- [x] `Add` `ErpHrConstants` 登记 config keys：`CONFIG_LEAVE_APPROVER_TIMEOUT_HOURS = "erp-hr.leave-approver-timeout-hours"`（默认 72）+ `CONFIG_LEAVE_APPROVER_TIMEOUT_CRON = "erp-hr.leave-approver-timeout-cron"`（默认空）+ notify event `NOTIFY_EVENT_LEAVE_APPROVER_TIMEOUT = "hr.leave-approver-timeout"`（对齐 `NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING` 命名）。
       - Skill: `nop-backend-dev`
-- [ ] `Add` `erp-hr-leave-approver-timeout.job.yaml`：jobName/enabled(`@cfg:nop.job.erp-hr-leave-approver-timeout.enabled|false`)/displayName/description/jobGroup(erp-hr)/cronExpr(`@cfg:nop.job.erp-hr-leave-approver-timeout.cron-expr|0 0 1 * * ?`)/invoker(bean=erpHrLeaveApproverTimeoutJob, method=execute)——镜像 `erp-hr-contract-expiry.job.yaml`（含 jobGroup 字段）。
+- [x] `Add` `erp-hr-leave-approver-timeout.job.yaml`：jobName/enabled(`@cfg:nop.job.erp-hr-leave-approver-timeout.enabled|false`)/displayName/description/jobGroup(erp-hr)/cronExpr(`@cfg:nop.job.erp-hr-leave-approver-timeout.cron-expr|0 0 1 * * ?`)/invoker(bean=erpHrLeaveApproverTimeoutJob, method=execute)——镜像 `erp-hr-contract-expiry.job.yaml`（含 jobGroup 字段）。
       - Skill: `nop-backend-dev`
-- [ ] `Add` **IoC bean 注册**：`app-service.beans.xml` 注册 `erpHrLeaveApproverTimeoutJob` bean（镜像 `erpHrContractExpiryJob` 注册先例 `:44`——job.yaml invoker 的 `bean:` 经 IoC 容器解析，未注册则 `BeanMethodJobInvoker` 运行时失败）。
+- [x] `Add` **IoC bean 注册**：`app-service.beans.xml` 注册 `erpHrLeaveApproverTimeoutJob` bean（镜像 `erpHrContractExpiryJob` 注册先例 `:44`——job.yaml invoker 的 `bean:` 经 IoC 容器解析，未注册则 `BeanMethodJobInvoker` 运行时失败）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `ErpHrLeaveApproverTimeoutJob`：execute() = cron config 空则跳过（对齐 `ErpHrContractExpiryJob.execute:54-59`）；扫描 `status=SUBMITTED` 且 `updateTime < now - timeoutHours`（`eq("status")` + `lt("updateTime")`，分页 limit 保护）→ 逐条 runTimeoutEscalation：解析 employee → superior/manager 兜底 → 幂等检查 → `setApproverId` + updateEntity + 派发 notify（`hr.leave-approver-timeout`，ctx = leaveCode/leaveType/employeeId/submitterUserId/superiorUserId/superiorId，USER_LIST 模板 `${superiorUserId}` 插值）+ 单条失败隔离 try/catch LOG.warn（对齐 `ErpHrContractExpiryJob.runExpiryWarnings:71-87`）。submitterUserId 解析：employee → 关联 NopAuthUser（userName 约定，经 I*Biz/平台查询——执行时按既有 `TestErpSysNotificationRecipientResolverRuntime` seed 范式确认映射键）。
+- [x] `Fix` `ErpHrLeaveApproverTimeoutJob`：execute() = cron config 空则跳过（对齐 `ErpHrContractExpiryJob.execute:54-59`）；扫描 `status=SUBMITTED` 且 `updateTime < now - timeoutHours`（`eq("status")` + `lt("updateTime")`，分页 limit 保护）→ 逐条 runTimeoutEscalation：解析 employee → superior/manager 兜底 → 幂等检查 → `setApproverId` + updateEntity + 派发 notify（`hr.leave-approver-timeout`，ctx = leaveCode/leaveType/employeeId/submitterUserId/superiorUserId/superiorId，USER_LIST 模板 `${superiorUserId}` 插值）+ 单条失败隔离 try/catch LOG.warn（对齐 `ErpHrContractExpiryJob.runExpiryWarnings:71-87`）。submitterUserId 解析：employee → 关联 NopAuthUser（userName 约定，经 I*Biz/平台查询——执行时按既有 `TestErpSysNotificationRecipientResolverRuntime` seed 范式确认映射键）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **通知模板前置契约**：派发依赖 ACTIVE `ErpSysNotificationTemplate`（eventType=`hr.leave-approver-timeout`）——无 ACTIVE 模板时 `IErpSysNotificationBiz.notify` config-gated 静默跳过（对齐 `hr.contract-expiry-warning` 先例：不预置模板，运营侧 CRUD 登记后生效；测试侧 seed 模板经 `TestErpSysNotificationRecipientResolverRuntime`/`TestErpMfgVarianceAlert` seed 范式）。记录于 owner doc 补注（部署启用说明）。
+- [x] `Decision` **通知模板前置契约**：派发依赖 ACTIVE `ErpSysNotificationTemplate`（eventType=`hr.leave-approver-timeout`）——无 ACTIVE 模板时 `IErpSysNotificationBiz.notify` config-gated 静默跳过（对齐 `hr.contract-expiry-warning` 先例：不预置模板，运营侧 CRUD 登记后生效；测试侧 seed 模板经 `TestErpSysNotificationRecipientResolverRuntime`/`TestErpMfgVarianceAlert` seed 范式）。记录于 owner doc 补注（部署启用说明）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 超时 SUBMITTED 休假单经 job 扫描后：approverId 更新为上级/部门负责人 + notify 落库（成功模式——测试侧 ACTIVE 模板 seed 后断言；生产侧无 ACTIVE 模板时静默跳过为既有 notify 契约，可观测行为在 owner doc 注记说明）；幂等跳过（approverId==目标人时不重复派发）；cron 空跳过（失败模式：无活跃扫描，行为可观测 LOG.info）
-- [ ] 无 ORM/契约变更（本阶段产物仅 Java 代码 + job.yaml + beans.xml 注册 + 常量）
+- [x] 超时 SUBMITTED 休假单经 job 扫描后：approverId 更新为上级/部门负责人 + notify 落库（成功模式——测试侧 ACTIVE 模板 seed 后断言；生产侧无 ACTIVE 模板时静默跳过为既有 notify 契约，可观测行为在 owner doc 注记说明）；幂等跳过（approverId==目标人时不重复派发）；cron 空跳过（失败模式：无活跃扫描，行为可观测 LOG.info）
+- [x] 无 ORM/契约变更（本阶段产物仅 Java 代码 + job.yaml + beans.xml 注册 + 常量）
 
 ### Phase 2 - dedicated 测试
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/src/test/java/app/erp/hr/service/`（新增 `TestErpHrLeaveApproverTimeoutJob`，镜像 `TestErpHrContractExpiryJob` 若有 + `TestErpSysNotificationRecipientResolverRuntime` 的 seed 范式）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Add` 测试矩阵：① 超时休假单（seed SUBMITTED + updateTime 早于阈值）→ execute → approverId == 上级 + ErpSysNotification 落库（eventType=hr.leave-approver-timeout + recipientUserId == 上级用户 + status=SENT）；② 未超时（updateTime 近）→ 不动；③ 幂等守卫直测：seed 超时休假单且 **approverId 已 == 目标上级 + updateTime 早于阈值** → execute → 断言跳过分支（通知数不变 + approverId 不变）——**须直接构造守卫前置态**（首扫会经 updateEntity 刷新 updateTime 致超时过滤不再命中，仅靠「二次扫描」测不到守卫分支）；④ superiorId null → 兜底部门负责人（managerId）；⑤ 两者均 null → 跳过 + 不抛（LOG.warn 路径）；⑥ cron config 空 → execute 直接返回不扫描；⑦ job 门控绑定断言：`assignConfigValue("nop.job.erp-hr-leave-approver-timeout.enabled","false")` + 断言 job.yaml 资源 `@cfg:` 绑定生效（nop-job enabled 由调度器消费，bean 层直调 execute 不经调度器——测试以 config 绑定断言替代"不派发"直测，对齐 crm job 测试缺口处理范式）。
+- [x] `Add` 测试矩阵：① 超时休假单（seed SUBMITTED + updateTime 早于阈值）→ execute → approverId == 上级 + ErpSysNotification 落库（eventType=hr.leave-approver-timeout + recipientUserId == 上级用户 + status=SENT）；② 未超时（updateTime 近）→ 不动；③ 幂等守卫直测：seed 超时休假单且 **approverId 已 == 目标上级 + updateTime 早于阈值** → execute → 断言跳过分支（通知数不变 + approverId 不变）——**须直接构造守卫前置态**（首扫会经 updateEntity 刷新 updateTime 致超时过滤不再命中，仅靠「二次扫描」测不到守卫分支）；④ superiorId null → 兜底部门负责人（managerId）；⑤ 两者均 null → 跳过 + 不抛（LOG.warn 路径）；⑥ cron config 空 → execute 直接返回不扫描；⑦ job 门控绑定断言：`assignConfigValue("nop.job.erp-hr-leave-approver-timeout.enabled","false")` + 断言 job.yaml 资源 `@cfg:` 绑定生效（nop-job enabled 由调度器消费，bean 层直调 execute 不经调度器——测试以 config 绑定断言替代"不派发"直测，对齐 crm job 测试缺口处理范式）。
       - Skill: `nop-testing`
-- [ ] `Proof` 断言强度：approverId 更新值 + 通知行 eventType/recipientUserId/status + 幂等计数；`@NopTestConfig` 隔离零外部依赖（镜像 `TestErpInvBatchExpiryInterception` 隔离范式）。
+- [x] `Proof` 断言强度：approverId 更新值 + 通知行 eventType/recipientUserId/status + 幂等计数；`@NopTestConfig` 隔离零外部依赖（镜像 `TestErpInvBatchExpiryInterception` 隔离范式）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 7 组测试全部落地并绿：`mvn test -pl module-hr/erp-hr-service` 全绿（既有 tests 零回归）；`_cases/` 快照录制落盘（对齐 `TestErpHrContractExpiry` 既有快照范式）
+- [x] 7 组测试全部落地并绿：`mvn test -pl module-hr/erp-hr-service` 全绿（既有 tests 零回归）；`_cases/` 快照录制落盘（对齐 `TestErpHrContractExpiry` 既有快照范式）
 
 ### Phase 3 - 文档回填 + arm-index/roadmap 状态
 
-Status: planned
+Status: completed
 Targets: `docs/architecture/job-scheduling.md`（§3.15 HR 作业行补注）；`docs/audits/arm-index.md`（P1-RC-011 修复状态）；`docs/backlog/requirement-compliance-roadmap.md`（RC-R1.4 done）；`docs/logs/2026/08-08.md`（当日实际日期为 2026-08-08，对齐 RC-R1.20 日志路径修正先例）
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1-2 完成
 
-- [ ] `Add` owner doc 补注：`docs/architecture/job-scheduling.md §3.15` 增 `erp-hr-leave-approver-timeout` 行（config keys + 转派解析链 + 幂等 + notify event + 模板前置契约），镜像 `erp-hr-contract-expiry` 行形态；不修改需求契约段（真相源冻结条款遵守）。
+- [x] `Add` owner doc 补注：`docs/architecture/job-scheduling.md §3.15` 增 `erp-hr-leave-approver-timeout` 行（config keys + 转派解析链 + 幂等 + notify event + 模板前置契约），镜像 `erp-hr-contract-expiry` 行形态；不修改需求契约段（真相源冻结条款遵守）。
       - Skill: none
-- [ ] `Add` arm-index P1-RC-011 行「修复状态」→ `done (RC-R1.4)` + 修复落地摘要；roadmap RC-R1.4 → done；`docs/logs/2026/08-08.md` 日志条目。
+- [x] `Add` arm-index P1-RC-011 行「修复状态」→ `done (RC-R1.4)` + 修复落地摘要；roadmap RC-R1.4 → done；`docs/logs/2026/08-08.md` 日志条目。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入
+- [x] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入
 
 ## Draft Review Record
 
@@ -121,14 +121,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn test -pl module-hr/erp-hr-service` + `mvn clean install -DskipTests` 全量 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline——实体访问经 I*Biz/既有 dao 形态，防基线漂移）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn test -pl module-hr/erp-hr-service` + `mvn clean install -DskipTests` 全量 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline——实体访问经 I*Biz/既有 dao 形态，防基线漂移）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -146,12 +146,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待执行。
+Status Note: 全部 3 阶段完成 + 全绿验证 + 独立结束审计 PASS。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 独立结束审计子代理（新会话）
-- Evidence: 待执行
+- Auditor / Agent: 独立结束审计子代理（新会话，ses_0222f6b4affet5aSaO6jifbhV2）
+- Evidence: Verdict **PASS**——①计划状态一致性（3/3 阶段 completed + 全 `[x]`）；②实现实仓核验（ErpHrConstants 三键 + ErpHrLeaveApproverTimeoutJob[execute 无参 public/cron 空跳过/dateTimeBetween 超时过滤[注释 XMeta 过滤操作集限制]/superior→manager 兜底/幂等守卫/notify 六键 ctx/逐条隔离/生产零 daoFor] + job.yaml[@cfg 双层门控/jobGroup=erp-hr/invoker bean] + beans.xml 注册 + TestErpAllJobYamlLoading 21）；③文档回填（job-scheduling §3.15 行/arm-index P1-RC-011 done/roadmap RC-R1.4 done/日志首条）；④验证抽查（TestErpHrLeaveApproverTimeoutJob 7 绿 + erp-hr-service 134 绿 + TestErpAllJobYamlLoading 1 绿 + checker R2c=1383/R10=7 等 19 规则 == baseline 零漂移；全量 `mvn clean install -DskipTests` + 全仓 `mvn test` 已于执行期通过）；⑤范围守卫（git status 仅预期文件，零 ORM/api.xml/view.xml/真相源变更）。唯一待办（Closure Gates 勾选 + 证据回填）由执行者在本审计 PASS 后完成。
 
 Follow-up:
 
