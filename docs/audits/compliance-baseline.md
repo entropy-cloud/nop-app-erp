@@ -289,6 +289,17 @@ V.2 对照 M0 锚点（HEAD=`0e963531d`，全 19 规则 0 漂移）复跑 `nop-c
 
 逐站点 file:line + 漂移分类 + Decision 理由（含替代方案否决理由 + 残留风险）见 `docs/plans/2026-08-02-0651-1-compliance-baseline-drift-adjudication.md` §Phase 1 Evidence。checker 复跑全 19 规则 actual ≤ updated baseline（R2b=229≤229 / R2c=1382≤1382 / R2d=34≤34，其余=基线），exit 0，CI green 恢复。
 
+## R2c/R10 同步注记（plan 2026-08-07-1932-3，RC-R1.2 银行对账自动红冲调度接线）
+
+`2026-08-07-1932-3`（RC-R1.2，P1-RC-005）新增 batch helper `ErpFinBankReconAutoReverseHelper`（`module-finance/erp-fin-service/.../bankrecon/`），引入 **R2c +1 / R10 +1**，全部为同一既有文档化 pattern 类：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2c | 1382 | **1383** | 1383 | **baseline-raise**（+1） | `ErpFinBankReconAutoReverseHelper.findCandidates:114` 1 处 `daoProvider.daoFor(ErpFinBankReconciliation.class)` ——batch helper 非 BizModel/Processor，无法经 I*Biz 注入扫描查询（IBiz 接口为 force-lazy-property 惰性注入，helper 于容器启动后懒创建时该属性不注入）；直接对齐既有同型 batch helper `ErpFinDeferredPostingRetryHelper`（R2c 基线已含其 4 处 daoFor）。无 ORM `<to-one>` getter 可替代（候选筛选按 docStatus+reconciliationDate 非 FK 导航）。 |
+| R10 | 6 | **7** | 7 | **baseline-raise**（+1） | `ErpFinBankReconAutoReverseHelper.reverseOne:93` 1 处 REQUIRES_NEW——单条红冲独立事务 + try/catch WARN 失败隔离（CLOSED 期间候选逐条隔离不中断批次），对齐 R10 校准注记文档化的合法失败隔离事务边界（`ErpFinDeferredPostingRetryHelper` 同型站点已在基线 6 处内）。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=229 / R2c=1383 / R2d=34 / R3=5 / R10=7 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 恢复。独立结束审计按本注记 per-site 证据复核。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -300,7 +311,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 229
-R2c: 1382
+R2c: 1383
 R2d: 34
 R3: 5
 R4: 0
@@ -308,7 +319,7 @@ R5: 0
 R6: 2
 R7: 0
 R8: 0
-R10: 6
+R10: 7
 R11: 0
 R12a: 69
 R12b: 66

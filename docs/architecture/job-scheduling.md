@@ -75,8 +75,8 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 - `nop-job-local` 已接入 `app-erp-all/pom.xml:182`（`BeanMethodJobInvoker`，本地反射，无 RPC）。
 - **`nop-batch-dsl` 依赖已引入** `app-erp-all/pom.xml:186-189`，自动传递 `nop-batch-core`/`nop-batch-orm`/`nop-batch-dao`；`nopBatchTaskRunner` 平台 Bean 已可用。
-- **全仓 19 个作业已迁移到独立 `.job.yaml` 模式**：`app-erp-all/.../nop/job/conf/` 下 19 个 `.job.yaml` 文件，由 nop-job-local 启动期扫描 `/nop/job/conf/` 加载。
-  - **9 个 batch-candidate（迁移类型 A）**：`invoker.bean: nopBatchTaskRunner` + `params.taskPath` 指向各域 `batch.xml`（9 个 `*.batch.xml` 分落 fin/ast/qa/prj/mfg 域），实现 Loader→Processor chunk 处理 + `saveState` 断点续传。9 个原始 Java Job Bean 类已删除。
+- **全仓 20 个作业已迁移到独立 `.job.yaml` 模式**：`app-erp-all/.../nop/job/conf/` 下 20 个 `.job.yaml` 文件，由 nop-job-local 启动期扫描 `/nop/job/conf/` 加载。
+  - **10 个 batch-candidate（迁移类型 A）**：`invoker.bean: nopBatchTaskRunner` + `params.taskPath` 指向各域 `batch.xml`（10 个 `*.batch.xml` 分落 fin/ast/qa/prj/mfg 域），实现 Loader→Processor chunk 处理 + `saveState` 断点续传。9 个原始 Java Job Bean 类已删除。
   - **10 个定点作业（迁移类型 B）**：`invoker.bean: <原 Java Bean>` 保留现有 `*Job.execute()`，仅将 `scheduler.yaml` 内联条目外移为独立 `.job.yaml`。
 - **`scheduler.yaml` 已清空内联作业**：仅保留顶层 `enabled: true`，无 `jobs:` 段。每个 `.job.yaml` 经 `enabled: "@cfg:nop.job.<name>.enabled|false"` 配置门控（默认关闭，运维按需启用）。
 - **待迁移 12 个 §7 batch-candidate**（无现有 Java Bean）仍处 deferred 状态，后续实现时直接走 `batch.xml + .job.yaml` 模式。
@@ -108,7 +108,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 | `erp-fin-credit-facility-interest` | 授信利息自动计提（CREDIT_FACILITY_INTEREST 过账类型） | 未定 | （仅手动触发） | 中 | job | DEFERRED | — | `plans/2026-07-02-1000-1:43` |
 | `erp-fin-ar-ap-auto-recon` | 定时自动核销（按比例/账龄/到期日） | 每日凌晨 | `ErpFinAutoReconJob.execute()` → `IErpFinReconciliationBiz.runAutoReconciliation()` | 大 | **batch-candidate** | SCHEDULED | `erp-fin.ar-ap-auto-recon-cron` | `docs/design/finance/ar-ap-reconciliation.md:132`；`module-finance/erp-fin-service/.../job/ErpFinAutoReconJob.java`；`app-erp-all/src/main/resources/_vfs/nop/job/conf/scheduler.yaml` |
 | `erp-fin-bank-recon` | 月末银行对账、自动匹配、暂记调整凭证 | 月末 | （待实现） | 中 | job | DESIGN | — | `docs/design/finance/bank-reconciliation.md:23,103,108` |
-| `erp-fin-bank-recon-adj-reverse` | 下月初自动红冲上月银行对账调整凭证 | 下月初 | （待实现） | 小 | job | DESIGN | — | `docs/design/finance/bank-reconciliation.md:108` |
+| `erp-fin-bank-recon-adj-reverse` | 下月初自动红冲上月银行对账调整凭证 | 每月 1 日 01:30（默认 cron `0 30 1 1 * ?`，`nop.job.erp-fin-bank-recon-adj-reverse.cron-expr` 可配） | `nopBatchTaskRunner.executeAsync` → `bank-recon-auto-reverse.batch.xml` → `ErpFinBankReconAutoReverseHelper`（调既有 `BankReconciliationBuilder.reverse` 入口） | 小 | **batch-candidate** | IMPLEMENTED（RC-R1.2，plan `2026-08-07-1932-3`） | `nop.job.erp-fin-bank-recon-adj-reverse.enabled`（默认 false，部署 opt-in）+ 业务 config `erp-fin.bank-recon-auto-reverse-next-month`（默认 true，机制开关） | `app-erp-all/.../nop/job/conf/erp-fin-bank-recon-adj-reverse.job.yaml`；`module-finance/erp-fin-service/.../nop/batch-task/fin/bank-recon-auto-reverse.batch.xml`；`docs/design/finance/bank-reconciliation.md:108` |
 | `erp-fin-fund-account-recon` | 资金账户余额 = Σ 总账分录 定期核对 | 定期 | （待实现） | 中 | job | DESIGN | — | `docs/design/finance/bank-reconciliation.md:110` |
 | `erp-fin-bad-debt-provision` | 月末坏账准备计提（AGING_BUCKET，分段损失率） | 月末 | （待实现） | 中 | job | DESIGN | `erp-fin.bad-debt-method` 等 | `docs/design/finance/bad-debt.md:225-238` |
 | `erp-fin-consolidation` | 合并报表（抵销内部交易/存货利润/投资） | MONTHLY（可配 QUARTERLY/YEARLY） | （待实现） | 大 | **batch-candidate** | DESIGN | `erp-fin.consolidation-schedule` 等 | `docs/design/finance/intercompany-consolidation.md:143-166` |
