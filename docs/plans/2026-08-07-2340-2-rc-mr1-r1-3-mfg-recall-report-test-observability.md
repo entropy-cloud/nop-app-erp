@@ -1,6 +1,6 @@
 # 2026-08-07-2340-2-rc-mr1-r1-3-mfg-recall-report-test-observability RC-R1.3 — mfg 召回报告测试补强 + best-effort 基因链写失败可观测性（P1-RC-010，MR1 第一批纯预授权）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Mission: requirement-compliance
 > Work Item: RC-R1.3（MR1 第一批纯预授权：mfg 召回报告测试补强 + best-effort 可观测性增强，P1-RC-010）
@@ -49,64 +49,64 @@
 
 ### Phase 1 - catch 分支 notify 告警派发实现
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/genealogy/BatchGenealogyWriter.java`；`module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/ErpMfgConstants.java`（按执行时裁决是否登记）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Fix`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` 告警 event 命名与派发形态：镜像 `dispatchVarianceFailureAlert`（`ErpMfgWorkOrderProcessor:150-167`）——event = `mfg.production-genealogy-write-failure`（同域命名族：`mfg.production-variance` / `mfg.production-variance-posting-failure`），ctx = workOrderId/workOrderCode/errorCode/errorMessage，外层 try/catch LOG.warn 降级不阻断完工；事件模板不预置（无 ACTIVE 模板时 notify config-gated 静默跳过，对齐 `IErpSysNotificationBiz.notify` 契约——文档说明「运营侧配置模板后生效」）。备选（否决）：复用 `mfg.production-variance-posting-failure` event——否决理由：事件语义不同（差异过账失败 vs 基因链写失败），复用将致模板接收人/上下文混同，且 A4.2.4/A4.2.9 报告均建议独立通道。
+- [x] `Decision` 告警 event 命名与派发形态：镜像 `dispatchVarianceFailureAlert`（`ErpMfgWorkOrderProcessor:150-167`）——event = `mfg.production-genealogy-write-failure`（同域命名族：`mfg.production-variance` / `mfg.production-variance-posting-failure`），ctx = workOrderId/workOrderCode/errorCode/errorMessage，外层 try/catch LOG.warn 降级不阻断完工；事件模板不预置（无 ACTIVE 模板时 notify config-gated 静默跳过，对齐 `IErpSysNotificationBiz.notify` 契约——文档说明「运营侧配置模板后生效」）。备选（否决）：复用 `mfg.production-variance-posting-failure` event——否决理由：事件语义不同（差异过账失败 vs 基因链写失败），复用将致模板接收人/上下文混同，且 A4.2.4/A4.2.9 报告均建议独立通道。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` 失败注入测试形态（Phase 2 前置契约）：mock 方式 = 构造派生 Writer（同包子类覆盖 `doWrite` 直接抛 NopException）注入被测 `writeOnCompletion`（`doWrite` 为 protected 可覆盖，`BatchGenealogyWriter:80`）——避免改生产代码加测试钩子；或 seed 数据致 doWrite 内部抛错（如 outputLine 缺 destWarehouseId 时返回不抛——不可用，须显式抛错的派生 Writer）。备选（否决）：反射/字节码 mock 框架——否决理由：项目测试栈以 seed 数据 + 派生覆盖为主，无 mock 框架先例。
+- [x] `Decision` 失败注入测试形态（Phase 2 前置契约）：mock 方式 = 构造派生 Writer（同包子类覆盖 `doWrite` 直接抛 NopException）注入被测 `writeOnCompletion`（`doWrite` 为 protected 可覆盖，`BatchGenealogyWriter:80`）——避免改生产代码加测试钩子；或 seed 数据致 doWrite 内部抛错（如 outputLine 缺 destWarehouseId 时返回不抛——不可用，须显式抛错的派生 Writer）。备选（否决）：反射/字节码 mock 框架——否决理由：项目测试栈以 seed 数据 + 派生覆盖为主，无 mock 框架先例。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `BatchGenealogyWriter` catch 分支（`:73-75`）增 `dispatchGenealogyWriteFailureAlert(wo, e)` 调用（protected 方法，镜像 dispatchVarianceFailureAlert 形态：@Inject IErpSysNotificationBiz + null 守卫 + try/catch 降级 + ctx 构造）；`LOG.error` 保留（失败详情仍须可查，消息含 workOrderCode 为既有行为 `:74`）。**`@Inject` 字段不可 private（Nop IoC 规则）且 mock 测试需跨包手工装配——增 `setNotificationBiz` public setter（镜像 `setDaoProvider:56-58` 先例），供测试装配 + IoC 注入双通道**。
+- [x] `Fix` `BatchGenealogyWriter` catch 分支（`:73-75`）增 `dispatchGenealogyWriteFailureAlert(wo, e)` 调用（protected 方法，镜像 dispatchVarianceFailureAlert 形态：@Inject IErpSysNotificationBiz + null 守卫 + try/catch 降级 + ctx 构造）；`LOG.error` 保留（失败详情仍须可查，消息含 workOrderCode 为既有行为 `:74`）。**`@Inject` 字段不可 private（Nop IoC 规则）且 mock 测试需跨包手工装配——增 `setNotificationBiz` public setter（镜像 `setDaoProvider:56-58` 先例），供测试装配 + IoC 注入双通道**。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` 常量登记：`NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE`（对齐先例：`ErpMfgWorkOrderProcessor:89` 类内 package-private 静态常量 vs `ErpMfgConstants` 全局常量——按同域约定裁决；仅一处定义，单一真相源）。
+- [x] `Fix` 常量登记：`NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE`（对齐先例：`ErpMfgWorkOrderProcessor:89` 类内 package-private 静态常量 vs `ErpMfgConstants` 全局常量——按同域约定裁决；仅一处定义，单一真相源）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 失败注入下 `writeOnCompletion` 不 rethrow（完工不阻断）+ notify 调用可达（成功与失败模式：派生 Writer 抛错 → catch 内派发；无 ACTIVE 模板 → 静默跳过不抛）
-- [ ] 无 ORM/契约变更（本阶段产物仅 Java 代码 + 常量）
+- [x] 失败注入下 `writeOnCompletion` 不 rethrow（完工不阻断）+ notify 调用可达（成功与失败模式：派生 Writer 抛错 → catch 内派发；无 ACTIVE 模板 → 静默跳过不抛）
+- [x] 无 ORM/契约变更（本阶段产物仅 Java 代码 + 常量）
 
 ### Phase 2 - 测试补强（recallReport 强断言 + 写失败 mock + notify 断言）
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/src/test/java/app/erp/mfg/service/TestErpMfgBatchGenealogy.java`（强化 + 追加）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Add` testRecallReport 强化断言：`sourceLotId` == 入参 lotA + `degraded` == true + `affectedLots` 大小 == 2 且逐项断言 lotId（lotB/lotC）/ batchNo / materialId / lotStatus（`RecallReport.AffectedLot` 字段集，`RecallReport.java:51-91`）+ REJECTED 批次排除分支（seed 一个 REJECTED 状态产出批次 → 不出现在 affectedLots，对齐 `collectAffectedIfFinishedGood:115-117` 行为）。
+- [x] `Add` testRecallReport 强化断言：`sourceLotId` == 入参 lotA + `degraded` == true + `affectedLots` 大小 == 2 且逐项断言 lotId（lotB/lotC）/ batchNo / materialId / lotStatus（`RecallReport.AffectedLot` 字段集，`RecallReport.java:51-91`）+ REJECTED 批次排除分支（seed 一个 REJECTED 状态产出批次 → 不出现在 affectedLots，对齐 `collectAffectedIfFinishedGood:115-117` 行为）。
       - Skill: `nop-testing`
-- [ ] `Add` best-effort 写失败 mock 测试：派生 Writer 覆盖 `doWrite` 抛 NopException → `writeOnCompletion` 调用不抛（断言完工不被阻断语义）+ catch 分支 notify 派发（seed USER_LIST 通知模板后断言 ErpSysNotification 行落库，镜像 `TestErpMfgVarianceAlert.findNotification:160-166`）**+ 无 ACTIVE 模板 → 静默跳过不抛断言**（对齐 `IErpSysNotificationBiz.notify` 契约，Phase 1 Exit 成功/失败模式全覆盖）；config `erp-mfg.genealogy-write-enabled=false` 时跳过（不派发）回归断言。
+- [x] `Add` best-effort 写失败 mock 测试：派生 Writer 覆盖 `doWrite` 抛 NopException → `writeOnCompletion` 调用不抛（断言完工不被阻断语义）+ catch 分支 notify 派发（seed USER_LIST 通知模板后断言 ErpSysNotification 行落库，镜像 `TestErpMfgVarianceAlert.findNotification:160-166`）**+ 无 ACTIVE 模板 → 静默跳过不抛断言**（对齐 `IErpSysNotificationBiz.notify` 契约，Phase 1 Exit 成功/失败模式全覆盖）；config `erp-mfg.genealogy-write-enabled=false` 时跳过（不派发）回归断言。
       - Skill: `nop-testing`
-- [ ] `Proof` 断言强度：拒绝/失败路径断言错误码 + 参数 + 事务回滚后状态（对齐既有拒绝范式）；通知断言含 eventType + recipientUserId（USER_LIST 模板接收人）+ status=SENT。**LOG 断言说明**：arm-index 修复面含「LOG.error 含 workOrderCode」——module-mfg 无日志捕获 harness（grep captureLog/OutputCapture 零命中），以 notify 落库断言 + `:74` 既有 LOG 消息文本（含 wo.getCode()）实仓引用替代，偏离记录于报告。
+- [x] `Proof` 断言强度：拒绝/失败路径断言错误码 + 参数 + 事务回滚后状态（对齐既有拒绝范式）；通知断言含 eventType + recipientUserId（USER_LIST 模板接收人）+ status=SENT。**LOG 断言说明**：arm-index 修复面含「LOG.error 含 workOrderCode」——module-mfg 无日志捕获 harness（grep captureLog/OutputCapture 零命中），以 notify 落库断言 + `:74` 既有 LOG 消息文本（含 wo.getCode()）实仓引用替代，偏离记录于报告。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 新/强化测试全部落地并绿：`mvn test -pl module-manufacturing/erp-mfg-service` 全绿（既有 tests 零回归；erp-mfg-service 无 `_cases/` 快照先例，以既有测试类形态为准）
+- [x] 新/强化测试全部落地并绿：`mvn test -pl module-manufacturing/erp-mfg-service` 全绿（既有 tests 零回归）。**结束审计修正（Minor 2）**：原「erp-mfg-service 无 `_cases/` 快照先例」事实主张错误——实仓 erp-mfg-service 有 1778 个已跟踪 `_cases/` 快照文件，既有测试类形态含录制快照。本计划新测试**不录制 DB 快照**：失败注入路径的通知 payload 含 `NopException[seq=N]`（NopException 全局静态计数器，跨运行非确定——录制 seq=490 vs 全量运行 seq=1246 实证比对失败），按 `nop-testing` skill「拒绝/失败路径不录制 DB snapshot（不可比基线）」处置，以显式断言替代；3 个新测试仅提交 0 字节 autotest.yaml 空壳（对齐本模块 153 个已提交 0 字节 autotest.yaml 惯例，避免测试运行产生 untracked 目录）
 
 ### Phase 3 - 文档回填 + arm-index/roadmap 状态
 
-Status: planned
+Status: completed
 Targets: `docs/design/manufacturing/batch-genealogy.md`（实现注记）；`docs/audits/arm-index.md`（P1-RC-010 修复状态）；`docs/backlog/requirement-compliance-roadmap.md`（RC-R1.3 done + Owner Doc 列修正）；`docs/logs/2026/08-08.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1-2 完成
 
-- [ ] `Add` owner doc 补注：`batch-genealogy.md` 记录 catch 分支 notify 告警派发（event + 形态 + 配置模板说明）；不修改需求契约段（真相源冻结条款遵守）。
+- [x] `Add` owner doc 补注：`batch-genealogy.md` 记录 catch 分支 notify 告警派发（event + 形态 + 配置模板说明）；不修改需求契约段（真相源冻结条款遵守）。
       - Skill: none
-- [ ] `Add` arm-index P1-RC-010 行「修复状态」→ `done (RC-R1.3)` + 修复落地摘要（测试补强 + notify 通道）；roadmap RC-R1.3 → done **+ roadmap 行 Owner Doc 列修正**（原指向 `variance-analysis.md` 与修复面不符 → `batch-genealogy.md`，执行时同步修正）；`docs/logs/2026/08-08.md` 日志条目（当日实际日期为 2026-08-08，对齐 RC-R1.20 日志路径修正先例）。
+- [x] `Add` arm-index P1-RC-010 行「修复状态」→ `done (RC-R1.3)` + 修复落地摘要（测试补强 + notify 通道）；roadmap RC-R1.3 → done **+ roadmap 行 Owner Doc 列修正**（原指向 `variance-analysis.md` 与修复面不符 → `batch-genealogy.md`，执行时同步修正）；`docs/logs/2026/08-08.md` 日志条目（当日实际日期为 2026-08-08，对齐 RC-R1.20 日志路径修正先例）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入
+- [x] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入
 
 ## Draft Review Record
 
@@ -115,14 +115,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn test -pl module-manufacturing/erp-mfg-service` + `mvn clean install -DskipTests` 全量 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline——notify 派发经 `IErpSysNotificationBiz` 注入不引 daoFor 漂移，防基线漂移）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn test -pl module-manufacturing/erp-mfg-service` + `mvn clean install -DskipTests` 全量 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline——notify 派发经 `IErpSysNotificationBiz` 注入不引 daoFor 漂移，防基线漂移）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -146,12 +146,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待执行。
+Status Note: 执行完成（2026-08-08，3 Phase 全落地 + 独立结束审计 PASS）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 独立结束审计子代理（新会话）
-- Evidence: 待执行
+- Auditor / Agent: 独立结束审计子代理（新会话 `ses_02288c290ffeRXvL41GVvZXJfO`，fresh session）
+- Evidence: **Verdict PASS（1 Major + 2 Minor，Major 为计划书签待执行——本次回填已闭合）**。实仓核验：Phase 1 `BatchGenealogyWriter` catch 分支派发 + `dispatchGenealogyWriteFailureAlert`（null 守卫 + ctx 四键 + try/catch 降级，逐行镜像 `dispatchVarianceFailureAlert:150-167`）+ `@Inject` 非 private + `setNotificationBiz` setter；`ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE` 单一真相源（全仓 grep 一处定义）；Phase 2 强断言 + 派生 Writer 失败注入 + 通知落库断言（eventType/recipient/status=SENT/payload 含 workOrderCode+errorCode）+ 无模板静默跳过 + config 关闭跳过；Phase 3 四文档回填齐全。验证复跑：`mvn test -o -pl module-manufacturing/erp-mfg-service` **156 全绿**（TestErpMfgBatchGenealogy 8/8）+ `mvn clean install -o -DskipTests` BUILD SUCCESS（156 reactor）+ compliance checker **actual==baseline 全 19 规则零漂移**（R1d=14/R2a=34/R2b=229/R2c=1383/R2d=34/R3=5/R10=7/R12a=69/R12b=66/R12c=40 与 `compliance-baseline.md` 机器可读块逐项一致）+ git diff 仅 2 生产 Java + 1 测试 + docs，零 ORM/契约/真相源变更。Minor 处置：Minor 2（`_cases/` 快照先例事实主张错误）→ 本计划 Phase 2 Exit Criteria 已修正 + 新测试按既有惯例提交 0 字节 autotest.yaml 空壳；Minor 3（空壳目录残留）→ 空壳已按惯例落地。
 
 Follow-up:
 

@@ -138,6 +138,20 @@ WHERE input_lot_id = :inputLotId;
 - **替代方案**：强一致（失败传播回滚完工入库，被否决：追溯缺口可容忍，完工不可中断）。
 - **残留风险**：best-effort 下可能产生基因链缺口（部分完工无追溯行），由 config 开关 + 日志可观测性兜底。
 
+### 实现注记（RC-R1.3）：写失败告警派发 —— catch 分支 notify 通道
+
+`BatchGenealogyWriter.writeOnCompletion` catch 分支在 `LOG.error`（消息含 workOrderCode）之外增派
+`dispatchGenealogyWriteFailureAlert(wo, e)`（protected 方法，镜像 `ErpMfgWorkOrderProcessor.dispatchVarianceFailureAlert`
+范式，A4.2.4）——消除 A4.2.9 residual observability gap（catch 仅 LOG.error 无监控采集通道，运营不可感知）：
+
+- 事件：`ErpMfgConstants.NOTIFY_EVENT_GENEALOGY_WRITE_FAILURE` = `mfg.production-genealogy-write-failure`（同域命名族：`mfg.production-variance` / `mfg.production-variance-posting-failure`）
+- ctx：workOrderId / workOrderCode / errorCode（NopException 取 ErrorCode，否则异常类名）/ errorMessage
+- 降级：外层 try/catch LOG.warn，通知派发失败不阻断完工主流程；`notificationBiz == null` 时跳过
+- 模板：事件模板**不预置**——无 ACTIVE 模板时 `IErpSysNotificationBiz.notify` config-gated 静默跳过（运营侧在 `erp_sys_notification_template` 配置 `mfg.production-genealogy-write-failure` 模板后生效）
+- 测试装配：`setNotificationBiz` public setter（镜像 `setDaoProvider` 先例）——`@Inject` 字段不可 private（Nop IoC 规则）+ 测试跨包手工装配双通道
+
+失败标记持久化（lastFailureAt/retryCount 列）为 successor（触 ORM 变更须人工授权，见 plan RC-R1.3 Deferred But Adjudicated）。
+
 ## recallReport 降级说明
 
 当前 `IErpInvStockBalanceBiz`/`IErpInvBatchBiz` 仅暴露 CRUD（无按批次的当前库存位置/已售去向查询方法集），故 `recallReport` 降级为仅返回受影响成品批次集合（`RecallReport.degraded=true`）。位置/去向查询归 inventory successor（触发条件=inventory 暴露按批次的位置/去向查询方法集时）。
