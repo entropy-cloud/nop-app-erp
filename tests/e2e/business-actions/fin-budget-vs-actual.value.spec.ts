@@ -13,19 +13,22 @@ import {
 import { cleanupVoucherByBillCode, cleanupArApByCode } from '../orchestration/_helper';
 
 /**
- * Finance 预算对比报表 getBudgetVsActual 数值断言浏览器层 E2E（plan 2026-07-14-1218-2 Phase 2）。
+ * Finance 预算对比报表 getBudgetVsActual 数值断言浏览器层 E2E（plan 2026-07-14-1218-2 Phase 2 + RC-R1.1 P1-RC-003 三通道化）。
  *
- * 验证 `ErpFinBudgetLine__getBudgetVsActual` @BizQuery 的 budgetAmount / actualAmount / availableAmount
- * 三值增量断言（初始 → actual 增量 → 红冲回退），覆盖 BUDGET 凭证（预算）+ NORMAL 凭证（实际）+ REVERSAL 凭证（冲销）的
- * postingType 聚合 + isReversed 过滤语义：
+ * 验证 `ErpFinBudgetLine__getBudgetVsActual` @BizQuery 的 budgetAmount / commitmentAmount / actualAmount / availableAmount
+ * 四值增量断言（初始 → actual 增量 → 红冲回退 → 承付增量），覆盖 BUDGET 凭证（预算）+ COMMITMENT 凭证（承付）+
+ * NORMAL 凭证（实际）+ REVERSAL 凭证（冲销）的 postingType 聚合 + isReversed 过滤语义：
  *   (a) 初始：approve 预算方案（BUDGET 凭证 Dr 6602=1000）→ budgetAmount=1000 / actualAmount=0 / availableAmount=1000
  *   (b) actual 增量：approve ExpenseClaim（NORMAL 凭证 Dr 6602=200）→ actualAmount=200 / availableAmount=800
  *   (c) 红冲回退：reverseApprove（原+红冲凭证均 isReversed=true → 双双排除）→ actualAmount=0 / availableAmount=1000
+ *   (d) 承付增量（P1-RC-003 三通道化）：直置 COMMITMENT 凭证 Dr 6602=200 → commitmentAmount=200 + actualAmount 不含承付
+ *       + availableAmount=800（1000−0−200，三项式）
  *
  * 权威设计（docs/design/finance/budget.md §业务规则5 + ErpFinBudgetLineBizModel.getBudgetVsActual）：
  *   - budgetAmount = Σ BUDGET 凭证行 amountFunctional（postingType=BUDGET + isReversed=false + docStatus=POSTED）
- *   - actualAmount = Σ NORMAL/NULL 凭证行 amountFunctional（非 BUDGET + isReversed=false + docStatus=POSTED）
- *   - availableAmount = budgetAmount − actualAmount
+ *   - commitmentAmount = Σ COMMITMENT 凭证行 amountFunctional（postingType=COMMITMENT + isReversed=false + docStatus=POSTED）
+ *   - actualAmount = Σ 其余（NORMAL/NULL/RESERVATION）凭证行 amountFunctional（非 BUDGET/COMMITMENT + isReversed=false + docStatus=POSTED）
+ *   - availableAmount = budgetAmount − actualAmount − commitmentAmount（三项式）
  *   - 聚合维度 (subjectId, costCenterId, projectId)：budget line 须 costCenterId=null + projectId=null 以匹配 NORMAL 凭证行
  *   - subjectName 按 ErpMdSubject.name（种子 6602 name="折旧费用"，非 Provider 注释"管理费用"）
  *
@@ -34,6 +37,10 @@ import { cleanupVoucherByBillCode, cleanupArApByCode } from '../orchestration/_h
  *     markOriginalVoucherReversed 对原 NORMAL 凭证设 isReversed=true（line 233）。
  *   - getBudgetVsActual 过滤 isReversed=false → 原凭证 + 红冲凭证双双排除 → actualAmount 归零。
  *   - 与 budget CHECK（ErpFinBudgetControlBiz.aggregateAmount）一致：同 isReversed=false 过滤。
+ *
+ * A4.1.6 门控清单（P1-RC-003 E2E 回归义务）：① GraphQL selection 增 commitmentAmount ② seed COMMITMENT 凭证
+ * （直置 postingType=COMMITMENT voucher line，不引入 purchase 域依赖）③ 三列增量断言
+ * （commitmentAmount=200 + actual 不含 commitment + available=budget−actual−commitment）。
  *
  * 科目引用：6602 折旧费用（id=31, EXPENSE, DEBIT, name="折旧费用"）。
  * 种子引用：org id=2 / acctSchema ACCT-FIN-01 id=1 / currency CNY id=1 / period 2026-07 id=1（OPEN）。
@@ -49,6 +56,7 @@ const SUBJECT_EXPENSE_NAME = '折旧费用';
 const BDATE = '2026-07-15';
 const BUDGET_AMOUNT = 1000;
 const CLAIM_AMOUNT_WITHOUT_TAX = 200;
+const COMMITMENT_AMOUNT = 200;
 
 let _seq = 0;
 function uniq(tag: string): string {
@@ -132,7 +140,7 @@ async function setupFull(page: import('@playwright/test').Page): Promise<Ctx> {
 
 async function getBudgetVsActual(page: import('@playwright/test').Page): Promise<any[]> {
   const json: any = await new GraphQLClient(page).raw(
-    `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:${ACCT_SCHEMA},periodId:${PERIOD},subjectId:${SUBJECT_EXPENSE_ID}){ subjectId subjectCode subjectName budgetAmount actualAmount availableAmount } }`,
+    `query{ ErpFinBudgetLine__getBudgetVsActual(acctSchemaId:${ACCT_SCHEMA},periodId:${PERIOD},subjectId:${SUBJECT_EXPENSE_ID}){ subjectId subjectCode subjectName budgetAmount commitmentAmount actualAmount availableAmount } }`,
   );
   expect(json?.errors, `getBudgetVsActual should not return errors: ${JSON.stringify(json?.errors)}`).toBeFalsy();
   return json?.data?.ErpFinBudgetLine__getBudgetVsActual ?? [];
@@ -140,6 +148,44 @@ async function getBudgetVsActual(page: import('@playwright/test').Page): Promise
 
 function findRow(rows: any[]): any | null {
   return rows.find((r) => Number(r.subjectId) === SUBJECT_EXPENSE_ID && r.costCenterId == null) || null;
+}
+
+/** 直置 COMMITMENT 凭证（postingType=COMMITMENT + POSTED + isReversed=false），A4.1.6 门控清单②。 */
+async function seedCommitmentVoucher(
+  page: import('@playwright/test').Page,
+  amount: number,
+): Promise<{ voucherId: string | number }> {
+  const code = uniq('VC');
+  const v = await createViaSave(
+    page, 'ErpFinVoucher',
+    {
+      code, voucherType: 'TRANSFER', postingType: 'COMMITMENT', voucherDate: BDATE,
+      orgId: ORG, acctSchemaId: ACCT_SCHEMA, periodId: PERIOD,
+      totalDebit: amount, totalCredit: 0, isReversed: false, docStatus: 'POSTED',
+    },
+    'id',
+  );
+  await createViaSave(
+    page, 'ErpFinVoucherLine',
+    {
+      voucherId: Number(v.id), lineNo: 1, subjectId: SUBJECT_EXPENSE_ID, subjectCode: SUBJECT_EXPENSE_CODE,
+      dcDirection: 'DEBIT', debitAmount: amount, creditAmount: 0,
+      currencyId: CURRENCY, exchangeRate: 1, amountSource: amount, amountFunctional: amount,
+      acctSchemaId: ACCT_SCHEMA,
+    },
+    'id',
+  );
+  return { voucherId: v.id };
+}
+
+/** 清理直置 COMMITMENT 凭证（行 → 头，反依赖链）。 */
+async function cleanupCommitmentVoucher(
+  page: import('@playwright/test').Page,
+  cmt: { voucherId: string | number },
+): Promise<void> {
+  if (!cmt) return;
+  await deleteByFilter(page, 'ErpFinVoucherLine', eqFilter('voucherId', Number(cmt.voucherId)));
+  await deleteById(page, 'ErpFinVoucher', cmt.voucherId);
 }
 
 async function cleanupCtx(page: import('@playwright/test').Page, ctx: Ctx): Promise<void> {
@@ -193,6 +239,22 @@ test.describe('Finance budget-vs-actual report value assertions browser-layer E2
       expect(Number(row.budgetAmount), 'budgetAmount should remain 1000 after reversal').toBe(BUDGET_AMOUNT);
       expect(Number(row.actualAmount), 'actualAmount should be 0 after reversal (both vouchers isReversed=true)').toBe(0);
       expect(Number(row.availableAmount), 'availableAmount should be 1000 after reversal').toBe(BUDGET_AMOUNT);
+
+      // (d) 承付三列断言（A4.1.6 门控清单③）：直置 COMMITMENT 凭证 200 → commitmentAmount=200 +
+      //     actualAmount 不含承付 + available=budget−actual−commitment（三项式）
+      const cmt = await seedCommitmentVoucher(page, COMMITMENT_AMOUNT);
+      try {
+        rows = await getBudgetVsActual(page);
+        row = findRow(rows);
+        expect(row, 'row should still exist after commitment seed').toBeTruthy();
+        expect(Number(row.budgetAmount), 'budgetAmount should remain 1000 after commitment seed').toBe(BUDGET_AMOUNT);
+        expect(Number(row.actualAmount), 'actualAmount should stay 0 (commitment not counted as actual)').toBe(0);
+        expect(Number(row.commitmentAmount), 'commitmentAmount should be 200 (COMMITMENT voucher)').toBe(COMMITMENT_AMOUNT);
+        expect(Number(row.availableAmount), 'availableAmount should be 800 (1000-0-200)').toBe(
+          BUDGET_AMOUNT - COMMITMENT_AMOUNT);
+      } finally {
+        await cleanupCommitmentVoucher(page, cmt);
+      }
     } finally {
       await cleanupCtx(page, ctx);
     }

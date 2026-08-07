@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- 预算 vs 实际对比表（种子报表，budget.md §业务规则5）。数据集 ds 由
      ErpFinReportBizModel.buildBudgetVsActualDataset 注入，每行
-     {subjectCode, subjectName, costCenterId, projectId, budgetAmount, actualAmount, availableAmount}。
-     预算数=postingType=BUDGET 凭证行累计；实际数=NORMAL 凭证行累计；余量=预算−实际。 -->
+     {subjectCode, subjectName, costCenterId, projectId, budgetAmount, commitmentAmount, actualAmount, availableAmount}。
+     预算数=postingType=BUDGET 凭证行累计；承付款=postingType=COMMITMENT 凭证行累计；
+     实际数=其余（NORMAL/NULL/RESERVATION）凭证行累计；余量=预算−实际−承付（三通道口径对齐控制引擎 P1-MA2-084）。 -->
 <workbook x:schema="/nop/schema/excel/workbook.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <sheets>
@@ -17,11 +18,12 @@
                     <col width="110.0"/>
                     <col width="110.0"/>
                     <col width="110.0"/>
+                    <col width="110.0"/>
                 </cols>
                 <rows>
                     <row height="24.0">
                         <cells>
-                            <cell mergeAcross="6" styleId="title"><model/><value>预算 vs 实际对比表</value></cell>
+                            <cell mergeAcross="7" styleId="title"><model/><value>预算 vs 实际对比表</value></cell>
                         </cells>
                         <model/>
                     </row>
@@ -32,6 +34,7 @@
                             <cell styleId="header"><model/><value>成本中心</value></cell>
                             <cell styleId="header"><model/><value>项目</value></cell>
                             <cell styleId="header"><model/><value>预算金额</value></cell>
+                            <cell styleId="header"><model/><value>承诺金额</value></cell>
                             <cell styleId="header"><model/><value>实际金额</value></cell>
                             <cell styleId="header"><model/><value>预算余量</value></cell>
                         </cells>
@@ -61,6 +64,10 @@
                             </cell>
                             <cell styleId="num">
                                 <model rowParent="A3"/>
+                                <value>*=commitmentAmount</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A3"/>
                                 <value>*=actualAmount</value>
                             </cell>
                             <cell styleId="num">
@@ -81,6 +88,9 @@
                             </cell>
                             <cell styleId="num">
                                 <model><valueExpr>SUM(G3)</valueExpr></model>
+                            </cell>
+                            <cell styleId="num">
+                                <model><valueExpr>SUM(H3)</valueExpr></model>
                             </cell>
                         </cells>
                         <model/>

@@ -193,6 +193,8 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
 
     @Test
     public void testGetBudgetVsActual() {
+        // P1-RC-003 三通道：BUDGET(1000) → budgetAmount；NORMAL(400) → actualAmount；COMMITMENT(200) → commitmentAmount；
+        // available = budget − actual − commitment = 1000 − 400 − 200 = 400。
         Long[] ids = seedReturn(() -> {
             Long pid = seedOpenPeriod("2024-11", 2024, 11);
             ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
@@ -201,6 +203,38 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
                     expense, income, new BigDecimal("1000"));
             // 实际凭证：费用 400（NORMAL）
             seedActualVoucher("V-ACT-11", pid, expense, income, new BigDecimal("400"));
+            // 承付凭证（postingType=COMMITMENT）：占用 expense 科目 200
+            seedCommitmentVoucher("V-CMT-11", pid, expense, new BigDecimal("200"));
+            return new Long[]{pid, scenarioId};
+        });
+        Long periodId = ids[0];
+        Long scenarioId = ids[1];
+        ErpMdSubject expense = findSubjectByCode("6601");
+
+        ormTemplate.runInSession(() -> scenarioBiz.submit(scenarioId, CTX));
+        ormTemplate.runInSession(() -> scenarioBiz.approve(scenarioId, CTX));
+
+        List<BudgetVsActualRow> rows = ormTemplate.runInSession(session -> budgetLineBiz.getBudgetVsActual(1L, periodId, expense.getId(), CTX));
+        assertEquals(1, rows.size(), "应返回 1 行（费用科目×期间×成本中心）");
+        BudgetVsActualRow row = rows.get(0);
+        assertEquals(0, row.getBudgetAmount().compareTo(new BigDecimal("1000")), "预算数=1000");
+        assertEquals(0, row.getActualAmount().compareTo(new BigDecimal("400")), "实际数=400（不含承付）");
+        assertEquals(0, row.getCommitmentAmount().compareTo(new BigDecimal("200")), "承付款=200");
+        assertEquals(0, row.getAvailableAmount().compareTo(new BigDecimal("400")),
+                "余量=预算1000−实际400−承付200=400（三项式）");
+    }
+
+    @Test
+    public void testGetBudgetVsActualNoCommitmentDegeneratesToTwoTerm() {
+        // P1-RC-003 边界等价：无 COMMITMENT 凭证时 commitmentAmount=0，available 退化为两项式（预算−实际）。
+        Long[] ids = seedReturn(() -> {
+            Long pid = seedOpenPeriod("2025-02", 2025, 2);
+            ErpMdSubject expense = seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT);
+            ErpMdSubject income = seedSubject("6001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT);
+            Long scenarioId = seedBudgetScenario("BUD-2025-02", pid, 2025, ErpFinConstants.BUDGET_CONTROL_NONE,
+                    expense, income, new BigDecimal("1000"));
+            seedActualVoucher("V-ACT-02", pid, expense, income, new BigDecimal("400"));
+            // 无 COMMITMENT 凭证（commitment=0）
             return new Long[]{pid, scenarioId};
         });
         Long periodId = ids[0];
@@ -215,7 +249,9 @@ public class TestErpFinBudgetEndToEnd extends JunitAutoTestCase {
         BudgetVsActualRow row = rows.get(0);
         assertEquals(0, row.getBudgetAmount().compareTo(new BigDecimal("1000")), "预算数=1000");
         assertEquals(0, row.getActualAmount().compareTo(new BigDecimal("400")), "实际数=400");
-        assertEquals(0, row.getAvailableAmount().compareTo(new BigDecimal("600")), "余量=600");
+        assertEquals(0, row.getCommitmentAmount().compareTo(BigDecimal.ZERO), "无 COMMITMENT 时 commitmentAmount=0");
+        assertEquals(0, row.getAvailableAmount().compareTo(new BigDecimal("600")),
+                "available 退化为两项式 = 预算1000−实际400=600");
     }
 
     @Test

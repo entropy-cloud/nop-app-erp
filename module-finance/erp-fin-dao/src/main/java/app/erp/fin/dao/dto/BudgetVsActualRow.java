@@ -7,8 +7,9 @@ import java.math.BigDecimal;
  * 维度从 {@code ErpFinVoucherLine} 聚合，关联 {@code ErpFinVoucher.postingType} 得到三列：
  * <ul>
  *   <li>{@code budgetAmount} —— postingType=BUDGET 凭证行累计（预算数）</li>
- *   <li>{@code actualAmount} —— postingType=NORMAL（含 NULL）凭证行累计（实际数）</li>
- *   <li>{@code availableAmount} —— budgetAmount − actualAmount（预算余量）</li>
+ *   <li>{@code commitmentAmount} —— postingType=COMMITMENT 凭证行累计（承付款）</li>
+ *   <li>{@code actualAmount} —— postingType 非 BUDGET/COMMITMENT（NORMAL/NULL/RESERVATION 等）凭证行累计（实际数）</li>
+ *   <li>{@code availableAmount} —— budgetAmount − actualAmount − commitmentAmount（预算余量）</li>
  * </ul>
  *
  * <p>本类型位于 finance-dao（跨层契约面），供 {@code ErpFinBudgetLineBizModel.getBudgetVsActual} 返回给前端/报表。
@@ -22,6 +23,7 @@ public class BudgetVsActualRow {
     private Long costCenterId;
     private Long projectId;
     private BigDecimal budgetAmount = BigDecimal.ZERO;
+    private BigDecimal commitmentAmount = BigDecimal.ZERO;
     private BigDecimal actualAmount = BigDecimal.ZERO;
     private BigDecimal availableAmount = BigDecimal.ZERO;
 
@@ -51,6 +53,11 @@ public class BudgetVsActualRow {
     public BigDecimal getActualAmount() { return actualAmount; }
     public void setActualAmount(BigDecimal actualAmount) {
         this.actualAmount = actualAmount == null ? BigDecimal.ZERO : actualAmount;
+    }
+
+    public BigDecimal getCommitmentAmount() { return commitmentAmount; }
+    public void setCommitmentAmount(BigDecimal commitmentAmount) {
+        this.commitmentAmount = commitmentAmount == null ? BigDecimal.ZERO : commitmentAmount;
     }
 
     public BigDecimal getAvailableAmount() { return availableAmount; }
