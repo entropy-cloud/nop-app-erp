@@ -10,6 +10,8 @@ import app.erp.md.dao.entity.ErpMdAcctSchema;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
+import io.nop.api.core.beans.ApiRequest;
+import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
@@ -17,6 +19,9 @@ import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import io.nop.graphql.core.IGraphQLExecutionContext;
+import io.nop.graphql.core.ast.GraphQLOperationType;
+import io.nop.graphql.core.engine.IGraphQLEngine;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
@@ -24,7 +29,9 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -59,6 +66,57 @@ public class TestErpLogFreightPosting extends JunitAutoTestCase {
     IOrmTemplate ormTemplate;
     @Inject
     IErpLogShipmentBiz shipmentBiz;
+    @Inject
+    IGraphQLEngine graphQLEngine;
+
+    /**
+     * A4.2.174 重复发运→重复运费过账运行时探针（SP-1 / P1-RC-083）：
+     * 同一出库单（relatedBillType+relatedBillCode 相同）经 BizModel save 路径（defaultPrepareSave 仅
+     * trackingNo+carrierId 维度）可创建 2 条发运单，均 DELIVERED 后各产生 1 张 FREIGHT 凭证 → 重复过账证实。
+     */
+    @Test
+    public void testDuplicateShipmentSameRelatedBillPostsTwoVouchers() {
+        long partnerId = 8804L;
+        Long carrierId = ormTemplate.runInSession(session -> {
+            seedFinancePrereqs();
+            return seedCarrier("MOCK-FRT-CAR", partnerId);
+        });
+
+        // 同 relatedBillType+relatedBillCode 创建 2 条发运单：无重复发运防护 → 均 save 成功
+        Map<String, Object> d1 = shipmentData("FRT-DUP-1", "MOCK-FRT-DUP-1", carrierId,
+                ErpLogConstants.SHIPMENT_STATUS_DISPATCHED,
+                ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY, "REL-BILL-DUP-001",
+                ErpLogConstants.FREIGHT_TERMS_PREPAID, new BigDecimal("100"));
+        Map<String, Object> d2 = shipmentData("FRT-DUP-2", "MOCK-FRT-DUP-2", carrierId,
+                ErpLogConstants.SHIPMENT_STATUS_DISPATCHED,
+                ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY, "REL-BILL-DUP-001",
+                ErpLogConstants.FREIGHT_TERMS_PREPAID, new BigDecimal("120"));
+        ApiResponse<?> first = executeMutation("ErpLogShipment__save", d1);
+        ApiResponse<?> second = executeMutation("ErpLogShipment__save", d2);
+        assertEquals(0, first.getStatus(), "首次创建应成功: " + first);
+        assertEquals(0, second.getStatus(), "同出库单重复发运应被接受（无 relatedBill 维度防护）: " + second);
+
+        // 双 shipment 均 webhook DELIVERED
+        String payload1 = "{\"trackingNo\":\"MOCK-FRT-DUP-1\",\"eventType\":\"DELIVERED\"}";
+        String sig1 = hmacSha256(payload1, "MOCK-FRT-CAR");
+        ErpLogShipment r1 = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig1, payload1, CTX));
+        String payload2 = "{\"trackingNo\":\"MOCK-FRT-DUP-2\",\"eventType\":\"DELIVERED\"}";
+        String sig2 = hmacSha256(payload2, "MOCK-FRT-CAR");
+        ErpLogShipment r2 = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig2, payload2, CTX));
+
+        assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, r1.getStatus());
+        assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, r2.getStatus());
+        assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, r1.getFreightSettlementStatus());
+        assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, r2.getFreightSettlementStatus());
+
+        // 凭证数断言：同一出库单 2 条发运单各产生 1 张 FREIGHT 凭证 → 重复运费过账证实
+        List<ErpFinVoucherBillR> links1 = findBillLinks("FRT-DUP-1");
+        List<ErpFinVoucherBillR> links2 = findBillLinks("FRT-DUP-2");
+        assertEquals(1, links1.size(), "发运单 FRT-DUP-1 DELIVERED 应产生 1 张 FREIGHT 凭证");
+        assertEquals(1, links2.size(), "发运单 FRT-DUP-2 DELIVERED 应产生 1 张 FREIGHT 凭证");
+        assertTrue(!links1.get(0).getVoucherId().equals(links2.get(0).getVoucherId()),
+                "双发运单的 FREIGHT 凭证应为两张独立凭证（重复过账）");
+    }
 
     @Test
     public void testSalesFreightPostedAndSettled() {
@@ -133,12 +191,59 @@ public class TestErpLogFreightPosting extends JunitAutoTestCase {
 
     // ---------- seed helpers ----------
 
+    private Map<String, Object> shipmentData(String code, String trackingNo, Long carrierId, String status,
+                                             String relatedBillType, String relatedBillCode, String freightTerms,
+                                             BigDecimal freightAmount) {
+        Map<String, Object> d = new LinkedHashMap<>();
+        d.put("code", code);
+        d.put("carrierId", carrierId);
+        d.put("status", status);
+        d.put("trackingNo", trackingNo);
+        d.put("relatedBillType", relatedBillType);
+        d.put("relatedBillCode", relatedBillCode);
+        d.put("freightTerms", freightTerms);
+        d.put("freightAmount", freightAmount);
+        d.put("freightCurrencyId", 1L);
+        d.put("orgId", 1L);
+        d.put("businessDate", java.time.LocalDate.of(2026, 7, 1));
+        return d;
+    }
+
+    private ApiResponse<?> executeMutation(String action, Map<String, Object> data) {
+        Map<String, Object> args = new LinkedHashMap<>();
+        args.put("data", data);
+        IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(GraphQLOperationType.mutation, action,
+                ApiRequest.build(args));
+        return graphQLEngine.executeRpc(ctx);
+    }
+
     private void seedFinancePrereqs() {
         seedOpenPeriod("2026-07", 2026, 7, LocalDate.of(2026, 7, 1), LocalDate.of(2026, 7, 31));
         seedAcctSchema(1L);
         seedSubject("6601", "销售费用", "EXPENSE", "DEBIT");
         seedSubject("1002", "银行存款", "ASSET", "DEBIT");
         seedSubject("2202", "应付账款", "LIABILITY", "CREDIT");
+        // GraphQL save 路径会校验 to-one 引用，需组织/币种存在（id=1 与 orgId/freightCurrencyId 对应）
+        IEntityDao<app.erp.md.dao.entity.ErpMdOrganization> orgDao =
+                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdOrganization.class);
+        if (orgDao.getEntityById(1L) == null) {
+            app.erp.md.dao.entity.ErpMdOrganization org = new app.erp.md.dao.entity.ErpMdOrganization();
+            org.setId(1L);
+            org.setCode("ORG-1");
+            org.setName("测试组织");
+            org.setOrgType("COMPANY");
+            org.setStatus("ACTIVE");
+            orgDao.saveEntity(org);
+        }
+        IEntityDao<app.erp.md.dao.entity.ErpMdCurrency> curDao =
+                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdCurrency.class);
+        if (curDao.getEntityById(1L) == null) {
+            app.erp.md.dao.entity.ErpMdCurrency cur = new app.erp.md.dao.entity.ErpMdCurrency();
+            cur.setId(1L);
+            cur.setCode("CNY");
+            cur.setName("人民币");
+            curDao.saveEntity(cur);
+        }
     }
 
     private Long seedCarrier(String code, long partnerId) {
