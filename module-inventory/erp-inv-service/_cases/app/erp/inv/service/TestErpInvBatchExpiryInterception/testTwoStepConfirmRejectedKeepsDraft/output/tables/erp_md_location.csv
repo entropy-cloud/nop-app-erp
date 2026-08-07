@@ -1,0 +1,2 @@
+_chgType,ID,WAREHOUSE_ID,CODE,NAME,PARENT_ID,IS_ACTIVE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,4002,3002,@var:ErpMdLocation@code,测试库位,,true,@var:ErpMdLocation@delVersion,0,autotest-ref,*,autotest-ref,*

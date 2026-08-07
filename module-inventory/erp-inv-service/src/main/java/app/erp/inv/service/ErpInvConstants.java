@@ -26,6 +26,10 @@ public interface ErpInvConstants extends ErpInvDocStatus {
     String CONFIG_TRACE_CHAIN_MAX_DEPTH = "erp-inv.trace-chain-max-depth";
     int TRACE_CHAIN_MAX_DEPTH_DEFAULT = 10;
 
+    // 批次效期拦截配置项（RC-R1.20 / P1-RC-031，UC-INV-06 ④；state-machine.md §4「可配置放行」落地。
+    // 默认 true：批次管控物料的过期批次拒绝出库确认；false 时守卫整体放行（部署期数据迁移放行口））
+    String CONFIG_BATCH_EXPIRY_CHECK_ENABLED = "erp-inv.batch-expiry-check-enabled";
+
     // 成本核算配置项（costing-methods.md §配置项 / plan 2026-07-02-1538-1）
     // costing-enabled=false 时记账器退化为既有硬编码移动加权平均行为（兜底开关）
     String CONFIG_COSTING_ENABLED = "erp-inv.costing-enabled";

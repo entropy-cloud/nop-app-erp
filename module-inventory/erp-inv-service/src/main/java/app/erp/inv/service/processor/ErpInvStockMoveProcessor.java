@@ -3,7 +3,9 @@ package app.erp.inv.service.processor;
 import app.erp.inv.biz.StockMoveLineRequest;
 import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.biz.TraceChainResult;
+import app.erp.inv.biz.IErpInvBatchBiz;
 import app.erp.inv.dao.ErpInvDaoConstants;
+import app.erp.inv.dao.entity.ErpInvBatch;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.dao.entity.ErpInvStockMoveLine;
@@ -12,6 +14,8 @@ import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.posting.InvPostingDispatcher;
 import app.erp.inv.service.stock.StockMoveBookkeeper;
 import app.erp.inv.service.trace.TraceChainQuery;
+import app.erp.md.biz.IErpMdMaterialBiz;
+import app.erp.md.dao.entity.ErpMdMaterial;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -24,6 +28,7 @@ import jakarta.inject.Inject;
 import java.util.Objects;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -53,6 +58,12 @@ public class ErpInvStockMoveProcessor {
 
     @Inject
     TraceChainQuery traceChainQuery;
+
+    @Inject
+    IErpMdMaterialBiz materialBiz;
+
+    @Inject
+    IErpInvBatchBiz batchBiz;
 
     public ErpInvStockMove findByRelatedBill(String relatedBillType, String relatedBillCode, IServiceContext context) {
         if (relatedBillType == null || relatedBillCode == null) {
@@ -114,6 +125,8 @@ public class ErpInvStockMoveProcessor {
     }
 
     protected void validateAvailable(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, IServiceContext context) {
+        // 效期守卫为合规门禁，置于负库存短路之前（RC-R1.20 Decision：allow-negative-stock 不豁免批次过期）
+        validateBatchExpiry(move, lines, context);
         if (isNegativeStockAllowed()) {
             return;
         }
@@ -133,6 +146,55 @@ public class ErpInvStockMoveProcessor {
                         .param(ErpInvErrors.ARG_REQUIRED, required.toPlainString());
             }
         }
+    }
+
+    /**
+     * per-line 批次效期守卫（RC-R1.20 / P1-RC-031，UC-INV-06 ④）：批次管控物料的过期批次拒绝出库确认。
+     * 仅在出库/内部转移移动单（{@code reservesOnConfirm} 命中类型）生效——与可用量校验同型边界；
+     * INCOMING 类移动单（采购入库/退货入库）收过期批次属质检域职责，不入拦截。
+     *
+     * <p>null 语义（A4.2.78 设计输入）：{@code expiryDate == null} → 跳过拦截（视为永不过期）。
+     * config {@code erp-inv.batch-expiry-check-enabled}（默认 true）= false 时守卫整体放行（L2「可配置放行」）。
+     */
+    protected void validateBatchExpiry(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, IServiceContext context) {
+        if (!isBatchExpiryCheckEnabled()) {
+            return;
+        }
+        if (!reservesOnConfirm(move.getMoveType())) {
+            return;
+        }
+        LocalDate today = CoreMetrics.today();
+        for (ErpInvStockMoveLine line : lines) {
+            if (StringHelper.isBlank(line.getBatchNo())) {
+                continue;
+            }
+            // 跨实体：物料 isBatchManaged 经 I*Biz 走权限管道；get(id,true) 容忍物料不存在（跳过守卫）
+            ErpMdMaterial material = materialBiz.get(String.valueOf(line.getMaterialId()), true, context);
+            if (material == null || !Boolean.TRUE.equals(material.getIsBatchManaged())) {
+                continue;
+            }
+            ErpInvBatch batch = findBatch(move, line, context);
+            if (batch == null || batch.getExpiryDate() == null) {
+                // null 语义（A4.2.78 设计输入）：expiryDate=null 跳过拦截（视为永不过期）
+                continue;
+            }
+            if (batch.getExpiryDate().isBefore(today)) {
+                throw new NopException(ErpInvErrors.ERR_BATCH_EXPIRED)
+                        .param(ErpInvErrors.ARG_MATERIAL_ID, line.getMaterialId())
+                        .param(ErpInvErrors.ARG_BATCH_NO, line.getBatchNo())
+                        .param(ErpInvErrors.ARG_EXPIRY_DATE, batch.getExpiryDate().toString());
+            }
+        }
+    }
+
+    protected ErpInvBatch findBatch(ErpInvStockMove move, ErpInvStockMoveLine line, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("batchNo", line.getBatchNo()));
+        q.addFilter(eq("materialId", line.getMaterialId()));
+        q.addFilter(eq("warehouseId", resolveReservationWarehouseId(move)));
+        q.addOrderField("id", true);
+        List<ErpInvBatch> list = batchBiz.findList(q, null, context);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     protected void applyReservation(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, boolean reserve,
@@ -285,6 +347,11 @@ public class ErpInvStockMoveProcessor {
     protected boolean isNegativeStockAllowed() {
         Boolean flag = AppConfig.var(ErpInvConstants.CONFIG_ALLOW_NEGATIVE_STOCK, Boolean.FALSE);
         return Boolean.TRUE.equals(flag);
+    }
+
+    protected boolean isBatchExpiryCheckEnabled() {
+        Boolean flag = AppConfig.var(ErpInvConstants.CONFIG_BATCH_EXPIRY_CHECK_ENABLED, Boolean.TRUE);
+        return !Boolean.FALSE.equals(flag);
     }
 
     protected boolean isTraceChainEnabled() {

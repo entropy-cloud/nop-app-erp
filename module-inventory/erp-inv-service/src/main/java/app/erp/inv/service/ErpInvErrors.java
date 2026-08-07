@@ -42,6 +42,10 @@ public interface ErpInvErrors {
     /** O-23：moveLineId 参数键命名常量（替代字符串字面量）。 */
     String ARG_MOVE_LINE_ID = "moveLineId";
 
+    // 批次效期拦截（RC-R1.20 / P1-RC-031，UC-INV-06 ④）
+    String ARG_BATCH_NO = "batchNo";
+    String ARG_EXPIRY_DATE = "expiryDate";
+
     ErrorCode ERR_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.inv.illegal-status-transition",
             "移动单 {moveCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
             ARG_MOVE_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
@@ -49,6 +53,12 @@ public interface ErpInvErrors {
     ErrorCode ERR_AVAILABLE_INSUFFICIENT = ErrorCode.define("erp.err.inv.available-insufficient",
             "可用量不足：物料 {materialId} / 仓库 {warehouseId}，可用={available}，需要={required}",
             ARG_MATERIAL_ID, ARG_WAREHOUSE_ID, ARG_AVAILABLE, ARG_REQUIRED);
+
+    // 批次效期拦截（RC-R1.20 / P1-RC-031，UC-INV-06 ④；use-cases.md:113「出库移动单确认失败」+
+    // state-machine.md §4「可配置放行」：erp-inv.batch-expiry-check-enabled=false 时放行不抛）
+    ErrorCode ERR_BATCH_EXPIRED = ErrorCode.define("erp.err.inv.batch-expired",
+            "批次已过期：物料 {materialId} / 批次 {batchNo} 有效期至 {expiryDate}，拒绝出库确认",
+            ARG_MATERIAL_ID, ARG_BATCH_NO, ARG_EXPIRY_DATE);
 
     // 并发扣减乐观锁冲突重试耗尽（plan 2026-07-07-0024-2；UC-INV-08；concurrency-and-transactions.md §模式四）
     ErrorCode ERR_INV_CONCURRENT_DEDUCT_CONFLICT = ErrorCode.define("erp.err.inv.concurrent-deduct-conflict",
