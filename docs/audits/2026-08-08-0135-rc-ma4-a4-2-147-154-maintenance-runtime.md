@@ -1,0 +1,282 @@
+# rc-ma4-a4-2-147-154-maintenance-runtime 维护域到期访问/设备恢复/备件跨域/联动响应运行时确认
+
+> Plan: `docs/plans/2026-08-08-0135-1-rc-ma4-a4-2-147-154-maintenance-runtime.md`
+> Mission: requirement-compliance（MA4 运行时行为验证 切片 A4.2.147-A4.2.154）
+> Work Item: A4.2.147 / A4.2.148 / A4.2.149 / A4.2.150 / A4.2.151 / A4.2.152 / A4.2.153 / A4.2.154（A1.42 §7 SP-1 + A1.43 §7 SP-1..SP-3 + A1.44 §7 SP-1..SP-4 八项静态存疑点运行时确认）
+> 来源: `docs/backlog/requirement-compliance-roadmap.md` A4.2.147-A4.2.154
+> Audit Status: closed
+> 审计性质: **只读审计 + 两处测试侧补充**（A4.2.148 IDLE 输入单测 + A4.2.149 余额直查断言，均限 erp-mnt-service 测试类目，不触生产代码）
+
+## 0. 与既有 MA1/A1.x 报告差异增量声明（§9）
+
+本报告**只补运行时行为证据**（methodology §去重协议），不重审 A1.42/A1.43/A1.44 已裁决的需求符合性结论与 finding 分级：
+
+- **A1.42**（`docs/audits/2026-08-06-0245-1-rc-ma1-a1-42-maintenance-f1-scheduling-conflict.md`）：UC-MAIN-01/02/09 五级追踪 + §7 SP-1..SP-3。本报告复用其 L3 代码路径静态判定 + §6 finding 编号（P1-RC-064/065/066 + P2-RC-060），只补 **SP-1（A4.2.147）generateDueVisits 自动生成路径→schedule→conflict 端到端**的运行时证据。SP-2/SP-3（运行时长采集入口 + recurrenceType RUNTIME）静态已确认缺失，归 P1-RC-064 修复，**不在本计划范围**（计划 Current Baseline 排除声明）。
+- **A1.43**（`docs/audits/2026-08-06-0245-2-rc-ma1-a1-43-maintenance-f2-visit-sparepart.md`）：UC-MAIN-03/04 五级追踪 + §7 SP-1..SP-3。本报告复用其 L3 静态判定 + §6 finding 编号（P2-RC-061），只补 **SP-1（A4.2.148）IDLE 恢复运行时证据（新测试）+ SP-2（A4.2.149）余额直查断言 + SP-3（A4.2.150）不足路径跨域 guard 确认**的运行时证据。
+- **A1.44**（`docs/audits/2026-08-06-0245-3-rc-ma1-a1-44-maintenance-f3-response-linkage-oee-dashboard.md`）：UC-MAIN-05/06/07/08/10/11 五级追踪 + §7 SP-1..SP-5。本报告复用其 L3 静态判定 + §6 finding 编号（P1-RC-067~071 + reuse P1-MA2-093），只补 **SP-1..SP-4（A4.2.151-154）隐式机制运行时 census** 的证据。SP-5（看板 orgId 行级权限）已由 A4.2.10 合并闭合（8 域 dashboard orgId P1-MA2-093 reuse R1.29 全覆盖，done ✅），**本计划不重复覆盖**（计划 Current Baseline 排除声明）。
+- **P1-MA2-086**（幂等维度，resolved R1.28）：本计划**不重审并发幂等维度**（A1.42/43/44 已声明复用其证据；计划 Non-Goals 排除声明）。
+- **P1-MA2-093**（看板行级权限，resolved R1.29）：A4.2.10 已闭合，本计划**不重复覆盖**（排除声明）。
+
+本切片**只补**的运行时差异：(i) A4.2.147 generateDueVisits cron→DRAFT→schedule→conflict 全链重跑；(ii) A4.2.148 IDLE 输入新测试（seed 设备=IDLE → complete → 断言恢复值，证实/证伪 restoreToRunning 简化偏差）；(iii) A4.2.149 余额直查断言（`ErpInvStockBalance.totalQuantity` == seed−消耗量，测试侧补充）；(iv) A4.2.150 不足库存跨域 guard 确认（`TestErpInvStockMoveBookkeeping` + `TestErpMntSparePartAndSchedule#testSparePartConfirmInsufficientRollsBack`）；(v) A4.2.151-154 隐式机制 grep census + 代码路径追踪（A1.44 §7 SP-1..SP-4）。
+
+---
+
+## 1. 存疑点清单与判据（A1.42/43/44 §7 八项）
+
+| # | 工作项 | 来源存疑点 | 静态判定 | 运行时判据 |
+|---|--------|-----------|---------|-----------|
+| 1 | A4.2.147 | A1.42 §7 SP-1（UC-MAIN-01 ④）generateDueVisits 自动生成路径→schedule→conflict 端到端 | 非缺口（自动生成产 DRAFT，冲突检测在 DRAFT→SCHEDULED） | 重跑 `TestErpMntDueVisitJob`（cron 门控）+ `TestErpMntSparePartAndSchedule#testGenerateDueVisitsCreatesPlannedVisitAndAdvancesNextDueDate`（DRAFT 生成）+ `TestErpMntDueVisitIdempotency`（幂等）+ `TestErpMntVisitRequestStateMachine#testVisitScheduleConflict`（DRAFT→SCHEDULED 冲突检测），追踪 `ScheduleDueGenerator.generateDueVisits`→DRAFT→`schedule`→`ERR_VISIT_SCHEDULE_CONFLICT` 全链 |
+| 2 | A4.2.148 | A1.43 §7 SP-1（UC-MAIN-03 ③）complete 时 IDLE 设备是否变 RUNNING | 是缺口（restoreToRunning 恒恢复 RUNNING 无 IDLE 分支，P2-RC-061） | 确认 `EquipmentStatusLinker.restoreToRunning:38-43` file:line 证据 + **新增 IDLE 输入单测**（seed 设备=IDLE → complete → 断言恢复值） |
+| 3 | A4.2.149 | A1.43 §7 SP-2（UC-MAIN-04-C）generateMove(OUTGOING+relatedBillType) 是否真实触发库存余额扣减 | 机制存在（inventory auto-DONE + bookkeeper.bookCompletion） | 追踪 `SparePartIssueService.issue:28`→跨域 `IErpInvStockMoveBiz.generateMove`→`ErpInvStockMoveProcessor`→`bookkeeper.bookCompletion` 链 + **补余额直查断言**（`ErpInvStockBalance.totalQuantity` == seed−消耗量） |
+| 4 | A4.2.150 | A1.43 §7 SP-3（UC-MAIN-04-E）备件不足校验失败路径是否抛 inventory ERR | guard 存在（validateAvailable + isNegativeStockAllowed 默认 FALSE） | 确认 `ErpInvStockMoveProcessor#validateAvailable:116-136` + `isNegativeStockAllowed:285` 门控链 + 既有 guard 测试（`TestErpInvStockMoveBookkeeping`） |
+| 5 | A4.2.151 | A1.44 §7 SP-1（UC-MAIN-05）accept 生成 visit 是否经隐式机关联回 request | 零 hook/拦截器 | grep census 复核 + 代码路径追踪 visit 生成时 requestId 填充机制 |
+| 6 | A4.2.152 | A1.44 §7 SP-2（UC-MAIN-06）DowntimeEntry record/complete 是否经隐式通道发布跨域事件 | 零事件发布 | grep census 复核 + 确认设备状态联动实际经 `EquipmentStatusLinker` 直接调用（`linkToDown:31`/`restoreToRunning:38`，config-gated 默认 true）达成行为等价 |
+| 7 | A4.2.153 | A1.44 §7 SP-3（UC-MAIN-08）资产 SCRAPPED/SOLD 是否反向调 `IErpMntEquipmentBiz.changeStatus(DECOMMISSIONED)` | maintenance 侧零监听器已证；assets 侧待核 | assets 域处置 Processor（`ErpAstDisposalProcessor`/`ErpAstDisposalApproveProcessor`）反向调用 census（运行时双向联动确认） |
+| 8 | A4.2.154 | A1.44 §7 SP-4（UC-MAIN-07）额外故障是否支持 visit remark/result + 手工创建 request 半自动流程 | 静态无编排方法 | 前端 AMIS 编排 census：visit 表单 remark/result 字段可达性 + request 手工 CRUD 可达性 |
+
+---
+
+## 2. 运行时证据采集（L3 `file:line` + L4 强断言）
+
+### 2-1 A4.2.147 generateDueVisits 自动生成路径→schedule→conflict 端到端确认 — 主路径闭合（非缺口）
+
+**L3 路径追踪**（live code 实测）：
+
+- `module-maintenance/erp-mnt-service/.../support/ScheduleDueGenerator.java#generateDueVisits:35` — 门控（`ErpMntConfigs.autoGenerateDueVisits()` 默认 true）→ `findDueSchedules:63-69`（isActive=1 AND nextDueDate ≤ asOfDate）→ `existsVisitForScheduleDate:55-61`（insert 前 code existence check 幂等去重，P1-MA2-086 resolved R1.28 行为证据）→ `generateVisitForSchedule:71-81`（code=VST-SCH-{schedId}-{date}/scheduleId/equipmentId/visitDate/**status=DRAFT**/visitType=PLANNED）→ `advanceNextDueDate:83-106`（按 recurrenceType/frequency 推进）。
+- 冲突检测站点：`.../processor/ErpMntVisitScheduleProcessor.java#schedule:22`（DRAFT→SCHEDULED 手动排程）→ `checkScheduleConflict:44-64`（equipmentId + visitDate + status∈(SCHEDULED, IN_PROGRESS) 过滤，排除自身后命中即抛 `ERR_VISIT_SCHEDULE_CONFLICT`，`ErpMntErrors.java:45`）。
+- cron 门控接线：`.../job/ErpMntDueVisitJob.java#execute:35`（cron 空值跳过；非空以 `CoreMetrics.today()` 为基准委派 `IErpMntScheduleBiz.generateDueVisits`）+ job.yaml 双重门控（enabled 默认 false + cronExpr 门控）。
+- **全链确认**：自动生成产 DRAFT → 手动 schedule 时走 `checkScheduleConflict` 设备维度冲突检测 → 冲突抛 `ERR_VISIT_SCHEDULE_CONFLICT`。自动生成路径本身不经冲突检测（DRAFT 无冲突语义），排程时进入检测——与 A1.42 §7 SP-1 静态判定一致。
+
+**L4 测试覆盖**（2026-08-08 重跑全绿）：
+
+- `job/TestErpMntDueVisitJob`（3 tests PASS）——cron 空值跳过 + cron 非空委派 + execute 无参 public，覆盖 UC-MAIN-01-A。
+- `TestErpMntSparePartAndSchedule#testGenerateDueVisitsCreatesPlannedVisitAndAdvancesNextDueDate`（:142，PASS）——生成 1 个 PLANNED 访问 + nextDueDate 推进 + visitType=PLANNED + status=DRAFT + scheduleId 关联，覆盖 UC-MAIN-01-B/D。
+- `TestErpMntDueVisitIdempotency#testRepeatGenerateSameDateNoDuplicateVisit`（:48，PASS）——同 asOfDate 重复生成 0 新建 + 仅 1 条访问行，覆盖幂等维度（P1-MA2-086 不重审）。
+- `TestErpMntVisitRequestStateMachine#testVisitScheduleConflict`（:93，PASS）——同设备同日（一 SCHEDULED + 一 DRAFT）→ schedule → `ERR_VISIT_SCHEDULE_CONFLICT`，覆盖 DRAFT→SCHEDULED 冲突检测。
+
+**裁决**：主路径闭合（非缺口确认，静态已明确，运行时全链重跑证实）。cron→DRAFT→schedule→conflict 端到端成立，行为正确。
+
+### 2-2 A4.2.148 complete 时 IDLE 设备运行时恢复值确认 — 维持 P2-RC-061（P2 登记不强制，修复归 MR1）+ 新测试证据
+
+**L3 路径追踪**（live code 实测）：
+
+- `module-maintenance/erp-mnt-service/.../support/EquipmentStatusLinker.java#restoreToRunning:38-43` — 恒 `changeEquipmentStatus(equipmentId, EQUIPMENT_STATUS_RUNNING, context)`，**无 IDLE 分支**、无前置状态快照列、无与排产协调判定。
+- javadoc:16-17 自承：「设备无独立持久化的前置状态快照列，故以 RUNNING 作为标准运行态恢复；IDLE 设备恢复为 RUNNING 为已知的简化偏差，乐观锁保护并发覆盖」——**AI 代码层自标，非 owner doc Deferred 段落**（A1.43 §5 三判据已复核，无人工批准痕迹）。
+- 调用点：`ErpMntVisitCompleteProcessor#complete:31`（IN_PROGRESS→COMPLETED 后调 `restoreToRunning`）+ `ErpMntVisitCancelProcessor#cancel:27` + `ErpMntDowntimeEntryCompleteProcessor#complete`。
+
+**新增 IDLE 输入单测**（本计划测试侧补充，`TestErpMntVisitRequestStateMachine#testVisitCompleteFromIdleEquipmentRestoresRunning`）：
+
+- seed 设备=`EQUIPMENT_STATUS_IDLE` + visit=DRAFT → schedule → start（设备→UNDER_MAINTENANCE）→ complete → **断言设备=RUNNING**（证实简化偏差：IDLE 设备经维护后恢复 RUNNING 而非 IDLE）。
+- 测试运行：`mvn test -pl module-maintenance/erp-mnt-service -Dtest=TestErpMntVisitRequestStateMachine` → **Tests run: 10, Failures: 0, Errors: 0, Skipped: 0 — BUILD SUCCESS**（2026-08-08 实测，含新增 IDLE 测试）。
+
+**裁决**：运行时证实 A1.43 静态判定成立——`restoreToRunning` 恒恢复 RUNNING，IDLE 输入经 complete 后变 RUNNING（简化偏差实证）。**维持 P2-RC-061（P2 登记不强制，修复归 MR1 R1.0 展开器）**。不影响主路径（RUNNING 是「更可用」态，非数据破坏）；不触发 MR0。
+
+### 2-3 A4.2.149 generateMove(OUTGOING+relatedBillType) 库存余额扣减运行时确认 — 主路径闭合（跨域集成链证据）
+
+**L3 路径追踪**（live code 实测）：
+
+- `module-maintenance/erp-mnt-service/.../support/SparePartIssueService.java#issue:28-55` — 按行构造 `StockMoveRequest`（moveType=`MOVE_TYPE_OUTGOING` + relatedBillType=`RELATED_BILL_TYPE_MNT_SPARE_PART` + relatedBillCode=usage.code + sourceWarehouseId=usage.warehouseId），`generateMove(request, context)` 调**跨域** `IErpInvStockMoveBiz.generateMove`（:55）。
+- 跨域 inventory：`ErpInvStockMoveBizModel#generateMove` → `ErpInvStockMoveGenerateMoveProcessor` → `ErpInvStockMoveProcessor`（OUTGOING + relatedBillType 非空 → 自动推进 DONE）→ `bookkeeper.bookCompletion(move, lines, acctSchemaId)` 更新 `ErpInvStockBalance`（现有量 -= 出库量，:110）。
+- 余额载体：`ErpInvStockBalance`（materialId/warehouseId/totalQuantity/availableQuantity/reservedQuantity/lockedQuantity/avgCost/totalCost），`recomputeAvailable:278-283` 维持 `available = total − reserved − locked` 不变量。
+
+**L4 测试覆盖**：
+
+- `TestErpMntSparePartPosting#testSparePartPostingBasic`（:101，2026-08-08 运行 PASS）——seed 库存 20@5 + confirm 消耗 10×5 → 断言 move DONE + 凭证借贷平衡（Dr 6602=50 / Cr 1403=50）。
+- **新增余额直查断言**（本计划测试侧补充，`:119-122`）：`ErpInvStockBalance balance = findBalance(M1)` → **断言 `totalQuantity == 10`（seed 20 − 消耗 10）**——直查跨域 bookkeeper 扣减生效，非仅 move 层 DONE 间接推断。
+- `TestErpMntSparePartAndSchedule#testSparePartConfirmIssuesStockAndPosts`（:107-110，既有强断言）——余额直查 `totalQuantity == 10`（20−10）同步佐证。
+
+**裁决**：主路径闭合（跨域集成链证据）。`SparePartIssueService.issue` → `generateMove(OUTGOING+relatedBillType)` → auto-DONE → `bookkeeper.bookCompletion` 真实更新 `ErpInvStockBalance.totalQuantity`（seed−消耗量），运行时直查断言证实。
+
+### 2-4 A4.2.150 备件不足校验失败路径运行时确认 — 主路径闭合（跨域 guard 生效）
+
+**L3 路径追踪**（live code 实测）：
+
+- `module-inventory/erp-inv-service/.../processor/ErpInvStockMoveProcessor.java#validateAvailable:116-136` — `isNegativeStockAllowed()` 为 true 直接 return（放行）；否则 `reservesOnConfirm(moveType)`（OUTGOING/INTERNAL_TRANSFER 才校验）→ 逐行 `bookkeeper.upsertBalance` 取 `availableQuantity` vs `line.quantity`，`available < required` 抛 `ERR_AVAILABLE_INSUFFICIENT`（携带 materialId/warehouseId/available/required，:128-134）。
+- `isNegativeStockAllowed:285-288` — `AppConfig.var(ErpInvConstants.CONFIG_ALLOW_NEGATIVE_STOCK, Boolean.FALSE)` 默认 **FALSE** → 默认禁负库存即备件不足校验失败。
+- 校验时机：`doConfirm:94` 在 CONFIRMED 翻转前调用（DRAFT→CONFIRMED 路径），maintenance 出库经 OUTGOING+relatedBillType 非空自动走 confirm→complete 链，validateAvailable 在链路中生效。
+
+**L4 测试覆盖**（跨域 guard，2026-08-08 运行 PASS）：
+
+- `module-inventory/erp-inv-service/.../TestErpInvStockMoveBookkeeping#testConfirmInsufficientAvailableRejected`（:117-131，PASS）——无库存出库 5 → `ERR_AVAILABLE_INSUFFICIENT` + 整笔回滚（无移动单残留）+ reserved 零。
+- `#testNegativeStockOffRejectsByDefault`（:271-288，PASS）——默认 allow-negative-stock=false 无库存出库 → `ERR_AVAILABLE_INSUFFICIENT`。
+- `#testNegativeStockConfigAllowsShortage`（:133-148，PASS）——config=true 放行（对照：默认 FALSE 为 guard 生效前提）。
+- maintenance 侧集成佐证：`TestErpMntSparePartAndSchedule#testSparePartConfirmInsufficientRollsBack`（:113-137，PASS）——seed 库存 5（< 消耗 10）→ confirm → `ERR_AVAILABLE_INSUFFICIENT` 整笔回滚 + posted=false + 余额未扣减（5 保持）。**跨域集成路径（maintenance confirm → inventory guard）运行时实证**。
+
+**裁决**：主路径闭合（跨域 guard 生效）。`validateAvailable:116-136` + `isNegativeStockAllowed:285`（默认 FALSE）门控链成立，备件不足经 maintenance confirm 跨域路径抛 `ERR_AVAILABLE_INSUFFICIENT` 整笔回滚。
+
+### 2-5 A4.2.151 accept→visit 隐式关联回 request 确认 — 无隐式自动联动（维持 P1-RC-067）
+
+**grep census 复核**（live code 实测）：
+
+- `ErpMntVisit` 实体（`_ErpMntVisit.java`）属性集：id/code/scheduleId/equipmentId/visitDate/status/assignedTo/completedBy/completedAt/startTime/endTime/totalMinutes/visitType/result/remark/orgId/businessDate/posted/postedAt/postedBy/...——**无 requestId 字段**（grep `requestId` 跨 erp-mnt-dao 仅 `ErpMntSparePartUsage` 实体命中，`_app.orm.xml:811`）。
+- `ErpMntRequestAcceptProcessor#generateResponsiveVisit:27-36` — 构造 data map：code="VST-REQ-"+requestId / equipmentId / visitDate / status=DRAFT / visitType=RESPONSIVE / assignedTo，**未设 requestId**（字段不存在无从设置）。visit 仅经 code 前缀（VST-REQ-{id}）+ equipmentId 隐式关联请求，无显式 FK。
+- visit complete 不回写 request：`ErpMntVisitCompleteProcessor#doComplete:35-54` 仅翻转 visit 状态 + 设备恢复 + GL 过账，**零 request 操作**；request COMPLETED 须经独立 mutation `ErpMntRequestCompleteProcessor#complete`（守卫 IN_PROGRESS）手工触发（`TestErpMntVisitRequestStateMachine#testRequestFullFlow:207` + `TestErpMntDowntimeAndE2E#testResponsiveRequestFullFlow:216` 证实手工两步）。
+- **零 hook/拦截器**：grep hook/interceptor/拦截器/event listener 跨 module-maintenance 生产代码零业务命中（A1.44 §2 已证，本报告复核）。
+
+**裁决**：运行时确认**无隐式自动联动**——accept 生成 visit 无 requestId 显式关联（字段不存在），visit complete 零 request 回写，无任何隐式 hook/拦截器机制。**按 A1.44 §6 衔接维持 P1-RC-067（不新建）**（关联请求维度 P1，Q4 强制实现义务归 MR1；修复触 ORM 结构[ErpMntVisit 加 requestId 列]须 ask-first + 独立 plan-audit）。
+
+### 2-6 A4.2.152 DowntimeEntry 跨域事件发布确认 — 非事件订阅模型（行为经直接调用达成等价 → 接受/watch-only）
+
+**grep census 复核**（live code 实测）：
+
+- grep `publish|IErpSysEventBus|notify.*event|IErpEvent|emit|EventBus|publishEvent|fireEvent` 跨 `module-maintenance` 全模块 **No files found**（零命中）——record/complete 两 Processor 均零事件发布。
+- 制造域无消费者：grep downtime/Downtime/设备停机/equipment-stop 跨 `module-manufacturing` 全模块 **零命中**——制造域无设备停机事件消费站点（A1.44 §2 已证，本报告复核）。
+
+**L3 路径追踪**（行为等价机制）：
+
+- `ErpMntDowntimeEntryRecordProcessor#record:16-22` — 创建停机记录 + 落库 + **直接调 `equipmentStatusLinker.linkToDown(downtime.getEquipmentId(), context)`**（:20）→ `EquipmentStatusLinker#linkToDown:31-36`（config-gated `erp-mnt.equipment-status-link-enabled` 默认 true）→ `changeEquipmentStatus(equipmentId, EQUIPMENT_STATUS_DOWN)`。
+- `ErpMntDowntimeEntryCompleteProcessor#complete:18` — 恢复设备 → `restoreToRunning:38-43` → RUNNING。
+
+**L4 测试覆盖**：`TestErpMntDowntimeAndE2E#testDowntimeRecordSetsDownAndCompleteRestores`（:86-116，PASS）——record 设备 DOWN + complete 设备 RUNNING + totalMinutes + 终态保护，仅本地记录断言（跨域事件零断言——与零实现一致）。
+
+**裁决**：运行时确认**非事件订阅模型**——DowntimeEntry record/complete 无任何跨域事件发布，设备状态联动实际经 `EquipmentStatusLinker` **直接调用**（`linkToDown:31`/`restoreToRunning:38`，config-gated 默认 true）达成行为等价（设备 DOWN/RUNNING 状态正确）。**按 A1.44 §6 衔接维持 P1-RC-068（跨域契约行为不一致——L1 要求发布事件供制造域消费暂停/恢复排产，实际零事件发布，Q4 强制实现义务归 MR1；跨域契约须与 mfg 工单排产协调 ask-first）**。本报告确认「行为等价达成」但不改变「事件发布契约缺失」分级。
+
+### 2-7 A4.2.153 资产 SCRAPPED/SOLD 反向调 changeStatus(DECOMMISSIONED) 确认 — 双向联动均缺失（维持 P1-RC-070）
+
+**grep census 复核**（live code 实测）：
+
+- maintenance 侧（A1.44 已证，本报告复核）：grep `DECOMMISSIONED|assetDisposal|onAssetDisposal|SCRAPPED|SOLD|disposal` 跨 `module-maintenance` 仅命中 dashboard 过滤行 + `ErpMntDaoConstants` 常量 + 测试种子——**零事件监听器**。`ErpMntEquipmentBizModel#changeStatus:20` 是通用手工方法（requireEntity + setStatus + updateEntity），非 assets 域事件驱动。
+- **assets 域反向调用 census（本报告运行时新增核验）**：grep `ErpMntEquipment|changeStatus|DECOMMISSIONED` 跨 `module-assets` 全模块 **No files found（零命中）**——assets 域处置链路**无任何反向调用** maintenance 设备。
+- assets 域处置 Processor 实测：`ErpAstDisposalProcessor#executeApprove:62-101` — approve 时 `asset.setStatus(terminalStatus)`（SCRAPPED/SOLD，:72-77）+ `cancelPendingSchedules(asset.getId())`（:79，取消排程）+ 过账凭证 + posted 回写——**仅操作资产本域状态 + 本域排程，零 maintenance 设备联动**。`ErpAstDisposalApproveProcessor`（:16，AbstractApproveProcessor 子类）走同一 `executeApprove` 链。
+
+**裁决**：运行时确认**双向联动均缺失**——maintenance 侧零监听器（已证）+ assets 侧处置 Processor 零反向调用（本报告 census 证实），资产 SCRAPPED/SOLD 后关联设备状态不自动变 DECOMMISSIONED。**按 A1.44 §6 衔接维持 P1-RC-070（不新建）**（自动联动缺失 + DECOMMISSIONED 引用守卫缺失，Q4 强制实现义务归 MR1；跨域契约须与 assets 域 IErpAstDisposalBiz 双向协调 ask-first + 监听器预授权）。
+
+### 2-8 A4.2.154 额外故障 visit remark/result + 手工 request 半自动流程确认 — 半自动流程可达性现状确认（接受/watch-only）
+
+**L3/L4 前端编排 census**（live code 实测）：
+
+- **visit 表单 remark/result 字段可达性**：`ErpMntVisit.xmeta`（`_ErpMntVisit.xmeta:76/80`）含 `result`（执行结果，propId=14）`remark`（备注，propId=15）prop，queryable + sortable；delta view `ErpMntVisit.view.xml` view 表单（:58 result / :64 remark）+ edit 表单（:88 result / :93 remark）均可达——**额外故障「本次记录（备注/结果）」载体前端可达**（UC-MAIN-07-B 满足）。
+- **visit 执行向导**：`ErpMntVisit.view.xml:122-126` `row-visit-wizard-button`（执行向导 4 步：信息确认→备件消耗→执行结果→确认完成）SCHEDULED/IN_PROGRESS 可见——结果记录经向导编排可达。
+- **request 手工 CRUD 可达性**：`ErpMntRequest.view.xml` 全量 CRUD 可达——list grid（:6）+ view/edit/add 表单（:44-78，含 equipmentId/description/priority/status/remark）+ `_gen/_ErpMntRequest.view.xml:157` `ErpMntRequest__save/id`（新增）+ rowActions（accept/complete/rejectRequest/cancel，:125-149）——**另开新维护请求（OPEN）手工创建前端可达**（UC-MAIN-07-C 半自动：visit 记录备注 + 手工另开 request）。
+- **零编排方法**：grep `additionalFault|additionalIssue|openNewRequest|newRequest|额外故障` 跨 `module-maintenance` 全模块 **No files found**——无「visit IN_PROGRESS → 发现额外故障 → 一键另开新请求」后端编排（A1.44 §2 已证，本报告复核）。
+
+**裁决**：运行时确认**半自动流程可达性现状成立**——visit 表单 remark/result 字段 + 执行向导 + request 手工 CRUD（含 accept/complete 流程按钮）前端全部可达，额外故障可经「visit 记录备注/结果 + 手工另开 request」半自动完成；但无自动化编排方法（一键另开新请求缺失）。**按 A1.44 §6 衔接维持 P1-RC-069（不新建）**（编排完全缺失，Q4 强制实现义务归 MR1；纯 BizModel/Processor 代码逻辑预授权不触 §5 ask-first）。本报告确认前端可达性现状（接受半自动流程为当前行为），不改变编排缺失分级。
+
+---
+
+## 3. 测试证据汇总（L4，断言强度 + 本计划测试侧补充）
+
+| 工作项 | 测试 | 断言强度 | 覆盖验收标准 | 运行结果（2026-08-08） |
+|--------|------|---------|-------------|----------------------|
+| A4.2.147 | `TestErpMntDueVisitJob`（3）+ `TestErpMntSparePartAndSchedule#testGenerateDueVisitsCreatesPlannedVisitAndAdvancesNextDueDate` + `TestErpMntDueVisitIdempotency#testRepeatGenerateSameDateNoDuplicateVisit` + `TestErpMntVisitRequestStateMachine#testVisitScheduleConflict` | 强（cron 门控 / DRAFT 生成 + nextDueDate 推进 / 幂等 / 冲突拒绝） | UC-MAIN-01-A/B/D + UC-MAIN-09-A/B-设备/C-reject | Tests run: 11, 0 failure ✅ |
+| A4.2.148 | **新增** `TestErpMntVisitRequestStateMachine#testVisitCompleteFromIdleEquipmentRestoresRunning` | 强（IDLE seed → complete → 断言 RUNNING，证实简化偏差） | UC-MAIN-03-C（IDLE 输入分支运行时证据） | Tests run: 10（含新增），0 failure ✅ |
+| A4.2.149 | **补断言** `TestErpMntSparePartPosting#testSparePartPostingBasic`（余额直查 totalQuantity == 10）+ `TestErpMntSparePartAndSchedule#testSparePartConfirmIssuesStockAndPosts:107-110` | 强（`ErpInvStockBalance.totalQuantity` == seed−消耗量） | UC-MAIN-04-C（库存余额 -= 消耗量，跨域直查） | Tests run: 4, 0 failure ✅ |
+| A4.2.150 | `TestErpInvStockMoveBookkeeping#testConfirmInsufficientAvailableRejected` + `#testNegativeStockOffRejectsByDefault`（inventory 域）+ `TestErpMntSparePartAndSchedule#testSparePartConfirmInsufficientRollsBack`（跨域集成） | 强（ERR_AVAILABLE_INSUFFICIENT + 整笔回滚 + 余额未扣减） | UC-MAIN-04-E（备件不足跨域 guard） | Tests run: 9, 0 failure ✅ |
+| A4.2.151 | `TestErpMntVisitRequestStateMachine#testRequestAcceptGeneratesResponsiveVisit`（未断言 requestId——字段不存在）+ `#testRequestFullFlow`（手工两步证实） | 强（证实无 requestId 关联 + 无自动联动） | UC-MAIN-05-B 缺失证实（既有 finding 维持） | ✅（复用既有测试） |
+| A4.2.152 | `TestErpMntDowntimeAndE2E#testDowntimeRecordSetsDownAndCompleteRestores` | 强（本地记录 + 设备 DOWN/RUNNING；零跨域事件断言与零实现一致） | UC-MAIN-06-A 满足 / B-C 缺失证实 | Tests run: 4, 0 failure ✅ |
+| A4.2.153 | assets 域处置测试（`TestErpAstDisposal` 等，census 佐证零反向调用）+ maintenance 侧零监听器 grep | 只读 census（无 dedicated 联动测试，与零实现一致） | UC-MAIN-08-A/B 缺失证实 | ✅（census） |
+| A4.2.154 | 前端 AMIS census（`ErpMntVisit.view.xml` remark/result + `ErpMntRequest.view.xml` CRUD） | 只读 census（字段/页面可达性） | UC-MAIN-07-B 载体可达 / C 编排缺失 | ✅（census） |
+
+---
+
+## 4. 运行时行为证据（L5）
+
+- **复用 A1.42/43/44 §4**：UC-MAIN-01/03/04/05/06/07/08 主路径静态判定 + A2.14 状态机迁移守卫 + EquipmentStatusLinker config-gated 机制（A2.14 已证实，本计划不重审状态机迁移维度）。本报告只补八项存疑点的运行时差异。
+- **P1-MA2-086 复用**（幂等维度，resolved R1.28）：`ScheduleDueGenerator.existsVisitForScheduleDate:55-61` 幂等守卫作为 A4.2.147 行为证据引用（`TestErpMntDueVisitIdempotency` PASS），**不重审并发幂等维度**。
+- **P1-MA2-093 排除声明**（看板行级权限，resolved R1.29）：A1.44 §7 SP-5 已由 A4.2.10 合并闭合（8 域 dashboard orgId reuse R1.29 全覆盖，done ✅），**本计划不重复覆盖**。
+- **本切片补的运行时差异**（经 live code 实测 + L4 强断言 + 两处测试侧补充）：
+  - **A4.2.147** generateDueVisits cron→DRAFT→schedule→conflict 全链重跑证实（4 测试类 11 tests PASS）。
+  - **A4.2.148** 新增 IDLE 输入单测实证 `restoreToRunning` 恒恢复 RUNNING（IDLE 设备 complete 后变 RUNNING，简化偏差证实）。
+  - **A4.2.149** 补余额直查断言实证跨域 `bookkeeper.bookCompletion` 真实更新 `ErpInvStockBalance.totalQuantity`（20−10=10）。
+  - **A4.2.150** 跨域 guard 实证（inventory `validateAvailable` + `isNegativeStockAllowed` 默认 FALSE + maintenance 集成路径 `testSparePartConfirmInsufficientRollsBack`）。
+  - **A4.2.151** 零 hook/拦截器复核 + `ErpMntVisit` 无 requestId 字段 + `generateResponsiveVisit` 不设 requestId——无隐式自动联动确认。
+  - **A4.2.152** 零事件发布复核 + 制造域零消费者复核 + `EquipmentStatusLinker` 直接调用（`linkToDown:31`/`restoreToRunning:38`，config-gated 默认 true）行为等价确认。
+  - **A4.2.153** assets 域反向调用 census 新增核验——`ErpAstDisposalProcessor#executeApprove:62-101` 仅操作资产本域状态 + 本域排程，`module-assets` 零 `ErpMntEquipment`/`changeStatus`/`DECOMMISSIONED` 引用——双向联动均缺失确认。
+  - **A4.2.154** 前端 AMIS census——visit 表单 remark/result + 执行向导 + request 手工 CRUD 全可达，半自动流程现状确认。
+
+---
+
+## 5. 符合性结论（八项存疑点裁决）
+
+### 5.1 八项裁决矩阵
+
+| 工作项 | 来源存疑点 | §2 判据命中分支 | 运行时裁决 | finding 衔接 |
+|--------|-----------|----------------|-----------|-------------|
+| **A4.2.147** | A1.42 §7 SP-1 自动生成→schedule→conflict 端到端 | 主路径闭合（非缺口） | **主路径闭合**（cron→DRAFT→schedule→conflict 全链重跑证实） | 无新 finding |
+| **A4.2.148** | A1.43 §7 SP-1 IDLE 恢复 | 维持 P2-RC-061 + 新测试证据 | **维持 P2-RC-061（P2 登记不强制，修复归 MR1）**（IDLE 输入单测实证恒恢复 RUNNING） | P2-RC-061（arm-index :251） |
+| **A4.2.149** | A1.43 §7 SP-2 余额扣减 | 主路径闭合 | **主路径闭合**（余额直查断言实证 seed−消耗量） | 无新 finding |
+| **A4.2.150** | A1.43 §7 SP-3 备件不足 guard | 主路径闭合 | **主路径闭合**（跨域 guard 实证 ERR_AVAILABLE_INSUFFICIENT） | 无新 finding |
+| **A4.2.151** | A1.44 §7 SP-1 隐式关联 request | 维持 P1-RC-067（衔接，不新建） | **确认无隐式自动联动**（Visit 无 requestId + 零 hook）→ 维持 P1-RC-067 | P1-RC-067（arm-index :252） |
+| **A4.2.152** | A1.44 §7 SP-2 跨域事件发布 | 维持 P1-RC-068（衔接，不新建）+ 行为等价接受 | **确认非事件订阅模型**（零事件发布 + 直接调用行为等价）→ 维持 P1-RC-068 | P1-RC-068（arm-index :253） |
+| **A4.2.153** | A1.44 §7 SP-3 资产处置反向联动 | 维持 P1-RC-070（衔接，不新建） | **确认双向联动均缺失**（assets 处置零反向调用）→ 维持 P1-RC-070 | P1-RC-070（arm-index :255） |
+| **A4.2.154** | A1.44 §7 SP-4 额外故障半自动流程 | 维持 P1-RC-069（衔接，不新建）+ 可达性现状接受 | **确认半自动流程可达**（前端 remark/result + 手工 CRUD 全可达，编排缺失）→ 维持 P1-RC-069 | P1-RC-069（arm-index :254） |
+
+### 5.2 裁决分支汇总
+
+- **三项主路径闭合**（A4.2.147 / A4.2.149 / A4.2.150）——行为正确，无新 finding。
+- **一项维持 P2-RC-061**（A4.2.148）——IDLE 恢复分支缺失运行时实证（新 IDLE 输入单测证据入报告），P2 登记不强制，修复归 MR1。
+- **四项维持 P1 既有 finding**（A4.2.151-154 → P1-RC-067/068/069/070）——全部按 A1.44 §6 衔接维持既有分级，无未经比对新建。
+- **零升级触发 MR0**（运行时未发现活跃数据破坏——A1.42/43/44 §7 P0 评估均无活跃破坏，本报告运行时证据一致）。
+- **零新 finding**（全部经 grep arm-index 同域同控制点比对，维持既有分级不撤销，无未经比对直接新建的 finding）。
+- **两处测试侧补充**（A4.2.148 IDLE 输入单测 + A4.2.149 余额直查断言，均限 erp-mnt-service 测试类目，不触生产代码）。
+
+---
+
+## 6. 与 arm-index 衔接（维持既有分级裁决）
+
+### 6.1 比对表
+
+| 本切片存疑点 | 比对 arm-index | 裁决 | 差异依据 |
+|-------------|---------------|------|---------|
+| A4.2.148 IDLE 恢复 | `P2-RC-061`（:251，A1.43 新建）| **维持 P2（登记不强制，修复归 MR1）** | 同根因同控制点：`restoreToRunning:38-43` 恒恢复 RUNNING 无 IDLE 分支。本报告新增 IDLE 输入单测（seed 设备=IDLE → complete → 断言 RUNNING）作为运行时证据 |
+| A4.2.151 visit→request 关联 | `P1-RC-067`（:252，A1.44 新建）| **维持 P1（Q4 强制实现，修复归 MR1）** | 同根因同控制点：Visit 无 requestId 字段 + 零 hook。本报告运行时确认无隐式自动联动 |
+| A4.2.152 跨域事件发布 | `P1-RC-068`（:253，A1.44 新建）| **维持 P1（Q4 强制实现，修复归 MR1）** | 同根因同控制点：零事件发布。本报告确认行为经 `EquipmentStatusLinker` 直接调用达成等价，但事件发布契约缺失分级不变 |
+| A4.2.154 额外故障编排 | `P1-RC-069`（:254，A1.44 新建）| **维持 P1（Q4 强制实现，修复归 MR1）** | 同根因同控制点：编排零实现。本报告确认前端半自动流程可达性现状，不改变编排缺失分级 |
+| A4.2.153 资产处置联动 | `P1-RC-070`（:255，A1.44 新建）| **维持 P1（Q4 强制实现，修复归 MR1）** | 同根因同控制点：双向联动缺失。本报告新增 assets 域反向调用 census（`ErpAstDisposalProcessor.executeApprove` 零 maintenance 调用） |
+| （排除）A4.2.151-154 其他 | `P1-RC-071`（OEE）+ reuse `P1-MA2-093`（行级权限）| **不在本计划范围** | P1-RC-071（OEE）属 A1.44 UC-MAIN-10，非本计划八项存疑点；P1-MA2-093（行级权限 = A1.44 §7 SP-5）已由 A4.2.10 合并闭合，本计划不重复覆盖 |
+| （排除）P1-MA2-086 幂等 | resolved R1.28 | **不重审** | A1.42/43/44 已声明复用其证据，本计划仅引用 `existsVisitForScheduleDate` 幂等守卫作为 A4.2.147 行为证据 |
+
+### 6.2 新 finding 清单
+
+- **无**（零新 finding；全部经 grep arm-index 同域同控制点比对后给出「维持既有分级」裁决，符合 A1.44 §6「禁止未经比对新建」要求）。
+
+### 6.3 复用 finding 交叉引用注记（追加 RC A4.2.147-154 运行时确认）
+
+- **P2-RC-061**（:251，UC-MAIN-03 C-IDLE 分支）：追加 RC A4.2.148 运行时确认注记——新增 `TestErpMntVisitRequestStateMachine#testVisitCompleteFromIdleEquipmentRestoresRunning`（seed 设备=IDLE → schedule→start→complete → 断言设备=RUNNING）实证 `EquipmentStatusLinker.restoreToRunning:38-43` 恒恢复 RUNNING 无 IDLE 分支简化偏差。维持 P2（登记不强制，修复归 MR1，修复形态择期裁决：纯 BizModel 前态恢复逻辑预授权 / 若加 `ErpMntEquipment` preMaintenanceStatus 快照列则 ORM ask-first）。
+- **P1-RC-067**（:252，UC-MAIN-05）：追加 RC A4.2.151 运行时确认注记——`ErpMntRequestAcceptProcessor#generateResponsiveVisit:27-36` 不设 requestId（`ErpMntVisit` 实体无 requestId 字段，grep 跨 erp-mnt-dao 仅 `ErpMntSparePartUsage` 命中）+ 零 hook/拦截器——无隐式自动联动运行时确认成立。维持 P1（修复触 ORM 结构 ask-first）。
+- **P1-RC-068**（:253，UC-MAIN-06）：追加 RC A4.2.152 运行时确认注记——grep `publish|IErpSysEventBus|publishEvent|fireEvent|EventBus` 跨 module-maintenance 零命中 + 制造域零消费者复核；设备状态联动实际经 `EquipmentStatusLinker.linkToDown:31`/`restoreToRunning:38` 直接调用（config-gated 默认 true）达成行为等价。维持 P1（跨域契约 ask-first）。
+- **P1-RC-069**（:254，UC-MAIN-07）：追加 RC A4.2.154 运行时确认注记——前端 AMIS census：`ErpMntVisit.view.xml` view/edit 表单 remark/result 字段 + 执行向导按钮（:122-126）+ `ErpMntRequest.view.xml` 手工 CRUD（含 `_gen` save/id + accept/complete/rejectRequest/cancel rowActions）全可达——半自动流程现状确认，编排方法仍缺失。维持 P1（纯 BizModel 预授权）。
+- **P1-RC-070**（:255，UC-MAIN-08）：追加 RC A4.2.153 运行时确认注记——**assets 域反向调用 census 新增核验**：`ErpAstDisposalProcessor#executeApprove:62-101` 处置时仅 `asset.setStatus(SCRAPPED/SOLD)` + `cancelPendingSchedules`，`module-assets` 全域零 `ErpMntEquipment`/`changeStatus`/`DECOMMISSIONED` 引用——双向联动均缺失运行时确认成立。维持 P1（跨域契约 ask-first + 监听器预授权）。
+
+---
+
+## 7. 过程纪律自检
+
+- [x] **checker 退出码门控核查**：本报告为只读运行时确认 + 两处测试侧补充（A4.2.148 IDLE 输入单测 + A4.2.149 余额直查断言，均限 erp-mnt-service 测试类目，**不触生产代码/ORM/api.xml/view.xml/config 默认值/真相源**），checker **actual == baseline，零漂移**（测试补充不触生产代码，预期无漂移）。区分门控退出码 vs 纯 reporter 退出码——checker 脚本是纯 reporter（退出码恒 0），真正门控在 CI workflow 解析 actual > baseline。
+- [x] **closure-audit 独立性声明**：本报告的 closure audit 将由独立子代理（新会话，不重用执行者上下文）执行，执行者不自我审计。
+- [x] **与 arm-index 交叉去重声明**：本报告全部 8 项运行时裁决已按 §去重协议 grep arm-index 同域同控制点后给出「维持既有分级」结论（P2-RC-061 维持 P2 + P1-RC-067/068/069/070 维持 P1），**无未经比对直接新建的 finding**。
+- [x] **A1.44 §7 SP-5 排除声明**：SP-5（看板 orgId 行级权限）已由 A4.2.10 合并闭合（8 域 dashboard orgId P1-MA2-093 reuse R1.29 全覆盖，done ✅），本计划不重复覆盖。
+- [x] **跨域探针纪律声明**：A4.2.149（余额直查）/A4.2.150（不足 guard）触及跨域 inventory 行为——**只读探针，不改 inventory 生产代码**（确认经既有 `TestErpInvStockMoveBookkeeping` + maintenance 侧既有 `testSparePartConfirmInsufficientRollsBack`；余额直查断言加在 maintenance 侧测试 `TestErpMntSparePartPosting`，非 inventory 侧）。零 inventory 生产代码变更。
+- [x] **测试侧补充范围声明**：本计划唯一代码变更 = 两处测试侧补充（A4.2.148 `TestErpMntVisitRequestStateMachine#testVisitCompleteFromIdleEquipmentRestoresRunning` + A4.2.149 `TestErpMntSparePartPosting#testSparePartPostingBasic` 余额直查断言 + `findBalance` helper），均限 erp-mnt-service 测试类目，不触生产代码。
+- [x] **测试运行验证**：`mvn test -pl module-maintenance/erp-mnt-service -Dtest='TestErpMntVisitRequestStateMachine,TestErpMntSparePartPosting,TestErpMntSparePartAndSchedule,TestErpMntDueVisitIdempotency,TestErpMntDueVisitJob,TestErpMntDowntimeAndE2E'` → 全绿（StateMachine=10 含新增 IDLE / SparePartPosting=4 含余额断言 / SparePartAndSchedule=4 / DueVisitIdempotency=1 / DueVisitJob=3 / DowntimeAndE2E=4）；`mvn test -pl module-inventory/erp-inv-service -Dtest='TestErpInvStockMoveBookkeeping'` → 9 tests 全绿（2026-08-08 实测）。
+
+---
+
+## 8. 报告 9 段完整性自检
+
+| # | 段落 | 状态 |
+|---|------|------|
+| 1 | 存疑点清单与判据（A1.42/43/44 §7 八项 + 判据） | ✅ §1 |
+| 2 | 运行时证据采集（L3 file:line + L4 强断言，八项逐项） | ✅ §2 |
+| 3 | 测试证据汇总（L4 Test*.java + 断言强度 + 本计划测试侧补充） | ✅ §3 |
+| 4 | 运行时行为证据（L5 复用 A1.42/43/44 §4 + 本切片差异） | ✅ §4 |
+| 5 | 符合性结论（八项裁决矩阵 + §2 判据命中分支） | ✅ §5 |
+| 6 | 与 arm-index 衔接（维持既有分级裁决 + 交叉引用注记 + 排除声明） | ✅ §6 |
+| 7 | 过程纪律自检（checker actual==baseline + 独立性 + 交叉去重 + SP-5 排除 + 跨域探针纪律 + 测试范围声明） | ✅ §7 |
+| 8 | 报告 9 段完整性自检 | ✅ §8 |
+| 9 | 与既有 MA1/A1.x 报告差异增量声明 | ✅ §0 |
+
+**9 段齐全**——本报告可定稿。
+
+---
+
+## 整体裁决
+
+**PASS（八项存疑点全数收口，三项主路径闭合 + 一项维持 P2-RC-061 + 四项维持 P1 既有 finding，零新 finding / 不触发 MR0）**：
+
+- **三项主路径闭合**（A4.2.147 / A4.2.149 / A4.2.150）——运行时行为正确：generateDueVisits 端到端全链证实（非缺口）；跨域余额扣减直查实证；备件不足跨域 guard 实证。L4 强断言 + 测试侧补充断言覆盖。
+- **A4.2.148 维持 P2-RC-061**——新增 IDLE 输入单测（seed 设备=IDLE → complete → 断言 RUNNING）实证 `restoreToRunning:38-43` 恒恢复 RUNNING 简化偏差；P2 登记不强制，修复归 MR1 R1.0 展开器（修复形态择期裁决：纯逻辑预授权 / ORM 快照列 ask-first）。
+- **A4.2.151-154 维持 P1-RC-067/068/069/070**——隐式机制运行时 census 全部确认 A1.44 静态判定：无隐式关联（Visit 无 requestId + 零 hook）/ 非事件订阅模型（零发布 + 直接调用行为等价）/ 资产处置双向联动均缺失（assets 零反向调用）/ 半自动流程前端可达但编排缺失。Q4 强制实现义务归 MR1，无未经比对新建 finding。
+- **零升级触发 MR0**——运行时未发现活跃数据破坏（A1.42/43/44 §7 P0 评估无活跃破坏，本报告运行时证据一致）。
+
+**A1.42/43/44 §7 八项静态判定无一翻转**，零新 finding，不触发 MR0。P2-RC-061 修复归 MR1（P2 登记不强制）；P1-RC-067~071 修复义务归 MR1 R1.0 展开器（P1-RC-064/065/067/071 触 ORM 结构变更须 ask-first + 独立 plan-audit）。**本审计不实施生产代码修复**（唯一代码变更 = 两处测试侧补充，限 erp-mnt-service 测试类目；结果表面 = 本报告 + arm-index 交叉引用注记 + roadmap/log 同步）。
