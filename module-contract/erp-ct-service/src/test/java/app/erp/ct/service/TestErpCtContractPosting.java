@@ -104,6 +104,21 @@ public class TestErpCtContractPosting extends JunitAutoTestCase {
         assertNotEquals(0, bad.getStatus());
     }
 
+    @Test
+    public void testTriggerInvoiceRejectedForTerminatedContract() {
+        long[] setup = setupActiveContract("PURCHASE", "INBOUND");
+        long contractLineId = setup[1];
+        long contractId = setup[0];
+
+        executeRpc(mutation, "ErpCtContract__terminate",
+                ApiRequest.build(Map.of("contractId", contractId)));
+
+        long planId = saveInvoicePlan(contractLineId, new BigDecimal("1000"));
+        ApiResponse<?> bad = executeRpc(mutation, "ErpCtInvoicePlan__triggerInvoice",
+                ApiRequest.build(Map.of("planId", planId)));
+        assertNotEquals(0, bad.getStatus());
+    }
+
     private long[] setupActiveContract(String contractType, String direction) {
         long[] ids = new long[5];
         ormTemplate.runInSession(session -> {
