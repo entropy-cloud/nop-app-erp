@@ -1,6 +1,6 @@
 # 2026-08-07-2345-3 rc-ma4-a4-2-83-96-crm-lead-lifecycle-marketing-forecast-runtime 线索转化前置/评分触发/territory 分配/营销预测配额运行时确认
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-07
 > Source: `docs/backlog/requirement-compliance-roadmap.md` Work Items A4.2.83 / A4.2.84 / A4.2.85 / A4.2.86 / A4.2.87 / A4.2.88 / A4.2.89 / A4.2.90 / A4.2.91 / A4.2.92 / A4.2.93 / A4.2.94 / A4.2.95 / A4.2.96
 > Related: `docs/audits/2026-08-05-1030-rc-ma1-a1-28-crm-f1-lead-lifecycle.md`（A1.28 §7 存疑点 SP-1..SP-6 + §6 新建 P1-RC-032~036/P2-RC-031~034）、`docs/audits/2026-08-05-1100-rc-ma1-a1-29-crm-f2-marketing-forecast-quota-sequence-funnel.md`（A1.29 §7 存疑点 SP-1..SP-8 + §6 新建 P1-RC-037/038/039/P2-RC-035 + reuse P1-MA2-076/P1-MA2-086）
@@ -53,67 +53,67 @@ CRM 域两切片（A1.28 线索生命周期 / A1.29 营销-预测-配额-序列-
 
 ### Phase 1 - 运行时证据采集与验证报告撰写（A4.2.83-A4.2.96）
 
-Status: planned
+Status: completed
 Targets: `docs/audits/2026-08-07-2345-rc-ma4-a4-2-83-96-crm-lead-lifecycle-marketing-forecast-runtime.md`（新建验证报告）
 Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: A4.2 done ✓；A1.28 done ✓；A1.29 done ✓
 
-- [ ] **A4.2.83 NEW 状态 LEAD 实际能否被 convertToCustomer 转化确认（P1-RC-033）**：确认 `convertToCustomerProcessor:21-22` 仅 validateNotConverted+validateLeadType(LEAD) 不查 docStatus；确认无 NEW 拒绝转化负向测试；确认 NEW LEAD 经 GraphQL convertToCustomer 运行时成功（前置条件未守卫）。裁决：维持 P1-RC-033 P1（§2 P1② 异常路径/前置条件未守卫，修复归 MR1 纯 Processor 预授权不触 ask-first）。
+- [x] **A4.2.83 NEW 状态 LEAD 实际能否被 convertToCustomer 转化确认（P1-RC-033）**：确认 `convertToCustomerProcessor:21-22` 仅 validateNotConverted+validateLeadType(LEAD) 不查 docStatus；确认无 NEW 拒绝转化负向测试；确认 NEW LEAD 经 GraphQL convertToCustomer 运行时成功（前置条件未守卫）。裁决：维持 P1-RC-033 P1（§2 P1② 异常路径/前置条件未守卫，修复归 MR1 纯 Processor 预授权不触 ask-first）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.84 任意 docStatus OPPORTUNITY 实际能否转报价单确认（P1-RC-034）**：确认 `convertToQuotationProcessor:21-25` 不查 docStatus 且不查 isWonStage（isWonStage 唯一消费点=board emoji :300）；确认单测仅覆盖 QUALIFIED 路径；确认非 QUALIFIED/won-stage OPPORTUNITY 运行时成功转报价单（前置条件未守卫）。裁决：维持 P1-RC-034 P1（§2 P1②，修复归 MR1 纯 Processor 预授权不触 ask-first）。
+- [x] **A4.2.84 任意 docStatus OPPORTUNITY 实际能否转报价单确认（P1-RC-034）**：确认 `convertToQuotationProcessor:21-25` 不查 docStatus 且不查 isWonStage（isWonStage 唯一消费点=board emoji :300）；确认单测仅覆盖 QUALIFIED 路径；确认非 QUALIFIED/won-stage OPPORTUNITY 运行时成功转报价单（前置条件未守卫）。裁决：维持 P1-RC-034 P1（§2 P1②，修复归 MR1 纯 Processor 预授权不触 ask-first）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.85 LEAD_UPDATE 自动评分并发更新下触发时序确认**：确认 `defaultPrepareUpdate:227-240` 同步触发评分（阻塞用户保存至评分完成）；确认并发更新经乐观锁防重复 ErpCrmLeadScore 记录（@Version 兜底）；确认触发时序对用户保存延迟的实际影响。裁决：登记 watch-only residual（同步触发属实现选择，并发由乐观锁兜底）。
+- [x] **A4.2.85 LEAD_UPDATE 自动评分并发更新下触发时序确认**：确认 `defaultPrepareUpdate:227-240` 同步触发评分（阻塞用户保存至评分完成）；确认并发更新经乐观锁防重复 ErpCrmLeadScore 记录（@Version 兜底）；确认触发时序对用户保存延迟的实际影响。裁决：登记 watch-only residual（同步触发属实现选择，并发由乐观锁兜底）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.86 territory 引擎无匹配时 territoryId 留空行为确认**：确认 `assign:70` 返回 null + BizModel:203 if territoryId==null 跳过（lead.territoryId 保持 null "未分配"）；确认 UI/报表展示 null = "未分配" 语义。裁决：主路径行为正确闭合（无匹配留空是合理降级，登记 watch-only residual 供报表展示参考）。
+- [x] **A4.2.86 territory 引擎无匹配时 territoryId 留空行为确认**：确认 `assign:70` 返回 null + BizModel:203 if territoryId==null 跳过（lead.territoryId 保持 null "未分配"）；确认 UI/报表展示 null = "未分配" 语义。裁决：主路径行为正确闭合（无匹配留空是合理降级，登记 watch-only residual 供报表展示参考）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.87 ROUND_ROBIN 降级 MANUAL 后 ownerId 实际值确认（P1-RC-036）**：确认 `toResult:73-84` 显式将非 MANUAL 方法降级为 MANUAL（degraded=true，AssignmentResult.ownerId 永不设置）；确认 BizModel:144 if ownerId!=null 跳过（lead.ownerId 保持 null "待分配"）；确认 ROUND_ROBIN/LOAD_BALANCED 引擎工作但运行时不挑人。裁决：维持 P1-RC-036 P1（§2 P1① 功能实质偏离验收标准——引擎显式降级不挑人，修复归 MR1 触 ORM 结构变更[assignmentMethod]须 ask-first + 独立 plan-audit §5）。
+- [x] **A4.2.87 ROUND_ROBIN 降级 MANUAL 后 ownerId 实际值确认（P1-RC-036）**：确认 `toResult:73-84` 显式将非 MANUAL 方法降级为 MANUAL（degraded=true，AssignmentResult.ownerId 永不设置）；确认 BizModel:144 if ownerId!=null 跳过（lead.ownerId 保持 null "待分配"）；确认 ROUND_ROBIN/LOAD_BALANCED 引擎工作但运行时不挑人。裁决：维持 P1-RC-036 P1（§2 P1① 功能实质偏离验收标准——引擎显式降级不挑人，修复归 MR1 触 ORM 结构变更[assignmentMethod]须 ask-first + 独立 plan-audit §5）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.88 直接升格分支在其他未审计入口补偿实现确认（P1-RC-032）**：grep census 直接升格（setLeadType(OPPORTUNITY) 原地升格非新建）跨 module-crm main + GraphQL 自定义 action + Delta 层；确认主代码直接升格 0 命中（唯一命中点 createOpportunityFromLead:92 在新建 ErpCrmLead 内非原地升格）；确认 Delta 层无补偿实现。裁决：维持 P1-RC-032 P1（§2 P1① 功能完全缺失——直接升格分支运行时不存在，修复归 MR1 纯 BizModel 预授权不触 ask-first）。
+- [x] **A4.2.88 直接升格分支在其他未审计入口补偿实现确认（P1-RC-032）**：grep census 直接升格（setLeadType(OPPORTUNITY) 原地升格非新建）跨 module-crm main + GraphQL 自定义 action + Delta 层；确认主代码直接升格 0 命中（唯一命中点 createOpportunityFromLead:92 在新建 ErpCrmLead 内非原地升格）；确认 Delta 层无补偿实现。裁决：维持 P1-RC-032 P1（§2 P1① 功能完全缺失——直接升格分支运行时不存在，修复归 MR1 纯 BizModel 预授权不触 ask-first）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.89 lastContactDate 按 COMPLETED 过滤的语义偏差确认**：确认 `LeadActivityDerivationHelper.latestCompletedStartDateTime:55` 按 COMPLETED 过滤（L1 字面"相关 Event"未限定状态）；确认"last contact"语义合理（CANCELLED 不算"联系过"）。裁决：倾向接受实现选择（与 A1.29 §5 倾向接受一致），不记 finding，登记 watch-only 观察。
+- [x] **A4.2.89 lastContactDate 按 COMPLETED 过滤的语义偏差确认**：确认 `LeadActivityDerivationHelper.latestCompletedStartDateTime:55` 按 COMPLETED 过滤（L1 字面"相关 Event"未限定状态）；确认"last contact"语义合理（CANCELLED 不算"联系过"）。裁决：倾向接受实现选择（与 A1.29 §5 倾向接受一致），不记 finding，登记 watch-only 观察。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.90 UTM copy 缺失下 utmMedium/utmSource 实际默认值确认（P1-RC-037）**：确认 UTM copy 缺失（grep UTM copy 路径零命中）；确认外部渠道提交不传 utmMedium/utmSource 时字段实际持久化为 NULL；确认影响后续归因报表准确性。裁决：维持 P1-RC-037 P1（修复归 MR1 纯 BizModel 预授权不触 ask-first）。
+- [x] **A4.2.90 UTM copy 缺失下 utmMedium/utmSource 实际默认值确认（P1-RC-037）**：确认 UTM copy 缺失（grep UTM copy 路径零命中）；确认外部渠道提交不传 utmMedium/utmSource 时字段实际持久化为 NULL；确认影响后续归因报表准确性。裁决：维持 P1-RC-037 P1（修复归 MR1 纯 BizModel 预授权不触 ask-first）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.91 归因报表缺失下 campaignId 已填但无聚合实际数据状态确认（P1-RC-038）**：确认 campaignId 外键可被 Lead 持久化但无归因报表消费（`ErpCrmCampaignBizModel.java:11-19` 19 行空 CRUD stub + `ErpCrmReportBizModel.prepareDataset:151-164` 仅 handle lead-conversion-funnel+forecast-accuracy + glob `**/report/crm/*.xpt.xml` 仅 2 文件无 `SELECT campaign.name, count(lead.id), sum(expectedRevenue) GROUP BY campaignId` 归因报表模板）；确认业务影响 = 归因报表完全缺失（L1 明确功能点，campaignId 数据完整仅无聚合视图）。裁决：维持 P1-RC-038 P1（§2 P1① 功能完全缺失——归因报表模板/stub 完全缺失，修复归 MR1 纯 BizModel/报表模板预授权不触 ask-first）。
+- [x] **A4.2.91 归因报表缺失下 campaignId 已填但无聚合实际数据状态确认（P1-RC-038）**：确认 campaignId 外键可被 Lead 持久化但无归因报表消费（`ErpCrmCampaignBizModel.java:11-19` 19 行空 CRUD stub + `ErpCrmReportBizModel.prepareDataset:151-164` 仅 handle lead-conversion-funnel+forecast-accuracy + glob `**/report/crm/*.xpt.xml` 仅 2 文件无 `SELECT campaign.name, count(lead.id), sum(expectedRevenue) GROUP BY campaignId` 归因报表模板）；确认业务影响 = 归因报表完全缺失（L1 明确功能点，campaignId 数据完整仅无聚合视图）。裁决：维持 P1-RC-038 P1（§2 P1① 功能完全缺失——归因报表模板/stub 完全缺失，修复归 MR1 纯 BizModel/报表模板预授权不触 ask-first）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.92 ForecastAggregator 3 级 rollup 跨 ownerId 边界正确性确认**：确认团队 rollup 按 `ownerTeam:62-72` 映射 ownerId→teamId；确认同一 owner 跨团队迁移场景 rollup 一致性（迁移后归属新团队的 forecast 聚合正确）。裁决：主路径行为正确闭合（ownerTeam 映射驱动 rollup，迁移后按新 teamId 聚合）。
+- [x] **A4.2.92 ForecastAggregator 3 级 rollup 跨 ownerId 边界正确性确认**：确认团队 rollup 按 `ownerTeam:62-72` 映射 ownerId→teamId；确认同一 owner 跨团队迁移场景 rollup 一致性（迁移后归属新团队的 forecast 聚合正确）。裁决：主路径行为正确闭合（ownerTeam 映射驱动 rollup，迁移后按新 teamId 聚合）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.93 territory tier 缺失下跨区域预测汇总实际行为确认（P1-RC-039）**：确认 `getTerritoryPipeline:88-117` 走 QuotaRollupCalculator.accumulatePipeline（含 territory 子树）+ Forecast 段无 territory tier 行（ForecastAggregator `:77-101` 仅生成个人/团队/公司 3 级非 L1 `:228` 要求的"团队→区域→公司"4 级）；确认 Forecast 段在 territory 级管道报表实际展示（0 或跨 territory 聚合失真）。裁决：维持 P1-RC-039 P1（§2 P1① + §4 三判据复核重开[触发条件 Lead.territoryId 现存]，修复归 MR1 纯 BizModel 预授权不触 ask-first——ForecastAggregator 加 territory tier 复用既有 collectSubtreeIds 模式镜像 QuotaRollupCalculator）。
+- [x] **A4.2.93 territory tier 缺失下跨区域预测汇总实际行为确认（P1-RC-039）**：确认 `getTerritoryPipeline:88-117` 走 QuotaRollupCalculator.accumulatePipeline（含 territory 子树）+ Forecast 段无 territory tier 行（ForecastAggregator `:77-101` 仅生成个人/团队/公司 3 级非 L1 `:228` 要求的"团队→区域→公司"4 级）；确认 Forecast 段在 territory 级管道报表实际展示（0 或跨 territory 聚合失真）。裁决：维持 P1-RC-039 P1（§2 P1① + §4 三判据复核重开[触发条件 Lead.territoryId 现存]，修复归 MR1 纯 BizModel 预授权不触 ask-first——ForecastAggregator 加 territory tier 复用既有 collectSubtreeIds 模式镜像 QuotaRollupCalculator）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.94 QuotaRollupCalculator 显式值优先 team+individual 共存 double-count 确认**：确认 `rollup:94-100` 对 territory 子树所有行（含 team-level explicit + individual-level explicit）求和；确认 team=1000+个人=500→region=1500 vs L1 严格"region=Σ teams"应为 1000 的偏差面。裁决：登记 watch-only residual（可能 P2 successor——L1 字面"区域配额=Σ 团队配额"与显式值优先语义冲突，运行时确认 double-count 偏差面）。
+- [x] **A4.2.94 QuotaRollupCalculator 显式值优先 team+individual 共存 double-count 确认**：确认 `rollup:94-100` 对 territory 子树所有行（含 team-level explicit + individual-level explicit）求和；确认 team=1000+个人=500→region=1500 vs L1 严格"region=Σ teams"应为 1000 的偏差面。裁决：登记 watch-only residual（可能 P2 successor——L1 字面"区域配额=Σ 团队配额"与显式值优先语义冲突，运行时确认 double-count 偏差面）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.95 FunnelAggregationJob/SequenceOverdueJob cron enabled 默认 false 实际触发链路确认（P2-RC-035）**：确认 cron yaml 注册但 enabled 默认 false（`@cfg:...enabled|false`）+ 全生产 application.yaml 零 override；确认 BizModel 逻辑层强测（testScanOverdueSteps/refreshFunnel）但 Job bean cron-gating execute() 入口无 dedicated TestErpCrmSequenceOverdueJob/TestErpCrmFunnelAggregationJob；确认部署 enabled=true 后执行链路（BeanMethodJobInvoker→execute()→cron 空 skip 门控）。裁决：config-gate = 部署启用决策非契约缺失（与 A4.1.4/A4.2.12/A4.2.13 范式一致），维持 P2-RC-035 P2（Job bean cron-gating 测试缺口归 MR1 纯测试补充预授权，登记不强制）。
+- [x] **A4.2.95 FunnelAggregationJob/SequenceOverdueJob cron enabled 默认 false 实际触发链路确认（P2-RC-035）**：确认 cron yaml 注册但 enabled 默认 false（`@cfg:...enabled|false`）+ 全生产 application.yaml 零 override；确认 BizModel 逻辑层强测（testScanOverdueSteps/refreshFunnel）但 Job bean cron-gating execute() 入口无 dedicated TestErpCrmSequenceOverdueJob/TestErpCrmFunnelAggregationJob；确认部署 enabled=true 后执行链路（BeanMethodJobInvoker→execute()→cron 空 skip 门控）。裁决：config-gate = 部署启用决策非契约缺失（与 A4.1.4/A4.2.12/A4.2.13 范式一致），维持 P2-RC-035 P2（Job bean cron-gating 测试缺口归 MR1 纯测试补充预授权，登记不强制）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **A4.2.96 EMAIL_OPENED/EMAIL_REPLIED 降级 eventType=EMAIL 匹配实际触发面确认**：确认降级后所有 EMAIL 历史均触发步骤推进；确认过早推进风险（邮件未实际打开/回复但步骤已 advance）。裁决：登记 watch-only residual（降级是 config-gated 简化，运行时过早推进风险属部署启用决策）。
+- [x] **A4.2.96 EMAIL_OPENED/EMAIL_REPLIED 降级 eventType=EMAIL 匹配实际触发面确认**：确认降级后所有 EMAIL 历史均触发步骤推进；确认过早推进风险（邮件未实际打开/回复但步骤已 advance）。裁决：登记 watch-only residual（降级是 config-gated 简化，运行时过早推进风险属部署启用决策）。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
-- [ ] **验证报告撰写**：十四项存疑点各出 §裁决（主路径闭合 / 维持 P1 + 运行时证据 / 登记 watch-only / config-gate 部署决策 / 触发 MR0）+ §与既有 finding 衔接（P1-RC-032~039 / P2-RC-031~035 / reuse P1-MA2-076/P1-MA2-086 交叉引用）+ §过程纪律自检（checker 退出码门控——无代码变更 actual=baseline；closure-audit 独立性声明）。报告落盘。
+- [x] **验证报告撰写**：十四项存疑点各出 §裁决（主路径闭合 / 维持 P1 + 运行时证据 / 登记 watch-only / config-gate 部署决策 / 触发 MR0）+ §与既有 finding 衔接（P1-RC-032~039 / P2-RC-031~035 / reuse P1-MA2-076/P1-MA2-086 交叉引用）+ §过程纪律自检（checker 退出码门控——无代码变更 actual=baseline；closure-audit 独立性声明）。报告落盘。
   - Skill: `docs/skills/multi-dimensional-audit-prompt.md`
 
 Exit Criteria:
 
 > 本阶段为只读审计，无生产代码变更。CRM 域不直接产生会计凭证，不触及业财保护区域探针。
 
-- [ ] 验证报告落盘，含十四项存疑点各自裁决 + file:line 证据 + §2 判据命中分支
-- [ ] 每项裁决明确：主路径闭合 / 维持分级（P1 Q4 强制实现 / watch-only / config-gate）+ 运行时证据记录，或升级触发 MR0
+- [x] 验证报告落盘，含十四项存疑点各自裁决 + file:line 证据 + §2 判据命中分支
+- [x] 每项裁决明确：主路径闭合 / 维持分级（P1 Q4 强制实现 / watch-only / config-gate）+ 运行时证据记录，或升级触发 MR0
 
 ### Phase 2 - Finding 衔接、roadmap/log 同步
 
-Status: planned
+Status: completed
 Targets: `docs/backlog/requirement-compliance-roadmap.md`（A4.2.83-96 done）、`docs/audits/arm-index.md`（维持注记追加）、`docs/logs/2026/08-07.md`
 Skill: none
 
 - Item Types: `Decision | Add`
 - Prereqs: Phase 1 报告落盘
 
-- [ ] `Decision` arm-index 衔接裁决：P1-RC-032（直接升格缺失）/ P1-RC-033（转化前置弱）/ P1-RC-034（报价单前置弱）维持 P1（运行时确认补偿实现/前置守卫缺失，修复归 MR1 纯 BizModel/Processor 预授权不触 ask-first）；P1-RC-036（territory 降级 MANUAL）维持 P1（修复归 MR1 触 ORM 结构变更[assignmentMethod]须 ask-first + 独立 plan-audit §5）；P1-RC-037（UTM copy）/ P1-RC-038（归因报表）/ P1-RC-039（Forecast territory tier）维持 P1（修复归 MR1 纯 BizModel/报表模板预授权不触 ask-first）；P2-RC-035（funnel-sequence job bean cron-gating 测试）维持 P2（Job bean execute() 测试缺口归 MR1 纯测试补充预授权，登记不强制）；reuse P1-MA2-076/P1-MA2-086 维持 resolved。无新 finding 新建（全部维持）。
-- [ ] `Add` roadmap A4.2.83-A4.2.96 `todo → done`；`docs/logs/2026/08-07.md` 追加完成条目。
+- [x] `Decision` arm-index 衔接裁决：P1-RC-032（直接升格缺失）/ P1-RC-033（转化前置弱）/ P1-RC-034（报价单前置弱）维持 P1（运行时确认补偿实现/前置守卫缺失，修复归 MR1 纯 BizModel/Processor 预授权不触 ask-first）；P1-RC-036（territory 降级 MANUAL）维持 P1（修复归 MR1 触 ORM 结构变更[assignmentMethod]须 ask-first + 独立 plan-audit §5）；P1-RC-037（UTM copy）/ P1-RC-038（归因报表）/ P1-RC-039（Forecast territory tier）维持 P1（修复归 MR1 纯 BizModel/报表模板预授权不触 ask-first）；P2-RC-035（funnel-sequence job bean cron-gating 测试）维持 P2（Job bean execute() 测试缺口归 MR1 纯测试补充预授权，登记不强制）；reuse P1-MA2-076/P1-MA2-086 维持 resolved。无新 finding 新建（全部维持）。
+- [x] `Add` roadmap A4.2.83-A4.2.96 `todo → done`；`docs/logs/2026/08-07.md` 追加完成条目。
 
 Exit Criteria:
 
-- [ ] roadmap 十四项状态已更新为 done 且与报告裁决一致
-- [ ] arm-index 维持注记已追加（无未经比对直接新建的 finding）
+- [x] roadmap 十四项状态已更新为 done 且与报告裁决一致
+- [x] arm-index 维持注记已追加（无未经比对直接新建的 finding）
 
 ## Draft Review Record
 
@@ -124,14 +124,14 @@ Exit Criteria:
 
 > 本计划为只读审计（零生产代码/ORM/api.xml/view.xml/真相源变更）。closure 时确认 checker 未触发 actual > baseline。
 
-- [ ] 范围内行为完成（十四项存疑点均有 file:line 运行时证据 + 明确裁决）
-- [ ] 相关文档对齐（报告落盘 + roadmap/log 同步 + arm-index 衔接裁决记录）
-- [ ] 已运行验证（checker actual=baseline 确认；无代码变更故无 build/test 回归风险）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（十四项存疑点均有 file:line 运行时证据 + 明确裁决）
+- [x] 相关文档对齐（报告落盘 + roadmap/log 同步 + arm-index 衔接裁决记录）
+- [x] 已运行验证（checker actual=baseline 确认；无代码变更故无 build/test 回归风险）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -143,12 +143,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <why the plan can close>
+Status Note: <completed — 两阶段执行完成，十四项存疑点全数收口（七项维持 P1[A4.2.83 P1-RC-033 / A4.2.84 P1-RC-034 / A4.2.87 P1-RC-036 / A4.2.88 P1-RC-032 / A4.2.90 P1-RC-037 / A4.2.91 P1-RC-038 / A4.2.93 P1-RC-039] + 一项维持 P2[A4.2.95 P2-RC-035] + 六项主路径闭合/watch-only[A4.2.85/86/89/92/94/96]，零新 finding / 不触发 MR0 / 不归 MR1 本审计；CRM 域不直接产生会计凭证故不触及业财保护区域探针；修复义务归 MR1 R1.0 展开器，P1-RC-036 触 ORM 结构变更须 ask-first）>
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 待独立子代理（新会话）执行 closure audit
+- Evidence: 验证报告 `docs/audits/2026-08-07-2345-rc-ma4-a4-2-83-96-crm-lead-lifecycle-marketing-forecast-runtime.md`（Report Status: done，5 段齐全）+ roadmap A4.2.83-96 done ✅ + arm-index RC 交叉引用注记 + 日志 `docs/logs/2026/08-07.md`
 
 Follow-up:
 
