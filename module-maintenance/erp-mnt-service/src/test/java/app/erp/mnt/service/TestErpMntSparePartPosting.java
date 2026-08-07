@@ -5,6 +5,7 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
+import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.md.dao.entity.ErpMdAcctSchema;
@@ -121,6 +122,11 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         ErpInvStockMove move = findMove("SP-POST-BASIC");
         assertNotNull(move, "应生成出库移动单");
         assertEquals(ErpInvConstants.DOC_STATUS_DONE, move.getDocStatus());
+
+        ErpInvStockBalance balance = findBalance(M1);
+        assertNotNull(balance, "应存在库存余额");
+        assertEquals(0, bd("10").compareTo(balance.getTotalQuantity()),
+                "余额直查：seed 20 - 消耗 10 = 10（跨域 bookkeeper 扣减生效）");
 
         ErpFinVoucher voucher = findVoucher("SP-POST-BASIC-MI");
         assertNotNull(voucher, "应生成 MAINTENANCE_ISSUE 凭证");
@@ -397,6 +403,14 @@ public class TestErpMntSparePartPosting extends JunitAutoTestCase {
         QueryBean q = new QueryBean();
         q.addFilter(eq("relatedBillType", ErpMntConstants.RELATED_BILL_TYPE_MNT_SPARE_PART));
         q.addFilter(eq("relatedBillCode", usageCode));
+        return dao.findAllByQuery(q).stream().findFirst().orElse(null);
+    }
+
+    private ErpInvStockBalance findBalance(Long materialId) {
+        IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("materialId", materialId));
+        q.addFilter(eq("warehouseId", WAREHOUSE_ID));
         return dao.findAllByQuery(q).stream().findFirst().orElse(null);
     }
 

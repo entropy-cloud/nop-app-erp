@@ -90,6 +90,25 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
     }
 
     @Test
+    public void testVisitCompleteFromIdleEquipmentRestoresRunning() {
+        Long visitId = nextId();
+        ormTemplate.runInSession(session -> {
+            seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
+            seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-IDLE-001");
+            return null;
+        });
+
+        assertEquals(0, schedule(visitId).getStatus(), "DRAFT→SCHEDULED");
+        assertEquals(0, start(visitId).getStatus(), "SCHEDULED→IN_PROGRESS");
+        assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE, equipmentStatus(),
+                "执行中设备置 UNDER_MAINTENANCE");
+
+        assertEquals(0, complete(visitId).getStatus(), "IN_PROGRESS→COMPLETED");
+        assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, equipmentStatus(),
+                "IDLE 设备 complete 后恢复 RUNNING（restoreToRunning 恒恢复 RUNNING，无 IDLE 分支——P2-RC-061 简化偏差运行时证实）");
+    }
+
+    @Test
     public void testVisitScheduleConflict() {
         Long existing = nextId();
         Long conflict = nextId();
