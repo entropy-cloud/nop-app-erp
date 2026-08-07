@@ -43,10 +43,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 /**
  * 批次效期拦截集成测试（RC-R1.20 / P1-RC-031，UC-INV-06 ④）。
  *
- * <p>覆盖 8 组场景：① 过期+批次管控+出库移动单拒绝（整笔回滚 + reserved/balance 不变）；
- * ⑦ 两步流（CRUD save DRAFT → confirm(moveId)）拒绝后移动单保持 DRAFT；② null expiryDate 通过；
- * ③ 未来效期通过；④ 非批次管控物料通过；⑤ config 放行（{@code erp-inv.batch-expiry-check-enabled=false}）；
- * ⑥ 负库存配置不豁免过期拦截；⑧ INCOMING 移动单不拦截（守卫类型范围边界）。
+ * <p>覆盖 9 组场景：① 过期+批次管控+出库移动单拒绝（整笔回滚 + reserved/balance 不变）；
+ * ⑦ 两步流（CRUD save DRAFT → confirm(moveId)）拒绝后移动单保持 DRAFT；
+ * A4.2.79 探针 ⑨ 既有预留占用（reservedQuantity>0）时过期拒绝不触碰既有预留/余额（最强一致性边界）；
+ * ② null expiryDate 通过；③ 未来效期通过；④ 非批次管控物料通过；⑤ config 放行
+ * （{@code erp-inv.batch-expiry-check-enabled=false}）；⑥ 负库存配置不豁免过期拦截；
+ * ⑧ INCOMING 移动单不拦截（守卫类型范围边界）。
  *
  * <p>时间冻结在 {@link InvFrozenClockExtension#REFERENCE_DATE}（2026-07-17），保证过期/未过期
  * 日期判定与快照确定性。种子数据经 {@code ormTemplate.runInSession} + daoProvider 显式 ID 落库
@@ -151,6 +153,66 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
 
         ErpInvStockBalance balance = findBalance(MATERIAL_BATCH, BATCH_EXPIRED);
         assertNull(balance, "拒绝路径未进入 applyReservation，不应占用预留量/产生余额行");
+    }
+
+    // ---------- A4.2.79 探针：批次余额行已有既有预留占用（reservedQuantity>0）时，过期拒绝的 confirm 不触碰既有预留/余额 ----------
+
+    @Test
+    public void testExpiryRejectedLeavesExistingReservationIntact() {
+        seedBatchLedger(BATCH_EXPIRED, MATERIAL_BATCH, CoreMetrics.currentDate().minusDays(1));
+        seedBalance(MATERIAL_BATCH, BATCH_EXPIRED, new BigDecimal("3"));
+
+        Map<String, Object> headData = new LinkedHashMap<>();
+        headData.put("code", "SS-EXP-RESERVED-001");
+        headData.put("moveType", ErpInvConstants.MOVE_TYPE_OUTGOING);
+        headData.put("businessDate", "2026-07-01");
+        headData.put("docStatus", ErpInvConstants.DOC_STATUS_DRAFT);
+        headData.put("approveStatus", "UNSUBMITTED");
+        headData.put("sourceWarehouseId", WAREHOUSE_ID);
+        headData.put("sourceLocationId", LOCATION_ID);
+        ApiResponse<?> saved = executeRpc(mutation, "ErpInvStockMove__save",
+                ApiRequest.build(Map.of("data", headData)));
+        assertEquals(0, saved.getStatus(), "DRAFT 保存应成功");
+        String moveId = String.valueOf(((Map<?, ?>) saved.getData()).get("id"));
+
+        Map<String, Object> lineData = new LinkedHashMap<>();
+        lineData.put("moveId", moveId);
+        lineData.put("lineNo", 1);
+        lineData.put("materialId", MATERIAL_BATCH);
+        lineData.put("uoMId", UOM_ID);
+        lineData.put("quantity", new BigDecimal("5"));
+        lineData.put("batchNo", BATCH_EXPIRED);
+        ApiResponse<?> lineSaved = executeRpc(mutation, "ErpInvStockMoveLine__save",
+                ApiRequest.build(Map.of("data", lineData)));
+        assertEquals(0, lineSaved.getStatus(), "行保存应成功");
+
+        ApiResponse<?> confirmResp = executeRpc(mutation, "ErpInvStockMove__confirm",
+                ApiRequest.build(Map.of("moveId", moveId)));
+        assertEquals(ErpInvErrors.ERR_BATCH_EXPIRED.getErrorCode(), confirmResp.getCode(),
+                "过期批次 confirm 应返回 ERR_BATCH_EXPIRED");
+        assertTrue(confirmResp.getMsg() != null && confirmResp.getMsg().contains(BATCH_EXPIRED),
+                "错误消息应含批次号参数: " + confirmResp.getMsg());
+        assertTrue(confirmResp.getMsg() != null && confirmResp.getMsg().contains(String.valueOf(MATERIAL_BATCH)),
+                "错误消息应含物料参数: " + confirmResp.getMsg());
+        assertTrue(confirmResp.getMsg() != null
+                        && confirmResp.getMsg().contains(CoreMetrics.currentDate().minusDays(1).toString()),
+                "错误消息应含效期参数: " + confirmResp.getMsg());
+        output("1_confirm_rejection_code.json5", confirmResp.getCode());
+
+        ErpInvStockMove move = daoProvider.daoFor(ErpInvStockMove.class).getEntityById(Long.parseLong(moveId));
+        assertNotNull(move, "两步流 DRAFT 已落库，confirm 拒绝后移动单应保留");
+        assertEquals(ErpInvConstants.DOC_STATUS_DRAFT, move.getDocStatus(),
+                "confirm 拒绝后移动单应保持 DRAFT（applyReservation 未执行）");
+
+        ErpInvStockBalance balance = findBalance(MATERIAL_BATCH, BATCH_EXPIRED);
+        assertNotNull(balance, "seed 既有预留余额行应存在");
+        assertEquals(0, balance.getReservedQuantity().compareTo(new BigDecimal("3")),
+                "拒绝路径不得触碰既有预留：reservedQuantity 保持原值 3（无新增/释放副作用）");
+        assertEquals(0, balance.getTotalQuantity().compareTo(new BigDecimal("100")),
+                "拒绝路径不得触碰既有余额：totalQuantity 保持 100");
+        assertEquals(0, balance.getAvailableQuantity().compareTo(new BigDecimal("97")),
+                "拒绝路径不得触碰既有余额：availableQuantity 保持 97");
+        output("1_balance_state.json5", balanceState(balance));
     }
 
     // ---------- ② null expiryDate → 通过（A4.2.78 null 语义：跳过拦截） ----------
@@ -349,6 +411,14 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
     }
 
     private void seedBalance(Long materialId, String batchNo) {
+        seedBalance(materialId, batchNo, BigDecimal.ZERO);
+    }
+
+    /**
+     * A4.2.79 探针：seed 余额行时显式指定既有预留占用（reservedQuantity>0），
+     * availableQuantity = total − reserved − locked 保持一致（reserved=3 → available=97）。
+     */
+    private void seedBalance(Long materialId, String batchNo, BigDecimal reservedQuantity) {
         ormTemplate.runInSession(() -> {
             IEntityDao<ErpInvStockBalance> dao = daoProvider.daoFor(ErpInvStockBalance.class);
             ErpInvStockBalance b = dao.newEntity();
@@ -358,9 +428,9 @@ public class TestErpInvBatchExpiryInterception extends JunitAutoTestCase {
             b.setLocationId(LOCATION_ID);
             b.setBatchNo(batchNo);
             b.setTotalQuantity(new BigDecimal("100"));
-            b.setReservedQuantity(BigDecimal.ZERO);
+            b.setReservedQuantity(reservedQuantity);
             b.setLockedQuantity(BigDecimal.ZERO);
-            b.setAvailableQuantity(new BigDecimal("100"));
+            b.setAvailableQuantity(new BigDecimal("100").subtract(reservedQuantity));
             b.setCostMethod(ErpInvConstants.COST_METHOD_MOVING_AVERAGE);
             b.setAvgCost(new BigDecimal("10"));
             b.setTotalCost(new BigDecimal("1000"));
