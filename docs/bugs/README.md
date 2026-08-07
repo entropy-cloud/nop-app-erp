@@ -50,6 +50,7 @@
 |------|----------|
 | `2026-07-20-2200-page-error-count-instability.md` | 页面错误数不稳定 |
 | `2026-07-23-1408-full-suite-regression-gate-findings.md` | 全套回归门禁发现汇总 |
+| `2026-08-08-1130-compliance-checker-r3-whitelist-abort-after-flux-flip.md` | flux 翻转后 compliance-checker R3 白名单零匹配致 set -e 静默中止，checker 只跑到 R3 无汇总表，CI gate 失效 |
 
 ### 业务逻辑/钩子容错类
 

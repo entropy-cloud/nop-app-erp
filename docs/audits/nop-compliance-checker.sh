@@ -174,10 +174,12 @@ echo "[R3] 🟡 中 — new Erp*() 直接构造实体"
 echo "规则: safe-api-reference.md — 应使用 newEntity()（仅计已注册 ORM 实体构造）"
 echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 # 构建已注册 ORM 实体短名白名单（从源 model/*.orm.xml 动态提取，排除 _gen/target）
+# 注意：flux 翻转（2026-08-04 738810aa5）后实体行形如 `<entity ext:web-renderer="flux" className="..."`，
+# `<entity className=` 直接相邻模式不再命中——用 `<entity[^>]*className=` 容忍属性顺序；`|| true` 防 set -e 中止。
 ENTITY_WHITELIST=$(eval "find '$REPO_ROOT' $PRUNE_DIRS -o -path '*/model/*.orm.xml' -type f -print" 2>/dev/null \
-  | xargs grep -oh '<entity className="[^"]*"' 2>/dev/null \
+  | xargs grep -oh '<entity[^>]*className="[^"]*"' 2>/dev/null \
   | sed -E 's/.*className="([^"]*)".*/\1/' \
-  | sed -E 's/.*\.//' | sort -u)
+  | sed -E 's/.*\.//' | sort -u || true)
 R3_RAW=$(rgrep_prodjava 'new Erp[A-Z]' | grep -v '_gen/' | grep -v 'Test' | grep -v '/test/' || true)
 R3=""
 if [[ -n "$R3_RAW" ]]; then
