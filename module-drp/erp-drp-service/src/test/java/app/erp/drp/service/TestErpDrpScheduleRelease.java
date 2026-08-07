@@ -5,10 +5,13 @@ import app.erp.drp.dao.entity.ErpDrpParameter;
 import app.erp.drp.dao.entity.ErpDrpPlan;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.dao.entity.ErpInvTransferOrder;
+import app.erp.inv.dao.entity.ErpInvTransferOrderLine;
 import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdMaterial;
+import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdWarehouse;
 import app.erp.pur.dao.entity.ErpPurOrder;
+import app.erp.pur.dao.entity.ErpPurOrderLine;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
@@ -33,6 +36,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @NopTestConfig(localDb = true,
@@ -160,6 +164,95 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
                 daoProvider.daoFor(ErpDrpPlan.class).getEntityById(planId).getStatus());
     }
 
+    @Test
+    public void testZeroValueLineReleaseGeneratesZeroQuantityOrder() {
+        seedMaterial(M_TRANSFER);
+        seedMaterial(M_PURCHASE);
+        seedWarehouse();
+        seedActiveSupplier(SUPPLIER_ID);
+        // safetyStock=0、库存 100 → netReq = max(0, 0+0-100) = 0 → 0 值行（L1 异常"不生成行"偏差；P2-RC-069）
+        seedParameter(M_TRANSFER, bd("0"), bd("1"), WH_SOURCE, null);
+        seedBalance(M_TRANSFER, bd("100"));
+        seedParameter(M_PURCHASE, bd("0"), bd("1"), null, SUPPLIER_ID);
+        seedBalance(M_PURCHASE, bd("100"));
+
+        Long planId = seedPlan("DRP-ZERO");
+        runDrpOk(planId);
+
+        List<ErpDrpLine> lines = linesOf(planId);
+        assertEquals(2, lines.size(), "netReq=0 仍生成 0 值行");
+        for (ErpDrpLine line : lines) {
+            assertEquals(0, line.getNetRequirement().compareTo(BigDecimal.ZERO));
+            assertEquals(0, line.getSuggestedQty().compareTo(BigDecimal.ZERO));
+        }
+
+        approvePlanOk(planId);
+        for (ErpDrpLine line : linesOf(planId)) {
+            assertEquals(0, line.getApprovedQty().compareTo(BigDecimal.ZERO),
+                    "approvePlan 回填 approvedQty=suggestedQty=0");
+        }
+
+        // 0 值 TRANSFER 行释放 → 0 量调拨单生成
+        ErpDrpLine transferLine = findLine(linesOf(planId), M_TRANSFER);
+        String toCode = releaseLineOk(transferLine.getId());
+        ErpInvTransferOrder to = findTransferOrder(toCode);
+        assertNotNull(to, "0 值行释放应生成调拨单");
+        ErpInvTransferOrderLine toLine = findTransferLine(to.getId());
+        assertNotNull(toLine, "调拨单行应存在");
+        assertEquals(0, toLine.getQuantity().compareTo(BigDecimal.ZERO), "调拨行数量=0");
+
+        // 0 值 PURCHASE 行释放 → 0 量采购单生成（unitPrice/amount=0，P2-RC-070）
+        ErpDrpLine purchaseLine = findLine(linesOf(planId), M_PURCHASE);
+        String poCode = releaseLineOk(purchaseLine.getId());
+        ErpPurOrder po = findPurchaseOrder(poCode);
+        assertNotNull(po, "0 值行释放应生成采购单");
+        ErpPurOrderLine poLine = findPurchaseLine(po.getId());
+        assertNotNull(poLine, "采购单行应存在");
+        assertEquals(0, poLine.getQuantity().compareTo(BigDecimal.ZERO), "采购行数量=0");
+        assertEquals(0, poLine.getUnitPrice().compareTo(BigDecimal.ZERO), "采购行单价=0");
+
+        // 下游 inventory/purchase 接受 0 量单（confirm/submitForApproval 无数量>0 守卫）
+        ApiResponse<?> confirm = rpc(mutation, "ErpInvTransferOrder__confirm", Map.of("transferOrderId", to.getId()));
+        assertEquals(0, confirm.getStatus(), "0 量调拨单 confirm 应成功（inventory 无数量守卫）: " + confirm);
+        ApiResponse<?> submit = rpc(mutation, "ErpPurOrder__submitForApproval", Map.of("id", String.valueOf(po.getId())));
+        assertEquals(0, submit.getStatus(), "0 量采购单 submitForApproval 应成功（purchase 无数量守卫）: " + submit);
+    }
+
+    @Test
+    public void testReleaseApprovedFailureRollsBackWholeBatch() {
+        seedMaterial(M_TRANSFER);
+        seedMaterial(M_PURCHASE);
+        seedWarehouse();
+        // M_TRANSFER：合法可释放；M_PURCHASE：无首选供应商 → releaseLine 抛 ERR_DRP_NO_PREFERRED_SUPPLIER
+        seedParameter(M_TRANSFER, bd("100"), bd("1"), WH_SOURCE, null);
+        seedBalance(M_TRANSFER, bd("30"));
+        seedParameter(M_PURCHASE, bd("50"), bd("1"), null, null);
+        seedBalance(M_PURCHASE, bd("10"));
+
+        Long planId = seedPlan("DRP-BATCH-FAIL");
+        runDrpOk(planId);
+        approvePlanOk(planId);
+        assertEquals(2, linesOf(planId).size());
+
+        ApiResponse<?> resp = rpc(mutation, "ErpDrpLine__releaseApproved", Map.of("planId", planId));
+        assertTrue(resp.getStatus() != 0, "批量释放某行失败应整批失败: " + resp);
+        assertEquals(ErpDrpErrors.ERR_DRP_NO_PREFERRED_SUPPLIER.getErrorCode(), resp.getCode());
+
+        // 单事务回滚：先释放成功的 TRANSFER 行也被回滚——无调拨单生成、全部行保持 APPROVED
+        for (ErpDrpLine line : linesOf(planId)) {
+            assertEquals(ErpDrpConstants.DRP_LINE_STATUS_APPROVED, line.getStatus(),
+                    "失败批释放后全部行保持 APPROVED（无 per-line 错误态）");
+            assertNull(line.getOrderBillCode(), "失败批释放后无 orderBillCode 回写");
+        }
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", ErpDrpConstants.RELEASE_TO_CODE_PREFIX + "TO-" + findLine(linesOf(planId), M_TRANSFER).getId()));
+        assertEquals(0, daoProvider.daoFor(ErpInvTransferOrder.class).findAllByQuery(q).size(),
+                "单事务回滚：已先释放的调拨单不存在");
+        assertEquals(ErpDrpConstants.DRP_PLAN_STATUS_APPROVED,
+                daoProvider.daoFor(ErpDrpPlan.class).getEntityById(planId).getStatus(),
+                "计划保持 APPROVED");
+    }
+
     private void runDrpOk(Long planId) {
         ApiResponse<?> resp = runDrp(planId);
         assertEquals(0, resp.getStatus(), "runDrp 应成功: " + resp);
@@ -223,6 +316,33 @@ public class TestErpDrpScheduleRelease extends JunitAutoTestCase {
         q.addFilter(eq("code", code));
         List<ErpPurOrder> list = daoProvider.daoFor(ErpPurOrder.class).findAllByQuery(q);
         return list.isEmpty() ? null : list.get(0);
+    }
+
+    private ErpInvTransferOrderLine findTransferLine(Long transferId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("transferId", transferId));
+        List<ErpInvTransferOrderLine> list = daoProvider.daoFor(ErpInvTransferOrderLine.class).findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    private ErpPurOrderLine findPurchaseLine(Long orderId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("orderId", orderId));
+        List<ErpPurOrderLine> list = daoProvider.daoFor(ErpPurOrderLine.class).findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    private void seedActiveSupplier(Long id) {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
+            ErpMdPartner partner = new ErpMdPartner();
+            partner.setId(id);
+            partner.setCode("SUP-" + id);
+            partner.setName("供应商" + id);
+            partner.setPartnerType("SUPPLIER");
+            partner.setStatus("ACTIVE");
+            dao.saveEntity(partner);
+        });
     }
 
     private Long seedPlan(String code) {
