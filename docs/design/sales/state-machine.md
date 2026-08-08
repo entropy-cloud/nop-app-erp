@@ -55,6 +55,8 @@
 | 销售退货单 | 调用库存域生成入库移动单（incoming）；若已开票生成红字发票；若已收款生成退款 | 方向相反 |
 | 销售订单 | 仅状态推进，不直接触发库存/凭证 | 同采购订单 |
 
+> **实现注记（RC-R1.13，P1-RC-020，L1↔L2 冲突收敛）**：L1（`use-cases.md` UC-SAL-01 ①）字面要求订单审核触发可用量校验，L2 本行「仅状态推进」与其冲突——按需求契约以 L1 为准的裁决，订单审核已落地**可选**可用量预校验：`ErpSalOrderProcessor.validateBusinessRulesForApprove` 经 config `erp-sal.order-availability-check-level`（默认 `OFF`，部署启用时设置；`WARN` 不足记告警放行 / `HARD` 不足拒绝审核）按订单行 `materialId`+`warehouseId`（行级缺失回退订单头）经 `IErpInvStockBalanceBiz` 聚合 `availableQuantity` 预检（只读查询，不做预留/reservation）。**出库审核仍是强制校验点**（`ErpSalDeliveryProcessor.triggerOutgoingMove` → 库存域 `validateAvailable` 抛 `ERR_AVAILABLE_INSUFFICIENT`），订单级预校验只是可选前置门禁——本行语义更新为「订单审核可选预校验（config-gated 默认关）+ 状态推进不强制触发库存」。
+
 ## 3. 终态与恢复
 
 与采购域相同：
