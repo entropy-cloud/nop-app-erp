@@ -8,11 +8,11 @@
 
 ## 当前结构
 
-根 pom.xml 列出 20 个 reactor 模块：18 个 `module-<domain>` + 1 个 `module-notify`（跨域 sys 通知派发子系统）+ 1 个 `app-erp-all`（子模块链合计 156 个 reactor 模块）。
+根 pom.xml 聚合：18 个业务域 `module-<domain>` + `module-notify`（跨域 sys 通知派发子系统）+ 项目级共享模块（`module-common-test` / `module-common-service`，跨域通用测试基类与 Processor 抽象基类）+ `app-erp-all`（顶层聚合启动工程）。每个业务域包含 model/codegen/dao/meta/service/web/app/api 子模块链。
 
-> **reactor 模块计数口径（权威）**：156 = 根 `mvn validate` 展开的完整 Maven reactor，含根聚合 pom（`app-erp`）+ `app-erp-all` 聚合启动工程 + 18 业务域与 notify 的各子模块链（model/codegen/dao/meta/service/web/app/api）。`find module-* -name pom.xml -maxdepth 3` 得 154，比 156 少 2，因它不含根 pom 与 `app-erp-all/`（位于 `module-*/` 之外）。历史快照（如 `known-good-baselines.md`）中的 154 保留为当时基线，新增基线行沿用本 156 口径。
+> **reactor 模块计数口径**：模块数量随重构增减，不在本文件固化精确计数；以根 `mvn validate` 展开为准，构建/测试基线以 `docs/testing/known-good-baselines.md` 最新条目为准。
 
-> **物理目录 ↔ 逻辑工程名 ↔ appName ↔ moduleId 映射**：完整 19 行映射表见 `docs/architecture/domain-module-split-analysis.md §2.0`（唯一规范）。物理目录 `module-<domain>/` 是 bootstrap 期别名，逻辑工程名为 `app-erp-<domain>`，聚合启动工程逻辑名 = 物理名 = `app-erp-all`。`module-notify`（逻辑工程名 `app-erp-notify`，appName `erp-notify`，moduleId `erp/notify`）为跨域 sys 子系统，与 18 业务域并列。
+> **物理目录 ↔ 逻辑工程名 ↔ appName ↔ moduleId 映射**：完整映射表见 `docs/architecture/domain-module-split-analysis.md §2.0`（唯一规范）。物理目录 `module-<domain>/` 是 bootstrap 期别名，逻辑工程名为 `app-erp-<domain>`，聚合启动工程逻辑名 = 物理名 = `app-erp-all`。`module-notify`（逻辑工程名 `app-erp-notify`，appName `erp-notify`，moduleId `erp/notify`）为跨域 sys 子系统，与 18 业务域并列；`module-common-test` / `module-common-service` 为项目级共享模块，无域映射。
 
 所有域 codegen 骨架已生成，含实体类、DAO、I*Biz 接口、BizModel、XMeta、view.xml 骨架。后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`。
 
@@ -21,8 +21,8 @@
 | 区域 | 路径 | 说明 | 置信度 |
 |------|------|------|--------|
 | ORM 模型（真相） | `module-<domain>/model/app-erp-<domain>.orm.xml` | 各域权威模型（18 业务域 + notify 通知派发子系统） | high |
-| 聚合启动工程 | `app-erp-all/` | Quarkus main + 聚合所有域依赖（含 notify）+ `nop-integration-api`（邮件/短信 SPI）；`app.action-auth.xml` 合并各域 + 系统管理菜单 | high |
-| 根 POM | `pom.xml` | 聚合 20 个模块 | high |
+| 聚合启动工程 | `app-erp-all/` | Quarkus main + 聚合所有域依赖（含 notify 与共享模块）+ `nop-integration-api`（邮件/短信 SPI）；`app.action-auth.xml` 合并各域 + 系统管理菜单 | high |
+| 根 POM | `pom.xml` | 聚合全部业务域/子系统/共享/启动模块 | high |
 | 设计文档（全局） | `docs/design/*.md` | 多份全局 owner doc（app-overview/flow-overview/domain-design-guidelines 等） | high |
 | 设计文档（域） | `docs/design/<domain>/` | 各域目录，含 README + state-machine + use-cases + ui-patterns 等 | high |
 | 架构文档 | `docs/architecture/*.md` | 多份技术基线文档 | high |

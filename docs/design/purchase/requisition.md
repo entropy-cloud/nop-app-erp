@@ -92,6 +92,16 @@ DRAFT（供应商报价草稿，可录入外部报价）
 - ⛔ **请购直通订单跳过审批**——请购与订单是不同实体，各有独立审批流。请购 APPROVED 后才创建订单。
 - ⛔ **比价只看价格不看评分**——价格最低的供应商可能质量/交期不达标，必须结合 `supplier-evaluation.md` 的评分 standing。
 
+## 实现注记：请购→转订单多供应商拆分（RC-R1.10）
+
+> 本段为实现注记，不修改需求契约段（L1 `use-cases.md` UC-PUR-08 ⑫ 为真相源）。
+
+- **拆单语义**：`ErpPurRequisitionProcessor.convertToOrder` 按行 `suggestedSupplierId` 分组（`groupLinesBySupplier`，LinkedHashMap 保留行首次出现顺序），每组生成一个 `ErpPurOrder`；单供应商时生成 1 个订单（现状不变）。任一缺失 supplier 的行整次转化拒绝（`ERR_REQ_MIXED_OR_MISSING_SUPPLIER`，不做静默裁剪）。幂等保持：一次调用全量转化，已转化再转 → `ERR_REQ_ALREADY_CONVERTED`（全部订单作废后可再转）。
+- **per-supplier 头字段**：`ConvertToOrderRequest.supplierOptions`（`Map<String, SupplierConversionOption>`，key = `String.valueOf(supplierId)`——执行期决策：BeanCopier 对 `Map<Long,...>` 键类型转换不完整，String 键在 Java/JSON 两路径一致）为各供应商订单头覆盖 `warehouseId`/`currencyId`/`deliveryDate`；未提供映射的供应商回退全局 `warehouseId`/`currencyId`（`deliveryDate` 置空，单供应商现状不变）。
+- **返回契约**：`ErpPurRequisition__convertToOrder`（`IErpPurRequisitionBiz.convertToOrder`）返回 `List<ErpPurOrder>`；`IErpPurOrderBiz.createFromRequisition` 保持单组实现由 Processor 循环调用（执行期决策，保留单组派生覆盖点，见 `IErpPurOrderBiz` javadoc）。
+- **行归属**：订单行 `lineNo` 按组内从 1 重排；单价/税率仍按请购行原始 `lineNo` 经 `lineUnitPrices`/`lineTaxRates` 解析；金额族（amount/taxAmount/amountWithTax）per-order 汇总。
+- **successor 注记**：行级到货期拆分（同供应商组内行级 `deliveryDate` 不同）无 ORM 载体，归 successor（当前按组头 `ErpPurOrder.deliveryDate` 承载）；前端 AMIS 拆单展示交互属页面层增强，当前零消费。
+
 ## 参考
 
 - `purchase/state-machine.md`（订单→入库→发票→付款）

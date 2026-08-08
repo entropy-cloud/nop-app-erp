@@ -11,7 +11,7 @@
 - 项目名称：nop-app-erp
 - 产品类型：基于 Nop Platform 构建的企业资源规划（ERP）应用骨架
 - 主要用户：ERP 系统操作员/管理员以及从现实业务领域应用学习 Nop Platform 的开发人员
-- 文档新鲜度：`fresh`（18 域 ORM 模型已设计完成；设计文档经多次审计验证）
+- 文档新鲜度：`fresh`（全部业务域 ORM 模型已设计完成；设计文档经多次审计验证）
 
 **新鲜度控制：**
 
@@ -21,22 +21,22 @@
 
 ## 当前技术基线
 
-- 前端栈：百度 AMIS（`.view.xml` 文件中的 JSON 驱动 UI）— 代码生成后可用
-- 后端栈：Java 17+、Quarkus、Nop Platform（nop-entropy 2.0.0-SNAPSHOT）— 代码生成后可用
+- 前端栈：nop-chaos-flux 渲染（flux-only 强制，页面模型仍为 `.view.xml`；AMIS 已非渲染目标，见 `docs/architecture/view-and-page-strategy.md`）— 代码生成后可用
+- 后端栈：Java 17+、Quarkus、Nop Platform（nop-entropy）— 代码生成后可用
 - 数据库/模型源：`module-<domain>/model/app-erp-<domain>.orm.xml` 中的 XML 模型
 
 ## 当前项目阶段
 
-`nop-app-erp` 处于 **业务逻辑深化与运营成熟度收尾阶段**。18 域 ORM 模型 + 跨域 sys 通知派发子系统已设计完成并经审计验证。所有域 codegen 骨架已生成，`app-erp-all` 聚合 app 已构建通过。
+`nop-app-erp` 处于 **业务逻辑深化与运营成熟度收尾阶段**。全部业务域 ORM 模型 + 跨域 sys 通知派发子系统 + 项目级共享模块（`module-common-test` / `module-common-service`）已就绪，所有域 codegen 骨架已生成，`app-erp-all` 聚合 app 已构建通过。
 
 - 后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`
 - **工程命名映射**：物理目录 `module-<domain>/` ↔ 逻辑工程名 `app-erp-<domain>` ↔ appName `erp-<简称>` ↔ moduleId `erp/<简称>` 的完整映射见 `docs/architecture/domain-module-split-analysis.md §2.0`
-- 当前重点：各域细化端到端验证、看板运行时视觉/浏览器回归
+- 当前重点：需求-实现符合性审计修复批次（requirement-compliance，见 `docs/backlog/requirement-compliance-roadmap.md`）+ 各域细化端到端验证
 - 已落地能力见 `AGENTS.md §当前项目阶段`
 
 ## 验证命令
 
-> **当前状态**：`mvn clean install -DskipTests` 全绿，所有域 codegen 骨架已就绪，业务逻辑已深化至运营成熟度阶段。
+> **当前状态**：最新已知良好基线见 `docs/testing/known-good-baselines.md`；`mvn clean install -DskipTests` 为标准构建验证入口。
 
 | 目的 | 命令 |
 |------|------|
@@ -56,7 +56,7 @@
 - [x] `docs/discussions/`（维护：需求澄清对话记录）
 - [x] `docs/audits/`（维护：综合审计、合规审计、专业审计记录）
 - [x] `docs/testing/`（维护：手动测试记录与已知良好基线）
-- [x] `docs/skills/`（维护：19 个审查/审计方法技能 + README 项目定制化层）
+- [x] `docs/skills/`（维护：一批可复用审查/审计方法技能 + README 项目定制化层，清单见 `docs/skills/README.md`）
 - [x] `docs/analysis/`（维护：调研笔记、权衡分析、自动化路线图）
 - [x] `docs/retrospectives/`（维护：实现差距分析与流程改进回顾）
 - [x] `docs/lessons/`（维护：从 Bug/审计/回顾提取的持久工程经验）

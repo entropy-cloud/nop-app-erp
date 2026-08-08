@@ -1,6 +1,6 @@
 # 2026-08-08-1154-3-rc-mr1-r1-10-pur-requisition-multi-supplier-split RC-R1.10 — purchase 请购转订单多供应商拆分（P1-RC-017，MR1 第一批纯预授权）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-08
 > Mission: requirement-compliance
 > Work Item: RC-R1.10（MR1 第一批纯预授权：purchase 请购转订单多供应商拆分——convertToOrder 按行 supplier 分组生成多个 ErpPurOrder，P1-RC-017）
@@ -54,68 +54,68 @@
 
 ### Phase 1 - convertToOrder 按 supplier 分组重构 + per-supplier 头字段
 
-Status: planned
+Status: completed
 Targets: `ErpPurRequisitionProcessor.java`；`ConvertToOrderRequest.java`；`RequisitionToOrderConverter.java`；`IErpPurOrderBiz.java`；`ErpPurOrderBizModel.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Decision`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` **缺失 supplier 行的处理**：选项 A（推荐，对齐既有语义）= 任一行的 `suggestedSupplierId` 为 null 时整次转化拒绝（保留 `ERR_REQ_MIXED_OR_MISSING_SUPPLIER`——与 `testConvertMissingSupplierRejected` 断言一致，L1「生成订单数 >= 1」不改变缺失行的拒绝语义）；选项 B = 跳过缺失行只转有供应商的行（静默裁剪——违背「整单转化 + 幂等标记」语义，弃）。备选与理由记录于本 Decision；**残留风险**：无（选项 A 与既有测试/语义一致）。
+- [x] `Decision` **缺失 supplier 行的处理**：选项 A（推荐，对齐既有语义）= 任一行的 `suggestedSupplierId` 为 null 时整次转化拒绝（保留 `ERR_REQ_MIXED_OR_MISSING_SUPPLIER`——与 `testConvertMissingSupplierRejected` 断言一致，L1「生成订单数 >= 1」不改变缺失行的拒绝语义）；选项 B = 跳过缺失行只转有供应商的行（静默裁剪——违背「整单转化 + 幂等标记」语义，弃）。备选与理由记录于本 Decision；**残留风险**：无（选项 A 与既有测试/语义一致）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `ConvertToOrderRequest` 扩展：新增 per-supplier 头字段映射（如 `Map<Long, SupplierConversionOption{warehouseId, currencyId, deliveryDate}>`，key = supplierId）；保留既有全局 `warehouseId/currencyId` 作单供应商回退（兼容既有调用方）。
+- [x] `Fix` `ConvertToOrderRequest` 扩展：新增 per-supplier 头字段映射（如 `Map<Long, SupplierConversionOption{warehouseId, currencyId, deliveryDate}>`，key = supplierId）；保留既有全局 `warehouseId/currencyId` 作单供应商回退（兼容既有调用方）。**执行期决策（记录）**：实际采用 `Map<String, SupplierConversionOption>`（key = `String.valueOf(supplierId)`）——BeanCopier 对 `Map<Long,...>` 键类型转换不完整（Java 直接传参 Long 键 ClassCastException；JSON 路径键恒为 String 与 Long 查键不匹配静默失效），String 键在 Java/JSON 两路径一致；记录于 `ConvertToOrderRequest` javadoc。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `ErpPurRequisitionProcessor.convertToOrder` 重构：`validateConsistentSupplier` 改造为分组收集器（或新增 `groupLinesBySupplier` protected step 替代之）——`LinkedHashMap<Long, List<Line>>` 按行序分组 + 缺失 supplier 拒绝（Decision）；循环分组调用 `doConvertToOrder`（per-group）；`validateNotAlreadyConverted` 保持在循环前（一次调用全量转化，幂等语义不变）；`doConvertToOrder` 返回 `List<ErpPurOrder>`（保持 protected step 派生覆盖模式，派生类可覆盖单组/全组逻辑）。
+- [x] `Fix` `ErpPurRequisitionProcessor.convertToOrder` 重构：`validateConsistentSupplier` 改造为分组收集器（或新增 `groupLinesBySupplier` protected step 替代之）——`LinkedHashMap<Long, List<Line>>` 按行序分组 + 缺失 supplier 拒绝（Decision）；循环分组调用 `doConvertToOrder`（per-group）；`validateNotAlreadyConverted` 保持在循环前（一次调用全量转化，幂等语义不变）；`doConvertToOrder` 返回 `List<ErpPurOrder>`（保持 protected step 派生覆盖模式，派生类可覆盖单组/全组逻辑）。**执行期决策（记录）**：新增 `doConvertToOrders` protected step 循环调单组 `doConvertToOrder`（返回单 `ErpPurOrder`），全组编排收集 `List<ErpPurOrder>`——保留单组 + 全组双派生覆盖点（优于 doConvertToOrder 返回 List 的单覆盖点方案），记录于 `ErpPurRequisitionProcessor` javadoc。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `RequisitionToOrderConverter`：`build(req, groupLines, supplierId, request, perSupplierOption)` 头组装支持 per-supplier warehouseId/currencyId/deliveryDate（未提供映射时回退 request 全局字段，保持单供应商现状）；`buildLines` 接收组行子集（lineNo 按组内重排或沿用请购行 lineNo，执行期定并记录）。
+- [x] `Fix` `RequisitionToOrderConverter`：`build(req, groupLines, supplierId, request, perSupplierOption)` 头组装支持 per-supplier warehouseId/currencyId/deliveryDate（未提供映射时回退 request 全局字段，保持单供应商现状）；`buildLines` 接收组行子集（lineNo 按组内重排或沿用请购行 lineNo，执行期定并记录）。**执行期决策（记录）**：`build` 从 `request.getSupplierOptions()` 取 per-supplier 选项；`buildLines` lineNo 按组内从 1 重排（每组订单行从 1 编号），单价/税率仍按请购行原始 `lineNo` 解析；记录于 converter javadoc。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` 返回契约调整：`IErpPurRequisitionBiz.convertToOrder` / `IErpPurOrderBiz.createFromRequisition` 返回类型 `ErpPurOrder` → `List<ErpPurOrder>`；`ErpPurRequisitionBizModel` / `ErpPurOrderBizModel` 同步（`createFromRequisition` 循环组内保存 + 行保存，或保持单组实现由 Processor 循环调用——执行期按派生覆盖友好性定并记录）。
+- [x] `Fix` 返回契约调整：`IErpPurRequisitionBiz.convertToOrder` / `IErpPurOrderBiz.createFromRequisition` 返回类型 `ErpPurOrder` → `List<ErpPurOrder>`；`ErpPurRequisitionBizModel` / `ErpPurOrderBizModel` 同步（`createFromRequisition` 循环组内保存 + 行保存，或保持单组实现由 Processor 循环调用——执行期按派生覆盖友好性定并记录）。**执行期决策（记录）**：`IErpPurRequisitionBiz.convertToOrder` → `List<ErpPurOrder>`（GraphQL 响应形状随之变更）；`IErpPurOrderBiz.createFromRequisition` **保持单组实现**（返回单 `ErpPurOrder`）由 Processor `doConvertToOrders` 循环调用——保留单组派生覆盖点，记录于 `IErpPurOrderBiz` javadoc。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 多供应商请购一次转化生成 N 个订单（N = 供应商数），行归属正确（各组行挂对应订单）；单供应商请购仍生成 1 个订单（现状不变）
-- [ ] 缺失 supplier 行仍拒绝（`ERR_REQ_MIXED_OR_MISSING_SUPPLIER`）；重复转化仍拒绝（`ERR_REQ_ALREADY_CONVERTED`）；per-supplier warehouseId/currencyId/deliveryDate 正确落各订单头
-- [ ] 无 ORM 结构变更（纯 Java 契约调整 + DTO 扩展）
+- [x] 多供应商请购一次转化生成 N 个订单（N = 供应商数），行归属正确（各组行挂对应订单）；单供应商请购仍生成 1 个订单（现状不变）——`testConvertMultiSupplierSplitsOrders`/`testConvertMixedSupplierSplitsOrders` 断言 2 供应商 → 2 订单 + 组行归属 + supplierId
+- [x] 缺失 supplier 行仍拒绝（`ERR_REQ_MIXED_OR_MISSING_SUPPLIER`）；重复转化仍拒绝（`ERR_REQ_ALREADY_CONVERTED`）；per-supplier warehouseId/currencyId/deliveryDate 正确落各订单头——`testConvertMissingSupplierRejected`/`testConvertSplitThenIdempotent`/`testConvertPerSupplierHeaderFields` 断言
+- [x] 无 ORM 结构变更（纯 Java 契约调整 + DTO 扩展）——`git diff --stat` 仅 erp-pur-dao/erp-pur-service Java + app-erp-all reflect-config + `_cases/` 测试快照
 
 ### Phase 2 - 既有测试适配 + 新增拆单测试
 
-Status: planned
+Status: completed
 Targets: `module-purchase/erp-pur-service/src/test/java/app/erp/pur/service/TestErpPurRequisitionConvertToOrder.java`；`.../TestErpPurRequisitionToOrderEnd.java`
 Skill: `nop-testing`
 
 - Item Types: `Fix | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Fix` 适配既有测试：`TestErpPurRequisitionConvertToOrder` 内 `testConvertMixedSupplierRejected` 语义反转（原强断言拒绝 → 改断言拆单成功生成 2 订单，见新测试）；`idOf(conv)` 读取从「单实体」改为「List 首元素」；`testConvertApprovedReqToOrder` / `testConvertMissingSupplierRejected` / `testConvertNotApprovedRejected` / `testConvertIdempotentRejected` / `testConvertedOrderThenApprove` 逐一适配返回契约（`_cases/` 快照同步更新）；`TestErpPurRequisitionToOrderEnd.testRequisitionToOrderToEnd` 同型适配（两处 `idOf(conv)` 取 List 首元素）。
+- [x] `Fix` 适配既有测试：`TestErpPurRequisitionConvertToOrder` 内 `testConvertMixedSupplierRejected` 语义反转（原强断言拒绝 → 改断言拆单成功生成 2 订单，见新测试）；`idOf(conv)` 读取从「单实体」改为「List 首元素」；`testConvertApprovedReqToOrder` / `testConvertMissingSupplierRejected` / `testConvertNotApprovedRejected` / `testConvertIdempotentRejected` / `testConvertedOrderThenApprove` 逐一适配返回契约（`_cases/` 快照同步更新）；`TestErpPurRequisitionToOrderEnd.testRequisitionToOrderToEnd` 同型适配（两处 `idOf(conv)` 取 List 首元素）。
       - Skill: `nop-testing`
-- [ ] `Add` 新增测试矩阵：① `testConvertMultiSupplierSplitsOrders`（2 供应商 × 各 1+ 行 → 2 订单 + 各组行归属 + 各单头 supplierId 正确）；② per-supplier 头字段（两组 warehouseId/currencyId/deliveryDate 各自落单）；③ 单供应商回退（不传 per-supplier 映射 → 全局字段生效，现状回归）；④ 缺失行拒绝（保留）；⑤ 幂等（拆单后重复转化 → ERR_REQ_ALREADY_CONVERTED；cancel 全部订单后可再转）；⑥ 行单价/税额按 lineNo 解析在拆单场景下正确（金额族 per-order 汇总正确）。
+- [x] `Add` 新增测试矩阵：① `testConvertMultiSupplierSplitsOrders`（2 供应商 × 各 1+ 行 → 2 订单 + 各组行归属 + 各单头 supplierId 正确）；② per-supplier 头字段（两组 warehouseId/currencyId/deliveryDate 各自落单）；③ 单供应商回退（不传 per-supplier 映射 → 全局字段生效，现状回归）；④ 缺失行拒绝（保留）；⑤ 幂等（拆单后重复转化 → ERR_REQ_ALREADY_CONVERTED；cancel 全部订单后可再转）；⑥ 行单价/税额按 lineNo 解析在拆单场景下正确（金额族 per-order 汇总正确）。
       - Skill: `nop-testing`
-- [ ] `Proof` GraphQL 冒烟断言（`graphQLEngine.executeRpc` 调 `ErpPurRequisition__convertToOrder` 多供应商场景返回 List 结构 + 每单 code 非空 + 回链 requisitionId 正确）+ `_cases/` 快照录制（镜像既有 executeRpc 范式）。
+- [x] `Proof` GraphQL 冒烟断言（`graphQLEngine.executeRpc` 调 `ErpPurRequisition__convertToOrder` 多供应商场景返回 List 结构 + 每单 code 非空 + 回链 requisitionId 正确）+ `_cases/` 快照录制（镜像既有 executeRpc 范式）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 适配后既有测试全绿 + 新增拆单矩阵全绿：`mvn test -pl module-purchase/erp-pur-service`（既有 tests 零回归）
-- [ ] 拆单行为/头字段/幂等/金额族断言落地（无「契约变更但零覆盖」缺口）；GraphQL 返回 List 契约可达性有证据
+- [x] 适配后既有测试全绿 + 新增拆单矩阵全绿：`mvn test -pl module-purchase/erp-pur-service`（既有 tests 零回归）——**141 tests 全绿（BUILD SUCCESS）**
+- [x] 拆单行为/头字段/幂等/金额族断言落地（无「契约变更但零覆盖」缺口）；GraphQL 返回 List 契约可达性有证据——`testConvertMultiSupplierSplitsOrders` 断言 `listDataOf` List 结构 + code 非空 + requisitionId 回链 + `_cases/` 5 新 case 目录快照录制
 
 ### Phase 3 - 文档回填 + arm-index/roadmap 状态
 
-Status: planned
+Status: completed
 Targets: `docs/design/purchase/requisition.md`；`docs/audits/arm-index.md`；`docs/backlog/requirement-compliance-roadmap.md`；`docs/logs/2026/08-08.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1-2 完成
 
-- [ ] `Add` owner doc 补注：`requisition.md` 请购→转订单段补「多供应商拆单」实现注记（分组语义 + per-supplier 头字段 + 返回 List 契约 + 行级到货期 successor 注记）；不修改需求契约段（真相源冻结条款遵守）。
+- [x] `Add` owner doc 补注：`requisition.md` 请购→转订单段补「多供应商拆单」实现注记（分组语义 + per-supplier 头字段 + 返回 List 契约 + 行级到货期 successor 注记）；不修改需求契约段（真相源冻结条款遵守）。
       - Skill: none
-- [ ] `Add` arm-index P1-RC-017 行「修复状态」→ `done (RC-R1.10)` + 修复落地摘要；roadmap RC-R1.10 → done；`docs/logs/2026/08-08.md` 日志条目。
+- [x] `Add` arm-index P1-RC-017 行「修复状态」→ `done (RC-R1.10)` + 修复落地摘要；roadmap RC-R1.10 → done；`docs/logs/2026/08-08.md` 日志条目。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入
+- [x] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入——arm-index P1-RC-017 ✅ done（RC-R1.10）+ roadmap RC-R1.10 done ✅ + requisition.md 实现注记 + logs 08-08 条目
 
 ## Draft Review Record
 
@@ -123,14 +123,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn test -pl module-purchase/erp-pur-service` + `mvn clean install -DskipTests` 全量 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline——新增 DTO 字段/方法不产生 checker 新违规）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn test -pl module-purchase/erp-pur-service` 141 全绿 + `mvn clean install -DskipTests` 全量 BUILD SUCCESS + `mvn test` 全仓 2040 tests 零失败[独立审计复跑口径] + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline——新增 DTO 类/字段零 checker 新违规）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -148,12 +148,14 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待执行（active）
+Status Note: 全部 3 阶段完成并验证全绿（`mvn test -pl module-purchase/erp-pur-service` 141 tests 零回归 + `mvn clean install -DskipTests` 全量 BUILD SUCCESS + 全仓 `mvn test` 零失败 + compliance checker actual==baseline 零漂移）；独立结束审计 PASS；文档回填完成（requisition.md 实现注记 + arm-index P1-RC-017 ✅ done（RC-R1.10）+ roadmap RC-R1.10 done ✅ + 日志条目）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 待独立结束审计
+- Auditor / Agent: 独立子代理（新会话，task ses_01fc5e82effe7wfs3pFjY60S2g）
+- Verdict: PASS（0 P0/0 P1；3 P2 非阻塞[P2-1 全仓测试计数口径订正 4072→2040[console 双重求和产物]，已修正 plan 门控措辞；P2-2 证据范围措辞补「+ 测试快照」，已修正；P2-3 Status Note 措辞「待执行」→「执行完成，待独立结束审计」，已修正]）
+- Evidence: 逐项核验计划 items/exit criteria 全 [x]、代码/文档实仓落盘（Processor 分组重构 + DTO/Converter/IBiz/BizModel 契约 + 10 组测试 + _cases 5 新 case 目录 + 3 文档，零 ORM/api.xml/view.xml/真相源变更）、独立复跑 `mvn test -pl module-purchase/erp-pur-service` 141 全绿 + 全仓 `mvn test -o` BUILD SUCCESS（2040 tests 零失败）+ checker 全 19 规则 actual==baseline
 
 Follow-up:
 
-- 待执行后填写（范围内项目全落地后关闭）
+- 无（范围内项目全落地；行级到货期拆分 + 前端 AMIS 拆单交互按 Deferred But Adjudicated 登记，见上节）
