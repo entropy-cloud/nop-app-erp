@@ -1,6 +1,6 @@
 # 2026-08-08-0424-2-rc-mr1-r1-6-hr-attendance-cross-day-clockout RC-R1.6 — hr 夜班跨天 clockOut 回退（P1-RC-013，MR1 第一批纯预授权，方案 A）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-08
 > Mission: requirement-compliance
 > Work Item: RC-R1.6（MR1 第一批纯预授权：hr 夜班跨天 clockOut 回退，P1-RC-013）
@@ -49,61 +49,61 @@
 
 ### Phase 1 - ClockOutProcessor 跨天回退查找
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/src/main/java/app/erp/hr/service/processor/ErpHrAttendanceClockOutProcessor.java`（主）+ `module-hr/erp-hr-service/src/main/java/app/erp/hr/service/processor/AbstractErpHrAttendanceProcessor.java`（helper，若需）
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Decision`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` 回退判据精确化：today 无记录**或**今日记录 clockIn==null → 触发回退探查；回退探查 = `findAttendance(employeeId, yesterday)` 非空 && 该记录 clockIn 非空 && 员工 yesterday 存在跨天排班（`ErpHrShiftAssignment` employeeId+assignmentDate=yesterday → 关联 `ErpHrShift` 非空 → `shift.isCrossDayShift`；**shift 关联为空（孤儿 assignment）→ 保守判不命中回退**，防 `isCrossDayShift(null)` NPE，对齐 `ErpHrShiftCalcAttendanceProcessor:29-32` null shift 跳过范式）。备选（否决）：仅回退查昨日记录不校验排班——否决理由：无排班校验会误接纳「昨日普通班次今日补签退」的异常场景，且与 L2「跨天班次日历归属」语义不符；残留风险记录：极端场景「昨日排班+今日记录也排班」双记录并存时仍以 today 记录优先（回退仅在 today 无可用记录时触发）。
+- [x] `Decision` 回退判据精确化：today 无记录**或**今日记录 clockIn==null → 触发回退探查；回退探查 = `findAttendance(employeeId, yesterday)` 非空 && 该记录 clockIn 非空 && 员工 yesterday 存在跨天排班（`ErpHrShiftAssignment` employeeId+assignmentDate=yesterday → 关联 `ErpHrShift` 非空 → `shift.isCrossDayShift`；**shift 关联为空（孤儿 assignment）→ 保守判不命中回退**，防 `isCrossDayShift(null)` NPE，对齐 `ErpHrShiftCalcAttendanceProcessor:29-32` null shift 跳过范式）。备选（否决）：仅回退查昨日记录不校验排班——否决理由：无排班校验会误接纳「昨日普通班次今日补签退」的异常场景，且与 L2「跨天班次日历归属」语义不符；残留风险记录：极端场景「昨日排班+今日记录也排班」双记录并存时仍以 today 记录优先（回退仅在 today 无可用记录时触发）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `ErpHrAttendanceClockOutProcessor.clockOut` 回退分支：today 记录可用（clockIn 非空）→ 既有路径；否则回退探查 yesterday（含排班校验）→ 命中则 `setClockOut(now)` + `computeWorkHours` + `saveOrUpdateAttendance`；未命中 → 抛 `ERR_NOT_CLOCKED_IN`（与现状一致）。
+- [x] `Fix` `ErpHrAttendanceClockOutProcessor.clockOut` 回退分支：today 记录可用（clockIn 非空）→ 既有路径；否则回退探查 yesterday（含排班校验）→ 命中则 `setClockOut(now)` + `computeWorkHours` + `saveOrUpdateAttendance`；未命中 → 抛 `ERR_NOT_CLOCKED_IN`（与现状一致）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` 跨天排班校验 helper：优先注入 `IErpHrShiftAssignmentBiz` 并复用既有 `findByEmployeeAndDate(employeeId, assignmentDate, context)`（`module-hr/erp-hr-dao/.../IErpHrShiftAssignmentBiz.java:52-55` 已存在，恰好匹配本查找需求）→ 取关联 `ErpHrShift` → `ShiftAttendanceCalculator.isCrossDayShift(shift)`；仅当 I*Biz 无法满足时回落 `daoProvider.daoFor(ErpHrShiftAssignment.class)`（注释记录原因，对齐 AGENTS.md 跨实体访问规则）。
+- [x] `Fix` 跨天排班校验 helper：优先注入 `IErpHrShiftAssignmentBiz` 并复用既有 `findByEmployeeAndDate(employeeId, assignmentDate, context)`（`module-hr/erp-hr-dao/.../IErpHrShiftAssignmentBiz.java:52-55` 已存在，恰好匹配本查找需求）→ 取关联 `ErpHrShift` → `ShiftAttendanceCalculator.isCrossDayShift(shift)`；仅当 I*Biz 无法满足时回落 `daoProvider.daoFor(ErpHrShift.class)`（注释记录原因，对齐 AGENTS.md 跨实体访问规则）。**执行期决策（偏离注记）**：shift 关联未随查询加载时的回落采用 `IErpHrShiftBiz.get(shiftId, false, context)`（同域 I*Biz，返回 null 语义同 daoFor）而非 `daoProvider.daoFor(ErpHrShift.class)`——实跑 checker 验证 daoFor 回落使 R2c actual 1383→1384 超基线（已知失败模式「Compliance 基线漂移」，project-context.md），I*Biz 可完全满足查找需求故按「I*Biz 优先」原则全程零 daoFor，checker actual==baseline 零漂移。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] Phase 1 交付可观察结果：回退分支代码落地（today 无可用记录 → 回退探查昨日跨天排班 → 命中写 clockOut / 未命中抛 `ERR_NOT_CLOCKED_IN`），`mvn compile -pl module-hr/erp-hr-service` 类型检查通过（行为正确性由 Phase 2 测试证明）
-- [ ] 无 ORM/契约变更（本阶段产物仅 Java 代码）
+- [x] Phase 1 交付可观察结果：回退分支代码落地（today 无可用记录 → 回退探查昨日跨天排班 → 命中写 clockOut / 未命中抛 `ERR_NOT_CLOCKED_IN`），`mvn compile -pl module-hr/erp-hr-service` 类型检查通过（行为正确性由 Phase 2 测试证明）
+- [x] 无 ORM/契约变更（本阶段产物仅 Java 代码）
 
 ### Phase 2 - dedicated 测试
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/src/test/java/app/erp/hr/service/TestErpHrAttendanceEngine.java`（扩展）或新建 `TestErpHrAttendanceCrossDayClockOut.java`
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Add` 测试矩阵：① 跨天命中——seed `ErpHrShift`（NIGHT，startTime 23:00 / endTime 08:00）+ `ErpHrShiftAssignment`（employeeId + assignmentDate=yesterday）+ `ErpHrAttendance`（date=yesterday + clockIn=yesterday 23:00）→ `clockOut` 今日 → 断言返回记录 date==yesterday + clockOut 非空 + workHours 断言方式（**注意**：`HrFrozenClockExtension` 仅冻结日期，`CoreMetrics.currentTimestamp()` 走真实系统毫秒——clockOut 实际写入 ≈ 当前真实时刻（2026-08-08 附近），非 2026-07-17T08:00。故 workHours 的**绝对 9h 断言不可行**（Duration 实为 clockIn(2026-07-16T23:00) → now(2026-08-08) ≈ 546h）。可行断言（采用）：seed `clockIn = LocalDateTime.now().minusHours(9)`（记录 date 仍 = REFERENCE_DATE.minusDays(1)）→ clockOut → 断言 `workHours == 9.00`（Duration 精确 9h）**或**断言 `workHours == Duration.between(返回记录clockIn, 返回记录clockOut).toMinutes()/60` 一致性（实现公式镜像，鲁棒不依赖具体时刻）；② 今日已有记录优先——seed 今日 attendance(clockIn 非空) + 昨日跨天记录 → clockOut → 断言今日记录被更新（不回退）；③ 昨日无跨天排班——seed 昨日记录(clockIn 非空) 无排班 → clockOut 抛 `ERR_NOT_CLOCKED_IN`；④ 昨日记录 clockIn 空 → 抛 `ERR_NOT_CLOCKED_IN`；⑤ 常规路径回归（无昨日数据 → 行为不变）。
+- [x] `Add` 测试矩阵：① 跨天命中——seed `ErpHrShift`（NIGHT，startTime 23:00 / endTime 08:00）+ `ErpHrShiftAssignment`（employeeId + assignmentDate=yesterday）+ `ErpHrAttendance`（date=yesterday + clockIn=yesterday 23:00）→ `clockOut` 今日 → 断言返回记录 date==yesterday + clockOut 非空 + workHours 断言方式（**注意**：`HrFrozenClockExtension` 仅冻结日期，`CoreMetrics.currentTimestamp()` 走真实系统毫秒——clockOut 实际写入 ≈ 当前真实时刻（2026-08-08 附近），非 2026-07-17T08:00。故 workHours 的**绝对 9h 断言不可行**（Duration 实为 clockIn(2026-07-16T23:00) → now(2026-08-08) ≈ 546h）。可行断言（采用）：seed `clockIn = LocalDateTime.now().minusHours(9)`（记录 date 仍 = REFERENCE_DATE.minusDays(1)）→ clockOut → 断言 `workHours == 9.00`（Duration 精确 9h）**或**断言 `workHours == Duration.between(返回记录clockIn, 返回记录clockOut).toMinutes()/60` 一致性（实现公式镜像，鲁棒不依赖具体时刻）；② 今日已有记录优先——seed 今日 attendance(clockIn 非空) + 昨日跨天记录 → clockOut → 断言今日记录被更新（不回退）；③ 昨日无跨天排班——seed 昨日记录(clockIn 非空) 无排班 → clockOut 抛 `ERR_NOT_CLOCKED_IN`；④ 昨日记录 clockIn 空 → 抛 `ERR_NOT_CLOCKED_IN`；⑤ 常规路径回归（无昨日数据 → 行为不变）。
       - Skill: `nop-testing`
-- [ ] `Proof` 断言强度：返回记录 date/clockOut/workHours 精确值 + 异常错误码；`@NopTestConfig` 隔离零外部依赖（镜像 `TestErpHrAttendanceEngine` 既有 `@NopTestConfig(localDb=true, initDatabaseSchema=TRUE, enableActionAuth=FALSE)` 范式 + `HrFrozenClockExtension` 冻结时钟）。昨日记日期用 `HrFrozenClockExtension.REFERENCE_DATE.minusDays(1)` 显式构造（不硬编码），避免时钟推进耦合。
+- [x] `Proof` 断言强度：返回记录 date/clockOut/workHours 精确值 + 异常错误码；`@NopTestConfig` 隔离零外部依赖（镜像 `TestErpHrAttendanceEngine` 既有 `@NopTestConfig(localDb=true, initDatabaseSchema=TRUE, enableActionAuth=FALSE)` 范式 + `HrFrozenClockExtension` 冻结时钟）。昨日记日期用 `HrFrozenClockExtension.REFERENCE_DATE.minusDays(1)` 显式构造（不硬编码），避免时钟推进耦合。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 5 组测试全部落地并绿：`mvn test -pl module-hr/erp-hr-service` 全绿（既有 tests 零回归）
-- [ ] 覆盖回退命中 + 未命中 + 优先级三分支（无死代码分支）
+- [x] 5 组测试全部落地并绿：`mvn test -pl module-hr/erp-hr-service` 全绿（既有 tests 零回归）
+- [x] 覆盖回退命中 + 未命中 + 优先级三分支（无死代码分支）
 
 ### Phase 3 - 文档回填 + arm-index/roadmap 状态
 
-Status: planned
+Status: completed
 Targets: `docs/design/human-resource/shift-scheduling.md`（§4.2 或 §九 补实现注记，可选）；`docs/audits/arm-index.md`（P1-RC-013 修复状态）；`docs/backlog/requirement-compliance-roadmap.md`（RC-R1.6 done）；`docs/logs/2026/08-08.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1-2 完成
 
-- [ ] `Add` owner doc 补注：`shift-scheduling.md §4.2` 无条件补「clocking 侧跨天签退回退」实现注记（今日无记录回退昨日跨天排班记录）；不修改需求契约段（真相源冻结条款遵守）。
+- [x] `Add` owner doc 补注：`shift-scheduling.md §4.2` 无条件补「clocking 侧跨天签退回退」实现注记（今日无记录回退昨日跨天排班记录）；不修改需求契约段（真相源冻结条款遵守）。
       - Skill: none
-- [ ] `Add` arm-index P1-RC-013 行「修复状态」→ `done (RC-R1.6)` + 修复落地摘要（跨天回退 + 排班校验 + 测试矩阵）；roadmap RC-R1.6 → done；`docs/logs/2026/08-08.md` 日志条目。
+- [x] `Add` arm-index P1-RC-013 行「修复状态」→ `done (RC-R1.6)` + 修复落地摘要（跨天回退 + 排班校验 + 测试矩阵）；roadmap RC-R1.6 → done；`docs/logs/2026/08-08.md` 日志条目。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入
+- [x] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入
 
 ## Draft Review Record
 
@@ -112,14 +112,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn test -pl module-hr/erp-hr-service` + `mvn clean install -DskipTests` 全量 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn test -pl module-hr/erp-hr-service` + `mvn clean install -DskipTests` 全量 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -137,11 +137,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待执行（active 阶段，独立草案审查已收敛）。
+Status Note: 已完成。3 Phase 全 done（Phase 1 回退分支 + I*Biz 优先排班校验 helper；Phase 2 dedicated 测试 5 组 + `_cases/` 快照；Phase 3 文档回填）。验证：`mvn test -pl module-hr/erp-hr-service` 140 tests 全绿（既有 135 零回归）+ 全量 `mvn clean install -DskipTests` BUILD SUCCESS + 全仓 `mvn test` BUILD SUCCESS + compliance checker actual==baseline 零漂移（R1d=14/R2a=34/R2b=229/R2c=1383/R2d=34/R3=5/R5=0/R6=2/R10=7/R12a=69/R12b=66/R12c=40 与 §BASELINE 逐行一致——执行期决策：shift 回落改 `IErpHrShiftBiz.get` 全程零 daoFor，防 R2c 1383→1384 基线漂移，已记录于 Phase 1 项 3 偏离注记）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 待独立结束审计
+- Auditor / Agent: 独立结束审计（新会话子代理 `ses_0210da14bffePqZuAsWECCPmDa`）Verdict **pass**——独立重跑三项验证门控（erp-hr-service 140/140 绿 + 全量构建 BUILD SUCCESS + checker 19 规则 actual==baseline 零漂移）而非信任记录证据；Phase 一致性/代码实现（today 优先 → 昨日回退探针 → `hasCrossDayAssignment` I*Biz 链 + 孤儿保守不命中 → `ERR_NOT_CLOCKED_IN`）/5 组测试 + 快照/文档回填/零 ORM 变更全部核验通过；0 BLOCKER 0 MAJOR 0 MINOR + 2 cosmetic（日志验证措辞已修正；Closure 段待审计后回填——本段即回填结果）。
 
 Follow-up:
 

@@ -211,6 +211,8 @@ HR 选择轮换模板 + 轮换组
 
 > 🟢 Odoo `hr_attendance` 跨天班次处理（自动识别次日 endTime）。
 
+> **实现注记（RC-R1.6，P1-RC-013）**：clocking 侧跨天签退回退已落地——`ErpHrAttendanceClockOutProcessor.clockOut` 今日无可用签到记录（无记录或 clockIn 为空）时，回退探查昨日记录（date=昨日且 clockIn 非空）且员工昨日存在跨天排班（`ErpHrShiftAssignment` assignmentDate=昨日 → 关联 `ErpHrShift` 且 `ShiftAttendanceCalculator.isCrossDayShift` 成立）→ 对昨日记录执行 clockOut 并重算 workHours；未命中（昨日无记录/昨日 clockIn 空/无跨天排班/孤儿 assignment）维持 `ERR_NOT_CLOCKED_IN`。今日记录可用时仍优先签退今日（回退仅在今日无可用记录时触发）。dedicated 测试 `TestErpHrAttendanceCrossDayClockOut` 5 组覆盖（命中/优先/拒绝三分支）。
+
 ---
 
 ## 五、排班调换（Shift Swap）
