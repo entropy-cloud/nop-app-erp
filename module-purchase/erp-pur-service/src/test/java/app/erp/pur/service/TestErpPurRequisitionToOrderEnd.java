@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
@@ -73,7 +74,7 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
         Map<String, Object> request = newRequest();
         ApiResponse<?> conv = convertToOrder(reqId, request);
         assertEquals(0, conv.getStatus());
-        Long orderId = idOf(conv);
+        Long orderId = firstIdOf(conv);
         ErpPurOrder order = daoProvider.daoFor(ErpPurOrder.class).getEntityById(orderId);
         assertEquals(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED, order.getApproveStatus());
         assertEquals(reqId, order.getRequisitionId(), "回链 requisitionId");
@@ -92,7 +93,7 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
 
         ApiResponse<?> secondConv = convertToOrder(reqId, request);
         assertEquals(0, secondConv.getStatus());
-        ErpPurOrder secondOrder = daoProvider.daoFor(ErpPurOrder.class).getEntityById(idOf(secondConv));
+        ErpPurOrder secondOrder = daoProvider.daoFor(ErpPurOrder.class).getEntityById(firstIdOf(secondConv));
         assertNotNull(secondOrder.getId());
         assertEquals(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED, secondOrder.getApproveStatus(),
                 "作废原订单后可重新转化");
@@ -132,8 +133,10 @@ public class TestErpPurRequisitionToOrderEnd extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long idOf(ApiResponse<?> resp) {
-        Object id = ((Map<?, ?>) resp.getData()).get("id");
+    @SuppressWarnings("unchecked")
+    private Long firstIdOf(ApiResponse<?> resp) {
+        List<Map<String, Object>> data = (List<Map<String, Object>>) resp.getData();
+        Object id = data.get(0).get("id");
         return id instanceof Number ? ((Number) id).longValue() : Long.parseLong(String.valueOf(id));
     }
 

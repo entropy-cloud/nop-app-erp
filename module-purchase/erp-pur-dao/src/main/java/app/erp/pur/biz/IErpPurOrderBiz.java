@@ -36,6 +36,10 @@ public interface IErpPurOrderBiz extends ICrudBiz<ErpPurOrder> {
     /**
      * 由请购单派生采购订单（跨聚合写：请购 APPROVED → 新建订单 + 行 + 回链 requisitionId）。
      * 含幂等防重复转化（查既有 docStatus≠CANCELLED 且 requisitionId 命中的订单）。
+     *
+     * <p>RC-R1.10：本方法为**单组**实现——{@code lines} 为同一供应商的分组行子集（{@code supplierId} 为该组
+     * 供应商），生成**一个**订单；多供应商拆单由 {@code ErpPurRequisitionProcessor.doConvertToOrders} 循环调用
+     * 本方法（执行期决策：保持单组实现由 Processor 循环调用，保留单组派生覆盖点）。
      */
     @BizAction
     ErpPurOrder createFromRequisition(@Name("requisition") ErpPurRequisition requisition,

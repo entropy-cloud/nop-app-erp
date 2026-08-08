@@ -6,6 +6,8 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
+import java.util.List;
+
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurRequisition;
 
@@ -20,9 +22,13 @@ public interface IErpPurRequisitionBiz extends ICrudBiz<ErpPurRequisition> {
 
     /**
      * 将 APPROVED 请购单转化为采购订单。入口在请购侧（请购 APPROVED → 派生订单）。
+     *
+     * <p>RC-R1.10 多供应商拆分：行按 {@code suggestedSupplierId} 分组，每组生成一个订单——
+     * 返回 {@code List<ErpPurOrder>}（单供应商时含 1 个元素，现状等价）；per-supplier 头字段
+     * （仓库/币种/到货期）经 {@link ConvertToOrderRequest#getSupplierOptions()} 提供。
      */
     @BizMutation
-    ErpPurOrder convertToOrder(@Name("requisitionId") Long requisitionId,
-                               @Name("request") ConvertToOrderRequest request,
-                               IServiceContext context);
+    List<ErpPurOrder> convertToOrder(@Name("requisitionId") Long requisitionId,
+                                     @Name("request") ConvertToOrderRequest request,
+                                     IServiceContext context);
 }

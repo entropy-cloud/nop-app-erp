@@ -16,12 +16,12 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
-import java.util.Objects;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
+import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -86,14 +86,20 @@ public class ErpPurRequisitionProcessor {
         return cancelProcessor.cancel(id, context);
     }
 
-    public ErpPurOrder convertToOrder(String id, ConvertToOrderRequest request, IServiceContext context) {
+    /**
+     * 将 APPROVED 请购转化为采购订单（RC-R1.10 多供应商拆分）：行按 {@code suggestedSupplierId} 分组
+     * （保留行序），每组生成一个 {@link ErpPurOrder}；单供应商时生成 1 个订单（现状不变）。
+     * 任一缺失 supplier 的行拒绝整次转化（Decision A：选项 A 落地——保留 ERR_REQ_MIXED_OR_MISSING_SUPPLIER，
+     * 与 testConvertMissingSupplierRejected 断言一致，不做静默裁剪）。
+     */
+    public List<ErpPurOrder> convertToOrder(String id, ConvertToOrderRequest request, IServiceContext context) {
         ErpPurRequisition req = requireRequisition(id, context);
         validateApprovedForConversion(req, context);
         List<ErpPurRequisitionLine> lines = loadLines(req);
         validateLinesNonEmptyForConversion(req, lines, context);
-        Long supplierId = validateConsistentSupplier(req, lines, context);
+        Map<Long, List<ErpPurRequisitionLine>> groups = groupLinesBySupplier(req, lines, context);
         validateNotAlreadyConverted(req.getId(), context);
-        return doConvertToOrder(req, lines, supplierId, request, context);
+        return doConvertToOrders(req, groups, request, context);
     }
 
     // ---------- step：迁移校验 ----------
@@ -168,21 +174,24 @@ public class ErpPurRequisitionProcessor {
         }
     }
 
-    protected Long validateConsistentSupplier(ErpPurRequisition req, List<ErpPurRequisitionLine> lines,
-                                              IServiceContext context) {
-        Set<Long> suppliers = new HashSet<>();
+    /**
+     * RC-R1.10 分组收集器（替代原 validateConsistentSupplier 单一供应商强制）：按行 {@code suggestedSupplierId}
+     * 分组，LinkedHashMap 保留行首次出现顺序；任一行为 null 抛 {@link ErpPurErrors#ERR_REQ_MIXED_OR_MISSING_SUPPLIER}
+     * （Decision A：整次转化拒绝，不做静默裁剪）。
+     */
+    protected Map<Long, List<ErpPurRequisitionLine>> groupLinesBySupplier(ErpPurRequisition req,
+                                                                          List<ErpPurRequisitionLine> lines,
+                                                                          IServiceContext context) {
+        Map<Long, List<ErpPurRequisitionLine>> groups = new LinkedHashMap<>();
         for (ErpPurRequisitionLine line : lines) {
-            if (line.getSuggestedSupplierId() == null) {
+            Long supplierId = line.getSuggestedSupplierId();
+            if (supplierId == null) {
                 throw new NopException(ErpPurErrors.ERR_REQ_MIXED_OR_MISSING_SUPPLIER)
                         .param(ErpPurErrors.ARG_REQUISITION_CODE, req.getCode());
             }
-            suppliers.add(line.getSuggestedSupplierId());
+            groups.computeIfAbsent(supplierId, k -> new ArrayList<>()).add(line);
         }
-        if (suppliers.size() != 1) {
-            throw new NopException(ErpPurErrors.ERR_REQ_MIXED_OR_MISSING_SUPPLIER)
-                    .param(ErpPurErrors.ARG_REQUISITION_CODE, req.getCode());
-        }
-        return suppliers.iterator().next();
+        return groups;
     }
 
     protected void validateNotAlreadyConverted(Long requisitionId, IServiceContext context) {
@@ -227,6 +236,20 @@ public class ErpPurRequisitionProcessor {
     protected void doCancel(ErpPurRequisition req, IServiceContext context) {
         req.setDocStatus(ErpPurConstants.DOC_STATUS_CANCELLED);
         requisitionDao().updateEntity(req);
+    }
+
+    /**
+     * RC-R1.10 全组转化编排：按分组循环调单组 {@link #doConvertToOrder}，收集返回订单列表。
+     * protected step——派生类可覆盖本方法改全组逻辑，或覆盖单组 {@link #doConvertToOrder} 改单组逻辑。
+     */
+    protected List<ErpPurOrder> doConvertToOrders(ErpPurRequisition req,
+                                                  Map<Long, List<ErpPurRequisitionLine>> groups,
+                                                  ConvertToOrderRequest request, IServiceContext context) {
+        List<ErpPurOrder> orders = new ArrayList<>(groups.size());
+        for (Map.Entry<Long, List<ErpPurRequisitionLine>> entry : groups.entrySet()) {
+            orders.add(doConvertToOrder(req, entry.getValue(), entry.getKey(), request, context));
+        }
+        return orders;
     }
 
     protected ErpPurOrder doConvertToOrder(ErpPurRequisition req, List<ErpPurRequisitionLine> lines,

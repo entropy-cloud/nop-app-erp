@@ -42,8 +42,8 @@ public class ErpPurRequisitionBizModel extends CrudBizModel<ErpPurRequisition> i
 
     @Override
     @BizMutation
-    public ErpPurOrder convertToOrder(@Name("requisitionId") Long requisitionId,
-                                      @Name("request") ConvertToOrderRequest request, IServiceContext context) {
+    public List<ErpPurOrder> convertToOrder(@Name("requisitionId") Long requisitionId,
+                                            @Name("request") ConvertToOrderRequest request, IServiceContext context) {
         return requisitionProcessor.convertToOrder(String.valueOf(requisitionId), request, context);
     }
 

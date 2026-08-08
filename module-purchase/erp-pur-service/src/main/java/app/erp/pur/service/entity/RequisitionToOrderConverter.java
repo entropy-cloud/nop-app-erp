@@ -1,6 +1,7 @@
 package app.erp.pur.service.entity;
 
 import app.erp.pur.biz.ConvertToOrderRequest;
+import app.erp.pur.biz.SupplierConversionOption;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.dao.entity.ErpPurRequisition;
@@ -26,11 +27,13 @@ import java.util.List;
  *
  * <p>关键映射（requisition.md + Phase 2 Decision）：
  * <ul>
- *   <li>订单头：{@code code}=新生成订单号；{@code requisitionId}=请购（转化回链键）；{@code supplierId}=请购行一致供应商；
- *       {@code warehouseId}/{@code currencyId}=调用方提供；{@code businessDate}={@code requisition.businessDate}；
+ *   <li>订单头：{@code code}=新生成订单号；{@code requisitionId}=请购（转化回链键）；{@code supplierId}=请购行供应商
+ *       （RC-R1.10 拆单后=该组行的供应商）；{@code warehouseId}/{@code currencyId}=调用方提供（per-supplier 选项
+ *       覆盖全局字段）；{@code deliveryDate}=per-supplier 选项到货期（无选项置空）；{@code businessDate}={@code requisition.businessDate}；
  *       {@code orgId}={@code requisition.orgId}；{@code approveStatus}=UNSUBMITTED，{@code docStatus}=DRAFT。</li>
  *   <li>订单行：复制请购行 {@code materialId}/{@code skuId}(请购行无此列,置 null)/{@code uoMId}/{@code quantity}/{@code projectId}；
- *       {@code unitPrice}=调用方按 {@code lineNo} 提供（VARCHAR 存储）；金额族（{@code amount}={@code unitPrice}×{@code quantity}、
+ *       {@code lineNo} 按组内重排（每组订单从 1 起，RC-R1.10 拆单后同请购行在各自订单内从 1 编号）；
+ *       {@code unitPrice}=调用方按请购行原始 {@code lineNo} 提供（VARCHAR 存储）；金额族（{@code amount}={@code unitPrice}×{@code quantity}、
  *       {@code taxRate}/{@code taxAmount}/{@code amountWithTax}）由本组件计算，按 VARCHAR 写入（对齐采购域 VARCHAR 金额约定）。</li>
  *   <li>单价解析防护：{@code unitPrice} 空/非法格式抛 {@link ErpPurErrors#ERR_INVALID_UNIT_PRICE}。</li>
  * </ul>
@@ -53,9 +56,13 @@ public class RequisitionToOrderConverter {
         order.setOrgId(req.getOrgId());
         order.setRequisitionId(req.getId());
         order.setSupplierId(supplierId);
-        order.setWarehouseId(request.getWarehouseId());
+        SupplierConversionOption option = request.getSupplierOptions().get(String.valueOf(supplierId));
+        order.setWarehouseId(option != null && option.getWarehouseId() != null
+                ? option.getWarehouseId() : request.getWarehouseId());
         order.setBusinessDate(req.getBusinessDate());
-        order.setCurrencyId(request.getCurrencyId());
+        order.setCurrencyId(option != null && option.getCurrencyId() != null
+                ? option.getCurrencyId() : request.getCurrencyId());
+        order.setDeliveryDate(option != null ? option.getDeliveryDate() : null);
         order.setExchangeRate(BigDecimal.ONE);
         order.setApproveStatus(ErpPurConstants.APPROVE_STATUS_UNSUBMITTED);
         order.setDocStatus(ErpPurConstants.DOC_STATUS_DRAFT);

@@ -39021,6 +39021,16 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "app.erp.pur.biz.SupplierConversionOption"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "app.erp.pur.biz.IErpPurOrderBiz"
   },
   {
@@ -43458,6 +43468,15 @@
         ]
       },
       {
+        "name": "doConvertToOrders",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurRequisition",
+          "java.util.Map",
+          "app.erp.pur.biz.ConvertToOrderRequest",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "doReject",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurRequisition",
@@ -43558,7 +43577,7 @@
         ]
       },
       {
-        "name": "validateConsistentSupplier",
+        "name": "groupLinesBySupplier",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurRequisition",
           "java.util.List",
