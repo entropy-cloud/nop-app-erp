@@ -272,4 +272,13 @@ public interface ErpSalErrors {
     ErrorCode ERR_SAL_APPROVER_IS_CREATOR = ErrorCode.define("erp.err.sal.approver-is-creator",
             "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
             ARG_USER_ID);
+
+    // ---- 订单级可用量预校验（RC-R1.13，P1-RC-020）：HARD 级别下订单审核时库存可用量不足 ---
+    String ARG_MATERIAL_ID = "materialId";
+    String ARG_WAREHOUSE_ID = "warehouseId";
+    String ARG_REQUIRED = "required";
+
+    ErrorCode ERR_SAL_ORDER_AVAILABLE_INSUFFICIENT = ErrorCode.define("erp.err.sal.order-available-insufficient",
+            "销售订单 {orderCode} 第 {lineNo} 行物料 {materialId}（仓库 {warehouseId}）可用量 {available} 不足，需求数量 {required}，订单级可用量预校验拒绝审核",
+            ARG_ORDER_CODE, ARG_LINE_NO, ARG_MATERIAL_ID, ARG_WAREHOUSE_ID, ARG_AVAILABLE, ARG_REQUIRED);
 }

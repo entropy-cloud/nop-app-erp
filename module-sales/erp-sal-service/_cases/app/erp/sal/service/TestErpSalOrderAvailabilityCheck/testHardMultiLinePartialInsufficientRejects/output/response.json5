@@ -1,0 +1,6 @@
+{
+  "bizFatal": false,
+  "code": "erp.err.sal.order-available-insufficient",
+  "msg": "销售订单 SO-AVAIL-MULTI-001 第 2 行物料 4302（仓库 3301）可用量 2.0000 不足，需求数量 5.0000，订单级可用量预校验拒绝审核",
+  "status": -1
+}

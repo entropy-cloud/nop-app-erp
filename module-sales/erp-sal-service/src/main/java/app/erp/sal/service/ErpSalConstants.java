@@ -41,6 +41,13 @@ public interface ErpSalConstants extends ErpSalDocStatus {
     String CREDIT_CHECK_LEVEL_SPECIAL_APPROVAL = "SPECIAL_APPROVAL";
     String CREDIT_CHECK_LEVEL_HARD_BLOCK = "HARD_BLOCK";
 
+    // 订单级可用量预校验配置项 erp-sal.order-availability-check-level（默认 OFF；RC-R1.13，对齐 credit-check-level 三级范式：
+    // OFF 关闭 / WARN 不足记告警放行 / HARD 不足拒绝审核；出库审核仍是强制校验点，本配置仅作可选前置预校验）
+    String CONFIG_ORDER_AVAILABILITY_CHECK_LEVEL = "erp-sal.order-availability-check-level";
+    String ORDER_AVAILABILITY_CHECK_LEVEL_OFF = "OFF";
+    String ORDER_AVAILABILITY_CHECK_LEVEL_WARN = "WARN";
+    String ORDER_AVAILABILITY_CHECK_LEVEL_HARD = "HARD";
+
     // 出库审核环节是否启用信用冻结检查（默认 false，向后兼容；plan 2026-07-10-1100-2）
     String CONFIG_CREDIT_CHECK_ON_DELIVERY = "erp-sal.credit-check-on-delivery";
     boolean CREDIT_CHECK_ON_DELIVERY_DEFAULT = false;

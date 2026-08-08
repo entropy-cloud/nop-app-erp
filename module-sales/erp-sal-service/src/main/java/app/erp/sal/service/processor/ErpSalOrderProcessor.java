@@ -4,6 +4,8 @@ import app.erp.fin.biz.IErpFinBudgetCommitmentBiz;
 import app.erp.fin.biz.IErpFinIntercompanyTransferBiz;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.inv.biz.IErpInvStockBalanceBiz;
+import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.md.dao.entity.ErpMdSubject;
@@ -56,6 +58,9 @@ public class ErpSalOrderProcessor {
 
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
+
+    @Inject
+    IErpInvStockBalanceBiz stockBalanceBiz;
 
     @Inject
     CreditLimitChecker creditLimitChecker;
@@ -167,6 +172,76 @@ public class ErpSalOrderProcessor {
         requireCustomerActive(order, context);
         creditLimitChecker.check(order.getCustomerId(), order.getTotalAmountWithTax(), order.getExchangeRate(),
                 order.getCode(), context);
+        validateOrderAvailability(order, context);
+    }
+
+    /**
+     * 订单级可用量预校验（RC-R1.13，P1-RC-020）：可选前置校验，config-gated
+     * {@code erp-sal.order-availability-check-level}（默认 OFF，部署启用时设置；对齐 credit-check-level 三级范式）。
+     *
+     * <p>per 订单行：行 {@code materialId} + 行 {@code warehouseId}（null 回退订单头 {@code warehouseId}，
+     * 仍 null 跳过该行）；经 {@link IErpInvStockBalanceBiz} 聚合 {@code availableQuantity}（null 视为 0，
+     * 无余额行保守按 0 计——HARD 下新物料无库存记录即拒绝）与行 {@code quantity} 比对：
+     * WARN 级别不足时 LOG.warn 放行 / HARD 级别抛 {@link ErpSalErrors#ERR_SAL_ORDER_AVAILABLE_INSUFFICIENT}。
+     * 出库审核仍是强制校验点，本步骤只是可选预校验（不做预留/reservation，只读查询）。
+     *
+     * <p>跨域查询经 I*Biz 管道（ICrudBiz findList + QueryBean），天然经过 R1.29 组织隔离 transformer 过滤。
+     */
+    protected void validateOrderAvailability(ErpSalOrder order, IServiceContext context) {
+        String level = resolveAvailabilityCheckLevel();
+        if (ErpSalConstants.ORDER_AVAILABILITY_CHECK_LEVEL_OFF.equals(level)) {
+            return;
+        }
+        boolean hard = ErpSalConstants.ORDER_AVAILABILITY_CHECK_LEVEL_HARD.equals(level);
+        Long orderWarehouseId = order.getWarehouseId();
+        for (ErpSalOrderLine line : loadLines(order.getId())) {
+            Long materialId = line.getMaterialId();
+            if (materialId == null) {
+                continue;
+            }
+            Long warehouseId = line.getWarehouseId() != null ? line.getWarehouseId() : orderWarehouseId;
+            if (warehouseId == null) {
+                continue;
+            }
+            BigDecimal required = line.getQuantity();
+            if (required == null || required.signum() <= 0) {
+                continue;
+            }
+            BigDecimal available = resolveAvailableQuantity(materialId, warehouseId, context);
+            if (available.compareTo(required) >= 0) {
+                continue;
+            }
+            if (hard) {
+                throw new NopException(ErpSalErrors.ERR_SAL_ORDER_AVAILABLE_INSUFFICIENT)
+                        .param(ErpSalErrors.ARG_ORDER_CODE, order.getCode())
+                        .param(ErpSalErrors.ARG_LINE_NO, line.getLineNo())
+                        .param(ErpSalErrors.ARG_MATERIAL_ID, materialId)
+                        .param(ErpSalErrors.ARG_WAREHOUSE_ID, warehouseId)
+                        .param(ErpSalErrors.ARG_AVAILABLE, available)
+                        .param(ErpSalErrors.ARG_REQUIRED, required);
+            }
+            LOG.warn("销售订单 {} 第 {} 行物料 {}（仓库 {}）可用量 {} 不足需求 {}，订单级预校验 WARN 放行（出库审核仍会强制校验）",
+                    order.getCode(), line.getLineNo(), materialId, warehouseId, available, required);
+        }
+    }
+
+    protected String resolveAvailabilityCheckLevel() {
+        String level = AppConfig.var(ErpSalConstants.CONFIG_ORDER_AVAILABILITY_CHECK_LEVEL,
+                ErpSalConstants.ORDER_AVAILABILITY_CHECK_LEVEL_OFF);
+        return level == null ? ErpSalConstants.ORDER_AVAILABILITY_CHECK_LEVEL_OFF : level;
+    }
+
+    protected BigDecimal resolveAvailableQuantity(Long materialId, Long warehouseId, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("materialId", materialId));
+        q.addFilter(eq("warehouseId", warehouseId));
+        q.setLimit(1);
+        List<ErpInvStockBalance> balances = stockBalanceBiz.findList(q, null, context);
+        if (balances.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+        BigDecimal available = balances.get(0).getAvailableQuantity();
+        return available == null ? BigDecimal.ZERO : available;
     }
 
     // ---------- step：执行（状态推进 + 持久化） ----------
