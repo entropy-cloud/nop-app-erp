@@ -3,7 +3,10 @@ package app.erp.pur.service.processor;
 import app.erp.fin.biz.IErpFinBudgetCommitmentBiz;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.md.biz.IErpMdPartnerBiz;
+import app.erp.md.biz.IErpMdSubjectBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.md.dao.entity.ErpMdSubject;
+import app.erp.pur.biz.IErpPurOrderBiz;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.dao.entity.ErpPurInvoiceLine;
 import app.erp.pur.dao.entity.ErpPurOrder;
@@ -23,6 +26,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import java.util.ArrayList;
@@ -59,6 +63,15 @@ public class ErpPurInvoiceProcessor {
 
     @Inject
     IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
+
+    @Inject
+    IErpPurOrderBiz orderBiz;
+
+    @Inject
+    ErpPurOrderProcessor orderProcessor;
+
+    @Inject
+    IErpMdSubjectBiz mdSubjectBiz;
 
     @Inject
     ErpPurInvoiceSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -295,6 +308,84 @@ public class ErpPurInvoiceProcessor {
     protected boolean isCommitmentAlreadyReleased(NopException e) {
         return app.erp.fin.service.ErpFinErrors.ERR_BUDGET_COMMITMENT_ALREADY_RELEASED.getErrorCode()
                 .equals(e.getErrorCode());
+    }
+
+    /**
+     * P1-MA2-083 冲销恢复 hook（RC-R1.12，budget.md §承付会计 §3 冲销恢复语义）。
+     * 发票 reverseApprove/cancel 后置 → 对关联 PO 重新生成 COMMITMENT 凭证（对称恢复正向 release-on-invoice-approve）。
+     *
+     * <p>恢复前置守卫（防幽灵承付/双占用，plan Decision 2 三守卫）：
+     * ① 单据曾 APPROVED（{@code wasApproved}——cancel 路径由调用方按原始 approveStatus 判定，reverseApprove 路径由迁移守卫保证）；
+     * ② PO 终态守卫：docStatus != CANCELLED 且 approveStatus == APPROVED（非 APPROVED PO 无活跃承付义务，
+     *    其承付经 order reverseApprove/cancel 的 release 路径已释放，恢复 = 幽灵承付双占用；PO 重新 approve 时
+     *    commit-on-order-approve 会重新承付）；
+     * ③ commit() 参数守卫返回 null（科目缺失/金额非法）视为 no-op 不抛错。
+     *
+     * <p>config-gated（{@code erp-fin.budget-commitment-enabled} 默认 false）；精确容错：NopException 仅守卫类错误
+     * （ERR_BUDGET_COMMITMENT_ALREADY_RELEASED）静默跳过，其他异常重新抛出（对齐 release hook 精确容错范式，
+     * 全吞会静默隐藏凭证生成失败 = 静默预算泄漏）。
+     */
+    protected void runCommitmentRestoreOnInvoiceReverseHook(ErpPurInvoice invoice, boolean wasApproved,
+                                                            IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        if (!wasApproved) {
+            return;
+        }
+        Set<String> orderCodes = resolveLinkedOrderCodes(invoice);
+        if (orderCodes.isEmpty()) {
+            return;
+        }
+        for (String orderCode : orderCodes) {
+            restoreCommitmentForOrder(orderCode, context);
+        }
+    }
+
+    /** 对单个 PO code 恢复承付（PO 终态守卫 + 科目/期间/金额解析 + commit()，精确容错）。 */
+    protected void restoreCommitmentForOrder(String orderCode, IServiceContext context) {
+        ErpPurOrder order = findOrderByCode(orderCode, context);
+        if (order == null || order.isCancelled() || !order.isApproved()) {
+            return;
+        }
+        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE, context);
+        if (subjectId == null) {
+            return;
+        }
+        Long periodId = orderProcessor.resolvePeriodId(order.getBusinessDate());
+        BigDecimal amount = order.getTotalAmountWithTax() != null
+                ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
+        if (amount.signum() <= 0) {
+            return;
+        }
+        try {
+            budgetCommitmentBiz.commit(
+                    ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, orderCode,
+                    subjectId, null, periodId, amount, context);
+        } catch (NopException e) {
+            // 容错：仅守卫类错误静默跳过；其他异常重新抛出（精确容错范式）
+            if (!isCommitmentAlreadyReleased(e)) {
+                throw e;
+            }
+        }
+    }
+
+    /** 按 code 加载采购订单（恢复承付时校验终态/取金额/解析期间）。 */
+    protected ErpPurOrder findOrderByCode(String orderCode, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", orderCode));
+        q.setLimit(1);
+        return orderBiz.findFirst(q, null, context);
+    }
+
+    /** 按 config 科目编码反查承付科目 id（缺失返回 null，恢复跳过）。 */
+    protected Long resolveBudgetSubjectId(String configKey, IServiceContext context) {
+        String code = AppConfig.var(configKey, null);
+        if (code == null || code.isEmpty()) {
+            return null;
+        }
+        ErpMdSubject subject = mdSubjectBiz.findByCode(code, context);
+        return subject == null ? null : subject.getId();
     }
 
     /** 经 invoiceLine.receiveLineId → receiveLine.receiveId → receive.orderId → order.code 反查关联订单编码集合。 */

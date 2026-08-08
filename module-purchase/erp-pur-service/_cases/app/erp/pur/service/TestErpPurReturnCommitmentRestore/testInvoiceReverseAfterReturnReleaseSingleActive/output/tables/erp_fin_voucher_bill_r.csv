@@ -1,0 +1,8 @@
+_chgType,ID,VOUCHER_ID,BILL_TYPE,BILL_CODE,BILL_LINE_CODE,BUSINESS_TYPE,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,15,12,PURCHASE_INPUT,@var:ErpFinVoucherBillR@billCode,,PURCHASE_INPUT,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,18,16,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@billCode_6,,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,25,22,PURCHASE_RETURN,@var:ErpFinVoucherBillR@billCode_2,,PURCHASE_RETURN,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,29,27,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@billCode_6,,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,36,32,AP_INVOICE,@var:ErpFinVoucherBillR@billCode_5,,AP_INVOICE,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,42,38,AP_INVOICE,@var:ErpFinVoucherBillR@billCode_5,,AP_INVOICE,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,45,43,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@billCode_6,,PURCHASE_ORDER_COMMITMENT,@var:ErpFinVoucherBillR@delVersion_2,0,autotest-ref,*,autotest-ref,*

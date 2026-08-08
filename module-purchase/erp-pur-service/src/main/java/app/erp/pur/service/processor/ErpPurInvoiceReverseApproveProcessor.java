@@ -33,6 +33,7 @@ public class ErpPurInvoiceReverseApproveProcessor extends AbstractReverseApprove
             invoice.setPostedBy(null);
         }
         processor.doReverseApprove(invoice, context);
+        processor.runCommitmentRestoreOnInvoiceReverseHook(invoice, true, context);
         return invoice;
     }
 

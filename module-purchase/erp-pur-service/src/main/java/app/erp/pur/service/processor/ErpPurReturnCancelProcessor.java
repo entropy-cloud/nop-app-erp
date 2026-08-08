@@ -23,12 +23,14 @@ public class ErpPurReturnCancelProcessor extends AbstractCancelProcessor<ErpPurR
     public ErpPurReturn cancel(String id, IServiceContext context) {
         ErpPurReturn returnOrder = requireEntity(id);
         validateTransitionForCancel(returnOrder, context);
-        if (returnOrder.isApproved()) {
+        boolean wasApproved = returnOrder.isApproved();
+        if (wasApproved) {
             processor.ensureReversed(returnOrder, context);
             returnOrder = dao().getEntityById(id);
         }
         returnOrder.setDocStatus(ErpPurConstants.DOC_STATUS_CANCELLED);
         dao().updateEntity(returnOrder);
+        processor.runCommitmentRestoreOnReturnReverseHook(returnOrder, wasApproved, context);
         return returnOrder;
     }
 

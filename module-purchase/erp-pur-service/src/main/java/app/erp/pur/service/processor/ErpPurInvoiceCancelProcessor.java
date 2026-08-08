@@ -25,8 +25,9 @@ public class ErpPurInvoiceCancelProcessor extends AbstractCancelProcessor<ErpPur
         ErpPurInvoice invoice = requireEntity(id);
         processor.validateTransitionForCancel(invoice, context);
         String approveStatus = invoice.getApproveStatus();
-        if (approveStatus != null && Objects.equals(approveStatus, ErpPurConstants.APPROVE_STATUS_APPROVED)
-                && Boolean.TRUE.equals(invoice.getPosted())) {
+        boolean wasApproved = approveStatus != null
+                && Objects.equals(approveStatus, ErpPurConstants.APPROVE_STATUS_APPROVED);
+        if (wasApproved && Boolean.TRUE.equals(invoice.getPosted())) {
             postingDispatcher.reverse(invoice);
             invoice = dao().getEntityById(id);
             invoice.setPosted(false);
@@ -34,6 +35,7 @@ public class ErpPurInvoiceCancelProcessor extends AbstractCancelProcessor<ErpPur
             invoice.setPostedBy(null);
         }
         processor.doCancel(invoice, context);
+        processor.runCommitmentRestoreOnInvoiceReverseHook(invoice, wasApproved, context);
         return invoice;
     }
 

@@ -33,6 +33,7 @@ public class ErpPurReturnReverseApproveProcessor extends AbstractReverseApproveP
         returnOrder.setApprovedBy(null);
         returnOrder.setApprovedAt(null);
         dao().updateEntity(returnOrder);
+        processor.runCommitmentRestoreOnReturnReverseHook(returnOrder, true, context);
         return returnOrder;
     }
 

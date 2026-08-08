@@ -6,7 +6,10 @@ import app.erp.inv.biz.IErpInvStockMoveBiz;
 import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.md.biz.IErpMdPartnerBiz;
+import app.erp.md.biz.IErpMdSubjectBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.md.dao.entity.ErpMdSubject;
+import app.erp.pur.biz.IErpPurOrderBiz;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReturn;
@@ -29,6 +32,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.math.BigDecimal;
 import java.util.Objects;
 
 import java.util.ArrayList;
@@ -74,6 +78,15 @@ public class ErpPurReturnProcessor {
 
     @Inject
     IErpFinBudgetCommitmentBiz budgetCommitmentBiz;
+
+    @Inject
+    IErpPurOrderBiz orderBiz;
+
+    @Inject
+    ErpPurOrderProcessor orderProcessor;
+
+    @Inject
+    IErpMdSubjectBiz mdSubjectBiz;
 
     @Inject
     ErpPurReturnSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -304,6 +317,92 @@ public class ErpPurReturnProcessor {
         }
         ErpPurOrder order = receive.getOrder();
         return order == null ? null : order.getCode();
+    }
+
+    /**
+     * P1-MA2-083 冲销恢复 hook（RC-R1.12，budget.md §承付会计 §3 冲销恢复语义，退货侧扩展）。
+     * 退货 reverseApprove/cancel 后置 → 对源 PO 重新生成 COMMITMENT 凭证（对称恢复正向 release-on-return）。
+     *
+     * <p>恢复前置守卫（防幽灵承付/双占用，plan Decision 2 三守卫）：
+     * ① 单据曾 APPROVED（{@code wasApproved}——cancel 路径由调用方按原始 approveStatus 判定，reverseApprove 路径由迁移守卫保证）；
+     * ② return 侧与释放同开关：总开关 {@code erp-fin.budget-commitment-enabled} **且** 子开关
+     *    {@code erp-fin.commitment-release-on-return}（子开关 OFF = 正向从未 release = 不得恢复，否则幽灵承付）；
+     * ③ PO 终态守卫：docStatus != CANCELLED 且 approveStatus == APPROVED（同 invoice 侧，见
+     *    {@link ErpPurInvoiceProcessor#runCommitmentRestoreOnInvoiceReverseHook} 守卫 ②）；
+     * ④ commit() 参数守卫返回 null（科目缺失/金额非法）视为 no-op 不抛错。
+     *
+     * <p>精确容错同 invoice 侧：NopException 仅守卫类错误（ERR_BUDGET_COMMITMENT_ALREADY_RELEASED）静默跳过，
+     * 其他异常重新抛出（对齐 release hook 精确容错范式，全吞会静默隐藏凭证生成失败 = 静默预算泄漏）。
+     */
+    protected void runCommitmentRestoreOnReturnReverseHook(ErpPurReturn returnOrder, boolean wasApproved,
+                                                           IServiceContext context) {
+        if (!Boolean.TRUE.equals(AppConfig.var(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_ENABLED, Boolean.FALSE))) {
+            return;
+        }
+        if (!Boolean.TRUE.equals(AppConfig.var(
+                ErpFinConstants.CONFIG_BUDGET_COMMITMENT_RELEASE_ON_RETURN, Boolean.FALSE))) {
+            return;
+        }
+        if (!wasApproved) {
+            return;
+        }
+        String poCode = resolvePurchaseOrderCode(returnOrder);
+        if (poCode == null || poCode.isEmpty()) {
+            return;
+        }
+        restoreCommitmentForOrder(poCode, context);
+    }
+
+    /** 对单个 PO code 恢复承付（PO 终态守卫 + 科目/期间/金额解析 + commit()，精确容错，同 invoice 侧）。 */
+    protected void restoreCommitmentForOrder(String orderCode, IServiceContext context) {
+        ErpPurOrder order = findOrderByCode(orderCode, context);
+        if (order == null || order.isCancelled() || !order.isApproved()) {
+            return;
+        }
+        Long subjectId = resolveBudgetSubjectId(ErpFinConstants.CONFIG_BUDGET_COMMITMENT_SUBJECT_CODE, context);
+        if (subjectId == null) {
+            return;
+        }
+        Long periodId = orderProcessor.resolvePeriodId(order.getBusinessDate());
+        BigDecimal amount = order.getTotalAmountWithTax() != null
+                ? order.getTotalAmountWithTax() : BigDecimal.ZERO;
+        if (amount.signum() <= 0) {
+            return;
+        }
+        try {
+            budgetCommitmentBiz.commit(
+                    ErpFinConstants.COMMITMENT_SOURCE_BILL_PURCHASE_ORDER, orderCode,
+                    subjectId, null, periodId, amount, context);
+        } catch (NopException e) {
+            // 容错：仅守卫类错误静默跳过；其他异常重新抛出（精确容错范式）
+            if (!isCommitmentAlreadyReleased(e)) {
+                throw e;
+            }
+        }
+    }
+
+    /** 按 code 加载采购订单（恢复承付时校验终态/取金额/解析期间）。 */
+    protected ErpPurOrder findOrderByCode(String orderCode, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", orderCode));
+        q.setLimit(1);
+        return orderBiz.findFirst(q, null, context);
+    }
+
+    /** 按 config 科目编码反查承付科目 id（缺失返回 null，恢复跳过）。 */
+    protected Long resolveBudgetSubjectId(String configKey, IServiceContext context) {
+        String code = AppConfig.var(configKey, null);
+        if (code == null || code.isEmpty()) {
+            return null;
+        }
+        ErpMdSubject subject = mdSubjectBiz.findByCode(code, context);
+        return subject == null ? null : subject.getId();
+    }
+
+    /** 判断异常是否为"无原承付凭证可红冲"（守卫类错误，恢复路径精确容错）。 */
+    protected boolean isCommitmentAlreadyReleased(NopException e) {
+        return app.erp.fin.service.ErpFinErrors.ERR_BUDGET_COMMITMENT_ALREADY_RELEASED.getErrorCode()
+                .equals(e.getErrorCode());
     }
 
     // ---------- 校验/查询辅助 ----------
