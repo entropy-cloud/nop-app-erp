@@ -16714,6 +16714,38 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "bankReconciliationBuilder"
+      },
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "transactionTemplate"
+      }
+    ],
+    "methods": [
+      {
+        "name": "findCandidates",
+        "parameterTypes": []
+      }
+    ],
+    "name": "app.erp.fin.service.bankrecon.ErpFinBankReconAutoReverseHelper"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
         "name": "daoProvider"
       }
     ],
@@ -24806,6 +24838,85 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "authUserBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "departmentBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "employeeBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "leaveRequestBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      }
+    ],
+    "methods": [
+      {
+        "name": "escalateLeave",
+        "parameterTypes": [
+          "app.erp.hr.dao.entity.ErpHrLeaveRequest",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "notifyEscalation",
+        "parameterTypes": [
+          "app.erp.hr.dao.entity.ErpHrLeaveRequest",
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "resolveCronConfig",
+        "parameterTypes": []
+      },
+      {
+        "name": "resolveEscalationTarget",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "resolveTimeoutHours",
+        "parameterTypes": []
+      },
+      {
+        "name": "resolveUserId",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "runTimeoutEscalation",
+        "parameterTypes": [
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
+    "name": "app.erp.hr.service.job.ErpHrLeaveApproverTimeoutJob"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
         "name": "bracketParser"
       },
       {
@@ -25653,8 +25764,32 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
-    "methods": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "assignmentBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "shiftBiz"
+      }
+    ],
+    "methods": [
+      {
+        "name": "doClockOut",
+        "parameterTypes": [
+          "app.erp.hr.dao.entity.ErpHrAttendance"
+        ]
+      },
+      {
+        "name": "hasCrossDayAssignment",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.time.LocalDate",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
     "name": "app.erp.hr.service.processor.ErpHrAttendanceClockOutProcessor"
   },
   {
@@ -28877,11 +29012,19 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "batchBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "bookkeeper"
       },
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "materialBiz"
       },
       {
         "allowWrite": true,
@@ -28920,6 +29063,14 @@
         ]
       },
       {
+        "name": "findBatch",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvStockMove",
+          "app.erp.inv.dao.entity.ErpInvStockMoveLine",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "findExisting",
         "parameterTypes": [
           "java.lang.String",
@@ -28932,6 +29083,10 @@
         "parameterTypes": [
           "java.lang.String"
         ]
+      },
+      {
+        "name": "isBatchExpiryCheckEnabled",
+        "parameterTypes": []
       },
       {
         "name": "isNegativeStockAllowed",
@@ -29017,6 +29172,14 @@
       },
       {
         "name": "validateAvailable",
+        "parameterTypes": [
+          "app.erp.inv.dao.entity.ErpInvStockMove",
+          "java.util.List",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateBatchExpiry",
         "parameterTypes": [
           "app.erp.inv.dao.entity.ErpInvStockMove",
           "java.util.List",
@@ -32832,12 +32995,23 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
       }
     ],
     "methods": [
       {
         "name": "batchDao",
         "parameterTypes": []
+      },
+      {
+        "name": "dispatchGenealogyWriteFailureAlert",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "java.lang.Exception"
+        ]
       },
       {
         "name": "doWrite",
