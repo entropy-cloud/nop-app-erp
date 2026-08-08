@@ -176,7 +176,7 @@
 
 ## 适用对象三：工时表（Timesheet）
 
-> **Deferred**：`DRAFT→SUBMITTED`（`ErpHrTimesheetBizModel.submit`）主路径。`APPROVED/REJECTED`（及迁移图中的 `CANCELLED`）为**预留死状态**——`erp-hr/timesheet-status` dict 值保留，但无 approve/reject mutation writer。下方 §场景 F 中 `SUBMITTED→APPROVED / REJECTED` 审批与项目成本归集为**目标行为，未接入**。**Successor**：工时单审批流接入时实现 setStatus writer + 状态迁移守卫 + APPROVED 后工时归集到 `projects/cost-collection` 的触发机制。
+> **实现注记（RC-R1.8，P1-RC-015 + P1-MA2-043，plan `docs/plans/2026-08-08-1154-1-rc-mr1-r1-8-hr-timesheet-family.md`）**：工时表状态机四态已全部落地——`submit`（DRAFT/REJECTED→SUBMITTED，提交时重算 totalHours + 24h 日工时终检）+ `approve`（SUBMITTED→APPROVED）+ `reject`（SUBMITTED→REJECTED，reason 必填写入 remark）。24h 校验口径 = 跨工时表全量（按 employeeId+workDate 汇总，Σ>24 抛 `ERR_TIMESHEET_DAILY_HOURS_EXCEEDED`）；`totalHours` 为派生字段（行增/改/删经 `afterEntityChange` 重算写回，submit 时按 Σ 修正）。审计字段 = 平台 updatedBy/updateTime 自动填充（无 approvedBy/approvedAt 列）。**「工时归集到 projects/cost-collection」仍为 successor**：hr 侧 APPROVED 状态点是接线锚点，跨域归集接线（hr→projects 契约 + ErpHrTimesheet vs ErpPrjTimesheet 双域语义统一）须人工裁决/第二批 ask-first。
 
 ### 1. 状态定义
 
@@ -191,7 +191,7 @@
 
 ```
 DRAFT → SUBMITTED → APPROVED
-                  → REJECTED → DRAFT（修改后重新提交）
+                  → REJECTED → SUBMITTED（修改后重新提交）
 DRAFT → CANCELLED
 ```
 
