@@ -160,6 +160,17 @@
 - 支持手动重新聚合（如新增问卷后）
 - 聚合历史保留在 trendData 中，对比历史绩效应保持题项一致性（同一问卷模板的多次发版）
 
+## 实现注记（RC-R1.9，P1-MA2-041 + P1-RC-016）
+
+> 本节为实现注记（非需求契约段，真相源冻结条款遵守——需求契约以 `use-cases.md` UC-HR-11 为准）。
+
+- **状态机（mutation）**：`ErpHrSurveyBizModel` 新增 `publish`（DRAFT→OPEN，校验题目非空 + startDate/endDate 必填，`ERR_HR_SURVEY_ILLEGAL_TRANSITION`）/ `close`（OPEN→CLOSED，触发 `aggregateResult`）/ `archive`（CLOSED→ARCHIVED）；`ErpHrConstants.SURVEY_STATUS_DRAFT/OPEN/CLOSED/ARCHIVED` 对齐 dict 四值，dict 无死状态。
+- **publish 后编辑守卫**：`defaultPrepareUpdate` 覆写——问卷已非 DRAFT 时拒绝 title/description/surveyType/isAnonymous/startDate/endDate/targetDepartmentId/includeENps/eNpsQuestion/reminderDays/questions 的修改（`ERR_HR_SURVEY_PUBLISHED_IMMUTABLE`）；版本化机制（新建版本替代编辑）归 successor。
+- **submitResponse（匿名防重复）**：`ErpHrSurveyResponseBizModel.submitResponse(surveyId, employeeId, answers)`——仅 OPEN 问卷可提交（`ERR_HR_SURVEY_NOT_OPEN`）；匿名模式 employeeId 置空 + 写 `respondentHash` = SHA-256(employeeId + ":" + surveyId) 十六进制（无 salt——防重复需服务端可复算，owner doc §匿名模式 salt 变体不采用，语义以本注记为准）；同人重复提交（匿名按 respondentHash / 非匿名按 employeeId）抛 `ERR_HR_SURVEY_ALREADY_SUBMITTED`；题目归属校验 `ERR_HR_SURVEY_INVALID_QUESTION`；提交后 `ErpHrSurvey.totalResponses+1`。
+- **CLOSED 自动聚合（aggregateResult）**：整体行（departmentId=null）恒生成；部门行仅对 employeeId 非空且经 `ErpHrEmployee.departmentId` 可解析的答卷生成（匿名答卷仅计入整体行——匿名模式部门归属不可知，部门对比对匿名问卷退化为整体视图）。口径：eNPS = (promoters − detractors) / total × 100（promoters=9-10，detractors=0-6，7-8 passive 不计，`Math.round` 取整，无 ENPS 答卷为 null）；avgScore = 全部 RATING 题（含 ENPS 题）评分算术平均（scale 2）；driverScores = 按 driverCategory 分组评分平均（JSON map）；questionBreakdown = 按题平均（JSON 数组）；trendData = 同 surveyType 且 CLOSED 的历史问卷 avgScore/eNpsScore 序列（endDate 升序，排除自身，无历史空数组，仅整体行携带）；completionRate = responses/目标人数（目标部门或全员的 ACTIVE/PROBATION 员工数，目标=0 置 null）；回写 `ErpHrSurvey.totalResponses/completionRate/avgScore/eNpsScore`。
+- **仪表盘查询**：`ErpHrSurveyResultBizModel.getSurveyDashboard(surveyId)`（@BizQuery）返回问卷头 + overall（含 driverScores/questionBreakdown/trendData）+ departments（含 departmentName），供 AMIS 直接渲染。
+- **通知/催填 successor 注记**：UC-HR-11 流程 5「系统通知目标员工填写」+ reminderDays 催填未实现（notify 子系统接线，见 `use-cases.md` 与 Deferred But Adjudicated）；`(surveyId, respondentHash)` DB UK 未增设（防重复为查询校验，触 ORM 属第二批授权）。
+
 ## 菜单归属
 
 新增 `hr-survey` 分组：
