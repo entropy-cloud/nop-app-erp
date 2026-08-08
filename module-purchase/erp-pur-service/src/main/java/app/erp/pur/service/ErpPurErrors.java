@@ -30,6 +30,10 @@ public interface ErpPurErrors {
     String ARG_INVOICE_PRICE = "invoicePrice";
     String ARG_LINE_NO = "lineNo";
 
+    // --- 入库超收容差作用域参数键（receive-vs-order，P1-RC-019 / RC-R1.11） ---
+    String ARG_ORDER_QTY = "orderQty";
+    String ARG_TOLERANCE = "tolerance";
+
     // --- 付款作用域参数键 ---
     String ARG_PAYMENT_CODE = "paymentCode";
     String ARG_PAYMENT_ID = "paymentId";
@@ -114,6 +118,12 @@ public interface ErpPurErrors {
     ErrorCode ERR_MOVE_NOT_FOUND = ErrorCode.define("erp.err.pur.move-not-found",
             "已审核入库单 {receiveCode} 找不到关联的入库移动单（数据不一致）",
             ARG_RECEIVE_CODE, ARG_MOVE_CODE);
+
+    // receive-vs-order 超收容差校验（P1-RC-019 / RC-R1.11，three-way-match.md §数量差异「超收」行）。
+    // strict 模式（erp-pur.match-strict-mode=true）下累计入库数量超过订单数量 × (1 + 容差%) 时拒绝入库审核。
+    ErrorCode ERR_RECEIVE_QTY_OVER_TOLERANCE = ErrorCode.define("erp.err.pur.receive-qty-over-tolerance",
+            "入库单 {receiveCode} 第 {lineNo} 行累计入库数量 {receivedQty} 超过订单数量 {orderQty} 与超收容差 {tolerance}% 之和，超收校验失败",
+            ARG_RECEIVE_CODE, ARG_LINE_NO, ARG_RECEIVED_QTY, ARG_ORDER_QTY, ARG_TOLERANCE);
 
     // --- 发票作用域错误码（消息文案绑定发票参数，避免复用入库单文案产生误导） ---
 

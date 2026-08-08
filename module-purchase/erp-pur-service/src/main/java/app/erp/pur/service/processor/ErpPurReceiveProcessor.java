@@ -17,15 +17,19 @@ import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionTrigger;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Objects;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +50,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>事务边界：跟随 xbiz mutation（由 approval-support.xbiz 标准 source 的 @BizMutation 保护），本类不带 @Transactional。
  */
 public class ErpPurReceiveProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpPurReceiveProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
@@ -165,6 +171,66 @@ public class ErpPurReceiveProcessor {
 
     protected void validateBusinessRulesForApprove(ErpPurReceive receive, IServiceContext context) {
         requireSupplierActive(receive, context);
+        validateOverReceiptTolerance(receive, context);
+    }
+
+    /**
+     * receive-vs-order 超收容差校验（P1-RC-019 / RC-R1.11，three-way-match.md §数量差异「超收」行）。
+     * 按 {@code erp-pur.match-qty-tolerance}（默认 5%）判定「当前入库单行 + 同订单其他 APPROVED 入库单行」的
+     * 累计入库数量 Σ &gt; 订单行数量 × (1 + 容差%)：严格模式（{@code erp-pur.match-strict-mode}=true）抛
+     * {@link ErpPurErrors#ERR_RECEIVE_QTY_OVER_TOLERANCE} 拒绝审核，非严格模式 LOG.warn 放行。
+     * {@code orderLineId == null} 的行（无订单关联独立入库）跳过；订单行数量为 0/null 按 0 基处理（Σ&gt;0 即超收）。
+     * 聚合口径继承 {@link #rollupOrderReceiveStatus} 现状：CANCELLED 但仍 APPROVED 的入库单计入 Σ。
+     */
+    protected void validateOverReceiptTolerance(ErpPurReceive receive, IServiceContext context) {
+        Long orderId = receive.getOrderId();
+        if (orderId == null) {
+            return;
+        }
+        List<ErpPurOrderLine> orderLines = loadOrderLines(orderId);
+        if (orderLines.isEmpty()) {
+            return;
+        }
+        BigDecimal tolerance = readDecimalConfig(ErpPurConstants.CONFIG_MATCH_QTY_TOLERANCE, "5");
+        boolean strict = readBooleanConfig(ErpPurConstants.CONFIG_MATCH_STRICT_MODE, "false");
+        BigDecimal toleranceFactor = BigDecimal.ONE.add(
+                tolerance.divide(BigDecimal.valueOf(100), 4, RoundingMode.HALF_UP));
+
+        Map<Long, BigDecimal> receivedByOrderLine = new HashMap<>();
+        addLineQuantities(receivedByOrderLine, loadLines(receive));
+        for (ErpPurReceive r : findApprovedReceives(orderId)) {
+            if (r.getId().equals(receive.getId())) {
+                continue;
+            }
+            addLineQuantities(receivedByOrderLine, loadLines(r));
+        }
+
+        for (ErpPurReceiveLine rl : loadLines(receive)) {
+            Long orderLineId = rl.getOrderLineId();
+            if (orderLineId == null) {
+                continue;
+            }
+            ErpPurOrderLine orderLine = findOrderLine(orderLines, orderLineId);
+            if (orderLine == null) {
+                continue;
+            }
+            BigDecimal ordered = orderLine.getQuantity() == null ? BigDecimal.ZERO : orderLine.getQuantity();
+            BigDecimal received = receivedByOrderLine.getOrDefault(orderLineId, BigDecimal.ZERO);
+            if (received.compareTo(ordered.multiply(toleranceFactor)) <= 0) {
+                continue;
+            }
+            NopException err = new NopException(ErpPurErrors.ERR_RECEIVE_QTY_OVER_TOLERANCE)
+                    .param(ErpPurErrors.ARG_RECEIVE_CODE, receive.getCode())
+                    .param(ErpPurErrors.ARG_LINE_NO, rl.getLineNo())
+                    .param(ErpPurErrors.ARG_RECEIVED_QTY, received)
+                    .param(ErpPurErrors.ARG_ORDER_QTY, ordered)
+                    .param(ErpPurErrors.ARG_TOLERANCE, tolerance);
+            if (strict) {
+                throw err;
+            }
+            LOG.warn("入库超收超容差（非严格模式放行）：入库单={} 行={} 累计入库数量={} 订单数量={} 容差={}%",
+                    receive.getCode(), rl.getLineNo(), received, ordered, tolerance);
+        }
     }
 
     // ---------- step：执行 ----------
@@ -370,6 +436,39 @@ public class ErpPurReceiveProcessor {
             }
             BigDecimal qty = rl.getQuantity() == null ? BigDecimal.ZERO : rl.getQuantity();
             map.merge(rl.getOrderLineId(), qty, BigDecimal::add);
+        }
+    }
+
+    protected ErpPurOrderLine findOrderLine(List<ErpPurOrderLine> orderLines, Long orderLineId) {
+        for (ErpPurOrderLine ol : orderLines) {
+            if (ol.getId().equals(orderLineId)) {
+                return ol;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 配置读取（对齐 ThreeWayMatcher 同型容错范式）：缺失/非法回退默认值，不因配置问题阻断审核。
+     */
+    protected BigDecimal readDecimalConfig(String key, String defaultValue) {
+        try {
+            String value = AppConfig.var(key, defaultValue);
+            if (value == null) {
+                return new BigDecimal(defaultValue);
+            }
+            return new BigDecimal(value.trim());
+        } catch (Exception e) {
+            return new BigDecimal(defaultValue);
+        }
+    }
+
+    protected boolean readBooleanConfig(String key, String defaultValue) {
+        try {
+            String value = AppConfig.var(key, defaultValue);
+            return "true".equalsIgnoreCase(value) || "1".equals(value);
+        } catch (Exception e) {
+            return "true".equalsIgnoreCase(defaultValue);
         }
     }
 
