@@ -56,6 +56,17 @@ finance `ErpFinPostingException` 工作台 IGNORED 状态是「显式放弃处�
    → 通知 + 期末结账 preCheck 扫描（含 IGNORED）：正常。
 ```
 
+## 正范式对照：「精确容错」而非「全吞」
+
+本课反模式聚焦「全吞」（宽 `catch(Exception)` + 只 `log.warn`）。**可选的正确形态是「精确容错」**——选择性静默可预期守卫类失败、其余异常重新抛出，两者在项目内已有实例对照（MR1 RC-R1.12 修复案）：
+
+| 形态 | 行为 | 实例 |
+|------|------|------|
+| 全吞（反模式） | 所有异常 catch + `log.warn` → 静默隐藏凭证生成失败 = 静默预算泄漏 | `ErpPurReturnProcessor`（重构前） |
+| 精确容错（正范式） | 仅**守卫类错误**（如 `ERR_BUDGET_COMMITMENT_ALREADY_RELEASED`）静默跳过（幂等语义）；**其他异常重新抛出**带告警 | `ErpPurInvoiceProcessor:285-290`（修复后范式） |
+
+判断规则：catch 块内显式枚举「可静默的守卫错误清单」（白名单），清单外的异常一律 rethrow——**清单外异常被吞视为全吞缺陷**。
+
 ## 自检清单（写过业财过账 catch 后）
 
 - [ ] catch 块**没有**宽 `catch (Exception)` 吞咽后只 `log.warn`？

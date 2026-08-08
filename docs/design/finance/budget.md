@@ -266,10 +266,13 @@ A2 默认 **commitment 不结转**（与 actualAmount 合并记录在源 Scenari
 
 #### 冲销恢复语义
 
-**发票 `reverseApprove` / `cancel` 不恢复承付**（保守方向：保持已释放状态）。`ErpPurInvoiceProcessor.reverseApprove/cancel` 仅红冲 AP ACTUAL 凭证，不调 `commit()` 恢复承付；`ErpSalInvoiceProcessor` 同型。
+**发票 `reverseApprove` / `cancel` 恢复承付**（RC-R1.12，P1-MA2-083 方案 A 落地）。`ErpPurInvoiceReverseApproveProcessor.reverseApprove` / `ErpPurInvoiceCancelProcessor.cancel` 在红冲 AP ACTUAL 凭证 + 状态回退之后，经 `invoiceLine.receiveLineId → receiveLine.receiveId → receive.orderId → order.code` 反查关联 PO，对每个 PO 调 `budgetCommitmentBiz.commit()` 重新生成 COMMITMENT 凭证（对称恢复正向 release-on-invoice-approve）；退货侧 `ErpPurReturnReverseApproveProcessor` / `ErpPurReturnCancelProcessor` 同型（`return.receiveId → receive.orderId` 反查）。
 
-- **残留风险**：冲销后 `actual↓` + `commitment=0`（已释放）→ 余量偏高，可能允许超预算放行新订单。
-- **successor 触发条件**：多组织预算硬约束启用 + 冲销频率上升致超预算放行成为实际痛点时，实现 `commit()` 自动恢复（须跨实体反查原始 PO/SO + 处理部分冲销 + 跨期语义）。
+- **恢复语义 = 全量恢复**（对称于 §全额释放语义）：恢复金额 = 关联 PO `totalAmountWithTax`，期间按 PO `businessDate` 解析——与正向 commit-on-order-approve 同源。部分冲销/跨期/按比例恢复归 successor（见下）。
+- **恢复前置守卫**（防幽灵承付/双占用）：① 单据曾 APPROVED（从未 APPROVED 的 cancel 不恢复）；② PO 终态守卫——docStatus != CANCELLED **且** approveStatus == APPROVED（非 APPROVED PO 无活跃承付义务，恢复 = 双占用；PO 重新 approve 时 commit-on-order-approve 重新承付）；③ return 侧与释放同开关——同时受总开关 `erp-fin.budget-commitment-enabled` **且** 子开关 `erp-fin.commitment-release-on-return` 门控（子开关 OFF = 正向从未释放 = 不得恢复）；④ `commit()` 参数守卫返回 null 视为 no-op。
+- **精确容错**：`NopException` 仅守卫类错误（`ERR_BUDGET_COMMITMENT_ALREADY_RELEASED`）静默跳过，其他异常重新抛出（全吞会静默隐藏凭证生成失败 = 静默预算泄漏）。
+- **config-gated**：`erp-fin.budget-commitment-enabled`（默认 false）+ 退货子开关 `erp-fin.commitment-release-on-return`（默认 false），非默认活跃路径。
+- **残留边界**：多发票场景 invoice#1 冲销恢复全量 vs invoice#2 ACTUAL 活跃的语义差异、按比例部分恢复归 successor（触发条件：多组织预算硬约束启用 + 部分开票/冲销为常态业务路径）。
 - sales 侧承付冲销恢复对称问题随本声明一并记录；sales 侧 hook 接线与 purchase 同型，归 successor（触发条件：sales 承付控制启用）。
 
 ### reject release-receive-complete（ErpPurReceive 入库路径）

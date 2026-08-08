@@ -111,6 +111,7 @@
 - **API 契约**：`module-<domain>/model/app-erp-<domain>.api.xml` 同上。
 - **会计/财务/数据删除**：财务凭证、过账、期末结账、坏账、成本核算等代码区域是 ERP 保护区域，无 owner doc 不实现。
 - **生成产物**：`_gen/` 目录、`_` 前缀文件、`_app.orm.xml`、`_service.beans.xml` 永不手写。
+- **批量预授权枚举不可类推（MR1 裁决留痕）**：批量授权（如 Q3「纯加性」授权）严格限定在枚举清单（如「加列 / 加 UK / 新增实体」）内；枚举**不包含**的变更类型，即使语义「纯加性」（如 dict 追加 `<option>`），也走保守选项（不注册并记录残留风险 / ask-first）——不得**类推**清单外变更。（源头：RC-R1.7 dict MANUAL 裁决，2026-08-08）
 - 完整规则见 `docs/context/ai-autonomy-policy.md` 与 `docs/context/project-context.md §AI 阻塞条件`。
 
 ### 验证命令（按场景）

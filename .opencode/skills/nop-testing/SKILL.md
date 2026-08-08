@@ -224,6 +224,15 @@ ApiResponse<?> executeRpc(GraphQLOperationType opType, String action,
 }
 ```
 
+## 角色守卫测试范式
+
+BizModel 内 Java 角色守卫（`IUserContext.isUserInRole(roleId)`）在测试中如何断言：
+
+- 类级 `@NopTestConfig(localDb=true, initDatabaseSchema=TRUE, enableActionAuth=FALSE)`；`@BeforeEach` 中显式构造 `IUserContext` 并经 `IUserContext.set(...)` 注入（FALSE 下没有近路，必须手造上下文）。
+- **seedRole 范式**（镜像 `TestErpPurPaymentApprovalNotifications.seedRole`）：seed 声明 `roleId="role-"+roleName`，测试断言的 roleId 常量与 seed 字面一致，消除守卫与种子漂移。
+- 成功路径（有角色）+ 失败路径（无角色被拒 + 自定义错误码）双侧都必须有断言——「守卫存在但零覆盖」是审计缺口。
+- 正确权限断言角色用 `isUserInRole(roleId)` 而不是角色名称比较：`IUserContext.getRoles()` 返回的是 roleId 集（平台语义，见 `docs-for-ai/02-core-guides/auth-and-permissions.md`）。
+
 ---
 
 ## @NopTestConfig 配置速查

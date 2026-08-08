@@ -391,6 +391,7 @@ throw new NopException(AppMallErrors.ERR_ORDER_NOT_FOUND)
 - `ErrorCode.define()` 描述用中文，框架通过 i18n 翻译
 - 用 `.param(...)` 附加上下文参数（实体 ID、当前状态等）
 - 包装底层异常：`new NopException(ERR_XXX, e).param(...)`
+- **守卫/驳回场景优先新增域内专用错误码**（域内错误码约定 + 测试可断言），而非复用平台通用权限错误（如 `nop.err.biz.insufficient-permission` 只作框架级兜底）。范例：`ERR_MAKEUP_ROLE_REQUIRED`（hr 补卡角色守卫）、`ERR_TIMESHEET_REJECT_REASON_REQUIRED`（工时单驳回原因必填）——守卫本身也要走 `I*Biz`/BizModel 可测试路径，xbiz `<auth>` 或 action-auth 声明在测试 `enableActionAuth=FALSE` 下不可断言，不用作唯一守卫。
 
 ### 9. 事务后回调
 
