@@ -1,0 +1,3 @@
+_chgType,ID,SURVEY_ID,EMPLOYEE_ID,RESPONDENT_HASH,SUBMITTED_AT,TIME_SPENT_SECONDS,IS_COMPLETE,ORG_ID,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6,3,,85f2ef987b76f4c3fc081acef84e0a730f5df8a2488a5bb7ddae4f7dee721ed8,@var:ErpHrSurveyResponse@submittedAt,,true,,@var:ErpHrSurveyResponse@delVersion,0,autotest-ref,*,autotest-ref,*
+A,9,3,,8e0375adfc1f456327247b91b11520cf9c2616e04503a43a71873485a07a6542,@var:ErpHrSurveyResponse@submittedAt_1,,true,,@var:ErpHrSurveyResponse@delVersion,0,autotest-ref,*,autotest-ref,*

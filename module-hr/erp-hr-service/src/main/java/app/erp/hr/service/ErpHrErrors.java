@@ -31,6 +31,8 @@ public interface ErpHrErrors {
     String ARG_SOURCE_PERIOD = "sourcePeriod";
     String ARG_TARGET_PERIOD = "targetPeriod";
     String ARG_REVIEWER_ID = "reviewerId";
+    String ARG_SURVEY_ID = "surveyId";
+    String ARG_QUESTION_ID = "questionId";
 
     // --- 胜任力管理作用域参数键 ---
     String ARG_ASSESSMENT_ID = "assessmentId";
@@ -261,6 +263,28 @@ public interface ErpHrErrors {
             "erp.err.hr.shift-assignment-duplicate",
             "员工 {employeeId} 日期 {assignmentDate} 班次 {shiftId} 排班已由并发事务创建，不可重复排班",
             ARG_EMPLOYEE_ID, ARG_ASSIGNMENT_DATE, ARG_SHIFT_ID);
+
+    // --- 员工调研（use-cases.md UC-HR-11，RC-R1.9 P1-MA2-041 + P1-RC-016） ---
+    ErrorCode ERR_HR_SURVEY_ILLEGAL_TRANSITION = ErrorCode.define(
+            "erp.err.hr.survey-illegal-transition",
+            "问卷 {surveyId} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_SURVEY_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+    ErrorCode ERR_HR_SURVEY_PUBLISHED_IMMUTABLE = ErrorCode.define(
+            "erp.err.hr.survey-published-immutable",
+            "问卷 {surveyId} 已发布（当前状态={currentStatus}），问卷配置字段与题目不可再修改，如需调整请新建版本",
+            ARG_SURVEY_ID, ARG_CURRENT_STATUS);
+    ErrorCode ERR_HR_SURVEY_NOT_OPEN = ErrorCode.define(
+            "erp.err.hr.survey-not-open",
+            "问卷 {surveyId} 当前状态={currentStatus}，非 OPEN 状态不可提交答卷",
+            ARG_SURVEY_ID, ARG_CURRENT_STATUS);
+    ErrorCode ERR_HR_SURVEY_ALREADY_SUBMITTED = ErrorCode.define(
+            "erp.err.hr.survey-already-submitted",
+            "问卷 {surveyId} 已存在该员工的答卷，禁止重复提交",
+            ARG_SURVEY_ID);
+    ErrorCode ERR_HR_SURVEY_INVALID_QUESTION = ErrorCode.define(
+            "erp.err.hr.survey-invalid-question",
+            "问卷 {surveyId} 不含题目 {questionId}，答卷数据非法",
+            ARG_SURVEY_ID, ARG_QUESTION_ID);
 
     // --- 招聘状态机（use-cases.md UC-HR-05）---
     String ARG_RECRUITMENT_ID = "recruitmentId";

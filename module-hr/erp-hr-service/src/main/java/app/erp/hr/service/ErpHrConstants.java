@@ -276,6 +276,16 @@ public interface ErpHrConstants {
      *  直接写字符串，UI 下拉不显示 MANUAL——可读性缺口见 shift-scheduling.md 手工补卡注记）。 */
     String ATTENDANCE_SOURCE_MANUAL = "MANUAL";
 
+    // ---- erp-hr/survey-status（调研状态机四态，UC-HR-11，RC-R1.9 P1-MA2-041）----
+    String SURVEY_STATUS_DRAFT = "DRAFT";
+    String SURVEY_STATUS_OPEN = "OPEN";
+    String SURVEY_STATUS_CLOSED = "CLOSED";
+    String SURVEY_STATUS_ARCHIVED = "ARCHIVED";
+
+    // ---- erp-hr/question-type（UC-HR-11，RC-R1.9 P1-RC-016 聚合口径用）----
+    String QUESTION_TYPE_RATING = "RATING";
+    String QUESTION_TYPE_ENPS = "ENPS";
+
     // ---- 手工补卡角色守卫（RC-R1.7，P1-RC-014）----
     /** HR 专员角色 ID：与 erp-hr.action-auth.xml 菜单 roles="HR 专员" 字面一致
      *  （SiteMapProvider containsRole 语义 = roleId 匹配，经 IUserContext.isUserInRole(roleId) 守卫）。

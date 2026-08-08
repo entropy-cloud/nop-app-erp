@@ -1,0 +1,5 @@
+_chgType,ID,RESPONSE_ID,QUESTION_ID,RATING_VALUE,SELECTED_OPTION,OPEN_TEXT,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,10,9,4,5,,,@var:ErpHrSurveyAnswer@delVersion,0,autotest-ref,*,autotest-ref,*
+A,11,9,5,10,,,@var:ErpHrSurveyAnswer@delVersion,0,autotest-ref,*,autotest-ref,*
+A,7,6,4,4,,,@var:ErpHrSurveyAnswer@delVersion,0,autotest-ref,*,autotest-ref,*
+A,8,6,5,9,,,@var:ErpHrSurveyAnswer@delVersion,0,autotest-ref,*,autotest-ref,*
