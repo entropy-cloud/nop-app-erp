@@ -14,7 +14,7 @@ public interface IErpHrAttendanceBiz extends ICrudBiz<ErpHrAttendance>{
 
     /**
      * 员工签到（UC-HR-06）。创建/更新当日考勤 clockIn=now。
-     * 若当日已签到则抛 ERR_ALREADY_CLOCKED_IN。
+     * 重复签到以最后一次为准（last-wins），覆盖 clockIn；若 clockOut 已存在则重算 workHours。
      */
     @BizMutation
     @SingleSession

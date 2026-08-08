@@ -2,8 +2,6 @@ package app.erp.hr.service.processor;
 
 import app.erp.hr.dao.entity.ErpHrAttendance;
 import app.erp.hr.service.ErpHrConstants;
-import app.erp.hr.service.ErpHrErrors;
-import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 
@@ -29,11 +27,12 @@ public class ErpHrAttendanceClockInProcessor extends AbstractErpHrAttendanceProc
             attendance.setLateMinutes(0);
             attendance.setEarlyLeaveMinutes(0);
         }
-        if (attendance.getClockIn() != null) {
-            throw new NopException(ErpHrErrors.ERR_ALREADY_CLOCKED_IN)
-                    .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId);
-        }
         attendance.setClockIn(CoreMetrics.currentTimestamp());
+        if (attendance.getClockOut() != null) {
+            attendance.setWorkHours(computeWorkHours(
+                    attendance.getClockIn().toLocalDateTime(),
+                    attendance.getClockOut().toLocalDateTime()));
+        }
         saveOrUpdateAttendance(attendance);
         return attendance;
     }

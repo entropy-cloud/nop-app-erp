@@ -27,7 +27,7 @@ import {
  * 考勤打卡端点（ErpHrAttendanceBizModel，UC-HR-06）：
  *   clockIn(employeeId) → ErpHrAttendance 行创建（clockInTime 非空）
  *   clockOut(employeeId) → clockOutTime 非空 + workHours 派生
- *   (employeeId,date) 唯一约束守卫：重复 clockIn 抛 ERR_ALREADY_CLOCKED_IN
+ *   重复 clockIn last-wins：覆盖 clockIn 为后值（clockOut 已存在时重算 workHours）
  *
  * ORM 无 useWorkflow / 无 useApproval，纯 DIRECT @BizMutation 浏览器层可达。
  * 自包含 setup：建 ErpHrEmployee + ErpHrLeaveRequest(DRAFT 入口)。清理：删 leave + attendance + employee。
@@ -152,7 +152,7 @@ test.describe('hr ErpHrLeaveRequest approval state machine', () => {
 });
 
 test.describe('hr ErpHrAttendance clock in/out endpoints', () => {
-  test('clockIn creates attendance + clockOut sets workHours + repeat clockIn guard', async ({ page }) => {
+  test('clockIn creates attendance + clockOut sets workHours + repeat clockIn last-wins', async ({ page }) => {
     await loginAndNavigate(page, '/ErpHrAttendance-main');
 
     const emp = await createEmployee(page, 'ci');
@@ -179,10 +179,24 @@ test.describe('hr ErpHrAttendance clock in/out endpoints', () => {
     expect(afterOut.clockOut, 'clockOut timestamp set').not.toBeNull();
     expect(Number(afterOut.workHours), 'workHours derived >= 0').toBeGreaterThanOrEqual(0);
 
-    // 重复 clockIn 守卫：(employeeId,date) 已有记录 + clockIn 非空 → ERR_ALREADY_CLOCKED_IN
-    const rej = await callMutation(page, 'ErpHrAttendance', 'clockIn', { employeeId: Number(emp.id) }, 'id');
-    expect(rej.errors, 'repeat clockIn should be rejected').toBeTruthy();
-    expect(JSON.stringify(rej.errors), 'reject should carry already-clocked-in token').toContain('已签到');
+    // 重复 clockIn last-wins：覆盖 clockIn 为后值（不再拒绝）
+    // 注：应用 GraphQL 时间戳序列化为秒级精度（未设 nop.graphql.ignore-millis-in-timestamp=false），
+    // 两次调用须跨秒边界才能确定断言后值 > 前值 → 显式等待 1.1s
+    await page.waitForTimeout(1100);
+    const secondClockIn = await callMutationOk(
+      page,
+      'ErpHrAttendance',
+      'clockIn',
+      { employeeId: Number(emp.id) },
+      'id clockIn',
+    );
+    expect(secondClockIn.clockIn, 'repeat clockIn returns later timestamp').not.toBeNull();
+    const afterRepeat = await verifyState(page, 'ErpHrAttendance', clockInResult.id, 'clockIn clockOut workHours');
+    const firstTs = new Date(clockInResult.clockIn as string).getTime();
+    const secondTs = new Date(afterRepeat.clockIn as string).getTime();
+    expect(secondTs, 'repeat clockIn overwrites to later value').toBeGreaterThan(firstTs);
+    expect(afterRepeat.clockOut, 'clockOut preserved after repeat clockIn').not.toBeNull();
+    expect(Number(afterRepeat.workHours), 'workHours recomputed >= 0').toBeGreaterThanOrEqual(0);
 
     await cleanupEmployee(page, emp.id);
   });
