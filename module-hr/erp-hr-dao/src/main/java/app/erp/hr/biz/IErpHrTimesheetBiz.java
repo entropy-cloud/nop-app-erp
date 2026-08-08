@@ -11,8 +11,22 @@ import app.erp.hr.dao.entity.ErpHrTimesheet;
 public interface IErpHrTimesheetBiz extends ICrudBiz<ErpHrTimesheet>{
 
     /**
-     * 提交工时表：DRAFT→SUBMITTED。提交后进入审批流程。
+     * 提交工时表：DRAFT/REJECTED→SUBMITTED。提交时重算 totalHours 并做 24h 日工时终检。
+     * REJECTED 为修改后重新提交路径（use-cases.md UC-HR-03 基本流程 5）。
      */
     @BizMutation
     ErpHrTimesheet submit(@Name("timesheetId") Long timesheetId, IServiceContext context);
+
+    /**
+     * 审批通过：SUBMITTED→APPROVED。
+     */
+    @BizMutation
+    ErpHrTimesheet approve(@Name("timesheetId") Long timesheetId, IServiceContext context);
+
+    /**
+     * 驳回：SUBMITTED→REJECTED，reason 必填并写入 remark。
+     */
+    @BizMutation
+    ErpHrTimesheet reject(@Name("timesheetId") Long timesheetId, @Name("reason") String reason,
+                          IServiceContext context);
 }

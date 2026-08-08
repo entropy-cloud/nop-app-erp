@@ -1,0 +1,3 @@
+_chgType,ID,CODE,EMPLOYEE_ID,PERIOD_FROM,PERIOD_TO,TOTAL_HOURS,STATUS,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
+A,2,@var:ErpHrTimesheet@code,1,2026-07-17,2026-07-23,0.00,APPROVED,,,@var:ErpHrTimesheet@delVersion_1,2,autotest-ref,*,autotest-ref,*,@var:ErpHrTimesheet@businessDate
+A,4,@var:ErpHrTimesheet@code_1,3,2026-07-17,2026-07-23,0.00,REJECTED,,驳回,@var:ErpHrTimesheet@delVersion_1,2,autotest-ref,*,autotest-ref,*,@var:ErpHrTimesheet@businessDate

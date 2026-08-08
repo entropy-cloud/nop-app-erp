@@ -285,4 +285,16 @@ public interface ErpHrErrors {
             "erp.err.hr.timesheet-illegal-transition",
             "工时表[{timesheetId}]当前状态[{currentStatus}]不允许此操作",
             ARG_TIMESHEET_ID, ARG_CURRENT_STATUS);
+
+    // --- 工时表（use-cases.md UC-HR-03，RC-R1.8 P1-RC-015/P1-MA2-043） ---
+    String ARG_WORK_DATE = "workDate";
+    String ARG_TOTAL_HOURS = "totalHours";
+    ErrorCode ERR_TIMESHEET_DAILY_HOURS_EXCEEDED = ErrorCode.define(
+            "erp.err.hr.timesheet-daily-hours-exceeded",
+            "员工 {employeeId} 在 {workDate} 的工时合计 {totalHours} 小时超过每日上限 24 小时",
+            ARG_EMPLOYEE_ID, ARG_WORK_DATE, ARG_TOTAL_HOURS);
+    ErrorCode ERR_TIMESHEET_REJECT_REASON_REQUIRED = ErrorCode.define(
+            "erp.err.hr.timesheet-reject-reason-required",
+            "驳回工时表[{timesheetId}]必须填写驳回原因（reason）",
+            ARG_TIMESHEET_ID);
 }

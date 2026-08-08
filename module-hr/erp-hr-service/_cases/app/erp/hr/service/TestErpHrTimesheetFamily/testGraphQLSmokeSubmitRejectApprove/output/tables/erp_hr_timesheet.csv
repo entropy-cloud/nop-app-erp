@@ -1,0 +1,2 @@
+_chgType,ID,CODE,EMPLOYEE_ID,PERIOD_FROM,PERIOD_TO,TOTAL_HOURS,STATUS,ORG_ID,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
+A,2,@var:ErpHrTimesheet@code,1,2026-07-17,2026-07-23,0.00,APPROVED,,GraphQL 驳回,@var:ErpHrTimesheet@delVersion,4,autotest-ref,*,autotest-ref,*,@var:ErpHrTimesheet@businessDate

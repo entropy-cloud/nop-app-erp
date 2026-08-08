@@ -227,9 +227,14 @@ public interface ErpHrConstants {
     String LEAVE_STATUS_SUBMITTED = "SUBMITTED";
     String LEAVE_STATUS_REJECTED = "REJECTED";
 
-    // ---- erp-hr/timesheet-status（工时表状态，state-machine.md 适用对象三；本期仅 DRAFT→SUBMITTED 落地）----
+    // ---- erp-hr/timesheet-status（工时表状态机四态，state-machine.md 适用对象三；RC-R1.8 全态可达）----
     String TIMESHEET_STATUS_DRAFT = "DRAFT";
     String TIMESHEET_STATUS_SUBMITTED = "SUBMITTED";
+    String TIMESHEET_STATUS_APPROVED = "APPROVED";
+    String TIMESHEET_STATUS_REJECTED = "REJECTED";
+
+    // ---- 日工时上限（use-cases.md UC-HR-03 异常段，RC-R1.8 P1-RC-015）----
+    int MAX_DAILY_HOURS = 24;
 
     // ---- erp-hr/recruitment-status（UC-HR-05 招聘状态机）----
     String RECRUITMENT_STATUS_OPEN = "OPEN";
