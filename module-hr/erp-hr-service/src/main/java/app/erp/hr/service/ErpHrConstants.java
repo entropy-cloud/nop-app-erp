@@ -265,4 +265,15 @@ public interface ErpHrConstants {
 
     // ---- 考勤来源 ----
     String ATTENDANCE_SOURCE_CARD = "CARD";
+    /** 手工补卡来源标记（RC-R1.7，P1-RC-014）：设备故障时 HR 经 makeUpClockIn/makeUpClockOut 补录，
+     *  source=MANUAL + remark=reason 作为审计标记与正常打卡区分。dict erp-hr/attendance-source 未注册
+     *  该值（Q3 授权范围仅加列/加 UK/新增实体，dict option 不在枚举内，故按 A4.2.145 孤儿非字典值先例
+     *  直接写字符串，UI 下拉不显示 MANUAL——可读性缺口见 shift-scheduling.md 手工补卡注记）。 */
+    String ATTENDANCE_SOURCE_MANUAL = "MANUAL";
+
+    // ---- 手工补卡角色守卫（RC-R1.7，P1-RC-014）----
+    /** HR 专员角色 ID：与 erp-hr.action-auth.xml 菜单 roles="HR 专员" 字面一致
+     *  （SiteMapProvider containsRole 语义 = roleId 匹配，经 IUserContext.isUserInRole(roleId) 守卫）。
+     *  维护点：roleId 与 nop-auth seed/action-auth 保持一致的漂移风险见 shift-scheduling.md 手工补卡注记。 */
+    String HR_ROLE_ID = "HR 专员";
 }

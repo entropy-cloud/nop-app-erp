@@ -246,6 +246,16 @@ public interface ErpHrErrors {
             "员工 {employeeId} 当日尚未签到，无法签退",
             ARG_EMPLOYEE_ID);
 
+    // --- 手工补卡（use-cases.md UC-HR-06⑮，RC-R1.7 / P1-RC-014）---
+    String ARG_ATTENDANCE_DATE = "date";
+    ErrorCode ERR_MAKEUP_REASON_REQUIRED = ErrorCode.define(
+            "erp.err.hr.makeup-reason-required",
+            "手工补卡必须填写补卡原因（reason），员工 {employeeId} 补卡日期 {date}",
+            ARG_EMPLOYEE_ID, ARG_ATTENDANCE_DATE);
+    ErrorCode ERR_MAKEUP_ROLE_REQUIRED = ErrorCode.define(
+            "erp.err.hr.makeup-role-required",
+            "仅 HR 专员角色可执行手工补卡（当前用户缺少角色 " + "HR 专员" + "）");
+
     // 并发重复排班被 UK_HR_SHIFT_ASSIGNMENT_NATURAL 兜底拦截（plan 2026-07-30-0841-2 R1.28 P1-MA2-091）
     ErrorCode ERR_HR_SHIFT_ASSIGNMENT_DUPLICATE = ErrorCode.define(
             "erp.err.hr.shift-assignment-duplicate",
