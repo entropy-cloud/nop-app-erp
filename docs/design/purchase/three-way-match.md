@@ -70,6 +70,8 @@
 | 发票数量 < 入库数量 | 正常（部分开票） |
 | 发票数量 > 入库数量 | 拒绝（除非配置允许，如运费/杂费明细） |
 
+> **实现注记（RC-R1.11，P1-RC-019）**：超收方向（receive-vs-order）校验已落地——`ErpPurReceiveProcessor.validateOverReceiptTolerance`（入库审核 `validateBusinessRulesForApprove` 内 protected step，位于库存移动/过账触发之前）。复用本文件 §不匹配的处理策略 的 `erp-pur.match-qty-tolerance`（默认 5%）与 `erp-pur.match-strict-mode`（默认 false）：per-order-line 聚合「当前入库单行 + 同订单其他 APPROVED 入库单行」Σ 数量，`Σ > 订单数量 × (1 + 容差%)` 时 strict 模式抛 `erp.err.pur.receive-qty-over-tolerance` 拒绝审核 / 非严格模式 LOG.warn 放行；无 `orderLineId` 行（独立入库）跳过；恰好等于容差边界放行。「容差内允许并调整订单数量」中的"调整"为人工操作语义，校验仅做允许/拒绝判定，不自动改订单行。短收方向（UC-PUR-06 ⑮ 短收差异处理）未随本行落地，归 P2-RC-014 successor watch-only。
+
 ### 价格差异
 
 | 场景 | 处理 |
