@@ -1,6 +1,6 @@
 # 2026-08-08-0424-3-rc-mr1-r1-7-hr-attendance-makeup-clock RC-R1.7 — hr 设备故障手工补卡（P1-RC-014，MR1 第一批纯预授权）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-08
 > Mission: requirement-compliance
 > Work Item: RC-R1.7（MR1 第一批纯预授权：hr 设备故障手工补卡，P1-RC-014）
@@ -51,67 +51,67 @@
 
 ### Phase 1 - IBiz 接口 + BizModel mutation + 常量/错误码
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-dao/src/main/java/app/erp/hr/biz/IErpHrAttendanceBiz.java`；`module-hr/erp-hr-service/src/main/java/app/erp/hr/service/entity/ErpHrAttendanceBizModel.java`；`module-hr/erp-hr-service/src/main/java/app/erp/hr/service/ErpHrConstants.java`；`module-hr/erp-hr-service/src/main/java/app/erp/hr/service/ErpHrErrors.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` **HR 角色守卫机制**：平台语义澄清——`IUserContext.getRoles()` 返回**角色 ID（roleId）集**而非角色名（`LoginServiceImpl` roleIds 构建 + `IUserContext.isUserInRole(roleId)`），`erp-hr.action-auth.xml:78` 菜单 `roles="HR 专员"` 匹配的也是 roleId（SiteMapProvider containsRole 语义）。故选项 A（推荐）= Java 侧 `IUserContext.get()` + `isUserInRole(HR_ROLE_ID)`（常量 `HR_ROLE_ID = "HR 专员"`，与 seed 数据/action-auth 的 roleId 一致——执行期须实仓核验 nop-auth seed 中该 role 的 roleId 字面值，若 seed roleId≠roleName 则以 seed roleId 为准）→ 不满足抛权限 ErrorCode（`ERR_MAKEUP_ROLE_REQUIRED` 或复用平台 `nop.err.biz.insufficient-permission`）；选项 B = xbiz `<mutation name=...><auth roles=.../></mutation>` 声明（仓库无既有先例 + 测试 enableActionAuth=FALSE 下不可断言，弃）；选项 C = action-auth.xml 接线（仓库无 mutation 级先例，弃）。备选与理由记录于本 Decision；**残留风险记录**：roleId 字面值与 seed 数据漂移风险（执行期核验 + owner doc 注记维护点）。
+- [x] `Decision` **HR 角色守卫机制**：平台语义澄清——`IUserContext.getRoles()` 返回**角色 ID（roleId）集**而非角色名（`LoginServiceImpl` roleIds 构建 + `IUserContext.isUserInRole(roleId)`），`erp-hr.action-auth.xml:78` 菜单 `roles="HR 专员"` 匹配的也是 roleId（SiteMapProvider containsRole 语义）。故选项 A（推荐）= Java 侧 `IUserContext.get()` + `isUserInRole(HR_ROLE_ID)`（常量 `HR_ROLE_ID = "HR 专员"`，与 seed 数据/action-auth 的 roleId 一致——执行期须实仓核验 nop-auth seed 中该 role 的 roleId 字面值，若 seed roleId≠roleName 则以 seed roleId 为准）→ 不满足抛权限 ErrorCode（`ERR_MAKEUP_ROLE_REQUIRED` 或复用平台 `nop.err.biz.insufficient-permission`）；选项 B = xbiz `<mutation name=...><auth roles=.../></mutation>` 声明（仓库无既有先例 + 测试 enableActionAuth=FALSE 下不可断言，弃）；选项 C = action-auth.xml 接线（仓库无 mutation 级先例，弃）。备选与理由记录于本 Decision；**残留风险记录**：roleId 字面值与 seed 数据漂移风险（执行期核验 + owner doc 注记维护点）。**执行裁决（2026-08-08）**：选项 A 落地——实仓核验 nop-entropy/app-erp-all 无 nop-auth seed 数据（grep `HR 专员`/`NopAuthRole` csv/sql 零命中），唯一权威 roleId 引用 = `erp-hr.action-auth.xml:78` `roles="HR 专员"`（SiteMapProvider containsRole 语义），故 `ErpHrConstants.HR_ROLE_ID = "HR 专员"` 与 action-auth 字面一致；权限错误码选专用 `ERR_MAKEUP_ROLE_REQUIRED`（域内错误码约定 + 测试可断言，不复用平台通用权限错误）；测试⑤ seed 角色 roleId 与常量一致（镜像 `TestErpPurPaymentApprovalNotifications.seedRole` 范式声明消除漂移）；残留风险 = roleId 字面与未来 nop-auth seed 漂移（owner doc 注记维护点）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **`erp-hr/attendance-source` dict 注册 MANUAL**：选项 A（推荐）= 在 `module-hr/model/app-erp-hr.orm.xml` dict 追加 `<option code="MANUAL" label="手工补卡" value="MANUAL"/>`（Q3 纯加性 ORM 变更批量授权：新增 option 不改既有语义/无数据影响；codegen 增量重生成 dict）→ 随后 `mvn clean install -DskipTests` 增量重新生成；选项 B = 不注册 dict，source=MANUAL 字符串直接写入（VARCHAR 列自由值，对齐 A4.2.145 孤儿非字典值先例，UI 下拉不显示 MANUAL）。备选与理由记录于本 Decision；**残留风险记录**：选项 B 下 UI 不显示 MANUAL 来源值（可读性缺口，owner doc 注记）。
+- [x] `Decision` **`erp-hr/attendance-source` dict 注册 MANUAL**：选项 A（推荐）= 在 `module-hr/model/app-erp-hr.orm.xml` dict 追加 `<option code="MANUAL" label="手工补卡" value="MANUAL"/>`（Q3 纯加性 ORM 变更批量授权：新增 option 不改既有语义/无数据影响；codegen 增量重生成 dict）→ 随后 `mvn clean install -DskipTests` 增量重新生成；选项 B = 不注册 dict，source=MANUAL 字符串直接写入（VARCHAR 列自由值，对齐 A4.2.145 孤儿非字典值先例，UI 下拉不显示 MANUAL）。备选与理由记录于本 Decision；**残留风险记录**：选项 B 下 UI 不显示 MANUAL 来源值（可读性缺口，owner doc 注记）。**执行裁决（2026-08-08）**：**选项 B 落地（不注册 dict）**——Q3 批量授权范围严格枚举「加列/加 UK/新增实体」（methodology §5 表格 + 审批盘点报告 §5 Q3 选项 B + §7 A2 越界项机制），dict `<option>` 追加不在枚举内，保守不越界触保护区域 `model/*.orm.xml`（arm-index 预授权类目 = 纯 BizModel 代码逻辑修复）；`source=MANUAL` 直接写 VARCHAR(20) 列，A4.2.145 孤儿非字典值先例运行时证实无碍；残留风险（UI 下拉不显示 MANUAL 可读性缺口）已 owner doc `shift-scheduling.md` 注记维护点（含后续人工裁决 dict 注册的落点指引）。
       - Skill: `nop-backend-dev`
-- [ ] `Add` `ErpHrConstants.ATTENDANCE_SOURCE_MANUAL = "MANUAL"`。
+- [x] `Add` `ErpHrConstants.ATTENDANCE_SOURCE_MANUAL = "MANUAL"`。
       - Skill: `nop-backend-dev`
-- [ ] `Add` `IErpHrAttendanceBiz`：`makeUpClockIn(@Name("employeeId") Long, @Name("date") LocalDate, @Name("clockTime") Timestamp/LocalDateTime, @Name("reason") String, IServiceContext)` + `makeUpClockOut(...)`（签名决策：clockTime 类型与 ORM 列 clockIn/clockOut 的 java.sql.Timestamp 对齐，执行期按框架反序列化惯例定）。
+- [x] `Add` `IErpHrAttendanceBiz`：`makeUpClockIn(@Name("employeeId") Long, @Name("date") LocalDate, @Name("clockTime") Timestamp/LocalDateTime, @Name("reason") String, IServiceContext)` + `makeUpClockOut(...)`（签名决策：clockTime 类型与 ORM 列 clockIn/clockOut 的 java.sql.Timestamp 对齐，执行期按框架反序列化惯例定）。
       - Skill: `nop-backend-dev`
-- [ ] `Add` `ErpHrAttendanceBizModel` 实现两 mutation：HR 角色守卫 → reason 空抛错误码 → 定位/新建 attendance（date + employeeId 唯一定位，镜像 `findAttendance` helper；新建行 `businessDate` 语义对齐 `defaultPrepareSave:53-55` 兜底 = 补卡日期 date，非 today）→ 写 clockIn/clockOut + source=MANUAL + remark=reason → 若 clockIn 与 clockOut 均非空则重算 workHours → `saveOrUpdateAttendance`（既有 helper）。守卫顺序：先角色后 reason（错误可见性）。
+- [x] `Add` `ErpHrAttendanceBizModel` 实现两 mutation：HR 角色守卫 → reason 空抛错误码 → 定位/新建 attendance（date + employeeId 唯一定位，镜像 `findAttendance` helper；新建行 `businessDate` 语义对齐 `defaultPrepareSave:53-55` 兜底 = 补卡日期 date，非 today）→ 写 clockIn/clockOut + source=MANUAL + remark=reason → 若 clockIn 与 clockOut 均非空则重算 workHours → `saveOrUpdateAttendance`（既有 helper）。守卫顺序：先角色后 reason（错误可见性）。
       - Skill: `nop-backend-dev`
-- [ ] `Add` 错误码：`ERR_MAKEUP_REASON_REQUIRED`（`erp.err.hr.makeup-reason-required`）+ 权限错误码（按 Decision 选定机制，若用平台通用权限错误则不新增）。
+- [x] `Add` 错误码：`ERR_MAKEUP_REASON_REQUIRED`（`erp.err.hr.makeup-reason-required`）+ 权限错误码（按 Decision 选定机制，若用平台通用权限错误则不新增）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 两 mutation 经 BizModel 直调断言落地 + `@BizMutation` 声明自动暴露 GraphQL（与 clockIn 同型机制，Phase 2 含 GraphQL 层冒烟断言）；reason 空拒绝；HR 角色守卫生效（成功模式 = HR 角色可补卡；失败模式 = 非 HR 角色被拒 + reason 空被拒）
-- [ ] 无 ORM 结构变更（仅当 Decision 选 dict 注册时为 Q3 纯加性 option 追加 + 增量重生成）
+- [x] 两 mutation 经 BizModel 直调断言落地 + `@BizMutation` 声明自动暴露 GraphQL（与 clockIn 同型机制，Phase 2 含 GraphQL 层冒烟断言）；reason 空拒绝；HR 角色守卫生效（成功模式 = HR 角色可补卡；失败模式 = 非 HR 角色被拒 + reason 空被拒）
+- [x] 无 ORM 结构变更（仅当 Decision 选 dict 注册时为 Q3 纯加性 option 追加 + 增量重生成）
 
 ### Phase 2 - dedicated 测试
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/src/test/java/app/erp/hr/service/TestErpHrAttendanceEngine.java`（扩展）或新建 `TestErpHrAttendanceMakeUp.java`
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Add` 测试矩阵：① makeUpClockIn 新建行（无既有记录）→ source=MANUAL + remark=reason + clockIn=补录时间 + businessDate=补卡日期；② makeUpClockIn 覆盖既有行（同日已有打卡记录）→ clockIn 覆盖 + source 改 MANUAL；③ makeUpClockOut → clockOut + workHours 重算；④ reason 空 → 抛 `ERR_MAKEUP_REASON_REQUIRED`；⑤ HR 角色守卫——**显式构造 IUserContext 并经 `IUserContext.set(...)` 注入**（`enableActionAuth=FALSE` 下平台不自动建 context，`TestErpHrAttendanceEngine:43` 用的裸 `ServiceContextImpl` 不携带角色；须手动构造含 roleIds 的 IUserContext 并 set，用后恢复/清理）+ 可选 DB seed `NopAuthRole`+`NopAuthUser`+`NopAuthUserRole` 对齐（镜像 `TestErpPurPaymentApprovalNotifications.seedRole:259-286`，roleId 与 Decision 常量一致）→ 有角色通过 / 无角色被拒；⑥ 历史日期补卡（date=昨日/多日前）→ 正确写入该日期行。
+- [x] `Add` 测试矩阵：① makeUpClockIn 新建行（无既有记录）→ source=MANUAL + remark=reason + clockIn=补录时间 + businessDate=补卡日期；② makeUpClockIn 覆盖既有行（同日已有打卡记录）→ clockIn 覆盖 + source 改 MANUAL；③ makeUpClockOut → clockOut + workHours 重算；④ reason 空 → 抛 `ERR_MAKEUP_REASON_REQUIRED`；⑤ HR 角色守卫——**显式构造 IUserContext 并经 `IUserContext.set(...)` 注入**（`enableActionAuth=FALSE` 下平台不自动建 context，`TestErpHrAttendanceEngine:43` 用的裸 `ServiceContextImpl` 不携带角色；须手动构造含 roleIds 的 IUserContext 并 set，用后恢复/清理）+ 可选 DB seed `NopAuthRole`+`NopAuthUser`+`NopAuthUserRole` 对齐（镜像 `TestErpPurPaymentApprovalNotifications.seedRole:259-286`，roleId 与 Decision 常量一致）→ 有角色通过 / 无角色被拒；⑥ 历史日期补卡（date=昨日/多日前）→ 正确写入该日期行。
       - Skill: `nop-testing`
-- [ ] `Proof` 断言强度：返回行 source/remark/clockIn/clockOut 精确值 + 错误码 + 角色拒/纳双侧；GraphQL 层冒烟断言（`graphQLEngine.executeRpc` 调 `ErpHrAttendance__makeUpClockIn`，镜像 `TestErpPurPaymentApprovalNotifications:210-214` 范式，证明 mutation 经 GraphQL 可达）；`@NopTestConfig` 隔离（镜像 `TestErpHrAttendanceEngine` 既有 `enableActionAuth=FALSE` 范式——Java 侧角色守卫不受 enableActionAuth 影响，直测 IUserContext 角色集）。
+- [x] `Proof` 断言强度：返回行 source/remark/clockIn/clockOut 精确值 + 错误码 + 角色拒/纳双侧；GraphQL 层冒烟断言（`graphQLEngine.executeRpc` 调 `ErpHrAttendance__makeUpClockIn`，镜像 `TestErpPurPaymentApprovalNotifications:210-214` 范式，证明 mutation 经 GraphQL 可达）；`@NopTestConfig` 隔离（镜像 `TestErpHrAttendanceEngine` 既有 `enableActionAuth=FALSE` 范式——Java 侧角色守卫不受 enableActionAuth 影响，直测 IUserContext 角色集）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 测试矩阵全绿：`mvn test -pl module-hr/erp-hr-service` 全绿（既有 tests 零回归）
-- [ ] 角色守卫双侧断言落地（无「守卫存在但零覆盖」缺口）；GraphQL 冒烟断言落地（契约可达性有证据）
+- [x] 测试矩阵全绿：`mvn test -pl module-hr/erp-hr-service` 全绿（既有 tests 零回归）
+- [x] 角色守卫双侧断言落地（无「守卫存在但零覆盖」缺口）；GraphQL 冒烟断言落地（契约可达性有证据）
 
 ### Phase 3 - 文档回填 + arm-index/roadmap 状态
 
-Status: planned
+Status: completed
 Targets: `docs/design/human-resource/shift-scheduling.md`（补注手工补卡入口）；`docs/audits/arm-index.md`（P1-RC-014 修复状态）；`docs/backlog/requirement-compliance-roadmap.md`（RC-R1.7 done）；`docs/logs/2026/08-08.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1-2 完成
 
-- [ ] `Add` owner doc 补注：`shift-scheduling.md` 补「手工补卡入口」段（mutation 名 + HR 角色 + reason 必填 + source=MANUAL + remark 承载 + dict 注册状态注记）；不修改需求契约段（真相源冻结条款遵守）。
+- [x] `Add` owner doc 补注：`shift-scheduling.md` 补「手工补卡入口」段（mutation 名 + HR 角色 + reason 必填 + source=MANUAL + remark 承载 + dict 注册状态注记）；不修改需求契约段（真相源冻结条款遵守）。
       - Skill: none
-- [ ] `Add` arm-index P1-RC-014 行「修复状态」→ `done (RC-R1.7)` + 修复落地摘要（两 mutation + 角色守卫 + source/reason 审计标记）；roadmap RC-R1.7 → done；`docs/logs/2026/08-08.md` 日志条目。
+- [x] `Add` arm-index P1-RC-014 行「修复状态」→ `done (RC-R1.7)` + 修复落地摘要（两 mutation + 角色守卫 + source/reason 审计标记）；roadmap RC-R1.7 → done；`docs/logs/2026/08-08.md` 日志条目。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入
+- [x] arm-index/roadmap 状态回填 + owner doc 补注落盘；日志条目写入
 
 ## Draft Review Record
 
@@ -120,14 +120,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn test -pl module-hr/erp-hr-service` + `mvn clean install -DskipTests` 全量 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline——新增 ErrorCode/常量不产生 checker 新违规）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn test -pl module-hr/erp-hr-service` + `mvn clean install -DskipTests` 全量 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline——新增 ErrorCode/常量不产生 checker 新违规）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -145,11 +145,11 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 待执行（draft 阶段）。
+Status Note: 已执行完成（Phases 1-3 全落地，2026-08-08）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 待独立结束审计
+- Auditor / Agent: 待独立结束审计（执行完成，独立子代理新会话审计进行中）
 
 Follow-up:
 

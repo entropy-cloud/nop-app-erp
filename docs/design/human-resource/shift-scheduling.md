@@ -338,6 +338,8 @@ HR 选择轮换模板 + 轮换组
 5. **宽容期内不视为迟到/早退**：由班次模板的 graceLateMinutes/graceEarlyLeaveMinutes 控制
 6. **跨天班次日历归属**：夜班排班归属到开始日期，迟到/早退按班次时间计算
 
+> **实现注记（RC-R1.7，P1-RC-014）——手工补卡入口**：UC-HR-06⑮「设备故障时支持手工补卡」已落地——`IErpHrAttendanceBiz`/`ErpHrAttendanceBizModel` 新增 `makeUpClockIn`/`makeUpClockOut` mutation（use-cases.md UC-HR-06 异常段）。语义：定位员工+日期考勤记录（无则新建，businessDate=补卡日期非 today 兜底）→ 写 clockIn/clockOut=补录时间 → `source=MANUAL` + `remark=reason`（审计标记，与正常打卡区分）→ clockIn/clockOut 均存在时按既有 computeWorkHours 重算 workHours。守卫：**HR 角色**（Java 侧 `IUserContext.get() + isUserInRole(HR_ROLE_ID)`，roleId="HR 专员" 与 `erp-hr.action-auth.xml` 菜单 roles 字面一致；未登录/缺角色 fail-closed 抛 `ERR_MAKEUP_ROLE_REQUIRED`）+ **reason 必填**（空/空白抛 `ERR_MAKEUP_REASON_REQUIRED`，先角色后 reason）。补卡是绕过打卡时序守卫的受控通道：直接写目标时间戳，不触发 clockIn/clockOut 时序守卫。**dict 注册状态注记**：`erp-hr/attendance-source` 字典未注册 MANUAL（Q3 批量授权范围仅「加列/加 UK/新增实体」，dict option 不在枚举内），source=MANUAL 按 A4.2.145 孤儿非字典值先例直接写 VARCHAR 列——**维护点：UI 下拉不显示 MANUAL（可读性缺口）；若后续人工裁决 dict 注册，追加 `<option code="MANUAL" label="手工补卡" value="MANUAL"/>` 并增量重生成即可**。roleId 字面值与 nop-auth seed/action-auth 的漂移风险亦为维护点（改动 roleId 须同步本守卫常量 `ErpHrConstants.HR_ROLE_ID`）。
+
 ## 参考
 
 - `docs/design/human-resource/README.md`（HR 域基础实体）
