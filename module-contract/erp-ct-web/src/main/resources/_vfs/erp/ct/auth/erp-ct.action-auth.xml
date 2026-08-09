@@ -12,7 +12,22 @@
                         <resource id="ErpCtContract-main" app:useCases="UC-CT-01,UC-CT-02,UC-CT-05,UC-CT-06"
                                   displayName="合同" i18n-en:displayName="Contract" icon="file-text"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/ct/pages/ErpCtContract/main.page.yaml"/>
+                                  url="/erp/ct/pages/ErpCtContract/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpCtContract:activate" displayName="激活合同(审批门控)" i18n-en:displayName="Activate Contract"
+                                          resourceType="FNPT" orderNo="10010" roles="合同审批人">
+                                    <permissions>ErpCtContract:activate</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContractVersion:finalizeVersion" displayName="定稿合同版本" i18n-en:displayName="Finalize Version"
+                                          resourceType="FNPT" orderNo="10020" roles="合同专员">
+                                    <permissions>ErpCtContractVersion:finalizeVersion</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtContractVersion:signVersion" displayName="签署合同版本(签章门控)" i18n-en:displayName="Sign Version"
+                                          resourceType="FNPT" orderNo="10030" roles="合同审批人">
+                                    <permissions>ErpCtContractVersion:signVersion</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ct-version-diff" app:useCases="UC-CT-02,UC-CT-06" displayName="合同版本对比"
                                   i18n-en:displayName="Contract Version Diff" icon="git-compare"
                                   component="FLUX" resourceType="SUBM" orderNo="105"
@@ -68,7 +83,30 @@
                         <resource id="ErpCtSignatureRequest-main" app:useCases="UC-CT-09"
                                   displayName="签章请求" i18n-en:displayName="Signature Request" icon="file-signature"
                                   component="FLUX" resourceType="SUBM" orderNo="170"
-                                  url="/erp/ct/pages/ErpCtSignatureRequest/main.page.yaml"/>
+                                  url="/erp/ct/pages/ErpCtSignatureRequest/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpCtSignatureRequest:initSignatureRequest" displayName="发起电子签(高危)" i18n-en:displayName="Init Signature Request"
+                                          resourceType="FNPT" orderNo="17010" roles="合同审批人">
+                                    <permissions>ErpCtSignatureRequest:initSignatureRequest</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtSignatureRequest:handleSignatureCallback" displayName="处理签章回调(高危webhook)" i18n-en:displayName="Handle Signature Callback"
+                                          resourceType="FNPT" orderNo="17020" roles="合同审批人">
+                                    <permissions>ErpCtSignatureRequest:handleSignatureCallback</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtSignatureRequest:queryAndUpdateStatus" displayName="轮询签章状态" i18n-en:displayName="Query And Update Status"
+                                          resourceType="FNPT" orderNo="17030" roles="合同专员">
+                                    <permissions>ErpCtSignatureRequest:queryAndUpdateStatus</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtSignatureRequest:cancelSignatureRequest" displayName="取消签章请求" i18n-en:displayName="Cancel Signature Request"
+                                          resourceType="FNPT" orderNo="17040" roles="合同审批人">
+                                    <permissions>ErpCtSignatureRequest:cancelSignatureRequest</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpCtSignatureRequest:rejectSignature" displayName="拒绝签章" i18n-en:displayName="Reject Signature"
+                                          resourceType="FNPT" orderNo="17050" roles="合同审批人">
+                                    <permissions>ErpCtSignatureRequest:rejectSignature</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <resource id="ct-repository" displayName="仓库搜索" i18n-en:displayName="Repository &amp; Search"

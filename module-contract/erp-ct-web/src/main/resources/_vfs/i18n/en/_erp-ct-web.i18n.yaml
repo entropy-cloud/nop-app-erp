@@ -24,6 +24,22 @@ site:
       displayName: Contract Template
     ErpCtVolumeDiscount-main:
       displayName: Volume Discount
+    FNPT:ErpCtContract:activate:
+      displayName: Activate Contract
+    FNPT:ErpCtContractVersion:finalizeVersion:
+      displayName: Finalize Version
+    FNPT:ErpCtContractVersion:signVersion:
+      displayName: Sign Version
+    FNPT:ErpCtSignatureRequest:cancelSignatureRequest:
+      displayName: Cancel Signature Request
+    FNPT:ErpCtSignatureRequest:handleSignatureCallback:
+      displayName: Handle Signature Callback
+    FNPT:ErpCtSignatureRequest:initSignatureRequest:
+      displayName: Init Signature Request
+    FNPT:ErpCtSignatureRequest:queryAndUpdateStatus:
+      displayName: Query And Update Status
+    FNPT:ErpCtSignatureRequest:rejectSignature:
+      displayName: Reject Signature
     ct-approval:
       displayName: Approval
     ct-billing:

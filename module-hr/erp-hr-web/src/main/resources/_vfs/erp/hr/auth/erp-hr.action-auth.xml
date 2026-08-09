@@ -106,6 +106,10 @@
                                           resourceType="FNPT" orderNo="50020" roles="薪酬审批人">
                                     <permissions>ErpHrSalary:markPaid</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpHrSalary:voidSalary" displayName="作废已审核未发放薪酬" i18n-en:displayName="Void Salary"
+                                          resourceType="FNPT" orderNo="50030" roles="薪酬审批人">
+                                    <permissions>ErpHrSalary:voidSalary</permissions>
+                                </resource>
                             </children>
                         </resource>
                         <resource id="hr-payroll-approval" app:useCases="UC-HR-04,UC-HR-10" displayName="薪酬核算审批"

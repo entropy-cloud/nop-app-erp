@@ -60,6 +60,8 @@ site:
       displayName: Approve Salary
     FNPT:ErpHrSalary:markPaid:
       displayName: Mark Paid
+    FNPT:ErpHrSalary:voidSalary:
+      displayName: Void Salary
     employee-net-balance:
       displayName: Employee Net Balance
     erp-hr:
