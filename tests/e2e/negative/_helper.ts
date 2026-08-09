@@ -1,0 +1,204 @@
+/**
+ * 负向隔离测试原语（plan 2026-08-09-2210-2 / P2.3，permissions-enforcement mission）。
+ *
+ * 关注点分离：本模块隔离「负向隔离测试」原语供 E1.x（action 级负向）/ E2.x（data 级负向）
+ * 清晰消费，不复用 `business-actions/_helper.ts`（正向业务动作原语职责不同）。`.ts` 文件
+ * 在本仓库 `opencode.json` 下可自由编辑（无 `_*.ts` deny 规则）——独立模块是清洁设计选择。
+ *
+ * **rejection-source-agnostic 设计**：`expectActionDenied` 同时适用于
+ *   (1) 业务逻辑拒绝（如 hr-payroll markPaid UNSUBMITTED 守卫抛 NopException，message 含「不允许执行该操作」）；
+ *   (2) enforcement 拒绝（action-auth 拦截抛 `nop.err.auth.no-permission`，message「没有访问权限」）。
+ * 两者同经 `GraphQLEngine.buildGraphQLResponse` → 同 `{errors}` 信封 + 同 `extensions["nop-error-code"]`
+ * 位置（Phase 1 静态表征结论），故按 `{errors}` 存在 + 可选 token/errorCode 匹配设计。
+ *
+ * **enforcement 拒绝形状（Phase 1 静态表征，运行时确认 gated on P2.4）**：
+ *   - HTTP status 恒 200（`GraphQLWebService.runGraphQL` 硬编码 200，非 403）；
+ *   - body `{errors:[{message}], data:null, extensions:{"nop-error-code":..., "nop-status":-1}}`；
+ *   - errorCode 在**顶层** `extensions["nop-error-code"]`，不在每条 error entry 内；
+ *   - `error.params` 不序列化进 JSON（仅用于 message 渲染）。
+ *   enforcement 专用 errorCode 常量（`nop.err.auth.no-permission` / `no-permission-for-field` /
+ *   `no-data-auth`）预留给 P2.4 运行时确认后收敛。
+ *
+ * **data-auth 行过滤形状（Phase 1 表征）**：`DefaultDataAuthChecker.getFilter` 注入 SQL WHERE →
+ * `__findPage` 静默返回过滤后行集（无 errors，total/items 减少）。故「越权数据被过滤」=
+ * 断言特定行 absent / 行集收敛，**非** errors 断言——独立原语 `expectRowsHidden/Visible`。
+ */
+
+import { test, expect } from '../fixtures';
+import type { Page } from '@playwright/test';
+import { login } from '../pages';
+import {
+  callMutation,
+  callQuery,
+  findItems,
+  findPageTotal,
+} from '../business-actions/_helper';
+
+export { test, expect };
+// Re-export for consumer convenience: negative spec 单一 import 入口（避免跨模块 import 认知负担）。
+export { callMutation, callQuery, findItems, findPageTotal };
+
+/**
+ * GraphQL 调用结果信封（callMutation/callQuery 返回值）。
+ * errors = json.errors（非空时表示拒绝，含 message）；json = 完整响应（含顶层 extensions）。
+ */
+export interface ActionResult {
+  data: any | null;
+  errors: any[] | null;
+  json: any;
+}
+
+/**
+ * expectActionDenied 选项。
+ *
+ * - `token`：message 子串匹配（`JSON.stringify(errors)` 包含检查）。用于中文 token 断言
+ *   （如业务拒绝「不允许执行该操作」/ enforcement 拒绝「没有访问权限」）。
+ * - `errorCode`：精确匹配 `json.extensions["nop-error-code"]`（如 enforcement `nop.err.auth.no-permission`）。
+ */
+export interface ActionDeniedOptions {
+  token?: string;
+  errorCode?: string;
+}
+
+/**
+ * enforcement 专用 ErrorCode 常量（Phase 1 静态表征，运行时确认随 P2.4）。
+ * P2.4 翻启 action-auth 后，负向 spec 可用这些常量做 `opts.errorCode` 精确断言收敛。
+ */
+export const ENFORCEMENT_ERROR_CODES = {
+  /** 顶层 @BizMutation/@BizQuery action 缺 FNPT 权限点（GraphQLActionAuthChecker.java:102）。 */
+  NO_PERMISSION: 'nop.err.auth.no-permission',
+  /** 嵌套字段权限拒绝（GraphQLActionAuthChecker.java:110）。 */
+  NO_PERMISSION_FOR_FIELD: 'nop.err.auth.no-permission-for-field',
+  /** 单实体 data-auth 拒绝 / 有规则但角色不匹配（DefaultDataAuthChecker.java getFilter 分支 B）。 */
+  NO_DATA_AUTH: 'nop.err.auth.no-data-auth',
+} as const;
+
+/**
+ * 原语：断言「未授权动作被拒绝」（rejection-source-agnostic）。
+ *
+ * 断言 `result.errors` 真值（GraphQL errors 数组存在）+ 可选 token（message 子串）/ errorCode
+ * （`extensions["nop-error-code"]` 精确）匹配。返回 errors 数组供链式断言。
+ *
+ * 适用于业务逻辑拒绝（NopException 守卫）与 enforcement 拒绝（action-auth 拦截）——两者同信封。
+ *
+ * @example
+ * // 业务拒绝载体（demo 范式，action-auth OFF 下证明机制成立）
+ * const rej = await callMutation(page, 'ErpHrSalary', 'markPaid', { salaryId }, 'id');
+ * expectActionDenied(rej, { token: '不允许执行该操作' });
+ *
+ * @example
+ * // enforcement 拒绝（P2.4/E1.x 翻启 action-auth 后）
+ * const rej = await callMutation(page, 'ErpFinVoucher', 'reverseClose', { id }, 'id');
+ * expectActionDenied(rej, {
+ *   errorCode: ENFORCEMENT_ERROR_CODES.NO_PERMISSION,
+ *   token: '没有访问权限',
+ * });
+ */
+export function expectActionDenied(
+  result: ActionResult,
+  opts?: ActionDeniedOptions,
+): any[] {
+  expect(
+    result.errors,
+    'expectActionDenied: expected GraphQL errors array to be present (action denied)',
+  ).toBeTruthy();
+  const errors = result.errors as any[];
+  expect(
+    errors.length,
+    'expectActionDenied: expected at least one error entry',
+  ).toBeGreaterThan(0);
+
+  if (opts?.token) {
+    expect(
+      JSON.stringify(errors),
+      `expectActionDenied: expected errors to contain token "${opts.token}"`,
+    ).toContain(opts.token);
+  }
+
+  if (opts?.errorCode) {
+    const actualCode = result.json?.extensions?.['nop-error-code'];
+    expect(
+      actualCode,
+      `expectActionDenied: expected extensions["nop-error-code"] to be "${opts.errorCode}"`,
+    ).toBe(opts.errorCode);
+  }
+
+  return errors;
+}
+
+/**
+ * 原语：断言「越权数据被过滤」（data-auth 行级规则排除后特定行不可见）。
+ *
+ * data-auth 静默过滤（无 errors），absent 是唯一可观测信号：断言匹配 `filter` 的行集为空
+ * （越权行被过滤）。返回空数组（语义明确，调用方可继续断言）。
+ *
+ * **运行时 demo 随 E2.1**（data-auth 双开关 OFF 下行过滤不可观测；本原语交付 + 静态签名 Proof）。
+ *
+ * @example
+ * // E2.1 翻启 data-auth 后：断言其他用户的行不可见
+ * await expectRowsHidden(page, 'ErpPrjTask', eqFilter('assigneeId', otherUserId), 'id');
+ */
+export async function expectRowsHidden<T = any>(
+  page: Page,
+  entity: string,
+  filter: Record<string, unknown>,
+  selection: string,
+): Promise<T[]> {
+  const items = await findItems<T>(page, entity, filter, selection);
+  expect(
+    items.length,
+    `expectRowsHidden: expected 0 visible rows for ${entity} matching filter (越权行应被过滤), got ${items.length}`,
+  ).toBe(0);
+  return items;
+}
+
+/**
+ * 原语：断言「可见行集收敛」（data-auth 过滤后剩余可见行符合预期）。
+ *
+ * `expectedCount` 提供时断言精确收敛至该数（如 admin 全见 vs 受限账号只见自有行）；
+ * 省略时断言可见行集 ≥ 1（存在性）。返回可见行数组。
+ *
+ * **运行时 demo 随 E2.1**（data-auth 双开关 OFF 下行过滤不可观测）。
+ *
+ * @example
+ * // E2.1 后：受限账号只见自有 3 行
+ * await expectRowsVisible(page, 'ErpPrjTask', eqFilter('assigneeId', myUserId), 'id', 3);
+ */
+export async function expectRowsVisible<T = any>(
+  page: Page,
+  entity: string,
+  filter: Record<string, unknown>,
+  selection: string,
+  expectedCount?: number,
+): Promise<T[]> {
+  if (expectedCount !== undefined) {
+    const total = await findPageTotal(page, entity, filter);
+    expect(
+      total,
+      `expectRowsVisible: expected ${expectedCount} visible rows for ${entity} (行集收敛), got ${total}`,
+    ).toBe(expectedCount);
+  }
+  const items = await findItems<T>(page, entity, filter, selection);
+  if (expectedCount === undefined) {
+    expect(
+      items.length,
+      `expectRowsVisible: expected ≥1 visible row for ${entity}, got 0`,
+    ).toBeGreaterThan(0);
+  }
+  return items;
+}
+
+/**
+ * 角色登录 indirection 占位（负向测试脚手架）。
+ *
+ * 接受角色名/用户名，本计划回退默认 `login`（nop 平台 admin——`%test` profile skip-check 兜底）。
+ * **P2.2b（角色化渐进）填充真实角色登录**：逐域补非 admin 受限账号后，此处按 `roleOrUser`
+ * 选择对应账号登录，使 E1.x/E2.x 负向 spec 可插拔负向主体。骨架交付不依赖负向账号（roadmap 明示）。
+ *
+ * @param roleOrUser 角色 roleId 或用户名（占位期忽略，统一 nop admin 登录）
+ */
+export async function loginAsRole(page: Page, roleOrUser: string): Promise<void> {
+  // Placeholder: P2.2b 将填充真实角色→账号映射登录。当前回退 nop admin。
+  void roleOrUser;
+  await login(page);
+}
