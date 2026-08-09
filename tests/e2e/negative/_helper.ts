@@ -189,16 +189,75 @@ export async function expectRowsVisible<T = any>(
 }
 
 /**
- * 角色登录 indirection 占位（负向测试脚手架）。
+ * 角色账号池（plan 2026-08-10-0119-1 / P2.2b）。
  *
- * 接受角色名/用户名，本计划回退默认 `login`（nop 平台 admin——`%test` profile skip-check 兜底）。
- * **P2.2b（角色化渐进）填充真实角色登录**：逐域补非 admin 受限账号后，此处按 `roleOrUser`
- * 选择对应账号登录，使 E1.x/E2.x 负向 spec 可插拔负向主体。骨架交付不依赖负向账号（roadmap 明示）。
+ * key = 业务 roleId 字面值（与 `nop_auth_role.csv` 一致）+ username 别名；
+ * value = {username, password}。覆盖 E1.1 五高危域 8 授权角色 + 1 通用受限账号 + 平台 admin
+ * 正向控制。账号种子见 `app-erp-all/_vfs/_init-data/nop_auth_user.csv`（userId 2-10）。
  *
- * @param roleOrUser 角色 roleId 或用户名（占位期忽略，统一 nop admin 登录）
+ * **双命名空间（横切 2）**：业务「管理员」（roleId=「管理员」，账号 role-biz-admin）≠ 平台 `admin`
+ * （roleId=`admin`，账号 nop，触发 skip-check 兜底）。两 key 各自映射，不可互换。
+ *
+ * **E1.2 扩展点**：新增角色账号按 `role-<slug>` 命名 + 小整数 userId 追加 CSV 行 +
+ * 此处追加 ROLE_ACCOUNTS 条目（机械扩展，无机制性返工）。
+ */
+const COMMON_PASS = '123';
+export const ROLE_ACCOUNTS: Record<string, { username: string; password: string }> = {
+  // 平台 admin 正向控制（skip-check 兜底触发）
+  admin: { username: 'nop', password: COMMON_PASS },
+  nop: { username: 'nop', password: COMMON_PASS },
+  // E1.1 五高危域 8 授权角色（业务 roleId 字面值 → 角色账号）
+  财务员: { username: 'role-finance', password: COMMON_PASS },
+  管理员: { username: 'role-biz-admin', password: COMMON_PASS },
+  'B2B 管理员': { username: 'role-b2b-admin', password: COMMON_PASS },
+  'B2B 对账员': { username: 'role-b2b-recon', password: COMMON_PASS },
+  生产主管: { username: 'role-mfg-lead', password: COMMON_PASS },
+  库管员: { username: 'role-inventory', password: COMMON_PASS },
+  薪酬审批人: { username: 'role-hr-salary', password: COMMON_PASS },
+  'HR 专员': { username: 'role-hr', password: COMMON_PASS },
+  // 通用受限账号（仅绑平台 user 角色，无敏感 FNPT，供 P2.4 dry-run 全 403 影响面）
+  user: { username: 'role-restricted', password: COMMON_PASS },
+  restricted: { username: 'role-restricted', password: COMMON_PASS },
+  // username 别名（同账号，便于调用方按 username 直传）
+  'role-finance': { username: 'role-finance', password: COMMON_PASS },
+  'role-biz-admin': { username: 'role-biz-admin', password: COMMON_PASS },
+  'role-b2b-admin': { username: 'role-b2b-admin', password: COMMON_PASS },
+  'role-b2b-recon': { username: 'role-b2b-recon', password: COMMON_PASS },
+  'role-mfg-lead': { username: 'role-mfg-lead', password: COMMON_PASS },
+  'role-inventory': { username: 'role-inventory', password: COMMON_PASS },
+  'role-hr-salary': { username: 'role-hr-salary', password: COMMON_PASS },
+  'role-hr': { username: 'role-hr', password: COMMON_PASS },
+  'role-restricted': { username: 'role-restricted', password: COMMON_PASS },
+};
+
+/**
+ * 角色登录 indirection（负向测试脚手架，plan 2026-08-10-0119-1 / P2.2b 真实映射填充）。
+ *
+ * 按 `roleOrUser` 从 {@link ROLE_ACCOUNTS} 解析账号凭据，先**防御性清空会话**（cookies +
+ * localStorage，支持 fresh page 与复用 page 两种调用形态——`Navigation.ts#login` 在已登录
+ * 页会跳过登录，切换身份须先清会话），再委派既有 `login(page, username, password)`。
+ *
+ * **解析顺序**：(1) 精确 roleId/别名匹配 → (2) 回退 `restricted`（保守：未知角色 = 最小权限，
+ * 保证负向断言倾向拒绝而非意外放行）。
+ *
+ * enforcement OFF（三开关 false）下，所有角色账号行为等价（action-auth 不拦截）——故 P2.3 既有
+ * demo `loginAsRole(page, 'requester')`（'requester' 回退 restricted）仍绿：身份切换不影响业务
+ * 逻辑拒绝载体的断言（markPaid UNSUBMITTED 守卫与身份无关）。enforcement 翻启后（P2.4/E1.x），
+ * 受限账号才触发真权限拒绝。
+ *
+ * @param roleOrUser 角色 roleId（如「财务员」）/ username 别名（如 `role-finance`）/ 通用别名
+ *   （`restricted`/`admin`/`nop`）；未知 key 回退 restricted
  */
 export async function loginAsRole(page: Page, roleOrUser: string): Promise<void> {
-  // Placeholder: P2.2b 将填充真实角色→账号映射登录。当前回退 nop admin。
-  void roleOrUser;
-  await login(page);
+  const account = ROLE_ACCOUNTS[roleOrUser] ?? ROLE_ACCOUNTS.restricted;
+  // 防御性会话清空：复用 page 上切换身份时须先清旧会话（login 在已登录页会跳过）。
+  // clearCookies 是 context 级（任何 URL 都生效）；localStorage.clear() 需同源 page——fresh page
+  // 在 about:blank 时 localStorage 不可访问（SecurityError），try-catch 容错（fresh page 无残留）。
+  await page.context().clearCookies();
+  try {
+    await page.evaluate(() => localStorage.clear());
+  } catch {
+    // about:blank / cross-origin：fresh page 无 localStorage 须清，静默跳过
+  }
+  await login(page, account.username, account.password);
 }
