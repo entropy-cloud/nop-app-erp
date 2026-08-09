@@ -34,6 +34,8 @@ site:
       displayName: Work Order
     ErpMfgWorkcenter-main:
       displayName: Work Center
+    FNPT:ErpMfgSubcontractOrder:approve:
+      displayName: Approve Subcontract Order
     FNPT:ErpMfgWorkOrder:cancel:
       displayName: Cancel Work Order
     FNPT:ErpMfgWorkOrder:close:
