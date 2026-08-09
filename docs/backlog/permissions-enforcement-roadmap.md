@@ -33,7 +33,7 @@
 | P1.4b | per-action FNPT 声明补齐——mfg approve subcontract + assets 处置 | done | 同上 | P1.3 | `nop-backend-dev` |
 | P1.4c | per-action FNPT 声明补齐——b2b EDI 全生命周期 | done | 同上 + `edi-formats.md` | P1.3 | `nop-backend-dev` |
 | P1.4d | per-action FNPT 声明补齐——扩展域敏感子集（contract 电子签 / hr 薪酬审核 等） | done | 同上 + `roles-and-permissions.md` §第二批扩展域 A | P1.3 | `nop-backend-dev` |
-| P1.5a | 静态 role-resource 种子补全（核心 15 角色 + HR/Contract/B2B 敏感角色 × 已声明权限点，按域集群核验权限点 ID） | todo | `roles-and-permissions.md` §action-level 声明层 | P1.4a-d + P1.6 | `nop-backend-dev` |
+| P1.5a | 静态 role-resource 种子补全（核心 15 角色 + HR/Contract/B2B 敏感角色 × 已声明权限点，按域集群核验权限点 ID） | done | `roles-and-permissions.md` §action-level 声明层 | P1.4a-d + P1.6 | `nop-backend-dev` |
 | P1.5b | auth 表 CSV 种子（角色记录 + 用户角色绑定 + 测试账号，含 **nop→平台 admin 角色**绑定；密码/salt 方案先行验证） | todo | `_vfs/_init-data/` 种子范式 | P1.5a | `nop-testing` |
 | P1.6 | xwf 4 实体（Payment/Receipt/Disposal/Salary）enforcement 语义裁决（权限点绑定 + DIRECT 三轴浏览器层策略） | done | `roles-and-permissions.md` §xwf 已知限制 | — | none |
 

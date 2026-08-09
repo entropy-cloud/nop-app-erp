@@ -144,6 +144,10 @@
 
 > **说明**：上表为收敛粒度的角色→SUBM/FNPT 蓝图（粒度已由「映射粒度裁决」正式确认）。实际权限配置在 `app.action-auth.xml` 按角色关联 SUBM 资源 + `_erp-*.action-auth.xml` 的 FNPT 权限点。当前运行基线 `nop.auth.enable-action-auth=false`（见"运行基线"节），启用操作级拦截后方生效。
 
+> **SUBM 菜单组层 roles 种子已落地（plan 2026-08-09-1600-1 / P1.5a，2026-08-09）**：14 角色域（9 核心 + master-data + hr/ct/b2b + notify）的 delta `erp-*.action-auth.xml` TOPM/SUBM 菜单组资源已全部挂载 `roles=` 静态种子（等价 `nop_auth_role_resource` 静态映射，enforcement OFF 时不生效，翻转后并入 `resourceToRoles` 校验）。落位策略：域级 TOPM 挂该域主角色；菜单组 SUBM 继承域级角色或按蓝图细分（mfg 三角色按 SUBM 组细分、qa 两角色按检验/管理细分、mnt 两角色按排程/执行细分）；per-entity SUBM 不单独挂 `roles=`（菜单组层覆盖可见性，per-entity action 级归 E1.x）。聚合层 `app.action-auth.xml` 的 `erp-sys`/`erp-l10n-cn` TOPM 挂 `roles="admin"`（平台 admin 可见）；`erp-notify.action-auth.xml` 的 `notify-inbox` TOPM/SUBM 挂 `roles="user"`（所有登录用户可见，`containsRole` 始终放行）。B 类 5 域（CRM/CS/APS/Logistics/DRP）admin-only 不加种子（P1.3 裁决）。菜单过滤机制：deny-by-default（`SiteMapProviderImpl.containsRole`），`authCascadeUp` 默认 true 仅 child→parent 上级联（父 `roles=` 不向下覆盖子 FNPT 授权），per-entity SUBM 可见性经 FNPT cascade-up + E1.x action 级收敛。
+>
+> **roleId 词表冻结（plan 2026-08-09-1600-1 Phase 1 D2）**：21 业务角色（采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员/审核人/管理员 + HR 专员/薪酬审批人/合同专员/合同审批人/B2B 对账员/B2B 管理员）+ 3 平台角色（`admin`/`nop-admin`/`user`）为本 app `roles=` 值 / `nop_auth_role.roleId` / 平台 `containsRole` 判定的唯一字面基准。「业务角色名即 roleId」策略（与 P1.4a-d 既有 FNPT 种子字面一致），P1.5b 创建 `nop_auth_role` 记录时须逐字复用。
+
 ### 第二批扩展域角色基线（CRM/CS/HR/APS/Logistics/B2B/Contract/DRP）
 
 > 第二批扩展域的角色基线按「是否承载敏感操作」分两类处理：敏感子集（HR 工资审批 / 合同审批电子签 / B2B EDI 对账）已定义角色；非敏感子集显式声明 deferred 范围边界（触发条件明确，非沉默「尚未定义」）。
@@ -200,6 +204,8 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 > 来源：plan `2026-07-31-0310-2-r2-7-api-contract-consistency.md` Phase 4。A3.6 审计 P1-MA3-046 发现全域敏感动作零运行时权限保护 + FNPT 粒度粗（每实体仅 `{Entity}:query`/`{Entity}:mutation`，敏感动作坍缩进 `mutation` 桶）。本节建立 **per-action FNPT 声明层**，保持 enforcement OFF。
 
 **已落地（声明层，enforcement 仍 OFF）**：在高危域的 delta `erp-*.action-auth.xml`（`x:extends` 生成基，非生成文件）为最高危敏感动作声明**独立 per-action FNPT 权限点**（不坍缩进泛化 `mutation`），并用 `<resource ... roles="...">` 属性承载**静态 role-resource 种子**（Nop 原生静态映射，运行时并入 `permissionToRoles`，等价 `nop_auth_role_resource` 静态种子）：
+
+> **菜单可见性层（TOPM/SUBM roles）与敏感动作层（per-action FNPT roles）双层已就绪（P1.5a，2026-08-09）**：收敛粒度的两个层面均已落地静态 `roles=` 种子——(1) 菜单组可见性层：14 角色域 TOPM/SUBM `roles=` 种子（P1.5a）+ sys/l10n-cn `admin` + notify `user`；(2) 敏感动作层：9 域 per-action FNPT `roles=` 种子（P1.4a-d）。enforcement 翻转（P2.4）后，菜单按角色过滤（deny-by-default）+ 敏感动作按角色拦截同时生效。per-entity query/mutation 的 action 级授权归 E1.x（P2.4 dry-run 影响面清单登记）。
 
 | 域 | 实体 | 独立 FNPT 点 | roles 种子（角色） |
 |----|------|-------------|------------------|
