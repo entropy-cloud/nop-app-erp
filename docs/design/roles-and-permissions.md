@@ -38,6 +38,12 @@
 | 审核人 | 各业务域单据审核 | 按单据类型配置审批流（nop-wf），与单据创建人职责分离 |
 | 管理员 | 高危操作与系统管理 | = 平台 superuser（`nop.auth.skip-check-for-admin=true` 默认启用，跳过权限检查拥有全系统访问）。反审核已审核单据、作废已审核单据、反结账会计期间、负库存配置、强制部分齐套开工、资产报废/出售审批 |
 
+> **「管理员」双命名空间语义分离注记（plan 2026-08-09-1314-2 / P1.3，2026-08-09）**：上表「管理员=平台 superuser」措辞中的"管理员"指**平台内置角色**（字面 `admin`/`nop-admin`）——这是 `skip-check-for-admin` 唯一识别、用作全放行兜底的命名空间。它与 action-auth `<resource roles="管理员">` 静态种子里的**业务角色「管理员」**是**两套各自绑定、不可互换**的命名空间：
+> - **平台 admin 命名空间**（`admin`/`nop-admin`）：经 `skip-check-for-admin` 全放行（兜底）。
+> - **业务角色「管理员」命名空间**：经 `<resource roles="管理员">` 静态种子显式授权特定 FNPT 点（如 finance `ErpFinAccountingPeriod:reverseClose`、`ErpFinBadDebt:reverseApprove` 的 roles 种子）。
+>
+> 二者**不可互换充当兜底**：业务角色「管理员」不会被 `skip-check-for-admin` 识别（不触发全放行）；平台 `admin` 也不依赖 roles 种子（它走兜底）。P1.5b 测试种子须显式绑定平台 admin 角色（消解 roadmap 横切关注点 2 的语义张力）；P1.5b/P2.2a 届时仅验证种子绑定一致。**归属说明**：roadmap 横切关注点 2 原将该注记归于 P1.5b/P2.2a 落地，因 P1.3 裁决兜底策略（plan Phase 1 D2）即产生该注记的动机，提前在此落地更自洽。
+
 ## 权限规则
 
 ### 职责分离（程序级强制）
@@ -105,7 +111,14 @@
 
 ## 角色→权限点映射
 
-映射层级：粗粒度（15 角色 × 域/菜单组 SUBM 层 + 关键 FNPT 前缀引用）。细粒度 15 × 674 FNPT 全矩阵过大易与生成文件漂移，逐权限点映射归 successor（触发条件：RBAC 精细化或合规审计需求）。
+映射粒度（已裁决，见下方「映射粒度裁决」）= **角色 × SUBM Menu（菜单组层）+ 敏感动作 per-action FNPT + 兜底策略**。下表为该收敛粒度的角色→SUBM/FNPT 蓝图（落地路径 = P1.4a-d 逐域补齐敏感动作 per-action 声明 + P1.5a 静态 role-resource 种子补全）。细粒度 15 × 674 FNPT 全矩阵为 Non-Goal（触发条件 = RBAC 精细化到单据字段级）。
+
+> **映射粒度裁决（plan 2026-08-09-1314-2 / P1.3，2026-08-09）**：正式确认权限映射的**收敛粒度** = **角色 × SUBM Menu（菜单组层）+ 敏感动作 per-action FNPT + 兜底策略**。考虑的替代方案与裁定：
+> - **(a) 全 15×674 FNPT 逐点矩阵** —— **拒绝**：规模过大、易与 `_erp-*.action-auth.xml` 生成文件漂移，且与本 roadmap 的 Non-Goal「细粒度 15×674 逐点全矩阵」冲突（触发条件 = RBAC 精细化到单据字段级）。
+> - **(b) 仅 SUBM 粗粒度** —— **拒绝**：敏感动作坍缩进泛化 `mutation` 桶（每实体仅 `:query`/`:mutation` 两点），无法表达 `reverseClose`/`writeOff`/`handleInboundWebhook` 等最高危动作为独立控制点，丧失管控意义。
+> - **(c) 收敛粒度（SUBM + 敏感动作 per-action FNPT + 兜底）** —— **采纳**。落地路径 = P1.4a-d 逐域补齐敏感动作 per-action 声明 + P1.5a 静态 role-resource 种子补全。
+>
+> **残留风险**：per-action 敏感动作子集的具体边界依赖 P1.1 五面清单输入与 P1.4a-d 逐域落地核对，本裁决**不冻结**具体动作清单（清单随 P1.4a-d 收敛）。
 
 角色名与 `domain-design-guidelines.md §6.1` 职责分离矩阵一致。
 
@@ -129,7 +142,7 @@
 | 审核人 | 各域审核相关 SUBM（取决于审批流配置） | 按审批流分配 `*:{approve,reject}` 权限 |
 | 管理员 | **全部域 TOPM + SUBM** + `sys-*`（系统管理全部含工作流/报表/监控）+ `erp-l10n-cn` | 所有 FNPT 前缀全权限（`*:*`）；`nop.auth.skip-check-for-admin=true` 默认启用 |
 
-> **说明**：上表为粗粒度映射蓝图。实际权限配置在 `app.action-auth.xml` 按角色关联 SUBM 资源 + `_erp-*.action-auth.xml` 的 FNPT 权限点。当前运行基线 `nop.auth.enable-action-auth=false`（见"运行基线"节），启用操作级拦截后方生效。
+> **说明**：上表为收敛粒度的角色→SUBM/FNPT 蓝图（粒度已由「映射粒度裁决」正式确认）。实际权限配置在 `app.action-auth.xml` 按角色关联 SUBM 资源 + `_erp-*.action-auth.xml` 的 FNPT 权限点。当前运行基线 `nop.auth.enable-action-auth=false`（见"运行基线"节），启用操作级拦截后方生效。
 
 ### 第二批扩展域角色基线（CRM/CS/HR/APS/Logistics/B2B/Contract/DRP）
 
@@ -148,12 +161,19 @@
 
 > 敏感操作（薪酬审批 / 合同审批 / EDI 对账）的权限点在灰度启用 `enable-action-auth=true` 后按角色绑定 FNPT 资源。运行时权限注解落地归 R2.7（P1-MA3-046 代码侧）+ MA6，本表为角色基线语义锚点。
 
-**B. 非敏感操作的域（角色映射 deferred）**：
+**B. 非敏感操作的域（测试环境 enforcement 行为已裁决：admin-only）**：
 
-CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处理 / 排产 / 发运 / 补货）暂未定义独立 ERP 角色映射。
+CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处理 / 排产 / 发运 / 补货）**测试环境裁决为 admin-only 可见**（非 admin 账号受限/不可见），不新建业务角色。
 
-- **Deferred 触发条件**：该域深化部署，或多公司 / 多团队数据隔离需求出现时。
-- **当前基线范围边界**：这些域的 SUBM / FNPT 资源已由 codegen 产出（`_erp-*.action-auth.xml`），灰度启用操作级拦截时可按需为上述域的新建角色（如客服人员 / 排产计划员 / 物流调度员 / 补货计划员 / CRM 销售员）分配对应 SUBM 资源。
+> **Enforcement 行为裁决（plan 2026-08-09-1314-2 / P1.3，2026-08-09）**：在「为每域新建业务角色 + 补 SUBM 种子」与「测试环境沿用 admin-only（非 admin 受限/不可见）」之间二选一，裁定**采纳 admin-only**。理由：
+> - 这 5 域不承载敏感操作（无 per-action FNPT 声明、无高危状态迁移），admin-only 不会放行任何应受控的高危动作——admin 经 `skip-check-for-admin` 本就全见。
+> - 这 5 域的独立 ERP 角色（客服人员 / 排产计划员 / 物流调度员 / 补货计划员 / CRM 销售员）权限边界尚未设计，此时为测试环境臆造角色种子属投机性工作，违背 owner doc「稳定设计」原则。
+> - admin-only 使 E1.2 全量翻转的覆盖边界明确可陈述（见下），不阻塞 14 个核心/敏感域的全量 enforcement 验证。
+>
+> **对 E1.2 全量翻转的影响（覆盖边界）**：E1.2 翻转后，这 5 域的 SUBM 资源存在（codegen 产出）但未 seed 给任何业务角色 → 非 admin 账号的菜单过滤会隐藏这 5 个域；admin 账号（回归基线）仍全量跑通这 5 域的 E2E。**P2.4 dry-run 影响面清单须登记此覆盖边界**：14 域全量角色化验证 + 5 域（CRM/CS/APS/Logistics/DRP）admin-only。残留风险：若后续某 B 类域出现敏感操作（如 EDI/合同电子签类），须升格为 A 类并补角色（successor）。
+
+- **Successor 触发条件**：该域深化部署、出现敏感操作、或多公司 / 多团队数据隔离需求时——届时新建业务角色并补 SUBM 种子（P1.5a 种子范围随之扩大）。
+- **当前基线范围边界**：这些域的 SUBM / FNPT 资源已由 codegen 产出（`_erp-*.action-auth.xml`），翻转后即可按需为新建角色分配对应 SUBM 资源。
 - **数据权限独立于操作级开关**：行级 orgId / 角色侧过滤独立于 `enable-action-auth` 开关（见"数据权限"节），经独立灰度门控（默认 OFF，翻转 successor），保证多公司 / 多团队数据隔离不依赖角色映射落地。
 
 ## 运行基线（当前拦截状态）
@@ -197,6 +217,28 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 **高危动作升级路径（successor）**：`reverseClose`（反结账）/ `writeOff`（坏账核销）/ `handleInboundWebhook`（B2B 入站）为最高危——其 FNPT 点已声明并 seed 给管理员/B2B 管理员，但**真正 enforcement 翻转**为 config-gated successor（见下方"Deferred"），须人工批准 + 灰度 + 负向隔离测试后分域启用。
 
 **灰度推进路线（staged rollout，successor）**：finance/b2b/mfg/inventory/hr 为首批落地（含全部 A3.6 点名的最高危动作：reverseClose/writeOff/handleInboundWebhook + 各域敏感状态迁移）；其余（pur/sal 审批集 / mfg approve subcontract / assets 处置 / 全 EDI 生命周期 等）的 per-action FNPT 声明随 enforcement 灰度分批补齐（触发条件 = 该域 `enable-action-auth=true` 灰度批准前）。新增高危实体应按本模式直接声明独立 FNPT 点（API 命名约定见 `domain-design-guidelines.md §16A`）。
+
+#### 兜底策略裁决（plan 2026-08-09-1314-2 / P1.3，2026-08-09）
+
+enforcement 开启后，授权判定由**两套互不互换的命名空间**共同覆盖：
+
+- **平台兜底命名空间**：平台内置角色（字面 `admin`/`nop-admin`）经 `nop.auth.skip-check-for-admin=true` **全放行**（跳过 action-auth/resource 校验）。这是唯一的全局兜底机制。
+- **业务授权命名空间**：业务角色（财务员/生产主管/薪酬审批人/管理员/…）经 `<resource ... roles="...">` 静态 role-resource 种子**显式授权**对应 FNPT 点（Nop 原生静态映射，运行时并入 `permissionToRoles`）。
+
+> **裁决**：采纳**双命名空间分离**——`skip-check-for-admin` 只认平台内置角色名，业务角色名不可充当兜底；反之，业务角色「管理员」的显式种子也不等于平台 admin 兜底。考虑的替代方案：
+> - **(a) 业务角色「管理员」兼任兜底** —— **拒绝**：`skip-check-for-admin` 不识别业务角色名，会导致兜底失效（B2 风险——见 roadmap 横切关注点 2）。
+> - **(b) 双命名空间分离** —— **采纳**。
+>
+> **残留风险**：§角色体系「管理员=平台 superuser」的既有表述与本分离主张存在语义张力（业务角色「管理员」≠ 平台 `admin`），由 §角色体系「管理员」行的双命名空间语义分离注记消解（见下文）。
+>
+> **既有种子证据（Proof，doc-only 计划证据引用，非测试命令）**——收敛粒度（SUBM + 敏感动作 per-action FNPT + 静态 roles 种子）已部分落地并验证可行，5 域 delta `erp-*.action-auth.xml` 实测行号：
+> - **finance** `erp-fin.action-auth.xml`：`ErpFinVoucher:post`/`:reverse`→财务员（L23-30）、`ErpFinAccountingPeriod:closePeriod`→财务员 / `:reverseClose`→管理员（L52-59）、`ErpFinBadDebt:writeOff`→财务员 / `:reverseApprove`→管理员（L86-93）。
+> - **b2b** `erp-b2b.action-auth.xml`：`ErpB2bEdiDoc:markSent`→B2B 对账员 / `:cancel`→B2B 管理员（L22-27）、`ErpB2bAsn:handleInboundWebhook`→B2B 管理员（L46-47）。
+> - **manufacturing** `erp-mfg.action-auth.xml`：`ErpMfgWorkOrder:start`/`:close`/`:cancel`→生产主管（L50-59）。
+> - **inventory** `erp-inv.action-auth.xml`：`ErpInvStockMove:confirm`→库管员（L24-25）、`ErpInvLandedCost:approve`→库管员（L115-116）。
+> - **human-resource** `erp-hr.action-auth.xml`：`ErpHrLeaveRequest:approve`→HR 专员（L78-79）、`ErpHrSalary:approve`/`:markPaid`→薪酬审批人（L102-107）。
+>
+> 证据佐证三点：(1) 敏感动作可作为独立 FNPT 点脱离泛化 `mutation` 桶；(2) `<resource roles="...">` 静态种子可承载业务角色授权；(3) 注 finance 的 `reverseClose`/`reverseApprove` 种子用的是**业务角色「管理员」**（非平台 `admin`），正凸显双命名空间分离的必要性。
 
 ### 浏览器层审批路径已知限制（xwf 4 实体）
 

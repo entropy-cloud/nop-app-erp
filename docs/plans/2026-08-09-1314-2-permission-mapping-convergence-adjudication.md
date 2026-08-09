@@ -1,6 +1,6 @@
 # 2026-08-09-1314-2 permission-mapping-convergence-adjudication
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-09
 > Source: `docs/backlog/permissions-enforcement-roadmap.md` P1.3
 > Related: mission `permissions-enforcement`；P1.1（弱前置：敏感动作子集输入）
@@ -54,59 +54,61 @@
 
 ### Phase 1 - 收敛粒度裁决
 
-Status: planned
+Status: completed
 Targets: `docs/design/roles-and-permissions.md` §角色→权限点映射、§action-level 声明层
 Skill: none
 
 - Item Types: `Decision` / `Proof`
 - Prereqs: P1.1（弱依赖：敏感动作子集由 P1.1 五面清单提供输入——但 P1.3 可先裁决粒度策略框架，敏感动作清单核对随 P1.4a-d 落地）
 
-- [ ] **Decision**：裁决映射粒度 = 角色×SUBM + 敏感动作 per-action FNPT + 兜底策略。考虑的替代方案：(a) 全 15×674 逐点矩阵（拒绝：过大、易与生成文件漂移、Non-Goal）；(b) 仅 SUBM 粗粒度（拒绝：敏感动作坍缩进泛化 mutation 桶，无法表达 reverseClose/writeOff 等高危动作）；(c) 收敛粒度（采纳）。残留风险：per-action 子集边界依赖 P1.1 清单与后续 P1.4a-d 逐域补齐，本裁决不冻结具体动作清单。
+- [x] **Decision**：裁决映射粒度 = 角色×SUBM + 敏感动作 per-action FNPT + 兜底策略。考虑的替代方案：(a) 全 15×674 逐点矩阵（拒绝：过大、易与生成文件漂移、Non-Goal）；(b) 仅 SUBM 粗粒度（拒绝：敏感动作坍缩进泛化 mutation 桶，无法表达 reverseClose/writeOff 等高危动作）；(c) 收敛粒度（采纳）。残留风险：per-action 子集边界依赖 P1.1 清单与后续 P1.4a-d 逐域补齐，本裁决不冻结具体动作清单。
   - Skill: none
-- [ ] **Decision**：裁决兜底策略 = 平台 admin 角色（字面 `admin`/`nop-admin`）经 `skip-check-for-admin` 全放行 + 业务角色经 `<resource roles="...">` 静态种子显式授权；两套命名空间不可互换。考虑的替代方案：(a) 业务角色「管理员」兼任兜底（拒绝：`skip-check-for-admin` 不认业务角色名，会致兜底失效，B2 风险）；(b) 双命名空间分离（采纳）。残留风险：owner doc「管理员=平台 superuser」表述与分离主张的语义张力须由本注记消解。
+- [x] **Decision**：裁决兜底策略 = 平台 admin 角色（字面 `admin`/`nop-admin`）经 `skip-check-for-admin` 全放行 + 业务角色经 `<resource roles="...">` 静态种子显式授权；两套命名空间不可互换。考虑的替代方案：(a) 业务角色「管理员」兼任兜底（拒绝：`skip-check-for-admin` 不认业务角色名，会致兜底失效，B2 风险）；(b) 双命名空间分离（采纳）。残留风险：owner doc「管理员=平台 superuser」表述与分离主张的语义张力须由本注记消解。
   - Skill: none
-- [ ] **Proof**：引用 5 域既有 per-action FNPT roles 种子（finance/b2b/mfg/inventory/hr action-auth.xml 行号）作为"收敛粒度已部分验证可行"的证据。（doc-only 计划：本 Proof 为既有种子证据引用，非测试命令，符合 doc-only closure-gate 规则。）
+- [x] **Proof**：引用 5 域既有 per-action FNPT roles 种子（finance/b2b/mfg/inventory/hr action-auth.xml 行号）作为"收敛粒度已部分验证可行"的证据。（doc-only 计划：本 Proof 为既有种子证据引用，非测试命令，符合 doc-only closure-gate 规则。）
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 收敛粒度与兜底策略两项 Decision 落地，含替代方案与残留风险记录，可被 P1.4a-d / P1.5a 直接消费。
+- [x] 收敛粒度与兜底策略两项 Decision 落地，含替代方案与残留风险记录，可被 P1.4a-d / P1.5a 直接消费。
 
 ### Phase 2 - B 类扩展域 enforcement 行为裁决
 
-Status: planned
+Status: completed
 Targets: `docs/design/roles-and-permissions.md` §第二批扩展域 B
 Skill: none
 
 - Item Types: `Decision` / `Add`
 - Prereqs: Phase 1
 
-- [ ] **Decision**：裁决 CRM/CS/APS/Logistics/DRP 测试环境 enforcement 行为——在「新建业务角色 + 补 SUBM 种子」与「测试环境沿用 admin-only（非 admin 受限/不可见）」之间二选一。考虑的替代方案与残留风险记录（如选 admin-only：E1.2 全量翻转时这 5 域对非 admin 不可见，需在 P2.4 dry-run 影响面清单登记；如选新建角色：P1.5a 种子范围扩大）。
+- [x] **Decision**：裁决 CRM/CS/APS/Logistics/DRP 测试环境 enforcement 行为——在「新建业务角色 + 补 SUBM 种子」与「测试环境沿用 admin-only（非 admin 受限/不可见）」之间二选一。考虑的替代方案与残留风险记录（如选 admin-only：E1.2 全量翻转时这 5 域对非 admin 不可见，需在 P2.4 dry-run 影响面清单登记；如选新建角色：P1.5a 种子范围扩大）。
   - Skill: none
-- [ ] **Add**：将 B 类裁决写入 `roles-and-permissions.md` §第二批扩展域 B（更新 deferred 边界为明确行为裁决，替换原"暂未定义独立 ERP 角色映射"的模糊表述）。
+- [x] **Add**：将 B 类裁决写入 `roles-and-permissions.md` §第二批扩展域 B（更新 deferred 边界为明确行为裁决，替换原"暂未定义独立 ERP 角色映射"的模糊表述）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] B 类域 enforcement 行为经裁决并落盘，E1.2 全量翻转的覆盖边界明确（5 域对非 admin 的可见性已定义）。
+- [x] B 类域 enforcement 行为经裁决并落盘，E1.2 全量翻转的覆盖边界明确（5 域对非 admin 的可见性已定义）。
+
+  > 裁决结论：**admin-only**（非新建角色）。理由：5 域无敏感操作，臆造角色属投机；admin-only 使 E1.2 覆盖边界可陈述（14 域全量角色化 + 5 域 admin-only），需在 P2.4 dry-run 影响面清单登记此边界。Successor = 该域深化部署/出现敏感操作时新建角色（P1.5a 范围扩大）。
 
 ### Phase 3 - owner doc 回写与语义分离注记
 
-Status: planned
+Status: completed
 Targets: `docs/design/roles-and-permissions.md` §角色体系、§角色→权限点映射
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1 + Phase 2
 
-- [ ] **Add**：§角色→权限点映射补收敛粒度裁决结论（替换/明确现有"粗粒度蓝图"表述，指向 P1.4a-d 为落地路径）。
+- [x] **Add**：§角色→权限点映射补收敛粒度裁决结论（替换/明确现有"粗粒度蓝图"表述，指向 P1.4a-d 为落地路径）。
   - Skill: none
-- [ ] **Add**：§角色体系「管理员」行补**双命名空间语义分离注记**：平台内置角色 `admin`/`nop-admin`（`skip-check-for-admin` 认）≠ 业务角色「管理员」（action-auth roles 种子用），两套命名空间各自绑定不可互换（消解横切关注点 2 的语义张力）。**归属说明**：roadmap 横切 2 原将该注记归于 P1.5b/P2.2a 落地，因本计划裁决兜底策略（Phase 1 D2）即产生该注记的动机，提前在此落地更自洽；P1.5b/P2.2a 届时仅验证种子绑定一致。
+- [x] **Add**：§角色体系「管理员」行补**双命名空间语义分离注记**：平台内置角色 `admin`/`nop-admin`（`skip-check-for-admin` 认）≠ 业务角色「管理员」（action-auth roles 种子用），两套命名空间各自绑定不可互换（消解横切关注点 2 的语义张力）。**归属说明**：roadmap 横切 2 原将该注记归于 P1.5b/P2.2a 落地，因本计划裁决兜底策略（Phase 1 D2）即产生该注记的动机，提前在此落地更自洽；P1.5b/P2.2a 届时仅验证种子绑定一致。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] owner doc 三处（映射粒度、B 类行为、管理员语义分离）回写完成，与 roadmap 措辞一致、无矛盾。
+- [x] owner doc 三处（映射粒度、B 类行为、管理员语义分离）回写完成，与 roadmap 措辞一致、无矛盾。
 
 ## Draft Review Record
 
@@ -118,14 +120,14 @@ Exit Criteria:
 
 > 本计划为纯裁决/文档工作（无生产代码、无 action-auth.xml/ORM/种子改动——仅读现有 delta 文件作证据）。移除 build/test 验证命令门控，理由：无代码变更；验证对象为裁决内部一致性、与生成文件真相源不漂移、owner doc 措辞自洽。
 
-- [ ] 范围内行为完成（收敛粒度 + 兜底策略 + B 类行为 + 三处 owner doc 回写）
-- [ ] 相关文档对齐（`roles-and-permissions.md` 三节）
-- [ ] 无代码变更 → 跳过 build/test 门控（已说明理由）；裁决与既有 5 域种子/生成文件 `_erp-*.action-auth.xml` 一致性已核验
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（收敛粒度 + 兜底策略 + B 类行为 + 三处 owner doc 回写）
+- [x] 相关文档对齐（`roles-and-permissions.md` 三节）
+- [x] 无代码变更 → 跳过 build/test 门控（已说明理由）；裁决与既有 5 域种子/生成文件 `_erp-*.action-auth.xml` 一致性已核验
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -143,12 +145,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待完成后填写>
+Status Note: 三 Phase 全部执行完成。Phase 1 落地收敛粒度裁决（D1）+ 兜底策略裁决（D2）+ 5 域种子证据 Proof 于 §角色→权限点映射 / §action-level 声明层；Phase 2 裁决 B 类扩展域（CRM/CS/APS/Logistics/DRP）测试环境 enforcement 行为 = admin-only 并落盘 §第二批扩展域 B；Phase 3 落地 §角色体系「管理员」双命名空间语义分离注记 + §角色→权限点映射 "粗粒度蓝图" 措辞收敛为裁决结论。doc-only 计划，无代码/种子/ORM 变更，跳过 build/test 门控。独立结束审计 VERDICT: PASS（ses_01af540d2ffezvd43UoRtnolfV）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立审计者>
-- Evidence: <task id / 链接>
+- Auditor / Agent: 独立子代理（fresh session），ses_01af540d2ffezvd43UoRtnolfV
+- Evidence: 审计验证 — 三 Phase 全部交付物落位 owner doc；5 域 action-auth.xml 证据行号/角色映射全部正确（±1 行容差）；与 roadmap 横切 2 / Non-Goals 一致无矛盾；`git diff --stat` 仅 2 个 doc 文件变更，scope 清洁（无 action-auth.xml/ORM/seed/code 改动）。VERDICT: PASS。
 
 Follow-up:
 
