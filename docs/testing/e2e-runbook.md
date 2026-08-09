@@ -437,7 +437,55 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 - **posted 字段语义**：`posted` 反映跨域财务过账（`InvPostingDispatcher`：成功置 true、失败优雅降级 false 不阻塞 DONE 终态）。spec 断言 `typeof posted === 'boolean'` + 同事务不可变流水 `ErpInvStockLedger` 非空（可靠过账产物）；凭证借贷平衡精确数值归 finance 数值断言层 successor。
 - **产物清理（强制）**：业务动作创建不可逆下游产物（库存流水/余额、工单审计/调查、线索转化日志）。全栈共享同一 Quarkus+H2 实例（`reuseExistingServer: true`），不清理会污染下游数值断言（dashboard KPI 聚合 stock_balance/ledger、report 聚合 ticket/survey）。每个 spec 在断言完成后经 `deleteByFilter`/`deleteById` 清理自身产物（镜像 write.spec.ts create→delete 范式，但扩展到不可逆下游产物逐域删除）。
 
-## 跨域编排链浏览器层 E2E（`orchestration/`，P2P + O2C）
+## 负向隔离测试原语（`negative/_helper.ts`，plan 2026-08-09-2210-2 / P2.3）
+
+在业务动作层（正向「动作可达」）之上，P2.3 叠加了**负向隔离测试原语层**——断言「未授权动作被拒绝」+「越权数据被过滤」，供 E1.x（action 级负向）/ E2.x（data 级负向）消费。原语 + 脚手架 + 1 冒烟 demo 已交付；**验收实测随 E 段**（骨架不依赖负向账号，roadmap 明示）。
+
+### 原语清单（`tests/e2e/negative/_helper.ts`）
+
+| 原语 | 用途 | 形状 |
+| --- | --- | --- |
+| `expectActionDenied(result, opts?)` | 断言「未授权动作被拒绝」（**rejection-source-agnostic**：业务逻辑拒绝 + enforcement 拒绝同适用） | `result` = `callMutation`/`callQuery` 返回的 `{data,errors,json}`；断言 `errors` 真值 + 非空 + 可选 `opts.token`（`JSON.stringify(errors)` 子串）+ 可选 `opts.errorCode`（`json.extensions["nop-error-code"]` 精确匹配）；返回 errors 供链式断言 |
+| `expectRowsHidden(page, entity, filter, selection)` | 断言「越权数据被过滤」（data-auth 行级规则排除后特定行不可见） | 封装 `findItems`，断言匹配 `filter` 的行集为空（absent 是 data-auth 静默过滤的唯一可观测信号） |
+| `expectRowsVisible(page, entity, filter, selection, expectedCount?)` | 断言「可见行集收敛」（data-auth 过滤后剩余可见行符合预期） | 封装 `findPageTotal`/`findItems`；`expectedCount` 精确收敛或省略时 ≥1 |
+| `loginAsRole(page, roleOrUser)` | 角色登录 indirection（**占位**，P2.2b 填充真实角色登录） | 接受角色 roleId/用户名，当前回退 `login(page)`（nop 平台 admin，`%test` profile skip-check 兜底）；P2.2b 账号就绪后按 `roleOrUser` 选择受限账号登录，使负向 spec 可插拔负向主体 |
+
+辅助导出：`ENFORCEMENT_ERROR_CODES` 常量对象（`NO_PERMISSION`=`nop.err.auth.no-permission` / `NO_PERMISSION_FOR_FIELD` / `NO_DATA_AUTH`，P2.4 运行时确认后供负向 spec 收敛）+ re-export `callMutation`/`callQuery`/`findItems`/`findPageTotal`（消费者单一 import 入口）。`test`/`expect` 同 fixtures。
+
+### enforcement 拒绝形状表征（Phase 1 静态表征，运行时确认 gated on P2.4）
+
+经平台源 + `docs-for-ai/02-core-guides/auth-and-permissions.md` 表征（action-auth OFF 下不可观测，运行时确认随 P2.4 翻启）：
+
+- **动作级 enforcement 拒绝**：`GraphQLActionAuthChecker.checkAuth`（顶层 action 于 `GraphQLActionAuthChecker.java:102`）抛 `NopException(AuthApiErrors.ERR_AUTH_NO_PERMISSION)` = `nop.err.auth.no-permission`，默认 message「没有访问权限」（i18n）。
+- **GraphQL 序列化形状**：HTTP status **恒 200**（`GraphQLWebService.runGraphQL` 硬编码 200，**非 403**——401 仅认证失败 `nop.err.auth.not-authorized`，与授权拒绝不同源）。body：
+  ```json
+  { "errors":[{"message":"没有访问权限"}], "data":null,
+    "extensions":{"nop-error-code":"nop.err.auth.no-permission","nop-status":-1} }
+  ```
+  errorCode 在**顶层** `extensions["nop-error-code"]`（不在每条 error entry 内）；`errors[0].message` = i18n 描述；`error.params` 不序列化进 JSON（仅用于 message 渲染）。
+- **rejection-source-agnostic 成立性**：业务逻辑拒绝（如 hr-payroll markPaid UNSUBMITTED 守卫）与 enforcement 拒绝**同经** `GraphQLEngine.buildGraphQLResponse` → 同 `{errors}` 信封 + 同 `extensions["nop-error-code"]` 位置 → `expectActionDenied` 按 `{errors}` 存在 + 可选 token/errorCode 匹配设计对两者同适用。
+- **data-auth 行过滤形状（独立原语根因）**：`DefaultDataAuthChecker.getFilter` 注入 SQL WHERE → `__findPage` **静默** 返回过滤后行集（**无 errors**，total/items 减少）。仅「有规则但用户角色不匹配」分支抛 `nop.err.auth.no-data-auth`（进 errors，可用 `expectActionDenied`）。故「越权数据被过滤」= 断言特定行 absent / 行集收敛（`expectRowsHidden/Visible`），**非** errors 断言。
+
+### demo 范式（`negative/action-denied.smoke.spec.ts`，业务拒绝载体）
+
+action-auth OFF 下 enforcement 拒绝不可观测，demo 复用一个**既有业务逻辑拒绝**作为 `expectActionDenied` 机制 Proof 载体——hr-payroll markPaid UNSUBMITTED 守卫（`ERR_SALARY_ILLEGAL_STATUS_TRANSITION`，message token「不允许执行该操作」）：
+
+```ts
+const rejected = await callMutation(page, 'ErpHrSalary', 'markPaid', { salaryId }, 'id');
+const errors = expectActionDenied(rejected, { token: '不允许执行该操作' });
+expect(errors.length).toBeGreaterThan(0);
+// 状态不变（守卫拒绝未副作用）
+```
+
+setup 为 spec-internal 内联最小链（employee + ACTIVE EmploymentContract + 社保基数 + HOUSING_FUND 配置 + 个税配置 → `calculateSalary` 产 UNSUBMITTED salary）+ 反依赖链 cleanup，自包含不污染共享 DB（镜像既有 hr-payroll spec 范式）。
+
+### Follow-up（gated 运行时 demo）
+
+- **动作级 enforcement 拒绝运行时确认**：随 P2.4（翻 `enable-action-auth` 后用同原语 + `ENFORCEMENT_ERROR_CODES.NO_PERMISSION` 常量断言真权限拒绝）。
+- **data-auth 行过滤原语运行时 demo**：随 E2.1（翻 `enable-data-auth` + `role-row-filter-enabled` 后用 `expectRowsHidden/Visible` 断言真行级过滤 absent）。
+- **负向账号主体**：随 P2.2b（逐域补非 admin 受限账号 + fixture 角色参数化，填充 `loginAsRole` 真实角色登录）。
+
+
 
 在业务动作层之上，1249-1 叠加了 P2P（Procure-to-Pay）+ O2C（Order-to-Cash）核心业财循环的跨域编排链浏览器层端到端验证（解除 0814-2 Deferred「跨域编排链完整 E2E」+「业财过账凭证数值断言」）。经 GraphQL `/graphql` 驱动全链 `__save`（头+行）→ `submitForApproval` → `approve`，每步 `verifyState` 经 `__get` 独立断言 approveStatus 翻转，并断言业财过账产物（库存移动 + GL 凭证 + AR-AP 辅助账）。
 
