@@ -14,6 +14,34 @@ site:
       displayName: Receipt
     ErpSalReturn-main:
       displayName: Sales Return
+    FNPT:ErpSalContract:approve:
+      displayName: Approve Sales Contract
+    FNPT:ErpSalContract:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpSalDelivery:approve:
+      displayName: Approve Sales Delivery
+    FNPT:ErpSalDelivery:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpSalInvoice:approve:
+      displayName: Approve Sales Invoice
+    FNPT:ErpSalInvoice:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpSalOrder:approve:
+      displayName: Approve Sales Order
+    FNPT:ErpSalOrder:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpSalQuotation:approve:
+      displayName: Approve Sales Quotation
+    FNPT:ErpSalQuotation:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpSalReceipt:approve:
+      displayName: Approve Receipt
+    FNPT:ErpSalReceipt:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpSalReturn:approve:
+      displayName: Approve Sales Return
+    FNPT:ErpSalReturn:reverseApprove:
+      displayName: Reverse Approve
     erp-sal:
       displayName: Sales
     pricing-rule:

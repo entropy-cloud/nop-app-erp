@@ -18,7 +18,18 @@
                         <resource id="ErpSalQuotation-main" app:useCases="UC-SAL-01" displayName="销售报价单"
                                   i18n-en:displayName="Sales Quotation" icon="file-sign"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/sal/pages/ErpSalQuotation/main.page.yaml"/>
+                                  url="/erp/sal/pages/ErpSalQuotation/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpSalQuotation:approve" displayName="审核销售报价单" i18n-en:displayName="Approve Sales Quotation"
+                                          resourceType="FNPT" orderNo="10010" roles="审核人">
+                                    <permissions>ErpSalQuotation:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpSalQuotation:reverseApprove" displayName="反审核销售报价单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="10020" roles="管理员">
+                                    <permissions>ErpSalQuotation:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 合同 -->
@@ -28,7 +39,18 @@
                         <resource id="ErpSalContract-main" app:useCases="UC-SAL-01" displayName="销售合同"
                                   i18n-en:displayName="Sales Contract" icon="file-text"
                                   component="FLUX" resourceType="SUBM" orderNo="200"
-                                  url="/erp/sal/pages/ErpSalContract/main.page.yaml"/>
+                                  url="/erp/sal/pages/ErpSalContract/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpSalContract:approve" displayName="审核销售合同" i18n-en:displayName="Approve Sales Contract"
+                                          resourceType="FNPT" orderNo="20010" roles="审核人">
+                                    <permissions>ErpSalContract:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpSalContract:reverseApprove" displayName="反审核销售合同" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="20020" roles="管理员">
+                                    <permissions>ErpSalContract:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 订单 -->
@@ -38,7 +60,18 @@
                         <resource id="ErpSalOrder-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10,UC-MD-01,UC-MD-02,UC-MD-03,UC-MD-04,UC-MD-05" displayName="销售订单"
                                   i18n-en:displayName="Sales Order" icon="shopping-cart"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/sal/pages/ErpSalOrder/main.page.yaml"/>
+                                  url="/erp/sal/pages/ErpSalOrder/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpSalOrder:approve" displayName="审核销售订单" i18n-en:displayName="Approve Sales Order"
+                                          resourceType="FNPT" orderNo="30010" roles="审核人">
+                                    <permissions>ErpSalOrder:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpSalOrder:reverseApprove" displayName="反审核销售订单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="30020" roles="管理员">
+                                    <permissions>ErpSalOrder:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 发货 -->
@@ -48,7 +81,18 @@
                         <resource id="ErpSalDelivery-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10,UC-INV-08" displayName="销售出库单"
                                   i18n-en:displayName="Sales Delivery" icon="package-minus"
                                   component="FLUX" resourceType="SUBM" orderNo="400"
-                                  url="/erp/sal/pages/ErpSalDelivery/main.page.yaml"/>
+                                  url="/erp/sal/pages/ErpSalDelivery/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpSalDelivery:approve" displayName="审核销售出库单" i18n-en:displayName="Approve Sales Delivery"
+                                          resourceType="FNPT" orderNo="40010" roles="审核人">
+                                    <permissions>ErpSalDelivery:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpSalDelivery:reverseApprove" displayName="反审核销售出库单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="40020" roles="管理员">
+                                    <permissions>ErpSalDelivery:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 开票 -->
@@ -58,7 +102,18 @@
                         <resource id="ErpSalInvoice-main" app:useCases="UC-SAL-01,UC-SAL-03,UC-SAL-04,UC-SAL-05" displayName="销售发票"
                                   i18n-en:displayName="Sales Invoice" icon="receipt"
                                   component="FLUX" resourceType="SUBM" orderNo="500"
-                                  url="/erp/sal/pages/ErpSalInvoice/main.page.yaml"/>
+                                  url="/erp/sal/pages/ErpSalInvoice/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpSalInvoice:approve" displayName="审核销售发票" i18n-en:displayName="Approve Sales Invoice"
+                                          resourceType="FNPT" orderNo="50010" roles="审核人">
+                                    <permissions>ErpSalInvoice:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpSalInvoice:reverseApprove" displayName="反审核销售发票" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="50020" roles="管理员">
+                                    <permissions>ErpSalInvoice:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 收款结算 -->
@@ -68,7 +123,18 @@
                         <resource id="ErpSalReceipt-main" app:useCases="UC-SAL-01,UC-SAL-03,UC-SAL-04" displayName="收款单"
                                   i18n-en:displayName="Receipt" icon="banknote"
                                   component="FLUX" resourceType="SUBM" orderNo="600"
-                                  url="/erp/sal/pages/ErpSalReceipt/main.page.yaml"/>
+                                  url="/erp/sal/pages/ErpSalReceipt/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpSalReceipt:approve" displayName="审核收款单" i18n-en:displayName="Approve Receipt"
+                                          resourceType="FNPT" orderNo="60010" roles="审核人">
+                                    <permissions>ErpSalReceipt:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpSalReceipt:reverseApprove" displayName="反审核收款单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="60020" roles="管理员">
+                                    <permissions>ErpSalReceipt:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 退货 -->
@@ -78,7 +144,18 @@
                         <resource id="ErpSalReturn-main" app:useCases="UC-SAL-04,UC-SAL-05,UC-SAL-06,UC-SAL-07,UC-SAL-09,UC-INV-05" displayName="销售退货单"
                                   i18n-en:displayName="Sales Return" icon="undo-2"
                                   component="FLUX" resourceType="SUBM" orderNo="700"
-                                  url="/erp/sal/pages/ErpSalReturn/main.page.yaml"/>
+                                  url="/erp/sal/pages/ErpSalReturn/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpSalReturn:approve" displayName="审核销售退货单" i18n-en:displayName="Approve Sales Return"
+                                          resourceType="FNPT" orderNo="70010" roles="审核人">
+                                    <permissions>ErpSalReturn:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpSalReturn:reverseApprove" displayName="反审核销售退货单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="70020" roles="管理员">
+                                    <permissions>ErpSalReturn:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 价格管理 -->
