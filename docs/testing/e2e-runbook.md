@@ -448,7 +448,7 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 | `expectActionDenied(result, opts?)` | 断言「未授权动作被拒绝」（**rejection-source-agnostic**：业务逻辑拒绝 + enforcement 拒绝同适用） | `result` = `callMutation`/`callQuery` 返回的 `{data,errors,json}`；断言 `errors` 真值 + 非空 + 可选 `opts.token`（`JSON.stringify(errors)` 子串）+ 可选 `opts.errorCode`（`json.extensions["nop-error-code"]` 精确匹配）；返回 errors 供链式断言 |
 | `expectRowsHidden(page, entity, filter, selection)` | 断言「越权数据被过滤」（data-auth 行级规则排除后特定行不可见） | 封装 `findItems`，断言匹配 `filter` 的行集为空（absent 是 data-auth 静默过滤的唯一可观测信号） |
 | `expectRowsVisible(page, entity, filter, selection, expectedCount?)` | 断言「可见行集收敛」（data-auth 过滤后剩余可见行符合预期） | 封装 `findPageTotal`/`findItems`；`expectedCount` 精确收敛或省略时 ≥1 |
-| `loginAsRole(page, roleOrUser)` | 角色登录 indirection（**占位**，P2.2b 填充真实角色登录） | 接受角色 roleId/用户名，当前回退 `login(page)`（nop 平台 admin，`%test` profile skip-check 兜底）；P2.2b 账号就绪后按 `roleOrUser` 选择受限账号登录，使负向 spec 可插拔负向主体 |
+| `loginAsRole(page, roleOrUser)` | 角色登录 indirection（**真实映射**，plan 2026-08-10-0119-1 / P2.2b 填充） | 接受角色 roleId/username 别名，从 `ROLE_ACCOUNTS` 映射表解析账号凭据，防御性清空会话（cookies + localStorage try-catch）后委派 `login(page, username, password)`；解析顺序 = 精确 roleId/别名 → 回退 `restricted`（保守：未知 = 最小权限） |
 
 辅助导出：`ENFORCEMENT_ERROR_CODES` 常量对象（`NO_PERMISSION`=`nop.err.auth.no-permission` / `NO_PERMISSION_FOR_FIELD` / `NO_DATA_AUTH`，P2.4 运行时确认后供负向 spec 收敛）+ re-export `callMutation`/`callQuery`/`findItems`/`findPageTotal`（消费者单一 import 入口）。`test`/`expect` 同 fixtures。
 
@@ -483,7 +483,31 @@ setup 为 spec-internal 内联最小链（employee + ACTIVE EmploymentContract +
 
 - **动作级 enforcement 拒绝运行时确认**：随 P2.4（翻 `enable-action-auth` 后用同原语 + `ENFORCEMENT_ERROR_CODES.NO_PERMISSION` 常量断言真权限拒绝）。
 - **data-auth 行过滤原语运行时 demo**：随 E2.1（翻 `enable-data-auth` + `role-row-filter-enabled` 后用 `expectRowsHidden/Visible` 断言真行级过滤 absent）。
-- **负向账号主体**：随 P2.2b（逐域补非 admin 受限账号 + fixture 角色参数化，填充 `loginAsRole` 真实角色登录）。
+- ~~负向账号主体~~：**P2.2b 已交付**（角色账号池 9 账号 + `loginAsRole` 真实映射，见下「角色账号池」节）。
+
+### 角色账号池（plan 2026-08-10-0119-1 / P2.2b）
+
+E1.1 五高危域 8 授权角色各 1 角色账号 + 1 通用受限账号（共 9 账号，userId 2-10），种子在 `app-erp-all/src/main/resources/_vfs/_init-data/nop_auth_user.csv` + `nop_auth_user_role.csv`（追加行，不改 nop 原行）。密码统一 "123"（复用 nop 的 BCrypt hash + salt）。enforcement OFF 下惰性加载（action-auth 不拦截），与 nop/admin 行为等价。
+
+| userId | username | 绑定 roleId | 用途 |
+|---|---|---|---|
+| 2 | `role-finance` | 财务员 | finance post/reverse/writeOff 正向 + 跨域负向 |
+| 3 | `role-biz-admin` | 管理员（业务） | finance reverseClose/reverseApprove 正向 + 跨域负向 |
+| 4 | `role-b2b-admin` | B2B 管理员 | b2b handleInboundWebhook/markError/retry/archive/cancel |
+| 5 | `role-b2b-recon` | B2B 对账员 | b2b markSent/markAcknowledged/matchPurchaseOrder |
+| 6 | `role-mfg-lead` | 生产主管 | mfg start/close/cancel/approve |
+| 7 | `role-inventory` | 库管员 | inventory confirm/approve |
+| 8 | `role-hr-salary` | 薪酬审批人 | hr salary approve/markPaid/voidSalary |
+| 9 | `role-hr` | HR 专员 | hr leaveRequest approve |
+| 10 | `role-restricted` | `user`（平台） | P2.4 dry-run 全 403 影响面（无敏感 FNPT） |
+
+`loginAsRole` 的 `ROLE_ACCOUNTS` 映射表（`negative/_helper.ts`）key = 业务 roleId 字面值 + username 别名 + 通用别名（`admin`/`nop`/`restricted`/`user`）；未知 key 回退 `restricted`（保守：最小权限）。
+
+**双命名空间（横切 2）**：`role-biz-admin`（userId=3）绑业务「管理员」（`nop_auth_role.csv` L16）≠ 平台 `admin`（L23）——不触发 `skip-check-for-admin` 兜底。运行时 Proof（`role-login.smoke.spec.ts`）：`LoginApi__login` 响应 `userInfo.roleInfos=[{roleId:"管理员"}]`（非 `admin`/`nop-admin`）。
+
+**E1.2 扩展指引**：新增角色账号按 `role-<slug>` 命名 + 小整数 userId 追加 CSV 行（避开 NOP_SYS_SEQUENCE 跳号 100000+）+ `ROLE_ACCOUNTS` 追加条目（机械扩展，无机制性返工）。
+
+**Proof 载体**：`tests/e2e/negative/role-login.smoke.spec.ts`（14 tests）——9 账号 `LoginApi__login` GraphQL roleInfos 断言 + 双命名空间 Proof + 密码 "123" 往返 + `loginAsRole` fresh page 登录可演示（经 `__Host-nop-token` HTTP-only cookie JWT `preferred_username` 解码验证身份）+ 未知 key 回退 restricted。
 
 
 

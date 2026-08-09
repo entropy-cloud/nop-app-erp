@@ -215,6 +215,8 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 
 > **auth 种子就绪（plan 2026-08-09-2107-1 / P1.5b，2026-08-09）**：auth 表 CSV 种子已落地（24 `nop_auth_role` 角色记录 + nop 测试账号 userId=1 绑平台 admin 角色），enforcement 仍 OFF（三开关 profile 预置默认 false），翻转归 P2.4。P2.2a（admin 兜底 E2E 基线）的账号/角色前置已满足。
 
+> **角色账号池就绪（plan 2026-08-10-0119-1 / P2.2b，2026-08-10）**：E1.1 五高危域 8 授权角色各 1 角色账号 + 1 通用受限账号（共 9 账号，userId 2-10）种子已追加至 `nop_auth_user.csv` + `nop_auth_user_role.csv`（密码 "123" 复用 nop BCrypt hash），enforcement OFF 下惰性加载。`loginAsRole` 占位已填充真实 ROLE_ACCOUNTS 映射（`negative/_helper.ts`），使 E1.x 负向 spec + P2.4 dry-run 可插拔真实受限账号。双命名空间 Proof：`role-biz-admin`（userId=3）运行时解析为业务「管理员」非平台 `admin`（不触发 skip-check）。E1.2 全量域角色账号扩展按 `role-<slug>` 命名 + 小整数 userId 追加行机制（无机制性返工）。
+
 | 域 | 实体 | 独立 FNPT 点 | roles 种子（角色） |
 |----|------|-------------|------------------|
 | finance | ErpFinVoucher | `:post` / `:reverse` | 财务员 |
