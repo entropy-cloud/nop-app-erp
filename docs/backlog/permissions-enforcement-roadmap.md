@@ -29,7 +29,7 @@
 | P1.1 | 敏感字段与保密范围清单（五面：薪酬/合同/EDI/供应商价格/成本分解 + **F7 既有 PII 字段集确认**） | done | `field-formatting-patterns.md` §9（F7）+ §9.4（后端脱敏 successor）+ `roles-and-permissions.md` | — | none |
 | P1.2 | 采购保密 Q1/Q4 裁决 + Q2/Q3 归属判定（Q2/Q3 属 AI 研发轨道，仅判归属域不实施） | done | 讨论文档 §未解决问题 + §裁决记录 | — | none |
 | P1.3 | 细粒度权限映射裁决（收敛粒度：角色×SUBM + 敏感动作 per-action FNPT；含 **B 类扩展域 enforcement 行为裁决**） | done | `roles-and-permissions.md` §角色→权限点映射 | P1.1（弱依赖，可并行） | none |
-| P1.4a | per-action FNPT 声明补齐——purchase/sales 审批集 | todo | `roles-and-permissions.md` §action-level 声明层 | P1.3 | `nop-backend-dev` |
+| P1.4a | per-action FNPT 声明补齐——purchase/sales 审批集 | done | `roles-and-permissions.md` §action-level 声明层 | P1.3 | `nop-backend-dev` |
 | P1.4b | per-action FNPT 声明补齐——mfg approve subcontract + assets 处置 | todo | 同上 | P1.3 | `nop-backend-dev` |
 | P1.4c | per-action FNPT 声明补齐——b2b EDI 全生命周期 | todo | 同上 + `edi-formats.md` | P1.3 | `nop-backend-dev` |
 | P1.4d | per-action FNPT 声明补齐——扩展域敏感子集（contract 电子签 / hr 薪酬审核 等） | todo | 同上 + `roles-and-permissions.md` §第二批扩展域 A | P1.3 | `nop-backend-dev` |

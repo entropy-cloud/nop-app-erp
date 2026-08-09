@@ -1,6 +1,6 @@
 # 2026-08-09-1400-2 per-action-fnpt-purchase-sales-approval
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-09
 > Source: `docs/backlog/permissions-enforcement-roadmap.md` P1.4a
 > Related: mission `permissions-enforcement`；P1.3（粒度裁决，已 done，提供收敛粒度）；P1.1（敏感字段清单，已 done，提供敏感动作输入）；P1.6（xwf 语义裁决，draft，提供 submit 处理输入——非硬前置，软协调）
@@ -54,57 +54,57 @@ P1.3 已裁决映射收敛粒度 = 角色×SUBM + **敏感动作 per-action FNPT
 
 ### Phase 1 - purchase 审批集 per-action FNPT 声明
 
-Status: planned
+Status: completed
 Targets: `module-purchase/erp-pur-web/.../_vfs/erp/pur/auth/erp-pur.action-auth.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add` / `Decision` / `Proof`
 - Prereqs: P1.3（done）；P1.1（done，敏感动作输入）
 
-- [ ] **Decision**：裁决 submitForApproval（提交审核）的 FNPT 处理。考虑的替代方案：(a) submit 留 `:mutation` 桶不声明独立点——submit 是提交动作（创建人发起），非 approve/reverseApprove 类最高危敏感动作，按 P1.3 收敛粒度不需脱离 `mutation` 桶；(b) submit 声明独立 `:submitForApproval` FNPT（拒绝：过度拆分，submit 的管控由 SUBM 菜单可见性 + SoD 程序级守卫覆盖，非 per-action 层职责）。选定 (a)，submit 留 `:mutation` 桶，本计划不声明 submit 独立点。残留风险：若后续要求"仅特定角色可提交"，须升格（successor）。
+- [x] **Decision**：裁决 submitForApproval（提交审核）的 FNPT 处理。考虑的替代方案：(a) submit 留 `:mutation` 桶不声明独立点——submit 是提交动作（创建人发起），非 approve/reverseApprove 类最高危敏感动作，按 P1.3 收敛粒度不需脱离 `mutation` 桶；(b) submit 声明独立 `:submitForApproval` FNPT（拒绝：过度拆分，submit 的管控由 SUBM 菜单可见性 + SoD 程序级守卫覆盖，非 per-action 层职责）。选定 (a)，submit 留 `:mutation` 桶，本计划不声明 submit 独立点。残留风险：若后续要求"仅特定角色可提交"，须升格（successor）。
   - Skill: none
-- [ ] **Add**：在 delta `erp-pur.action-auth.xml` 为 purchase approve-path 敏感动作声明独立 per-action FNPT 点（approve / reverseApprove），挂在对应实体 `<resource id="ErpPur*-main">` 的 `<children>` 下（参照 finance delta `ErpFinVoucher:post`/`:reverse` 范式）。`<permissions>` = `{Entity}:{action}`；`roles` 种子：approve→审核人、reverseApprove→管理员。具体实体×动作清单执行时按生成文件 `_erp-pur.action-auth.xml` 权限点 ID 核验 + 各域 state-machine.md「角色与权限」节核对（不在本计划冻结逐点清单，遵循 P1.3「不冻结具体动作清单」残留风险）。
+- [x] **Add**：在 delta `erp-pur.action-auth.xml` 为 purchase approve-path 敏感动作声明独立 per-action FNPT 点（approve / reverseApprove），挂在对应实体 `<resource id="ErpPur*-main">` 的 `<children>` 下（参照 finance delta `ErpFinVoucher:post`/`:reverse` 范式）。`<permissions>` = `{Entity}:{action}`；`roles` 种子：approve→审核人、reverseApprove→管理员。具体实体×动作清单执行时按生成文件 `_erp-pur.action-auth.xml` 权限点 ID 核验 + 各域 state-machine.md「角色与权限」节核对（不在本计划冻结逐点清单，遵循 P1.3「不冻结具体动作清单」残留风险）。
   - Skill: `nop-backend-dev`
-- [ ] **Proof**：xmllint well-formed 校验 `erp-pur.action-auth.xml` 通过 + `permissionToRoles` 静态映射一致性自检（approve→审核人、reverseApprove→管理员，角色名与 `roles-and-permissions.md` §角色体系一致）。
+- [x] **Proof**：xmllint well-formed 校验 `erp-pur.action-auth.xml` 通过 + `permissionToRoles` 静态映射一致性自检（approve→审核人、reverseApprove→管理员，角色名与 `roles-and-permissions.md` §角色体系一致）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] submit FNPT 处理 Decision 落地（留 `:mutation` 桶）+ purchase 审批集敏感动作 per-action FNPT 声明落地，xmllint 通过，roles 种子与角色矩阵一致。
+- [x] submit FNPT 处理 Decision 落地（留 `:mutation` 桶）+ purchase 审批集敏感动作 per-action FNPT 声明落地，xmllint 通过，roles 种子与角色矩阵一致。
 
 ### Phase 2 - sales 审批集 per-action FNPT 声明
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-web/.../_vfs/erp/sal/auth/erp-sal.action-auth.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add` / `Proof`
 - Prereqs: Phase 1（purchase 范式确立后复用）；P1.3（done）
 
-- [ ] **Add**：在 delta `erp-sal.action-auth.xml` 为 sales approve-path 敏感动作声明独立 per-action FNPT 点（approve / reverseApprove），范式复用 Phase 1。roles 种子：approve→审核人、reverseApprove→管理员。实体×动作清单执行时按生成文件 `_erp-sal.action-auth.xml` + sales state-machine.md 核对。**含 ErpSalContract**（INLINE xbiz 路径，但其 `:approve`/`:reverseApprove` FNPT 权限点声明方式与 PROC 实体一致——权限点与实现模式无关，挂在 `ErpSalContract-main` 的 `<children>` 下）。
+- [x] **Add**：在 delta `erp-sal.action-auth.xml` 为 sales approve-path 敏感动作声明独立 per-action FNPT 点（approve / reverseApprove），范式复用 Phase 1。roles 种子：approve→审核人、reverseApprove→管理员。实体×动作清单执行时按生成文件 `_erp-sal.action-auth.xml` + sales state-machine.md 核对。**含 ErpSalContract**（INLINE xbiz 路径，但其 `:approve`/`:reverseApprove` FNPT 权限点声明方式与 PROC 实体一致——权限点与实现模式无关，挂在 `ErpSalContract-main` 的 `<children>` 下）。
   - Skill: `nop-backend-dev`
-- [ ] **Proof**：xmllint well-formed 校验 `erp-sal.action-auth.xml` 通过 + `permissionToRoles` 一致性自检。
+- [x] **Proof**：xmllint well-formed 校验 `erp-sal.action-auth.xml` 通过 + `permissionToRoles` 一致性自检。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] sales 审批集敏感动作 per-action FNPT 声明落地，xmllint 通过，roles 种子与角色矩阵一致。
+- [x] sales 审批集敏感动作 per-action FNPT 声明落地，xmllint 通过，roles 种子与角色矩阵一致。
 
 ### Phase 3 - owner doc 实现注记 + 日志
 
-Status: planned
+Status: completed
 Targets: `docs/design/roles-and-permissions.md` §action-level 声明层
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1 + Phase 2
 
-- [ ] **Add**：§action-level 声明层「已落地」表增列 purchase/sales 审批集 per-action FNPT 点 + roles 种子（行号证据），与既有 finance/b2b/mfg/inv/hr 行对齐。
+- [x] **Add**：§action-level 声明层「已落地」表增列 purchase/sales 审批集 per-action FNPT 点 + roles 种子（行号证据），与既有 finance/b2b/mfg/inv/hr 行对齐。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] owner doc 实现注记落地，与 delta 文件真相源一致。
+- [x] owner doc 实现注记落地，与 delta 文件真相源一致。
 
 ## Draft Review Record
 
@@ -118,14 +118,14 @@ Exit Criteria:
 
 > 本计划改 delta action-auth.xml（声明层，enforcement 保持 OFF，不改运行时行为）。Closure Gates 运行 delta XML well-formed + compliance checker 对照 `known-good-baselines.md` 零漂移（横切关注点 7）。完整 build/test 在此运行一次。
 
-- [ ] 范围内行为完成（purchase + sales 审批集 per-action FNPT 声明 + roles 种子 + owner doc 注记）
-- [ ] 相关文档对齐（`roles-and-permissions.md` §action-level 声明层）
-- [ ] 已运行验证：`xmllint --noout` 两个 delta 文件 + `bash docs/audits/nop-compliance-checker.sh` 对照 `docs/testing/known-good-baselines.md` 零漂移 + `mvn clean install -DskipTests`（标准构建验证）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（purchase + sales 审批集 per-action FNPT 声明 + roles 种子 + owner doc 注记）
+- [x] 相关文档对齐（`roles-and-permissions.md` §action-level 声明层）
+- [x] 已运行验证：`xmllint --noout` 两个 delta 文件 + `bash docs/audits/nop-compliance-checker.sh` 对照 `docs/testing/known-good-baselines.md` 零漂移 + `mvn clean install -DskipTests`（标准构建验证）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -143,13 +143,16 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 已完成。三 Phase 全部落地——purchase 6 实体 + sales 7 实体（含 ErpSalContract INLINE xbiz 路径）`:approve`/`:reverseApprove` per-action FNPT 声明 + roles 种子（approve→审核人 / reverseApprove→管理员），submitForApproval 留 `:mutation` 桶（Phase 1 Decision）。enforcement 保持 OFF（声明层，不改运行时）。验证全绿：xmllint 两个 delta 文件 well-formed + compliance checker 零漂移（改 0 Java）+ `mvn clean install -DskipTests` 全 reactor BUILD SUCCESS。owner doc `roles-and-permissions.md` §action-level 表 + 种子证据块（5→7 域）+ 灰度推进路线已对齐。日志 `docs/logs/2026/08-09.md`。roadmap P1.4a todo→done。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立审计者或独立子代理>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立子代理（新会话 ses_01a671112ffeWgIWZ3GN68In6J，执行者未自我审计）
+- Verdict: PASS（0 blocker / 0 major / 0 minor-blocker；1 非阻塞信息性注记——构建 codegen 增量再生 `_vfs/i18n/en/_erp-{pur,sal}-web.i18n.yaml` 镜像 `i18n-en:displayName`，为生成派生件非真相源，与 finance 先例同型，日志已补记）
+- Evidence: 8 项检查全 PASS——A 范围完整（pur 12 + sal 14 FNPT，ErpSalContract@L44 在位，无 submit FNPT）/ B roles 一致（13×approve→审核人 + 13×reverseApprove→管理员 零错配）/ C 真相源完整（`_erp-*.action-auth.xml` 未触）/ D xmllint OK / E 范式与 finance 同构 / F owner doc 行号实测一致（5→7 域） / G 改 0 Java 合规零漂移 / H Non-Goals 全守住
 
 Follow-up:
 
-- <仅非阻塞跟进项；已确认缺陷不得出现于此>
+- submitForApproval 升格独立 FNPT（触发 = "仅特定角色可提交"精细化需求；见 Deferred But Adjudicated）
+- SUBM 菜单组层 roles 映射（归 P1.5a）
+- ErpPurPayment / ErpSalReceipt `:approve` enforcement 测试策略归 sibling P1.6（`2026-08-09-1400-1`）裁决

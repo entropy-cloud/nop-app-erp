@@ -211,12 +211,14 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 | inventory | ErpInvLandedCost | `:approve` | 库管员 |
 | human-resource | ErpHrLeaveRequest | `:approve` | HR 专员 |
 | human-resource | ErpHrSalary | `:approve`（薪酬机密）/ `:markPaid` | 薪酬审批人 |
+| purchase | ErpPurRequisition / Order / Receive / Invoice / Payment / Return | `:approve` / `:reverseApprove`（审批集 6 实体） | approve=审核人 / reverseApprove=管理员 |
+| sales | ErpSalQuotation / Contract / Order / Delivery / Invoice / Receipt / Return | `:approve` / `:reverseApprove`（审批集 7 实体，含 ErpSalContract INLINE xbiz 路径） | approve=审核人 / reverseApprove=管理员 |
 
 **当前运行时行为不变**：`nop.auth.enable-action-auth=false` 保持——声明层仅"已就绪可授权"，不拦截任何调用。`roles` 属性在 enforcement OFF 时不生效，仅在翻转后并入 `permissionToRoles` 校验。
 
 **高危动作升级路径（successor）**：`reverseClose`（反结账）/ `writeOff`（坏账核销）/ `handleInboundWebhook`（B2B 入站）为最高危——其 FNPT 点已声明并 seed 给管理员/B2B 管理员，但**真正 enforcement 翻转**为 config-gated successor（见下方"Deferred"），须人工批准 + 灰度 + 负向隔离测试后分域启用。
 
-**灰度推进路线（staged rollout，successor）**：finance/b2b/mfg/inventory/hr 为首批落地（含全部 A3.6 点名的最高危动作：reverseClose/writeOff/handleInboundWebhook + 各域敏感状态迁移）；其余（pur/sal 审批集 / mfg approve subcontract / assets 处置 / 全 EDI 生命周期 等）的 per-action FNPT 声明随 enforcement 灰度分批补齐（触发条件 = 该域 `enable-action-auth=true` 灰度批准前）。新增高危实体应按本模式直接声明独立 FNPT 点（API 命名约定见 `domain-design-guidelines.md §16A`）。
+**灰度推进路线（staged rollout，successor）**：finance/b2b/mfg/inventory/hr/pur/sal 为首批落地（含全部 A3.6 点名的最高危动作：reverseClose/writeOff/handleInboundWebhook + 各域敏感状态迁移；pur/sal 审批集 approve/reverseApprove per-action FNPT 由 plan `2026-08-09-1400-2` / P1.4a 补齐）；其余（mfg approve subcontract / assets 处置 / 全 EDI 生命周期 等）的 per-action FNPT 声明随 enforcement 灰度分批补齐（触发条件 = 该域 `enable-action-auth=true` 灰度批准前）。新增高危实体应按本模式直接声明独立 FNPT 点（API 命名约定见 `domain-design-guidelines.md §16A`）。
 
 #### 兜底策略裁决（plan 2026-08-09-1314-2 / P1.3，2026-08-09）
 
@@ -231,12 +233,14 @@ enforcement 开启后，授权判定由**两套互不互换的命名空间**共�
 >
 > **残留风险**：§角色体系「管理员=平台 superuser」的既有表述与本分离主张存在语义张力（业务角色「管理员」≠ 平台 `admin`），由 §角色体系「管理员」行的双命名空间语义分离注记消解（见下文）。
 >
-> **既有种子证据（Proof，doc-only 计划证据引用，非测试命令）**——收敛粒度（SUBM + 敏感动作 per-action FNPT + 静态 roles 种子）已部分落地并验证可行，5 域 delta `erp-*.action-auth.xml` 实测行号：
+> **既有种子证据（Proof，doc-only 计划证据引用，非测试命令）**——收敛粒度（SUBM + 敏感动作 per-action FNPT + 静态 roles 种子）已部分落地并验证可行，7 域 delta `erp-*.action-auth.xml` 实测行号：
 > - **finance** `erp-fin.action-auth.xml`：`ErpFinVoucher:post`/`:reverse`→财务员（L23-30）、`ErpFinAccountingPeriod:closePeriod`→财务员 / `:reverseClose`→管理员（L52-59）、`ErpFinBadDebt:writeOff`→财务员 / `:reverseApprove`→管理员（L86-93）。
 > - **b2b** `erp-b2b.action-auth.xml`：`ErpB2bEdiDoc:markSent`→B2B 对账员 / `:cancel`→B2B 管理员（L22-27）、`ErpB2bAsn:handleInboundWebhook`→B2B 管理员（L46-47）。
 > - **manufacturing** `erp-mfg.action-auth.xml`：`ErpMfgWorkOrder:start`/`:close`/`:cancel`→生产主管（L50-59）。
 > - **inventory** `erp-inv.action-auth.xml`：`ErpInvStockMove:confirm`→库管员（L24-25）、`ErpInvLandedCost:approve`→库管员（L115-116）。
 > - **human-resource** `erp-hr.action-auth.xml`：`ErpHrLeaveRequest:approve`→HR 专员（L78-79）、`ErpHrSalary:approve`/`:markPaid`→薪酬审批人（L102-107）。
+> - **purchase** `erp-pur.action-auth.xml`（plan `2026-08-09-1400-2` / P1.4a）：审批集 6 实体 `:approve`→审核人 / `:reverseApprove`→管理员——ErpPurRequisition（L46-53）、ErpPurOrder（L61-68）、ErpPurReceive（L83-90）、ErpPurInvoice（L105-112）、ErpPurPayment（L120-127）、ErpPurReturn（L142-149）。
+> - **sales** `erp-sal.action-auth.xml`（plan `2026-08-09-1400-2` / P1.4a）：审批集 7 实体 `:approve`→审核人 / `:reverseApprove`→管理员——ErpSalQuotation（L23-30）、ErpSalContract（L44-51，INLINE xbiz 路径）、ErpSalOrder（L65-72）、ErpSalDelivery（L86-93）、ErpSalInvoice（L107-114）、ErpSalReceipt（L128-135）、ErpSalReturn（L149-156）。
 >
 > 证据佐证三点：(1) 敏感动作可作为独立 FNPT 点脱离泛化 `mutation` 桶；(2) `<resource roles="...">` 静态种子可承载业务角色授权；(3) 注 finance 的 `reverseClose`/`reverseApprove` 种子用的是**业务角色「管理员」**（非平台 `admin`），正凸显双命名空间分离的必要性。
 
