@@ -50,3 +50,27 @@ quarkus:
      auth:
        login:
          allow-create-default-user: true
+       enable-action-auth: false
+       enable-data-auth: false
+       skip-check-for-admin: true
+   erp:
+     data-auth:
+       role-row-filter-enabled: false
+"%test":
+   nop:
+     auth:
+       enable-action-auth: false
+       enable-data-auth: false
+       skip-check-for-admin: true
+   erp:
+     data-auth:
+       role-row-filter-enabled: false
+"%prod":
+   nop:
+     auth:
+       enable-action-auth: false
+       enable-data-auth: false
+   # skip-check-for-admin 省略 → 继承平台默认 false（DR-1e 安全姿态）
+   erp:
+     data-auth:
+       role-row-filter-enabled: false
