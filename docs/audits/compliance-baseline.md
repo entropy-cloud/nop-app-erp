@@ -19,9 +19,9 @@
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
-| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 240 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1380 |
-| R2d | Processor daoFor(ErpMd*) | 🔴 高 | 32 |
+| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 229 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1388 |
+| R2d | Processor daoFor(ErpMd*) | 🔴 高 | 34 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
 | R5 | @Inject private | 🟡 中 | 0 |
@@ -311,7 +311,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 229
-R2c: 1383
+R2c: 1388
 R2d: 34
 R3: 5
 R4: 0

@@ -185,6 +185,13 @@ UNSUBMITTED
 | 已开票退货 | 已开具发票后退货 | 生成红字发票冲销 |
 | 部分退货+发票 | 退货数量小于发票数量 | 部分红字发票 |
 
+> **实现注记（RC-R1.17 运营代理条件分支，零过账核心变更）**：
+> `SalReturnPostingDispatcher.tryPost` 在组装 SALES_RETURN 事件前检查源出库单 `delivery.posted`
+> 作为暂估应收运营代理：`posted=true` ⇒ 视为暂估应收未清，维持 SALES_RETURN 冲减路径（credit memo）；
+> `posted=false`（未暂估）⇒ 跳过事件构造（零凭证 / 零 ArApItem，下游 SalAcctDocProvider /
+> ErpFinArApItemGenerator 零变更）。实仓无独立「暂估应收」凭证载体，故以 delivery.posted 近似——
+> 残留风险：posted 与真实暂估应收状态存在运营近似偏差。
+
 ### 应收冲减
 
 出库后未开票时，应收为暂估。退货冲减应收：
@@ -336,6 +343,13 @@ UNSUBMITTED
         │
         └─► 退货数量可重新形成新的发货需求
 ```
+
+> **实现注记（RC-R1.16 方案 A，零 ORM 变更）**：`ErpSalReturnProcessor.updateUndeliveredQuantity`
+> 在退货审核（approve/reverseApprove）末尾按退货行 `deliveryLineId → ErpSalDeliveryLine.orderLineId`
+> 定位订单行，补写 `ErpSalOrderLine.deliveredQuantity` 的「毛口径」值（Σ APPROVED delivery-line qty
+> by orderLineId，对齐 ReturnQtyValidator 聚合先例）。L1 公式 `未交货量 = quantity − deliveredQuantity +
+> Σ退货量` 由读侧派生成立（退货量 Σ 从 APPROVED 退货行聚合，不在本方法写入）。幂等：按重新聚合重算。
+> 与 P2-RC-019（deliveredQuantity 零 writer）同源联动——此处为首个写入口。
 
 ## 质量域协作
 
