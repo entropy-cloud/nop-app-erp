@@ -1,6 +1,6 @@
 # 权限 enforcement 开启（测试环境）路线图
 
-> 最后更新：2026-08-09
+> 最后更新：2026-08-09（P2.2a done——admin 兜底 E2E 基线就绪；P2.3 计划 ready 待执行）
 > 触发条件：RBAC 精细化 / 合规审计需求（`roles-and-permissions.md` §角色→权限点映射）+ 人工批准（2026-08-05，测试环境开启 enforcement；2026-08-06，启动执行并委托全部实施决策）
 > 来源：`docs/backlog/README.md` + `docs/discussions/2026-08-05-1800-ai-mfg-rd-bom-and-procurement-confidentiality.md` §讨论点四 + `docs/design/roles-and-permissions.md`
 > 执行：mission driver（`./tools/mission-driver.sh run permissions-enforcement`）；roadmap 状态块为唯一动态状态真相源
@@ -20,7 +20,7 @@
 
 ## Work Item Status
 
-> 唯一的动态状态块。状态：`todo` / `ready` / `done`。初始全 `todo`；2026-08-06 执行授权后首波 P1.1/P1.2/P1.3 转 `ready`（门控满足，可被 DRAFT_PLANS 选取），其余保持 `todo` 直至 Deps 满足。
+> 唯一的动态状态块。状态：`todo` / `ready` / `done`。初始全 `todo`；2026-08-06 执行授权后首波 P1.1/P1.2/P1.3 转 `ready`（门控满足，可被 DRAFT_PLANS 选取）；P1 全段 + P2.1 done 后，P2.2a/P2.3 经独立草案审查通过转 `ready`；P2.2a 经 plan `2026-08-09-2210-1` 执行完成转 `done`（admin 兜底 E2E 基线就绪：skip-check 经 `-Dquarkus.profile=test` 在 E2E 运行时生效 + nop→平台 admin 角色运行时解析 + 全 E2E 套件零回归三路证明）；其余保持 `todo` 直至 Deps 满足。
 
 ### Milestone P1 — 准备：权限矩阵与种子
 
@@ -42,9 +42,9 @@
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
 | P2.1 | enforcement 配置 profile 化（dev/test profile 预置三开关 config 变量默认 OFF；翻启节奏：action-auth 随 P2.4、data-auth+row-filter 随 E2.1；prod 保持 OFF；灰度粒度 config 变量） | done | `roles-and-permissions.md` §运行基线 | P1.6 | `nop-testing` |
-| P2.2a | **管理员兜底先行**（E2E fixture 切平台 admin + `skip-check` 生效验证 + 全 E2E 绿——E1.1/E1.2 硬前置） | todo | `tests/e2e/auth.ts` + `e2e-runbook.md` | P1.5b + P2.1 | `nop-testing` |
+| P2.2a | **管理员兜底先行**（E2E fixture 切平台 admin + `skip-check` 生效验证 + 全 E2E 绿——E1.1/E1.2 硬前置） | done | `tests/e2e/auth.ts` + `e2e-runbook.md` | P1.5b + P2.1 | `nop-testing` |
 | P2.2b | 角色化渐进（按负向测试需要的角色逐域补账号，fixture 支持角色参数化） | todo | `e2e-runbook.md` | P1.5b + P2.2a | `nop-testing` |
-| P2.3 | 负向隔离测试框架（未授权动作拒绝 + 越权数据过滤断言的原语/脚手架；验收实测随 E 段，但账号依赖 P1.5b 种子） | todo | `e2e-runbook.md` | P2.1 + P1.5b | `nop-testing` |
+| P2.3 | 负向隔离测试框架（未授权动作拒绝 + 越权数据过滤断言的原语/脚手架；验收实测随 E 段，但账号依赖 P1.5b 种子） | ready | `e2e-runbook.md` | P2.1 + P1.5b | `nop-testing` |
 | P2.4 | **dry-run 中间门控**（先仅翻 `enable-action-auth`，admin 跑通全 E2E 做回归基线 + 非 admin 受限账号（P2.2b）跑子集统计真实 403 影响面并登记清单，作为 E1 进入门；data-auth 留待 E2.1 独立开启） | todo | `e2e-runbook.md` + `known-good-baselines.md` | P2.1 + P2.2a + P2.2b | `nop-testing` |
 
 ### Milestone E1 — 执行：action 级强制

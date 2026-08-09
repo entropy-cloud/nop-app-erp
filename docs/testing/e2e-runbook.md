@@ -124,8 +124,9 @@ E2E_ENGINE=flux npx playwright test
 ```
 
 webServer 命令含测试专用 JVM 参数：
+- `-Dquarkus.profile=test` — 激活 `%test` profile 块（`app-erp-all/application.yaml`），使 `nop.auth.skip-check-for-admin=true`（admin 兜底）+ 三开关 OFF（`enable-action-auth`/`enable-data-auth`/`role-row-filter-enabled`）在 E2E 运行时生效。**P2.1 在 `%dev`/`%test` 预置的 skip-check 此前在 E2E 不生效**——`java -jar` 打包件默认激活空 default profile（`%dev` 仅 `mvn quarkus:dev` 自动激活），故须显式 `-Dquarkus.profile=test` 激活（plan 2026-08-09-2210-1 / P2.2a）。`%test` 块仅 4 键（nop.auth.*/erp.data-auth.*，无 Quarkus 内建键）+ 顶层 `quarkus.devservices.enabled=false` 始终生效 → 无框架级 test-mode 副作用。`_tmp-server.sh` 镜像同步同款 flag（单一真相源 = `playwright.config.ts` webServer.command）。
 - `-Dnop.auth.service-public=true` — 服务端认证旁路（sys 用户上下文）
-- `-Dnop.auth.login.allow-create-default-user=true` — 自动创建测试用户 `nop`/`123`
+- `-Dnop.auth.login.allow-create-default-user=true` — 自动创建测试用户 `nop`/`123`（**无害 fallback**：P1.5b auth CSV 种子使 `addDefaultUser()` 的 `dao.count()>0` 守卫跳过，flag 退化为抗种子回退兜底，不创建重复 nop；plan 2026-08-09-2210-1 / P2.2a 裁决保留）
   - `-Dnop.orm.init-database-data=true` — 部署期种子数据初始化（21 张主数据表 + 23 张交易单据表 + 13 张运营域表 + 4 张制造域表 + 11 张维护+质量域表 + 12 张 CRM/CS/HR 域表 + 3 张质量域 SPC 表 + 4 张制造域工作中心配置链+crp_load 表，详见下方「种子库启动」）
   - `-Derp-qua.ncr-default-acct-schema=1` — NCR SCRAP 过账 acctSchemaId（种子 ACCT-FIN-01，plan 2026-07-10-1800-1）
   - `-Derp-fin.bad-debt-allowance-subject-code=1231` / `-Derp-fin.bad-debt-expense-subject-code=6701` / `-Derp-fin.ar-subject-code=1122` — 坏账核销/收回/计提凭证科目编码（requireSubject config 默认 null，未配置抛 ERR_CLOSE_SUBJECT_NOT_CONFIGURED；种子 erp_md_subject.csv 补齐 1231/6701，1122 已在种子，plan 2026-07-12-0413-2）
