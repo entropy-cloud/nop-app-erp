@@ -152,6 +152,8 @@ UNSUBMITTED
 | 当前库存成本 | 使用退货入库时的库存成本 | 价格波动调整 |
 | 退货协议价 | 按退货协议约定的成本 | 双方协商 |
 
+> 实现注记（RC-R1.18 / P1-RC-026）：三策略由配置 `erp-sal.return-cost-method` 决定（默认 `original`）。`ReturnStockMoveBuilder.buildLines` 按配置分支设置库存移动单行 `unitCost`：`original` = 行 unitPrice（原出库成本）/ `current` = 库存域 `ErpInvStockBalance.avgCost`（按 materialId+warehouseId 查询；缺失回退 unitPrice + LOG.warn）/ `agreement` = 行 unitPrice（退货协议价语义）。`SalReturnPostingDispatcher.computeTotalCost` 经同一 `ReturnCostStrategyResolver` 同源消费，维持「库存 ledger totalCost 与 GL 凭证 TOTAL_COST 同源」不变量。非法配置值回退 `original`。
+
 ### 批次追溯
 
 启用批次管理时，退货入库批次处理：
@@ -411,6 +413,10 @@ UNSUBMITTED
 | 已核销退货 | 发票已全额核销收款 | 需先撤回核销 |
 | 已结账期间退货 | 退货期间已结账 | 拒绝，需先反结账 |
 | 可用量不足 | 退货入库但仓库可用量限制 | 检查仓库容量配置 |
+
+> 实现注记（RC-R1.19 / P1-RC-027 + P1-RC-028）：退货审核（`ErpSalReturnProcessor.validateBusinessRulesForApprove`）在源出库单审核守卫之后、数量守卫之前接入两个 pre-approve 守卫：
+> - **已核销发票守卫**：经退货行 `deliveryLineId → ErpSalInvoiceLine.deliveryLineId → invoice` 链路（发票级，对齐 L1 字面「退货关联的发票」）查关联发票 `receivedStatus`，`RECEIVED`（完全核销）抛 `ERR_RETURN_INVOICE_SETTLED` 拒绝审核（提示先撤回核销）；`PARTIAL`/`OPEN` 放行（post-approve `ReturnRefundOrchestrator` 既有反向兜底承接客户级残余）。无关联发票跳过。
+> - **期间 CLOSED 守卫**：按退货 `businessDate` 查对应会计期间 status（经 `ErpFinAccountingPeriod`，对齐 finance `resolveOpenPeriod` + assets `requirePeriodOpen` 严格语义），非 OPEN（含 `CLOSING`/`CLOSED`/`CLOSED_FINAL`/`NEVER_OPENED`）或无对应期间抛 `ERR_RETURN_PERIOD_CLOSED` 拒绝审核。过账侧 `ErpFinPostingProcessor.resolveOpenPeriod` 既有兜底保持，本守卫为审核侧显式前置拦截（体验层）。
 
 ### 批次处理异常
 

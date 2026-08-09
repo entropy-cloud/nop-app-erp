@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 229 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1388 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1392 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 34 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -300,6 +300,16 @@ V.2 对照 M0 锚点（HEAD=`0e963531d`，全 19 规则 0 漂移）复跑 `nop-c
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=229 / R2c=1383 / R2d=34 / R3=5 / R10=7 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 恢复。独立结束审计按本注记 per-site 证据复核。
 
+## R2c 基线上调注记（plan 2026-08-08-2219-3，RC-R1.18/19 sales 退货成本策略 + 守卫族）
+
+`2026-08-08-2219-3`（RC-R1.18 退货成本策略 config 化 + RC-R1.19 已核销发票/期间 CLOSED pre-approve 守卫族）在 `module-sales/erp-sal-service` 新增 4 处生产代码 `daoFor()`，引入 **R2c +4**。逐站点均已核验「无法经 I*Biz 注入替代」的技术约束（含一次 I*Biz 改造实验证实 objMeta 限制），全部为既有文档化 pattern 的合法同型新增：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2c | 1388 | **1392** | 1392 | **baseline-raise**（+4） | 4 处逐站点见下（均经核验无法以 ICrudBiz.findList 替代）：(1) `ReturnCostStrategyResolver.findAvgCost:78` `daoFor(ErpInvStockBalance)` ——cross-domain（sal→inv）current 成本策略；dispatcher `computeTotalCost` 运行于 Facade `IErpFinVoucherBiz.post` 的 REQUIRES_NEW 隔离事务、`IServiceContext` 不可达（`ICrudBiz.findList` 需 context 入参不可用）；对齐既有跨模块 DAO 直读先例 `AcctSchemaResolver.resolvePrimarySchemaId(daoProvider,...)`（`SalInvoice/SalReceiptPostingDispatcher` 已在基线，resolver javadoc 显式登记该先例）。(2) `ErpSalReturnProcessor.findPeriodByDate:349` `daoFor(ErpFinAccountingPeriod)` ——cross-domain（sal→fin）期间 CLOSED 守卫；`ICrudBiz.findList` 经 BizModel 管道强制 objMeta filterable-field 校验，`startDate/endDate/orgId` 非 objMeta-filterable → `nop.err.biz.prop-not-support-filter-op`（I*Biz 改造实验致 `TestErpSalReturnCostAndGuards` 12/12 回归失败已实测验证），须 raw DAO `findAllByQuery` 绕过 objMeta；finance `resolveOpenPeriod:509` 同域 daoFor 先例。(3) `ErpSalReturnProcessor.findInvoiceIdsByDeliveryLines:361` `daoFor(ErpSalInvoiceLine)` ——same-domain（sal）发票行反查；对齐 `ReturnRefundOrchestrator:80`「`daoFor` 处理同模块实体」文档化先例。(4) `ErpSalReturnProcessor.findApprovedInvoices:374` `daoFor(ErpSalInvoice)` ——same-domain（sal）已审核发票查询；对齐 `ReturnRefundOrchestrator:70` 同模块 daoFor 先例。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R2c=1392≤1392，其余 = 基线），CI green 保持。该裁决对齐 `2026-08-07-1932-3`（RC-R1.2）batch helper R2c baseline-raise 先例（同样因技术约束无法经 I*Biz 注入）。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -311,7 +321,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 229
-R2c: 1388
+R2c: 1392
 R2d: 34
 R3: 5
 R4: 0
