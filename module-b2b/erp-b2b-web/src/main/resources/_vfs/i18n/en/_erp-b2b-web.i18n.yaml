@@ -20,12 +20,32 @@ site:
       displayName: MFT Log
     ErpB2bPartnerProfile-main:
       displayName: Partner Profile
+    FNPT:ErpB2bAsn:createReceiveFromAsn:
+      displayName: Create Receive From ASN
     FNPT:ErpB2bAsn:handleInboundWebhook:
       displayName: Handle Inbound Webhook
+    FNPT:ErpB2bAsn:matchPurchaseOrder:
+      displayName: Match Purchase Order
+    FNPT:ErpB2bAsn:retryMatch:
+      displayName: Retry Match
+    FNPT:ErpB2bEdiDoc:archive:
+      displayName: Archive EDI
     FNPT:ErpB2bEdiDoc:cancel:
       displayName: Cancel EDI
+    FNPT:ErpB2bEdiDoc:markAcknowledged:
+      displayName: Mark Acknowledged
+    FNPT:ErpB2bEdiDoc:markError:
+      displayName: Mark Error
     FNPT:ErpB2bEdiDoc:markSent:
       displayName: Mark Sent
+    FNPT:ErpB2bEdiDoc:retry:
+      displayName: Retry EDI
+    FNPT:ErpB2bPartnerProfile:activate:
+      displayName: Activate Partner
+    FNPT:ErpB2bPartnerProfile:deactivate:
+      displayName: Deactivate Partner
+    FNPT:ErpB2bPartnerProfile:suspend:
+      displayName: Suspend Partner
     b2b-asn:
       displayName: ASN Management
     b2b-asn-flow:

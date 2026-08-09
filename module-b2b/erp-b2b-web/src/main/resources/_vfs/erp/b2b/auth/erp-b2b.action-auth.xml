@@ -26,6 +26,22 @@
                                           resourceType="FNPT" orderNo="11020" roles="B2B 管理员">
                                     <permissions>ErpB2bEdiDoc:cancel</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpB2bEdiDoc:markAcknowledged" displayName="确认EDI已回执" i18n-en:displayName="Mark Acknowledged"
+                                          resourceType="FNPT" orderNo="11030" roles="B2B 对账员">
+                                    <permissions>ErpB2bEdiDoc:markAcknowledged</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpB2bEdiDoc:markError" displayName="标记EDI错误" i18n-en:displayName="Mark Error"
+                                          resourceType="FNPT" orderNo="11040" roles="B2B 管理员">
+                                    <permissions>ErpB2bEdiDoc:markError</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpB2bEdiDoc:retry" displayName="重试EDI事务" i18n-en:displayName="Retry EDI"
+                                          resourceType="FNPT" orderNo="11050" roles="B2B 管理员">
+                                    <permissions>ErpB2bEdiDoc:retry</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpB2bEdiDoc:archive" displayName="归档EDI事务" i18n-en:displayName="Archive EDI"
+                                          resourceType="FNPT" orderNo="11060" roles="B2B 管理员">
+                                    <permissions>ErpB2bEdiDoc:archive</permissions>
+                                </resource>
                             </children>
                         </resource>
                         <resource id="b2b-edi-detail" app:useCases="UC-B2B-002,UC-B2B-005,UC-B2B-006" displayName="EDI事务详情"
@@ -46,6 +62,18 @@
                                           resourceType="FNPT" orderNo="20010" roles="B2B 管理员">
                                     <permissions>ErpB2bAsn:handleInboundWebhook</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpB2bAsn:matchPurchaseOrder" displayName="ASN匹配采购订单" i18n-en:displayName="Match Purchase Order"
+                                          resourceType="FNPT" orderNo="20020" roles="B2B 对账员">
+                                    <permissions>ErpB2bAsn:matchPurchaseOrder</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpB2bAsn:createReceiveFromAsn" displayName="从ASN创建入库单" i18n-en:displayName="Create Receive From ASN"
+                                          resourceType="FNPT" orderNo="20030" roles="B2B 对账员">
+                                    <permissions>ErpB2bAsn:createReceiveFromAsn</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpB2bAsn:retryMatch" displayName="重试ASN匹配" i18n-en:displayName="Retry Match"
+                                          resourceType="FNPT" orderNo="20040" roles="B2B 对账员">
+                                    <permissions>ErpB2bAsn:retryMatch</permissions>
+                                </resource>
                             </children>
                         </resource>
                         <resource id="b2b-asn-flow" app:useCases="UC-B2B-003" displayName="ASN流程跟踪"
@@ -64,7 +92,22 @@
                         <resource id="ErpB2bPartnerProfile-main" app:useCases="UC-B2B-007"
                                   displayName="合作伙伴档案" i18n-en:displayName="Partner Profile" icon="building"
                                   component="FLUX" resourceType="SUBM" orderNo="50"
-                                  url="/erp/b2b/pages/ErpB2bPartnerProfile/main.page.yaml"/>
+                                  url="/erp/b2b/pages/ErpB2bPartnerProfile/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpB2bPartnerProfile:activate" displayName="激活伙伴" i18n-en:displayName="Activate Partner"
+                                          resourceType="FNPT" orderNo="5010" roles="B2B 管理员">
+                                    <permissions>ErpB2bPartnerProfile:activate</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpB2bPartnerProfile:suspend" displayName="暂停伙伴" i18n-en:displayName="Suspend Partner"
+                                          resourceType="FNPT" orderNo="5020" roles="B2B 管理员">
+                                    <permissions>ErpB2bPartnerProfile:suspend</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpB2bPartnerProfile:deactivate" displayName="停用伙伴" i18n-en:displayName="Deactivate Partner"
+                                          resourceType="FNPT" orderNo="5030" roles="B2B 管理员">
+                                    <permissions>ErpB2bPartnerProfile:deactivate</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <resource id="b2b-mft" displayName="MFT配置" i18n-en:displayName="MFT Configuration"
