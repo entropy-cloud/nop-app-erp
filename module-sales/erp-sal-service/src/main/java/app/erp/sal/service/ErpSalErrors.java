@@ -44,6 +44,7 @@ public interface ErpSalErrors {
     String ARG_RETURN_QTY = "returnQty";
     String ARG_MAX_RETURN_QTY = "maxReturnQty";
     String ARG_DELIVERED_QTY_RETURN = "deliveredQtyReturn";
+    String ARG_PERIOD = "period";
 
     ErrorCode ERR_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.sal.illegal-status-transition",
             "出库单 {deliveryCode} 当前审核状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
@@ -207,6 +208,16 @@ public interface ErpSalErrors {
     ErrorCode ERR_RETURN_REASON_REQUIRED = ErrorCode.define("erp.err.sal.return-reason-required",
             "销售退货单 {returnCode} 第 {lineNo} 行缺少退货原因（按配置必填）",
             ARG_RETURN_CODE, ARG_LINE_NO);
+
+    // P1-RC-027 已核销发票 pre-approve 守卫：退货关联的发票已核销（receivedStatus=RECEIVED）→ 需先撤回核销再退货（UC-SAL-09）
+    ErrorCode ERR_RETURN_INVOICE_SETTLED = ErrorCode.define("erp.err.sal.return-invoice-settled",
+            "销售退货单 {returnCode} 关联的发票 {invoiceCode} 已核销，需先撤回核销再退货",
+            ARG_RETURN_CODE, ARG_INVOICE_CODE);
+
+    // P1-RC-028 期间 CLOSED pre-approve 守卫：退货期间已结账/非 OPEN/无对应期间 → 拒绝（UC-SAL-09，会计正确性 Q4 无例外）
+    ErrorCode ERR_RETURN_PERIOD_CLOSED = ErrorCode.define("erp.err.sal.return-period-closed",
+            "销售退货单 {returnCode} 业务日期所在会计期间 {period} 已结账或不可用，不可退货（期间控制）",
+            ARG_RETURN_CODE, ARG_PERIOD);
 
     // 强制质检阻塞（plan 2026-07-02-2237-3 Phase 2）：出库单 {deliveryCode} 属强制质检类型，
     // 关联质检单未合格/让步，审核暂挂（首次审核已生成 PENDING 质检单，待质检结论后再次审核放行）

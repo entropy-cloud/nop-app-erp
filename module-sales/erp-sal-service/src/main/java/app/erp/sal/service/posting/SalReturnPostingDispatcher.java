@@ -7,6 +7,7 @@ import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalReturn;
 import app.erp.sal.dao.entity.ErpSalReturnLine;
 import app.erp.sal.service.ErpSalConstants;
+import app.erp.sal.service.entity.ReturnCostStrategyResolver;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
@@ -33,7 +34,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * 标志由调用方 BizModel 在主事务内统一持久化。
  *
  * <p>billData 契约（供 SalAcctDocProvider + ErpFinArApItemGenerator 消费）：
- * {@code TOTAL_COST}（退货成本 = Σ 行 quantity×unitPrice，对齐 ReturnStockMoveBuilder 透传的 unitCost）、
+ * {@code TOTAL_COST}（退货成本 = Σ 行 quantity×策略 unitCost，与 ReturnStockMoveBuilder 经同一
+ * {@link ReturnCostStrategyResolver} 同源消费，对齐 config {@code erp-sal.return-cost-method}）、
  * {@code CUSTOMER_ID}、{@code TOTAL_AMOUNT_WITH_TAX}（退货含税售价，供辅助账 credit memo 用）。
  * 辅助账生成器据此产 DIRECTION_RECEIVABLE + 负 openAmount 项（credit memo，使 sumOpen 自然减计 receivableBalance）。
  */
@@ -113,7 +115,7 @@ public class SalReturnPostingDispatcher {
         event.setVoucherDate(voucherDate);
 
         Map<String, Object> billData = new LinkedHashMap<>();
-        billData.put(SalAcctDocProvider.KEY_TOTAL_COST, computeTotalCost(lines));
+        billData.put(SalAcctDocProvider.KEY_TOTAL_COST, computeTotalCost(returnOrder, lines));
         billData.put(SalAcctDocProvider.KEY_TOTAL_AMOUNT_WITH_TAX, nz(returnOrder.getTotalAmountWithTax()));
         billData.put("CUSTOMER_ID", returnOrder.getCustomerId());
         billData.put(KEY_OFFSET_ESTIMATED_RECEIVABLE, Boolean.TRUE);
@@ -136,15 +138,17 @@ public class SalReturnPostingDispatcher {
     }
 
     /**
-     * 退货成本 = Σ 行 quantity × unitPrice（对齐 {@code ReturnStockMoveBuilder} 透传 unitCost = unitPrice 的口径，
-     * 与库存移动单 stock ledger 的 totalCost 同源）。
+     * 退货成本 = Σ 行 quantity × 策略 unitCost。与 {@code ReturnStockMoveBuilder.buildLines} 经同一
+     * {@link ReturnCostStrategyResolver} 同源消费（P1-RC-026）——current/agreement 策略下 GL 凭证
+     * {@code TOTAL_COST} 与库存移动单 stock ledger 的 totalCost 同源；original 策略行为不变（行 unitPrice）。
      */
-    private BigDecimal computeTotalCost(List<ErpSalReturnLine> lines) {
+    private BigDecimal computeTotalCost(ErpSalReturn returnOrder, List<ErpSalReturnLine> lines) {
         BigDecimal total = BigDecimal.ZERO;
         for (ErpSalReturnLine line : lines) {
             BigDecimal qty = line.getQuantity() == null ? BigDecimal.ZERO : line.getQuantity();
-            BigDecimal price = line.getUnitPrice() == null ? BigDecimal.ZERO : line.getUnitPrice();
-            total = total.add(qty.multiply(price));
+            BigDecimal unitCost = ReturnCostStrategyResolver.resolveUnitCost(daoProvider, line.getUnitPrice(),
+                    line.getMaterialId(), returnOrder.getWarehouseId());
+            total = total.add(qty.multiply(unitCost));
         }
         return total;
     }

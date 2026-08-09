@@ -82,6 +82,22 @@ public interface ErpSalConstants extends ErpSalDocStatus {
     String CONFIG_RETURN_REASON_REQUIRED = "erp-sal.return-reason-required";
     String CONFIG_RETURN_APPROVAL_REQUIRED = "erp-sal.return-approval-required";
 
+    // 退货入库成本策略配置项 erp-sal.return-cost-method（UC-SAL-07，P1-RC-026）：
+    // original=按原出库成本（行 unitPrice，默认）/ current=按当前库存成本（库存域 avgCost，缺失回退 unitPrice+LOG.warn）
+    // / agreement=按退货协议价（行 unitPrice 协议价语义）。三策略由 ReturnStockMoveBuilder.buildLines 与
+    // SalReturnPostingDispatcher.computeTotalCost 同源消费（同一 ReturnCostStrategyResolver）。
+    String CONFIG_RETURN_COST_METHOD = "erp-sal.return-cost-method";
+    String RETURN_COST_METHOD_ORIGINAL = "original";
+    String RETURN_COST_METHOD_CURRENT = "current";
+    String RETURN_COST_METHOD_AGREEMENT = "agreement";
+
+    // 会计期间状态常量（UC-SAL-09 期间 CLOSED 守卫，P1-RC-028；镜像 finance/assets 域字面值，避免跨 service 依赖）
+    String PERIOD_STATUS_OPEN = "OPEN";
+    String PERIOD_STATUS_CLOSING = "CLOSING";
+    String PERIOD_STATUS_CLOSED = "CLOSED";
+    String PERIOD_STATUS_CLOSED_FINAL = "CLOSED_FINAL";
+    String PERIOD_STATUS_NEVER_OPENED = "NEVER_OPENED";
+
     // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
     /** 应收超期预警天数（账龄 > 此值触发）；默认 0=关闭预警。 */
     String CONFIG_DASH_SAL_AR_OVERDUE_DAYS = "erp-dash.sal-ar-overdue-days";

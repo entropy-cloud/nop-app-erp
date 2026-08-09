@@ -1,5 +1,6 @@
 package app.erp.sal.service.processor;
 
+import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.inv.biz.IErpInvStockMoveBiz;
 import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.entity.ErpInvStockMove;
@@ -7,6 +8,8 @@ import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalDeliveryLine;
+import app.erp.sal.dao.entity.ErpSalInvoice;
+import app.erp.sal.dao.entity.ErpSalInvoiceLine;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.dao.entity.ErpSalReturn;
 import app.erp.sal.dao.entity.ErpSalReturnLine;
@@ -28,6 +31,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -39,7 +43,9 @@ import java.util.stream.Collectors;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
+import static io.nop.api.core.beans.FilterBeans.le;
 
 /**
  * 销售退货单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
@@ -183,6 +189,9 @@ public class ErpSalReturnProcessor {
         requireCustomerActive(returnOrder, context);
         requireSourceDeliveryApproved(returnOrder, context);
         List<ErpSalReturnLine> lines = loadLines(returnOrder.getId());
+        // P2-3 守卫顺序确定化：跨域守卫（期间/发票）先于数量守卫，派生可覆盖
+        requirePeriodOpen(returnOrder, context);
+        validateInvoiceNotSettled(returnOrder, lines, context);
         requireReasonIfConfigured(returnOrder, lines, context);
         returnQtyValidator.validate(returnOrder, lines);
     }
@@ -278,6 +287,94 @@ public class ErpSalReturnProcessor {
         } catch (Exception e) {
             return defaultValue;
         }
+    }
+
+    /**
+     * P1-RC-028 期间 CLOSED pre-approve 守卫（UC-SAL-09，会计正确性 Q4 无例外）。按退货 businessDate 解析
+     * 对应会计期间 status：非 OPEN（含 CLOSING/CLOSED/CLOSED_FINAL/NEVER_OPENED）拒绝、无对应期间拒绝。
+     * 对齐 finance {@code ErpFinPostingProcessor.resolveOpenPeriod}（无期间抛 ERR_PERIOD_NOT_FOUND 同型 +
+     * 非 OPEN 抛 ERR_PERIOD_CLOSED）+ assets {@code ErpAstDepreciationScheduleProcessor.requirePeriodOpen}
+     * 严格语义——过账侧 resolveOpenPeriod 既有兜底保持，本守卫为审核侧显式前置拦截（体验层）。
+     */
+    protected void requirePeriodOpen(ErpSalReturn returnOrder, IServiceContext context) {
+        LocalDate businessDate = returnOrder.getBusinessDate();
+        ErpFinAccountingPeriod period = findPeriodByDate(returnOrder.getOrgId(), businessDate);
+        if (period == null) {
+            throw new NopException(ErpSalErrors.ERR_RETURN_PERIOD_CLOSED)
+                    .param(ErpSalErrors.ARG_RETURN_CODE, returnOrder.getCode())
+                    .param(ErpSalErrors.ARG_PERIOD, businessDate == null ? "未设置业务日期" : businessDate.toString());
+        }
+        if (!Objects.equals(period.getStatus(), ErpSalConstants.PERIOD_STATUS_OPEN)) {
+            throw new NopException(ErpSalErrors.ERR_RETURN_PERIOD_CLOSED)
+                    .param(ErpSalErrors.ARG_RETURN_CODE, returnOrder.getCode())
+                    .param(ErpSalErrors.ARG_PERIOD, period.getCode());
+        }
+    }
+
+    /**
+     * P1-RC-027 已核销发票 pre-approve 守卫（UC-SAL-09）。按退货关联的发票（经退货行 deliveryLineId →
+     * ErpSalInvoiceLine.deliveryLineId → invoice 链路，发票级解析面对齐 L1 字面「退货关联的发票」）查核销状态：
+     * receivedStatus=RECEIVED（完全核销）拒绝、提示先撤回核销；PARTIAL/OPEN 放行（post-approve 既有
+     * {@code ReturnRefundOrchestrator.reverseSettlementsForInvoice} 反向兜底承接客户级残余，@Version 乐观锁保护）。
+     * 无关联发票跳过。
+     */
+    protected void validateInvoiceNotSettled(ErpSalReturn returnOrder, List<ErpSalReturnLine> lines,
+                                              IServiceContext context) {
+        Set<Long> deliveryLineIds = new HashSet<>();
+        for (ErpSalReturnLine line : lines) {
+            if (line.getDeliveryLineId() != null) {
+                deliveryLineIds.add(line.getDeliveryLineId());
+            }
+        }
+        if (deliveryLineIds.isEmpty()) {
+            return;
+        }
+        Set<Long> invoiceIds = findInvoiceIdsByDeliveryLines(deliveryLineIds);
+        if (invoiceIds.isEmpty()) {
+            return;
+        }
+        for (ErpSalInvoice invoice : findApprovedInvoices(invoiceIds)) {
+            if (Objects.equals(invoice.getReceivedStatus(), ErpSalConstants.RECEIVED_STATUS_RECEIVED)) {
+                throw new NopException(ErpSalErrors.ERR_RETURN_INVOICE_SETTLED)
+                        .param(ErpSalErrors.ARG_RETURN_CODE, returnOrder.getCode())
+                        .param(ErpSalErrors.ARG_INVOICE_CODE, invoice.getCode());
+            }
+        }
+    }
+
+    protected ErpFinAccountingPeriod findPeriodByDate(Long orgId, LocalDate date) {
+        if (date == null) {
+            return null;
+        }
+        IEntityDao<ErpFinAccountingPeriod> dao = daoProvider.daoFor(ErpFinAccountingPeriod.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(le("startDate", date), ge("endDate", date)));
+        if (orgId != null) {
+            q.addFilter(eq("orgId", orgId));
+        }
+        q.setLimit(1);
+        List<ErpFinAccountingPeriod> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
+    }
+
+    private Set<Long> findInvoiceIdsByDeliveryLines(Set<Long> deliveryLineIds) {
+        IEntityDao<ErpSalInvoiceLine> dao = daoProvider.daoFor(ErpSalInvoiceLine.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(in("deliveryLineId", deliveryLineIds));
+        Set<Long> invoiceIds = new HashSet<>();
+        for (ErpSalInvoiceLine il : dao.findAllByQuery(q)) {
+            if (il.getInvoiceId() != null) {
+                invoiceIds.add(il.getInvoiceId());
+            }
+        }
+        return invoiceIds;
+    }
+
+    private List<ErpSalInvoice> findApprovedInvoices(Set<Long> invoiceIds) {
+        IEntityDao<ErpSalInvoice> dao = daoProvider.daoFor(ErpSalInvoice.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(and(in("id", invoiceIds), eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED)));
+        return dao.findAllByQuery(q);
     }
 
     // ---------- 过账接线 ----------
