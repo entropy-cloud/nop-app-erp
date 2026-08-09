@@ -41,6 +41,7 @@ start_server() {
   rm -f db/erp.mv.db db/erp.trace.db
   echo "booting server on ${PORT}"
   nohup java -Dfile.encoding=UTF8 \
+    -Dquarkus.profile=test \
     -Dnop.auth.service-public=true \
     -Dnop.auth.login.allow-create-default-user=true \
     -Dnop.orm.init-database-data=true \
