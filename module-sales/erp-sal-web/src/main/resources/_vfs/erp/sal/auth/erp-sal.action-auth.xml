@@ -9,11 +9,11 @@
         <!-- 销售管理:sales域一级菜单 -->
         <resource id="erp-sal" displayName="销售管理" i18n-en:displayName="Sales"
                   icon="receipt" resourceType="TOPM" orderNo="300"
-                  routePath="/erp-sal" component="layouts/default/index">
+                  routePath="/erp-sal" component="layouts/default/index" roles="销售员">
             <children>
                 <!-- 报价 -->
                 <resource id="sal-quotation" displayName="报价" i18n-en:displayName="Quotation"
-                          icon="file-sign" resourceType="SUBM" orderNo="100">
+                          icon="file-sign" resourceType="SUBM" orderNo="100" roles="销售员">
                     <children>
                         <resource id="ErpSalQuotation-main" app:useCases="UC-SAL-01" displayName="销售报价单"
                                   i18n-en:displayName="Sales Quotation" icon="file-sign"
@@ -34,7 +34,7 @@
                 </resource>
                 <!-- 合同 -->
                 <resource id="sal-contract" displayName="合同" i18n-en:displayName="Contract"
-                          icon="file-text" resourceType="SUBM" orderNo="200">
+                          icon="file-text" resourceType="SUBM" orderNo="200" roles="销售员">
                     <children>
                         <resource id="ErpSalContract-main" app:useCases="UC-SAL-01" displayName="销售合同"
                                   i18n-en:displayName="Sales Contract" icon="file-text"
@@ -55,7 +55,7 @@
                 </resource>
                 <!-- 订单 -->
                 <resource id="sal-order" displayName="订单" i18n-en:displayName="Order"
-                          icon="shopping-cart" resourceType="SUBM" orderNo="300">
+                          icon="shopping-cart" resourceType="SUBM" orderNo="300" roles="销售员">
                     <children>
                         <resource id="ErpSalOrder-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10,UC-MD-01,UC-MD-02,UC-MD-03,UC-MD-04,UC-MD-05" displayName="销售订单"
                                   i18n-en:displayName="Sales Order" icon="shopping-cart"
@@ -76,7 +76,7 @@
                 </resource>
                 <!-- 发货 -->
                 <resource id="sal-delivery" displayName="发货" i18n-en:displayName="Delivery"
-                          icon="package-minus" resourceType="SUBM" orderNo="400">
+                          icon="package-minus" resourceType="SUBM" orderNo="400" roles="销售员">
                     <children>
                         <resource id="ErpSalDelivery-main" app:useCases="UC-SAL-01,UC-SAL-02,UC-SAL-03,UC-SAL-08,UC-SAL-10,UC-INV-08" displayName="销售出库单"
                                   i18n-en:displayName="Sales Delivery" icon="package-minus"
@@ -97,7 +97,7 @@
                 </resource>
                 <!-- 开票 -->
                 <resource id="sal-invoice" displayName="开票" i18n-en:displayName="Invoice"
-                          icon="receipt" resourceType="SUBM" orderNo="500">
+                          icon="receipt" resourceType="SUBM" orderNo="500" roles="销售员">
                     <children>
                         <resource id="ErpSalInvoice-main" app:useCases="UC-SAL-01,UC-SAL-03,UC-SAL-04,UC-SAL-05" displayName="销售发票"
                                   i18n-en:displayName="Sales Invoice" icon="receipt"
@@ -118,7 +118,7 @@
                 </resource>
                 <!-- 收款结算 -->
                 <resource id="sal-receipt" displayName="收款结算" i18n-en:displayName="Receipt"
-                          icon="banknote" resourceType="SUBM" orderNo="600">
+                          icon="banknote" resourceType="SUBM" orderNo="600" roles="销售员">
                     <children>
                         <resource id="ErpSalReceipt-main" app:useCases="UC-SAL-01,UC-SAL-03,UC-SAL-04" displayName="收款单"
                                   i18n-en:displayName="Receipt" icon="banknote"
@@ -139,7 +139,7 @@
                 </resource>
                 <!-- 退货 -->
                 <resource id="sal-return" displayName="退货" i18n-en:displayName="Return"
-                          icon="undo-2" resourceType="SUBM" orderNo="700">
+                          icon="undo-2" resourceType="SUBM" orderNo="700" roles="销售员">
                     <children>
                         <resource id="ErpSalReturn-main" app:useCases="UC-SAL-04,UC-SAL-05,UC-SAL-06,UC-SAL-07,UC-SAL-09,UC-INV-05" displayName="销售退货单"
                                   i18n-en:displayName="Sales Return" icon="undo-2"
@@ -160,7 +160,7 @@
                 </resource>
                 <!-- 价格管理 -->
                 <resource id="sal-pricing" displayName="价格管理" i18n-en:displayName="Pricing"
-                          icon="tag" resourceType="SUBM" orderNo="800">
+                          icon="tag" resourceType="SUBM" orderNo="800" roles="销售员">
                     <children>
                         <resource id="sales-price-list" app:useCases="UC-SAL-11" displayName="销售价格清单"
                                   i18n-en:displayName="Sales Price List" icon="tag"
@@ -174,7 +174,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="sal-dashboard" displayName="销售概览" i18n-en:displayName="Sales Overview"
-                          icon="trending-up" resourceType="SUBM" orderNo="999">
+                          icon="trending-up" resourceType="SUBM" orderNo="999" roles="销售员">
                     <children>
                         <resource id="sal-dashboard-main" app:useCases="UC-SAL-12" displayName="销售概览"
                                   i18n-en:displayName="Sales Overview" icon="trending-up"

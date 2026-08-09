@@ -9,11 +9,11 @@
         <!-- 设备维护:maintenance域一级菜单 -->
         <resource id="erp-mnt" displayName="设备维护" i18n-en:displayName="Maintenance"
                   icon="wrench" resourceType="TOPM" orderNo="900"
-                  routePath="/erp-mnt" component="layouts/default/index">
+                  routePath="/erp-mnt" component="layouts/default/index" roles="维护主管/维护人员">
             <children>
                 <!-- 设备主数据 -->
                 <resource id="mnt-equipment" displayName="设备主数据" i18n-en:displayName="Equipment"
-                          icon="cog" resourceType="SUBM" orderNo="100">
+                          icon="cog" resourceType="SUBM" orderNo="100" roles="维护主管">
                     <children>
                         <resource id="ErpMntEquipment-main" app:useCases="UC-MAIN-03,UC-MAIN-06,UC-MAIN-08,UC-MAIN-10" displayName="设备"
                                   i18n-en:displayName="Equipment" icon="cog"
@@ -27,7 +27,7 @@
                 </resource>
                 <!-- 维护计划 -->
                 <resource id="mnt-schedule" displayName="维护计划" i18n-en:displayName="Schedule"
-                          icon="calendar-clock" resourceType="SUBM" orderNo="200">
+                          icon="calendar-clock" resourceType="SUBM" orderNo="200" roles="维护主管">
                     <children>
                         <resource id="ErpMntSchedule-main" app:useCases="UC-MAIN-01,UC-MAIN-02" displayName="维护计划"
                                   i18n-en:displayName="Maintenance Schedule" icon="calendar-clock"
@@ -41,7 +41,7 @@
                 </resource>
                 <!-- 维护工单 -->
                 <resource id="mnt-work" displayName="维护工单" i18n-en:displayName="Work Order"
-                          icon="life-buoy" resourceType="SUBM" orderNo="300">
+                          icon="life-buoy" resourceType="SUBM" orderNo="300" roles="维护主管/维护人员">
                     <children>
                         <resource id="ErpMntVisit-main" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-07,UC-MAIN-09" displayName="维护访问"
                                   i18n-en:displayName="Maintenance Visit" icon="clipboard-check"
@@ -64,7 +64,7 @@
                 </resource>
                 <!-- 团队 -->
                 <resource id="mnt-team" displayName="团队" i18n-en:displayName="Team"
-                          icon="users" resourceType="SUBM" orderNo="400">
+                          icon="users" resourceType="SUBM" orderNo="400" roles="维护主管">
                     <children>
                         <resource id="ErpMntMaintenanceTeam-main" displayName="维护团队"
                                   i18n-en:displayName="Maintenance Team" icon="users"
@@ -74,7 +74,7 @@
                 </resource>
                 <!-- 备件 -->
                 <resource id="mnt-spare" displayName="备件" i18n-en:displayName="Spare Part"
-                          icon="package-minus" resourceType="SUBM" orderNo="500">
+                          icon="package-minus" resourceType="SUBM" orderNo="500" roles="维护主管/维护人员">
                     <children>
                         <resource id="ErpMntSparePartUsage-main" app:useCases="UC-MAIN-04" displayName="备件消耗"
                                   i18n-en:displayName="Spare Part Usage" icon="package-minus"
@@ -84,7 +84,7 @@
                 </resource>
                 <!-- 维护报表 -->
                 <resource id="mnt-report" displayName="维护报表" i18n-en:displayName="Maintenance Reports"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="600">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="600" roles="维护主管">
                     <children>
                         <resource id="maintenance-history" app:useCases="UC-MAIN-03,UC-MAIN-04,UC-MAIN-11" displayName="维护历史表"
                                   i18n-en:displayName="Maintenance History" icon="clipboard-check"
@@ -98,7 +98,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="mnt-dashboard" displayName="维护概览" i18n-en:displayName="Maintenance Overview"
-                          icon="gauge" resourceType="SUBM" orderNo="999">
+                          icon="gauge" resourceType="SUBM" orderNo="999" roles="维护主管">
                     <children>
                         <resource id="mnt-dashboard-main" app:useCases="UC-MAIN-11" displayName="维护概览"
                                   i18n-en:displayName="Maintenance Overview" icon="gauge"

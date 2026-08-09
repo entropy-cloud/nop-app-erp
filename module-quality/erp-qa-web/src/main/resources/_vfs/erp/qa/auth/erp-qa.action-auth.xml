@@ -9,11 +9,11 @@
         <!-- 质量管理:quality域一级菜单 -->
         <resource id="erp-qa" displayName="质量管理" i18n-en:displayName="Quality"
                   icon="shield-check" resourceType="TOPM" orderNo="1000"
-                  routePath="/erp-qa" component="layouts/default/index">
+                  routePath="/erp-qa" component="layouts/default/index" roles="质检员/质量主管">
             <children>
                 <!-- 检验执行 -->
                 <resource id="qa-inspection" displayName="检验执行" i18n-en:displayName="Inspection"
-                          icon="clipboard-check" resourceType="SUBM" orderNo="100">
+                          icon="clipboard-check" resourceType="SUBM" orderNo="100" roles="质检员/质量主管">
                     <children>
                         <resource id="ErpQaInspection-main" app:useCases="UC-QA-01,UC-QA-02,UC-QA-03,UC-QA-04,UC-QA-06,UC-QA-08,UC-QA-11" displayName="质检单"
                                   i18n-en:displayName="Inspection" icon="clipboard-check"
@@ -23,7 +23,7 @@
                 </resource>
                 <!-- 检验标准 -->
                 <resource id="qa-standard" displayName="检验标准" i18n-en:displayName="Standard"
-                          icon="file-check-2" resourceType="SUBM" orderNo="200">
+                          icon="file-check-2" resourceType="SUBM" orderNo="200" roles="质量主管">
                     <children>
                         <resource id="ErpQaInspectionTemplate-main" app:useCases="UC-QA-07" displayName="质检模板"
                                   i18n-en:displayName="Inspection Template" icon="file-check-2"
@@ -37,7 +37,7 @@
                 </resource>
                 <!-- 不合格品 -->
                 <resource id="qa-ncr" displayName="不合格品" i18n-en:displayName="Non-Conformance"
-                          icon="x-circle" resourceType="SUBM" orderNo="300">
+                          icon="x-circle" resourceType="SUBM" orderNo="300" roles="质检员/质量主管">
                     <children>
                         <resource id="ErpQaNonConformance-main" app:useCases="UC-QA-02,UC-QA-05,UC-QA-09" displayName="不合格品报告"
                                   i18n-en:displayName="Non-Conformance Report" icon="x-circle"
@@ -51,7 +51,7 @@
                 </resource>
                 <!-- 纠正预防 -->
                 <resource id="qa-capa" displayName="纠正预防" i18n-en:displayName="Corrective Action"
-                          icon="shield-alert" resourceType="SUBM" orderNo="400">
+                          icon="shield-alert" resourceType="SUBM" orderNo="400" roles="质量主管">
                     <children>
                         <resource id="ErpQaAction-main" app:useCases="UC-QA-05,UC-QA-09" displayName="纠正预防措施"
                                   i18n-en:displayName="Corrective Action" icon="shield-alert"
@@ -65,7 +65,7 @@
                 </resource>
                 <!-- 质量目标 -->
                 <resource id="qa-goal" displayName="质量目标" i18n-en:displayName="Quality Goal"
-                          icon="target" resourceType="SUBM" orderNo="500">
+                          icon="target" resourceType="SUBM" orderNo="500" roles="质量主管">
                     <children>
                         <resource id="ErpQaQualityGoal-main" app:useCases="UC-QA-10" displayName="质量目标"
                                   i18n-en:displayName="Quality Goal" icon="target"
@@ -83,7 +83,7 @@
                 </resource>
                 <!-- 质量报表 -->
                 <resource id="qa-report" displayName="质量报表" i18n-en:displayName="Quality Reports"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="600">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="600" roles="质量主管">
                     <children>
                         <resource id="inspection-summary" app:useCases="UC-QA-01,UC-QA-03,UC-QA-12" displayName="质检合格率统计表"
                                   i18n-en:displayName="Inspection Summary" icon="clipboard-check"
@@ -97,7 +97,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="qa-dashboard" displayName="质量概览" i18n-en:displayName="Quality Overview"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="999">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="999" roles="质量主管">
                     <children>
                         <resource id="qa-dashboard-main" app:useCases="UC-QA-12" displayName="质量概览"
                                   i18n-en:displayName="Quality Overview" icon="bar-chart-3"
@@ -107,7 +107,7 @@
                 </resource>
                 <!-- 过程控制(SPC) -->
                 <resource id="qa-spc" displayName="过程控制(SPC)" i18n-en:displayName="SPC"
-                          icon="activity" resourceType="SUBM" orderNo="700">
+                          icon="activity" resourceType="SUBM" orderNo="700" roles="质量主管">
                     <children>
                         <resource id="spc-chart" app:useCases="UC-QA-09,UC-QA-10,UC-QA-11" displayName="控制图配置"
                                   i18n-en:displayName="SPC Chart" icon="activity"
@@ -125,7 +125,7 @@
                 </resource>
                 <!-- 产品召回 -->
                 <resource id="qa-recall" displayName="产品召回" i18n-en:displayName="Product Recall"
-                          icon="undo-2" resourceType="SUBM" orderNo="750">
+                          icon="undo-2" resourceType="SUBM" orderNo="750" roles="质量主管">
                     <children>
                         <resource id="ErpQaRecall-main" app:useCases="UC-QA-05,UC-QA-09" displayName="召回事件"
                                   i18n-en:displayName="Recall Event" icon="undo-2"

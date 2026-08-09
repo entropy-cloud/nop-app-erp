@@ -9,11 +9,11 @@
         <!-- 采购管理:采购域一级菜单,菜单组织参照 ERPNext buying 域的业务阶段分组 -->
         <resource id="erp-pur" displayName="采购管理" i18n-en:displayName="Purchase"
                   icon="shopping-cart" resourceType="TOPM" orderNo="200"
-                  routePath="/erp-pur" component="layouts/default/index">
+                  routePath="/erp-pur" component="layouts/default/index" roles="采购员">
             <children>
                 <!-- 采购寻源:询价 / 报价 / 价格清单 -->
                 <resource id="erp-pur-sourcing" displayName="采购寻源"
-                          i18n-en:displayName="Sourcing" icon="search" resourceType="SUBM" orderNo="100">
+                          i18n-en:displayName="Sourcing" icon="search" resourceType="SUBM" orderNo="100" roles="采购员">
                     <children>
                         <resource id="ErpPurRfq-main" app:useCases="UC-PUR-01" displayName="采购询价单"
                                   i18n-en:displayName="Purchase RFQ" icon="message-circle-question"
@@ -36,7 +36,7 @@
 
                 <!-- 采购订单:请购 / 订单 -->
                 <resource id="erp-pur-order" displayName="采购订单"
-                          i18n-en:displayName="Purchase Order" icon="shopping-cart" resourceType="SUBM" orderNo="200">
+                          i18n-en:displayName="Purchase Order" icon="shopping-cart" resourceType="SUBM" orderNo="200" roles="采购员">
                     <children>
                         <resource id="ErpPurRequisition-main" app:useCases="UC-PUR-01,UC-PUR-08" displayName="采购请购单"
                                   i18n-en:displayName="Purchase Requisition" icon="file-text"
@@ -73,7 +73,7 @@
 
                 <!-- 采购入库:收货入库 -->
                 <resource id="erp-pur-receipt" displayName="采购入库"
-                          i18n-en:displayName="Goods Receipt" icon="package-plus" resourceType="SUBM" orderNo="300">
+                          i18n-en:displayName="Goods Receipt" icon="package-plus" resourceType="SUBM" orderNo="300" roles="采购员">
                     <children>
                         <resource id="ErpPurReceive-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-07" displayName="采购入库单"
                                   i18n-en:displayName="Purchase Receipt" icon="package-plus"
@@ -95,7 +95,7 @@
 
                 <!-- 采购结算:发票 / 付款 -->
                 <resource id="erp-pur-billing" displayName="采购结算"
-                          i18n-en:displayName="Billing" icon="receipt" resourceType="SUBM" orderNo="400">
+                          i18n-en:displayName="Billing" icon="receipt" resourceType="SUBM" orderNo="400" roles="采购员">
                     <children>
                         <resource id="ErpPurInvoice-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-05,UC-PUR-07" displayName="采购发票"
                                   i18n-en:displayName="Purchase Invoice" icon="receipt"
@@ -132,7 +132,7 @@
 
                 <!-- 采购退货 -->
                 <resource id="erp-pur-return" displayName="采购退货"
-                          i18n-en:displayName="Return" icon="undo-2" resourceType="SUBM" orderNo="500">
+                          i18n-en:displayName="Return" icon="undo-2" resourceType="SUBM" orderNo="500" roles="采购员">
                     <children>
                         <resource id="ErpPurReturn-main" app:useCases="UC-PUR-04,UC-INV-05" displayName="采购退货单"
                                   i18n-en:displayName="Purchase Return" icon="undo-2"
@@ -153,7 +153,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="pur-dashboard" displayName="采购概览" i18n-en:displayName="Purchase Overview"
-                          icon="pie-chart" resourceType="SUBM" orderNo="999">
+                          icon="pie-chart" resourceType="SUBM" orderNo="999" roles="采购员">
                     <children>
                         <resource id="pur-dashboard-main" app:useCases="UC-PUR-09" displayName="采购概览"
                                   i18n-en:displayName="Purchase Overview" icon="pie-chart"

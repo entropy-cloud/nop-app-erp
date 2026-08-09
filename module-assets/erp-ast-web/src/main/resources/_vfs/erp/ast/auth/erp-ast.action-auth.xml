@@ -9,11 +9,11 @@
         <!-- 固定资产管理:assets域一级菜单 -->
         <resource id="erp-ast" displayName="固定资产管理" i18n-en:displayName="Fixed Assets"
                   icon="truck" resourceType="TOPM" orderNo="600"
-                  routePath="/erp-ast" component="layouts/default/index">
+                  routePath="/erp-ast" component="layouts/default/index" roles="资产管理员">
             <children>
                 <!-- 资产台账 -->
                 <resource id="ast-ledger" displayName="资产台账" i18n-en:displayName="Asset Ledger"
-                          icon="truck" resourceType="SUBM" orderNo="100">
+                          icon="truck" resourceType="SUBM" orderNo="100" roles="资产管理员">
                     <children>
                         <resource id="ErpAstAsset-main" app:useCases="UC-AST-01,UC-AST-02,UC-AST-03,UC-AST-04,UC-AST-05" displayName="固定资产"
                                   i18n-en:displayName="Fixed Asset" icon="truck"
@@ -27,7 +27,7 @@
                 </resource>
                 <!-- 折旧 -->
                 <resource id="ast-depreciation" displayName="折旧" i18n-en:displayName="Depreciation"
-                          icon="trending-down" resourceType="SUBM" orderNo="200">
+                          icon="trending-down" resourceType="SUBM" orderNo="200" roles="资产管理员">
                     <children>
                         <resource id="ErpAstDepreciationSchedule-main" app:useCases="UC-AST-02,UC-AST-07,UC-AST-08" displayName="折旧计划"
                                   i18n-en:displayName="Depreciation Schedule" icon="trending-down"
@@ -37,7 +37,7 @@
                 </resource>
                 <!-- 资产变动 -->
                 <resource id="ast-movement" displayName="资产变动" i18n-en:displayName="Asset Movement"
-                          icon="move" resourceType="SUBM" orderNo="300">
+                          icon="move" resourceType="SUBM" orderNo="300" roles="资产管理员">
                     <children>
                         <resource id="ErpAstMovement-main" app:useCases="UC-AST-03" displayName="资产移动"
                                   i18n-en:displayName="Asset Movement" icon="move"
@@ -67,7 +67,7 @@
                 </resource>
                 <!-- 处置资本化 -->
                 <resource id="ast-disposal" displayName="处置资本化" i18n-en:displayName="Disposal &amp; Capitalization"
-                          icon="trash-2" resourceType="SUBM" orderNo="400">
+                          icon="trash-2" resourceType="SUBM" orderNo="400" roles="资产管理员">
                     <children>
                         <resource id="ErpAstDisposal-main" app:useCases="UC-AST-04,UC-AST-05" displayName="资产处置"
                                   i18n-en:displayName="Asset Disposal" icon="trash-2"
@@ -96,7 +96,7 @@
                 </resource>
                 <!-- 资产盘点 -->
                 <resource id="ast-stocktake" displayName="资产盘点" i18n-en:displayName="Asset Stocktake"
-                          icon="clipboard-list" resourceType="SUBM" orderNo="600">
+                          icon="clipboard-list" resourceType="SUBM" orderNo="600" roles="资产管理员">
                     <children>
                         <resource id="ErpAstInventory-main" app:useCases="UC-AST-09" displayName="资产盘点单"
                                   i18n-en:displayName="Asset Stocktake" icon="clipboard-list"
@@ -106,7 +106,7 @@
                 </resource>
                 <!-- 资产报表 -->
                 <resource id="ast-report" displayName="资产报表" i18n-en:displayName="Assets Reports"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="700">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="700" roles="资产管理员">
                     <children>
                         <resource id="asset-depreciation-detail" app:useCases="UC-AST-02,UC-AST-07,UC-AST-12" displayName="资产折旧明细表"
                                   i18n-en:displayName="Asset Depreciation Detail" icon="trending-down"
@@ -120,7 +120,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="ast-dashboard" displayName="资产概览" i18n-en:displayName="Assets Overview"
-                          icon="truck" resourceType="SUBM" orderNo="999">
+                          icon="truck" resourceType="SUBM" orderNo="999" roles="资产管理员">
                     <children>
                         <resource id="ast-dashboard-main" app:useCases="UC-AST-12" displayName="资产概览"
                                   i18n-en:displayName="Assets Overview" icon="truck"

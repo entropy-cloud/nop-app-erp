@@ -9,11 +9,11 @@
         <!-- 仓库管理:inventory域一级菜单 -->
         <resource id="erp-inv" displayName="仓库管理" i18n-en:displayName="Inventory"
                   icon="warehouse" resourceType="TOPM" orderNo="400"
-                  routePath="/erp-inv" component="layouts/default/index">
+                  routePath="/erp-inv" component="layouts/default/index" roles="库管员">
             <children>
                 <!-- 库存作业 -->
                 <resource id="inv-move" displayName="库存作业" i18n-en:displayName="Stock Operation"
-                          icon="arrow-left-right" resourceType="SUBM" orderNo="100">
+                          icon="arrow-left-right" resourceType="SUBM" orderNo="100" roles="库管员">
                     <children>
                         <resource id="ErpInvStockMove-main" app:useCases="UC-INV-01,UC-INV-03,UC-INV-04,UC-INV-10,UC-MD-02,UC-INV-08,UC-INV-09" displayName="库存移动单"
                                   i18n-en:displayName="Stock Move" icon="arrow-left-right"
@@ -38,7 +38,7 @@
                 </resource>
                 <!-- 流水余额 -->
                 <resource id="inv-ledger" displayName="流水余额" i18n-en:displayName="Ledger &amp; Balance"
-                          icon="trending-up" resourceType="SUBM" orderNo="200">
+                          icon="trending-up" resourceType="SUBM" orderNo="200" roles="库管员">
                     <children>
                         <resource id="ErpInvStockLedger-main" app:useCases="UC-INV-01,UC-INV-03" displayName="库存流水"
                                   i18n-en:displayName="Stock Ledger" icon="trending-up"
@@ -52,7 +52,7 @@
                 </resource>
                 <!-- 调拨 -->
                 <resource id="inv-transfer" displayName="调拨" i18n-en:displayName="Transfer"
-                          icon="arrow-right-left" resourceType="SUBM" orderNo="300">
+                          icon="arrow-right-left" resourceType="SUBM" orderNo="300" roles="库管员">
                     <children>
                         <resource id="ErpInvTransferOrder-main" app:useCases="UC-INV-04" displayName="调拨单"
                                   i18n-en:displayName="Transfer Order" icon="arrow-right-left"
@@ -62,7 +62,7 @@
                 </resource>
                 <!-- 盘点 -->
                 <resource id="inv-take" displayName="盘点" i18n-en:displayName="Stock Take"
-                          icon="clipboard-list" resourceType="SUBM" orderNo="400">
+                          icon="clipboard-list" resourceType="SUBM" orderNo="400" roles="库管员">
                     <children>
                         <resource id="ErpInvStockTake-main" app:useCases="UC-INV-07" displayName="盘点单"
                                   i18n-en:displayName="Stock Take" icon="clipboard-list"
@@ -76,7 +76,7 @@
                 </resource>
                 <!-- 预留 -->
                 <resource id="inv-reservation" displayName="预留" i18n-en:displayName="Reservation"
-                          icon="bookmark" resourceType="SUBM" orderNo="500">
+                          icon="bookmark" resourceType="SUBM" orderNo="500" roles="库管员">
                     <children>
                         <resource id="ErpInvReservation-main" app:useCases="UC-INV-02" displayName="库存预留单"
                                   i18n-en:displayName="Stock Reservation" icon="bookmark"
@@ -86,7 +86,7 @@
                 </resource>
                 <!-- 批次序列号 -->
                 <resource id="inv-batch" displayName="批次序列号" i18n-en:displayName="Batch &amp; Serial"
-                          icon="boxes" resourceType="SUBM" orderNo="600">
+                          icon="boxes" resourceType="SUBM" orderNo="600" roles="库管员">
                     <children>
                         <resource id="ErpInvBatch-main" app:useCases="UC-INV-06" displayName="批次台账"
                                   i18n-en:displayName="Batch Ledger" icon="boxes"
@@ -100,7 +100,7 @@
                 </resource>
                 <!-- 成本 -->
                 <resource id="inv-cost" displayName="成本" i18n-en:displayName="Cost"
-                          icon="layers" resourceType="SUBM" orderNo="700">
+                          icon="layers" resourceType="SUBM" orderNo="700" roles="库管员">
                     <children>
                         <resource id="ErpInvCostLayer-main" app:useCases="UC-INV-10,UC-FIN-10" displayName="成本层"
                                   i18n-en:displayName="Cost Layer" icon="layers"
@@ -125,7 +125,7 @@
                 </resource>
                 <!-- 库存报表 -->
                 <resource id="inv-report" displayName="库存报表" i18n-en:displayName="Inventory Reports"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="800">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="800" roles="库管员">
                     <children>
                         <resource id="inventory-trace-report" app:useCases="UC-INV-06,UC-INV-11" displayName="库存追溯可视化"
                                   i18n-en:displayName="Inventory Trace Report" icon="git-commit"
@@ -135,7 +135,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="inv-dashboard" displayName="库存概览" i18n-en:displayName="Inventory Overview"
-                          icon="boxes" resourceType="SUBM" orderNo="999">
+                          icon="boxes" resourceType="SUBM" orderNo="999" roles="库管员">
                     <children>
                         <resource id="inv-dashboard-main" app:useCases="UC-INV-11" displayName="库存概览"
                                   i18n-en:displayName="Inventory Overview" icon="boxes"

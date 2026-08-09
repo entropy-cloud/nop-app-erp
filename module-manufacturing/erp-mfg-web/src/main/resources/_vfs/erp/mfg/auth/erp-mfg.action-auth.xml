@@ -9,11 +9,11 @@
         <!-- 制造管理:manufacturing域一级菜单 -->
         <resource id="erp-mfg" displayName="制造管理" i18n-en:displayName="Manufacturing"
                   icon="factory" resourceType="TOPM" orderNo="800"
-                  routePath="/erp-mfg" component="layouts/default/index">
+                  routePath="/erp-mfg" component="layouts/default/index" roles="生产计划员/生产主管/作业员">
             <children>
                 <!-- 基础数据 -->
                 <resource id="mfg-master" displayName="基础数据" i18n-en:displayName="Master Data"
-                          icon="git-branch" resourceType="SUBM" orderNo="100">
+                          icon="git-branch" resourceType="SUBM" orderNo="100" roles="生产计划员/生产主管">
                     <children>
                         <resource id="ErpMfgBom-main" app:useCases="UC-MFG-02,UC-MFG-10" displayName="BOM"
                                   i18n-en:displayName="BOM" icon="git-branch"
@@ -39,7 +39,7 @@
                 </resource>
                 <!-- 工单执行 -->
                 <resource id="mfg-execution" displayName="工单执行" i18n-en:displayName="Execution"
-                          icon="factory" resourceType="SUBM" orderNo="200">
+                          icon="factory" resourceType="SUBM" orderNo="200" roles="生产计划员/生产主管/作业员">
                     <children>
                         <resource id="ErpMfgWorkOrder-main" app:useCases="UC-MFG-01,UC-MFG-03,UC-MFG-04,UC-MFG-07,UC-MFG-08,UC-MFG-09,UC-MFG-10,UC-MFG-05" displayName="工单"
                                   i18n-en:displayName="Work Order" icon="factory"
@@ -72,7 +72,7 @@
                 </resource>
                 <!-- MRP计划 -->
                 <resource id="mfg-mrp" displayName="MRP计划" i18n-en:displayName="MRP"
-                          icon="calendar-clock" resourceType="SUBM" orderNo="300">
+                          icon="calendar-clock" resourceType="SUBM" orderNo="300" roles="生产主管">
                     <children>
                         <resource id="ErpMfgMrpPlan-main" app:useCases="UC-MFG-03" displayName="MRP计划"
                                   i18n-en:displayName="MRP Plan" icon="calendar-clock"
@@ -90,7 +90,7 @@
                 </resource>
                 <!-- MRP仿真（plan 2026-07-22-1000-2） -->
                 <resource id="mfg-mrp-simulation" displayName="MRP仿真" i18n-en:displayName="MRP Simulation"
-                          icon="flask-conical" resourceType="SUBM" orderNo="350">
+                          icon="flask-conical" resourceType="SUBM" orderNo="350" roles="生产主管">
                     <children>
                         <resource id="ErpMfgMrpScenario-main" displayName="MRP仿真场景"
                                   i18n-en:displayName="MRP Simulation Scenario" icon="flask-conical"
@@ -108,7 +108,7 @@
                 </resource>
                 <!-- 委外 -->
                 <resource id="mfg-subcontract" displayName="委外" i18n-en:displayName="Subcontract"
-                          icon="truck" resourceType="SUBM" orderNo="400">
+                          icon="truck" resourceType="SUBM" orderNo="400" roles="生产主管">
                     <children>
                         <resource id="ErpMfgSubcontractOrder-main" app:useCases="UC-MFG-01" displayName="委外加工单"
                                   i18n-en:displayName="Subcontract Order" icon="truck"
@@ -125,7 +125,7 @@
                 </resource>
                 <!-- 成本 -->
                 <resource id="mfg-cost" displayName="成本" i18n-en:displayName="Cost"
-                          icon="calculator" resourceType="SUBM" orderNo="500">
+                          icon="calculator" resourceType="SUBM" orderNo="500" roles="生产主管">
                     <children>
                         <resource id="ErpMfgCostRollup-main" app:useCases="UC-MFG-07" displayName="标准成本滚算"
                                   i18n-en:displayName="Cost Rollup" icon="calculator"
@@ -139,7 +139,7 @@
                 </resource>
                 <!-- 质量追溯 -->
                 <resource id="mfg-trace" displayName="质量追溯" i18n-en:displayName="Traceability"
-                          icon="git-commit" resourceType="SUBM" orderNo="600">
+                          icon="git-commit" resourceType="SUBM" orderNo="600" roles="生产主管">
                     <children>
                         <resource id="ErpMfgBatchGenealogy-main" app:useCases="UC-MFG-13" displayName="批次追溯"
                                   i18n-en:displayName="Batch Genealogy" icon="git-commit"
@@ -149,7 +149,7 @@
                 </resource>
                 <!-- 制造报表 -->
                 <resource id="mfg-report" displayName="制造报表" i18n-en:displayName="Manufacturing Reports"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="700">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="700" roles="生产主管">
                     <children>
                         <resource id="crp-load-report" app:useCases="UC-MFG-03,UC-MFG-11" displayName="CRP 负荷报表"
                                   i18n-en:displayName="CRP Load Report" icon="gauge"
@@ -167,7 +167,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="mfg-dashboard" displayName="制造概览" i18n-en:displayName="Manufacturing Overview"
-                          icon="activity" resourceType="SUBM" orderNo="999">
+                          icon="activity" resourceType="SUBM" orderNo="999" roles="生产计划员/生产主管/作业员">
                     <children>
                         <resource id="mfg-dashboard-main" app:useCases="UC-MFG-11" displayName="制造概览"
                                   i18n-en:displayName="Manufacturing Overview" icon="activity"

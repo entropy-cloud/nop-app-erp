@@ -37,7 +37,7 @@
         <!-- 中国本地化:金税接口(L10N CN,独立 module-l10n-cn 工程,设计阶段) -->
         <resource id="erp-l10n-cn" displayName="中国本地化" i18n-en:displayName="L10N CN"
                   icon="map-pin" resourceType="TOPM" orderNo="3000"
-                  routePath="/erp-l10n-cn" component="layouts/default/index">
+                  routePath="/erp-l10n-cn" component="layouts/default/index" roles="admin">
             <children>
                 <resource id="l10n-cn-invoice" displayName="增值税发票" i18n-en:displayName="VAT Invoice"
                           icon="receipt" resourceType="SUBM" orderNo="100">
@@ -66,7 +66,7 @@
         <!-- 系统管理:聚合系统级功能的顶层菜单 -->
         <resource id="erp-sys" displayName="系统管理" i18n-en:displayName="System"
                   icon="settings" resourceType="TOPM" orderNo="2000"
-                  routePath="/erp-sys" component="layouts/default/index">
+                  routePath="/erp-sys" component="layouts/default/index" roles="admin">
             <children>
                 <!-- 用户权限 -->
                 <resource id="sys-user" displayName="用户权限" i18n-en:displayName="User &amp; Role"

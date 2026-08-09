@@ -7,9 +7,9 @@
              与 admin 自动生成的 test-orm-erp-notify TOPM 分离:admin TOPM 保留运维入口,
              notify-inbox TOPM 提供给最终用户的菜单入口,指向 inbox.page.yaml(经 ctx.getUserId() 过滤 recipientUserId)。 -->
         <resource id="notify-inbox" displayName="通知中心" i18n-en:displayName="Notification Center" icon="inbox"
-                  resourceType="TOPM" orderNo="9000" routePath="/notify-inbox" component="layouts/default/index">
+                  resourceType="TOPM" orderNo="9000" routePath="/notify-inbox" component="layouts/default/index" roles="user">
             <children>
-                <resource id="ErpSysNotification-inbox" displayName="我的通知" orderNo="9001"
+                <resource id="ErpSysNotification-inbox" displayName="我的通知" orderNo="9001" roles="user"
                           i18n-en:displayName="My Notifications" icon="bell" component="FLUX" resourceType="SUBM"
                           url="/erp/notify/pages/ErpSysNotification/inbox.page.yaml">
                     <children>

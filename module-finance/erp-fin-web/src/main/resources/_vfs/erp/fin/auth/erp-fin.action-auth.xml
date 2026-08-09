@@ -9,11 +9,11 @@
         <!-- 财务管理:finance域一级菜单 -->
         <resource id="erp-fin" displayName="财务管理" i18n-en:displayName="Finance"
                   icon="landmark" resourceType="TOPM" orderNo="500"
-                  routePath="/erp-fin" component="layouts/default/index">
+                  routePath="/erp-fin" component="layouts/default/index" roles="财务员">
             <children>
                 <!-- 凭证 -->
                 <resource id="fin-voucher" displayName="凭证" i18n-en:displayName="Voucher"
-                          icon="book-up" resourceType="SUBM" orderNo="100">
+                          icon="book-up" resourceType="SUBM" orderNo="100" roles="财务员">
                     <children>
                         <resource id="ErpFinVoucher-main" app:useCases="UC-FIN-01,UC-FIN-02,UC-FIN-12,UC-FIN-03,UC-FIN-04" displayName="会计凭证"
                                   i18n-en:displayName="Accounting Voucher" icon="book-up"
@@ -42,7 +42,7 @@
                 </resource>
                 <!-- 会计期间 -->
                 <resource id="fin-period" displayName="会计期间" i18n-en:displayName="Accounting Period"
-                          icon="calendar" resourceType="SUBM" orderNo="200">
+                          icon="calendar" resourceType="SUBM" orderNo="200" roles="财务员">
                     <children>
                         <resource id="ErpFinAccountingPeriod-main" app:useCases="UC-FIN-06,UC-FIN-07" displayName="会计期间"
                                   i18n-en:displayName="Accounting Period" icon="calendar"
@@ -72,7 +72,7 @@
                 </resource>
                 <!-- 应收应付 -->
                 <resource id="fin-arap" displayName="应收应付" i18n-en:displayName="AR/AP"
-                          icon="arrow-left-right" resourceType="SUBM" orderNo="300">
+                          icon="arrow-left-right" resourceType="SUBM" orderNo="300" roles="财务员">
                     <children>
                         <resource id="ErpFinArApItem-main" app:useCases="UC-FIN-08" displayName="应收应付明细账"
                                   i18n-en:displayName="AR/AP Subledger" icon="arrow-left-right"
@@ -97,7 +97,7 @@
                 </resource>
                 <!-- 核销 -->
                 <resource id="fin-recon" displayName="核销" i18n-en:displayName="Reconciliation"
-                          icon="check-check" resourceType="SUBM" orderNo="400">
+                          icon="check-check" resourceType="SUBM" orderNo="400" roles="财务员">
                     <children>
                         <resource id="ErpFinReconciliation-main" app:useCases="UC-FIN-08" displayName="核销单"
                                   i18n-en:displayName="Reconciliation" icon="check-check"
@@ -107,7 +107,7 @@
                 </resource>
                 <!-- 总账 -->
                 <resource id="fin-gl" displayName="总账" i18n-en:displayName="General Ledger"
-                          icon="scale" resourceType="SUBM" orderNo="500">
+                          icon="scale" resourceType="SUBM" orderNo="500" roles="财务员">
                     <children>
                         <resource id="ErpFinGlBalance-main" app:useCases="UC-FIN-05,UC-FIN-11" displayName="总账余额"
                                   i18n-en:displayName="GL Balance" icon="scale"
@@ -126,7 +126,7 @@
                 </resource>
                 <!-- A3 多公司运营深度（plan 2026-07-22-1000-1，multi-company.md）：跨法人内部交易 + 配对 + 合并抵消 -->
                 <resource id="fin-intercompany" displayName="公司间(多公司)" i18n-en:displayName="Intercompany"
-                          icon="building-2" resourceType="SUBM" orderNo="550">
+                          icon="building-2" resourceType="SUBM" orderNo="550" roles="财务员">
                     <children>
                         <resource id="ErpFinIntercompanyTransferPrice-main" displayName="跨法人转移定价规则"
                                   i18n-en:displayName="Intercompany Transfer Price" icon="tags"
@@ -144,7 +144,7 @@
                 </resource>
                 <!-- 资金 -->
                 <resource id="fin-fund" displayName="资金" i18n-en:displayName="Fund"
-                          icon="wallet" resourceType="SUBM" orderNo="600">
+                          icon="wallet" resourceType="SUBM" orderNo="600" roles="财务员">
                     <children>
                         <resource id="ErpFinFundAccount-main" app:useCases="UC-FIN-09" displayName="资金账户"
                                   i18n-en:displayName="Fund Account" icon="wallet"
@@ -162,7 +162,7 @@
                 </resource>
                 <!-- 财务报表 -->
                 <resource id="fin-report" displayName="财务报表" i18n-en:displayName="Financial Statements"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="700">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="700" roles="财务员">
                     <children>
                         <resource id="balance-sheet" app:useCases="UC-FIN-16" displayName="资产负债表"
                                   i18n-en:displayName="Balance Sheet" icon="scale"
@@ -188,7 +188,7 @@
                 </resource>
                 <!-- 科目分摊 -->
                 <resource id="fin-distribution" displayName="科目分摊" i18n-en:displayName="GL Distribution"
-                          icon="split" resourceType="SUBM" orderNo="800">
+                          icon="split" resourceType="SUBM" orderNo="800" roles="财务员">
                     <children>
                         <resource id="gl-distribution" app:useCases="UC-FIN-04,UC-FIN-15" displayName="分摊规则"
                                   i18n-en:displayName="Distribution Rule" icon="split"
@@ -198,7 +198,7 @@
                 </resource>
                 <!-- 费用报销 -->
                 <resource id="fin-expense" displayName="费用报销" i18n-en:displayName="Expense Claim"
-                          icon="wallet-receipt" resourceType="SUBM" orderNo="900">
+                          icon="wallet-receipt" resourceType="SUBM" orderNo="900" roles="财务员">
                     <children>
                         <resource id="expense-claim" app:useCases="UC-FIN-16" displayName="费用报销单"
                                   i18n-en:displayName="Expense Claim" icon="wallet-receipt"
@@ -212,7 +212,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="fin-dashboard" displayName="财务概览" i18n-en:displayName="Finance Overview"
-                          icon="pie-chart" resourceType="SUBM" orderNo="999">
+                          icon="pie-chart" resourceType="SUBM" orderNo="999" roles="财务员">
                     <children>
                         <resource id="fin-dashboard-main" app:useCases="UC-FIN-17" displayName="财务概览"
                                   i18n-en:displayName="Finance Overview" icon="pie-chart"
@@ -222,7 +222,7 @@
                 </resource>
                 <!-- 预算管理 -->
                 <resource id="fin-budget" displayName="预算管理" i18n-en:displayName="Budget"
-                          icon="wallet" resourceType="SUBM" orderNo="910">
+                          icon="wallet" resourceType="SUBM" orderNo="910" roles="财务员">
                     <children>
                         <resource id="budget-scenario" app:useCases="UC-FIN-13" displayName="预算方案"
                                   i18n-en:displayName="Budget Scenario" icon="wallet"
@@ -245,7 +245,7 @@
                 </resource>
                 <!-- 票据管理 -->
                 <resource id="fin-notes" displayName="票据管理" i18n-en:displayName="Notes Management"
-                          icon="file-text" resourceType="SUBM" orderNo="920">
+                          icon="file-text" resourceType="SUBM" orderNo="920" roles="财务员">
                     <children>
                         <resource id="ErpFinNotesReceivable-main" displayName="应收票据"
                                   i18n-en:displayName="Notes Receivable" icon="file-text"
@@ -259,7 +259,7 @@
                 </resource>
                 <!-- 银行对账 -->
                 <resource id="fin-bank-recon" displayName="银行对账" i18n-en:displayName="Bank Reconciliation"
-                          icon="landmark" resourceType="SUBM" orderNo="930">
+                          icon="landmark" resourceType="SUBM" orderNo="930" roles="财务员">
                     <children>
                         <resource id="bank-statement" app:useCases="UC-FIN-14" displayName="银行对账单"
                                   i18n-en:displayName="Bank Statement" icon="receipt"

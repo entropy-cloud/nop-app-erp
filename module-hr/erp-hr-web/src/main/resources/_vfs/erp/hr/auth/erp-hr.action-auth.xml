@@ -4,10 +4,10 @@
     <site id="main">
         <resource id="erp-hr" displayName="人力资源管理" i18n-en:displayName="Human Resources"
                   icon="users" resourceType="TOPM" orderNo="1200"
-                  routePath="/erp-hr" component="layouts/default/index">
+                  routePath="/erp-hr" component="layouts/default/index" roles="HR 专员/薪酬审批人">
             <children>
                 <resource id="hr-org" displayName="组织管理" i18n-en:displayName="Organization"
-                          icon="building-2" resourceType="SUBM" orderNo="100">
+                          icon="building-2" resourceType="SUBM" orderNo="100" roles="HR 专员">
                     <children>
                         <resource id="ErpHrDepartment-main" app:useCases="UC-HR-08"
                                   displayName="部门" i18n-en:displayName="Department" icon="building-2"
@@ -24,7 +24,7 @@
                     </children>
                 </resource>
                 <resource id="hr-employee" displayName="员工管理" i18n-en:displayName="Employees"
-                          icon="user-circle" resourceType="SUBM" orderNo="200">
+                          icon="user-circle" resourceType="SUBM" orderNo="200" roles="HR 专员">
                     <children>
                         <resource id="ErpHrEmployee-main" app:useCases="UC-HR-01,UC-HR-08"
                                   displayName="员工主数据" i18n-en:displayName="Employee" icon="user-circle"
@@ -37,7 +37,7 @@
                     </children>
                 </resource>
                 <resource id="hr-attendance" displayName="考勤工时" i18n-en:displayName="Attendance &amp; Timesheet"
-                          icon="clock" resourceType="SUBM" orderNo="300">
+                          icon="clock" resourceType="SUBM" orderNo="300" roles="HR 专员">
                     <children>
                         <resource id="ErpHrAttendance-main" app:useCases="UC-HR-06"
                                   displayName="考勤记录" i18n-en:displayName="Attendance" icon="clock"
@@ -54,7 +54,7 @@
                     </children>
                 </resource>
                 <resource id="hr-shift-scheduling" displayName="排班管理" i18n-en:displayName="Shift Scheduling"
-                          icon="calendar-days" resourceType="SUBM" orderNo="350">
+                          icon="calendar-days" resourceType="SUBM" orderNo="350" roles="HR 专员">
                     <children>
                         <resource id="ErpHrShift-main" app:useCases="UC-HR-09"
                                   displayName="班次模板" i18n-en:displayName="Shift" icon="clock"
@@ -67,7 +67,7 @@
                     </children>
                 </resource>
                 <resource id="hr-leave" displayName="休假管理" i18n-en:displayName="Leave Management"
-                          icon="calendar-off" resourceType="SUBM" orderNo="400">
+                          icon="calendar-off" resourceType="SUBM" orderNo="400" roles="HR 专员">
                     <children>
                         <resource id="ErpHrLeaveRequest-main" app:useCases="UC-HR-02"
                                   displayName="休假申请" i18n-en:displayName="Leave Request" icon="calendar-off"
@@ -91,7 +91,7 @@
                     </children>
                 </resource>
                 <resource id="hr-salary" displayName="薪酬管理" i18n-en:displayName="Payroll"
-                          icon="dollar-sign" resourceType="SUBM" orderNo="500">
+                          icon="dollar-sign" resourceType="SUBM" orderNo="500" roles="HR 专员/薪酬审批人">
                     <children>
                         <resource id="ErpHrSalary-main" app:useCases="UC-HR-04,UC-HR-10"
                                   displayName="薪酬记录" i18n-en:displayName="Salary Record" icon="dollar-sign"
@@ -127,7 +127,7 @@
                     </children>
                 </resource>
                 <resource id="hr-social-insurance" displayName="社保管理" i18n-en:displayName="Social Insurance"
-                          icon="shield" resourceType="SUBM" orderNo="530">
+                          icon="shield" resourceType="SUBM" orderNo="530" roles="HR 专员">
                     <children>
                         <resource id="ErpHrSocialInsuranceConfig-main" displayName="社保配置"
                                   i18n-en:displayName="Social Insurance Config" icon="settings"
@@ -140,7 +140,7 @@
                     </children>
                 </resource>
                 <resource id="hr-tax" displayName="税务配置" i18n-en:displayName="Tax Configuration"
-                          icon="receipt" resourceType="SUBM" orderNo="560">
+                          icon="receipt" resourceType="SUBM" orderNo="560" roles="HR 专员">
                     <children>
                         <resource id="ErpHrTaxConfig-main" displayName="个税配置"
                                   i18n-en:displayName="Tax Config" icon="settings"
@@ -153,7 +153,7 @@
                     </children>
                 </resource>
                 <resource id="hr-survey" displayName="员工调研" i18n-en:displayName="Employee Survey"
-                          icon="file-question" resourceType="SUBM" orderNo="550">
+                          icon="file-question" resourceType="SUBM" orderNo="550" roles="HR 专员">
                     <children>
                         <resource id="ErpHrSurvey-main" app:useCases="UC-HR-11"
                                   displayName="问卷模板" i18n-en:displayName="Survey Template" icon="file-question"
@@ -170,7 +170,7 @@
                     </children>
                 </resource>
                 <resource id="hr-competency" displayName="胜任力管理" i18n-en:displayName="Competency Management"
-                          icon="book-open" resourceType="SUBM" orderNo="650">
+                          icon="book-open" resourceType="SUBM" orderNo="650" roles="HR 专员">
                     <children>
                         <resource id="ErpHrCompetency-main" app:useCases="UC-HR-12"
                                   displayName="胜任力字典" i18n-en:displayName="Competency" icon="book-open"
@@ -195,7 +195,7 @@
                     </children>
                 </resource>
                 <resource id="hr-recruit" displayName="招聘管理" i18n-en:displayName="Recruitment"
-                          icon="user-plus" resourceType="SUBM" orderNo="700">
+                          icon="user-plus" resourceType="SUBM" orderNo="700" roles="HR 专员">
                     <children>
                         <resource id="ErpHrRecruitment-main" app:useCases="UC-HR-05"
                                   displayName="招聘记录" i18n-en:displayName="Recruitment" icon="user-plus"
@@ -204,7 +204,7 @@
                     </children>
                 </resource>
                 <resource id="hr-report" displayName="人力资源报表" i18n-en:displayName="HR Reports"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="800">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="800" roles="HR 专员/薪酬审批人">
                     <children>
                         <resource id="employee-net-balance" app:useCases="UC-HR-04,UC-FIN-16" displayName="员工净余额"
                                   i18n-en:displayName="Employee Net Balance" icon="scale"

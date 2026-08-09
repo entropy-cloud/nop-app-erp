@@ -9,11 +9,11 @@
         <!-- 项目管理:projects域一级菜单 -->
         <resource id="erp-prj" displayName="项目管理" i18n-en:displayName="Projects"
                   icon="briefcase" resourceType="TOPM" orderNo="700"
-                  routePath="/erp-prj" component="layouts/default/index">
+                  routePath="/erp-prj" component="layouts/default/index" roles="项目经理">
             <children>
                 <!-- 项目 -->
                 <resource id="prj-project" displayName="项目" i18n-en:displayName="Project"
-                          icon="briefcase" resourceType="SUBM" orderNo="100">
+                          icon="briefcase" resourceType="SUBM" orderNo="100" roles="项目经理">
                     <children>
                         <resource id="ErpPrjProject-main" app:useCases="UC-PRJ-01,UC-PRJ-06,UC-PRJ-07,UC-PRJ-09" displayName="项目"
                                   i18n-en:displayName="Project" icon="briefcase"
@@ -35,7 +35,7 @@
                 </resource>
                 <!-- 任务工时 -->
                 <resource id="prj-task" displayName="任务工时" i18n-en:displayName="Task &amp; Timesheet"
-                          icon="list-checks" resourceType="SUBM" orderNo="200">
+                          icon="list-checks" resourceType="SUBM" orderNo="200" roles="项目经理">
                     <children>
                         <resource id="ErpPrjTask-main" app:useCases="UC-PRJ-05" displayName="任务"
                                   i18n-en:displayName="Task" icon="list-checks"
@@ -57,7 +57,7 @@
                 </resource>
                 <!-- 预算 -->
                 <resource id="prj-budget" displayName="预算" i18n-en:displayName="Budget"
-                          icon="wallet" resourceType="SUBM" orderNo="300">
+                          icon="wallet" resourceType="SUBM" orderNo="300" roles="项目经理">
                     <children>
                         <resource id="ErpPrjBudget-main" app:useCases="UC-PRJ-04" displayName="项目预算"
                                   i18n-en:displayName="Project Budget" icon="wallet"
@@ -67,7 +67,7 @@
                 </resource>
                 <!-- 成本 -->
                 <resource id="prj-cost" displayName="成本" i18n-en:displayName="Cost"
-                          icon="coins" resourceType="SUBM" orderNo="400">
+                          icon="coins" resourceType="SUBM" orderNo="400" roles="项目经理">
                     <children>
                         <resource id="ErpPrjCostCollection-main" app:useCases="UC-PRJ-03,UC-PRJ-06" displayName="项目成本归集"
                                   i18n-en:displayName="Project Cost Collection" icon="coins"
@@ -77,7 +77,7 @@
                 </resource>
                 <!-- 开票 -->
                 <resource id="prj-billing" displayName="开票" i18n-en:displayName="Billing"
-                          icon="receipt" resourceType="SUBM" orderNo="500">
+                          icon="receipt" resourceType="SUBM" orderNo="500" roles="项目经理">
                     <children>
                         <resource id="ErpPrjBilling-main" app:useCases="UC-PRJ-06" displayName="项目开票"
                                   i18n-en:displayName="Project Billing" icon="receipt"
@@ -87,7 +87,7 @@
                 </resource>
                 <!-- 项目报表 -->
                 <resource id="prj-report" displayName="项目报表" i18n-en:displayName="Projects Reports"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="600">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="600" roles="项目经理">
                     <children>
                         <resource id="project-cost-summary" app:useCases="UC-PRJ-03,UC-PRJ-06,UC-PRJ-10" displayName="项目成本汇总表"
                                   i18n-en:displayName="Project Cost Summary" icon="coins"
@@ -101,7 +101,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="prj-dashboard" displayName="项目概览" i18n-en:displayName="Projects Overview"
-                          icon="kanban" resourceType="SUBM" orderNo="999">
+                          icon="kanban" resourceType="SUBM" orderNo="999" roles="项目经理">
                     <children>
                         <resource id="prj-dashboard-main" app:useCases="UC-PRJ-10" displayName="项目概览"
                                   i18n-en:displayName="Projects Overview" icon="kanban"
@@ -111,7 +111,7 @@
                 </resource>
                 <!-- 盈利分析 -->
                 <resource id="prj-profitability" displayName="盈利分析" i18n-en:displayName="Profitability"
-                          icon="trending-up" resourceType="SUBM" orderNo="700">
+                          icon="trending-up" resourceType="SUBM" orderNo="700" roles="项目经理">
                     <children>
                         <resource id="project-pnl" app:useCases="UC-PRJ-06" displayName="项目损益汇总"
                                   i18n-en:displayName="Project P&amp;L" icon="trending-up"

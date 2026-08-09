@@ -9,11 +9,11 @@
         <!-- 主数据管理:master-data域一级菜单 -->
         <resource id="erp-md" displayName="主数据管理" i18n-en:displayName="Master Data"
                   icon="database" resourceType="TOPM" orderNo="100"
-                  routePath="/erp-md" component="layouts/default/index">
+                  routePath="/erp-md" component="layouts/default/index" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
             <children>
                 <!-- 物料 -->
                 <resource id="md-material" displayName="物料" i18n-en:displayName="Material"
-                          icon="package" resourceType="SUBM" orderNo="100">
+                          icon="package" resourceType="SUBM" orderNo="100" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="ErpMdMaterial-main" app:useCases="UC-MD-06" displayName="物料"
                                   i18n-en:displayName="Material" icon="package"
@@ -31,7 +31,7 @@
                 </resource>
                 <!-- 往来单位 -->
                 <resource id="md-partner" displayName="往来单位" i18n-en:displayName="Business Partner"
-                          icon="users" resourceType="SUBM" orderNo="200">
+                          icon="users" resourceType="SUBM" orderNo="200" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="ErpMdPartner-main" displayName="往来单位"
                                   i18n-en:displayName="Business Partner" icon="users"
@@ -53,7 +53,7 @@
                 </resource>
                 <!-- 仓储组织 -->
                 <resource id="md-org" displayName="仓储组织" i18n-en:displayName="Warehouse &amp; Org"
-                          icon="warehouse" resourceType="SUBM" orderNo="300">
+                          icon="warehouse" resourceType="SUBM" orderNo="300" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="ErpMdWarehouse-main" displayName="仓库"
                                   i18n-en:displayName="Warehouse" icon="warehouse"
@@ -71,7 +71,7 @@
                 </resource>
                 <!-- 计量计价 -->
                 <resource id="md-uom" displayName="计量计价" i18n-en:displayName="UoM &amp; Pricing"
-                          icon="coins" resourceType="SUBM" orderNo="400">
+                          icon="coins" resourceType="SUBM" orderNo="400" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="ErpMdUoM-main" displayName="计量单位"
                                   i18n-en:displayName="Unit of Measure" icon="ruler"
@@ -105,7 +105,7 @@
                 </resource>
                 <!-- 会计科目 -->
                 <resource id="md-account" displayName="会计科目" i18n-en:displayName="Accounting Subject"
-                          icon="book-open-text" resourceType="SUBM" orderNo="500">
+                          icon="book-open-text" resourceType="SUBM" orderNo="500" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="ErpMdSubject-main" displayName="会计科目"
                                   i18n-en:displayName="Accounting Subject" icon="book-open-text"
@@ -127,7 +127,7 @@
                 </resource>
                 <!-- 人员 -->
                 <resource id="md-hr" displayName="人员" i18n-en:displayName="Employee"
-                          icon="user-round" resourceType="SUBM" orderNo="600">
+                          icon="user-round" resourceType="SUBM" orderNo="600" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="ErpMdEmployee-main" displayName="职员"
                                   i18n-en:displayName="Employee" icon="user-round"
@@ -137,7 +137,7 @@
                 </resource>
                 <!-- 主数据报表 -->
                 <resource id="md-report" displayName="主数据报表" i18n-en:displayName="Master Data Reports"
-                          icon="bar-chart-3" resourceType="SUBM" orderNo="800">
+                          icon="bar-chart-3" resourceType="SUBM" orderNo="800" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="material-price-list" app:useCases="UC-MD-06,UC-MD-07" displayName="物料价格清单"
                                   i18n-en:displayName="Material Price List" icon="dollar-sign"
@@ -151,7 +151,7 @@
                 </resource>
                 <!-- 报表看板 -->
                 <resource id="md-dashboard" displayName="主数据概览" i18n-en:displayName="Master Data Overview"
-                          icon="layout-dashboard" resourceType="SUBM" orderNo="999">
+                          icon="layout-dashboard" resourceType="SUBM" orderNo="999" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="md-dashboard-main" app:useCases="UC-MD-07" displayName="主数据概览"
                                   i18n-en:displayName="Master Data Overview" icon="layout-dashboard"
@@ -161,7 +161,7 @@
                 </resource>
                 <!-- 核算维度 -->
                 <resource id="md-cost-center" displayName="核算维度" i18n-en:displayName="Cost Center"
-                          icon="git-branch" resourceType="SUBM" orderNo="700">
+                          icon="git-branch" resourceType="SUBM" orderNo="700" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="cost-center" displayName="成本中心"
                                   i18n-en:displayName="Cost Center" icon="git-branch"
@@ -171,7 +171,7 @@
                 </resource>
                 <!-- C2 跨境贸易扩展：报关记录归独立分组（介于核算维度 700 与报表 800 之间，orderNo=750） -->
                 <resource id="md-trade" displayName="跨境贸易" i18n-en:displayName="Cross-Border Trade"
-                          icon="file-text" resourceType="SUBM" orderNo="750">
+                          icon="file-text" resourceType="SUBM" orderNo="750" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="ErpMdMaterialCustoms-main" displayName="物料报关记录"
                                   i18n-en:displayName="Material Customs Declaration" icon="file-text"
@@ -181,7 +181,7 @@
                 </resource>
                 <!-- 系统配置 -->
                 <resource id="md-system" displayName="系统配置" i18n-en:displayName="System Config"
-                          icon="settings" resourceType="SUBM" orderNo="850">
+                          icon="settings" resourceType="SUBM" orderNo="850" roles="采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员">
                     <children>
                         <resource id="ErpSysConfig-main" displayName="系统参数配置"
                                   i18n-en:displayName="System Config" icon="settings"

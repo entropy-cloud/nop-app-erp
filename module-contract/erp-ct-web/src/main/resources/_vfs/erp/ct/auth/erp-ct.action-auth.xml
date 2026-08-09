@@ -4,10 +4,10 @@
     <site id="main">
         <resource id="erp-ct" displayName="合同管理" i18n-en:displayName="Contract Management"
                   icon="file-text" resourceType="TOPM" orderNo="950"
-                  routePath="/erp-ct" component="layouts/default/index">
+                  routePath="/erp-ct" component="layouts/default/index" roles="合同专员/合同审批人">
             <children>
                 <resource id="ct-contract" displayName="合同列表" i18n-en:displayName="Contracts"
-                          icon="file-text" resourceType="SUBM" orderNo="100">
+                          icon="file-text" resourceType="SUBM" orderNo="100" roles="合同专员/合同审批人">
                     <children>
                         <resource id="ErpCtContract-main" app:useCases="UC-CT-01,UC-CT-02,UC-CT-05,UC-CT-06"
                                   displayName="合同" i18n-en:displayName="Contract" icon="file-text"
@@ -39,7 +39,7 @@
                     </children>
                 </resource>
                 <resource id="ct-template" displayName="合同模板" i18n-en:displayName="Templates"
-                          icon="file" resourceType="SUBM" orderNo="200">
+                          icon="file" resourceType="SUBM" orderNo="200" roles="合同专员">
                     <children>
                         <resource id="ErpCtTemplate-main" displayName="合同模板"
                                   i18n-en:displayName="Contract Template" icon="file"
@@ -48,7 +48,7 @@
                     </children>
                 </resource>
                 <resource id="ct-approval" displayName="审批管理" i18n-en:displayName="Approval"
-                          icon="check-square" resourceType="SUBM" orderNo="150">
+                          icon="check-square" resourceType="SUBM" orderNo="150" roles="合同审批人">
                     <children>
                         <resource id="ErpCtApprovalMatrix-main" app:useCases="UC-CT-07"
                                   displayName="审批矩阵" i18n-en:displayName="Approval Matrix" icon="check-square"
@@ -61,7 +61,7 @@
                     </children>
                 </resource>
                 <resource id="ct-rebate" displayName="折扣与返利" i18n-en:displayName="Discount &amp; Rebate"
-                          icon="percent" resourceType="SUBM" orderNo="180">
+                          icon="percent" resourceType="SUBM" orderNo="180" roles="合同专员/合同审批人">
                     <children>
                         <resource id="ErpCtVolumeDiscount-main" app:useCases="UC-CT-08"
                                   displayName="批量折扣" i18n-en:displayName="Volume Discount" icon="percent"
@@ -78,7 +78,7 @@
                     </children>
                 </resource>
                 <resource id="ct-signature" displayName="签章管理" i18n-en:displayName="Signature Management"
-                          icon="file-signature" resourceType="SUBM" orderNo="170">
+                          icon="file-signature" resourceType="SUBM" orderNo="170" roles="合同专员/合同审批人">
                     <children>
                         <resource id="ErpCtSignatureRequest-main" app:useCases="UC-CT-09"
                                   displayName="签章请求" i18n-en:displayName="Signature Request" icon="file-signature"
@@ -110,7 +110,7 @@
                     </children>
                 </resource>
                 <resource id="ct-repository" displayName="仓库搜索" i18n-en:displayName="Repository &amp; Search"
-                          icon="archive" resourceType="SUBM" orderNo="175">
+                          icon="archive" resourceType="SUBM" orderNo="175" roles="合同专员/合同审批人">
                     <children>
                         <resource id="ErpCtDocument-main" app:useCases="UC-CT-10"
                                   displayName="合同文档" i18n-en:displayName="Contract Document" icon="archive"
@@ -119,7 +119,7 @@
                     </children>
                 </resource>
                 <resource id="ct-billing" displayName="开票与消耗" i18n-en:displayName="Billing &amp; Consumption"
-                          icon="credit-card" resourceType="SUBM" orderNo="300">
+                          icon="credit-card" resourceType="SUBM" orderNo="300" roles="合同专员/合同审批人">
                     <children>
                         <resource id="ErpCtInvoicePlan-main" app:useCases="UC-CT-03"
                                   displayName="开票计划" i18n-en:displayName="Invoice Plan" icon="calendar"
