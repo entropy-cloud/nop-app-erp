@@ -74,6 +74,16 @@
 - **红冲不变量（P1-MA2-024）**：STANDARD 红冲跨 STANDARD_REVALUATION 时 `balance.totalCost` 恢复依赖两点——(1) `onOutgoing` 刷新 `line.unitCost` 为出库时标准成本（`line.setUnitCost(ErpInvConfigs.roundCost(standardUnitCost))` + `saveOrUpdateEntity`，对齐 FIFO:131-132 范式），供 `ErpInvStockMoveProcessor.reverse:144` 透传给反向入库行；(2) `onIncoming` 在传入 `unitCost` 有效时采用之——但因正常采购入库 `line.unitCost` 持**实际采购价**（PPV 经 `dispatchPurchasePriceVariance:125` 读此值与标准成本比对），不可一律采用传入值，仅当本入库为冲销反向入库（`move.originReturnedMoveId != null`）且 `unitCost > 0` 时采用（原出库扣减的旧标准成本），否则重解析当前标准成本。跨重估时反向入库沿用旧标准成本，红冲后 `balance.totalCost` 恢复不变量（与 FIFO 红冲不变量对齐）。
 - **本期 Non-Goal**：~~生产差异（材料用量/人工效率/费率/产量/制造费用）归 `variance-analysis.md` 工单完工触发面~~（见 §实现注记：生产差异计算：`ProductionVarianceCalculator` + 完工触发 + `ProductionVarianceDispatcher` 过账）；~~标准成本更新/重估流程（成本调整单+审批+重估凭证）归 1538-1 Deferred「成本调整单」~~（见 §实现注记：成本调整：`ErpInvCostAdjust` 头-行实体 + `CostAdjustmentService` 引擎 + 审批门控 + `CostAdjustmentAcctDocProvider` 过账 + `STANDARD_REVALUATION` 发布 FIRMED rollup；制造件标准成本重估归制造域 `rollupCost` successor）。
 
+## 成本卷算取值豁免边界（采购保密 Q4 裁决交叉引用）
+
+> 来源：plan `2026-08-09-1314-3-procurement-confidentiality-q1q4-adjudication`（Q4 裁决）；权威裁决 = `docs/discussions/2026-08-05-1800-ai-mfg-rd-bom-and-procurement-confidentiality.md §裁决记录.Q4`。本节为 E3.2（`CostRollupService` 取值豁免实施）的 plan-first 锚点，**不改本文件描述的成本算法**。
+
+**事实（架构性豁免）**：`CostRollupService`（`module-manufacturing/erp-mfg-service/.../costing/CostRollupService.java:61-72,294-304`）与 `StandardCostResolver`（`module-inventory/erp-inv-service/.../costing/StandardCostResolver.java:37-52,73-96`）均为**非 BizModel 直接 DAO 消费者**——经 `IDaoProvider`/`IOrmTemplate` 直读 `ErpMdMaterialSku.purchasePrice`/`ErpMfgCostRollupLine.unitCost`，**无 `IContext`/user-context 注入，不遍历任何用户角色的查询路径**。Nop 的字段级可见性（meta `published`/`queryable`，E4.1）与行级 data-auth（`nopDataAuthChecker`）仅在 **BizModel/GraphQL 边界**强制，DAO 层直读不经这些拦截器。
+
+**裁决结论**：「研发角色不可见」（E4.1 字段级隐藏 + data-auth）与「成本可滚算」（服务端跨域取值）在服务端本就共存——服务端取值架构性豁免这些检查，**无需配置豁免**，仅需裁决确认知。Q4 真实矛盾不在取值，而在研发角色经何种视图消费聚合结果（Q4 选定 (c) 混合：服务端取值豁免 + 研发侧代理视图，详见讨论文档 §裁决记录.Q4）。
+
+**E3.2 冻结输入**：E3.2（`CostRollupService` 取值豁免 plan-first）的证据 = 本节 + 讨论文档 §裁决记录.Q4 Proof/Decision。E3.2 实施时**不改 `CostRollupService`/`StandardCostResolver` 业务逻辑**，仅在代理视图/字段级可见性层落 (c) 方案。架构不变量（「二者始终为非 BizModel 直 DAO 消费者」）须在 E3.2 代码契约/注释固化。
+
 ## 实现注记：生产差异计算
 
 本节承接 `0427-2` Deferred「生产差异」，触发条件「工单完工差异分析需求落地」（依据：`variance-analysis.md` 设计权威指定 + 技术前置就绪）。

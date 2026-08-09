@@ -1,6 +1,6 @@
 # 2026-08-09-1314-3 procurement-confidentiality-q1q4-adjudication
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-09
 > Source: `docs/backlog/permissions-enforcement-roadmap.md` P1.2
 > Related: `docs/discussions/2026-08-05-1800-ai-mfg-rd-bom-and-procurement-confidentiality.md` §未解决问题；mission `permissions-enforcement`
@@ -56,57 +56,63 @@
 
 ### Phase 1 - Q4 成本滚算取值豁免边界裁决
 
-Status: planned
+Status: completed
 Targets: `docs/discussions/2026-08-05-1800-...md` §未解决问题 Q4、`docs/design/finance/costing-methods.md`
 Skill: none
 
 - Item Types: `Decision` / `Proof`
 - Prereqs: 无（Q4 独立于 Q1）
 
-- [ ] **Proof**：核实并记录"服务端取值角色无关"事实——`CostRollupService` / `StandardCostResolver` 是 **non-BizModel 直接 DAO 消费者**（用 `IDaoProvider`/`IOrmTemplate`，无 `IContext`/user-context 注入，引用 java 文件 Javadoc 行号），而 Nop 的字段级可见性（meta `published`/`queryable`，E4.1）与行级 data-auth（`nopDataAuthChecker`）在 **BizModel/GraphQL 边界**强制——故服务内部跨域取值（如 `defaultSkuPurchasePrice` → `ErpMdMaterialSku.purchasePrice`）**架构性豁免**这些检查。**须区分触发与读取**：`rollupCost` 由用户经 BizModel *触发*，但*取值*不遍历该用户的查询路径——这是 Q4 裁决的事实基础（引用 costing-methods.md §STANDARD）。
+- [x] **Proof**：核实并记录"服务端取值角色无关"事实——`CostRollupService` / `StandardCostResolver` 是 **non-BizModel 直接 DAO 消费者**（用 `IDaoProvider`/`IOrmTemplate`，无 `IContext`/user-context 注入，引用 java 文件 Javadoc 行号），而 Nop 的字段级可见性（meta `published`/`queryable`，E4.1）与行级 data-auth（`nopDataAuthChecker`）在 **BizModel/GraphQL 边界**强制——故服务内部跨域取值（如 `defaultSkuPurchasePrice` → `ErpMdMaterialSku.purchasePrice`）**架构性豁免**这些检查。**须区分触发与读取**：`rollupCost` 由用户经 BizModel *触发*，但*取值*不遍历该用户的查询路径——这是 Q4 裁决的事实基础（引用 costing-methods.md §STANDARD）。
   - Skill: none
-- [ ] **Decision**：裁决 Q4 可见性边界方案。考虑的替代方案：(a) 研发角色直读 `unitCost`/成本字段，由 E4.1 字段级隐藏阻断（评估：与服务端取值不冲突，但研发若需看聚合成本则需代理）；(b) 研发角色经代理视图/E3.x 聚合值代理消费（评估：明细供应商数据不离开采购/财务域，符合讨论点二"聚合值代理"原则）；(c) 混合（服务端取值豁免 + 研发侧代理视图）。选定方案 + 残留风险记录（如选 (c)，E3.2 取值豁免须 plan-first 证据）。
+  - **落盘**：讨论文档 §裁决记录.Q4 Proof（`CostRollupService.java:61-72,294-304` + `StandardCostResolver.java:37-52,73-96` 行号证据 + 触发/读取区分）。
+- [x] **Decision**：裁决 Q4 可见性边界方案。考虑的替代方案：(a) 研发角色直读 `unitCost`/成本字段，由 E4.1 字段级隐藏阻断（评估：与服务端取值不冲突，但研发若需看聚合成本则需代理）；(b) 研发角色经代理视图/E3.x 聚合值代理消费（评估：明细供应商数据不离开采购/财务域，符合讨论点二"聚合值代理"原则）；(c) 混合（服务端取值豁免 + 研发侧代理视图）。选定方案 + 残留风险记录（如选 (c)，E3.2 取值豁免须 plan-first 证据）。
   - Skill: none
+  - **落盘**：讨论文档 §裁决记录.Q4 Decision——选定 (c) 混合 + 三方案对比表 + R1/R2/R3 残留风险 + E3.2 冻结输入。
 
 Exit Criteria:
 
-- [ ] Q4 裁决落地，含"服务端取值角色无关"事实证据 + 选定方案 + 替代方案 + 残留风险，可作为 E3.2 冻结输入。
+- [x] Q4 裁决落地，含"服务端取值角色无关"事实证据 + 选定方案 + 替代方案 + 残留风险，可作为 E3.2 冻结输入。
 
 ### Phase 2 - Q1 成本聚合可见粒度裁决
 
-Status: planned
+Status: completed
 Targets: `docs/discussions/2026-08-05-1800-...md` §未解决问题 Q1
 Skill: none
 
 - Item Types: `Decision`
 - Prereqs: Phase 1（Q4 方案影响 Q1 粒度选择——若 Q4 选代理视图，Q1 粒度即代理视图输出）
 
-- [ ] **Decision**：裁决 Q1 研发/AI 视图成本聚合可见粒度。考虑的替代方案：(a) 按成本要素的成本区间（材料/人工/制造费用/委外各区间）；(b) 标准成本总额（仅 totalCost/unitCost）；(c) 仅相对高低（高/中/低离散档位）；(d) 组合。选定方案 + 对 E4.1 字段范围与新权限控制点字段集的影响 + 残留风险记录。
+- [x] **Decision**：裁决 Q1 研发/AI 视图成本聚合可见粒度。考虑的替代方案：(a) 按成本要素的成本区间（材料/人工/制造费用/委外各区间）；(b) 标准成本总额（仅 totalCost/unitCost）；(c) 仅相对高低（高/中/低离散档位）；(d) 组合。选定方案 + 对 E4.1 字段范围与新权限控制点字段集的影响 + 残留风险记录。
   - Skill: none
+  - **落盘**：讨论文档 §裁决记录.Q1 Decision——选定 (d) 组合（总额精确 + 要素档位离散）+ 四方案对比表 + 字段可见性矩阵（unitCost/totalCost ✅、materialCost/laborCost/overheadCost/subcontractCost ❌→档位映射、purchasePrice ❌）+ R1/R2/R3 残留风险 + E4.1 冻结输入。
 
 Exit Criteria:
 
-- [ ] Q1 裁决落地，含选定粒度 + 对字段范围影响 + 替代方案 + 残留风险，可作为 E4.1 冻结输入。
+- [x] Q1 裁决落地，含选定粒度 + 对字段范围影响 + 替代方案 + 残留风险，可作为 E4.1 冻结输入。
 
 ### Phase 3 - Q2/Q3 归属判定与裁决落盘
 
-Status: planned
+Status: completed
 Targets: `docs/discussions/2026-08-05-1800-...md` §未解决问题 Q2/Q3、§讨论点一
 Skill: none
 
 - Item Types: `Decision` / `Add`
 - Prereqs: Phase 1 + Phase 2
 
-- [ ] **Decision**：判定 Q2（候选 BOM 建模位置）/Q3（AI provenance 字段集）归属 manufacturing 域 successor（仅归属判定，不设计字段集、不实施）。考虑的替代归属：crm / logistics / manufacturing —— 选 manufacturing，因其拥有 `ErpMfgBom` 权威源，provenance 不宜混入生产实体（讨论点一已倾向独立 candidate 头依附正式 BOM）。残留风险：若 AI 研发管道最终跨域（如 crm 选配），归属可能 revisited。
+- [x] **Decision**：判定 Q2（候选 BOM 建模位置）/Q3（AI provenance 字段集）归属 manufacturing 域 successor（仅归属判定，不设计字段集、不实施）。考虑的替代归属：crm / logistics / manufacturing —— 选 manufacturing，因其拥有 `ErpMfgBom` 权威源，provenance 不宜混入生产实体（讨论点一已倾向独立 candidate 头依附正式 BOM）。残留风险：若 AI 研发管道最终跨域（如 crm 选配），归属可能 revisited。
   - Skill: none
-- [ ] **Add**：将 Q1/Q4 裁决写入讨论文档 §未解决问题（标记 Q1/Q4 resolved + 交叉引用 costing-methods.md），Q2/Q3 归属写入 §讨论点一/未解决问题。
+  - **落盘**：讨论文档 §裁决记录.Q2/Q3 Decision——manufacturing 域 successor + crm/logistics/manufacturing 三归属对比表 + 残留风险。
+- [x] **Add**：将 Q1/Q4 裁决写入讨论文档 §未解决问题（标记 Q1/Q4 resolved + 交叉引用 costing-methods.md），Q2/Q3 归属写入 §讨论点一/未解决问题。
   - Skill: none
-- [ ] **Add**：在 `docs/design/finance/costing-methods.md` 增加 Q4 取值豁免边界交叉引用（指向讨论文档裁决），为 E3.2 plan-first 提供锚点。
+  - **落盘**：讨论文档 §未解决问题 Q1/Q4 标记 ✅ RESOLVED + Q2/Q3 标注归属判定，均交叉引用 §裁决记录。
+- [x] **Add**：在 `docs/design/finance/costing-methods.md` 增加 Q4 取值豁免边界交叉引用（指向讨论文档裁决），为 E3.2 plan-first 提供锚点。
   - Skill: none
+  - **落盘**：costing-methods.md 新增 `## 成本卷算取值豁免边界（采购保密 Q4 裁决交叉引用）` 节（位于 STANDARD 节后、生产差异计算节前），含事实证据 + 裁决结论 + E3.2 冻结输入。
 
 Exit Criteria:
 
-- [ ] 讨论文档 Q1/Q4 标记 resolved 且裁决可被 E3.2/E4.1 直接引用；Q2/Q3 归属判定落盘；costing-methods.md 交叉引用落地。
+- [x] 讨论文档 Q1/Q4 标记 resolved 且裁决可被 E3.2/E4.1 直接引用；Q2/Q3 归属判定落盘；costing-methods.md 交叉引用落地。
 
 ## Draft Review Record
 
@@ -118,14 +124,14 @@ Exit Criteria:
 
 > 本计划为纯裁决/文档工作（无生产代码、无 ORM/成本服务改动——仅读 java/讨论文档作裁决输入）。移除 build/test 验证命令门控，理由：无代码变更；验证对象为裁决内部一致性、事实证据可追溯、与 costing-methods.md 不矛盾。Q1/Q4 为安全/业务裁决，触及成本代码区域的实施（E3.2）为独立 ask-first successor，本计划不触代码。
 
-- [ ] 范围内行为完成（Q1 + Q4 + Q2/Q3 归属 + 三处落盘）
-- [ ] 相关文档对齐（讨论文档 §未解决问题/§讨论点一、`costing-methods.md`）
-- [ ] 无代码变更 → 跳过 build/test 门控（已说明理由）；裁决事实证据（CostRollupService/StandardCostResolver 行号引用）可追溯
-- [ ] 无范围内项目降级为 deferred/follow-up（Q2/Q3 实施显式移出范围为 successor，非降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Q1 + Q4 + Q2/Q3 归属 + 三处落盘）
+- [x] 相关文档对齐（讨论文档 §未解决问题/§讨论点一、`costing-methods.md`）
+- [x] 无代码变更 → 跳过 build/test 门控（已说明理由）；裁决事实证据（CostRollupService/StandardCostResolver 行号引用）可追溯
+- [x] 无范围内项目降级为 deferred/follow-up（Q2/Q3 实施显式移出范围为 successor，非降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -143,13 +149,15 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待完成后填写>
+Status Note: 全 3 Phase 完成（Q4 取值豁免边界裁决 = Proof + Decision(c) 混合；Q1 成本聚合可见粒度裁决 = Decision(d) 组合；Q2/Q3 归属判定 = manufacturing 域 successor）。三处落盘：讨论文档 §裁决记录（Q1/Q4/Q2/Q3）+ §未解决问题 Q1/Q4 标记 ✅ RESOLVED/Q2/Q3 标注归属 + costing-methods.md 新增取值豁免边界交叉引用节。无代码/ORM/成本服务变更（仅 .md）。E3.2/E4.1 获冻结输入；Q2/Q3 实施归 manufacturing successor。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立审计者>
-- Evidence: <task id / 链接>
+- Auditor / Agent: 独立子代理 ses_01aee2686ffeIaTD3AdTxY7Mdc（general，新会话）
+- Evidence: 6 项检查全 PASS（范围完整性 / 事实准确性——CostRollupService.java:61-72,294-304 + StandardCostResolver.java:37-52,73-96 行号证据均准确、无 IContext/user-context 注入 / 内部一致性 / E3.2/E4.1 冻结输入质量 / 无代码变更——`git status` 仅 3 个 .md / 文本一致性）；AUDIT_RESULT: PASS。审计者未执行本计划，仅验证 on-disk artifacts。
 
 Follow-up:
 
-- <非阻塞跟进项；已确认缺陷不得出现于此>
+- E3.2 successor（必需）：实施 Q4 (c) 方案的服务端取值豁免 + 代理视图，触及成本代码保护区域须 plan-first + ask-first。
+- E4.1 successor：实施 Q1 (d) 字段级可见性 + 档位映射代理视图（含 R1 档位边界策略、R2 单来源采购件模糊化）。
+- Q2/Q3 successor（manufacturing 域）：候选 BOM 建模 + AI provenance 字段集设计/实施，触发条件 = AI 候选 BOM 管道启动。
