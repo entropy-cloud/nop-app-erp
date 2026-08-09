@@ -36,7 +36,7 @@
 | 角色 | 职责 | 说明 |
 |------|------|------|
 | 审核人 | 各业务域单据审核 | 按单据类型配置审批流（nop-wf），与单据创建人职责分离 |
-| 管理员 | 高危操作与系统管理 | = 平台 superuser（`nop.auth.skip-check-for-admin=true` 默认启用，跳过权限检查拥有全系统访问）。反审核已审核单据、作废已审核单据、反结账会计期间、负库存配置、强制部分齐套开工、资产报废/出售审批 |
+| 管理员 | 高危操作与系统管理 | = 平台 superuser（`nop.auth.skip-check-for-admin`：app `%dev`/`%test` profile 显式 `true`（admin 兜底生效），平台 IConfigReference 默认 `false`（DR-1e），`%prod` 继承 `false`（见 §运行基线）；dev/test 跳过权限检查拥有全系统访问）。反审核已审核单据、作废已审核单据、反结账会计期间、负库存配置、强制部分齐套开工、资产报废/出售审批 |
 
 > **「管理员」双命名空间语义分离注记（plan 2026-08-09-1314-2 / P1.3，2026-08-09）**：上表「管理员=平台 superuser」措辞中的"管理员"指**平台内置角色**（字面 `admin`/`nop-admin`）——这是 `skip-check-for-admin` 唯一识别、用作全放行兜底的命名空间。它与 action-auth `<resource roles="管理员">` 静态种子里的**业务角色「管理员」**是**两套各自绑定、不可互换**的命名空间：
 > - **平台 admin 命名空间**（`admin`/`nop-admin`）：经 `skip-check-for-admin` 全放行（兜底）。
@@ -80,7 +80,7 @@
 
 > **敏感字段保密清单（交叉引用）**：保密五面（薪酬/合同/EDI/供应商价格/成本分解）+ F7 已落地 PII 基线 + `taxFileNo`（隐藏非脱敏）的逐字段七元组清单（实体×字段×propId×现脱敏方式×xmeta published/queryable×GraphQL schema 影响×拟落地层）以 `docs/design/field-formatting-patterns.md` §9.7 为单一真相源。字段级可见性裁决（哪些角色可见哪些字段）归 E4.1，受 P1.2 Q1/Q4 裁决约束；本表不重复字段定义。
 
-> **行级过滤落地状态（plan 2026-07-31-1023-3 R3.4，P1-MA6-002）**：角色侧行级过滤已落地为 `erp-*.data-auth.xml` 规则 + config-gated `ErpRoleDataAuthChecker`，**灰度默认 OFF**（双层门控：`nop.auth.enable-data-auth=false` + `erp.data-auth.role-row-filter-enabled=false`），单组织基线零回归。翻转至 enforcement 为 successor（须人工批准 + role 种子 + 灰度计划）。
+> **行级过滤落地状态（plan 2026-07-31-1023-3 R3.4，P1-MA6-002）**：角色侧行级过滤已落地为 `erp-*.data-auth.xml` 规则 + config-gated `ErpRoleDataAuthChecker`，**灰度默认 OFF**（双层门控：`nop.auth.enable-data-auth=false` + `erp.data-auth.role-row-filter-enabled=false`），单组织基线零回归。两开关已 profile 预置就绪（`%dev`/`%test`/`%prod`，默认 OFF，见 §运行基线 profile 化预置注记 / plan 2026-08-09-0751-3）。翻转至 enforcement 为 successor（须人工批准 + role 种子 + 灰度计划）。
 >
 > **过滤列与列域分类**（实测各域 orm.xml，已纠正 `createdById`/`assigneeId` 误称）：
 > - **userId 域列**（直接与 `${userContext.userId}` 比较，已落地规则）：sales `createdBy`（业务员×6 单据）；quality `ownerId`（质检员×ErpQaRiskRegister，VARCHAR stdDomain="userId"）。
@@ -140,7 +140,7 @@
 | 维护主管 | `erp-mnt`（维护管理）全部（含排程/受理/拒绝） | `ErpMnt*:{query,save,update,delete,accept,reject,schedule,assign}` |
 | 维护人员 | `erp-mnt` 维护执行子集（访问单执行/备件消耗） | `ErpMntVisit:{query,start,complete,recordSparePart}`、`ErpMntRequest:query` |
 | 审核人 | 各域审核相关 SUBM（取决于审批流配置） | 按审批流分配 `*:{approve,reject}` 权限 |
-| 管理员 | **全部域 TOPM + SUBM** + `sys-*`（系统管理全部含工作流/报表/监控）+ `erp-l10n-cn` | 所有 FNPT 前缀全权限（`*:*`）；`nop.auth.skip-check-for-admin=true` 默认启用 |
+| 管理员 | **全部域 TOPM + SUBM** + `sys-*`（系统管理全部含工作流/报表/监控）+ `erp-l10n-cn` | 所有 FNPT 前缀全权限（`*:*`）；`nop.auth.skip-check-for-admin`：app `%dev`/`%test` profile 显式 `true`（admin 兜底生效），平台默认 `false`（见 §运行基线） |
 
 > **说明**：上表为收敛粒度的角色→SUBM/FNPT 蓝图（粒度已由「映射粒度裁决」正式确认）。实际权限配置在 `app.action-auth.xml` 按角色关联 SUBM 资源 + `_erp-*.action-auth.xml` 的 FNPT 权限点。当前运行基线 `nop.auth.enable-action-auth=false`（见"运行基线"节），启用操作级拦截后方生效。
 
@@ -183,7 +183,9 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 | 项 | 当前值 | 说明 |
 |----|---------|------|
 | `nop.auth.enable-action-auth` | `false`（默认） | 操作级拦截关闭：菜单与 FNPT 全量可见可操作。数据权限不受此开关影响（有独立灰度门控，见"数据权限"节，默认 OFF）。 |
-| `nop.auth.skip-check-for-admin` | `true`（默认） | 管理员跳过权限检查 |
+| `nop.auth.skip-check-for-admin` | 平台 IConfigReference 默认 `false`（DR-1e，`NopAuthConfigs.java:77` 单一来源）；app `%dev`/`%test` profile 显式 `true`（admin 兜底可生效），`%prod` 继承平台默认 `false`（安全姿态，prod 翻转 successor 裁决） | 管理员跳过权限检查（dev/test 生效；action-auth OFF 时无运行时效果，翻转后才生效） |
+
+> **profile 化预置（plan 2026-08-09-0751-3 / P2.1，2026-08-09）**：三开关（`nop.auth.enable-action-auth` / `nop.auth.enable-data-auth` / `erp.data-auth.role-row-filter-enabled`）已在 `app-erp-all/src/main/resources/application.yaml` 的 `%dev`/`%test`/`%prod` profile 块预置为 config 变量（默认全 OFF，与平台有效默认一致，不改运行时）；`skip-check-for-admin` dev/test 显式 `true`、`%prod` 省略（继承平台默认 false，DR-1e 安全姿态）。灰度粒度 = config 变量，后续翻转无需改代码。**翻启节奏**：`enable-action-auth` 随 P2.4（dry-run 门控）；`enable-data-auth` + `role-row-filter-enabled` 随 E2.1 同时翻启（双层门控须同时开启）；`%prod` 保持 OFF（successor，触发条件 = 测试环境全绿验收 + 生产灰度计划人工批准）。
 
 **灰度启用操作级拦截的步骤**：
 1. 在 `app-erp-all/application.yaml` 设 `nop.auth.enable-action-auth: true`。

@@ -53,7 +53,7 @@
 - 销售员：维护销售订单、跟踪出库
 - 库管员：审核出入库、管理库存、盘点
 - 财务员：审核发票、生成凭证、收付款核销、期末结账
-- 管理员：高危操作与系统管理（= 平台 superuser，`nop.auth.skip-check-for-admin=true` 默认启用，跳过权限检查拥有全系统访问）。承载反审核/作废/反结账等敏感操作
+- 管理员：高危操作与系统管理（= 平台 superuser，`nop.auth.skip-check-for-admin`：app `%dev`/`%test` profile 显式 `true`（admin 兜底生效），平台 IConfigReference 默认 `false`（DR-1e），`%prod` 继承 `false`，见 `roles-and-permissions.md §运行基线`；dev/test 跳过权限检查拥有全系统访问）。承载反审核/作废/反结账等敏感操作
 
 > **管理员角色单一模型**：当前基线只有一级「管理员」（= superuser via `skip-check-for-admin=true`），不存在「限定职责范围的管理员」二级角色——平台未实现职责范围限定机制。若未来产品需限定管理员职责范围，需先实现平台机制再在本总览与 `roles-and-permissions.md` 同步新增二级角色定义。
 

@@ -41,7 +41,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| P2.1 | enforcement 配置 profile 化（dev/test profile 预置三开关 config 变量默认 OFF；翻启节奏：action-auth 随 P2.4、data-auth+row-filter 随 E2.1；prod 保持 OFF；灰度粒度 config 变量） | todo | `roles-and-permissions.md` §运行基线 | P1.6 | `nop-testing` |
+| P2.1 | enforcement 配置 profile 化（dev/test profile 预置三开关 config 变量默认 OFF；翻启节奏：action-auth 随 P2.4、data-auth+row-filter 随 E2.1；prod 保持 OFF；灰度粒度 config 变量） | done | `roles-and-permissions.md` §运行基线 | P1.6 | `nop-testing` |
 | P2.2a | **管理员兜底先行**（E2E fixture 切平台 admin + `skip-check` 生效验证 + 全 E2E 绿——E1.1/E1.2 硬前置） | todo | `tests/e2e/auth.ts` + `e2e-runbook.md` | P1.5b + P2.1 | `nop-testing` |
 | P2.2b | 角色化渐进（按负向测试需要的角色逐域补账号，fixture 支持角色参数化） | todo | `e2e-runbook.md` | P1.5b + P2.2a | `nop-testing` |
 | P2.3 | 负向隔离测试框架（未授权动作拒绝 + 越权数据过滤断言的原语/脚手架；验收实测随 E 段，但账号依赖 P1.5b 种子） | todo | `e2e-runbook.md` | P2.1 + P1.5b | `nop-testing` |
@@ -81,7 +81,7 @@
 - **Nop 原生 RBAC**：用户→角色→资源模型（`nop-auth`）；`*.action-auth.xml` 的 TOPM/SUBM/FNPT 权限点已由 codegen 产出（`_erp-*.action-auth.xml` 为真相源），无需自建权限点。
 - **静态 role-resource 种子**：`<resource ... roles="...">` 属性（Nop 原生静态映射，并入 `permissionToRoles`，等价 `nop_auth_role_resource` 静态种子）——无需新增 role-resource 实体表。
 - **数据权限机制**：`nopDataAuthChecker` / `DefaultDataAuthChecker` / config-gated `ErpRoleDataAuthChecker`（bean `nopDataAuthChecker`）已就绪，仅需翻开关。
-- **管理员兜底**：`nop.auth.skip-check-for-admin=true` 默认启用；兜底只认**平台内置角色**（字面 `admin`/`nop-admin`），与业务角色「管理员」分属两套命名空间（见横切关注点 2）。
+- **管理员兜底**：`nop.auth.skip-check-for-admin`：平台 IConfigReference 默认 `false`（DR-1e，`NopAuthConfigs.java:77` 单一来源）；app `%dev`/`%test` profile 显式 `true`（admin 兜底可生效，plan 2026-08-09-0751-3 / P2.1），`%prod` 继承平台默认 `false`（安全姿态，prod 翻转 successor 裁决）。兜底只认**平台内置角色**（字面 `admin`/`nop-admin`），与业务角色「管理员」分属两套命名空间（见横切关注点 2）。
 - **测试种子范式**：`_vfs/_init-data/` CSV + DataInitInitializer（既有部署期种子基建）。
 - **声明层定制**：delta `x:extends` 非生成文件（`erp-*.action-auth.xml` / `erp-*.data-auth.xml`）已落地，无需新建机制。
 

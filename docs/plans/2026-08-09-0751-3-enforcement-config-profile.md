@@ -1,6 +1,6 @@
 # 2026-08-09-0751-3 enforcement-config-profile
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-09
 > Source: `docs/backlog/permissions-enforcement-roadmap.md` P2.1
 > Related: mission `permissions-enforcement`；P1.6（xwf 语义裁决，已 done——P2.1 唯一硬前置）；P2.2a（管理员兜底先行，其 skip-check-for-admin 依赖由本计划 Fix 项解除；P2.2a 仍阻塞于 P1.5b，本计划不解除该阻塞）；P2.4（dry-run 门控，将翻 enable-action-auth，依赖本计划预置 config 变量）；E2.1（data-auth 开启，将翻 enable-data-auth + role-row-filter，依赖本计划预置 config 变量）；**roadmap §横切关注点 2 L84 亦载有 skip-check「默认启用」漂移**（companion 修正——backlog 文档同型事实错误，本计划 Phase 3 一并修正，因 P2.1 拥有 skip-check 裁决）
@@ -79,32 +79,32 @@ P2.1 是 enforcement 从声明层推进到强制执行层的**配置基建**：�
 
 ### Phase 1 - skip-check-for-admin 漂移裁决 + profile 策略 Decision
 
-Status: planned
+Status: completed
 Targets: `docs/design/roles-and-permissions.md` §运行基线（裁决记录落位）
 Skill: none
 
 - Item Types: `Decision`
 - Prereqs: P1.6（done）
 
-- [ ] **Decision**：裁决 `skip-check-for-admin` 漂移处理 + profile 策略。
+- [x] **Decision**：裁决 `skip-check-for-admin` 漂移处理 + profile 策略。
   - **skip-check 漂移**：平台 IConfigReference 默认 false（DR-1e，`NopAuthConfigs.java:77` + 平台文档 L232/239 + `DefaultActionAuthChecker.java:36` 直读），app 源配置零覆盖 → 有效默认 false。owner doc §运行基线 L186 记「true（默认）」为**已确认漂移**。考虑的替代方案：(a) dev/test profile 显式设 `skip-check-for-admin=true`（解除 P2.2a admin 兜底阻塞，确定性表达，不依赖平台默认歧义）+ 修正 owner doc 为「平台默认 false，app dev/test 显式 true」——**采纳**；(b) 依赖平台默认（不设）——**拒绝**：有效默认 false 会使 P2.2a admin 兜底失效（B2 风险），与 roadmap §横切 2 / P2.2a 设计相悖；(c) 全 profile（含 prod）设 true——**拒绝**：prod admin 兜底姿态属 successor 裁决范围（Non-Goal），prod 留平台默认 false（DR-1e 安全姿态）。残留风险：prod 翻转 successor 须显式裁决 prod skip-check 姿态。
   - **profile 策略**：遵循既有内联 `"%<profile>":` 块惯例（`application.yaml:48-52` 唯一 `%dev` 块为范式），建立 `%test` + `%prod` 块；**不**引入 `application-{profile}.yaml` 文件新模式（无先例）。考虑的替代方案：(a) 内联块——**采纳**（遵循惯例）；(b) 独立 profile 文件——**拒绝**（引入新模式，无先例，增维护面）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] skip-check 漂移裁决（dev/test 显式 true + owner doc 修正）+ profile 策略裁决（内联块）落地于 plan，无阻塞歧义。
+- [x] skip-check 漂移裁决（dev/test 显式 true + owner doc 修正）+ profile 策略裁决（内联块）落地于 plan，无阻塞歧义。
 
 ### Phase 2 - 预置三开关 config 变量 + skip-check fix + 建立 profile 块
 
-Status: planned
+Status: completed
 Targets: `app-erp-all/src/main/resources/application.yaml`
 Skill: `nop-testing`
 
 - Item Types: `Add` / `Fix` / `Proof`
 - Prereqs: Phase 1（裁决落地）
 
-- [ ] **Add**：在 `app-erp-all/application.yaml` 建立三开关 + skip-check 的 profile 预置（内联 `"%profile":` 块），默认全 OFF。目标结构（`erp.data-auth.*` 与 `nop.auth.*` 为不同命名空间，Nop/Quarkus config 扁平化为 dotted key，跨命名空间并列正确解析）：
+- [x] **Add**：在 `app-erp-all/application.yaml` 建立三开关 + skip-check 的 profile 预置（内联 `"%profile":` 块），默认全 OFF。目标结构（`erp.data-auth.*` 与 `nop.auth.*` 为不同命名空间，Nop/Quarkus config 扁平化为 dotted key，跨命名空间并列正确解析）：
   ```yaml
   "%dev":
     nop:
@@ -138,34 +138,34 @@ Skill: `nop-testing`
   ```
   - 扩展既有 `"%dev":` 块（L48-52）增三开关 false + skip-check=true（保留既有 allow-create-default-user=true）；新建 `"%test":` 块（同 dev 四变量，skip-check=true 使 E2E admin 兜底可生效）；新建 `"%prod":` 块（三开关 false 确定性表达；skip-check 省略→平台默认 false）。
   - Skill: `nop-testing`
-- [ ] **Fix**：`skip-check-for-admin` owner-doc 漂移修正（解除 P2.2a skip-check 依赖阻塞——P2.2a 仍阻塞于 P1.5b）——本项是 Phase 2 config 落地的文档侧伴随（owner doc 全文修正归 Phase 3，本项确认 config 侧 fix 已使 admin 兜底在 dev/test 可生效）。
+- [x] **Fix**：`skip-check-for-admin` owner-doc 漂移修正（解除 P2.2a skip-check 依赖阻塞——P2.2a 仍阻塞于 P1.5b）——本项是 Phase 2 config 落地的文档侧伴随（owner doc 全文修正归 Phase 3，本项确认 config 侧 fix 已使 admin 兜底在 dev/test 可生效）。
   - Skill: none
-- [ ] **Proof**：YAML well-formed 校验 `app-erp-all/application.yaml`（用 Python `yaml.safe_load` 或 Nop config 启动解析；`xmllint` 不适用 yaml）+ profile 块结构自检（`%dev`/`%test` 含三开关 false + skip-check=true；`%prod` 含三开关 false 且无 skip-check）+ 三开关有效值仍为 false（预置不改运行时，action-auth OFF 时 skip-check 无运行时效果）。
+- [x] **Proof**：YAML well-formed 校验 `app-erp-all/application.yaml`（用 Python `yaml.safe_load` 或 Nop config 启动解析；`xmllint` 不适用 yaml）+ profile 块结构自检（`%dev`/`%test` 含三开关 false + skip-check=true；`%prod` 含三开关 false 且无 skip-check）+ 三开关有效值仍为 false（预置不改运行时，action-auth OFF 时 skip-check 无运行时效果）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] `%dev`/`%test`/`%prod` 三 profile 块落地，三开关预置默认 OFF，skip-check dev/test 显式 true、prod 继承平台默认 false；YAML well-formed + profile 结构自检通过。
+- [x] `%dev`/`%test`/`%prod` 三 profile 块落地，三开关预置默认 OFF，skip-check dev/test 显式 true、prod 继承平台默认 false；YAML well-formed + profile 结构自检通过。
 
 ### Phase 3 - owner doc §运行基线修正 + 日志
 
-Status: planned
+Status: completed
 Targets: `docs/design/roles-and-permissions.md` §运行基线 + §数据权限
 Skill: none
 
 - Item Types: `Fix` / `Add`
 - Prereqs: Phase 2
 
-- [ ] **Fix**：修正 `skip-check-for-admin` 默认值 owner-doc 漂移——**全量枚举并修正所有断言「平台默认 true」的位置**（Rule 13：已确认漂移不得遗漏）。实测命中位置（两种漂移措辞：`默认启用` 与 `true（默认）`）：`docs/design/roles-and-permissions.md` L39（§角色体系「管理员」行，措辞「默认启用」）、L143（§角色→权限点映射「管理员」行，措辞「默认启用」）、L186（§运行基线表，措辞「`true`（默认）」）；`docs/design/app-overview.md` L56（§角色体系「管理员」行，措辞「默认启用」）；`docs/backlog/permissions-enforcement-roadmap.md` L84（§横切关注点 2，措辞「默认启用」）。逐处由「默认启用 / `true`（默认）」改为「平台 IConfigReference 默认 `false`（DR-1e，`NopAuthConfigs.java:77` 单一来源）；app `%dev`/`%test` profile 显式 `true`（admin 兜底可生效，见 plan 2026-08-09-0751-3 / P2.1）；`%prod` 继承平台默认 `false`（安全姿态，prod 翻转 successor 裁决）」。roadmap L84 仅修正事实陈述，不改工作项状态/范围。
+- [x] **Fix**：修正 `skip-check-for-admin` 默认值 owner-doc 漂移——**全量枚举并修正所有断言「平台默认 true」的位置**（Rule 13：已确认漂移不得遗漏）。实测命中位置（两种漂移措辞：`默认启用` 与 `true（默认）`）：`docs/design/roles-and-permissions.md` L39（§角色体系「管理员」行，措辞「默认启用」）、L143（§角色→权限点映射「管理员」行，措辞「默认启用」）、L186（§运行基线表，措辞「`true`（默认）」）；`docs/design/app-overview.md` L56（§角色体系「管理员」行，措辞「默认启用」）；`docs/backlog/permissions-enforcement-roadmap.md` L84（§横切关注点 2，措辞「默认启用」）。逐处由「默认启用 / `true`（默认）」改为「平台 IConfigReference 默认 `false`（DR-1e，`NopAuthConfigs.java:77` 单一来源）；app `%dev`/`%test` profile 显式 `true`（admin 兜底可生效，见 plan 2026-08-09-0751-3 / P2.1）；`%prod` 继承平台默认 `false`（安全姿态，prod 翻转 successor 裁决）」。roadmap L84 仅修正事实陈述，不改工作项状态/范围。
   - Skill: none
-- [ ] **Add**：§运行基线增「profile 化预置」注记——三开关已在 `app-erp-all/application.yaml` `%dev`/`%test`/`%prod` profile 预置为 config 变量（默认 OFF，灰度粒度 = config 变量）；翻启节奏：`enable-action-auth` 随 P2.4、`enable-data-auth` + `role-row-filter-enabled` 随 E2.1 同时；prod 保持 OFF（successor）。§数据权限双层门控注记补「两开关 profile 预置就绪」。
+- [x] **Add**：§运行基线增「profile 化预置」注记——三开关已在 `app-erp-all/application.yaml` `%dev`/`%test`/`%prod` profile 预置为 config 变量（默认 OFF，灰度粒度 = config 变量）；翻启节奏：`enable-action-auth` 随 P2.4、`enable-data-auth` + `role-row-filter-enabled` 随 E2.1 同时；prod 保持 OFF（successor）。§数据权限双层门控注记补「两开关 profile 预置就绪」。
   - Skill: none
-- [ ] **Proof**：(1) **权威 gate——逐行 spot-check**：显式核验 5 个枚举行的**当前值列/语义**（roles-and-permissions.md L39/L143/L186 + app-overview.md L56 + roadmap L84）均已由「默认 true」（两种措辞）改为「平台默认 false + app dev/test 显式 true + prod 继承 false」，**无一仍断言默认 true**（直击语义，不依赖 token 顺序——校正文本合法含「true」与「默认」两 token，grep 无法稳定区分，故以 spot-check 为权威）。(2) **辅助扫荡——grep**：`grep -rnE "skip-check-for-admin.*默认启用" docs/`（排除 plans/audits/logs/discussions/analysis/lessons/retrospectives 历史目录）应零命中，用于发现 5 枚举行之外的任何**新**「默认启用」漂移点（L186 措辞异，由 spot-check 覆盖，不在 grep 责任内）。§运行基线表与 application.yaml 真相源一致。
+- [x] **Proof**：(1) **权威 gate——逐行 spot-check**：显式核验 5 个枚举行的**当前值列/语义**（roles-and-permissions.md L39/L143/L186 + app-overview.md L56 + roadmap L84）均已由「默认 true」（两种措辞）改为「平台默认 false + app dev/test 显式 true + prod 继承 false」，**无一仍断言默认 true**（直击语义，不依赖 token 顺序——校正文本合法含「true」与「默认」两 token，grep 无法稳定区分，故以 spot-check 为权威）。(2) **辅助扫荡——grep**：`grep -rnE "skip-check-for-admin.*默认启用" docs/`（排除 plans/audits/logs/discussions/analysis/lessons/retrospectives 历史目录）应零命中，用于发现 5 枚举行之外的任何**新**「默认启用」漂移点（L186 措辞异，由 spot-check 覆盖，不在 grep 责任内）。§运行基线表与 application.yaml 真相源一致。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] owner doc skip-check 漂移全量修正（**权威 gate**：5 枚举行逐行 spot-check 均不再断言默认 true；**辅助**：`grep -rnE "skip-check-for-admin.*默认启用" docs/` 排除历史目录零命中）+ §运行基线 profile 化预置 + 翻启节奏注记落地，与 application.yaml 真相源一致。
+- [x] owner doc skip-check 漂移全量修正（**权威 gate**：5 枚举行逐行 spot-check 均不再断言默认 true；**辅助**：`grep -rnE "skip-check-for-admin.*默认启用" docs/` 排除历史目录零命中）+ §运行基线 profile 化预置 + 翻启节奏注记落地，与 application.yaml 真相源一致。
 
 ## Draft Review Record
 
@@ -182,14 +182,14 @@ Exit Criteria:
 
 > 本计划改 `app-erp-all/application.yaml` profile 块（三开关预置默认 OFF，不改有效运行时值）+ owner doc 漂移修正。三开关有效默认本就 false，预置不改运行时；skip-check dev/test 显式 true 在 action-auth OFF 时无运行时效果（P2.2a 翻 action-auth 后才生效）。Closure Gates 运行 YAML 解析校验 + compliance checker 对照 `known-good-baselines.md` 零漂移（横切关注点 7）+ 完整 build。改 0 Java。
 
-- [ ] 范围内行为完成（三 profile 块 + 三开关预置默认 OFF + skip-check dev/test fix + owner doc 漂移修正 + 翻启节奏注记）
-- [ ] 相关文档对齐（`roles-and-permissions.md` §运行基线 + §数据权限）
-- [ ] 已运行验证：application.yaml YAML 解析校验（`yaml.safe_load`/Nop config 启动）+ skip-check 漂移修正（权威 gate：5 枚举行逐行 spot-check 均不再断言默认 true；辅助 grep `默认启用` 排除历史目录零命中）+ `bash docs/audits/nop-compliance-checker.sh` 对照 `docs/testing/known-good-baselines.md` 零漂移 + `mvn clean install -DskipTests`
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（三 profile 块 + 三开关预置默认 OFF + skip-check dev/test fix + owner doc 漂移修正 + 翻启节奏注记）
+- [x] 相关文档对齐（`roles-and-permissions.md` §运行基线 + §数据权限）
+- [x] 已运行验证：application.yaml YAML 解析校验（`yaml.safe_load`/Nop config 启动）+ skip-check 漂移修正（权威 gate：5 枚举行逐行 spot-check 均不再断言默认 true；辅助 grep `默认启用` 排除历史目录零命中）+ `bash docs/audits/nop-compliance-checker.sh` 对照 `docs/testing/known-good-baselines.md` 零漂移 + `mvn clean install -DskipTests`
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -213,13 +213,27 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <关闭时填写>
+Status Note: 三 Phase 全部执行完成（Phase 1 Decision 落地 + Phase 2 application.yaml 三 profile 块预置 + Phase 3 owner doc 5 枚举行漂移修正）。改 0 Java（仅 `app-erp-all/src/main/resources/application.yaml` + 4 个 owner doc/roadmap + 日志）。验证全绿：`mvn clean install -DskipTests` BUILD SUCCESS（01:40）；compliance checker 零漂移（R12c=40 经 `git stash` 实测为 pre-existing，与本计划零因果）；application.yaml `yaml.safe_load` well-formed + profile 结构自检全通过；owner doc 漂移修正权威 gate（5 枚举行逐行 spot-check 均不再断言默认 true）+ 辅助 grep（`skip-check-for-admin.*默认启用` 排除历史目录零命中）双通过。`app-erp-all` 模块相关 enforcement 测试（TestErpDataAuthStructure 4 tests / TestAppActionAuthMerge 1 test）全绿；6 个 H2 schema-init 错误（`Table "NOP_AUTH_SITE" not found (this database is empty)`）经 `git stash` 实测为 pre-existing 环境故障（nop-ioc refactor successor），与本计划资源文件变更零因果。结束审计已由独立子代理（新会话 `2026-08-09-075057-mission-driver`，不重用执行者上下文）执行，结论 approved（详见下方 Closure Audit Evidence）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理（新会话），执行者未自我审计>
-- Evidence: <关闭时填写>
+- Auditor / Agent: 独立结束审计子代理（新会话 `2026-08-09-075057-mission-driver`，不重用执行者上下文）
+- Independent Audit Walkthrough（2026-08-09）：冷重读全文 plan + 实时仓库逐项核验，结论 **approved**。
+  - **Phase/Exit Criteria 一致性**：三 Phase `Status: completed` + 全部 Exit Criteria `[x]`，无 `[ ]` 残留；Plan Status / Phase Status / Closure Gates / Closure 四点一致。
+  - **application.yaml 实测**（`app-erp-all/src/main/resources/application.yaml:48-76`）：`%dev`(L48-58)/`%test`(L59-67)/`%prod`(L68-76) 三块结构、三开关 false、`%dev`/`%test` `skip-check-for-admin: true`、`%prod` 省略 skip-check——与 plan Phase 2 目标结构逐一吻合。
+  - **owner doc 漂移修正权威 gate 实测**：5 枚举行逐行 spot-check 均不再断言「默认 true」——`roles-and-permissions.md` L39/L143/L186、`app-overview.md` L56、`permissions-enforcement-roadmap.md` L84 全部改为「平台默认 false + app dev/test 显式 true + prod 继承 false」语义；辅助 grep `skip-check-for-admin.*默认启用` 排除历史目录零命中。
+  - **Anti-Hollow**：交付物为 config 变量 + 文档（非 Java 逻辑），三开关有效默认本就 false（预置零运行时行为变更），skip-check dev/test true 在 action-auth OFF 时无运行时效果——无空函数体/return null/吞异常/未接线组件。
+  - **Deferred honesty**：§Deferred But Adjudicated 三项（prod skip-check 姿态 / admin 兜底实测 / application-{profile}.yaml 文件模式）均为 watch-only / out-of-scope，触发条件明确，无 live defect 隐藏。
+  - **Docs sync**：`docs/logs/2026/08-09.md` P2.1 条目落地（reverse-chronological 顶部）；`docs/architecture/` 无需更新（本计划不改架构基线）。
+- Evidence（执行者记录，供独立审计核验）:
+  - **application.yaml 变更**（`app-erp-all/src/main/resources/application.yaml:48-76`）：扩既有 `"%dev":` 块（L48-58）+ 新建 `"%test":`（L59-67）+ `"%prod":`（L68-76）profile 块。`%dev`/`%test`：三开关 false + `skip-check-for-admin: true`；`%prod`：三开关 false + skip-check 省略（继承平台默认 false）。`erp.data-auth.*` 与 `nop.auth.*` 跨命名空间并列。`mvn clean install -DskipTests` BUILD SUCCESS。
+  - **owner doc 漂移修正（5 枚举行）**：`roles-and-permissions.md` L39/L143/L186、`app-overview.md` L56、`permissions-enforcement-roadmap.md` L84——逐处由「默认启用 / `true`（默认）」改为「平台 IConfigReference 默认 `false`（DR-1e）+ app dev/test 显式 `true` + prod 继承 `false`」。§运行基线增 profile 化预置 + 翻启节奏注记；§数据权限双层门控注记补「两开关 profile 预置就绪」。
+  - **Proof 双 gate**：权威 gate——5 枚举行逐行 spot-check 均不再断言默认 true（语义直击）；辅助 grep `grep -rnE "skip-check-for-admin.*默认启用" docs/`（排除 plans/audits/logs/discussions/analysis/lessons/retrospectives）零命中。
+  - **compliance checker**：`bash docs/audits/nop-compliance-checker.sh` R1-R12 全命中数与本计划变更零因果（R12c=40 经 `git stash` 实测 clean tree 亦为 40，pre-existing，in-checker-text「基线 38」为 checker 文本自身陈旧）。
+  - **基线实测确认（load-bearing）**：`nop-entropy` `NopAuthConfigs.java:77` `CFG_AUTH_SKIP_CHECK_FOR_ADMIN` 默认 = `false`；`DefaultActionAuthChecker.java:36` 直读 IConfigReference（H-2 已移除 bean 层 `@InjectValue|true` fallback）；app 源配置零覆盖 → 有效默认 false。
+  - **日志**：`docs/logs/2026/08-09.md` 顶部增 P2.1 条目（reverse-chronological）。
+  - **roadmap**：`docs/backlog/permissions-enforcement-roadmap.md` P2.1 `todo`→`done`（待独立结束审计后由 mission driver 确认；执行者已就地标记状态）。
 
 Follow-up:
 
-- <仅非阻塞跟进项；已确认缺陷不得出现于此>
+- <非阻塞 successor 见 §Deferred But Adjudicated：prod skip-check 姿态裁决（successor，触发=生产灰度计划人工批准）/ admin 兜底实测验证（归 P2.2a，触发=P2.2a 进入）/ application-{profile}.yaml 独立文件模式（无先例）>
