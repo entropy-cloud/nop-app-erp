@@ -61,8 +61,12 @@ if [ "$DO_FLUX" = true ]; then
 fi
 
 if [ "$DO_NEXT" = true ]; then
-  info "步骤 3/5：nop-chaos-next 构建"
-  (cd "$NEXT_ROOT" && pnpm build)
+  info "步骤 3/5：nop-chaos-next 构建（--force 绕过 turbo 缓存）"
+  # 必须 --force：pnpm build 是 turbo run build，turbo 的缓存 key 不感知
+  # libs/ 下 flux tgz 内容变化（依赖声明/lockfile 未变），会命中旧缓存跳过
+  # 构建，导致 apps/main/dist 仍是旧 flux bundle（2026-08-09 实测：改完
+  # flux 后 dist 停留在旧产物，前端 closeOnSubmit 等新逻辑不生效）。
+  (cd "$NEXT_ROOT" && pnpm build --force)
 fi
 
 if [ "$DO_SITE" = true ]; then
