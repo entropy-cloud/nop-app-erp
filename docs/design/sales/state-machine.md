@@ -146,6 +146,10 @@
 2. 审核时校验：赠品可用量是否充足（赠品也要扣库存）。
 3. 折扣影响应收金额（价税分离计算）。
 
+> **实现注记（RC-R1.14 + RC-R1.15）**：
+> - **价税分离**：`ErpSalOrderBizModel.recomputeLineAmount` 按 L1 公式重算行级 `taxAmount = net × rate / (1+rate)`（scale=4 HALF_UP，rate=taxRate/100）+ `amountWithTax = net + taxAmount`；`recomputeOrderTotals` 头级 `totalTaxAmount`/`totalAmountWithTax` = Σ 新行值（恒等式 `totalAmountWithTax = totalAmount + totalTaxAmount`）。零税率/null rate 行 `taxAmount=0`。
+> - **最低价校验**：`ErpSalOrderBizModel.validatePromotionPrices`（protected step，`persistPricingResult` 落地后逐行触发）复用 master-data `IErpMdMaterialSkuBiz.validatePrice` 三级语义（OFF 放行 / WARN 放行带 LOG.warn / HARD 抛 `ERR_PRICE_BELOW_MIN` propagate + @BizMutation 事务回滚）。`finalPrice = line.amount/line.quantity`（促销后净单价）；`materialCategoryId` 经 `line.getMaterial().getCategoryId()` 解析。**赠品行（amount==0）显式跳过**——L1 UC-SAL-08 要求赠品可成功生成，HARD 级别下不排除将误拒含赠品促销。
+
 ## 10. 与设计文档一致性
 
 - 销售域与采购域的对称性见 `sales/README.md`。
