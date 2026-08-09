@@ -20,6 +20,30 @@ site:
       displayName: Supplier Price List
     ErpPurSupplierScorecard-main:
       displayName: Supplier Scorecard
+    FNPT:ErpPurInvoice:approve:
+      displayName: Approve Purchase Invoice
+    FNPT:ErpPurInvoice:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpPurOrder:approve:
+      displayName: Approve Purchase Order
+    FNPT:ErpPurOrder:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpPurPayment:approve:
+      displayName: Approve Payment
+    FNPT:ErpPurPayment:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpPurReceive:approve:
+      displayName: Approve Purchase Receipt
+    FNPT:ErpPurReceive:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpPurRequisition:approve:
+      displayName: Approve Purchase Requisition
+    FNPT:ErpPurRequisition:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpPurReturn:approve:
+      displayName: Approve Purchase Return
+    FNPT:ErpPurReturn:reverseApprove:
+      displayName: Reverse Approve
     erp-pur:
       displayName: Purchase
     erp-pur-billing:

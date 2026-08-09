@@ -41,11 +41,33 @@
                         <resource id="ErpPurRequisition-main" app:useCases="UC-PUR-01,UC-PUR-08" displayName="采购请购单"
                                   i18n-en:displayName="Purchase Requisition" icon="file-text"
                                   component="FLUX" resourceType="SUBM" orderNo="200"
-                                  url="/erp/pur/pages/ErpPurRequisition/main.page.yaml"/>
+                                  url="/erp/pur/pages/ErpPurRequisition/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPurRequisition:approve" displayName="审核采购请购单" i18n-en:displayName="Approve Purchase Requisition"
+                                          resourceType="FNPT" orderNo="20010" roles="审核人">
+                                    <permissions>ErpPurRequisition:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPurRequisition:reverseApprove" displayName="反审核采购请购单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="20020" roles="管理员">
+                                    <permissions>ErpPurRequisition:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpPurOrder-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-05,UC-PUR-06,UC-PUR-07,UC-PUR-08,UC-MD-01,UC-MD-02,UC-MD-05" displayName="采购订单"
                                   i18n-en:displayName="Purchase Order" icon="shopping-cart"
                                   component="FLUX" resourceType="SUBM" orderNo="210"
-                                  url="/erp/pur/pages/ErpPurOrder/main.page.yaml"/>
+                                  url="/erp/pur/pages/ErpPurOrder/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPurOrder:approve" displayName="审核采购订单" i18n-en:displayName="Approve Purchase Order"
+                                          resourceType="FNPT" orderNo="21010" roles="审核人">
+                                    <permissions>ErpPurOrder:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPurOrder:reverseApprove" displayName="反审核采购订单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="21020" roles="管理员">
+                                    <permissions>ErpPurOrder:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
 
@@ -56,7 +78,18 @@
                         <resource id="ErpPurReceive-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-03,UC-PUR-07" displayName="采购入库单"
                                   i18n-en:displayName="Purchase Receipt" icon="package-plus"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/pur/pages/ErpPurReceive/main.page.yaml"/>
+                                  url="/erp/pur/pages/ErpPurReceive/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPurReceive:approve" displayName="审核采购入库单" i18n-en:displayName="Approve Purchase Receipt"
+                                          resourceType="FNPT" orderNo="30010" roles="审核人">
+                                    <permissions>ErpPurReceive:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPurReceive:reverseApprove" displayName="反审核采购入库单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="30020" roles="管理员">
+                                    <permissions>ErpPurReceive:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
 
@@ -67,11 +100,33 @@
                         <resource id="ErpPurInvoice-main" app:useCases="UC-PUR-01,UC-PUR-02,UC-PUR-05,UC-PUR-07" displayName="采购发票"
                                   i18n-en:displayName="Purchase Invoice" icon="receipt"
                                   component="FLUX" resourceType="SUBM" orderNo="400"
-                                  url="/erp/pur/pages/ErpPurInvoice/main.page.yaml"/>
+                                  url="/erp/pur/pages/ErpPurInvoice/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPurInvoice:approve" displayName="审核采购发票" i18n-en:displayName="Approve Purchase Invoice"
+                                          resourceType="FNPT" orderNo="40010" roles="审核人">
+                                    <permissions>ErpPurInvoice:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPurInvoice:reverseApprove" displayName="反审核采购发票" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="40020" roles="管理员">
+                                    <permissions>ErpPurInvoice:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpPurPayment-main" app:useCases="UC-PUR-01" displayName="付款单"
                                   i18n-en:displayName="Payment" icon="banknote"
                                   component="FLUX" resourceType="SUBM" orderNo="410"
-                                  url="/erp/pur/pages/ErpPurPayment/main.page.yaml"/>
+                                  url="/erp/pur/pages/ErpPurPayment/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPurPayment:approve" displayName="审核付款单" i18n-en:displayName="Approve Payment"
+                                          resourceType="FNPT" orderNo="41010" roles="审核人">
+                                    <permissions>ErpPurPayment:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPurPayment:reverseApprove" displayName="反审核付款单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="41020" roles="管理员">
+                                    <permissions>ErpPurPayment:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
 
@@ -82,7 +137,18 @@
                         <resource id="ErpPurReturn-main" app:useCases="UC-PUR-04,UC-INV-05" displayName="采购退货单"
                                   i18n-en:displayName="Purchase Return" icon="undo-2"
                                   component="FLUX" resourceType="SUBM" orderNo="500"
-                                  url="/erp/pur/pages/ErpPurReturn/main.page.yaml"/>
+                                  url="/erp/pur/pages/ErpPurReturn/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPurReturn:approve" displayName="审核采购退货单" i18n-en:displayName="Approve Purchase Return"
+                                          resourceType="FNPT" orderNo="50010" roles="审核人">
+                                    <permissions>ErpPurReturn:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPurReturn:reverseApprove" displayName="反审核采购退货单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="50020" roles="管理员">
+                                    <permissions>ErpPurReturn:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 报表看板 -->
