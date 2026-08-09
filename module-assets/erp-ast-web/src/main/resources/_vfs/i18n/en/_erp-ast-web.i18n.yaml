@@ -26,6 +26,8 @@ site:
       displayName: Asset Split
     ErpAstValueAdjustment-main:
       displayName: Asset Value Adjustment
+    FNPT:ErpAstDisposal:approve:
+      displayName: Approve Asset Disposal
     asset-depreciation-detail:
       displayName: Asset Depreciation Detail
     asset-disposal-detail:

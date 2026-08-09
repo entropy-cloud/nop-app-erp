@@ -72,7 +72,14 @@
                         <resource id="ErpAstDisposal-main" app:useCases="UC-AST-04,UC-AST-05" displayName="资产处置"
                                   i18n-en:displayName="Asset Disposal" icon="trash-2"
                                   component="FLUX" resourceType="SUBM" orderNo="400"
-                                  url="/erp/ast/pages/ErpAstDisposal/main.page.yaml"/>
+                                  url="/erp/ast/pages/ErpAstDisposal/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpAstDisposal:approve" displayName="审批资产处置" i18n-en:displayName="Approve Asset Disposal"
+                                          resourceType="FNPT" orderNo="40010" roles="资产管理员/管理员">
+                                    <permissions>ErpAstDisposal:approve</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="disposal-wizard" app:useCases="UC-AST-04" displayName="资产处置向导"
                                   i18n-en:displayName="Disposal Wizard" icon="magic"
                                   component="FLUX" resourceType="SUBM" orderNo="401"
