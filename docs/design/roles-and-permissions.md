@@ -204,8 +204,9 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 | finance | ErpFinVoucher | `:post` / `:reverse` | 财务员 |
 | finance | ErpFinAccountingPeriod | `:closePeriod` / `:reverseClose`（反结账 kill-switch） | closePeriod=财务员 / reverseClose=管理员 |
 | finance | ErpFinBadDebt | `:writeOff` / `:reverseApprove` | writeOff=财务员 / reverseApprove=管理员 |
-| b2b | ErpB2bEdiDoc | `:markSent` / `:cancel` | markSent=B2B 对账员 / cancel=B2B 管理员 |
-| b2b | ErpB2bAsn | `:handleInboundWebhook`（入站 webhook 高危） | B2B 管理员 |
+| b2b | ErpB2bEdiDoc | `:markSent` / `:markAcknowledged` / `:markError` / `:retry` / `:archive` / `:cancel`（EDI 信封全生命周期） | markSent/markAcknowledged=B2B 对账员 / markError/retry/archive/cancel=B2B 管理员 |
+| b2b | ErpB2bAsn | `:handleInboundWebhook`（入站 webhook 高危）/ `:matchPurchaseOrder` / `:createReceiveFromAsn` / `:retryMatch`（ASN 全生命周期） | handleInboundWebhook=B2B 管理员 / matchPurchaseOrder/createReceiveFromAsn/retryMatch=B2B 对账员 |
+| b2b | ErpB2bPartnerProfile | `:activate` / `:suspend` / `:deactivate`（凭证/安全生命周期，管 `webhookSecret` 载体） | B2B 管理员 |
 | manufacturing | ErpMfgWorkOrder | `:start` / `:close` / `:cancel` | 生产主管 |
 | manufacturing | ErpMfgSubcontractOrder | `:approve`（委外审批） | 生产主管 |
 | inventory | ErpInvStockMove | `:confirm` | 库管员 |
@@ -220,7 +221,7 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 
 **高危动作升级路径（successor）**：`reverseClose`（反结账）/ `writeOff`（坏账核销）/ `handleInboundWebhook`（B2B 入站）为最高危——其 FNPT 点已声明并 seed 给管理员/B2B 管理员，但**真正 enforcement 翻转**为 config-gated successor（见下方"Deferred"），须人工批准 + 灰度 + 负向隔离测试后分域启用。
 
-**灰度推进路线（staged rollout，successor）**：finance/b2b/mfg/inventory/hr/pur/sal/assets 为首批落地（含全部 A3.6 点名的最高危动作：reverseClose/writeOff/handleInboundWebhook + 各域敏感状态迁移；pur/sal 审批集 approve/reverseApprove per-action FNPT 由 plan `2026-08-09-1400-2` / P1.4a 补齐；mfg 委外审批 + assets 处置 approve per-action FNPT 由 plan `2026-08-09-1400-3` / P1.4b 补齐）；其余（全 EDI 生命周期 等）的 per-action FNPT 声明随 enforcement 灰度分批补齐（触发条件 = 该域 `enable-action-auth=true` 灰度批准前）。新增高危实体应按本模式直接声明独立 FNPT 点（API 命名约定见 `domain-design-guidelines.md §16A`）。
+**灰度推进路线（staged rollout，successor）**：finance/b2b/mfg/inventory/hr/pur/sal/assets 为首批落地（含全部 A3.6 点名的最高危动作：reverseClose/writeOff/handleInboundWebhook + 各域敏感状态迁移；pur/sal 审批集 approve/reverseApprove per-action FNPT 由 plan `2026-08-09-1400-2` / P1.4a 补齐；mfg 委外审批 + assets 处置 approve per-action FNPT 由 plan `2026-08-09-1400-3` / P1.4b 补齐；**b2b EDI 全生命周期 per-action FNPT**——EdiDoc（markAcknowledged/markError/retry/archive）+ Asn（matchPurchaseOrder/createReceiveFromAsn/retryMatch）+ PartnerProfile（activate/suspend/deactivate）共 10 点 + roles 种子由 plan `2026-08-09-0751-1` / P1.4c 补齐，b2b 域全生命周期（信封+ASN+伙伴）现已完整）；其余（其它域全生命周期 等）的 per-action FNPT 声明随 enforcement 灰度分批补齐（触发条件 = 该域 `enable-action-auth=true` 灰度批准前）。新增高危实体应按本模式直接声明独立 FNPT 点（API 命名约定见 `domain-design-guidelines.md §16A`）。
 
 #### 兜底策略裁决（plan 2026-08-09-1314-2 / P1.3，2026-08-09）
 
@@ -237,7 +238,7 @@ enforcement 开启后，授权判定由**两套互不互换的命名空间**共�
 >
 > **既有种子证据（Proof，doc-only 计划证据引用，非测试命令）**——收敛粒度（SUBM + 敏感动作 per-action FNPT + 静态 roles 种子）已部分落地并验证可行，7 域 delta `erp-*.action-auth.xml` 实测行号：
 > - **finance** `erp-fin.action-auth.xml`：`ErpFinVoucher:post`/`:reverse`→财务员（L23-30）、`ErpFinAccountingPeriod:closePeriod`→财务员 / `:reverseClose`→管理员（L52-59）、`ErpFinBadDebt:writeOff`→财务员 / `:reverseApprove`→管理员（L86-93）。
-> - **b2b** `erp-b2b.action-auth.xml`：`ErpB2bEdiDoc:markSent`→B2B 对账员 / `:cancel`→B2B 管理员（L22-27）、`ErpB2bAsn:handleInboundWebhook`→B2B 管理员（L46-47）。
+> - **b2b** `erp-b2b.action-auth.xml`（plan `2026-08-09-0751-1` / P1.4c，b2b 全生命周期补齐）：`ErpB2bEdiDoc:markSent`→B2B 对账员（L21-24）/ `:cancel`→B2B 管理员（L25-28）/ `:markAcknowledged`→B2B 对账员（L29-32）/ `:markError`→B2B 管理员（L33-36）/ `:retry`→B2B 管理员（L37-40）/ `:archive`→B2B 管理员（L41-44）；`ErpB2bAsn:handleInboundWebhook`→B2B 管理员（L61-64）/ `:matchPurchaseOrder`→B2B 对账员（L65-68）/ `:createReceiveFromAsn`→B2B 对账员（L69-72）/ `:retryMatch`→B2B 对账员（L73-76）；`ErpB2bPartnerProfile:activate`/`:suspend`/`:deactivate`→B2B 管理员（L97-108，凭证/安全生命周期，原自闭合 resource 已转开闭合挂 children）。
 > - **manufacturing** `erp-mfg.action-auth.xml`：`ErpMfgWorkOrder:start`/`:close`/`:cancel`→生产主管（L50-59）、`ErpMfgSubcontractOrder:approve`→生产主管（L118-121）。
 > - **inventory** `erp-inv.action-auth.xml`：`ErpInvStockMove:confirm`→库管员（L24-25）、`ErpInvLandedCost:approve`→库管员（L115-116）。
 > - **human-resource** `erp-hr.action-auth.xml`：`ErpHrLeaveRequest:approve`→HR 专员（L78-79）、`ErpHrSalary:approve`/`:markPaid`→薪酬审批人（L102-107）。

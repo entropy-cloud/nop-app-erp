@@ -31,7 +31,7 @@
 | P1.3 | 细粒度权限映射裁决（收敛粒度：角色×SUBM + 敏感动作 per-action FNPT；含 **B 类扩展域 enforcement 行为裁决**） | done | `roles-and-permissions.md` §角色→权限点映射 | P1.1（弱依赖，可并行） | none |
 | P1.4a | per-action FNPT 声明补齐——purchase/sales 审批集 | done | `roles-and-permissions.md` §action-level 声明层 | P1.3 | `nop-backend-dev` |
 | P1.4b | per-action FNPT 声明补齐——mfg approve subcontract + assets 处置 | done | 同上 | P1.3 | `nop-backend-dev` |
-| P1.4c | per-action FNPT 声明补齐——b2b EDI 全生命周期 | todo | 同上 + `edi-formats.md` | P1.3 | `nop-backend-dev` |
+| P1.4c | per-action FNPT 声明补齐——b2b EDI 全生命周期 | done | 同上 + `edi-formats.md` | P1.3 | `nop-backend-dev` |
 | P1.4d | per-action FNPT 声明补齐——扩展域敏感子集（contract 电子签 / hr 薪酬审核 等） | todo | 同上 + `roles-and-permissions.md` §第二批扩展域 A | P1.3 | `nop-backend-dev` |
 | P1.5a | 静态 role-resource 种子补全（核心 15 角色 + HR/Contract/B2B 敏感角色 × 已声明权限点，按域集群核验权限点 ID） | todo | `roles-and-permissions.md` §action-level 声明层 | P1.4a-d + P1.6 | `nop-backend-dev` |
 | P1.5b | auth 表 CSV 种子（角色记录 + 用户角色绑定 + 测试账号，含 **nop→平台 admin 角色**绑定；密码/salt 方案先行验证） | todo | `_vfs/_init-data/` 种子范式 | P1.5a | `nop-testing` |
