@@ -250,10 +250,12 @@ enforcement 开启后，授权判定由**两套互不互换的命名空间**共�
 
 | 域 | 实体 | xwf 文件 | 影响 |
 |----|------|---------|------|
-| finance | ErpFinPayment | `payment-approval/v1.xwf` | 浏览器层 `submitForApproval`→`approve` 链不可达；后端 BizModel `approve_direct` / DIRECT 三轴审批仍可用（不依赖 xwf） |
-| finance | ErpFinReceipt | `receipt-approval/v1.xwf` | 同上 |
+| purchase | ErpPurPayment | `payment-approval/v1.xwf` | 浏览器层 `submitForApproval`→`approve` 链不可达；后端 BizModel `approve_direct` / DIRECT 三轴审批仍可用（不依赖 xwf） |
+| sales | ErpSalReceipt | `receipt-approval/v1.xwf` | 同上 |
 | assets | ErpAstDisposal | `disposal-approval/v1.xwf` | 同上；资产处置审批走 DIRECT 三轴 |
 | hr | ErpHrSalary | `salary-approval/v1.xwf`（三级链） | 同上；薪资审批走 DIRECT 三轴 |
+
+> **域/实体名订正注记（plan 2026-08-09-1400-1 / P1.6，2026-08-09）**：上表早前将 Payment/Receipt 误标为 finance 域 `ErpFinPayment`/`ErpFinReceipt`——实测真值为 purchase 域 `ErpPurPayment`（`module-purchase/model/app-erp-purchase.orm.xml:923` `erp_pur_payment` `useWorkflow="true"`）与 sales 域 `ErpSalReceipt`（`module-sales/model/app-erp-sales.orm.xml:735` `erp_sal_receipt` `useWorkflow="true"`）。**finance 域 ORM 无任何 `useWorkflow="true"` 实体**（实测 `module-finance/model/app-erp-finance.orm.xml`）。4 实体完整集合 = ErpHrSalary（hr，`module-hr/.../app-erp-hr.orm.xml:722`）/ ErpAstDisposal（assets，`module-assets/.../app-erp-assets.orm.xml:578`）/ ErpPurPayment（purchase）/ ErpSalReceipt（sales），与 2330-1 裁决证据一致。
 
 **替代路径**：4 实体的 DIRECT 三轴审批状态机（`approveStatus` DIRECT 路径，见 `docs/plans/2026-07-05-0540-3`）不依赖 xwf，浏览器层 E2E 可达且全绿。需要多级审批链的业务场景在浏览器层目前无法验证（仅后端单测覆盖）。
 
@@ -264,6 +266,41 @@ enforcement 开启后，授权判定由**两套互不互换的命名空间**共�
 3. 4 实体改回 DIRECT 审批，移除 `useWorkflow="true"`（产品决策）
 
 **详细裁决与探针证据**：见 `docs/plans/2026-07-09-2330-1-use-workflow-browser-e2e-feasibility.md`（plan 内 §Closure Audit Evidence）。
+
+#### xwf 4 实体 enforcement 语义裁决（plan 2026-08-09-1400-1 / P1.6，2026-08-09）
+
+> 来源：plan `2026-08-09-1400-1`（P1.6）。裁决 4 个 `useWorkflow="true"` 实体（ErpHrSalary / ErpAstDisposal / ErpPurPayment / ErpSalReceipt）approve 动作的**权限点绑定规则**与 **DIRECT 三轴浏览器层负向测试策略**。交叉引用：2330-1（xwf 不可达权威裁决）、P1.3（收敛粒度 = 角色×SUBM + 敏感动作 per-action FNPT + 兜底策略，见 §角色→权限点映射「映射粒度裁决」）。
+
+**A. 权限点绑定规则：approve → 独立 per-action `:approve` FNPT**
+
+裁决：4 实体的 approve 动作**一律经独立 per-action `:approve` FNPT 点**脱离泛化 `:mutation` 桶——与 P1.3 收敛粒度裁决一致（approve 属敏感动作，必须作为独立控制点）。考虑的替代方案与裁定：
+- **(a) approve 一律经独立 `:approve` per-action FNPT** —— **采纳**：敏感动作脱离 `mutation` 桶，与 P1.3 收敛粒度 + §action-level 声明层既有模式（finance/b2b/mfg/inventory/hr 已落地的 reverseClose/writeOff/handleInboundWebhook 等独立点）一致。
+- **(b) 未声明者暂入 `:mutation` 桶** —— **拒绝**：违背 P1.3（approve 为敏感动作，坍缩进 `mutation` 丧失管控意义），且 enforcement 翻启后无法将 approve 与普通写动作区分。
+- **(c) 混合（已声明者经 `:approve`，未声明者先声明再绑定）** —— **拒绝为终态、采纳为过渡**：实质收敛于 (a)——3 实体 approve 点落地后即与 (a) 等价；过渡期（声明未落地）由 admin 兜底 + enforcement 翻启门控兜住（见残留风险）。
+
+**4 实体 `:approve` 声明归属**（声明落地**不在**本裁决——本裁决仅记录归属，确保 P1.5a 种子时 4 实体 approve 点均已存在）：
+
+| 实体 | `:approve` 声明状态 | 归属 | 证据 |
+|------|--------------------|------|------|
+| ErpHrSalary | **已声明**（`:approve`/`:markPaid`→薪酬审批人） | 本身已落地 | delta `erp-hr.action-auth.xml` L101-108 |
+| ErpPurPayment | 未声明（生成文件仅 `:query`/`:mutation`） | sibling P1.4a（`2026-08-09-1400-2`，active） | 生成 `_erp-pur.action-auth.xml` L73-79（无 `:approve`）；delta 未补 |
+| ErpSalReceipt | 未声明（生成文件仅 `:query`/`:mutation`） | sibling P1.4a（`2026-08-09-1400-2`，active） | 生成 `_erp-sal.action-auth.xml` L185-191（无 `:approve`）；delta 未补 |
+| ErpAstDisposal | 未声明（生成文件仅 `:query`/`:mutation`） | sibling P1.4b（`2026-08-09-1400-3`，active） | 生成 `_erp-ast.action-auth.xml` L115-121（无 `:approve`）；delta 未补 |
+
+> **残留风险**：在 sibling P1.4a/P1.4b 声明落地前，ErpPurPayment/ErpSalReceipt/ErpAstDisposal 的 approve 无独立 per-action FNPT——enforcement 翻启后无法将这 3 实体的 approve 与泛化 `mutation` 区分。**缓解**：(1) enforcement 翻启（P2.4/E1.x）门控在 P1.4a/P1.4b 声明 + P1.5a 种子完成之后；(2) 过渡期由平台 admin 兜底（`skip-check-for-admin`）+ enforcement OFF 覆盖。ErpHrSalary 无此风险（已声明）。
+
+**B. DIRECT 三轴浏览器层负向测试策略**
+
+裁决：4 实体 enforcement 负向测试路径 = **DIRECT 三轴 approve 为浏览器层 E2E 负向断言主体**；**xwf 审批轴保持后端单测覆盖**（浏览器层不可达，非负向 E2E 缺陷）。考虑的替代方案与裁定：
+- **(a) DIRECT 三轴 approve = 浏览器层 E2E 负向断言主体；xwf 轴 = 后端单测覆盖** —— **采纳**：DIRECT 三轴不依赖 xwf（2330-1 已确认浏览器层可达且全绿），可断言"非 admin/未授权角色经 DIRECT 路径 approve 被拒"；xwf 多级链不可达属平台 successor（2330-1 NOT FEASIBLE），后端单测覆盖足够。
+- **(b) 仅后端单测覆盖 approve enforcement，浏览器层不测** —— **拒绝**：削弱 enforcement 真拒绝证明（浏览器层是用户实际攻击面，须有端到端负向断言）。
+- **(c) 强行修复 xwf 可达性以补浏览器层负向测试** —— **拒绝**：2330-1 权威裁决 NOT FEASIBLE，解除条件属平台 successor（nop-wf 修复 `sysUser(0)` 物化路径）。
+
+**对下游影响（冻结输入）**：
+- **P2.1（enforcement 配置 profile 化）**：dev/test profile 可预置 `enable-action-auth=true`，知悉这 4 实体的 DIRECT 三轴 approve 浏览器层 E2E 可覆盖；xwf 轴 enforcement 仅后端单测层验证（profile 化须登记此覆盖边界）。
+- **E1.x（高危翻转）**：4 实体 approve 翻启可凭 DIRECT 轴 E2E 负向证据 + xwf 轴后端单测证据推进；DIRECT 轴无浏览器层覆盖缺口。
+
+> **残留风险**：xwf 多级审批链（如薪酬三级链 `salary-approval/v1.xwf`）无浏览器层 E2E 负向证明——仅有后端单测覆盖。按 2330-1 裁决可接受（xwf 浏览器层可达性为平台 successor，非本裁决范围）。**解除条件**：nop-wf 平台修复 `sysUser(0)` 浏览器层物化路径，或 4 实体改回 DIRECT 移除 `useWorkflow="true"`（见上方"解除条件"）。
 
 ## 实现机制（平台组件）
 
