@@ -6,6 +6,8 @@ import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.dao.entity.ErpSalDelivery;
+import app.erp.sal.dao.entity.ErpSalDeliveryLine;
+import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.dao.entity.ErpSalReturn;
 import app.erp.sal.dao.entity.ErpSalReturnLine;
 import app.erp.sal.service.ErpSalConstants;
@@ -25,12 +27,19 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
-import java.util.Objects;
-
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.in;
 
 /**
  * 销售退货单审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
@@ -203,6 +212,7 @@ public class ErpSalReturnProcessor {
         returnOrder.setApprovedBy(currentUserId());
         returnOrder.setApprovedAt(CoreMetrics.currentTimestamp());
         applyPosted(returnOrder, posted);
+        updateUndeliveredQuantity(returnOrder, context);
         returnDao().updateEntity(returnOrder);
     }
 
@@ -371,6 +381,81 @@ public class ErpSalReturnProcessor {
         QueryBean q = new QueryBean();
         q.addFilter(eq("returnId", returnId));
         return new ArrayList<>(dao.findAllByQuery(q));
+    }
+
+    /**
+     * 退货后回填原订单行的已出库数量（P1-RC-023 方案 A 写路径）。
+     *
+     * <p>L1 公式：未交货量 = 订单数量 − 已出库数量 + 退货数量。本方法补写 {@code ErpSalOrderLine.deliveredQuantity}
+     * 的「毛口径」值（Σ APPROVED delivery-line qty by orderLineId，对齐 ReturnQtyValidator 聚合先例），
+     * 使公式可派生成立。退货量 Σ 由读侧从 APPROVED 退货行聚合派生，不在本方法写入——净口径会与公式中
+     * {@code + 退货数量} 项重复计算。幂等：按重新聚合重算（非增量累加）。
+     *
+     * <p>链路：退货行 {@code deliveryLineId} → {@code ErpSalDeliveryLine.orderLineId} → {@code ErpSalOrderLine}。
+     * 与 P2-RC-019（deliveredQuantity 零 writer）同源联动，此处为首个写入口。
+     */
+    protected void updateUndeliveredQuantity(ErpSalReturn returnOrder, IServiceContext context) {
+        List<ErpSalReturnLine> lines = loadLines(returnOrder.getId());
+        Set<Long> orderLineIds = new HashSet<>();
+        IEntityDao<ErpSalDeliveryLine> deliveryLineDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
+        for (ErpSalReturnLine line : lines) {
+            Long deliveryLineId = line.getDeliveryLineId();
+            if (deliveryLineId == null) {
+                continue;
+            }
+            ErpSalDeliveryLine deliveryLine = deliveryLineDao.getEntityById(deliveryLineId);
+            if (deliveryLine != null && deliveryLine.getOrderLineId() != null) {
+                orderLineIds.add(deliveryLine.getOrderLineId());
+            }
+        }
+        if (orderLineIds.isEmpty()) {
+            return;
+        }
+        Map<Long, BigDecimal> deliveredByOrderLine = aggregateApprovedDelivered(orderLineIds);
+        IEntityDao<ErpSalOrderLine> orderLineDao = daoProvider.daoFor(ErpSalOrderLine.class);
+        for (Long orderLineId : orderLineIds) {
+            ErpSalOrderLine orderLine = orderLineDao.getEntityById(orderLineId);
+            if (orderLine != null) {
+                BigDecimal delivered = deliveredByOrderLine.getOrDefault(orderLineId, BigDecimal.ZERO);
+                orderLine.setDeliveredQuantity(delivered);
+                orderLineDao.updateEntity(orderLine);
+            }
+        }
+    }
+
+    /**
+     * 按 orderLineId 聚合 APPROVED 出库行的数量（毛口径）。对齐 ReturnQtyValidator:72-101 先例：
+     * 仅统计父出库单 approveStatus=APPROVED 的出库行数量。
+     */
+    private Map<Long, BigDecimal> aggregateApprovedDelivered(Set<Long> orderLineIds) {
+        IEntityDao<ErpSalDeliveryLine> dlDao = daoProvider.daoFor(ErpSalDeliveryLine.class);
+        QueryBean dlQuery = new QueryBean();
+        dlQuery.addFilter(in("orderLineId", orderLineIds));
+        List<ErpSalDeliveryLine> deliveryLines = dlDao.findAllByQuery(dlQuery);
+        if (deliveryLines.isEmpty()) {
+            return new HashMap<>();
+        }
+        Set<Long> deliveryIds = deliveryLines.stream()
+                .map(ErpSalDeliveryLine::getDeliveryId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+        IEntityDao<ErpSalDelivery> dDao = daoProvider.daoFor(ErpSalDelivery.class);
+        QueryBean dQuery = new QueryBean();
+        dQuery.addFilter(and(
+                in("id", deliveryIds),
+                eq("approveStatus", ErpSalConstants.APPROVE_STATUS_APPROVED)));
+        Set<Long> approvedDeliveryIds = dDao.findAllByQuery(dQuery).stream()
+                .map(ErpSalDelivery::getId)
+                .collect(Collectors.toSet());
+
+        Map<Long, BigDecimal> result = new HashMap<>();
+        for (ErpSalDeliveryLine dl : deliveryLines) {
+            if (dl.getDeliveryId() != null && approvedDeliveryIds.contains(dl.getDeliveryId())) {
+                BigDecimal qty = dl.getQuantity() == null ? BigDecimal.ZERO : dl.getQuantity();
+                result.merge(dl.getOrderLineId(), qty, BigDecimal::add);
+            }
+        }
+        return result;
     }
 
     // ---------- misc helpers ----------

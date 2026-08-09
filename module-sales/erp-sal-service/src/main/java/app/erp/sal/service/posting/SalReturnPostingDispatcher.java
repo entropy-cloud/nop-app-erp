@@ -3,8 +3,10 @@ package app.erp.sal.service.posting;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.PostingEvent;
 import app.erp.md.dao.AcctSchemaResolver;
+import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.dao.entity.ErpSalReturn;
 import app.erp.sal.dao.entity.ErpSalReturnLine;
+import app.erp.sal.service.ErpSalConstants;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
@@ -39,6 +41,13 @@ public class SalReturnPostingDispatcher {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalReturnPostingDispatcher.class);
 
+    /**
+     * billData 条件标记（P1-RC-024）：true = 未开票且已暂估 → 冲减暂估应收路径；
+     * false = 已开票 → 红字替代路径（credit memo 等价，P2-MA2-011 接受）。下游消费方零变更——
+     * 两种路径均生成 SALES_RETURN 凭证 + 负向 ArApItem，差异仅在标记。
+     */
+    static final String KEY_OFFSET_ESTIMATED_RECEIVABLE = "OFFSET_ESTIMATED_RECEIVABLE";
+
     @Inject
     SalPostingExecutor executor;
 
@@ -47,8 +56,17 @@ public class SalReturnPostingDispatcher {
 
     /**
      * 退货审核通过后调用。成功返回 true（调用方据此置 posted=true）；失败吞异常返回 false（保持 posted=false）。
+     *
+     * <p>P1-RC-024 条件门控（运营代理）：源出库单 {@code delivery.posted=true}（SALES_OUTPUT 凭证存在）
+     * ⇒ 视为暂估应收未清，维持 SALES_RETURN 冲减路径；{@code posted=false}（未暂估）⇒ 跳过事件构造
+     * （零凭证 / 零 ArApItem），下游消费方零变更。
      */
     public boolean tryPost(ErpSalReturn returnOrder) {
+        if (!isEstimatedReceivableOutstanding(returnOrder)) {
+            LOG.debug("销售退货 {} 源出库单未暂估（posted=false），跳过 SALES_RETURN 事件构造",
+                    returnOrder.getCode());
+            return false;
+        }
         PostingEvent event = buildEvent(returnOrder);
         try {
             Long voucherId = executor.postEvent(event);
@@ -98,8 +116,23 @@ public class SalReturnPostingDispatcher {
         billData.put(SalAcctDocProvider.KEY_TOTAL_COST, computeTotalCost(lines));
         billData.put(SalAcctDocProvider.KEY_TOTAL_AMOUNT_WITH_TAX, nz(returnOrder.getTotalAmountWithTax()));
         billData.put("CUSTOMER_ID", returnOrder.getCustomerId());
+        billData.put(KEY_OFFSET_ESTIMATED_RECEIVABLE, Boolean.TRUE);
         event.setBillData(billData);
         return event;
+    }
+
+    /**
+     * P1-RC-024 运营代理判定：源出库单 {@code posted=true}（SALES_OUTPUT 凭证存在）⇒ 视为暂估应收未清。
+     * 实仓无独立「暂估应收」凭证载体——InvAcctDocProvider SALES_OUTPUT 仅成本侧 6401/1401，
+     * 故以 delivery.posted 作为运营近似代理（残留风险：posted 与真实暂估应收状态存在运营近似偏差）。
+     */
+    private boolean isEstimatedReceivableOutstanding(ErpSalReturn returnOrder) {
+        Long deliveryId = returnOrder.getDeliveryId();
+        if (deliveryId == null) {
+            return false;
+        }
+        ErpSalDelivery delivery = daoProvider.daoFor(ErpSalDelivery.class).getEntityById(deliveryId);
+        return delivery != null && Boolean.TRUE.equals(delivery.getPosted());
     }
 
     /**

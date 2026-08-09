@@ -266,7 +266,7 @@ public class TestErpSalReturnQty extends JunitAutoTestCase {
         delivery.setExchangeRate(new BigDecimal("1"));
         delivery.setDocStatus(ErpSalConstants.DOC_STATUS_ACTIVE);
         delivery.setApproveStatus(ErpSalConstants.APPROVE_STATUS_APPROVED);
-        delivery.setPosted(false);
+        delivery.setPosted(true);
         dao.saveEntity(delivery);
     }
 

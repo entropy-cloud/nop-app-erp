@@ -50,6 +50,7 @@ public class ErpSalReturnApproveProcessor extends AbstractApproveProcessor<ErpSa
         setApprovedBy(returnOrder, currentUserId());
         setApprovedAt(returnOrder, now());
         processor.applyPosted(returnOrder, posted);
+        processor.updateUndeliveredQuantity(returnOrder, context);
         dao().updateEntity(returnOrder);
         return returnOrder;
     }

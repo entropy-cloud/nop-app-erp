@@ -31,6 +31,7 @@ public class ErpSalReturnReverseApproveProcessor extends AbstractReverseApproveP
         setApproveStatus(returnOrder, ErpSalConstants.APPROVE_STATUS_REJECTED);
         setApprovedBy(returnOrder, null);
         setApprovedAt(returnOrder, null);
+        processor.updateUndeliveredQuantity(returnOrder, context);
         dao().updateEntity(returnOrder);
         return returnOrder;
     }
