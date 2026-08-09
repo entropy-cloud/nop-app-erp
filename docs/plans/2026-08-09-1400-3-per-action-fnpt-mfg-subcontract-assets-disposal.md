@@ -1,6 +1,6 @@
 # 2026-08-09-1400-3 per-action-fnpt-mfg-subcontract-assets-disposal
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-09
 > Source: `docs/backlog/permissions-enforcement-roadmap.md` P1.4b
 > Related: mission `permissions-enforcement`；P1.3（粒度裁决，已 done）；P1.1（敏感字段清单，已 done）；P1.6（xwf 语义裁决，draft——assets Disposal 是 P1.6 4 实体之一，本计划与 P1.6 软协调：执行序 P1.6(N=1) → 本计划(N=3)，使 Disposal binding 裁决先行落地）
@@ -53,55 +53,55 @@ P1.3 已裁决映射收敛粒度 = 角色×SUBM + **敏感动作 per-action FNPT
 
 ### Phase 1 - mfg 委外审批 per-action FNPT 声明
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-web/.../_vfs/erp/mfg/auth/erp-mfg.action-auth.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add` / `Proof`
 - Prereqs: P1.3（done）；P1.1（done）
 
-- [ ] **Add**：在 delta `erp-mfg.action-auth.xml` 为委外单（`ErpMfgSubcontractOrder`）approve 敏感动作声明独立 per-action FNPT 点 `ErpMfgSubcontractOrder:approve`，挂在 `ErpMfgSubcontractOrder-main` 的 `<children>` 下（参照既有 WorkOrder `:start`/`:close`/`:cancel` 范式，delta `erp-mfg.action-auth.xml` 既有行）。`<permissions>` = `ErpMfgSubcontractOrder:approve`；`roles` 种子按 `docs/design/manufacturing/state-machine.md` §角色与权限 核对（生产主管/审核人）。具体权限点 ID 执行时按生成文件 `_erp-mfg.action-auth.xml` 核验（不在本计划冻结，遵循 P1.3 残留风险）。
+- [x] **Add**：在 delta `erp-mfg.action-auth.xml` 为委外单（`ErpMfgSubcontractOrder`）approve 敏感动作声明独立 per-action FNPT 点 `ErpMfgSubcontractOrder:approve`，挂在 `ErpMfgSubcontractOrder-main` 的 `<children>` 下（参照既有 WorkOrder `:start`/`:close`/`:cancel` 范式，delta `erp-mfg.action-auth.xml` 既有行）。`<permissions>` = `ErpMfgSubcontractOrder:approve`；`roles` 种子按 `docs/design/manufacturing/state-machine.md` §角色与权限 核对（生产主管/审核人）。具体权限点 ID 执行时按生成文件 `_erp-mfg.action-auth.xml` 核验（不在本计划冻结，遵循 P1.3 残留风险）。
   - Skill: `nop-backend-dev`
-- [ ] **Proof**：xmllint well-formed 校验 `erp-mfg.action-auth.xml` 通过 + `permissionToRoles` 一致性自检（角色名与角色矩阵一致）。
+- [x] **Proof**：xmllint well-formed 校验 `erp-mfg.action-auth.xml` 通过 + `permissionToRoles` 一致性自检（角色名与角色矩阵一致）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] mfg 委外审批 per-action FNPT 声明落地，xmllint 通过，roles 种子与角色矩阵一致。
+- [x] mfg 委外审批 per-action FNPT 声明落地，xmllint 通过，roles 种子与角色矩阵一致。
 
 ### Phase 2 - assets 处置 approve per-action FNPT 声明
 
-Status: planned
+Status: completed
 Targets: `module-assets/erp-ast-web/.../_vfs/erp/ast/auth/erp-ast.action-auth.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add` / `Proof`
 - Prereqs: Phase 1；**软协调 P1.6 Phase 1**（Disposal binding 裁决——若 P1.6 已 active/done，按其裁决对齐 Disposal `roles` 种子；若 P1.6 仍未决，本阶段按 `roles-and-permissions.md` §高危操作权限「资产报废/出售处置=资产管理员+审批」先行声明，并在 plan 记录假设，待 P1.6 决后核对）
 
-- [ ] **Add**：在 delta `erp-ast.action-auth.xml` 为 ErpAstDisposal approve 声明独立 per-action FNPT 点 `ErpAstDisposal:approve`，挂在 `ErpAstDisposal-main` 的 `<children>` 下。`roles` 种子按 §高危操作权限 + P1.6 Disposal 裁决（资产管理员/管理员）。Disposal 是 xwf 实体——声明仅落权限点 + 种子，**测试策略（DIRECT 三轴）归 P1.6，不在本计划**。
+- [x] **Add**：在 delta `erp-ast.action-auth.xml` 为 ErpAstDisposal approve 声明独立 per-action FNPT 点 `ErpAstDisposal:approve`，挂在 `ErpAstDisposal-main` 的 `<children>` 下。`roles` 种子按 §高危操作权限 + P1.6 Disposal 裁决（资产管理员/管理员）。Disposal 是 xwf 实体——声明仅落权限点 + 种子，**测试策略（DIRECT 三轴）归 P1.6，不在本计划**。
   - Skill: `nop-backend-dev`
-- [ ] **Proof**：xmllint well-formed 校验 `erp-ast.action-auth.xml` 通过 + `permissionToRoles` 一致性自检。
+- [x] **Proof**：xmllint well-formed 校验 `erp-ast.action-auth.xml` 通过 + `permissionToRoles` 一致性自检。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] assets 处置 approve per-action FNPT 声明落地，xmllint 通过，roles 种子与角色矩阵 + P1.6 裁决一致（或显式记录假设待核对）。
+- [x] assets 处置 approve per-action FNPT 声明落地，xmllint 通过，roles 种子与角色矩阵 + P1.6 裁决一致（或显式记录假设待核对）。
 
 ### Phase 3 - owner doc 实现注记 + 日志
 
-Status: planned
+Status: completed
 Targets: `docs/design/roles-and-permissions.md` §action-level 声明层
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1 + Phase 2
 
-- [ ] **Add**：§action-level 声明层「已落地」表增列 mfg 委外审批 + assets Disposal approve per-action FNPT 点 + roles 种子（行号证据），与既有 finance/b2b/mfg/inv/hr 行对齐。
+- [x] **Add**：§action-level 声明层「已落地」表增列 mfg 委外审批 + assets Disposal approve per-action FNPT 点 + roles 种子（行号证据），与既有 finance/b2b/mfg/inv/hr 行对齐。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] owner doc 实现注记落地，与 delta 文件真相源一致。
+- [x] owner doc 实现注记落地，与 delta 文件真相源一致。
 
 ## Draft Review Record
 
@@ -113,14 +113,14 @@ Exit Criteria:
 
 > 本计划改 delta action-auth.xml（声明层，enforcement 保持 OFF，不改运行时行为）。Closure Gates 运行 delta XML well-formed + compliance checker 对照 `known-good-baselines.md` 零漂移（横切关注点 7）。完整 build/test 在此运行一次。
 
-- [ ] 范围内行为完成（mfg 委外审批 + assets Disposal approve per-action FNPT 声明 + roles 种子 + owner doc 注记）
-- [ ] 相关文档对齐（`roles-and-permissions.md` §action-level 声明层）
-- [ ] 已运行验证：`xmllint --noout` 两个 delta 文件 + `bash docs/audits/nop-compliance-checker.sh` 对照 `docs/testing/known-good-baselines.md` 零漂移 + `mvn clean install -DskipTests`
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（mfg 委外审批 + assets Disposal approve per-action FNPT 声明 + roles 种子 + owner doc 注记）
+- [x] 相关文档对齐（`roles-and-permissions.md` §action-level 声明层）
+- [x] 已运行验证：`xmllint --noout` 两个 delta 文件 + `bash docs/audits/nop-compliance-checker.sh` 对照 `docs/testing/known-good-baselines.md` 零漂移 + `mvn clean install -DskipTests`
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -144,12 +144,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 执行完成 2026-08-09。三阶段全绿：(1) mfg 委外审批 `ErpMfgSubcontractOrder:approve`→生产主管 落地于 delta `erp-mfg.action-auth.xml` L118-121（xmllint 通过）；(2) assets 处置 `ErpAstDisposal:approve`→资产管理员/管理员 落地于 delta `erp-ast.action-auth.xml` L77-79（xmllint 通过，roles 对齐 §高危操作权限「资产报废/出售处置=资产管理员+审批」+ P1.6 Disposal 裁决 rule A）；(3) owner doc `roles-and-permissions.md` §action-level 已落地表 + §灰度推进路线 + §既有种子证据 + P1.6 表 ErpAstDisposal 行 均已同步更新。验证：`mvn clean install -DskipTests` 156 模块 BUILD SUCCESS；compliance checker 零漂移（改 XML+md，无 Java 变更）；codegen 自动同步两 `_erp-*-web.i18n.yaml` 增对应 FNPT i18n key。结束审计待独立子代理执行。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立审计者或独立子代理>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（新会话，mission-driver 2026-08-09-075057-mission-driver，未复用执行者上下文）
+- Evidence: 执行证据——delta `erp-mfg.action-auth.xml:118-121`（`FNPT:ErpMfgSubcontractOrder:approve` roles=生产主管）、delta `erp-ast.action-auth.xml:77-79`（`FNPT:ErpAstDisposal:approve` roles=资产管理员/管理员）；`roles-and-permissions.md` §action-level 已落地表含 manufacturing subcontract + assets disposal 两行、§既有种子证据含 mfg subcontract + assets 行、P1.6 表 ErpAstDisposal 行已改「已声明」；`mvn clean install -DskipTests` BUILD SUCCESS（156 模块）；xmllint 两 delta 通过；compliance checker 零漂移。
+- 独立审计复核（2026-08-09）：逐项对照实时仓库核验通过——(1) `module-manufacturing/.../erp-mfg.action-auth.xml:118-121` 实测存在 `FNPT:ErpMfgSubcontractOrder:approve` resourceType=FNPT roles=生产主管，`<permissions>ErpMfgSubcontractOrder:approve</permissions>`，挂在 `ErpMfgSubcontractOrder-main` 的 `<children>` 下；(2) `module-assets/.../erp-ast.action-auth.xml:77-79` 实测存在 `FNPT:ErpAstDisposal:approve` roles=资产管理员/管理员，挂在 `ErpAstDisposal-main` 的 `<children>` 下；(3) `docs/design/roles-and-permissions.md:241,244` 实测含两行落地证据；(4) codegen i18n 自动同步实测——`_erp-mfg-web.i18n.yaml:37` 与 `_erp-ast-web.i18n.yaml:29` 含对应 FNPT key。反空洞检查：声明均为真实 `<permissions>`+`roles`，非 `{}`/`return null`/占位。文本一致性：Plan Status completed / 三 Phase Status completed / 三 Exit Criteria 全 [x] / Closure Gates 全 [x] 一致。Deferred 三项均正交 successor，无范围内缺陷降级。审计通过，结束审计门控由独立子代理勾选（执行者未自审）。
 
 Follow-up:
 

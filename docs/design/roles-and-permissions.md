@@ -207,10 +207,12 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 | b2b | ErpB2bEdiDoc | `:markSent` / `:cancel` | markSent=B2B 对账员 / cancel=B2B 管理员 |
 | b2b | ErpB2bAsn | `:handleInboundWebhook`（入站 webhook 高危） | B2B 管理员 |
 | manufacturing | ErpMfgWorkOrder | `:start` / `:close` / `:cancel` | 生产主管 |
+| manufacturing | ErpMfgSubcontractOrder | `:approve`（委外审批） | 生产主管 |
 | inventory | ErpInvStockMove | `:confirm` | 库管员 |
 | inventory | ErpInvLandedCost | `:approve` | 库管员 |
 | human-resource | ErpHrLeaveRequest | `:approve` | HR 专员 |
 | human-resource | ErpHrSalary | `:approve`（薪酬机密）/ `:markPaid` | 薪酬审批人 |
+| assets | ErpAstDisposal | `:approve`（资产处置审批） | 资产管理员/管理员 |
 | purchase | ErpPurRequisition / Order / Receive / Invoice / Payment / Return | `:approve` / `:reverseApprove`（审批集 6 实体） | approve=审核人 / reverseApprove=管理员 |
 | sales | ErpSalQuotation / Contract / Order / Delivery / Invoice / Receipt / Return | `:approve` / `:reverseApprove`（审批集 7 实体，含 ErpSalContract INLINE xbiz 路径） | approve=审核人 / reverseApprove=管理员 |
 
@@ -218,7 +220,7 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 
 **高危动作升级路径（successor）**：`reverseClose`（反结账）/ `writeOff`（坏账核销）/ `handleInboundWebhook`（B2B 入站）为最高危——其 FNPT 点已声明并 seed 给管理员/B2B 管理员，但**真正 enforcement 翻转**为 config-gated successor（见下方"Deferred"），须人工批准 + 灰度 + 负向隔离测试后分域启用。
 
-**灰度推进路线（staged rollout，successor）**：finance/b2b/mfg/inventory/hr/pur/sal 为首批落地（含全部 A3.6 点名的最高危动作：reverseClose/writeOff/handleInboundWebhook + 各域敏感状态迁移；pur/sal 审批集 approve/reverseApprove per-action FNPT 由 plan `2026-08-09-1400-2` / P1.4a 补齐）；其余（mfg approve subcontract / assets 处置 / 全 EDI 生命周期 等）的 per-action FNPT 声明随 enforcement 灰度分批补齐（触发条件 = 该域 `enable-action-auth=true` 灰度批准前）。新增高危实体应按本模式直接声明独立 FNPT 点（API 命名约定见 `domain-design-guidelines.md §16A`）。
+**灰度推进路线（staged rollout，successor）**：finance/b2b/mfg/inventory/hr/pur/sal/assets 为首批落地（含全部 A3.6 点名的最高危动作：reverseClose/writeOff/handleInboundWebhook + 各域敏感状态迁移；pur/sal 审批集 approve/reverseApprove per-action FNPT 由 plan `2026-08-09-1400-2` / P1.4a 补齐；mfg 委外审批 + assets 处置 approve per-action FNPT 由 plan `2026-08-09-1400-3` / P1.4b 补齐）；其余（全 EDI 生命周期 等）的 per-action FNPT 声明随 enforcement 灰度分批补齐（触发条件 = 该域 `enable-action-auth=true` 灰度批准前）。新增高危实体应按本模式直接声明独立 FNPT 点（API 命名约定见 `domain-design-guidelines.md §16A`）。
 
 #### 兜底策略裁决（plan 2026-08-09-1314-2 / P1.3，2026-08-09）
 
@@ -236,9 +238,10 @@ enforcement 开启后，授权判定由**两套互不互换的命名空间**共�
 > **既有种子证据（Proof，doc-only 计划证据引用，非测试命令）**——收敛粒度（SUBM + 敏感动作 per-action FNPT + 静态 roles 种子）已部分落地并验证可行，7 域 delta `erp-*.action-auth.xml` 实测行号：
 > - **finance** `erp-fin.action-auth.xml`：`ErpFinVoucher:post`/`:reverse`→财务员（L23-30）、`ErpFinAccountingPeriod:closePeriod`→财务员 / `:reverseClose`→管理员（L52-59）、`ErpFinBadDebt:writeOff`→财务员 / `:reverseApprove`→管理员（L86-93）。
 > - **b2b** `erp-b2b.action-auth.xml`：`ErpB2bEdiDoc:markSent`→B2B 对账员 / `:cancel`→B2B 管理员（L22-27）、`ErpB2bAsn:handleInboundWebhook`→B2B 管理员（L46-47）。
-> - **manufacturing** `erp-mfg.action-auth.xml`：`ErpMfgWorkOrder:start`/`:close`/`:cancel`→生产主管（L50-59）。
+> - **manufacturing** `erp-mfg.action-auth.xml`：`ErpMfgWorkOrder:start`/`:close`/`:cancel`→生产主管（L50-59）、`ErpMfgSubcontractOrder:approve`→生产主管（L118-121）。
 > - **inventory** `erp-inv.action-auth.xml`：`ErpInvStockMove:confirm`→库管员（L24-25）、`ErpInvLandedCost:approve`→库管员（L115-116）。
 > - **human-resource** `erp-hr.action-auth.xml`：`ErpHrLeaveRequest:approve`→HR 专员（L78-79）、`ErpHrSalary:approve`/`:markPaid`→薪酬审批人（L102-107）。
+> - **assets** `erp-ast.action-auth.xml`：`ErpAstDisposal:approve`→资产管理员/管理员（L77-79）。
 > - **purchase** `erp-pur.action-auth.xml`（plan `2026-08-09-1400-2` / P1.4a）：审批集 6 实体 `:approve`→审核人 / `:reverseApprove`→管理员——ErpPurRequisition（L46-53）、ErpPurOrder（L61-68）、ErpPurReceive（L83-90）、ErpPurInvoice（L105-112）、ErpPurPayment（L120-127）、ErpPurReturn（L142-149）。
 > - **sales** `erp-sal.action-auth.xml`（plan `2026-08-09-1400-2` / P1.4a）：审批集 7 实体 `:approve`→审核人 / `:reverseApprove`→管理员——ErpSalQuotation（L23-30）、ErpSalContract（L44-51，INLINE xbiz 路径）、ErpSalOrder（L65-72）、ErpSalDelivery（L86-93）、ErpSalInvoice（L107-114）、ErpSalReceipt（L128-135）、ErpSalReturn（L149-156）。
 >
@@ -289,9 +292,9 @@ enforcement 开启后，授权判定由**两套互不互换的命名空间**共�
 | ErpHrSalary | **已声明**（`:approve`/`:markPaid`→薪酬审批人） | 本身已落地 | delta `erp-hr.action-auth.xml` L101-108 |
 | ErpPurPayment | 未声明（生成文件仅 `:query`/`:mutation`） | sibling P1.4a（`2026-08-09-1400-2`，active） | 生成 `_erp-pur.action-auth.xml` L73-79（无 `:approve`）；delta 未补 |
 | ErpSalReceipt | 未声明（生成文件仅 `:query`/`:mutation`） | sibling P1.4a（`2026-08-09-1400-2`，active） | 生成 `_erp-sal.action-auth.xml` L185-191（无 `:approve`）；delta 未补 |
-| ErpAstDisposal | 未声明（生成文件仅 `:query`/`:mutation`） | sibling P1.4b（`2026-08-09-1400-3`，active） | 生成 `_erp-ast.action-auth.xml` L115-121（无 `:approve`）；delta 未补 |
+| ErpAstDisposal | **已声明**（`:approve`→资产管理员/管理员） | sibling P1.4b（`2026-08-09-1400-3`，done） | delta `erp-ast.action-auth.xml` L77-79 |
 
-> **残留风险**：在 sibling P1.4a/P1.4b 声明落地前，ErpPurPayment/ErpSalReceipt/ErpAstDisposal 的 approve 无独立 per-action FNPT——enforcement 翻启后无法将这 3 实体的 approve 与泛化 `mutation` 区分。**缓解**：(1) enforcement 翻启（P2.4/E1.x）门控在 P1.4a/P1.4b 声明 + P1.5a 种子完成之后；(2) 过渡期由平台 admin 兜底（`skip-check-for-admin`）+ enforcement OFF 覆盖。ErpHrSalary 无此风险（已声明）。
+> **残留风险**：在 sibling P1.4a 声明落地前，ErpPurPayment/ErpSalReceipt 的 approve 无独立 per-action FNPT——enforcement 翻启后无法将这 2 实体的 approve 与泛化 `mutation` 区分（ErpAstDisposal 已由 P1.4b 声明、ErpHrSalary 本身已声明，均无此风险）。**缓解**：(1) enforcement 翻启（P2.4/E1.x）门控在 P1.4a 声明 + P1.5a 种子完成之后；(2) 过渡期由平台 admin 兜底（`skip-check-for-admin`）+ enforcement OFF 覆盖。
 
 **B. DIRECT 三轴浏览器层负向测试策略**
 
