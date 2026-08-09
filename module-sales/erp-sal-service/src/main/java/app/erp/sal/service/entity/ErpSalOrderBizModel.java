@@ -1,7 +1,10 @@
 
 package app.erp.sal.service.entity;
 
+import app.erp.md.biz.IErpMdMaterialSkuBiz;
 import app.erp.md.biz.IErpMdPartnerBiz;
+import app.erp.md.dao.dto.PriceValidationResult;
+import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.biz.BatchOperationResult;
 import app.erp.sal.biz.IErpSalOrderBiz;
@@ -26,6 +29,9 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
@@ -44,6 +50,8 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 @BizModel("ErpSalOrder")
 public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IErpSalOrderBiz {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ErpSalOrderBizModel.class);
+
     @Inject
     QuotationToOrderConverter quotationToOrderConverter;
 
@@ -55,6 +63,9 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
 
     @Inject
     IErpMdPartnerBiz mdPartnerBiz;
+
+    @Inject
+    IErpMdMaterialSkuBiz mdMaterialSkuBiz;
 
     @Inject
     ErpSalPricingRuleEngine pricingRuleEngine;
@@ -156,6 +167,7 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
             }
         }
         recomputeOrderTotals(order, result.getModifiedLines(), result.getOrderDiscountAmount());
+        validatePromotionPrices(order, result.getModifiedLines(), context);
         updateEntity(order, null, context);
     }
 
@@ -175,7 +187,19 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
         BigDecimal gross = unitPrice.multiply(qty);
         BigDecimal discountAmt = nullSafe(line.getDiscountAmount());
         BigDecimal net = gross.subtract(discountAmt).max(BigDecimal.ZERO);
-        line.setAmount(net.setScale(4, RoundingMode.HALF_UP));
+        net = net.setScale(4, RoundingMode.HALF_UP);
+        line.setAmount(net);
+        // 价税分离（L1 公式：税额 = 折扣后金额 / (1 + 税率) × 税率；P1-RC-022）
+        BigDecimal taxRate = nullSafe(line.getTaxRate());
+        BigDecimal taxAmount;
+        if (taxRate.signum() == 0) {
+            taxAmount = BigDecimal.ZERO;
+        } else {
+            BigDecimal rate = taxRate.divide(BigDecimal.valueOf(100), 6, RoundingMode.HALF_UP);
+            taxAmount = net.multiply(rate).divide(BigDecimal.ONE.add(rate), 4, RoundingMode.HALF_UP);
+        }
+        line.setTaxAmount(taxAmount);
+        line.setAmountWithTax(net.add(taxAmount).setScale(4, RoundingMode.HALF_UP));
     }
 
     protected void recomputeOrderTotals(ErpSalOrder order, List<ErpSalOrderLine> lines,
@@ -198,6 +222,53 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
 
     protected BigDecimal nullSafe(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
+    }
+
+    // ---------- 促销最低价校验（P1-RC-021，复用 master-data validatePrice 三级语义） ----------
+
+    /**
+     * 促销结果落地后逐行触发最低价校验（UC-SAL-11 ⑥）。复用 master-data
+     * {@link IErpMdMaterialSkuBiz#validatePrice} 的 OFF/WARN/HARD 三级语义：
+     * OFF 放行 / WARN 放行带 LOG.warn / HARD 抛 {@code ERR_PRICE_BELOW_MIN} propagate
+     * （整个 @BizMutation 事务回滚，促销变更不落库）。
+     *
+     * <p>赠品行（{@code amount==0}）显式跳过——L1 UC-SAL-08 要求赠品可成功生成（单价 0 语义），
+     * HARD 级别下不排除将整体拒绝含赠品的促销（相对基线行为回归）。
+     */
+    protected void validatePromotionPrices(ErpSalOrder order, List<ErpSalOrderLine> lines,
+                                           IServiceContext context) {
+        for (ErpSalOrderLine line : lines) {
+            Long skuId = line.getSkuId();
+            if (skuId == null) {
+                continue;
+            }
+            // 赠品行（amount==0）跳过
+            if (nullSafe(line.getAmount()).signum() == 0) {
+                continue;
+            }
+            BigDecimal qty = nullSafe(line.getQuantity());
+            if (qty.signum() == 0) {
+                continue;
+            }
+            // finalPrice = 促销后行净单价（amount/quantity，对齐「最终售价」字面）
+            BigDecimal finalPrice = line.getAmount().divide(qty, 4, RoundingMode.HALF_UP);
+            Long materialCategoryId = resolveMaterialCategoryId(line);
+            PriceValidationResult vr = mdMaterialSkuBiz.validatePrice(
+                    skuId, finalPrice, materialCategoryId, context);
+            if (vr.isWarning()) {
+                LOG.warn("销售订单 {} 促销后行 skuId={} 最终售价 {} 低于底线 {}（价格校验级别={} WARN 放行）",
+                        order.getCode(), skuId, finalPrice, vr.getMinPrice(), vr.getLevel());
+            }
+        }
+    }
+
+    /**
+     * 经 ORM 关系 {@code ErpSalOrderLine.material} 解析物料分类 ID，
+     * 供 {@code validatePrice} 按 MaterialCategory.priceValidationLevel 分派级别。
+     */
+    protected Long resolveMaterialCategoryId(ErpSalOrderLine line) {
+        ErpMdMaterial material = line.getMaterial();
+        return material == null ? null : material.getCategoryId();
     }
 
     // ---------- 跨聚合写契约（报价→订单转化、发货进度回写） ----------
