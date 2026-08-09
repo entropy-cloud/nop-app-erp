@@ -72,6 +72,8 @@
 - 质检员只能看分配给自己的质检任务。
 - 维护人员只能看分配给自己的维护访问。
 
+> **敏感字段保密清单（交叉引用）**：保密五面（薪酬/合同/EDI/供应商价格/成本分解）+ F7 已落地 PII 基线 + `taxFileNo`（隐藏非脱敏）的逐字段七元组清单（实体×字段×propId×现脱敏方式×xmeta published/queryable×GraphQL schema 影响×拟落地层）以 `docs/design/field-formatting-patterns.md` §9.7 为单一真相源。字段级可见性裁决（哪些角色可见哪些字段）归 E4.1，受 P1.2 Q1/Q4 裁决约束；本表不重复字段定义。
+
 > **行级过滤落地状态（plan 2026-07-31-1023-3 R3.4，P1-MA6-002）**：角色侧行级过滤已落地为 `erp-*.data-auth.xml` 规则 + config-gated `ErpRoleDataAuthChecker`，**灰度默认 OFF**（双层门控：`nop.auth.enable-data-auth=false` + `erp.data-auth.role-row-filter-enabled=false`），单组织基线零回归。翻转至 enforcement 为 successor（须人工批准 + role 种子 + 灰度计划）。
 >
 > **过滤列与列域分类**（实测各域 orm.xml，已纠正 `createdById`/`assigneeId` 误称）：

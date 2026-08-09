@@ -376,6 +376,8 @@ view.xml <col> + <gen-control>
 | **写回型凭据**（logistics apiKey/apiSecret） | xmeta `published="false"` + 查看态静态 `******` | GraphQL 响应不含字段值 | 高（明文永不离开服务端） | 集成凭据（API key/secret）：前端可录不可读 |
 | 后端响应层（successor） | BizModel `@BizLoader` 打码 GraphQL 响应 | GraphQL response 全链路 | 高（API 消费者也拿到打码值） | 安全审计要求 API 层脱敏、第三方集成 |
 
+> **字段级清单（冻结输入）**：保密五面（薪酬/合同/EDI/供应商价格/成本分解）+ F7 已落地基线 + `taxFileNo`（隐藏非脱敏）的逐字段七元组清单见下方 **§9.7**，作为本节后端响应层 successor（E3.1）与字段级可见性（E4.1）的冻结输入。清单来源 plan：`docs/plans/2026-08-09-1314-1-sensitive-field-confidentiality-inventory.md`（P1.1）。
+
 ### 9.5 反模式自检表（脱敏补充）
 
 | 不要这样写 | 应该这样写 |
@@ -398,3 +400,165 @@ amis-formula tpl 表达式 `${ expr }` 内置完整文本函数集（经 `baidu/
 - `LEN(text)` / `ISEMPTY(text)` / `PADSTART(text, num, pad)` / `REPLACE(text, search, replace)`
 
 gen-control `{type:'tpl', tpl:'${LEFT(field,N)}****${RIGHT(field,M)}'}` 经 `flux-web.xlib:GenGridCol` → `eval(colXpl)` → putAll 到 AMIS col JSON 链路，在 list grid col、form view cell、sub-grid-view col 三态均生效（与 F5 status-tag tpl 同一机制）。
+
+### 9.7 保密敏感字段清单（P1.1 冻结输入）
+
+> Owner: 本节（§9 子节，单一真相源）
+> 来源 plan：`docs/plans/2026-08-09-1314-1-sensitive-field-confidentiality-inventory.md`（permissions-enforcement 路线图 P1.1）
+> 用途：为 §9.4「后端响应层脱敏 successor（E3.1）」与「字段级可见性（E4.1）」提供逐字段冻结输入；同时显式复核确认 F7 既有 PII 集落地状态。
+> 范围：保密五面（薪酬 / 合同 / EDI / 供应商价格 / 成本分解）+ F7 已落地前端脱敏基线 + `taxFileNo`（隐藏非脱敏）。
+> **非目标**：不实现 E3.1/E4.1（仅产清单）；不改 GraphQL schema/ORM/xmeta（仅读取记录现状）；不做逐字段角色绑定裁决（归 E4.1，受 P1.2 Q1/Q4 约束）；不做成本取值豁免裁决（归 P1.2 Q4 + E3.2）。
+
+### 9.7.1 七元组约定
+
+每行字段携带：`{实体, 字段(propId, stdSqlType), ORM 行号, 当前脱敏方式, xmeta published/queryable 现值, GraphQL schema 影响Y/N, 拟落地层}`。
+
+- **当前脱敏方式**取值：`F7前端tpl`（gen-control tpl 打码）/ `写回型published=false`（响应不含值）/ `隐藏visibleOn=false`（非脱敏）/ `无`。
+- **GraphQL schema 影响 Y/N**：字段 xmeta `published`/`queryable` 现值为默认 `true`（GraphQL 暴露该字段）→ 翻转会改变对外契约 → **Y**；若已 `published="false"`（不暴露）→ **N**。
+- **证据规则**：xmeta `published`/`queryable` 现值以**保留层 delta xmeta**（`<Entity>.xmeta`，非 `_` 前缀）的显式覆盖为准；无显式覆盖时回落生成基线 `_<Entity>.xmeta` 默认 `queryable="true"`、`published` 默认 `true`（Nop 约定）。全域相关 delta xmeta 仅 logistics `ErpLogCarrierConfig.xmeta` 存在 `published="false"` 覆盖（grep 证据：hr/ct/b2b/pur/md/mfg/log delta xmeta 中 `published="false"` 仅命中 logistics 该实体的 apiKey/apiSecret/credentials 三 prop）。
+
+### 9.7.2 F7 已落地前端脱敏基线（PII 集）—— 复核确认
+
+**hr `ErpHrEmployee`**（`module-hr/model/app-erp-hr.orm.xml:271`，实体头）—— 4 字段，经 view.xml gen-control tpl 打码：
+
+| 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | xmeta published/queryable | GraphQL schema 影响 | 拟落地层 |
+| --- | --- | --- | --- | --- | --- |
+| idCardNo (9, VARCHAR) | orm:283 | F7前端tpl（form-view cell 首1末4 `view.xml:147-152`；edit input-password `:202-206`） | 默认 true/true（`_ErpHrEmployee.xmeta:56` queryable=true，无 published 覆盖） | **Y**（响应含明文，F12 可见） | 已落地（前端）；后端 successor E3.1 |
+| mobilePhone (11, VARCHAR) | orm:285 | F7前端tpl（form-view cell 首3末4 `:154-159`；edit input-password `:209-213`） | 默认 true/true（`_xmeta:64`） | **Y** | 同上 |
+| bankAccountId (28, BIGINT) | orm:302 | F7前端tpl（list grid col 末4 `:16-21`；form-view cell 末4 `:161-166`；edit 保留 input-text 以便肉眼核对录入） | 默认 true/true（`_xmeta:132`） | **Y** | 同上 |
+| socialSecurityNo (29, VARCHAR) | orm:303 | F7前端tpl（form-view cell 全打码 `******` `:168-173`；edit input-password `:216-220`） | 默认 true/true（`_xmeta:136`） | **Y** | 同上 |
+
+> 实现注记：当前 view.xml tpl 实际使用 JS `.slice()`（如 `${(idCardNo||"").slice(0,1)}`），与本节 §9.2/§9.5 描述的 amis-formula `LEFT/RIGHT` 模板存在表述差异；flux 渲染下 `.slice()` 实测生效（F7 已落地基线），功能上达成打码。该差异为既有实现细节，非本清单范围，登记备查。
+
+**logistics `ErpLogCarrierConfig`**（`module-logistics/model/app-erp-logistics.orm.xml:128`，实体头）—— 2 字段，写回型凭据：
+
+| 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | xmeta published/queryable | GraphQL schema 影响 | 拟落地层 |
+| --- | --- | --- | --- | --- | --- |
+| apiKey (7, VARCHAR(500)) | orm:138 | 写回型published=false（GraphQL 响应不含字段值；查看态静态 `******`） | **false/false**（`ErpLogCarrierConfig.xmeta:5`，显式覆盖） | **N**（schema 已不暴露，翻转无契约影响） | 已落地（写回型，全仓唯一后端级保密先例） |
+| apiSecret (8, VARCHAR(500)) | orm:139 | 同上 | **false/false**（`:6`） | **N** | 同上 |
+
+> 旁注：派生 prop `credentials`（xmeta `:7`）同样 `published="false" queryable="false"`。F7 集按 §9 锚定为 hr 4 + logistics 2 = 6 字段。
+
+### 9.7.3 `taxFileNo`（隐藏非脱敏）—— 单独登记
+
+| 实体 / 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | xmeta published/queryable | GraphQL schema 影响 | 拟落地层 |
+| --- | --- | --- | --- | --- | --- |
+| hr ErpHrEmployee.taxFileNo (30, VARCHAR) | orm:304 | **隐藏visibleOn=false**（`ErpHrEmployee.view.xml:223-225`，§9.5 反模式点名「字段不可见，非脱敏」） | 默认 true/true（`_ErpHrEmployee.xmeta:140` queryable=true） | **Y**（GraphQL 响应含明文，前端仅隐藏不显示） | **E3.1 后端响应层脱敏**（路由：unhide+后端打码，候选），非 F7 tpl 集 |
+
+### 9.7.4 面A：薪酬面（hr）
+
+> 全域无 xmeta `published`/`queryable` 覆盖 → 字段均默认 `published=true queryable=true` → GraphQL schema 影响 **Y**、响应含明文。下表省略重复现值列，统一记「默认true/true」。
+
+| 实体 / 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | published/queryable | schema影响 | 拟落地层 |
+| --- | --- | --- | --- | --- | --- |
+| ErpHrSalary.basicSalary (5, DECIMAL) | orm:728 | 无 | 默认true/true | Y | E3.1 + E4.1（仅薪酬审批人） |
+| ErpHrSalary.positionAllowance (6, DECIMAL) | orm:729 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSalary.performanceBonus (7, DECIMAL) | orm:730 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSalary.overtimePay (8, DECIMAL) | orm:731 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSalary.mealAllowance (9, DECIMAL) | orm:732 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSalary.transportAllowance (10, DECIMAL) | orm:733 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSalary.otherAllowance (11, DECIMAL) | orm:734 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSalary.grossSalary (12, DECIMAL) | orm:735 | 无 | 默认true/true | Y | 同上（应发合计，汇总） |
+| ErpHrSalary.socialInsurance (13, DECIMAL) | orm:736 | 无 | 默认true/true | Y | 同上（社保个人部分） |
+| ErpHrSalary.housingFund (14, DECIMAL) | orm:737 | 无 | 默认true/true | Y | 同上（公积金个人部分） |
+| ErpHrSalary.taxAmount (15, DECIMAL) | orm:738 | 无 | 默认true/true | Y | 同上（个税） |
+| ErpHrSalary.otherDeductions (16, DECIMAL) | orm:739 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSalary.netSalary (17, DECIMAL) | orm:740 | 无 | 默认true/true | Y | 同上（实发合计，汇总） |
+| ErpHrSalary.cumulativeData (34, VARCHAR(2000)) | orm:750 | 无 | 默认true/true | Y | E3.1（累计个税数据，非金额但是个税机密） |
+| ErpHrEmploymentContract.socialInsuranceBase (14, DECIMAL) | orm:442（实体@425） | 无 | 默认true/true | Y | E3.1 + E4.1 |
+| ErpHrSocialInsuranceBase.socialInsuranceBase (4, DECIMAL) | orm:1020（实体@1013） | 无 | 默认true/true | Y | E3.1 + E4.1 |
+| ErpHrSocialInsuranceBase.housingFundBase (5, DECIMAL) | orm:1021 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSocialInsuranceConfig.companyRate (4, DECIMAL(8,6)) | orm:992（实体@985） | 无 | 默认true/true | Y | E4.1（社保配置 rate，非个人薪酬） |
+| ErpHrSocialInsuranceConfig.employeeRate (5, DECIMAL(8,6)) | orm:993 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSocialInsuranceConfig.baseLowerLimit (6, DECIMAL) | orm:994 | 无 | 默认true/true | Y | 同上（基数上下限） |
+| ErpHrSocialInsuranceConfig.baseUpperLimit (7, DECIMAL) | orm:995 | 无 | 默认true/true | Y | 同上 |
+| ErpHrSalarySimulationItemAdjustment.originalAmount (5, DECIMAL) | orm:924（实体@916） | 无 | 默认true/true | Y | E3.1 + E4.1 |
+| ErpHrSalarySimulationItemAdjustment.adjustedAmount (6, DECIMAL) | orm:925 | 无 | 默认true/true | Y | 同上 |
+
+> 面A 旁注：`ErpHrSalarySimulation`（实体@860）为模拟头实体，**无直接金额字段**（金额经子表 `ErpHrSalarySimulationItemAdjustment` 承载，已登记）。`ErpHrSalaryItem`（实体@952）为薪酬项目配置实体，**无金额字段**，含 `formula`/`isTaxable`/`isSocialInsuranceBase` 核算规则，属薪酬配置可见性范畴（E4.1），非金额脱敏。`ErpHrSalary.performanceFactor`(29)/`actualWorkDays`(30)/`requiredWorkDays`(31)/`unpaidLeaveDays`(33) 为核算系数/考勤，归 F6 §7 长尾 defer（非保密金额）。
+
+### 9.7.5 面B：合同面（contract）
+
+> 全域无 xmeta `published`/`queryable` 覆盖 → 字段默认 `published=true queryable=true` → schema 影响 **Y**、响应含明文。
+
+| 实体 / 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | published/queryable | schema影响 | 拟落地层 |
+| --- | --- | --- | --- | --- | --- |
+| ErpCtContract.totalAmount (9, DECIMAL(20,4)) | orm:134（实体@122） | 无 | 默认true/true | Y | E3.1 + E4.1（合同审批人/专员） |
+| ErpCtContractLine.amount (8, DECIMAL(20,4)) | orm:206（实体@195） | 无 | 默认true/true | Y | 同上 |
+| ErpCtInvoicePlan.amount (4, DECIMAL(20,4)) | orm:281（实体@274） | 无 | 默认true/true | Y | 同上（开票金额） |
+| ErpCtConsumptionLine.amount (6, DECIMAL(20,4)) | orm:314（实体@305） | 无 | 默认true/true | Y | 同上 |
+| ErpCtApprovalMatrix.minAmount (4, DECIMAL) | orm:367（实体@360） | 无 | 默认true/true | Y | E4.1（审批矩阵配置） |
+| ErpCtApprovalMatrix.maxAmount (5, DECIMAL) | orm:368 | 无 | 默认true/true | Y | 同上 |
+| ErpCtRebateAgreement.totalAccumulatedAmount (12, DECIMAL) | orm:480（实体@465） | 无 | 默认true/true | Y | E3.1 + E4.1（返利机密） |
+| ErpCtRebateAgreement.estimatedRebateAmount (13, DECIMAL) | orm:481 | 无 | 默认true/true | Y | 同上 |
+| ErpCtRebateTier.fromAmount (3, DECIMAL) | orm:526（实体@520） | 无 | 默认true/true | Y | E4.1（返利档配置） |
+| ErpCtRebateTier.toAmount (4, DECIMAL) | orm:527 | 无 | 默认true/true | Y | 同上 |
+| ErpCtRebateTier.rebateAmount (6, DECIMAL) | orm:529 | 无 | 默认true/true | Y | 同上 |
+| ErpCtRebateAccrual.billAmountSource (6, DECIMAL) | orm:558（实体@549） | 无 | 默认true/true | Y | E3.1 + E4.1 |
+| ErpCtRebateAccrual.accruedRebate (7, DECIMAL) | orm:559 | 无 | 默认true/true | Y | 同上 |
+| ErpCtRebateSettlement.totalRebateAmount (5, DECIMAL) | orm:591（实体@583） | 无 | 默认true/true | Y | 同上 |
+
+电子签相关字段（`ErpCtSignatureRequest`，实体@627）—— 合同域**无后端级保密先例**（无明文 secret 字段，与 logistics apiKey/apiSecret 不同），登记为电子签事务/证书引用可见性：
+
+| 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | published/queryable | schema影响 | 拟落地层 |
+| --- | --- | --- | --- | --- | --- |
+| signers (7, VARCHAR(2000)) | orm:637 | 无 | 默认true/true | Y | E4.1（含签署人 PII） |
+| providerRequestId (5, VARCHAR(200)) | orm:635 | 无 | 默认true/true | Y | E4.1（集成事务标识） |
+| certificateUrl (10, VARCHAR(1000)) | orm:640 | 无 | 默认true/true | Y | E4.1（完成证书 URL） |
+| evidenceNo (11, VARCHAR(200)) | orm:641 | 无 | 默认true/true | Y | E4.1（存证编号） |
+
+> 面B 旁注：`provider`(4)/`status`(6) 为枚举配置，非机密金额。`ErpCtRebateTier.rebatePercent`(5, DECIMAL(10,2)) 为返利比例（配置 rate），与 F6 §7 长尾 rate 范畴重叠，登记备查不单列。
+
+### 9.7.6 面C：EDI 面（b2b）
+
+> 全域无 xmeta `published`/`queryable` 覆盖 → 默认 `true/true` → schema 影响 **Y**。
+
+| 实体 / 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | published/queryable | schema影响 | 拟落地层 |
+| --- | --- | --- | --- | --- | --- |
+| ErpB2bEdiFormat.formatStandard (5, VARCHAR(20)) | orm:142（实体@134） | 无 | 默认true/true | Y（枚举，翻转低敏） | E4.1（EDI 配置可见性） |
+| ErpB2bEdiFormat.direction (6, VARCHAR(20)) | orm:143 | 无 | 默认true/true | Y（枚举） | 同上 |
+| ErpB2bEdiDoc.attachmentFileId (11, VARCHAR(200)) | orm:177（实体@163） | 无 | 默认true/true | Y | E4.1（EDI 报文文件载荷引用，商业机密） |
+| ErpB2bEdiDoc.error (9, VARCHAR(2000)) | orm:175 | 无 | 默认true/true | Y | E4.1（错误信息可能含载荷片段） |
+
+> 面C 旁注：EDI 报文明文载荷以**文件**（`attachmentFileId`）承载，非 DB 列；字段级清单覆盖报文文件引用可见性，文件本体访问控制归文件权限层（非本清单）。`ErpB2bEdiDoc.state`(7)/`blockingLevel`(8)/`relatedBillCode`(6) 为状态/引用，非机密载荷（长尾 defer）。
+
+### 9.7.7 面D：供应商价格面（purchase + master-data）
+
+> 全域无 xmeta `published`/`queryable` 覆盖 → 默认 `true/true` → schema 影响 **Y**。
+
+| 实体 / 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | published/queryable | schema影响 | 拟落地层 |
+| --- | --- | --- | --- | --- | --- |
+| ErpPurSupplierPriceList.unitPrice (6, DECIMAL(20,4)) | orm:393（实体@384） | 无 | 默认true/true | Y | E3.1 + E4.1（采购员/管理员） |
+| ErpPurSupplierPriceList.taxRate (7, DECIMAL(10,4)) | orm:394 | 无 | 默认true/true | Y | E4.1（与价格清单绑定的 rate） |
+| ErpPurSupplierPriceList.minOrderQuantity (8, DECIMAL) | orm:395 | 无 | 默认true/true | Y | E4.1（商务条款：起订量） |
+| ErpMdMaterialSku.purchasePrice (7, DECIMAL(20,4)) | orm:384（实体@371） | 无 | 默认true/true | Y | E3.1 + E4.1 |
+| ErpMdMaterialSku.salePrice (8, DECIMAL(20,4)) | orm:385 | 无 | 默认true/true | Y | E3.1 + E4.1（销售机密，邻近登记） |
+| ErpMdMaterialSku.wholesalePrice (9, DECIMAL(20,4)) | orm:386 | 无 | 默认true/true | Y | 同上 |
+
+### 9.7.8 面E：成本分解面（manufacturing）
+
+> 全域无 xmeta `published`/`queryable` 覆盖 → 默认 `true/true` → schema 影响 **Y**。`ErpMfgCostRollupLine` 实体@1259（`module-manufacturing/model/app-erp-manufacturing.orm.xml`）。
+
+| 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | published/queryable | schema影响 | 拟落地层 |
+| --- | --- | --- | --- | --- | --- |
+| materialCost (6, DECIMAL(20,4)) | orm:1268 | 无 | 默认true/true | Y | E3.1 + E4.1（成本机密） |
+| laborCost (7, DECIMAL(20,4)) | orm:1269 | 无 | 默认true/true | Y | 同上 |
+| overheadCost (8, DECIMAL(20,4)) | orm:1270 | 无 | 默认true/true | Y | 同上 |
+| subcontractCost (9, DECIMAL(20,4)) | orm:1271 | 无 | 默认true/true | Y | 同上（委外成本） |
+| totalCost (10, DECIMAL(20,4)) | orm:1272 | 无 | 默认true/true | Y | 同上（汇总） |
+| unitCost (11, DECIMAL(20,4)) | orm:1273（domain=unitPrice） | 无 | 默认true/true | Y | 同上（单位标准成本） |
+
+> 成本分解字段 ORM 行号统一引用 `app-erp-manufacturing.orm.xml:1268-1273`（实体头@1259，6 金额列 propId 6-11）。`CostRollupService` 跨域读值豁免裁决归 P1.2 Q4 + E3.2（Non-Goals 明示）。
+
+### 9.7.9 清单边界取舍决策
+
+- **范围裁决**：仅覆盖保密五面（roadmap 显式边界）。长尾低敏字段（各域审计时间戳、非业务核心配置 rate、考勤系数）移出范围，沿用 F6 §7 长尾 defer 范畴。
+- **替代方案**：(a) 仅保密五面（**采纳**，roadmap 显式边界 + 信噪比高）；(b) 含长尾全量枚举（**拒绝**：非保密诉求，与 F6 §7 长尾 defer 重叠，稀释清单信噪比，放大 E4.1 裁决面）。
+- **残留风险**：若未来出现新保密诉求（如新增机密域/字段），需扩清单。触发条件 = 新保密诉求出现（见 Deferred）。
+
+### 9.7.10 复核结论（P1.1 范围内）
+
+1. **F7 既有 PII 集经实测证据确认**：hr 4 字段（idCardNo/mobilePhone/bankAccountId/socialSecurityNo）前端 tpl 打码 + logistics 2 字段（apiKey/apiSecret）写回型 `published=false`，与 §9 文档描述一致。
+2. **`taxFileNo` 现状确认**：`visibleOn=${false}` 隐藏非脱敏（§9.5 反模式），登记为「已发现敏感字段、现状态=隐藏、拟路由 E3.1」，**不计入** F7 已落地基线。
+3. **保密五面均无脱敏**：既无前端 tpl，也无后端 `@BizLoader`；字段 xmeta 均 `published=true queryable=true` → GraphQL schema 影响 **Y**（翻转 published/queryable 将改变对外契约），为 E4.1 契约变更门控（横切关注点 5）提供冻结输入。
+4. **清单可被 E3.1/E4.1 直接消费**：每字段七元组齐全，含 `propId`、`stdSqlType`、`published/queryable` 现值、GraphQL schema 影响标记、拟落地层。
