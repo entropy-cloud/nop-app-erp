@@ -148,6 +148,8 @@
 >
 > **roleId 词表冻结（plan 2026-08-09-1600-1 Phase 1 D2）**：21 业务角色（采购员/销售员/库管员/财务员/资产管理员/项目经理/生产计划员/生产主管/作业员/质检员/质量主管/维护主管/维护人员/审核人/管理员 + HR 专员/薪酬审批人/合同专员/合同审批人/B2B 对账员/B2B 管理员）+ 3 平台角色（`admin`/`nop-admin`/`user`）为本 app `roles=` 值 / `nop_auth_role.roleId` / 平台 `containsRole` 判定的唯一字面基准。「业务角色名即 roleId」策略（与 P1.4a-d 既有 FNPT 种子字面一致），P1.5b 创建 `nop_auth_role` 记录时须逐字复用。
 
+> **roleId 词表已物化为 DB 记录（plan 2026-08-09-2107-1 / P1.5b，2026-08-09）**：上述 24 条 roleId 词表已物化为 `app-erp-all/src/main/resources/_vfs/_init-data/nop_auth_role.csv` 种子记录（21 业务角色中文字面 + 平台 `admin`/`nop-admin`/`user`，逐字复用 P1.5a 冻结词表，经 `DataInitInitializer` 在部署期加载）。同时落地 nop 测试账号：`nop_auth_user.csv`（`USER_ID=1` 显式小整数，密码 "123" 经平台 `CompositePasswordEncoder` 编码）+ `nop_auth_user_role.csv`（nop → 平台 `admin` 角色绑定——**B2 修复**：双命名空间分离，绑定平台 `admin` 角色非业务「管理员」，使 `skip-check-for-admin` 兜底经 `isUserInRole("admin")` 生效）。编码密码往返 Proof + 小整数 userId 存活 Proof + 种子加载 Proof 均通过（`TestAuthSeedEncodingProof` / `TestAuthSeedLoadingProof`）。**双命名空间语义分离注记核验**（§角色体系 L41-45 注记）：实际种子绑定（nop → ROLE_ID=`admin`）与该注记主张一致。enforcement 仍 OFF，翻转归 P2.4。
+
 ### 第二批扩展域角色基线（CRM/CS/HR/APS/Logistics/B2B/Contract/DRP）
 
 > 第二批扩展域的角色基线按「是否承载敏感操作」分两类处理：敏感子集（HR 工资审批 / 合同审批电子签 / B2B EDI 对账）已定义角色；非敏感子集显式声明 deferred 范围边界（触发条件明确，非沉默「尚未定义」）。
@@ -206,6 +208,8 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 **已落地（声明层，enforcement 仍 OFF）**：在高危域的 delta `erp-*.action-auth.xml`（`x:extends` 生成基，非生成文件）为最高危敏感动作声明**独立 per-action FNPT 权限点**（不坍缩进泛化 `mutation`），并用 `<resource ... roles="...">` 属性承载**静态 role-resource 种子**（Nop 原生静态映射，运行时并入 `permissionToRoles`，等价 `nop_auth_role_resource` 静态种子）：
 
 > **菜单可见性层（TOPM/SUBM roles）与敏感动作层（per-action FNPT roles）双层已就绪（P1.5a，2026-08-09）**：收敛粒度的两个层面均已落地静态 `roles=` 种子——(1) 菜单组可见性层：14 角色域 TOPM/SUBM `roles=` 种子（P1.5a）+ sys/l10n-cn `admin` + notify `user`；(2) 敏感动作层：9 域 per-action FNPT `roles=` 种子（P1.4a-d）。enforcement 翻转（P2.4）后，菜单按角色过滤（deny-by-default）+ 敏感动作按角色拦截同时生效。per-entity query/mutation 的 action 级授权归 E1.x（P2.4 dry-run 影响面清单登记）。
+
+> **auth 种子就绪（plan 2026-08-09-2107-1 / P1.5b，2026-08-09）**：auth 表 CSV 种子已落地（24 `nop_auth_role` 角色记录 + nop 测试账号 userId=1 绑平台 admin 角色），enforcement 仍 OFF（三开关 profile 预置默认 false），翻转归 P2.4。P2.2a（admin 兜底 E2E 基线）的账号/角色前置已满足。
 
 | 域 | 实体 | 独立 FNPT 点 | roles 种子（角色） |
 |----|------|-------------|------------------|
