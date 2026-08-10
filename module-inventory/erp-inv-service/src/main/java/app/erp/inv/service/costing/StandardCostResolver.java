@@ -37,6 +37,14 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>本类非 BizModel（同 {@link CostMethodResolver} 范式），经 {@link IDaoProvider} 直接读 mfg-dao 实体，
  * 避免跨域 BizObject 解析在单域测试中的注册复杂性。
  *
+ * <p><b>架构不变量（E3.2 / Q4 取值豁免）</b>：本类为非 BizModel 直 DAO 消费者，经 {@link IDaoProvider} +
+ * {@link IOrmTemplate} 直读 {@code ErpMfgCostRollupLine.unitCost} 等成本源，<b>不遍历用户角色查询路径</b>。
+ * Nop 字段级可见性（meta {@code published}/{@code queryable}）+ 行级 data-auth（{@code nopDataAuthChecker}）
+ * 仅在 BizModel/GraphQL 边界强制，DAO 层直读不经这些拦截器 → 取值架构性豁免。<b>禁止引入
+ * {@code IContext}/{@code IUserContext} 注入或 user-scoped DAO 查询</b>（破坏则 E4.1 字段级隐藏 +
+ * data-auth 会阻断标准成本解析取值，见 {@code docs/design/finance/costing-methods.md §成本卷算取值豁免边界}）。
+ * 防回归守卫：{@code TestErpInvStandardCostResolverValueExemptionInvariant}（@Inject 字段类型集合硬失败断言）。
+ *
  * <p>权威：{@code docs/design/finance/costing-methods.md}（STANDARD 方法）。
  */
 public class StandardCostResolver {
