@@ -205,6 +205,13 @@ AI 制造研发的本质 = 高频生成候选 + 快速对比 + 有损评审（hu
 - (R2) `unitCost` 精确值对**单来源采购件**仍可近似还原采购价（`unitCost ≈ purchasePrice`）——E4.x 代理视图须对此场景追加模糊化（如四舍五入到档位粒度），归代理视图脱敏强度。
 - (R3) 本裁决**不实施**（Non-Goal）；E4.1 字段级可见性为独立 successor，依赖本 Q1 裁决作为冻结输入。
 
+> **E4.1 落地注记**（2026-08-11，plan `2026-08-11-0915-3`）：Q1 (d) + Q4 (c) 冻结输入已落地。实施裁决：
+> - **mfg 4 要素成本**（materialCost/laborCost/overheadCost/subcontractCost）：xmeta `published=false`/`queryable=false` 隐藏 + `@BizLoader(autoCreateField=true)` 代理视图暴露 `materialBand`/`laborBand`/`overheadBand`/`subcontractBand`（high/mid/low 档位，`CostBandClassifier` 全局固定阈值 low<100/mid 100-1000/high≥1000，R1 全局阈值采纳，按类别分位为 successor）。Q1 (d)「精确要素值默认不可见，经档位映射暴露」满足。
+> - **mfg totalCost/unitCost + md/pur 供应商价 + hr/ct 金额**：保持 E3.1 masking（Phase 1 Decision (a) 裁决：隐藏+passthrough 代理 = masking 功能等价，无保密增益）。Q1 (d)「标准成本总额 ✅ 研发可见（经代理视图直读）」满足——masking loader 即代理视图控制点（授权管理员/财务员见明文）。
+> - **纯 E4.1 配置字段**（EDI/ApprovalMatrix/RebateTier/SignatureRequest/SocialInsuranceConfig/taxRate/minOrderQuantity）：保持 visible（Phase 1 Decision (a)#5：配置/操作性字段，schema 隐藏破坏管理 UI，无保密增益）。
+> - **Q4 (c) 满足**：服务端取值豁免（`CostRollupService` 经 DAO 写入要素成本；`StandardCostResolver` 经 DAO 读 unitCost）经 E3.2 守卫测试复跑绿证明。R2（unitCost≈purchasePrice 近似还原）登记为 successor（两字段均保持 masking，R2 为 masking 层既有属性非 E4.1 新增）。
+> - **平台机制实证**：`ObjMetaToGraphQLDefinition` 跳过 `published=false` 字段，`@BizLoader(autoCreateField=true)` 经 `GraphQLObjectDefinition.mergeField` bypass objMeta 检查重新引入代理字段；既有 masking loader（`autoCreate=false`）须移除否则 `objMeta.hasProp=true` 重新引入隐藏字段。
+
 ### Q2/Q3 — 候选 BOM 建模位置 / AI provenance 字段集归属判定
 
 #### Decision（归属域）

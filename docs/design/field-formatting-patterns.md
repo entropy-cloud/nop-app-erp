@@ -375,6 +375,7 @@ view.xml <col> + <gen-control>
 | **前端渲染层**（F7，保留作 UI 防偷窥） | gen-control tpl 打码 flux/AMIS 输出 | list grid col + form view cell + sub-grid-view col | 低（GraphQL 响应含明文，F12 可见） | UI 防偷窥、截图脱敏、合规展示 |
 | **写回型凭据**（logistics apiKey/apiSecret） | xmeta `published="false"` + 查看态静态 `******` | GraphQL 响应不含字段值 | 高（明文永不离开服务端） | 集成凭据（API key/secret）：前端可录不可读 |
 | **后端响应层**（E3.1，已落地） | BizModel `@BizLoader` 按 role-view 打码 GraphQL 响应 | 43 字段（保密五面金额 + F7 PII 升级 + taxFileNo） | 高（API 消费者也拿到 null/打码值） | 安全审计要求 API 层脱敏、第三方集成 |
+| **字段级可见性 + 代理视图**（E4.1，已落地） | xmeta `published="false" queryable="false"` 全局隐藏原始字段 + BizModel `@BizLoader(autoCreateField=true)` 新增代理字段（档位映射） | mfg `ErpMfgCostRollupLine` 4 要素成本（material/labor/overhead/subcontract） | 最高（原始字段从 GraphQL schema 移除，精确值不可达；代理字段仅暴露 high/mid/low 档位） | 成本要素机密：研发可见聚合（totalCost/unitCost masking）+ 档位（band proxy），不可见精确要素分解 |
 
 > **E3.1 实现注记**（plan `2026-08-10-2059-2`，已落地）：后端响应层经各域 entity BizModel `@BizLoader("field") + @ContextSource Entity` 委托共享 `MaskHelper`（`module-common-service` `app.erp.common.service.MaskHelper`）。授权角色见明文，非授权 = 数值字段（DECIMAL/BIGINT）返 `null`（类型安全，零位数泄漏）/ VARCHAR PII 返打码串（首末保留或全打码，与 F7 §9.2 模板对齐）。fail-closed（无 `IUserContext` = 打码）。
 >
@@ -383,6 +384,8 @@ view.xml <col> + <gen-control>
 > **双层分工**：E3.1 后端层兜底 API 消费者（第三方/F12），F7 前端 tpl 保留兜底 UI 截图（授权 HR 用户经 API 拿明文但 UI 见打码）。E3.2 取值豁免不变量保持：服务端成本卷算（`CostRollupService`/`StandardCostResolver`）经 DAO 直读不经 BizModel 边界，故 masking 不阻断跨域取值（守卫测试 `TestErpMfgCostRollupValueExemptionInvariant`/`TestErpInvStandardCostResolverValueExemptionInvariant` 复跑绿）。
 >
 > **字段级清单（冻结输入）**：保密五面（薪酬/合同/EDI/供应商价格/成本分解）+ F7 已落地基线 + `taxFileNo`（隐藏非脱敏）的逐字段七元组清单见下方 **§9.7**，作为字段级可见性（E4.1）的冻结输入。清单来源 plan：`docs/plans/2026-08-09-1314-1-sensitive-field-confidentiality-inventory.md`（P1.1）。
+>
+> **E4.1 实现注记**（plan `2026-08-11-0915-3`，已落地）：字段级可见性经双层分工落地：(1) **schema 级隐藏**——`ErpMfgCostRollupLine.xmeta` 翻 4 要素成本（materialCost/laborCost/overheadCost/subcontractCost）`published="false" queryable="false" sortable="false"`（参照 logistics `ErpLogCarrierConfig.xmeta` 先例），精确要素值从 GraphQL schema 移除；(2) **代理视图**——`ErpMfgCostRollupLineBizModel` 经 `@BizLoader(autoCreateField=true)` 新增 `materialBand`/`laborBand`/`overheadBand`/`subcontractBand`（high/mid/low 档位映射，经 `CostBandClassifier.classify`，全局固定阈值 low<100/mid 100-1000/high≥1000），档位对所有角色可见（精确值不可达）。totalCost/unitCost 聚合保持 E3.1 masking（授权管理员/财务员见明文）。平台机制实证：`ObjMetaToGraphQLDefinition` 跳过 `published=false` 字段，`@BizLoader(autoCreateField=true)` 经 `GraphQLObjectDefinition.mergeField` bypass objMeta 检查重新引入代理字段（autoCreate=true）。E3.2 不变量复跑绿（`CostRollupService` 经 DAO 写入 / `StandardCostResolver` 经 DAO 读 unitCost，均不遍历 BizModel 边界）。Phase 1 Decision (a) 裁决：隐藏 + passthrough 代理 = masking（功能等价），故 totalCost/unitCost + md/pur 供应商价保持 masking（避免契约面振荡 + 零保密增益）；仅要素成本因 Q1 (d) 要求档位映射而 HIDE + band 代理。
 
 ### 9.5 反模式自检表（脱敏补充）
 
@@ -544,18 +547,20 @@ gen-control `{type:'tpl', tpl:'${LEFT(field,N)}****${RIGHT(field,M)}'}` 经 `flu
 
 ### 9.7.8 面E：成本分解面（manufacturing）
 
-> 全域无 xmeta `published`/`queryable` 覆盖 → 默认 `true/true` → schema 影响 **Y**。`ErpMfgCostRollupLine` 实体@1259（`module-manufacturing/model/app-erp-manufacturing.orm.xml`）。
+> **E4.1 状态更新（2026-08-11）**：4 要素成本字段已翻 `published="false" queryable="false" sortable="false"`（xmeta delta `ErpMfgCostRollupLine.xmeta`）+ 代理视图 band 字段（`materialBand`/`laborBand`/`overheadBand`/`subcontractBand` 经 `@BizLoader(autoCreateField=true)`）。totalCost/unitCost 保持 E3.1 masking（`published=true`，masking 授权可见）。详见 §9.4 E4.1 实现注记。
+>
+> 全域 xmeta `published`/`queryable` 覆盖：4 要素成本已翻 `false/false`（E4.1 落地）；totalCost/unitCost 保持默认 `true/true`（E3.1 masking）。`ErpMfgCostRollupLine` 实体@1259（`module-manufacturing/model/app-erp-manufacturing.orm.xml`）。
 
 | 字段 (propId, stdSqlType) | ORM 行号 | 当前脱敏方式 | published/queryable | schema影响 | 拟落地层 |
 | --- | --- | --- | --- | --- | --- |
-| materialCost (6, DECIMAL(20,4)) | orm:1268 | 无 | 默认true/true | Y | E3.1 + E4.1（成本机密） |
-| laborCost (7, DECIMAL(20,4)) | orm:1269 | 无 | 默认true/true | Y | 同上 |
-| overheadCost (8, DECIMAL(20,4)) | orm:1270 | 无 | 默认true/true | Y | 同上 |
-| subcontractCost (9, DECIMAL(20,4)) | orm:1271 | 无 | 默认true/true | Y | 同上（委外成本） |
-| totalCost (10, DECIMAL(20,4)) | orm:1272 | 无 | 默认true/true | Y | 同上（汇总） |
-| unitCost (11, DECIMAL(20,4)) | orm:1273（domain=unitPrice） | 无 | 默认true/true | Y | 同上（单位标准成本） |
+| materialCost (6, DECIMAL(20,4)) | orm:1268 | E4.1 schema 隐藏 + band 代理 | **false/false**（E4.1 落地） | **N**（已隐藏） | E4.1 已落地（HIDE + materialBand） |
+| laborCost (7, DECIMAL(20,4)) | orm:1269 | E4.1 schema 隐藏 + band 代理 | **false/false**（E4.1 落地） | **N** | E4.1 已落地（HIDE + laborBand） |
+| overheadCost (8, DECIMAL(20,4)) | orm:1270 | E4.1 schema 隐藏 + band 代理 | **false/false**（E4.1 落地） | **N** | E4.1 已落地（HIDE + overheadBand） |
+| subcontractCost (9, DECIMAL(20,4)) | orm:1271 | E4.1 schema 隐藏 + band 代理 | **false/false**（E4.1 落地） | **N** | E4.1 已落地（HIDE + subcontractBand） |
+| totalCost (10, DECIMAL(20,4)) | orm:1272 | E3.1 masking（授权见明文） | 默认true/true | Y | E3.1 已落地（masking，Phase 1 Decision (a)#2 保持） |
+| unitCost (11, DECIMAL(20,4)) | orm:1273（domain=unitPrice） | E3.1 masking（授权见明文） | 默认true/true | Y | E3.1 已落地（masking，Phase 1 Decision (a)#2 保持） |
 
-> 成本分解字段 ORM 行号统一引用 `app-erp-manufacturing.orm.xml:1268-1273`（实体头@1259，6 金额列 propId 6-11）。`CostRollupService` 跨域读值豁免裁决归 P1.2 Q4 + E3.2（Non-Goals 明示）。
+> 成本分解字段 ORM 行号统一引用 `app-erp-manufacturing.orm.xml:1268-1273`（实体头@1259，6 金额列 propId 6-11）。`CostRollupService` 跨域读值豁免裁决归 P1.2 Q4 + E3.2（Non-Goals 明示）。E4.1 落地后 `CostRollupService` 经 DAO 写入要素成本（生产者，不遍历 BizModel）；`StandardCostResolver` 经 DAO 读 unitCost（unitCost 保持 published，masking 不影响 DAO）。
 
 ### 9.7.9 清单边界取舍决策
 
@@ -567,6 +572,6 @@ gen-control `{type:'tpl', tpl:'${LEFT(field,N)}****${RIGHT(field,M)}'}` 经 `flu
 
 1. **F7 既有 PII 集经实测证据确认**：hr 4 字段（idCardNo/mobilePhone/bankAccountId/socialSecurityNo）前端 tpl 打码 + logistics 2 字段（apiKey/apiSecret）写回型 `published=false`，与 §9 文档描述一致。
 2. **`taxFileNo` 现状确认**：原 `visibleOn=${false}` 隐藏非脱敏（§9.5 反模式），**E3.1 已修正**（移除 `visibleOn` + 后端 @BizLoader 打码，授权=HR 专员）。
-3. **保密五面 E3.1 后端响应层 masking 已落地**：43 字段经 @BizLoader + 共享 MaskHelper 实现授权/非授权分视（数值 null / VARCHAR 打码串），不改 schema（published/queryable 不动）。E4.1 字段级可见性 + 代理视图裁决待定（受 P1.2 Q1/Q4 约束）。
+3. **保密五面 E3.1 后端响应层 masking 已落地**：43 字段经 @BizLoader + 共享 MaskHelper 实现授权/非授权分视（数值 null / VARCHAR 打码串），不改 schema（published/queryable 不动）。**E4.1 字段级可见性 + 代理视图已落地**（plan `2026-08-11-0915-3`）：mfg `ErpMfgCostRollupLine` 4 要素成本翻 `published=false` 隐藏 + band 代理视图；totalCost/unitCost + md/pur 供应商价 + hr/ct 金额保持 masking（Phase 1 Decision (a) 裁决：隐藏+passthrough=masking，无保密增益）；纯 E4.1 配置字段保持 visible。
 4. **E3.2 取值豁免不变量保持**：服务端成本卷算经 DAO 直读不经 BizModel 边界，E3.1 masking 不阻断跨域取值（守卫测试复跑绿）。
 5. **清单可被 E4.1 直接消费**：每字段七元组齐全，含 `propId`、`stdSqlType`、`published/queryable` 现值、GraphQL schema 影响标记、拟落地层。
