@@ -52,10 +52,10 @@ public class TestErpDataAuthStructure {
 
     private static final String QUALITY_OBJ = "ErpQaRiskRegister";
 
-    /** 业务员过滤列；质检员过滤列（均为 userId 域）。 */
+    /** 销售员（roleId，与 P1.5a 冻结词表 + nop_auth_role.csv L3 种子一致）过滤列；质检员过滤列（均为 userId 域）。 */
     private static final String SALES_FILTER_COL = "createdBy";
     private static final String QUALITY_FILTER_COL = "ownerId";
-    private static final String ROLE_SALESPERSON = "业务员";
+    private static final String ROLE_SALESPERSON = "销售员";
     private static final String ROLE_INSPECTOR = "质检员";
     private static final String ROLE_ADMIN = "管理员";
 

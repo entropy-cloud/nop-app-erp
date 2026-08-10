@@ -282,6 +282,9 @@ export const ROLE_ACCOUNTS: Record<string, { username: string; password: string 
   // E1.2 审核人（跨域审批角色，pur/sal approve 授权）
   审核人: { username: 'role-approver', password: COMMON_PASS },
   'role-approver': { username: 'role-approver', password: COMMON_PASS },
+  // E2.1 质检员（qa 维 data-auth 行级过滤 Proof，userId 21）
+  质检员: { username: 'role-inspector', password: COMMON_PASS },
+  'role-inspector': { username: 'role-inspector', password: COMMON_PASS },
 };
 
 /**

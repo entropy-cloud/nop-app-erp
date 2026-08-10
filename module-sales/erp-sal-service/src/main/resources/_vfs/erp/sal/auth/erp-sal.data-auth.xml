@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!-- 角色侧行级数据权限规则（plan 2026-07-31-1023-3-r3-4，P1-MA6-002）。
-     owner doc docs/design/roles-and-permissions.md §数据权限："业务员只能看自己创建的单据"。
+     owner doc docs/design/roles-and-permissions.md §数据权限："业务员只能看自己创建的单据"（散文「业务员」= 销售域销售员角色，roleId「销售员」，见 P1.5a 冻结词表 + nop_auth_role.csv L3 种子）。
 
      过滤列：createdBy（VARCHAR，userId 域，平台 auto-stamp 当前 userId），直接与 userContext.userId 比较。
      EL 表达式用 ${userContext.userId}（DefaultDataAuthChecker.newEvalScope 注入的 scope 变量 = IUserContext）；
@@ -9,7 +9,7 @@
      role-auth 顺序语义（对齐平台 nop-auth.data-auth.xml 范式）：所有 role-auth 同 priority（默认 100），
      ObjDataAuthModel.getRoleAuth 按【声明顺序】首匹配（List.sort 稳定排序，同 priority 保持插入序）：
        1. 管理员（首位）：无 filter，全量访问——管理员用户首匹配命中。
-       2. 业务员（次位）：filter eq(createdBy, userContext.userId)——只看自己创建的单据。
+        2. 销售员（roleId，次位）：filter eq(createdBy, userContext.userId)——只看自己创建的单据。
        3. user 兜底（末位）：无 filter，roleIds="user" 对所有登录用户总命中，避免未种子角色 fail-closed。
      【勿用显式 priority=admin200/user0】——getRoleAuth 升序首匹配会使 user(0) 先于角色匹配，shadow 过滤规则。
 
@@ -22,7 +22,7 @@
         <obj name="ErpSalOrder">
             <role-auths>
                 <role-auth id="admin" roleIds="管理员"></role-auth>
-                <role-auth id="salesperson" roleIds="业务员">
+                <role-auth id="salesperson" roleIds="销售员">
                     <filter><eq name="createdBy" value="${userContext.userId}"/></filter>
                 </role-auth>
                 <role-auth id="default" roleIds="user"></role-auth>
@@ -31,7 +31,7 @@
         <obj name="ErpSalQuotation">
             <role-auths>
                 <role-auth id="admin" roleIds="管理员"></role-auth>
-                <role-auth id="salesperson" roleIds="业务员">
+                <role-auth id="salesperson" roleIds="销售员">
                     <filter><eq name="createdBy" value="${userContext.userId}"/></filter>
                 </role-auth>
                 <role-auth id="default" roleIds="user"></role-auth>
@@ -40,7 +40,7 @@
         <obj name="ErpSalDelivery">
             <role-auths>
                 <role-auth id="admin" roleIds="管理员"></role-auth>
-                <role-auth id="salesperson" roleIds="业务员">
+                <role-auth id="salesperson" roleIds="销售员">
                     <filter><eq name="createdBy" value="${userContext.userId}"/></filter>
                 </role-auth>
                 <role-auth id="default" roleIds="user"></role-auth>
@@ -49,7 +49,7 @@
         <obj name="ErpSalInvoice">
             <role-auths>
                 <role-auth id="admin" roleIds="管理员"></role-auth>
-                <role-auth id="salesperson" roleIds="业务员">
+                <role-auth id="salesperson" roleIds="销售员">
                     <filter><eq name="createdBy" value="${userContext.userId}"/></filter>
                 </role-auth>
                 <role-auth id="default" roleIds="user"></role-auth>
@@ -58,7 +58,7 @@
         <obj name="ErpSalReceipt">
             <role-auths>
                 <role-auth id="admin" roleIds="管理员"></role-auth>
-                <role-auth id="salesperson" roleIds="业务员">
+                <role-auth id="salesperson" roleIds="销售员">
                     <filter><eq name="createdBy" value="${userContext.userId}"/></filter>
                 </role-auth>
                 <role-auth id="default" roleIds="user"></role-auth>
@@ -67,7 +67,7 @@
         <obj name="ErpSalReturn">
             <role-auths>
                 <role-auth id="admin" roleIds="管理员"></role-auth>
-                <role-auth id="salesperson" roleIds="业务员">
+                <role-auth id="salesperson" roleIds="销售员">
                     <filter><eq name="createdBy" value="${userContext.userId}"/></filter>
                 </role-auth>
                 <role-auth id="default" roleIds="user"></role-auth>

@@ -60,11 +60,12 @@ quarkus:
    nop:
      auth:
        enable-action-auth: true
-       enable-data-auth: false
+       enable-data-auth: true
        skip-check-for-admin: true
+       use-user-id-for-audit-fields: true
    erp:
      data-auth:
-       role-row-filter-enabled: false
+       role-row-filter-enabled: true
 "%prod":
    nop:
      auth:

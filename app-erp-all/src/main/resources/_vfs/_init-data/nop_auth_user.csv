@@ -19,3 +19,4 @@ USER_ID,USER_NAME,PASSWORD,SALT,NICK_NAME,OPEN_ID,GENDER,USER_TYPE,STATUS,DEL_FL
 18,role-ct-clerk,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-ct-clerk,0,1,1,1,0,0
 19,role-ct-approver,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-ct-approver,0,1,1,1,0,0
 20,role-approver,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-approver,0,1,1,1,0,0
+21,role-inspector,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-inspector,0,1,1,1,0,0

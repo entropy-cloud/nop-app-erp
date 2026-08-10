@@ -59,7 +59,7 @@ public class TestErpRoleRowFilterIsolation extends JunitAutoTestCase {
     private static final String CFG_DATA_AUTH_PATH = "nop.auth.data-auth-config-path";
     private static final String SALES_DATA_AUTH_PATH = "/erp/sal/auth/erp-sal.data-auth.xml";
     private static final String DEFAULT_DATA_AUTH_PATH = "/nop/main/auth/app.data-auth.xml";
-    private static final String ROLE_SALESPERSON = "业务员";
+    private static final String ROLE_SALESPERSON = "销售员";
     private static final String ROLE_ADMIN = "管理员";
 
     private static ErpRoleDataAuthChecker SHARED_CHECKER;
