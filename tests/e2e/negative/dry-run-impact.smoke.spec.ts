@@ -28,17 +28,38 @@ interface ProbeSpec {
 }
 
 const DUMMY_ID = 999999;
+const DUMMY_STR = '999999';
 
+/**
+ * 标量单参动作探针：argName 对应 BizModel 方法 @Name（默认 id）。
+ * E1.1 已按各 BizModel 方法签名修正 argName（plan 2026-08-10-0739-1 Phase 1 Fix）。
+ */
 function probe(domain: string, entity: string, action: string, argName = 'id'): ProbeSpec {
   return { domain, entity, action, args: { [argName]: DUMMY_ID } };
 }
 
+/**
+ * 显式 args 探针：用于多参 / 复杂类型 / String-id 动作（arg 名与类型按方法签名）。
+ * Long 型用 DUMMY_ID；String 型用 DUMMY_STR；复杂 input 用最小骨架（过 GraphQL arg 校验即可，enforcement 检查在业务逻辑之前）。
+ */
+function probeArgs(
+  domain: string,
+  entity: string,
+  action: string,
+  args: Record<string, unknown>,
+): ProbeSpec {
+  return { domain, entity, action, args };
+}
+
 const SUBSET: ProbeSpec[] = [
   // fin（E1.1 高危 + P1.4 声明域）
-  probe('fin', 'ErpFinVoucher', 'post'),
-  probe('fin', 'ErpFinVoucher', 'reverse'),
-  probe('fin', 'ErpFinAccountingPeriod', 'closePeriod'),
-  probe('fin', 'ErpFinAccountingPeriod', 'reverseClose'),
+  // ErpFinVoucher.post(event: PostingEvent) — 复杂 input，最小骨架过 arg 校验。Java @BizMutation → DENIED（静态裁决）。
+  probeArgs('fin', 'ErpFinVoucher', 'post', { event: {} }),
+  // ErpFinVoucher.reverse(billHeadCode: String, businessType: ErpFinBusinessType enum)
+  probeArgs('fin', 'ErpFinVoucher', 'reverse', {     billHeadCode: DUMMY_STR, businessType: 'PURCHASE_INPUT' }),
+  // ErpFinAccountingPeriod.closePeriod(periodId: Long) / reverseClose(periodId: Long)
+  probe('fin', 'ErpFinAccountingPeriod', 'closePeriod', 'periodId'),
+  probe('fin', 'ErpFinAccountingPeriod', 'reverseClose', 'periodId'),
   probe('fin', 'ErpFinBadDebt', 'writeOff', 'arApItemId'),
   probe('fin', 'ErpFinBadDebt', 'reverseApprove'),
   // pur（P1.4a 审批集）
@@ -71,22 +92,29 @@ const SUBSET: ProbeSpec[] = [
   probe('sal', 'ErpSalReturn', 'reverseApprove'),
   // mfg（P1.4b 委外 + E1.1 start/close/cancel）
   probe('mfg', 'ErpMfgSubcontractOrder', 'approve'),
-  probe('mfg', 'ErpMfgWorkOrder', 'start'),
-  probe('mfg', 'ErpMfgWorkOrder', 'close'),
-  probe('mfg', 'ErpMfgWorkOrder', 'cancel'),
+  probe('mfg', 'ErpMfgWorkOrder', 'start', 'workOrderId'),
+  probe('mfg', 'ErpMfgWorkOrder', 'close', 'workOrderId'),
+  probe('mfg', 'ErpMfgWorkOrder', 'cancel', 'workOrderId'),
   // ast（P1.4b 处置）
   probe('ast', 'ErpAstDisposal', 'approve'),
   // b2b（P1.4c EDI 全生命周期 + E1.1 handleInboundWebhook）
-  probe('b2b', 'ErpB2bEdiDoc', 'markSent'),
-  probe('b2b', 'ErpB2bEdiDoc', 'cancel'),
-  probe('b2b', 'ErpB2bEdiDoc', 'markAcknowledged'),
-  probe('b2b', 'ErpB2bEdiDoc', 'markError'),
-  probe('b2b', 'ErpB2bEdiDoc', 'retry'),
-  probe('b2b', 'ErpB2bEdiDoc', 'archive'),
-  probe('b2b', 'ErpB2bAsn', 'handleInboundWebhook'),
-  probe('b2b', 'ErpB2bAsn', 'matchPurchaseOrder'),
-  probe('b2b', 'ErpB2bAsn', 'createReceiveFromAsn'),
-  probe('b2b', 'ErpB2bAsn', 'retryMatch'),
+  probe('b2b', 'ErpB2bEdiDoc', 'markSent', 'ediDocId'),
+  probe('b2b', 'ErpB2bEdiDoc', 'cancel', 'ediDocId'),
+  probe('b2b', 'ErpB2bEdiDoc', 'markAcknowledged', 'ediDocId'),
+  probeArgs('b2b', 'ErpB2bEdiDoc', 'markError', { ediDocId: DUMMY_ID, error: 'probe' }),
+  probe('b2b', 'ErpB2bEdiDoc', 'retry', 'ediDocId'),
+  probe('b2b', 'ErpB2bEdiDoc', 'archive', 'ediDocId'),
+  // ErpB2bAsn.handleInboundWebhook(formatCode, partnerCode, signature, eventId, payload: 全 String)
+  probeArgs('b2b', 'ErpB2bAsn', 'handleInboundWebhook', {
+    formatCode: 'X12',
+    partnerCode: 'probe',
+    signature: 'probe',
+    eventId: 'probe',
+    payload: '{}',
+  }),
+  probe('b2b', 'ErpB2bAsn', 'matchPurchaseOrder', 'asnId'),
+  probe('b2b', 'ErpB2bAsn', 'createReceiveFromAsn', 'asnId'),
+  probe('b2b', 'ErpB2bAsn', 'retryMatch', 'asnId'),
   // ct（P1.4d 电子签）
   probe('ct', 'ErpCtContract', 'activate'),
   probe('ct', 'ErpCtContractVersion', 'finalizeVersion'),
@@ -97,12 +125,14 @@ const SUBSET: ProbeSpec[] = [
   probe('ct', 'ErpCtSignatureRequest', 'queryAndUpdateStatus'),
   probe('ct', 'ErpCtSignatureRequest', 'rejectSignature'),
   // hr（P1.4d 薪酬审核 + E1.1 approve/markPaid + leaveRequest）
-  probe('hr', 'ErpHrSalary', 'approve', 'salaryId'),
+  // ErpHrSalary.approve 由 xbiz 声明（<arg name="id" type="String"/>）— String id
+  probeArgs('hr', 'ErpHrSalary', 'approve', { id: DUMMY_STR }),
   probe('hr', 'ErpHrSalary', 'markPaid', 'salaryId'),
   probe('hr', 'ErpHrSalary', 'voidSalary', 'salaryId'),
-  probe('hr', 'ErpHrLeaveRequest', 'approve', 'leaveRequestId'),
+  // ErpHrLeaveRequest.approve(@Name("id") String id) — Java @BizMutation
+  probeArgs('hr', 'ErpHrLeaveRequest', 'approve', { id: DUMMY_STR }),
   // inv（E1.1 confirm/approve）
-  probe('inv', 'ErpInvStockMove', 'confirm'),
+  probe('inv', 'ErpInvStockMove', 'confirm', 'moveId'),
   probe('inv', 'ErpInvLandedCost', 'approve'),
 ];
 

@@ -13,6 +13,7 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
+            <auth permissions="ErpMfgSubcontractOrder:approve"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>

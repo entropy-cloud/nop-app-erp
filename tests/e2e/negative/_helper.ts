@@ -27,6 +27,7 @@
 import { test, expect } from '../fixtures';
 import type { Page } from '@playwright/test';
 import { login } from '../pages';
+import { GraphQLClient } from '../pages';
 import {
   callMutation,
   callQuery,
@@ -37,6 +38,34 @@ import {
 export { test, expect };
 // Re-export for consumer convenience: negative spec 单一 import 入口（避免跨模块 import 认知负担）。
 export { callMutation, callQuery, findItems, findPageTotal };
+
+/**
+ * Scalar-returning mutation 调用（如 `ErpFinVoucher.post/reverse` 返 Long、`ErpB2bAsn.handleInboundWebhook` 返 Long）。
+ *
+ * `callMutation` 默认 selection=`'id'` 会产出 `{ Action{ id } }` 子选择，对 Long/scalar 返回类型
+ * 触发 GraphQL 校验错误 `[Long]不是对象类型，不支持字段选择`（enforcement 检查在校验之后，永不可达）。
+ * 本原语走 `GraphQLClient.raw` 无子选择查询，使 Long 返回型动作也能抵达 enforcement 检查层。
+ * 返回与 `callMutation` 同形 `{data, errors, json}` 信封，可直接喂 `expectActionDenied`。
+ */
+export async function callMutationScalar(
+  page: Page,
+  entityName: string,
+  action: string,
+  args: Record<string, unknown>,
+): Promise<{ data: any | null; errors: any[] | null; json: any }> {
+  const gql = new GraphQLClient(page);
+  const parts: string[] = [];
+  for (const [name, arg] of Object.entries(args)) {
+    parts.push(`${name}:${JSON.stringify(arg)}`);
+  }
+  const query = `mutation{ ${entityName}__${action}(${parts.join(',')}) }`;
+  const json: any = await gql.raw(query);
+  return {
+    data: json?.data?.[`${entityName}__${action}`] ?? null,
+    errors: json?.errors ?? null,
+    json,
+  };
+}
 
 /**
  * GraphQL 调用结果信封（callMutation/callQuery 返回值）。
