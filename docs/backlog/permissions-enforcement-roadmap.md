@@ -66,7 +66,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
-| E3.1 | `@BizLoader` 后端响应层脱敏控制点（薪酬/合同/EDI/供应商价格/成本分解 → 按角色视图脱敏，替代 F7 前端层——范围以 P1.1 清单核对，含 F7 PII 集） | todo | `field-formatting-patterns.md` §9.4 + 讨论文档 §讨论点二 | P1.1 + E1.2 | `nop-backend-dev` |
+| E3.1 | `@BizLoader` 后端响应层脱敏控制点（薪酬/合同/EDI/供应商价格/成本分解 → 按角色视图脱敏，替代 F7 前端层——范围以 P1.1 清单核对，含 F7 PII 集） | done | `field-formatting-patterns.md` §9.4 + 讨论文档 §讨论点二 | P1.1 + E1.2 | `nop-backend-dev` |
 | E3.2 | 内部计算服务跨域取值与可见性边界裁决（`CostRollupService` 读 purchasePrice 的服务端计算豁免 + 聚合值代理视图；触及成本区域时须 plan-first 证据） | done | `finance/costing-methods.md` + 讨论文档 Q4 | P1.2 | `nop-backend-dev` |
 
 ### Milestone E4 — 执行：采购保密字段级

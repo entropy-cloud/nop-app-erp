@@ -90,6 +90,8 @@
 
 **successor 衔接**：E4.1 字段级可见性 successor 的取值侧前提已闭环（本节 + E3.2 守卫）；消费侧代理视图（Q4 Decision (c) 研发侧聚合值）+ Q1 粒度裁决（总额精确 + 要素档位离散）归 E4.x。
 
+**E3.1 masking 交叉引用**（plan `2026-08-10-2059-2`，已落地）：E3.1 在 `ErpMfgCostRollupLine` BizModel 边界（@BizLoader）+ `ErpMdMaterialSku.purchasePrice` BizModel 边界对 6 成本字段 + 3 价格字段按 role-view masking（授权管理员/财务员/采购员见明文，非授权见 null）。因 `CostRollupService`/`StandardCostResolver` 经 DAO 直读（不经 BizModel/GraphQL 边界，见上方代码层固化 + 守卫测试），E3.1 masking 不阻断服务端跨域成本取值——守卫测试复跑绿（`TestErpMfgCostRollupValueExemptionInvariant`/`TestErpInvStandardCostResolverValueExemptionInvariant`）。消费侧代理视图（研发角色聚合值）仍归 E4.x。
+
 ## 实现注记：生产差异计算
 
 本节承接 `0427-2` Deferred「生产差异」，触发条件「工单完工差异分析需求落地」（依据：`variance-analysis.md` 设计权威指定 + 技术前置就绪）。

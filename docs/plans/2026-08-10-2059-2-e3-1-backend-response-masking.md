@@ -1,6 +1,6 @@
 # 2026-08-10-2059-2 E3.1 后端响应层脱敏控制点（@BizLoader，保密五面 + F7 PII）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-10
 > Source: `docs/backlog/permissions-enforcement-roadmap.md` E3.1
 > Related:
@@ -74,100 +74,154 @@ E3.1 建立 **后端响应层脱敏控制点**：经 BizModel `@BizLoader` 按 r
 
 ### Phase 1 - Decision/Explore：masking 机制 + role-view 绑定 + 字段集枚举
 
-Status: planned
+Status: completed
 Targets: 本计划 Decision 节 + `docs/design/field-formatting-patterns.md` §9.4
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Explore | Proof`
 - Prereqs: P1.1 done（冻结清单）+ E3.2 done（取值豁免前提）
 
-- [ ] `Explore`: 核验 Nop @BizLoader masking 机制的可复用结构——是否存在平台级 response transformer / field interceptor 可替代逐字段 @BizLoader（查 `nop-entropy/docs-for-ai/` + 既有 @BizLoader 范式）。若平台无更优机制，确认逐字段 @BizLoader + 共享 mask helper 为正道。
+- [x] `Explore`: 核验 Nop @BizLoader masking 机制的可复用结构。证据：`nop-entropy/docs-for-ai/03-runbooks/add-bizloader-field.md`（`@BizLoader(forType=T.class, value="field")` + `@ContextSource T` 覆盖既有字段 fetcher）+ `04-reference/source-anchors.md` BIZ-006（`BizLoader.java` + `LoginApiBizModelDelta.java`）+ `02-core-guides/api-and-graphql.md`（扩展返回字段优先 `@BizLoader`，字段不存在时 Delta + `autoCreateField=true`）+ 平台既有范式 `NopAuthRoleBizModel.roleUsers`/`roleResourceIds`（entity BizModel 内 `@BizLoader` + `@ContextSource Entity`）。**结论**：无平台级 response transformer / field interceptor 更优机制；`BizModelToGraphQLDefinition.toBuilder` 在 `autoCreateField=false`（默认）时覆盖既有字段 data fetcher（field 类型不变），正是 masking 既有字段值的正确机制。逐字段 `@BizLoader` + 共享 `MaskHelper` 为正道。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`: masking 机制裁决——候选：(a) 逐字段 `@BizLoader` 于各域 BizModel + 共享 `MaskHelper.mask(value, maskFormat, authorizedRoles)`（显式 per-field 控制，~44 方法但 helper 去重）；(b) 平台 response-level transformer（若 Explore 发现可行，但 roadmap 指定 @BizLoader）。记录选择 + 替代方案 + 残留风险（默认采纳 (a)）。
+- [x] `Decision (a) 机制`: 采纳候选 (a)——逐字段 `@BizLoader("fieldName")` 于各域 entity BizModel + `@ContextSource Entity` 参数 + 共享 `MaskHelper`（落 `module-common-service` `app.erp.common.service.MaskHelper`，该模块为 5 个目标 service 模块的既有依赖）。替代方案 (b)（平台 response-level transformer）经 Explore 证伪（不存在）。残留风险：~44 个 loader 方法（机械重复，helper 去重逻辑，可接受）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`: role-view 绑定裁决——采纳 §9.7「拟落地层」建议为 masking role-view 工作假设（授权角色见明文，其余打码），逐面记录：薪酬→薪酬审批人；合同金额→合同审批人/合同专员；供应商价→采购员/管理员；成本→管理员/财务员；PII→HR 专员/薪酬审批人；taxFileNo→HR 专员。**显式声明**：此为 masking 层视图，不 preempt E4.1 正式 field-level visibility 裁决。
+- [x] `Decision (b) role-view 绑定`: 采纳 §9.7「拟落地层」建议为 masking 层工作假设（授权角色见明文，其余打码），逐面记录：薪酬金额 → `{薪酬审批人}`；hr PII 4 → `{HR 专员, 薪酬审批人}`；taxFileNo → `{HR 专员}`；ct 合同金额 → `{合同审批人, 合同专员}`；供应商价（pur+md）→ `{采购员, 管理员}`；mfg 成本分解 → `{管理员, 财务员}`。roleId 字面与 `nop_auth_role.csv` seed + 各域 `erp-*.action-auth.xml` `roles` 属性一致（同 `ErpHrConstants.HR_ROLE_ID="HR 专员"` 范式）。**显式声明**：此为 masking 层视图，不 preempt E4.1 正式 field-level visibility + 代理视图裁决。
   - Skill: none
-- [ ] `Decision`: mask 格式裁决（按字段类型）——DECIMAL 金额（末 N 位或区间档位？E3.1 默认全打码 `****` 或末位模糊化，精确档位归 E4.x Q1）；VARCHAR PII（首/末保留，复用 F7 既有 tpl 格式）；bankAccountId（末4）。taxFileNo unhide 路由（移除 `visibleOn=false` + 后端打码）。记录每类格式 + 与 F7 前端 tpl 一致性。
+- [x] `Decision (c) mask 格式`: **类型安全裁决**（不改 GraphQL schema = E3.1 不动 published/queryable，字段类型不变）：
+  - DECIMAL/BIGINT 数值字段（薪酬金额、合同金额、供应商价、成本分解、bankAccountId BIGINT）→ 非授权返 `null`（BigDecimal/Long 字段不可表示 `"****"`；null = 值保留不披露，比末位模糊更安全——零泄漏；F7 末4/末N 位格式仅前端 tpl 层对字符串渲染有效，后端层不泄漏位数）。
+  - VARCHAR PII：idCardNo → 首1+`******`+末4（`张******1234`，len>5 时，否则全打码）；mobilePhone → 首3+`****`+末4（`138****0000`，len>7 时，否则全打码）；socialSecurityNo → `******`（全打码，F7 §9.2 一致）；taxFileNo → `******`（全打码）；cumulativeData → `******`（全打码，个税机密 JSON）。
+  - taxFileNo unhide 路由：移除 `ErpHrEmployee.view.xml` `visibleOn=${false}`（§9.5 反模式修正）+ 后端 @BizLoader 打码。
+  - 与 F7 前端 tpl 一致性：VARCHAR PII 格式与 F7 §9.2 模板对齐；DECIMAL null 为后端层增强（前端层不渲染数值字段 tpl，无冲突）。精确档位/末位模糊归 E4.x Q1。
   - Skill: none
-- [ ] `Decision`: 前端 F7 tpl 处置——E3.1 后端层落地后，hr 4 PII 前端 tpl 是否保留（双层冗余 UI 防偷窥）或移除。默认保留（后端层兜底 API 消费者，前端层兜底 UI 截图）。
+- [x] `Decision (d) 前端 F7 tpl 处置`: 保留（默认）。后端层 = API 消费者保护（第三方集成 / F12 网络面板拿到 null/打码值）；F7 前端 tpl = UI 截图防偷窥。授权 HR 用户经 API 拿明文但 UI 见打码（双层冗余，非冲突——UI 页面已由 action-auth 限定 HR 专员可见，后端层兜底未授权 API 消费者）。
   - Skill: none
-- [ ] `Proof`: E3.1 字段集枚举冻结——据 §9.7 核对最终 E3.1 范围（~44 字段，排除纯 E4.1），列出逐字段表（实体×字段×mask 格式×授权角色）作为后续 Phase 实现清单。
+- [x] `Proof 字段集冻结`: 据 §9.7 核对最终 E3.1 范围 = **43 字段**（§9.7 精确枚举），排除纯 E4.1（EDI 面 4 / ApprovalMatrix min-maxAmount / RebateTier 3 / SignatureRequest 4 / ErpHrSocialInsuranceConfig 4 rate / taxRate / minOrderQuantity）。逐字段实现清单（实体×字段×mask 格式×授权角色）见下方「Phase 1 字段集冻结表」。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] 4 项 Decision 落定（机制 / role-view / mask 格式 / 前端 tpl 处置）+ 字段集冻结清单产出（Phase 2-4 实现依据）。
-- [ ] masking 机制经 Explore 确认（无更优平台机制或确认 @BizLoader 正道）。
+- [x] 4 项 Decision 落定（机制 / role-view / mask 格式 / 前端 tpl 处置）+ 字段集冻结清单产出（Phase 2-4 实现依据）。
+- [x] masking 机制经 Explore 确认（无更优平台机制，@BizLoader + MaskHelper 正道）。
+
+### Phase 1 字段集冻结表（43 字段，Phase 2-4 实现依据）
+
+> 来源：§9.7 逐字段七元组。`mask` 列：`null` = 数值字段非授权返 null；`str(fmt)` = VARCHAR 非授权返打码字符串。`roles` = 授权见明文角色集。
+
+| # | 域 | 实体 | 字段 | mask | roles |
+|---|----|------|------|------|-------|
+| 1 | hr | ErpHrSalary | basicSalary | null | 薪酬审批人 |
+| 2 | hr | ErpHrSalary | positionAllowance | null | 薪酬审批人 |
+| 3 | hr | ErpHrSalary | performanceBonus | null | 薪酬审批人 |
+| 4 | hr | ErpHrSalary | overtimePay | null | 薪酬审批人 |
+| 5 | hr | ErpHrSalary | mealAllowance | null | 薪酬审批人 |
+| 6 | hr | ErpHrSalary | transportAllowance | null | 薪酬审批人 |
+| 7 | hr | ErpHrSalary | otherAllowance | null | 薪酬审批人 |
+| 8 | hr | ErpHrSalary | grossSalary | null | 薪酬审批人 |
+| 9 | hr | ErpHrSalary | socialInsurance | null | 薪酬审批人 |
+| 10 | hr | ErpHrSalary | housingFund | null | 薪酬审批人 |
+| 11 | hr | ErpHrSalary | taxAmount | null | 薪酬审批人 |
+| 12 | hr | ErpHrSalary | otherDeductions | null | 薪酬审批人 |
+| 13 | hr | ErpHrSalary | netSalary | null | 薪酬审批人 |
+| 14 | hr | ErpHrSalary | cumulativeData | str(******) | 薪酬审批人 |
+| 15 | hr | ErpHrEmploymentContract | socialInsuranceBase | null | 薪酬审批人 |
+| 16 | hr | ErpHrSocialInsuranceBase | socialInsuranceBase | null | 薪酬审批人 |
+| 17 | hr | ErpHrSocialInsuranceBase | housingFundBase | null | 薪酬审批人 |
+| 18 | hr | ErpHrSalarySimulationItemAdjustment | originalAmount | null | 薪酬审批人 |
+| 19 | hr | ErpHrSalarySimulationItemAdjustment | adjustedAmount | null | 薪酬审批人 |
+| 20 | hr | ErpHrEmployee | idCardNo | str(首1******末4) | HR 专员, 薪酬审批人 |
+| 21 | hr | ErpHrEmployee | mobilePhone | str(首3****末4) | HR 专员, 薪酬审批人 |
+| 22 | hr | ErpHrEmployee | bankAccountId | null (BIGINT) | HR 专员, 薪酬审批人 |
+| 23 | hr | ErpHrEmployee | socialSecurityNo | str(******) | HR 专员, 薪酬审批人 |
+| 24 | hr | ErpHrEmployee | taxFileNo | str(******) | HR 专员 |
+| 25 | ct | ErpCtContract | totalAmount | null | 合同审批人, 合同专员 |
+| 26 | ct | ErpCtContractLine | amount | null | 合同审批人, 合同专员 |
+| 27 | ct | ErpCtInvoicePlan | amount | null | 合同审批人, 合同专员 |
+| 28 | ct | ErpCtConsumptionLine | amount | null | 合同审批人, 合同专员 |
+| 29 | ct | ErpCtRebateAgreement | totalAccumulatedAmount | null | 合同审批人, 合同专员 |
+| 30 | ct | ErpCtRebateAgreement | estimatedRebateAmount | null | 合同审批人, 合同专员 |
+| 31 | ct | ErpCtRebateAccrual | billAmountSource | null | 合同审批人, 合同专员 |
+| 32 | ct | ErpCtRebateAccrual | accruedRebate | null | 合同审批人, 合同专员 |
+| 33 | ct | ErpCtRebateSettlement | totalRebateAmount | null | 合同审批人, 合同专员 |
+| 34 | pur | ErpPurSupplierPriceList | unitPrice | null | 采购员, 管理员 |
+| 35 | md | ErpMdMaterialSku | purchasePrice | null | 采购员, 管理员 |
+| 36 | md | ErpMdMaterialSku | salePrice | null | 采购员, 管理员 |
+| 37 | md | ErpMdMaterialSku | wholesalePrice | null | 采购员, 管理员 |
+| 38 | mfg | ErpMfgCostRollupLine | materialCost | null | 管理员, 财务员 |
+| 39 | mfg | ErpMfgCostRollupLine | laborCost | null | 管理员, 财务员 |
+| 40 | mfg | ErpMfgCostRollupLine | overheadCost | null | 管理员, 财务员 |
+| 41 | mfg | ErpMfgCostRollupLine | subcontractCost | null | 管理员, 财务员 |
+| 42 | mfg | ErpMfgCostRollupLine | totalCost | null | 管理员, 财务员 |
+| 43 | mfg | ErpMfgCostRollupLine | unitCost | null | 管理员, 财务员 |
 
 ### Phase 2 - hr 域 masking（薪酬面 ~20 + F7 PII 升级 4 + taxFileNo 1）
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/.../biz/`（ErpHrSalaryBizModel / ErpHrEmployeeBizModel / 等）；`module-hr/erp-hr-web/.../ErpHrEmployee.view.xml`（taxFileNo unhide）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1 done（机制 + role-view + 字段集冻结）
 
-- [ ] `Add`: `MaskHelper`（共享脱敏工具，`module-common-service` 或 hr-service，按 Phase 1 裁决位置）—— `mask(Object value, MaskFormat fmt, Set<String> authorizedRoles, IUserContext ctx)`：授权角色返原值，否则按 fmt 打码。
+- [x] `Add`: `MaskHelper`（共享脱敏工具，`module-common-service` `app.erp.common.service.MaskHelper` + `StringMaskFormat`）—— `maskDecimal/maskLong/maskString` + `isAuthorized(Set<String> authorizedRoles)`：授权角色返原值，否则按 fmt 打码（数值 null / VARCHAR 打码串）。fail-closed（无 IUserContext = 打码）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`: ErpHrSalary ~14 金额字段 + cumulativeData @BizLoader（委托 MaskHelper，授权=薪酬审批人）；ErpHrEmploymentContract.socialInsuranceBase + ErpHrSocialInsuranceBase 2 + ErpHrSalarySimulationItemAdjustment 2 同模式。
+- [x] `Add`: ErpHrSalary 13 金额字段 + cumulativeData @BizLoader（委托 MaskHelper，授权=薪酬审批人）；ErpHrEmploymentContract.socialInsuranceBase + ErpHrSocialInsuranceBase 2 + ErpHrSalarySimulationItemAdjustment 2 同模式。
   - Skill: `nop-backend-dev`
-- [ ] `Add`: F7 PII 升级——ErpHrEmployee idCardNo/mobilePhone/bankAccountId/socialSecurityNo @BizLoader（授权=HR 专员/薪酬审批人，mask 格式与 F7 前端 tpl 一致）。
+- [x] `Add`: F7 PII 升级——ErpHrEmployee idCardNo/mobilePhone/bankAccountId/socialSecurityNo @BizLoader（授权=HR 专员/薪酬审批人，mask 格式与 F7 前端 tpl 一致：idCardNo 首1末4 / mobilePhone 首3末4 / bankAccountId null(BIGINT) / socialSecurityNo 全打码）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`: taxFileNo unhide + 后端打码——移除 `ErpHrEmployee.view.xml` `visibleOn=${false}`（§9.5 反模式修正）+ @BizLoader 打码（授权=HR 专员）。
+- [x] `Add`: taxFileNo unhide + 后端打码——移除 `ErpHrEmployee.view.xml` `visibleOn=${false}`（§9.5 反模式修正，改为静态 `******` tpl）+ @BizLoader 打码（授权=HR 专员）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`: hr 域 masking 单元测试（授权角色见明文 + 非授权见打码，覆盖薪酬金额 + PII + taxFileNo）；指定验证命令 `mvn test -pl module-hr/erp-hr-service -Dtest='*Mask*'`。
+- [x] `Proof`: hr 域 masking 单元测试 `TestErpHrResponseMasking`（9 用例，授权角色见明文 + 非授权见打码/null + fail-closed，覆盖薪酬金额 + cumulativeData + PII 4 + taxFileNo + contract/insurance/simAdj）；`mvn test -pl module-hr/erp-hr-service -Dtest='*Mask*'` = Tests run: 9, Failures: 0, Errors: 0。全 hr-service 套件 BUILD SUCCESS（无既有快照测试引用 masked 字段，零回归）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] hr 域 ~25 字段 masking 落地（授权见明文 + 非授权打码）；taxFileNo unhide + 打码；单元 Proof 绿。
-- [ ] hr-service 包类型检查通过（解除 Phase 3 对 hr 范围的阻塞——若 MaskHelper 在 common-service，该包类型检查通过）。
+- [x] hr 域 25 字段 masking 落地（授权见明文 + 非授权打码/null）；taxFileNo unhide + 打码；单元 Proof 绿。
+- [x] hr-service 包类型检查通过（`mvn test -pl module-hr/erp-hr-service` BUILD SUCCESS；MaskHelper 在 common-service 已 install）。
 
 ### Phase 3 - ct 域合同金额 + pur/md 供应商价格 masking
 
-Status: planned
+Status: completed
 Targets: `module-contract/erp-ct-service/.../biz/`；`module-purchase/erp-pur-service/.../biz/`；`module-master-data/erp-md-service/.../biz/`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2 done（MaskHelper 就绪）
 
-- [ ] `Add`: ct 域合同金额 ~9 字段 @BizLoader（ErpCtContract.totalAmount / ContractLine.amount / InvoicePlan.amount / ConsumptionLine.amount / RebateAgreement 2 / RebateAccrual 2 / RebateSettlement.totalRebateAmount；授权=合同审批人/合同专员，委托 MaskHelper）。
+- [x] `Add`: ct 域合同金额 9 字段 @BizLoader（ErpCtContract.totalAmount / ContractLine.amount / InvoicePlan.amount / ConsumptionLine.amount / RebateAgreement 2 / RebateAccrual 2 / RebateSettlement.totalRebateAmount；授权=合同审批人/合同专员，委托 MaskHelper）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`: pur 域 ErpPurSupplierPriceList.unitPrice + md 域 ErpMdMaterialSku purchasePrice/salePrice/wholesalePrice @BizLoader（授权=采购员/管理员）。
+- [x] `Add`: pur 域 ErpPurSupplierPriceList.unitPrice + md 域 ErpMdMaterialSku purchasePrice/salePrice/wholesalePrice @BizLoader（授权=采购员/管理员）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`: ct + pur/md masking 单元测试（授权/非授权双侧）；`mvn test -pl module-contract/erp-ct-service,module-purchase/erp-pur-service,module-master-data/erp-md-service -Dtest='*Mask*'`。
+- [x] `Proof`: ct + pur/md masking 单元测试（`TestErpCtResponseMasking` 4 用例 + `TestErpPurMdResponseMasking` 3 用例 + `TestErpMdResponseMasking` 3 用例，授权/非授权双侧 + fail-closed）；`mvn test -pl module-contract/erp-ct-service,module-purchase/erp-pur-service,module-master-data/erp-md-service -Dtest='*Mask*'` = Tests run: 10, Failures: 0, Errors: 0。全 3 模块套件 BUILD SUCCESS（零回归）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] ct ~9 + pur/md ~4 字段 masking 落地；单元 Proof 绿。
+- [x] ct 9 + pur/md 4 字段 masking 落地；单元 Proof 绿。
 
 ### Phase 4 - mfg 成本分解 masking + E3.2 不变量复验 + owner doc + 日志
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/.../biz/`；`docs/design/field-formatting-patterns.md`；`docs/design/finance/costing-methods.md`；`docs/logs/2026/08-10.md`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 3 done
 
-- [ ] `Add`: mfg 域 ErpMfgCostRollupLine 6 成本字段 @BizLoader（materialCost/laborCost/overheadCost/subcontractCost/totalCost/unitCost；授权=管理员/财务员，委托 MaskHelper）。**成本区域 plan-first 证据**：E3.2 取值豁免不变量（`TestErpMfgCostRollupValueExemptionInvariant`）保证服务端卷算不阻断——本项仅在 BizModel/GraphQL 边界 masking，不触 `CostRollupService` 业务逻辑。
+- [x] `Add`: mfg 域 ErpMfgCostRollupLine 6 成本字段 @BizLoader（materialCost/laborCost/overheadCost/subcontractCost/totalCost/unitCost；授权=管理员/财务员，委托 MaskHelper）。**成本区域 plan-first 证据**：E3.2 取值豁免不变量保证服务端卷算不阻断——本项仅在 BizModel/GraphQL 边界 masking，不触 `CostRollupService` 业务逻辑。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`（E3.2 不变量复验，load-bearing）: masking 落地后复跑 `TestErpMfgCostRollupValueExemptionInvariant` + `TestErpInvStandardCostResolverValueExemptionInvariant` 绿——证明 @BizLoader masking 不破坏服务端跨域成本取值豁免（反射断言 @Inject 字段不含 user-context 类型仍成立）。
+- [x] `Proof`（E3.2 不变量复验，load-bearing）: masking 落地后复跑 `TestErpMfgCostRollupValueExemptionInvariant`（2/0/0）+ `TestErpInvStandardCostResolverValueExemptionInvariant`（2/0/0）绿——证明 @BizLoader masking 不破坏服务端跨域成本取值豁免（反射断言 @Inject 字段不含 user-context 类型仍成立）。
   - Skill: `nop-testing`
-- [ ] `Proof`: mfg 成本 masking 单元测试（管理员/财务员见明文 + 非授权打码）；`mvn test -pl module-manufacturing/erp-mfg-service -Dtest='*Mask*'`。
+- [x] `Proof`: mfg 成本 masking 单元测试 `TestErpMfgResponseMasking`（3 用例：管理员/财务员见明文 + 非授权 null + fail-closed）；`mvn test -pl module-manufacturing/erp-mfg-service -Dtest='*Mask*'` = Tests run: 3, Failures: 0, Errors: 0。
   - Skill: `nop-testing`
-- [ ] `Add`: owner doc 更新——`field-formatting-patterns.md` §9.4「后端响应层」从 successor 改为「已落地（E3.1）」+ §9.7 各字段「拟落地层」更新实际状态；`costing-methods.md §成本卷算取值豁免边界` 交叉引用 E3.1 masking 落地（消费侧代理视图仍归 E4.x）。
+- [x] `Add`: owner doc 更新——`field-formatting-patterns.md` §9.4「后端响应层」从 successor 改为「已落地（E3.1）」+ §9.7 header 增 E3.1 状态横幅 + §9.7.10 复核结论更新；`costing-methods.md §成本卷算取值豁免边界` 增 E3.1 masking 交叉引用（消费侧代理视图仍归 E4.x）。
   - Skill: none
-- [ ] `Add`: `docs/logs/2026/08-10.md` 聚合日志条目（E3.1 masking 落地 + 机制裁决 + E3.2 不变量复验 + 验证状态）。
+- [x] `Add`: `docs/logs/2026/08-10.md` 聚合日志条目（E3.1 masking 落地 + 机制裁决 + E3.2 不变量复验 + 验证状态）。
   - Skill: none
 
 Exit Criteria:
 
-- [ ] mfg 成本 6 字段 masking 落地；E3.2 不变量守卫测试复跑绿（取值豁免未被破坏）；单元 Proof 绿。
-- [ ] owner doc + 日志已更新（§9.4 后端层从 successor 改已落地）。
+- [x] mfg 成本 6 字段 masking 落地；E3.2 不变量守卫测试复跑绿（取值豁免未被破坏）；单元 Proof 绿。
+- [x] owner doc + 日志已更新（§9.4 后端层从 successor 改已落地）。
 
 ## Draft Review Record
 
@@ -177,14 +231,14 @@ Exit Criteria:
 
 > 完整仓库验证在结束时运行一次。
 
-- [ ] 范围内行为完成（~44 字段 @BizLoader masking 跨 hr/ct/pur/md/mfg + taxFileNo unhide）
-- [ ] 相关文档对齐（field-formatting-patterns §9.4/§9.7 + costing-methods §取值豁免边界）
-- [ ] 已运行验证：`mvn clean install -DskipTests`（156 模块 BUILD SUCCESS）+ `mvn test`（全 reactor 0 回归，**含 E3.2 守卫测试 `TestErpMfgCostRollupValueExemptionInvariant`/`TestErpInvStandardCostResolverValueExemptionInvariant` 绿**）+ 各域 masking 单元 Proof 绿 + `bash docs/audits/nop-compliance-checker.sh`（零漂移，对照 `docs/testing/known-good-baselines.md`）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（43 字段 @BizLoader masking 跨 hr/ct/pur/md/mfg + taxFileNo unhide）
+- [x] 相关文档对齐（field-formatting-patterns §9.4/§9.7 + costing-methods §取值豁免边界）
+- [x] 已运行验证：`mvn clean install -DskipTests`（156 模块 BUILD SUCCESS）+ `mvn test`（全 reactor 仅 1 pre-existing failure `TestErpDrpSafetyStock`，stash 对照确认与 E3.1 无关；E3.1 范围内 5 service 模块全绿 + 22 masking 单元 Proof 绿 + **E3.2 守卫测试 `TestErpMfgCostRollupValueExemptionInvariant`/`TestErpInvStandardCostResolverValueExemptionInvariant` 绿**）+ 各域 masking 单元 Proof 绿 + `bash docs/audits/nop-compliance-checker.sh`（exit 0，零漂移，对照 `docs/testing/known-good-baselines.md`）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -208,12 +262,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <to be filled at closure>
+Status Note: E3.1 后端响应层脱敏控制点已落地。43 字段经 @BizLoader + 共享 MaskHelper 实现 role-view masking（授权见明文，非授权数值 null / VARCHAR 打码串），不改 GraphQL schema（published/queryable 不动）。E3.2 取值豁免不变量守卫测试复跑绿（masking 不阻断服务端跨域成本取值）。taxFileNo unhide + 后端打码（§9.5 反模式修正）。F7 前端 tpl 保留作 UI 防偷窥双层冗余。全 reactor `mvn clean install -DskipTests` BUILD SUCCESS（156 模块）+ E3.1 范围内 5 service 模块全 `mvn test` 绿 + 22 masking 单元 Proof 绿 + E3.2 守卫测试绿 + compliance checker exit 0（零漂移）。全 reactor `mvn test` 仅 1 pre-existing failure（`TestErpDrpSafetyStock`，stash 对照确认与 E3.1 无关，drp 域安全库存计算业务逻辑 issue）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立子代理 `ses_0135909dcffedFdJe7LBb5x9Ph`（general，新会话，未执行本计划）
+- Evidence: A-G 全 PASS — 代码存在正确（MaskHelper + 5 域 43 字段 @BizLoader + taxFileNo unhide）/ role-view 绑定匹配 / 22 masking 单元测试（hr 9 + ct 4 + pur 3 + md 3 + mfg 3）全绿 / E3.2 守卫测试 4 绿（取值豁免未破坏）/ owner doc §9.4/§9.7/costing-methods 更新 / roadmap E3.1 done / 计划内部一致。Overall verdict: PASS。
 
 Follow-up:
 

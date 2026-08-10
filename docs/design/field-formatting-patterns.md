@@ -372,11 +372,17 @@ view.xml <col> + <gen-control>
 
 | 层 | 机制 | 覆盖范围 | 安全性 | 适用场景 |
 | --- | --- | --- | --- | --- |
-| **前端渲染层**（本设计） | gen-control tpl 打码 AMIS 输出 | list grid col + form view cell + sub-grid-view col | 低（GraphQL 响应含明文，F12 可见） | UI 防偷窥、截图脱敏、合规展示 |
+| **前端渲染层**（F7，保留作 UI 防偷窥） | gen-control tpl 打码 flux/AMIS 输出 | list grid col + form view cell + sub-grid-view col | 低（GraphQL 响应含明文，F12 可见） | UI 防偷窥、截图脱敏、合规展示 |
 | **写回型凭据**（logistics apiKey/apiSecret） | xmeta `published="false"` + 查看态静态 `******` | GraphQL 响应不含字段值 | 高（明文永不离开服务端） | 集成凭据（API key/secret）：前端可录不可读 |
-| 后端响应层（successor） | BizModel `@BizLoader` 打码 GraphQL 响应 | GraphQL response 全链路 | 高（API 消费者也拿到打码值） | 安全审计要求 API 层脱敏、第三方集成 |
+| **后端响应层**（E3.1，已落地） | BizModel `@BizLoader` 按 role-view 打码 GraphQL 响应 | 43 字段（保密五面金额 + F7 PII 升级 + taxFileNo） | 高（API 消费者也拿到 null/打码值） | 安全审计要求 API 层脱敏、第三方集成 |
 
-> **字段级清单（冻结输入）**：保密五面（薪酬/合同/EDI/供应商价格/成本分解）+ F7 已落地基线 + `taxFileNo`（隐藏非脱敏）的逐字段七元组清单见下方 **§9.7**，作为本节后端响应层 successor（E3.1）与字段级可见性（E4.1）的冻结输入。清单来源 plan：`docs/plans/2026-08-09-1314-1-sensitive-field-confidentiality-inventory.md`（P1.1）。
+> **E3.1 实现注记**（plan `2026-08-10-2059-2`，已落地）：后端响应层经各域 entity BizModel `@BizLoader("field") + @ContextSource Entity` 委托共享 `MaskHelper`（`module-common-service` `app.erp.common.service.MaskHelper`）。授权角色见明文，非授权 = 数值字段（DECIMAL/BIGINT）返 `null`（类型安全，零位数泄漏）/ VARCHAR PII 返打码串（首末保留或全打码，与 F7 §9.2 模板对齐）。fail-closed（无 `IUserContext` = 打码）。
+>
+> **role-view 绑定**（masking 层工作假设，不 preempt E4.1 正式 field-level visibility 裁决）：薪酬金额→薪酬审批人；hr PII→HR 专员/薪酬审批人；taxFileNo→HR 专员；ct 合同金额→合同审批人/合同专员；供应商价→采购员/管理员；mfg 成本→管理员/财务员。roleId 字面与 `nop_auth_role.csv` seed + `erp-*.action-auth.xml` `roles` 属性一致。
+>
+> **双层分工**：E3.1 后端层兜底 API 消费者（第三方/F12），F7 前端 tpl 保留兜底 UI 截图（授权 HR 用户经 API 拿明文但 UI 见打码）。E3.2 取值豁免不变量保持：服务端成本卷算（`CostRollupService`/`StandardCostResolver`）经 DAO 直读不经 BizModel 边界，故 masking 不阻断跨域取值（守卫测试 `TestErpMfgCostRollupValueExemptionInvariant`/`TestErpInvStandardCostResolverValueExemptionInvariant` 复跑绿）。
+>
+> **字段级清单（冻结输入）**：保密五面（薪酬/合同/EDI/供应商价格/成本分解）+ F7 已落地基线 + `taxFileNo`（隐藏非脱敏）的逐字段七元组清单见下方 **§9.7**，作为字段级可见性（E4.1）的冻结输入。清单来源 plan：`docs/plans/2026-08-09-1314-1-sensitive-field-confidentiality-inventory.md`（P1.1）。
 
 ### 9.5 反模式自检表（脱敏补充）
 
@@ -405,9 +411,10 @@ gen-control `{type:'tpl', tpl:'${LEFT(field,N)}****${RIGHT(field,M)}'}` 经 `flu
 
 > Owner: 本节（§9 子节，单一真相源）
 > 来源 plan：`docs/plans/2026-08-09-1314-1-sensitive-field-confidentiality-inventory.md`（permissions-enforcement 路线图 P1.1）
-> 用途：为 §9.4「后端响应层脱敏 successor（E3.1）」与「字段级可见性（E4.1）」提供逐字段冻结输入；同时显式复核确认 F7 既有 PII 集落地状态。
+> 用途：为 §9.4「后端响应层脱敏（E3.1）」与「字段级可见性（E4.1）」提供逐字段冻结输入；同时显式复核确认 F7 既有 PII 集落地状态。
 > 范围：保密五面（薪酬 / 合同 / EDI / 供应商价格 / 成本分解）+ F7 已落地前端脱敏基线 + `taxFileNo`（隐藏非脱敏）。
-> **非目标**：不实现 E3.1/E4.1（仅产清单）；不改 GraphQL schema/ORM/xmeta（仅读取记录现状）；不做逐字段角色绑定裁决（归 E4.1，受 P1.2 Q1/Q4 约束）；不做成本取值豁免裁决（归 P1.2 Q4 + E3.2）。
+> **E3.1 状态更新（2026-08-10，plan `2026-08-10-2059-2`）**：下方各表「拟落地层」列含 `E3.1` tag 的 43 字段（§9.7.2 hr PII 4 + §9.7.3 taxFileNo + §9.7.4 薪酬 19 + §9.7.5 合同 9 + §9.7.7 供应商价 4 + §9.7.8 成本 6）后端响应层 @BizLoader masking **已落地**（授权角色见明文，非授权见 null/打码）。纯 `E4.1` 字段（EDI 面 4 / ApprovalMatrix / RebateTier / SignatureRequest / SocialInsuranceConfig rate / taxRate / minOrderQuantity）不在 E3.1 范围，归 E4.1。逐字段实现清单 + role-view + mask 格式见 plan §Phase 1 字段集冻结表。
+> **非目标**：不实现 E4.1（仅产清单）；不改 GraphQL schema/ORM/xmeta（仅读取记录现状）；不做逐字段角色绑定裁决（归 E4.1，受 P1.2 Q1/Q4 约束）；不做成本取值豁免裁决（归 P1.2 Q4 + E3.2）。
 
 ### 9.7.1 七元组约定
 
@@ -559,6 +566,7 @@ gen-control `{type:'tpl', tpl:'${LEFT(field,N)}****${RIGHT(field,M)}'}` 经 `flu
 ### 9.7.10 复核结论（P1.1 范围内）
 
 1. **F7 既有 PII 集经实测证据确认**：hr 4 字段（idCardNo/mobilePhone/bankAccountId/socialSecurityNo）前端 tpl 打码 + logistics 2 字段（apiKey/apiSecret）写回型 `published=false`，与 §9 文档描述一致。
-2. **`taxFileNo` 现状确认**：`visibleOn=${false}` 隐藏非脱敏（§9.5 反模式），登记为「已发现敏感字段、现状态=隐藏、拟路由 E3.1」，**不计入** F7 已落地基线。
-3. **保密五面均无脱敏**：既无前端 tpl，也无后端 `@BizLoader`；字段 xmeta 均 `published=true queryable=true` → GraphQL schema 影响 **Y**（翻转 published/queryable 将改变对外契约），为 E4.1 契约变更门控（横切关注点 5）提供冻结输入。
-4. **清单可被 E3.1/E4.1 直接消费**：每字段七元组齐全，含 `propId`、`stdSqlType`、`published/queryable` 现值、GraphQL schema 影响标记、拟落地层。
+2. **`taxFileNo` 现状确认**：原 `visibleOn=${false}` 隐藏非脱敏（§9.5 反模式），**E3.1 已修正**（移除 `visibleOn` + 后端 @BizLoader 打码，授权=HR 专员）。
+3. **保密五面 E3.1 后端响应层 masking 已落地**：43 字段经 @BizLoader + 共享 MaskHelper 实现授权/非授权分视（数值 null / VARCHAR 打码串），不改 schema（published/queryable 不动）。E4.1 字段级可见性 + 代理视图裁决待定（受 P1.2 Q1/Q4 约束）。
+4. **E3.2 取值豁免不变量保持**：服务端成本卷算经 DAO 直读不经 BizModel 边界，E3.1 masking 不阻断跨域取值（守卫测试复跑绿）。
+5. **清单可被 E4.1 直接消费**：每字段七元组齐全，含 `propId`、`stdSqlType`、`published/queryable` 现值、GraphQL schema 影响标记、拟落地层。
