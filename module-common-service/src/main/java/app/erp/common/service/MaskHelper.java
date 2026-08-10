@@ -21,6 +21,12 @@ import java.util.Set;
  * <p><b>roleId 字面</b>：与 {@code nop_auth_role.csv} seed + 各域 {@code erp-*.action-auth.xml}
  * {@code roles} 属性一致（同 {@code ErpHrConstants.HR_ROLE_ID="HR 专员"} 范式）。
  *
+ * <p><b>E4.2 读访问审计挂钩</b>（plan 2026-08-11-1030-1，Phase 1 Decision (a) 单一 chokepoint）：
+ * 新增重载 {@link #maskDecimal(BigDecimal, Set, Object, String)} / {@link #maskLong(Long, Set, Object, String)}
+ * / {@link #maskString(String, StringMaskFormat, Set, Object, String)} 接收审计上下文（entity + fieldName），
+ * 在 authorized-clear-text 分支委托 {@link MaskAuditRecorder#recordDisclosure(Object, String, String)} 写
+ * 审计记录。旧无审计重载保留（back-compat，审计 OFF）。
+ *
  * <p>此为 masking 层工作假设，不 preempt E4.1 正式 field-level visibility + 代理视图裁决。
  */
 public final class MaskHelper {
@@ -54,21 +60,74 @@ public final class MaskHelper {
         return isAuthorized(authorizedRoles) ? value : format.mask(value);
     }
 
+    // ---- E4.2 带审计上下文重载（plan 2026-08-11-1030-1）—— authorized-clear-text 分支委托 MaskAuditRecorder ----
+
+    /**
+     * 数值字段（DECIMAL）masking + 读访问审计。授权角色见明文 → 委托 {@link MaskAuditRecorder}
+     * 记录披露事件；非授权返 {@code null}。
+     */
+    public static BigDecimal maskDecimal(BigDecimal value, Set<String> authorizedRoles,
+                                         Object entity, String fieldName) {
+        String matchedRole = findAuthorizedRole(authorizedRoles);
+        if (matchedRole != null) {
+            MaskAuditRecorder.recordDisclosureIfEnabled(entity, fieldName, matchedRole);
+            return value;
+        }
+        return null;
+    }
+
+    /**
+     * 数值字段（BIGINT）masking + 读访问审计。授权角色见明文 → 委托 {@link MaskAuditRecorder}
+     * 记录披露事件；非授权返 {@code null}。
+     */
+    public static Long maskLong(Long value, Set<String> authorizedRoles,
+                                Object entity, String fieldName) {
+        String matchedRole = findAuthorizedRole(authorizedRoles);
+        if (matchedRole != null) {
+            MaskAuditRecorder.recordDisclosureIfEnabled(entity, fieldName, matchedRole);
+            return value;
+        }
+        return null;
+    }
+
+    /**
+     * VARCHAR 字段 masking + 读访问审计。授权角色见明文 → 委托 {@link MaskAuditRecorder}
+     * 记录披露事件；非授权返打码字符串。
+     */
+    public static String maskString(String value, StringMaskFormat format, Set<String> authorizedRoles,
+                                    Object entity, String fieldName) {
+        String matchedRole = findAuthorizedRole(authorizedRoles);
+        if (matchedRole != null) {
+            MaskAuditRecorder.recordDisclosureIfEnabled(entity, fieldName, matchedRole);
+            return value;
+        }
+        return format.mask(value);
+    }
+
     // ---- 授权判定（fail-closed：无用户上下文 = 非授权 = 打码）----
 
     public static boolean isAuthorized(Set<String> authorizedRoles) {
+        return findAuthorizedRole(authorizedRoles) != null;
+    }
+
+    /**
+     * 返回命中的授权角色（roleId 字面），无授权返 {@code null}（fail-closed）。
+     *
+     * <p>E4.2 引入：匹配的首个授权角色用于审计记录的 {@code authorizedRole} 字段。
+     */
+    public static String findAuthorizedRole(Set<String> authorizedRoles) {
         if (authorizedRoles == null || authorizedRoles.isEmpty()) {
-            return false;
+            return null;
         }
         IUserContext ctx = IUserContext.get();
         if (ctx == null) {
-            return false;
+            return null;
         }
         for (String role : authorizedRoles) {
             if (ctx.isUserInRole(role)) {
-                return true;
+                return role;
             }
         }
-        return false;
+        return null;
     }
 }

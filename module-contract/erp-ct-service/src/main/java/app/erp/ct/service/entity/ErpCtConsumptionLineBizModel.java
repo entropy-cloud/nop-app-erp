@@ -25,7 +25,7 @@ public class ErpCtConsumptionLineBizModel extends CrudBizModel<ErpCtConsumptionL
 
     @BizLoader("amount")
     public BigDecimal amountMask(@ContextSource ErpCtConsumptionLine entity) {
-        return MaskHelper.maskDecimal(entity.getAmount(), CT_AMOUNT_ROLES);
+        return MaskHelper.maskDecimal(entity.getAmount(), CT_AMOUNT_ROLES, entity, "amount");
     }
 
 }

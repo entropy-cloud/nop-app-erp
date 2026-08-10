@@ -222,7 +222,7 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
 
     @BizLoader("totalRebateAmount")
     public BigDecimal totalRebateAmountMask(@ContextSource ErpCtRebateSettlement entity) {
-        return MaskHelper.maskDecimal(entity.getTotalRebateAmount(), CT_AMOUNT_ROLES);
+        return MaskHelper.maskDecimal(entity.getTotalRebateAmount(), CT_AMOUNT_ROLES, entity, "totalRebateAmount");
     }
 
 }

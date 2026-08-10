@@ -109,7 +109,7 @@ public class ErpHrEmploymentContractBizModel extends CrudBizModel<ErpHrEmploymen
 
     @BizLoader("socialInsuranceBase")
     public BigDecimal socialInsuranceBaseMask(@ContextSource ErpHrEmploymentContract entity) {
-        return MaskHelper.maskDecimal(entity.getSocialInsuranceBase(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getSocialInsuranceBase(), SALARY_MASK_ROLES, entity, "socialInsuranceBase");
     }
 
 }

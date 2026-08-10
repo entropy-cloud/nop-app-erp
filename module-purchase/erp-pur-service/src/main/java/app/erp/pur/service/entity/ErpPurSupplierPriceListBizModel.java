@@ -24,6 +24,6 @@ public class ErpPurSupplierPriceListBizModel extends CrudBizModel<ErpPurSupplier
 
     @BizLoader("unitPrice")
     public BigDecimal unitPriceMask(@ContextSource ErpPurSupplierPriceList entity) {
-        return MaskHelper.maskDecimal(entity.getUnitPrice(), PRICE_ROLES);
+        return MaskHelper.maskDecimal(entity.getUnitPrice(), PRICE_ROLES, entity, "unitPrice");
     }
 }

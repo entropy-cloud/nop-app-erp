@@ -411,16 +411,16 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     @BizLoader("purchasePrice")
     public BigDecimal purchasePriceMask(@ContextSource ErpMdMaterialSku entity) {
-        return MaskHelper.maskDecimal(entity.getPurchasePrice(), PRICE_ROLES);
+        return MaskHelper.maskDecimal(entity.getPurchasePrice(), PRICE_ROLES, entity, "purchasePrice");
     }
 
     @BizLoader("salePrice")
     public BigDecimal salePriceMask(@ContextSource ErpMdMaterialSku entity) {
-        return MaskHelper.maskDecimal(entity.getSalePrice(), PRICE_ROLES);
+        return MaskHelper.maskDecimal(entity.getSalePrice(), PRICE_ROLES, entity, "salePrice");
     }
 
     @BizLoader("wholesalePrice")
     public BigDecimal wholesalePriceMask(@ContextSource ErpMdMaterialSku entity) {
-        return MaskHelper.maskDecimal(entity.getWholesalePrice(), PRICE_ROLES);
+        return MaskHelper.maskDecimal(entity.getWholesalePrice(), PRICE_ROLES, entity, "wholesalePrice");
     }
 }

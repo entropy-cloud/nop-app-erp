@@ -56,6 +56,9 @@ quarkus:
    erp:
      data-auth:
        role-row-filter-enabled: false
+     audit:
+       field-read:
+         enabled: false
 "%test":
    nop:
      auth:
@@ -66,6 +69,9 @@ quarkus:
    erp:
      data-auth:
        role-row-filter-enabled: true
+     audit:
+       field-read:
+         enabled: true
 "%prod":
    nop:
      auth:
@@ -75,3 +81,6 @@ quarkus:
    erp:
      data-auth:
        role-row-filter-enabled: false
+     audit:
+       field-read:
+         enabled: false

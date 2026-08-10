@@ -42,12 +42,12 @@ public class ErpMfgCostRollupLineBizModel extends CrudBizModel<ErpMfgCostRollupL
 
     @BizLoader("totalCost")
     public BigDecimal totalCostMask(@ContextSource ErpMfgCostRollupLine entity) {
-        return MaskHelper.maskDecimal(entity.getTotalCost(), COST_ROLES);
+        return MaskHelper.maskDecimal(entity.getTotalCost(), COST_ROLES, entity, "totalCost");
     }
 
     @BizLoader("unitCost")
     public BigDecimal unitCostMask(@ContextSource ErpMfgCostRollupLine entity) {
-        return MaskHelper.maskDecimal(entity.getUnitCost(), COST_ROLES);
+        return MaskHelper.maskDecimal(entity.getUnitCost(), COST_ROLES, entity, "unitCost");
     }
 
     // ---------- E4.1 代理视图：要素成本档位映射（autoCreateField=true，Q1 (d)）----------

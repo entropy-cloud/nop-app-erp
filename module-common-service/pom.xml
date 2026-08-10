@@ -41,10 +41,17 @@
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-wf-core</artifactId>
         </dependency>
-        <!-- nop-auth-service: DefaultDataAuthChecker 委托（plan 2026-07-31-1023-3-r3-4 角色侧行级数据权限 checker） -->
+        <!-- nop-auth-service: DefaultDataAuthChecker 委托（plan 2026-07-31-1023-3-r3-4 角色侧行级数据权限 checker）
+             + IAuditService 复用（plan 2026-08-11-1030-1 E4.2 读访问审计记录器） -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-auth-service</artifactId>
+        </dependency>
+        <!-- test-only: E4.2 MaskAuditRecorder + MaskHelper 单元测试（plan 2026-08-11-1030-1 Phase 3） -->
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

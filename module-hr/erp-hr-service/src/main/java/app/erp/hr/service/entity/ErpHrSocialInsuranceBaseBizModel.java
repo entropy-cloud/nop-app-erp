@@ -25,12 +25,12 @@ public class ErpHrSocialInsuranceBaseBizModel extends CrudBizModel<ErpHrSocialIn
 
     @BizLoader("socialInsuranceBase")
     public BigDecimal socialInsuranceBaseMask(@ContextSource ErpHrSocialInsuranceBase entity) {
-        return MaskHelper.maskDecimal(entity.getSocialInsuranceBase(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getSocialInsuranceBase(), SALARY_MASK_ROLES, entity, "socialInsuranceBase");
     }
 
     @BizLoader("housingFundBase")
     public BigDecimal housingFundBaseMask(@ContextSource ErpHrSocialInsuranceBase entity) {
-        return MaskHelper.maskDecimal(entity.getHousingFundBase(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getHousingFundBase(), SALARY_MASK_ROLES, entity, "housingFundBase");
     }
 
 }

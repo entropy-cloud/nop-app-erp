@@ -23,4 +23,13 @@
          二级保险：nop.auth.enable-data-auth 默认 false（data-auth 管道关闭）。 -->
     <bean id="nopDataAuthChecker"
           class="app.erp.common.auth.ErpRoleDataAuthChecker"/>
+
+    <!-- E4.2 保密字段读访问审计记录器（plan 2026-08-11-1030-1，Phase 1 Decision (a)/(b)）。
+         由 MaskHelper 静态方法经 instance() 引用委托（MaskHelper = final + static 无法直接 @Inject）。
+         注入平台 IAuditService（nopAuditService，bean 来自 nop/auth/beans/auth-service.beans.xml）；
+         @PostConstruct 注册静态 instance 供 MaskHelper 调用，@PreDestroy 清理。
+         config-gated 默认关闭（erp.audit.field-read.enabled=false）：OFF 时 recordDisclosure 首行 return 零开销。
+         fail-safe：无 IUserContext / 无 instance（单元测试）= 不审计。 -->
+    <bean id="erpMaskAuditRecorder"
+          class="app.erp.common.service.MaskAuditRecorder"/>
 </beans>

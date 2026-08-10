@@ -164,12 +164,12 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
 
     @BizLoader("totalAccumulatedAmount")
     public BigDecimal totalAccumulatedAmountMask(@ContextSource ErpCtRebateAgreement entity) {
-        return MaskHelper.maskDecimal(entity.getTotalAccumulatedAmount(), CT_AMOUNT_ROLES);
+        return MaskHelper.maskDecimal(entity.getTotalAccumulatedAmount(), CT_AMOUNT_ROLES, entity, "totalAccumulatedAmount");
     }
 
     @BizLoader("estimatedRebateAmount")
     public BigDecimal estimatedRebateAmountMask(@ContextSource ErpCtRebateAgreement entity) {
-        return MaskHelper.maskDecimal(entity.getEstimatedRebateAmount(), CT_AMOUNT_ROLES);
+        return MaskHelper.maskDecimal(entity.getEstimatedRebateAmount(), CT_AMOUNT_ROLES, entity, "estimatedRebateAmount");
     }
 
 }

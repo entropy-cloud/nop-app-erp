@@ -157,72 +157,72 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
 
     @BizLoader("basicSalary")
     public BigDecimal basicSalaryMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getBasicSalary(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getBasicSalary(), SALARY_MASK_ROLES, entity, "basicSalary");
     }
 
     @BizLoader("positionAllowance")
     public BigDecimal positionAllowanceMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getPositionAllowance(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getPositionAllowance(), SALARY_MASK_ROLES, entity, "positionAllowance");
     }
 
     @BizLoader("performanceBonus")
     public BigDecimal performanceBonusMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getPerformanceBonus(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getPerformanceBonus(), SALARY_MASK_ROLES, entity, "performanceBonus");
     }
 
     @BizLoader("overtimePay")
     public BigDecimal overtimePayMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getOvertimePay(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getOvertimePay(), SALARY_MASK_ROLES, entity, "overtimePay");
     }
 
     @BizLoader("mealAllowance")
     public BigDecimal mealAllowanceMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getMealAllowance(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getMealAllowance(), SALARY_MASK_ROLES, entity, "mealAllowance");
     }
 
     @BizLoader("transportAllowance")
     public BigDecimal transportAllowanceMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getTransportAllowance(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getTransportAllowance(), SALARY_MASK_ROLES, entity, "transportAllowance");
     }
 
     @BizLoader("otherAllowance")
     public BigDecimal otherAllowanceMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getOtherAllowance(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getOtherAllowance(), SALARY_MASK_ROLES, entity, "otherAllowance");
     }
 
     @BizLoader("grossSalary")
     public BigDecimal grossSalaryMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getGrossSalary(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getGrossSalary(), SALARY_MASK_ROLES, entity, "grossSalary");
     }
 
     @BizLoader("socialInsurance")
     public BigDecimal socialInsuranceMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getSocialInsurance(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getSocialInsurance(), SALARY_MASK_ROLES, entity, "socialInsurance");
     }
 
     @BizLoader("housingFund")
     public BigDecimal housingFundMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getHousingFund(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getHousingFund(), SALARY_MASK_ROLES, entity, "housingFund");
     }
 
     @BizLoader("taxAmount")
     public BigDecimal taxAmountMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getTaxAmount(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getTaxAmount(), SALARY_MASK_ROLES, entity, "taxAmount");
     }
 
     @BizLoader("otherDeductions")
     public BigDecimal otherDeductionsMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getOtherDeductions(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getOtherDeductions(), SALARY_MASK_ROLES, entity, "otherDeductions");
     }
 
     @BizLoader("netSalary")
     public BigDecimal netSalaryMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskDecimal(entity.getNetSalary(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getNetSalary(), SALARY_MASK_ROLES, entity, "netSalary");
     }
 
     @BizLoader("cumulativeData")
     public String cumulativeDataMask(@ContextSource ErpHrSalary entity) {
-        return MaskHelper.maskString(entity.getCumulativeData(), StringMaskFormat.FULL, SALARY_MASK_ROLES);
+        return MaskHelper.maskString(entity.getCumulativeData(), StringMaskFormat.FULL, SALARY_MASK_ROLES, entity, "cumulativeData");
     }
 
     // ---------- helpers ----------

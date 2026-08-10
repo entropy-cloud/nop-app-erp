@@ -25,12 +25,12 @@ public class ErpCtRebateAccrualBizModel extends CrudBizModel<ErpCtRebateAccrual>
 
     @BizLoader("billAmountSource")
     public BigDecimal billAmountSourceMask(@ContextSource ErpCtRebateAccrual entity) {
-        return MaskHelper.maskDecimal(entity.getBillAmountSource(), CT_AMOUNT_ROLES);
+        return MaskHelper.maskDecimal(entity.getBillAmountSource(), CT_AMOUNT_ROLES, entity, "billAmountSource");
     }
 
     @BizLoader("accruedRebate")
     public BigDecimal accruedRebateMask(@ContextSource ErpCtRebateAccrual entity) {
-        return MaskHelper.maskDecimal(entity.getAccruedRebate(), CT_AMOUNT_ROLES);
+        return MaskHelper.maskDecimal(entity.getAccruedRebate(), CT_AMOUNT_ROLES, entity, "accruedRebate");
     }
 
 }

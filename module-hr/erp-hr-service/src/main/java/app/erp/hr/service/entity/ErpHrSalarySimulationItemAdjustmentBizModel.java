@@ -25,12 +25,12 @@ public class ErpHrSalarySimulationItemAdjustmentBizModel extends CrudBizModel<Er
 
     @BizLoader("originalAmount")
     public BigDecimal originalAmountMask(@ContextSource ErpHrSalarySimulationItemAdjustment entity) {
-        return MaskHelper.maskDecimal(entity.getOriginalAmount(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getOriginalAmount(), SALARY_MASK_ROLES, entity, "originalAmount");
     }
 
     @BizLoader("adjustedAmount")
     public BigDecimal adjustedAmountMask(@ContextSource ErpHrSalarySimulationItemAdjustment entity) {
-        return MaskHelper.maskDecimal(entity.getAdjustedAmount(), SALARY_MASK_ROLES);
+        return MaskHelper.maskDecimal(entity.getAdjustedAmount(), SALARY_MASK_ROLES, entity, "adjustedAmount");
     }
 
 }

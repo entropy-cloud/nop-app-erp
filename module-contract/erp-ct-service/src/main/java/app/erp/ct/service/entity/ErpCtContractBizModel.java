@@ -194,7 +194,7 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @BizLoader("totalAmount")
     public BigDecimal totalAmountMask(@ContextSource ErpCtContract entity) {
-        return MaskHelper.maskDecimal(entity.getTotalAmount(), CT_AMOUNT_ROLES);
+        return MaskHelper.maskDecimal(entity.getTotalAmount(), CT_AMOUNT_ROLES, entity, "totalAmount");
     }
 
 }

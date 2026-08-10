@@ -327,27 +327,27 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
 
     @BizLoader("idCardNo")
     public String idCardNoMask(@ContextSource ErpHrEmployee entity) {
-        return MaskHelper.maskString(entity.getIdCardNo(), StringMaskFormat.ID_CARD, PII_MASK_ROLES);
+        return MaskHelper.maskString(entity.getIdCardNo(), StringMaskFormat.ID_CARD, PII_MASK_ROLES, entity, "idCardNo");
     }
 
     @BizLoader("mobilePhone")
     public String mobilePhoneMask(@ContextSource ErpHrEmployee entity) {
-        return MaskHelper.maskString(entity.getMobilePhone(), StringMaskFormat.MOBILE, PII_MASK_ROLES);
+        return MaskHelper.maskString(entity.getMobilePhone(), StringMaskFormat.MOBILE, PII_MASK_ROLES, entity, "mobilePhone");
     }
 
     @BizLoader("bankAccountId")
     public Long bankAccountIdMask(@ContextSource ErpHrEmployee entity) {
-        return MaskHelper.maskLong(entity.getBankAccountId(), PII_MASK_ROLES);
+        return MaskHelper.maskLong(entity.getBankAccountId(), PII_MASK_ROLES, entity, "bankAccountId");
     }
 
     @BizLoader("socialSecurityNo")
     public String socialSecurityNoMask(@ContextSource ErpHrEmployee entity) {
-        return MaskHelper.maskString(entity.getSocialSecurityNo(), StringMaskFormat.FULL, PII_MASK_ROLES);
+        return MaskHelper.maskString(entity.getSocialSecurityNo(), StringMaskFormat.FULL, PII_MASK_ROLES, entity, "socialSecurityNo");
     }
 
     @BizLoader("taxFileNo")
     public String taxFileNoMask(@ContextSource ErpHrEmployee entity) {
-        return MaskHelper.maskString(entity.getTaxFileNo(), StringMaskFormat.FULL, TAX_FILE_MASK_ROLES);
+        return MaskHelper.maskString(entity.getTaxFileNo(), StringMaskFormat.FULL, TAX_FILE_MASK_ROLES, entity, "taxFileNo");
     }
 
     // ---------- helpers for tests ----------

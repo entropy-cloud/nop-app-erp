@@ -175,7 +175,7 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
 
     @BizLoader("amount")
     public BigDecimal amountMask(@ContextSource ErpCtInvoicePlan entity) {
-        return MaskHelper.maskDecimal(entity.getAmount(), CT_AMOUNT_ROLES);
+        return MaskHelper.maskDecimal(entity.getAmount(), CT_AMOUNT_ROLES, entity, "amount");
     }
 
 }
