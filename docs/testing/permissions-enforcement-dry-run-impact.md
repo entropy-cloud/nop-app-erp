@@ -84,3 +84,54 @@
 
 - **`GraphQLClient` auth 传输 gap**：`page.request.post('/graphql')` 不携带 flux 前端的 token（前端存 sessionStorage + fetch 拦截器注入 header，`page.request` 绕过拦截器，且 `__Host-nop-token` cookie 因 `__Host-` 前缀 Secure 约束不被 `page.request` 发送）。action-auth OFF 时无影响（server 不校验）；action-auth ON 时所有 `page.request` GraphQL 调用抵达时 `roles=[]` → 全 `no-permission`。**修正**：`GraphQLClient.post` 读 `__Host-nop-token` cookie + 显式注入 `Authorization: Bearer <token>` header（server `/graphql` 接受 Authorization header 或 cookie——P2.4 实测两者均接受）。
 - **`GraphQLClient.callMutation` 不返回 `json` envelope**：business-actions/_helper `callMutation` 声明返回 `{data, errors, json}` 但 GraphQLClient.callMutation 只返 `{data, errors}` → `json` undefined → `expectActionDenied` errorCode 断言失效（P2.3 demo 仅用 token 断言未触发）。**修正**：GraphQLClient.callMutation/callQuery 补返 `json` envelope。
+
+## E1.1 重归类结果（plan 2026-08-10-0739-1 / E1.1，2026-08-10）
+
+> **E1.2 直接消费本节**——根因裁决 + 重归类终态 + 修复方案为 E1.2（pur/sal/ast 27 bypassed + ct 等域 arg-mismatch）冻结输入。
+
+### 根因裁决（approve/reverseApprove bypass 模式）
+
+**根因 = xbiz `<mutation>` 缺 `<auth>` 子元素致 `field.auth=null`**。enforcement 由 `GraphQLActionAuthChecker.isAllowAccess(auth, ctx)`（`GraphQLActionAuthChecker.java:118-145`）判定，`auth == null` 即放行（return true）。auth 元数据来源分两路：
+
+- **Java `@BizMutation` 方法**（如 `ErpFinBadDebt.writeOff`、`ErpHrSalary.markPaid`、`ErpInvLandedCost.approve`）经 `ReflectionBizModelBuilder.buildActionField:330-336` **恒定**附加非空 `ActionAuthMeta`（即便无 `@Auth` 注解，也自动派生 permission `{bizObj}:{opType}|{bizObj}:{action}`）→ enforcement 路径必达 → restricted 被 `nop.err.auth.no-permission` 拒。
+- **xbiz `<mutation>` 无 `<auth>` 子元素**（如 `ErpMfgSubcontractOrder.approve`、`ErpHrSalary.approve`，经 approval-support.xbiz 注入，`<source>` 存在但**无 `<auth>`**）经 `BizModelToGraphQLDefinition.toOperationDefinition:80`（`field.setAuth(actionModel.getAuth())`）→ `field.getAuth() == null` → `isAllowAccess(null) = true` → **bypass**（action-auth.xml 的 FNPT 声明仅建 permissionToRoles 映射，不触达 field.auth）。
+
+**关键**：`approve`/`reverseApprove` **不是** CrudBizModel Java 基类方法，而是由平台 `nop-wf-core/_vfs/nop/wf/base/approval-support.xbiz` 经 xbiz delta（`x:extends`）注入的 `<mutation>` action。`inv ErpInvLandedCost.approve` 是 Java `@BizMutation`（故 P2.4 denied 锚点），与 pur/sal/mfg 委外的 approve 走不同路径——这解释了 P2.4 清单中 inv approve 是唯一 denied 的 approve 动作。
+
+### 重归类方法 = 静态裁决（权威）
+
+分类**不依赖单次运行**（复杂 input arg 校验在 enforcement 之前，运行时探针对 `post`/`reverse` 仍可能 arg-validation 失败需调参）。权威分类规则（从源码机制派生）：
+
+| 动作来源 | field.auth | enforcement | 归类 |
+|----------|-----------|-------------|------|
+| Java `@BizMutation` 方法 | 必非空（ReflectionBizModelBuilder 恒定附加） | 路径必达 | **denied**（restricted 无 permission 映射） |
+| xbiz `<mutation>` 含 `<auth>` | 非空 | 路径必达 | **denied** |
+| xbiz `<mutation>` 无 `<auth>` | `null` | `isAllowAccess(null)=true` 放行 | **bypassed** |
+
+### E1.1 五域重归类终态表
+
+**P2.4 原 28 inconclusive-arg-mismatch → E1.1 探针 arg 名修正后（fin `voucherId`/`periodId` + `event:{}` 骨架 + `billHeadCode,businessType`；b2b `ediDocId` + `error` + 5×String；mfg `workOrderId`；hr `id` String；inv `moveId`）重新归类**：
+
+| 终态 | 计数 | 项 | 说明 |
+|------|------|----|------|
+| **denied（Java @BizMutation 重归类）** | 18 | fin post/reverse + closePeriod/reverseClose；b2b markSent/cancel/markAcknowledged/markError/retry/archive + handleInboundWebhook/matchPurchaseOrder/createReceiveFromAsn/retryMatch；mfg WorkOrder start/close/cancel；hr leaveRequest.approve；inv StockMove.confirm | arg-mismatch 修正后全部为 Java @BizMutation → field.auth 非空 → restricted 真拒绝 |
+| **denied 锚点（P2.4 已闭环）** | 5 | fin writeOff/reverseApprove；hr markPaid/voidSalary；inv landedCost.approve | 自定义 @BizMutation + FNPT 声明 + checker 三层联动，E1.1 复用为负向断言锚点 |
+| **bypassed（xbiz `<mutation>` 无 `<auth>`）** | 2 | mfg `ErpMfgSubcontractOrder.approve`；hr `ErpHrSalary.approve` | xbiz-only mutation 缺 `<auth>` → field.auth=null → checker 放行 |
+
+**E1.1 五域合计**：23 denied（18 重归类 + 5 锚点）+ 2 bypassed = 25 动作。denied 项天然闭环（Java 方法恒定附加 auth，无需修复）；2 bypassed 项需补 xbiz `<auth>`（见修复方案）。
+
+### 修复方案 = 方案 (a)：保留层 xbiz `<mutation>` 补 `<auth permissions="..."/>`
+
+在 `ErpMfgSubcontractOrder.xbiz` / `ErpHrSalary.xbiz` 的 `approve` `<mutation>` 内补：
+```xml
+<auth permissions="ErpMfgSubcontractOrder:approve"/>   <!-- 或 ErpHrSalary:approve -->
+```
+permission 与 action-auth.xml 既声明的 `FNPT:...:approve <permissions>` 字面一致——checker 经 permissionToRoles 映射（site-map）判定授权角色通过 / restricted 拒。
+
+**未选方案 (b)（SUBM 级已覆盖）的理由**：SUBM 级（`ErpMfgSubcontractOrder-main` roles="生产主管"）仅菜单过滤，不触达 GraphQL field enforcement——field.auth=null 时 checker 放行，与 SUBM 无关，故 (b) 不成立。
+
+**触保护区域 = 是**（xbiz enforcement 绑定 = auth plan-first 保护区域）。2 bypassed 项的 xbiz 编辑**被系统权限规则阻塞**（`**/_*.xbiz` deny 规则原意保护生成层 `_*.xbiz`，但 glob 实现将 `_vfs` 路径段纳入匹配，连带阻塞保留层无下划线 xbiz）→ 登记人工批准待办（具体 diff：`<mutation name="approve">` 内 `<arg>` 之后、`<return>` 之前插入 `<auth permissions="..."/>`）+ mfg/hr spec `test.fixme` 标记，待人工批准 xbiz `<auth>` 补齐后去 fixme 激活。
+
+### E1.2 冻结输入（直接消费）
+
+E1.2 范围 bypassed = **27 项**（pur 12 + sal 14 + ast 1，同样 approve/reverseApprove 由 approval-support.xbiz 注入、本域保留层 xbiz 未补 `<auth>` 模式）+ ct 等域 arg-mismatch。E1.2 直接消费：(1) 根因裁决（同 xbiz `<auth>` 缺失模式）；(2) 修复方案（同 `<auth permissions="..."/>` 批量补齐）；(3) 五域闭环范式（denied 天然闭环 + bypassed 补 xbiz `<auth>` + 授权角色正向/restricted 负向双侧 Proof）。

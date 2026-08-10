@@ -525,6 +525,54 @@ E1.1 五高危域 8 授权角色各 1 角色账号 + 1 通用受限账号（共 
 
 **Proof 载体**：`tests/e2e/negative/role-login.smoke.spec.ts`（14 tests）——9 账号 `LoginApi__login` GraphQL roleInfos 断言 + 双命名空间 Proof + 密码 "123" 往返 + `loginAsRole` fresh page 登录可演示（经 `__Host-nop-token` HTTP-only cookie JWT `preferred_username` 解码验证身份）+ 未知 key 回退 restricted。
 
+### E1.1 五域负向测试范式（plan 2026-08-10-0739-1 / E1.1，2026-08-10）
+
+E1.1 在 action-auth ON（P2.4 dry-run）基线上，对 finance/b2b/manufacturing/inventory/hr 五高危域逐域交付**授权角色正向（enforcement 通过 = 种子授权 CAN）+ restricted 负向（真拒绝 `nop.err.auth.no-permission`）双侧 Proof**。根因裁决与重归类终态见 `permissions-enforcement-dry-run-impact.md` §E1.1 重归类结果；本节记录可复用的负向测试范式。
+
+**灰度纪律（roadmap 横切 3，强制）**：每域 spec 内联「admin 兜底绿 → 授权角色正向 → restricted 拒 → 下一域」次序（admin 兜底由 P2.2a skip-check live 保证，E1.1 spec 聚焦后两侧）。
+
+**双侧 Proof 模板**（`tests/e2e/negative/e1-1-*.smoke.spec.ts`）：
+
+1. **restricted 负向（单测循环，单次登录）**——`loginAsRole(page, 'restricted')` 后遍历该域全部 E1.1 动作，每个动作 `expectActionDenied(rej, { errorCode: NO_PERMISSION, token: '没有访问权限' })`，断言 enforcement 真拒绝。
+2. **授权角色正向（每角色独立 test，fresh page）**——按 `action-auth.xml` FNPT `roles=` 声明的授权角色分组，每角色 `loginAsRole(page, role)` 后遍历该角色动作，断言 `json.extensions["nop-error-code"]` **不**等于 `NO_PERMISSION`（业务逻辑层可能因哨兵 id 返回 not-found / invalid-status，但 enforcement 层放行 = 种子授权证明）。
+
+```ts
+// restricted 负向
+test('restricted denied for all <domain> E1.1 actions', async ({ page }) => {
+  await loginAsRole(page, 'restricted');
+  for (const a of ACTIONS) {
+    const rej = await call(page, a);
+    expectActionDenied(rej, { errorCode: ENFORCEMENT_ERROR_CODES.NO_PERMISSION, token: '没有访问权限' });
+  }
+});
+// 授权角色正向（每角色 fresh page，避免 SPA 角色切换不重定向）
+for (const [role, actions] of actionsByRole) {
+  test(`authorized role ${role} enforcement passes`, async ({ page }) => {
+    await loginAsRole(page, role);
+    for (const a of actions) {
+      const rej = await call(page, a);
+      expect(rej.json?.extensions?.['nop-error-code']).not.toBe(ENFORCEMENT_ERROR_CODES.NO_PERMISSION);
+    }
+  });
+}
+```
+
+**探针 arg 适配（probeArgs）**：动作 arg 名按各 BizModel Java 方法 / xbiz `<arg>` 实测签名修正（fin `post` 复杂 input 用 `{event:{}}`、`reverse(billHeadCode, businessType)`；mfg `workOrderId`；b2b `ediDocId` + `handleInboundWebhook` 5×String；hr `id` String；inv `moveId`）。返 Long/scalar 的动作（如 `ErpFinVoucher.post/reverse`）须用 `callMutationScalar`（无子选择）。
+
+**bypassed 项处理（保护区域暂停协议）**：经根因裁决归类为 bypassed（xbiz `<mutation>` 无 `<auth>`）的动作，其 xbiz `<auth>` 补齐属 auth plan-first 保护区域——若被系统权限规则阻塞，以 `test.fixme` 标记该动作的负向断言，待人工批准 xbiz 编辑后去 fixme 激活（mfg `ErpMfgSubcontractOrder.approve` + hr `ErpHrSalary.approve` 当前 fixme）。
+
+**五域 spec 清单**（flux 引擎，`playwright --list` 全解析通过；runtime 绿归 Closure Gates 服务器启动）：
+
+| 域 | spec | 动作数 | 授权角色 | fixme（bypassed） |
+|----|------|--------|----------|-------------------|
+| finance | `e1-1-finance.smoke.spec.ts` | 6 | 财务员 / 管理员 | — |
+| b2b | `e1-1-b2b.smoke.spec.ts` | 10 | B2B 管理员 / B2B 对账员 | — |
+| manufacturing | `e1-1-manufacturing.smoke.spec.ts` | 4 | 生产主管 | `ErpMfgSubcontractOrder.approve` |
+| inventory | `e1-1-inventory.smoke.spec.ts` | 2 | 库管员 | — |
+| human-resource | `e1-1-hr.smoke.spec.ts` | 4 | 薪酬审批人 / HR 专员 | `ErpHrSalary.approve` |
+
+合计 5 spec / 12 test（10 active + 2 fixme）。闭环率 = 23/25 E1.1 动作（92%），2 项 pending 人工批准 xbiz `<auth>` 编辑（保护区域硬约束）。
+
 
 
 在业务动作层之上，1249-1 叠加了 P2P（Procure-to-Pay）+ O2C（Order-to-Cash）核心业财循环的跨域编排链浏览器层端到端验证（解除 0814-2 Deferred「跨域编排链完整 E2E」+「业财过账凭证数值断言」）。经 GraphQL `/graphql` 驱动全链 `__save`（头+行）→ `submitForApproval` → `approve`，每步 `verifyState` 经 `__get` 独立断言 approveStatus 翻转，并断言业财过账产物（库存移动 + GL 凭证 + AR-AP 辅助账）。
