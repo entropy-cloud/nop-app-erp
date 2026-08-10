@@ -1,10 +1,38 @@
 import type { Page } from '@playwright/test';
 
+/**
+ * 浏览器内 GraphQL 调用客户端（plan 2026-07-09-0814-2 + 2026-08-10-0741-1 P2.4 auth 修正）。
+ *
+ * **auth 传输（P2.4 修正）**：flux 前端（nop-chaos-flux）将 access token 存于 sessionStorage
+ * （`auth:tokens:v1`），并在自身 `fetch` 拦截器中注入 auth header。但 Playwright `page.request`
+ * （APIRequestContext）绕过前端拦截器做裸 HTTP 调用，且 `__Host-nop-token` cookie 因 `__Host-`
+ * 前缀 Secure 约束在 `page.request` 路径不被发送。结果：action-auth OFF 时 server 不校验 → 调用
+ * 等价已认证；action-auth ON 时 server 校验 → `page.request` 抵达时 `roles=[]` → 全 `nop.err.auth.no-permission`。
+ *
+ * **修正**：`post()` 读取 `__Host-nop-token` cookie 值并显式注入 `Authorization: Bearer <token>`
+ * header（server `/graphql` 认证过滤器读 `Authorization` header 或 `__Host-nop-token` cookie——
+ * P2.4 实测两者均接受）。每次 post 读 cookie（cheap）以正确支持 `loginAsRole` 身份切换
+ * （negative 原语 session 清空 + 新登录 → cookie 值变化 → GraphQLClient 自然跟随）。
+ */
 export class GraphQLClient {
   constructor(private page: Page) {}
 
+  private async getAccessToken(): Promise<string | null> {
+    const cookies = await this.page.context().cookies();
+    const tokenCookie =
+      cookies.find((c) => c.name === '__Host-nop-token') ??
+      cookies.find((c) => c.name === 'nop-token');
+    return tokenCookie?.value ?? null;
+  }
+
   private async post(query: string, variables?: Record<string, unknown>): Promise<any> {
+    const headers: Record<string, string> = {};
+    const token = await this.getAccessToken();
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
     const resp = await this.page.request.post('/graphql', {
+      headers,
       data: variables ? { query, variables } : { query },
     });
     return resp.json();
@@ -58,7 +86,7 @@ export class GraphQLClient {
     action: string,
     args: Record<string, unknown>,
     fields = 'id',
-  ): Promise<{ data: T | null; errors: any[] | null }> {
+  ): Promise<{ data: T | null; errors: any[] | null; json: any }> {
     const parts: string[] = [];
     const varDecls: string[] = [];
     const vars: Record<string, unknown> = {};
@@ -75,8 +103,12 @@ export class GraphQLClient {
     const query = varDecls.length
       ? `mutation(${varDecls.join(',')}){ ${entityName}__${action}(${parts.join(',')}){ ${fields} } }`
       : `mutation{ ${entityName}__${action}(${parts.join(',')}){ ${fields} } }`;
-    const json = await this.post(query, varDecls.length ? vars : undefined);
-    return { data: json?.data?.[`${entityName}__${action}`] ?? null, errors: json?.errors ?? null };
+    const json: any = await this.post(query, varDecls.length ? vars : undefined);
+    return {
+      data: json?.data?.[`${entityName}__${action}`] ?? null,
+      errors: json?.errors ?? null,
+      json,
+    };
   }
 
   async callMutationOk<T = any>(

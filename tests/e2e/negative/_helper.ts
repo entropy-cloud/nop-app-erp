@@ -11,7 +11,7 @@
  * 两者同经 `GraphQLEngine.buildGraphQLResponse` → 同 `{errors}` 信封 + 同 `extensions["nop-error-code"]`
  * 位置（Phase 1 静态表征结论），故按 `{errors}` 存在 + 可选 token/errorCode 匹配设计。
  *
- * **enforcement 拒绝形状（Phase 1 静态表征，运行时确认 gated on P2.4）**：
+ * **enforcement 拒绝形状（运行时已确认 P2.4 dry-run，形状与静态表征一致）**：
  *   - HTTP status 恒 200（`GraphQLWebService.runGraphQL` 硬编码 200，非 403）；
  *   - body `{errors:[{message}], data:null, extensions:{"nop-error-code":..., "nop-status":-1}}`；
  *   - errorCode 在**顶层** `extensions["nop-error-code"]`，不在每条 error entry 内；
@@ -61,8 +61,10 @@ export interface ActionDeniedOptions {
 }
 
 /**
- * enforcement 专用 ErrorCode 常量（Phase 1 静态表征，运行时确认随 P2.4）。
- * P2.4 翻启 action-auth 后，负向 spec 可用这些常量做 `opts.errorCode` 精确断言收敛。
+ * enforcement 专用 ErrorCode 常量（运行时已确认 P2.4 dry-run，形状与静态表征一致）。
+ * P2.4 翻启 action-auth 后经 `tests/e2e/negative/p2.4-proof-b.smoke.spec.ts` 实测拒绝信封
+ * `{data:null, errors:[{message:"没有访问权限"}], extensions:{"nop-error-code":"nop.err.auth.no-permission","nop-status":-1}}`，
+ * NO_PERMISSION 常量值收敛无需调整。负向 spec 可用这些常量做 `opts.errorCode` 精确断言。
  */
 export const ENFORCEMENT_ERROR_CODES = {
   /** 顶层 @BizMutation/@BizQuery action 缺 FNPT 权限点（GraphQLActionAuthChecker.java:102）。 */

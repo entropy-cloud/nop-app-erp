@@ -59,7 +59,7 @@ quarkus:
 "%test":
    nop:
      auth:
-       enable-action-auth: false
+       enable-action-auth: true
        enable-data-auth: false
        skip-check-for-admin: true
    erp:
