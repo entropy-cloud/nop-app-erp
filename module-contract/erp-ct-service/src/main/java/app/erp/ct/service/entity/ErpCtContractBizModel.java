@@ -1,8 +1,10 @@
 
 package app.erp.ct.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -10,6 +12,7 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 
+import app.erp.common.service.MaskHelper;
 import app.erp.contract.dao.entity.ErpCtContract;
 import app.erp.contract.dao.entity.ErpCtContractVersion;
 import app.erp.ct.biz.IErpCtContractBiz;
@@ -20,8 +23,10 @@ import app.erp.ct.service.processor.ErpCtContractActivateProcessor;
 import app.erp.ct.service.processor.ErpCtContractAmendProcessor;
 import jakarta.inject.Inject;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import io.nop.biz.crud.EntityData;
@@ -181,6 +186,15 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
                 .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode())
                 .param(ErpCtErrors.ARG_CURRENT_STATUS, contract.getStatus())
                 .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);
+    }
+
+    // ---------- E3.1 后端响应层脱敏（@BizLoader，plan 2026-08-10-2059-2）----------
+    // 授权 = 合同审批人/合同专员；非授权 = null。委托 MaskHelper（fail-closed）。
+    private static final Set<String> CT_AMOUNT_ROLES = Set.of(MaskHelper.ROLE_CT_APPROVER, MaskHelper.ROLE_CT_CLERK);
+
+    @BizLoader("totalAmount")
+    public BigDecimal totalAmountMask(@ContextSource ErpCtContract entity) {
+        return MaskHelper.maskDecimal(entity.getTotalAmount(), CT_AMOUNT_ROLES);
     }
 
 }

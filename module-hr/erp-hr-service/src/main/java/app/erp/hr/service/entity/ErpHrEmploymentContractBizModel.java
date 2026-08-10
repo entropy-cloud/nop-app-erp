@@ -1,9 +1,11 @@
 
 package app.erp.hr.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -13,6 +15,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 
+import app.erp.common.service.MaskHelper;
 import app.erp.hr.biz.IErpHrEmploymentContractBiz;
 import app.erp.hr.dao.entity.ErpHrEmploymentContract;
 import app.erp.hr.service.ErpHrConfigs;
@@ -23,9 +26,11 @@ import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.dateBetween;
@@ -96,6 +101,15 @@ public class ErpHrEmploymentContractBizModel extends CrudBizModel<ErpHrEmploymen
         contract.setEndDate(newEndDate);
         updateEntity(contract, null, context);
         return contract;
+    }
+
+    // ---------- E3.1 后端响应层脱敏（@BizLoader，plan 2026-08-10-2059-2）----------
+    // socialInsuranceBase 授权 = 薪酬审批人；非授权 = null。委托 MaskHelper（fail-closed）。
+    private static final Set<String> SALARY_MASK_ROLES = Set.of(MaskHelper.ROLE_SALARY_APPROVER);
+
+    @BizLoader("socialInsuranceBase")
+    public BigDecimal socialInsuranceBaseMask(@ContextSource ErpHrEmploymentContract entity) {
+        return MaskHelper.maskDecimal(entity.getSocialInsuranceBase(), SALARY_MASK_ROLES);
     }
 
 }

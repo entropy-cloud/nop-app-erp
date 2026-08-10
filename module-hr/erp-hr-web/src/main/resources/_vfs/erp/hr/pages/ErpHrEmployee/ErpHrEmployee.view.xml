@@ -221,7 +221,11 @@
                     </gen-control>
                 </cell>
                 <cell id="taxFileNo">
-                    <visibleOn>${false}</visibleOn>
+                    <gen-control>
+                        <c:script><![CDATA[
+                            return { type: 'tpl', tpl: '******' };
+                        ]]></c:script>
+                    </gen-control>
                 </cell>
             </cells>
         </form>

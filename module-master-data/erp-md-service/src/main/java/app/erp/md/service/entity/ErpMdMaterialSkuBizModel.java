@@ -1,8 +1,10 @@
 
 package app.erp.md.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -13,6 +15,7 @@ import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 
+import app.erp.common.service.MaskHelper;
 import app.erp.md.biz.IErpMdMaterialSkuBiz;
 import app.erp.md.dao.dto.PriceValidationResult;
 import app.erp.md.dao.dto.ResolvedPrice;
@@ -31,6 +34,7 @@ import jakarta.inject.Inject;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -398,5 +402,25 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     private BigDecimal nullSafe(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
+    }
+
+    // ---------- E3.1 后端响应层脱敏（@BizLoader，plan 2026-08-10-2059-2）----------
+    // 授权 = 采购员/管理员；非授权 = null。委托 MaskHelper（fail-closed）。
+    // 服务端跨域取值豁免（E3.2）：CostRollupService/StandardCostResolver 经 DAO 直读不经此 @BizLoader。
+    private static final Set<String> PRICE_ROLES = Set.of(MaskHelper.ROLE_PURCHASER, MaskHelper.ROLE_BIZ_ADMIN);
+
+    @BizLoader("purchasePrice")
+    public BigDecimal purchasePriceMask(@ContextSource ErpMdMaterialSku entity) {
+        return MaskHelper.maskDecimal(entity.getPurchasePrice(), PRICE_ROLES);
+    }
+
+    @BizLoader("salePrice")
+    public BigDecimal salePriceMask(@ContextSource ErpMdMaterialSku entity) {
+        return MaskHelper.maskDecimal(entity.getSalePrice(), PRICE_ROLES);
+    }
+
+    @BizLoader("wholesalePrice")
+    public BigDecimal wholesalePriceMask(@ContextSource ErpMdMaterialSku entity) {
+        return MaskHelper.maskDecimal(entity.getWholesalePrice(), PRICE_ROLES);
     }
 }

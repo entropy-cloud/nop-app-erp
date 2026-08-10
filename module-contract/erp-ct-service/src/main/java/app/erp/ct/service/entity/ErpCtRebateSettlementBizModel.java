@@ -1,8 +1,10 @@
 
 package app.erp.ct.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.auth.IUserContext;
@@ -12,6 +14,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 
+import app.erp.common.service.MaskHelper;
 import app.erp.contract.dao.entity.ErpCtContract;
 import app.erp.contract.dao.entity.ErpCtContractLine;
 import app.erp.contract.dao.entity.ErpCtRebateAccrual;
@@ -30,6 +33,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import io.nop.biz.crud.EntityData;
@@ -210,6 +214,15 @@ public class ErpCtRebateSettlementBizModel extends CrudBizModel<ErpCtRebateSettl
 
     protected BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
+    }
+
+    // ---------- E3.1 后端响应层脱敏（@BizLoader，plan 2026-08-10-2059-2）----------
+    // 授权 = 合同审批人/合同专员；非授权 = null。委托 MaskHelper（fail-closed）。
+    private static final Set<String> CT_AMOUNT_ROLES = Set.of(MaskHelper.ROLE_CT_APPROVER, MaskHelper.ROLE_CT_CLERK);
+
+    @BizLoader("totalRebateAmount")
+    public BigDecimal totalRebateAmountMask(@ContextSource ErpCtRebateSettlement entity) {
+        return MaskHelper.maskDecimal(entity.getTotalRebateAmount(), CT_AMOUNT_ROLES);
     }
 
 }

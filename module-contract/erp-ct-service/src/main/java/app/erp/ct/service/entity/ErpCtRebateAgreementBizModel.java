@@ -1,8 +1,10 @@
 
 package app.erp.ct.service.entity;
 
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -10,6 +12,7 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 
+import app.erp.common.service.MaskHelper;
 import app.erp.contract.dao.entity.ErpCtRebateAccrual;
 import app.erp.contract.dao.entity.ErpCtRebateAgreement;
 import app.erp.ct.biz.IErpCtRebateAgreementBiz;
@@ -153,6 +156,20 @@ public class ErpCtRebateAgreementBizModel extends CrudBizModel<ErpCtRebateAgreem
 
     protected BigDecimal nz(BigDecimal v) {
         return v == null ? BigDecimal.ZERO : v;
+    }
+
+    // ---------- E3.1 后端响应层脱敏（@BizLoader，plan 2026-08-10-2059-2）----------
+    // 授权 = 合同审批人/合同专员；非授权 = null。委托 MaskHelper（fail-closed）。
+    private static final Set<String> CT_AMOUNT_ROLES = Set.of(MaskHelper.ROLE_CT_APPROVER, MaskHelper.ROLE_CT_CLERK);
+
+    @BizLoader("totalAccumulatedAmount")
+    public BigDecimal totalAccumulatedAmountMask(@ContextSource ErpCtRebateAgreement entity) {
+        return MaskHelper.maskDecimal(entity.getTotalAccumulatedAmount(), CT_AMOUNT_ROLES);
+    }
+
+    @BizLoader("estimatedRebateAmount")
+    public BigDecimal estimatedRebateAmountMask(@ContextSource ErpCtRebateAgreement entity) {
+        return MaskHelper.maskDecimal(entity.getEstimatedRebateAmount(), CT_AMOUNT_ROLES);
     }
 
 }

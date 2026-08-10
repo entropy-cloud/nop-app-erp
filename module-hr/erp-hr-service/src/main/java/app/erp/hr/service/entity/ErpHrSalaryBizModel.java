@@ -1,5 +1,7 @@
 package app.erp.hr.service.entity;
 
+import app.erp.common.service.MaskHelper;
+import app.erp.common.service.StringMaskFormat;
 import app.erp.hr.biz.IErpHrSalaryBiz;
 import app.erp.hr.dao.entity.ErpHrEmployee;
 import app.erp.hr.dao.entity.ErpHrPayrollBankFile;
@@ -12,9 +14,11 @@ import app.erp.hr.service.processor.ErpHrSalaryCalculateSalaryProcessor;
 import app.erp.hr.service.processor.ErpHrSalaryGenerateBankFileProcessor;
 import app.erp.hr.service.processor.ErpHrSalaryMarkPaidProcessor;
 import app.erp.hr.service.processor.ErpHrSalaryRunPayrollProcessor;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
@@ -28,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -143,6 +148,81 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
             }
         }
         return latest != null ? latest.getCumulativeData() : "{}";
+    }
+
+    // ---------- E3.1 后端响应层脱敏（@BizLoader，plan 2026-08-10-2059-2）----------
+    // 授权角色 = 薪酬审批人（见明文）；非授权 = 数值 null / cumulativeData 全打码。
+    // 13 DECIMAL 金额字段 + cumulativeData（个税机密 JSON）。委托 MaskHelper（fail-closed）。
+    private static final Set<String> SALARY_MASK_ROLES = Set.of(MaskHelper.ROLE_SALARY_APPROVER);
+
+    @BizLoader("basicSalary")
+    public BigDecimal basicSalaryMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getBasicSalary(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("positionAllowance")
+    public BigDecimal positionAllowanceMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getPositionAllowance(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("performanceBonus")
+    public BigDecimal performanceBonusMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getPerformanceBonus(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("overtimePay")
+    public BigDecimal overtimePayMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getOvertimePay(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("mealAllowance")
+    public BigDecimal mealAllowanceMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getMealAllowance(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("transportAllowance")
+    public BigDecimal transportAllowanceMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getTransportAllowance(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("otherAllowance")
+    public BigDecimal otherAllowanceMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getOtherAllowance(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("grossSalary")
+    public BigDecimal grossSalaryMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getGrossSalary(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("socialInsurance")
+    public BigDecimal socialInsuranceMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getSocialInsurance(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("housingFund")
+    public BigDecimal housingFundMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getHousingFund(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("taxAmount")
+    public BigDecimal taxAmountMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getTaxAmount(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("otherDeductions")
+    public BigDecimal otherDeductionsMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getOtherDeductions(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("netSalary")
+    public BigDecimal netSalaryMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskDecimal(entity.getNetSalary(), SALARY_MASK_ROLES);
+    }
+
+    @BizLoader("cumulativeData")
+    public String cumulativeDataMask(@ContextSource ErpHrSalary entity) {
+        return MaskHelper.maskString(entity.getCumulativeData(), StringMaskFormat.FULL, SALARY_MASK_ROLES);
     }
 
     // ---------- helpers ----------

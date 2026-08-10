@@ -1,6 +1,8 @@
 
 package app.erp.hr.service.entity;
 
+import app.erp.common.service.MaskHelper;
+import app.erp.common.service.StringMaskFormat;
 import app.erp.hr.biz.IErpHrDepartmentBiz;
 import app.erp.hr.biz.IErpHrEmployeeBiz;
 import app.erp.hr.biz.IErpHrEmploymentContractBiz;
@@ -18,9 +20,11 @@ import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.processor.ErpHrEmployeeTransferEmployeeProcessor;
+import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
+import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -37,6 +41,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.dateBetween;
@@ -312,6 +317,37 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         String head = headLen > 0 ? activeCode.substring(0, Math.min(headLen, activeCode.length())) : "";
         String hash = StringHelper.md5Hash(activeCode).substring(0, SUCCESSOR_HASH_SUFFIX_LENGTH);
         return base + "-" + head + hash;
+    }
+
+    // ---------- E3.1 后端响应层脱敏（@BizLoader，plan 2026-08-10-2059-2）----------
+    // F7 PII 4 字段从前端 tpl 升级到后端响应层 + taxFileNo unhide + 后端打码。
+    // PII 4 授权 = HR 专员/薪酬审批人；taxFileNo 授权 = HR 专员。委托 MaskHelper（fail-closed）。
+    private static final Set<String> PII_MASK_ROLES = Set.of(MaskHelper.ROLE_HR_SPECIALIST, MaskHelper.ROLE_SALARY_APPROVER);
+    private static final Set<String> TAX_FILE_MASK_ROLES = Set.of(MaskHelper.ROLE_HR_SPECIALIST);
+
+    @BizLoader("idCardNo")
+    public String idCardNoMask(@ContextSource ErpHrEmployee entity) {
+        return MaskHelper.maskString(entity.getIdCardNo(), StringMaskFormat.ID_CARD, PII_MASK_ROLES);
+    }
+
+    @BizLoader("mobilePhone")
+    public String mobilePhoneMask(@ContextSource ErpHrEmployee entity) {
+        return MaskHelper.maskString(entity.getMobilePhone(), StringMaskFormat.MOBILE, PII_MASK_ROLES);
+    }
+
+    @BizLoader("bankAccountId")
+    public Long bankAccountIdMask(@ContextSource ErpHrEmployee entity) {
+        return MaskHelper.maskLong(entity.getBankAccountId(), PII_MASK_ROLES);
+    }
+
+    @BizLoader("socialSecurityNo")
+    public String socialSecurityNoMask(@ContextSource ErpHrEmployee entity) {
+        return MaskHelper.maskString(entity.getSocialSecurityNo(), StringMaskFormat.FULL, PII_MASK_ROLES);
+    }
+
+    @BizLoader("taxFileNo")
+    public String taxFileNoMask(@ContextSource ErpHrEmployee entity) {
+        return MaskHelper.maskString(entity.getTaxFileNo(), StringMaskFormat.FULL, TAX_FILE_MASK_ROLES);
     }
 
     // ---------- helpers for tests ----------
