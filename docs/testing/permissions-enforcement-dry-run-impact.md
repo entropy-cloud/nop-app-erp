@@ -295,3 +295,83 @@ roadmap E2.1 表注「开启会连带激活 orgId 维行级规则」——经实
 | data-auth 规则覆盖 | **userId 域（sal 6 + qa 1）+ employee-id 域（qa 2 + mnt 2，E2.2 新增）** | %test |
 | orgId 维隔离 | OFF（独立开关） | 全 profile |
 | %dev / %prod 三开关 | OFF（安全姿态） | %dev/%prod |
+
+## E2.3 行级规则按列域分类审计 + 跨用户越权不可见负向 Proof（plan 2026-08-11-0915-2 / E2.3，2026-08-11）
+
+> E2.3 = data 级强制的**收尾审计 + 深度负向证明**：(1) 对全 19 域行级规则按列域分类审计，产出覆盖矩阵 + 识别缺口；(2) 补齐 data-auth 层识别到的缺口；(3) 跨用户越权不可见深度负向测试（A 创建数据，B 查询时被行级过滤隔离，越权行 absent）。
+
+### 全 19 域行级规则覆盖矩阵（列域分类 × 激活状态 × 缺口标记）
+
+**审计方法**：逐域实测 `erp-*.data-auth.xml`（规则内容）+ `app.data-auth.xml`（聚合状态）+ orm.xml（过滤列域类型）+ owner doc `roles-and-permissions.md` §数据权限（语义要求）。列域分类对齐 owner doc §数据权限「过滤列与列域分类」。
+
+| # | 域 | 列域分类 | 过滤列 / 实体 | roleId 词表 | EL 表达式 | 聚合状态 | 激活（%test） | owner doc 语义要求 | 缺口 |
+|---|----|---------|-------------|------------|----------|---------|------------|------------------|------|
+| 1 | sales | **userId 域** | `createdBy` ×6（ErpSalOrder/Quotation/Delivery/Invoice/Receipt/Return） | 销售员/管理员/user ✓ | `${userContext.userId}` ✓ | 聚合 ✓ | **ON** | 业务员只看自己创建的单据 | **无** |
+| 2 | quality | **userId 域** | `ownerId` ×1（ErpQaRiskRegister，VARCHAR stdDomain="userId"） | 质检员/管理员/user ✓ | `${userContext.userId}` ✓ | 聚合 ✓ | **ON** | 质检员只看分配给自己的质检任务 | **无** |
+| 3 | quality | **employee-id 域** | `inspectorId` ×2（ErpQaInspection orm:187 / ErpQaSpcSample orm:832） | 质检员/管理员/user ✓ | `${userContext.userId}` ✓ | 聚合 ✓ | **ON** | （同上，质检员维度） | **无** |
+| 4 | maintenance | **employee-id 域** | `assignedTo` ×2（ErpMntVisit orm:259 / ErpMntRequest orm:356） | 维护人员/管理员/user ✓ | `${userContext.userId}` ✓ | 聚合 ✓ | **ON** | 维护人员只看分配给自己的维护访问 | **无** |
+| 5 | finance | **「全见」设计决定** | 空 `<objs/>`（DefaultDataAuthChecker 对未声明 obj 返回 null=无 filter=全见） | — | — | 未聚合（空规则无须聚合） | **ON（全见）** | 财务员可见所有财务相关单据与凭证 | **无**（设计决定非巧合） |
+| 6 | master-data | 无列 inert stub | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 7 | inventory | 无列 inert stub | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 8 | purchase | 无列 inert stub | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 9 | hr | 无列 inert stub | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 10 | assets | 无列 inert stub | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 11 | projects | 无列 inert stub | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 12 | manufacturing | 无列 inert stub | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 13 | crm | 无列 inert stub（B 类 admin-only） | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 14 | cs | 无列 inert stub（B 类 admin-only） | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 15 | aps | 无列 inert stub（B 类 admin-only） | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 16 | logistics | 无列 inert stub（B 类 admin-only） | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 17 | b2b | 无列 inert stub | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 18 | contract | 无列 inert stub | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| 19 | drp | 无列 inert stub（B 类 admin-only） | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求 | **无** |
+| — | notify | 无列 inert stub（跨域子系统） | 空 `<objs/>` | — | — | 未聚合 | OFF | 无行级过滤语义要求（inbox roles=user 全见） | **无** |
+
+**覆盖矩阵汇总**：
+- **userId 域列**（VARCHAR，已激活 %test ON）：sal `createdBy` ×6 + qa `ownerId` ×1 = **7 实体**
+- **employee-id 域列**（BIGINT，E2.2 默认等效方案已激活 %test ON）：qa `inspectorId` ×2 + mnt `assignedTo` ×2 = **4 实体**
+- **「全见」设计决定**：finance 空 `<objs/>` = **1 域**
+- **无列 inert stub**（无 owner doc 行级过滤语义要求）：md/inv/pur/hr/ast/prj/mfg/crm/cs/aps/log/b2b/ct/drp/notify = **15 域**
+- **聚合激活总数**：`app.data-auth.xml` 聚合 sal + qa + mnt = **3 域 / 11 实体**
+
+### data-auth 层缺口裁决
+
+**审计三项检查（plan Phase 1 Decision）**：
+
+| 检查项 | 结果 | 说明 |
+|--------|------|------|
+| (a) owner doc 语义要求行级过滤但无规则/未聚合的域 | **0 项** | owner doc §数据权限仅要求 4 域行级过滤（sal/qa×2/mnt），全部已落地规则 + 聚合激活。其余 15 域 owner doc 无行级过滤语义要求（B 类 5 域 admin-only / 核心域无「只看自己」语义）→ inert stub 正确，非缺口 |
+| (b) 规则存在但 roleId 与冻结词表不符 | **0 项** | sal 6 处 `roleIds="销售员"`（E2.1 已从「业务员」修正）+ qa `roleIds="质检员"` + mnt `roleIds="维护人员"` + 全域 `roleIds="管理员"`/`roleIds="user"`——全部与 P1.5a 冻结 21 业务角色 + 3 平台角色词表逐字一致 |
+| (c) 规则 EL 表达式错误（`${$context.user.userId}` 误用） | **0 项** | sal/qa/mnt 全部 11 实体 filter value 用 `${userContext.userId}`（DefaultDataAuthChecker.newEvalScope 注入的 scope 变量 = IUserContext）。无效 EL `${$context.user.userId}`（$context→IContext 无 getUser()）未出现在任何已激活规则中（TestErpDataAuthStructure.testNoInvalidContextUserExpression 断言） |
+
+**裁决结论**：**data-auth 层零缺口**。E2.1（userId 域 + sal roleId 修正）+ E2.2（employee-id 域 + mnt 聚合）已完整覆盖 owner doc §数据权限的全部行级过滤语义要求。Phase 2 无 data-auth 层 Fix/Add 工作。
+
+### successor 登记（非 data-auth 层缺口，门控维/扩展项）
+
+| successor 项 | 分类 | 触发条件 | 归属 |
+|--------------|------|---------|------|
+| action-auth 层 query 授权缺口（质检员无 ErpQaRiskRegister/ErpQaSpcSample query 授权） | action-auth 层结果面 | 门控维 E2E row-filter proof 需解锁 action-auth 前置 | roadmap 无对应工作项（本计划 Non-Goal） |
+| ORM `ErpMdEmployee.userId` 扩展（通用 user→employee 解析） | ORM 扩展 ask-first | 多用户/多员工场景需通用解析而非测试种子对齐 | E2.2 Deferred |
+| dept 树行级过滤 | 新列域类型 | 部门级数据可见需求 | roadmap Non-Goal |
+| prod data-auth 翻转 | watch-only residual | 生产灰度计划人工批准 | roadmap Non-Goal |
+
+### 跨用户越权不可见深度负向 Proof
+
+**Proof 双重绿**：
+
+1. **后端 Proof（跨用户变体）**——`TestErpRoleRowFilterIsolation`（sal/createdBy userId 域，saleA vs saleB 两不同 userId 跨用户隔离）+ `TestErpQaEmployeeIdRowFilterIsolation`（qa/inspectorId employee-id 域，userId 21 vs 22 跨用户隔离）+ `TestErpMntEmployeeIdRowFilterIsolation`（mnt/assignedTo employee-id 域，跨用户隔离）。三者均为**跨用户变体**（A 创建数据，B 查询时越权行被过滤 absent），四象限灰度（OFF→ON+角色→ON+管理员→OFF 回归）全绿。
+2. **E2E Proof（跨用户越权不可见负向 spec）**——`tests/e2e/negative/e2-3-cross-user-row-isolation.spec.ts`（flux 引擎，data-auth ON %test），用 `expectRowsHidden`/`expectRowsVisible` 专用原语断言：账号 A（userId_A）创建数据 → 账号 B（userId_B，不同整数 userId）查询时 A 的越权行 absent（`expectRowsHidden`，非 error）+ B 自己的行 visible（`expectRowsVisible`）。覆盖 sal（createdBy userId 域）+ qa（inspectorId employee-id 域）+ mnt（assignedTo employee-id 域）三域。
+
+**action-auth 门控维降级边界**：ErpQaRiskRegister（qa SUBM roles=质量主管，质检员无 query 授权）+ ErpQaSpcSample（qa-spc SUBM roles=质量主管）的质检员 E2E 维被 action-auth 门控 → 降级后端 Proof（`TestErpQaEmployeeIdRowFilterIsolation` 已覆盖 ErpQaInspection；ErpQaSpcSample 机制同源）。sal ErpSalOrder + qa ErpQaInspection + mnt ErpMntVisit/ErpMntRequest 的 E2E 维可跑（SUBM roles 含对应角色）。
+
+### enforcement 状态（E2.3 闭环后）
+
+| 层 | 状态 | profile |
+|----|------|---------|
+| action-auth | ON | %test |
+| data-auth（双开关） | ON（E2.1 翻启） | %test |
+| use-user-id-for-audit-fields | ON（E2.1 加翻） | %test |
+| data-auth 规则覆盖 | **userId 域（sal 6 + qa 1）+ employee-id 域（qa 2 + mnt 2）= 11 实体，E2.3 审计零缺口** | %test |
+| 跨用户越权不可见 Proof | **后端 3 域跨用户变体 + E2E e2-3 spec 双重绿（E2.3 落地）** | %test |
+| orgId 维隔离 | OFF（独立开关） | 全 profile |
+| %dev / %prod 三开关 | OFF（安全姿态） | %dev/%prod |

@@ -1,6 +1,6 @@
 # 2026-08-11-0915-2 E2.3 行级规则按列域分类审计 + 缺口补齐 + 越权不可见负向测试
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-11
 > Source: `docs/backlog/permissions-enforcement-roadmap.md` E2.3
 > Related:
@@ -70,62 +70,68 @@ E2.3 是 data 级强制的**收尾审计 + 深度负向证明**切片：(1) 对�
 
 ### Phase 1 - 分类审计：全 19 域行级规则覆盖矩阵 + 缺口识别
 
-Status: planned
+Status: completed
 Targets: 各域 `erp-*.data-auth.xml` + `app.data-auth.xml`；各域 orm.xml（列域实证）；`docs/testing/permissions-enforcement-dry-run-impact.md`
 Skill: `nop-testing`
 
 - Item Types: `Proof | Decision`
 - Prereqs: E2.1 done（data-auth ON 基线）
 
-- [ ] `Proof`: 枚举全 19 域行级规则覆盖矩阵——逐域实测 `erp-*.data-auth.xml`（规则内容）+ `app.data-auth.xml`（聚合状态）+ orm.xml（过滤列域类型），分类为：userId 域（已激活）/ employee-id 域（E2.2 默认方案）/ 全见设计决定（finance 空 `<objs/>`）/ 无列 inert stub。落盘覆盖矩阵到 `docs/testing/permissions-enforcement-dry-run-impact.md` §E2.3。
+- [x] `Proof`: 枚举全 19 域行级规则覆盖矩阵——逐域实测 `erp-*.data-auth.xml`（规则内容）+ `app.data-auth.xml`（聚合状态）+ orm.xml（过滤列域类型），分类为：userId 域（已激活）/ employee-id 域（E2.2 默认方案）/ 全见设计决定（finance 空 `<objs/>`）/ 无列 inert stub。落盘覆盖矩阵到 `docs/testing/permissions-enforcement-dry-run-impact.md` §E2.3。
   - Skill: none
-- [ ] `Decision`: 据覆盖矩阵识别 data-auth 层缺口——(a) owner doc 语义要求行级过滤但无规则/未聚合的域；(b) 规则存在但 roleId 与冻结词表不符（同 E2.1 sal「业务员」缺陷模式）；(c) 规则 EL 表达式错误（`${$context.user.userId}` 误用）。逐项分类为「本计划补齐」vs「successor（action-auth 层 / ORM 扩展）」。记录裁决 + 替代方案。
+- [x] `Decision`: 据覆盖矩阵识别 data-auth 层缺口——(a) owner doc 语义要求行级过滤但无规则/未聚合的域；(b) 规则存在但 roleId 与冻结词表不符（同 E2.1 sal「业务员」缺陷模式）；(c) 规则 EL 表达式错误（`${$context.user.userId}` 误用）。逐项分类为「本计划补齐」vs「successor（action-auth 层 / ORM 扩展）」。记录裁决 + 替代方案。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 覆盖矩阵产出（19 域 × 列域分类 × 激活状态 × 缺口标记），落盘 dry-run-impact §E2.3。
-- [ ] data-auth 层缺口识别完成，逐项裁决补齐 vs successor。
+- [x] 覆盖矩阵产出（19 域 × 列域分类 × 激活状态 × 缺口标记），落盘 dry-run-impact §E2.3。
+- [x] data-auth 层缺口识别完成，逐项裁决补齐 vs successor。
 
 ### Phase 2 - 缺口补齐 + 跨用户越权不可见深度负向测试
 
-Status: planned
+Status: completed
 Targets: 审计识别的 `erp-*.data-auth.xml` / `app.data-auth.xml`；`tests/e2e/negative/`；后端测试
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add | Proof`
 - Prereqs: Phase 1 done（覆盖矩阵 + 缺口裁决）
 
-- [ ] `Fix`/`Add`: 补齐 Phase 1 识别的 data-auth 层缺口（规则补全 / 聚合补全 / roleId 词表修正 / EL 表达式修正）。**仅 data-auth 层**；action-auth 层缺口登记 successor。
+- [x] `Fix`/`Add`: 补齐 Phase 1 识别的 data-auth 层缺口（规则补全 / 聚合补全 / roleId 词表修正 / EL 表达式修正）。**仅 data-auth 层**；action-auth 层缺口登记 successor。
   - Skill: `nop-backend-dev`
-- [ ] `Add`: 跨用户越权不可见深度负向 spec（`tests/e2e/negative/e2-3-cross-user-row-isolation.spec.ts`）：账号 A（userId_A）创建数据 → 账号 B（userId_B，不同整数 userId）登录查询 → 断言 A 的行 `expectRowsHidden`（越权行 absent，非 error）+ B 自己的行 `expectRowsVisible`。覆盖 sal（createdBy）+ E2.2 已落地的 employee-id 域（若 E2.2 已执行；未执行则自建整数 userId 账号同款机制）。action-auth 门控维降级后端 Proof。
+  - **N/A**：Phase 1 审计裁决 data-auth 层零缺口（owner doc §数据权限 4 域要求全覆盖 + roleId 词表全对齐 + EL 表达式全正确）。E2.1（userId 域 + sal roleId 修正）+ E2.2（employee-id 域 + mnt 聚合）已完整落地，无 Phase 2 Fix/Add 工作。
+- [x] `Add`: 跨用户越权不可见深度负向 spec（`tests/e2e/negative/e2-3-cross-user-row-isolation.spec.ts`）：账号 A（userId_A）创建数据 → 账号 B（userId_B，不同整数 userId）登录查询 → 断言 A 的行 `expectRowsHidden`（越权行 absent，非 error）+ B 自己的行 `expectRowsVisible`。覆盖 sal（createdBy）+ E2.2 已落地的 employee-id 域（若 E2.2 已执行；未执行则自建整数 userId 账号同款机制）。action-auth 门控维降级后端 Proof。
   - Skill: `nop-testing`
-- [ ] `Proof`: 跨用户负向 spec 已就绪（flux 引擎，data-auth ON %test）；后端 Proof（`TestErpRoleRowFilterIsolation` 跨用户变体）双重绿。
+  - **已落地**：`tests/e2e/negative/e2-3-cross-user-row-isolation.spec.ts`（3 tests，flux 引擎，data-auth ON %test）。用专用原语 `expectRowsHidden`/`expectRowsVisible` 断言跨用户越权不可见：sal（admin userId=1 创建 → 销售员 userId=12 越权不可见）+ qa ErpQaInspection（admin 创建 inspectorId=999 → 质检员 userId=21 越权不可见）+ mnt ErpMntVisit（admin 创建 assignedTo=999 → 维护人员 userId=17 越权不可见）。复用 E2.2 同款机制整数 userId 账号（role-sal/role-inspector/role-mnt-tech）。action-auth 门控维（ErpQaRiskRegister/ErpQaSpcSample 质检员无 query 授权）降级后端 Proof。
+- [x] `Proof`: 跨用户负向 spec 已就绪（flux 引擎，data-auth ON %test）；后端 Proof（`TestErpRoleRowFilterIsolation` 跨用户变体）双重绿。
   - Skill: `nop-testing`
+  - **双重绿**：(a) 后端 Proof 3 域跨用户变体全绿——`TestErpRoleRowFilterIsolation`（sal saleA vs saleB）2/0/0 + `TestErpQaEmployeeIdRowFilterIsolation`（qa userId 21 vs 22）2/0/0 + `TestErpMntEmployeeIdRowFilterIsolation`（mnt）2/0/0；(b) E2E e2-3 spec 已就绪（3 tests，复用 e2-1/e2-2 同款 createViaSave/findItems 范式 + expectRowsHidden/Visible 专用原语）。结构断言 `TestErpDataAuthStructure` 6/0/0。
 
 Exit Criteria:
 
-- [ ] data-auth 层缺口补齐落地（Phase 1 识别项）；跨用户越权不可见负向 spec 已就绪（或 action-auth 门控维降级后端 Proof 双重绿）。
+- [x] data-auth 层缺口补齐落地（Phase 1 识别项）；跨用户越权不可见负向 spec 已就绪（或 action-auth 门控维降级后端 Proof 双重绿）。
 
 ### Phase 3 - owner doc + 日志
 
-Status: planned
+Status: completed
 Targets: `docs/design/roles-and-permissions.md`; `docs/testing/permissions-enforcement-dry-run-impact.md`; `docs/logs/2026/08-11.md`
 Skill: `nop-testing`
 
 - Item Types: `Add`
 - Prereqs: Phase 2 done
 
-- [ ] `Add`: owner doc 更新——`roles-and-permissions.md` §数据权限「过滤列与列域分类」增 E2.3 全 19 域覆盖矩阵引用 + 缺口补齐终态 + 跨用户越权不可见 Proof 落地注记。
+- [x] `Add`: owner doc 更新——`roles-and-permissions.md` §数据权限「过滤列与列域分类」增 E2.3 全 19 域覆盖矩阵引用 + 缺口补齐终态 + 跨用户越权不可见 Proof 落地注记。
   - Skill: none
-- [ ] `Add`: `docs/testing/permissions-enforcement-dry-run-impact.md` §E2.3 完整结果（覆盖矩阵 + 缺口清单 + 补齐终态 + 跨用户负向 Proof + action-auth 门控 successor 登记）。
+  - **已落地**：`roles-and-permissions.md` §数据权限「行级过滤落地状态」增 E2.3 引用（plan 2026-08-11-0915-2）+ 实证 (9)(10)（覆盖矩阵 + 零缺口 + 跨用户越权不可见 Proof 双重绿）+ dry-run-impact §E2.3 为覆盖矩阵权威落盘交叉引用。
+- [x] `Add`: `docs/testing/permissions-enforcement-dry-run-impact.md` §E2.3 完整结果（覆盖矩阵 + 缺口清单 + 补齐终态 + 跨用户负向 Proof + action-auth 门控 successor 登记）。
   - Skill: none
-- [ ] `Add`: `docs/logs/2026/08-11.md` 聚合日志条目（E2.3 审计 + 缺口补齐 + 跨用户负向 Proof + 验证状态）。
+  - **已落地**：§E2.3 完整结果（全 19 域覆盖矩阵表 + data-auth 层缺口裁决三项检查表 + successor 登记表 + 跨用户越权不可见 Proof 双重绿 + enforcement 状态终态表）。
+- [x] `Add`: `docs/logs/2026/08-11.md` 聚合日志条目（E2.3 审计 + 缺口补齐 + 跨用户负向 Proof + 验证状态）。
   - Skill: none
+  - **已落地**：`docs/logs/2026/08-11.md` 增 E2.3 条目（工作项 + 三 Phase 产出 + 验证状态 + 边界裁决 + follow-up）。
 
 Exit Criteria:
 
-- [ ] owner doc + dry-run-impact §E2.3 + 日志已更新。
+- [x] owner doc + dry-run-impact §E2.3 + 日志已更新。
 
 ## Draft Review Record
 
@@ -135,14 +141,14 @@ Exit Criteria:
 
 > 完整仓库验证在结束时运行一次。
 
-- [ ] 范围内行为完成（分类审计覆盖矩阵 + data-auth 层缺口补齐 + 跨用户越权不可见负向 Proof）
-- [ ] 相关文档对齐（roles-and-permissions §数据权限 + dry-run-impact §E2.3）
-- [ ] 已运行验证：`mvn clean install -DskipTests` + `mvn test`（data-auth 范围全绿）+ `bash docs/audits/nop-compliance-checker.sh`（零漂移）+ E2E 跨用户负向 spec 已就绪（flux 引擎，data-auth ON %test）
-- [ ] 无范围内项目降级为 deferred/follow-up（data-auth 层识别缺口为审计产物，已确认的实时缺陷/契约漂移不可降级）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（分类审计覆盖矩阵 + data-auth 层缺口补齐 + 跨用户越权不可见负向 Proof）
+- [x] 相关文档对齐（roles-and-permissions §数据权限 + dry-run-impact §E2.3）
+- [x] 已运行验证：`mvn clean install -DskipTests` + `mvn test`（data-auth 范围全绿）+ `bash docs/audits/nop-compliance-checker.sh`（零漂移）+ E2E 跨用户负向 spec 已就绪（flux 引擎，data-auth ON %test）
+- [x] 无范围内项目降级为 deferred/follow-up（data-auth 层识别缺口为审计产物，已确认的实时缺陷/契约漂移不可降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -172,12 +178,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: E2.3 闭环完成。三 Phase 全落地：(1) 全 19 域行级规则覆盖矩阵产出（3 激活域 / 11 实体 + finance 全见设计决定 + 15 inert stub 域）+ data-auth 层零缺口裁决（roleId 词表全对齐 + EL 表达式全正确 + owner doc §数据权限 4 域要求全覆盖）；(2) 跨用户越权不可见深度负向 Proof 双重绿——后端 3 域跨用户变体（TestErpRoleRowFilterIsolation/TestErpQaEmployeeIdRowFilterIsolation/TestErpMntEmployeeIdRowFilterIsolation 各 2/0/0）+ E2E e2-3-cross-user-row-isolation.spec.ts（3 tests，expectRowsHidden/expectRowsVisible 专用原语，sal/qa/mnt 三域）；(3) owner doc + dry-run-impact §E2.3 + 日志全更新。全 reactor `mvn clean install -DskipTests` BUILD SUCCESS + compliance exit 0（零漂移）。data-auth 层无 Fix/Add（审计零缺口，E2.1+E2.2 已完整覆盖）。action-auth 门控维 successor / ORM ErpMdEmployee.userId 扩展 / dept 树 / prod 翻转正确登记为 out-of-scope。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
-- Evidence: <待执行后填写>
+- Auditor / Agent: 独立结束审计子代理 `ses_012e92964ffebFp5gR3U6jD9Wl`（fresh-session general 子代理，未执行本计划）
+- Evidence: verdict `pass`，0 blocker / 2 minor（信息性）。零信任核验全 VERIFIED：§E2.3 覆盖矩阵 19 域 + notify / data-auth 层缺口裁决三项检查 0 项 / sal 6 obj roleId=销售员 + qa 3 obj（ownerId userId 域 + inspectorId employee-id 域）/ mnt 2 obj assignedTo employee-id 域 / app.data-auth.xml 聚合 sal+qa+mnt / inert stub 域 `<objs/>` 实测 / finance 全见设计决定 / 全部激活规则用 `${userContext.userId}`（无无效 EL）/ e2-3 spec imports expectRowsHidden/expectRowsVisible + 3 tests 覆盖 sal/qa/mnt 跨用户 / Phase 2 Fix/Add 正确标 N/A / owner doc + 日志 E2.3 条目存在 / Plan Status 未提前翻 / Rule 13 受尊重（sal roleId 修正归 E2.1 非降级，action-auth 缺口路由到不同层 successor 非降级）。2 minor：(m1) roadmap E2.3 待翻 done（本步骤执行）；(m2) Closure 占位符待填（本步骤执行）。
 
 Follow-up:
 
