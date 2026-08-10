@@ -61,10 +61,11 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         seedWarehouse();
         seedParameter(M_STAT, bd("50"), 15);
 
-        // 提供 3 个月历史出库（满足 historyMonths=3 的最小样本要求 ≥2）
-        seedOutboundMove(M_STAT, "SM-1", LocalDate.of(2026, 4, 10), bd("1200"));
-        seedOutboundMove(M_STAT, "SM-2", LocalDate.of(2026, 5, 10), bd("980"));
-        seedOutboundMove(M_STAT, "SM-3", LocalDate.of(2026, 6, 10), bd("1500"));
+        // 提供 3 个月历史出库（满足 historyMonths=3 的最小样本要求 ≥2）。
+        // 日期须相对今天滚动，否则引擎窗口 CoreMetrics.today().minusMonths(historyMonths) 会让固定历史日期随时间老化出窗 → 样本不足降级 SIMPLE。
+        seedOutboundMove(M_STAT, "SM-1", LocalDate.now().minusMonths(2), bd("1200"));
+        seedOutboundMove(M_STAT, "SM-2", LocalDate.now().minusMonths(1), bd("980"));
+        seedOutboundMove(M_STAT, "SM-3", LocalDate.now(), bd("1500"));
 
         Long calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_STATISTICAL,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 15);
@@ -87,7 +88,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         seedParameter(M_SIMPLE, bd("30"), 10);
 
         // 仅提供 1 个月历史（< 2 个月，STATISTICAL 不足 → 降级 SIMPLE）
-        seedOutboundMove(M_SIMPLE, "SM-S1", LocalDate.of(2026, 6, 10), bd("300"));
+        seedOutboundMove(M_SIMPLE, "SM-S1", LocalDate.now().minusMonths(1), bd("300"));
 
         Long calcId = seedCalc(M_SIMPLE, ErpDrpConstants.SS_METHOD_STATISTICAL,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 10);
@@ -106,7 +107,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         seedWarehouse();
         seedParameter(M_STAT, bd("40"), 10);
 
-        seedOutboundMove(M_STAT, "SM-SIM-1", LocalDate.of(2026, 6, 10), bd("600"));
+        seedOutboundMove(M_STAT, "SM-SIM-1", LocalDate.now().minusMonths(1), bd("600"));
 
         Long calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_SIMPLE,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 10);
@@ -125,7 +126,7 @@ public class TestErpDrpSafetyStock extends JunitAutoTestCase {
         seedWarehouse();
         seedParameter(M_STAT, bd("40"), 10);
 
-        seedOutboundMove(M_STAT, "SM-DD-1", LocalDate.of(2026, 6, 10), bd("900"));
+        seedOutboundMove(M_STAT, "SM-DD-1", LocalDate.now().minusMonths(1), bd("900"));
 
         Long calcId = seedCalc(M_STAT, ErpDrpConstants.SS_METHOD_DDMRP,
                 ErpDrpConstants.SERVICE_LEVEL_PCT95, 3, 10);
