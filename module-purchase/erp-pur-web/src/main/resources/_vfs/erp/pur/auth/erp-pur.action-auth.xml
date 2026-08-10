@@ -18,11 +18,31 @@
                         <resource id="ErpPurRfq-main" app:useCases="UC-PUR-01" displayName="采购询价单"
                                   i18n-en:displayName="Purchase RFQ" icon="message-circle-question"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/pur/pages/ErpPurRfq/main.page.yaml"/>
+                                  url="/erp/pur/pages/ErpPurRfq/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPurRfq:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="10010" roles="审核人">
+                                    <permissions>ErpPurRfq:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPurRfq:reverseApprove" displayName="反审核采购询价单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="10020" roles="管理员">
+                                    <permissions>ErpPurRfq:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpPurQuotation-main" app:useCases="UC-PUR-01" displayName="供应商报价单"
                                   i18n-en:displayName="Supplier Quotation" icon="file-sign"
                                   component="FLUX" resourceType="SUBM" orderNo="110"
-                                  url="/erp/pur/pages/ErpPurQuotation/main.page.yaml"/>
+                                  url="/erp/pur/pages/ErpPurQuotation/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPurQuotation:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="11010" roles="审核人">
+                                    <permissions>ErpPurQuotation:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPurQuotation:reverseApprove" displayName="反审核供应商报价单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="11020" roles="管理员">
+                                    <permissions>ErpPurQuotation:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpPurSupplierPriceList-main" app:useCases="UC-PUR-05" displayName="供应商价格清单"
                                   i18n-en:displayName="Supplier Price List" icon="list-checks"
                                   component="FLUX" resourceType="SUBM" orderNo="120"

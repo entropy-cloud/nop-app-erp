@@ -48,6 +48,14 @@ site:
       displayName: Reverse Approve
     FNPT:ErpFinBadDebt:writeOff:
       displayName: Write Off
+    FNPT:ErpFinEmployeeAdvance:approve:
+      displayName: Approve
+    FNPT:ErpFinEmployeeAdvance:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpFinExpenseClaim:approve:
+      displayName: Approve
+    FNPT:ErpFinExpenseClaim:reverseApprove:
+      displayName: Reverse Approve
     FNPT:ErpFinVoucher:post:
       displayName: Post Voucher
     FNPT:ErpFinVoucher:reverse:

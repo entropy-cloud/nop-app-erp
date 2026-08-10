@@ -50,6 +50,14 @@
                                           resourceType="FNPT" orderNo="20010" roles="生产主管">
                                     <permissions>ErpMfgWorkOrder:start</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpMfgWorkOrder:approve" displayName="审核工单" i18n-en:displayName="Approve"
+                                          resourceType="FNPT" orderNo="10010" roles="生产主管">
+                                    <permissions>ErpMfgWorkOrder:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMfgWorkOrder:reverseApprove" displayName="反审核工单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="10020" roles="管理员">
+                                    <permissions>ErpMfgWorkOrder:reverseApprove</permissions>
+                                </resource>
                                 <resource id="FNPT:ErpMfgWorkOrder:close" displayName="关闭工单(部分完工)" i18n-en:displayName="Close Work Order"
                                           resourceType="FNPT" orderNo="20020" roles="生产主管">
                                     <permissions>ErpMfgWorkOrder:close</permissions>
@@ -67,7 +75,17 @@
                         <resource id="ErpMfgMaterialIssue-main" app:useCases="UC-MFG-06" displayName="领料单"
                                   i18n-en:displayName="Material Issue" icon="package-minus"
                                   component="FLUX" resourceType="SUBM" orderNo="220"
-                                  url="/erp/mfg/pages/ErpMfgMaterialIssue/main.page.yaml"/>
+                                  url="/erp/mfg/pages/ErpMfgMaterialIssue/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpMfgMaterialIssue:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="生产主管">
+                                    <permissions>ErpMfgMaterialIssue:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMfgMaterialIssue:reverseApprove" displayName="反审核领料单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="12020" roles="管理员">
+                                    <permissions>ErpMfgMaterialIssue:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- MRP计划 -->
@@ -118,6 +136,10 @@
                                 <resource id="FNPT:ErpMfgSubcontractOrder:approve" displayName="审批委外加工单" i18n-en:displayName="Approve Subcontract Order"
                                           resourceType="FNPT" orderNo="40010" roles="生产主管">
                                     <permissions>ErpMfgSubcontractOrder:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMfgSubcontractOrder:reverseApprove" displayName="反审核委外订单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="11020" roles="管理员">
+                                    <permissions>ErpMfgSubcontractOrder:reverseApprove</permissions>
                                 </resource>
                             </children>
                         </resource>

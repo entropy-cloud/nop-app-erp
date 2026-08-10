@@ -18,7 +18,17 @@
                         <resource id="ErpQaInspection-main" app:useCases="UC-QA-01,UC-QA-02,UC-QA-03,UC-QA-04,UC-QA-06,UC-QA-08,UC-QA-11" displayName="质检单"
                                   i18n-en:displayName="Inspection" icon="clipboard-check"
                                   component="FLUX" resourceType="SUBM" orderNo="100"
-                                  url="/erp/qa/pages/ErpQaInspection/main.page.yaml"/>
+                                  url="/erp/qa/pages/ErpQaInspection/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpQaInspection:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="质量主管">
+                                    <permissions>ErpQaInspection:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpQaInspection:reverseApprove" displayName="反审核检验记录" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="90020" roles="管理员">
+                                    <permissions>ErpQaInspection:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 检验标准 -->
@@ -60,7 +70,17 @@
                         <resource id="ErpQaReview-main" app:useCases="UC-QA-05" displayName="质量评审"
                                   i18n-en:displayName="Quality Review" icon="clipboard-list"
                                   component="FLUX" resourceType="SUBM" orderNo="410"
-                                  url="/erp/qa/pages/ErpQaReview/main.page.yaml"/>
+                                  url="/erp/qa/pages/ErpQaReview/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpQaReview:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="质量主管">
+                                    <permissions>ErpQaReview:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpQaReview:reverseApprove" displayName="反审核质量评审" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="90020" roles="管理员">
+                                    <permissions>ErpQaReview:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 质量目标 -->
@@ -78,7 +98,17 @@
                         <resource id="ErpQaCalibration-main" app:useCases="UC-QA-01" displayName="量具校准"
                                   i18n-en:displayName="Gauge Calibration" icon="gauge"
                                   component="FLUX" resourceType="SUBM" orderNo="520"
-                                  url="/erp/qa/pages/ErpQaCalibration/main.page.yaml"/>
+                                  url="/erp/qa/pages/ErpQaCalibration/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpQaCalibration:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="质量主管">
+                                    <permissions>ErpQaCalibration:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpQaCalibration:reverseApprove" displayName="反审核校准记录" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="90020" roles="管理员">
+                                    <permissions>ErpQaCalibration:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 质量报表 -->
@@ -112,7 +142,16 @@
                         <resource id="spc-chart" app:useCases="UC-QA-09,UC-QA-10,UC-QA-11" displayName="控制图配置"
                                   i18n-en:displayName="SPC Chart" icon="activity"
                                   component="FLUX" resourceType="SUBM" orderNo="700"
-                                  url="/erp/qa/pages/spc-chart/main.page.yaml"/>
+                                  url="/erp/qa/pages/spc-chart/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpQaSpcChart:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="质量主管">
+                                    <permissions>ErpQaSpcChart:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpQaSpcChart:reverseApprove" displayName="反审核" i18n-en:displayName="Reverse Approve" resourceType="FNPT" orderNo="90020" roles="管理员">
+                                    <permissions>ErpQaSpcChart:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="spc-sample" app:useCases="UC-QA-09,UC-QA-11" displayName="样本数据"
                                   i18n-en:displayName="SPC Sample" icon="list"
                                   component="FLUX" resourceType="SUBM" orderNo="710"
@@ -130,7 +169,17 @@
                         <resource id="ErpQaRecall-main" app:useCases="UC-QA-05,UC-QA-09" displayName="召回事件"
                                   i18n-en:displayName="Recall Event" icon="undo-2"
                                   component="FLUX" resourceType="SUBM" orderNo="750"
-                                  url="/erp/qa/pages/ErpQaRecall/main.page.yaml"/>
+                                  url="/erp/qa/pages/ErpQaRecall/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpQaRecall:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="质量主管">
+                                    <permissions>ErpQaRecall:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpQaRecall:reverseApprove" displayName="反审核召回记录" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="90020" roles="管理员">
+                                    <permissions>ErpQaRecall:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
             </children>

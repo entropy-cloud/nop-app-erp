@@ -62,7 +62,17 @@
                         <resource id="ErpPrjBudget-main" app:useCases="UC-PRJ-04" displayName="项目预算"
                                   i18n-en:displayName="Project Budget" icon="wallet"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/prj/pages/ErpPrjBudget/main.page.yaml"/>
+                                  url="/erp/prj/pages/ErpPrjBudget/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPrjBudget:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="项目经理">
+                                    <permissions>ErpPrjBudget:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPrjBudget:reverseApprove" displayName="反审核项目预算" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="20020" roles="管理员">
+                                    <permissions>ErpPrjBudget:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 成本 -->
@@ -72,7 +82,17 @@
                         <resource id="ErpPrjCostCollection-main" app:useCases="UC-PRJ-03,UC-PRJ-06" displayName="项目成本归集"
                                   i18n-en:displayName="Project Cost Collection" icon="coins"
                                   component="FLUX" resourceType="SUBM" orderNo="400"
-                                  url="/erp/prj/pages/ErpPrjCostCollection/main.page.yaml"/>
+                                  url="/erp/prj/pages/ErpPrjCostCollection/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPrjCostCollection:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="项目经理">
+                                    <permissions>ErpPrjCostCollection:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPrjCostCollection:reverseApprove" displayName="反审核成本归集" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="30020" roles="管理员">
+                                    <permissions>ErpPrjCostCollection:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 开票 -->
@@ -82,7 +102,17 @@
                         <resource id="ErpPrjBilling-main" app:useCases="UC-PRJ-06" displayName="项目开票"
                                   i18n-en:displayName="Project Billing" icon="receipt"
                                   component="FLUX" resourceType="SUBM" orderNo="500"
-                                  url="/erp/prj/pages/ErpPrjBilling/main.page.yaml"/>
+                                  url="/erp/prj/pages/ErpPrjBilling/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpPrjBilling:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="项目经理">
+                                    <permissions>ErpPrjBilling:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpPrjBilling:reverseApprove" displayName="反审核项目开票" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="10020" roles="管理员">
+                                    <permissions>ErpPrjBilling:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 项目报表 -->

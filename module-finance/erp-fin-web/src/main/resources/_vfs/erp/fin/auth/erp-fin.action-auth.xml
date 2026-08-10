@@ -203,11 +203,31 @@
                         <resource id="expense-claim" app:useCases="UC-FIN-16" displayName="费用报销单"
                                   i18n-en:displayName="Expense Claim" icon="wallet-receipt"
                                   component="FLUX" resourceType="SUBM" orderNo="9010"
-                                  url="/erp/fin/pages/expense-claim/main.page.yaml"/>
+                                  url="/erp/fin/pages/expense-claim/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpFinExpenseClaim:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="901010" roles="财务员">
+                                    <permissions>ErpFinExpenseClaim:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinExpenseClaim:reverseApprove" displayName="反审核费用报销" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="43020" roles="管理员">
+                                    <permissions>ErpFinExpenseClaim:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpFinEmployeeAdvance-main" displayName="员工借款单"
                                   i18n-en:displayName="Employee Advance" icon="hand-coins"
                                   component="FLUX" resourceType="SUBM" orderNo="9020"
-                                  url="/erp/fin/pages/ErpFinEmployeeAdvance/main.page.yaml"/>
+                                  url="/erp/fin/pages/ErpFinEmployeeAdvance/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpFinEmployeeAdvance:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="902010" roles="财务员">
+                                    <permissions>ErpFinEmployeeAdvance:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpFinEmployeeAdvance:reverseApprove" displayName="反审核员工预支" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="42020" roles="管理员">
+                                    <permissions>ErpFinEmployeeAdvance:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 报表看板 -->

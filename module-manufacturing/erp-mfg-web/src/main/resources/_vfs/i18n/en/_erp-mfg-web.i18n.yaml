@@ -34,12 +34,22 @@ site:
       displayName: Work Order
     ErpMfgWorkcenter-main:
       displayName: Work Center
+    FNPT:ErpMfgMaterialIssue:approve:
+      displayName: Approve
+    FNPT:ErpMfgMaterialIssue:reverseApprove:
+      displayName: Reverse Approve
     FNPT:ErpMfgSubcontractOrder:approve:
       displayName: Approve Subcontract Order
+    FNPT:ErpMfgSubcontractOrder:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpMfgWorkOrder:approve:
+      displayName: Approve
     FNPT:ErpMfgWorkOrder:cancel:
       displayName: Cancel Work Order
     FNPT:ErpMfgWorkOrder:close:
       displayName: Close Work Order
+    FNPT:ErpMfgWorkOrder:reverseApprove:
+      displayName: Reverse Approve
     FNPT:ErpMfgWorkOrder:start:
       displayName: Start Work Order
     crp-load-report:

@@ -246,6 +246,16 @@ export const ROLE_ACCOUNTS: Record<string, { username: string; password: string 
   库管员: { username: 'role-inventory', password: COMMON_PASS },
   薪酬审批人: { username: 'role-hr-salary', password: COMMON_PASS },
   'HR 专员': { username: 'role-hr', password: COMMON_PASS },
+  // E1.2 扩展至 14 角色域全集（9 新增角色账号，plan 2026-08-10-1404-1 Phase 2）
+  采购员: { username: 'role-pur', password: COMMON_PASS },
+  销售员: { username: 'role-sal', password: COMMON_PASS },
+  资产管理员: { username: 'role-ast', password: COMMON_PASS },
+  项目经理: { username: 'role-prj', password: COMMON_PASS },
+  质量主管: { username: 'role-qa', password: COMMON_PASS },
+  维护主管: { username: 'role-mnt-lead', password: COMMON_PASS },
+  维护人员: { username: 'role-mnt-tech', password: COMMON_PASS },
+  合同专员: { username: 'role-ct-clerk', password: COMMON_PASS },
+  合同审批人: { username: 'role-ct-approver', password: COMMON_PASS },
   // 通用受限账号（仅绑平台 user 角色，无敏感 FNPT，供 P2.4 dry-run 全 403 影响面）
   user: { username: 'role-restricted', password: COMMON_PASS },
   restricted: { username: 'role-restricted', password: COMMON_PASS },
@@ -259,6 +269,19 @@ export const ROLE_ACCOUNTS: Record<string, { username: string; password: string 
   'role-hr-salary': { username: 'role-hr-salary', password: COMMON_PASS },
   'role-hr': { username: 'role-hr', password: COMMON_PASS },
   'role-restricted': { username: 'role-restricted', password: COMMON_PASS },
+  // E1.2 username 别名
+  'role-pur': { username: 'role-pur', password: COMMON_PASS },
+  'role-sal': { username: 'role-sal', password: COMMON_PASS },
+  'role-ast': { username: 'role-ast', password: COMMON_PASS },
+  'role-prj': { username: 'role-prj', password: COMMON_PASS },
+  'role-qa': { username: 'role-qa', password: COMMON_PASS },
+  'role-mnt-lead': { username: 'role-mnt-lead', password: COMMON_PASS },
+  'role-mnt-tech': { username: 'role-mnt-tech', password: COMMON_PASS },
+  'role-ct-clerk': { username: 'role-ct-clerk', password: COMMON_PASS },
+  'role-ct-approver': { username: 'role-ct-approver', password: COMMON_PASS },
+  // E1.2 审核人（跨域审批角色，pur/sal approve 授权）
+  审核人: { username: 'role-approver', password: COMMON_PASS },
+  'role-approver': { username: 'role-approver', password: COMMON_PASS },
 };
 
 /**

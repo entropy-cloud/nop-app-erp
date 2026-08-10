@@ -42,19 +42,59 @@
                         <resource id="ErpAstMovement-main" app:useCases="UC-AST-03" displayName="资产移动"
                                   i18n-en:displayName="Asset Movement" icon="move"
                                   component="FLUX" resourceType="SUBM" orderNo="300"
-                                  url="/erp/ast/pages/ErpAstMovement/main.page.yaml"/>
+                                  url="/erp/ast/pages/ErpAstMovement/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpAstMovement:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="30010" roles="资产管理员,管理员">
+                                    <permissions>ErpAstMovement:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpAstMovement:reverseApprove" displayName="反审核资产转移" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="60020" roles="管理员">
+                                    <permissions>ErpAstMovement:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpAstValueAdjustment-main" app:useCases="UC-AST-02" displayName="资产价值调整"
                                   i18n-en:displayName="Asset Value Adjustment" icon="sliders-horizontal"
                                   component="FLUX" resourceType="SUBM" orderNo="310"
-                                  url="/erp/ast/pages/ErpAstValueAdjustment/main.page.yaml"/>
+                                  url="/erp/ast/pages/ErpAstValueAdjustment/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpAstValueAdjustment:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="31010" roles="资产管理员,管理员">
+                                    <permissions>ErpAstValueAdjustment:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpAstValueAdjustment:reverseApprove" displayName="反审核资产价值调整" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="20020" roles="管理员">
+                                    <permissions>ErpAstValueAdjustment:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpAstSplit-main" app:useCases="UC-AST-11" displayName="资产拆分单"
                                   i18n-en:displayName="Asset Split" icon="split"
                                   component="FLUX" resourceType="SUBM" orderNo="320"
-                                  url="/erp/ast/pages/ErpAstSplit/main.page.yaml"/>
+                                  url="/erp/ast/pages/ErpAstSplit/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpAstSplit:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="32010" roles="资产管理员,管理员">
+                                    <permissions>ErpAstSplit:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpAstSplit:reverseApprove" displayName="反审核资产拆分" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="30020" roles="管理员">
+                                    <permissions>ErpAstSplit:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpAstMerge-main" app:useCases="UC-AST-11" displayName="资产合并单"
                                   i18n-en:displayName="Asset Merge" icon="git-merge"
                                   component="FLUX" resourceType="SUBM" orderNo="330"
-                                  url="/erp/ast/pages/ErpAstMerge/main.page.yaml"/>
+                                  url="/erp/ast/pages/ErpAstMerge/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpAstMerge:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="33010" roles="资产管理员,管理员">
+                                    <permissions>ErpAstMerge:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpAstMerge:reverseApprove" displayName="反审核资产合并" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="50020" roles="管理员">
+                                    <permissions>ErpAstMerge:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     
                         <resource id="ErpAstMaintenance-main" app:useCases="UC-AST-10" displayName="资产维修工单"
                                   i18n-en:displayName="Asset Maintenance" icon="wrench"
@@ -75,8 +115,12 @@
                                   url="/erp/ast/pages/ErpAstDisposal/main.page.yaml">
                             <children>
                                 <resource id="FNPT:ErpAstDisposal:approve" displayName="审批资产处置" i18n-en:displayName="Approve Asset Disposal"
-                                          resourceType="FNPT" orderNo="40010" roles="资产管理员/管理员">
+                                          resourceType="FNPT" orderNo="40010" roles="资产管理员,管理员">
                                     <permissions>ErpAstDisposal:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpAstDisposal:reverseApprove" displayName="反审核资产处置" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="40020" roles="管理员">
+                                    <permissions>ErpAstDisposal:reverseApprove</permissions>
                                 </resource>
                             </children>
                         </resource>
@@ -87,7 +131,17 @@
                         <resource id="ErpAstAssetCapitalization-main" app:useCases="UC-AST-01,UC-AST-06" displayName="资产资本化"
                                   i18n-en:displayName="Asset Capitalization" icon="badge-plus"
                                   component="FLUX" resourceType="SUBM" orderNo="410"
-                                  url="/erp/ast/pages/ErpAstAssetCapitalization/main.page.yaml"/>
+                                  url="/erp/ast/pages/ErpAstAssetCapitalization/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpAstAssetCapitalization:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="41010" roles="资产管理员,管理员">
+                                    <permissions>ErpAstAssetCapitalization:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpAstAssetCapitalization:reverseApprove" displayName="反审核资产资本化" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="70020" roles="管理员">
+                                    <permissions>ErpAstAssetCapitalization:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpAstCip-main" app:useCases="UC-AST-06" displayName="在建工程"
                                   i18n-en:displayName="CIP" icon="hard-hat"
                                   component="FLUX" resourceType="SUBM" orderNo="420"

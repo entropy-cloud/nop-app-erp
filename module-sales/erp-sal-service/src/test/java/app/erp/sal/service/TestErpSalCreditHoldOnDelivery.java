@@ -11,9 +11,11 @@ import app.erp.sal.dao.entity.ErpSalOrder;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.auth.IActionAuthChecker;
+import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.config.AppConfig;
+import io.nop.auth.core.login.UserContextImpl;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -210,7 +212,11 @@ public class TestErpSalCreditHoldOnDelivery extends JunitAutoTestCase {
     private ApiResponse<?> approveWithPermission(Long deliveryId, String grantedPermission) {
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(mutation, "ErpSalDelivery__approve",
                 ApiRequest.build(Map.of("id", String.valueOf(deliveryId))));
-        ctx.setActionAuthChecker((permission, c) -> grantedPermission != null && grantedPermission.equals(permission));
+        ctx.setActionAuthChecker((permission, c) -> "ErpSalDelivery:approve".equals(permission)
+                || (grantedPermission != null && grantedPermission.equals(permission)));
+        UserContextImpl uc = new UserContextImpl();
+        uc.setUserId("test-approver");
+        ctx.getServiceContext().setUserContext(uc);
         return graphQLEngine.executeRpc(ctx);
     }
 

@@ -60,6 +60,8 @@ site:
       displayName: Approve Salary
     FNPT:ErpHrSalary:markPaid:
       displayName: Mark Paid
+    FNPT:ErpHrSalary:reverseApprove:
+      displayName: Reverse Approve
     FNPT:ErpHrSalary:voidSalary:
       displayName: Void Salary
     employee-net-balance:

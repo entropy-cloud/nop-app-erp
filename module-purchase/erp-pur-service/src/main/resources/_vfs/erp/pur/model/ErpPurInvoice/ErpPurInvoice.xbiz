@@ -13,6 +13,7 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
+            <auth permissions="ErpPurInvoice:approve"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -23,6 +24,7 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
+            <auth permissions="ErpPurInvoice:reverseApprove"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>

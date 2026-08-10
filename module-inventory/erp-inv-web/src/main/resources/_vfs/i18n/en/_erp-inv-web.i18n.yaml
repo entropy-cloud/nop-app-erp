@@ -26,6 +26,10 @@ site:
       displayName: Stock Take
     ErpInvTransferOrder-main:
       displayName: Transfer Order
+    FNPT:ErpInvCostAdjust:approve:
+      displayName: Approve
+    FNPT:ErpInvCostAdjust:reverseApprove:
+      displayName: Reverse Approve
     FNPT:ErpInvLandedCost:approve:
       displayName: Approve Landed Cost
     FNPT:ErpInvStockMove:confirm:

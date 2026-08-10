@@ -36,7 +36,17 @@
                         <resource id="ErpMntCalibration-main" app:useCases="UC-MAIN-01" displayName="校准记录"
                                   i18n-en:displayName="Calibration" icon="gauge"
                                   component="FLUX" resourceType="SUBM" orderNo="210"
-                                  url="/erp/mnt/pages/ErpMntCalibration/main.page.yaml"/>
+                                  url="/erp/mnt/pages/ErpMntCalibration/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpMntCalibration:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="维护主管">
+                                    <permissions>ErpMntCalibration:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMntCalibration:reverseApprove" displayName="反审核设备校准" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="20020" roles="管理员">
+                                    <permissions>ErpMntCalibration:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 维护工单 -->
@@ -55,7 +65,17 @@
                         <resource id="ErpMntRequest-main" app:useCases="UC-MAIN-05" displayName="维护请求"
                                   i18n-en:displayName="Maintenance Request" icon="life-buoy"
                                   component="FLUX" resourceType="SUBM" orderNo="310"
-                                  url="/erp/mnt/pages/ErpMntRequest/main.page.yaml"/>
+                                  url="/erp/mnt/pages/ErpMntRequest/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpMntRequest:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="维护主管">
+                                    <permissions>ErpMntRequest:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpMntRequest:reverseApprove" displayName="反审核维护请求" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="10020" roles="管理员">
+                                    <permissions>ErpMntRequest:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                         <resource id="ErpMntDowntimeEntry-main" app:useCases="UC-MAIN-06,UC-MAIN-10" displayName="停机记录"
                                   i18n-en:displayName="Downtime Entry" icon="timer-off"
                                   component="FLUX" resourceType="SUBM" orderNo="320"

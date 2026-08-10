@@ -26,8 +26,30 @@ site:
       displayName: Asset Split
     ErpAstValueAdjustment-main:
       displayName: Asset Value Adjustment
+    FNPT:ErpAstAssetCapitalization:approve:
+      displayName: Approve
+    FNPT:ErpAstAssetCapitalization:reverseApprove:
+      displayName: Reverse Approve
     FNPT:ErpAstDisposal:approve:
       displayName: Approve Asset Disposal
+    FNPT:ErpAstDisposal:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpAstMerge:approve:
+      displayName: Approve
+    FNPT:ErpAstMerge:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpAstMovement:approve:
+      displayName: Approve
+    FNPT:ErpAstMovement:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpAstSplit:approve:
+      displayName: Approve
+    FNPT:ErpAstSplit:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpAstValueAdjustment:approve:
+      displayName: Approve
+    FNPT:ErpAstValueAdjustment:reverseApprove:
+      displayName: Reverse Approve
     asset-depreciation-detail:
       displayName: Asset Depreciation Detail
     asset-disposal-detail:

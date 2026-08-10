@@ -18,6 +18,14 @@ site:
       displayName: Spare Part Usage
     ErpMntVisit-main:
       displayName: Maintenance Visit
+    FNPT:ErpMntCalibration:approve:
+      displayName: Approve
+    FNPT:ErpMntCalibration:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpMntRequest:approve:
+      displayName: Approve
+    FNPT:ErpMntRequest:reverseApprove:
+      displayName: Reverse Approve
     downtime-summary:
       displayName: Downtime Summary
     erp-mnt:

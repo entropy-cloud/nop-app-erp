@@ -32,6 +32,7 @@
             ]]></source>
         </mutation>
         <mutation name="approve">
+            <auth permissions="ErpAstMovement:approve"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -94,6 +95,7 @@
             ]]></source>
         </mutation>
         <mutation name="reverseApprove">
+            <auth permissions="ErpAstMovement:reverseApprove"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>

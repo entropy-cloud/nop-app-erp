@@ -120,7 +120,17 @@
                         <resource id="ErpInvCostAdjust-main" app:useCases="UC-INV-10" displayName="成本调整单"
                                   i18n-en:displayName="Cost Adjustment" icon="sliders-horizontal"
                                   component="FLUX" resourceType="SUBM" orderNo="720"
-                                  url="/erp/inv/pages/ErpInvCostAdjust/main.page.yaml"/>
+                                  url="/erp/inv/pages/ErpInvCostAdjust/main.page.yaml">
+                            <children>
+                                <resource id="FNPT:ErpInvCostAdjust:approve" displayName="审核" i18n-en:displayName="Approve" resourceType="FNPT" orderNo="90010" roles="库管员">
+                                    <permissions>ErpInvCostAdjust:approve</permissions>
+                                </resource>
+                                <resource id="FNPT:ErpInvCostAdjust:reverseApprove" displayName="反审核成本调整" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="22020" roles="管理员">
+                                    <permissions>ErpInvCostAdjust:reverseApprove</permissions>
+                                </resource>
+                            </children>
+                        </resource>
                     </children>
                 </resource>
                 <!-- 库存报表 -->

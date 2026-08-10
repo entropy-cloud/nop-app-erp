@@ -8,6 +8,12 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="approve">
+            <auth permissions="ErpInvCostAdjust:approve"/>
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.inv.service.processor.ErpInvCostAdjustApproveProcessor').approve(id, svcCtx);
             ]]></c:script></source>
@@ -18,6 +24,12 @@
             ]]></c:script></source>
         </mutation>
         <mutation name="reverseApprove">
+            <auth permissions="ErpInvCostAdjust:reverseApprove"/>
+            <arg name="id" type="String" mandatory="true"/>
+            <arg name="svcCtx" kind="ServiceContext"/>
+            <return>
+                <schema bizObjName="THIS_OBJ"/>
+            </return>
             <source><c:script><![CDATA[
                 return inject('app.erp.inv.service.processor.ErpInvCostAdjustReverseApproveProcessor').reverseApprove(id, svcCtx);
             ]]></c:script></source>

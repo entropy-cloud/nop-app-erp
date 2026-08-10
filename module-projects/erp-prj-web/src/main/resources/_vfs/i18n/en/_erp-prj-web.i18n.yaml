@@ -20,6 +20,18 @@ site:
       displayName: Task
     ErpPrjTimesheet-main:
       displayName: Timesheet
+    FNPT:ErpPrjBilling:approve:
+      displayName: Approve
+    FNPT:ErpPrjBilling:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpPrjBudget:approve:
+      displayName: Approve
+    FNPT:ErpPrjBudget:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpPrjCostCollection:approve:
+      displayName: Approve
+    FNPT:ErpPrjCostCollection:reverseApprove:
+      displayName: Reverse Approve
     erp-prj:
       displayName: Projects
     prj-billing:

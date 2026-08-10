@@ -9,3 +9,13 @@ USER_ID,USER_NAME,PASSWORD,SALT,NICK_NAME,OPEN_ID,GENDER,USER_TYPE,STATUS,DEL_FL
 8,role-hr-salary,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-hr-salary,0,1,1,1,0,0
 9,role-hr,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-hr,0,1,1,1,0,0
 10,role-restricted,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-restricted,0,1,1,1,0,0
+11,role-pur,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-pur,0,1,1,1,0,0
+12,role-sal,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-sal,0,1,1,1,0,0
+13,role-ast,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-ast,0,1,1,1,0,0
+14,role-prj,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-prj,0,1,1,1,0,0
+15,role-qa,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-qa,0,1,1,1,0,0
+16,role-mnt-lead,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-mnt-lead,0,1,1,1,0,0
+17,role-mnt-tech,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-mnt-tech,0,1,1,1,0,0
+18,role-ct-clerk,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-ct-clerk,0,1,1,1,0,0
+19,role-ct-approver,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-ct-approver,0,1,1,1,0,0
+20,role-approver,$2a$10$74DaI9b3RwzmmA3xpb6ZN.WTzl2YjNf7cLVTTaW1TmaW1rGCdn892,26dce419976e4e7f95f7a9dcb82e5bc4,role-approver,0,1,1,1,0,0

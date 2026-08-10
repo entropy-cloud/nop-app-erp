@@ -32,6 +32,10 @@ site:
       displayName: Approve Payment
     FNPT:ErpPurPayment:reverseApprove:
       displayName: Reverse Approve
+    FNPT:ErpPurQuotation:approve:
+      displayName: Approve
+    FNPT:ErpPurQuotation:reverseApprove:
+      displayName: Reverse Approve
     FNPT:ErpPurReceive:approve:
       displayName: Approve Purchase Receipt
     FNPT:ErpPurReceive:reverseApprove:
@@ -43,6 +47,10 @@ site:
     FNPT:ErpPurReturn:approve:
       displayName: Approve Purchase Return
     FNPT:ErpPurReturn:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpPurRfq:approve:
+      displayName: Approve
+    FNPT:ErpPurRfq:reverseApprove:
       displayName: Reverse Approve
     erp-pur:
       displayName: Purchase

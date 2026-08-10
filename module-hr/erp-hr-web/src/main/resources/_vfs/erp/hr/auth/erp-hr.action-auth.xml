@@ -102,6 +102,10 @@
                                           resourceType="FNPT" orderNo="50010" roles="薪酬审批人">
                                     <permissions>ErpHrSalary:approve</permissions>
                                 </resource>
+                                <resource id="FNPT:ErpHrSalary:reverseApprove" displayName="反审核工资单" i18n-en:displayName="Reverse Approve"
+                                          resourceType="FNPT" orderNo="20020" roles="管理员">
+                                    <permissions>ErpHrSalary:reverseApprove</permissions>
+                                </resource>
                                 <resource id="FNPT:ErpHrSalary:markPaid" displayName="标记已发放" i18n-en:displayName="Mark Paid"
                                           resourceType="FNPT" orderNo="50020" roles="薪酬审批人">
                                     <permissions>ErpHrSalary:markPaid</permissions>

@@ -26,6 +26,7 @@
             ]]></source>
         </mutation>
         <mutation name="approve">
+            <auth permissions="ErpMntRequest:approve"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -76,6 +77,7 @@
             ]]></source>
         </mutation>
         <mutation name="reverseApprove">
+            <auth permissions="ErpMntRequest:reverseApprove"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>

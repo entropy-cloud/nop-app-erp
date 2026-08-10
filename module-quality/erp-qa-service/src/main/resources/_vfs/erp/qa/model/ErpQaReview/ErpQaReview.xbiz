@@ -26,6 +26,7 @@
             ]]></source>
         </mutation>
         <mutation name="approve">
+            <auth permissions="ErpQaReview:approve"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
@@ -76,6 +77,7 @@
             ]]></source>
         </mutation>
         <mutation name="reverseApprove">
+            <auth permissions="ErpQaReview:reverseApprove"/>
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>

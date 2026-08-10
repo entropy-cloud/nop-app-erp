@@ -20,6 +20,26 @@ site:
       displayName: Risk Register
     ErpQaSamplingPlan-main:
       displayName: Sampling Plan
+    FNPT:ErpQaCalibration:approve:
+      displayName: Approve
+    FNPT:ErpQaCalibration:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpQaInspection:approve:
+      displayName: Approve
+    FNPT:ErpQaInspection:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpQaRecall:approve:
+      displayName: Approve
+    FNPT:ErpQaRecall:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpQaReview:approve:
+      displayName: Approve
+    FNPT:ErpQaReview:reverseApprove:
+      displayName: Reverse Approve
+    FNPT:ErpQaSpcChart:approve:
+      displayName: Approve
+    FNPT:ErpQaSpcChart:reverseApprove:
+      displayName: Reverse Approve
     erp-qa:
       displayName: Quality
     inspection-summary:
