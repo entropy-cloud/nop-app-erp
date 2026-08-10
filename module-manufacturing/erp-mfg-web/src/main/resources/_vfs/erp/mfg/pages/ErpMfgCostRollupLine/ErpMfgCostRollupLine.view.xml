@@ -12,8 +12,11 @@
                 <col id="materialId" label="产品" i18n-en:label="Product"/>
                 <col id="uoMId" label="计量单位" i18n-en:label="UoM"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
-                <col id="materialCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
-                <col id="laborCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
+                <!-- E4.1：materialCost/laborCost/overheadCost/subcontractCost 已 published=false 隐藏，grid 不引用 -->
+                <col id="materialBand" label="材料档位" i18n-en:label="Material Band" sortable="true" align="center"/>
+                <col id="laborBand" label="人工档位" i18n-en:label="Labor Band" sortable="true" align="center"/>
+                <col id="overheadBand" label="制费档位" i18n-en:label="Overhead Band" sortable="true" align="center"/>
+                <col id="subcontractBand" label="委外档位" i18n-en:label="Subcontract Band" sortable="true" align="center"/>
                 <col id="totalCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="unitCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
             </cols>
@@ -28,8 +31,8 @@
  lineNo[行号] materialId[物料]
  uoMId[计量单位]
 =========>cost[成本信息]======
- materialCost[材料成本] laborCost[人工成本]
- overheadCost[制造费用] subcontractCost[委外成本]
+ materialBand[材料档位] laborBand[人工档位]
+ overheadBand[制费档位] subcontractBand[委外档位]
  totalCost[总成本] unitCost[单位成本]
  currencyId[币种]
 =========>reference[业务关联]======
@@ -45,8 +48,6 @@
  lineNo[行号] materialId[物料]
  uoMId[计量单位]
 =========>cost[成本信息]======
- materialCost[材料成本] laborCost[人工成本]
- overheadCost[制造费用] subcontractCost[委外成本]
  totalCost[总成本] unitCost[单位成本]
  currencyId[币种]
 =========>reference[业务关联]======

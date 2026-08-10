@@ -83,62 +83,6 @@
         }
 
 
-        private java.math.BigDecimal _materialCost;
-
-    
-        @PropMeta(propId=6)
-    
-        public java.math.BigDecimal getMaterialCost(){
-            return _materialCost;
-        }
-
-        public void setMaterialCost(java.math.BigDecimal value){
-            this._materialCost = value;
-        }
-
-
-        private java.math.BigDecimal _laborCost;
-
-    
-        @PropMeta(propId=7)
-    
-        public java.math.BigDecimal getLaborCost(){
-            return _laborCost;
-        }
-
-        public void setLaborCost(java.math.BigDecimal value){
-            this._laborCost = value;
-        }
-
-
-        private java.math.BigDecimal _overheadCost;
-
-    
-        @PropMeta(propId=8)
-    
-        public java.math.BigDecimal getOverheadCost(){
-            return _overheadCost;
-        }
-
-        public void setOverheadCost(java.math.BigDecimal value){
-            this._overheadCost = value;
-        }
-
-
-        private java.math.BigDecimal _subcontractCost;
-
-    
-        @PropMeta(propId=9)
-    
-        public java.math.BigDecimal getSubcontractCost(){
-            return _subcontractCost;
-        }
-
-        public void setSubcontractCost(java.math.BigDecimal value){
-            this._subcontractCost = value;
-        }
-
-
         private java.math.BigDecimal _totalCost;
 
     
