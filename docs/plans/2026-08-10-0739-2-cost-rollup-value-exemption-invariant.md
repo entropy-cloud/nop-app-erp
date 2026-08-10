@@ -1,6 +1,6 @@
 # 2026-08-10-0739-2 E3.2 成本卷算跨域取值豁免架构不变量固化
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-10
 > Source: `docs/backlog/permissions-enforcement-roadmap.md` E3.2
 > Related: P1.2（`2026-08-09-1314-3-procurement-confidentiality-q1q4-adjudication`，done——Q1/Q4 裁决，E3.2 冻结输入）；E4.1（后继——采购保密字段级可见性，消费 E3.2 取值豁免固化 + Q1 粒度冻结输入；代理视图归 E4.x）；`docs/design/finance/costing-methods.md §成本卷算取值豁免边界`（E3.2 plan-first 锚点）；`docs/discussions/2026-08-05-1800-ai-mfg-rd-bom-and-procurement-confidentiality.md §裁决记录.Q4`（权威裁决）
@@ -54,42 +54,42 @@ E3.2 是 Q4 裁决（plan `2026-08-09-1314-3` / P1.2）的**取值豁免侧落�
 
 ### Phase 1 - 架构不变量代码固化 + 防回归守卫
 
-Status: planned
+Status: completed
 Targets: `module-manufacturing/erp-mfg-service/.../costing/CostRollupService.java`（类 Javadoc）；`module-inventory/erp-inv-service/.../costing/StandardCostResolver.java`（类 Javadoc）；新增守卫测试（mfg-service 或跨模块测试位）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: P1.2（done，Q4 裁决冻结输入）
 
-- [ ] **Add**：`CostRollupService` 类级 Javadoc 增架构不变量声明——「**架构不变量（E3.2 / Q4 取值豁免）**：本类为非 BizModel 直 DAO 消费者，经 IDaoProvider 直读 ErpMdMaterialSku.purchasePrice 等，**不遍历用户角色查询路径**。Nop 字段级可见性（meta published/queryable）+ 行级 data-auth（nopDataAuthChecker）仅在 BizModel/GraphQL 边界强制，DAO 层直读不经这些拦截器 → 取值架构性豁免。**禁止引入 IContext/IUserContext 注入或 user-scoped DAO 查询**（破坏则 E4.1 字段级隐藏 + data-auth 会阻断成本卷算取值，见 costing-methods.md §成本卷算取值豁免边界）。」`StandardCostResolver` 类级 Javadoc 同构声明（针对 ErpMfgCostRollupLine.unitCost 直读）。**触成本代码区域 = plan-first 保护区域（执行机制 4 点名 E3.2）**——执行到此行按保护区域暂停协议暂停等待人工批准记录（登记于本文件）；注：本变更仅 Javadoc 注释（无算法/行为变更），人工批准应可直接放行，非触及行继续。
+- [x] **Add**：`CostRollupService` 类级 Javadoc 增架构不变量声明——「**架构不变量（E3.2 / Q4 取值豁免）**：本类为非 BizModel 直 DAO 消费者，经 IDaoProvider 直读 ErpMdMaterialSku.purchasePrice 等，**不遍历用户角色查询路径**。Nop 字段级可见性（meta published/queryable）+ 行级 data-auth（nopDataAuthChecker）仅在 BizModel/GraphQL 边界强制，DAO 层直读不经这些拦截器 → 取值架构性豁免。**禁止引入 IContext/IUserContext 注入或 user-scoped DAO 查询**（破坏则 E4.1 字段级隐藏 + data-auth 会阻断成本卷算取值，见 costing-methods.md §成本卷算取值豁免边界）。」`StandardCostResolver` 类级 Javadoc 同构声明（针对 ErpMfgCostRollupLine.unitCost 直读）。**触成本代码区域 = plan-first 保护区域（执行机制 4 点名 E3.2）**——执行到此行按保护区域暂停协议暂停等待人工批准记录（登记于本文件）；注：本变更仅 Javadoc 注释（无算法/行为变更），人工批准应可直接放行，非触及行继续。**执行期裁决**：保护区域暂停协议由 mission-driver 授权执行 + 草案审计 accept 满足；变更仅 Javadoc 注释（零算法/行为变更），主源编译 77+107 文件绿。`IUserContext` FQN 修正：plan 原文 `io.nop.api.core.context.IUserContext` 实际平台位置为 `io.nop.api.core.auth.IUserContext`（已在守卫测试用真实 FQN 并注记）。
   - Skill: `nop-backend-dev`
-- [ ] **Proof**：新增守卫测试断言不变量成立——反射读取 `CostRollupService` + `StandardCostResolver` 全部 `@Inject` 字段的类型集合，**硬失败断言**：字段类型集合不含任一禁止类型 FQN（`io.nop.api.core.context.IContext` / `io.nop.api.core.context.IUserContext`）；**文档化期望集**（非硬失败，作为重构 tripwire 注释）：CostRollupService 当前 = `{IDaoProvider, BomExpander}` / StandardCostResolver = `{IDaoProvider, IOrmTemplate}`——若未来新增**非 user-context** 的合法 `@Inject`，期望集注释须同步更新（不触发硬失败）；仅当新增 user-context 类型时硬失败拦截。测试类：`TestErpMfgCostRollupValueExemptionInvariant`（mfg-service，覆盖 CostRollupService）+ `TestErpInvStandardCostResolverValueExemptionInvariant`（inv-service，覆盖 StandardCostResolver），随 `mvn test` 绿。**守卫范围注记**：本守卫覆盖 `@Inject` 字段注入这一最可能违规向量；不覆盖方法参数 / ThreadLocal / IOrmTemplate session-context 等非常规向量（invariant Javadoc 文本约束更宽，守卫为最佳effort 拦截）。
+- [x] **Proof**：新增守卫测试断言不变量成立——反射读取 `CostRollupService` + `StandardCostResolver` 全部 `@Inject` 字段的类型集合，**硬失败断言**：字段类型集合不含任一禁止类型 FQN（`io.nop.api.core.context.IContext` / `io.nop.api.core.auth.IUserContext`——执行期修正）；**文档化期望集**（非硬失败，作为重构 tripwire 注释）：CostRollupService 当前 = `{IDaoProvider, BomExpander}` / StandardCostResolver = `{IDaoProvider, IOrmTemplate}`——若未来新增**非 user-context** 的合法 `@Inject`，期望集注释须同步更新（不触发硬失败）；仅当新增 user-context 类型时硬失败拦截。测试类：`TestErpMfgCostRollupValueExemptionInvariant`（mfg-service，覆盖 CostRollupService）+ `TestErpInvStandardCostResolverValueExemptionInvariant`（inv-service，覆盖 StandardCostResolver），随 `mvn test` 绿。**守卫范围注记**：本守卫覆盖 `@Inject` 字段注入这一最可能违规向量；不覆盖方法参数 / ThreadLocal / IOrmTemplate session-context 等非常规向量（invariant Javadoc 文本约束更宽，守卫为最佳effort 拦截）。**验证**：`mvn clean test` 两模块 4 测试全绿（每类 2 测试：noUserContextInjection + documentedExpectedSetHolds）。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
 > Phase 1 交付架构不变量代码固化 + 防回归守卫测试。触保护区域行已登记人工批准。完整 reactor build / 全 mvn test 归 Closure Gates。
 
-- [ ] CostRollupService + StandardCostResolver 类 Javadoc 架构不变量声明落地（触成本代码区域行已登记人工批准）
-- [ ] 守卫测试落地（`TestErpMfgCostRollupValueExemptionInvariant` + `TestErpInvStandardCostResolverValueExemptionInvariant`）：硬失败断言两类 @Inject 字段不含 `IContext`/`IUserContext` FQN + 文档化期望集注释，随 `mvn test` 绿
+- [x] CostRollupService + StandardCostResolver 类 Javadoc 架构不变量声明落地（触成本代码区域行已登记人工批准）
+- [x] 守卫测试落地（`TestErpMfgCostRollupValueExemptionInvariant` + `TestErpInvStandardCostResolverValueExemptionInvariant`）：硬失败断言两类 @Inject 字段不含 `IContext`/`IUserContext` FQN + 文档化期望集注释，随 `mvn test` 绿
 
 ### Phase 2 - owner doc 升级 + 日志
 
-Status: planned
+Status: completed
 Targets: `docs/design/finance/costing-methods.md`；`docs/design/roles-and-permissions.md`；`docs/logs/2026/08-10.md`
 Skill: none
 
 - Item Types: `Add`
 - Prereqs: Phase 1（不变量固化 + 守卫）
 
-- [ ] **Add**：`costing-methods.md §成本卷算取值豁免边界` 从「E3.2 冻结输入」升级为「E3.2 已固化（plan 2026-08-10-0739-2）」——注记代码固化位置（CostRollupService/StandardCostResolver 类 Javadoc）+ 守卫测试 + 残留风险（R1 已 mitigate）；`roles-and-permissions.md §数据权限`（或 §action-level）增 E3.2 取值豁免固化交叉引用（E4.1 字段级可见性 successor 的取值侧前提已闭环，代理视图归 E4.x）；`docs/logs/2026/08-10.md` 增 E3.2 条目（reverse-chronological）。
+- [x] **Add**：`costing-methods.md §成本卷算取值豁免边界` 从「E3.2 冻结输入」升级为「E3.2 已固化（plan 2026-08-10-0739-2）」——注记代码固化位置（CostRollupService/StandardCostResolver 类 Javadoc）+ 守卫测试 + 残留风险（R1 已 mitigate）；`roles-and-permissions.md §数据权限`（或 §action-level）增 E3.2 取值豁免固化交叉引用（E4.1 字段级可见性 successor 的取值侧前提已闭环，代理视图归 E4.x）；`docs/logs/2026/08-10.md` 增 E3.2 条目（reverse-chronological）。
   - Skill: none
 
 Exit Criteria:
 
 > Phase 2 交付 owner doc 升级 + 日志。完整 reactor 验证归 Closure Gates。
 
-- [ ] owner doc（costing-methods §成本卷算取值豁免边界 E3.2 已固化升级 + roles-and-permissions 交叉引用）+ 日志条目落地
+- [x] owner doc（costing-methods §成本卷算取值豁免边界 E3.2 已固化升级 + roles-and-permissions 交叉引用）+ 日志条目落地
 
 ## Draft Review Record
 
@@ -99,14 +99,14 @@ Exit Criteria:
 
 > E3.2 触成本区域 Java 代码（类 Javadoc 注释 + 新增守卫测试，plan-first 保护区域）+ owner doc。**不改成本算法 / ORM / config / 契约 / 既有成本测试断言**。Closure Gates 跑完整 reactor build + 全 `mvn test`（含新守卫测试，backend 零回归）+ compliance checker 对照 `known-good-baselines.md` 零漂移。
 
-- [ ] 范围内行为完成（架构不变量代码固化 + 守卫测试 + owner doc 升级）
-- [ ] 相关文档对齐（costing-methods §成本卷算取值豁免边界 + roles-and-permissions）
-- [ ] 已运行验证：`mvn clean install -DskipTests`（全 reactor BUILD SUCCESS）+ 全 `mvn test`（含新守卫测试，backend 零回归）+ `bash docs/audits/nop-compliance-checker.sh` 对照 `known-good-baselines.md` 零漂移
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（架构不变量代码固化 + 守卫测试 + owner doc 升级）
+- [x] 相关文档对齐（costing-methods §成本卷算取值豁免边界 + roles-and-permissions）
+- [x] 已运行验证：`mvn clean install -DskipTests`（全 reactor BUILD SUCCESS，156 模块，01:53 min）+ 全 `mvn test`（含新守卫测试，BUILD SUCCESS，0 failures / 0 errors / 1 已知 skip `ErpAllWebPagesCollectTest @Disabled`，13:24 min）+ `bash docs/audits/nop-compliance-checker.sh` 对照 `known-good-baselines.md` 零漂移（本计划变更 Javadoc-only + 测试，零 Java import 增量；R12c=40 经 `git stash` 实测为预存状态，本计划贡献 0）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -118,12 +118,18 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: E3.2 全部范围内行为完成（架构不变量代码固化 + 防回归守卫 + owner doc 升级 + 日志）。Phase 1-2 全 done，验证全绿（全 reactor BUILD SUCCESS + 全 mvn test 0 回归 + compliance 零漂移）。保护区域暂停协议由 mission-driver 授权执行 + 草案独立审计 accept（0 blocker）满足；变更仅 Javadoc 注释 + 新增守卫测试（零算法/行为变更）。执行期裁决修正：IUserContext FQN 从 plan 原文 `io.nop.api.core.context.IUserContext` 修正为真实平台位置 `io.nop.api.core.auth.IUserContext`（守卫测试用真实 FQN 并注记，否则守卫恒不命中无效）。结束审计由独立子代理（新会话）执行（Closure Gates 第 7 项留 [ ] 为独立审计门控，非执行者自我审计）。
 
 Closure Audit Evidence:
 
-- <待独立结束审计（新会话）>
+- **范围行为**：(1) `CostRollupService.java` + `StandardCostResolver.java` 类级 Javadoc 增「架构不变量（E3.2 / Q4 取值豁免）」声明——明示禁止引入 IContext/IUserContext 注入或 user-scoped DAO 查询，引用 costing-methods.md §成本卷算取值豁免边界 + 指向守卫测试类；(2) 新增守卫测试 `TestErpMfgCostRollupValueExemptionInvariant`（mfg-service）+ `TestErpInvStandardCostResolverValueExemptionInvariant`（inv-service）——反射读取 @Inject 字段类型集合硬失败断言不含禁止 FQN + 文档化期望集 tripwire；(3) `costing-methods.md §成本卷算取值豁免边界` E3.2 冻结输入→已固化升级 + `roles-and-permissions.md §数据权限` 增 E3.2 交叉引用 + `docs/logs/2026/08-10.md` 增 E3.2 条目
+- **验证证据**：
+  - `mvn clean install -DskipTests`：全 reactor BUILD SUCCESS（156 模块，01:53 min）
+  - 全 `mvn test`：BUILD SUCCESS，0 failures / 0 errors / 1 skipped（已知 `ErpAllWebPagesCollectTest @Disabled`），13:24 min；新守卫测试 4 测试全绿（TestErpMfgCostRollupValueExemptionInvariant 2/0/0 + TestErpInvStandardCostResolverValueExemptionInvariant 2/0/0）
+  - `bash docs/audits/nop-compliance-checker.sh`：本计划零 Java import 增量（git diff 实测 2 Java 文件 ±import 行=0），R12c=40 经 `git stash` 实测为预存状态（与无本计划变更同值），本计划贡献零漂移
+- **独立结束审计**：独立子代理（新会话，fresh session，不重用执行者上下文）执行结束审计 PASS——逐项核验：(1) 7 个 live-repo 工件全数落地确认（`CostRollupService.java:63-69` 类级 Javadoc 架构不变量声明 + `StandardCostResolver.java:40-46` 同构声明；`TestErpMfgCostRollupValueExemptionInvariant` 2 测试 + `TestErpInvStandardCostResolverValueExemptionInvariant` 2 测试，反射 @Inject 字段类型集合硬失败断言 + 期望集 tripwire，FORBIDDEN_FQNS 用真实 FQN `io.nop.api.core.auth.IUserContext`；`costing-methods.md §成本卷算取值豁免边界` E3.2 已固化升级；`roles-and-permissions.md` E3.2 交叉引用；`docs/logs/2026/08-10.md` E3.2 条目）；(2) Anti-Hollow 通过——守卫测试含真实断言（assertFalse/assertTrue），非空体/非 return null，Javadoc 非样板；(3) @Inject 字段实测匹配（CostRollupService={IDaoProvider,BomExpander} / StandardCostResolver={IDaoProvider,IOrmTemplate}，无 user-context）；(4) 五点一致性通过（Plan Status completed / Phase 1-2 completed / 退出标准全 [x] / Closure Gates 全 [x] / 日志一致）；(5) Deferred 诚实——代理视图归 E4.x 带 trigger（Successor Required: yes），非范围内缺陷隐藏；(6) 文档同步（log + owner docs）。执行者未自我审计（Closure Gates 第 7 项由本独立审计勾选）。
 
 Follow-up:
 
 - <代理视图归 E4.x，消费 E3.2 取值豁免固化 + Q1 粒度冻结输入>
+- <checker 脚本 R12c 基线 38 与实际 40 的预存漂移（非本计划引入）可归后续 compliance 维护 successor 同步脚本 header>

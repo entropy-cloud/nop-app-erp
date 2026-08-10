@@ -89,6 +89,8 @@
 >
 > **EL 表达式**：filter 用 `${userContext.userId}`（`DefaultDataAuthChecker.newEvalScope` 注入的 scope 变量 = `IUserContext`）。注意 `${$context.user.userId}` 无效——`$context` 解析为 `IContext`，`IContext` 无 `getUser()` 方法。
 
+> **E3.2 成本卷算取值豁免固化（交叉引用，plan `2026-08-10-0739-2`）**：服务端成本卷算（`CostRollupService` / `StandardCostResolver`）为**非 BizModel 直 DAO 消费者**，经 `IDaoProvider`/`IOrmTemplate` 直读 `ErpMdMaterialSku.purchasePrice` / `ErpMfgCostRollupLine.unitCost`，**不遍历用户角色查询路径**——架构性豁免字段级可见性（meta `published`/`queryable`）+ 行级 data-auth（仅 BizModel/GraphQL 边界强制）。此为 **E4.1 字段级可见性 successor 的取值侧前提**：翻启字段级隐藏 + data-auth 不会阻断服务端跨域成本取值。架构不变量已双层固化：(1) 类级 Javadoc 显式声明「禁止引入 `IContext`/`IUserContext` 注入或 user-scoped DAO 查询」；(2) 防回归守卫测试（`TestErpMfgCostRollupValueExemptionInvariant` + `TestErpInvStandardCostResolverValueExemptionInvariant`）反射断言 @Inject 字段类型不含 user-context 类型。权威：`docs/design/finance/costing-methods.md §成本卷算取值豁免边界`（E3.2 已固化落点）。消费侧代理视图（Q4 Decision (c)）+ Q1 粒度裁决归 E4.x。
+
 ### 状态机绑定
 
 每个状态机的迁移都绑定执行角色（详见各域 `state-machine.md` 的"角色与权限"节）。角色名与本文档一致。新增状态机迁移时必须同步更新本文档。

@@ -76,13 +76,19 @@
 
 ## 成本卷算取值豁免边界（采购保密 Q4 裁决交叉引用）
 
-> 来源：plan `2026-08-09-1314-3-procurement-confidentiality-q1q4-adjudication`（Q4 裁决）；权威裁决 = `docs/discussions/2026-08-05-1800-ai-mfg-rd-bom-and-procurement-confidentiality.md §裁决记录.Q4`。本节为 E3.2（`CostRollupService` 取值豁免实施）的 plan-first 锚点，**不改本文件描述的成本算法**。
+> 来源：plan `2026-08-09-1314-3-procurement-confidentiality-q1q4-adjudication`（Q4 裁决）；权威裁决 = `docs/discussions/2026-08-05-1800-ai-mfg-rd-bom-and-procurement-confidentiality.md §裁决记录.Q4`。本节为 E3.2（`CostRollupService` 取值豁免）的 plan-first 锚点 + E3.2 已固化落点（plan `2026-08-10-0739-2`），**不改本文件描述的成本算法**。
 
 **事实（架构性豁免）**：`CostRollupService`（`module-manufacturing/erp-mfg-service/.../costing/CostRollupService.java:61-72,294-304`）与 `StandardCostResolver`（`module-inventory/erp-inv-service/.../costing/StandardCostResolver.java:37-52,73-96`）均为**非 BizModel 直接 DAO 消费者**——经 `IDaoProvider`/`IOrmTemplate` 直读 `ErpMdMaterialSku.purchasePrice`/`ErpMfgCostRollupLine.unitCost`，**无 `IContext`/user-context 注入，不遍历任何用户角色的查询路径**。Nop 的字段级可见性（meta `published`/`queryable`，E4.1）与行级 data-auth（`nopDataAuthChecker`）仅在 **BizModel/GraphQL 边界**强制，DAO 层直读不经这些拦截器。
 
 **裁决结论**：「研发角色不可见」（E4.1 字段级隐藏 + data-auth）与「成本可滚算」（服务端跨域取值）在服务端本就共存——服务端取值架构性豁免这些检查，**无需配置豁免**，仅需裁决确认知。Q4 真实矛盾不在取值，而在研发角色经何种视图消费聚合结果（Q4 选定 (c) 混合：服务端取值豁免 + 研发侧代理视图，详见讨论文档 §裁决记录.Q4）。
 
-**E3.2 冻结输入**：E3.2（`CostRollupService` 取值豁免 plan-first）的证据 = 本节 + 讨论文档 §裁决记录.Q4 Proof/Decision。E3.2 实施时**不改 `CostRollupService`/`StandardCostResolver` 业务逻辑**，仅在代理视图/字段级可见性层落 (c) 方案。架构不变量（「二者始终为非 BizModel 直 DAO 消费者」）须在 E3.2 代码契约/注释固化。
+**E3.2 已固化（plan 2026-08-10-0739-2）**：E3.2（`CostRollupService` 取值豁免）的证据 = 本节 + 讨论文档 §裁决记录.Q4 Proof/Decision。E3.2 **不改 `CostRollupService`/`StandardCostResolver` 业务逻辑**（仅类级 Javadoc 增架构不变量声明），代理视图/字段级可见性 (c) 方案归 E4.x。架构不变量（「二者始终为非 BizModel 直 DAO 消费者」）已闭环固化：
+
+- **代码层固化**：`CostRollupService` 类级 Javadoc + `StandardCostResolver` 类级 Javadoc 显式声明「禁止引入 `IContext`/`IUserContext` 注入或 user-scoped DAO 查询」约束（破坏则 E4.1 字段级隐藏 + data-auth 会阻断取值），使未来重构者可见约束。
+- **防回归守卫测试**：`TestErpMfgCostRollupValueExemptionInvariant`（mfg-service）+ `TestErpInvStandardCostResolverValueExemptionInvariant`（inv-service）反射读取 `@Inject` 字段类型集合，硬失败断言不含 `io.nop.api.core.context.IContext` / `io.nop.api.core.auth.IUserContext`（注：IUserContext 实际平台 FQN 在 `auth` 包，非 `context`）；附文档化期望集 tripwire（CostRollupService = `{IDaoProvider, BomExpander}` / StandardCostResolver = `{IDaoProvider, IOrmTemplate}`，非 user-context 新增仅更新注释，user-context 新增硬失败）。守卫覆盖 @Inject 注入向量（最可能违规向量），不覆盖方法参数 / ThreadLocal / session-context 等非常规向量（Javadoc 文本约束更宽）。
+- **R1 残留风险 = 已 mitigate**：原 R1（「取值豁免依赖架构不变量，后续重构破坏前提」）经代码 Javadoc + 守卫测试双层缓解——重构者可见约束 + 违规被测试捕获。
+
+**successor 衔接**：E4.1 字段级可见性 successor 的取值侧前提已闭环（本节 + E3.2 守卫）；消费侧代理视图（Q4 Decision (c) 研发侧聚合值）+ Q1 粒度裁决（总额精确 + 要素档位离散）归 E4.x。
 
 ## 实现注记：生产差异计算
 
