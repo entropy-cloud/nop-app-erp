@@ -189,3 +189,64 @@ E1.2 扩展至 14 角色域全集 + 审核人跨域审批账号（userId 11-20�
 | e1-2-assets | 12 | ✓ | 资产管理员(approve) + 管理员(reverseApprove) |
 | e1-2-residual-extended | 17 | ✓ | 库管员/财务员/生产主管/项目经理/质量主管/维护主管/管理员 |
 | e1-2-menu-filter | 3 tests | B 类隐藏 + sys 隐藏 | 财务员见 erp-fin + 采购员 cross-domain deny |
+
+## E2.1 data-auth 翻启结果（plan 2026-08-10-2059-1 / E2.1，2026-08-10）
+
+> E2.1 = enforcement 从 action 级（E1.x 闭环）推进到 **data 级强制**的首个执行里程碑：翻启 data-auth 双开关（%test profile）+ 修正 sal data-auth roleId 实时缺陷 + 单组织基线零回归 + filter-active smoke Proof。
+
+### 配置翻启终态（application.yaml %test 块）
+
+| key | 值 | 行 | 说明 |
+|-----|----|----|------|
+| `nop.auth.enable-action-auth` | true | L62 | E1.2 已 ON（继承） |
+| `nop.auth.enable-data-auth` | true | L63 | **本计划翻启** |
+| `nop.auth.skip-check-for-admin` | true | L64 | P2.2a 已就位（继承） |
+| `nop.auth.use-user-id-for-audit-fields` | true | L65 | **本计划追加**——row-filter 运行时必要 enabler |
+| `erp.data-auth.role-row-filter-enabled` | true | L68 | **本计划翻启** |
+
+`%dev` / `%prod` 不动（OFF，安全姿态）。
+
+### sal roleId 实时缺陷 Fix（load-bearing）
+
+`erp-sal.data-auth.xml` 6 处 `roleIds="业务员"` → `roleIds="销售员"`（与 P1.5a 冻结词表 + `nop_auth_role.csv` L3 种子逐字一致）。修正前「销售员」用户不匹配「业务员」role-auth → 落 user 兜底 → 销售员行级过滤被静默击败。修正后销售员 row-filter 真正生效。连带修正：`TestErpRoleRowFilterIsolation.ROLE_SALESPERSON` + `TestErpDataAuthStructure.ROLE_SALESPERSON`（后者是 Phase 1 漏列目标，Phase 2 全 reactor `mvn test` 触发其失败时按同等原则补修）。
+
+### admin data-auth 匹配行为裁决（实证 + 机制证据）
+
+**裁决 = (1) admin 经平台 user 兜底零回归**。机制证据：sal/qa 规则末位 `<role-auth roleIds="user">` 无 filter，`ObjDataAuthModel.isUserInRole` 对 `roleIds="user"` 总命中（平台对所有登录用户隐式赋 `user` 角色），故 nop（admin）即便未绑业务「管理员」也命中 user 兜底 → 全见。**未选 (2) 补 admin role-auth**——非必要（user 兜底已覆盖），且会引入双命名空间混淆（业务「管理员」≠ 平台 `admin`，见 `roles-and-permissions.md` §角色体系横切关注点 2）。
+
+Proof 双重印证：(a) 后端 `TestErpRoleRowFilterIsolation.testAdminSeesAllAndUserFallbackNoShadow`——admin role-auth 声明在 user 兜底之前，不被 user 兜底 shadow；(b) E2E `e2-1-data-auth-filter-active.smoke.spec.ts` qa test——admin 经 user 兜底可见 ErpQaRiskRegister（规则加载 + 不 fail-closed）。
+
+### qa 维覆盖边界裁决
+
+质检员账号在 action-auth 层无 `ErpQaRiskRegister:query` 授权（qa SUBM roles=质量主管，FNPT 未 seed 给质检员）→ action-auth 拒绝先于 data-auth → 质检员 row-filter 的 E2E 证明被 action-auth 门控（扩 action-auth 归 successor，非 E2.1 data-auth 范围）。故 qa 维 E2E 仅证 admin 规则加载不 fail-closed；质检员 row-filter 运行时 Proof 由后端机制同源性（`TestErpRoleRowFilterIsolation` sal/createdBy 范式 DefaultDataAuthChecker + eq userId 域列）+ xmllint well-formed 覆盖。
+
+### filter-active smoke Proof 终态
+
+`e2-1-data-auth-filter-active.smoke.spec.ts`（2 tests，flux 引擎，data-auth ON %test）：
+
+| test | 断言 |
+|------|------|
+| salesperson (role-sal) sees only own ErpSalOrder rows; admin sees all | 销售员建 1 单 + admin 建 1 单 → 销售员视角查 admin 单行集收敛为空（越权行被过滤，无 errors）+ 查自己单可见；admin 视角两单均可见（user 兜底） |
+| qa rule active: admin sees ErpQaRiskRegister (no fail-closed) | admin 经 user 兜底可见 ErpQaRiskRegister（qa 规则加载 + 不 fail-closed） |
+
+后端 Proof 双重绿：`TestErpRoleRowFilterIsolation` 2/0/0（灰度 OFF→ON+销售员→ON+管理员→OFF 四象限）+ `TestErpDataAuthStructure` 4/0/0（聚合结构 + 三层 role-auth + EL 正确性 + 无效 EL 检测）。
+
+### orgId 维解耦注记（refine roadmap E2.1 表注）
+
+roadmap E2.1 表注「开启会连带激活 orgId 维行级规则」——经实测 refine：orgId 维隔离经**独立开关** `erp.multi-company.org-isolation-enabled`（`ErpOrgIsolationQueryTransformer` / `ErpOrgIsolationConstants`，默认 false）门控，与 data-auth 双开关**解耦**。sal/qa data-auth 规则均无 orgId 过滤列。故 E2.1 翻启 data-auth 双开关**不激活 orgId 维**（该开关保持 false）。单组织基线覆盖边界因此自然成立；多公司 orgId 隔离深化归 Non-Goal「多公司 orgId 隔离」。
+
+### 全 reactor 验证状态
+
+- `mvn clean install -DskipTests` 全 reactor BUILD SUCCESS（156 模块）
+- `mvn test`：data-auth 范围内全绿（`TestErpRoleRowFilterIsolation` 2/0/0 + `TestErpDataAuthStructure` 4/0/0 + `TestAuthSeedLoadingProof` 3/0/0 + hr-service 163/0/0 + sales/quality 受影响域绿）；执行期 flaky `TestErpHrSurveyLifecycle`（hr-service）在模块级和隔离运行全绿，判定为全 reactor 顺序执行的 pre-existing 隔离 issue，与本计划变更无因果（无 hr-service 代码/配置/种子触及）
+- `bash docs/audits/nop-compliance-checker.sh` exit 0（零漂移）
+
+### enforcement 状态（E2.1 闭环后）
+
+| 层 | 状态 | profile |
+|----|------|---------|
+| action-auth | ON | %test |
+| data-auth（双开关） | **ON（E2.1 翻启）** | %test |
+| use-user-id-for-audit-fields | **ON（E2.1 加翻）** | %test |
+| orgId 维隔离 | OFF（独立开关） | 全 profile |
+| %dev / %prod 三开关 | OFF（安全姿态） | %dev/%prod |
