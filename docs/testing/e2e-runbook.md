@@ -450,11 +450,11 @@ master-data ErpMdPartner 经 `runCrudWriteCycle`（GraphQL 层）+ `runAmisFormW
 | `expectRowsVisible(page, entity, filter, selection, expectedCount?)` | 断言「可见行集收敛」（data-auth 过滤后剩余可见行符合预期） | 封装 `findPageTotal`/`findItems`；`expectedCount` 精确收敛或省略时 ≥1 |
 | `loginAsRole(page, roleOrUser)` | 角色登录 indirection（**真实映射**，plan 2026-08-10-0119-1 / P2.2b 填充） | 接受角色 roleId/username 别名，从 `ROLE_ACCOUNTS` 映射表解析账号凭据，防御性清空会话（cookies + localStorage try-catch）后委派 `login(page, username, password)`；解析顺序 = 精确 roleId/别名 → 回退 `restricted`（保守：未知 = 最小权限） |
 
-辅助导出：`ENFORCEMENT_ERROR_CODES` 常量对象（`NO_PERMISSION`=`nop.err.auth.no-permission` / `NO_PERMISSION_FOR_FIELD` / `NO_DATA_AUTH`，P2.4 运行时确认后供负向 spec 收敛）+ re-export `callMutation`/`callQuery`/`findItems`/`findPageTotal`（消费者单一 import 入口）。`test`/`expect` 同 fixtures。
+辅助导出：`ENFORCEMENT_ERROR_CODES` 常量对象（`NO_PERMISSION`=`nop.err.auth.no-permission` / `NO_PERMISSION_FOR_FIELD` / `NO_DATA_AUTH`，**P2.4 运行时已确认**——形状与静态表征一致，常量值收敛无需调整，供负向 spec `opts.errorCode` 精确断言）+ re-export `callMutation`/`callQuery`/`findItems`/`findPageTotal`（消费者单一 import 入口）。`test`/`expect` 同 fixtures。
 
-### enforcement 拒绝形状表征（Phase 1 静态表征，运行时确认 gated on P2.4）
+### enforcement 拒绝形状表征（P2.4 运行时已确认，2026-08-10）
 
-经平台源 + `docs-for-ai/02-core-guides/auth-and-permissions.md` 表征（action-auth OFF 下不可观测，运行时确认随 P2.4 翻启）：
+经平台源 + `docs-for-ai/02-core-guides/auth-and-permissions.md` 表征 + **P2.4 dry-run 运行时确认**（`tests/e2e/negative/p2.4-proof-b.smoke.spec.ts` 实测 `role-restricted` 调 `ErpFinBadDebt__writeOff` 拒绝信封）：
 
 - **动作级 enforcement 拒绝**：`GraphQLActionAuthChecker.checkAuth`（顶层 action 于 `GraphQLActionAuthChecker.java:102`）抛 `NopException(AuthApiErrors.ERR_AUTH_NO_PERMISSION)` = `nop.err.auth.no-permission`，默认 message「没有访问权限」（i18n）。
 - **GraphQL 序列化形状**：HTTP status **恒 200**（`GraphQLWebService.runGraphQL` 硬编码 200，**非 403**——401 仅认证失败 `nop.err.auth.not-authorized`，与授权拒绝不同源）。body：
@@ -481,9 +481,25 @@ setup 为 spec-internal 内联最小链（employee + ACTIVE EmploymentContract +
 
 ### Follow-up（gated 运行时 demo）
 
-- **动作级 enforcement 拒绝运行时确认**：随 P2.4（翻 `enable-action-auth` 后用同原语 + `ENFORCEMENT_ERROR_CODES.NO_PERMISSION` 常量断言真权限拒绝）。
+- ~~**动作级 enforcement 拒绝运行时确认**：随 P2.4（翻 `enable-action-auth` 后用同原语 + `ENFORCEMENT_ERROR_CODES.NO_PERMISSION` 常量断言真权限拒绝）。~~ **P2.4 已闭环（2026-08-10）**——见下「P2.4 dry-run 门控」节。
 - **data-auth 行过滤原语运行时 demo**：随 E2.1（翻 `enable-data-auth` + `role-row-filter-enabled` 后用 `expectRowsHidden/Visible` 断言真行级过滤 absent）。
 - ~~负向账号主体~~：**P2.2b 已交付**（角色账号池 9 账号 + `loginAsRole` 真实映射，见下「角色账号池」节）。
+
+### P2.4 dry-run 门控（plan 2026-08-10-0741-1 / P2.4，2026-08-10）
+
+action-auth 从声明层推进到强制执行层的**dry-run 中间门控**——首次翻启 `enable-action-auth=true`（仅 action-auth，data-auth 留 E2.1），建立 admin ON 回归基线 + 受限账号 403 影响面清单（E1 进入门）。
+
+**翻启位置**：`app-erp-all/application.yaml` `%test` 块 L62 `enable-action-auth: false → true`（单行 config 变量）。%test 块经 `-Dquarkus.profile=test`（P2.2a 已在 webServer.command + `_tmp-server.sh` 两处同步）在 E2E 运行时激活，翻启即生效无需改启动命令。data-auth 双开关 + role-row-filter 保持 false（归 E2.1）。
+
+**admin/restricted 双轨验证范式**：
+- **admin 正向基线**（fold P2.2a Deferred skip-check live 充分性）：fresh-DB server action-auth ON，admin（nop）跑代表集（crud + dashboards + reports + business-actions），断言三元组 parity（total/passed/已知豁免）零新增失败 = skip-check 在 live action-auth 下真正放行 admin（`DefaultActionAuthChecker.isPermitted` + `SiteMapProviderImpl.filterAllowedMenu` 两路径）。
+- **restricted 负向影响面**（E1 进入门）：`role-restricted`（绑平台 `user` 角色，无敏感 FNPT）遍历 FNPT 声明子集，登记 denied / bypassed / inconclusive 三类清单。
+
+**影响面清单落盘**：`docs/testing/permissions-enforcement-dry-run-impact.md`（三类分布 + 逐动作表 + E1.1 消费次序）。E1.1 按此清单分批消费（bypassed P0 → arg-mismatch P1 → denied 已闭环锚点）。
+
+**Proof spec**：`tests/e2e/negative/p2.4-proof-b.smoke.spec.ts`（enforcement 拒绝形状运行时确认，fold P2.3 Deferred）+ `tests/e2e/negative/dry-run-impact.smoke.spec.ts`（61 项子集三类分类 Proof）。
+
+**测试基建 finding（P2.4 期间发现并已修）**：(1) `GraphQLClient` auth 传输 gap——`page.request.post('/graphql')` 不携带 flux 前端 token（前端存 sessionStorage + fetch 拦截器注入，`page.request` 绕过 + `__Host-nop-token` cookie 因 `__Host-` 前缀 Secure 约束不被发送），action-auth ON 时抵达 `roles=[]` 全 `no-permission`；修为显式注入 `Authorization: Bearer <token>` header。(2) `GraphQLClient.callMutation` 不返 `json` envelope → `expectActionDenied` errorCode 断言失效；修为补返 `json`。两项修正对所有 E2E 测试 action-auth OFF 下兼容（仅增 auth header + json 字段）。
 
 ### 角色账号池（plan 2026-08-10-0119-1 / P2.2b）
 

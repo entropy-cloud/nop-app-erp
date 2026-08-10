@@ -1,6 +1,6 @@
 # 权限 enforcement 开启（测试环境）路线图
 
-> 最后更新：2026-08-10（P2.2b done——角色账号池 9 账号 + loginAsRole 真实映射，验收实测随 E 段；P2.3 done——负向隔离测试原语 + 脚手架 + 冒烟 demo 交付；P2.2a done——admin 兜底 E2E 基线就绪）
+> 最后更新：2026-08-10（P2.4 done——action-auth 翻启 + admin 零回归基线 + enforcement 拒绝形状运行时确认 + 受限账号 403 影响面三类清单就绪；P2.2b done——角色账号池 9 账号 + loginAsRole 真实映射，验收实测随 E 段；P2.3 done——负向隔离测试原语 + 脚手架 + 冒烟 demo 交付；P2.2a done——admin 兜底 E2E 基线就绪）
 > 触发条件：RBAC 精细化 / 合规审计需求（`roles-and-permissions.md` §角色→权限点映射）+ 人工批准（2026-08-05，测试环境开启 enforcement；2026-08-06，启动执行并委托全部实施决策）
 > 来源：`docs/backlog/README.md` + `docs/discussions/2026-08-05-1800-ai-mfg-rd-bom-and-procurement-confidentiality.md` §讨论点四 + `docs/design/roles-and-permissions.md`
 > 执行：mission driver（`./tools/mission-driver.sh run permissions-enforcement`）；roadmap 状态块为唯一动态状态真相源
@@ -20,7 +20,7 @@
 
 ## Work Item Status
 
-> 唯一的动态状态块。状态：`todo` / `ready` / `done`。初始全 `todo`；2026-08-06 执行授权后首波 P1.1/P1.2/P1.3 转 `ready`（门控满足，可被 DRAFT_PLANS 选取）；P1 全段 + P2.1 done 后，P2.2a/P2.3 经独立草案审查通过转 `ready`；P2.2a 经 plan `2026-08-09-2210-1` 执行完成转 `done`（admin 兜底 E2E 基线就绪：skip-check 经 `-Dquarkus.profile=test` 在 E2E 运行时生效 + nop→平台 admin 角色运行时解析 + 全 E2E 套件零回归三路证明）；P2.3 经 plan `2026-08-09-2210-2` 执行完成转 `done`（负向隔离测试原语 expectActionDenied/expectRowsHidden/expectRowsVisible + loginAsRole 占位 + 脚手架 + 1 冒烟 demo 绿 + owner doc；enforcement 拒绝形状 Phase 1 静态表征，运行时确认随 P2.4；验收实测随 E 段）；P2.2b 经 plan `2026-08-10-0119-1` 执行完成转 `done`（角色账号池：E1.1 五高危域 8 授权角色 + 1 通用受限账号 CSV 种子 userId 2-10 + loginAsRole 真实 ROLE_ACCOUNTS 映射填充占位 + 14-test role-login.smoke.spec.ts 运行时 Proof 含双命名空间 + 全 E2E negative/dashboards 零回归）；其余保持 `todo` 直至 Deps 满足。
+> 唯一的动态状态块。状态：`todo` / `ready` / `done`。初始全 `todo`；2026-08-06 执行授权后首波 P1.1/P1.2/P1.3 转 `ready`（门控满足，可被 DRAFT_PLANS 选取）；P1 全段 + P2.1 done 后，P2.2a/P2.3 经独立草案审查通过转 `ready`；P2.2a 经 plan `2026-08-09-2210-1` 执行完成转 `done`（admin 兜底 E2E 基线就绪：skip-check 经 `-Dquarkus.profile=test` 在 E2E 运行时生效 + nop→平台 admin 角色运行时解析 + 全 E2E 套件零回归三路证明）；P2.3 经 plan `2026-08-09-2210-2` 执行完成转 `done`（负向隔离测试原语 expectActionDenied/expectRowsHidden/expectRowsVisible + loginAsRole 占位 + 脚手架 + 1 冒烟 demo 绿 + owner doc；enforcement 拒绝形状 Phase 1 静态表征，运行时确认随 P2.4；验收实测随 E 段）；P2.2b 经 plan `2026-08-10-0119-1` 执行完成转 `done`（角色账号池：E1.1 五高危域 8 授权角色 + 1 通用受限账号 CSV 种子 userId 2-10 + loginAsRole 真实 ROLE_ACCOUNTS 映射填充占位 + 14-test role-login.smoke.spec.ts 运行时 Proof 含双命名空间 + 全 E2E negative/dashboards 零回归）；P2.4 经 plan `2026-08-10-0741-1` 执行完成转 `done`（action-auth 正式翻启 %test profile L62 + admin 代表集零回归基线 skip-check live 充分性 fold P2.2a Deferred + enforcement 拒绝形状运行时确认 fold P2.3 Deferred + 受限账号 403 影响面三类清单 denied=5/bypassed=28/inconclusive=28 落盘 `docs/testing/permissions-enforcement-dry-run-impact.md` 作 E1.1 进入门 + 测试基建修正 GraphQLClient auth 传输 + callMutation json envelope）；其余保持 `todo` 直至 Deps 满足。
 
 ### Milestone P1 — 准备：权限矩阵与种子
 
@@ -45,7 +45,7 @@
 | P2.2a | **管理员兜底先行**（E2E fixture 切平台 admin + `skip-check` 生效验证 + 全 E2E 绿——E1.1/E1.2 硬前置） | done | `tests/e2e/auth.ts` + `e2e-runbook.md` | P1.5b + P2.1 | `nop-testing` |
 | P2.2b | 角色化渐进（按负向测试需要的角色逐域补账号，fixture 支持角色参数化） | done | `e2e-runbook.md` | P1.5b + P2.2a | `nop-testing` |
 | P2.3 | 负向隔离测试框架（未授权动作拒绝 + 越权数据过滤断言的原语/脚手架；验收实测随 E 段，但账号依赖 P1.5b 种子） | done | `e2e-runbook.md` | P2.1 + P1.5b | `nop-testing` |
-| P2.4 | **dry-run 中间门控**（先仅翻 `enable-action-auth`，admin 跑通全 E2E 做回归基线 + 非 admin 受限账号（P2.2b）跑子集统计真实 403 影响面并登记清单，作为 E1 进入门；data-auth 留待 E2.1 独立开启） | todo | `e2e-runbook.md` + `known-good-baselines.md` | P2.1 + P2.2a + P2.2b | `nop-testing` |
+| P2.4 | **dry-run 中间门控**（先仅翻 `enable-action-auth`，admin 跑通全 E2E 做回归基线 + 非 admin 受限账号（P2.2b）跑子集统计真实 403 影响面并登记清单，作为 E1 进入门；data-auth 留待 E2.1 独立开启） | done | `e2e-runbook.md` + `known-good-baselines.md` | P2.1 + P2.2a + P2.2b | `nop-testing` |
 
 ### Milestone E1 — 执行：action 级强制
 
