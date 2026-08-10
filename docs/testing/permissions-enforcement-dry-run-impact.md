@@ -250,3 +250,48 @@ roadmap E2.1 表注「开启会连带激活 orgId 维行级规则」——经实
 | use-user-id-for-audit-fields | **ON（E2.1 加翻）** | %test |
 | orgId 维隔离 | OFF（独立开关） | 全 profile |
 | %dev / %prod 三开关 | OFF（安全姿态） | %dev/%prod |
+
+## E2.2 employee-id 域列行级规则结果（plan 2026-08-11-0915-1 / E2.2，2026-08-11）
+
+> E2.2 = data 级强制从 userId 域列（E2.1 已落地 sal createdBy / qa ownerId）推进到 **employee-id 域列**：quality inspectorId ×2 + maintenance assignedTo ×2，默认等效方案（user.id==employee.id 种子对齐 + 规则直比，不触 ORM）。
+
+### 落地变更清单
+
+| 变更 | 文件 | 说明 |
+|------|------|------|
+| qa inspectorId 规则 | `erp-qa.data-auth.xml` | 增 ErpQaInspection + ErpQaSpcSample（质检员 eq(inspectorId, ${userContext.userId})） |
+| mnt assignedTo 规则 | `erp-mnt.data-auth.xml` | 从惰性 stub `<objs/>` 改为 ErpMntVisit + ErpMntRequest（维护人员 eq(assignedTo, ${userContext.userId})） |
+| mnt 聚合 | `app.data-auth.xml` | 增 x:extends erp-mnt.data-auth.xml（mnt 域规则首次激活） |
+| employee 种子对齐 | `erp_md_employee.csv` | 补 id=17（维护员甲）+ id=21（质检员甲），使 user.id==employee.id 整数直比成立 |
+| 结构断言扩展 | `TestErpDataAuthStructure.java` | 从 7 objs 扩展到 11 objs（6 sales + 3 qa + 2 mnt）+ qa/mnt employee-id 域三层结构断言 |
+
+### 默认等效方案裁决
+
+`ErpMdEmployee` 当前无 userId 列（实测 orm.xml 无 userId 列声明）→ 通用 user→employee 解析不可行 → 默认等效方案 = 复用既有 role-inspector（userId 21）/ role-mnt-tech（userId 17）+ 补 erp_md_employee.csv 种子行 id=17/id=21（种子 CSV 非 ORM 模型，非 ask-first），规则 `eq(<col>, ${userContext.userId})` 整数直比成立。ORM `ErpMdEmployee.userId` 扩展（通用解析）为 ask-first successor。
+
+### action-auth 门控实证
+
+| 实体 | SUBM | SUBM roles | 质检员/维护人员 query 授权 | E2E Proof |
+|------|------|-----------|--------------------------|-----------|
+| ErpQaInspection | qa-inspection | 质检员/质量主管 | ✓ | 可跑 |
+| ErpQaSpcSample | qa-spc | 质量主管 | ✗ | 降级后端 |
+| ErpMntVisit | mnt-work | 维护主管/维护人员 | ✓ | 可跑 |
+| ErpMntRequest | mnt-work | 维护主管/维护人员 | ✓ | 可跑 |
+
+### Proof 终态
+
+- 后端 Proof 双重绿：`TestErpQaEmployeeIdRowFilterIsolation` 2/0/0 + `TestErpMntEmployeeIdRowFilterIsolation` 2/0/0（employee-id 域列行集收敛，灰度 OFF→ON+授权角色→ON+管理员→OFF 四象限）
+- 结构断言：`TestErpDataAuthStructure` 6/0/0（聚合 11 objs 三层 role-auth + EL 正确性）
+- filter-active smoke spec 就绪：`e2-2-employee-id-row-filter.smoke.spec.ts`（flux 引擎，data-auth ON %test，未运行仅就绪）
+- 零回归：qa-service 122 + mnt-service 62 + md-service 126 + pur-service 166 + prj-service 77 + app-erp-all 26 全绿
+
+### enforcement 状态（E2.2 闭环后）
+
+| 层 | 状态 | profile |
+|----|------|---------|
+| action-auth | ON | %test |
+| data-auth（双开关） | ON（E2.1 翻启） | %test |
+| use-user-id-for-audit-fields | ON（E2.1 加翻） | %test |
+| data-auth 规则覆盖 | **userId 域（sal 6 + qa 1）+ employee-id 域（qa 2 + mnt 2，E2.2 新增）** | %test |
+| orgId 维隔离 | OFF（独立开关） | 全 profile |
+| %dev / %prod 三开关 | OFF（安全姿态） | %dev/%prod |

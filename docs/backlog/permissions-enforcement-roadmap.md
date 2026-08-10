@@ -59,7 +59,7 @@
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|-----------|--------|-----------|------|-------|
 | E2.1 | role-row-filter 灰度开启（`enable-data-auth=true` + `role-row-filter-enabled=true`）+ 单组织基线回归（注：开启会连带激活 orgId 维行级规则，覆盖边界=单组织基线；多组织验证归 Non-Goal「多公司 orgId 隔离」） | done | `roles-and-permissions.md` §数据权限 | E1.2 | `nop-testing` |
-| E2.2 | employee-id 列行级规则（默认等效方案：**专用小整数 userId 账号**（P2.2b 参数化，非默认 nop UUID）对齐 `user.id`==`employee.id`，规则直比 `inspectorId == ${userContext.userId}`；ORM `ErpMdEmployee.userId` 扩展为可选 ask-first successor） | todo | `roles-and-permissions.md` §数据权限 | E2.1 | `nop-backend-dev` |
+| E2.2 | employee-id 列行级规则（默认等效方案：**专用小整数 userId 账号**（P2.2b 参数化，非默认 nop UUID）对齐 `user.id`==`employee.id`，规则直比 `inspectorId == ${userContext.userId}`；ORM `ErpMdEmployee.userId` 扩展为可选 ask-first successor） | done | `roles-and-permissions.md` §数据权限 | E2.1 | `nop-backend-dev` |
 | E2.3 | 行级规则按列域分类审计 + 缺口补齐 + 越权不可见负向测试（userId 域列 / employee-id 域列 / 无列；负向断言用 E2.2 同款机制整数 userId 账号（可复用/自建）；finance 空 `<objs/>` 保持设计决定；dept 树归 successor） | todo | `roles-and-permissions.md` §数据权限 | E2.1 | `nop-testing` |
 
 ### Milestone E3 — 执行：后端响应层脱敏
