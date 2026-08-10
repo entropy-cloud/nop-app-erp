@@ -9,6 +9,7 @@
        2. erp.data-auth.role-row-filter-enabled=true（ErpRoleDataAuthChecker 委托开启，默认 false）。
      单组织基线：两者皆 false → 零运行时过滤，零回归。 -->
 <data-auth x:extends="/erp/sal/auth/erp-sal.data-auth.xml,
-                 /erp/qa/auth/erp-qa.data-auth.xml"
+                 /erp/qa/auth/erp-qa.data-auth.xml,
+                 /erp/mnt/auth/erp-mnt.data-auth.xml"
            x:schema="/nop/schema/data-auth.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 </data-auth>

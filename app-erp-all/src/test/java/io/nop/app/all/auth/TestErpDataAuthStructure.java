@@ -26,21 +26,25 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 角色侧行级数据权限结构断言测试（plan 2026-07-31-1023-3-r3-4，P1-MA6-002 Phase 3 Proof）。
+ * 角色侧行级数据权限结构断言测试（plan 2026-07-31-1023-3-r3-4，P1-MA6-002 Phase 3 Proof；
+ * E2.2 扩展 plan 2026-08-11-0915-1）。
  *
  * <p>用平台运行时同一机制（{@link DslNodeLoader} 执行 {@code x:extends} 节点级合并）加载聚合的
  * {@code /nop/main/auth/app.data-auth.xml}，验证：
  * <ul>
- *   <li>sales（6 obj，createdBy）+ quality（1 obj，ownerId）规则经聚合合并后全部出现；</li>
+ *   <li>sales（6 obj，createdBy userId 域）+ quality（3 obj：ownerId userId 域 + inspectorId employee-id 域 ×2）
+ *       + maintenance（2 obj，assignedTo employee-id 域）规则经聚合合并后全部出现；</li>
  *   <li>每 obj 三层 role-auth：管理员无 filter + 角色带 {@code <filter><eq name="列" value="${userContext.userId}"/></filter>}
  *       + user 兜底无 filter（防 fail-closed）；</li>
  *   <li>EL 表达式为正确的 {@code ${userContext.userId}}（scope 变量 = IUserContext），而非无效的
  *       {@code ${$context.user.userId}}（$context→IContext 无 getUser()，Phase 1 修正的 bug）；</li>
- *   <li>过滤列名与列域分类正确（sales createdBy / quality ownerId，均为 userId 域）。</li>
+ *   <li>过滤列名与列域分类正确（sales createdBy / quality ownerId userId 域；quality inspectorId / mnt assignedTo employee-id 域）。</li>
  * </ul>
  *
  * <p>不依赖运行时 enforcement——结构 + EL 正确性即规则正确性证明。负向隔离行为由
- * {@code TestErpRoleRowFilterIsolation}（erp-sal-service）覆盖。
+ * {@code TestErpRoleRowFilterIsolation}（erp-sal-service userId 域）+
+ * {@code TestErpQaEmployeeIdRowFilterIsolation}（erp-qa-service employee-id 域）+
+ * {@code TestErpMntEmployeeIdRowFilterIsolation}（erp-mnt-service employee-id 域）覆盖。
  */
 public class TestErpDataAuthStructure {
 
@@ -50,13 +54,25 @@ public class TestErpDataAuthStructure {
             "ErpSalOrder", "ErpSalQuotation", "ErpSalDelivery",
             "ErpSalInvoice", "ErpSalReceipt", "ErpSalReturn");
 
-    private static final String QUALITY_OBJ = "ErpQaRiskRegister";
+    private static final String QUALITY_USERID_OBJ = "ErpQaRiskRegister";
+
+    /** E2.2 employee-id 域列（qa inspectorId）。 */
+    private static final List<String> QUALITY_EMPLOYEEID_OBJS = Arrays.asList(
+            "ErpQaInspection", "ErpQaSpcSample");
+
+    /** E2.2 employee-id 域列（mnt assignedTo）。 */
+    private static final List<String> MAINTENANCE_EMPLOYEEID_OBJS = Arrays.asList(
+            "ErpMntVisit", "ErpMntRequest");
 
     /** 销售员（roleId，与 P1.5a 冻结词表 + nop_auth_role.csv L3 种子一致）过滤列；质检员过滤列（均为 userId 域）。 */
     private static final String SALES_FILTER_COL = "createdBy";
-    private static final String QUALITY_FILTER_COL = "ownerId";
+    private static final String QUALITY_USERID_FILTER_COL = "ownerId";
+    /** E2.2 employee-id 域过滤列。 */
+    private static final String QA_INSPECTOR_FILTER_COL = "inspectorId";
+    private static final String MNT_ASSIGNED_TO_FILTER_COL = "assignedTo";
     private static final String ROLE_SALESPERSON = "销售员";
     private static final String ROLE_INSPECTOR = "质检员";
+    private static final String ROLE_TECHNICIAN = "维护人员";
     private static final String ROLE_ADMIN = "管理员";
 
     private static final List<ICoreInitializer> INITIALIZERS = new ArrayList<>();
@@ -79,19 +95,28 @@ public class TestErpDataAuthStructure {
     }
 
     @Test
-    public void testAggregatedDataAuthMergesSalesAndQuality() {
+    public void testAggregatedDataAuthMergesAllDomains() {
         XNode root = loadMergedDataAuth();
         List<XNode> objs = root.childByTag("objs").childrenByTag("obj");
         Set<String> names = new HashSet<>();
         for (XNode o : objs) {
             names.add(o.attrText("name"));
         }
+        int expected = SALES_OBJS.size() + 1 /* qa userId */
+                + QUALITY_EMPLOYEEID_OBJS.size() /* qa employee-id */
+                + MAINTENANCE_EMPLOYEEID_OBJS.size() /* mnt employee-id */;
         for (String name : SALES_OBJS) {
             assertTrue(names.contains(name), "sales obj missing in merged data-auth: " + name);
         }
-        assertTrue(names.contains(QUALITY_OBJ), "quality obj missing in merged data-auth: " + QUALITY_OBJ);
-        assertEquals(SALES_OBJS.size() + 1, objs.size(),
-                "expected " + (SALES_OBJS.size() + 1) + " objs (6 sales + 1 quality), got: " + names);
+        assertTrue(names.contains(QUALITY_USERID_OBJ), "quality userId obj missing: " + QUALITY_USERID_OBJ);
+        for (String name : QUALITY_EMPLOYEEID_OBJS) {
+            assertTrue(names.contains(name), "quality employee-id obj missing: " + name);
+        }
+        for (String name : MAINTENANCE_EMPLOYEEID_OBJS) {
+            assertTrue(names.contains(name), "maintenance employee-id obj missing: " + name);
+        }
+        assertEquals(expected, objs.size(),
+                "expected " + expected + " objs (6 sales + 3 qa + 2 mnt), got: " + names);
     }
 
     @Test
@@ -103,9 +128,27 @@ public class TestErpDataAuthStructure {
     }
 
     @Test
-    public void testQualityObjThreeTierRoleAuthWithOwnerIdFilter() {
+    public void testQualityUserIdObjThreeTierRoleAuthWithOwnerIdFilter() {
         XNode root = loadMergedDataAuth();
-        assertThreeTierStructure(root, QUALITY_OBJ, ROLE_INSPECTOR, QUALITY_FILTER_COL);
+        assertThreeTierStructure(root, QUALITY_USERID_OBJ, ROLE_INSPECTOR, QUALITY_USERID_FILTER_COL);
+    }
+
+    /** E2.2 employee-id 域列：qa inspectorId 三层结构。 */
+    @Test
+    public void testQualityEmployeeIdObjsThreeTierRoleAuthWithInspectorIdFilter() {
+        XNode root = loadMergedDataAuth();
+        for (String bizObj : QUALITY_EMPLOYEEID_OBJS) {
+            assertThreeTierStructure(root, bizObj, ROLE_INSPECTOR, QA_INSPECTOR_FILTER_COL);
+        }
+    }
+
+    /** E2.2 employee-id 域列：mnt assignedTo 三层结构。 */
+    @Test
+    public void testMaintenanceEmployeeIdObjsThreeTierRoleAuthWithAssignedToFilter() {
+        XNode root = loadMergedDataAuth();
+        for (String bizObj : MAINTENANCE_EMPLOYEEID_OBJS) {
+            assertThreeTierStructure(root, bizObj, ROLE_TECHNICIAN, MNT_ASSIGNED_TO_FILTER_COL);
+        }
     }
 
     /** 全局禁止无效 EL：合并后的 data-auth 不应出现 ${$context.user.userId}（Phase 1 修正的 bug）。 */
