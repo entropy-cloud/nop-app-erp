@@ -102,6 +102,23 @@
 - 让步接收记录让步理由与审批人。
 - 红冲凭证摘要注明冲销原凭证号与原因。
 
+### 保密字段读访问审计（E4.2，plan `2026-08-11-1030-1`，2026-08-11）
+
+> **范围**：授权用户读取保密字段**明文**事件 = 敏感数据披露 → 留审计记录。与 §审批与审计要求既有「写操作审计」（反审核/作废等的 action-auth + 变更跟踪）**语义正交但互补**：本节补的是**读访问**审计（敏感数据披露追溯）。
+
+**机制**（Phase 1 Decision 落地）：
+- **挂钩点**（Decision (a)）：扩展 `MaskHelper`（`module-common-service/.../MaskHelper.java`）的 authorized-clear-text 分支为单一 chokepoint。授权用户经 masking loader 拿明文时，委托 `MaskAuditRecorder`（`module-common-service/.../MaskAuditRecorder.java`）写审计记录。覆盖全 5 域 15 BizModel 38 字段披露点（与 E3.1 masking 面 1:1 对齐）。
+- **存储**（Decision (b)）：复用平台 `IAuditService.saveAudit(AuditRequest)` → 写 `NopAuthOpLog`（平台批处理异步，零阻塞主请求）。**无 ORM 新实体，无平台代码改动**（保护区域 ask-first 未触发）。审计记录字段：`operation="FIELD_READ_DISCLOSURE"`、`entityId={entityName}:{objId}`、`userId`、`sessionId`、`tenantId`、`actionTime`、`opRequest`=JSON（含 `entity`/`field`/`objId`/`authorizedRole`/`disclosedAt`）。
+- **粒度**（Decision (c)）：按实体去重窗口——同一 `userId × entityName × objId × fieldName` 在同一请求线程内仅记一次（ThreadLocal `LinkedHashSet`，上限 500 防泄漏）。典型 list 请求（100 行 × 13 字段）去重后 = 13 条审计。
+- **config-gate**（Decision (d)）：`erp.audit.field-read.enabled` 默认 false；`%test`=true / `%dev`/`%prod`=OFF。fail-safe：OFF 时 `recordDisclosure` 首行 return 零开销；无 `IUserContext`/无 IoC（单元测试）= 不审计。
+
+**非审计对象**（明示）：
+- E4.1 已 `published=false` schema 隐藏字段（mfg 4 要素成本）——不可读，无披露事件。
+- 非授权路径（masking 后见 null/打码）——无明文披露。
+- E3.2 服务端取值（`CostRollupService`/`StandardCostResolver` 经 DAO 直读）——非 BizModel 边界，不经 chokepoint；归 E3.2 不变量范畴（守卫测试反射断言 @Inject 不含 user-context 类型）。
+
+**审计查询/展示 UI**：本节为审计**写入**侧；管理员审计台（查询/导出/告警）为 successor（触发条件 = 合规审计消费需求出现）。审计记录留存/归档策略（TTL/轮转）同为 successor（触发条件 = 审计数据量增长实证 / 合规留存期要求）。
+
 ## 设计能力基线（已沉淀，始终生效）
 
 以下能力随模块定义落地，**始终生效**（其中数据权限不依赖操作级开关）：
@@ -195,6 +212,7 @@ CRM / CS / APS / Logistics / DRP 域的业务操作（线索跟进 / 工单处�
 | `erp.data-auth.role-row-filter-enabled` | `%test`=true（E2.1 翻启）/ `%dev`=`%prod`=false | 角色侧行级过滤规则激活（双层门控之二，控制 `ErpRoleDataAuthChecker.getFilter`）。 |
 | `nop.auth.use-user-id-for-audit-fields` | `%test`=true（E2.1 加翻）/ `%dev`=`%prod`=false | createdBy auto-stamp 用 userId（row-filter 运行时 enabler，E2.1 执行期发现）。 |
 | `nop.auth.skip-check-for-admin` | 平台 IConfigReference 默认 `false`（DR-1e，`NopAuthConfigs.java:77` 单一来源）；app `%dev`/`%test` profile 显式 `true`（admin 兜底可生效），`%prod` 继承平台默认 `false`（安全姿态，prod 翻转 successor 裁决） | 管理员跳过权限检查（dev/test 生效；action-auth OFF 时无运行时效果，翻转后才生效） |
+| `erp.audit.field-read.enabled` | `%test`=true（E4.2 翻启）/ `%dev`/`%prod`=false | E4.2 保密字段读访问审计：授权用户读 masking 字段明文 → 写 `NopAuthOpLog`（经 `MaskAuditRecorder` + `IAuditService.saveAudit`）。OFF 时 `recordDisclosure` 首行 return 零开销。详见 §审批与审计要求 / 保密字段读访问审计。 |
 
 > **profile 化预置（plan 2026-08-09-0751-3 / P2.1，2026-08-09）**：三开关（`nop.auth.enable-action-auth` / `nop.auth.enable-data-auth` / `erp.data-auth.role-row-filter-enabled`）已在 `app-erp-all/src/main/resources/application.yaml` 的 `%dev`/`%test`/`%prod` profile 块预置为 config 变量（默认全 OFF，与平台有效默认一致，不改运行时）；`skip-check-for-admin` dev/test 显式 `true`、`%prod` 省略（继承平台默认 false，DR-1e 安全姿态）。灰度粒度 = config 变量，后续翻转无需改代码。**翻启节奏**：`enable-action-auth` 随 P2.4（dry-run 门控）；`enable-data-auth` + `role-row-filter-enabled` 随 E2.1 同时翻启（双层门控须同时开启）；`%prod` 保持 OFF（successor，触发条件 = 测试环境全绿验收 + 生产灰度计划人工批准）。
 
