@@ -573,6 +573,47 @@ for (const [role, actions] of actionsByRole) {
 
 合计 5 spec / 12 test（10 active + 2 fixme）。闭环率 = 23/25 E1.1 动作（92%），2 项 pending 人工批准 xbiz `<auth>` 编辑（保护区域硬约束）。
 
+### E1.2 全量负向测试范式 + 菜单过滤验证（plan 2026-08-10-1404-1 / E1.2，2026-08-10）
+
+E1.2 在 E1.1 五域闭环基线上，对剩余 14 域逐域交付双侧 Proof + 菜单过滤负向验证。**E1.1 范式直接复用**：灰度纪律（admin→auth-positive→restricted-negative）+ 双侧 Proof 模板（restricted 单测循环 + 授权角色每角色独立 test）+ `expectActionDenied({errorCode: NO_PERMISSION, token: '没有访问权限'})`。
+
+**E1.2 新增的 3 类测试模式**：
+
+1. **逐域双侧 Proof（5 spec / 34 tests，与 E1.1 同模板）**——purchase（16 动作）+ sales（14）+ assets（12）+ residual-extended（17，覆盖 inv/fin/mfg/hr 残留 + prj/qa/mnt 新增）。授权角色分组：approve=域主角色（审核人/资产管理员/库管员/财务员/生产主管/项目经理/质量主管/维护主管）/ reverseApprove=管理员（统一范式）。
+
+2. **菜单过滤负向验证（`e1-2-menu-filter.smoke.spec.ts`，3 tests）**——经 REST RPC `/r/SiteMapApi__getSiteMap` 提取可见 TOPM ID 集合，4 类断言：
+   - (a) **B 类 5 域 admin-only 隐藏**：role-restricted 不见 CRM/CS/APS/Logistics/DRP TOPM
+   - (b) **角色域按角色过滤**：财务员见 erp-fin（FNPT cascadeUp 驱动），不见 pur/sal/ct 等其他域
+   - (b2) **cross-domain deny**：采购员不见 fin/sal/ct 等（≥8/10 其他域隐藏）
+   - (c) **notify user 全见**：role-restricted 可见 notify-inbox（`roles="user"` containsRole 放行）
+   - (d) **sys-*/l10n-cn admin-only**：role-restricted 不见 erp-sys/erp-l10n-cn（`roles="admin"`）
+
+   ```ts
+   async function getSiteMapIds(page: Page): Promise<Set<string>> {
+     const cookies = await page.context().cookies();
+     const tokenCookie = cookies.find(c => c.name === '__Host-nop-token') ?? cookies.find(c => c.name === 'nop-token');
+     const headers: Record<string, string> = {};
+     if (tokenCookie) headers['Authorization'] = `Bearer ${tokenCookie.value}`;
+     const resp = await page.request.post('/r/SiteMapApi__getSiteMap', { headers, data: {} });
+     const json = await resp.json();
+     // walk tree collecting resource ids
+   }
+   ```
+
+3. **菜单可见性运行时 finding（设计契约）**：菜单可见性经 FNPT cascadeUp 驱动（`SiteCacheDataBuilder.cascadeResourceToRoles`）——有 FNPT `roles="<role>"` 的角色稳定见各自域；FNPT roles=其他角色的角色（如采购员，FNPT roles=审核人/管理员）菜单可见性受限。**菜单过滤 spec 因此以财务员（稳定可见）做正向断言、采购员做 cross-domain deny 断言**。深化菜单种子补齐（为采购员等无 FNPT 本角色域的角色补 query FNPT cascadeUp）归 successor。
+
+**E1.2 执行期 4 类缺漏补救**（详见 `permissions-enforcement-dry-run-impact.md` §E1.2 闭环结果）：(1) 25 缺失 reverseApprove FNPT 补声明；(2) ast FNPT roles slash→comma（平台契约：roles= 多角色必须逗号分隔）；(3) ErpInvCostAdjust xbiz `<arg>`/`<return>` 补齐；(4) 审核人跨域审批账号种子。
+
+**E1.2 spec 清单**（flux 引擎，37 tests 全绿）：
+
+| 域 | spec | 动作数/tests | 授权角色 |
+|----|------|-------------|----------|
+| purchase | `e1-2-purchase.smoke.spec.ts` | 16 / 3 tests | 审核人(approve) + 管理员(reverseApprove) |
+| sales | `e1-2-sales.smoke.spec.ts` | 14 / 3 tests | 审核人(approve) + 管理员(reverseApprove) |
+| assets | `e1-2-assets.smoke.spec.ts` | 12 / 3 tests | 资产管理员(approve) + 管理员(reverseApprove) |
+| residual+extended | `e1-2-residual-extended.smoke.spec.ts` | 17 / 8 tests | 库管员/财务员/生产主管/项目经理/质量主管/维护主管/管理员 |
+| menu-filter | `e1-2-menu-filter.smoke.spec.ts` | 3 tests | 财务员(正向) + role-restricted/采购员(负向) |
+
 
 
 在业务动作层之上，1249-1 叠加了 P2P（Procure-to-Pay）+ O2C（Order-to-Cash）核心业财循环的跨域编排链浏览器层端到端验证（解除 0814-2 Deferred「跨域编排链完整 E2E」+「业财过账凭证数值断言」）。经 GraphQL `/graphql` 驱动全链 `__save`（头+行）→ `submitForApproval` → `approve`，每步 `verifyState` 经 `__get` 独立断言 approveStatus 翻转，并断言业财过账产物（库存移动 + GL 凭证 + AR-AP 辅助账）。

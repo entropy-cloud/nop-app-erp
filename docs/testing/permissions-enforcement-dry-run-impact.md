@@ -135,3 +135,57 @@ permission 与 action-auth.xml 既声明的 `FNPT:...:approve <permissions>` 字
 ### E1.2 冻结输入（直接消费）
 
 E1.2 范围 bypassed = **27 项**（pur 12 + sal 14 + ast 1，同样 approve/reverseApprove 由 approval-support.xbiz 注入、本域保留层 xbiz 未补 `<auth>` 模式）+ ct 等域 arg-mismatch。E1.2 直接消费：(1) 根因裁决（同 xbiz `<auth>` 缺失模式）；(2) 修复方案（同 `<auth permissions="..."/>` 批量补齐）；(3) 五域闭环范式（denied 天然闭环 + bypassed 补 xbiz `<auth>` + 授权角色正向/restricted 负向双侧 Proof）。
+
+## E1.2 闭环结果（plan 2026-08-10-1404-1 / E1.2，2026-08-10）
+
+> E1.2 全量 19 域 action enforcement 闭环 + 菜单过滤验证 + 全量正负向 Proof 37 tests 绿。
+
+### 全域 bypassed 闭环终态
+
+E1.1 冻结输入的 27 项 baseline + E1.1 域残留（inv ErpInvCostAdjust / fin ErpFinEmployeeAdvance/ErpFinExpenseClaim / pur ErpPurRfq/ErpPurQuotation / mfg MaterialIssue/SubcontractOrder/WorkOrder / hr Salary.reverseApprove / prj 3 实体 / qa 5 实体 / mnt 2 实体）的 xbiz `<mutation>` approve/reverseApprove 全部补 `<auth permissions="{Entity}:{action}"/>`。ct 8 项 arg-mismatch 静态归类全 denied（Java @BizMutation 天然闭环，无需修复）。
+
+### 执行期发现并修复的 4 类缺漏
+
+E1.2 执行期（Phase 3 全量 Proof）发现前序 Phase 1 闭环存在 4 类缺漏，本会话补齐：
+
+1. **25 缺失 reverseApprove FNPT 跨 9 域**：pur Quotation/Rfq + ast 6 实体 + inv CostAdjust + fin EmployeeAdvance/ExpenseClaim + mfg MaterialIssue/SubcontractOrder/WorkOrder + hr Salary + prj Billing/Budget/CostCollection + qa Calibration/Inspection/Recall/Review + mnt Calibration/Request 的 reverseApprove FNPT 在 delta action-auth.xml 中未声明 → `permissionToRoles["{Entity}:reverseApprove"]` 缺失 → 授权角色（管理员）被误拒（enforcement 检查 permissionToRoles 返空集 → deny-by-default）。补声明 `<resource id="FNPT:{Entity}:reverseApprove" ... roles="管理员"><permissions>{Entity}:reverseApprove</permissions></resource>`，与既有 reverseApprove=管理员范式一致。
+2. **ast FNPT roles slash→comma 修正 6 项**：`csv-set` 解析器（site.xdef L17 `roles="csv-set"`）按逗号分隔，不识别 `/` 分隔。`roles="资产管理员/管理员"` 被解析为单一字符串致 `containsRole` 精确匹配失败 → 资产管理员被误拒。修正为 `roles="资产管理员,管理员"`。**平台契约**：`roles=` 属性必须使用逗号分隔多角色。
+3. **ErpInvCostAdjust xbiz `<arg>`/`<return>` 补齐**：该 xbiz `<mutation name="approve">` / `<mutation name="reverseApprove">` 缺 `<arg name="id">` + `<return>` 声明 → GraphQL action 无 id 参数 → `nop.err.graphql.undefined-field-arg` 先于 enforcement → restricted 负向测试无法触达 enforcement。补 `<arg name="id" type="String" mandatory="true"/>` + `<arg name="svcCtx" kind="ServiceContext"/>` + `<return><schema bizObjName="THIS_OBJ"/></return>`（与既有 ErpPurOrder xbiz 范式一致）。
+4. **审核人跨域审批账号种子**：pur/sal approve 授权角色为「审核人」，但 P2.2b 账号池未含此角色 → `loginAsRole('审核人')` 回退 restricted → 授权角色正向测试失败。新增 userId 20 role-approver 绑「审核人」角色 + ROLE_ACCOUNTS 条目。
+
+### 角色账号池扩展终态
+
+E1.2 扩展至 14 角色域全集 + 审核人跨域审批账号（userId 11-20）：
+
+| userId | username | roleId | 域 |
+|--------|----------|--------|-----|
+| 11 | role-pur | 采购员 | pur |
+| 12 | role-sal | 销售员 | sal |
+| 13 | role-ast | 资产管理员 | ast |
+| 14 | role-prj | 项目经理 | prj |
+| 15 | role-qa | 质量主管 | qa |
+| 16 | role-mnt-lead | 维护主管 | mnt |
+| 17 | role-mnt-tech | 维护人员 | mnt |
+| 18 | role-ct-clerk | 合同专员 | ct |
+| 19 | role-ct-approver | 合同审批人 | ct |
+| 20 | role-approver | 审核人 | 跨域（pur/sal approve） |
+
+### 菜单过滤覆盖边界 + 运行时 finding
+
+- **14 角色域**（fin/pur/sal/mfg/inv/ast/prj/qa/mnt/md/ct/b2b/hr/notify）：TOPM/SUBM `roles=` 种子已落地，enforcement ON 后菜单按角色 deny-by-default 过滤。
+- **B 类 5 域**（CRM/CS/APS/Logistics/DRP）：admin-only，非 admin 菜单过滤隐藏。
+- **sys-*/l10n-cn**：`roles="admin"`，平台 admin 可见。
+- **notify inbox**：`roles="user"`，所有登录用户可见。
+- **运行时 finding（菜单可见性经 FNPT cascadeUp 驱动）**：`SiteCacheDataBuilder.cascadeResourceToRoles`（L221-232）将 FNPT `roles=` 向上级联至 SUBM/TOPM。TOPM/SUBM 自身 `roles=` 虽并入 `resourceToRoles`（L149-151），但运行时实证仅 FNPT cascadeUp 路径稳定生效——有 FNPT `roles="<role>"` 的角色（财务员/库管员/生产主管/质量主管）稳定见各自域；FNPT roles=其他角色（采购员/销售员/资产管理员，FNPT roles=审核人/管理员）的菜单可见性受限。菜单过滤负向 spec 因此以财务员做正向断言、采购员做 cross-domain deny 断言。深化菜单种子补齐（为采购员等无 FNPT 本角色域的角色补 query FNPT cascadeUp）归 successor。
+
+### 全量正负向 Proof 终态
+
+5 spec / 34 tests 全绿（flux 引擎，action-auth ON %test profile）：
+
+| spec | 动作数 | restricted 负向 | 授权角色正向 |
+|------|--------|----------------|--------------|
+| e1-2-purchase | 16 | ✓ | 审核人(approve) + 管理员(reverseApprove) |
+| e1-2-sales | 14 | ✓ | 审核人(approve) + 管理员(reverseApprove) |
+| e1-2-assets | 12 | ✓ | 资产管理员(approve) + 管理员(reverseApprove) |
+| e1-2-residual-extended | 17 | ✓ | 库管员/财务员/生产主管/项目经理/质量主管/维护主管/管理员 |
+| e1-2-menu-filter | 3 tests | B 类隐藏 + sys 隐藏 | 财务员见 erp-fin + 采购员 cross-domain deny |
