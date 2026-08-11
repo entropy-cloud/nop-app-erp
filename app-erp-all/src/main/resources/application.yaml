@@ -72,6 +72,8 @@ quarkus:
      audit:
        field-read:
          enabled: true
+   erp-common:
+     sod-enabled: false
 "%prod":
    nop:
      auth:

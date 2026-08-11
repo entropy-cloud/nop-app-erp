@@ -159,8 +159,10 @@ async function cleanupMinimalChain(
 
 test.describe('negative isolation primitives: expectActionDenied smoke demo', () => {
   test('business-logic rejection (markPaid UNSUBMITTED guard) asserted via expectActionDenied', async ({ page }) => {
-    // loginAsRole 占位回退 nop admin（P2.2b 填充真实负向账号后此处插拔受限主体）
-    await loginAsRole(page, 'requester');
+    // setup 须 admin（action-auth ON 后受限账号无 ErpHrEmployee:save 授权，demo 用 admin 完成
+    // create+calculateSalary 前置；本 spec 验证的是业务逻辑拒绝 markPaid UNSUBMITTED 守卫，
+    // 非 enforcement 拒绝，故 admin 主体与原 expectActionDenied 机制 Proof 设计意图一致）。
+    await loginAsRole(page, 'admin');
     await page.goto('/#/ErpHrSalary-main', { waitUntil: 'domcontentloaded' });
     await page.waitForTimeout(2000);
 
