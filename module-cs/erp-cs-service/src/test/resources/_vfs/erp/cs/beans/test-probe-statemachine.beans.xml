@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- M0.1 实体级 StateMachine Bean 契约探针（plan 2026-08-12-0617-1 Phase 2）：
+     注册合成的 ErpProbeStateMachine（不绑定任何真实业务实体）+ Processor 桩，由真实 IoC 容器加载，
+     证明 (1) Bean 可解析 (2) Processor 按类型注入成功 (3) 非法边→领域 ErrorCode 映射可观测。
+     测试作用域专用——不得引入生产 app-service.beans.xml 条目。真实 Bean 由 M1.1 落地。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <bean id="app.erp.cs.service.probe.ErpProbeStateMachine"
+          class="app.erp.cs.service.probe.ErpProbeStateMachine"/>
+
+    <bean id="app.erp.cs.service.probe.ProbeProcessorStub"
+          class="app.erp.cs.service.probe.ProbeProcessorStub"/>
+</beans>
