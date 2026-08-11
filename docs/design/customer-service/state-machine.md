@@ -154,6 +154,8 @@ NEW（新建）
 - **reopen 副作用**：RESOLVED→IN_PROGRESS 时取消未响应的调查（删除 `respondedAt` 空的调查），避免误发满意度问卷。
 - **CSAT 触发**：resolve 成功后（config-gated `survey-trigger-status=RESOLVED` 默认）自动创建调查。
 
+> **M0.2 SLA 起算 drift 裁决**（`docs/analysis/2026-08-12-entity-state-axis-inventory.md §4`，2026-08-12）：上述 SLA 计时偏离经裁定为 **intentional legacy behavior（已生效的有意偏离）**。权威解释 = `startDateTime = 首次 IN_PROGRESS 时间`；§1 状态定义表「SLA 从创建时开始计时」表述**被本 §实现约定取代**。`deadlineDateTime` 仍在 NEW 创建时计算（基于优先级+SLA 策略），只是 `startDateTime`/`duration` 计量起点为 IN_PROGRESS。M1.1 迁移**必须保持此行为**，不得静默改为创建时起算。此裁决解除 M1.1 矩阵固化前置。
+
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
 - SLA 计时起止点是否正确（NEW 开始，RESOLVED 停止）。
 - 超时升级机制是否落实（escalationUserId + nop-job 定时扫描）。
