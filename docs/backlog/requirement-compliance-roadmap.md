@@ -27,6 +27,30 @@
 > - **Q10**：P2-RC-005/011/016/012 use-cases 真相源命名修订经批准登记（§9 流程）
 >
 > **2026-08-08 追加人工裁决**（同一讨论文档 §7，批准人：用户，生效即日）：A1 **R1.0 分批启动**——先执行纯预授权类修复（A2 代码逻辑类），越界项按 A2 逐项暂停 ask-first（标准流程：独立 fix plan + plan-audit + plan 内 ask-first checkbox），非触及行继续；A3 **P1-RC-091 属会计核心路径**，独立 plan-audit + ask-first，不自动执行；A4 **P2-RC-061 纯逻辑修复**（`EquipmentStatusLinker.restoreToRunning` 补 IDLE 分支，不改 ORM，按 A2 预授权）；A5 **P2-RC-057 ORM defaultValue 改 "WARN"**（纯收敛修复，按 Q3 纯加性类自动执行）。A1 撤销 §6 Q1 的「无限期挂起」状态；A2-A5 不扩大 Q3/Q4 授权范围。
+>
+> **2026-08-12 ORM 变更批量裁决**（批准人：用户，生效即日）：对 RC-R1.41~R1.89 全部 49 个越界项进行逐项 ORM 必要性研究（5 路并行独立 agent 核实需求文档 + ORM 模型 + Java 代码），裁决如下：
+>
+> **A. ORM 变更批准（21 项）**——经核实确实需要 ORM 结构变更（加列/加 UK/新增实体），现批量批准 ORM 修改授权（对齐 Q3 纯加性类自动执行范围，越界回落 ask-first）：
+> - **finance**: RC-R1.43（ErpFinBankStatementLine 加 counterpartyAccount/counterpartyName/counterpartyBank 3 列）、RC-R1.44（ErpFinAccountingPeriod 加 reverseCloseReason/reversedBy/reverseCloseAt 3 列 或 新增 ErpFinReverseCloseLog 实体）、RC-R1.45（ErpMdSubject 加 cashFlowType 列）
+> - **mfg**: RC-R1.49（ErpMfgWorkOrder 加 snapshotBomVersion + 快照内容 或 新增 BOM 快照实体）
+> - **sales**: RC-R1.51（ErpSalReturn 加 returnType 列）
+> - **crm**: RC-R1.57（新增 ErpCrmTeamMember 实体 或 成员子表）
+> - **quality**: RC-R1.58（ErpQaInspectionTemplateLine + ErpQaInspectionLine 加 isCritical 列）
+> - **projects**: RC-R1.60（ErpPrjProjectUser 加 costRate 列 + 新增 ErpPrjRole 实体 或费率实体）
+> - **cs**: RC-R1.66（新增 ErpCsTicketTimerSession 实体）、RC-R1.67（ErpCsTicket 加 escalation 计数字段 + ErpCsSlaPolicy 加 L2 字段）、RC-R1.70（ErpCsSurvey 加 status/failureCount 列）、RC-R1.71（新增 ErpCsTicketFulfillmentStep 实体 或 ticket 加执行状态列）
+> - **master-data**: RC-R1.72（ErpMdMaterialSku 加 status 列）
+> - **maintenance**: RC-R1.73（ErpMntSchedule 加 triggerType/threshold 列 + 设备加累计运行时长 或 新增 ErpMntEquipmentStatusLog 实体）、RC-R1.74（新增任务模板实体）、RC-R1.75（ErpMntVisit 加 requestId 列）
+> - **contract**: RC-R1.80（ErpCtDocument 加 legalHold 列）
+> - **drp**: RC-R1.81（ErpInvDrpCrossDock 加 matchingStrategy 列）、RC-R1.82（新增供应商评分汇总实体）
+> - **logistics**: RC-R1.84（新增 ErpLogDeliveryBooking 实体）
+> - **aps**: RC-R1.87（ErpApsOperationOrder 加 selectedRoutingId 列）
+>
+> **B. 降级为预授权（26 项）**——经核实不需要 ORM 结构变更，纯代码逻辑/跨域契约即可解决，从"越界项 ask-first"降级为预授权自动执行（跨域契约项仍须协调确认但不触 ORM ask-first）：
+> - RC-R1.41（FactsValidator SPI 已存在，实现 Validator bean）、RC-R1.42（prepareContext 加汇率缺失守卫）、RC-R1.46（findPostedVoucherIds 加 COMMITMENT 过滤）、RC-R1.48（inventory 域已有 ErpInvReservation 表，mfg 侧跨域调用）、RC-R1.50（createFacts 加 PPV 行）、RC-R1.52（catchUpDepreciation mutation + period 推断，isCatchUp 列可选非必需）、RC-R1.53（createFacts 重构加 1606 中间科目）、RC-R1.54（suspend/resume mutation，idleSince 列可选非必需）、RC-R1.59（cancelForBusinessBill Facade + Processor wiring）、RC-R1.61（InvPostingDispatcher 加 PROJECT_COST 分支 + 新 aggregator）、RC-R1.62（ExpenseCostAggregator 加状态守卫 + budgetChecker.check）、RC-R1.63（retention 字段已存在，Processor 填充 + 返还 mutation）、RC-R1.64（buildEvent 汇率解析替代 BigDecimal.ONE）、RC-R1.65（gen 规则生成 code + 跨域查询 team 成员）、RC-R1.68（actionType dict + TicketAction 记录 NCR，A4.2.137 自述不触 ORM）、RC-R1.69（usageCount 可从 TicketAction 派生，非结构必需）、RC-R1.76（事件发布 + mfg 消费者）、RC-R1.77（事件监听器 + DECOMMISSIONED 守卫）、RC-R1.78（OEE 按需计算 @BizQuery，无聚合实体）、RC-R1.79（订单行调 IErpCtVolumeDiscountBiz.resolveDiscount）、RC-R1.83（defaultPrepareSave 加守卫，DB UK 可选硬化）、RC-R1.85（onDelivered 加 SALES_DELIVERY 分支）、RC-R1.86（事件订阅 + 批量创建 DRAFT）、RC-R1.88（dict 加 HOLD/ON_HOLD 是数据非结构变更）、RC-R1.89（ER 经 billData JSON 持久化，设计注释确认）
+>
+> **C. 已实现确认（2 项）**——经核实当前代码已完整实现，标记 done：
+> - RC-R1.47（LandedCost 防重——pessimistic lock `ErpInvLandedCostProcessor:388-407` + app 级唯一性检查已落地，UK 非必需因 approveStatus 是状态字段非自然键）
+> - RC-R1.55（FIFO delta 层消耗——`CostAdjustmentService.appendFifoAdjustLayer` 创建 delta 层 + `FifoCostingStrategy.findFifoLayers` 透明消费 delta 层，正常路径已完整）
 
 ## Work Item Status
 
@@ -412,7 +436,7 @@
 | RC-R1.44 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** finance 反结账审计轨迹（P1-RC-006，**ORM 结构变更 + 会计过账逻辑[反结账]**）：reverseClose 增 reason 参数 + ORM 增 reversedBy/reverseCloseReason/reverseCloseAt 或新 ReverseCloseLog 实体 + 落库审计 | todo | `docs/design/finance/period-close.md` | R1.0 | none |
 | RC-R1.45 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** finance 现金流量三分类 + 间接法（P1-RC-007，**ORM 结构变更**）：ErpMdSubject 增 cashFlowType + buildCashFlowDataset 分类 + 间接法 | todo | `docs/design/finance/` + `use-cases.md` | R1.0 | none |
 | RC-R1.46 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** finance 试算平衡 COMMITMENT 排除（P1-RC-091，**§7 A3 会计核心路径，独立 plan-audit + ask-first**）：5 GL 路径过滤 from or(isNull,ne(BUDGET)) 改 or(isNull,notIn(BUDGET,COMMITMENT)) | todo | `docs/design/finance/budget.md` | R1.0 | none |
-| RC-R1.47 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** finance/inventory LandedCost 防重复分摊跨方言锁（P1-RC-092，**锁/check 逻辑 + ORM UK，§5 锁/数据安全类**）：部署侧 READ_COMMITTED 或 sibling 行 SELECT FOR UPDATE 或 (receiveId, approveStatus) UK | todo | `docs/design/finance/costing-methods.md` | R1.0 | none |
+| RC-R1.47 | **已实现确认（2026-08-12 ORM 核实 C 类）** finance/inventory LandedCost 防重复分摊跨方言锁（P1-RC-092）：pessimistic lock `ErpInvLandedCostProcessor:388-407` + app 级唯一性检查 `validateNotAlreadyAllocated:392-407` 已落地，UK 非必需（approveStatus 是状态字段非自然键，多 DRAFT 合法） | done ✅（2026-08-12 ORM 核实确认已实现） | `docs/design/finance/costing-methods.md` | R1.0 | none |
 | RC-R1.48 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** mfg 物料预留写路径（P1-RC-008，**ORM 结构变更 + 跨域写**，A4.2.3 successor 触发）：reservationStatus 字段或 ErpMfgMaterialReservation 实体 + IErpInvReservationBiz 预留写方法 + 审核/取消/完工 hook + reservedQty writer | todo | `docs/design/manufacturing/material-reservation.md` | R1.0 | none |
 | RC-R1.49 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** mfg BOM 快照（P1-RC-009，**ORM 结构变更 + 成本正确性**）：snapshotBomVersion + 快照实体 + 审核复制 + 读侧按状态切换 + config bom-snapshot-strategy | todo | `docs/design/manufacturing/bom-and-routing.md` | R1.0 | none |
 | RC-R1.50 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** purchase 价格差异过账（P1-RC-018，**会计过账逻辑[PurAcctDocProvider/VoucherFact]**）：ThreeWayMatcher 审批后接收/接收并过账差异策略 + buildEvent 传递差异数据 + AP_INVOICE 增 PPV 行 | todo | `docs/design/purchase/three-way-match.md` | R1.0 | none |
@@ -420,7 +444,7 @@
 | RC-R1.52 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** assets 折旧补提方式 B（P1-RC-029，**ORM 结构变更 + 会计过账逻辑**，Q6 已裁决 product-scope 不裁剪）：catchUpDepreciation mutation + 多月补提循环 + isCatchUp 列 | todo | `docs/design/assets/` + `use-cases.md` | R1.0 | none |
 | RC-R1.53 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** assets 处置凭证 1606 中间科目腿（P1-RC-030，**会计过账逻辑[DisposalAcctDocProvider/VoucherFact]**）：方案 A 实现 1606 两步流 / 方案 B 人工批准 documented simplification | todo | `docs/design/assets/` + `use-cases.md` | R1.0 | none |
 | RC-R1.54 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** assets IDLE 闲置状态机（P1-MA2-061 reuse 重开，A1.24 §4 复核，**ORM 结构变更 + 折旧计提逻辑 + product-scope 确认**）：suspend/resume BizMutation + 折旧引擎扩展 + 闲置超期 cron | todo | `docs/design/assets/state-machine.md` | R1.0 | none |
-| RC-R1.55 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** inventory FIFO 到岸成本 delta 层消耗（P2-RC-004 升级 P1，**成本过账核心路径[CostAdjustmentService/FifoCostingStrategy]**）：delta 层消耗语义修复[remainingQuantity/排序或层合并] + 回归测试 | todo | `docs/design/finance/costing-methods.md` | R1.0 | none |
+| RC-R1.55 | **已实现确认（2026-08-12 ORM 核实 C 类）** inventory FIFO 到岸成本 delta 层消耗（P2-RC-004 升级 P1）：`CostAdjustmentService.appendFifoAdjustLayer:137-171` 创建 delta 层 + `FifoCostingStrategy.findFifoLayers:178-205` 透明消费 delta 层（remainingQuantity>0 过滤含 delta），正常路径已完整；FIFO-reverse-after-partial-consumption 边角为已登记 successor | done ✅（2026-08-12 ORM 核实确认已实现） | `docs/design/finance/costing-methods.md` | R1.0 | none |
 | RC-R1.56 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** inventory 盘点完成自动差异移动单（P1-MA2-062 reuse 重开，A4.2.80，**代码逻辑预授权 + product-scope 确认义务**）：completeTake 自动 generateMove 盘盈/盘亏移动单 | todo | `docs/design/inventory/state-machine.md` | R1.0 | none |
 | RC-R1.57 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** crm 团队分配 ROUND_ROBIN/LOAD_BALANCED（P1-RC-036，**ORM 结构变更**）：新增 ErpCrmTeamMember 实体或成员子表 + 分配算法 + config 门控 | todo | `docs/design/crm/` + `use-cases.md` | R1.0 | none |
 | RC-R1.58 | **越界项（须独立 fix plan + 独立 plan-audit + plan 内 ask-first 人工确认 checkbox）** quality 关键项否决（P1-RC-040，**ORM 结构变更**）：ErpQaInspectionTemplateLine/Line 加 isCritical + aggregate 增关键项否决分支 | todo | `docs/design/quality/` + `use-cases.md` | R1.0 | none |
