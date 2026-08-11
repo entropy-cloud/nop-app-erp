@@ -125,6 +125,7 @@ Processor 是通用方法分解器，不限于"跨域编排"——任何 ≥3 �
 | 文档 | 关系 |
 |------|------|
 | `service-layer-orchestration.md` | task.xml 编排的 owner doc；本文是其 Java 侧补充（拓扑稳定场景） |
+| `entity-state-machine-bean.md` | 实体级 StateMachine Bean 契约（固定迁移矩阵的承载者，嵌入 Processor 编排点） |
 | `system-baseline.md §服务层编写规范` | 核心规则基线；本文是其 Processor 分支的展开 |
 | `customization-capabilities.md` | 定制能力总览；本文的"派生 bean 覆盖"是其"BizModel/Processor 手写"能力的配置余地细化 |
 | `../nop-entropy/docs-for-ai/03-runbooks/implement-complex-business-flow.md` | Processor vs task flow 判定的平台权威 |
@@ -179,3 +180,17 @@ Processor 是通用方法分解器，不限于"跨域编排"——任何 ≥3 �
 - **优先方向 A**：实体方法上提（`ErpPurOrder.isApproved()` / `isRejected()` / `isSubmitted()`）——DDD 正统，调用点最自然
 - **方向 B**：共享工具类（`ApprovalStatusHelper.isApproved(ApprovableEntity)`）——跨实体通用但需引入新接口
 - **方向 C**：依赖平台 `use-approval` 机制标准化（`ApprovalSupportBizModel` 提供 helper）——平台对齐但需 nop-entropy 协调
+
+### 固定迁移矩阵的承载者：实体级 StateMachine Bean
+
+> 上述内联 `Objects.equals(status, CONSTANTS.APPROVED)` 重复属于「**拓扑稳定的固定来源/目标状态/终态分类**」判断。这类判断的**集中承载者**是实体级 `ErpXxxStateMachine` Bean，契约见 `entity-state-machine-bean.md`。
+
+`ErpXxxStateMachine` Bean 嵌入 per-mutation Processor 的编排点：Processor 在状态守卫步骤调用 `stateMachine.assertCan<Action>(status)`，Bean 报告非法边，Processor 保留领域 ErrorCode、动态业务守卫、权限、审计与跨域副作用（事务/写回仍归 Processor）。
+
+| 变化类型 | 默认手段 |
+|----------|----------|
+| 固定的来源状态、目标状态、终态分类 | 实体级 `ErpXxxStateMachine` Bean（Processor 按类型注入，调用 `assertCan<Action>` + `<action>TargetStatus()` + `isTerminal()`） |
+| 客户替换某实体的迁移矩阵 | Delta 同名 Bean 覆盖 `ErpXxxStateMachine`（业务级实证 = successor） |
+| 客户仅替换一个业务校验/计算/副作用 | 派生 per-mutation Processor，覆盖 `protected` hook（本文「配置余地」节） |
+
+> 分工边界与不适用场景（库存强一致、过账、`posted` 轴、nop-wf 人机任务、task.xml 拓扑可变编排）的完整表见 `entity-state-machine-bean.md §8`。StateMachine Bean 只集中固定迁移边，**不替代** Processor 的实体读写、动态守卫、事务与副作用，也**不替代** task.xml 的可变拓扑编排。

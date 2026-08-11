@@ -1,0 +1,20 @@
+{
+  "name": "entity-state-machine",
+  "description": "nop-app-erp 实体级状态机 Bean 迁移：将分散在 BizModel / per-mutation Processor / facade helper 中的固定命名业务动作状态迁移语义，渐进迁移为每实体每状态轴一颗可注入、可 Delta 覆盖的 ErpXxxStateMachine Bean。Bean 只拥有迁移矩阵 + 状态分类 + 机器可读元数据；Processor 继续拥有实体读写、动态守卫、权限、审计、事务、跨域副作用。里程碑：M0 契约定稿 + 全域状态轴清单与展开器（硬门控）→ M1 客服 ErpCsTicket.status 试点 + Delta 同名 Bean 覆盖证明 + 试点评估 → M2 直接生命周期 / M3 复杂业务与审批轴 / M4 财务影响与保护域（M0.2 才展开原子项）→ M5 全域矩阵完备性审计 + CI 一致性守卫 + 跨域回归。当前状态：全工作项 todo；roadmap 已过 5 轮独立草案审查并于 2026-08-06 passes draft review（v4.2）。人工批准：M1.1（客服 Ticket 试点）2026-08-06 获批，范围限于「保留既有 reopen 删除未答问卷行为」前提下的状态机迁移，不扩展到其他数据删除或行为变化。Non-Goals：不引入反射型/泛型全局 IStateMachine 调度器；不合并 docStatus/approveStatus/posted 三轴；posted 不作迁移轴；DAO/I*Biz/IServiceContext/事务/副作用不下沉。保护区域：每项代码迁移均 plan-first（须 owner doc + tests + 独立 plan-audit + 独立 closure audit）；M4 财务影响/保护域项触发过账/结账/红冲/模型语义变化时暂停并取得 owner doc + 人工批准；ORM/API 变更按独立 ask-first 协议，本路线图不授予自主权。执行门控：M0.1 与 M0.2 审查通过前任何代码迁移项不得转 ready；M1.3 评估通过前不批准 M2/M3 迁移模板；M1.2 业务级 Delta 运行时证据未落盘前不得声称 Delta 覆盖已验证；M2/M3/M4 表在 M0.2 展开前为空占位。验证标准：每纳入状态轴均具备（a）命名业务动作的唯一迁移矩阵 + （b）owner doc/ORM dict/全部 writer 可追溯证据 + （c）矩阵级完备性测试 + （d）可运行 Delta 同名 Bean 覆盖证明；通用 CRUD 对状态字段写入边界由 M0.1 裁定后才能宣称更强运行时唯一性。",
+  "roadmapPath": "docs/backlog/entity-state-machine-migration-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "auditsDir": "docs/audits",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "test": "mvn test",
+    "build": "mvn clean install -DskipTests",
+    "compliance": "bash docs/audits/nop-compliance-checker.sh"
+  },
+  "prompts": {
+    "multiAuditPrompt": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAuditPrompt": "docs/skills/open-ended-audit-prompt.md"
+  },
+  "commitFormat": "<type>: <description>"
+}

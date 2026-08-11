@@ -29,7 +29,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
-| M0.1 | 实体级 StateMachine Bean 契约、CRUD 写入边界、Bean/Delta 注册和测试策略定稿 | todo | `processor-extension-pattern.md`、`customization-capabilities.md`、状态机分析报告 | — | `state-machine-business-review-prompt.md` |
+| M0.1 | 实体级 StateMachine Bean 契约、CRUD 写入边界、Bean/Delta 注册和测试策略定稿 | done | `processor-extension-pattern.md`、`customization-capabilities.md`、`entity-state-machine-bean.md`（新契约 owner doc）、状态机分析报告 | — | `state-machine-business-review-prompt.md`（计划 Task Route 覆盖为 Skill:none，见计划） |
 | M0.2 | 全域状态轴清单与迁移批次展开器：逐实体对照 owner doc、ORM dict、actions、writer、测试和保护区；向本路线图追加 M2-M4 的原子迁移项 | todo | 17 个域 `state-machine.md`、相关 ORM 模型 | M0.1 | `state-machine-business-review-prompt.md` |
 
 ### Milestone M1 — 非保护域试点

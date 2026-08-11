@@ -63,6 +63,8 @@ nop-app-erp 的定制能力按"改动成本从低到高、灵活度从高到低"
 | 不同租户用不同物料分类树 | VFS 租户层（`_tenant/{tenantId}/...`） |
 
 > **实证状态注记（P1-MA3-057）**：本项目当前**业务级 Delta = 0**——产品基线的定制需求已由「非下划线保留层 + 模块化组装 + 配置驱动」覆盖（均 ✅ 经项目实证落地）。Delta 合并机制经**平台层**实证可用（`app-erp-all/_vfs/_delta/default/nop/auth/pages/` 下 2 个 nop-auth view delta，证实 `x:extends="super"` 差量合并 + `_dump/` 来源标注机制工作）。**业务级 Delta 实证为 successor**：首项真实业务域 Delta 上线时验证 ORM/beans/xbiz/view 的差量合并、调试（`nop.debug=true`）与升级再合并路径。声明 Delta 为"核心手段"指其在平台机制层的地位，非本项目已实证的业务定制路径。
+>
+> **Delta 同名 Bean 覆盖定制点（实体级 StateMachine Bean）**：实体级 `ErpXxxStateMachine` Bean 的迁移矩阵可经 Delta 同名 bean id 覆盖替换基线（客户替换某实体的固定迁移边），机制与覆盖路径契约见 `entity-state-machine-bean.md §5/§6`。**实证状态**：平台 Delta 同名 Bean 覆盖机制经平台层实证可用；**业务级 Bean Delta 覆盖运行时实证 = successor（= 迁移路线图 M1.2「客服试点 Delta 同名 Bean 覆盖证明」）**——在 M1.2 于真实应用容器证明基线/Delta 两种加载结果前，不得声称业务级 StateMachine Delta 覆盖已验证。
 
 **项目约定**：
 - Delta 目录名默认 `default`；按客户/行业可建多个 deltaDir（如 `default`、`pharma`、`retail`），通过配置激活。
@@ -212,6 +214,7 @@ assets/projects/manufacturing/quality/maintenance（扩展域）
 | 加客户专属字段（个别客户） | 扩展字段 EAV | Delta ORM 加列 |
 | 改字段属性（标签/必填/显隐） | 改 xmeta 或保留层 view | Delta view |
 | 改业务逻辑（多步骤编排/审核流） | Delta task.xml覆写步骤 | Delta xbiz/beans 或 保留层 BizModel |
+| 替换某实体的状态迁移矩阵（固定迁移边/终态分类） | Delta 同名 `ErpXxxStateMachine` Bean 覆盖（契约见 `entity-state-machine-bean.md`） | 派生 per-mutation Processor 覆盖单步 |
 | 新增业务表（领域独有） | nop-dyn 动态实体 | 新建扩展工程 + ORM |
 | 加计算/派生字段（不入库） | BizLoader | — |
 | 改页面布局/按钮 | 保留层 view | Delta view |
