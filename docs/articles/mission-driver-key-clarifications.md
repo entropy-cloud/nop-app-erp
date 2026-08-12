@@ -4,17 +4,56 @@
 >
 > 前两份材料分别介绍了 Mission Driver 的工程实现与 AGE 的方向理论，但放在一起仍然容易产生误解。本文是一份概念澄清：先定位 Mission Driver 在整个概念体系中的位置，再回答它到底解决什么问题，最后解释它为什么这样设计。
 
-## 一、概念体系定位：三个层次，不是三个并列名词
+## 一、概念体系定位：Loop Engineering 是概括，AGE 是理论，Mission Driver 是运行机制
 
-Mission Driver、Loop Engineering 与 Attractor-Guided Engineering（AGE）不是三个并列的品牌名词，而是三个不同层次的问题。
+### 1.1 Loop Engineering：业内的概括性表达，但没有回答"为什么能收敛"
 
-| 概念 | 回答的问题 |
-|------|-----------|
-| Mission Driver | 如何让控制机制脱离人的同步参与，在多个 Plan、进程和 Session 之间持续运行？ |
-| Loop Engineering | 如何用反馈、重试、隔离、恢复、验证和多时间尺度闭环，组织概率性的 AI 执行过程？ |
-| AGE | 项目在长期变化中应保持什么结构，如何判断轨迹漂移，如何维持跨会话的组织同一性？ |
+Loop Engineering 是业内对 AI 自主运行某一阶段的概括性表达。Andrew Ng 的三层 Loop 模型（Agentic Coding 分钟级、Developer Feedback 小时级、External Feedback 天/周级）、Boris Cherny 的"我不再写 prompt 了，我改成设计写 prompt 的系统——我在写 Loop"，共同把 **loop 认定为自主运行的核心机制**。这个概括本身没有错，但它只描述了"应该存在一个循环"，没有回答两个更根本的问题：
 
-三者之间的关系可以压缩为——从"方向"到"轨迹"再到"载体"的完整链条：
+> loop 为什么能稳定存在，以致趋于收敛？
+> 在 loop 持续运行期间，人与 AI 如何交互？
+
+纯 Loop Engineering 的实践往往在这两个问题上失守：
+
+- 表面上 loop 在自主运行，实际仍依赖用户以 vibe coding 的方式不断向体系内注入信息——方向、裁决、纠偏都来自循环外的人；
+- 人工与 AI 自动运行的交互方式缺乏标准方案：人直接介入 AI 执行时面对**黑箱**——看不到 AI 当前运行到什么状态、依据什么判断；要改变行为，往往只能**停止 loop、修改提示词指令**，而无法直接触及 AI 当前运行的状态。
+
+这两个缺口的共同根源是：loop 本身只是一个执行结构，它不携带"方向"、"状态"和"轨迹"这些可以让它自我校正的信息。
+
+### 1.2 AGE：回答"loop 为什么能稳定存在以致收敛"
+
+AGE（Attractor-Guided Engineering，吸引子引导工程）是为回答这个问题而建立的概念体系，核心是四个概念：
+
+```text
+状态空间：系统可能演化到什么
+吸引子：  系统长期应反复回到什么结构
+轨迹：    系统实际上怎样走到了现在
+控制：    测量与纠偏机制如何把轨迹拉回吸引子附近
+```
+
+在这个概念体系中，"持续运行"不再是目的，而是方向已经被外化后的自然结果。loop 之所以能稳定存在并趋于收敛，不是因为循环本身设计得精巧，而是因为：
+
+- **运行之前**，docs 体系已经建立——明确区分规范性文档与实效性文档，确保 AI 面对的信息源具有明确的权威定义和更新策略（哪份文档定义"系统应该是什么"，哪份记录"当前实际是什么"，冲突时以谁为准）；
+- **运行之中**，AI 的内部状态和认知被显性化，人的介入有标准方案，而不是黑箱。
+
+### 1.3 Mission Driver：对 Loop Engineering 的通用实现，在 AGE 概念体系下定义状态与演化
+
+Mission Driver 落实了 Loop Engineering 的核心概念：不写 prompt，而是写一个 loop 不断产生 prompt。它是对 Loop Engineering 的一种通用实现——底层是一个通用的 Flow DSL 运行引擎，在概念层面上与 Loop Engineering 乃至 Graph Engineering 的内容对应。通用性来自 Flow DSL 与配置注入：每一轮循环都会为下一个 AI 步骤重新构建 prompt（从配置变量表注入实际值，如 `{{planGuide}}`、`{{roadmapPath}}`、`{{plansDir}}`、`{{testCmd}}`），换一个 flow 文件即可适配数据处理、文档分析等场景；而人面对的是 loop 本身——设计、配置、监控它，而不是逐个手写提示词。
+
+它同时又是 AGE 概念体系下的一种全自动运行机制，二者的关系是：**loop 结构由 LE 提供，状态管理与演化由 AGE 定义**。Mission Driver 强调的是**状态空间、吸引子引导和轨迹控制**——它运行于由 docs 体系承载的吸引子定义与收敛机制之上（期望吸引子由 docs 体系外化承载，Mission Driver 依赖而非自行定义方向），并有收敛机制定义（Closure Gates、独立审计、DEEP_AUDIT 与轨迹纠偏），而不仅仅是边界和护栏等 Harness。这也是它区别于"只实现了 loop 结构"的其他引擎的地方。三者的界限是：
+
+- **边界和护栏（Guardrail）**只回答"当前动作是否允许"——例如文件名规范、命名规范、"不准绕过 ORM 直接写 SQL"之类的检查规则。护栏能挡住明确不允许的动作，但无法回答"系统长期应该向哪个结构收敛"。
+- **Harness（测量和纠偏机制）**在软件工程里有成熟对应物：Test Harness 由 Driver、Stub、Mock、Comparator 组成测试夹具，隔离外部不确定性，让测试结果只反映被测对象本身的质量；Deployment Harness 用金丝雀发布、流量切分、指标判断、自动回滚和审批闸门，把发布从"事件"变成可观测、可干预、可撤销的"过程"。在 AGE 中，Plan Loop、测试、Closure Gates、独立审计、DEEP_AUDIT 与轨迹纠偏扮演的就是这个角色——它们测量实际轨迹、判断偏差、并把偏离拉回。Harness 解决"当前轨迹是否偏离、如何纠偏"，但 Harness 本身不定义"应该回到哪里"。
+- **AGE 定义了吸引子和收敛机制**——例如"ORM 模型是唯一事实来源"这样的期望吸引子，通过 Closure Gates、独立审计、DEEP_AUDIT 和轨迹纠偏，在偏离后把系统拉回稳定结构附近。收敛不是"不越界"，而是"偏离后仍能回到长期结构附近"。吸引子回答"应该回到哪里"，这正是护栏和 Harness 都不回答的问题：AGE 官方模板明确写着——plans, tests, audits, logs, bug notes 和 verification 都不是吸引子本身，它们是 engineering harnesses：帮助证明一次变更把仓库推向吸引子、而不是仅仅完成了检查清单的局部控制机制。
+
+这种定义在运行中表现为四个可观察的机制设计：
+
+1. **状态显性化**：roadmap / plan / audits 等文件显性化 AI 的内部运行状态与认知——人不需要猜 AI 在想什么，文件就是它的认知。这正是对"黑箱介入"的回答。
+2. **不停循环的介入**：人工介入可以在不停止 loop 的情况下直接修改或新增 plan、修改 roadmap——REVIEW_PLANS 自动拾取任何 Status=draft 的 Plan，DRAFT_PLANS 读取最新路线图。这正是对"必须停 loop 改 prompt"的回答。
+3. **轨迹的充分统计量**：通过 logs 可以在不依赖 git 历史的情况下记录核心轨迹信息——所有关键决策都可以通过少量类似"充分统计量"的记录快速归档，新主体不必考古历史提交就能恢复关键演化认知。
+4. **审计反哺**：审计历史可以反向抽取各种 skill，改进后续工作——每一轮深度审计的发现都会沉淀为后续循环可加载的经验。
+
+AGE 的完整机制链可以压缩为：
 
 ```text
 期望吸引子定义长期结构
@@ -25,15 +64,9 @@ Mission Driver 自动编排 Harness
 仓库承载跨会话事实与记忆
 ```
 
-上表的三个层次与这张图是同一关系在不同粒度的投影：表中是"谁回答什么问题"的定位，图中是"它们如何连接成一条工作链"的结构。
+nop-app-erp 就是这套机制运行的明确示例：22 天（06-22 → 07-13）、187 份 Plan（07-01 起计）全部双审计通过，人工介入从早期的高频平台机制纠正（06-22 单日 7 条）衰减至 07-14 后为零。需要说明的是：介入衰减本身有阶段迁移等多种可能解释，不能唯一归因于机制成熟（见 `docs/analysis/2026-07-19-1400-human-role-ai-autonomy-analysis.md`）；但独立审计推翻虚假完成声明属于有据可查的机制事实（如 07-10 草案审查在编码前拦截 2 个 P0 财务正确性缺陷与 1 个运行期缺陷，07-20 EXEC_PLANS 子流内第二轮审计 FAIL 推翻"编辑生成文件已补救"的虚假声明——git diff 为空）。
 
-其中，Mission Driver 同时拥有两个身份：
-
-1. **它是 Loop Engineering 的一种通用参考实现**。Loop Engineering 是一种可以独立于具体工具来设计的工程模式；Mission Driver 是这种模式的一个可运行、可配置、可复制的具体实现。引擎本身是通用的 Flow DSL 状态机执行器，不绑定任何固定步骤——内置的 CHECK → REVIEW_PLANS → EXEC_PLANS → DRAFT_PLANS → DEEP_AUDIT 主流程只是一个**缺省配置**，换一个 flow 文件就可以适配数据处理、文档分析等其他场景。注意 DEEP_AUDIT 并不是线性第五步：DRAFT_PLANS 只有无可起草的新工作（返回 `nothing`）时才分支进入深度审计，审计结束后回到 REVIEW_PLANS 继续循环——全部完成不是停止信号，而是升级审计的信号。
-
-2. **它是 AGE 在控制层的一种自动编排实现**。在 AGE 的层次关系中，Attractor 定义方向、Harness 提供控制、Mission Driver 编排 Harness。它解决的是"当方向已经被外化后，如何让控制过程脱离人的同步参与，并持续运行"。
-
-这两个身份经常被混淆：把它当成一个普通的 Agent 编排器，就丢失了它在 Loop Engineering 中的设计思想；把它当成 AGE 本身，就丢失了方向定义与控制编排之间的区别——第四章的"边界"与第五章的"全自动"都源自这个区分：Mission Driver 能自动的是执行与编排，不能自动的是方向定义。
+把 Mission Driver 当成普通的 Agent 编排器，就丢失了它在 AGE 中的方向前提；把它当成 AGE 本身，就丢失了"它只是控制层的执行机制，不拥有方向定义权"这一边界。第四章的"边界"与第五章的"全自动"都源自这个区分。
 
 ---
 
@@ -51,7 +84,9 @@ Mission Driver 的起点是 Vibe Coding 的困境。当前主流的 AI 辅助开
 
 Mission Driver 的目标不是"替代人"，而是"让人可以在任意时间点介入，但不需要在每一步都介入"。它把人的介入从"必须"变成了"可选"。
 
-在 Vibe Coding 中，环中的每一步都依赖人的触发。在 Plan Loop 中，每个 Plan 的触发仍然依赖人。在 Mission Driver 中，人可以选择参与——但系统在没有人的干预下，也能从路线图的第一项走到最后一项。
+在 Vibe Coding 中，环中的每一步都依赖人的触发。Plan Loop 本身可以构成一张 Plan 从起草、审查、执行到关闭的最小自主闭环；但在只有 Plan Loop 的形态下，"下一步做什么"的编排问题（排序、状态推进、空档发现、深度审计触发）仍然依赖人。Mission Driver 的设计是把编排层架构在 Plan Loop 之上：Plan Loop 解决"一次变更如何可靠关闭"，Mission Driver Loop 解决"接下来该关闭哪一次变更"——人在 Mission Driver 中可以选择参与，但系统在没有人的干预下，也能从路线图的第一项走到最后一项。
+
+这种可选参与直接回应了 1.1 指出的两个缺口：介入不面对黑箱（AI 的当前运行状态、认知与判断依据都显性化在 roadmap / plan / audits 文件中），介入也不需要停止 loop（直接改文件，下一轮循环自动拾取）——而不是"看不到状态、只能停循环改 prompt"。
 
 这种可选参与的机制是异步的：`plans/` 目录就是文件系统上的共享队列。人可以随时自己起草一张 Plan 放进队列，或修改某张 Plan 的状态（比如把误标为 active 的改回 draft）、调整路线图的优先级——下一轮循环的 REVIEW_PLANS 会自动拾取并审查，不区分 Plan 是机器起草的还是人手工创建的。人和 Mission Driver 在不同的时间尺度上工作（人可能每天集中处理一次，Mission Driver 每 4-12 小时自动完成一个完整循环），通过文件系统而不是即时通信交换状态。
 
@@ -62,7 +97,9 @@ Mission Driver 的目标不是"替代人"，而是"让人可以在任意时间�
 - **推进（Advancement）**：谁来选择下一个工作项？谁来起草新的 Plan 并标记为 active？这个动作需要能自动执行，但执行结果的接受又需要独立审查来把关——推进和审计不能是同一个主体。
 - **审计（Audit）**：路线图工作项耗尽（DRAFT_PLANS 返回 `nothing`）时，谁来触发深度审查？深度审计只有在执行主循环无新工作时介入，避免与正在推进的变更抢道。
 
-在纯 Plan Loop 模式下，这四个问题都由人来回答。Mission Driver 的设计目标是把它们从人脑转移到机器。
+在只有 Plan Loop、没有编排层的模式下，这四个问题都由人来回答。Mission Driver 的设计目标是把它们从人脑转移到机器——但它不替代 Plan Loop：它驱动并编排 Plan Loop，让每个最小自主闭环持续、有序地运转（嵌套关系见 3.4）。
+
+关于"排序"所依赖的路线图，需要澄清它的性质：**roadmap 只是 work 规划，不是 execution plan，也不是设计契约**——work item 的粒度等于"一个 execution plan 的合理交付范围"，具体 work 依赖的信息（立项材料、设计契约、范围裁定）由 docs 体系中单独定义，而非塞进 roadmap 正文。这既是刻意为之，也是运行中事实：路线图会在运行过程中被自动或人工修改（状态写回、review gate 修正项回写、结构性调整标记人工确认），AI 不得跳序或新增 work item；某些 roadmap 还会在执行中自行补充信息——例如先调研再实现的阶段：E0 先行 spike 验证待验证项并裁定主路径，之后才进入设计与实现（nop-chaos-flux 的 industrial-hmi-editor mission 即此模式：roadmap 明示"本文是编排层，不是 execution plan，也不是设计契约"，立项材料 `editor-initiation.md` 是输入而非契约）。
 
 ### 2.3 与普通工作流引擎的区别
 
@@ -94,6 +131,30 @@ Mission Driver 面对的却是一个**会持续改变自身事实、计划、证
 > 它是 Harness 与多层 Loop 的持续编排器，也是仓库化项目连续性的执行机器。
 
 它不是方向来源。它不会凭自身定义：项目应该成为什么、哪份 Owner Doc 有权修改结构基线、哪个 Proof Relation 才是正确的、某个偏离应当修实现还是修正 Attractor。如果这些关系尚未外化，Mission Driver 只能持续制造文件变化，不能保证这些变化属于同一条可接受轨迹。
+
+### 2.4 与业内同类实现（LoopX）的对比：共识与差异
+
+为了检验以上理解是否偏离业内常见做法，可以与 LoopX（本地控制平面，自称"The local control plane for long-running AI agent work"，面向 Codex / Claude Code / Cursor 等运行时）对照。它在 loop 的工程机制上代表了业内广泛认可的共识；对照的结果是：**Mission Driver 对 Loop Engineering 的工程层理解与业内高度一致，差异集中在理论层与自动化边界的表述上**。
+
+工程层共识（LoopX 与 Mission Driver 相同的判断）：
+
+| 共识 | LoopX 的表述 | Mission Driver 的表述 |
+|---|---|---|
+| 聊天记忆不是长期任务的事实源 | "Chat memory and a timer are not enough to govern that"；聊天记忆"不能成为长期任务的事实源" | logs 在不依赖 git 历史的情况下记录核心轨迹（充分统计量式记录），"文件就是它的认知" |
+| Human On The Loop：人的介入从"必须"变成"可选" | "Human-in-the-loop 不应该等价于每隔几分钟让用户确认一次"；人在真正需要判断的位置出现 | 人可以选择参与，但系统在没有人的干预下也能从路线图第一项走到最后一项 |
+| 有界回合 + 验证后写回才算完成 | "Validate and write durable state before spending"；反对把"旁路有进展"写成"gate 已解决" | Closure Gates 拒绝"Checkbox 全勾"式的虚假完成，DEEP_AUDIT 可推翻已完成结论 |
+| 更长的运行不等于更好的产品 | "没有更好状态管理的长 loop，只会制造更大的漂移" | "固定目标、固定反馈且不能改写自身结构的 Loop 只是伺服机构" |
+| 证据要紧凑、可检查、可恢复、可接手 | compact artifact、run index、handoff，让"下一轮 agent 能恢复上下文" | Plan 关闭契约定义"从哪开始、允许什么、在哪闭合、什么证据足以证明闭合" |
+
+差异集中在三点：
+
+1. **理论层：AGE 是本文系的独特增量，LoopX 明确不做**。LoopX 自我定位为控制平面而非方向来源：`quota should-run` 是 compute guard 而非 strategy selector，"It does not replace your agent runtime"，slogan 是"Keep the loop moving. Keep the judgment human."。它不回答"系统长期应该向什么结构收敛"——目标、边界与验收由用户在 goal 文本中给出，控制层只负责让这些目标在多轮、多 agent、多运行时之间不漂移。Mission Driver 所在的概念体系则前进一步：期望吸引子定义长期结构、Trajectory 记录实际演化、Harness 提供测量与纠偏，方向前提被外化为仓库结构（Owner Docs、ORM 唯一真相源等）。这一层在业内常见做法中都不存在——Andrew Ng 的三层 Loop 模型中 External Feedback 对应的是 Mission Loop 层（天/周级信号响应），LoopX 的 quota/gate 机制也是信号响应层，二者都没有显式的、外化为仓库结构的期望吸引子定义和收敛机制。这是本文系与它们的主要区别，也正对应 1.3 中"不仅仅是边界和护栏等 Harness"的定位。
+
+2. **自动化边界的设计不同**。LoopX 在架构层面把人的判断做成一等公民——"LoopX is not an autonomous production controller"、"final ownership stays with the human"，人的判断（reward、gate、quota、注意力成本）保留在运行层的每个环节，"Quota 保护的不只是算力，也是人的注意力"。Mission Driver 则把人类治理限定在方向层（期望吸引子、Owner Docs），执行与编排层追求无人值守：7×24 运行、每 4-12 小时自动完成一个完整循环、人工介入从早期高频衰减至后期为零。但两者并非实质冲突：LoopX 的"判断贯穿运行层"对应的是 Mission Driver 概念体系中"不定义方向"的边界（第四章），而"自动执行与编排"对应可自动化前两层（第五章）——差别在于人类判断在运行链中的保留位置。
+
+3. **架构取向不同**。LoopX 是 agent-agnostic 的旁路控制层：以 in_loop / wrapper / passive_posthoc 三种适配深度包围外部运行时，用 append-only 事件 ledger 作为真相、当前状态只是投影，并引入 quota 分配与 peer claim/lease 多 agent 协作。Mission Driver 是自包含的 Flow DSL 引擎 + 编排器：文件系统即真相层、零 IPC、断点恢复靠磁盘扫描，子代理以 Fresh Session 隔离，但无事件 ledger 与 peer/lease 概念。两者解决同一类问题的不同子集——LoopX 侧重多运行时、多 agent 的资源治理，Mission Driver 侧重单项目内闭环的可靠推进与方向一致性。
+
+小结：文章对 Loop Engineering 的工程理解没有偏离业内常见做法；真正不同的是它叠加的 AGE 理论层（这被定位为与"只实现了 loop 结构"的引擎的区分点），以及自动化叙事中"方向由人、执行与编排归机器"的分层表述。
 
 ---
 
@@ -152,7 +213,7 @@ AGE 要维护的不是简单的"代码 ↔ 测试"，而是"语义承诺 → 可
 
 **隔离的顶级步骤——解决断点恢复和部分重试。** 五步之间不传递参数。CHECK 不知道 REVIEW_PLANS 发现了几张 Plan，REVIEW_PLANS 不知道 EXEC_PLANS 会执行哪些模块。所有状态——Plan 的 status 字段、审计的 PASS/FAIL 结论、构建的 stdout 输出——全部通过文件持久化到磁盘。每个步骤从磁盘读取自己的输入，执行后把输出写回磁盘。
 
-这种设计的工程效果是：任意步骤可以单独执行；断点可以从磁盘状态自动恢复（扫盘就知道"当前在哪"）；不需要内存中的状态管理——没有进程需要保持活跃，也不会因内存中残留状态产生幂等性问题。恢复不是 replay（不重新执行历史步骤），而是 disk scan（扫描磁盘上的 Plan status 行和 checkbox 标记）。
+这种设计的工程效果是：任意步骤可以单独执行；断点可以从磁盘状态自动恢复（扫盘就知道"当前在哪"）；不需要内存中的状态管理——没有进程需要保持活跃，也不会因内存中残留状态产生幂等性问题。恢复不是 replay（不重新执行历史步骤），而是 disk scan（扫描磁盘上的 Plan status 行和 checkbox 标记，恢复的是"运行时进程状态"而非"语义一致性"——Plan 声明的 status 是否与实际代码匹配，由 Closure Gates 和独立审计负责校验）。
 
 **零 IPC，全文件——解决可观测性。** 执行路径上没有进程间通信，没有消息队列，没有数据库；监控看板（`localhost:9300`）是独立启动的可选旁路进程，不参与执行链路。Mission Driver 运行时不需要任何持久运行的执行进程——它只是按流程顺序启动子代理会话，每个会话读写文件后结束。这不是架构洁癖。在一个基于 IPC 的编排系统中，要判断"系统当前处于什么状态"通常需要查询某个运行中进程的内部状态——这个状态可能因为进程崩溃而丢失，可能因为并发更新而不一致。全文件模式的可观测性是最简单的：你只需要读文件。执行和审计共享同一个真相层。
 
@@ -166,7 +227,7 @@ AGE 要维护的不是简单的"代码 ↔ 测试"，而是"语义承诺 → 可
 
 在工程实现上，嵌套通过 `_runChildSubflow` 创建全新的 FlowEngine 实例来实现——子流程有独立的 `flowVars`、`visitCounts`、`retryCounts`，完全隔离于外层。两层之间的接口只有函数调用参数：外层扫出 Plan 文件列表，每个文件作为参数传递给子 FlowEngine，子流程返回 `{status, flowVars}`。外层不进入内层的执行链，内层不感知外层是否有其他步骤在等待。
 
-配套的稳定保障还有：重试预算（每步最多重试 3 次，重试通常续用同一会话以保留执行上下文——与 3.2 的"审计者必须开新会话从零读仓库"是两种不同场景）、死循环检测（ping-pong + max_cycles + max_total_steps）、看门狗（子 agent 超时强杀）——这些都不是"锦上添花"，而是概率性执行下维持长时间稳定运行的必要条件。
+配套的稳定保障还有：重试预算（每步最多重试 3 次，重试通常续用同一会话以保留执行上下文——与 3.2 的"审计者必须开新会话从零读仓库"是两种不同场景）、死循环检测（ping-pong + maxCycleVisits + max_total_steps）、看门狗（子 agent 超时强杀）——这些都不是"锦上添花"，而是概率性执行下维持长时间稳定运行的必要条件。
 
 ### 3.5 循环即智能：多时间尺度、结构记忆与递归闭环
 
@@ -249,7 +310,7 @@ Attractor 也不在 Loop 之外。它与闭环层叠形成递归关系：Attract
 
 Mission Driver 不定义期望吸引子，但它会显著影响实际吸引子。原因在于，它决定哪些行为会被反复执行：哪类 Plan 会被优先处理、哪些证据足以关闭任务、何时启动深度审计、哪类问题会被重新送回执行队列、哪些失败会触发升级而不是自动修补。
 
-如果 Mission Driver 只奖励"测试通过 + Checkbox 完成 + 当前任务关闭"，那么它可能把项目拉向"局部完成最大化"的实际吸引子。如果它持续读取 Owner Docs、Proof Relation、Closure Gates、Freshness、Independent Audit 和未关闭的轨迹义务，那么它才可能帮助实际吸引子逐渐接近期望吸引子。nop-app-erp 中 DEEP_AUDIT 曾多次推翻"Checkbox 全勾"的虚假完成——正是独立审计这个偏置源，把局部完成最大化拉回向真实结构收敛，才使得实际吸引子没有漂向"完成任务的数量"。
+如果 Mission Driver 只奖励"测试通过 + Checkbox 完成 + 当前任务关闭"，那么它可能把项目拉向"局部完成最大化"的实际吸引子。如果它持续读取 Owner Docs、Proof Relation、Closure Gates、Freshness、Independent Audit 和未关闭的轨迹义务，那么它才可能帮助实际吸引子逐渐接近期望吸引子。nop-app-erp 中独立审计曾多次推翻虚假完成声明（如 07-20 EXEC_PLANS 子流内第二轮审计 FAIL——执行者声称已补救"编辑生成文件"的违规，git diff 为空证明未发生任何修改）——正是独立审计这个偏置源，把局部完成最大化拉回向真实结构收敛，才使得实际吸引子没有漂向"完成任务的数量"。
 
 这也意味着 Mission Driver 自身必须接受 Meta-Audit：
 
@@ -266,7 +327,7 @@ Mission Driver 不定义期望吸引子，但它会显著影响实际吸引子�
 
 在人工协作中，许多缺口可以被人的临时解释掩盖：文档冲突时，人知道该听谁的；Plan 不完整时，人会口头补充；测试过时时，人知道暂时忽略；中间状态未记录时，人记得后续清理；Owner 不明确时，架构师可以现场裁决。
 
-Mission Driver 持续运行后，这些隐性补丁会消失，系统会暴露：路由不完整、Owner 不明确、Precedence 无法裁决、Plan 与 live repo 基线不符、Closure 只是 Checkbox、Proof 与语义承诺脱节、历史材料被误当成当前规范、临时结构没有退出义务、Freshness 不足却仍允许自动扩张。nop-app-erp 的 07-12 竞争杠杆审计就是一个例子：子代理核实承诺的 8 个竞争优势，发现 2 个夸大、2 个缺口——从 Plan Loop 和 Mission Driver 的角度，每条对应的 Plan 都通过了审查，控制层没有失败；失败的是外化不足的方向定义层，而深度审计恰好把这种缺口暴露了出来。
+Mission Driver 持续运行后，这些隐性补丁会消失，系统会暴露：路由不完整、Owner 不明确、Precedence 无法裁决、Plan 与 live repo 基线不符、Closure 只是 Checkbox、Proof 与语义承诺脱节、历史材料被误当成当前规范、临时结构没有退出义务、Freshness 不足却仍允许自动扩张。nop-app-erp 的 07-12 竞争杠杆审计是一个相关例子（该审计由人触发而非 Mission Driver 自动发起，但揭示的缺口相同）：子代理核实承诺的 8 个竞争优势，发现 2 个夸大、2 个缺口——从 Plan Loop 和 Mission Driver 的角度，每条对应的 Plan 都通过了审查，控制层没有失败；失败的是外化不足的方向定义层。它说明这类缺口最终只能靠方向定义层的持续外化被暴露和拦截，无论触发者是人是机。
 
 因此，Mission Driver 不只是提高效率。它还在检验：
 
@@ -304,11 +365,11 @@ Mission Driver 持续运行后，这些隐性补丁会消失，系统会暴露�
 
 ## 六、最终澄清
 
-回到开头：Mission Driver、Loop Engineering 和 AGE 是三个不同层次的问题，不是三个并列的品牌名词。
+回到开头，把三个概念的关系收束为三句话：
 
-- **Mission Driver 回答**：如何自动推进一个长期任务，如何让控制机制脱离人的同步参与持续运行？
-- **Loop Engineering 回答**：如何用反馈、重试、隔离、恢复和验证组织概率性的 AI 执行？
-- **AGE 回答**：如何让大量局部正确的 AI 变更，在长期演化中仍然保持结构方向，并在偏离后能够被重新拉回？
+- **Loop Engineering** 是业内对 AI 自主运行某一阶段的概括性表达——它把 loop 认定为自主运行的核心机制，但没有回答 loop 为什么能稳定存在以致趋于收敛，也没有提供人与运行中的循环交互的标准方案（黑箱、必须停 loop 改 prompt）。
+- **AGE** 用状态空间、吸引子、轨迹与控制四个概念回答这个问题，并要求在 loop 运行之前建立 docs 体系（规范性文档与实效性文档的权威定义和更新策略），在运行之中通过 roadmap / plan / audits 显性化 AI 的内部状态与认知。
+- **Mission Driver** 是对 Loop Engineering 的通用实现——它落实了"不写 prompt，而是写一个 loop 不断产生 prompt"的概念；同时它又是 AGE 概念体系下的机制，状态管理和演化在 AGE 体系下明确定义：运行于由 docs 体系承载的吸引子定义与收敛机制之上（Closure Gates、独立审计、DEEP_AUDIT 与轨迹纠偏），而不仅仅是边界和护栏等 Harness；人的介入可以不停止 loop（直接修改/新增 plan、修改 roadmap），logs 在不依赖 git 历史的情况下记录核心轨迹（充分统计量式记录），审计历史反向抽取 skill 改进后续工作。
 
 最需要澄清的一句话是：
 
@@ -320,4 +381,4 @@ Mission Driver 持续运行后，这些隐性补丁会消失，系统会暴露�
 
 ---
 
-*本文基于 nop-app-erp 项目的真实开发记录与 Mission Driver 源码撰写。素材来源包括 22 天的开发日志（`docs/logs/2026/`）、PPT 源材料（`docs/ppts/nop-erp-loop-engineering.ppt.md`）、187+ 份 Plan 文件（`docs/plans/`）、Mission Driver 配置文件与源码（`tools/mission-driver/`、AGE 模板 `tools/mission-driver/src/`）以及配套文章《Loop Engineering 通用参考实现》与《Loop Engineering × Attractor》。*
+*本文基于 nop-app-erp 项目的真实开发记录与 Mission Driver 源码撰写。素材来源包括 22 天的开发日志（`docs/logs/2026/`）、PPT 源材料（`docs/ppts/nop-erp-loop-engineering.ppt.md`）、187+ 份 Plan 文件（`docs/plans/`）、Mission Driver 配置文件与引擎源码（本仓库 `tools/mission-driver.sh` 与 `missions/`，引擎实现于 `../attractor-guided-engineering-template/tools/mission-driver/src/`）以及配套文章《Loop Engineering 通用参考实现》与《Loop Engineering × Attractor》。2.4 节的业内对照基于 LoopX（`~/ai/loopx`，README、`docs/product/foundations/loop-engineering-principles-and-pitfalls.zh.md`、`docs/state-interaction-model.md`）与 Andrew Ng 三层 Loop 模型等公开材料。*
