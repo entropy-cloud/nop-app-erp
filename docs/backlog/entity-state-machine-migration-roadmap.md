@@ -36,8 +36,8 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
-| M1.1 | 客服 `ErpCsTicket.status` 试点：矩阵 Bean、Processor/BizModel 接线、矩阵完备性和既有动作回归 | todo | `customer-service/state-machine.md` | M0.1 + M0.2 + data-deletion 人工批准（2026-08-06 记录） | `nop-backend-dev` + `nop-testing` |
-| M1.2 | 客服试点 Delta 同名 Bean 覆盖证明：替换一条允许边或分类语义，并证明基线/Delta 两种加载结果 | todo | `customization-capabilities.md`、M0.1 产物 | M1.1 | `nop-backend-dev` + `nop-testing` |
+| M1.1 | 客服 `ErpCsTicket.status` 试点：矩阵 Bean、Processor/BizModel 接线、矩阵完备性和既有动作回归 | done | `customer-service/state-machine.md` | M0.1 + M0.2 + data-deletion 人工批准（2026-08-06 记录） | `nop-backend-dev` + `nop-testing` |
+| M1.2 | 客服试点 Delta 同名 Bean 覆盖证明：替换一条允许边或分类语义，并证明基线/Delta 两种加载结果 | done | `customization-capabilities.md`、M0.1 产物 | M1.1 | `nop-backend-dev` + `nop-testing` |
 | M1.3 | 试点评估：审计 StateMachine 元数据与客服 owner doc/dict/writer 的一致性，裁定批量迁移模板 | todo | `customer-service/state-machine.md`、M0.1 产物 | M1.1 + M1.2 | `state-machine-business-review-prompt.md` |
 
 ### Milestone M2 — 非保护域直接生命周期迁移
