@@ -21,6 +21,7 @@ import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
 import app.erp.ct.service.processor.ErpCtContractActivateProcessor;
 import app.erp.ct.service.processor.ErpCtContractAmendProcessor;
+import app.erp.ct.service.statemachine.ErpCtContractStateMachine;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -54,6 +55,9 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @Inject
     ErpCtContractAmendProcessor amendProcessor;
 
+    @Inject
+    ErpCtContractStateMachine stateMachine;
+
     public ErpCtContractBizModel() {
         setEntityName(ErpCtContract.class.getName());
     }
@@ -77,10 +81,12 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @BizMutation
     public ErpCtContract suspend(@Name("contractId") Long contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
-        if (!Objects.equals(contract.getStatus(), ErpCtConstants.CONTRACT_STATUS_ACTIVE)) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE);
+        try {
+            stateMachine.assertCanSuspend(contract.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE, e);
         }
-        contract.setStatus(ErpCtConstants.CONTRACT_STATUS_SUSPENDED);
+        contract.setStatus(stateMachine.suspendTargetStatus());
         updateEntity(contract, null, context);
         return contract;
     }
@@ -89,10 +95,12 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @BizMutation
     public ErpCtContract resume(@Name("contractId") Long contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
-        if (!Objects.equals(contract.getStatus(), ErpCtConstants.CONTRACT_STATUS_SUSPENDED)) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_SUSPENDED);
+        try {
+            stateMachine.assertCanResume(contract.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_SUSPENDED, e);
         }
-        contract.setStatus(ErpCtConstants.CONTRACT_STATUS_ACTIVE);
+        contract.setStatus(stateMachine.resumeTargetStatus());
         updateEntity(contract, null, context);
         return contract;
     }
@@ -101,19 +109,20 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @BizMutation
     public ErpCtContract terminate(@Name("contractId") Long contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
-        String status = contract.getStatus();
         // 守卫接受 ACTIVE（生效合同提前终止）与 NEGOTIATION（谈判破裂放弃）两类源态
         // （对齐 state-machine.md §2 L34/L51 + §3 L58：NEGOTIATION 或后续态不可作废，只能 TERMINATED）。
-        if (!Objects.equals(status, ErpCtConstants.CONTRACT_STATUS_ACTIVE)
-                && !Objects.equals(status, ErpCtConstants.CONTRACT_STATUS_NEGOTIATION)) {
+        // 矩阵判定下沉 Bean（多源 {ACTIVE,NEGOTIATION}），非法边 Bean 抛 common 码，此处映射领域码。
+        try {
+            stateMachine.assertCanTerminate(contract.getStatus());
+        } catch (NopException e) {
             throw illegalTransition(contract,
-                    ErpCtConstants.CONTRACT_STATUS_ACTIVE + "/" + ErpCtConstants.CONTRACT_STATUS_NEGOTIATION);
+                    ErpCtConstants.CONTRACT_STATUS_ACTIVE + "/" + ErpCtConstants.CONTRACT_STATUS_NEGOTIATION, e);
         }
         // 作废语义：InvoicePlan 无独立状态列，合同头 TERMINATED 后未开票计划经合同头隐式失效
         // （triggerInvoice 校验合同 ACTIVE 即拒绝，isInvoiced=false 永不可再触发）。
         // NEGOTIATION→TERMINATED 谈判破裂，未生效合同放弃，版本归档经 useLogicalDelete 既有语义
         // （NEGOTIATION 未生效，无需 signDate/version 归档差异；与 ACTIVE 路径仅 setStatus+updateEntity 一致）。
-        contract.setStatus(ErpCtConstants.CONTRACT_STATUS_TERMINATED);
+        contract.setStatus(stateMachine.terminateTargetStatus());
         updateEntity(contract, null, context);
         return contract;
     }
@@ -122,10 +131,12 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @BizMutation
     public ErpCtContract expire(@Name("contractId") Long contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
-        if (!Objects.equals(contract.getStatus(), ErpCtConstants.CONTRACT_STATUS_ACTIVE)) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE);
+        try {
+            stateMachine.assertCanExpire(contract.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE, e);
         }
-        contract.setStatus(ErpCtConstants.CONTRACT_STATUS_EXPIRED);
+        contract.setStatus(stateMachine.expireTargetStatus());
         updateEntity(contract, null, context);
         return contract;
     }
@@ -182,7 +193,15 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     }
 
     protected NopException illegalTransition(ErpCtContract contract, String expected) {
-        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(contract, expected, null);
+    }
+
+    /**
+     * 领域非法迁移异常构造。可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
+     * Bean 报 common 码 + action/fromStatus 元数据，Processor 映射领域码 + 实体编号/上下文，common 码作 cause 保留）。
+     */
+    protected NopException illegalTransition(ErpCtContract contract, String expected, Throwable cause) {
+        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode())
                 .param(ErpCtErrors.ARG_CURRENT_STATUS, contract.getStatus())
                 .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);

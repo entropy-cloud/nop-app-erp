@@ -29,6 +29,12 @@
           class="app.erp.ct.service.spi.mock.MockSignatureProvider"/>
 
 
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对一实体一轴。
+         ErpCtContractStateMachine 承载合同头 status 轴已实现迁移矩阵（activate/suspend/resume/terminate/expire/amend）。
+         下游可经 Delta beans.xml 同名 bean id 覆盖基线矩阵（契约 §6）。 -->
+    <bean id="app.erp.ct.service.statemachine.ErpCtContractStateMachine"
+          class="app.erp.ct.service.statemachine.ErpCtContractStateMachine"/>
+
     <!-- per-mutation Cat-B D-mutation Processor beans (R6.7)：类别 B 内联 mutation 每 mutation 独立 Processor。
          自包含 body（VERBATIM 迁移 + CrudBizModel 管道方法替换为 raw dao 等价）；下游可经 Delta beans.xml 同名 bean id 覆盖。 -->
     <bean id="app.erp.ct.service.processor.ErpCtContractActivateProcessor"

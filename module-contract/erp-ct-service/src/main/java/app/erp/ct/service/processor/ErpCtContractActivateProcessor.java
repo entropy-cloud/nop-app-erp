@@ -5,6 +5,7 @@ import app.erp.contract.dao.entity.ErpCtContractVersion;
 import app.erp.ct.biz.IErpCtContractVersionBiz;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.statemachine.ErpCtContractStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -20,6 +21,11 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 /**
  * ErpCtContract activate per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含合同激活编排（NEGOTIATION→ACTIVE + 当前版本定稿则同步签署）；共享 protected helper 已随编排迁入。
+ *
+ * <p>固定来源态/目标态判断委托 {@link ErpCtContractStateMachine}（合同头 status 轴 Bean，契约 §4/§7）；
+ * 动态业务守卫（contractType↔direction 组合校验）+ 签署/版本生效副作用保留原位。非法边 Bean 抛 common 层码
+ * （含 {@code action}/fromStatus 元数据），本 Processor 捕获后映射领域码 {@link ErpCtErrors#ERR_CT_ILLEGAL_STATUS_TRANSITION}
+ * （+ contractCode/currentStatus/expectedStatus 实体编号/上下文，common 码作 cause 保留）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpCtContractActivateProcessor {
@@ -30,10 +36,15 @@ public class ErpCtContractActivateProcessor {
     @Inject
     IErpCtContractVersionBiz contractVersionBiz;
 
+    @Inject
+    ErpCtContractStateMachine stateMachine;
+
     public ErpCtContract activate(Long contractId, IServiceContext context) {
         ErpCtContract contract = requireContract(contractId);
-        if (!Objects.equals(contract.getStatus(), ErpCtConstants.CONTRACT_STATUS_NEGOTIATION)) {
-            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_NEGOTIATION);
+        try {
+            stateMachine.assertCanActivate(contract.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_NEGOTIATION, e);
         }
         validateTypeDirectionCombo(contract);
 
@@ -43,7 +54,7 @@ public class ErpCtContractActivateProcessor {
             contractVersionBiz.signVersion(current.getId(), context);
         }
 
-        contract.setStatus(ErpCtConstants.CONTRACT_STATUS_ACTIVE);
+        contract.setStatus(stateMachine.activateTargetStatus());
         contract.setSignDate(CoreMetrics.today());
         dao().updateEntity(contract);
         return contract;
@@ -85,7 +96,12 @@ public class ErpCtContractActivateProcessor {
     }
 
     protected NopException illegalTransition(ErpCtContract contract, String expected) {
-        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(contract, expected, null);
+    }
+
+    /** 领域非法迁移异常构造；可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7）。 */
+    protected NopException illegalTransition(ErpCtContract contract, String expected, Throwable cause) {
+        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode())
                 .param(ErpCtErrors.ARG_CURRENT_STATUS, contract.getStatus())
                 .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);
