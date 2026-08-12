@@ -19,6 +19,7 @@
 
 | 文章 | 主题 |
 |------|------|
+| `mission-driver-key-clarifications.md` | Mission Driver 概念澄清：它解决什么问题，为什么这样设计——概念体系定位（Mission Driver / Loop Engineering / AGE 三层次）、内部设计思想（Plan 关闭契约与中间状态合法性、生成与验收分离、文件化状态、循环嵌套、循环即智能）与能力边界（不定义方向、期望/实际吸引子、压力测试） |
 | `loop-engineering-x-attractor.md` | Loop Engineering 实践：Plan Loop（单次变更的关闭契约）与 Mission Driver Loop（自动路线图编排）的工程设计、嵌套解耦与运行数据（以 nop-app-erp 22 天 154 模块全栈开发为实证案例） |
 | `mission-driver--loop-engineering.md` | Mission Driver：Loop Engineering 的一种通用参考实现——通用 AI 任务驱动引擎如何通过 loop 嵌套实现局部容错与稳定保障 |
 

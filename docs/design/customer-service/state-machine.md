@@ -37,8 +37,12 @@ NEW（新建）
 | IN_PROGRESS→RESOLVED | 处理人 | 已给出解决方案，填写 resolution | SLA 停止，deadlineDateTime 对比 |
 | RESOLVED→CLOSED | 客户 / 客服 | 客户确认问题解决 | 终态，endDateTime 设置 |
 | RESOLVED→IN_PROGRESS | 处理人 | 客户驳回解决方案 | 恢复计时（时长累加） |
-| IN_PROGRESS→CANCELLED | 客服主管 | 重复工单/客户要求取消 | 终态 |
 | NEW→CANCELLED | 客服主管 | 误开、无效请求 | 终态 |
+| ASSIGNED→CANCELLED | 客服主管 | 分派后取消（重复/客户撤销） | 终态 |
+| IN_PROGRESS→CANCELLED | 客服主管 | 处理中取消（重复工单/客户要求取消） | 终态 |
+| RESOLVED→CANCELLED | 客服主管 | 解决后取消（误判解决/客户撤回） | 终态 |
+
+> **M1.3 审计补正**（2026-08-12，`docs/plans/2026-08-12-0738-2-cs-ticket-state-machine-pilot-evaluation.md` Phase 1 四方对照裁决）：本 §2 表原仅列 NEW/IN_PROGRESS 两条 cancel 来源，与本节 §实现约定「cancel 范围：NEW/ASSIGNED/IN_PROGRESS/RESOLVED 均可 cancel」声明内部漂移。`ErpCsTicketStateMachine.transitions()` 取 9 边（cancel 展开 4 来源），生产 `ErpCsTicketBizModel.cancel` 亦对四非终态合法。裁定 = **doc drift**（§2 表不全），处置 = 补全缺失的 ASSIGNED→CANCELLED / RESOLVED→CANCELLED 行（即上表），使 §2 表与 §实现约定 + Bean 元数据 + 生产 writer 三方对齐。
 
 ### 3. 终态与恢复
 

@@ -239,6 +239,80 @@ class IllegalStatusTransitionException extends NopException {
 
 ---
 
+## 11. 迁移模板（M1.3 产物）
+
+> **来源**：`docs/plans/2026-08-12-0738-2-cs-ticket-state-machine-pilot-evaluation.md`（M1.3 客服试点评估与批量迁移模板裁定）。
+> **依据**：客服试点 `ErpCsTicketStateMachine`（M1.1 Bean + M1.2 Delta 实证）四方对照审计结论 = 试点无行为回归、元数据可审计、Delta 生效 → **go**（批准 M2/M3 启动；M4 沿同模板但每项 plan-first）。
+> **本节定位**：固化 M2/M3/M4 迁移项将遵循的标准步骤序列与三类变体点。引用 M0.1 契约（§1-§10）章节而非重述；各迁移项 plan 在 Draft Review Record 引用本节作为模板来源。
+
+### 11.1 七步标准序列（每迁移项按序执行）
+
+| 步 | 动作 | 契约引用 | 产出 |
+|----|------|----------|------|
+| 1 | **Bean 形状**：一实体一轴的 `Erp<Domain><Entity>[<Axis>]StateMachine`，显式动作方法（`assertCan<Action>` + `<action>TargetStatus`）+ 终态分类（`isTerminal`）+ 只读元数据（`transitions()` / `terminalStatuses()` / `initialStatuses()`）；严格无状态（不注入 DAO/IBiz/IServiceContext/事务）。 | §1 颗粒度命名、§2 无状态约束、§4 方法形状 | Bean 源文件 |
+| 2 | **Bean 注册**：在非生成 `_vfs/erp/{domain}/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（沿用既有 Processor FQN-id 范式）。 | §5 Bean ID 与注册 | beans.xml 追加一行 |
+| 3 | **Processor/BizModel 接线**：按类型注入 `@Inject Erp<...>StateMachine`（字段非 `private`，§5 + 合规 R5），将**固定来源态/目标态判断**（内联 `Objects.equals(from, CONST)` 矩阵守卫）替换为 `stateMachine.assertCan<Action>(from)` + `stateMachine.<action>TargetStatus()` 写回；**动态业务守卫保留原位**（SLA 时序、close-breached、并发乐观锁、权限、审计字段、跨域副作用、data-deletion 等）。非法边由 Bean 抛 common 层码 + `action`/`fromStatus` 元数据，Processor 映射为领域 ErrorCode + 实体编号/上下文（common 码作 cause 保留）。 | §6 Delta 覆盖路径、§7 错误/拒绝语义、`processor-extension-pattern.md` 编排点 | Processor/BizModel diff（grep 证实相关方法体内不再有内联矩阵判断，动态守卫除外） |
+| 4 | **层 1 矩阵完备性测试**（新增 greenfield 表驱动）：遍历每个动作的合法/非法来源态——(a) 无重复/冲突边；(b) 从初始态可达全部声明状态、终态无出边；(c) 多来源态动作（如 cancel）覆盖全集；(d) `transitions()` 元数据与显式方法语义一致；(e) 终态/初始态集合正确。**不经 BizModel 入口**（层 1 只测 Bean）。 | §10 层 1 | `TestErp<...>StateMachineMatrix` |
+| 5 | **层 2 四方对照**（新增）：dict ↔ owner-doc 迁移图 ↔ StateMachine 元数据 ↔ 全部 writer（含 CRUD 路径，§9.4）。检测 dict 死状态、owner-doc 迁移图与生产 writer 漂移、矩阵-owner-doc 不一致；发现项按路线图规则 5 Fix 登记 + successor（**禁止静默排除**），并在 owner doc §迁移表 与 Bean 对齐。 | §9.4、`state-machine-business-review-prompt.md` 10 维度 | 四方对照审计记录（写入迁移项 plan 的 Closure 段或 `docs/audits/`） |
+| 6 | **层 3 既有命名动作回归**（非 greenfield）：复用既有 `TestErp*StateMachine` 集成测试基线（M0.1 §10 末段登记的 8 个 + M1.1 新增 Ticket）+ 既有 BizModel 入口测试，证明 Processor 写回、审计 fromStatus/toStatus、错误码 + 参数、终态不可恢复、跨域副作用、SLA/CSAT 等均不变。 | §10 层 3 | `mvn test -pl module-<domain>/<domain>-service` 全绿 |
+| 7 | **Delta 适用性**：本项迁移是否证 Delta？——M2/M3 **非保护域**：可选证 Delta（放开/收紧一条边，证明基线/Delta 双加载可区分）；M4 **保护域**：按 `ai-autonomy-policy.md` plan-first 门控，Delta 实证由 M5.3 最终跨域回归统一证，单项 plan 不要求自带 Delta 证明（除非该域是首迁移项）。 | §6 + 路线图 M1.2 既有实证范式 | Delta 证据（如适用）或显式标注「M4 plan-first，Delta 归 M5.3」 |
+
+### 11.2 三类变体点（M2 / M3 / M4）
+
+> 七步序列对所有里程碑同形适用；下列变体点是**类别特定的额外约束**，迁移项 plan 须在 Goals/Non-Goals 显式声明所归属类别的约束。
+
+#### M2 — 简单生命周期（19 项，≤4 态线性或简单分支）
+
+- **代表样例**：`M2.1 ErpMdSupplierApproval.status`（APPLIED→APPROVED/PROBATION/SUSPENDED/REJECTED，5 态简单分支 + 既有 `TestErpMdSupplierApprovalStateMachine` 层 3 基线）、`M2.8 ErpPurOrder.docStatus`（DRAFT→CANCELLED 最小 2 态）、`M2.3 ErpPrjTask.status`（TODO→IN_PROGRESS→DONE；↔BLOCKED 线性 + 回退）。
+- **变体**：单轴、无审批子矩阵、无跨域过账副作用。跨域副作用（若有）仅限 notify/nop-job 提醒类（如 M2.2 nop-job 提醒→notify、M2.12 notify hr.contract-expiry），不改财务/库存。
+- **Delta 适用性**：非保护域，可选证 Delta；若证，复用 M1.2 范式（派生类覆盖一个 `assertCan<Action>` + VFS Delta 层同名 bean id 覆盖 + 基线/Delta 双加载测试）。
+- **plan-first**：否（非保护、无财务影响）。但仍是跨模块行为变更，须独立 plan + 独立草案审查 + 独立结束审计（路线图规则 3）。
+
+#### M3 — 复杂业务/审批轴（19 项）
+
+- **代表样例**：`M3.5 ErpPurOrder.approveStatus`（UNSUBMITTED→SUBMITTED→APPROVED/REJECTED；APPROVED→REJECTED 反审，wf/approve-status 4 态）与 `M2.8 ErpPurOrder.docStatus` **双轴各自独立 Bean**（命名 `ErpPurOrderDocumentStateMachine` / `ErpPurOrderApprovalStateMachine`，§1 双轴后缀约定）；`M3.13 ErpMfgJobCard.status`（OPEN→WIP→SUBMITTED→COMPLETED；WIP↔ON_HOLD；→CANCELLED 8 态复杂分支）、`M3.17 ErpMntRequest.status`（OPEN→ACCEPTED→COMPLETED/REJECTED；→CANCELLED，既有 `TestErpMntVisitRequestStateMachine` 层 3 基线）。
+- **变体**：(i) 审批轴 Bean 与业务生命周期 Bean **分离**（同一实体双轴时两 Bean，不合并笛卡尔积，§3）；(ii) 复杂业务分支（多回退/转发/会签结果回写）——只迁移**固定**来源/目标态判断，**动态**分支（如 SoD approver-is-creator、24h 跨表校验、DAG 前置依赖、APS generateJobCards cascade）保留在 Processor；(iii) 审批结果若触发**下游过账**则该项升级为 M4（见 M4 变体，不留在 M3）。
+- **跨域副作用**：经既有 Processor/`I*Biz` 路径执行；Bean 只回答「该审批动作在此态是否合法」，不持有副作用（§8）。
+- **Delta 适用性**：非保护域（审批轴本身不触发过账），可选证 Delta。
+- **plan-first**：否（除非审批结果触发财务过账 → 升级 M4）。
+
+#### M4 — 财务影响/保护域（65 项，**全部 plan-first**）
+
+- **代表样例**：`M4.1 ErpFinVoucher.docStatus`（DRAFT→POSTED；POSTED→isReversed 过账核心）、`M4.29 ErpInvStockMove.docStatus`（DONE 触发 `InvPostingExecutor`→`IErpFinVoucherBiz.post` 存货过账）、`M4.13/14 ErpPurReceive.docStatus/approveStatus`（APPROVED→入库 `IErpInvStockMoveBiz` + AP 凭证）。
+- **变体（硬约束，迁移项 plan 必须显式声明）**：
+  - (i) **plan-first**：每项按 `ai-autonomy-policy.md` plan-first 门控；触及受保护行为（过账/红冲/结账/库存强一致/数据删除）时不因 StateMachine Bean 抽象而免除人工/owner-doc 门控。
+  - (ii) **过账时序不改**：迁移只替换固定状态判断；过账的**触发时机、编排顺序、失败回退（posted 回写）、红冲闭环**继续由过账编排与 `posted` 契约管理（§3 + §8），Bean 不触碰。
+  - (iii) **`posted` 不入轴**：`posted`（boolean）继续是业财过账/红冲/物理锁定契约，**不作为 StateMachine 迁移轴**（§3）。M4 项只迁移触发/逆转过账的**业务状态轴**（如 `docStatus`/`approveStatus`）。
+  - (iv) **跨域副作用保留原路径**：`IErpFinVoucherBiz.post` / `IErpInvStockMoveBiz` / `IErpFinAcctDocProvider` 调用、ReversalListener 回写 posted=false、ArApItem 联动等，全部留在 Processor/`I*Biz` 路径；Bean 不下沉任何跨域副作用。
+  - (v) **既有 ReversalListener / 红冲闭环**继续以 `posted` 为契约，不因 Bean 引入改变。
+- **Delta 适用性**：单项 plan **不要求**自带 Delta 证明（保护域）；Delta 覆盖回归归 M5.3 最终跨域回归统一证。若该域是首迁移项且团队要求 Delta 实证，则按 M1.2 范式补，并在 plan 显式声明。
+- **保护区 ask-first**：触及 `model/*.orm.xml` / API / 财务过账 / 数据删除自主权时停并 ask-first（路线图 Non-Goal + 规则 7）。
+
+### 11.3 模板覆盖性自检（无空白槽）
+
+按 M0.2 §2.2 全表至少各一类代表样例覆盖：
+
+| 里程碑 | 代表样例 | 模板覆盖的类别特征 | 空白槽 |
+|--------|----------|---------------------|--------|
+| M2 | `M2.8 ErpPurOrder.docStatus`（DRAFT→CANCELLED 最小 2 态） | 最小生命周期 | 无 |
+| M2 | `M2.1 ErpMdSupplierApproval.status`（5 态简单分支 + 既有层 3 基线） | 简单分支 + 既有测试复用 | 无 |
+| M3 | `M3.5 + M2.8 ErpPurOrder` 双轴（approveStatus / docStatus 各自独立 Bean） | 双轴分离 + `Document`/`Approval` 后缀命名 | 无 |
+| M3 | `M3.13 ErpMfgJobCard.status`（8 态复杂分支 + 死状态登记） | 复杂分支 + dict 死状态 Fix 登记 | 无 |
+| M3 | `M3.17 ErpMntRequest.status`（既有 `TestErpMntVisitRequestStateMachine` 层 3 基线） | 复杂业务 + accept→生成下游实体副作用 | 无 |
+| M4 | `M4.1 ErpFinVoucher.docStatus`（DRAFT→POSTED 过账核心，plan-first） | 财务核心 + plan-first + `posted` 不入轴 | 无 |
+| M4 | `M4.29 ErpInvStockMove.docStatus`（DONE→存货过账 + 库存强一致） | 跨域过账触发 + 库存强一致保护区 | 无 |
+| M4 | `M4.13/14 ErpPurReceive` 双轴（docStatus + approveStatus，APPROVED→入库+AP 凭证） | 双轴 + 财务影响 + 跨域 `I*Biz` | 无 |
+
+**结论**：M2/M3/M4 三类的「最小/简单分支/双轴/复杂分支/财务核心/跨域过账触发」特征均被代表样例覆盖，模板无空白槽。
+
+### 11.4 警示条目（审计新发现 → 迁移项须规避）
+
+- **owner-doc §迁移表 vs §实现约定 内部漂移**（M1.3 在客服试点发现）：各迁移项层 2 四方对照须显式核对 owner doc 内部 §迁移表 与 §实现约定 是否一致；若不一致按 doc drift Fix 登记 + 补 §迁移表缺失行（非静默折叠）。客服试点已就地补正 `customer-service/state-machine.md §2`（M1.3 Fix 登记）。
+- **SLA/计时类 intentional legacy behavior**：迁移项不得静默改变已裁决的 intentional legacy behavior（如客服 `startDateTime = 首次 IN_PROGRESS`）；owner doc §实现约定 + 清单 §4 已裁决项须在 Bean 中如实保持，迁移项 plan Non-Goals 显式声明。
+- **cancel 多来源态与终态领域异常重叠**：当动作（如 cancel）对终态报告 common 非法边、但领域对终态有专属错误码（如 `ERR_TICKET_ALREADY_TERMINAL`）时，接线须令终态走领域码、非终态非法走 Bean→领域映射（参见 `ErpCsTicketBizModel.cancel` 范式）；M2/M3 多来源态动作（如 M2.1 SuspendByPartner、M3.13 JobCard 多出口）须复核此模式。
+
+---
+
 ## 与其他文档的关系
 
 | 文档 | 关系 |
@@ -247,3 +321,5 @@ class IllegalStatusTransitionException extends NopException {
 | `customization-capabilities.md` | Delta 同名 Bean 覆盖定制点（业务级实证 = successor，按其声明-实证规范标注） |
 | `domain-design-guidelines.md §16` | 三轴分离约束来源（本文对齐之，不改动） |
 | `../nop-entropy/docs-for-ai/02-core-guides/delta-customization.md` | Delta 机制平台权威 |
+| `docs/backlog/entity-state-machine-migration-roadmap.md` | 迁移路线图（M2/M3/M4 工作项按本 §11 模板执行） |
+| `docs/skills/state-machine-business-review-prompt.md` | 层 2 四方对照 + 10 维度审查方法（步骤 5 标配） |

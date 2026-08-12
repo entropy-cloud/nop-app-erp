@@ -1,6 +1,6 @@
 # 实体级状态机 Bean 迁移路线图
 
-> 最后更新：2026-08-12（M0.2 完成：M2=19 + M3=19 + M4=65 = 103 纳入轴展开）
+> 最后更新：2026-08-12（M1.3 完成：客服试点四方对照审计 PASS + go 裁定 + 批量迁移模板裁定落地至 `docs/architecture/entity-state-machine-bean.md §11`；M2/M3 Deps 门控解除，各迁移项可启动独立 plan。M0.2 展开：M2=19 + M3=19 + M4=65 = 103 纳入轴）
 > 来源：`docs/analysis/2026-08-06-1000-erp-state-machine-extension-strategy.md`；用户决策：每种业务状态机采用对应的可注入、可 Delta 覆盖 `ErpXxxStateMachine` Bean，以集中迁移逻辑并支持完备性分析。
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > 审查记录：4 轮独立子代理审查后收敛；见文末 `Draft Review Record`。
@@ -38,7 +38,7 @@
 |---|---|---|---|---|---|
 | M1.1 | 客服 `ErpCsTicket.status` 试点：矩阵 Bean、Processor/BizModel 接线、矩阵完备性和既有动作回归 | done | `customer-service/state-machine.md` | M0.1 + M0.2 + data-deletion 人工批准（2026-08-06 记录） | `nop-backend-dev` + `nop-testing` |
 | M1.2 | 客服试点 Delta 同名 Bean 覆盖证明：替换一条允许边或分类语义，并证明基线/Delta 两种加载结果 | done | `customization-capabilities.md`、M0.1 产物 | M1.1 | `nop-backend-dev` + `nop-testing` |
-| M1.3 | 试点评估：审计 StateMachine 元数据与客服 owner doc/dict/writer 的一致性，裁定批量迁移模板 | todo | `customer-service/state-machine.md`、M0.1 产物 | M1.1 + M1.2 | `state-machine-business-review-prompt.md` |
+| M1.3 | 试点评估：审计 StateMachine 元数据与客服 owner doc/dict/writer 的一致性，裁定批量迁移模板 | done | `customer-service/state-machine.md`、M0.1 产物 | M1.1 + M1.2 | `state-machine-business-review-prompt.md` |
 
 ### Milestone M2 — 非保护域直接生命周期迁移
 
@@ -207,7 +207,7 @@
 - Ticket `reopen` 会删除未答问卷，因此 M1.1 属于 data-deletion ask-first 试点。用户已于 2026-08-06 明确批准 M1.1 迁移并指示记录于本路线图；批准范围限于**保留既有 reopen 删除未答问卷行为**前提下的状态机迁移，不扩展到其他数据删除或行为变化，也不授予 ORM、API、财务过账或外部集成自主权。
 - M1.1 必须保持经裁决确认的 Ticket 外部行为、审计、SLA/CSAT、副作用和错误语义；具体断言矩阵由实施计划定义。
 - M1.2 必须证明真实应用容器中的基线与 Delta 覆盖行为；仅编译派生类或静态检查 bean XML 不构成证明。
-- M1.3 只在独立审计确认无行为回归、元数据可审计、Delta 生效后，才能批准 M2/M3 的迁移模板。
+- M1.3 只在独立审计确认无行为回归、元数据可审计、Delta 生效后，才能批准 M2/M3 的迁移模板。**已完成（2026-08-12）**：M1.3 四方对照审计裁决 `Verdict: pass`（详见 `docs/plans/2026-08-12-0738-2-cs-ticket-state-machine-pilot-evaluation.md` Phase 1 + Closure）；go 裁定落地，批量迁移模板固化于 `docs/architecture/entity-state-machine-bean.md §11`。M2/M3 各迁移项 Deps（M1.3）门控解除，可启动独立 plan。
 
 ### M2-M4 批量纪律
 
