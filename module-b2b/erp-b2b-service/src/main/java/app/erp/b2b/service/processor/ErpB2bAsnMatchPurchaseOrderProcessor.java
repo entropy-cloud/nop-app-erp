@@ -5,6 +5,7 @@ import app.erp.b2b.dao.entity.ErpB2bAsn;
 import app.erp.b2b.dao.entity.ErpB2bAsnLine;
 import app.erp.b2b.service.ErpB2bConstants;
 import app.erp.b2b.service.ErpB2bErrors;
+import app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import io.nop.api.core.beans.query.QueryBean;
@@ -25,6 +26,10 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * ErpB2bAsn matchPurchaseOrder per-mutation Processor。
  * 自包含采购订单匹配编排（RECEIVED→MATCHED）：PO 查找 + 关闭/取消判定 + 逐行物料匹配与超量校验 + EdiDoc 归档。
  * （R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
+ *
+ * <p>固定来源/目标态判断经 {@link ErpB2bAsnStateMachine} Bean（契约 {@code entity-state-machine-bean.md}）。
+ * Bean 抛 common 层非法迁移码，本类映射为 {@link ErpB2bErrors#ERR_B2B_ASN_ILLEGAL_TRANSITION}（参数不变，common 码作 cause）。
+ * 动态守卫保留原位：HMAC 校验、PO 匹配/超量、EdiDoc 归档失败容忍。
  */
 public class ErpB2bAsnMatchPurchaseOrderProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ErpB2bAsnMatchPurchaseOrderProcessor.class);
@@ -35,15 +40,13 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
     @Inject
     IErpB2bEdiDocBiz ediDocBiz;
 
+    @Inject
+    ErpB2bAsnStateMachine stateMachine;
+
     public ErpB2bAsn matchPurchaseOrder(Long asnId, IServiceContext context) {
         ErpB2bAsn asn = requireAsn(asnId);
-        String status = asn.getStatus();
-        if (!ErpB2bConstants.ASN_STATUS_RECEIVED.equals(status)) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION)
-                    .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
-                    .param(ErpB2bErrors.ARG_CURRENT_STATE, status)
-                    .param(ErpB2bErrors.ARG_EXPECTED_STATE, ErpB2bConstants.ASN_STATUS_RECEIVED);
-        }
+        String from = asn.getStatus();
+        assertCanMatch(asn, from);
 
         // 查采购订单
         ErpPurOrder po = findPurchaseOrder(asn.getRelatedBillCode());
@@ -81,7 +84,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         }
 
         // 匹配成功 → MATCHED
-        asn.setStatus(ErpB2bConstants.ASN_STATUS_MATCHED);
+        asn.setStatus(stateMachine.matchPurchaseOrderTargetStatus());
         if (overQuantity) {
             asn.setRemark("部分行超 PO 数量（blockingLevel=WARN）");
         }
@@ -99,6 +102,21 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
     }
 
     // ---------- 内部辅助 ----------
+
+    /**
+     * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
+     * {@code ERR_B2B_ASN_ILLEGAL_TRANSITION} + 实体编号/上下文，common 码作 cause 保留（契约 §7）。
+     */
+    private void assertCanMatch(ErpB2bAsn asn, String from) {
+        try {
+            stateMachine.assertCanMatchPurchaseOrder(from);
+        } catch (NopException e) {
+            throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION, e)
+                    .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
+                    .param(ErpB2bErrors.ARG_CURRENT_STATE, from)
+                    .param(ErpB2bErrors.ARG_EXPECTED_STATE, ErpB2bConstants.ASN_STATUS_RECEIVED);
+        }
+    }
 
     protected ErpB2bAsn requireAsn(Long asnId) {
         ErpB2bAsn asn = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId);

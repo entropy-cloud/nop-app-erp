@@ -5,6 +5,7 @@ import app.erp.b2b.dao.entity.ErpB2bAsnLine;
 import app.erp.b2b.service.ErpB2bConfigs;
 import app.erp.b2b.service.ErpB2bConstants;
 import app.erp.b2b.service.ErpB2bErrors;
+import app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine;
 import app.erp.md.dao.entity.ErpMdMaterial;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
@@ -31,12 +32,19 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * ErpB2bAsn createReceiveFromAsn per-mutation Processor。
  * 自包含 config-gated 入库草稿创建编排（MATCHED→RECEIVED_TO_STOCK）：建 ErpPurReceive 头 + 行级回填（核心零污染，仅弱指针 orderId）。
  * （R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
+ *
+ * <p>固定来源/目标态判断经 {@link ErpB2bAsnStateMachine} Bean（契约 {@code entity-state-machine-bean.md}）。
+ * Bean 抛 common 层非法迁移码，本类映射为 {@link ErpB2bErrors#ERR_B2B_ASN_ILLEGAL_TRANSITION}（参数不变，common 码作 cause）。
+ * 动态守卫保留原位：config-gate {@code erp-b2b.asn-auto-create-receive}、ErpPurReceive 构建 + 失败回滚、行级物料守卫。
  */
 public class ErpB2bAsnCreateReceiveFromAsnProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ErpB2bAsnCreateReceiveFromAsnProcessor.class);
 
     @Inject
     IDaoProvider daoProvider;
+
+    @Inject
+    ErpB2bAsnStateMachine stateMachine;
 
     public ErpB2bAsn createReceiveFromAsn(Long asnId, IServiceContext context) {
         boolean enabled = AppConfig.var(ErpB2bConfigs.CONFIG_ASN_AUTO_CREATE_RECEIVE,
@@ -47,13 +55,8 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         }
 
         ErpB2bAsn asn = requireAsn(asnId);
-        String status = asn.getStatus();
-        if (!ErpB2bConstants.ASN_STATUS_MATCHED.equals(status)) {
-            throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION)
-                    .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
-                    .param(ErpB2bErrors.ARG_CURRENT_STATE, status)
-                    .param(ErpB2bErrors.ARG_EXPECTED_STATE, ErpB2bConstants.ASN_STATUS_MATCHED);
-        }
+        String from = asn.getStatus();
+        assertCanCreateReceive(asn, from);
 
         ErpPurOrder po = findPurchaseOrder(asn.getRelatedBillCode());
         if (po == null) {
@@ -79,7 +82,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         fillReceiveLinesFromAsn(asn, receive, po);
 
         // ASN → RECEIVED_TO_STOCK
-        asn.setStatus(ErpB2bConstants.ASN_STATUS_RECEIVED_TO_STOCK);
+        asn.setStatus(stateMachine.createReceiveFromAsnTargetStatus());
         daoProvider.daoFor(ErpB2bAsn.class).saveOrUpdateEntity(asn);
 
         LOG.info("ASN {} 创建采购入库草稿 {} 成功（RECEIVED_TO_STOCK）", asn.getCode(), receive.getCode());
@@ -168,6 +171,21 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
     }
 
     // ---------- 内部辅助 ----------
+
+    /**
+     * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
+     * {@code ERR_B2B_ASN_ILLEGAL_TRANSITION} + 实体编号/上下文，common 码作 cause 保留（契约 §7）。
+     */
+    private void assertCanCreateReceive(ErpB2bAsn asn, String from) {
+        try {
+            stateMachine.assertCanCreateReceiveFromAsn(from);
+        } catch (NopException e) {
+            throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION, e)
+                    .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
+                    .param(ErpB2bErrors.ARG_CURRENT_STATE, from)
+                    .param(ErpB2bErrors.ARG_EXPECTED_STATE, ErpB2bConstants.ASN_STATUS_MATCHED);
+        }
+    }
 
     protected ErpB2bAsn requireAsn(Long asnId) {
         ErpB2bAsn asn = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId);

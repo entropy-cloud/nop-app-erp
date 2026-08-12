@@ -64,4 +64,11 @@
           class="app.erp.b2b.service.processor.ErpB2bEdiDocCreateOutboundProcessor"/>
     <bean id="app.erp.b2b.service.processor.ErpB2bEdiDocCreateInboundProcessor"
           class="app.erp.b2b.service.processor.ErpB2bEdiDocCreateInboundProcessor"/>
+
+    <!-- 实体级 StateMachine Bean（契约 entity-state-machine-bean.md §5；FQN id 范式同 per-mutation Processor）。
+         EdiDoc（state 轴）+ Asn（status 轴）两独立 Bean，严格无状态，下游可经 Delta 同名 bean id 覆盖。 -->
+    <bean id="app.erp.b2b.service.statemachine.ErpB2bEdiDocStateMachine"
+          class="app.erp.b2b.service.statemachine.ErpB2bEdiDocStateMachine"/>
+    <bean id="app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine"
+          class="app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine"/>
 </beans>
