@@ -1,8 +1,9 @@
 package app.erp.sal.service.processor;
 
+import app.erp.common.service.ErpCommonErrors;
 import app.erp.sal.dao.entity.ErpSalOrder;
-import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.sal.service.statemachine.ErpSalOrderDocumentStateMachine;
 import app.erp.common.service.AbstractCancelProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,14 +11,24 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalOrder cancel per-mutation Processor (plan 2026-07-30-1433-2 R5.2, no xbiz source).
- * Runs the AbstractCancelProcessor skeleton; beforeCancel 承载 commitment-release + intercompany-reverse hooks。
- * 经 BizModel Java 调用，R5.8 重配线前不在 xbiz 委托链（运行时验证移交 R5.8）。
+ * ErpSalOrder cancel per-mutation Processor (plan 2026-07-30-1433-2 R5.2；StateMachine 接线 plan 2026-08-12-0918-2 M2.10)。
+ *
+ * <p>运行 {@link AbstractCancelProcessor} 骨架；固定来源态/目标态判断委托
+ * {@link ErpSalOrderDocumentStateMachine}（docStatus 业务生命周期轴 Bean，契约 §4/§7）；
+ * 动态业务守卫/副作用（commitment-release/intercompany-reverse）保留在 {@link ErpSalOrderProcessor} 经
+ * {@link #beforeCancel} 钩子执行。
+ *
+ * <p>非法边映射：Bean 抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（含 {@code action=cancel}/
+ * {@code fromStatus} 元数据）作 cause，{@link #validateTransitionForCancel} 捕获后映射领域码
+ * {@link ErpSalErrors#ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION}（+ {@code orderCode} 实体编号/上下文）。
  */
 public class ErpSalOrderCancelProcessor extends AbstractCancelProcessor<ErpSalOrder> {
 
     @Inject
     ErpSalOrderProcessor processor;
+
+    @Inject
+    ErpSalOrderDocumentStateMachine stateMachine;
 
     @Override
     protected IEntityDao<ErpSalOrder> dao() {
@@ -39,6 +50,15 @@ public class ErpSalOrderCancelProcessor extends AbstractCancelProcessor<ErpSalOr
     }
 
     @Override
+    protected void validateTransitionForCancel(ErpSalOrder entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanCancel(entity.getDocStatus());
+        } catch (NopException e) {
+            throw illegalStatusException(entity, entity.getDocStatus(), "非已作废");
+        }
+    }
+
+    @Override
     protected void beforeCancel(ErpSalOrder entity, IServiceContext context) {
         processor.runCommitmentReleaseHook(entity, context);
         processor.runIntercompanyReverseHook(entity, context);
@@ -56,6 +76,6 @@ public class ErpSalOrderCancelProcessor extends AbstractCancelProcessor<ErpSalOr
 
     @Override
     protected String cancelledDocStatus() {
-        return ErpSalConstants.DOC_STATUS_CANCELLED;
+        return stateMachine.cancelTargetStatus();
     }
 }

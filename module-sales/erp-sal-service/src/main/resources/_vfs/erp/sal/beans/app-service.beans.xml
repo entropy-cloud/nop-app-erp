@@ -67,6 +67,20 @@
     <bean id="app.erp.sal.service.entity.ReturnRefundOrchestrator"
           class="app.erp.sal.service.entity.ReturnRefundOrchestrator"/>
 
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
+         ErpSalOrder.docStatus 轴（业务生命周期）。按类型注入 Processor/BizModel；Delta 同名 bean id
+         覆盖替换基线矩阵（§6）。命名带 Document 后缀为 M3.7 approveStatus Bean 预留命名空间。
+         (plan 2026-08-12-0918-2 Phase 1 M2.10) -->
+    <bean id="app.erp.sal.service.statemachine.ErpSalOrderDocumentStateMachine"
+          class="app.erp.sal.service.statemachine.ErpSalOrderDocumentStateMachine"/>
+
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
+         ErpSalQuotation.docStatus 轴（业务生命周期）。按类型注入 Processor/BizModel；Delta 同名 bean id
+         覆盖替换基线矩阵（§6）。命名带 Document 后缀为 M3.6 approveStatus Bean 预留命名空间。
+         (plan 2026-08-12-0918-2 Phase 2 M2.9) -->
+    <bean id="app.erp.sal.service.statemachine.ErpSalQuotationDocumentStateMachine"
+          class="app.erp.sal.service.statemachine.ErpSalQuotationDocumentStateMachine"/>
+
     <!-- 销售域审批状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖） -->
     <bean id="app.erp.sal.service.processor.ErpSalOrderProcessor"
           class="app.erp.sal.service.processor.ErpSalOrderProcessor"/>
