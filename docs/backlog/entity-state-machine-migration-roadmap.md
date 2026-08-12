@@ -47,7 +47,7 @@
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
 | M2.1 | ErpMdSupplierApproval.status SupplierApproval 生命周期 Bean | done | `master-data/README.md` §供应商准入 | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M2.2 | ErpCrmEvent.status Event 生命周期 Bean | todo | `crm/state-machine.md` §Event | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M2.2 | ErpCrmEvent.status Event 生命周期 Bean | done | `crm/state-machine.md` §Event | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.3 | ErpPrjTask.status Task 生命周期 Bean | done | `projects/state-machine.md` §Task | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.4 | ErpPrjProject.status Project 生命周期 Bean | done | `projects/state-machine.md` §Project | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.5 | ErpPurQuotation.docStatus 最小生命周期 Bean | done | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
