@@ -20,6 +20,7 @@ import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.processor.ErpHrEmployeeTransferEmployeeProcessor;
+import app.erp.hr.service.statemachine.ErpHrEmployeeStateMachine;
 import app.erp.hr.service.statemachine.ErpHrEmploymentContractStateMachine;
 import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -37,8 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,6 +89,8 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
     ErpHrEmployeeTransferEmployeeProcessor transferEmployeeProcessor;
     @Inject
     ErpHrEmploymentContractStateMachine contractStateMachine;
+    @Inject
+    ErpHrEmployeeStateMachine employeeStateMachine;
 
     public ErpHrEmployeeBizModel() {
         setEntityName(ErpHrEmployee.class.getName());
@@ -147,6 +148,8 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
                     .param(ErpHrErrors.ARG_CURRENT_STATUS, null);
         }
         String status = employee.getEmploymentStatus();
+        // 只读调动守卫委托 ErpHrEmployeeStateMachine（Bean 分类权威，契约 §4）：仅 ACTIVE/PROBATION 可调动。
+        // ERR_EMPLOYEE_NOT_TRANSFERABLE 领域码对外不变（调动守卫是只读判断而非状态迁移，领域有专属错误码）。
         if (!isTransferable(status)) {
             throw new NopException(ErpHrErrors.ERR_EMPLOYEE_NOT_TRANSFERABLE)
                     .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
@@ -155,9 +158,8 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
         return employee;
     }
 
-    static boolean isTransferable(String employmentStatus) {
-        return ErpHrConstants.EMPLOYMENT_ACTIVE.equals(employmentStatus)
-                || ErpHrConstants.EMPLOYMENT_PROBATION.equals(employmentStatus);
+    boolean isTransferable(String employmentStatus) {
+        return employeeStateMachine.isTransferable(employmentStatus);
     }
 
     ErpHrDepartment requireTargetDepartment(Long targetDepartmentId, IServiceContext context) {
@@ -366,10 +368,7 @@ public class ErpHrEmployeeBizModel extends CrudBizModel<ErpHrEmployee> implement
     // ---------- helpers for tests ----------
 
     List<String> nonTransferableStatuses() {
-        return Collections.unmodifiableList(Arrays.asList(
-                ErpHrConstants.EMPLOYMENT_RESIGNED,
-                ErpHrConstants.EMPLOYMENT_TERMINATED,
-                ErpHrConstants.EMPLOYMENT_RETIRED));
+        return employeeStateMachine.nonTransferableStatuses();
     }
 
 }

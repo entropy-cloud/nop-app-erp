@@ -11,6 +11,7 @@ import app.erp.hr.dao.entity.ErpHrPosition;
 import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.statemachine.ErpHrEmployeeStateMachine;
 import app.erp.hr.service.statemachine.ErpHrEmploymentContractStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -67,6 +68,8 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
     IErpHrLeaveRequestBiz leaveRequestBiz;
     @Inject
     ErpHrEmploymentContractStateMachine contractStateMachine;
+    @Inject
+    ErpHrEmployeeStateMachine employeeStateMachine;
 
     public ErpHrEmployee transferEmployee(Long employeeId,
                                           Long targetDepartmentId,
@@ -107,6 +110,8 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
                     .param(ErpHrErrors.ARG_CURRENT_STATUS, null);
         }
         String status = employee.getEmploymentStatus();
+        // 只读调动守卫委托 ErpHrEmployeeStateMachine（Bean 分类权威，契约 §4）：仅 ACTIVE/PROBATION 可调动。
+        // ERR_EMPLOYEE_NOT_TRANSFERABLE 领域码对外不变（调动守卫是只读判断而非状态迁移，领域有专属错误码）。
         if (!isTransferable(status)) {
             throw new NopException(ErpHrErrors.ERR_EMPLOYEE_NOT_TRANSFERABLE)
                     .param(ErpHrErrors.ARG_EMPLOYEE_ID, employeeId)
@@ -115,9 +120,8 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
         return employee;
     }
 
-    static boolean isTransferable(String employmentStatus) {
-        return ErpHrConstants.EMPLOYMENT_ACTIVE.equals(employmentStatus)
-                || ErpHrConstants.EMPLOYMENT_PROBATION.equals(employmentStatus);
+    boolean isTransferable(String employmentStatus) {
+        return employeeStateMachine.isTransferable(employmentStatus);
     }
 
     protected ErpHrDepartment requireTargetDepartment(Long targetDepartmentId, IServiceContext context) {

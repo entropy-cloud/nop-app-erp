@@ -108,11 +108,16 @@
           class="app.erp.hr.service.processor.ErpHrRecruitmentHireProcessor"/>
 
     <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
-          ErpHrLeaveRequest.status 轴 / ErpHrEmploymentContract.status 轴。按类型注入 Processor/BizModel；
+          ErpHrLeaveRequest.status 轴 / ErpHrEmploymentContract.status 轴 / ErpHrTimesheet.status 轴 /
+          ErpHrEmployee.employmentStatus 轴（退化解）。按类型注入 Processor/BizModel；
           Delta 同名 bean id 覆盖替换基线矩阵（§6）。 -->
     <bean id="app.erp.hr.service.statemachine.ErpHrLeaveRequestStateMachine"
           class="app.erp.hr.service.statemachine.ErpHrLeaveRequestStateMachine"/>
     <bean id="app.erp.hr.service.statemachine.ErpHrEmploymentContractStateMachine"
           class="app.erp.hr.service.statemachine.ErpHrEmploymentContractStateMachine"/>
+    <bean id="app.erp.hr.service.statemachine.ErpHrTimesheetStateMachine"
+          class="app.erp.hr.service.statemachine.ErpHrTimesheetStateMachine"/>
+    <bean id="app.erp.hr.service.statemachine.ErpHrEmployeeStateMachine"
+          class="app.erp.hr.service.statemachine.ErpHrEmployeeStateMachine"/>
 
 </beans>
