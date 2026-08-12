@@ -21,19 +21,25 @@
 ```
 NEW（新线索/新商机创建）
   ├─ 跟进 → QUALIFIED（已验证，进入漏斗阶段管理）
-  │            ├─ 转化 → CONVERTED（已转报价单，终态）
+  │            ├─ 转化 → CONVERTED（经 leadType 门控，终态）
   │            ├─ 标记丢失 → LOST（录入丢单原因，终态）
   │            └─ 取消 → CANCELLED（无效/重复，终态）
+  ├─ 转化 → CONVERTED（LEAD 类型直接转客户+商机，经 leadType 门控，终态）
   ├─ 标记丢失 → LOST（线索阶段直接丢单）
   └─ 取消 → CANCELLED（无效/重复，终态）
 ```
+
+> **convert 来源态 doc-drift 补正（plan 2026-08-13-0945-3 Phase 2 Fix）**：原 §2 声明「QUALIFIED→CONVERTED」与代码实况漂移。代码实况：`ErpCrmConversionConvertToCustomerProcessor`/`...ConvertToQuotationProcessor` 仅调 `validateNotConverted`（拒绝 CONVERTED 幂等）+ `validateLeadType` 门控，**零 QUALIFIED 来源态守卫**——即任何非 CONVERTED 态经 leadType 门控→CONVERTED（含 NEW→CONVERTED：`convertToCustomer` 从 LEAD 类型 NEW 直接转化，测试 `TestErpCrmLeadConversion.testAlreadyConvertedRejected` 证之）。裁定（路线图规则 5，保持既有外部行为不变）：Bean `assertCanConvert` 运行时仅拒 CONVERTED；owner doc §2 就地补正为「{NEW,QUALIFIED}→CONVERTED 经 leadType 门控」。`ErpCrmLeadStateMachine.transitions()` 编码意图矩阵 {NEW,QUALIFIED}→CONVERTED。
+>
+> **已知 latent gap（watch-only residual，非本计划引入）**：`assertCanConvert` 运行时仅拒 CONVERTED，故 LOST/CANCELLED→CONVERTED 在代码中技术上允许（`validateNotConverted` 不拦），但意图矩阵（`transitions()` + 上图）限定 {NEW,QUALIFIED}→CONVERTED。此为迁移前已存在的既有 latent gap（运行时宽放），裁定保持运行时宽放（不新增来源态限制，避免行为变化）；若产品要求收窄须开 successor（触及业务行为 ask-first）。
 
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|
 | NEW→QUALIFIED | 销售员 | leadType=LEAD，联系人信息必填 | 允许设置 stageId，概率取阶段默认值 |
 | NEW→LOST | 销售员 | — | lostReasonId 必填 |
 | NEW→CANCELLED | 销售员/管理员 | — | 不可恢复 |
-| QUALIFIED→CONVERTED | 销售员（转报价单需权限） | leadType=OPPORTUNITY（LEAD 需先转化为 OPPORTUNITY） | relatedBillType/Code 写入，触发跨域创建报价单 |
+| NEW→CONVERTED | 销售员 | leadType=LEAD（convertToCustomer 从 LEAD 类型 NEW 直接转化：建客户 + 新建 OPPORTUNITY(NEW) + 原 lead 弱指针） | relatedBillType/Code 写入，触发跨域 master-data 创建客户 |
+| QUALIFIED→CONVERTED | 销售员（转报价单需权限） | leadType=OPPORTUNITY（经 convertToQuotation 转报价单；LEAD 需先经 convertToCustomer 转为 OPPORTUNITY 再转报价单） | relatedBillType/Code 写入，触发跨域创建报价单 |
 | QUALIFIED→LOST | 销售员 | lostReasonId 必填 | 丢单归档 |
 | QUALIFIED→CANCELLED | 销售员/管理员 | — | 不可恢复 |
 

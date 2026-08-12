@@ -70,7 +70,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
-| M3.1 | ErpCrmLead.docStatus Lead 业务生命周期 Bean | todo | `crm/state-machine.md` §Lead | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M3.1 | ErpCrmLead.docStatus Lead 业务生命周期 Bean | done | `crm/state-machine.md` §Lead | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.2 | ErpPurQuotation.approveStatus 审批轴 Bean | done | `purchase/state-machine.md` §审批轴 | M1.3 + M2.5 | `nop-backend-dev` + `nop-testing` |
 | M3.3 | ErpPurRfq.approveStatus 审批轴 Bean | done | `purchase/state-machine.md` §审批轴 | M1.3 + M2.6 | `nop-backend-dev` + `nop-testing` |
 | M3.4 | ErpPurRequisition.approveStatus 审批轴 Bean | done | `purchase/state-machine.md` §审批轴 | M1.3 + M2.7 | `nop-backend-dev` + `nop-testing` |

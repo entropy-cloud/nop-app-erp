@@ -1,8 +1,8 @@
 # 2026-08-13-0945-3-ercm-lead-state-machine-bean 线索/商机 ErpCrmLead.docStatus 生命周期 StateMachine Bean 迁移（M3.1）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-13
-> Source: `docs/backlog/entity-state-machine-migration-roadmap.md` M3.1（todo）
+> Source: `docs/backlog/entity-state-machine-migration-roadmap.md` M3.1（done）
 > Related: 前置 `2026-08-12-2142-2-erpcrm-event-state-machine-bean.md`（M2.2 done，crm 域 StateMachine Bean 范式首立 `ErpCrmEventStateMachine`；其 Deferred 将 crm 域其余状态轴（M3.1）指派为 successor，触发条件已满足）；M0.1 契约 + M1.3 批量迁移模板固化于 `docs/architecture/entity-state-machine-bean.md §11`
 > Mission: entity-state-machine
 > Work Item: M3.1
@@ -69,64 +69,64 @@
 
 ### Phase 1 - ErpCrmLeadStateMachine Bean + 接线 + 跨实体 Decision 固化
 
-Status: planned
+Status: completed
 Targets: `module-crm/erp-crm-service/src/main/java/app/erp/crm/service/statemachine/ErpCrmLeadStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpCrmLead{Qualify,Lose,Cancel}Processor.java`、Conversion 接线路径（`IErpCrmConversionBiz` 实现或其委托）、`module-crm/erp-crm-service/src/test/.../TestErpCrmLeadStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done（已满足）
 
-- [ ] `Decision`（convert 来源态漂移裁定，路线图规则 5）：owner doc §2 声明 QUALIFIED→CONVERTED，代码实况为「任何非 CONVERTED 态经 leadType 门控→CONVERTED」（含 NEW→CONVERTED，测试证之）。裁定分支：(a) **Bean 据实编码代码行为**——`assertCanConvert` 仅拒绝 CONVERTED（匹配 `validateNotConverted`），leadType/partner 门控保留 Conversion Processor 动态守卫；owner doc §2 **doc-drift Fix**：就地补正为「convert 从非 CONVERTED 态经 leadType 门控→CONVERTED（NEW→CONVERTED 合法：convertToCustomer 从 LEAD 类型 NEW 直接转化）」。此分支保持既有外部行为（推荐）。(b) 若 PM 要求 owner-doc 权威 QUALIFIED-only → 属行为变化 Fix（拒绝现行 NEW→CONVERTED），移交 successor（触及业务行为 ask-first）。默认采 (a)。Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpCrmLeadStateMachine` Bean——显式 `assertCanQualify/Lose/Cancel/Convert(String docStatus)`（非法来源态 → 抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`fromStatus` 补充参数；`assertCanConvert` 据 Decision 分支 (a) 仅拒绝 CONVERTED）+ `qualifyTargetStatus/loseTargetStatus/cancelTargetStatus/convertTargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + 只读 `transitions()`（据 Decision：NEW→QUALIFIED/LOST/CANCELLED、QUALIFIED→LOST/CANCELLED、{NEW,QUALIFIED}→CONVERTED）。严格无状态（§2）。
+- [x] `Decision`（convert 来源态漂移裁定，路线图规则 5）：owner doc §2 声明 QUALIFIED→CONVERTED，代码实况为「任何非 CONVERTED 态经 leadType 门控→CONVERTED」（含 NEW→CONVERTED，测试证之）。裁定分支：(a) **Bean 据实编码代码行为**——`assertCanConvert` 仅拒绝 CONVERTED（匹配 `validateNotConverted`），leadType/partner 门控保留 Conversion Processor 动态守卫；owner doc §2 **doc-drift Fix**：就地补正为「convert 从非 CONVERTED 态经 leadType 门控→CONVERTED（NEW→CONVERTED 合法：convertToCustomer 从 LEAD 类型 NEW 直接转化）」。此分支保持既有外部行为（推荐）。(b) 若 PM 要求 owner-doc 权威 QUALIFIED-only → 属行为变化 Fix（拒绝现行 NEW→CONVERTED），移交 successor（触及业务行为 ask-first）。默认采 (a)。Skill: `state-machine-business-review-prompt.md`
+- [x] `Add`：落地 `ErpCrmLeadStateMachine` Bean——显式 `assertCanQualify/Lose/Cancel/Convert(String docStatus)`（非法来源态 → 抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`fromStatus` 补充参数；`assertCanConvert` 据 Decision 分支 (a) 仅拒绝 CONVERTED）+ `qualifyTargetStatus/loseTargetStatus/cancelTargetStatus/convertTargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + 只读 `transitions()`（据 Decision：NEW→QUALIFIED/LOST/CANCELLED、QUALIFIED→LOST/CANCELLED、{NEW,QUALIFIED}→CONVERTED）。严格无状态（§2）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：在非生成 `_vfs/erp/crm/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（§5，沿用 M2.2 `ErpCrmEventStateMachine` 范式）。
+- [x] `Add`：在非生成 `_vfs/erp/crm/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（§5，沿用 M2.2 `ErpCrmEventStateMachine` 范式）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision | Add`（接线 Decision）：(A) Bean 接线点 = qualify/lose/cancel per-mutation Processor + convert 两 Conversion Processor 各自注入 `@Inject ErpCrmLeadStateMachine`（非 private），固定来源态守卫处调 `assertCanXxx`，目标态写入调 `*TargetStatus()`；(B) common 错误码沿用 Option A；(C) **领域码按动作分轨**——qualify/lose/cancel → 既有 `ERR_LEAD_ILLEGAL_STATUS_TRANSITION`（`ErpCrmErrors.java:70`，layer-1 复核）；**convert 幂等拒绝（CONVERTED→CONVERTED）→ 保持既有 `ERR_LEAD_ALREADY_CONVERTED`**（`ErpCrmErrors.java:95`，distinct 幂等码，**不复用** `ERR_LEAD_ILLEGAL_STATUS_TRANSITION`；Bean `assertCanConvert` 抛 common 码作 cause，Conversion Processor 捕获后映射 `ERR_LEAD_ALREADY_CONVERTED`）；(D) 初始态 NEW 写入不经 Bean（§9.2 选项 c）；(E) 动态守卫/副作用保留原位（leadType 校验、联系人/lostReasonId 必填、stageId 方向守卫、convert 跨域报价单/客户创建 + relatedBill 写入、convert 的 `validateLeadType`/`requireOpportunityPartner`）。grep 证 Processor 内不再有内联 docStatus 来源态矩阵判断（动态守卫除外）。
+- [x] `Decision | Add`（接线 Decision）：(A) Bean 接线点 = qualify/lose/cancel per-mutation Processor + convert 两 Conversion Processor 各自注入 `@Inject ErpCrmLeadStateMachine`（非 private），固定来源态守卫处调 `assertCanXxx`，目标态写入调 `*TargetStatus()`；(B) common 错误码沿用 Option A；(C) **领域码按动作分轨**——qualify/lose/cancel → 既有 `ERR_LEAD_ILLEGAL_STATUS_TRANSITION`（`ErpCrmErrors.java:70`，layer-1 复核）；**convert 幂等拒绝（CONVERTED→CONVERTED）→ 保持既有 `ERR_LEAD_ALREADY_CONVERTED`**（`ErpCrmErrors.java:95`，distinct 幂等码，**不复用** `ERR_LEAD_ILLEGAL_STATUS_TRANSITION`；Bean `assertCanConvert` 抛 common 码作 cause，Conversion Processor 捕获后映射 `ERR_LEAD_ALREADY_CONVERTED`）；(D) 初始态 NEW 写入不经 Bean（§9.2 选项 c）；(E) 动态守卫/副作用保留原位（leadType 校验、联系人/lostReasonId 必填、stageId 方向守卫、convert 跨域报价单/客户创建 + relatedBill 写入、convert 的 `validateLeadType`/`requireOpportunityPartner`）。grep 证 Processor 内不再有内联 docStatus 来源态矩阵判断（动态守卫除外）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（greenfield 表驱动）——(a) 无重复/冲突边；(b) NEW→QUALIFIED 可达、NEW/QUALIFIED→LOST/CANCELLED 可达、{NEW,QUALIFIED}→CONVERTED 可达；(c) QUALIFIED 不可回 NEW（assertCanQualify 对 QUALIFIED 抛 common 码）；(d) `assertCanConvert` 据 Decision 分支 (a) **仅对 CONVERTED 抛 common 码、对一切非 CONVERTED 态（NEW/QUALIFIED/LOST/CANCELLED）运行时通过**——严格匹配代码现行 `validateNotConverted` 行为（不新增任何来源态限制，杜绝 NEW→CONVERTED 回归）；(e) 终态 CONVERTED/LOST/CANCELLED 的 qualify/lose/cancel `assertCanXxx` 抛 common 码携带 `action`/`fromStatus`；(f) `transitions()` 编码**意图矩阵** {NEW,QUALIFIED}→CONVERTED（声明态，与运行时 `assertCanConvert` 仅拒 CONVERTED 的范围有意不同——见下方 layer-2 已知漂移）；(g) 初始集 {NEW}、终态集 {CONVERTED,LOST,CANCELLED} 正确。
+- [x] `Proof`：层 1 矩阵完备性（greenfield 表驱动）——(a) 无重复/冲突边；(b) NEW→QUALIFIED 可达、NEW/QUALIFIED→LOST/CANCELLED 可达、{NEW,QUALIFIED}→CONVERTED 可达；(c) QUALIFIED 不可回 NEW（assertCanQualify 对 QUALIFIED 抛 common 码）；(d) `assertCanConvert` 据 Decision 分支 (a) **仅对 CONVERTED 抛 common 码、对一切非 CONVERTED 态（NEW/QUALIFIED/LOST/CANCELLED）运行时通过**——严格匹配代码现行 `validateNotConverted` 行为（不新增任何来源态限制，杜绝 NEW→CONVERTED 回归）；(e) 终态 CONVERTED/LOST/CANCELLED 的 qualify/lose/cancel `assertCanXxx` 抛 common 码携带 `action`/`fromStatus`；(f) `transitions()` 编码**意图矩阵** {NEW,QUALIFIED}→CONVERTED（声明态，与运行时 `assertCanConvert` 仅拒 CONVERTED 的范围有意不同——见下方 layer-2 已知漂移）；(g) 初始集 {NEW}、终态集 {CONVERTED,LOST,CANCELLED} 正确。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] `ErpCrmLeadStateMachine` Bean 存在、已注册、严格无状态；qualify/lose/cancel/convert 接线委托 Bean，grep 证内联 docStatus 来源态矩阵判断已移除（动态守卫除外）。
-- [ ] Lead 层 1 矩阵测试本地 `mvn test -pl module-crm/erp-crm-service -am -Dtest=TestErpCrmLeadStateMachineMatrix` 全绿。
+- [x] `ErpCrmLeadStateMachine` Bean 存在、已注册、严格无状态；qualify/lose/cancel/convert 接线委托 Bean，grep 证内联 docStatus 来源态矩阵判断已移除（动态守卫除外）。
+- [x] Lead 层 1 矩阵测试本地 `mvn test -pl module-crm/erp-crm-service -am -Dtest=TestErpCrmLeadStateMachineMatrix` 全绿。
 
 ### Phase 2 - 层 2 四方对照 + 漂移裁定
 
-Status: planned
+Status: completed
 Targets: `docs/design/crm/state-machine.md`（若漂移补注）、本计划 Closure 段
 Skill: `state-machine-business-review-prompt.md`
 
 - Item Types: `Decision | Fix | Proof`
 - Prereqs: Phase 1（Bean + 接线已落地）
 
-- [ ] `Proof | Decision`：层 2 四方对照——dict `erp-crm/lead-doc-status`（NEW/QUALIFIED/CONVERTED/LOST/CANCELLED）↔ `crm/state-machine.md` §Lead（§2 矩阵 + §5 可达性）↔ Bean 元数据 ↔ 全部 writer（qualify/lose/cancel/convert + 创建路径写 NEW + 通用 CRUD 路径 §9.4）。逐条分类（一致 / implementation drift / doc drift / intentional legacy），任何不一致按规则 5 Fix/Decision + successor（禁止静默排除）。**已知漂移 1**：convert 来源态（owner doc §2 QUALIFIED-only vs 代码 非CONVERTED，Phase 1 Decision 分支 a 裁定 + Phase 2 Fix 闭环）。**已知漂移 2（运行时 vs 意图矩阵 latent gap）**：`assertCanConvert` 运行时仅拒 CONVERTED，故 LOST/CANCELLED→CONVERTED 在代码中技术上允许（`validateNotConverted` 不拦），但意图矩阵（`transitions()` + owner doc §2）限定 {NEW,QUALIFIED}→CONVERTED。此为**既有 latent gap**（迁移前已存在，非本计划引入），layer-2 须裁定：(i) 保持运行时宽放（Bean 不加来源态限制，匹配现行行为）+ owner doc §2 补注 latent gap 为 watch-only residual + successor；或 (ii) 视为 implementation drift → Fix 收窄（但属行为变化，须 successor/ask-first）。默认 (i) 保持行为不变。
+- [x] `Proof | Decision`：层 2 四方对照——dict `erp-crm/lead-doc-status`（NEW/QUALIFIED/CONVERTED/LOST/CANCELLED）↔ `crm/state-machine.md` §Lead（§2 矩阵 + §5 可达性）↔ Bean 元数据 ↔ 全部 writer（qualify/lose/cancel/convert + 创建路径写 NEW + 通用 CRUD 路径 §9.4）。逐条分类（一致 / implementation drift / doc drift / intentional legacy），任何不一致按规则 5 Fix/Decision + successor（禁止静默排除）。**已知漂移 1**：convert 来源态（owner doc §2 QUALIFIED-only vs 代码 非CONVERTED，Phase 1 Decision 分支 a 裁定 + Phase 2 Fix 闭环）。**已知漂移 2（运行时 vs 意图矩阵 latent gap）**：`assertCanConvert` 运行时仅拒 CONVERTED，故 LOST/CANCELLED→CONVERTED 在代码中技术上允许（`validateNotConverted` 不拦），但意图矩阵（`transitions()` + owner doc §2）限定 {NEW,QUALIFIED}→CONVERTED。此为**既有 latent gap**（迁移前已存在，非本计划引入），layer-2 须裁定：(i) 保持运行时宽放（Bean 不加来源态限制，匹配现行行为）+ owner doc §2 补注 latent gap 为 watch-only residual + successor；或 (ii) 视为 implementation drift → Fix 收窄（但属行为变化，须 successor/ask-first）。默认 (i) 保持行为不变。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Fix`（convert doc-drift，落地 Phase 1 Decision 分支 a）：就地补正 `crm/state-machine.md` §2 迁移图 + 迁移表：convert 从「QUALIFIED→CONVERTED」补正为「{NEW,QUALIFIED}→CONVERTED 经 leadType 门控」（convertToCustomer 从 LEAD 类型 NEW 直接转化；convertToQuotation 从 OPPORTUNITY 类型经 createOpportunityFromLead 新建 OPPORTUNITY(NEW) 再转化）。补注 doc-drift 裁定结论 + 引用本计划。其他漂移（若有）按裁定落地。
+- [x] `Fix`（convert doc-drift，落地 Phase 1 Decision 分支 a）：就地补正 `crm/state-machine.md` §2 迁移图 + 迁移表：convert 从「QUALIFIED→CONVERTED」补正为「{NEW,QUALIFIED}→CONVERTED 经 leadType 门控」（convertToCustomer 从 LEAD 类型 NEW 直接转化；convertToQuotation 从 OPPORTUNITY 类型经 createOpportunityFromLead 新建 OPPORTUNITY(NEW) 再转化）。补注 doc-drift 裁定结论 + 引用本计划。其他漂移（若有）按裁定落地。
   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] Lead 四方对照记录可追溯；任何漂移已按 Fix/Decision 登记 + successor，无静默排除。
+- [x] Lead 四方对照记录可追溯；任何漂移已按 Fix/Decision 登记 + successor，无静默排除。
 
 ### Phase 3 - 层 3 既有命名动作回归 + 一致性复核
 
-Status: planned
+Status: completed
 Targets: `module-crm/erp-crm-service/src/test/`（既有集成测试，零新建）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1–2（Bean + 接线 + 四方对照已落地）
 
-- [ ] `Proof`：层 3 既有命名动作回归（非 greenfield）——复用既有 Lead 集成测试基线，证明 Processor 写回、终态不可恢复（CONVERTED/LOST/CANCELLED 无出边）、QUALIFIED 不可回 NEW、领域错误码 + 参数、convert 跨域报价单/客户创建副作用、stageId 方向守卫语义不变。本地 `mvn test -pl module-crm/erp-crm-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归（非 greenfield）——复用既有 Lead 集成测试基线，证明 Processor 写回、终态不可恢复（CONVERTED/LOST/CANCELLED 无出边）、QUALIFIED 不可回 NEW、领域错误码 + 参数、convert 跨域报价单/客户创建副作用、stageId 方向守卫语义不变。本地 `mvn test -pl module-crm/erp-crm-service -am` 全绿。
   - Skill: `nop-testing`
-- [ ] `Proof`：一致性复核——Bean 命名/注册/无状态/元数据形状与 crm M2.2 `ErpCrmEventStateMachine` 范式一致；四方对照记录写入本计划 Closure 段。
+- [x] `Proof`：一致性复核——Bean 命名/注册/无状态/元数据形状与 crm M2.2 `ErpCrmEventStateMachine` 范式一致；四方对照记录写入本计划 Closure 段。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] `mvn test -pl module-crm/erp-crm-service -am` 全绿（层 3 回归无行为回归）。
-- [ ] 四方对照记录可追溯、漂移处置闭环。
+- [x] `mvn test -pl module-crm/erp-crm-service -am` 全绿（层 3 回归无行为回归）。
+- [x] 四方对照记录可追溯、漂移处置闭环。
 
 ## Draft Review Record
 
@@ -137,14 +137,14 @@ Exit Criteria:
 
 > 仅在所有项目和每个阶段的退出标准都勾选 `[x]` 后关闭。完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成（Lead docStatus Bean + 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐（漂移裁定按分支落地 owner-doc 补注或 Fix；架构 doc 不引用本路线图执行状态）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-crm/erp-crm-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` 全 19 规则 actual ≤ baseline（R5=0 不漂移、R11=0 不增）
-- [ ] 无范围内项目降级为 deferred/follow-up（漂移裁定必须落地登记 + successor，不得悬置）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Lead docStatus Bean + 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（漂移裁定按分支落地 owner-doc 补注或 Fix；架构 doc 不引用本路线图执行状态）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-crm/erp-crm-service -am` 全绿（162 tests, 0 failures）+ `bash docs/audits/nop-compliance-checker.sh` 全 19 规则 actual ≤ baseline（R5=0 不漂移、R11=0 不增）
+- [x] 无范围内项目降级为 deferred/follow-up（漂移裁定必须落地登记 + successor，不得悬置）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此门控留作未勾选占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -168,13 +168,42 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填充>
+Status Note: 三阶段全部执行完成（Phase 1 Bean+接线+矩阵测试；Phase 2 四方对照+漂移 Fix；Phase 3 既有回归+一致性复核）。验证全绿（162 tests, 0 failures）。convert doc-drift 已就地补正 owner doc §2；latent gap 登记为 watch-only residual。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理（新会话，非执行者上下文）>
-- Evidence: <待填充>
+- Auditor / Agent: 独立结束审计子代理（新会话，GLM 模型，经 mission-driver closure-audit 触发，非执行者上下文）
+- Evidence: 实仓冷核验（grep/glob/read，非信任 `[x]` 标记）——(1) `ErpCrmLeadStateMachine` Bean 存在（167 行，严格无状态：零 DAO/IBiz/事务注入），7 意图边 + `assertCanConvert` 运行时仅拒 CONVERTED 与 Decision 分支 a 一致；(2) Bean 在非生成 `_vfs/erp/crm/beans/app-service.beans.xml:126` FQN-id 注册；(3) **接线真实非空壳（anti-hollow PASS）**：`ErpCrmLeadProcessor:58/67/77` 调 `assertCanQualify/Lose/Cancel` + `:132/144/153` 写 `*TargetStatus()`；`ErpCrmConversionProcessor:122` 调 `assertCanConvert` + `:114` 写 `convertTargetStatus()`，幂等拒绝映射 `ERR_LEAD_ALREADY_CONVERTED` 保留专属码、common 码作 cause；(4) 层 1 矩阵测试 `TestErpCrmLeadStateMachineMatrix`（282 行）覆盖无重复边/从 NEW 可达全部声明状态/QUALIFIED 不可回 NEW/`assertCanConvert` 仅拒 CONVERTED/终态全动作拒绝/意图矩阵 vs 运行时宽放有意区分/初始终态集；(5) 动态守卫保留原位（`validateStageDirection`/`validateMovable`/`requireLostReason`/`validateLeadType`/`requireOpportunityPartner`）；(6) owner doc `crm/state-machine.md:32-34,41-42` convert doc-drift Fix 已落地（{NEW,QUALIFIED}→CONVERTED 补正 + latent gap watch-only 补注 + 引用本计划）；(7) 四方对照 + 一致性复核记录写入本计划 Closure 段。文本一致性 PASS：Plan Status `completed` / 三 Phase `completed` / Exit Criteria 全 `[x]` / Closure Gates 全 `[x]` / 日志条目已补 `docs/logs/2026/2026-08-13.md`。
+
+### 层 2 四方对照记录（Phase 2 产出，写入本段供 Phase 3 一致性复核追溯）
+
+**对照四方**：
+
+| 方 | 来源 | 值/边 |
+|----|------|-------|
+| 1 dict | `module-crm/model/app-erp-crm.orm.xml` dict `erp-crm/lead-doc-status` | NEW, QUALIFIED, CONVERTED, LOST, CANCELLED（5 值） |
+| 2 owner doc | `docs/design/crm/state-machine.md` §Lead（§2 矩阵 + §5 可达性） | §2: 7 边（补正后）；§5: 从 NEW 可达全部终态、QUALIFIED 不可回 NEW、终态无出边 |
+| 3 Bean 元数据 | `ErpCrmLeadStateMachine` | transitions() 7 意图边；assertCanConvert 运行时仅拒 CONVERTED；terminalStatuses=[CONVERTED,LOST,CANCELLED]；initialStatuses=[NEW] |
+| 4 writer | qualify/lose/cancel/convert + 创建写 NEW + 通用 CRUD §9.4 | doQualify→QUALIFIED、doLose→LOST、doCancel→CANCELLED、markLeadConverted→CONVERTED（均经 Bean TargetStatus）；createOpportunityFromLead 写 NEW（§9.2 选项 c）；validateMovable（stageId 维度） |
+
+**逐项分类**：
+
+1. **dict ↔ Bean ↔ §5 一致**：5 dict 值全部有 Bean 分类；初始 {NEW}、终态 {CONVERTED,LOST,CANCELLED}；从 NEW 经命名动作可达全部声明状态。无 dict 死状态（每值均有 writer）。
+2. **漂移 1（convert 来源态，doc drift）→ 已 Fix**：owner doc §2 原声明 QUALIFIED→CONVERTED 与代码实况（非 CONVERTED→CONVERTED 经 leadType 门控，含 NEW→CONVERTED）漂移。Phase 1 Decision 分支 a 裁定（Bean 据实仅拒 CONVERTED，保持既有行为）；Phase 2 Fix 就地补正 §2 迁移图+表为 {NEW,QUALIFIED}→CONVERTED + 补注裁定结论。
+3. **漂移 2（运行时 vs 意图矩阵 latent gap，既有非本计划引入）→ watch-only residual**：assertCanConvert 运行时仅拒 CONVERTED，故 LOST/CANCELLED→CONVERTED 技术上允许，但意图矩阵限定 {NEW,QUALIFIED}→CONVERTED。裁定 (i) 保持运行时宽放（不新增来源态限制，避免行为变化）；owner doc §2 补注为 watch-only residual；若产品要求收窄须 successor/ask-first。
+4. **通用 CRUD 写路径（§9.4 残留）→ watch-only residual**：通用 CRUD `save`/`update` 可写 docStatus（无全局写锁，M0.1 §9.2 选项 c 显式排除）。非本计划引入，successor 已在 Deferred 登记（全局 CRUD 写锁）。
+5. **stageId 维度 → 独立维度，非本轴**：`validateMovable`/`validateStageDirection` 是 stageId 维度守卫，保留原位不纳入 docStatus Bean 矩阵（Non-Goals）。
+
+**裁决**：Verdict pass。无 P0/P1 发现。两项已知漂移均已按规则 5 裁定落地（漂移 1 Fix + 漂移 2 watch-only residual + successor），无静默排除。
+
+### 一致性复核记录（Phase 3 产出）
+
+- Bean 命名 `ErpCrmLeadStateMachine`（单轴无后缀）对齐 §1 + M2.2 `ErpCrmEventStateMachine` 范式。
+- Bean 注册 `<bean id="<FQN>" class="<FQN>"/>` 在非生成 `app-service.beans.xml`（§5）。
+- 严格无状态：无 DAO/IBiz/IServiceContext/事务注入（§2）。
+- 元数据形状：`transitions()`/`terminalStatuses()`/`initialStatuses()` + `TransitionDefinition` 内部类 + `ARG_ACTION` 常量 + `illegal()` helper，与 M2.2 同形。
+- 错误语义：Bean 抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`currentStatus`/`expectedStatus`；qualify/lose/cancel 映射 `ERR_LEAD_ILLEGAL_STATUS_TRANSITION`；convert 幂等拒绝保持 `ERR_LEAD_ALREADY_CONVERTED`（common 码作 cause，§7 + Decision C）。
 
 Follow-up:
 
-- <无非阻塞跟进；crm Event 死代码清理已在 Deferred But Adjudicated 登记并指派 successor 触发条件>
+- <无非阻塞跟进；crm Event 死代码清理已在 Deferred But Adjudicated 登记并指派 successor 触发条件；convert latent gap（漂移 2）为 watch-only residual，产品要求收窄时开 successor>
