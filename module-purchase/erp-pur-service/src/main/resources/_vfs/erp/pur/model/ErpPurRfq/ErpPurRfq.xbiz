@@ -10,24 +10,8 @@
             </return>
             <source><![CDATA[
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
-                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "submitForApproval");
-                }
-                const status = entity.approveStatus;
-
-                if (status !== 'UNSUBMITTED' && status !== null && status !== 'REJECTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "submitForApproval")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "UNSUBMITTED or REJECTED");
-                }
-
-                entity.approveStatus = 'SUBMITTED';
+                entity.approveStatus = thisObj.invoke("prepareSubmit",
+                    {code: entity.code, approveStatus: entity.approveStatus, docStatus: entity.docStatus}, null, svcCtx);
                 return entity;
             ]]></source>
         </mutation>
@@ -40,24 +24,8 @@
             </return>
             <source><![CDATA[
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
-                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "approve");
-                }
-                const status = entity.approveStatus;
-
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "approve")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
-
-                entity.approveStatus = 'APPROVED';
+                entity.approveStatus = thisObj.invoke("prepareApprove",
+                    {code: entity.code, approveStatus: entity.approveStatus, docStatus: entity.docStatus}, null, svcCtx);
                 entity.approvedBy = svcCtx.getUserId();
                 entity.approvedAt = now();
                 return entity;
@@ -71,24 +39,8 @@
             </return>
             <source><![CDATA[
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
-                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reject");
-                }
-                const status = entity.approveStatus;
-
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reject")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
-
-                entity.approveStatus = 'REJECTED';
+                entity.approveStatus = thisObj.invoke("prepareReject",
+                    {code: entity.code, approveStatus: entity.approveStatus, docStatus: entity.docStatus}, null, svcCtx);
                 entity.approvedBy = svcCtx.getUserId();
                 entity.approvedAt = now();
                 return entity;
@@ -103,24 +55,8 @@
             </return>
             <source><![CDATA[
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
-                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reverseApprove");
-                }
-                const status = entity.approveStatus;
-
-                if (status !== 'APPROVED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reverseApprove")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "APPROVED");
-                }
-
-                entity.approveStatus = 'REJECTED';
+                entity.approveStatus = thisObj.invoke("prepareReverseApprove",
+                    {code: entity.code, approveStatus: entity.approveStatus, docStatus: entity.docStatus}, null, svcCtx);
                 entity.approvedBy = null;
                 entity.approvedAt = null;
                 return entity;
@@ -134,24 +70,8 @@
             </return>
             <source><![CDATA[
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
-                    throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "withdrawApproval");
-                }
-                const status = entity.approveStatus;
-
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "withdrawApproval")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
-
-                entity.approveStatus = 'UNSUBMITTED';
+                entity.approveStatus = thisObj.invoke("prepareWithdraw",
+                    {code: entity.code, approveStatus: entity.approveStatus, docStatus: entity.docStatus}, null, svcCtx);
                 return entity;
             ]]></source>
         </mutation>

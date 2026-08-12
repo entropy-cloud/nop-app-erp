@@ -181,4 +181,14 @@
           class="app.erp.pur.service.statemachine.ErpPurQuotationDocumentStateMachine"/>
     <bean id="app.erp.pur.service.statemachine.ErpPurRfqDocumentStateMachine"
           class="app.erp.pur.service.statemachine.ErpPurRfqDocumentStateMachine"/>
+    <!-- approveStatus 审批轴 Bean（M3.2/M3.3/M3.4/M3.5），承载 5 动作迁移矩阵 + 终态/初始态分类 + 只读元数据。
+         一 Bean 对一实体一轴（契约 §1 双轴约定，与 Document 后缀 docStatus 轴分离）。 -->
+    <bean id="app.erp.pur.service.statemachine.ErpPurOrderApprovalStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurOrderApprovalStateMachine"/>
+    <bean id="app.erp.pur.service.statemachine.ErpPurRequisitionApprovalStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurRequisitionApprovalStateMachine"/>
+    <bean id="app.erp.pur.service.statemachine.ErpPurQuotationApprovalStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurQuotationApprovalStateMachine"/>
+    <bean id="app.erp.pur.service.statemachine.ErpPurRfqApprovalStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurRfqApprovalStateMachine"/>
 </beans>

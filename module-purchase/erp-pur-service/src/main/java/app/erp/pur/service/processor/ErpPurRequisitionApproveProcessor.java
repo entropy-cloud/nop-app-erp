@@ -3,6 +3,7 @@ package app.erp.pur.service.processor;
 import app.erp.pur.dao.entity.ErpPurRequisition;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.statemachine.ErpPurRequisitionApprovalStateMachine;
 import app.erp.common.service.AbstractApproveProcessor;
 import io.nop.api.core.exceptions.ErrorCode;
 import io.nop.api.core.exceptions.NopException;
@@ -11,13 +12,18 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpPurRequisition approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Runs the AbstractApproveProcessor skeleton; delegates domain-specific hooks to ErpPurRequisitionProcessor.
+ * ErpPurRequisition approve per-mutation Processor (plan 2026-07-25-1057-2；审批轴 Bean 接线 plan 2026-08-13-0945-1 M3.4)。
+ *
+ * <p>运行 {@link AbstractApproveProcessor} 骨架；固定来源态/目标态判断委托
+ * {@link ErpPurRequisitionApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）。Requisition 无 commitment/intercompany（保持）。
  */
 public class ErpPurRequisitionApproveProcessor extends AbstractApproveProcessor<ErpPurRequisition> {
 
     @Inject
     ErpPurRequisitionProcessor processor;
+
+    @Inject
+    ErpPurRequisitionApprovalStateMachine stateMachine;
 
     @Override
     protected IEntityDao<ErpPurRequisition> dao() {
@@ -41,6 +47,15 @@ public class ErpPurRequisitionApproveProcessor extends AbstractApproveProcessor<
     @Override
     protected void validateNotCancelled(ErpPurRequisition entity, IServiceContext context) {
         processor.validateNotCancelled(entity, context);
+    }
+
+    @Override
+    protected void validateTransitionForApprove(ErpPurRequisition entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+        }
     }
 
     @Override
@@ -81,7 +96,7 @@ public class ErpPurRequisitionApproveProcessor extends AbstractApproveProcessor<
 
     @Override
     protected String approvedStatus() {
-        return ErpPurConstants.APPROVE_STATUS_APPROVED;
+        return stateMachine.approveTargetStatus();
     }
 
     @Override

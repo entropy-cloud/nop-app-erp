@@ -3,6 +3,7 @@ package app.erp.pur.service.processor;
 import app.erp.pur.dao.entity.ErpPurRequisition;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.statemachine.ErpPurRequisitionApprovalStateMachine;
 import app.erp.common.service.AbstractSubmitForApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,13 +11,18 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpPurRequisition submitForApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Runs the AbstractSubmitForApprovalProcessor skeleton; delegates domain-specific hooks to ErpPurRequisitionProcessor.
+ * ErpPurRequisition submitForApproval per-mutation Processor (plan 2026-07-25-1057-2；审批轴 Bean 接线 plan 2026-08-13-0945-1 M3.4)。
+ *
+ * <p>运行 {@link AbstractSubmitForApprovalProcessor} 骨架；固定来源态/目标态判断委托
+ * {@link ErpPurRequisitionApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）。
  */
 public class ErpPurRequisitionSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpPurRequisition> {
 
     @Inject
     ErpPurRequisitionProcessor processor;
+
+    @Inject
+    ErpPurRequisitionApprovalStateMachine stateMachine;
 
     public ErpPurRequisitionSubmitForApprovalProcessor() {
         super("ErpPurRequisition");
@@ -52,6 +58,16 @@ public class ErpPurRequisitionSubmitForApprovalProcessor extends AbstractSubmitF
     }
 
     @Override
+    protected void validateTransitionForSubmit(ErpPurRequisition entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanSubmit(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity),
+                    ErpPurConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpPurConstants.APPROVE_STATUS_REJECTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpPurRequisition entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -74,7 +90,7 @@ public class ErpPurRequisitionSubmitForApprovalProcessor extends AbstractSubmitF
 
     @Override
     protected String submittedStatus() {
-        return ErpPurConstants.APPROVE_STATUS_SUBMITTED;
+        return stateMachine.submitTargetStatus();
     }
 
     @Override

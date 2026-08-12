@@ -2,12 +2,15 @@
 package app.erp.pur.service.entity;
 
 import app.erp.pur.biz.IErpPurQuotationBiz;
+import app.erp.pur.dao.constants.ErpPurDocStatus;
 import app.erp.pur.dao.entity.ErpPurQuotation;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.SupplierEligibilityChecker;
+import app.erp.pur.service.statemachine.ErpPurQuotationApprovalStateMachine;
 import app.erp.pur.service.statemachine.ErpPurQuotationDocumentStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
@@ -30,8 +33,13 @@ import org.slf4j.LoggerFactory;
  *
  * <p><b>docStatus cancel 守卫（plan 2026-08-12-0918-1 Phase 3 Fix）</b>：{@link #cancel} 经
  * {@link ErpPurQuotationDocumentStateMachine} 断言来源态合法（owner doc §2「非已作废」守卫）。
- * 迁移前 cancel 无守卫（允许幂等 CANCELLED→CANCELLED）→ 经层 2 四方对照裁定为 implementation drift → Fix：
- * 已作废报价单再 cancel 抛领域码 {@link ErpPurErrors#ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION}。
+ *
+ * <p><b>approveStatus 审批轴 Bean 接线（plan 2026-08-13-0945-1 Phase 3）</b>：5 动作经 {@link #prepareSubmit} 等
+ * {@code @BizQuery} helper 委托 {@link ErpPurQuotationApprovalStateMachine}（INLINE 路径，契约 §4/§7）。
+ * {@code ErpPurQuotation.xbiz} 内联 {@code isCancelled} + 来源态守卫改调本 helper，目标态写入改用 helper 返回值。
+ * 错误码 Decision 分支 (b)：迁移前 xbiz 抛平台码 {@code nop.err.wf.approve.*}；迁移后 isCancelled 守卫→领域码
+ * {@link ErpPurErrors#ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION}（同 sales precedent），来源态守卫→领域码
+ * {@link ErpPurErrors#ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION}（同 Order/Req 模式）。行为变化已显式记录。
  */
 @BizModel("ErpPurQuotation")
 public class ErpPurQuotationBizModel extends CrudBizModel<ErpPurQuotation> implements IErpPurQuotationBiz {
@@ -43,6 +51,9 @@ public class ErpPurQuotationBizModel extends CrudBizModel<ErpPurQuotation> imple
 
     @Inject
     ErpPurQuotationDocumentStateMachine stateMachine;
+
+    @Inject
+    ErpPurQuotationApprovalStateMachine approvalStateMachine;
 
     public ErpPurQuotationBizModel() {
         setEntityName(ErpPurQuotation.class.getName());
@@ -82,4 +93,88 @@ public class ErpPurQuotationBizModel extends CrudBizModel<ErpPurQuotation> imple
         updateEntity(quotation, null, context);
         return quotation;
     }
+
+    // ---------- approveStatus 审批轴 helper（plan 2026-08-13-0945-1 Phase 3，INLINE 路径委托 Bean） ----------
+
+    @Override
+    @BizQuery
+    public String prepareSubmit(@Name("code") String code, @Name("approveStatus") String approveStatus,
+                                @Name("docStatus") String docStatus, IServiceContext context) {
+        requireNotCancelled(code, docStatus);
+        try {
+            approvalStateMachine.assertCanSubmit(approveStatus);
+        } catch (NopException e) {
+            throw illegalStatus(code, approveStatus, "UNSUBMITTED 或 REJECTED");
+        }
+        return approvalStateMachine.submitTargetStatus();
+    }
+
+    @Override
+    @BizQuery
+    public String prepareApprove(@Name("code") String code, @Name("approveStatus") String approveStatus,
+                                 @Name("docStatus") String docStatus, IServiceContext context) {
+        requireNotCancelled(code, docStatus);
+        try {
+            approvalStateMachine.assertCanApprove(approveStatus);
+        } catch (NopException e) {
+            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_SUBMITTED);
+        }
+        return approvalStateMachine.approveTargetStatus();
+    }
+
+    @Override
+    @BizQuery
+    public String prepareReject(@Name("code") String code, @Name("approveStatus") String approveStatus,
+                                @Name("docStatus") String docStatus, IServiceContext context) {
+        requireNotCancelled(code, docStatus);
+        try {
+            approvalStateMachine.assertCanReject(approveStatus);
+        } catch (NopException e) {
+            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_SUBMITTED);
+        }
+        return approvalStateMachine.rejectTargetStatus();
+    }
+
+    @Override
+    @BizQuery
+    public String prepareReverseApprove(@Name("code") String code, @Name("approveStatus") String approveStatus,
+                                        @Name("docStatus") String docStatus, IServiceContext context) {
+        requireNotCancelled(code, docStatus);
+        try {
+            approvalStateMachine.assertCanReverseApprove(approveStatus);
+        } catch (NopException e) {
+            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_APPROVED);
+        }
+        return approvalStateMachine.reverseApproveTargetStatus();
+    }
+
+    @Override
+    @BizQuery
+    public String prepareWithdraw(@Name("code") String code, @Name("approveStatus") String approveStatus,
+                                  @Name("docStatus") String docStatus, IServiceContext context) {
+        requireNotCancelled(code, docStatus);
+        try {
+            approvalStateMachine.assertCanWithdraw(approveStatus);
+        } catch (NopException e) {
+            throw illegalStatus(code, approveStatus, ErpPurDocStatus.APPROVE_STATUS_SUBMITTED);
+        }
+        return approvalStateMachine.withdrawTargetStatus();
+    }
+
+    private void requireNotCancelled(String code, String docStatus) {
+        if (ErpPurDocStatus.DOC_STATUS_CANCELLED.equals(docStatus)) {
+            throw new NopException(ErpPurErrors.ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION)
+                    .param(ErpPurErrors.ARG_QUOTATION_CODE, code)
+                    .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, docStatus)
+                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "非已作废");
+        }
+    }
+
+    private NopException illegalStatus(String code, String currentStatus, String expectedStatus) {
+        return new NopException(ErpPurErrors.ERR_QUOTATION_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpPurErrors.ARG_QUOTATION_CODE, code)
+                .param(ErpPurErrors.ARG_CURRENT_STATUS, currentStatus)
+                .param(ErpPurErrors.ARG_EXPECTED_STATUS, expectedStatus);
+    }
 }
+

@@ -3,6 +3,7 @@ package app.erp.pur.service.processor;
 import app.erp.pur.dao.entity.ErpPurRequisition;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.statemachine.ErpPurRequisitionApprovalStateMachine;
 import app.erp.common.service.AbstractWithdrawApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,13 +11,18 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpPurRequisition withdrawApproval per-mutation Processor (plan 2026-07-25-1057-2).
- * Runs the AbstractWithdrawApprovalProcessor skeleton; delegates domain-specific hooks to ErpPurRequisitionProcessor.
+ * ErpPurRequisition withdrawApproval per-mutation Processor (plan 2026-07-25-1057-2；审批轴 Bean 接线 plan 2026-08-13-0945-1 M3.4)。
+ *
+ * <p>运行 {@link AbstractWithdrawApprovalProcessor} 骨架；固定来源态/目标态判断委托
+ * {@link ErpPurRequisitionApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）。
  */
 public class ErpPurRequisitionWithdrawApprovalProcessor extends AbstractWithdrawApprovalProcessor<ErpPurRequisition> {
 
     @Inject
     ErpPurRequisitionProcessor processor;
+
+    @Inject
+    ErpPurRequisitionApprovalStateMachine stateMachine;
 
     @Override
     protected IEntityDao<ErpPurRequisition> dao() {
@@ -43,6 +49,15 @@ public class ErpPurRequisitionWithdrawApprovalProcessor extends AbstractWithdraw
     }
 
     @Override
+    protected void validateTransitionForWithdraw(ErpPurRequisition entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanWithdraw(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpPurRequisition entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -60,7 +75,7 @@ public class ErpPurRequisitionWithdrawApprovalProcessor extends AbstractWithdraw
 
     @Override
     protected String unsubmittedStatus() {
-        return ErpPurConstants.APPROVE_STATUS_UNSUBMITTED;
+        return stateMachine.withdrawTargetStatus();
     }
 
     @Override
