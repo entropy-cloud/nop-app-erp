@@ -46,4 +46,9 @@
     <!-- R6.9 ErpMdSupplierApproval suspendByPartner per-mutation Processor（批量挂起：循环内含写，不满足豁免条件 4）。 -->
     <bean id="app.erp.md.service.processor.ErpMdSupplierApprovalSuspendByPartnerProcessor"
           class="app.erp.md.service.processor.ErpMdSupplierApprovalSuspendByPartnerProcessor"/>
+
+    <!-- 实体级 StateMachine Bean（plan 2026-08-12-2142-1 M2.1）：ErpMdSupplierApproval.status 单轴迁移矩阵唯一权威。
+         沿用既有 Processor FQN-id 注册范式（契约 entity-state-machine-bean.md §5）；按类型注入，可经 Delta 同名 bean id 覆盖（契约 §6）。 -->
+    <bean id="app.erp.md.service.statemachine.ErpMdSupplierApprovalStateMachine"
+          class="app.erp.md.service.statemachine.ErpMdSupplierApprovalStateMachine"/>
 </beans>
