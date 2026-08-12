@@ -87,6 +87,12 @@
         </property>
     </bean>
 
+    <!-- 需求预测实体级状态机 Bean（plan 2026-08-12-1841-3 M2.19；契约 docs/architecture/entity-state-machine-bean.md）：
+          一 Bean 对一实体一轴 status，承载 approve/cancel 迁移矩阵。实体 BizModel 经 @BizModel 自动发现，
+          Bean 须显式 FQN-id 注册（同 cs/purchase 范式）。 -->
+    <bean id="app.erp.mfg.service.statemachine.ErpMfgForecastStateMachine"
+          class="app.erp.mfg.service.statemachine.ErpMfgForecastStateMachine"/>
+
     <!-- manufacturing 域状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。 -->
     <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"
           class="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"/>
