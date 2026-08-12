@@ -1,50 +1,49 @@
 # 关于《Mission Driver：Loop Engineering 的一种通用参考实现》的补充说明
 
-> 写给读过《Mission Driver：Loop Engineering 的一种通用参考实现》和《Loop Engineering × Attractor》PPT 的读者
->
-> 前两份材料分别介绍了 Mission Driver 的工程实现与 AGE 的方向理论，但放在一起仍然容易产生误解。本文是一份概念澄清：先定位 Mission Driver 在整个概念体系中的位置，再回答它到底解决什么问题，最后解释它为什么这样设计。
+在我此前的文章[《Mission Driver：Loop Engineering 的一种通用参考实现》]()中，我介绍了 Mission Driver 的设计原理与使用方式。它是吸引子引导工程（Attractor-Guided Engineering, AGE）在控制层的核心实现，负责 7×24 小时 AI 全自主运行。
 
-## 一、概念体系定位：Loop Engineering 是概括，AGE 是理论，Mission Driver 是运行机制
+但在实际应用中，我发现很多人习惯把它映射为自己熟知的概念——更复杂的工作流编排、Agent 编排器，或另一套 Harness 控制。这种理解没有真正触及 Mission Driver 的独特之处：网上常见的 Loop Engineering 实现大多是某种黑箱模型——AI 的内部状态对使用者不可见、不可控，人工介入只能停止循环并修改提示词；而 Mission Driver 把核心运行状态显性化为 roadmap 与 plan 文件（文件就是 AI 的认知），人工介入是异步的——可以直接修改 roadmap 或投放新的 plan，下一轮循环自动拾取。人机分工界面因此可以更加灵活：人可以审核 roadmap，AI 也能自主在 roadmap 中引入 audit 审计工作项。
+
+
+另一个更根本的区别是，目前大部分 AI 工程都是面向单次任务的——包括 goal 驱动在内，都是针对单项任务进行组织。信息容器就是任务本身，任务完成、会话结束，信息便随之失效，这对长期演化运行来说是信息不充分的。AI 长时间（周甚至月）自主运行所依赖的方向引导，不能来自外部用户输入和用户监控，只能来源于项目自身的 Owner Doc 体系。AGE 的文档体系不是针对单个任务构建，而是面向整个领域结构空间：它定义系统长期应保持什么结构（期望吸引子）、哪个工件对什么问题拥有权威（Precedence）、什么证据证明什么承诺（Proof）、历史上做过什么关键决策（轨迹记忆），以及信息是否仍足以支撑自主行动（Freshness）。这些关系跨任务、跨会话持续有效——任何新的开发主体只依赖当前仓库，就能恢复同一套事实、权威、方向与轨迹，这正是 Mission Driver 能够长时间全自主运行的信息基础。
+
+没有理解这些，就很难让 Mission Driver 全自主地运行起来，也难以用它实现超越 goal 驱动等 coding CLI 工具内置目标驱动机制的效果。本文是一份概念澄清，说明 Mission Driver 所在的概念体系（Loop Engineering / Attractor-Guided Engineering），回答它解决什么问题，以及为什么这样设计。
+
+## 一、概念体系定位：Loop Engineering vs. Attractor Guided Engineering
 
 ### 1.1 Loop Engineering：业内的概括性表达，但没有回答"为什么能收敛"
 
-Loop Engineering 是业内对 AI 自主运行某一阶段的概括性表达。Andrew Ng 的三层 Loop 模型（Agentic Coding 分钟级、Developer Feedback 小时级、External Feedback 天/周级）、Boris Cherny 的"我不再写 prompt 了，我改成设计写 prompt 的系统——我在写 Loop"，共同把 **loop 认定为自主运行的核心机制**。这个概括本身没有错，但它只描述了"应该存在一个循环"，没有回答两个更根本的问题：
+Loop Engineering 是业内对 AI 自主运行当前能达到的阶段的概括性表达。Andrew Ng 的三层 Loop 模型（Agentic Coding 分钟级、Developer Feedback 小时级、External Feedback 天/周级）、Boris Cherny 的"我不再写 prompt 了，我改成设计写 prompt 的系统——我在写 Loop"，共同 **把Loop 认定为自主运行的核心机制**。
+
+这个概括本身没有问题。但它只描述了"自主运行需要采用什么执行形态"，没有回答两个更深的问题：
 
 > loop 为什么能稳定存在，以致趋于收敛？
 > 在 loop 持续运行期间，人与 AI 如何交互？
 
-纯 Loop Engineering 的实践往往在这两个问题上失守：
+这两个问题在实际工程中暴露得很直接。很多号称 loop 驱动的系统，方向、裁决、纠偏其实都来自循环外的人——用户一边看输出一边做决定，跟 vibe coding 并没有本质区别。而当人需要介入时，又往往面对一个黑箱：不知道 AI 当前处于什么状态、依据什么做出当前判断。想调整行为，通常只能停止循环、修改提示词，然后重来。
 
-- 表面上 loop 在自主运行，实际仍依赖用户以 vibe coding 的方式不断向体系内注入信息——方向、裁决、纠偏都来自循环外的人；
-- 人工与 AI 自动运行的交互方式缺乏标准方案：人直接介入 AI 执行时面对**黑箱**——看不到 AI 当前运行到什么状态、依据什么判断；要改变行为，往往只能**停止 loop、修改提示词指令**，而无法直接触及 AI 当前运行的状态。
-
-这两个缺口的共同根源是：loop 本身只是一个执行结构，它不携带"方向"、"状态"和"轨迹"这些可以让它自我校正的信息。
+这两个缺口来自同一个根源：loop 只是一个执行结构。方向、状态、轨迹——这些让系统能够自我校正的东西，不在 loop 的范畴之内。
 
 ### 1.2 AGE：回答"loop 为什么能稳定存在以致收敛"
 
-AGE（Attractor-Guided Engineering，吸引子引导工程）是为回答这个问题而建立的概念体系，核心是四个概念：
+AGE（Attractor-Guided Engineering，吸引子引导工程）是为回答上一节那两个缺口而建立的概念体系。它的核心是四个概念：状态空间（系统演化过程所有可能出现的结构）、吸引子（系统长期应稳定趋向的结构）、轨迹（系统实际上怎样走到了现在）、控制（测量与纠偏机制如何把轨迹拉回吸引子附近）。
 
-```text
-状态空间：系统可能演化到什么
-吸引子：  系统长期应反复回到什么结构
-轨迹：    系统实际上怎样走到了现在
-控制：    测量与纠偏机制如何把轨迹拉回吸引子附近
-```
+在这个概念体系中，"持续运行"不再是目的，而是方向已经被外化后的自然结果。loop 之所以能稳定存在并趋于收敛，不是因为循环设计得有多精巧，而是因为三个时间维度上的机制已经就位：
 
-在这个概念体系中，"持续运行"不再是目的，而是方向已经被外化后的自然结果。loop 之所以能稳定存在并趋于收敛，不是因为循环本身设计得精巧，而是因为：
-
-- **运行之前**，docs 体系已经建立——明确区分规范性文档与实效性文档，确保 AI 面对的信息源具有明确的权威定义和更新策略（哪份文档定义"系统应该是什么"，哪份记录"当前实际是什么"，冲突时以谁为准）；
-- **运行之中**，AI 的内部状态和认知被显性化，人的介入有标准方案，而不是黑箱。
+- **运行之前**，docs 体系已经建立——明确区分规范性文档与时效性文档，确保 AI 面对的信息源具有明确的权威定义和更新策略：规范性文档（architecture / design 等稳定 Owner Docs）定义"系统长期应该是什么"——期望吸引子与权威归属，不带日期、原地更新，其有效性不随时间衰减；时效性文档（plans / logs / audits / analysis 等过程记录）描述"某个时间窗口内实际发生了什么、当前状态如何"——带日期、只在有效窗口内可信，过期后必须重新验证（freshness）才能继续支撑自主行动；两者之间以及规范性文档相互之间的冲突，都以 Precedence 定义的权威归属为准——按 Owner 与作用域规定的优先级裁决，而非按更新时间或取用便利性裁决；
+- **运行之中**，AI 的内部状态和认知被显性化——roadmap / plan / audits 文件就是它的认知，人不需要猜 AI 在想什么；人的介入有标准方案：直接修改 roadmap 或增删 plan，下一轮循环自动拾取，无需停止 loop 或修改提示词；logs 同步记录每轮执行的关键决策与验证结果，沉淀为可追溯的轨迹。介入不再是黑箱，也不需要打断运行。
+- **运行之后**，经验被提炼并反哺——AI可以从 logs / plans / audits 中挖掘本轮经验：人工纠正的模式沉淀为 skill，审计遗漏的维度补入审计提示词，重复失败提升为 lessons（nop-app-erp展示了具体的实践案例）；Mission Driver 的 postmortem 复盘还会把报告写入 memory，后续同模块 mission 自动加载。循环因此不只是重复执行，而是持续学习。
 
 ### 1.3 Mission Driver：对 Loop Engineering 的通用实现，在 AGE 概念体系下定义状态与演化
 
-Mission Driver 落实了 Loop Engineering 的核心概念：不写 prompt，而是写一个 loop 不断产生 prompt。它是对 Loop Engineering 的一种通用实现——底层是一个通用的 Flow DSL 运行引擎，在概念层面上与 Loop Engineering 乃至 Graph Engineering 的内容对应。通用性来自 Flow DSL 与配置注入：每一轮循环都会为下一个 AI 步骤重新构建 prompt（从配置变量表注入实际值，如 `{{planGuide}}`、`{{roadmapPath}}`、`{{plansDir}}`、`{{testCmd}}`），换一个 flow 文件即可适配数据处理、文档分析等场景；而人面对的是 loop 本身——设计、配置、监控它，而不是逐个手写提示词。
+Mission Driver 落实了 Loop Engineering 的核心主张：不写 prompt，而是写一个 loop，让它不断产生 prompt。它可以看作是对 Loop Engineering 的一种通用实现——底层是一个通用的 Flow DSL 运行引擎，每一轮循环为下一个 AI 步骤重新构建 prompt，占位符（{{planGuide}}、{{roadmapPath}}、{{plansDir}}、{{testCmd}}）从配置变量表注入实际值。换一个 flow 文件就能适配不同场景，人不再逐个手写提示词，而是设计、配置和监控 loop 本身。
 
-它同时又是 AGE 概念体系下的一种全自动运行机制，二者的关系是：**loop 结构由 LE 提供，状态管理与演化由 AGE 定义**。Mission Driver 强调的是**状态空间、吸引子引导和轨迹控制**——它运行于由 docs 体系承载的吸引子定义与收敛机制之上（期望吸引子由 docs 体系外化承载，Mission Driver 依赖而非自行定义方向），并有收敛机制定义（Closure Gates、独立审计、DEEP_AUDIT 与轨迹纠偏），而不仅仅是边界和护栏等 Harness。这也是它区别于"只实现了 loop 结构"的其他引擎的地方。三者的界限是：
+在概念体系上，Mission Driver 是 AGE 框架下的一种全自动运行机制。两者的分工很清楚：loop 的执行结构由 Loop Engineering 提供，状态管理和演化规则由 AGE 定义。Mission Driver 运行于由 docs 体系承载的吸引子定义之上（期望吸引子由 docs 体系外化承载，Mission Driver 依赖而非自行定义方向），并驱动 Plan 走完从审查、执行、验证到审计的完整生命周期。它不是一般意义上的 Harness，而是在吸引子引导下根据 roadmap 执行的持续编排器。这也是它区别于"只实现了 loop 结构"的其他引擎的地方。从运行形式看，Mission Driver 编排的是 work item 与 plan——DRAFT_PLANS 把 roadmap 中的 work item 投影为 plan，EXEC_PLANS 驱动 plan 走过执行、检查、审计的完整闭环；而这个闭环在 AGE 中承载的正是 Harness 的功能（测量与纠偏）。
 
-- **边界和护栏（Guardrail）**只回答"当前动作是否允许"——例如文件名规范、命名规范、"不准绕过 ORM 直接写 SQL"之类的检查规则。护栏能挡住明确不允许的动作，但无法回答"系统长期应该向哪个结构收敛"。
-- **Harness（测量和纠偏机制）**在软件工程里有成熟对应物：Test Harness 由 Driver、Stub、Mock、Comparator 组成测试夹具，隔离外部不确定性，让测试结果只反映被测对象本身的质量；Deployment Harness 用金丝雀发布、流量切分、指标判断、自动回滚和审批闸门，把发布从"事件"变成可观测、可干预、可撤销的"过程"。在 AGE 中，Plan Loop、测试、Closure Gates、独立审计、DEEP_AUDIT 与轨迹纠偏扮演的就是这个角色——它们测量实际轨迹、判断偏差、并把偏离拉回。Harness 解决"当前轨迹是否偏离、如何纠偏"，但 Harness 本身不定义"应该回到哪里"。
-- **AGE 定义了吸引子和收敛机制**——例如"ORM 模型是唯一事实来源"这样的期望吸引子，通过 Closure Gates、独立审计、DEEP_AUDIT 和轨迹纠偏，在偏离后把系统拉回稳定结构附近。收敛不是"不越界"，而是"偏离后仍能回到长期结构附近"。吸引子回答"应该回到哪里"，这正是护栏和 Harness 都不回答的问题：AGE 官方模板明确写着——plans, tests, audits, logs, bug notes 和 verification 都不是吸引子本身，它们是 engineering harnesses：帮助证明一次变更把仓库推向吸引子、而不是仅仅完成了检查清单的局部控制机制。
+Mission Driver 与 Harness、AGE 的界限是：
+
+- **Harness（Agent = Model + Harness）**。在 Harness Engineering 的理解中，harness 是模型之外的一切——引导文件（AGENTS.md 等指令）、上下文工程（任务相关的信息供给）、传感器（lint / typecheck / 安全扫描等自动检查）、护栏（Guardrail：文件名规范、"不准绕过 ORM 直接写 SQL"等边界规则）、验证闸门（测试与构建门禁）、监控（人工审查）与反馈循环（把纠正工程化，使同一错误结构性不可再犯）。在 AGE 中，Plan Loop、测试、Closure Gates、独立审计、DEEP_AUDIT 与轨迹纠偏扮演的就是 Harness 的角色——它们测量实际轨迹、判断偏差、并把偏离拉回。Harness 解决"当前轨迹是否偏离、如何纠偏"，但 Harness 本身不定义"应该回到哪里"。
+- **AGE 定义了吸引子，并赋予 Harness 长期演化方向与收敛标准**——收敛机制（Closure Gates、独立审计、DEEP_AUDIT、轨迹纠偏）在结构上就是 Harness。AGE 的增量不在机制本身，而在两层 Harness 自身不携带的信息：其一是方向依据——期望吸引子定义"应该回到哪里"，它不是某一条规则，而是由少数高价值结构约束共同界定的允许结构区域（如 nop-app-erp 的"每域一份 `<domain>/model/*.orm.xml` 是持久化模型唯一真相源"、"模块依赖为单向 DAG、跨域引用走 R/S/P 契约"、"docStatus × approveStatus × posted 三轴正交状态分离"等约束共同界定），Attractor Before Harness 意味着先有它，才能决定 Harness 测什么、拒绝什么、把偏离拉回哪里；其二是收敛定义——收敛不是静态合规，而是动力学性质：系统在持续扰动（需求变化、AI 生成扩张、重构、外部反馈）下，长期轨迹反复回到吸引子定义的结构区域附近（"关键不是永远停在 X，而是偏离后仍能回到 X 附近"）；判定依据不是单次截面合规——一次检查通过只说明当前截面没暴露问题，只有偏离被识别、记录为未关闭义务、后续工作持续推动回归，才能说明系统具备收敛。
 
 这种定义在运行中表现为四个可观察的机制设计：
 
@@ -60,15 +59,13 @@ AGE 的完整机制链可以压缩为：
 Trajectory 记录实际演化
 Plan 关闭局部轨迹
 Harness 提供测量和纠偏
-Mission Driver 自动编排 Harness
+Mission Driver 自动编排 Plan
 仓库承载跨会话事实与记忆
 ```
 
-nop-app-erp 就是这套机制运行的明确示例：22 天（06-22 → 07-13）、187 份 Plan（07-01 起计）全部双审计通过，人工介入从早期的高频平台机制纠正（06-22 单日 7 条）衰减至 07-14 后为零。需要说明的是：介入衰减本身有阶段迁移等多种可能解释，不能唯一归因于机制成熟（见 `docs/analysis/2026-07-19-1400-human-role-ai-autonomy-analysis.md`）；但独立审计推翻虚假完成声明属于有据可查的机制事实（如 07-10 草案审查在编码前拦截 2 个 P0 财务正确性缺陷与 1 个运行期缺陷，07-20 EXEC_PLANS 子流内第二轮审计 FAIL 推翻"编辑生成文件已补救"的虚假声明——git diff 为空）。
+nop-app-erp 就是这套机制运行的明确示例：22 天（06-22 → 07-13）、187 份 Plan（07-01 起计）全部双审计通过，人工介入从早期的高频平台机制纠正（06-22 单日 7 条）衰减至 07-14 后为零。这是一个典型的知识转移过程：用户介入分三类——A 类（明确指明 Nop 平台机制，集中在早期 06-22 ~ 06-26）、B 类（指明工程原则方向，如过账引擎 DDD 原则与架构文档元规则，集中在中期 06-29 ~ 07-01）、C 类（只要求 AI 自查对比、不暗示答案，后期 07-04 之后占绝大多数）；A 类频次下降与 AI 自主度上升两条曲线在 06-29 ~ 07-01 交叉，此后 AI 自主成为主要工作模式。被转移的知识沉淀在 19 个可复用 skill、docs-for-ai 补充与 lessons 教训中，构成自运转的知识基座——正如项目复盘所言："用户不是在写代码，而是在转移平台知识，一旦知识转移完成，介入频率自动归零"，介入归零不是因为 AI 学会了写代码，而是因为吸引子已经定义好了。
 
-把 Mission Driver 当成普通的 Agent 编排器，就丢失了它在 AGE 中的方向前提；把它当成 AGE 本身，就丢失了"它只是控制层的执行机制，不拥有方向定义权"这一边界。第四章的"边界"与第五章的"全自动"都源自这个区分。
-
----
+把 Mission Driver 当成普通的 Agent 编排器，就丢失了它在 AGE 中的方向依据。但它本身也不拥有方向定义权，它只是控制层的执行机制，必须和外部的 docs 体系协同工作。
 
 ## 二、它解决什么问题
 
@@ -148,7 +145,7 @@ Mission Driver 面对的却是一个**会持续改变自身事实、计划、证
 
 差异集中在三点：
 
-1. **理论层：AGE 是本文系的独特增量，LoopX 明确不做**。LoopX 自我定位为控制平面而非方向来源：`quota should-run` 是 compute guard 而非 strategy selector，"It does not replace your agent runtime"，slogan 是"Keep the loop moving. Keep the judgment human."。它不回答"系统长期应该向什么结构收敛"——目标、边界与验收由用户在 goal 文本中给出，控制层只负责让这些目标在多轮、多 agent、多运行时之间不漂移。Mission Driver 所在的概念体系则前进一步：期望吸引子定义长期结构、Trajectory 记录实际演化、Harness 提供测量与纠偏，方向前提被外化为仓库结构（Owner Docs、ORM 唯一真相源等）。这一层在业内常见做法中都不存在——Andrew Ng 的三层 Loop 模型中 External Feedback 对应的是 Mission Loop 层（天/周级信号响应），LoopX 的 quota/gate 机制也是信号响应层，二者都没有显式的、外化为仓库结构的期望吸引子定义和收敛机制。这是本文系与它们的主要区别，也正对应 1.3 中"不仅仅是边界和护栏等 Harness"的定位。
+1. **理论层：AGE 是本文系的独特增量，LoopX 明确不做**。LoopX 自我定位为控制平面而非方向来源：`quota should-run` 是 compute guard 而非 strategy selector，"It does not replace your agent runtime"，slogan 是"Keep the loop moving. Keep the judgment human."。它不回答"系统长期应该向什么结构收敛"——目标、边界与验收由用户在 goal 文本中给出，控制层只负责让这些目标在多轮、多 agent、多运行时之间不漂移。Mission Driver 所在的概念体系则前进一步：期望吸引子定义长期结构、Trajectory 记录实际演化、Harness 提供测量与纠偏，方向前提被外化为仓库结构（Owner Docs、ORM 唯一真相源等）。这一层在业内常见做法中都不存在——Andrew Ng 的三层 Loop 模型中 External Feedback 对应的是 Mission Loop 层（天/周级信号响应），LoopX 的 quota/gate 机制也是信号响应层，二者都没有显式的、外化为仓库结构的期望吸引子定义和收敛机制。这是本文系与它们的主要区别，也正对应 1.3 中"不仅仅是一般意义上的 Harness"的定位。
 
 2. **自动化边界的设计不同**。LoopX 在架构层面把人的判断做成一等公民——"LoopX is not an autonomous production controller"、"final ownership stays with the human"，人的判断（reward、gate、quota、注意力成本）保留在运行层的每个环节，"Quota 保护的不只是算力，也是人的注意力"。Mission Driver 则把人类治理限定在方向层（期望吸引子、Owner Docs），执行与编排层追求无人值守：7×24 运行、每 4-12 小时自动完成一个完整循环、人工介入从早期高频衰减至后期为零。但两者并非实质冲突：LoopX 的"判断贯穿运行层"对应的是 Mission Driver 概念体系中"不定义方向"的边界（第四章），而"自动执行与编排"对应可自动化前两层（第五章）——差别在于人类判断在运行链中的保留位置。
 
@@ -368,8 +365,8 @@ Mission Driver 持续运行后，这些隐性补丁会消失，系统会暴露�
 回到开头，把三个概念的关系收束为三句话：
 
 - **Loop Engineering** 是业内对 AI 自主运行某一阶段的概括性表达——它把 loop 认定为自主运行的核心机制，但没有回答 loop 为什么能稳定存在以致趋于收敛，也没有提供人与运行中的循环交互的标准方案（黑箱、必须停 loop 改 prompt）。
-- **AGE** 用状态空间、吸引子、轨迹与控制四个概念回答这个问题，并要求在 loop 运行之前建立 docs 体系（规范性文档与实效性文档的权威定义和更新策略），在运行之中通过 roadmap / plan / audits 显性化 AI 的内部状态与认知。
-- **Mission Driver** 是对 Loop Engineering 的通用实现——它落实了"不写 prompt，而是写一个 loop 不断产生 prompt"的概念；同时它又是 AGE 概念体系下的机制，状态管理和演化在 AGE 体系下明确定义：运行于由 docs 体系承载的吸引子定义与收敛机制之上（Closure Gates、独立审计、DEEP_AUDIT 与轨迹纠偏），而不仅仅是边界和护栏等 Harness；人的介入可以不停止 loop（直接修改/新增 plan、修改 roadmap），logs 在不依赖 git 历史的情况下记录核心轨迹（充分统计量式记录），审计历史反向抽取 skill 改进后续工作。
+- **AGE** 用状态空间、吸引子、轨迹与控制四个概念回答这个问题，并要求在 loop 运行之前建立 docs 体系（规范性文档与时效性文档的权威定义和更新策略），在运行之中通过 roadmap / plan / audits 显性化 AI 的内部状态与认知。
+- **Mission Driver** 是对 Loop Engineering 的通用实现——它落实了"不写 prompt，而是写一个 loop 不断产生 prompt"的概念；同时它又是 AGE 概念体系下的机制，状态管理和演化在 AGE 体系下明确定义：运行于由 docs 体系承载的吸引子定义与收敛机制之上（Closure Gates、独立审计、DEEP_AUDIT 与轨迹纠偏），而不仅仅是一般意义上的 Harness；人的介入可以不停止 loop（直接修改/新增 plan、修改 roadmap），logs 在不依赖 git 历史的情况下记录核心轨迹（充分统计量式记录），审计历史反向抽取 skill 改进后续工作。
 
 最需要澄清的一句话是：
 

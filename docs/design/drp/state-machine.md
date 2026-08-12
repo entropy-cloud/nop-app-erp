@@ -12,7 +12,7 @@
 |------|----------------------|--------------|
 | 草稿（DRAFT） | 计划已创建但未运算，等待运行 DRP 计算 | 无 |
 | 已计算（COMPUTED） | DRP 引擎已完成净需求计算，建议补货量已生成，等待人工审批 | 明细行处于 SUGGESTED 状态 |
-| 已批准（APPROVED） | 终态：计划员已审批，等待执行生成补货单 | 可自动或手动生成 TransferOrder/PurchaseOrder |
+| 已批准（APPROVED） | 计划员已审批，等待执行生成补货单（**非终态**：可经 `resetToDraft` 回退 DRAFT，见 §3） | 可自动或手动生成 TransferOrder/PurchaseOrder |
 | 已执行（EXECUTED） | 终态：补货单已全部生成完毕 | — |
 
 ### 2. 迁移完整性
@@ -26,7 +26,8 @@
   └─ 回退 → 草稿 (DRAFT)  [参数调整后重新计算]
 
 已批准 (APPROVED)
-  └─ 生成补货单并执行 → 已执行 (EXECUTED)
+  ├─ 生成补货单并执行 → 已执行 (EXECUTED)
+  └─ 回退 → 草稿 (DRAFT)  [人工撤回，参数调整后重新计算]
 ```
 
 | 迁移 | 触发人 | 前置条件 | 结果 |
@@ -34,12 +35,13 @@
 | DRAFT→COMPUTED | 系统（DRP 引擎）/ 计划员 | 仓库补货参数已配置；物料主数据完整 | 生成 SUGGESTED 的 DrpLine |
 | COMPUTED→APPROVED | 计划员（审批） | 明细行已审查，approvedQty 已确认 | 明细行标记 APPROVED |
 | COMPUTED→DRAFT | 计划员 | 参数调整或数据更新 | 清除计算结果的明细行 |
+| APPROVED→DRAFT | 计划员（人工撤回） | 计划批准后需重新计算（参数/库存变化） | 清除计算结果的明细行（同 COMPUTED→DRAFT） |
 | APPROVED→EXECUTED | 系统（自动）/ 计划员（手动） | 所有 APPROVED 行已生成对应补货单 | 明细行→ORDERED |
 
 ### 3. 终态与恢复
 
-- 终态：`已批准（APPROVED）`、`已执行（EXECUTED）`。
-- APPROVED 可直接回退到 DRAFT（人工撤回）。
+- 终态：`已执行（EXECUTED）`（唯一终态）。
+- `已批准（APPROVED）` **非终态**：可经 `resetToDraft` 直接回退到 DRAFT（人工撤回）——见 §2 迁移表 `APPROVED→DRAFT`。
 - EXECUTED 不可回退；补货单已生成则走补货单的撤销流程。
 
 ### 4. 异常路径
