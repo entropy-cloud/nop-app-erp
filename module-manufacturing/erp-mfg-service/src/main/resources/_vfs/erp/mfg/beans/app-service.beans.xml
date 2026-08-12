@@ -93,6 +93,18 @@
     <bean id="app.erp.mfg.service.statemachine.ErpMfgForecastStateMachine"
           class="app.erp.mfg.service.statemachine.ErpMfgForecastStateMachine"/>
 
+    <!-- 作业卡实体级状态机 Bean（plan 2026-08-13-1430-1 M3.13；契约 docs/architecture/entity-state-machine-bean.md）：
+          一 Bean 对一实体一轴 status，承载 startJob/submitJob/completeJob/holdJob/resumeJob/cancelJob 6 迁移边
+          + recordWork 来源态校验。实体 BizModel 经 @BizModel 自动发现，Bean 须显式 FQN-id 注册。 -->
+    <bean id="app.erp.mfg.service.statemachine.ErpMfgJobCardStateMachine"
+          class="app.erp.mfg.service.statemachine.ErpMfgJobCardStateMachine"/>
+
+    <!-- MRP 计划实体级状态机 Bean（plan 2026-08-13-1430-1 M3.14；契约 docs/architecture/entity-state-machine-bean.md）：
+          一 Bean 对一实体一轴 status，承载 run/complete/firm 3 迁移边（formal+simulation 双 run/complete 链 + firm 释放副作用）。
+          引擎/释放服务直接注入（非 BizModel 自动发现），Bean 须显式 FQN-id 注册。 -->
+    <bean id="app.erp.mfg.service.statemachine.ErpMfgMrpPlanStateMachine"
+          class="app.erp.mfg.service.statemachine.ErpMfgMrpPlanStateMachine"/>
+
     <!-- manufacturing 域状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。 -->
     <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"
           class="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"/>

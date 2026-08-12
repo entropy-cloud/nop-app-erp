@@ -8,6 +8,7 @@ import app.erp.mfg.dao.entity.ErpMfgSubcontractOrderLine;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mfg.service.statemachine.ErpMfgMrpPlanStateMachine;
 import app.erp.pur.dao.constants.ErpPurDocStatus;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
@@ -58,6 +59,8 @@ public class MrpReleaseService {
 
     @Inject
     IDaoProvider daoProvider;
+    @Inject
+    ErpMfgMrpPlanStateMachine stateMachine;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -235,7 +238,14 @@ public class MrpReleaseService {
             }
         }
         if (allFirmed) {
-            plan.setStatus(ErpMfgConstants.MRP_STATUS_FIRMED);
+            try {
+                stateMachine.assertCanFirm(plan.getStatus());
+            } catch (NopException e) {
+                throw new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS, e)
+                        .param(ErpMfgErrors.ARG_PLAN_CODE, plan.getCode())
+                        .param(ErpMfgErrors.ARG_CURRENT_STATUS, plan.getStatus());
+            }
+            plan.setStatus(stateMachine.firmTargetStatus());
             daoProvider.daoFor(ErpMfgMrpPlan.class).updateEntity(plan);
         }
     }

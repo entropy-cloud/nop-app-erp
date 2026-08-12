@@ -15,6 +15,7 @@ import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.bom.BomExpander;
 import app.erp.mfg.service.mrp.DemandAggregator;
+import app.erp.mfg.service.statemachine.ErpMfgMrpPlanStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -62,6 +63,8 @@ public class SimulationMrpEngine {
     DemandAggregator demandAggregator;
     @Inject
     IErpMfgSimulationParamResolver paramResolver;
+    @Inject
+    ErpMfgMrpPlanStateMachine stateMachine;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -131,8 +134,15 @@ public class SimulationMrpEngine {
         List<ErpMfgMrpDemand> demands = loadDemands(basePlan.getId());
         demands = applySafetyStockOverride(demands, scenario, computed);
 
-        // 3. 仿真 MRP 计算（fork）
-        computed.setStatus(ErpMfgConstants.MRP_STATUS_RUNNING);
+        // 3. 仿真 MRP 计算（fork）：computed plan 由 :124 DRAFT seed → RUNNING（经 Bean 守卫 + 目标态）
+        try {
+            stateMachine.assertCanRun(computed.getStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS, e)
+                    .param(ErpMfgErrors.ARG_PLAN_CODE, computed.getCode())
+                    .param(ErpMfgErrors.ARG_CURRENT_STATUS, computed.getStatus());
+        }
+        computed.setStatus(stateMachine.runTargetStatus());
         daoProvider.daoFor(ErpMfgMrpPlan.class).saveOrUpdateEntity(computed);
 
         LocalDate defaultDate = computed.getBusinessDate() != null ? computed.getBusinessDate() : CoreMetrics.today();
@@ -144,7 +154,15 @@ public class SimulationMrpEngine {
                     null, new LinkedHashSet<>(), lineDao, lineNo, scenarioId);
         }
 
-        computed.setStatus(ErpMfgConstants.MRP_STATUS_COMPLETED);
+        // computed plan RUNNING→COMPLETED（经 Bean 守卫 + 目标态，对齐 MrpEngine formal 链）
+        try {
+            stateMachine.assertCanComplete(computed.getStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS, e)
+                    .param(ErpMfgErrors.ARG_PLAN_CODE, computed.getCode())
+                    .param(ErpMfgErrors.ARG_CURRENT_STATUS, computed.getStatus());
+        }
+        computed.setStatus(stateMachine.completeTargetStatus());
         daoProvider.daoFor(ErpMfgMrpPlan.class).saveOrUpdateEntity(computed);
 
         // 4. 写场景版本

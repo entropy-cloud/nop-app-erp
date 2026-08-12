@@ -11,13 +11,13 @@ import app.erp.mfg.dao.entity.ErpMfgMrpPlanLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.bom.BomExpander;
+import app.erp.mfg.service.statemachine.ErpMfgMrpPlanStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
-import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -60,6 +60,8 @@ public class MrpEngine {
     IDaoProvider daoProvider;
     @Inject
     BomExpander bomExpander;
+    @Inject
+    ErpMfgMrpPlanStateMachine stateMachine;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -76,12 +78,14 @@ public class MrpEngine {
      */
     public void runMrp(Long planId, List<ErpMfgMrpDemand> demands) {
         ErpMfgMrpPlan plan = requirePlan(planId);
-        if (plan.getStatus() != null && !Objects.equals(plan.getStatus(), ErpMfgConstants.MRP_STATUS_DRAFT)) {
-            throw new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS)
+        try {
+            stateMachine.assertCanRun(plan.getStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpMfgErrors.ERR_MRP_INVALID_PLAN_STATUS, e)
                     .param(ErpMfgErrors.ARG_PLAN_CODE, plan.getCode())
                     .param(ErpMfgErrors.ARG_CURRENT_STATUS, plan.getStatus());
         }
-        plan.setStatus(ErpMfgConstants.MRP_STATUS_RUNNING);
+        plan.setStatus(stateMachine.runTargetStatus());
         daoProvider.daoFor(ErpMfgMrpPlan.class).updateEntity(plan);
 
         IEntityDao<ErpMfgMrpPlanLine> lineDao = daoProvider.daoFor(ErpMfgMrpPlanLine.class);
@@ -95,7 +99,7 @@ public class MrpEngine {
                     null, new LinkedHashSet<>(), lineDao, lineNo);
         }
 
-        plan.setStatus(ErpMfgConstants.MRP_STATUS_COMPLETED);
+        plan.setStatus(stateMachine.completeTargetStatus());
         daoProvider.daoFor(ErpMfgMrpPlan.class).updateEntity(plan);
     }
 
