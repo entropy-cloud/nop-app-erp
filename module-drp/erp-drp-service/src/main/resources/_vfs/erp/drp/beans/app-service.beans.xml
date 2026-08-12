@@ -60,4 +60,11 @@
     <bean id="app.erp.drp.service.processor.ErpInvDrpSafetyStockCalcConfirmWritebackProcessor"
           class="app.erp.drp.service.processor.ErpInvDrpSafetyStockCalcConfirmWritebackProcessor"/>
 
+    <!-- 实体级 StateMachine Bean（plan 2026-08-12-1841-1 M2.14 + M2.15；契约 docs/architecture/entity-state-machine-bean.md §5）：
+         一 Bean 对应一实体一轴，严格无状态、可经 Delta 同名 bean id 覆盖。沿用既有 FQN-id 注册范式。 -->
+    <bean id="app.erp.drp.service.statemachine.ErpDrpPlanStateMachine"
+          class="app.erp.drp.service.statemachine.ErpDrpPlanStateMachine"/>
+    <bean id="app.erp.drp.service.statemachine.ErpDrpLineStateMachine"
+          class="app.erp.drp.service.statemachine.ErpDrpLineStateMachine"/>
+
 </beans>

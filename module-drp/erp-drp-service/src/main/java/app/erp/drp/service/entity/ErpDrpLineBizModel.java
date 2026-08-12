@@ -1,14 +1,13 @@
 package app.erp.drp.service.entity;
 
-import java.util.Objects;
 import app.erp.drp.biz.IErpDrpLineBiz;
 import app.erp.drp.dao.entity.ErpDrpLine;
-import app.erp.drp.service.ErpDrpConstants;
 import app.erp.drp.service.ErpDrpErrors;
 import app.erp.drp.service.processor.ErpDrpLineCancelLineProcessor;
 import app.erp.drp.service.processor.ErpDrpLineReleaseApprovedProcessor;
 import app.erp.drp.service.processor.ErpDrpLineReleaseLineProcessor;
 import app.erp.drp.service.processor.ErpDrpLineRejectLineProcessor;
+import app.erp.drp.service.statemachine.ErpDrpLineStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -45,6 +44,8 @@ public class ErpDrpLineBizModel extends CrudBizModel<ErpDrpLine> implements IErp
     ErpDrpLineRejectLineProcessor rejectLineProcessor;
     @Inject
     ErpDrpLineCancelLineProcessor cancelLineProcessor;
+    @Inject
+    ErpDrpLineStateMachine lineStateMachine;
 
     public ErpDrpLineBizModel() {
         setEntityName(ErpDrpLine.class.getName());
@@ -66,12 +67,16 @@ public class ErpDrpLineBizModel extends CrudBizModel<ErpDrpLine> implements IErp
     @BizMutation
     public ErpDrpLine approveLine(@Name("lineId") Long lineId, IServiceContext context) {
         ErpDrpLine line = requireEntity(String.valueOf(lineId), null, context);
-        if (!Objects.equals(line.getStatus(), ErpDrpConstants.DRP_LINE_STATUS_SUGGESTED)) {
-            throw new NopException(ErpDrpErrors.ERR_DRP_LINE_ILLEGAL_TRANSITION)
+        // 固定来源态守卫经 Line StateMachine Bean（保持 INLINE，不提取 Processor，参照 purchase Quotation/Rfq INLINE 先例）；
+        // 非 SUGGESTED 映射为既有 ERR_DRP_LINE_ILLEGAL_TRANSITION（参数 drpLineId/currentStatus 不变，common 层码作 cause）。
+        try {
+            lineStateMachine.assertCanApproveLine(line.getStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpDrpErrors.ERR_DRP_LINE_ILLEGAL_TRANSITION, e)
                     .param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId)
                     .param(ErpDrpErrors.ARG_CURRENT_STATUS, line.getStatus());
         }
-        line.setStatus(ErpDrpConstants.DRP_LINE_STATUS_APPROVED);
+        line.setStatus(lineStateMachine.approveLineTargetStatus());
         updateEntity(line, null, context);
         return line;
     }

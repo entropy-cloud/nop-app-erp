@@ -5,6 +5,8 @@ import app.erp.drp.dao.entity.ErpDrpParameter;
 import app.erp.drp.dao.entity.ErpDrpPlan;
 import app.erp.drp.service.ErpDrpConstants;
 import app.erp.drp.service.ErpDrpErrors;
+import app.erp.drp.service.statemachine.ErpDrpLineStateMachine;
+import app.erp.drp.service.statemachine.ErpDrpPlanStateMachine;
 import app.erp.inv.dao.entity.ErpInvTransferOrder;
 import app.erp.inv.dao.entity.ErpInvTransferOrderLine;
 import app.erp.md.dao.entity.ErpMdCurrency;
@@ -50,6 +52,10 @@ public class DrpReleaseService {
 
     @Inject
     IDaoProvider daoProvider;
+    @Inject
+    ErpDrpLineStateMachine lineStateMachine;
+    @Inject
+    ErpDrpPlanStateMachine planStateMachine;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -85,7 +91,7 @@ public class DrpReleaseService {
         }
         line.setOrderBillType(billType);
         line.setOrderBillCode(billCode);
-        line.setStatus(ErpDrpConstants.DRP_LINE_STATUS_ORDERED);
+        line.setStatus(lineStateMachine.releaseTargetStatus());
         daoProvider.daoFor(ErpDrpLine.class).updateEntity(line);
         advancePlanToExecutedIfComplete(line.getPlanId());
         return billCode;
@@ -123,13 +129,17 @@ public class DrpReleaseService {
         if (all.isEmpty()) {
             return;
         }
+        // 隐式「全部行终态」门控（动态业务守卫，非状态轴判断，保留原位）。
         for (ErpDrpLine l : all) {
             if (!Objects.equals(l.getStatus(), ErpDrpConstants.DRP_LINE_STATUS_ORDERED)
                     && !Objects.equals(l.getStatus(), ErpDrpConstants.DRP_LINE_STATUS_CANCELLED)) {
                 return; // 尚有未释放/未取消的行
             }
         }
-        plan.setStatus(ErpDrpConstants.DRP_PLAN_STATUS_EXECUTED);
+        // 防御性不变量加强（plan 2026-08-12-1841-1 Phase 2）：全行终态时 plan 必为 APPROVED（业务不变量），
+        // 经 Plan Bean 断言为 no-op；若数据漂移使 plan 非 APPROVED（如人工直改），Bean 抛 common 层码。
+        planStateMachine.assertCanAdvanceToExecuted(plan.getStatus());
+        plan.setStatus(planStateMachine.advanceToExecutedTargetStatus());
         daoProvider.daoFor(ErpDrpPlan.class).updateEntity(plan);
     }
 
@@ -141,11 +151,18 @@ public class DrpReleaseService {
         if (line == null) {
             throw new NopException(ErpDrpErrors.ERR_DRP_LINE_NOT_SUGGESTED).param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
         }
+        // 幂等：已 ORDERED 行重复释放 → ERR_DRP_LINE_ALREADY_ORDERED（独立语义，非矩阵非法边，保留原位）。
         if (Objects.equals(line.getStatus(), ErpDrpConstants.DRP_LINE_STATUS_ORDERED)) {
             throw new NopException(ErpDrpErrors.ERR_DRP_LINE_ALREADY_ORDERED).param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
         }
-        if (!Objects.equals(line.getStatus(), ErpDrpConstants.DRP_LINE_STATUS_APPROVED)) {
-            throw new NopException(ErpDrpErrors.ERR_DRP_LINE_NOT_SUGGESTED).param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
+        // 固定来源态守卫经 Line StateMachine Bean（仅 APPROVED 合法）；
+        // 非 APPROVED 映射为既有 ERR_DRP_LINE_NOT_SUGGESTED（误名，pre-existing，本重构不重命名），
+        // common 层码作 cause（契约 §7）。类型守卫（TRANSFER sourceWh / PURCHASE supplier）保留在 releaseLine 主体。
+        try {
+            lineStateMachine.assertCanRelease(line.getStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpDrpErrors.ERR_DRP_LINE_NOT_SUGGESTED, e)
+                    .param(ErpDrpErrors.ARG_DRP_LINE_ID, lineId);
         }
         return line;
     }

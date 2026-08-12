@@ -5,6 +5,7 @@ import app.erp.drp.dao.entity.ErpDrpParameter;
 import app.erp.drp.dao.entity.ErpDrpPlan;
 import app.erp.drp.service.ErpDrpConstants;
 import app.erp.drp.service.ErpDrpErrors;
+import app.erp.drp.service.statemachine.ErpDrpPlanStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
@@ -44,6 +45,8 @@ public class DrpEngine {
     IDaoProvider daoProvider;
     @Inject
     DrpDemandAggregator demandAggregator;
+    @Inject
+    ErpDrpPlanStateMachine planStateMachine;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -53,6 +56,10 @@ public class DrpEngine {
         this.demandAggregator = demandAggregator;
     }
 
+    public void setPlanStateMachine(ErpDrpPlanStateMachine planStateMachine) {
+        this.planStateMachine = planStateMachine;
+    }
+
     /**
      * 运行 DRP：计划状态 DRAFT→COMPUTED；清除既有 SUGGESTED 行后重算并写入 {@link ErpDrpLine}。
      *
@@ -60,12 +67,12 @@ public class DrpEngine {
      */
     public void runDrp(Long planId, List<DrpDemandAggregator.AggregatedDemand> aggregated) {
         ErpDrpPlan plan = requirePlan(planId);
-        if (plan.getStatus() != null && !Objects.equals(plan.getStatus(), ErpDrpConstants.DRP_PLAN_STATUS_DRAFT)) {
-            throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION)
-                    .param(ErpDrpErrors.ARG_PLAN_CODE, plan.getCode())
-                    .param(ErpDrpErrors.ARG_CURRENT_STATUS, plan.getStatus())
-                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS, ErpDrpConstants.DRP_PLAN_STATUS_DRAFT);
-        }
+        // 固定来源态守卫经 StateMachine Bean（plan 2026-08-12-1841-1 Phase 2）。
+        // 原代码 `status != null && !Objects.equals(status, DRAFT)` 对 null 放行（视为 DRAFT 等价，未初始化）；
+        // 为保留既有外部行为，null 归一化为 DRAFT 再交 Bean 判定。
+        String fromStatus = plan.getStatus() != null ? plan.getStatus() : ErpDrpConstants.DRP_PLAN_STATUS_DRAFT;
+        assertCanPlan("runDrp", plan, fromStatus, ErpDrpConstants.DRP_PLAN_STATUS_DRAFT,
+                () -> planStateMachine.assertCanRunDrp(fromStatus));
 
         IEntityDao<ErpDrpLine> lineDao = daoProvider.daoFor(ErpDrpLine.class);
         clearSuggestedLines(lineDao, planId);
@@ -111,7 +118,7 @@ public class DrpEngine {
         plan.setTotalReplenishmentQty(totalReplenishment);
         plan.setRunAt(CoreMetrics.currentTimestamp());
         // runBy（运行人）由 BizModel 层从 IServiceContext 注入用户身份后回写；helper 引擎不持有用户上下文
-        plan.setStatus(ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED);
+        plan.setStatus(planStateMachine.runDrpTargetStatus());
         daoProvider.daoFor(ErpDrpPlan.class).updateEntity(plan);
     }
 
@@ -122,17 +129,13 @@ public class DrpEngine {
     public void resetToDraft(Long planId) {
         ErpDrpPlan plan = requirePlan(planId);
         String status = plan.getStatus();
-        if (status == null || !(Objects.equals(status, ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED)
-                || Objects.equals(status, ErpDrpConstants.DRP_PLAN_STATUS_APPROVED))) {
-            throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION)
-                    .param(ErpDrpErrors.ARG_PLAN_CODE, plan.getCode())
-                    .param(ErpDrpErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS,
-                            ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED + "/" + ErpDrpConstants.DRP_PLAN_STATUS_APPROVED);
-        }
+        // 固定来源态守卫经 StateMachine Bean（plan 2026-08-12-1841-1 Phase 2）：合法来源 {COMPUTED, APPROVED}。
+        assertCanPlan("resetToDraft", plan, status,
+                ErpDrpConstants.DRP_PLAN_STATUS_COMPUTED + "/" + ErpDrpConstants.DRP_PLAN_STATUS_APPROVED,
+                () -> planStateMachine.assertCanResetToDraft(status));
         IEntityDao<ErpDrpLine> lineDao = daoProvider.daoFor(ErpDrpLine.class);
         clearSuggestedLines(lineDao, planId);
-        plan.setStatus(ErpDrpConstants.DRP_PLAN_STATUS_DRAFT);
+        plan.setStatus(planStateMachine.resetToDraftTargetStatus());
         plan.setTotalReplenishmentQty(null);
         daoProvider.daoFor(ErpDrpPlan.class).updateEntity(plan);
     }
@@ -184,5 +187,27 @@ public class DrpEngine {
 
     static BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    /**
+     * 经 Plan StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
+     * {@code ERR_DRP_PLAN_ILLEGAL_TRANSITION} + planCode/currentStatus/expectedStatus 上下文，common 码作 cause（契约 §7）。
+     *
+     * @param action         动作名（诊断用，与 Bean 的 action 元数据一致）
+     * @param plan           被操作的计划（提供 planCode 与原始 currentStatus 上下文）
+     * @param currentStatus  传入 Bean 的来源态（可能已归一化，如 null→DRAFT）
+     * @param expectedStatus 期望来源态描述（领域错误码参数，对外形状不变）
+     * @param beanCall       实际触发 Bean {@code assertCan<Action>} 的调用
+     */
+    private void assertCanPlan(String action, ErpDrpPlan plan, String currentStatus, String expectedStatus,
+                               Runnable beanCall) {
+        try {
+            beanCall.run();
+        } catch (NopException e) {
+            throw new NopException(ErpDrpErrors.ERR_DRP_PLAN_ILLEGAL_TRANSITION, e)
+                    .param(ErpDrpErrors.ARG_PLAN_CODE, plan.getCode())
+                    .param(ErpDrpErrors.ARG_CURRENT_STATUS, plan.getStatus())
+                    .param(ErpDrpErrors.ARG_EXPECTED_STATUS, expectedStatus);
+        }
     }
 }
