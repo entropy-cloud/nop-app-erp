@@ -51,7 +51,9 @@
 | approvedBy/approvedAt | 批准人/时间 |
 | 标准审计字段 | |
 
-**状态机**：`APPLIED → APPROVED`（正式准入）；`APPROVED → PROBATION`（试用，新供应商）；`PROBATION → APPROVED`（试用通过）；`APPROVED/PROBATION → SUSPENDED`（评分 standing=RED 触发，见联动规则）；`SUSPENDED → APPROVED`（恢复，需审批）；`APPLIED → REJECTED`。
+**状态机**：`apply(null|REJECTED → APPLIED)`（新建申请，或驳回后重新申请——REJECTED 非严格终态，经 apply 可恢复）；`APPLIED → APPROVED`（正式准入）；`APPROVED → PROBATION`（试用，新供应商）；`PROBATION → APPROVED`（试用通过）；`APPLIED/APPROVED/PROBATION → SUSPENDED`（评分 standing=RED 触发，见联动规则；含 APPLIED 申请中暂停——既有实现补充边）；`SUSPENDED → APPROVED`（恢复，需审批）；`APPLIED → REJECTED`。
+
+> **状态机 Bean**（plan 2026-08-12-2142-1 M2.1，契约 `docs/architecture/entity-state-machine-bean.md`）：固定来源态/目标态判断下沉 `ErpMdSupplierApprovalStateMachine` Bean（`module-master-data/erp-md-service`，status 单轴），非法边由 Bean 报 common 层码、BizModel/Processor 映射领域 `ERR_INVALID_APPROVAL_STATUS_TRANSITION`；动态业务守卫（approve 的资质校验、C3 date-range MUTEX）保留原位。suspend 幂等（已 SUSPENDED 直接 return，不抛）。REJECTED 经 apply 可恢复故 Bean `isTerminal` 对全部 dict 值返回 false、终态集为空。
 
 ### purchase 域：周期评分卡
 
