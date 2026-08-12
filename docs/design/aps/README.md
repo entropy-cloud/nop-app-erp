@@ -88,6 +88,7 @@ aps 域 TOPM「高级排产」，分组：工序工单（排产甘特图）、�
 | `README.md`（本文件） | 域概览、工序排产模型、跨域协作 |
 | `state-machine.md` | 工序工单状态机 |
 | `scheduling.md` | 排产算法（前向/后向/有限产能） |
+| `constraint-based-planning.md` | 约束排产深化设计（E1.3，2026-08-12 erp-survey 批次，暂不编码） |
 | `auto-dispatch.md` | 自动分派规则 |
 | `alternative-routing.md` | 替代工艺路线 |
 | `ui-patterns.md` | 前端模式（排产甘特图） |

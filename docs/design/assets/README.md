@@ -77,6 +77,7 @@
 | `README.md`（本文件） | 域概览、资产与折旧模型、跨域协作 |
 | `state-machine.md` | 资产卡片状态机、折旧计划状态 |
 | `depreciation-and-posting.md` | 折旧与财务打通详细机制 |
+| `audit-trail-and-custom-fieldsets.md` | 资产操作审计轨迹与自定义字段集设计（E1.5，2026-08-12 erp-survey 批次，暂不编码） |
 
 ## 实现落位提示
 

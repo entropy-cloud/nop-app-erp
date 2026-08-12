@@ -549,6 +549,16 @@ IErpFinAcctDocProvider.createFacts()
     └─► 审批拒绝 → REJECTED → 允许修改后重新提交
 ```
 
+### 跨域流程编排方向澄清（2026-08-12）
+
+针对「跨域业务链（多单据/多域串成一条流程）是否用 task.xml 任务化」的讨论，方向澄清如下（架构落位见 `docs/architecture/cross-domain-flow-orchestration.md`，本主题当前只保留分析+设计、暂不编码）：
+
+1. **不整体替换现有流程实现**——Processor 同步链（强一致）/ 事件链（最终一致）/ 审批 nop-wf 链保持。
+2. **采用「补充 wf 关联」形态**——每个现有 BizMethod 是流程的一部分，关联到 nop-wf 节点；流程配置由 **nop-wf**（而非 nop-task）执行。
+3. **BizMethod 不可变**——保持「输入 → Processor → 输出」形状，作为流程步骤的对齐 cadence。
+4. **先分析必要性再定形态**——必要性判定矩阵见 `cross-domain-flow-orchestration.md` §必要性分析框架。
+5. **子域可能独立微服务**——全局协调器形态为演进预留（同文档 §全局协调器）。
+
 ---
 
 ## 八、流程设计特点总结

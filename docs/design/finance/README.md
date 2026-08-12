@@ -113,6 +113,7 @@
 | `ar-ap-reconciliation.md` | 应收应付核销机制、余额计算、账龄分析、辅助账项回写 |
 | `bad-debt.md` | 坏账准备生命周期（计提/核销/收回/释放）、账龄分桶计提、应收 NRV、期末 allowance 充足性门控 |
 | `multiple-accounting-schemas.md` | 多账套并行核算机制、账套管理、账套转换 |
+| `document-driven-ap-automation.md` | 文档驱动 AP 自动化管道设计（E1.2，2026-08-12 erp-survey 批次，暂不编码） |
 
 ## 实现落位提示
 

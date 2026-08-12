@@ -1,4 +1,4 @@
-# Mission Driver：Loop Engineering 通用实现的概念澄清——它解决什么问题，为什么这样设计
+# 关于《Mission Driver：Loop Engineering 的一种通用参考实现》的补充说明
 
 > 写给读过《Mission Driver：Loop Engineering 的一种通用参考实现》和《Loop Engineering × Attractor》PPT 的读者
 >
