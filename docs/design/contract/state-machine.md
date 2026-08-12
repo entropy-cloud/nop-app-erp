@@ -20,6 +20,8 @@
 
 > L-5 补：CANCELLED 态在 §2 迁移图中早已使用（`DRAFT → CANCELLED` 草稿废弃路径），但 §1 定义表遗漏。CANCELLED 与 TERMINATED 的区别：CANCELLED 仅限 DRAFT 阶段的草稿废弃（未生效，无版本归档，无业务回写）；TERMINATED 是已生效合同（ACTIVE/NEGOTIATION）的提前终止（已生效，需归档版本与关联终止协议）。
 
+> **实现漂移注记（plan 2026-08-12-1118-1 层 2 四方对照裁定）**：CANCELLED 为**目标态未落地**——dict `erp-ct/contract-status`（`module-contract/model/app-erp-contract.orm.xml`）仅含 6 值（DRAFT/NEGOTIATION/ACTIVE/SUSPENDED/EXPIRED/TERMINATED），**缺 CANCELLED 值**；全域零 `setStatus(CANCELLED)` writer。即 `DRAFT → CANCELLED` 草稿废弃迁移在 dict 与 writer 双侧均不存在，DRAFT 废弃当前经 CRUD 删除。`ErpCtContractStateMachine` Bean 据实不将 CANCELLED 纳入终态集。**Successor**：PM 要求草稿废弃命名动作时，开独立 plan 新增 dict 值 + cancel mutation（触及 `model/*.orm.xml` 保护区 ask-first）。
+
 ### 2. 迁移完整性
 
 ```
@@ -51,6 +53,12 @@ DRAFT（草稿）
 | ACTIVE→SUSPENDED | 合同管理员 | 双方确认中止，填写中止原因 | 版本冻结 |
 | SUSPENDED→ACTIVE | 合同管理员 | 中止状态解除，双方确认恢复 | 版本恢复生效 |
 | NEGOTIATION→TERMINATED | 合同管理员 | 谈判破裂，双方确认终止 | 版本归档 |
+
+> **迁移图实现漂移注记（plan 2026-08-12-1118-1 层 2 四方对照裁定）**：上图声明 9 条迁移边，其中两条**命名动作 writer 未落地**，`ErpCtContractStateMachine` Bean 据实不编码：
+> - **DRAFT→NEGOTIATION（提交谈判）**：全域零 `setStatus(NEGOTIATION)` writer（无 `submitForNegotiation` 命名动作），NEGOTIATION 仅作为 activate/terminate 的源态被消费，命名动作路径下从 DRAFT 不可达（仅经 CRUD `save` 可写，M0.1 §9.4 残留风险）。**Successor**：合同提交谈判业务流落地时开独立 plan。
+> - **DRAFT→CANCELLED（草稿废弃）**：dict 缺 CANCELLED 值 + 零 writer（详见 §1 实现漂移注记）。
+>
+> Bean 仅编码**已实现**的 7 条边（activate/suspend/resume/terminate[多源]/expire/amend）。已实现边与本图一致，无 §迁移表 vs §实现约定 的内部语义漂移。
 
 ### 3. 终态与恢复
 

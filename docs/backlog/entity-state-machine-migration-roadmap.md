@@ -63,7 +63,7 @@
 | M2.15 | ErpDrpLine.status DrpLine 生命周期 Bean | todo | `drp/state-machine.md` §Line | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.16 | ErpB2bAsn.status Asn 生命周期 Bean | todo | `b2b/state-machine.md` §Asn | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.17 | ErpB2bEdiDoc.state EdiDoc 生命周期 Bean | todo | `b2b/state-machine.md` §EdiDoc | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M2.18 | ErpCtContract.status Contract 生命周期 Bean | todo | `contract/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M2.18 | ErpCtContract.status Contract 生命周期 Bean | done | `contract/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.19 | ErpMfgForecast.status Forecast 生命周期 Bean | todo | `manufacturing/state-machine.md` §Forecast | M1.3 | `nop-backend-dev` + `nop-testing` |
 
 > M0.2 必须在本节追加每个已分类的无财务影响复杂业务或审批状态轴的独立工作项。审批轴和业务生命周期轴分开迁移；有跨域副作用的 action 仅替换固定来源/目标状态判断。
