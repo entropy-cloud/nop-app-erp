@@ -9,6 +9,7 @@ import app.erp.prj.service.processor.ErpPrjProjectCloseProjectProcessor;
 import app.erp.prj.service.processor.ErpPrjProjectHoldProjectProcessor;
 import app.erp.prj.service.processor.ErpPrjProjectRefreshActualCostProcessor;
 import app.erp.prj.service.processor.ErpPrjProjectResumeProjectProcessor;
+import app.erp.prj.service.statemachine.ErpPrjProjectStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -54,6 +55,8 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
     ErpPrjProjectResumeProjectProcessor resumeProjectProcessor;
     @Inject
     ErpPrjProjectRefreshActualCostProcessor refreshActualCostProcessor;
+    @Inject
+    ErpPrjProjectStateMachine stateMachine;
 
     public ErpPrjProjectBizModel() {
         setEntityName(ErpPrjProject.class.getName());
@@ -88,15 +91,11 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
     @BizMutation
     public ErpPrjProject startProject(@Name("projectId") Long projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
-        // 立项前校验必填字段（config-gated STRICT/WARN，对齐 state-machine.md §迁移完整性 DRAFT→OPEN）
+        // 动态守卫保留原位：立项前校验必填字段（config-gated STRICT/WARN，对齐 state-machine.md §迁移完整性 DRAFT→OPEN）
         validateStartPreconditions(project);
         String status = project.getStatus();
-        if (!Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_DRAFT)) {
-            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
-                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
-                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
-        }
-        project.setStatus(ErpPrjConstants.PROJECT_STATUS_OPEN);
+        assertCan("start", projectId, status);
+        project.setStatus(stateMachine.startTargetStatus());
         updateEntity(project, null, context);
         return project;
     }
@@ -118,15 +117,38 @@ public class ErpPrjProjectBizModel extends CrudBizModel<ErpPrjProject> implement
     public ErpPrjProject cancelProject(@Name("projectId") Long projectId, IServiceContext context) {
         ErpPrjProject project = requireEntity(String.valueOf(projectId), null, context);
         String status = project.getStatus();
-        if (Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_COMPLETED)
-                || Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_CANCELLED)) {
+        // 终态走领域码 ERR_PROJECT_NOT_CLOSABLE（保持既有外部错误码）；非终态经 Bean 矩阵守卫
+        // （cancel 非终态 DRAFT/OPEN/ON_HOLD 均合法）。参照 M1.1 ErpCsTicketBizModel.cancel 防冲突范式（契约 §11.4）。
+        if (stateMachine.isTerminal(status)) {
             throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
                     .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
                     .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
         }
-        project.setStatus(ErpPrjConstants.PROJECT_STATUS_CANCELLED);
+        stateMachine.assertCanCancel(status);
+        project.setStatus(stateMachine.cancelTargetStatus());
         updateEntity(project, null, context);
         return project;
+    }
+
+    /**
+     * 经 StateMachine Bean 断言来源态合法（start）；非法边（Bean 报告 common 层码）映射为领域
+     * {@code ERR_PROJECT_NOT_CLOSABLE}（项目域 start/cancel/Hold/Resume/Close 共享此码）+ 项目编号/上下文，
+     * common 码作 cause 保留（契约 §7）。cancel 的终态拒绝不经此 helper（终态优先走领域码路径，见 cancelProject）。
+     */
+    private void assertCan(String action, Long projectId, String from) {
+        try {
+            switch (action) {
+                case "start":
+                    stateMachine.assertCanStart(from);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unexpected action: " + action);
+            }
+        } catch (NopException e) {
+            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE, e)
+                    .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
+                    .param(ErpPrjErrors.ARG_CURRENT_STATUS, from);
+        }
     }
 
     /**

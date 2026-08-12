@@ -7,6 +7,7 @@ import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
 import app.erp.prj.service.cost.ExpenseCostAggregator;
 import app.erp.prj.service.cost.ProjectCostAggregator;
+import app.erp.prj.service.statemachine.ErpPrjProjectStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -18,7 +19,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
@@ -46,16 +46,21 @@ public class ErpPrjProjectCloseProjectProcessor {
     ExpenseCostAggregator expenseCostAggregator;
     @Inject
     IErpPrjTaskBiz taskBiz;
+    @Inject
+    ErpPrjProjectStateMachine stateMachine;
 
     public ErpPrjProject closeProject(Long projectId, IServiceContext context) {
         ErpPrjProject project = requireProject(projectId);
         String status = project.getStatus();
-        if (status == null || !Objects.equals(status, ErpPrjConstants.PROJECT_STATUS_OPEN)) {
-            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE)
+        try {
+            stateMachine.assertCanClose(status);
+        } catch (NopException e) {
+            // 非法边（Bean 报告 common 层码）映射为领域 ERR_PROJECT_NOT_CLOSABLE + 项目上下文，common 码作 cause（契约 §7）
+            throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_CLOSABLE, e)
                     .param(ErpPrjErrors.ARG_PROJECT_ID, projectId)
                     .param(ErpPrjErrors.ARG_CURRENT_STATUS, status);
         }
-        // 关闭前校验任务已结束（config-gated STRICT/WARN，对齐 state-machine.md §迁移完整性 OPEN→COMPLETED）
+        // 动态守卫保留原位：关闭前校验任务已结束（config-gated STRICT/WARN，对齐 state-machine.md §迁移完整性 OPEN→COMPLETED）
         validateTasksFinished(projectId, context);
         // 关闭前刷新实际成本（保证关账数据完整，对齐 §4.3）
         costAggregator.refreshActualCost(projectId);
@@ -64,7 +69,7 @@ public class ErpPrjProjectCloseProjectProcessor {
             expenseCostAggregator.refreshExpenseCost(projectId);
         }
         project = projectDao().getEntityById(projectId);
-        project.setStatus(ErpPrjConstants.PROJECT_STATUS_COMPLETED);
+        project.setStatus(stateMachine.closeTargetStatus());
         projectDao().updateEntity(project);
         return project;
     }

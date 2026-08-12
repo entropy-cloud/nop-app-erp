@@ -8,6 +8,13 @@
 
     <import resource="_service.beans.xml"/>
 
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：每 Bean 对应
+          一个实体的一条状态轴。按类型注入 BizModel/Processor；Delta 同名 bean id 覆盖替换基线矩阵（§6）。 -->
+    <bean id="app.erp.prj.service.statemachine.ErpPrjTaskStateMachine"
+          class="app.erp.prj.service.statemachine.ErpPrjTaskStateMachine"/>
+    <bean id="app.erp.prj.service.statemachine.ErpPrjProjectStateMachine"
+          class="app.erp.prj.service.statemachine.ErpPrjProjectStateMachine"/>
+
     <!-- 项目业财过账：执行器 + 工时派发器 + PROJECT_COST_COLLECTION Provider（Registry 容器级 collect-by-type 自动收录） -->
     <bean id="app.erp.prj.service.posting.ProjectPostingExecutor"
           class="app.erp.prj.service.posting.ProjectPostingExecutor"/>

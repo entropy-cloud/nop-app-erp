@@ -5,6 +5,7 @@ import app.erp.prj.dao.entity.ErpPrjTask;
 import app.erp.prj.service.ErpPrjConfigs;
 import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
+import app.erp.prj.service.statemachine.ErpPrjTaskStateMachine;
 import app.erp.prj.service.validator.TaskDependencyValidator;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -18,6 +19,7 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErpPrjTaskBiz {
 
     private static final Logger LOG = LoggerFactory.getLogger(ErpPrjTaskBizModel.class);
+
+    @Inject
+    ErpPrjTaskStateMachine stateMachine;
 
     public ErpPrjTaskBizModel() {
         setEntityName(ErpPrjTask.class.getName());
@@ -108,11 +113,10 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
     public ErpPrjTask startTask(@Name("taskId") Long taskId, IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();
-        if (status == null || !Objects.equals(status, ErpPrjConstants.TASK_STATUS_TODO)) {
-            throw illegalTransition(taskId, status, ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
-        }
+        assertCan("start", taskId, status, ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+        // 动态守卫保留原位：前置任务完成检查（task-dag.md §4.3，config-gated STRICT/WARN）
         validatePredecessorDone(task);
-        task.setStatus(ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+        task.setStatus(stateMachine.startTargetStatus());
         task.setActualStartDate(CoreMetrics.currentDate());
         updateEntity(task, null, context);
         return task;
@@ -123,10 +127,8 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
     public ErpPrjTask completeTask(@Name("taskId") Long taskId, IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();
-        if (status == null || !Objects.equals(status, ErpPrjConstants.TASK_STATUS_IN_PROGRESS)) {
-            throw illegalTransition(taskId, status, ErpPrjConstants.TASK_STATUS_DONE);
-        }
-        task.setStatus(ErpPrjConstants.TASK_STATUS_DONE);
+        assertCan("complete", taskId, status, ErpPrjConstants.TASK_STATUS_DONE);
+        task.setStatus(stateMachine.completeTargetStatus());
         task.setActualEndDate(CoreMetrics.currentDate());
         updateEntity(task, null, context);
         return task;
@@ -139,14 +141,13 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
                                 IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();
-        if (status == null || !Objects.equals(status, ErpPrjConstants.TASK_STATUS_IN_PROGRESS)) {
-            throw illegalTransition(taskId, status, ErpPrjConstants.TASK_STATUS_BLOCKED);
-        }
+        assertCan("block", taskId, status, ErpPrjConstants.TASK_STATUS_BLOCKED);
+        // 动态守卫保留原位：阻塞须填写 blockReason
         if (blockReason == null || blockReason.trim().isEmpty()) {
             throw new NopException(ErpPrjErrors.ERR_TASK_BLOCK_REASON_REQUIRED)
                     .param(ErpPrjErrors.ARG_TASK_ID, taskId);
         }
-        task.setStatus(ErpPrjConstants.TASK_STATUS_BLOCKED);
+        task.setStatus(stateMachine.blockTargetStatus());
         task.setBlockReason(blockReason);
         updateEntity(task, null, context);
         return task;
@@ -157,10 +158,8 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
     public ErpPrjTask unblockTask(@Name("taskId") Long taskId, IServiceContext context) {
         ErpPrjTask task = requireEntity(String.valueOf(taskId), null, context);
         String status = task.getStatus();
-        if (status == null || !Objects.equals(status, ErpPrjConstants.TASK_STATUS_BLOCKED)) {
-            throw illegalTransition(taskId, status, ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
-        }
-        task.setStatus(ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+        assertCan("unblock", taskId, status, ErpPrjConstants.TASK_STATUS_IN_PROGRESS);
+        task.setStatus(stateMachine.unblockTargetStatus());
         task.setBlockReason(null);
         updateEntity(task, null, context);
         return task;
@@ -323,8 +322,39 @@ public class ErpPrjTaskBizModel extends CrudBizModel<ErpPrjTask> implements IErp
         return dao.getEntityById(taskId);
     }
 
+    /**
+     * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
+     * {@code ERR_TASK_ILLEGAL_STATUS_TRANSITION} + 任务编号/上下文，common 码作 cause 保留（契约 §7）。
+     */
+    private void assertCan(String action, Long taskId, String from, String target) {
+        try {
+            switch (action) {
+                case "start":
+                    stateMachine.assertCanStart(from);
+                    break;
+                case "complete":
+                    stateMachine.assertCanComplete(from);
+                    break;
+                case "block":
+                    stateMachine.assertCanBlock(from);
+                    break;
+                case "unblock":
+                    stateMachine.assertCanUnblock(from);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unexpected action: " + action);
+            }
+        } catch (NopException e) {
+            throw illegalTransition(taskId, from, target, e);
+        }
+    }
+
     private NopException illegalTransition(Long taskId, String current, String target) {
-        return new NopException(ErpPrjErrors.ERR_TASK_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(taskId, current, target, null);
+    }
+
+    private NopException illegalTransition(Long taskId, String current, String target, Throwable cause) {
+        return new NopException(ErpPrjErrors.ERR_TASK_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpPrjErrors.ARG_TASK_ID, taskId)
                 .param(ErpPrjErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpPrjErrors.ARG_TARGET_STATUS, target);
