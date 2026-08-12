@@ -264,4 +264,16 @@ public interface ErpPurErrors {
     ErrorCode ERR_PUR_APPROVER_IS_CREATOR = ErrorCode.define("erp.err.pur.approver-is-creator",
             "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
             ARG_USER_ID);
+
+    // --- 报价单/询价单 docStatus 守卫（plan 2026-08-12-0918-1 Phase 3，Quotation/Rfq 缺失守卫漂移 Fix） ---
+    String ARG_QUOTATION_CODE = "quotationCode";
+    String ARG_RFQ_CODE = "rfqCode";
+
+    ErrorCode ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION = ErrorCode.define("erp.err.pur.quotation-illegal-doc-status-transition",
+            "报价单 {quotationCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_QUOTATION_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
+
+    ErrorCode ERR_RFQ_ILLEGAL_DOC_STATUS_TRANSITION = ErrorCode.define("erp.err.pur.rfq-illegal-doc-status-transition",
+            "询价单 {rfqCode} 当前单据状态={currentDocStatus}，不允许执行该操作（期望状态={expectedDocStatus}）",
+            ARG_RFQ_CODE, ARG_CURRENT_DOC_STATUS, ARG_EXPECTED_DOC_STATUS);
 }

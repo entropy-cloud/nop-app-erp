@@ -1,21 +1,31 @@
 package app.erp.pur.service.processor;
 
 import app.erp.pur.dao.entity.ErpPurRequisition;
-import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.statemachine.ErpPurRequisitionDocumentStateMachine;
 import app.erp.common.service.AbstractCancelProcessor;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpPurRequisition cancel per-mutation Processor (plan 2026-07-25-1057-2).
- * Runs the AbstractCancelProcessor skeleton; delegates domain-specific hooks to ErpPurRequisitionProcessor.
+ * ErpPurRequisition cancel per-mutation Processor (plan 2026-07-25-1057-2；StateMachine 接线 plan 2026-08-12-0918-1 M2.7)。
+ *
+ * <p>运行 {@link AbstractCancelProcessor} 骨架；固定来源态/目标态判断委托
+ * {@link ErpPurRequisitionDocumentStateMachine}（docStatus 业务生命周期轴 Bean，契约 §4/§7）。
+ * Requisition 无 beforeCancel 业务 hook（保持）。
+ *
+ * <p>非法边映射：Bean 抛 common 层码作 cause，{@link #validateTransitionForCancel} 捕获后映射领域码
+ * {@link ErpPurErrors#ERR_REQ_ILLEGAL_DOC_STATUS_TRANSITION}（+ {@code requisitionCode} 实体编号/上下文）。
  */
 public class ErpPurRequisitionCancelProcessor extends AbstractCancelProcessor<ErpPurRequisition> {
 
     @Inject
     ErpPurRequisitionProcessor processor;
+
+    @Inject
+    ErpPurRequisitionDocumentStateMachine stateMachine;
 
     @Override
     protected IEntityDao<ErpPurRequisition> dao() {
@@ -37,6 +47,15 @@ public class ErpPurRequisitionCancelProcessor extends AbstractCancelProcessor<Er
     }
 
     @Override
+    protected void validateTransitionForCancel(ErpPurRequisition entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanCancel(entity.getDocStatus());
+        } catch (NopException e) {
+            throw illegalStatusException(entity, entity.getDocStatus(), "非已作废");
+        }
+    }
+
+    @Override
     protected String getDocStatus(ErpPurRequisition entity) {
         return entity.getDocStatus();
     }
@@ -48,6 +67,6 @@ public class ErpPurRequisitionCancelProcessor extends AbstractCancelProcessor<Er
 
     @Override
     protected String cancelledDocStatus() {
-        return ErpPurConstants.DOC_STATUS_CANCELLED;
+        return stateMachine.cancelTargetStatus();
     }
 }

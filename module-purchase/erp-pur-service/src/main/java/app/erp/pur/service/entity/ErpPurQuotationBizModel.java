@@ -2,10 +2,10 @@
 package app.erp.pur.service.entity;
 
 import app.erp.pur.biz.IErpPurQuotationBiz;
-import app.erp.pur.dao.constants.ErpPurDocStatus;
 import app.erp.pur.dao.entity.ErpPurQuotation;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.SupplierEligibilityChecker;
+import app.erp.pur.service.statemachine.ErpPurQuotationDocumentStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -27,6 +27,11 @@ import org.slf4j.LoggerFactory;
  *
  * <p>{@link #defaultPrepareSave} 委托 {@link SupplierEligibilityChecker}：
  * PREVENT → 抛 {@link ErpPurErrors#ERR_SUPPLIER_NOT_APPROVED}；WARN（YELLOW）→ 仅记录日志提示，不阻止保存。
+ *
+ * <p><b>docStatus cancel 守卫（plan 2026-08-12-0918-1 Phase 3 Fix）</b>：{@link #cancel} 经
+ * {@link ErpPurQuotationDocumentStateMachine} 断言来源态合法（owner doc §2「非已作废」守卫）。
+ * 迁移前 cancel 无守卫（允许幂等 CANCELLED→CANCELLED）→ 经层 2 四方对照裁定为 implementation drift → Fix：
+ * 已作废报价单再 cancel 抛领域码 {@link ErpPurErrors#ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION}。
  */
 @BizModel("ErpPurQuotation")
 public class ErpPurQuotationBizModel extends CrudBizModel<ErpPurQuotation> implements IErpPurQuotationBiz {
@@ -35,6 +40,9 @@ public class ErpPurQuotationBizModel extends CrudBizModel<ErpPurQuotation> imple
 
     @Inject
     SupplierEligibilityChecker eligibilityChecker;
+
+    @Inject
+    ErpPurQuotationDocumentStateMachine stateMachine;
 
     public ErpPurQuotationBizModel() {
         setEntityName(ErpPurQuotation.class.getName());
@@ -62,7 +70,15 @@ public class ErpPurQuotationBizModel extends CrudBizModel<ErpPurQuotation> imple
     @BizMutation
     public ErpPurQuotation cancel(@Name("quotationId") Long quotationId, IServiceContext context) {
         ErpPurQuotation quotation = requireEntity(String.valueOf(quotationId), null, context);
-        quotation.setDocStatus(ErpPurDocStatus.DOC_STATUS_CANCELLED);
+        try {
+            stateMachine.assertCanCancel(quotation.getDocStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpPurErrors.ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION)
+                    .param(ErpPurErrors.ARG_QUOTATION_CODE, quotation.getCode())
+                    .param(ErpPurErrors.ARG_CURRENT_DOC_STATUS, quotation.getDocStatus())
+                    .param(ErpPurErrors.ARG_EXPECTED_DOC_STATUS, "非已作废");
+        }
+        quotation.setDocStatus(stateMachine.cancelTargetStatus());
         updateEntity(quotation, null, context);
         return quotation;
     }

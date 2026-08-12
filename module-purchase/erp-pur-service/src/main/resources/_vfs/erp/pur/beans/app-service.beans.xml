@@ -168,4 +168,17 @@
     <!-- SupplierScorecard D-mutation per-mutation Processor (R6.5 类别 B) -->
     <bean id="app.erp.pur.service.processor.ErpPurSupplierScorecardFinalizeScorecardProcessor"
           class="app.erp.pur.service.processor.ErpPurSupplierScorecardFinalizeScorecardProcessor"/>
+
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
+         一实体一轴。docStatus 业务生命周期轴 Bean（M2.5/M2.6/M2.7/M2.8），承载 DRAFT→CANCELLED 最小迁移矩阵 +
+         终态/初始态分类 + 只读元数据。approveStatus 审批轴归 M3.2-M3.5 各自独立 Bean（命名带 Approval 后缀）。
+         按类型注入（@Inject 非 private，合规 R5）；Delta 同名 Bean 覆盖路径见契约 §6。 -->
+    <bean id="app.erp.pur.service.statemachine.ErpPurOrderDocumentStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurOrderDocumentStateMachine"/>
+    <bean id="app.erp.pur.service.statemachine.ErpPurRequisitionDocumentStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurRequisitionDocumentStateMachine"/>
+    <bean id="app.erp.pur.service.statemachine.ErpPurQuotationDocumentStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurQuotationDocumentStateMachine"/>
+    <bean id="app.erp.pur.service.statemachine.ErpPurRfqDocumentStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurRfqDocumentStateMachine"/>
 </beans>
