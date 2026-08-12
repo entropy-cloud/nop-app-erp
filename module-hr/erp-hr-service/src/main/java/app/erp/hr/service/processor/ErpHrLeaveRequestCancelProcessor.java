@@ -2,14 +2,18 @@ package app.erp.hr.service.processor;
 
 import app.erp.hr.biz.IErpHrShiftBiz;
 import app.erp.hr.dao.entity.ErpHrLeaveRequest;
-import app.erp.hr.service.ErpHrConstants;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 /**
  * ErpHrLeaveRequest cancel per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
- * 自包含 APPROVED→CANCELLED 取消编排：状态守卫 + 排班联动解除（UC-HR-02）。
- * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。共享 helper 单一真相源在 {@link AbstractErpHrLeaveRequestProcessor}。
+ * 自包含 APPROVED→CANCELLED 取消编排（<strong>单源</strong>，对齐生产代码）：状态守卫 + 排班联动解除（UC-HR-02）。
+ *
+ * <p>固定来源态/目标态判断委托 {@link app.erp.hr.service.statemachine.ErpHrLeaveRequestStateMachine}
+ * （Bean 矩阵权威，契约 §4/§7）；非法边由 {@link #assertCanCancel} 映射领域码。**cancel 保持单源 APPROVED→CANCELLED**
+ * （不放开至 DRAFT/SUBMITTED——owner doc §2/§6 漂移在 layer-2 登记，非本重构改业务行为）。
+ * **动态副作用保留原位**：排班联动解除（{@link IErpHrShiftBiz#onLeaveCancelled}）。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
+ * 共享 helper 单一真相源在 {@link AbstractErpHrLeaveRequestProcessor}。
  */
 public class ErpHrLeaveRequestCancelProcessor extends AbstractErpHrLeaveRequestProcessor {
 
@@ -18,8 +22,8 @@ public class ErpHrLeaveRequestCancelProcessor extends AbstractErpHrLeaveRequestP
 
     public ErpHrLeaveRequest cancel(String id, IServiceContext context) {
         ErpHrLeaveRequest leave = requireLeave(id);
-        requireStatus(leave, ErpHrConstants.LEAVE_STATUS_APPROVED, ErpHrConstants.LEAVE_STATUS_CANCELLED);
-        leave.setStatus(ErpHrConstants.LEAVE_STATUS_CANCELLED);
+        assertCanCancel(leave);
+        leave.setStatus(stateMachine.cancelTargetStatus());
         leaveRequestDao().updateEntity(leave);
         shiftBiz.onLeaveCancelled(leave.getId(), context);
         return leave;

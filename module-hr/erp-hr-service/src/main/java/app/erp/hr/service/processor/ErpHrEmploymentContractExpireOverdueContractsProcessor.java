@@ -2,6 +2,7 @@ package app.erp.hr.service.processor;
 
 import app.erp.hr.dao.entity.ErpHrEmploymentContract;
 import app.erp.hr.service.ErpHrConstants;
+import app.erp.hr.service.statemachine.ErpHrEmploymentContractStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -21,7 +22,10 @@ import static io.nop.api.core.beans.FilterBeans.lt;
 /**
  * ErpHrEmploymentContract expireOverdueContracts per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含逾期合同批量到期编排（ACTIVE 且 endDate &lt; today → EXPIRED，逐条容错跳过失败项并告警）。
- * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
+ *
+ * <p>固定来源态/目标态判断委托 {@link ErpHrEmploymentContractStateMachine}（Bean 矩阵权威，契约 §4/§7）。
+ * 查询已限定 status=ACTIVE，{@code assertCanExpire(ACTIVE)} 在常规流程下必过；异常路径（并发状态变更）
+ * 由本类既有 try/catch 容错跳过 + 告警。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpHrEmploymentContractExpireOverdueContractsProcessor {
 
@@ -29,6 +33,8 @@ public class ErpHrEmploymentContractExpireOverdueContractsProcessor {
 
     @Inject
     IDaoProvider daoProvider;
+    @Inject
+    ErpHrEmploymentContractStateMachine stateMachine;
 
     public List<ErpHrEmploymentContract> expireOverdueContracts(IServiceContext context) {
         LocalDate now = CoreMetrics.today();
@@ -39,7 +45,8 @@ public class ErpHrEmploymentContractExpireOverdueContractsProcessor {
         List<ErpHrEmploymentContract> expired = new ArrayList<>();
         for (ErpHrEmploymentContract c : overdue) {
             try {
-                c.setStatus(ErpHrConstants.CONTRACT_STATUS_EXPIRED);
+                stateMachine.assertCanExpire(c.getStatus());
+                c.setStatus(stateMachine.expireTargetStatus());
                 contractDao().updateEntity(c);
                 expired.add(c);
             } catch (Exception ex) {

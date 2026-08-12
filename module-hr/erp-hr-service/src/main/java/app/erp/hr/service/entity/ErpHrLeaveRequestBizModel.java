@@ -22,6 +22,8 @@ import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.processor.ErpHrLeaveRequestApproveProcessor;
 import app.erp.hr.service.processor.ErpHrLeaveRequestCancelProcessor;
 import app.erp.hr.service.processor.ErpHrLeaveRequestSubmitProcessor;
+import app.erp.hr.service.statemachine.ErpHrLeaveRequestStateMachine;
+import app.erp.common.service.ErpCommonErrors;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
@@ -53,6 +55,8 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
     ErpHrLeaveRequestApproveProcessor approveProcessor;
     @Inject
     ErpHrLeaveRequestCancelProcessor cancelProcessor;
+    @Inject
+    ErpHrLeaveRequestStateMachine stateMachine;
 
     public ErpHrLeaveRequestBizModel() {
         setEntityName(ErpHrLeaveRequest.class.getName());
@@ -94,8 +98,17 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
     @BizMutation
     public ErpHrLeaveRequest reject(@Name("id") String id, IServiceContext context) {
         ErpHrLeaveRequest leave = requireEntity(id, null, context);
-        requireStatus(leave, ErpHrConstants.LEAVE_STATUS_SUBMITTED, ErpHrConstants.LEAVE_STATUS_REJECTED);
-        leave.setStatus(ErpHrConstants.LEAVE_STATUS_REJECTED);
+        // 固定来源态/目标态判断委托 ErpHrLeaveRequestStateMachine（Bean 矩阵权威，契约 §4/§7）；
+        // 非法边 Bean 抛 common 层码，此处映射领域 ERR_LEAVE_ILLEGAL_STATUS_TRANSITION（common 码作 cause）。
+        try {
+            stateMachine.assertCanReject(leave.getStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION, e)
+                    .param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId())
+                    .param(ErpHrErrors.ARG_CURRENT_STATUS, leave.getStatus())
+                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, e.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
+        }
+        leave.setStatus(stateMachine.rejectTargetStatus());
         updateEntity(leave, null, context);
         return leave;
     }
@@ -120,15 +133,6 @@ public class ErpHrLeaveRequestBizModel extends CrudBizModel<ErpHrLeaveRequest> i
     }
 
     // ---------- validation gates ----------
-
-    void requireStatus(ErpHrLeaveRequest leave, String expected, String target) {
-        if (!expected.equals(leave.getStatus())) {
-            throw new NopException(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId())
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, leave.getStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, expected);
-        }
-    }
 
     void checkLeaveBalance(ErpHrLeaveRequest leave, IServiceContext context) {
         Integer fiscalYear = leave.getStartDate() != null ? leave.getStartDate().getYear() : null;

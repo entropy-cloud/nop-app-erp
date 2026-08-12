@@ -11,6 +11,7 @@ import app.erp.hr.dao.entity.ErpHrPosition;
 import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.statemachine.ErpHrEmploymentContractStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -64,6 +65,8 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
     IErpHrEmploymentContractBiz employmentContractBiz;
     @Inject
     IErpHrLeaveRequestBiz leaveRequestBiz;
+    @Inject
+    ErpHrEmploymentContractStateMachine contractStateMachine;
 
     public ErpHrEmployee transferEmployee(Long employeeId,
                                           Long targetDepartmentId,
@@ -187,7 +190,17 @@ public class ErpHrEmployeeTransferEmployeeProcessor {
         }
         ErpHrEmploymentContract active = findActiveContract(employee.getId(), context);
         if (active != null) {
-            active.setStatus(ErpHrConstants.CONTRACT_STATUS_TERMINATED);
+            // 固定来源态/目标态判断委托 ErpHrEmploymentContractStateMachine（Bean 矩阵权威，契约 §4/§7）：
+            // terminate 仅 ACTIVE 合法。findActiveContract 已限定 status=ACTIVE，常规流程必过；非法边 Bean 抛
+            // common 层码，此处映射领域 ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION（common 码作 cause）。
+            try {
+                contractStateMachine.assertCanTerminate(active.getStatus());
+            } catch (NopException e) {
+                throw new NopException(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION, e)
+                        .param(ErpHrErrors.ARG_CONTRACT_ID, active.getId())
+                        .param(ErpHrErrors.ARG_CURRENT_STATUS, active.getStatus());
+            }
+            active.setStatus(contractStateMachine.terminateTargetStatus());
             employmentContractBiz.updateEntity(active, null, context);
         }
         ErpHrEmploymentContract successor = newContractFrom(active, employee, effectiveDate);

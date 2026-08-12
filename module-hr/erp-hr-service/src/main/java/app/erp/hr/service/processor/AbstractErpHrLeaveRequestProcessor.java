@@ -1,10 +1,12 @@
 package app.erp.hr.service.processor;
 
+import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.biz.IErpHrLeaveBalanceBiz;
 import app.erp.hr.dao.entity.ErpHrLeaveBalance;
 import app.erp.hr.dao.entity.ErpHrLeaveRequest;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
+import app.erp.hr.service.statemachine.ErpHrLeaveRequestStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -25,6 +27,11 @@ import static io.nop.api.core.beans.FilterBeans.in;
 /**
  * 休假申请 per-mutation Processor 共享基类（R6.7，{@code processor-extension-pattern.md} facade protected helper 范式）。
  * 承载 submit/approve/cancel 共用的加载、状态守卫、余额校验、日期重叠校验与审批人解析辅助（单一真相源）。子类只编排单 mutation 步骤顺序。
+ *
+ * <p>状态守卫改调实体级 {@link ErpHrLeaveRequestStateMachine}（Bean 矩阵权威，契约 §4/§7）：{@link #assertCanSubmit} /
+ * {@link #assertCanApprove} / {@link #assertCanCancel} 调用 Bean 的 {@code assertCan<Action>}，非法边由 Bean 抛
+ * common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}，本基类映射为领域
+ * {@link ErpHrErrors#ERR_LEAVE_ILLEGAL_STATUS_TRANSITION} + 实体编号/上下文（common 码作 cause 保留）。
  */
 public abstract class AbstractErpHrLeaveRequestProcessor {
 
@@ -33,6 +40,9 @@ public abstract class AbstractErpHrLeaveRequestProcessor {
 
     @Inject
     IErpHrLeaveBalanceBiz leaveBalanceBiz;
+
+    @Inject
+    ErpHrLeaveRequestStateMachine stateMachine;
 
     static final LocalDate MIN_QUERY_DATE = LocalDate.of(1970, 1, 1);
     static final LocalDate MAX_QUERY_DATE = LocalDate.of(2999, 12, 31);
@@ -51,13 +61,39 @@ public abstract class AbstractErpHrLeaveRequestProcessor {
         return leave;
     }
 
-    protected void requireStatus(ErpHrLeaveRequest leave, String expected, String target) {
-        if (!expected.equals(leave.getStatus())) {
-            throw new NopException(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId())
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, leave.getStatus())
-                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, expected);
+    /**
+     * 经 StateMachine Bean 断言 submit 来源态合法；非法边（Bean 报告 common 层码）映射为领域
+     * {@link ErpHrErrors#ERR_LEAVE_ILLEGAL_STATUS_TRANSITION} + 实体编号/上下文，common 码作 cause 保留（契约 §7）。
+     */
+    protected void assertCanSubmit(ErpHrLeaveRequest leave) {
+        try {
+            stateMachine.assertCanSubmit(leave.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(leave, e);
         }
+    }
+
+    protected void assertCanApprove(ErpHrLeaveRequest leave) {
+        try {
+            stateMachine.assertCanApprove(leave.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(leave, e);
+        }
+    }
+
+    protected void assertCanCancel(ErpHrLeaveRequest leave) {
+        try {
+            stateMachine.assertCanCancel(leave.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(leave, e);
+        }
+    }
+
+    private static NopException illegalTransition(ErpHrLeaveRequest leave, NopException cause) {
+        return new NopException(ErpHrErrors.ERR_LEAVE_ILLEGAL_STATUS_TRANSITION, cause)
+                .param(ErpHrErrors.ARG_LEAVE_REQUEST_ID, leave.getId())
+                .param(ErpHrErrors.ARG_CURRENT_STATUS, leave.getStatus())
+                .param(ErpHrErrors.ARG_EXPECTED_STATUS, cause.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
     }
 
     static void computeDurationDays(ErpHrLeaveRequest entity) {

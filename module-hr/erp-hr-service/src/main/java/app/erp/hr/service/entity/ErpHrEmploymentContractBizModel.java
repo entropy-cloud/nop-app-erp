@@ -22,6 +22,7 @@ import app.erp.hr.service.ErpHrConfigs;
 import app.erp.hr.service.ErpHrConstants;
 import app.erp.hr.service.ErpHrErrors;
 import app.erp.hr.service.processor.ErpHrEmploymentContractExpireOverdueContractsProcessor;
+import app.erp.hr.service.statemachine.ErpHrEmploymentContractStateMachine;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,8 @@ public class ErpHrEmploymentContractBizModel extends CrudBizModel<ErpHrEmploymen
 
     @Inject
     ErpHrEmploymentContractExpireOverdueContractsProcessor expireOverdueContractsProcessor;
+    @Inject
+    ErpHrEmploymentContractStateMachine stateMachine;
 
     public ErpHrEmploymentContractBizModel() {
         setEntityName(ErpHrEmploymentContract.class.getName());
@@ -90,14 +93,17 @@ public class ErpHrEmploymentContractBizModel extends CrudBizModel<ErpHrEmploymen
                                          @Name("newEndDate") LocalDate newEndDate,
                                          IServiceContext context) {
         ErpHrEmploymentContract contract = requireEntity(id, null, context);
-        String status = contract.getStatus();
-        if (!ErpHrConstants.CONTRACT_STATUS_ACTIVE.equals(status)
-                && !ErpHrConstants.CONTRACT_STATUS_EXPIRED.equals(status)) {
-            throw new NopException(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION)
+        // 固定来源态/目标态判断委托 ErpHrEmploymentContractStateMachine（Bean 矩阵权威，契约 §4/§7）：
+        // renew 接受 ACTIVE/EXPIRED 两类源（对齐原守卫）。非法边 Bean 抛 common 层码，此处映射领域
+        // ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION（common 码作 cause）。
+        try {
+            stateMachine.assertCanRenew(contract.getStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpHrErrors.ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION, e)
                     .param(ErpHrErrors.ARG_CONTRACT_ID, contract.getId())
-                    .param(ErpHrErrors.ARG_CURRENT_STATUS, status);
+                    .param(ErpHrErrors.ARG_CURRENT_STATUS, contract.getStatus());
         }
-        contract.setStatus(ErpHrConstants.CONTRACT_STATUS_ACTIVE);
+        contract.setStatus(stateMachine.renewTargetStatus());
         contract.setEndDate(newEndDate);
         updateEntity(contract, null, context);
         return contract;

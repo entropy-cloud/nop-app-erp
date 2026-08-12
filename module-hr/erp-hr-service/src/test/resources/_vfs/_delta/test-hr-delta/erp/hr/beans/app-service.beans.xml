@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- M2.11 Delta same-name Bean override proof (plan 2026-08-12-1118-3 Phase 3):
+     Delta layer file. When nop.core.vfs.delta-layer-ids=test-hr-delta is active, this file is merged
+     over the baseline app-service.beans.xml. The same bean id overrides the baseline
+     ErpHrLeaveRequestStateMachine with derived ErpHrLeaveRequestStateMachineDelta (loosens cancel source:
+     APPROVED-only to APPROVED+SUBMITTED, modeling a client that allows employee self-cancellation of
+     submitted-but-unapproved leave). All other baseline beans (Processors, Payroll, Posting, etc.) are
+     preserved by XDsl merge. -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:ioc="ioc"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="app.erp.hr.service.statemachine.ErpHrLeaveRequestStateMachine"
+          class="app.erp.hr.service.statemachine.ErpHrLeaveRequestStateMachineDelta"/>
+</beans>
