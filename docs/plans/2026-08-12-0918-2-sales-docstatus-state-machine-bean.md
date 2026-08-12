@@ -1,6 +1,6 @@
 # 2026-08-12-0918-2-sales-docstatus-state-machine-bean 销售单据 docStatus 最小生命周期 StateMachine Bean 迁移（M2.9–M2.10）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-12
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` M2.9 / M2.10（均 todo）
 > Related: 前置 `2026-08-12-0738-2-cs-ticket-state-machine-pilot-evaluation.md`（M1.3 done，go 裁定，模板固化于 `entity-state-machine-bean.md §11`）；本计划解阻 M3.6/M3.7（销售 approveStatus 轴，各自 deps 含 M2.9/M2.10）；姊妹计划 `2026-08-12-0918-1-purchase-docstatus-state-machine-bean.md`（N=1，采购同轴迁移，跨实体 Decision 同源）
@@ -60,66 +60,66 @@
 
 ### Phase 1 - ErpSalOrder docStatus Bean（M2.10）
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-service/src/main/java/app/erp/sal/service/statemachine/ErpSalOrderDocumentStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpSalOrderCancelProcessor.java`、`module-sales/erp-sal-service/src/test/.../TestErpSalOrderDocumentStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done（已满足）
 
-- [ ] `Add`：落地 `ErpSalOrderDocumentStateMachine` Bean（显式 `assertCanCancel` + `cancelTargetStatus` + `isTerminal`/`initialStatuses`/`terminalStatuses` + 只读 `transitions()`，DRAFT→CANCELLED 一条边）。严格无状态（§2）。`Document` 后缀为 M3.7 approveStatus Bean 预留命名空间。在 `_vfs/erp/sal/beans/app-service.beans.xml` 注册。
+- [x] `Add`：落地 `ErpSalOrderDocumentStateMachine` Bean（显式 `assertCanCancel` + `cancelTargetStatus` + `isTerminal`/`initialStatuses`/`terminalStatuses` + 只读 `transitions()`，DRAFT→CANCELLED 一条边）。严格无状态（§2）。`Document` 后缀为 M3.7 approveStatus Bean 预留命名空间。在 `_vfs/erp/sal/beans/app-service.beans.xml` 注册。
   - Skill: `nop-backend-dev`
-- [ ] `Decision | Add`：接线 Decision 引用 M0.1 契约 §5/§7 + cs 试点 M1.1 Option A（与采购计划同源）——`ErpSalOrderCancelProcessor` 注入 `@Inject ErpSalOrderDocumentStateMachine`（非 private），覆写 `validateTransitionForCancel` 委托 Bean；`doCancel` 用 `cancelTargetStatus()` 写回；`beforeCancel`（commitment-release/intercompany-reverse）保留原位；Bean 抛 common 码（+`action`/`fromStatus`），Processor 既有 `illegalStatusException` 映射 `ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION`。grep 证内联 `Objects.equals` 矩阵判断已移除（动态 hook 除外）。
+- [x] `Decision | Add`：接线 Decision 引用 M0.1 契约 §5/§7 + cs 试点 M1.1 Option A（与采购计划同源）——`ErpSalOrderCancelProcessor` 注入 `@Inject ErpSalOrderDocumentStateMachine`（非 private），覆写 `validateTransitionForCancel` 委托 Bean；`doCancel` 用 `cancelTargetStatus()` 写回；`beforeCancel`（commitment-release/intercompany-reverse）保留原位；Bean 抛 common 码（+`action`/`fromStatus`），Processor 既有 `illegalStatusException` 映射 `ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION`。grep 证内联 `Objects.equals` 矩阵判断已移除（动态 hook 除外）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（greenfield，五点：无重复/冲突边、DRAFT 可达 CANCELLED、CANCELLED 终态无出边、`assertCanCancel` DRAFT 合法/CANCELLED 抛 common 码、元数据一致、初始/终态集合正确）。
+- [x] `Proof`：层 1 矩阵完备性（greenfield，五点：无重复/冲突边、DRAFT 可达 CANCELLED、CANCELLED 终态无出边、`assertCanCancel` DRAFT 合法/CANCELLED 抛 common 码、元数据一致、初始/终态集合正确）。
   - Skill: `nop-testing`
-- [ ] `Proof`：层 2 四方对照（Order 单条，预期无漂移；writer 含 CancelProcessor + 创建路径 + 通用 CRUD）。
+- [x] `Proof`：层 2 四方对照（Order 单条，预期无漂移；writer 含 CancelProcessor + 创建路径 + 通用 CRUD）。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] `ErpSalOrderDocumentStateMachine` 存在/注册/无状态；`ErpSalOrderCancelProcessor` 委托 Bean，内联矩阵判断已移除（动态 hook 除外）。
-- [ ] Order 层 1 矩阵测试本地 `mvn test -pl module-sales/erp-sal-service -am -Dtest=TestErpSalOrderDocumentStateMachineMatrix` 全绿（解除 Phase 2 复用阻塞）。
+- [x] `ErpSalOrderDocumentStateMachine` 存在/注册/无状态；`ErpSalOrderCancelProcessor` 委托 Bean，内联矩阵判断已移除（动态 hook 除外）。
+- [x] Order 层 1 矩阵测试本地 `mvn test -pl module-sales/erp-sal-service -am -Dtest=TestErpSalOrderDocumentStateMachineMatrix` 全绿（解除 Phase 2 复用阻塞）。
 
 ### Phase 2 - ErpSalQuotation docStatus Bean（M2.9）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpSalQuotationDocumentStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpSalQuotationCancelProcessor.java`、`.../test/.../TestErpSalQuotationDocumentStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（接线范式已固化）
 
-- [ ] `Add`：落地 `ErpSalQuotationDocumentStateMachine`（同 Phase 1 结构，领域码 `ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION`）；`ErpSalQuotationCancelProcessor` 覆写 `validateTransitionForCancel` 委托 Bean。Quotation cancel 无域特有 hook（保持）。注册 Bean。
+- [x] `Add`：落地 `ErpSalQuotationDocumentStateMachine`（同 Phase 1 结构，领域码 `ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION`）；`ErpSalQuotationCancelProcessor` 覆写 `validateTransitionForCancel` 委托 Bean。Quotation cancel 无域特有 hook（保持）。注册 Bean。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（同 Phase 1 五点，Quotation 独立测试）。
+- [x] `Proof`：层 1 矩阵完备性（同 Phase 1 五点，Quotation 独立测试）。
   - Skill: `nop-testing`
-- [ ] `Proof`：层 2 四方对照（Quotation 单条，预期无漂移）。
+- [x] `Proof`：层 2 四方对照（Quotation 单条，预期无漂移）。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] Quotation Bean 存在/注册/无状态；`ErpSalQuotationCancelProcessor` 委托 Bean，内联矩阵判断已移除。
-- [ ] Quotation 层 1 矩阵测试本地全绿。
+- [x] Quotation Bean 存在/注册/无状态；`ErpSalQuotationCancelProcessor` 委托 Bean，内联矩阵判断已移除。
+- [x] Quotation 层 1 矩阵测试本地全绿。
 
 ### Phase 3 - 层 3 既有命名动作回归 + 两实体一致性复核
 
-Status: planned
+Status: completed
 Targets: `module-sales/erp-sal-service/src/test/`（既有集成测试，零新建）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1–2（两实体 Bean + 接线已落地）
 
-- [ ] `Proof`：层 3 既有命名动作回归（非 greenfield）——复用既有集成测试基线（`TestErpSalOrderApproval`/`TestErpSalQuotationCrudSmoke`/`TestErpSalQuotationToOrder`/`TestErpSalOrderToCashEnd` 等），证明 Processor 写回、审计、领域错误码 + 参数、终态不可恢复、commitment-release/intercompany-reverse 副作用时序不变。本地 `mvn test -pl module-sales/erp-sal-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归（非 greenfield）——复用既有集成测试基线（`TestErpSalOrderApproval`/`TestErpSalQuotationCrudSmoke`/`TestErpSalQuotationToOrder`/`TestErpSalOrderToCashEnd` 等），证明 Processor 写回、审计、领域错误码 + 参数、终态不可恢复、commitment-release/intercompany-reverse 副作用时序不变。本地 `mvn test -pl module-sales/erp-sal-service -am` 全绿。
   - Skill: `nop-testing`
-- [ ] `Proof`：两实体一致性复核——两 Bean 命名/注册/无状态/元数据形状一致；接线范式可追溯；四方对照记录写入本计划 Closure 段。
+- [x] `Proof`：两实体一致性复核——两 Bean 命名/注册/无状态/元数据形状一致；接线范式可追溯；四方对照记录写入本计划 Closure 段。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] `mvn test -pl module-sales/erp-sal-service -am` 全绿（层 3 回归无行为回归）。
-- [ ] 两实体四方对照记录可追溯、漂移处置闭环（预期无漂移）。
+- [x] `mvn test -pl module-sales/erp-sal-service -am` 全绿（层 3 回归无行为回归）。
+- [x] 两实体四方对照记录可追溯、漂移处置闭环（预期无漂移）。
 
 ## Draft Review Record
 
@@ -127,14 +127,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（两实体 docStatus Bean + 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐（架构 doc 不引用本路线图执行状态；若层 2 发现 owner doc 漂移则按 Fix 登记）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-sales/erp-sal-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` exit 0（R5=0 不漂移、R11 不增）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（两实体 docStatus Bean + 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（架构 doc 不引用本路线图执行状态；若层 2 发现 owner doc 漂移则按 Fix 登记）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-sales/erp-sal-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` exit 0（R5=0 不漂移、R11 不增）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -158,9 +158,32 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填写>
+Status Note: 执行完成（三 Phase 全绿）+ 独立结束审计通过。两实体 docStatus Bean + 接线 + 层 1 矩阵 + 层 3 回归均已落地并验证。独立结束审计由独立子代理（新会话，无执行者上下文）执行——见下方 Closure Audit Evidence 第二条。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理，新会话>
-- Evidence: <待填写>
+- 执行者 / Agent: 主代理（EXECUTE 模式，glm-5.2）
+- 实仓证据：
+  - **Phase 1（M2.10 ErpSalOrder）**：
+    - `module-sales/erp-sal-service/src/main/java/app/erp/sal/service/statemachine/ErpSalOrderDocumentStateMachine.java` 新建（DRAFT→CANCELLED 1 边，严格无状态，`assertCanCancel`/`cancelTargetStatus`/`isTerminal`/`initialStatuses`/`terminalStatuses`/`transitions()`，`Document` 后缀为 M3.7 预留）。
+    - `app-service.beans.xml` 注册 `<bean id="app.erp.sal.service.statemachine.ErpSalOrderDocumentStateMachine" .../>`。
+    - `ErpSalOrderCancelProcessor` 接线：`@Inject ErpSalOrderDocumentStateMachine stateMachine`（包级可见，R5=0），覆写 `validateTransitionForCancel` 委托 `stateMachine.assertCanCancel`，`cancelledDocStatus()` 返回 `stateMachine.cancelTargetStatus()`；`beforeCancel`（commitment-release/intercompany-reverse）保留原位。grep 证无内联 `Objects.equals` 矩阵判断（`ErpSalOrderCancelProcessor.java:31,55,79`）。
+    - 层 1 矩阵测试 `TestErpSalOrderDocumentStateMachineMatrix`（6 tests，五点覆盖）本地 `mvn test ... -Dtest=TestErpSalOrderDocumentStateMachineMatrix` 全绿（Tests run: 6, Failures: 0, Errors: 0）。
+  - **Phase 2（M2.9 ErpSalQuotation）**：同 Phase 1 结构。`ErpSalQuotationDocumentStateMachine` + beans.xml 注册 + `ErpSalQuotationCancelProcessor` 接线（领域码 `ERR_QUOTATION_ILLEGAL_DOC_STATUS_TRANSITION`，Quotation cancel 无域特有 hook 保持）。层 1 矩阵测试 `TestErpSalQuotationDocumentStateMachineMatrix`（6 tests）全绿。
+  - **层 2 四方对照（两实体，预期无漂移 → 已确认无漂移）**：
+    - dict `erp-sal/doc-status`（DRAFT/ACTIVE/CANCELLED）↔ `sales/state-machine.md`（docStatus=草稿/已生效/已作废 业务生命周期轴）↔ Bean 元数据（DRAFT→CANCELLED 1 条命名边，cancel 守卫仅 CANCELLED 终态非法、其余非终态放行 = 骨架收敛前行为）↔ LIVE writer（`ErpSalOrderCancelProcessor`/`ErpSalQuotationCancelProcessor` 经 Bean；`QuotationToOrderConverter:52` 写初始 DRAFT；通用 CRUD 路径经 §9.2 选项 (c) 显式排除）。
+    - **观察项（非漂移，不阻塞）**：`ErpSalOrderProcessor.validateTransitionForCancel:157`/`doCancel:279`、`ErpSalQuotationProcessor.validateTransitionForCancel:134`/`doCancel:214` 为 per-mutation Processor 抽取（plan 2026-07-30-1433-2 R5.2）后的死桩——`ErpSalOrderProcessor.cancel:112`/`ErpSalQuotationProcessor.cancel:85` 与 BizModel `cancel` 均委托 `cancelProcessor.cancel()`（经骨架），不调用本地 stub。LIVE cancel 路径单一且已委托 Bean。死桩清理归 successor（与采购姊妹计划 M2.8 同构，非本计划引入）。
+    - dict `ACTIVE` 值：由 approveStatus 轴 / 其它路径到达，Bean `assertCanCancel` 对 ACTIVE（非终态）放行 = 行为不变；`transitions()` 仅声明命名边 DRAFT→CANCELLED（模板 §11.2 M2 最小生命周期，与采购 M2.8 同源裁定）。
+  - **层 3 既有命名动作回归**：`mvn test -pl module-sales/erp-sal-service` 全绿（Tests run: 199, Failures: 0, Errors: 0, Skipped: 0, BUILD SUCCESS）。覆盖 `TestErpSalOrderApproval`/`TestErpSalQuotationCrudSmoke`/`TestErpSalQuotationToOrder`/`TestErpSalOrderToCashEnd` 等 cancel 全生命周期——Processor 写回、领域错误码 + 参数、终态不可恢复、commitment-release/intercompany-reverse 副作用时序不变。
+  - **两实体一致性复核**：两 Bean 命名（`ErpSal<Entity>DocumentStateMachine`）/注册（同名 bean id 范式）/无状态（零注入）/元数据形状（1 边 + 单终态 + 单初始态）完全一致；接线范式可追溯至 M0.1 §5/§7 + cs 试点 M1.1 Option A + 采购 M2.8 同源。
+  - **构建与合规**：`mvn clean install -DskipTests`（全 156 reactor 模块）BUILD SUCCESS（无跨模块破坏）；`bash docs/audits/nop-compliance-checker.sh` exit 0（R5=0、R11=0；R12c=40 = 既裁决基线，本计划零新增 `AcctSchemaResolver` import）。
+- 待办：~~独立结束审计（Closure Gates 倒数第二项）由独立子代理新会话执行。~~ 已完成（见下）。
+- 独立结束审计 / Agent: 独立子代理（closure-auditor 新会话，glm-5.2，无执行者上下文）。审计结论：`approved`。逐项核实：
+  - **结构合规**：Front matter `Plan Status: completed` + `Last Reviewed: 2026-08-12`；三 Phase 均含 `Status: completed` + `Exit Criteria:` 全 `[x]`；Closure Gates 8/8 `[x]`；Closure 段含非占位证据项。
+  - **Phase 1 实仓核实（M2.10 ErpSalOrder）**：`ErpSalOrderDocumentStateMachine.java` 存在（DRAFT→CANCELLED 1 边，严格无状态，零 DAO/IBiz 注入，`assertCanCancel`/`cancelTargetStatus`/`isTerminal`/`initialStatuses`/`terminalStatuses`/`transitions()`）；`app-service.beans.xml:74-75` 注册 Bean；`ErpSalOrderCancelProcessor.java:30-31` `@Inject ErpSalOrderDocumentStateMachine stateMachine`（包级可见，非 private，R5=0），`:53-59` `validateTransitionForCancel` 委托 `stateMachine.assertCanCancel`（捕获 NopException → 映射 `ERR_ORDER_ILLEGAL_DOC_STATUS_TRANSITION`），`:78-80` `cancelledDocStatus()` 返回 `stateMachine.cancelTargetStatus()`，`:62-65` `beforeCancel` 保留 commitment-release/intercompany-reverse；`TestErpSalOrderDocumentStateMachineMatrix`（6 @Test，五点 a-e 覆盖）。
+  - **Phase 2 实仓核实（M2.9 ErpSalQuotation）**：`ErpSalQuotationDocumentStateMachine` + `beans.xml:81-82` 注册 + `ErpSalQuotationCancelProcessor:29-30` 接线 + `:52-58` 委托 + `TestErpSalQuotationDocumentStateMachineMatrix`（6 @Test）。Quotation cancel 无域特有 hook 保持。
+  - **Anti-Hollow 核实**：Bean 所有方法有真实实现（无空体/`return null`/吞异常）；Processor 路径 `cancel → validateTransitionForCancel → stateMachine.assertCanCancel`、`doCancel → cancelledDocStatus() → stateMachine.cancelTargetStatus()` 运行时可达；`QuotationToOrderConverter.java:52` 写初始 `DOC_STATUS_DRAFT`（`ErpSalConstants.DOC_STATUS_DRAFT`）。
+  - **层 2 四方对照**：`docs/design/sales/state-machine.md:15` docStatus = 草稿/已生效/已作废 ↔ dict DRAFT/ACTIVE/CANCELLED ↔ Bean 元数据 1 边 + 单终态 ↔ LIVE writer。一致。
+  - **Deferred 诚实**：Deferred 三项（approveStatus 轴 M3.6/M3.7、Delta 覆盖、全局 CRUD 写锁）均为显式 out-of-scope / optimization / watch-only，含 successor 触发条件，未隐藏在范围内缺陷。
+  - **Docs sync**：`docs/logs/2026/08-12.md` 含本计划日志条目（M2.9/M2.10 done）。
+  - **五点一致性**：Plan Status / Phase Status / Exit Criteria / Closure Gates / Closure 证据全部一致。
