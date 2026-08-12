@@ -7,6 +7,7 @@ import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.dao.entity.ErpCsTicketAction;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
+import app.erp.cs.service.statemachine.ErpCsTicketStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
@@ -15,7 +16,6 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.util.List;
-import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -32,17 +32,21 @@ public class ErpCsTicketReopenProcessor {
     IErpCsTicketActionBiz ticketActionBiz;
     @Inject
     IErpCsSurveyBiz surveyBiz;
+    @Inject
+    ErpCsTicketStateMachine stateMachine;
 
     public ErpCsTicket reopen(Long ticketId, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
-        if (!Objects.equals(from, ErpCsConstants.TICKET_STATUS_RESOLVED)) {
-            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_RESOLVED);
+        try {
+            stateMachine.assertCanReopen(from);
+        } catch (NopException e) {
+            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_RESOLVED, e);
         }
-        ticket.setStatus(ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        ticket.setStatus(stateMachine.reopenTargetStatus());
         // 恢复计时：保留原 startDateTime（duration 在下次 resolve 时累加重算，因 startDateTime 不变）
         dao().updateEntity(ticket);
-        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS,
+        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, stateMachine.reopenTargetStatus(),
                 "驳回重开", context);
 
         // reopen 时取消未响应的调查（避免误发）
@@ -74,8 +78,8 @@ public class ErpCsTicketReopenProcessor {
         return ticket;
     }
 
-    private NopException illegalTransition(ErpCsTicket ticket, String current, String expected) {
-        return new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION)
+    private NopException illegalTransition(ErpCsTicket ticket, String current, String expected, Throwable cause) {
+        return new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION, cause)
                 .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode())
                 .param(ErpCsErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpCsErrors.ARG_EXPECTED_STATUS, expected);

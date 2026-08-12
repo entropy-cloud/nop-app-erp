@@ -8,6 +8,7 @@ import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
 import app.erp.cs.service.entity.SlaDeadlineCalculator;
+import app.erp.cs.service.statemachine.ErpCsTicketStateMachine;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -31,12 +32,16 @@ public class ErpCsTicketResolveProcessor {
     IErpCsTicketActionBiz ticketActionBiz;
     @Inject
     IErpCsSurveyBiz surveyBiz;
+    @Inject
+    ErpCsTicketStateMachine stateMachine;
 
     public ErpCsTicket resolve(Long ticketId, String resolution, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
-        if (!Objects.equals(from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS)) {
-            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        try {
+            stateMachine.assertCanResolve(from);
+        } catch (NopException e) {
+            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS, e);
         }
         LocalDateTime now = CoreMetrics.currentDateTime();
         // 停 SLA 计时算 duration（分钟）；startDateTime 为空时 duration 留空
@@ -48,12 +53,12 @@ public class ErpCsTicketResolveProcessor {
         LocalDateTime deadline = ticket.getDeadlineDateTime() != null ? ticket.getDeadlineDateTime().toLocalDateTime() : null;
         boolean completed = deadline == null || !now.isAfter(deadline);
         ticket.setIsSlaCompleted(completed);
-        ticket.setStatus(ErpCsConstants.TICKET_STATUS_RESOLVED);
+        ticket.setStatus(stateMachine.resolveTargetStatus());
         if (resolution != null) {
             ticket.setRemark(resolution);
         }
         dao().updateEntity(ticket);
-        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_RESOLVED,
+        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, stateMachine.resolveTargetStatus(),
                 "标记解决: " + (resolution == null ? "" : resolution), context);
 
         // CSAT 触发（config-gated）：trigger-status 默认 RESOLVED
@@ -75,8 +80,8 @@ public class ErpCsTicketResolveProcessor {
         return ticket;
     }
 
-    private NopException illegalTransition(ErpCsTicket ticket, String current, String expected) {
-        return new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION)
+    private NopException illegalTransition(ErpCsTicket ticket, String current, String expected, Throwable cause) {
+        return new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION, cause)
                 .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode())
                 .param(ErpCsErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpCsErrors.ARG_EXPECTED_STATUS, expected);

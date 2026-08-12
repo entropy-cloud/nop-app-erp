@@ -11,6 +11,7 @@ import app.erp.cs.service.processor.ErpCsTicketMatchAndAttachSlaProcessor;
 import app.erp.cs.service.processor.ErpCsTicketReopenProcessor;
 import app.erp.cs.service.processor.ErpCsTicketResolveProcessor;
 import app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor;
+import app.erp.cs.service.statemachine.ErpCsTicketStateMachine;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.notify.biz.IErpSysNotificationBiz;
@@ -63,6 +64,8 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     @Inject
     IErpSysNotificationBiz notificationBiz;
     @Inject
+    ErpCsTicketStateMachine stateMachine;
+    @Inject
     ErpCsTicketMatchAndAttachSlaProcessor matchAndAttachSlaProcessor;
     @Inject
     ErpCsTicketReopenProcessor reopenProcessor;
@@ -105,13 +108,11 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
                               IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
-        if (!Objects.equals(from, ErpCsConstants.TICKET_STATUS_NEW)) {
-            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_NEW);
-        }
+        assertCan("assign", ticket, from, ErpCsConstants.TICKET_STATUS_NEW);
         ticket.setAssignedToId(assignedToId);
-        ticket.setStatus(ErpCsConstants.TICKET_STATUS_ASSIGNED);
+        ticket.setStatus(stateMachine.assignTargetStatus());
         updateEntity(ticket, null, context);
-        writeAction(ticket, ErpCsConstants.ACTION_TYPE_ASSIGN, from, ErpCsConstants.TICKET_STATUS_ASSIGNED,
+        writeAction(ticket, ErpCsConstants.ACTION_TYPE_ASSIGN, from, stateMachine.assignTargetStatus(),
                 "分派处理人: " + assignedToId, context);
         return ticket;
     }
@@ -121,14 +122,12 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     public ErpCsTicket start(@Name("ticketId") Long ticketId, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
-        if (!Objects.equals(from, ErpCsConstants.TICKET_STATUS_ASSIGNED)) {
-            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_ASSIGNED);
-        }
-        ticket.setStatus(ErpCsConstants.TICKET_STATUS_IN_PROGRESS);
+        assertCan("start", ticket, from, ErpCsConstants.TICKET_STATUS_ASSIGNED);
+        ticket.setStatus(stateMachine.startTargetStatus());
         // 计时起点：首次进入 IN_PROGRESS（见 plan Decision：startDateTime=首次 IN_PROGRESS 时间）
         ticket.setStartDateTime(CoreMetrics.currentTimestamp());
         updateEntity(ticket, null, context);
-        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, ErpCsConstants.TICKET_STATUS_IN_PROGRESS,
+        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, from, stateMachine.startTargetStatus(),
                 "开始处理", context);
         return ticket;
     }
@@ -146,19 +145,17 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     public ErpCsTicket close(@Name("ticketId") Long ticketId, IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
-        if (!Objects.equals(from, ErpCsConstants.TICKET_STATUS_RESOLVED)) {
-            throw illegalTransition(ticket, from, ErpCsConstants.TICKET_STATUS_RESOLVED);
-        }
+        assertCan("close", ticket, from, ErpCsConstants.TICKET_STATUS_RESOLVED);
         // 关闭前检查：超时工单（isSlaCompleted=false）须在 remark 注明超时原因
         if (Boolean.FALSE.equals(ticket.getIsSlaCompleted())
                 && (ticket.getRemark() == null || ticket.getRemark().trim().isEmpty())) {
             throw new NopException(ErpCsErrors.ERR_TICKET_CLOSE_BREACHED_NO_REASON)
                     .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode());
         }
-        ticket.setStatus(ErpCsConstants.TICKET_STATUS_CLOSED);
+        ticket.setStatus(stateMachine.closeTargetStatus());
         ticket.setEndDateTime(CoreMetrics.currentTimestamp());
         updateEntity(ticket, null, context);
-        writeAction(ticket, ErpCsConstants.ACTION_TYPE_CLOSE, from, ErpCsConstants.TICKET_STATUS_CLOSED,
+        writeAction(ticket, ErpCsConstants.ACTION_TYPE_CLOSE, from, stateMachine.closeTargetStatus(),
                 "关闭工单", context);
         return ticket;
     }
@@ -176,19 +173,19 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
                               IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String from = ticket.getStatus();
-        // 非终态→CANCELLED（NEW/ASSIGNED/IN_PROGRESS/RESOLVED 均可取消）
-        if (Objects.equals(from, ErpCsConstants.TICKET_STATUS_CLOSED)
-                || Objects.equals(from, ErpCsConstants.TICKET_STATUS_CANCELLED)) {
+        // 终态走领域码 ERR_TICKET_ALREADY_TERMINAL（保持既有外部错误码）；非终态经 Bean 矩阵守卫（cancel 非终态均合法）
+        if (stateMachine.isTerminal(from)) {
             throw new NopException(ErpCsErrors.ERR_TICKET_ALREADY_TERMINAL)
                     .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode())
                     .param(ErpCsErrors.ARG_CURRENT_STATUS, from);
         }
-        ticket.setStatus(ErpCsConstants.TICKET_STATUS_CANCELLED);
+        stateMachine.assertCanCancel(from);
+        ticket.setStatus(stateMachine.cancelTargetStatus());
         if (cancelReason != null) {
             ticket.setRemark(cancelReason);
         }
         updateEntity(ticket, null, context);
-        writeAction(ticket, ErpCsConstants.ACTION_TYPE_CANCEL, from, ErpCsConstants.TICKET_STATUS_CANCELLED,
+        writeAction(ticket, ErpCsConstants.ACTION_TYPE_CANCEL, from, stateMachine.cancelTargetStatus(),
                 "取消工单: " + (cancelReason == null ? "" : cancelReason), context);
         return ticket;
     }
@@ -350,11 +347,40 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         return requireEntity(String.valueOf(ticketId), null, context);
     }
 
+    /**
+     * 经 StateMachine Bean 断言来源态合法；非法边（Bean 报告 common 层码）映射为领域
+     * {@code ERR_INVALID_TICKET_STATUS_TRANSITION} + 实体编号/上下文，common 码作 cause 保留（契约 §7）。
+     */
+    private void assertCan(String action, ErpCsTicket ticket, String from, String expected) {
+        try {
+            switch (action) {
+                case "assign":
+                    stateMachine.assertCanAssign(from);
+                    break;
+                case "start":
+                    stateMachine.assertCanStart(from);
+                    break;
+                case "close":
+                    stateMachine.assertCanClose(from);
+                    break;
+                default:
+                    throw new IllegalArgumentException("unexpected action: " + action);
+            }
+        } catch (NopException e) {
+            throw illegalTransition(ticket, from, expected, e);
+        }
+    }
+
     private NopException illegalTransition(ErpCsTicket ticket, String current, String expected) {
-        return new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION)
+        return illegalTransition(ticket, current, expected, null);
+    }
+
+    private NopException illegalTransition(ErpCsTicket ticket, String current, String expected, Throwable cause) {
+        NopException ex = new NopException(ErpCsErrors.ERR_INVALID_TICKET_STATUS_TRANSITION, cause)
                 .param(ErpCsErrors.ARG_TICKET_CODE, ticket.getCode())
                 .param(ErpCsErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpCsErrors.ARG_EXPECTED_STATUS, expected);
+        return ex;
     }
 
     private void writeAction(ErpCsTicket ticket, String actionType, String fromStatus, String toStatus,
