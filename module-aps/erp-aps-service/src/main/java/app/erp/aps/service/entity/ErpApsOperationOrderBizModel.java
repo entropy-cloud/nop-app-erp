@@ -2,7 +2,6 @@
 package app.erp.aps.service.entity;
 
 import java.util.List;
-import java.util.Objects;
 import app.erp.aps.biz.CtpResult;
 import app.erp.aps.biz.IErpApsAtpCtpService;
 import app.erp.aps.biz.IErpApsOperationOrderBiz;
@@ -14,6 +13,7 @@ import app.erp.aps.service.ErpApsErrors;
 import app.erp.aps.service.processor.ErpApsSchedulingInsertRushOrderProcessor;
 import app.erp.aps.service.processor.ErpApsSchedulingScheduleBackwardProcessor;
 import app.erp.aps.service.processor.ErpApsSchedulingScheduleForwardProcessor;
+import app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -51,6 +51,9 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
 
     @Inject
     IErpApsAtpCtpService atpCtpService;
+
+    @Inject
+    ErpApsOperationOrderStateMachine stateMachine;
 
     public ErpApsOperationOrderBizModel() {
         setEntityName(ErpApsOperationOrder.class.getName());
@@ -125,13 +128,13 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     @BizMutation
     public ErpApsOperationOrder start(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
         ErpApsOperationOrder order = requireEntity(String.valueOf(operationOrderId), null, context);
-        if (!Objects.equals(order.getStatus(), ErpApsConstants.OP_STATUS_PLANNED)) {
-            throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION)
-                    .param(ErpApsErrors.ARG_OP_CODE, order.getCode())
-                    .param(ErpApsErrors.ARG_CURRENT_STATUS, order.getStatus())
-                    .param(ErpApsErrors.ARG_EXPECTED_STATUS, ErpApsConstants.OP_STATUS_PLANNED);
+        // 矩阵守卫下沉 Bean（PLANNED→IN_PROGRESS），非法边 Bean 抛 common 码，此处映射领域码。
+        try {
+            stateMachine.assertCanStart(order.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(order, ErpApsConstants.OP_STATUS_PLANNED, e);
         }
-        order.setStatus(ErpApsConstants.OP_STATUS_IN_PROGRESS);
+        order.setStatus(stateMachine.startTargetStatus());
         updateEntity(order, null, context);
         return order;
     }
@@ -140,13 +143,13 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     @BizMutation
     public ErpApsOperationOrder complete(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
         ErpApsOperationOrder order = requireEntity(String.valueOf(operationOrderId), null, context);
-        if (!Objects.equals(order.getStatus(), ErpApsConstants.OP_STATUS_IN_PROGRESS)) {
-            throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION)
-                    .param(ErpApsErrors.ARG_OP_CODE, order.getCode())
-                    .param(ErpApsErrors.ARG_CURRENT_STATUS, order.getStatus())
-                    .param(ErpApsErrors.ARG_EXPECTED_STATUS, ErpApsConstants.OP_STATUS_IN_PROGRESS);
+        // 矩阵守卫下沉 Bean（IN_PROGRESS→FINISHED），非法边 Bean 抛 common 码，此处映射领域码。
+        try {
+            stateMachine.assertCanComplete(order.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(order, ErpApsConstants.OP_STATUS_IN_PROGRESS, e);
         }
-        order.setStatus(ErpApsConstants.OP_STATUS_FINISHED);
+        order.setStatus(stateMachine.completeTargetStatus());
         updateEntity(order, null, context);
         return order;
     }
@@ -155,21 +158,35 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     @BizMutation
     public ErpApsOperationOrder cancel(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
         ErpApsOperationOrder order = requireEntity(String.valueOf(operationOrderId), null, context);
-        String status = order.getStatus();
-        if (!Objects.equals(status, ErpApsConstants.OP_STATUS_DRAFT)
-                && !Objects.equals(status, ErpApsConstants.OP_STATUS_PLANNED)
-                && !Objects.equals(status, ErpApsConstants.OP_STATUS_IN_PROGRESS)) {
-            throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION)
-                    .param(ErpApsErrors.ARG_OP_CODE, order.getCode())
-                    .param(ErpApsErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpApsErrors.ARG_EXPECTED_STATUS,
-                            ErpApsConstants.OP_STATUS_DRAFT + "/"
-                                    + ErpApsConstants.OP_STATUS_PLANNED + "/"
-                                    + ErpApsConstants.OP_STATUS_IN_PROGRESS);
+        // 矩阵守卫下沉 Bean（cancel 三源 {DRAFT,PLANNED,IN_PROGRESS}→CANCELLED），非法边 Bean 抛 common 码，
+        // 此处映射领域码。cancel 三源经 Bean 正向枚举合法来源（对齐 owner doc §2 :24/:29/:33 + §3 终态不可恢复）。
+        try {
+            stateMachine.assertCanCancel(order.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(order,
+                    ErpApsConstants.OP_STATUS_DRAFT + "/"
+                            + ErpApsConstants.OP_STATUS_PLANNED + "/"
+                            + ErpApsConstants.OP_STATUS_IN_PROGRESS, e);
         }
-        order.setStatus(ErpApsConstants.OP_STATUS_CANCELLED);
+        order.setStatus(stateMachine.cancelTargetStatus());
         updateEntity(order, null, context);
         return order;
+    }
+
+    // ---------- helpers ----------
+
+    /**
+     * 领域非法迁移异常构造。可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
+     * Bean 报 common 码 + action/fromStatus 元数据，BizModel 映射领域码 + 实体编号/上下文，common 码作 cause 保留）。
+     *
+     * <p>保留对外契约不变：错误码 {@code ERR_APS_OP_ILLEGAL_TRANSITION} + 参数
+     * {@code operationOrderCode}/{@code currentStatus}/{@code expectedStatus}（层 3 断言证实）。
+     */
+    protected NopException illegalTransition(ErpApsOperationOrder order, String expected, Throwable cause) {
+        return new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION, cause)
+                .param(ErpApsErrors.ARG_OP_CODE, order.getCode())
+                .param(ErpApsErrors.ARG_CURRENT_STATUS, order.getStatus())
+                .param(ErpApsErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     @Override

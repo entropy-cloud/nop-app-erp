@@ -7,6 +7,7 @@ import app.erp.aps.service.ErpApsConfigs;
 import app.erp.aps.service.ErpApsConstants;
 import app.erp.aps.service.ErpApsErrors;
 import app.erp.aps.service.scheduling.ErpApsSchedulingEngine;
+import app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -30,6 +31,9 @@ public class ErpApsSchedulingInsertRushOrderProcessor {
 
     @Inject
     ErpApsSchedulingProcessor facade;
+
+    @Inject
+    ErpApsOperationOrderStateMachine stateMachine;
 
     public SchedulingResult insertRushOrder(Long operationOrderId, IServiceContext context) {
         ErpApsOperationOrder rush = facade.requireOperationOrder(operationOrderId, context);
@@ -74,7 +78,18 @@ public class ErpApsSchedulingInsertRushOrderProcessor {
             // 释放该工序在原 PLANNED 时段占用的产能预留（P0-MA2-019），按 operationOrderId 定位，
             // 与 planned 字段是否已清空无关。释放先于 saveOrUpdateEntity 落库，确保回退原子可见。
             facade.releaseReservationsByOrder(op.getId());
-            op.setStatus(ErpApsConstants.OP_STATUS_DRAFT);
+            // PLANNED→DRAFT 回退矩阵权威下沉 Bean（plan 2026-08-12-2142-3 M2.13）：所选 op 本为 PLANNED
+            // （经上方优先级选择 + IN_PROGRESS 硬守卫过滤），调用确认矩阵合法性。非法边 Bean 抛 common 码，
+            // 此处映射领域码。IN_PROGRESS 不可重排硬守卫已在选择之前保留（动态业务守卫，非纯状态迁移守卫）。
+            try {
+                stateMachine.assertCanRevertToDraft(op.getStatus());
+            } catch (NopException e) {
+                throw new NopException(ErpApsErrors.ERR_APS_OP_ILLEGAL_TRANSITION, e)
+                        .param(ErpApsErrors.ARG_OP_CODE, op.getCode())
+                        .param(ErpApsErrors.ARG_CURRENT_STATUS, op.getStatus())
+                        .param(ErpApsErrors.ARG_EXPECTED_STATUS, ErpApsConstants.OP_STATUS_PLANNED);
+            }
+            op.setStatus(stateMachine.revertToDraftTargetStatus());
             op.setPlannedStartDateT(null);
             op.setPlannedEndDateT(null);
             facade.opOrderDao().saveOrUpdateEntity(op);

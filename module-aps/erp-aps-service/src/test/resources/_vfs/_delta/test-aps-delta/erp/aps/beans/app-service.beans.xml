@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- M2.13 Delta same-name Bean override proof (plan 2026-08-12-2142-3 Phase 3):
+     Delta layer file. When nop.core.vfs.delta-layer-Ids=test-aps-delta is active, this file is merged
+     over the baseline app-service.beans.xml. The same bean id overrides the baseline
+     ErpApsOperationOrderStateMachine with derived ErpApsOperationOrderStateMachineDelta (tightens cancel source:
+     DRAFT+PLANNED+IN_PROGRESS to DRAFT+PLANNED only, removing IN_PROGRESS exceptional termination).
+     All other baseline beans (Scheduling Processors, AtpCtpService, LoadSourceProvider) are preserved by XDsl merge. -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <bean id="app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine"
+          class="app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachineDelta"/>
+</beans>

@@ -31,4 +31,10 @@
           APS 模块缺失时 mfg 侧收集到空 list，CRP 回退 WorkOrder 计划日期（行为不变）。 -->
     <bean id="app.erp.aps.service.loadsource.ApsLoadSourceProvider"
           class="app.erp.aps.service.loadsource.ApsLoadSourceProvider"/>
+
+    <!-- OperationOrder 实体级状态机 Bean（plan 2026-08-12-2142-3 M2.13）：一 Bean 对一实体一轴 status。
+         严格无状态，承载命名动作迁移矩阵 + 终态分类 + 只读元数据。BizModel/Processor 按类型注入；同名 Delta
+         bean id 覆盖替换基线矩阵（契约 §6）。 -->
+    <bean id="app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine"
+          class="app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine"/>
 </beans>
