@@ -115,6 +115,11 @@
           class="app.erp.crm.service.processor.ErpCrmEventCompleteProcessor"/>
     <bean id="app.erp.crm.service.processor.ErpCrmEventCancelProcessor"
           class="app.erp.crm.service.processor.ErpCrmEventCancelProcessor"/>
+
+    <!-- CRM ErpCrmEvent 实体级 status 状态机 Bean（plan 2026-08-12-2142-2 M2.2，契约 entity-state-machine-bean.md）：
+         一 Bean 对一实体一轴（PLANNED/COMPLETED/CANCELLED），严格无状态；可经 Delta 同名 bean id 覆盖替换基线矩阵。 -->
+    <bean id="app.erp.crm.service.statemachine.ErpCrmEventStateMachine"
+          class="app.erp.crm.service.statemachine.ErpCrmEventStateMachine"/>
     <bean id="app.erp.crm.service.processor.ErpCrmForecastRefreshForecastProcessor"
           class="app.erp.crm.service.processor.ErpCrmForecastRefreshForecastProcessor"/>
     <bean id="app.erp.crm.service.processor.ErpCrmForecastPeriodClosePeriodProcessor"

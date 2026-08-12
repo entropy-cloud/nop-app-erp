@@ -3,6 +3,7 @@ package app.erp.crm.service.processor;
 import app.erp.crm.dao.entity.ErpCrmEvent;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.ErpCrmErrors;
+import app.erp.crm.service.statemachine.ErpCrmEventStateMachine;
 import app.erp.crm.service.support.LeadActivityDerivationHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -11,11 +12,14 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
-import java.util.Objects;
-
 /**
  * ErpCrmEvent cancel per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含活动/事件取消编排（PLANNED→CANCELLED + flush 后派生回写关联 Lead 字段）。
+ *
+ * <p>固定来源态/目标态判断委托 {@link ErpCrmEventStateMachine}（Event status 轴 Bean，契约 §4/§7）；
+ * 动态业务守卫（requireEvent not-found、Lead 派生、relatedLeadId==null 跳过、乐观锁）保留原位。非法边 Bean 抛 common 层码
+ * （含 {@code action}/fromStatus 元数据），本 Processor 捕获后映射领域码 {@link ErpCrmErrors#ERR_EVENT_ILLEGAL_STATUS_TRANSITION}
+ * （+ eventCode/currentStatus/expectedStatus 实体编号/上下文，common 码作 cause 保留）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpCrmEventCancelProcessor {
@@ -29,10 +33,17 @@ public class ErpCrmEventCancelProcessor {
     @Inject
     LeadActivityDerivationHelper leadDerivationHelper;
 
+    @Inject
+    ErpCrmEventStateMachine stateMachine;
+
     public ErpCrmEvent cancel(Long eventId, IServiceContext context) {
         ErpCrmEvent event = requireEvent(eventId);
-        validatePlanned(event, "cancel");
-        event.setStatus(ErpCrmConstants.EVENT_STATUS_CANCELLED);
+        try {
+            stateMachine.assertCanCancel(event.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(event, ErpCrmConstants.EVENT_STATUS_PLANNED, e);
+        }
+        event.setStatus(stateMachine.cancelTargetStatus());
         dao().updateEntity(event);
         ormTemplate.flushSession();
         deriveLeadFields(event.getRelatedLeadId());
@@ -50,14 +61,12 @@ public class ErpCrmEventCancelProcessor {
         return event;
     }
 
-    protected void validatePlanned(ErpCrmEvent event, String action) {
-        String status = event.getStatus();
-        if (!Objects.equals(status, ErpCrmConstants.EVENT_STATUS_PLANNED)) {
-            throw new NopException(ErpCrmErrors.ERR_EVENT_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpCrmErrors.ARG_EVENT_CODE, event.getCode())
-                    .param(ErpCrmErrors.ARG_CURRENT_STATUS, status)
-                    .param(ErpCrmErrors.ARG_EXPECTED_STATUS, ErpCrmConstants.EVENT_STATUS_PLANNED);
-        }
+    /** 领域非法迁移异常构造；可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7）。 */
+    protected NopException illegalTransition(ErpCrmEvent event, String expected, Throwable cause) {
+        return new NopException(ErpCrmErrors.ERR_EVENT_ILLEGAL_STATUS_TRANSITION, cause)
+                .param(ErpCrmErrors.ARG_EVENT_CODE, event.getCode())
+                .param(ErpCrmErrors.ARG_CURRENT_STATUS, event.getStatus())
+                .param(ErpCrmErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     /**
