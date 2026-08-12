@@ -75,8 +75,8 @@
 | M3.3 | ErpPurRfq.approveStatus 审批轴 Bean | done | `purchase/state-machine.md` §审批轴 | M1.3 + M2.6 | `nop-backend-dev` + `nop-testing` |
 | M3.4 | ErpPurRequisition.approveStatus 审批轴 Bean | done | `purchase/state-machine.md` §审批轴 | M1.3 + M2.7 | `nop-backend-dev` + `nop-testing` |
 | M3.5 | ErpPurOrder.approveStatus 审批轴 Bean | done | `purchase/state-machine.md` §审批轴 | M1.3 + M2.8 | `nop-backend-dev` + `nop-testing` |
-| M3.6 | ErpSalQuotation.approveStatus 审批轴 Bean | todo | `sales/state-machine.md` §审批轴 | M1.3 + M2.9 | `nop-backend-dev` + `nop-testing` |
-| M3.7 | ErpSalOrder.approveStatus 审批轴 Bean | todo | `sales/state-machine.md` §审批轴 | M1.3 + M2.10 | `nop-backend-dev` + `nop-testing` |
+| M3.6 | ErpSalQuotation.approveStatus 审批轴 Bean | done | `sales/state-machine.md` §审批轴 | M1.3 + M2.9 | `nop-backend-dev` + `nop-testing` |
+| M3.7 | ErpSalOrder.approveStatus 审批轴 Bean | done | `sales/state-machine.md` §审批轴 | M1.3 + M2.10 | `nop-backend-dev` + `nop-testing` |
 | M3.8 | ErpHrEmployee.employmentStatus 雇佣生命周期 Bean | todo | `human-resource/state-machine.md` §Employee | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.9 | ErpHrTimesheet.status Timesheet 审批生命周期 Bean | todo | `human-resource/state-machine.md` §Timesheet | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.10 | ErpPrjTimesheet.status Timesheet 审批轴 Bean | todo | `projects/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
