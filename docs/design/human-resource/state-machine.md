@@ -129,6 +129,8 @@
 
 > **Deferred**：员工 `ACTIVE/PROBATION` 在职主路径 + `transferEmployee` 部门调动（不改 employmentStatus，保留 ACTIVE/PROBATION）。`RESIGNED/TERMINATED/RETIRED` 三态为**预留死状态**——`employmentStatus` 字段与 `erp-hr/employment-status` dict 值保留，但本期全模块无 `setEmploymentStatus(RESIGNED|TERMINATED|RETIRED)` writer，亦无 resignEmployee / retireEmployee / terminateEmployee / probationToRegular mutation。下方 §场景 D（离职）/§场景 E（转正）描述的是**目标行为，未接入**；三态目前仅出现在 `ErpHrEmployeeBizModel.nonTransferableStatuses()` 作只读调动守卫。**Successor**：PM 要求正式离职/退休/试用期转正工作流时实现上述 mutation（方案A 触及 nop-auth 用户禁用副作用，属保护区域，故 Deferred）。
 
+> **实体级状态机 Bean 落地注记（plan `2026-08-13-1430-2`，M3.8）**：`ErpHrEmployeeStateMachine` 为**退化分类 Bean**（`transitions()` 空，如实反映零命名动作迁移 writer）。Bean 分类对齐本节业务语义：`initialStatuses()`={ACTIVE, PROBATION}（§1）、`terminalStatuses()`={RESIGNED, TERMINATED, RETIRED}（§3 显式声明）、`isTransferable()`/`nonTransferableStatuses()` 集中化只读调动守卫（替代 BizModel + Processor 双副本内联判断）。**死状态 vs 终态**：三终态当前零 writer = 不可达（死 = 无入边），但 isTerminal=true（§3 业务生命周期终点）；退化解下全部状态无出边，故「终态」按 §3 业务语义而非图论定义裁定。**PROBATION 零 writer 不对称**：PROBATION 归 initial（§1 业务语义，试用期入口），与三死状态归 terminal 对称；二者当前均不可达，successor 填充 writer 后可达。
+
 ### 1. 状态定义
 
 | 状态 | 业务含义（等待什么） |
@@ -198,6 +200,8 @@ DRAFT → SUBMITTED → APPROVED
                   → REJECTED → SUBMITTED（修改后重新提交）
 DRAFT → CANCELLED
 ```
+
+> **实现漂移注记（plan `2026-08-13-1430-2` layer-2 四方对照裁定）**：上图 `DRAFT → CANCELLED` 为**目标业务行为，生产代码未落地**——dict `erp-hr/timesheet-status`（`app-erp-hr.orm.xml:57-62`）**无 CANCELLED 值**（仅 DRAFT/SUBMITTED/APPROVED/REJECTED 四值），RC-R1.8 权威实现注记（本节顶部）仅列 submit/approve/reject 三动作，`ErpHrTimesheetBizModel` 无 cancel mutation/writer。生产实况为**三动作**：submit（DRAFT/REJECTED→SUBMITTED）+ approve（SUBMITTED→APPROVED）+ reject（SUBMITTED→REJECTED）。`ErpHrTimesheetStateMachine` Bean 矩阵如实编码已实现的三动作（4 边：submit 2 源 + approve 1 + reject 1），不编码 cancel 边。**Successor**：PM 要求工时表取消业务流落地时，开独立 plan 实现 cancel mutation + dict 加 CANCELLED 值（属业务行为变更 + 触及数据，须 ask-first），届时同步放开 Bean `assertCanCancel` + 本图无需此注记。归 `docs/plans/2026-08-13-1430-2-erphr-employee-timesheet-state-machine-beans.md` Deferred But Adjudicated。
 
 ### 3. 场景演练
 

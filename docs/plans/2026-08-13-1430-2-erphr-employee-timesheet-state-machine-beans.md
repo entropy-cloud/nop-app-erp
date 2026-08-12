@@ -1,6 +1,6 @@
 # 2026-08-13-1430-2-erphr-employee-timesheet-state-machine-beans 人力资源 ErpHrEmployee + ErpHrTimesheet 实体级状态机 Bean（M3.8 + M3.9）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-13
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` M3.8（todo）+ M3.9（todo）
 > Related: 前置 `2026-08-12-0617-1-entity-state-machine-m0-1-contract.md`（M0.1 done）+ `2026-08-12-0617-2-entity-state-machine-m0-2-inventory.md`（M0.2 done）+ `2026-08-12-0738-2-cs-ticket-state-machine-pilot-evaluation.md`（M1.3 模板 done）；姊妹计划 `2026-08-12-1118-3-erphr-leave-contract-state-machine-beans.md`（M2.11+M2.12 done，本域 Bean/接线/测试/Delta 范式，其 Deferred But Adjudicated 显式将 M3.8/M3.9 列为 successor，触发条件「各对应 M3 工作项启动时」已满足）；M0.2 清单 `docs/analysis/2026-08-12-entity-state-axis-inventory.md`（HR Employee/Timesheet 行）
@@ -70,56 +70,56 @@
 
 ### Phase 1 - ErpHrTimesheetStateMachine + ErpHrEmployeeStateMachine Bean + 注册 + 层 1 矩阵完备性测试
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/src/main/java/app/erp/hr/service/statemachine/ErpHrTimesheetStateMachine.java`（新）+ `ErpHrEmployeeStateMachine.java`（新）；`.../beans/app-service.beans.xml`（追加 2 Bean 注册于 `:116` 后）；`TestErpHrTimesheetStateMachineMatrix.java` + `TestErpHrEmployeeStateMachineMatrix.java`（新，层 1）
 Skill: `nop-backend-dev`（Bean 形状/注册）+ `nop-testing`（层 1 表驱动测试）
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M0.1 + M0.2 + M1.3 done
 
-- [ ] `Add`：创建 `ErpHrTimesheetStateMachine`（无状态），矩阵编码**已实现 3 边**：`assertCanSubmit(DRAFT|REJECTED)`/`assertCanApprove(SUBMITTED)`/`assertCanReject(SUBMITTED)` + 目标态方法（`submitTargetStatus()`→SUBMITTED / `approveTargetStatus()`→APPROVED / `rejectTargetStatus()`→REJECTED）+ `isTerminal(APPROVED|REJECTED)` + `transitions()`（submit 含 DRAFT→SUBMITTED + REJECTED→SUBMITTED = 2 边、approve 1、reject 1 = 4 边）+ `terminalStatuses()`(APPROVED/REJECTED) + `initialStatuses()`(DRAFT)。**不编码 cancel**（dict 无 CANCELLED + RC-R1.8 注记权威，layer-2 登记 doc drift）。非法来源态抛 common 码携带 `action`/`fromStatus`。Skill: `nop-backend-dev`
-- [ ] `Decision`（Timesheet cancel doc drift，路线图规则 5）：owner doc §2 图表 `state-machine.md:199` 画 `DRAFT→CANCELLED`，但 dict `erp-hr/timesheet-status`（orm.xml:57-62）**无 CANCELLED 值**，RC-R1.8 权威注记 `:183` 仅列 submit/approve/reject，BizModel 无 cancel writer。分类 = **doc drift**。Fix = owner doc §2 图表补注「cancel 为目标行为未落地，生产仅 submit/approve/reject 三动作；dict 无 CANCELLED」+ successor（PM 要求工时表取消业务流落地时开独立 plan 实现 cancel mutation + dict 加值 + 触及数据 ask-first）。Bean 不编码 cancel 边（镜像 LeaveRequest cancel 单源裁定范式）。Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：创建 `ErpHrEmployeeStateMachine`（无状态，**退化分类 Bean**）——`transitions()` 返回空列表（零迁移边，如实反映无命名动作 writer）；`initialStatuses()`(ACTIVE/PROBATION) + `terminalStatuses()`(RESIGNED/TERMINATED/RETIRED)（**对齐 owner doc §适用对象二 §3 终态声明**——见 Phase 3 Decision）+ `isTerminal(status)` 对三终态返回 true；集中化只读调动判断：`isTransferable(ACTIVE|PROBATION)` 返回 true / 其他 false + `nonTransferableStatuses()` 返回 [RESIGNED,TERMINATED,RETIRED]。**RESIGNED/TERMINATED/RETIRED 不在 initial/transitions 任一集合**（死状态：零 writer、不可达，但按 owner doc §3 业务语义为终态——「死」与「终态」不矛盾：死 = 无入边，终态 = 业务生命周期终点）。javadoc 标注退化解 + 死状态（当前不可达，successor 填充入边）+ PROBATION 零 writer 不对称（见 Phase 3 Decision）。Skill: `nop-backend-dev`
-- [ ] `Add`：在 `app-service.beans.xml` 以 FQN id 注册两 Bean（沿用 LeaveRequest/Contract 范式 `:113-116`，§11.1 步骤 2）。Skill: `nop-backend-dev`
-- [ ] `Proof`（层 1 矩阵完备性，新增 greenfield 表驱动测试，§11.1 步骤 4）：`TestErpHrTimesheetStateMachineMatrix` 覆盖 submit（DRAFT/REJECTED 合法、SUBMITTED/APPROVED 非法）/approve（SUBMITTED 合法）/reject（SUBMITTED 合法）合法+非法 + REJECTED→SUBMITTED 重提边 + APPROVED 严格终态无出边（REJECTED 为可恢复终态，有 submit 重提边）+ transitions（4 边）一致 + **断言无 cancel 边**（dict 无 CANCELLED 的对照留 layer-2 四方对照）；`TestErpHrEmployeeStateMachineMatrix` 覆盖退化解——`transitions()` 空、`isTransferable`(ACTIVE/PROBATION=true, RESIGNED/TERMINATED/RETIRED=false)、`nonTransferableStatuses()`=[三终态]、initial={ACTIVE,PROBATION}、terminal={RESIGNED,TERMINATED,RETIRED}（对齐 owner doc §3）、**断言三终态不在 transitions/initial 集合（死状态：零入边）但 isTerminal=true（业务终态 per §3）**。**不经 BizModel 入口**（层 1 只测 Bean）。Skill: `nop-testing`
+- [x] `Add`：创建 `ErpHrTimesheetStateMachine`（无状态），矩阵编码**已实现 3 边**：`assertCanSubmit(DRAFT|REJECTED)`/`assertCanApprove(SUBMITTED)`/`assertCanReject(SUBMITTED)` + 目标态方法（`submitTargetStatus()`→SUBMITTED / `approveTargetStatus()`→APPROVED / `rejectTargetStatus()`→REJECTED）+ `isTerminal(APPROVED|REJECTED)` + `transitions()`（submit 含 DRAFT→SUBMITTED + REJECTED→SUBMITTED = 2 边、approve 1、reject 1 = 4 边）+ `terminalStatuses()`(APPROVED/REJECTED) + `initialStatuses()`(DRAFT)。**不编码 cancel**（dict 无 CANCELLED + RC-R1.8 注记权威，layer-2 登记 doc drift）。非法来源态抛 common 码携带 `action`/`fromStatus`。Skill: `nop-backend-dev`
+- [x] `Decision`（Timesheet cancel doc drift，路线图规则 5）：owner doc §2 图表 `state-machine.md:199` 画 `DRAFT→CANCELLED`，但 dict `erp-hr/timesheet-status`（orm.xml:57-62）**无 CANCELLED 值**，RC-R1.8 权威注记 `:183` 仅列 submit/approve/reject，BizModel 无 cancel writer。分类 = **doc drift**。Fix = owner doc §2 图表补注「cancel 为目标行为未落地，生产仅 submit/approve/reject 三动作；dict 无 CANCELLED」+ successor（PM 要求工时表取消业务流落地时开独立 plan 实现 cancel mutation + dict 加值 + 触及数据 ask-first）。Bean 不编码 cancel 边（镜像 LeaveRequest cancel 单源裁定范式）。Skill: `state-machine-business-review-prompt.md`
+- [x] `Add`：创建 `ErpHrEmployeeStateMachine`（无状态，**退化分类 Bean**）——`transitions()` 返回空列表（零迁移边，如实反映无命名动作 writer）；`initialStatuses()`(ACTIVE/PROBATION) + `terminalStatuses()`(RESIGNED/TERMINATED/RETIRED)（**对齐 owner doc §适用对象二 §3 终态声明**——见 Phase 3 Decision）+ `isTerminal(status)` 对三终态返回 true；集中化只读调动判断：`isTransferable(ACTIVE|PROBATION)` 返回 true / 其他 false + `nonTransferableStatuses()` 返回 [RESIGNED,TERMINATED,RETIRED]。**RESIGNED/TERMINATED/RETIRED 不在 initial/transitions 任一集合**（死状态：零 writer、不可达，但按 owner doc §3 业务语义为终态——「死」与「终态」不矛盾：死 = 无入边，终态 = 业务生命周期终点）。javadoc 标注退化解 + 死状态（当前不可达，successor 填充入边）+ PROBATION 零 writer 不对称（见 Phase 3 Decision）。Skill: `nop-backend-dev`
+- [x] `Add`：在 `app-service.beans.xml` 以 FQN id 注册两 Bean（沿用 LeaveRequest/Contract 范式 `:113-116`，§11.1 步骤 2）。Skill: `nop-backend-dev`
+- [x] `Proof`（层 1 矩阵完备性，新增 greenfield 表驱动测试，§11.1 步骤 4）：`TestErpHrTimesheetStateMachineMatrix` 覆盖 submit（DRAFT/REJECTED 合法、SUBMITTED/APPROVED 非法）/approve（SUBMITTED 合法）/reject（SUBMITTED 合法）合法+非法 + REJECTED→SUBMITTED 重提边 + APPROVED 严格终态无出边（REJECTED 为可恢复终态，有 submit 重提边）+ transitions（4 边）一致 + **断言无 cancel 边**（dict 无 CANCELLED 的对照留 layer-2 四方对照）；`TestErpHrEmployeeStateMachineMatrix` 覆盖退化解——`transitions()` 空、`isTransferable`(ACTIVE/PROBATION=true, RESIGNED/TERMINATED/RETIRED=false)、`nonTransferableStatuses()`=[三终态]、initial={ACTIVE,PROBATION}、terminal={RESIGNED,TERMINATED,RETIRED}（对齐 owner doc §3）、**断言三终态不在 transitions/initial 集合（死状态：零入边）但 isTerminal=true（业务终态 per §3）**。**不经 BizModel 入口**（层 1 只测 Bean）。Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 两 Bean 落地（Timesheet 3 动作 + 目标态 + isTerminal + transitions 4 边；Employee 退化解 + isTransferable/nonTransferableStatuses + transitions 空），无状态（grep 证实不 import DAO/IBiz/IServiceContext/事务）。
-- [ ] 两 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）。
-- [ ] 层 1 矩阵测试 `mvn test -pl module-hr/erp-hr-service -am -Dtest=TestErpHrTimesheetStateMachineMatrix,TestErpHrEmployeeStateMachineMatrix` 全绿。
-- [ ] 本地化编译检查：`mvn compile -pl module-hr/erp-hr-service -am` 通过（解除 Phase 2 接线依赖）。
+- [x] 两 Bean 落地（Timesheet 3 动作 + 目标态 + isTerminal + transitions 4 边；Employee 退化解 + isTransferable/nonTransferableStatuses + transitions 空），无状态（grep 证实不 import DAO/IBiz/IServiceContext/事务）。
+- [x] 两 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）。
+- [x] 层 1 矩阵测试 `mvn test -pl module-hr/erp-hr-service -am -Dtest=TestErpHrTimesheetStateMachineMatrix,TestErpHrEmployeeStateMachineMatrix` 全绿。
+- [x] 本地化编译检查：`mvn compile -pl module-hr/erp-hr-service -am` 通过（解除 Phase 2 接线依赖）。
 
 ### Phase 2 - BizModel 接线（行为保持）+ 层 3 回归
 
-Status: planned
+Status: completed
 Targets: Timesheet：`ErpHrTimesheetBizModel`（submit/approve/reject）；Employee：`ErpHrEmployeeBizModel`（isTransferable/nonTransferableStatuses/requireTransferableEmployee）、`ErpHrEmployeeTransferEmployeeProcessor`（调动只读守卫）
 Skill: `nop-backend-dev`（接线 + 错误码映射）+ `nop-testing`（回归断言）
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1
 
-- [ ] `Fix`：Timesheet `ErpHrTimesheetBizModel` 注入 `ErpHrTimesheetStateMachine`（`@Inject` 非 private），将 submit `:53-59`/approve `:71`/reject `:90` 内联 `Objects.equals` 来源态守卫替换为 `stateMachine.assertCan<Action>(from)` + 目标态写回（submit/approve/reject TargetStatus）；common→`ERR_HR_TIMESHEET_ILLEGAL_TRANSITION` 映射（common 码作 cause）。**动态副作用保留原位**：submit 的 totalHours 重算 `:60` + 24h 跨表校验 `:61`（`checkDailyHoursLimit:109-132`）、reject 的 reason 必填守卫 `:85-88`（`ERR_TIMESHEET_REJECT_REASON_REQUIRED`）+ reason 写入 remark `:96`、审计字段、乐观锁。Skill: `nop-backend-dev`
-- [ ] `Fix`：Employee `ErpHrEmployeeBizModel` 注入 `ErpHrEmployeeStateMachine`，将 `isTransferable:158-161`/`nonTransferableStatuses:368-373`/`requireTransferableEmployee:142-156` 只读调动判断改委托 Bean（`stateMachine.isTransferable(status)` / `stateMachine.nonTransferableStatuses()`）；`ErpHrEmployeeTransferEmployeeProcessor:109` 调动只读守卫同步委托。**ERR_EMPLOYEE_NOT_TRANSFERABLE 对外不变**。**2 处初始态 ACTIVE 写入不调 assertCan***（`ErpHrRecruitmentHireProcessor:63` / `ErpHrRecruitmentBizModel:149`——按 §9.2 选项 c 初始态路径，非迁移）。**transferEmployee 不改 employmentStatus**（保持）。Skill: `nop-backend-dev`
-- [ ] `Proof`（层 3 既有回归保持全绿）：`mvn test -pl module-hr/erp-hr-service -am` 全绿——重点 `TestErpHrTimesheetFamily`（24h 跨表校验 + totalHours 派生 + submit/approve/reject 生命周期 + REJECTED→submit→approve 链 + 非法迁移拒绝）、`TestErpHrEmployeeTransfer`（调动守卫 isTransferable + transferEmployee 不改 employmentStatus）、`TestErpHrEmployeeReferences`（入职→合同联动 + 初始 ACTIVE）、`TestErpHrLeaveEngine`/`TestErpHrPayrollSimulation`（HR 域回归基线）。证明错误码、3 边、24h 校验、调动守卫、入职→ACTIVE 不变。Skill: `nop-testing`
+- [x] `Fix`：Timesheet `ErpHrTimesheetBizModel` 注入 `ErpHrTimesheetStateMachine`（`@Inject` 非 private），将 submit `:53-59`/approve `:71`/reject `:90` 内联 `Objects.equals` 来源态守卫替换为 `stateMachine.assertCan<Action>(from)` + 目标态写回（submit/approve/reject TargetStatus）；common→`ERR_HR_TIMESHEET_ILLEGAL_TRANSITION` 映射（common 码作 cause）。**动态副作用保留原位**：submit 的 totalHours 重算 `:60` + 24h 跨表校验 `:61`（`checkDailyHoursLimit:109-132`）、reject 的 reason 必填守卫 `:85-88`（`ERR_TIMESHEET_REJECT_REASON_REQUIRED`）+ reason 写入 remark `:96`、审计字段、乐观锁。Skill: `nop-backend-dev`
+- [x] `Fix`：Employee `ErpHrEmployeeBizModel` 注入 `ErpHrEmployeeStateMachine`，将 `isTransferable:158-161`/`nonTransferableStatuses:368-373`/`requireTransferableEmployee:142-156` 只读调动判断改委托 Bean（`stateMachine.isTransferable(status)` / `stateMachine.nonTransferableStatuses()`）；`ErpHrEmployeeTransferEmployeeProcessor:109` 调动只读守卫同步委托。**ERR_EMPLOYEE_NOT_TRANSFERABLE 对外不变**。**2 处初始态 ACTIVE 写入不调 assertCan***（`ErpHrRecruitmentHireProcessor:63` / `ErpHrRecruitmentBizModel:149`——按 §9.2 选项 c 初始态路径，非迁移）。**transferEmployee 不改 employmentStatus**（保持）。Skill: `nop-backend-dev`
+- [x] `Proof`（层 3 既有回归保持全绿）：`mvn test -pl module-hr/erp-hr-service -am` 全绿——重点 `TestErpHrTimesheetFamily`（24h 跨表校验 + totalHours 派生 + submit/approve/reject 生命周期 + REJECTED→submit→approve 链 + 非法迁移拒绝）、`TestErpHrEmployeeTransfer`（调动守卫 isTransferable + transferEmployee 不改 employmentStatus）、`TestErpHrEmployeeReferences`（入职→合同联动 + 初始 ACTIVE）、`TestErpHrLeaveEngine`/`TestErpHrPayrollSimulation`（HR 域回归基线）。证明错误码、3 边、24h 校验、调动守卫、入职→ACTIVE 不变。Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] Timesheet submit/approve/reject 内联来源态守卫 + Employee isTransferable/nonTransferableStatuses/requireTransferableEmployee 只读判断均改调/委托 Bean，grep 证实相关方法体内不再有内联 `Objects.equals` 矩阵判断（动态副作用如 24h 校验/totalHours/reason 必填/调动 NOP 用户边界除外；2 处初始态 ACTIVE 写入不调 assertCan*——按 §9.2 初始态路径）。
-- [ ] 领域错误码 + 参数对外不变（层 3 断言证实）；Timesheet 3 边 + 24h 校验 + reject reason；Employee 调动守卫 ERR_EMPLOYEE_NOT_TRANSFERABLE + transferEmployee 不改 employmentStatus + 入职→ACTIVE 行为不变。
-- [ ] 层 3 `mvn test -pl module-hr/erp-hr-service -am` 全绿。
+- [x] Timesheet submit/approve/reject 内联来源态守卫 + Employee isTransferable/nonTransferableStatuses/requireTransferableEmployee 只读判断均改调/委托 Bean，grep 证实相关方法体内不再有内联 `Objects.equals` 矩阵判断（动态副作用如 24h 校验/totalHours/reason 必填/调动 NOP 用户边界除外；2 处初始态 ACTIVE 写入不调 assertCan*——按 §9.2 初始态路径）。
+- [x] 领域错误码 + 参数对外不变（层 3 断言证实）；Timesheet 3 边 + 24h 校验 + reject reason；Employee 调动守卫 ERR_EMPLOYEE_NOT_TRANSFERABLE + transferEmployee 不改 employmentStatus + 入职→ACTIVE 行为不变。
+- [x] 层 3 `mvn test -pl module-hr/erp-hr-service -am` 全绿。
 
 ### Phase 3 - 层 2 四方对照（Timesheet + Employee 双轴）
 
-Status: planned
+Status: completed
 Targets: 四方对照审计记录（写入本计划 Closure 段）
 Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度）
 
 - Item Types: `Proof | Decision | Fix`
 - Prereqs: Phase 2
 
-- [ ] `Proof`（四方对照，§11.1 步骤 5）：以 `state-machine-business-review-prompt.md` 10 维度审查双轴——Timesheet（dict timesheet-status 4 值 ↔ owner-doc §适用对象三 RC-R1.8 ↔ Bean ↔ writer 含 BizModel 3 mutation + CRUD 路径，**重点裁定 cancel doc drift**：§2 图表 `:199` vs RC-R1.8 注记 `:183` + dict 无 CANCELLED——dict 无值对照在此落实）；Employee（dict employment-status 5 值 ↔ owner-doc §适用对象二 §1-§3 ↔ Bean 退化解 ↔ writer 含 2 初始态 ACTIVE 写入（RecruitmentHireProcessor:63 / RecruitmentBizModel:149）+ 只读调动守卫（BizModel:158-161,368-373,142-156 **及 Processor 重复副本** `ErpHrEmployeeTransferEmployeeProcessor:102-121`——Phase 2 两处均委托 Bean）+ CRUD 路径，**重点裁定 3 死状态 + 退化轴 + §3 终态对齐**）。writer 盘点含初始态写入 + 只读守卫（BizModel + Processor 双副本）+ 框架入口 + 测试 fixture。Skill: `state-machine-business-review-prompt.md`
-- [ ] `Decision`（漂移裁定，路线图规则 5）：
+- [x] `Proof`（四方对照，§11.1 步骤 5）：以 `state-machine-business-review-prompt.md` 10 维度审查双轴——Timesheet（dict timesheet-status 4 值 ↔ owner-doc §适用对象三 RC-R1.8 ↔ Bean ↔ writer 含 BizModel 3 mutation + CRUD 路径，**重点裁定 cancel doc drift**：§2 图表 `:199` vs RC-R1.8 注记 `:183` + dict 无 CANCELLED——dict 无值对照在此落实）；Employee（dict employment-status 5 值 ↔ owner-doc §适用对象二 §1-§3 ↔ Bean 退化解 ↔ writer 含 2 初始态 ACTIVE 写入（RecruitmentHireProcessor:63 / RecruitmentBizModel:149）+ 只读调动守卫（BizModel:158-161,368-373,142-156 **及 Processor 重复副本** `ErpHrEmployeeTransferEmployeeProcessor:102-121`——Phase 2 两处均委托 Bean）+ CRUD 路径，**重点裁定 3 死状态 + 退化轴 + §3 终态对齐**）。writer 盘点含初始态写入 + 只读守卫（BizModel + Processor 双副本）+ 框架入口 + 测试 fixture。Skill: `state-machine-business-review-prompt.md`
+- [x] `Decision`（漂移裁定，路线图规则 5）：
   - **Timesheet cancel = doc drift**（Phase 1 Decision 闭环）：§2 图表声明 DRAFT→CANCELLED，但 dict 无值 + RC-R1.8 仅 3 动作 + 无 writer。Fix：owner doc §2 图表补注 + successor。
   - **Employee §3 终态 vs Bean terminalStatuses() 对齐（§11.4 显式裁定）**：owner doc §适用对象二 §3（`state-machine.md:157-160`）显式声明 RESIGNED/TERMINATED/RETIRED 为终态。Bean `terminalStatuses()`=[三态]（对齐 §3 业务语义）+ `isTerminal()=true`。三者当前不可达（零 writer = 死/无入边），但「死」（无入边）与「终态」（业务生命周期终点、无出边）不矛盾——退化解下全部状态无出边，故「终态」按 **owner doc §3 业务语义**而非图论定义裁定（否则 ACTIVE/PROBATION 也无出边会被误判终态）。登记为 Decision（Bean 对齐 §3；死=不可达单独以「不在 transitions/initial」+ javadoc 表达）。
   - **Employee RESIGNED/TERMINATED/RETIRED = intentional reserved（死状态）**：dict 有值 + 零 writer + 无 mutation。owner doc §适用对象二已记载 Deferred。分类 = `intentional reserved`。Fix：dict 值保留（不删除，对齐先例）。Successor：离职/退休/转正业务流落地时（填充入边使三态可达）。
@@ -130,8 +130,8 @@ Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度）
 
 Exit Criteria:
 
-- [ ] 双轴四方对照审计记录存在且非空，每维有可追溯结论（引用 Bean 元数据 / owner doc 章节 / dict 位置 / writer 类:行）。
-- [ ] Timesheet cancel doc drift（§2 图表补注）+ Employee 3 死状态 + 退化轴 Decision 均已登记 + successor，无静默排除；其他不一致项（若有）已 Fix 登记。
+- [x] 双轴四方对照审计记录存在且非空，每维有可追溯结论（引用 Bean 元数据 / owner doc 章节 / dict 位置 / writer 类:行）。
+- [x] Timesheet cancel doc drift（§2 图表补注）+ Employee 3 死状态 + 退化轴 Decision 均已登记 + successor，无静默排除；其他不一致项（若有）已 Fix 登记。
 
 ## Draft Review Record
 
@@ -143,14 +143,14 @@ Exit Criteria:
 
 > 本计划含生产代码变更（2 Bean + Timesheet 3 接线 + Employee 守卫委托 + 测试），Closure Gates 运行完整仓库验证。
 
-- [ ] 范围内行为完成（Timesheet + Employee 双轴 Bean + 接线 + 层 1 矩阵 + 层 3 回归 + 层 2 四方对照）
-- [ ] 相关文档对齐（owner doc §2 cancel doc drift 补注；Employee 死状态 + 退化轴 Decision 补注；路线图 M3.8 + M3.9 done）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-hr/erp-hr-service` 全绿 + `bash docs/audits/nop-compliance-checker.sh`（R5=0/R11=0 无漂移）
-- [ ] 无范围内项目降级为 deferred/follow-up（cancel doc drift + 死状态 Decision 必须落地登记）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Timesheet + Employee 双轴 Bean + 接线 + 层 1 矩阵 + 层 3 回归 + 层 2 四方对照）
+- [x] 相关文档对齐（owner doc §2 cancel doc drift 补注；Employee 死状态 + 退化轴 Decision 补注；路线图 M3.8 + M3.9 done）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-hr/erp-hr-service` 全绿（214 tests, 0 failures） + `bash docs/audits/nop-compliance-checker.sh`（R5=0/R11=0 无漂移）
+- [x] 无范围内项目降级为 deferred/follow-up（cancel doc drift + 死状态 Decision 必须落地登记）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -186,12 +186,73 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <pending — plan not yet executed>
+Status Note: 已执行（Phase 1-3 全部完成，层 1 矩阵 + 层 3 回归全绿，owner doc 补注已落地）。
 
 Closure Audit Evidence:
 
-- <pending — independent closure audit after execution>
+### 层 2 四方对照审计记录（Phase 3 Proof 产出，`state-machine-business-review-prompt.md` 10 维度）
+
+#### 轴一：ErpHrTimesheet.status（dict erp-hr/timesheet-status）
+
+**四方对照表：**
+
+| 维度 | dict（`app-erp-hr.orm.xml:57-62`） | owner doc（`state-machine.md §适用对象三`） | Bean（`ErpHrTimesheetStateMachine`） | writer（生产代码） |
+|------|------|------|------|------|
+| 状态全集 | DRAFT/SUBMITTED/APPROVED/REJECTED（4 值，**无 CANCELLED**） | §1 表 4 态 + §2 图表画 `DRAFT→CANCELLED`（drift） | initial={DRAFT}, terminal={APPROVED,REJECTED}, transitions 4 边 | 3 mutation × setStatus + CRUD 入口 + 测试 fixture |
+
+**10 维度结论：**
+
+1. **状态定义**：4 态语义清晰（草稿/已提交/已批准/已驳回），每态有明确业务等待点。✅ 无「动作作为状态」。dict 4 值与 owner doc §1 表一致。
+2. **转换完整性**：Bean 编码 4 边 = submit(DRAFT→SUBMITTED) + submit(REJECTED→SUBMITTED 重提) + approve(SUBMITTED→APPROVED) + reject(SUBMITTED→REJECTED)。与 BizModel 3 mutation 完全对齐（`ErpHrTimesheetBizModel:50-99` Phase 2 接线后委托 Bean）。
+3. **终端与恢复**：APPROVED 严格终态（无出边）；REJECTED 可恢复终态（submit 重提边 →SUBMITTED）。Bean `isTerminal`=true 对二者，`transitions()` 反映 REJECTED 有 submit 出边。✅
+4. **异常路径**：24h 跨表校验（`ERR_TIMESHEET_DAILY_HOURS_EXCEEDED`）+ reject reason 必填（`ERR_TIMESHEET_REJECT_REASON_REQUIRED`）+ 非法迁移（`ERR_HR_TIMESHEET_ILLEGAL_TRANSITION`）。均为动态业务校验，保留 BizModel。✅
+5. **可达性**：从 DRAFT 可达全部 3 非初始态（层 1 `testReachabilityFromInitial` 证实）。无死状态（dict 4 值全有 writer 或可达）。✅
+6. **角色与权限**：owner doc 未显式绑定角色（UC-HR-03 员工提交 + 项目经理审批）；本 Bean 不持有角色（契约 §2 无状态）。角色守卫归 xbiz auth。✅
+7. **外部依赖**：owner doc §适用对象三 RC-R1.8 注记「工时归集到 projects/cost-collection」为 successor（跨域归集未接线）。Bean 不持有跨域副作用。✅
+8. **TODO/任务策略**：SUBMITTED 产生审批待办（owner doc §场景 F）；Bean 不持有。✅
+9. **场景演练**：层 3 `TestErpHrTimesheetFamily` 覆盖快乐路径（DRAFT→submit→SUBMITTED→approve→APPROVED）+ 拒绝路径（SUBMITTED→reject→REJECTED→submit 重提→approve）+ 异常终止（24h 超限/非法迁移）。✅
+10. **设计文档一致性**：**发现 doc drift** —— §2 图表 `state-machine.md:199` 画 `DRAFT→CANCELLED`，但 dict 无 CANCELLED 值 + RC-R1.8 权威注记仅 3 动作 + 无 writer。**Fix**：owner doc §2 图表补注已落地（cancel 为目标行为未落地 + dict 无值 + successor）。Bean 不编码 cancel 边（层 1 `testNoCancelEdgeDictHasNoCancelledValue` 断言）。
+
+**Timesheet 裁定汇总**：1 项 doc drift（cancel）已 Fix + successor 登记；无死状态；Bean 矩阵与生产 writer 完全对齐。
+
+#### 轴二：ErpHrEmployee.employmentStatus（dict erp-hr/employment-status，退化解）
+
+**四方对照表：**
+
+| 维度 | dict（`app-erp-hr.orm.xml:8-14`） | owner doc（`state-machine.md §适用对象二`） | Bean（`ErpHrEmployeeStateMachine`） | writer（生产代码） |
+|------|------|------|------|------|
+| 状态全集 | ACTIVE/PROBATION/RESIGNED/TERMINATED/RETIRED（5 值） | §1 表 5 态 + §2 图表（目标行为 Deferred）+ §3 终态声明 | initial={ACTIVE,PROBATION}, terminal={RESIGNED,TERMINATED,RETIRED}, transitions=**空** | 2 处初始 ACTIVE 写入 + 只读调动守卫 + CRUD + 测试 fixture |
+
+**writer 全量盘点（§9.4 CRUD 路径纳入）：**
+- 生产命名动作迁移 writer：**0**（无 resignEmployee/retireEmployee/terminateEmployee/probationToRegular mutation）
+- 初始态 ACTIVE 写入：**2**（`ErpHrRecruitmentHireProcessor:63` 入职新建 + `ErpHrRecruitmentBizModel:149` 入职新建 legacy dup）—— §9.2 选项 c 创建路径，不调 assertCan*
+- 只读调动守卫（非 writer）：BizModel `isTransferable`/`nonTransferableStatuses`/`requireTransferableEmployee` + Processor `isTransferable`/`requireTransferableEmployee`（Phase 2 两处均委托 Bean）
+- 框架 CRUD 入口：通用 `__save`/`update` 可写 employmentStatus（xmeta insertable/updatable=true，§9.1 探索结论）—— 不在矩阵运行时强制范围（§9.2 选项 c）
+- 测试 fixture：12 处 `setEmploymentStatus(ACTIVE)` 构造测试种子（非生产 writer）
+
+**10 维度结论（退化解适配）：**
+
+1. **状态定义**：5 态语义清晰（在职/试用/离职/解雇/退休）。✅ ACTIVE/PROBATION 为活态入口（§1），RESIGNED/TERMINATED/RETIRED 为业务终点（§3）。
+2. **转换完整性**：**退化解**——transitions() 空，如实反映零命名动作迁移 writer。owner doc §2 图表（离职/转正）为**目标行为 Deferred**（§适用对象二 Deferred 注记 + 场景 D/E 明示）。Bean 不编码未落地边。
+3. **终端与恢复**：Bean `terminalStatuses()`={RESIGNED,TERMINATED,RETIRED} 对齐 owner doc §3 显式声明。**§3 终态对齐 Decision**（§11.4 显式裁定）：三态当前零 writer = 死（无入边），但 isTerminal=true（§3 业务终点）；退化解下全部状态无出边，故「终态」按 §3 业务语义而非图论裁定。
+4. **异常路径**：调动守卫（`ERR_EMPLOYEE_NOT_TRANSFERABLE`）保留 BizModel/Processor，Phase 2 委托 Bean `isTransferable` 判断。✅ 领域码对外不变。
+5. **可达性**：**退化解特性**——从 ACTIVE 经 transitions() 不可达任何其他状态（transitions 空）。RESIGNED/TERMINATED/RETIRED 当前不可达（死状态），PROBATION 当前不可达（零 writer 不对称）。均归 successor（离职/退休/转正 mutation 落地后填充入边）。层 1 `testTerminalStatusesAreDeadButBusinessTerminal` 断言三终态不在 transitions/initial 但 isTerminal=true。
+6. **角色与权限**：owner doc §场景 D/E 描述目标角色（HR 操作）；当前无 mutation 故无角色绑定。调动守卫角色归 xbiz auth。✅
+7. **外部依赖**：owner doc §场景 D 描述目标联动（合同→TERMINATED、休假→CANCELLED、停用账号）；当前未接入。Bean 不持有。✅
+8. **TODO/任务策略**：退化解无非终态产生 TODO（无 mutation 推进）。调动守卫为同步拒绝。✅
+9. **场景演练**：层 3 `TestErpHrEmployeeTransfer`（10 tests）覆盖调动守卫（ACTIVE 可调动 + RESIGNED 不可调动）+ transferEmployee 不改 employmentStatus。入职→ACTIVE 由 `TestErpHrEmployeeReferences` 覆盖。✅
+10. **设计文档一致性**：owner doc §适用对象二 Deferred 注记 + Bean 落地注记（补注已落地）对齐。**PROBATION 零 writer 不对称 Decision**：PROBATION 归 initial（§1 业务语义），与三死状态归 terminal 对称；二者当前均不可达。**退化轴 Decision（rule 9 替代方案）**：选定落地退化 Bean（transitions 空 + 分类集中化）而非 defer M3.8——Bean 集中化 BizModel+Processor 双副本调动守卫为可测/Delta-overridable 单元（真实整合价值），forward-compatible，M5.1 全域矩阵审计需机器可读元数据。
+
+**Employee 裁定汇总**：3 死状态（RESIGNED/TERMINATED/RETIRED）= intentional reserved（dict 值保留，successor 填充入边）；PROBATION 零 writer 不对称 Decision 登记；退化轴 rule 9 替代方案记录；Bean `terminalStatuses()` 对齐 §3。无静默排除。
+
+### 验证证据
+
+- 层 1 矩阵：`TestErpHrTimesheetStateMachineMatrix`（11 tests）+ `TestErpHrEmployeeStateMachineMatrix`（7 tests）= 18 tests 全绿。
+- 层 3 回归：`mvn test -pl module-hr/erp-hr-service` = 214 tests 全绿（0 failures, 0 errors），含 `TestErpHrTimesheetFamily`/`TestErpHrEmployeeTransfer`/`TestErpHrEmployeeReferences`/`TestErpHrLeaveEngine`/`TestErpHrPayrollSimulation`。
+- 全仓构建：`mvn clean install -DskipTests` BUILD SUCCESS。
+- 合规：`nop-compliance-checker.sh` R5=0, R11=0（无漂移）。
+- grep 证实：Timesheet BizModel 无 `Objects.equals` 状态判断；Employee BizModel + Processor 无内联 `EMPLOYMENT_ACTIVE/PROBATION.equals` 判断（均委托 Bean）。
 
 Follow-up:
 
-- <pending — 非阻塞跟进见 §Deferred But Adjudicated>
+- 非阻塞跟进见 §Deferred But Adjudicated（Timesheet cancel mutation / Employee 离职退休转正 mutation / Salary Survey 状态轴 / Delta 覆盖实证 / 全局 CRUD 写锁）。
