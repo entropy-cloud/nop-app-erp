@@ -412,7 +412,7 @@ CRUD 写入边界（M0.1 §9）：选项 (c) 显式排除——全部状态字�
 | M3.11 | 结算单据 docStatus | projects（语义推断） | erp-prj/project-status | ErpPrjProjectSettlementProcessor:122-137 | 无 | 无 | 无 | 无 |
 | M3.12 | 结算审批轴 | projects（同上） | wf/approve-status | Settlement lifecycle Processors | 无 | 无 | 无 | 无 |
 | M3.13 | OPEN→WIP→SUBMITTED→COMPLETED；WIP↔ON_HOLD；→CANCELLED | manufacturing/state-machine.md §JobCard | erp-mfg/job-card-status | 6 JobCard Processors | 无 | 无 | 无 | WorkOrder cascade；APS generateJobCards |
-| M3.14 | DRAFT→RUNNING→COMPLETED→FIRMED；COMPLETED→DRAFT | manufacturing/state-machine.md §MRP | erp-mfg/mrp-status | MrpEngine + MrpReleaseService | 无 | 无 | 无 | release 生成 WorkOrder/Subcontract |
+| M3.14 | DRAFT→RUNNING→COMPLETED→FIRMED；~~COMPLETED→DRAFT~~（⚠ 清单漂移：owner doc §MRP + 实仓均无此 revert 边，`MrpEngine.runMrp` 守卫要求 DRAFT，COMPLETED 不可 revert；plan 2026-08-13-1430-1 §Deferred 登记为 documentation drift → successor） | manufacturing/state-machine.md §MRP | erp-mfg/mrp-status | MrpEngine + SimulationMrpEngine + MrpReleaseService | 无 | 无 | 无 | release 生成 WorkOrder/Subcontract |
 | M3.15 | DRAFT→ACTIVE→CANCELLED（无 reversal listener） | assets/state-machine.md §Movement | erp/doc-status | Movement INLINE 5 action | 无 | 无 | 无 | 无过账副作用 |
 | M3.16 | UNSUBMITTED→SUBMITTED→APPROVED/REJECTED | assets/state-machine.md | wf/approve-status | Movement INLINE 5 action | 无 | 无 | 无 | 无 |
 | M3.17 | OPEN→ACCEPTED→COMPLETED/REJECTED；→CANCELLED | maintenance/state-machine.md §Request | erp-mnt/request-status | Request Accept/Start/Complete/Reject/Cancel Processors | TestErpMntVisitRequestStateMachine | 无 | 无 | accept→生成 Visit |

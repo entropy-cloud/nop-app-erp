@@ -82,8 +82,8 @@
 | M3.10 | ErpPrjTimesheet.status Timesheet 审批轴 Bean | todo | `projects/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.11 | ErpPrjProjectSettlement.docStatus 结算单据生命周期 Bean | todo | `projects/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.12 | ErpPrjProjectSettlement.approveStatus 结算审批轴 Bean | todo | `projects/state-machine.md` | M1.3 + M3.11 | `nop-backend-dev` + `nop-testing` |
-| M3.13 | ErpMfgJobCard.status JobCard 生命周期 Bean | todo | `manufacturing/state-machine.md` §JobCard | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M3.14 | ErpMfgMrpPlan.status MrpPlan 生命周期 Bean | todo | `manufacturing/state-machine.md` §MRP | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M3.13 | ErpMfgJobCard.status JobCard 生命周期 Bean | done | `manufacturing/state-machine.md` §JobCard | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M3.14 | ErpMfgMrpPlan.status MrpPlan 生命周期 Bean | done | `manufacturing/state-machine.md` §MRP | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.15 | ErpAstMovement.docStatus 资产移动单据生命周期 Bean | todo | `assets/state-machine.md` §Movement | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.16 | ErpAstMovement.approveStatus 资产移动审批轴 Bean | todo | `assets/state-machine.md` §Movement | M1.3 + M3.15 | `nop-backend-dev` + `nop-testing` |
 | M3.17 | ErpMntRequest.status Request 生命周期 Bean | todo | `maintenance/state-machine.md` §Request | M1.3 | `nop-backend-dev` + `nop-testing` |

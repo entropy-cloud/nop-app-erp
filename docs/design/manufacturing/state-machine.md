@@ -197,7 +197,7 @@
   │              ├─ 提交 → 已提交 (SUBMITTED)
   │              │           └─ 完成 → 已完成 (COMPLETED)
   │              └─ 取消 → 已取消 (CANCELLED)
-  └─ （工单取消时联动取消）
+  └─ （工单取消时联动取消）⚠ doc drift：目标行为未落地（`ErpMfgWorkOrderProcessor.cancel` 仅翻 WorkOrder.docStatus→CANCELLED，无 JobCard setStatus 跨聚合 writer）；`cancelJob` 为独立命名动作，非级联目标。实现级联属跨聚合业务行为变更，归 successor（plan 2026-08-13-1430-1 §Deferred）。
 ```
 
 > **作业卡 TRANSFERRED 两态为预留死状态（Deferred）**：`erp-mfg/job-card-status` 字典含 `PARTIALLY_TRANSFERRED`/`MATERIAL_TRANSFERRED` 两值（转序/工序转移语义入口），但 `ErpMfgJobCardProcessor` 与 `ErpMfgJobCardBizModel` 全 7 mutation（startJob/recordWork/submitJob/completeJob/holdJob/resumeJob/cancelJob）**零 setStatus writer**，两态本期不可达。处置：采纳 Decision A（保留 dict 值为预留 + owner doc 标注 Deferred，对齐 `mrp.md:88` forecast CONSUMED 既有先例），不从 ORM 删除。**Successor 触发条件**：转序/工序转移功能上线时，实现 setStatus writer + 状态迁移守卫，将两态接入作业卡主生命周期。
