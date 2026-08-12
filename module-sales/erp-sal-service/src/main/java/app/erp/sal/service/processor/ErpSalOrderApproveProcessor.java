@@ -3,6 +3,7 @@ package app.erp.sal.service.processor;
 import app.erp.sal.dao.entity.ErpSalOrder;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.sal.service.statemachine.ErpSalOrderApprovalStateMachine;
 import app.erp.common.service.AbstractApproveProcessor;
 import io.nop.api.core.exceptions.ErrorCode;
 import io.nop.api.core.exceptions.NopException;
@@ -11,15 +12,21 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalOrder approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2).
- * Runs the AbstractApproveProcessor skeleton; delegates domain-specific hooks to ErpSalOrderProcessor.
+ * ErpSalOrder approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2；审批轴 Bean 接线 plan 2026-08-13-0945-2 M3.7)。
+ *
+ * <p>运行 {@link AbstractApproveProcessor} 骨架；固定来源态/目标态判断委托
+ * {@link ErpSalOrderApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）；
  * approve 业务校验（客户启用 + 信用额度）经 facade.validateBusinessRulesForApprove；
- * pricingSource 审计 + commitment-commit + intercompany-approve 经 beforeStateChange/afterStateChange hooks。
+ * pricingSource 审计 + commitment-commit + intercompany-approve 经 beforeStateChange/afterStateChange hooks 保留原位；
+ * SoD 守卫 {@link #sodErrorCode()} 保留。
  */
 public class ErpSalOrderApproveProcessor extends AbstractApproveProcessor<ErpSalOrder> {
 
     @Inject
     ErpSalOrderProcessor processor;
+
+    @Inject
+    ErpSalOrderApprovalStateMachine stateMachine;
 
     @Override
     protected IEntityDao<ErpSalOrder> dao() {
@@ -48,6 +55,15 @@ public class ErpSalOrderApproveProcessor extends AbstractApproveProcessor<ErpSal
     @Override
     protected void validateBusinessRules(ErpSalOrder entity, IServiceContext context) {
         processor.validateBusinessRulesForApprove(entity, context);
+    }
+
+    @Override
+    protected void validateTransitionForApprove(ErpSalOrder entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+        }
     }
 
     @Override
@@ -99,7 +115,7 @@ public class ErpSalOrderApproveProcessor extends AbstractApproveProcessor<ErpSal
 
     @Override
     protected String approvedStatus() {
-        return ErpSalConstants.APPROVE_STATUS_APPROVED;
+        return stateMachine.approveTargetStatus();
     }
 
     @Override

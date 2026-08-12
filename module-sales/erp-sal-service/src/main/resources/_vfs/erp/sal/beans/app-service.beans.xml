@@ -81,6 +81,20 @@
     <bean id="app.erp.sal.service.statemachine.ErpSalQuotationDocumentStateMachine"
           class="app.erp.sal.service.statemachine.ErpSalQuotationDocumentStateMachine"/>
 
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
+         ErpSalOrder.approveStatus 轴（审批轴）。按类型注入 Processor；Delta 同名 bean id 覆盖替换基线矩阵（§6）。
+         命名带 Approval 后缀（§1 双轴约定，与 ErpSalOrderDocumentStateMachine docStatus 轴分离）。
+         (plan 2026-08-13-0945-2 Phase 1 M3.7) -->
+    <bean id="app.erp.sal.service.statemachine.ErpSalOrderApprovalStateMachine"
+          class="app.erp.sal.service.statemachine.ErpSalOrderApprovalStateMachine"/>
+
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
+         ErpSalQuotation.approveStatus 轴（审批轴）。按类型注入 Processor；Delta 同名 bean id 覆盖替换基线矩阵（§6）。
+         命名带 Approval 后缀（§1 双轴约定，与 ErpSalQuotationDocumentStateMachine docStatus 轴分离）。
+         (plan 2026-08-13-0945-2 Phase 2 M3.6) -->
+    <bean id="app.erp.sal.service.statemachine.ErpSalQuotationApprovalStateMachine"
+          class="app.erp.sal.service.statemachine.ErpSalQuotationApprovalStateMachine"/>
+
     <!-- 销售域审批状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖） -->
     <bean id="app.erp.sal.service.processor.ErpSalOrderProcessor"
           class="app.erp.sal.service.processor.ErpSalOrderProcessor"/>
