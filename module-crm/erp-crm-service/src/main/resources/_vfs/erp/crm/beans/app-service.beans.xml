@@ -120,6 +120,11 @@
          一 Bean 对一实体一轴（PLANNED/COMPLETED/CANCELLED），严格无状态；可经 Delta 同名 bean id 覆盖替换基线矩阵。 -->
     <bean id="app.erp.crm.service.statemachine.ErpCrmEventStateMachine"
           class="app.erp.crm.service.statemachine.ErpCrmEventStateMachine"/>
+
+    <!-- CRM ErpCrmLead 实体级 docStatus 状态机 Bean（plan 2026-08-13-0945-3 M3.1，契约 entity-state-machine-bean.md）：
+         一 Bean 对一实体一轴（NEW/QUALIFIED/CONVERTED/LOST/CANCELLED），严格无状态；可经 Delta 同名 bean id 覆盖替换基线矩阵。 -->
+    <bean id="app.erp.crm.service.statemachine.ErpCrmLeadStateMachine"
+          class="app.erp.crm.service.statemachine.ErpCrmLeadStateMachine"/>
     <bean id="app.erp.crm.service.processor.ErpCrmForecastRefreshForecastProcessor"
           class="app.erp.crm.service.processor.ErpCrmForecastRefreshForecastProcessor"/>
     <bean id="app.erp.crm.service.processor.ErpCrmForecastPeriodClosePeriodProcessor"

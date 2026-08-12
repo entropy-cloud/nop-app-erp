@@ -3,6 +3,7 @@ package app.erp.crm.service.processor;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.ErpCrmErrors;
+import app.erp.crm.service.statemachine.ErpCrmLeadStateMachine;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.sal.biz.IErpSalQuotationBiz;
@@ -44,6 +45,9 @@ public class ErpCrmConversionProcessor {
 
     @Inject
     IErpSalQuotationBiz quotationBiz;
+
+    @Inject
+    ErpCrmLeadStateMachine stateMachine;
 
     public ErpCrmLead getCreatedOpportunity(Long leadId, IServiceContext context) {
         ErpCrmLead lead = requireLead(leadId, context);
@@ -107,15 +111,19 @@ public class ErpCrmConversionProcessor {
                                      IServiceContext context) {
         lead.setRelatedBillType(relatedBillType);
         lead.setRelatedBillCode(relatedBillCode);
-        lead.setDocStatus(ErpCrmConstants.DOC_STATUS_CONVERTED);
+        lead.setDocStatus(stateMachine.convertTargetStatus());
         leadDao().updateEntity(lead);
     }
 
     // ---------- step：校验 ----------
 
     protected void validateNotConverted(ErpCrmLead lead, IServiceContext context) {
-        if (Objects.equals(lead.getDocStatus(), ErpCrmConstants.DOC_STATUS_CONVERTED)) {
-            throw new NopException(ErpCrmErrors.ERR_LEAD_ALREADY_CONVERTED)
+        try {
+            stateMachine.assertCanConvert(lead.getDocStatus());
+        } catch (NopException e) {
+            // convert 幂等拒绝（CONVERTED→CONVERTED）保持专属领域码 ERR_LEAD_ALREADY_CONVERTED，
+            // 不复用通用迁移码；common 层码作 cause 保留（plan Decision C）。
+            throw new NopException(ErpCrmErrors.ERR_LEAD_ALREADY_CONVERTED, e)
                     .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode());
         }
     }

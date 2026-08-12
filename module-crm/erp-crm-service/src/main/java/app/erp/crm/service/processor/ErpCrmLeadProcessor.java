@@ -6,6 +6,7 @@ import app.erp.crm.dao.entity.ErpCrmStage;
 import app.erp.crm.service.ErpCrmConfigs;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.ErpCrmErrors;
+import app.erp.crm.service.statemachine.ErpCrmLeadStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -40,6 +41,9 @@ public class ErpCrmLeadProcessor {
     IDaoProvider daoProvider;
 
     @Inject
+    ErpCrmLeadStateMachine stateMachine;
+
+    @Inject
     ErpCrmLeadCancelProcessor cancelProcessor;
 
     public ErpCrmLead cancel(Long leadId, IServiceContext context) {
@@ -50,24 +54,30 @@ public class ErpCrmLeadProcessor {
 
     protected void validateTransitionForQualify(ErpCrmLead lead, IServiceContext context) {
         String status = currentStatus(lead);
-        if (!Objects.equals(status, ErpCrmConstants.DOC_STATUS_NEW)) {
-            throw illegalTransition(lead, status, "NEW");
+        try {
+            stateMachine.assertCanQualify(status);
+        } catch (NopException e) {
+            throw illegalTransition(lead, status, ErpCrmConstants.DOC_STATUS_NEW, e);
         }
     }
 
     protected void validateTransitionForLose(ErpCrmLead lead, IServiceContext context) {
         String status = currentStatus(lead);
-        if (!Objects.equals(status, ErpCrmConstants.DOC_STATUS_NEW)
-                && !Objects.equals(status, ErpCrmConstants.DOC_STATUS_QUALIFIED)) {
-            throw illegalTransition(lead, status, "NEW 或 QUALIFIED");
+        try {
+            stateMachine.assertCanLose(status);
+        } catch (NopException e) {
+            throw illegalTransition(lead, status,
+                    ErpCrmConstants.DOC_STATUS_NEW + "/" + ErpCrmConstants.DOC_STATUS_QUALIFIED, e);
         }
     }
 
     protected void validateTransitionForCancel(ErpCrmLead lead, IServiceContext context) {
         String status = currentStatus(lead);
-        if (!Objects.equals(status, ErpCrmConstants.DOC_STATUS_NEW)
-                && !Objects.equals(status, ErpCrmConstants.DOC_STATUS_QUALIFIED)) {
-            throw illegalTransition(lead, status, "NEW 或 QUALIFIED");
+        try {
+            stateMachine.assertCanCancel(status);
+        } catch (NopException e) {
+            throw illegalTransition(lead, status,
+                    ErpCrmConstants.DOC_STATUS_NEW + "/" + ErpCrmConstants.DOC_STATUS_QUALIFIED, e);
         }
     }
 
@@ -119,7 +129,7 @@ public class ErpCrmLeadProcessor {
     // ---------- step：执行 ----------
 
     protected void doQualify(ErpCrmLead lead, IServiceContext context) {
-        lead.setDocStatus(ErpCrmConstants.DOC_STATUS_QUALIFIED);
+        lead.setDocStatus(stateMachine.qualifyTargetStatus());
         if (lead.getStageId() == null) {
             ErpCrmStage first = findFirstStage(lead.getOrgId());
             if (first != null) {
@@ -131,7 +141,7 @@ public class ErpCrmLeadProcessor {
     }
 
     protected void doLose(ErpCrmLead lead, Long lostReasonId, String lostReasonDesc, IServiceContext context) {
-        lead.setDocStatus(ErpCrmConstants.DOC_STATUS_LOST);
+        lead.setDocStatus(stateMachine.loseTargetStatus());
         lead.setLostReasonId(lostReasonId);
         if (lostReasonDesc != null) {
             lead.setLostReasonDesc(lostReasonDesc);
@@ -140,7 +150,7 @@ public class ErpCrmLeadProcessor {
     }
 
     protected void doCancel(ErpCrmLead lead, IServiceContext context) {
-        lead.setDocStatus(ErpCrmConstants.DOC_STATUS_CANCELLED);
+        lead.setDocStatus(stateMachine.cancelTargetStatus());
         leadDao().updateEntity(lead);
     }
 
@@ -216,6 +226,14 @@ public class ErpCrmLeadProcessor {
 
     protected NopException illegalTransition(ErpCrmLead lead, String current, String expected) {
         return new NopException(ErpCrmErrors.ERR_LEAD_ILLEGAL_STATUS_TRANSITION)
+                .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode())
+                .param(ErpCrmErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpCrmErrors.ARG_EXPECTED_STATUS, expected);
+    }
+
+    /** 领域非法迁移异常构造；{@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7）。 */
+    protected NopException illegalTransition(ErpCrmLead lead, String current, String expected, Throwable cause) {
+        return new NopException(ErpCrmErrors.ERR_LEAD_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode())
                 .param(ErpCrmErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpCrmErrors.ARG_EXPECTED_STATUS, expected);
