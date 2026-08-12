@@ -1,6 +1,6 @@
 # 2026-08-12-1118-3-erphr-leave-contract-state-machine-beans 人力资源 ErpHrLeaveRequest + ErpHrEmploymentContract 实体级状态机 Bean（M2.11 + M2.12）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-12
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` M2.11（todo）+ M2.12（todo）
 > Related: 前置 `2026-08-12-0617-1-entity-state-machine-m0-1-contract.md`（M0.1 done）+ `2026-08-12-0617-2-entity-state-machine-m0-2-inventory.md`（M0.2 done）+ `2026-08-12-0738-1-cs-ticket-state-machine-bean-pilot.md`（M1.1 范式）+ `2026-08-12-0738-2-cs-ticket-state-machine-pilot-evaluation.md`（M1.3 模板 done）
@@ -57,66 +57,66 @@
 
 ### Phase 1 - ErpHrLeaveRequestStateMachine + ErpHrEmploymentContractStateMachine Bean + 注册 + 层 1 矩阵完备性测试
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/src/main/java/app/erp/hr/service/statemachine/ErpHrLeaveRequestStateMachine.java`（新）+ `ErpHrEmploymentContractStateMachine.java`（新）；`.../beans/app-service.beans.xml`（追加 2 Bean 注册）；`TestErpHrLeaveRequestStateMachineMatrix.java` + `TestErpHrEmploymentContractStateMachineMatrix.java`（新，层 1）
 Skill: `nop-backend-dev`（Bean 形状/注册）+ `nop-testing`（层 1 表驱动测试）
 
 - Item Types: `Add | Proof`
 - Prereqs: M0.1 + M0.2 + M1.3 done
 
-- [ ] `Add`：创建 `ErpHrLeaveRequestStateMachine`（无状态），矩阵（编码**已实现**行为）：`assertCanSubmit(DRAFT)`/`assertCanApprove(SUBMITTED)`/`assertCanReject(SUBMITTED)`/`assertCanCancel(APPROVED)`（**单源**，对齐代码 `CancelProcessor:21`；owner doc DRAFT/SUBMITTED 偏离在 layer-2 登记）+ 目标态方法 + `isTerminal(APPROVED|REJECTED|CANCELLED)` + `transitions()`（submit/approve/reject/cancel 各 1 = 4 边）+ `terminalStatuses()` + `initialStatuses()`(DRAFT)。Skill: `nop-backend-dev`
-- [ ] `Add`：创建 `ErpHrEmploymentContractStateMachine`（无状态），矩阵编码**已实现活态**迁移：`assertCanRenew(ACTIVE|EXPIRED)`（2 源：ACTIVE→ACTIVE 自环 + EXPIRED→ACTIVE，对齐 `renew:94-100`）/ `assertCanExpire(ACTIVE)` / `assertCanTerminate(ACTIVE)` + 目标态方法（`renewTargetStatus()`→ACTIVE / `expireTargetStatus()`→EXPIRED / `terminateTargetStatus()`→TERMINATED）+ `isTerminal(EXPIRED|TERMINATED)` + `transitions()`（renew 2 源 + expire 1 + terminate 1 = 4 边）+ `terminalStatuses()`(EXPIRED/TERMINATED) + `initialStatuses()`(ACTIVE)。**SUSPENDED 不在矩阵**（dict 有值但零 writer = 死状态，layer-2 裁定登记）。Skill: `nop-backend-dev`
-- [ ] `Add`：在 `app-service.beans.xml` 以 FQN id 注册两个 Bean（沿用既有 Processor 范式，§11.1 步骤 2）。Skill: `nop-backend-dev`
-- [ ] `Proof`（层 1 矩阵完备性，新增 greenfield 表驱动测试，§11.1 步骤 4）：`TestErpHrLeaveRequestStateMachineMatrix` 覆盖 submit/approve/reject/cancel 合法/非法来源态 + **cancel 单源 APPROVED**（对 DRAFT/SUBMITTED/REJECTED 等非法）+ 终态无出边 + transitions（4 边）元数据一致；`TestErpHrEmploymentContractStateMachineMatrix` 覆盖 renew（ACTIVE/EXPIRED 合法，TERMINATED 非法）/expire/terminate 合法（仅 ACTIVE）/非法 + ACTIVE→ACTIVE renew 自环 + 终态无出边 + transitions（4 边）一致，并断言 SUSPENDED 不在 transitions（死状态如实反映）。**不经 BizModel 入口**（层 1 只测 Bean）。Skill: `nop-testing`
+- [x] `Add`：创建 `ErpHrLeaveRequestStateMachine`（无状态），矩阵（编码**已实现**行为）：`assertCanSubmit(DRAFT)`/`assertCanApprove(SUBMITTED)`/`assertCanReject(SUBMITTED)`/`assertCanCancel(APPROVED)`（**单源**，对齐代码 `CancelProcessor:21`；owner doc DRAFT/SUBMITTED 偏离在 layer-2 登记）+ 目标态方法 + `isTerminal(APPROVED|REJECTED|CANCELLED)` + `transitions()`（submit/approve/reject/cancel 各 1 = 4 边）+ `terminalStatuses()` + `initialStatuses()`(DRAFT)。Skill: `nop-backend-dev`
+- [x] `Add`：创建 `ErpHrEmploymentContractStateMachine`（无状态），矩阵编码**已实现活态**迁移：`assertCanRenew(ACTIVE|EXPIRED)`（2 源：ACTIVE→ACTIVE 自环 + EXPIRED→ACTIVE，对齐 `renew:94-100`）/ `assertCanExpire(ACTIVE)` / `assertCanTerminate(ACTIVE)` + 目标态方法（`renewTargetStatus()`→ACTIVE / `expireTargetStatus()`→EXPIRED / `terminateTargetStatus()`→TERMINATED）+ `isTerminal(EXPIRED|TERMINATED)` + `transitions()`（renew 2 源 + expire 1 + terminate 1 = 4 边）+ `terminalStatuses()`(EXPIRED/TERMINATED) + `initialStatuses()`(ACTIVE)。**SUSPENDED 不在矩阵**（dict 有值但零 writer = 死状态，layer-2 裁定登记）。Skill: `nop-backend-dev`
+- [x] `Add`：在 `app-service.beans.xml` 以 FQN id 注册两个 Bean（沿用既有 Processor 范式，§11.1 步骤 2）。Skill: `nop-backend-dev`
+- [x] `Proof`（层 1 矩阵完备性，新增 greenfield 表驱动测试，§11.1 步骤 4）：`TestErpHrLeaveRequestStateMachineMatrix` 覆盖 submit/approve/reject/cancel 合法/非法来源态 + **cancel 单源 APPROVED**（对 DRAFT/SUBMITTED/REJECTED 等非法）+ 终态无出边 + transitions（4 边）元数据一致；`TestErpHrEmploymentContractStateMachineMatrix` 覆盖 renew（ACTIVE/EXPIRED 合法，TERMINATED 非法）/expire/terminate 合法（仅 ACTIVE）/非法 + ACTIVE→ACTIVE renew 自环 + 终态无出边 + transitions（4 边）一致，并断言 SUSPENDED 不在 transitions（死状态如实反映）。**不经 BizModel 入口**（层 1 只测 Bean）。Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 两 Bean 落地（LeaveRequest 4 动作：submit/approve/reject/cancel + Contract 3 动作：renew/expire/terminate + 目标态 + isTerminal + transitions 元数据），无状态（grep 证实不 import DAO/IBiz/IServiceContext/事务）。
-- [ ] 两 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）。
-- [ ] 层 1 矩阵测试 `mvn test -pl module-hr/erp-hr-service -Dtest=TestErpHrLeaveRequestStateMachineMatrix,TestErpHrEmploymentContractStateMachineMatrix` 全绿。
-- [ ] 本地化编译检查：`mvn compile -pl module-hr/erp-hr-service -am` 通过（解除 Phase 2 接线依赖）。
+- [x] 两 Bean 落地（LeaveRequest 4 动作：submit/approve/reject/cancel + Contract 3 动作：renew/expire/terminate + 目标态 + isTerminal + transitions 元数据），无状态（grep 证实不 import DAO/IBiz/IServiceContext/事务）。
+- [x] 两 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）。
+- [x] 层 1 矩阵测试 `mvn test -pl module-hr/erp-hr-service -Dtest=TestErpHrLeaveRequestStateMachineMatrix,TestErpHrEmploymentContractStateMachineMatrix` 全绿。
+- [x] 本地化编译检查：`mvn compile -pl module-hr/erp-hr-service -am` 通过（解除 Phase 2 接线依赖）。
 
 ### Phase 2 - BizModel/Processor 接线（行为保持）+ 层 3 回归
 
-Status: planned
+Status: completed
 Targets: LeaveRequest：`ErpHrLeaveRequestSubmitProcessor`/`ApproveProcessor`/`CancelProcessor`、`ErpHrLeaveRequestBizModel`（reject/defaultPrepareSave）、`AbstractErpHrLeaveRequestProcessor`；EmploymentContract（跨聚合）：`ErpHrEmploymentContractExpireOverdueContractsProcessor`、`ErpHrEmployeeTransferEmployeeProcessor`、`ErpHrEmployeeBizModel`、`ErpHrRecruitmentHireProcessor`、`ErpHrRecruitmentBizModel`、`ErpHrEmploymentContractBizModel`
 Skill: `nop-backend-dev`（接线 + 错误码映射）+ `nop-testing`（回归断言）
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1
 
-- [ ] `Fix`：LeaveRequest Submit/Approve/Cancel Processor + reject BizModel 注入 `ErpHrLeaveRequestStateMachine`，将固定守卫替换为 `stateMachine.assertCan<Action>(from)` + 目标态写回；`AbstractErpHrLeaveRequestProcessor` 守卫改调 Bean，common→领域 `ERR_LEAVE_ILLEGAL_STATUS_TRANSITION` 映射（common 码作 cause）。**cancel 保持单源 APPROVED→CANCELLED**（`assertCanCancel(APPROVED)`，不放开至 DRAFT/SUBMITTED——owner doc 偏离在 layer-2 登记，非本重构改业务行为）。**动态副作用保留原位**：APPROVED 扣减/ CANCELLED 返还假期余额、排班联动解除（`IErpHrShiftBiz.onLeaveCancelled`）。Skill: `nop-backend-dev`
-- [ ] `Fix`：EmploymentContract 命名动作迁移注入 `ErpHrEmploymentContractStateMachine`：`ErpHrEmploymentContractBizModel.renew`（`assertCanRenew(from)` before setStatus ACTIVE）、ExpireOverdueContracts（`assertCanExpire` before 批量 setStatus EXPIRED）、TransferEmployee/EmployeeBizModel（`assertCanTerminate` before 联动 setStatus TERMINATED）；common→领域 `ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION` 映射。**初始态 ACTIVE 写入不调 `assertCan*`**（4 处：RecruitmentHire:94 / RecruitmentBizModel:180 / TransferEmployee:240 newContractFrom / EmployeeBizModel:283 newContractFrom —— 按 §9.2 选项 c 初始态路径，非迁移）。**动态副作用保留原位**：调动 NOP 用户禁用边界、到期 Job 批量编排、renew 的 endDate 更新、乐观锁。Skill: `nop-backend-dev`
-- [ ] `Proof`（层 3 既有回归保持全绿）：`mvn test -pl module-hr/erp-hr-service` 全绿——重点 `TestErpHrLeaveEngine`（生命周期 + 审批 + cancel APPROVED→CANCELLED + 余额联动）、`TestErpHrEmployeeReferences`（合同/员工引用 + renew + 调动/离职联动）、`TestErpHrShiftScheduling`（请假→排班）、`TestErpHrAttendanceMakeUp`。证明错误码、cancel 单源、余额扣减/返还、合同 renew（ACTIVE/EXPIRED→ACTIVE）、调动/离职→合同 TERMINATED、到期 Job→EXPIRED 均不变。Skill: `nop-testing`
+- [x] `Fix`：LeaveRequest Submit/Approve/Cancel Processor + reject BizModel 注入 `ErpHrLeaveRequestStateMachine`，将固定守卫替换为 `stateMachine.assertCan<Action>(from)` + 目标态写回；`AbstractErpHrLeaveRequestProcessor` 守卫改调 Bean，common→领域 `ERR_LEAVE_ILLEGAL_STATUS_TRANSITION` 映射（common 码作 cause）。**cancel 保持单源 APPROVED→CANCELLED**（`assertCanCancel(APPROVED)`，不放开至 DRAFT/SUBMITTED——owner doc 偏离在 layer-2 登记，非本重构改业务行为）。**动态副作用保留原位**：APPROVED 扣减/ CANCELLED 返还假期余额、排班联动解除（`IErpHrShiftBiz.onLeaveCancelled`）。Skill: `nop-backend-dev`
+- [x] `Fix`：EmploymentContract 命名动作迁移注入 `ErpHrEmploymentContractStateMachine`：`ErpHrEmploymentContractBizModel.renew`（`assertCanRenew(from)` before setStatus ACTIVE）、ExpireOverdueContracts（`assertCanExpire` before 批量 setStatus EXPIRED）、TransferEmployee/EmployeeBizModel（`assertCanTerminate` before 联动 setStatus TERMINATED）；common→领域 `ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION` 映射。**初始态 ACTIVE 写入不调 `assertCan*`**（4 处：RecruitmentHire:94 / RecruitmentBizModel:180 / TransferEmployee:253 newContractFrom / EmployeeBizModel:296 newContractFrom —— 按 §9.2 选项 c 初始态路径，非迁移）。**动态副作用保留原位**：调动 NOP 用户禁用边界、到期 Job 批量编排、renew 的 endDate 更新、乐观锁。Skill: `nop-backend-dev`
+- [x] `Proof`（层 3 既有回归保持全绿）：`mvn test -pl module-hr/erp-hr-service` 全绿（190/190）——重点 `TestErpHrLeaveEngine`（生命周期 + 审批 + cancel APPROVED→CANCELLED + 余额联动）、`TestErpHrEmployeeReferences`（合同/员工引用 + renew + 调动/离职联动）、`TestErpHrShiftScheduling`（请假→排班）、`TestErpHrAttendanceMakeUp`。证明错误码、cancel 单源、余额扣减/返还、合同 renew（ACTIVE/EXPIRED→ACTIVE）、调动/离职→合同 TERMINATED、到期 Job→EXPIRED 均不变。Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] LeaveRequest 4 处（Submit/Approve/Cancel/reject）+ EmploymentContract 命名动作迁移处（renew/Expire/Transfer-terminate/Employee-terminate）固定判断均改调 Bean，grep 证实相关方法体内不再有内联 `Objects.equals(from, *_STATUS_*)` / `requireStatus(...)` 矩阵判断（动态副作用如余额联动/排班/NOP 用户边界除外；**4 处初始态 ACTIVE 写入不调 `assertCan*`**——按 §9.2 初始态路径）。
-- [ ] 领域错误码 + 参数对外不变（层 3 断言证实）；LeaveRequest cancel 保持单源 APPROVED→CANCELLED；合同 renew（ACTIVE/EXPIRED→ACTIVE）、调动/离职→合同 TERMINATED、到期 Job→EXPIRED 联动行为不变。
-- [ ] 层 3 `mvn test -pl module-hr/erp-hr-service` 全绿。
+- [x] LeaveRequest 4 处（Submit/Approve/Cancel/reject）+ EmploymentContract 命名动作迁移处（renew/Expire/Transfer-terminate/Employee-terminate）固定判断均改调 Bean，grep 证实相关方法体内不再有内联 `Objects.equals(from, *_STATUS_*)` / `requireStatus(...)` 矩阵判断（动态副作用如余额联动/排班/NOP 用户边界除外；**4 处初始态 ACTIVE 写入不调 `assertCan*`**——按 §9.2 初始态路径）。
+- [x] 领域错误码 + 参数对外不变（层 3 断言证实）；LeaveRequest cancel 保持单源 APPROVED→CANCELLED；合同 renew（ACTIVE/EXPIRED→ACTIVE）、调动/离职→合同 TERMINATED、到期 Job→EXPIRED 联动行为不变。
+- [x] 层 3 `mvn test -pl module-hr/erp-hr-service` 全绿（190/190）。
 
 ### Phase 3 - 层 2 四方对照（LeaveRequest + EmploymentContract 双轴）+ Delta 适用性
 
-Status: planned
-Targets: 四方对照审计记录（写入本计划 Closure 段）；HR 域单轴 Delta 证据
+Status: completed
+Targets: 四方对照审计记录（写入本计划 Closure 段）；HR 域 LeaveRequest 单轴 Delta 证据
 Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度）+ `nop-testing`（Delta 双加载）
 
 - Item Types: `Proof | Decision | Fix | Add`
 - Prereqs: Phase 2
 
-- [ ] `Proof`（四方对照，§11.1 步骤 5）：以 `state-machine-business-review-prompt.md` 10 维度审查双轴——LeaveRequest（dict leave-status 5 值 ↔ owner-doc §适用对象一 ↔ Bean ↔ writer，**重点裁定 cancel 漂移**：owner doc §2 迁移图 + §6 权限表声明 DRAFT/SUBMITTED→CANCELLED，但代码实际 APPROVED→CANCELLED 单源）；EmploymentContract（dict contract-status 4 值 ↔ owner-doc §适用对象五 ↔ Bean ↔ 全部 writer 含 CRUD/初始态路径，**重点裁定 SUSPENDED 死状态**：dict 有值 + 零 writer + 无 suspend mutation；并复核 renew ACTIVE→ACTIVE 自环与 owner-doc 一致性）。writer 盘点含跨聚合副作用 writer（Expire/Transfer/Recruitment/Employee）+ 4 处初始态 ACTIVE 写入 + 框架入口。Skill: `state-machine-business-review-prompt.md`
-- [ ] `Decision`（漂移裁定，路线图规则 5）：
+- [x] `Proof`（四方对照，§11.1 步骤 5）：以 `state-machine-business-review-prompt.md` 10 维度审查双轴——LeaveRequest（dict leave-status 5 值 ↔ owner-doc §适用对象一 ↔ Bean ↔ writer，**重点裁定 cancel 漂移**：owner doc §2 迁移图 + §6 权限表声明 DRAFT/SUBMITTED→CANCELLED，但代码实际 APPROVED→CANCELLED 单源）；EmploymentContract（dict contract-status 4 值 ↔ owner-doc §适用对象五 ↔ Bean ↔ 全部 writer 含 CRUD/初始态路径，**重点裁定 SUSPENDED 死状态**：dict 有值 + 零 writer + 无 suspend mutation；并复核 renew ACTIVE→ACTIVE 自环与 owner-doc 一致性）。writer 盘点含跨聚合副作用 writer（Expire/Transfer/Recruitment/Employee）+ 4 处初始态 ACTIVE 写入 + 框架入口。Skill: `state-machine-business-review-prompt.md`
+- [x] `Decision`（漂移裁定，路线图规则 5）：
   - **LeaveRequest cancel 漂移**：owner doc §2/§6（DRAFT/SUBMITTED→CANCELLED）vs 代码（APPROVED→CANCELLED 单源）= **doc drift**。Fix = 就地补正 `human-resource/state-machine.md §2` 迁移图 + §6 权限表为「cancel 单源 APPROVED→CANCELLED（已批准休假取消）」+ successor（若 PM 要求 DRAFT/SUBMITTED 自撤为产品需求，开独立 plan 实现 cancel-from-draft/submitted mutation + 触及业务行为 ask-first；本重构不改 cancel 行为）。
   - **SUSPENDED 死状态**：分类 = `intentional reserved`（owner doc §适用对象五已记载 Deferred）——登记为 Decision（保留 dict 值为预留语义入口，不删除，对齐 R1.x 先例）+ successor（suspendContract 业务流落地时）。
   - 任何 owner-doc §迁移表 vs §实现约定 内部漂移按 §11.4 补正；其他不一致按 Fix/Decision 登记。
   Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add | Proof`（Delta 适用性，§11.1 步骤 7；M2 非保护域）：在 LeaveRequest 轴证 Delta（派生类覆盖一个动作，如放开 cancel 至 APPROVED 由 HR 操作，或收紧 submit），VFS Delta 层同名 bean id 覆盖，基线/Delta 双加载可区分（复用 M1.2 范式）。Contract 轴继承既有证明，不重复证。Skill: `nop-testing`
+- [x] `Add | Proof`（Delta 适用性，§11.1 步骤 7；M2 非保护域）：在 LeaveRequest 轴证 Delta（派生类 `ErpHrLeaveRequestStateMachineDelta` 覆盖 `assertCanCancel`，放开 cancel 至 APPROVED+SUBMITTED——建模某客户要求员工可自撤已提交未审批休假），VFS Delta 层 `test-hr-delta` 同名 bean id 覆盖，基线/Delta 双加载可区分（`assertCanCancel(SUBMITTED)` 基线抛异常 / Delta 放行），复用 M1.2/M2.18 范式。Contract 轴继承 M2.18 既有证明，不重复证。Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 双轴四方对照审计记录存在且非空，每维有可追溯结论（引用 Bean 元数据 / owner doc 章节 / dict 位置 / writer 类:行）。
-- [ ] LeaveRequest cancel doc drift（§2/§6 补正为 APPROVED→CANCELLED 单源）+ SUSPENDED 死状态 Decision 均已登记 + successor，无静默排除；其他不一致项（若有）已 Fix 登记。
-- [ ] LeaveRequest 轴 Delta 双加载运行时证据存在（非静态检查），基线/Delta 可区分。
+- [x] 双轴四方对照审计记录存在且非空，每维有可追溯结论（引用 Bean 元数据 / owner doc 章节 / dict 位置 / writer 类:行）。
+- [x] LeaveRequest cancel doc drift（§2/§6 补正为 APPROVED→CANCELLED 单源）+ SUSPENDED 死状态 Decision 均已登记 + successor，无静默排除；其他不一致项（若有）已 Fix 登记。
+- [x] LeaveRequest 轴 Delta 双加载运行时证据存在（非静态检查），基线/Delta 可区分。
 
 ## Draft Review Record
 
@@ -127,14 +127,14 @@ Exit Criteria:
 
 > 本计划含生产代码变更（2 Bean + 接线含跨聚合 writer + 测试），Closure Gates 运行完整仓库验证。
 
-- [ ] 范围内行为完成（LeaveRequest + EmploymentContract 双轴 Bean + 接线 + 层 1 矩阵 + 层 3 回归 + 层 2 四方对照 + Delta 证据）
-- [ ] 相关文档对齐（`human-resource/state-machine.md §2/§6` cancel 单源补正 + SUSPENDED 死状态 Decision 补注；路线图 M2.11 + M2.12 done）
-- [ ] 已运行验证：`mvn clean install -DskipTests`（全仓库 BUILD SUCCESS）+ `mvn test -pl module-hr/erp-hr-service`（全绿）+ `bash docs/audits/nop-compliance-checker.sh`（exit 0，R5=0/R11=0 无漂移）
-- [ ] 无范围内项目降级为 deferred/follow-up（SUSPENDED 死状态 Decision 必须落地登记）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（LeaveRequest + EmploymentContract 双轴 Bean + 接线 + 层 1 矩阵 + 层 3 回归 + 层 2 四方对照 + Delta 证据）
+- [x] 相关文档对齐（`human-resource/state-machine.md §2/§6` cancel 单源补正 + SUSPENDED 死状态 Decision 补注；路线图 M2.11 + M2.12 done）
+- [x] 已运行验证：`mvn clean install -DskipTests`（全仓库 BUILD SUCCESS）+ `mvn test -pl module-hr/erp-hr-service`（全绿 196/196）+ `bash docs/audits/nop-compliance-checker.sh`（exit 0，R5=0/R11=0 无漂移）
+- [x] 无范围内项目降级为 deferred/follow-up（SUSPENDED 死状态 Decision 必须落地登记）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -158,13 +158,70 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 三 Phase 全部执行完成。`ErpHrLeaveRequestStateMachine`（4 动作：submit/approve/reject/cancel + 目标态 + isTerminal + transitions 元数据，4 条已实现边，cancel 单源 APPROVED）+ `ErpHrEmploymentContractStateMachine`（3 动作：renew/expire/terminate + 目标态 + isTerminal + transitions 元数据，4 条已实现边，SUSPENDED 死状态如实排除）两 Bean 落地。LeaveRequest 4 处（Submit/Approve/Cancel Processor + BizModel.reject）+ EmploymentContract 命名动作迁移 4 处（renew/Expire/Transfer-terminate/Employee-terminate）固定判断接线至 Bean；4 处初始态 ACTIVE 写入按 §9.2 选项 c 不调 assertCan*。层 1 矩阵测试 18/18 绿、层 3 既有集成回归全绿、LeaveRequest 轴 Delta 双加载运行时实证 6/6 绿。cancel doc drift + SUSPENDED 死状态按路线图规则 5 登记为 Decision/Fix + successor（已入 Deferred But Adjudicated），owner doc §2/§6 已就地补正。
+
+### 层 2 四方对照审计记录（Phase 3 Proof，按 `state-machine-business-review-prompt.md` 10 维度）
+
+**维度 1 — dict ↔ 元数据**：
+- **LeaveRequest**：dict `erp-hr/leave-status`（5 值 DRAFT/SUBMITTED/APPROVED/REJECTED/CANCELLED）。Bean `transitions()` 4 条已实现边覆盖全部 5 态。**无死状态**：DRAFT（初始+defaultPrepareSave）、SUBMITTED（submit 目标）、APPROVED（approve 目标 + cancel 源）、REJECTED（reject 目标）、CANCELLED（cancel 目标）均有 writer 路径。
+- **EmploymentContract**：dict `erp-hr/contract-status`（4 值 ACTIVE/EXPIRED/TERMINATED/SUSPENDED）。Bean `transitions()` 4 条已实现边覆盖活态 ACTIVE/EXPIRED/TERMINATED。**SUSPENDED = 死状态**（dict 有值 + 零 `setStatus(SUSPENDED)` writer + 无 suspendContract mutation），Bean 如实不纳入 transitions/initial/terminal 任一集合——漂移项见 Decision 段。
+
+**维度 2 — owner-doc 迁移图 ↔ 元数据**：
+- **LeaveRequest**：owner doc §2 声明 5 条边（submit/approve/reject + DRAFT→CANCELLED + SUBMITTED→CANCELLED）。Bean 编码 4 条已实现边。差异 2 条（DRAFT/SUBMITTED→CANCELLED）登记为 doc drift（见 Decision 段）：生产 cancel 单源 APPROVED→CANCELLED，DRAFT/SUBMITTED 自撤无 writer。owner doc §迁移表 与 §实现约定 经 §11.4 警示显式核对，无额外内部漂移。
+- **EmploymentContract**：owner doc §适用对象五 已记载 SUSPENDED 为预留死状态（Deferred）、活态 ACTIVE/EXPIRED/TERMINATED 主生命周期可用。Bean 编码与 owner doc 一致；renew ACTIVE→ACTIVE 自环（续签生效中合同）+ EXPIRED→ACTIVE（续签已过期合同）与 owner doc §适用对象五语义一致。
+
+**维度 3 — 元数据 ↔ 全部 writer**：
+- **LeaveRequest.status 写路径盘点**：
+  - 生产命名动作（Bean 治理，4 处）：`ErpHrLeaveRequestSubmitProcessor:21`（assertCanSubmit + submitTargetStatus）/ `ErpHrLeaveRequestApproveProcessor:22`（assertCanApprove + approveTargetStatus）/ `ErpHrLeaveRequestCancelProcessor:21`（assertCanCancel + cancelTargetStatus）/ `ErpHrLeaveRequestBizModel.reject:104`（assertCanReject + rejectTargetStatus）—— 全部改调 Bean，方法体内零内联矩阵判断（grep 证实）。共享守卫 + common→领域映射在 `AbstractErpHrLeaveRequestProcessor`（assertCanSubmit/Approve/Cancel + illegalTransition helper）。
+  - 初始态写入（§9.2 选项 c，非迁移）：`ErpHrLeaveRequestBizModel.defaultPrepareSave:70` setStatus(DRAFT)。
+  - 框架入口（CRUD）：defaultPrepareSave 仅在 status==null 时兜底 DRAFT；xmeta status insertable/updatable，GraphQL save 可直写（M0.1 §9.4 残留，非矩阵运行时强制范围）。
+  - 测试 fixture：`TestErpHrLeaveEngine` 经 save/submit 入口构造各态（层 3 基线，不变）。
+- **ErpHrEmploymentContract.status 写路径盘点**：
+  - 生产命名动作迁移（Bean 治理，4 处）：`ErpHrEmploymentContractBizModel.renew:100`（assertCanRenew + renewTargetStatus）/ `ErpHrEmploymentContractExpireOverdueContractsProcessor:48`（assertCanExpire + expireTargetStatus，批量容错）/ `ErpHrEmployeeTransferEmployeeProcessor:197`（assertCanTerminate + terminateTargetStatus，调动联动）/ `ErpHrEmployeeBizModel:240`（assertCanTerminate + terminateTargetStatus，离职/调动联动）—— 全部改调 Bean。common→领域 ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION 映射。
+  - 初始态 ACTIVE 写入（§9.2 选项 c，**不**调 assertCan*，4 处）：`ErpHrRecruitmentHireProcessor:94`（入职新建合同）/ `ErpHrRecruitmentBizModel:180`（入职新建）/ `ErpHrEmployeeTransferEmployeeProcessor:253` newContractFrom（调动后继合同）/ `ErpHrEmployeeBizModel:296` newContractFrom（离职/调动后继合同）。
+  - 框架入口（CRUD）：`ErpHrEmploymentContractBizModel.defaultPrepareSave` 仅兜底 businessDate，不写 status；xmeta status writable（M0.1 §9.4 残留）。
+  - 测试 fixture：`TestErpHrEmployeeReferences` 经 save 直写 ACTIVE 构造合同（层 3 基线，不变）。
+
+**维度 4 — 可达性/终态/异常路径**：
+- **LeaveRequest**：从 DRAFT 命名动作可达集 = {SUBMITTED, APPROVED, REJECTED, CANCELLED}（submit→SUBMITTED→approve/reject；SUBMITTED→approve→APPROVED→cancel→CANCELLED）——层 1 `testReachabilityFromInitial` 断言。纯终态 REJECTED/CANCELLED 无出边（`testPureTerminalStatusesHaveNoOutgoingEdges`）；APPROVED 虽 isTerminal=true 但为 cancel 单源（已批准休假取消特例，有 cancel 出边）。非法来源态经 Bean 抛 common 层码 → Processor/BizModel 映射 `ERR_LEAVE_ILLEGAL_STATUS_TRANSITION`（leaveRequestId/currentStatus/expectedStatus，common 码作 cause）；cancel 对 DRAFT/SUBMITTED/REJECTED/CANCELLED 全拒绝（单源 APPROVED）。
+- **EmploymentContract**：从 ACTIVE 命名动作可达 = {ACTIVE(自环 renew), EXPIRED, TERMINATED}；EXPIRED → renew → ACTIVE。终态 EXPIRED/TERMINATED：TERMINATED 无出边；EXPIRED 有 renew 出边（续签恢复）。SUSPENDED 命名动作下不可达（死状态）。非法来源态经 Bean 抛 common 层码 → 映射 `ERR_CONTRACT_ILLEGAL_STATUS_TRANSITION`（contractId/currentStatus，common 码作 cause）。
+
+### 漂移裁定（Phase 3 Decision，路线图规则 5——禁止静默排除）
+
+- **LeaveRequest cancel = doc drift**：owner doc §2 迁移图 + §6 权限表声明 cancel 多源（DRAFT/SUBMITTED→CANCELLED 员工未审批前自撤 + APPROVED→CANCELLED HR 取消），但生产代码实际**单源 APPROVED→CANCELLED**（`ErpHrLeaveRequestCancelProcessor` + Bean `assertCanCancel(APPROVED)`，零 setStatus(CANCELLED) writer 以 DRAFT/SUBMITTED 为源）。Fix：owner doc §2/§6 已就地补注「cancel 生产实况为单源 APPROVED→CANCELLED，DRAFT/SUBMITTED 自撤为目标行为未落地」；Bean 如实编码单源 APPROVED 边。Successor：PM 要求员工休假自撤业务流落地时开独立 plan 实现 cancel-from-draft/submitted mutation（属业务行为变更 + 触及权限/余额时序，ask-first）→ 入 Deferred But Adjudicated。
+- **SUSPENDED = intentional reserved**：dict `erp-hr/contract-status` 含 SUSPENDED，但生产零 setStatus(SUSPENDED) writer + 无 suspendContract mutation。owner doc §适用对象五已记载 Deferred。分类 = `intentional reserved`（非 implementation drift——预留语义入口）。Fix：Bean 不纳入终态/初始/迁移任一集合（javadoc 标注）；dict 值保留（不删除，对齐 R1.x 先例，避免 ORM ext:dict 改动触发 codegen 漂移）。Successor：合同中止/恢复业务流落地时开独立 plan 实现 suspend/resume mutation + 状态迁移守卫（触及 NOP 用户权限/调动副作用，保护区 ask-first）→ 入 Deferred But Adjudicated。
+- **owner-doc §迁移表 vs §实现约定 内部漂移**：按 §11.4 警示显式核对——LeaveRequest §2 迁移图与 §3 终态/§实现约定 内部一致（CANCELLED 在 §1/§3 均作终态声明），cancel 漂移属 owner-doc↔实现 漂移（已登记）；EmploymentContract §适用对象五 Deferred 声明与实现一致。无额外内部漂移。
+
+### Delta 适用性证据（Phase 3 Add|Proof，M2 非保护域，LeaveRequest 轴）
+
+经 VFS Delta 层 `test-hr-delta` 同名 bean id 覆盖基线为派生类 `ErpHrLeaveRequestStateMachineDelta`（放开 cancel 来源态：APPROVED-only → APPROVED+SUBMITTED，建模某客户要求员工可自撤已提交未审批休假）。运行时双加载实证：
+- `TestErpHrLeaveRequestStateMachineBaselineIoC`（3/3 绿）：容器解析基线类，`assertCanCancel(SUBMITTED)` **抛异常**（单源 APPROVED）。
+- `TestErpHrLeaveRequestStateMachineDeltaOverride`（3/3 绿，`@NopTestProperty nop.core.vfs.delta-layer-ids=test-hr-delta`）：容器解析 Delta 派生类，`assertCanCancel(SUBMITTED)` **放行**；非覆盖动作（submit/approve/isTerminal）继承基线。
+- 同一 `assertCanCancel(SUBMITTED)` 在基线抛异常 / Delta 放行 → 构成可区分的基线/Delta 双加载运行时证据（契约 §6 业务级 Delta 实证义务）。
+- Contract 轴 Delta 继承 M2.18（`TestErpCtContractStateMachineBaselineIoC`/`DeltaOverride`）既有证明，不重复证（同范式、同契约 §6 义务）。
+
+### 验证结果
+
+- `mvn compile -pl module-hr/erp-hr-service -am`：BUILD SUCCESS。
+- `mvn test -pl module-hr/erp-hr-service`：Tests run: 196, Failures: 0, Errors: 0, Skipped: 0（含层 1 矩阵 18 + BaselineIoC 3 + DeltaOverride 3 + 既有层 3 集成回归 172）。
+- Bean 无状态：grep 证实两 Bean 不 import DAO/IBiz/IServiceContext/事务；`@Inject` 字段（BizModel/Processor）均非 private（合规 R5）。
+- **VFS Delta 隔离兜底**：`TestErpHrLeaveRequestStateMachineDeltaOverride` 在 `@BeforeAll`/`@AfterAll` 调 `VfsConfigLoader.registerDefault(null)` 清理框架静态缓存——`VfsConfigLoader._default` 为单例、不在测试类间清理，delta 层对 `app-service.beans.xml` 做文件级替换（非 XDsl 合并），同 surefire fork 后续测试（如 `TestErpHrReportRendering` 注入 `ioc:type="@bean:id"` bean）会因基线 bean 丢失而失败。此兜底使 Delta 隔离不依赖 fork 调度（ct-service 因多核 fork 分布偶然未暴露）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理填写>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（新会话，`MISSION_DRIVER:2026-08-12-111827-mission-driver`，未参与执行）
+- Audit Scope: 三 Phase 全部退出标准 + Closure Gates + 反空心（anti-hollow）+ 五点一致性 + Deferred 诚实 + 文档同步
+- Live-repo verification (glob/grep/read against `./`):
+  - 两 Bean 存在：`module-hr/erp-hr-service/src/main/java/app/erp/hr/service/statemachine/ErpHrLeaveRequestStateMachine.java` + `ErpHrEmploymentContractStateMachine.java`（无状态、矩阵编码已实现行为）
+  - Bean 注册存在：`module-hr/erp-hr-service/src/main/resources/_vfs/erp/hr/beans/app-service.beans.xml:113-116`（两条 `<bean id="<FQN>" class="<FQN>"/>`，FQN id 范式）
+  - 接线落地（anti-hollow 证，方法体引用 Bean 矩阵权威）：`ErpHrLeaveRequestSubmitProcessor`/`ApproveProcessor`/`CancelProcessor`/`AbstractErpHrLeaveRequestProcessor`/`ErpHrLeaveRequestBizModel`（reject）+ `ErpHrEmploymentContractBizModel.renew`/`ErpHrEmploymentContractExpireOverdueContractsProcessor`/`ErpHrEmployeeTransferEmployeeProcessor`/`ErpHrEmployeeBizModel` 均经 `@Inject` 注入对应 StateMachine 并改调 `assertCan*`
+  - 层 1 矩阵 + Delta 测试存在：`TestErpHrLeaveRequestStateMachineMatrix`/`TestErpHrEmploymentContractStateMachineMatrix`/`TestErpHrLeaveRequestStateMachineBaselineIoC`/`TestErpHrLeaveRequestStateMachineDeltaOverride`
+  - owner doc 漂移补正落地：`docs/design/human-resource/state-machine.md:39`（§2 cancel 单源注记）+ `:71`（§6 取消权限漂移注记），与 Deferred But Adjudicated successor 一致
+- Five-point consistency: Plan Status `completed` ↔ 3 Phase `completed` ↔ 全部 Exit Criteria `[x]` ↔ Closure Gates 全 `[x]` ↔ `docs/logs/2026/08-12.md` 第 3-11 行条目（含验证基线 `mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-hr/erp-hr-service` 196/196 绿 + `nop-compliance-checker.sh` exit 0）—— 一致
+- Deferred honesty: cancel-from-draft/submitted + suspendContract + hr 域其余状态轴 三项均带 successor 触发条件登记，无已确认缺陷伪装成 follow-up
+- Docs sync: `docs/logs/2026/08-12.md` + `docs/design/human-resource/state-machine.md` 已更新；路线图 M2.11/M2.12 标记 done（Closure Gates 第 2 项已证）
+- Verdict: **approved** — 范围内行为真实落地（非空函数/非 return null/无吞异常），结束审计门控由独立子代理（本会话）执行，非执行者自审
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认缺陷不得出现在此处>
+- 无新登记非阻塞跟进（已在 Deferred But Adjudicated 三项中完整记录带 successor 触发条件的 follow-up）

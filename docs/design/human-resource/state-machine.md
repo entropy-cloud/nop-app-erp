@@ -36,6 +36,8 @@
 | SUBMITTED→REJECTED | 审批人 | — | 退回，员工可见驳回原因 |
 | DRAFT/SUBMITTED→CANCELLED | 员工本人 | 仅限未 APPOVED 状态 | 释放假期暂扣额度 |
 
+> **实现漂移注记（plan `2026-08-12-1118-3` layer-2 四方对照裁定）**：上表 `DRAFT/SUBMITTED→CANCELLED`（员工未审批前自撤）为**目标业务行为，生产代码未落地**。生产 cancel 实况为**单源 `APPROVED→CANCELLED`**——`ErpHrLeaveRequestCancelProcessor` 经 `ErpHrLeaveRequestStateMachine.assertCanCancel(APPROVED)` 守卫，仅允许已批准休假取消（由 HR/员工触发并联动排班解除/余额返还）；全域零 `setStatus(CANCELLED)` writer 以 DRAFT/SUBMITTED 为源。Bean 矩阵如实编码已实现的单源 APPROVED 边。**Successor**：PM 要求员工休假自撤业务流落地时，开独立 plan 实现 `cancel-from-draft/submitted` mutation（属业务行为变更，触及权限/余额时序，须 ask-first），届时同步放开 Bean `assertCanCancel` 多源 + 本表无需此注记。归 `docs/plans/2026-08-12-1118-3-erphr-leave-contract-state-machine-beans.md` Deferred But Adjudicated。
+
 ### 3. 终态与恢复
 
 - 终态：`已批准（APPROVED）`、`已驳回（REJECTED）`、`已取消（CANCELLED）`。
@@ -65,6 +67,8 @@
 | SUBMITTED→APPROVED | 直属上级 / HR 管理员 |
 | SUBMITTED→REJECTED | 审批人 |
 | 取消（→CANCELLED） | 员工本人（仅 DRAFT/SUBMITTED）或 HR 管理员（任意状态） |
+
+> **取消权限实现漂移**（同 §2 注记）：生产 cancel 单源 `APPROVED→CANCELLED`，实际执行角色 = HR 管理员/员工对**已批准休假**的取消（联动余额返还 + 排班解除）。`DRAFT/SUBMITTED→CANCELLED`（员工未审批前自撤）的权限分级尚未落地，归 successor。
 
 危险操作：
 - **已批准的休假取消**：仅 HR 管理员可操作（需补偿假期余额）。
