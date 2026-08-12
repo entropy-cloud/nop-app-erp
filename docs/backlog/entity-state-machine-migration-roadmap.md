@@ -61,8 +61,8 @@
 | M2.13 | ErpApsOperationOrder.status OperationOrder 生命周期 Bean | todo | `aps/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.14 | ErpDrpPlan.status DrpPlan 生命周期 Bean | done | `drp/state-machine.md` §Plan | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.15 | ErpDrpLine.status DrpLine 生命周期 Bean | done | `drp/state-machine.md` §Line | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M2.16 | ErpB2bAsn.status Asn 生命周期 Bean | todo | `b2b/state-machine.md` §Asn | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M2.17 | ErpB2bEdiDoc.state EdiDoc 生命周期 Bean | todo | `b2b/state-machine.md` §EdiDoc | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M2.16 | ErpB2bAsn.status Asn 生命周期 Bean | done | `b2b/state-machine.md` §Asn | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M2.17 | ErpB2bEdiDoc.state EdiDoc 生命周期 Bean | done | `b2b/state-machine.md` §EdiDoc | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.18 | ErpCtContract.status Contract 生命周期 Bean | done | `contract/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.19 | ErpMfgForecast.status Forecast 生命周期 Bean | todo | `manufacturing/state-machine.md` §Forecast | M1.3 | `nop-backend-dev` + `nop-testing` |
 

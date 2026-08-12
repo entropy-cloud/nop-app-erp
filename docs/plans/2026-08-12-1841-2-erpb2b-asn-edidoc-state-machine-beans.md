@@ -1,6 +1,6 @@
 # 2026-08-12-1841-2-erpb2b-asn-edidoc-state-machine-beans B2B ErpB2bAsn + ErpB2bEdiDoc 实体级状态机 Bean（M2.16 + M2.17）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-12
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` M2.16（todo）+ M2.17（todo）
 > Related: 前置 `2026-08-12-0617-1-entity-state-machine-m0-1-contract.md`（M0.1 done）+ `2026-08-12-0617-2-entity-state-machine-m0-2-inventory.md`（M0.2 done）+ `2026-08-12-0738-1-cs-ticket-state-machine-bean-pilot.md`（M1.1 范式）+ `2026-08-12-0738-2-cs-ticket-state-machine-pilot-evaluation.md`（M1.3 模板 done）；姊妹范式 `2026-08-12-0918-1-purchase-docstatus-state-machine-bean.md`（Quotation/Rfq 缺失守卫漂移裁定 + INLINE/PROC 双路径范本）
@@ -65,84 +65,84 @@
 
 ### Phase 1 - ErpB2bEdiDocStateMachine + ErpB2bAsnStateMachine Bean + 注册 + 层 1 矩阵完备性测试
 
-Status: planned
+Status: completed
 Targets: `module-b2b/erp-b2b-service/src/main/java/app/erp/b2b/service/statemachine/ErpB2bEdiDocStateMachine.java`（新）+ `ErpB2bAsnStateMachine.java`（新）；`.../beans/app-service.beans.xml`（追加 2 Bean 注册）；`TestErpB2bEdiDocStateMachineMatrix.java` + `TestErpB2bAsnStateMachineMatrix.java`（新，层 1）
 Skill: `nop-backend-dev`（Bean 形状/注册）+ `nop-testing`（层 1 表驱动测试）
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M0.1 + M0.2 + M1.3 done
 
-- [ ] `Decision`（D-B2B-3 markError 守卫，Phase 1 前置裁定）：层 2 四方对照前置复核 `ErpB2bEdiDocBizModel.markError` `:97-108` 无守卫。参照 purchase Quotation/Rfq cancel 缺失守卫先例，**初步裁定 implementation drift → Fix**（Bean 守卫 markError 来源 {TO_SEND, SENT, RECEIVED}；接线后从终态/非法态 markError 抛领域码）。Phase 1 Bean 按此分支编码。Phase 3 层 2 须以实仓证据（grep markError 调用方/测试/运维 SOP）最终确认；若反转则修订 Bean + owner doc 补注。理由记录于本计划。
+- [x] `Decision`（D-B2B-3 markError 守卫，Phase 1 前置裁定）：层 2 四方对照前置复核 `ErpB2bEdiDocBizModel.markError` `:97-108` 无守卫。参照 purchase Quotation/Rfq cancel 缺失守卫先例，**初步裁定 implementation drift → Fix**（Bean 守卫 markError 来源 {TO_SEND, SENT, RECEIVED}；接线后从终态/非法态 markError 抛领域码）。Phase 1 Bean 按此分支编码。Phase 3 层 2 须以实仓证据（grep markError 调用方/测试/运维 SOP）最终确认；若反转则修订 Bean + owner doc 补注。理由记录于本计划。
       - Skill: `nop-backend-dev`
-- [ ] `Add`：创建 `ErpB2bEdiDocStateMachine`（无状态），矩阵编码**已实现**迁移：`assertCanMarkSent(TO_SEND)`→SENT、`assertCanMarkAcknowledged(SENT)`→ACKNOWLEDGED、`assertCanMarkError(TO_SEND|SENT|RECEIVED)`（按 D-B2B-3 初步裁定）→ERROR、`assertCanRetry(ERROR)`→{TO_SEND|RECEIVED}（目标按方向，Bean 提供两可能目标态方法 `retryOutboundTargetStatus()`/`retryInboundTargetStatus()`，BizModel 按方向选）、`assertCanCancel(TO_SEND|SENT|ERROR)`（多源）→CANCELLED、`assertCanArchive(RECEIVED)`→ARCHIVED；`isTerminal(CANCELLED|ACKNOWLEDGED|ARCHIVED)`；`transitions()`（6 边）；`terminalStatuses()`(CANCELLED/ACKNOWLEDGED/ARCHIVED) + `initialStatuses()`(TO_SEND/RECEIVED)。**不编码 TO_CANCEL 任何边**（D-B2B-1 死状态）。非法来源态抛 common 层码 + `action`/`fromStatus` 元数据。
+- [x] `Add`：创建 `ErpB2bEdiDocStateMachine`（无状态），矩阵编码**已实现**迁移：`assertCanMarkSent(TO_SEND)`→SENT、`assertCanMarkAcknowledged(SENT)`→ACKNOWLEDGED、`assertCanMarkError(TO_SEND|SENT|RECEIVED)`（按 D-B2B-3 初步裁定）→ERROR、`assertCanRetry(ERROR)`→{TO_SEND|RECEIVED}（目标按方向，Bean 提供两可能目标态方法 `retryOutboundTargetStatus()`/`retryInboundTargetStatus()`，BizModel 按方向选）、`assertCanCancel(TO_SEND|SENT|ERROR)`（多源）→CANCELLED、`assertCanArchive(RECEIVED)`→ARCHIVED；`isTerminal(CANCELLED|ACKNOWLEDGED|ARCHIVED)`；`transitions()`（6 边）；`terminalStatuses()`(CANCELLED/ACKNOWLEDGED/ARCHIVED) + `initialStatuses()`(TO_SEND/RECEIVED)。**不编码 TO_CANCEL 任何边**（D-B2B-1 死状态）。非法来源态抛 common 层码 + `action`/`fromStatus` 元数据。
       - Skill: `nop-backend-dev`
-- [ ] `Add`：创建 `ErpB2bAsnStateMachine`（无状态），矩阵编码**已实现**迁移：`assertCanMatchPurchaseOrder(RECEIVED)`→MATCHED、`assertCanCreateReceiveFromAsn(MATCHED)`→RECEIVED_TO_STOCK；retryMatch 为幂等重置（非矩阵迁移边，Bean 不编码为状态边，提供 `isIdempotentRetryStatus(MATCHED|RECEIVED_TO_STOCK)` 判定 helper 供 Processor 短路）；`isTerminal(RECEIVED_TO_STOCK)`；`transitions()`（2 边）；`terminalStatuses()`(RECEIVED_TO_STOCK) + `initialStatuses()`(RECEIVED)。**不编码 cancel 边、CANCELLED 不入终态集**（D-B2B-2 未落地）。
+- [x] `Add`：创建 `ErpB2bAsnStateMachine`（无状态），矩阵编码**已实现**迁移：`assertCanMatchPurchaseOrder(RECEIVED)`→MATCHED、`assertCanCreateReceiveFromAsn(MATCHED)`→RECEIVED_TO_STOCK；retryMatch 为幂等重置（非矩阵迁移边，Bean 不编码为状态边，提供 `isIdempotentRetryStatus(MATCHED|RECEIVED_TO_STOCK)` 判定 helper 供 Processor 短路）；`isTerminal(RECEIVED_TO_STOCK)`；`transitions()`（2 边）；`terminalStatuses()`(RECEIVED_TO_STOCK) + `initialStatuses()`(RECEIVED)。**不编码 cancel 边、CANCELLED 不入终态集**（D-B2B-2 未落地）。
       - Skill: `nop-backend-dev`
-- [ ] `Add`：在 `app-service.beans.xml` 以 FQN id 注册两个 Bean（沿用既有 Processor 范式，§11.1 步骤 2）。
+- [x] `Add`：在 `app-service.beans.xml` 以 FQN id 注册两个 Bean（沿用既有 Processor 范式，§11.1 步骤 2）。
       - Skill: `nop-backend-dev`
-- [ ] `Proof`（层 1 矩阵完备性，新增 greenfield 表驱动测试，不经 BizModel 入口）：
+- [x] `Proof`（层 1 矩阵完备性，新增 greenfield 表驱动测试，不经 BizModel 入口）：
       - `TestErpB2bEdiDocStateMachineMatrix`：(a) 无重复/冲突边；(b) 终态 {CANCELLED, ACKNOWLEDGED, ARCHIVED} 无出边；(c) cancel 多源 {TO_SEND, SENT, ERROR} 合法、对终态非法；(d) markError 仅 {TO_SEND, SENT, RECEIVED} 合法、对终态/ERROR 非法（断言 D-B2B-3 Fix 收紧）；(e) retry 仅 ERROR 合法；(f) `transitions()` 元数据一致；(g) 初始/终态集合正确；(h) **TO_CANCEL 无任何边**（断言 Bean 不编码该态，javadoc 标注死状态）。
       - `TestErpB2bAsnStateMachineMatrix`：(a) 无重复/冲突边；(b) RECEIVED_TO_STOCK 终态无出边；(c) matchPurchaseOrder 仅 RECEIVED、createReceiveFromAsn 仅 MATCHED；(d) `transitions()` 一致；(e) **CANCELLED 无任何边/不在终态集**（断言未落地，javadoc 标注）；(f) retryMatch 幂等判定 helper 正确。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 两 Bean 落地（EdiDoc 6 动作 + Asn 2 动作 + 目标态 + isTerminal + transitions 元数据），无状态（grep 证实不 import DAO/IBiz/IServiceContext/事务）。
-- [ ] 两 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）。
-- [ ] 层 1 矩阵测试 `mvn test -pl module-b2b/erp-b2b-service -Dtest=TestErpB2bEdiDocStateMachineMatrix,TestErpB2bAsnStateMachineMatrix` 全绿。
-- [ ] 本地化编译检查：`mvn compile -pl module-b2b/erp-b2b-service -am` 通过（解除 Phase 2 接线依赖）。
+- [x] 两 Bean 落地（EdiDoc 6 动作 + Asn 2 动作 + 目标态 + isTerminal + transitions 元数据），无状态（grep 证实不 import DAO/IBiz/IServiceContext/事务）。
+- [x] 两 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）。
+- [x] 层 1 矩阵测试 `mvn test -pl module-b2b/erp-b2b-service -Dtest=TestErpB2bEdiDocStateMachineMatrix,TestErpB2bAsnStateMachineMatrix` 全绿。
+- [x] 本地化编译检查：`mvn compile -pl module-b2b/erp-b2b-service -am` 通过（解除 Phase 2 接线依赖）。
 
 ### Phase 2 - BizModel/Processor 接线（行为保持 + D-B2B-3 Fix）+ 层 3 回归
 
-Status: planned
+Status: completed
 Targets: `entity/ErpB2bEdiDocBizModel.java`（markSent/markAcknowledged/markError/retry/cancel/archive）；`processor/ErpB2bAsnMatchPurchaseOrderProcessor.java`、`processor/ErpB2bAsnCreateReceiveFromAsnProcessor.java`、`processor/ErpB2bAsnRetryMatchProcessor.java`
 Skill: `nop-backend-dev`（接线 + 错误码映射）+ `nop-testing`（回归断言）
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1（D-B2B-3 初步裁定已固化）
 
-- [ ] `Fix`：`ErpB2bEdiDocBizModel` 注入 `ErpB2bEdiDocStateMachine`（字段非 private），将 markSent（`:68`）/markAcknowledged（`:84`）/retry（`:115`）/cancel（`:133-135`）/archive（`:160`）的内联守卫替换为 `stateMachine.assertCan<Action>(from)` + 目标态写回（retry 按方向调 `retryOutbound/InboundTargetStatus()`）。**动态守卫保留原位**：retry 的 retryCount++/error/blockingLevel 清除（`:119-121`）、sentAt/acknowledgedAt 写入。删除私有 `illegalTransition` 的**矩阵部分**（保留 common→领域映射 helper 或下沉）。BizModel 捕获 Bean common 层码映射 `ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION`（参数不变，common 码作 cause）。
+- [x] `Fix`：`ErpB2bEdiDocBizModel` 注入 `ErpB2bEdiDocStateMachine`（字段非 private），将 markSent（`:68`）/markAcknowledged（`:84`）/retry（`:115`）/cancel（`:133-135`）/archive（`:160`）的内联守卫替换为 `stateMachine.assertCan<Action>(from)` + 目标态写回（retry 按方向调 `retryOutbound/InboundTargetStatus()`）。**动态守卫保留原位**：retry 的 retryCount++/error/blockingLevel 清除（`:119-121`）、sentAt/acknowledgedAt 写入。删除私有 `illegalTransition` 的**矩阵部分**（保留 common→领域映射 helper 或下沉）。BizModel 捕获 Bean common 层码映射 `ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION`（参数不变，common 码作 cause）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix`（D-B2B-3 裁定生效）：`markError` 接线 Bean `stateMachine.assertCanMarkError(from)`——**新增守卫收紧来源至 {TO_SEND, SENT, RECEIVED}**（原任意态→ERROR 收紧），非法来源（含终态/ERROR）抛 `ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION`。保留 blockingLevel=ERROR/error msg 写入副作用。行为变化已显式记录（D-B2B-3）。
+- [x] `Fix`（D-B2B-3 裁定生效）：`markError` 接线 Bean `stateMachine.assertCanMarkError(from)`——**新增守卫收紧来源至 {TO_SEND, SENT, RECEIVED}**（原任意态→ERROR 收紧），非法来源（含终态/ERROR）抛 `ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION`。保留 blockingLevel=ERROR/error msg 写入副作用。行为变化已显式记录（D-B2B-3）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix`：三 Asn Processor 各自注入 `ErpB2bAsnStateMachine`（字段非 private），将内联守卫替换为 Bean 调用：MatchPurchaseOrder `:41`→`assertCanMatchPurchaseOrder(from)`、CreateReceiveFromAsn `:51`→`assertCanCreateReceiveFromAsn(from)`、RetryMatch 用 `isIdempotentRetryStatus` 短路。Processor 捕获 common 层码映射 `ERR_B2B_ASN_ILLEGAL_TRANSITION`（参数不变）。**动态守卫保留原位**：HMAC 校验、PO 匹配/超量、config-gate `erp-b2b.asn-auto-create-receive`、幂等 eventId、ErpPurReceive 构建 + 失败回滚。
+- [x] `Fix`：三 Asn Processor 各自注入 `ErpB2bAsnStateMachine`（字段非 private），将内联守卫替换为 Bean 调用：MatchPurchaseOrder `:41`→`assertCanMatchPurchaseOrder(from)`、CreateReceiveFromAsn `:51`→`assertCanCreateReceiveFromAsn(from)`、RetryMatch 用 `isIdempotentRetryStatus` 短路。Processor 捕获 common 层码映射 `ERR_B2B_ASN_ILLEGAL_TRANSITION`（参数不变）。**动态守卫保留原位**：HMAC 校验、PO 匹配/超量、config-gate `erp-b2b.asn-auto-create-receive`、幂等 eventId、ErpPurReceive 构建 + 失败回滚。
       - Skill: `nop-backend-dev`
-- [ ] `Proof`（层 3 既有回归保持全绿）：`mvn test -pl module-b2b/erp-b2b-service` 全绿——重点 `TestErpB2bEdiEnvelope`（出站 happy + errorAndRetry + cancelFromToSend + inboundReceivedToArchived + illegalTransitionThrows）、`TestErpB2bEdiPosting`、`TestErpB2bAsnInbound`、`TestErpB2bAsnInventoryIntegration`。证明错误码 + 参数、cancel 多源、retry 方向、config-gate、幂等均不变。若 D-B2B-3 markError 收紧导致既有测试失败（如有测试从终态 markError），仅当该测试覆盖的是被裁定为 drift 的路径时调整断言并记录理由（不得弱化矩阵断言）。
+- [x] `Proof`（层 3 既有回归保持全绿）：`mvn test -pl module-b2b/erp-b2b-service` 全绿——重点 `TestErpB2bEdiEnvelope`（出站 happy + errorAndRetry + cancelFromToSend + inboundReceivedToArchived + illegalTransitionThrows）、`TestErpB2bEdiPosting`、`TestErpB2bAsnInbound`、`TestErpB2bAsnInventoryIntegration`。证明错误码 + 参数、cancel 多源、retry 方向、config-gate、幂等均不变。若 D-B2B-3 markError 收紧导致既有测试失败（如有测试从终态 markError），仅当该测试覆盖的是被裁定为 drift 的路径时调整断言并记录理由（不得弱化矩阵断言）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] EdiDoc 6 处（markSent/markAcknowledged/markError/retry/cancel/archive）+ Asn 3 处（Match/CreateReceive/RetryMatch）固定判断均改调 Bean，grep 证实相关方法体内不再有内联 `Objects.equals(*, EDI_DOC_STATE_*)`/`ASN_STATUS_*` 矩阵判断（动态守卫如方向/config-gate/HMAC/幂等除外）。
-- [ ] 错误码 + 参数对外不变（层 3 断言证实）；D-B2B-3 markError 收紧行为变化已记录。
-- [ ] 层 3 `mvn test -pl module-b2b/erp-b2b-service` 全绿。
+- [x] EdiDoc 6 处（markSent/markAcknowledged/markError/retry/cancel/archive）+ Asn 3 处（Match/CreateReceive/RetryMatch）固定判断均改调 Bean，grep 证实相关方法体内不再有内联 `Objects.equals(*, EDI_DOC_STATE_*)`/`ASN_STATUS_*` 矩阵判断（动态守卫如方向/config-gate/HMAC/幂等除外）。
+- [x] 错误码 + 参数对外不变（层 3 断言证实）；D-B2B-3 markError 收紧行为变化已记录。
+- [x] 层 3 `mvn test -pl module-b2b/erp-b2b-service` 全绿。
 
 ### Phase 3 - 层 2 四方对照（EdiDoc + Asn 双轴）+ 漂移裁定闭环 + Delta 适用性
 
-Status: planned
+Status: completed
 Targets: 四方对照审计记录（写入本计划 Closure 段）；owner doc ASN 段漂移补正；D-B2B-3 终裁；B2B 单轴 Delta 证据
 Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度）+ `nop-testing`（Delta 双加载）
 
 - Item Types: `Proof | Fix | Decision | Add`
 - Prereqs: Phase 2
 
-- [ ] `Proof`（四方对照，§11.1 步骤 5）：以 `state-machine-business-review-prompt.md` 10 维度审查 EdiDoc + Asn 双轴——dict（edi-doc-state 8 值含 TO_CANCEL 死 / asn-status 4 值含 CANCELLED 死）↔ owner doc §1/§2 ↔ 两 Bean `transitions()` ↔ 全部 writer（含 CRUD 路径 §9.4 + TransportManager 潜在 writer）。
+- [x] `Proof`（四方对照，§11.1 步骤 5）：以 `state-machine-business-review-prompt.md` 10 维度审查 EdiDoc + Asn 双轴——dict（edi-doc-state 8 值含 TO_CANCEL 死 / asn-status 4 值含 CANCELLED 死）↔ owner doc §1/§2 ↔ 两 Bean `transitions()` ↔ 全部 writer（含 CRUD 路径 §9.4 + TransportManager 潜在 writer）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Decision`（D-B2B-1 TO_CANCEL 死状态）：确认 intentional legacy / Deferred——dict 值保留作预留，Bean 不编码边，owner doc `:57` 已标注。无额外 Fix（owner doc 一致）。登记 successor（两步取消业务流）。
+- [x] `Decision`（D-B2B-1 TO_CANCEL 死状态）：确认 intentional legacy / Deferred——dict 值保留作预留，Bean 不编码边，owner doc `:57` 已标注。无额外 Fix（owner doc 一致）。登记 successor（两步取消业务流）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Fix`（D-B2B-2 Asn cancel 未落地 doc drift）：owner doc ASN 段 `:200-206` 列 cancel 边但零实现。Fix owner doc ASN 段补注「cancel 边设计保留/未落地（零 writer、零 mutation）；CANCELLED 为 dict 预留死状态」。Bean 不编码 cancel（已落实）。
+- [x] `Fix`（D-B2B-2 Asn cancel 未落地 doc drift）：owner doc ASN 段 `:200-206` 列 cancel 边但零实现。Fix owner doc ASN 段补注「cancel 边设计保留/未落地（零 writer、零 mutation）；CANCELLED 为 dict 预留死状态」。Bean 不编码 cancel（已落实）。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Decision`（D-B2B-3 markError 终裁）：以实仓证据（grep markError 生产调用方/测试/运维 SOP/owner doc §6 角色）最终确认分支。若确认为 implementation drift（Fix 已在 Phase 2 落地），记录残留风险（前端/集成方若依赖从终态 markError 将收新错误码）；若反转为 intentional legacy，回退 Phase 2 Fix + owner doc 补注「markError 为运维逃生舱允许任意态」。无论分支，须显式记录。
+- [x] `Decision`（D-B2B-3 markError 终裁）：以实仓证据（grep markError 生产调用方/测试/运维 SOP/owner doc §6 角色）最终确认分支。若确认为 implementation drift（Fix 已在 Phase 2 落地），记录残留风险（前端/集成方若依赖从终态 markError 将收新错误码）；若反转为 intentional legacy，回退 Phase 2 Fix + owner doc 补注「markError 为运维逃生舱允许任意态」。无论分支，须显式记录。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Decision`（D-B2B-4 错误码过载 + D-B2B-5 TransportManager 双 writer）：两者登记为 watch-only residual + successor（不修复，超出范围）。D-B2B-5 successor 触发条件 = 出站自动化 `ErpB2bEdiOutboundJob` 落地时须路由经 Bean。
+- [x] `Decision`（D-B2B-4 错误码过载 + D-B2B-5 TransportManager 双 writer）：两者登记为 watch-only residual + successor（不修复，超出范围）。D-B2B-5 successor 触发条件 = 出站自动化 `ErpB2bEdiOutboundJob` 落地时须路由经 Bean。
       - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add | Proof`（Delta 适用性，§11.1 步骤 7；M2 非保护域）：在 EdiDoc 轴证 Delta（派生类覆盖一个动作，如收紧 cancel 仅 TO_SEND，移除 SENT/ERROR 源），VFS Delta 层同名 bean id 覆盖，基线/Delta 双加载可区分（复用 M1.2/contract 范式：`TestErpB2bEdiDocStateMachineBaselineIoC` + `TestErpB2bEdiDocStateMachineDeltaOverride`）。Asn 轴继承 EdiDoc 轴 + M1.2 既有证明，不重复证。
+- [x] `Add | Proof`（Delta 适用性，§11.1 步骤 7；M2 非保护域）：在 EdiDoc 轴证 Delta（派生类覆盖一个动作，如收紧 cancel 仅 TO_SEND，移除 SENT/ERROR 源），VFS Delta 层同名 bean id 覆盖，基线/Delta 双加载可区分（复用 M1.2/contract 范式：`TestErpB2bEdiDocStateMachineBaselineIoC` + `TestErpB2bEdiDocStateMachineDeltaOverride`）。Asn 轴继承 EdiDoc 轴 + M1.2 既有证明，不重复证。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 双轴四方对照审计记录存在且非空，每维有可追溯结论（引用 Bean 元数据 / owner doc 章节 / dict 位置 / writer 类:行）。
-- [ ] D-B2B-1..D-B2B-5 全部漂移已按 Fix/Decision 登记 + successor，无静默排除；owner doc ASN 段 cancel 未落地补注落地；D-B2B-3 终裁记录存在。
-- [ ] EdiDoc 轴 Delta 双加载运行时证据存在（非静态检查），基线/Delta 可区分。
+- [x] 双轴四方对照审计记录存在且非空，每维有可追溯结论（引用 Bean 元数据 / owner doc 章节 / dict 位置 / writer 类:行）。
+- [x] D-B2B-1..D-B2B-5 全部漂移已按 Fix/Decision 登记 + successor，无静默排除；owner doc ASN 段 cancel 未落地补注落地；D-B2B-3 终裁记录存在。
+- [x] EdiDoc 轴 Delta 双加载运行时证据存在（非静态检查），基线/Delta 可区分。
 
 ## Draft Review Record
 
@@ -152,14 +152,14 @@ Exit Criteria:
 
 > 本计划含生产代码变更（2 Bean + 接线 + 测试），Closure Gates 运行完整仓库验证。
 
-- [ ] 范围内行为完成（EdiDoc + Asn 双轴 Bean + 接线 + 层 1 矩阵 + 层 3 回归 + 层 2 四方对照 + D-B2B-1..5 漂移裁定闭环 + Delta 证据）
-- [ ] 相关文档对齐（`b2b/state-machine.md` ASN 段 cancel 未落地补注；D-B2B-3 终裁记录；路线图 M2.16 + M2.17 done）
-- [ ] 已运行验证：`mvn clean install -DskipTests`（全仓库 BUILD SUCCESS）+ `mvn test -pl module-b2b/erp-b2b-service`（全绿）+ `bash docs/audits/nop-compliance-checker.sh`（exit 0，R5=0/R11=0 无漂移）
-- [ ] 无范围内项目降级为 deferred/follow-up（D-B2B-1..5 须显式裁定，D-B2B-2/D-B2B-3 范围内 Fix 须落地）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（EdiDoc + Asn 双轴 Bean + 接线 + 层 1 矩阵 + 层 3 回归 + 层 2 四方对照 + D-B2B-1..5 漂移裁定闭环 + Delta 证据）
+- [x] 相关文档对齐（`b2b/state-machine.md` ASN 段 cancel 未落地补注；D-B2B-3 终裁记录；路线图 M2.16 + M2.17 done）
+- [x] 已运行验证：`mvn clean install -DskipTests`（全仓库 BUILD SUCCESS）+ `mvn test -pl module-b2b/erp-b2b-service`（全绿）+ `bash docs/audits/nop-compliance-checker.sh`（exit 0，R5=0/R11=0 无漂移）
+- [x] 无范围内项目降级为 deferred/follow-up（D-B2B-1..5 须显式裁定，D-B2B-2/D-B2B-3 范围内 Fix 须落地）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此项留为未勾选占位
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -195,13 +195,53 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填充>
+Status Note: 三阶段全部执行完成 + 全绿验证（57 tests pass：18 层 1 矩阵 + 33 既有层 3 回归 + 6 Delta 双加载）+ 合规 R5=0/R11=0。层 2 四方对照双轴闭环，D-B2B-1..5 漂移全部显式裁定。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计子代理填充>
-- Evidence: <待填充>
+- Auditor / Agent: 独立结束审计子代理（mission-driver closure-audit 新会话，非执行者上下文，2026-08-12）。复核范围：EdiDoc/Asn 两 Bean 矩阵 + 注册 + BizModel INLINE 接线 6 处 + 三 Asn Processor 接线 + D-B2B-3 markError 收紧 Fix + owner doc ASN 段 D-B2B-2 补注 + 层 1 矩阵/Delta 测试存在性 + R5 合规 + docs/logs 同步。
+- Evidence:
+
+  ### 层 2 四方对照审计记录（EdiDoc + Asn 双轴）
+
+  #### EdiDoc 轴（ErpB2bEdiDoc.state）
+
+  | 维度 | 证据 | 结论 |
+  |------|------|------|
+  | **dict** | `module-b2b/model/app-erp-b2b.orm.xml` `edi-doc-state` 8 值：TO_SEND/SENT/**TO_CANCEL**/CANCELLED/ERROR/RECEIVED/ACKNOWLEDGED/ARCHIVED | 8 值，TO_CANCEL 为预留死状态（D-B2B-1） |
+  | **owner doc 迁移图** | `docs/design/b2b/state-machine.md §2` `:28-48` | 出站 TO_SEND→SENT→ACKNOWLEDGED + ERROR/retry/cancel；入站 RECEIVED→ARCHIVED；TO_CANCEL 两步取消 Deferred 注 `:57` |
+  | **StateMachine 元数据** | `ErpB2bEdiDocStateMachine.transitions()` 11 边（markSent 1 + markAcknowledged 1 + markError 3 + retry 2 + cancel 3 + archive 1） | 不含 TO_CANCEL 任何边（D-B2B-1）；终态 {CANCELLED, ACKNOWLEDGED, ARCHIVED} 无出边 |
+  | **writer 盘点** | 生产命名动作（BizModel 6 处经 Bean `*TargetStatus()`）+ create 路径（CreateOutbound `:63` TO_SEND / CreateInbound `:42` RECEIVED 初始态）+ TransportManager `:123` setState(SENT) wired-but-uncalled（D-B2B-5）+ CRUD 路径（§9.4：通用 CRUD 可写，无写锁） | 命名动作路径经 Bean 唯一治理；TransportManager 潜在双 writer 登记 watch-only |
+
+  #### Asn 轴（ErpB2bAsn.status）
+
+  | 维度 | 证据 | 结论 |
+  |------|------|------|
+  | **dict** | `module-b2b/model/app-erp-b2b.orm.xml` `asn-status` 4 值：RECEIVED/MATCHED/RECEIVED_TO_STOCK/**CANCELLED** | 4 值，CANCELLED 为预留死状态（D-B2B-2） |
+  | **owner doc 迁移图** | `docs/design/b2b/state-machine.md §ASN` `:200-206` | 列 RECEIVED→MATCHED→RECEIVED_TO_STOCK + cancel 边；cancel 未落地补注已落地（D-B2B-2 Fix） |
+  | **StateMachine 元数据** | `ErpB2bAsnStateMachine.transitions()` 2 边（matchPurchaseOrder 1 + createReceiveFromAsn 1） | 不含 CANCELLED 任何边，CANCELLED 不在终态集（D-B2B-2） |
+  | **writer 盘点** | 生产命名动作（MatchPurchaseOrder `:87` + CreateReceiveFromAsn `:85` 经 Bean `*TargetStatus()`；RetryMatch `:39` 动态 reset）+ create 路径（HandleInboundWebhook `:126` RECEIVED 初始态）+ **零 cancel writer**（grep 证实）+ CRUD 路径 | 命名动作路径经 Bean 唯一治理；cancel 零 writer 证实 doc drift |
+
+  ### D-B2B-1..5 漂移裁定闭环
+
+  - **D-B2B-1 EdiDoc TO_CANCEL 死状态**：`Decision` = intentional legacy / Deferred。dict 值保留作预留，Bean 不编码边，owner doc `:57` 已标注。Successor：两步取消业务流（`SENT→TO_CANCEL→CANCELLED` + `markCancelConfirmed`）落地时新增边。**已闭环**。
+  - **D-B2B-2 Asn cancel 未落地 doc drift**：`Fix` = owner doc ASN 段 cancel 未落地补注已落地（`state-machine.md §ASN 迁移` 后注）。Bean 不编码 cancel（已落实），CANCELLED 不入终态集。Successor：PM 要求 ASN cancel 命名动作时开独立 plan。**已闭环**。
+  - **D-B2B-3 EdiDoc markError 无守卫 → 终裁 implementation drift**：`Decision` = **implementation drift → Fix（Phase 2 已落地）**。实仓证据：(1) 生产 markError 调用方——`ErpB2bAsnMatchPurchaseOrderProcessor:177`（RECEIVED 态，合法）、`ErpB2bAsnHandleInboundWebhookProcessor:98`（RECEIVED 态，合法）；(2) 测试——`TestErpB2bEdiEnvelope:95` + `TestErpB2bEdiPosting:88` 均从 TO_SEND 调用；(3) 无运维 SOP 文档化终态 markError 为逃生舱；(4) owner doc §1-§3 明确限定来源 {TO_SEND, SENT, RECEIVED}。**残留风险**：前端/集成方若依赖从终态（CANCELLED/ACKNOWLEDGED/ARCHIVED）markError 将收新错误码 `ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION`（可接受——终态概念上不可 markError）。**不反转为 intentional legacy**。**已闭环**。
+  - **D-B2B-4 错误码过载**：`Decision` = watch-only residual。`requireDoc`/`requireAsn` 复用 ILLEGAL_TRANSITION 于 not-found（专用 NOT_FOUND 码存在但未使用）。pre-existing，超出状态机集中范围。Successor：no（仅当统一错误码语义清理时）。**已闭环**。
+  - **D-B2B-5 TransportManager 潜在双 writer**：`Decision` = watch-only residual。`TransportManager.markEdiDocSent:115-130` 独立 setState(SENT) + TO_SEND 守卫，但**生产零调用方**（无 `@Inject TransportManager`，无 `transportManager.send(...)` 调用）。Bean 落地后成 SENT 边矩阵权威。Successor：yes（出站自动化 `ErpB2bEdiOutboundJob` 激活时须路由经 Bean）。**已闭环**。
+
+  ### Delta 适用性证据（EdiDoc 轴）
+
+  - 基线加载：`TestErpB2bEdiDocStateMachineBaselineIoC`（3 tests，容器解析基线类，cancel 多源放行）
+  - Delta 加载：`TestErpB2bEdiDocStateMachineDeltaOverride`（3 tests，容器解析 `ErpB2bEdiDocStateMachineDelta` 派生类，cancel 收紧为仅 TO_SEND）
+  - 可区分差异：`assertCanCancel(SENT)` 基线放行 / Delta 抛异常 → 构成可区分双加载证据（契约 §6 业务级 Delta 实证）
+  - Asn 轴继承 EdiDoc 轴 + M1.2 既有证明，不重复证（§11.1 步骤 7 范式）
 
 Follow-up:
 
-- <待填充；D-B2B-1..5 裁定须落地，Deferred 项见上>
+- D-B2B-1 Successor：两步取消业务流（触发条件 = 业务要求 SENT→TO_CANCEL→CANCELLED 确认时）
+- D-B2B-2 Successor：ASN cancel 命名动作（触发条件 = PM 要求时，可能触及 dict 行为 ask-first）
+- D-B2B-3 残留风险：前端/集成方终态 markError 将收新错误码（已记录，可接受）
+- D-B2B-4：watch-only（统一错误码清理时）
+- D-B2B-5 Successor：TransportManager 出站接线时须路由经 Bean（触发条件 = `ErpB2bEdiOutboundJob` 落地时）
+- D-B2B-6（入站 ERROR→RECEIVED retry 路径未实现）：Bean 提供 `retryInboundTargetStatus()`，当前 BizModel 仅用出站 retry；入站 retry 为 successor（owner doc §2 提及但生产未实现方向检测）

@@ -205,6 +205,8 @@ RECEIVED ──(匹配采购订单)──→ MATCHED ──(入库完成)──�
     └──(取消)──→ CANCELLED          └──(取消)──→ CANCELLED
 ```
 
+> **§ASN cancel 边未落地注（D-B2B-2 doc drift Fix）**：上图 cancel 边（RECEIVED|MATCHED→CANCELLED）为**设计保留/未落地**——全域**零 cancel writer、零 cancel mutation**（`IErpB2bAsnBiz` 无 cancel 方法，grep 零 `setStatus(ASN_STATUS_CANCELLED)` writer）。当前 ASN 废弃/取消经标准 CRUD。**CANCELLED 为 dict 预留死状态**（常量 `ASN_STATUS_CANCELLED` 定义于 `ErpB2bConstants.java`，但生产不可达）。`ErpB2bAsnStateMachine` Bean **不编码 cancel 边**，CANCELLED **不入终态集**（不可达）。**Successor**：PM 要求 ASN cancel 命名动作时开独立 plan 新增 mutation（可能触及 dict 行为 ask-first）。
+
 ### ASN 与 ErpB2bEdiDoc 的关系
 
 - ErpB2bAsn.sourceEdiDocId → ErpB2bEdiDoc（来源 EDI 报文）。
