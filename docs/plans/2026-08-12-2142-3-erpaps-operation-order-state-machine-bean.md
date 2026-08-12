@@ -1,6 +1,6 @@
 # 2026-08-12-2142-3-erpaps-operation-order-state-machine-bean APS ErpApsOperationOrder 实体级状态机 Bean（M2.13）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-12
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` M2.13（todo）
 > Related: 前置 `2026-08-12-0617-1-entity-state-machine-m0-1-contract.md`（M0.1 done）+ `2026-08-12-0617-2-entity-state-machine-m0-2-inventory.md`（M0.2 done）+ `2026-08-12-0738-1-cs-ticket-state-machine-bean-pilot.md`（M1.1 范式）+ `2026-08-12-0738-2-cs-ticket-state-machine-pilot-evaluation.md`（M1.3 模板 done）；姊妹范式 `2026-08-12-1118-1-erpct-contract-state-machine-bean.md`（单实体单轴 + INLINE BizModel 接线 + 多源 cancel 范本）+ `2026-08-12-1841-1-erpdrp-plan-line-state-machine-beans.md`（引擎/服务类写 status + 隐式门控 advance 范本）
@@ -64,77 +64,77 @@
 
 ### Phase 1 - ErpApsOperationOrderStateMachine Bean + 注册 + 层 1 矩阵完备性测试
 
-Status: planned
+Status: completed
 Targets: `module-aps/erp-aps-service/src/main/java/app/erp/aps/service/statemachine/ErpApsOperationOrderStateMachine.java`（新）；`module-aps/erp-aps-service/src/main/resources/_vfs/erp/aps/beans/app-service.beans.xml`（追加 Bean 注册）；`module-aps/erp-aps-service/src/test/java/app/erp/aps/service/statemachine/TestErpApsOperationOrderStateMachineMatrix.java`（新，层 1）
 Skill: `nop-backend-dev`（Bean 形状/注册）+ `nop-testing`（层 1 表驱动测试）
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M0.1 + M0.2 + M1.3 done
 
-- [ ] `Add`：创建 `ErpApsOperationOrderStateMachine`（无状态、不注入 DAO/IBiz/IServiceContext/事务），按契约 §4 + §11.1 步骤 1 实现。矩阵编码**已实现**迁移：
+- [x] `Add`：创建 `ErpApsOperationOrderStateMachine`（无状态、不注入 DAO/IBiz/IServiceContext/事务），按契约 §4 + §11.1 步骤 1 实现。矩阵编码**已实现**迁移：
   - 显式动作方法（主路径，集中有守卫的边）：`assertCanStart(PLANNED)`、`assertCanComplete(IN_PROGRESS)`、`assertCanCancel(DRAFT|PLANNED|IN_PROGRESS)`（三源，正向枚举合法来源）、`assertCanRevertToDraft(PLANNED)`（抢单回退路径矩阵权威）；非法来源态抛 common 层码 + `action`/`fromStatus` 元数据。
   - 目标态方法：`startTargetStatus()`→IN_PROGRESS / `completeTargetStatus()`→FINISHED / `cancelTargetStatus()`→CANCELLED / `revertToDraftTargetStatus()`→DRAFT。
   - 终态分类：`isTerminal(FINISHED|CANCELLED)`=true；DRAFT/PLANNED/IN_PROGRESS=false。
   - 只读元数据：`transitions()` 返回不可变快照，**声明全部 7 条已实现边**（DRAFT→PLANNED、DRAFT→CANCELLED、PLANNED→IN_PROGRESS、PLANNED→DRAFT、PLANNED→CANCELLED、IN_PROGRESS→FINISHED、IN_PROGRESS→CANCELLED）——含 DRAFT→PLANNED（排产，引擎驱动无 assertCan 守卫但属已实现边，供可达性分析）与 PLANNED→DRAFT（重排回退）；`terminalStatuses()`（FINISHED, CANCELLED）；`initialStatuses()`（DRAFT）。
   Skill: `nop-backend-dev`
-- [ ] `Add`：在 `app-service.beans.xml` 以 `<bean id="app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine" class="...ErpApsOperationOrderStateMachine"/>` 显式 FQN-id 注册（沿用 cs 试点范式，§11.1 步骤 2；注意 BizModel 是 `ioc:type="@bean:id"` 自动发现，但 StateMachine Bean 须显式 class 注册）。
+- [x] `Add`：在 `app-service.beans.xml` 以 `<bean id="app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine" class="...ErpApsOperationOrderStateMachine"/>` 显式 FQN-id 注册（沿用 cs 试点范式，§11.1 步骤 2；注意 BizModel 是 `ioc:type="@bean:id"` 自动发现，但 StateMachine Bean 须显式 class 注册）。
   Skill: `nop-backend-dev`
-- [ ] `Proof`（层 1 矩阵完备性，新增 greenfield 表驱动测试 `TestErpApsOperationOrderStateMachineMatrix`，§11.1 步骤 4）：遍历每个动作的合法/非法来源态——(a) 无重复/冲突边；(b) 从 DRAFT 经声明边可达全部状态（DRAFT→PLANNED→IN_PROGRESS→FINISHED；DRAFT/PLANNED/IN_PROGRESS→CANCELLED；PLANNED→DRAFT 回退环）；(c) cancel 三源 {DRAFT,PLANNED,IN_PROGRESS} 全覆盖、对终态 FINISHED/CANCELLED 非法；(d) `transitions()` 元数据（7 条边）与显式方法 + owner doc §2 一致；(e) 终态/初始态集合正确。**不经 BizModel 入口**（层 1 只测 Bean）。Skill: `nop-testing`
+- [x] `Proof`（层 1 矩阵完备性，新增 greenfield 表驱动测试 `TestErpApsOperationOrderStateMachineMatrix`，§11.1 步骤 4）：遍历每个动作的合法/非法来源态——(a) 无重复/冲突边；(b) 从 DRAFT 经声明边可达全部状态（DRAFT→PLANNED→IN_PROGRESS→FINISHED；DRAFT/PLANNED/IN_PROGRESS→CANCELLED；PLANNED→DRAFT 回退环）；(c) cancel 三源 {DRAFT,PLANNED,IN_PROGRESS} 全覆盖、对终态 FINISHED/CANCELLED 非法；(d) `transitions()` 元数据（7 条边）与显式方法 + owner doc §2 一致；(e) 终态/初始态集合正确。**不经 BizModel 入口**（层 1 只测 Bean）。Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] `ErpApsOperationOrderStateMachine` 落地（4 assertCan 动作 + 目标态 + isTerminal + transitions 元数据 7 边），无状态（grep 证实不 import DAO/IBiz/IServiceContext/事务）。
-- [ ] Bean 已在 `app-service.beans.xml` 显式注册（FQN id）；Bean 自身无 `@Inject`（严格无状态），BizModel/Processor 接线点的 `@Inject` 字段非 private（合规 R5）。
-- [ ] 层 1 矩阵测试 `mvn test -pl module-aps/erp-aps-service -Dtest=TestErpApsOperationOrderStateMachineMatrix` 全绿，覆盖上述 (a)-(e)。
-- [ ] 本地化编译检查：`mvn compile -pl module-aps/erp-aps-service -am` 通过（解除 Phase 2 接线依赖）。
+- [x] `ErpApsOperationOrderStateMachine` 落地（4 assertCan 动作 + 目标态 + isTerminal + transitions 元数据 7 边），无状态（grep 证实不 import DAO/IBiz/IServiceContext/事务）。
+- [x] Bean 已在 `app-service.beans.xml` 显式注册（FQN id）；Bean 自身无 `@Inject`（严格无状态），BizModel/Processor 接线点的 `@Inject` 字段非 private（合规 R5）。
+- [x] 层 1 矩阵测试 `mvn test -pl module-aps/erp-aps-service -Dtest=TestErpApsOperationOrderStateMachineMatrix` 全绿，覆盖上述 (a)-(e)。
+- [x] 本地化编译检查：`mvn compile -pl module-aps/erp-aps-service -am` 通过（解除 Phase 2 接线依赖）。
 
 ### Phase 2 - BizModel/Processor 接线（行为保持）+ 层 3 回归
 
-Status: planned
+Status: completed
 Targets: `ErpApsOperationOrderBizModel.java`（start/complete/cancel）、`ErpApsSchedulingInsertRushOrderProcessor.java`（抢单回退循环 PLANNED→DRAFT）
 Skill: `nop-backend-dev`（接线 + 错误码映射）+ `nop-testing`（回归断言）
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1
 
-- [ ] `Fix`：BizModel 注入 `ErpApsOperationOrderStateMachine`（按类型注入，字段非 private），将 start/complete/cancel 的内联 `Objects.equals` 守卫（`:128,:143,:159-161`）替换为 `stateMachine.assertCanStart/Complete/Cancel(from)`，目标态写回改 `stateMachine.<action>TargetStatus()`；cancel 三源改 `stateMachine.assertCanCancel(from)`（Bean 内部判定 {DRAFT,PLANNED,IN_PROGRESS}）。BizModel 捕获 Bean 的 common 层非法边报告，映射为领域 `ERR_APS_OP_ILLEGAL_TRANSITION`（保留 operationOrderCode/currentStatus/expectedStatus 参数，common 码作 cause——对齐契约 §7 + M1.1 Option A 范式）。**动态业务守卫保留原位**：requireOrder 实体加载、乐观锁。**不得新增** start/complete/cancel 的容量预留释放（Deferred P1-MA2-077 MR1）。Skill: `nop-backend-dev`
-- [ ] `Fix`：`ErpApsSchedulingInsertRushOrderProcessor` 注入 `ErpApsOperationOrderStateMachine`，在抢单回退循环（`:73-81`）所选 PLANNED op `setStatus(DRAFT) :77` 前调 `stateMachine.assertCanRevertToDraft(op.getStatus())`（矩阵权威——所选 op 本为 PLANNED，调用确认矩阵合法性）；**IN_PROGRESS 不可重排硬守卫 `:53-59`（`ERR_APS_OP_IN_PROGRESS_NOT_RESCHEDULABLE`）保留在 Processor 选择之前不动**（动态业务守卫，非纯状态迁移守卫）；保留 `releaseReservationsByOrder :76` + 清 plannedStart/End `:78-79` + saveOrUpdate `:80` + 优先级选择 `:64-72`。Processor 捕获 Bean common 码 → 领域码映射。Skill: `nop-backend-dev`
-- [ ] `Proof`（层 3 既有回归保持全绿）：`mvn test -pl module-aps/erp-aps-service` 全绿——重点 `TestErpApsOperationOrderStateGuards`（11 @Test：start/complete/cancel happy + 非法路径）、`TestErpApsSchedulingEngine`（前向/后向/抢单/CTP 影子）、`TestErpApsCapacityReservation`（TOCTOU UK + pre-check + 释放）、`TestErpApsOperationOrderCrudSmoke`、`TestErpApsScheduleManagement`、`TestErpApsCrossDomainIntegration`、`TestErpApsDemandPlanning`。证明错误码 + 参数、start 仅 PLANNED、complete 仅 IN_PROGRESS、cancel 三源、IN_PROGRESS 不可重排、容量预留获取/释放时序、抢单优先级规则均不变。若既有测试因 helper 调整需微调断言，仅调整与矩阵无关部分并记录理由（不得弱化断言）。Skill: `nop-testing`
+- [x] `Fix`：BizModel 注入 `ErpApsOperationOrderStateMachine`（按类型注入，字段非 private），将 start/complete/cancel 的内联 `Objects.equals` 守卫（`:128,:143,:159-161`）替换为 `stateMachine.assertCanStart/Complete/Cancel(from)`，目标态写回改 `stateMachine.<action>TargetStatus()`；cancel 三源改 `stateMachine.assertCanCancel(from)`（Bean 内部判定 {DRAFT,PLANNED,IN_PROGRESS}）。BizModel 捕获 Bean 的 common 层非法边报告，映射为领域 `ERR_APS_OP_ILLEGAL_TRANSITION`（保留 operationOrderCode/currentStatus/expectedStatus 参数，common 码作 cause——对齐契约 §7 + M1.1 Option A 范式）。**动态业务守卫保留原位**：requireOrder 实体加载、乐观锁。**不得新增** start/complete/cancel 的容量预留释放（Deferred P1-MA2-077 MR1）。Skill: `nop-backend-dev`
+- [x] `Fix`：`ErpApsSchedulingInsertRushOrderProcessor` 注入 `ErpApsOperationOrderStateMachine`，在抢单回退循环（`:73-81`）所选 PLANNED op `setStatus(DRAFT) :77` 前调 `stateMachine.assertCanRevertToDraft(op.getStatus())`（矩阵权威——所选 op 本为 PLANNED，调用确认矩阵合法性）；**IN_PROGRESS 不可重排硬守卫 `:53-59`（`ERR_APS_OP_IN_PROGRESS_NOT_RESCHEDULABLE`）保留在 Processor 选择之前不动**（动态业务守卫，非纯状态迁移守卫）；保留 `releaseReservationsByOrder :76` + 清 plannedStart/End `:78-79` + saveOrUpdate `:80` + 优先级选择 `:64-72`。Processor 捕获 Bean common 码 → 领域码映射。Skill: `nop-backend-dev`
+- [x] `Proof`（层 3 既有回归保持全绿）：`mvn test -pl module-aps/erp-aps-service` 全绿——重点 `TestErpApsOperationOrderStateGuards`（11 @Test：start/complete/cancel happy + 非法路径）、`TestErpApsSchedulingEngine`（前向/后向/抢单/CTP 影子）、`TestErpApsCapacityReservation`（TOCTOU UK + pre-check + 释放）、`TestErpApsOperationOrderCrudSmoke`、`TestErpApsScheduleManagement`、`TestErpApsCrossDomainIntegration`、`TestErpApsDemandPlanning`。证明错误码 + 参数、start 仅 PLANNED、complete 仅 IN_PROGRESS、cancel 三源、IN_PROGRESS 不可重排、容量预留获取/释放时序、抢单优先级规则均不变。若既有测试因 helper 调整需微调断言，仅调整与矩阵无关部分并记录理由（不得弱化断言）。Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 四处固定来源态/目标态判断（BizModel start/complete/cancel 3 + InsertRushOrderProcessor 回退 1）均改调 Bean，grep 证实相关方法体内不再有内联 `Objects.equals(*, OP_STATUS_*)` 矩阵判断（动态守卫 IN_PROGRESS-not-reschedulable、优先级选择、预留获取/释放除外）。
-- [ ] `ERR_APS_OP_ILLEGAL_TRANSITION` + 参数（operationOrderCode/currentStatus/expectedStatus）对外不变（层 3 断言证实）；start/complete/cancel 守卫、cancel 三源、IN_PROGRESS 不可重排行为不变；容量预留获取/释放时序不变。
-- [ ] 层 3 `mvn test -pl module-aps/erp-aps-service` 全绿。
+- [x] 四处固定来源态/目标态判断（BizModel start/complete/cancel 3 + InsertRushOrderProcessor 回退 1）均改调 Bean，grep 证实相关方法体内不再有内联 `Objects.equals(*, OP_STATUS_*)` 矩阵判断（动态守卫 IN_PROGRESS-not-reschedulable、优先级选择、预留获取/释放除外）。
+- [x] `ERR_APS_OP_ILLEGAL_TRANSITION` + 参数（operationOrderCode/currentStatus/expectedStatus）对外不变（层 3 断言证实）；start/complete/cancel 守卫、cancel 三源、IN_PROGRESS 不可重排行为不变；容量预留获取/释放时序不变。
+- [x] 层 3 `mvn test -pl module-aps/erp-aps-service` 全绿。
 
 ### Phase 3 - 层 2 四方对照（dict ↔ owner-doc ↔ 元数据 ↔ writer）+ Delta 适用性
 
-Status: planned
+Status: completed
 Targets: 四方对照审计记录（写入本计划 Closure 段）；OperationOrder 单轴 Delta 证据
 Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度）+ `nop-testing`（Delta 双加载）
 
 - Item Types: `Proof | Decision | Add`
 - Prereqs: Phase 2
 
-- [ ] `Proof`（四方对照，§11.1 步骤 5）：以 `state-machine-business-review-prompt.md` 10 维度审查 OperationOrder 单轴——
+- [x] `Proof`（四方对照，§11.1 步骤 5）：以 `state-machine-business-review-prompt.md` 10 维度审查 OperationOrder 单轴——
   - **dict ↔ 元数据**：dict 5 值 ↔ Bean `transitions()` 7 条边覆盖；每个 dict 值 writer 可达性（含 CRUD 路径，M0.1 §9.4；DRAFT/PLANNED 经引擎 + CRUD + 抢单回退、IN_PROGRESS/FINISHED/CANCELLED 经命名动作）。
   - **owner-doc 迁移图 ↔ 元数据**：`aps/state-machine.md §2 :21-42` 迁移图（7 条边）↔ Bean 边覆盖；owner doc 采用 10 维度审查结构（无独立「迁移表/实现约定」分节），§11.4「§迁移表 vs §实现约定 内部漂移」警示结构不直接适用——重点核对 §2 声明边与 §3 终态/§4 异常路径（预留释放 Deferred `:58`）的一致性。
   - **元数据 ↔ 全部 writer**：盘点 `ErpApsOperationOrder.status` 全部写路径——生产命名动作（BizModel start/complete/cancel）+ 引擎算法（SchedulingEngine DRAFT↔PLANNED）+ 抢单回退（InsertRushOrderProcessor PLANNED→DRAFT）+ CTP 影子（非持久化）+ 框架入口（`__save`/`save`，xmeta `status` insertable/updatable）+ 测试 fixture。
   - **可达性/终态/异常路径**：从 DRAFT 经声明边可达性、终态 FINISHED/CANCELLED 无出边、IN_PROGRESS 不可重排异常路径、容量预留 UK 冲突路径与 owner doc §3-§5 一致。
   Skill: `state-machine-business-review-prompt.md`
-- [ ] `Decision`（漂移/边界裁定，路线图规则 5）：
+- [x] `Decision`（漂移/边界裁定，路线图规则 5）：
   - **引擎算法写 status 不在 Bean 治理范围**：`ErpApsSchedulingEngine` 的 DRAFT↔PLANNED 写是纯算法按可行性写状态（无 status 守卫可集中），调用方 `SchedulingProcessor.persist` 的预留获取/释放是强一致约束（保留不动）。Bean `transitions()` 声明 DRAFT→PLANNED 边供可达性分析，但不路由引擎写经 Bean（无可集中守卫）——登记为 intentional architecture boundary（引擎=算法状态，Bean=命名动作矩阵）。
   - **预留释放 Deferred**：start/complete/cancel 不释放预留（owner doc §4 `:58` P1-MA2-077 MR1），仅 PLANNED→DRAFT 抢单回退释放——本计划保持此行为，不实现 Deferred 项。登记 watch-only residual（successor = P1-MA2-077 MR1 落地时）。
   - **IN_PROGRESS cancel 审批工作流 Deferred**（§6 `:77-79` P1-MA2-078）：今日 cancel 仅经 entry-permission overlay——本计划保持。登记 watch-only residual。
   - 若层 2 实仓证据发现任何 dict 死状态、owner-doc↔实现 漂移或非法边，按 Fix/Decision 登记 + successor（禁止静默排除）。
   Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add | Proof`（Delta 适用性，§11.1 步骤 7；M2 非保护域可选证 Delta）：经 VFS Delta 层同名 bean id 覆盖证明替换生效——派生类覆盖一个 `assertCan<Action>`（如收紧 cancel 仅 DRAFT/PLANNED，移除 IN_PROGRESS 异常终止源），基线/Delta 双加载可区分（复用 M1.2 范式：`TestErpApsOperationOrderStateMachineBaselineIoC` + `TestErpApsOperationOrderStateMachineDeltaOverride`）。Skill: `nop-testing`
+- [x] `Add | Proof`（Delta 适用性，§11.1 步骤 7；M2 非保护域可选证 Delta）：经 VFS Delta 层同名 bean id 覆盖证明替换生效——派生类覆盖一个 `assertCan<Action>`（如收紧 cancel 仅 DRAFT/PLANNED，移除 IN_PROGRESS 异常终止源），基线/Delta 双加载可区分（复用 M1.2 范式：`TestErpApsOperationOrderStateMachineBaselineIoC` + `TestErpApsOperationOrderStateMachineDeltaOverride`）。Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 四方对照审计记录存在且非空，每维有可追溯结论（引用 Bean 元数据 / owner doc 章节 / dict 位置 / writer 类:行）。
-- [ ] 引擎边界、预留释放 Deferred、IN_PROGRESS cancel 审批 Deferred 均已按 Decision 登记 + successor，无静默排除；任何死状态/漂移（若发现）已 Fix 登记。
-- [ ] Delta 双加载运行时证据存在（非静态检查），基线/Delta 可区分。
+- [x] 四方对照审计记录存在且非空，每维有可追溯结论（引用 Bean 元数据 / owner doc 章节 / dict 位置 / writer 类:行）。
+- [x] 引擎边界、预留释放 Deferred、IN_PROGRESS cancel 审批 Deferred 均已按 Decision 登记 + successor，无静默排除；任何死状态/漂移（若发现）已 Fix 登记。
+- [x] Delta 双加载运行时证据存在（非静态检查），基线/Delta 可区分。
 
 ## Draft Review Record
 
@@ -144,14 +144,14 @@ Exit Criteria:
 
 > 本计划含生产代码变更（新增 Bean + 接线 + 测试），Closure Gates 运行完整仓库验证。验证命令见 `docs/context/project-context.md`。
 
-- [ ] 范围内行为完成（Bean + 接线 + 层 1 矩阵 + 层 3 回归 + 层 2 四方对照 + Delta 证据）
-- [ ] 相关文档对齐（路线图 M2.13 done；owner doc 若有漂移补注）
-- [ ] 已运行验证：`mvn clean install -DskipTests`（全仓库 BUILD SUCCESS）+ `mvn test -pl module-aps/erp-aps-service`（全绿）+ `bash docs/audits/nop-compliance-checker.sh`（exit 0，R5=0/R11=0 无漂移）
-- [ ] 无范围内项目降级为 deferred/follow-up（漂移裁定必须落地登记 + successor，不得悬置）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Bean + 接线 + 层 1 矩阵 + 层 3 回归 + 层 2 四方对照 + Delta 证据）
+- [x] 相关文档对齐（路线图 M2.13 done；owner doc 若有漂移补注）
+- [x] 已运行验证：`mvn clean install -DskipTests`（全仓库 BUILD SUCCESS）+ `mvn test -pl module-aps/erp-aps-service`（全绿）+ `bash docs/audits/nop-compliance-checker.sh`（exit 0，R5=0/R11=0 无漂移）
+- [x] 无范围内项目降级为 deferred/follow-up（漂移裁定必须落地登记 + successor，不得悬置）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -175,12 +175,122 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行 + 独立结束审计后填写>
+Status Note: 执行完成（Bean + 接线 + 层 1 矩阵 + 层 3 回归 + 层 2 四方对照 + Delta 证据）。独立结束审计由独立子代理（新会话）执行。
+
+### 层 2 四方对照审计记录（Phase 3 Proof）
+
+**对照范围**：`ErpApsOperationOrder.status` 单轴。10 维度审查结构（owner doc `docs/design/aps/state-machine.md` 采用 10 维度审查结构，非「迁移表/实现约定」分节——§11.4 警示结构不直接适用，重点核对 §2 声明边与 §3 终态/§4 异常路径一致性）。
+
+#### 维度 1 — dict ↔ 元数据（无死状态）
+
+- **dict 5 值**（`module-aps/model/app-erp-aps.orm.xml:8-14` inline dict `erp-aps/operation-order-status`，镜像 `module-aps/erp-aps-meta/.../_vfs/dict/erp-aps/operation-order-status.dict.yaml`）：DRAFT/PLANNED/IN_PROGRESS/FINISHED/CANCELLED。
+- **Bean `transitions()` 7 边覆盖全部 5 dict 值为节点**：
+  - DRAFT = schedule 源 + cancel 源；
+  - PLANNED = schedule 目标 + start 源 + cancel 源 + revertToDraft 源；
+  - IN_PROGRESS = start 目标 + complete 源 + cancel 源；
+  - FINISHED = complete 目标（终态）；
+  - CANCELLED = cancel 目标（终态）。
+- **每个 dict 值 writer 可达性**（含 CRUD 路径，M0.1 §9.4）：
+  - DRAFT：引擎 scheduleForward/Backward 失败→DRAFT（`ErpApsSchedulingEngine:85/122/132/140`）+ InsertRushOrderProcessor 回退（`:92`）+ rush 规范化（`:104`）+ CRUD `__save`（创建初始态，`TestErpApsOperationOrderStateGuards.createOrder` seed 经 save）+ CTP 影子（`AtpCtpServiceImpl:226` 非持久化）。
+  - PLANNED：引擎 scheduleForward/Backward 成功→PLANNED（`ErpApsSchedulingEngine:93/149`）+ CRUD save。
+  - IN_PROGRESS：BizModel.start 命名动作（`stateMachine.startTargetStatus()`）。
+  - FINISHED：BizModel.complete 命名动作（`stateMachine.completeTargetStatus()`）。
+  - CANCELLED：BizModel.cancel 命名动作（`stateMachine.cancelTargetStatus()`）。
+- **结论**：5 dict 值全部有生产 writer，**无死状态**。
+
+#### 维度 2 — owner-doc 迁移图 ↔ 元数据（7 边全对齐，无漂移）
+
+owner doc `aps/state-machine.md §2 :21-42` 声明 7 条边，与 Bean `transitions()` 7 边逐一对照：
+
+| owner-doc §2 边 | 行号 | Bean action | 一致 |
+|----------------|------|------------|------|
+| DRAFT→PLANNED（APS 排产） | :23 | schedule | ✓ |
+| DRAFT→CANCELLED（取消） | :24 | cancel | ✓ |
+| PLANNED→IN_PROGRESS（开始执行） | :27 | start | ✓ |
+| PLANNED→DRAFT（重排回退） | :28 | revertToDraft | ✓ |
+| PLANNED→CANCELLED（取消） | :29 | cancel | ✓ |
+| IN_PROGRESS→FINISHED（完工） | :32 | complete | ✓ |
+| IN_PROGRESS→CANCELLED（异常终止） | :33 | cancel | ✓ |
+
+- §3 `:46-49` 终态 FINISHED/CANCELLED ↔ Bean `terminalStatuses()` = {FINISHED, CANCELLED} ✓
+- §3 `:49` illegal-transition 守卫（start 仅 PLANNED、complete 仅 IN_PROGRESS、cancel 三源）↔ Bean assertCan 方法 ✓
+- §4 `:58` Deferred（预留释放 P1-MA2-077 MR1）↔ Bean 不实现，watch-only residual ✓
+- §6 `:77-79` Deferred（IN_PROGRESS cancel 审批 P1-MA2-078）↔ Bean 不实现，watch-only residual ✓
+- **结论**：owner-doc 迁移图与 Bean 元数据 **7 边全对齐，无漂移**。
+
+#### 维度 3 — 元数据 ↔ 全部 writer（含 CRUD 路径）
+
+`ErpApsOperationOrder.status` 全部写路径盘点：
+
+| 写路径 | 类:行 | 类型 | Bean 治理 |
+|--------|-------|------|----------|
+| BizModel.start | `ErpApsOperationOrderBizModel:133/137` | 命名动作（assertCanStart + startTargetStatus） | ✓ 已接线 |
+| BizModel.complete | `ErpApsOperationOrderBizModel:148/152` | 命名动作（assertCanComplete + completeTargetStatus） | ✓ 已接线 |
+| BizModel.cancel | `ErpApsOperationOrderBizModel:164/171` | 命名动作（assertCanCancel + cancelTargetStatus） | ✓ 已接线 |
+| InsertRushOrderProcessor 回退 | `ErpApsSchedulingInsertRushOrderProcessor:85/92` | 命名动作（assertCanRevertToDraft + revertToDraftTargetStatus） | ✓ 已接线 |
+| Engine scheduleForward/Backward | `ErpApsSchedulingEngine:85/93/122/132/140/149` | 引擎算法（DRAFT↔PLANNED 按可行性写） | ✗ 引擎边界（Decision） |
+| InsertRushOrderProcessor rush 规范化 | `ErpApsSchedulingInsertRushOrderProcessor:104` | 算法输入规范化（rush→DRAFT 统一处理） | 保留原位（算法输入） |
+| CTP 影子 | `ErpApsAtpCtpServiceImpl:226` | 非持久化影子实体 | out of scope |
+| 框架 CRUD `__save`/`save` | xmeta `status` insertable/updatable | 通用 CRUD 入口（M0.1 §9.4 残留风险） | 选项 (c) 显式排除 |
+| 测试 fixture | `TestErpApsOperationOrderStateGuards.createOrder` | seed 经 save 带 status | 测试种子（合法） |
+
+- **grep 证实**：BizModel start/complete/cancel 方法体内零内联 `Objects.equals(*, OP_STATUS_*)` 矩阵判断；InsertRushOrderProcessor 仅保留 IN_PROGRESS 硬守卫（`:58` 动态业务守卫）+ rush DRAFT 规范化检查（`:103` 算法输入）。
+- **结论**：命名动作路径 4 处固定判断全部改调 Bean；引擎算法/CTP 影子/CRUD 入口经 Decision 裁定边界。
+
+#### 维度 4 — 可达性/终态/异常路径
+
+- **可达性**（层 1 `testReachabilityFromDraftCoversAllStatuses` 证实）：从 DRAFT 经声明边可达全部状态（DRAFT→PLANNED→IN_PROGRESS→FINISHED；DRAFT/PLANNED/IN_PROGRESS→CANCELLED；PLANNED→DRAFT 回退环）。对齐 owner doc §5 `:63-64`。
+- **终态无出边**（层 1 `testTerminalStatusesHaveNoOutgoingEdges` 证实）：FINISHED/CANCELLED 无出边。对齐 §3 `:46-49`。
+- **IN_PROGRESS 不可重排异常路径**：`InsertRushOrderProcessor:53-59` `ERR_APS_OP_IN_PROGRESS_NOT_RESCHEDULABLE` 硬守卫保留在 Processor 选择之前（动态业务守卫，非纯状态迁移守卫）。层 3 `TestErpApsSchedulingEngine` 抢单测试证实。
+- **容量预留 UK 冲突路径**：`SchedulingProcessor.persist` acquireReservation + `UK_APS_CAPACITY_RESERVATION_SLOT` DB 兜底 + `ERR_APS_CAPACITY_CONFLICT`（强一致约束，保留不动）。层 3 `TestErpApsCapacityReservation` TOCTOU 证实。
+- **结论**：可达性/终态/异常路径与 owner doc §3-§5 一致。
+
+### Phase 3 Decisions（漂移/边界裁定，路线图规则 5）
+
+#### Decision 1 — 引擎算法写 status 不在 Bean 治理范围（intentional architecture boundary）
+
+- **事实**：`ErpApsSchedulingEngine`（纯 POJO 无 Spring/DB，javadoc `:18-34`）的 DRAFT↔PLANNED 写（scheduleForward `:85/93`、scheduleBackward `:122/132/140/149`）按可行性写状态，**无 status 守卫可集中**。调用方 `SchedulingProcessor.persist` 的预留获取/释放是强一致约束（保留不动）。
+- **裁定**：Bean `transitions()` 声明 DRAFT→PLANNED 边供可达性分析，但**不路由引擎写经 Bean**（无可集中守卫）。登记为 intentional architecture boundary（引擎=算法状态，Bean=命名动作矩阵）。
+- **successor**：no（架构边界裁决，非待实现项；若未来引擎改为经命名 mutation 驱动排产则重评）。
+- **依据**：契约 §4.1/§4.2 不要求每条声明边配 assertCan 方法；DRAFT→PLANNED 边无对应 assertCan 方法，仅供 `transitions()` 可达性分析。
+
+#### Decision 2 — 预留释放 Deferred（watch-only residual）
+
+- **事实**：owner doc §4 `:58` 明示 PLANNED→IN_PROGRESS/FINISHED/CANCELLED 状态翻转的预留释放归 P1-MA2-077 MR1（Deferred）。今日仅 PLANNED→DRAFT 抢单回退释放（`InsertRushOrderProcessor:80 releaseReservationsByOrder`）。
+- **裁定**：本计划保持行为，**不实现** Deferred 项。start/complete/cancel 不释放预留。
+- **successor**：yes（触发条件 = P1-MA2-077 MR1 容量预留释放落地时）。
+
+#### Decision 3 — IN_PROGRESS cancel 审批工作流 Deferred（watch-only residual）
+
+- **事实**：owner doc §6 `:77-79` 明示 P1-MA2-078 Deferred（需生产主管审批）。今日 cancel 仅经 entry-permission overlay 门控。
+- **裁定**：本计划保持行为，**不实现** Deferred 项。
+- **successor**：yes（触发条件 = P1-MA2-078 审批工作流落地时）。
+
+#### 死状态/漂移扫描结论
+
+- **dict 死状态**：无（5 值全部有生产 writer，维度 1 证实）。
+- **owner-doc↔实现 漂移**：无（7 边全对齐，维度 2 证实）。
+- **非法边**：无（Bean 矩阵与 owner-doc §2 声明边完全一致）。
+- **无须 Fix 登记的新发现项**。
+
+### Delta 适用性证据（Phase 3 Add | Proof）
+
+- **Delta 派生类**：`ErpApsOperationOrderStateMachineDelta`（测试作用域）覆盖 `assertCanCancel`，收紧 cancel 来源态从 {DRAFT,PLANNED,IN_PROGRESS} 到 {DRAFT,PLANNED}（移除 IN_PROGRESS 异常终止源）。
+- **Delta 层文件**：`_vfs/_delta/test-aps-delta/erp/aps/beans/app-service.beans.xml` 以同名 bean id 覆盖基线。
+- **基线加载证据**：`TestErpApsOperationOrderStateMachineBaselineIoC`（3 @Test）——容器解析为基线类，`assertCanCancel(IN_PROGRESS)` 放行。
+- **Delta 加载证据**：`TestErpApsOperationOrderStateMachineDeltaOverride`（3 @Test，`@NopTestProperty(nop.core.vfs.delta-layer-ids=test-aps-delta)`）——容器解析为 `ErpApsOperationOrderStateMachineDelta` 派生类，`assertCanCancel(IN_PROGRESS)` 抛异常；非覆盖动作（start/complete/revertToDraft/isTerminal）继承基线不变。
+- **可区分性**：同一 `assertCanCancel(IN_PROGRESS)` 在基线放行、在 Delta 抛异常 → 构成可区分的基线/Delta 双加载运行时证据（非静态检查）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理（新会话）>
-- Evidence: <task id / 测试结果 / 四方对照记录>
+- Auditor / Agent: 独立结束审计子代理（新会话，无执行者上下文，task `MISSION_DRIVER:2026-08-12-111827-mission-driver` / closure-audit）
+- Evidence:
+  - 层 1 矩阵：`TestErpApsOperationOrderStateMachineMatrix` 9 @Test 全绿（`mvn test -pl module-aps/erp-aps-service -Dtest=TestErpApsOperationOrderStateMachineMatrix`）。
+  - 层 3 回归：`mvn test -pl module-aps/erp-aps-service` 51 @Test 全绿（含 `TestErpApsOperationOrderStateGuards` 11 + `TestErpApsSchedulingEngine` 6 + `TestErpApsCapacityReservation` + scheduling/crud/cross-domain/demand-planning）。
+  - Delta 证据：`TestErpApsOperationOrderStateMachineBaselineIoC` 3 @Test + `TestErpApsOperationOrderStateMachineDeltaOverride` 3 @Test 全绿。
+  - 下游：`mvn test -pl module-manufacturing/erp-mfg-service` BUILD SUCCESS（CRP load source SPI 跨模块消费无破坏）。
+  - 合规：`bash docs/audits/nop-compliance-checker.sh` exit 0（R5=@Inject private=0、R11=Processor 重复状态判断=0 无漂移；R10=7 为既有基线非本计划引入，已核实变更文件零 REQUIRES_NEW/@Transactional）。
+  - 四方对照：见上「层 2 四方对照审计记录」（7 边全对齐、5 dict 值无死状态、3 Decision 已登记 + successor）。
 
 Follow-up:
 
