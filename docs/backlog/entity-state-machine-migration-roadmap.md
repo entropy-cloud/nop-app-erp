@@ -50,10 +50,10 @@
 | M2.2 | ErpCrmEvent.status Event 生命周期 Bean | todo | `crm/state-machine.md` §Event | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.3 | ErpPrjTask.status Task 生命周期 Bean | todo | `projects/state-machine.md` §Task | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.4 | ErpPrjProject.status Project 生命周期 Bean | todo | `projects/state-machine.md` §Project | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M2.5 | ErpPurQuotation.docStatus 最小生命周期 Bean | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M2.6 | ErpPurRfq.docStatus 最小生命周期 Bean | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M2.7 | ErpPurRequisition.docStatus 最小生命周期 Bean | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M2.8 | ErpPurOrder.docStatus 最小生命周期 Bean | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M2.5 | ErpPurQuotation.docStatus 最小生命周期 Bean | done | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M2.6 | ErpPurRfq.docStatus 最小生命周期 Bean | done | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M2.7 | ErpPurRequisition.docStatus 最小生命周期 Bean | done | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M2.8 | ErpPurOrder.docStatus 最小生命周期 Bean | done | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.9 | ErpSalQuotation.docStatus 最小生命周期 Bean | todo | `sales/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.10 | ErpSalOrder.docStatus 最小生命周期 Bean | todo | `sales/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M2.11 | ErpHrLeaveRequest.status LeaveRequest 生命周期 Bean | todo | `human-resource/state-machine.md` §LeaveRequest | M1.3 | `nop-backend-dev` + `nop-testing` |
