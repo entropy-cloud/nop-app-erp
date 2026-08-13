@@ -1,6 +1,6 @@
 # 2026-08-13-1950-3-erpfin-budget-scenario-state-machine-beans 预算方案 ErpFinBudgetScenario docStatus + approveStatus 实体级状态机 Bean（M4.11 + M4.12）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-13
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.11（ErpFinBudgetScenario.docStatus）+ M4.12（ErpFinBudgetScenario.approveStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md §3.5 finance M4.11/12`（FIN-24/25 行）
 > Related: M4 finance 同域先例 `2026-08-13-1146-2-erpfin-expense-claim-state-machine-beans.md`（M4.4+M4.5 draft）+ `2026-08-13-1146-3-erpfin-employee-advance-state-machine-beans.md`（M4.6+M4.7 draft）；M4 plan-first 先例 `2026-08-13-0805-3-erpprj-timesheet-settlement-state-machine-beans.md`；M0.1 契约 + M1.3 模板 `docs/architecture/entity-state-machine-bean.md §11`
@@ -84,53 +84,53 @@
 
 ### Phase 1 - 2 个 StateMachine Bean + 注册 + facade 接线 + 层 1 矩阵完备性测试
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/statemachine/{ErpFinBudgetScenarioDocumentStateMachine,ErpFinBudgetScenarioApprovalStateMachine}.java`（新建）、`.../budget/ErpFinBudgetScenarioProcessor.java`（facade `validateTransition` 改调 Bean）、`.../beans/app-service.beans.xml`（注册 2 Bean）、`.../statemachine/TestErpFinBudgetScenarioStateMachines.java`（新建）
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done（已满足）；M4.12 deps = M1.3 + M4.11（同计划，同 Phase）
 
-- [ ] `Decision`（双轴耦合裁定 + rollForward 非 source 迁移 + REJECTED 重提三方 drift + carryForward/rollForward 守卫绕过）：
+- [x] `Decision`（双轴耦合裁定 + rollForward 非 source 迁移 + REJECTED 重提三方 drift + carryForward/rollForward 守卫绕过）：
   (A) docStatus 为主迁移轴；approveStatus 镜像轴（3 动作）。双轴矩阵同构。
   (B) rollForward 是 spawn-new-entity（源 docStatus 不变），**不纳入 docStatus Bean assertCan 矩阵**；仅 `transitions()` metadata。
   (C) carryForward 是 source 迁移 APPROVED→CLOSED，但**绕过 facade `validateTransition`**（使用自身守卫 + 不同错误码 `ERR_BUDGET_SCENARIO_NOT_APPROVED`/`ERR_BUDGET_CARRY_FORWARD_RULE_INVALID`）。Bean **不接管** carryForward 守卫——carryForward 边仅作 `transitions()` metadata。避免改变 carryForward 错误码（行为保持）。
   (D) REJECTED 重提三方 drift：owner doc `budget.md:42` + javadoc 写 REJECTED→DRAFT，live Processor allowedFrom=DRAFT/REJECTED 目标=SUBMITTED。Bean 据实编码 REJECTED→SUBMITTED（保持 live 行为）；owner doc/javadoc drift 移交 successor。
   Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpFinBudgetScenarioDocumentStateMachine`（docStatus 主轴）——`assertCanSubmit/Approve/Reject/Cancel/CarryForward(String docStatus)`（5 源迁移动作；**rollForward 不纳入 assertCan**）+ 各 `*TargetStatus()`（carryForward 目标=CLOSED）+ `isTerminal`/`initialStatuses`/`terminalStatuses` + 只读 `transitions()`（含 carryForward APPROVED→CLOSED 边 + rollForward metadata-only 标注）。非法来源态 → common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`fromStatus`。严格无状态（§2）。
+- [x] `Add`：落地 `ErpFinBudgetScenarioDocumentStateMachine`（docStatus 主轴）——`assertCanSubmit/Approve/Reject/Cancel/CarryForward(String docStatus)`（5 源迁移动作；**rollForward 不纳入 assertCan**）+ 各 `*TargetStatus()`（carryForward 目标=CLOSED）+ `isTerminal`/`initialStatuses`/`terminalStatuses` + 只读 `transitions()`（含 carryForward APPROVED→CLOSED 边 + rollForward metadata-only 标注）。非法来源态 → common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`fromStatus`。严格无状态（§2）。
   Skill: `nop-backend-dev`
-- [ ] `Add`：落地 `ErpFinBudgetScenarioApprovalStateMachine`（approveStatus 镜像轴）——`assertCanSubmit/Approve/Reject(String approveStatus)` + 各 `*TargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`（3 动作 3 边 + resubmit 边）。严格无状态。
+- [x] `Add`：落地 `ErpFinBudgetScenarioApprovalStateMachine`（approveStatus 镜像轴）——`assertCanSubmit/Approve/Reject(String approveStatus)` + 各 `*TargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`（3 动作 3 边 + resubmit 边）。严格无状态。
   Skill: `nop-backend-dev`
-- [ ] `Add`：在 `app-service.beans.xml` 以 FQN id 注册 2 Bean。
+- [x] `Add`：在 `app-service.beans.xml` 以 FQN id 注册 2 Bean。
   Skill: `nop-backend-dev`
-- [ ] `Decision | Add`（facade 接线）：`ErpFinBudgetScenarioProcessor.validateTransition`（4 动作路由：submit/approve/reject/cancel）改调 docStatus Bean 的对应 `assertCanXxx`。错误码映射 common→`ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION`（保留领域码 + 参数）。**carryForward/rollForward 不经 facade `validateTransition`，Bean 不接管其守卫**。`generateBudgetVoucher`/`reverseBudgetVoucher` 副作用保留原位。
+- [x] `Decision | Add`（facade 接线）：`ErpFinBudgetScenarioProcessor.validateTransition`（4 动作路由：submit/approve/reject/cancel）改调 docStatus Bean 的对应 `assertCanXxx`。错误码映射 common→`ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION`（保留领域码 + 参数）。**carryForward/rollForward 不经 facade `validateTransition`，Bean 不接管其守卫**。`generateBudgetVoucher`/`reverseBudgetVoucher` 副作用保留原位。
   Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（表驱动，不经 BizModel/facade）——docStatus Bean {submit DRAFT/REJECTED→SUBMITTED + approve SUBMITTED→APPROVED + reject SUBMITTED→REJECTED + cancel APPROVED→CANCELLED + carryForward APPROVED→CLOSED + terminal {CANCELLED,CLOSED} 无出边 + rollForward metadata-only in transitions}；approveStatus Bean {submit + approve + reject + resubmit}。各 assertCan 合法/非法 + transitions 一致 + initial/terminal 集合正确。
+- [x] `Proof`：层 1 矩阵完备性（表驱动，不经 BizModel/facade）——docStatus Bean {submit DRAFT/REJECTED→SUBMITTED + approve SUBMITTED→APPROVED + reject SUBMITTED→REJECTED + cancel APPROVED→CANCELLED + carryForward APPROVED→CLOSED + terminal {CANCELLED,CLOSED} 无出边 + rollForward metadata-only in transitions}；approveStatus Bean {submit + approve + reject + resubmit}。各 assertCan 合法/非法 + transitions 一致 + initial/terminal 集合正确。
   Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 2 Bean 无状态、矩阵完整；双轴耦合 Decision + CLOSED 出边核实记录在案。
-- [ ] 2 Bean 已在 `app-service.beans.xml` 注册；facade `validateTransition` 委托 Bean；`@Inject` 字段非 private。
+- [x] 2 Bean 无状态、矩阵完整；双轴耦合 Decision + CLOSED 出边核实记录在案。
+- [x] 2 Bean 已在 `app-service.beans.xml` 注册；facade `validateTransition` 委托 Bean；`@Inject` 字段非 private。
 
 ### Phase 2 - 层 2 四方对照 + 层 3 既有集成回归
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/test/`（既有集成测试，零新建）
 Skill: `state-machine-business-review-prompt.md` + `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1（2 Bean + 接线已落地）
 
-- [ ] `Proof`：层 2 四方对照——dict `erp-fin/budget-status`（6 值）↔ `docs/design/finance/budget.md` BudgetScenario §42（状态图）+ §38 字段表（stale: 5 值遗漏 CLOSED，drift 登记）↔ docStatus Bean 元数据 ↔ 全部 writer（4 per-mutation Processor via `validateTransition` + carryForward Processor 自身守卫 + rollForward spawn-new-entity + 创建写 DRAFT + CRUD 路径 §9.4 选项 c 排除）。approveStatus 同理对照 `wf/approve-status`。**三方 drift 登记**：(1) REJECTED 重提 doc/javadoc=DRAFT vs code=SUBMITTED；(2) budget.md:38 字段表遗漏 CLOSED；(3) rollForward 非 source 迁移（javadoc 未标注）。drift 项按规则 5 Fix/successor 处置。
+- [x] `Proof`：层 2 四方对照——dict `erp-fin/budget-status`（6 值）↔ `docs/design/finance/budget.md` BudgetScenario §42（状态图）+ §38 字段表（stale: 5 值遗漏 CLOSED，drift 登记）↔ docStatus Bean 元数据 ↔ 全部 writer（4 per-mutation Processor via `validateTransition` + carryForward Processor 自身守卫 + rollForward spawn-new-entity + 创建写 DRAFT + CRUD 路径 §9.4 选项 c 排除）。approveStatus 同理对照 `wf/approve-status`。**三方 drift 登记**：(1) REJECTED 重提 doc/javadoc=DRAFT vs code=SUBMITTED；(2) budget.md:38 字段表遗漏 CLOSED；(3) rollForward 非 source 迁移（javadoc 未标注）。drift 项按规则 5 Fix/successor 处置（见 Closure Follow-up）。
   Skill: `state-machine-business-review-prompt.md`
-- [ ] `Proof`：层 3 既有命名动作回归——复用既有 `TestErpFinBudget*` 测试基线（M0.2 标「无」须实仓扫描确认），证明凭证生成/红冲、审计、领域错误码 + 参数不变。若确实无既有集成测试，登记回归缺口 + 补全为 Follow-up（Phase 1 Proof 已覆盖 Bean 层）。本地 `mvn test -pl module-finance/erp-fin-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归——复用既有 `TestErpFinBudget*` 测试基线（实仓确认 3 个：`TestErpFinBudgetEndToEnd` submit→approve→cancel + `TestErpFinBudgetCarryForward` + `TestErpFinBudgetRollForward`），证明凭证生成/红冲、审计、领域错误码 + 参数不变。本地 `mvn test -pl module-finance/erp-fin-service -am` 全绿（380 tests, 0 failures）。
   Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 层 2 四方对照裁定完成（含 owner-doc 存在性核实 + doc drift 处置如有）。
-- [ ] 层 3 既有集成测试全绿（零行为回归）或缺口已登记。
+- [x] 层 2 四方对照裁定完成（含 owner-doc 存在性核实 + doc drift 处置如有）。
+- [x] 层 3 既有集成测试全绿（零行为回归）或缺口已登记。
 
 ## Draft Review Record
 
@@ -142,14 +142,14 @@ Exit Criteria:
 ## Closure Gates
 
 - [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)；2026-08-13 人工确认，见 Draft Review Record 门控确认记录）
-- [ ] 范围内行为完成（双轴 Bean + facade 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐
-- [ ] 已运行验证：`mvn clean install -DskipTests` + `mvn test -pl module-finance/erp-fin-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（双轴 Bean + facade 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（owner doc drift 登记为 successor，非静默排除）
+- [x] 已运行验证：`mvn clean install -DskipTests` + `mvn test -pl module-finance/erp-fin-service -am` 全绿（380 tests） + `bash docs/audits/nop-compliance-checker.sh` R5=0/R11=0 actual ≤ baseline
+- [x] 无范围内项目降级为 deferred/follow-up（assertCanCarryForward runtime-dead 为显式 justified 设计，非降级）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行（见 Closure Audit Evidence）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -167,12 +167,36 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending execution
+Status Note: closed — independent closure audit passed
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
+- Auditor / Agent: 独立结束审计子代理（新会话，mission-driver AUDIT 步骤）
+- 审计范围与结论：
+  - 实仓核实 2 Bean 已落地：`module-finance/erp-fin-service/src/main/java/app/erp/fin/service/statemachine/ErpFinBudgetScenarioDocumentStateMachine.java`（docStatus 主轴）+ `ErpFinBudgetScenarioApprovalStateMachine.java`（approveStatus 镜像轴）。
+  - beans.xml 注册核实：`_vfs/erp/fin/beans/app-service.beans.xml:386-389` 以 FQN id 注册 2 Bean。
+  - facade 接线核实：`ErpFinBudgetScenarioProcessor.validateTransition:107-126` 按 target 路由到 `documentStateMachine.assertCanSubmit/Approve/Reject/Cancel`（`:111/113/115/117`），catch `ERR_ILLEGAL_STATUS_TRANSITION`（`:125`）映射为领域码 `ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION`（`:126`，common 作 cause）。`@Inject` 字段 `documentStateMachine` 非 private（`:64`）。
+  - 层 1 矩阵测试核实：`TestErpFinBudgetScenarioStateMachines.java` 存在于 `module-finance/erp-fin-service/src/test/java/app/erp/fin/service/statemachine/`。
+  - 反 Hollow 核实：facade `validateTransition` 实际委托 Bean assertCan 调用（非占位 `return null`/空体）；错误码映射路径可触达（非法来源态抛 `ERR_ILLEGAL_STATUS_TRANSITION` → catch → 重抛领域码）。
+  - 范围内行为保持核实：carryForward/rollForward 不经 facade `validateTransition`（绕过路径保留各自错误码），`generateBudgetVoucher`/`reverseBudgetVoucher` 副作用保留原位——兑现「全部既有外部行为不变」。
+  - Deferred 诚实性核实：assertCanCarryForward runtime-dead 为显式 justified 设计（Phase 1 Decision (C)，保留 carryForward 错误码），非降级；owner-doc drift 4 项作为 successor 登记于 Follow-up，非静默排除范围内缺陷。
+  - Closure Gates 全部 `[x]`，无范围内项目降级为 deferred/follow-up。
+- **实施证据**：
+  - 新建 2 Bean：`ErpFinBudgetScenarioDocumentStateMachine`（docStatus 主轴，5 assertCan + 5 targetStatus + isTerminal/initial/terminal + transitions 7 边含 rollForward spawn）+ `ErpFinBudgetScenarioApprovalStateMachine`（approveStatus 镜像轴，3 assertCan + 3 targetStatus + transitions 4 边）。均严格无状态（无 @Inject/DAO/IBiz/事务）。
+  - beans.xml 注册 2 Bean（FQN id，`app-service.beans.xml`）。
+  - facade 接线：`ErpFinBudgetScenarioProcessor.validateTransition` 按 target 路由到 docStatus Bean 的 `assertCanSubmit/Approve/Reject/Cancel`，catch common `ERR_ILLEGAL_STATUS_TRANSITION` 映射为领域码 `ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION`（common 作 cause）+ 实体参数。carryForward/rollForward 绕过 facade（保留各自错误码）。`generateBudgetVoucher`/`reverseBudgetVoucher` 副作用保留原位。
+  - 层 1 矩阵测试：`TestErpFinBudgetScenarioStateMachines`（21 tests，全绿）。
+  - 层 3 回归：380 finance-service tests 全绿（含 `TestErpFinBudgetEndToEnd` submit→approve→cancel + `TestErpFinBudgetCarryForward` + `TestErpFinBudgetRollForward`）。
+- **层 2 四方对照记录**：
+  - docStatus dict `erp-fin/budget-status`（6 值）↔ Bean 元数据（initial={DRAFT}, terminal={CANCELLED,CLOSED}, transitions 7 边）↔ 全部 writer（submit DRAFT/REJECTED→SUBMITTED, approve SUBMITTED→APPROVED, reject SUBMITTED→REJECTED, cancel APPROVED→CANCELLED via facade validateTransition; carryForward APPROVED→CLOSED via 自身守卫; rollForward spawn-new-entity DRAFT; CRUD 创建写 DRAFT §9.2 选项 c）。dict 无死状态（6 值全部有 writer 或可达）。
+  - approveStatus dict `wf/approve-status`（4 值）↔ Bean 元数据（initial={UNSUBMITTED}, terminal={APPROVED}, transitions 4 边）↔ 全部 writer（submit→SUBMITTED, approve→APPROVED, reject→REJECTED via Processor; 创建写 UNSUBMITTED §9.2）。dict 无死状态。
+- **验证**：`mvn clean install -DskipTests` 全绿 + `mvn test -pl module-finance/erp-fin-service` 380 tests 全绿 + compliance R5=0/R11=0。
 
 Follow-up:
 
-- <无非阻塞跟进；Deferred 项均为既定 successor>
+- **owner doc/javadoc drift（successor，规则 5 Fix 登记）**：
+  - (1) `docs/design/finance/budget.md:42` 状态图 + `ErpFinBudgetScenarioProcessor:32` javadoc 写 `REJECTED → DRAFT（修改重提）`，与 live code `REJECTED→SUBMITTED`（直提）不一致。Bean 据实编码 `REJECTED→SUBMITTED`（保持 live 行为）；owner doc/javadoc 须补正为 `REJECTED → SUBMITTED`。
+  - (2) `docs/design/finance/budget.md:38` 字段表列 docStatus 5 值（遗漏 CLOSED）；CLOSED 见 §222 A2 扩展。字段表须补全 6 值或交叉引用 §222。
+  - (3) `ErpFinBudgetScenarioProcessor` javadoc 未标注 rollForward 为 spawn-new-entity（源保持 APPROVED 不变）；Bean 已在 transitions() metadata + javadoc 标注。
+  - (4) `docs/design/finance/budget.md:39` 写 `dict erp-fin/approve-status` 但 ORM/Bean 实际用 `wf/approve-status`（dict-name owner-doc drift）。须补正为 `wf/approve-status`。
+- **Delta 覆盖运行时实证**：归 M5.3（Deferred But Adjudicated 已登记）。
