@@ -5,6 +5,7 @@ import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
 import app.erp.prj.service.cost.ProjectCostAggregator;
 import app.erp.prj.service.posting.TimesheetPostingDispatcher;
+import app.erp.prj.service.statemachine.ErpPrjTimesheetStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -28,20 +29,26 @@ public class ErpPrjTimesheetApproveProcessor {
     TimesheetPostingDispatcher postingDispatcher;
     @Inject
     ProjectCostAggregator costAggregator;
+    @Inject
+    ErpPrjTimesheetStateMachine stateMachine;
 
     public ErpPrjTimesheet approve(Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId);
         String status = timesheet.getStatus();
+        // 幂等：已审批直接返回（既有行为保持）
         if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_APPROVED)) {
             return timesheet;
         }
-        if (status == null || !Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_SUBMITTED)) {
+        // 固定来源态守卫委托 StateMachine Bean（非法边映射为领域码 + expected="SUBMITTED" 文案保持）
+        try {
+            stateMachine.assertCanApprove(status);
+        } catch (NopException e) {
             throw illegalTransition(timesheet, status, "SUBMITTED");
         }
 
         boolean posted = postingDispatcher.tryPost(timesheet);
         timesheet = timesheetDao().getEntityById(timesheetId);
-        timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
+        timesheet.setStatus(stateMachine.approveTargetStatus());
         timesheet.setApprovedBy(currentUserId());
         timesheet.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {

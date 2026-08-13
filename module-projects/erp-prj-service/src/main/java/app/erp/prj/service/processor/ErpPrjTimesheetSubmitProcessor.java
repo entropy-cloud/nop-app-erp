@@ -7,6 +7,7 @@ import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
 import app.erp.prj.service.cost.BudgetChecker;
 import app.erp.prj.service.cost.CostRateResolver;
+import app.erp.prj.service.statemachine.ErpPrjTimesheetStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -30,17 +31,20 @@ public class ErpPrjTimesheetSubmitProcessor {
     CostRateResolver costRateResolver;
     @Inject
     BudgetChecker budgetChecker;
+    @Inject
+    ErpPrjTimesheetStateMachine stateMachine;
 
     public ErpPrjTimesheet submit(Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId);
         String status = timesheet.getStatus();
+        // 幂等：已提交直接返回（既有行为保持）
         if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_SUBMITTED)) {
             return timesheet;
         }
-        if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(timesheet, status, "DRAFT");
-        }
-        if (status != null && !Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED)) {
+        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + expected="DRAFT" 文案保持）
+        try {
+            stateMachine.assertCanSubmit(status);
+        } catch (NopException e) {
             throw illegalTransition(timesheet, status, "DRAFT");
         }
 
@@ -54,7 +58,7 @@ public class ErpPrjTimesheetSubmitProcessor {
 
         timesheet.setCostRate(costRate);
         timesheet.setCostAmount(costAmount);
-        timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
+        timesheet.setStatus(stateMachine.submitTargetStatus());
         runBudgetCheckHook(timesheet, costAmount);
         timesheetDao().updateEntity(timesheet);
         return timesheet;

@@ -4,6 +4,7 @@ import app.erp.prj.dao.entity.ErpPrjTimesheet;
 import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
 import app.erp.prj.service.posting.TimesheetPostingDispatcher;
+import app.erp.prj.service.statemachine.ErpPrjTimesheetStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -22,10 +23,15 @@ public class ErpPrjTimesheetCancelProcessor {
     IDaoProvider daoProvider;
     @Inject
     TimesheetPostingDispatcher postingDispatcher;
+    @Inject
+    ErpPrjTimesheetStateMachine stateMachine;
 
     public ErpPrjTimesheet cancel(Long timesheetId, IServiceContext context) {
         ErpPrjTimesheet timesheet = requireTimesheet(timesheetId);
+        // 固定迁移守卫委托 StateMachine Bean（撤回语义：基线对所有状态放行，不抛——行为保持）
+        stateMachine.assertCanCancel(timesheet.getStatus());
         String status = timesheet.getStatus();
+        // 既有红冲过账路径原序保留（§11.2 M4 (ii)/(v)）：APPROVED 且已过账则先红字冲销 + 清 posted 契约
         if (status != null && Objects.equals(status, ErpPrjConstants.APPROVE_STATUS_APPROVED)) {
             if (Boolean.TRUE.equals(timesheet.getPosted())) {
                 postingDispatcher.reverse(timesheet);
@@ -35,7 +41,7 @@ public class ErpPrjTimesheetCancelProcessor {
                 timesheet.setPostedBy(null);
             }
         }
-        timesheet.setStatus(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
+        timesheet.setStatus(stateMachine.cancelTargetStatus());
         timesheetDao().updateEntity(timesheet);
         return timesheet;
     }

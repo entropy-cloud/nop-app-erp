@@ -14,6 +14,12 @@
           class="app.erp.prj.service.statemachine.ErpPrjTaskStateMachine"/>
     <bean id="app.erp.prj.service.statemachine.ErpPrjProjectStateMachine"
           class="app.erp.prj.service.statemachine.ErpPrjProjectStateMachine"/>
+    <bean id="app.erp.prj.service.statemachine.ErpPrjTimesheetStateMachine"
+          class="app.erp.prj.service.statemachine.ErpPrjTimesheetStateMachine"/>
+    <bean id="app.erp.prj.service.statemachine.ErpPrjProjectSettlementApprovalStateMachine"
+          class="app.erp.prj.service.statemachine.ErpPrjProjectSettlementApprovalStateMachine"/>
+    <bean id="app.erp.prj.service.statemachine.ErpPrjProjectSettlementDocumentStateMachine"
+          class="app.erp.prj.service.statemachine.ErpPrjProjectSettlementDocumentStateMachine"/>
 
     <!-- 项目业财过账：执行器 + 工时派发器 + PROJECT_COST_COLLECTION Provider（Registry 容器级 collect-by-type 自动收录） -->
     <bean id="app.erp.prj.service.posting.ProjectPostingExecutor"

@@ -12,6 +12,8 @@ import app.erp.prj.service.ErpPrjConfigs;
 import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
 import app.erp.prj.service.posting.ProjectSettlementPostingDispatcher;
+import app.erp.prj.service.statemachine.ErpPrjProjectSettlementApprovalStateMachine;
+import app.erp.prj.service.statemachine.ErpPrjProjectSettlementDocumentStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
@@ -62,6 +64,10 @@ public class ErpPrjProjectSettlementProcessor {
     @Inject
     IDaoProvider daoProvider;
     @Inject
+    ErpPrjProjectSettlementApprovalStateMachine approvalStateMachine;
+    @Inject
+    ErpPrjProjectSettlementDocumentStateMachine documentStateMachine;
+    @Inject
     ErpPrjProjectSettlementSubmitForApprovalProcessor submitForApprovalProcessor;
     @Inject
     ErpPrjProjectSettlementApproveProcessor approveProcessor;
@@ -89,52 +95,71 @@ public class ErpPrjProjectSettlementProcessor {
     // ---- protected step methods（下游可逐个覆盖） ----
 
     protected void validateTransitionForSubmit(ErpPrjProjectSettlement settlement) {
-        if (!Objects.equals(settlement.getApproveStatus(), ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED)) {
-            throw illegalTransition(settlement, settlement.getApproveStatus(), ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
+        String approveStatus = settlement.getApproveStatus();
+        // 固定来源态守卫委托 Approval Bean（非法边映射为领域码 + 实体上下文，common 码作 cause，契约 §7）
+        try {
+            approvalStateMachine.assertCanSubmit(approveStatus);
+        } catch (NopException e) {
+            throw illegalTransition(settlement, approveStatus, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpPrjProjectSettlement settlement) {
         String approveStatus = settlement.getApproveStatus();
         boolean requireApproval = ErpPrjConfigs.settlementRequireApproval();
-        if (requireApproval && !Objects.equals(approveStatus, ErpPrjConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(settlement, approveStatus, ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
-        }
-        if (!requireApproval && !Objects.equals(approveStatus, ErpPrjConstants.APPROVE_STATUS_SUBMITTED)
-                && !Objects.equals(approveStatus, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED)) {
-            throw illegalTransition(settlement, approveStatus, "UNSUBMITTED|SUBMITTED");
+        if (requireApproval) {
+            // STRICT 默认矩阵委托 Approval Bean（SUBMITTED 单源）
+            try {
+                approvalStateMachine.assertCanApprove(approveStatus);
+            } catch (NopException e) {
+                throw illegalTransition(settlement, approveStatus, ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
+            }
+        } else {
+            // RELAXED 分支（config-gated 动态扩展）：允许 UNSUBMITTED 直审，保留原位（行为保持）
+            if (!Objects.equals(approveStatus, ErpPrjConstants.APPROVE_STATUS_SUBMITTED)
+                    && !Objects.equals(approveStatus, ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED)) {
+                throw illegalTransition(settlement, approveStatus, "UNSUBMITTED|SUBMITTED");
+            }
         }
     }
 
     protected void validateTransitionForReject(ErpPrjProjectSettlement settlement) {
-        if (!Objects.equals(settlement.getApproveStatus(), ErpPrjConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(settlement, settlement.getApproveStatus(), ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
+        String approveStatus = settlement.getApproveStatus();
+        try {
+            approvalStateMachine.assertCanReject(approveStatus);
+        } catch (NopException e) {
+            throw illegalTransition(settlement, approveStatus, ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForCancel(ErpPrjProjectSettlement settlement) {
-        if (Objects.equals(settlement.getDocStatus(), ErpPrjConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalTransition(settlement, settlement.getDocStatus(), "非CANCELLED");
+        String docStatus = settlement.getDocStatus();
+        // 固定来源态守卫委托 Document Bean（仅终态 CANCELLED 非法，行为保持）
+        try {
+            documentStateMachine.assertCanCancel(docStatus);
+        } catch (NopException e) {
+            throw illegalTransition(settlement, docStatus, "非CANCELLED");
         }
     }
 
     protected void doSubmit(ErpPrjProjectSettlement settlement, IServiceContext context) {
-        settlement.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_SUBMITTED);
+        settlement.setApproveStatus(approvalStateMachine.submitTargetStatus());
     }
 
     protected void doApprove(ErpPrjProjectSettlement settlement, IServiceContext context) {
-        settlement.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
-        settlement.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
+        // 双轴同动：approveStatus→APPROVED + docStatus→APPROVED（各轴目标态由对应 Bean 表达，契约 §3 双轴分离）
+        settlement.setApproveStatus(approvalStateMachine.approveTargetStatus());
+        settlement.setDocStatus(documentStateMachine.approveTargetStatus());
         settlement.setApprovedBy(resolveUserId(context));
         settlement.setApprovedAt(CoreMetrics.currentTimestamp());
     }
 
     protected void doReject(ErpPrjProjectSettlement settlement, IServiceContext context) {
-        settlement.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_REJECTED);
+        settlement.setApproveStatus(approvalStateMachine.rejectTargetStatus());
     }
 
     protected void doCancel(ErpPrjProjectSettlement settlement, IServiceContext context) {
-        settlement.setDocStatus(ErpPrjConstants.DOC_STATUS_CANCELLED);
+        settlement.setDocStatus(documentStateMachine.cancelTargetStatus());
     }
 
     protected void doPost(ErpPrjProjectSettlement settlement, IServiceContext context) {
