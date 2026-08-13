@@ -20,7 +20,7 @@ public class ErpQaRecallRegisterProcessor extends AbstractErpQaRecallProcessor {
         if (data != null) {
             applyRecallFields(recall, data);
         }
-        recall.setStatus(ErpQaConstants.RECALL_STATUS_OPEN);
+        recall.setStatus(statusStateMachine.registerTargetStatus());
         recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED);
         recall.setNotifyCustomer(Boolean.FALSE);
         if (recall.getBusinessDate() == null) {

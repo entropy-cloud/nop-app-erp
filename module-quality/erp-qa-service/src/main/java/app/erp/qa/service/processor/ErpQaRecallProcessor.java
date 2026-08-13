@@ -3,6 +3,8 @@ package app.erp.qa.service.processor;
 import app.erp.qa.dao.entity.ErpQaRecall;
 import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
+import app.erp.qa.service.statemachine.ErpQaRecallApprovalStateMachine;
+import app.erp.qa.service.statemachine.ErpQaRecallStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -10,7 +12,6 @@ import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
-import java.util.Objects;
 
 /**
  * 召回事件审批状态机编排 Processor。标准审批动作（submitForApproval/approve/reject/reverseApprove/
@@ -27,6 +28,12 @@ public class ErpQaRecallProcessor {
 
     @Inject
     IDaoProvider daoProvider;
+
+    @Inject
+    ErpQaRecallApprovalStateMachine approvalStateMachine;
+
+    @Inject
+    ErpQaRecallStateMachine statusStateMachine;
 
     @Inject
     ErpQaRecallSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -64,86 +71,100 @@ public class ErpQaRecallProcessor {
     }
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
+    // approveStatus 轴固定来源态守卫委托 ErpQaRecallApprovalStateMachine（非法边→领域码 ERR_INVALID_RECALL_STATUS_TRANSITION）
 
     protected void validateTransitionForSubmit(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
-        if (aStatus == null) {
-            aStatus = ErpQaConstants.APPROVE_STATUS_UNSUBMITTED;
-        }
-        if (!Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_UNSUBMITTED)
-                && !Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(recall, aStatus, "UNSUBMITTED 或 REJECTED");
+        try {
+            approvalStateMachine.assertCanSubmit(aStatus);
+        } catch (NopException e) {
+            throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_UNSUBMITTED + " 或 " + ErpQaConstants.APPROVE_STATUS_REJECTED);
         }
     }
 
     protected void validateTransitionForWithdraw(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
-        if (aStatus == null || !Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED)) {
+        try {
+            approvalStateMachine.assertCanWithdraw(aStatus);
+        } catch (NopException e) {
             throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
-        if (aStatus == null || !Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED)) {
+        try {
+            approvalStateMachine.assertCanApprove(aStatus);
+        } catch (NopException e) {
             throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
-        if (aStatus == null || !Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED)) {
+        try {
+            approvalStateMachine.assertCanReject(aStatus);
+        } catch (NopException e) {
             throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpQaRecall recall, IServiceContext context) {
         String aStatus = recall.getApproveStatus();
-        if (aStatus == null || !Objects.equals(aStatus, ErpQaConstants.APPROVE_STATUS_APPROVED)) {
+        try {
+            approvalStateMachine.assertCanReverseApprove(aStatus);
+        } catch (NopException e) {
             throw illegalTransition(recall, aStatus, ErpQaConstants.APPROVE_STATUS_APPROVED);
         }
     }
 
     // ---------- step：业务规则校验 ----------
+    // approve 联动的 status 来源态守卫（须 OPEN）委托 ErpQaRecallStateMachine；submit 的 status=OPEN 前置条件保留原位
 
     protected void validateBusinessRulesForSubmit(ErpQaRecall recall, IServiceContext context) {
         requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_OPEN, "OPEN");
     }
 
     protected void validateBusinessRulesForApprove(ErpQaRecall recall, IServiceContext context) {
-        requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_OPEN, "OPEN");
+        String current = recall.getStatus();
+        try {
+            statusStateMachine.assertCanApprove(current);
+        } catch (NopException e) {
+            throw illegalTransition(recall, current, ErpQaConstants.RECALL_STATUS_OPEN);
+        }
     }
 
     // ---------- step：执行（状态推进 + 持久化） ----------
+    // approveStatus 目标态委托 approvalStateMachine；status 联动目标态委托 statusStateMachine
 
     protected void doSubmit(ErpQaRecall recall, IServiceContext context) {
-        recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_SUBMITTED);
+        recall.setApproveStatus(approvalStateMachine.submitTargetStatus());
         recallDao().updateEntity(recall);
     }
 
     protected void doWithdrawSubmit(ErpQaRecall recall, IServiceContext context) {
-        recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_UNSUBMITTED);
+        recall.setApproveStatus(approvalStateMachine.withdrawTargetStatus());
         recallDao().updateEntity(recall);
     }
 
     protected void doApprove(ErpQaRecall recall, IServiceContext context) {
-        recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_APPROVED);
-        recall.setStatus(ErpQaConstants.RECALL_STATUS_APPROVED);
+        recall.setApproveStatus(approvalStateMachine.approveTargetStatus());
+        recall.setStatus(statusStateMachine.approveTargetStatus());
         recall.setApprovedBy(currentUserId(context));
         recall.setApprovedAt(CoreMetrics.currentTimestamp());
         recallDao().updateEntity(recall);
     }
 
     protected void doReject(ErpQaRecall recall, IServiceContext context) {
-        recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_REJECTED);
-        recall.setStatus(ErpQaConstants.RECALL_STATUS_CANCELLED);
+        recall.setApproveStatus(approvalStateMachine.rejectTargetStatus());
+        recall.setStatus(statusStateMachine.rejectTargetStatus());
         recall.setApprovedBy(currentUserId(context));
         recall.setApprovedAt(CoreMetrics.currentTimestamp());
         recallDao().updateEntity(recall);
     }
 
     protected void doReverseApprove(ErpQaRecall recall, IServiceContext context) {
-        recall.setApproveStatus(ErpQaConstants.APPROVE_STATUS_REJECTED);
+        recall.setApproveStatus(approvalStateMachine.reverseApproveTargetStatus());
         recall.setApprovedBy(null);
         recall.setApprovedAt(null);
         recallDao().updateEntity(recall);
@@ -162,7 +183,7 @@ public class ErpQaRecallProcessor {
 
     protected void requireRecallStatus(ErpQaRecall recall, String expected, String expectedLabel) {
         String current = recall.getStatus();
-        if (current == null || !Objects.equals(current, expected)) {
+        if (current == null || !expected.equals(current)) {
             throw illegalTransition(recall, current, expectedLabel);
         }
     }

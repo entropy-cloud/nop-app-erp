@@ -7,6 +7,7 @@ import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
 import app.erp.qa.service.entity.InspectionResultEvaluator;
 import app.erp.qa.service.entity.NcrLifecycleService;
+import app.erp.qa.service.statemachine.ErpQaInspectionApprovalStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -22,11 +23,19 @@ import java.util.Set;
  * ErpQaInspection recordResult per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含行级评测 + 结果汇总 + posted + REJECTED 自动 NCR 编排（{@code docs/design/quality/state-machine.md §适用对象一`}）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。共享 helper 单一真相源在 {@link AbstractErpQaInspectionProcessor}。
+ *
+ * <p>result 轴来源态守卫委托 {@code ErpQaInspectionResultStateMachine.assertCanRecordResult}（非法边→领域码
+ * {@code ERR_INVALID_INSPECTION_STATUS_TRANSITION}）；目标态由行级评测器决定（数据驱动三分支，非 Bean 固定值）。
+ * approveStatus 轴让步审批目标态委托 {@link ErpQaInspectionApprovalStateMachine#concessionApproveTargetStatus()}。
+ * posted 三件套写入 + NCR auto-create 保留原位（动态副作用，契约 §8）。
  */
 public class ErpQaInspectionRecordResultProcessor extends AbstractErpQaInspectionProcessor {
 
     @Inject
     NcrLifecycleService ncrLifecycleService;
+
+    @Inject
+    ErpQaInspectionApprovalStateMachine approvalStateMachine;
 
     public ErpQaInspection recordResult(Long inspectionId,
                                         List<InspectionLineResultInput> lineResults,
@@ -34,7 +43,9 @@ public class ErpQaInspectionRecordResultProcessor extends AbstractErpQaInspectio
                                         IServiceContext context) {
         ErpQaInspection inspection = requireInspection(inspectionId, context);
         String current = inspection.getResult();
-        if (current != null && !Objects.equals(current, ErpQaConstants.INSPECTION_RESULT_PENDING)) {
+        try {
+            resultStateMachine.assertCanRecordResult(current);
+        } catch (NopException e) {
             throw illegalInspectionTransition(inspection, current, "PENDING（终态不可恢复）");
         }
 
@@ -57,7 +68,7 @@ public class ErpQaInspectionRecordResultProcessor extends AbstractErpQaInspectio
         inspection.setResult(aggregated);
         inspection.setPosted(Boolean.TRUE);
         if (concession && Objects.equals(aggregated, ErpQaConstants.INSPECTION_RESULT_CONDITIONAL)) {
-            inspection.setApproveStatus(ErpQaConstants.APPROVE_STATUS_APPROVED);
+            inspection.setApproveStatus(approvalStateMachine.concessionApproveTargetStatus());
             inspection.setApprovedBy(context.getUserId());
             inspection.setApprovedAt(CoreMetrics.currentTimestamp());
         }

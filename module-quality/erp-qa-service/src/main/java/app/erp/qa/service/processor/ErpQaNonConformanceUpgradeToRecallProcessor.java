@@ -4,6 +4,8 @@ import app.erp.qa.biz.IErpQaRecallBiz;
 import app.erp.qa.dao.entity.ErpQaNonConformance;
 import app.erp.qa.dao.entity.ErpQaRecall;
 import app.erp.qa.service.ErpQaConstants;
+import app.erp.qa.service.statemachine.ErpQaNonConformanceStateMachine;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -15,6 +17,10 @@ import java.util.Map;
  * ErpQaNonConformance upgradeToRecall per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含 NCR→ESCALATED_TO_RECALL 状态迁移 + 召回事件登记编排（继承 NCR 物料/严重程度）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。共享 helper 单一真相源在 {@link AbstractErpQaNonConformanceProcessor}。
+ *
+ * <p>status 轴来源态守卫委托 {@link ErpQaNonConformanceStateMachine#assertCanUpgradeToRecall}（非法边→领域码
+ * {@code ERR_INVALID_NCR_STATUS_TRANSITION}）；目标态委托 {@code ncrStateMachine.upgradeToRecallTargetStatus()}。
+ * 跨实体创建 Recall 副作用保留原位（动态副作用，契约 §8）。
  */
 public class ErpQaNonConformanceUpgradeToRecallProcessor extends AbstractErpQaNonConformanceProcessor {
 
@@ -23,9 +29,14 @@ public class ErpQaNonConformanceUpgradeToRecallProcessor extends AbstractErpQaNo
 
     public ErpQaRecall upgradeToRecall(Long ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
-        requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_IN_REVIEW, "IN_REVIEW");
+        String current = ncr.getStatus();
+        try {
+            ncrStateMachine.assertCanUpgradeToRecall(current);
+        } catch (NopException e) {
+            throw illegalNcrTransition(ncr, current, "IN_REVIEW");
+        }
         // NCR→ESCALATED_TO_RECALL（字典值已存在），并生成召回事件（继承 NCR 物料/严重程度）
-        ncr.setStatus(ErpQaConstants.NCR_STATUS_ESCALATED_TO_RECALL);
+        ncr.setStatus(ncrStateMachine.upgradeToRecallTargetStatus());
         ncrDao().updateEntity(ncr);
 
         Map<String, Object> data = new LinkedHashMap<>();

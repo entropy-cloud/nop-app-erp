@@ -3,13 +3,13 @@ package app.erp.qa.service.entity;
 
 import app.erp.qa.biz.IErpQaRecallBiz;
 import app.erp.qa.dao.entity.ErpQaRecall;
-import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
 import app.erp.qa.service.processor.ErpQaRecallCloseProcessor;
 import app.erp.qa.service.processor.ErpQaRecallGenerateReturnsProcessor;
 import app.erp.qa.service.processor.ErpQaRecallLocateTargetsProcessor;
 import app.erp.qa.service.processor.ErpQaRecallNotifyCustomersProcessor;
 import app.erp.qa.service.processor.ErpQaRecallRegisterProcessor;
+import app.erp.qa.service.statemachine.ErpQaRecallStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -19,7 +19,6 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * 召回事件 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。在 {@link CrudBizModel} 标准 CRUD 之上
@@ -30,6 +29,8 @@ import java.util.Objects;
  * <p>标准审批动作（submitForApproval/approve/reject/reverseApprove/withdrawApproval）由平台 {@code approval-support.xbiz}
  * 提供，经 {@code app.erp.qa.service.processor.ErpQaRecallProcessor} 编排，recall.status 联动经 xbiz {@code <source>} 内联。
  * 非法迁移抛 {@link ErpQaErrors#ERR_INVALID_RECALL_STATUS_TRANSITION}。
+ *
+ * <p>status 操作轴固定来源态/目标态判断委托 {@link ErpQaRecallStateMachine}（实体级状态机 Bean，契约 §4/§7）。
  */
 @BizModel("ErpQaRecall")
 public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IErpQaRecallBiz {
@@ -44,6 +45,8 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
     ErpQaRecallGenerateReturnsProcessor generateReturnsProcessor;
     @Inject
     ErpQaRecallCloseProcessor closeProcessor;
+    @Inject
+    ErpQaRecallStateMachine statusStateMachine;
 
     public ErpQaRecallBizModel() {
         setEntityName(ErpQaRecall.class.getName());
@@ -60,12 +63,12 @@ public class ErpQaRecallBizModel extends CrudBizModel<ErpQaRecall> implements IE
     public ErpQaRecall cancel(@Name("recallId") Long recallId, IServiceContext context) {
         ErpQaRecall recall = requireRecall(recallId, context);
         String current = recall.getStatus();
-        if (current == null || (!Objects.equals(current, ErpQaConstants.RECALL_STATUS_OPEN)
-                && !Objects.equals(current, ErpQaConstants.RECALL_STATUS_APPROVED)
-                && !Objects.equals(current, ErpQaConstants.RECALL_STATUS_IN_PROGRESS))) {
+        try {
+            statusStateMachine.assertCanCancel(current);
+        } catch (NopException e) {
             throw illegalRecallTransition(recall, current, "OPEN 或 APPROVED 或 IN_PROGRESS");
         }
-        recall.setStatus(ErpQaConstants.RECALL_STATUS_CANCELLED);
+        recall.setStatus(statusStateMachine.cancelTargetStatus());
         updateEntity(recall, null, context);
         return recall;
     }

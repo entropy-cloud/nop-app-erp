@@ -33,6 +33,17 @@
     <!-- NCR→RETURN 处置退货编排器（plan 2026-07-05-2352-2 Phase 3） -->
     <bean id="app.erp.qa.service.posting.NcrReturnOrchestrator"
           class="app.erp.qa.service.posting.NcrReturnOrchestrator"/>
+    <!-- 实体级状态机 Bean（契约 docs/architecture/entity-state-machine-bean.md；plan 2026-08-14-0930-2 M4.58-62） -->
+    <bean id="app.erp.qa.service.statemachine.ErpQaInspectionResultStateMachine"
+          class="app.erp.qa.service.statemachine.ErpQaInspectionResultStateMachine"/>
+    <bean id="app.erp.qa.service.statemachine.ErpQaInspectionApprovalStateMachine"
+          class="app.erp.qa.service.statemachine.ErpQaInspectionApprovalStateMachine"/>
+    <bean id="app.erp.qa.service.statemachine.ErpQaNonConformanceStateMachine"
+          class="app.erp.qa.service.statemachine.ErpQaNonConformanceStateMachine"/>
+    <bean id="app.erp.qa.service.statemachine.ErpQaRecallStateMachine"
+          class="app.erp.qa.service.statemachine.ErpQaRecallStateMachine"/>
+    <bean id="app.erp.qa.service.statemachine.ErpQaRecallApprovalStateMachine"
+          class="app.erp.qa.service.statemachine.ErpQaRecallApprovalStateMachine"/>
 
     <!-- 质量看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
           经 @BizQuery 暴露 getDashboardKpi/getDashboardTrend/findDefectTopN/findCapaOverdueAlert。 -->

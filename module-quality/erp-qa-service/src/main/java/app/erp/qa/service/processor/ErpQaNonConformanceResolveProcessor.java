@@ -2,10 +2,10 @@ package app.erp.qa.service.processor;
 
 import app.erp.qa.dao.entity.ErpQaNonConformance;
 import app.erp.qa.service.ErpQaConfigs;
-import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.entity.NcrLifecycleService;
 import app.erp.qa.service.posting.NcrPostingDispatcher;
 import app.erp.qa.service.posting.NcrReturnOrchestrator;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
@@ -30,10 +30,15 @@ public class ErpQaNonConformanceResolveProcessor extends AbstractErpQaNonConform
                                        String noCapaReason,
                                        IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
-        requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_IN_REVIEW, "IN_REVIEW");
+        String current = ncr.getStatus();
+        try {
+            ncrStateMachine.assertCanResolve(current);
+        } catch (NopException e) {
+            throw illegalNcrTransition(ncr, current, "IN_REVIEW");
+        }
         // CAPA 闭环门控：有措施须全 COMPLETED + 验证人/验证日期；无措施须显式提供 noCapaReason（误开/降级场景）
         ncrLifecycleService.requireResolveGate(ncrId, ncr.getCode(), noCapaReason);
-        ncr.setStatus(ErpQaConstants.NCR_STATUS_RESOLVED);
+        ncr.setStatus(ncrStateMachine.resolveTargetStatus());
         if (resolution != null) {
             ncr.setResolution(resolution);
         }

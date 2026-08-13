@@ -4,6 +4,7 @@ import app.erp.qa.biz.IErpQaRecallTargetBiz;
 import app.erp.qa.dao.entity.ErpQaRecall;
 import app.erp.qa.dao.entity.ErpQaRecallTarget;
 import app.erp.qa.service.ErpQaErrors;
+import app.erp.qa.service.statemachine.ErpQaRecallStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -13,7 +14,6 @@ import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -23,6 +23,10 @@ import java.util.Set;
  *
  * <p>注：召回审批 S-mutation（submitForApproval/approve/reject/reverseApprove/withdrawApproval）经
  * {@link ErpQaRecallProcessor} + 平台 approval-support，不在本基类范围。
+ *
+ * <p>status 操作轴固定来源态/目标态判断委托 {@link ErpQaRecallStateMachine}（实体级状态机 Bean，契约 §4/§7）；
+ * locateTargets/close 调 Bean assert + 目标态。notifyCustomers/generateReturns 的 status=IN_PROGRESS 前置条件
+ * 为非迁移守卫，保留 {@link #requireRecallStatus} helper。
  */
 public abstract class AbstractErpQaRecallProcessor {
 
@@ -30,6 +34,8 @@ public abstract class AbstractErpQaRecallProcessor {
     IDaoProvider daoProvider;
     @Inject
     IErpQaRecallTargetBiz recallTargetBiz;
+    @Inject
+    ErpQaRecallStateMachine statusStateMachine;
 
     protected IEntityDao<ErpQaRecall> recallDao() {
         return daoProvider.daoFor(ErpQaRecall.class);
@@ -48,7 +54,7 @@ public abstract class AbstractErpQaRecallProcessor {
 
     protected void requireRecallStatus(ErpQaRecall recall, String expected, String expectedLabel) {
         String current = recall.getStatus();
-        if (current == null || !Objects.equals(current, expected)) {
+        if (current == null || !expected.equals(current)) {
             throw illegalRecallTransition(recall, current, expectedLabel);
         }
     }

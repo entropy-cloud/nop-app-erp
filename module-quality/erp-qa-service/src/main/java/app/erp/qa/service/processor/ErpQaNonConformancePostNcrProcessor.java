@@ -1,7 +1,6 @@
 package app.erp.qa.service.processor;
 
 import app.erp.qa.dao.entity.ErpQaNonConformance;
-import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
 import app.erp.qa.service.posting.NcrPostingDispatcher;
 import io.nop.api.core.exceptions.NopException;
@@ -20,7 +19,12 @@ public class ErpQaNonConformancePostNcrProcessor extends AbstractErpQaNonConform
 
     public ErpQaNonConformance postNcr(Long ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
-        requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_RESOLVED, "RESOLVED");
+        String current = ncr.getStatus();
+        try {
+            ncrStateMachine.assertCanPostNcr(current);
+        } catch (NopException e) {
+            throw illegalNcrTransition(ncr, current, "RESOLVED");
+        }
         if (Boolean.TRUE.equals(ncr.getPosted())) {
             throw new NopException(ErpQaErrors.ERR_NCR_ALREADY_POSTED).param(ErpQaErrors.ARG_NCR_CODE, ncr.getCode());
         }

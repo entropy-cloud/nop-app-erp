@@ -4,6 +4,7 @@ import app.erp.qa.dao.entity.ErpQaRecall;
 import app.erp.qa.service.ErpQaConfigs;
 import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.ErpQaErrors;
+import app.erp.qa.service.statemachine.ErpQaRecallStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -14,12 +15,21 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * ErpQaRecall close per-mutation Processor（R6.6，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含 IN_PROGRESS→CLOSED 关闭编排，含通知门控（config-gated erp-qua.recall-notify-required-to-close）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。共享 helper 单一真相源在 {@link AbstractErpQaRecallProcessor}。
+ *
+ * <p>status 轴来源态守卫委托 {@link ErpQaRecallStateMachine#assertCanClose}（非法边→领域码
+ * {@code ERR_INVALID_RECALL_STATUS_TRANSITION}）；目标态委托 {@code statusStateMachine.closeTargetStatus()}。
+ * 通知门控（动态守卫）保留原位。
  */
 public class ErpQaRecallCloseProcessor extends AbstractErpQaRecallProcessor {
 
     public ErpQaRecall close(Long recallId, IServiceContext context) {
         ErpQaRecall recall = requireRecall(recallId, context);
-        requireRecallStatus(recall, ErpQaConstants.RECALL_STATUS_IN_PROGRESS, "IN_PROGRESS");
+        String current = recall.getStatus();
+        try {
+            statusStateMachine.assertCanClose(current);
+        } catch (NopException e) {
+            throw illegalRecallTransition(recall, current, "IN_PROGRESS");
+        }
         // 通知门控：配置开启时全部 target returnStatus≠PENDING 且 notifyCustomer=true 方可 CLOSED
         if (ErpQaConfigs.isRecallNotifyRequiredToClose()) {
             if (!Boolean.TRUE.equals(recall.getNotifyCustomer())) {
@@ -35,7 +45,7 @@ public class ErpQaRecallCloseProcessor extends AbstractErpQaRecallProcessor {
                         .param(ErpQaErrors.ARG_RECALL_CODE, recall.getCode());
             }
         }
-        recall.setStatus(ErpQaConstants.RECALL_STATUS_CLOSED);
+        recall.setStatus(statusStateMachine.closeTargetStatus());
         recallDao().updateEntity(recall);
         return recall;
     }

@@ -10,6 +10,7 @@ import app.erp.qa.service.processor.ErpQaNonConformancePostNcrProcessor;
 import app.erp.qa.service.processor.ErpQaNonConformanceResolveProcessor;
 import app.erp.qa.service.processor.ErpQaNonConformanceReverseNcrProcessor;
 import app.erp.qa.service.processor.ErpQaNonConformanceUpgradeToRecallProcessor;
+import app.erp.qa.service.statemachine.ErpQaNonConformanceStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
@@ -19,15 +20,14 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
-import java.util.Objects;
-
 /**
  * NCR BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。在 {@link CrudBizModel} 标准 CRUD 之上
  * 实现 NCR 5 态状态机（{@code docs/design/quality/state-machine.md §适用对象二`}）。单步状态翻转（submitReview/
  * escalateToRecall/cancel）留在 Facade；多步 mutation（resolve 财务过账分派 / postNcr / reverseNcr /
  * upgradeToRecall）委托 per-mutation Processor，下游可经 Delta beans.xml 同名 bean id 覆盖。
  *
- * <p>非法迁移抛 {@link ErpQaErrors#ERR_INVALID_NCR_STATUS_TRANSITION}。
+ * <p>status 轴固定来源态/目标态判断委托 {@link ErpQaNonConformanceStateMachine}（实体级状态机 Bean，契约 §4/§7）。
+ * 非法迁移抛 {@link ErpQaErrors#ERR_INVALID_NCR_STATUS_TRANSITION}。
  */
 @BizModel("ErpQaNonConformance")
 public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformance> implements IErpQaNonConformanceBiz {
@@ -40,6 +40,8 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
     ErpQaNonConformanceReverseNcrProcessor reverseNcrProcessor;
     @Inject
     ErpQaNonConformanceUpgradeToRecallProcessor upgradeToRecallProcessor;
+    @Inject
+    ErpQaNonConformanceStateMachine ncrStateMachine;
 
     public ErpQaNonConformanceBizModel() {
         setEntityName(ErpQaNonConformance.class.getName());
@@ -49,8 +51,13 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
     @BizMutation
     public ErpQaNonConformance submitReview(@Name("ncrId") Long ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
-        requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_OPEN, "OPEN");
-        ncr.setStatus(ErpQaConstants.NCR_STATUS_IN_REVIEW);
+        String current = ncr.getStatus();
+        try {
+            ncrStateMachine.assertCanSubmitReview(current);
+        } catch (NopException e) {
+            throw illegalNcrTransition(ncr, current, "OPEN");
+        }
+        ncr.setStatus(ncrStateMachine.submitReviewTargetStatus());
         updateEntity(ncr, null, context);
         return ncr;
     }
@@ -80,9 +87,14 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
     @BizMutation
     public ErpQaNonConformance escalateToRecall(@Name("ncrId") Long ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
-        requireNcrStatus(ncr, ErpQaConstants.NCR_STATUS_IN_REVIEW, "IN_REVIEW");
+        String current = ncr.getStatus();
+        try {
+            ncrStateMachine.assertCanUpgradeToRecall(current);
+        } catch (NopException e) {
+            throw illegalNcrTransition(ncr, current, "IN_REVIEW");
+        }
         // 升级为召回（终态，仅状态迁移占位；不建召回实体。真正建召回用 upgradeToRecall）
-        ncr.setStatus(ErpQaConstants.NCR_STATUS_ESCALATED_TO_RECALL);
+        ncr.setStatus(ncrStateMachine.upgradeToRecallTargetStatus());
         updateEntity(ncr, null, context);
         return ncr;
     }
@@ -98,11 +110,12 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
     public ErpQaNonConformance cancel(@Name("ncrId") Long ncrId, IServiceContext context) {
         ErpQaNonConformance ncr = requireNcr(ncrId, context);
         String current = ncr.getStatus();
-        if (current == null || (!Objects.equals(current, ErpQaConstants.NCR_STATUS_OPEN)
-                && !Objects.equals(current, ErpQaConstants.NCR_STATUS_IN_REVIEW))) {
+        try {
+            ncrStateMachine.assertCanCancel(current);
+        } catch (NopException e) {
             throw illegalNcrTransition(ncr, current, "OPEN 或 IN_REVIEW");
         }
-        ncr.setStatus(ErpQaConstants.NCR_STATUS_CANCELLED);
+        ncr.setStatus(ncrStateMachine.cancelTargetStatus());
         updateEntity(ncr, null, context);
         return ncr;
     }
@@ -114,13 +127,6 @@ public class ErpQaNonConformanceBizModel extends CrudBizModel<ErpQaNonConformanc
             throw new NopException(ErpQaErrors.ERR_NCR_NOT_FOUND).param(ErpQaErrors.ARG_NCR_ID, ncrId);
         }
         return requireEntity(String.valueOf(ncrId), null, context);
-    }
-
-    private void requireNcrStatus(ErpQaNonConformance ncr, String expected, String expectedLabel) {
-        String current = ncr.getStatus();
-        if (current == null || !Objects.equals(current, expected)) {
-            throw illegalNcrTransition(ncr, current, expectedLabel);
-        }
     }
 
     private NopException illegalNcrTransition(ErpQaNonConformance ncr, String current, String expected) {
