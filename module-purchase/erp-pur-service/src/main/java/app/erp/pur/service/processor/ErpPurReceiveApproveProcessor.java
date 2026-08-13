@@ -4,6 +4,7 @@ import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.statemachine.ErpPurReceiveApprovalStateMachine;
 import app.erp.common.service.AbstractApproveProcessor;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.exceptions.ErrorCode;
@@ -13,14 +14,20 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpPurReceive approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Overrides the public approve method to replicate the facade flow (stock move + posting + rollup),
- * calling facade helper methods for each step. Downstream can override via Delta beans.xml with same bean id.
+ * ErpPurReceive approve per-mutation Processor (plan 2026-07-25-1057-2；审批轴 Bean 接线 plan 2026-08-13-1950-1 M4.14)。
+ *
+ * <p>整体覆写 public approve 方法以编排业财过账副作用（入库 stock move + posting + receiveStatus 回写）；
+ * 固定来源态/目标态判断委托 {@link ErpPurReceiveApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）；
+ * 动态业务守卫/副作用（triggerIncomingMove/enforceInspectionGate/applyPostingResult/SoD）保留原位。
+ * Downstream can override via Delta beans.xml with same bean id.
  */
 public class ErpPurReceiveApproveProcessor extends AbstractApproveProcessor<ErpPurReceive> {
 
     @Inject
     ErpPurReceiveProcessor processor;
+
+    @Inject
+    ErpPurReceiveApprovalStateMachine stateMachine;
 
     @Override
     public ErpPurReceive approve(String id, IServiceContext context) {
@@ -73,6 +80,15 @@ public class ErpPurReceiveApproveProcessor extends AbstractApproveProcessor<ErpP
     }
 
     @Override
+    protected void validateTransitionForApprove(ErpPurReceive entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpPurReceive entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -110,7 +126,7 @@ public class ErpPurReceiveApproveProcessor extends AbstractApproveProcessor<ErpP
 
     @Override
     protected String approvedStatus() {
-        return ErpPurConstants.APPROVE_STATUS_APPROVED;
+        return stateMachine.approveTargetStatus();
     }
 
     @Override

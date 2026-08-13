@@ -3,16 +3,27 @@ package app.erp.pur.service.processor;
 import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.statemachine.ErpPurPaymentApprovalStateMachine;
 import app.erp.common.service.AbstractSubmitForApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
+/**
+ * ErpPurPayment submitForApproval per-mutation Processor（审批轴 Bean 接线 plan 2026-08-13-1950-1 M4.18，skeleton 路径）。
+ *
+ * <p>整体覆写 public submitForApproval 方法以编排 workflow（{@code nopFlowId}/{@code useWorkflow}）；
+ * 固定来源态/目标态判断委托 {@link ErpPurPaymentApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）；
+ * 动态业务守卫/副作用（requireSupplierActive/maybeStartWorkflow）保留原位。
+ */
 public class ErpPurPaymentSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpPurPayment> {
 
     @Inject
     ErpPurPaymentProcessor processor;
+
+    @Inject
+    ErpPurPaymentApprovalStateMachine stateMachine;
 
     public ErpPurPaymentSubmitForApprovalProcessor() {
         super("ErpPurPayment");
@@ -55,6 +66,16 @@ public class ErpPurPaymentSubmitForApprovalProcessor extends AbstractSubmitForAp
     }
 
     @Override
+    protected void validateTransitionForSubmit(ErpPurPayment entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanSubmit(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity),
+                    ErpPurConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpPurConstants.APPROVE_STATUS_REJECTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpPurPayment entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -77,7 +98,7 @@ public class ErpPurPaymentSubmitForApprovalProcessor extends AbstractSubmitForAp
 
     @Override
     protected String submittedStatus() {
-        return ErpPurConstants.APPROVE_STATUS_SUBMITTED;
+        return stateMachine.submitTargetStatus();
     }
 
     @Override

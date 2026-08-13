@@ -5,6 +5,7 @@ import app.erp.pur.dao.entity.ErpPurReturn;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.posting.PurReturnPostingDispatcher;
+import app.erp.pur.service.statemachine.ErpPurReturnApprovalStateMachine;
 import app.erp.common.service.AbstractApproveProcessor;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.exceptions.ErrorCode;
@@ -15,9 +16,12 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 /**
- * ErpPurReturn approve per-mutation Processor (plan 2026-07-25-1057-2).
- * Overrides the public approve method to replicate the facade flow (outgoing move + flush + posting + commitment release),
- * calling facade helper methods for each step. Downstream can override via Delta beans.xml with same bean id.
+ * ErpPurReturn approve per-mutation Processor (plan 2026-07-25-1057-2；审批轴 Bean 接线 plan 2026-08-13-1950-1 M4.20)。
+ *
+ * <p>整体覆写 public approve 方法以编排业财过账副作用（出库 stock move + flush + posting + commitment release）；
+ * 固定来源态/目标态判断委托 {@link ErpPurReturnApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）；
+ * 动态业务守卫/副作用（triggerOutgoingMove/runCommitmentReleaseOnReturnHook/PostingDispatcher/SoD）保留原位。
+ * Downstream can override via Delta beans.xml with same bean id.
  */
 public class ErpPurReturnApproveProcessor extends AbstractApproveProcessor<ErpPurReturn> {
 
@@ -29,6 +33,9 @@ public class ErpPurReturnApproveProcessor extends AbstractApproveProcessor<ErpPu
 
     @Inject
     PurReturnPostingDispatcher postingDispatcher;
+
+    @Inject
+    ErpPurReturnApprovalStateMachine stateMachine;
 
     @Override
     public ErpPurReturn approve(String id, IServiceContext context) {
@@ -86,6 +93,15 @@ public class ErpPurReturnApproveProcessor extends AbstractApproveProcessor<ErpPu
     }
 
     @Override
+    protected void validateTransitionForApprove(ErpPurReturn entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpPurReturn entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpPurConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -123,7 +139,7 @@ public class ErpPurReturnApproveProcessor extends AbstractApproveProcessor<ErpPu
 
     @Override
     protected String approvedStatus() {
-        return ErpPurConstants.APPROVE_STATUS_APPROVED;
+        return stateMachine.approveTargetStatus();
     }
 
     @Override

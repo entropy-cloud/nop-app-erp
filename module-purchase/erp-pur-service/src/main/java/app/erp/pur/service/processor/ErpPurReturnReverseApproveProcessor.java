@@ -3,6 +3,7 @@ package app.erp.pur.service.processor;
 import app.erp.pur.dao.entity.ErpPurReturn;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.statemachine.ErpPurReturnApprovalStateMachine;
 import app.erp.common.service.AbstractReverseApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,14 +11,21 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpPurReturn reverseApprove per-mutation Processor (plan 2026-07-25-1057-2).
- * Overrides the public reverseApprove method to replicate the facade flow (stock move reversal + status),
- * calling facade helper methods for each step. Downstream can override via Delta beans.xml with same bean id.
+ * ErpPurReturn reverseApprove per-mutation Processor (plan 2026-07-25-1057-2；审批轴 Bean 接线 plan 2026-08-13-1950-1 M4.20)。
+ *
+ * <p>整体覆写 public reverseApprove 方法以编排业财过账副作用逆转（stock move reversal + commitment restore）；
+ * 固定来源态/目标态判断委托 {@link ErpPurReturnApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）；
+ * 动态副作用（ensureReversed/runCommitmentRestoreOnReturnReverseHook）保留原位。
+ *
+ * <p>reverseApprove 目标态=REJECTED（据实保持 Return 当前行为，已合规 §16.4；Bean 据实编码）。
  */
 public class ErpPurReturnReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpPurReturn> {
 
     @Inject
     ErpPurReturnProcessor processor;
+
+    @Inject
+    ErpPurReturnApprovalStateMachine stateMachine;
 
     @Override
     public ErpPurReturn reverseApprove(String id, IServiceContext context) {
@@ -29,7 +37,7 @@ public class ErpPurReturnReverseApproveProcessor extends AbstractReverseApproveP
         processor.ensureReversed(returnOrder, context);
         returnOrder = dao().getEntityById(id);
 
-        returnOrder.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
+        returnOrder.setApproveStatus(stateMachine.reverseApproveTargetStatus());
         returnOrder.setApprovedBy(null);
         returnOrder.setApprovedAt(null);
         dao().updateEntity(returnOrder);
@@ -54,6 +62,15 @@ public class ErpPurReturnReverseApproveProcessor extends AbstractReverseApproveP
                 .param(ErpPurErrors.ARG_RETURN_CODE, entity.getCode())
                 .param(ErpPurErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpPurErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
+    }
+
+    @Override
+    protected void validateTransitionForReverseApprove(ErpPurReturn entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanReverseApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpPurConstants.APPROVE_STATUS_APPROVED);
+        }
     }
 
     @Override

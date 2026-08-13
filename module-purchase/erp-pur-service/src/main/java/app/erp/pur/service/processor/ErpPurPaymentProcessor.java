@@ -10,6 +10,7 @@ import app.erp.pur.dao.entity.ErpPurPayment;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.posting.PurPaymentPostingDispatcher;
+import app.erp.pur.service.statemachine.ErpPurPaymentApprovalStateMachine;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
@@ -54,6 +55,9 @@ public class ErpPurPaymentProcessor {
 
     @Inject
     IErpFinBudgetControlBiz budgetControlBiz;
+
+    @Inject
+    ErpPurPaymentApprovalStateMachine stateMachine;
 
     @Inject
     ErpPurPaymentSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -121,9 +125,10 @@ public class ErpPurPaymentProcessor {
     }
 
     protected void validateTransitionForApprove(ErpPurPayment payment, IServiceContext context) {
-        String status = payment.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(payment, status, ErpPurConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            stateMachine.assertCanApprove(payment.getApproveStatus());
+        } catch (NopException e) {
+            throw illegalTransition(payment, payment.getApproveStatus(), ErpPurConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
@@ -135,9 +140,10 @@ public class ErpPurPaymentProcessor {
     }
 
     protected void validateTransitionForReverseApprove(ErpPurPayment payment, IServiceContext context) {
-        String status = payment.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpPurConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(payment, status, ErpPurConstants.APPROVE_STATUS_APPROVED);
+        try {
+            stateMachine.assertCanReverseApprove(payment.getApproveStatus());
+        } catch (NopException e) {
+            throw illegalTransition(payment, payment.getApproveStatus(), ErpPurConstants.APPROVE_STATUS_APPROVED);
         }
     }
 
@@ -222,7 +228,7 @@ public class ErpPurPaymentProcessor {
 
     protected void doApprove(ErpPurPayment payment, boolean posted, IServiceContext context) {
         SoDGuard.assertApproverNotCreator(payment.getCreatedBy(), currentUserId(), ErpPurErrors.ERR_PUR_APPROVER_IS_CREATOR);
-        payment.setApproveStatus(ErpPurConstants.APPROVE_STATUS_APPROVED);
+        payment.setApproveStatus(stateMachine.approveTargetStatus());
         payment.setApprovedBy(currentUserId());
         payment.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
@@ -239,7 +245,7 @@ public class ErpPurPaymentProcessor {
     }
 
     protected void doReverseApprove(ErpPurPayment payment, IServiceContext context) {
-        payment.setApproveStatus(ErpPurConstants.APPROVE_STATUS_REJECTED);
+        payment.setApproveStatus(stateMachine.reverseApproveTargetStatus());
         payment.setApprovedBy(null);
         payment.setApprovedAt(null);
         paymentDao().updateEntity(payment);
