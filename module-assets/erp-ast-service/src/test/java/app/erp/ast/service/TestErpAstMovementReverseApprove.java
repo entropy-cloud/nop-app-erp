@@ -24,6 +24,7 @@ import java.util.Map;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
@@ -108,6 +109,81 @@ public class TestErpAstMovementReverseApprove extends JunitAutoTestCase {
                 ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
                 "CANCELLED 单据 reverseApprove 应被 isCancelled 守卫阻断");
         assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, reload(id).getApproveStatus());
+    }
+
+    // ---------- withdrawApproval 回归 + 剩余 3 处 CANCELLED 守卫 + 非法态拒绝（plan 2026-08-13-0805-2 Phase 2 补缺） ----------
+
+    @Test
+    public void testWithdrawApprovalHappyPath() {
+        Long assetId = ormTemplate.runInSession(session -> seedAsset());
+        Long id = ormTemplate.runInSession(session -> seedMovement("MV-WD-001", assetId,
+                ErpAstConstants.APPROVE_STATUS_SUBMITTED));
+
+        assertEquals(0, rpc(mutation, "ErpAstMovement__withdrawApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "撤回 → UNSUBMITTED");
+        assertEquals(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED, reload(id).getApproveStatus());
+    }
+
+    @Test
+    public void testWithdrawApprovalIllegalStatusBlocked() {
+        Long assetId = ormTemplate.runInSession(session -> seedAsset());
+        Long id = ormTemplate.runInSession(session -> seedMovement("MV-WD-002", assetId,
+                ErpAstConstants.APPROVE_STATUS_APPROVED));
+
+        assertNotEquals(0, rpc(mutation, "ErpAstMovement__withdrawApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                "APPROVED 状态 withdrawApproval 应被 Bean 矩阵守卫阻断");
+        assertEquals(ErpAstConstants.APPROVE_STATUS_APPROVED, reload(id).getApproveStatus());
+    }
+
+    @Test
+    public void testCancelledDocSubmitForApprovalBlocked() {
+        Long assetId = ormTemplate.runInSession(session -> seedAsset());
+        Long id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-003", assetId,
+                ErpAstConstants.APPROVE_STATUS_UNSUBMITTED));
+
+        assertNotEquals(0, rpc(mutation, "ErpAstMovement__submitForApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                "CANCELLED 单据 submitForApproval 应被 isCancelled 守卫阻断");
+        assertEquals(ErpAstConstants.APPROVE_STATUS_UNSUBMITTED, reload(id).getApproveStatus());
+    }
+
+    @Test
+    public void testCancelledDocApproveBlocked() {
+        Long assetId = ormTemplate.runInSession(session -> seedAsset());
+        Long id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-004", assetId,
+                ErpAstConstants.APPROVE_STATUS_SUBMITTED));
+
+        assertNotEquals(0, rpc(mutation, "ErpAstMovement__approve",
+                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                "CANCELLED 单据 approve 应被 isCancelled 守卫阻断");
+        assertEquals(ErpAstConstants.APPROVE_STATUS_SUBMITTED, reload(id).getApproveStatus());
+    }
+
+    @Test
+    public void testCancelledDocWithdrawApprovalBlocked() {
+        Long assetId = ormTemplate.runInSession(session -> seedAsset());
+        Long id = ormTemplate.runInSession(session -> seedMovementCancelled("MV-CN-005", assetId,
+                ErpAstConstants.APPROVE_STATUS_SUBMITTED));
+
+        assertNotEquals(0, rpc(mutation, "ErpAstMovement__withdrawApproval",
+                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(),
+                "CANCELLED 单据 withdrawApproval 应被 isCancelled 守卫阻断");
+        assertEquals(ErpAstConstants.APPROVE_STATUS_SUBMITTED, reload(id).getApproveStatus());
+    }
+
+    @Test
+    public void testRejectSetsApprovedByAndApprovedAt() {
+        Long assetId = ormTemplate.runInSession(session -> seedAsset());
+        Long id = ormTemplate.runInSession(session -> seedMovement("MV-RJ-001", assetId,
+                ErpAstConstants.APPROVE_STATUS_SUBMITTED));
+
+        assertEquals(0, rpc(mutation, "ErpAstMovement__reject",
+                ApiRequest.build(Map.of("id", String.valueOf(id)))).getStatus(), "驳回 → REJECTED");
+        ErpAstMovement after = reload(id);
+        assertEquals(ErpAstConstants.APPROVE_STATUS_REJECTED, after.getApproveStatus());
+        assertNotNull(after.getApprovedBy(), "reject 应写入 approvedBy");
+        assertNotNull(after.getApprovedAt(), "reject 应写入 approvedAt");
     }
 
     // ---------- helpers ----------

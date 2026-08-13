@@ -91,6 +91,14 @@
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /ast/）。 -->
     <bean id="app.erp.ast.service.report.ErpAstReportBizModel" ioc:type="@bean:id"/>
 
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：ErpAstMovement 双轴
+          各自独立 Bean。Approval 轴 = approveStatus 5 动作矩阵；Document 轴 = docStatus 退化分类轴（零命名动作 writer，
+          仅 isCancelled 只读守卫）。按类型注入 xbiz source（INLINE→Bean 首迁移范式）；Delta 同名 bean id 覆盖替换基线矩阵（§6）。 -->
+    <bean id="app.erp.ast.service.statemachine.ErpAstMovementApprovalStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstMovementApprovalStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine"/>
+
     <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
     <bean id="app.erp.ast.service.processor.ErpAstSplitSubmitForApprovalProcessor"
           class="app.erp.ast.service.processor.ErpAstSplitSubmitForApprovalProcessor"/>

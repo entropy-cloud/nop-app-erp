@@ -9,25 +9,18 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><![CDATA[
+                const approvalSM = inject('app.erp.ast.service.statemachine.ErpAstMovementApprovalStateMachine');
+                const documentSM = inject('app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
+                if (documentSM.isCancelled(entity.docStatus)) {
                     throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
                         .param("bizObjName", thisObj.bizObjName)
                         .param("bizObjId", entity.id)
                         .param("action", "submitForApproval");
                 }
-                const status = entity.approveStatus;
+                approvalSM.assertCanSubmitForApproval(entity.approveStatus);
 
-                if (status !== 'UNSUBMITTED' && status !== null && status !== 'REJECTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "submitForApproval")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "UNSUBMITTED or REJECTED");
-                }
-
-                entity.approveStatus = 'SUBMITTED';
+                entity.approveStatus = approvalSM.submitForApprovalTargetStatus();
                 return entity;
             ]]></source>
         </mutation>
@@ -39,25 +32,18 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><![CDATA[
+                const approvalSM = inject('app.erp.ast.service.statemachine.ErpAstMovementApprovalStateMachine');
+                const documentSM = inject('app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
+                if (documentSM.isCancelled(entity.docStatus)) {
                     throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
                         .param("bizObjName", thisObj.bizObjName)
                         .param("bizObjId", entity.id)
                         .param("action", "approve");
                 }
-                const status = entity.approveStatus;
+                approvalSM.assertCanApprove(entity.approveStatus);
 
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "approve")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
-
-                entity.approveStatus = 'APPROVED';
+                entity.approveStatus = approvalSM.approveTargetStatus();
                 entity.approvedBy = svcCtx.getUserId();
                 entity.approvedAt = now();
                 return entity;
@@ -70,25 +56,18 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><![CDATA[
+                const approvalSM = inject('app.erp.ast.service.statemachine.ErpAstMovementApprovalStateMachine');
+                const documentSM = inject('app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
+                if (documentSM.isCancelled(entity.docStatus)) {
                     throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
                         .param("bizObjName", thisObj.bizObjName)
                         .param("bizObjId", entity.id)
                         .param("action", "reject");
                 }
-                const status = entity.approveStatus;
+                approvalSM.assertCanReject(entity.approveStatus);
 
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reject")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
-
-                entity.approveStatus = 'REJECTED';
+                entity.approveStatus = approvalSM.rejectTargetStatus();
                 entity.approvedBy = svcCtx.getUserId();
                 entity.approvedAt = now();
                 return entity;
@@ -102,25 +81,18 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><![CDATA[
+                const approvalSM = inject('app.erp.ast.service.statemachine.ErpAstMovementApprovalStateMachine');
+                const documentSM = inject('app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
+                if (documentSM.isCancelled(entity.docStatus)) {
                     throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
                         .param("bizObjName", thisObj.bizObjName)
                         .param("bizObjId", entity.id)
                         .param("action", "reverseApprove");
                 }
-                const status = entity.approveStatus;
+                approvalSM.assertCanReverseApprove(entity.approveStatus);
 
-                if (status !== 'APPROVED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reverseApprove")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "APPROVED");
-                }
-
-                entity.approveStatus = 'REJECTED';
+                entity.approveStatus = approvalSM.reverseApproveTargetStatus();
                 entity.approvedBy = null;
                 entity.approvedAt = null;
                 return entity;
@@ -133,25 +105,18 @@
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><![CDATA[
+                const approvalSM = inject('app.erp.ast.service.statemachine.ErpAstMovementApprovalStateMachine');
+                const documentSM = inject('app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                if (entity.docStatus === 'CANCELLED') {
+                if (documentSM.isCancelled(entity.docStatus)) {
                     throw new NopScriptError("nop.err.wf.approve.doc-cancelled")
                         .param("bizObjName", thisObj.bizObjName)
                         .param("bizObjId", entity.id)
                         .param("action", "withdrawApproval");
                 }
-                const status = entity.approveStatus;
+                approvalSM.assertCanWithdrawApproval(entity.approveStatus);
 
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "withdrawApproval")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
-
-                entity.approveStatus = 'UNSUBMITTED';
+                entity.approveStatus = approvalSM.withdrawApprovalTargetStatus();
                 return entity;
             ]]></source>
         </mutation>
