@@ -1,6 +1,6 @@
 # 2026-08-13-2045-1-erpfin-period-state-machine-bean 会计期间 ErpFinAccountingPeriod.status 实体级状态机 Bean（M4.2）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) 人工/owner-doc 门控**已于 2026-08-13 经人工确认解除**——本计划触及受保护会计期间结账/反结账行为（reverseClose 触发期末凭证红冲，已由起草者经 live code 实证：`ErpFinAccountingPeriodReverseCloseProcessor:39,42-48` setStatus(OPEN) + reverseCloseVoucher(PL/FX/ANNUAL)）。M4 plan-first 门控成立；该人工裁定非起草者可自主解除（project-context.md 会计保护域硬停止）。计划格式/完备性/范围/结束证据就绪 + 人工门控已确认，已转 `active` 进入实施。
 > Last Reviewed: 2026-08-13
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.2（ErpFinAccountingPeriod.status，plan-first）；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md §3.5 finance M4.2`
@@ -64,68 +64,75 @@
 
 ### Phase 1 - ErpFinAccountingPeriodStateMachine Bean + 注册 + 层 1 矩阵完备性测试
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/statemachine/ErpFinAccountingPeriodStateMachine.java`（新建）、`module-finance/erp-fin-service/src/main/resources/_vfs/erp/fin/beans/app-service.beans.xml`（注册）、`module-finance/erp-fin-service/src/test/java/app/erp/fin/service/statemachine/TestErpFinAccountingPeriodStateMachineMatrix.java`（新建）
 Skill: `nop-backend-dev`（Bean 形状/注册）+ `nop-testing`（层 1 表驱动测试）
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done
 
-- [ ] 新建无状态 `ErpFinAccountingPeriodStateMachine`（§2 无状态约束）：矩阵 `assertCanOpenPeriod(NEVER_OPENED)`→`openPeriodTargetStatus()=OPEN`；`assertCanClose(OPEN)`→`closeTargetStatus()` 两段（CLOSING 然后 CLOSED）；`assertCanFinalize(CLOSED)`→`finalizeTargetStatus()=CLOSED_FINAL`；`assertCanReverseClose(CLOSED_FINAL)`→`reverseCloseTargetStatus()=OPEN`。分类 `initialStatuses()={NEVER_OPENED}`、`terminalStatuses()={CLOSED_FINAL}`、`isTerminal(CLOSED_FINAL)=true`。`transitions()` 编码 4 条命名边（openPeriod/finalize/reverseClose 各 1 + close 两段）。CLOSING 标注为事务内瞬态（javadoc 说明 closePeriod 在事务内 CLOSING→CLOSED，失败回滚不持久化）。非法来源态抛 common 码携带 `action`/`fromStatus`。grep 证实不 import DAO/IBiz/IServiceContext/事务。
+- [x] 新建无状态 `ErpFinAccountingPeriodStateMachine`（§2 无状态约束）：矩阵 `assertCanOpenPeriod(NEVER_OPENED)`→`openPeriodTargetStatus()=OPEN`；`assertCanClose(OPEN)`→`closeTargetStatus()` 两段（CLOSING 然后 CLOSED）；`assertCanFinalize(CLOSED)`→`finalizeTargetStatus()=CLOSED_FINAL`；`assertCanReverseClose(CLOSED_FINAL)`→`reverseCloseTargetStatus()=OPEN`。分类 `initialStatuses()={NEVER_OPENED}`、`terminalStatuses()={CLOSED_FINAL}`、`isTerminal(CLOSED_FINAL)=true`。`transitions()` 编码 4 条命名边（openPeriod/finalize/reverseClose 各 1 + close 两段）。CLOSING 标注为事务内瞬态（javadoc 说明 closePeriod 在事务内 CLOSING→CLOSED，失败回滚不持久化）。非法来源态抛 common 码携带 `action`/`fromStatus`。grep 证实不 import DAO/IBiz/IServiceContext/事务。
   - Skill: `nop-backend-dev`
-- [ ] Decision（前置）：在计划中记录 CLOSING 瞬态分类——closePeriod 为 `@BizMutation`（事务包裹），CLOSING 在事务内设置后于 CLOSED，结账步骤失败则整 mutation 回滚（CLOSING 不持久化）；owner doc「CLOSING→OPEN（结账失败）」= 事务回滚语义，非显式 writer，Bean 不为 CLOSING→OPEN 发明独立命名边（close 两段边已覆盖）。供 Phase 3 owner-doc 补注引用。
+- [x] Decision（前置）：在计划中记录 CLOSING 瞬态分类——closePeriod 为 `@BizMutation`（事务包裹），CLOSING 在事务内设置后于 CLOSED，结账步骤失败则整 mutation 回滚（CLOSING 不持久化）；owner doc「CLOSING→OPEN（结账失败）」= 事务回滚语义，非显式 writer，Bean 不为 CLOSING→OPEN 发明独立命名边（close 两段边已覆盖）。供 Phase 3 owner-doc 补注引用。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] 在非生成 `app-service.beans.xml` 以 FQN 为 bean id 注册 Bean（§11.1 步骤 2）。
+  - **Decision 记录（CLOSING 瞬态分类）**：closePeriod 步骤（成本核算/折旧/结转损益/模块结账子状态，`ClosePeriodProcessor:50-78`）全部在期间仍 OPEN 时执行，成功后事务内 `:81 setStatus(CLOSING)` 紧接 `:82 setStatus(CLOSED)`（同一 @BizMutation 事务）；任一步骤失败 → 整 mutation 回滚，CLOSING 不持久化。故 owner doc §对象二「CLOSING→OPEN（结账失败）」= **事务回滚语义**，分类 = `intentional transactional behavior`（非 implementation drift）。Bean 落位：`assertCanClose` 仅守卫动作入口来源态 OPEN（`assertCanClose(CLOSING)` 抛非法——CLOSING 不可作「发起结账」入口）；`transitions()` 编码 close 两段（OPEN→CLOSING 进入段 + CLOSING→CLOSED 完成段），不为 CLOSING→OPEN 发明命名边。该裁定记于 Bean 类级 javadoc「CLOSING 瞬态」节 + 矩阵测试 javadoc，Phase 3 owner-doc 补注将引用。
+- [x] 在非生成 `app-service.beans.xml` 以 FQN 为 bean id 注册 Bean（§11.1 步骤 2）。
   - Skill: `nop-backend-dev`
-- [ ] Proof（层 1 矩阵完备性，表驱动，§11.1 步骤 4）：`TestErpFinAccountingPeriodStateMachineMatrix` 覆盖 openPeriod（NEVER_OPENED 合法、OPEN/CLOSING/CLOSED/CLOSED_FINAL 非法）/close（OPEN 合法、其余非法）/finalize（CLOSED 合法、其余非法）/reverseClose（CLOSED_FINAL 合法、其余非法）合法+非法边 + 终态 CLOSED_FINAL 无出边 + transitions 一致 + initial/terminal。**不经 BizModel 入口**（层 1 只测 Bean）。
+- [x] Proof（层 1 矩阵完备性，表驱动，§11.1 步骤 4）：`TestErpFinAccountingPeriodStateMachineMatrix` 覆盖 openPeriod（NEVER_OPENED 合法、OPEN/CLOSING/CLOSED/CLOSED_FINAL 非法）/close（OPEN 合法、其余非法）/finalize（CLOSED 合法、其余非法）/reverseClose（CLOSED_FINAL 合法、其余非法）合法+非法边 + 终态 CLOSED_FINAL 无出边 + transitions 一致 + initial/terminal。**不经 BizModel 入口**（层 1 只测 Bean）。
   - Skill: `nop-testing`
+  - Proof：10 个 `@Test` 全绿（`mvn test -Dtest=TestErpFinAccountingPeriodStateMachineMatrix` → Tests run: 10, Failures: 0）。终态 CLOSED_FINAL 仅有 reverseClose 恢复出边（无前向推进边，区别于一般「终态零出边」死状态启发式——reverseClose 是显式管理员恢复 action，owner doc §对象二 §3/§5）。
 
 Exit Criteria:
 
-- [ ] Bean 无状态、矩阵完整（4 命名边 + close 两段），CLOSING 瞬态 Decision 记录在案
-- [ ] Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）
-- [ ] 层 1 矩阵测试通过；本地化编译 `mvn compile -pl module-finance/erp-fin-service -am` 通过（解除 Phase 2 接线依赖）
+- [x] Bean 无状态、矩阵完整（4 命名边 + close 两段），CLOSING 瞬态 Decision 记录在案
+- [x] Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）
+- [x] 层 1 矩阵测试通过；本地化编译 `mvn compile -pl module-finance/erp-fin-service -am` 通过（解除 Phase 2 接线依赖）
 
 ### Phase 2 - per-mutation Processor 接线（行为保持，过账/红冲/kill-switch 副作用保留）+ 层 3 回归
 
-Status: planned
+Status: completed
 Targets: `ErpFinAccountingPeriodOpenPeriodProcessor`、`ErpFinAccountingPeriodClosePeriodProcessor`、`ErpFinAccountingPeriodFinalizePeriodProcessor`、`ErpFinAccountingPeriodReverseCloseProcessor`（4 个 per-mutation Processor 注入 Bean + 替换 `assertPeriodStatus` 守卫 + 目标态回写）
 Skill: `nop-backend-dev`（接线 + 错误码映射）+ `nop-testing`（回归断言）
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1 Bean 落地
 
-- [ ] 4 Processor 注入 `ErpFinAccountingPeriodStateMachine`（`@Inject` 非 private），将各 `facade.assertPeriodStatus(period, EXPECTED, label)` 内联固定守卫替换为 `stateMachine.assertCan<Action>(from)` + 目标态写回（`<action>TargetStatus()`）。common→领域码映射（common 码作 cause），错误码 + 参数（`ARG_PERIOD_CODE`/`ARG_CURRENT_PERIOD_STATUS`/`ARG_EXPECTED_PERIOD_STATUS`，3 参数；actionLabel 仅日志不入异常）对外不变。**完整保留**：closePeriod 的结账步骤编排（成本核算/折旧/结转损益/模块结账子状态写入）、`reclosePeriodCosts` 跨域调用、CLOSING→CLOSED 两段时序；reverseClose 的 kill-switch（`erp-fin.reverse-close-approval-required` + `ERR_REVERSE_CLOSE_APPROVAL_REQUIRED`）+ `reverseCloseVoucher(PL/FX/ANNUAL)` 期末凭证红冲时序 + 乐观锁。**generateNextYearPeriods 初始态写入不调 assertCan***（`:75-76`，§9.2 选项 c）。
+- [x] 4 Processor 注入 `ErpFinAccountingPeriodStateMachine`（`@Inject` 非 private），将各 `facade.assertPeriodStatus(period, EXPECTED, label)` 内联固定守卫替换为 `stateMachine.assertCan<Action>(from)` + 目标态写回（`<action>TargetStatus()`）。common→领域码映射（common 码作 cause），错误码 + 参数（`ARG_PERIOD_CODE`/`ARG_CURRENT_PERIOD_STATUS`/`ARG_EXPECTED_PERIOD_STATUS`，3 参数；actionLabel 仅日志不入异常）对外不变。**完整保留**：closePeriod 的结账步骤编排（成本核算/折旧/结转损益/模块结账子状态写入）、`reclosePeriodCosts` 跨域调用、CLOSING→CLOSED 两段时序；reverseClose 的 kill-switch（`erp-fin.reverse-close-approval-required` + `ERR_REVERSE_CLOSE_APPROVAL_REQUIRED`）+ `reverseCloseVoucher(PL/FX/ANNUAL)` 期末凭证红冲时序 + 乐观锁。**generateNextYearPeriods 初始态写入不调 assertCan***（`:75-76`，§9.2 选项 c）。
   - Skill: `nop-backend-dev`
-- [ ] Proof（层 3 回归）：`mvn test -pl module-finance/erp-fin-service -am` 全绿——重点 `TestErpFinPeriodStateMachine`（4 mutation 正向+反向+非法态，最直接相关）、`TestErpFinPeriodCloseEndToEnd`（结账 happy + CLOSING→CLOSED）、`TestErpFinReverseClose`（反结账 CLOSED_FINAL→OPEN + 红冲 + kill-switch 拒绝路径）、`TestErpFinPeriodPreCheck`（结账前置校验）、`TestErpFinAnnualClose`（年结）、`TestErpFinVoucherPeriodLock`（凭证-期间耦合 `ERR_FIN_VOUCHER_PERIOD_LOCKED` 不变）。证明 5 态迁移边、CLOSING 瞬态、反结账红冲时序、kill-switch、凭证耦合均不变。
+  - 接线实证：4 Processor 各 `@Inject ErpFinAccountingPeriodStateMachine stateMachine`（非 private）；`facade.assertPeriodStatus` 已删除（grep 证实 0 引用），facade 新增 `mapIllegalTransition(beanException, period, expected)` 承载 common→领域码映射（common 作 cause，契约 §7）。closePeriod 两段写 `closeEnteringTargetStatus()`(CLOSING) → `closeTargetStatus()`(CLOSED)；reverseClose 的 setStatus(OPEN) → `reverseCloseTargetStatus()`。结账步骤编排（preCheck/advanceModule/closeInvModule/closeAssetModule/closeGlModule/closeAnnual）、reclosePeriodCosts、kill-switch、次年期间门控、`reverseCloseVoucher` PL/FX/ANNUAL 红冲、反折旧、reopenModules 全部原位未改。`generateNextYearPeriods:75-76` 初始态写入未调 assertCan*。
+- [x] Proof（层 3 回归）：`mvn test -pl module-finance/erp-fin-service -am` 全绿——重点 `TestErpFinPeriodStateMachine`（4 mutation 正向+反向+非法态，最直接相关）、`TestErpFinPeriodCloseEndToEnd`（结账 happy + CLOSING→CLOSED）、`TestErpFinReverseClose`（反结账 CLOSED_FINAL→OPEN + 红冲 + kill-switch 拒绝路径）、`TestErpFinPeriodPreCheck`（结账前置校验）、`TestErpFinAnnualClose`（年结）、`TestErpFinVoucherPeriodLock`（凭证-期间耦合 `ERR_FIN_VOUCHER_PERIOD_LOCKED` 不变）。证明 5 态迁移边、CLOSING 瞬态、反结账红冲时序、kill-switch、凭证耦合均不变。
   - Skill: `nop-testing`
+  - Proof：6 具名测试全绿（Tests run: 20, Failures: 0）；全模块 `mvn test -pl module-finance/erp-fin-service` 全绿（Tests run: 390, Failures: 0, Errors: 0, Skipped: 0）。
 
 Exit Criteria:
 
-- [ ] 4 Processor 内联 `assertPeriodStatus` 固定守卫改调 Bean 委托，grep 证实相关方法体内不再有内联固定状态矩阵判断（动态副作用如 kill-switch/结账步骤/红冲/模块子状态/跨域调用除外；generateNextYearPeriods 初始态不调 assertCan*）
-- [ ] 领域错误码 + 参数对外不变（层 3 断言证实）；5 态边 + CLOSING 瞬态 + 反结账红冲时序 + kill-switch + 凭证耦合行为不变
-- [ ] 层 3 `mvn test -pl module-finance/erp-fin-service -am` 全绿
+- [x] 4 Processor 内联 `assertPeriodStatus` 固定守卫改调 Bean 委托，grep 证实相关方法体内不再有内联固定状态矩阵判断（动态副作用如 kill-switch/结账步骤/红冲/模块子状态/跨域调用除外；generateNextYearPeriods 初始态不调 assertCan*）
+- [x] 领域错误码 + 参数对外不变（层 3 断言证实）；5 态边 + CLOSING 瞬态 + 反结账红冲时序 + kill-switch + 凭证耦合行为不变
+- [x] 层 3 `mvn test -pl module-finance/erp-fin-service -am` 全绿
 
 ### Phase 3 - 层 2 四方对照 + 漂移 Decision + owner doc 补注
 
-Status: planned
+Status: completed
 Targets: 四方对照审计记录（写入本计划 Closure 段）；`docs/design/finance/state-machine.md`（§对象二 CLOSING 瞬态补注 + M0.2 测试名漂移登记）；本计划 Closure
 Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度）
 
 - Item Types: `Proof | Decision | Add`
 - Prereqs: Phase 2 接线完成
 
-- [ ] Proof（层 2 四方对照，§11.1 步骤 5，10 维度）：dict（`erp-fin/period-status` 5 值）↔ owner doc（§对象二）↔ Bean 元数据 ↔ writer（4 per-mutation Processor + generateNextYearPeriods 生成 + 框架入口 + 测试 fixture）。重点裁定：(a) CLOSING 瞬态事务语义（owner doc「CLOSING→OPEN 结账失败」= 事务回滚，非显式 writer）；(b) 5 态全可达（NEVER_OPENED→OPEN→CLOSING→CLOSED→CLOSED_FINAL + reverseClose CLOSED_FINAL→OPEN）；(c) 凭证耦合边界（assertPeriodNotLocked 属凭证侧 M4.1 路径，本轴不触碰）；(d) 模块结账子状态排除（FIN-3 技术派生）。
+- [x] Proof（层 2 四方对照，§11.1 步骤 5，10 维度）：dict（`erp-fin/period-status` 5 值）↔ owner doc（§对象二）↔ Bean 元数据 ↔ writer（4 per-mutation Processor + generateNextYearPeriods 生成 + 框架入口 + 测试 fixture）。重点裁定：(a) CLOSING 瞬态事务语义（owner doc「CLOSING→OPEN 结账失败」= 事务回滚，非显式 writer）；(b) 5 态全可达（NEVER_OPENED→OPEN→CLOSING→CLOSED→CLOSED_FINAL + reverseClose CLOSED_FINAL→OPEN）；(c) 凭证耦合边界（assertPeriodNotLocked 属凭证侧 M4.1 路径，本轴不触碰）；(d) 模块结账子状态排除（FIN-3 技术派生）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Add owner doc：在 `docs/design/finance/state-machine.md §对象二` 补 CLOSING 瞬态实现注记（closePeriod 事务内 CLOSING→CLOSED，失败回滚不持久化，对齐「CLOSING→OPEN 结账失败」语义）+ 反结账 kill-switch 保留原位声明交叉引用 §已知简化 P1-MA3-036。
+  - **四方对照记录**（见下方 §Closure 「层 2 四方对照审计证据」）。
+- [x] Add owner doc：在 `docs/design/finance/state-machine.md §对象二` 补 CLOSING 瞬态实现注记（closePeriod 事务内 CLOSING→CLOSED，失败回滚不持久化，对齐「CLOSING→OPEN 结账失败」语义）+ 反结账 kill-switch 保留原位声明交叉引用 §已知简化 P1-MA3-036。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Decision（漂移裁定，路线图规则 5）：(a) CLOSING 瞬态分类 = `intentional transactional behavior`（事务回滚语义，非 implementation drift，Bean 不发明 CLOSING→OPEN 独立边）；(b) 模块结账子状态（ar/ap/inv/gl/assetStatus）= FIN-3 排除-技术，确认不入轴。（注：M0.2 §3.1 #6 所列 `TestErpFinPeriodStateMachine` 实仓存在且为有效层 3 基线，无测试名漂移需登记。）
+  - 已补：`state-machine.md §对象二 §3 终态与恢复` 末追加「CLOSING 瞬态实现注记」blockquote（事务内 CLOSING→CLOSED + 失败回滚 + Bean 矩阵处理）+ §3 反结账恢复 bullet 增 kill-switch 交叉引用 §6 P1-MA3-036。
+- [x] Decision（漂移裁定，路线图规则 5）：(a) CLOSING 瞬态分类 = `intentional transactional behavior`（事务回滚语义，非 implementation drift，Bean 不发明 CLOSING→OPEN 独立边）；(b) 模块结账子状态（ar/ap/inv/gl/assetStatus）= FIN-3 排除-技术，确认不入轴。（注：M0.2 §3.1 #6 所列 `TestErpFinPeriodStateMachine` 实仓存在且为有效层 3 基线，无测试名漂移需登记。）
   - Skill: `state-machine-business-review-prompt.md`
+  - **Decision 记录**：(a) CLOSING = `intentional transactional behavior`（非 drift）——Bean `transitions()` 编码 close 两段 OPEN→CLOSING→CLOSED，CLOSING 有 writer（`ClosePeriodProcessor:81`）且经 close 进入段从 OPEN 可达，非死状态；CLOSING→OPEN 不发明（事务回滚）。(b) ar/ap/inv/gl/assetStatus = FIN-3 排除-技术（不同字段，`ErpFinAccountingPeriodStatus` 的 `module-close-status` dict），确认不入本 `status` 轴。(c) 测试名：M0.2 §3.1 #6 `TestErpFinPeriodStateMachine` 实仓存在（`module-finance/erp-fin-service/src/test/.../entity/TestErpFinPeriodStateMachine.java`，5 @Test 全绿）= 有效层 3 基线，**无测试名漂移需登记**。
 
 Exit Criteria:
 
-- [ ] 四方对照无未裁决漂移（CLOSING 瞬态 + 测试名漂移 + 模块子状态排除均裁定并落入 owner doc/计划）
-- [ ] owner doc §对象二 CLOSING 瞬态补注与 dict/Bean/代码一致
+- [x] 四方对照无未裁决漂移（CLOSING 瞬态 + 测试名漂移 + 模块子状态排除均裁定并落入 owner doc/计划）
+- [x] owner doc §对象二 CLOSING 瞬态补注与 dict/Bean/代码一致
 
 ## Draft Review Record
 
@@ -140,15 +147,15 @@ Exit Criteria:
 
 > 本计划含生产代码变更（1 Bean + 4 Processor 接线 + 测试 + owner doc 补注），Closure Gates 运行完整仓库验证。无 ORM/API/字典变更（5 态保留），Compliance 基线预期无漂移（R5=0/R11=0）。
 
-- [ ] 范围内行为完成（Bean + 4 Processor 接线 + 三层证据；结账/反结账/红冲时序 + kill-switch 完整保留，§11.2 M4 (ii)/(iv)/(v)）
-- [ ] 相关文档对齐（owner doc §对象二 CLOSING 瞬态补注 + 测试名漂移 + 模块子状态排除 Decision 登记；路线图 M4.2 done）
-- [ ] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` + Closure 时 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`
+- [x] 范围内行为完成（Bean + 4 Processor 接线 + 三层证据；结账/反结账/红冲时序 + kill-switch 完整保留，§11.2 M4 (ii)/(iv)/(v)）
+- [x] 相关文档对齐（owner doc §对象二 CLOSING 瞬态补注 + 测试名漂移 + 模块子状态排除 Decision 登记；路线图 M4.2 done）
+- [x] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` + Closure 时 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`
 - [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)；2026-08-13 人工确认，见 Draft Review Record 门控确认记录）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -178,12 +185,44 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填充>
+Status Note: 三阶段执行完成（2026-08-14）；层 1 矩阵 10 测试全绿 + 层 3 既有回归全模块 390 测试全绿 + 层 2 四方对照无未裁决漂移 + 独立结束审计 PASS（ses_0037a262fffe7X0XC0KCBIwk9l，7 检查全 PASS，21 具名测试 0 失败，无 blocker）。全仓库 `mvn clean install -DskipTests` BUILD SUCCESS；合规 R5=0/R11=0（plan 基线达成，R12c +2 为既有漂移非本计划引入）。
+
+### 层 2 四方对照审计证据（§11.1 步骤 5）
+
+**四方**：dict（`erp-fin/period-status`）↔ owner doc（`docs/design/finance/state-machine.md §对象二`）↔ Bean 元数据（`ErpFinAccountingPeriodStateMachine`）↔ 生产 writer。
+
+| 维度 | dict（orm.xml:200-206, ErpFinConstants:139-143） | owner doc §对象二 | Bean 元数据 | 生产 writer（grep 实证） | 一致性 |
+|------|------|------|------|------|------|
+| NEVER_OPENED | ✓ 值 | §1 未开启 | `initialStatuses()={NEVER_OPENED}`；openPeriod fromStatus | GenerateNextYearPeriodsProcessor:75-76（§9.2 初始 seed，不调 assertCan*） | ✓ |
+| OPEN | ✓ 值 | §1 已开启 | openPeriod toStatus / close fromStatus / reverseClose toStatus | Open:33→openPeriodTargetStatus；Close:52 assertCanClose；ReverseClose:51→reverseCloseTargetStatus | ✓ |
+| CLOSING | ✓ 值 | §1 结账中 + §2 OPEN→CLOSING→CLOSED + §3 CLOSING→OPEN(失败回退) | close 进入段 toStatus（OPEN→CLOSING）+ 完成段 fromStatus（CLOSING→CLOSED）；CLOSING→OPEN **不**编码（事务回滚语义） | Close:91→closeEnteringTargetStatus（事务内瞬态，失败回滚不持久化） | ✓ 裁定：intentional transactional behavior，非 drift |
+| CLOSED | ✓ 值 | §1 已结账（待复核中间态，非终态） | finalize fromStatus；`isTerminal(CLOSED)=false` | Finalize:27 assertCanFinalize | ✓ |
+| CLOSED_FINAL | ✓ 值 | §1 已复核（终态）+ §3 终态 | `terminalStatuses()={CLOSED_FINAL}`；reverseClose fromStatus（唯一恢复出边） | ReverseClose:33 assertCanReverseClose | ✓ 终态仅有 reverseClose 恢复出边（无前向推进边） |
+
+**重点裁定**：
+
+- **(a) CLOSING 瞬态事务语义**：owner doc §2/§3「CLOSING→OPEN（结账失败）」= **事务回滚语义**，非显式 writer。closePeriod 为 `@BizMutation`（事务包裹），CLOSING 在事务内 `:81` 设置后紧接 `:82` CLOSED，任一步骤失败则整 mutation 回滚（CLOSING 不持久化）。Bean `transitions()` 编码 close 两段 OPEN→CLOSING→CLOSED，不为 CLOSING→OPEN 发明命名边。CLOSING 经 close 进入段从 OPEN 可达、有 writer、非死状态。**分类 = `intentional transactional behavior`（非 implementation drift）**。owner doc §3 已补「CLOSING 瞬态实现注记」。
+- **(b) 5 态全可达**：NEVER_OPENED→OPEN（openPeriod）→CLOSING（close 进入段）→CLOSED（close 完成段）→CLOSED_FINAL（finalize）+ reverseClose CLOSED_FINAL→OPEN（恢复）。矩阵测试 `testReachabilityFromInitial` 证实从 NEVER_OPENED 可达其余 4 态。**无死状态**（全部 dict 值有 writer 或可达）。
+- **(c) 凭证耦合边界**：`assertPeriodNotLocked`/`ERR_FIN_VOUCHER_PERIOD_LOCKED` 位于 `ErpFinVoucherBizModel`（凭证侧 M4.1 路径），本期间轴 Bean 不触碰。`TestErpFinVoucherPeriodLock` 层 3 回归全绿证实耦合守卫不变。
+- **(d) 模块结账子状态排除**：`ErpFinAccountingPeriodStatus` 的 ar/ap/inv/gl/assetStatus（dict `erp-fin/module-close-status`）= M0.2 FIN-3 排除-技术（不同字段、DAG 派生子状态），不入本 `status` 轴。
+
+**CRUD 写入路径（§9.4 残留）**：通用 CRUD `__save`/`update` 技术上可写 `status`（xmeta insertable/updatable，M0.1 §9.2 选项 c 残留）。Bean 治理「命名动作迁移矩阵」唯一性，不治理 CRUD 路径——已知 scoped 残留（M0.1 successor），**非本轴 drift**。
+
+**测试名漂移**：M0.2 §3.1 #6 所列 `TestErpFinPeriodStateMachine` 实仓存在（`module-finance/erp-fin-service/src/test/java/app/erp/fin/service/entity/TestErpFinPeriodStateMachine.java`，5 @Test 全绿）= 有效层 3 基线。**无测试名漂移需登记**。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立子代理（新会话 `ses_0037a262fffe7X0XC0KCBIwk9l`，2026-08-14）
+- Verdict: **PASS** — 7 编号检查全 PASS，§11.2 M4 (i)–(v) 硬约束全兑现，无 blocker/major。
+- Evidence:
+  - Bean 形状/无状态 PASS（`ErpFinAccountingPeriodStateMachine.java`：4 动作 + 两段 close + transitions 5 边不含 CLOSING→OPEN + 仅 import ErpCommonErrors/ErpFinConstants/NopException/java.util，无 DAO/IBiz/IServiceContext/事务）。
+  - Bean 注册 PASS（`app-service.beans.xml:395-396`，FQN id）。
+  - 4 Processor 接线 PASS（`assertPeriodStatus` grep = 0 hits；4 Processor 均 `@Inject` 非 private + `assertCan<Action>` + `<action>TargetStatus`；facade `mapIllegalTransition` common→领域码作 cause + 3 参数）。
+  - M4 (ii)/(iv)/(v) 兑现 PASS（closePeriod 编排 AR/AP/INV/AST/GL/closeAnnual 步骤原序 + 两段写在步骤后；reverseClose kill-switch + 次年门控 + reverseCloseVoucher PL/FX/ANNUAL + reverseDepreciation + reopenModules 原位；generateNextYearPeriods §9.2 初始写入不调 assertCan* 未改）。
+  - 测试 PASS（`mvn -pl module-finance/erp-fin-service test -Dtest=...` → 21 测试 0 失败：Matrix 10 + PeriodStateMachine 5 + PeriodCloseEndToEnd 1 + ReverseClose 1 + VoucherPeriodLock 4）。
+  - owner doc PASS（`state-machine.md:188` CLOSING 瞬态注记 + `:185` kill-switch 交叉引用 §6 P1-MA3-036）。
+  - 计划一致性 PASS（3 Phase 全 completed + 全项 `[x]` + Closure 四方对照证据 + Draft Review 收敛）。
+  - 推荐所有 Closure Gates satisfied（已勾选）。
 
 Follow-up:
 

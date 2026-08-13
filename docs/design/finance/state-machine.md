@@ -182,8 +182,10 @@
 ### 3. 终态与恢复
 
 - **终态**：`已复核（CLOSED_FINAL）`。`已结账（CLOSED）` 为待复核中间态（结账完成但尚未最终锁定）。
-- **反结账恢复**：管理员可反结账回到 OPEN，修改凭证后重新结账。需严格权限控制（影响已出具报表）。
+- **反结账恢复**：管理员可反结账回到 OPEN，修改凭证后重新结账。需严格权限控制（影响已出具报表）。反结账 kill-switch 保留原位（见 §6 已知简化 P1-MA3-036）。
 - **结账失败的恢复**：CLOSING → OPEN（自动回退），修复问题后重新发起结账。
+
+> **CLOSING 瞬态实现注记**（plan 2026-08-13-2045-1）：`closePeriod` 为 `@BizMutation`（事务包裹）——结账步骤（成本核算/折旧/汇兑重估/损益结转/模块结账子状态，均在期间仍 OPEN 时执行）全部成功后，事务内先 `setStatus(CLOSING)` 紧接 `setStatus(CLOSED)`（`ErpFinAccountingPeriodClosePeriodProcessor:81-82`）。故上文「CLOSING → OPEN（结账失败）」即**事务回滚语义**——任一结账步骤失败则整 mutation 回滚，CLOSING 不持久化——而非独立的显式 writer。`ErpFinAccountingPeriodStateMachine` 状态矩阵 Bean 仅守卫 close 动作入口来源态 OPEN（`assertCanClose(CLOSING)` 抛非法：CLOSING 不可作「发起结账」入口，仅事务内瞬态中间态），编码 close 两段边 OPEN→CLOSING→CLOSED，不为 CLOSING→OPEN 发明独立命名边（契约 §11.2 M4 + `entity-state-machine-bean.md §8` 瞬态轴）。
 
 ### 4. 异常路径
 

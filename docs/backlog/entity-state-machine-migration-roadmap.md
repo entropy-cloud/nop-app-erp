@@ -95,7 +95,7 @@
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
 | M4.1 | ErpFinVoucher.docStatus 凭证过账生命周期 Bean（plan-first） | done | `finance/state-machine.md` §Voucher | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.2 | ErpFinAccountingPeriod.status 会计期间生命周期 Bean（plan-first） | ready | `finance/state-machine.md` §Period | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.2 | ErpFinAccountingPeriod.status 会计期间生命周期 Bean（plan-first） | done | `finance/state-machine.md` §Period | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.3 | ErpFinReconciliation.docStatus 对账单生命周期 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.4 | ErpFinExpenseClaim.docStatus 报销单生命周期 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.5 | ErpFinExpenseClaim.approveStatus 报销审批轴 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 + M4.4 | `nop-backend-dev` + `nop-testing` |
@@ -151,11 +151,11 @@
 | M4.55 | ErpMntSparePartUsage.docStatus 备件消耗单据生命周期 Bean（plan-first） | todo | `maintenance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.56 | ErpMntSparePartUsage.approveStatus 备件审批轴 Bean（plan-first） | todo | `maintenance/state-machine.md` | M1.3 + M4.55 | `nop-backend-dev` + `nop-testing` |
 | M4.57 | ErpLogShipment.status 发运单生命周期 Bean（plan-first） | todo | `logistics/state-machine.md` §Shipment | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.58 | ErpQaInspection.docStatus 质检单生命周期 Bean（plan-first） | todo | `quality/state-machine.md` §Inspection | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.59 | ErpQaInspection.approveStatus 质检审批轴 Bean（plan-first） | todo | `quality/state-machine.md` §Inspection | M1.3 + M4.58 | `nop-backend-dev` + `nop-testing` |
-| M4.60 | ErpQaNonConformance.status NCR 生命周期 Bean（plan-first） | todo | `quality/state-machine.md` §NCR | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.61 | ErpQaRecall.status 召回生命周期 Bean（plan-first） | todo | `quality/state-machine.md` §Recall | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.62 | ErpQaRecall.approveStatus 召回审批轴 Bean（plan-first） | todo | `quality/state-machine.md` §Recall | M1.3 + M4.61 | `nop-backend-dev` + `nop-testing` |
+| M4.58 | ErpQaInspection.docStatus 质检单生命周期 Bean（plan-first） | done | `quality/state-machine.md` §Inspection | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.59 | ErpQaInspection.approveStatus 质检审批轴 Bean（plan-first） | done | `quality/state-machine.md` §Inspection | M1.3 + M4.58 | `nop-backend-dev` + `nop-testing` |
+| M4.60 | ErpQaNonConformance.status NCR 生命周期 Bean（plan-first） | done | `quality/state-machine.md` §NCR | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.61 | ErpQaRecall.status 召回生命周期 Bean（plan-first） | done | `quality/state-machine.md` §Recall | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.62 | ErpQaRecall.approveStatus 召回审批轴 Bean（plan-first） | done | `quality/state-machine.md` §Recall | M1.3 + M4.61 | `nop-backend-dev` + `nop-testing` |
 | M4.63 | ErpHrSalary.paymentStatus 薪酬发放生命周期 Bean（plan-first） | todo | `human-resource/state-machine.md` §Salary | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.64 | ErpHrSalary.approveStatus 薪酬审批轴 Bean（plan-first） | todo | `human-resource/state-machine.md` §Salary | M1.3 + M4.63 | `nop-backend-dev` + `nop-testing` |
 | M4.65 | ErpCtRebateSettlement.status 返利结算生命周期 Bean（plan-first） | todo | `contract/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |

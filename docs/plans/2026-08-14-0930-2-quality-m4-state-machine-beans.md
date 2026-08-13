@@ -1,6 +1,6 @@
 # 2026-08-14-0930-2-quality-m4-state-machine-beans 质量域 ErpQaInspection/NonConformance/Recall 实体级状态机 Bean（M4.58 + M4.59 + M4.60 + M4.61 + M4.62）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-14
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.58（ErpQaInspection.docStatus）+ M4.59（ErpQaInspection.approveStatus）+ M4.60（ErpQaNonConformance.status）+ M4.61（ErpQaRecall.status）+ M4.62（ErpQaRecall.approveStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md` QA-1/2/3/4/5（330-334 行段）+ M4.58-62（330-334 行段）
 > Related: M4 采购审批先例 `2026-08-13-1950-1-purchase-m4-approvestatus-state-machine-bean.md`（skeleton+facade 双路径 + Recall 同构 approval-orchestrator-facade 范式 done）；M3 同构先例 `2026-08-13-0805-1-erpmnt-request-state-machine-bean.md`（单 status 轴 abstract→Bean 范式 done）；M0.1 契约 + M1.3 批量迁移模板固化于 `docs/architecture/entity-state-machine-bean.md §11`
@@ -82,94 +82,94 @@
 
 ### Phase 1 - ErpQaInspection result + approveStatus Bean（M4.58 + M4.59）
 
-Status: planned
+Status: completed
 Targets: `module-quality/erp-qa-service/src/main/java/app/erp/qa/service/statemachine/ErpQaInspection{Result,Approval}StateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/AbstractErpQaInspectionProcessor.java`、`.../processor/ErpQaInspection{RecordResult,PassInspection,FailInspection}Processor.java`、`.../test/.../statemachine/TestErpQaInspection{Result,Approval}StateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done（已满足）
 
-- [ ] `Decision`（Inspection 三字段轴迁移范围裁决）：(A) **M4.58 docStatus 轴**：实仓零状态机 writer（仅测试 seed ACTIVE）——裁定是否为 DRAFT→ACTIVE/CANCELLED 建立 Bean 矩阵，或裁定为 dict-only 泛型占位轴排除迁移（对齐 M0.2 §5.1 死状态登记范式）。若裁定排除，M4.58 标记为 `deferred-but-adjudicated` 并登记 successor。(B) **M4.59 approveStatus 轴**：仅 concession-approve 单边（CONDITIONAL 时写 APPROVED），非完整 5 动作生命周期——裁定 Bean 迁移范围（仅 concession-approve 边 vs 完整 5 动作矩阵据实仓 writer 推导）。(C) **result 轴**（实仓驱动的实际状态机）虽然 M0.2 未单列为独立工作项，但其固定迁移判断是 Inspection 核心迁移目标——Bean 命名为 `ErpQaInspectionResultStateMachine`。
+- [x] `Decision`（Inspection 三字段轴迁移范围裁决）：(A) **M4.58 docStatus 轴**：实仓零状态机 writer（仅测试 seed ACTIVE）——裁定为 **dict-only 泛型占位轴排除迁移**（对齐 M0.2 §5.1 死状态登记范式），M4.58 标记为 `deferred-but-adjudicated` 并登记 successor（Deferred 段「Inspection docStatus 零-writer 占位轴」）。(B) **M4.59 approveStatus 轴**：仅 concession-approve 单边（CONDITIONAL 时写 APPROVED），非完整 5 动作生命周期——裁定 Bean 迁移范围 = **仅 concession-approve 单边矩阵**（`ErpQaInspectionApprovalStateMachine` 单边 concessionApprove UNSUBMITTED→APPROVED）。(C) **result 轴**：实仓驱动的实际状态机，Bean 命名 `ErpQaInspectionResultStateMachine`，3 动作矩阵（recordResult 数据驱动三分支 + passInspection + failInspection）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpQaInspectionResultStateMachine` Bean——3 动作矩阵（recordResult PENDING→ACCEPTED/CONDITIONAL/REJECTED、passInspection PENDING→ACCEPTED、failInspection PENDING→REJECTED）+ `assertCanRecordResult/PassInspection/FailInspection` + `*TargetStatus()` + `transitions()` + 终态={ACCEPTED, CONDITIONAL, REJECTED}。严格无状态。
+- [x] `Add`：落地 `ErpQaInspectionResultStateMachine` Bean——3 动作矩阵（recordResult PENDING→ACCEPTED/CONDITIONAL/REJECTED 数据驱动三分支 + passInspection PENDING→ACCEPTED + failInspection PENDING→REJECTED）+ `assertCanRecordResult/PassInspection/FailInspection` + `passInspection/failInspectionTargetStatus()`（recordResult 目标态数据驱动无 getter）+ `transitions()` 5 边 + 终态={ACCEPTED, CONDITIONAL, REJECTED}。严格无状态。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：按 Phase 1 Decision 裁定落地 `ErpQaInspectionApprovalStateMachine`（concession-approve 单边或完整矩阵）。
+- [x] `Add`：按 Phase 1 Decision 裁定落地 `ErpQaInspectionApprovalStateMachine`（concession-approve 单边矩阵：concessionApprove UNSUBMITTED→APPROVED + `assertCanConcessionApprove` + `concessionApproveTargetStatus()` + `transitions()` 1 边 + 终态={APPROVED}）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：在 `_vfs/erp/qa/beans/app-service.beans.xml` 注册 Bean。
+- [x] `Add`：在 `_vfs/erp/qa/beans/app-service.beans.xml` 注册 2 Bean。
   - Skill: `nop-backend-dev`
-- [ ] `Decision | Add`（接线）：`AbstractErpQaInspectionProcessor.requireInspectionPending:65-70` + `illegalInspectionTransition:58-63` 改调 Bean `assertCanXxx`（try/catch common 码 → 领域码 `ERR_INVALID_INSPECTION_STATUS_TRANSITION`）；RecordResult/PassInspection/FailInspection Processor 目标态改调 Bean `*TargetStatus()`。posted 三件套写入 + NCR auto-create 保留原位。abstract 注入 `@Inject` Bean（非 private）。
+- [x] `Decision | Add`（接线）：abstract 注入 `ErpQaInspectionResultStateMachine`，移除 `requireInspectionPending` 内联 `Objects.equals` 守卫；RecordResult/PassInspection/FailInspection Processor 各自调 Bean `assertCanRecordResult/PassInspection/FailInspection`（try/catch common 码 → 领域码 `ERR_INVALID_INSPECTION_STATUS_TRANSITION`）；Pass/Fail 目标态改调 Bean `*TargetStatus()`；RecordResult 让步审批 approveStatus 写入改调 `approvalStateMachine.concessionApproveTargetStatus()`。posted 三件套写入 + NCR auto-create 保留原位。`@Inject` Bean 非 private。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性 + 层 2 四方对照（dict `erp-qa/inspection-result` + `wf/approve-status` ↔ owner doc §Inspection ↔ Bean ↔ 全部 writer）。
+- [x] `Proof`：层 1 矩阵完备性（14 tests green：result 8 + approval 6）+ 层 2 四方对照（dict `erp-qa/inspection-result` + `wf/approve-status` ↔ owner doc §Inspection ↔ Bean ↔ 全部 writer：recordResult/passInspection/failInspection 3 Processor live 委托 Bean + CRUD 路径 §9.4 选项 c 排除 + docStatus 零-writer 排除登记）。**已验证一致**。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] Inspection result/approveStatus Bean 存在/注册/无状态；abstract + Processor 委托 Bean。
-- [ ] Inspection 层 1 矩阵测试本地全绿。
+- [x] Inspection result/approveStatus Bean 存在/注册/无状态；abstract + Processor 委托 Bean。
+- [x] Inspection 层 1 矩阵测试本地全绿。**已验证：14 tests green；层 3 集成回归 TestErpQaInspectionStateMachine(13)/TestErpQaInspectionTrigger(6)/TestErpQaNcrCapaEndToEnd(5) 全绿，零行为回归**。
 
 ### Phase 2 - ErpQaNonConformance status Bean（M4.60）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpQaNonConformanceStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/AbstractErpQaNonConformanceProcessor.java`、`.../entity/ErpQaNonConformanceBizModel.java`、`.../test/.../statemachine/TestErpQaNonConformanceStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（Inspection 范式已固化）
 
-- [ ] `Decision`（NCR 双 guard 源统一）：(A) BizModel inline guard（`submitReview:50`/`escalateToRecall:81`/`cancel:98`）+ Processor abstract guard（`requireNcrStatus:39`）两套重复——统一改调 Bean，BizModel 重复 private guard 方法移除或委托 Bean。(B) `resolve` 的 CAPA gate + posting dispatch 为动态业务守卫保留原位（非固定迁移边）。(C) `postNcr`/`reverseNcr` 守卫 require RESOLVED + posted 状态——固定来源态守卫改调 Bean，posted 判定保留原位。(D) `upgradeToRecall` 跨实体创建 Recall 副作用保留原位。
+- [x] `Decision`（NCR 双 guard 源统一）：(A) BizModel inline guard（`submitReview`/`escalateToRecall`/`cancel`）+ Processor abstract guard（`requireNcrStatus`）两套重复——统一改调 Bean，BizModel 重复 private `requireNcrStatus` 移除、保留 `illegalNcrTransition`（领域错误组装非重复）。(B) `resolve` 的 CAPA gate + posting dispatch 为动态业务守卫保留原位（非固定迁移边）。(C) `postNcr`/`reverseNcr` 守卫 require RESOLVED（固定来源态守卫改调 Bean）+ posted 判定保留原位（动态守卫）；reverseNcr 原仅查 posted 现增 Bean status=RESOLVED 断言（posted 蕴含 RESOLVED 不变，防御性）。(D) `upgradeToRecall` 跨实体创建 Recall 副作用保留原位。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpQaNonConformanceStateMachine`——6 动作矩阵（submitReview OPEN→IN_REVIEW、resolve IN_REVIEW→RESOLVED、postNcr RESOLVED→(RESOLVED 不变 + posted)、reverseNcr posted→(RESOLVED 不变)、upgradeToRecall IN_REVIEW→ESCALATED_TO_RECALL、cancel OPEN/IN_REVIEW→CANCELLED）+ `assertCanXxx` + `*TargetStatus()` + `transitions()` + 终态={RESOLVED, ESCALATED_TO_RECALL, CANCELLED}。注册 1 Bean。
+- [x] `Add`：落地 `ErpQaNonConformanceStateMachine`——6 动作矩阵（submitReview OPEN→IN_REVIEW、resolve IN_REVIEW→RESOLVED、postNcr RESOLVED→RESOLVED 自环、reverseNcr RESOLVED→RESOLVED 自环、upgradeToRecall IN_REVIEW→ESCALATED_TO_RECALL、cancel OPEN/IN_REVIEW→CANCELLED）+ `assertCanXxx` + `*TargetStatus()` + `transitions()` 7 边 + 终态={RESOLVED, ESCALATED_TO_RECALL, CANCELLED}。注册 1 Bean。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线）：abstract `requireNcrStatus:39`/`illegalNcrTransition:46` + BizModel 重复 guard 改调 Bean；4 Processor 目标态改调 Bean。CAPA gate + NcrPostingDispatcher + NcrReturnOrchestrator + Recall auto-create 保留原位。
+- [x] `Add`（接线）：abstract 移除 `requireNcrStatus` 内联 `Objects.equals` 守卫、注入 Bean；4 Processor（resolve/postNcr/reverseNcr/upgradeToRecall）各自调 Bean `assertCanXxx`（try/catch common 码 → 领域码 `ERR_INVALID_NCR_STATUS_TRANSITION`）+ 目标态调 Bean `*TargetStatus()`；BizModel 移除重复 `requireNcrStatus`、注入 Bean、submitReview/escalateToRecall/cancel 调 Bean assert + 目标态。CAPA gate + NcrPostingDispatcher + NcrReturnOrchestrator + Recall auto-create 保留原位。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性 + 层 2 四方对照。
+- [x] `Proof`：层 1 矩阵完备性（12 tests green）+ 层 2 四方对照（dict `erp-qa/ncr-status` ↔ owner doc §适用对象二 ↔ Bean ↔ 全部 writer：BizModel 3 inline + Processor 4 live 委托 Bean + CRUD §9.4 选项 c 排除）。**已核实一致**。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] NCR Bean 存在/注册/无状态；abstract + BizModel + Processor 委托 Bean，重复 guard 统一。
-- [ ] NCR 层 1 矩阵测试本地全绿。
+- [x] NCR Bean 存在/注册/无状态；abstract + BizModel + Processor 委托 Bean，重复 guard 统一。
+- [x] NCR 层 1 矩阵测试本地全绿。**已验证：12 tests green；层 3 集成回归 TestErpQaNcrCapaEndToEnd(5)/TestErpQaNcrPosting(7) 全绿，零行为回归**。
 
 ### Phase 3 - ErpQaRecall status + approveStatus Bean（M4.61 + M4.62）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpQaRecall{State,Approval}StateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpQaRecallProcessor.java`、`.../processor/AbstractErpQaRecallProcessor.java`、`.../processor/ErpQaRecall{Register,LocateTargets,NotifyCustomers,GenerateReturns,Close}Processor.java`、`.../entity/ErpQaRecallBizModel.java`、`.../test/.../statemachine/TestErpQaRecall{State,Approval}StateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1-2（Inspection/NCR 范式已固化；Recall 双轴 + orchestrator-facade 最复杂）
 
-- [ ] `Decision`（Recall orchestrator-facade 接线点 + 双轴联动裁决）：(A) 审批轴经 dedicated orchestrator-facade `ErpQaRecallProcessor.validateTransitionForXxx:68-105` 改调 `ErpQaRecallApprovalStateMachine`——对齐 M4 采购 facade 路径先例。(B) `doApprove:129` 联动写 approveStatus=APPROVED + status=APPROVED、`doReject:137` 联动写 approveStatus=REJECTED + status=CANCELLED——Bean 按**单轴**建模，联动写入保留在 facade `doXxx` 原位。(C) 操作轴经 `AbstractErpQaRecallProcessor` + BizModel inline guard 改调 `ErpQaRecallStateMachine`。(D) xbiz 审批 Processor 接线不动（仍调 orchestrator-facade，facade 内部改调 Bean）。(E) `reverseApprove` 目标态=REJECTED（实仓 `:145`）。
+- [x] `Decision`（Recall orchestrator-facade 接线点 + 双轴联动裁决）：(A) 审批轴经 dedicated orchestrator-facade `ErpQaRecallProcessor.validateTransitionForXxx` 改调 `ErpQaRecallApprovalStateMachine`——对齐 M4 采购 facade 路径先例。(B) `doApprove`/`doReject` 联动写 approveStatus + status——Bean 按**单轴**建模（approval Bean 管 approveStatus，status Bean 管 status），联动写入保留在 facade `doApprove`/`doReject` 原位（目标态均调各自 Bean getter）。(C) 操作轴经 `AbstractErpQaRecallProcessor`（locateTargets/close）+ BizModel inline guard（cancel）改调 `ErpQaRecallStateMachine`；notifyCustomers/generateReturns 的 IN_PROGRESS 前置条件为非迁移守卫保留 `requireRecallStatus` helper。(D) xbiz 审批 Processor 接线不动（仍调 orchestrator-facade，facade 内部改调 Bean）。(E) `reverseApprove` 目标态=REJECTED（实仓 `doReverseApprove` 已覆写）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpQaRecallApprovalStateMachine`（5 动作审批矩阵，reverseApprove=REJECTED）+ `ErpQaRecallStateMachine`（status 操作矩阵：register→OPEN、approve→APPROVED、locateTargets APPROVED→IN_PROGRESS、close IN_PROGRESS→CLOSED、reject→CANCELLED、cancel OPEN/APPROVED/IN_PROGRESS→CANCELLED）+ `assertCanXxx` + `transitions()` + 终态。注册 2 Bean。
+- [x] `Add`：落地 `ErpQaRecallApprovalStateMachine`（5 动作审批矩阵，reverseApprove=REJECTED）+ `ErpQaRecallStateMachine`（status 操作矩阵：approve OPEN→APPROVED 联动、locateTargets APPROVED→IN_PROGRESS、close IN_PROGRESS→CLOSED、reject OPEN→CANCELLED 联动、cancel OPEN/APPROVED/IN_PROGRESS→CANCELLED；register 初始写 target getter）+ `assertCanXxx` + `transitions()`（approval 6 边 + status 7 边）+ 终态。注册 2 Bean。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线）：orchestrator-facade `ErpQaRecallProcessor.validateTransitionForXxx:68-105` + `doXxx:119-150` 目标态改调 Bean；操作轴 abstract `AbstractErpQaRecallProcessor.requireRecallStatus:49` + BizModel `cancel:60` inline guard 改调 Bean。同时统一/移除 BizModel 内重复的 private guard 方法（对齐 Phase 2 NCR 重复 guard 统一范式）。target locator + notify gate + generateReturns 保留原位。
+- [x] `Add`（接线）：orchestrator-facade `ErpQaRecallProcessor` 注入双 Bean，`validateTransitionForXxx`（5）改调 approval Bean assert + `doXxx`（5）目标态改调 Bean getter + `validateBusinessRulesForApprove` 改调 status Bean `assertCanApprove`；操作轴 abstract 注入 status Bean，`LocateTargets`/`Close` Processor 调 Bean assert + 目标态；`Register` Processor 初始写调 `registerTargetStatus()`；BizModel `cancel` 注入 status Bean 调 `assertCanCancel` + `cancelTargetStatus()`，移除 inline `Objects.equals` 守卫 + 重复 guard。target locator + notify gate + generateReturns 保留原位。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（2 Bean 独立测试）+ 层 2 四方对照。
+- [x] `Proof`：层 1 矩阵完备性（20 tests green：status 10 + approval 10）+ 层 2 四方对照（dict `erp-qa/recall-status` + `wf/approve-status` ↔ owner doc recall.md ↔ Bean ↔ 全部 writer：facade 5 审批 + operation 5 Processor + BizModel cancel live 委托 Bean + register 初始写 + CRUD §9.4 选项 c 排除）。**已核实一致**。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] 2 Recall Bean 存在/注册/无状态；orchestrator-facade + abstract + BizModel 委托 Bean。
-- [ ] Recall 层 1 矩阵测试本地全绿。
+- [x] 2 Recall Bean 存在/注册/无状态；orchestrator-facade + abstract + BizModel 委托 Bean。
+- [x] Recall 层 1 矩阵测试本地全绿。**已验证：20 tests green；层 3 集成回归 TestErpQaRecallStateMachine(7)/TestErpQaRecallE2E(3)/TestErpQaRecallLocateNotifyReturn(2) 全绿，零行为回归**。
 
 ### Phase 4 - 层 3 既有命名动作回归
 
-Status: planned
+Status: completed
 Targets: `module-quality/erp-qa-service/src/test/`（既有集成测试，零新建）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1-3（三实体 5 轴 Bean + 接线已落地）
 
-- [ ] `Proof`：层 3 既有命名动作回归——复用 `TestErpQaInspectionStateMachine`/`TestErpQaRecallStateMachine`/`TestErpQaNcrCapaEndToEnd` 等，证明 Processor 写回、审计、领域错误码、NCR auto-create、posting dispatch、Recall 编排副作用不变。本地 `mvn test -pl module-quality/erp-qa-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归——复用 `TestErpQaInspectionStateMachine`/`TestErpQaRecallStateMachine`/`TestErpQaNcrCapaEndToEnd` 等，证明 Processor 写回、审计、领域错误码、NCR auto-create、posting dispatch、Recall 编排副作用不变。本地 `mvn test -pl module-quality/erp-qa-service -am` 全绿。**已验证：168 tests, 0 failures, 0 errors（含全部上述既有集成测试 + 5 矩阵测试，零行为回归）**。
   - Skill: `nop-testing`
-- [ ] `Proof`：五轴一致性复核——5 Bean 命名/注册/无状态/元数据形状一致；三路径接线（abstract/orchestrator-facade/BizModel-inline）可追溯。
+- [x] `Proof`：五轴一致性复核——5 Bean 命名/注册/无状态/元数据形状一致；三路径接线（abstract/orchestrator-facade/BizModel-inline）可追溯。**已核实：5 Bean 同包同文件注册（app.erp.qa.service.statemachine）、命名统一（result/status/Approval 后缀）、无状态（零 DAO/IBiz/IServiceContext 注入）；Inspection/NCR=abstract + BizModel-inline 路径、Recall=orchestrator-facade + abstract + BizModel-inline 三路径接线范式可追溯**。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 层 3 既有集成测试全绿（零行为回归）。
+- [x] 层 3 既有集成测试全绿（零行为回归）。**168 tests green + `mvn clean install -DskipTests` BUILD SUCCESS + compliance 全 19 规则 actual = baseline（R5=0、R11=0 不增）**。
 
 ## Draft Review Record
 
@@ -177,15 +177,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
-- [ ] 范围内行为完成（三实体 5 轴 Bean + 三路径接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐（roadmap M4.58-62 → done）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-quality/erp-qa-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` 全 19 规则 actual ≤ baseline
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)；Draft Review Record iteration 1 accept，门控随草案审查通过确认）
+- [x] 范围内行为完成（三实体 5 轴 Bean + 三路径接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（roadmap M4.58-62 → done）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-quality/erp-qa-service -am` 全绿（168 tests）+ `bash docs/audits/nop-compliance-checker.sh` 全 19 规则 actual = baseline（R5=0、R11=0 不增）
+- [x] 无范围内项目降级为 deferred/follow-up（M4.58 docStatus 经 Decision 裁定为 deferred-but-adjudicated 登记 successor；reverseApprove 骨架 §16.4 合规化同既有 successor）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行（MISSION_DRIVER 2026-08-13-193118-mission-driver 独立审计会话，零执行者上下文冷重播；语义五点 + 反空心 + Deferred 诚实性 + 文档同步全 pass）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -221,13 +221,14 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <why the plan can close>
+Status Note: executed (2026-08-14)；全部 4 Phase 完成，验证全绿（`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-quality/erp-qa-service -am` 168 tests green + compliance 全 19 规则 actual = baseline R5=0/R11=0）。5 实体级状态机 Bean（ErpQaInspectionResult/Approval + ErpQaNonConformance + ErpQaRecall/RecallApproval）落地 + 三路径接线（abstract/orchestrator-facade/BizModel-inline）+ 5 矩阵测试（46 tests green）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- 执行者验证（2026-08-14）：5 Bean 创建/注册/无状态；Inspection 3 Processor + NCR 4 Processor + BizModel inline + Recall facade 5 审批 + Recall 5 操作 Processor + Recall BizModel cancel 全部委托 Bean；5 矩阵测试 46 tests green；层 3 集成回归 168 tests green；compliance 全 19 规则 = baseline。
+- Auditor / Agent: MISSION_DRIVER 2026-08-13-193118-mission-driver（独立结束审计子代理，新会话，零执行者上下文冷重播）— 2026-08-14 审计通过。
+- Evidence: 独立核实 5 Bean 源文件存在于 `app.erp.qa.service.statemachine` 包 + `app-service.beans.xml` 5 注册行 + 三路径接线（Path A `ErpQaRecallProcessor` 注入双 Bean `validateTransitionForXxx`/`doXxx` 委托；Path B `Abstract{Inspection,NonConformance,Recall}Processor` 注入 Bean，10 Processor `assertCanXxx`+`*TargetStatus()` 委托；Path C `ErpQaNonConformanceBizModel`/`ErpQaRecallBizModel` inline guard 委托）+ 反空心确认（NCR Bean 全实 6 动作矩阵/7 边/终态分类/`transitions()` 元数据，无空体/`return null`/吞异常）+ 共享骨架 `Abstract{Xxx}Processor` 零改动（Non-Goal honored）+ 5 矩阵测试 @Test 计数 6/8/12/10/10=46 与声明一致 + 4 既有集成测试存在 + roadmap M4.58-62 全 done + 日志 `docs/logs/2026/2026-08-14.md` 引用本计划。Deferred 项（docStatus 零-writer / reverseApprove §16.4 / 业务作废联动 / Delta 实证 / CRUD 写锁）均有显式 successor 触发条件，无隐藏缺陷降级。
 
 Follow-up:
 
-- <无非阻塞跟进；Deferred 项均为既定 successor>
+- <无非阻塞跟进；Deferred 项（docStatus 零-writer 占位轴 / reverseApprove 骨架 §16.4 / 业务作废联动 / Delta 覆盖实证 / 全局 CRUD 写锁）均为既定 successor>
