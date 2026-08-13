@@ -2,6 +2,7 @@ package app.erp.mnt.service.processor;
 
 import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntRequest;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.time.CoreMetrics;
 
@@ -14,13 +15,18 @@ public class ErpMntRequestCompleteProcessor extends AbstractErpMntRequestProcess
 
     public ErpMntRequest complete(Long requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
-        validateTransition(request, ErpMntDaoConstants.REQUEST_STATUS_IN_PROGRESS, "IN_PROGRESS");
+        String from = request.getStatus();
+        try {
+            stateMachine.assertCanComplete(from);
+        } catch (NopException e) {
+            throw illegalRequestTransition(request, from, ErpMntDaoConstants.REQUEST_STATUS_IN_PROGRESS, e);
+        }
         doComplete(request, context);
         return request;
     }
 
     protected void doComplete(ErpMntRequest request, IServiceContext context) {
-        request.setStatus(ErpMntDaoConstants.REQUEST_STATUS_COMPLETED);
+        request.setStatus(stateMachine.completeTargetStatus());
         request.setCompletedAt(CoreMetrics.currentTimestamp());
         requestDao().updateEntity(request);
     }

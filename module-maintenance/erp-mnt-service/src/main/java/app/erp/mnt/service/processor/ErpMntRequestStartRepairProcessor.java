@@ -2,6 +2,7 @@ package app.erp.mnt.service.processor;
 
 import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntRequest;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 
 /**
@@ -13,13 +14,18 @@ public class ErpMntRequestStartRepairProcessor extends AbstractErpMntRequestProc
 
     public ErpMntRequest startRepair(Long requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
-        validateTransition(request, ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED, "ACCEPTED");
+        String from = request.getStatus();
+        try {
+            stateMachine.assertCanStartRepair(from);
+        } catch (NopException e) {
+            throw illegalRequestTransition(request, from, ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED, e);
+        }
         doStartRepair(request, context);
         return request;
     }
 
     protected void doStartRepair(ErpMntRequest request, IServiceContext context) {
-        request.setStatus(ErpMntDaoConstants.REQUEST_STATUS_IN_PROGRESS);
+        request.setStatus(stateMachine.startRepairTargetStatus());
         requestDao().updateEntity(request);
     }
 }

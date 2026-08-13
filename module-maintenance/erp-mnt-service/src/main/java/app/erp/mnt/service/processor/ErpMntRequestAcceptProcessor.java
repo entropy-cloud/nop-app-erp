@@ -3,6 +3,7 @@ package app.erp.mnt.service.processor;
 import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntRequest;
 import app.erp.mnt.dao.entity.ErpMntVisit;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.time.CoreMetrics;
 
@@ -18,7 +19,12 @@ public class ErpMntRequestAcceptProcessor extends AbstractErpMntRequestProcessor
 
     public ErpMntRequest accept(Long requestId, IServiceContext context) {
         ErpMntRequest request = requireRequest(requestId, context);
-        validateTransition(request, ErpMntDaoConstants.REQUEST_STATUS_OPEN, "OPEN");
+        String from = request.getStatus();
+        try {
+            stateMachine.assertCanAccept(from);
+        } catch (NopException e) {
+            throw illegalRequestTransition(request, from, ErpMntDaoConstants.REQUEST_STATUS_OPEN, e);
+        }
         ErpMntVisit visit = generateResponsiveVisit(request, context);
         doAccept(request, visit, context);
         return request;
@@ -36,7 +42,7 @@ public class ErpMntRequestAcceptProcessor extends AbstractErpMntRequestProcessor
     }
 
     protected void doAccept(ErpMntRequest request, ErpMntVisit visit, IServiceContext context) {
-        request.setStatus(ErpMntDaoConstants.REQUEST_STATUS_ACCEPTED);
+        request.setStatus(stateMachine.acceptTargetStatus());
         requestDao().updateEntity(request);
     }
 }
