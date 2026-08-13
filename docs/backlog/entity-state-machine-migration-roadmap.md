@@ -94,7 +94,7 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
-| M4.1 | ErpFinVoucher.docStatus 凭证过账生命周期 Bean（plan-first） | ready | `finance/state-machine.md` §Voucher | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.1 | ErpFinVoucher.docStatus 凭证过账生命周期 Bean（plan-first） | done | `finance/state-machine.md` §Voucher | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.2 | ErpFinAccountingPeriod.status 会计期间生命周期 Bean（plan-first） | ready | `finance/state-machine.md` §Period | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.3 | ErpFinReconciliation.docStatus 对账单生命周期 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.4 | ErpFinExpenseClaim.docStatus 报销单生命周期 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |

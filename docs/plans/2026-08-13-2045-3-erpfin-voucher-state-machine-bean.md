@@ -1,6 +1,6 @@
 # 2026-08-13-2045-3-erpfin-voucher-state-machine-bean 会计凭证 ErpFinVoucher.docStatus 实体级状态机 Bean（M4.1）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) 人工/owner-doc 门控**已于 2026-08-13 经人工确认解除**——本计划触及受保护会计过账核心行为（凭证 DRAFT→POSTED 过账 + reverseVoucher 红冲置 isReversed=true，全域经 `IErpFinAcctDocProvider` 聚合 + `ErpFinPostingProcessor` 引擎过账，已由起草者经 live code 实证：`ErpFinVoucherBizModel:88-103/105-116` + `ErpFinPostingProcessor:808,812`）。M4 plan-first 门控成立且为 M4 最核心保护项；该人工裁定非起草者可自主解除（project-context.md 会计保护域硬停止）。计划格式/完备性/范围/结束证据就绪 + 人工门控确认后，已转 `active` 进入实施。
 > Last Reviewed: 2026-08-13
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.1（ErpFinVoucher.docStatus，plan-first，过账核心）；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md §3.5 finance M4.1` + §5.1 死状态（ErpFinVoucher CANCELLED）
@@ -74,68 +74,68 @@
 
 ### Phase 1 - ErpFinVoucherDocumentStateMachine Bean + 注册 + 层 1 矩阵完备性测试
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/statemachine/ErpFinVoucherDocumentStateMachine.java`（新建）、`module-finance/erp-fin-service/src/main/resources/_vfs/erp/fin/beans/app-service.beans.xml`（注册）、`module-finance/erp-fin-service/src/test/java/app/erp/fin/service/statemachine/TestErpFinVoucherDocumentStateMachineMatrix.java`（新建）
 Skill: `nop-backend-dev`（Bean 形状/注册）+ `nop-testing`（层 1 表驱动测试）
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done
 
-- [ ] 新建无状态 `ErpFinVoucherDocumentStateMachine`（§2 无状态约束）：**唯一迁移边** `assertCanPost(DRAFT)`→`postVoucherTargetStatus()=POSTED`；分类 helper `isPosted(status)`（POSTED=true）+ `isTerminal(POSTED)=true`；`initialStatuses()={DRAFT}`、`terminalStatuses()={POSTED}`、`transitions()`=1 边（postVoucher）。**CANCELLED 不纳入任一集合**（intentional reserved 死状态，javadoc 标注 + §5.1 引用）。**isReversed 不建模为 docStatus 边**（javadoc 标注：reverseVoucher 在 POSTED 上置 isReversed=true，POSTED 保留，非 docStatus 迁移；isPosted helper 供其前置分类）。非法来源态（POSTED/CANCELLED post）抛 common 码携带 action/fromStatus。grep 证实不 import DAO/IBiz/IServiceContext/事务。
+- [x] 新建无状态 `ErpFinVoucherDocumentStateMachine`（§2 无状态约束）：**唯一迁移边** `assertCanPost(DRAFT)`→`postVoucherTargetStatus()=POSTED`；分类 helper `isPosted(status)`（POSTED=true）+ `isTerminal(POSTED)=true`；`initialStatuses()={DRAFT}`、`terminalStatuses()={POSTED}`、`transitions()`=1 边（postVoucher）。**CANCELLED 不纳入任一集合**（intentional reserved 死状态，javadoc 标注 + §5.1 引用）。**isReversed 不建模为 docStatus 边**（javadoc 标注：reverseVoucher 在 POSTED 上置 isReversed=true，POSTED 保留，非 docStatus 迁移；isPosted helper 供其前置分类）。非法来源态（POSTED/CANCELLED post）抛 common 码携带 action/fromStatus。grep 证实不 import DAO/IBiz/IServiceContext/事务。
   - Skill: `nop-backend-dev`
-- [ ] Decision（前置）：记录三项分类供 Phase 3 引用：(a) CANCELLED = intentional reserved 死状态（零 writer，草稿废弃经 useLogicalDelete，§5.1 已登记）；(b) isReversed = boolean 红冲标记（非 docStatus 轴，reverseVoucher 不写 docStatus）；(c) 7 生成路径 = §9.2 选项 c 初始态/生成写入（不调 assertCan*）。
+- [x] Decision（前置）：记录三项分类供 Phase 3 引用：(a) CANCELLED = intentional reserved 死状态（零 writer，草稿废弃经 useLogicalDelete，§5.1 已登记）；(b) isReversed = boolean 红冲标记（非 docStatus 轴，reverseVoucher 不写 docStatus）；(c) 7 生成路径 = §9.2 选项 c 初始态/生成写入（不调 assertCan*）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] 在非生成 `app-service.beans.xml` 以 FQN id 注册 Bean（§11.1 步骤 2）。
+- [x] 在非生成 `app-service.beans.xml` 以 FQN id 注册 Bean（§11.1 步骤 2）。
   - Skill: `nop-backend-dev`
-- [ ] Proof（层 1 矩阵完备性，表驱动，§11.1 步骤 4）：`TestErpFinVoucherDocumentStateMachineMatrix` 覆盖 post（DRAFT 合法、POSTED/CANCELLED 非法）+ 终态 POSTED 无出边 + transitions(1) + initial/terminal + **断言 CANCELLED 不在 initial/terminal/transitions 任一集合**（死状态）+ isPosted(POSTED=true, DRAFT/CANCELLED=false)。**不经 BizModel 入口**（层 1 只测 Bean）。
+- [x] Proof（层 1 矩阵完备性，表驱动，§11.1 步骤 4）：`TestErpFinVoucherDocumentStateMachineMatrix` 覆盖 post（DRAFT 合法、POSTED/CANCELLED 非法）+ 终态 POSTED 无出边 + transitions(1) + initial/terminal + **断言 CANCELLED 不在 initial/terminal/transitions 任一集合**（死状态）+ isPosted(POSTED=true, DRAFT/CANCELLED=false)。**不经 BizModel 入口**（层 1 只测 Bean）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] Bean 无状态、单边矩阵完整；CANCELLED 死状态排除；isReversed 非 docStatus 边；三项 Decision 记录在案
-- [ ] Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）
-- [ ] 层 1 矩阵测试通过；本地化编译 `mvn compile -pl module-finance/erp-fin-service -am` 通过（解除 Phase 2 接线依赖）
+- [x] Bean 无状态、单边矩阵完整；CANCELLED 死状态排除；isReversed 非 docStatus 边；三项 Decision 记录在案
+- [x] Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）
+- [x] 层 1 矩阵测试通过；本地化编译 `mvn compile -pl module-finance/erp-fin-service -am` 通过（解除 Phase 2 接线依赖）
 
 ### Phase 2 - BizModel 接线（行为保持，过账引擎/生成路径/红冲/期间耦合保留）+ 层 3 回归
 
-Status: planned
+Status: completed
 Targets: `ErpFinVoucherBizModel`（postVoucher/reverseVoucher 委托）
 Skill: `nop-backend-dev`（接线 + 错误码映射）+ `nop-testing`（回归断言）
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1 Bean 落地
 
-- [ ] `ErpFinVoucherBizModel` 注入 `ErpFinVoucherDocumentStateMachine`（`@Inject` 非 private）：postVoucher 将 `:91-92` 内联 `docStatus==DRAFT` 守卫替换为 `stateMachine.assertCanPost(from)` + 目标态写回 `postVoucherTargetStatus()`（`:96`）；reverseVoucher 将 `:108-109` `docStatus==POSTED` 守卫改委托 `stateMachine.isPosted(status)` 分类 helper；`previewReverseVoucher`（`:126`，`@BizQuery` 只读预览）的 `docStatus==POSTED` 守卫同样委托 `isPosted`（只读预览守卫，一致性，非迁移边）。common→`ERR_FIN_VOUCHER_ILLEGAL_TRANSITION` 映射（common 作 cause）+ `ARG_VOUCHER_ID`/`ARG_CURRENT_STATUS` 对外不变。**完整保留**：postVoucher 的 `assertPeriodNotLocked`（:90，凭证-期间耦合动态守卫）+ postedBy/postedAt（:97-98）；reverseVoucher 的 `assertPeriodNotLocked`（:107）+ `setIsReversed(true)`（:113）红冲单边标记 + 业财回链；乐观锁。**7 生成路径（PostingProcessor 引擎 / BudgetVoucherGenerator / CloseVoucherWriter / IntercompanyVoucherGenerator / Consolidation / CarryForward / CommitmentVoucherGenerator）不接线 Bean**（§9.2 生成写入，保留原位）。
+- [x] `ErpFinVoucherBizModel` 注入 `ErpFinVoucherDocumentStateMachine`（`@Inject` 非 private）：postVoucher 将 `:91-92` 内联 `docStatus==DRAFT` 守卫替换为 `stateMachine.assertCanPost(from)` + 目标态写回 `postVoucherTargetStatus()`（`:96`）；reverseVoucher 将 `:108-109` `docStatus==POSTED` 守卫改委托 `stateMachine.isPosted(status)` 分类 helper；`previewReverseVoucher`（`:126`，`@BizQuery` 只读预览）的 `docStatus==POSTED` 守卫同样委托 `isPosted`（只读预览守卫，一致性，非迁移边）。common→`ERR_FIN_VOUCHER_ILLEGAL_TRANSITION` 映射（common 作 cause）+ `ARG_VOUCHER_ID`/`ARG_CURRENT_STATUS` 对外不变。**完整保留**：postVoucher 的 `assertPeriodNotLocked`（:90，凭证-期间耦合动态守卫）+ postedBy/postedAt（:97-98）；reverseVoucher 的 `assertPeriodNotLocked`（:107）+ `setIsReversed(true)`（:113）红冲单边标记 + 业财回链；乐观锁。**7 生成路径（PostingProcessor 引擎 / BudgetVoucherGenerator / CloseVoucherWriter / IntercompanyVoucherGenerator / Consolidation / CarryForward / CommitmentVoucherGenerator）不接线 Bean**（§9.2 生成写入，保留原位）。
   - Skill: `nop-backend-dev`
-- [ ] Proof（层 3 回归）：`mvn test -pl module-finance/erp-fin-service -am` 全绿——重点 `TestErpFinVoucherPeriodLock`（期间锁定守卫 `ERR_FIN_VOUCHER_PERIOD_LOCKED` 不变）、`TestErpFinVoucherReversePreview`（红冲预览/反向 isReversed 语义不变）、`TestErpFinPostingExceptionWorkbench`（过账异常路径）、`TestErpFinPeriodCloseEndToEnd`/`TestErpFinAnnualClose`（期末/年结凭证生成路径 POSTED 写入不变）。证明 DRAFT→POSTED 边、reverseVoucher isReversed 语义、期间锁定、生成路径、红冲闭环均不变。
+- [x] Proof（层 3 回归）：`mvn test -pl module-finance/erp-fin-service -am` 全绿——重点 `TestErpFinVoucherPeriodLock`（期间锁定守卫 `ERR_FIN_VOUCHER_PERIOD_LOCKED` 不变）、`TestErpFinVoucherReversePreview`（红冲预览/反向 isReversed 语义不变）、`TestErpFinPostingExceptionWorkbench`（过账异常路径）、`TestErpFinPeriodCloseEndToEnd`/`TestErpFinAnnualClose`（期末/年结凭证生成路径 POSTED 写入不变）。证明 DRAFT→POSTED 边、reverseVoucher isReversed 语义、期间锁定、生成路径、红冲闭环均不变。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] postVoucher/reverseVoucher 内联固定守卫改调/委托 Bean，grep 证实两方法体内不再有内联固定 docStatus 矩阵判断（动态守卫 assertPeriodNotLocked + postedBy/postedAt + isReversed 写入除外；7 生成路径不调 assertCan*）
-- [ ] 领域错误码 + 参数对外不变（层 3 断言证实）；DRAFT→POSTED 边 + reverseVoucher isReversed + 期间锁定 + 生成路径 + 红冲闭环行为不变
-- [ ] 层 3 `mvn test -pl module-finance/erp-fin-service -am` 全绿
+- [x] postVoucher/reverseVoucher 内联固定守卫改调/委托 Bean，grep 证实两方法体内不再有内联固定 docStatus 矩阵判断（动态守卫 assertPeriodNotLocked + postedBy/postedAt + isReversed 写入除外；7 生成路径不调 assertCan*）
+- [x] 领域错误码 + 参数对外不变（层 3 断言证实）；DRAFT→POSTED 边 + reverseVoucher isReversed + 期间锁定 + 生成路径 + 红冲闭环行为不变
+- [x] 层 3 `mvn test -pl module-finance/erp-fin-service -am` 全绿
 
 ### Phase 3 - 层 2 四方对照（7 生成路径 writer 全集分类）+ 漂移 Decision + owner doc 补注
 
-Status: planned
+Status: completed
 Targets: 四方对照审计记录（写入本计划 Closure 段）；`docs/design/finance/state-machine.md`（§对象一 生成路径/isReversed 边界补注）；本计划 Closure
 Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度，重点 writer 全集分类）
 
 - Item Types: `Proof | Decision | Add`
 - Prereqs: Phase 2 接线完成
 
-- [ ] Proof（层 2 四方对照，§11.1 步骤 5，10 维度）：dict（voucher-status 3 值）↔ owner doc（§对象一）↔ Bean ↔ writer。**重点 = writer 全集分类**（须独立 grep 重核，起草者首轮漏列 CommitmentVoucherGenerator 已补入）：(a) 命名动作 postVoucher（DRAFT→POSTED，Bean assertCanPost）；(b) reverseVoucher + previewReverseVoucher（isReversed 标志操作/只读预览，docStatus==POSTED 守卫用 Bean isPosted，非迁移边）；(c) 7 生成路径（PostingProcessor:808,812 / CloseVoucherWriter:101-102 / BudgetVoucherGenerator:133,137 / ConsolidationElimination:88-89 / IntercompanyVoucherGenerator:212-214,304-305 / BudgetScenarioCarryForward:315 / CommitmentVoucherGenerator:149,217 = §9.2 初始态/生成写入，不调 assertCan*）；(d) BankStatementImporter/BankReconciliationBuilder 使用 VOUCHER_STATUS 常量但作用于 ErpFinBankStatement/ErpFinBankReconciliation head（非 ErpFinVoucher writer，排除）；(e) CANCELLED 死状态（零 writer，草稿废弃经 useLogicalDelete）；(f) isReversed 红冲边界（单边标记，无双向回链 successor）；(g) 期间耦合边界（assertPeriodNotLocked 属期间侧 M4.2）。writer 盘点含命名动作 + 生成路径 + 框架入口 + 测试 fixture。
+- [x] Proof（层 2 四方对照，§11.1 步骤 5，10 维度）：dict（voucher-status 3 值）↔ owner doc（§对象一）↔ Bean ↔ writer。**重点 = writer 全集分类**（独立 grep 重核，结论 = 恰好 7 生成路径 + 1 命名动作，无第 8 writer）：(a) 命名动作 postVoucher（DRAFT→POSTED，Bean assertCanPost + postVoucherTargetStatus 写回）；(b) reverseVoucher + previewReverseVoucher（isReversed 标志操作/只读预览，docStatus==POSTED 守卫用 Bean isPosted，非迁移边）；(c) 7 生成路径（PostingProcessor:812 / CloseVoucherWriter:102 / BudgetVoucherGenerator:137 / ConsolidationElimination:89 / IntercompanyVoucherGenerator:214,305 / BudgetScenarioCarryForward:315 / CommitmentVoucherGenerator:149,217 = §9.2 初始态/生成写入，不调 assertCan*）；(d) BankStatementImporter:72/BankReconciliationBuilder:96,129,140 使用 VOUCHER_STATUS 常量但作用于 ErpFinBankStatement/ErpFinBankReconciliation head（非 ErpFinVoucher writer，排除）；(e) CANCELLED 死状态（零 writer，草稿废弃经 useLogicalDelete）；(f) isReversed 红冲边界（单边标记，无双向回链 successor）；(g) 期间耦合边界（assertPeriodNotLocked 属期间侧 M4.2）。writer 盘点含命名动作 + 生成路径 + 框架入口 + 测试 fixture。详细四方对照记录见 §Closure。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Add owner doc：在 `docs/design/finance/state-machine.md §对象一` 补生成路径实现注记（业财自动过账/期末结转/预算/合并抵销/内部交易/预算结转/承付占用 7 生成路径直接写 POSTED/DRAFT，不经 DRAFT→POSTED 命名动作，Bean 不覆盖此 §9.2 路径）+ isReversed 非 docStatus 轴边界声明（reverseVoucher 在 POSTED 上置 isReversed=true，Bean isPosted 分类 helper）。
+- [x] Add owner doc：在 `docs/design/finance/state-machine.md §对象一` 补生成路径实现注记（§7.1：业财自动过账/期末结转/预算/合并抵销/内部交易/预算结转/承付占用 7 生成路径直接写 POSTED/DRAFT，不经 DRAFT→POSTED 命名动作，Bean 不覆盖此 §9.2 路径）+ isReversed 非 docStatus 轴边界声明（reverseVoucher 在 POSTED 上置 isReversed=true，Bean isPosted 分类 helper；CANCELLED 死状态排除）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Decision（漂移裁定，路线图规则 5）：(a) CANCELLED = intentional reserved 死状态（§5.1 已登记，Bean 不纳入任一集合，dict 值保留不删）；(b) isReversed = boolean 红冲标记（非状态轴）；(c) 7 生成路径 = §9.2 生成写入（如实反映，非 implementation drift）；(d) `reversedVoucherId` 双向回链 = owner doc 已知简化 successor（报表需求驱动）；(e) M0.2 §3.5 finance M4.1「测试：无」与实仓具名层 3 测试存在漂移——登记建议 reconcile。
+- [x] Decision（漂移裁定，路线图规则 5）：(a) CANCELLED = intentional reserved 死状态（§5.1 已登记，Bean 不纳入任一集合，dict 值保留不删）；(b) isReversed = boolean 红冲标记（非状态轴）；(c) 7 生成路径 = §9.2 生成写入（如实反映，非 implementation drift）；(d) `reversedVoucherId` 双向回链 = owner doc 已知简化 successor（报表需求驱动）；(e) M0.2 §3.5 finance M4.1「测试：无」与实仓具名层 3 测试存在漂移——登记建议 reconcile。裁定明细见 §Closure。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] 四方对照无未裁决漂移（7 生成路径分类 + CANCELLED 死状态 + isReversed 边界 + 期间耦合 + 双向回链 successor 均裁定并落入 owner doc/计划）
-- [ ] owner doc §对象一 生成路径/isReversed 补注与 dict/Bean/代码一致
+- [x] 四方对照无未裁决漂移（7 生成路径分类 + CANCELLED 死状态 + isReversed 边界 + 期间耦合 + 双向回链 successor 均裁定并落入 owner doc/计划）
+- [x] owner doc §对象一 生成路径/isReversed 补注与 dict/Bean/代码一致
 
 ## Draft Review Record
 
@@ -150,15 +150,15 @@ Exit Criteria:
 
 > 本计划含生产代码变更（1 Bean + VoucherBizModel 接线 + 测试 + owner doc 补注），Closure Gates 运行完整仓库验证。无 ORM/API/字典变更（3 值保留 + CANCELLED 死状态不删绑），Compliance 基线预期无漂移（R5=0/R11=0）。
 
-- [ ] 范围内行为完成（Bean + VoucherBizModel 接线 + 三层证据；过账引擎/7 生成路径/红冲闭环/期间耦合完整保留，§11.2 M4 (ii)/(iv)/(v)）
-- [ ] 相关文档对齐（owner doc §对象一 生成路径/isReversed 补注 + 漂移 Decision 登记；路线图 M4.1 done）
-- [ ] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` + Closure 时 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`
+- [x] 范围内行为完成（Bean + VoucherBizModel 接线 + 三层证据；过账引擎/7 生成路径/红冲闭环/期间耦合完整保留，§11.2 M4 (ii)/(iv)/(v)）
+- [x] 相关文档对齐（owner doc §对象一 §7.1 生成路径/isReversed 补注 + 漂移 Decision 登记；路线图 M4.1 done）
+- [x] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` + Closure 时 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`
 - [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)；2026-08-13 人工确认，见 Draft Review Record 门控确认记录）——M4.1 为最核心保护项，门控最严格
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -194,12 +194,44 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填充>
+Status Note: 已执行 Phase 1-3 全部交付。Bean `ErpFinVoucherDocumentStateMachine` 落地（1 迁移边 DRAFT→POSTED + isPosted/isTerminal 分类 + transitions/initial/terminal 元数据，CANCELLED 死状态排除）并注册于 `app-service.beans.xml`（FQN id）；`ErpFinVoucherBizModel` postVoucher/reverseVoucher/previewReverseVoucher 三方法接线（内联固定 docStatus 守卫 → Bean assertCanPost/isPosted 委托，common→领域码映射保持 `ERR_FIN_VOUCHER_ILLEGAL_TRANSITION` + 参数对外不变，动态守卫 assertPeriodNotLocked + postedBy/postedAt + isReversed 标记 + 业财回链 + 乐观锁原位保留）；层 1 矩阵测试 8 项 green；层 3 fin-service 全套 359 项 green（含 TestErpFinVoucherPeriodLock/ReversePreview/PostingExceptionWorkbench/PeriodCloseEndToEnd/AnnualClose 等关键回归）；owner doc §对象一 §7.1 补生成路径实现注记 + isReversed 边界声明。过账引擎/7 生成路径/红冲闭环/期间耦合完整保留（§11.2 M4 (ii)/(iv)/(v)），无 ORM/API/字典变更。
+
+### 层 2 四方对照记录（§11.1 步骤 5，10 维度 + §11.4 警示）
+
+独立 grep 命令：`rg -n "setDocStatus\(.*VOUCHER_STATUS|setDocStatus\(ErpFinConstants\.VOUCHER_STATUS" module-finance/ --type java -g '!*/test/*'`。结论：**ErpFinVoucher.docStatus 生产 writer = 1 命名动作 + 7 生成路径，无第 8 writer**。
+
+| dict（erp-fin/voucher-status） | owner doc §对象一 | Bean 元数据 | 生产 writer（独立 grep 重核） |
+|---|---|---|---|
+| DRAFT | 初始态，等待过账 | `initialStatuses()={DRAFT}` | 命名动作 postVoucher 的来源态；生成路径 ConsolidationElimination:89 写 DRAFT（§9.2 生成写入） |
+| POSTED | 终态（参与总账，红冲置 isReversed） | `terminalStatuses()={POSTED}`、`isTerminal(POSTED)=true`、`isPosted(POSTED)=true`、唯一迁移边 `postVoucher DRAFT→POSTED` | 命名动作 postVoucher:102 写回（经 Bean target）；7 生成路径直接写 POSTED（PostingProcessor:812/CloseVoucherWriter:102/BudgetVoucherGenerator:137/CommitmentVoucherGenerator:149,217/IntercompanyVoucherGenerator:214,305/BudgetScenarioCarryForward:315）§9.2 |
+| CANCELLED | 预留 dict 项（未启用迁移，草稿废弃经 logical delete） | **不纳入** initial/terminal/transitions 任一集合（死状态） | **零生产 writer**（死状态）；草稿废弃经 useLogicalDelete 承载 |
+
+writer 全集分类（10 维度核查）：
+
+- (a) **命名动作迁移边**：`postVoucher`（DRAFT→POSTED）— 唯一经 Bean `assertCanPost` + `postVoucherTargetStatus()` 的迁移边。
+- (b) **isReversed 标志操作（非 docStatus 边）**：`reverseVoucher`（置 isReversed=true，POSTED 保留）+ `previewReverseVoucher`（只读预览）— docStatus==POSTED 前置守卫委托 Bean `isPosted` 分类 helper，不产生 docStatus 迁移边。
+- (c) **7 生成路径（§9.2 选项 c，不调 assertCan*）**：PostingProcessor:812（业财自动过账引擎）/ CloseVoucherWriter:102（期末结转）/ BudgetVoucherGenerator:137（预算影子凭证）/ CommitmentVoucherGenerator:149,217（承付占用/释放）/ IntercompanyVoucherGenerator:214,305（内部交易）/ BudgetScenarioCarryForward:315（预算结转）/ ConsolidationElimination:89（合并抵销候选）。
+- (d) **排除（非 ErpFinVoucher writer）**：BankStatementImporter:72 / BankReconciliationBuilder:96,129,140 使用 VOUCHER_STATUS 常量但作用于 ErpFinBankStatement/ErpFinBankReconciliation head 实体，非 ErpFinVoucher writer。
+- (e) **CANCELLED 死状态**：零 writer，草稿废弃经 useLogicalDelete，intentional reserved（§5.1 已登记）。
+- (f) **isReversed 红冲边界**：单边标记（保留 POSTED），无 reversedVoucherId 双向回链（owner doc 已知简化 successor）。
+- (g) **期间耦合边界**：assertPeriodNotLocked 是凭证侧动态业务守卫，期间轴归 M4.2 姊妹计划，本计划保留原位。
+- (h) **框架入口（CRUD）**：契约 §9.2 选项 c 显式排除——通用 CRUD 可写 docStatus（无全局写锁），但本计划是「命名动作迁移矩阵唯一权威」声明（successor=M0.1 全局 CRUD 写锁）。
+- (i) **测试 fixture**：多个测试种子直接 setDocStatus 构造初始/任意态（TestErpFinVoucherPeriodLock 等），非生产 writer。
+- (j) **可达性**：DRAFT→POSTED 单边有向无环；CANCELLED 不可达（死状态，无入边）；POSTED 终态无出边。无死锁、无循环。
+
+### 漂移裁定（Decision，路线图规则 5）
+
+- **(a) CANCELLED = intentional reserved 死状态**：dict 有 CANCELLED 但零生产 writer；草稿废弃经 useLogicalDelete。Bean 不纳入 initial/terminal/transitions 任一集合；dict 值保留不删（未来显式作废工作流语义入口）。裁定 = 如实反映，非 implementation drift（§5.1 已登记 + owner doc §1/§3 明确）。Successor = PM 要求显式作废工作流时。
+- **(b) isReversed = boolean 红冲标记（非状态轴）**：reverseVoucher 在 POSTED 上置 isReversed=true，不写 docStatus，非迁移边。Bean 提供 isPosted 分类 helper 供其前置守卫。裁定 = 设计裁定（契约 §3 + owner doc §对象一 §2/§3）。
+- **(c) 7 生成路径 = §9.2 生成写入**：凭证生成即落目标态（POSTED/DRAFT），非用户命名动作迁移，不经 Bean assertCan*。裁定 = 如实反映，非 implementation drift（契约 §9.2 选项 c）。统一经 Bean = M0.1 successor。
+- **(d) reversedVoucherId 双向回链 = owner doc 已知简化 successor**：reverseVoucher 单边标记 isReversed，不建双向回链；红冲闭环功能完整（postingType=REVERSAL + 业财回链）。Successor = 报表需求驱动双向回链时。
+- **(e) M0.2 §3.5 finance M4.1「测试：无」与实仓漂移**：M0.2 清单标注 finance M4.1「测试：无」，但实仓存在具名层 3 集成测试（TestErpFinVoucherPeriodLock/ReversePreview/PostingExceptionWorkbench/PeriodCloseEndToEnd/AnnualClose）。登记 = 建议 M0.2 reconcile（非阻塞，属清单维护）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（新会话 `ses_003ea9048ffeRZobUN2TTZFNXN`，零信任 read-only，2026-08-14）
+- Verdict: **PASS**（无 P0/P1/P2 发现）。8 维度（A Bean 无状态/单边矩阵/CANCELLED 死状态/isReversed 非边 + B Bean 注册 FQN id + C BizModel 接线无内联矩阵/动态守卫保留/错误码映射 + D 7 生成路径未接线 + E writer全集=1 命名动作+7 生成路径无第8 writer/CANCELLED 零 writer + F 层 1 矩阵不经 BizModel + G owner doc §7.1 与代码一致 + H plan/roadmap 一致性）全部经 live grep/read 实证确认。
+- Execution Evidence: Bean `module-finance/erp-fin-service/.../statemachine/ErpFinVoucherDocumentStateMachine.java`（新建）+ `app-service.beans.xml`（注册）+ `ErpFinVoucherBizModel`（postVoucher/reverseVoucher/previewReverseVoucher 接线）+ `TestErpFinVoucherDocumentStateMachineMatrix`（层 1，8 项 green）+ owner doc `docs/design/finance/state-machine.md §7.1`（补注）。验证：`mvn test -pl module-finance/erp-fin-service -o`（层 3 全套 359 项 0 failures/errors BUILD SUCCESS）+ Closure `mvn clean install -DskipTests`（全 reactor BUILD SUCCESS）+ `bash docs/audits/nop-compliance-checker.sh`（R5=0/R11=0 基线维持）。
 
 Follow-up:
 

@@ -85,6 +85,26 @@
 - 业务单据审核联动（主要渠道，异步 post-commit）。
 - 财务员手工创建（调整凭证、期末结转凭证）。
 
+#### 7.1 实现注记：生成路径与状态机 Bean 边界（plan 2026-08-13-2045-3）
+
+凭证 `docStatus` 轴由实体级状态机 Bean `ErpFinVoucherDocumentStateMachine`（契约 `docs/architecture/entity-state-machine-bean.md`）承载。**唯一命名动作迁移边**为财务员/系统触发的 `postVoucher`：`DRAFT→POSTED`（Bean `assertCanPost(DRAFT)` + `postVoucherTargetStatus()`）。Bean 严格无状态，按类型注入，可经 Delta 同名覆盖（契约 §6）。
+
+下列 **7 条程序化生成路径**（契约 §9.2 选项 c 初始态/生成写入）直接写 `POSTED`/`DRAFT`，**不经 `postVoucher` 命名动作，也不经 Bean `assertCanPost`**——凭证生成即落目标态，属生成写入而非用户命名动作迁移，Bean 不覆盖此路径：
+
+| 生成路径 | 写入值 | 场景 |
+|----------|--------|------|
+| `ErpFinPostingProcessor.persistVoucher` | POSTED | 业财自动过账引擎（业务单据审核联动生成凭证即 POSTED） |
+| `CloseVoucherWriter` | POSTED | 期末结转（损益结转凭证） |
+| `BudgetVoucherGenerator` | POSTED | 预算影子凭证（postingType=BUDGET） |
+| `CommitmentVoucherGenerator` | POSTED | 承付占用/释放凭证（postingType=COMMITMENT） |
+| `IntercompanyVoucherGenerator` | POSTED | 内部交易配对凭证 |
+| `ErpFinBudgetScenarioCarryForwardProcessor` | POSTED | 预算方案结转凭证 |
+| `ErpFinConsolidationEliminationPostEliminationProcessor` | DRAFT | 合并抵销候选凭证（生成后经命名动作过账） |
+
+> 「生成路径统一经 Bean `assertCanPost`」属更强的 CRUD/生成路径写入锁范畴，为 M0.1 successor（契约 §9.4 + 路线图规则），不在本轴迁移范围内静默实施。
+
+**`isReversed` 非 `docStatus` 轴边界**：`reverseVoucher`（及其只读预览 `previewReverseVoucher`）在已过账凭证上置 `isReversed=true`（单边标记，保留 POSTED），**不写 `docStatus`，不产生 docStatus 迁移边**。其 `docStatus==POSTED` 前置守卫经 Bean 的 `isPosted(status)` 分类 helper 承载（一致性，非迁移边）。红冲闭环以 `isReversed` + `postingType=REVERSAL` 为契约，`reversedVoucherId` 双向回链为 successor（报表需求驱动）。`CANCELLED` 为 intentional reserved 死状态（零 writer，草稿废弃经 `useLogicalDelete`），dict 项保留为未来显式作废工作流的语义入口，Bean 不纳入 initial/terminal/transitions 任一集合。
+
 ### 8. TODO / 任务策略
 
 | 状态 | 是否产生 TODO | TODO 类型 |
