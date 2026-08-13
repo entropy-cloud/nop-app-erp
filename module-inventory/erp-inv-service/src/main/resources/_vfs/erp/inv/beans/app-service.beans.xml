@@ -149,4 +149,10 @@
           class="app.erp.inv.service.processor.ErpInvStockMoveReverseProcessor"/>
     <bean id="app.erp.inv.service.processor.ErpInvTransferOrderConfirmProcessor"
           class="app.erp.inv.service.processor.ErpInvTransferOrderConfirmProcessor"/>
+    <!-- 实体级状态机 Bean（plan 2026-08-13-2045-2）：StockMove/StockTake docStatus 轴迁移矩阵权威来源。
+         严格无状态（契约 §2），按类型注入，可经 Delta 同名 bean id 覆盖（契约 §6）。 -->
+    <bean id="app.erp.inv.service.statemachine.ErpInvStockMoveStateMachine"
+          class="app.erp.inv.service.statemachine.ErpInvStockMoveStateMachine"/>
+    <bean id="app.erp.inv.service.statemachine.ErpInvStockTakeStateMachine"
+          class="app.erp.inv.service.statemachine.ErpInvStockTakeStateMachine"/>
 </beans>

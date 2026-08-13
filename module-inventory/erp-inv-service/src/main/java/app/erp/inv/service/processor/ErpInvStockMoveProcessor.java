@@ -12,6 +12,7 @@ import app.erp.inv.dao.entity.ErpInvStockMoveLine;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.posting.InvPostingDispatcher;
+import app.erp.inv.service.statemachine.ErpInvStockMoveStateMachine;
 import app.erp.inv.service.stock.StockMoveBookkeeper;
 import app.erp.inv.service.trace.TraceChainQuery;
 import app.erp.md.biz.IErpMdMaterialBiz;
@@ -65,6 +66,9 @@ public class ErpInvStockMoveProcessor {
     @Inject
     IErpInvBatchBiz batchBiz;
 
+    @Inject
+    ErpInvStockMoveStateMachine stateMachine;
+
     public ErpInvStockMove findByRelatedBill(String relatedBillType, String relatedBillCode, IServiceContext context) {
         if (relatedBillType == null || relatedBillCode == null) {
             return null;
@@ -96,30 +100,36 @@ public class ErpInvStockMoveProcessor {
 
     protected void doConfirm(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, IServiceContext context) {
         String status = move.getDocStatus();
-        if (status == null || !Objects.equals(status, ErpInvConstants.DOC_STATUS_DRAFT)) {
-            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        try {
+            stateMachine.assertCanConfirm(status);
+        } catch (NopException e) {
+            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
                     .param(ErpInvErrors.ARG_MOVE_CODE, move.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
                     .param(ErpInvErrors.ARG_EXPECTED_STATUS, ErpInvConstants.DOC_STATUS_DRAFT);
         }
         validateAvailable(move, lines, context);
         applyReservation(move, lines, true, context);
-        move.setDocStatus(ErpInvConstants.DOC_STATUS_CONFIRMED);
+        move.setDocStatus(stateMachine.confirmTargetStatus());
         moveDao().saveOrUpdateEntity(move);
     }
 
     protected void doComplete(ErpInvStockMove move, List<ErpInvStockMoveLine> lines, Long acctSchemaId,
                               IServiceContext context) {
         String status = move.getDocStatus();
-        if (status == null || !Objects.equals(status, ErpInvConstants.DOC_STATUS_CONFIRMED)) {
-            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        try {
+            stateMachine.assertCanComplete(status);
+        } catch (NopException e) {
+            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
                     .param(ErpInvErrors.ARG_MOVE_CODE, move.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
                     .param(ErpInvErrors.ARG_EXPECTED_STATUS, "CONFIRMED");
         }
         releaseReservation(move, lines, context);
         bookkeeper.bookCompletion(move, lines, acctSchemaId);
-        move.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
+        move.setDocStatus(stateMachine.completeTargetStatus());
         moveDao().saveOrUpdateEntity(move);
         postingDispatcher.dispatchIfApplicable(move, lines);
     }
