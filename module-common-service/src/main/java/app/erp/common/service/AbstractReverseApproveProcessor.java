@@ -11,7 +11,7 @@ import java.util.Objects;
  * <p>编排骨架：{@code requireEntity → validateTransitionForReverseApprove
  * → beforeStateChange → doReverseApprove → afterStateChange → save}。
  *
- * <p>目标状态：回到 SUBMITTED，清空 approvedBy/approvedAt 审计字段。
+ * <p>目标状态：REJECTED（§16.4 反审核目标态），清空 approvedBy/approvedAt 审计字段。
  */
 public abstract class AbstractReverseApproveProcessor<T extends OrmEntity> extends AbstractProcessor<T> {
 
@@ -36,7 +36,7 @@ public abstract class AbstractReverseApproveProcessor<T extends OrmEntity> exten
     }
 
     protected void doReverseApprove(T entity, IServiceContext context) {
-        setApproveStatus(entity, submittedStatus());
+        setApproveStatus(entity, rejectedStatus());
         setApprovedBy(entity, null);
         setApprovedAt(entity, null);
     }
@@ -60,4 +60,8 @@ public abstract class AbstractReverseApproveProcessor<T extends OrmEntity> exten
     protected abstract String approvedStatus();
 
     protected abstract String submittedStatus();
+
+    protected String rejectedStatus() {
+        return "REJECTED";
+    }
 }
