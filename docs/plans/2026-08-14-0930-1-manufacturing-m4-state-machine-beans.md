@@ -1,0 +1,240 @@
+# 2026-08-14-0930-1-manufacturing-m4-state-machine-beans 制造域 ErpMfgWorkOrder/SubcontractOrder/MaterialIssue 实体级状态机 Bean（M4.35 + M4.36 + M4.37 + M4.38 + M4.39）
+
+> Plan Status: draft
+> Review Hold: §11.2 M4 (i) 人工/owner-doc 门控待确认——本计划触及受保护制造业财过账行为（approve 触发完工入库→MANUFACTURING_RECEIPT 凭证、领料→MANUFACTURING_ISSUE 凭证 + `IErpInvStockMoveBiz`、委外→SUBCONTRACT_FEE 凭证；reverseApprove/reverseCompletion 逆转上述副作用经 `MfgSubcontractReversalListener` 回写，已由起草者经 live code 实证）。M4 plan-first 门控成立；该人工裁定非起草者/审查者可自主解除（project-context.md 会计/财务保护域硬停止）。计划格式/完备性/范围/结束证据就绪，保持 `draft` 直至门控确认（同 2026-08-13-0810-1 采购 docStatus / 2026-08-13-1146-3 借款 M4 同批 batch-consistent hold；1950-1 采购 approveStatus 唯一 completed 因人工 2026-08-13 显式解除门控）。
+> Last Reviewed: 2026-08-14
+> Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.35（ErpMfgWorkOrder.docStatus）+ M4.36（ErpMfgWorkOrder.approveStatus）+ M4.37（ErpMfgSubcontractOrder.docStatus）+ M4.38（ErpMfgSubcontractOrder.approveStatus）+ M4.39（ErpMfgMaterialIssue.docStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md` MFG-1/2/6/9/10（176-182 行段）+ M4.35-39（307-311 行段）
+> Related: M3 同域先例 `2026-08-13-1430-1-erpmfg-jobcard-mrpplan-state-machine-beans.md`（M3.13 JobCard + M3.14 MrpPlan done）；M4 采购审批先例 `2026-08-13-1950-1-purchase-m4-approvestatus-state-machine-bean.md`（skeleton+facade 双路径接线范式 done）；M0.1 契约 + M1.3 批量迁移模板固化于 `docs/architecture/entity-state-machine-bean.md §11`
+> Mission: entity-state-machine
+> Work Item: M4.35 + M4.36 + M4.37 + M4.38 + M4.39
+> Audit: required
+>
+> **治理声明（§11.2 M4）**：本计划按 M4 plan-first 约束执行。WorkOrder.approve / SubcontractOrder.approve 触发受保护业财过账行为（完工入库→MANUFACTURING_RECEIPT 凭证；领料→MANUFACTURING_ISSUE 凭证 + `IErpInvStockMoveBiz`；委外→SUBCONTRACT_FEE 凭证），reverseApprove/reverseCompletion 逆转上述副作用经 `MfgSubcontractReversalListener` 回写。声明 §11.2 M4 硬约束：(i) plan-first + 受保护行为人工/owner-doc 门控；(ii) 过账时序/编排/失败回退不改，继续由 Processor + `*PostingDispatcher` + `posted` 契约管理；(iii) `posted` 不入轴；(iv) 跨域副作用保留原 Processor/`I*Biz` 路径；(v) 既有红冲/reversal-listener 回写闭环不改。
+>
+> **规则 14 bundling 声明**：M4.35-M4.39 属同一组件（同一 owner doc `docs/design/manufacturing/state-machine.md`、同一域 `erp-mfg`、同一结果表面 = 制造域三实体状态轴矩阵集中化），按指南规则 14 合并为单计划。WorkOrder 双轴（docStatus + approveStatus）在同一实体上，SubcontractOrder 双轴同理，MaterialIssue 单轴，分阶段落地。与 M4 采购先例（0810-1 docStatus / 1950-1 approveStatus 按轴分计划）不同，制造域三实体更紧密耦合且单实体范围更小，按实体而非按轴分阶段更适合 rule 14 的"同一结果表面"判定。
+
+## Current Baseline
+
+> 按 M0.2 清单 `docs/analysis/2026-08-12-entity-state-axis-inventory.md §3.5 manufacturing`（446 行段）+ 实仓核实。三实体状态轴分离如下。
+
+- **ErpMfgWorkOrder**（M4.35 docStatus + M4.36 approveStatus，混骨架+facade 双路径）：
+  - **docStatus 10 态**（`erp-mfg/work-order-status`）：DRAFT/SUBMITTED/NOT_STARTED/IN_PROCESS/STOCK_RESERVED/STOCK_PARTIAL/COMPLETED/STOPPED/CLOSED/CANCELLED。
+  - **approveStatus 4 态**（`wf/approve-status`）：UNSUBMITTED/SUBMITTED/APPROVED/REJECTED。
+  - **审批轴 writer（skeleton 路径，5 Processor）**：`ErpMfgWorkOrder{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval}Processor` 各 extends `Abstract{Xxx}Processor<ErpMfgWorkOrder>`（module-common-service 骨架），public 方法覆写编排调 facade `ErpMfgWorkOrderProcessor` 的 protected `validateTransitionForXxx` + `doXxx`。固定守卫在 facade：`validateTransitionForSubmit:171`（allow-list UNSUBMITTED/REJECTED）、`validateTransitionForWithdraw:182`、`validateTransitionForApprove:189`、`validateTransitionForReject:196`、`validateTransitionForReverseApprove:203`。目标态写入：`doSubmit:222`（approveStatus=SUBMITTED + docStatus=SUBMITTED）、`doApprove:233`（APPROVED + docStatus=NOT_STARTED）、`doReject:242`（REJECTED only，不写 docStatus）、`doReverseApprove:247`（REJECTED + 清 approvedBy/At）、`doWithdrawSubmit:228`（UNSUBMITTED）。
+  - **操作轴 writer（facade 路径，5 Processor + 2 直入）**：`ErpMfgWorkOrder{Start,Stop,Resume,Close,ReportCompletion}Processor` 各 `@Inject` facade；facade 公开直入 `checkAvailability:111`（写 docStatus=STOCK_RESERVED/STOCK_PARTIAL）、`cancel:127`（写 docStatus=CANCELLED）。固定守卫：`validateTransitionForStart:256`（allow-list STOCK_RESERVED/STOCK_PARTIAL config-gated）、`requireStatus:360`（stop/resume/reportCompletion 各调）、`CloseProcessor.validateTransitionForClose:27`（allow-list STOPPED/IN_PROCESS）。
+  - **SoD**：`doApprove:234` 比对 createdBy vs userId（`ERR_MFG_APPROVER_IS_CREATOR`）。
+  - **领域错误码**：`ERR_INVALID_STATUS_TRANSITION`（`erp.err.mfg.work-order.illegal-status-transition`，`:78-81`，参数 workOrderCode/currentStatus/expectedStatus，泛型命名覆盖双轴）。
+  - **跨域 writer**：`MrpReleaseService.releaseToWorkOrder:185-186`（docStatus=DRAFT + approveStatus=UNSUBMITTED，spawn-new-entity O-4 豁免）。
+- **ErpMfgSubcontractOrder**（M4.37 docStatus + M4.38 approveStatus，混骨架+facade）：
+  - **docStatus 8 态**（`erp-mfg/subcontract-status`）：DRAFT/SUBMITTED/APPROVED/ISSUED/RECEIVED/COMPLETED/CANCELLED/REJECTED。
+  - **approveStatus 4 态**（`wf/approve-status`）：同 WorkOrder。
+  - **审批轴 writer（skeleton 路径，5 Processor）**：镜像 WorkOrder 结构。facade `ErpMfgSubcontractOrderProcessor` protected 守卫 `validateTransitionForSubmit:235`/`Withdraw:246`/`Approve:253`/`Reject:260`/`ReverseApprove:267`。do* 写入：`doSubmit:276`（SUBMITTED + docStatus=SUBMITTED）、`doApprove:287`（APPROVED + docStatus=APPROVED）、`doReject:296`（REJECTED + docStatus=REJECTED——**与 WorkOrder 不同，Subcontract reject 写 docStatus**）、`doReverseApprove:302`（REJECTED + 清 approvedBy/At）。
+  - **操作轴 writer（facade 路径，4 Processor + 1 直入）**：`ErpMfgSubcontractOrder{IssueMaterials,ReceiveFinished,PostProcessingFee,ReverseCompletion}Processor` 各 `@Inject` facade；facade 直入 `cancel:120`（docStatus=CANCELLED）。守卫 `requireStatus:396`（issueMaterials=APPROVED/receiveFinished=ISSUED/postProcessingFee=RECEIVED）。`validateCanReverse:141`（不对称守卫 require COMPLETED + posted=true）。
+  - **领域错误码**：`ERR_SUBCONTRACT_ILLEGAL_STATUS_TRANSITION`（`erp.err.mfg.subcontract-order.illegal-status-transition`，`:233-236`）。
+  - **跨域 writer**：`MrpReleaseService.releaseToSubcontractOrder:206-207`（docStatus=APPROVED + approveStatus=APPROVED，跳过审批 O-4 豁免）；`MfgSubcontractReversalListener.rollbackSubcontractOrder:73`（docStatus=CANCELLED + posted=false，业财红冲回写）。
+- **ErpMfgMaterialIssue**（M4.39 docStatus only，本地 abstract 骨架，无审批轴）：
+  - **docStatus 4 态**（`erp-mfg/issue-status`）：DRAFT/CONFIRMED/DONE/CANCELLED。
+  - **无 approveStatus**（实体无该字段）。
+  - **writer（2 Processor，本地 abstract）**：`ErpMfgMaterialIssue{Confirm,ReverseConfirm}Processor` 各 extends 本地 `AbstractErpMfgMaterialIssueProcessor`（**非** module-common-service 骨架）。confirm 守卫 DRAFT（inline `:40-42`，非法调 `illegalTransition:69`），两步迁移 DRAFT→CONFIRMED(`:50`)→DONE(`:65`)。reverseConfirm 守卫 `validateCanReverse:70`（posted=true + DONE，否则 `ERR_MATERIAL_ISSUE_NOT_POSTED`），doReverseConfirm 写 CANCELLED + posted=false。
+  - **领域错误码**：复用 WorkOrder 的 `ERR_INVALID_STATUS_TRANSITION`（`erp.err.mfg.work-order.illegal-status-transition`，misnamed——参数用 `workOrderCode` 传 issue.code，M3 JobCard 先例同类 misnamed 已登记 watch-only）。
+- **既有 Bean 注册**：`_vfs/erp/mfg/beans/app-service.beans.xml` 已注册 3 SM Bean（Forecast/JobCard/MrpPlan M2/M3 done）。**3 M4 实体 SM Bean 未注册**（greenfield）。Bean 命名约定：双轴用 `Document`/`Approval` 后缀（WorkOrder/SubcontractOrder），单轴无后缀（MaterialIssue）。
+- **既有测试**：层 3 `TestErpMfgWorkOrderStateMachine`（371 行，10 tests，GraphQL 集成），`TestErpMfgWorkOrderEndToEnd`/`TestErpMfgCompletionPosting`/`TestErpMfgProductionVariance`/`TestErpMfgSubcontracting`/`TestErpMfgSubcontractReverse`/`TestErpMfgMaterialIssue`/`TestErpMfgMaterialIssueReversal`。层 1 矩阵测试 `TestErpMfg{Forecast,JobCard,MrpPlan}StateMachineMatrix`（3 个 M2/M3 已有）。**WorkOrder/SubcontractOrder/MaterialIssue 矩阵测试 greenfield**。
+- **common 层非法迁移码**：`ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION`（`nop.err.erp.common.illegal-status-transition`），M3 + M4 采购审批先例裁定复用。
+- **合规基线**：`docs/audits/compliance-baseline.md` R5=0、R11=0。
+- **owner doc 覆盖**：`docs/design/manufacturing/state-machine.md` §适用对象一（WorkOrder 10 态完整）+ §适用对象三（SubcontractOrder 8 态核心子集，舍 PRODUCED/RETURNED）+ §实现约定（INSPECTING 缺失→config-gated 钩子；领料 moveType 修正；齐套只读；完工凭证映射）。
+
+## Goals
+
+- 为 3 个制造实体的 5 条状态轴各落地一个实体级 `ErpMfg*StateMachine` Bean（一 Bean 对一实体一轴），承载命名动作迁移矩阵 + 终态/初始态分类 + 只读 `transitions()` 元数据，严格无状态（§2）。
+  - `ErpMfgWorkOrderDocumentStateMachine`（docStatus 轴，操作动作 + 审批联动 docStatus 写入）
+  - `ErpMfgWorkOrderApprovalStateMachine`（approveStatus 轴，5 审批动作）
+  - `ErpMfgSubcontractOrderDocumentStateMachine`（docStatus 轴）
+  - `ErpMfgSubcontractOrderApprovalStateMachine`（approveStatus 轴）
+  - `ErpMfgMaterialIssueStateMachine`（docStatus 单轴，confirm/reverseConfirm）
+- 将固定来源态/目标态判断改调 Bean：**双路径接线**——(A) skeleton 路径（审批轴 5 Processor）经 facade protected `validateTransitionForXxx` 改调 Bean；(B) facade 路径（操作轴 Processor + facade 直入）经 facade protected `validateTransitionForXxx`/`requireStatus` 改调 Bean；(C) 本地 abstract 路径（MaterialIssue）经本地 abstract protected guard 改调 Bean。**动态业务守卫与副作用保留原位**（SoD、checkAvailability 齐套校验、`*PostingDispatcher` 过账、stock move 生成/逆转、commitment-restore、workflow）。
+- 层 2 四方对照（dict ↔ `manufacturing/state-machine.md` ↔ Bean 元数据 ↔ 全部 writer 含 CRUD/MrpRelease/reversal-listener 路径）逐实体逐轴裁定。
+- 新增层 1 矩阵完备性表驱动测试（greenfield，5 个 Bean）；层 3 既有集成测试全绿回归。
+- 保持全部既有外部行为不变（错误码值/参数、审计、SoD、过账时序/失败回退、stock move 时序、MrpRelease 豁免写入、reversal-listener 回写）。
+
+## Non-Goals
+
+- 不修改任何 `model/*.orm.xml` / `model/*.api.xml` / 字典 yaml（路线图 Non-Goal）。
+- 不迁移 `posted`（§11.2 M4 (iii)）；过账编排保留在 `*PostingDispatcher` + Processor 原位。
+- 不修改共享骨架 `Abstract{SubmitForApproval,Approve,Reject,ReverseApprove,Withdraw}Processor`（module-common-service 零改动）——迁移经各域 facade/Processor 委托。
+- 不改变 `*PostingDispatcher` 过账编排、`MfgSubcontractReversalListener` 回写语义、stock move 生成/逆转时序。
+- 不重命名 WorkOrder/MaterialIssue 的泛型错误码 `ERR_INVALID_STATUS_TRANSITION`（路线图 Non-Goal「不借迁移改变既有错误码」）。
+- 不实现 JobCard 级联取消（M3.13 Deferred successor，须跨聚合 ask-first）。
+- 不迁移 SubcontractOrder PRODUCED/RETURNED 两态（owner doc Deferred successor）。
+- 不引入全局 CRUD 写锁（M0.1 successor）。
+- 不自主跳过 M4 plan-first 人工/owner-doc 门控（§11.2 M4 (i)）。
+- 不证 Delta 覆盖（M4 保护域单项，归 M5.3）。
+
+## Task Route
+
+- Type: `implementation-only change`（消费 M0.1 契约 + M0.2 清单 + M1.3 模板 §11 + M3 同域 JobCard/MrpPlan 先例 + M4 采购审批 skeleton+facade 双路径先例；落地 5 个单实体单轴 Bean + PROC/facade/local-abstract 三路径接线 + 测试 + 四方对照；不改契约/模型/公共 API/共享骨架。**M4 plan-first**——approve 触发制造业财过账/存货移动）
+- Owner Docs: `docs/architecture/entity-state-machine-bean.md`（M0.1 契约 + §11 模板 + §11.2 M4 变体 + §1 双轴约定）、`docs/design/manufacturing/state-machine.md`（§WorkOrder + §Subcontract + §实现约定）、`docs/design/domain-design-guidelines.md`（§16.4 反审核目标态权威）、`docs/analysis/2026-08-12-entity-state-axis-inventory.md`（MFG-1/2/6/9/10）、`docs/architecture/processor-extension-pattern.md`、`docs/skills/state-machine-business-review-prompt.md`、`docs/plans/2026-08-13-1430-1-erpmfg-jobcard-mrpplan-state-machine-beans.md`（M3 同域先例）、`docs/plans/2026-08-13-1950-1-purchase-m4-approvestatus-state-machine-bean.md`（M4 skeleton+facade 双路径先例）
+- Skill Selection Basis: 路线图 M4.35-39 指定 `nop-backend-dev` + `nop-testing`。`nop-backend-dev` 匹配「Processor/facade 接线、Bean 注册、`@Inject` 非 private、跨实体调用边界、错误码、事务边界、SoD、过账副作用保留、产品化可定制性自检」；`nop-testing` 匹配「矩阵表驱动测试 + 既有集成测试回归」。`state-machine-business-review-prompt.md` 匹配层 2 四方对照。必需输入均已就绪。
+
+## Infrastructure And Config Prereqs
+
+- **M4 plan-first 人工/owner-doc 门控（阻塞前置，§11.2 M4 (i)）**：本计划触及受保护制造业财过账行为（approve 触发完工入库/领料出库/委外过账 + reverseApprove/reverseCompletion 逆转上述副作用经 `MfgSubcontractReversalListener` 回写）。在人工/owner-doc 确认「以行为保持的矩阵集中化方式迁移此 5 轴、过账/stock move/reversal-listener 路径完整保留」可接受前为阻塞前置。
+- 无端口/环境变量/CORS/密钥/.env/外部服务依赖。无数据迁移。
+
+## Execution Plan
+
+### Phase 1 - ErpMfgWorkOrder docStatus + approveStatus Bean（M4.35 + M4.36）
+
+Status: planned
+Targets: `module-manufacturing/erp-mfg-service/src/main/java/app/erp/mfg/service/statemachine/ErpMfgWorkOrder{Document,Approval}StateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpMfgWorkOrder{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval}Processor.java`、`.../processor/ErpMfgWorkOrder{Start,Stop,Resume,Close,ReportCompletion}Processor.java`、`.../processor/ErpMfgWorkOrderProcessor.java`、`.../test/.../statemachine/TestErpMfgWorkOrder{Document,Approval}StateMachineMatrix.java`
+Skill: `nop-backend-dev` + `nop-testing`
+
+- Item Types: `Add | Decision | Proof`
+- Prereqs: M1.3 done（已满足）
+
+- [ ] `Decision`（reverseApprove 目标态 + docStatus 联动确认 + wiring 路径分类，复用 M4 采购先例）：(A) 核实 WorkOrder `doReverseApprove:247` 目标态 = REJECTED（实仓已确认）。(B) 逐动作 wiring 路径核实：审批 5 动作经 skeleton→facade protected `validateTransitionForXxx`；操作 5 动作 + checkAvailability/cancel 经 facade 路径。(C) docStatus 联动裁决：WorkOrder `doSubmit` 同时写 approveStatus=SUBMITTED + docStatus=SUBMITTED，`doApprove` 同时写 approveStatus=APPROVED + docStatus=NOT_STARTED——Bean 按**单轴**建模（approveStatus Bean 不含 docStatus 写入；docStatus Bean 不含 approveStatus 写入），联动写入保留在 facade `doXxx` 原位（§9.2 选项 c 联动写入不在 Bean 范围）。
+  - Skill: `state-machine-business-review-prompt.md`
+- [ ] `Add`：落地 `ErpMfgWorkOrderApprovalStateMachine` Bean——`assertCanSubmit/Approve/Reject/ReverseApprove/Withdraw(String status)` + `*TargetStatus()`（reverseApprove=REJECTED）+ `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`（6 边：submit×2 + approve + reject + reverseApprove + withdraw）。严格无状态。命名带 `Approval` 后缀。
+  - Skill: `nop-backend-dev`
+- [ ] `Add`：落地 `ErpMfgWorkOrderDocumentStateMachine` Bean——docStatus 操作动作迁移矩阵（submit→SUBMITTED、approve→NOT_STARTED、checkAvailability→STOCK_RESERVED/STOCK_PARTIAL、start→IN_PROCESS、stop→STOPPED、resume→IN_PROCESS、close→CLOSED、reportCompletion→COMPLETED、cancel→CANCELLED）+ `assertCanXxx` + `*TargetStatus()` + `transitions()` + 终态={COMPLETED, CLOSED, CANCELLED}。命名带 `Document` 后缀。
+  - Skill: `nop-backend-dev`
+- [ ] `Add`：在 `_vfs/erp/mfg/beans/app-service.beans.xml` 注册 2 Bean（5 实体轴 Bean 一并注册）。
+  - Skill: `nop-backend-dev`
+- [ ] `Decision | Add`（接线策略）：(A) 审批轴 facade `validateTransitionFor{Submit,Withdraw,Approve,Reject,ReverseApprove}` 改调 `ErpMfgWorkOrderApprovalStateMachine.assertCanXxx`（try/catch common 码 → `illegalTransition` 领域码 `ERR_INVALID_STATUS_TRANSITION`）；目标态经覆写 `submittedStatus`/`approvedStatus`/`rejectedStatus`/`unsubmittedStatus` getter 委托 Bean `*TargetStatus()`。(B) 操作轴 facade `validateTransitionForStart`/`requireStatus`/`CloseProcessor.validateTransitionForClose` 改调 `ErpMfgWorkOrderDocumentStateMachine.assertCanXxx`（try/catch common 码 → 领域码）。(C) SoD + checkAvailability 齐套校验 + `*PostingDispatcher` 过账 + stock move 保留原位。各 Processor/facade 注入对应 `@Inject ErpMfgWorkOrder*StateMachine`（非 private）。
+  - Skill: `nop-backend-dev`
+- [ ] `Proof`：层 1 矩阵完备性（greenfield 表驱动）——(a) 无重复/冲突边；(b) 各 `assertCanXxx` 合法来源态通过、非法来源态抛 common 码；(c) `transitions()` 与显式方法语义一致；(d) 初始/终态集核实。
+  - Skill: `nop-testing`
+- [ ] `Proof`：层 2 四方对照——dict `erp-mfg/work-order-status` + `wf/approve-status` ↔ `manufacturing/state-machine.md` §WorkOrder ↔ Bean 元数据 ↔ 全部 writer（10+5 Processor live + MrpRelease spawn + CRUD 路径排除）。
+  - Skill: `state-machine-business-review-prompt.md`
+
+Exit Criteria:
+
+- [ ] 2 WorkOrder Bean 存在/注册/无状态；审批+操作 Processor/facade 委托 Bean，内联守卫已移除（动态 hook 除外）。
+- [ ] WorkOrder 层 1 矩阵测试本地全绿。
+
+### Phase 2 - ErpMfgSubcontractOrder docStatus + approveStatus Bean（M4.37 + M4.38）
+
+Status: planned
+Targets: `.../statemachine/ErpMfgSubcontractOrder{Document,Approval}StateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpMfgSubcontractOrder{...}Processor.java`、`.../processor/ErpMfgSubcontractOrderProcessor.java`、`.../test/.../statemachine/TestErpMfgSubcontractOrder{Document,Approval}StateMachineMatrix.java`
+Skill: `nop-backend-dev` + `nop-testing`
+
+- Item Types: `Add | Decision | Proof`
+- Prereqs: Phase 1（双轴 Bean 模式 + wiring 范式已固化）
+
+- [ ] `Decision`（Subcontract 独有差异裁决）：(A) Subcontract reject **同时写 docStatus=REJECTED**（与 WorkOrder 不同，WorkOrder reject 不写 docStatus）——docStatus Bean 须含 reject→REJECTED 边，审批 Bean 不含。(B) `validateCanReverse` 不对称守卫（require COMPLETED + posted=true）保留原位（动态业务守卫，含 posted 判定，非固定状态迁移边）。(C) MrpRelease spawn（docStatus=APPROVED + approveStatus=APPROVED，跳过审批）= O-4 豁免，Bean 不守卫此路径（§9.2 选项 c）。(D) `MfgSubcontractReversalListener` 回写（docStatus=CANCELLED + posted=false）= 业财红冲路径，Bean 不守卫。
+  - Skill: `state-machine-business-review-prompt.md`
+- [ ] `Add`：落地 `ErpMfgSubcontractOrderApprovalStateMachine`（同 WorkOrder 审批轴结构，reverseApprove=REJECTED）+ `ErpMfgSubcontractOrderDocumentStateMachine`（docStatus 操作动作矩阵：submit→SUBMITTED、approve→APPROVED、reject→REJECTED、issueMaterials→ISSUED、receiveFinished→RECEIVED、postProcessingFee→COMPLETED、reverseCompletion→CANCELLED、cancel→CANCELLED）。注册 2 Bean。
+  - Skill: `nop-backend-dev`
+- [ ] `Decision | Add`（接线同 Phase 1 范式分化）：审批轴经 skeleton→facade `validateTransitionForXxx` 改调 ApprovalStateMachine；操作轴经 facade `requireStatus` 改调 DocumentStateMachine。Subcontract reject 联动写 docStatus=REJECTED 保留在 facade `doReject:296` 原位。`validateCanReverse` 保留原位。注册 Bean 注入。
+  - Skill: `nop-backend-dev`
+- [ ] `Proof`：层 1 矩阵完备性（2 Bean 独立测试）。
+  - Skill: `nop-testing`
+- [ ] `Proof`：层 2 四方对照——dict `erp-mfg/subcontract-status` + `wf/approve-status` ↔ owner doc §Subcontract ↔ Bean ↔ 全部 writer（5+4 Processor + MrpRelease + MfgSubcontractReversalListener）。
+  - Skill: `state-machine-business-review-prompt.md`
+
+Exit Criteria:
+
+- [ ] 2 Subcontract Bean 存在/注册/无状态；Processor/facade 委托 Bean。
+- [ ] Subcontract 层 1 矩阵测试本地全绿。
+
+### Phase 3 - ErpMfgMaterialIssue docStatus Bean（M4.39）
+
+Status: planned
+Targets: `.../statemachine/ErpMfgMaterialIssueStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/AbstractErpMfgMaterialIssueProcessor.java`、`.../processor/ErpMfgMaterialIssue{Confirm,ReverseConfirm}Processor.java`、`.../test/.../statemachine/TestErpMfgMaterialIssueStateMachineMatrix.java`
+Skill: `nop-backend-dev` + `nop-testing`
+
+- Item Types: `Add | Decision | Proof`
+- Prereqs: Phase 1-2（双轴模式已固化；MaterialIssue 为单轴简化变体）
+
+- [ ] `Decision`（MaterialIssue 独有差异裁决）：(A) 本地 abstract `AbstractErpMfgMaterialIssueProcessor` **非** module-common-service 骨架——接线经本地 abstract protected guard 改调 Bean（同 M3 Request 先例的 abstract 注入范式）。(B) confirm 两步迁移 DRAFT→CONFIRMED→DONE 经单动作 `confirm` 触发（中间态 CONFIRMED 瞬态）——Bean 矩阵按命名动作建模：confirm(DRAFT→DONE)，CONFIRMED 为瞬态不暴露为独立动作边（或 Decision 裁定是否建模两步边）。(C) `validateCanReverse` 不对称守卫（require posted=true + DONE）保留原位。(D) 错误码 misnamed（`erp.err.mfg.work-order.illegal-status-transition` 复用于 MaterialIssue）保持不变（路线图 Non-Goal）。
+  - Skill: `state-machine-business-review-prompt.md`
+- [ ] `Add`：落地 `ErpMfgMaterialIssueStateMachine`（单轴 docStatus，4 态，confirm/reverseConfirm 动作矩阵：confirm DRAFT→DONE、reverseConfirm DONE→CANCELLED）+ `assertCanConfirm`/`assertCanReverseConfirm` + `*TargetStatus()` + `transitions()` + 终态={DONE, CANCELLED}。注册 1 Bean。
+  - Skill: `nop-backend-dev`
+- [ ] `Add`（接线）：本地 abstract `AbstractErpMfgMaterialIssueProcessor` 注入 `@Inject ErpMfgMaterialIssueStateMachine`（非 private），`validateTransition`/`illegalTransition` 改调 Bean `assertCanConfirm`（confirm 路径）；`validateCanReverse` 保留 posted 守卫原位 + 增 Bean `assertCanReverseConfirm` 状态守卫。`applyIssueResult`/`doReverseConfirm` 目标态改调 Bean `*TargetStatus()`。
+  - Skill: `nop-backend-dev`
+- [ ] `Proof`：层 1 矩阵完备性 + 层 2 四方对照（dict `erp-mfg/issue-status` ↔ owner doc ↔ Bean ↔ 全部 writer）。
+  - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
+
+Exit Criteria:
+
+- [ ] MaterialIssue Bean 存在/注册/无状态；本地 abstract + Processor 委托 Bean。
+- [ ] MaterialIssue 层 1 矩阵测试本地全绿。
+
+### Phase 4 - 层 3 既有命名动作回归
+
+Status: planned
+Targets: `module-manufacturing/erp-mfg-service/src/test/`（既有集成测试，零新建）
+Skill: `nop-testing`
+
+- Item Types: `Proof`
+- Prereqs: Phase 1-3（三实体 5 轴 Bean + 接线已落地）
+
+- [ ] `Proof`：层 3 既有命名动作回归——复用既有集成测试基线（`TestErpMfgWorkOrderStateMachine`/`TestErpMfgWorkOrderEndToEnd`/`TestErpMfgCompletionPosting`/`TestErpMfgProductionVariance`/`TestErpMfgSubcontracting`/`TestErpMfgSubcontractReverse`/`TestErpMfgMaterialIssue`/`TestErpMfgMaterialIssueReversal`），证明 Processor 写回、审计 fromStatus/toStatus、SoD、领域错误码 + 参数、过账 dispatcher/stock move/MfgSubcontractReversalListener 副作用时序不变。本地 `mvn test -pl module-manufacturing/erp-mfg-service -am` 全绿。
+  - Skill: `nop-testing`
+- [ ] `Proof`：五轴一致性复核——5 Bean 命名（Document/Approval/无后缀）/注册（同文件）/无状态/元数据形状一致；三路径接线范式（skeleton/facade/local-abstract）可追溯。
+  - Skill: `nop-testing`
+
+Exit Criteria:
+
+- [ ] 层 3 既有集成测试全绿（零行为回归）。
+
+## Draft Review Record
+
+- Independent draft review iteration 1: `accept` (`ses_003da7a3dffeyEn6DSDBHjdfaJ`) — 零信任实仓核实全部 baseline 声明（WorkOrder/Subcontract/MaterialIssue facade + Processor + abstract + 错误码 + Bean 注册 + 测试 + §11.2 M4 治理 + Deferred 诚实性均 pass）。无 BLOCKER / MAJOR。3 MINOR 已修正：(1) TestErpMfgWorkOrderStateMachine test count 11→10；(2) ERR_INVALID_STATUS_TRANSITION 行号 `:78-82`→`:78-81`；(3) 规则 14 bundling 声明补充与采购先例按轴分计划的差异说明。
+- Independent draft review iteration 2 (mission-driver): `acceptable as draft, held for M4 gate`（四维复核：format/completeness/scope/closure + 门控现态）。零 BLOCKER / 零 MAJOR / 零需就地修改项。(1) 格式合规——必需段全在（Current Baseline/Goals/Non-Goals/Task Route/Infrastructure And Config Prereqs/4 Phases/Draft Review Record/Closure Gates/Deferred But Adjudicated/Closure），字段名正确，4 阶段 Phase 结构有效（Status/Targets/Skill/Item Types/Prereqs/checklist/Exit Criteria），Item Types 用合法集（Add/Decision/Proof）；(2) 完备性——各阶段 Exit Criteria 清晰可测（Bean 无状态+注册+层 1 矩阵绿、层 3 集成测试绿），Execution Plan 覆盖全部 checklist（5 轴 Bean + skeleton/facade/local-abstract 三路径接线 + 层 1/2/3 证明）；(3) 范围——rule 14 bundling 合理（同 owner doc `manufacturing/state-machine.md` + 同域 erp-mfg + 同结果表面=三实体状态轴矩阵集中化），Non-Goals 显式排除 posted/过账编排/共享骨架/reversal-listener/stock move/ORM/字典/API/错误码重命名/JobCard 级联/PRODUCED·RETURNED 两态/Delta(M5.3)/CRUD 写锁，无 scope creep；(4) 结束证据——Closure Gates 定义验证命令（`mvn test -pl module-manufacturing/erp-mfg-service -am` + `mvn clean install -DskipTests` + compliance checker）+ M4 门控确认项 + 独立子代理审计 + evidence-in-file。load-bearing baseline 抽查：11 WorkOrder Processor（SubmitForApproval/Approve/Reject/ReverseApprove/WithdrawApproval/Start/Stop/Resume/Close/ReportCompletion）+ facade `ErpMfgWorkOrderProcessor` + beans.xml 物理存在 ✓。**M4 plan-first 人工/owner-doc 门控 = 唯一阻塞**，属 review 时无法自主解除的「missing upstream decision」（触及制造业财过账/存货移动保护行为，project-context.md「AI 阻塞条件」会计/财务保护域硬停止 + ai-autonomy-policy.md plan-first）。跨计划复核：0810-1 采购 docStatus（6 轮 mission-driver 全 `draft`+Review Hold）+ 1146-3 借款（5 轮全 `draft`+Review Hold）+ 1950-1 采购 approveStatus（唯一 completed，因人工 2026-08-13 显式解除门控）证实为 batch-consistent escape-hatch。Draft Review Record 无门控确认记录→门控确为 pending。fix-forward 转义口适用：保持 `Plan Status: draft` + `> Review Hold:`（已添加 line 4 近 Plan Status），无需其他修改。Minor 保留给结束审计：Phase 3 Decision(B) MaterialIssue confirm 两步迁移 DRAFT→CONFIRMED→DONE 建模（单边 DRAFT→DONE vs 两边）——baseline 已实证 CONFIRMED 为持久 dict 态（`:50` 写入），executor 须据实裁定；CONFIRMED 既有 writer 故 Bean 不得判其为死状态。
+
+## Closure Gates
+
+- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
+- [ ] 范围内行为完成（三实体 5 轴 Bean + 三路径接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [ ] 相关文档对齐（roadmap M4.35-39 → done）
+- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-manufacturing/erp-mfg-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` 全 19 规则 actual ≤ baseline
+- [ ] 无范围内项目降级为 deferred/follow-up
+- [ ] 独立草案审查已完成并记录
+- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [ ] 结束证据存在于文件中
+
+## Deferred But Adjudicated
+
+### reverseApprove 共享骨架 §16.4 合规化
+
+- Classification: `confirmed live defect moved to explicit successor ownership`
+- Why Not Blocking Closure: 共享骨架 `AbstractReverseApproveProcessor.doReverseApprove` 返回 SUBMITTED，违反 `domain-design-guidelines.md §16.4`。WorkOrder/SubcontractOrder facade `doReverseApprove` 均已覆写=REJECTED（零行为回归）。与 M3/M4 采购审批计划同源 successor。
+- Successor Required: yes（触发条件 = 独立「reverseApprove 骨架 §16.4 合规化」plan）
+
+### MaterialIssue 错误码误命名（work-order → material-issue）
+
+- Classification: `watch-only residual (intentional legacy)`
+- Why Not Blocking Closure: MaterialIssue 复用 WorkOrder 的 `ERR_INVALID_STATUS_TRANSITION`（码 `erp.err.mfg.work-order.illegal-status-transition`）。路线图 Non-Goal「不借迁移改变既有错误码」。与 M3.13 JobCard 同类 misnamed 同源 successor。
+- Successor Required: yes（触发条件 = PM/owner 要求 MaterialIssue 错误码语义对齐时）
+
+### SubcontractOrder PRODUCED/RETURNED 两态
+
+- Classification: `intentional reserved (dead state)`
+- Why Not Blocking Closure: owner doc §Subcontract Deferred：舍 PRODUCED（Portal 协同 successor）与 RETURNED（退货 successor）。Bean 不编码两态。
+- Successor Required: yes（触发条件 = 委外协同/退货功能落地时）
+
+### Delta 覆盖运行时实证
+
+- Classification: `optimization candidate`
+- Why Not Blocking Closure: M4 保护域单项 Delta 可选；归 M5.3。
+- Successor Required: yes（触发条件 = M5.3 最终跨域 Delta 覆盖回归）
+
+### 全局 CRUD 写锁
+
+- Classification: `watch-only residual`
+- Why Not Blocking Closure: M0.1 §9 裁定选项 (c) 显式排除；更强写锁须改 ORM/xmeta（保护区 ask-first）。
+- Successor Required: no（仅当产品要求全局强制矩阵写锁时重开）
+
+## Closure
+
+Status Note: <why the plan can close>
+
+Closure Audit Evidence:
+
+- Auditor / Agent: <independent auditor or independent subagent>
+- Evidence: <task id / log link / walkthrough record>
+
+Follow-up:
+
+- <无非阻塞跟进；Deferred 项均为既定 successor>
