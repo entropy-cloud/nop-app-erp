@@ -29,6 +29,10 @@ Do not keep one-off migration scripts, repo-specific cleanup scripts, or tools t
 - `check-oversized-code-files.mjs`: flag tracked code files that exceed line thresholds
 - `check-docs-garbled.mjs`: scan docs for suspicious Unicode and mojibake
 - `parse-nop-errors.mjs`: parse a Nop server log, dedupe & summarize structured errors (`errorCode` + `@_loc` file:line). See `docs/lessons/05-nop-e2e-failure-log-first-diagnosis.md`. Run: `pnpm parse:nop-errors -- <logfile> [--recent] [--grep PAT]`
+- `check-bigint-id-types.mjs`: BIGINT 主键/外键 `stdDataType` 检查与批量修改工具。规则：BIGINT 主键/外键必须显式 `stdDataType="string"`（JS long 精度问题，见 nop-entropy `docs-for-ai/02-core-guides/orm-model-design.md` 主键设计节）。
+  - `node tools/check-bigint-id-types.mjs scan [root]` — 盘点所有 module-* / model 下 orm.xml 的 PK/FK 列（含 to-one join 交叉校验，0 告警即查找完整）
+  - `node tools/check-bigint-id-types.mjs dry-run [root]` — 生成修改副本到 `_tmp/bigint-id-string-fix/`，xmllint 校验 XML、重扫确认零残留与幂等，不修改源文件
+  - `node tools/check-bigint-id-types.mjs apply --yes` — 审核副本后回写源文件（ORM 增量重生成 + 全量验证后方可提交）
 
 These are lightweight, generic, and reasonable to keep enabled by default.
 

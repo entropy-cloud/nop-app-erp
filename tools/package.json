@@ -12,6 +12,8 @@
     "check:duplicates": "node ./check-duplicates.mjs",
     "audit:suspects": "node ./audit/discover-audit-suspects.mjs",
     "parse:nop-errors": "node ./parse-nop-errors.mjs",
+    "bigint:scan": "node ./check-bigint-id-types.mjs scan",
+    "bigint:dry-run": "node ./check-bigint-id-types.mjs dry-run",
     "stats": "node ./code-stats.mjs",
     "analyze:buttons": "node ./analyze-view-buttons.mjs",
     "format": "prettier --write .",
