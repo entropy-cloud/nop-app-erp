@@ -147,9 +147,9 @@
 | M4.51 | ErpAstMerge.approveStatus 合并审批轴 Bean（plan-first） | todo | `assets/state-machine.md` | M1.3 + M4.50 | `nop-backend-dev` + `nop-testing` |
 | M4.52 | ErpAstInventory.status 资产盘点生命周期 Bean（plan-first） | todo | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.53 | ErpAstMaintenance.status 资产维护生命周期 Bean（plan-first） | todo | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.54 | ErpMntVisit.status 维护访问生命周期 Bean（plan-first） | todo | `maintenance/state-machine.md` §Visit | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.55 | ErpMntSparePartUsage.docStatus 备件消耗单据生命周期 Bean（plan-first） | todo | `maintenance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.56 | ErpMntSparePartUsage.approveStatus 备件审批轴 Bean（plan-first） | todo | `maintenance/state-machine.md` | M1.3 + M4.55 | `nop-backend-dev` + `nop-testing` |
+| M4.54 | ErpMntVisit.status 维护访问生命周期 Bean（plan-first） | done | `maintenance/state-machine.md` §Visit | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.55 | ErpMntSparePartUsage.docStatus 备件消耗单据生命周期 Bean（plan-first） | done | `maintenance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.56 | ErpMntSparePartUsage.approveStatus 备件审批轴 Bean（plan-first） | done | `maintenance/state-machine.md` | M1.3 + M4.55 | `nop-backend-dev` + `nop-testing` |
 | M4.57 | ErpLogShipment.status 发运单生命周期 Bean（plan-first） | todo | `logistics/state-machine.md` §Shipment | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.58 | ErpQaInspection.docStatus 质检单生命周期 Bean（plan-first） | done | `quality/state-machine.md` §Inspection | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.59 | ErpQaInspection.approveStatus 质检审批轴 Bean（plan-first） | done | `quality/state-machine.md` §Inspection | M1.3 + M4.58 | `nop-backend-dev` + `nop-testing` |
