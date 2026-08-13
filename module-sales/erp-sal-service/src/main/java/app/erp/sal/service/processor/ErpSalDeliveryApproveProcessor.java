@@ -4,6 +4,7 @@ import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.sal.service.statemachine.ErpSalDeliveryApprovalStateMachine;
 import app.erp.common.service.AbstractApproveProcessor;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.exceptions.ErrorCode;
@@ -13,14 +14,18 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalDelivery approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2).
+ * ErpSalDelivery approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2；审批轴 Bean 接线 plan 2026-08-13-1950-2 M4.22)。
  * approve 触发出库移动单 + 过账 + 订单发货状态回写（facade doApprove 流程），需 custom public override
- * 调 facade 各 step helper（对齐 R5.1 ErpPurReceiveApproveProcessor 模式 B）。
+ * 调 facade 各 step helper（对齐 R5.1 ErpPurReceiveApproveProcessor 模式 B）。固定来源态/目标态判断委托
+ * {@link ErpSalDeliveryApprovalStateMachine}；triggerOutgoingMove + posting + SoD 保留原位。
  */
 public class ErpSalDeliveryApproveProcessor extends AbstractApproveProcessor<ErpSalDelivery> {
 
     @Inject
     ErpSalDeliveryProcessor processor;
+
+    @Inject
+    ErpSalDeliveryApprovalStateMachine stateMachine;
 
     @Override
     public ErpSalDelivery approve(String id, IServiceContext context) {
@@ -65,6 +70,15 @@ public class ErpSalDeliveryApproveProcessor extends AbstractApproveProcessor<Erp
     }
 
     @Override
+    protected void validateTransitionForApprove(ErpSalDelivery entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpSalDelivery entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpSalConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -102,7 +116,7 @@ public class ErpSalDeliveryApproveProcessor extends AbstractApproveProcessor<Erp
 
     @Override
     protected String approvedStatus() {
-        return ErpSalConstants.APPROVE_STATUS_APPROVED;
+        return stateMachine.approveTargetStatus();
     }
 
     @Override

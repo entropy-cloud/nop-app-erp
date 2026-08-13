@@ -3,6 +3,7 @@ package app.erp.sal.service.processor;
 import app.erp.sal.dao.entity.ErpSalReceipt;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.sal.service.statemachine.ErpSalReceiptApprovalStateMachine;
 import app.erp.common.service.AbstractApproveProcessor;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.exceptions.ErrorCode;
@@ -12,14 +13,18 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalReceipt approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2).
+ * ErpSalReceipt approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2；审批轴 Bean 接线 plan 2026-08-13-1950-2 M4.26)。
  * approve 触发收款过账（facade doPosting）后 reload 设 APPROVED + applyPosted，需 custom public override
- * （过账后实体引用变更）。对齐 R5.1 ErpPurReceiveApproveProcessor 模式 B。
+ * （过账后实体引用变更）。固定来源态/目标态判断委托 {@link ErpSalReceiptApprovalStateMachine}；
+ * 过账编排/核销/SoD 保留原位。
  */
 public class ErpSalReceiptApproveProcessor extends AbstractApproveProcessor<ErpSalReceipt> {
 
     @Inject
     ErpSalReceiptProcessor processor;
+
+    @Inject
+    ErpSalReceiptApprovalStateMachine stateMachine;
 
     @Override
     public ErpSalReceipt approve(String id, IServiceContext context) {
@@ -66,6 +71,15 @@ public class ErpSalReceiptApproveProcessor extends AbstractApproveProcessor<ErpS
     }
 
     @Override
+    protected void validateTransitionForApprove(ErpSalReceipt entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpSalReceipt entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpSalConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -103,7 +117,7 @@ public class ErpSalReceiptApproveProcessor extends AbstractApproveProcessor<ErpS
 
     @Override
     protected String approvedStatus() {
-        return ErpSalConstants.APPROVE_STATUS_APPROVED;
+        return stateMachine.approveTargetStatus();
     }
 
     @Override

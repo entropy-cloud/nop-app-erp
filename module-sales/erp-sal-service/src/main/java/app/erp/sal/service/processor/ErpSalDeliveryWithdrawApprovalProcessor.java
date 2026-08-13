@@ -3,6 +3,7 @@ package app.erp.sal.service.processor;
 import app.erp.sal.dao.entity.ErpSalDelivery;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.sal.service.statemachine.ErpSalDeliveryApprovalStateMachine;
 import app.erp.common.service.AbstractWithdrawApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,15 +11,18 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalDelivery withdrawApproval per-mutation Processor (plan 2026-07-30-1433-2 R5.2)。
- * 原 xbiz withdrawApproval inline-script 提取为抽象骨架 + hook override。
- * NopScriptError → NopException 语义等价：doc-cancelled→ERR_ILLEGAL_DOC_STATUS_TRANSITION，
- * invalid-status→ERR_ILLEGAL_STATUS_TRANSITION。
+ * ErpSalDelivery withdrawApproval per-mutation Processor (plan 2026-07-30-1433-2 R5.2；审批轴 Bean 接线 plan 2026-08-13-1950-2 M4.22)。
+ *
+ * <p>运行 {@link AbstractWithdrawApprovalProcessor} 骨架；固定来源态/目标态判断委托
+ * {@link ErpSalDeliveryApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）。
  */
 public class ErpSalDeliveryWithdrawApprovalProcessor extends AbstractWithdrawApprovalProcessor<ErpSalDelivery> {
 
     @Inject
     ErpSalDeliveryProcessor processor;
+
+    @Inject
+    ErpSalDeliveryApprovalStateMachine stateMachine;
 
     @Override
     protected IEntityDao<ErpSalDelivery> dao() {
@@ -45,6 +49,15 @@ public class ErpSalDeliveryWithdrawApprovalProcessor extends AbstractWithdrawApp
     }
 
     @Override
+    protected void validateTransitionForWithdraw(ErpSalDelivery entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanWithdraw(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpSalDelivery entity) {
         return entity.getApproveStatus();
     }
@@ -61,7 +74,7 @@ public class ErpSalDeliveryWithdrawApprovalProcessor extends AbstractWithdrawApp
 
     @Override
     protected String unsubmittedStatus() {
-        return ErpSalConstants.APPROVE_STATUS_UNSUBMITTED;
+        return stateMachine.withdrawTargetStatus();
     }
 
     @Override

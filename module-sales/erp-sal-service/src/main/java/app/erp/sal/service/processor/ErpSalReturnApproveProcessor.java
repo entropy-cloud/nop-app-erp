@@ -4,6 +4,7 @@ import app.erp.sal.dao.entity.ErpSalReturn;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.service.entity.ReturnRefundOrchestrator;
+import app.erp.sal.service.statemachine.ErpSalReturnApprovalStateMachine;
 import app.erp.common.service.AbstractApproveProcessor;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.exceptions.ErrorCode;
@@ -14,9 +15,9 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalReturn approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2).
+ * ErpSalReturn approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2；审批轴 Bean 接线 plan 2026-08-13-1950-2 M4.28)。
  * approve 触发反向入库移动 + flush + 过账 + 退款编排（facade doApprove 流程），需 custom public override。
- * 对齐 R5.1 ErpPurReturnApproveProcessor 模式 B。
+ * 固定来源态/目标态判断委托 {@link ErpSalReturnApprovalStateMachine}；入库 stock move + posting + 退款编排/SoD 保留原位。
  */
 public class ErpSalReturnApproveProcessor extends AbstractApproveProcessor<ErpSalReturn> {
 
@@ -28,6 +29,9 @@ public class ErpSalReturnApproveProcessor extends AbstractApproveProcessor<ErpSa
 
     @Inject
     ReturnRefundOrchestrator refundOrchestrator;
+
+    @Inject
+    ErpSalReturnApprovalStateMachine stateMachine;
 
     @Override
     public ErpSalReturn approve(String id, IServiceContext context) {
@@ -75,6 +79,15 @@ public class ErpSalReturnApproveProcessor extends AbstractApproveProcessor<ErpSa
     }
 
     @Override
+    protected void validateTransitionForApprove(ErpSalReturn entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpSalReturn entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpSalConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -112,7 +125,7 @@ public class ErpSalReturnApproveProcessor extends AbstractApproveProcessor<ErpSa
 
     @Override
     protected String approvedStatus() {
-        return ErpSalConstants.APPROVE_STATUS_APPROVED;
+        return stateMachine.approveTargetStatus();
     }
 
     @Override

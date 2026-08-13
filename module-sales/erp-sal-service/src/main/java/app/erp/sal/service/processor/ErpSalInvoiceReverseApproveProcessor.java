@@ -4,6 +4,7 @@ import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.service.posting.SalInvoicePostingDispatcher;
+import app.erp.sal.service.statemachine.ErpSalInvoiceApprovalStateMachine;
 import app.erp.common.service.AbstractReverseApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -11,9 +12,12 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalInvoice reverseApprove per-mutation Processor (plan 2026-07-30-1433-2 R5.2).
- * reverseApprove 在已过账时红冲 AR 发票过账（postingDispatcher.reverse）后 reload 设 REJECTED + 清空审计字段，
- * 需 custom public override（红冲后实体引用变更）。对齐 R5.1 ErpPurInvoiceReverseApproveProcessor 模式 B。
+ * ErpSalInvoice reverseApprove per-mutation Processor (plan 2026-07-30-1433-2 R5.2；审批轴 Bean 接线 plan 2026-08-13-1950-2 M4.24)。
+ *
+ * <p>运行 {@link AbstractReverseApproveProcessor} 骨架；固定来源态判断委托
+ * {@link ErpSalInvoiceApprovalStateMachine}。reverseApprove 在已过账时红冲 AR 发票过账（postingDispatcher.reverse）
+ * 后 reload 设 REJECTED + 清空审计字段，需 custom public override（红冲后实体引用变更）。
+ * reverseApprove 目标态=REJECTED 委托 Bean。
  */
 public class ErpSalInvoiceReverseApproveProcessor extends AbstractReverseApproveProcessor<ErpSalInvoice> {
 
@@ -22,6 +26,9 @@ public class ErpSalInvoiceReverseApproveProcessor extends AbstractReverseApprove
 
     @Inject
     SalInvoicePostingDispatcher postingDispatcher;
+
+    @Inject
+    ErpSalInvoiceApprovalStateMachine stateMachine;
 
     @Override
     public ErpSalInvoice reverseApprove(String id, IServiceContext context) {
@@ -37,7 +44,7 @@ public class ErpSalInvoiceReverseApproveProcessor extends AbstractReverseApprove
             invoice.setPostedAt(null);
             invoice.setPostedBy(null);
         }
-        setApproveStatus(invoice, ErpSalConstants.APPROVE_STATUS_REJECTED);
+        setApproveStatus(invoice, stateMachine.reverseApproveTargetStatus());
         setApprovedBy(invoice, null);
         setApprovedAt(invoice, null);
         dao().updateEntity(invoice);
@@ -61,6 +68,15 @@ public class ErpSalInvoiceReverseApproveProcessor extends AbstractReverseApprove
                 .param(ErpSalErrors.ARG_INVOICE_CODE, entity.getCode())
                 .param(ErpSalErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpSalErrors.ARG_EXPECTED_STATUS, String.join(" / ", expected));
+    }
+
+    @Override
+    protected void validateTransitionForReverseApprove(ErpSalInvoice entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanReverseApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_APPROVED);
+        }
     }
 
     @Override

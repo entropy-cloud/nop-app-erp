@@ -3,6 +3,7 @@ package app.erp.sal.service.processor;
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.sal.service.statemachine.ErpSalInvoiceApprovalStateMachine;
 import app.erp.common.service.AbstractApproveProcessor;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.exceptions.ErrorCode;
@@ -12,14 +13,18 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalInvoice approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2).
+ * ErpSalInvoice approve per-mutation Processor (plan 2026-07-30-1433-2 R5.2；审批轴 Bean 接线 plan 2026-08-13-1950-2 M4.24)。
  * approve 触发 AR 发票过账 + applyPosted + commitment-release-on-invoice-approve hook（facade approve 流程），
- * 需 custom public override（过账后实体引用变更）。对齐 R5.1 ErpPurInvoiceApproveProcessor 模式 B。
+ * 需 custom public override（过账后实体引用变更）。固定来源态/目标态判断委托
+ * {@link ErpSalInvoiceApprovalStateMachine}；过账编排/commitment-release/SoD 保留原位。
  */
 public class ErpSalInvoiceApproveProcessor extends AbstractApproveProcessor<ErpSalInvoice> {
 
     @Inject
     ErpSalInvoiceProcessor processor;
+
+    @Inject
+    ErpSalInvoiceApprovalStateMachine stateMachine;
 
     @Override
     public ErpSalInvoice approve(String id, IServiceContext context) {
@@ -68,6 +73,15 @@ public class ErpSalInvoiceApproveProcessor extends AbstractApproveProcessor<ErpS
     }
 
     @Override
+    protected void validateTransitionForApprove(ErpSalInvoice entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanApprove(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity), ErpSalConstants.APPROVE_STATUS_SUBMITTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpSalInvoice entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpSalConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -105,7 +119,7 @@ public class ErpSalInvoiceApproveProcessor extends AbstractApproveProcessor<ErpS
 
     @Override
     protected String approvedStatus() {
-        return ErpSalConstants.APPROVE_STATUS_APPROVED;
+        return stateMachine.approveTargetStatus();
     }
 
     @Override

@@ -3,6 +3,7 @@ package app.erp.sal.service.processor;
 import app.erp.sal.dao.entity.ErpSalReceipt;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.sal.service.statemachine.ErpSalReceiptApprovalStateMachine;
 import app.erp.common.service.AbstractSubmitForApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,13 +11,18 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalReceipt submitForApproval per-mutation Processor (plan 2026-07-30-1433-2 R5.2).
- * Runs the AbstractSubmitForApprovalProcessor skeleton; delegates domain-specific hooks to ErpSalReceiptProcessor.
+ * ErpSalReceipt submitForApproval per-mutation Processor (plan 2026-07-30-1433-2 R5.2；审批轴 Bean 接线 plan 2026-08-13-1950-2 M4.26)。
+ *
+ * <p>固定来源态/目标态判断委托 {@link ErpSalReceiptApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）。
+ * workflow 保留原位（submitForApproval custom override 跳过抽象骨架 maybeStartWorkflow，避免与 xbiz 双重启动 wf）。
  */
 public class ErpSalReceiptSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpSalReceipt> {
 
     @Inject
     ErpSalReceiptProcessor processor;
+
+    @Inject
+    ErpSalReceiptApprovalStateMachine stateMachine;
 
     public ErpSalReceiptSubmitForApprovalProcessor() {
         super("ErpSalReceipt");
@@ -70,6 +76,16 @@ public class ErpSalReceiptSubmitForApprovalProcessor extends AbstractSubmitForAp
     }
 
     @Override
+    protected void validateTransitionForSubmit(ErpSalReceipt entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanSubmit(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity),
+                    ErpSalConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpSalConstants.APPROVE_STATUS_REJECTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpSalReceipt entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpSalConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -92,7 +108,7 @@ public class ErpSalReceiptSubmitForApprovalProcessor extends AbstractSubmitForAp
 
     @Override
     protected String submittedStatus() {
-        return ErpSalConstants.APPROVE_STATUS_SUBMITTED;
+        return stateMachine.submitTargetStatus();
     }
 
     @Override

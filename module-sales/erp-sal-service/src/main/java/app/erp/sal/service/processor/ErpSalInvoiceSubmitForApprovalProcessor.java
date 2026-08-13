@@ -3,6 +3,7 @@ package app.erp.sal.service.processor;
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
+import app.erp.sal.service.statemachine.ErpSalInvoiceApprovalStateMachine;
 import app.erp.common.service.AbstractSubmitForApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -10,13 +11,19 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 /**
- * ErpSalInvoice submitForApproval per-mutation Processor (plan 2026-07-30-1433-2 R5.2).
- * Runs the AbstractSubmitForApprovalProcessor skeleton; delegates domain-specific hooks to ErpSalInvoiceProcessor.
+ * ErpSalInvoice submitForApproval per-mutation Processor (plan 2026-07-30-1433-2 R5.2；审批轴 Bean 接线 plan 2026-08-13-1950-2 M4.24)。
+ *
+ * <p>运行 {@link AbstractSubmitForApprovalProcessor} 骨架；固定来源态/目标态判断委托
+ * {@link ErpSalInvoiceApprovalStateMachine}（approveStatus 审批轴 Bean，契约 §4/§7）；
+ * 动态业务守卫（requireLinesNonEmpty/requireCustomerActive）保留原位。
  */
 public class ErpSalInvoiceSubmitForApprovalProcessor extends AbstractSubmitForApprovalProcessor<ErpSalInvoice> {
 
     @Inject
     ErpSalInvoiceProcessor processor;
+
+    @Inject
+    ErpSalInvoiceApprovalStateMachine stateMachine;
 
     public ErpSalInvoiceSubmitForApprovalProcessor() {
         super("ErpSalInvoice");
@@ -53,6 +60,16 @@ public class ErpSalInvoiceSubmitForApprovalProcessor extends AbstractSubmitForAp
     }
 
     @Override
+    protected void validateTransitionForSubmit(ErpSalInvoice entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanSubmit(getApproveStatus(entity));
+        } catch (NopException e) {
+            throw illegalStatusException(entity, getApproveStatus(entity),
+                    ErpSalConstants.APPROVE_STATUS_UNSUBMITTED + " / " + ErpSalConstants.APPROVE_STATUS_REJECTED);
+        }
+    }
+
+    @Override
     protected String getApproveStatus(ErpSalInvoice entity) {
         String status = entity.getApproveStatus();
         return status == null ? ErpSalConstants.APPROVE_STATUS_UNSUBMITTED : status;
@@ -75,7 +92,7 @@ public class ErpSalInvoiceSubmitForApprovalProcessor extends AbstractSubmitForAp
 
     @Override
     protected String submittedStatus() {
-        return ErpSalConstants.APPROVE_STATUS_SUBMITTED;
+        return stateMachine.submitTargetStatus();
     }
 
     @Override
