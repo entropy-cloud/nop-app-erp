@@ -7,6 +7,7 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.annualclose.AnnualCloseService;
 import app.erp.fin.service.metrics.ErpFinBusinessMetrics;
+import app.erp.fin.service.statemachine.ErpFinAccountingPeriodStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -29,6 +30,8 @@ public class ErpFinAccountingPeriodClosePeriodProcessor {
     ErpFinAccountingPeriodGenerateNextYearPeriodsProcessor generateNextYearPeriodsProcessor;
     @Inject
     AnnualCloseService annualCloseService;
+    @Inject
+    ErpFinAccountingPeriodStateMachine stateMachine;
 
     public ErpFinAccountingPeriod closePeriod(Long periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = facade.requirePeriod(periodId);
@@ -45,7 +48,11 @@ public class ErpFinAccountingPeriodClosePeriodProcessor {
 
     private ErpFinAccountingPeriod doClosePeriod(Long periodId, ErpFinAccountingPeriod period,
                                                   IServiceContext context) {
-        facade.assertPeriodStatus(period, ErpFinConstants.PERIOD_STATUS_OPEN, "结账");
+        try {
+            stateMachine.assertCanClose(period.getStatus());
+        } catch (NopException e) {
+            throw facade.mapIllegalTransition(e, period, ErpFinConstants.PERIOD_STATUS_OPEN);
+        }
 
         PeriodPreCheckReport report = preCheckProcessor.preCheck(periodId, context);
         // Allowance shortfall 是独立硬阻断——不受 auto-post-on-close 影响（bad-debt.md §期末 allowance 充足性门控）。
@@ -78,8 +85,11 @@ public class ErpFinAccountingPeriodClosePeriodProcessor {
         }
 
         // 期末凭证生成完成（期间仍 OPEN）后，状态簿记：CLOSING→CLOSED。flush 落库。
-        period.setStatus(ErpFinConstants.PERIOD_STATUS_CLOSING);
-        period.setStatus(ErpFinConstants.PERIOD_STATUS_CLOSED);
+        // 两段写经 StateMachine Bean（plan 2026-08-13-2045-1）：closeEnteringTargetStatus()=CLOSING（事务内瞬态中间态）
+        // 紧接 closeTargetStatus()=CLOSED。closePeriod 为 @BizMutation（事务包裹），任一步骤失败则整 mutation 回滚，
+        // CLOSING 不持久化（owner doc §对象二「CLOSING→OPEN 结账失败」= 事务回滚语义，非显式 writer）。
+        period.setStatus(stateMachine.closeEnteringTargetStatus());
+        period.setStatus(stateMachine.closeTargetStatus());
         period.setClosedAt(CoreMetrics.currentTimestamp());
         period.setClosedBy(facade.currentUserId());
         facade.orm().flushSession();

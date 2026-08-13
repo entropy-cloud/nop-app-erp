@@ -571,13 +571,21 @@ public class ErpFinAccountingPeriodProcessor {
         return period;
     }
 
-    protected void assertPeriodStatus(ErpFinAccountingPeriod period, String expected, String action) {
-        if (!Objects.equals(period.getStatus(), expected)) {
-            throw new NopException(ErpFinErrors.ERR_PERIOD_ILLEGAL_TRANSITION)
-                    .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode())
-                    .param(ErpFinErrors.ARG_CURRENT_PERIOD_STATUS, period.getStatus())
-                    .param(ErpFinErrors.ARG_EXPECTED_PERIOD_STATUS, expected);
-        }
+    /**
+     * 将 StateMachine Bean 抛出的 common 层非法迁移异常映射为领域码 {@code ERR_PERIOD_ILLEGAL_TRANSITION}
+     * （契约 §7：Bean 报告非法边 + 拒绝元数据；Processor 保留领域 ErrorCode + 实体编号/上下文参数；common 码作 cause）。
+     *
+     * <p>状态矩阵守卫已迁移至 {@code ErpFinAccountingPeriodStateMachine}（plan 2026-08-13-2045-1）：per-mutation
+     * Processor 调 {@code stateMachine.assertCan<Action>}，捕获 common 层非法迁移异常后经此方法映射为领域码。
+     * 此方法不判定合法性（矩阵权威在 Bean），仅组装领域异常的 3 个参数（{@code ARG_PERIOD_CODE}/
+     * {@code ARG_CURRENT_PERIOD_STATUS}/{@code ARG_EXPECTED_PERIOD_STATUS}），保持对外错误码 + 参数契约不变。
+     */
+    protected NopException mapIllegalTransition(NopException beanException,
+                                                ErpFinAccountingPeriod period, String expected) {
+        return new NopException(ErpFinErrors.ERR_PERIOD_ILLEGAL_TRANSITION, beanException)
+                .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode())
+                .param(ErpFinErrors.ARG_CURRENT_PERIOD_STATUS, period.getStatus())
+                .param(ErpFinErrors.ARG_EXPECTED_PERIOD_STATUS, expected);
     }
 
     protected ErpFinAccountingPeriodStatus findOrCreatePeriodStatus(ErpFinAccountingPeriod period) {

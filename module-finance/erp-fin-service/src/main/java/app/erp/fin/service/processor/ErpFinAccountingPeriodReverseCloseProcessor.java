@@ -5,6 +5,7 @@ import app.erp.fin.dao.entity.ErpFinAccountingPeriod;
 import app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.statemachine.ErpFinAccountingPeriodStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -13,15 +14,26 @@ import jakarta.inject.Inject;
  * ErpFinAccountingPeriod reverseClose per-mutation Processor（R6.1，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含反结账编排（{@code period-close.md §反结账流程}）；共享 protected helper 单一真相源在
  * {@link ErpFinAccountingPeriodProcessor}。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
+ *
+ * <p>状态矩阵守卫委托 {@link ErpFinAccountingPeriodStateMachine}（plan 2026-08-13-2045-1，契约 §7）。
+ * <b>动态业务守卫保留原位</b>（§11.2 M4 (v)）：反结账 kill-switch（{@code erp-fin.reverse-close-approval-required}）
+ * + 年度结转次年期间已创建门控；<b>副作用保留原位</b>（§11.2 M4 (iv)）：{@code reverseCloseVoucher} 期末凭证红冲时序 +
+ * 反折旧 + 模块状态回开。
  */
 public class ErpFinAccountingPeriodReverseCloseProcessor {
 
     @Inject
     ErpFinAccountingPeriodProcessor facade;
+    @Inject
+    ErpFinAccountingPeriodStateMachine stateMachine;
 
     public ErpFinAccountingPeriod reverseClose(Long periodId, IServiceContext context) {
         ErpFinAccountingPeriod period = facade.requirePeriod(periodId);
-        facade.assertPeriodStatus(period, ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL, "反结账");
+        try {
+            stateMachine.assertCanReverseClose(period.getStatus());
+        } catch (NopException e) {
+            throw facade.mapIllegalTransition(e, period, ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL);
+        }
 
         if (facade.isReverseCloseApprovalRequired()) {
             throw new NopException(ErpFinErrors.ERR_REVERSE_CLOSE_APPROVAL_REQUIRED)
@@ -36,7 +48,7 @@ public class ErpFinAccountingPeriodReverseCloseProcessor {
         }
 
         // 先回开期间为 OPEN，使红冲可经引擎过账（resolveOpenPeriod 要求 OPEN）。
-        period.setStatus(ErpFinConstants.PERIOD_STATUS_OPEN);
+        period.setStatus(stateMachine.reverseCloseTargetStatus());
 
         // 冲销本期结转 / 汇兑 / 年度结转（及条件折旧）凭证（红字）。
         facade.reverseCloseVoucher(period, ErpFinAccountingPeriodProcessor.PL_BILL_CODE_PREFIX + period.getCode(),

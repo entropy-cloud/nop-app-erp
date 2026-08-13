@@ -387,4 +387,11 @@
           class="app.erp.fin.service.statemachine.ErpFinBudgetScenarioDocumentStateMachine"/>
     <bean id="app.erp.fin.service.statemachine.ErpFinBudgetScenarioApprovalStateMachine"
           class="app.erp.fin.service.statemachine.ErpFinBudgetScenarioApprovalStateMachine"/>
+
+    <!-- 会计期间状态机 Bean（plan 2026-08-13-2045-1，entity-state-machine-bean.md §5）：
+          ErpFinAccountingPeriod.status 生命周期轴（5 态，4 命名动作，close 两段）。按类型注入，Delta 同名覆盖（契约 §6）。
+          generateNextYearPeriods 生成路径不经此 Bean（§9.2 生成写入）。结账/反结账/红冲编排 + kill-switch 保留 Processor 原位
+          （§11.2 M4 (ii)/(iv)/(v)）。 -->
+    <bean id="app.erp.fin.service.statemachine.ErpFinAccountingPeriodStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinAccountingPeriodStateMachine"/>
 </beans>
