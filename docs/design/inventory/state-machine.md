@@ -165,6 +165,8 @@
   └─ 取消 → 已取消 (CANCELLED)
 ```
 
+> **标签映射注记（COUNTING ↔ CONFIRMED，doc label drift，行为一致）**：上图标签「盘点中 (COUNTING)」为业务语义描述；实际持久化 dict `erp-inv/move-status`（`model/app-erp-inventory.orm.xml`）**无 COUNTING 值**，盘点单复用移动单字典，`startTake` 的目标态实际写入 `CONFIRMED`（`ErpInvStockTakeBizModel.startTake` → `setDocStatus(CONFIRMED)`）。即「盘点中 (COUNTING)」标签 ↔ 实际 dict/code 值 `CONFIRMED` 存在标签/命名漂移，**行为一致**（owner doc 的「盘点中」= 代码的 CONFIRMED）。实体级状态机 Bean `ErpInvStockTakeStateMachine` 按既有 writer 建模（`startTakeTargetStatus()=CONFIRMED`），保留 CONFIRMED 行为不改 dict/绑。分类 = `doc label drift`（标签漂移，非行为漂移）。
+
 - **差异调整移动单的自动生成 = Deferred（owner doc 语义对齐）**：`ErpInvStockTakeBizModel.completeTake` 当前仅将盘点单置为 DONE（源态守卫 CONFIRMED → `DOC_STATUS_DONE` + `updateEntity`），**无任何 `StockTakeLine.qtyActual` vs `StockBalance.totalQuantity` 比对、无 `IErpInvStockMoveBiz.generateMove` 调用**——即不自动生成盘盈/盘亏移动单。差异调整当前经库管员**手工 `generateMove`** 处置（创建新 DRAFT 移动单，正数盘盈/负数盘亏），走下方移动单状态机流程。盘点单 DONE 后无悬挂数据（差异未自动入账但不阻塞盘点闭环）。
 - **Successor 触发条件**：盘点闭环自动化需求落地时，在 `completeTake` 内自动比对 `qtyActual` vs `totalQuantity` → 经 `IErpInvStockMoveBiz.generateMove` Facade 生成差异移动单（实现路径与现有 Facade 可复用）。
 - 盘点完成的差异**不直接改余额**，而是经移动单（正数盘盈/负数盘亏）走移动单状态机流程才会影响余额。这一原则保留；当前唯一的偏差是「自动生成」降级为「手工入口」（Deferred）。

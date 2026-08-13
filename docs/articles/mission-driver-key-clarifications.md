@@ -1,6 +1,7 @@
 # 关于《Mission Driver：Loop Engineering 的一种通用参考实现》的补充说明
 
-在我此前的文章[《Mission Driver：Loop Engineering 的一种通用参考实现》]()中，我介绍了 Mission Driver 的设计原理与使用方式。它是吸引子引导工程（Attractor-Guided Engineering, AGE）在控制层的核心实现，负责 7×24 小时 AI 全自主运行。
+在我此前的文章[《Mission Driver：Loop Engineering 的一种通用参考实现》](https://mp.weixin.qq.com/s/AFpnWdDXyp6Z9SDi_1MCqw
+)中，我介绍了 Mission Driver 的设计原理与使用方式。它是吸引子引导工程（Attractor-Guided Engineering, AGE）在控制层的核心实现，负责 7×24 小时 AI 全自主运行。
 
 但在实际应用中，我发现很多人习惯把它映射为自己熟知的概念——更复杂的工作流编排、Agent 编排器，或另一套 Harness 控制。这种理解没有真正触及 Mission Driver 的独特之处：网上常见的 Loop Engineering 实现大多是某种黑箱模型——AI 的内部状态对使用者不可见、不可控，人工介入只能停止循环并修改提示词；而 Mission Driver 把核心运行状态显性化为 roadmap 与 plan 文件（文件就是 AI 的认知），人工介入是异步的——可以直接修改 roadmap 或投放新的 plan，下一轮循环自动拾取。人机分工界面因此可以更加灵活：人可以审核 roadmap，AI 也能自主在 roadmap 中引入 audit 审计工作项。
 
@@ -33,11 +34,35 @@ Loop Engineering 是业内对 AI 自主运行当前能达到的阶段的概括�
 
 AGE（Attractor-Guided Engineering，吸引子引导工程）是为回答上一节那两个缺口而建立的概念体系。它的核心是四个概念：状态空间（系统演化过程所有可能出现的结构）、吸引子（系统长期应稳定趋向的结构）、轨迹（系统实际上怎样走到了现在）、控制（测量与纠偏机制如何把轨迹拉回吸引子附近）。
 
+> AGE的详细介绍参见 [Attractor Before Harness: AI 大规模开发的方法论](https://mp.weixin.qq.com/s/TwMkUDLNo2-bIrXrfvPqIw)
+
 在这个概念体系中，“持续运行”不再是目的，而是方向已经被外化后的自然结果。loop 之所以能稳定存在并趋于收敛，不是因为循环设计得有多精巧，而是因为三个时间维度上的机制已经就位：
 
 - **运行之前**，docs 体系已经建立——明确区分规范性文档与时效性文档，确保 AI 面对的信息源具有明确的权威定义和更新策略：规范性文档（architecture / design 等稳定 Owner Docs）定义“系统长期应该是什么”——期望吸引子与权威归属，不带日期、原地更新，其有效性不随时间衰减；时效性文档（plans / logs / audits / analysis 等过程记录）描述“某个时间窗口内实际发生了什么、当前状态如何”——带日期、只在有效窗口内可信，过期后必须重新验证（freshness）才能继续支撑自主行动；两者之间以及规范性文档相互之间的冲突，都以 Precedence 定义的权威归属为准——按 Owner 与作用域规定的优先级裁决，而非按更新时间或取用便利性裁决；
 - **运行之中**，AI 的内部状态和认知被显性化——roadmap / plan / audits 文件就是它的认知，人不需要猜 AI 在想什么；人的介入有标准方案：直接修改 roadmap 或增删 plan，下一轮循环自动拾取，无需停止 loop 或修改提示词；logs 同步记录每轮执行的关键决策与验证结果，沉淀为可追溯的轨迹。介入不再是黑箱，也不需要打断运行。
 - **运行之后**，经验被提炼并反哺——AI 可以从 logs / plans / audits 中挖掘本轮经验：人工纠正的模式沉淀为 skill，审计遗漏的维度补入审计提示词，重复失败提升为 lessons（nop-app-erp 展示了具体的实践案例）；Mission Driver 的 postmortem 复盘还会把报告写入 memory，后续同模块 mission 自动加载。循环因此不只是重复执行，而是持续学习。
+
+#### 长期连续性来自认知恢复，而不是 Session 延续
+
+单个 Session 的认知不是时间平移不变的。时刻 t 形成的临时认识，不能被假定为在时刻 t+1 的新 Session 中自然存在。
+
+长期自主运行必须满足更严格的条件：
+
+> 在任意合理的中断点启动一个新的执行主体，它都能够仅依据当前项目状态，恢复继续同一条工程轨迹所需的认知。
+
+其过程可以表示为：
+
+$$
+C_t\rightarrow Action_t \rightarrow Validate_t \rightarrow R_{t+1} \rightarrow Recover \rightarrow C_{t+1} 
+$$
+
+其中：
+
+- $C_t $ 是当前 Session 恢复出的临时认知；
+- $R_{t+1}$ 是经过验证和写回后的项目认知结构；
+- $C_{t+1}$ 不是对 $C_t$ 的直接复制，而是新 Session 根据 $R_{t+1}$ 重新形成的行动认知。
+
+因此，AGE 不要求保存每个 Session 的完整推理过程，也不要求回放全部历史。它要求当前仓库保存对后续行动足够的认知结构。
 
 ### 1.3 Mission Driver：对 Loop Engineering 的通用实现，在 AGE 概念体系下定义状态与演化
 
@@ -72,11 +97,13 @@ nop-app-erp 就是这套机制运行的明确示例：22 天（06-22 → 07-13�
 
 把 Mission Driver 当成普通的 Agent 编排器，就丢失了它在 AGE 中的方向依据。但它本身也不拥有方向定义权，它只是控制层的执行机制，必须和外部的 docs 体系协同工作。
 
+![knowdge-transfer](./images/knowledge-transfer.png)
+
 ## 二、它解决什么问题
 
 ### 2.1 Vibe Coding 的两个结构性困境
 
-Mission Driver 要解决的问题，始于 Vibe Coding 的困境。当前主流的 AI 辅助开发模式——人提示、AI 响应、人纠正、AI 再响应——本质上是一个没有退出条件的无限循环。这个模式有两个问题（细节见《Mission Driver：Loop Engineering 的一种通用参考实现》第一部分）。
+Mission Driver 要解决的问题，始于 Vibe Coding 的困境。当前主流的 AI 辅助开发模式——人提示、AI 响应、人纠正、AI 再响应——本质上是一个没有退出条件的无限循环。这个模式有两个问题（细节见[《Mission Driver：Loop Engineering 的一种通用参考实现》](https://mp.weixin.qq.com/s/AFpnWdDXyp6Z9SDi_1MCqw)第一部分）。
 
 第一个是**质量失控**。AI 的执行本质上是概率采样过程，在没有外部控制结构介入时，AI 很容易走上岔路：改到一半跑去改别的代码，改完忘记跑测试，失败了陷入死循环，进程崩溃后状态丢失只能从头再来。更危险的是自我宣称完成——跳过实际实现直接声称做完了。
 
@@ -149,7 +176,7 @@ Mission Driver 的 Flow DSL 有五种步骤类型：`tool`（shell 命令）和 
 
 差异集中在三点：
 
-1. **理论层：AGE 的吸引子体系是本文系的独特增量**。LoopX 自我定位为控制平面而非方向来源：`quota should-run` 是 compute guard 而非 strategy selector——目标、边界与验收由用户在 goal 文本中给出，控制层只负责让这些目标在多轮、多 agent、多运行时之间不漂移。LoopX 认同方向基线的缺口是真实的，但选择以最小合同方式补充（如绑定 authority material revision 到 admission/checkpoint），保持 provider-neutral（仓库 owner docs 只是 provider 之一）。Mission Driver 所在的概念体系则前进一步：期望吸引子定义长期结构、Trajectory 记录实际演化、Harness 提供测量与纠偏，方向前提被外化为仓库结构（Owner Docs 中的结构不变量等）。Andrew Ng 的三层 Loop 模型中 External Feedback 对应的是 Mission Loop 层（天/周级信号响应），LoopX 的 quota/gate 机制也是信号响应层，二者都没有显式的、外化为仓库结构的期望吸引子定义和收敛机制。
+1. **理论层：AGE 的吸引子体系是理论上的独特增量**。LoopX 自我定位为控制平面而非方向来源：`quota should-run` 是 compute guard 而非 strategy selector——目标、边界与验收由用户在 goal 文本中给出，控制层只负责让这些目标在多轮、多 agent、多运行时之间不漂移。LoopX 认同方向基线的缺口是真实的，但选择以最小合同方式补充（如绑定 authority material revision 到 admission/checkpoint），保持 provider-neutral（仓库 owner docs 只是 provider 之一）。Mission Driver 所在的概念体系则前进一步：期望吸引子定义长期结构、Trajectory 记录实际演化、Harness 提供测量与纠偏，方向前提被外化为仓库结构（Owner Docs 中的结构不变量等）。Andrew Ng 的三层 Loop 模型中 External Feedback 对应的是 Mission Loop 层（天/周级信号响应），LoopX 的 quota/gate 机制也是信号响应层，二者都没有显式的、外化为仓库结构的期望吸引子定义和收敛机制。
 
 2. **自动化边界的设计不同**。LoopX 在架构层面把人的判断做成一等公民——人的判断（reward、gate、quota、注意力成本）保留在运行层的每个环节，“Quota 保护的不只是算力，也是人的注意力”；同时 LoopX 明确反对默认提交完整 reasoning、prompt、raw trajectory——担心隐私泄露、仓库膨胀和双重状态权威，Todo/claim/gate/receipt 保持 kernel-owned。Mission Driver 则把人类治理限定在方向层（期望吸引子、Owner Docs），执行与编排层追求无人值守：7×24 运行、每 4-12 小时自动完成一个完整循环、人工介入从早期高频衰减至后期为零，所有状态（plan/log/audit/skill）全部文件化在仓库中。但两者并非实质冲突：LoopX 的“判断贯穿运行层”对应的是 Mission Driver 概念体系中“不定义方向”的边界（第四章），而“自动执行与编排”对应可自动化前两层（第五章）——差别在于人类判断在运行链中的保留位置。
 
@@ -208,7 +235,7 @@ AGE 要维护的不是简单的“代码 ↔ 测试”，而是“语义承诺 �
 
 **注入机制——跨项目复用。** Prompt 模板包含 `{{planGuide}}`、`{{roadmapPath}}`、`{{plansDir}}`、`{{testCmd}}` 等占位符，引擎从 mission 配置变量表注入实际值。换项目时只需修改 JSON 配置，不需修改 prompt 逻辑——“项目结构”与“prompt 结构”两个关注点被分离。
 
-**断点恢复——disk scan，不是 replay。** 进程崩溃后重启，引擎不回放历史步骤，而是扫描磁盘上 Plan 的 status 行和 checkbox 标记，直接跳到断点继续。恢复的是“运行时进程状态”（执行到哪一步），而非“语义一致性”（Plan 声明的 status 是否与实际代码匹配）——后者由 Closure Gates 和独立审计负责。这也是主流程步骤之间不传参数的原因：各步骤只依赖 plan 文件传递信息，CHECK 不知道 REVIEW_PLANS 发现了几张 Plan，每个步骤从磁盘读取输入、写回输出。
+**断点恢复——disk scan，不是 replay。** 进程崩溃后重启，引擎不回放历史步骤，而是扫描磁盘上 Plan 的 status 行和 checkbox 标记，直接跳到断点继续。这也是主流程步骤之间不传参数的原因：各步骤只依赖 plan 文件传递信息，CHECK 不知道 REVIEW_PLANS 发现了几张 Plan，每个步骤从磁盘读取输入、写回输出。
 
 **零 IPC——可观测性。** 没有进程间通信、消息队列或数据库。要判断“系统当前处于什么状态”，只需读文件——执行和审计共享同一个真相层。
 

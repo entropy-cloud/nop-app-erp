@@ -1,6 +1,6 @@
 # 2026-08-13-2045-2-erpinv-stockmove-stocktake-state-machine-beans 库存移动单 + 盘点单 ErpInvStockMove/ErpInvStockTake.docStatus 实体级状态机 Bean（M4.29 + M4.30）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) 人工/owner-doc 门控**已于 2026-08-13 经人工确认解除**——本计划触及受保护存货过账行为（StockMove DONE 触发 `InvPostingExecutor`→`IErpFinVoucherBiz.post` 存货过账事件，已由起草者经 live code 实证：`ErpInvStockMoveCompleteProcessor` doComplete 翻 DONE + 过账派发；库存强一致保护区）。M4 plan-first + 库存强一致门控成立；该人工裁定非起草者可自主解除（project-context.md 会计/库存保护域硬停止）。计划格式/完备性/范围/结束证据就绪 + 人工门控已确认，已转 `active` 进入实施。
 > Last Reviewed: 2026-08-13
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.29（ErpInvStockMove.docStatus，plan-first）+ M4.30（ErpInvStockTake.docStatus，plan-first）；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md §1.2 inventory INV-1/INV-8 + §3.5 inventory`
@@ -77,71 +77,71 @@
 
 ### Phase 1 - 2 个 StateMachine Bean + 注册 + 层 1 矩阵完备性测试
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/src/main/java/app/erp/inv/service/statemachine/{ErpInvStockMoveStateMachine,ErpInvStockTakeStateMachine}.java`（新建）、`.../beans/app-service.beans.xml`（注册 2 Bean）、`.../statemachine/TestErpInvStockMoveAndStockTakeStateMachines.java`（新建）
 Skill: `nop-backend-dev`（Bean 形状/注册）+ `nop-testing`（层 1 表驱动测试）
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done
 
-- [ ] 新建无状态 `ErpInvStockMoveStateMachine`：矩阵 `assertCanConfirm(DRAFT)`→CONFIRMED；`assertCanComplete(CONFIRMED)`→DONE；`assertCanCancel({DRAFT,CONFIRMED})`→CANCELLED。分类 initial=`{DRAFT}`、terminal=`{DONE,CANCELLED}`、`transitions()`=3 边。**reversal/generateMove 无迁移边**（生成路径 §9.2，javadoc 标注）。非法来源态抛 common 码携带 action/fromStatus。grep 证实不 import DAO/IBiz/IServiceContext/事务。
+- [x] 新建无状态 `ErpInvStockMoveStateMachine`：矩阵 `assertCanConfirm(DRAFT)`→CONFIRMED；`assertCanComplete(CONFIRMED)`→DONE；`assertCanCancel({DRAFT,CONFIRMED})`→CANCELLED。分类 initial=`{DRAFT}`、terminal=`{DONE,CANCELLED}`、`transitions()`=4 边（confirm 1 + complete 1 + cancel 2 来源）。**reversal/generateMove 无迁移边**（生成路径 §9.2，javadoc 标注）。非法来源态抛 common 码携带 action/fromStatus。grep 证实不 import DAO/IBiz/IServiceContext/事务。
   - Skill: `nop-backend-dev`
-- [ ] 新建无状态 `ErpInvStockTakeStateMachine`：矩阵 `assertCanStartTake(DRAFT)`→CONFIRMED；`assertCanCompleteTake(CONFIRMED)`→DONE；`assertCanCancel({DRAFT,CONFIRMED})`→CANCELLED（守卫非终态 {DONE,CANCELLED}）。分类 initial=`{DRAFT}`、terminal=`{DONE,CANCELLED}`、`transitions()`=3 边。**目标态 CONFIRMED 对应 owner doc 标签「盘点中」（dict 无 COUNTING）**——javadoc 标注 COUNTING↔CONFIRMED 标签映射（Phase 3 裁定）。
+- [x] 新建无状态 `ErpInvStockTakeStateMachine`：矩阵 `assertCanStartTake(DRAFT)`→CONFIRMED；`assertCanCompleteTake(CONFIRMED)`→DONE；`assertCanCancel({DRAFT,CONFIRMED})`→CANCELLED（守卫非终态 {DONE,CANCELLED}）。分类 initial=`{DRAFT}`、terminal=`{DONE,CANCELLED}`、`transitions()`=4 边。**目标态 CONFIRMED 对应 owner doc 标签「盘点中」（dict 无 COUNTING）**——javadoc 标注 COUNTING↔CONFIRMED 标签映射（Phase 3 裁定）。
   - Skill: `nop-backend-dev`
-- [ ] Decision（前置）：记录 StockTake COUNTING 标签漂移分类——owner doc §盘点单 标「盘点中 (COUNTING)」但 dict `erp-inv/move-status` 无 COUNTING 值，实际 code 写 CONFIRMED；分类 = `doc label drift`（标签漂移，行为一致），保留 CONFIRMED 行为不改 dict/绑，owner doc 补注标签映射。供 Phase 3 引用。
+- [x] Decision（前置）：记录 StockTake COUNTING 标签漂移分类——owner doc §盘点单 标「盘点中 (COUNTING)」但 dict `erp-inv/move-status` 无 COUNTING 值，实际 code 写 CONFIRMED；分类 = `doc label drift`（标签漂移，行为一致），保留 CONFIRMED 行为不改 dict/绑，owner doc 补注标签映射。已落入两 Bean javadoc + 层 1 测试 `takeCountingLabelDriftResolvedToConfirmed`，Phase 3 正式化。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] 在 `app-service.beans.xml` 以 FQN id 注册 2 Bean（§11.1 步骤 2）。
+- [x] 在 `app-service.beans.xml` 以 FQN id 注册 2 Bean（§11.1 步骤 2）。
   - Skill: `nop-backend-dev`
-- [ ] Proof（层 1 矩阵完备性，表驱动，§11.1 步骤 4）：`TestErpInvStockMoveAndStockTakeStateMachines`——StockMove × {confirm/complete/cancel} 合法+非法边 + terminal {DONE,CANCELLED} 无出边 + transitions(3) + initial/terminal；StockTake × {startTake/completeTake/cancel} 合法+非法边（cancel 对 DONE/CANCELLED 非法）+ transitions(3)。**不经 BizModel 入口**（层 1 只测 Bean）。
+- [x] Proof（层 1 矩阵完备性，表驱动，§11.1 步骤 4）：`TestErpInvStockMoveAndStockTakeStateMachines`（20 tests 全绿）——StockMove × {confirm/complete/cancel} 合法+非法边 + terminal {DONE,CANCELLED} 真终态无出边 + transitions(4) + initial/terminal + 4 值全可达；StockTake × {startTake/completeTake/cancel} 合法+非法边（cancel 对 DONE/CANCELLED 非法）+ transitions(4) + COUNTING 标签漂移核对。**不经 BizModel 入口**（层 1 只测 Bean）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 2 Bean 无状态、矩阵完整；reversal/generateMove 无迁移边；COUNTING↔CONFIRMED Decision 记录在案
-- [ ] 2 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）
-- [ ] 层 1 矩阵测试通过；本地化编译 `mvn compile -pl module-inventory/erp-inv-service -am` 通过（解除 Phase 2 接线依赖）
+- [x] 2 Bean 无状态、矩阵完整；reversal/generateMove 无迁移边；COUNTING↔CONFIRMED Decision 记录在案
+- [x] 2 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（Bean 无注入字段，严格无状态，合规 R5）
+- [x] 层 1 矩阵测试通过；本地化编译 `mvn compile -pl module-inventory/erp-inv-service -am` 通过（解除 Phase 2 接线依赖）
 
 ### Phase 2 - Processor/BizModel 接线（行为保持，过账/记账/效期副作用保留）+ 层 3 回归
 
-Status: planned
+Status: completed
 Targets: `ErpInvStockMoveConfirmProcessor`、`ErpInvStockMoveCompleteProcessor`、`ErpInvStockMoveCancelProcessor`、`ErpInvStockMoveProcessor`（facade）、`ErpInvStockTakeBizModel`（3 动作）
 Skill: `nop-backend-dev`（接线 + 错误码映射）+ `nop-testing`（回归断言）
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1 两 Bean 落地
 
-- [ ] StockMove：Confirm/Complete/Cancel Processor + facade 注入 `ErpInvStockMoveStateMachine`，固定来源态守卫改 `stateMachine.assertCan<Action>(from)` + 目标态回写（`<action>TargetStatus()`）。common→既有 `ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION` 映射（common 作 cause）+ `ARG_MOVE_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` 参数对外不变（**不新增错误码**）。**完整保留**：confirm 的 validateAvailable + validateBatchExpiry（config-gated）+ applyReservation；complete 的 releaseReservation + StockMoveBookkeeper 记账 + InvPostingDispatcher 过账派发（**过账失败保持 DONE + `posted=false`，不置 `posted=true`**——实仓 `ErpInvStockMoveProcessor:122-124` 先翻 DONE 后派发，失败 try/catch 保留 DONE+posted=false）；cancel 的 CONFIRMED 条件 releaseReservation + 跨实体 ErpInvStockBalance 写。**reverse/generateMove 不接线 Bean**（生成路径，初始态 DRAFT §9.2）。
+- [x] StockMove：Confirm/Complete（facade `ErpInvStockMoveProcessor.doConfirm/doComplete`）+ Cancel（`ErpInvStockMoveCancelProcessor`）注入 `ErpInvStockMoveStateMachine`，固定来源态守卫改 `stateMachine.assertCan<Action>(from)` + 目标态回写（`<action>TargetStatus()`）。common→既有 `ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION` 映射（common 作 cause）+ `ARG_MOVE_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` 参数对外不变（**不新增错误码**）。**完整保留**：confirm 的 validateAvailable + validateBatchExpiry（config-gated）+ applyReservation；complete 的 releaseReservation + StockMoveBookkeeper 记账 + InvPostingDispatcher 过账派发（**过账失败保持 DONE + `posted=false`**——`testPostingFailureLeavesMoveDonePostedFalse` 回归绿）；cancel 的 CONFIRMED 条件 releaseReservation + 跨实体 ErpInvStockBalance 写。**reverse/generateMove 不接线 Bean**（生成路径，初始态 DRAFT §9.2，grep 证实零 `stateMachine`/`assertCan` 引用）。
   - Skill: `nop-backend-dev`
-- [ ] StockTake：BizModel 3 动作（`startTake`/`completeTake`/`cancelTake`，`ErpInvStockTakeBizModel.java`）注入 `ErpInvStockTakeStateMachine`，固定来源态守卫改 Bean 委托 + 目标态回写。common→`ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION` 映射。**完整保留 `completeTake` 不自动生成差异移动单的 Deferred 行为**（无 qtyActual vs totalQuantity 比对、无 generateMove 调用——owner doc §盘点 Deferred）。
+- [x] StockTake：BizModel 3 动作（`startTake`/`completeTake`/`cancelTake`，`ErpInvStockTakeBizModel.java`）注入 `ErpInvStockTakeStateMachine`，固定来源态守卫改 Bean 委托 + 目标态回写。common→`ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION` 映射。**完整保留 `completeTake` 不自动生成差异移动单的 Deferred 行为**（无 qtyActual vs totalQuantity 比对、无 generateMove 调用——owner doc §盘点 Deferred）。
   - Skill: `nop-backend-dev`
-- [ ] Proof（层 3 回归）：`mvn test -pl module-inventory/erp-inv-service -am` 全绿——重点 `TestErpInvStockMoveBizModel`（confirm/complete/cancel happy + 非法态）、`TestErpInvStockMoveBookkeeping`（余额/预留量 + retry-on-conflict）、`TestErpInvPosting`（DONE→存货过账事件 + **`testPostingFailureLeavesMoveDonePostedFalse`：过账失败保持 DONE + `posted=false` 不悬挂**）、`TestErpInvBatchExpiryInterception`（批次效期拦截守卫不变）。StockTake 回归：核实/补全 startTake/completeTake/cancelTake 路径（completeTake 不生成移动单）。（`TestErpInvPostingDispatcherFailureHangs` 覆盖 LandedCost/CostAdjust/OwnershipTransfer dispatcher，非 StockMove，不作 StockMove 回归依据。）
+- [x] Proof（层 3 回归）：`mvn test -pl module-inventory/erp-inv-service` 全绿（**174 tests, 0 failures, 0 errors**）——重点 `TestErpInvStockMoveBizModel`（confirm/complete/cancel happy + 非法态）、`TestErpInvStockMoveBookkeeping`（余额/预留量 + retry-on-conflict）、`TestErpInvPosting`（DONE→存货过账事件 + **`testPostingFailureLeavesMoveDonePostedFalse`：过账失败保持 DONE + `posted=false` 不悬挂**）、`TestErpInvBatchExpiryInterception`（批次效期拦截守卫不变）、`TestErpInvStockMoveCrudSmoke`、`TestErpInvStockMoveGraphQL`。（`TestErpInvPostingDispatcherFailureHangs` 覆盖 LandedCost/CostAdjust/OwnershipTransfer dispatcher，非 StockMove，不作 StockMove 回归依据。）
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] StockMove + StockTake 接线后既有测试全绿（行为、过账编排/失败回退/红冲反向单、批次效期、余额/预留量、completeTake Deferred、错误码、乐观锁无回归；过账失败不悬挂已断言）
-- [ ] grep 证实相关方法体内不再有内联固定状态矩阵判断（动态副作用如可用量/效期/记账/过账/预留量除外；reverse/generateMove 初始态不调 assertCan*）
+- [x] StockMove + StockTake 接线后既有测试全绿（行为、过账编排/失败回退/红冲反向单、批次效期、余额/预留量、completeTake Deferred、错误码、乐观锁无回归；过账失败不悬挂已断言）
+- [x] grep 证实相关方法体内不再有内联固定状态矩阵判断（动态副作用如可用量/效期/记账/过账/预留量除外；cancel 的 `Objects.equals(status,CONFIRMED)` 为条件 releaseReservation 路由非守卫；reverse/generateMove 初始态不调 assertCan*，零引用证实）
 
 ### Phase 3 - 层 2 四方对照 + 漂移 Decision + owner doc 补注
 
-Status: planned
+Status: completed
 Targets: 四方对照审计记录（写入本计划 Closure 段）；`docs/design/inventory/state-machine.md`（§盘点单 COUNTING↔CONFIRMED 标签补注）；本计划 Closure
 Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度）
 
 - Item Types: `Proof | Decision | Add`
 - Prereqs: Phase 2 接线完成
 
-- [ ] Proof（层 2 四方对照，§11.1 步骤 5，10 维度 × 双轴）：dict（move-status 4 值）↔ owner doc（§适用对象 + §盘点单）↔ Bean ↔ writer。StockMove 重点：(a) reversal = 生成反向新单非状态迁移（无迁移边，§9.2）；(b) 4 值全可达（DRAFT=generateMove/联动 seed；CONFIRMED=confirm；DONE=complete；CANCELLED=cancel）；(c) 过账/记账/效期副作用边界。StockTake 重点：(d) COUNTING↔CONFIRMED 标签漂移裁定；(e) completeTake Deferred（不自动生成差异移动单）；(f) dict 复用（StockTake 共享 move-status）。
+- [x] Proof（层 2 四方对照，§11.1 步骤 5，10 维度 × 双轴）：dict（move-status 4 值）↔ owner doc（§适用对象 + §盘点单）↔ Bean ↔ writer。StockMove 重点：(a) reversal = 生成反向新单非状态迁移（无迁移边，§9.2，grep 证实零引用）；(b) 4 值全可达（层 1 `moveAllDictValuesReachable` 绿）；(c) 过账/记账/效期副作用边界（完整保留 Processor）。StockTake 重点：(d) COUNTING↔CONFIRMED 标签漂移裁定；(e) completeTake Deferred（不自动生成差异移动单）；(f) dict 复用（StockTake 共享 move-status）。详见 Closure 段四方位对照表。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Add owner doc：在 `docs/design/inventory/state-machine.md §盘点单状态机（独立）` 补 COUNTING↔CONFIRMED 标签映射注记（owner doc 标签「盘点中 (COUNTING)」对应实际 dict/code 值 `CONFIRMED`，erp-inv/move-status 无 COUNTING；行为一致，保留 CONFIRMED）。
+- [x] Add owner doc：在 `docs/design/inventory/state-machine.md §盘点单状态机（独立）` 补 COUNTING↔CONFIRMED 标签映射注记（owner doc 标签「盘点中 (COUNTING)」对应实际 dict/code 值 `CONFIRMED`，erp-inv/move-status 无 COUNTING；行为一致，保留 CONFIRMED）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Decision（漂移裁定，路线图规则 5）：(a) StockTake COUNTING 标签漂移 = `doc label drift`（owner doc 标签 vs dict/code 值，行为一致），保留 CONFIRMED + owner doc 补注；(b) reversal/completeTake Deferred = 如实反映（非 implementation drift），Bean 不发明边；(c) M0.2 §3.5 inventory「既有测试：无」与实仓具名层 3 测试存在轻微漂移——登记建议 reconcile。
+- [x] Decision（漂移裁定，路线图规则 5）：(a) StockTake COUNTING 标签漂移 = `doc label drift`（owner doc 标签 vs dict/code 值，行为一致），保留 CONFIRMED + owner doc 补注；(b) reversal/completeTake Deferred = 如实反映（非 implementation drift），Bean 不发明边；(c) M0.2 §3.5 inventory「既有测试：无」与实仓具名层 3 测试存在轻微漂移——登记建议 reconcile。详见 Closure 段漂移 Decision。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] 四方对照无未裁决漂移（COUNTING 标签 + reversal + Deferred + 测试名均裁定并落入 owner doc/计划）
-- [ ] owner doc §盘点单 COUNTING↔CONFIRMED 补注与 dict/Bean/代码一致
+- [x] 四方对照无未裁决漂移（COUNTING 标签 + reversal + Deferred + 测试名均裁定并落入 owner doc/计划）
+- [x] owner doc §盘点单 COUNTING↔CONFIRMED 补注与 dict/Bean/代码一致
 
 ## Draft Review Record
 
@@ -157,15 +157,15 @@ Exit Criteria:
 
 > 本计划含生产代码变更（2 Bean + StockMove/StockTake 接线 + 测试 + owner doc 补注），Closure Gates 运行完整仓库验证。无 ORM/API/字典变更（move-status 4 值保留 + StockTake CONFIRMED 行为不改绑），Compliance 基线预期无漂移（R5=0/R11=0）。
 
-- [ ] 范围内行为完成（2 Bean + StockMove/StockTake 接线 + 三层证据；过账/记账/效期/红冲反向单时序完整保留，§11.2 M4 (ii)/(iv)/(v)）
-- [ ] 相关文档对齐（owner doc §盘点单 COUNTING↔CONFIRMED 补注 + 漂移 Decision 登记；路线图 M4.29 + M4.30 done）
-- [ ] 已运行验证：`mvn test -pl module-inventory/erp-inv-service -am` + Closure 时 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`
+- [x] 范围内行为完成（2 Bean + StockMove/StockTake 接线 + 三层证据；过账/记账/效期/红冲反向单时序完整保留，§11.2 M4 (ii)/(iv)/(v)）
+- [x] 相关文档对齐（owner doc §盘点单 COUNTING↔CONFIRMED 补注 + 漂移 Decision 登记；路线图 M4.29 + M4.30 done）
+- [x] 已运行验证：`mvn test -pl module-inventory/erp-inv-service`（174 tests 全绿，含 `testPostingFailureLeavesMoveDonePostedFalse`）+ Closure 时 `mvn clean install -DskipTests`（全模块 BUILD SUCCESS）+ `bash docs/audits/nop-compliance-checker.sh`（EXIT=0，R5=0/R11=0 基线维持）
 - [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)；2026-08-13 人工确认，见 Draft Review Record 门控确认记录）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录（Draft Review Record iter1-3 + 2 次 mission-driver plan review 收敛）
+- [x] 文本一致性已验证：Plan Status=completed、Phase 1/2/3 Status=completed、Exit Criteria/Phase items 全 [x]、Closure Gates 一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位（独立结束审计子代理 `2026-08-13-193118-mission-driver`，新会话零执行者上下文，见 Closure 段审计证据）
+- [x] 结束证据存在于文件中（Closure 段 Status Note + 层 2 四方对照表 + 漂移 Decision；执行证据：2 Bean 源文件 + beans.xml 注册 + 层 1 测试 + 接线 diff + owner doc 补注）
 
 ## Deferred But Adjudicated
 
@@ -201,13 +201,60 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填充>
+Status Note: 三阶段执行完成。Phase 1 = 2 Bean（`ErpInvStockMoveStateMachine` + `ErpInvStockTakeStateMachine`，严格无状态）+ beans.xml 注册 + 层 1 矩阵测试（20 tests 全绿）；Phase 2 = StockMove Confirm/Complete/Cancel + StockTake 3 动作接线（固定守卫委托 Bean + common 作 cause 映射领域码 + 目标态回写），动态副作用（可用量/效期/记账/过账/预留量/completeTake Deferred）原序保留，reverse/generateMove 生成路径不接线；Phase 3 = 层 2 四方对照（下）+ 漂移 Decision + owner doc §盘点单 COUNTING↔CONFIRMED 补注。验证：`mvn test -pl module-inventory/erp-inv-service` = **174 tests, 0 failures, 0 errors**（含 `testPostingFailureLeavesMoveDonePostedFalse`）；本地化 `mvn compile -pl module-inventory/erp-inv-service -am` 通过。
+
+### 层 2 四方对照（dict ↔ owner-doc ↔ Bean ↔ writer，10 维度 × 双轴）
+
+> 审查方法：`docs/skills/state-machine-business-review-prompt.md` 10 维度。writer 盘点含通用 CRUD 路径（契约 §9.4）。
+
+**轴一：ErpInvStockMove.docStatus**
+
+| 维度 | dict (`erp-inv/move-status`, orm.xml) | owner-doc (§适用对象) | Bean (`ErpInvStockMoveStateMachine`) | writer (Processor/BizModel/CRUD) | 一致性 |
+|------|--------|---------|------|--------|--------|
+| 1 状态全集 | DRAFT/CONFIRMED/DONE/CANCELLED 4 值 | §1 同 4 值 | `transitions()` 覆盖全 4 值（initial DRAFT + 3 toStatus） | writer 覆盖全 4 值 | ✅ |
+| 2 迁移边 | — | §2：DRAFT→CONFIRMED、CONFIRMED→DONE、{DRAFT,CONFIRMED}→CANCELLED | confirm/complete/cancel×2 = 4 边 | doConfirm/doComplete/CancelProcessor 同 | ✅ |
+| 3 4 值全可达（无死状态） | 4 值均有 writer | §5 无不可达 | 层 1 `moveAllDictValuesReachable` 绿（DRAFT=initial seed，CONFIRMED/DONE/CANCELLED=迁移 toStatus） | DRAFT=generateMove/联动 seed；CONFIRMED=confirm；DONE=complete；CANCELLED=cancel | ✅ (a) |
+| 4 终态无出边 | — | §3：DONE/CANCELLED 终态 | DONE/CANCELLED 真终态（`moveTerminalsAreTrueTerminals` 绿） | 无 writer 从 DONE/CANCELLED 迁出 | ✅ |
+| 5 reversal = 生成新单非迁移 | — | §3：DONE「冲销」=生成反向新单非状态回退 | Bean 无 reversal 边（§9.2） | `ErpInvStockMoveReverseProcessor` 不改原单 docStatus（grep 零 `stateMachine` 引用） | ✅ (b) |
+| 6 过账/记账/效期副作用边界 | — | §4 异常路径 | Bean 不持有（契约 §2） | 完整保留 Processor：validateAvailable/validateBatchExpiry/applyReservation/releaseReservation/StockMoveBookkeeper/InvPostingDispatcher（失败保持 DONE+posted=false） | ✅ (c) |
+| 7 错误码 | — | — | common 码 + action/fromStatus | common→`ERR_ILLEGAL_STATUS_TRANSITION` 映射（cause）+ ARG_MOVE_CODE/CURRENT/EXPECTED 不变 | ✅ |
+| 8 生成路径 | — | §9 场景 A/C | generateMove 无迁移边（§9.2 选项 c） | `ErpInvStockMoveGenerateMoveProcessor` seed DRAFT 不调 assertCan*（grep 零引用） | ✅ |
+| 9 dict ↔ owner-doc 标签 | 4 值 | §1 标签 = 代码值 | Bean 用 ErpInvDocStatus 常量 | 代码用常量 | ✅ |
+| 10 posted 不入轴 | posted boolean（独立字段） | §1 DONE「等待后续过账」+ 业财契约 | Bean 无 posted 边（契约 §3） | posted 由 InvPostingDispatcher/Executor + 红冲闭环管理 | ✅ |
+
+**轴二：ErpInvStockTake.docStatus（复用 move-status dict）**
+
+| 维度 | dict | owner-doc (§盘点单状态机) | Bean (`ErpInvStockTakeStateMachine`) | writer (BizModel/CRUD) | 一致性 |
+|------|------|---------|------|--------|--------|
+| 1 状态全集 | 复用 move-status 4 值 | 标 COUNTING（漂移，见下） | 4 边覆盖全 4 值 | writer 覆盖全 4 值 | ✅ |
+| 2 迁移边 | — | startTake/completeTake/cancel | startTake/completeTake/cancel×2 = 4 边 | BizModel 3 动作同 | ✅ |
+| 3 4 值全可达 | 4 值 | §5 同 | 层 1 `takeReachabilityFromInitial` 绿 | DRAFT=seed；CONFIRMED=startTake；DONE=completeTake；CANCELLED=cancel | ✅ |
+| 4 终态无出边 | — | DONE/CANCELLED 终态 | `takeTerminalsAreTrueTerminals` 绿 | 无 writer 从 DONE/CANCELLED 迁出 | ✅ |
+| 5 COUNTING 标签漂移 | **无 COUNTING 值** | 标「盘点中 (COUNTING)」 | startTake 目标态=CONFIRMED（`takeCountingLabelDriftResolvedToConfirmed` 绿） | 代码 `setDocStatus(CONFIRMED)` | ✅ (d) 已裁定+owner doc 补注 |
+| 6 dict 复用 | StockTake 共享 move-status | §盘点单「独立状态机」 | Bean 独立（语义同 dict） | StockTake 复用 CONFIRMED | ✅ (f) |
+| 7 completeTake Deferred | — | §盘点 Deferred：手工 generateMove | Bean 不发明边 | completeTake 仅置 DONE，无 qtyActual 比对/无 generateMove 调用 | ✅ (e) 如实反映 |
+| 8 错误码 | — | — | common 码 | common→`ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION` 映射（cause）+ ARG_TAKE_ID/CURRENT 不变 | ✅ |
+
+### 漂移 Decision（路线图规则 5）
+
+- **(d) StockTake COUNTING 标签漂移 = `doc label drift`（标签漂移，行为一致）**：owner doc §盘点单状态图标「盘点中 (COUNTING)」，但 dict `erp-inv/move-status` 无 COUNTING 值，实际 code 写 CONFIRMED。裁定：保留 CONFIRMED 行为不改 dict/绑（非 ask-first 可自主范围），owner doc §盘点单已补 COUNTING↔CONFIRMED 标签映射注记。Bean 按既有 writer 建模。**非 implementation drift**（行为一致，仅命名）。
+- **(b)(e) reversal 生成新单 + completeTake Deferred = `如实反映`（非 implementation drift）**：reversal = 生成反向新单非状态迁移（owner doc §3 明确），Bean 不发明边（§9.2）；completeTake 不自动生成差异移动单 = owner doc §盘点 Deferred（差异当前手工 generateMove）。两者如实反映既有语义，Bean 正确不发明边。
+- **(c) M0.2 §3.5 inventory「既有测试：无」与实仓具名层 3 测试轻微漂移 = 登记建议 reconcile**：M0.2 清单标 inventory「既有测试：无」，但实仓存在具名层 3 测试（`TestErpInvStockMoveBizModel`/`Bookkeeping`/`Posting`/`BatchExpiryInterception` 等，构成层 3 既有基线）。本计划已正确识别并复用为层 3 回归（非 greenfield 重建）。登记建议：M0.2 §3.5 inventory 行 reconcile「既有测试」列。非阻塞。
+
+**四方对照结论**：双轴无未裁决漂移。COUNTING 标签漂移已裁定（doc label drift + owner doc 补注）；reversal/completeTake Deferred 如实反映；4 值全可达无死状态；过账/记账/效期/红冲反向单时序完整保留（§11.2 M4 (ii)/(iv)/(v)）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理 `2026-08-13-193118-mission-driver`（新会话，零执行者上下文，非执行者自我审计）
+- Evidence: 实仓零信任复核（Read/grep/glob），全部退出标准与 Closure Gates 对照 live code 验证通过：
+  - **Phase 1 落地**：`ErpInvStockMoveStateMachine.java`（168 行，严格无状态，4 边矩阵 confirm/complete/cancel×2，initial={DRAFT}、terminal={DONE,CANCELLED}，抛 common 层 `ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION` + action/currentStatus/expectedStatus 参数，无 DAO/IBiz/IServiceContext/事务 import）；`ErpInvStockTakeStateMachine.java`（164 行，4 边 startTake/completeTake/cancel×2，javadoc 标注 COUNTING↔CONFIRMED 标签漂移，`startTakeTargetStatus()=CONFIRMED`）；两 Bean 已于 `app-service.beans.xml:154-157` 以 FQN id 注册。
+  - **层 1 测试**：`TestErpInvStockMoveAndStockTakeStateMachines.java`（363 行，真实断言 assertEquals/assertTrue/assertThrows，覆盖无重复/冲突边、4 值全可达、终态无出边、合法/非法来源态全集、COUNTING 标签漂移核对）。
+  - **Phase 2 接线**：`ErpInvStockMoveProcessor`（doConfirm/doComplete 注入 + 委托 + 目标态回写）、`ErpInvStockMoveCancelProcessor`（cancel 委托）、`ErpInvStockTakeBizModel`（3 动作委托）——全部 `@Inject` 字段包级可见（R5=0 合规）。**reverse/generateMove Processor 零 stateMachine/assertCan 引用**（grep EXIT=1 证实生成路径不接线）。
+  - **Phase 3 owner doc**：`docs/design/inventory/state-machine.md` §盘点单状态机 含 COUNTING↔CONFIRMED 标签映射注记（:168 doc label drift 裁定）+ completeTake Deferred 注记（:170）。
+  - **Anti-hollow**：无空函数体/`return null` 占位/吞异常；Bean 经 Processor/BizModel 运行时调用并写回目标态；动态副作用（可用量/效期/记账/过账/预留量）保留原位。
+  - **Deferred honesty**：§Deferred But Adjudicated 5 项均为 out-of-scope/watch-only（4 缺口轴 successor 计划 / completeTake 自动差异移动单 owner doc Deferred / reversal 目标态 watch-only / 过账编排 watch-only / CRUD 禁止+Delta 归 M0.1/M5.3）——无范围内缺陷伪装 follow-up。
+  - **执行证据**：Phase 1 层 1 测试（`TestErpInvStockMoveAndStockTakeStateMachines`）；Phase 2 `mvn test -pl module-inventory/erp-inv-service` 174 tests 全绿（含 `testPostingFailureLeavesMoveDonePostedFalse`）；Phase 3 四方对照 + 漂移 Decision + owner doc §盘点单 COUNTING↔CONFIRMED 补注（`docs/design/inventory/state-machine.md`）。
 
 Follow-up:
 
-- <非阻塞跟进见 §Deferred But Adjudicated；已确认缺陷不得出现在此处>
+- <非阻塞跟进见 §Deferred But Adjudicated（inventory 4 缺口轴 / completeTake 自动差异移动单 / reversal 目标态 / 过账编排 watch-only / CRUD 禁止+Delta 归 M0.1/M5.3）；已确认缺陷不得出现在此处>

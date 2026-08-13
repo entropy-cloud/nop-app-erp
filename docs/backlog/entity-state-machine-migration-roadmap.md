@@ -122,8 +122,8 @@
 | M4.26 | ErpSalReceipt.approveStatus 收款审批轴 Bean（plan-first） | ready | `sales/state-machine.md` | M1.3 + M4.25 | `nop-backend-dev` + `nop-testing` |
 | M4.27 | ErpSalReturn.docStatus 销退单生命周期 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.28 | ErpSalReturn.approveStatus 销退审批轴 Bean（plan-first） | ready | `sales/state-machine.md` | M1.3 + M4.27 | `nop-backend-dev` + `nop-testing` |
-| M4.29 | ErpInvStockMove.docStatus 库存移动生命周期 Bean（plan-first） | ready | `inventory/state-machine.md` §StockMove | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.30 | ErpInvStockTake.docStatus 盘点单生命周期 Bean（plan-first） | ready | `inventory/state-machine.md` §StockTake | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.29 | ErpInvStockMove.docStatus 库存移动生命周期 Bean（plan-first） | done | `inventory/state-machine.md` §StockMove | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.30 | ErpInvStockTake.docStatus 盘点单生命周期 Bean（plan-first） | done | `inventory/state-machine.md` §StockTake | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.31 | ErpInvTransferOrder.docStatus 调拨单生命周期 Bean（plan-first） | todo | `inventory/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.32 | ErpInvOwnershipTransfer.docStatus 所有权转移生命周期 Bean（plan-first） | todo | `inventory/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.33 | ErpInvCostAdjust.docStatus 成本调整生命周期 Bean（plan-first） | todo | `inventory/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
