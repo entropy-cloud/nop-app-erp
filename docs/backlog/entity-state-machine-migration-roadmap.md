@@ -1,6 +1,6 @@
 # 实体级状态机 Bean 迁移路线图
 
-> 最后更新：2026-08-13（M3.15/M3.16 done：资产移动单 docStatus 退化轴 + approveStatus 审批轴双 Bean 迁移完成，计划 `2026-08-13-0805-2-erpast-movement-state-machine-beans.md`，首个 INLINE→Bean 迁移范式 + owner doc §适用对象二补章节 + ACTIVE 死状态/退化轴 Decision。M3.17 done：维护请求 `ErpMntRequest.status` 状态机 Bean 迁移完成，计划 `2026-08-13-0805-1-erpmnt-request-state-machine-bean.md`，owner doc §维护请求补 `IN_PROGRESS` doc-drift 修正 + 双源 reject/cancel Decision；M3.10/M3.11/M3.12 计划草案 `2026-08-13-0805-3-erpprj-timesheet-settlement-state-machine-beans.md` 发现分类漂移：Timesheet/Settlement approve 触发会计过账，依 §11.2 M3(iii) 应升级 M4 plan-first，M0.2 清单 §3.4 标`过账=无`与 live code 冲突；计划保持 draft 待人工/owner-doc plan-first 门控，并建议 M0.2 reconcile 表内分类 M3→M4。M3.18/M3.19 done：合同版本 + 返利协议状态轴 Bean 迁移完成，计划 `docs/plans/2026-08-13-1430-3-erpct-version-rebate-state-machine-beans.md`，owner doc 补 §适用对象二/三 + 退化轴/死状态 Decision 登记。M3.2/M3.3/M3.4/M3.5 done：采购四实体 approveStatus 审批轴 Bean 迁移完成，计划 `docs/plans/2026-08-13-0945-1-purchase-approvestatus-state-machine-bean.md`。M1.3 完成：客服试点四方对照审计 PASS + go 裁定 + 批量迁移模板裁定落地至 `docs/architecture/entity-state-machine-bean.md §11`；M2/M3 Deps 门控解除，各迁移项可启动独立 plan。M0.2 展开：M2=19 + M3=19 + M4=65 = 103 纳入轴）
+> 最后更新：2026-08-13（**M4 第二批 plan-first 草案**：M4.14/M4.16/M4.18/M4.20 采购 Receive/Invoice/Payment/Return approveStatus + M4.22/M4.24/M4.26/M4.28 销售 Delivery/Invoice/Receipt/Return approveStatus + M4.11/M4.12 ErpFinBudgetScenario docStatus+approveStatus 计划草案创建（`docs/plans/2026-08-13-1950-{1,2,3}-*.md`），各经独立子代理草案审查 2 轮收敛 acceptable-as-draft；全部触及业财过账保护域。**【2026-08-13 人工门控确认】**：M4.11/M4.12/M4.14/M4.16/M4.18/M4.20/M4.22/M4.24/M4.26/M4.28 的 §11.2 M4 (i) plan-first 人工/owner-doc 门控已于 2026-08-13 经人工确认解除，各 `Plan Status: draft → active`，工作项 Status `todo → ready`（规则 1）。审查零信任实证修正：(1) 采购 Invoice/Payment approve/reverseApprove 经 **facade** `ErpPurInvoice/PaymentProcessor.validateTransitionForXxx`（非 skeleton），与 Receive/Return 的 skeleton 路径分化，Bean 接线须双路径；(2) BudgetScenario rollForward 非 source docStatus 迁移（spawn-new-entity，源保持 APPROVED），仅 carryForward 是 APPROVED→CLOSED source 迁移；(3) carryForward/rollForward 绕过 facade `validateTransition`（使用自身守卫 + 不同错误码），Bean 守卫范围仅 4 动作；(4) BudgetScenario REJECTED 重提三方 drift（owner doc/javadoc=REJECTED→DRAFT vs live code=REJECTED→SUBMITTED）+ owner doc 实际为 `budget.md` 非 `state-machine.md`。**M4 首批 plan-first 草案**：M4.2 ErpFinAccountingPeriod.status + M4.29/M4.30 ErpInvStockMove/StockTake.docStatus + M4.1 ErpFinVoucher.docStatus 计划草案创建（`docs/plans/2026-08-13-2045-{1,2,3}-*.md`），各经独立子代理草案审查 2 轮收敛 acceptable-as-draft。**【2026-08-13 人工门控确认】**：M4.1/M4.2/M4.29+M4.30（+ M3.10/M3.11/M3.12 经 §11.2 M3(iii)→M4 升级）的 §11.2 M4 (i) plan-first 人工/owner-doc 门控已于 2026-08-13 经人工确认解除，各 `Plan Status: draft → active`，工作项 Status `todo → ready`（规则 1）；M3.10-12 表内 M3→M4 reconcile 仍为 Phase 3 Fix 登记项（非阻塞）。审查零信任实证修正：M0.2 §3.5 finance/inventory 测试名引用漂移（`TestErpFinPeriodStateMachine` 实存 / inventory「既有测试：无」实有具名测试）+ StockTake COUNTING↔CONFIRMED doc 标签漂移（保留 CONFIRMED 不改绑）+ ErpFinVoucher 恰 7 生成路径 writer（含首轮漏列的 `CommitmentVoucherGenerator`）+ ErpFinVoucher 无独立 `posted` 字段（过账状态即 docStatus=POSTED）+ StockMove 错误码实为 `ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION`（无 `ERR_INV_STOCK_MOVE_ILLEGAL_TRANSITION`）。M3.15/M3.16 done：资产移动单 docStatus 退化轴 + approveStatus 审批轴双 Bean 迁移完成，计划 `2026-08-13-0805-2-erpast-movement-state-machine-beans.md`，首个 INLINE→Bean 迁移范式 + owner doc §适用对象二补章节 + ACTIVE 死状态/退化轴 Decision。M3.17 done：维护请求 `ErpMntRequest.status` 状态机 Bean 迁移完成，计划 `2026-08-13-0805-1-erpmnt-request-state-machine-bean.md`，owner doc §维护请求补 `IN_PROGRESS` doc-drift 修正 + 双源 reject/cancel Decision；M3.10/M3.11/M3.12 计划草案 `2026-08-13-0805-3-erpprj-timesheet-settlement-state-machine-beans.md` 发现分类漂移：Timesheet/Settlement approve 触发会计过账，依 §11.2 M3(iii) 应升级 M4 plan-first，M0.2 清单 §3.4 标`过账=无`与 live code 冲突；计划保持 draft 待人工/owner-doc plan-first 门控，并建议 M0.2 reconcile 表内分类 M3→M4。M3.18/M3.19 done：合同版本 + 返利协议状态轴 Bean 迁移完成，计划 `docs/plans/2026-08-13-1430-3-erpct-version-rebate-state-machine-beans.md`，owner doc 补 §适用对象二/三 + 退化轴/死状态 Decision 登记。M3.2/M3.3/M3.4/M3.5 done：采购四实体 approveStatus 审批轴 Bean 迁移完成，计划 `docs/plans/2026-08-13-0945-1-purchase-approvestatus-state-machine-bean.md`。M1.3 完成：客服试点四方对照审计 PASS + go 裁定 + 批量迁移模板裁定落地至 `docs/architecture/entity-state-machine-bean.md §11`；M2/M3 Deps 门控解除，各迁移项可启动独立 plan。M0.2 展开：M2=19 + M3=19 + M4=65 = 103 纳入轴）
 > 来源：`docs/analysis/2026-08-06-1000-erp-state-machine-extension-strategy.md`；用户决策：每种业务状态机采用对应的可注入、可 Delta 覆盖 `ErpXxxStateMachine` Bean，以集中迁移逻辑并支持完备性分析。
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > 审查记录：4 轮独立子代理审查后收敛；见文末 `Draft Review Record`。
@@ -79,9 +79,9 @@
 | M3.7 | ErpSalOrder.approveStatus 审批轴 Bean | done | `sales/state-machine.md` §审批轴 | M1.3 + M2.10 | `nop-backend-dev` + `nop-testing` |
 | M3.8 | ErpHrEmployee.employmentStatus 雇佣生命周期 Bean | done | `human-resource/state-machine.md` §Employee | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.9 | ErpHrTimesheet.status Timesheet 审批生命周期 Bean | done | `human-resource/state-machine.md` §Timesheet | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M3.10 | ErpPrjTimesheet.status Timesheet 审批轴 Bean | todo | `projects/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M3.11 | ErpPrjProjectSettlement.docStatus 结算单据生命周期 Bean | todo | `projects/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M3.12 | ErpPrjProjectSettlement.approveStatus 结算审批轴 Bean | todo | `projects/state-machine.md` | M1.3 + M3.11 | `nop-backend-dev` + `nop-testing` |
+| M3.10 | ErpPrjTimesheet.status Timesheet 审批轴 Bean | done | `projects/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M3.11 | ErpPrjProjectSettlement.docStatus 结算单据生命周期 Bean | done | `projects/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M3.12 | ErpPrjProjectSettlement.approveStatus 结算审批轴 Bean | done | `projects/state-machine.md` | M1.3 + M3.11 | `nop-backend-dev` + `nop-testing` |
 | M3.13 | ErpMfgJobCard.status JobCard 生命周期 Bean | done | `manufacturing/state-machine.md` §JobCard | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.14 | ErpMfgMrpPlan.status MrpPlan 生命周期 Bean | done | `manufacturing/state-machine.md` §MRP | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.15 | ErpAstMovement.docStatus 资产移动单据生命周期 Bean | done | `assets/state-machine.md` §适用对象二 | M1.3 | `nop-backend-dev` + `nop-testing` |
@@ -94,8 +94,8 @@
 
 | # | Work Item | Status | Owner Doc | Deps | Skill |
 |---|---|---|---|---|---|
-| M4.1 | ErpFinVoucher.docStatus 凭证过账生命周期 Bean（plan-first） | todo | `finance/state-machine.md` §Voucher | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.2 | ErpFinAccountingPeriod.status 会计期间生命周期 Bean（plan-first） | todo | `finance/state-machine.md` §Period | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.1 | ErpFinVoucher.docStatus 凭证过账生命周期 Bean（plan-first） | ready | `finance/state-machine.md` §Voucher | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.2 | ErpFinAccountingPeriod.status 会计期间生命周期 Bean（plan-first） | ready | `finance/state-machine.md` §Period | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.3 | ErpFinReconciliation.docStatus 对账单生命周期 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.4 | ErpFinExpenseClaim.docStatus 报销单生命周期 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.5 | ErpFinExpenseClaim.approveStatus 报销审批轴 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 + M4.4 | `nop-backend-dev` + `nop-testing` |
@@ -104,26 +104,26 @@
 | M4.8 | ErpFinNotesReceivable.status 应收票据生命周期 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.9 | ErpFinNotesPayable.status 应付票据生命周期 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.10 | ErpFinBadDebt.approveStatus 坏账审批轴 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.11 | ErpFinBudgetScenario.docStatus 预算方案生命周期 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.12 | ErpFinBudgetScenario.approveStatus 预算审批轴 Bean（plan-first） | todo | `finance/state-machine.md` | M1.3 + M4.11 | `nop-backend-dev` + `nop-testing` |
+| M4.11 | ErpFinBudgetScenario.docStatus 预算方案生命周期 Bean（plan-first） | ready | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.12 | ErpFinBudgetScenario.approveStatus 预算审批轴 Bean（plan-first） | ready | `finance/state-machine.md` | M1.3 + M4.11 | `nop-backend-dev` + `nop-testing` |
 | M4.13 | ErpPurReceive.docStatus 入库单生命周期 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.14 | ErpPurReceive.approveStatus 入库审批轴 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 + M4.13 | `nop-backend-dev` + `nop-testing` |
+| M4.14 | ErpPurReceive.approveStatus 入库审批轴 Bean（plan-first） | ready | `purchase/state-machine.md` | M1.3 + M4.13 | `nop-backend-dev` + `nop-testing` |
 | M4.15 | ErpPurInvoice.docStatus 采购发票生命周期 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.16 | ErpPurInvoice.approveStatus 采购发票审批轴 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 + M4.15 | `nop-backend-dev` + `nop-testing` |
+| M4.16 | ErpPurInvoice.approveStatus 采购发票审批轴 Bean（plan-first） | ready | `purchase/state-machine.md` | M1.3 + M4.15 | `nop-backend-dev` + `nop-testing` |
 | M4.17 | ErpPurPayment.docStatus 付款单生命周期 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.18 | ErpPurPayment.approveStatus 付款审批轴 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 + M4.17 | `nop-backend-dev` + `nop-testing` |
+| M4.18 | ErpPurPayment.approveStatus 付款审批轴 Bean（plan-first） | ready | `purchase/state-machine.md` | M1.3 + M4.17 | `nop-backend-dev` + `nop-testing` |
 | M4.19 | ErpPurReturn.docStatus 退货单生命周期 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.20 | ErpPurReturn.approveStatus 退货审批轴 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 + M4.19 | `nop-backend-dev` + `nop-testing` |
+| M4.20 | ErpPurReturn.approveStatus 退货审批轴 Bean（plan-first） | ready | `purchase/state-machine.md` | M1.3 + M4.19 | `nop-backend-dev` + `nop-testing` |
 | M4.21 | ErpSalDelivery.docStatus 出库单生命周期 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.22 | ErpSalDelivery.approveStatus 出库审批轴 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 + M4.21 | `nop-backend-dev` + `nop-testing` |
+| M4.22 | ErpSalDelivery.approveStatus 出库审批轴 Bean（plan-first） | ready | `sales/state-machine.md` | M1.3 + M4.21 | `nop-backend-dev` + `nop-testing` |
 | M4.23 | ErpSalInvoice.docStatus 销售发票生命周期 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.24 | ErpSalInvoice.approveStatus 销售发票审批轴 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 + M4.23 | `nop-backend-dev` + `nop-testing` |
+| M4.24 | ErpSalInvoice.approveStatus 销售发票审批轴 Bean（plan-first） | ready | `sales/state-machine.md` | M1.3 + M4.23 | `nop-backend-dev` + `nop-testing` |
 | M4.25 | ErpSalReceipt.docStatus 收款单生命周期 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.26 | ErpSalReceipt.approveStatus 收款审批轴 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 + M4.25 | `nop-backend-dev` + `nop-testing` |
+| M4.26 | ErpSalReceipt.approveStatus 收款审批轴 Bean（plan-first） | ready | `sales/state-machine.md` | M1.3 + M4.25 | `nop-backend-dev` + `nop-testing` |
 | M4.27 | ErpSalReturn.docStatus 销退单生命周期 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.28 | ErpSalReturn.approveStatus 销退审批轴 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 + M4.27 | `nop-backend-dev` + `nop-testing` |
-| M4.29 | ErpInvStockMove.docStatus 库存移动生命周期 Bean（plan-first） | todo | `inventory/state-machine.md` §StockMove | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.30 | ErpInvStockTake.docStatus 盘点单生命周期 Bean（plan-first） | todo | `inventory/state-machine.md` §StockTake | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.28 | ErpSalReturn.approveStatus 销退审批轴 Bean（plan-first） | ready | `sales/state-machine.md` | M1.3 + M4.27 | `nop-backend-dev` + `nop-testing` |
+| M4.29 | ErpInvStockMove.docStatus 库存移动生命周期 Bean（plan-first） | ready | `inventory/state-machine.md` §StockMove | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.30 | ErpInvStockTake.docStatus 盘点单生命周期 Bean（plan-first） | ready | `inventory/state-machine.md` §StockTake | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.31 | ErpInvTransferOrder.docStatus 调拨单生命周期 Bean（plan-first） | todo | `inventory/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.32 | ErpInvOwnershipTransfer.docStatus 所有权转移生命周期 Bean（plan-first） | todo | `inventory/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.33 | ErpInvCostAdjust.docStatus 成本调整生命周期 Bean（plan-first） | todo | `inventory/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
