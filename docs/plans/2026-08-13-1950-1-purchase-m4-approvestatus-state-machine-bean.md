@@ -1,6 +1,6 @@
 # 2026-08-13-1950-1-purchase-m4-approvestatus-state-machine-bean 采购入库/发票/付款/退货单 ErpPurReceive/Invoice/Payment/Return.approveStatus 实体级状态机 Bean（M4.14 + M4.16 + M4.18 + M4.20）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) 人工/owner-doc 门控**已于 2026-08-13 经人工确认解除**——本计划触及受保护采购业财过账行为（approve 触发入库移动/凭证过账：Receive→`IErpInvStockMoveBiz` 入库；Invoice→AP_INVOICE 凭证；Payment→PAYMENT 凭证+核销；Return→出库+红字发票。reverseApprove 逆转上述副作用经 `PurReversalListener` 回写 posted=false + APPROVED→REJECTED，已由起草者经 live code 实证）。M4 plan-first 门控成立；该人工裁定非起草者可自主解除（project-context.md 会计/财务保护域硬停止）。计划格式/完备性/范围/结束证据就绪 + 人工门控已确认，已转 `active` 进入实施。
 > Last Reviewed: 2026-08-13
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.14（ErpPurReceive.approveStatus）+ M4.16（ErpPurInvoice.approveStatus）+ M4.18（ErpPurPayment.approveStatus）+ M4.20（ErpPurReturn.approveStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md §3.5 purchase`（440 行段，PUR-5/6/9/10/13/14/17/18 行）
@@ -73,69 +73,78 @@
 
 ### Phase 1 - ErpPurReceive approveStatus Bean（M4.14）+ 跨实体 Decision 固化
 
-Status: planned
+Status: completed
+
+> **Decision Result（Phase 1 执行固化）**：
+> (A) **reverseApprove 目标态实仓确认 = 全部 REJECTED**：Receive `ErpPurReceiveReverseApproveProcessor:32` REJECTED；Invoice `ErpPurInvoiceProcessor.doReverseApprove:215` REJECTED；Payment `ErpPurPaymentProcessor.doReverseApprove:242` REJECTED；Return `ErpPurReturnReverseApproveProcessor:32` REJECTED。四实体统一 = REJECTED，零行为回归。骨架 `AbstractReverseApproveProcessor`→SUBMITTED 为经覆写绕过的死路径，§16.4 合规化移交既有 successor（与 M3 同源）。
+> (B) **wiring 路径逐实体逐动作核实**：
+> - **Receive（skeleton 全 5）**：submit/reject/withdraw 经骨架 `validateTransitionForXxx`；approve/reverseApprove 整体覆写 public 方法但调 `this.validateTransitionForXxx`（继承骨架默认）→ 全部 skeleton 路径。
+> - **Return（skeleton 全 5）**：同 Receive。
+> - **Invoice**：submit/reject/withdraw = skeleton（per-mutation Processor 不覆写 `validateTransitionForXxx`）；approve/reverseApprove = **facade**（per-mutation Processor 调 `processor.validateTransitionForApprove/ReverseApprove` + `processor.doApprove/doReverseApprove`）。
+> - **Payment**：submit（per-mutation 覆写 public 方法，调 `this.validateTransitionForSubmit` = skeleton）；reject/withdraw = skeleton；approve/reverseApprove = **facade**（同 Invoice）。
+> (C) **facade 路径接线点选定**：facade `validateTransitionForApprove/ReverseApprove` + `doApprove/doReverseApprove` 改调 Bean（Phase 2 实施）。facade `validateTransitionForSubmit/Withdraw/Reject` 经 grep 确认**无调用方**（死代码），保留不动（skeleton 路径 live，per-mutation Processor 接线 Bean）。
 Targets: `module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/statemachine/ErpPurReceiveApprovalStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpPurReceive{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval}Processor.java`、`.../test/.../TestErpPurReceiveApprovalStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done（已满足）；M4.14 deps = M1.3 + M4.13（draft，docStatus 轴另计划，approveStatus 迁移不阻塞于 docStatus 执行——双轴独立）
 
-- [ ] `Decision`（reverseApprove 目标态实仓确认 + **wiring 路径逐实体分类**，复用 M3 先例）：(A) 核实 4 实体 `*ReverseApproveProcessor` 的 reverseApprove 目标态。Receive 已实证=REJECTED（`:32`）。Invoice/Payment/Return 须实仓核实，预期同覆写=REJECTED。骨架 `AbstractReverseApproveProcessor.doReverseApprove:39`→SUBMITTED 仍为已确认 live 缺陷（经覆写绕过的死路径），§16.4 合规化移交既有 successor。(B) **逐实体逐动作 wiring 路径核实**：Receive/Return 全部经 skeleton `validateTransitionForXxx`；Invoice/Payment 的 approve/reverseApprove 经 **facade** `ErpPurInvoice/PaymentProcessor.validateTransitionForXxx`（非 skeleton）。Bean 接线策略按路径分化：(A) skeleton 路径 → per-mutation Processor 覆写委托 Bean；(B) facade 路径 → facade 方法改调 Bean（或 per-mutation Processor 改调 Bean 替代 facade 调用）。Phase 2 须按此分化执行，**不得假设 Invoice/Payment 沿用 Receive 范式**。
+- [x] `Decision`（reverseApprove 目标态实仓确认 + **wiring 路径逐实体分类**，复用 M3 先例）：(A) 核实 4 实体 `*ReverseApproveProcessor` 的 reverseApprove 目标态。Receive 已实证=REJECTED（`:32`）。Invoice/Payment/Return 须实仓核实，预期同覆写=REJECTED。骨架 `AbstractReverseApproveProcessor.doReverseApprove:39`→SUBMITTED 仍为已确认 live 缺陷（经覆写绕过的死路径），§16.4 合规化移交既有 successor。(B) **逐实体逐动作 wiring 路径核实**：Receive/Return 全部经 skeleton `validateTransitionForXxx`；Invoice/Payment 的 approve/reverseApprove 经 **facade** `ErpPurInvoice/PaymentProcessor.validateTransitionForXxx`（非 skeleton）。Bean 接线策略按路径分化：(A) skeleton 路径 → per-mutation Processor 覆写委托 Bean；(B) facade 路径 → facade 方法改调 Bean（或 per-mutation Processor 改调 Bean 替代 facade 调用）。Phase 2 须按此分化执行，**不得假设 Invoice/Payment 沿用 Receive 范式**。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpPurReceiveApprovalStateMachine` Bean——显式 `assertCanSubmit/Approve/Reject/ReverseApprove/Withdraw(String status)`（非法来源态 → 抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`fromStatus` 补充参数）+ `submitTargetStatus/approveTargetStatus/rejectTargetStatus/reverseApproveTargetStatus/withdrawTargetStatus()`（reverseApprove=REJECTED）+ `isTerminal`/`initialStatuses`/`terminalStatuses` + 只读 `transitions()`（6 条边：submit×2 + approve + reject + reverseApprove + withdraw）。严格无状态（§2）。命名带 `Approval` 后缀。
+- [x] `Add`：落地 `ErpPurReceiveApprovalStateMachine` Bean——显式 `assertCanSubmit/Approve/Reject/ReverseApprove/Withdraw(String status)`（非法来源态 → 抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`fromStatus` 补充参数）+ `submitTargetStatus/approveTargetStatus/rejectTargetStatus/reverseApproveTargetStatus/withdrawTargetStatus()`（reverseApprove=REJECTED）+ `isTerminal`/`initialStatuses`/`terminalStatuses` + 只读 `transitions()`（6 条边：submit×2 + approve + reject + reverseApprove + withdraw）。严格无状态（§2）。命名带 `Approval` 后缀。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：在 `_vfs/erp/pur/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（四实体审批轴 Bean 一并注册）。
+- [x] `Add`：在 `_vfs/erp/pur/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（四实体审批轴 Bean 一并注册）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision | Add`（跨实体接线 Decision 复用 M3 先例）：(A) Bean 接线点 = 5 个 per-mutation Processor 覆写 `validateTransitionFor{Submit,Approve,Reject,ReverseApprove,Withdraw}` 委托 Bean（try/catch common 码 → `illegalStatusException` 领域码）；目标态写入经覆写 `submittedStatus/approvedStatus/rejectedStatus/unsubmittedStatus` getter 委托 Bean `*TargetStatus()`；(B) common 错误码沿用 Option A；(C) 领域码映射 `ERR_ILLEGAL_STATUS_TRANSITION`（Receive 泛型）/ `ERR_INVOICE/PAYMENT/RETURN_ILLEGAL_STATUS_TRANSITION`（各自领域码）保留；(D) 初始态 UNSUBMITTED 写入不经 Bean（§9.2 选项 c）；(E) SoD + 动态业务守卫/副作用（triggerIncomingMove/enforceInspectionGate/PostingDispatcher/commitment-restore/workflow）保留原位。Receive 5 Processor 注入 `@Inject ErpPurReceiveApprovalStateMachine`（非 private），覆写 5 个 `validateTransitionForXxx` 调对应 `assertCanXxx`。
+- [x] `Decision | Add`（跨实体接线 Decision 复用 M3 先例）：(A) Bean 接线点 = 5 个 per-mutation Processor 覆写 `validateTransitionFor{Submit,Approve,Reject,ReverseApprove,Withdraw}` 委托 Bean（try/catch common 码 → `illegalStatusException` 领域码）；目标态写入经覆写 `submittedStatus/approvedStatus/rejectedStatus/unsubmittedStatus` getter 委托 Bean `*TargetStatus()`；(B) common 错误码沿用 Option A；(C) 领域码映射 `ERR_ILLEGAL_STATUS_TRANSITION`（Receive 泛型）/ `ERR_INVOICE/PAYMENT/RETURN_ILLEGAL_STATUS_TRANSITION`（各自领域码）保留；(D) 初始态 UNSUBMITTED 写入不经 Bean（§9.2 选项 c）；(E) SoD + 动态业务守卫/副作用（triggerIncomingMove/enforceInspectionGate/PostingDispatcher/commitment-restore/workflow）保留原位。Receive 5 Processor 注入 `@Inject ErpPurReceiveApprovalStateMachine`（非 private），覆写 5 个 `validateTransitionForXxx` 调对应 `assertCanXxx`。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（greenfield 表驱动）——(a) 无重复/冲突边（6 边唯一 action|fromStatus 键）；(b) submit UNSUBMITTED/null/REJECTED→SUBMITTED、approve SUBMITTED→APPROVED、reject SUBMITTED→REJECTED、reverseApprove APPROVED→REJECTED、withdraw SUBMITTED→UNSUBMITTED 可达；(c) 各 `assertCanXxx` 合法来源态通过、非法来源态抛 common 码携带 `action`/`fromStatus`；(d) `transitions()` 与显式方法语义一致；(e) 初始={UNSUBMITTED}/终态={APPROVED}（APPROVED 经 reverseApprove 有出边，为可逆业务终态）。
+- [x] `Proof`：层 1 矩阵完备性（greenfield 表驱动）——(a) 无重复/冲突边（6 边唯一 action|fromStatus 键）；(b) submit UNSUBMITTED/null/REJECTED→SUBMITTED、approve SUBMITTED→APPROVED、reject SUBMITTED→REJECTED、reverseApprove APPROVED→REJECTED、withdraw SUBMITTED→UNSUBMITTED 可达；(c) 各 `assertCanXxx` 合法来源态通过、非法来源态抛 common 码携带 `action`/`fromStatus`；(d) `transitions()` 与显式方法语义一致；(e) 初始={UNSUBMITTED}/终态={APPROVED}（APPROVED 经 reverseApprove 有出边，为可逆业务终态）。**已验证：11 tests, 0 failures**。
   - Skill: `nop-testing`
-- [ ] `Proof`：层 2 四方对照（Receive 单条）——dict `wf/approve-status` ↔ `purchase/state-machine.md` §审批轴 ↔ Bean 元数据 ↔ 全部 writer（5 Processor live + 创建写 UNSUBMITTED + CRUD 路径 §9.4 选项 c 排除）。owner doc §审批轴矩阵与 Bean 一致性核实。
+- [x] `Proof`：层 2 四方对照（Receive 单条）——dict `wf/approve-status` ↔ `purchase/state-machine.md` §审批轴 ↔ Bean 元数据 ↔ 全部 writer（5 Processor live + 创建写 UNSUBMITTED + CRUD 路径 §9.4 选项 c 排除）。owner doc §审批轴矩阵与 Bean 一致性核实。**已核实一致：Bean 6 边矩阵与 dict/owner doc §审批轴完全对齐；5 Processor 全部委托 Bean，内联 `Objects.equals` 守卫已移除**。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] `ErpPurReceiveApprovalStateMachine` Bean 存在、已注册、严格无状态；5 个 Receive 审批 Processor 委托 Bean，内联 `Objects.equals` 矩阵判断已移除（动态 hook 除外）。
-- [ ] Receive 层 1 矩阵测试本地 `mvn test -pl module-purchase/erp-pur-service -am -Dtest=TestErpPurReceiveApprovalStateMachineMatrix` 全绿。
+- [x] `ErpPurReceiveApprovalStateMachine` Bean 存在、已注册、严格无状态；5 个 Receive 审批 Processor 委托 Bean，内联 `Objects.equals` 矩阵判断已移除（动态 hook 除外）。
+- [x] Receive 层 1 矩阵测试本地 `mvn test -pl module-purchase/erp-pur-service -am -Dtest=TestErpPurReceiveApprovalStateMachineMatrix` 全绿。**已验证：11 tests green；TestErpPurReceiveApproval 集成回归 4 tests green**。
 
 ### Phase 2 - ErpPurInvoice + ErpPurPayment + ErpPurReturn approveStatus Bean（M4.16 + M4.18 + M4.20）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpPur{Invoice,Payment,Return}ApprovalStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpPur{Invoice,Payment,Return}{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval}Processor.java`、`.../test/.../TestErpPur{Invoice,Payment,Return}ApprovalStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（跨实体 Decision + wiring 分类已固化，三实体按路径分化执行）
 
-- [ ] `Add`：落地 `ErpPurInvoiceApprovalStateMachine` / `ErpPurPaymentApprovalStateMachine` / `ErpPurReturnApprovalStateMachine`（同 Phase 1 结构，reverseApprove 目标态=REJECTED，各自领域码）；**接线按 Phase 1 wiring 分类分化**：Return（skeleton 路径）5 Processor 覆写 `validateTransitionForXxx` 委托 Bean；Invoice/Payment 的 submit/reject/withdraw（skeleton）经 per-mutation Processor 覆写委托 Bean，**approve/reverseApprove（facade 路径）经 facade `ErpPurInvoice/PaymentProcessor.validateTransitionForApprove/validateTransitionForReverseApprove` 改调 Bean**（确切注入点按 Phase 1 Decision）。Invoice/Payment 的 PostingDispatcher 过账编排、commitment-restore 保留原位。Payment 的 workflow（`nopFlowId`/`useWorkflow="true"`）保留原位。注册 3 Bean。
+- [x] `Add`：落地 `ErpPurInvoiceApprovalStateMachine` / `ErpPurPaymentApprovalStateMachine` / `ErpPurReturnApprovalStateMachine`（同 Phase 1 结构，reverseApprove 目标态=REJECTED，各自领域码）；**接线按 Phase 1 wiring 分类分化**：Return（skeleton 路径）5 Processor 覆写 `validateTransitionForXxx` 委托 Bean；Invoice/Payment 的 submit/reject/withdraw（skeleton）经 per-mutation Processor 覆写委托 Bean，**approve/reverseApprove（facade 路径）经 facade `ErpPurInvoice/PaymentProcessor.validateTransitionForApprove/validateTransitionForReverseApprove` 改调 Bean**（确切注入点按 Phase 1 Decision）。Invoice/Payment 的 PostingDispatcher 过账编排、commitment-restore 保留原位。Payment 的 workflow（`nopFlowId`/`useWorkflow="true"`）保留原位。注册 3 Bean。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（3 实体独立测试）。
+- [x] `Proof`：层 1 矩阵完备性（3 实体独立测试）。**已验证：3×11 = 33 tests green（+Receive 11 = 44 total）**。
   - Skill: `nop-testing`
-- [ ] `Proof`：层 2 四方对照（Invoice/Payment/Return 各单条）。writer 图：各 5 per-mutation Processor（live，xbiz 委托）+ 创建写 UNSUBMITTED + CRUD 路径（§9.4 选项 c 排除）。owner doc 矛盾处按 doc drift 处置（如有）。
+- [x] `Proof`：层 2 四方对照（Invoice/Payment/Return 各单条）。writer 图：各 5 per-mutation Processor（live，xbiz 委托）+ 创建写 UNSUBMITTED + CRUD 路径（§9.4 选项 c 排除）。owner doc 矛盾处按 doc drift 处置（如有）。**已核实一致：3 实体 Bean 6 边矩阵与 dict/owner doc §审批轴完全对齐；skeleton 路径 Processor 内联守卫已移除委托 Bean；facade 路径 validateTransitionForApprove/ReverseApprove + doApprove/doReverseApprove 改调 Bean；Invoice/Payment facade validateTransitionForSubmit/Withdraw/Reject 为死代码（无调用方）保留不动**。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] 3 Bean 存在/注册/无状态；各 5 Processor 委托 Bean，内联矩阵判断已移除。
-- [ ] 3 层 1 矩阵测试本地全绿。
+- [x] 3 Bean 存在/注册/无状态；各 5 Processor 委托 Bean，内联矩阵判断已移除。
+- [x] 3 层 1 矩阵测试本地全绿。**+ 集成回归 TestErpPurInvoiceApproval(5)/TestErpPurPaymentApproval(3)/TestErpPurReturnApproval(6) 全绿**。
 
 ### Phase 3 - 层 3 既有命名动作回归
 
-Status: planned
+Status: completed
 Targets: `module-purchase/erp-pur-service/src/test/`（既有集成测试，零新建）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1–2（四实体 Bean + 接线已落地）
 
-- [ ] `Proof`：层 3 既有命名动作回归——复用既有集成测试基线（`TestErpPurReceiveApproval`/`TestErpPurInvoiceApproval`/`TestErpPurPaymentApproval`/`TestErpPurReturnApproval` + 跨域 `TestErpPurProcureToPayEnd`/`TestPurReversalListenerReceiveRollback`/`TestErpPurFinanceReversalWriteback`），证明 Processor 写回、审计 fromStatus/toStatus、SoD、领域错误码 + 参数、过账 dispatcher/stock move/PurReversalListener 副作用时序不变。本地 `mvn test -pl module-purchase/erp-pur-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归——复用既有集成测试基线（`TestErpPurReceiveApproval`/`TestErpPurInvoiceApproval`/`TestErpPurPaymentApproval`/`TestErpPurReturnApproval` + 跨域 `TestErpPurProcureToPayEnd`/`TestPurReversalListenerReceiveRollback`/`TestErpPurFinanceReversalWriteback`），证明 Processor 写回、审计 fromStatus/toStatus、SoD、领域错误码 + 参数、过账 dispatcher/stock move/PurReversalListener 副作用时序不变。本地 `mvn test -pl module-purchase/erp-pur-service -am` 全绿。**已验证：`mvn test -pl module-purchase/erp-pur-service` 全绿，Tests run: 269, Failures: 0, Errors: 0, Skipped: 0（含全部上述既有集成测试 + 4 矩阵测试，零行为回归）**。
   - Skill: `nop-testing`
-- [ ] `Proof`：四实体一致性复核——四 Bean 命名（`Approval` 后缀）/注册（同文件）/无状态/元数据形状一致（同 6 边矩阵 + reverseApprove=REJECTED 统一）；PROC 路径接线范式可追溯。
+- [x] `Proof`：四实体一致性复核——四 Bean 命名（`Approval` 后缀）/注册（同文件）/无状态/元数据形状一致（同 6 边矩阵 + reverseApprove=REJECTED 统一）；PROC 路径接线范式可追溯。**已核实：4 Bean 同包同文件注册、命名统一 `Approval` 后缀、矩阵形状一致（6 边 + reverseApprove=REJECTED）；Receive/Return=skeleton 全 5、Invoice/Payment=skeleton(submit/reject/withdraw)+facade(approve/reverseApprove) 接线范式可追溯**。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 层 3 既有集成测试全绿（零行为回归）。
+- [x] 层 3 既有集成测试全绿（零行为回归）。**269 tests green**。
 
 ## Draft Review Record
 
@@ -147,14 +156,14 @@ Exit Criteria:
 ## Closure Gates
 
 - [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)；2026-08-13 人工确认，见 Draft Review Record 门控确认记录）
-- [ ] 范围内行为完成（四实体 approveStatus Bean + PROC 路径接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-purchase/erp-pur-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` 全 19 规则 actual ≤ baseline
-- [ ] 无范围内项目降级为 deferred/follow-up（reverseApprove 骨架缺陷已显式移交既有 successor ownership）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（四实体 approveStatus Bean + PROC 路径接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（roadmap M4.14/16/18/20 → done）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-purchase/erp-pur-service -am` 全绿（269 tests）+ `bash docs/audits/nop-compliance-checker.sh` 全 19 规则 actual ≤ baseline（R5=0、R11=0 不增）
+- [x] 无范围内项目降级为 deferred/follow-up（reverseApprove 骨架缺陷已显式移交既有 successor ownership）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -178,11 +187,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending execution
+Status Note: executed + closed (2026-08-13)；全部 3 Phase 完成，验证全绿（`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-purchase/erp-pur-service` 269 tests green + compliance R5=0/R11=0 不增）。独立子代理结束审计已通过（见下方证据）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
+- 执行者验证（2026-08-13）：4 Bean 创建/注册/无状态；20 Processor 接线（Receive/Return skeleton 全 5 + Invoice/Payment skeleton submit/reject/withdraw + facade approve/reverseApprove）；4 矩阵测试 44 tests green；层 3 集成回归 269 tests green；compliance 全 19 规则 ≤ baseline。
+- Auditor / Agent: 独立结束审计子代理（新会话，`MISSION_DRIVER:2026-08-13-193118-mission-driver`，非执行者上下文）— 2026-08-13 通过。
+- 审计方法与核实记录：(a) 反空心核实——`ErpPurReceiveApprovalStateMachine` 177 行完整实现（5 个 `assertCanXxx` 守卫 + 5 个 `*TargetStatus()` getter + `transitions()` 6 边元数据 + `isTerminal`/`initialStatuses`/`terminalStatuses`），无空方法体/`return null`/吞异常；(b) 接线核实——Receive 5 Processor 均注入 `ErpPurReceiveApprovalStateMachine`（grep 5 命中，`@Inject` 非 private）；Invoice facade `ErpPurInvoiceProcessor.validateTransitionForApprove:143`/`validateTransitionForReverseApprove:158`/`doReverseApprove:220` 委托 Bean（`stateMachine.assertCanApprove`/`assertCanReverseApprove`/`reverseApproveTargetStatus()`），Payment facade 同构；(c) reverseApprove=REJECTED 实仓确认——`doReverseApprove:221` 调 `stateMachine.reverseApproveTargetStatus()` 返回 `APPROVE_STATUS_REJECTED`，与 Phase 1 Decision (A) 一致；(d) 死代码处置一致——facade `validateTransitionForReject:151` 仍内联 `Objects.equals`（无调用方，Phase 1 Decision (C) 裁定保留不动），与计划声明一致；(e) 五点一致性——`Plan Status: completed` / 3 Phase `completed` / 各 Exit Criteria 全 `[x]` / Closure Gates 全 `[x]` / 日志 `docs/logs/2026/2026-08-13.md`（269 tests green 基线）一致；(f) Deferred 诚实性——骨架 §16.4 缺陷为已确认 live defect 显式移交既有 successor（与 M3 同源），未隐藏于 Follow-up；(g) docs sync——日志已记录全绿基线。
 
 Follow-up:
 

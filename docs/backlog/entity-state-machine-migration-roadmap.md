@@ -107,13 +107,13 @@
 | M4.11 | ErpFinBudgetScenario.docStatus 预算方案生命周期 Bean（plan-first） | ready | `finance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.12 | ErpFinBudgetScenario.approveStatus 预算审批轴 Bean（plan-first） | ready | `finance/state-machine.md` | M1.3 + M4.11 | `nop-backend-dev` + `nop-testing` |
 | M4.13 | ErpPurReceive.docStatus 入库单生命周期 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.14 | ErpPurReceive.approveStatus 入库审批轴 Bean（plan-first） | ready | `purchase/state-machine.md` | M1.3 + M4.13 | `nop-backend-dev` + `nop-testing` |
+| M4.14 | ErpPurReceive.approveStatus 入库审批轴 Bean（plan-first） | done | `purchase/state-machine.md` | M1.3 + M4.13 | `nop-backend-dev` + `nop-testing` |
 | M4.15 | ErpPurInvoice.docStatus 采购发票生命周期 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.16 | ErpPurInvoice.approveStatus 采购发票审批轴 Bean（plan-first） | ready | `purchase/state-machine.md` | M1.3 + M4.15 | `nop-backend-dev` + `nop-testing` |
+| M4.16 | ErpPurInvoice.approveStatus 采购发票审批轴 Bean（plan-first） | done | `purchase/state-machine.md` | M1.3 + M4.15 | `nop-backend-dev` + `nop-testing` |
 | M4.17 | ErpPurPayment.docStatus 付款单生命周期 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.18 | ErpPurPayment.approveStatus 付款审批轴 Bean（plan-first） | ready | `purchase/state-machine.md` | M1.3 + M4.17 | `nop-backend-dev` + `nop-testing` |
+| M4.18 | ErpPurPayment.approveStatus 付款审批轴 Bean（plan-first） | done | `purchase/state-machine.md` | M1.3 + M4.17 | `nop-backend-dev` + `nop-testing` |
 | M4.19 | ErpPurReturn.docStatus 退货单生命周期 Bean（plan-first） | todo | `purchase/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.20 | ErpPurReturn.approveStatus 退货审批轴 Bean（plan-first） | ready | `purchase/state-machine.md` | M1.3 + M4.19 | `nop-backend-dev` + `nop-testing` |
+| M4.20 | ErpPurReturn.approveStatus 退货审批轴 Bean（plan-first） | done | `purchase/state-machine.md` | M1.3 + M4.19 | `nop-backend-dev` + `nop-testing` |
 | M4.21 | ErpSalDelivery.docStatus 出库单生命周期 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.22 | ErpSalDelivery.approveStatus 出库审批轴 Bean（plan-first） | ready | `sales/state-machine.md` | M1.3 + M4.21 | `nop-backend-dev` + `nop-testing` |
 | M4.23 | ErpSalInvoice.docStatus 销售发票生命周期 Bean（plan-first） | todo | `sales/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
