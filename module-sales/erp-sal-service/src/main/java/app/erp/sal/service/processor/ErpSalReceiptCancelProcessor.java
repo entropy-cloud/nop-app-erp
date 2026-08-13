@@ -4,6 +4,7 @@ import app.erp.sal.dao.entity.ErpSalReceipt;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
 import app.erp.sal.service.posting.SalReceiptPostingDispatcher;
+import app.erp.sal.service.statemachine.ErpSalReceiptDocumentStateMachine;
 import app.erp.common.service.AbstractCancelProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -13,9 +14,17 @@ import jakarta.inject.Inject;
 import java.util.Objects;
 
 /**
- * ErpSalReceipt cancel per-mutation Processor (plan 2026-07-30-1433-2 R5.2, no xbiz source).
+ * ErpSalReceipt cancel per-mutation Processor (plan 2026-07-30-1433-2 R5.2, no xbiz source;
+ * StateMachine 接线 plan 2026-08-13-0810-2 M4.25)。
  * cancel 在已审核已过账时红冲收款过账（postingDispatcher.reverse）后 reload setDocStatus(CANCELLED)，
  * 需 custom public override。经 BizModel Java 调用，R5.8 重配线前不在 xbiz 委托链（运行时验证移交 R5.8）。
+ *
+ * <p>固定来源态/目标态判断委托 {@link ErpSalReceiptDocumentStateMachine}（docStatus 业务生命周期轴 Bean，契约 §4/§7）。
+ * writtenOffStatus（核销轴）/ settle 编排不受 docStatus 轴影响。非法边映射：Bean 抛 common 层
+ * {@code ERR_ILLEGAL_STATUS_TRANSITION}（含 {@code action=cancel}/{@code fromStatus} 元数据）作 cause，
+ * {@link #validateTransitionForCancel} 捕获后映射领域码
+ * {@link ErpSalErrors#ERR_RECEIPT_ILLEGAL_DOC_STATUS_TRANSITION}（{@code receiptCode}/
+ * {@code currentDocStatus}/{@code expectedDocStatus} 参数对外不变）。
  */
 public class ErpSalReceiptCancelProcessor extends AbstractCancelProcessor<ErpSalReceipt> {
 
@@ -24,6 +33,9 @@ public class ErpSalReceiptCancelProcessor extends AbstractCancelProcessor<ErpSal
 
     @Inject
     SalReceiptPostingDispatcher postingDispatcher;
+
+    @Inject
+    ErpSalReceiptDocumentStateMachine stateMachine;
 
     @Override
     public ErpSalReceipt cancel(String id, IServiceContext context) {
@@ -68,12 +80,21 @@ public class ErpSalReceiptCancelProcessor extends AbstractCancelProcessor<ErpSal
     }
 
     @Override
+    protected void validateTransitionForCancel(ErpSalReceipt entity, IServiceContext context) {
+        try {
+            stateMachine.assertCanCancel(entity.getDocStatus());
+        } catch (NopException e) {
+            throw illegalStatusException(entity, entity.getDocStatus(), "非已作废");
+        }
+    }
+
+    @Override
     protected void setDocStatus(ErpSalReceipt entity, String status) {
         entity.setDocStatus(status);
     }
 
     @Override
     protected String cancelledDocStatus() {
-        return ErpSalConstants.DOC_STATUS_CANCELLED;
+        return stateMachine.cancelTargetStatus();
     }
 }

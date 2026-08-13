@@ -82,6 +82,34 @@
           class="app.erp.sal.service.statemachine.ErpSalQuotationDocumentStateMachine"/>
 
     <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
+         ErpSalDelivery.docStatus 轴（业务生命周期）。按类型注入 Processor；Delta 同名 bean id 覆盖替换基线矩阵（§6）。
+          命名带 Document 后缀（§1 双轴约定，与 ErpSalDeliveryApprovalStateMachine docStatus 轴分离）。
+          (plan 2026-08-13-0810-2 Phase 1 M4.21) -->
+    <bean id="app.erp.sal.service.statemachine.ErpSalDeliveryDocumentStateMachine"
+          class="app.erp.sal.service.statemachine.ErpSalDeliveryDocumentStateMachine"/>
+
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
+         ErpSalInvoice.docStatus 轴（业务生命周期）。按类型注入 Processor；Delta 同名 bean id 覆盖替换基线矩阵（§6）。
+          命名带 Document 后缀（§1 双轴约定，与 ErpSalInvoiceApprovalStateMachine docStatus 轴分离）。
+          (plan 2026-08-13-0810-2 Phase 1 M4.23) -->
+    <bean id="app.erp.sal.service.statemachine.ErpSalInvoiceDocumentStateMachine"
+          class="app.erp.sal.service.statemachine.ErpSalInvoiceDocumentStateMachine"/>
+
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
+         ErpSalReceipt.docStatus 轴（业务生命周期）。按类型注入 Processor；Delta 同名 bean id 覆盖替换基线矩阵（§6）。
+          命名带 Document 后缀（§1 双轴约定，与 ErpSalReceiptApprovalStateMachine docStatus 轴分离）。
+          (plan 2026-08-13-0810-2 Phase 1 M4.25) -->
+    <bean id="app.erp.sal.service.statemachine.ErpSalReceiptDocumentStateMachine"
+          class="app.erp.sal.service.statemachine.ErpSalReceiptDocumentStateMachine"/>
+
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
+         ErpSalReturn.docStatus 轴（业务生命周期）。按类型注入 Processor；Delta 同名 bean id 覆盖替换基线矩阵（§6）。
+          命名带 Document 后缀（§1 双轴约定，与 ErpSalReturnApprovalStateMachine docStatus 轴分离）。
+          (plan 2026-08-13-0810-2 Phase 1 M4.27) -->
+    <bean id="app.erp.sal.service.statemachine.ErpSalReturnDocumentStateMachine"
+          class="app.erp.sal.service.statemachine.ErpSalReturnDocumentStateMachine"/>
+
+    <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
          ErpSalOrder.approveStatus 轴（审批轴）。按类型注入 Processor；Delta 同名 bean id 覆盖替换基线矩阵（§6）。
          命名带 Approval 后缀（§1 双轴约定，与 ErpSalOrderDocumentStateMachine docStatus 轴分离）。
          (plan 2026-08-13-0945-2 Phase 1 M3.7) -->
