@@ -1,6 +1,5 @@
 package app.erp.mnt.service.processor;
 
-import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
@@ -22,14 +21,19 @@ public class ErpMntVisitCancelProcessor extends AbstractErpMntVisitProcessor {
 
     public ErpMntVisit cancel(Long visitId, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
-        validateNotTerminal(visit, context);
+        String from = visit.getStatus();
+        try {
+            stateMachine.assertCanCancel(from);
+        } catch (NopException e) {
+            throw illegalVisitTransition(visit, from, "非终态", e);
+        }
         doCancel(visit, context);
         equipmentStatusLinker.restoreToRunning(visit.getEquipmentId(), context);
         return visit;
     }
 
     protected void doCancel(ErpMntVisit visit, IServiceContext context) {
-        visit.setStatus(ErpMntDaoConstants.VISIT_STATUS_CANCELLED);
+        visit.setStatus(stateMachine.cancelTargetStatus());
         visitDao().updateEntity(visit);
 
         // 维修工时费用化 GL 红冲（cancel 时已生成 MAINTENANCE_LABOR 凭证则红冲），config-gated 与正向对称

@@ -7,7 +7,6 @@ import app.erp.mnt.service.ErpMntErrors;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
-
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
@@ -21,7 +20,12 @@ public class ErpMntVisitScheduleProcessor extends AbstractErpMntVisitProcessor {
 
     public ErpMntVisit schedule(Long visitId, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
-        validateTransition(visit, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "DRAFT");
+        String from = visit.getStatus();
+        try {
+            stateMachine.assertCanSchedule(from);
+        } catch (NopException e) {
+            throw illegalVisitTransition(visit, from, ErpMntDaoConstants.VISIT_STATUS_DRAFT, e);
+        }
         validateSchedulePrereqs(visit, context);
         checkScheduleConflict(visit, context);
         doSchedule(visit, context);
@@ -64,7 +68,7 @@ public class ErpMntVisitScheduleProcessor extends AbstractErpMntVisitProcessor {
     }
 
     protected void doSchedule(ErpMntVisit visit, IServiceContext context) {
-        visit.setStatus(ErpMntDaoConstants.VISIT_STATUS_SCHEDULED);
+        visit.setStatus(stateMachine.scheduleTargetStatus());
         visitDao().updateEntity(visit);
     }
 }

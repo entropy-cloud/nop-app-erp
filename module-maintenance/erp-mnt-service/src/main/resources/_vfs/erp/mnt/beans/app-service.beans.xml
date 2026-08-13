@@ -52,9 +52,15 @@
     <bean id="app.erp.mnt.service.report.ErpMntReportBizModel" ioc:type="@bean:id"/>
 
     <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对应
-          ErpMntRequest.status 轴。按类型注入 Processor/BizModel；Delta 同名 bean id 覆盖替换基线矩阵（§6）。 -->
+          一实体一轴。按类型注入 Processor/BizModel；Delta 同名 bean id 覆盖替换基线矩阵（§6）。 -->
     <bean id="app.erp.mnt.service.statemachine.ErpMntRequestStateMachine"
           class="app.erp.mnt.service.statemachine.ErpMntRequestStateMachine"/>
+    <bean id="app.erp.mnt.service.statemachine.ErpMntVisitStateMachine"
+          class="app.erp.mnt.service.statemachine.ErpMntVisitStateMachine"/>
+    <bean id="app.erp.mnt.service.statemachine.ErpMntSparePartUsageDocumentStateMachine"
+          class="app.erp.mnt.service.statemachine.ErpMntSparePartUsageDocumentStateMachine"/>
+    <bean id="app.erp.mnt.service.statemachine.ErpMntSparePartUsageApprovalStateMachine"
+          class="app.erp.mnt.service.statemachine.ErpMntSparePartUsageApprovalStateMachine"/>
 
     <!-- per-mutation Processor beans (R6.7，processor-extension-pattern.md 每 mutation 一 Processor)：
          maintenance 域 14 须拆 mutation 全部拆为独立 Processor；域专属抽象基类（Abstract*）不注册。 -->

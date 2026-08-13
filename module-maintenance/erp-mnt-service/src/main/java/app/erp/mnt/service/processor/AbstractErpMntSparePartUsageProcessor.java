@@ -8,6 +8,8 @@ import app.erp.mnt.dao.entity.ErpMntSparePartUsageLine;
 import app.erp.mnt.service.ErpMntConstants;
 import app.erp.mnt.service.ErpMntErrors;
 import app.erp.mnt.service.posting.MaintenanceIssuePostingDispatcher;
+import app.erp.mnt.service.statemachine.ErpMntSparePartUsageApprovalStateMachine;
+import app.erp.mnt.service.statemachine.ErpMntSparePartUsageDocumentStateMachine;
 import app.erp.mnt.service.support.SparePartIssueService;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -44,6 +46,12 @@ public abstract class AbstractErpMntSparePartUsageProcessor {
     @Inject
     IErpInvStockMoveBiz stockMoveBiz;
 
+    @Inject
+    ErpMntSparePartUsageDocumentStateMachine documentStateMachine;
+
+    @Inject
+    ErpMntSparePartUsageApprovalStateMachine approvalStateMachine;
+
     protected IEntityDao<ErpMntSparePartUsage> usageDao() {
         return daoProvider.daoFor(ErpMntSparePartUsage.class);
     }
@@ -75,18 +83,22 @@ public abstract class AbstractErpMntSparePartUsageProcessor {
     }
 
     protected void validateCanReverse(ErpMntSparePartUsage usage, IServiceContext context) {
-        String docStatus = usage.getDocStatus();
-        if (!Boolean.TRUE.equals(usage.getPosted())
-                || !Objects.equals(docStatus, ErpMntDaoConstants.DOC_STATUS_ACTIVE)) {
+        if (!Boolean.TRUE.equals(usage.getPosted())) {
             throw new NopException(ErpMntErrors.ERR_SPARE_PART_USAGE_NOT_POSTED)
+                    .param(ErpMntErrors.ARG_USAGE_CODE, usage.getCode());
+        }
+        try {
+            documentStateMachine.assertCanReverseConfirm(usage.getDocStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpMntErrors.ERR_SPARE_PART_USAGE_NOT_POSTED, e)
                     .param(ErpMntErrors.ARG_USAGE_CODE, usage.getCode());
         }
     }
 
     protected void applyIssueResult(ErpMntSparePartUsage usage, List<ErpMntSparePartUsageLine> lines,
                                      ErpInvStockMove move, IServiceContext context) {
-        usage.setDocStatus(ErpMntDaoConstants.DOC_STATUS_ACTIVE);
-        usage.setApproveStatus(ErpMntConstants.APPROVE_STATUS_APPROVED);
+        usage.setDocStatus(documentStateMachine.confirmTargetStatus());
+        usage.setApproveStatus(approvalStateMachine.confirmApproveTargetStatus());
         usage.setPosted(isStockIssued(move));
         if (Boolean.TRUE.equals(usage.getPosted())) {
             usage.setPostedAt(CoreMetrics.currentTimestamp());
@@ -100,7 +112,7 @@ public abstract class AbstractErpMntSparePartUsageProcessor {
     }
 
     protected void doReverseConfirm(ErpMntSparePartUsage usage, IServiceContext context) {
-        usage.setDocStatus(ErpMntDaoConstants.DOC_STATUS_CANCELLED);
+        usage.setDocStatus(documentStateMachine.reverseConfirmTargetStatus());
         usage.setPosted(false);
         usageDao().updateEntity(usage);
     }

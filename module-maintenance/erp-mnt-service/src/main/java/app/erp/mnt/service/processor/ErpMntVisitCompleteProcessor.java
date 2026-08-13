@@ -4,6 +4,7 @@ import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.api.core.exceptions.NopException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,14 +27,19 @@ public class ErpMntVisitCompleteProcessor extends AbstractErpMntVisitProcessor {
 
     public ErpMntVisit complete(Long visitId, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
-        validateTransition(visit, ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS, "IN_PROGRESS");
+        String from = visit.getStatus();
+        try {
+            stateMachine.assertCanComplete(from);
+        } catch (NopException e) {
+            throw illegalVisitTransition(visit, from, ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS, e);
+        }
         doComplete(visit, context);
         equipmentStatusLinker.restoreToRunning(visit.getEquipmentId(), context);
         return visit;
     }
 
     protected void doComplete(ErpMntVisit visit, IServiceContext context) {
-        visit.setStatus(ErpMntDaoConstants.VISIT_STATUS_COMPLETED);
+        visit.setStatus(stateMachine.completeTargetStatus());
         Timestamp endTime = visit.getEndTime() == null ? CoreMetrics.currentTimestamp() : visit.getEndTime();
         visit.setEndTime(endTime);
         if (visit.getStartTime() != null) {

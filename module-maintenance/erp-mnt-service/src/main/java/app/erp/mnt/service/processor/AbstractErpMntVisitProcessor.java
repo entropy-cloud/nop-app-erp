@@ -1,9 +1,9 @@
 package app.erp.mnt.service.processor;
 
-import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.service.ErpMntErrors;
 import app.erp.mnt.service.posting.MaintenanceLaborPostingDispatcher;
+import app.erp.mnt.service.statemachine.ErpMntVisitStateMachine;
 import app.erp.mnt.service.support.EquipmentStatusLinker;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -11,13 +11,15 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
-import java.util.Objects;
-
 /**
  * 维护访问 per-mutation Processor 共享基类（R6.7，{@code processor-extension-pattern.md} facade protected helper 范式）。
  * 承载 schedule/start/complete/cancel 四个 per-mutation Processor 共用的加载、状态守卫辅助（单一真相源）。
  * complete/cancel 含维修工时费用化 GL 过账（会计保护区域），其 config-gating / try-catch / session-reload 惯法逐字保留在
  * 各子类 doComplete/doCancel 内（对照 TestErpMntLaborPosting 校验语义不变）。
+ *
+ * <p>状态守卫经实体级 {@link ErpMntVisitStateMachine} Bean（契约 §5）：各 Processor 直接调用 {@code assertCanXxx}，
+ * common 层非法迁移码经 {@link #illegalVisitTransition(ErpMntVisit, String, String, Throwable)} cause-chain 映射为领域
+ * {@code ERR_INVALID_VISIT_STATUS_TRANSITION}（契约 §7）。目标态经 {@code *TargetStatus()}。
  */
 public abstract class AbstractErpMntVisitProcessor {
 
@@ -29,6 +31,9 @@ public abstract class AbstractErpMntVisitProcessor {
 
     @Inject
     MaintenanceLaborPostingDispatcher laborPostingDispatcher;
+
+    @Inject
+    ErpMntVisitStateMachine stateMachine;
 
     protected IEntityDao<ErpMntVisit> visitDao() {
         return daoProvider.daoFor(ErpMntVisit.class);
@@ -42,23 +47,16 @@ public abstract class AbstractErpMntVisitProcessor {
         return visit;
     }
 
-    protected void validateTransition(ErpMntVisit visit, String expected, String expectedName) {
-        String status = visit.getStatus();
-        if (status == null || !Objects.equals(status, expected)) {
-            throw illegalVisitTransition(visit, status, expectedName);
-        }
-    }
-
-    protected void validateNotTerminal(ErpMntVisit visit, IServiceContext context) {
-        String status = visit.getStatus();
-        if (status != null && (Objects.equals(status, ErpMntDaoConstants.VISIT_STATUS_COMPLETED)
-                || Objects.equals(status, ErpMntDaoConstants.VISIT_STATUS_CANCELLED))) {
-            throw illegalVisitTransition(visit, status, "非终态");
-        }
-    }
-
     protected NopException illegalVisitTransition(ErpMntVisit visit, String current, String expected) {
-        return new NopException(ErpMntErrors.ERR_INVALID_VISIT_STATUS_TRANSITION)
+        return illegalVisitTransition(visit, current, expected, null);
+    }
+
+    /**
+     * 非法迁移领域异常（带 cause）：StateMachine Bean 报告 common 层 {@code ERR_ILLEGAL_STATUS_TRANSITION}，
+     * 此处映射为领域 {@code ERR_INVALID_VISIT_STATUS_TRANSITION} + 实体编号/上下文，common 码作 cause 保留（契约 §7）。
+     */
+    protected NopException illegalVisitTransition(ErpMntVisit visit, String current, String expected, Throwable cause) {
+        return new NopException(ErpMntErrors.ERR_INVALID_VISIT_STATUS_TRANSITION, cause)
                 .param(ErpMntErrors.ARG_VISIT_CODE, visit.getCode())
                 .param(ErpMntErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpMntErrors.ARG_EXPECTED_STATUS, expected);

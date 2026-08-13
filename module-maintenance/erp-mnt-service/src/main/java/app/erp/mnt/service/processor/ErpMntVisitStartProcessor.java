@@ -4,6 +4,7 @@ import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.time.CoreMetrics;
+import io.nop.api.core.exceptions.NopException;
 
 /**
  * ErpMntVisit start per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
@@ -14,14 +15,19 @@ public class ErpMntVisitStartProcessor extends AbstractErpMntVisitProcessor {
 
     public ErpMntVisit start(Long visitId, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
-        validateTransition(visit, ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, "SCHEDULED");
+        String from = visit.getStatus();
+        try {
+            stateMachine.assertCanStart(from);
+        } catch (NopException e) {
+            throw illegalVisitTransition(visit, from, ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, e);
+        }
         doStart(visit, context);
         equipmentStatusLinker.linkToUnderMaintenance(visit.getEquipmentId(), context);
         return visit;
     }
 
     protected void doStart(ErpMntVisit visit, IServiceContext context) {
-        visit.setStatus(ErpMntDaoConstants.VISIT_STATUS_IN_PROGRESS);
+        visit.setStatus(stateMachine.startTargetStatus());
         if (visit.getStartTime() == null) {
             visit.setStartTime(CoreMetrics.currentTimestamp());
         }
