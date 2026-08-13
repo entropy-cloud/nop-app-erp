@@ -34,6 +34,14 @@
          下游可经 Delta beans.xml 同名 bean id 覆盖基线矩阵（契约 §6）。 -->
     <bean id="app.erp.ct.service.statemachine.ErpCtContractStateMachine"
           class="app.erp.ct.service.statemachine.ErpCtContractStateMachine"/>
+    <!-- 合同版本 status 轴 Bean（M3.18，plan 2026-08-13-1430-3）：2 边 finalize/sign + 终态 SIGNED + transitions 元数据。
+         下游可经 Delta beans.xml 同名 bean id 覆盖基线矩阵（契约 §6）。 -->
+    <bean id="app.erp.ct.service.statemachine.ErpCtContractVersionStateMachine"
+          class="app.erp.ct.service.statemachine.ErpCtContractVersionStateMachine"/>
+    <!-- 返利协议 status 轴 Bean（M3.19，plan 2026-08-13-1430-3）：退化分类 Bean（transitions 空 + 3 死状态预留登记）
+         + 集中化 ACTIVE accrual 只读守卫委托。下游可经 Delta beans.xml 同名 bean id 覆盖（契约 §6）。 -->
+    <bean id="app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine"
+          class="app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine"/>
 
     <!-- per-mutation Cat-B D-mutation Processor beans (R6.7)：类别 B 内联 mutation 每 mutation 独立 Processor。
          自包含 body（VERBATIM 迁移 + CrudBizModel 管道方法替换为 raw dao 等价）；下游可经 Delta beans.xml 同名 bean id 覆盖。 -->

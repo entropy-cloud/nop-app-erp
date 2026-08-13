@@ -5,6 +5,7 @@ import app.erp.contract.dao.entity.ErpCtRebateAgreement;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
 import app.erp.ct.service.rebate.RebateEngine;
+import app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.sal.dao.entity.ErpSalInvoice;
 import io.nop.api.core.beans.query.QueryBean;
@@ -41,9 +42,12 @@ public class ErpCtRebateAgreementRunAccrualProcessor {
     @Inject
     RebateEngine rebateEngine;
 
+    @Inject
+    ErpCtRebateAgreementStateMachine stateMachine;
+
     public ErpCtRebateAgreement runAccrual(Long agreementId, LocalDate asOfDate, IServiceContext context) {
         ErpCtRebateAgreement agreement = requireAgreement(agreementId);
-        if (!Objects.equals(agreement.getStatus(), ErpCtConstants.REBATE_AGREEMENT_STATUS_ACTIVE)) {
+        if (!stateMachine.isActive(agreement.getStatus())) {
             throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_NOT_ACTIVE)
                     .param(ErpCtErrors.ARG_REBATE_AGREEMENT_ID, agreementId)
                     .param(ErpCtErrors.ARG_CURRENT_STATUS, agreement.getStatus());

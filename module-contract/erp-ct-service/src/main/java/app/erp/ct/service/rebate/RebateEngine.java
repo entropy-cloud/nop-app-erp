@@ -17,12 +17,11 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
-import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine;
 
 /**
  * 返利计提引擎（{@code volume-discount.md} §返利计提明细 / §追溯调整）。
@@ -45,6 +44,9 @@ public class RebateEngine {
 
     @Inject
     IErpCtRebateAccrualBiz rebateAccrualBiz;
+
+    @Inject
+    ErpCtRebateAgreementStateMachine stateMachine;
 
     /**
      * 对单张已过账发票事件计提返利。
@@ -138,7 +140,7 @@ public class RebateEngine {
     }
 
     protected void validateActive(ErpCtRebateAgreement agreement) {
-        if (!Objects.equals(agreement.getStatus(), ErpCtConstants.REBATE_AGREEMENT_STATUS_ACTIVE)) {
+        if (!stateMachine.isActive(agreement.getStatus())) {
             throw new NopException(ErpCtErrors.ERR_CT_REBATE_AGREEMENT_NOT_ACTIVE)
                     .param(ErpCtErrors.ARG_REBATE_AGREEMENT_ID, agreement.getId())
                     .param(ErpCtErrors.ARG_CURRENT_STATUS, agreement.getStatus());

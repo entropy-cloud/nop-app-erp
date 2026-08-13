@@ -16,11 +16,11 @@ import app.erp.ct.biz.IErpCtContractVersionBiz;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
 import app.erp.ct.service.processor.ErpCtContractVersionSignVersionProcessor;
+import app.erp.ct.service.statemachine.ErpCtContractVersionStateMachine;
 import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -38,6 +38,9 @@ public class ErpCtContractVersionBizModel extends CrudBizModel<ErpCtContractVers
     @Inject
     ErpCtContractVersionSignVersionProcessor signVersionProcessor;
 
+    @Inject
+    ErpCtContractVersionStateMachine stateMachine;
+
     public ErpCtContractVersionBizModel() {
         setEntityName(ErpCtContractVersion.class.getName());
     }
@@ -46,10 +49,12 @@ public class ErpCtContractVersionBizModel extends CrudBizModel<ErpCtContractVers
     @BizMutation
     public ErpCtContractVersion finalizeVersion(@Name("versionId") Long versionId, IServiceContext context) {
         ErpCtContractVersion version = requireVersion(versionId, context);
-        if (!Objects.equals(version.getStatus(), ErpCtConstants.VERSION_STATUS_DRAFT)) {
-            throw illegalTransition(version, ErpCtConstants.VERSION_STATUS_DRAFT);
+        try {
+            stateMachine.assertCanFinalize(version.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(version, ErpCtConstants.VERSION_STATUS_DRAFT, e);
         }
-        version.setStatus(ErpCtConstants.VERSION_STATUS_FINALIZED);
+        version.setStatus(stateMachine.finalizeTargetStatus());
         updateEntity(version, null, context);
         return version;
     }
@@ -80,7 +85,15 @@ public class ErpCtContractVersionBizModel extends CrudBizModel<ErpCtContractVers
     }
 
     protected NopException illegalTransition(ErpCtContractVersion version, String expected) {
-        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(version, expected, null);
+    }
+
+    /**
+     * 领域非法迁移异常构造。可选 {@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
+     * Bean 报 common 码 + action/fromStatus 元数据，BizModel/Processor 映射领域码 + 实体编号/上下文，common 码作 cause 保留）。
+     */
+    protected NopException illegalTransition(ErpCtContractVersion version, String expected, Throwable cause) {
+        return new NopException(ErpCtErrors.ERR_CT_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpCtErrors.ARG_CONTRACT_CODE, version.getContractId())
                 .param(ErpCtErrors.ARG_CURRENT_STATUS, version.getStatus())
                 .param(ErpCtErrors.ARG_EXPECTED_STATUS, expected);
