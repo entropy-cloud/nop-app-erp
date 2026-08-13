@@ -2,7 +2,7 @@
 
 > **设计要点依据**：本状态机按 `docs/skills/state-machine-business-review-prompt.md` 的 10 个审查维度组织。审查本状态机时使用该提示词。
 >
-> 资产域有两类状态对象：**资产卡片**（生命周期状态机）与**折旧计划条目**（简单执行状态）。本文件主要覆盖资产卡片状态机，折旧计划条目状态较简单（见末节）。
+> 资产域有两类状态对象：**资产卡片**（生命周期状态机）与**折旧计划条目**（简单执行状态）。本文件主要覆盖资产卡片状态机（§适用对象），折旧计划条目状态较简单（见末节）。资产移动单（ErpAstMovement）双轴状态机见 §适用对象二。
 
 ## 适用对象
 
@@ -146,13 +146,110 @@
 - 业财打通机制见 `finance/posting.md`（businessType 含 DEPRECIATION/CAPITALIZATION/DISPOSAL）。
 - 期末折旧与会计期间结账的关系见 `finance/state-machine.md`。
 
+## 适用对象二：资产移动单（ErpAstMovement）
+
+> 本节由 plan `2026-08-13-0805-2`（M3.15 docStatus + M3.16 approveStatus）补章节落地——owner doc 原仅在「实现模式与守卫边界」散文段提及 Movement INLINE 路径，无矩阵化 §适用对象章节。本节集中建立 `ErpAstMovement` 双轴（`approveStatus` 审批轴 + `docStatus` 退化分类轴）的权威迁移语义与退化轴裁定登记。
+>
+> 实体级状态机 Bean：`ErpAstMovementApprovalStateMachine`（approveStatus 5 动作矩阵）+ `ErpAstMovementDocumentStateMachine`（docStatus 退化分类 Bean——`transitions()` 空 + 集中化 `isCancelled(status)` 只读守卫）。双轴各自独立 Bean（契约 §1/§3 双轴分离 + `Approval`/`Document` 后缀命名）。
+
+### 1. 状态定义
+
+#### approveStatus 审批轴（dict `wf/approve-status`）
+
+| approveStatus | 业务含义 | 可达性 |
+|---------------|----------|--------|
+| 未提交（UNSUBMITTED） | 移动单新建，等待提交审批 | 初始态（CRUD 创建写入）；withdrawApproval 可回到此态 |
+| 已提交（SUBMITTED） | 已提交待审核 | submitForApproval 从 UNSUBMITTED/REJECTED 进入 |
+| 已审核（APPROVED） | 审核通过（业务终态，可逆） | approve 从 SUBMITTED 进入 |
+| 已驳回（REJECTED） | 审核驳回 | reject 从 SUBMITTED 进入；reverseApprove 从 APPROVED 进入 |
+
+#### docStatus 退化分类轴（dict `erp/doc-status`）
+
+| docStatus | 业务含义 | 可达性 |
+|-----------|----------|--------|
+| 草稿（DRAFT） | 单据初始生命周期态 | 初始态（CRUD 创建写入） |
+| 已生效（ACTIVE） | **预留死状态** | dict 内有值，Movement 零命名动作 writer 可达（保留为预留语义入口） |
+| 已作废（CANCELLED） | 终态：逻辑删除 | 经 `useLogicalDelete` 承载（无独立 cancel mutation） |
+
+### 2. 迁移完整性
+
+#### approveStatus 审批轴迁移矩阵（5 命名动作，6 条边）
+
+```
+未提交 (UNSUBMITTED) / 已驳回 (REJECTED)
+  └─ submitForApproval → 已提交 (SUBMITTED)
+                          ├─ approve → 已审核 (APPROVED)
+                          │             └─ reverseApprove → 已驳回 (REJECTED)
+                          ├─ reject → 已驳回 (REJECTED)
+                          └─ withdrawApproval → 未提交 (UNSUBMITTED)
+```
+
+| 动作 | 来源态 | 目标态 | 审计字段 |
+|------|--------|--------|----------|
+| submitForApproval | UNSUBMITTED / null / REJECTED | SUBMITTED | — |
+| approve | SUBMITTED | APPROVED | approvedBy + approvedAt |
+| reject | SUBMITTED | REJECTED | approvedBy + approvedAt |
+| reverseApprove | APPROVED | REJECTED | approvedBy + approvedAt 置空 |
+| withdrawApproval | SUBMITTED | UNSUBMITTED | — |
+
+5 动作均前置 `isCancelled(docStatus)` 防御守卫（CANCELLED 单据禁止审批操作）。
+
+> **reverseApprove 目标态裁定**：reverseApprove→REJECTED（非 SUBMITTED），对齐 `domain-design-guidelines.md §16.4` + assets 域 R1.x 既有行为。Bean `reverseApproveTargetStatus()`=REJECTED。
+
+#### docStatus 退化轴声明（layer-2 四方对照裁定）
+
+本轴为**退化分类轴**：
+
+- **零命名动作迁移 writer**：全仓无 `setDocStatus(...)` 生产 writer（grep 零命中），无 cancel/activate BizMutation。
+- **CANCELLED 经 `useLogicalDelete` 承载**：Movement 实体配 `useLogicalDelete="true"`（`app-erp-assets.orm.xml:396`），逻辑删除时置 CANCELLED，无独立 cancel mutation。
+- **ACTIVE = 预留死状态（intentional reserved）**：dict 含值但零 writer 可达。Bean `transitions()` 返回**空列表**（零迁移边），ACTIVE 不在 `initialStatuses`/`terminalStatuses`/`transitions` 任一集合。
+- **裁定（Decision）**：分类 = `intentional reserved`。dict 值保留（**不从 ORM 删除**——对齐资产卡片 IDLE + Contract CANCELLED + hr SUSPENDED 先例：保留优于删除）。
+- **Successor**：资产移动单独立 cancel/activate 工作流需求时，开独立 plan 实现命名动作 mutation + 填充 Bean `transitions()` 边。
+
+### 3. 终态与恢复
+
+- **approveStatus 终态**：APPROVED 为业务终态（「可逆终态」——经 reverseApprove 有出边，故不适用「终态无出边」强断言）。REJECTED 非终态（经 submitForApproval 可重新提交）。
+- **docStatus 终态**：CANCELLED 为经 useLogicalDelete 可达的终态。
+
+### 4. 异常路径
+
+| 异常场景 | 处理 |
+|----------|------|
+| CANCELLED 单据执行审批动作 | `isCancelled` 防御守卫阻断（抛 `nop.err.wf.approve.doc-cancelled`） |
+| 非来源态执行审批动作 | Bean `assertCan<Action>` 报告 common 层非法迁移码（`nop.err.erp.common.illegal-status-transition`，契约 §7） |
+| 资产移动单无 posted 副作用 | 不过账、无凭证需 reverse；reverseApprove 仅清空 approvedBy/At + 置 REJECTED |
+
+### 5. 可达性
+
+- approveStatus：从 UNSUBMITTED 可达全部 3 非初始态（SUBMITTED/APPROVED/REJECTED）；REJECTED 经 submitForApproval 可回到 SUBMITTED（驳回后重新提交循环合法）。
+- docStatus：DRAFT 为初始态；CANCELLED 经 useLogicalDelete 可达（终态）；ACTIVE 死状态不可达。
+
+### 6. 角色与权限
+
+| 动作 | `<auth permissions>` 声明 |
+|------|---------------------------|
+| approve | `ErpAstMovement:approve` |
+| reverseApprove | `ErpAstMovement:reverseApprove` |
+| submitForApproval / reject / withdrawApproval | 无额外 auth 声明（默认） |
+
+### 7. 实现模式：INLINE→Bean 迁移（首个范式）
+
+Movement 审批状态逻辑原 100% 内联在 `ErpAstMovement.xbiz` 的 `<source>` 脚本（无 `ErpAstMovement*Processor` Java 类）。本节落地后：
+
+- **xbiz source 经 `inject('FQN')` 取得双 Bean**（验证 xbiz source 可注入并调用 Bean，首个 INLINE→Bean 迁移范式）。
+- approveStatus 守卫 → `approvalStateMachine.assertCan<Action>(entity.approveStatus)`；目标态 → `entity.approveStatus = approvalStateMachine.<action>TargetStatus()`。
+- docStatus 防御守卫 → `documentStateMachine.isCancelled(entity.docStatus)`（boolean，xbiz 保留领域码 `nop.err.wf.approve.doc-cancelled` 抛出）。
+- **保留**：`<auth permissions>` 声明、approvedBy/approvedAt 置位与置空、`<x:extends>` 继承结构。
+
+> **错误码迁移说明（契约 §7）**：approveStatus 非法边由 Bean 抛 common 层码（`nop.err.erp.common.illegal-status-transition`，携带 action/currentStatus 元数据）；Movement 无 Processor 层做领域码映射（XScript 不支持 try-catch），故 common 码直接传播。doc-cancelled 守卫经 `isCancelled()` boolean helper 委托，xbiz 保留领域码 `nop.err.wf.approve.doc-cancelled`（错误码对外不变）。
+
 ## 实现模式与守卫边界
 
-> 资产域移动单（ErpAstMovement）审批轴动作的实现模式补注。
+> 资产域移动单（ErpAstMovement）审批轴动作的实现模式补注。完整双轴矩阵见 §适用对象二。
 
 **PROC 路径**（资本化/处置/拆分/合并/价值调整 等 `ErpAst*Processor`）：含完整业务守卫 + 过账联动。
 
-**INLINE 路径**（Movement 全 5 动作：submitForApproval/approve/reject/reverseApprove/withdrawApproval）：直接在 xbiz `<source>` 脚本中实现，守卫边界为 **isCancelled + src 状态校验**（`entity.docStatus === 'CANCELLED'` 阻断 + `approveStatus` 源态校验）。Movement 无独立 cancel mutation，docStatus=CANCELLED 经 `useLogicalDelete` 承载，isCancelled 守卫为防御性（阻止逻辑删除单据的 approveStatus 副轴漂移）。
+**INLINE→Bean 路径**（Movement 全 5 动作：submitForApproval/approve/reject/reverseApprove/withdrawApproval）：原直接在 xbiz `<source>` 脚本中实现，现**已完成 INLINE→Bean 迁移**（plan `2026-08-13-0805-2`）——xbiz source 经 `inject` 取得 `ErpAstMovementApprovalStateMachine` + `ErpAstMovementDocumentStateMachine` 双 Bean，固定守卫/目标态委托 Bean，动态守卫（isCancelled 防御 + approvedBy/At 审计）保留原位。Movement 无独立 cancel mutation，docStatus=CANCELLED 经 `useLogicalDelete` 承载，isCancelled 守卫为防御性（阻止逻辑删除单据的 approveStatus 副轴漂移）。
 
 ### IDLE 暂停/恢复：本期 Deferred
 
@@ -182,6 +279,7 @@
 - 终态（报废/出售）是否真正无出边，处置错误的纠正路径是否清晰。
 - 折旧漏提补提路径是否覆盖（反结账 vs 当期补提）。
 - 资本化入账与库存出库的协作（库存转固场景）。
+- 资产移动单（适用对象二）：approveStatus 5 动作矩阵 + docStatus 退化轴（ACTIVE 死状态 reserved，CANCELLED 经 useLogicalDelete）；reverseApprove→REJECTED 目标态（§16.4）；INLINE→Bean 迁移（xbiz source inject 双 Bean）。
 
 ## 已知限制：浏览器层 xwf 审批路径（ErpAstDisposal）
 
