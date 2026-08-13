@@ -18,6 +18,8 @@
 
 持久化状态码字典以 `module-sales/model/app-erp-sales.orm.xml` 为准。
 
+> **docStatus（单据状态轴）生命周期注记**（plan 2026-08-13-0810-2 §Phase 3 owner doc 补注）：`erp/doc-status` 字典含 3 值 `DRAFT/ACTIVE/CANCELLED`，但销售域全部业务单据（订单/报价/出库/发票/收款/退货）的 docStatus 实际生命周期为**单边 `cancel: DRAFT → CANCELLED`**。`ACTIVE`（已生效）为 dict 中存在但**零生产 writer** 的死状态——4 实体级 `ErpSal*DocumentStateMachine` Bean 不编码 ACTIVE 入边（initial=`{DRAFT}`、terminal=`{CANCELLED}`、transitions 仅 1 边 cancel(DRAFT→CANCELLED)）。分类 = `intentional legacy dead state`（同 Order/Quotation M2 裁定，dict 值保留不改绑）。approveStatus/receivedStatus 轴独立演化，与 docStatus 无交叉写入。
+
 ## 1. 状态定义（审核轴）
 
 与采购域相同（UNSUBMITTED/SUBMITTED/APPROVED/REJECTED），每个状态表达"等待什么"。详见 `purchase/state-machine.md` 第 1 节，此处不重复。
