@@ -24,13 +24,13 @@ import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.ErpFinPostingProcessor;
+import app.erp.fin.service.statemachine.ErpFinVoucherDocumentStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -64,6 +64,9 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     @Inject
     ErpFinPostingProcessor postingProcessor;
 
+    @Inject
+    ErpFinVoucherDocumentStateMachine documentStateMachine;
+
     @Override
     // nop-check: allow @Transactional(REQUIRES_NEW) — 过账独立事务边界，见 processor-extension-pattern.md 硬规则 1
     @BizMutation
@@ -88,12 +91,15 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     public ErpFinVoucher postVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
         ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
         assertPeriodNotLocked(voucher);
-        if (!Objects.equals(voucher.getDocStatus(), ErpFinConstants.VOUCHER_STATUS_DRAFT)) {
-            throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION)
+        try {
+            documentStateMachine.assertCanPost(voucher.getDocStatus());
+        } catch (NopException e) {
+            // Bean 抛 common 层非法迁移码（作 cause），映射为领域码保持对外契约（契约 §7）。
+            throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION, e)
                     .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
                     .param(ErpFinErrors.ARG_CURRENT_STATUS, voucher.getDocStatus());
         }
-        voucher.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
+        voucher.setDocStatus(documentStateMachine.postVoucherTargetStatus());
         voucher.setPostedBy(context.getUserContext() != null ? context.getUserContext().getUserId() : null);
         voucher.setPostedAt(CoreMetrics.currentTimestamp());
         updateEntity(voucher, null, context);
@@ -105,7 +111,8 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     public ErpFinVoucher reverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
         ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
         assertPeriodNotLocked(voucher);
-        if (!Objects.equals(voucher.getDocStatus(), ErpFinConstants.VOUCHER_STATUS_POSTED)) {
+        // isReversed 标志操作的前置分类（POSTED），非 docStatus 迁移边（契约 §3/§对象一；POSTED 保留）。
+        if (!documentStateMachine.isPosted(voucher.getDocStatus())) {
             throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION)
                     .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
                     .param(ErpFinErrors.ARG_CURRENT_STATUS, voucher.getDocStatus());
@@ -123,7 +130,8 @@ public class ErpFinVoucherBizModel extends CrudBizModel<ErpFinVoucher> implement
     @BizQuery
     public VoucherReversePreview previewReverseVoucher(@Name("voucherId") Long voucherId, IServiceContext context) {
         ErpFinVoucher voucher = requireEntity(String.valueOf(voucherId), null, context);
-        if (!Objects.equals(voucher.getDocStatus(), ErpFinConstants.VOUCHER_STATUS_POSTED)) {
+        // 只读预览守卫，委托 Bean isPosted 分类 helper（一致性，非迁移边）。
+        if (!documentStateMachine.isPosted(voucher.getDocStatus())) {
             throw new NopException(ErpFinErrors.ERR_FIN_VOUCHER_ILLEGAL_TRANSITION)
                     .param(ErpFinErrors.ARG_VOUCHER_ID, voucherId)
                     .param(ErpFinErrors.ARG_CURRENT_STATUS, voucher.getDocStatus());

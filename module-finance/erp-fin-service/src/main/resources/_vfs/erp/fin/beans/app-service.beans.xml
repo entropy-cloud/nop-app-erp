@@ -371,4 +371,11 @@
           class="app.erp.fin.service.processor.ErpFinReconciliationRunAutoReconciliationProcessor"/>
     <bean id="app.erp.fin.service.processor.ErpFinVoucherTemplateRenderTemplateProcessor"
           class="app.erp.fin.service.processor.ErpFinVoucherTemplateRenderTemplateProcessor"/>
+
+    <!-- 实体级状态机 Bean（plan 2026-08-13-2045-3，entity-state-machine-bean.md §5）：
+         凭证 docStatus 业务生命周期轴（DRAFT→POSTED 唯一迁移边）。按类型注入，Delta 同名覆盖（契约 §6）。
+         7 生成路径（PostingProcessor/CloseVoucherWriter/BudgetVoucherGenerator/CommitmentVoucherGenerator/
+         IntercompanyVoucherGenerator/BudgetScenarioCarryForward/ConsolidationElimination）不经此 Bean（§9.2 生成写入）。 -->
+    <bean id="app.erp.fin.service.statemachine.ErpFinVoucherDocumentStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinVoucherDocumentStateMachine"/>
 </beans>
