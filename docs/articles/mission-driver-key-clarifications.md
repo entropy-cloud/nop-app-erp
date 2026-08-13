@@ -131,7 +131,7 @@ Mission Driver 的 Flow DSL 有五种步骤类型：`tool`（shell 命令）和 
 
 [LoopX, https://github.com/huangruiteng/loopx](https://github.com/huangruiteng/loopx) 是一个面向长周期 AI agent 的本地控制平面（local control plane），slogan 是"Keep the loop moving. Keep the judgment human."。它**不替代 agent 运行时**，而是以 agent-agnostic 的旁路控制层包围 Codex / Claude Code / Cursor 等外部运行时，用一个持久状态内核承载 lifetime goal、gates、todos、evidence、quota 与 handoff——让目标、判断、证据和成本在多轮、多 agent 之间不漂移。它明确声明自己不是 autonomous production controller，危险权限与最终所有权始终属于人类。
 
-它同样是LoopEngineering的一种具体实现，与 Mission Driver 都解决"让 AI 长时间运行可治理"这同一类问题。对照结果是：**两者在 Loop Engineering 的工程层高度一致，差异集中在理论层、自动化边界与架构取向**。
+它同样是LoopEngineering的一种具体实现，与 Mission Driver一样都尝试解决"让 AI 长时间运行可治理"这一问题。两者在 Loop Engineering 的工程层面高度一致，差异集中在理论层、自动化边界与架构取向。
 
 工程层共识（LoopX 与 Mission Driver 相同的判断）：
 
@@ -145,15 +145,13 @@ Mission Driver 的 Flow DSL 有五种步骤类型：`tool`（shell 命令）和 
 
 差异集中在三点：
 
-1. **理论层：AGE 的吸引子体系是本文系的独特增量**。LoopX 自我定位为控制平面而非方向来源：`quota should-run` 是 compute guard 而非 strategy selector——目标、边界与验收由用户在 goal 文本中给出，控制层只负责让这些目标在多轮、多 agent、多运行时之间不漂移。LoopX 认同方向基线的缺口是真实的，但选择以最小合同方式补充（如绑定 authority material revision 到 admission/checkpoint），保持 provider-neutral（仓库 owner docs 只是 provider 之一），不采用 AGE 的整套仓库化吸引子体系。Mission Driver 所在的概念体系则前进一步：期望吸引子定义长期结构、Trajectory 记录实际演化、Harness 提供测量与纠偏，方向前提被外化为仓库结构（Owner Docs 中的结构不变量等）。Andrew Ng 的三层 Loop 模型中 External Feedback 对应的是 Mission Loop 层（天/周级信号响应），LoopX 的 quota/gate 机制也是信号响应层，二者都没有显式的、外化为仓库结构的期望吸引子定义和收敛机制。
+1. **理论层：AGE 的吸引子体系是本文系的独特增量**。LoopX 自我定位为控制平面而非方向来源：`quota should-run` 是 compute guard 而非 strategy selector——目标、边界与验收由用户在 goal 文本中给出，控制层只负责让这些目标在多轮、多 agent、多运行时之间不漂移。LoopX 认同方向基线的缺口是真实的，但选择以最小合同方式补充（如绑定 authority material revision 到 admission/checkpoint），保持 provider-neutral（仓库 owner docs 只是 provider 之一）。Mission Driver 所在的概念体系则前进一步：期望吸引子定义长期结构、Trajectory 记录实际演化、Harness 提供测量与纠偏，方向前提被外化为仓库结构（Owner Docs 中的结构不变量等）。Andrew Ng 的三层 Loop 模型中 External Feedback 对应的是 Mission Loop 层（天/周级信号响应），LoopX 的 quota/gate 机制也是信号响应层，二者都没有显式的、外化为仓库结构的期望吸引子定义和收敛机制。
 
 2. **自动化边界的设计不同**。LoopX 在架构层面把人的判断做成一等公民——人的判断（reward、gate、quota、注意力成本）保留在运行层的每个环节，"Quota 保护的不只是算力，也是人的注意力"；同时 LoopX 明确反对默认提交完整 reasoning、prompt、raw trajectory——担心隐私泄露、仓库膨胀和双重状态权威，Todo/claim/gate/receipt 保持 kernel-owned。Mission Driver 则把人类治理限定在方向层（期望吸引子、Owner Docs），执行与编排层追求无人值守：7×24 运行、每 4-12 小时自动完成一个完整循环、人工介入从早期高频衰减至后期为零，所有状态（plan/log/audit/skill）全部文件化在仓库中。但两者并非实质冲突：LoopX 的"判断贯穿运行层"对应的是 Mission Driver 概念体系中"不定义方向"的边界（第四章），而"自动执行与编排"对应可自动化前两层（第五章）——差别在于人类判断在运行链中的保留位置。
 
 3. **架构取向不同**。LoopX 是 agent-agnostic 的旁路控制层：以 in_loop / wrapper / passive_posthoc 三种适配深度包围外部运行时，用 append-only 事件 ledger 作为真相、当前状态只是投影，并引入 quota 分配与 peer claim/lease 多 agent 协作；方向基线保持 provider-neutral（仓库 docs、私有 wiki、本地 owner docs 均可），状态保持 kernel-owned。Mission Driver 是自包含的 Flow DSL 引擎 + 编排器：文件系统即唯一真相层、零 IPC、断点恢复靠磁盘扫描，子代理以 Fresh Session 隔离，但无事件 ledger 与 peer/lease 概念。两者解决同一类问题的不同子集——LoopX 侧重多运行时、多 agent 的资源治理，Mission Driver 侧重单项目内闭环的可靠推进与方向一致性。
 
-小结：两者对 Loop Engineering 的工程理解高度一致；真正不同的是 AGE 理论层（期望吸引子与收敛机制），以及自动化叙事中"方向由人、执行与编排归机器"的分层表述。
-
----
+小结：两者在 Loop Engineering 的工程层（状态持久化、有界回合、证据可恢复）高度一致；差异在于 AGE 把方向外化为仓库结构并定义收敛机制，Mission Driver 以全文件化路线追求无人值守自主运行。
 
 ## 三、为什么这样设计：内部设计思想
 
@@ -170,7 +168,7 @@ Plan Loop 的核心是 Plan。Plan 不是任务清单——**它是 AI 自主执
 - **退出标准（Exit Criteria + Closure Gates）**：可观察的完成条件，每项之后都有一个小方框等待被打勾。不是"功能做完"这种无法判定的描述。
 - **辅助项：审查记录（Draft Review Record）**：独立审查迭代的过程记录，使 Plan 的演化过程可追溯。
 
-但"关闭契约"只是表层。更深一层的设计理由在跨会话场景中才能看到：**Plan 管理的是中间状态的合法性**。
+在跨会话场景中 Plan 同时管理着中间状态的合法性：
 
 一次迁移进行到一半时，仓库可能同时存在旧接口、新接口、兼容层、临时测试、部分迁移模块和过渡文档。原执行者知道这些是中间状态，但下一个 Session 只能读取当前仓库。如果没有显式 Plan，下一个主体很可能把这些临时结构理解成正式架构——于是，中间状态无需经过任何裁决，就能通过后续扩张逐渐获得长期合法性。
 
@@ -182,13 +180,13 @@ Closure Plan 正是为了阻止这种无声升级。它回答的不是"要做哪
 
 ### 3.2 生成与验收分离：重建认识独立性，而不是重复检查
 
-**解决的问题：同一个上下文生成的证据可能一起错向自洽。**
+**解决的问题：同一个上下文生成的证据会逐步偏向某一概率分布。** （上下文中包含的错误信息多了之后甚至可能诱导AI误以为你要生成错误样本）
 
 AI 可以在同一个上下文中生成代码、测试、文档、Plan 更新、完成说明和自我审查结论。如果最初理解发生偏差，这些产出可以彼此一致，却共同指向错误方向——它们不会互相矛盾，却可能共同偏离真实需求或长期结构。
 
 因此，Fresh Session 和独立 Audit 的意义不是"再看一遍"，而是**切断验收对生成者完成叙事的直接继承**。验收者必须重新读取 live repository、当前 Owner Docs、Plan 义务、Proof Evidence 和未关闭冲突，从外部证据开始判断。
 
-但独立会话不等于最终真理。Fresh Session 仍然不是绝对客观的第三方——相同模型、相同资料和相似 Prompt 仍可能产生相关错误。可靠性还需要来自可执行检查、属性测试、E2E、真实运行证据、不同模型或不同工具、领域专家和用户反馈的证据层次。独立 Agent 是 Harness 的组成部分，不应被误解成外部第三方认证。
+但独立会话不等于最终真理。Fresh Session 仍然不是绝对客观的第三方——相同模型、相同资料和相似 Prompt 仍可能产生相关错误。可靠性还需要来自可执行检查、属性测试、E2E、真实运行证据、不同模型或不同工具、领域专家和用户反馈的证据层次。
 
 这里还必须指出一个更隐蔽的陷阱：**测试通过不等于语义承诺已经被证明**。测试只有在与某项承诺保持有效关系时，才构成 Proof。假设系统的真实承诺是"Spreadsheet 在任意数据规模下正确呈现当前可见行"，旧实现一次挂载全部行，因此测试写成"断言 30 个 row headers 同时存在"。当实现改为虚拟化后，这个测试可能仍然稳定、清晰，却已经不再证明原始行为——它开始保护旧实现细节。这就是 Proof Drift：
 
@@ -200,35 +198,21 @@ AI 可以在同一个上下文中生成代码、测试、文档、Plan 更新、
 
 AGE 要维护的不是简单的"代码 ↔ 测试"，而是"语义承诺 → 可观察后果 → 证明证据"。
 
-### 3.3 文件化状态：全文件、零 IPC 执行路径、断点恢复
+### 3.3 工程实现：文件化、断点恢复与子流隔离
 
-**解决的问题：长时间运行的编排系统需要可观测、可恢复。**
+2.3 已概括了文件化状态与循环嵌套的结构特征。这里补充三个 2.3 未展开的工程细节。
 
-文件化状态由三个配套设计决策支撑，分别解决不同层面的问题（另一个基础设计决策——子流隔离——在 3.4 单独展开）。
+**注入机制——跨项目复用。** Prompt 模板包含 `{{planGuide}}`、`{{roadmapPath}}`、`{{plansDir}}`、`{{testCmd}}` 等占位符，引擎从 mission 配置变量表注入实际值。换项目时只需修改 JSON 配置，不需修改 prompt 逻辑——"项目结构"与"prompt 结构"两个关注点被分离。
 
-**注入机制——解决跨项目复用。** Prompt 模板包含 `{{planGuide}}`、`{{roadmapPath}}`、`{{plansDir}}`、`{{testCmd}}` 等占位符，引擎在构建每个步骤的 prompt 时，从启动时解析出的 mission 配置变量表读取实际值注入。AI 只负责答卷，不管这个卷子是给哪个项目的。换项目时只需修改 JSON 配置文件，不需要修改 prompt 中的逻辑。注入机制把"项目结构"和"prompt 结构"两个关注点分离了。
+**断点恢复——disk scan，不是 replay。** 进程崩溃后重启，引擎不回放历史步骤，而是扫描磁盘上 Plan 的 status 行和 checkbox 标记，直接跳到断点继续。恢复的是"运行时进程状态"（执行到哪一步），而非"语义一致性"（Plan 声明的 status 是否与实际代码匹配）——后者由 Closure Gates 和独立审计负责。这也是主流程步骤之间不传参数的原因：各步骤只依赖 plan 文件传递信息，CHECK 不知道 REVIEW_PLANS 发现了几张 Plan，每个步骤从磁盘读取输入、写回输出。
 
-**隔离的顶级步骤——解决断点恢复和部分重试。** 五步之间不传递参数。CHECK 不知道 REVIEW_PLANS 发现了几张 Plan，REVIEW_PLANS 不知道 EXEC_PLANS 会执行哪些模块。所有状态——Plan 的 status 字段、审计的 PASS/FAIL 结论、构建的 stdout 输出——全部通过文件持久化到磁盘。每个步骤从磁盘读取自己的输入，执行后把输出写回磁盘。
+**零 IPC——可观测性。** 没有进程间通信、消息队列或数据库。要判断"系统当前处于什么状态"，只需读文件——执行和审计共享同一个真相层。
 
-这种设计的工程效果是：任意步骤可以单独执行；断点可以从磁盘状态自动恢复（扫盘就知道"当前在哪"）；不需要内存中的状态管理——没有进程需要保持活跃，也不会因内存中残留状态产生幂等性问题。恢复不是 replay（不重新执行历史步骤），而是 disk scan（扫描磁盘上的 Plan status 行和 checkbox 标记，恢复的是"运行时进程状态"而非"语义一致性"——Plan 声明的 status 是否与实际代码匹配，由 Closure Gates 和独立审计负责校验）。
+**子流隔离的具体表现。** 假设有 3 个 active plan，plan-002 执行重试 3 次仍失败——执行 agent 发现某个前提不成立，将阻塞项移至 Deferred But Adjudicated 并记录触发条件，其余 Phase 继续完成。plan-002 的阻塞完全不传播到 plan-001 和 plan-003。重试通常续用同一会话以保留执行上下文，与 3.2 的"审计者必须开新会话从零读仓库"是两种不同场景。
 
-**零 IPC，全文件——解决可观测性。** 执行路径上没有进程间通信，没有消息队列，没有数据库；监控看板（`localhost:9300`）是独立启动的可选旁路进程，不参与执行链路。Mission Driver 运行时不需要任何持久运行的执行进程——它只是按流程顺序启动子代理会话，每个会话读写文件后结束。这不是架构洁癖。在一个基于 IPC 的编排系统中，要判断"系统当前处于什么状态"通常需要查询某个运行中进程的内部状态——这个状态可能因为进程崩溃而丢失，可能因为并发更新而不一致。全文件模式的可观测性是最简单的：你只需要读文件。执行和审计共享同一个真相层。
+### 3.4 循环即智能：多时间尺度、结构记忆与递归闭环
 
-### 3.4 循环嵌套：把失败隔离在子流边界内
-
-**解决的问题：AI 步骤是概率性的，失败是预期的。**
-
-如果把 Vibe Coding 看作是一种无限长的单一 Loop，Mission Driver 的核心就是将这个单一 Loop 分解为多层 Loop 的嵌套——主循环（五步闭环）在外层，内层嵌入 Plan Loop（EXEC_PLANS 子流中的执行→检查→审计→验证闭环）和可选的 Audit Loop（DEEP_AUDIT 子流中的多维审计闭环）。
-
-这种嵌套带来的是**结构性隔离**：子流边界 = 容错边界。假设有 3 个 active plan，plan-002 的执行遇到了阻塞——重试 3 次仍失败，执行 agent 发现某个前提不成立，将阻塞项移至 Deferred But Adjudicated 并记录触发条件，其余 Phase 继续执行完成。plan-002 的执行阻塞完全没有影响 plan-001 和 plan-003。阻塞被限制在子流程内部，不传播到兄弟子流程或父循环。
-
-在工程实现上，嵌套通过 `_runChildSubflow` 创建全新的 FlowEngine 实例来实现——子流程有独立的 `flowVars`、`visitCounts`、`retryCounts`，完全隔离于外层。两层之间的接口只有函数调用参数：外层扫出 Plan 文件列表，每个文件作为参数传递给子 FlowEngine，子流程返回 `{status, flowVars}`。外层不进入内层的执行链，内层不感知外层是否有其他步骤在等待。
-
-配套的稳定保障还有：重试预算（每步最多重试 3 次，重试通常续用同一会话以保留执行上下文——与 3.2 的"审计者必须开新会话从零读仓库"是两种不同场景）、死循环检测（ping-pong + maxCycleVisits + max_total_steps）、看门狗（子 agent 超时强杀）——这些都不是"锦上添花"，而是概率性执行下维持长时间稳定运行的必要条件。
-
-### 3.5 循环即智能：多时间尺度、结构记忆与递归闭环
-
-这是 Mission Driver 设计思想中最容易被忽略、也最根本的一层。"循环即智能"不是说机械重复会产生智能——固定目标、固定反馈和固定控制规则的单一 Loop，只是一个伺服机构。
+"循环即智能"不是说机械重复会产生智能——固定目标、固定反馈和固定控制规则的单一 Loop，只是一个伺服机构。
 
 **智能的本质，是一个系统围绕某种组织同一性，在不确定环境中运行多时间尺度的感知—预测—行动闭环，将反馈沉淀为结构记忆，并递归修正自身模型、控制方式和结构边界的能力。**
 
@@ -269,11 +253,8 @@ Attractor 也不在 Loop 之外。它与闭环层叠形成递归关系：Attract
 
 > 从 AGE 的视角看，智能不是一个固定目标下的单层 Loop，而是受 Attractor 引导、跨多个时间尺度运行、能够自我修正并积累结构记忆的递归闭环层叠。固定目标、固定反馈且不能改写自身结构的 Loop 只是伺服机构；当不同层次的闭环能够交叉验证反馈，并将经验写回模型、控制规则与结构边界时，系统才从重复执行走向学习、适应和演化。
 
----
-
 ## 四、它的边界：Mission Driver 不能做什么
 
-澄清一个系统，既要说明它解决什么，也要说明它不能做什么。Mission Driver 的边界比它的能力更值得理解。
 
 ### 4.1 它不定义方向
 
@@ -291,7 +272,7 @@ Attractor 也不在 Loop 之外。它与闭环层叠形成递归关系：Attract
 
 ### 4.2 写入 Owner Docs 不等于拥有吸引子：期望吸引子与实际吸引子
 
-关于 Attractor，最容易产生的混淆，是把"系统应该收敛到哪里"和"系统实际上会收敛到哪里"视为同一个问题。二者必须明确区分。
+"系统应该收敛到哪里"和"系统实际上会收敛到哪里"实际上是有区别的。
 
 **期望吸引子**回答"系统在持续演化中，应该反复保持或重新回到什么结构附近？"它由少量高价值的结构关系定义（某个模型是领域事实的唯一来源、Template 与 Instance 分离、Data 与 Capability 正交、模块遵守明确的依赖方向、核心原语形成闭集……）。期望吸引子通常由 Owner Docs 承载，但 Owner Docs 不是吸引子本身——文档只是把这些结构关系变成可版本化、可路由、可审计和可修改的工程表示。
 
@@ -332,21 +313,6 @@ Mission Driver 持续运行后，这些隐性补丁会消失，系统会暴露�
 
 如果答案是否定的，Mission Driver 越自动，漂移可能越快。
 
-### 4.5 常见误解清单
-
-围绕 Mission Driver 的误解，可以归结为几种层级降级或升格：
-
-| 误解 | 丢失的东西 |
-|------|-----------|
-| 将 Mission Driver 升格为 AGE 本身 | 方向定义与控制编排之间的区别 |
-| 将 Mission Driver 降级为工作流引擎 | 它对仓库化项目连续性的持续执行和压力测试作用 |
-| 将 Plan 降级为任务列表 | 对中间状态合法性和局部轨迹闭合的管理 |
-| 将测试通过降级为 Proof | 测试与语义承诺之间可能发生漂移的关系 |
-| 将 Attractor 降级为架构原则 | 扰动、轨迹和回归能力 |
-| 将 Attractor 降级为 Guardrail | 多次合法动作累积后的结构趋势 |
-| 将 Trajectory 降级为 Git 历史 | 历史对未来仍然有效的语义约束 |
-
----
 
 ## 五、如何理解"AI 全自动开发"
 
@@ -375,7 +341,3 @@ Mission Driver 持续运行后，这些隐性补丁会消失，系统会暴露�
 在这个前提下，Mission Driver 不是 AGE 的起点。它是一个执行器，也是一个检验器：当当前 Session 结束、当前执行者离开之后，项目是否已经拥有足够完整的方向、证明、记忆和裁决结构，能够继续作为同一个项目演化下去。
 
 > **不是让某个 Agent 记住项目，而是让项目本身不再遗忘自己。**
-
----
-
-*本文基于 nop-app-erp 项目的真实开发记录与 Mission Driver 源码撰写。素材来源包括 22 天的开发日志（`docs/logs/2026/`）、PPT 源材料（`docs/ppts/nop-erp-loop-engineering.ppt.md`）、187+ 份 Plan 文件（`docs/plans/`）、Mission Driver 配置文件与引擎源码（本仓库 `tools/mission-driver.sh` 与 `missions/`，引擎实现于 `../attractor-guided-engineering-template/tools/mission-driver/src/`）以及配套文章《Loop Engineering 通用参考实现》与《Loop Engineering × Attractor》。2.4 节的业内对照基于 LoopX（`~/ai/loopx`，README、`docs/product/foundations/loop-engineering-principles-and-pitfalls.zh.md`、`docs/state-interaction-model.md`）与 Andrew Ng 三层 Loop 模型等公开材料。*

@@ -114,24 +114,32 @@
 
 ## 适用对象二：维护请求（MaintenanceRequest）
 
-维护请求状态机 6 态：
+维护请求状态机 6 态（字典 `erp-mnt/request-status`，`app-erp-maintenance.orm.xml`）：
 
 ```
 待受理 (OPEN)
-  ├─ 受理 → 已受理 (ACCEPTED) → 生成维护访问
-  │           ├─ 维修中（维护访问执行中）→ 已完成 (COMPLETED)
-  │           └─ 拒绝（误报或无法处理）→ 已拒绝 (REJECTED)
-  ├─ 拒绝 → 已拒绝 (REJECTED)
-  └─ 取消 → 已取消 (CANCELLED)
+  ├─ accept → 已受理 (ACCEPTED) → 生成响应式维护访问（DRAFT）
+  │              ├─ startRepair → 维修中 (IN_PROGRESS)
+  │              │                   └─ complete → 已完成 (COMPLETED) [终态]
+  │              ├─ rejectRequest → 已拒绝 (REJECTED) [终态]
+  │              └─ cancel → 已取消 (CANCELLED) [终态]
+  ├─ rejectRequest → 已拒绝 (REJECTED) [终态]
+  └─ cancel → 已取消 (CANCELLED) [终态]
 ```
 
-| 状态 | 业务含义 |
-|------|----------|
-| 待受理（OPEN） | 报修已提交，等待维护团队受理 |
-| 已受理（ACCEPTED） | 已受理，已生成维护访问待执行 |
-| 已完成（COMPLETED） | 终态：维修完成 |
-| 已拒绝（REJECTED） | 终态：误报或无法处理 |
-| 已取消（CANCELLED） | 终态：提交者撤销 |
+> 迁移矩阵权威：`ErpMntRequestStateMachine` Bean（`docs/architecture/entity-state-machine-bean.md`）。`rejectRequest`
+> 与 `cancel` 为**双源动作**（OPEN/ACCEPTED 均合法——保持既有「拒绝/取消已受理请求」业务路径）；`IN_PROGRESS`
+> 仅可经 `complete` 到达终态（维修中不可再直接 reject/cancel）。`accept` 受理后生成响应式维护访问（跨实体副作用，
+> 保留在 Processor，不在 StateMachine Bean 范围）。
+
+| 状态 | 业务含义 | 终态 |
+|------|----------|------|
+| 待受理（OPEN） | 报修已提交，等待维护团队受理 | 否（初始态） |
+| 已受理（ACCEPTED） | 已受理，已生成维护访问待执行 | 否 |
+| 维修中（IN_PROGRESS） | 已开始维修，等待完成 | 否 |
+| 已完成（COMPLETED） | 终态：维修完成 | 是 |
+| 已拒绝（REJECTED） | 终态：误报或无法处理 | 是 |
+| 已取消（CANCELLED） | 终态：提交者撤销 | 是 |
 
 维护请求的其他维度（异常/角色/TODO）与维护访问类似，不重复展开；审查时同样使用提示词。
 
