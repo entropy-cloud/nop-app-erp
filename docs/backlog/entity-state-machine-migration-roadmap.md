@@ -1,6 +1,6 @@
 # 实体级状态机 Bean 迁移路线图
 
-> 最后更新：2026-08-13（M3.2/M3.3/M3.4/M3.5 done：采购四实体 approveStatus 审批轴 Bean 迁移完成，计划 `docs/plans/2026-08-13-0945-1-purchase-approvestatus-state-machine-bean.md`。M1.3 完成：客服试点四方对照审计 PASS + go 裁定 + 批量迁移模板裁定落地至 `docs/architecture/entity-state-machine-bean.md §11`；M2/M3 Deps 门控解除，各迁移项可启动独立 plan。M0.2 展开：M2=19 + M3=19 + M4=65 = 103 纳入轴）
+> 最后更新：2026-08-13（M3.18/M3.19 done：合同版本 + 返利协议状态轴 Bean 迁移完成，计划 `docs/plans/2026-08-13-1430-3-erpct-version-rebate-state-machine-beans.md`，owner doc 补 §适用对象二/三 + 退化轴/死状态 Decision 登记。M3.2/M3.3/M3.4/M3.5 done：采购四实体 approveStatus 审批轴 Bean 迁移完成，计划 `docs/plans/2026-08-13-0945-1-purchase-approvestatus-state-machine-bean.md`。M1.3 完成：客服试点四方对照审计 PASS + go 裁定 + 批量迁移模板裁定落地至 `docs/architecture/entity-state-machine-bean.md §11`；M2/M3 Deps 门控解除，各迁移项可启动独立 plan。M0.2 展开：M2=19 + M3=19 + M4=65 = 103 纳入轴）
 > 来源：`docs/analysis/2026-08-06-1000-erp-state-machine-extension-strategy.md`；用户决策：每种业务状态机采用对应的可注入、可 Delta 覆盖 `ErpXxxStateMachine` Bean，以集中迁移逻辑并支持完备性分析。
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > 审查记录：4 轮独立子代理审查后收敛；见文末 `Draft Review Record`。
@@ -87,8 +87,8 @@
 | M3.15 | ErpAstMovement.docStatus 资产移动单据生命周期 Bean | todo | `assets/state-machine.md` §Movement | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M3.16 | ErpAstMovement.approveStatus 资产移动审批轴 Bean | todo | `assets/state-machine.md` §Movement | M1.3 + M3.15 | `nop-backend-dev` + `nop-testing` |
 | M3.17 | ErpMntRequest.status Request 生命周期 Bean | todo | `maintenance/state-machine.md` §Request | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M3.18 | ErpCtContractVersion.status 版本生命周期 Bean | todo | `contract/state-machine.md` §Version | M1.3 + M2.18 | `nop-backend-dev` + `nop-testing` |
-| M3.19 | ErpCtRebateAgreement.status 返利协议生命周期 Bean | todo | `contract/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M3.18 | ErpCtContractVersion.status 版本生命周期 Bean | done | `contract/state-machine.md` §适用对象二 | M1.3 + M2.18 | `nop-backend-dev` + `nop-testing` |
+| M3.19 | ErpCtRebateAgreement.status 返利协议生命周期 Bean | done | `contract/state-machine.md` §适用对象三 | M1.3 | `nop-backend-dev` + `nop-testing` |
 
 > M0.2 必须单独列出 finance 各状态轴，以及任何域中会触发、冲销、补偿或回写库存/会计过账的 action 所在状态轴。每项均为 `plan-first`；如迁移暴露过账、结账、红冲或模型语义变化，暂停并取得 owner doc 与所需人工批准，不得以纯重构名义继续。每一项的行级依赖在 M0.2 展开时定义，不以整个 M2/M3 里程碑完成作为前置。
 

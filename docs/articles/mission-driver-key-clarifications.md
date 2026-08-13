@@ -101,58 +101,57 @@ Mission Driver 的目标不是"替代人"，而是"让人可以在任意时间�
 
 ### 2.3 与普通工作流引擎的区别
 
-一个常见的误解是：Mission Driver 不过是一个自动化 Agent 编排器。这个理解只看到它的执行形式，没有看到它所承担的连续性功能。
+一个常见的误解是：Mission Driver 不过是一个自动化 Agent 编排器。这两者确实都是状态机引擎——步骤、转换、状态推进，形式上是同构的。但本质区别在于执行单元的性质和运行内容：普通工作流引擎执行确定性的既定步骤，Mission Driver 编排的是概率性 AI 步骤与动态生成的规划。
 
-普通工作流引擎编排的是**预先确定的步骤**：
+普通工作流引擎与 Mission Driver 在架构层面有三个根本区别：
 
-```text
-输入任务
-→ 执行步骤
-→ 判断成功或失败
-→ 进入下一阶段
-```
+| 维度 | 普通工作流引擎                    | Mission Driver                                         |
+|------|----------------------------|--------------------------------------------------------|
+| 运行内容 | 设计时已确定的既定任务，流程定义即任务，无复杂规划层 | roadmap 动态规划 work item，plan 定义单次变更的关闭契约，均在运行中生成        |
+| 状态位置 | 引擎内部（运行时/引擎数据库），需查询引擎      | 仓库文件中（plan 的 status 与 checkbox），读仓库即可恢复，恢复逻辑也是AI智能判断执行 |
+| 运行形态 | 一次运行消费一个确定实例，结束即止          | 面向 7×24 持续运行，可随时中断，重启后扫盘恢复而非 replay                    |
 
-Mission Driver 面对的却是一个**会持续改变自身事实、计划、证据和控制条件的仓库**。它需要反复完成：
+三个区别中最根本的是执行单元的性质。普通工作流引擎编排的是**确定性步骤**：每一步是预先写好的代码或命令，输入确定、执行确定、成败确定，失败是异常，需要中断或人工介入。
 
-- 从 live repository 恢复当前状态；
-- 审查 Plan 是否仍以真实基线为起点；
-- 执行并验证 Plan；
-- 判断 Closure Gates 是否真正满足；
-- 在任务耗尽时起草后续 Plan；
-- 发起独立深度审计；
-- 用审计结果推翻虚假完成；
-- 将新发现重新写入仓库；
-- 在进程或 Session 结束后继续运行。
+Mission Driver 的 Flow DSL 有五种步骤类型：`tool`（shell 命令）和 `script`（JS 函数）是确定性的，`group`（子步骤的带轮次循环）和 `subflow`（递归子流程）是结构性编排，而 `agent`（spawn opencode 子进程）**天然不确定**——同一个 prompt 在不同 session 可能走不同路径、产生不同结果。**正因为概率性步骤的存在，引擎的设计目标从"确定性执行"变为"在概率性执行中保证收敛"**。这种收敛靠三层容错：
 
-因此，Mission Driver 的准确位置是：
+- **每个调用都是微循环**：agent 步骤内部，marker（AI 输出中的 `<AI_STEP_RESULT>` 标签，引擎靠它驱动状态转换）提取失败不会直接判定失败——解析子代理（runParseAgent）会推断缺失的标签、调用markerAliases 归一化容忍近义词，仍不匹配则 spawn 修正子进程输出合法值（最多 2 次）；进程被杀后走 `onError` 重试（默认 3 次）；瞬时 provider 错误（429/限流）走独立的指数退避重试预算。
+- **loop 嵌套 loop**：主循环（五步闭环）在外，内嵌 group（如 CLOSURE_VERIFY 的 script-check → AI-audit → 重检，最多 3 轮）与 subflow（EXEC_PLANS 的 plan-execution、DEEP_AUDIT 的 deep-audit-loop）；subflow 在同进程内递归创建新的 `FlowEngine` 实例，各自持有独立的 `flowVars` / `visitCounts` / `retryCounts`——整体结构上更接近递归的**调用堆栈**，而不是一条流水线。
+- **容错是结构性的**：每个步骤有独立的 `maxRetries` / `onError` / `onMaxRetries`；全局有 ping-pong 检测、`maxCycleVisits`、`maxTotalSteps` 防死循环；子流边界就是容错边界——一个 plan 的失败不传播到兄弟 plan。
 
-> 它是 Harness 与多层 Loop 的持续编排器，也是仓库化项目连续性的执行机器。
+两相对比：普通工作流引擎把失败当作异常（中断或人工介入），Mission Driver 把失败当作预期输入（重试、降级、隔离是默认路径）；前者追求确定性执行，后者追求在不确定性中维持收敛。
 
-它不是方向来源。它不会凭自身定义：项目应该成为什么、哪份 Owner Doc 有权修改结构基线、哪个 Proof Relation 才是正确的、某个偏离应当修实现还是修正 Attractor。如果这些关系尚未外化，Mission Driver 只能持续制造文件变化，不能保证这些变化属于同一条可接受轨迹。
+因此，Mission Driver 的准确定位是：
+
+> 它是在吸引子引导下、按 roadmap 持续编排 work item 与 plan 生命周期的引擎，plan 的审查、执行、验证、审计闭环承载的正是 Harness 的功能，使这些控制过程脱离人的同步参与而长期运行。
+
+最后，方向的位置也不同：普通工作流引擎的方向就在流程定义里（流程即任务）；Mission Driver 的通用 Flow DSL 只是执行骨架，方向外化于 docs 体系（期望吸引子），roadmap 则是吸引子的任务化投影而非方向本身。它不会凭自身定义：项目应该成为什么、哪份 Owner Doc 有权修改结构基线、哪个 Proof Relation 才是正确的、某个偏离应当修实现还是修正 Attractor。如果这些关系尚未外化，Mission Driver 只能持续制造文件变化，不能保证这些变化属于同一条可接受轨迹（完整论述见 4.1）。
 
 ### 2.4 与业内同类实现（LoopX）的对比：共识与差异
 
-为了检验以上理解是否偏离业内常见做法，可以与 LoopX（本地控制平面，自称"The local control plane for long-running AI agent work"，面向 Codex / Claude Code / Cursor 等运行时）对照。它在 loop 的工程机制上代表了业内广泛认可的共识；对照的结果是：**Mission Driver 对 Loop Engineering 的工程层理解与业内高度一致，差异集中在理论层与自动化边界的表述上**。
+[LoopX, https://github.com/huangruiteng/loopx](https://github.com/huangruiteng/loopx) 是一个面向长周期 AI agent 的本地控制平面（local control plane），slogan 是"Keep the loop moving. Keep the judgment human."。它**不替代 agent 运行时**，而是以 agent-agnostic 的旁路控制层包围 Codex / Claude Code / Cursor 等外部运行时，用一个持久状态内核承载 lifetime goal、gates、todos、evidence、quota 与 handoff——让目标、判断、证据和成本在多轮、多 agent 之间不漂移。它明确声明自己不是 autonomous production controller，危险权限与最终所有权始终属于人类。
+
+它同样是LoopEngineering的一种具体实现，与 Mission Driver 都解决"让 AI 长时间运行可治理"这同一类问题。对照结果是：**两者在 Loop Engineering 的工程层高度一致，差异集中在理论层、自动化边界与架构取向**。
 
 工程层共识（LoopX 与 Mission Driver 相同的判断）：
 
 | 共识 | LoopX 的表述 | Mission Driver 的表述 |
 |---|---|---|
-| 聊天记忆不是长期任务的事实源 | "Chat memory and a timer are not enough to govern that"；聊天记忆"不能成为长期任务的事实源" | logs 在不依赖 git 历史的情况下记录核心轨迹（充分统计量式记录），"文件就是它的认知" |
-| Human On The Loop：人的介入从"必须"变成"可选" | "Human-in-the-loop 不应该等价于每隔几分钟让用户确认一次"；人在真正需要判断的位置出现 | 人可以选择参与，但系统在没有人的干预下也能从路线图第一项走到最后一项 |
+| 聊天记忆不是长期任务的事实源 | "Chat memory and a timer are not enough to govern that" | logs 在不依赖 git 历史的情况下记录核心轨迹，"文件就是它的认知" |
+| Human On The Loop：人的介入从"必须"变成"可选" | "Human-in-the-loop 不应该等价于每隔几分钟让用户确认一次" | 人可以选择参与，但系统在没有人的干预下也能从路线图第一项走到最后一项 |
 | 有界回合 + 验证后写回才算完成 | "Validate and write durable state before spending"；反对把"旁路有进展"写成"gate 已解决" | Closure Gates 拒绝"Checkbox 全勾"式的虚假完成，DEEP_AUDIT 可推翻已完成结论 |
 | 更长的运行不等于更好的产品 | "没有更好状态管理的长 loop，只会制造更大的漂移" | "固定目标、固定反馈且不能改写自身结构的 Loop 只是伺服机构" |
 | 证据要紧凑、可检查、可恢复、可接手 | compact artifact、run index、handoff，让"下一轮 agent 能恢复上下文" | Plan 关闭契约定义"从哪开始、允许什么、在哪闭合、什么证据足以证明闭合" |
 
 差异集中在三点：
 
-1. **理论层：AGE 是本文系的独特增量，LoopX 明确不做**。LoopX 自我定位为控制平面而非方向来源：`quota should-run` 是 compute guard 而非 strategy selector，"It does not replace your agent runtime"，slogan 是"Keep the loop moving. Keep the judgment human."。它不回答"系统长期应该向什么结构收敛"——目标、边界与验收由用户在 goal 文本中给出，控制层只负责让这些目标在多轮、多 agent、多运行时之间不漂移。Mission Driver 所在的概念体系则前进一步：期望吸引子定义长期结构、Trajectory 记录实际演化、Harness 提供测量与纠偏，方向前提被外化为仓库结构（Owner Docs、ORM 唯一真相源等）。这一层在业内常见做法中都不存在——Andrew Ng 的三层 Loop 模型中 External Feedback 对应的是 Mission Loop 层（天/周级信号响应），LoopX 的 quota/gate 机制也是信号响应层，二者都没有显式的、外化为仓库结构的期望吸引子定义和收敛机制。这是本文系与它们的主要区别，也正对应 1.3 中"不仅仅是一般意义上的 Harness"的定位。
+1. **理论层：AGE 的吸引子体系是本文系的独特增量**。LoopX 自我定位为控制平面而非方向来源：`quota should-run` 是 compute guard 而非 strategy selector——目标、边界与验收由用户在 goal 文本中给出，控制层只负责让这些目标在多轮、多 agent、多运行时之间不漂移。LoopX 认同方向基线的缺口是真实的，但选择以最小合同方式补充（如绑定 authority material revision 到 admission/checkpoint），保持 provider-neutral（仓库 owner docs 只是 provider 之一），不采用 AGE 的整套仓库化吸引子体系。Mission Driver 所在的概念体系则前进一步：期望吸引子定义长期结构、Trajectory 记录实际演化、Harness 提供测量与纠偏，方向前提被外化为仓库结构（Owner Docs 中的结构不变量等）。Andrew Ng 的三层 Loop 模型中 External Feedback 对应的是 Mission Loop 层（天/周级信号响应），LoopX 的 quota/gate 机制也是信号响应层，二者都没有显式的、外化为仓库结构的期望吸引子定义和收敛机制。
 
-2. **自动化边界的设计不同**。LoopX 在架构层面把人的判断做成一等公民——"LoopX is not an autonomous production controller"、"final ownership stays with the human"，人的判断（reward、gate、quota、注意力成本）保留在运行层的每个环节，"Quota 保护的不只是算力，也是人的注意力"。Mission Driver 则把人类治理限定在方向层（期望吸引子、Owner Docs），执行与编排层追求无人值守：7×24 运行、每 4-12 小时自动完成一个完整循环、人工介入从早期高频衰减至后期为零。但两者并非实质冲突：LoopX 的"判断贯穿运行层"对应的是 Mission Driver 概念体系中"不定义方向"的边界（第四章），而"自动执行与编排"对应可自动化前两层（第五章）——差别在于人类判断在运行链中的保留位置。
+2. **自动化边界的设计不同**。LoopX 在架构层面把人的判断做成一等公民——人的判断（reward、gate、quota、注意力成本）保留在运行层的每个环节，"Quota 保护的不只是算力，也是人的注意力"；同时 LoopX 明确反对默认提交完整 reasoning、prompt、raw trajectory——担心隐私泄露、仓库膨胀和双重状态权威，Todo/claim/gate/receipt 保持 kernel-owned。Mission Driver 则把人类治理限定在方向层（期望吸引子、Owner Docs），执行与编排层追求无人值守：7×24 运行、每 4-12 小时自动完成一个完整循环、人工介入从早期高频衰减至后期为零，所有状态（plan/log/audit/skill）全部文件化在仓库中。但两者并非实质冲突：LoopX 的"判断贯穿运行层"对应的是 Mission Driver 概念体系中"不定义方向"的边界（第四章），而"自动执行与编排"对应可自动化前两层（第五章）——差别在于人类判断在运行链中的保留位置。
 
-3. **架构取向不同**。LoopX 是 agent-agnostic 的旁路控制层：以 in_loop / wrapper / passive_posthoc 三种适配深度包围外部运行时，用 append-only 事件 ledger 作为真相、当前状态只是投影，并引入 quota 分配与 peer claim/lease 多 agent 协作。Mission Driver 是自包含的 Flow DSL 引擎 + 编排器：文件系统即真相层、零 IPC、断点恢复靠磁盘扫描，子代理以 Fresh Session 隔离，但无事件 ledger 与 peer/lease 概念。两者解决同一类问题的不同子集——LoopX 侧重多运行时、多 agent 的资源治理，Mission Driver 侧重单项目内闭环的可靠推进与方向一致性。
+3. **架构取向不同**。LoopX 是 agent-agnostic 的旁路控制层：以 in_loop / wrapper / passive_posthoc 三种适配深度包围外部运行时，用 append-only 事件 ledger 作为真相、当前状态只是投影，并引入 quota 分配与 peer claim/lease 多 agent 协作；方向基线保持 provider-neutral（仓库 docs、私有 wiki、本地 owner docs 均可），状态保持 kernel-owned。Mission Driver 是自包含的 Flow DSL 引擎 + 编排器：文件系统即唯一真相层、零 IPC、断点恢复靠磁盘扫描，子代理以 Fresh Session 隔离，但无事件 ledger 与 peer/lease 概念。两者解决同一类问题的不同子集——LoopX 侧重多运行时、多 agent 的资源治理，Mission Driver 侧重单项目内闭环的可靠推进与方向一致性。
 
-小结：文章对 Loop Engineering 的工程理解没有偏离业内常见做法；真正不同的是它叠加的 AGE 理论层（这被定位为与"只实现了 loop 结构"的引擎的区分点），以及自动化叙事中"方向由人、执行与编排归机器"的分层表述。
+小结：两者对 Loop Engineering 的工程理解高度一致；真正不同的是 AGE 理论层（期望吸引子与收敛机制），以及自动化叙事中"方向由人、执行与编排归机器"的分层表述。
 
 ---
 
