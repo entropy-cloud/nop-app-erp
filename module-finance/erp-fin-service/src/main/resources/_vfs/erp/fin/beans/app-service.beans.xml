@@ -378,4 +378,13 @@
          IntercompanyVoucherGenerator/BudgetScenarioCarryForward/ConsolidationElimination）不经此 Bean（§9.2 生成写入）。 -->
     <bean id="app.erp.fin.service.statemachine.ErpFinVoucherDocumentStateMachine"
           class="app.erp.fin.service.statemachine.ErpFinVoucherDocumentStateMachine"/>
+
+    <!-- 预算方案状态机 Bean（plan 2026-08-13-1950-3，entity-state-machine-bean.md §5）：
+          ErpFinBudgetScenario 双轴各自独立 Bean。docStatus 主迁移轴（5 源迁移动作，rollForward spawn metadata-only）；
+          approveStatus 镜像轴（3 动作，无 withdraw/reverseApprove）。facade validateTransition 按 docStatus Bean 守卫，
+          approveStatus 与 docStatus 同步推进不经独立守卫。carryForward/rollForward 绕过 facade validateTransition（保留各自错误码）。 -->
+    <bean id="app.erp.fin.service.statemachine.ErpFinBudgetScenarioDocumentStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinBudgetScenarioDocumentStateMachine"/>
+    <bean id="app.erp.fin.service.statemachine.ErpFinBudgetScenarioApprovalStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinBudgetScenarioApprovalStateMachine"/>
 </beans>

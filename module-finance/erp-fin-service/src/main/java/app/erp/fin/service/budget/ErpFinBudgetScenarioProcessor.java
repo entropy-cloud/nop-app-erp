@@ -1,5 +1,6 @@
 package app.erp.fin.service.budget;
 
+import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.dao.entity.ErpFinBudgetLine;
 import app.erp.fin.dao.entity.ErpFinBudgetScenario;
 import app.erp.fin.service.ErpFinConstants;
@@ -8,6 +9,7 @@ import app.erp.fin.service.processor.ErpFinBudgetScenarioApproveProcessor;
 import app.erp.fin.service.processor.ErpFinBudgetScenarioCancelProcessor;
 import app.erp.fin.service.processor.ErpFinBudgetScenarioRejectProcessor;
 import app.erp.fin.service.processor.ErpFinBudgetScenarioSubmitForApprovalProcessor;
+import app.erp.fin.service.statemachine.ErpFinBudgetScenarioDocumentStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -18,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.Objects;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 
@@ -58,6 +59,9 @@ public class ErpFinBudgetScenarioProcessor {
 
     @Inject
     ErpFinBudgetScenarioCancelProcessor cancelProcessor;
+
+    @Inject
+    ErpFinBudgetScenarioDocumentStateMachine documentStateMachine;
 
     public ErpFinBudgetScenario submit(Long id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(String.valueOf(id), context);
@@ -102,18 +106,30 @@ public class ErpFinBudgetScenarioProcessor {
 
     public void validateTransition(ErpFinBudgetScenario scenario, String target, String... allowedFrom) {
         String current = scenario.getDocStatus();
-        boolean ok = false;
-        for (String s : allowedFrom) {
-            if (Objects.equals(s, current)) {
-                ok = true;
-                break;
+        try {
+            if (ErpFinConstants.BUDGET_STATUS_SUBMITTED.equals(target)) {
+                documentStateMachine.assertCanSubmit(current);
+            } else if (ErpFinConstants.BUDGET_STATUS_APPROVED.equals(target)) {
+                documentStateMachine.assertCanApprove(current);
+            } else if (ErpFinConstants.BUDGET_STATUS_REJECTED.equals(target)) {
+                documentStateMachine.assertCanReject(current);
+            } else if (ErpFinConstants.BUDGET_STATUS_CANCELLED.equals(target)) {
+                documentStateMachine.assertCanCancel(current);
+            } else {
+                throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION)
+                        .param(ErpFinErrors.ARG_SCENARIO_CODE, scenario.getCode())
+                        .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, current)
+                        .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS, target);
             }
-        }
-        if (!ok) {
-            throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION)
-                    .param(ErpFinErrors.ARG_SCENARIO_CODE, scenario.getCode())
-                    .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, current)
-                    .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS, join(allowedFrom));
+        } catch (NopException e) {
+            if (ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode().equals(e.getErrorCode())) {
+                throw new NopException(ErpFinErrors.ERR_BUDGET_SCENARIO_ILLEGAL_TRANSITION, e)
+                        .param(ErpFinErrors.ARG_SCENARIO_CODE, scenario.getCode())
+                        .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, current)
+                        .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS,
+                                e.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
+            }
+            throw e;
         }
     }
 
@@ -147,9 +163,5 @@ public class ErpFinBudgetScenarioProcessor {
         } catch (Exception ignored) {
         }
         return null;
-    }
-
-    protected static String join(String[] arr) {
-        return String.join("/", arr);
     }
 }
