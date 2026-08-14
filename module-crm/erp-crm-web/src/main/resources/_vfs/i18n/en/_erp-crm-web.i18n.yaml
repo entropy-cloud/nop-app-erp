@@ -46,6 +46,8 @@ site:
       displayName: Sales Team
     ErpCrmTerritory-main:
       displayName: Territory
+    campaign-attribution:
+      displayName: Campaign Attribution
     crm-activity-calendar:
       displayName: Activity Calendar
     crm-activity-timeline:

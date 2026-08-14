@@ -166,6 +166,10 @@
                                   i18n-en:displayName="Forecast Accuracy" icon="trending-up"
                                   component="FLUX" resourceType="SUBM" orderNo="10020"
                                   url="/erp/crm/pages/report/forecast-accuracy.page.yaml"/>
+                        <resource id="campaign-attribution" app:useCases="UC-CRM-07" displayName="营销活动归因表"
+                                  i18n-en:displayName="Campaign Attribution" icon="bar-chart-3"
+                                  component="FLUX" resourceType="SUBM" orderNo="10030"
+                                  url="/erp/crm/pages/report/campaign-attribution.page.yaml"/>
                     </children>
                 </resource>
             </children>

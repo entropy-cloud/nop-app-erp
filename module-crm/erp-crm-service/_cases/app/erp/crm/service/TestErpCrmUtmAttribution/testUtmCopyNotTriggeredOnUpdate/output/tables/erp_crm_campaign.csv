@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,ORG_ID,CAMPAIGN_NAME,MEDIUM,SOURCE,START_DATE,END_DATE,BUDGET_AMOUNT,ACTUAL_COST,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7003,@var:ErpCrmCampaign@code,社媒营销,,社媒营销,social,wechat,,,,,,@var:ErpCrmCampaign@delVersion,0,autotest-ref,*,autotest-ref,*

@@ -1,7 +1,9 @@
 package app.erp.crm.service.entity;
 
+import app.erp.crm.biz.IErpCrmCampaignBiz;
 import app.erp.crm.biz.IErpCrmLeadBiz;
 import app.erp.crm.biz.IErpCrmStageBiz;
+import app.erp.crm.dao.entity.ErpCrmCampaign;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmStage;
 import app.erp.crm.dao.entity.ErpCrmTerritoryAssignmentRule;
@@ -53,6 +55,9 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Inject
     IErpCrmStageBiz stageBiz;
+
+    @Inject
+    IErpCrmCampaignBiz campaignBiz;
 
     @Inject
     ErpCrmLeadLoseProcessor loseProcessor;
@@ -228,6 +233,22 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
                     if (result.getOwnerId() != null) {
                         lead.setOwnerId(result.getOwnerId());
                     }
+                }
+            }
+        }
+
+        // UTM copy-on-create（plan 2026-08-14-1815-3 RC-R1.24）：仅新建路径（id==null）且 campaignId 非空时，
+        // 若 utmMedium/utmSource 未显式传入（entity 字段为 null）→ 经 IErpCrmCampaignBiz 读 campaign.medium/source 复制；
+        // 显式传入（非 null）不覆盖；campaign 不存在或字段为 null 跳过不抛异常。
+        if (lead.getId() == null && lead.getCampaignId() != null
+                && (lead.getUtmMedium() == null || lead.getUtmSource() == null)) {
+            ErpCrmCampaign campaign = campaignBiz.get(String.valueOf(lead.getCampaignId()), true, context);
+            if (campaign != null) {
+                if (lead.getUtmMedium() == null && campaign.getMedium() != null) {
+                    lead.setUtmMedium(campaign.getMedium());
+                }
+                if (lead.getUtmSource() == null && campaign.getSource() != null) {
+                    lead.setUtmSource(campaign.getSource());
                 }
             }
         }

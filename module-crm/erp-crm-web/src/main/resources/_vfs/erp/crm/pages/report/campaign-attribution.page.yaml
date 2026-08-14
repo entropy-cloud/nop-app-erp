@@ -1,0 +1,55 @@
+type: page
+title: "营销活动归因表"
+body:
+  - type: form
+    title: ""
+    mode: inline
+    className: m-3
+    body:
+      - type: button
+        label: "渲染报表"
+        actionType: reload
+        target: "reportService"
+      - type: button-toolbar
+        buttons:
+          - type: button
+            label: "下载 XLSX"
+            actionType: download
+            api:
+              url: /p/ErpCrmReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "campaign-attribution"
+                renderType: "xlsx"
+                data: {}
+          - type: button
+            label: "下载 PDF"
+            actionType: download
+            api:
+              url: /p/ErpCrmReport__download
+              method: post
+              responseType: blob
+              data:
+                reportName: "campaign-attribution"
+                renderType: "pdf"
+                data: {}
+      - type: service
+        name: reportService
+        id: reportContainer
+        initFetch: false
+        api:
+          url: /graphql
+          method: post
+          dataType: raw
+          data:
+            query: "query(${'$'}reportName:String!){ ErpCrmReport__renderHtml(reportName:${'$'}reportName,data:{}) }"
+            variables:
+              reportName: "campaign-attribution"
+          adaptor: |
+            const d = payload.data || {};
+            const html = (d.data ? d.data : d).ErpCrmReport__renderHtml || '';
+            return { status: 0, msg: '', data: { reportHtml: html } };
+        body:
+          - type: html
+            html: "${reportHtml}"

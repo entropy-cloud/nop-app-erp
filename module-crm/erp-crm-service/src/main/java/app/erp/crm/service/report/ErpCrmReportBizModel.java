@@ -1,5 +1,6 @@
 package app.erp.crm.service.report;
 
+import app.erp.crm.dao.entity.ErpCrmCampaign;
 import app.erp.crm.dao.entity.ErpCrmForecast;
 import app.erp.crm.dao.entity.ErpCrmForecastLine;
 import app.erp.crm.dao.entity.ErpCrmLead;
@@ -158,6 +159,9 @@ public class ErpCrmReportBizModel {
             case "forecast-accuracy":
                 data.put(DS_VAR, buildForecastAccuracyDataset(asLong(data, "forecastId")));
                 break;
+            case "campaign-attribution":
+                data.put(DS_VAR, buildCampaignAttributionDataset());
+                break;
             default:
                 break;
         }
@@ -182,6 +186,12 @@ public class ErpCrmReportBizModel {
     public List<Map<String, Object>> forecastAccuracyData(@Optional @Name("forecastId") Long forecastId,
                                                            IServiceContext context) {
         return buildForecastAccuracyDataset(forecastId);
+    }
+
+    /** 营销活动归因数据集：按 campaignId 聚合线索数 + 期望收入，对齐 {@code crm/use-cases.md} UC-CRM-07。 */
+    @BizQuery
+    public List<Map<String, Object>> campaignAttributionData(IServiceContext context) {
+        return buildCampaignAttributionDataset();
     }
 
     // ===================== 数据集聚合实现 =====================
@@ -233,6 +243,62 @@ public class ErpCrmReportBizModel {
         if (v instanceof BigDecimal) return (BigDecimal) v;
         if (v instanceof Number) return new BigDecimal(v.toString());
         return new BigDecimal(v.toString());
+    }
+
+    /**
+     * 营销活动归因数据集。从 {@link ErpCrmLead} 按 campaignId 聚合：leadCount + expectedRevenue 合计，
+     * 对齐 {@code docs/design/crm/use-cases.md} UC-CRM-07（SELECT campaign.name, count(lead.id), sum(expectedRevenue)
+     * GROUP BY campaign.id——JOIN 语义下无 campaign 关联的 lead 不计入，null 组排除）。活动名称经
+     * {@link ErpCrmCampaign} 关系解析。
+     * <p>DB 级 GROUP BY campaignId + COUNT + SUM(expectedRevenue)（类 D 裁决：报表渲染数据集，DB 级聚合避免全表物化）。
+     */
+    List<Map<String, Object>> buildCampaignAttributionDataset() {
+        return ormTemplate.runInSession(session -> {
+            QueryBean q = new QueryBean();
+            q.setSourceName(ErpCrmLead.class.getName());
+            QueryFieldBean dim = QueryFieldBean.mainField("campaignId");
+            QueryFieldBean cnt = QueryFieldBean.mainField("campaignId").count().alias("leadCount");
+            QueryFieldBean sumRev = QueryFieldBean.mainField("expectedRevenue").sum().alias("expectedRevenue");
+            q.setFields(Arrays.asList(dim, cnt, sumRev));
+            List<Map<String, Object>> rows = ormTemplate.findListByQuery(q);
+            if (rows.isEmpty()) {
+                return Collections.emptyList();
+            }
+            Map<Long, Object[]> agg = new LinkedHashMap<>();
+            for (Map<String, Object> row : rows) {
+                Object cid = row.get("campaignId");
+                if (cid == null) continue;
+                long campaignId = ((Number) cid).longValue();
+                long leadCount = row.get("leadCount") == null ? 0L : ((Number) row.get("leadCount")).longValue();
+                BigDecimal expectedRevenue = toBigDecimal(row.get("expectedRevenue"));
+                agg.put(campaignId, new Object[]{leadCount, expectedRevenue});
+            }
+            Map<Long, String> campaignNames = resolveCampaignNames(agg.keySet());
+            List<Map<String, Object>> result = new ArrayList<>(agg.size());
+            for (Map.Entry<Long, Object[]> e : agg.entrySet()) {
+                long campaignId = e.getKey();
+                Object[] v = e.getValue();
+                Map<String, Object> r = new LinkedHashMap<>();
+                r.put("campaignId", campaignId);
+                r.put("campaignName", campaignNames.getOrDefault(campaignId, ""));
+                r.put("leadCount", v[0]);
+                r.put("expectedRevenue", v[1]);
+                result.add(r);
+            }
+            return result;
+        });
+    }
+
+    private Map<Long, String> resolveCampaignNames(Set<Long> campaignIds) {
+        if (campaignIds.isEmpty()) return Collections.emptyMap();
+        QueryBean q = new QueryBean();
+        q.addFilter(in("id", campaignIds));
+        List<ErpCrmCampaign> campaigns = daoProvider.daoFor(ErpCrmCampaign.class).findAllByQuery(q);
+        Map<Long, String> names = new HashMap<>();
+        for (ErpCrmCampaign c : campaigns) {
+            names.put(c.getId(), c.getName());
+        }
+        return names;
     }
 
     /**
