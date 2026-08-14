@@ -1,6 +1,6 @@
 # 2026-08-14-0456-2-erphr-salary-state-machine-beans HR 域 ErpHrSalary.paymentStatus + approveStatus 实体级状态机 Bean（M4.63 + M4.64）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) plan-first 人工/owner-doc 门控**已于 2026-08-14 经人工确认解除**（见 Draft Review Record 门控确认记录）（markPaid 触发 SALARY_PAYMENT(280) 发放凭证；approve 触发 SALARY(270)/SOCIAL_INSURANCE_ER(290)/HOUSING_FUND_ER(300) 计提凭证——后三者当前 Deferred/dead-code 但 config 翻转后触发受保护行为）。门控非起草者/审查者可自主解除——经人工确认解除；已转 `active` 进入实施。
 > Last Reviewed: 2026-08-14
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.63（ErpHrSalary.paymentStatus）+ M4.64（ErpHrSalary.approveStatus），均 plan-first，M4.64 deps M4.63；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md`（:335-336 + 风险展开 :456）
@@ -72,69 +72,69 @@
 
 ### Phase 1 - ErpHrSalary paymentStatus Bean（M4.63）
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/src/main/java/app/erp/hr/service/statemachine/ErpHrSalaryPaymentStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpHrSalaryMarkPaidProcessor.java`、`.../processor/ErpHrSalaryGenerateBankFileProcessor.java`、`.../processor/AbstractErpHrSalaryProcessor.java`、`.../entity/ErpHrSalaryBizModel.java`、`.../test/.../statemachine/TestErpHrSalaryPaymentStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done（已满足）；M2.11 `ErpHrLeaveRequestStateMachine` 范本已 done
 
-- [ ] `Add`：落地 `ErpHrSalaryPaymentStateMachine` Bean——2 动作矩阵（markPaid PENDING→PAID、voidSalary PENDING→VOID）+ `assertCanMarkPaid(String paymentStatus)` + `assertCanVoid(String paymentStatus)` + `markPaidTargetStatus()`/`voidTargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`。严格无状态。非法边抛 common 码。镜像 `ErpHrLeaveRequestStateMachine` 结构。
+- [x] `Add`：落地 `ErpHrSalaryPaymentStateMachine` Bean——2 动作矩阵（markPaid PENDING→PAID、voidSalary PENDING→VOID）+ `assertCanMarkPaid(String paymentStatus)` + `assertCanVoid(String paymentStatus)` + `markPaidTargetStatus()`/`voidTargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`。严格无状态。非法边抛 common 码。镜像 `ErpHrLeaveRequestStateMachine` 结构。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：在 `_vfs/erp/hr/beans/app-service.beans.xml` 注册（紧邻既有 4 SM Bean L114-121 之后）。
+- [x] `Add`：在 `_vfs/erp/hr/beans/app-service.beans.xml` 注册（紧邻既有 4 SM Bean L114-121 之后）。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`（voidSalary 接线方式）：voidSalary 是 inline BizModel 方法（非 Processor）。Decision：(A) **在 BizModel 内直接注入 Bean**——`ErpHrSalaryBizModel` 注入 `@Inject ErpHrSalaryPaymentStateMachine`（非 private），voidSalary `:111-114` 守卫改调 `assertCanVoid`（try/catch common 码 → cause-chain `ERR_SALARY_LOCKED_AFTER_PAID` 领域码，§11.4 终态领域异常重叠模式）；`:115` 目标态改调 `voidTargetStatus()`。**(B) 不提取 voidSalary 为 Processor**（R6.7 successor）——最小变更原则，不重构 BizModel→Processor 架构。
+- [x] `Decision`（voidSalary 接线方式）：voidSalary 是 inline BizModel 方法（非 Processor）。Decision：(A) **在 BizModel 内直接注入 Bean**——`ErpHrSalaryBizModel` 注入 `@Inject ErpHrSalaryPaymentStateMachine`（非 private），voidSalary `:111-114` 守卫改调 `assertCanVoid`（try/catch common 码 → cause-chain `ERR_SALARY_LOCKED_AFTER_PAID` 领域码，§11.4 终态领域异常重叠模式）；`:115` 目标态改调 `voidTargetStatus()`。**(B) 不提取 voidSalary 为 Processor**（R6.7 successor）——最小变更原则，不重构 BizModel→Processor 架构。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线，镜像 M2.11 范式）：`AbstractErpHrSalaryProcessor` 注入 `@Inject ErpHrSalaryPaymentStateMachine`（非 private，对齐 `AbstractErpHrLeaveRequestProcessor:44-45`）；MarkPaidProcessor `:24,:30` 双轴守卫中的 payment 轴部分改调 `stateMachine.assertCanMarkPaid(paymentStatus)`（try/catch common 码 → cause-chain `ERR_SALARY_ILLEGAL_STATUS_TRANSITION`）；`:38` 目标态改调 `markPaidTargetStatus()`。GenerateBankFileProcessor `:40` 同理。SALARY_PAYMENT 过账 + 银行文件生成 + approve 轴守卫保留原位。
+- [x] `Add`（接线，镜像 M2.11 范式）：`AbstractErpHrSalaryProcessor` 注入 `@Inject ErpHrSalaryPaymentStateMachine`（非 private，对齐 `AbstractErpHrLeaveRequestProcessor:44-45`）；MarkPaidProcessor `:24,:30` 双轴守卫中的 payment 轴部分改调 `stateMachine.assertCanMarkPaid(paymentStatus)`（try/catch common 码 → cause-chain `ERR_SALARY_ILLEGAL_STATUS_TRANSITION`）；`:38` 目标态改调 `markPaidTargetStatus()`。GenerateBankFileProcessor `:40` 同理。SALARY_PAYMENT 过账 + 银行文件生成 + approve 轴守卫保留原位。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性 + 层 2 四方对照（dict `erp-hr/salary-payment-status`（3 值）↔ owner-doc §4 ↔ Bean 元数据 ↔ 全部 writer：PayrollCalculator 初始 + MarkPaid + GenerateBankFile + voidSalary + SimulationConvert 初始 + CRUD 路径排除）。
+- [x] `Proof`：层 1 矩阵完备性 + 层 2 四方对照（dict `erp-hr/salary-payment-status`（3 值）↔ owner-doc §4 ↔ Bean 元数据 ↔ 全部 writer：PayrollCalculator 初始 + MarkPaid + GenerateBankFile + voidSalary + SimulationConvert 初始 + CRUD 路径排除）。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] `ErpHrSalaryPaymentStateMachine` Bean 存在、已注册、严格无状态；MarkPaid/GenerateBankFile Processor + voidSalary BizModel 委托 Bean。
-- [ ] Salary payment 层 1 矩阵测试本地 `mvn test -pl module-hr/erp-hr-service -am -Dtest=TestErpHrSalaryPaymentStateMachineMatrix` 全绿。
+- [x] `ErpHrSalaryPaymentStateMachine` Bean 存在、已注册、严格无状态；MarkPaid/GenerateBankFile Processor + voidSalary BizModel 委托 Bean。
+- [x] Salary payment 层 1 矩阵测试本地 `mvn test -pl module-hr/erp-hr-service -am -Dtest=TestErpHrSalaryPaymentStateMachineMatrix` 全绿（实测 7/7 green）。
 
 ### Phase 2 - ErpHrSalary approveStatus Bean（M4.64）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpHrSalaryApprovalStateMachine.java`、`.../beans/app-service.beans.xml`、`.../resources/_vfs/erp/hr/model/ErpHrSalary/ErpHrSalary.xbiz`、`.../processor/ErpHrSalaryMarkPaidProcessor.java`、`.../test/.../statemachine/TestErpHrSalaryApprovalStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（payment Bean + abstract→Bean 范式已固化）
 
-- [ ] `Decision`（XScript approve 轴接线方式）：approve 轴转换逻辑在 `ErpHrSalary.xbiz` XScript（submit/approve/reject/reverseApprove/withdrawApproval 5 动作），不在 Java。Decision：(A) **xbiz 内 inject Bean + 调用 `assertCanXxx`**——XScript `inject` 指令注入 `ErpHrSalaryApprovalStateMachine`，各动作前置 `stateMachine.assertCanXxx(entity.approveStatus)` 守卫，目标态改调 `*TargetStatus()`（try/catch common NopException → cause-chain 领域码 `ERR_SALARY_ILLEGAL_STATUS_TRANSITION` + salaryId）。(B) MarkPaidProcessor `:24` 的 approve 轴守卫（require APPROVED）改调 approval Bean `assertCanMarkPaid` 的交叉守卫（一致性，非迁移边——markPaid 的迁移边在 payment Bean）。(C) **dict 漂移裁定**：`erp-hr/salary-approval-status`（6 值 legacy）vs `wf/approve-status`（4 值实际）——Bean 按 `wf/approve-status` 4 值编码，legacy dict 登记 doc drift + successor（不从 ORM 删除，PM 要求 6 态审批链时重开）。
+- [x] `Decision`（XScript approve 轴接线方式）：approve 轴转换逻辑在 `ErpHrSalary.xbiz` XScript（submit/approve/reject/reverseApprove/withdrawApproval 5 动作），不在 Java。Decision：(A) **xbiz 内 inject Bean + 调用 `assertCanXxx`**——XScript `inject` 指令注入 `ErpHrSalaryApprovalStateMachine`，各动作前置 `stateMachine.assertCanXxx(entity.approveStatus)` 守卫，目标态改调 `*TargetStatus()`（try/catch common NopException → cause-chain 领域码 `ERR_SALARY_ILLEGAL_STATUS_TRANSITION` + salaryId）。**机制替代注记（执行期）**：XLang 引擎不支持 `try/catch` 语句（`TryStatement` 语法节点被 `BuildExecutableProcessor` 拒绝，`nop.err.xlang.exec.not-supported-node`）——「try/catch 映射」下沉到 Java 侧 `ErpHrSalaryApprovalGuard` Bean（契约 §7 接线层职责：调用 Bean `assertCanXxx`，非法边 Bean 抛 common 码，Guard Java try/catch 映射领域码 + salaryId/currentStatus/expectedStatus，common 码作 cause 保留），XScript 仅 inject Guard 调 `assertCanXxx(entity)` + 经 Bean `*TargetStatus()` 写回。行为与错误码契约不变（详见 Guard javadoc）。实际落地：xbiz 5 动作经 Guard 委托 Bean（submit/approve/reject/reverseApprove/withdrawApproval）；非法迁移错误码由原平台 `nop.err.wf.approve.invalid-status` 改为领域 `ERR_SALARY_ILLEGAL_STATUS_TRANSITION`（计划既定改进，守卫/驳回场景域内错误码约定）。(B) MarkPaidProcessor `:24` 的 approve 轴守卫（require APPROVED）改调 approval Bean `assertCanMarkPaid` 的交叉守卫（一致性，非迁移边——markPaid 的迁移边在 payment Bean）。(C) **dict 漂移裁定**：`erp-hr/salary-approval-status`（6 值 legacy）vs `wf/approve-status`（4 值实际）——Bean 按 `wf/approve-status` 4 值编码，legacy dict 登记 doc drift + successor（不从 ORM 删除，PM 要求 6 态审批链时重开）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpHrSalaryApprovalStateMachine` Bean——5 动作矩阵（submit {UNSUBMITTED,null,REJECTED}→SUBMITTED、approve {SUBMITTED}→APPROVED、reject {SUBMITTED}→REJECTED、reverseApprove APPROVED→SUBMITTED、withdrawApproval SUBMITTED→UNSUBMITTED）+ 对应 `assertCanXxx` + `*TargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`。严格无状态。镜像 M3.7 `ErpSalOrderApprovalStateMachine`（ErpSalOrder.approveStatus done）审批轴范式。**矩阵裁定依据**：实仓 xbiz 守卫（`ErpHrSalary.xbiz:26` submit 允许 UNSUBMITTED/null/REJECTED、`:62` approve 仅 SUBMITTED、`:87` reject 仅 SUBMITTED、`:113` reverseApprove 仅 APPROVED、`:138` withdrawApproval 仅 SUBMITTED）+ `TestErpHrPayrollEngine:223-226` testIllegalTransitionRejects 证实 UNSUBMITTED 直接 approve 被拒。
+- [x] `Add`：落地 `ErpHrSalaryApprovalStateMachine` Bean——5 动作矩阵（submit {UNSUBMITTED,null,REJECTED}→SUBMITTED、approve {SUBMITTED}→APPROVED、reject {SUBMITTED}→REJECTED、reverseApprove APPROVED→SUBMITTED、withdrawApproval SUBMITTED→UNSUBMITTED）+ 对应 `assertCanXxx` + `*TargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`。严格无状态。镜像 M3.7 `ErpSalOrderApprovalStateMachine`（ErpSalOrder.approveStatus done）审批轴范式。**矩阵裁定依据**：实仓 xbiz 守卫（`ErpHrSalary.xbiz:26` submit 允许 UNSUBMITTED/null/REJECTED、`:62` approve 仅 SUBMITTED、`:87` reject 仅 SUBMITTED、`:113` reverseApprove 仅 APPROVED、`:138` withdrawApproval 仅 SUBMITTED）+ `TestErpHrPayrollEngine:223-226` testIllegalTransitionRejects 证实 UNSUBMITTED 直接 approve 被拒。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：注册 Bean + 接线 xbiz（经 Decision (A) 裁定的 inject + assertCan 模式）。xwf 多级审批链（hr-review/finance-review/manager-approval）+ SoD + notify 保留原位。
+- [x] `Add`：注册 Bean + 接线 xbiz（经 Decision (A) 裁定的 inject + assertCan 模式）。xwf 多级审批链（hr-review/finance-review/manager-approval）+ SoD + notify 保留原位。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性 + 层 2 四方对照（dict `wf/approve-status`（4 值）↔ owner-doc §适用对象四 ↔ Bean 元数据 ↔ 全部 writer：xbiz 5 动作 + MarkPaid 交叉守卫 + PayrollCalculator 初始 + SimulationConvert 初始 + CRUD 路径排除）。**dict 漂移 finding**：`erp-hr/salary-approval-status` 6 值未被引用，登记 doc drift + successor。
+- [x] `Proof`：层 1 矩阵完备性 + 层 2 四方对照（dict `wf/approve-status`（4 值）↔ owner-doc §适用对象四 ↔ Bean 元数据 ↔ 全部 writer：xbiz 5 动作 + MarkPaid 交叉守卫 + PayrollCalculator 初始 + SimulationConvert 初始 + CRUD 路径排除）。**dict 漂移 finding**：`erp-hr/salary-approval-status` 6 值未被引用，登记 doc drift + successor。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] `ErpHrSalaryApprovalStateMachine` Bean 存在/注册/无状态；xbiz 5 动作委托 Bean。
-- [ ] Salary approval 层 1 矩阵测试本地 `mvn test -pl module-hr/erp-hr-service -am -Dtest=TestErpHrSalaryApprovalStateMachineMatrix` 全绿。
+- [x] `ErpHrSalaryApprovalStateMachine` Bean 存在/注册/无状态；xbiz 5 动作委托 Bean（经 Guard，运行时实证：`testIllegalTransitionRejects` 断言领域码 + `TestErpHrSalaryWorkflowApproval` 3 用例全绿）。
+- [x] Salary approval 层 1 矩阵测试本地 `mvn test -pl module-hr/erp-hr-service -am -Dtest=TestErpHrSalaryApprovalStateMachineMatrix` 全绿（实测 11/11 green）。
 
 ### Phase 3 - 层 3 既有命名动作回归
 
-Status: planned
+Status: completed
 Targets: `module-hr/erp-hr-service/src/test/`（既有集成测试，零新建）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1-2（双轴 Bean + 接线已落地）
 
-- [ ] `Proof`：层 3 既有命名动作回归——复用 `TestErpHrSalaryWorkflowApproval`（178 行，approve 轴 xwf e2e：submit→3 级 agree→APPROVED；reject→REJECTED；resubmit）、`TestErpHrPayrollEngine`（`testApprovalStateMachineAndPaidLock:173-204` UNSUBMITTED→SUBMITTED→APPROVED→PAID→voidSalary throws LOCKED；`testIllegalTransitionRejects:207`；`testGenerateBankFileTransfersSalariesToPaid:230`）、`TestErpHrPayrollSimulation`，证明 xwf 审批链、PAID 锁、SALARY_PAYMENT 过账、银行文件生成不变。本地 `mvn test -pl module-hr/erp-hr-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归——复用 `TestErpHrSalaryWorkflowApproval`（178 行，approve 轴 xwf e2e：submit→3 级 agree→APPROVED；reject→REJECTED；resubmit）、`TestErpHrPayrollEngine`（`testApprovalStateMachineAndPaidLock:173-204` UNSUBMITTED→SUBMITTED→APPROVED→PAID→voidSalary throws LOCKED；`testIllegalTransitionRejects:207`；`testGenerateBankFileTransfersSalariesToPaid:230`）、`TestErpHrPayrollSimulation`，证明 xwf 审批链、PAID 锁、SALARY_PAYMENT 过账、银行文件生成不变。本地 `mvn test -pl module-hr/erp-hr-service -am` 全绿（实测 232 tests，0 failures/errors，含 TestErpHrPayrollEngine 10 + TestErpHrSalaryWorkflowApproval 3 + TestErpHrPayrollSimulation 12）。
   - Skill: `nop-testing`
-- [ ] `Proof`：双轴一致性复核——2 Bean 命名（Payment/Approval 后缀）/注册/无状态/元数据形状一致；abstract+BizModel→Bean 注入 + cause-chaining 范式与 M2.11 LeaveRequest 可追溯一致；xbiz inject 模式运行时验证。
+- [x] `Proof`：双轴一致性复核——2 Bean 命名（Payment/Approval 后缀）/注册/无状态/元数据形状一致；abstract+BizModel→Bean 注入 + cause-chaining 范式与 M2.11 LeaveRequest 可追溯一致；xbiz inject 模式运行时验证（`testIllegalTransitionRejects` 领域码断言 + Guard 机制替代注记）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 层 3 既有集成测试全绿（零行为回归）。
+- [x] 层 3 既有集成测试全绿（零行为回归）。
 
 ## Draft Review Record
 
@@ -147,15 +147,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
-- [ ] 范围内行为完成（双轴 Bean + Processor/BizModel/xbiz 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐（roadmap M4.63/M4.64 → done；dict 漂移登记）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-hr/erp-hr-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
+- [x] 范围内行为完成（双轴 Bean + Processor/BizModel/xbiz 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（roadmap M4.63/M4.64 → done；dict 漂移登记）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-hr/erp-hr-service -am` 全绿（232 tests）+ `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -191,13 +191,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _待执行后填写_
+Status Note: 全 3 Phase 执行完成 + 独立结束审计通过（第二轮审计 PASS）。双轴 Bean 落地：`ErpHrSalaryPaymentStateMachine`（markPaid/voidSalary 2 边）+ `ErpHrSalaryApprovalStateMachine`（5 动作 6 边 + markPaid 交叉守卫），接线覆盖 MarkPaid/GenerateBankFile Processor + voidSalary BizModel + xbiz 5 动作（经 `ErpHrSalaryApprovalGuard`，机制替代注记见 Phase 2 Decision）。层 1 矩阵 18 测试（7+11）+ 层 2 四方对照（payment 轴：dict `erp-hr/salary-payment-status` 3 值 ↔ owner-doc §适用对象四 §4 ↔ Bean 元数据 ↔ 5 writer 全对齐，无死状态；approval 轴：dict `wf/approve-status` 4 值 ↔ owner-doc §适用对象四 ↔ Bean 元数据 ↔ 8 writer 全对齐；dict 漂移 `erp-hr/salary-approval-status` 6 值 legacy 未引用已登记 Deferred）+ 层 3 回归（232 tests 全绿，xwf 审批链/PAID 锁/SALARY_PAYMENT 过账/银行文件生成零回归）。验证：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + `mvn test -pl module-hr/erp-hr-service -am` 232/232 green + compliance checker 全 19 规则 actual ≤ baseline（R5=0/R11=0/R2c=1392/R12c=40）。owner doc `human-resource/state-machine.md §适用对象四` 已覆盖双轴（无需补正）；dict 漂移 + voidSalary Processor 提取归 Deferred 段既定 successor。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _待执行后填写_
-- Evidence: _待执行后填写_
+- Auditor / Agent: 独立子代理（新会话，不重用执行者上下文）——task `ses_0016e1d66ffeomTWt3Ccb8i00R`（第一轮，FAIL：文档完成步骤缺失，代码/验证全 PASS）+ task `ses_0015f7431ffe6Vm1phqEQAYj5J`（第二轮，FAIL：Closure 证据占位符未填，其余全 PASS）+ task `ses_00155532effe6WUrdseXy4dgHK`（第三轮，PASS）
+- Evidence: 审计逐项核实（1）计划文档完成标记（Phase Status/items/exit criteria/Closure Gates/Closure 段/Plan Status）；（2）代码工件与实仓一致（双 Bean 无状态/beans.xml 注册/MarkPaid+GenerateBankFile+voidSalary 接线/xbiz 5 动作 inject Guard+Bean/Guard 注册）；（3）R5 @Inject 非 private、零 ORM/API/dict 修改（git status 仅 erp-hr-service 模块）；（4）roadmap M4.63/M4.64 ready→done + 最后更新 header；（5）验证复跑：`mvn test -pl module-hr/erp-hr-service -am` 232 tests 0 failures + compliance checker actual ≤ baseline。
 
 Follow-up:
 
-- <待执行后填写；Deferred 项均为既定 successor>
+- 无新增跟进项；Deferred 项均为既定 successor（voidSalary Processor 提取 R6.7、salary-approval-status 6 态重开 PM 要求、SALARY 计提过账 R1.26、Delta 覆盖 M5.3、全局 CRUD 写锁 M0.1 §9）。
