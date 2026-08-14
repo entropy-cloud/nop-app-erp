@@ -56,7 +56,7 @@ public interface ErpCrmConstants {
     // ===== 线索评分（3.3）配置点 =====
     String CONFIG_LEAD_SCORING_AUTO_QUALIFY = "erp-crm.lead-scoring.auto-qualify";
     String CONFIG_LEAD_SCORING_RECALC_ON_LEAD_UPDATE = "erp-crm.lead-scoring.recalc-on-lead-update";
-    /** 定时线索评分批量重算 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
+    /** 定时线索评分批量重算 cron（空值=跳过；job.yaml `erp-crm-lead-scoring-recalc.job.yaml` cronExpr 消费 + `ErpCrmLeadScoringRecalcHelper` 机制开关，plan 2026-08-14-1815-2）。 */
     String CONFIG_LEAD_SCORING_SCHEDULE_CRON = "erp-crm.lead-scoring.schedule-cron";
 
     // erp-crm/scoring-method 字典

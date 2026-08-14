@@ -5,6 +5,9 @@
        xmlns:x="/nop/schema/xdsl.xdef"
        xmlns:c="c">
 
+    <!-- 扫描非终态（active）线索逐条重算评分（triggerEvent=SCHEDULED）。
+         单条失败隔离由 ErpCrmLeadScoringRecalcHelper 内 REQUIRES_NEW + try/catch WARN 承载
+         （batch chunk 事务不提供 per-item 隔离；对齐 bank-recon-auto-reverse.batch.xml 范式）。 -->
     <loader>
         <orm-reader entityName="app.erp.crm.dao.entity.ErpCrmLead">
             <query>
@@ -17,8 +20,8 @@
 
     <processor name="process">
         <source><![CDATA[
-            const biz = inject('IErpCrmLeadScoreBiz');
-            biz.recalculateScore(item.id, 'SCHEDULED', batchChunkCtx.serviceContext);
+            const helper = inject('erpCrmLeadScoringRecalcHelper');
+            helper.recalculateOne(item.id, batchChunkCtx.serviceContext);
         ]]></source>
     </processor>
 </batch>

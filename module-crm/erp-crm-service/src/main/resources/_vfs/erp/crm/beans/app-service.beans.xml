@@ -54,6 +54,14 @@
     <bean id="erpCrmEventReminderJob"
           class="app.erp.crm.service.job.ErpCrmEventReminderJob"/>
 
+    <!-- 线索评分批量重算帮助类（plan 2026-08-14-1815-2 Phase 2，P1-RC-035 SCHEDULED 触发器接线）：
+         供 nop-batch lead-scoring-recalc.batch.xml processor 按记录调用，消费
+         erp-crm.lead-scoring.schedule-cron config 门控（默认 0 2 * * *，空值=跳过），
+         逐条 REQUIRES_NEW 调 IErpCrmLeadScoreBiz.recalculateScore（triggerEvent=SCHEDULED）+
+         单条失败隔离（镜像 ErpFinBankReconAutoReverseHelper 范式）。 -->
+    <bean id="erpCrmLeadScoringRecalcHelper"
+          class="app.erp.crm.service.job.ErpCrmLeadScoringRecalcHelper"/>
+
     <!-- CRM 域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /crm/）。 -->
     <bean id="app.erp.crm.service.report.ErpCrmReportBizModel" ioc:type="@bean:id"/>
