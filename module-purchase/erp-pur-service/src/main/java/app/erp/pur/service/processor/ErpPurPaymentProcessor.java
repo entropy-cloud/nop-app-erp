@@ -11,6 +11,7 @@ import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.posting.PurPaymentPostingDispatcher;
 import app.erp.pur.service.statemachine.ErpPurPaymentApprovalStateMachine;
+import app.erp.pur.service.statemachine.ErpPurPaymentDocumentStateMachine;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
@@ -58,6 +59,9 @@ public class ErpPurPaymentProcessor {
 
     @Inject
     ErpPurPaymentApprovalStateMachine stateMachine;
+
+    @Inject
+    ErpPurPaymentDocumentStateMachine documentStateMachine;
 
     @Inject
     ErpPurPaymentSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -148,9 +152,10 @@ public class ErpPurPaymentProcessor {
     }
 
     protected void validateTransitionForCancel(ErpPurPayment payment, IServiceContext context) {
-        String docStatus = payment.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(payment, docStatus, "非已作废");
+        try {
+            documentStateMachine.assertCanCancel(payment.getDocStatus());
+        } catch (NopException e) {
+            throw illegalDocTransition(payment, payment.getDocStatus(), "非已作废");
         }
     }
 
@@ -252,7 +257,7 @@ public class ErpPurPaymentProcessor {
     }
 
     protected void doCancel(ErpPurPayment payment, IServiceContext context) {
-        payment.setDocStatus(ErpPurConstants.DOC_STATUS_CANCELLED);
+        payment.setDocStatus(documentStateMachine.cancelTargetStatus());
         paymentDao().updateEntity(payment);
     }
 

@@ -181,6 +181,17 @@
           class="app.erp.pur.service.statemachine.ErpPurQuotationDocumentStateMachine"/>
     <bean id="app.erp.pur.service.statemachine.ErpPurRfqDocumentStateMachine"
           class="app.erp.pur.service.statemachine.ErpPurRfqDocumentStateMachine"/>
+    <!-- docStatus 业务生命周期轴 Bean（M4.13/M4.15/M4.17/M4.19，plan 2026-08-13-0810-1），承载
+         Receive/Invoice/Payment/Return 的 DRAFT→CANCELLED 最小迁移矩阵 + 终态/初始态分类 + 只读元数据。
+         cancel 路径接线点分两种编排形态：Receive/Return 接 CancelProcessor；Invoice/Payment 接主 Processor。 -->
+    <bean id="app.erp.pur.service.statemachine.ErpPurReceiveDocumentStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurReceiveDocumentStateMachine"/>
+    <bean id="app.erp.pur.service.statemachine.ErpPurInvoiceDocumentStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurInvoiceDocumentStateMachine"/>
+    <bean id="app.erp.pur.service.statemachine.ErpPurPaymentDocumentStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurPaymentDocumentStateMachine"/>
+    <bean id="app.erp.pur.service.statemachine.ErpPurReturnDocumentStateMachine"
+          class="app.erp.pur.service.statemachine.ErpPurReturnDocumentStateMachine"/>
     <!-- approveStatus 审批轴 Bean（M3.2/M3.3/M3.4/M3.5），承载 5 动作迁移矩阵 + 终态/初始态分类 + 只读元数据。
          一 Bean 对一实体一轴（契约 §1 双轴约定，与 Document 后缀 docStatus 轴分离）。 -->
     <bean id="app.erp.pur.service.statemachine.ErpPurOrderApprovalStateMachine"

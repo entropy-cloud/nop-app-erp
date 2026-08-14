@@ -17,6 +17,7 @@ import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.entity.ThreeWayMatcher;
 import app.erp.pur.service.posting.PurInvoicePostingDispatcher;
 import app.erp.pur.service.statemachine.ErpPurInvoiceApprovalStateMachine;
+import app.erp.pur.service.statemachine.ErpPurInvoiceDocumentStateMachine;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
@@ -76,6 +77,9 @@ public class ErpPurInvoiceProcessor {
 
     @Inject
     ErpPurInvoiceApprovalStateMachine stateMachine;
+
+    @Inject
+    ErpPurInvoiceDocumentStateMachine documentStateMachine;
 
     @Inject
     ErpPurInvoiceSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -164,9 +168,10 @@ public class ErpPurInvoiceProcessor {
     }
 
     protected void validateTransitionForCancel(ErpPurInvoice invoice, IServiceContext context) {
-        String docStatus = invoice.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpPurConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(invoice, docStatus, "非已作废");
+        try {
+            documentStateMachine.assertCanCancel(invoice.getDocStatus());
+        } catch (NopException e) {
+            throw illegalDocTransition(invoice, invoice.getDocStatus(), "非已作废");
         }
     }
 
@@ -225,7 +230,7 @@ public class ErpPurInvoiceProcessor {
     }
 
     protected void doCancel(ErpPurInvoice invoice, IServiceContext context) {
-        invoice.setDocStatus(ErpPurConstants.DOC_STATUS_CANCELLED);
+        invoice.setDocStatus(documentStateMachine.cancelTargetStatus());
         invoiceDao().updateEntity(invoice);
     }
 

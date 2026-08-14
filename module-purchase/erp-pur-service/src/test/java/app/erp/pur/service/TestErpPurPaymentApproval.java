@@ -119,6 +119,24 @@ public class TestErpPurPaymentApproval extends JunitAutoTestCase {
                 "供应商停用 → submit 应返回 ERR_PARTNER_INACTIVE");
     }
 
+    @Test
+    public void testCancelFromDraft() {
+        ErpPurPayment payment = paymentOf("PY-CANCEL-001", new BigDecimal("100"));
+        ormTemplate.runInSession(() -> {
+            seedActiveSupplier(SUPPLIER_ID);
+            daoProvider.daoFor(ErpPurPayment.class).saveEntity(payment);
+        });
+
+        assertEquals(0, cancel(payment.getId()).getStatus());
+        ErpPurPayment cancelled = reload(payment);
+        assertEquals(ErpPurConstants.DOC_STATUS_CANCELLED, cancelled.getDocStatus(),
+                "草稿 → 作废 docStatus=CANCELLED");
+
+        ApiResponse<?> bad = submit(payment.getId());
+        assertEquals(ErpPurErrors.ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "已作废单据不可提交，应返回非法单据状态迁移错误");
+    }
+
     // ---------- helpers ----------
 
     private ApiResponse<?> submit(Long id) {
@@ -131,6 +149,10 @@ public class TestErpPurPaymentApproval extends JunitAutoTestCase {
 
     private ApiResponse<?> reverseApprove(Long id) {
         return executeRpc(mutation, "ErpPurPayment__reverseApprove", ApiRequest.build(Map.of("id", String.valueOf(id))));
+    }
+
+    private ApiResponse<?> cancel(Long id) {
+        return executeRpc(mutation, "ErpPurPayment__cancel", ApiRequest.build(Map.of("paymentId", id)));
     }
 
     private ApiResponse<?> executeRpc(GraphQLOperationType opType, String action, ApiRequest<?> request) {
