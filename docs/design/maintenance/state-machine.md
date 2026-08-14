@@ -51,6 +51,8 @@
 | 计划生成的访问无人排程 | 产生 TODO 提醒维护主管 |
 | 并发状态变更 | 乐观锁 |
 
+> **排程冲突双维度实现注记（RC-R1.30 / P1-RC-066）**：`ErpMntVisitScheduleProcessor.checkScheduleConflict`（:53-102）实现 **设备 + 人员双维度**冲突检测（L1 UC-MAIN-09 字面「设备/人员 同时段是否已有排程」）——设备维度 = `equipmentId + visitDate + status∈(SCHEDULED, IN_PROGRESS)`，人员维度 = `assignedTo + visitDate + status∈(SCHEDULED, IN_PROGRESS)`（assignedTo 非空守卫，schedule 前置校验保证恒非空）；双维度独立查询独立判定（设备查询先于人员查询，确定性顺序），命中抛 `ERR_VISIT_SCHEDULE_CONFLICT`（`ErpMntErrors.java:45-47`，E1 裁决选项 A 复用同一错误码——L1 单一冲突语义，参数 ARG_EQUIPMENT_ID/ARG_ASSIGNED_TO/ARG_CONFLICT_VISIT_CODE 区分维度；消息模板双维度覆盖「设备 {equipmentId}/执行人 {assignedTo} …」）。测试证据：`TestErpMntVisitRequestStateMachine#testVisitScheduleConflictPersonnelDimension`（同人不同设备同日拒绝 + 消息含被冲突 code）/`#testVisitScheduleConflictEquipmentDimensionIndependentOfPersonnel`（同设备不同人拒绝）/`#testVisitScheduleSamePersonDifferentDateAllowed`（不同日放行）/`#testVisitScheduleCancelledPeerDoesNotBlock` + `#testVisitScheduleDraftPeerDoesNotBlockThenBlocksWhenScheduled`（仅 SCHEDULED/IN_PROGRESS 计入，DRAFT/CANCELLED 不计）。**P2-RC-060 边界声明**：冲突处理模式 config 化（warn/reject 配置切换）为独立 P2 watch-only finding（`erp-mnt.schedule-conflict-mode` config key 不在本行范围，本行仅补人员维度，reject 为当前唯一行为）。
+
 ### 5. 可达性
 
 - 从 DRAFT 可达 SCHEDULED→IN_PROGRESS→COMPLETED，以及 CANCELLED。
