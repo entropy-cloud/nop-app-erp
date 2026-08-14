@@ -4,7 +4,9 @@
 
 ## 适用对象
 
-本状态机适用于**库存移动单**（StockMove）。盘点单状态机见文末单独一节。主数据实体（物料/仓库等）的"启用/停用"不是状态机，见 `master-data/README.md`。
+本状态机适用于**库存移动单**（StockMove）。盘点单状态机见文末「盘点单状态机（独立）」一节；调拨单/所有权转移单/成本调整单/到岸成本单四个独立 docStatus 状态机见「调拨单状态机（独立）」「所有权转移单状态机（独立）」「成本调整单状态机（独立）」「到岸成本单状态机（独立）」四节。主数据实体（物料/仓库等）的"启用/停用"不是状态机，见 `master-data/README.md`。
+
+> **实体级状态机 Bean 注记**：各节迁移矩阵的权威代码载体为 `erp-inv-service` statemachine 包下的实体级 StateMachine Bean（StockMove=`ErpInvStockMoveStateMachine`、StockTake=`ErpInvStockTakeStateMachine`、TransferOrder=`ErpInvTransferOrderStateMachine`、OwnershipTransfer=`ErpInvOwnershipTransferStateMachine`、CostAdjust=`ErpInvCostAdjustStateMachine`、LandedCost=`ErpInvLandedCostStateMachine`）。固定来源/目标态判断由 Bean 唯一治理（契约 `docs/architecture/entity-state-machine-bean.md`）；本节描述业务语义，持久化状态码字典以 `model/app-erp-inventory.orm.xml` 为准。
 
 ## 1. 状态定义
 
@@ -171,6 +173,86 @@
 - **Successor 触发条件**：盘点闭环自动化需求落地时，在 `completeTake` 内自动比对 `qtyActual` vs `totalQuantity` → 经 `IErpInvStockMoveBiz.generateMove` Facade 生成差异移动单（实现路径与现有 Facade 可复用）。
 - 盘点完成的差异**不直接改余额**，而是经移动单（正数盘盈/负数盘亏）走移动单状态机流程才会影响余额。这一原则保留；当前唯一的偏差是「自动生成」降级为「手工入口」（Deferred）。
 - 这种设计保证所有余额变动都通过移动单流水可追溯，盘点只是发现差异的入口（差异入口当前为手工 `generateMove`，自动比对留 successor）。
+
+## 调拨单状态机（独立）
+
+调拨单（ErpInvTransferOrder）有独立状态机，与移动单不同——**仅单边 confirm，无 cancel/complete/reverse**：
+
+```
+草稿 (DRAFT) ── 确认 → 已确认 (CONFIRMED) [终态]
+```
+
+- **迁移**：`confirm: {DRAFT}→CONFIRMED`；initial={DRAFT}、terminal={CONFIRMED}。
+- **仅 confirm 边的原因**：调拨单确认后，实际物理移动由**独立 ErpInvStockMove 流**承载（生成新 DRAFT 移动单走移动单状态机），非本单 docStatus 生命周期。DONE/CANCELLED 生命周期（cancel/complete/reverse writer）属 out-of-scope（路线图 Deferred「TransferOrder DONE/CANCELLED 生命周期 + approveStatus 接入」，触发条件 = PM 要求调拨单取消/完成/审批业务流落地时）。
+- **过账边界（较轻保护区）**：confirm **不触发存货成本过账、不生成 stock movement**；仅可选跨法人内部往来 GL hook（`dispatchIntercompanyPosting` → `IErpFinIntercompanyTransferBiz.onTransferConfirmed`，config-gated + **失败吞掉** log warn，不阻塞库存确认）。无 TransferOrderPostingDispatcher。
+- **错误码缺陷（confirmed live defect，行为保持不修正）**：confirm 守卫（`ErpInvTransferOrderConfirmProcessor.validateDraft`）抛**盘点单的** `ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION`（`erp.err.inv.stock-take.illegal-transition`）+ `ARG_TAKE_ID` 参数（copy-paste bug，应为 TransferOrder 自己的码；无 TransferOrder 专属 illegal-transition 码）。路线图 Non-Goal「不借迁移改变既有错误码」→ 行为保持映射既有（错误）码；修正（新增 `ERR_INV_TRANSFER_ORDER_ILLEGAL_TRANSITION`）登记为 successor（见路线图 Deferred）。
+- **状态机 Bean**：`ErpInvTransferOrderStateMachine`（confirm 单边；非法来源态 Bean 抛 common 码，Processor 映射为上述既有（错误）领域码 + `ARG_TAKE_ID`/`ARG_CURRENT_STATUS` 参数不变）。
+- **动态守卫边界（保留 Processor）**：intercompany hook（config-gated + 失败吞掉）不属于状态轴判断，Bean 不承载。
+
+## 所有权转移单状态机（独立）
+
+所有权转移单（ErpInvOwnershipTransfer）有独立状态机，与移动单不同——**docStatus 用独立字典 `erp-inv/ownership-transfer-status`**（4 值 DRAFT/CONFIRMED/DONE/CANCELLED，值与 move-status 相同但**不复用**，常量 `ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_*` 非 `DOC_STATUS_*`）：
+
+```
+草稿 (DRAFT)
+  ├─ 确认 → 已确认 (CONFIRMED)
+  │           ├─ 完成 → 已完成 (DONE)   [终态]
+  │           └─ 取消 → 已取消 (CANCELLED) [终态]
+  └─ 取消 → 已取消 (CANCELLED) [终态]
+```
+
+- **迁移**：`confirm: {DRAFT}→CONFIRMED`；`done: {CONFIRMED}→DONE`；`cancel: {DRAFT,CONFIRMED}→CANCELLED`；initial={DRAFT}、terminal={DONE, CANCELLED}。无 approveStatus 轴（无审批流）。
+- **过账边界（存货成本过账 + 库存强一致保护区）**：
+  - done 触发 `OwnershipTransferPostingDispatcher.dispatchIfApplicable`：仅 `transferType==VMI_CONSUME` 且 config `erp-inv.vmi-auto-generate-ap=true` 时过账 `ErpFinBusinessType.OWNERSHIP_TRANSFER`→`IErpFinVoucherBiz.post`（Dr Inventory/Cr AP）；**失败保持 DONE + posted=false**（try/catch 吞掉 log，运营可见悬挂）。
+  - done 同时执行**余额重分类**（`reclassifyBalance`，同库位对 (material×warehouse×location×batch) 改 ownershipType/ownerId，**数量守恒非 stock movement**，经 `bookkeeper.updateBalanceWithRetry` 并发兜底）。
+  - confirm/cancel 无过账。
+- **动态守卫（保留 Processor）**：`ERR_OWNERSHIP_TRACKING_DISABLED`（config `erp-inv.ownership-tracking-enabled=false` 时 done 拒绝）、不变量校验（loc-mismatch：`sourceLocId==destLocId` 物理位置不变；type-inconsistent：transferType 与所有权类型迁移一致性）。
+- **错误码**：`ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS`（`erp.err.inv.ownership-transfer-illegal-status`，**专属码**，最接近 StockMove 范式）。
+- **状态机 Bean**：`ErpInvOwnershipTransferStateMachine`（confirm/done/cancel 3 动作；用 `OWNERSHIP_TRANSFER_STATUS_*` 常量独立 dict 语义；非法来源态 Bean 抛 common 码，Processor 映射为 `ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS` + `ARG_TRANSFER_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` 参数不变）。
+
+## 成本调整单状态机（独立）
+
+成本调整单（ErpInvCostAdjust）有独立状态机，与移动单不同——**approveStatus 独立审批轴与 docStatus 双轴并存，Bean 仅迁移 docStatus 轴**：
+
+```
+草稿 (DRAFT) ── 应用 → 已完成 (DONE) [终态]
+    ↑                      │
+    └──── 红冲 ────────────┘
+        (reverseCostAdjust: DONE→CONFIRMED, 可逆重应用)
+```
+
+- **迁移**：`applyCostAdjust: {DRAFT,CONFIRMED}→DONE`；`reverseCostAdjust: {DONE}→CONFIRMED`；initial={DRAFT}、terminal={DONE}（**CONFIRMED 可逆**——仅由 reverse 到达、可 re-apply，非终态）。
+- **双轴联动**：`applyCostAdjust`/`reverseCostAdjust` 的 approveStatus 写 + gating（`erp-fin.cost-adjust-approval` 审批门控 + 5 INLINE 动作 submitForApproval/approve/reject/reverseApprove/withdrawApproval）**保留 Processor**（`ErpInvCostAdjustProcessor`），Bean 仅集中 docStatus 边 + `assertCan*`（docStatus 源态）——option a，同 StockMove Non-Goal 先例。
+- **过账边界（存货成本过账 + 库存强一致保护区）**：
+  - apply 触发 `CostAdjustmentPostingDispatcher.tryPost`（COST_ADJUSTMENT，借贷方向由 `totalAdjustAmount` 符号定 INCREASE/DECREASE，**净 0 跳过返回 null → DONE+posted=false 边缘**）+ 成本层更新（`CostAdjustmentService.applyCostAdjust`）。
+  - reverse 触发红字凭证（`postingDispatcher.reverse`）+ 成本层逆转（`reverseCostAdjust`）。
+  - **无 stock movement**（纯成本变更，`LEDGER_MOVE_ID_COST_ADJUST=0L` 标记）。
+- **跨实体子单据写（内部编排，Bean 容忍不发明边）**：`ErpInvLandedCostProcessor` facade 写子 CostAdjust docStatus（DRAFT seed / DONE / CANCELLED），刻意绕过 `ErpInvCostAdjustProcessor.applyCostAdjust`（避免 COST_ADJUSTMENT+LANDED_COST 双过账，注释 `createAndApplyCostAdjust`）。CANCELLED 由此路径写入，非 Bean 迁移边。
+- **net-0 DONE+posted=false 边缘裁定**：既有代码 apply 无 docStatus 源态守卫（仅 validateNotCancelled/已-applied/审批门），net-0 调整可达 DONE+posted=false 且理论可从 DONE 重 apply；Bean `assertCanApplyCostAdjust({DRAFT,CONFIRMED})` 对 DONE 源态拒绝属**合理收紧**（从 DONE 重 apply 语义错误，正常流程重 apply 必经 reverse→CONFIRMED；无既有测试覆盖此边缘，层 2 四方对照已核实，裁定不违反「保持既有外部行为不变」Non-Goal）。
+- **错误码**：docStatus **无专属 illegal-transition 码**（apply/reverse 由 posted/approval 门守卫：`ERR_COST_ADJUST_ALREADY_APPLIED`/`NOT_APPROVED`/`NOT_APPLIED`）——Bean common→既有 generic `ERR_ILLEGAL_STATUS_TRANSITION` 映射（intentional legacy，见计划 Phase 3 Decision）。
+- **状态机 Bean**：`ErpInvCostAdjustStateMachine`（applyCostAdjust/reverseCostAdjust 2 动作；approveStatus 轴不在 Bean）。
+
+## 到岸成本单状态机（独立）
+
+到岸成本单（ErpInvLandedCost）有独立状态机，与移动单不同——**approve/reverseApprove 双轴联动（同时写 docStatus 与 approveStatus），Bean 仅迁移 docStatus 边；无 CONFIRMED 写（DRAFT→DONE 直达）**：
+
+```
+草稿 (DRAFT) ── 审核 → 已完成 (DONE) [终态]
+    │                        │
+    │                        └── 红冲 → 已取消 (CANCELLED) [终态]
+    └── generateFreightLandedCost（生成路径，seed DRAFT，无迁移边）
+```
+
+- **迁移**：`approve: {DRAFT}→DONE`；`reverseApprove: {DONE}→CANCELLED`；initial={DRAFT}、terminal={DONE, CANCELLED}。**无 CONFIRMED 写**。
+- **双轴联动（原子写）**：`doPostApprove` 同时写 `docStatus→DONE` + `approveStatus→APPROVED`；`doReverseApprove` 同时写 `docStatus→CANCELLED` + `approveStatus→REJECTED`。Bean 仅集中 docStatus 边 + `assertCan*`（docStatus 源态），approveStatus 写 + approveStatus/posted gating 保留 Processor（option a）。
+- **过账边界（存货成本过账 + 库存强一致保护区）**：
+  - approve 触发 `LandedCostPostingDispatcher.tryPost`（LANDED_COST Dr Inventory/Cr AP）+ 分配引擎（`LandedCostAllocationEngine`）+ 子 CostAdjust 成本层更新（`createAndApplyCostAdjust` 直接调 `CostAdjustmentService.applyCostAdjust`，避免双过账）。
+  - reverse 触发红字凭证（`postingDispatcher.reverse`，**失败吞掉 + 告警** `IErpSysNotificationBiz.notify(NOTIFY_EVENT_LANDED_COST_REVERSE_FAILURE)`，G4 分级）+ 子 CostAdjust 逆转（`reverseCostAdjust` + 子单 posted=false）。
+  - **无 stock movement**（纯成本）。
+- **生成路径无迁移边（契约 §9.2 选项 c）**：`generateFreightLandedCost`（`createLandedCostHead`）创建新单 seed DRAFT，不调 `assertCan*`。
+- **动态守卫（保留 Processor）**：幂等守卫（`ERR_LANDED_COST_ALREADY_APPROVED`）、悲观锁（`lockReceiveForAllocation` SELECT FOR UPDATE 串行化并发同 receiveId 分摊）、`validateNotAlreadyAllocated`（`ERR_LANDED_COST_ALREADY_ALLOCATED`）、reverse posted+APPROVED 守卫（`ERR_LANDED_COST_NOT_POSTED`）、reverse 失败吞掉 + 告警（G4）。
+- **错误码**：docStatus **无专属 illegal-transition 码**（approve/reverse 由幂等/posted 门守卫 `ERR_LANDED_COST_ALREADY_APPROVED`/`NOT_POSTED`）——Bean common→既有 generic `ERR_ILLEGAL_STATUS_TRANSITION` 映射（intentional legacy，见计划 Phase 3 Decision）；reverse 失败告警（G4）为 intentional legacy 保留。
+- **状态机 Bean**：`ErpInvLandedCostStateMachine`（approve/reverseApprove 2 动作；双轴联动中 Bean 仅 docStatus 边；`generateFreightLandedCost` 无迁移边）。
 
 ## 拣货单生命周期（Deferred）
 
