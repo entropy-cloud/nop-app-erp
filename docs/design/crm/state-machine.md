@@ -32,6 +32,12 @@ NEW（新线索/新商机创建）
 > **convert 来源态 doc-drift 补正（plan 2026-08-13-0945-3 Phase 2 Fix）**：原 §2 声明「QUALIFIED→CONVERTED」与代码实况漂移。代码实况：`ErpCrmConversionConvertToCustomerProcessor`/`...ConvertToQuotationProcessor` 仅调 `validateNotConverted`（拒绝 CONVERTED 幂等）+ `validateLeadType` 门控，**零 QUALIFIED 来源态守卫**——即任何非 CONVERTED 态经 leadType 门控→CONVERTED（含 NEW→CONVERTED：`convertToCustomer` 从 LEAD 类型 NEW 直接转化，测试 `TestErpCrmLeadConversion.testAlreadyConvertedRejected` 证之）。裁定（路线图规则 5，保持既有外部行为不变）：Bean `assertCanConvert` 运行时仅拒 CONVERTED；owner doc §2 就地补正为「{NEW,QUALIFIED}→CONVERTED 经 leadType 门控」。`ErpCrmLeadStateMachine.transitions()` 编码意图矩阵 {NEW,QUALIFIED}→CONVERTED。
 >
 > **已知 latent gap（watch-only residual，非本计划引入）**：`assertCanConvert` 运行时仅拒 CONVERTED，故 LOST/CANCELLED→CONVERTED 在代码中技术上允许（`validateNotConverted` 不拦），但意图矩阵（`transitions()` + 上图）限定 {NEW,QUALIFIED}→CONVERTED。此为迁移前已存在的既有 latent gap（运行时宽放），裁定保持运行时宽放（不新增来源态限制，避免行为变化）；若产品要求收窄须开 successor（触及业务行为 ask-first）。
+>
+> **转化前置守卫实现注记（plan 2026-08-14-1815-1 RC-R1.21/RC-R1.22 落地）**：转化链前置条件在 Processor 层新增守卫，状态机 Bean 语义不变（本 § latent gap 分层裁决保持）：
+> - **直接升格（convertToOpportunity，UC-CRM-02「不创建客户」分支）**：校验 leadType==LEAD + docStatus==QUALIFIED → 原 lead 原地 `leadType=OPPORTUNITY`，**不建 Partner/新 Lead、docStatus 保持 QUALIFIED**（保持 QUALIFIED 使后续 convertToQuotation 前置成立；置 CONVERTED 将阻断 UC-CRM-03 链路）。非 QUALIFIED 抛 `ERR_LEAD_NOT_QUALIFIED`；非 LEAD 类型抛 `ERR_LEAD_TYPE_MISMATCH`（leadType 校验先于 docStatus）。
+> - **convertToCustomer 前置（UC-CRM-02）**：`validateLeadType(LEAD)` 后新增 `validateDocStatus(QUALIFIED)`——非 QUALIFIED（NEW/LOST/CANCELLED/CONVERTED）抛 `ERR_LEAD_NOT_QUALIFIED` 拒绝（L1「Lead.docStatus == QUALIFIED 且 leadType == LEAD」双前置落地）。
+> - **convertToQuotation 前置（UC-CRM-03）**：`validateLeadType(OPPORTUNITY)` 后新增 `validateDocStatus(QUALIFIED)` + `validateWonStage`（经 `lead.stageId` → `ErpCrmStage.isWonStage==true`，stageId null 或非 won-stage 抛 `ERR_LEAD_STAGE_NOT_WON`）——守卫顺序确定化：docStatus → won-stage → partner（`ERR_OPPORTUNITY_PARTNER_REQUIRED` 可达性不受影响）。
+> - **守卫与状态机分层边界**：`assertCanConvert` 运行时仅拒 CONVERTED 的既有宽放保持（本行前置守卫在 Processor 层新增，不修改状态机 Bean 语义——NEW 状态 LEAD 直接升格/转化仍被 Processor 层 QUALIFIED 守卫拒绝，属更严格的业务前置，非状态机迁移收窄）。
 
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|

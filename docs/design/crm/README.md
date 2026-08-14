@@ -65,11 +65,12 @@
 ### 衔接契约
 
 - **线索转客户**：LEAD 类型转化时创建客户主数据（ErpMdPartner）并生成对应商机（leadType=OPPORTUNITY，绑定新建客户），原线索 docStatus→CONVERTED。
-- **商机转报价单**：OPPORTUNITY 类型转化时校验类型后调用 sales 域创建报价单（ErpSalQuotation），转化结果以弱指针（relatedBillType=SALES_QUOTATION + relatedBillCode）回写至 CRM 侧线索，sales 实体零字段新增（核心零污染）。
+- **线索直接升格**（plan 2026-08-14-1815-1 RC-R1.21）：不创建客户时经 `convertToOpportunity` 原 lead 原地 leadType→OPPORTUNITY（前置 docStatus==QUALIFIED 且 leadType==LEAD；不建 Partner/新 Lead，docStatus 保持 QUALIFIED）。
+- **商机转报价单**：OPPORTUNITY 类型转化时校验类型后调用 sales 域创建报价单（ErpSalQuotation），转化结果以弱指针（relatedBillType=SALES_QUOTATION + relatedBillCode）回写至 CRM 侧线索，sales 实体零字段新增（核心零污染）。前置守卫（plan 2026-08-14-1815-1 RC-R1.22）：docStatus==QUALIFIED（`ERR_LEAD_NOT_QUALIFIED`）+ stage.isWonStage==true（`ERR_LEAD_STAGE_NOT_WON`）+ partnerId 非空（`ERR_OPPORTUNITY_PARTNER_REQUIRED`），顺序 docStatus → won-stage → partner。
 
 ## 关键业务规则
 
-1. **Lead→Convert→Opportunity→Quotation 转化流**：LEAD 转化→创建客户主数据 + 生成商机；OPPORTUNITY 转化→调用 sales 域创建报价单；转化后线索 docStatus=CONVERTED，转化结果弱指针写回。
+1. **Lead→Convert→Opportunity→Quotation 转化流**：LEAD 转化→创建客户主数据 + 生成商机（`convertToCustomer`）；或**直接升格**（`convertToOpportunity`，不创建客户时原 lead 原地 leadType=OPPORTUNITY，docStatus 保持 QUALIFIED）；OPPORTUNITY 转化→调用 sales 域创建报价单（`convertToQuotation`，前置 docStatus==QUALIFIED 且 stage.isWonStage==true）；转化后线索 docStatus=CONVERTED，转化结果弱指针写回。
 2. **活动时间线自动派生**：线索的最后联系日期与下次活动日期从关联的活动/事件自动计算。
 3. **线索查重**：提交线索时自动检查重复（相同企业名/邮箱/电话），提示用户合并或跳过。
 4. **事件提醒**：活动状态为已计划且临近开始时间时，通过定时任务发送通知。
