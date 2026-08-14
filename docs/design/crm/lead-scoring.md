@@ -154,7 +154,7 @@
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `erp-crm.lead-scoring.auto-qualify` | true | 是否启用自动转商机（开关） |
-| `erp-crm.lead-scoring.schedule-cron` | —（默认不执行，运维启用配置键生效） | 定时批量评分 cron 门控（设计 `0 2 * * *` 每日凌晨 2 点）。**SCHEDULED**：`ErpCrmLeadScoringRecalcJob` + `scheduler.yaml` 已接线，空值=跳过；非空时迭代 active 线索逐条 `IErpCrmLeadScoreBiz.recalculateScore()`（triggerEvent=SCHEDULED，单线索失败隔离） |
+| `erp-crm.lead-scoring.schedule-cron` | `0 2 * * *`（每日凌晨 2 点；空值=跳过） | 定时批量评分 cron 门控。**SCHEDULED** 接线（plan 2026-08-14-1815-2 RC-R1.23）：`app-erp-all/.../nop/job/conf/erp-crm-lead-scoring-recalc.job.yaml`（`enabled` 默认 false = 部署启用决策 + cronExpr 消费本键）→ `nopBatchTaskRunner` → `module-crm/.../nop/batch-task/crm/lead-scoring-recalc.batch.xml`（loader 排除 CONVERTED/LOST/CANCELLED 终态）→ processor 逐条调 `ErpCrmLeadScoringRecalcHelper.recalculateOne()`（schedule-cron 空值=跳过；单线索失败隔离：REQUIRES_NEW + WARN 日志，镜像 bank-recon helper 范式）→ `IErpCrmLeadScoreBiz.recalculateScore()`（triggerEvent=SCHEDULED） |
 | `erp-crm.lead-scoring.recalc-on-lead-update` | true | 线索字段变更是否触发自动重新评分 |
 
 ## 状态机关联

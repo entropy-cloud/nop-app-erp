@@ -310,6 +310,16 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R2c=1392≤1392，其余 = 基线），CI green 保持。该裁决对齐 `2026-08-07-1932-3`（RC-R1.2）batch helper R2c baseline-raise 先例（同样因技术约束无法经 I*Biz 注入）。
 
+## R10 基线上调注记（plan 2026-08-14-1815-2，RC-R1.23 crm 线索评分 SCHEDULED 触发器接线）
+
+`2026-08-14-1815-2`（RC-R1.23，P1-RC-035）新增 batch helper `ErpCrmLeadScoringRecalcHelper`（`module-crm/erp-crm-service/.../job/`），引入 **R10 +1**，为既有文档化 pattern 类的合法同型新增：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R10 | 7 | **8** | 8 | **baseline-raise**（+1） | `ErpCrmLeadScoringRecalcHelper.recalculateOne` 1 处 REQUIRES_NEW——单条评分独立事务 + try/catch WARN 失败隔离（单线索失败不阻断批次，对齐 L2「单线索失败隔离」声明），镜像 RC-R1.2 `ErpFinBankReconAutoReverseHelper`（R10 基线已含其 1 处 REQUIRES_NEW）同型站点——batch chunk 事务本身不提供 per-item 隔离（`BatchTaskBuilder.buildChunkProcessor` + `InvokerBatchConsumer` 整 chunk 单事务），per-item 隔离须由 REQUIRES_NEW helper 承载。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=229 / R2c=1392 / R2d=34 / R3=5 / R10=8 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -329,7 +339,7 @@ R5: 0
 R6: 2
 R7: 0
 R8: 0
-R10: 7
+R10: 8
 R11: 0
 R12a: 69
 R12b: 66

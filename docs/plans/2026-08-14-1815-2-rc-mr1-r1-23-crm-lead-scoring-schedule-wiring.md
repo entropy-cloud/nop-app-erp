@@ -1,6 +1,6 @@
 # 2026-08-14-1815-2-rc-mr1-r1-23-crm-lead-scoring-schedule-wiring RC-R1.23 — crm 线索评分调度接线（MR1 第一批纯预授权）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-14
 > Mission: requirement-compliance
 > Work Item: RC-R1.23（P1-RC-035 crm 线索评分 SCHEDULED 触发器接线 + owner doc lead-scoring.md 失实声明纠正）
@@ -56,82 +56,82 @@
 
 ### Phase 1 - Explore 既有 batch-task 接线运行时状态（Decision）
 
-Status: planned
+Status: completed
 Targets: `erp-crm-lead-scoring-recalc.job.yaml`；`lead-scoring-recalc.batch.xml`；`ErpCrmConstants.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` **接线形态裁决**：选项 A（推荐）= **确认/修正既有 batch-task 式接线**（job.yaml + batch.xml + nopBatchTaskRunner——2026-07-18 迁移标准模式，参照 RC-R1.2 已验证 bank-recon job）；选项 B = 新建 Java Job bean `ErpCrmLeadScoringRecalcJob`（镜像 ForecastRecalc/EventReminder 范式，beans.xml 注册 + scheduler.yaml）——**Explore 项**：先核实 batch.xml 的 `inject('IErpCrmLeadScoreBiz')` + `batchChunkCtx.serviceContext` 在 batch source 上下文解析（同型 pnl-calc/bank-recon 已落地），若可达则选项 A（最小改动 + 既有模式），否则选项 B。记录理由。
+- [x] `Decision` **接线形态裁决**：**选项 A（采用）** = 确认/修正既有 batch-task 式接线（job.yaml + batch.xml + nopBatchTaskRunner——2026-07-18 迁移标准模式，参照 RC-R1.2 已验证 bank-recon job）；选项 B（否决）= 新建 Java Job bean `ErpCrmLeadScoringRecalcJob`（镜像 ForecastRecalc/EventReminder 范式）。**Explore 证据**：①`inject('IErpCrmLeadScoreBiz')` 在 batch source 上下文解析可达——`biz_ErpCrmLeadScore` bean 注册于 `_service.beans.xml:234-236`（`ioc:type="app.erp.crm.biz.IErpCrmLeadScoreBiz"`），同型 pnl-calc `inject('IErpPrjProjectPnlBiz')`（`IErpPrjProjectPnlBiz` 亦经 `_service.beans.xml:71` ioc:type 注册）已落地部署；②`batchChunkCtx.serviceContext` 变量在 processor source 可用（同型 bank-recon/pnl-calc batch.xml，draft review 已核实 `IBatchChunkContext` default 委派方法）；③`nopBatchTaskRunner` bean 注册于 nop-batch-dsl `batch-dsl.beans.xml:6`（`io.nop.batch.dsl.runner.BatchTaskRunner`）；④job.yaml 加载链：`LocalJobConfigLoader.scanJobConfigs("/nop/job/conf")` 扫描 `.job.yaml`（TestErpAllJobYamlLoading 断言 21 个），`@cfg:` 经 `ConfigValueResolver` 解析（`AppConfig.var` + 默认值），enabled=false 默认不注册（`LocalJobConfigLoader.registerJob` 仅注册 enabled=true；TestLocalJobConfigLoader.testDefaultEnabledIsFalse 证明）。→ **选项 A**（最小改动 + 既有模式）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **失败隔离语义裁决（F1）**：选项 A（推荐）= 落地 per-item 隔离——`transactionScope="chunk"` + processor per-item try/catch（捕获 NopException LOG.warn 继续）或新建 REQUIRES_NEW helper（镜像 bank-recon `erpFinBankReconAutoReverseHelper` 范式）；选项 B = L2 声明调整为「chunk 级隔离（batchSize=200）」。记录理由 + 残余风险（chunk 级隔离下同 chunk 内失败项后续项丢弃）。
+- [x] `Decision` **失败隔离语义裁决（F1）**：**选项 A（采用）** = 落地 per-item 隔离——新建 REQUIRES_NEW helper（镜像 bank-recon `ErpFinBankReconAutoReverseHelper` 范式，`transactionTemplate.runInTransaction(null, REQUIRES_NEW, ...)` + try/catch WARN + 返回 boolean）；选项 B（否决） = L2 声明调整为「chunk 级隔离（batchSize=200）」。**Explore 证据（nop-entropy 实测）**：`BatchTaskBuilder.buildChunkProcessor`（nop-batch-core）：`batchTransactionScope==process` 时 `InvokerBatchConsumer` 包裹整个 chunk consumer（`transactionalInvoker.invoke` 包整 chunk 单事务），`chunk` scope 时 `AddCompletedBatchConsumer` 等——**process/chunk 两 scope 均整 chunk 单事务，任一项抛异常回滚整 chunk，无 per-item 隔离**（与 draft review 已核实结论一致）；bank-recon 先例 = `transactionScope="process"` + helper 内 REQUIRES_NEW 逐条独立事务。残余风险（选项 B 弃后无）：chunk 级隔离的「同 chunk 内失败项后续项丢弃」不适用。
       - Skill: `nop-backend-dev`
-- [ ] `Proof` **运行时验证前置**：核实 job.yaml 加载链（`nop.job.*` config 键 + nopBatchTaskRunner bean 注册 + taskPath 解析）在 app-erp-all 聚合应用上下文可达（参照 RC-R1.2 验证记录 `2026-08-07-1932-3` 的 bank-recon job 同构验证路径）。
+- [x] `Proof` **运行时验证前置**：job.yaml 加载链核实——①`LocalJobConfigLoader` 扫描 `/nop/job/conf`（21 个 job.yaml，`TestErpAllJobYamlLoading` 断言）；②`@cfg:` 键经 `ConfigValueResolver.resolveValue`（`AppConfig.var(key)` 有值取之、null 取默认）；③`nopBatchTaskRunner` bean 注册（nop-batch-dsl `batch-dsl.beans.xml:6`）；④taskPath `/nop/batch-task/crm/lead-scoring-recalc.batch.xml` 文件存在（`module-crm/erp-crm-service/src/main/resources/_vfs/nop/batch-task/crm/`）；⑤`inject('IErpCrmLeadScoreBiz')` 解析（`biz_ErpCrmLeadScore` bean ioc:type，同型 pnl-calc 成功先例）。运行时可达性最终由 Phase 3 batch 任务级测试（`IBatchTaskRunner.execute(taskPath)`）给出。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 接线形态裁决记录（A/B 二选一 + 理由）+ 隔离语义裁决记录（A/B 二选一 + 理由），Explore 证据（inject 解析/batch source 上下文/transactionScope 语义）落盘计划或日志
-- [ ] 既有 batch.xml/job.yaml 无语法/引用错误（XML 可解析 + taskPath 命中文件）
+- [x] 接线形态裁决记录（A 采用 + 理由）+ 隔离语义裁决记录（A 采用 + 理由），Explore 证据（inject 解析/batch source 上下文/transactionScope 语义）落盘计划或日志
+- [x] 既有 batch.xml/job.yaml 无语法/引用错误（XML 可解析 + taskPath 命中文件）
 
 ### Phase 2 - 接线落地 + config 对齐（P1-RC-035 核心）
 
-Status: planned
+Status: completed
 Targets: `erp-crm-lead-scoring-recalc.job.yaml`；`lead-scoring-recalc.batch.xml`；`ErpCrmConstants.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Decision`
 - Prereqs: Phase 1 完成（裁决决定实现形态）
 
-- [ ] `Decision` **config 门控键对齐**：选项 A（推荐）= job.yaml cronExpr 消费 `erp-crm.lead-scoring.schedule-cron`（`@cfg:erp-crm.lead-scoring.schedule-cron|0 2 * * *`），常量由 dead 转活跃——L2 声明的键名与实际接线一致；选项 B = 常量改为 `nop.job.erp-crm-lead-scoring-recalc.cron-expr`（跟随 job.yaml 现状）——L2 声明改键名。记录理由（倾向 A：业务 config 键范式对齐 R1.4/R1.5，L2 文档键名保持）。
+- [x] `Decision` **config 门控键对齐**：**选项 A（采用）** = job.yaml cronExpr 消费 `erp-crm.lead-scoring.schedule-cron`（`@cfg:erp-crm.lead-scoring.schedule-cron|0 2 * * *`），常量由 dead 转活跃（job.yaml + `ErpCrmLeadScoringRecalcHelper.isScheduleCronConfigured()` 双消费点）；选项 B（否决） = 常量改为 `nop.job.erp-crm-lead-scoring-recalc.cron-expr`（跟随 job.yaml 现状）。**理由（选项 A）**：①`CONFIG_LEAD_SCORING_SCHEDULE_CRON` 从 dead config 转活跃，grep 显示 job.yaml + helper 消费；②L2 `lead-scoring.md:157` 声明的键名 `erp-crm.lead-scoring.schedule-cron` 与实际接线一致（文档键名保持）；③`job-scheduling.md:177` 该作业行已列 `erp-crm.lead-scoring.schedule-cron` → 选项 A 下自动一致（选项 B 下须同步改键名）；④业务 config 键范式对齐 R1.4/R1.5（job 层 enabled 门控 + 业务键门控双层）。`enabled` 保持 `@cfg:nop.job.erp-crm-lead-scoring-recalc.enabled|false`（部署 opt-in，对齐 A4.2.95 config-gate 范式）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` 按 Phase 1 裁决落地接线：选项 A → 修正/确认 job.yaml + batch.xml（processor 调 `IErpCrmLeadScoreBiz.recalculateScore(item.id, 'SCHEDULED', ...)`——**失败隔离按 Phase 1 F1 裁决落地**：F1=per-item 时 `transactionScope="chunk"` + processor per-item try/catch（捕获 NopException LOG.warn 继续）或 REQUIRES_NEW helper 镜像 bank-recon 范式——**注意 batch chunk 事务本身不提供 per-item 隔离**（已核实 `BatchTaskBuilder.buildChunkProcessor`：process/chunk 两 scope 均以 InvokerBatchConsumer/InvokerBatchChunkProcessor 包裹整 chunk，任一项抛异常回滚整 chunk；现 `transactionScope="process"` 即此形态，与 L2「单线索失败隔离」不符）；F1=chunk 级时 `transactionScope="chunk"` + 残余风险记录（同 chunk 内失败项后续项丢弃）。loader 已按 `notIn [CONVERTED,LOST,CANCELLED]` 过滤 active 线索）；选项 B → 新建 `ErpCrmLeadScoringRecalcJob`（public void execute() 无参 + cron 空跳过 + beans.xml 注册 + job.yaml invoker 指向）。
+- [x] `Fix` 按 Phase 1 裁决落地接线（选项 A + F1=per-item）：`erp-crm-lead-scoring-recalc.job.yaml` cronExpr 改 `@cfg:erp-crm.lead-scoring.schedule-cron|0 2 * * *`；**新建 `ErpCrmLeadScoringRecalcHelper`**（`module-crm/erp-crm-service/.../job/`，镜像 bank-recon `ErpFinBankReconAutoReverseHelper` 范式：`transactionTemplate.runInTransaction(null, REQUIRES_NEW, ...)` 逐条独立事务 + try/catch WARN + 返回 boolean；schedule-cron 空值=跳过 INFO——「空值=跳过」语义落地）+ `app-service.beans.xml` 注册 + **batch.xml processor 改调 helper**（`inject('erpCrmLeadScoringRecalcHelper').recalculateOne(item.id, batchChunkCtx.serviceContext)`；`transactionScope` 保持 "process" 与 bank-recon 同型）；loader 保持 `notIn [CONVERTED,LOST,CANCELLED]` 过滤 active 线索。**实施中发现并修复运行时缺陷（Explore 深化）**：`batchChunkCtx.serviceContext` 在 nop-batch 执行路径为 **null**（`BatchTaskRunner.executeAsync` → `batchTaskManager.newBatchTaskContext()` 无绑定上下文），而 `IErpCrmLeadScoreBiz` 代理调用需非 null ctx（`EvalServiceAction.invoke` → `context.getEvalScope()`）——helper 内空值兜底 `new ServiceContextImpl()`（对齐 R1.4/R1.5 Job bean `execute()` 自建 ctx 范式）；该缺陷同样潜伏于 pnl-calc 等既有 batch job（watch-only 记录，非本行范围）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `ErpCrmConstants`：`CONFIG_LEAD_SCORING_SCHEDULE_CRON` 常量消费点接线（若选项 A，则常量已声明无需改；若需注释更新则同步 javadoc 说明 job.yaml 消费）。
+- [x] `Fix` `ErpCrmConstants`：`CONFIG_LEAD_SCORING_SCHEDULE_CRON` 常量已声明无需改值；javadoc 更新说明 job.yaml + `ErpCrmLeadScoringRecalcHelper` 消费（dead → 活跃）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 接线落地且 config 键消费闭环（`erp-crm.lead-scoring.schedule-cron` 非 dead——grep 显示 job.yaml 消费）
-- [ ] job.yaml/batch.xml 与 L2 文档声明一致（Phase 4 文档同步后三方一致）
+- [x] 接线落地且 config 键消费闭环（`erp-crm.lead-scoring.schedule-cron` 非 dead——grep 显示 job.yaml + helper 消费）
+- [x] job.yaml/batch.xml 与 L2 文档声明一致（Phase 4 文档同步后三方一致）
 
 ### Phase 3 - 测试矩阵
 
-Status: planned
+Status: completed
 Targets: `module-crm/erp-crm-service/src/test/java/app/erp/crm/service/job/`（新增测试类）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2 完成
 
-- [ ] `Add` 接线测试：① SCHEDULED 触发后 active 线索生成 ErpCrmLeadScore 记录（triggerEvent=SCHEDULED，镜像 TestErpCrmForecastAndScoring 断言）；② 终态线索（CONVERTED/LOST/CANCELLED）被 loader 排除不评分；③ cron 空值跳过语义（若 Job bean 形态）或 batch 任务级测试（若 batch 形态，参照 nop-batch-dsl `TestBatchTaskRunner` 执行入口 `IBatchTaskRunner.execute(taskPath)`）——含**失败隔离断言**（按 Phase 1 F1 裁决：单条失败线索不阻断其余线索评分；若 F1=chunk 级，断言残余风险行为并记录）。
+- [x] `Add` 接线测试（`TestErpCrmLeadScoringRecalcJob`，batch 任务级执行 `IBatchTaskRunner.execute(taskPath)`——nop-batch-dsl 执行入口，参照 `TestBatchTaskRunner`；**erp-crm-service pom 补 nop-batch-dsl test-scope 依赖**）：① SCHEDULED 触发后 active 线索生成 ErpCrmLeadScore 记录（triggerEvent=SCHEDULED + totalScore=100 + append-only + 行级快照，镜像 TestErpCrmForecastAndScoring 断言）；② 终态线索（CONVERTED/LOST/CANCELLED）被 loader 排除不评分；③ schedule-cron 空值跳过语义（`assignConfigValue` 置空 → helper 跳过 INFO + 零评分记录）；④ **失败隔离断言**（F1=per-item）：不存在线索（ERR_LEAD_NOT_FOUND）→ REQUIRES_NEW 回滚 + WARN 日志（ListAppender 断言含 leadId）+ 返回 false，随后正常线索评分成功（失败不阻断批次继续）。
       - Skill: `nop-testing`
-- [ ] `Proof` 既有 `TestErpCrmForecastAndScoring`/`TestErpCrmEventReminderJob`/`TestErpCrmForecastRecalcJob` 零回归 + `_cases/` 快照（如有新断言点）。
+- [x] `Proof` 既有 `TestErpCrmForecastAndScoring`/`TestErpCrmEventReminderJob`/`TestErpCrmForecastRecalcJob` 零回归 + `TestErpAllJobYamlLoading`（job.yaml cronExpr 改动后 21 个文件仍可解析）——`mvn test -pl module-crm/erp-crm-service` 172 tests 全绿（168 基线 + 4 新增）+ `mvn test -pl app-erp-all -Dtest=TestErpAllJobYamlLoading` 1/1 绿。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 新增测试全绿 + 既有 crm 测试零回归：`mvn test -pl module-crm/erp-crm-service`（BUILD SUCCESS）
-- [ ] SCHEDULED 路径有运行时断言证据（非仅静态接线）
+- [x] 新增测试全绿 + 既有 crm 测试零回归：`mvn test -pl module-crm/erp-crm-service`（BUILD SUCCESS，172 tests）
+- [x] SCHEDULED 路径有运行时断言证据（非仅静态接线——`IBatchTaskRunner.execute` 真实执行 loader+processor+helper 全链）
 
 ### Phase 4 - L2 失实纠正 + 文档回填 + arm-index/roadmap 状态
 
-Status: planned
+Status: completed
 Targets: `docs/design/crm/lead-scoring.md`；`docs/architecture/job-scheduling.md`；`docs/audits/arm-index.md`；`docs/backlog/requirement-compliance-roadmap.md`；`docs/logs/2026/08-14.md`
 Skill: none
 
 - Item Types: `Fix | Add`
 - Prereqs: Phase 1-3 完成
 
-- [ ] `Fix` **L2 失实纠正（P1-RC-035 明示义务）**：`lead-scoring.md:157` 配置表行改为与实际接线一致——按 Phase 1 裁决：批量接线形态（nopBatchTaskRunner + batch.xml + job.yaml）/ 或 Job bean 形态 + config 键名更正 + 门控语义（enabled 默认 false = 部署启用决策 + schedule-cron 空值=跳过）；不修改需求契约段（use-cases L1 不动）。**同步 `docs/architecture/job-scheduling.md:177,310`**：该作业行现列配置键 `erp-crm.lead-scoring.schedule-cron` 而 job.yaml 实际用 `nop.job.erp-crm-lead-scoring-recalc.cron-expr`（已核实）——按 Phase 2 config 裁决对齐（选项 A 下 job-scheduling.md 自动一致，选项 B 下须同步改键名），对齐 RC-R1.2 Phase 3 先例（job-scheduling.md DESIGN/键名注记同步）。
+- [x] `Fix` **L2 失实纠正（P1-RC-035 明示义务）**：`lead-scoring.md:157` 配置表行改为与实际接线一致（batch-task 接线形态：job.yaml → nopBatchTaskRunner → batch.xml → `ErpCrmLeadScoringRecalcHelper.recalculateOne()` REQUIRES_NEW 单线索失败隔离 → `IErpCrmLeadScoreBiz.recalculateScore()` triggerEvent=SCHEDULED；键名 `erp-crm.lead-scoring.schedule-cron` 保持 + 默认 `0 2 * * *` + 空值=跳过；门控语义 enabled 默认 false = 部署启用决策 + schedule-cron 空值=跳过）；不修改需求契约段（use-cases L1 不动）。**同步 `docs/architecture/job-scheduling.md`**：§3.9 `erp-crm-lead-scoring-recalc` 行调用入口/配置键/证据更新（RC-R1.23 接线修正）+ 配置键表 `erp-crm.lead-scoring.schedule-cron` 行补消费说明（选项 A 下键名自动一致，对齐 RC-R1.2 Phase 3 先例）。
       - Skill: none
-- [ ] `Add` arm-index P1-RC-035 → `done (RC-R1.23)` + 修复落地摘要（含 L2 失实纠正记录）；roadmap RC-R1.23 → done；`docs/logs/2026/08-14.md` 日志条目。
+- [x] `Add` arm-index P1-RC-035 → `done (RC-R1.23)` + 修复落地摘要（含 L2 失实纠正记录 + 隔离语义修正）；roadmap RC-R1.23 → done ✅（含落地摘要）；`docs/logs/2026/08-14.md` 日志条目。**R10 基线漂移登记**（plan Closure Gates 已知失败模式 #1，RC-R1.2 同型先例）：`compliance-baseline.md` 新增 R10 7→8 基线上调注记（per-site 证据：`ErpCrmLeadScoringRecalcHelper.recalculateOne` 1 处 REQUIRES_NEW，镜像 RC-R1.2 `ErpFinBankReconAutoReverseHelper` 同型站点）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] `lead-scoring.md` 声明与实际接线一致（实现注记与配置表同步）；`job-scheduling.md:177,310` 配置键/接线注记与最终接线一致；arm-index/roadmap 状态回填 + 日志条目写入
+- [x] `lead-scoring.md` 声明与实际接线一致（实现注记与配置表同步）；`job-scheduling.md` §3.9 行/配置键表与最终接线一致；arm-index/roadmap 状态回填 + 日志条目写入
 
 ## Draft Review Record
 
@@ -141,14 +141,14 @@ Exit Criteria:
 
 > 仅在所有项目和每个阶段的退出标准都勾选 `[x]` 后关闭。**完整仓库验证在此处**：结束时运行一次全量验证。
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn test -pl module-crm/erp-crm-service` 全绿 + `mvn clean install -DskipTests` 全量 BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline；若新增 REQUIRES_NEW helper/daoFor 触发基线漂移，按 project-context 已知失败模式 #1 在闭包前开基线裁决或登记 per-site 证据——RC-R1.2 同型先例）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn test -pl module-crm/erp-crm-service` 172 tests 全绿 + `mvn clean install -DskipTests` 全量 BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline；**R10 基线漂移已登记**——R10 7→8 per-site 证据落 `docs/audits/compliance-baseline.md`「R10 基线上调注记（plan 2026-08-14-1815-2，RC-R1.23）」块，按 project-context 已知失败模式 #1 + RC-R1.2 同型先例；全仓 `mvn test` 2 项已知预存失败[ErpMfgCostRollupLine cell-not-prop + TestAuthSeedLoadingProof NPE]非本行引入，见 known-good-baselines.md:63-64 + docs/bugs/ 双注记）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -166,13 +166,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <pending — 执行完成并独立结束审计后填写>
+Status Note: 执行完成并独立结束审计通过（2026-08-14）。四 Phase 全绿：接线落地（batch-task 形态确认 + REQUIRES_NEW helper per-item 隔离 + config 键对齐 `erp-crm.lead-scoring.schedule-cron` 由 dead 转活跃 + 运行时 ctx 空值兜底修复）+ batch 任务级测试 4 组 + L2 失实纠正（lead-scoring.md:157 / job-scheduling.md §3.9 + 配置键表）+ arm-index/roadmap/日志回填 + R10 7→8 基线漂移登记。验证：erp-crm-service 172 tests 全绿 + TestErpAllJobYamlLoading 1/1 + 全量 `mvn clean install -DskipTests` BUILD SUCCESS + checker actual ≤ baseline（R10=8）。全仓 `mvn test` 2 项已知预存失败（mfg ErpMfgCostRollupLine cell-not-prop + TestAuthSeedLoadingProof NPE）非本行引入（known-good-baselines.md:63-64 + docs/bugs/ 双注记，commit 时间线早于本会话）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <pending — 独立结束审计子代理>
-- Evidence: <pending>
+- Auditor / Agent: 独立结束审计子代理（新会话，只读，零文件修改）
+- Evidence: **Verdict PASS**——①计划状态一致性（4/4 Phase completed + 全 `[x]` + Plan Status completed；Closure Gates 8/8 由执行者在本审计后按审计结论勾选）；②Phase 2 接线实仓核验（job.yaml cronExpr `@cfg:erp-crm.lead-scoring.schedule-cron|0 2 * * *` + enabled|false + nopBatchTaskRunner + taskPath；batch.xml loader notIn[CONVERTED,LOST,CANCELLED] + processor `inject('erpCrmLeadScoringRecalcHelper').recalculateOne(item.id, batchChunkCtx.serviceContext)` + transactionScope=process；helper REQUIRES_NEW + try/catch WARN + schedule-cron 空值跳过 + null ctx 兜底 ServiceContextImpl；beans.xml 注册 + ErpCrmConstants javadoc 更新）；③Phase 3 测试实跑（审计者自跑 `mvn test -pl module-crm/erp-crm-service -Dtest=TestErpCrmLeadScoringRecalcJob` 4/4 绿 + 全模块 172/172 绿 + TestErpAllJobYamlLoading 1/1 绿；nop-batch-dsl test-scope 依赖属实）；④Phase 4 文档实仓核验（lead-scoring.md:157 失实纠正 / job-scheduling.md §3.9 + 配置键表 / arm-index P1-RC-035 done (RC-R1.23) / roadmap RC-R1.23 done ✅ / 日志条目 / compliance-baseline R10 7→8 注记 + machine-readable R10: 8）；⑤范围守卫（git status 仅预期文件，零 ORM/会计/删除路径变更；审计者自跑全量 `mvn clean install -DskipTests` BUILD SUCCESS + checker actual ≤ baseline）；⑥预存失败核验（mfg cell-not-prop + authseed NPE 的 bug 文件 commit 时间早于本会话，与 CRM 线索评分无因果）。
 
 Follow-up:
 
-- <pending — 无范围外 follow-up；MR1 第一批后续 RC-R1.24+ 由 mission driver 继续>
+- 无范围外 follow-up；MR1 第一批后续 RC-R1.24+（UTM 归因族 / Forecast territory rollup / SPC 调度 / pnl-calc 调度等）由 mission driver 继续。watch-only 记录：`batchChunkCtx.serviceContext` null ctx 缺陷同样潜伏于 pnl-calc 等既有 batch job（非本行范围，后续 batch job 接线行可一并处理）。

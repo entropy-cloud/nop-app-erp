@@ -174,7 +174,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
 | `erp-crm-event-reminder` | 扫描 PLANNED 活动按 `reminderMinutesBefore` 发提醒 | `0 0/15 * * * ?`（每 15 分钟） | `ErpCrmEventReminderJob.execute()` → `IErpCrmEventBiz.findDueReminders()` → `IErpSysNotificationBiz.notify("crm.event-reminder")` | 小 | job | SCHEDULED | `erp-crm.event-reminder-cron` | `docs/design/crm/use-cases.md:168`；`plans/2026-07-06-0642-1` §Phase 2 |
-| `erp-crm-lead-scoring-recalc` | 每日批量重算线索评分 | `0 2 * * *`（每日 02:00） | `erp-crm-lead-scoring-recalc.job.yaml` → `nopBatchTaskRunner` → `crm/lead-scoring-recalc.batch.xml`（orm-reader filter notIn(terminal statuses) + processor → `IErpCrmLeadScoreBiz.recalculateScore()`） | 小-中 | batch | SCHEDULED | `erp-crm.lead-scoring.schedule-cron` | `docs/design/crm/lead-scoring.md:157`；`plans/2026-07-18-1600-1:Phase2` |
+| `erp-crm-lead-scoring-recalc` | 每日批量重算线索评分 | `0 2 * * *`（每日 02:00；经 `erp-crm.lead-scoring.schedule-cron` 配置键） | `erp-crm-lead-scoring-recalc.job.yaml`（enabled 默认 false 部署 opt-in + cronExpr `@cfg:erp-crm.lead-scoring.schedule-cron|0 2 * * *`）→ `nopBatchTaskRunner` → `crm/lead-scoring-recalc.batch.xml`（orm-reader filter notIn(terminal statuses) + processor → `ErpCrmLeadScoringRecalcHelper.recalculateOne()` [REQUIRES_NEW 单线索失败隔离] → `IErpCrmLeadScoreBiz.recalculateScore()`） | 小-中 | batch | SCHEDULED | `erp-crm.lead-scoring.schedule-cron` | `docs/design/crm/lead-scoring.md:157`；`plans/2026-08-14-1815-2`（RC-R1.23 接线修正）；`plans/2026-07-18-1600-1:Phase2` |
 | `erp-crm-forecast-recalc` | 每日重算销售预测 | `0 3 * * *`（每日 03:00） | `ErpCrmForecastRecalcJob.execute()` → `IErpCrmForecastBiz.refreshForecast()` | 中 | job | SCHEDULED | `erp-crm.forecast.recalc-cron` | `docs/design/crm/sales-forecast.md:165`；`plans/2026-07-05-0306-1` |
 | `erp-crm-funnel-aggregation` | 漏斗阶段聚合 rollup（查询后写结果表，不适合 chunk 拆分） | `0 0 3 * * ?`（每日 03:00） | `ErpCrmFunnelAggregationJob.execute()` → `IErpCrmFunnelBiz.aggregateFunnel()` | 中 | job | SCHEDULED | `erp-crm.funnel.aggregation-cron` | `docs/design/crm/lead-waterfall.md:191`；`plans/2026-07-18-1600-1:row16,fn1` |
 | `erp-crm-sequence-step-reminder` | 销售序列步骤到期提醒 + 逾期检查 | 未定 | （待实现） | 小 | job | DESIGN | — | `docs/design/crm/sales-sequence.md:205` |
@@ -307,7 +307,7 @@ erp-fin-period-close（单个作业）
 | `erp-inv.drp-run-schedule` | — | drp | `docs/design/drp/README.md:99` |
 | `erp-inv.drp-ss-schedule-cron` | — | drp | `docs/design/drp/safety-stock-optimization.md:200` |
 | `erp-crm.event-reminder-cron` | —（默认每小时） | crm | `docs/design/crm/use-cases.md:168`；`docs/design/crm/README.md:253` |
-| `erp-crm.lead-scoring.schedule-cron` | `0 2 * * *` | crm | `docs/design/crm/lead-scoring.md:157` |
+| `erp-crm.lead-scoring.schedule-cron` | `0 2 * * *`（空值=跳过） | crm | `docs/design/crm/lead-scoring.md:157`；RC-R1.23（plan 2026-08-14-1815-2）接线后由 job.yaml cronExpr + `ErpCrmLeadScoringRecalcHelper` 消费 |
 | `erp-crm.forecast.recalc-cron` | `0 3 * * *` | crm | `docs/design/crm/sales-forecast.md:165` |
 | `erp-crm.funnel.aggregation-cron` | `0 0 3 * * ?` | crm | `docs/design/crm/lead-waterfall.md:191` |
 | `erp-cs.sla-scan-interval` | 1（分钟） | cs | `docs/design/customer-service/sla.md:281`（SLA 扫描频率语义键） |
