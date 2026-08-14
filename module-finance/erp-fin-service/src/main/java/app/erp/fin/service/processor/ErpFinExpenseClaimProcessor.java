@@ -8,6 +8,8 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.AdvanceOffsetOrchestrator;
 import app.erp.fin.service.posting.ExpenseClaimPostingDispatcher;
+import app.erp.fin.service.statemachine.ErpFinExpenseClaimApprovalStateMachine;
+import app.erp.fin.service.statemachine.ErpFinExpenseClaimDocumentStateMachine;
 import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.entity.ErpMdEmployee;
 import app.erp.md.dao.entity.ErpMdSubject;
@@ -65,6 +67,12 @@ public class ErpFinExpenseClaimProcessor {
     @Inject
     ErpFinExpenseClaimCancelProcessor cancelProcessor;
 
+    @Inject
+    ErpFinExpenseClaimApprovalStateMachine approvalStateMachine;
+
+    @Inject
+    ErpFinExpenseClaimDocumentStateMachine documentStateMachine;
+
     public ErpFinExpenseClaim submitForApproval(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(id, context);
     }
@@ -91,46 +99,69 @@ public class ErpFinExpenseClaimProcessor {
 
     // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
 
+    /**
+     * 固定来源态/目标态矩阵守卫委托 {@link ErpFinExpenseClaimApprovalStateMachine}（approveStatus 轴 Bean，
+     * plan 2026-08-13-1146-2 M4.5；契约 entity-state-machine-bean.md §4/§7）。Bean 抛 common 层非法迁移码
+     * （携带 {@code action}/{@code fromStatus} 元数据）作 cause，此处映射为领域码
+     * {@code ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION}（参数对外不变）。
+     */
     protected void validateTransitionForSubmit(ErpFinExpenseClaim claim, IServiceContext context) {
         validateNotCancelled(claim, context);
         String status = currentApproveStatus(claim);
-        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED)
-                && !Objects.equals(status, ErpFinConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(claim, status, "UNSUBMITTED 或 REJECTED");
+        try {
+            approvalStateMachine.assertCanSubmit(status);
+        } catch (NopException e) {
+            throw illegalTransition(claim, status, "UNSUBMITTED 或 REJECTED", e);
         }
     }
 
     protected void validateTransitionForWithdraw(ErpFinExpenseClaim claim, IServiceContext context) {
         String status = currentApproveStatus(claim);
-        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanWithdraw(status);
+        } catch (NopException e) {
+            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForApprove(ErpFinExpenseClaim claim, IServiceContext context) {
         String status = currentApproveStatus(claim);
-        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReject(ErpFinExpenseClaim claim, IServiceContext context) {
         String status = currentApproveStatus(claim);
-        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanReject(status);
+        } catch (NopException e) {
+            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpFinExpenseClaim claim, IServiceContext context) {
         String status = currentApproveStatus(claim);
-        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_APPROVED);
+        try {
+            approvalStateMachine.assertCanReverseApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(claim, status, ErpFinConstants.APPROVE_STATUS_APPROVED, e);
         }
     }
 
+    /**
+     * docStatus 轴矩阵守卫委托 {@link ErpFinExpenseClaimDocumentStateMachine}（plan 2026-08-13-1146-2 M4.4；
+     * 契约 §7）。Bean 抛 common 码（作 cause），此处映射领域码
+     * {@code ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION}（参数对外不变）。已 CANCELLED 拒绝；
+     * dict 残余值 SUBMITTED/APPROVED/REJECTED 不在 Bean 矩阵（intentional reserved，生命周期推进由 approveStatus 承载）。
+     */
     protected void validateTransitionForCancel(ErpFinExpenseClaim claim, IServiceContext context) {
-        if (claim.isCancelled()) {
-            throw illegalDocTransition(claim, claim.getDocStatus(), "非已作废");
+        try {
+            documentStateMachine.assertCanCancel(claim.getDocStatus());
+        } catch (NopException e) {
+            throw illegalDocTransition(claim, claim.getDocStatus(), "非已作废", e);
         }
     }
 
@@ -239,12 +270,12 @@ public class ErpFinExpenseClaimProcessor {
     // ---------- step：执行（状态推进 + 持久化） ----------
 
     protected void doSubmit(ErpFinExpenseClaim claim, IServiceContext context) {
-        claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_SUBMITTED);
+        claim.setApproveStatus(approvalStateMachine.submitTargetStatus());
         claimDao().updateEntity(claim);
     }
 
     protected void doWithdrawSubmit(ErpFinExpenseClaim claim, IServiceContext context) {
-        claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_UNSUBMITTED);
+        claim.setApproveStatus(approvalStateMachine.withdrawTargetStatus());
         claimDao().updateEntity(claim);
     }
 
@@ -252,7 +283,7 @@ public class ErpFinExpenseClaimProcessor {
         SoDGuard.assertApproverNotCreator(claim.getCreatedBy(), currentUserId(), ErpFinErrors.ERR_FIN_APPROVER_IS_CREATOR);
         boolean posted = postingDispatcher.tryPost(claim);
         claim = reload(id);
-        claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
+        claim.setApproveStatus(approvalStateMachine.approveTargetStatus());
         claim.setApprovedBy(currentUserId());
         claim.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
@@ -267,7 +298,7 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected void doReject(ErpFinExpenseClaim claim, IServiceContext context) {
-        claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_REJECTED);
+        claim.setApproveStatus(approvalStateMachine.rejectTargetStatus());
         claimDao().updateEntity(claim);
     }
 
@@ -281,7 +312,7 @@ public class ErpFinExpenseClaimProcessor {
             claim.setPostedBy(null);
             claim.setSettleAdvanceId(null);
         }
-        claim.setApproveStatus(ErpFinConstants.APPROVE_STATUS_REJECTED);
+        claim.setApproveStatus(approvalStateMachine.reverseApproveTargetStatus());
         claim.setApprovedBy(null);
         claim.setApprovedAt(null);
         claimDao().updateEntity(claim);
@@ -300,7 +331,7 @@ public class ErpFinExpenseClaimProcessor {
             claim.setPostedBy(null);
             claim.setSettleAdvanceId(null);
         }
-        claim.setDocStatus(ErpFinConstants.DOC_STATUS_CANCELLED);
+        claim.setDocStatus(documentStateMachine.cancelTargetStatus());
         claimDao().updateEntity(claim);
         return claim;
     }
@@ -378,14 +409,28 @@ public class ErpFinExpenseClaimProcessor {
     }
 
     protected NopException illegalTransition(ErpFinExpenseClaim claim, String current, String expected) {
-        return new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(claim, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalTransition(ErpFinExpenseClaim claim, String current, String expected, NopException cause) {
+        return new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpFinErrors.ARG_CLAIM_CODE, claim.getCode())
                 .param(ErpFinErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpFinErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected NopException illegalDocTransition(ErpFinExpenseClaim claim, String current, String expected) {
-        return new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION)
+        return illegalDocTransition(claim, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalDocTransition(ErpFinExpenseClaim claim, String current, String expected, NopException cause) {
+        return new NopException(ErpFinErrors.ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION, cause)
                 .param(ErpFinErrors.ARG_CLAIM_CODE, claim.getCode())
                 .param(ErpFinErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpFinErrors.ARG_EXPECTED_DOC_STATUS, expected);

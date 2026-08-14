@@ -403,4 +403,15 @@
           class="app.erp.fin.service.statemachine.ErpFinNotesReceivableStateMachine"/>
     <bean id="app.erp.fin.service.statemachine.ErpFinNotesPayableStateMachine"
           class="app.erp.fin.service.statemachine.ErpFinNotesPayableStateMachine"/>
+    <!-- 费用报销单状态机 Bean（plan 2026-08-13-1146-2，entity-state-machine-bean.md §5）：
+          ErpFinExpenseClaim 双轴各自独立 Bean。approveStatus 审批轴（5 命名边：submit{UNSUBMITTED,REJECTED}→SUBMITTED /
+          withdraw→UNSUBMITTED / approve→APPROVED / reject→REJECTED / reverseApprove→REJECTED）+ docStatus 业务生命周期轴
+          （1 命名边：cancel {非 CANCELLED}→CANCELLED；dict 残余值 SUBMITTED/APPROVED/REJECTED 不纳入 Bean）。
+          按类型注入，Delta 同名覆盖（契约 §6）。过账（ExpenseClaimPostingDispatcher→FinPostingExecutor）/红冲/员工借款冲抵
+          （AdvanceOffsetOrchestrator）/ArApItem/SoD 副作用保留 Processor 原位（§11.2 M4 (ii)/(iv)/(v)）；posted 不入轴
+          （§11.2 M4 (iii)）。 -->
+    <bean id="app.erp.fin.service.statemachine.ErpFinExpenseClaimApprovalStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinExpenseClaimApprovalStateMachine"/>
+    <bean id="app.erp.fin.service.statemachine.ErpFinExpenseClaimDocumentStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinExpenseClaimDocumentStateMachine"/>
 </beans>
