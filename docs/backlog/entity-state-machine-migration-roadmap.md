@@ -1,6 +1,6 @@
 # 实体级状态机 Bean 迁移路线图
 
-> 最后更新：2026-08-14（**M4.35–M4.39 done ✅（manufacturing M4 5 轴 3 实体）**：plan `2026-08-14-0930-1-manufacturing-m4-state-machine-beans.md` 全 4 Phase 执行完成——5 Bean（WorkOrder Document 9 动作 14 边 + Approval 5 动作 6 边 / SubcontractOrder Document 8 动作 11 边含 reject 联动 + Approval 5 动作 6 边 / MaterialIssue 单轴 confirm·reverseConfirm 2 边，CONFIRMED 瞬态中间态裁定）+ 三路径接线（skeleton→facade / facade 直入 / 本地 abstract）+ 层 1 矩阵 59 测试 + 层 2 四方对照（dict↔owner-doc↔Bean↔writer 全对齐；Subcontract reject 联动 / MrpRelease spawn / ReversalListener 回写豁免裁定）+ 层 3 回归 260 tests 全绿零回归。验证：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + compliance 零漂移（R5=0/R11=0，R12c 40≤40）。）
+> 最后更新：2026-08-14（**M4.40+M4.41+M4.52+M4.53 done ✅（assets 域核心生命周期/跟踪实体 status 单轴 4 实体）**：plan `2026-08-14-1931-1-erpast-core-lifecycle-state-machine-beans.md` 全 3 Phase 执行完成——4 Bean（Asset 6 命名动作 7 边 / DepreciationSchedule 4 动作 4 边 / Inventory 5 动作 6 边 / Maintenance 6 动作 7 边）+ 16 Processor 接线（跨实体 side-effect + facade cancel + per-mutation；approve/processVariance/decideTreatment 动态守卫不迁移）+ 层 1 矩阵 53 tests + 层 2 四方对照（dict↔owner-doc↔Bean↔writer 全对齐；IDLE 死状态登记 transitions 无 IDLE 边；DISPOSED 归计划 3；创建种子 §9.2 排除）+ 层 3 回归 185 tests 全绿零回归。验证：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + compliance 零漂移（全 19 规则 actual = baseline）。**；上一批：M4.35–M4.39 done ✅（manufacturing M4 5 轴 3 实体，plan `2026-08-14-0930-1-manufacturing-m4-state-machine-beans.md`：5 Bean + 三路径接线 + 层 1 矩阵 59 tests + 层 2 四方对照 + 层 3 回归 260 tests 全绿；验证：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + compliance 零漂移（R5=0/R11=0，R12c 40≤40）。）
 > 来源：`docs/analysis/2026-08-06-1000-erp-state-machine-extension-strategy.md`；用户决策：每种业务状态机采用对应的可注入、可 Delta 覆盖 `ErpXxxStateMachine` Bean，以集中迁移逻辑并支持完备性分析。
 > 规范：`docs/backlog/00-roadmap-authoring-guide.md`
 > 审查记录：4 轮独立子代理审查后收敛；见文末 `Draft Review Record`。
@@ -133,8 +133,8 @@
 | M4.37 | ErpMfgSubcontractOrder.docStatus 委外单生命周期 Bean（plan-first） | done | `manufacturing/state-machine.md` §Subcontract | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.38 | ErpMfgSubcontractOrder.approveStatus 委外审批轴 Bean（plan-first） | done | `manufacturing/state-machine.md` §Subcontract | M1.3 + M4.37 | `nop-backend-dev` + `nop-testing` |
 | M4.39 | ErpMfgMaterialIssue.docStatus 领料单生命周期 Bean（plan-first） | done | `manufacturing/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.40 | ErpAstAsset.status 资产卡片生命周期 Bean（plan-first） | ready | `assets/state-machine.md` §Asset | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.41 | ErpAstDepreciationSchedule.status 折旧计划生命周期 Bean（plan-first） | ready | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.40 | ErpAstAsset.status 资产卡片生命周期 Bean（plan-first） | done | `assets/state-machine.md` §Asset | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.41 | ErpAstDepreciationSchedule.status 折旧计划生命周期 Bean（plan-first） | done | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.42 | ErpAstValueAdjustment.docStatus 减值/增值单据生命周期 Bean（plan-first） | ready | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.43 | ErpAstValueAdjustment.approveStatus 减值/增值审批轴 Bean（plan-first） | ready | `assets/state-machine.md` | M1.3 + M4.42 | `nop-backend-dev` + `nop-testing` |
 | M4.44 | ErpAstDisposal.docStatus 处置单据生命周期 Bean（plan-first） | ready | `assets/state-machine.md` §Disposal | M1.3 | `nop-backend-dev` + `nop-testing` |
@@ -145,8 +145,8 @@
 | M4.49 | ErpAstSplit.approveStatus 拆分审批轴 Bean（plan-first） | ready | `assets/state-machine.md` | M1.3 + M4.48 | `nop-backend-dev` + `nop-testing` |
 | M4.50 | ErpAstMerge.docStatus 合并单据生命周期 Bean（plan-first） | ready | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.51 | ErpAstMerge.approveStatus 合并审批轴 Bean（plan-first） | ready | `assets/state-machine.md` | M1.3 + M4.50 | `nop-backend-dev` + `nop-testing` |
-| M4.52 | ErpAstInventory.status 资产盘点生命周期 Bean（plan-first） | ready | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
-| M4.53 | ErpAstMaintenance.status 资产维护生命周期 Bean（plan-first） | ready | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.52 | ErpAstInventory.status 资产盘点生命周期 Bean（plan-first） | done | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
+| M4.53 | ErpAstMaintenance.status 资产维护生命周期 Bean（plan-first） | done | `assets/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.54 | ErpMntVisit.status 维护访问生命周期 Bean（plan-first） | done | `maintenance/state-machine.md` §Visit | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.55 | ErpMntSparePartUsage.docStatus 备件消耗单据生命周期 Bean（plan-first） | done | `maintenance/state-machine.md` | M1.3 | `nop-backend-dev` + `nop-testing` |
 | M4.56 | ErpMntSparePartUsage.approveStatus 备件审批轴 Bean（plan-first） | done | `maintenance/state-machine.md` | M1.3 + M4.55 | `nop-backend-dev` + `nop-testing` |
