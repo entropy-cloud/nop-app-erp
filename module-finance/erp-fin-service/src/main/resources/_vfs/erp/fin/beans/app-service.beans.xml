@@ -414,4 +414,15 @@
           class="app.erp.fin.service.statemachine.ErpFinExpenseClaimApprovalStateMachine"/>
     <bean id="app.erp.fin.service.statemachine.ErpFinExpenseClaimDocumentStateMachine"
           class="app.erp.fin.service.statemachine.ErpFinExpenseClaimDocumentStateMachine"/>
+    <!-- 员工借款单状态机 Bean（plan 2026-08-13-1146-3，entity-state-machine-bean.md §5）：
+          ErpFinEmployeeAdvance 双轴各自独立 Bean。approveStatus 审批轴（5 命名边：submit{UNSUBMITTED,REJECTED}→SUBMITTED /
+          withdraw→UNSUBMITTED / approve→APPROVED / reject→REJECTED / reverseApprove→REJECTED）+ docStatus 业务生命周期轴
+          （1 命名边：cancel {非 CANCELLED}→CANCELLED；dict 残余值 SUBMITTED/APPROVED/REJECTED 不纳入 Bean）。
+          按类型注入，Delta 同名覆盖（契约 §6）。过账（EmployeeAdvancePostingDispatcher→FinPostingExecutor）/红冲/ArApItem/
+          SoD 副作用保留 Processor 原位（§11.2 M4 (ii)/(iv)/(v)）；posted 不入轴（§11.2 M4 (iii)）；cashRepay/reverseCashRepay
+          为资金动作非状态轴不触碰；本实体为报销冲抵的被冲抵方（冲抵由 ExpenseClaim 侧 AdvanceOffsetOrchestrator 驱动）。 -->
+    <bean id="app.erp.fin.service.statemachine.ErpFinEmployeeAdvanceApprovalStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinEmployeeAdvanceApprovalStateMachine"/>
+    <bean id="app.erp.fin.service.statemachine.ErpFinEmployeeAdvanceDocumentStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinEmployeeAdvanceDocumentStateMachine"/>
 </beans>
