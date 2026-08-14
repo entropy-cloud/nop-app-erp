@@ -93,6 +93,8 @@ SPC 只做**计量型数据的过程分析**,不做离线检验判定(判定归 
 
 3. **失控预警**:sample.isOutOfControl=true 时,事件驱动(模式 B,post-commit)创建 ErpQaNonConformance(sourceType=SPC,severity 按 violatedRules 映射),并按 chart.ruleSet 创建 ErpQaAction(actionType=CAPA)。NCR→Action 的级联已在现有 orm 中存在(ErpQaNonConformance.actions to-many cascade-delete)。
 
+   **batch 调度接线注记**（RC-R1.26，plan 2026-08-14-2304-2）：`spc-sampling.batch.xml`（job `erp-qa-spc-sampling`，`nop.job.erp-qa-spc-sampling.enabled` 默认 false）processor 段完整三段调用链 **collectSamples → recalculate → evaluate**（`inject` 用 **FQCN bean id**：`app.erp.qa.service.spc.SpcSamplingService/SpcControlLimitCalculator/SpcRuleEngine`——IoC `getBean` 仅按 id 精确匹配，简单名注入运行时解析失败，2026-08-15 实测修正）。失控样本经 `SpcRuleEngine.evaluate` 回写 isOutOfControl=true + violatedRules，`SpcOutOfControlHandler.cascadeNcrAndCapa` afterCommit（chunk 事务提交触发，模式 B post-commit）建 NCR(sourceType=SPC)+CAPA，config-gated `erp-qa.spc-auto-ncr-enabled`（默认 true，关闭则仅标记不建单）。evaluate 幂等与失败隔离：控制限缺失/ruleSet 空/无样本返回 0 + per-sample try/catch WARN，不阻断 chunk。**测试 seed 配方**（`TestErpQaSpcSamplingEvaluateBatch` 固化）：< 20 样本（recalculate no-op 不重写 cl/ucl/lcl）+ 显式 cl/ucl/lcl + parameterId 非空 + 不 seed 匹配 parameterId 的 APPROVED 检验行（防批内 collectSamples 追加样本致 ≥20 重算失稳）。
+
 4. **能力分析**:周期性(月/周)任务对每个 chart 计算 ErpQaSpcCapability,等级低于 ACCEPTABLE 触发 ErpQaQualityGoal.currentValue 回写与风险登记 ErpQaRiskRegister。
 
 ## 与现有实体的关系

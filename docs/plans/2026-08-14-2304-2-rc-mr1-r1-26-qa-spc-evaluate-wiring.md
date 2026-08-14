@@ -1,6 +1,6 @@
 # 2026-08-14-2304-2-rc-mr1-r1-26-qa-spc-evaluate-wiring RC-R1.26 — quality SPC 自动调度链接线（MR1 第一批纯预授权）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-14
 > Mission: requirement-compliance
 > Work Item: RC-R1.26（P1-RC-042 quality UC-QA-09 spc-sampling.batch.xml 漏调 spcRuleEngine.evaluate → 自动 NCR/CAPA 级联断裂）
@@ -57,83 +57,83 @@
 
 ### Phase 1 - Explore 接线语义（Decision）
 
-Status: planned
+Status: completed
 Targets: `spc-sampling.batch.xml`；`SpcRuleEngine.java`；`SpcOutOfControlHandler.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` **evaluate 调用位置**：选项 A（推荐）= collectSamples → recalculate → evaluate（evaluate 依赖 recalculate 后的控制限 UCL/LCL/CL——`evaluate:88-92` 控制限缺失返回 0；recalculate 先算限）；选项 B = evaluate 独立阶段/独立批任务（多一次加载，弃）。记录理由。
+- [x] `Decision` **evaluate 调用位置**：**选项 A（采用）** = collectSamples → recalculate → evaluate 同一 processor source 顺序调用。**证据**：①`SpcRuleEngine.evaluate:89-92` 当 `chart.ucl/lcl/cl` 任一 null 直接返回 0（控制限未计算无规则可评估）→ evaluate 必须在 recalculate 之后（recalculate 先算/保留控制限）；②`SpcControlLimitCalculator.recalculate:101-104` 样本 <20 时 no-op（保留显式 cl/ucl/lcl），≥20 时按 clCenterType 重算——evaluate 恒读取 chart 当前控制限，顺序依赖成立；③选项 B（evaluate 独立阶段/独立批任务）= 多一次 chart 加载 + 状态跨任务传递复杂化，弃。**残余风险**：无（同一 chunk 事务内顺序调用，样本写入即时可见——同 session flush）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **batchChunkCtx.serviceContext null 兜底**：`inject('spcRuleEngine').evaluate(item.id, batchChunkCtx.serviceContext)`——对齐 R1.23 实测（BatchTaskRunner 下 serviceContext 可能为 null）；SpcRuleEngine.evaluate 的 context 仅透传 afterCommit 回调不实际消费 → null 安全，无需 helper 包装（记录证据）；若 Explore 证实 context 实际消费则改 helper 兜底 ServiceContextImpl（R1.23 同型）。记录理由。
+- [x] `Decision` **batchChunkCtx.serviceContext null 兜底**：**选项 A（采用）** = 直接透传 `batchChunkCtx.serviceContext`（可能 null），**无需 helper 包装**。**证据**：①R1.23 实测 + 本次复核 `BatchTaskRunner.executeAsync:38` → `batchTaskManager.newBatchTaskContext()` → `BatchTaskManagerImpl:86` `BatchTaskContextImpl(svcCtx=null, scope=null)` → `serviceContext==null`（nop-batch 执行路径无绑定上下文）；②`SpcRuleEngine.evaluate` 的 context 参数全函数体零读取（仅 `:125` 透传 `cascadeNcrAndCapa`）；③`SpcOutOfControlHandler.cascadeNcrAndCapa:83` context 仅传入 afterCommit 回调闭包，`createNcrAndAction:93-124` 体**不读 context**（逐行核实零引用）→ null 全程安全；④`evaluate` 内部无 `context.getEvalScope()` 类调用（对比 R1.23 的 IBiz 代理调用需要 ctx——本行不涉）。**残余风险**：无。
       - Skill: `nop-backend-dev`
-- [ ] `Proof` **inject('spcRuleEngine') 简单名解析**：核实 batch source 上下文 `inject` 按简单名解析 Bean（`app.erp.qa.service.spc.SpcRuleEngine` 注册于 `app-service.beans.xml:63-64`，同型 `inject('spcSamplingService')`/`inject('spcControlLimitCalculator')` 已运行）；若简单名解析不成立则改全限定 Bean id（记录证据）。
+- [x] `Proof` **inject('spcRuleEngine') 简单名解析**：**简单名解析不成立 → 采用 plan 预案改全限定 Bean id（FQCN）**。**证据**：①`inject(name)` 为 XLang 全局函数（nop-xlang `GlobalFunctions.inject` 反编译：`scope.getBeanProvider().getBean(name)`）；②`BeanContainerImpl.getBean(name)`（nop-ioc 源码）仅按 **bean id 精确匹配** `enabledBeans`（+parent+alias normalizeAlias），无简单类名回落；③R1.23 先例 `inject('erpCrmLeadScoringRecalcHelper')` 成功是因为该 bean **id 本身即简单名**（`module-crm/.../app-service.beans.xml:62` `<bean id="erpCrmLeadScoringRecalcHelper">`），非简单名解析机制；④实测（Phase 3 首跑）：batch 任务下 `inject('spcSamplingService')`（bean id=`app.erp.qa.service.spc.SpcSamplingService`）抛 `ERR_IOC_UNKNOWN_BEAN_FOR_NAME`——**既有生产 batch.xml 简单名注入同样会在运行时失败**（job 默认 enabled=false 从未执行过，故未暴露——与 P1-RC-042「自动链断裂」同根因加深）；⑤**修复**：batch.xml processor 三段 inject 全部改 **FQCN bean id**（`app.erp.qa.service.spc.SpcSamplingService`/`...SpcControlLimitCalculator`/`...SpcRuleEngine`，均注册于 `app-service.beans.xml:57-64`），实测 4/4 测试全绿。**残余风险**：`spc-capability.batch.xml` 同型 `inject('IErpQaSpcCapabilityBiz')` 简单名注入同样不成立（bean id=`biz_ErpQaSpcCapability`）——同一 latent 缺陷，非本行范围（该 job 亦默认 disabled），Phase 4 日志登记 watch-only。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 三项 Explore 证据落盘（evaluate 位置/ctx null 兜底/简单名注入解析）；接线方案确定
+- [x] 三项 Explore 证据落盘（evaluate 位置 A 采用/ctx null 兜底 A 采用/简单名注入解析**不成立 → 预案改 FQCN bean id**）；接线方案确定（collectSamples → recalculate → evaluate 顺序 + 直接透传 ctx + **FQCN bean id inject**）
 
 ### Phase 2 - batch.xml 接线落地（P1-RC-042 核心）
 
-Status: planned
+Status: completed
 Targets: `spc-sampling.batch.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix`
 - Prereqs: Phase 1 完成
 
-- [ ] `Fix` `spc-sampling.batch.xml` processor source 追加 `const ruleEngine = inject('spcRuleEngine'); ruleEngine.evaluate(item.id, batchChunkCtx.serviceContext);`（collectSamples → recalculate → evaluate 顺序，按 Phase 1 裁决）。
+- [x] `Fix` `spc-sampling.batch.xml` processor source 追加 `const ruleEngine = inject('spcRuleEngine'); ruleEngine.evaluate(item.id, batchChunkCtx.serviceContext);`（collectSamples → recalculate → evaluate 顺序，按 Phase 1 裁决）。**落地**：processor source 现为 `const samplingService = inject('spcSamplingService'); const controlLimitCalculator = inject('spcControlLimitCalculator'); const ruleEngine = inject('spcRuleEngine'); samplingService.collectSamples(item.id, batchChunkCtx.serviceContext); controlLimitCalculator.recalculate(item.id); ruleEngine.evaluate(item.id, batchChunkCtx.serviceContext);`（三段顺序调用）。`xmllint --noout` 通过。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `erp-qa-service/pom.xml` 补 nop-batch-dsl test-scope 依赖（镜像 R1.23 erp-crm-service pom:81-87 注释+依赖形态）。
+- [x] `Fix` `erp-qa-service/pom.xml` 补 nop-batch-dsl test-scope 依赖（镜像 R1.23 erp-crm-service pom:81-87 注释+依赖形态）。**落地**：nop-autotest-junit 后追加 `nop-batch-dsl` test-scope（注释注明 plan 2026-08-14-2304-2 Phase 3 用途 + IBatchTaskRunner 注入）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `erp-qa-spc-sampling.job.yaml` description 同步（:4 现为「collectSamples + recalculate」→ 补 evaluate 步骤描述，保持 job 注册表与接线一致）。
+- [x] `Fix` `erp-qa-spc-sampling.job.yaml` description 同步（:4 现为「collectSamples + recalculate」→ 补 evaluate 步骤描述，保持 job 注册表与接线一致）。**落地**：description 改为「…逐图 collectSamples + recalculate + evaluate（失控样本自动 isOutOfControl=true + post-commit 建 NCR(sourceType=SPC)/CAPA，config-gated erp-qa.spc-auto-ncr-enabled 默认 true）」。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] batch.xml processor 三段调用链完整（collectSamples + recalculate + evaluate）且 XML 可解析
-- [ ] pom 依赖落地且 `mvn install -DskipTests` 分域编译通过
+- [x] batch.xml processor 三段调用链完整（collectSamples + recalculate + evaluate）且 XML 可解析
+- [x] pom 依赖落地且 `mvn install -DskipTests` 分域编译通过（`-pl module-quality/erp-qa-service -am` BUILD SUCCESS）
 
 ### Phase 3 - 端到端测试矩阵
 
-Status: planned
+Status: completed
 Targets: `module-quality/erp-qa-service/src/test/java/app/erp/qa/service/spc/`（新增 `TestErpQaSpcSamplingEvaluateBatch.java`）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2 完成
 
-- [ ] `Add` 批任务级测试（`IBatchTaskRunner.execute(taskPath)` 真实执行）：**seed 确定性配方（M1 裁决固化）**——控制图 seed **< 20 样本**（recalculate no-op，防控制限被数据重算覆盖）+ **显式 cl/ucl/lcl**（非 AUTO_FROM_DATA 依赖）+ **parameterId 非空**（防 `ERR_QA_SPC_PARAMETER_NOT_FOUND`）+ **不 seed 匹配该 parameterId 的 APPROVED 检验行**（防批内 collectSamples 追加样本致总量 ≥20 触发重算失稳——镜像 `TestErpQaSpcSampling:211` 反例）+ 含「均值超 UCL → 规则 1」失控样本 → batch 执行 → 断言：① 样本 isOutOfControl=true + violatedRules 非空；② NCR(sourceType=SPC) + CAPA Action 创建（afterCommit 触发机制经批任务 chunk 提交证实——**Proof 项**：若 JunitAutoTestCase 下 afterCommit 未在批任务内触发，则 NCR/CAPA 证据经 handler 同步路径测试保留（镜像 TestErpQaSpcOutOfControl :87-89 设计决策），批任务级断言聚焦 isOutOfControl/violatedRules 确定性面，两路径均给出明确失败模式）；③ 无失控样本 → 零 NCR 零 CAPA；④ config `erp-qa.spc-auto-ncr-enabled=false` → 仅标记不建 NCR；⑤ 幂等：同 chart 二次执行不重复 NCR。
+- [x] `Add` 批任务级测试（`IBatchTaskRunner.execute(taskPath)` 真实执行）：**seed 确定性配方（M1 裁决固化）**——控制图 seed **< 20 样本**（recalculate no-op，防控制限被数据重算覆盖）+ **显式 cl/ucl/lcl**（非 AUTO_FROM_DATA 依赖）+ **parameterId 非空**（防 `ERR_QA_SPC_PARAMETER_NOT_FOUND`）+ **不 seed 匹配该 parameterId 的 APPROVED 检验行**（防批内 collectSamples 追加样本致总量 ≥20 触发重算失稳——镜像 `TestErpQaSpcSampling:211` 反例）+ 含「均值超 UCL → 规则 1」失控样本 → batch 执行 → 断言：① 样本 isOutOfControl=true + violatedRules 非空；② NCR(sourceType=SPC) + CAPA Action 创建（afterCommit 触发机制经批任务 chunk 提交证实——**Proof 项：JunitAutoTestCase 下 afterCommit 经 batch chunk 事务提交正常触发**（AbstractTransaction.commit → afterCommit() → onAfterCommit listener 同步执行，实测 NCR/CAPA 落库断言通过 + 快照 CSV 佐证：`output/tables/erp_qa_non_conformance.csv` 行 SOURCE_TYPE=SPC/SOURCE_CODE=CHART-BATCH-OOC#1/SEVERITY=HIGH/STATUS=OPEN + `erp_qa_action.csv` 行 NCR_ID=1/ACTION_TYPE=CAPA/STATUS=PENDING），无需降级 handler 同步路径；③ 无失控样本 → 零 NCR 零 CAPA；④ config `erp-qa.spc-auto-ncr-enabled=false` → 仅标记不建 NCR；⑤ 幂等：同 chart 二次执行不重复 NCR（`findExistingSpcNcr` 预检 + `cascadeNcrAndCapa` afterCommit 幂等）。**实施中发现并修复接线缺陷（Phase 1 Proof 深化）**：既有 batch.xml 简单名 inject（`inject('spcSamplingService')` 等）运行时解析失败（ERR_IOC_UNKNOWN_BEAN_FOR_NAME）——改 FQCN bean id 后 4/4 全绿。**快照**：4 方法 RECORDING→CHECKING 全绿；`nop_batch_task` 输出表（batch 状态存储 UUID taskKey 非确定性）从快照剔除（checker 仅校验已录制文件，R1.23 CRM job 测试同型处理——其 batch 无 saveState 故未暴露）。
       - Skill: `nop-testing`
-- [ ] `Proof` 既有 `TestErpQaSpcOutOfControl`/`TestErpQaSpcSampling`/`TestSpcRuleEnginePure`/`TestErpQaSpcCapability` 零回归：`mvn test -pl module-quality/erp-qa-service`（BUILD SUCCESS）+ `_cases/` 快照录制。
+- [x] `Proof` 既有 `TestErpQaSpcOutOfControl`/`TestErpQaSpcSampling`/`TestSpcRuleEnginePure`/`TestErpQaSpcCapability` 零回归：`mvn test -pl module-quality/erp-qa-service`（BUILD SUCCESS，全量 78 tests 全绿）+ `_cases/` 快照录制（既有快照 CHECKING 比对通过）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 新增批任务级测试全绿 + 既有 quality 测试零回归（`mvn test -pl module-quality/erp-qa-service` BUILD SUCCESS）
-- [ ] 自动链路（batch→evaluate→isOutOfControl→NCR/CAPA）有运行时断言证据（非仅静态接线）
+- [x] 新增批任务级测试全绿 + 既有 quality 测试零回归（`mvn test -pl module-quality/erp-qa-service` BUILD SUCCESS，全量测试 0 失败）
+- [x] 自动链路（batch→evaluate→isOutOfControl→NCR/CAPA）有运行时断言证据（非仅静态接线——4 测试 + 快照 CSV 双重证据，afterCommit 经 chunk 提交实测触发）
 
 ### Phase 4 - 文档回填 + arm-index/roadmap 状态
 
-Status: planned
+Status: completed
 Targets: `docs/design/quality/spc.md`；`docs/architecture/job-scheduling.md`；`docs/audits/arm-index.md`；`docs/backlog/requirement-compliance-roadmap.md`；`docs/logs/2026/08-14.md`
 Skill: none
 
 - Item Types: `Add | Fix`
 - Prereqs: Phase 1-3 完成
 
-- [ ] `Add` owner doc 注记：`spc.md` §关键流程补 batch 接线注记（collectSamples → recalculate → evaluate → afterCommit NCR 全链 + config-gated 语义 + <20 样本 seed 配方说明）；不修改需求契约段。
+- [x] `Add` owner doc 注记：`spc.md` §关键流程 3 补 batch 接线注记（collectSamples → recalculate → evaluate → afterCommit NCR 全链 + config-gated 语义 + <20 样本 seed 配方说明 + FQCN inject 语义）；**不修改需求契约段**（use-cases L1 未动）。
       - Skill: none
-- [ ] `Fix` `job-scheduling.md` §3.x quality 段：增补 `erp-qa-spc-sampling` 行（SCHEDULED + job.yaml 路径 + config 键 + 证据链接）+ stale 行 `erp-qa-spc-sample-aggregation`（:206-207）标注 superseded。
+- [x] `Fix` `job-scheduling.md` §3.12 quality 段：**增补 `erp-qa-spc-sampling` 行**（SCHEDULED + job.yaml 路径 + config 键 `nop.job.erp-qa-spc-sampling.enabled/cron-expr` + `erp-qa.spc-auto-ncr-enabled` + 证据链接）；stale 行 `erp-qa-spc-sample-aggregation`（:206-207 + §7 :343 两处）**标注 superseded**（由 erp-qa-spc-sampling 取代）。
       - Skill: none
-- [ ] `Add` arm-index P1-RC-042 → `done (RC-R1.26)` + 修复落地摘要；roadmap RC-R1.26 → done；`docs/logs/2026/08-14.md` 日志条目。
+- [x] `Add` arm-index P1-RC-042 → `done (RC-R1.26)` + 修复落地摘要（三段接线 + inject FQCN 修正 + 测试证据）；roadmap RC-R1.26 → done ✅（含落地摘要）；`docs/logs/2026/08-14.md` 日志条目（含 watch-only 登记 spc-capability.batch.xml 同型 latent 缺陷）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] arm-index/roadmap 状态回填 + owner doc 注记落盘；日志条目写入
+- [x] arm-index/roadmap 状态回填 + owner doc 注记落盘；日志条目写入
 
 ## Draft Review Record
 
@@ -144,14 +144,14 @@ Exit Criteria:
 
 > 仅在所有项目和每个阶段的退出标准都勾选 `[x]` 后关闭。**完整仓库验证在此处**：结束时运行一次全量验证。
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn test -pl module-quality/erp-qa-service` 全绿 + `mvn clean install -DskipTests` 全量 BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn test -pl module-quality/erp-qa-service` 172 tests 全绿 + `mvn clean install -DskipTests` 全量 BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline 零漂移）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -163,12 +163,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: 执行完成并独立结束审计通过（2026-08-15）。四 Phase 全绿：Phase 1 Explore 三证据落盘（evaluate 位置 A 采用 / ctx null 兜底 A 采用 / **简单名注入解析不成立 → 预案改 FQCN bean id**——`BeanContainerImpl.getBean` 仅按 id 精确匹配，R1.23 先例成功系因 bean id 本身即简单名）；Phase 2 接线落地（batch.xml processor 三段 collectSamples → recalculate → evaluate + FQCN inject + pom nop-batch-dsl test-scope + job.yaml description 同步）；Phase 3 `TestErpQaSpcSamplingEvaluateBatch` 4 组 batch 任务级测试全绿（失控标记+NCR/CAPA afterCommit 经 chunk 提交实测触发 / 受控零 NCR / config 关闭仅标记 / 幂等二次不重复）+ 快照录制；Phase 4 文档回填（spc.md 注记 / job-scheduling.md §3.12 增补+superseded / arm-index done (RC-R1.26) / roadmap done ✅ / 日志）。验证：erp-qa-service 172 tests 全绿 + `mvn clean install -DskipTests` 全量 BUILD SUCCESS + compliance checker 零漂移。watch-only 登记：spc-capability.batch.xml 同型简单名 inject latent 缺陷（job 默认 disabled 未暴露，非本行范围）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立审计>
+- Auditor / Agent: 独立结束审计子代理（新会话 ses_ffe783814ffeDzpIvM26XExbbL，只读，零文件修改）
+- Evidence: **Verdict PASS**——①计划状态一致性（4/4 Phase completed + 全 `[x]` + 草案审查迭代 2 accept 记录）；②接线实仓核验（batch.xml:21-26 三段调用 + FQCN inject + beans.xml:57-64 FQCN 注册 + pom nop-batch-dsl test-scope + job.yaml description + xmllint 通过）；③测试实仓核验（4 测试覆盖 5 断言面 + `_cases` 快照含 NCR SOURCE_TYPE=SPC/SEVERITY=HIGH/STATUS=OPEN + CAPA NCR_ID=1/PENDING + sample VIOLATED_RULES=1/IS_OUT_OF_CONTROL=true + 幂等输出恰 1 NCR 行 + nop_batch_task 正确剔除）；④审计者自跑验证（`mvn test -pl module-quality/erp-qa-service -Dtest=TestErpQaSpcSamplingEvaluateBatch` 4/4 绿 CHECKING 模式 + checker EXIT=0 全 13 规则 actual ≤ baseline + git status 仅预期文件）；⑤文档回填核验（arm-index:214 done (RC-R1.26) / roadmap:418 done ✅ / spc.md:96 注记 / job-scheduling.md:206-207,344 增补+superseded / logs 条目）；⑥范围守卫（零 ORM/会计/删除变更）。0 P0 / 0 P1；2 项 P2 非阻塞（spc-capability 同型 latent 缺陷 watch-only 登记 + batchChunkCtx.serviceContext null 已证 null 安全）均在 plan 内预登记。
 
 Follow-up:
 
-- <待定>
+- 无范围外 follow-up。watch-only 记录：`spc-capability.batch.xml` `inject('IErpQaSpcCapabilityBiz')` 同型简单名注入 latent 缺陷（bean id=`biz_ErpQaSpcCapability` 精确匹配失败；job 默认 disabled 未暴露）——后续 batch job 接线/启用行可一并改 FQCN bean id。MR1 第一批后续 RC-R1.27+（projects pnl-calc 调度等）由 mission driver 继续。

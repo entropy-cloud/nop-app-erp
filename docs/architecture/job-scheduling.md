@@ -203,7 +203,8 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-qa-spc-sample-aggregation` | 按 `samplingFrequency` 扫 APPROVED 检验行聚合到 `ErpQaSpcSample` | 按 `samplingFrequency` | （待实现） | 中-大 | **batch-candidate** | DESIGN | — | `docs/design/quality/spc.md:28,79,93` |
+| `erp-qa-spc-sampling` | 扫描 active 控制图（isActive=true）批量采集子组样本 + 重算控制限 + 判异规则评估（失控样本自动 isOutOfControl=true + post-commit 建 NCR(sourceType=SPC)/CAPA，config-gated） | `0 0 * * * ?`（每小时，默认关） | `nopBatchTaskRunner.executeAsync(taskPath=/nop/batch-task/qa/spc-sampling.batch.xml)` → processor 三段 collectSamples → recalculate → evaluate | 中（按 active chart 数） | batch | SCHEDULED（RC-R1.26，P1-RC-042 自动调度链接线） | `nop.job.erp-qa-spc-sampling.enabled`（默认 false）+ `nop.job.erp-qa-spc-sampling.cron-expr`（默认 `0 0 * * * ?`）+ `erp-qa.spc-auto-ncr-enabled`（NCR 建单开关，默认 true） | `app-erp-all/src/main/resources/_vfs/nop/job/conf/erp-qa-spc-sampling.job.yaml`；`module-quality/erp-qa-service/.../_vfs/nop/batch-task/qa/spc-sampling.batch.xml`（inject 用 FQCN bean id）；`docs/design/quality/spc.md` §关键流程 3 batch 接线注记；`docs/plans/2026-08-14-2304-2-rc-mr1-r1-26-qa-spc-evaluate-wiring.md` |
+| ~~`erp-qa-spc-sample-aggregation`~~ | 按 `samplingFrequency` 扫 APPROVED 检验行聚合到 `ErpQaSpcSample` | ~~按 `samplingFrequency`~~ | ~~（待实现）~~ | 中-大 | **batch-candidate** | DESIGN → **superseded**（由 `erp-qa-spc-sampling` 取代——2026-07-18 nop-batch 迁移已实现同功能 job.yaml+batch.xml 接线，本行旧名/旧语义作废；RC-R1.26 标注） | — | `docs/design/quality/spc.md:28,79,93` |
 | `erp-qa-spc-capability-analysis` | 周期 Cpk 计算，< ACCEPTABLE 触发质量目标回写 + 风险登记 | 月度/周度 | （待实现） | 小-中 | job | DESIGN | — | `docs/design/quality/spc.md:85,93` |
 
 ### 3.13 Maintenance（设备维护）
@@ -340,7 +341,7 @@ erp-fin-period-close（单个作业）
 | `erp-inv-costing-reclose` | 大（扫本期所有 FIFO 移动） | 全表 + 独立事务 | 单期移动量 ≥ 数十万 |
 | `erp-ast-depreciation` | 大（批量计提，平台 docs-for-ai 明示适用） | 记录级错误隔离 + 断点续跑 | 资产量 ≥ 数千 |
 | `erp-inv-stock-check` | 大（全库存核对） | 记录级重试 | 库存 SKU ≥ 数万 |
-| `erp-qa-spc-sample-aggregation` | 中-大（扫所有 APPROVED 检验行） | 分组聚合 + 断点续跑 | 检验量 ≥ 数万/期 |
+| ~~`erp-qa-spc-sample-aggregation`~~ | 中-大（扫所有 APPROVED 检验行） | 分组聚合 + 断点续跑 | 检验量 ≥ 数万/期（**行 superseded**：功能已由 `erp-qa-spc-sampling` batch job 承载，RC-R1.26 标注，见 §3.12） |
 | `erp-b2b-sftp-inbound-poll` | 大（批量文件下载+反向管道） | 文件级断点 + 记录级重试 | 文件量 ≥ 数千/批 |
 | `erp-prj-pnl-aggregation` | 中-大（多项目多币种 rollup） | 项目级断点 | 项目数 ≥ 数百 |
 
