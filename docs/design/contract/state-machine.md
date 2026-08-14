@@ -2,7 +2,7 @@
 
 > **设计要点依据**：本状态机按 `docs/skills/state-machine-business-review-prompt.md` 的 10 个审查维度组织。审查本状态机时使用该提示词。
 >
-> 合同域状态对象：**合同（Contract）**（主轴，适用对象一）+ **合同版本（ContractVersion）**（辅助轴，与合同状态联动变更，适用对象二）+ **返利协议（RebateAgreement）**（退化分类轴，适用对象三）。
+> 合同域状态对象：**合同（Contract）**（主轴，适用对象一）+ **合同版本（ContractVersion）**（辅助轴，与合同状态联动变更，适用对象二）+ **返利协议（RebateAgreement）**（退化分类轴，适用对象三）+ **返利结算（RebateSettlement）**（独立结算过账轴，适用对象四）。
 
 ## 适用对象一：合同（Contract）
 
@@ -274,6 +274,59 @@ dict `erp-ct/rebate-agreement-status` 4 值（`module-contract/model/app-erp-con
 - 结算过账独立轴交叉引用：本 doc 未含（归 M4.65 `ErpCtRebateSettlement.status` 轴）。
 - 状态码归 `module-contract/model/app-erp-contract.orm.xml`（dict: `erp-ct/rebate-agreement-status`）。
 
+## 适用对象四：返利结算（RebateSettlement）
+
+> 本节由 plan `2026-08-14-2000-1`（M4.65）补章节落地——owner doc 原仅以边界声明散见于 §适用对象三 §4（返利结算过账独立轴声明）。本节集中建立 `ErpCtRebateSettlement.status` 轴（dict `erp-ct/settlement-status`）的权威迁移语义与裁定登记。
+>
+> 实体级状态机 Bean：`ErpCtRebateSettlementStateMachine`（`module-contract/erp-ct-service/.../statemachine/`，无状态，1 实现边 postSettlement DRAFT→POSTED + 终态 POSTED + 只读 `transitions()` 元数据）。
+
+### 1. 状态定义
+
+| status | 业务含义（等待什么） | 可达性 |
+|--------|----------------------|--------|
+| 草稿（DRAFT） | 结算单正起草，等待过账 | 经 CRUD 创建可达（新建 seed，初始态写入 §9.2 选项 c；`ErpCtRebateSettlementBizModel.defaultPrepareSave` 仅 seed businessDate，status 由调用方请求体提供） |
+| 已过账（POSTED） | 终态：结算已过账，credit-memo 已生成、计提已回写 | 经 `postSettlement` 命名动作可达（DRAFT→POSTED 唯一实现边） |
+| 已取消（CANCELLED） | **预留死状态**（intentional reserved） | **零 writer 可达**（见 §2 裁定） |
+
+dict `erp-ct/settlement-status` 3 值（`module-contract/model/app-erp-contract.orm.xml:73-77`）。
+
+### 2. 迁移完整性 + CANCELLED 死状态裁定（layer-2 四方对照 Decision）
+
+```
+DRAFT（草稿）─ postSettlement ─→ POSTED（已过账，终态）
+```
+
+| 迁移 | 触发入口 | 前置条件（守卫） | 结果 |
+|------|----------|------------------|------|
+| DRAFT→POSTED | `ErpCtRebateSettlementPostSettlementProcessor.postSettlement`（BizModel `postSettlement` @BizMutation 单行委托） | `status==DRAFT`（Bean `assertCanPostSettlement`） | `status=POSTED` + totalRebateAmount + postedAt/postedBy + creditMemoBillType/BillCode |
+
+**CANCELLED = intentional reserved 死状态（Decision）**：dict 含 CANCELLED 值但全仓**零 `setStatus(CANCELLED)` 生产 writer**（全域零 reverse/unpost/cancel 命名 mutation）。裁定分类 = `intentional reserved`（对齐 Contract CANCELLED / RebateAgreement EXPIRED+SETTLED 先例：保留优于删除）。Bean `transitions()` **不含** CANCELLED 边、`terminalStatuses()` **不含** CANCELLED（非真正终态，仅预留语义入口）、`initialStatuses()` 不含 CANCELLED；dict 值保留不删。**Successor**：PM 要求 settlement cancel 工作流时，开独立 plan 实现 cancel mutation + dict 值激活。
+
+### 3. postSettlement 副作用边界声明
+
+`postSettlement`（DRAFT→POSTED）副作用（**保留在 Processor，Bean 不持有**，§8 分工边界）：
+
+- 汇总关联未结算计提 `findUnsettledAccruals` → 按 `agreement.rebateType` 分支生成 credit-memo **负额发票**（PURCHASE → AP 发票 `posted=false` / SALES → AR 发票 `posted=false`，O-4 架构豁免 `docs/architecture/posting-exemptions.md §ErpCtRebateSettlementBizModel`，非 GL 凭证）；
+- `settlement.setCreditMemoBillType/BillCode`；
+- `ErpCtRebateAccrual.isSettled=true` + `settledDate=today` 回写；
+- `postedAt`/`postedBy` 审计字段写入。
+
+### 4. `posted` 布尔列不对称（watch-only residual，Decision）
+
+ORM `posted` 列（`app-erp-contract.orm.xml:605`，BOOLEAN default false）存在，但 Processor **从不 `setPosted(true)`**——仅写 `postedAt`/`postedBy`；credit-memo 发票自身 `posted=false`（经 pur/sal 管道后续翻转）。裁定分类 = **watch-only residual（登记非修正）**：Bean **不入轴 `posted`**（契约 §3：`posted` 不作 StateMachine 迁移轴，过账/红冲契约归过账侧）。Successor：仅当 PM 要求 settlement 独立 posted 翻转语义时重评。
+
+### 5. 终态与可达性
+
+- 终态 = {POSTED}（结算过账后归档，不可回退；非法 re-post 经 Bean `assertCanPostSettlement` 拦截 + 领域码 `ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION` 仅传 settlementId + currentStatus）。
+- 初始 = {DRAFT}。从 DRAFT 出发仅 POSTED 可达；CANCELLED 命名动作路径下零 writer 可达（死状态，§2 裁定）。
+- 幂等：POSTED 重复 postSettlement 经 `assertCanPostSettlement` 拒绝（层 3 `TestErpCtContractRebate.testSettlementIllegalTransition` 回归）。
+
+### 6. 与设计文档一致性
+
+- 返利结算流程交叉引用：`docs/design/contract/volume-discount.md` §结算流程。
+- 返利协议轴边界交叉引用：本 doc §适用对象三 §4（返利结算过账独立轴声明，M4.65 与本对象互为权威）。
+- 状态码归 `module-contract/model/app-erp-contract.orm.xml`（dict: `erp-ct/settlement-status`）；错误码 `ErpCtErrors.ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION`（`erp.err.ct.settlement-illegal-transition`，参数 settlementId + currentStatus，action/expectedStatus 仅存于 common 码 cause）。
+
 ## 审查提示
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
@@ -284,3 +337,4 @@ dict `erp-ct/rebate-agreement-status` 4 值（`module-contract/model/app-erp-con
 - contractType 与 contractDirection 的组合校验（采购合同→INBOUND，销售合同→OUTBOUND）。
 - 合同版本（适用对象二）：signVersion 的 isCurrent 守卫 + FINALIZED 来源态；Contract 激活→版本 SIGNED 级联（父驱子，守卫统一在 signVersion）；amend 新建 DRAFT 不调 assertCan*。
 - 返利协议（适用对象三）：ACTIVE/EXPIRED/SETTLED 预留死状态裁定（intentional reserved，不删除 dict 值）；ACTIVE accrual 只读守卫委托 Bean；返利结算过账在独立 `ErpCtRebateSettlement.status` 轴（M4.65），非 RebateAgreement.status。
+- 返利结算（适用对象四）：postSettlement DRAFT→POSTED 唯一实现边（Bean `assertCanPostSettlement`）；CANCELLED 预留死状态裁定（intentional reserved，零 writer，dict 值保留）；`posted` 布尔列不对称 watch-only residual（不入轴）；credit-memo 生成 + accrual 回写副作用保留在 Processor。

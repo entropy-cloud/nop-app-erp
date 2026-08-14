@@ -1,6 +1,6 @@
 # 2026-08-14-2000-1-erpct-rebate-settlement-state-machine-bean 合同域 ErpCtRebateSettlement.status 实体级状态机 Bean（M4.65）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) plan-first 人工/owner-doc 门控**已于 2026-08-14 经人工确认解除**（见 Draft Review Record 门控确认记录）（postSettlement 触发 credit-memo AP/AR 负额发票生成 + ErpCtRebateAccrual.isSettled 回写）。门控非起草者/审查者可自主解除——经人工确认解除；已转 `active` 进入实施。
 > Last Reviewed: 2026-08-14
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.65（ErpCtRebateSettlement.status），plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md` CT-3
@@ -68,50 +68,50 @@
 
 ### Phase 1 - ErpCtRebateSettlement status Bean + PostSettlementProcessor 接线（M4.65）
 
-Status: planned
+Status: completed
 Targets: `module-contract/erp-ct-service/src/main/java/app/erp/ct/service/statemachine/ErpCtRebateSettlementStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpCtRebateSettlementPostSettlementProcessor.java`、`.../test/.../statemachine/TestErpCtRebateSettlementStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done（已满足）；M3.18/M3.19 同域 Bean 范本已 done
 
-- [ ] `Decision`（CANCELLED 死状态裁定 + `posted` 不对称登记）：(A) **CANCELLED = intentional reserved 死状态**——dict 含 CANCELLED 但全域零 setStatus(CANCELLED) writer + 无 cancel mutation。Bean `transitions()` 不含 CANCELLED 边，`terminalStatuses()` 不含 CANCELLED（非真正终态，仅预留语义入口），dict 值保留不删（对齐 Contract CANCELLED/RebateAgreement EXPIRED+SETTLED 先例）。Successor：PM 要求 settlement cancel 工作流时开独立 plan。(B) **`posted` 布尔列不对称**——Processor 从不 setPosted(true)，仅写 postedAt/postedBy。credit-memo 发票自身 `posted=false`。此为 watch-only residual（owner doc 登记非修正），Bean 不入轴 posted。
+- [x] `Decision`（CANCELLED 死状态裁定 + `posted` 不对称登记）：(A) **CANCELLED = intentional reserved 死状态**——dict 含 CANCELLED 但全域零 setStatus(CANCELLED) writer + 无 cancel mutation。Bean `transitions()` 不含 CANCELLED 边，`terminalStatuses()` 不含 CANCELLED（非真正终态，仅预留语义入口），dict 值保留不删（对齐 Contract CANCELLED/RebateAgreement EXPIRED+SETTLED 先例）。Successor：PM 要求 settlement cancel 工作流时开独立 plan。(B) **`posted` 布尔列不对称**——Processor 从不 setPosted(true)，仅写 postedAt/postedBy。credit-memo 发票自身 `posted=false`。此为 watch-only residual（owner doc 登记非修正），Bean 不入轴 posted。已落地：Bean javadoc 声明（Decision (A)/(B)）+ owner doc §适用对象四登记（Phase 2）+ 层 1 (f) 断言 CANCELLED 不在任一集合。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpCtRebateSettlementStateMachine` Bean——1 实现边（postSettlement DRAFT→POSTED）+ `assertCanPostSettlement(String status)` + `postSettlementTargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses`（初始={DRAFT}/终态={POSTED}）+ `transitions()`（1 边）。CANCELLED 不在任一集合（intentional reserved，见 Decision (A)）。严格无状态。非法边抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`currentStatus`/`expectedStatus` 参数。镜像 M3.18 `ErpCtContractVersionStateMachine` 结构。
+- [x] `Add`：落地 `ErpCtRebateSettlementStateMachine` Bean——1 实现边（postSettlement DRAFT→POSTED）+ `assertCanPostSettlement(String status)` + `postSettlementTargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses`（初始={DRAFT}/终态={POSTED}）+ `transitions()`（1 边）。CANCELLED 不在任一集合（intentional reserved，见 Decision (A)）。严格无状态。非法边抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`currentStatus`/`expectedStatus` 参数。镜像 M3.18 `ErpCtContractVersionStateMachine` 结构。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：在 `_vfs/erp/ct/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（紧邻已注册的 3 个 SM Bean）。
+- [x] `Add`：在 `_vfs/erp/ct/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（紧邻已注册的 3 个 SM Bean）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线）：`ErpCtRebateSettlementPostSettlementProcessor` 注入 `@Inject ErpCtRebateSettlementStateMachine stateMachine`（非 private）；`:45` 守卫改调 `stateMachine.assertCanPostSettlement(status)`（try/catch common 码 → cause-chain 领域码 `ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION`，common NopException 作 cause；领域 re-throw 仅传 `ARG_SETTLEMENT_ID` + `ARG_CURRENT_STATUS`——`action`/`expectedStatus` 仅存于 common 码 cause，不向领域码传播）；`:90` 目标态改调 `stateMachine.postSettlementTargetStatus()`。credit-memo 生成 + accrual 回写 + `postedAt`/`postedBy` + `setCreditMemoBillType/BillCode` 保留原位。
+- [x] `Add`（接线）：`ErpCtRebateSettlementPostSettlementProcessor` 注入 `@Inject ErpCtRebateSettlementStateMachine stateMachine`（非 private）；`:45` 守卫改调 `stateMachine.assertCanPostSettlement(status)`（try/catch common 码 → cause-chain 领域码 `ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION`，common NopException 作 cause；领域 re-throw 仅传 `ARG_SETTLEMENT_ID` + `ARG_CURRENT_STATUS`——`action`/`expectedStatus` 仅存于 common 码 cause，不向领域码传播）；`:90` 目标态改调 `stateMachine.postSettlementTargetStatus()`。credit-memo 生成 + accrual 回写 + `postedAt`/`postedBy` + `setCreditMemoBillType/BillCode` 保留原位。grep 证 Processor 内零 `SETTLEMENT_STATUS` 常量残留（矩阵判断全委托 Bean）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（greenfield 表驱动，镜像 `TestErpCtContractVersionStateMachine` 范式）——(a) 无重复/冲突边（1 边唯一 action|fromStatus 键）；(b) postSettlement DRAFT→POSTED 可达；(c) `assertCanPostSettlement(DRAFT)` 通过、`assertCanPostSettlement(POSTED)`/`assertCanPostSettlement(CANCELLED)` 抛 common 码携带 `action`/`fromStatus`；(d) `transitions()` 与显式方法语义一致；(e) 初始={DRAFT}/终态={POSTED}；(f) CANCELLED 不在 initialStatuses/terminalStatuses/transitions 任一集合。
+- [x] `Proof`：层 1 矩阵完备性（greenfield 表驱动，镜像 `TestErpCtContractVersionStateMachine` 范式）——(a) 无重复/冲突边（1 边唯一 action|fromStatus 键）；(b) postSettlement DRAFT→POSTED 可达；(c) `assertCanPostSettlement(DRAFT)` 通过、`assertCanPostSettlement(POSTED)`/`assertCanPostSettlement(CANCELLED)` 抛 common 码携带 `action`/`fromStatus`；(d) `transitions()` 与显式方法语义一致；(e) 初始={DRAFT}/终态={POSTED}；(f) CANCELLED 不在 initialStatuses/terminalStatuses/transitions 任一集合。`TestErpCtRebateSettlementStateMachineMatrix` 7/7 绿。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] `ErpCtRebateSettlementStateMachine` Bean 存在、已注册、严格无状态；PostSettlementProcessor 委托 Bean 前向守卫 + 目标态，内联 `Objects.equals` 守卫已移除。
-- [ ] Settlement 层 1 矩阵测试本地 `mvn test -pl module-contract/erp-ct-service -am -Dtest=TestErpCtRebateSettlementStateMachineMatrix` 全绿。
+- [x] `ErpCtRebateSettlementStateMachine` Bean 存在、已注册、严格无状态（零 @Inject/DAO/IServiceContext，grep 证实）；PostSettlementProcessor 委托 Bean 前向守卫 + 目标态，内联 `Objects.equals` 守卫已移除。
+- [x] Settlement 层 1 矩阵测试本地 `mvn test -pl module-contract/erp-ct-service -am -Dtest=TestErpCtRebateSettlementStateMachineMatrix -Dsurefire.failIfNoSpecifiedTests=false` 全绿（7/7）。
 
 ### Phase 2 - 层 2 四方对照 + owner doc 补章节 + 层 3 既有回归
 
-Status: planned
+Status: completed
 Targets: `module-contract/erp-ct-service/src/test/`（既有集成测试，零新建）、`docs/design/contract/state-machine.md`（补 §RebateSettlement 章节）
 Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 1（Bean + Processor 接线已落地）
 
-- [ ] `Add`（owner doc 补章节）：在 `docs/design/contract/state-machine.md` 新增 **§适用对象四：返利结算（RebateSettlement）**，集中建立 `ErpCtRebateSettlement.status` 轴（dict `erp-ct/settlement-status`）权威迁移语义——状态定义（3 值）+ 迁移完整性（DRAFT→POSTED 唯一实现边）+ CANCELLED intentional reserved 裁定 + `posted` 不对称 watch-only residual 登记 + postSettlement 副作用边界声明（credit-memo 生成 + accrual 回写）。对齐 M3.18/M3.19 补章节先例。
+- [x] `Add`（owner doc 补章节）：在 `docs/design/contract/state-machine.md` 新增 **§适用对象四：返利结算（RebateSettlement）**，集中建立 `ErpCtRebateSettlement.status` 轴（dict `erp-ct/settlement-status`）权威迁移语义——状态定义（3 值）+ 迁移完整性（DRAFT→POSTED 唯一实现边）+ CANCELLED intentional reserved 裁定 + `posted` 不对称 watch-only residual 登记 + postSettlement 副作用边界声明（credit-memo 生成 + accrual 回写）。对齐 M3.18/M3.19 补章节先例（含 §适用对象四 header 行 + 审查提示行更新）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Proof`：层 2 四方对照——dict `erp-ct/settlement-status`（3 值）↔ owner doc §RebateSettlement（Phase 2 新建）↔ Bean 元数据 ↔ 全部 writer（PostSettlementProcessor:90 唯一生产 writer + 创建写 DRAFT CRUD 路径 + CANCELLED 零 writer）。**CANCELLED 死状态 finding**：分类 = intentional reserved + successor。**`posted` 不对称 finding**：分类 = watch-only residual + owner doc 登记。
+- [x] `Proof`：层 2 四方对照——dict `erp-ct/settlement-status`（3 值）↔ owner doc §RebateSettlement（Phase 2 新建）↔ Bean 元数据 ↔ 全部 writer（PostSettlementProcessor:94 唯一生产 writer 经 Bean 目标态 + 创建写 DRAFT CRUD 路径 + CANCELLED 零 writer）。**CANCELLED 死状态 finding**：分类 = intentional reserved + successor。**`posted` 不对称 finding**：分类 = watch-only residual + owner doc 登记。完整审计记录见 Closure 段「层 2 四方对照审计记录」。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Proof`：层 3 既有命名动作回归——复用 `TestErpCtRebateSettlementEnd`（2 case：SALES DRAFT→POSTED + AR credit-memo + accrual 回写）+ `TestErpCtContractRebate`（PURCHASE DRAFT→POSTED + AP credit-memo + illegal transition guard），证明 Processor 写回、credit-memo 类型/金额/`posted=false`、accrual 回写、领域错误码 + 参数不变。本地 `mvn test -pl module-contract/erp-ct-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归——复用 `TestErpCtRebateSettlementEnd`（2 case：SALES DRAFT→POSTED + AR credit-memo + accrual 回写）+ `TestErpCtContractRebate`（PURCHASE DRAFT→POSTED + AP credit-memo + illegal transition guard），证明 Processor 写回、credit-memo 类型/金额/`posted=false`、accrual 回写、领域错误码 + 参数不变。本地 `mvn test -pl module-contract/erp-ct-service -am` 全绿（82/82，75 既有基线 + 新增层 1 矩阵 7）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] owner doc §适用对象四：返利结算（RebateSettlement）章节已新增。
-- [ ] 层 2 四方对照已完成（dict ↔ owner doc ↔ Bean ↔ writer，CANCELLED 死状态 + `posted` 不对称 findings 已登记）。
-- [ ] 层 3 既有集成测试全绿（零行为回归）。
+- [x] owner doc §适用对象四：返利结算（RebateSettlement）章节已新增（含 header 行 + 审查提示行）。
+- [x] 层 2 四方对照已完成（dict ↔ owner doc ↔ Bean ↔ writer，CANCELLED 死状态 + `posted` 不对称 findings 已登记，记录于 Closure 段）。
+- [x] 层 3 既有集成测试全绿（零行为回归）。
 
 ## Draft Review Record
 
@@ -125,15 +125,15 @@ Exit Criteria:
 
 > 仅在所有项目和每个阶段的退出标准都勾选 `[x]` 后关闭。M4 plan-first 门控为阻塞前置。
 
-- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
-- [ ] 范围内行为完成（status Bean + PostSettlementProcessor 接线 + 层 1 矩阵 + 层 2 四方对照 + owner doc 补章节 + 层 3 回归）
-- [ ] 相关文档对齐（roadmap M4.65 → done；CANCELLED 死状态 + `posted` 不对称登记）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-contract/erp-ct-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
+- [x] 范围内行为完成（status Bean + PostSettlementProcessor 接线 + 层 1 矩阵 + 层 2 四方对照 + owner doc 补章节 + 层 3 回归）
+- [x] 相关文档对齐（roadmap M4.65 → done；CANCELLED 死状态 + `posted` 不对称登记）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-contract/erp-ct-service -am` 全绿（82/82）+ `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline（exit 0，R5=0/R11=0）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -169,13 +169,42 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _待执行后填写_
+Status Note: 执行完成（Phase 1/2 全部 [x] + 层 1 矩阵 7/7 + 层 3 回归 82/82 + 全量 `mvn clean install -DskipTests` BUILD SUCCESS）；层 2 四方对照 + Decision 已落地登记。结束审计由独立子代理（新会话）执行通过（CLOSURE_VERIFY，见 Closure Audit Evidence 实仓复核）。
+
+### 层 2 四方对照审计记录（plan `2026-08-14-2000-1`，按 `state-machine-business-review-prompt.md` 10 维度）
+
+四方对照 = ①dict ②owner doc ③Bean 元数据 ④writer（命名动作 + 初始态写入 + 框架入口 + 测试 fixture）。
+
+#### 轴一：返利结算（ErpCtRebateSettlement.status，dict `erp-ct/settlement-status`）
+
+- **D1 状态定义**：dict 3 值 DRAFT/POSTED/CANCELLED（`app-erp-contract.orm.xml:73-77`）②owner doc §适用对象四 §1（plan 补章节）③Bean `initialStatuses()={DRAFT}` / `terminalStatuses()={POSTED}`（`ErpCtRebateSettlementStateMachine`）。三方一致。
+- **D2 转换完整性**：1 实现边。③Bean `transitions()`=1（postSettlement DRAFT→POSTED）②owner doc §适用对象四 §2 迁移表 ④writer：`ErpCtRebateSettlementPostSettlementProcessor:94` 唯一生产 writer（经 Bean `postSettlementTargetStatus()`）。进/出迁移齐备，无非法跳转。
+- **D3 终态与恢复**：③Bean `isTerminal(POSTED)=true` ②owner doc §适用对象四 §5 终态={POSTED}。POSTED 无出边（Bean transitions 无 POSTED 源边），不可回退。CANCELLED 非终态（intentional reserved，见 Decision (A)）。
+- **D4 异常路径**：④非法来源态（POSTED/CANCELLED 重复过账）抛 common 码（Bean `illegal`，携带 action/currentStatus/expectedStatus）→ Processor 映射 `ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION`（cause 保留 common 码，领域 re-throw 仅传 settlementId + currentStatus——`action`/`expectedStatus` 仅存于 common 码 cause）。幂等：POSTED 重过账经 assertCanPostSettlement 拦截（`TestErpCtContractRebate.testSettlementIllegalTransition` 回归）。
+- **D5 可达性**：从 DRAFT 出发 POSTED 可达；CANCELLED 命名动作路径下**零 writer 可达**（死状态）。③Bean 据实不纳入任一集合。②owner doc §适用对象四 §2 裁定声明一致。
+- **D6 角色与权限**：postSettlement @BizMutation（经权限管道）；无 cancel/unpost/reverse mutation（因零 writer）。本期未改变权限模型。
+- **D7 外部依赖**：**cross-domain 副作用（credit-memo AP/AR 负额发票 + accrual 回写）保留 Processor 原路径**（§11.2 M4 (iv)）——`createNegativeApInvoice`/`createNegativeArInvoice` 经 `IDaoProvider` 直接持久化（O-4 架构豁免 `posting-exemptions.md §ErpCtRebateSettlementBizModel`），发票 `posted=false` 非 GL 凭证；`ErpCtRebateAccrual.isSettled=true` + `settledDate` 回写原位。Bean 零副作用（§8）。②owner doc §适用对象四 §3 边界声明一致。
+- **D8 TODO/任务策略**：结算单状态不产 TODO（结算经运营触发，credit-memo 审批归 pur/sal 域人工管道）。
+- **D9 场景演练**：快乐路径 DRAFT（CRUD 创建 seed）→ postSettlement → POSTED（credit-memo 生成 + accrual 回写 + postedAt/postedBy）；拒绝路径 POSTED/CANCELLED 重过账抛 `ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION`（层 3 `TestErpCtRebateSettlementEnd` 2 case + `TestErpCtContractRebate` PURCHASE path + illegal transition 覆盖）。
+- **D10 与设计文档一致性**：②owner doc §适用对象四补章节落地（含与 §适用对象三 §4 边界声明交叉引用 + volume-discount.md §结算流程交叉引用 + §审查提示行）；③Bean javadoc 引用 `docs/design/contract/state-machine.md §适用对象：返利结算（RebateSettlement）`。dict/Bean/owner doc 三方迁移矩阵一致，无内部漂移。
+- **D11 dict 可达性核查**：dict 3 值中 DRAFT（CRUD 创建 seed + 测试 fixture `createSettlement`）/POSTED（PostSettlementProcessor:94）可达，**CANCELLED 零 writer** → 裁决三选一：**保留为 intentional reserved + Successor 登记**（不删 dict 项 / 不实现 mutation / Deferred 标注触发条件），对齐 Contract CANCELLED/RebateAgreement EXPIRED+SETTLED 先例。**禁止沉默保留**——已 owner doc §适用对象四 §2 + Bean javadoc 登记。
+
+**轴一裁决：pass**（0 P0 / 0 P1）。1 实现边 + CANCELLED 死状态裁定 + `posted` 不对称 watch-only residual 登记 + 跨域副作用原路径保留均确认；Bean/dict/owner doc/writer 四方一致。
+
+### Phase 1/2 Decision 登记（漂移裁定，路线图规则 5）
+
+1. **CANCELLED = intentional reserved（死状态）**：dict 含值 + 全域零 `setStatus(CANCELLED)` writer + 无 cancel mutation。分类 = `intentional reserved`。Fix：Bean 不纳入任一集合（javadoc 声明）；dict 值保留（不删除，对齐 Contract CANCELLED/RebateAgreement EXPIRED+SETTLED 先例）；owner doc §适用对象四 §2 登记。Successor：PM 要求 settlement cancel 工作流时开独立 plan。
+2. **`posted` 布尔列不对称 = watch-only residual**：Processor 从不 setPosted(true)，仅写 postedAt/postedBy；credit-memo 发票自身 `posted=false`（经 pur/sal 管道后续翻转）。分类 = `watch-only residual`。Fix：Bean 不入轴 posted（契约 §3）+ owner doc §适用对象四 §4 登记（非修正）。Successor：仅当 PM 要求 settlement 独立 posted 翻转语义时重评。
+3. **无 §迁移表 vs §实现约定 内部漂移**：dict/Bean/owner doc/writer 四方迁移矩阵一致，无 §11.4 补正项；无其他不一致。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _待执行后填写_
-- Evidence: _待执行后填写_
+- 执行证据：Phase 1（Bean + 注册 + Processor 接线 + 层 1 矩阵 7/7）+ Phase 2（owner doc §适用对象四 + 层 2 四方对照 pass + 2 Decision 登记 + 层 3 `mvn test -pl module-contract/erp-ct-service -am` 82/82 全绿）。
+- 全量验证：`mvn clean install -DskipTests` BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` 无漂移。
+- **独立结束审计（CLOSURE_VERIFY）由独立子代理（新会话，零执行者上下文）执行通过**（见下方 Auditor / Agent 记录）。
+- Auditor / Agent: 独立子代理（本审计会话）
+- Evidence: 实仓复核全 pass：Bean 1 边 postSettlement DRAFT→POSTED + CANCELLED 不在任一集合 + 严格无状态（ErpCtRebateSettlementStateMachine.java:59-106）；Processor @Inject 非 private 委托守卫/目标态、领域码仅 settlementId+currentStatus 且 cause 保留、副作用全保留（ErpCtRebateSettlementPostSettlementProcessor.java:44-96、179-183）；app-service.beans.xml:48-49 注册 + xmllint OK；矩阵测试 7/7；`mvn test -pl module-contract/erp-ct-service -am` 82/82 BUILD SUCCESS；compliance-checker exit 0；roadmap M4.65 done；owner doc §适用对象四 + §审查提示 bullet 落地；四方对照裁决 pass（CANCELLED intentional reserved + posted watch-only residual 登记）
 
 Follow-up:
 
-- <待执行后填写；Deferred 项均为既定 successor>
+- 非阻塞跟进见 §Deferred But Adjudicated（CANCELLED 死状态 / `posted` 不对称 / BizModel 死代码 / Delta 覆盖 / 全局 CRUD 写锁）。
