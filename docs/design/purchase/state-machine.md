@@ -20,6 +20,8 @@
 
 > **为何三轴分离而非单状态机**：若用单状态机表达"已审核+部分付款""已审核+已付清""已作废+未付"等组合，状态数会笛卡尔积爆炸。三轴分离让每个维度独立演化，业务语义清晰。这是"条件作为字段而非状态"反模式的正确应用——付款进度是派生字段，不是独立工作流状态。
 
+> **docStatus 轴 ACTIVE 死状态注记（plan 2026-08-13-0810-1 层 2 四方对照裁定）**：`erp/doc-status` dict 含 ACTIVE（已生效），但采购 4 单据（Receive/Invoice/Payment/Return）**零 setDocStatus(ACTIVE) 生产 writer**——业务「已生效」由 approveStatus=APPROVED + posted 表达。docStatus 轴实际迁移仅为 `DRAFT → CANCELLED`（cancel 路径唯一 writer）。ACTIVE 分类 = `intentional legacy dead state`（同 Order/Quotation M2 裁定）：dict 值保留不改绑，StateMachine Bean 不编码 ACTIVE 入边（isTerminal(ACTIVE)=false）。
+
 本文以"审核状态机"为主线展开（最复杂），单据状态与付款状态作为关联维度。
 
 ## 1. 状态定义（审核轴）

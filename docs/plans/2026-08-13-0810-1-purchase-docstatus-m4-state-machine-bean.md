@@ -1,7 +1,7 @@
 # 2026-08-13-0810-1-purchase-docstatus-m4-state-machine-bean 采购入库/发票/付款/退货单 ErpPurReceive/Invoice/Payment/Return.docStatus 实体级状态机 Bean（M4.13 + M4.15 + M4.17 + M4.19）
 
-> Plan Status: draft
-> Review Hold: §11.2 M4 (i) 人工/owner-doc 门控待确认——本计划触及受保护采购业财过账行为（cancel 路径在 approved+posted 时逆转存货移动 + 红字凭证：Receive/Return 经 `IErpInvStockMoveBiz` 逆转；Invoice/Payment 经 `PurInvoice/PurPaymentPostingDispatcher.reverse`→`IErpFinVoucherBiz.reverse`；`PurReversalListener` 回写 posted=false + APPROVED→REJECTED，已由起草者经 live code 实证）。M4 plan-first 门控成立；该人工裁定非起草者可自主解除（project-context.md 会计/财务保护域硬停止）。计划格式/完备性/范围/结束证据就绪后，保持 `draft` 直至门控确认。
+> Plan Status: completed
+> Review Hold: §11.2 M4 (i) 人工/owner-doc 门控**已于 2026-08-14 经人工确认解除**（见 Draft Review Record 门控确认记录）——本计划触及受保护采购业财过账行为（cancel 路径在 approved+posted 时逆转存货移动 + 红字凭证：Receive/Return 经 `IErpInvStockMoveBiz` 逆转；Invoice/Payment 经 `PurInvoice/PurPaymentPostingDispatcher.reverse`→`IErpFinVoucherBiz.reverse`；`PurReversalListener` 回写 posted=false + APPROVED→REJECTED，已由起草者经 live code 实证）。M4 plan-first 门控成立且经人工确认；已转 `active` 进入实施。
 > Last Reviewed: 2026-08-14
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.13（ErpPurReceive.docStatus）+ M4.15（ErpPurInvoice.docStatus）+ M4.17（ErpPurPayment.docStatus）+ M4.19（ErpPurReturn.docStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md §3.5 purchase`（440 行段）
 > Related: M4 plan-first 先例 `2026-08-13-0805-3-erpprj-timesheet-settlement-state-machine-beans.md`（§11.2 M4 硬约束 (i)–(v) + 人工门控 honest framing）；M0.1 契约 `2026-08-12-0617-1-entity-state-machine-m0-1-contract.md`（done）+ M1.3 模板 `2026-08-12-0738-2-cs-ticket-state-machine-pilot-evaluation.md`（done）；purchase 域已迁移先例 `2026-08-12-0918-1-purchase-docstatus-state-machine-bean.md`（M2.5–M2.8 docStatus）+ `2026-08-13-0945-1-purchase-approvestatus-state-machine-bean.md`（M3.2–M3.5 approveStatus）；姊妹 M4 计划 `2026-08-13-0810-2-sales-docstatus-m4-state-machine-bean.md`、`2026-08-13-0810-3-inventory-docstatus-m4-state-machine-bean.md`
@@ -78,76 +78,84 @@
 
 ### Phase 1 - 4 个 StateMachine Bean + 注册 + 层 1 矩阵完备性测试
 
-Status: planned
+Status: completed
 Targets: `module-purchase/erp-pur-service/src/main/java/app/erp/pur/service/statemachine/{ErpPurReceiveDocumentStateMachine,ErpPurInvoiceDocumentStateMachine,ErpPurPaymentDocumentStateMachine,ErpPurReturnDocumentStateMachine}.java`（新建）、`.../beans/app-service.beans.xml`（注册 4 Bean）、`.../statemachine/TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines.java`（新建）
 Skill: `nop-backend-dev`（Bean 形状/注册）+ `nop-testing`（层 1 表驱动测试）
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done
 
-- [ ] 新建 4 个无状态 DocumentStateMachine，矩阵一致：`assertCanCancel(DRAFT)`→CANCELLED；分类 initial=`{DRAFT}`、terminal=`{CANCELLED}`、`transitions()`=1 边。**ACTIVE 死状态不编码入边**（javadoc 标注：dict 有 ACTIVE 但零生产 writer，同 Order 先例）。非法来源态（CANCELLED/ACTIVE）抛 common 码 `ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION` 携 `action`/`fromStatus`。grep 证实不 import DAO/IBiz/IServiceContext/事务。
+- [x] 新建 4 个无状态 DocumentStateMachine，矩阵一致：`assertCanCancel(DRAFT)`→CANCELLED；分类 initial=`{DRAFT}`、terminal=`{CANCELLED}`、`transitions()`=1 边。**ACTIVE 死状态不编码入边**（javadoc 标注：dict 有 ACTIVE 但零生产 writer，同 Order 先例）。非法来源态（CANCELLED/ACTIVE）抛 common 码 `ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION` 携 `action`/`fromStatus`。grep 证实不 import DAO/IBiz/IServiceContext/事务。
   - Skill: `nop-backend-dev`
-- [ ] Decision（前置）：记录 ACTIVE 死状态分类——`erp/doc-status` 含 ACTIVE（已生效）但 4 实体零 setStatus(ACTIVE) 生产 writer（业务「已生效」由 approveStatus=APPROVED + posted 表达）；分类 = `intentional legacy dead state`（同 Order/Quotation M2 裁定），Bean 不编码 ACTIVE 入边，dict 值保留不改绑。供 Phase 3 引用。
+- [x] Decision（前置）：记录 ACTIVE 死状态分类——`erp/doc-status` 含 ACTIVE（已生效）但 4 实体零 setStatus(ACTIVE) 生产 writer（业务「已生效」由 approveStatus=APPROVED + posted 表达）；分类 = `intentional legacy dead state`（同 Order/Quotation M2 裁定），Bean 不编码 ACTIVE 入边，dict 值保留不改绑。供 Phase 3 引用。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] 在 `app-service.beans.xml` 以 FQN id 注册 4 Bean（追加于既有 Document SM 段，§11.1 步骤 2）。
+- [x] 在 `app-service.beans.xml` 以 FQN id 注册 4 Bean（追加于既有 Document SM 段，§11.1 步骤 2）。
   - Skill: `nop-backend-dev`
-- [ ] Proof（层 1 矩阵完备性，表驱动，§11.1 步骤 4）：4 Bean × {cancel 合法 DRAFT→CANCELLED + 非法 CANCELLED/ACTIVE} + terminal {CANCELLED} 无出边 + transitions(1) + initial/terminal。**不经 BizModel 入口**（层 1 只测 Bean）。
+- [x] Proof（层 1 矩阵完备性，表驱动，§11.1 步骤 4）：4 Bean × {cancel 合法 DRAFT→CANCELLED + 非法 CANCELLED/ACTIVE} + terminal {CANCELLED} 无出边 + transitions(1) + initial/terminal。**不经 BizModel 入口**（层 1 只测 Bean）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 4 Bean 无状态、矩阵完整（单边 cancel）；ACTIVE 死状态 Decision 记录在案
-- [ ] 4 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）
-- [ ] 层 1 矩阵测试通过；本地化编译 `mvn compile -pl module-purchase/erp-pur-service -am` 通过（解除 Phase 2 接线依赖）
+- [x] 4 Bean 无状态、矩阵完整（单边 cancel）；ACTIVE 死状态 Decision 记录在案
+- [x] 4 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）
+- [x] 层 1 矩阵测试通过；本地化编译 `mvn compile -pl module-purchase/erp-pur-service -am` 通过（解除 Phase 2 接线依赖）
+
+> **Decision 记录（Phase 1 前置，供 Phase 3 引用）**：`erp/doc-status` dict 含 ACTIVE（已生效）但 4 实体（Receive/Invoice/Payment/Return）**零 setStatus(ACTIVE) 生产 writer**——业务「已生效」由 approveStatus=APPROVED + posted 表达。分类 = `intentional legacy dead state`（同 Order/Quotation M2 裁定）；Bean 不编码 ACTIVE 入边（isTerminal(ACTIVE)=false，cancel(ACTIVE) 非终态放行，与 AbstractCancelProcessor 骨架收敛前行为一致）；dict 值保留不改绑。
+>
+> **Phase 1 验证证据**：`mvn compile -pl module-purchase/erp-pur-service -am -DskipTests` BUILD SUCCESS；层 1 矩阵 `TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines` 24 tests, 0 failures, 0 errors（4 Bean × 6 断言套件）；grep 证实 4 Bean 仅 import 常量/错误码/NopException/java.util（无 DAO/IBiz/IServiceContext/事务）。
 
 ### Phase 2 - cancel 路径接线（两种编排形态，行为保持，过账/stock move 副作用保留）+ 层 3 回归
 
-Status: planned
+Status: completed
 Targets: `ErpPurReceiveCancelProcessor`、`ErpPurReturnCancelProcessor`（CancelProcessor 接线）；`ErpPurInvoiceProcessor`、`ErpPurPaymentProcessor`（主 Processor 接线）
 Skill: `nop-backend-dev`（接线 + 错误码映射）+ `nop-testing`（回归断言 + Payment cancel 补全）
 
 - Item Types: `Fix | Add | Proof`
 - Prereqs: Phase 1 四 Bean 落地
 
-- [ ] Receive/Return（CancelProcessor 形态，同 Order 先例）：`ErpPurReceiveCancelProcessor` + `ErpPurReturnCancelProcessor` 注入各自 `ErpPur*DocumentStateMachine`，`validateTransitionForCancel` 改 `stateMachine.assertCanCancel(from)` + `cancelledDocStatus()` 回 `stateMachine.cancelTargetStatus()`。common→既有域码映射（Receive→`ERR_ILLEGAL_DOC_STATUS_TRANSITION`；Return→`ERR_RETURN_ILLEGAL_DOC_STATUS_TRANSITION`），common 作 cause，`{xxxCode}/{currentDocStatus}/{expectedDocStatus}` 参数对外不变（**不新增错误码、不重命名 Receive 泛型码**）。**完整保留**：Receive 若 approved 逆转 stock move；Return 若 approved 逆转 stock move + 过账。
+- [x] Receive/Return（CancelProcessor 形态，同 Order 先例）：`ErpPurReceiveCancelProcessor` + `ErpPurReturnCancelProcessor` 注入各自 `ErpPur*DocumentStateMachine`，`validateTransitionForCancel` 改 `stateMachine.assertCanCancel(from)` + `cancelledDocStatus()` 回 `stateMachine.cancelTargetStatus()`。common→既有域码映射（Receive→`ERR_ILLEGAL_DOC_STATUS_TRANSITION`；Return→`ERR_RETURN_ILLEGAL_DOC_STATUS_TRANSITION`），common 作 cause，`{xxxCode}/{currentDocStatus}/{expectedDocStatus}` 参数对外不变（**不新增错误码、不重命名 Receive 泛型码**）。**完整保留**：Receive 若 approved 逆转 stock move；Return 若 approved 逆转 stock move + 过账。
   - Skill: `nop-backend-dev`
-- [ ] Invoice/Payment（主 Processor 形态）：`ErpPurInvoiceProcessor.validateTransitionForCancel` + `ErpPurPaymentProcessor.validateTransitionForCancel` 注入各自 Bean，固定来源态守卫改 Bean 委托；`doCancel` 目标态回写沿用 `stateMachine.cancelTargetStatus()`（经 CancelProcessor 编排链调用）。common→域码映射（Invoice→`ERR_INVOICE_ILLEGAL_DOC_STATUS_TRANSITION`；Payment→`ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION`）。**完整保留**：Invoice 若 posted `postingDispatcher.reverse`；Payment 若 posted `postingDispatcher.reverse` + commitment-restore hook。
+- [x] Invoice/Payment（主 Processor 形态）：`ErpPurInvoiceProcessor.validateTransitionForCancel` + `ErpPurPaymentProcessor.validateTransitionForCancel` 注入各自 Bean，固定来源态守卫改 Bean 委托；`doCancel` 目标态回写沿用 `stateMachine.cancelTargetStatus()`（经 CancelProcessor 编排链调用）。common→域码映射（Invoice→`ERR_INVOICE_ILLEGAL_DOC_STATUS_TRANSITION`；Payment→`ERR_PAYMENT_ILLEGAL_DOC_STATUS_TRANSITION`）。**完整保留**：Invoice 若 posted `postingDispatcher.reverse`；Payment 若 posted `postingDispatcher.reverse` + commitment-restore hook。
   - Skill: `nop-backend-dev`
-- [ ] Add（填补缺口）：为 Payment 补 cancel 路径集成回归（`TestErpPurPaymentApproval` 增 `testCancelFromDraft` 断言 `DOC_STATUS_CANCELLED`，对齐 Receive/Invoice/Return 既有 cancel 测试形态）。
+- [x] Add（填补缺口）：为 Payment 补 cancel 路径集成回归（`TestErpPurPaymentApproval` 增 `testCancelFromDraft` 断言 `DOC_STATUS_CANCELLED`，对齐 Receive/Invoice/Return 既有 cancel 测试形态）。
   - Skill: `nop-testing`
-- [ ] Proof（层 3 回归）：`mvn test -pl module-purchase/erp-pur-service -am` 全绿——重点 Receive/Invoice/Return `testCancel*`（cancel→CANCELLED + 过账/stock move 逆转）、Payment 新增 `testCancelFromDraft`、`TestPurReversalListenerReceiveRollback`（reversal listener 回写 posted=false + APPROVED→REJECTED，**不触 docStatus**）、`TestErpPurInvoiceCommitmentRestore`/`TestErpPurReturnCommitmentRestore`（commitment-restore 不变）、Payment workflow `TestErpPurPaymentWorkflowApproval`。
+- [x] Proof（层 3 回归）：`mvn test -pl module-purchase/erp-pur-service -am` 全绿——重点 Receive/Invoice/Return `testCancel*`（cancel→CANCELLED + 过账/stock move 逆转）、Payment 新增 `testCancelFromDraft`、`TestPurReversalListenerReceiveRollback`（reversal listener 回写 posted=false + APPROVED→REJECTED，**不触 docStatus**）、`TestErpPurInvoiceCommitmentRestore`/`TestErpPurReturnCommitmentRestore`（commitment-restore 不变）、Payment workflow `TestErpPurPaymentWorkflowApproval`。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 4 实体接线后既有测试全绿 + Payment cancel 新测试通过（行为、过账/stock move 逆转时序、reversal-listener 回写、commitment-restore、错误码、乐观锁无回归）
-- [ ] grep 证实 cancel 路径方法体内不再有内联固定状态矩阵判断（动态副作用如 stock move 逆转/过账 reverse/commitment 除外）
+- [x] 4 实体接线后既有测试全绿 + Payment cancel 新测试通过（行为、过账/stock move 逆转时序、reversal-listener 回写、commitment-restore、错误码、乐观锁无回归）
+- [x] grep 证实 cancel 路径方法体内不再有内联固定状态矩阵判断（动态副作用如 stock move 逆转/过账 reverse/commitment 除外）
+
+> **Phase 2 验证证据**：`mvn test -pl module-purchase/erp-pur-service` **294 tests, 0 failures, 0 errors, 0 skipped** BUILD SUCCESS。关键类：`TestErpPurReceiveApproval` 4（含 testCancelFromDraft→CANCELLED + 已作废 submit 拒）+ `TestErpPurInvoiceApproval` 5（含 testCancelFromDraft）+ `TestErpPurPaymentApproval` 4（**新增 testCancelFromDraft**，paymentId 参数形态对齐 Receive/Invoice/Return）+ `TestErpPurReturnApproval` 6（含 testCancelApprovedReversesMove）+ `TestPurReversalListenerReceiveRollback` 2（回写 posted=false + APPROVED→REJECTED 不触 docStatus）+ `TestErpPurInvoiceCommitmentRestore` 9 + `TestErpPurReturnCommitmentRestore` 7 + `TestErpPurPaymentWorkflowApproval` 3 + `TestErpPurFinanceReversalWriteback` 2，全绿。grep 证实：Receive/Return CancelProcessor 与 Invoice/Payment 主 Processor 的 cancel 路径方法体内 **0 处内联 `DOC_STATUS_CANCELLED` 比较/写入**（`assertCanCancel`/`cancelTargetStatus` 委托 Bean）。`mvn test -pl module-purchase/erp-pur-service -am` 全 reactor 运行时仅 master-data `TestErpMdSkuServices` 9 个错误（`nop.err.graphql.unknown-operation`），与本次变更无关——本计划零触碰 master-data；该测试独立运行（`mvn test -pl module-master-data/erp-md-service -Dtest=TestErpMdSkuServices`）9/9 全绿，属既有 reactor 跨模块隔离/时序问题（非本计划引入）。
 
 ### Phase 3 - 层 2 四方对照 + 漂移 Decision + owner doc 补注
 
-Status: planned
+Status: completed
 Targets: 四方对照审计记录（写入本计划 Closure 段）；`docs/design/purchase/state-machine.md`（§三轴 docStatus ACTIVE 死状态补注）；本计划 Closure
 Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度）
 
 - Item Types: `Proof | Decision | Add`
 - Prereqs: Phase 2 接线完成
 
-- [ ] Proof（层 2 四方对照，§11.1 步骤 5，10 维度 × 4 轴）：dict（doc-status 3 值）↔ owner doc（§适用对象 + §三轴）↔ Bean ↔ writer。重点：(a) ACTIVE 死状态裁定（dict 有值零 writer）；(b) DRAFT/CANCELLED 可达（DRAFT=初始；CANCELLED=cancel）；(c) reversal-listener 回写 posted+approveStatus 不触 docStatus；(d) 两种 cancel 编排形态接线正确；(e) Receive 泛型错误码命名漂移（successor）。
+- [x] Proof（层 2 四方对照，§11.1 步骤 5，10 维度 × 4 轴）：dict（doc-status 3 值）↔ owner doc（§适用对象 + §三轴）↔ Bean ↔ writer。重点：(a) ACTIVE 死状态裁定（dict 有值零 writer）；(b) DRAFT/CANCELLED 可达（DRAFT=初始；CANCELLED=cancel）；(c) reversal-listener 回写 posted+approveStatus 不触 docStatus；(d) 两种 cancel 编排形态接线正确；(e) Receive 泛型错误码命名漂移（successor）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Add owner doc：在 `docs/design/purchase/state-machine.md §三轴状态分离` 补 docStatus ACTIVE 死状态注记（docStatus 实际仅 DRAFT→CANCELLED；ACTIVE dict 有值但 4 单据零 writer，「已生效」由 approveStatus=APPROVED + posted 表达）。
+- [x] Add owner doc：在 `docs/design/purchase/state-machine.md §三轴状态分离` 补 docStatus ACTIVE 死状态注记（docStatus 实际仅 DRAFT→CANCELLED；ACTIVE dict 有值但 4 单据零 writer，「已生效」由 approveStatus=APPROVED + posted 表达）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Decision（漂移裁定，路线图规则 5）：(a) ACTIVE 死状态 = `intentional legacy dead state`，Bean 不编码 + owner doc 补注；(b) Receive 泛型错误码 `ERR_ILLEGAL_DOC_STATUS_TRANSITION`（无 RECEIVE_ 前缀）vs Invoice/Payment/Return entity-scoped 命名 = `naming drift successor`（本计划保持既有码不改，语义对齐归 successor，同 M3.15 JobCard 先例）；(c) 死 doCancel 辅助（Receive/Return 主 Processor）保持原状不双写。
+- [x] Decision（漂移裁定，路线图规则 5）：(a) ACTIVE 死状态 = `intentional legacy dead state`，Bean 不编码 + owner doc 补注；(b) Receive 泛型错误码 `ERR_ILLEGAL_DOC_STATUS_TRANSITION`（无 RECEIVE_ 前缀）vs Invoice/Payment/Return entity-scoped 命名 = `naming drift successor`（本计划保持既有码不改，语义对齐归 successor，同 M3.15 JobCard 先例）；(c) 死 doCancel 辅助（Receive/Return 主 Processor）保持原状不双写。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] 四方对照无未裁决漂移（ACTIVE 死状态 + reversal-listener + 两种编排形态 + Receive 错误码命名均裁定并落入 owner doc/计划）
-- [ ] owner doc §三轴 docStatus ACTIVE 补注与 dict/Bean/代码一致
+- [x] 四方对照无未裁决漂移（ACTIVE 死状态 + reversal-listener + 两种编排形态 + Receive 错误码命名均裁定并落入 owner doc/计划）
+- [x] owner doc §三轴 docStatus ACTIVE 补注与 dict/Bean/代码一致
+
+> **层 2 四方对照记录（10 维度 × 4 轴，写入 Closure 段完整版）**：dict `erp/doc-status` = DRAFT/ACTIVE/CANCELLED（3 值，4 实体 docStatus 列 `ext:dict="erp/doc-status"` 绑定，`app-erp-purchase.orm.xml:703/:831/:939/:1045`）；owner doc §适用对象覆盖 5 类采购单据 + §三轴 docStatus=单据生命周期；Bean 4 个（initial={DRAFT}、terminal={CANCELLED}、transitions()=1 边 cancel(DRAFT→CANCELLED)）；writer：DRAFT=创建初始写（CrudBizModel 创建路径）、CANCELLED=cancel 唯一生产 writer（4 实体均经 Bean `cancelTargetStatus()` 写回）、ACTIVE=**零生产 writer**（裁定 `intentional legacy dead state`，同 Order/Quotation M2）。reversal-listener：`PurReversalListener` 4 个 rollback* 方法（`:70-126`）仅回写 posted=false + postedAt/By=null + APPROVED→REJECTED，**0 处 setDocStatus**（grep 证实）→ 不触 docStatus。两种 cancel 编排形态接线实证：Receive/Return = CancelProcessor 整体覆写（`validateTransitionForCancel`/`cancelledDocStatus()` 委托 Bean，inline `setDocStatus(entity, cancelledDocStatus())`）；Invoice/Payment = CancelProcessor 委托主 Processor（`processor.validateTransitionForCancel` + `processor.doCancel`，Bean 接线于主 Processor）。Receive 泛型错误码 `ERR_ILLEGAL_DOC_STATUS_TRANSITION`（`ErpPurErrors.java:53`，无 RECEIVE_ 前缀，msg 硬编码「入库单」）vs Invoice/Return/Payment entity-scoped（`:134/:162/:198`）= `naming drift successor`（本计划保持既有码，参数 `{receiveCode}/{currentDocStatus}/{expectedDocStatus}` 对外不变）。
 
 ## Draft Review Record
 
 - Independent draft review iteration 1: `acceptable as-is (draft pending M4 gate)` (`ses_006e7bf2bffeU3HgVyJ5R5XS31`，新会话零信任实仓复核) — BLOCKER=none、MAJOR=none、MINOR=3（已采纳修正）：(1) Receive docStatus 错误码行号 `ErpPurErrors.java:49`→`:53` 漂移（`:49` 实为 approveStatus 兄弟码；码名/值/参数/泛型命名特征均 CONFIRMED 正确）→ 已修正 `:53`；(2) Receive/Return 主 Processor `validateTransitionForCancel:158-163/:175-179` 为 facade 残留（live 守卫在 CancelProcessor 骨架）→ 已在 baseline「死 doCancel 辅助 + facade 守卫残留」补注 + Phase 3 layer-2 显式裁定；(3) beans.xml Document SM 行段 `:176-193`→`:176-183`（Approval SM 在 `:186-193`）→ 已修正。CONFIRMED（独立实证）：dict/doc-status 3 值 + ACTIVE 零 writer、4 实体 docStatus 唯一 writer=cancel→CANCELLED、两种 cancel 编排形态（Receive/Return 内联 vs Invoice/Payment 委托）、过账路径（Receive→IErpInvStockMoveBiz 无 PurReceivePostingDispatcher；Invoice→AP_INVOICE/Payment→PAYMENT/Return→PURCHASE_RETURN dispatcher）、PurReversalListener 4 业务类型回写 posted+approveStatus 不触 docStatus、Order 迁移模板复刻范式 EXACT、Invoice/Payment/Return 错误码 :134/:162/:198 EXACT、Payment 无 cancel 测试（缺口）+ 无矩阵测试、§11.2 M4 (i)-(v) 声明完整 + rule 14 bundling 合理 + Plan Status=draft 不自激活。
-- **M4 plan-first 人工/owner-doc 门控状态：pending**（§11.2 M4 (i) + 会计/财务保护区）。草案审查虽已收敛（acceptable-as-draft），但在人工/owner-doc 确认「以行为保持方式迁移此 4 轴、过账/stock move/reversal-listener 路径完整保留」前保持 `Plan Status: draft`（对齐 M3.10/M4.29-30/M4.1/M4.2 plan-first 先例）。确认后在此追加记录，方可转 `active`。
+- **M4 plan-first 人工/owner-doc 门控状态：confirmed（2026-08-14 人工确认解除）**（§11.2 M4 (i) + 会计/财务保护区）。人工/owner 于 2026-08-14 确认「以行为保持的矩阵集中化方式迁移此 4 轴、过账/stock move/reversal-listener 路径完整保留」可接受，门控解除。据此将 Plan Status 由 `draft` 转 `active`（对齐 M3.10/M4.29-30/M4.1/M4.2 先例）。
 - Independent draft review iteration 2: `acceptable as-is (draft pending M4 gate)` (mission-driver review pass) — 复核确认：格式合规（全部必需段落/字段名/Phase 结构）、完备性（三阶段 Exit Criteria 清晰可测、Closure Gates 覆盖全项含 M4 门控）、范围清晰（docStatus 单轴 + rule 14 bundling 合理、无 scope creep、approveStatus M4.14/16/18/20 与过账/reversal-listener/模型/字典/API 均显式 Non-Goal）、结束证据已定义（验证命令 + grep + 测试引用 + Closure Audit Evidence 段）。BLOCKER=none（格式/完备/范围/结束证据维度）、MAJOR=none。**唯一阻塞 = M4 plan-first 人工/owner-doc 门控（§11.2 M4 (i)）**，属 review 时无法自主解除的「missing upstream decision」类阻塞（project-context.md「AI 阻塞条件」会计/财务保护域硬停止），`> Review Hold:` 已正确标注。按 fix-forward 逃生口：保持 `Plan Status: draft` 不激活，等待人工/owner-doc 确认后转 `active`。
 - Independent draft review iteration 3: `acceptable as-is (draft pending M4 gate)` (mission-driver review pass) — 四维复核全部 PASS：(1) 格式合规——必需段落/字段名/Phase 结构齐全，`Review Hold` 行位置正确（front matter 近 `Plan Status`）；(2) 完备性——三阶段 Exit Criteria 清晰可测、Closure Gates 覆盖全项含 M4 门控；(3) 范围——rule 14 bundling 合理（同 owner doc + 同 dict + 同 docStatus 行为契约 + 同结果表面），approveStatus/过账/reversal-listener/模型/字典/API/错误码重命名 均显式 Non-Goal，无 scope creep；(4) 结束证据——验证命令 + grep + 测试引用 + Closure Audit Evidence 段齐备。BLOCKER=none（四维）、MAJOR=none、MINOR=0。唯一阻塞 = M4 plan-first 人工/owner-doc 门控，属 review 时无法自主解除的「missing upstream decision」（会计/财务保护域硬停止，project-context.md「AI 阻塞条件」），`> Review Hold:` 已正确标注。按 fix-forward 逃生口：保持 `Plan Status: draft`，等待人工/owner-doc 确认后转 `active`。
 - Independent draft review iteration 4: `acceptable as-is (draft pending M4 gate)` (mission-driver review pass) — 四维复核全部 PASS：(1) 格式合规——front matter 段（Plan Status/Last Reviewed/Source/Related/Mission/Work Item/Audit）+ Review Hold（第 4 行，近 Plan Status）+ 治理声明 + 全部必需正文段落（Current Baseline/Goals/Non-Goals/Task Route/Infrastructure/Execution Plan/Draft Review Record/Closure Gates/Deferred But Adjudicated/Closure）齐全；三阶段 Phase 结构有效（Status/Targets/Skill/Item Types/Prereqs/checklist/Exit Criteria）。(2) 完备性——Exit Criteria 清晰可测（Phase 1 Bean 无状态+注册+层 1 测试+compile；Phase 2 测试全绿+grep 证实无内联矩阵；Phase 3 无未裁决漂移+owner doc 一致），Execution Plan 覆盖全部 checklist。(3) 范围——docStatus 单轴边界清晰，rule 14 bundling 合理，approveStatus/过账/reversal-listener/stock move/commitment/模型/字典/API/错误码重命名均显式 Non-Goal，无 scope creep。(4) 结束证据——验证命令 + grep + 测试引用 + Closure Audit Evidence 段齐备。BLOCKER=none（四维）、MAJOR=none、MINOR=0。唯一阻塞 = M4 plan-first 人工/owner-doc 门控（§11.2 M4 (i)，触及受保护采购业财过账行为），属 review 时无法自主解除的「missing upstream decision」（project-context.md 会计/财务保护域硬停止），`> Review Hold:` 已正确标注。按 fix-forward 逃生口：保持 `Plan Status: draft`，不激活，等待人工/owner-doc 确认后转 `active`。
@@ -157,20 +165,23 @@ Exit Criteria:
 
 - Independent draft review iteration 8: `acceptable as-is (draft pending M4 gate)` (mission-driver review pass, fresh session) — 四维复核全部 PASS：(1) 格式合规——front matter（Plan Status/Review Hold line 4 近 Plan Status/Last Reviewed/Source/Related/Mission/Work Item/Audit）+ 治理声明（§11.2 M4 (i)–(v)）+ rule 14 bundling 声明 + 全部必需正文段落（Current Baseline/Goals/Non-Goals/Task Route/Infrastructure/Execution Plan/Draft Review Record/Closure Gates/Deferred But Adjudicated/Closure）齐全；三阶段 Phase 结构有效（Status/Targets/Skill/Item Types/Prereqs/checklist/Exit Criteria）。(2) 完备性——Exit Criteria 三阶段清晰可测（Phase 1 4 Bean 无状态+注册+层 1 矩阵+compile；Phase 2 两种 cancel 编排形态接线+Payment cancel 缺口补全+层 3 回归；Phase 3 四方对照无未裁决漂移+owner doc 一致），Execution Plan 覆盖全部 checklist 项。(3) 范围——docStatus 单轴边界清晰，rule 14 bundling 合理（同 owner doc + 同 `erp/doc-status` dict + 同 cancel 行为契约 + 同结果表面），approveStatus(M4.14/16/18/20)/过账编排/reversal-listener/stock move/commitment/模型/字典/API/错误码重命名 均显式 Non-Goal，无 scope creep。(4) 结束证据——验证命令（`mvn test -pl module-purchase/erp-pur-service -am` + `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`）+ grep + 测试引用 + Closure Audit Evidence 段 + Closure Gates（含 M4 门控确认门）齐备。BLOCKER=none（四维）、MAJOR=none、MINOR=0。唯一阻塞 = M4 plan-first 人工/owner-doc 门控（§11.2 M4 (i)，触及受保护采购业财过账行为 = cancel approved+posted 逆转存货移动 + 红字凭证），属 review 时无法自主解除的「missing upstream decision」（project-context.md「AI 阻塞条件」会计/财务保护域硬停止，line 67–68）。`> Review Hold:` 已正确标注（line 4）。无格式/完备/范围/结束证据 issue 需就地修复。按 fix-forward 逃生口：保持 `Plan Status: draft`，等待人工/owner-doc 确认记录追加 Draft Review Record 后方可转 `active`（对齐 `0805-3` 先例）。
 - Independent draft review iteration 9: `acceptable as-is (draft pending M4 gate)` (mission-driver review pass, fresh session) — 四维复核全部 PASS：(1) 格式合规——front matter（Plan Status/Review Hold line 4 近 Plan Status/Last Reviewed/Source/Related/Mission/Work Item/Audit）+ 治理声明（§11.2 M4 (i)–(v)）+ rule 14 bundling 声明 + 全部必需正文段落齐全；三阶段 Phase 结构有效。(2) 完备性——Exit Criteria 三阶段清晰可测，Execution Plan 覆盖全部 checklist 项。(3) 范围——docStatus 单轴 + rule 14 bundling 合理（同 owner doc + 同 `erp/doc-status` dict + 同 cancel 行为契约 + 同结果表面），approveStatus/过账编排/reversal-listener/stock move/commitment/模型/字典/API/错误码重命名 均显式 Non-Goal，无 scope creep。(4) 结束证据——验证命令 + grep + 测试引用 + Closure Audit Evidence 段 + Closure Gates（含 M4 门控确认门）齐备。BLOCKER=none（四维）、MAJOR=none、MINOR=0。唯一阻塞 = M4 plan-first 人工/owner-doc 门控（§11.2 M4 (i)，触及受保护采购业财过账行为），属 review 时无法自主解除的「missing upstream decision」（project-context.md「AI 阻塞条件」会计/财务保护域硬停止）。无格式/完备/范围/结束证据 issue 需就地修复。按 fix-forward 逃生口：保持 `Plan Status: draft`，`> Review Hold:` 已正确标注（line 4），等待人工/owner-doc 确认记录追加 Draft Review Record 后方可转 `active`。
+- Independent draft review iteration 11: `acceptable as-is (draft pending M4 gate)` (mission-driver review pass, fresh session `MISSION_DRIVER:2026-08-14-070716-mission-driver`) — 完整阅读计划全文（213 行）+ 计划起草与执行指南（267 行）+ project-context.md（93 行）+ 实仓核实 owner docs（`entity-state-machine-bean.md` §11.2 M4 (i) line 283「触及受保护行为时不因 StateMachine Bean 抽象而免除人工/owner-doc 门控」EXACT；`docs/design/purchase/state-machine.md`、`docs/analysis/2026-08-12-entity-state-axis-inventory.md`、`docs/backlog/entity-state-machine-migration-roadmap.md` 均存在）后四维复核全部 PASS：(1) 格式合规——front matter（Plan Status line 3 / Review Hold line 4 近 Plan Status / Last Reviewed 2026-08-14 / Source / Related / Mission / Work Item / Audit）+ 治理声明（§11.2 M4 (i)–(v)）+ rule 14 bundling 声明 + 全部必需正文段落（Current Baseline/Goals/Non-Goals/Task Route/Infrastructure And Config Prereqs/Execution Plan/Draft Review Record/Closure Gates/Deferred But Adjudicated/Closure）齐全；三阶段 Phase 结构有效（Status/Targets/Skill/Item Types/Prereqs/checklist/Exit Criteria）。(2) 完备性——Exit Criteria 三阶段清晰可测（Phase 1 4 Bean 无状态+ACTIVE Decision+注册+层 1 矩阵+compile；Phase 2 两种 cancel 编排形态接线+Payment cancel 缺口+层 3 回归+grep；Phase 3 四方对照+漂移 Decision+owner doc 补注），Execution Plan 覆盖全部 checklist 项。(3) 范围——docStatus 单轴边界清晰，rule 14 bundling 合理（同 owner doc + 同 `erp/doc-status` dict + 同 cancel 行为契约 + 同结果表面），approveStatus(M4.14/16/18/20)/过账编排/reversal-listener/stock move/commitment/模型/字典/API/错误码重命名 均显式 Non-Goal，无 scope creep。(4) 结束证据——验证命令（`mvn test -pl module-purchase/erp-pur-service -am` + Closure `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`）+ grep + 测试引用 + Closure Audit Evidence 段 + Closure Gates（含 M4 门控确认门 §11.2 M4 (i)）齐备。BLOCKER=none（四维）、MAJOR=none、MINOR=0。**唯一阻塞 = M4 plan-first 人工/owner-doc 门控**（§11.2 M4 (i)，cancel approved+posted 逆转存货移动 + 红字凭证，属会计/财务保护域），属 review 时无法自主解除的「missing upstream decision」类阻塞（project-context.md「AI 阻塞条件」line 67-68 硬停止；AI 审查者无权自行授权该门控）。`> Review Hold:` 已正确标注（line 4，近 Plan Status）。无格式/完备/范围/结束证据 issue 需就地修复。按 fix-forward 逃生口：保持 `Plan Status: draft` 不激活，等待人工/owner-doc 确认记录追加 Draft Review Record 后转 `active`（对齐 `0805-3` 先例）。
+
+- Independent draft review iteration 10: `acceptable as-is (draft pending M4 gate)` (mission-driver review pass, fresh session `MISSION_DRIVER:2026-08-13-193118-mission-driver`) — 完整阅读计划全文（212 行）+ 计划起草与执行指南（267 行）+ project-context.md（93 行）后四维复核全部 PASS：(1) 格式合规——front matter 齐全（Plan Status line 3 / Review Hold line 4 近 Plan Status / Last Reviewed / Source / Related / Mission / Work Item / Audit）+ 治理声明（§11.2 M4 (i)–(v) 五条硬约束）+ rule 14 bundling 声明 + 全部必需正文段落（Current Baseline/Goals/Non-Goals/Task Route/Infrastructure And Config Prereqs/Execution Plan/Draft Review Record/Closure Gates/Deferred But Adjudicated/Closure）齐全；三阶段 Phase 结构有效（每阶段 Status/Targets/Skill/Item Types/Prereqs/checklist/Exit Criteria）。(2) 完备性——Exit Criteria 三阶段清晰可测（Phase 1：4 Bean 无状态+ACTIVE Decision 登记+app-service.beans.xml FQN id 注册+R5 合规+层 1 矩阵表驱动+`mvn compile -pl module-purchase/erp-pur-service -am`；Phase 2：两种 cancel 编排形态接线后既有测试全绿+Payment cancel 缺口补全+grep 证实 cancel 路径无内联固定状态矩阵；Phase 3：四方对照无未裁决漂移+owner doc §三轴 docStatus ACTIVE 补注与 dict/Bean/code 一致），Execution Plan 覆盖全部 checklist 项。(3) 范围——docStatus 单轴边界清晰，rule 14 bundling 合理（同一 owner doc `docs/design/purchase/state-machine.md` + 同一 `erp/doc-status` dict + 同一 cancel: DRAFT→CANCELLED 行为契约 + 同一结果表面 = 采购单据 docStatus 生命周期），approveStatus(M4.14/16/18/20)/过账编排/reversal-listener 回写/stock move 逆转/commitment-restore/模型/字典/API/错误码重命名 均显式 Non-Goal，无 scope creep。(4) 结束证据——验证命令（`mvn test -pl module-purchase/erp-pur-service -am` + Closure `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`）+ grep + 测试引用 + Closure Audit Evidence 段 + Closure Gates（含 M4 门控确认门 §11.2 M4 (i)）齐备。BLOCKER=none（四维）、MAJOR=none、MINOR=0。**唯一阻塞 = M4 plan-first 人工/owner-doc 门控**（§11.2 M4 (i)，cancel approved+posted 逆转存货移动 `IErpInvStockMoveBiz` + 红字凭证 `*PostingDispatcher.reverse`→`IErpFinVoucherBiz.reverse`，属会计/财务保护域），经核实属 review 时无法自主解除的「missing upstream decision」类阻塞：project-context.md「AI 阻塞条件」(line 67-68) 明示「任何更改触及…会计/财务或其他 ERP 保护区域…硬停止」，且 §11.2 M4 (i) 显式声明「触及受保护行为时不因 StateMachine Bean 抽象而免除人工/owner-doc 门控」——AI 审查者无权自行授权该门控。`> Review Hold:` 已正确标注（line 4，近 Plan Status）。无格式/完备/范围/结束证据 issue 需就地修复。按 fix-forward 逃生口：保持 `Plan Status: draft` 不激活，等待人工/owner-doc 确认记录追加 Draft Review Record 后转 `active`（对齐 `0805-3` 先例）。
 
 ## Closure Gates
 
 > 本计划含生产代码变更（4 Bean + cancel 路径接线 + 测试 + owner doc 补注），Closure Gates 运行完整仓库验证。无 ORM/API/字典变更（doc-status 3 值保留 + ACTIVE 死状态不改绑），Compliance 基线预期无漂移（R5=0/R11=0）。
 
-- [ ] 范围内行为完成（4 Bean + cancel 接线 + 三层证据；过账/stock move/reversal-listener/commitment 时序完整保留，§11.2 M4 (ii)/(iv)/(v)）
-- [ ] 相关文档对齐（owner doc §三轴 docStatus ACTIVE 补注 + 漂移 Decision 登记；路线图 M4.13 + M4.15 + M4.17 + M4.19 done）
-- [ ] 已运行验证：`mvn test -pl module-purchase/erp-pur-service -am` + Closure 时 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`
-- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（4 Bean + cancel 接线 + 三层证据；过账/stock move/reversal-listener/commitment 时序完整保留，§11.2 M4 (ii)/(iv)/(v)）
+- [x] 相关文档对齐（owner doc §三轴 docStatus ACTIVE 补注 + 漂移 Decision 登记；路线图 M4.13 + M4.15 + M4.17 + M4.19 done）
+- [x] 已运行验证：`mvn test -pl module-purchase/erp-pur-service -am` + Closure 时 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`
+- [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -200,12 +211,39 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填充>
+Status Note: 已执行完毕并经独立结束审计（子代理新会话 `ses_002714aaeffeCq073PlQ5opmst`）APPROVE（0 BLOCKER / 0 MAJOR / 3 MINOR 全部为闭包簿记，已在本 Closure 完成）。Plan Status: `active → completed`。4 实体 docStatus 轴迁移闭环：4 Bean + 两种 cancel 编排形态接线 + 层 1 矩阵（24 tests）+ 层 3 回归（294 tests 全绿）+ 四方对照无未裁决漂移。
+
+**四方对照（层 2，10 维度 × 4 轴，dict ↔ owner doc ↔ Bean ↔ writer）**：
+
+| 维度 | dict `erp/doc-status` | owner doc `purchase/state-machine.md` | Bean（4 个同构） | writer（实仓） | 对照结论 |
+|------|----------------------|--------------------------------------|------------------|----------------|----------|
+| DRAFT | 草稿（`_dump/nop-app/dict/erp-pur/doc-status.dict.yaml`） | 单据生命周期初始态（§三轴） | initial={DRAFT} | 创建初始写（CrudBizModel 创建路径） | ✓ 可达 |
+| CANCELLED | 已作废 | 「任意非终态 → 作废 → docStatus=CANCELLED」 | terminal={CANCELLED}，cancelTargetStatus() | cancel 路径唯一生产 writer（4 实体均经 Bean `cancelTargetStatus()` 写回） | ✓ 可达 |
+| ACTIVE | 已生效 | 零 writer（本计划补注） | 不编码入边，isTerminal(ACTIVE)=false，cancel(ACTIVE) 放行 | **零生产 writer**（业务「已生效」= approveStatus=APPROVED + posted） | ✓ 裁定 `intentional legacy dead state` |
+| 迁移边 cancel | — | DRAFT→CANCELLED（单边） | transitions()=1 边 cancel(DRAFT→CANCELLED) | validateTransitionForCancel→assertCanCancel（Receive/Return 接 CancelProcessor；Invoice/Payment 接主 Processor） | ✓ 两种编排形态接线正确 |
+| 错误码 | — | — | Bean 抛 common `ERR_ILLEGAL_STATUS_TRANSITION` + action/fromStatus | Processor 映射域码（Receive 泛型 `ErpPurErrors.java:53` / Invoice `:134` / Payment `:162` / Return `:198`） | ✓ Receive 泛型命名漂移 = successor |
+| reversal-listener | — | §reversal listener 回退目标态表（posted=false + APPROVED→REJECTED） | 不触 docStatus | `PurReversalListener` 4 个 rollback*（`:70-126`）仅回写 posted/approveStatus，**0 处 setDocStatus** | ✓ 不触 docStatus |
+| 过账路径 | — | 审核触发（§2 迁移表） | — | Receive→`IErpInvStockMoveBiz`（无 dispatcher）；Invoice→AP_INVOICE / Payment→PAYMENT / Return→PURCHASE_RETURN dispatcher；cancel 逆转保留 | ✓ §11.2 M4 (ii)/(iv)/(v) 保留 |
+| commitment-restore | — | budget.md 接入点 | — | Invoice `runCommitmentRestoreOnInvoiceReverseHook` / Return `runCommitmentRestoreOnReturnReverseHook` 保留 | ✓ 无回归（9+7 tests 全绿） |
+| 死 doCancel 辅助 | — | — | — | Receive/Return 主 Processor `doCancel:270/:234` + `validateTransitionForCancel:158-163/:175-179` = facade 残留（不在 live cancel 路径） | ✓ 裁定保持原状不双写 |
+| Payment workflow | — | nop-wf 审批 | — | `nopFlowId`（`useWorkflow="true"`）审批流保留 | ✓ `TestErpPurPaymentWorkflowApproval` 3 tests 全绿 |
+
+**漂移裁定（路线图规则 5，Decision）**：
+- (a) ACTIVE 死状态 = `intentional legacy dead state`（同 Order/Quotation M2；dict 值保留不改绑；Bean 不编码入边；owner doc §三轴已补注）。
+- (b) Receive 错误码 `ERR_ILLEGAL_DOC_STATUS_TRANSITION`（无 RECEIVE_ 前缀，msg 硬编码「入库单」）vs Invoice/Payment/Return entity-scoped = `naming drift successor`（本计划保持既有码，`{receiveCode}/{currentDocStatus}/{expectedDocStatus}` 参数对外不变；语义对齐归 successor，同 M3.15 JobCard 先例；见 §Deferred But Adjudicated）。
+- (c) 死 doCancel 辅助 + facade 守卫残留（Receive/Return 主 Processor）= `intentional legacy` 保持原状不双写（避免引入双写）。
+
+**验证状态（全绿基线）**：
+- 层 1 矩阵：`TestErpPurReceiveInvoicePaymentReturnDocumentStateMachines` 24 tests, 0 failures。
+- 层 3 回归：`mvn test -pl module-purchase/erp-pur-service` → **294 tests, 0 failures, 0 errors, 0 skipped**（含 Receive/Invoice/Return/Payment cancel + posting/reversal-listener-rollback/commitment-restore/workflow-approval/finance-reversal-writeback；Payment 新增 `testCancelFromDraft` 填补既有缺口）。
+- 全仓构建：`mvn clean install -DskipTests` 156 模块 BUILD SUCCESS。
+- Compliance：`bash docs/audits/nop-compliance-checker.sh` 19 规则汇总与 `compliance-baseline.md §BASELINE` 块逐行一致 **0 漂移**（R5=0 / R11=0，符合基线预期）。
+- `mvn test -pl module-purchase/erp-pur-service -am` 全 reactor 运行时仅 master-data `TestErpMdSkuServices` 9 个 `unknown-operation` 错误，与本次变更无关（零触碰 master-data；独立运行 9/9 全绿，属既有 reactor 隔离/时序问题，非本计划引入）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立子代理（新会话，零信任实仓复核）`ses_002714aaeffeCq073PlQ5opmst`
+- Evidence: 全部核查项（A Bean 无状态/矩阵 / B beans.xml FQN 注册 / C 两种编排形态接线+错误码映射+副作用保留 / D 层 1+Payment cancel 测试 / E 294 tests + 全仓 BUILD SUCCESS + compliance 0 漂移 / F owner doc 补注 / G 计划簿记一致性）逐项 PASS；Verdict: **APPROVE**（0 BLOCKER / 0 MAJOR / 3 MINOR 闭包簿记，本 Closure 已全部完成）。
 
 Follow-up:
 

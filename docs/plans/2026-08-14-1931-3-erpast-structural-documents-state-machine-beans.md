@@ -1,9 +1,9 @@
 # 2026-08-14-1931-3-erpast-structural-documents-state-machine-beans 资产域拆分/合并文档双轴状态机 Bean（M4.48 + M4.49 + M4.50 + M4.51）
 
-> Plan Status: draft
-> Review Hold: §11.2 M4 (i) 人工/owner-doc 门控待确认——本计划触及受保护资产/业财过账行为（Split approve→结构性资产拆分过账 + 卡片重组、Merge approve→结构性资产合并过账 + 卡片重组；二者均 post-only 无 reverse，reverseApprove 无条件抛 ERR_*_REVERSE_NOT_SUPPORTED 不可逆契约）。M4 plan-first 门控成立；该人工裁定非起草者/审查者可自主解除（project-context.md 会计/财务保护域硬停止）。计划格式/完备性/范围/结束证据经 3 轮独立草案审查收敛 accept，保持 `draft` 直至门控确认（同 2026-08-14-0930-1 制造 M4 / 2026-08-13-0810-x / 1146-x batch-consistent hold）。
+> Plan Status: active
+> Review Hold: §11.2 M4 (i) 人工/owner-doc 门控**已于 2026-08-14 经人工确认解除**（见 Draft Review Record 门控确认记录）——本计划触及受保护资产/业财过账行为（Split approve→结构性资产拆分过账 + 卡片重组、Merge approve→结构性资产合并过账 + 卡片重组；二者均 post-only 无 reverse，reverseApprove 无条件抛 ERR_*_REVERSE_NOT_SUPPORTED 不可逆契约）。M4 plan-first 门控成立且经人工确认；已转 `active` 进入实施。
 > Last Reviewed: 2026-08-14
-> Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.48（ErpAstSplit.docStatus）+ M4.49（ErpAstSplit.approveStatus）+ M4.50（ErpAstMerge.docStatus）+ M4.51（ErpAstMerge.approveStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md` AST-9/10/11（待核实行段，312-325 区间）+ M4.48-51
+> Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.48（ErpAstSplit.docStatus）+ M4.49（ErpAstSplit.approveStatus）+ M4.50（ErpAstMerge.docStatus）+ M4.51（ErpAstMerge.approveStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md`（M4.48-51 行段，320-323 区间）
 > Related: M4 采购审批先例 `2026-08-13-1950-1-purchase-m4-approvestatus-state-machine-bean.md`（facade `validateTransitionForXxx` + per-mutation 双路径 + 双轴后缀命名 done）；M3 同域先例 `2026-08-13-0805-2-erpast-movement-state-machine-beans.md`（同域双轴 done）；同批计划 1 `2026-08-14-1931-1-erpast-core-lifecycle-state-machine-beans.md`（assets status 轴基线）、计划 2 `2026-08-14-1931-2-erpast-value-change-documents-state-machine-beans.md`（assets 文档双轴 facade 范式，先执行建立文档双轴接线基线）
 > Mission: entity-state-machine
 > Work Item: M4.48 + M4.49 + M4.50 + M4.51
@@ -58,7 +58,7 @@
 
 ## Task Route
 
-- Type: `implementation-only change`（消费 M0.1 契约 + M0.2 清单 + M1.3 模板 §11 + **同批计划 2 Disposal facade 直接范本** + M4 采购审批 1951-1；落地 4 个双轴 Bean + facade/per-mutation 接线 + 测试 + 四方对照；不改契约/模型/公共 API/共享骨架。**M4 plan-first**——approve 触发结构性资产过账 + 卡片重组）
+- Type: `implementation-only change`（消费 M0.1 契约 + M0.2 清单 + M1.3 模板 §11 + **同批计划 2 Disposal facade 直接范本** + M4 采购审批 1950-1；落地 4 个双轴 Bean + facade/per-mutation 接线 + 测试 + 四方对照；不改契约/模型/公共 API/共享骨架。**M4 plan-first**——approve 触发结构性资产过账 + 卡片重组）
 - Owner Docs: `docs/architecture/entity-state-machine-bean.md`（M0.1 契约 + §11 模板 + §11.2 M4 变体 + §1 双轴命名）、`docs/design/assets/split-merge.md`（§关键业务规则 5 不可逆契约 + 拆分/合并业务规则）、`docs/design/assets/state-machine.md`（§实现模式与守卫边界 PROC 路径）、`docs/design/domain-design-guidelines.md`（§16.4 reverseApprove→REJECTED）、`docs/analysis/2026-08-12-entity-state-axis-inventory.md`（AST-9/10/11）、`docs/architecture/processor-extension-pattern.md`、`docs/skills/state-machine-business-review-prompt.md`、`docs/plans/2026-08-14-1931-2-erpast-value-change-documents-state-machine-beans.md`（同域文档双轴直接范本）
 - Skill Selection Basis: 路线图 M4.48-51 指定 `nop-backend-dev` + `nop-testing`。`nop-backend-dev` 匹配「facade validateTransition + per-mutation 接线、Bean 注册、`@Inject` 非 private、cause-chaining 错误码、不可逆契约守卫保留、过账副作用保留、产品化可定制性自检」；`nop-testing` 匹配「矩阵表驱动测试 + 既有集成测试回归」。`state-machine-business-review-prompt.md` 匹配层 2 四方对照。必需输入均已就绪。
 
@@ -135,6 +135,7 @@ Exit Criteria:
 
 - Independent draft review iteration 1: `needs revision` (`ses_00335fee7ffedAqnzZlUZ6edkR`) — 零信任实仓核实全部 baseline 声明（6 错误码精确行号 / 2 dispatcher post-only 注释 / 2 facade + 各 6 per-mutation 注册 / greenfield SM Bean / split-merge.md §关键业务规则 5 / §16.4 reverseApprove→REJECTED / 规则 14 bundling + §11.2 M4 治理 + 规则 13 不可逆保留）均 pass。1 MAJOR（review brief 标记的 KEY risk）已修正：**reverseApprove 建模错误**——plan 误称「posted=false 窗口有效 / posted=true 不可逆」，实仓 per-mutation `ErpAst{Split,Merge}ReverseApproveProcessor:22-26` **无条件抛 `ERR_*_REVERSE_NOT_SUPPORTED`**（无 posted 判定、无 executeReverseApprove 方法体、短路在 facade validateTransitionForReverseApprove 之前）。v2 修正：baseline 改为无条件抛错；治理声明/Non-Goal 改为「无 posted 窗口」；Decision (A) 改为 Bean reverseApprove 边 = **名义元数据边（运行时不可达，javadoc 标注，不接线）**，层 1 矩阵测试显式断言不可达；Split/Merge 接线移除 reverseApprove 委托（per-mutation 保持无条件抛错）；移除 Phase 3 幻影「posted=false 窗口」测试断言。MINOR：docStatus Decision (C) 据实仓 SplitProcessor:117 已写 ACTIVE + :176-187/:459-463 isCancelled 守卫，倾向命名边（并入 Decision (B)）。
 - Independent draft review iteration 2: `needs revision` → 修正后收敛 (`ses_0032e4e99ffeu7lO6e4m5NPdX5`) — iteration 1 MAJOR（无条件抛错建模）在 10 处中 8 处已正确修正；残余 2 处 Goals 高可见位仍带旧错误：(M1a) Goals L42 `posted=true 后 reverseApprove 抛` 残留条件模型；(M1b) Goals L41 引用不存在的 `executeReverseApprove` 接线目标（Split/Merge facade 无此方法）。v3 已修正 Goals 两行。2 MINOR 一并处理：(m1) Decision (A) 层 1/层 3 测试断言拆分（层 1 仅断言元数据存在，运行时不可达归层 3 Phase 3 Proof）；(m2) Decision (C) `validateTransitionForCancel` 保留 ACTIVE/posted 动态条件 + 仅 CANCELLED 判定委托 Document Bean `isCancelled()`。
+- **M4 plan-first 人工/owner-doc 门控状态：confirmed（2026-08-14 人工确认解除）**（§11.2 M4 (i)）。人工/owner 于 2026-08-14 确认「以行为保持的矩阵集中化方式迁移结构性资产单据各轴、Split/Merge 过账 + 卡片重组 + post-only 不可逆契约完整保留」可接受，门控解除。据此将 Plan Status 由 `draft` 转 `active`。
 
 ## Closure Gates
 
