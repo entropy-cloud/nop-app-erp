@@ -1,6 +1,6 @@
 # 2026-08-14-1931-3-erpast-structural-documents-state-machine-beans 资产域拆分/合并文档双轴状态机 Bean（M4.48 + M4.49 + M4.50 + M4.51）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) 人工/owner-doc 门控**已于 2026-08-14 经人工确认解除**（见 Draft Review Record 门控确认记录）——本计划触及受保护资产/业财过账行为（Split approve→结构性资产拆分过账 + 卡片重组、Merge approve→结构性资产合并过账 + 卡片重组；二者均 post-only 无 reverse，reverseApprove 无条件抛 ERR_*_REVERSE_NOT_SUPPORTED 不可逆契约）。M4 plan-first 门控成立且经人工确认；已转 `active` 进入实施。
 > Last Reviewed: 2026-08-14
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.48（ErpAstSplit.docStatus）+ M4.49（ErpAstSplit.approveStatus）+ M4.50（ErpAstMerge.docStatus）+ M4.51（ErpAstMerge.approveStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md`（M4.48-51 行段，320-323 区间）
@@ -71,65 +71,65 @@
 
 ### Phase 1 - ErpAstSplit 双轴 Bean（M4.48 + M4.49）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpAstSplit{Approval,Document}StateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpAstSplitProcessor.java`、`.../processor/ErpAstSplit{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval,Cancel}Processor.java`、`.../test/.../statemachine/TestErpAstSplit{Approval,Document}StateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done；同批计划 2 Disposal facade 范式已 done（或同期建立）；M4 plan-first 门控解除
 
-- [ ] `Decision`（不可逆契约建模 + 双轴接线 + docStatus 轴）：(A) reverseApprove 目标态=REJECTED（§16.4 约定）——但 **Split/Merge reverseApprove 是无条件抛错动作（per-mutation Processor:22-26，无 posted 判定、短路在 facade validateTransitionForReverseApprove 之前）**，运行时从不产生状态迁移。Bean 建模裁定：Approval Bean 将 reverseApprove APPROVED→REJECTED 声明为 **名义边（nominal edge，供矩阵完备性/可达性元数据 M5.1 消费 + §16.4 约定对齐）**，javadoc 显式标注「运行时不可达——per-mutation Processor 无条件抛 ERR_*_REVERSE_NOT_SUPPORTED」；Bean `assertCanReverseApprove` 存在但**不被接线**（reverseApprove 路径不经 facade validateTransition，per-mutation 短路）。**层 1 矩阵测试仅断言 reverseApprove 边在 `transitions()` 元数据中存在**（元数据完备性）；**运行时不可达由层 3 Phase 3 Proof 断言**（reverseApprove 调用无条件抛 ERR_*_REVERSE_NOT_SUPPORTED）。(B) docStatus 轴：approve 写 ACTIVE（SplitProcessor:117）+ cancel 守卫（`validateTransitionForCancel:176-187` 检查 ACTIVE/CANCELLED/posted 三条件 + `isCancelled():459-463`）——Document Bean 据实仓裁定（approve→ACTIVE 命名边 vs ACTIVE 预留死状态退化轴，同计划 2 Decision (B) 范式；实仓 facade 已写 ACTIVE，倾向命名边）。(C) `validateTransitionForCancel` 委托 Document Bean `isCancelled()`（docStatus 轴部分；该守卫的 ACTIVE/posted 条件属动态业务守卫保留原位，仅 CANCELLED 判定委托 Document Bean）。
+- [x] `Decision`（不可逆契约建模 + 双轴接线 + docStatus 轴）：(A) reverseApprove 目标态=REJECTED（§16.4 约定）——但 **Split/Merge reverseApprove 是无条件抛错动作（per-mutation Processor:22-26，无 posted 判定、短路在 facade validateTransitionForReverseApprove 之前）**，运行时从不产生状态迁移。Bean 建模裁定：Approval Bean 将 reverseApprove APPROVED→REJECTED 声明为 **名义边（nominal edge，供矩阵完备性/可达性元数据 M5.1 消费 + §16.4 约定对齐）**，javadoc 显式标注「运行时不可达——per-mutation Processor 无条件抛 ERR_*_REVERSE_NOT_SUPPORTED」；Bean `assertCanReverseApprove` 存在但**不被接线**（reverseApprove 路径不经 facade validateTransition，per-mutation 短路）。**层 1 矩阵测试仅断言 reverseApprove 边在 `transitions()` 元数据中存在**（元数据完备性）；**运行时不可达由层 3 Phase 3 Proof 断言**（reverseApprove 调用无条件抛 ERR_*_REVERSE_NOT_SUPPORTED）。(B) docStatus 轴：approve 写 ACTIVE（SplitProcessor:117）+ cancel 守卫（`validateTransitionForCancel:176-187` 检查 ACTIVE/CANCELLED/posted 三条件 + `isCancelled():459-463`）——Document Bean 据实仓裁定（approve→ACTIVE 命名边 vs ACTIVE 预留死状态退化轴，同计划 2 Decision (B) 范式；实仓 facade 已写 ACTIVE，倾向命名边）。(C) `validateTransitionForCancel` 委托 Document Bean `isCancelled()`（docStatus 轴部分；该守卫的 ACTIVE/posted 条件属动态业务守卫保留原位，仅 CANCELLED 判定委托 Document Bean）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpAstSplitApprovalStateMachine`（5 动作 6 边：submit UNSUBMITTED/REJECTED→SUBMITTED、approve SUBMITTED→APPROVED、reject SUBMITTED→REJECTED、reverseApprove APPROVED→REJECTED **[名义边，运行时不可达——无条件抛 ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED]**、withdraw SUBMITTED→UNSUBMITTED）+ `ErpAstSplitDocumentStateMachine`（据 Decision (B)）+ `assertCanXxx`/`*TargetStatus()`/分类/`transitions()`。reverseApprove 边 javadoc 标注不可达 + 不接线。注册 2 Bean。镜像计划 2 Disposal 双轴结构。
+- [x] `Add`：落地 `ErpAstSplitApprovalStateMachine`（5 动作 6 边：submit UNSUBMITTED/REJECTED→SUBMITTED、approve SUBMITTED→APPROVED、reject SUBMITTED→REJECTED、reverseApprove APPROVED→REJECTED **[名义边，运行时不可达——无条件抛 ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED]**、withdraw SUBMITTED→UNSUBMITTED）+ `ErpAstSplitDocumentStateMachine`（据 Decision (B)）+ `assertCanXxx`/`*TargetStatus()`/分类/`transitions()`。reverseApprove 边 javadoc 标注不可达 + 不接线。注册 2 Bean。镜像计划 2 Disposal 双轴结构。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线）：`ErpAstSplitProcessor` 注入 2 Bean（非 private）；`validateTransitionForSubmit/Withdraw/Approve/Reject` 各改调 Approval Bean `assertCanXxx`（try/catch common 码 → cause-chain `ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION`）；`validateTransitionForCancel` 改调 Document Bean `isCancelled()`；`executeApprove` 目标态改调 Bean `*TargetStatus()`。**reverseApprove 不接线**（per-mutation `ErpAstSplitReverseApproveProcessor:22-26` 短路在 facade validateTransitionForReverseApprove 之前，无条件抛 `ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED`——保留原位，Bean reverseApprove 边为名义元数据不接运行时）。per-mutation 5 Processor（Submit/Approve/Reject/Withdraw/Cancel）经 facade 透传自动生效；ReverseApprove per-mutation 保持无条件抛错不变。**比例/金额平衡（PROPORTION_NOT_BALANCED/AMOUNT_NOT_BALANCED）、跨类别（CROSS_CATEGORY_NOT_ALLOWED）、源 IN_SERVICE（SOURCE_NOT_IN_SERVICE）、净值充足（INSUFFICIENT_NET_VALUE）、目标编码唯一（TARGET_ASSET_CODE_DUPLICATE）、已过账（ALREADY_POSTED）全部保留原位**。资产卡片重组 + `AssetSplitPostingDispatcher.tryPost` + posted 置位保留原位。
+- [x] `Add`（接线）：`ErpAstSplitProcessor` 注入 2 Bean（非 private）；`validateTransitionForSubmit/Withdraw/Approve/Reject` 各改调 Approval Bean `assertCanXxx`（try/catch common 码 → cause-chain `ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION`）；`validateTransitionForCancel` 改调 Document Bean `isCancelled()`；`executeApprove` 目标态改调 Bean `*TargetStatus()`。**reverseApprove 不接线**（per-mutation `ErpAstSplitReverseApproveProcessor:22-26` 短路在 facade validateTransitionForReverseApprove 之前，无条件抛 `ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED`——保留原位，Bean reverseApprove 边为名义元数据不接运行时）。per-mutation 5 Processor（Submit/Approve/Reject/Withdraw/Cancel）经 facade 透传自动生效；ReverseApprove per-mutation 保持无条件抛错不变。**比例/金额平衡（PROPORTION_NOT_BALANCED/AMOUNT_NOT_BALANCED）、跨类别（CROSS_CATEGORY_NOT_ALLOWED）、源 IN_SERVICE（SOURCE_NOT_IN_SERVICE）、净值充足（INSUFFICIENT_NET_VALUE）、目标编码唯一（TARGET_ASSET_CODE_DUPLICATE）、已过账（ALREADY_POSTED）全部保留原位**。资产卡片重组 + `AssetSplitPostingDispatcher.tryPost` + posted 置位保留原位。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（2 Bean 独立测试）+ 层 2 四方对照（dict `wf/approve-status` + `erp/doc-status` ↔ `split-merge.md` §关键业务规则 ↔ Bean ↔ 全部 writer：facade validateTransition 6 + executeApprove/ReverseApprove 2 + per-mutation 6 + 创建写 + CRUD 路径排除 + 不可逆守卫 REVERSE_NOT_SUPPORTED 登记）。
+- [x] `Proof`：层 1 矩阵完备性（2 Bean 独立测试）+ 层 2 四方对照（dict `wf/approve-status` + `erp/doc-status` ↔ `split-merge.md` §关键业务规则 ↔ Bean ↔ 全部 writer：facade validateTransition 5 + executeApprove 2 目标态 + per-mutation 6 + 创建写 + CRUD 路径排除 + 不可逆守卫 REVERSE_NOT_SUPPORTED 登记）。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] Split 双轴 Bean 存在/注册/无状态；facade validateTransition（Submit/Withdraw/Approve/Reject/Cancel）+ executeApprove 委托 Bean，内联 `Objects.equals` 状态判断已移除；reverseApprove 不接线（per-mutation 无条件抛 `ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED` 保持，Bean 边为名义元数据）。
-- [ ] Split 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstSplitApprovalStateMachineMatrix,TestErpAstSplitDocumentStateMachineMatrix` 全绿。
+- [x] Split 双轴 Bean 存在/注册/无状态；facade validateTransition（Submit/Withdraw/Approve/Reject/Cancel）+ executeApprove 委托 Bean，内联 `Objects.equals` 状态判断已移除（cancel 守卫 ACTIVE/posted 动态条件按 Decision (C) 保留原位）；reverseApprove 不接线（per-mutation 无条件抛 `ERR_AST_SPLIT_REVERSE_NOT_SUPPORTED` 保持，Bean 边为名义元数据）。
+- [x] Split 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstSplitApprovalStateMachineMatrix,TestErpAstSplitDocumentStateMachineMatrix` 全绿（22/22：Approval 13 含 reverseApprove 名义边元数据测试 + Document 9）。
 
 ### Phase 2 - ErpAstMerge 双轴 Bean（M4.50 + M4.51）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpAstMerge{Approval,Document}StateMachine.java`、`.../processor/ErpAstMergeProcessor.java`、`.../processor/ErpAstMerge{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval,Cancel}Processor.java`、`.../test/.../statemachine/TestErpAstMerge{Approval,Document}StateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（Split 双轴 + facade 接线 + 不可逆守卫范式已固化）
 
-- [ ] `Add`：落地 `ErpAstMergeApprovalStateMachine`（5 动作 6 边，同 Split 矩阵结构）+ `ErpAstMergeDocumentStateMachine`（同 Phase 1 Decision (C) 范式）。注册 2 Bean。
+- [x] `Add`：落地 `ErpAstMergeApprovalStateMachine`（5 动作 6 边，同 Split 矩阵结构）+ `ErpAstMergeDocumentStateMachine`（同 Phase 1 Decision (C) 范式）。注册 2 Bean。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线，镜像 Phase 1）：`ErpAstMergeProcessor` 注入 2 Bean；`validateTransitionForSubmit/Withdraw/Approve/Reject` 改调 Approval Bean；cancel 守卫改调 Document Bean `isCancelled()`；`executeApprove` 目标态改调 Bean。**reverseApprove 不接线**（per-mutation `ErpAstMergeReverseApproveProcessor:22-26` 无条件抛 `ERR_AST_MERGE_REVERSE_NOT_SUPPORTED` 保持；Bean reverseApprove 边为名义元数据）。**源 IN_SERVICE（SOURCE_NOT_IN_SERVICE）、跨类别/币种（CROSS_CATEGORY/CURRENCY_NOT_ALLOWED）、无源（NO_SOURCES）、已过账（ALREADY_POSTED）全部保留原位**。资产卡片合并 + `AssetMergePostingDispatcher.tryPost` + posted 置位保留原位。
+- [x] `Add`（接线，镜像 Phase 1）：`ErpAstMergeProcessor` 注入 2 Bean；`validateTransitionForSubmit/Withdraw/Approve/Reject` 改调 Approval Bean；cancel 守卫改调 Document Bean `isCancelled()`；`executeApprove` 目标态改调 Bean。**reverseApprove 不接线**（per-mutation `ErpAstMergeReverseApproveProcessor:22-26` 无条件抛 `ERR_AST_MERGE_REVERSE_NOT_SUPPORTED` 保持；Bean reverseApprove 边为名义元数据）。**源 IN_SERVICE（SOURCE_NOT_IN_SERVICE）、跨类别/币种（CROSS_CATEGORY/CURRENCY_NOT_ALLOWED）、无源（NO_SOURCES）、已过账（ALREADY_POSTED）全部保留原位**。资产卡片合并 + `AssetMergePostingDispatcher.tryPost` + posted 置位保留原位。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（2 Bean）+ 层 2 四方对照（dict ↔ `split-merge.md` ↔ Bean ↔ 全部 writer）。含不可逆契约登记。
+- [x] `Proof`：层 1 矩阵完备性（2 Bean）+ 层 2 四方对照（dict ↔ `split-merge.md` ↔ Bean ↔ 全部 writer）。含不可逆契约登记。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] Merge 双轴 Bean 存在/注册/无状态；facade + 5 per-mutation（Submit/Approve/Reject/Withdraw/Cancel）委托 Bean；reverseApprove 不接线（per-mutation 无条件抛 `ERR_AST_MERGE_REVERSE_NOT_SUPPORTED` 保持，Bean 边为名义元数据）。
-- [ ] Merge 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstMerge*StateMachineMatrix` 全绿。
+- [x] Merge 双轴 Bean 存在/注册/无状态；facade + 5 per-mutation（Submit/Approve/Reject/Withdraw/Cancel）委托 Bean；reverseApprove 不接线（per-mutation 无条件抛 `ERR_AST_MERGE_REVERSE_NOT_SUPPORTED` 保持，Bean 边为名义元数据）。
+- [x] Merge 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstMerge*StateMachineMatrix` 全绿（22/22：Approval 13 含 reverseApprove 名义边元数据测试 + Document 9）。
 
 ### Phase 3 - 层 3 既有命名动作回归 + 二实体一致性
 
-Status: planned
+Status: completed
 Targets: `module-assets/erp-ast-service/src/test/`（既有集成测试，零新建）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1-2（二实体 4 轴 Bean + 接线已落地）
 
-- [ ] `Proof`：层 3 既有命名动作回归——复用拆分/合并既有集成测试（approve happy path + **reverseApprove 无条件抛 ERR_*_REVERSE_NOT_SUPPORTED**（无 posted 窗口）+ reject + withdraw + cancel + illegal transition + 比例/金额平衡 + 跨类别/币种 + 资产卡片重组），证明错误码值/参数、过账时序、不可逆契约、卡片重组时序不变。本地 `mvn test -pl module-assets/erp-ast-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归——复用拆分/合并既有集成测试（`TestErpAstSplitMerge` 8 tests：approve happy path（testProportionalSplitHappyPath/testFixedAmountSplit/testMergeWeightedHappyPath）+ **reverseApprove 无条件抛 ERR_*_REVERSE_NOT_SUPPORTED（testApproveThenReverseNotSupported，无 posted 窗口）** + reject + withdraw + cancel + illegal transition + 比例/金额平衡（testProportionNotBalancedRejected）+ 跨类别/币种（testCrossCategoryConfigGatedRejected/testMergeCrossCurrencyRejected）+ 源 IN_SERVICE（testSourceNotInServiceRejected）+ 资产卡片重组），证明错误码值/参数、过账时序、不可逆契约、卡片重组时序不变。本地 `mvn test -pl module-assets/erp-ast-service -am` 全绿（299/299：既有 255 + 层 1 矩阵 4 新测试类 44 tests，零回归）。
   - Skill: `nop-testing`
-- [ ] `Proof`：二实体一致性复核——4 Bean 命名（Approval/Document 后缀）/注册/无状态/矩阵形状一致；facade→Bean 注入 + cause-chaining + 不可逆守卫范式与计划 2 Disposal + Movement 双轴可追溯一致。
+- [x] `Proof`：二实体一致性复核——4 Bean 命名（Approval/Document 后缀）/注册（beans.xml 4 FQN bean id）/无状态（grep 零 @Inject/DAO/IServiceContext，javadoc 除外）/矩阵形状一致（2 Approval 各 5 动作 6 边含 reverseApprove 名义边；2 Document 各 1 边 approve(DRAFT→ACTIVE) + isCancelled 守卫）一致；facade→Bean 注入（非 private）+ cause-chaining（common 码作 cause → 领域码，4 参重载）范式与计划 2 Disposal + Movement 双轴可追溯一致；二 facade 内联 `Objects.equals` 状态判断已移除（grep 零残留——cancel 守卫 ACTIVE「非已生效」+ posted 动态条件按 Decision (C) 保留原位，源 IN_SERVICE 动态守卫保留原位）；reverseApprove per-mutation Processor 无条件抛错保持原位（:24 行实证）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 层 3 既有集成测试全绿（零行为回归）。
+- [x] 层 3 既有集成测试全绿（零行为回归）。
 
 ## Draft Review Record
 
@@ -139,15 +139,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
-- [ ] 范围内行为完成（二实体 4 轴 Bean + facade/per-mutation 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐（roadmap M4.48-51 → done）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-assets/erp-ast-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
+- [x] 范围内行为完成（二实体 4 轴 Bean + facade/per-mutation 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（roadmap M4.48-51 → done）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-assets/erp-ast-service -am` 全绿（299/299）+ `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline（R5=0/R11=0，exit=0）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -177,12 +177,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 全 3 Phase 执行完成（Split 双轴 → Merge 双轴 → 层 3 回归 + 二实体一致性）。4 Bean（2 Approval 各 5 动作 6 边含 reverseApprove **名义边**（运行时不可达——per-mutation 无条件抛 `ERR_AST_{SPLIT,MERGE}_REVERSE_NOT_SUPPORTED`）+ 2 Document 各 1 边 approve(DRAFT→ACTIVE) + `isCancelled()` 只读守卫）落地 + beans.xml FQN-id 注册 + 2 facade 接线（validateTransitionForSubmit/Withdraw/Approve/Reject 委托 assertCanXxx + executeApprove 目标态委托 *TargetStatus()，try/catch common 码作 cause → 领域码 4 参重载；cancel 守卫 CANCELLED 判定委托 Document Bean `isCancelled()`，ACTIVE/posted 动态条件保留原位；reverseApprove 不接线——per-mutation 无条件抛错保持，Bean 边为名义元数据；比例/金额平衡、跨类别/币种、源 IN_SERVICE、净值充足、目标编码唯一、已过账守卫、资产卡片结构性重组、`AssetSplit/MergePostingDispatcher.tryPost`（仅 post 无 reverse）、posted 置位全部保留原位）+ 层 1 矩阵 4 测试类 44 tests + 层 2 四方对照（dict `wf/approve-status` + `erp/doc-status` ↔ `split-merge.md` §关键业务规则 5 不可逆契约 ↔ Bean ↔ 全部 writer：facade validateTransition 5×2 + executeApprove 目标态 2×2 + per-mutation 6×2 + 创建写 DRAFT/UNSUBMITTED + CRUD 路径排除 + 不可逆守卫 REVERSE_NOT_SUPPORTED 登记，全对齐；owner doc `state-machine.md` 补「适用对象四：资产拆分/合并文档双轴」章节 + 审查提示行）+ 层 3 回归 299/299 零行为回归（`TestErpAstSplitMerge` 8 tests 含 testApproveThenReverseNotSupported 断言无条件抛 ERR_*_REVERSE_NOT_SUPPORTED 无 posted 窗口）。验证：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + `mvn test -pl module-assets/erp-ast-service -am` 299/299 全绿 + compliance checker exit 0（R5=0/R11=0 零漂移）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
+- Auditor / Agent: 独立子代理（新会话）`ses_000763efdffenWYlC8kBmnA0KZ`——结束审计零信任静态实证 + 命令复跑：7 项检查全 PASS（1）plan 零 `- [ ]` 残留 + 3 Phase `Status: completed` + `Plan Status: completed` + roadmap M4.48-51 `done` + 日志条目顶部时间倒序；（2）4 Bean 存在/无状态（grep 仅 javadoc）/beans.xml 4 FQN-id 注册/Approval 5 动作 6 边含 reverseApprove 名义边/ Document 1 边 approve(DRAFT→ACTIVE) + isCancelled；（3）2 facade 注入非 private + validateTransitionForXxx 委托 assertCanXxx（4 参 cause 重载）+ validateTransitionForCancel ACTIVE/posted 动态条件保留原位 + CANCELLED 委托 isCancelled + executeApprove 目标态委托 *TargetStatus + reverseApprove 不接线（per-mutation :22-26 无条件抛错实证）+ 动态守卫/tryPost/posted 置位保留原位；（4）层 1 矩阵 4 测试类 44 tests 亲跑全绿；（5）owner doc 适用对象四章节存在；（6）`mvn test -pl module-assets/erp-ast-service -am -Dsurefire.failIfNoSpecifiedTests=false -Dtest='TestErpAstSplit*StateMachineMatrix,TestErpAstMerge*StateMachineMatrix'` 44/44 BUILD SUCCESS + compliance exit 0（R5=0/R11=0）+ TestErpAstSplitMerge 8/8 抽查；（7）git status 无 orm.xml/api.xml/_gen 越界改动。1 INFO（非阻塞，既存重复日志标题行，diff 仅追加）→ `END_AUDIT_VERDICT: PASS`。
 
 Follow-up:
 
-- <待执行后填写；Deferred 项均为既定 successor>
+- Deferred 项均为既定 successor：Split/Merge 不可逆契约（无 reverse 过账路径——PM 要求拆分/合并可撤销时须先设计 reverse 过账 + 卡片逆向重组方案，触及模型/过账保护区 ask-first）；Split/Merge 动态业务守卫（比例/金额/类别/币种/净值/编码唯一，watch-only residual，successor no）；Delta 覆盖运行时实证（归 M5.3）；全局 CRUD 写锁（M0.1 §9 显式排除）。

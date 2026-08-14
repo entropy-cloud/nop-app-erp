@@ -310,6 +310,69 @@ dict 3 值（DRAFT/ACTIVE/CANCELLED）。三实体 docStatus writer 分化如下
 
 approve/reverseApprove 权限声明沿用各实体 xbiz 既有 `<auth permissions>`（本计划零改动，仅迁移固定状态判断）。
 
+## 适用对象四：资产拆分/合并文档双轴（Split / Merge）
+
+> 本节由 plan `2026-08-14-1931-3`（M4.48 docStatus + M4.49 approveStatus Split、M4.50 docStatus + M4.51 approveStatus Merge）补章节落地——owner doc 原仅在「实现模式与守卫边界」散文段提及拆分/合并 PROC 路径，无矩阵化 §适用对象章节。本节集中建立 `ErpAstSplit` / `ErpAstMerge` 双轴（`approveStatus` 审批轴 + `docStatus` 业务生命周期轴）权威迁移语义与 layer-2 四方对照裁定登记（以代码为权威；dict `wf/approve-status` + `erp/doc-status`；业务语义见 `split-merge.md`）。
+>
+> 实体级状态机 Bean（4 个，双轴各自独立 Bean，契约 §1/§3 双轴分离 + `Approval`/`Document` 后缀命名）：
+> - `ErpAstSplitApprovalStateMachine`（M4.49）+ `ErpAstSplitDocumentStateMachine`（M4.48）
+> - `ErpAstMergeApprovalStateMachine`（M4.51）+ `ErpAstMergeDocumentStateMachine`（M4.50）
+>
+> 接线范式 = 1931-2 Disposal facade 先例（同域文档双轴直接范本）：facade `validateTransitionForXxx` 改调 Bean `assertCanXxx`（try/catch common 码作 cause → 领域码 `ERR_AST_{SPLIT,MERGE}_ILLEGAL_{STATUS,DOC}_TRANSITION`，契约 §7）；`executeApprove` 目标态改调 Bean `*TargetStatus()`；per-mutation 6 Processor 经 facade 透传自动生效。**动态业务守卫与副作用保留原位**（比例/金额平衡、跨类别/币种、源 IN_SERVICE、净值充足、目标编码唯一、已过账守卫、资产卡片结构性重组、`AssetSplit/MergePostingDispatcher.tryPost`、posted 置位）。
+>
+> **不可逆契约（关键差异 vs 适用对象三，owner doc `split-merge.md` §关键业务规则 5）**：Split/Merge approve 触发**资产卡片结构性重组**（不可物理回退），`AssetSplit/MergePostingDispatcher` **仅 post 路径、无 reverse**。reverseApprove Mutation 存在但**无条件抛错**——per-mutation `ErpAst{Split,Merge}ReverseApproveProcessor` 在 `requireXxx` 后直接 `throw ERR_AST_{SPLIT,MERGE}_REVERSE_NOT_SUPPORTED`（无 posted 判定、无 executeReverseApprove 方法体、短路在 facade validateTransition 之前）。与适用对象三（reverseApprove 有真实 posted=true 红冲 + posted=false 不对称窗口）形成对比——Split/Merge 的 reverseApprove 连 posted=false 窗口都没有。错误更正路径 = 资产处置 + 新建流程。**Bean reverseApprove(APPROVED→REJECTED) 边为名义边（nominal edge，运行时不可达）**——仅供矩阵完备性/可达性元数据（M5.1）+ §16.4 约定对齐消费，`assertCanReverseApprove` 存在但**不被接线**。
+
+### 1. approveStatus 审批轴（二实体同构，dict `wf/approve-status`）
+
+二实体 approveStatus 均为 4 态 + 5 命名动作 6 条边（与 Movement/采购/适用对象三同构）：
+
+| approveStatus | 业务含义 | 可达性 |
+|---------------|----------|--------|
+| 未提交（UNSUBMITTED） | 单据新建，等待提交审批 | 初始态（CRUD 创建写入）；withdrawApproval 可回到此态 |
+| 已提交（SUBMITTED） | 已提交待审核 | submitForApproval 从 UNSUBMITTED/REJECTED 进入 |
+| 已审核（APPROVED） | 审核通过（业务终态，可逆） | approve 从 SUBMITTED 进入；触发结构性资产过账 + 卡片重组 |
+| 已驳回（REJECTED） | 审核驳回 | reject 从 SUBMITTED 进入；reverseApprove 名义边从 APPROVED 进入（运行时不可达） |
+
+| 动作 | 来源态 | 目标态 |
+|------|--------|--------|
+| submitForApproval | UNSUBMITTED / null / REJECTED | SUBMITTED |
+| approve | SUBMITTED | APPROVED |
+| reject | SUBMITTED | REJECTED |
+| reverseApprove | APPROVED | REJECTED（**名义边，运行时不可达**——无条件抛 `ERR_AST_{SPLIT,MERGE}_REVERSE_NOT_SUPPORTED`） |
+| withdrawApproval | SUBMITTED | UNSUBMITTED |
+
+> **reverseApprove 名义边裁定（plan Phase 1 Decision (A)）**：目标态=REJECTED（对齐 `domain-design-guidelines.md §16.4`），但 **Split/Merge reverseApprove 是无条件抛错动作**（per-mutation Processor require 后直接抛，无 posted 判定、短路在 facade `validateTransitionForReverseApprove` 之前），运行时从不产生状态迁移。Bean 将 reverseApprove APPROVED→REJECTED 声明为**名义边**（javadoc 显式标注「运行时不可达」），`assertCanReverseApprove` 存在但**不被接线**；层 1 矩阵测试仅断言该边在 `transitions()` 元数据中存在（元数据完备性），运行时不可达由层 3 既有集成测试断言（`TestErpAstSplitMerge.testApproveThenReverseNotSupported` 等）。
+
+### 2. docStatus 业务生命周期轴（二实体同构，dict `erp/doc-status`）
+
+dict 3 值（DRAFT/ACTIVE/CANCELLED）。二实体 docStatus writer 分化如下（layer-2 四方对照以代码为权威）：
+
+| 实体 | 命名动作 writer | transitions() 边 | 终态集合 | 特例登记 |
+|------|-----------------|------------------|----------|----------|
+| **Split** | approve→ACTIVE（`executeApprove:117`）唯一命名 writer + cancel→CANCELLED（`ErpAstSplitCancelProcessor:26`，独立 cancel mutation） | `approve(DRAFT→ACTIVE)` 1 边 | {ACTIVE, CANCELLED} | cancel 守卫动态条件（ACTIVE「非已生效」+ posted「非已过账」）保留原位，仅 CANCELLED 判定委托 Document Bean `isCancelled()`（Phase 1 Decision (C)）；reverseApprove 不写 docStatus（无条件抛错） |
+| **Merge** | approve→ACTIVE（`executeApprove:120`）唯一命名 writer + cancel→CANCELLED（`ErpAstMergeCancelProcessor:26`，独立 cancel mutation） | `approve(DRAFT→ACTIVE)` 1 边 | {ACTIVE, CANCELLED} | 同上（Phase 2 镜像） |
+
+二实体 docStatus 初始态均为 DRAFT（CRUD 创建路径写入，§9.1 排除矩阵运行时强制）。
+
+### 3. 终态与恢复
+
+- **approveStatus 终态**：APPROVED 为业务终态（「可逆终态」——经 reverseApprove 有出边（名义），运行时该边不可达）。REJECTED 非终态（经 submitForApproval 可重新提交）。
+- **docStatus 终态**：{ACTIVE, CANCELLED}。
+- **资产终态联动（非本计划接管）**：Split/Merge approve→源资产 Asset.status=DISPOSED（内部结构重组无损终态，`split-merge.md` 实现注记 Decision 1）+ 新卡片 IN_SERVICE；**不可逆**——无 reverse 路径恢复源资产。
+
+### 4. 异常路径与不可逆契约
+
+| 异常场景 | 处理 |
+|----------|------|
+| 非来源态执行审批动作 | Bean `assertCanXxx` 报告 common 层非法迁移码（契约 §7），facade 映射领域码 `ERR_AST_{SPLIT,MERGE}_ILLEGAL_STATUS_TRANSITION`（common 作 cause；错误码值/参数对外不变） |
+| CANCELLED 单据执行审批动作 | doc-cancelled 守卫（facade `validateTransitionForCancel` 委托 Document Bean `isCancelled()`，ACTIVE/posted 动态条件保留原位）阻断，抛 `ERR_AST_{SPLIT,MERGE}_ILLEGAL_DOC_TRANSITION` |
+| **reverseApprove（不可逆契约）** | per-mutation `ErpAst{Split,Merge}ReverseApproveProcessor` require 后**无条件抛 `ERR_AST_{SPLIT,MERGE}_REVERSE_NOT_SUPPORTED`**（无 posted 判定、无窗口期、短路在 facade validateTransition 之前）。错误更正走资产处置 + 新建流程（owner doc `split-merge.md` §关键业务规则 5） |
+| 比例/金额不平衡、跨类别/币种、源非 IN_SERVICE、净值不足、目标编码重复、无行/无源、已过账 | 动态业务守卫保留原位（`ERR_AST_{SPLIT,MERGE}_*`，非固定状态迁移边） |
+
+### 5. 角色与权限
+
+approve/reverseApprove 权限声明沿用各实体 xbiz 既有 `<auth permissions>`（本计划零改动，仅迁移固定状态判断）。
+
 ## 实现模式与守卫边界
 
 > 资产域移动单（ErpAstMovement）审批轴动作的实现模式补注。完整双轴矩阵见 §适用对象二。
@@ -347,6 +410,7 @@ approve/reverseApprove 权限声明沿用各实体 xbiz 既有 `<auth permission
 - 折旧漏提补提路径是否覆盖（反结账 vs 当期补提）。
 - 资本化入账与库存出库的协作（库存转固场景）。
 - 资产移动单（适用对象二）：approveStatus 5 动作矩阵 + docStatus 退化轴（ACTIVE 死状态 reserved，CANCELLED 经 useLogicalDelete）；reverseApprove→REJECTED 目标态（§16.4）；INLINE→Bean 迁移（xbiz source inject 双 Bean）。
+- 资产拆分/合并（适用对象四）：二实体 approveStatus 5 动作矩阵 + docStatus 1 边（approve→ACTIVE）+ cancel mutation（CANCELLED）；**不可逆契约**——reverseApprove 无条件抛 `ERR_AST_{SPLIT,MERGE}_REVERSE_NOT_SUPPORTED`，Bean reverseApprove 边为名义边（运行时不可达）；approve 触发结构性资产过账 + 卡片重组（`AssetSplit/MergePostingDispatcher` 仅 post 无 reverse）。
 
 ## 已知限制：浏览器层 xwf 审批路径（ErpAstDisposal）
 
