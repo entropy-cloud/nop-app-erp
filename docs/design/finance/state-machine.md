@@ -2,7 +2,7 @@
 
 > **设计要点依据**：本状态机按 `docs/skills/state-machine-business-review-prompt.md` 的 10 个审查维度组织。审查本状态机时使用该提示词。
 >
-> 财务域有五类状态对象：**会计凭证**（单据级状态机）、**会计期间**（时间窗口状态机）、**应收票据**与**应付票据**（票据生命周期状态机，见 §对象三/§对象四）、**费用报销单**（审批 + 生命周期双轴，见 §对象五）。凭证与期间的状态迁移相互约束（已结账期间不可新增凭证）。
+> 财务域有六类状态对象：**会计凭证**（单据级状态机）、**会计期间**（时间窗口状态机）、**应收票据**与**应付票据**（票据生命周期状态机，见 §对象三/§对象四）、**费用报销单**（审批 + 生命周期双轴，见 §对象五）、**员工借款单**（审批 + 生命周期双轴，见 §对象六）。凭证与期间的状态迁移相互约束（已结账期间不可新增凭证）。
 
 ## 适用对象
 
@@ -11,6 +11,7 @@
 - 应收票据（NotesReceivable）：收到/贴现/背书/托收/承兑/拒付/注销的票据生命周期。
 - 应付票据（NotesPayable）：开出/兑付/拒付/注销的票据生命周期。
 - 费用报销单（ExpenseClaim）：报销单的**审批轴**（approveStatus，5 动作）与**业务生命周期轴**（docStatus，cancel 作废），见 §对象五。
+- 员工借款单（EmployeeAdvance）：借款单的**审批轴**（approveStatus，5 动作）与**业务生命周期轴**（docStatus，cancel 作废），见 §对象六。
 
 ## 对象一：会计凭证状态机
 
@@ -436,6 +437,83 @@
 - **writer 放置**：6 动作 writer 全部在 facade `do*`（`ErpFinExpenseClaimProcessor`），迁移仅改守卫委托 Bean + 目标态写回 Bean 目标态方法，writer 物理位置与副作用（SoD/tryPost/reverse/offset/reverseOffset/posted/approvedBy/approvedAt 写入/乐观锁/业务规则校验）原序保留。
 - **reverseApprove→REJECTED**：已合规 `domain-design-guidelines.md §16.4`（与 purchase 一致，无 drift）。
 - 非法边由 Bean 抛 common 码（携带 `action`/`fromStatus` 元数据），Processor 映射领域码（common 作 cause，`ARG_CLAIM_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` / `ARG_CURRENT_DOC_STATUS`/`ARG_EXPECTED_DOC_STATUS` 对外不变）。
+
+---
+
+## 对象六：员工借款单状态机（双轴）
+
+> 借款单字段与业务规则权威来源：`docs/design/finance/expense-claim.md`（`:81` ErpFinEmployeeAdvance 业务设计，与费用报销同域同模式）；业财过账业务类型见 `docs/design/finance/posting.md`（EMPLOYEE_ADVANCE：Dr 1221 其他应收款-员工预支 / Cr 1002 银行存款 + ArApItem RECEIVABLE，`EmployeeAdvanceAcctDocProvider` implements `IErpFinAcctDocProvider`）。
+>
+> **实现注记（plan 2026-08-13-1146-3，M4.6 + M4.7）**：双轴各自独立 Bean（契约 `docs/architecture/entity-state-machine-bean.md` §3 双轴分离，不合并笛卡尔积）——`ErpFinEmployeeAdvanceApprovalStateMachine`（approveStatus 轴）+ `ErpFinEmployeeAdvanceDocumentStateMachine`（docStatus 轴）。5 审批守卫 + 1 作废守卫接线至 `ErpFinEmployeeAdvanceProcessor.validateTransitionFor*`（Bean 抛 common 码作 cause，Processor 映射领域码 `ERR_EMPLOYEE_ADVANCE_ILLEGAL_STATUS_TRANSITION` / `ERR_EMPLOYEE_ADVANCE_ILLEGAL_DOC_STATUS_TRANSITION`，参数对外不变）。
+
+### 1. 状态定义（双轴）
+
+**审批轴 approveStatus**（字典 `wf/approve-status` 4 值，平台共享 dict）：
+
+| 状态 | 业务含义 |
+|------|----------|
+| 未提交（UNSUBMITTED） | 草稿，未进入审批流。**initial 态** |
+| 已提交（SUBMITTED） | 已提交审批，等待审核 |
+| 已审核（APPROVED） | 审核通过，触发过账（凭证 + ArApItem RECEIVABLE） |
+| 已驳回（REJECTED） | 审核驳回，可修改重提 |
+
+**业务生命周期轴 docStatus**（字典 `erp-fin/advance-status` 5 值）：
+
+| 状态 | 业务含义 |
+|------|----------|
+| 草稿（DRAFT） | **initial 态**（创建时写入） |
+| 已作废（CANCELLED） | 终态：作废（已过账时先红冲再作废） |
+| ~~SUBMITTED / APPROVED / REJECTED~~ | **残余值（intentional reserved）**：dict 5 值但代码仅写 DRAFT/CANCELLED——生命周期推进由 approveStatus 轴承载，docStatus 仅 DRAFT→CANCELLED。残余值不纳入状态机 Bean 任一集合（initial/terminal/transitions），dict 项保留不删（dict 治理归 successor）。同 ExpenseClaim（§对象五） |
+
+### 2. 迁移完整性
+
+```
+审批轴 approveStatus:
+未提交 (UNSUBMITTED) ← initial
+  ├─ 提交 → 已提交 (SUBMITTED)
+  │            ├─ 撤回 → 未提交 (UNSUBMITTED)
+  │            ├─ 审核 → 已审核 (APPROVED)
+  │            └─ 驳回 → 已驳回 (REJECTED)
+  ├─ 驳回后重提 → 已提交 (SUBMITTED)
+  └─ 已审核 → 反审核 → 已驳回 (REJECTED)   ← reverseApprove，触发红冲
+
+生命周期轴 docStatus:
+草稿 (DRAFT) ← initial
+  └─ 作废 → 已作废 (CANCELLED, 终态)        ← 已过账时先红冲再作废
+```
+
+| 迁移 | 触发人/系统 | 前置条件 | 结果 |
+|------|-------------|----------|------|
+| submitForApproval {UNSUBMITTED,REJECTED} → SUBMITTED | 借款人 | 未作废、员工启用/partnerId 存在、金额为正 | 进入审批流 |
+| withdrawApproval {SUBMITTED} → UNSUBMITTED | 借款人 | 已提交未审核 | 撤回 |
+| approve {SUBMITTED} → APPROVED | 审核人（**SoD：不得为创建人**） | 已提交、SoD 通过 | **过账**（EMPLOYEE_ADVANCE 凭证 + ArApItem RECEIVABLE，posted=true） |
+| reject {SUBMITTED} → REJECTED | 审核人 | 已提交 | 驳回 |
+| reverseApprove {APPROVED} → REJECTED | 审核人（需权限） | 已审核 | 若已过账则**红冲**（reverse + posted=false + 清 approvedBy/approvedAt） |
+| cancel {非 CANCELLED} → CANCELLED | 借款人 | 未作废 | 若已过账则先红冲再作废 |
+
+### 3. 终态与恢复
+
+- **审批轴终态**：`APPROVED` / `REJECTED`（均为**可逆终态**——APPROVED 经 reverseApprove 有出边、REJECTED 经 submitForApproval 有出边，不适用「终态无出边」强可达性断言）。**initial**：`UNSUBMITTED`。
+- **生命周期轴终态**：`CANCELLED`（无出边）。**initial**：`DRAFT`。
+- 作废不可恢复（逻辑删除不可逆；已作废再 cancel 抛非法迁移拒绝）。
+
+### 4. 过账 + SoD + 冲抵边界（§11.2 M4 治理裁定）
+
+- approve 触发业财过账（`EmployeeAdvancePostingDispatcher`→`FinPostingExecutor` 生成 EMPLOYEE_ADVANCE 凭证 + `ErpFinArApItem` RECEIVABLE 1221 其他应收-员工预支，partnerId=employee.partnerId）；reverseApprove/cancel 在已过账时触发红冲。**过账时序/编排/失败兜底（posted 回写）/红冲闭环由过账引擎 + `posted`/`postedBy`/`postedAt` 契约管理**（§11.2 M4 (ii)/(v)），状态机 Bean 不触碰。
+- **`posted` 不入轴**（契约 §3）：`posted`（boolean）为业财过账/红冲契约，不是状态轴。approve→`posted=true`（markPosted helper）；reverseApprove/cancel 红冲→`posted=false`（clearPosted helper）。
+- **SoD（approver-is-creator）为动态业务守卫**：保留在 `ErpFinEmployeeAdvanceProcessor.doApprove` 原位（`SoDGuard.assertApproverNotCreator`，抛 `ERR_FIN_APPROVER_IS_CREATOR`），**非 Bean 范畴**（架构契约 `entity-state-machine-bean.md:274`）。
+- **冲抵引用关系（被冲抵方）**：本实体**无** `AdvanceOffsetOrchestrator` 调用——员工借款冲抵由费用报销侧（ExpenseClaim approve → `AdvanceOffsetOrchestrator.offset` 按 advance code 驱动）执行，本实体为被冲抵方（见 §对象五）。
+- **cashRepay / reverseCashRepay 非状态轴**：`ErpFinEmployeeAdvanceBizModel.cashRepay`/`reverseCashRepay` 为资金动作（更新 settledAmount/outstandingAmount + EMPLOYEE_ADVANCE_SETTLE 清算凭证/红冲），非状态机轴范畴，不纳入 Bean、不触碰。
+- **残余值边界**：docStatus dict 中 SUBMITTED/APPROVED/REJECTED 为 intentional reserved（workflow 轴 = approveStatus），Bean 不纳入任一集合（见 §1）。
+- **`ERR_EMPLOYEE_ADVANCE_NOT_REVERSED_BEFORE_CANCEL`（dead error code）**：`ErpFinErrors.java:206` 已定义但全仓零 throw 引用（plan Phase 1/3 layer-2 grep 证实）——cancel 自动红冲已过账凭证（intentional auto-reverse），不要求先反审核。该码为 dead/vestigial，清理归错误码统一治理批次（successor），保留为未来「要求先反审核」工作流的语义入口。
+
+### 5. 实现注记（plan 2026-08-13-1146-3）
+
+- `ErpFinEmployeeAdvanceApprovalStateMachine`：5 命名动作矩阵（submit×2 源 + withdraw + approve + reject + reverseApprove）+ initial/terminal + 只读 `transitions()` 元数据（6 边）。形状与 `ErpFinExpenseClaimApprovalStateMachine` 一致（同 4 态 approve 轴），但为独立 Bean（每实体每轴一 Bean，不跨实体复用）。
+- `ErpFinEmployeeAdvanceDocumentStateMachine`：1 命名动作（cancel，loose 非 CANCELLED 源）+ initial/terminal + `transitions()`（1 代表边 DRAFT→CANCELLED）。
+- **writer 放置**：6 动作 writer 全部在 facade `do*`（`ErpFinEmployeeAdvanceProcessor`），迁移仅改守卫委托 Bean + 目标态写回 Bean 目标态方法，writer 物理位置与副作用（SoD/tryPost/reverse/markPosted/clearPosted/approvedBy/approvedAt 写入/乐观锁/业务规则校验）原序保留。
+- **reverseApprove→REJECTED**：已合规 `domain-design-guidelines.md §16.4`（与 purchase/ExpenseClaim 一致，无 drift）。
+- 非法边由 Bean 抛 common 码（携带 `action`/`fromStatus` 元数据），Processor 映射领域码（common 作 cause，`ARG_ADVANCE_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` / `ARG_CURRENT_DOC_STATUS`/`ARG_EXPECTED_DOC_STATUS` 对外不变）。
 
 ---
 
