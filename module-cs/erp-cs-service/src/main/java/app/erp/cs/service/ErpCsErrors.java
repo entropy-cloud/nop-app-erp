@@ -34,6 +34,8 @@ public interface ErpCsErrors {
     String ARG_MAX_DEPTH = "maxDepth";
     String ARG_CATALOG_ITEM_ID = "catalogItemId";
     String ARG_CATALOG_ITEM_NAME = "catalogItemName";
+    String ARG_CATALOG_FIELD_KEY = "fieldKey";
+    String ARG_CATALOG_FIELD_LABEL = "fieldLabel";
 
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
@@ -146,6 +148,11 @@ public interface ErpCsErrors {
             "erp.err.cs.catalog-item.not-found",
             "服务目录项不存在: {catalogItemId}",
             ARG_CATALOG_ITEM_ID);
+
+    ErrorCode ERR_CATALOG_FORM_REQUIRED_MISSING = ErrorCode.define(
+            "erp.err.cs.catalog-item.form-required-missing",
+            "服务目录请求表单必填项缺失：字段[{fieldKey}]（目录项[{catalogItemId}]）",
+            ARG_CATALOG_ITEM_ID, ARG_CATALOG_FIELD_KEY);
 
     // --- 知识库搜索错误码（plan 2026-07-08-0056-2） ---
 

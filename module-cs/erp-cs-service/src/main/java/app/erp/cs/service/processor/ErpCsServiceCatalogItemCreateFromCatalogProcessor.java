@@ -9,8 +9,10 @@ import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
+import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.core.lang.json.JsonTool;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -18,6 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,6 +48,9 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
         }
         ErpCsServiceCatalogItem item = requireCatalogItem(catalogItemId, context);
         validateCatalogItemUsable(item);
+        // L1 UC-CS-10 异常①：表单必填项缺失 → 禁止提交（校验基准 = formData 原始值 fallback 前，
+        // 在权益扣减/工单落库之前拒绝，保证不产生副作用）
+        validateRequiredFormFields(item, formData);
 
         Map<String, Object> ticketData = buildTicketData(item, formData);
         // 权益匹配 + 扣减（建单前）：config-gated，与 ErpCsTicketBizModel.matchAndAttachSla 同语义
@@ -120,6 +126,60 @@ public class ErpCsServiceCatalogItemCreateFromCatalogProcessor {
         }
         // isPublic=false 时仅客服可见可提交——本期不引入角色鉴权（归前端 successor），
         // 默认允许提交；门户自助前端建立后再加 isPublic + 客户角色校验。
+    }
+
+    /**
+     * 必填表单校验（L1 UC-CS-10 异常「表单必填项缺失 → 禁止提交」）。
+     * 校验基准 = formData 原始键值（fallback 前）——schema 标必填而客户未提交 → 拒绝，
+     * 即使服务端有 subject/priority 缺省回退（fallback 是服务端兜底非客户提供）。
+     * requestFormConfig 为 null/空白/非法 JSON/fields 非数组 → 跳过校验（配置数据质量问题不阻断建单，LOG.warn）。
+     * 校验的 schema keys 须落在 buildTicketData 映射集内（映射集外 key 落库时被静默丢弃，数据治理责任在 schema 维护方）。
+     */
+    protected void validateRequiredFormFields(ErpCsServiceCatalogItem item, Map<String, Object> formData) {
+        String config = item.getRequestFormConfig();
+        if (StringHelper.isBlank(config)) {
+            return;
+        }
+        Map<String, Object> schema;
+        try {
+            schema = JsonTool.parseBeanFromText(config, Map.class);
+        } catch (Exception e) {
+            LOG.warn("request-form-config-parse-failed (跳过必填校验): catalogItemId={}, reason={}",
+                    item.getId(), e.getMessage());
+            return;
+        }
+        if (schema == null) {
+            return;
+        }
+        Object fieldsObj = schema.get("fields");
+        if (!(fieldsObj instanceof List)) {
+            LOG.warn("request-form-config-fields-not-array (跳过必填校验): catalogItemId={}", item.getId());
+            return;
+        }
+        for (Object fieldObj : (List<?>) fieldsObj) {
+            if (!(fieldObj instanceof Map)) {
+                continue;
+            }
+            Map<?, ?> field = (Map<?, ?>) fieldObj;
+            if (!Boolean.TRUE.equals(field.get("required"))) {
+                continue;
+            }
+            Object keyObj = field.get("key");
+            if (keyObj == null || StringHelper.isBlank(String.valueOf(keyObj))) {
+                continue;
+            }
+            String key = String.valueOf(keyObj);
+            Object value = formData == null ? null : formData.get(key);
+            if (value == null || StringHelper.isBlank(String.valueOf(value))) {
+                NopException err = new NopException(ErpCsErrors.ERR_CATALOG_FORM_REQUIRED_MISSING)
+                        .param(ErpCsErrors.ARG_CATALOG_ITEM_ID, item.getId())
+                        .param(ErpCsErrors.ARG_CATALOG_FIELD_KEY, key);
+                if (field.get("label") != null) {
+                    err.param(ErpCsErrors.ARG_CATALOG_FIELD_LABEL, String.valueOf(field.get("label")));
+                }
+                throw err;
+            }
+        }
     }
 
     /**

@@ -2,6 +2,7 @@ package app.erp.cs.service;
 
 import app.erp.cs.dao.entity.ErpCsCatalogCategory;
 import app.erp.cs.dao.entity.ErpCsCatalogFulfillment;
+import app.erp.cs.dao.entity.ErpCsEntitlement;
 import app.erp.cs.dao.entity.ErpCsServiceCatalogItem;
 import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.dao.entity.ErpCsTicketAction;
@@ -19,6 +20,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -174,6 +176,130 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         assertEquals("网络咨询", ticket.getSubject(), "subject 缺省应回退为目录项 name");
     }
 
+    // ---------- 必填表单校验（RC-R1.28 / P1-RC-060，L1 UC-CS-10 异常①） ----------
+
+    private static final String FORM_CONFIG_SUBJECT_DESC_REQUIRED =
+            "{\"fields\":[{\"key\":\"subject\",\"label\":\"请求主题\",\"type\":\"text\",\"required\":true},"
+                    + "{\"key\":\"description\",\"label\":\"问题描述\",\"type\":\"textarea\",\"required\":true}]}";
+    private static final String FORM_CONFIG_SUBJECT_URGENCY_REQUIRED =
+            "{\"fields\":[{\"key\":\"subject\",\"label\":\"请求主题\",\"type\":\"text\",\"required\":true},"
+                    + "{\"key\":\"urgency\",\"label\":\"紧急程度\",\"type\":\"select\",\"required\":true}]}";
+    private static final String FORM_CONFIG_SUBJECT_REQUIRED =
+            "{\"fields\":[{\"key\":\"subject\",\"label\":\"请求主题\",\"type\":\"text\",\"required\":true}]}";
+    private static final String FORM_CONFIG_SUBJECT_REQUIRED_PRODUCT_OPTIONAL =
+            "{\"fields\":[{\"key\":\"subject\",\"label\":\"请求主题\",\"type\":\"text\",\"required\":true},"
+                    + "{\"key\":\"productId\",\"label\":\"关联产品\",\"type\":\"ref\",\"required\":false}]}";
+
+    @Test
+    public void testCreateFromCatalogRequiredFieldMissingRejected() {
+        seedCustomer(PARTNER_ID, "ACME");
+        seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
+        // 活跃 PAY_PER_TICKET 权益：若校验未拦截，扣减会使 usedTickets 0 → 1（断言非平凡）
+        seedEntitlement(8301L, PARTNER_ID, ErpCsConstants.SERVICE_TYPE_PAY_PER_TICKET, 0, 10, 30);
+        Long catalogItemId = seedCatalogItemWithFormConfig(6004L, "必填校验项", TICKET_TYPE_ID, SLA_POLICY_ID,
+                true, FORM_CONFIG_SUBJECT_DESC_REQUIRED);
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("subject", "打印机故障");
+        formData.put("customerId", PARTNER_ID);
+        // description 缺失 → 拒绝
+
+        ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
+                Map.of("catalogItemId", catalogItemId, "formData", formData));
+        assertEquals(ErpCsErrors.ERR_CATALOG_FORM_REQUIRED_MISSING.getErrorCode(), resp.getCode(),
+                "schema 必填字段缺失应返回 ERR_CATALOG_FORM_REQUIRED_MISSING");
+
+        assertEquals(0, countTickets(catalogItemId), "必填缺失拒绝后工单应零落库");
+        ErpCsEntitlement entitlement = daoProvider.daoFor(ErpCsEntitlement.class).getEntityById(8301L);
+        assertEquals(0, entitlement.getUsedTickets(), "必填缺失拒绝后权益应零扣减");
+    }
+
+    @Test
+    public void testCreateFromCatalogRequiredFieldsSatisfiedAllowed() {
+        seedCustomer(PARTNER_ID, "ACME");
+        seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
+        Long catalogItemId = seedCatalogItemWithFormConfig(6005L, "必填满足项", TICKET_TYPE_ID, SLA_POLICY_ID,
+                true, FORM_CONFIG_SUBJECT_URGENCY_REQUIRED);
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("subject", "打印机故障");
+        formData.put("urgency", ErpCsConstants.TICKET_PRIORITY_HIGH);
+        formData.put("customerId", PARTNER_ID);
+
+        ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
+                Map.of("catalogItemId", catalogItemId, "formData", formData));
+        assertEquals(0, resp.getStatus(), "必填全满足应放行: " + resp);
+
+        Long ticketId = toLong(((Map<?, ?>) resp.getData()).get("id"));
+        ErpCsTicket ticket = daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
+        assertEquals("打印机故障", ticket.getSubject(), "subject 应从 formData 映射");
+        assertEquals(ErpCsConstants.TICKET_PRIORITY_HIGH, ticket.getPriority(),
+                "必填 urgency 应映射到 priority");
+    }
+
+    @Test
+    public void testCreateFromCatalogNoRequestFormConfigAllowed() {
+        seedCustomer(PARTNER_ID, "ACME");
+        seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
+        Long catalogItemId = seedCatalogItem(6006L, "无表单配置项", TICKET_TYPE_ID, SLA_POLICY_ID, true);
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("subject", "咨询");
+        formData.put("customerId", PARTNER_ID);
+
+        ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
+                Map.of("catalogItemId", catalogItemId, "formData", formData));
+        assertEquals(0, resp.getStatus(), "requestFormConfig 为 null 应跳过校验放行: " + resp);
+    }
+
+    @Test
+    public void testCreateFromCatalogInvalidJsonConfigAllowed() {
+        seedCustomer(PARTNER_ID, "ACME");
+        seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
+        Long catalogItemId = seedCatalogItemWithFormConfig(6007L, "非法配置项", TICKET_TYPE_ID, SLA_POLICY_ID,
+                true, "{invalid-json!!");
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("subject", "咨询");
+        formData.put("customerId", PARTNER_ID);
+
+        ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
+                Map.of("catalogItemId", catalogItemId, "formData", formData));
+        assertEquals(0, resp.getStatus(), "requestFormConfig 非法 JSON 应跳过校验放行: " + resp);
+    }
+
+    @Test
+    public void testCreateFromCatalogBlankValueTreatedAsMissing() {
+        seedCustomer(PARTNER_ID, "ACME");
+        seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
+        Long catalogItemId = seedCatalogItemWithFormConfig(6008L, "空白值项", TICKET_TYPE_ID, SLA_POLICY_ID,
+                true, FORM_CONFIG_SUBJECT_REQUIRED);
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("subject", "   ");
+
+        ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
+                Map.of("catalogItemId", catalogItemId, "formData", formData));
+        assertEquals(ErpCsErrors.ERR_CATALOG_FORM_REQUIRED_MISSING.getErrorCode(), resp.getCode(),
+                "空白字符串应视为必填缺失拒绝");
+    }
+
+    @Test
+    public void testCreateFromCatalogOptionalFieldMissingAllowed() {
+        seedCustomer(PARTNER_ID, "ACME");
+        seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
+        Long catalogItemId = seedCatalogItemWithFormConfig(6009L, "可选字段项", TICKET_TYPE_ID, SLA_POLICY_ID,
+                true, FORM_CONFIG_SUBJECT_REQUIRED_PRODUCT_OPTIONAL);
+
+        Map<String, Object> formData = new HashMap<>();
+        formData.put("subject", "咨询");
+        formData.put("customerId", PARTNER_ID);
+
+        ApiResponse<?> resp = rpc(mutation, "ErpCsServiceCatalogItem__createFromCatalog",
+                Map.of("catalogItemId", catalogItemId, "formData", formData));
+        assertEquals(0, resp.getStatus(), "非必填字段缺失应放行: " + resp);
+    }
+
     // ---------- 履行首步 CREATE_TICKET 落地 ----------
 
     @Test
@@ -294,6 +420,49 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
             dao.saveEntity(item);
         });
         return id;
+    }
+
+    private Long seedCatalogItemWithFormConfig(Long id, String name, Long ticketTypeId, Long slaPolicyId,
+                                               boolean active, String requestFormConfig) {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpCsServiceCatalogItem> dao = daoProvider.daoFor(ErpCsServiceCatalogItem.class);
+            ErpCsServiceCatalogItem item = new ErpCsServiceCatalogItem();
+            item.orm_propValueByName("id", id);
+            item.setCode("ITEM-" + id);
+            item.setName(name);
+            item.setTicketTypeId(ticketTypeId);
+            item.setSlaPolicyId(slaPolicyId);
+            item.setIsActive(active);
+            item.setIsPublic(Boolean.TRUE);
+            item.setRequestFormConfig(requestFormConfig);
+            dao.saveEntity(item);
+        });
+        return id;
+    }
+
+    private void seedEntitlement(Long id, Long partnerId, String serviceType, int usedTickets,
+                                 int maxTickets, int daysUntilEnd) {
+        ormTemplate.runInSession(() -> {
+            IEntityDao<ErpCsEntitlement> dao = daoProvider.daoFor(ErpCsEntitlement.class);
+            ErpCsEntitlement e = new ErpCsEntitlement();
+            e.orm_propValueByName("id", id);
+            e.setCode("ENT-" + id);
+            e.setPartnerId(partnerId);
+            e.setServiceType(serviceType);
+            e.setStartDate(LocalDate.now().minusDays(10));
+            e.setEndDate(LocalDate.now().plusDays(daysUntilEnd));
+            e.setMaxTickets(maxTickets);
+            e.setUsedTickets(usedTickets);
+            e.setIsActive(Boolean.TRUE);
+            e.setSlaPolicyId(SLA_POLICY_ID);
+            dao.saveEntity(e);
+        });
+    }
+
+    private long countTickets(Long catalogItemId) {
+        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        q.addFilter(eq("catalogItemId", catalogItemId));
+        return daoProvider.daoFor(ErpCsTicket.class).findAllByQuery(q).size();
     }
 
     private void seedFulfillmentStep(Long id, Long catalogItemId, int sequence, String actionType) {
