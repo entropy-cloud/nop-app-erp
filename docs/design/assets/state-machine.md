@@ -243,6 +243,73 @@ Movement 审批状态逻辑原 100% 内联在 `ErpAstMovement.xbiz` 的 `<source
 
 > **错误码迁移说明（契约 §7）**：approveStatus 非法边由 Bean 抛 common 层码（`nop.err.erp.common.illegal-status-transition`，携带 action/currentStatus 元数据）；Movement 无 Processor 层做领域码映射（XScript 不支持 try-catch），故 common 码直接传播。doc-cancelled 守卫经 `isCancelled()` boolean helper 委托，xbiz 保留领域码 `nop.err.wf.approve.doc-cancelled`（错误码对外不变）。
 
+## 适用对象三：资产价值调整文档双轴（Disposal / Capitalization / ValueAdjustment）
+
+> 本节由 plan `2026-08-14-1931-2`（M4.42–M4.47）补章节落地——owner doc 原仅在「实现模式与守卫边界」散文段提及三文档实体 PROC 路径，无矩阵化 §适用对象章节。本节集中建立三实体的双轴（`approveStatus` 审批轴 + `docStatus` 业务生命周期轴）权威迁移语义与 layer-2 四方对照裁定登记（以代码为权威；dict `wf/approve-status` + `erp/doc-status`）。
+>
+> 实体级状态机 Bean（6 个，双轴各自独立 Bean，契约 §1/§3 双轴分离 + `Approval`/`Document` 后缀命名）：
+> - `ErpAstDisposalApprovalStateMachine`（M4.45）+ `ErpAstDisposalDocumentStateMachine`（M4.44）
+> - `ErpAstAssetCapitalizationApprovalStateMachine`（M4.47）+ `ErpAstAssetCapitalizationDocumentStateMachine`（M4.46）
+> - `ErpAstValueAdjustmentApprovalStateMachine`（M4.43）+ `ErpAstValueAdjustmentDocumentStateMachine`（M4.42）
+>
+> 接线范式 = 1950-1 采购 facade 先例（assets 版）：facade `validateTransitionForXxx` 改调 Bean `assertCanXxx`（try/catch common 码作 cause → 领域码 `ERR_*_ILLEGAL_{STATUS,DOC}_TRANSITION`，契约 §7）；`executeApprove`/`executeReverseApprove` 目标态改调 Bean `*TargetStatus()`；per-mutation Processor 经 facade 透传自动生效。**动态业务守卫与副作用保留原位**（Asset 来源态校验、gain/loss 计算、schedule cancel/restore、过账、posted 置位、折旧计划生成）。Asset.status side-effect（→IN_SERVICE/SCRAPPED/SOLD/DRAFT）由计划 1 M4.40 `ErpAstAssetStateMachine` 守卫——两计划在 `asset.setStatus(...)` 行交汇，接线互不冲突。
+>
+> **注（层 2 四方对照漂移登记，plan 1931-2 结束审计 MINOR M1）**：「资本化库存转固 stock move」（owner doc §7 外部依赖行 `IErpInvStockMoveBiz`）在 `module-assets` 全仓代码中**零引用**（grep 实证，本计划未删任何代码）——为**继承性 owner-doc 漂移**（资本化 Processor 实际无库存出库调用），本计划不传播此声明。Successor：库存转固业务上线时补实现 + 补 owner doc 对齐。
+
+### 1. approveStatus 审批轴（三实体同构，dict `wf/approve-status`）
+
+三实体 approveStatus 均为 4 态 + 5 命名动作 6 条边（与 Movement/采购同构）：
+
+| approveStatus | 业务含义 | 可达性 |
+|---------------|----------|--------|
+| 未提交（UNSUBMITTED） | 单据新建，等待提交审批 | 初始态（CRUD 创建写入）；withdrawApproval 可回到此态 |
+| 已提交（SUBMITTED） | 已提交待审核 | submitForApproval 从 UNSUBMITTED/REJECTED 进入 |
+| 已审核（APPROVED） | 审核通过（业务终态，可逆） | approve 从 SUBMITTED 进入；触发业财过账 + 资产联动 |
+| 已驳回（REJECTED） | 审核驳回 | reject 从 SUBMITTED 进入；reverseApprove 从 APPROVED 进入 |
+
+| 动作 | 来源态 | 目标态 |
+|------|--------|--------|
+| submitForApproval | UNSUBMITTED / null / REJECTED | SUBMITTED |
+| approve | SUBMITTED | APPROVED |
+| reject | SUBMITTED | REJECTED |
+| reverseApprove | APPROVED | REJECTED |
+| withdrawApproval | SUBMITTED | UNSUBMITTED |
+
+> **reverseApprove 目标态裁定（plan Phase 1 Decision (A)）**：reverseApprove→REJECTED（非 SUBMITTED），对齐 `domain-design-guidelines.md §16.4` + assets 域 R1.x 既有行为（三 facade `executeReverseApprove` 现状均写 REJECTED，实仓核实）。Bean `reverseApproveTargetStatus()`=REJECTED。
+>
+> **ValueAdjustment 动态守卫（不迁移，plan Phase 3 Decision）**：`ERR_ADJUSTMENT_ALREADY_REVERSED`（已红冲不可二次红冲）、`ERR_ADJUSTMENT_APPROVAL_REQUIRED`（强制审批配置 config-gated）、`ERR_ADJUSTMENT_TYPE_INVALID`/`ERR_ADJUSTMENT_AMOUNT_INVALID`（调整类型/金额业务校验）为 posted/docStatus/config/业务值**动态守卫**，非固定状态迁移边，保留原位（Bean 只接管固定 approveStatus 5 动作矩阵 + docStatus 轴）。
+
+### 2. docStatus 业务生命周期轴（三实体分化，dict `erp/doc-status`）
+
+dict 3 值（DRAFT/ACTIVE/CANCELLED）。三实体 docStatus writer 分化如下（layer-2 四方对照以代码为权威）：
+
+| 实体 | 命名动作 writer | transitions() 边 | 终态集合 | 特例登记 |
+|------|-----------------|------------------|----------|----------|
+| **Disposal** | approve→ACTIVE（`executeApprove:93`）唯一命名 writer | `approve(DRAFT→ACTIVE)` 1 边 | {ACTIVE, CANCELLED} | CANCELLED 经 `useLogicalDelete` 可达（实体实仓核实）；reverseApprove **不写** docStatus（保持 ACTIVE） |
+| **Capitalization** | approve→ACTIVE（`executeApprove:86`）+ reverseApprove→CANCELLED（`executeReverseApprove:122`） | `approve(DRAFT→ACTIVE)` + `reverseApprove(ACTIVE→CANCELLED)` 2 边 | {CANCELLED} | **特例边**：reverseApprove 额外写 docStatus=CANCELLED（Disposal/ValueAdjustment 无此 docStatus 写——不与 Disposal Document Bean 同构，draft review M2 登记）；ACTIVE 为「可逆中间态」（经 reverseApprove 有出边，不适用「终态无出边」强断言） |
+| **ValueAdjustment** | approve→ACTIVE（`executeApprove:68` + `doAutoApprove:270` 双 writer）+ cancel→CANCELLED（`ErpAstValueAdjustmentCancelProcessor:26`，唯一有独立 cancel mutation 的实体） | `approve(DRAFT→ACTIVE)` + `cancel(DRAFT→CANCELLED)` 2 边 | {ACTIVE, CANCELLED} | cancel 守卫动态部分（posted=true 拒绝）保留原位（`validateTransitionForCancel` posted 守卫）；ACTIVE 禁 cancel（「非已生效」领域码，Bean `assertCanCancel` 承载） |
+
+三实体 docStatus 初始态均为 DRAFT（CRUD 创建路径写入，§9.1 排除矩阵运行时强制）。
+
+### 3. 终态与恢复
+
+- **approveStatus 终态**：APPROVED 为业务终态（「可逆终态」——经 reverseApprove 有出边）。REJECTED 非终态（经 submitForApproval 可重新提交）。
+- **docStatus 终态**：Disposal/ValueAdjustment {ACTIVE, CANCELLED}；Capitalization {CANCELLED}（ACTIVE 为可逆中间态）。
+- **资产终态联动（非本计划接管）**：Disposal approve→Asset SCRAPPED/SOLD（M4.40 AssetStateMachine `disposeScrapTargetStatus`/`disposeSellTargetStatus`）；Capitalization approve→Asset IN_SERVICE（`capitalizeTargetStatus`）+ reverseApprove posted=true 窗口→DRAFT（`reverseCapitalizeTargetStatus`）；ValueAdjustment 不改 Asset.status。
+
+### 4. 异常路径与 posted=false 不对称窗口
+
+| 异常场景 | 处理 |
+|----------|------|
+| 非来源态执行审批动作 | Bean `assertCanXxx` 报告 common 层非法迁移码（契约 §7），facade 映射领域码 `ERR_*_ILLEGAL_STATUS_TRANSITION`（common 作 cause；错误码值/参数对外不变） |
+| CANCELLED 单据执行审批动作 | doc-cancelled 守卫（facade `validateTransitionForCancel`/`validateNotCancelled` 委托 Document Bean `isCancelled()`）阻断，抛 `ERR_*_ILLEGAL_DOC_TRANSITION` |
+| **reverseApprove posted=false 不对称窗口** | 三实体 `executeReverseApprove` 仅 posted=true 时回滚资产行为 + 红冲凭证 + schedule cancel/restore；posted=false 窗口仅设 approveStatus=REJECTED（Capitalization 额外 docStatus=CANCELLED），资产保持终态。deliberate 不对称（owner doc §4 实现约定），悬挂经 `DeferredPostingSweepJob` 兜底重试 + `IErpSysNotificationBiz` 告警——本计划不改此行为 |
+| ValueAdjustment 已红冲二次红冲 / 强制审批配置 / 类型金额非法 | 动态守卫保留原位（§1 动态守卫登记） |
+
+### 5. 角色与权限
+
+approve/reverseApprove 权限声明沿用各实体 xbiz 既有 `<auth permissions>`（本计划零改动，仅迁移固定状态判断）。
+
 ## 实现模式与守卫边界
 
 > 资产域移动单（ErpAstMovement）审批轴动作的实现模式补注。完整双轴矩阵见 §适用对象二。

@@ -1,6 +1,6 @@
 # 2026-08-14-1931-2-erpast-value-change-documents-state-machine-beans 资产域价值调整文档双轴状态机 Bean（M4.42 + M4.43 + M4.44 + M4.45 + M4.46 + M4.47）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) 人工/owner-doc 门控**已于 2026-08-14 经人工确认解除**（见 Draft Review Record 门控确认记录）——本计划触及受保护资产/业财过账行为（ValueAdjustment approve→VALUE_ADJUSTMENT 减值/增值凭证、Disposal approve→DISPOSAL 清理凭证 + Asset 终态 SCRAPPED/SOLD、Capitalization approve→CAPITALIZATION 入账凭证 + Asset DRAFT→IN_SERVICE + 库存转固 stock move；reverseApprove posted=true 窗口红冲上述副作用，posted=false 不对称窗口悬挂经 DeferredPostingSweepJob 兜底）。M4 plan-first 门控成立且经人工确认；已转 `active` 进入实施。
 > Last Reviewed: 2026-08-14
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.42（ErpAstValueAdjustment.docStatus）+ M4.43（ErpAstValueAdjustment.approveStatus）+ M4.44（ErpAstDisposal.docStatus）+ M4.45（ErpAstDisposal.approveStatus）+ M4.46（ErpAstAssetCapitalization.docStatus）+ M4.47（ErpAstAssetCapitalization.approveStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md` AST-3/4/5/6/7/8（314-319 行段）+ M4.42-47
@@ -75,88 +75,88 @@
 
 ### Phase 1 - ErpAstDisposal 双轴 Bean（M4.44 + M4.45）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpAstDisposal{Approval,Document}StateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpAstDisposalProcessor.java`（validateTransitionForXxx:133-173 + executeApprove:82-86 + executeReverseApprove:126）、`.../processor/ErpAstDisposal{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval}Processor.java`、`.../test/.../statemachine/TestErpAstDisposal{Approval,Document}StateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done；M4 采购审批 facade 先例 1950-1 done；M4 plan-first 门控解除
 
-- [ ] `Decision`（双轴接线 + reverseApprove 目标态）：(A) reverseApprove 目标态=REJECTED（对齐 `domain-design-guidelines.md §16.4` + assets 域 R1.x + Movement 先例，非 SUBMITTED）。(B) docStatus 轴：Disposal docStatus 经 executeApprove 写 ACTIVE + cancel/isCancelled 守卫——Document Bean `transitions()` 含 approve→ACTIVE（若 approve 是 docStatus 唯一命名 writer）；若 docStatus 退化（ACTIVE 预留死状态）则按 Movement docStatus 退化轴范式（`transitions()` 空 + `isCancelled()` 只读守卫）。Phase 1 实仓核实后裁定。(C) `validateTransitionForCancel:169-173` doc-cancelled 守卫委托 Document Bean `isCancelled()`。
+- [x] `Decision`（双轴接线 + reverseApprove 目标态）：(A) reverseApprove 目标态=REJECTED（对齐 `domain-design-guidelines.md §16.4` + assets 域 R1.x + Movement 先例，非 SUBMITTED）——实仓核实 Disposal `executeReverseApprove:138` 现状写 REJECTED，Bean `reverseApproveTargetStatus()`=REJECTED。(B) docStatus 轴：实仓核实 Disposal docStatus 经 `executeApprove:93` 写 ACTIVE（approve 是**唯一命名 writer**，非退化轴）→ Document Bean `transitions()` 含 approve(DRAFT→ACTIVE)；CANCELLED 经 useLogicalDelete（实体 `useLogicalDelete="true"` 实仓核实）可达，无独立 cancel mutation；terminal={ACTIVE, CANCELLED}、initial={DRAFT}。(C) `validateTransitionForCancel:181-185` doc-cancelled 守卫委托 Document Bean `isCancelled()`。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpAstDisposalApprovalStateMachine`（5 动作 6 边：submit UNSUBMITTED/REJECTED→SUBMITTED、approve SUBMITTED→APPROVED、reject SUBMITTED→REJECTED、reverseApprove APPROVED→REJECTED、withdraw SUBMITTED→UNSUBMITTED）+ `ErpAstDisposalDocumentStateMachine`（据 Decision (B)）+ `assertCanXxx`/`*TargetStatus()`/分类/`transitions()`。注册 2 Bean。镜像 Movement 双轴结构 + 1950-1 facade 范式。
+- [x] `Add`：落地 `ErpAstDisposalApprovalStateMachine`（5 动作 6 边：submit UNSUBMITTED/REJECTED→SUBMITTED、approve SUBMITTED→APPROVED、reject SUBMITTED→REJECTED、reverseApprove APPROVED→REJECTED、withdraw SUBMITTED→UNSUBMITTED）+ `ErpAstDisposalDocumentStateMachine`（据 Decision (B)：1 边 approve(DRAFT→ACTIVE) + `isCancelled()` 只读守卫 + `approveTargetStatus()`）+ `assertCanXxx`/`*TargetStatus()`/分类/`transitions()`。注册 2 Bean（app-service.beans.xml 紧邻既有 SM Bean 块）。镜像 Movement 双轴结构 + 1950-1 facade 范式。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线）：`ErpAstDisposalProcessor` 注入 2 Bean（非 private）；`validateTransitionForSubmit:133-139`/`Withdraw`/`Approve`/`Reject`/`ReverseApprove` 各改调 Approval Bean `assertCanXxx`（try/catch common 码 → cause-chain `illegalTransition`→`ERR_DISPOSAL_ILLEGAL_STATUS_TRANSITION`）；`validateTransitionForCancel:169-173` 改调 Document Bean `isCancelled()`；`executeApprove:82-83`/`executeReverseApprove:126` 目标态改调 Bean `*TargetStatus()`。per-mutation 5 Processor 经 facade 透传自动生效。**Asset 来源态校验（validateAssetDisposable:184-198）、gain/loss 计算、schedule cancel/restore、过账、posted 置位保留原位**。Asset.status side-effect（:76/:116）由计划 1 AssetStateMachine 守卫——两计划在该行交汇，接线互不冲突（Disposal Bean 管文档 approveStatus/docStatus，Asset Bean 管资产 status）。
+- [x] `Add`（接线）：`ErpAstDisposalProcessor` 注入 2 Bean（非 private）；`validateTransitionForSubmit:145-151`/`Withdraw`/`Approve`/`Reject`/`ReverseApprove` 各改调 Approval Bean `assertCanXxx`（try/catch common 码 → cause-chain `illegalTransition`→`ERR_DISPOSAL_ILLEGAL_STATUS_TRANSITION`，新增 4 参 cause 重载）；`validateTransitionForCancel:181-185` 改调 Document Bean `isCancelled()`；`executeApprove:92-93`/`executeReverseApprove:138` 目标态改调 Bean `*TargetStatus()`。per-mutation 5 Processor 经 facade 透传自动生效。**Asset 来源态校验（validateAssetDisposable:196-210）、gain/loss 计算、schedule cancel/restore、过账、posted 置位保留原位**。Asset.status side-effect（:86/:128）由计划 1 AssetStateMachine 守卫——两计划在该行交汇，接线互不冲突（Disposal Bean 管文档 approveStatus/docStatus，Asset Bean 管资产 status）。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（2 Bean 独立测试）+ 层 2 四方对照（dict `wf/approve-status` + `erp/doc-status` ↔ owner doc §Asset + §实现模式 ↔ Bean ↔ 全部 writer：facade validateTransition 6 + executeApprove/ReverseApprove 2 + per-mutation 5 + 创建写 + CRUD 路径排除）。
+- [x] `Proof`：层 1 矩阵完备性（2 Bean 独立测试：Approval 12 tests + Document 9 tests，全绿）+ 层 2 四方对照（dict `wf/approve-status` + `erp/doc-status` ↔ owner doc §适用对象三新增节 ↔ Bean 元数据 ↔ 全部 writer：facade validateTransition 6 + executeApprove/ReverseApprove 2 目标态 + per-mutation 5（守卫经 facade 透传；目标态直写常量与 Bean 目标态值一致）+ 创建写 DRAFT/UNSUBMITTED + CRUD 路径排除，全对齐）。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] Disposal 双轴 Bean 存在/注册/无状态；facade validateTransition + executeApprove/ReverseApprove 委托 Bean，内联 `Objects.equals` 状态判断已移除。
-- [ ] Disposal 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstDisposalApprovalStateMachineMatrix,TestErpAstDisposalDocumentStateMachineMatrix` 全绿。
+- [x] Disposal 双轴 Bean 存在/注册/无状态；facade validateTransition + executeApprove/ReverseApprove 委托 Bean，内联 `Objects.equals` 状态判断已移除。
+- [x] Disposal 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstDisposalApprovalStateMachineMatrix,TestErpAstDisposalDocumentStateMachineMatrix` 全绿（21/21，含层 3 既有 TestErpAstDisposal/TestErpAstDisposalWorkflowApproval 同模块回归绿）。
 
 ### Phase 2 - ErpAstAssetCapitalization 双轴 Bean（M4.46 + M4.47）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpAstAssetCapitalization{Approval,Document}StateMachine.java`、`.../processor/ErpAstAssetCapitalizationProcessor.java`、`.../processor/ErpAstAssetCapitalization{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval}Processor.java`、`.../test/.../statemachine/TestErpAstAssetCapitalization{Approval,Document}StateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 1（Disposal 双轴 + facade 接线范式已固化）
 
-- [ ] `Add`：落地 `ErpAstAssetCapitalizationApprovalStateMachine`（5 动作 6 边，同 Disposal 矩阵结构）+ `ErpAstAssetCapitalizationDocumentStateMachine`（同 Phase 1 Decision (B) 范式）。注册 2 Bean。
+- [x] `Add`：落地 `ErpAstAssetCapitalizationApprovalStateMachine`（5 动作 6 边，同 Disposal 矩阵结构）+ `ErpAstAssetCapitalizationDocumentStateMachine`（同 Phase 1 Decision (B) 范式 + **Capitalization 特例边 reverseApprove(ACTIVE→CANCELLED)**）。注册 2 Bean。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线，镜像 Phase 1）：`ErpAstAssetCapitalizationProcessor` 注入 2 Bean；`validateTransitionForXxx` 改调 Approval Bean；cancel 守卫改调 Document Bean `isCancelled()`；`executeApprove`/`executeReverseApprove` 目标态改调 Bean。**折旧计划生成、库存转固 stock move、Asset.status side-effect（→IN_SERVICE/→DRAFT）、过账、posted 置位保留原位**。
+- [x] `Add`（接线，镜像 Phase 1）：`ErpAstAssetCapitalizationProcessor` 注入 2 Bean；`validateTransitionForXxx` 改调 Approval Bean（try/catch common 码作 cause → `illegalTransition`→`ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION`，新增 4 参 cause 重载）；cancel 守卫（`validateTransitionForCancel:165-169`）改调 Document Bean `isCancelled()`；`executeApprove:85-86` 目标态改调 Bean（approveTargetStatus×2）；`executeReverseApprove:121-122` 目标态改调 Bean（reverseApproveTargetStatus×2——**docStatus=CANCELLED 特例边**）。**折旧计划生成、库存转固 stock move、Asset.status side-effect（→IN_SERVICE/→DRAFT，计划 1 M4.40 AssetStateMachine 守卫）、过账、posted 置位保留原位**。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（2 Bean）+ 层 2 四方对照（dict ↔ owner doc ↔ Bean ↔ 全部 writer）。含 reverseApprove posted=false 不对称窗口（仅设 REJECTED，资产保持终态）登记。**Capitalization Document 轴特例**：`ErpAstAssetCapitalizationProcessor.executeReverseApprove:112` 额外写 `docStatus=CANCELLED`（Disposal/ValueAdjustment reverseApprove 只写 approveStatus=REJECTED，不写 docStatus）——Document Bean 须为 Capitalization 单独登记此 reverseApprove→CANCELLED 边（不与 Disposal Document Bean 完全同构）。
+- [x] `Proof`：层 1 矩阵完备性（2 Bean 独立测试：Approval 12 + Document 11，全绿）+ 层 2 四方对照（dict ↔ owner doc §适用对象三 ↔ Bean ↔ 全部 writer：executeApprove 2 + executeReverseApprove 2 + per-mutation 5 守卫透传 + 创建写 + CRUD 排除，全对齐）。含 reverseApprove posted=false 不对称窗口（仅设 REJECTED + docStatus=CANCELLED，资产保持终态）登记（owner doc §4 已声明，本计划不改）。**Capitalization Document 轴特例**：`ErpAstAssetCapitalizationProcessor.executeReverseApprove:122` 额外写 `docStatus=CANCELLED`（Disposal/ValueAdjustment reverseApprove 只写 approveStatus=REJECTED，不写 docStatus）——Document Bean 单独登记 reverseApprove→CANCELLED 边（draft review M2 登记，不与 Disposal Document Bean 同构）。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] Capitalization 双轴 Bean 存在/注册/无状态；facade + 5 per-mutation 委托 Bean。
-- [ ] Capitalization 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstAssetCapitalization*StateMachineMatrix` 全绿。
+- [x] Capitalization 双轴 Bean 存在/注册/无状态；facade + 5 per-mutation 委托 Bean。
+- [x] Capitalization 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstAssetCapitalization*StateMachineMatrix` 全绿（23/23）。
 
 ### Phase 3 - ErpAstValueAdjustment 双轴 Bean（M4.42 + M4.43）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpAstValueAdjustment{Approval,Document}StateMachine.java`、`.../processor/ErpAstValueAdjustmentProcessor.java`、`.../processor/ErpAstValueAdjustment{SubmitForApproval,Approve,Reject,ReverseApprove,WithdrawApproval,Cancel}Processor.java`、`.../test/.../statemachine/TestErpAstValueAdjustment{Approval,Document}StateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1-2
 
-- [ ] `Decision`（ValueAdjustment 特殊守卫迁移）：(A) `ERR_ADJUSTMENT_ALREADY_REVERSED`（已红冲不可二次红冲）——是 posted/docStatus 动态守卫非固定状态迁移边，保留原位（reverseApprove 动态守卫）。(B) `ERR_ADJUSTMENT_APPROVAL_REQUIRED`（强制审批配置）——config-gated 动态守卫，保留原位。(C) 调整类型/金额校验（`TYPE_INVALID`/`AMOUNT_INVALID`）——动态业务守卫，保留原位。Bean 只接管固定 approveStatus 5 动作矩阵 + docStatus 轴。
+- [x] `Decision`（ValueAdjustment 特殊守卫迁移）：(A) `ERR_ADJUSTMENT_ALREADY_REVERSED`（已红冲不可二次红冲）——是 posted/docStatus 动态守卫非固定状态迁移边，保留原位（reverseApprove 动态守卫）。(B) `ERR_ADJUSTMENT_APPROVAL_REQUIRED`（强制审批配置）——config-gated 动态守卫，保留原位。(C) 调整类型/金额校验（`TYPE_INVALID`/`AMOUNT_INVALID`）——动态业务守卫，保留原位。Bean 只接管固定 approveStatus 5 动作矩阵 + docStatus 轴（含 cancel 固定守卫 ACTIVE「非已生效」/CANCELLED「非已作废」；posted 守卫「非已过账」保留原位，posted 不入轴契约 §3）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpAstValueAdjustmentApprovalStateMachine` + `ErpAstValueAdjustmentDocumentStateMachine`（同范式）。注册 2 Bean。
+- [x] `Add`：落地 `ErpAstValueAdjustmentApprovalStateMachine` + `ErpAstValueAdjustmentDocumentStateMachine`（同范式；docStatus 轴 2 边：approve(DRAFT→ACTIVE) + cancel(DRAFT→CANCELLED)——唯一有独立 cancel mutation 的实体，实仓核实 `ErpAstValueAdjustmentCancelProcessor:26` 写 CANCELLED）。注册 2 Bean。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线，镜像 Phase 1）：facade 注入 2 Bean；validateTransition/executeApprove/ReverseApprove 委托 Bean。**已红冲守卫、强制审批配置、调整类型/金额校验、过账、posted 置位保留原位**。
+- [x] `Add`（接线，镜像 Phase 1）：facade 注入 2 Bean；validateTransition/executeApprove/executeReverseApprove/doAutoApprove 委托 Bean（try/catch common 码作 cause → 领域码，新增 4 参 cause 重载；`validateTransitionForCancel` 按当前态区分 expected「非已生效」/「非已作废」，posted 守卫原位；`validateNotCancelled` 委托 `isCancelled()`）。**已红冲守卫、强制审批配置、调整类型/金额校验、过账、applyAssetValueChange/rollbackAssetValue、posted 置位保留原位**。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（2 Bean）+ 层 2 四方对照。
+- [x] `Proof`：层 1 矩阵完备性（2 Bean 独立测试：Approval 12 + Document 12，全绿）+ 层 2 四方对照（dict ↔ owner doc §适用对象三 ↔ Bean ↔ 全部 writer：executeApprove + doAutoApprove + executeReverseApprove + cancelProcessor + per-mutation 6 守卫透传 + 创建写 + CRUD 排除，全对齐；动态守卫登记见 Phase 3 Decision）。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] ValueAdjustment 双轴 Bean 存在/注册/无状态；facade + 6 per-mutation 委托 Bean。
-- [ ] ValueAdjustment 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstValueAdjustment*StateMachineMatrix` 全绿。
+- [x] ValueAdjustment 双轴 Bean 存在/注册/无状态；facade + 6 per-mutation 委托 Bean。
+- [x] ValueAdjustment 层 1 矩阵测试本地 `mvn test -pl module-assets/erp-ast-service -am -Dtest=TestErpAstValueAdjustment*StateMachineMatrix` 全绿（24/24）。
 
 ### Phase 4 - 层 3 既有命名动作回归 + 三实体一致性
 
-Status: planned
+Status: completed
 Targets: `module-assets/erp-ast-service/src/test/`（既有集成测试，零新建）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1-3（三实体 6 轴 Bean + 接线已落地）
 
-- [ ] `Proof`：层 3 既有命名动作回归——复用资本化/处置/价值调整既有集成测试（approve happy path + reverseApprove posted=true/false 窗口 + reject + withdraw + cancel + illegal transition + Asset 终态联动 + schedule cancel/restore + 过账），证明错误码值/参数、过账时序、posted=false 不对称窗口、gain/loss、stock move 不变。本地 `mvn test -pl module-assets/erp-ast-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归——复用资本化/处置/价值调整既有集成测试（`TestErpAstCapitalization` 3 / `TestErpAstDisposal` 2 / `TestErpAstDisposalWorkflowApproval` 3 / `TestErpAstValueAdjustment` 6 / `TestErpAstPostingReverse` 5 / `TestErpAstMovementReverseApprove` 10 / `TestErpAstSplitMerge` 8 等，approve happy path + reverseApprove posted=true/false 窗口 + reject + withdraw + cancel + illegal transition + Asset 终态联动 + schedule cancel/restore + 过账），证明错误码值/参数、过账时序、posted=false 不对称窗口、gain/loss 不变。（注：结束审计 MINOR M1——「库存转固 stock move」为继承性 owner-doc 漂移，`module-assets` 全仓 `IErpInvStockMoveBiz` 零引用，本计划未删任何代码，owner doc §适用对象三已改注登记，successor 见 Deferred 段。）本地 `mvn test -pl module-assets/erp-ast-service -am` 全绿（255/255，含层 1 矩阵 6 新测试类 68 tests + 全部既有集成测试，零回归）。
   - Skill: `nop-testing`
-- [ ] `Proof`：三实体一致性复核——6 Bean 命名（Approval/Document 后缀）/注册/无状态/矩阵形状一致；facade→Bean 注入 + cause-chaining 范式与 1950-1 采购审批 + Movement 双轴可追溯一致。
+- [x] `Proof`：三实体一致性复核——6 Bean 命名（Approval/Document 后缀）/注册（beans.xml 6 FQN bean id）/无状态（grep 零 @Inject/DAO/IServiceContext，javadoc 除外）/矩阵形状一致（3 Approval 各 5 动作 6 边；3 Document：Disposal 1 边 / Capitalization 2 边含特例 / ValueAdjustment 2 边含 cancel）一致；facade→Bean 注入（非 private）+ cause-chaining（common 码作 cause → 领域码，4 参重载）范式与 1950-1 采购审批 + Movement 双轴可追溯一致；三 facade 内联 `Objects.equals` 状态判断已全部移除（grep 零残留）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 层 3 既有集成测试全绿（零行为回归）。
+- [x] 层 3 既有集成测试全绿（零行为回归）。
 
 ## Draft Review Record
 
@@ -168,15 +168,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
-- [ ] 范围内行为完成（三实体 6 轴 Bean + facade/per-mutation 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐（roadmap M4.42-47 → done）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-assets/erp-ast-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
+- [x] 范围内行为完成（三实体 6 轴 Bean + facade/per-mutation 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（roadmap M4.42-47 → done）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-assets/erp-ast-service -am` 全绿（255/255）+ `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline（R5=0/R11=0，exit=0）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证
+- [x] 结束审计由独立子代理（新会话）执行
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -192,6 +192,18 @@ Exit Criteria:
 - Why Not Blocking Closure: `ERR_ADJUSTMENT_ALREADY_REVERSED`/`APPROVAL_REQUIRED`/`TYPE_INVALID`/`AMOUNT_INVALID` 是 posted/docStatus/config/业务值动态守卫，非固定状态迁移边，保留原位。
 - Successor Required: no
 
+### ValueAdjustment 已红冲守卫死码（结束审计 MINOR M2）
+
+- Classification: `dead-code registry (audit finding)`
+- Why Not Blocking Closure: 结束审计零信任实证 `ERR_ADJUSTMENT_ALREADY_REVERSED`（ErpAstErrors.java:167）在全部 Java 代码中**零 throw 点**（改动前后一致）——plan baseline「reverseApprove 含 ALREADY_REVERSED 不对称守卫」描述准确性被高估，Phase 3 Decision (A) 处置（保留原位）正确、行为无影响。本计划仅登记不处理。
+- Successor Required: yes（触发条件 = 清理 dead error code / 补红冲守卫实现时，随 `docs/audits/` dead-code 清理或红冲闭环增强统一处理）
+
+### 资本化库存转固 stock move（结束审计 MINOR M1）
+
+- Classification: `watch-only residual (inherited owner-doc drift)`
+- Why Not Blocking Closure: owner doc §7 外部依赖行 `IErpInvStockMoveBiz` 在 `module-assets` 全仓代码零引用（grep 实证，本计划未删任何代码）——继承性 owner-doc 漂移，本计划不再传播（owner doc §适用对象三已改注登记）。
+- Successor Required: yes（触发条件 = 库存转固业务上线实现时补代码 + 补 owner doc 对齐）
+
 ### Delta 覆盖运行时实证
 
 - Classification: `optimization candidate`
@@ -206,12 +218,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行后填写>
+Status Note: 全 4 Phase 执行完成（Disposal → Capitalization → ValueAdjustment → 层 3 回归 + 三实体一致性）。6 Bean（3 Approval 双轴各 5 动作 6 边 + 3 Document：Disposal 1 边 / Capitalization 2 边含 reverseApprove(ACTIVE→CANCELLED) 特例边 / ValueAdjustment 2 边含 cancel）落地 + beans.xml FQN-id 注册 + 3 facade 接线（validateTransitionForXxx 委托 assertCanXxx + executeApprove/executeReverseApprove/doAutoApprove 目标态委托 *TargetStatus()，try/catch common 码作 cause → 领域码 4 参重载；动态守卫/过账/Asset.status side-effect/schedule/折旧计划生成全部保留原位）+ 层 1 矩阵 6 测试类 68 tests + 层 2 四方对照（dict ↔ owner doc §适用对象三 ↔ Bean ↔ 全部 writer 全对齐）+ 层 3 回归 255/255 零行为回归。验证：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + `mvn test -pl module-assets/erp-ast-service -am` 255/255 全绿 + compliance checker exit 0（R5=0/R11=0 零漂移）。结束审计独立子代理两轮收敛（首轮 FAIL：MAJOR F1 日志缺失 + 2 MINOR 已修复登记 → 二轮 PASS）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立结束审计>
+- Auditor / Agent: 独立子代理（新会话）`ses_000935016ffeQABLJn0LVxIe`——首轮审计零信任静态实证：9 个 Closure Gates 中 8 项 PASS + MAJOR F1（docs/logs/2026/08-14.md 缺失 1931-2 执行条目，违反 AGENTS.md 规则 8）+ MINOR M1（「库存转固 stock move」为继承性 owner-doc 漂移，module-assets 全仓 IErpInvStockMoveBiz 零引用，本计划未删任何代码）+ MINOR M2（ERR_ADJUSTMENT_ALREADY_REVERSED 全仓零 throw 点死码）。修复：日志补条目（顶部时间倒序）+ owner doc §适用对象三改注登记漂移 + plan Deferred 段登记 M1/M2 + Phase 4 Proof 注记。二轮复检 5 项全部 PASS → `END_AUDIT_VERDICT: PASS`。
 
 Follow-up:
 
-- <待执行后填写；Deferred 项均为既定 successor>
+- Deferred 项均为既定 successor：reverseApprove posted=false 不对称窗口悬挂兜底（owner doc §4，DeferredPostingSweepJob）；ValueAdjustment 已红冲/强制审批/类型金额守卫（动态守卫，successor no）；ValueAdjustment 已红冲守卫死码 `ERR_ADJUSTMENT_ALREADY_REVERSED`（零 throw 点，dead-code 清理/红冲闭环增强时统一处理）；资本化库存转固 stock move（继承性 owner-doc 漂移，库存转固业务上线时补实现 + 补 owner doc 对齐）；Delta 覆盖运行时实证（归 M5.3）；全局 CRUD 写锁（M0.1 §9 显式排除）。
