@@ -3,6 +3,7 @@ package app.erp.mfg.service.processor;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderApprovalStateMachine;
 import app.erp.common.service.AbstractReverseApproveProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -22,6 +23,9 @@ public class ErpMfgSubcontractOrderReverseApproveProcessor extends AbstractRever
 
     @Inject
     ErpMfgSubcontractOrderProcessor processor;
+
+    @Inject
+    ErpMfgSubcontractOrderApprovalStateMachine stateMachine;
 
     @Override
     public ErpMfgSubcontractOrder reverseApprove(String id, IServiceContext context) {
@@ -69,11 +73,11 @@ public class ErpMfgSubcontractOrderReverseApproveProcessor extends AbstractRever
 
     @Override
     protected String approvedStatus() {
-        return ErpMfgConstants.APPROVE_STATUS_APPROVED;
+        return stateMachine.approveTargetStatus();
     }
 
     @Override
     protected String submittedStatus() {
-        return ErpMfgConstants.APPROVE_STATUS_SUBMITTED;
+        return stateMachine.submitTargetStatus();
     }
 }

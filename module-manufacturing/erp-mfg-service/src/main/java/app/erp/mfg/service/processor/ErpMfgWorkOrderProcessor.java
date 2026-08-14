@@ -8,11 +8,14 @@ import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mfg.service.statemachine.ErpMfgWorkOrderApprovalStateMachine;
+import app.erp.mfg.service.statemachine.ErpMfgWorkOrderDocumentStateMachine;
 import app.erp.mfg.service.costing.ProductionVarianceCalculator;
 import app.erp.mfg.service.genealogy.BatchGenealogyWriter;
 import app.erp.mfg.service.posting.ProductionVarianceDispatcher;
 import app.erp.mfg.service.workorder.KitAvailabilityChecker;
 import app.erp.mfg.service.workorder.KitAvailabilityResult;
+import app.erp.common.service.ErpCommonErrors;
 import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
@@ -32,7 +35,6 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.util.Objects;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -85,6 +87,10 @@ public class ErpMfgWorkOrderProcessor {
     ErpMfgWorkOrderReverseApproveProcessor reverseApproveProcessor;
     @Inject
     ErpMfgWorkOrderWithdrawApprovalProcessor withdrawApprovalProcessor;
+    @Inject
+    ErpMfgWorkOrderApprovalStateMachine approvalStateMachine;
+    @Inject
+    ErpMfgWorkOrderDocumentStateMachine documentStateMachine;
 
     static final String NOTIFY_EVENT_VARIANCE_FAILURE = "mfg.production-variance-posting-failure";
 
@@ -110,7 +116,7 @@ public class ErpMfgWorkOrderProcessor {
 
     public ErpMfgWorkOrder checkAvailability(Long workOrderId, IServiceContext context) {
         ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
-        requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED, "NOT_STARTED");
+        validateTransitionForCheckAvailability(wo, context);
         KitAvailabilityResult result = kitAvailabilityChecker.check(workOrderId);
         wo.setDocStatus(result.getResultingStatus());
         workOrderDao().updateEntity(wo);
@@ -126,13 +132,8 @@ public class ErpMfgWorkOrderProcessor {
      */
     public ErpMfgWorkOrder cancel(Long workOrderId, IServiceContext context) {
         ErpMfgWorkOrder wo = requireWorkOrder(String.valueOf(workOrderId), context);
-        String status = wo.getDocStatus();
-        if (status == null || (!Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_DRAFT)
-                && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED)
-                && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED))) {
-            throw illegalTransition(wo, status, "DRAFT、SUBMITTED 或 NOT_STARTED");
-        }
-        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_CANCELLED);
+        validateTransitionForCancel(wo, context);
+        wo.setDocStatus(documentStateMachine.cancelTargetStatus());
         workOrderDao().updateEntity(wo);
         return wo;
     }
@@ -170,39 +171,45 @@ public class ErpMfgWorkOrderProcessor {
 
     protected void validateTransitionForSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
         String status = wo.getApproveStatus();
-        if (status == null) {
-            status = ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED;
-        }
-        if (!Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED)
-                && !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_REJECTED)) {
+        try {
+            approvalStateMachine.assertCanSubmit(status);
+        } catch (NopException e) {
             throw illegalTransition(wo, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpMfgWorkOrder wo, IServiceContext context) {
         String status = wo.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED)) {
+        try {
+            approvalStateMachine.assertCanWithdraw(status);
+        } catch (NopException e) {
             throw illegalTransition(wo, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpMfgWorkOrder wo, IServiceContext context) {
         String status = wo.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED)) {
+        try {
+            approvalStateMachine.assertCanApprove(status);
+        } catch (NopException e) {
             throw illegalTransition(wo, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpMfgWorkOrder wo, IServiceContext context) {
         String status = wo.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED)) {
+        try {
+            approvalStateMachine.assertCanReject(status);
+        } catch (NopException e) {
             throw illegalTransition(wo, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpMfgWorkOrder wo, IServiceContext context) {
         String status = wo.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_APPROVED)) {
+        try {
+            approvalStateMachine.assertCanReverseApprove(status);
+        } catch (NopException e) {
             throw illegalTransition(wo, status, ErpMfgConstants.APPROVE_STATUS_APPROVED);
         }
     }
@@ -220,19 +227,19 @@ public class ErpMfgWorkOrderProcessor {
     // ---------- step：审批执行 ----------
 
     protected void doSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
-        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+        wo.setApproveStatus(approvalStateMachine.submitTargetStatus());
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED);
         workOrderDao().updateEntity(wo);
     }
 
     protected void doWithdrawSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
-        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED);
+        wo.setApproveStatus(approvalStateMachine.withdrawTargetStatus());
         workOrderDao().updateEntity(wo);
     }
 
     protected void doApprove(ErpMfgWorkOrder wo, IServiceContext context) {
         SoDGuard.assertApproverNotCreator(wo.getCreatedBy(), currentUserId(), ErpMfgErrors.ERR_MFG_APPROVER_IS_CREATOR);
-        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
+        wo.setApproveStatus(approvalStateMachine.approveTargetStatus());
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_NOT_STARTED);
         wo.setApprovedBy(currentUserId());
         wo.setApprovedAt(CoreMetrics.currentTimestamp());
@@ -240,12 +247,12 @@ public class ErpMfgWorkOrderProcessor {
     }
 
     protected void doReject(ErpMfgWorkOrder wo, IServiceContext context) {
-        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_REJECTED);
+        wo.setApproveStatus(approvalStateMachine.rejectTargetStatus());
         workOrderDao().updateEntity(wo);
     }
 
     protected void doReverseApprove(ErpMfgWorkOrder wo, IServiceContext context) {
-        wo.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_REJECTED);
+        wo.setApproveStatus(approvalStateMachine.reverseApproveTargetStatus());
         wo.setApprovedBy(null);
         wo.setApprovedAt(null);
         workOrderDao().updateEntity(wo);
@@ -255,21 +262,72 @@ public class ErpMfgWorkOrderProcessor {
 
     protected void validateTransitionForStart(ErpMfgWorkOrder wo, IServiceContext context) {
         String status = wo.getDocStatus();
-        if (status != null && Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOCK_RESERVED)) {
-        } else if (status != null && Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL)) {
-            if (!isAllowPartialKitStart()) {
-                throw new NopException(ErpMfgErrors.ERR_PARTIAL_KIT_START_FORBIDDEN)
-                        .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
-            }
-        } else {
+        try {
+            documentStateMachine.assertCanStart(status);
+        } catch (NopException e) {
             throw illegalTransition(wo, status, "STOCK_RESERVED 或 STOCK_PARTIAL");
+        }
+        // 动态业务守卫（config-gated 部分齐套开工许可）保留原位
+        if (ErpMfgConstants.WORK_ORDER_STATUS_STOCK_PARTIAL.equals(status) && !isAllowPartialKitStart()) {
+            throw new NopException(ErpMfgErrors.ERR_PARTIAL_KIT_START_FORBIDDEN)
+                    .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
+        }
+    }
+
+    /** stop 守卫：仅 IN_PROCESS 合法（固定来源态委托 Document Bean）。 */
+    protected void validateTransitionForStop(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getDocStatus();
+        try {
+            documentStateMachine.assertCanStop(status);
+        } catch (NopException e) {
+            throw illegalTransition(wo, status, "IN_PROCESS");
+        }
+    }
+
+    /** resume 守卫：仅 STOPPED 合法（固定来源态委托 Document Bean）。 */
+    protected void validateTransitionForResume(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getDocStatus();
+        try {
+            documentStateMachine.assertCanResume(status);
+        } catch (NopException e) {
+            throw illegalTransition(wo, status, "STOPPED");
+        }
+    }
+
+    /** reportCompletion 守卫：仅 IN_PROCESS 合法（固定来源态委托 Document Bean）。 */
+    protected void validateTransitionForReportCompletion(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getDocStatus();
+        try {
+            documentStateMachine.assertCanReportCompletion(status);
+        } catch (NopException e) {
+            throw illegalTransition(wo, status, "IN_PROCESS");
+        }
+    }
+
+    /** checkAvailability 守卫：仅 NOT_STARTED 合法（固定来源态委托 Document Bean）。 */
+    protected void validateTransitionForCheckAvailability(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getDocStatus();
+        try {
+            documentStateMachine.assertCanCheckAvailability(status);
+        } catch (NopException e) {
+            throw illegalTransition(wo, status, "NOT_STARTED");
+        }
+    }
+
+    /** cancel 守卫：来源态 {DRAFT, SUBMITTED, NOT_STARTED}（固定来源态委托 Document Bean）。 */
+    protected void validateTransitionForCancel(ErpMfgWorkOrder wo, IServiceContext context) {
+        String status = wo.getDocStatus();
+        try {
+            documentStateMachine.assertCanCancel(status);
+        } catch (NopException e) {
+            throw illegalTransition(wo, status, "DRAFT、SUBMITTED 或 NOT_STARTED");
         }
     }
 
     // ---------- step：工单操作执行 ----------
 
     protected void doStart(ErpMfgWorkOrder wo, IServiceContext context) {
-        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS);
+        wo.setDocStatus(documentStateMachine.startTargetStatus());
         if (wo.getActualStartDate() == null) {
             wo.setActualStartDate(CoreMetrics.today());
         }
@@ -359,7 +417,19 @@ public class ErpMfgWorkOrderProcessor {
 
     protected void requireStatus(ErpMfgWorkOrder wo, String expected, String expectedLabel) {
         String current = wo.getDocStatus();
-        if (current == null || !Objects.equals(current, expected)) {
+        try {
+            if (ErpMfgConstants.WORK_ORDER_STATUS_DRAFT.equals(expected)) {
+                // submit（docStatus 侧）固定守卫：仅 DRAFT
+                documentStateMachine.assertCanSubmit(current);
+            } else if (ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED.equals(expected)) {
+                // approve（docStatus 侧）固定守卫：仅 SUBMITTED
+                documentStateMachine.assertCanApprove(current);
+            } else {
+                throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+                        .param(ErpCommonErrors.ARG_CURRENT_STATUS, current)
+                        .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedLabel);
+            }
+        } catch (NopException e) {
             throw illegalTransition(wo, current, expectedLabel);
         }
     }

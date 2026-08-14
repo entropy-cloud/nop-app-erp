@@ -3,6 +3,7 @@ package app.erp.mfg.service.processor;
 import app.erp.mfg.dao.entity.ErpMfgSubcontractOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderApprovalStateMachine;
 import app.erp.common.service.AbstractWithdrawApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -26,6 +27,9 @@ public class ErpMfgSubcontractOrderWithdrawApprovalProcessor extends AbstractWit
 
     @Inject
     ErpMfgSubcontractOrderProcessor processor;
+
+    @Inject
+    ErpMfgSubcontractOrderApprovalStateMachine stateMachine;
 
     @Override
     public ErpMfgSubcontractOrder withdrawApproval(String id, IServiceContext context) {
@@ -63,11 +67,11 @@ public class ErpMfgSubcontractOrderWithdrawApprovalProcessor extends AbstractWit
 
     @Override
     protected String unsubmittedStatus() {
-        return ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED;
+        return stateMachine.withdrawTargetStatus();
     }
 
     @Override
     protected String submittedStatus() {
-        return ErpMfgConstants.APPROVE_STATUS_SUBMITTED;
+        return stateMachine.submitTargetStatus();
     }
 }

@@ -33,20 +33,19 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
     public ErpMfgMaterialIssue confirm(Long issueId, IServiceContext context) {
         ErpMfgMaterialIssue issue = requireIssue(issueId, context);
         String status = issue.getDocStatus();
-        // 幂等：已 DONE（已出库）直接返回，不重复触发库存出库（state-machine §4）
+        // 幂等：已 DONE（已出库）直接返回，不重复触发库存出库（state-machine §4；动态幂等守卫保留原位）
         if (status != null && Objects.equals(status, ErpMfgConstants.ISSUE_STATUS_DONE)) {
             return issue;
         }
-        if (status == null || !Objects.equals(status, ErpMfgConstants.ISSUE_STATUS_DRAFT)) {
-            throw illegalTransition(issue, status, "DRAFT");
-        }
+        // 固定来源态守卫（仅 DRAFT）委托 ErpMfgMaterialIssueStateMachine（M4.39）
+        validateTransition(issue, context);
         List<ErpMfgMaterialIssueLine> lines = loadLines(issueId);
         if (lines.isEmpty()) {
             throw new NopException(ErpMfgErrors.ERR_ISSUE_LINES_EMPTY)
                     .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, issue.getCode());
         }
 
-        // issue-status DRAFT→CONFIRMED
+        // issue-status DRAFT→CONFIRMED（confirm 动作瞬态中间态，同事务内立即推进至 DONE）
         issue.setDocStatus(ErpMfgConstants.ISSUE_STATUS_CONFIRMED);
         issueDao().updateEntity(issue);
 
@@ -62,7 +61,7 @@ public class ErpMfgMaterialIssueConfirmProcessor extends AbstractErpMfgMaterialI
         // issue-status CONFIRMED→DONE（已出库）；汇总领料出库流水 totalCost → WorkOrder.materialCost
         BigDecimal materialCostDelta = aggregateIssueMaterialCost(move, context);
         issue = requireIssue(issueId, context);
-        issue.setDocStatus(ErpMfgConstants.ISSUE_STATUS_DONE);
+        issue.setDocStatus(stateMachine.confirmTargetStatus());
         issueDao().updateEntity(issue);
 
         applyMaterialCostToWorkOrder(issue.getWorkOrderId(), materialCostDelta, context);

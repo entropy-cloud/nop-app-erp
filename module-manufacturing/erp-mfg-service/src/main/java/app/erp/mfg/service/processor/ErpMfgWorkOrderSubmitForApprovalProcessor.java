@@ -3,6 +3,7 @@ package app.erp.mfg.service.processor;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mfg.service.statemachine.ErpMfgWorkOrderApprovalStateMachine;
 import app.erp.common.service.AbstractSubmitForApprovalProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -22,6 +23,9 @@ public class ErpMfgWorkOrderSubmitForApprovalProcessor extends AbstractSubmitFor
 
     @Inject
     ErpMfgWorkOrderProcessor processor;
+
+    @Inject
+    ErpMfgWorkOrderApprovalStateMachine stateMachine;
 
     public ErpMfgWorkOrderSubmitForApprovalProcessor() {
         super("ErpMfgWorkOrder");
@@ -64,16 +68,16 @@ public class ErpMfgWorkOrderSubmitForApprovalProcessor extends AbstractSubmitFor
 
     @Override
     protected String unsubmittedStatus() {
-        return ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED;
+        return stateMachine.withdrawTargetStatus();
     }
 
     @Override
     protected String submittedStatus() {
-        return ErpMfgConstants.APPROVE_STATUS_SUBMITTED;
+        return stateMachine.submitTargetStatus();
     }
 
     @Override
     protected String rejectedStatus() {
-        return ErpMfgConstants.APPROVE_STATUS_REJECTED;
+        return stateMachine.rejectTargetStatus();
     }
 }

@@ -30,7 +30,7 @@ public class ErpMfgWorkOrderReportCompletionProcessor {
 
     public ErpMfgWorkOrder reportCompletion(Long workOrderId, BigDecimal completedQty, IServiceContext context) {
         ErpMfgWorkOrder wo = facade.requireWorkOrder(String.valueOf(workOrderId), context);
-        facade.requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, "IN_PROCESS");
+        facade.validateTransitionForReportCompletion(wo, context);
         if (completedQty == null || completedQty.signum() < 0) {
             completedQty = BigDecimal.ZERO;
         }
@@ -74,7 +74,7 @@ public class ErpMfgWorkOrderReportCompletionProcessor {
         ErpMfgWorkOrderProcessor.recomputeTotals(wo);
 
         if (willFinish) {
-            wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_COMPLETED);
+            wo.setDocStatus(facade.documentStateMachine.reportCompletionTargetStatus());
             wo.setActualEndDate(CoreMetrics.today());
         }
         facade.workOrderDao().updateEntity(wo);

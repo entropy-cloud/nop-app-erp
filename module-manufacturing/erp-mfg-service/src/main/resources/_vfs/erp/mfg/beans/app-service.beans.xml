@@ -105,6 +105,31 @@
     <bean id="app.erp.mfg.service.statemachine.ErpMfgMrpPlanStateMachine"
           class="app.erp.mfg.service.statemachine.ErpMfgMrpPlanStateMachine"/>
 
+    <!-- 生产工单实体级状态机 Bean（plan 2026-08-14-0930-1 M4.35 + M4.36；契约 docs/architecture/entity-state-machine-bean.md）：
+         双轴分离（契约 §1）：Document 后缀 = docStatus 业务生命周期轴（9 动作 14 边），Approval 后缀 = approveStatus 审批轴
+         （5 动作 6 边，reverseApprove 目标态=REJECTED）。固定来源态/目标态判断由 facade/Processor 委托 Bean，
+         动态业务守卫（SoD/齐套校验/过账/stock move）保留原位。 -->
+    <bean id="app.erp.mfg.service.statemachine.ErpMfgWorkOrderDocumentStateMachine"
+          class="app.erp.mfg.service.statemachine.ErpMfgWorkOrderDocumentStateMachine"/>
+    <bean id="app.erp.mfg.service.statemachine.ErpMfgWorkOrderApprovalStateMachine"
+          class="app.erp.mfg.service.statemachine.ErpMfgWorkOrderApprovalStateMachine"/>
+
+    <!-- 委外加工单实体级状态机 Bean（plan 2026-08-14-0930-1 M4.37 + M4.38；契约 docs/architecture/entity-state-machine-bean.md）：
+         双轴分离（契约 §1）：Document 后缀 = docStatus 业务生命周期轴（8 动作 11 边，reject 联动写 docStatus=REJECTED），
+         Approval 后缀 = approveStatus 审批轴（5 动作 6 边，reverseApprove 目标态=REJECTED）。固定来源态/目标态判断由
+         facade/Processor 委托 Bean；动态守卫（validateCanReverse 的 posted 判定、MrpRelease spawn、ReversalListener 回写）保留原位。 -->
+    <bean id="app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderDocumentStateMachine"
+          class="app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderDocumentStateMachine"/>
+    <bean id="app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderApprovalStateMachine"
+          class="app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderApprovalStateMachine"/>
+
+    <!-- 领料单实体级状态机 Bean（plan 2026-08-14-0930-1 M4.39；契约 docs/architecture/entity-state-machine-bean.md）：
+         单轴 docStatus（实体无 approveStatus），无 Document/Approval 后缀（契约 §1 单轴省略约定）。
+         confirm 单命名动作（DRAFT→DONE，CONFIRMED 为瞬态中间态）+ reverseConfirm 固定状态边（DONE→CANCELLED，
+         posted 判定为动态守卫保留在 Processor 原位）。 -->
+    <bean id="app.erp.mfg.service.statemachine.ErpMfgMaterialIssueStateMachine"
+          class="app.erp.mfg.service.statemachine.ErpMfgMaterialIssueStateMachine"/>
+
     <!-- manufacturing 域状态机编排 Processor（Facade + Processor 两层结构，protected step 方法供下游覆盖）。 -->
     <bean id="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"
           class="app.erp.mfg.service.processor.ErpMfgWorkOrderProcessor"/>

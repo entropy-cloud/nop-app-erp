@@ -12,6 +12,7 @@ import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.entity.MaterialIssueStockMoveBuilder;
 import app.erp.mfg.service.posting.ManufacturingIssuePostingDispatcher;
+import app.erp.mfg.service.statemachine.ErpMfgMaterialIssueStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -54,6 +55,8 @@ public class AbstractErpMfgMaterialIssueProcessor {
     MaterialIssueStockMoveBuilder stockMoveBuilder;
     @Inject
     ManufacturingIssuePostingDispatcher issuePostingDispatcher;
+    @Inject
+    ErpMfgMaterialIssueStateMachine stateMachine;
 
     // ---------- 实体加载/守卫（protected，供派生复用与覆盖） ----------
 
@@ -64,6 +67,22 @@ public class AbstractErpMfgMaterialIssueProcessor {
                     .param(ErpMfgErrors.ARG_ISSUE_ID, issueId);
         }
         return issue;
+    }
+
+    /**
+     * confirm 路径固定来源态守卫（plan 2026-08-14-0930-1 M4.39）：委托
+     * {@link ErpMfgMaterialIssueStateMachine#assertCanConfirm(String)}，非法边由 Bean 抛 common 层码，
+     * 此处映射领域码 {@code ERR_INVALID_STATUS_TRANSITION}（misnamed 复用，common 码作 cause）。
+     *
+     * <p>已 DONE 的幂等短路（重复确认空操作）为动态幂等守卫，保留在 {@code ErpMfgMaterialIssueConfirmProcessor} 原位。
+     */
+    protected void validateTransition(ErpMfgMaterialIssue issue, IServiceContext context) {
+        String status = issue.getDocStatus();
+        try {
+            stateMachine.assertCanConfirm(status);
+        } catch (NopException e) {
+            throw illegalTransition(issue, status, "DRAFT");
+        }
     }
 
     protected NopException illegalTransition(ErpMfgMaterialIssue issue, String current, String expected) {

@@ -12,6 +12,9 @@ import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.posting.MfgPostingExecutor;
 import app.erp.mfg.service.posting.SubcontractPostingDispatcher;
+import app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderApprovalStateMachine;
+import app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderDocumentStateMachine;
+import app.erp.common.service.ErpCommonErrors;
 import app.erp.common.service.SoDGuard;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.md.dao.entity.ErpMdMaterial;
@@ -78,6 +81,10 @@ public class ErpMfgSubcontractOrderProcessor {
     ErpMfgSubcontractOrderReverseApproveProcessor reverseApproveProcessor;
     @Inject
     ErpMfgSubcontractOrderWithdrawApprovalProcessor withdrawApprovalProcessor;
+    @Inject
+    ErpMfgSubcontractOrderApprovalStateMachine approvalStateMachine;
+    @Inject
+    ErpMfgSubcontractOrderDocumentStateMachine documentStateMachine;
 
     public void setDaoProvider(IDaoProvider daoProvider) {
         this.daoProvider = daoProvider;
@@ -119,13 +126,8 @@ public class ErpMfgSubcontractOrderProcessor {
 
     public ErpMfgSubcontractOrder cancel(Long subcontractOrderId, IServiceContext context) {
         ErpMfgSubcontractOrder order = requireOrder(String.valueOf(subcontractOrderId), context);
-        String status = order.getDocStatus();
-        if (status == null || (!Objects.equals(status, ErpMfgConstants.SUBCONTRACT_STATUS_DRAFT)
-                && !Objects.equals(status, ErpMfgConstants.SUBCONTRACT_STATUS_SUBMITTED)
-                && !Objects.equals(status, ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED))) {
-            throw illegalTransition(order, status, "DRAFT、SUBMITTED 或 APPROVED");
-        }
-        order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_CANCELLED);
+        validateTransitionForCancel(order, context);
+        order.setDocStatus(documentStateMachine.cancelTargetStatus());
         orderDao().updateEntity(order);
         return order;
     }
@@ -226,7 +228,7 @@ public class ErpMfgSubcontractOrderProcessor {
         order.setPosted(false);
         order.setPostedAt(null);
         order.setPostedBy(null);
-        order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_CANCELLED);
+        order.setDocStatus(documentStateMachine.reverseCompletionTargetStatus());
         orderDao().updateEntity(order);
     }
 
@@ -234,59 +236,75 @@ public class ErpMfgSubcontractOrderProcessor {
 
     protected void validateTransitionForSubmit(ErpMfgSubcontractOrder order, IServiceContext context) {
         String status = order.getApproveStatus();
-        if (status == null) {
-            status = ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED;
-        }
-        if (!Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED)
-                && !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_REJECTED)) {
+        try {
+            approvalStateMachine.assertCanSubmit(status);
+        } catch (NopException e) {
             throw illegalTransition(order, status, "UNSUBMITTED 或 REJECTED");
         }
     }
 
     protected void validateTransitionForWithdraw(ErpMfgSubcontractOrder order, IServiceContext context) {
         String status = order.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED)) {
+        try {
+            approvalStateMachine.assertCanWithdraw(status);
+        } catch (NopException e) {
             throw illegalTransition(order, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForApprove(ErpMfgSubcontractOrder order, IServiceContext context) {
         String status = order.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED)) {
+        try {
+            approvalStateMachine.assertCanApprove(status);
+        } catch (NopException e) {
             throw illegalTransition(order, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReject(ErpMfgSubcontractOrder order, IServiceContext context) {
         String status = order.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED)) {
+        try {
+            approvalStateMachine.assertCanReject(status);
+        } catch (NopException e) {
             throw illegalTransition(order, status, ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpMfgSubcontractOrder order, IServiceContext context) {
         String status = order.getApproveStatus();
-        if (status == null || !Objects.equals(status, ErpMfgConstants.APPROVE_STATUS_APPROVED)) {
+        try {
+            approvalStateMachine.assertCanReverseApprove(status);
+        } catch (NopException e) {
             throw illegalTransition(order, status, ErpMfgConstants.APPROVE_STATUS_APPROVED);
+        }
+    }
+
+    /** cancel 守卫：来源 {DRAFT, SUBMITTED, APPROVED}（固定来源态委托 Document Bean）。 */
+    protected void validateTransitionForCancel(ErpMfgSubcontractOrder order, IServiceContext context) {
+        String status = order.getDocStatus();
+        try {
+            documentStateMachine.assertCanCancel(status);
+        } catch (NopException e) {
+            throw illegalTransition(order, status, "DRAFT、SUBMITTED 或 APPROVED");
         }
     }
 
     // ---------- step：审批执行 ----------
 
     protected void doSubmit(ErpMfgSubcontractOrder order, IServiceContext context) {
-        order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_SUBMITTED);
+        order.setApproveStatus(approvalStateMachine.submitTargetStatus());
         order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_SUBMITTED);
         orderDao().updateEntity(order);
     }
 
     protected void doWithdrawSubmit(ErpMfgSubcontractOrder order, IServiceContext context) {
-        order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_UNSUBMITTED);
+        order.setApproveStatus(approvalStateMachine.withdrawTargetStatus());
         orderDao().updateEntity(order);
     }
 
     protected void doApprove(ErpMfgSubcontractOrder order, IServiceContext context) {
         SoDGuard.assertApproverNotCreator(order.getCreatedBy(), currentUserId(), ErpMfgErrors.ERR_MFG_APPROVER_IS_CREATOR);
-        order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_APPROVED);
+        order.setApproveStatus(approvalStateMachine.approveTargetStatus());
         order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED);
         order.setApprovedBy(currentUserId());
         order.setApprovedAt(CoreMetrics.currentTimestamp());
@@ -294,13 +312,14 @@ public class ErpMfgSubcontractOrderProcessor {
     }
 
     protected void doReject(ErpMfgSubcontractOrder order, IServiceContext context) {
-        order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_REJECTED);
+        order.setApproveStatus(approvalStateMachine.rejectTargetStatus());
+        // Subcontract 独有：reject 联动写 docStatus=REJECTED（与 WorkOrder 不同；联动写入保留原位，契约 §9.2 选项 c）
         order.setDocStatus(ErpMfgConstants.SUBCONTRACT_STATUS_REJECTED);
         orderDao().updateEntity(order);
     }
 
     protected void doReverseApprove(ErpMfgSubcontractOrder order, IServiceContext context) {
-        order.setApproveStatus(ErpMfgConstants.APPROVE_STATUS_REJECTED);
+        order.setApproveStatus(approvalStateMachine.reverseApproveTargetStatus());
         order.setApprovedBy(null);
         order.setApprovedAt(null);
         orderDao().updateEntity(order);
@@ -395,7 +414,22 @@ public class ErpMfgSubcontractOrderProcessor {
 
     protected void requireStatus(ErpMfgSubcontractOrder order, String expected, String expectedLabel) {
         String current = order.getDocStatus();
-        if (current == null || !Objects.equals(current, expected)) {
+        try {
+            if (ErpMfgConstants.SUBCONTRACT_STATUS_APPROVED.equals(expected)) {
+                // issueMaterials 固定守卫：仅 APPROVED
+                documentStateMachine.assertCanIssueMaterials(current);
+            } else if (ErpMfgConstants.SUBCONTRACT_STATUS_ISSUED.equals(expected)) {
+                // receiveFinished 固定守卫：仅 ISSUED
+                documentStateMachine.assertCanReceiveFinished(current);
+            } else if (ErpMfgConstants.SUBCONTRACT_STATUS_RECEIVED.equals(expected)) {
+                // postProcessingFee 固定守卫：仅 RECEIVED
+                documentStateMachine.assertCanPostProcessingFee(current);
+            } else {
+                throw new NopException(ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION)
+                        .param(ErpCommonErrors.ARG_CURRENT_STATUS, current)
+                        .param(ErpCommonErrors.ARG_EXPECTED_STATUS, expectedLabel);
+            }
+        } catch (NopException e) {
             throw illegalTransition(order, current, expectedLabel);
         }
     }

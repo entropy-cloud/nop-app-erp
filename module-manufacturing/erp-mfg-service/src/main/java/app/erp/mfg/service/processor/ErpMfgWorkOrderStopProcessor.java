@@ -1,7 +1,6 @@
 package app.erp.mfg.service.processor;
 
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
-import app.erp.mfg.service.ErpMfgConstants;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -16,13 +15,13 @@ public class ErpMfgWorkOrderStopProcessor {
 
     public ErpMfgWorkOrder stop(Long workOrderId, IServiceContext context) {
         ErpMfgWorkOrder wo = facade.requireWorkOrder(String.valueOf(workOrderId), context);
-        facade.requireStatus(wo, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS, "IN_PROCESS");
+        facade.validateTransitionForStop(wo, context);
         doStop(wo);
         return wo;
     }
 
     protected void doStop(ErpMfgWorkOrder wo) {
-        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_STOPPED);
+        wo.setDocStatus(facade.documentStateMachine.stopTargetStatus());
         facade.workOrderDao().updateEntity(wo);
     }
 }

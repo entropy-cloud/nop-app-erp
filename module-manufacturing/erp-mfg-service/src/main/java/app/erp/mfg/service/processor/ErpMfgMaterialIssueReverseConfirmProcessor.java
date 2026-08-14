@@ -2,14 +2,11 @@ package app.erp.mfg.service.processor;
 
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.mfg.dao.entity.ErpMfgMaterialIssue;
-import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Objects;
 
 /**
  * ErpMfgMaterialIssue reverseConfirm per-mutation Processor（R6.2，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
@@ -65,12 +62,20 @@ public class ErpMfgMaterialIssueReverseConfirmProcessor extends AbstractErpMfgMa
 
     /**
      * 红冲前置守卫：仅 posted=true 且 docStatus=DONE（已 confirm 出库）的领料单可红冲。
-     * 未过账或已 CANCELLED 抛 ERR_MATERIAL_ISSUE_NOT_POSTED。
+     *
+     * <p>posted 判定为动态业务守卫保留原位（未过账抛 {@code ERR_MATERIAL_ISSUE_NOT_POSTED}）；
+     * 固定状态边守卫（仅 DONE）委托 {@code ErpMfgMaterialIssueStateMachine.assertCanReverseConfirm}
+     * （M4.39；posted=true 时 docStatus 必为 DONE，状态守卫为矩阵防御，映射同码保持行为一致）。
      */
     protected void validateCanReverse(ErpMfgMaterialIssue issue, IServiceContext context) {
         String status = issue.getDocStatus();
-        if (!Boolean.TRUE.equals(issue.getPosted())
-                || !Objects.equals(status, ErpMfgConstants.ISSUE_STATUS_DONE)) {
+        if (!Boolean.TRUE.equals(issue.getPosted())) {
+            throw new NopException(ErpMfgErrors.ERR_MATERIAL_ISSUE_NOT_POSTED)
+                    .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, issue.getCode());
+        }
+        try {
+            stateMachine.assertCanReverseConfirm(status);
+        } catch (NopException e) {
             throw new NopException(ErpMfgErrors.ERR_MATERIAL_ISSUE_NOT_POSTED)
                     .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, issue.getCode());
         }
@@ -80,7 +85,7 @@ public class ErpMfgMaterialIssueReverseConfirmProcessor extends AbstractErpMfgMa
      * 翻 posted=false + docStatus=CANCELLED（红冲终态）。对齐 confirm 反向操作。
      */
     protected void doReverseConfirm(ErpMfgMaterialIssue issue, IServiceContext context) {
-        issue.setDocStatus(ErpMfgConstants.ISSUE_STATUS_CANCELLED);
+        issue.setDocStatus(stateMachine.reverseConfirmTargetStatus());
         issue.setPosted(false);
         issueDao().updateEntity(issue);
     }

@@ -1,21 +1,23 @@
 package app.erp.mfg.service.processor;
 
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
-import app.erp.mfg.service.ErpMfgConstants;
+import app.erp.mfg.service.statemachine.ErpMfgWorkOrderDocumentStateMachine;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
-import java.util.Objects;
-
 /**
  * ErpMfgWorkOrder close per-mutation Processor（R6.2，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含 STOPPED/IN_PROCESS→CLOSED 结案编排；共享 protected helper 单一真相源在 {@link ErpMfgWorkOrderProcessor}。
+ * 固定来源态/目标态判断委托 {@link ErpMfgWorkOrderDocumentStateMachine}（plan 2026-08-14-0930-1 M4.35）。
  */
 public class ErpMfgWorkOrderCloseProcessor {
 
     @Inject
     ErpMfgWorkOrderProcessor facade;
+
+    @Inject
+    ErpMfgWorkOrderDocumentStateMachine documentStateMachine;
 
     public ErpMfgWorkOrder close(Long workOrderId, IServiceContext context) {
         ErpMfgWorkOrder wo = facade.requireWorkOrder(String.valueOf(workOrderId), context);
@@ -26,14 +28,15 @@ public class ErpMfgWorkOrderCloseProcessor {
 
     protected void validateTransitionForClose(ErpMfgWorkOrder wo) {
         String status = wo.getDocStatus();
-        if (status == null || (!Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_STOPPED)
-                && !Objects.equals(status, ErpMfgConstants.WORK_ORDER_STATUS_IN_PROCESS))) {
+        try {
+            documentStateMachine.assertCanClose(status);
+        } catch (io.nop.api.core.exceptions.NopException e) {
             throw facade.illegalTransition(wo, status, "STOPPED 或 IN_PROCESS");
         }
     }
 
     protected void doClose(ErpMfgWorkOrder wo) {
-        wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_CLOSED);
+        wo.setDocStatus(documentStateMachine.closeTargetStatus());
         if (wo.getActualEndDate() == null) {
             wo.setActualEndDate(CoreMetrics.today());
         }
