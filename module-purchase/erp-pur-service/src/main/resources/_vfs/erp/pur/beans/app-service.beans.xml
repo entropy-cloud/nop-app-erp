@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:ioc="ioc"
        xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
@@ -7,6 +8,16 @@
     <import resource="_dao.beans.xml"/>
 
     <import resource="_service.beans.xml"/>
+
+    <!-- UC-MD-03 采购方向价格表层：供应商价格清单解析器（实现 IErpMdSupplierPriceResolver SPI，
+         由 master-data ErpMdMaterialSkuBizModel @Inject @Nullable 类型注入；无需 ioc:type，
+         BeanFinder.findByType 按 isAssignableFrom 匹配，镜像 ErpSalCustomerPriceResolver 同型先例） -->
+    <bean id="app.erp.pur.service.support.ErpPurSupplierPriceResolver"
+          class="app.erp.pur.service.support.ErpPurSupplierPriceResolver">
+        <property name="daoProvider">
+            <ioc:inject type="io.nop.dao.api.IDaoProvider"/>
+        </property>
+    </bean>
 
     <!-- 采购域服务（非 BizModel）：入库移动单请求构造器 -->
     <bean id="app.erp.pur.service.entity.ReceiveStockMoveBuilder"
