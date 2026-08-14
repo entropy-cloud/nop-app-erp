@@ -6,6 +6,9 @@
        xmlns:x="/nop/schema/xdsl.xdef"
        xmlns:c="c">
 
+    <!-- 扫描活跃（DRAFT/OPEN/ON_HOLD）项目逐条汇总损益（Billing 收入 + CostCollection 四类成本）。
+         单条失败隔离由 ErpPrjProjectPnlCalcHelper 内 REQUIRES_NEW + try/catch WARN 承载
+         （batch chunk 事务不提供 per-item 隔离；镜像 lead-scoring-recalc.batch.xml 范式）。 -->
     <loader>
         <orm-reader entityName="app.erp.prj.dao.entity.ErpPrjProject">
             <query>
@@ -18,8 +21,8 @@
 
     <processor name="process">
         <source><![CDATA[
-            const biz = inject('IErpPrjProjectPnlBiz');
-            biz.refreshPnl(item.id, null, null, batchChunkCtx.serviceContext);
+            const helper = inject('erpPrjProjectPnlCalcHelper');
+            helper.recalculateOne(item.id, batchChunkCtx.serviceContext);
         ]]></source>
     </processor>
 </batch>

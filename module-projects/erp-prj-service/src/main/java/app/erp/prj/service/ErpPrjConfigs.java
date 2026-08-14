@@ -15,6 +15,9 @@ public interface ErpPrjConfigs {
     /** 损益汇总自动计算默认关闭（双层门控第二层，需显式开启）。 */
     boolean DEFAULT_PNL_AUTO_CALC_ENABLED = false;
 
+    /** 损益汇总 cron 默认值（每日凌晨 1 点；对齐 job.yaml cronExpr @cfg 默认，空值=禁用语义）。 */
+    String DEFAULT_PNL_CALC_CRON = "0 0 1 * * ?";
+
     /** 项目结算强制审批默认启用。 */
     boolean DEFAULT_SETTLEMENT_REQUIRE_APPROVAL = true;
 
@@ -79,8 +82,15 @@ public interface ErpPrjConfigs {
         return flag == null || flag;
     }
 
+    /** 损益汇总 cron（默认 {@code 0 0 1 * * ?}；显式置空=禁用——「空值=跳过」语义，消费点：
+     *  job.yaml cronExpr {@code @cfg} 引用 + {@code ErpPrjProjectPnlCalcHelper} 门控）。 */
     static String pnlCalcCron() {
-        return io.nop.api.core.config.AppConfig.var(ErpPrjConstants.CONFIG_PNL_CALC_CRON, "");
+        String cron = io.nop.api.core.config.AppConfig.var(ErpPrjConstants.CONFIG_PNL_CALC_CRON,
+                ErpPrjConfigs.DEFAULT_PNL_CALC_CRON);
+        if (cron == null || cron.trim().isEmpty()) {
+            return "";
+        }
+        return cron.trim();
     }
 
     static int taskDependencyMaxDepth() {

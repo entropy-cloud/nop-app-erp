@@ -83,6 +83,13 @@
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-sys-dao</artifactId>
         </dependency>
+        <!-- test-only: 项目损益汇总调度 batch 任务级测试（plan 2026-08-14-2304-3 Phase 3）需注入
+             IBatchTaskRunner（nopBatchTaskRunner bean，nop-batch-dsl 注册；运行期由 app-erp-all 提供）。 -->
+        <dependency>
+            <groupId>io.github.entropy-cloud</groupId>
+            <artifactId>nop-batch-dsl</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-autotest-junit</artifactId>

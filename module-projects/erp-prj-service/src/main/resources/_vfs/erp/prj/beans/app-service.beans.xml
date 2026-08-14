@@ -63,6 +63,13 @@
     <bean id="app.erp.prj.service.pnl.ProjectPnlCalculator"
           class="app.erp.prj.service.pnl.ProjectPnlCalculator"/>
 
+    <!-- 项目损益汇总定时批量计算帮助类（plan 2026-08-14-2304-3 Phase 2，P1-RC-053 调度接线）：
+         供 nop-batch pnl-calc.batch.xml processor 按记录调用，消费 erp-prj.pnl-auto-calc-enabled（默认 false）
+         + erp-prj.pnl-calc-cron（默认 0 0 1 * * ?，空值=跳过）业务键双层门控，逐条 REQUIRES_NEW 调
+         IErpPrjProjectPnlBiz.refreshPnl + 单条失败隔离 + null ctx 兜底（镜像 R1.23 ErpCrmLeadScoringRecalcHelper 范式）。 -->
+    <bean id="erpPrjProjectPnlCalcHelper"
+          class="app.erp.prj.service.job.ErpPrjProjectPnlCalcHelper"/>
+
     <!-- 项目结算单编排 Processor（plan 2026-07-07-0305-1 Phase 3）：三轴状态机 + CLOSE 转固 + 过账委托 -->
     <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementProcessor"
           class="app.erp.prj.service.processor.ErpPrjProjectSettlementProcessor"/>

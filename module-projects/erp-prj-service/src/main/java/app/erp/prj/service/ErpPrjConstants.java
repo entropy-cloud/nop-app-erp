@@ -16,9 +16,12 @@ public interface ErpPrjConstants {
     /** 费用报销归集开关（默认 true）。关闭时 closeProject 跳过费用刷新。 */
     String CONFIG_EXPENSE_AGGREGATION_ENABLED = "erp-prj.expense-aggregation-enabled";
 
-    /** 损益汇总计算 cron（空=不调度；plan 2026-07-07-0305-1 §配置点）。 */
+    /** 损益汇总计算 cron（默认每日凌晨 1 点；空值=禁用——「空值=跳过」语义；消费点：job.yaml
+     *  {@code erp-prj-pnl-calc.job.yaml} cronExpr {@code @cfg} 引用 + {@code ErpPrjProjectPnlCalcHelper} 门控，
+     *  plan 2026-08-14-2304-3 Phase 2 由 dead 转活跃）。 */
     String CONFIG_PNL_CALC_CRON = "erp-prj.pnl-calc-cron";
-    /** 损益汇总自动计算总开关（默认 false，双层门控第二层）。 */
+    /** 损益汇总自动计算总开关（默认 false，双层门控第二层：job 层 enabled + 业务键门控；
+     *  消费点：{@code ErpPrjProjectPnlCalcHelper} 门控，plan 2026-08-14-2304-3 Phase 2 由 dead 转活跃）。 */
     String CONFIG_PNL_AUTO_CALC_ENABLED = "erp-prj.pnl-auto-calc-enabled";
     /** 项目结算强制审批开关（默认 true；关闭时 approve 跳过 SUBMITTED 直接审批）。 */
     String CONFIG_SETTLEMENT_REQUIRE_APPROVAL = "erp-prj.settlement-require-approval";
