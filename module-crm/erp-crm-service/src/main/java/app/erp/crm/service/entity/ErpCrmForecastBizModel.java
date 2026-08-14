@@ -12,7 +12,7 @@ import jakarta.inject.Inject;
 
 /**
  * 销售预测 BizModel。{@link #refreshForecast} 委托 {@link ErpCrmForecastRefreshForecastProcessor}
- * （聚合引擎：commit/upside/best-case/weighted 分类 + 商机级 ForecastLine 快照 + 团队→公司层级 rollup）。
+ * （聚合引擎：commit/upside/best-case/weighted 分类 + 商机级 ForecastLine 快照 + 个人→团队→区域→公司层级 rollup）。
  *
  * <p>对齐 {@code docs/design/crm/sales-forecast.md}。
  */

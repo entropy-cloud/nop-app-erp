@@ -33,7 +33,11 @@ import static io.nop.api.core.beans.FilterBeans.le;
  * upsert {@link ErpCrmForecast} + 重建 {@link ErpCrmForecastLine}（商机级快照）；
  * {@link #computeAccuracy} 期间关闭后对比预测与实际收入算准确率。
  *
- * <p>层级 rollup：个人（ownerId 非空）→ 团队（teamId 非空、ownerId 空）→ 公司（均为空）。
+ * <p>层级 rollup：个人（ownerId 非空）→ 团队（teamId 非空、ownerId 空）→ 区域（territoryId 非空、
+ * ownerId/teamId 空）→ 公司（均为空）。区域行为 leaf-exact 直接归属聚合——仅对「有商机直接归属」的
+ * territory 节点生成行，行金额 = 该节点直接商机 Σ（每商机恰计数一次，区域行间不重叠，不含子节点商机）；
+ * 区域子树总额（含子节点商机）由 {@code QuotaRollupCalculator.accumulatePipeline} 子树 in 查询动态聚合，
+ * 不持久化重复行（对齐 `docs/design/crm/sales-forecast.md` §实现约定）。
  * 仅 OPEN 期间可重算；FROZEN/CLOSED 拒绝（抛 {@code ERR_FORECAST_PERIOD_NOT_OPEN}）。
  *
  * <p>对齐 {@code docs/design/crm/sales-forecast.md}（加权管道计算 / commit-upside 分类 / 层级聚合 / 准确率）。
@@ -57,9 +61,10 @@ public class ForecastAggregator {
         int commitThreshold = commitThreshold();
         int upsideThreshold = upsideThreshold();
 
-        // 个人预测（按 ownerId 分组）
+        // 个人预测（按 ownerId 分组）+ 区域直接归属收集（leaf-exact：不做祖先展开）
         Map<String, List<ErpCrmLead>> byOwner = new HashMap<>();
         Map<String, Long> ownerTeam = new HashMap<>();
+        Map<Long, List<ErpCrmLead>> byTerritory = new HashMap<>();
         for (ErpCrmLead opp : opportunities) {
             String owner = opp.getOwnerId();
             if (owner == null) {
@@ -68,6 +73,9 @@ public class ForecastAggregator {
             byOwner.computeIfAbsent(owner, k -> new ArrayList<>()).add(opp);
             if (opp.getTeamId() != null) {
                 ownerTeam.putIfAbsent(owner, opp.getTeamId());
+            }
+            if (opp.getTerritoryId() != null) {
+                byTerritory.computeIfAbsent(opp.getTerritoryId(), k -> new ArrayList<>()).add(opp);
             }
         }
 
@@ -96,6 +104,14 @@ public class ForecastAggregator {
             forecastDao().saveEntity(teamForecast);
         }
 
+        // 区域 rollup（leaf-exact：仅对有直接商机归属的 territory 节点生成行，行金额 = 该节点直接商机 Σ；
+        // 区域子树总额由 accumulatePipeline 子树 in 查询动态聚合，不持久化重复行）
+        for (Map.Entry<Long, List<ErpCrmLead>> entry : byTerritory.entrySet()) {
+            ForecastTotals totals = ForecastTotals.of(entry.getValue(), commitThreshold, upsideThreshold);
+            ErpCrmForecast territoryForecast = buildForecast(period, null, null, entry.getKey(), totals);
+            forecastDao().saveEntity(territoryForecast);
+        }
+
         // 公司 rollup
         ErpCrmForecast companyForecast = buildForecast(period, null, null, companyTotals);
         forecastDao().saveEntity(companyForecast);
@@ -118,11 +134,17 @@ public class ForecastAggregator {
 
     protected ErpCrmForecast buildForecast(ErpCrmForecastPeriod period, String ownerId, Long teamId,
                                            ForecastTotals totals) {
+        return buildForecast(period, ownerId, teamId, null, totals);
+    }
+
+    protected ErpCrmForecast buildForecast(ErpCrmForecastPeriod period, String ownerId, Long teamId,
+                                           Long territoryId, ForecastTotals totals) {
         ErpCrmForecast forecast = forecastDao().newEntity();
         forecast.setOrgId(period.getOrgId());
         forecast.setPeriodId(period.getId());
         forecast.setOwnerId(ownerId);
         forecast.setTeamId(teamId);
+        forecast.setTerritoryId(territoryId);
         forecast.setCommitAmount(totals.commitAmount);
         forecast.setUpsideAmount(totals.upsideAmount);
         forecast.setWeightedAmount(totals.weightedAmount);
