@@ -2,12 +2,14 @@
 
 > **设计要点依据**：本状态机按 `docs/skills/state-machine-business-review-prompt.md` 的 10 个审查维度组织。审查本状态机时使用该提示词。
 >
-> 财务域有两类状态对象：**会计凭证**（单据级状态机）与**会计期间**（时间窗口状态机）。两者的状态迁移相互约束（已结账期间不可新增凭证）。
+> 财务域有四类状态对象：**会计凭证**（单据级状态机）、**会计期间**（时间窗口状态机）、**应收票据**与**应付票据**（票据生命周期状态机，见 §对象三/§对象四）。凭证与期间的状态迁移相互约束（已结账期间不可新增凭证）。
 
 ## 适用对象
 
 - 会计凭证（Voucher）：业务单据审核触发生成的、或财务员手工创建的复式记账凭证。
 - 会计期间（AccountingPeriod）：财务结账的时间窗口（月/季/年）。
+- 应收票据（NotesReceivable）：收到/贴现/背书/托收/承兑/拒付/注销的票据生命周期。
+- 应付票据（NotesPayable）：开出/兑付/拒付/注销的票据生命周期。
 
 ## 对象一：会计凭证状态机
 
@@ -260,6 +262,105 @@
 
 - 期间约束（已结账不可新增凭证）在凭证状态机的"异常路径"中体现。
 - 期末结账流程见 `finance/posting.md`（业财打通的期末部分）。
+
+---
+
+## 对象三：应收票据状态机
+
+> 票据字段与业务规则权威来源：`docs/design/finance/treasury.md` §ErpFinNotesReceivable（`:56-75` 状态机 + `:197-202` 关键业务规则）；业财过账业务类型见 `docs/design/finance/posting.md`（NOTES_RECEIVABLE_RECEIVED/DISCOUNTED/ENDORSED/COLLECTION）。
+
+### 1. 状态定义
+
+| 状态 | 业务含义 |
+|------|----------|
+| 收到（RECEIVED） | 收到票据，挂账应收票据（资产）。**initial 态**（票据收到即 RECEIVED，无 DRAFT 前态） |
+| 已贴现（DISCOUNTED） | 已向银行贴现取得资金（贴现息走财务费用，treasury.md §规则 2） |
+| 已背书（ENDORSED） | 已背书转让给供应商（抵应付）。**非终态中间态**：背书后票据所有权已转移，**仅可 writeOff 出边**——不可再 collect/discount/背书 |
+| 托收中（COLLECTION_PENDING） | 到期已送银行托收，等待兑付（**在途态，不过账**） |
+| 已承兑（HONORED） | 终态：银行承兑付款 |
+| 拒付（DISHONORED） | 终态：拒付（转应收账款追索，treasury.md §规则 3；**终态重分类，不过账**） |
+| 已注销（WRITE_OFF） | 终态：注销（票据遗失/作废，需审批，treasury.md §规则 4） |
+
+### 2. 迁移完整性
+
+```
+收到 (RECEIVED)                       ← initial（receive，无 DRAFT 前态；幂等 re-receive 合法）
+  ├─ 贴现 → 已贴现 (DISCOUNTED)
+  │            └─ 到期托收 → 托收中 (COLLECTION_PENDING) → 承兑 (HONORED, 终态) / 拒付 (DISHONORED)
+  ├─ 背书转让 → 已背书 (ENDORSED)      ── 仅 writeOff 出边
+  └─ 到期托收 → 托收中 (COLLECTION_PENDING) → 承兑 (HONORED) / 拒付 (DISHONORED)
+任何非终态 → 注销 (WRITE_OFF, 终态，需审批)
+```
+
+| 迁移 | 触发人 | 前置条件 | 结果 |
+|------|--------|----------|------|
+| receive → RECEIVED | 财务员 | initial（null）或幂等 re-receive | 挂应收票据；**过账** NOTES_RECEIVABLE_RECEIVED（借应收票据/贷应收账款，抵客户欠款） |
+| discount → DISCOUNTED | 财务员 | RECEIVED | **过账** NOTES_RECEIVABLE_DISCOUNTED（科目分解五件套 + FX plug） |
+| endorse → ENDORSED | 财务员 | RECEIVED | **过账** NOTES_RECEIVABLE_ENDORSED（借应付账款/贷应收票据，抵供应商） |
+| collect → COLLECTION_PENDING | 财务员 | RECEIVED **或** DISCOUNTED（双源） | 在途态，**不过账** |
+| honor → HONORED | 财务员 | COLLECTION_PENDING | **过账** NOTES_RECEIVABLE_COLLECTION（借银行存款/贷应收票据） |
+| dishonor → DISHONORED | 财务员 | COLLECTION_PENDING | 终态重分类，**不过账**；拒付转应收（treasury.md §规则 3） |
+| writeOff → WRITE_OFF | 财务员（需审批） | 任意非终态（loose） | 若已过账则红冲（`reverseReceivable`） |
+
+### 3. 终态与恢复
+
+- **终态**：`HONORED` / `DISHONORED` / `WRITE_OFF`（均无出边）。**initial**：`RECEIVED`。
+- **ENDORSED 非终态**：背书后票据所有权已转移，仅可 writeOff 出边（不可 collect/discount/再次背书）。
+- 终态不可恢复；纠错仅能经注销/红冲路径。
+
+### 4. 过账边界（§11.2 M4 治理裁定）
+
+- receive/discount/endorse/honor 四动作触发业财过账（`NotesPostingDispatcher`→`FinPostingExecutor` 生成凭证 + `ErpFinArApItem` 辅助账，RECEIVED→RECEIVABLE 抵销客户 AR / ENDORSED→PAYABLE 抵销供应商 AP）；writeOff 若已过账则红冲。**过账时序/编排/失败回退（posted 回写）/红冲闭环由过账引擎 + `posted`/`postedBy`/`postedAt` 契约管理**，状态机 Bean 不触碰。
+- **COLLECTION_PENDING（在途）/DISHONORED（终态重分类）不过账**——属过账侧（`NotesPostingDispatcher`）语义，非状态机轴范畴。
+
+### 5. 实现注记（plan 2026-08-13-1146-1）
+
+`status` 轴由实体级状态机 Bean `ErpFinNotesReceivableStateMachine`（契约 `docs/architecture/entity-state-machine-bean.md`）承载：7 命名动作矩阵（receive/discount/endorse/collect 双源/honor/dishonor/writeOff 非终态）+ initial/terminal 分类 + 只读 `transitions()` 元数据（7 命名边）。**writer 放置不对称（intentional legacy layout）**：collect/dishonor 的 writer 在 per-mutation Processor（`ErpFinNotesReceivableCollectProcessor`/`ErpFinNotesReceivableDishonorProcessor`）直接 `setStatus(collectTargetStatus()/dishonorTargetStatus())`，其余 5 动作在 facade `do*` 写回——迁移仅改守卫委托 Bean，不改 writer 物理位置。receive 守卫为**有意收窄**（仅接受 null initial 写入 / RECEIVED 幂等，实仓零路径从非 initial 态 receive）。`posted` 不入轴（契约 §3）。非法边由 Bean 抛 common 码，Processor 映射领域码 `ERR_NOTES_RECEIVABLE_ILLEGAL_STATUS_TRANSITION`（common 作 cause，`ARG_NOTES_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` 对外不变）。
+
+---
+
+## 对象四：应付票据状态机
+
+> 票据字段与业务规则权威来源：`docs/design/finance/treasury.md` §ErpFinNotesPayable（`:77-93`）+ 关键业务规则（`:197-202`，授信强一致校验 §规则 1）；业财过账业务类型见 `docs/design/finance/posting.md`（NOTES_PAYABLE_ISSUED/HONORED）。
+
+### 1. 状态定义
+
+| 状态 | 业务含义 |
+|------|----------|
+| 已开出（ISSUED） | 开出应付票据（负债）。**initial 态**（开出即 ISSUED，无 DRAFT 前态；商业/银行承兑） |
+| 已兑付（HONORED） | 终态：到期兑付（借应付票据/贷银行存款） |
+| 拒付（DISHONORED） | 终态：拒付 |
+| 已注销（WRITE_OFF） | 终态：注销（需审批） |
+
+### 2. 迁移完整性
+
+```
+开出 (ISSUED)                          ← initial（issue，无 DRAFT 前态；幂等 re-issue 合法）
+  ├─ 兑付 → 已兑付 (HONORED, 终态)
+  ├─ 拒付 → 拒付 (DISHONORED, 终态)
+  └─ 注销 → 已注销 (WRITE_OFF, 终态，需审批)
+```
+
+| 迁移 | 触发人 | 前置条件 | 结果 |
+|------|--------|----------|------|
+| issue → ISSUED | 财务员 | initial（null）或幂等 re-issue | 挂应付票据；**过账** NOTES_PAYABLE_ISSUED（借应付账款/贷应付票据）；银承**占用授信**（`reserveCreditIfNeeded`，config-gated `erp-fin.credit-check-on-issue`） |
+| honor → HONORED | 财务员 | ISSUED | **过账** NOTES_PAYABLE_HONORED（借应付票据/贷银行存款）；**释放授信** |
+| dishonor → DISHONORED | 财务员 | ISSUED | **释放授信**（不产生过账） |
+| writeOff → WRITE_OFF | 财务员（需审批） | 任意非终态（loose） | 若已过账则红冲（`reversePayable`）；**释放授信** |
+
+### 3. 终态与恢复
+
+- **终态**：`HONORED` / `DISHONORED` / `WRITE_OFF`（均无出边）。**initial**：`ISSUED`。
+- 终态不可恢复。
+
+### 4. 过账 + 授信边界（§11.2 M4 治理裁定）
+
+- issue/honor 两动作触发业财过账（`NotesPostingDispatcher`→`FinPostingExecutor` 生成凭证）；writeOff 若已过账则红冲。**过账时序/编排/失败回退（posted 回写）/红冲闭环由过账引擎 + `posted`/`postedBy`/`postedAt` 契约管理**，状态机 Bean 不触碰。
+- **授信占用/释放为 Payable 独有受保护维度**（`IErpFinCreditFacilityBiz`）：issue 时银承 `reserveCreditIfNeeded`（占用授信，treasury.md §规则 1 强一致校验），honor/dishonor/writeOff 时 `releaseOccupiedCredit`（释放授信）——时序保留 Processor 原位，Bean 不触碰。
+
+### 5. 实现注记（plan 2026-08-13-1146-1）
+
+`status` 轴由实体级状态机 Bean `ErpFinNotesPayableStateMachine`（契约 `docs/architecture/entity-state-machine-bean.md`）承载：4 命名动作矩阵（issue/honor/dishonor/writeOff）+ initial/terminal 分类 + 只读 `transitions()` 元数据（4 命名边）。**writer 全部在 facade `do*`**（无 per-mutation 不对称，区别于 Receivable 的 collect/dishonor per-mutation writer）。issue 守卫为**有意收窄**（仅接受 null initial 写入 / ISSUED 幂等，实仓零路径从非 initial 态 issue）。`posted` 不入轴（契约 §3）。非法边由 Bean 抛 common 码，Processor 映射领域码 `ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION`（common 作 cause，`ARG_NOTES_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` 对外不变）。
 
 ---
 
