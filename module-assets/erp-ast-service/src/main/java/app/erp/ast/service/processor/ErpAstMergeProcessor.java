@@ -8,6 +8,8 @@ import app.erp.ast.dao.entity.ErpAstMergeLine;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.AssetMergePostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstMergeApprovalStateMachine;
+import app.erp.ast.service.statemachine.ErpAstMergeDocumentStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -64,6 +66,12 @@ public class ErpAstMergeProcessor {
     @Inject
     ErpAstMergeCancelProcessor cancelProcessor;
 
+    @Inject
+    ErpAstMergeApprovalStateMachine approvalStateMachine;
+
+    @Inject
+    ErpAstMergeDocumentStateMachine documentStateMachine;
+
     public ErpAstMerge submitForApproval(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(id, context);
     }
@@ -116,8 +124,8 @@ public class ErpAstMergeProcessor {
         // step 6: postProcess（targetAssetId 回写 + posted 三件套 + 终态）
         merge = reload(id);
         merge.setTargetAssetId(target.getId());
-        merge.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
-        merge.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
+        merge.setApproveStatus(approvalStateMachine.approveTargetStatus());
+        merge.setDocStatus(documentStateMachine.approveTargetStatus());
         merge.setApprovedBy(currentUserId());
         merge.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
@@ -149,30 +157,37 @@ public class ErpAstMergeProcessor {
 
     protected void validateTransitionForSubmit(ErpAstMerge merge, IServiceContext context) {
         String status = currentApproveStatus(merge);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_UNSUBMITTED)
-                && !Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(merge, status, "UNSUBMITTED 或 REJECTED");
+        try {
+            approvalStateMachine.assertCanSubmitForApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(merge, status, "UNSUBMITTED 或 REJECTED", e);
         }
     }
 
     protected void validateTransitionForWithdraw(ErpAstMerge merge, IServiceContext context) {
         String status = currentApproveStatus(merge);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanWithdrawApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstMerge merge, IServiceContext context) {
         String status = currentApproveStatus(merge);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReject(ErpAstMerge merge, IServiceContext context) {
         String status = currentApproveStatus(merge);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanReject(status);
+        } catch (NopException e) {
+            throw illegalTransition(merge, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
@@ -181,7 +196,7 @@ public class ErpAstMergeProcessor {
         if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_ACTIVE)) {
             throw illegalDocTransition(merge, docStatus, "非已生效");
         }
-        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
+        if (documentStateMachine.isCancelled(docStatus)) {
             throw illegalDocTransition(merge, docStatus, "非已作废");
         }
         if (Boolean.TRUE.equals(merge.getPosted())) {
@@ -471,14 +486,28 @@ public class ErpAstMergeProcessor {
     }
 
     protected NopException illegalTransition(ErpAstMerge merge, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_AST_MERGE_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(merge, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalTransition(ErpAstMerge merge, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_AST_MERGE_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected NopException illegalDocTransition(ErpAstMerge merge, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_AST_MERGE_ILLEGAL_DOC_TRANSITION)
+        return illegalDocTransition(merge, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalDocTransition(ErpAstMerge merge, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_AST_MERGE_ILLEGAL_DOC_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_MERGE_CODE, merge.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expected);

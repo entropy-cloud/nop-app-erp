@@ -118,6 +118,14 @@
           class="app.erp.ast.service.statemachine.ErpAstValueAdjustmentApprovalStateMachine"/>
     <bean id="app.erp.ast.service.statemachine.ErpAstValueAdjustmentDocumentStateMachine"
           class="app.erp.ast.service.statemachine.ErpAstValueAdjustmentDocumentStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstSplitApprovalStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstSplitApprovalStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstSplitDocumentStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstSplitDocumentStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstMergeApprovalStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstMergeApprovalStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstMergeDocumentStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstMergeDocumentStateMachine"/>
 
     <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
     <bean id="app.erp.ast.service.processor.ErpAstSplitSubmitForApprovalProcessor"

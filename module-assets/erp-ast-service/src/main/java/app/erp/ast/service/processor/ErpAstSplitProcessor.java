@@ -8,6 +8,8 @@ import app.erp.ast.dao.entity.ErpAstSplitLine;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.AssetSplitPostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstSplitApprovalStateMachine;
+import app.erp.ast.service.statemachine.ErpAstSplitDocumentStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -74,6 +76,12 @@ public class ErpAstSplitProcessor {
     @Inject
     ErpAstSplitCancelProcessor cancelProcessor;
 
+    @Inject
+    ErpAstSplitApprovalStateMachine approvalStateMachine;
+
+    @Inject
+    ErpAstSplitDocumentStateMachine documentStateMachine;
+
     public ErpAstSplit submitForApproval(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(id, context);
     }
@@ -113,8 +121,8 @@ public class ErpAstSplitProcessor {
 
         // step 6: postProcess（posted 三件套 + 终态）
         split = reload(id);
-        split.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
-        split.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
+        split.setApproveStatus(approvalStateMachine.approveTargetStatus());
+        split.setDocStatus(documentStateMachine.approveTargetStatus());
         split.setApprovedBy(currentUserId());
         split.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
@@ -146,30 +154,37 @@ public class ErpAstSplitProcessor {
 
     protected void validateTransitionForSubmit(ErpAstSplit split, IServiceContext context) {
         String status = currentApproveStatus(split);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_UNSUBMITTED)
-                && !Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(split, status, "UNSUBMITTED 或 REJECTED");
+        try {
+            approvalStateMachine.assertCanSubmitForApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(split, status, "UNSUBMITTED 或 REJECTED", e);
         }
     }
 
     protected void validateTransitionForWithdraw(ErpAstSplit split, IServiceContext context) {
         String status = currentApproveStatus(split);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(split, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanWithdrawApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(split, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstSplit split, IServiceContext context) {
         String status = currentApproveStatus(split);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(split, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(split, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReject(ErpAstSplit split, IServiceContext context) {
         String status = currentApproveStatus(split);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(split, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanReject(status);
+        } catch (NopException e) {
+            throw illegalTransition(split, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
@@ -178,7 +193,7 @@ public class ErpAstSplitProcessor {
         if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_ACTIVE)) {
             throw illegalDocTransition(split, docStatus, "非已生效");
         }
-        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
+        if (documentStateMachine.isCancelled(docStatus)) {
             throw illegalDocTransition(split, docStatus, "非已作废");
         }
         if (Boolean.TRUE.equals(split.getPosted())) {
@@ -520,14 +535,28 @@ public class ErpAstSplitProcessor {
     }
 
     protected NopException illegalTransition(ErpAstSplit split, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(split, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalTransition(ErpAstSplit split, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_AST_SPLIT_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_SPLIT_CODE, split.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected NopException illegalDocTransition(ErpAstSplit split, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_AST_SPLIT_ILLEGAL_DOC_TRANSITION)
+        return illegalDocTransition(split, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalDocTransition(ErpAstSplit split, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_AST_SPLIT_ILLEGAL_DOC_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_SPLIT_CODE, split.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expected);
