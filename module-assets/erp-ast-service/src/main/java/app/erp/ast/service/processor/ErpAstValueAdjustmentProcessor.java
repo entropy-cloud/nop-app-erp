@@ -6,6 +6,8 @@ import app.erp.ast.dao.entity.ErpAstValueAdjustment;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.ValueAdjustmentPostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstValueAdjustmentApprovalStateMachine;
+import app.erp.ast.service.statemachine.ErpAstValueAdjustmentDocumentStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -47,6 +49,12 @@ public class ErpAstValueAdjustmentProcessor {
     @Inject
     ErpAstValueAdjustmentCancelProcessor cancelProcessor;
 
+    @Inject
+    ErpAstValueAdjustmentApprovalStateMachine approvalStateMachine;
+
+    @Inject
+    ErpAstValueAdjustmentDocumentStateMachine documentStateMachine;
+
     public ErpAstValueAdjustment submitForApproval(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(id, context);
     }
@@ -64,8 +72,8 @@ public class ErpAstValueAdjustmentProcessor {
         ErpAstAsset asset = adjustment.getAsset();
         validateAssetAdjustable(asset, context);
 
-        adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
-        adjustment.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
+        adjustment.setApproveStatus(approvalStateMachine.approveTargetStatus());
+        adjustment.setDocStatus(documentStateMachine.approveTargetStatus());
         adjustment.setApprovedBy(currentUserId());
         adjustment.setApprovedAt(CoreMetrics.currentTimestamp());
         adjustmentDao().updateEntity(adjustment);
@@ -107,7 +115,7 @@ public class ErpAstValueAdjustmentProcessor {
             adjustment.setPostedAt(null);
             adjustment.setPostedBy(null);
         }
-        adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
+        adjustment.setApproveStatus(approvalStateMachine.reverseApproveTargetStatus());
         adjustmentDao().updateEntity(adjustment);
         return adjustment;
     }
@@ -120,48 +128,58 @@ public class ErpAstValueAdjustmentProcessor {
 
     protected void validateTransitionForSubmit(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String status = currentApproveStatus(adjustment);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_UNSUBMITTED)
-                && !Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(adjustment, status, "UNSUBMITTED 或 REJECTED");
+        try {
+            approvalStateMachine.assertCanSubmitForApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(adjustment, status, "UNSUBMITTED 或 REJECTED", e);
         }
     }
 
     protected void validateTransitionForWithdraw(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String status = currentApproveStatus(adjustment);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanWithdrawApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String status = currentApproveStatus(adjustment);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReject(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String status = currentApproveStatus(adjustment);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanReject(status);
+        } catch (NopException e) {
+            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String status = currentApproveStatus(adjustment);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_APPROVED);
+        try {
+            approvalStateMachine.assertCanReverseApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(adjustment, status, ErpAstConstants.APPROVE_STATUS_APPROVED, e);
         }
     }
 
     protected void validateTransitionForCancel(ErpAstValueAdjustment adjustment, IServiceContext context) {
         String docStatus = adjustment.getDocStatus();
-        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_ACTIVE)) {
-            throw illegalDocTransition(adjustment, docStatus, "非已生效");
+        try {
+            documentStateMachine.assertCanCancel(docStatus);
+        } catch (NopException e) {
+            boolean active = ErpAstConstants.DOC_STATUS_ACTIVE.equals(docStatus);
+            throw illegalDocTransition(adjustment, docStatus, active ? "非已生效" : "非已作废", e);
         }
-        if (docStatus != null && Objects.equals(docStatus, ErpAstConstants.DOC_STATUS_CANCELLED)) {
-            throw illegalDocTransition(adjustment, docStatus, "非已作废");
-        }
+        // posted 动态守卫保留原位（posted 不入轴，契约 §3）
         if (Boolean.TRUE.equals(adjustment.getPosted())) {
             throw illegalDocTransition(adjustment, docStatus, "非已过账");
         }
@@ -266,8 +284,8 @@ public class ErpAstValueAdjustmentProcessor {
         ErpAstAsset asset = adjustment.getAsset();
         validateAssetAdjustable(asset, context);
 
-        adjustment.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
-        adjustment.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
+        adjustment.setApproveStatus(approvalStateMachine.approveTargetStatus());
+        adjustment.setDocStatus(documentStateMachine.approveTargetStatus());
         adjustment.setApprovedBy(currentUserId());
         adjustment.setApprovedAt(CoreMetrics.currentTimestamp());
         adjustmentDao().updateEntity(adjustment);
@@ -307,7 +325,7 @@ public class ErpAstValueAdjustmentProcessor {
     }
 
     protected void validateNotCancelled(ErpAstValueAdjustment adjustment, IServiceContext context) {
-        if (adjustment.isCancelled()) {
+        if (documentStateMachine.isCancelled(adjustment.getDocStatus())) {
             throw illegalDocTransition(adjustment, adjustment.getDocStatus(), "非已作废");
         }
     }
@@ -345,14 +363,28 @@ public class ErpAstValueAdjustmentProcessor {
     }
 
     protected NopException illegalTransition(ErpAstValueAdjustment adjustment, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(adjustment, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalTransition(ErpAstValueAdjustment adjustment, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected NopException illegalDocTransition(ErpAstValueAdjustment adjustment, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION)
+        return illegalDocTransition(adjustment, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalDocTransition(ErpAstValueAdjustment adjustment, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_ADJUSTMENT_ILLEGAL_DOC_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_ADJUSTMENT_CODE, adjustment.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expected);

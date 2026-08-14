@@ -106,6 +106,18 @@
           class="app.erp.ast.service.statemachine.ErpAstInventoryStateMachine"/>
     <bean id="app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine"
           class="app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstDisposalApprovalStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstDisposalApprovalStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstDisposalDocumentStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstDisposalDocumentStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstAssetCapitalizationApprovalStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstAssetCapitalizationApprovalStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstAssetCapitalizationDocumentStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstAssetCapitalizationDocumentStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstValueAdjustmentApprovalStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstValueAdjustmentApprovalStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstValueAdjustmentDocumentStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstValueAdjustmentDocumentStateMachine"/>
 
     <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
     <bean id="app.erp.ast.service.processor.ErpAstSplitSubmitForApprovalProcessor"

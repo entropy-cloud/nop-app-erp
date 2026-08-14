@@ -9,6 +9,8 @@ import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.DisposalPostingDispatcher;
 import app.erp.ast.service.statemachine.ErpAstAssetStateMachine;
 import app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine;
+import app.erp.ast.service.statemachine.ErpAstDisposalApprovalStateMachine;
+import app.erp.ast.service.statemachine.ErpAstDisposalDocumentStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -55,6 +57,12 @@ public class ErpAstDisposalProcessor {
     @Inject
     ErpAstDepreciationScheduleStateMachine scheduleStateMachine;
 
+    @Inject
+    ErpAstDisposalApprovalStateMachine approvalStateMachine;
+
+    @Inject
+    ErpAstDisposalDocumentStateMachine documentStateMachine;
+
     public ErpAstDisposal submitForApproval(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(id, context);
     }
@@ -89,8 +97,8 @@ public class ErpAstDisposalProcessor {
         cancelPendingSchedules(asset.getId());
 
         disposal.setGainLoss(gainLoss);
-        disposal.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
-        disposal.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
+        disposal.setApproveStatus(approvalStateMachine.approveTargetStatus());
+        disposal.setDocStatus(documentStateMachine.approveTargetStatus());
         disposal.setApprovedBy(currentUserId());
         disposal.setApprovedAt(CoreMetrics.currentTimestamp());
         disposalDao().updateEntity(disposal);
@@ -135,7 +143,7 @@ public class ErpAstDisposalProcessor {
             disposal.setPostedBy(null);
             disposal.setGainLoss(null);
         }
-        disposal.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
+        disposal.setApproveStatus(approvalStateMachine.reverseApproveTargetStatus());
         disposalDao().updateEntity(disposal);
         return disposal;
     }
@@ -144,42 +152,51 @@ public class ErpAstDisposalProcessor {
 
     protected void validateTransitionForSubmit(ErpAstDisposal disposal, IServiceContext context) {
         String status = currentApproveStatus(disposal);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_UNSUBMITTED)
-                && !Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(disposal, status, "UNSUBMITTED 或 REJECTED");
+        try {
+            approvalStateMachine.assertCanSubmitForApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(disposal, status, "UNSUBMITTED 或 REJECTED", e);
         }
     }
 
     protected void validateTransitionForWithdraw(ErpAstDisposal disposal, IServiceContext context) {
         String status = currentApproveStatus(disposal);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanWithdrawApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstDisposal disposal, IServiceContext context) {
         String status = currentApproveStatus(disposal);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReject(ErpAstDisposal disposal, IServiceContext context) {
         String status = currentApproveStatus(disposal);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanReject(status);
+        } catch (NopException e) {
+            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstDisposal disposal, IServiceContext context) {
         String status = currentApproveStatus(disposal);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_APPROVED);
+        try {
+            approvalStateMachine.assertCanReverseApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(disposal, status, ErpAstConstants.APPROVE_STATUS_APPROVED, e);
         }
     }
 
     protected void validateTransitionForCancel(ErpAstDisposal disposal, IServiceContext context) {
-        if (disposal.isCancelled()) {
+        if (documentStateMachine.isCancelled(disposal.getDocStatus())) {
             throw illegalDocTransition(disposal, disposal.getDocStatus(), "非已作废");
         }
     }
@@ -281,14 +298,28 @@ public class ErpAstDisposalProcessor {
     }
 
     protected NopException illegalTransition(ErpAstDisposal disposal, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(disposal, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalTransition(ErpAstDisposal disposal, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected NopException illegalDocTransition(ErpAstDisposal disposal, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_DOC_TRANSITION)
+        return illegalDocTransition(disposal, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalDocTransition(ErpAstDisposal disposal, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_DISPOSAL_ILLEGAL_DOC_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_DISPOSAL_CODE, disposal.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expected);

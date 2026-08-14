@@ -7,6 +7,8 @@ import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.CapitalizationPostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstAssetCapitalizationApprovalStateMachine;
+import app.erp.ast.service.statemachine.ErpAstAssetCapitalizationDocumentStateMachine;
 import app.erp.ast.service.statemachine.ErpAstAssetStateMachine;
 import app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine;
 import io.nop.api.core.auth.IUserContext;
@@ -62,6 +64,12 @@ public class ErpAstAssetCapitalizationProcessor {
     @Inject
     ErpAstDepreciationScheduleStateMachine scheduleStateMachine;
 
+    @Inject
+    ErpAstAssetCapitalizationApprovalStateMachine approvalStateMachine;
+
+    @Inject
+    ErpAstAssetCapitalizationDocumentStateMachine documentStateMachine;
+
     public ErpAstAssetCapitalization submitForApproval(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(id, context);
     }
@@ -82,8 +90,8 @@ public class ErpAstAssetCapitalizationProcessor {
         boolean posted = postingDispatcher.tryPost(cap);
 
         cap = reload(id);
-        cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_APPROVED);
-        cap.setDocStatus(ErpAstConstants.DOC_STATUS_ACTIVE);
+        cap.setApproveStatus(approvalStateMachine.approveTargetStatus());
+        cap.setDocStatus(documentStateMachine.approveTargetStatus());
         cap.setApprovedBy(currentUserId());
         cap.setApprovedAt(CoreMetrics.currentTimestamp());
         if (posted) {
@@ -118,8 +126,8 @@ public class ErpAstAssetCapitalizationProcessor {
             cap = reload(id);
             clearPosted(cap);
         }
-        cap.setApproveStatus(ErpAstConstants.APPROVE_STATUS_REJECTED);
-        cap.setDocStatus(ErpAstConstants.DOC_STATUS_CANCELLED);
+        cap.setApproveStatus(approvalStateMachine.reverseApproveTargetStatus());
+        cap.setDocStatus(documentStateMachine.reverseApproveTargetStatus());
         capDao().updateEntity(cap);
         return cap;
     }
@@ -128,42 +136,51 @@ public class ErpAstAssetCapitalizationProcessor {
 
     protected void validateTransitionForSubmit(ErpAstAssetCapitalization cap, IServiceContext context) {
         String status = currentApproveStatus(cap);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_UNSUBMITTED)
-                && !Objects.equals(status, ErpAstConstants.APPROVE_STATUS_REJECTED)) {
-            throw illegalTransition(cap, status, "UNSUBMITTED 或 REJECTED");
+        try {
+            approvalStateMachine.assertCanSubmitForApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(cap, status, "UNSUBMITTED 或 REJECTED", e);
         }
     }
 
     protected void validateTransitionForWithdraw(ErpAstAssetCapitalization cap, IServiceContext context) {
         String status = currentApproveStatus(cap);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanWithdrawApproval(status);
+        } catch (NopException e) {
+            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForApprove(ErpAstAssetCapitalization cap, IServiceContext context) {
         String status = currentApproveStatus(cap);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReject(ErpAstAssetCapitalization cap, IServiceContext context) {
         String status = currentApproveStatus(cap);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_SUBMITTED)) {
-            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED);
+        try {
+            approvalStateMachine.assertCanReject(status);
+        } catch (NopException e) {
+            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_SUBMITTED, e);
         }
     }
 
     protected void validateTransitionForReverseApprove(ErpAstAssetCapitalization cap, IServiceContext context) {
         String status = currentApproveStatus(cap);
-        if (!Objects.equals(status, ErpAstConstants.APPROVE_STATUS_APPROVED)) {
-            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_APPROVED);
+        try {
+            approvalStateMachine.assertCanReverseApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(cap, status, ErpAstConstants.APPROVE_STATUS_APPROVED, e);
         }
     }
 
     protected void validateTransitionForCancel(ErpAstAssetCapitalization cap, IServiceContext context) {
-        if (cap.isCancelled()) {
+        if (documentStateMachine.isCancelled(cap.getDocStatus())) {
             throw illegalDocTransition(cap, cap.getDocStatus(), "非已作废");
         }
     }
@@ -352,14 +369,28 @@ public class ErpAstAssetCapitalizationProcessor {
     }
 
     protected NopException illegalTransition(ErpAstAssetCapitalization cap, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION)
+        return illegalTransition(cap, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalTransition(ErpAstAssetCapitalization cap, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_STATUS_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 
     protected NopException illegalDocTransition(ErpAstAssetCapitalization cap, String current, String expected) {
-        return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_DOC_TRANSITION)
+        return illegalDocTransition(cap, current, expected, null);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。参数由本层组装，对外不变。
+     */
+    protected NopException illegalDocTransition(ErpAstAssetCapitalization cap, String current, String expected, NopException cause) {
+        return new NopException(ErpAstErrors.ERR_CAPITALIZATION_ILLEGAL_DOC_TRANSITION, cause)
                 .param(ErpAstErrors.ARG_CAPITALIZATION_CODE, cap.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_DOC_STATUS, current)
                 .param(ErpAstErrors.ARG_EXPECTED_DOC_STATUS, expected);
