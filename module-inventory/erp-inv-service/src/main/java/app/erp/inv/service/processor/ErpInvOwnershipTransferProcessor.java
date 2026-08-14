@@ -5,6 +5,7 @@ import app.erp.inv.dao.entity.ErpInvOwnershipTransferLine;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
+import app.erp.inv.service.statemachine.ErpInvOwnershipTransferStateMachine;
 import app.erp.inv.service.stock.StockMoveBookkeeper;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -46,17 +47,22 @@ public class ErpInvOwnershipTransferProcessor {
     @Inject
     StockMoveBookkeeper bookkeeper;
 
+    @Inject
+    ErpInvOwnershipTransferStateMachine stateMachine;
+
     public ErpInvOwnershipTransfer cancel(Long transferId, IServiceContext context) {
         ErpInvOwnershipTransfer transfer = requireTransfer(transferId, context);
         String status = transfer.getDocStatus();
-        if (!Objects.equals(status, ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DRAFT)
-                && !Objects.equals(status, ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED)) {
-            throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS)
+        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause）
+        try {
+            stateMachine.assertCanCancel(status);
+        } catch (NopException e) {
+            throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS, e)
                     .param(ErpInvErrors.ARG_TRANSFER_CODE, transfer.getCode())
                     .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
                     .param(ErpInvErrors.ARG_EXPECTED_STATUS, "DRAFT或CONFIRMED");
         }
-        transfer.setDocStatus(ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CANCELLED);
+        transfer.setDocStatus(stateMachine.cancelTargetStatus());
         transferDao().saveOrUpdateEntity(transfer);
         return transfer;
     }
@@ -251,11 +257,25 @@ public class ErpInvOwnershipTransferProcessor {
         return transfer;
     }
 
+    /**
+     * 固定来源态守卫（Confirm/Done 共用，按 {@code actionTarget} 分派对应 Bean 动作）：
+     * 委托 {@link ErpInvOwnershipTransferStateMachine}，非法边 Bean 抛 common 层码，映射为领域码
+     * {@code ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS} + common 作 cause（保持既有 expected 文案）。
+     */
     protected void assertStatus(ErpInvOwnershipTransfer transfer, String expected, String actionTarget) {
-        if (!Objects.equals(transfer.getDocStatus(), expected)) {
-            throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS)
+        String status = transfer.getDocStatus();
+        try {
+            if (ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DONE.equals(actionTarget)) {
+                stateMachine.assertCanDone(status);
+            } else if (ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_CONFIRMED.equals(actionTarget)) {
+                stateMachine.assertCanConfirm(status);
+            } else {
+                stateMachine.assertCanCancel(status);
+            }
+        } catch (NopException e) {
+            throw new NopException(ErpInvErrors.ERR_OWNERSHIP_TRANSFER_ILLEGAL_STATUS, e)
                     .param(ErpInvErrors.ARG_TRANSFER_CODE, transfer.getCode())
-                    .param(ErpInvErrors.ARG_CURRENT_STATUS, transfer.getDocStatus())
+                    .param(ErpInvErrors.ARG_CURRENT_STATUS, status)
                     .param(ErpInvErrors.ARG_EXPECTED_STATUS, expected + "（目标：" + actionTarget + "）");
         }
     }

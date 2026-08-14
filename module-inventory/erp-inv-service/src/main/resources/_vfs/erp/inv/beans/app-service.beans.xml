@@ -155,4 +155,14 @@
           class="app.erp.inv.service.statemachine.ErpInvStockMoveStateMachine"/>
     <bean id="app.erp.inv.service.statemachine.ErpInvStockTakeStateMachine"
           class="app.erp.inv.service.statemachine.ErpInvStockTakeStateMachine"/>
+    <!-- 实体级状态机 Bean（plan 2026-08-13-0810-3）：TransferOrder/OwnershipTransfer/CostAdjust/LandedCost
+         docStatus 轴迁移矩阵权威来源。严格无状态（契约 §2），按类型注入，可经 Delta 同名 bean id 覆盖（契约 §6）。 -->
+    <bean id="app.erp.inv.service.statemachine.ErpInvTransferOrderStateMachine"
+          class="app.erp.inv.service.statemachine.ErpInvTransferOrderStateMachine"/>
+    <bean id="app.erp.inv.service.statemachine.ErpInvOwnershipTransferStateMachine"
+          class="app.erp.inv.service.statemachine.ErpInvOwnershipTransferStateMachine"/>
+    <bean id="app.erp.inv.service.statemachine.ErpInvCostAdjustStateMachine"
+          class="app.erp.inv.service.statemachine.ErpInvCostAdjustStateMachine"/>
+    <bean id="app.erp.inv.service.statemachine.ErpInvLandedCostStateMachine"
+          class="app.erp.inv.service.statemachine.ErpInvLandedCostStateMachine"/>
 </beans>

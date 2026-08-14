@@ -1,11 +1,12 @@
 package app.erp.inv.service.processor;
 
+import app.erp.inv.dao.constants.ErpInvDocStatus;
 import app.erp.inv.dao.entity.ErpInvCostAdjust;
 import app.erp.inv.dao.entity.ErpInvCostAdjustLine;
-import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.costing.CostAdjustmentService;
 import app.erp.inv.service.posting.CostAdjustmentPostingDispatcher;
+import app.erp.inv.service.statemachine.ErpInvCostAdjustStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.IOrmTemplate;
@@ -15,13 +16,17 @@ import java.util.List;
 
 /**
  * ErpInvCostAdjust reverseCostAdjust per-mutation Processor（R6.4，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
- * 自包含红冲编排：require/posted 守卫 → 反向应用成本层 → 红冲凭证 → 回退终态。共享 protected helper 单一真相源在
+ * 自包含红冲编排：require/posted 守卫（含 docStatus 源态守卫，委托 {@link ErpInvCostAdjustStateMachine}）→ 反向应用成本层
+ * → 红冲凭证 → 回退终态（目标态取自 Bean）。共享 protected helper 单一真相源在
  * {@link ErpInvCostAdjustProcessor}（slim-to-S-delegation facade）。下游可经 Delta beans.xml 同名 bean id 覆盖本类。
  */
 public class ErpInvCostAdjustReverseCostAdjustProcessor {
 
     @Inject
     ErpInvCostAdjustProcessor facade;
+
+    @Inject
+    ErpInvCostAdjustStateMachine stateMachine;
 
     @Inject
     CostAdjustmentService costAdjustmentService;
@@ -46,6 +51,17 @@ public class ErpInvCostAdjustReverseCostAdjustProcessor {
             throw new NopException(ErpInvErrors.ERR_COST_ADJUST_NOT_APPLIED)
                     .param(ErpInvErrors.ARG_ADJUST_CODE, adjust.getCode());
         }
+        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause；
+        // docStatus 无专属 illegal-transition 码，映射到既有 generic ERR_ILLEGAL_STATUS_TRANSITION，
+        // 见计划 Phase 3 Decision）。置于 posted 检查之后——保持既有 posted=false → NOT_APPLIED 行为。
+        try {
+            stateMachine.assertCanReverseCostAdjust(adjust.getDocStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
+                    .param(ErpInvErrors.ARG_MOVE_CODE, adjust.getCode())
+                    .param(ErpInvErrors.ARG_CURRENT_STATUS, adjust.getDocStatus())
+                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, ErpInvDocStatus.DOC_STATUS_DONE);
+        }
         return adjust;
     }
 
@@ -59,7 +75,7 @@ public class ErpInvCostAdjustReverseCostAdjustProcessor {
         adjust.setPosted(false);
         adjust.setPostedAt(null);
         adjust.setPostedBy(null);
-        adjust.setDocStatus(ErpInvConstants.DOC_STATUS_CONFIRMED);
+        adjust.setDocStatus(stateMachine.reverseCostAdjustTargetStatus());
         facade.adjustDao().updateEntity(adjust);
         return adjust;
     }

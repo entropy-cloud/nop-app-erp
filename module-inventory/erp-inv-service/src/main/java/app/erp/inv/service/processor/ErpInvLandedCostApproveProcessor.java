@@ -6,6 +6,7 @@ import app.erp.inv.dao.entity.ErpInvLandedCostLine;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.costing.LandedCostAllocationEngine;
+import app.erp.inv.service.statemachine.ErpInvLandedCostStateMachine;
 import app.erp.common.service.AbstractApproveProcessor;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
@@ -19,9 +20,10 @@ import java.util.Objects;
 
 /**
  * ErpInvLandedCost approve per-mutation Processor (plan 2026-07-25-1057-2, R5.6 Pattern B).
- * Self-contained orchestration: require → idempotency → load lines → load receive → validateReceiveApproved
- * → lockReceiveForAllocation → validateNotAlreadyAllocated → doAllocate → createAndApplyCostAdjust
- * → doPostApprove → reload. Domain logic via facade protected helpers (single source of truth).
+ * Self-contained orchestration: require → idempotency → docStatus 源态守卫（委托 {@link ErpInvLandedCostStateMachine}，
+ * 双轴联动中 Bean 仅 docStatus 边，approveStatus 写留 facade doPostApprove）→ load lines → load receive →
+ * validateReceiveApproved → lockReceiveForAllocation → validateNotAlreadyAllocated → doAllocate →
+ * createAndApplyCostAdjust → doPostApprove → reload. Domain logic via facade protected helpers (single source of truth).
  * Dormant until R5.8 rewire（BizModel Java 直调 facade.approve，不经 xbiz 委托链）。
  * Long signature boundary: base class public method takes String id, facade takes Long id,
  * conversion at call boundary via Long.valueOf(id).
@@ -31,6 +33,9 @@ public class ErpInvLandedCostApproveProcessor extends AbstractApproveProcessor<E
     @Inject
     ErpInvLandedCostProcessor processor;
 
+    @Inject
+    ErpInvLandedCostStateMachine stateMachine;
+
     @Override
     public ErpInvLandedCost approve(String id, IServiceContext context) {
         Long lid = Long.valueOf(id);
@@ -39,6 +44,17 @@ public class ErpInvLandedCostApproveProcessor extends AbstractApproveProcessor<E
         if (Objects.equals(landedCost.getApproveStatus(), ErpInvConstants.APPROVE_STATUS_APPROVED)) {
             throw new NopException(ErpInvErrors.ERR_LANDED_COST_ALREADY_APPROVED)
                     .param(ErpInvErrors.ARG_LANDED_COST_CODE, landedCost.getCode());
+        }
+        // 固定来源态守卫委托 StateMachine Bean（非法边 Bean 抛 common 层码，映射为领域码 + common 作 cause；
+        // docStatus 无专属 illegal-transition 码，映射到既有 generic ERR_ILLEGAL_STATUS_TRANSITION，
+        // 见计划 Phase 3 Decision）。置于幂等守卫之后——保持既有 approveStatus==APPROVED → ALREADY_APPROVED 行为。
+        try {
+            stateMachine.assertCanApprove(landedCost.getDocStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpInvErrors.ERR_ILLEGAL_STATUS_TRANSITION, e)
+                    .param(ErpInvErrors.ARG_MOVE_CODE, landedCost.getCode())
+                    .param(ErpInvErrors.ARG_CURRENT_STATUS, landedCost.getDocStatus())
+                    .param(ErpInvErrors.ARG_EXPECTED_STATUS, ErpInvConstants.DOC_STATUS_DRAFT);
         }
 
         List<ErpInvLandedCostLine> costLines = processor.loadCostLines(landedCost.getId());

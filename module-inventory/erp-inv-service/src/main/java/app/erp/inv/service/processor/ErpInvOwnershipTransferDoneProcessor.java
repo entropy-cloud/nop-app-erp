@@ -5,6 +5,7 @@ import app.erp.inv.dao.entity.ErpInvOwnershipTransferLine;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.posting.OwnershipTransferPostingDispatcher;
+import app.erp.inv.service.statemachine.ErpInvOwnershipTransferStateMachine;
 import app.erp.inv.service.stock.StockMoveBookkeeper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -14,7 +15,8 @@ import java.util.List;
 
 /**
  * ErpInvOwnershipTransfer done per-mutation Processor（R6.4，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
- * 自包含完成编排：require → status 守卫 → 不变量校验 → ownership 追踪守卫 → 同库位余额重分类 → 翻 DONE → 业财过账派发。
+ * 自包含完成编排：require → status 守卫（委托 {@link ErpInvOwnershipTransferStateMachine}，经 facade assertStatus）→
+ * 不变量校验 → ownership 追踪守卫 → 同库位余额重分类 → 翻 DONE（目标态取自 Bean）→ 业财过账派发。
  * 共享 protected helper（{@code reclassifyBalance}/{@code findBalance}/{@code validateInvariants}）单一真相源在
  * {@link ErpInvOwnershipTransferProcessor}（delete-after-extract facade，类保留为 helper 持有者）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。
@@ -23,6 +25,9 @@ public class ErpInvOwnershipTransferDoneProcessor {
 
     @Inject
     ErpInvOwnershipTransferProcessor facade;
+
+    @Inject
+    ErpInvOwnershipTransferStateMachine stateMachine;
 
     @Inject
     StockMoveBookkeeper bookkeeper;
@@ -41,7 +46,7 @@ public class ErpInvOwnershipTransferDoneProcessor {
         }
 
         List<ErpInvOwnershipTransferLine> lines = reclassifyBalances(transfer);
-        transfer.setDocStatus(ErpInvConstants.OWNERSHIP_TRANSFER_STATUS_DONE);
+        transfer.setDocStatus(stateMachine.doneTargetStatus());
         facade.transferDao().saveOrUpdateEntity(transfer);
 
         postingDispatcher.dispatchIfApplicable(transfer, lines);

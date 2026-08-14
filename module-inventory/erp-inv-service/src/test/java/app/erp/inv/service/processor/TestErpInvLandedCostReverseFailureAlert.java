@@ -3,6 +3,7 @@ package app.erp.inv.service.processor;
 import app.erp.inv.dao.entity.ErpInvLandedCost;
 import app.erp.inv.service.ErpInvConstants;
 import app.erp.inv.service.posting.LandedCostPostingDispatcher;
+import app.erp.inv.service.statemachine.ErpInvLandedCostStateMachine;
 import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -101,6 +102,7 @@ public class TestErpInvLandedCostReverseFailureAlert extends JunitAutoTestCase {
         ErpInvLandedCostProcessor processor = new ErpInvLandedCostProcessor();
         processor.daoProvider = daoProvider;
         processor.ormTemplate = ormTemplate;
+        processor.stateMachine = new ErpInvLandedCostStateMachine();
         processor.postingDispatcher = new LandedCostPostingDispatcher() {
             @Override
             public void reverse(ErpInvLandedCost landedCost) {

@@ -9,6 +9,7 @@ import app.erp.inv.service.ErpInvErrors;
 import app.erp.inv.service.costing.CostAdjustmentService;
 import app.erp.inv.service.costing.LandedCostAllocationEngine;
 import app.erp.inv.service.posting.LandedCostPostingDispatcher;
+import app.erp.inv.service.statemachine.ErpInvLandedCostStateMachine;
 import app.erp.notify.biz.IErpSysNotificationBiz;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
@@ -79,6 +80,9 @@ public class ErpInvLandedCostProcessor {
 
     @Inject
     ErpInvLandedCostReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpInvLandedCostStateMachine stateMachine;
 
     static final String NOTIFY_EVENT_LANDED_COST_REVERSE_FAILURE = "inv.landed-cost-reverse-failure";
 
@@ -183,11 +187,12 @@ public class ErpInvLandedCostProcessor {
         managed.setPosted(false);
         managed.setPostedAt(now);
         managed.setApproveStatus(ErpInvConstants.APPROVE_STATUS_REJECTED);
-        managed.setDocStatus(ErpInvConstants.DOC_STATUS_CANCELLED);
+        managed.setDocStatus(stateMachine.reverseApproveTargetStatus());
         landedCostDao().updateEntity(managed);
         ormTemplate.flushSession();
 
         if (costAdjust != null) {
+            // 跨实体子 CostAdjust 写（内部编排，非 LandedCost Bean 边）：置 CANCELLED 与 LandedCost 同步
             IEntityDao<ErpInvCostAdjust> adjustDao = daoProvider.daoFor(ErpInvCostAdjust.class);
             ErpInvCostAdjust managedAdjust = adjustDao.getEntityById(costAdjust.getId());
             if (managedAdjust != null) {
@@ -348,7 +353,7 @@ public class ErpInvLandedCostProcessor {
         landedCost.setApproveStatus(ErpInvConstants.APPROVE_STATUS_APPROVED);
         landedCost.setApprovedBy(currentUserId());
         landedCost.setApprovedAt(now);
-        landedCost.setDocStatus(ErpInvConstants.DOC_STATUS_DONE);
+        landedCost.setDocStatus(stateMachine.approveTargetStatus());
         if (voucherId != null) {
             landedCost.setPosted(true);
             landedCost.setPostedAt(now);
