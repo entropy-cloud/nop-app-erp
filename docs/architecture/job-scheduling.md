@@ -218,7 +218,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-prj-pnl-aggregation` | 项目损益汇总（开票 + 成本归集 → `ErpPrjProjectPnl`，多币种 rollup） | 按月/里程碑 | （待实现） | 中-大 | **batch-candidate** | DESIGN | — | `docs/design/projects/profitability.md:82,95` |
+| `erp-prj-pnl-calc` | 项目损益汇总（Billing 收入 + CostCollection 四类成本 → `ErpPrjProjectPnl`，RC-R1.27 接线） | 每日凌晨（默认关） | `erp-prj-pnl-calc.job.yaml` → `nopBatchTaskRunner` → `pnl-calc.batch.xml`（loader status in [DRAFT,OPEN,ON_HOLD]）→ `ErpPrjProjectPnlCalcHelper.recalculateOne()`（REQUIRES_NEW 单条失败隔离）→ `IErpPrjProjectPnlBiz.refreshPnl` | 中-大 | batch | SCHEDULED | `nop.job.erp-prj-pnl-calc.enabled`（默认 false，部署 opt-in）+ `erp-prj.pnl-auto-calc-enabled`（默认 false）+ `erp-prj.pnl-calc-cron`（默认 `0 0 1 * * ?`，空值=跳过） | `docs/design/projects/profitability.md:82`；`app-erp-all/src/main/resources/_vfs/nop/job/conf/erp-prj-pnl-calc.job.yaml`；`docs/plans/2026-08-14-2304-3-rc-mr1-r1-27-prj-pnl-schedule-wiring.md` |
 
 ### 3.15 Human-Resource（人力资源）
 
@@ -343,7 +343,7 @@ erp-fin-period-close（单个作业）
 | `erp-inv-stock-check` | 大（全库存核对） | 记录级重试 | 库存 SKU ≥ 数万 |
 | ~~`erp-qa-spc-sample-aggregation`~~ | 中-大（扫所有 APPROVED 检验行） | 分组聚合 + 断点续跑 | 检验量 ≥ 数万/期（**行 superseded**：功能已由 `erp-qa-spc-sampling` batch job 承载，RC-R1.26 标注，见 §3.12） |
 | `erp-b2b-sftp-inbound-poll` | 大（批量文件下载+反向管道） | 文件级断点 + 记录级重试 | 文件量 ≥ 数千/批 |
-| `erp-prj-pnl-aggregation` | 中-大（多项目多币种 rollup） | 项目级断点 | 项目数 ≥ 数百 |
+| `erp-prj-pnl-calc` | 中-大（多项目损益汇总 rollup，RC-R1.27 已接线） | REQUIRES_NEW 单条失败隔离（`ErpPrjProjectPnlCalcHelper`）+ 记录级幂等（refreshPnl 同期间重算清旧重建） | 项目数 ≥ 数百 |
 
 ---
 

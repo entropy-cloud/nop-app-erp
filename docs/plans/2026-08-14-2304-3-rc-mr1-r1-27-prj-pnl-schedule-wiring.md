@@ -1,6 +1,6 @@
 # 2026-08-14-2304-3-rc-mr1-r1-27-prj-pnl-schedule-wiring RC-R1.27 — projects 损益汇总 nop-job 调度接线（MR1 第一批纯预授权）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-14
 > Mission: requirement-compliance
 > Work Item: RC-R1.27（P1-RC-053 projects UC-PRJ-06 ① PnL 自动调度接线——config key 已声明但消费缺失 / 接线语义核对）
@@ -58,93 +58,93 @@
 
 ### Phase 1 - Explore 既有 batch-task 接线运行时状态（Decision）
 
-Status: planned
+Status: completed
 Targets: `erp-prj-pnl-calc.job.yaml`；`pnl-calc.batch.xml`；`ErpPrjConstants.java`；`ErpPrjConfigs.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` **接线形态裁决**：选项 A（推荐）= 确认/修正既有 batch-task 式接线（job.yaml + batch.xml + nopBatchTaskRunner——2026-07-18 迁移标准模式，参照 R1.23/R1.2 已验证先例）；选项 B = 新建 Java Job bean `ErpPrjProjectPnlCalcJob`（镜像 ForecastRecalc 范式，弃——重复接线）。**Explore 证据**：①`inject('IErpPrjProjectPnlBiz')` 在 batch source 上下文解析可达（`biz_ErpPrjProjectPnl` bean ioc:type 注册 `_service.beans.xml:70-73`，同型 R1.23 `IErpCrmLeadScoreBiz` 已运行）；②`batchChunkCtx.serviceContext` 变量可用但 **null 缺陷**（R1.23 实测，本行须兜底）；③`nopBatchTaskRunner` bean 注册（nop-batch-dsl）；④job.yaml 加载链（`LocalJobConfigLoader` 扫描 /nop/job/conf，`TestErpAllJobYamlLoading` 断言 21 个含本行）。→ 选项 A 最小改动。
+- [x] `Decision` **接线形态裁决**：**选项 A（采用）** = 确认/修正既有 batch-task 式接线（job.yaml + batch.xml + nopBatchTaskRunner——2026-07-18 迁移标准模式，参照 R1.23/R1.2 已验证先例）；选项 B（否决） = 新建 Java Job bean `ErpPrjProjectPnlCalcJob`（镜像 ForecastRecalc 范式，弃——重复接线）。**Explore 证据（HEAD 实测）**：①`inject('IErpPrjProjectPnlBiz')` 在 batch source 上下文解析可达——`biz_ErpPrjProjectPnl` bean 注册于 `_service.beans.xml:70-73`（`ioc:type="app.erp.prj.biz.IErpPrjProjectPnlBiz"`，BizProxyFactoryBean），同型 R1.23 `IErpCrmLeadScoreBiz` 已运行证实；②`batchChunkCtx.serviceContext` 变量在 processor source 可用但 **null 缺陷潜伏**（R1.23 实测 `BatchTaskRunner.executeAsync → newBatchTaskContext()` 无绑定上下文，本行须兜底）；③`nopBatchTaskRunner` bean 注册于 nop-batch-dsl `batch-dsl.beans.xml:6`（`io.nop.batch.dsl.runner.BatchTaskRunner`）；④job.yaml 加载链——`TestErpAllJobYamlLoading` 断言 `/nop/job/conf` 下 21 个 `.job.yaml` 经 `JsonTool.loadDeltaBeanFromResource` 反序列化为 `LocalJobConfig`（`erp-prj-pnl-calc` 在列），`@cfg:` 经 `ConfigValueResolver` 解析（enabled=false 默认不注册，部署 opt-in）。→ **选项 A**（最小改动 + 既有模式）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **config 门控键对齐（G1）**：选项 A（推荐）= job.yaml cronExpr 消费 `erp-prj.pnl-calc-cron`（`@cfg:erp-prj.pnl-calc-cron|0 0 1 * * ?`，常量由 dead 转活跃）+ `erp-prj.pnl-auto-calc-enabled` 门控（helper 或 batch processor 消费——空值/关闭=跳过）；选项 B = 常量改 `nop.job.*` 键（跟随 job.yaml 现状——业务键仍 dead，弃）。**理由（选项 A）**：①`CONFIG_PNL_CALC_CRON`/`CONFIG_PNL_AUTO_CALC_ENABLED` 从 dead 转活跃；②业务 config 键范式对齐 R1.23/R1.4/R1.5（job 层 enabled 门控 + 业务键门控双层）；③`job-scheduling.md:220` stale 行同步为 `erp-prj-pnl-calc` + 配置键。
+- [x] `Decision` **config 门控键对齐（G1）**：**选项 A（采用）** = job.yaml cronExpr 消费 `erp-prj.pnl-calc-cron`（`@cfg:erp-prj.pnl-calc-cron|0 0 1 * * ?`，常量由 dead 转活跃）+ `erp-prj.pnl-auto-calc-enabled` 门控（helper 消费——关闭=跳过）；选项 B（否决） = 常量改 `nop.job.*` 键（跟随 job.yaml 现状——业务键仍 dead，弃）。**理由（选项 A）**：①`CONFIG_PNL_CALC_CRON`/`CONFIG_PNL_AUTO_CALC_ENABLED` 从 dead 转活跃（grep 消费点 = job.yaml + helper）；②业务 config 键范式对齐 R1.23/R1.4/R1.5（job 层 enabled 门控 + 业务键门控双层）；③`job-scheduling.md:221` stale 行同步为 `erp-prj-pnl-calc` + 配置键。`enabled` 保持 `@cfg:nop.job.erp-prj-pnl-calc.enabled|false`（部署 opt-in，对齐 A4.2.121 config-gate 范式）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **失败隔离语义裁决（F1）**：选项 A（推荐）= REQUIRES_NEW helper（镜像 R1.23 `ErpCrmLeadScoringRecalcHelper`/R1.2 `ErpFinBankReconAutoReverseHelper` 范式——逐条独立事务 + try/catch WARN + 返回 boolean + null ctx 兜底 ServiceContextImpl）；选项 B = 保持 chunk 级（batch.xml `transactionScope="chunk"` 现状，任一项失败回滚整 chunk）并显式声明。**Explore 证据**：nop-batch chunk 事务无 per-item 隔离（R1.23 已实测 `BatchTaskBuilder.buildChunkProcessor`——process/chunk 均整 chunk 单事务）；L2 `profitability.md:82` 未声明 per-item 隔离 → 选项 A 更鲁棒（对齐 R1.23 裁决先例）。
+- [x] `Decision` **失败隔离语义裁决（F1）**：**选项 A（采用）** = REQUIRES_NEW helper（镜像 R1.23 `ErpCrmLeadScoringRecalcHelper`/R1.2 `ErpFinBankReconAutoReverseHelper` 范式——逐条独立事务 + try/catch WARN + 返回 boolean + null ctx 兜底 ServiceContextImpl）；选项 B（否决） = 保持 chunk 级（batch.xml `transactionScope="chunk"` 现状，任一项失败回滚整 chunk）并显式声明。**Explore 证据**：nop-batch chunk 事务无 per-item 隔离（R1.23 已实测 `BatchTaskBuilder.buildChunkProcessor` + `InvokerBatchConsumer`——process/chunk 均整 chunk 单事务，任一项抛异常回滚整 chunk）；L2 `profitability.md:82` 未声明 per-item 隔离 → 选项 A 更鲁棒（对齐 R1.23 裁决先例 + `ErpPrjErrors.ERR_PROJECT_NOT_REFERENCEABLE` 单项目失败天然可隔离）。
       - Skill: `nop-backend-dev`
-- [ ] `Proof` **运行时验证前置**：job.yaml 加载链核实（`TestErpAllJobYamlLoading` 21 个含 `erp-prj-pnl-calc`）+ taskPath 文件存在 + `inject('IErpPrjProjectPnlBiz')` 解析可达。运行时可达性最终由 Phase 3 批任务级测试（`IBatchTaskRunner.execute(taskPath)`）给出。
+- [x] `Proof` **运行时验证前置**：job.yaml 加载链核实——①`TestErpAllJobYamlLoading` 断言 21 个 `.job.yaml` 可解析（`erp-prj-pnl-calc` 在列）；②taskPath `/nop/batch-task/prj/pnl-calc.batch.xml` 文件存在（XML 实解析通过）；③job.yaml YAML 实解析通过（jobName/invoker.bean=nopBatchTaskRunner/taskPath/cronExpr `@cfg:nop.job.erp-prj-pnl-calc.cron-expr|0 0 1 * * ?` 逐字确认）；④`inject('IErpPrjProjectPnlBiz')` 解析可达（`biz_ErpPrjProjectPnl` ioc:type 注册，同型 R1.23 成功先例）。运行时可达性最终由 Phase 3 批任务级测试（`IBatchTaskRunner.execute(taskPath)`）给出。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 接线形态裁决记录（A 采用 + 理由）+ config 键对齐裁决（G1 A 采用）+ 隔离语义裁决（F1 A/B 记录），Explore 证据落盘计划或日志
-- [ ] 既有 job.yaml/batch.xml 无语法/引用错误（XML 可解析 + taskPath 命中文件）
+- [x] 接线形态裁决记录（A 采用 + 理由）+ config 键对齐裁决（G1 A 采用）+ 隔离语义裁决（F1 A 采用），Explore 证据落盘计划
+- [x] 既有 job.yaml/batch.xml 无语法/引用错误（XML/YAML 实解析通过 + taskPath 命中文件）
 
 ### Phase 2 - 接线落地 + config 对齐 + null ctx 兜底（P1-RC-053 核心）
 
-Status: planned
+Status: completed
 Targets: `erp-prj-pnl-calc.job.yaml`；`pnl-calc.batch.xml`；`ErpPrjConstants.java`；`ErpPrjConfigs.java`（如需）；新增 helper（如 F1=A）
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Decision`
 - Prereqs: Phase 1 完成
 
-- [ ] `Fix` 按 Phase 1 裁决落地：`erp-prj-pnl-calc.job.yaml` cronExpr 改 `@cfg:erp-prj.pnl-calc-cron|0 0 1 * * ?`（或等效，按 G1 裁决）+ 门控接线；`pnl-calc.batch.xml` processor 改调 helper（F1=A）或保持裸调 + 显式声明（F1=B）。
+- [x] `Fix` 按 Phase 1 裁决落地（选项 A + G1 A + F1 A）：`erp-prj-pnl-calc.job.yaml` cronExpr 改 `@cfg:erp-prj.pnl-calc-cron|0 0 1 * * ?`（业务键消费，弃 `nop.job...cron-expr`）+ description 同步 helper/门控语义；`pnl-calc.batch.xml` processor 改调 helper（`inject('erpPrjProjectPnlCalcHelper').recalculateOne(item.id, batchChunkCtx.serviceContext)`，bean id 即简单名，对齐 R1.23 成功先例；`transactionScope="chunk"` 保持——per-item 隔离由 helper REQUIRES_NEW 承载）+ loader 过滤（DRAFT/OPEN/ON_HOLD）保持。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` **null ctx 兜底**：helper 内（F1=A）或 batch.xml processor 内（F1=B）`serviceContext == null → new ServiceContextImpl()` 兜底（对齐 R1.23 执行发现；`refreshPnl(item.id, null, null, ctx)` 经 BizProxy 代理需非 null ctx）。
+- [x] `Fix` **null ctx 兜底**：helper 内 `serviceContext == null → new ServiceContextImpl()` 兜底（`recalculateOne(projectId, ctx)` 入口判空；`refreshPnl(projectId, null, null, svcCtx)` 经 BizProxy 代理需非 null ctx——R1.23 缺陷回归收口，Phase 3 批任务真实执行证实不 NPE）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` **helper bean 注册**（F1=A）：新增 helper（如 `ErpPrjProjectPnlCalcHelper`，镜像 R1.23 `ErpCrmLeadScoringRecalcHelper`）**须在 `module-projects/erp-prj-service/src/main/resources/_vfs/erp/prj/beans/app-service.beans.xml`（或 `_service.beans.xml`）显式注册**（R1.23 同型：`app-service.beans.xml:62-63` 注册 + batch.xml `inject('erpCrmLeadScoringRecalcHelper')` 简单名调用）。
+- [x] `Fix` **helper bean 注册**（F1=A）：新增 `ErpPrjProjectPnlCalcHelper`（`module-projects/erp-prj-service/.../job/`，镜像 R1.23 `ErpCrmLeadScoringRecalcHelper`）在 `app-service.beans.xml` 显式注册（`erpPrjProjectPnlCalcHelper` bean id = 简单名，batch.xml `inject` 直接命中）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `ErpPrjConstants`/`ErpPrjConfigs`：config key 由 dead 转活跃（javadoc 更新说明消费点：job.yaml + helper/processor）。
+- [x] `Fix` `ErpPrjConstants`/`ErpPrjConfigs`：config key 由 dead 转活跃——`CONFIG_PNL_CALC_CRON`/`CONFIG_PNL_AUTO_CALC_ENABLED` javadoc 更新说明消费点（job.yaml + helper）；`ErpPrjConfigs` 增 `DEFAULT_PNL_CALC_CRON = "0 0 1 * * ?"` + `pnlCalcCron()` 默认值改由该常量提供（显式置空=禁用「空值=跳过」语义，对齐 job.yaml cronExpr @cfg 默认）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `module-projects/erp-prj-service/pom.xml` 补 nop-batch-dsl test-scope 依赖（镜像 R1.23 erp-crm-service pom:81-87）。
+- [x] `Fix` `module-projects/erp-prj-service/pom.xml` 补 nop-batch-dsl test-scope 依赖（镜像 R1.23 erp-crm-service pom:81-87，紧邻 nop-autotest-junit）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 接线落地且 config 键消费闭环（`erp-prj.pnl-calc-cron`/`erp-prj.pnl-auto-calc-enabled` 非 dead——grep 显示消费点）
-- [ ] null ctx 兜底落地（批任务运行时 refreshPnl 不 NPE——Phase 3 测试证实）
-- [ ] job.yaml/batch.xml 与最终文档声明一致（Phase 4 文档同步后三方一致）
+- [x] 接线落地且 config 键消费闭环（`erp-prj.pnl-calc-cron`/`erp-prj.pnl-auto-calc-enabled` 非 dead——grep 显示 job.yaml + helper 消费点）
+- [x] null ctx 兜底落地（批任务运行时 refreshPnl 不 NPE——Phase 3 测试证实）
+- [x] job.yaml/batch.xml 与最终文档声明一致（Phase 4 文档同步后三方一致）
 
 ### Phase 3 - 测试矩阵
 
-Status: planned
+Status: completed
 Targets: `module-projects/erp-prj-service/src/test/java/app/erp/prj/service/`（新增 `TestErpPrjPnlCalcJob.java`）
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2 完成
 
-- [ ] `Add` 批任务级测试（`IBatchTaskRunner.execute(taskPath)`——nop-batch-dsl 执行入口，镜像 R1.23 `TestErpCrmLeadScoringRecalcJob`）：① 批任务执行后 seed 项目生成/更新 ErpPrjProjectPnl（calcStatus=CALCULATED + Billing 收入 + CostCollection 四类成本聚合数值断言，镜像 `TestErpPrjProjectPnl` 断言）；② loader 过滤（DRAFT/OPEN/ON_HOLD 项目加载，CLOSED/COMPLETED 排除）；③ cron 空值/门控关闭跳过语义（`assignConfigValue` 置空 → 跳过 + 零 Pnl 更新）；④ null ctx 兜底路径（批任务真实执行下不 NPE——R1.23 缺陷回归）；⑤ 失败隔离断言（F1=A：不存在项目 → REQUIRES_NEW 回滚 + WARN + 后续项目继续；F1=B：chunk 级语义记录）。
+- [x] `Add` 批任务级测试（`TestErpPrjPnlCalcJob`，`IBatchTaskRunner.execute(taskPath)`——nop-batch-dsl 执行入口，镜像 R1.23 `TestErpCrmLeadScoringRecalcJob`）5 组全绿：① 批任务执行后 OPEN/DRAFT 项目生成 `ErpPrjProjectPnl`（calcStatus=CALCULATED + 收入 10000 + 四类成本 2000/1500/1000/1500 + 毛利 4000 + 毛利率 40.0000 + EAC 23000 数值断言，镜像 `TestErpPrjProjectPnl`；**真实执行路径 `batchChunkCtx.serviceContext`=null → helper 兜底 `ServiceContextImpl` 不 NPE——R1.23 缺陷回归证实**）；② loader 过滤（COMPLETED/CANCELLED 终态项目排除零 Pnl）；③ cron 空值跳过语义（`assignConfigValue` 置空 → helper 跳过 INFO + 零 Pnl 更新）；④ `erp-prj.pnl-auto-calc-enabled` 门控关闭（默认 false）跳过语义（INFO + 零 Pnl）；⑤ 失败隔离断言（F1=A：不存在项目 `ERR_PROJECT_NOT_REFERENCEABLE` → REQUIRES_NEW 回滚 + WARN 含 projectId + 返回 false + 随后正常项目继续汇总）。
       - Skill: `nop-testing`
-- [ ] `Proof` 既有 `TestErpPrjProjectPnl`/`TestErpPrjProjectSettlement` 零回归 + `TestErpAllJobYamlLoading`（job.yaml cronExpr 改动后 21 个文件仍可解析）：`mvn test -pl module-projects/erp-prj-service`（BUILD SUCCESS）+ `mvn test -pl app-erp-all -Dtest=TestErpAllJobYamlLoading` 1/1 绿。
+- [x] `Proof` 既有 `TestErpPrjProjectPnl`/`TestErpPrjProjectSettlement` 零回归 + `TestErpAllJobYamlLoading`（job.yaml cronExpr 改动后 21 个文件仍可解析）：`mvn test -pl module-projects/erp-prj-service` **138 tests 全绿**（133 基线 + 5 新增，BUILD SUCCESS）+ `mvn test -pl app-erp-all -Dtest=TestErpAllJobYamlLoading` 1/1 绿。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 新增批任务级测试全绿 + 既有 projects 测试零回归（`mvn test -pl module-projects/erp-prj-service` BUILD SUCCESS）
-- [ ] 自动调度路径有运行时断言证据（非仅静态接线——`IBatchTaskRunner.execute` 真实执行 loader+processor+refreshPnl 全链）+ null ctx 兜底证实
+- [x] 新增批任务级测试全绿 + 既有 projects 测试零回归（`mvn test -pl module-projects/erp-prj-service` BUILD SUCCESS，138 tests）
+- [x] 自动调度路径有运行时断言证据（非仅静态接线——`IBatchTaskRunner.execute` 真实执行 loader+processor+helper+refreshPnl 全链）+ null ctx 兜底证实
 
 ### Phase 4 - 文档回填 + arm-index/roadmap 状态
 
-Status: planned
+Status: completed
 Targets: `docs/design/projects/profitability.md`；`docs/architecture/job-scheduling.md`；`docs/audits/compliance-baseline.md`（F1=A 条件）；`docs/audits/arm-index.md`；`docs/backlog/requirement-compliance-roadmap.md`；`docs/logs/2026/08-14.md`
 Skill: none
 
 - Item Types: `Add | Fix`
 - Prereqs: Phase 1-3 完成
 
-- [ ] `Add` owner doc 注记：`profitability.md:82` 关键流程补接线实现注记（job.yaml → nopBatchTaskRunner → batch.xml → `IErpPrjProjectPnlBiz.refreshPnl` + config 门控语义 + null ctx 兜底）；不修改需求契约段。
+- [x] `Add` owner doc 注记：`profitability.md:82` 关键流程 1 补接线实现注记（job.yaml → nopBatchTaskRunner → batch.xml → `ErpPrjProjectPnlCalcHelper.recalculateOne()` → `IErpPrjProjectPnlBiz.refreshPnl` 全链 + config 门控语义 + null ctx 兜底 + 测试证据 + P2-RC-050 successor 边界声明）；不修改需求契约段（use-cases L1 不动）。
       - Skill: none
-- [ ] `Fix` `job-scheduling.md` Projects 段 stale 修正：§3.14 :220 `erp-prj-pnl-aggregation`（（待实现）/DESIGN/batch-candidate）→ `erp-prj-pnl-calc`（SCHEDULED + job.yaml 路径 + config 键 + 证据链接）；**§7 :345 候选作业汇总表同型 stale 行一并修正**（对齐 R1.23 job-scheduling.md 全量同步先例）。
+- [x] `Fix` `job-scheduling.md` Projects 段 stale 修正：§3.14 行 `erp-prj-pnl-aggregation`（（待实现）/DESIGN/batch-candidate）→ `erp-prj-pnl-calc`（SCHEDULED + job.yaml 路径 + config 键 + 证据链接）；**§7 候选作业汇总表同型 stale 行一并修正**（`erp-prj-pnl-calc` + REQUIRES_NEW 单条失败隔离 + 记录级幂等，对齐 R1.23 job-scheduling.md 全量同步先例）。
       - Skill: none
-- [ ] `Add` **R10 基线漂移登记（条件 F1=A）**：`docs/audits/compliance-baseline.md` 新增 R10 8→9 基线上调注记（per-site 证据：`ErpPrjProjectPnlCalcHelper.recalculateOne` 1 处 REQUIRES_NEW，镜像 R1.23 `ErpCrmLeadScoringRecalcHelper` 同型站点——R1.23 先例见 compliance-baseline.md:313-315）；F1=B 则跳过并记录理由。
+- [x] `Add` **R10 基线漂移登记（F1=A 落地）**：`docs/audits/compliance-baseline.md` 新增 R10 8→9 基线上调注记（per-site 证据：`ErpPrjProjectPnlCalcHelper.recalculateOne` 1 处 REQUIRES_NEW，镜像 R1.23 `ErpCrmLeadScoringRecalcHelper` 同型站点）+ 机器可读块 `R10: 9`。
       - Skill: none
-- [ ] `Add` arm-index P1-RC-053 → `done (RC-R1.27)` + 修复落地摘要（含接线形态确认 + config 键对齐 + null ctx 兜底）；roadmap RC-R1.27 → done；`docs/logs/2026/08-14.md` 日志条目。
+- [x] `Add` arm-index P1-RC-053 → `done (RC-R1.27)` + 修复落地摘要（含接线形态确认 + config 键对齐 + null ctx 兜底 + 失败隔离）；roadmap RC-R1.27 → done ✅（含落地摘要）；`docs/logs/2026/08-14.md` 日志条目写入。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] arm-index/roadmap 状态回填 + owner doc 注记落盘 + job-scheduling.md 双 stale 行修正 + R10 漂移登记（F1=A）；日志条目写入
+- [x] arm-index/roadmap 状态回填 + owner doc 注记落盘 + job-scheduling.md 双 stale 行修正 + R10 漂移登记（F1=A）；日志条目写入
 
 ## Draft Review Record
 
@@ -155,14 +155,14 @@ Exit Criteria:
 
 > 仅在所有项目和每个阶段的退出标准都勾选 `[x]` 后关闭。**完整仓库验证在此处**：结束时运行一次全量验证。
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn test -pl module-projects/erp-prj-service` 全绿 + `mvn clean install -DskipTests` 全量 BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline；**R10 基线漂移登记**：如 F1=A 落地 REQUIRES_NEW helper，按 R1.23 同型先例登记 R10 基线上调 per-site 证据）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn test -pl module-projects/erp-prj-service` 138 tests 全绿 + `mvn clean install -DskipTests` 全量 BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline；**R10 基线漂移已登记**——R10 8→9 per-site 证据落 `docs/audits/compliance-baseline.md`「R10 基线上调注记（plan 2026-08-14-2304-3，RC-R1.27）」块 + 机器可读块 R10: 9，按 R1.23 同型先例 + project-context 已知失败模式 #1 登记；`TestErpAllJobYamlLoading` 1/1 绿）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -180,12 +180,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: 执行完成并独立结束审计通过（2026-08-15）。四 Phase 全绿：接线落地（既有 batch-task 接线形态确认 + REQUIRES_NEW helper `ErpPrjProjectPnlCalcHelper` per-item 失败隔离 + config 键对齐 `erp-prj.pnl-calc-cron`/`erp-prj.pnl-auto-calc-enabled` 由 dead 转活跃 + `batchChunkCtx.serviceContext` null ctx 兜底 `ServiceContextImpl`——R1.23 Follow-up 潜伏缺陷收口）+ batch 任务级测试 5 组（TestErpPrjPnlCalcJob）+ owner doc 注记（profitability.md §关键流程 1）+ job-scheduling.md §3.14/§7 双 stale 行修正 + arm-index/roadmap/日志回填 + R10 8→9 基线漂移登记。验证：erp-prj-service 138 tests 全绿（133 基线 + 5 新增）+ TestErpAllJobYamlLoading 1/1 + 全量 `mvn clean install -DskipTests` BUILD SUCCESS + checker actual ≤ baseline（R10=9）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待独立审计>
+- Auditor / Agent: 独立结束审计子代理（新会话，只读，零文件修改）——ses_ffe56587dffeiS2DhPLA8yGOXR
+- Evidence: **Verdict PASS**（0 P0 / 0 P1；1 P2 非阻塞已顺手修复[compliance-baseline 顶部汇总表 R10 6→9 同步]）——①计划状态一致性（4/4 Phase completed + 全 `[x]` + Closure Gates 7/7[结束审计门控由执行者按审计结论勾选]）；②Phase 2 接线实仓核验（job.yaml cronExpr `@cfg:erp-prj.pnl-calc-cron|0 0 1 * * ?` + enabled|false + nopBatchTaskRunner + taskPath；batch.xml processor `inject('erpPrjProjectPnlCalcHelper').recalculateOne(item.id, batchChunkCtx.serviceContext)` + loader DRAFT/OPEN/ON_HOLD + transactionScope=chunk 保持；helper REQUIRES_NEW + try/catch WARN + 双业务键门控 + null ctx 兜底 ServiceContextImpl；beans.xml 注册 + ErpPrjConstants/ErpPrjConfigs javadoc/默认值更新 + pom nop-batch-dsl test-scope）；③Phase 3 测试实跑（审计者自跑 `mvn test -pl module-projects/erp-prj-service -Dtest=TestErpPrjPnlCalcJob` 5/5 绿 + 全模块 138/138 绿 + TestErpAllJobYamlLoading 1/1 绿）；④Phase 4 文档实仓核验（profitability.md 实现注记 / job-scheduling.md §3.14+§7 双行 / compliance-baseline R10 8→9 注记 + 机器可读块 R10: 9 / arm-index P1-RC-053 done (RC-R1.27) / roadmap RC-R1.27 done ✅ / 日志条目）；⑤范围守卫（git status 仅预期文件[13 修改 + 3 新增]，零 ORM/会计/删除路径变更；审计者自跑全量 `mvn clean install -DskipTests` BUILD SUCCESS + checker actual ≤ baseline[R10=9]）。
 
 Follow-up:
 
-- <待定>
+- 无范围外 follow-up；MR1 第一批后续 RC-R1.28+（cs 目录建单必填校验等）由 mission driver 继续。watch-only 维持：`batchChunkCtx.serviceContext` null ctx 缺陷在其余既有 batch job（如 spc-sampling 等）的潜伏由各域 batch job 接线行（如 RC-R1.26 已处理 SPC）执行时各自核实（本计划 Deferred But Adjudicated 已登记）。

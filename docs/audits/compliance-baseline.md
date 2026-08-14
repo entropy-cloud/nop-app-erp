@@ -28,7 +28,7 @@
 | R6 | @Transactional in BizModel | 🟢 低 | 2 |
 | R7 | System.currentTimeMillis() | 🟢 低 | 0 |
 | R8 | Processor 无 xbiz 接线 | 🔴 高 | 0 |
-| R10 | REQUIRES_NEW 事务 | 🟡 中 | 6 |
+| R10 | REQUIRES_NEW 事务 | 🟡 中 | 9 |
 | R11 | Processor 重复状态判断方法 | 🟡 中 | 0 |
 | R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 69 |
 | R12b | 共享内核 import PostingEvent | 🟡 中 | 66 |
@@ -320,6 +320,16 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R2c=1392≤1392，其�
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=229 / R2c=1392 / R2d=34 / R3=5 / R10=8 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R10 基线上调注记（plan 2026-08-14-2304-3，RC-R1.27 projects 损益汇总调度接线）
+
+`2026-08-14-2304-3`（RC-R1.27，P1-RC-053）新增 batch helper `ErpPrjProjectPnlCalcHelper`（`module-projects/erp-prj-service/.../job/`），引入 **R10 +1**，为既有文档化 pattern 类的合法同型新增：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R10 | 8 | **9** | 9 | **baseline-raise**（+1） | `ErpPrjProjectPnlCalcHelper.recalculateOne` 1 处 REQUIRES_NEW——单条损益汇总独立事务 + try/catch WARN 失败隔离（单项目失败不阻断批次），镜像 RC-R1.23 `ErpCrmLeadScoringRecalcHelper`（R10 基线已含其 1 处 REQUIRES_NEW）同型站点——batch chunk 事务本身不提供 per-item 隔离（`BatchTaskBuilder.buildChunkProcessor` + `InvokerBatchConsumer` 整 chunk 单事务），per-item 隔离须由 REQUIRES_NEW helper 承载。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=230 / R2c=1393 / R2d=34 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
+
 ## R2b/R2c 基线上调注记（plan 2026-08-14-1815-3，RC-R1.24 crm UTM 归因族）
 
 `2026-08-14-1815-3`（RC-R1.24，P1-RC-037 + P1-RC-038）新增 `ErpCrmReportBizModel.resolveCampaignNames`（`module-crm/erp-crm-service/.../report/`），引入 **R2b +1 / R2c +1**，为既有文档化 pattern 类的合法同型新增（plan Phase 2 显式规定镜像 `resolveStageNames:246-255` 范式）：
@@ -351,7 +361,7 @@ R5: 0
 R6: 2
 R7: 0
 R8: 0
-R10: 8
+R10: 9
 R11: 0
 R12a: 69
 R12b: 66

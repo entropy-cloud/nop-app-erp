@@ -81,6 +81,8 @@
 
 1. **损益汇总计算**:依赖 nop-job 定时任务(按月/按里程碑触发),扫描项目下所有 ErpPrjBilling 与 ErpPrjCostCollection,按 costCategory 聚合到 ErpPrjProjectPnl。多币种统一折算到 currencyId。
 
+> **实现注记（plan 2026-08-14-2304-3，RC-R1.27 P1-RC-053 调度接线）**：自动触发路径已接线——`app-erp-all` job conf `erp-prj-pnl-calc.job.yaml`（jobName=erp-prj-pnl-calc，enabled `@cfg:nop.job.erp-prj-pnl-calc.enabled|false` 部署 opt-in；cronExpr `@cfg:erp-prj.pnl-calc-cron|0 0 1 * * ?`）→ invoker `nopBatchTaskRunner` → `pnl-calc.batch.xml`（loader: status in [DRAFT,OPEN,ON_HOLD]，chunk 事务）→ `ErpPrjProjectPnlCalcHelper.recalculateOne()`（逐条 REQUIRES_NEW 独立事务 + try/catch WARN 单条失败隔离 + `batchChunkCtx.serviceContext` null 兜底 `ServiceContextImpl`）→ `IErpPrjProjectPnlBiz.refreshPnl`（既有 `ProjectPnlCalculator` 引擎）。业务键双层门控：`erp-prj.pnl-auto-calc-enabled`（默认 false，总开关）+ `erp-prj.pnl-calc-cron`（默认 `0 0 1 * * ?`，空值=跳过）。批量调度路径测试 `TestErpPrjPnlCalcJob`（5 组 batch 任务级）。多币种折算（exchangeRate=ONE）仍归 P2-RC-050 successor，非本行范围。
+
 2. **结算**:项目 status→COMPLETED 时,基于最新 PnlSnapshot 生成 ErpPrjProjectSettlement(settlementType=FINAL);如客户合同为总价合同且结算后仍有资产(如自建固定资产),settlementType=CLOSE 触发 transferToAsset=true,调用 IErpAstAssetBiz 生成资产卡片(assets 域),并生成转固凭证(经 finance 域 IErpFinAcctDocProvider 注册 PROJECT_SETTLEMENT 类型)。
 
 3. **业财一体**:Pnl/Settlement 不直接生成凭证,而是通过 posted=false + 事件驱动(模式 B)通知 finance 域,finance 按 ERPNext on_submit 钩子模式统一过账。
