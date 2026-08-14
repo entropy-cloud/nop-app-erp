@@ -16,7 +16,7 @@ public class ErpFinNotesPayableDishonorProcessor {
 
     public ErpFinNotesPayable dishonor(Long notesId, IServiceContext context) {
         ErpFinNotesPayable note = facade.requireNote(notesId, context);
-        facade.validateTransitionForHonor(note, context);
+        facade.validateTransitionForDishonor(note, context);
         facade.releaseOccupiedCredit(note, context);
         facade.doDishonor(note, context);
         return note;

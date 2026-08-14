@@ -19,7 +19,8 @@ public class ErpFinNotesReceivableReceiveProcessor {
         if (facade.isAlreadyReceived(note)) {
             return note;
         }
-        facade.validateNotTerminal(note, context);
+        // receive 为 initial 态写入（§9.2 选项 c），守卫有意收窄为 Bean assertCanReceive（null/RECEIVED 合法）。
+        facade.validateTransitionForReceive(note, context);
         facade.requireAmountPositive(note, context);
         return facade.doReceive(notesId, note, context);
     }

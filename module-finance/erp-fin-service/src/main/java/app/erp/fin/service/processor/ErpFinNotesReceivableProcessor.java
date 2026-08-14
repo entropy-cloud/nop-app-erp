@@ -1,11 +1,13 @@
 package app.erp.fin.service.processor;
 
+import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinNotesDiscount;
 import app.erp.fin.dao.entity.ErpFinNotesReceivable;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.NotesPostingDispatcher;
+import app.erp.fin.service.statemachine.ErpFinNotesReceivableStateMachine;
 import app.erp.md.dao.entity.ErpMdCurrency;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.config.AppConfig;
@@ -44,44 +46,33 @@ public class ErpFinNotesReceivableProcessor {
     @Inject
     NotesPostingDispatcher postingDispatcher;
 
-    // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
+    @Inject
+    ErpFinNotesReceivableStateMachine stateMachine;
+
+    // ---------- step：迁移校验（protected，下游可逐个覆盖；固定来源态矩阵判断已迁移至
+    //           ErpFinNotesReceivableStateMachine Bean，本层仅作 common→领域码映射 wrapper） ----------
 
     protected void validateTransitionForDiscount(ErpFinNotesReceivable note, IServiceContext context) {
-        String status = note.getStatus();
-        if (status == null || !Objects.equals(status, ErpFinConstants.NOTES_RECV_RECEIVED)) {
-            throw illegalTransition(note, status, "RECEIVED");
-        }
+        assertTransition(note, () -> stateMachine.assertCanDiscount(note.getStatus()));
     }
 
     protected void validateTransitionForEndorse(ErpFinNotesReceivable note, IServiceContext context) {
-        String status = note.getStatus();
-        if (status == null || !Objects.equals(status, ErpFinConstants.NOTES_RECV_RECEIVED)) {
-            throw illegalTransition(note, status, "RECEIVED");
-        }
+        assertTransition(note, () -> stateMachine.assertCanEndorse(note.getStatus()));
     }
 
-    protected void validateTransitionForCollect(ErpFinNotesReceivable note, IServiceContext context) {
-        String status = note.getStatus();
-        // 托收：已收到或已贴现（贴现后票据仍归本方，到期仍需托收承兑）均可进入托收中。
-        if (status == null
-                || (!Objects.equals(status, ErpFinConstants.NOTES_RECV_RECEIVED)
-                && !Objects.equals(status, ErpFinConstants.NOTES_RECV_DISCOUNTED))) {
-            throw illegalTransition(note, status, "RECEIVED 或 DISCOUNTED");
-        }
-    }
-
+    /** honor 路径守卫（dishonor 的守卫由 ErpFinNotesReceivableDishonorProcessor 直接委托 Bean assertCanDishonor）。 */
     protected void validateTransitionForHonorOrDishonor(ErpFinNotesReceivable note, IServiceContext context) {
-        String status = note.getStatus();
-        if (status == null || !Objects.equals(status, ErpFinConstants.NOTES_RECV_COLLECTION_PENDING)) {
-            throw illegalTransition(note, status, "COLLECTION_PENDING");
-        }
+        assertTransition(note, () -> stateMachine.assertCanHonor(note.getStatus()));
     }
 
-    protected void validateNotTerminal(ErpFinNotesReceivable note, IServiceContext context) {
-        String status = note.getStatus();
-        if (isTerminal(status)) {
-            throw illegalTransition(note, status, "非终态");
-        }
+    /** receive 入口守卫（有意收窄：assertCanReceive 仅接受 null initial 写入 / RECEIVED 幂等）。 */
+    protected void validateTransitionForReceive(ErpFinNotesReceivable note, IServiceContext context) {
+        assertTransition(note, () -> stateMachine.assertCanReceive(note.getStatus()));
+    }
+
+    /** writeOff 入口守卫（loose：assertCanWriteOff 校验非终态）。 */
+    protected void validateTransitionForWriteOff(ErpFinNotesReceivable note, IServiceContext context) {
+        assertTransition(note, () -> stateMachine.assertCanWriteOff(note.getStatus()));
     }
 
     // ---------- step：业务规则校验 ----------
@@ -106,7 +97,7 @@ public class ErpFinNotesReceivableProcessor {
     // ---------- step：执行（状态推进 + 持久化） ----------
 
     protected ErpFinNotesReceivable doReceive(Long notesId, ErpFinNotesReceivable note, IServiceContext context) {
-        note.setStatus(ErpFinConstants.NOTES_RECV_RECEIVED);
+        note.setStatus(stateMachine.receiveTargetStatus());
         noteDao().updateEntity(note);
 
         boolean posted = postingDispatcher.tryPostReceivable(note, ErpFinBusinessType.NOTES_RECEIVABLE_RECEIVED);
@@ -121,7 +112,7 @@ public class ErpFinNotesReceivableProcessor {
         IEntityDao<ErpFinNotesDiscount> discountDao = daoProvider.daoFor(ErpFinNotesDiscount.class);
         discountDao.saveEntity(discount);
 
-        note.setStatus(ErpFinConstants.NOTES_RECV_DISCOUNTED);
+        note.setStatus(stateMachine.discountTargetStatus());
         note.setDiscountId(discount.getId());
         noteDao().updateEntity(note);
 
@@ -137,7 +128,7 @@ public class ErpFinNotesReceivableProcessor {
         if (endorsementFromId != null) {
             note.setEndorsementFromId(endorsementFromId);
         }
-        note.setStatus(ErpFinConstants.NOTES_RECV_ENDORSED);
+        note.setStatus(stateMachine.endorseTargetStatus());
         noteDao().updateEntity(note);
 
         boolean posted = postingDispatcher.tryPostReceivable(note, ErpFinBusinessType.NOTES_RECEIVABLE_ENDORSED);
@@ -148,7 +139,7 @@ public class ErpFinNotesReceivableProcessor {
     }
 
     protected ErpFinNotesReceivable doHonor(Long notesId, ErpFinNotesReceivable note, IServiceContext context) {
-        note.setStatus(ErpFinConstants.NOTES_RECV_HONORED);
+        note.setStatus(stateMachine.honorTargetStatus());
         noteDao().updateEntity(note);
 
         boolean posted = postingDispatcher.tryPostReceivable(note, ErpFinBusinessType.NOTES_RECEIVABLE_COLLECTION);
@@ -165,7 +156,7 @@ public class ErpFinNotesReceivableProcessor {
                 postingDispatcher.reverseReceivable(note, postedType);
             }
         }
-        note.setStatus(ErpFinConstants.NOTES_RECV_WRITE_OFF);
+        note.setStatus(stateMachine.writeOffTargetStatus());
         note.setPosted(false);
         note.setPostedAt(null);
         note.setPostedBy(null);
@@ -277,13 +268,6 @@ public class ErpFinNotesReceivableProcessor {
         return status != null && Objects.equals(status, ErpFinConstants.NOTES_RECV_RECEIVED);
     }
 
-    protected boolean isTerminal(String status) {
-        return status != null
-                && (Objects.equals(status, ErpFinConstants.NOTES_RECV_HONORED)
-                || Objects.equals(status, ErpFinConstants.NOTES_RECV_DISHONORED)
-                || Objects.equals(status, ErpFinConstants.NOTES_RECV_WRITE_OFF));
-    }
-
     protected ErpFinNotesReceivable reload(Long notesId) {
         return noteDao().getEntityById(notesId);
     }
@@ -346,5 +330,24 @@ public class ErpFinNotesReceivableProcessor {
                 .param(ErpFinErrors.ARG_NOTES_CODE, note.getCode())
                 .param(ErpFinErrors.ARG_CURRENT_STATUS, current)
                 .param(ErpFinErrors.ARG_EXPECTED_STATUS, expected);
+    }
+
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。
+     * 参数从 Bean 异常提取（currentStatus/expectedStatus 单真相源在 Bean），notesCode 由本层组装。
+     */
+    protected NopException illegalTransition(ErpFinNotesReceivable note, NopException common) {
+        return new NopException(ErpFinErrors.ERR_NOTES_RECEIVABLE_ILLEGAL_STATUS_TRANSITION, common)
+                .param(ErpFinErrors.ARG_NOTES_CODE, note.getCode())
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, common.getParam(ErpCommonErrors.ARG_CURRENT_STATUS))
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, common.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
+    }
+
+    private void assertTransition(ErpFinNotesReceivable note, Runnable assertion) {
+        try {
+            assertion.run();
+        } catch (NopException e) {
+            throw illegalTransition(note, e);
+        }
     }
 }

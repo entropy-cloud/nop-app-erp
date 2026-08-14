@@ -19,7 +19,8 @@ public class ErpFinNotesPayableIssueProcessor {
         if (facade.isAlreadyIssued(note)) {
             return note;
         }
-        facade.validateNotTerminal(note, context);
+        // issue 为 initial 态写入（§9.2 选项 c），守卫有意收窄为 Bean assertCanIssue（null/ISSUED 合法）。
+        facade.validateTransitionForIssue(note, context);
         facade.requireAmountPositive(note, context);
         facade.reserveCreditIfNeeded(note, context);
         return facade.doIssue(notesId, note, context);

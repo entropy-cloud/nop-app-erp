@@ -1,11 +1,13 @@
 package app.erp.fin.service.processor;
 
+import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.biz.IErpFinCreditFacilityBiz;
 import app.erp.fin.dao.ErpFinBusinessType;
 import app.erp.fin.dao.entity.ErpFinNotesPayable;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.posting.NotesPostingDispatcher;
+import app.erp.fin.service.statemachine.ErpFinNotesPayableStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
@@ -40,20 +42,28 @@ public class ErpFinNotesPayableProcessor {
     @Inject
     NotesPostingDispatcher postingDispatcher;
 
-    // ---------- step：迁移校验（protected，下游可逐个覆盖） ----------
+    @Inject
+    ErpFinNotesPayableStateMachine stateMachine;
+
+    // ---------- step：迁移校验（protected，下游可逐个覆盖；固定来源态矩阵判断已迁移至
+    //           ErpFinNotesPayableStateMachine Bean，本层仅作 common→领域码映射 wrapper） ----------
 
     protected void validateTransitionForHonor(ErpFinNotesPayable note, IServiceContext context) {
-        String status = note.getStatus();
-        if (status == null || !Objects.equals(status, ErpFinConstants.NOTES_PAY_ISSUED)) {
-            throw illegalTransition(note, status, "ISSUED");
-        }
+        assertTransition(note, () -> stateMachine.assertCanHonor(note.getStatus()));
     }
 
-    protected void validateNotTerminal(ErpFinNotesPayable note, IServiceContext context) {
-        String status = note.getStatus();
-        if (isTerminal(status)) {
-            throw illegalTransition(note, status, "非终态");
-        }
+    protected void validateTransitionForDishonor(ErpFinNotesPayable note, IServiceContext context) {
+        assertTransition(note, () -> stateMachine.assertCanDishonor(note.getStatus()));
+    }
+
+    /** issue 入口守卫（有意收窄：assertCanIssue 仅接受 null initial 写入 / ISSUED 幂等）。 */
+    protected void validateTransitionForIssue(ErpFinNotesPayable note, IServiceContext context) {
+        assertTransition(note, () -> stateMachine.assertCanIssue(note.getStatus()));
+    }
+
+    /** writeOff 入口守卫（loose：assertCanWriteOff 校验非终态）。 */
+    protected void validateTransitionForWriteOff(ErpFinNotesPayable note, IServiceContext context) {
+        assertTransition(note, () -> stateMachine.assertCanWriteOff(note.getStatus()));
     }
 
     // ---------- step：业务规则校验 ----------
@@ -82,7 +92,7 @@ public class ErpFinNotesPayableProcessor {
     // ---------- step：执行（状态推进 + 持久化） ----------
 
     protected ErpFinNotesPayable doIssue(Long notesId, ErpFinNotesPayable note, IServiceContext context) {
-        note.setStatus(ErpFinConstants.NOTES_PAY_ISSUED);
+        note.setStatus(stateMachine.issueTargetStatus());
         noteDao().updateEntity(note);
 
         boolean posted = postingDispatcher.tryPostPayable(note, ErpFinBusinessType.NOTES_PAYABLE_ISSUED);
@@ -93,7 +103,7 @@ public class ErpFinNotesPayableProcessor {
     }
 
     protected ErpFinNotesPayable doHonor(Long notesId, ErpFinNotesPayable note, IServiceContext context) {
-        note.setStatus(ErpFinConstants.NOTES_PAY_HONORED);
+        note.setStatus(stateMachine.honorTargetStatus());
         noteDao().updateEntity(note);
 
         boolean posted = postingDispatcher.tryPostPayable(note, ErpFinBusinessType.NOTES_PAYABLE_HONORED);
@@ -104,7 +114,7 @@ public class ErpFinNotesPayableProcessor {
     }
 
     protected void doDishonor(ErpFinNotesPayable note, IServiceContext context) {
-        note.setStatus(ErpFinConstants.NOTES_PAY_DISHONORED);
+        note.setStatus(stateMachine.dishonorTargetStatus());
         noteDao().updateEntity(note);
     }
 
@@ -112,7 +122,7 @@ public class ErpFinNotesPayableProcessor {
         if (Boolean.TRUE.equals(note.getPosted())) {
             postingDispatcher.reversePayable(note, ErpFinBusinessType.NOTES_PAYABLE_ISSUED);
         }
-        note.setStatus(ErpFinConstants.NOTES_PAY_WRITE_OFF);
+        note.setStatus(stateMachine.writeOffTargetStatus());
         note.setPosted(false);
         note.setPostedAt(null);
         note.setPostedBy(null);
@@ -158,13 +168,6 @@ public class ErpFinNotesPayableProcessor {
         return flag == null ? true : flag;
     }
 
-    protected boolean isTerminal(String status) {
-        return status != null
-                && (Objects.equals(status, ErpFinConstants.NOTES_PAY_HONORED)
-                || Objects.equals(status, ErpFinConstants.NOTES_PAY_DISHONORED)
-                || Objects.equals(status, ErpFinConstants.NOTES_PAY_WRITE_OFF));
-    }
-
     protected ErpFinNotesPayable reload(Long notesId) {
         return noteDao().getEntityById(notesId);
     }
@@ -192,10 +195,22 @@ public class ErpFinNotesPayableProcessor {
         return v != null ? v : BigDecimal.ZERO;
     }
 
-    protected NopException illegalTransition(ErpFinNotesPayable note, String current, String expected) {
-        return new NopException(ErpFinErrors.ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION)
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。
+     * 参数从 Bean 异常提取（currentStatus/expectedStatus 单真相源在 Bean），notesCode 由本层组装。
+     */
+    protected NopException illegalTransition(ErpFinNotesPayable note, NopException common) {
+        return new NopException(ErpFinErrors.ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION, common)
                 .param(ErpFinErrors.ARG_NOTES_CODE, note.getCode())
-                .param(ErpFinErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpFinErrors.ARG_EXPECTED_STATUS, expected);
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, common.getParam(ErpCommonErrors.ARG_CURRENT_STATUS))
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, common.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
+    }
+
+    private void assertTransition(ErpFinNotesPayable note, Runnable assertion) {
+        try {
+            assertion.run();
+        } catch (NopException e) {
+            throw illegalTransition(note, e);
+        }
     }
 }
