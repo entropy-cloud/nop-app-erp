@@ -1,12 +1,15 @@
 package app.erp.fin.service.processor;
 
+import app.erp.common.service.ErpCommonErrors;
 import app.erp.fin.dao.entity.ErpFinReconciliation;
 import app.erp.fin.dao.entity.ErpFinReconciliationLine;
 import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
+import app.erp.fin.service.statemachine.ErpFinReconciliationDocumentStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
+import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -18,11 +21,12 @@ import java.util.List;
  */
 public class ErpFinReconciliationPostProcessor extends AbstractErpFinReconciliationProcessor {
 
+    @Inject
+    ErpFinReconciliationDocumentStateMachine stateMachine;
+
     public ErpFinReconciliation post(Long reconciliationId, IServiceContext context) {
         ErpFinReconciliation head = requireHead(reconciliationId, context);
-        if (!ErpFinConstants.RECON_STATUS_DRAFT.equals(head.getDocStatus())) {
-            throw statusError(head);
-        }
+        assertCanPost(head);
         List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);
         if (lines.isEmpty()) {
             throw new NopException(ErpFinErrors.ERR_RECONCILIATION_NOT_FOUND)
@@ -40,12 +44,24 @@ public class ErpFinReconciliationPostProcessor extends AbstractErpFinReconciliat
         } else {
             settler.settle(head, lines);
         }
-        head.setDocStatus(ErpFinConstants.RECON_STATUS_POSTED);
+        head.setDocStatus(stateMachine.postTargetStatus());
         head.setPostedAt(CoreMetrics.currentTimestamp());
         head.setPostedBy(context.getUserContext() != null ? context.getUserContext().getUserId() : null);
 
         flushBeforeBalance();
         partnerBalanceUpdater.refresh(head.getPartnerId());
         return head;
+    }
+
+    /** post 迁移守卫：固定来源态矩阵判断委托状态机 Bean（common 码作 cause，领域码 {@code ERR_RECONCILIATION_STATUS_INVALID}）。 */
+    private void assertCanPost(ErpFinReconciliation head) {
+        try {
+            stateMachine.assertCanPost(head.getDocStatus());
+        } catch (NopException e) {
+            if (ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode().equals(e.getErrorCode())) {
+                throw statusError(head, e);
+            }
+            throw e;
+        }
     }
 }

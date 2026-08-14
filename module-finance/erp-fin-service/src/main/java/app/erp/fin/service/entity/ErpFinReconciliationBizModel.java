@@ -16,6 +16,8 @@ import app.erp.fin.service.processor.ErpFinReconciliationPostProcessor;
 import app.erp.fin.service.processor.ErpFinReconciliationReverseProcessor;
 import app.erp.fin.service.processor.ErpFinReconciliationRunAutoReconciliationProcessor;
 import app.erp.fin.service.reconciliation.DualSideConsistencyChecker;
+import app.erp.fin.service.statemachine.ErpFinReconciliationDocumentStateMachine;
+import app.erp.common.service.ErpCommonErrors;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
@@ -59,6 +61,8 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     ErpFinReconciliationReverseProcessor reverseProcessor;
     @Inject
     ErpFinReconciliationRunAutoReconciliationProcessor runAutoReconciliationProcessor;
+    @Inject
+    ErpFinReconciliationDocumentStateMachine stateMachine;
 
     public ErpFinReconciliationBizModel() {
         setEntityName(ErpFinReconciliation.class.getName());
@@ -95,8 +99,13 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     public ReconciliationReversePreview previewReverse(@Name("reconciliationId") Long reconciliationId,
                                                        IServiceContext context) {
         ErpFinReconciliation head = requireHead(reconciliationId, context);
-        if (!ErpFinConstants.RECON_STATUS_POSTED.equals(head.getDocStatus())) {
-            throw statusError(head);
+        try {
+            stateMachine.assertCanReverse(head.getDocStatus());
+        } catch (NopException e) {
+            if (ErpCommonErrors.ERR_ILLEGAL_STATUS_TRANSITION.getErrorCode().equals(e.getErrorCode())) {
+                throw statusError(head, e);
+            }
+            throw e;
         }
         List<ErpFinReconciliationLine> lines = loadLines(reconciliationId);
 
@@ -194,7 +203,15 @@ public class ErpFinReconciliationBizModel extends CrudBizModel<ErpFinReconciliat
     }
 
     protected NopException statusError(ErpFinReconciliation head) {
-        return new NopException(ErpFinErrors.ERR_RECONCILIATION_STATUS_INVALID)
+        return statusError(head, null);
+    }
+
+    /**
+     * 领域码 {@code ERR_RECONCILIATION_STATUS_INVALID}（Bean common 码作 cause 保留，契约 §7）。
+     * 参数 reconciliationId/docStatus 由本层组装（唯一真相源在实体），cause 来自状态机 Bean 非法边。
+     */
+    protected NopException statusError(ErpFinReconciliation head, NopException cause) {
+        return new NopException(ErpFinErrors.ERR_RECONCILIATION_STATUS_INVALID, cause)
                 .param(ErpFinErrors.ARG_RECONCILIATION_ID, head.getId())
                 .param(ErpFinErrors.ARG_DOC_STATUS, head.getDocStatus());
     }

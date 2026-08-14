@@ -379,6 +379,14 @@
     <bean id="app.erp.fin.service.statemachine.ErpFinVoucherDocumentStateMachine"
           class="app.erp.fin.service.statemachine.ErpFinVoucherDocumentStateMachine"/>
 
+    <!-- 核销单状态机 Bean（plan 2026-08-14-0456-1，entity-state-machine-bean.md §5）：
+          ErpFinReconciliation.docStatus 核销单生命周期轴（2 迁移边：post DRAFT→POSTED / reverse POSTED→REVERSED，
+          dict 3 值全活跃，REVERSED 终态）。按类型注入，Delta 同名覆盖（契约 §6）。
+          ArApItem 核销联动 + 往来余额刷新 + FX 凭证红冲保留 Processor/ReconciliationSettler 原位（§11.2 M4 (ii)/(iv)/(v)）；
+          posted 不入轴（§11.2 M4 (iii)）；CreateProcessor 创建写 DRAFT 为初始态生成写入不经此 Bean（§9.2 选项 c）。 -->
+    <bean id="app.erp.fin.service.statemachine.ErpFinReconciliationDocumentStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinReconciliationDocumentStateMachine"/>
+
     <!-- 预算方案状态机 Bean（plan 2026-08-13-1950-3，entity-state-machine-bean.md §5）：
           ErpFinBudgetScenario 双轴各自独立 Bean。docStatus 主迁移轴（5 源迁移动作，rollForward spawn metadata-only）；
           approveStatus 镜像轴（3 动作，无 withdraw/reverseApprove）。facade validateTransition 按 docStatus Bean 守卫，
@@ -387,6 +395,14 @@
           class="app.erp.fin.service.statemachine.ErpFinBudgetScenarioDocumentStateMachine"/>
     <bean id="app.erp.fin.service.statemachine.ErpFinBudgetScenarioApprovalStateMachine"
           class="app.erp.fin.service.statemachine.ErpFinBudgetScenarioApprovalStateMachine"/>
+    <!-- 坏账单状态机 Bean（plan 2026-08-14-0456-1，entity-state-machine-bean.md §5）：
+          ErpFinBadDebt.approvalStatus 坏账审批轴（4 命名动作：submit UNSUBMITTED→SUBMITTED /
+          approve {UNSUBMITTED,SUBMITTED}→APPROVED / reject {UNSUBMITTED,SUBMITTED}→REJECTED /
+          reverseApprove APPROVED→REJECTED；wf/approve-status 4 态）。按类型注入，Delta 同名覆盖（契约 §6）。
+          BAD_DEBT_WRITE_OFF/RECOVERY 凭证过账 + ArApItem 变异/对称回滚 + config-gate 保留 facade 原位（§11.2 M4 (ii)/(iv)/(v)）；
+          posted 不入轴（§11.2 M4 (iii)）；WriteOff/Recover auto-approve 旁路为初始/生成写入不经此 Bean（§9.2 选项 c）。 -->
+    <bean id="app.erp.fin.service.statemachine.ErpFinBadDebtApprovalStateMachine"
+          class="app.erp.fin.service.statemachine.ErpFinBadDebtApprovalStateMachine"/>
 
     <!-- 会计期间状态机 Bean（plan 2026-08-13-2045-1，entity-state-machine-bean.md §5）：
           ErpFinAccountingPeriod.status 生命周期轴（5 态，4 命名动作，close 两段）。按类型注入，Delta 同名覆盖（契约 §6）。

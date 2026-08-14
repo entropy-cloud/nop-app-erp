@@ -162,7 +162,15 @@ public abstract class AbstractErpFinReconciliationProcessor {
     }
 
     protected NopException statusError(ErpFinReconciliation head) {
-        return new NopException(ErpFinErrors.ERR_RECONCILIATION_STATUS_INVALID)
+        return statusError(head, null);
+    }
+
+    /**
+     * 领域码 {@code ERR_RECONCILIATION_STATUS_INVALID}（Bean common 码作 cause 保留，契约 §7）。
+     * 参数 reconciliationId/docStatus 由本层组装（唯一真相源在实体），cause 来自状态机 Bean 非法边。
+     */
+    protected NopException statusError(ErpFinReconciliation head, NopException cause) {
+        return new NopException(ErpFinErrors.ERR_RECONCILIATION_STATUS_INVALID, cause)
                 .param(ErpFinErrors.ARG_RECONCILIATION_ID, head.getId())
                 .param(ErpFinErrors.ARG_DOC_STATUS, head.getDocStatus());
     }

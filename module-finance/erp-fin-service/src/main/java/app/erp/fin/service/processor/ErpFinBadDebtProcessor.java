@@ -12,6 +12,8 @@ import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.close.CloseVoucherWriter;
 import app.erp.fin.service.close.CloseVoucherWriter.Line;
 import app.erp.fin.service.posting.FinPostingExecutor;
+import app.erp.fin.service.statemachine.ErpFinBadDebtApprovalStateMachine;
+import app.erp.common.service.ErpCommonErrors;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -67,6 +69,9 @@ public class ErpFinBadDebtProcessor {
 
     @Inject
     ErpFinBadDebtReverseApproveProcessor reverseApproveProcessor;
+
+    @Inject
+    ErpFinBadDebtApprovalStateMachine approvalStateMachine;
 
     // ===================== 审批状态机 =====================
 
@@ -138,7 +143,8 @@ public class ErpFinBadDebtProcessor {
         }
 
         // step 3：翻 approvalStatus → REJECTED（保留 voucherId 不动——原凭证 isReversed=true 已表明状态）
-        debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_REJECTED);
+        assertCanReverseApprove(debt);
+        debt.setApprovalStatus(approvalStateMachine.reverseApproveTargetStatus());
         badDebtDao().updateEntity(debt);
         return debt;
     }
@@ -151,7 +157,7 @@ public class ErpFinBadDebtProcessor {
         } else {
             executeRecovery(debt, item, context);
         }
-        debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_APPROVED);
+        debt.setApprovalStatus(approvalStateMachine.approveTargetStatus());
         badDebtDao().updateEntity(debt);
         return debt;
     }
@@ -217,36 +223,40 @@ public class ErpFinBadDebtProcessor {
 
     protected void validateTransitionForSubmit(ErpFinBadDebt debt) {
         String status = currentApprovalStatus(debt);
-        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED)) {
-            throw illegalTransition(debt, status, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED);
+        try {
+            approvalStateMachine.assertCanSubmit(status);
+        } catch (NopException e) {
+            throw illegalTransition(debt, e);
         }
     }
 
     protected void validateTransitionForApprove(ErpFinBadDebt debt) {
         String status = currentApprovalStatus(debt);
-        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)
-                && !Objects.equals(status, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED)) {
-            throw illegalTransition(debt, status, "SUBMITTED 或 UNSUBMITTED");
+        try {
+            approvalStateMachine.assertCanApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(debt, e);
         }
     }
 
     protected void validateTransitionForReject(ErpFinBadDebt debt) {
         String status = currentApprovalStatus(debt);
-        if (!Objects.equals(status, ErpFinConstants.APPROVE_STATUS_SUBMITTED)
-                && !Objects.equals(status, ErpFinConstants.APPROVE_STATUS_UNSUBMITTED)) {
-            throw illegalTransition(debt, status, "SUBMITTED 或 UNSUBMITTED");
+        try {
+            approvalStateMachine.assertCanReject(status);
+        } catch (NopException e) {
+            throw illegalTransition(debt, e);
         }
     }
 
     // ===================== step：状态推进 =====================
 
     protected void doSubmit(ErpFinBadDebt debt) {
-        debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_SUBMITTED);
+        debt.setApprovalStatus(approvalStateMachine.submitTargetStatus());
         badDebtDao().updateEntity(debt);
     }
 
     protected void doReject(ErpFinBadDebt debt) {
-        debt.setApprovalStatus(ErpFinConstants.APPROVE_STATUS_REJECTED);
+        debt.setApprovalStatus(approvalStateMachine.rejectTargetStatus());
         badDebtDao().updateEntity(debt);
     }
 
@@ -366,11 +376,25 @@ public class ErpFinBadDebtProcessor {
         return flag == null || flag;
     }
 
-    protected NopException illegalTransition(ErpFinBadDebt debt, String current, String expected) {
-        return new NopException(ErpFinErrors.ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION)
+    /**
+     * Bean common 码 → 领域码映射（common 作 cause 保留，契约 §7）。
+     * 参数从 Bean 异常提取（currentStatus/expectedStatus 单真相源在 Bean），badDebtCode 由本层组装。
+     */
+    protected NopException illegalTransition(ErpFinBadDebt debt, NopException common) {
+        return new NopException(ErpFinErrors.ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION, common)
                 .param(ErpFinErrors.ARG_BAD_DEBT_CODE, debt.getCode())
-                .param(ErpFinErrors.ARG_CURRENT_STATUS, current)
-                .param(ErpFinErrors.ARG_EXPECTED_STATUS, expected);
+                .param(ErpFinErrors.ARG_CURRENT_STATUS, common.getParam(ErpCommonErrors.ARG_CURRENT_STATUS))
+                .param(ErpFinErrors.ARG_EXPECTED_STATUS, common.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
+    }
+
+    /** reverseApprove 迁移守卫：固定来源态矩阵判断委托状态机 Bean（common 码作 cause，领域码 {@code ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION}）。 */
+    protected void assertCanReverseApprove(ErpFinBadDebt debt) {
+        String status = currentApprovalStatus(debt);
+        try {
+            approvalStateMachine.assertCanReverseApprove(status);
+        } catch (NopException e) {
+            throw illegalTransition(debt, e);
+        }
     }
 
     // ---------- misc helpers ----------
