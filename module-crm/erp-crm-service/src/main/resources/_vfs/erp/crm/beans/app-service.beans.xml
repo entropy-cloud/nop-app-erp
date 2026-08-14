@@ -102,6 +102,8 @@
           class="app.erp.crm.service.processor.ErpCrmConversionConvertToCustomerProcessor"/>
     <bean id="app.erp.crm.service.processor.ErpCrmConversionConvertToQuotationProcessor"
           class="app.erp.crm.service.processor.ErpCrmConversionConvertToQuotationProcessor"/>
+    <bean id="app.erp.crm.service.processor.ErpCrmConversionConvertToOpportunityProcessor"
+          class="app.erp.crm.service.processor.ErpCrmConversionConvertToOpportunityProcessor"/>
     <bean id="app.erp.crm.service.processor.ErpCrmLeadQualifyProcessor"
           class="app.erp.crm.service.processor.ErpCrmLeadQualifyProcessor"/>
     <bean id="app.erp.crm.service.processor.ErpCrmLeadLoseProcessor"

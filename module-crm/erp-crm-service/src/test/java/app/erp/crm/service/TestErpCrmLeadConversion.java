@@ -55,6 +55,7 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
     static final Long ORG_ID = 1301L;
     static final Long STAGE_NEW = 1101L;
     static final Long STAGE_DEMO = 1102L;
+    static final Long STAGE_WON = 1103L;
     static final Long LOST_REASON_ID = 1201L;
     static final Long CURRENCY_ID = 6401L;
 
@@ -72,6 +73,7 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
             seedOrganization();
             seedStage(STAGE_NEW, "STG-NEW", "新线索", 10, 20);
             seedStage(STAGE_DEMO, "STG-DEMO", "方案演示", 20, 40);
+            seedStage(STAGE_WON, "STG-WON", "赢单", 30, 90, true);
             seedLead(2001L, "LEAD-001", ErpCrmConstants.LEAD_TYPE_LEAD,
                     ErpCrmConstants.DOC_STATUS_NEW, "Acme Corp", "john@acme.com", "13800000001");
         });
@@ -113,6 +115,14 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
         assertEquals(ErpCrmConstants.LEAD_TYPE_OPPORTUNITY, opportunity.getLeadType(), "新商机 leadType=OPPORTUNITY");
         assertEquals(partnerId, opportunity.getPartnerId(), "新商机 partnerId=新客户");
         assertEquals(ErpCrmConstants.DOC_STATUS_NEW, opportunity.getDocStatus(), "新商机 docStatus=NEW");
+
+        // 新商机达转化前置（P1-RC-034 守卫）：qualify（NEW→QUALIFIED 入漏斗设默认 stage）+ moveStage 至 won-stage
+        assertEquals(0, qualify(opportunity.getId()).getStatus(), "商机 qualify 应成功");
+        assertEquals(ErpCrmConstants.DOC_STATUS_QUALIFIED, reloadLead(opportunity.getId()).getDocStatus(),
+                "商机 → QUALIFIED");
+        assertEquals(STAGE_NEW, reloadLead(opportunity.getId()).getStageId(), "qualify 设默认 stageId");
+        assertEquals(0, moveStage(opportunity.getId(), STAGE_WON).getStatus(), "moveStage 至赢单阶段应成功");
+        assertEquals(STAGE_WON, reloadLead(opportunity.getId()).getStageId(), "商机 stageId → won-stage");
 
         // convertToQuotation: OPPORTUNITY → 报价单（经 IErpSalQuotationBiz save）+ 弱指针 + CONVERTED
         ApiResponse<?> qconv = convertToQuotation(opportunity.getId(), quotationData());
@@ -166,7 +176,7 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
             seedOrganization();
             seedStage(STAGE_NEW, "STG-NEW", "新线索", 10, 20);
             seedLead(2301L, "LEAD-CONV-001", ErpCrmConstants.LEAD_TYPE_LEAD,
-                    ErpCrmConstants.DOC_STATUS_NEW, "Delta Corp", "delta@corp.com", null);
+                    ErpCrmConstants.DOC_STATUS_QUALIFIED, "Delta Corp", "delta@corp.com", null);
         });
         assertEquals(0, convertToCustomer(2301L).getStatus(), "首次 convertToCustomer 应成功");
 
@@ -180,9 +190,11 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
         ormTemplate.runInSession(() -> {
             seedCurrency();
             seedStage(STAGE_NEW, "STG-NEW", "新线索", 10, 20);
-            // 商机但无 partnerId
+            seedStage(STAGE_WON, "STG-WON", "赢单", 30, 90, true);
+            // 商机但无 partnerId（won-stage 前置已满足，partner 守卫可达）
             ErpCrmLead opp = newLead(2401L, "OPP-NOPARTNER-001", ErpCrmConstants.LEAD_TYPE_OPPORTUNITY,
                     ErpCrmConstants.DOC_STATUS_QUALIFIED);
+            opp.setStageId(STAGE_WON);
             daoProvider.daoFor(ErpCrmLead.class).saveEntity(opp);
         });
         ApiResponse<?> bad = convertToQuotation(2401L, quotationData());
@@ -331,6 +343,11 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
     }
 
     private void seedStage(Long id, String code, String name, int sequence, int defaultProbability) {
+        seedStage(id, code, name, sequence, defaultProbability, false);
+    }
+
+    private void seedStage(Long id, String code, String name, int sequence, int defaultProbability,
+                           boolean isWonStage) {
         IEntityDao<ErpCrmStage> dao = daoProvider.daoFor(ErpCrmStage.class);
         ErpCrmStage stage = new ErpCrmStage();
         stage.setId(id);
@@ -338,6 +355,7 @@ public class TestErpCrmLeadConversion extends JunitAutoTestCase {
         stage.setStageName(name);
         stage.setSequence(sequence);
         stage.setDefaultProbability(defaultProbability);
+        stage.setIsWonStage(isWonStage);
         dao.saveEntity(stage);
     }
 

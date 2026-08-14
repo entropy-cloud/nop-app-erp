@@ -22,6 +22,8 @@ public class ErpCrmConversionConvertToQuotationProcessor {
         ErpCrmLead lead = facade.requireLead(leadId, context);
         facade.validateNotConverted(lead, context);
         facade.validateLeadType(lead, ErpCrmConstants.LEAD_TYPE_OPPORTUNITY, context);
+        facade.validateDocStatus(lead, ErpCrmConstants.DOC_STATUS_QUALIFIED, context);
+        facade.validateWonStage(lead, context);
         facade.requireOpportunityPartner(lead, context);
         ErpSalQuotation quotation = facade.createQuotationFromOpportunity(lead, quotationData, context);
         facade.markLeadConverted(lead, ErpCrmConstants.RELATED_BILL_TYPE_SALES_QUOTATION,

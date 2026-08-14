@@ -7,6 +7,7 @@ import app.erp.crm.dao.entity.ErpCrmStage;
 import app.erp.crm.dao.entity.ErpCrmTerritoryAssignmentRule;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.processor.ErpCrmConversionConvertToCustomerProcessor;
+import app.erp.crm.service.processor.ErpCrmConversionConvertToOpportunityProcessor;
 import app.erp.crm.service.processor.ErpCrmConversionConvertToQuotationProcessor;
 import app.erp.crm.service.processor.ErpCrmConversionProcessor;
 import app.erp.crm.service.processor.ErpCrmLeadCancelProcessor;
@@ -67,6 +68,9 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
 
     @Inject
     ErpCrmConversionConvertToQuotationProcessor convertToQuotationProcessor;
+
+    @Inject
+    ErpCrmConversionConvertToOpportunityProcessor convertToOpportunityProcessor;
 
     @Inject
     ErpCrmConversionProcessor conversionProcessor;
@@ -184,6 +188,12 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
                                               @Name("quotationData") Map<String, Object> quotationData,
                                               IServiceContext context) {
         return convertToQuotationProcessor.convertToQuotation(leadId, quotationData, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpCrmLead convertToOpportunity(@Name("leadId") Long leadId, IServiceContext context) {
+        return convertToOpportunityProcessor.convertToOpportunity(leadId, context);
     }
 
     @Override

@@ -1,6 +1,8 @@
 package app.erp.crm.service.processor;
 
+import app.erp.crm.biz.IErpCrmStageBiz;
 import app.erp.crm.dao.entity.ErpCrmLead;
+import app.erp.crm.dao.entity.ErpCrmStage;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.ErpCrmErrors;
 import app.erp.crm.service.statemachine.ErpCrmLeadStateMachine;
@@ -21,13 +23,14 @@ import java.util.Objects;
 /**
  * CRM 转化闭环 Processor（{@code processor-extension-pattern.md} Facade + Processor）。
  *
- * <p>R6.6 delete-after-extract：{@code convertToCustomer}/{@code convertToQuotation} 两个 D-mutation 已拆为独立
- * {@link ErpCrmConversionConvertToCustomerProcessor}/{@link ErpCrmConversionConvertToQuotationProcessor}。
+ * <p>R6.6 delete-after-extract：{@code convertToCustomer}/{@code convertToQuotation}/{@code convertToOpportunity}
+ * 三个 D-mutation 已拆为独立 Processor（{@code per-mutation Processor} 范式）。
  * 本类保留为共享 protected helper 单一真相源 + {@code getCreatedOpportunity} 查询辅助（≤2 步豁免）。
  *
- * <p>两条转化链（核心零污染：转化结果存在 CRM 侧弱指针，sales/master-data 实体零字段新增）：
+ * <p>三条转化链（核心零污染：转化结果存在 CRM 侧弱指针，sales/master-data 实体零字段新增）：
  * <ul>
  *   <li>{@code convertToCustomer}：LEAD → 经 {@link IErpMdPartnerBiz} 建客户 + 新建 OPPORTUNITY lead + 原 lead 弱指针 + CONVERTED。</li>
+ *   <li>{@code convertToOpportunity}：LEAD → 原 lead 原地升格为 OPPORTUNITY（不建 Partner/新 Lead，docStatus 保持 QUALIFIED）。</li>
  *   <li>{@code convertToQuotation}：OPPORTUNITY → 经 {@link IErpSalQuotationBiz}（{@code ICrudBiz.save}）建报价单 + 弱指针回写 + CONVERTED。</li>
  * </ul>
  *
@@ -45,6 +48,9 @@ public class ErpCrmConversionProcessor {
 
     @Inject
     IErpSalQuotationBiz quotationBiz;
+
+    @Inject
+    IErpCrmStageBiz stageBiz;
 
     @Inject
     ErpCrmLeadStateMachine stateMachine;
@@ -134,6 +140,48 @@ public class ErpCrmConversionProcessor {
                     .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode())
                     .param(ErpCrmErrors.ARG_LEAD_TYPE, expectedType);
         }
+    }
+
+    /**
+     * docStatus 前置守卫（P1-RC-033/034，L1 UC-CRM-02/03「Lead.docStatus == QUALIFIED」）：
+     * 转化/升格链仅允许 QUALIFIED 来源态，非 QUALIFIED（NEW/LOST/CANCELLED/CONVERTED）抛 {@link ErpCrmErrors#ERR_LEAD_NOT_QUALIFIED}。
+     * 与状态机 Bean {@code assertCanConvert} 的运行时宽放（仅拒 CONVERTED）分层：本守卫在 Processor 层收紧业务前置，
+     * 状态机 Bean 语义不变（owner doc 注记记录边界）。
+     */
+    protected void validateDocStatus(ErpCrmLead lead, String expectedStatus, IServiceContext context) {
+        if (!Objects.equals(lead.getDocStatus(), expectedStatus)) {
+            throw new NopException(ErpCrmErrors.ERR_LEAD_NOT_QUALIFIED)
+                    .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode())
+                    .param(ErpCrmErrors.ARG_CURRENT_STATUS, lead.getDocStatus());
+        }
+    }
+
+    /**
+     * won-stage 前置守卫（P1-RC-034，L1 UC-CRM-03「stage.isWonStage == true」）：
+     * 经 {@code lead.getStageId()} 查 {@link ErpCrmStage#getIsWonStage()}，stageId 为 null 或非赢单阶段抛
+     * {@link ErpCrmErrors#ERR_LEAD_STAGE_NOT_WON}。先 docStatus 后 won-stage，守卫顺序确定化（docStatus → won-stage → partner）。
+     */
+    protected void validateWonStage(ErpCrmLead lead, IServiceContext context) {
+        Long stageId = lead.getStageId();
+        ErpCrmStage stage = stageId != null ? stageBiz.get(String.valueOf(stageId), true, context) : null;
+        if (stage == null || !Boolean.TRUE.equals(stage.getIsWonStage())) {
+            throw new NopException(ErpCrmErrors.ERR_LEAD_STAGE_NOT_WON)
+                    .param(ErpCrmErrors.ARG_LEAD_CODE, lead.getCode())
+                    .param(ErpCrmErrors.ARG_STAGE_ID, stageId);
+        }
+    }
+
+    /**
+     * 直接升格 step（P1-RC-032，UC-CRM-02「不创建客户」分支）：前置 leadType==LEAD + docStatus==QUALIFIED →
+     * 原 lead 原地 setLeadType(OPPORTUNITY) + updateEntity——不建 Partner/新 Lead、docStatus 保持 QUALIFIED
+     * （Decision：后续 convertToQuotation 前置（QUALIFIED + won-stage）成立；置 CONVERTED 将阻断 UC-CRM-03 链路）。
+     */
+    protected ErpCrmLead promoteToOpportunity(ErpCrmLead lead, IServiceContext context) {
+        validateLeadType(lead, ErpCrmConstants.LEAD_TYPE_LEAD, context);
+        validateDocStatus(lead, ErpCrmConstants.DOC_STATUS_QUALIFIED, context);
+        lead.setLeadType(ErpCrmConstants.LEAD_TYPE_OPPORTUNITY);
+        leadDao().updateEntity(lead);
+        return lead;
     }
 
     protected void requireOpportunityPartner(ErpCrmLead lead, IServiceContext context) {

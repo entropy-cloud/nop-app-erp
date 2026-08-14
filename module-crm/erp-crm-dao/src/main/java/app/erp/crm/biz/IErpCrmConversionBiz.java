@@ -12,9 +12,10 @@ import java.util.Map;
 /**
  * CRM 转化服务契约（对齐 {@code docs/design/crm/README.md §衔接契约}）。
  *
- * <p>两条转化链（核心零污染：转化结果存在 CRM 侧弱指针，sales/master-data 实体零字段新增）：
+ * <p>三条转化链（核心零污染：转化结果存在 CRM 侧弱指针，sales/master-data 实体零字段新增）：
  * <ul>
  *   <li>{@code convertToCustomer}：LEAD → {@link ErpMdPartner}（建客户）+ 新建 OPPORTUNITY lead + 原 lead CONVERTED。</li>
+ *   <li>{@code convertToOpportunity}：LEAD → 原 lead 原地升格为 OPPORTUNITY（不建 Partner/新 Lead，docStatus 保持 QUALIFIED）。</li>
  *   <li>{@code convertToQuotation}：OPPORTUNITY → {@link ErpSalQuotation}（跨域经 {@code IErpSalQuotationBiz}）+ 弱指针回写 + CONVERTED。</li>
  * </ul>
  */
@@ -26,6 +27,14 @@ public interface IErpCrmConversionBiz {
      */
     @BizMutation
     ErpMdPartner convertToCustomer(@Name("leadId") Long leadId, IServiceContext context);
+
+    /**
+     * 线索直接升格（UC-CRM-02「不创建客户」分支）：校验 leadType==LEAD 且 docStatus==QUALIFIED；
+     * 原 lead 原地 setLeadType(OPPORTUNITY)——不创建 ErpMdPartner、不新建 ErpCrmLead，docStatus 保持 QUALIFIED
+     * （后续 convertToQuotation 前置（QUALIFIED + won-stage）成立）。
+     */
+    @BizMutation
+    ErpCrmLead convertToOpportunity(@Name("leadId") Long leadId, IServiceContext context);
 
     /**
      * 商机转报价单：校验 leadType==OPPORTUNITY 且 partnerId 非空；经 IErpSalQuotationBiz 建报价单（跨域，核心零污染）；

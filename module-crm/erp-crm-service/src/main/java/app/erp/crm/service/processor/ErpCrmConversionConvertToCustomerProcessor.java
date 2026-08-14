@@ -20,6 +20,7 @@ public class ErpCrmConversionConvertToCustomerProcessor {
         ErpCrmLead lead = facade.requireLead(leadId, context);
         facade.validateNotConverted(lead, context);
         facade.validateLeadType(lead, ErpCrmConstants.LEAD_TYPE_LEAD, context);
+        facade.validateDocStatus(lead, ErpCrmConstants.DOC_STATUS_QUALIFIED, context);
         ErpMdPartner partner = facade.createPartnerFromLead(lead, context);
         ErpCrmLead opportunity = facade.createOpportunityFromLead(lead, partner, context);
         facade.markLeadConverted(lead, ErpCrmConstants.RELATED_BILL_TYPE_CRM_LEAD,

@@ -89,6 +89,14 @@ public interface ErpCrmErrors {
     ErrorCode ERR_LEAD_TYPE_MISMATCH = ErrorCode.define("erp.err.crm.lead-type-mismatch",
             "线索/商机 {leadCode} 类型不匹配（期望 {leadType}）", ARG_LEAD_CODE, ARG_LEAD_TYPE);
 
+    ErrorCode ERR_LEAD_NOT_QUALIFIED = ErrorCode.define("erp.err.crm.lead-not-qualified",
+            "线索/商机 {leadCode} 非 QUALIFIED 状态（当前 {currentStatus}），仅 QUALIFIED 状态的线索可转化/升格",
+            ARG_LEAD_CODE, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_LEAD_STAGE_NOT_WON = ErrorCode.define("erp.err.crm.lead-stage-not-won",
+            "商机 {leadCode} 当前阶段（stageId={stageId}）非赢单阶段（isWonStage=true），不可转报价单",
+            ARG_LEAD_CODE, ARG_STAGE_ID);
+
     ErrorCode ERR_OPPORTUNITY_PARTNER_REQUIRED = ErrorCode.define("erp.err.crm.opportunity-partner-required",
             "商机 {leadCode} 缺少客户，不可转报价单（须先转客户或关联 partnerId）", ARG_LEAD_CODE);
 
