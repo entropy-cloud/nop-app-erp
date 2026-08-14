@@ -82,6 +82,8 @@
           class="app.erp.mnt.service.processor.ErpMntVisitCompleteProcessor"/>
     <bean id="app.erp.mnt.service.processor.ErpMntVisitCancelProcessor"
           class="app.erp.mnt.service.processor.ErpMntVisitCancelProcessor"/>
+    <bean id="app.erp.mnt.service.processor.ErpMntVisitReportAdditionalFaultProcessor"
+          class="app.erp.mnt.service.processor.ErpMntVisitReportAdditionalFaultProcessor"/>
     <bean id="app.erp.mnt.service.processor.ErpMntDowntimeEntryRecordProcessor"
           class="app.erp.mnt.service.processor.ErpMntDowntimeEntryRecordProcessor"/>
     <bean id="app.erp.mnt.service.processor.ErpMntDowntimeEntryCompleteProcessor"

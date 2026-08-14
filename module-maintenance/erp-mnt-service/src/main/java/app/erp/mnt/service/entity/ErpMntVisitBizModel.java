@@ -1,14 +1,17 @@
 package app.erp.mnt.service.entity;
 
 import app.erp.mnt.biz.IErpMntVisitBiz;
+import app.erp.mnt.dao.entity.ErpMntRequest;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.service.processor.ErpMntVisitCancelProcessor;
 import app.erp.mnt.service.processor.ErpMntVisitCompleteProcessor;
+import app.erp.mnt.service.processor.ErpMntVisitReportAdditionalFaultProcessor;
 import app.erp.mnt.service.processor.ErpMntVisitScheduleProcessor;
 import app.erp.mnt.service.processor.ErpMntVisitStartProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -24,6 +27,8 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
     ErpMntVisitCompleteProcessor completeProcessor;
     @Inject
     ErpMntVisitCancelProcessor cancelProcessor;
+    @Inject
+    ErpMntVisitReportAdditionalFaultProcessor reportAdditionalFaultProcessor;
 
     public ErpMntVisitBizModel() {
         setEntityName(ErpMntVisit.class.getName());
@@ -51,5 +56,15 @@ public class ErpMntVisitBizModel extends CrudBizModel<ErpMntVisit> implements IE
     @BizMutation
     public ErpMntVisit cancel(@Name("visitId") Long visitId, IServiceContext context) {
         return cancelProcessor.cancel(visitId, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpMntRequest reportAdditionalFault(@Name("visitId") Long visitId,
+                                               @Name("description") String description,
+                                               @Name("priority") @Optional String priority,
+                                               @Name("remark") @Optional String remark,
+                                               IServiceContext context) {
+        return reportAdditionalFaultProcessor.reportAdditionalFault(visitId, description, priority, remark, context);
     }
 }
