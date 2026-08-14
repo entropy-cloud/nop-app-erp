@@ -43,8 +43,8 @@ public interface ErpMntErrors {
             ARG_VISIT_CODE, ARG_VISIT_DATE);
 
     ErrorCode ERR_VISIT_SCHEDULE_CONFLICT = ErrorCode.define("erp.err.mnt.visit-schedule-conflict",
-            "维护访问 {visitCode} 排程冲突：设备 {equipmentId} 在该日期已有排程/执行中访问 {conflictVisitCode}",
-            ARG_VISIT_CODE, ARG_EQUIPMENT_ID, ARG_CONFLICT_VISIT_CODE);
+            "维护访问 {visitCode} 排程冲突：设备 {equipmentId}/执行人 {assignedTo} 在该日期已有排程/执行中访问 {conflictVisitCode}",
+            ARG_VISIT_CODE, ARG_EQUIPMENT_ID, ARG_ASSIGNED_TO, ARG_CONFLICT_VISIT_CODE);
 
     ErrorCode ERR_REQUEST_NOT_FOUND = ErrorCode.define("erp.err.mnt.request-not-found",
             "维护请求 {requestId} 不存在", ARG_REQUEST_ID);

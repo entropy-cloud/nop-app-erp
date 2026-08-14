@@ -47,7 +47,9 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
     static MntFrozenClockExtension frozenClock = new MntFrozenClockExtension();
 
     static final Long EQUIPMENT_ID = 101L;
+    static final Long OTHER_EQUIPMENT_ID = 102L;
     static final Long ASSIGNEE_ID = 201L;
+    static final Long OTHER_ASSIGNEE_ID = 202L;
 
     @Inject
     IDaoProvider daoProvider;
@@ -121,6 +123,91 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
 
         ApiResponse<?> resp = schedule(conflict);
         assertNotEquals(0, resp.getStatus(), "同设备同日排程冲突应拒绝");
+        assertEquals(ErpMntErrors.ERR_VISIT_SCHEDULE_CONFLICT.getErrorCode(), resp.getCode());
+    }
+
+    @Test
+    public void testVisitScheduleConflictPersonnelDimension() {
+        Long existing = nextId();
+        Long conflict = nextId();
+        ormTemplate.runInSession(session -> {
+            seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedVisit(existing, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, "VST-PERS-CONF-001", ASSIGNEE_ID);
+            seedVisit(conflict, OTHER_EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-PERS-CONF-002", ASSIGNEE_ID);
+            return null;
+        });
+
+        ApiResponse<?> resp = schedule(conflict);
+        assertNotEquals(0, resp.getStatus(), "同执行人同日（不同设备）排程冲突应拒绝");
+        assertEquals(ErpMntErrors.ERR_VISIT_SCHEDULE_CONFLICT.getErrorCode(), resp.getCode());
+        assertNotNull(resp.getMsg(), "错误消息非空");
+        assertTrue(resp.getMsg().contains("VST-PERS-CONF-001"), "错误消息含被冲突 visit code: " + resp.getMsg());
+    }
+
+    @Test
+    public void testVisitScheduleConflictEquipmentDimensionIndependentOfPersonnel() {
+        Long existing = nextId();
+        Long conflict = nextId();
+        ormTemplate.runInSession(session -> {
+            seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedVisit(existing, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, "VST-EQ-CONF-001", ASSIGNEE_ID);
+            seedVisit(conflict, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-EQ-CONF-002", OTHER_ASSIGNEE_ID);
+            return null;
+        });
+
+        ApiResponse<?> resp = schedule(conflict);
+        assertNotEquals(0, resp.getStatus(), "同设备同日（不同执行人）排程冲突应拒绝");
+        assertEquals(ErpMntErrors.ERR_VISIT_SCHEDULE_CONFLICT.getErrorCode(), resp.getCode());
+    }
+
+    @Test
+    public void testVisitScheduleSamePersonDifferentDateAllowed() {
+        Long existing = nextId();
+        Long newVisit = nextId();
+        ormTemplate.runInSession(session -> {
+            seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedVisit(existing, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, "VST-PERS-OK-001", ASSIGNEE_ID);
+            seedVisit(newVisit, OTHER_EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-PERS-OK-002", ASSIGNEE_ID,
+                    LocalDate.of(2026, 7, 2));
+            return null;
+        });
+
+        assertEquals(0, schedule(newVisit).getStatus(), "同执行人不同日应放行");
+        assertEquals(ErpMntDaoConstants.VISIT_STATUS_SCHEDULED, visitStatus(newVisit));
+    }
+
+    @Test
+    public void testVisitScheduleCancelledPeerDoesNotBlock() {
+        Long cancelled = nextId();
+        Long newVisit = nextId();
+        ormTemplate.runInSession(session -> {
+            seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedVisit(cancelled, OTHER_EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_CANCELLED, "VST-PERS-CNL-001", ASSIGNEE_ID);
+            seedVisit(newVisit, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-PERS-CNL-002", ASSIGNEE_ID);
+            return null;
+        });
+
+        assertEquals(0, schedule(newVisit).getStatus(), "同执行人同日 CANCELLED 不计入冲突，应放行");
+    }
+
+    @Test
+    public void testVisitScheduleDraftPeerDoesNotBlockThenBlocksWhenScheduled() {
+        Long first = nextId();
+        Long second = nextId();
+        ormTemplate.runInSession(session -> {
+            seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
+            seedVisit(first, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-PERS-DRAFT-001", ASSIGNEE_ID);
+            seedVisit(second, OTHER_EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-PERS-DRAFT-002", ASSIGNEE_ID);
+            return null;
+        });
+
+        assertEquals(0, schedule(first).getStatus(), "同执行人同日 DRAFT 同伴不计冲突，首个排程放行");
+        ApiResponse<?> resp = schedule(second);
+        assertNotEquals(0, resp.getStatus(), "首个已 SCHEDULED 后，同执行人同日第二排程冲突");
         assertEquals(ErpMntErrors.ERR_VISIT_SCHEDULE_CONFLICT.getErrorCode(), resp.getCode());
     }
 
@@ -297,15 +384,24 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
     }
 
     private void seedVisit(Long id, Long equipmentId, String status, String code) {
+        seedVisit(id, equipmentId, status, code, ASSIGNEE_ID);
+    }
+
+    private void seedVisit(Long id, Long equipmentId, String status, String code, Long assignedTo) {
+        seedVisit(id, equipmentId, status, code, assignedTo, LocalDate.of(2026, 7, 1));
+    }
+
+    private void seedVisit(Long id, Long equipmentId, String status, String code, Long assignedTo,
+                           LocalDate visitDate) {
         IEntityDao<ErpMntVisit> dao = daoProvider.daoFor(ErpMntVisit.class);
         ErpMntVisit visit = new ErpMntVisit();
         visit.setId(id);
         visit.setCode(code);
         visit.setEquipmentId(equipmentId);
-        visit.setVisitDate(LocalDate.of(2026, 7, 1));
+        visit.setVisitDate(visitDate);
         visit.setStatus(status);
         visit.setVisitType(ErpMntDaoConstants.VISIT_TYPE_PLANNED);
-        visit.setAssignedTo(ASSIGNEE_ID);
+        visit.setAssignedTo(assignedTo);
         dao.saveEntity(visit);
     }
 
