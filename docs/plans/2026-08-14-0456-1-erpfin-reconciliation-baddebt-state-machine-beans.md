@@ -1,6 +1,6 @@
 # 2026-08-14-0456-1-erpfin-reconciliation-baddebt-state-machine-beans 财务域 ErpFinReconciliation.docStatus + ErpFinBadDebt.approveStatus 实体级状态机 Bean（M4.3 + M4.10）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) plan-first 人工/owner-doc 门控**已于 2026-08-14 经人工确认解除**（见 Draft Review Record 门控确认记录）（Reconciliation post/reverse 触发 ArApItem 联动；BadDebt approve 触发 BAD_DEBT_WRITE_OFF/RECOVERY 凭证 + ArApItem 对称回滚）。门控非起草者/审查者可自主解除——经人工确认解除；已转 `active` 进入实施。
 > Last Reviewed: 2026-08-14
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.3（ErpFinReconciliation.docStatus）+ M4.10（ErpFinBadDebt.approveStatus），均 plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md` FIN-5（:153）+ FIN-23（:167）+ M4 表展开（:275,:282）+ 风险展开（:432,:437）
@@ -81,75 +81,75 @@
 
 ### Phase 1 - ErpFinReconciliation docStatus Bean（M4.3）
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/statemachine/ErpFinReconciliationDocumentStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpFinReconciliationPostProcessor.java`、`.../processor/ErpFinReconciliationReverseProcessor.java`、`.../processor/AbstractErpFinReconciliationProcessor.java`、`.../entity/ErpFinReconciliationBizModel.java`、`.../test/.../statemachine/TestErpFinReconciliationStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done（已满足）；M4.1 `ErpFinVoucherDocumentStateMachine` 范本已 done
 
-- [ ] `Add`：落地 `ErpFinReconciliationDocumentStateMachine` Bean——2 动作矩阵（post DRAFT→POSTED、reverse POSTED→REVERSED）+ `assertCanPost(String docStatus)` + `assertCanReverse(String docStatus)` + `postTargetStatus()`/`reverseTargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`（2 边）。严格无状态（§2）。非法边抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`currentStatus`/`expectedStatus` 参数。直接镜像 `ErpFinVoucherDocumentStateMachine` 结构（M4.1 范本）。
+- [x] `Add`：落地 `ErpFinReconciliationDocumentStateMachine` Bean——2 动作矩阵（post DRAFT→POSTED、reverse POSTED→REVERSED）+ `assertCanPost(String docStatus)` + `assertCanReverse(String docStatus)` + `postTargetStatus()`/`reverseTargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`（2 边）。严格无状态（§2）。非法边抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`currentStatus`/`expectedStatus` 参数。直接镜像 `ErpFinVoucherDocumentStateMachine` 结构（M4.1 范本）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：在 `_vfs/erp/fin/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（紧邻既有 Voucher SM Bean L379-380）。
+- [x] `Add`：在 `_vfs/erp/fin/beans/app-service.beans.xml` 以 `<bean id="<FQN>" class="<FQN>"/>` 注册（紧邻既有 Voucher SM Bean L379-380）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线，镜像 M4.1 Voucher 范式）：PostProcessor `:23` 守卫改调 `stateMachine.assertCanPost(docStatus)`（try/catch common 码 → cause-chain `statusError()` 领域码 `ERR_RECONCILIATION_STATUS_INVALID`）；`:43` 目标态改调 `stateMachine.postTargetStatus()`。ReverseProcessor `:19` 守卫同理改调 `assertCanReverse`；`:26` 目标态改调 `reverseTargetStatus()`。BizModel previewReverse `:98` 守卫改调 Bean `assertCanReverse`（一致性）。`AbstractErpFinReconciliationProcessor:164-168` + BizModel `:196-200` 的 `statusError()` 重复副本统一路由 cause-chain。ArApItem 核销联动 + `posted` 编排保留原位。
+- [x] `Add`（接线，镜像 M4.1 Voucher 范式）：PostProcessor `:23` 守卫改调 `stateMachine.assertCanPost(docStatus)`（try/catch common 码 → cause-chain `statusError()` 领域码 `ERR_RECONCILIATION_STATUS_INVALID`）；`:43` 目标态改调 `stateMachine.postTargetStatus()`。ReverseProcessor `:19` 守卫同理改调 `assertCanReverse`；`:26` 目标态改调 `reverseTargetStatus()`。BizModel previewReverse `:98` 守卫改调 Bean `assertCanReverse`（一致性）。`AbstractErpFinReconciliationProcessor:164-168` + BizModel `:196-200` 的 `statusError()` 重复副本统一路由 cause-chain。ArApItem 核销联动 + `posted` 编排保留原位。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`（owner doc 缺口）：finance/state-machine.md 当前无 Reconciliation 章节。四方对照须以代码为权威建立语义（post DRAFT→POSTED + reverse POSTED→REVERSED），并 Decision 裁定补 owner doc Reconciliation 章节（对齐 maintenance SparePartUsage 先例 + inventory StockTake 先例）。
+- [x] `Decision`（owner doc 缺口）：finance/state-machine.md 当前无 Reconciliation 章节。四方对照须以代码为权威建立语义（post DRAFT→POSTED + reverse POSTED→REVERSED），并 Decision 裁定补 owner doc Reconciliation 章节（对齐 maintenance SparePartUsage 先例 + inventory StockTake 先例）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Proof`：层 1 矩阵完备性（greenfield 表驱动，镜像 `TestErpFinVoucher*Matrix` 范式）——(a) 无重复/冲突边；(b) post DRAFT→POSTED、reverse POSTED→REVERSED 可达；(c) 各 `assertCanXxx` 合法来源态通过、非法来源态抛 common 码携带 `action`/`fromStatus`；(d) `transitions()` 与显式方法语义一致；(e) 初始={DRAFT}/终态={REVERSED}（POSTED 为中间态）。
+- [x] `Proof`：层 1 矩阵完备性（greenfield 表驱动，镜像 `TestErpFinVoucher*Matrix` 范式）——(a) 无重复/冲突边；(b) post DRAFT→POSTED、reverse POSTED→REVERSED 可达；(c) 各 `assertCanXxx` 合法来源态通过、非法来源态抛 common 码携带 `action`/`fromStatus`；(d) `transitions()` 与显式方法语义一致；(e) 初始={DRAFT}/终态={REVERSED}（POSTED 为中间态）。
   - Skill: `nop-testing`
-- [ ] `Proof`：层 2 四方对照——dict `erp-fin/reconciliation-status`（3 值）↔ owner-doc 迁移图（待补 Reconciliation 章节）↔ Bean 元数据 ↔ 全部 writer（Create 写 DRAFT + Post 写 POSTED + Reverse 写 REVERSED + BizModel previewReverse 守卫 + CRUD 路径排除）。
+- [x] `Proof`：层 2 四方对照——dict `erp-fin/reconciliation-status`（3 值）↔ owner-doc 迁移图（待补 Reconciliation 章节）↔ Bean 元数据 ↔ 全部 writer（Create 写 DRAFT + Post 写 POSTED + Reverse 写 REVERSED + BizModel previewReverse 守卫 + CRUD 路径排除）。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] `ErpFinReconciliationDocumentStateMachine` Bean 存在、已注册、严格无状态；Post/Reverse Processor 委托 Bean，内联 `Objects.equals` 矩阵判断已移除。
-- [ ] Reconciliation 层 1 矩阵测试本地 `mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinReconciliationStateMachineMatrix` 全绿。
+- [x] `ErpFinReconciliationDocumentStateMachine` Bean 存在、已注册、严格无状态；Post/Reverse Processor 委托 Bean，内联 `Objects.equals` 矩阵判断已移除。
+- [x] Reconciliation 层 1 矩阵测试本地 `mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinReconciliationStateMachineMatrix` 全绿（7 测试通过）。
 
 ### Phase 2 - ErpFinBadDebt approveStatus Bean（M4.10）
 
-Status: planned
+Status: completed
 Targets: `.../statemachine/ErpFinBadDebtApprovalStateMachine.java`、`.../beans/app-service.beans.xml`、`.../processor/ErpFinBadDebtProcessor.java`、`.../processor/ErpFinBadDebtReverseApproveProcessor.java`、`.../test/.../statemachine/TestErpFinBadDebtStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（Reconciliation Bean + 接线范式已固化）
 
-- [ ] `Decision`（BadDebt facade 接入点裁决）：(A) **per-mutation stubs 旁路 common 骨架**——submit/approve/reject/reverseApprove Processor 覆盖 main entry 委托 facade `ErpFinBadDebtProcessor`，common `AbstractApproveProcessor` 转换守卫路径被旁路。Bean 接入点 = facade 的 `validateTransitionForSubmit():218-223` / `validateTransitionForApprove():225-231` / `validateTransitionForReject():233-239` + `executeReverseApprove:141` 状态守卫，不接入 per-mutation stubs（它们是 dead-code）。(B) **writeOff/recover auto-approve 旁路**（`ErpFinBadDebtWriteOffProcessor:25` / `RecoverProcessor:25`，config-gated）= §9.2 选项 c 初始/生成写入路径，不经 Bean `assertCanApprove`（与 Voucher 生成路径先例一致，Bean 不覆盖）。(C) **ORM 列名 `approvalStatus`（单 p）vs Bean 命名 `Approval`（双 p）**——按 §1 约定 Bean 用 `Approval` 后缀对齐 `wf/approve-status` dict 语义，ORM 列名不改（非本计划保护区）。
+- [x] `Decision`（BadDebt facade 接入点裁决）：(A) **per-mutation stubs 旁路 common 骨架**——submit/approve/reject/reverseApprove Processor 覆盖 main entry 委托 facade `ErpFinBadDebtProcessor`，common `AbstractApproveProcessor` 转换守卫路径被旁路。Bean 接入点 = facade 的 `validateTransitionForSubmit():218-223` / `validateTransitionForApprove():225-231` / `validateTransitionForReject():233-239` + `executeReverseApprove:141` 状态守卫，不接入 per-mutation stubs（它们是 dead-code）。(B) **writeOff/recover auto-approve 旁路**（`ErpFinBadDebtWriteOffProcessor:25` / `RecoverProcessor:25`，config-gated）= §9.2 选项 c 初始/生成写入路径，不经 Bean `assertCanApprove`（与 Voucher 生成路径先例一致，Bean 不覆盖）。(C) **ORM 列名 `approvalStatus`（单 p）vs Bean 命名 `Approval`（双 p）**——按 §1 约定 Bean 用 `Approval` 后缀对齐 `wf/approve-status` dict 语义，ORM 列名不改（非本计划保护区）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpFinBadDebtApprovalStateMachine` Bean——4 动作矩阵（submit UNSUBMITTED→SUBMITTED、approve {SUBMITTED,UNSUBMITTED}→APPROVED、reject {SUBMITTED,UNSUBMITTED}→REJECTED、reverseApprove APPROVED→REJECTED）+ `assertCanSubmit/Approve/Reject/ReverseApprove(String approvalStatus)` + 对应 `*TargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`。非法边抛 common 码。镜像 M4.12 `ErpFinBudgetScenarioApprovalStateMachine` 范式。
+- [x] `Add`：落地 `ErpFinBadDebtApprovalStateMachine` Bean——4 动作矩阵（submit UNSUBMITTED→SUBMITTED、approve {SUBMITTED,UNSUBMITTED}→APPROVED、reject {SUBMITTED,UNSUBMITTED}→REJECTED、reverseApprove APPROVED→REJECTED）+ `assertCanSubmit/Approve/Reject/ReverseApprove(String approvalStatus)` + 对应 `*TargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`（6 边）。非法边抛 common 码。镜像 M4.12 `ErpFinBudgetScenarioApprovalStateMachine` 范式。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：在 `_vfs/erp/fin/beans/app-service.beans.xml` 注册（紧邻既有 BudgetScenario Approval SM Bean L388-389）。
+- [x] `Add`：在 `_vfs/erp/fin/beans/app-service.beans.xml` 注册（紧邻既有 BudgetScenario Approval SM Bean L388-389）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线）：facade `ErpFinBadDebtProcessor` 注入 `@Inject ErpFinBadDebtApprovalStateMachine`（非 private）；`validateTransitionForSubmit/Approve/Reject` 改调 Bean `assertCanXxx`（try/catch common 码 → cause-chain `illegalTransition()` 领域码 `ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION`）；`doSubmit:244`/`approveInternal:154`/`doReject:249` 目标态改调 Bean `*TargetStatus()`；`executeReverseApprove:141` 守卫改调 `assertCanReverseApprove` + 目标态改调 `reverseApproveTargetStatus()`。`ErpFinBadDebtReverseApproveProcessor:28` 终态守卫 `ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED` 保留原位（含 posted 判定，动态业务守卫）。BAD_DEBT_WRITE_OFF 凭证过账 + ArApItem 对称回滚 + config-gate + SoD 保留原位。
+- [x] `Add`（接线）：facade `ErpFinBadDebtProcessor` 注入 `@Inject ErpFinBadDebtApprovalStateMachine`（非 private）；`validateTransitionForSubmit/Approve/Reject` 改调 Bean `assertCanXxx`（try/catch common 码 → cause-chain `illegalTransition()` 领域码 `ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION`）；`doSubmit:244`/`approveInternal:154`/`doReject:249` 目标态改调 Bean `*TargetStatus()`；`executeReverseApprove:141` 守卫改调 `assertCanReverseApprove` + 目标态改调 `reverseApproveTargetStatus()`。`ErpFinBadDebtReverseApproveProcessor:28` 终态守卫 `ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED` 保留原位（含 posted 判定，动态业务守卫）。BAD_DEBT_WRITE_OFF 凭证过账 + ArApItem 对称回滚 + config-gate + SoD 保留原位。
   - Skill: `nop-backend-dev`
-- [ ] `Decision`（owner doc 缺口）：finance/state-machine.md 当前无 BadDebt 章节。四方对照须以代码为权威建立语义（4 动作 + auto-approve 旁路），并 Decision 裁定补 owner doc BadDebt 章节。
+- [x] `Decision`（owner doc 缺口）：finance/state-machine.md 当前无 BadDebt 章节。四方对照须以代码为权威建立语义（4 动作 + auto-approve 旁路），并 Decision 裁定补 owner doc BadDebt 章节（§对象八，含 config-gate 边界 + per-mutation stubs 旁路架构事实 + 不可逆 REJECTED 终态）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Proof`：层 1 矩阵完备性 + 层 2 四方对照（dict `wf/approve-status` ↔ owner-doc ↔ Bean ↔ 全部 writer 含 facade 5 写入点 + auto-approve 旁路 2 写入点 + CRUD 路径排除）。
+- [x] `Proof`：层 1 矩阵完备性 + 层 2 四方对照（dict `wf/approve-status` ↔ owner-doc ↔ Bean ↔ 全部 writer 含 facade 5 写入点 + auto-approve 旁路 2 写入点 + CRUD 路径排除）。
   - Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] `ErpFinBadDebtApprovalStateMachine` Bean 存在/注册/无状态；facade `validateTransitionFor*` 委托 Bean，内联 `Objects.equals` 矩阵判断已移除。
-- [ ] BadDebt 层 1 矩阵测试本地 `mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinBadDebtStateMachineMatrix` 全绿。
+- [x] `ErpFinBadDebtApprovalStateMachine` Bean 存在/注册/无状态；facade `validateTransitionFor*` 委托 Bean，内联 `Objects.equals` 矩阵判断已移除。
+- [x] BadDebt 层 1 矩阵测试本地 `mvn test -pl module-finance/erp-fin-service -am -Dtest=TestErpFinBadDebtStateMachineMatrix` 全绿（10 测试通过）。
 
 ### Phase 3 - 层 3 既有命名动作回归
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/test/`（既有集成测试，零新建）
 Skill: `nop-testing`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1-2（二实体 2 轴 Bean + 接线已落地）
 
-- [ ] `Proof`：层 3 既有命名动作回归——复用 `TestErpFinReconciliation`（post/reverse happy path + negative）、`TestErpFinBadDebt`（auto-approve）、`TestErpFinBadDebtReversal`（reverseApprove REJECTED + 红冲凭证）、`TestErpFinAutoReconciliation`、`TestErpFinDualSideConsistency`、`TestErpFinPartnerBalance`，证明 Processor 写回、ArApItem 核销联动、过账副作用时序、config-gate 不变。本地 `mvn test -pl module-finance/erp-fin-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归——复用 `TestErpFinReconciliation`（post/reverse happy path + negative）、`TestErpFinBadDebt`（auto-approve）、`TestErpFinBadDebtReversal`（reverseApprove REJECTED + 红冲凭证）、`TestErpFinAutoReconciliation`、`TestErpFinDualSideConsistency`、`TestErpFinPartnerBalance`，证明 Processor 写回、ArApItem 核销联动、过账副作用时序、config-gate 不变。本地 `mvn test -pl module-finance/erp-fin-service -am` 全绿（463 测试，0 failures/0 errors；含 TestErpFinReconciliation 7 + ReversePreview 1 + BadDebt 7 + BadDebtReversal 3 + BadDebtProvisionReversal 5 + AutoReconciliation 7 + DualSideConsistency 4 + PartnerBalance 2 + 新矩阵 17）。
   - Skill: `nop-testing`
-- [ ] `Proof`：二轴一致性复核——2 Bean 命名（Document/Approval 后缀）/注册（同文件紧邻 Voucher/BudgetScenario Bean）/无状态/元数据形状一致；Processor/facade→Bean 注入 + cause-chaining 范式与 M4.1 Voucher 可追溯一致。
+- [x] `Proof`：二轴一致性复核——2 Bean 命名（Document/Approval 后缀）/注册（同文件紧邻 Voucher/BudgetScenario Bean）/无状态/元数据形状一致；Processor/facade→Bean 注入 + cause-chaining 范式与 M4.1 Voucher 可追溯一致（7 接线点全部 try/catch common 码 → cause-chain 领域码）。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 层 3 既有集成测试全绿（零行为回归）。
+- [x] 层 3 既有集成测试全绿（零行为回归）。
 
 ## Draft Review Record
 
@@ -162,15 +162,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
-- [ ] 范围内行为完成（二实体 2 轴 Bean + Processor/facade 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐（roadmap M4.3/M4.10 → done；finance/state-machine.md 补 Reconciliation + BadDebt 章节）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-finance/erp-fin-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
+- [x] 范围内行为完成（二实体 2 轴 Bean + Processor/facade 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（roadmap M4.3/M4.10 → done；finance/state-machine.md 补 Reconciliation + BadDebt 章节）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-finance/erp-fin-service -am` 全绿（463/463，层 1 矩阵 17 + 层 3 回归 446）+ `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -200,13 +200,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _待执行后填写_
+Status Note: 全 3 Phase 执行完成并可关闭。M4.3 + M4.10 落地：2 个单实体单轴实体级状态机 Bean（`ErpFinReconciliationDocumentStateMachine` docStatus 2 边 + `ErpFinBadDebtApprovalStateMachine` approveStatus 4 动作 6 边），严格无状态，`app-service.beans.xml` FQN-id 注册（紧邻 Voucher/BudgetScenario Bean）；7 守卫接线（Post/Reverse Processor + BizModel previewReverse + BadDebt facade validateTransitionFor*×3 + executeReverseApprove）全部 cause-chain 委托 Bean，内联矩阵判断移除；ArApItem 核销联动/往来余额刷新/FX 凭证/BAD_DEBT_WRITE_OFF·RECOVERY 凭证/红冲对称回滚/config-gate/SoD/终态守卫原序保留（§11.2 M4 (ii)-(v)）；层 1 矩阵 17 测试 + 层 3 回归 463/463 全绿；owner doc 补 §对象七/§对象八；roadmap M4.3/M4.10 → done。验证：`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + compliance 零漂移（R5=0/R11=0）。独立结束审计 APPROVED（见 Closure Audit Evidence）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _待执行后填写_
-- Evidence: _待执行后填写_
+- Auditor / Agent: 独立子代理（新会话 `ses_0019b6ff7ffehaYOiDW3SWqZJo`，零信任审计，未复用执行者上下文）
+- Evidence: 5 项检查全 PASS——(1) 计划文件一致性（3 Phase 全 tick + Status completed + Exit Criteria 全 [x] + 门控确认记录 L161）；(2) 代码证据（2 Bean 存在/无状态/矩阵正确，7 接线点 cause-chain 范式，无内联矩阵守卫残留，beans.xml 注册，non-goal 表面零改动）；(3) 测试证据（审计者亲跑矩阵 17/17 + 全模块 463/463 绿）；(4) 构建 + compliance（审计者亲跑 `mvn clean install -DskipTests` BUILD SUCCESS + checker 全 19 规则 actual ≤ baseline，R5=0/R11=0）；(5) 文档对齐（owner doc §对象七/八 + roadmap M4.3/M4.10 done + 日志条目）。无 BLOCKER/MAJOR；2 MINOR 簿记项（Closure Gates 终态勾选 + Closure 占位填写）已在审计后由执行者完成。审计 MINOR 2 注记（BadDebt facade cause-chain 无条件 catch）行为安全——Bean assertCan* 无其他抛路径，对齐 NotesPayable 先例。
 
 Follow-up:
 
-- <待执行后填写；Deferred 项均为既定 successor>
+- 无新增非阻塞跟进项；Deferred 4 项均为既定 successor（per-mutation stubs 旁路 = Pattern B 既有设计；writeOff/recover auto-approve 旁路 = config-gate 既有设计；Delta 覆盖运行时实证 = M5.3；全局 CRUD 写锁 = M0.1 successor）。

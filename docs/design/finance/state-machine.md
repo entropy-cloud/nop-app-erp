@@ -2,7 +2,7 @@
 
 > **设计要点依据**：本状态机按 `docs/skills/state-machine-business-review-prompt.md` 的 10 个审查维度组织。审查本状态机时使用该提示词。
 >
-> 财务域有六类状态对象：**会计凭证**（单据级状态机）、**会计期间**（时间窗口状态机）、**应收票据**与**应付票据**（票据生命周期状态机，见 §对象三/§对象四）、**费用报销单**（审批 + 生命周期双轴，见 §对象五）、**员工借款单**（审批 + 生命周期双轴，见 §对象六）。凭证与期间的状态迁移相互约束（已结账期间不可新增凭证）。
+> 财务域有八类状态对象：**会计凭证**（单据级状态机）、**会计期间**（时间窗口状态机）、**应收票据**与**应付票据**（票据生命周期状态机，见 §对象三/§对象四）、**费用报销单**（审批 + 生命周期双轴，见 §对象五）、**员工借款单**（审批 + 生命周期双轴，见 §对象六）、**核销单**（docStatus 单轴，见 §对象七）、**坏账单**（approveStatus 单轴，见 §对象八）。凭证与期间的状态迁移相互约束（已结账期间不可新增凭证）。
 
 ## 适用对象
 
@@ -12,6 +12,8 @@
 - 应付票据（NotesPayable）：开出/兑付/拒付/注销的票据生命周期。
 - 费用报销单（ExpenseClaim）：报销单的**审批轴**（approveStatus，5 动作）与**业务生命周期轴**（docStatus，cancel 作废），见 §对象五。
 - 员工借款单（EmployeeAdvance）：借款单的**审批轴**（approveStatus，5 动作）与**业务生命周期轴**（docStatus，cancel 作废），见 §对象六。
+- 核销单（Reconciliation）：核销单的**业务生命周期轴**（docStatus，post 过账 / reverse 红冲），见 §对象七。
+- 坏账单（BadDebt）：坏账核销/收回的**审批轴**（approveStatus，submit/approve/reject/reverseApprove），见 §对象八。
 
 ## 对象一：会计凭证状态机
 
@@ -514,6 +516,111 @@
 - **writer 放置**：6 动作 writer 全部在 facade `do*`（`ErpFinEmployeeAdvanceProcessor`），迁移仅改守卫委托 Bean + 目标态写回 Bean 目标态方法，writer 物理位置与副作用（SoD/tryPost/reverse/markPosted/clearPosted/approvedBy/approvedAt 写入/乐观锁/业务规则校验）原序保留。
 - **reverseApprove→REJECTED**：已合规 `domain-design-guidelines.md §16.4`（与 purchase/ExpenseClaim 一致，无 drift）。
 - 非法边由 Bean 抛 common 码（携带 `action`/`fromStatus` 元数据），Processor 映射领域码（common 作 cause，`ARG_ADVANCE_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` / `ARG_CURRENT_DOC_STATUS`/`ARG_EXPECTED_DOC_STATUS` 对外不变）。
+
+---
+
+## 对象七：核销单状态机
+
+> 核销单业务规则权威来源：`docs/design/finance/ar-ap-reconciliation.md`（核销语义、双向核销、多币种汇兑损益核销规则）。
+>
+> **实现注记（plan 2026-08-14-0456-1，M4.3）**：`docStatus` 单轴由实体级状态机 Bean `ErpFinReconciliationDocumentStateMachine`（契约 `docs/architecture/entity-state-machine-bean.md`）承载——**2 命名动作迁移边**：`post` `DRAFT→POSTED` + `reverse` `POSTED→REVERSED`（Bean `assertCanPost`/`assertCanReverse` + `postTargetStatus()`/`reverseTargetStatus()`）。dict `erp-fin/reconciliation-status` 3 值全活跃（无死状态）：DRAFT=initial、POSTED=中间态（有出边）、REVERSED=终态。守卫接线：PostProcessor/ReverseProcessor 内联 `CONST.equals(...)` 判断 → Bean（common 码 `ERR_ILLEGAL_STATUS_TRANSITION` 作 cause，领域码 `ERR_RECONCILIATION_STATUS_INVALID` 参数对外不变）；BizModel `previewReverse` 前置守卫同 Bean（一致性）。
+
+### 1. 状态定义
+
+| 状态 | 业务含义（等待什么） | 可修改 | 参与核销 |
+|------|----------------------|--------|----------|
+| 草稿（DRAFT） | **initial 态**：创建后未过账 | 是 | 否 |
+| 已过账（POSTED） | **中间态**：已核销结算，辅助账已回写，往来余额已刷新 | 否（需红冲） | 是 |
+| 已红冲（REVERSED） | **终态**：红冲已恢复辅助账，无出边 | 否 | 否 |
+
+### 2. 迁移完整性
+
+```
+草稿 (DRAFT) ← initial
+  └─ 过账 → 已过账 (POSTED)
+              └─ 红冲 → 已红冲 (REVERSED, 终态)
+```
+
+| 迁移 | 触发人/系统 | 前置条件 | 结果 |
+|------|-------------|----------|------|
+| post {DRAFT} → POSTED | 财务员 / 系统 | 草稿状态、行非空、方向一致、往来单位一致、辅助账 OPEN、不超额（或 config 允许超额）、日期不早于发票 | ArApItem 核销联动（status→SETTLED/PARTIAL + settled/openAmount 回写）+ 往来余额刷新 + 可选汇兑损益凭证（config `erp-fin.recon-fx-gain-loss-enabled`） |
+| reverse {POSTED} → REVERSED | 财务员 | 已过账状态 | 辅助账对称回滚（openAmount 恢复）+ 往来余额刷新 + 可选 FX 凭证红冲 |
+
+### 3. 终态与恢复
+
+- **终态**：`REVERSED`（无出边，红冲后不可恢复）。**initial**：`DRAFT`。`POSTED` 为中间态（经 reverse 有出边，`isTerminal(POSTED)=false`）。
+- 已过账不可直接修改：纠错只能红冲（POSTED→REVERSED）。
+
+### 4. 过账边界（§11.2 M4 治理裁定）
+
+- **post 触发 ArApItem 核销联动**（`ReconciliationSettler.settle/settleWithFx`：辅助账 status/openAmount 回写）；reverse 对称回滚（`reverseSettle`）+ 可选 FX 凭证红冲（`reverseReconFxVoucher`）。**过账/红冲时序、编排、失败回退由 per-mutation Processor（`ErpFinReconciliationPostProcessor`/`ReverseProcessor`）+ `ReconciliationSettler` + `postedBy`/`postedAt` 契约管理**（§11.2 M4 (ii)/(v)），状态机 Bean 不触碰。
+- **`posted` 不入轴**（契约 §3）：本实体**无独立 `posted` boolean 字段**（仅有 `postedBy`/`postedAt` 审计字段），核销状态即经 `docStatus` 表达（§11.2 M4 (iii)）。
+- **跨域副作用保留原路径**（§11.2 M4 (iv)）：ArApItem 回写、往来余额刷新（`PartnerBalanceUpdater`）均在 Processor 原位执行。
+- **核销不直接生成 GL 凭证**：凭证由收付款审核时生成（`ar-ap-reconciliation.md §核销流程` 步骤 5）；仅汇兑损益核销（config 开启时）生成 RFX 凭证。
+- **CRUD 路径排除**：通用 CRUD 写 `docStatus` 不在 Bean 运行时强制范围（契约 §9 声明；M0.1 successor 全局写锁）。
+
+### 5. 实现注记（plan 2026-08-14-0456-1）
+
+- **writer 盘点**：`ErpFinReconciliationCreateProcessor:48` 创建写 DRAFT（**初始态生成写入**，§9.2 选项 c，不经 Bean `assertCanPost`）；`ErpFinReconciliationPostProcessor` 写 POSTED（Bean `postTargetStatus()`）；`ErpFinReconciliationReverseProcessor` 写 REVERSED（Bean `reverseTargetStatus()`）；BizModel `previewReverse:98` 守卫读 POSTED（经 Bean `assertCanReverse`，一致性）；auto-reconciliation（`runAutoReconciliation`）仍经命名动作 post，无独立旁路写入路径；**CRUD 路径排除**。
+- **层 2 四方对照**（plan Phase 1 Proof）：dict `erp-fin/reconciliation-status`（3 值 DRAFT/POSTED/REVERSED，`app-erp-finance.orm.xml:235-239`）↔ 本文迁移图（§2）↔ Bean `transitions()` 元数据（2 边 post/reverse，initial={DRAFT}/terminal={REVERSED}）↔ 全部 writer——**一致，无死状态，无多余边**。
+- **非法边**：Bean 抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION`（携带 `action`/`currentStatus` 补充诊断），PostProcessor/ReverseProcessor/BizModel 映射领域码 `ERR_RECONCILIATION_STATUS_INVALID`（common 作 cause 保留，`ARG_RECONCILIATION_ID`/`ARG_DOC_STATUS` 对外不变）。
+
+---
+
+## 对象八：坏账单状态机
+
+> 坏账单业务规则权威来源：`docs/design/finance/bad-debt.md`（§步骤3 核销 / §步骤4a 恢复）；业财过账业务类型见 `docs/design/finance/posting.md`（BAD_DEBT_WRITE_OFF / BAD_DEBT_RECOVERY）。
+>
+> **实现注记（plan 2026-08-14-0456-1，M4.10）**：`approveStatus` 单轴由实体级状态机 Bean `ErpFinBadDebtApprovalStateMachine`（契约 `docs/architecture/entity-state-machine-bean.md`）承载——**4 命名动作迁移矩阵**：`submit` `{UNSUBMITTED}→SUBMITTED`（无 REJECTED 重提，facade `validateTransitionForSubmit` require UNSUBMITTED only）、`approve` `{UNSUBMITTED,SUBMITTED}→APPROVED`、`reject` `{UNSUBMITTED,SUBMITTED}→REJECTED`、`reverseApprove` `{APPROVED}→REJECTED`。dict `wf/approve-status` 4 值全活跃（无死状态）。**注意**：ORM 列名为 `approvalStatus`（单 p，`app-erp-finance.orm.xml:1688`），Bean 命名用 `Approval` 后缀对齐 dict 语义（契约 §1 约定），ORM 列名不改。守卫接线：facade `validateTransitionFor*` + `executeReverseApprove` 内联判断 → Bean（common 码作 cause，领域码 `ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION` 参数对外不变）；`ErpFinBadDebtReverseApproveProcessor:28` 终态守卫 `ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED`（含 posted 判定）为动态业务守卫保留原位。
+
+### 1. 状态定义
+
+| 状态 | 业务含义 | 可修改 | 触发过账 |
+|------|----------|--------|----------|
+| 未提交（UNSUBMITTED） | **initial 态**：创建后未进入审批流（newBadDebt 创建时写入） | 是 | 否 |
+| 已提交（SUBMITTED） | 已提交审批，等待审核 | 否 | 否 |
+| 已审核（APPROVED） | 审核通过，**触发坏账凭证过账**（config-gated） | 否（需反审核） | 是 |
+| 已驳回（REJECTED） | 审核驳回（**不可逆终态**，无重提路径）或反审核翻转 | 否 | 否 |
+
+### 2. 迁移完整性
+
+```
+未提交 (UNSUBMITTED) ← initial
+  ├─ 提交 → 已提交 (SUBMITTED)
+  │            ├─ 审核 → 已审核 (APPROVED)
+  │            └─ 驳回 → 已驳回 (REJECTED, 终态)
+  ├─ 审核（直接） → 已审核 (APPROVED)      ← facade 允许直接审批未提交单
+  ├─ 驳回（直接） → 已驳回 (REJECTED)      ← facade 允许直接驳回未提交单
+  └─ 已审核 → 反审核 → 已驳回 (REJECTED)   ← reverseApprove，触发红冲
+```
+
+| 迁移 | 触发人/系统 | 前置条件 | 结果 |
+|------|-------------|----------|------|
+| submit {UNSUBMITTED} → SUBMITTED | 经办人 | 未提交 | 进入审批流 |
+| approve {UNSUBMITTED,SUBMITTED} → APPROVED | 审核人 | 未提交或已提交 | **BAD_DEBT_WRITE_OFF/RECOVERY 凭证过账 + ArApItem 变异**（WRITTEN_OFF↔OPEN + openAmount 回写），config `erp-fin.bad-debt-write-off-require-approval=true` 时必经审批 |
+| reject {UNSUBMITTED,SUBMITTED} → REJECTED | 审核人 | 未提交或已提交 | 驳回（不可逆，无重提路径） |
+| reverseApprove {APPROVED} → REJECTED | 审核人（需权限） | 已审核 | **红冲凭证 + ArApItem 对称回滚** + 翻 REJECTED |
+
+### 3. 终态与恢复
+
+- **终态**：`APPROVED` / `REJECTED`。**APPROVED 为可逆终态**（经 reverseApprove 有出边，不适用「终态无出边」强断言）；**REJECTED 为不可逆终态**（无出边——facade 无 REJECTED 重提路径）。**initial**：`UNSUBMITTED`（null 归一化为 UNSUBMITTED，与 facade `currentApprovalStatus` 归一一致）。
+- **auto-approve 旁路（§9.2 选项 c 初始/生成写入路径，不经 Bean `assertCanApprove`）**：config `erp-fin.bad-debt-write-off-require-approval=false` 时 `ErpFinBadDebtWriteOffProcessor`/`ErpFinBadDebtRecoverProcessor` 创建即写 APPROVED（与 Voucher 生成路径先例一致）。
+
+### 4. 过账 + config-gate 边界（§11.2 M4 治理裁定）
+
+- **approve 触发 BAD_DEBT_WRITE_OFF/RECOVERY 凭证**（`CloseVoucherWriter` 直写，借Allowance/贷AR 或反向）+ ArApItem 变异（status/openAmount）；reverseApprove 红冲凭证 + ArApItem 对称回滚（`executeReverseApprove`，`FinPostingExecutor.reverse` 失败抛 NopException 触发事务回滚——强一致）。**过账时序/编排/失败回退由 facade `ErpFinBadDebtProcessor` 管理**（§11.2 M4 (ii)/(v)），状态机 Bean 不触碰。
+- **`posted` 不入轴**（契约 §3）：本实体**无独立 `posted` boolean 字段**，以 `voucherId` 非空作为已过账标志（`ErpFinBadDebtReverseApproveProcessor:27` 判定）——属动态业务守卫，非 Bean 范畴。
+- **跨域副作用保留原路径**（§11.2 M4 (iv)）：凭证过账、ArApItem 变异、红冲闭环均在 facade/Processor 原位执行。
+- **config-gate 不变**：`erp-fin.bad-debt-write-off-require-approval` 保持（`isWriteOffApprovalRequired`），Bean 不触碰。
+- **SoD（approver-is-creator）为动态业务守卫**：保留在 facade 原位（架构契约 `entity-state-machine-bean.md:274`）。
+- **CRUD 路径排除**：通用 CRUD 写 `approvalStatus` 不在 Bean 运行时强制范围（契约 §9 声明；M0.1 successor 全局写锁）。
+- **per-mutation stubs 旁路 common 骨架（intentional legacy Pattern B）**：submit/approve/reject/reverseApprove per-mutation Processor 覆盖 main entry 委托 facade，common `AbstractApproveProcessor` 守卫路径为 dead-code stub——Bean 接入 facade 而非骨架，不改此架构（per-mutation-processor-split-plan 既有裁定）。
+
+### 5. 实现注记（plan 2026-08-14-0456-1）
+
+- **writer 盘点**（facade 5 写入点 + auto-approve 旁路 2 写入点 + CRUD 排除）：`newBadDebt:321` 写 UNSUBMITTED（**初始态生成写入**，§9.2 选项 c 不经 Bean）；`doSubmit:244` 写 SUBMITTED（Bean `submitTargetStatus()`）；`approveInternal:154` 写 APPROVED（Bean `approveTargetStatus()`）；`doReject:249` 写 REJECTED（Bean `rejectTargetStatus()`）；`executeReverseApprove:141` 写 REJECTED（Bean `reverseApproveTargetStatus()`，前置 Bean `assertCanReverseApprove` 守卫）；`ErpFinBadDebtWriteOffProcessor:25`/`ErpFinBadDebtRecoverProcessor:25` auto-approve 写 APPROVED（config-gated 生成路径，不经 Bean）；**CRUD 路径排除**。
+- **层 2 四方对照**（plan Phase 2 Proof）：dict `wf/approve-status`（4 值 UNSUBMITTED/SUBMITTED/APPROVED/REJECTED）↔ 本文迁移图（§2）↔ Bean `transitions()` 元数据（6 边：submit + approve×2 + reject×2 + reverseApprove，initial={UNSUBMITTED}/terminal={APPROVED,REJECTED}）↔ 全部 writer——**一致，无死状态，无多余边**（REJECTED 无重提边与 facade `validateTransitionForSubmit` require UNSUBMITTED only 一致）。
+- **非法边**：Bean 抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION`（携带 `action`/`currentStatus` 补充诊断），facade `validateTransitionFor*`/`assertCanReverseApprove` 映射领域码 `ERR_BAD_DEBT_ILLEGAL_APPROVAL_TRANSITION`（common 作 cause 保留，`ARG_BAD_DEBT_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` 对外不变）；`ErpFinBadDebtReverseApproveProcessor:28` `ERR_BAD_DEBT_NOT_APPROVED_OR_NOT_POSTED` 终态守卫（含 voucherId 已过账判定）保留原位。
 
 ---
 
