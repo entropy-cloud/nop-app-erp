@@ -19,8 +19,8 @@
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
-| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 229 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1392 |
+| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 230 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1393 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 34 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -320,6 +320,18 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R2c=1392≤1392，其�
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=229 / R2c=1392 / R2d=34 / R3=5 / R10=8 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R2b/R2c 基线上调注记（plan 2026-08-14-1815-3，RC-R1.24 crm UTM 归因族）
+
+`2026-08-14-1815-3`（RC-R1.24，P1-RC-037 + P1-RC-038）新增 `ErpCrmReportBizModel.resolveCampaignNames`（`module-crm/erp-crm-service/.../report/`），引入 **R2b +1 / R2c +1**，为既有文档化 pattern 类的合法同型新增（plan Phase 2 显式规定镜像 `resolveStageNames:246-255` 范式）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2b | 229 | **230** | 230 | **baseline-raise**（+1） | `ErpCrmReportBizModel.resolveCampaignNames` 1 处 `daoProvider.daoFor(ErpCrmCampaign.class)`——归因报表数据集 campaignId → campaignName 同域只读解析，镜像同文件既有 `resolveStageNames`（`daoFor(ErpCrmStage.class)`，基线已含）同型站点；报表聚合行非实体，无法经 ORM to-one 导航，合法 IDaoProvider 只读范式，无 B 类「重构为 I*Biz」候选。 |
+| R2c | 1392 | **1393** | 1393 | **baseline-raise**（+1） | 同上 per-site 证据（R2b 增量的 R2c 子集）。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=230 / R2c=1393 / R2d=34 / R3=5 / R10=8 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
+
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -330,8 +342,8 @@ R1b: 0
 R1c: 0
 R1d: 14
 R2a: 34
-R2b: 229
-R2c: 1392
+R2b: 230
+R2c: 1393
 R2d: 34
 R3: 5
 R4: 0

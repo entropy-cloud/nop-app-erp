@@ -112,6 +112,13 @@ Lead 创建时 campaignId 记录来源活动 → 转化后回写 actualRevenue
       GROUP BY campaignId
 ```
 
+### 2.4 实现注记（RC-R1.24，plan 2026-08-14-1815-3）
+
+> 本节为实施后回写的实现注记。当实现与 2.1-2.3 设计表述出现偏离时，本节为权威。
+
+- **UTM copy-on-create（P1-RC-037）**：`ErpCrmLeadBizModel.defaultPrepareSave` 新建路径（`lead.getId() == null`）且 campaignId 非空时，若 `lead.utmMedium`/`utmSource` 为 null（未显式传入）→ 经注入的 `IErpCrmCampaignBiz` 读 `ErpCrmCampaign.medium`/`source` 复制；显式传入（非 null）不覆盖。**「未显式传入」判定载体 = entityData 字段 null 判定**（GraphQL save 未传字段不 set，entity 字段保持 null）。campaign 不存在时平台 FK 校验（`nop.err.dao.unknown-entity`）在 defaultPrepareSave 之前拒绝保存；`get(ignoreUnknown=true)` 防御性跳过分支保持。仅新建路径触发（defaultPrepareUpdate 不复制）。utm_term/utm_content 不在 L1 验收标准内（watch-only，见 use-cases.md UC-CRM-07 字面三项）。
+- **归因报表（P1-RC-038）**：`ErpCrmReportBizModel.prepareDataset` 增 `campaign-attribution` case + `buildCampaignAttributionDataset()`（DB 级 GROUP BY campaignId + COUNT(lead.id) + SUM(expectedRevenue)，经 ErpCrmCampaign to-one 解析 campaignName；JOIN 语义下无 campaign 关联的 lead 不计入——null 组排除）+ `@BizQuery campaignAttributionData` 暴露原始数据；模板 `_vfs/nop/main/report/crm/campaign-attribution.xpt.xml`（campaignName/leadCount/expectedRevenue 三列 + 合计行）+ 页面 `erp/crm/pages/report/campaign-attribution.page.yaml` + action-auth crm-report 子资源（orderNo=10030，app:useCases="UC-CRM-07"）。对齐 L1 UC-CRM-07 归因报表 SQL（campaign.name / count(lead.id) / sum(lead.expectedRevenue) GROUP BY campaign.id）。
+
 ---
 
 ## 三、预算与 ROI 计算
