@@ -7,6 +7,7 @@ import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.MaintenanceCapitalizationPostingDispatcher;
 import app.erp.ast.service.posting.MaintenanceExpensePostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -33,9 +34,17 @@ public class ErpAstMaintenancePostProcessor {
     @Inject
     MaintenanceCapitalizationPostingDispatcher capitalizationDispatcher;
 
+    @Inject
+    ErpAstMaintenanceStateMachine stateMachine;
+
     public ErpAstMaintenance post(Long id, IServiceContext context) {
         ErpAstMaintenance m = facade.requireMaintenance(id, context);
-        facade.validateTransition(m, ErpAstConstants.MAINTENANCE_STATUS_COMPLETED, "post");
+        // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        try {
+            stateMachine.assertCanPost(m.getStatus());
+        } catch (NopException e) {
+            throw facade.mapIllegalTransition(e, m, ErpAstConstants.MAINTENANCE_STATUS_COMPLETED);
+        }
         if (Boolean.TRUE.equals(m.getPosted())) {
             throw new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_ALREADY_POSTED)
                     .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode());
@@ -70,7 +79,7 @@ public class ErpAstMaintenancePostProcessor {
         }
 
         m = facade.reload(id);
-        m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_POSTED);
+        m.setStatus(stateMachine.postTargetStatus());
         Timestamp now = CoreMetrics.currentTimestamp();
         if (voucherId != null) {
             m.setPosted(true);

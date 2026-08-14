@@ -2,6 +2,8 @@ package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.entity.ErpAstMaintenance;
 import app.erp.ast.service.ErpAstConstants;
+import app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -15,10 +17,18 @@ public class ErpAstMaintenanceSubmitProcessor {
     @Inject
     ErpAstMaintenanceProcessor facade;
 
+    @Inject
+    ErpAstMaintenanceStateMachine stateMachine;
+
     public ErpAstMaintenance submit(Long id, IServiceContext context) {
         ErpAstMaintenance m = facade.requireMaintenance(id, context);
-        facade.validateTransition(m, ErpAstConstants.MAINTENANCE_STATUS_DRAFT, "submit");
-        m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_SUBMITTED);
+        // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        try {
+            stateMachine.assertCanSubmit(m.getStatus());
+        } catch (NopException e) {
+            throw facade.mapIllegalTransition(e, m, ErpAstConstants.MAINTENANCE_STATUS_DRAFT);
+        }
+        m.setStatus(stateMachine.submitTargetStatus());
         facade.maintenanceDao().updateEntity(m);
         return m;
     }

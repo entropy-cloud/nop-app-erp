@@ -2,6 +2,8 @@ package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.entity.ErpAstInventory;
 import app.erp.ast.service.ErpAstConstants;
+import app.erp.ast.service.statemachine.ErpAstInventoryStateMachine;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -15,11 +17,19 @@ public class ErpAstInventoryCreateInventoryProcessor {
     @Inject
     ErpAstInventoryProcessor facade;
 
+    @Inject
+    ErpAstInventoryStateMachine stateMachine;
+
     public ErpAstInventory createInventory(Long id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
-        facade.validateTransition(inv, ErpAstConstants.INVENTORY_STATUS_DRAFT, "createInventory");
+        // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；创建种子初始态守卫）
+        try {
+            stateMachine.assertCanCreate(inv.getStatus());
+        } catch (NopException e) {
+            throw facade.mapIllegalTransition(e, inv, ErpAstConstants.INVENTORY_STATUS_DRAFT);
+        }
         facade.expandAssetsToLines(inv, context);
-        inv.setStatus(ErpAstConstants.INVENTORY_STATUS_DRAFT);
+        inv.setStatus(stateMachine.createTargetStatus());
         facade.inventoryDao().updateEntity(inv);
         return inv;
     }

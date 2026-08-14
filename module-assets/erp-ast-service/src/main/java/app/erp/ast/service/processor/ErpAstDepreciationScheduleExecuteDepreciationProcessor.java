@@ -7,6 +7,7 @@ import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.DepreciationPostingDispatcher;
 import app.erp.ast.service.service.DepreciationCalculator;
+import app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -34,6 +35,9 @@ public class ErpAstDepreciationScheduleExecuteDepreciationProcessor {
 
     @Inject
     DepreciationPostingDispatcher postingDispatcher;
+
+    @Inject
+    ErpAstDepreciationScheduleStateMachine scheduleStateMachine;
 
     public ErpAstDepreciationSchedule executeDepreciation(Long assetId, String period, IServiceContext context) {
         ErpAstAsset asset = facade.requireAsset(assetId);
@@ -88,7 +92,8 @@ public class ErpAstDepreciationScheduleExecuteDepreciationProcessor {
         schedule.setActualAmount(amount);
         schedule.setAccumulatedDepreciation(newAccum);
         schedule.setNetBookValue(newNbv);
-        schedule.setStatus(ErpAstConstants.SCHEDULE_STATUS_EXECUTED);
+        // 目标态委托 StateMachine Bean（M4.41，契约 §4；重执行/幂等路径为动态编排逻辑保留原位）
+        schedule.setStatus(scheduleStateMachine.executeTargetStatus());
         schedule.setExecutedAt(now);
         schedule.setPosted(false);
         schedule.setVoucherId(null);

@@ -98,6 +98,14 @@
           class="app.erp.ast.service.statemachine.ErpAstMovementApprovalStateMachine"/>
     <bean id="app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine"
           class="app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstAssetStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstAssetStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstInventoryStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstInventoryStateMachine"/>
+    <bean id="app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine"
+          class="app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine"/>
 
     <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
     <bean id="app.erp.ast.service.processor.ErpAstSplitSubmitForApprovalProcessor"

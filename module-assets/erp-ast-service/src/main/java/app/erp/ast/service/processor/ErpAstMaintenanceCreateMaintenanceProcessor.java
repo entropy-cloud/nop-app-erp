@@ -3,6 +3,7 @@ package app.erp.ast.service.processor;
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstMaintenance;
 import app.erp.ast.service.ErpAstConstants;
+import app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -19,6 +20,9 @@ public class ErpAstMaintenanceCreateMaintenanceProcessor {
     @Inject
     ErpAstMaintenanceProcessor facade;
 
+    @Inject
+    ErpAstMaintenanceStateMachine stateMachine;
+
     public ErpAstMaintenance createMaintenance(Long assetId, String code, String name, String businessDate,
                                                 Long maintenanceVisitId, String reason, IServiceContext context) {
         ErpAstAsset asset = facade.requireAsset(assetId);
@@ -31,7 +35,8 @@ public class ErpAstMaintenanceCreateMaintenanceProcessor {
         maintenance.setOrgId(asset.getOrgId());
         maintenance.setAssetId(assetId);
         maintenance.setMaintenanceVisitId(maintenanceVisitId);
-        maintenance.setStatus(ErpAstConstants.MAINTENANCE_STATUS_DRAFT);
+        // 创建种子初始态目标态委托 StateMachine Bean（M4.53，契约 §4）
+        maintenance.setStatus(stateMachine.createTargetStatus());
         maintenance.setBusinessDate(facade.parseDate(businessDate));
         maintenance.setCurrencyId(asset.getCurrencyId());
         maintenance.setCapitalizedAmount(BigDecimal.ZERO);

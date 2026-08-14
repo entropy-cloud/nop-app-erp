@@ -9,6 +9,8 @@ import app.erp.ast.dao.entity.ErpAstInventoryLine;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.AssetInventoryPostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstAssetStateMachine;
+import app.erp.ast.service.statemachine.ErpAstInventoryStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -64,6 +66,16 @@ public class ErpAstInventoryProcessor {
     @Inject
     ErpAstInventoryApproveProcessor approveProcessor;
 
+    @Inject
+    ErpAstInventoryStateMachine stateMachine;
+
+    /**
+     * 跨阶段 Asset Bean 接线（plan 2026-08-14-1931-1 Phase 2）：盘点盘亏触发处置守卫 Asset.status
+     * 固定来源/目标态判断委托 Phase 1 落地的 {@link ErpAstAssetStateMachine}。
+     */
+    @Inject
+    ErpAstAssetStateMachine assetStateMachine;
+
     // ---------- public actions ----------
     // D-mutation 公共入口（createInventory/submitForCount/reconcile/processVariance/post/reverse）已按 R6.3
     // 拆为独立 per-mutation Processor。本 facade 处置 = slim-to-S-delegation-facade：
@@ -76,11 +88,13 @@ public class ErpAstInventoryProcessor {
     public ErpAstInventory cancel(Long id, IServiceContext context) {
         ErpAstInventory inv = requireInventory(id, context);
         String status = inv.getStatus();
-        if (Objects.equals(status, ErpAstConstants.INVENTORY_STATUS_POSTED)
-                || Objects.equals(status, ErpAstConstants.INVENTORY_STATUS_CANCELLED)) {
-            throw illegalTransition(inv, status, "非 DRAFT/COUNTING");
+        // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        try {
+            stateMachine.assertCanCancel(status);
+        } catch (NopException e) {
+            throw mapIllegalTransition(e, inv, "DRAFT 或 COUNTING");
         }
-        inv.setStatus(ErpAstConstants.INVENTORY_STATUS_CANCELLED);
+        inv.setStatus(stateMachine.cancelTargetStatus());
         inventoryDao().updateEntity(inv);
         return inv;
     }
@@ -267,7 +281,9 @@ public class ErpAstInventoryProcessor {
                 || Objects.equals(assetStatus, ErpAstConstants.ASSET_STATUS_DISPOSED)) {
             return;
         }
-        asset.setStatus(ErpAstConstants.ASSET_STATUS_SCRAPPED);
+        // 固定来源/目标态判断委托 Phase 1 Asset StateMachine Bean（M4.40 跨阶段接线，契约 §4）
+        assetStateMachine.assertCanShortageDispose(assetStatus);
+        asset.setStatus(assetStateMachine.shortageDisposeTargetStatus());
         assetDao().saveOrUpdateEntity(asset);
     }
 
@@ -396,6 +412,17 @@ public class ErpAstInventoryProcessor {
         return new NopException(ErpAstErrors.ERR_AST_INVENTORY_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
+    }
+
+    /**
+     * Bean 非法边（common 层码）→ 领域码 cause-chain 映射（契约 §7；M4.52）。
+     * 保持错误码值/参数形状与 {@link #illegalTransition} 一致。
+     */
+    protected NopException mapIllegalTransition(NopException beanException, ErpAstInventory inv, String expected) {
+        return new NopException(ErpAstErrors.ERR_AST_INVENTORY_ILLEGAL_STATUS_TRANSITION, beanException)
+                .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode())
+                .param(ErpAstErrors.ARG_CURRENT_STATUS, inv.getStatus())
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 

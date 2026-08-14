@@ -4,6 +4,7 @@ import app.erp.ast.dao.entity.ErpAstInventory;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.AssetInventoryPostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstInventoryStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -25,9 +26,17 @@ public class ErpAstInventoryPostProcessor {
     @Inject
     AssetInventoryPostingDispatcher postingDispatcher;
 
+    @Inject
+    ErpAstInventoryStateMachine stateMachine;
+
     public ErpAstInventory post(Long id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
-        facade.validateReconciling(inv);
+        // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        try {
+            stateMachine.assertCanPost(inv.getStatus());
+        } catch (NopException e) {
+            throw facade.mapIllegalTransition(e, inv, ErpAstConstants.INVENTORY_STATUS_RECONCILING);
+        }
         if (facade.isApprovalRequired() && inv.getApprovedAt() == null) {
             throw new NopException(ErpAstErrors.ERR_AST_INVENTORY_NOT_RECONCILED)
                     .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode())
@@ -43,7 +52,7 @@ public class ErpAstInventoryPostProcessor {
             inv.setPosted(true);
             inv.setPostedAt(now);
             inv.setPostedBy(facade.currentUserId());
-            inv.setStatus(ErpAstConstants.INVENTORY_STATUS_POSTED);
+            inv.setStatus(stateMachine.postTargetStatus());
         }
         facade.inventoryDao().updateEntity(inv);
         return inv;

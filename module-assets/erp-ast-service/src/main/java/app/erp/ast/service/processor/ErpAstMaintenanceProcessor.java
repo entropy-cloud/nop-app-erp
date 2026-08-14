@@ -9,6 +9,7 @@ import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.MaintenanceCapitalizationPostingDispatcher;
 import app.erp.ast.service.posting.MaintenanceExpensePostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -57,6 +58,9 @@ public class ErpAstMaintenanceProcessor {
     @Inject
     ErpAstMaintenanceApproveProcessor approveProcessor;
 
+    @Inject
+    ErpAstMaintenanceStateMachine stateMachine;
+
     // ---------- public actions ----------
     // D-mutation 公共入口（createMaintenance/submit/startWork/completeWork/decideTreatment/post/reverse）已按 R6.3
     // 拆为独立 per-mutation Processor。本 facade 处置 = slim-to-S-delegation-facade：
@@ -69,11 +73,13 @@ public class ErpAstMaintenanceProcessor {
     public ErpAstMaintenance cancel(Long id, IServiceContext context) {
         ErpAstMaintenance m = requireMaintenance(id, context);
         String status = m.getStatus();
-        if (!Objects.equals(status, ErpAstConstants.MAINTENANCE_STATUS_DRAFT)
-                && !Objects.equals(status, ErpAstConstants.MAINTENANCE_STATUS_SUBMITTED)) {
-            throw illegalTransition(m, status, "DRAFT 或 SUBMITTED");
+        // 固定来源态守卫委托 StateMachine Bean（M4.53，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        try {
+            stateMachine.assertCanCancel(status);
+        } catch (NopException e) {
+            throw mapIllegalTransition(e, m, "DRAFT 或 SUBMITTED");
         }
-        m.setStatus(ErpAstConstants.MAINTENANCE_STATUS_CANCELLED);
+        m.setStatus(stateMachine.cancelTargetStatus());
         maintenanceDao().updateEntity(m);
         return m;
     }
@@ -217,6 +223,17 @@ public class ErpAstMaintenanceProcessor {
         return new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_ILLEGAL_STATUS_TRANSITION)
                 .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode())
                 .param(ErpAstErrors.ARG_CURRENT_STATUS, current)
+                .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
+    }
+
+    /**
+     * Bean 非法边（common 层码）→ 领域码 cause-chain 映射（契约 §7；M4.53）。
+     * 保持错误码值/参数形状与 {@link #illegalTransition} 一致。
+     */
+    protected NopException mapIllegalTransition(NopException beanException, ErpAstMaintenance m, String expected) {
+        return new NopException(ErpAstErrors.ERR_AST_MAINTENANCE_ILLEGAL_STATUS_TRANSITION, beanException)
+                .param(ErpAstErrors.ARG_MAINTENANCE_CODE, m.getCode())
+                .param(ErpAstErrors.ARG_CURRENT_STATUS, m.getStatus())
                 .param(ErpAstErrors.ARG_EXPECTED_STATUS, expected);
     }
 

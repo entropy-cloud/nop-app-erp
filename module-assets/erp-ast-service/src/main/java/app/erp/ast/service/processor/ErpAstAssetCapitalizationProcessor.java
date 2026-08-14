@@ -7,6 +7,8 @@ import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.CapitalizationPostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstAssetStateMachine;
+import app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -54,6 +56,12 @@ public class ErpAstAssetCapitalizationProcessor {
     @Inject
     ErpAstAssetCapitalizationWithdrawApprovalProcessor withdrawApprovalProcessor;
 
+    @Inject
+    ErpAstAssetStateMachine assetStateMachine;
+
+    @Inject
+    ErpAstDepreciationScheduleStateMachine scheduleStateMachine;
+
     public ErpAstAssetCapitalization submitForApproval(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(id, context);
     }
@@ -99,7 +107,9 @@ public class ErpAstAssetCapitalizationProcessor {
             postingDispatcher.reverse(cap);
             ErpAstAsset asset = findAssetByCode(resolveAssetCode(cap));
             if (asset != null) {
-                asset.setStatus(ErpAstConstants.ASSET_STATUS_DRAFT);
+                // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7）
+                assetStateMachine.assertCanReverseCapitalize(asset.getStatus());
+                asset.setStatus(assetStateMachine.reverseCapitalizeTargetStatus());
                 asset.setAccumulatedDepreciation(BigDecimal.ZERO);
                 asset.setNetBookValue(asset.getOriginalValue());
                 daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
@@ -198,7 +208,9 @@ public class ErpAstAssetCapitalizationProcessor {
         asset.setUsefulLifeMonths(category.getUsefulLifeMonths());
         asset.setAccumulatedDepreciation(BigDecimal.ZERO);
         asset.setNetBookValue(cap.getOriginalValue());
-        asset.setStatus(ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+        // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7；新建资产 status=null 归一化 DRAFT 通过守卫）
+        assetStateMachine.assertCanCapitalize(asset.getStatus());
+        asset.setStatus(assetStateMachine.capitalizeTargetStatus());
         dao.saveEntity(asset);
         return asset;
     }
@@ -283,7 +295,7 @@ public class ErpAstAssetCapitalizationProcessor {
         QueryBean q = new QueryBean();
         q.addFilter(eq("assetId", assetId));
         for (ErpAstDepreciationSchedule s : dao.findAllByQuery(q)) {
-            s.setStatus(ErpAstConstants.SCHEDULE_STATUS_CANCELLED);
+            s.setStatus(scheduleStateMachine.cancelTargetStatus());
             dao.saveOrUpdateEntity(s);
         }
     }

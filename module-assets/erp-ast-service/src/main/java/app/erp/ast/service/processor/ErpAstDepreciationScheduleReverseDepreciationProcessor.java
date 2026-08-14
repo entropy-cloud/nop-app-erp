@@ -2,16 +2,15 @@ package app.erp.ast.service.processor;
 
 import app.erp.ast.dao.entity.ErpAstAsset;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
-import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.DepreciationPostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 /**
  * ErpAstDepreciationSchedule reverseDepreciation per-mutation Processor（R6.3，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
@@ -30,12 +29,22 @@ public class ErpAstDepreciationScheduleReverseDepreciationProcessor {
     @Inject
     DepreciationPostingDispatcher postingDispatcher;
 
+    @Inject
+    ErpAstDepreciationScheduleStateMachine scheduleStateMachine;
+
     public ErpAstDepreciationSchedule reverseDepreciation(Long assetId, String period, IServiceContext context) {
         ErpAstDepreciationSchedule schedule = facade.findSchedule(assetId, period);
-        if (schedule == null || schedule.getStatus() == null
-                || !Objects.equals(schedule.getStatus(), ErpAstConstants.SCHEDULE_STATUS_EXECUTED)) {
+        if (schedule == null) {
             throw new NopException(ErpAstErrors.ERR_SCHEDULE_ILLEGAL_STATUS_TRANSITION)
-                    .param(ErpAstErrors.ARG_CURRENT_STATUS, schedule != null ? schedule.getStatus() : null)
+                    .param(ErpAstErrors.ARG_CURRENT_STATUS, null)
+                    .param(ErpAstErrors.ARG_EXPECTED_STATUS, "EXECUTED");
+        }
+        // 固定来源态守卫委托 StateMachine Bean（M4.41，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        try {
+            scheduleStateMachine.assertCanReverse(schedule.getStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpAstErrors.ERR_SCHEDULE_ILLEGAL_STATUS_TRANSITION, e)
+                    .param(ErpAstErrors.ARG_CURRENT_STATUS, schedule.getStatus())
                     .param(ErpAstErrors.ARG_EXPECTED_STATUS, "EXECUTED");
         }
         ErpAstAsset asset = facade.requireAsset(assetId);
@@ -47,7 +56,7 @@ public class ErpAstDepreciationScheduleReverseDepreciationProcessor {
         asset.setNetBookValue(ErpAstDepreciationScheduleProcessor.nz(asset.getNetBookValue()).add(oldAmount));
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
 
-        schedule.setStatus(ErpAstConstants.SCHEDULE_STATUS_REVERSED);
+        schedule.setStatus(scheduleStateMachine.reverseTargetStatus());
         schedule.setPosted(false);
         schedule.setVoucherId(null);
         daoProvider.daoFor(ErpAstDepreciationSchedule.class).saveOrUpdateEntity(schedule);

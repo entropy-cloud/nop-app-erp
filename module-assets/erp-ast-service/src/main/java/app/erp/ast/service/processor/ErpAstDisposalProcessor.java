@@ -7,6 +7,8 @@ import app.erp.ast.dao.entity.ErpAstDisposal;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
 import app.erp.ast.service.posting.DisposalPostingDispatcher;
+import app.erp.ast.service.statemachine.ErpAstAssetStateMachine;
+import app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -47,6 +49,12 @@ public class ErpAstDisposalProcessor {
     @Inject
     ErpAstDisposalWithdrawApprovalProcessor withdrawApprovalProcessor;
 
+    @Inject
+    ErpAstAssetStateMachine assetStateMachine;
+
+    @Inject
+    ErpAstDepreciationScheduleStateMachine scheduleStateMachine;
+
     public ErpAstDisposal submitForApproval(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(id, context);
     }
@@ -69,10 +77,12 @@ public class ErpAstDisposalProcessor {
         BigDecimal disposalAmount = nz(disposal.getDisposalAmount());
         BigDecimal gainLoss = disposalAmount.subtract(nbv);
 
+        // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7；按 disposalType 选 scrap/sell 目标态）
+        assetStateMachine.assertCanDispose(asset.getStatus());
         String terminalStatus = disposal.getDisposalType() != null
                 && Objects.equals(disposal.getDisposalType(), ErpAstConstants.DISPOSAL_TYPE_SOLD)
-                        ? ErpAstConstants.ASSET_STATUS_SOLD
-                        : ErpAstConstants.ASSET_STATUS_SCRAPPED;
+                        ? assetStateMachine.disposeSellTargetStatus()
+                        : assetStateMachine.disposeScrapTargetStatus();
         asset.setStatus(terminalStatus);
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
 
@@ -113,7 +123,9 @@ public class ErpAstDisposalProcessor {
             postingDispatcher.reverse(disposal);
             ErpAstAsset asset = disposal.getAsset();
             if (asset != null) {
-                asset.setStatus(ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+                // 固定来源/目标态判断委托 StateMachine Bean（M4.40，契约 §4/§7）
+                assetStateMachine.assertCanReverseDispose(asset.getStatus());
+                asset.setStatus(assetStateMachine.reverseDisposalTargetStatus());
                 daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
             }
             restoreCancelledSchedules(disposal.getAssetId());
@@ -205,7 +217,7 @@ public class ErpAstDisposalProcessor {
         q.addFilter(eq("assetId", assetId));
         q.addFilter(eq("status", ErpAstConstants.SCHEDULE_STATUS_PENDING));
         for (ErpAstDepreciationSchedule s : dao.findAllByQuery(q)) {
-            s.setStatus(ErpAstConstants.SCHEDULE_STATUS_CANCELLED);
+            s.setStatus(scheduleStateMachine.cancelTargetStatus());
             dao.saveOrUpdateEntity(s);
         }
     }
@@ -216,7 +228,7 @@ public class ErpAstDisposalProcessor {
         q.addFilter(eq("assetId", assetId));
         q.addFilter(eq("status", ErpAstConstants.SCHEDULE_STATUS_CANCELLED));
         for (ErpAstDepreciationSchedule s : dao.findAllByQuery(q)) {
-            s.setStatus(ErpAstConstants.SCHEDULE_STATUS_PENDING);
+            s.setStatus(scheduleStateMachine.restoreTargetStatus());
             dao.saveOrUpdateEntity(s);
         }
     }

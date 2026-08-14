@@ -3,6 +3,7 @@ package app.erp.ast.service.processor;
 import app.erp.ast.dao.entity.ErpAstInventory;
 import app.erp.ast.service.ErpAstConstants;
 import app.erp.ast.service.ErpAstErrors;
+import app.erp.ast.service.statemachine.ErpAstInventoryStateMachine;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
@@ -17,14 +18,22 @@ public class ErpAstInventorySubmitForCountProcessor {
     @Inject
     ErpAstInventoryProcessor facade;
 
+    @Inject
+    ErpAstInventoryStateMachine stateMachine;
+
     public ErpAstInventory submitForCount(Long id, IServiceContext context) {
         ErpAstInventory inv = facade.requireInventory(id, context);
-        facade.validateTransition(inv, ErpAstConstants.INVENTORY_STATUS_DRAFT, "submitForCount");
+        // 固定来源态守卫委托 StateMachine Bean（M4.52，契约 §4/§7；Bean 抛 common 层码 → cause-chain 领域码）
+        try {
+            stateMachine.assertCanSubmitForCount(inv.getStatus());
+        } catch (NopException e) {
+            throw facade.mapIllegalTransition(e, inv, ErpAstConstants.INVENTORY_STATUS_DRAFT);
+        }
         if (facade.findLines(inv.getId()).isEmpty()) {
             throw new NopException(ErpAstErrors.ERR_AST_INVENTORY_RANGE_EMPTY)
                     .param(ErpAstErrors.ARG_INVENTORY_CODE, inv.getCode());
         }
-        inv.setStatus(ErpAstConstants.INVENTORY_STATUS_COUNTING);
+        inv.setStatus(stateMachine.submitForCountTargetStatus());
         facade.inventoryDao().updateEntity(inv);
         return inv;
     }
