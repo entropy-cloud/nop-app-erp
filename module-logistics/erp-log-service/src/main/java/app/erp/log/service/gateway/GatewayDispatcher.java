@@ -14,6 +14,7 @@ import app.erp.log.service.spi.model.DeliveryOrderRequest;
 import app.erp.log.service.spi.model.DeliveryOrderResult;
 import app.erp.log.service.spi.model.ParcelInfo;
 import app.erp.log.service.spi.model.TrackingResult;
+import app.erp.log.service.statemachine.ErpLogShipmentStateMachine;
 import app.erp.notify.biz.IErpSysNotificationBiz;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -55,6 +56,8 @@ public class GatewayDispatcher {
     IDaoProvider daoProvider;
     @Inject
     IErpSysNotificationBiz notificationBiz;
+    @Inject
+    ErpLogShipmentStateMachine stateMachine;
 
     static final String NOTIFY_EVENT_GATEWAY_DEAD_LETTER = "log.gateway-dead-letter";
 
@@ -62,17 +65,21 @@ public class GatewayDispatcher {
     public ErpLogShipment advise(Long shipmentId) {
         ErpLogShipment shipment = loadShipment(shipmentId);
         String status = shipment.getStatus();
-        if (!ErpLogConstants.SHIPMENT_STATUS_DRAFT.equals(status)
-                && !ErpLogConstants.SHIPMENT_STATUS_ADVISED.equals(status)) {
-            throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION)
+        // 幂等短路保留 Dispatcher（Decision B）：已 ADVISED 直接返回
+        if (ErpLogConstants.SHIPMENT_STATUS_ADVISED.equals(status)) {
+            return shipment;
+        }
+        // 前向守卫委托 Bean（非法边 Bean 抛 common 码，映射为领域码 + common 作 cause）
+        try {
+            stateMachine.assertCanAdvise(status);
+        } catch (NopException e) {
+            throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION, e)
                     .param(ErpLogErrors.ARG_SHIPMENT_CODE, shipment.getCode())
                     .param(ErpLogErrors.ARG_CURRENT_STATUS, status)
                     .param(ErpLogErrors.ARG_EXPECTED_STATUS, ErpLogConstants.SHIPMENT_STATUS_DRAFT);
         }
-        if (!ErpLogConstants.SHIPMENT_STATUS_ADVISED.equals(status)) {
-            shipment.setStatus(ErpLogConstants.SHIPMENT_STATUS_ADVISED);
-            daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
-        }
+        shipment.setStatus(stateMachine.adviseTargetStatus());
+        daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
         return shipment;
     }
 
@@ -84,14 +91,18 @@ public class GatewayDispatcher {
     public ErpLogShipment completeShipment(Long shipmentId, IServiceContext context) {
         ErpLogShipment shipment = loadShipment(shipmentId);
         String status = shipment.getStatus();
+        // 幂等短路保留 Dispatcher（Decision B）：已 DISPATCHED/IN_TRANSIT/DELIVERED/CANCELLED 直接返回
         if (ErpLogConstants.SHIPMENT_STATUS_DISPATCHED.equals(status)
                 || ErpLogConstants.SHIPMENT_STATUS_DELIVERED.equals(status)
                 || ErpLogConstants.SHIPMENT_STATUS_CANCELLED.equals(status)
                 || ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT.equals(status)) {
             return shipment;
         }
-        if (!ErpLogConstants.SHIPMENT_STATUS_ADVISED.equals(status)) {
-            throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION)
+        // 前向守卫委托 Bean（非法边 Bean 抛 common 码，映射为领域码 + common 作 cause）
+        try {
+            stateMachine.assertCanCompleteShipment(status);
+        } catch (NopException e) {
+            throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION, e)
                     .param(ErpLogErrors.ARG_SHIPMENT_CODE, shipment.getCode())
                     .param(ErpLogErrors.ARG_CURRENT_STATUS, status)
                     .param(ErpLogErrors.ARG_EXPECTED_STATUS, ErpLogConstants.SHIPMENT_STATUS_ADVISED);
@@ -131,15 +142,16 @@ public class GatewayDispatcher {
     public ErpLogShipment cancelShipment(Long shipmentId, IServiceContext context) {
         ErpLogShipment shipment = loadShipment(shipmentId);
         String status = shipment.getStatus();
+        // 幂等短路保留 Dispatcher（Decision B）：已 CANCELLED/DELIVERED 直接返回
         if (ErpLogConstants.SHIPMENT_STATUS_CANCELLED.equals(status)
                 || ErpLogConstants.SHIPMENT_STATUS_DELIVERED.equals(status)) {
             return shipment;
         }
-        if (!ErpLogConstants.SHIPMENT_STATUS_ADVISED.equals(status)
-                && !ErpLogConstants.SHIPMENT_STATUS_DISPATCHED.equals(status)
-                && !ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT.equals(status)
-                && !ErpLogConstants.SHIPMENT_STATUS_DRAFT.equals(status)) {
-            throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION)
+        // 前向守卫委托 Bean（多源；非法边 Bean 抛 common 码，映射为领域码 + common 作 cause）
+        try {
+            stateMachine.assertCanCancelShipment(status);
+        } catch (NopException e) {
+            throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION, e)
                     .param(ErpLogErrors.ARG_SHIPMENT_CODE, shipment.getCode())
                     .param(ErpLogErrors.ARG_CURRENT_STATUS, status)
                     .param(ErpLogErrors.ARG_EXPECTED_STATUS, ErpLogConstants.SHIPMENT_STATUS_ADVISED);
@@ -150,7 +162,7 @@ public class GatewayDispatcher {
                     .cancelShipment(shipment.getTrackingNo() != null ? shipment.getTrackingNo() : shipment.getCode());
             writeLog(shipment, ErpLogConstants.GATEWAY_ACTION_CANCEL, shipment.getCode(), null, 200, null, null, true);
         }
-        shipment.setStatus(ErpLogConstants.SHIPMENT_STATUS_CANCELLED);
+        shipment.setStatus(stateMachine.cancelShipmentTargetStatus());
         daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
         return shipment;
     }
@@ -162,10 +174,20 @@ public class GatewayDispatcher {
     public boolean advanceTracking(ErpLogShipment shipment, String carrierStatus, String signedBy) {
         String status = shipment.getStatus();
         if (ErpLogConstants.TRACKING_EVENT_DELIVERED.equals(carrierStatus)) {
+            // 幂等短路保留 Dispatcher（Decision B）：已 DELIVERED 不重复推进
             if (ErpLogConstants.SHIPMENT_STATUS_DELIVERED.equals(status)) {
                 return false;
             }
-            shipment.setStatus(ErpLogConstants.SHIPMENT_STATUS_DELIVERED);
+            // 前向守卫委托 Bean（Decision C 刻意收紧：仅 {ADVISED,DISPATCHED,IN_TRANSIT}→DELIVERED，排除 DRAFT/CANCELLED）
+            try {
+                stateMachine.assertCanAdvanceToDelivered(status);
+            } catch (NopException e) {
+                throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION, e)
+                        .param(ErpLogErrors.ARG_SHIPMENT_CODE, shipment.getCode())
+                        .param(ErpLogErrors.ARG_CURRENT_STATUS, status)
+                        .param(ErpLogErrors.ARG_EXPECTED_STATUS, "ADVISED/DISPATCHED/IN_TRANSIT");
+            }
+            shipment.setStatus(stateMachine.advanceToDeliveredTargetStatus());
             shipment.setActualDeliveryDate(CoreMetrics.today());
             if (signedBy != null) {
                 shipment.setSignedBy(signedBy);
@@ -175,11 +197,22 @@ public class GatewayDispatcher {
         }
         if (ErpLogConstants.TRACKING_EVENT_IN_TRANSIT.equals(carrierStatus)
                 || ErpLogConstants.TRACKING_EVENT_PICKED_UP.equals(carrierStatus)) {
-            if (ErpLogConstants.SHIPMENT_STATUS_DISPATCHED.equals(status)) {
-                shipment.setStatus(ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT);
-                daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
-                return true;
+            // 幂等短路保留 Dispatcher（对齐 :165-166 模式）：已 IN_TRANSIT 重复事件不重复推进（testWebhookIdempotentDuplicate 依赖）
+            if (ErpLogConstants.SHIPMENT_STATUS_IN_TRANSIT.equals(status)) {
+                return false;
             }
+            // 前向守卫委托 Bean（仅 DISPATCHED→IN_TRANSIT；DELIVERED/CANCELLED 等非来源态抛领域码——同 Decision (C) 收紧族）
+            try {
+                stateMachine.assertCanAdvanceToInTransit(status);
+            } catch (NopException e) {
+                throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION, e)
+                        .param(ErpLogErrors.ARG_SHIPMENT_CODE, shipment.getCode())
+                        .param(ErpLogErrors.ARG_CURRENT_STATUS, status)
+                        .param(ErpLogErrors.ARG_EXPECTED_STATUS, ErpLogConstants.SHIPMENT_STATUS_DISPATCHED);
+            }
+            shipment.setStatus(stateMachine.advanceToInTransitTargetStatus());
+            daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
+            return true;
         }
         return false;
     }
@@ -316,7 +349,7 @@ public class GatewayDispatcher {
         if (result.getEstimatedDelivery() != null) {
             shipment.setEstimatedDeliveryDate(result.getEstimatedDelivery());
         }
-        shipment.setStatus(ErpLogConstants.SHIPMENT_STATUS_DISPATCHED);
+        shipment.setStatus(stateMachine.completeShipmentTargetStatus());
         IOrmEntitySet<ErpLogShipmentParcel> rel = shipment.getParcels();
         if (rel != null) {
             IEntityDao<ErpLogShipmentParcel> dao = daoProvider.daoFor(ErpLogShipmentParcel.class);

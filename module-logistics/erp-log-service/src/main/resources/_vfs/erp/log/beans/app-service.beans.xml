@@ -27,6 +27,11 @@
     <bean id="app.erp.log.service.gateway.GatewayDispatcher"
           class="app.erp.log.service.gateway.GatewayDispatcher"/>
 
+    <!-- 发运单 status 轴实体级状态机 Bean（M4.57，契约 docs/architecture/entity-state-machine-bean.md §5：
+         FQN-id 注册范式；GatewayDispatcher 按类型注入，非法边 Bean 抛 common 码，接线方映射领域码）。 -->
+    <bean id="app.erp.log.service.statemachine.ErpLogShipmentStateMachine"
+          class="app.erp.log.service.statemachine.ErpLogShipmentStateMachine"/>
+
     <!-- 物流产费过账 Provider（注册为 Bean 后由 finance ErpFinAcctDocRegistry 自动聚合，
          处理 FREIGHT 业务类型——3.18 path-1 销售运费 借销售费用-运费/贷应付或银行存款）。 -->
     <bean id="app.erp.log.service.posting.LogisticsFreightProvider"
