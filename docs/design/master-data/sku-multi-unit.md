@@ -198,6 +198,8 @@ SKU 支持四档可配置价格：
                └─ 否则拒绝或警告
 ```
 
+> **supplier 价格表层实现注记（P1-RC-063，2026-08-15）**：L1 UC-MD-03 ④「价格表（供应商专属）」层已落地生产实现——purchase 域 `ErpPurSupplierPriceResolver implements IErpMdSupplierPriceResolver`（`module-purchase/erp-pur-service/.../support/`）经 `module-purchase/.../beans/app-service.beans.xml` 注册，由 master-data `ErpMdMaterialSkuBizModel.supplierPriceResolver` `@Inject @Nullable` 类型注入（无需 `ioc:type`，镜像 `ErpSalCustomerPriceResolver` 同型先例）。查询语义：`supplierId == partnerId && materialId == sku.materialId && isActive == true` + 效期窗口（`validFrom`/`validTo` null 开放边界）+ **单位精确匹配**（U1 裁决：`uoMId == sku.uoMId`，多单位 SKU 按单位取价；`sku.uoMId` 为 null 时宽放到仅 materialId）+ **priority 数字小优先、同档 unitPrice 低者**（P1 裁决，orm.xml:399 权威声明）+ 货币维度不参与匹配（U2 边界——SPI 签名无 currencyId 参数，货币一致性由价格表维护方保证）。无命中返回 null（回退 SKU 默认档）。测试证据：`TestErpPurSupplierPriceResolver` 14 组（12 SPI 单测 + 2 集成：`ErpMdMaterialSku__resolvePrice` 经真实 beans.xml 注册返回价格表层价）。跨域消费面：purchase 侧当前不经 `resolvePrice` 取价（P2 裁决选项 B），采购单据取价接线为 successor（与 purchase A1.15-A1.17 协同行对接）。
+
 ### 折扣叠加规则
 
 - 折扣在源币种金额上扣减后再按汇率转换本位币

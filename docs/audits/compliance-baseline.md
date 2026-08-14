@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 230 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1393 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1394 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 34 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -341,6 +341,16 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=230 / R2c=1393 / R2d=34 / R3=5 / R10=8 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R2c 基线上调注记（plan 2026-08-15-0320-2，RC-R1.29 master-data supplier 价格解析 SPI 实现）
+
+`2026-08-15-0320-2`（RC-R1.29，P1-RC-063）新增 `ErpPurSupplierPriceResolver`（`module-purchase/erp-pur-service/.../support/`，实现 `IErpMdSupplierPriceResolver` SPI），引入 **R2c +1**，为既有文档化 pattern 类的合法同型新增（镜像 `ErpSalCustomerPriceResolver` 同型先例——基线已含其 daoFor）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2c | 1393 | **1394** | 1394 | **baseline-raise**（+1） | `ErpPurSupplierPriceResolver.findCandidates:75` 1 处 `daoProvider.daoFor(ErpPurSupplierPriceList.class)`——SPI 解析器非 BizModel（由 master-data `ErpMdMaterialSkuBizModel` 经 `@Inject @Nullable` 反向类型注入，无 purchase I*Biz 可注入）；supplier+material 组合条件查询非 FK 导航，ORM to-one getter 不可替代；对齐 `ErpSalCustomerPriceResolver`（sales 域 customer 价格清单解析器，R2c 基线已含其 daoFor）同型站点。无 B 类「重构为 I*Biz」候选。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=230 / R2c=1394 / R2d=34 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
+
 
 ## BASELINE (machine-readable)
 
@@ -353,7 +363,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 230
-R2c: 1393
+R2c: 1394
 R2d: 34
 R3: 5
 R4: 0

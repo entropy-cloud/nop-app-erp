@@ -64,6 +64,7 @@
 | DRP 补货计划生成采购单 | drp | DRP APPROVED 且补货类型=PURCHASE → 创建采购订单 |
 | B2B/ASN 入站通知收货 | b2b | ASN RECEIVED → 采购域基于 ASN 创建入库单（ASN 不直接写库存） |
 | 物料/供应商/仓库引用 | master-data | 单据引用主数据编码 + `IErpMd*Biz` |
+| 供应商价格表层取价 | master-data | 价格表层能力已就绪（2026-08-15，P1-RC-063）：本域 `ErpPurSupplierPriceResolver`（实现 `IErpMdSupplierPriceResolver` SPI 并经本域 beans.xml 注册）→ `ErpMdMaterialSkuBizModel.resolvePrice` 可解析供应商专属价格（supplier+material+单位+效期+priority 命中链）；**采购单据当前不经 resolvePrice 取价（P2 裁决选项 B 零消费）——采购取价接线为 successor**（触发条件 = 采购取价接线行启动时：单据行取价须调 `IErpMdMaterialSkuBiz.resolvePrice` 使价格表层对采购路径生效，与 A1.15-A1.17 协同行对接） |
 
 ## 关键业务规则
 
