@@ -119,5 +119,11 @@
           class="app.erp.hr.service.statemachine.ErpHrTimesheetStateMachine"/>
     <bean id="app.erp.hr.service.statemachine.ErpHrEmployeeStateMachine"
           class="app.erp.hr.service.statemachine.ErpHrEmployeeStateMachine"/>
+    <bean id="app.erp.hr.service.statemachine.ErpHrSalaryPaymentStateMachine"
+          class="app.erp.hr.service.statemachine.ErpHrSalaryPaymentStateMachine"/>
+    <bean id="app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine"
+          class="app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine"/>
+    <bean id="app.erp.hr.service.processor.ErpHrSalaryApprovalGuard"
+          class="app.erp.hr.service.processor.ErpHrSalaryApprovalGuard"/>
 
 </beans>

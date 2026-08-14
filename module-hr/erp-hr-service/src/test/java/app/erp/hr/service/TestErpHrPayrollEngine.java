@@ -220,10 +220,12 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 10, CTX));
         Long salaryId = salary.getId();
-        // UNSUBMITTED 直接 approve（跳过 submit）→ 平台守卫拒绝
+        // UNSUBMITTED 直接 approve（跳过 submit）→ Bean 矩阵守卫拒绝（xbiz assertCanApprove 仅 SUBMITTED 源态）
         ApiResponse<?> bad = approveSalary(salaryId);
         assertEquals(-1, bad.getStatus(),
-                "UNSUBMITTED 不可直接审核：平台守卫仅接受 SUBMITTED 源态");
+                "UNSUBMITTED 不可直接审核：Bean 矩阵守卫仅接受 SUBMITTED 源态");
+        assertEquals(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION.getErrorCode(), bad.getCode(),
+                "非法审批迁移映射为领域码 ERR_SALARY_ILLEGAL_STATUS_TRANSITION（xbiz try/catch Bean common 码 → cause-chain）");
     }
 
     @Test

@@ -15,6 +15,8 @@ import java.util.List;
 /**
  * ErpHrSalary generateBankFile per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
  * 自包含银行代发文件生成（可发放薪酬查询 + CSV 内容拼装 + 逐条 PAID 标记 + BankFile 落库 + 回填 bankFileId），薪酬语义不变（payroll.md §七）。
+ * 固定状态判断委托实体级 StateMachine Bean（契约 §4/§7）：可发放守卫经 {@link AbstractErpHrSalaryProcessor#findPayableSalaries}
+ * 查询级实现（APPROVED+PENDING），PAID 目标态改调 {@code ErpHrSalaryPaymentStateMachine.markPaidTargetStatus()}。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。共享 helper 单一真相源在 {@link AbstractErpHrSalaryProcessor}。
  */
 public class ErpHrSalaryGenerateBankFileProcessor extends AbstractErpHrSalaryProcessor {
@@ -37,7 +39,7 @@ public class ErpHrSalaryGenerateBankFileProcessor extends AbstractErpHrSalaryPro
                     .append(s.getEmployeeId()).append(",")
                     .append(net.toPlainString()).append(",工资\n");
             s.setPaymentBatchNo(batchNo);
-            s.setPaymentStatus(ErpHrConstants.PAYMENT_PAID);
+            s.setPaymentStatus(paymentStateMachine.markPaidTargetStatus());
             s.setPaymentDate(CoreMetrics.today());
             salaryDao().updateEntity(s);
         }

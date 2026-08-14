@@ -7,8 +7,14 @@
         WorkflowEngineImpl.removeStdStartParam 强制 (String) 转换会 ClassCastException，
         故在此显式 String(entity.id) 转换（平台对 Long 主键实体的已知限制，本计划 Non-Goal
         不改平台源码，由应用层 xbiz 适配）。其余逻辑与标准 source 对齐（状态守卫 + wf 启动）。
-        approve/reject/reverseApprove 由 approval-support.xbiz 标准 source 提供，wf 结束经
-        .xwf listener 回调。
+
+        审批轴固定状态判断委托实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md
+        §4/§7，plan 2026-08-14-0456-2 M4.64）：XScript inject ErpHrSalaryApprovalStateMachine
+        （*TargetStatus() 写回目标态）+ ErpHrSalaryApprovalGuard（守卫经 Bean assertCanXxx，非法边由 Bean 抛
+        common 码、Guard Java 侧映射为领域码 ERR_SALARY_ILLEGAL_STATUS_TRANSITION + salaryId/currentStatus/
+        expectedStatus，common 码作 cause 保留）。机制替代注记：计划原案「XScript try/catch」在 XLang 引擎
+        不可行（TryStatement 语法节点不被编译支持），映射下沉 Java Guard Bean，行为契约不变（见 Guard javadoc）。
+        approve/reject/reverseApprove 由 approval-support.xbiz 标准 source 提供，wf 结束经 .xwf listener 回调。
     -->
     <actions>
         <mutation name="submitForApproval">
@@ -20,19 +26,13 @@
             <source><c:script><![CDATA[
                 import io.nop.wf.core.support.ApprovalFlowHelper;
 
+                const approvalSM = inject('app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine');
+                const guard = inject('app.erp.hr.service.processor.ErpHrSalaryApprovalGuard');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                const status = entity.approveStatus;
 
-                if (status !== 'UNSUBMITTED' && status !== null && status !== 'REJECTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "submitForApproval")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "UNSUBMITTED or REJECTED");
-                }
+                guard.assertCanSubmit(entity);
 
-                entity.approveStatus = 'SUBMITTED';
+                entity.approveStatus = approvalSM.submitTargetStatus();
 
                 const wfName = thisObj.objMeta['wf:wfName'];
                 if (wfName) {
@@ -48,52 +48,42 @@
                 return entity;
             ]]></c:script></source>
         </mutation>
-            <mutation name="approve">
+                    <mutation name="approve">
             <auth permissions="ErpHrSalary:approve"/>
+
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><![CDATA[
+                const approvalSM = inject('app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine');
+                const guard = inject('app.erp.hr.service.processor.ErpHrSalaryApprovalGuard');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                const status = entity.approveStatus;
 
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "approve")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
+                guard.assertCanApprove(entity);
 
-                entity.approveStatus = 'APPROVED';
+                entity.approveStatus = approvalSM.approveTargetStatus();
                 entity.approvedBy = svcCtx.getUserId();
                 entity.approvedAt = now();
                 return entity;
             ]]></source>
         </mutation>
         <mutation name="reject">
+
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><![CDATA[
+                const approvalSM = inject('app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine');
+                const guard = inject('app.erp.hr.service.processor.ErpHrSalaryApprovalGuard');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                const status = entity.approveStatus;
 
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reject")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
+                guard.assertCanReject(entity);
 
-                entity.approveStatus = 'REJECTED';
+                entity.approveStatus = approvalSM.rejectTargetStatus();
                 entity.approvedBy = svcCtx.getUserId();
                 entity.approvedAt = now();
                 return entity;
@@ -101,50 +91,40 @@
         </mutation>
         <mutation name="reverseApprove">
             <auth permissions="ErpHrSalary:reverseApprove"/>
+
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><![CDATA[
+                const approvalSM = inject('app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine');
+                const guard = inject('app.erp.hr.service.processor.ErpHrSalaryApprovalGuard');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                const status = entity.approveStatus;
 
-                if (status !== 'APPROVED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "reverseApprove")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "APPROVED");
-                }
+                guard.assertCanReverseApprove(entity);
 
-                entity.approveStatus = 'SUBMITTED';
+                entity.approveStatus = approvalSM.reverseApproveTargetStatus();
                 entity.approvedBy = null;
                 entity.approvedAt = null;
                 return entity;
             ]]></source>
         </mutation>
         <mutation name="withdrawApproval">
+
             <arg name="id" type="String" mandatory="true"/>
             <arg name="svcCtx" kind="ServiceContext"/>
             <return>
                 <schema bizObjName="THIS_OBJ"/>
             </return>
             <source><![CDATA[
+                const approvalSM = inject('app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine');
+                const guard = inject('app.erp.hr.service.processor.ErpHrSalaryApprovalGuard');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
-                const status = entity.approveStatus;
 
-                if (status !== 'SUBMITTED') {
-                    throw new NopScriptError("nop.err.wf.approve.invalid-status")
-                        .param("bizObjName", thisObj.bizObjName)
-                        .param("bizObjId", entity.id)
-                        .param("action", "withdrawApproval")
-                        .param("currentStatus", status)
-                        .param("expectedStatus", "SUBMITTED");
-                }
+                guard.assertCanWithdrawApproval(entity);
 
-                entity.approveStatus = 'UNSUBMITTED';
+                entity.approveStatus = approvalSM.withdrawApprovalTargetStatus();
                 return entity;
             ]]></source>
         </mutation>

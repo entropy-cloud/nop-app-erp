@@ -2,6 +2,7 @@ package app.erp.hr.service.entity;
 
 import app.erp.common.service.MaskHelper;
 import app.erp.common.service.StringMaskFormat;
+import app.erp.common.service.ErpCommonErrors;
 import app.erp.hr.biz.IErpHrSalaryBiz;
 import app.erp.hr.dao.entity.ErpHrEmployee;
 import app.erp.hr.dao.entity.ErpHrPayrollBankFile;
@@ -14,6 +15,7 @@ import app.erp.hr.service.processor.ErpHrSalaryCalculateSalaryProcessor;
 import app.erp.hr.service.processor.ErpHrSalaryGenerateBankFileProcessor;
 import app.erp.hr.service.processor.ErpHrSalaryMarkPaidProcessor;
 import app.erp.hr.service.processor.ErpHrSalaryRunPayrollProcessor;
+import app.erp.hr.service.statemachine.ErpHrSalaryPaymentStateMachine;
 import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -47,7 +49,9 @@ import io.nop.biz.crud.EntityData;
  * <p>审批轴（approveStatus UNSUBMITTED/SUBMITTED/APPROVED/REJECTED）由平台
  * {@code approval-support.xbiz} 标准动作提供（DIRECT 模式，多级 WORKFLOW 归 .xwf 后续计划）。
  * 支付轴（paymentStatus PENDING/PAID/VOID）由本类 {@code markPaid}/{@code voidSalary} 管理，
- * 前提条件 {@code approveStatus=APPROVED}。
+ * 前提条件 {@code approveStatus=APPROVED}。固定状态判断委托实体级 StateMachine Bean（契约 §4/§7）：
+ * {@code ErpHrSalaryPaymentStateMachine}（markPaid/voidSalary 支付轴矩阵），审批轴守卫归
+ * {@code ErpHrSalary.xbiz}（XScript inject {@code ErpHrSalaryApprovalStateMachine}）。
  *
  * <p>核算委托 {@link PayrollCalculator}（编排），PAID 发放凭证委托
  * {@link SalaryPostingDispatcher}（跨域经 finance {@code IErpFinVoucherBiz}）。
@@ -67,6 +71,8 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
     ErpHrSalaryMarkPaidProcessor markPaidProcessor;
     @Inject
     ErpHrSalaryGenerateBankFileProcessor generateBankFileProcessor;
+    @Inject
+    ErpHrSalaryPaymentStateMachine paymentStateMachine;
 
     public ErpHrSalaryBizModel() {
         setEntityName(ErpHrSalary.class.getName());
@@ -112,7 +118,15 @@ public class ErpHrSalaryBizModel extends CrudBizModel<ErpHrSalary> implements IE
             throw new NopException(ErpHrErrors.ERR_SALARY_LOCKED_AFTER_PAID)
                     .param(ErpHrErrors.ARG_SALARY_ID, salaryId);
         }
-        salary.setPaymentStatus(ErpHrConstants.PAYMENT_VOID);
+        try {
+            paymentStateMachine.assertCanVoid(salary.getPaymentStatus());
+        } catch (NopException e) {
+            throw new NopException(ErpHrErrors.ERR_SALARY_ILLEGAL_STATUS_TRANSITION, e)
+                    .param(ErpHrErrors.ARG_SALARY_ID, salaryId)
+                    .param(ErpHrErrors.ARG_CURRENT_STATUS, salary.getPaymentStatus())
+                    .param(ErpHrErrors.ARG_EXPECTED_STATUS, e.getParam(ErpCommonErrors.ARG_EXPECTED_STATUS));
+        }
+        salary.setPaymentStatus(paymentStateMachine.voidTargetStatus());
         updateEntity(salary, null, context);
         return salary;
     }
