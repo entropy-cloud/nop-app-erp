@@ -18,10 +18,12 @@
 
     <processor name="process">
         <source><![CDATA[
-            const samplingService = inject('spcSamplingService');
-            const controlLimitCalculator = inject('spcControlLimitCalculator');
+            const samplingService = inject('app.erp.qa.service.spc.SpcSamplingService');
+            const controlLimitCalculator = inject('app.erp.qa.service.spc.SpcControlLimitCalculator');
+            const ruleEngine = inject('app.erp.qa.service.spc.SpcRuleEngine');
             samplingService.collectSamples(item.id, batchChunkCtx.serviceContext);
             controlLimitCalculator.recalculate(item.id);
+            ruleEngine.evaluate(item.id, batchChunkCtx.serviceContext);
         ]]></source>
     </processor>
 </batch>

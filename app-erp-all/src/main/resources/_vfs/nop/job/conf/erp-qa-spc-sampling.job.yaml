@@ -1,7 +1,7 @@
 jobName: erp-qa-spc-sampling
 enabled: "@cfg:nop.job.erp-qa-spc-sampling.enabled|false"
 displayName: Quality SPC Sampling
-description: 每小时扫描 active 控制图批量采集子组样本并重算控制限；nop-batch chunk 按 ErpQaSpcChart(isActive=true) 逐图 collectSamples + recalculate
+description: 每小时扫描 active 控制图批量采集子组样本、重算控制限并评估判异规则；nop-batch chunk 按 ErpQaSpcChart(isActive=true) 逐图 collectSamples + recalculate + evaluate（失控样本自动 isOutOfControl=true + post-commit 建 NCR(sourceType=SPC)/CAPA，config-gated erp-qa.spc-auto-ncr-enabled 默认 true）
 jobGroup: erp-qa
 trigger:
   cronExpr: "@cfg:nop.job.erp-qa-spc-sampling.cron-expr|0 0 * * * ?"
