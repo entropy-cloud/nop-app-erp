@@ -318,3 +318,15 @@ v2（草稿/待审批） → 审批通过后替换 v1
 ### 9.3 门户自助 / isPublic 鉴权范围收窄
 
 `isPublic=false` 时本期不引入角色鉴权（归前端 successor），默认允许提交；门户自助前端建立后再加 isPublic + 客户角色校验。
+
+### 9.4 服务端必填校验（RC-R1.28 / P1-RC-060 实现注记）
+
+`createFromCatalog` 按 §1.4 `requestFormConfig.fields[].required==true` 做服务端必填校验（L1 UC-CS-10 异常①「表单必填项缺失 → 禁止提交」）：
+
+- **校验时机**：`ErpCsServiceCatalogItemCreateFromCatalogProcessor.validateRequiredFormFields`（protected step）在 `requireCatalogItem`/`validateCatalogItemUsable` 之后、`buildTicketData` 之前接线——校验失败时工单不落库、权益不扣减（副作用之前拒绝）。
+- **校验基准**：formData **原始键值（fallback 前）**——schema 标必填而客户未提交 → 拒绝，即使服务端有 subject/priority 缺省回退（fallback 是服务端兜底非客户提供）；`urgency→priority` 映射按 formData 原始键 `urgency` 校验。
+- **错误码**：`ERR_CATALOG_FORM_REQUIRED_MISSING`（`erp.err.cs.catalog-item.form-required-missing`），参数含 catalogItemId + fieldKey（label 若可得）。
+- **容错语义**：`requestFormConfig` 为 null/空白/非法 JSON/fields 非数组 → 跳过校验（LOG.warn，配置数据质量问题不阻断建单）；单个字段 `required` 非布尔 true → 该字段不视为必填；空串/空白值视为缺失。
+- **数据治理声明**：校验仅在 requestFormConfig 声明 required 时生效——生产/种子 catalogItem 须维护含 `required` 的 schema 才能实际拦截（当前种子数据未维护，见 A4.2.142 §(f) 条件；随门户自助前端上线/目录数据治理批次执行）。
+- **schema key 覆盖约束**：校验的 schema keys 须落在 §9.2 映射集（subject/description/customerId/contactId/productId/orderNumber/urgency/source）内——映射集之外的 key 即使 formData 有值也会在落库时被静默丢弃，数据治理责任在 schema 维护方。
+- **测试证据**：`TestErpCsServiceCatalog` 必填校验组 6 用例全绿（缺失拒绝+工单零落库+权益零扣减 / 必填满足放行含 urgency→priority / null 配置跳过 / 非法 JSON 跳过 / 空白视为缺失 / 非必填缺失放行）。
