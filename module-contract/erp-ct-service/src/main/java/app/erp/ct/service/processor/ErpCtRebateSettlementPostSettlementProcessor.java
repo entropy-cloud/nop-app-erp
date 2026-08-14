@@ -7,6 +7,7 @@ import app.erp.contract.dao.entity.ErpCtRebateAgreement;
 import app.erp.contract.dao.entity.ErpCtRebateSettlement;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.statemachine.ErpCtRebateSettlementStateMachine;
 import app.erp.pur.dao.entity.ErpPurInvoice;
 import app.erp.pur.dao.entity.ErpPurInvoiceLine;
 import app.erp.sal.dao.entity.ErpSalInvoice;
@@ -40,12 +41,15 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
     @Inject
     IDaoProvider daoProvider;
 
+    @Inject
+    ErpCtRebateSettlementStateMachine stateMachine;
+
     public ErpCtRebateSettlement postSettlement(Long settlementId, IServiceContext context) {
         ErpCtRebateSettlement settlement = requireSettlement(settlementId);
-        if (!Objects.equals(settlement.getStatus(), ErpCtConstants.SETTLEMENT_STATUS_DRAFT)) {
-            throw new NopException(ErpCtErrors.ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION)
-                    .param(ErpCtErrors.ARG_SETTLEMENT_ID, settlementId)
-                    .param(ErpCtErrors.ARG_CURRENT_STATUS, settlement.getStatus());
+        try {
+            stateMachine.assertCanPostSettlement(settlement.getStatus());
+        } catch (NopException e) {
+            throw illegalTransition(settlementId, settlement, e);
         }
 
         // 汇总关联未结算计提
@@ -87,7 +91,7 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
 
         // 结算单过账
         settlement.setTotalRebateAmount(total);
-        settlement.setStatus(ErpCtConstants.SETTLEMENT_STATUS_POSTED);
+        settlement.setStatus(stateMachine.postSettlementTargetStatus());
         settlement.setPostedAt(CoreMetrics.currentTimestamp());
         settlement.setPostedBy(currentUserId());
         dao().updateEntity(settlement);
@@ -165,6 +169,18 @@ public class ErpCtRebateSettlementPostSettlementProcessor {
     }
 
     // ---------- helpers ----------
+
+    /**
+     * 领域非法迁移异常构造。{@code cause} 保留 Bean 抛出的 common 层非法边报告（契约 §7：
+     * Bean 报 common 码 + action/currentStatus/expectedStatus 元数据，Processor 映射领域码 +
+     * 实体编号/上下文，common 码作 cause 保留）。领域 re-throw 仅传 {@code settlementId} + {@code currentStatus}
+     * （action/expectedStatus 仅存于 common 码 cause，不向领域码传播）。
+     */
+    protected NopException illegalTransition(Long settlementId, ErpCtRebateSettlement settlement, Throwable cause) {
+        return new NopException(ErpCtErrors.ERR_CT_SETTLEMENT_ILLEGAL_TRANSITION, cause)
+                .param(ErpCtErrors.ARG_SETTLEMENT_ID, settlementId)
+                .param(ErpCtErrors.ARG_CURRENT_STATUS, settlement.getStatus());
+    }
 
     protected ErpCtRebateSettlement requireSettlement(Long settlementId) {
         ErpCtRebateSettlement settlement = dao().getEntityById(settlementId);

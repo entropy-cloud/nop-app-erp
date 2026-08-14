@@ -42,6 +42,11 @@
          + 集中化 ACTIVE accrual 只读守卫委托。下游可经 Delta beans.xml 同名 bean id 覆盖（契约 §6）。 -->
     <bean id="app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine"
           class="app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine"/>
+    <!-- 返利结算单 settlement-status 轴 Bean（M4.65，plan 2026-08-14-2000-1）：1 实现边 postSettlement(DRAFT→POSTED)
+         + CANCELLED intentional reserved 死状态裁定 + posted 不对称 watch-only residual 登记（不入轴）。
+         下游可经 Delta beans.xml 同名 bean id 覆盖（契约 §6）。 -->
+    <bean id="app.erp.ct.service.statemachine.ErpCtRebateSettlementStateMachine"
+          class="app.erp.ct.service.statemachine.ErpCtRebateSettlementStateMachine"/>
 
     <!-- per-mutation Cat-B D-mutation Processor beans (R6.7)：类别 B 内联 mutation 每 mutation 独立 Processor。
          自包含 body（VERBATIM 迁移 + CrudBizModel 管道方法替换为 raw dao 等价）；下游可经 Delta beans.xml 同名 bean id 覆盖。 -->
