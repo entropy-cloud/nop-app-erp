@@ -1,6 +1,6 @@
 # 2026-08-13-1146-2-erpfin-expense-claim-state-machine-beans 费用报销 ErpFinExpenseClaim.docStatus + approveStatus 实体级状态机 Bean（M4.4 + M4.5）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) 人工/owner-doc 门控**已于 2026-08-14 经人工确认解除**（见 Draft Review Record 门控确认记录）——本计划触及受保护报销过账行为（approve 触发 `ExpenseClaimPostingDispatcher.tryPost`→`FinPostingExecutor` 生成 EXPENSE_CLAIM 凭证 + `ErpFinArApItem`（PAYABLE）+ `AdvanceOffsetOrchestrator` 员工借款冲抵，已由起草者经 live code 实证：`ErpFinExpenseClaimProcessor:253` tryPost + `:262` offset + `ExpenseClaimAcctDocProvider` implements `IErpFinAcctDocProvider`）。M4 plan-first 门控成立且经人工确认；已转 `active` 进入实施。
 > Last Reviewed: 2026-08-13
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.4（ErpFinExpenseClaim.docStatus）+ M4.5（ErpFinExpenseClaim.approveStatus），plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md §3.5 finance M4.4/5`（FIN-10/11 纳入，报销凭证+SoD）
@@ -79,70 +79,70 @@
 
 ### Phase 1 - 双轴 Bean + 注册 + layer-1 矩阵测试
 
-Status: planned
+Status: completed
 Targets: `module-finance/erp-fin-service/src/main/java/app/erp/fin/service/statemachine/ErpFinExpenseClaimApprovalStateMachine.java`、`.../ErpFinExpenseClaimDocumentStateMachine.java`（新建）、`app-service.beans.xml`（注册）、`module-finance/erp-fin-service/src/test/java/app/erp/fin/service/statemachine/TestErpFinExpenseClaimApprovalStateMachineMatrix.java`、`.../TestErpFinExpenseClaimDocumentStateMachineMatrix.java`（新建）
 Skill: `nop-backend-dev`（Bean 形状/注册）+ `nop-testing`（layer-1 表驱动测试）
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done
 
-- [ ] 新建无状态 `ErpFinExpenseClaimApprovalStateMachine`：矩阵 `assertCanSubmit({UNSUBMITTED,REJECTED})`→`submitTargetStatus()=SUBMITTED`；`assertCanWithdraw(SUBMITTED)`→UNSUBMITTED；`assertCanApprove(SUBMITTED)`→APPROVED；`assertCanReject(SUBMITTED)`→REJECTED；`assertCanReverseApprove(APPROVED)`→REJECTED。`initialStatuses()={UNSUBMITTED}`、`terminalStatuses()={APPROVED,REJECTED}`、`isTerminal`。`transitions()` 编码 5 命名边。`normalize(null)`→UNSUBMITTED。非法来源态抛 common 码携带 `action`/`fromStatus`。grep 证实无 DAO/IBiz/事务 import。
+- [x] 新建无状态 `ErpFinExpenseClaimApprovalStateMachine`：矩阵 `assertCanSubmit({UNSUBMITTED,REJECTED})`→`submitTargetStatus()=SUBMITTED`；`assertCanWithdraw(SUBMITTED)`→UNSUBMITTED；`assertCanApprove(SUBMITTED)`→APPROVED；`assertCanReject(SUBMITTED)`→REJECTED；`assertCanReverseApprove(APPROVED)`→REJECTED。`initialStatuses()={UNSUBMITTED}`、`terminalStatuses()={APPROVED,REJECTED}`、`isTerminal`。`transitions()` 编码 5 命名边。`normalize(null)`→UNSUBMITTED。非法来源态抛 common 码携带 `action`/`fromStatus`。grep 证实无 DAO/IBiz/事务 import。
   - Skill: `nop-backend-dev`
-- [ ] 新建无状态 `ErpFinExpenseClaimDocumentStateMachine`：矩阵 `assertCanCancel({非 CANCELLED})`→CANCELLED（校验 `!isCancelled(from)`）。`initialStatuses()={DRAFT}`、`terminalStatuses()={CANCELLED}`。**docStatus dict 残余值 SUBMITTED/APPROVED/REJECTED 不纳入任一集合**（javadoc 标注 intentional reserved——生命周期推进由 approveStatus 承载，docStatus 仅 DRAFT→CANCELLED）。`transitions()` 编码 1 命名边（cancel）。非法来源态（CANCELLED）抛 common 码。
+- [x] 新建无状态 `ErpFinExpenseClaimDocumentStateMachine`：矩阵 `assertCanCancel({非 CANCELLED})`→CANCELLED（校验 `!isCancelled(from)`）。`initialStatuses()={DRAFT}`、`terminalStatuses()={CANCELLED}`。**docStatus dict 残余值 SUBMITTED/APPROVED/REJECTED 不纳入任一集合**（javadoc 标注 intentional reserved——生命周期推进由 approveStatus 承载，docStatus 仅 DRAFT→CANCELLED）。`transitions()` 编码 1 命名边（cancel）。非法来源态（CANCELLED）抛 common 码。
   - Skill: `nop-backend-dev`
-- [ ] Decision（前置）：记录 docStatus 残余值分类——dict 5 值但代码仅写 DRAFT/CANCELLED，SUBMITTED/APPROVED/REJECTED 为残余（intentional，workflow 轴 = approveStatus）；Bean DocumentStateMachine 仅建模 DRAFT→CANCELLED，残余值不纳入任一集合，dict 项保留不删。供 Phase 4 owner-doc/Decision 引用。
+- [x] Decision（前置）：记录 docStatus 残余值分类——dict 5 值但代码仅写 DRAFT/CANCELLED，SUBMITTED/APPROVED/REJECTED 为残余（intentional，workflow 轴 = approveStatus）；Bean DocumentStateMachine 仅建模 DRAFT→CANCELLED，残余值不纳入任一集合，dict 项保留不删。供 Phase 4 owner-doc/Decision 引用。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] 在 `app-service.beans.xml` 以 FQN id 注册两 Bean。
+- [x] 在 `app-service.beans.xml` 以 FQN id 注册两 Bean。
   - Skill: `nop-backend-dev`
-- [ ] Proof（layer-1 矩阵，表驱动，两 Bean 各一份）：Approval 覆盖 submit（UNSUBMITTED & REJECTED 合法、SUBMITTED/APPROVED 非法）/withdraw（SUBMITTED 合法）/approve（SUBMITTED 合法、其余非法）/reject（SUBMITTED 合法）/reverseApprove（APPROVED 合法、其余非法）+ 终态无出边 + transitions(5) + initial/terminal。Document 覆盖 cancel（DRAFT 合法、CANCELLED 非法）+ **断言 SUBMITTED/APPROVED/REJECTED 不在 initial/terminal/transitions 任一集合**（残余值排除）+ transitions(1)。不经 Processor 入口。
+- [x] Proof（layer-1 矩阵，表驱动，两 Bean 各一份）：Approval 覆盖 submit（UNSUBMITTED & REJECTED 合法、SUBMITTED/APPROVED 非法）/withdraw（SUBMITTED 合法）/approve（SUBMITTED 合法、其余非法）/reject（SUBMITTED 合法）/reverseApprove（APPROVED 合法、其余非法）+ 终态无出边 + transitions(5) + initial/terminal。Document 覆盖 cancel（DRAFT 合法、CANCELLED 非法）+ **断言 SUBMITTED/APPROVED/REJECTED 不在 initial/terminal/transitions 任一集合**（残余值排除）+ transitions(1)。不经 Processor 入口。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 两 Bean 无状态、矩阵完整；docStatus 残余值排除；残余值 Decision 记录在案
-- [ ] 两 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）
-- [ ] layer-1 矩阵测试通过；本地化编译 `mvn compile -pl module-finance/erp-fin-service -am` 通过（解除 Phase 2 接线依赖）
+- [x] 两 Bean 无状态、矩阵完整；docStatus 残余值排除；残余值 Decision 记录在案
+- [x] 两 Bean 已在 `app-service.beans.xml` 注册（FQN id）；`@Inject` 字段非 private（合规 R5）
+- [x] layer-1 矩阵测试通过；本地化编译 `mvn compile -pl module-finance/erp-fin-service -am` 通过（解除 Phase 2 接线依赖）
 
 ### Phase 2 - Processor 接线（行为保持，SoD/过账/冲抵副作用保留）+ layer-3 回归
 
-Status: planned
+Status: completed
 Targets: `ErpFinExpenseClaimProcessor`（6 个 do* 守卫委托）
 Skill: `nop-backend-dev`（接线 + 错误码映射）+ `nop-testing`（回归断言）
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 1 Bean 落地
 
-- [ ] `ErpFinExpenseClaimProcessor` 注入两 Bean（`@Inject` 非 private），将 6 个 `validateTransitionFor*` 内联固定 `Objects.equals` 判断替换为对应 Bean `assertCan<Action>(from)` + 目标态写回。5 approve 守卫（`validateTransitionForSubmit:94`/`Withdraw:103`/`Approve:110`/`Reject:117`/`ReverseApprove:124`）委托 ApprovalStateMachine；1 doc 守卫（`validateTransitionForCancel:131`）委托 DocumentStateMachine。common→领域码映射（Approval→`ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION`，Document→`ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION`，common 作 cause）+ 参数对外不变。**完整保留**：SoD（`:252` `SoDGuard`）、tryPost（`:253`）/reverse、offset（`:262`）/reverseOffset（`:276`）、posted/approvedBy/approvedAt 写入、业务规则校验、reverseApprove→REJECTED、cancel 红冲 if posted、乐观锁。
+- [x] `ErpFinExpenseClaimProcessor` 注入两 Bean（`@Inject` 非 private），将 6 个 `validateTransitionFor*` 内联固定 `Objects.equals` 判断替换为对应 Bean `assertCan<Action>(from)` + 目标态写回。5 approve 守卫（`validateTransitionForSubmit:94`/`Withdraw:103`/`Approve:110`/`Reject:117`/`ReverseApprove:124`）委托 ApprovalStateMachine；1 doc 守卫（`validateTransitionForCancel:131`）委托 DocumentStateMachine。common→领域码映射（Approval→`ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION`，Document→`ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION`，common 作 cause）+ 参数对外不变。**完整保留**：SoD（`:252` `SoDGuard`）、tryPost（`:253`）/reverse、offset（`:262`）/reverseOffset（`:276`）、posted/approvedBy/approvedAt 写入、业务规则校验、reverseApprove→REJECTED、cancel 红冲 if posted、乐观锁。
   - Skill: `nop-backend-dev`
-- [ ] Proof（layer-3 回归）：`mvn test -pl module-finance/erp-fin-service -am` 全绿——重点 `TestErpFinExpenseClaimApproval`（9 @Test：submit/approve/reject/reverseApprove/withdraw/resubmit/cancel + SoD 自审拒绝 `:140-144` + 非法 approve-from-unsubmitted + claimant/partner/lines/amount 守卫）、`TestErpFinExpenseClaimPosting`（approve→EXPENSE_CLAIM 凭证 + reverseApprove→红冲不变）、`TestErpFinExpenseOffsetAdvance`（冲抵 + reverse 不变）。证明 5 approve 边 + 1 doc 边 + 过账/冲抵/SoD 行为不变。
+- [x] Proof（layer-3 回归）：`mvn test -pl module-finance/erp-fin-service -am` 全绿——重点 `TestErpFinExpenseClaimApproval`（9 @Test：submit/approve/reject/reverseApprove/withdraw/resubmit/cancel + SoD 自审拒绝 `:140-144` + 非法 approve-from-unsubmitted + claimant/partner/lines/amount 守卫）、`TestErpFinExpenseClaimPosting`（approve→EXPENSE_CLAIM 凭证 + reverseApprove→红冲不变）、`TestErpFinExpenseOffsetAdvance`（冲抵 + reverse 不变）。证明 5 approve 边 + 1 doc 边 + 过账/冲抵/SoD 行为不变。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 6 守卫改调 Bean 委托，grep 证实相关方法体内不再有内联固定状态矩阵判断（动态副作用 SoD/tryPost/offset/posted 写入/业务规则除外）
-- [ ] 领域错误码 + 参数对外不变（layer-3 断言证实）；5 approve 边 + 1 doc 边 + reverseApprove→REJECTED + 过账/冲抵/SoD 行为不变
-- [ ] layer-3 `mvn test -pl module-finance/erp-fin-service -am` 全绿
+- [x] 6 守卫改调 Bean 委托，grep 证实相关方法体内不再有内联固定状态矩阵判断（动态副作用 SoD/tryPost/offset/posted 写入/业务规则除外）
+- [x] 领域错误码 + 参数对外不变（layer-3 断言证实）；5 approve 边 + 1 doc 边 + reverseApprove→REJECTED + 过账/冲抵/SoD 行为不变
+- [x] layer-3 `mvn test -pl module-finance/erp-fin-service -am` 全绿（435 测试：Approval 9 + Posting 3 + OffsetAdvance 2 + PartnerIdResolution 3 + AcctDocProviderAccountKey 9 + 其余回归）
 
 ### Phase 3 - layer-2 四方对照 + owner doc 补章节 + 漂移 Decision
 
-Status: planned
+Status: completed
 Targets: 四方对照审计记录（写入本计划 Closure 段）；`docs/design/finance/state-machine.md`（新增 §对象五 ExpenseClaim 双轴）；本计划 Closure
 Skill: `state-machine-business-review-prompt.md`（四方对照 + 10 维度）
 
 - Item Types: `Proof | Decision | Add`
 - Prereqs: Phase 2 接线完成
 
-- [ ] Proof（layer-2 四方对照，§11.1 步骤 5，10 维度，双轴各一份）：dict（expense-claim-status 5 值 + wf/approve-status 4 值）↔ owner doc（新增 §对象五 + expense-claim.md §源）↔ Bean 元数据 ↔ writer。重点：(a) 6 命名动作 writer 全集（5 approve do* + 1 cancel do*，须独立 grep 重核）；(b) reverseApprove→REJECTED 合规；(c) docStatus 残余值 SUBMITTED/APPROVED/REJECTED（dict 有但代码不写，Bean 不纳入）；(d) SoD 边界（动态守卫，非 Bean）；(e) 过账/冲抵副作用边界（非 Bean 范畴）；(f) approve→posted=true + ArApItem PAYABLE + offset。writer 盘点含命名动作 + per-mutation 桥接（非独立 writer，排除）+ 过账路径（非状态 writer）+ 框架入口 + 测试 fixture。
+- [x] Proof（layer-2 四方对照，§11.1 步骤 5，10 维度，双轴各一份）：dict（expense-claim-status 5 值 + wf/approve-status 4 值）↔ owner doc（新增 §对象五 + expense-claim.md §源）↔ Bean 元数据 ↔ writer。重点：(a) 6 命名动作 writer 全集（5 approve do* + 1 cancel do*，须独立 grep 重核）；(b) reverseApprove→REJECTED 合规；(c) docStatus 残余值 SUBMITTED/APPROVED/REJECTED（dict 有但代码不写，Bean 不纳入）；(d) SoD 边界（动态守卫，非 Bean）；(e) 过账/冲抵副作用边界（非 Bean 范畴）；(f) approve→posted=true + ArApItem PAYABLE + offset。writer 盘点含命名动作 + per-mutation 桥接（非独立 writer，排除）+ 过账路径（非状态 writer）+ 框架入口 + 测试 fixture。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Add owner doc：在 `docs/design/finance/state-machine.md` §适用对象增列费用报销，新增 **§对象五：费用报销单状态机（双轴）**：approveStatus 轴（5 边：submit{UNSUBMITTED,REJECTED}→SUBMITTED / withdraw→UNSUBMITTED / approve→APPROVED / reject→REJECTED / reverseApprove→REJECTED + initial/terminal）+ docStatus 轴（1 边 cancel→CANCELLED + 残余值说明 + initial/terminal）+ SoD 声明（动态守卫保留 Processor）+ 过账/冲抵副作用引用 `posting.md`/`expense-claim.md`。
+- [x] Add owner doc：在 `docs/design/finance/state-machine.md` §适用对象增列费用报销，新增 **§对象五：费用报销单状态机（双轴）**：approveStatus 轴（5 边：submit{UNSUBMITTED,REJECTED}→SUBMITTED / withdraw→UNSUBMITTED / approve→APPROVED / reject→REJECTED / reverseApprove→REJECTED + initial/terminal）+ docStatus 轴（1 边 cancel→CANCELLED + 残余值说明 + initial/terminal）+ SoD 声明（动态守卫保留 Processor）+ 过账/冲抵副作用引用 `posting.md`/`expense-claim.md`。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] Decision（漂移裁定，路线图规则 5）：(a) docStatus 残余值 = `intentional legacy dict`（workflow 轴 = approveStatus，docStatus 仅 DRAFT/CANCELLED，dict 项保留不删，Bean 不纳入）；(b) M0.2 §3.5 finance M4.4/5 标「测试：无」**与实仓漂移**——实有 `TestErpFinExpenseClaimApproval`（9 @Test）+ 4 过账测试，登记建议 reconcile；(c) reverseApprove→REJECTED = 已合规（非 drift）；(d) SoD = 动态守卫（非 Bean 范畴，架构 `entity-state-machine-bean.md:274`）。
+- [x] Decision（漂移裁定，路线图规则 5）：(a) docStatus 残余值 = `intentional legacy dict`（workflow 轴 = approveStatus，docStatus 仅 DRAFT/CANCELLED，dict 项保留不删，Bean 不纳入）；(b) M0.2 §3.5 finance M4.4/5 标「测试：无」**与实仓漂移**——实有 `TestErpFinExpenseClaimApproval`（9 @Test）+ 4 过账测试，登记建议 reconcile；(c) reverseApprove→REJECTED = 已合规（非 drift）；(d) SoD = 动态守卫（非 Bean 范畴，架构 `entity-state-machine-bean.md:274`）。
   - Skill: `state-machine-business-review-prompt.md`
 
 Exit Criteria:
 
-- [ ] 四方对照无未裁决漂移（6 writer 全集 + docStatus 残余值 + reverseApprove 合规 + SoD/过账边界 + 测试名漂移均裁定并落入 owner doc/计划）
-- [ ] owner doc §对象五 双轴矩阵与 dict/Bean/代码一致
+- [x] 四方对照无未裁决漂移（6 writer 全集 + docStatus 残余值 + reverseApprove 合规 + SoD/过账边界 + 测试名漂移均裁定并落入 owner doc/计划）
+- [x] owner doc §对象五 双轴矩阵与 dict/Bean/代码一致
 
 ## Draft Review Record
 
@@ -157,15 +157,15 @@ Exit Criteria:
 
 > 本计划含生产代码变更（2 Bean + 6 守卫接线 + 测试 + owner doc 补章节），Closure Gates 运行完整仓库验证。无 ORM/API/字典变更（5+4 值保留，残余值不删），Compliance 基线预期无漂移（R5=0/R11=0）。
 
-- [ ] 范围内行为完成（2 Bean + 6 守卫接线 + 三层证据；过账/冲抵/SoD/红冲完整保留，§11.2 M4 (ii)/(iv)/(v)）
-- [ ] 相关文档对齐（owner doc §对象五 新增 + 漂移 Decision 登记；路线图 M4.4/M4.5 done）
-- [ ] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` + Closure 时 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`
-- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（2 Bean + 6 守卫接线 + 三层证据；过账/冲抵/SoD/红冲完整保留，§11.2 M4 (ii)/(iv)/(v)）
+- [x] 相关文档对齐（owner doc §对象五 新增 + 漂移 Decision 登记；路线图 M4.4/M4.5 done）
+- [x] 已运行验证：`mvn test -pl module-finance/erp-fin-service -am` + Closure 时 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`
+- [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：Plan Status、各 Phase Status、Exit Criteria、Closure Gates、日志一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 占位
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -183,13 +183,53 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行与独立结束审计后填充>
+Status Note: completed（2026-08-14 全 3 Phase 执行完成；独立结束审计 APPROVED——子代理零信任亲跑 33 关键测试全绿，技术实现全部 PASS；审计发现的 2 项文档性缺口——roadmap M4.4/M4.5 未标 done + 当日日志缺失——已由执行者补齐，审计复核通过后关闭）
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立子代理>
-- Evidence: <task id / walkthrough record>
+- Auditor / Agent: 独立子代理（新会话零信任，`ses_001e1aea6ffeVF3ZH9w6zTVzRe`）
+- Evidence: 7 项检查全 PASS（Bean 无状态/矩阵完整 + 注册 + 6 守卫接线 + 副作用保留 + 错误码映射 + 层 1/层 3 测试存在 + owner doc §对象五 + plan 一致性）；`mvn -o test -pl module-finance/erp-fin-service` 亲跑 5 测试类 33/33 绿；roadmap/log 缺口已补齐后复核通过
 
 Follow-up:
 
 - <非阻塞跟进见 §Deferred But Adjudicated；已确认缺陷不得出现在此处>
+
+### layer-2 四方对照审计记录（plan Phase 3 Proof，10 维度，双轴各一份）
+
+**1. dict ↔ Bean ↔ owner doc ↔ writer 一致性（approveStatus 轴）**
+
+| 维度 | 结论 |
+|------|------|
+| dict | `wf/approve-status` 4 值（UNSUBMITTED/SUBMITTED/APPROVED/REJECTED，平台共享 dict，orm.xml:1279 引用） |
+| Bean 元数据 | `ErpFinExpenseClaimApprovalStateMachine`：initial={UNSUBMITTED}、terminal={APPROVED,REJECTED}、transitions 6 边（submit×2 + withdraw + approve + reject + reverseApprove） |
+| owner doc | §对象五 approveStatus 轴 5 边表 + 终态说明（可逆终态），与 Bean 一致 |
+| writer 全集（独立 grep 重核） | 5 命名动作 writer 全在 facade `do*`：`doSubmit:272`（submitTargetStatus）、`doWithdrawSubmit:277`、`doApprove:282`、`doReject:300`、`doReverseApprove:305`（reverseApproveTargetStatus=REJECTED）。per-mutation Processor `setApproveStatus` override 为 abstract base 桥接（非独立 writer，其编排入口 `submitForApproval/cancel` 等经 `processor.requireClaim/validateTransition*/do*` 委托 facade，独立 grep 证实）。过账路径（tryPost/reverse）写 `posted` 非 approveStatus。框架入口（CRUD save/update 可写，§9.4 选项 c）与测试 fixture 为既定类别 |
+
+**2. dict ↔ Bean ↔ owner doc ↔ writer 一致性（docStatus 轴）**
+
+| 维度 | 结论 |
+|------|------|
+| dict | `erp-fin/expense-claim-status` 5 值（DRAFT/SUBMITTED/APPROVED/REJECTED/CANCELLED，orm.xml:266-272） |
+| Bean 元数据 | `ErpFinExpenseClaimDocumentStateMachine`：initial={DRAFT}、terminal={CANCELLED}、transitions 1 代表边（cancel DRAFT→CANCELLED，loose 非 CANCELLED 源）；**残余值 SUBMITTED/APPROVED/REJECTED 不纳入任一集合**（layer-1 测试断言） |
+| owner doc | §对象五 docStatus 轴 + 残余值说明，与 Bean 一致 |
+| writer 全集 | 1 命名动作 writer：`doCancel:322`（cancelTargetStatus）。`validateNotCancelled`→`validateTransitionForCancel` 经 Document Bean 守卫（submit 前置的 docStatus 检查亦走 Bean）。seed 写 DRAFT（创建路径），无其他生产 docStatus writer |
+
+**3. 重点维度裁定**
+
+- (a) **6 writer 全集 = 5 approve do* + 1 cancel do***：独立 grep 证实（`ErpFinExpenseClaimProcessor:272/277/282/300/305/322`），与 plan Current Baseline 声明一致；per-mutation 桥接排除（编排入口全部委托 facade）。
+- (b) **reverseApprove→REJECTED 合规**：Bean `reverseApproveTargetStatus()=REJECTED` ↔ `doReverseApprove:305` 一致，已合规 `domain-design-guidelines.md §16.4`（与 purchase M3.5 先例一致），非 drift。
+- (c) **docStatus 残余值**：dict 5 值但生产代码仅写 DRAFT（seed）/CANCELLED（cancel）；SUBMITTED/APPROVED/REJECTED 为 `intentional legacy dict`（Decision，见下方裁定），Bean 不纳入，dict 项保留不删。
+- (d) **SoD 边界**：`SoDGuard.assertApproverNotCreator`（`doApprove:283`，抛 `ERR_FIN_APPROVER_IS_CREATOR`）为动态业务守卫，保留 Processor 原位，非 Bean 范畴（架构 `entity-state-machine-bean.md:274`）；layer-3 `TestErpFinExpenseClaimApproval:135-145` SoD 自审拒绝断言全绿。
+- (e) **过账/冲抵副作用边界**：tryPost（`doApprove:284`）/reverse（`doReverseApprove:308`、`doCancel:327`）/offset（`:293`）/reverseOffset（`:307/326`）/posted/approvedBy/approvedAt 写入全保留原序（§11.2 M4 (ii)/(iv)/(v)），Bean 无任何副作用 import（grep 证实无 DAO/IBiz/事务 import）。
+- (f) **approve→posted=true + ArApItem PAYABLE + offset**：`doApprove` 保留原序（tryPost→posted 三件套→offset），layer-3 `TestErpFinExpenseClaimPosting`（approve→EXPENSE_CLAIM 凭证 + reverseApprove→红冲）+ `TestErpFinExpenseOffsetAdvance`（冲抵 + reverse）全绿证实。
+
+### 漂移 Decision（路线图规则 5）
+
+- **(D1) docStatus 残余值 = `intentional legacy dict`**：dict 5 值但代码仅写 DRAFT/CANCELLED，SUBMITTED/APPROVED/REJECTED 为残余（workflow 轴 = approveStatus，docStatus 仅 DRAFT→CANCELLED）。dict 项保留不删，Bean 不纳入任一集合。裁剪属 dict 治理，需独立 ask-first（保护区域：不改 ORM/dict），记入 §Deferred But Adjudicated。
+- **(D2) M0.2 §3.5 finance M4.4/5 标「测试：无」与实仓漂移**：实有 `TestErpFinExpenseClaimApproval`（9 @Test）+ `TestErpFinExpenseClaimPosting`（3）+ `TestErpFinExpenseOffsetAdvance`（2）+ `TestErpFinPartnerIdResolution`（3）+ `TestErpFinAcctDocProviderAccountKey`（9）。登记建议 reconcile M0.2 清单（successor：M0.2 清单维护批次统一 reconcile）。
+- **(D3) reverseApprove→REJECTED = 已合规**：Bean/代码/owner doc 三方一致（§16.4），非 drift，无 Fix。
+- **(D4) SoD = 动态守卫**：非 Bean 范畴（架构契约 §8/§11.2 M4 (i)），保留 Processor 原位，无 Fix。
+
+### owner doc 变更
+
+- `docs/design/finance/state-machine.md`：§适用对象增列费用报销单（ExpenseClaim）；新增 **§对象五：费用报销单状态机（双轴）**（approveStatus 轴 5 边 + docStatus 轴 1 边 + 残余值说明 + SoD 声明 + 过账/冲抵边界 + 实现注记）。双轴矩阵与 dict/Bean/代码一致（owner doc §对象五 ↔ orm.xml:266-272/1278-1279 ↔ 两 Bean ↔ `ErpFinExpenseClaimProcessor` do*）。

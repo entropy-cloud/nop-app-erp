@@ -2,7 +2,7 @@
 
 > **设计要点依据**：本状态机按 `docs/skills/state-machine-business-review-prompt.md` 的 10 个审查维度组织。审查本状态机时使用该提示词。
 >
-> 财务域有四类状态对象：**会计凭证**（单据级状态机）、**会计期间**（时间窗口状态机）、**应收票据**与**应付票据**（票据生命周期状态机，见 §对象三/§对象四）。凭证与期间的状态迁移相互约束（已结账期间不可新增凭证）。
+> 财务域有五类状态对象：**会计凭证**（单据级状态机）、**会计期间**（时间窗口状态机）、**应收票据**与**应付票据**（票据生命周期状态机，见 §对象三/§对象四）、**费用报销单**（审批 + 生命周期双轴，见 §对象五）。凭证与期间的状态迁移相互约束（已结账期间不可新增凭证）。
 
 ## 适用对象
 
@@ -10,6 +10,7 @@
 - 会计期间（AccountingPeriod）：财务结账的时间窗口（月/季/年）。
 - 应收票据（NotesReceivable）：收到/贴现/背书/托收/承兑/拒付/注销的票据生命周期。
 - 应付票据（NotesPayable）：开出/兑付/拒付/注销的票据生命周期。
+- 费用报销单（ExpenseClaim）：报销单的**审批轴**（approveStatus，5 动作）与**业务生命周期轴**（docStatus，cancel 作废），见 §对象五。
 
 ## 对象一：会计凭证状态机
 
@@ -361,6 +362,80 @@
 ### 5. 实现注记（plan 2026-08-13-1146-1）
 
 `status` 轴由实体级状态机 Bean `ErpFinNotesPayableStateMachine`（契约 `docs/architecture/entity-state-machine-bean.md`）承载：4 命名动作矩阵（issue/honor/dishonor/writeOff）+ initial/terminal 分类 + 只读 `transitions()` 元数据（4 命名边）。**writer 全部在 facade `do*`**（无 per-mutation 不对称，区别于 Receivable 的 collect/dishonor per-mutation writer）。issue 守卫为**有意收窄**（仅接受 null initial 写入 / ISSUED 幂等，实仓零路径从非 initial 态 issue）。`posted` 不入轴（契约 §3）。非法边由 Bean 抛 common 码，Processor 映射领域码 `ERR_NOTES_PAYABLE_ILLEGAL_STATUS_TRANSITION`（common 作 cause，`ARG_NOTES_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` 对外不变）。
+
+---
+
+## 对象五：费用报销单状态机（双轴）
+
+> 报销单字段与业务规则权威来源：`docs/design/finance/expense-claim.md`；业财过账业务类型见 `docs/design/finance/posting.md`（EXPENSE_CLAIM：Dr 6602 管理费用 / Dr 2221 进项税 / Cr 2241 应付-员工 或 1002 银行存款）+ `docs/design/finance/expense-claim.md`（ArApItem PAYABLE + 员工借款冲抵 `AdvanceOffsetOrchestrator`）。
+>
+> **实现注记（plan 2026-08-13-1146-2，M4.4 + M4.5）**：双轴各自独立 Bean（契约 `docs/architecture/entity-state-machine-bean.md` §3 双轴分离，不合并笛卡尔积）——`ErpFinExpenseClaimApprovalStateMachine`（approveStatus 轴）+ `ErpFinExpenseClaimDocumentStateMachine`（docStatus 轴）。5 审批守卫 + 1 作废守卫接线至 `ErpFinExpenseClaimProcessor.validateTransitionFor*`（Bean 抛 common 码作 cause，Processor 映射领域码 `ERR_EXPENSE_CLAIM_ILLEGAL_STATUS_TRANSITION` / `ERR_EXPENSE_CLAIM_ILLEGAL_DOC_STATUS_TRANSITION`，参数对外不变）。
+
+### 1. 状态定义（双轴）
+
+**审批轴 approveStatus**（字典 `wf/approve-status` 4 值，平台共享 dict）：
+
+| 状态 | 业务含义 |
+|------|----------|
+| 未提交（UNSUBMITTED） | 草稿，未进入审批流。**initial 态** |
+| 已提交（SUBMITTED） | 已提交审批，等待审核 |
+| 已审核（APPROVED） | 审核通过，触发过账（凭证 + ArApItem PAYABLE + 员工借款冲抵） |
+| 已驳回（REJECTED） | 审核驳回，可修改重提 |
+
+**业务生命周期轴 docStatus**（字典 `erp-fin/expense-claim-status` 5 值）：
+
+| 状态 | 业务含义 |
+|------|----------|
+| 草稿（DRAFT） | **initial 态**（创建时写入） |
+| 已作废（CANCELLED） | 终态：作废（已过账时先红冲再作废） |
+| ~~SUBMITTED / APPROVED / REJECTED~~ | **残余值（intentional reserved）**：dict 5 值但代码仅写 DRAFT/CANCELLED——生命周期推进由 approveStatus 轴承载，docStatus 仅 DRAFT→CANCELLED。残余值不纳入状态机 Bean 任一集合（initial/terminal/transitions），dict 项保留不删（dict 治理归 successor） |
+
+### 2. 迁移完整性
+
+```
+审批轴 approveStatus:
+未提交 (UNSUBMITTED) ← initial
+  ├─ 提交 → 已提交 (SUBMITTED)
+  │            ├─ 撤回 → 未提交 (UNSUBMITTED)
+  │            ├─ 审核 → 已审核 (APPROVED)
+  │            └─ 驳回 → 已驳回 (REJECTED)
+  ├─ 驳回后重提 → 已提交 (SUBMITTED)
+  └─ 已审核 → 反审核 → 已驳回 (REJECTED)   ← reverseApprove，触发红冲
+
+生命周期轴 docStatus:
+草稿 (DRAFT) ← initial
+  └─ 作废 → 已作废 (CANCELLED, 终态)        ← 已过账时先红冲（reverseOffset + reverse）再作废
+```
+
+| 迁移 | 触发人/系统 | 前置条件 | 结果 |
+|------|-------------|----------|------|
+| submitForApproval {UNSUBMITTED,REJECTED} → SUBMITTED | 报销人 | 未作废、报销人启用/partnerId 存在、行非空、价税合计一致、事由必填（按配置）、预算校验（按配置） | 进入审批流 |
+| withdrawApproval {SUBMITTED} → UNSUBMITTED | 报销人 | 已提交未审核 | 撤回 |
+| approve {SUBMITTED} → APPROVED | 审核人（**SoD：不得为创建人**） | 已提交、SoD 通过 | **过账**（EXPENSE_CLAIM 凭证 + ArApItem PAYABLE + 员工借款冲抵，posted=true） |
+| reject {SUBMITTED} → REJECTED | 审核人 | 已提交 | 驳回 |
+| reverseApprove {APPROVED} → REJECTED | 审核人（需权限） | 已审核 | 若已过账则**红冲**（reverse + reverseOffset + posted=false） |
+| cancel {非 CANCELLED} → CANCELLED | 报销人 | 未作废 | 若已过账则先红冲再作废 |
+
+### 3. 终态与恢复
+
+- **审批轴终态**：`APPROVED` / `REJECTED`（均为**可逆终态**——APPROVED 经 reverseApprove 有出边、REJECTED 经 submitForApproval 有出边，不适用「终态无出边」强可达性断言）。**initial**：`UNSUBMITTED`。
+- **生命周期轴终态**：`CANCELLED`（无出边）。**initial**：`DRAFT`。
+- 作废不可恢复（逻辑删除不可逆；已作废再 cancel 抛非法迁移拒绝）。
+
+### 4. 过账边界（§11.2 M4 治理裁定）
+
+- approve 触发业财过账（`ExpenseClaimPostingDispatcher`→`FinPostingExecutor` 生成 EXPENSE_CLAIM 凭证 + `ErpFinArApItem` PAYABLE + `AdvanceOffsetOrchestrator` 员工借款冲抵）；reverseApprove/cancel 在已过账时触发红冲（reverse + reverseOffset）。**过账时序/编排/失败兜底（posted 回写）/红冲闭环由过账引擎 + `posted`/`postedBy`/`postedAt` 契约管理**（§11.2 M4 (ii)/(v)），状态机 Bean 不触碰。
+- **`posted` 不入轴**（契约 §3）：`posted`（boolean）为业财过账/红冲契约，不是状态轴。approve→`posted=true` + ArApItem PAYABLE + offset；reverseApprove/cancel 红冲→`posted=false`。
+- **SoD（approver-is-creator）为动态业务守卫**：保留在 `ErpFinExpenseClaimProcessor.doApprove` 原位（`SoDGuard.assertApproverNotCreator`，抛 `ERR_FIN_APPROVER_IS_CREATOR`），**非 Bean 范畴**（架构契约 `entity-state-machine-bean.md:274`）。
+- **残余值边界**：docStatus dict 中 SUBMITTED/APPROVED/REJECTED 为 intentional reserved（workflow 轴 = approveStatus），Bean 不纳入任一集合（见 §1）。
+
+### 5. 实现注记（plan 2026-08-13-1146-2）
+
+- `ErpFinExpenseClaimApprovalStateMachine`：5 命名动作矩阵（submit×2 源 + withdraw + approve + reject + reverseApprove）+ initial/terminal + 只读 `transitions()` 元数据（6 边）。
+- `ErpFinExpenseClaimDocumentStateMachine`：1 命名动作（cancel，loose 非 CANCELLED 源）+ initial/terminal + `transitions()`（1 代表边 DRAFT→CANCELLED）。
+- **writer 放置**：6 动作 writer 全部在 facade `do*`（`ErpFinExpenseClaimProcessor`），迁移仅改守卫委托 Bean + 目标态写回 Bean 目标态方法，writer 物理位置与副作用（SoD/tryPost/reverse/offset/reverseOffset/posted/approvedBy/approvedAt 写入/乐观锁/业务规则校验）原序保留。
+- **reverseApprove→REJECTED**：已合规 `domain-design-guidelines.md §16.4`（与 purchase 一致，无 drift）。
+- 非法边由 Bean 抛 common 码（携带 `action`/`fromStatus` 元数据），Processor 映射领域码（common 作 cause，`ARG_CLAIM_CODE`/`ARG_CURRENT_STATUS`/`ARG_EXPECTED_STATUS` / `ARG_CURRENT_DOC_STATUS`/`ARG_EXPECTED_DOC_STATUS` 对外不变）。
 
 ---
 
