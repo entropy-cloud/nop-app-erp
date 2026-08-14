@@ -1,6 +1,6 @@
 # 2026-08-14-0456-3-erplog-shipment-state-machine-bean 物流域 ErpLogShipment.status 实体级状态机 Bean（M4.57）
 
-> Plan Status: active
+> Plan Status: completed
 > Review Hold: §11.2 M4 (i) plan-first 人工/owner-doc 门控**已于 2026-08-14 经人工确认解除**（见 Draft Review Record 门控确认记录）（DELIVERED 触发 FREIGHT 运费过账 path-1 + config-gated 到岸成本自动创建 path-2）。门控非起草者/审查者可自主解除——经人工确认解除；已转 `active` 进入实施。
 > Last Reviewed: 2026-08-14
 > Source: `docs/backlog/entity-state-machine-migration-roadmap.md` 工作项 M4.57（ErpLogShipment.status），plan-first；M0.2 清单行 `docs/analysis/2026-08-12-entity-state-axis-inventory.md`（:329 + 风险展开 :452）
@@ -72,46 +72,46 @@
 
 ### Phase 1 - ErpLogShipment status Bean + GatewayDispatcher 接线（M4.57）
 
-Status: planned
+Status: completed
 Targets: `module-logistics/erp-log-service/src/main/java/app/erp/log/service/statemachine/ErpLogShipmentStateMachine.java`、`.../beans/app-service.beans.xml`、`.../gateway/GatewayDispatcher.java`、`.../test/.../statemachine/TestErpLogShipmentStateMachineMatrix.java`
 Skill: `nop-backend-dev` + `nop-testing`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: M1.3 done（已满足）；M4.29 `ErpInvStockMoveStateMachine` 范本已 done
 
-- [ ] `Decision`（GatewayDispatcher Facade 接线 + 幂等/DELIVERED drift 三项裁决）：(A) **Bean 接入 GatewayDispatcher**（非 per-mutation Processor——守卫集中在 Facade）。Dispatcher 注入 `@Inject ErpLogShipmentStateMachine`（非 private）。(B) **幂等 short-circuit 保留在 Dispatcher**——`advise:72-75` if already ADVISED → return、`completeShipment:87-98` if DISPATCHED+ → return、`cancelShipment:134-136` if CANCELLED/DELIVERED → return、`advanceTracking:165-166` if already DELIVERED → return false 均为动态流程控制（非纯迁移边），保留原位。Bean 只替换**前向迁移守卫**（source-state assert），不接管幂等短路。(C) **advanceTracking DELIVERED 无来源态守卫——刻意收紧**：code `:168` 无 `Objects.equals(from, CONST)` 来源态守卫（任何非 DELIVERED 状态均可被推进到 DELIVERED，包括 DRAFT/CANCELLED），owner-doc §2 迁移表（state-machine.md :49）仅声明 `IN_TRANSIT→DELIVERED`。Bean **刻意编码合法来源态集 = {ADVISED,DISPATCHED,IN_TRANSIT}**（排除 DRAFT/CANCELLED）——这是**引入新守卫（行为变更）**而非"按代码实况"：DRAFT 发运单无承运商/trackingNo（advanceTracking 不可达）；CANCELLED 是终态不应可逆到 DELIVERED。此项**是行为收紧**（Bean `assertCanAdvanceToDelivered` 在 DRAFT/CANCELLED 时抛异常，而当前 code 无抛异常），但因 DRAFT→DELIVERED 实践中不可达（无 trackingNo 无法匹配发运单）+ CANCELLED→DELIVERED 是逻辑错误，收紧为**安全改善**。四方对照登记此 drift 为 `intentional narrowing`（code drift：code 比 owner-doc 更宽松，Bean 向 owner-doc 收紧方向靠拢但不完全一致——owner-doc 仅 IN_TRANSIT 单源，Bean 含 ADVISED/DISPATCHED 作为合法中间态推进路径，因 advanceTracking 可从 DISPATCHED 直接到 DELIVERED）。
+- [x] `Decision`（GatewayDispatcher Facade 接线 + 幂等/DELIVERED drift 三项裁决）：(A) **Bean 接入 GatewayDispatcher**（非 per-mutation Processor——守卫集中在 Facade）。Dispatcher 注入 `@Inject ErpLogShipmentStateMachine`（非 private）。(B) **幂等 short-circuit 保留在 Dispatcher**——`advise:72-75` if already ADVISED → return、`completeShipment:87-98` if DISPATCHED+ → return、`cancelShipment:134-136` if CANCELLED/DELIVERED → return、`advanceTracking:165-166` if already DELIVERED → return false 均为动态流程控制（非纯迁移边），保留原位。Bean 只替换**前向迁移守卫**（source-state assert），不接管幂等短路。(C) **advanceTracking DELIVERED 无来源态守卫——刻意收紧**：code `:168` 无 `Objects.equals(from, CONST)` 来源态守卫（任何非 DELIVERED 状态均可被推进到 DELIVERED，包括 DRAFT/CANCELLED），owner-doc §2 迁移表（state-machine.md :49）仅声明 `IN_TRANSIT→DELIVERED`。Bean **刻意编码合法来源态集 = {ADVISED,DISPATCHED,IN_TRANSIT}**（排除 DRAFT/CANCELLED）——这是**引入新守卫（行为变更）**而非"按代码实况"：DRAFT 发运单无承运商/trackingNo（advanceTracking 不可达）；CANCELLED 是终态不应可逆到 DELIVERED。此项**是行为收紧**（Bean `assertCanAdvanceToDelivered` 在 DRAFT/CANCELLED 时抛异常，而当前 code 无抛异常），但因 DRAFT→DELIVERED 实践中不可达（无 trackingNo 无法匹配发运单）+ CANCELLED→DELIVERED 是逻辑错误，收紧为**安全改善**。四方对照登记此 drift 为 `intentional narrowing`（code drift：code 比 owner-doc 更宽松，Bean 向 owner-doc 收紧方向靠拢但不完全一致——owner-doc 仅 IN_TRANSIT 单源，Bean 含 ADVISED/DISPATCHED 作为合法中间态推进路径，因 advanceTracking 可从 DISPATCHED 直接到 DELIVERED）。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Add`：落地 `ErpLogShipmentStateMachine` Bean——5 动作矩阵（advise DRAFT→ADVISED、completeShipment ADVISED→DISPATCHED、advanceToInTransit DISPATCHED→IN_TRANSIT、advanceToDelivered {ADVISED,DISPATCHED,IN_TRANSIT}→DELIVERED（**刻意收紧**，排除 DRAFT/CANCELLED——见 Decision (C)）、cancelShipment {DRAFT,ADVISED,DISPATCHED,IN_TRANSIT}→CANCELLED）+ 对应 `assertCanXxx(String status)` + `*TargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`。严格无状态。非法边抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`currentStatus`/`expectedStatus`。镜像 M4.29 `ErpInvStockMoveStateMachine` 结构。
+- [x] `Add`：落地 `ErpLogShipmentStateMachine` Bean——5 动作矩阵（advise DRAFT→ADVISED、completeShipment ADVISED→DISPATCHED、advanceToInTransit DISPATCHED→IN_TRANSIT、advanceToDelivered {ADVISED,DISPATCHED,IN_TRANSIT}→DELIVERED（**刻意收紧**，排除 DRAFT/CANCELLED——见 Decision (C)）、cancelShipment {DRAFT,ADVISED,DISPATCHED,IN_TRANSIT}→CANCELLED）+ 对应 `assertCanXxx(String status)` + `*TargetStatus()` + `isTerminal`/`initialStatuses`/`terminalStatuses` + `transitions()`。严格无状态。非法边抛 common 码 `ERR_ILLEGAL_STATUS_TRANSITION` + `action`/`currentStatus`/`expectedStatus`。镜像 M4.29 `ErpInvStockMoveStateMachine` 结构。
   - Skill: `nop-backend-dev`
-- [ ] `Add`：在 `_vfs/erp/log/beans/app-service.beans.xml` 注册（紧邻 `GatewayDispatcher` L27-28）。
+- [x] `Add`：在 `_vfs/erp/log/beans/app-service.beans.xml` 注册（紧邻 `GatewayDispatcher` L27-28）。
   - Skill: `nop-backend-dev`
-- [ ] `Add`（接线，GatewayDispatcher Facade）：`GatewayDispatcher` 注入 `@Inject ErpLogShipmentStateMachine`（非 private）；`advise:62-73` 前向守卫改调 `stateMachine.assertCanAdvise(status)`（幂等短路保留在前）；`completeShipment:84-98` 前向守卫改调 `assertCanCompleteShipment`（`writeBackSuccess:319` 目标态改调 `completeShipmentTargetStatus()`）；`advanceTracking:162-184` 前向守卫改调 `assertCanAdvanceToInTransit`/`assertCanAdvanceToDelivered`；`cancelShipment:131-153` 前向守卫改调 `assertCanCancelShipment`（多源）。try/catch common 码 → cause-chain `ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION`。网关重试/死信/告警 + DELIVERED 过账编排 + 到岸成本 + `freightSettlementStatus` 保留原位。
+- [x] `Add`（接线，GatewayDispatcher Facade）：`GatewayDispatcher` 注入 `@Inject ErpLogShipmentStateMachine`（非 private）；`advise:62-73` 前向守卫改调 `stateMachine.assertCanAdvise(status)`（幂等短路保留在前）；`completeShipment:84-98` 前向守卫改调 `assertCanCompleteShipment`（`writeBackSuccess:319` 目标态改调 `completeShipmentTargetStatus()`）；`advanceTracking:162-184` 前向守卫改调 `assertCanAdvanceToInTransit`/`assertCanAdvanceToDelivered`；`cancelShipment:131-153` 前向守卫改调 `assertCanCancelShipment`（多源）。try/catch common 码 → cause-chain `ERR_LOG_SHIPMENT_ILLEGAL_TRANSITION`。网关重试/死信/告警 + DELIVERED 过账编排 + 到岸成本 + `freightSettlementStatus` 保留原位。
   - Skill: `nop-backend-dev`
-- [ ] `Proof`：层 1 矩阵完备性（greenfield 表驱动，镜像 M4.29 `TestErpInvStockMoveAndStockTakeStateMachines` 范式）——(a) 无重复/冲突边；(b) 全部 5 边可达；(c) 各 `assertCanXxx` 合法来源态通过、非法来源态抛 common 码；(d) `transitions()` 与显式方法语义一致；(e) 初始={DRAFT}/终态={DELIVERED,CANCELLED}。
+- [x] `Proof`：层 1 矩阵完备性（greenfield 表驱动，镜像 M4.29 `TestErpInvStockMoveAndStockTakeStateMachines` 范式）——(a) 无重复/冲突边；(b) 全部 5 边可达；(c) 各 `assertCanXxx` 合法来源态通过、非法来源态抛 common 码；(d) `transitions()` 与显式方法语义一致；(e) 初始={DRAFT}/终态={DELIVERED,CANCELLED}。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] `ErpLogShipmentStateMachine` Bean 存在、已注册、严格无状态；GatewayDispatcher 委托 Bean 前向守卫，内联 `Objects.equals` 矩阵判断已移除（幂等短路保留）。
-- [ ] Shipment 层 1 矩阵测试本地 `mvn test -pl module-logistics/erp-log-service -am -Dtest=TestErpLogShipmentStateMachineMatrix` 全绿。
+- [x] `ErpLogShipmentStateMachine` Bean 存在、已注册、严格无状态；GatewayDispatcher 委托 Bean 前向守卫，内联 `Objects.equals` 矩阵判断已移除（幂等短路保留）。
+- [x] Shipment 层 1 矩阵测试本地 `mvn test -pl module-logistics/erp-log-service -am -Dtest=TestErpLogShipmentStateMachineMatrix` 全绿（12/12）。
 
 ### Phase 2 - 层 2 四方对照 + 层 3 既有回归
 
-Status: planned
+Status: completed
 Targets: `module-logistics/erp-log-service/src/test/`（既有集成测试，零新建）
 Skill: `nop-testing` + `state-machine-business-review-prompt.md`
 
 - Item Types: `Proof`
 - Prereqs: Phase 1（Bean + Dispatcher 接线已落地）
 
-- [ ] `Proof`：层 2 四方对照——dict `erp-log/shipment-status`（6 值）↔ owner-doc §2 迁移表 ↔ Bean 元数据 ↔ 全部 writer（GatewayDispatcher 5 call-sites + 创建写 DRAFT + 幂等短路 + CRUD 路径排除）。**DELIVERED drift finding**：advanceTracking 无来源态守卫 → 分类 + successor。
+- [x] `Proof`：层 2 四方对照——dict `erp-log/shipment-status`（6 值）↔ owner-doc §2 迁移表 ↔ Bean 元数据 ↔ 全部 writer（GatewayDispatcher 5 call-sites + 创建写 DRAFT + 幂等短路 + CRUD 路径排除）。**DELIVERED drift finding**：advanceTracking 无来源态守卫 → 分类 + successor。
   - Skill: `state-machine-business-review-prompt.md`
-- [ ] `Proof`：层 3 既有命名动作回归——复用 8 个集成测试（`TestErpLogShipmentGateway` testFullStateMachineFlow + cancel + retry/dead-letter/webhook；`TestErpLogShipmentPostingEnd` path-1/path-2 e2e；`TestErpLogFreightPosting` duplicate/settled/idempotent；`TestErpLogPath2LandedCost`；`TestErpLogCarrierGatewayIntegration`；`TestErpLogShipmentTrackingNoUk`；`TestErpLogShipmentCrudSmoke`；`TestLogPostingFaultInjection`），证明 Dispatcher 写回、FREIGHT 过账时序、到岸成本编排、幂等行为、网关重试/死信/告警、终态守卫（`ERR_LOG_SHIPMENT_ALREADY_DELIVERED`）不变。本地 `mvn test -pl module-logistics/erp-log-service -am` 全绿。
+- [x] `Proof`：层 3 既有命名动作回归——复用 8 个集成测试（`TestErpLogShipmentGateway` testFullStateMachineFlow + cancel + retry/dead-letter/webhook；`TestErpLogShipmentPostingEnd` path-1/path-2 e2e；`TestErpLogFreightPosting` duplicate/settled/idempotent；`TestErpLogPath2LandedCost`；`TestErpLogCarrierGatewayIntegration`；`TestErpLogShipmentTrackingNoUk`；`TestErpLogShipmentCrudSmoke`；`TestLogPostingFaultInjection`），证明 Dispatcher 写回、FREIGHT 过账时序、到岸成本编排、幂等行为、网关重试/死信/告警、终态守卫（`ERR_LOG_SHIPMENT_ALREADY_DELIVERED`）不变。本地 `mvn test -pl module-logistics/erp-log-service -am` 全绿。
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 层 3 既有集成测试全绿（零行为回归）。
+- [x] 层 3 既有集成测试全绿（零行为回归）——`mvn test -pl module-logistics/erp-log-service` 39/39 绿（矩阵 12 + 既有 27，0 failures/errors）。
 
 ## Draft Review Record
 
@@ -125,15 +125,15 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
-- [ ] 范围内行为完成（status Bean + GatewayDispatcher Facade 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
-- [ ] 相关文档对齐（roadmap M4.57 → done；DELIVERED drift 登记）
-- [ ] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-logistics/erp-log-service -am` 全绿 + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证
-- [ ] 结束审计由独立子代理（新会话）执行
-- [ ] 结束证据存在于文件中
+- [x] **M4 plan-first 人工/owner-doc 门控已确认并记录于 Draft Review Record**（§11.2 M4 (i)）
+- [x] 范围内行为完成（status Bean + GatewayDispatcher Facade 接线 + 层 1 矩阵 + 层 2 四方对照 + 层 3 回归）
+- [x] 相关文档对齐（roadmap M4.57 → done；DELIVERED drift 登记）
+- [x] 已运行验证：`mvn clean install -DskipTests` BUILD SUCCESS + `mvn test -pl module-logistics/erp-log-service -am` 全绿（39/39）+ `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline（R5=0/R11=0 零漂移）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录（Draft Review Record 4 迭代 + 4 plan review pass 全记录）
+- [x] 文本一致性已验证（Plan Status / 阶段 Status / Exit Criteria / Closure Gates / 日志一致）
+- [x] 结束审计由独立子代理（新会话）执行（ses_0012ea1a3ffeWkOHyi870Dl801，VERDICT: PASS，零 BLOCKER/MAJOR）
+- [x] 结束证据存在于文件中（本 Closure 段 + 日志 docs/logs/2026/08-14.md + roadmap 头部记录）
 
 ## Deferred But Adjudicated
 
@@ -169,13 +169,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: _待执行后填写_
+Status Note: executed (2026-08-14)；全部 2 Phase 完成，验证全绿（`mvn clean install -DskipTests` 全仓 BUILD SUCCESS + `mvn test -pl module-logistics/erp-log-service -am` 39/39 绿 + compliance 零漂移 R5=0/R11=0）。`ErpLogShipmentStateMachine`（5 动作 10 边 status 轴）落地 + beans.xml 注册 + GatewayDispatcher Facade 全守卫接线（幂等短路/网关重试死信/DELIVERED path-1/path-2 过账保留原位）+ 层 1 矩阵 12 测试 + 层 2 四方对照（DELIVERED drift 分类 intentional narrowing）+ 层 3 既有 8 集成测试零回归。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: _待执行后填写_
-- Evidence: _待执行后填写_
+- Auditor / Agent: MISSION_DRIVER 2026-08-14-070716-mission-driver（独立结束审计子代理，新会话，零执行者上下文）— 2026-08-14 审计通过。
+- Evidence: 独立核实 `ErpLogShipmentStateMachine` 源文件（严格无状态、5 动作合法集、10 边 transitions()、initial={DRAFT}/terminal={DELIVERED,CANCELLED}、common 码 + action/currentStatus/expectedStatus）+ beans.xml:32-33 注册 + GatewayDispatcher 接线（@Inject 非 private :59-60、advise:73-80/completeShipment:102-109/cancelShipment:151-158/advanceTracking:182-189+205-212 全守卫委托 + 5 处 *TargetStatus() 写回含 writeBackSuccess:352 + 幂等短路 5 处保留 + 重试/死信/告警保留 + AbstractErpLogShipmentDeliveredProcessor path-1 FREIGHT 过账/path-2 config-gated 到岸成本/freightSettlementStatus 原位）+ setStatus 全仓 grep 仅 5 call-site 无旁路 + 层 1 矩阵 12 @Test 亲跑全绿 + 层 3 39/39 亲跑全绿 + compliance 全规则 ≤ baseline 亲跑 + roadmap M4.57 done + 日志引用本计划。Deferred 项（DELIVERED 收紧 successor / cancel 审批 P1-MA2-078 / 部分签收 P1-MA2-079 / Delta 实证 M5.3 / CRUD 写锁 M0.1）均有显式触发条件，无隐藏缺陷降级。MINOR：审计时 2 项闭包簿记（本段证据 + 门控 tick）由执行者补完，非代码缺陷。
 
 Follow-up:
 
-- <待执行后填写；Deferred 项均为既定 successor>
+- 无新增非阻塞跟进项；Deferred But Adjudicated 的既定 successor 保持。
