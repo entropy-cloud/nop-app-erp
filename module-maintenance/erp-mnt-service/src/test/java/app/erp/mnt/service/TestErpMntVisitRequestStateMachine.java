@@ -4,12 +4,15 @@ import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntEquipment;
 import app.erp.mnt.dao.entity.ErpMntRequest;
 import app.erp.mnt.dao.entity.ErpMntVisit;
+import app.erp.mnt.service.support.EquipmentStatusLinker;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
+import io.nop.core.context.IServiceContext;
+import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.graphql.core.IGraphQLExecutionContext;
@@ -51,12 +54,16 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
     static final Long ASSIGNEE_ID = 201L;
     static final Long OTHER_ASSIGNEE_ID = 202L;
 
+    private static final IServiceContext CTX = new ServiceContextImpl();
+
     @Inject
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
     @Inject
     IGraphQLEngine graphQLEngine;
+    @Inject
+    EquipmentStatusLinker equipmentStatusLinker;
 
     private final AtomicLong idSeq = new AtomicLong(100000L);
 
@@ -92,7 +99,7 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
     }
 
     @Test
-    public void testVisitCompleteFromIdleEquipmentRestoresRunning() {
+    public void testVisitCompleteFromIdleEquipmentRestoresIdle() {
         Long visitId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
@@ -106,8 +113,63 @@ public class TestErpMntVisitRequestStateMachine extends JunitAutoTestCase {
                 "执行中设备置 UNDER_MAINTENANCE");
 
         assertEquals(0, complete(visitId).getStatus(), "IN_PROGRESS→COMPLETED");
+        assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE, equipmentStatus(),
+                "IDLE 设备 complete 后恢复 IDLE（P2-RC-061 双分支实现：start 捕获前态 IDLE → restore 恢复 IDLE；A4.2.148 原断言 RUNNING 反转）");
+    }
+
+    @Test
+    public void testVisitCancelFromIdleEquipmentRestoresIdle() {
+        Long visitId = nextId();
+        ormTemplate.runInSession(session -> {
+            seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
+            seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-IDLE-CNL-001");
+            return null;
+        });
+
+        assertEquals(0, schedule(visitId).getStatus(), "DRAFT→SCHEDULED");
+        assertEquals(0, start(visitId).getStatus(), "SCHEDULED→IN_PROGRESS");
+        assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE, equipmentStatus());
+
+        assertEquals(0, cancel(visitId).getStatus(), "IN_PROGRESS→CANCELLED");
+        assertEquals(ErpMntDaoConstants.VISIT_STATUS_CANCELLED, visitStatus(visitId));
+        assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE, equipmentStatus(),
+                "IDLE 设备 cancel 后恢复 IDLE（恢复语义经 cancel 同样成立）");
+    }
+
+    @Test
+    public void testVisitCompleteFromDownEquipmentRestoresRunning() {
+        Long visitId = nextId();
+        ormTemplate.runInSession(session -> {
+            seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_DOWN);
+            seedVisit(visitId, EQUIPMENT_ID, ErpMntDaoConstants.VISIT_STATUS_DRAFT, "VST-DOWN-001");
+            return null;
+        });
+
+        assertEquals(0, schedule(visitId).getStatus(), "DRAFT→SCHEDULED");
+        assertEquals(0, start(visitId).getStatus(), "SCHEDULED→IN_PROGRESS");
+        assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_UNDER_MAINTENANCE, equipmentStatus());
+
+        assertEquals(0, complete(visitId).getStatus(), "IN_PROGRESS→COMPLETED");
         assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, equipmentStatus(),
-                "IDLE 设备 complete 后恢复 RUNNING（restoreToRunning 恒恢复 RUNNING，无 IDLE 分支——P2-RC-061 简化偏差运行时证实）");
+                "DOWN 来源设备 complete 后恢复 RUNNING（capturePriorStatus 仅捕获 IDLE，DOWN 非缓存态 → restore 回退 RUNNING）");
+    }
+
+    @Test
+    public void testRestoreWithoutPriorLinkFallsBackToRunning() {
+        ormTemplate.runInSession(session -> {
+            seedEquipment(OTHER_EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_IDLE);
+            return null;
+        });
+
+        // 模拟重启语义：无前置 linkTo*（缓存缺失），直接 restore → 恢复 RUNNING 而非异常（watch-only 回退语义断言）
+        ormTemplate.runInSession(session -> {
+            equipmentStatusLinker.restoreToRunning(OTHER_EQUIPMENT_ID, CTX);
+            return null;
+        });
+
+        assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
+                daoProvider.daoFor(ErpMntEquipment.class).getEntityById(OTHER_EQUIPMENT_ID).getStatus(),
+                "缓存缺失回退 RUNNING（现状已接受行为）");
     }
 
     @Test
