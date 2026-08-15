@@ -1,0 +1,10 @@
+jobName: erp-log-tracking-poll
+enabled: "@cfg:nop.job.erp-log-tracking-poll.enabled|false"
+displayName: Logistics Tracking Poll Fallback
+description: 定时（默认每 4 小时）调 scanForPolling 对 DISPATCHED/IN_TRANSIT 运单调 trackShipment 推进，DELIVERED 翻转后逐单 onDelivered 运费过账/到岸成本编排（失败隔离由既有 Processor 内部保证）；消费既有 erp-log.tracking-poll-cron 键（dead config 转活跃，cron 空值=跳过）
+jobGroup: erp-log
+trigger:
+  cronExpr: "@cfg:erp-log.tracking-poll-cron|0 0 */4 * * ?"
+invoker:
+  bean: erpLogTrackingPollJob
+  method: execute

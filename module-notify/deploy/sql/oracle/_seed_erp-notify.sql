@@ -110,4 +110,12 @@ VALUES
    '薪酬单 ${docNo} 抄送知会',
    '薪酬单 ${docNo} 已审批通过，特此抄送知会',
    'ROLE', '{"roles":["HR专员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
-   '抄送通知（CC 接收人，薪酬）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
+   '抄送通知（CC 接收人，薪酬）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 业务提醒：DRAFT 发运单超阈值升级通知（RC-R1.37，P1-RC-084，UC-LOG-01），5 分钟窗口合并。
+  -- 接收人=发货员 createdBy（USER_LIST ${submitterUserId} 从 notify context 插值；物流主管路由待角色基础设施）。
+  (7201, 'log.draft-escalation', 'DRAFT发运单升级通知', 'IN_APP',
+   '发运单 ${shipmentCode} 超时未确认',
+   '发运单 ${shipmentCode}（ID ${shipmentId}）已超过 ${elapsedHours} 小时未确认，请及时处理',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '业务提醒样例（DRAFT 发运单滞留升级，submitterUserId=发货员 createdBy）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
+

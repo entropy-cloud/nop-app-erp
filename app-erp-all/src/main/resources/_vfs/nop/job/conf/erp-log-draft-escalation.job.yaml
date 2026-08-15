@@ -1,0 +1,10 @@
+jobName: erp-log-draft-escalation
+enabled: "@cfg:nop.job.erp-log-draft-escalation.enabled|false"
+displayName: Logistics Draft Shipment Escalation
+description: 每日 01:30 扫描 DRAFT 且 updateTime 超 erp-log.draft-escalation-hours（默认 24）阈值发运单，派发 log.draft-escalation 升级通知（USER_LIST ${submitterUserId} 发货员）；cron 经 erp-log.draft-escalation-cron 配置门控（空值=跳过）
+jobGroup: erp-log
+trigger:
+  cronExpr: "@cfg:erp-log.draft-escalation-cron|0 30 1 * * ?"
+invoker:
+  bean: erpLogDraftEscalationJob
+  method: execute

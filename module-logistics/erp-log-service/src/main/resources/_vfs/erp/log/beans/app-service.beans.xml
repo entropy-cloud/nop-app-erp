@@ -54,4 +54,14 @@
     <bean id="app.erp.log.service.processor.ErpLogShipmentScanForPollingProcessor"
           class="app.erp.log.service.processor.ErpLogShipmentScanForPollingProcessor"/>
 
+    <!-- RC-R1.37（P1-RC-084，UC-LOG-01）：DRAFT 超阈值升级 job（R1.4 简单 job bean 范式——
+         cron 空值跳过 + dateTimeBetween(updateTime) 扫描 + 逐条 IErpSysNotificationBiz 派发 log.draft-escalation） -->
+    <bean id="erpLogDraftEscalationJob"
+          class="app.erp.log.service.job.ErpLogDraftEscalationJob"/>
+
+    <!-- RC-R1.38（P1-RC-085，UC-LOG-03）：追踪轮询兜底 job（R1.4 简单 job bean 范式——
+         消费 erp-log.tracking-poll-cron 既有键[dead config 转活跃] + 调 scanForPolling 全量推进） -->
+    <bean id="erpLogTrackingPollJob"
+          class="app.erp.log.service.job.ErpLogTrackingPollJob"/>
+
 </beans>

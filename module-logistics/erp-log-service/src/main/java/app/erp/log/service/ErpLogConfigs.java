@@ -11,7 +11,8 @@ public interface ErpLogConfigs {
     String CONFIG_GATEWAY_MAX_RETRIES = "erp-log.gateway-max-retries";
     /** 重试间隔（秒，逗号分隔，指数退避序列），默认 {@code 30,120,600}。 */
     String CONFIG_RETRY_BASE_INTERVAL_SECS = "erp-log.retry-base-interval-secs";
-    /** 追踪轮询 cron，默认 {@code 0 0 *&#47;4 * * ?}（每 4 小时）。 */
+    /** 追踪轮询 cron，默认 {@code 0 0 *&#47;4 * * ?}（每 4 小时）。RC-R1.38：由 dead 转活跃——
+     * 双消费点（{@code erp-log-tracking-poll.job.yaml} cronExpr + {@code ErpLogTrackingPollJob} bean 空值跳过）。 */
     String CONFIG_TRACKING_POLLING_CRON = "erp-log.tracking-poll-cron";
     /** 运费结算模式：AUTO（默认，DELIVERED 自动过账）/ MANUAL（仅标记待处理）。 */
     String CONFIG_SHIPMENT_SETTLEMENT_MODE = "erp-log.shipment-settlement-mode";
@@ -20,6 +21,13 @@ public interface ErpLogConfigs {
 
     /** 销售运费费用科目编码（缺省回退），默认 6601 销售费用。 */
     String CONFIG_SALES_FREIGHT_EXPENSE_SUBJECT = "erp-log.sales-freight-expense-subject";
+
+    // ---- RC-R1.37（P1-RC-084，UC-LOG-01）：DRAFT 24h 升级通知 ----
+
+    /** DRAFT 发运单升级阈值（小时），默认 24（对齐 use-cases.md L1 字面「超过 24 小时」）。 */
+    String CONFIG_DRAFT_ESCALATION_HOURS = "erp-log.draft-escalation-hours";
+    /** DRAFT 升级扫描 cron，默认 {@code 0 30 1 * * ?}（每日 01:30）；空值 = 跳过（R1.4 双键门控语义）。 */
+    String CONFIG_DRAFT_ESCALATION_CRON = "erp-log.draft-escalation-cron";
 
     String DEFAULT_SALES_FREIGHT_EXPENSE_SUBJECT = "6601";
 
@@ -31,4 +39,7 @@ public interface ErpLogConfigs {
     String DEFAULT_RETRY_INTERVAL_SECS = "30,120,600";
     String DEFAULT_TRACKING_POLLING_CRON = "0 0 */4 * * ?";
     boolean DEFAULT_WEBHOOK_SIGNATURE_REQUIRED = true;
+
+    long DEFAULT_DRAFT_ESCALATION_HOURS = 24;
+    String DEFAULT_DRAFT_ESCALATION_CRON = "0 30 1 * * ?";
 }

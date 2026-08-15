@@ -49,6 +49,10 @@ public interface ErpLogConstants {
     /** mock 承运商网关标识。 */
     String GATEWAY_ID_MOCK = "mock";
 
+    // ---- notify 事件（跨域通知派发子系统） ----
+    /** DRAFT 超阈值升级通知事件（RC-R1.37，P1-RC-084，UC-LOG-01；USER_LIST ${submitterUserId} 接收人）。 */
+    String NOTIFY_EVENT_DRAFT_ESCALATION = "log.draft-escalation";
+
     /** path-2 运费→到岸成本自动创建开关（默认 false，向后兼容）。plan 2026-07-11-2329-1。 */
     String CONFIG_PATH2_LANDED_COST_AUTO_CREATE = "erp-log.path2-landed-cost-auto-create";
 }
