@@ -357,6 +357,8 @@ HMAC 验签 ──失败──→ 401 拒绝，记录 ErpLogShipmentLog
 | `erp-log.tracking-poll-cron` | `0 0 */4 * * ?` | 每 4 小时轮询一次 |
 | `erp-log.tracking-poll-max-days` | 30 | 仅轮询近 30 天内 DISPATCHED/IN_TRANSIT 的记录 |
 
+> **轮询调度已接线**（RC-R1.38，P1-RC-085，plan `2026-08-15-1605-1`）：`ErpLogTrackingPollJob`（`app.erp.log.service.job`，R1.4 简单 job bean——否决 batch-task 的 D1 裁决：`scanForPolling` 是全量语义单入口，batch 化需重构 per-shipment 轮询方法超范围）经 `erp-log-tracking-poll.job.yaml` 注册（enabled 默认 false + cronExpr 消费 **既有键** `erp-log.tracking-poll-cron` 默认 `0 0 */4 * * ?`，空值=跳过）。触发时 `ormTemplate.runInSession` 包裹调 `IErpLogShipmentBiz.scanForPolling` 一次——DISPATCHED/IN_TRANSIT 运单调 `trackShipment` 推进，DELIVERED 翻转后逐单 `onDelivered`（path-1 运费过账 / path-2 到岸成本编排），失败隔离由既有 `ErpLogShipmentScanForPollingProcessor` 内部保证，本 job 零业务逻辑仅接线。`erp-log.tracking-poll-max-days` 仍为未消费配置项（scanForPolling 现行为全量扫描 + `q.setLimit(100)` 单轮），保持登记不承诺。
+
 ---
 
 ## 六、比价（Rate Shopping）

@@ -124,6 +124,8 @@
 避免"草稿发运单长期滞留"：DRAFT 超过 24 小时产生升级 TODO，通知物流主管。
 避免"网关异常长期未处理"：ADVISED 网关异常标记后 4 小时升级通知。
 
+> **DRAFT 24h 升级已落地**（RC-R1.37，P1-RC-084，plan `2026-08-15-1605-1`）：`ErpLogDraftEscalationJob`（`app.erp.log.service.job`）经 `erp-log-draft-escalation.job.yaml` 注册（enabled 默认 false + cronExpr 消费 `erp-log.draft-escalation-cron` 默认 `0 30 1 * * ?`，空值=跳过）。扫描 DRAFT 且 updateTime 超 `erp-log.draft-escalation-hours`（默认 24）发运单（dateTimeBetween(updateTime) 窗口 + limit 200），逐条经 `IErpSysNotificationBiz.notify` 派发 `log.draft-escalation` 事件，逐条失败隔离（WARN 不阻断）。**接收人裁决（D2）**：USER_LIST `${submitterUserId}` = 发货员 `createdBy`（物流域角色权限边界未设计，`roles-and-permissions.md:195`）；「通知物流主管」语义登记 successor（角色基础设施落地后切换 ROLE 模板 + 上级链解析，对齐 R1.4/R1.35 上级兜底链范式）。通知模板 seed 行：`module-notify/deploy/sql/*/_seed_erp-notify.sql` ID 7201。重复升级通知（滞留期每日重复派发）为 watch-only residual（「已通知」标记列触 ORM 移出范围，successor 登记）。
+
 > **网关异常告警落地**（G4 错误传播分级，plan `2026-07-30-0341-2` Phase 3 P1-MA2-080）：`GatewayDispatcher.deadLetter` 派发 `IErpSysNotificationBiz` 告警（`log.gateway-dead-letter`），使 ADVISED 死信发运单不再静默悬挂。logistics 网关无 `DeferredPostingSweepJob` 覆盖（比 peer dispatcher 更严重），告警是失败恢复的唯一闭环入口；自愈路径为人工干预（修复网关配置 / 手工重发 webhook）。DELIVERED-PENDING 运费过账悬挂同理（onDelivered 失败派发告警，期末前置检查兜底）。
 
 ### 9. 场景演练
