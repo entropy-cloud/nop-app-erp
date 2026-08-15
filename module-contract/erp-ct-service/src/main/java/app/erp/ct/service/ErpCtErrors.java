@@ -45,6 +45,16 @@ public interface ErpCtErrors {
             "合同 {contractCode} 已中止，期间不可触发生成新发票",
             ARG_CONTRACT_CODE);
 
+    // --- 创建校验（RC-R1.32，UC-CT-01 跨字段校验） ---
+
+    ErrorCode ERR_CT_AMOUNT_MISMATCH = ErrorCode.define("erp.err.ct.amount-mismatch",
+            "合同 {contractCode} 总金额 {totalAmount} 与行金额合计 {sumLineAmount} 不一致",
+            ARG_CONTRACT_CODE, "totalAmount", "sumLineAmount");
+
+    ErrorCode ERR_CT_DATE_RANGE_INVALID = ErrorCode.define("erp.err.ct.date-range-invalid",
+            "合同 {contractCode} 生效日期 {startDate} 必须早于到期日期 {endDate}",
+            ARG_CONTRACT_CODE, "startDate", "endDate");
+
     // --- 版本管理（dict erp-ct/version-status） ---
 
     ErrorCode ERR_CT_VERSION_NOT_CURRENT = ErrorCode.define("erp.err.ct.version-not-current",

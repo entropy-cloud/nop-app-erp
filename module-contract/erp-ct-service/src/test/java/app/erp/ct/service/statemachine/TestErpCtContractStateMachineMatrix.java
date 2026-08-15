@@ -25,9 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 不断言副作用/审计。覆盖：
  * <ul>
  *   <li>(a) 无重复/冲突边；</li>
- *   <li>(b) 从 DRAFT 命名动作可达性 = **空集**（NEGOTIATION 在命名动作下从 DRAFT 不可达——
- *       {@code submitForNegotiation} 未落地，零 {@code setStatus(NEGOTIATION)} writer，层 2 漂移项；
- *       Bean 如实不编码该边，本测试断言此事实而非伪造可达边）；</li>
+ *   <li>(b) 从 DRAFT 命名动作可达性 = {NEGOTIATION, ACTIVE}（RC-R1.32 落地 submit(DRAFT→NEGOTIATION)
+ *       + rejectAmend(DRAFT→ACTIVE) 两出边——§2 漂移 successor 已编码）；</li>
  *   <li>(c) terminate 多源 {ACTIVE, NEGOTIATION} 全覆盖、对其余态（含终态）非法；</li>
  *   <li>(d) {@code transitions()} 元数据与显式方法语义一致；</li>
  *   <li>(e) 终态/初始态集合正确（终态 = {EXPIRED, TERMINATED}；CANCELLED 因 dict 缺值 + 零 writer 不纳入）。</li>
@@ -59,21 +58,23 @@ public class TestErpCtContractStateMachineMatrix {
             // 同一 action + 同一 fromStatus 不得出现多次（否则冲突）
             assertTrue(seen.add(key), "重复/冲突边: action=" + e.getAction() + ", fromStatus=" + e.getFromStatus());
         }
-        assertEquals(7, edges.size(), "迁移矩阵应有 7 条边（terminate 多源占 2）");
+        assertEquals(9, edges.size(), "迁移矩阵应有 9 条边（terminate 多源占 2 + RC-R1.32 新增 submit/rejectAmend）");
     }
 
-    // ---------- (b) 从 DRAFT 命名动作可达性 = 空集（NEGOTIATION 漂移事实） ----------
+    // ---------- (b) 从 DRAFT 命名动作可达性 = {NEGOTIATION, ACTIVE}（RC-R1.32 已落地出边） ----------
 
     @Test
-    public void testReachabilityFromDraftIsEmptyDueToNoSubmitWriter() {
-        // 关键漂移事实：命名动作路径下从 DRAFT 无出边
-        // （DRAFT→NEGOTIATION 的 submitForNegotiation 未落地；DRAFT→CANCELLED 的 cancel 未落地 + dict 缺值）。
-        // Bean 如实不编码这两条边，故从 DRAFT 经命名动作无可达状态。
+    public void testReachabilityFromDraftCoversSubmitAndRejectAmend() {
+        // RC-R1.32 修复：命名动作路径下从 DRAFT 有 submit(DRAFT→NEGOTIATION) + rejectAmend(DRAFT→ACTIVE)
+        // 两出边（§2 漂移 successor 已编码）；CANCELLED 仍不可达（dict 缺值 + 零 writer，dict drift）。
         Set<String> reachable = reachableFrom(ErpCtConstants.CONTRACT_STATUS_DRAFT);
-        assertTrue(reachable.isEmpty(),
-                "从 DRAFT 命名动作可达集应为空（NEGOTIATION 不可达=implementation drift，CANCELLED=dict drift）: " + reachable);
-        assertFalse(reachable.contains(ErpCtConstants.CONTRACT_STATUS_NEGOTIATION),
-                "NEGOTIATION 在命名动作下从 DRAFT 不可达（层 2 漂移事实，非伪造边）");
+        assertTrue(reachable.contains(ErpCtConstants.CONTRACT_STATUS_NEGOTIATION),
+                "从 DRAFT 经 submit 命名动作可达 NEGOTIATION（RC-R1.32 落地）: " + reachable);
+        assertTrue(reachable.contains(ErpCtConstants.CONTRACT_STATUS_ACTIVE),
+                "从 DRAFT 经 rejectAmend→ACTIVE 可达（驳回恢复出边）: " + reachable);
+        assertTrue(reachable.contains(ErpCtConstants.CONTRACT_STATUS_SUSPENDED), "DRAFT→ACTIVE→SUSPENDED 可达");
+        assertTrue(reachable.contains(ErpCtConstants.CONTRACT_STATUS_EXPIRED), "DRAFT→ACTIVE→EXPIRED 可达");
+        assertTrue(reachable.contains(ErpCtConstants.CONTRACT_STATUS_TERMINATED), "DRAFT→NEGOTIATION→TERMINATED 可达");
     }
 
     @Test
@@ -153,6 +154,10 @@ public class TestErpCtContractStateMachineMatrix {
 
     @Test
     public void testExplicitActionGuards() {
+        // submit: 仅 DRAFT 合法（RC-R1.32，§2 漂移 successor）
+        assertActionAllowsOnly("submit", ErpCtConstants.CONTRACT_STATUS_DRAFT);
+        // rejectAmend: 仅 DRAFT 合法（RC-R1.32，驳回恢复出边）
+        assertActionAllowsOnly("rejectAmend", ErpCtConstants.CONTRACT_STATUS_DRAFT);
         // activate: 仅 NEGOTIATION 合法
         assertActionAllowsOnly("activate", ErpCtConstants.CONTRACT_STATUS_NEGOTIATION);
         // suspend: 仅 ACTIVE 合法
@@ -167,12 +172,14 @@ public class TestErpCtContractStateMachineMatrix {
 
     @Test
     public void testTargetStatusMethods() {
+        assertEquals(ErpCtConstants.CONTRACT_STATUS_NEGOTIATION, sm.submitTargetStatus());
         assertEquals(ErpCtConstants.CONTRACT_STATUS_ACTIVE, sm.activateTargetStatus());
         assertEquals(ErpCtConstants.CONTRACT_STATUS_SUSPENDED, sm.suspendTargetStatus());
         assertEquals(ErpCtConstants.CONTRACT_STATUS_ACTIVE, sm.resumeTargetStatus());
         assertEquals(ErpCtConstants.CONTRACT_STATUS_TERMINATED, sm.terminateTargetStatus());
         assertEquals(ErpCtConstants.CONTRACT_STATUS_EXPIRED, sm.expireTargetStatus());
         assertEquals(ErpCtConstants.CONTRACT_STATUS_DRAFT, sm.amendTargetStatus());
+        assertEquals(ErpCtConstants.CONTRACT_STATUS_ACTIVE, sm.rejectAmendTargetStatus());
     }
 
     // ---------- helpers ----------
@@ -199,6 +206,9 @@ public class TestErpCtContractStateMachineMatrix {
 
     private void invokeAssert(String action, String status) {
         switch (action) {
+            case "submit":
+                sm.assertCanSubmitForNegotiation(status);
+                break;
             case "activate":
                 sm.assertCanActivate(status);
                 break;
@@ -217,6 +227,9 @@ public class TestErpCtContractStateMachineMatrix {
             case "amend":
                 sm.assertCanAmend(status);
                 break;
+            case "rejectAmend":
+                sm.assertCanRejectAmend(status);
+                break;
             default:
                 throw new IllegalArgumentException("unknown action: " + action);
         }
@@ -224,6 +237,8 @@ public class TestErpCtContractStateMachineMatrix {
 
     private String targetStatusFor(String action) {
         switch (action) {
+            case "submit":
+                return sm.submitTargetStatus();
             case "activate":
                 return sm.activateTargetStatus();
             case "suspend":
@@ -236,6 +251,8 @@ public class TestErpCtContractStateMachineMatrix {
                 return sm.expireTargetStatus();
             case "amend":
                 return sm.amendTargetStatus();
+            case "rejectAmend":
+                return sm.rejectAmendTargetStatus();
             default:
                 throw new IllegalArgumentException("unknown action: " + action);
         }

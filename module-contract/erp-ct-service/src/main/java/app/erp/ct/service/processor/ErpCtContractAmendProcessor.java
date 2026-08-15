@@ -48,6 +48,10 @@ public class ErpCtContractAmendProcessor {
             throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_ACTIVE, e);
         }
 
+        // 行语义（D3 裁决，RC-R1.32）：同合同 amend 模型下「复制原合同所有行到变更单」= 行保留即满足——
+        // 变更单 = 同合同 DRAFT 态，行留在 contractId 下，版本切换不删行、变更 DRAFT 可编辑既有行；
+        // 逐行 newEntity 复制会在同 contractId 下产生重复行，与同合同模型冲突，故零复制代码（见
+        // docs/design/contract/state-machine.md §适用对象二 + arm-index RC-R1.32 落地摘要）。
         // 修订：新建版本（versionNo = max+1），原子翻转 isCurrent（旧版本 false，新版本 true）
         List<ErpCtContractVersion> versions = findVersions(contract.getId(), context);
         int maxVersionNo = 0;

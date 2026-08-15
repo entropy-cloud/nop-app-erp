@@ -21,19 +21,23 @@ import java.util.List;
  * <p>非法边抛 common 层 {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/
  * {@code expectedStatus}），并附 {@code action} 补充诊断参数；领域 ErrorCode 映射归 Processor/BizModel（契约 §7）。
  *
- * <p>迁移矩阵（7 条边，仅编码命名动作路径下**已落地**的 writer）：
+ * <p>迁移矩阵（9 条边，仅编码命名动作路径下**已落地**的 writer）：
  * <ul>
+ *   <li>submit(DRAFT→NEGOTIATION)（提交谈判，RC-R1.32 落地 §2 漂移 successor）；</li>
  *   <li>activate(NEGOTIATION→ACTIVE)；</li>
  *   <li>suspend(ACTIVE→SUSPENDED)、resume(SUSPENDED→ACTIVE)；</li>
  *   <li>terminate(ACTIVE→TERMINATED)、terminate(NEGOTIATION→TERMINATED)（多源：生效合同提前终止 + 谈判破裂）；</li>
  *   <li>expire(ACTIVE→EXPIRED)；</li>
- *   <li>amend(ACTIVE→DRAFT)（修订回草稿）。</li>
+ *   <li>amend(ACTIVE→DRAFT)（修订回草稿）；</li>
+ *   <li>rejectAmend(DRAFT→ACTIVE)（变更单驳回恢复，RC-R1.32）。</li>
  * </ul>
  *
- * <p><strong>NEGOTIATION 可达性漂移（如实编码，非伪造边）</strong>：命名动作路径下从 DRAFT **无** {@code setStatus(NEGOTIATION)}
- * writer（{@code submitForNegotiation} 未落地），故 NEGOTIATION 在命名动作下从 DRAFT 不可达——本 Bean 不编码该出边。
- * 合同经 CRUD 创建可直接写 NEGOTIATION（M0.1 §9.4 残留风险）；NEGOTIATION 仅作为 activate/terminate 的源态被消费。
- * 此漂移在 plan 2026-08-12-1118-1 层 2 四方对照登记为 implementation drift + successor。
+ * <p><strong>NEGOTIATION 可达性漂移（RC-R1.32 已修复）</strong>：命名动作路径下从 DRAFT 的
+ * {@code setStatus(NEGOTIATION)} writer（{@code submitForNegotiation}）已由本行落地
+ * （{@link #assertCanSubmitForNegotiation} + {@link ErpCtContractBizModel#submit}），DRAFT 出边
+ * = submit(DRAFT→NEGOTIATION) + rejectAmend(DRAFT→ACTIVE)。NEGOTIATION 不再仅作为 activate/terminate
+ * 的源态被消费（该漂移在 plan 2026-08-12-1118-1 层 2 四方对照登记为 implementation drift + successor，
+ * 本 Bean 已按 successor 落地编码该边）。
  *
  * <p><strong>CANCELLED 漂移</strong>：owner doc 声明 {@code DRAFT→CANCELLED} 草稿废弃终态，但 dict
  * {@code erp-ct/contract-status} 缺 CANCELLED 值且零 writer → 本 Bean 不纳入终态集（dict 与 writer 双侧均无）。
@@ -45,6 +49,23 @@ public class ErpCtContractStateMachine {
     public static final String ARG_ACTION = "action";
 
     // ---------- 显式动作方法（主路径） ----------
+
+    /**
+     * submit 守卫：仅 DRAFT 合法（RC-R1.32 落地 §2 漂移 successor，UC-CT-01 提交审批）。
+     *
+     * <p><strong>不因已有版本拒绝</strong>——amend 生命周期下变更 DRAFT 已有版本
+     * （v1 false + v2 DRAFT true），submit 是其唯一前向出口（MAJOR-1 修正：仅守卫 status==DRAFT，
+     * 零版本建 v1 / 已有版本保留既有 DRAFT 当前版本不动，由 BizModel 实现承载）。
+     */
+    public void assertCanSubmitForNegotiation(String status) {
+        if (!ErpCtConstants.CONTRACT_STATUS_DRAFT.equals(status)) {
+            throw illegal("submit", status, ErpCtConstants.CONTRACT_STATUS_DRAFT);
+        }
+    }
+
+    public String submitTargetStatus() {
+        return ErpCtConstants.CONTRACT_STATUS_NEGOTIATION;
+    }
 
     public void assertCanActivate(String status) {
         if (!ErpCtConstants.CONTRACT_STATUS_NEGOTIATION.equals(status)) {
@@ -114,6 +135,22 @@ public class ErpCtContractStateMachine {
         return ErpCtConstants.CONTRACT_STATUS_DRAFT;
     }
 
+    /**
+     * rejectAmend 守卫：仅 DRAFT 合法（RC-R1.32 落地，UC-CT-02 异常「变更单被驳回 → 原合同保持 ACTIVE 不变」）。
+     * 恢复目标（前任 current 版本）规格化见 {@link ErpCtContractBizModel#rejectAmend}（D5 选项 B：
+     * 优先 SIGNED 最大 versionNo，无 SIGNED 回落 FINALIZED 最大者——恢复时推导，跨请求可行 + 对遗留
+     * DRAFT 行免疫 + 防 finalize-then-reject 恢复未签署 FINALIZED 为 current）。
+     */
+    public void assertCanRejectAmend(String status) {
+        if (!ErpCtConstants.CONTRACT_STATUS_DRAFT.equals(status)) {
+            throw illegal("rejectAmend", status, ErpCtConstants.CONTRACT_STATUS_DRAFT);
+        }
+    }
+
+    public String rejectAmendTargetStatus() {
+        return ErpCtConstants.CONTRACT_STATUS_ACTIVE;
+    }
+
     // ---------- 终态/初始态分类 ----------
 
     /**
@@ -131,13 +168,15 @@ public class ErpCtContractStateMachine {
 
     public List<TransitionDefinition> transitions() {
         return Collections.unmodifiableList(Arrays.asList(
+                new TransitionDefinition("submit", ErpCtConstants.CONTRACT_STATUS_DRAFT, ErpCtConstants.CONTRACT_STATUS_NEGOTIATION),
                 new TransitionDefinition("activate", ErpCtConstants.CONTRACT_STATUS_NEGOTIATION, ErpCtConstants.CONTRACT_STATUS_ACTIVE),
                 new TransitionDefinition("suspend", ErpCtConstants.CONTRACT_STATUS_ACTIVE, ErpCtConstants.CONTRACT_STATUS_SUSPENDED),
                 new TransitionDefinition("resume", ErpCtConstants.CONTRACT_STATUS_SUSPENDED, ErpCtConstants.CONTRACT_STATUS_ACTIVE),
                 new TransitionDefinition("terminate", ErpCtConstants.CONTRACT_STATUS_ACTIVE, ErpCtConstants.CONTRACT_STATUS_TERMINATED),
                 new TransitionDefinition("terminate", ErpCtConstants.CONTRACT_STATUS_NEGOTIATION, ErpCtConstants.CONTRACT_STATUS_TERMINATED),
                 new TransitionDefinition("expire", ErpCtConstants.CONTRACT_STATUS_ACTIVE, ErpCtConstants.CONTRACT_STATUS_EXPIRED),
-                new TransitionDefinition("amend", ErpCtConstants.CONTRACT_STATUS_ACTIVE, ErpCtConstants.CONTRACT_STATUS_DRAFT)));
+                new TransitionDefinition("amend", ErpCtConstants.CONTRACT_STATUS_ACTIVE, ErpCtConstants.CONTRACT_STATUS_DRAFT),
+                new TransitionDefinition("rejectAmend", ErpCtConstants.CONTRACT_STATUS_DRAFT, ErpCtConstants.CONTRACT_STATUS_ACTIVE)));
     }
 
     public List<String> terminalStatuses() {
