@@ -177,6 +177,48 @@ public class TestErpFinBankStatementImport extends JunitAutoTestCase {
         assertNotEquals(h1.getId(), h2.getId());
     }
 
+    @Test
+    public void testImportPersistsCounterpartyFields() {
+        final Long[] accountId = new Long[1];
+        ormTemplate.runInSession(() -> accountId[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK,
+                new BigDecimal("1000")));
+
+        BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-CP-1",
+                ErpFinConstants.DC_CREDIT, new BigDecimal("500"));
+        l1.setCounterpartyAccount("6222 0000 1111");
+        l1.setCounterpartyName("甲公司");
+        l1.setCounterpartyBank("工商银行上海分行");
+
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(accountId[0],
+                LocalDate.of(2026, 6, 30), Collections.singletonList(l1), CTX));
+
+        List<ErpFinBankStatementLine> lines = loadLines(head.getId());
+        assertEquals(1, lines.size());
+        ErpFinBankStatementLine line = lines.get(0);
+        assertEquals("6222 0000 1111", line.getCounterpartyAccount(), "对方账号应落库");
+        assertEquals("甲公司", line.getCounterpartyName(), "对方户名应落库");
+        assertEquals("工商银行上海分行", line.getCounterpartyBank(), "对方开户行应落库");
+    }
+
+    @Test
+    public void testImportCounterpartyNullsPassthrough() {
+        final Long[] accountId = new Long[1];
+        ormTemplate.runInSession(() -> accountId[0] = seedFundAccount(ErpFinConstants.FUND_ACCOUNT_TYPE_BANK,
+                new BigDecimal("1000")));
+
+        BankStatementLineInput l1 = line(LocalDate.of(2026, 6, 10), "REF-CP-NULL-1",
+                ErpFinConstants.DC_CREDIT, new BigDecimal("200"));
+
+        ErpFinBankStatement head = ormTemplate.runInSession(session -> bankStatementBiz.importStatement(accountId[0],
+                LocalDate.of(2026, 6, 30), Collections.singletonList(l1), CTX));
+
+        List<ErpFinBankStatementLine> lines = loadLines(head.getId());
+        assertEquals(1, lines.size());
+        assertEquals(null, lines.get(0).getCounterpartyAccount(), "缺省对方账号为 null");
+        assertEquals(null, lines.get(0).getCounterpartyName(), "缺省对方户名为 null");
+        assertEquals(null, lines.get(0).getCounterpartyBank(), "缺省对方开户行为 null");
+    }
+
     // ---------- helpers ----------
 
     private List<ErpFinBankStatementLine> loadLines(Long statementId) {

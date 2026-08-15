@@ -88,6 +88,9 @@ public class BankStatementImporter {
             line.setAmount(in.getAmount());
             line.setCurrencyId(account.getCurrencyId());
             line.setBalanceAfter(in.getBalanceAfter() != null ? in.getBalanceAfter() : lastBalance);
+            line.setCounterpartyAccount(in.getCounterpartyAccount());
+            line.setCounterpartyName(in.getCounterpartyName());
+            line.setCounterpartyBank(in.getCounterpartyBank());
             line.setMatchStatus(ErpFinConstants.BANK_MATCH_UNMATCHED);
             lineDao.saveEntity(line);
 

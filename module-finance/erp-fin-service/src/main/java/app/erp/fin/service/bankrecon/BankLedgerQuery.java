@@ -6,6 +6,7 @@ import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.commons.util.StringHelper;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
@@ -30,6 +31,10 @@ import static io.nop.api.core.beans.FilterBeans.le;
  * {@code [txnDate − daysWindow, txnDate + daysWindow]} 内、{@code docStatus=POSTED} 且未红冲的分录。
  *
  * <p>方向语义：银行 {@code DEBIT}(扣款/流出) ↔ 账面 {@code CREDIT}(贷方/资金流出)；调用方传入反向。
+ *
+ * <p>对方账号维度（P1-RC-004 / RC-R1.43）：{@code counterpartyName} 非空时，候选行经
+ * {@code partner} 关系解析 {@code ErpMdPartner.name} 做非空精确匹配（两侧任一为空放行，见
+ * {@code bank-reconciliation.md §业务规则 2} 实现注记）。
  */
 public class BankLedgerQuery {
 
@@ -37,7 +42,8 @@ public class BankLedgerQuery {
     IDaoProvider daoProvider;
 
     public List<ErpFinVoucherLine> findCandidates(ErpFinFundAccount fundAccount, BigDecimal amount,
-                                                    String oppositeDirection, LocalDate txnDate, int daysWindow) {
+                                                    String oppositeDirection, LocalDate txnDate, int daysWindow,
+                                                    String counterpartyName) {
         if (fundAccount == null || fundAccount.getSubjectId() == null
                 || amount == null || txnDate == null || oppositeDirection == null) {
             return new ArrayList<>();
@@ -79,6 +85,16 @@ public class BankLedgerQuery {
             if (!occupied.contains(line.getId())) {
                 filtered.add(line);
             }
+        }
+
+        // 对方账号维度过滤（C1 选项 A + C2 选项 A，plan 2026-08-15-1838-2 Phase 1 裁决）：
+        // 对账单行 counterpartyName 与候选侧 partner.name（经 ErpFinVoucherLine.partner 关系解析）做非空精确匹配；
+        // 两侧任一为空放行（保持既有 seed 无 counterparty 数据零回归）。
+        if (StringHelper.isNotBlank(counterpartyName)) {
+            filtered.removeIf(line -> {
+                String partnerName = line.getPartner() == null ? null : line.getPartner().getName();
+                return partnerName != null && !partnerName.equals(counterpartyName);
+            });
         }
         return filtered;
     }

@@ -234,6 +234,9 @@ prop:
     ErpFinBankStatementLine:
       amount: 金额
       balanceAfter: 交易后余额
+      counterpartyAccount: 对方账号
+      counterpartyBank: 对方开户行
+      counterpartyName: 对方户名
       createTime: 创建时间
       createdBy: 创建人
       currency: null

@@ -97,8 +97,20 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 19;
     
+    /* 对方账号: COUNTERPARTY_ACCOUNT VARCHAR */
+    public static final String PROP_NAME_counterpartyAccount = "counterpartyAccount";
+    public static final int PROP_ID_counterpartyAccount = 20;
+    
+    /* 对方户名: COUNTERPARTY_NAME VARCHAR */
+    public static final String PROP_NAME_counterpartyName = "counterpartyName";
+    public static final int PROP_ID_counterpartyName = 21;
+    
+    /* 对方开户行: COUNTERPARTY_BANK VARCHAR */
+    public static final String PROP_NAME_counterpartyBank = "counterpartyBank";
+    public static final int PROP_ID_counterpartyBank = 22;
+    
 
-    private static int _PROP_ID_BOUND = 20;
+    private static int _PROP_ID_BOUND = 23;
 
     
     /* relation:  */
@@ -114,7 +126,7 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[20];
+    private static final String[] PROP_ID_TO_NAME = new String[23];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -175,6 +187,15 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_counterpartyAccount] = PROP_NAME_counterpartyAccount;
+          PROP_NAME_TO_ID.put(PROP_NAME_counterpartyAccount, PROP_ID_counterpartyAccount);
+      
+          PROP_ID_TO_NAME[PROP_ID_counterpartyName] = PROP_NAME_counterpartyName;
+          PROP_NAME_TO_ID.put(PROP_NAME_counterpartyName, PROP_ID_counterpartyName);
+      
+          PROP_ID_TO_NAME[PROP_ID_counterpartyBank] = PROP_NAME_counterpartyBank;
+          PROP_NAME_TO_ID.put(PROP_NAME_counterpartyBank, PROP_ID_counterpartyBank);
+      
     }
 
     
@@ -234,6 +255,15 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 对方账号: COUNTERPARTY_ACCOUNT */
+    private java.lang.String _counterpartyAccount;
+    
+    /* 对方户名: COUNTERPARTY_NAME */
+    private java.lang.String _counterpartyName;
+    
+    /* 对方开户行: COUNTERPARTY_BANK */
+    private java.lang.String _counterpartyBank;
     
 
     public _ErpFinBankStatementLine(){
@@ -365,6 +395,15 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_counterpartyAccount:
+               return getCounterpartyAccount();
+        
+            case PROP_ID_counterpartyName:
+               return getCounterpartyName();
+        
+            case PROP_ID_counterpartyBank:
+               return getCounterpartyBank();
         
            default:
               return super.orm_propValue(propId);
@@ -567,6 +606,36 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_counterpartyAccount:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_counterpartyAccount));
+               }
+               setCounterpartyAccount(typedValue);
+               break;
+            }
+        
+            case PROP_ID_counterpartyName:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_counterpartyName));
+               }
+               setCounterpartyName(typedValue);
+               break;
+            }
+        
+            case PROP_ID_counterpartyBank:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_counterpartyBank));
+               }
+               setCounterpartyBank(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -705,6 +774,27 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_counterpartyAccount:{
+               onInitProp(propId);
+               this._counterpartyAccount = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_counterpartyName:{
+               onInitProp(propId);
+               this._counterpartyName = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_counterpartyBank:{
+               onInitProp(propId);
+               this._counterpartyBank = (java.lang.String)value;
                
                break;
             }
@@ -1072,6 +1162,63 @@ public class _ErpFinBankStatementLine extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 对方账号: COUNTERPARTY_ACCOUNT
+     */
+    public final java.lang.String getCounterpartyAccount(){
+         onPropGet(PROP_ID_counterpartyAccount);
+         return _counterpartyAccount;
+    }
+
+    /**
+     * 对方账号: COUNTERPARTY_ACCOUNT
+     */
+    public final void setCounterpartyAccount(java.lang.String value){
+        if(onPropSet(PROP_ID_counterpartyAccount,value)){
+            this._counterpartyAccount = value;
+            internalClearRefs(PROP_ID_counterpartyAccount);
+            
+        }
+    }
+    
+    /**
+     * 对方户名: COUNTERPARTY_NAME
+     */
+    public final java.lang.String getCounterpartyName(){
+         onPropGet(PROP_ID_counterpartyName);
+         return _counterpartyName;
+    }
+
+    /**
+     * 对方户名: COUNTERPARTY_NAME
+     */
+    public final void setCounterpartyName(java.lang.String value){
+        if(onPropSet(PROP_ID_counterpartyName,value)){
+            this._counterpartyName = value;
+            internalClearRefs(PROP_ID_counterpartyName);
+            
+        }
+    }
+    
+    /**
+     * 对方开户行: COUNTERPARTY_BANK
+     */
+    public final java.lang.String getCounterpartyBank(){
+         onPropGet(PROP_ID_counterpartyBank);
+         return _counterpartyBank;
+    }
+
+    /**
+     * 对方开户行: COUNTERPARTY_BANK
+     */
+    public final void setCounterpartyBank(java.lang.String value){
+        if(onPropSet(PROP_ID_counterpartyBank,value)){
+            this._counterpartyBank = value;
+            internalClearRefs(PROP_ID_counterpartyBank);
             
         }
     }

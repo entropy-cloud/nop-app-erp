@@ -303,6 +303,48 @@
         }
 
 
+        private String _counterpartyAccount;
+
+    
+        @PropMeta(propId=20)
+    
+        public String getCounterpartyAccount(){
+            return _counterpartyAccount;
+        }
+
+        public void setCounterpartyAccount(String value){
+            this._counterpartyAccount = value;
+        }
+
+
+        private String _counterpartyName;
+
+    
+        @PropMeta(propId=21)
+    
+        public String getCounterpartyName(){
+            return _counterpartyName;
+        }
+
+        public void setCounterpartyName(String value){
+            this._counterpartyName = value;
+        }
+
+
+        private String _counterpartyBank;
+
+    
+        @PropMeta(propId=22)
+    
+        public String getCounterpartyBank(){
+            return _counterpartyBank;
+        }
+
+        public void setCounterpartyBank(String value){
+            this._counterpartyBank = value;
+        }
+
+
         private Map<String,Object> _statement;
 
         public Map<String,Object> getStatement(){

@@ -95,6 +95,18 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="counterpartyAccount" displayName="对方账号" propId="20" i18n-en:displayName="Counterparty Account"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="counterpartyName" displayName="对方户名" propId="21" i18n-en:displayName="Counterparty Name"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="counterpartyBank" displayName="对方开户行" propId="22" i18n-en:displayName="Counterparty Bank"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
         <prop name="statement" i18n-en:displayName="Statement" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="statementId" ext:joinRightProp="id" insertable="false"
               updatable="false" mandatory="true" lazy="true">

@@ -875,6 +875,9 @@ CREATE TABLE erp_fin_bank_statement_line(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  COUNTERPARTY_ACCOUNT VARCHAR2(50)  ,
+  COUNTERPARTY_NAME VARCHAR2(200)  ,
+  COUNTERPARTY_BANK VARCHAR2(200)  ,
   constraint PK_erp_fin_bank_statement_line primary key (ID)
 );
 
@@ -2399,6 +2402,12 @@ CREATE TABLE erp_fin_budget_control_log(
       COMMENT ON COLUMN erp_fin_bank_statement_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_bank_statement_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.COUNTERPARTY_ACCOUNT IS '对方账号';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.COUNTERPARTY_NAME IS '对方户名';
+                    
+      COMMENT ON COLUMN erp_fin_bank_statement_line.COUNTERPARTY_BANK IS '对方开户行';
                     
       COMMENT ON TABLE erp_fin_budget_line IS '预算明细行';
                 

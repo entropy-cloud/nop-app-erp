@@ -56,7 +56,8 @@ public class BankStatementMatcher {
                 continue;
             }
             List<ErpFinVoucherLine> candidates = bankLedgerQuery.findCandidates(
-                    account, line.getAmount(), oppositeDirection, line.getTransactionDate(), daysWindow);
+                    account, line.getAmount(), oppositeDirection, line.getTransactionDate(), daysWindow,
+                    line.getCounterpartyName());
 
             if (candidates.size() == 1) {
                 ErpFinVoucherLine chosen = candidates.get(0);

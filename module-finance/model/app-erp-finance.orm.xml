@@ -1147,6 +1147,9 @@
                 <column name="matchStatus" displayName="匹配状态" ext:dict="erp-fin/bank-match-status" mandatory="true" code="MATCH_STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Match Status' />
                 <column name="matchedLineId" displayName="匹配凭证行ID" stdSqlType="BIGINT" code="MATCHED_LINE_ID" propId="12" stdDataType="long" i18n-en:displayName='Matched Line' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="13" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="counterpartyAccount" displayName="对方账号" code="COUNTERPARTY_ACCOUNT" propId="20" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Counterparty Account' />
+                <column name="counterpartyName" displayName="对方户名" code="COUNTERPARTY_NAME" propId="21" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Counterparty Name' />
+                <column name="counterpartyBank" displayName="对方开户行" code="COUNTERPARTY_BANK" propId="22" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Counterparty Bank' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />

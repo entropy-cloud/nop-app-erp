@@ -253,6 +253,9 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      counterpartyAccount: Counterparty Account
+      counterpartyName: Counterparty Name
+      counterpartyBank: Counterparty Bank
       statement: Statement
       matchedLine: Matched Voucher Line
       currency: Currency
