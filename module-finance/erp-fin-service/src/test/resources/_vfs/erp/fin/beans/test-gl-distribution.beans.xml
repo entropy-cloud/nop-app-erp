@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:ioc="ioc"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <!-- 测试专用 GlDistribution 规则 Validator（add-test-mock-bean.md 范式：test 前缀 bean id 防污染生产命名）。
+         经 @NopTestConfig(testBeansFile) 引入，与生产 Validator（空规则表）一同被
+         ErpFinAcctDocRegistry 的 ioc:collect-beans by-type=IErpFinFactsValidator 聚合。
+         规则仅匹配本测试类的专属科目编码（6602 拆行 / 9901 拒绝），不影响其他测试。 -->
+    <bean id="testGlDistributionValidator"
+          class="app.erp.fin.service.posting.ErpFinGlDistributionValidator">
+        <property name="rules">
+            <list>
+                <bean class="app.erp.fin.service.posting.ErpFinGlDistributionRule">
+                    <property name="ruleCode" value="TEST-SPLIT-60-40"/>
+                    <property name="sourceSubjectCode" value="6602"/>
+                    <property name="targets">
+                        <list>
+                            <bean class="app.erp.fin.service.posting.GlDistributionTarget">
+                                <property name="targetCostCenterId" value="101"/>
+                                <property name="percent" value="60"/>
+                            </bean>
+                            <bean class="app.erp.fin.service.posting.GlDistributionTarget">
+                                <property name="targetCostCenterId" value="102"/>
+                                <property name="percent" value="40"/>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+                <bean class="app.erp.fin.service.posting.ErpFinGlDistributionRule">
+                    <property name="ruleCode" value="TEST-REJECT-95"/>
+                    <property name="sourceSubjectCode" value="9901"/>
+                    <property name="targets">
+                        <list>
+                            <bean class="app.erp.fin.service.posting.GlDistributionTarget">
+                                <property name="targetCostCenterId" value="103"/>
+                                <property name="percent" value="95"/>
+                            </bean>
+                        </list>
+                    </property>
+                </bean>
+            </list>
+        </property>
+    </bean>
+</beans>

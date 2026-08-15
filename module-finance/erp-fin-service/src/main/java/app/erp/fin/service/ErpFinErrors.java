@@ -482,4 +482,21 @@ public interface ErpFinErrors {
     ErrorCode ERR_FIN_APPROVER_IS_CREATOR = ErrorCode.define("erp.err.fin.approver-is-creator",
             "审核人与单据创建人不可为同一人（违反职责分离）：{userId}",
             ARG_USER_ID);
+
+    // --- 过账引擎前置守卫族（plan 2026-08-15-1838-1，RC-R1.41 + RC-R1.42） ---
+
+    String ARG_CURRENCY_CODE = "currencyCode";
+    String ARG_RULE_CODE = "ruleCode";
+    String ARG_PERCENT_SUM = "percentSum";
+
+    /** 外币过账汇率缺失守卫（RC-R1.42，L1 UC-FIN-12 断言②「若 汇率缺失 → 报错拒绝过账」）。
+     *  prepareContext 在事件币种为非本位币且未显式传 exchangeRate 时抛出，替代既有静默回退 rate=1。 */
+    ErrorCode ERR_EXCHANGE_RATE_REQUIRED = ErrorCode.define("erp.err.fin.exchange-rate-required",
+            "币种 {currencyCode} 的汇率缺失，无法折算过账（外币过账必须显式提供 exchangeRate）",
+            ARG_CURRENCY_CODE);
+
+    /** GlDistribution 科目分摊比例合计校验（RC-R1.41，L1 UC-FIN-04/15「若 Σ percent != 100 → 抛异常拒绝过账」）。 */
+    ErrorCode ERR_GL_DISTRIBUTION_PERCENT_SUM = ErrorCode.define("erp.err.fin.gl-distribution.percent-sum",
+            "科目分摊规则 {ruleCode} 分摊比例合计 {percentSum} 不等于 100，拒绝过账",
+            ARG_RULE_CODE, ARG_PERCENT_SUM);
 }

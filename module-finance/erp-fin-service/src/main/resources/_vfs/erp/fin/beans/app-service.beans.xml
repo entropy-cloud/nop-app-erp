@@ -34,6 +34,14 @@
         </property>
     </bean>
 
+    <!-- GlDistribution 科目分摊 FactsValidator（plan 2026-08-15-1838-1，RC-R1.41）：
+         注册为 Bean 后由 ErpFinAcctDocRegistry 经上方 ioc:collect-beans by-type=IErpFinFactsValidator 自动聚合。
+         规则载体 = Bean 内静态规则表（rules setter 注入，D1 裁决不物化 ErpFinGlDistribution ORM 实体）：
+         生产默认空规则表 = 零行为变更（分摊未启用时主路径不受影响）；下游经本 bean 的 rules property
+         或 Delta 同名 bean 覆盖注入规则（cost-center.md §ErpFinGlDistribution 裁决注记）。 -->
+    <bean id="app.erp.fin.service.posting.ErpFinGlDistributionValidator"
+          class="app.erp.fin.service.posting.ErpFinGlDistributionValidator"/>
+
     <bean id="app.erp.fin.service.posting.provider.ErpFinTemplateAcctDocProvider"
           class="app.erp.fin.service.posting.provider.ErpFinTemplateAcctDocProvider"/>
 

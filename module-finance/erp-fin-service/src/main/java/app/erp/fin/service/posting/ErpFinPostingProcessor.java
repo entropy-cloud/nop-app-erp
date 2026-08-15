@@ -9,8 +9,11 @@ import app.erp.fin.dao.entity.ErpFinVoucher;
 import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.fin.dao.entity.ErpFinVoucherLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.metrics.ErpFinBusinessMetrics;
+import app.erp.md.biz.IErpMdCurrencyBiz;
 import app.erp.md.biz.IErpMdSubjectBiz;
+import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdSubject;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -534,10 +537,43 @@ public class ErpFinPostingProcessor {
         ctx.setAcctSchemaId(event.getAcctSchemaId());
         ctx.setOrgId(event.getOrgId());
         ctx.setCurrencyId(event.getCurrencyId());
-        ctx.setExchangeRate(event.getExchangeRate() != null ? event.getExchangeRate() : EXCHANGE_RATE_DEFAULT);
+        // P1-RC-002（RC-R1.42，plan 2026-08-15-1838-1）：外币过账汇率缺失守卫（L1 UC-FIN-12 断言②「若 汇率缺失 → 报错拒绝过账」）。
+        // 事件币种为非本位币（ErpMdCurrency.isFunctional=false）且未显式传 exchangeRate → 抛 ERR_EXCHANGE_RATE_REQUIRED 拒绝过账；
+        // 本位币 / currencyId=null / 币种不存在 → 保留既有 rate=1 回退语义（本位币折算恒等式 + 保守放行，D2 裁决）。
+        ctx.setExchangeRate(guardExchangeRate(event, context));
         ctx.setPeriodId(period.getId());
         ctx.setPeriodStatus(period.getStatus());
         return ctx;
+    }
+
+    /**
+     * 外币过账汇率缺失守卫（D2 裁决，plan 2026-08-15-1838-1）：仅当事件币种可判定为非本位币
+     * （经 {@code IErpMdCurrencyBiz} 查询 {@code ErpMdCurrency.isFunctional=false}）且 {@code exchangeRate} 缺失时拒绝。
+     * {@code persistVoucher:817-820} 的兜底回退不动（ctx 已由本守卫保证；直调 persistVoucher 的路径为内部受控）。
+     */
+    protected BigDecimal guardExchangeRate(PostingEvent event, IServiceContext context) {
+        if (event.getExchangeRate() != null || event.getCurrencyId() == null) {
+            return event.getExchangeRate() != null ? event.getExchangeRate() : EXCHANGE_RATE_DEFAULT;
+        }
+        ErpMdCurrency currency = findCurrencyById(event.getCurrencyId(), context);
+        if (currency == null) {
+            LOG.warn("汇率缺失守卫：币种 {} 不存在，无法判定本位币归属，保守放行 rate=1", event.getCurrencyId());
+            return EXCHANGE_RATE_DEFAULT;
+        }
+        if (Boolean.TRUE.equals(currency.getIsFunctional())) {
+            return EXCHANGE_RATE_DEFAULT;
+        }
+        throw new NopException(ErpFinErrors.ERR_EXCHANGE_RATE_REQUIRED)
+                .param(ErpFinErrors.ARG_CURRENCY_CODE, currency.getCode());
+    }
+
+    /** 按 id 查询币种。跨域只读经 IErpMdCurrencyBiz（对齐 resolveSubjects 的 IBizObjectManager 按名解析范式）。 */
+    protected ErpMdCurrency findCurrencyById(Long currencyId, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("id", currencyId));
+        q.setLimit(1);
+        IErpMdCurrencyBiz currencyBiz = bizObjectManager.getBizObject(ErpMdCurrency.class.getSimpleName()).asProxy();
+        return currencyBiz.findFirst(q, null, context);
     }
 
     protected AcctDocContext prepareReversalContext(ErpFinVoucher original, ErpFinAccountingPeriod period,
