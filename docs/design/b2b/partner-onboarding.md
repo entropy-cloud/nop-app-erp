@@ -288,6 +288,17 @@ TERMINATED（终态，可归档）
 | `erp-b2b.onboarding-test-timeout-hours` | 72 | 测试阶段超时未完成则降级提醒 |
 | `erp-b2b.onboarding-production-monitor-hours` | 24 | 上线后监控窗口（小时） |
 
+## 实现注记（RC-R1.36，plan `2026-08-15-1023-3`）
+
+> 本段为 P1-RC-080（UC-B2B-007 伙伴上线状态机推进）修复落地注记，不改写需求契约（use-cases L1 不动）。
+
+- **状态机 Bean**：`ErpB2bPartnerProfileStateMachine`（statemachine 包，契约 `entity-state-machine-bean.md`）——12 边迁移矩阵：promoteToTesting(REGISTERED→TESTING) / promoteToCertified(TESTING→CERTIFIED) / activate(CERTIFIED→PRODUCTION) / suspend(REGISTERED|TESTING|CERTIFIED|PRODUCTION→SUSPENDED) / deactivate(任意非终态→TERMINATED)。**PRODUCTION→TESTING 回退 + SUSPENDED→原阶段 resume 未编码**（L1 未列，Deferred But Adjudicated，successor = 生产回退/暂停恢复需求立项；SUSPENDED 无 resume 会滞留伙伴的不对称已登记）。
+- **推进门槛**（`ErpB2bPartnerProfileBizModel`）：`promoteToTesting` 前置「基本配置完整」= partnerId/protocol/authMethod/transportEndpoint/allowedFormats 非空（`ERR_B2B_PARTNER_PROFILE_INCOMPLETE`）；`promoteToCertified` 前置 = 测试通过率 ≥ `erp-b2b.onboarding-test-pass-rate`（默认 0.9，TestExchange 按 partnerProfileId 聚合，零行=0 拒绝）+ 关键用例 TC-001/TC-004 必过（testCaseCode 前缀匹配）+ 认证清单必检项全过（isMandatory=true 行全 isPassed=true，空清单拒绝）（`ERR_B2B_PARTNER_PASS_RATE_NOT_MET`/`ERR_B2B_PARTNER_CERTIFICATION_NOT_MET`）。**blocking_level=ERROR 阻断查询未实现**（EdiDoc 无 partnerProfileId 锚点，与监控同源结构缺口，successor = 伙伴级 EDI 统计需求立项）。
+- **字段回写**：activate 设 goLiveDate=now + deactivate 设 archivedAt=now（tagSet=clock 语义）。
+- **24h 上线监控**：`ErpB2bOnboardingMonitorJob`（R1.4 简单 job bean）+ `erp-b2b-onboarding-monitor.job.yaml`（app-erp-all，enabled 默认 false）——扫描 PRODUCTION 且 goLiveDate 在窗口内的伙伴，经间接锚点（allowedFormats→EdiFormat.code→formatId + org 级 scope）聚合窗口内 EDI 失败率，超 `erp-b2b.onboarding-monitor-failure-rate`（默认 0.05）→ notify `b2b.onboarding-monitor-alert`（ROLE「B2B 管理员」）。已知近似：同 org + 同支持格式的伙伴事务互相计入（D4 裁决，ORM 加列 = ask-first successor）。
+- **config 键**：`erp-b2b.onboarding-test-pass-rate`（0.9）/`erp-b2b.onboarding-production-monitor-hours`（24）/`erp-b2b.onboarding-monitor-failure-rate`（0.05）/`erp-b2b.onboarding-monitor-cron`（`0 0 * * * ?`）登记 `ErpB2bConfigs`。
+- **测试证据**：`TestErpB2bPartnerProfileStateMachineMatrix`（10 组纯矩阵）+ `TestErpB2bPartnerOnboarding`（13 组 GraphQL RPC 实调：守卫拒绝矩阵 + 合法全生命周期 + 门槛六场景 + 字段回写 + 监控 job 六场景），erp-b2b-service 80/80 全绿。
+
 ## 反模式警示
 
 - ⛔ **跳过测试阶段直接上线**——未经测试的 EDI 对接会导致生产事故。必须经过 TESTING → CERTIFIED 阶段。
