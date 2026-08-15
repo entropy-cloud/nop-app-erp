@@ -929,6 +929,7 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="22" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="23" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
                 <column name="remark" code="REMARK" displayName="备注" propId="24" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+                <column name="cashFlowType" code="CASH_FLOW_TYPE" displayName="现金流分类" propId="25" stdSqlType="VARCHAR" precision="20" stdDataType="string" ext:dict="erp-md/cash-flow-type" i18n-en:displayName='Cash Flow Type' />
             </columns>
             <relations>
                 <to-one name="parent" refEntityName="app.erp.md.dao.entity.ErpMdSubject" tagSet="pub" i18n-en:displayName='Parent'>

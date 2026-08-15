@@ -120,6 +120,10 @@
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
+        <prop name="cashFlowType" displayName="现金流分类" propId="25" i18n-en:displayName="Cash Flow Type" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-md/cash-flow-type"/>
+        </prop>
         <prop name="parent" i18n-en:displayName="Parent" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="parentId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" insertable="false"
               updatable="false" lazy="true">

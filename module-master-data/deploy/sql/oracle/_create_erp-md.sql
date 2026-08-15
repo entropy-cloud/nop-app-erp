@@ -205,6 +205,7 @@ CREATE TABLE erp_md_subject(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
+  CASH_FLOW_TYPE VARCHAR2(20)  ,
   constraint PK_erp_md_subject primary key (ID)
 );
 
@@ -839,6 +840,8 @@ CREATE TABLE erp_md_uom_conversion(
       COMMENT ON COLUMN erp_md_subject.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON COLUMN erp_md_subject.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_md_subject.CASH_FLOW_TYPE IS '现金流分类';
                     
       COMMENT ON TABLE erp_md_organization IS '组织';
                 

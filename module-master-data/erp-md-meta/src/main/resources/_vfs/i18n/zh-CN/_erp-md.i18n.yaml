@@ -400,6 +400,8 @@ prop:
     ErpMdSubject:
       balanceType: 余额类型
       balanceType_label: 余额类型
+      cashFlowType: 现金流分类
+      cashFlowType_label: 现金流分类
       children: null
       code: 科目编码
       createTime: 创建时间

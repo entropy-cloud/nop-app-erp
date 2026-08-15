@@ -1353,6 +1353,9 @@
                         propId="23" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="24"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="CASH_FLOW_TYPE" displayName="现金流分类" name="cashFlowType" precision="20" propId="25"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-md/cash-flow-type"
+                        i18n-en:displayName="Cash Flow Type"/>
             </columns>
             <indexes>
                 <index name="IDX_MD_SUBJECT_PARENT_ID" unique="false">

@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 现金流分类
+locale: zh-CN
+valueType: string
+description: 科目现金流量表分类（直接法 section 分类 + 间接法非现金项目识别）
+options:
+
+  - label: 经营
+    value: OPERATING
+    description: 经营活动（含 null 回退默认值）
+
+  - label: 投资
+    value: INVESTING
+    description: 投资活动
+
+  - label: 筹资
+    value: FINANCING
+    description: 筹资活动
+
+  - label: 非现金
+    value: NON_CASH
+    description: 非现金项目（间接法调整项，如折旧/摊销/减值）
+

@@ -117,8 +117,12 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 24;
     
+    /* 现金流分类: CASH_FLOW_TYPE VARCHAR */
+    public static final String PROP_NAME_cashFlowType = "cashFlowType";
+    public static final int PROP_ID_cashFlowType = 25;
+    
 
-    private static int _PROP_ID_BOUND = 25;
+    private static int _PROP_ID_BOUND = 26;
 
     
     /* relation:  */
@@ -134,7 +138,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[25];
+    private static final String[] PROP_ID_TO_NAME = new String[26];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -210,6 +214,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
+          PROP_ID_TO_NAME[PROP_ID_cashFlowType] = PROP_NAME_cashFlowType;
+          PROP_NAME_TO_ID.put(PROP_NAME_cashFlowType, PROP_ID_cashFlowType);
+      
     }
 
     
@@ -284,6 +291,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 现金流分类: CASH_FLOW_TYPE */
+    private java.lang.String _cashFlowType;
     
 
     public _ErpMdSubject(){
@@ -430,6 +440,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_cashFlowType:
+               return getCashFlowType();
         
            default:
               return super.orm_propValue(propId);
@@ -682,6 +695,16 @@ public class _ErpMdSubject extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_cashFlowType:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_cashFlowType));
+               }
+               setCashFlowType(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -855,6 +878,13 @@ public class _ErpMdSubject extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_cashFlowType:{
+               onInitProp(propId);
+               this._cashFlowType = (java.lang.String)value;
                
                break;
             }
@@ -1317,6 +1347,25 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_remark,value)){
             this._remark = value;
             internalClearRefs(PROP_ID_remark);
+            
+        }
+    }
+    
+    /**
+     * 现金流分类: CASH_FLOW_TYPE
+     */
+    public final java.lang.String getCashFlowType(){
+         onPropGet(PROP_ID_cashFlowType);
+         return _cashFlowType;
+    }
+
+    /**
+     * 现金流分类: CASH_FLOW_TYPE
+     */
+    public final void setCashFlowType(java.lang.String value){
+        if(onPropSet(PROP_ID_cashFlowType,value)){
+            this._cashFlowType = value;
+            internalClearRefs(PROP_ID_cashFlowType);
             
         }
     }

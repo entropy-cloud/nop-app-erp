@@ -398,6 +398,32 @@
         }
 
 
+        private String _cashFlowType;
+
+    
+        @PropMeta(propId=25)
+    
+        public String getCashFlowType(){
+            return _cashFlowType;
+        }
+
+        public void setCashFlowType(String value){
+            this._cashFlowType = value;
+        }
+
+
+        private String _cashFlowType_label;
+
+    
+        public String getCashFlowType_label(){
+            return _cashFlowType_label;
+        }
+
+        public void setCashFlowType_label(String value){
+            this._cashFlowType_label = value;
+        }
+
+
         private Map<String,Object> _parent;
 
         public Map<String,Object> getParent(){

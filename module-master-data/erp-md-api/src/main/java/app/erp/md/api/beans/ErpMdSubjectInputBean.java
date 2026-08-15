@@ -265,6 +265,20 @@
         }
 
 
+        private String _cashFlowType;
+
+    
+        @PropMeta(propId=25)
+    
+        public String getCashFlowType(){
+            return _cashFlowType;
+        }
+
+        public void setCashFlowType(String value){
+            this._cashFlowType = value;
+        }
+
+
         private List<ErpMdSubjectInputBean> _children;
 
         public List<ErpMdSubjectInputBean> getChildren(){

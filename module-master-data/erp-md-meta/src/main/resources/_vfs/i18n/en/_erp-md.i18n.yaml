@@ -426,6 +426,8 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      cashFlowType: Cash Flow Type
+      cashFlowType_label: null
       parent: Parent
       parent.name: Parent
       currency: Currency
