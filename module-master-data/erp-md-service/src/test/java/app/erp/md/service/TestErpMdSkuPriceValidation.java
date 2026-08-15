@@ -165,6 +165,51 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
         assertFalse(Boolean.TRUE.equals(result.get("warning")), "高于底线不应警告");
     }
 
+    // ============ RC-R1.40 defaultValue 收敛（P2-RC-057 方案 A 落地） ============
+
+    @Test
+    public void testDefaultPriceValidationLevelConvergedToWarn() {
+        // defaultValue "20"→"WARN"：不显式赋值创建分类 → 持久化物化字典合法值 WARN
+        ErpMdMaterialCategory category = new ErpMdMaterialCategory();
+        category.setCode("CAT-DEF-1");
+        category.setName("分类-CAT-DEF-1");
+        ormTemplate.runInSession(() -> categoryDao().saveEntity(category));
+        Long categoryId = category.getId();
+        assertEquals(ErpMdConstants.PRICE_VALIDATION_WARN,
+                categoryDao().getEntityById(categoryId).getPriceValidationLevel(),
+                "defaultValue 收敛：未显式赋值创建的分类应物化 WARN");
+    }
+
+    @Test
+    public void testExplicitPriceValidationLevelUnaffected() {
+        // 显式赋值 OFF/WARN/HARD 路径不受默认值收敛影响，持久化原样保留
+        Long offId = seedCategory("CAT-EXP-OFF", ErpMdConstants.PRICE_VALIDATION_OFF);
+        Long warnId = seedCategory("CAT-EXP-WARN", ErpMdConstants.PRICE_VALIDATION_WARN);
+        Long hardId = seedCategory("CAT-EXP-HARD", ErpMdConstants.PRICE_VALIDATION_HARD);
+        assertEquals(ErpMdConstants.PRICE_VALIDATION_OFF,
+                categoryDao().getEntityById(offId).getPriceValidationLevel(), "显式 OFF 应原样持久化");
+        assertEquals(ErpMdConstants.PRICE_VALIDATION_WARN,
+                categoryDao().getEntityById(warnId).getPriceValidationLevel(), "显式 WARN 应原样持久化");
+        assertEquals(ErpMdConstants.PRICE_VALIDATION_HARD,
+                categoryDao().getEntityById(hardId).getPriceValidationLevel(), "显式 HARD 应原样持久化");
+    }
+
+    @Test
+    public void testNonDictValueFallsBackToWarn() {
+        // 行为不变性证明：既有历史 "20" 非字典值行 resolve 兜底 → WARN（放行带警告）
+        Long materialId = seedMaterialAndSku("MAT-VN-1", new BigDecimal("10.00"),
+                new BigDecimal("15.00"), new BigDecimal("12.00"), new BigDecimal("18.00"));
+        Long skuId = skuIdFor(materialId);
+        Long categoryId = seedCategory("CAT-VN-1", "20");
+
+        Map<?, ?> result = (Map<?, ?>) rpcData(query, "ErpMdMaterialSku__validatePrice",
+                Map.of("skuId", skuId, "finalPrice", new BigDecimal("9.00"),
+                        "materialCategoryId", categoryId));
+        assertEquals(Boolean.TRUE, result.get("passed"), "非字典值兜底应放行");
+        assertEquals(Boolean.TRUE, result.get("warning"), "非字典值低于底线应带警告");
+        assertEquals(ErpMdConstants.PRICE_VALIDATION_WARN, result.get("level"), "非字典值应解析为 WARN");
+    }
+
     // ---------- helpers ----------
 
     private BigDecimal resolvePrice(Long skuId, Long partnerId, String billType, BigDecimal manual) {

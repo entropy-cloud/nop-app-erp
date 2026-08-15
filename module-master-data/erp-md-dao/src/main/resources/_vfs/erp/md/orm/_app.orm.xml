@@ -425,8 +425,8 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Parent"/>
                 <column code="SORT_NUM" displayName="排序" name="sortNum" propId="5" stdDataType="int"
                         stdSqlType="INTEGER" i18n-en:displayName="Sort Order"/>
-                <column code="PRICE_VALIDATION_LEVEL" defaultValue="20" displayName="价格校验级别" name="priceValidationLevel"
-                        precision="20" propId="6" stdDataType="string" stdSqlType="VARCHAR"
+                <column code="PRICE_VALIDATION_LEVEL" defaultValue="WARN" displayName="价格校验级别"
+                        name="priceValidationLevel" precision="20" propId="6" stdDataType="string" stdSqlType="VARCHAR"
                         ext:dict="erp-md/price-validation" i18n-en:displayName="Price Validation Level"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
                         name="delVersion" propId="7" stdDataType="long" stdSqlType="BIGINT"

@@ -5,7 +5,7 @@ CREATE TABLE erp_md_material_category(
   name VARCHAR(200) NOT NULL ,
   parent_id INT8  ,
   sort_num INT4  ,
-  price_validation_level VARCHAR(20) default '20'   ,
+  price_validation_level VARCHAR(20) default 'WARN'   ,
   del_version INT8 default 0  NOT NULL ,
   version INT4 default 0  NOT NULL ,
   created_by VARCHAR(50) NOT NULL ,

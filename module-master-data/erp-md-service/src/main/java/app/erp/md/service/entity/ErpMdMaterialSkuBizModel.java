@@ -351,7 +351,8 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     /**
      * UC-MD-04 读 MaterialCategory.priceValidationLevel。
-     * G5：字典值为 string OFF/WARN/HARD；列默认值 "20" 为孤儿不参与逻辑（非字典值统一按 WARN 宽松处理）。
+     * G5：字典值为 string OFF/WARN/HARD；列默认值已收敛为 "WARN"（RC-R1.40），
+     * 历史遗留非字典值行（如旧默认 "20"）仍经兜底统一按 WARN 宽松处理。
      */
     protected String resolvePriceValidationLevel(Long materialCategoryId, IServiceContext context) {
         if (materialCategoryId == null) {

@@ -44,7 +44,7 @@
             <schema type="java.lang.Integer"/>
         </prop>
         <prop name="priceValidationLevel" displayName="价格校验级别" propId="6" i18n-en:displayName="Price Validation Level"
-              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="20">
+              queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="WARN">
             <schema type="java.lang.String" precision="20" dict="erp-md/price-validation"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="7" i18n-en:displayName="Del Flag" mandatory="true"
