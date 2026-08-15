@@ -20,7 +20,7 @@
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
 | R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 230 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1394 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1399 |
 | R2d | Processor daoFor(ErpMd*) | 🔴 高 | 34 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
@@ -351,6 +351,16 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=230 / R2c=1394 / R2d=34 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R2c 基线上调注记（plan 2026-08-15-0456-3，RC-R1.33 contract 计费族）
+
+`2026-08-15-0456-3`（RC-R1.33，P1-RC-074 + P1-RC-075）新增 2 个 per-mutation Processor（`ErpCtInvoicePlanGenerateByTermProcessor` + `ErpCtConsumptionPeriodSummarizeProcessor`，`module-contract/erp-ct-service/.../processor/`），引入 **R2c +5**，全部为既有文档化 pattern 类的合法同型新增（对齐 1057-2 +149 / R6.8 +130 / R6.9 +2 / R1.29 +1 先例——per-mutation Processor 的 `daoProvider.daoFor(<EntityClass>)` 是 Nop 平台读取托管实体 DAO 的标准方式，非业务跨域编排）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2c | 1394 | **1399** | 1399 | **baseline-raise**（+5） | (1) `ErpCtInvoicePlanGenerateByTermProcessor:55` `dao().daoFor(ErpCtContract.class)`（合同 ACTIVE 守卫直查）+ `:112` `planDao()=daoFor(ErpCtInvoicePlan)` + `:116` `contractLineDao()=daoFor(ErpCtContractLine)`（行归属校验直查）——同域实体直查，对齐 triggerInvoice/triggerDuePlans Processor 既有 `daoProvider.daoFor` 范式（行归属判定非 FK 导航，ORM to-one getter 不可替代）；(2) `ErpCtConsumptionPeriodSummarizeProcessor:204` `daoFor(ErpCtConsumptionLine)` + `:208` `daoFor(ErpCtContractLine)`——期间汇总直查（对齐 triggerDuePlans 绕过 XMeta 查询算子白名单的既有注记范式）。无 B 类「重构为 I*Biz」候选（per-mutation Processor 编排骨架 + 内部批量查询语义）。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=230 / R2c=1399 / R2d=34 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
+
 
 ## BASELINE (machine-readable)
 
@@ -363,7 +373,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 230
-R2c: 1394
+R2c: 1399
 R2d: 34
 R3: 5
 R4: 0

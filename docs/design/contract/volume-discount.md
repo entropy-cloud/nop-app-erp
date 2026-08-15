@@ -212,6 +212,39 @@
 | `erp-ct.rebate-auto-settle` | true | 协议到期是否自动触发结算 |
 | `erp-ct.rebate-accrual-method` | PERIOD_END | 默认计提方法 |
 
+## 消耗计费与开票计划生成（RC-R1.33 实现注记）
+
+> **实现注记（plan 2026-08-15-0456-3，RC-R1.33，P1-RC-074 + P1-RC-075）**：UC-CT-03/04 的生成面与计费面落地。契约段落（use-cases L1）未修改，本注记记录实现语义与裁决。
+
+### 开票计划批量生成（generateInvoicePlansByTerm，UC-CT-03 A）
+
+- **入口**：`ErpCtInvoicePlanBizModel#generateInvoicePlansByTerm` @BizMutation（委托 per-mutation Processor `ErpCtInvoicePlanGenerateByTermProcessor`，R6.7 范式）。
+- **入参**（D2 裁决）：`contractId` + 生成项列表 `[{contractLineId, invoiceTerm, planDate, amount}]`——**生成契约经入参承载 invoiceTerm**（ORM 结构注记：`ErpCtInvoicePlan.invoiceTerm` mandatory，而 `ErpCtContractLine` **无 invoiceTerm 列**；L1「合同行已配置 invoiceTerm」按入参化解释，调用方按 L1 流程传入 ADVANCE/MILESTONE/MONTHLY/COMPLETION）。
+- **守卫链**：合同 ACTIVE（SUSPENDED 专属 `ERR_CT_CONTRACT_SUSPENDED` + 通用非 ACTIVE `ERR_CT_CONTRACT_NOT_ACTIVE`，对齐 triggerInvoice 守卫语义）→ 行归属校验（`ERR_CT_INVOICE_PLAN_LINE_NOT_IN_CONTRACT`）→ 幂等查重（D3：contractLineId+invoiceTerm+planDate，重复抛 `ERR_CT_INVOICE_PLAN_DUPLICATE`）。
+- **planDate 推导**（D3）：入参显式提供，不引入 config 推导键（ADVANCE N 天/MONTHLY 固定日语义由调用方推导；config 推导属调度 successor 范畴）。
+- **落库**：`isInvoiced=false` + invoiceTerm + planDate + amount，返回生成计划集合。
+
+### 已开票禁改守卫（isInvoiced 锁，UC-CT-03 C）
+
+- `ErpCtInvoicePlanBizModel#defaultPrepareUpdate` 增守卫（D4 裁决）：**isInvoiced=true 时 amount/planDate/invoiceTerm 变更拒绝**，抛 `ERR_CT_INVOICE_PLAN_INVOICED_IMMUTABLE`（参数 invoicePlanId）。remark 等非计费字段放行。
+- 已开票状态经 ORM 脏值追踪取"更新前"持久化值（客户端同请求改 isInvoiced 防解锁绕过，对齐 R1.9 publish 守卫范式）。
+- **不影响 triggerInvoice 回写**：触发面经 Processor `dao().updateEntity` 直写绕过 CrudBizModel 更新路径（既有行为不变）。
+
+### 消耗计费周期汇总（periodSummarize，UC-CT-04 B/C/D）
+
+- **入口**：`ErpCtConsumptionLineBizModel#periodSummarize` @BizMutation（委托 per-mutation Processor `ErpCtConsumptionPeriodSummarizeProcessor`）。入参 `{contractLineId, fromDate, toDate, invoiceTerm, planDate}`——**行级聚合入口**（D6 裁决；合同级循环归 successor）。
+- **汇总**：期间内 Σ ConsumptionLine.quantity 对比合同行预估总量 `line.quantity`。
+- **超量**（Σ > line.quantity）：生成额外 InvoicePlan（**复用 generateInvoicePlansByTerm 内部能力**，amount 按 D6 选项 A = `(Σquantity − line.quantity) × line.unitPrice`，scale 4 HALF_UP）+ 复用 `triggerInvoice` 路径生成 AP/AR 发票草稿（O-4 豁免语义不变，非新增过账逻辑）。
+  - **量/额不一致声明**（D6）：超量发票草稿行级 quantity/unitPrice 镜像合同行（triggerInvoice Processor 既有语义），header amount = 超量金额——刻意选择（header 是计费基准，行级仅供明细展示）。
+  - 同事务内新实体 NEW 态处理：flush + evict 后重新 DB 加载再触发（triggerInvoice 的 `dao().updateEntity` 要求 DB 加载态）。
+- **120% 通知**（Σ > line.quantity × 1.2，预估 0 时任何消耗即超限）：经 `IErpSysNotificationBiz.notify` 派发事件 **`ct.consumption-over-120-percent`**（`ErpCtConstants.NOTIFY_EVENT_CONSUMPTION_OVER_120`），context 键集 {contractId, contractCode, contractLineId, lineDescription, estimatedQuantity, totalConsumedQuantity, overRatio}。**无 ACTIVE 模板静默跳过**（R1.4 范式，best-effort 不阻断业务事实；运营侧 CRUD 登记模板后生效，测试侧 seed 模板断言落库）。
+- **返回**：`ErpCtConsumptionPeriodSummarizeResult`（totalConsumedQuantity/estimatedQuantity/overQuantity/overAmount/overagePlanId/invoiceBillCode/notificationSent/overRatio）。
+
+### 结构注记
+
+- **Line 无 invoiceTerm 列**：`ErpCtContractLine` ORM 仅含 quantity/unitPrice/amount/description（`module-contract/model/app-erp-contract.orm.xml:195-231`）——生成契约经入参承载（D2）；未来如需行级 term 持久化属 ORM 变更（ask-first successor）。
+- **消耗计费定时调度**：周期触发 job 属部署/调度 successor——本期仅提供手工 @BizMutation 能力面（对齐 triggerDuePlans 手工入口先例）。
+
 ## 反模式警示
 
 - ⛔ **返利直接在订单行上折扣**——返利是期间后置结算，不是行级折扣。行级折扣走 VolumeDiscount，返利走 RebateAgreement → RebateSettlement。
