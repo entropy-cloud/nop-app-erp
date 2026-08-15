@@ -37,7 +37,15 @@ public class PurInvoicePostingDispatcher {
      * 发票审核通过后调用。成功返回 true（调用方据此置 posted=true）；失败吞异常返回 false（保持 posted=false）。
      */
     public boolean tryPost(ErpPurInvoice invoice) {
-        PostingEvent event = buildEvent(invoice);
+        return tryPost(invoice, null);
+    }
+
+    /**
+     * RC-R1.50：带价格差异数据的过账入口。{@code priceVariance} 为 invoice-vs-order 超容差差异聚合金额
+     * （带符号，由调用方按策略解析；拒绝族传 null → buildEvent 不写差异键 → createFacts 走既有三行零 PPV）。
+     */
+    public boolean tryPost(ErpPurInvoice invoice, BigDecimal priceVariance) {
+        PostingEvent event = buildEvent(invoice, priceVariance);
         try {
             Long voucherId = executor.postEvent(event);
             return voucherId != null;
@@ -68,7 +76,7 @@ public class PurInvoicePostingDispatcher {
         }
     }
 
-    private PostingEvent buildEvent(ErpPurInvoice invoice) {
+    private PostingEvent buildEvent(ErpPurInvoice invoice, BigDecimal priceVariance) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.AP_INVOICE);
         event.setBillHeadCode(invoice.getCode());
@@ -84,6 +92,11 @@ public class PurInvoicePostingDispatcher {
         billData.put(PurAcctDocProvider.KEY_TOTAL_TAX_AMOUNT, nz(invoice.getTotalTaxAmount()));
         billData.put(PurAcctDocProvider.KEY_TOTAL_AMOUNT_WITH_TAX, nz(invoice.getTotalAmountWithTax()));
         billData.put("SUPPLIER_ID", invoice.getSupplierId());
+        // RC-R1.50：写入门控——仅策略「接收并过账差异」（POST_DIFFERENCE）且差异 != 0 时写入差异键；
+        // 拒绝族由调用方传 null → 不写键 → createFacts 走既有三行零 PPV（差异 0/键缺失行为零变化）。
+        if (priceVariance != null && priceVariance.signum() != 0) {
+            billData.put(PurAcctDocProvider.KEY_PRICE_VARIANCE_AMOUNT, priceVariance);
+        }
         event.setBillData(billData);
         return event;
     }

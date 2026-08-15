@@ -191,7 +191,24 @@ public class ErpPurInvoiceProcessor {
     // ---------- step：过账/执行 ----------
 
     protected boolean doPosting(ErpPurInvoice invoice, IServiceContext context) {
-        return postingDispatcher.tryPost(invoice);
+        return postingDispatcher.tryPost(invoice, resolvePriceVariance(invoice, context));
+    }
+
+    /**
+     * RC-R1.50（P1-RC-018）：差异数据门控——策略「接收并过账差异」（erp-pur.price-diff-strategy=POST_DIFFERENCE）
+     * 时返回超容差价格差异聚合金额（带符号，经 {@link ThreeWayMatcher#computeOverTolerancePriceVariance} 与 match
+     * 同回链路径/同容差口径）；拒绝族返回 null → buildEvent 不写差异键 → createFacts 走既有三行零 PPV。
+     */
+    protected BigDecimal resolvePriceVariance(ErpPurInvoice invoice, IServiceContext context) {
+        if (!isPostDifferenceStrategy()) {
+            return null;
+        }
+        return threeWayMatcher.computeOverTolerancePriceVariance(invoice.getCode(), loadLines(invoice));
+    }
+
+    protected boolean isPostDifferenceStrategy() {
+        String raw = AppConfig.var(ErpPurConstants.CONFIG_PRICE_DIFF_STRATEGY, "");
+        return ErpPurConstants.PRICE_DIFF_STRATEGY_POST_DIFFERENCE.equals(raw);
     }
 
     protected void doSubmit(ErpPurInvoice invoice, IServiceContext context) {

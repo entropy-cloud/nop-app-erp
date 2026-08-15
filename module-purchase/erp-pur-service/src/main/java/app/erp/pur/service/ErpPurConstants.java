@@ -45,6 +45,12 @@ public interface ErpPurConstants extends ErpPurDocStatus {
     String CONFIG_MATCH_PRICE_TOLERANCE = "erp-pur.match-price-tolerance";
     String CONFIG_MATCH_STRICT_MODE = "erp-pur.match-strict-mode";
 
+    // 价格差异处理策略（RC-R1.50 / P1-RC-018，three-way-match.md §不匹配的处理策略）。
+    // 空/其他值 = 拒绝族（既有 strict 抛错 / 非 strict warn 放行，零 PPV）；POST_DIFFERENCE = 「接收并过账差异」
+    // （价格超容差 warn 放行 + buildEvent 写差异键 → AP_INVOICE 增 PPV 行，1403 按差异拆分）。
+    String CONFIG_PRICE_DIFF_STRATEGY = "erp-pur.price-diff-strategy";
+    String PRICE_DIFF_STRATEGY_POST_DIFFERENCE = "POST_DIFFERENCE";
+
     // 付款核销三单匹配二次门控（R1.8 P1-MA2-003 方案 A，three-way-match.md §匹配时机「付款前最终校验」）。
     // 默认 false 保护既有测试基线；启用后 settle 路径强制 strict 复核 invoice 三单匹配完成态。
     String CONFIG_SETTLE_RECHECK_THREE_WAY_MATCH = "erp-pur.settle-recheck-three-way-match";

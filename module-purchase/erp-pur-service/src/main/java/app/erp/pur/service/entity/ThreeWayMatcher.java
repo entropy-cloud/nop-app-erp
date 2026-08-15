@@ -91,20 +91,61 @@ public class ThreeWayMatcher {
                     BigDecimal invoicePrice = nz(line.getUnitPrice());
                     BigDecimal orderPrice = nz(orderLine.getUnitPrice());
                     if (orderPrice.signum() > 0 && priceDiffPercent(invoicePrice, orderPrice).compareTo(priceTolerance) > 0) {
-                        NopException err = new NopException(ErpPurErrors.ERR_INVOICE_PRICE_MISMATCH)
-                                .param(ErpPurErrors.ARG_INVOICE_CODE, invoiceCode)
-                                .param(ErpPurErrors.ARG_LINE_NO, line.getLineNo())
-                                .param(ErpPurErrors.ARG_INVOICE_PRICE, invoicePrice)
-                                .param(ErpPurErrors.ARG_ORDER_PRICE, orderPrice);
-                        if (strict) {
-                            throw err;
+                        if (isPostDifferenceStrategy()) {
+                            // RC-R1.50：策略「接收并过账差异」——价格超容差 warn 放行（差异经 buildEvent 差异键
+                            // → createFacts PPV 行过账，见 PurAcctDocProvider 1403 拆分语义）
+                            LOG.warn("三单匹配价格超容差（接收并过账差异策略放行）：发票={} 行={} 发票单价={} 订单单价={} 容差={}%",
+                                    invoiceCode, line.getLineNo(), invoicePrice, orderPrice, priceTolerance);
+                        } else {
+                            NopException err = new NopException(ErpPurErrors.ERR_INVOICE_PRICE_MISMATCH)
+                                    .param(ErpPurErrors.ARG_INVOICE_CODE, invoiceCode)
+                                    .param(ErpPurErrors.ARG_LINE_NO, line.getLineNo())
+                                    .param(ErpPurErrors.ARG_INVOICE_PRICE, invoicePrice)
+                                    .param(ErpPurErrors.ARG_ORDER_PRICE, orderPrice);
+                            if (strict) {
+                                throw err;
+                            }
+                            LOG.warn("三单匹配价格超容差（非严格模式放行）：发票={} 行={} 发票单价={} 订单单价={} 容差={}%",
+                                    invoiceCode, line.getLineNo(), invoicePrice, orderPrice, priceTolerance);
                         }
-                        LOG.warn("三单匹配价格超容差（非严格模式放行）：发票={} 行={} 发票单价={} 订单单价={} 容差={}%",
-                                invoiceCode, line.getLineNo(), invoicePrice, orderPrice, priceTolerance);
                     }
                 }
             }
         }
+    }
+
+    /**
+     * RC-R1.50：计算超容差价格差异聚合金额（差异 = Σ[(发票单价 − 订单单价) × 数量]，仅超容差行）。
+     * 与 {@link #match} 同回链路径（invoiceLine.receiveLineId → receiveLine.orderLineId → orderLine.unitPrice）
+     * 与同容差口径；仅计算不校验不抛错。无 receiveLineId / 无订单回链 / 订单价 0 行跳过（与 match 一致）。
+     * 返回值带符号：涨价为正（PPV 借 1404）/ 降价为负（PPV 贷 1404），由 {@code PurAcctDocProvider} 消费。
+     */
+    public BigDecimal computeOverTolerancePriceVariance(String invoiceCode, List<ErpPurInvoiceLine> lines) {
+        BigDecimal total = BigDecimal.ZERO;
+        BigDecimal priceTolerance = priceTolerancePercent();
+        if (priceTolerance == null) {
+            priceTolerance = new BigDecimal("5");
+        }
+        for (ErpPurInvoiceLine line : lines) {
+            if (line.getReceiveLineId() == null) {
+                continue;
+            }
+            ErpPurReceiveLine receiveLine = loadReceiveLine(line.getReceiveLineId());
+            if (receiveLine == null || receiveLine.getOrderLineId() == null) {
+                continue;
+            }
+            ErpPurOrderLine orderLine = loadOrderLine(receiveLine.getOrderLineId());
+            if (orderLine == null) {
+                continue;
+            }
+            BigDecimal invoicePrice = nz(line.getUnitPrice());
+            BigDecimal orderPrice = nz(orderLine.getUnitPrice());
+            if (orderPrice.signum() > 0 && priceDiffPercent(invoicePrice, orderPrice).compareTo(priceTolerance) > 0) {
+                BigDecimal diff = invoicePrice.subtract(orderPrice).multiply(nz(line.getQuantity()));
+                total = total.add(diff);
+            }
+        }
+        return total;
     }
 
     private BigDecimal priceDiffPercent(BigDecimal invoicePrice, BigDecimal orderPrice) {
@@ -117,6 +158,12 @@ public class ThreeWayMatcher {
     private boolean isStrictMode() {
         String raw = readStringConfig(ErpPurConstants.CONFIG_MATCH_STRICT_MODE, "false");
         return "true".equalsIgnoreCase(raw) || "1".equals(raw);
+    }
+
+    /** RC-R1.50：策略「接收并过账差异」启用判定（erp-pur.price-diff-strategy=POST_DIFFERENCE）。 */
+    private boolean isPostDifferenceStrategy() {
+        String raw = readStringConfig(ErpPurConstants.CONFIG_PRICE_DIFF_STRATEGY, "");
+        return ErpPurConstants.PRICE_DIFF_STRATEGY_POST_DIFFERENCE.equals(raw);
     }
 
     private BigDecimal qtyTolerancePercent() {
