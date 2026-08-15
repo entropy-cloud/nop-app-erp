@@ -177,6 +177,23 @@
 - ⛔ **驳回后重置全部审批**——只重新激活驳回节点及其后续，已审批通过的节点保持不变。
 - ⛔ **审批与签署混淆**——审批是内部流程（NEGOTIATION 中），签署是双方确认（NEGOTIATION→ACTIVE 的触发条件），两者分离。
 
+## 实现注记（RC-R1.34，plan `2026-08-15-1023-1`）
+
+> 本段记录审批工作流的运行时落地语义（P1-RC-077 修复，UC-CT-07；L1 契约段未改动）。
+
+- **引擎**：`app.erp.ct.service.approval.ErpCtApprovalWorkflowEngine`（无状态编排助手 Bean，`app-service.beans.xml` FQCN 注册）——`matchByAmount`（ApprovalMatrix：isActive=true + contractType 匹配/null 通配 + orgId 匹配/null 通配 + minAmount≤totalAmount≤maxAmount[null 无界] + approvalOrder 升序）+ `generateRecords`（每节点一条：首 PENDING 其余 WAITING）+ 链状态推导（latestRecord per node / rejectedCount / latestRejected / isChainComplete / hasPendingTermination）。
+- **触发入口 = submit 后置接线**（L1「经办人提交合同」）：`ErpCtContractBizModel#submit` 后置生成记录，config-gated `erp-ct.approval-enabled`（默认 false = 零生成零阻塞，部署启用决策 A4.1.4 范式）；矩阵零匹配 = 无需审批（零记录，金额低于阈值档位合同直接可激活）。
+- **逐节点审批**：`ErpCtApprovalRecordBizModel#approve/reject`（@BizMutation）——仅链记录（approvalMatrixId != null）可操作；PENDING 守卫 + 审批人守卫（approverId 非空时须 == 当前操作人，空 = D2 无命中手工指定语义放行）；approve → APPROVED + 激活下一 WAITING 节点；reject → REJECTED + 合同保持 NEGOTIATION + 经办人通知（`ct.approval-rejected`）。
+- **activate 联动 = 前置校验**（L1「所有节点通过后合同可进入 ACTIVE 状态」= 前置满足非自动迁移）：`ErpCtContractActivateProcessor` config-gated 链完整性校验——approval-enabled 且链记录存在且非全 APPROVED → `ERR_CT_APPROVAL_NOT_COMPLETE` 拒绝；签署确认仍须显式 activate（不自动激活，防绕过 signDate/签署确认）。
+- **D2 角色→用户解析**：approverRole 视为 nop-auth **roleName**（`nop_auth_role.csv` 冻结词表语义）→ NopAuthRole.roleName 匹配 → NopAuthUserRole 成员 → 确定序最小 userId 落 approverId；无命中留空（手工指定）。
+- **D3 驳回超限锁定**：派生计数 = (contractId, approvalOrder) 组 REJECTED 记录数 vs `erp-ct.approval-max-retries`（默认 3）——计数 ≥ 上限后 approve/reject/resubmit 均拒（`ERR_CT_APPROVAL_LOCKED`，锁定需强制升级）+ 锁定时刻 best-effort 派发 `ct.approval-locked` 升级通知（经办人）。
+- **D7 驳回重提**：`resubmit(contractId)`（@BizMutation）——合同 NEGOTIATION + 最新轮次含 REJECTED → 对驳回节点及其后续节点**追加新 ApprovalRecord 行**（首 PENDING 其余 WAITING，REJECTED 历史保留，已 APPROVED 节点不动）；派生计数随轮次递增使 D3 锁定可达；无驳回 `ERR_CT_APPROVAL_NO_REJECTED`。
+- **72h 超时升级**：`ErpCtApprovalTimeoutEscalationJob` + `app-erp-all/_vfs/nop/job/conf/erp-ct-approval-timeout.job.yaml`（R1.4 简单 job bean 范式）——双层门控（job.yaml `nop.job.erp-ct-approval-timeout.enabled|cron-expr` + bean `erp-ct.approval-timeout-cron` 空值跳过）；扫描 PENDING 且 updateTime 超 `erp-ct.approval-timeout-hours`（默认 72）记录 → 升级通知上一节点审批人（approvalOrder-1 最新记录 approverId），无则合同经办人（`ct.approval-timeout-escalation`）；逐条失败隔离。
+- **通知事件**（全部 best-effort，无 ACTIVE 模板静默跳过 R1.4 范式）：`ct.approval-task`（审批待办）/ `ct.approval-rejected`（驳回→经办人）/ `ct.approval-locked`（锁定强制升级）/ `ct.approval-timeout-escalation`（超时升级）。
+- **config 键**：`erp-ct.approval-enabled`(false) / `erp-ct.approval-max-retries`(3) / `erp-ct.approval-timeout-hours`(72) / `erp-ct.approval-urgent-threshold`(500000，设计 doc 顶层边界默认语义——矩阵边界运行时权威，本键供种子/部署对齐) / `erp-ct.amendment-reapproval-threshold`(0.2，amend→submit 全链重审结构性达成；小额变更免审快捷通道未实现，消费点 Deferred) / `erp-ct.approval-timeout-cron`（job 门控）/ `erp-ct.terminate-approver-role`（「合同审批人」，terminate 法务门控角色，见 state-machine.md §6 注记）。
+- **测试**：`TestErpCtApprovalWorkflow`（11 组：config-gated 双路径/金额匹配生成/逐节点推进/activate 联动与拒绝/驳回通知/审批人守卫/D3+D7 锁定闭环）+ `TestErpCtApprovalTimeoutJob`（5 组：超时升级通知/未超时零动作/cron 跳过/失败隔离/config 绑定）。
+- **Deferred（已裁定）**：审批撤回（NEGOTIATION→DRAFT）与转交（§业务规则 5/6，L1 未列，out-of-scope improvement，successor = PM 审批操作完备性立项）+ amendment-reapproval-threshold 小额免审快捷通道（watch-only，amend 变更走 submit 全链重审为结构性达成路径）+ 前端审批操作 AMIS 接线（watch-only residual，后端 mutation 能力面已提供）。
+
 ## 证据强度
 
 | 证据 | 强度 | 说明 |

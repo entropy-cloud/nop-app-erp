@@ -71,6 +71,8 @@ DRAFT（草稿）
 
 > **实现约定**：`NEGOTIATION→TERMINATED` 迁移——`ErpCtContractBizModel.terminate` 守卫接受 `status∈{ACTIVE, NEGOTIATION}` 两种源态。NEGOTIATION 路径与 ACTIVE 路径行为一致（仅 `setStatus(TERMINATED) + updateEntity`），**无 signDate/version 归档差异**（NEGOTIATION 未生效，无需签署归档；版本归档经 `useLogicalDelete` 既有语义）。NEGOTIATION→TERMINATED 无独立法务审批门控（与 ACTIVE→TERMINATED 一致，均经 @BizMutation 入口权限 + e-signature config 覆盖）。
 
+> **terminate 两段化实现注记（RC-R1.34，plan `2026-08-15-1023-1`，P1-RC-076）**：§6 法务审批门控已落地——`terminate` 为**发起语义**（Bean `assertCanTerminate` 多源守卫保留 + 重复发起守卫 `ERR_CT_TERMINATE_ALREADY_PENDING` + 生成法务审批记录[ErpCtApprovalRecord：approvalMatrixId=null 判别 + approvalOrder=1 + approverId 经 D2 roleName→用户解析[config `erp-ct.terminate-approver-role` 默认「合同审批人」] + PENDING + remark 承载终止原因/附件引用] + **合同保持原状态**）；法务经 `approveTermination`（守卫 PENDING + 审批人匹配）通过后执行终止操作——合同→TERMINATED + 当前版本 isCurrent=false 归档（`archiveCurrentVersion`）+ 未执行 InvoicePlan 逻辑删除截停（`haltUnexecutedInvoicePlans`，D4 选项 A：useLogicalDelete 显式标记，已开票行保留）+ 善后 TODO 通知（`ct.terminate-winddown` 经办人，D5 选项 A：TODO 语义由通知承载，对齐 §8 TODO 表 TERMINATED 行）；`rejectTermination`（守卫同 approve）驳回 → 记录 REJECTED + 经办人通知（`ct.terminate-rejected`）+ **合同保持原状态**（§4 异常路径「法务驳回 → 合同保持原状态」落地）。**法务门控不受 `erp-ct.approval-enabled` config 门控**（D1 选项 B 裁决：§6 强制义务无条件生效；approval-enabled 仅管 submit 审批链生成）。**审批人守卫语义**：approverId 非空时须 == 当前操作人（不匹配 `ERR_CT_APPROVAL_APPROVER_MISMATCH`）；空 = D2 解析无命中手工指定语义放行任意操作员。测试：`TestErpCtTerminateGate` 6 组（发起/重复拒绝/副作用全落地/驳回保持/守卫/未过法务不执行副作用）+ 既有 `TestErpCtContractTerminate`/`TestErpCtContractPosting`/`TestErpCtContractRebate`/E2E `ct-contract-lifecycle` 两段化调整。
+
 ### 4. 异常路径
 
 | 异常场景 | 处理 |
