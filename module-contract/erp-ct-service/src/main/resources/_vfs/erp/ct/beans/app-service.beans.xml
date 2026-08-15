@@ -60,6 +60,12 @@
           class="app.erp.ct.service.processor.ErpCtInvoicePlanTriggerInvoiceProcessor"/>
     <bean id="app.erp.ct.service.processor.ErpCtInvoicePlanTriggerDuePlansProcessor"
           class="app.erp.ct.service.processor.ErpCtInvoicePlanTriggerDuePlansProcessor"/>
+    <!-- RC-R1.33（P1-RC-074）：按生成项批量生成 InvoicePlan（合同 ACTIVE 守卫 + 行归属 + 幂等查重） -->
+    <bean id="app.erp.ct.service.processor.ErpCtInvoicePlanGenerateByTermProcessor"
+          class="app.erp.ct.service.processor.ErpCtInvoicePlanGenerateByTermProcessor"/>
+    <!-- RC-R1.33（P1-RC-075）：消耗计费周期汇总 + 超量 InvoicePlan + 120% 通知 -->
+    <bean id="app.erp.ct.service.processor.ErpCtConsumptionPeriodSummarizeProcessor"
+          class="app.erp.ct.service.processor.ErpCtConsumptionPeriodSummarizeProcessor"/>
     <bean id="app.erp.ct.service.processor.ErpCtRebateAgreementRunAccrualProcessor"
           class="app.erp.ct.service.processor.ErpCtRebateAgreementRunAccrualProcessor"/>
     <bean id="app.erp.ct.service.processor.ErpCtRebateSettlementPostSettlementProcessor"

@@ -70,4 +70,8 @@ public interface ErpCtConstants {
     // ---- 跨域镜像：发票草稿初始审核状态（对齐 ErpPurConstants/ErpSalConstants.APPROVE_STATUS_UNSUBMITTED）----
     // 合同域触发生成的 AP/AR 发票草稿为新建实体初始化，非用户审批状态迁移。
     String APPROVE_STATUS_UNSUBMITTED = "UNSUBMITTED";
+
+    // --- 消耗计费超量通知事件（RC-R1.33，P1-RC-075，UC-CT-04 异常路径，D5 契约） ---
+    // 无 ACTIVE 模板时经 IErpSysNotificationBiz.notify best-effort 静默跳过（R1.4 范式）。
+    String NOTIFY_EVENT_CONSUMPTION_OVER_120 = "ct.consumption-over-120-percent";
 }

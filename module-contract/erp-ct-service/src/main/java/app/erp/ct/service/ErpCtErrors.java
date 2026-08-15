@@ -23,6 +23,10 @@ public interface ErpCtErrors {
     String ARG_EXPECTED_STATUS = "expectedStatus";
     String ARG_FROM_QTY = "fromQty";
     String ARG_TO_QTY = "toQty";
+    String ARG_INVOICE_TERM = "invoiceTerm";
+    String ARG_PLAN_DATE = "planDate";
+    String ARG_FROM_DATE = "fromDate";
+    String ARG_TO_DATE = "toDate";
 
     // --- 电子签章（plan 2026-07-04-2200-2，dict erp-ct/sign-status / erp-ct/sign-provider） ---
 
@@ -66,6 +70,30 @@ public interface ErpCtErrors {
     ErrorCode ERR_CT_INVOICE_PLAN_ALREADY_INVOICED = ErrorCode.define("erp.err.ct.invoice-plan-already-invoiced",
             "开票计划 {invoicePlanId} 已生成发票，不可重复触发",
             ARG_INVOICE_PLAN_ID);
+
+    // --- 开票计划批量生成 + 已开票锁（RC-R1.33，P1-RC-074，UC-CT-03） ---
+
+    ErrorCode ERR_CT_INVOICE_PLAN_INVOICED_IMMUTABLE = ErrorCode.define("erp.err.ct.invoice-plan-invoiced-immutable",
+            "开票计划 {invoicePlanId} 已开票，金额/计划开票日期/开票条款不可修改",
+            ARG_INVOICE_PLAN_ID);
+
+    ErrorCode ERR_CT_INVOICE_PLAN_DUPLICATE = ErrorCode.define("erp.err.ct.invoice-plan-duplicate",
+            "开票计划重复生成：合同行 {contractLineId} 条款 {invoiceTerm} 计划日期 {planDate} 已存在",
+            ARG_CONTRACT_LINE_ID, ARG_INVOICE_TERM, ARG_PLAN_DATE);
+
+    ErrorCode ERR_CT_INVOICE_PLAN_LINE_NOT_IN_CONTRACT = ErrorCode.define("erp.err.ct.invoice-plan-line-not-in-contract",
+            "合同行 {contractLineId} 不属于合同 {contractId}",
+            ARG_CONTRACT_LINE_ID, ARG_CONTRACT_ID);
+
+    // --- 消耗计费周期汇总（RC-R1.33，P1-RC-075，UC-CT-04） ---
+
+    ErrorCode ERR_CT_CONSUMPTION_LINE_NOT_FOUND = ErrorCode.define("erp.err.ct.consumption-line-not-found",
+            "合同行 {contractLineId} 不存在，无法汇总消耗计费",
+            ARG_CONTRACT_LINE_ID);
+
+    ErrorCode ERR_CT_CONSUMPTION_DATE_RANGE_INVALID = ErrorCode.define("erp.err.ct.consumption-date-range-invalid",
+            "消耗汇总期间非法：起始日期 {fromDate} 必须不晚于截止日期 {toDate}",
+            ARG_FROM_DATE, ARG_TO_DATE);
 
     // --- VolumeDiscount 区间带（docs/design/contract/volume-discount.md §ErpCtVolumeDiscount） ---
 

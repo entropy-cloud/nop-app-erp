@@ -18,10 +18,14 @@ import app.erp.common.service.MaskHelper;
 import app.erp.contract.dao.entity.ErpCtContract;
 import app.erp.contract.dao.entity.ErpCtContractLine;
 import app.erp.contract.dao.entity.ErpCtInvoicePlan;
+import app.erp.ct.biz.ErpCtInvoicePlanGenerateItem;
 import app.erp.ct.biz.IErpCtInvoicePlanBiz;
 import app.erp.ct.service.ErpCtConfigs;
+import app.erp.ct.service.processor.ErpCtInvoicePlanGenerateByTermProcessor;
 import app.erp.ct.service.processor.ErpCtInvoicePlanTriggerDuePlansProcessor;
 import app.erp.ct.service.processor.ErpCtInvoicePlanTriggerInvoiceProcessor;
+import io.nop.biz.crud.EntityData;
+import io.nop.api.core.convert.ConvertHelper;
 import jakarta.inject.Inject;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
@@ -33,6 +37,7 @@ import app.erp.sal.dao.entity.ErpSalInvoiceLine;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -60,6 +65,9 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
     @Inject
     ErpCtInvoicePlanTriggerDuePlansProcessor triggerDuePlansProcessor;
 
+    @Inject
+    ErpCtInvoicePlanGenerateByTermProcessor generateByTermProcessor;
+
     public ErpCtInvoicePlanBizModel() {
         setEntityName(ErpCtInvoicePlan.class.getName());
     }
@@ -76,6 +84,51 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
                                @Name("asOfDate") LocalDate asOfDate,
                                IServiceContext context) {
         return triggerDuePlansProcessor.triggerDuePlans(contractId, asOfDate, context);
+    }
+
+    @Override
+    @BizMutation
+    public List<ErpCtInvoicePlan> generateInvoicePlansByTerm(@Name("contractId") Long contractId,
+                                                             @Name("items") List<ErpCtInvoicePlanGenerateItem> items,
+                                                             IServiceContext context) {
+        return generateByTermProcessor.generateInvoicePlansByTerm(contractId, items, context);
+    }
+
+    // ---------- 已开票禁改守卫（RC-R1.33 P1-RC-074，UC-CT-03 C，D4 契约） ----------
+
+    /**
+     * isInvoiced=true 的 InvoicePlan 拒绝修改 amount/planDate/invoiceTerm（已开票一致性）。
+     * 已开票状态经 ORM 脏值追踪取"本次更新前"的持久化状态（客户端同请求改 isInvoiced 时也能拿到旧值，
+     * 防解锁绕过），对齐 R1.9 publish 守卫范式（{@code ErpHrSurveyBizModel#defaultPrepareUpdate}）。
+     * 非计费字段（remark 等）放行。triggerInvoice 回写经 Processor {@code dao().updateEntity}
+     * 直写绕过本守卫，不阻塞既有触发面。
+     */
+    @Override
+    protected void defaultPrepareUpdate(EntityData<ErpCtInvoicePlan> entityData, IServiceContext context) {
+        super.defaultPrepareUpdate(entityData, context);
+        Map<String, Object> data = entityData.getData();
+        if (data == null || !touchesGuardedFields(data)) {
+            return;
+        }
+        ErpCtInvoicePlan entity = entityData.getEntity();
+        boolean persistedInvoiced = Boolean.TRUE.equals(entity.getIsInvoiced());
+        if (entity.orm_propDirtyByName("isInvoiced")) {
+            Object old = entity.orm_dirtyOldValues().get("isInvoiced");
+            if (old != null) {
+                Boolean oldVal = ConvertHelper.toBoolean(old);
+                persistedInvoiced = oldVal != null && oldVal;
+            }
+        }
+        if (persistedInvoiced) {
+            throw new NopException(ErpCtErrors.ERR_CT_INVOICE_PLAN_INVOICED_IMMUTABLE)
+                    .param(ErpCtErrors.ARG_INVOICE_PLAN_ID, entity.getId());
+        }
+    }
+
+    private boolean touchesGuardedFields(Map<String, Object> data) {
+        return data.containsKey("amount")
+                || data.containsKey("planDate")
+                || data.containsKey("invoiceTerm");
     }
 
     // ---------- 发票草稿生成（经 IDaoProvider 直接持久化） ----------
