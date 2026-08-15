@@ -95,4 +95,13 @@ public interface ErpCtConstants {
     String NOTIFY_EVENT_TERMINATE_WINDDOWN = "ct.terminate-winddown";
     /** 终止申请驳回通知（接收人 = 合同经办人）。 */
     String NOTIFY_EVENT_TERMINATE_REJECTED = "ct.terminate-rejected";
+
+    // --- 合同到期自动化通知事件（RC-R1.35，UC-CT-05；D1-D5 裁决见 plan 2026-08-15-1023-2 Phase 1） ---
+    // 无 ACTIVE 模板时 notify best-effort 静默跳过（R1.4 范式）。
+    /** 到期前 30 天提醒（接收人 = 合同经办人 createdBy）。 */
+    String NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_30 = "ct.contract-expiry-warning-30";
+    /** 到期前 15 天再次提醒「即将到期」（接收人 = 合同经办人 createdBy）。 */
+    String NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_15 = "ct.contract-expiry-warning-15";
+    /** 到期前 7 天升级通知经办人上级（D2：NopAuthUser.managerId → 兜底 NopAuthDept.managerId）。 */
+    String NOTIFY_EVENT_CONTRACT_EXPIRY_ESCALATION_7 = "ct.contract-expiry-escalation-7";
 }

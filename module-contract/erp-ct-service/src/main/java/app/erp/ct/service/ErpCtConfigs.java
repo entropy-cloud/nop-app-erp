@@ -54,7 +54,6 @@ public interface ErpCtConfigs {
     String CFG_SIGNATURE_DEADLINE_DEFAULT_DAYS = "erp-ct.signature-deadline-default-days";
 
     // --- 审批工作流（RC-R1.34，UC-CT-07；键权威定义 approval-workflow.md §配置点） ---
-
     /** 审批流整体启用（config-gate = 部署启用决策，对齐 A4.1.4 范式）。默认 false——false 时 submit 零生成零阻塞。 */
     String CFG_APPROVAL_ENABLED = "erp-ct.approval-enabled";
 
@@ -76,12 +75,35 @@ public interface ErpCtConfigs {
     /** terminate 法务审批角色（D1 裁决——nop-auth roleName，对齐 nop_auth_role.csv 冻结词表）。默认「合同审批人」。 */
     String CFG_TERMINATE_APPROVER_ROLE = "erp-ct.terminate-approver-role";
 
+    // --- 合同到期自动化（RC-R1.35，UC-CT-05；D1-D5 裁决见 plan 2026-08-15-1023-2 Phase 1） ---
+
+    /** 到期扫描 job 执行门控 cron（D5 单键模式——job.yaml cronExpr 与 bean 空值跳过共用本键；空值 = 「不调度」语义）。默认空。 */
+    String CFG_CONTRACT_EXPIRY_CRON = "erp-ct.contract-expiry-cron";
+
+    /** 30 天档到期提醒窗口（D1 三独立键之一）。默认 30。 */
+    String CFG_CONTRACT_EXPIRY_WARNING_DAYS_30 = "erp-ct.contract-expiry-warning-days-30";
+
+    /** 15 天档到期提醒窗口（D1 三独立键之一）。默认 15。 */
+    String CFG_CONTRACT_EXPIRY_WARNING_DAYS_15 = "erp-ct.contract-expiry-warning-days-15";
+
+    /** 7 天档升级通知窗口（D1 三独立键之一）。默认 7。 */
+    String CFG_CONTRACT_EXPIRY_WARNING_DAYS_7 = "erp-ct.contract-expiry-warning-days-7";
+
+    /** 到期时是否自动创建续期草稿（D4 到期时触发；parentContractId 关联原合同，DRAFT）。默认 false。 */
+    String CFG_AUTO_CREATE_RENEWAL_DRAFT = "erp-ct.auto-create-renewal-draft";
+
     int DEFAULT_APPROVAL_MAX_RETRIES = 3;
     long DEFAULT_APPROVAL_TIMEOUT_HOURS = 72;
     long DEFAULT_APPROVAL_URGENT_THRESHOLD = 500000;
     double DEFAULT_AMENDMENT_REAPPROVAL_THRESHOLD = 0.2;
     String DEFAULT_APPROVAL_TIMEOUT_CRON = "0 0 1 * * ?";
     String DEFAULT_TERMINATE_APPROVER_ROLE = "合同审批人";
+
+    String DEFAULT_CONTRACT_EXPIRY_CRON = "";
+    int DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS_30 = 30;
+    int DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS_15 = 15;
+    int DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS_7 = 7;
+    boolean DEFAULT_AUTO_CREATE_RENEWAL_DRAFT = false;
 
     String DEFAULT_SIGNATURE_DEFAULT_PROVIDER = "MOCK";
     boolean DEFAULT_SIGNATURE_CALLBACK_SIGNATURE_REQUIRED = true;

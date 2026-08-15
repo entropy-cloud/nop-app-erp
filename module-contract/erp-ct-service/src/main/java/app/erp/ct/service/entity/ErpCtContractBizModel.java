@@ -4,13 +4,20 @@ package app.erp.ct.service.entity;
 import io.nop.api.core.annotations.biz.BizLoader;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.biz.ContextSource;
 import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
+import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import app.erp.common.service.MaskHelper;
 import app.erp.contract.dao.entity.ErpCtApprovalRecord;
@@ -31,19 +38,6 @@ import app.erp.ct.service.processor.ErpCtContractActivateProcessor;
 import app.erp.ct.service.processor.ErpCtContractAmendProcessor;
 import app.erp.ct.service.statemachine.ErpCtContractStateMachine;
 import app.erp.notify.biz.IErpSysNotificationBiz;
-import io.nop.api.core.annotations.biz.BizLoader;
-import io.nop.api.core.annotations.biz.BizModel;
-import io.nop.api.core.annotations.biz.BizMutation;
-import io.nop.api.core.annotations.biz.ContextSource;
-import io.nop.api.core.annotations.core.Name;
-import io.nop.api.core.annotations.core.Optional;
-import io.nop.api.core.beans.query.QueryBean;
-import io.nop.api.core.config.AppConfig;
-import io.nop.api.core.exceptions.NopException;
-import io.nop.api.core.time.CoreMetrics;
-import io.nop.biz.crud.CrudBizModel;
-import io.nop.core.context.IServiceContext;
-import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -55,8 +49,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import static io.nop.api.core.beans.FilterBeans.dateBetween;
 import static io.nop.api.core.beans.FilterBeans.eq;
-import io.nop.biz.crud.EntityData;
 
 /**
  * 合同头 BizModel。合同全生命周期状态机 + 版本修订编排
@@ -72,6 +66,8 @@ import io.nop.biz.crud.EntityData;
  */
 @BizModel("ErpCtContract")
 public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implements IErpCtContractBiz {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ErpCtContractBizModel.class);
 
     @Inject
     IErpCtContractLineBiz contractLineBiz;
@@ -312,6 +308,143 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
     @BizMutation
     public ErpCtContract amend(@Name("contractId") Long contractId, IServiceContext context) {
         return amendProcessor.amend(contractId, context);
+    }
+
+    @Override
+    @BizQuery
+    public List<ErpCtContract> scanExpiringContracts(@Optional @Name("warningDays") Integer warningDays,
+                                                     IServiceContext context) {
+        int window = warningDays != null ? warningDays : AppConfig.var(
+                ErpCtConfigs.CFG_CONTRACT_EXPIRY_WARNING_DAYS_30,
+                ErpCtConfigs.DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS_30);
+        LocalDate now = CoreMetrics.today();
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("status", ErpCtConstants.CONTRACT_STATUS_ACTIVE));
+        q.addFilter(dateBetween("endDate", now, now.plusDays(window)));
+        return findList(q, null, context);
+    }
+
+    /**
+     * 批量推进已过期合同（UC-CT-05，RC-R1.35）：status=ACTIVE 且 endDate &lt; today 逐合同
+     * expire（先 D3 未完成开票先完成，再 D4 config-gated 续期草稿，后 stateMachine 守卫置 EXPIRED）。
+     * 逐条失败隔离（try/catch per contract，WARN 不阻断后续），对齐 hr
+     * {@code ErpHrEmploymentContractExpireOverdueContractsProcessor} 范式。
+     */
+    @Override
+    @BizMutation
+    public List<ErpCtContract> expireOverdueContracts(IServiceContext context) {
+        LocalDate now = CoreMetrics.today();
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("status", ErpCtConstants.CONTRACT_STATUS_ACTIVE));
+        // endDate < now 语义：XMeta 过滤操作集不支持 lt/le（ObjMetaBasedFilterValidator 白名单
+        // 仅 eq/in/dateBetween/dateTimeBetween——对齐 TriggerDuePlansProcessor:39-44 注记），
+        // 以 dateBetween(epoch, today-1) 表达"早于 today"（无业务上早于 1970 的 endDate）。
+        q.addFilter(dateBetween("endDate", LocalDate.of(1970, 1, 1), now.minusDays(1)));
+        List<ErpCtContract> overdue = findList(q, null, context);
+        if (overdue == null || overdue.isEmpty()) {
+            return java.util.Collections.emptyList();
+        }
+        List<ErpCtContract> expired = new java.util.ArrayList<>();
+        for (ErpCtContract contract : overdue) {
+            try {
+                triggerDueInvoicesBeforeExpire(contract, context);
+                createRenewalDraftIfEnabled(contract, context);
+                // 复用既有状态机守卫语义（job 批量路径与手工 expire() 同一守卫）
+                stateMachine.assertCanExpire(contract.getStatus());
+                contract.setStatus(stateMachine.expireTargetStatus());
+                updateEntity(contract, null, context);
+                expired.add(contract);
+            } catch (Exception ex) {
+                LOG.warn("erp-ct-contract-expiry: 单条合同到期失败（隔离继续）：contractId={}, reason={}",
+                        contract.getId(), ex.getMessage());
+            }
+        }
+        return expired;
+    }
+
+    /**
+     * D3 异常路径（L1「endDate 到达仍有未完成的开票计划 → 先完成开票再 EXPIRED」）：
+     * expire 前对 isInvoiced=false 且 planDate ≤ today 的 InvoicePlan 逐条 triggerInvoice
+     * （复用既有 Processor 生成 AP/AR 发票草稿）；触发失败逐条 try/catch 隔离，
+     * 不影响 expire 主路径（D3 选项 A 裁决）。
+     */
+    protected void triggerDueInvoicesBeforeExpire(ErpCtContract contract, IServiceContext context) {
+        List<ErpCtContractLine> lines = findLines(contract.getId(), context);
+        if (lines.isEmpty()) {
+            return;
+        }
+        List<Long> lineIds = new java.util.ArrayList<>();
+        for (ErpCtContractLine line : lines) {
+            lineIds.add(line.getId());
+        }
+        QueryBean query = new QueryBean();
+        query.addFilter(io.nop.api.core.beans.FilterBeans.in("contractLineId", lineIds));
+        query.addFilter(eq("isInvoiced", false));
+        // planDate ≤ today 语义：dateBetween(epoch, today) 表达（同上白名单约束）
+        query.addFilter(dateBetween("planDate", LocalDate.of(1970, 1, 1), CoreMetrics.today()));
+        List<ErpCtInvoicePlan> plans = contractInvoicePlanBiz.findList(query, null, context);
+        if (plans == null) {
+            return;
+        }
+        for (ErpCtInvoicePlan plan : plans) {
+            try {
+                contractInvoicePlanBiz.triggerInvoice(plan.getId(), context);
+            } catch (Exception ex) {
+                LOG.warn("erp-ct-contract-expiry: 到期前开票触发失败（隔离继续）：contractId={}, planId={}, reason={}",
+                        contract.getId(), plan.getId(), ex.getMessage());
+            }
+        }
+    }
+
+    /**
+     * D4 续期草稿（config-gated {@code erp-ct.auto-create-renewal-draft} 默认 false；D4 选项 A 到期时创建）：
+     * 为到期合同创建 DRAFT 续期草稿——合同头复制（code=原code+"-RN" 防 UK_CT_CONTRACT_CODE_ORG 冲突，
+     * contractName/contractType/contractDirection/partnerId/currencyId/orgId/totalAmount 复制 +
+     * startDate=原endDate+1 + endDate=原endDate+原时长）+ parentContractId 关联原合同。
+     * 幂等守卫：已存在 parentContractId=原合同 且 status=DRAFT 的草稿时跳过（防重复运行重复建）。
+     */
+    protected void createRenewalDraftIfEnabled(ErpCtContract contract, IServiceContext context) {
+        if (!AppConfig.var(ErpCtConfigs.CFG_AUTO_CREATE_RENEWAL_DRAFT,
+                ErpCtConfigs.DEFAULT_AUTO_CREATE_RENEWAL_DRAFT)) {
+            return;
+        }
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("parentContractId", contract.getId()));
+        q.addFilter(eq("status", ErpCtConstants.CONTRACT_STATUS_DRAFT));
+        List<ErpCtContract> existing = findList(q, null, context);
+        if (existing != null && !existing.isEmpty()) {
+            return;
+        }
+        ErpCtContract draft = newEntity();
+        draft.setCode(renewalDraftCode(contract.getCode()));
+        draft.setOrgId(contract.getOrgId());
+        draft.setContractName(contract.getContractName());
+        draft.setContractType(contract.getContractType());
+        draft.setContractDirection(contract.getContractDirection());
+        draft.setPartnerId(contract.getPartnerId());
+        draft.setCurrencyId(contract.getCurrencyId());
+        draft.setTotalAmount(contract.getTotalAmount());
+        if (contract.getStartDate() != null && contract.getEndDate() != null) {
+            long durationDays = java.time.temporal.ChronoUnit.DAYS.between(contract.getStartDate(), contract.getEndDate());
+            draft.setStartDate(contract.getEndDate().plusDays(1));
+            draft.setEndDate(contract.getEndDate().plusDays(durationDays));
+        }
+        draft.setParentContractId(contract.getId());
+        draft.setStatus(ErpCtConstants.CONTRACT_STATUS_DRAFT);
+        draft.setBusinessDate(CoreMetrics.today());
+        saveEntity(draft, null, context);
+        LOG.info("erp-ct-contract-expiry: 自动创建续期草稿：parentContractId={}, draftCode={}",
+                contract.getId(), draft.getCode());
+    }
+
+    /** 续期草稿 code：原 code + "-RN"（orderCode 精度 50，超长截断保后缀）。 */
+    protected String renewalDraftCode(String originalCode) {
+        String base = originalCode == null ? "" : originalCode;
+        String suffix = "-RN";
+        if (base.length() + suffix.length() <= 50) {
+            return base + suffix;
+        }
+        return base.substring(0, 50 - suffix.length()) + suffix;
     }
 
     // ---------- helpers ----------

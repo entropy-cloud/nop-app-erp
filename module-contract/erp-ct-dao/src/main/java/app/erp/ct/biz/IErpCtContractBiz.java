@@ -2,12 +2,16 @@
 package app.erp.ct.biz;
 
 import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
+import io.nop.api.core.annotations.orm.SingleSession;
 import io.nop.core.context.IServiceContext;
 import io.nop.orm.biz.ICrudBiz;
 
 import app.erp.contract.dao.entity.ErpCtContract;
+
+import java.util.List;
 
 /**
  * 合同头业务接口。除标准 CRUD 外，定义合同全生命周期状态机契约
@@ -77,4 +81,24 @@ public interface IErpCtContractBiz extends ICrudBiz<ErpCtContract> {
 
     @BizMutation
     ErpCtContract rejectAmend(@Name("contractId") Long contractId, IServiceContext context);
+
+    /**
+     * 扫描到期预警合同（UC-CT-05，RC-R1.35）：status=ACTIVE 且 endDate 在 [today, today+warningDays] 区间。
+     *
+     * @param warningDays 预警提前天数；null 取 config erp-ct.contract-expiry-warning-days-30（默认 30）
+     */
+    @BizQuery
+    List<ErpCtContract> scanExpiringContracts(@Optional @Name("warningDays") Integer warningDays,
+                                              IServiceContext context);
+
+    /**
+     * 批量推进已过期合同（UC-CT-05，RC-R1.35）：status=ACTIVE 且 endDate &lt; today。
+     * 逐合同（失败隔离，单条 WARN 不阻断）：① D3 异常路径——到期前存在 isInvoiced=false 且
+     * planDate ≤ today 的 InvoicePlan 时先经 triggerInvoice 完成开票（逐条失败隔离）；
+     * ② D4 续期草稿——config erp-ct.auto-create-renewal-draft（默认 false）时创建续期草稿
+     * （parentContractId 关联原合同，DRAFT，幂等守卫防重复）；③ 置 EXPIRED（stateMachine 守卫）。
+     */
+    @BizMutation
+    @SingleSession
+    List<ErpCtContract> expireOverdueContracts(IServiceContext context);
 }

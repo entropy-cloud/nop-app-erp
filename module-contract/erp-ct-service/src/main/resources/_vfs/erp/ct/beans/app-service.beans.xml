@@ -24,6 +24,11 @@
     <bean id="erpCtApprovalTimeoutEscalationJob"
           class="app.erp.ct.service.job.ErpCtApprovalTimeoutEscalationJob"/>
 
+    <!-- RC-R1.35（P1-MA2-071，UC-CT-05）：合同到期扫描 job（R1.4 简单 job bean 范式——
+         30/15/7 分级提醒 + 批量 expire + config-gated 续期草稿 + 未完成开票先完成；cron 空值跳过） -->
+    <bean id="erpCtContractExpiryJob"
+          class="app.erp.ct.service.job.ErpCtContractExpiryJob"/>
+
     <!-- 电子签章三层 SPI（plan 2026-07-04-2200-2，design e-signature.md §SPI 接口）：Registry 镜像
          logistics ErpLogCarrierGatewayRegistry / finance ErpFinAcctDocRegistry 的 List 注入 + 内部建图范式；
          MockSignatureProvider（providerCode="MOCK"）注册为 Bean。真实三方供应商（e签宝/DocuSign/Tsign）
