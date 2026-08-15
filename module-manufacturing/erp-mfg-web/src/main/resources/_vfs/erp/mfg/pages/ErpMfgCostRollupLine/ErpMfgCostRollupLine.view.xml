@@ -12,11 +12,12 @@
                 <col id="materialId" label="产品" i18n-en:label="Product"/>
                 <col id="uoMId" label="计量单位" i18n-en:label="UoM"/>
                 <col id="currencyId" label="币种" i18n-en:label="Currency"/>
-                <!-- E4.1：materialCost/laborCost/overheadCost/subcontractCost 已 published=false 隐藏，grid 不引用 -->
-                <col id="materialBand" label="材料档位" i18n-en:label="Material Band" sortable="true" align="center"/>
-                <col id="laborBand" label="人工档位" i18n-en:label="Labor Band" sortable="true" align="center"/>
-                <col id="overheadBand" label="制费档位" i18n-en:label="Overhead Band" sortable="true" align="center"/>
-                <col id="subcontractBand" label="委外档位" i18n-en:label="Subcontract Band" sortable="true" align="center"/>
+                <!-- E4.1：materialCost/laborCost/overheadCost/subcontractCost 已 published=false 隐藏，grid 不引用。
+                     band 字段为 @BizLoader 代理视图字段（非实体属性），col 需 custom="true"（对齐 ErpFinVoucher balanceStatus 先例）。 -->
+                <col id="materialBand" label="材料档位" i18n-en:label="Material Band" sortable="true" align="center" custom="true"/>
+                <col id="laborBand" label="人工档位" i18n-en:label="Labor Band" sortable="true" align="center" custom="true"/>
+                <col id="overheadBand" label="制费档位" i18n-en:label="Overhead Band" sortable="true" align="center" custom="true"/>
+                <col id="subcontractBand" label="委外档位" i18n-en:label="Subcontract Band" sortable="true" align="center" custom="true"/>
                 <col id="totalCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
                 <col id="unitCost" ui:number="true" sortable="true" align="right" domain="amount"></col>
             </cols>
@@ -41,6 +42,14 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
             </layout>
+            <cells>
+                <!-- E4.1：band 字段为 @BizLoader 代理视图字段（非实体属性），cell 需 custom="true"
+                     （对齐 ErpMfgWorkOrder workOrderProgress / ErpMfgSubcontractOrder 参数 cell 先例）。 -->
+                <cell id="materialBand" custom="true"/>
+                <cell id="laborBand" custom="true"/>
+                <cell id="overheadBand" custom="true"/>
+                <cell id="subcontractBand" custom="true"/>
+            </cells>
         </form>
         <form id="edit" size="lg">
             <layout x:override="replace">
