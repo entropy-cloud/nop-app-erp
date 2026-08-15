@@ -31,7 +31,9 @@
 
 ### ErpFinGlDistribution(科目分摊规则,表 `erp_fin_gl_distribution`,归属 finance)
 
-实现 posting.md 已占位的 GL Distribution。一条规则把"一条凭证行"按维度拆成多条。
+> **裁决注记（2026-08-12 批量裁决 B 类，RC-R1.41，plan `2026-08-15-1838-1`）**：本实体**未物化**。裁决经 5 路并行独立 agent 核实——「FactsValidator SPI 已存在，实现 Validator bean」，规则以非 ORM 载体承载（`ErpFinGlDistributionValidator` Bean 内静态规则表 `rules` setter 注入，生产默认空表 = 零行为变更，下游经 beans.xml property 或 Delta 同名 bean 覆盖注入），L1 UC-FIN-04/15 断言（拆行 + Σ 守恒 + Σpercent!=100 拒绝 + `ErpFinGlDistributionValidator(IErpFinFactsValidator 实现)` Bean + getOrder() 较高）全部逐字满足。本节实体设计（字段/状态机）保留作**产品化演进参考**：若未来需要规则运行时管理界面（CRUD + 生效窗口管理），按 ORM ask-first 流程单独立项实体化，届时本节表结构作为字段设计基线。
+
+实现落地的科目分摊规则（GL Distribution）把"一条凭证行"按维度拆成多条：
 
 | 字段 | 含义 |
 |---|---|
@@ -61,7 +63,7 @@
 
 1. **凭证行新增 `costCenterId` 列**(ErpFinVoucherLine 与 ErpFinGlBalance 同步加),与 projectId/departmentId 同级、同语义、同可空。ErpMdSubject 新增 `isAuxiliaryCostCenter BOOLEAN` 控制该科目是否要求必填成本中心(对照已有的 isAuxiliaryPartner/Department/Project/Warehouse/Product 系列)。
 
-2. **FactsValidator 集成**:新增 `ErpFinGlDistributionValidator implements IErpFinFactsValidator`(接口见 posting.md:127-147),在凭证写库前对每条匹配 ErpFinGlDistribution 的分录行按 percent 拆分,输出多条目标行;getOrder() 设较高值确保在其他 Validator 之后执行。
+2. **FactsValidator 集成**:新增 `ErpFinGlDistributionValidator implements IErpFinFactsValidator`(接口见 posting.md:127-147),在凭证写库前对每条匹配 ErpFinGlDistribution 的分录行按 percent 拆分,输出多条目标行;getOrder() 设较高值确保在其他 Validator 之后执行。**实现注记（RC-R1.41）**：已落地 `ErpFinGlDistributionValidator`（`getOrder()=100`）——规则载体为 Bean 内静态规则表（源键 = sourceSubjectCode/sourceCostCenterId 任一非空 + 生效窗口 + isActive，目标行 = targetCostCenterId + percent），命中拆行（金额 scale 4 HALF_UP + 末行补差保证 Σ==原行），Σpercent≠100（精度容忍 0.000001）抛 `ERR_GL_DISTRIBUTION_PERCENT_SUM` 拒绝过账。
 
 3. **平衡保持**:分摊只改维度不改总金额,借贷平衡不变;Validator 校验 Σ percent = 100,否则抛 NopException。
 

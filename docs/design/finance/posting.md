@@ -225,7 +225,7 @@ autoCreateVoucher(billHeadCode, Double[]{amountSum, taxAmountSum, voucherAmount}
 | 合规校验（如现金流分类） | 拒绝：不符合现金流量表分类的凭证 throw NopException |
 | 跨账套同步 | 追加：在多 AcctSchema 下各生成一组分录 |
 
-**与 GL Distribution（科目分摊）的关系**：GL Distribution 是 FactsValidator 的一个具体实现——按部门/项目/产品线将一条分录拆成多条。本工程不强制实现 GL Distribution，但通过 FactsValidator 扩展点保留了实现能力（参考 iDempiere/Metasfresh 的 `MGLDistribution` + `FactsValidator` 组合）。
+**与 GL Distribution（科目分摊）的关系**：GL Distribution 是 FactsValidator 的一个具体实现——按部门/项目/产品线将一条分录拆成多条。**实现注记（RC-R1.41，plan `2026-08-15-1838-1`）**：本工程已落地 `ErpFinGlDistributionValidator implements IErpFinFactsValidator`（`posting/` 包，`getOrder()=100` 较高值确保在其他 Validator 之后执行），经 `ErpFinAcctDocRegistry` 的 `ioc:collect-beans by-type` 自动聚合——命中分摊规则（源 subjectCode/costCenterId 匹配 + 生效窗口 + 启用态）的分录行按 percent 拆行（金额 scale 4 HALF_UP，末行补差保证 Σ 拆分行金额 == 原行金额，平衡保持；`amountSource`/`amountFunctional` 同比例拆分，null 保持回退语义），规则 Σpercent 超出精度容忍（≠ 100）抛 `ERR_GL_DISTRIBUTION_PERCENT_SUM` 拒绝过账（L1 UC-FIN-04/15 断言逐字满足）。**规则载体裁决（2026-08-12 批量裁决 B 类）**：不物化 `ErpFinGlDistribution` ORM 实体——规则以 Bean 内静态规则表承载（`ErpFinGlDistributionValidator.rules` setter 注入，生产默认空表 = 零行为变更，下游经 beans.xml property 或 Delta 同名 bean 覆盖注入；无运行时规则管理 UI，实体化归 successor，见 `cost-center.md §ErpFinGlDistribution` 裁决注记）。参考 iDempiere/Metasfresh 的 `MGLDistribution` + `FactsValidator` 组合。
 
 > **新增校验规则 = 新增 Validator Bean，零改动财务核心**。与 Provider 机制配套，形成"生成 → 校验/改写 → 落库"的完整可插拔流水线。
 
@@ -442,6 +442,7 @@ VoucherBillR（业财回链）
   - 币种编码（`currencyCode`）
   - 汇率（`exchangeRate`）—— 业务日期当天的汇率
 - 汇率由主数据域提供；缺失汇率时报错而非静默使用默认值。
+- **汇率缺失守卫实现注记（RC-R1.42，plan `2026-08-15-1838-1`，D2 裁决）**：`ErpFinPostingProcessor.prepareContext` 已加外币过账汇率缺失守卫——事件币种为非本位币（经 `IErpMdCurrencyBiz` 查询 `ErpMdCurrency.isFunctional=false`）且 `event.getExchangeRate()==null` → 抛 `ERR_EXCHANGE_RATE_REQUIRED`（`erp.err.fin.exchange-rate-required`，含 `{currencyCode}` 参数）拒绝过账（L1 UC-FIN-12 断言②逐字满足）；本位币 / `currencyId=null` / 币种不存在 → 保留既有 `EXCHANGE_RATE_DEFAULT=1` 回退语义（本位币折算恒等式 + 保守放行）。守卫实现经 `IBizObjectManager` 按名解析 `IErpMdCurrencyBiz`（对齐本类 `resolveSubjects` 的非 BizModel bean 范式，零 daoFor）；`persistVoucher` 的兜底回退**不动**（ctx 已由 `prepareContext` 守卫保证，直调路径为内部受控，不做双守卫）。本位币判定载体 = `ErpMdCurrency.isFunctional` 字段（`eq("isFunctional",TRUE)` 查询范式，`ErpMdAcctSchema.functionalCurrencyId` 作 schema 级细分兜底载体，归 successor）。
 - **汇率锁定时机**：本位币金额在业务单据创建时按业务日期汇率锁定，过账时不重新计算。汇率差异在期末汇兑损益调整中统一处理（见 `domain-design-guidelines.md` §十二）。
 
 ### 实现契约
