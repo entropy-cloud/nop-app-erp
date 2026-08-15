@@ -40,6 +40,8 @@ DRAFT（草稿）
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|
 | DRAFT→NEGOTIATION | 合同经办人 | 合同内容填完整，金额/条款/日期必填 | 创建 v1 版本（DRAFT→FINALIZED） |
+
+> **DRAFT→NEGOTIATION 实现注记（RC-R1.32，plan 2026-08-15-0456-2）**：该迁移已由 `ErpCtContractBizModel#submit` @BizMutation 落地（§2 漂移注记已更新为已实现）——守卫仅 `status==DRAFT`（Bean `assertCanSubmitForNegotiation`，**不因已有版本拒绝**——amend 生命周期下变更 DRAFT 已有版本，submit 是其唯一前向出口）；校验经 `validateContractFields`（D1 语义：totalAmount==Σ行金额 DAO 口径 + startDate<endDate，`ERR_CT_AMOUNT_MISMATCH`/`ERR_CT_DATE_RANGE_INVALID`）；版本创建语义 = 零版本时自动创建 v1（versionNo=1、isCurrent=true、status=DRAFT——**初始态写入**，非经版本 Bean 迁移；「创建 v1 版本（DRAFT→FINALIZED）」读作「经 DRAFT→FINALIZED 演进」，activate 前须显式 `finalizeVersion`），已有版本时保留既有 DRAFT 当前版本不动（仅合同头 → NEGOTIATION）。
 | DRAFT→CANCELLED | 合同经办人 | 草稿状态、无关联生效业务（无开票/消耗） | 删除草稿版本，记录作废原因 |
 | NEGOTIATION→ACTIVE | 双方签署 | 合同文件签署完成（signDate 设置） | 版本状态→SIGNED，isCurrent=true |
 
@@ -54,11 +56,11 @@ DRAFT（草稿）
 | SUSPENDED→ACTIVE | 合同管理员 | 中止状态解除，双方确认恢复 | 版本恢复生效 |
 | NEGOTIATION→TERMINATED | 合同管理员 | 谈判破裂，双方确认终止 | 版本归档 |
 
-> **迁移图实现漂移注记（plan 2026-08-12-1118-1 层 2 四方对照裁定）**：上图声明 9 条迁移边，其中两条**命名动作 writer 未落地**，`ErpCtContractStateMachine` Bean 据实不编码：
-> - **DRAFT→NEGOTIATION（提交谈判）**：全域零 `setStatus(NEGOTIATION)` writer（无 `submitForNegotiation` 命名动作），NEGOTIATION 仅作为 activate/terminate 的源态被消费，命名动作路径下从 DRAFT 不可达（仅经 CRUD `save` 可写，M0.1 §9.4 残留风险）。**Successor**：合同提交谈判业务流落地时开独立 plan。
-> - **DRAFT→CANCELLED（草稿废弃）**：dict 缺 CANCELLED 值 + 零 writer（详见 §1 实现漂移注记）。
+> **迁移图实现漂移注记（plan 2026-08-12-1118-1 层 2 四方对照裁定 + RC-R1.32 更新）**：上图声明 9 条迁移边，其中**命名动作 writer 原未落地**两条，`ErpCtContractStateMachine` Bean 据实编码：
+> - **DRAFT→NEGOTIATION（提交谈判）**：**RC-R1.32 已实现**（plan `2026-08-15-0456-2`）——`ErpCtContractBizModel#submit` @BizMutation + Bean `assertCanSubmitForNegotiation`/`submitTargetStatus()`（DRAFT→NEGOTIATION 边已编码，Bean 7 边 → 9 边）；NEGOTIATION 不再仅作为 activate/terminate 的源态被消费（M0.1 §9.4 残留风险收敛：合同仍可经 CRUD save 直设 NEGOTIATION，但命名动作路径已可达）。同时落地**驳回恢复边** `rejectAmend`（DRAFT→ACTIVE，UC-CT-02 异常路径）——恢复目标 = 优先 SIGNED 最大 versionNo（无 SIGNED 回落 FINALIZED 最大者，D5 选项 B：跨请求可行 + 对重复 amend/reject 周期遗留 DRAFT 行免疫 + 防 finalize-then-reject 恢复未签署 FINALIZED 为 current），遗留 DRAFT 版本行保留为孤儿历史。
+> - **DRAFT→CANCELLED（草稿废弃）**：dict 缺 CANCELLED 值 + 零 writer（详见 §1 实现漂移注记），**仍为漂移**（Successor：PM 要求草稿废弃命名动作时开独立 plan，触及 `model/*.orm.xml` 保护区 ask-first）。
 >
-> Bean 仅编码**已实现**的 7 条边（activate/suspend/resume/terminate[多源]/expire/amend）。已实现边与本图一致，无 §迁移表 vs §实现约定 的内部语义漂移。
+> Bean 编码**已实现**的 9 条边（submit/rejectAmend/activate/suspend/resume/terminate[多源]/expire/amend）。已实现边与本图一致，无 §迁移表 vs §实现约定 的内部语义漂移。
 
 ### 3. 终态与恢复
 
@@ -203,6 +205,12 @@ DRAFT（草稿）─ finalizeVersion ─→ FINALIZED（定稿）─ signVersion
 
 > **amend = 新建版本（非迁移）**：`ErpCtContractAmendProcessor` 在合同修订时对**新建版本行** seed `setStatus(VERSION_STATUS_DRAFT)`（初始态写入，非既有版本迁移），不调 Bean 的 `assertCanFinalize`/`assertCanSign`（契约 §9.2 初始态路径）。
 
+> **RC-R1.32 版本族裁定注记（plan 2026-08-15-0456-2）**：
+> - **submit 建 v1 = 初始态写入（D2 裁决）**：`ErpCtContractBizModel#submit` 零版本时自动创建 v1（versionNo=1、isCurrent=true、status=DRAFT）——与 amend 新建版本同型（初始态写入，不调 Bean `assertCan*`）；已有版本时零操作（amend 场景 v2 已 DRAFT current，submit 仅合同头 → NEGOTIATION，v2 保持 DRAFT 直至显式 `finalizeVersion`）。
+> - **amend 行复制语义（D3 裁决）**：同合同 amend 模型（变更单 = 同合同 DRAFT 态，行留 contractId 下）下，L1「复制原合同所有行到变更单」的复制义务语义化 = **行保留**（版本切换不删行，变更 DRAFT 可编辑既有行）——零复制代码；逐行 newEntity 复制会在同 contractId 下产生重复行，与同合同模型冲突（否决）。
+> - **rejectAmend 恢复语义（D5 裁决，选项 B）**：`ErpCtContractBizModel#rejectAmend`（DRAFT→ACTIVE）恢复前任 current 版本 = **优先 status==SIGNED 中 versionNo 最大者，无 SIGNED 回落 FINALIZED 最大者**（恢复时推导，跨请求可行；SIGNED 优先防 finalize-then-reject 恢复未签署 FINALIZED 为 current；status 过滤天然排除重复周期遗留 DRAFT 行）；遗留 DRAFT 版本行保留为孤儿历史（逻辑删除语义不破坏）；无候选边界（零版本 ACTIVE 合同 amend 后驳回）清空遗留 DRAFT 的 isCurrent 恢复「无 current 版本」前置不变量。
+> - **activate 对非 FINALIZED current 版本静默跳过（D6 watch-only 登记）**：amend→submit 路径下 v2 保持 DRAFT current 时 activate 级联 signVersion 仅对 FINALIZED 生效（`ErpCtContractActivateProcessor:52-55`），静默跳过未补齐守卫（行为变更超出 RC-R1.32 范围）——**activate 前须显式 `finalizeVersion(v2)`**（版本 Bean `assertCanFinalize` 仅收 DRAFT，可达性有保证；测试 `TestErpCtContractCreateValidate#testFullChainAmendPath` 覆盖该契约）。
+
 ### 3. 与 Contract 主轴联动（跨聚合级联）
 
 版本签署（FINALIZED→SIGNED）有两条触发路径，**守卫统一在 signVersion Processor 内**（注入 Version Bean）：
@@ -336,5 +344,6 @@ ORM `posted` 列（`app-erp-contract.orm.xml:605`，BOOLEAN default false）存�
 - 到期提醒的 nop-job 定时任务配置。
 - contractType 与 contractDirection 的组合校验（采购合同→INBOUND，销售合同→OUTBOUND）。
 - 合同版本（适用对象二）：signVersion 的 isCurrent 守卫 + FINALIZED 来源态；Contract 激活→版本 SIGNED 级联（父驱子，守卫统一在 signVersion）；amend 新建 DRAFT 不调 assertCan*。
+- 合同头（适用对象一）：submit（DRAFT→NEGOTIATION，零版本建 v1 / 已有版本保留 current）+ rejectAmend（DRAFT→ACTIVE，SIGNED 优先恢复）两 RC-R1.32 边；activate 前置 finalizeVersion 契约（D6 watch-only）。
 - 返利协议（适用对象三）：ACTIVE/EXPIRED/SETTLED 预留死状态裁定（intentional reserved，不删除 dict 值）；ACTIVE accrual 只读守卫委托 Bean；返利结算过账在独立 `ErpCtRebateSettlement.status` 轴（M4.65），非 RebateAgreement.status。
 - 返利结算（适用对象四）：postSettlement DRAFT→POSTED 唯一实现边（Bean `assertCanPostSettlement`）；CANCELLED 预留死状态裁定（intentional reserved，零 writer，dict 值保留）；`posted` 布尔列不对称 watch-only residual（不入轴）；credit-memo 生成 + accrual 回写副作用保留在 Processor。
