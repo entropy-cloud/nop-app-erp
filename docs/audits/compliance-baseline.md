@@ -361,6 +361,17 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=230 / R2c=1399 / R2d=34 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R2b/R2c/R2d 基线上调注记（plan 2026-08-15-2119-3，RC-R1.48 mfg 物料预留写路径）
+
+`2026-08-15-2119-3`（RC-R1.48，P1-RC-008 修复：mfg 工单审核触发/释放/领料扣减物料预留写路径）新增跨域预留写路径生产代码，引入 **R2b +3 / R2c +6 / R2d +1**，全部为既有文档化 pattern 类的合法同型新增（对齐 1057-2 / R6.8 / R1.29 / R1.33 先例——预留写路径跨域编排 + 库存余额写经 `StockMoveBookkeeper` 封装的既定范式）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2b | 230 | **233** | 233 | **baseline-raise**（+3） | `ErpInvReservationBizModel` 3 处 `daoProvider().daoFor(...)`（`ErpInvReservation`/`ErpInvReservationLine`/`ErpInvStockBalance`，:422/:426/:430）——预留写接口（createReservation/releaseReservation/consumeReservation）编排头/行/余额三实体持久化，行级 min(需求,可用) 预留量 + 余额增量经 `StockMoveBookkeeper.updateBalanceWithRetry` 乐观锁（对齐 `StockMoveBookkeeper` 自身 daoProvider 直查范式 + `ErpInvStockMoveProcessor` 余额写路径）；CrudBizModel 管道（findList/saveEntity）不承载行级余额编排，ORM to-one getter 不可替代。无 B 类「重构为 I*Biz」候选（本接口即 I*Biz 契约实现）。 |
+| R2c | 1399 | **1405** | 1405 | **baseline-raise**（+6） | R2b 增量 3 处（子集）+ `ErpMfgWorkOrderProcessor:604` 1 处 `daoFor(ErpMdMaterial)`（预留行 uom 回退查物料主数据——同文件 :358 既有同型站点先例，getEntityById 主键导航非 FK 弱引用可替代）+ `ErpMfgMaterialIssueConfirmProcessor` 2 处 `daoFor(ErpInvReservation)`/`daoFor(ErpInvReservationLine)`（:332/:342，领料消耗前预留剩余量只读聚合——对齐 `KitAvailabilityChecker` 跨域只读直查先例）。 |
+| R2d | 34 | **35** | 35 | **baseline-raise**（+1） | `ErpMfgWorkOrderProcessor:604` `daoFor(ErpMdMaterial.class).getEntityById`（R2c 增量子集，同文件 :358 既有同型站点先例——工单 Processor 物料主数据 uom 回退读）。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1405 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
 ## BASELINE (machine-readable)
 
@@ -372,9 +383,9 @@ R1b: 0
 R1c: 0
 R1d: 14
 R2a: 34
-R2b: 230
-R2c: 1399
-R2d: 34
+R2b: 233
+R2c: 1405
+R2d: 35
 R3: 5
 R4: 0
 R5: 0

@@ -1,6 +1,6 @@
 # 2026-08-15-2119-3-rc-mr1-r1-48-mfg-material-reservation-write-path RC-R1.48 — mfg 物料预留写路径（MR1 第二批 B 类预授权降级）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-15
 > Mission: requirement-compliance
 > Work Item: RC-R1.48（P1-RC-008 mfg 工单审核触发/释放/领料扣减物料预留写路径完全缺失）
@@ -61,99 +61,114 @@
 
 ### Phase 1 - 状态映射与 config 语义裁决（Decision）
 
-Status: planned
+Status: completed
 Targets: `material-reservation.md`；`reservation-status.dict.yaml`；`ErpMfgConstants.java`；`ErpMfgWorkOrderProcessor.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` **D1 超预留语义（UC-MFG-06 ⑫）**：**选项 A（倾向）** = config `erp-mfg.over-pick-warning` 默认 true → 领料确认时领料量 > 预留未消耗量（reservedQuantity − consumedQuantity）时 LOG.warn 放行（对齐既有 warn 范式，不阻断领料主链）；**选项 B（否决）** = 默认拒绝（抛错阻断——改变既有领料行为面，无 config 门控时既有工单（无预留）会被误拦）；**选项 C（否决）** = 无预留工单豁免 + 有预留超量拒绝（两态混合——实现复杂 + 边界不清）。**理由**：owner doc `over-pick-warning` 语义即警告非阻断；无预留工单（既有数据）必须豁免零回归。记录替代方案与残留风险。
+- [x] `Decision` **D1 超预留语义（UC-MFG-06 ⑫）**：**选项 A（倾向）** = config `erp-mfg.over-pick-warning` 默认 true → 领料确认时领料量 > 预留未消耗量（reservedQuantity − consumedQuantity）时 LOG.warn 放行（对齐既有 warn 范式，不阻断领料主链）；**选项 B（否决）** = 默认拒绝（抛错阻断——改变既有领料行为面，无 config 门控时既有工单（无预留）会被误拦）；**选项 C（否决）** = 无预留工单豁免 + 有预留超量拒绝（两态混合——实现复杂 + 边界不清）。**理由**：owner doc `over-pick-warning` 语义即警告非阻断；无预留工单（既有数据）必须豁免零回归。记录替代方案与残留风险。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **D2 状态语义映射（L1 ④⑦ + dict 五态）**：**选项 A（倾向）** = 头 status 五态承载（RESERVED 语义 = 头创建后 status=OPEN[生效中] + 工单侧以既有 docStatus 状态机承载 RESERVED/PARTIAL 语义——工单齐套态 `STOCK_RESERVED`/`STOCK_PARTIAL` 已存在，`checkAvailability:117-124` 已设置；RELEASED 语义 = 释放后行 consumedQuantity=reservedQuantity 且头 status 按 D2 细裁[CANCELLED（取消释放）vs CONSUMED（完工领完）vs PARTIALLY_CONSUMED 过渡]）；**选项 B（否决）** = dict 追加 RELEASED 值（RC-R1.88 先例「dict 加值是数据非结构变更」虽预授权，但 L1 字面 RELEASED 与 ERP 语义 CONSUMED/CANCELLED 二值表达重复——头状态表达"预留单生命周期"，释放后的终态语义由消费方上下文决定）。**理由**：dict 五态已覆盖预留单生命周期；工单侧 RESERVED/PARTIAL 语义经 docStatus（STOCK_RESERVED/STOCK_PARTIAL）承载零新增结构；L1 ⑦「MaterialReservation.状态=RELEASED」以释放动作 + 行消耗追踪达成语义等价（owner doc 注记声明映射）。记录替代方案与残留风险（字面 RELEASED 态缺失——owner doc 声明语义等价映射）。
+- [x] `Decision` **D2 状态语义映射（L1 ④⑦ + dict 五态）**：**选项 A（倾向）** = 头 status 五态承载（RESERVED 语义 = 头创建后 status=OPEN[生效中] + 工单侧以既有 docStatus 状态机承载 RESERVED/PARTIAL 语义——工单齐套态 `STOCK_RESERVED`/`STOCK_PARTIAL` 已存在，`checkAvailability:117-124` 已设置；RELEASED 语义 = 释放后行 consumedQuantity=reservedQuantity 且头 status 按 D2 细裁[CANCELLED（取消释放）vs CONSUMED（完工领完）vs PARTIALLY_CONSUMED 过渡]）；**选项 B（否决）** = dict 追加 RELEASED 值（RC-R1.88 先例「dict 加值是数据非结构变更」虽预授权，但 L1 字面 RELEASED 与 ERP 语义 CONSUMED/CANCELLED 二值表达重复——头状态表达"预留单生命周期"，释放后的终态语义由消费方上下文决定）。**理由**：dict 五态已覆盖预留单生命周期；工单侧 RESERVED/PARTIAL 语义经 docStatus（STOCK_RESERVED/STOCK_PARTIAL）承载零新增结构；L1 ⑦「MaterialReservation.状态=RELEASED」以释放动作 + 行消耗追踪达成语义等价（owner doc 注记声明映射）。记录替代方案与残留风险（字面 RELEASED 态缺失——owner doc 声明语义等价映射）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **D3 config 默认值 + 键集**：**选项 A（倾向）** = `erp-mfg.reservation-enabled` 默认 true（owner doc :284 建议 true；预留写路径启用后既有工单流程行为变化仅限新增预留记录 + reservedQuantity 占用——领料/完工主链不变，config-gate 仍可关闭回退）vs **选项 B（否决）** = 默认 false（零行为变化但功能默认不可用，对齐 budget config-gate 范式——但本行是需求契约强制实现，默认关闭则修复义务未达）。**理由**：Q4 强制实现 + A4.2.3 回队需要默认活跃；`auto-release-on-complete` 随 enabled 联动（enabled 关闭时全链跳过）。**键集合并裁决（MINOR-3 修复）**：owner doc :284-290 四键中 `reservation-on-approve` **并入 `reservation-enabled`**（本行唯一激活语义 = 审核时建预留，无「enabled 但 approve 不建」的组合需求）——D3 记录合并决策 + Phase 4 owner doc config 表映射更新，避免死配置键（对齐 RC-R1.41/R1.42「dead config 转活跃」教训）。记录残留风险（config 默认 true 的既有工单流程影响——测试证明主链零回归）。
+- [x] `Decision` **D3 config 默认值 + 键集**：**选项 A（倾向）** = `erp-mfg.reservation-enabled` 默认 true（owner doc :284 建议 true；预留写路径启用后既有工单流程行为变化仅限新增预留记录 + reservedQuantity 占用——领料/完工主链不变，config-gate 仍可关闭回退）vs **选项 B（否决）** = 默认 false（零行为变化但功能默认不可用，对齐 budget config-gate 范式——但本行是需求契约强制实现，默认关闭则修复义务未达）。**理由**：Q4 强制实现 + A4.2.3 回队需要默认活跃；`auto-release-on-complete` 随 enabled 联动（enabled 关闭时全链跳过）。**键集合并裁决（MINOR-3 修复）**：owner doc :284-290 四键中 `reservation-on-approve` **并入 `reservation-enabled`**（本行唯一激活语义 = 审核时建预留，无「enabled 但 approve 不建」的组合需求）——D3 记录合并决策 + Phase 4 owner doc config 表映射更新，避免死配置键（对齐 RC-R1.41/R1.42「dead config 转活跃」教训）。记录残留风险（config 默认 true 的既有工单流程影响——测试证明主链零回归）。
       - Skill: `nop-backend-dev`
-- [ ] `Proof` **接线点全集确认**：`ErpMfgWorkOrderProcessor.doApprove:240-247`/`cancel:133-139`/`ErpMfgWorkOrderReportCompletionProcessor:31-104`/`ErpMfgMaterialIssueConfirmProcessor.confirm:33-72` 四接线点现状（代码实读 + 行号确认）；`ErpMfgConstants` config key 声明位（:73-74 先例 CONFIG_ALLOW_PARTIAL_KIT_START/INSPECTION_GATE_ENABLED）；inventory `updateBalanceWithRetry` 可复用性确认（public 方法 + 注册 bean `app-service.beans.xml:12-13`——ErpInvReservationBizModel 可直接注入复用，见 Phase 2 实现裁决）；**补充接线点边界**：`ErpMfgWorkOrderProcessor.doReverseApprove:254-259`（反审核后 docStatus 保持 NOT_STARTED 且预留保留——L1 未列反审核释放语义，按「cancel 兜底 + L1 一致性」裁决为保留预留不释放，Phase 1 记录）；`ErpMfgWorkOrderCloseProcessor`（STOPPED/IN_PROCESS→CLOSED 可达路径不触发 cancel/complete 释放——见 Deferred But Adjudicated 登记）。
+- [x] `Proof` **接线点全集确认**：`ErpMfgWorkOrderProcessor.doApprove:240-247`/`cancel:133-139`/`ErpMfgWorkOrderReportCompletionProcessor:31-104`/`ErpMfgMaterialIssueConfirmProcessor.confirm:33-72` 四接线点现状（代码实读 + 行号确认）；`ErpMfgConstants` config key 声明位（:73-74 先例 CONFIG_ALLOW_PARTIAL_KIT_START/INSPECTION_GATE_ENABLED）；inventory `updateBalanceWithRetry` 可复用性确认（public 方法 + 注册 bean `app-service.beans.xml:12-13`——ErpInvReservationBizModel 可直接注入复用，见 Phase 2 实现裁决）；**补充接线点边界**：`ErpMfgWorkOrderProcessor.doReverseApprove:254-259`（反审核后 docStatus 保持 NOT_STARTED 且预留保留——L1 未列反审核释放语义，按「cancel 兜底 + L1 一致性」裁决为保留预留不释放，Phase 1 记录）；`ErpMfgWorkOrderCloseProcessor`（STOPPED/IN_PROCESS→CLOSED 可达路径不触发 cancel/complete 释放——见 Deferred But Adjudicated 登记）。
       - Skill: `nop-backend-dev`
+
+### Phase 1 裁决记录（执行落盘）
+
+- **D1 超预留语义（UC-MFG-06 ⑫）— 选项 A 落地**：`erp-mfg.over-pick-warning` 默认 true。领料确认时经 `IErpInvReservationBiz.consumeReservation` 消耗预留，inventory 侧对超出未消耗量部分按 min 语义封顶消费（不产生负预留）；mfg 侧 `ErpMfgMaterialIssueConfirmProcessor` 在消费前直读预留行计算「预留未消耗量 vs 领料量」，超出时 LOG.warn 放行（不阻断领料主链）。备选 B（默认拒绝）否决——改变既有领料行为面，无预留工单（既有数据）会被误拦；备选 C（无预留豁免 + 有预留拒绝）否决——两态混合实现复杂 + 边界不清。残留风险：超预留放行后预留追踪与实际领料存在差额（差额部分无预留覆盖，归运营可见——领料移动单主链扣减仍守恒）。
+- **D2 状态语义映射（L1 ④⑦ + dict 五态）— 选项 A 落地**：头 status 五态承载预留单生命周期——创建后 `OPEN`（生效中）；领料消耗后按行消耗度推进 `PARTIALLY_CONSUMED`/`CONSUMED`；释放路径按释放语义映射终态：取消释放 → `CANCELLED`，完工释放（剩余>0）→ `PARTIALLY_CONSUMED`，完工时已全领 → `CONSUMED`。工单侧 RESERVED/PARTIAL 语义经既有 docStatus（`STOCK_RESERVED`/`STOCK_PARTIAL`，`checkAvailability` 已设置）承载，零新增结构。L1 ⑦「MaterialReservation.状态=RELEASED」以释放动作 + 行 `consumedQuantity`/`reservedQuantity` 追踪达成语义等价。备选 B（dict 追加 RELEASED）否决——与 CONSUMED/CANCELLED 二值表达重复。残留风险：字面 RELEASED 态缺失——owner doc 声明语义等价映射。
+- **D3 config 默认值 + 键集 — 选项 A 落地**：`erp-mfg.reservation-enabled` 默认 **true**（owner doc 建议 true；Q4 强制实现 + A4.2.3 回队需要默认活跃）；`erp-mfg.over-pick-warning` 默认 true（D1）；`erp-mfg.auto-release-on-complete` 默认 true（随 enabled 联动，enabled=false 时全链跳过）。**键集合并（MINOR-3 修复）**：owner doc 四键中 `reservation-on-approve` **并入 `reservation-enabled`**（本行唯一激活语义 = 审核时建预留），不再单独声明。残留风险：config 默认 true 对既有工单流程的影响——由测试证明无预留数据（无 BOM/无仓库行）路径零回归（approve 跳过预留创建不阻断）。
+- **Proof 接线点全集（实仓核实）**：
+  - `ErpMfgWorkOrderProcessor.doApprove:240-247` ✓（approve 挂接点 = doApprove 内增 protected step `createReservations`，经 `ErpMfgWorkOrderApproveProcessor.approve:30-37` 链自动生效）；
+  - `ErpMfgWorkOrderProcessor.cancel:133-139` ✓（cancel 挂接点 = 状态翻转后增 `releaseReservations`）；
+  - `ErpMfgWorkOrderReportCompletionProcessor.reportCompletion:31-104` ✓（complete 挂接点 = willFinish 终态判定后 :76-80 增 `releaseRemainingReservations`）；
+  - `ErpMfgMaterialIssueConfirmProcessor.confirm:33-72` ✓（issue 挂接点 = generateMove :54 + flush :56 后增 `consumeReservations`）；
+  - `ErpMfgConstants` config 声明位：:73-74 既有 `CONFIG_ALLOW_PARTIAL_KIT_START`/`CONFIG_INSPECTION_GATE_ENABLED` 先例 ✓；
+  - `updateBalanceWithRetry` 可复用性：`StockMoveBookkeeper.updateBalanceWithRetry:256-328` public ✓，bean 注册于 `app-service.beans.xml:12-13`（`app.erp.inv.service.stock.StockMoveBookkeeper`）✓——ErpInvReservationBizModel 直接注入复用，封装裁决见 D4；
+  - 边界：`doReverseApprove:254-259` 反审核后 docStatus 回 NOT_STARTED 且**预留保留不释放**（L1 未列反审核释放语义，cancel 兜底 + L1 一致性）✓ 记录；`ErpMfgWorkOrderCloseProcessor`（STOPPED/IN_PROCESS→CLOSED）不触发 cancel/complete 释放——已登记 Deferred But Adjudicated（watch-only residual + successor 触发条件）✓。
+  - 补充核实：`ErpMfgWorkOrder` 头无 sourceWarehouseId 字段（ORM :570-665），仓库回退链 = `ErpMfgWorkOrderLine.sourceWarehouseId:682` → null 则跳过该行预留 LOG.warn（MINOR-8）；`KitAvailabilityChecker.aggregateRequirements:91` 与 `resolveBomId:133-143` 均为 private——Phase 3 将二者改 public 复用（MINOR-7）；BOM 无子件爆炸空结果 → 零预留静默返回。
 
 Exit Criteria:
 
-- [ ] D1-D3 裁决记录落盘计划（选择 + 备选 + 理由 + 残留风险），四接线点 + config 声明位全集证据产出
-- [ ] updateBalanceWithRetry 复用路径确认（封装裁决）
+- [x] D1-D3 裁决记录落盘计划（选择 + 备选 + 理由 + 残留风险），四接线点 + config 声明位全集证据产出
+- [x] updateBalanceWithRetry 复用路径确认（封装裁决）
 
 ### Phase 2 - inventory 跨域写接口（IErpInvReservationBiz purpose-built 方法）
 
-Status: planned
+Status: completed
 Targets: `IErpInvReservationBiz.java`；`ErpInvReservationBizModel.java`（或新 per-mutation Processor，按 D4 裁决）；`ErpInvErrors.java`（按需）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision`
 - Prereqs: Phase 1 完成
 
-- [ ] `Decision` **D4 实现形态**：**选项 A（倾向）** = `ErpInvReservationBizModel` 直接实现（对齐 `ErpInvStockMoveBizModel` 先例——BizModel 内委托，方法级 @BizMutation/@BizAction 注解 + 库存余额写经既有 `StockMoveBookkeeper` 封装入口）；**选项 B（否决）** = 新建 per-mutation Processor 链（预留写 + 余额写两域职责，Processor 分层收益低——跨域调用方是 mfg 单侧，非多业务单据复用）。**理由**：库存侧单一职责 + 既有 StockMoveBookkeeper 复用；若执行中发现余额写需独立事务边界再升 Processor（记录为执行期裁决）。
+- [x] `Decision` **D4 实现形态（执行落盘：选项 A 落地）**：`ErpInvReservationBizModel` 直接实现三写方法（对齐 `ErpInvStockMoveBizModel` 委托范式），注入 `StockMoveBookkeeper`（bean 已注册 `app-service.beans.xml:12-13`，`updateBalanceWithRetry:256-328` public 可复用）+ `IDaoProvider` + `IOrmTemplate`；余额查找在 BizModel 内镜像 `StockMoveBookkeeper.findBalance` 查询语义（同口径避免与移动单路径余额行错位），无独立事务边界需求 → 不升 per-mutation Processor。理由：跨域调用方是 mfg 单侧非多单据复用；执行期未发现需独立事务边界的场景。
       - Skill: `nop-backend-dev`
-- [ ] `Add` `IErpInvReservationBiz` purpose-built 写方法契约（对齐 IErpInvStockMoveBiz 注解风格）：`createReservation`（@BizMutation：sourceBillType/sourceBillCode/lines[行 materialId/warehouseId/locationId/batchNo/requestedQuantity/uomId/sourceLineCode] → 建头(status=OPEN)+行(reservedQuantity=min(requested, available) 经余额读) + 余额 reservedQuantity+= + 返回含实际预留量）、`releaseReservation`（@BizMutation：by sourceBillType+sourceBillCode，未消耗部分全释放 + 余额 -=）、`consumeReservation`（@BizMutation：by sourceBillType+sourceBillCode+行维度，consumedQuantity+= + 余额 -=，超量按 D1 裁决 warn/拒绝）；**no-op 语义（MINOR-4 修复）**：`releaseReservation`/`consumeReservation` 按 sourceBillType+sourceBillCode 查无预留记录 → **静默跳过返回（零异常零写入）**——既有无预留工单（功能上线前数据/config 关闭）零回归依赖此语义，javadoc 显式声明；javadoc 契约注释。
+- [x] `Add` `IErpInvReservationBiz` purpose-built 写方法契约（对齐 IErpInvStockMoveBiz 注解风格）：`createReservation`（@BizMutation：request=ReservationCreateRequest[orgId/businessDate/sourceBillType/sourceBillCode/reservedForPartnerId/remark/lines: ReservationLineRequest{materialId/skuId/warehouseId/locationId/batchNo/requestedQuantity/uomId/sourceLineCode}] → 建头(status=OPEN)+行(reservedQuantity=min(requested, available) 经余额读) + 余额 reservedQuantity+= + 返回含实际预留量；同源单幂等返回既有头）、`releaseReservation`（@BizMutation：sourceBillType+sourceBillCode+reason[CANCELLED/COMPLETED]，未消耗部分全释放 + 余额 -= + 头状态按 D2 映射）、`consumeReservation`（@BizMutation：request=ReservationConsumeRequest[sourceBillType/sourceBillCode/lines: ReservationConsumeLine{materialId/warehouseId/locationId/batchNo/quantity}]，consumedQuantity+= + 余额 -=，超量按 min 封顶不产生负预留）；**no-op 语义（MINOR-4 修复）**：release/consume 查无预留记录 → 静默返回 null（零异常零写入），javadoc 显式声明。新增 4 个 DTO（ReservationCreateRequest/ReservationLineRequest/ReservationConsumeRequest/ReservationConsumeLine，`erp-inv-dao/.../biz/` 对齐 StockMoveRequest 先例）。
       - Skill: `nop-backend-dev`
-- [ ] `Add` `ErpInvReservationBizModel` 实现：头/行创建（code 生成规则按既有 orderCode 域范式）+ 余额读写经 `StockMoveBookkeeper` 封装（updateBalanceWithRetry 乐观锁——跨包可见性若受限则 BizModel 内镜像同型重试逻辑，声明理由）；**库存余额写面 = reservedQuantity 增减**（availableQuantity 经 recomputeAvailable 派生）；事务边界 @BizMutation 自动包装。
+- [x] `Add` `ErpInvReservationBizModel` 实现：头/行创建（code = `RSV-` + generateUUID，对齐 `newMoveCode:391-393` 范式）+ 余额读写经 `StockMoveBookkeeper.updateBalanceWithRetry`（乐观锁 + UK 冲突重试，A4.2.3 SP-3 义务）+ `recomputeAvailable` 派生 availableQuantity；`findOrNewBalance` 镜像 upsertBalance 语义（查询前 flushSession + 缺失建 TRANSIENT 候选交 INSERT 路径重试）；事务边界 @BizMutation 自动包装。跨包可见性未受限（bookkeeper 方法均 public），无需镜像重试逻辑。
       - Skill: `nop-backend-dev`
-- [ ] `Proof` 编译 + 单元验证：`mvn test -pl module-inventory/erp-inv-service`（新方法定向测试先于 mfg 接线——inventory 侧独立可测，Phase 3 集成后再全链断言）。
+- [x] `Proof` 编译 + 单元验证：`mvn test -pl module-inventory/erp-inv-service` —— 新增 `TestErpInvReservationWriteApi`（10 用例：创建占用/min 语义/幂等/取消释放/完工部分释放/完工全领/消耗追踪/超预留封顶/no-op/并发 lost-update）全绿 + 既有 inventory 测试零回归。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] IErpInvReservationBiz 三写方法契约 + 实现落地（grep 证据 + 编译通过），inventory 定向测试绿（创建/释放/消耗 + 余额断言 + 乐观锁冲突重试）
-- [ ] D4 裁决落盘记录
+- [x] IErpInvReservationBiz 三写方法契约 + 实现落地（grep 证据 + 编译通过），inventory 定向测试绿（创建/释放/消耗 + 余额断言 + 乐观锁冲突重试）
+- [x] D4 裁决落盘记录
 
 ### Phase 3 - mfg 接线（approve/cancel/complete/issue 四挂钩）
 
-Status: planned
+Status: completed
 Targets: `ErpMfgWorkOrderProcessor.java`；`ErpMfgWorkOrderApproveProcessor.java`；`ErpMfgWorkOrderReportCompletionProcessor.java`；`ErpMfgMaterialIssueConfirmProcessor.java`；`ErpMfgConstants.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Fix`
 - Prereqs: Phase 2 完成（写接口可用）
 
-- [ ] `Add` config keys：`ErpMfgConstants` 增 `CONFIG_RESERVATION_ENABLED`（`erp-mfg.reservation-enabled` 默认 true，D3）+ `CONFIG_OVER_PICK_WARNING`（`erp-mfg.over-pick-warning` 默认 true，D1）+ `CONFIG_AUTO_RELEASE_ON_COMPLETE`（`erp-mfg.auto-release-on-complete` 默认 true，D3 联动语义）+ 读点（readBoolConfig 范式，对齐 `ErpMfgWorkOrderProcessor:470-480`）。
+- [x] `Add` config keys：`ErpMfgConstants` 增 `CONFIG_RESERVATION_ENABLED`（`erp-mfg.reservation-enabled` 默认 true，D3）+ `CONFIG_OVER_PICK_WARNING`（`erp-mfg.over-pick-warning` 默认 true，D1）+ `CONFIG_AUTO_RELEASE_ON_COMPLETE`（`erp-mfg.auto-release-on-complete` 默认 true，D3 联动语义）+ `SOURCE_BILL_TYPE_WORK_ORDER`（预留 sourceBillType 码值）+ 读点（`ErpMfgWorkOrderProcessor.isReservationEnabled/isOverPickWarningEnabled/isAutoReleaseOnComplete`，readBoolConfig 范式 :470-480）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` approve 接线（UC-MFG-05 ①-④）：`ErpMfgWorkOrderProcessor.doApprove:240-247`（或 `ErpMfgWorkOrderApproveProcessor.approve:30-37` 链）增 protected step `createReservations(wo, context)`——config-gated（reservation-enabled）+ 注入 `IErpInvReservationBiz` + BOM 展开子件需求（复用 `KitAvailabilityChecker` 的 `bomExpander.explode`/`aggregateRequirements` 或等价解析——**注意 `aggregateRequirements:91` 为 private，直接复用须抽 public helper 或经 KitAvailabilityChecker 新增 public 解析方法**）+ 行维度仓库取 `ErpMfgWorkOrderLine.sourceWarehouseId:682`（**null 回退（MINOR-8 修复）：回退工单头仓库（若 WO 有 sourceWarehouseId 类字段）→ 仍 null 则跳过该行预留并 LOG.warn，不阻断 approve**）+ 调 `createReservation`（min(需求,可用) 在库存侧）→ 工单齐套态 docStatus 维持（checkAvailability 既有逻辑，D2 语义）；**无 BOM/无子件场景（MINOR-5 修复）：`resolveBomId:133-143` 抛 `ERR_DEFAULT_BOM_NOT_FOUND` 时——reservation-enabled 下跳过预留创建不阻断 approve（LOG.warn），仅记录工单无预留**（避免既有 BOM-less 工单流程在默认 true 下被破坏，与 KitAvailabilityChecker 只读校验路径行为对齐）。
+- [x] `Fix` approve 接线（UC-MFG-05 ①-④）：`ErpMfgWorkOrderProcessor.doApprove` 增 protected step `createReservations(wo, context)`（经 `ErpMfgWorkOrderApproveProcessor.approve` 链自动生效）——config-gated（reservation-enabled）+ 注入 `IErpInvReservationBiz` + BOM 展开子件需求（**MINOR-7 落地**：`KitAvailabilityChecker.aggregateRequirements`/`resolveBomId` 改 public + 新增 public `explodeRequirements` 复用）`+ 行维度仓库取 `ErpMfgWorkOrderLine.sourceWarehouseId:682`（**MINOR-8 落地**：WO 头无 sourceWarehouseId 字段（ORM :570-665 核实），回退链 = 跳过该行预留 LOG.warn，不阻断 approve）+ 调 `createReservation`（min(需求,可用) 在库存侧）→ 工单齐套态 docStatus 维持（D2 语义）；**无 BOM 场景（MINOR-5 落地）**：`resolveBomId` 抛 `ERR_DEFAULT_BOM_NOT_FOUND` → 跳过预留创建 LOG.warn 不阻断 approve；无子件/无仓库行 → 零预留静默/告警跳过。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` cancel 接线（UC-MFG-08 ⑤⑥⑦）：`ErpMfgWorkOrderProcessor.cancel:133-139` 增 `releaseReservations(wo, context)`——config-gated + 调 `releaseReservation`（未领料全释放 + 余额-=）。
+- [x] `Fix` cancel 接线（UC-MFG-08 ⑤⑥⑦）：`ErpMfgWorkOrderProcessor.cancel:133-139` 状态翻转后增 `releaseReservations(wo, context)`——config-gated + 调 `releaseReservation(reason=CANCELLED)`（未领料全释放 + 余额-= + 头状态 → CANCELLED）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` complete 接线（UC-MFG-08 ⑤⑥⑦）：`ErpMfgWorkOrderReportCompletionProcessor` 终态判定后增 `releaseRemainingReservations`——config-gated（auto-release-on-complete）+ 调 `releaseReservation`（未领料部分释放）。
+- [x] `Fix` complete 接线（UC-MFG-08 ⑤⑥⑦）：`ErpMfgWorkOrderReportCompletionProcessor` 终态判定（willFinish）后增 `facade.releaseRemainingReservations(wo, context)`——config-gated（auto-release-on-complete + enabled 联动）+ 调 `releaseReservation(reason=COMPLETED)`（未领料部分释放 + 余额-= + 头状态按 D2 映射）。查无预留 no-op 零写入。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` issue 领料消耗接线（UC-MFG-06 ⑬⑭⑯）：`ErpMfgMaterialIssueConfirmProcessor.confirm:33-72` 增 `consumeReservations(issue, lines)`——config-gated + 领料量经 `MaterialIssueStockMoveBuilder` 行映射 + 调 `consumeReservation`（consumedQuantity+= + 余额-= + 超量按 D1 warn/拒绝）；领料移动单主链（generateMove）零改动。
+- [x] `Fix` issue 领料消耗接线（UC-MFG-06 ⑬⑭⑯）：`ErpMfgMaterialIssueConfirmProcessor.confirm` generateMove+flush 后增 `consumeReservations(issue, lines, context)`——config-gated（enabled）+ 领料量行映射（issuedQuantity?:requiredQuantity）+ 超预留按 D1 裁决 `warnIfOverPick`（config over-pick-warning 默认 true LOG.warn 放行）+ 调 `consumeReservation`（consumedQuantity+= + 余额-= + 超量 min 封顶）；查无预留 no-op；**领料移动单主链（generateMove）零改动**（git diff 核实）。
       - Skill: `nop-backend-dev`
-- [ ] `Proof` 分域编译 + 集成测试前置：`mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service` 既有测试零回归（config 默认 true 下既有工单流程测试全绿——无预留数据旧路径兼容性证明）。
+- [x] `Proof` 分域编译 + 集成测试前置：`mvn test -pl module-manufacturing/erp-mfg-service` 既有 260 tests 全绿（config 默认 true 下既有工单流程测试零回归——无预留数据旧路径兼容性证明，含 TestErpMfgWorkOrderEndToEnd/TestErpMfgCostFlowEndToEnd/TestErpMfgCompletionPosting 等 approve/cancel/complete 全链）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 四接线点落地（grep 证据：approve/cancel/complete/issue 各含 create/release/consume 调用）+ config 三键声明/读点 + 分域既有测试零回归
-- [ ] 领料移动单主链零改动（git diff 检查）
+- [x] 四接线点落地（grep 证据：approve/cancel/complete/issue 各含 create/release/consume 调用）+ config 三键声明/读点 + 分域既有测试零回归
+- [x] 领料移动单主链零改动（git diff 检查）
 
 ### Phase 4 - 测试 + 零回归 + 文档回填
 
-Status: planned
+Status: completed
 Targets: 新增测试类（inventory + mfg）；`material-reservation.md`；arm-index/roadmap/`docs/logs/`；A4.2.3 行解锁注记
 Skill: `nop-testing`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 3 完成
 
-- [ ] `Add` inventory 侧测试（Phase 2 定向测试完善）：`TestErpInvReservationWriteApi`（或等价）——创建（头+行+reservedQuantity+= + min 语义）/释放（未消耗全释放 + -=）/消耗（consumedQuantity+= + -= + 超量 warn 放行）/并发 lost-update（双写冲突 → updateBalanceWithRetry 重试无丢失）。
+- [x] `Add` inventory 侧测试（Phase 2 定向测试完善）：`TestErpInvReservationWriteApi`（`module-inventory/erp-inv-service/src/test/.../TestErpInvReservationWriteApi.java`）——10 组全绿：创建（头+行+reservedQuantity+= + min 语义）/ 幂等 / 取消释放（CANCELLED + 余额回退）/ 完工部分释放（PARTIALLY_CONSUMED + 行归位）/ 完工全领（CONSUMED）/ 消耗追踪（consumedQuantity+= + 余额-= + 行 reservedQuantity 固定语义）/ 超预留 min 封顶 / no-op（release/consume 查无预留零写入）/ 多线程并发 lost-update（双写预留 4+4=8 无丢失 + available=2，updateBalanceWithRetry 重试实证）。
       - Skill: `nop-testing`
-- [ ] `Add` mfg 侧集成测试：`TestErpMfgReservationLifecycle`（或等价，对齐 `TestErpMfgWorkOrderEndToEnd` 范式）——① 审核创建（approve → ErpInvReservation 落库 + 余额占用）；② 取消释放（cancel → 释放 + 余额回退）；③ 完工释放（complete → 未领料部分释放）；④ 领料消耗（confirm → 消耗追踪 + 余额扣减）；⑤ 超预留 warn 路径；⑥ config 关闭全链跳过（reservation-enabled=false 既有行为零变化）；**⑦ 头状态断言（MINOR-6 修复）：释放路径经 D2 映射的 ErpInvReservation.status 终态断言——cancel 释放→CANCELLED / 领料领完→CONSUMED / 部分领料→PARTIALLY_CONSUMED（L1 ⑦ RELEASED 语义的载体证明）**；**⑧ no-op 语义断言：无预留工单（旧数据）cancel/confirm/complete 不抛异常零写入**；**⑨ 无 BOM 工单 approve 不阻断（跳过预留 LOG.warn）**。
+- [x] `Add` mfg 侧集成测试：`TestErpMfgReservationLifecycle`（`module-manufacturing/erp-mfg-service/src/test/.../TestErpMfgReservationLifecycle.java`，对齐 `TestErpMfgWorkOrderEndToEnd` 范式）——9 组全绿：① 审核创建（approve → ErpInvReservation 落库 + 余额占用 + min 语义 + 行仓库/sourceLineCode）；② 取消释放（cancel → 释放 + 余额回退）；③ 完工释放（complete → 未领料部分释放 + 行 reserved=consumed 归位）；④ 领料消耗（confirm → 消耗追踪 + 余额扣减）；⑤ 超预留 warn 路径（confirm 放行 + min 封顶消耗 + 领料主链扣减不受影响）；⑥ config 关闭全链跳过（reservation-enabled=false 既有行为零变化）；**⑦ 头状态断言（MINOR-6 落地）**：cancel→CANCELLED / 领料领完→CONSUMED / 部分领料→PARTIALLY_CONSUMED（L1 ⑦ RELEASED 语义的载体证明）；**⑧ no-op 语义断言**：无预留工单（旧数据，无仓库行）cancel/confirm/complete 不抛异常零写入；**⑨ 无 BOM 工单 approve 不阻断**（跳过预留 LOG.warn）。
       - Skill: `nop-testing`
-- [ ] `Add` owner doc 更新：`material-reservation.md` Deferred 标注更新为已实现（跨域调用点 + config keys[含 reservation-on-approve 并入 reservation-enabled 的 config 表映射，D3 裁决] + D1-D4 裁决映射 + 残留边界声明[RELEASED 语义等价映射/6 态业务参考态/A2.17 并发归口/close 路径保留预留]）。
+- [x] `Add` owner doc 更新：`material-reservation.md` Deferred 标注更新为已实现（跨域调用点 + config keys[含 reservation-on-approve 并入 reservation-enabled 的 config 表映射，D3 裁决] + D1-D4 裁决映射 + 残留边界声明[RELEASED 语义等价映射/6 态业务参考态/A2.17 并发归口/close 路径保留预留]）。
       - Skill: `nop-backend-dev`
-- [ ] `Proof` 零回归验证：`mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service` 全绿 + `mvn clean install -DskipTests` 全量构建 + `bash docs/audits/nop-compliance-checker.sh`（若新增 daoFor/import 面 → per-site 登记 baseline-raise 对齐 RC-R1.29/RC-R1.33 先例）+ 回填（arm-index P1-RC-008 → done (RC-R1.48) + roadmap 行 done + **roadmap RC-R1.48 行旧「越界项…双独立子 agent 批准 checkbox」字样按 2026-08-12 B 类裁决改写消除歧义，对齐 RC-R1.41/42 行先例** + A4.2.3 行解锁注记[回队触发条件满足] + `docs/logs/2026/08-15.md` 日志条目）。
+- [x] `Proof` 零回归验证：`mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service` 全绿（218 + 269）+ `mvn clean install -DskipTests` 全量构建 BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh`（新增 daoFor 面 6 处 → **baseline-raise per-site 登记**落 `docs/audits/compliance-baseline.md`（R2b 230→233 / R2c 1399→1405 / R2d 34→35，per-site 证据：ErpInvReservationBizModel 3 处 + ErpMfgWorkOrderProcessor:604 uom 回退[同文件 :358 先例] + ErpMfgMaterialIssueConfirmProcessor 2 处预留只读聚合，对齐 RC-R1.29/RC-R1.33 先例））+ 回填（arm-index P1-RC-008 → done (RC-R1.48) + roadmap RC-R1.48 行 done ✅ + **roadmap RC-R1.48 行旧「越界项…双独立子 agent 批准 checkbox」字样按 2026-08-12 B 类裁决改写消除歧义** + A4.2.3 行解锁注记[回队触发条件满足] + `docs/logs/2026/08-16.md` 日志条目）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 新测试全绿（①-⑨）+ 既有 inventory/mfg 测试零回归 + compliance checker 通过（或 per-site 登记）
-- [ ] owner doc 更新 + 四处回填（arm-index/roadmap/A4.2.3 解锁/log）+ 无范围内项目降级
+- [x] 新测试全绿（①-⑨）+ 既有 inventory/mfg 测试零回归 + compliance checker 通过（per-site 登记 baseline-raise）
+- [x] owner doc 更新 + 四处回填（arm-index/roadmap/A4.2.3 解锁/log）+ 无范围内项目降级
 
 ## Draft Review Record
 
@@ -162,14 +177,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（P1-RC-008 预留写路径：inventory 写接口 + mfg 四接线 + config + 测试）
-- [ ] 相关文档对齐（material-reservation.md 更新 + arm-index P1-RC-008 → done (RC-R1.48) + roadmap 行 done + A4.2.3 解锁注记）
-- [ ] 已运行验证（`mvn clean install -DskipTests` + `mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service` + `bash docs/audits/nop-compliance-checker.sh`）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（P1-RC-008 预留写路径：inventory 写接口 + mfg 四接线 + config + 测试）
+- [x] 相关文档对齐（material-reservation.md 更新 + arm-index P1-RC-008 → done (RC-R1.48) + roadmap 行 done + A4.2.3 解锁注记）
+- [x] 已运行验证（`mvn clean install -DskipTests` + `mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service` + `bash docs/audits/nop-compliance-checker.sh`）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符（审计证据见 Closure 节，独立子代理执行）
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -205,13 +220,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待执行完成后填写>
+Status Note: 全部 4 Phase 完成（P1-RC-008 预留写路径落地：inventory 跨域写接口 create/release/consume + mfg 四接线 + config 3 键 + 测试 19 组全绿 + 文档回填），独立结束审计通过（零阻塞项）。验证全绿：`mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service`（218 + 269）+ `mvn clean install -DskipTests` BUILD SUCCESS + compliance checker actual ≤ baseline（baseline-raise R2b 233/R2c 1405/R2d 35 per-site 登记）。A4.2.3 解锁回队注记已落 roadmap。无范围内项目降级（Deferred But Adjudicated 仅含 5 项预批准 watch-only 残留）。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <待填写>
-- Evidence: <待填写>
+- Auditor / Agent: 独立子代理（新会话，无执行者上下文）`ses_ff8fc15c9ffeowgwXIp473MKZb` — VERDICT: **pass**
+- Evidence: 7 项检查清单全 PASS（Phase 一致性/范围内行为/grep 证据/测试 19 组/三验证命令实测全绿/文档回填四处/无降级/反松弛扫描零禁词）；非阻塞观察 2 项（工作区未提交——仓库惯例；closure gate 勾选后由本审计实质满足——本节即证据落盘）
 
 Follow-up:
 
-- <待填写>
+- 无（A4.2.3 回队验证义务已注记 roadmap 行；close 路径预留释放 / 6 态 reservationStatus 物化的 successor 触发条件已登记 Deferred But Adjudicated）
