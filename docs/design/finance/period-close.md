@@ -227,6 +227,15 @@
 - **税务影响**：已申报税务需与税务机关沟通
 - **数据一致性**：反结账后需重新执行期间内所有单据过账
 
+### 反结账审计轨迹（实现注记，RC-R1.44 / P1-RC-006）
+
+- **契约**：`IErpFinPeriodCloseBiz.reverseClose(periodId, reason, context)`——**reason 必填**（RC-9 全程审计[操作人/原因]），缺失抛 `ERR_REVERSE_CLOSE_REASON_REQUIRED`（`erp.err.fin.period-close.reverse-close-reason-required`）。守卫位于状态守卫之前（fail-fast 输入校验），kill-switch（`erp-fin.reverse-close-approval-required`）与次年期间门控行为零变化。
+- **存储载体**：`ErpFinAccountingPeriod` 3 可空专属列 `reversedBy`（propId 20，`stdDomain="userId"`）/`reverseCloseReason`（propId 21，VARCHAR 500）/`reverseCloseAt`（propId 22，`tagSet="clock"`）——对称 `closedBy/closedAt` 结账审计，对齐 `ErpFinPostingException` resolutionNote/resolvedBy/resolvedAt 三列写入范式。
+- **写入点**：`ErpFinAccountingPeriodReverseCloseProcessor.reverseClose` 状态翻转（setStatus OPEN）后、红冲/回开副作用前写入 `setReverseCloseReason(reason)` + `setReversedBy(currentUserId())` + `setReverseCloseAt(CoreMetrics.currentTimestamp())`；与状态翻转同事务（@BizMutation 包裹），红冲/回开逻辑零变更。
+- **前端**：期末结账向导（`period-close-wizard/main.flux.yaml` 反结账步骤 + `main.page.yaml` 反结账确认 dialog）与期间列表行操作（`ErpFinAccountingPeriod.view.xml` 反结账 dialog，对齐 ErpFinBudgetScenario rollForward 参数化 dialog 范式）均收集必填 reason 后调用 mutation。
+- **与 kill-switch 关系**：reason 守卫独立于审批门控——approval-required=true 时仍先拒绝（reason 已校验或未校验均不影响 kill-switch 阻断语义）；approval-required=false 时 reason 必填保证审计可追。
+- **多次反结账覆盖边界（残留风险）**：同期间 CLOSED_FINAL→OPEN→重新结账→再次反结账循环中，3 审计列仅保留末次记录（专属列免于无关更新覆盖，但不免下次反结账覆盖）。缓解：专属列 + 期间状态轨迹（`ErpFinAccountingPeriodStatus.statusRecords`）组合追溯；逐次保留的多级 change-trail 归「结构化操作日志」successor（触发条件：审计/合规场景要求 NopSysChangeLog 多级变更日志时按 ORM ask-first 流程立项）。
+
 ## 与其他域的协作
 
 | 对端域 | 协作内容 |
