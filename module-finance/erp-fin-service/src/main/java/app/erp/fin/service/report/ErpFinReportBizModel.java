@@ -49,11 +49,15 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
+import static io.nop.api.core.beans.FilterBeans.isNull;
+import static io.nop.api.core.beans.FilterBeans.notIn;
+import static io.nop.api.core.beans.FilterBeans.or;
 
 /**
  * 财务报表渲染入口。注入平台 {@link IReportEngine}，按报表名解析 VFS 模板路径
@@ -176,7 +180,7 @@ public class ErpFinReportBizModel {
     /** 按报表短名自动装配数据集（调用方未预先提供时）。 */
     private void prepareDataset(String reportName, Map<String, Object> data) {
         String key = baseName(reportName);
-        if (data.containsKey(DS_VAR)) return;
+        if (data.containsKey(DS_VAR) && !"cash-flow-statement".equals(key)) return;
         switch (key) {
             case "balance-sheet":
                 data.put(DS_VAR, buildBalanceSheetDataset(asLong(data, "periodId")));
@@ -185,7 +189,11 @@ public class ErpFinReportBizModel {
                 data.put(DS_VAR, buildIncomeStatementDataset(asLong(data, "periodId")));
                 break;
             case "cash-flow-statement":
-                data.put(DS_VAR, buildCashFlowDataset(asLong(data, "periodId")));
+                // 直接法行（section=OPERATING/INVESTING/FINANCING）+ 间接法行（section=INDIRECT）双数据集
+                if (!data.containsKey(DS_VAR)) {
+                    data.put(DS_VAR, buildCashFlowDataset(asLong(data, "periodId")));
+                }
+                data.put("indirectDs", buildIndirectCashFlowDataset(asLong(data, "periodId")));
                 break;
             case "ar-ap-aging":
                 data.put(DS_VAR, buildArApAgingDataset(asDate(data, "asOfDate")));
@@ -245,10 +253,18 @@ public class ErpFinReportBizModel {
         return buildIncomeStatementDataset(periodId);
     }
 
-    /** 现金流量表数据集：现金类科目本期净变动，对齐 finance 现金流口径。 */
+    /** 现金流量表数据集：现金类科目本期净变动（直接法），按科目 cashFlowType 三分类（经营/投资/筹资）。 */
     @BizQuery
     public List<Map<String, Object>> cashFlowStatementData(@Name("periodId") Long periodId, IServiceContext context) {
-        return buildCashFlowDataset(periodId);
+        List<Map<String, Object>> rows = new ArrayList<>(buildCashFlowDataset(periodId));
+        rows.addAll(buildIndirectCashFlowDataset(periodId));
+        return rows;
+    }
+
+    /** 间接法现金流量数据集：净利润 + 非现金项目 + 营运资金变动（RC-R1.45 / P1-RC-007）。 */
+    @BizQuery
+    public List<Map<String, Object>> indirectCashFlowData(@Name("periodId") Long periodId, IServiceContext context) {
+        return buildIndirectCashFlowDataset(periodId);
     }
 
     /** AR/AP 账龄数据集：按 0-30/31-60/61-90/90+ 分桶，区分应收应付，对齐 ar-ap-reconciliation §账龄。 */
@@ -296,6 +312,11 @@ public class ErpFinReportBizModel {
         });
     }
 
+    /**
+     * 现金流量表数据集（直接法）：现金类科目（isCashSubjectCode 前缀准入）本期净变动，
+     * section 按科目 cashFlowType 分类（OPERATING/INVESTING/FINANCING，null/NON_CASH 回退 OPERATING）。
+     * 与 {@link #buildIndirectCashFlowDataset} 同源（loadPostedVoucherLines），模板双数据集渲染。
+     */
     List<Map<String, Object>> buildCashFlowDataset(Long periodId) {
         return ormTemplate.runInSession(session -> {
             List<Map<String, Object>> rows = new ArrayList<>();
@@ -311,13 +332,71 @@ public class ErpFinReportBizModel {
                         ? ErpFinConstants.CASH_FLOW_INFLOW
                         : ErpFinConstants.CASH_FLOW_OUTFLOW;
                 Map<String, Object> r = new LinkedHashMap<>();
-                r.put("section", "OPERATING");
+                r.put("section", sectionOfCashFlowType(l.getSubject()));
                 r.put("code", l.getSubjectCode());
                 r.put("name", l.getSubjectName());
                 r.put("direction", flowDir);
                 r.put("amount", net.abs());
                 rows.add(r);
             }
+            rows.sort((a, b) -> {
+                int c = Integer.compare(sectionOrder((String) a.get("section")),
+                        sectionOrder((String) b.get("section")));
+                if (c != 0) return c;
+                return String.valueOf(a.get("code")).compareTo(String.valueOf(b.get("code")));
+            });
+            return rows;
+        });
+    }
+
+    /**
+     * 间接法现金流量数据集（RC-R1.45 / P1-RC-007）：净利润 + 非现金项目 + 营运资金变动。
+     *
+     * <p>三组件基于同一已加载凭证行集内存聚合（D3 选项 A）：
+     * <ul>
+     *   <li>净利润 = 损益类科目（INCOME/EXPENSE/COST）net 聚合（收入 credit−debit / 费用成本 debit−credit），
+     *       businessType=PERIOD_CLOSE 结转凭证行排除（对齐 ProfitLossClosingService 范式）；</li>
+     *   <li>非现金项目 = cashFlowType=NON_CASH 损益类科目 Σ(debit−credit)（折旧/减值加回，非现金收入负向抵消）；</li>
+     *   <li>营运资金变动 = 流动资产/负债科目 Σ(credit−debit)——资产增加减现金流/负债增加加现金流；
+     *       科目判定 = ASSET 类且 direction=DEBIT 且非现金前缀且非 160x 非流动资产前缀 ∪ LIABILITY 类且 direction=CREDIT
+     *       （CREDIT 方向资产[1231 坏账准备/1602 累计折旧/1604 减值准备]经 direction 规则排除，防与 NON_CASH 加回重复计算）。</li>
+     * </ul>
+     * 三组件共享 voucher 头侧 postingType 过滤（D3 子裁决）：postingType notIn(BUDGET, COMMITMENT)——
+     * BUDGET/COMMITMENT 影子凭证的损益类行（6601/6001 等）不得污染净利润（对齐 RC-R1.46 模式）。
+     */
+    List<Map<String, Object>> buildIndirectCashFlowDataset(Long periodId) {
+        return ormTemplate.runInSession(session -> {
+            BigDecimal netProfit = BigDecimal.ZERO;
+            BigDecimal nonCash = BigDecimal.ZERO;
+            BigDecimal workingCapital = BigDecimal.ZERO;
+            List<ErpFinVoucherLine> lines = loadPostedVoucherLines(periodId, true);
+            for (ErpFinVoucherLine l : lines) {
+                ErpMdSubject s = l.getSubject();
+                if (s == null) continue;
+                String cls = s.getSubjectClass();
+                BigDecimal debit = nz(l.getDebitAmount());
+                BigDecimal credit = nz(l.getCreditAmount());
+                if (isPnlClass(cls)) {
+                    if (isPeriodCloseLine(l)) continue;
+                    BigDecimal net = pnlNet(l, s);
+                    if (ErpFinConstants.SUBJECT_CLASS_INCOME.equals(cls)) {
+                        netProfit = netProfit.add(net);
+                    } else {
+                        netProfit = netProfit.subtract(net);
+                    }
+                    if (ErpFinConstants.CASH_FLOW_TYPE_NON_CASH.equals(s.getCashFlowType())) {
+                        nonCash = nonCash.add(debit.subtract(credit));
+                    }
+                } else if (isWorkingCapitalSubject(s)) {
+                    workingCapital = workingCapital.add(credit.subtract(debit));
+                }
+            }
+            List<Map<String, Object>> rows = new ArrayList<>();
+            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_NET_PROFIT, "净利润", netProfit));
+            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_NON_CASH, "非现金项目", nonCash));
+            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_WORKING_CAPITAL, "营运资金变动", workingCapital));
+            rows.add(indirectRow(ErpFinConstants.CASH_FLOW_INDIRECT_NET,
+                    "经营活动现金流量净额(间接法)", netProfit.add(nonCash).add(workingCapital)));
             return rows;
         });
     }
@@ -422,9 +501,22 @@ public class ErpFinReportBizModel {
     }
 
     private List<ErpFinVoucherLine> loadPostedVoucherLines(Long periodId) {
+        return loadPostedVoucherLines(periodId, false);
+    }
+
+    /**
+     * 加载已过账凭证行。{@code excludeShadowPostings=true} 时在 voucher 头侧过滤
+     * postingType notIn(BUDGET, COMMITMENT)（D3 子裁决——间接法三组件共享该过滤，
+     * BUDGET/COMMITMENT 影子凭证的损益类行不得污染净利润聚合；直接法保持不过滤零回归）。
+     */
+    private List<ErpFinVoucherLine> loadPostedVoucherLines(Long periodId, boolean excludeShadowPostings) {
         IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
         QueryBean vq = new QueryBean();
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
+        if (excludeShadowPostings) {
+            vq.addFilter(or(isNull("postingType"), notIn("postingType",
+                    Arrays.asList(ErpFinConstants.POSTING_TYPE_BUDGET, ErpFinConstants.POSTING_TYPE_COMMITMENT))));
+        }
         if (periodId != null) {
             vq.addFilter(eq("periodId", periodId));
             applyOrgAndSchemaScope(vq, periodId);
@@ -550,6 +642,75 @@ public class ErpFinReportBizModel {
         if (code == null) return false;
         return code.startsWith("1001") || code.startsWith("1002")
                 || code.startsWith("1012") || code.startsWith("1031");
+    }
+
+    /** 科目现金流分类 → 直接法 section；null/NON_CASH 回退 OPERATING（D1 选项 A 零回归基线）。 */
+    private static String sectionOfCashFlowType(ErpMdSubject s) {
+        String t = s != null ? s.getCashFlowType() : null;
+        if (ErpFinConstants.CASH_FLOW_TYPE_INVESTING.equals(t)) return "INVESTING";
+        if (ErpFinConstants.CASH_FLOW_TYPE_FINANCING.equals(t)) return "FINANCING";
+        return "OPERATING";
+    }
+
+    private static int sectionOrder(String section) {
+        switch (section) {
+            case "INVESTING":
+                return 1;
+            case "FINANCING":
+                return 2;
+            default:
+                return 0;
+        }
+    }
+
+    /** 损益类科目净额（收入：credit−debit；费用/成本：debit−credit），方向语义对齐 ProfitLossClosingService。 */
+    private static BigDecimal pnlNet(ErpFinVoucherLine l, ErpMdSubject s) {
+        BigDecimal debit = nz(l.getDebitAmount());
+        BigDecimal credit = nz(l.getCreditAmount());
+        return ErpFinConstants.DC_CREDIT.equals(s.getDirection())
+                ? credit.subtract(debit)
+                : debit.subtract(credit);
+    }
+
+    /** 损益结转凭证行排除（间接法净利润口径，对齐 ProfitLossClosingService）。 */
+    private static boolean isPeriodCloseLine(ErpFinVoucherLine l) {
+        String bt = l.getBusinessType();
+        return bt != null && Objects.equals(bt, ErpFinBusinessType.PERIOD_CLOSE.name());
+    }
+
+    /**
+     * 营运资金变动组件科目判定（D3 选项 A）：ASSET 类且 direction=DEBIT 且非现金前缀且非 160x 非流动资产前缀
+     * ∪ LIABILITY 类且 direction=CREDIT。CREDIT 方向资产（1231 坏账准备/1602 累计折旧/1604 固定资产减值准备）
+     * 经 direction 规则天然排除——其 P&L 对偶科目（6701/6602/6702）经 NON_CASH 加回，排除防重复计算。
+     */
+    private static boolean isWorkingCapitalSubject(ErpMdSubject s) {
+        if (s == null || s.getSubjectClass() == null || s.getDirection() == null) return false;
+        String code = s.getCode();
+        if (code == null) return false;
+        if (isCashSubjectCode(code)) return false;
+        if (code.startsWith("160")) return false;
+        String cls = s.getSubjectClass();
+        if (ErpFinConstants.SUBJECT_CLASS_ASSET.equals(cls)) {
+            return ErpFinConstants.DC_DEBIT.equals(s.getDirection());
+        }
+        if (ErpFinConstants.SUBJECT_CLASS_LIABILITY.equals(cls)) {
+            return ErpFinConstants.DC_CREDIT.equals(s.getDirection());
+        }
+        return false;
+    }
+
+    /** 间接法组件行（section=INDIRECT + 组件键 + 中文名 + 符号方向 + 绝对值金额）。 */
+    private static Map<String, Object> indirectRow(String key, String name, BigDecimal value) {
+        BigDecimal v = nz(value);
+        Map<String, Object> r = new LinkedHashMap<>();
+        r.put("section", "INDIRECT");
+        r.put("code", key);
+        r.put("name", name);
+        r.put("direction", v.signum() >= 0
+                ? ErpFinConstants.CASH_FLOW_INFLOW
+                : ErpFinConstants.CASH_FLOW_OUTFLOW);
+        r.put("amount", v.abs());
+        return r;
     }
 
     private static String bucketOf(long days) {

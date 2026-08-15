@@ -151,6 +151,10 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     String SUBJECT_CLASS_INCOME = "INCOME";
     String SUBJECT_CLASS_EXPENSE = "EXPENSE";
     String SUBJECT_CLASS_COST = "COST";
+    // ---- subject-class 资产负债权益（现金流水分类/间接法营运资金组件判定） ----
+    String SUBJECT_CLASS_ASSET = "ASSET";
+    String SUBJECT_CLASS_LIABILITY = "LIABILITY";
+    String SUBJECT_CLASS_EQUITY = "EQUITY";
 
     // ---- 借贷方向 ----
     String DC_DEBIT = "DEBIT";
@@ -270,6 +274,22 @@ public interface ErpFinConstants extends ErpFinDocStatus {
     // ---- cash-flow-direction ----
     String CASH_FLOW_INFLOW = "INFLOW";
     String CASH_FLOW_OUTFLOW = "OUTFLOW";
+
+    // ---- cash-flow-type（erp-md/cash-flow-type，ErpMdSubject.cashFlowType 科目现金流分类）----
+    /** 经营活动（科目 cashFlowType null/未分类时直接法 section 回退值）。 */
+    String CASH_FLOW_TYPE_OPERATING = "OPERATING";
+    /** 投资活动。 */
+    String CASH_FLOW_TYPE_INVESTING = "INVESTING";
+    /** 筹资活动。 */
+    String CASH_FLOW_TYPE_FINANCING = "FINANCING";
+    /** 非现金项目（间接法调整项，如折旧/摊销/减值）。 */
+    String CASH_FLOW_TYPE_NON_CASH = "NON_CASH";
+
+    // ---- 间接法组件键（buildIndirectCashFlowDataset 行 code）----
+    String CASH_FLOW_INDIRECT_NET_PROFIT = "NET_PROFIT";
+    String CASH_FLOW_INDIRECT_NON_CASH = "NON_CASH";
+    String CASH_FLOW_INDIRECT_WORKING_CAPITAL = "WORKING_CAPITAL";
+    String CASH_FLOW_INDIRECT_NET = "NET";
 
     // ---- PostingEvent.billData 键（票据过账派发器填入） ----
     String BILL_DATA_PARTNER_ID = "partnerId";

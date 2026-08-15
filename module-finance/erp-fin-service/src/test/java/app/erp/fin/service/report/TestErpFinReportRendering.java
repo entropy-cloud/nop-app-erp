@@ -172,6 +172,134 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
         assertEquals(new BigDecimal("80.00"), inflow.setScale(2), "现金流入 80");
     }
 
+    /** RC-R1.45 / P1-RC-007：直接法按科目 cashFlowType 三分类（经营/投资/筹资），既有现金流入额断言零回归。 */
+    @Test
+    public void testCashFlowThreeSectionClassification() {
+        seed();
+        Map<String, ErpMdSubject> subs = new HashMap<>();
+        subs.put("1012", seedSubject("1012", "其他货币资金", "ASSET", ErpFinConstants.DC_DEBIT,
+                ErpFinConstants.CASH_FLOW_TYPE_INVESTING));
+        subs.put("1031", seedSubject("1031", "存出保证金", "ASSET", ErpFinConstants.DC_DEBIT,
+                ErpFinConstants.CASH_FLOW_TYPE_FINANCING));
+        subs.put("1601", seedSubject("1601", "固定资产", "ASSET", ErpFinConstants.DC_DEBIT));
+        subs.put("5001", seedSubject("5001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
+        // 投资：1012 借 200（其他货币资金转入）
+        seedPostedVoucher("V-INV", ErpFinConstants.POSTING_TYPE_NORMAL, subs,
+                line("1012", "其他货币资金", ErpFinConstants.DC_DEBIT, "200"),
+                line("1601", "固定资产", ErpFinConstants.DC_CREDIT, "200"));
+        // 筹资：1031 贷 50（保证金返还）
+        seedPostedVoucher("V-FIN", ErpFinConstants.POSTING_TYPE_NORMAL, subs,
+                line("1031", "存出保证金", ErpFinConstants.DC_CREDIT, "50"),
+                line("5001", "主营业务收入", ErpFinConstants.DC_DEBIT, "50"));
+
+        List<Map<String, Object>> ds = reportBiz.buildCashFlowDataset(periodId);
+        // 基础 seed 的 1001 现金科目 cashFlowType null → 回退 OPERATING（base 凭证流入 80）
+        assertEquals(new BigDecimal("80.00"), sumBySection(ds, "OPERATING").setScale(2), "经营净额 80");
+        assertEquals(new BigDecimal("200.00"), sumBySection(ds, "INVESTING").setScale(2), "投资净额 200");
+        assertEquals(new BigDecimal("50.00"), sumBySection(ds, "FINANCING").setScale(2), "筹资净额 50");
+        BigDecimal total = BigDecimal.ZERO;
+        for (Map<String, Object> r : ds) {
+            total = total.add((BigDecimal) r.get("amount"));
+        }
+        assertEquals(new BigDecimal("330.00"), total.setScale(2), "直接法总额 330（分类后总额不变零回归）");
+    }
+
+    /** RC-R1.45 / P1-RC-007：间接法 = 净利润 + 非现金项目 + 营运资金变动。 */
+    @Test
+    public void testIndirectCashFlowDataset() {
+        periodId = seedPeriod("2025-06", 2025, 6);
+        seedCurrency(1L, "CNY");
+        Map<String, ErpMdSubject> subs = new HashMap<>();
+        subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT,
+                ErpFinConstants.CASH_FLOW_TYPE_OPERATING));
+        subs.put("5001", seedSubject("5001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
+        subs.put("6001", seedSubject("6001", "主营业务成本", ErpFinConstants.SUBJECT_CLASS_COST, ErpFinConstants.DC_DEBIT));
+        subs.put("6602", seedSubject("6602", "折旧费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT,
+                ErpFinConstants.CASH_FLOW_TYPE_NON_CASH));
+        subs.put("1602", seedSubject("1602", "累计折旧", "ASSET", ErpFinConstants.DC_CREDIT));
+        subs.put("1122", seedSubject("1122", "应收账款", "ASSET", ErpFinConstants.DC_DEBIT));
+        subs.put("2202", seedSubject("2202", "应付账款", "LIABILITY", ErpFinConstants.DC_CREDIT));
+        // 现金销售：净利润 +100
+        seedPostedVoucher("V-CASH-SALE", ErpFinConstants.POSTING_TYPE_NORMAL, subs,
+                line("1001", "库存现金", ErpFinConstants.DC_DEBIT, "100"),
+                line("5001", "主营业务收入", ErpFinConstants.DC_CREDIT, "100"));
+        // 赊销：净利润 +50 / 应收增加 −50
+        seedPostedVoucher("V-CREDIT-SALE", ErpFinConstants.POSTING_TYPE_NORMAL, subs,
+                line("1122", "应收账款", ErpFinConstants.DC_DEBIT, "50"),
+                line("5001", "主营业务收入", ErpFinConstants.DC_CREDIT, "50"));
+        // 赊购费用：净利润 −30 / 应付增加 +30
+        seedPostedVoucher("V-CREDIT-EXP", ErpFinConstants.POSTING_TYPE_NORMAL, subs,
+                line("6001", "主营业务成本", ErpFinConstants.DC_DEBIT, "30"),
+                line("2202", "应付账款", ErpFinConstants.DC_CREDIT, "30"));
+        // 折旧：净利润 −20 / 非现金项目 +20（1602 累计折旧 CREDIT 方向资产不重复计入营运资金）
+        seedPostedVoucher("V-DEP", ErpFinConstants.POSTING_TYPE_NORMAL, subs,
+                line("6602", "折旧费用", ErpFinConstants.DC_DEBIT, "20"),
+                line("1602", "累计折旧", ErpFinConstants.DC_CREDIT, "20"));
+
+        List<Map<String, Object>> ds = reportBiz.buildIndirectCashFlowDataset(periodId);
+        Map<String, BigDecimal> byKey = componentMap(ds);
+        assertEquals(new BigDecimal("100.00"), byKey.get(ErpFinConstants.CASH_FLOW_INDIRECT_NET_PROFIT).setScale(2),
+                "净利润 = 100+50−30−20");
+        assertEquals(new BigDecimal("20.00"), byKey.get(ErpFinConstants.CASH_FLOW_INDIRECT_NON_CASH).setScale(2),
+                "非现金项目 = 折旧 20");
+        assertEquals(new BigDecimal("20.00"), byKey.get(ErpFinConstants.CASH_FLOW_INDIRECT_WORKING_CAPITAL).setScale(2),
+                "营运资金变动 |−20| = 应收 −50 + 应付 +30");
+        assertEquals(ErpFinConstants.CASH_FLOW_OUTFLOW,
+                componentDirection(ds, ErpFinConstants.CASH_FLOW_INDIRECT_WORKING_CAPITAL),
+                "营运资金变动为流出（应收净增加）");
+        assertEquals(new BigDecimal("100.00"), byKey.get(ErpFinConstants.CASH_FLOW_INDIRECT_NET).setScale(2),
+                "间接法净额 = 100+20−20");
+        // 全经营场景下直接法经营净额 == 间接法净额（口径一致性）
+        List<Map<String, Object>> direct = reportBiz.buildCashFlowDataset(periodId);
+        assertEquals(new BigDecimal("100.00"), sumBySection(direct, "OPERATING").setScale(2),
+                "直接法经营 100 与间接法净额恒等");
+    }
+
+    /** RC-R1.45 / P1-RC-007：null cashFlowType 科目回退 OPERATING（零回归基线）。 */
+    @Test
+    public void testCashFlowNullFallbackToOperating() {
+        seed();
+        List<Map<String, Object>> ds = reportBiz.buildCashFlowDataset(periodId);
+        assertFalse(ds.isEmpty(), "现金流量数据集非空");
+        for (Map<String, Object> r : ds) {
+            assertEquals("OPERATING", r.get("section"),
+                    "seed 1001 未设 cashFlowType → 回退 OPERATING");
+        }
+        assertEquals(new BigDecimal("80.00"), sumBySection(ds, "OPERATING").setScale(2), "经营净额 80");
+    }
+
+    /** RC-R1.45 / P1-RC-007（D3 子裁决）：间接法聚合排除 BUDGET/COMMITMENT 影子凭证损益行；直接法不受污染。 */
+    @Test
+    public void testIndirectExcludesShadowVoucherLines() {
+        periodId = seedPeriod("2025-06", 2025, 6);
+        seedCurrency(1L, "CNY");
+        Map<String, ErpMdSubject> subs = new HashMap<>();
+        subs.put("1001", seedSubject("1001", "库存现金", "ASSET", ErpFinConstants.DC_DEBIT,
+                ErpFinConstants.CASH_FLOW_TYPE_OPERATING));
+        subs.put("5001", seedSubject("5001", "主营业务收入", ErpFinConstants.SUBJECT_CLASS_INCOME, ErpFinConstants.DC_CREDIT));
+        subs.put("6601", seedSubject("6601", "销售费用", ErpFinConstants.SUBJECT_CLASS_EXPENSE, ErpFinConstants.DC_DEBIT));
+        // 实际凭证：现金销售 200 → 净利润 +200
+        seedPostedVoucher("V-ACT", ErpFinConstants.POSTING_TYPE_NORMAL, subs,
+                line("1001", "库存现金", ErpFinConstants.DC_DEBIT, "200"),
+                line("5001", "主营业务收入", ErpFinConstants.DC_CREDIT, "200"));
+        // 影子凭证：BUDGET 费用 500/收入 400（非平衡——若不过滤将污染净利润：200−500+400−100=0）
+        seedPostedVoucher("V-BUDGET", ErpFinConstants.POSTING_TYPE_BUDGET, subs,
+                line("6601", "销售费用", ErpFinConstants.DC_DEBIT, "500"),
+                line("5001", "主营业务收入", ErpFinConstants.DC_CREDIT, "400"));
+        // 影子凭证：COMMITMENT 费用 100（单向）
+        seedPostedVoucher("V-COMMIT", ErpFinConstants.POSTING_TYPE_COMMITMENT, subs,
+                line("6601", "销售费用", ErpFinConstants.DC_DEBIT, "100"));
+
+        List<Map<String, Object>> ds = reportBiz.buildIndirectCashFlowDataset(periodId);
+        Map<String, BigDecimal> byKey = componentMap(ds);
+        assertEquals(new BigDecimal("200.00"), byKey.get(ErpFinConstants.CASH_FLOW_INDIRECT_NET_PROFIT).setScale(2),
+                "净利润不含 BUDGET/COMMITMENT 影子凭证损益行（无过滤将 = 0）");
+        // 直接法不受污染（影子凭证无现金科目行）
+        List<Map<String, Object>> direct = reportBiz.buildCashFlowDataset(periodId);
+        assertEquals(new BigDecimal("200.00"), sumBySection(direct, "OPERATING").setScale(2),
+                "直接法经营 200（影子凭证零污染）");
+    }
+
     @Test
     public void testArApAgingBuckets() {
         seed();
@@ -279,15 +407,95 @@ public class TestErpFinReportRendering extends JunitAutoTestCase {
     }
 
     private ErpMdSubject seedSubject(String code, String name, String subjectClass, String direction) {
+        return seedSubject(code, name, subjectClass, direction, null);
+    }
+
+    private ErpMdSubject seedSubject(String code, String name, String subjectClass, String direction,
+                                     String cashFlowType) {
         IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
         ErpMdSubject s = new ErpMdSubject();
         s.setCode(code);
         s.setName(name);
         s.setSubjectClass(subjectClass);
         s.setDirection(direction);
+        s.setCashFlowType(cashFlowType);
         s.setStatus("ACTIVE");
         dao.saveEntity(s);
         return s;
+    }
+
+    private Object[] line(String subjectCode, String subjectName, String dc, String amount) {
+        return new Object[]{subjectCode, subjectName, dc, new BigDecimal(amount)};
+    }
+
+    private void seedPostedVoucher(String code, String postingType,
+                                   Map<String, ErpMdSubject> subjects, Object[]... lines) {
+        IEntityDao<ErpFinVoucher> vDao = daoProvider.daoFor(ErpFinVoucher.class);
+        BigDecimal total = BigDecimal.ZERO;
+        for (Object[] l : lines) {
+            total = total.add((BigDecimal) l[3]);
+        }
+        ErpFinVoucher v = new ErpFinVoucher();
+        v.setCode(code);
+        v.setVoucherType("TRANSFER");
+        v.setPostingType(postingType);
+        v.setVoucherDate(LocalDate.of(2025, 6, 10));
+        v.setOrgId(1L);
+        v.setAcctSchemaId(1L);
+        v.setPeriodId(periodId);
+        v.setTotalDebit(total);
+        v.setTotalCredit(total);
+        v.setIsReversed(false);
+        v.setDocStatus(ErpFinConstants.VOUCHER_STATUS_POSTED);
+        vDao.saveEntity(v);
+
+        IEntityDao<ErpFinVoucherLine> lDao = daoProvider.daoFor(ErpFinVoucherLine.class);
+        int lineNo = 1;
+        for (Object[] l : lines) {
+            ErpMdSubject subj = subjects.get((String) l[0]);
+            String dc = (String) l[2];
+            BigDecimal amt = (BigDecimal) l[3];
+            ErpFinVoucherLine line = new ErpFinVoucherLine();
+            line.setVoucherId(v.getId());
+            line.setLineNo(lineNo++);
+            line.setSubjectId(subj.getId());
+            line.setSubjectCode((String) l[0]);
+            line.setSubjectName((String) l[1]);
+            line.setDcDirection(dc);
+            line.setDebitAmount(ErpFinConstants.DC_DEBIT.equals(dc) ? amt : BigDecimal.ZERO);
+            line.setCreditAmount(ErpFinConstants.DC_CREDIT.equals(dc) ? amt : BigDecimal.ZERO);
+            line.setCurrencyId(1L);
+            line.setExchangeRate(BigDecimal.ONE);
+            line.setAmountSource(amt);
+            line.setAmountFunctional(amt);
+            line.setAcctSchemaId(1L);
+            lDao.saveEntity(line);
+        }
+    }
+
+    private static Map<String, BigDecimal> componentMap(List<Map<String, Object>> ds) {
+        Map<String, BigDecimal> m = new HashMap<>();
+        for (Map<String, Object> r : ds) {
+            m.put((String) r.get("code"), (BigDecimal) r.get("amount"));
+        }
+        return m;
+    }
+
+    private static String componentDirection(List<Map<String, Object>> ds, String code) {
+        for (Map<String, Object> r : ds) {
+            if (code.equals(r.get("code"))) {
+                return (String) r.get("direction");
+            }
+        }
+        return null;
+    }
+
+    private ErpMdSubject findSubjectByCode(String code) {
+        IEntityDao<ErpMdSubject> dao = daoProvider.daoFor(ErpMdSubject.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("code", code));
+        List<ErpMdSubject> list = dao.findAllByQuery(q);
+        return list.isEmpty() ? null : list.get(0);
     }
 
     private void seedGlBalance(ErpMdSubject s, BigDecimal closingDebit, BigDecimal closingCredit,

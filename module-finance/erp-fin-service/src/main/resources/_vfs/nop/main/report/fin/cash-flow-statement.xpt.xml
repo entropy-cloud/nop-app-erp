@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!-- 现金流量表（种子报表，简化的直接法）。数据集 ds 由 ErpFinReportBizModel.buildCashFlowDataset 注入，
-     每行 {section:OPERATING, code, name, direction:INFLOW|OUTFLOW, amount}（现金类科目本期净变动）。
-     对齐 finance 现金流口径；完整 IAS7 分类（经营/投资/筹资）归后续按 owner doc 细化。 -->
+<!-- 现金流量表（种子报表，直接法 + 间接法补充）。数据集 ds（直接法行 {section:OPERATING|INVESTING|FINANCING, code, name, direction:INFLOW|OUTFLOW, amount}）
+     与 indirectDs（间接法行 {section:INDIRECT, code:NET_PROFIT|NON_CASH|WORKING_CAPITAL|NET, name, direction, amount}）
+     由 ErpFinReportBizModel.prepareDataset 注入（buildCashFlowDataset/buildIndirectCashFlowDataset）。
+     对齐 finance 现金流口径（RC-R1.45 / P1-RC-007：科目 cashFlowType 三分类 + 间接法净利润+非现金项目+营运资金变动）。 -->
 <workbook x:schema="/nop/schema/excel/workbook.xdef" xmlns:x="/nop/schema/xdsl.xdef">
 
     <sheets>
@@ -59,9 +60,36 @@
                     </row>
                     <row height="18.0">
                         <cells>
-                            <cell mergeAcross="3" styleId="total"><model/><value>现金净增加</value></cell>
+                            <cell mergeAcross="3" styleId="total"><model/><value>现金净增加（直接法）</value></cell>
                             <cell styleId="num">
                                 <model><valueExpr>SUM(E3)</valueExpr></model>
+                            </cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="18.0">
+                        <cells>
+                            <cell mergeAcross="4" styleId="section"><model/><value>间接法补充：净利润 + 非现金项目 + 营运资金变动</value></cell>
+                        </cells>
+                        <model/>
+                    </row>
+                    <row height="16.0">
+                        <cells>
+                            <cell styleId="cell">
+                                <model ds="indirectDs" expandType="r" field="code"/>
+                                <value>*=^indirectDs!code</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A6"/>
+                                <value>*=name</value>
+                            </cell>
+                            <cell styleId="cell">
+                                <model rowParent="A6"/>
+                                <value>*=direction</value>
+                            </cell>
+                            <cell styleId="num">
+                                <model rowParent="A6"/>
+                                <value>*=amount</value>
                             </cell>
                         </cells>
                         <model/>
@@ -80,6 +108,13 @@
             <font fontName="等线" fontSize="11.0" bold="true"/>
             <numberFormat>General</numberFormat>
             <topBorder type="thin" weight="1"/>
+            <bottomBorder type="thin" weight="1"/>
+            <leftBorder type="thin" weight="1"/>
+            <rightBorder type="thin" weight="1"/>
+        </style>
+        <style id="section" fillPattern="solid" fillBgColor="FFF5F0E6" horizontalAlign="center" verticalAlign="center">
+            <font fontName="等线" fontSize="11.0" bold="true"/>
+            <numberFormat>General</numberFormat>
             <bottomBorder type="thin" weight="1"/>
             <leftBorder type="thin" weight="1"/>
             <rightBorder type="thin" weight="1"/>
