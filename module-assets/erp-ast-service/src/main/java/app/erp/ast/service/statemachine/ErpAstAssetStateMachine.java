@@ -18,21 +18,19 @@ import java.util.List;
  * 迁移矩阵 + 终态/初始态分类 + 只读 {@link #transitions()} 元数据。可经 Delta 同名 Bean 覆盖（契约 §6）
  * 替换基线矩阵。
  *
- * <p><strong>跨实体 writer 轴（特殊形态）</strong>：Asset.status 无 Asset 自有 status mutation——
- * {@code ErpAstAssetBizModel} 为 CrudBizModel 桩（零状态机 mutation），全部 5 处 writer 为跨实体文档
- * Processor 的 side-effect（capitalization 资本化 / disposal 处置 / inventory 盘亏触发处置）。本 Bean 集中治理
- * 这些 side-effect 写入的固定来源/目标态判断；各文档自身的 approveStatus/docStatus 轴不在本 Bean（归计划 2）。
+ * <p><strong>writer 轴</strong>：Asset.status 写路径 = 跨实体文档 Processor 的 side-effect（capitalization 资本化 /
+ * disposal 处置 / inventory 盘亏触发处置）+ RC-R1.54 起 Asset 自有 suspend/resume mutation（IN_SERVICE↔IDLE）。
+ * 本 Bean 集中治理这些写入的固定来源/目标态判断；各文档自身的 approveStatus/docStatus 轴不在本 Bean（归计划 2）。
  *
- * <p>迁移矩阵（6 命名动作）：capitalize(DRAFT→IN_SERVICE)、reverseCapitalize(IN_SERVICE→DRAFT，资本化 posted
- * 窗口)、disposeScrap(IN_SERVICE→SCRAPPED)、disposeSell(IN_SERVICE→SOLD)、reverseDisposal(SCRAPPED/SOLD→IN_SERVICE，
- * 处置 posted 窗口)、inventoryShortageDisposal(IN_SERVICE/IDLE→SCRAPPED，盘点盘亏触发处置)。
+ * <p>迁移矩阵（8 命名动作）：capitalize(DRAFT→IN_SERVICE)、reverseCapitalize(IN_SERVICE→DRAFT，资本化 posted
+ * 窗口)、suspend(IN_SERVICE→IDLE，RC-R1.54)、resume(IDLE→IN_SERVICE，RC-R1.54)、disposeScrap(IN_SERVICE/IDLE→SCRAPPED，
+ * RC-R1.54 扩展 IDLE 来源对齐 owner doc §2「IN_SERVICE/IDLE → SCRAPPED/SOLD」契约)、disposeSell(IN_SERVICE/IDLE→SOLD)、
+ * reverseDisposal(SCRAPPED/SOLD→IN_SERVICE，处置 posted 窗口)、inventoryShortageDisposal(IN_SERVICE/IDLE→SCRAPPED，
+ * 盘点盘亏触发处置)。
  *
- * <p><strong>IDLE 死状态（layer-2 四方对照裁定登记）</strong>：dict {@code erp-ast/asset-status} 值 IDLE 分类为
- * {@code intentional reserved}（owner doc §2/§5 Deferred）——全 {@code module-assets} 零 {@code setStatus(...IDLE)}
- * writer，折旧引擎仅查 IN_SERVICE 等价满足「IDLE 默认停提」。故 {@link #transitions()} 不含 IDLE 出边；
- * dict 值保留不删（对齐 Movement ACTIVE 死状态先例）。inventoryShortageDisposal 运行时守卫保留 IDLE 为合法来源
- * （对齐 {@code ErpAstInventoryProcessor} 盘点范围过滤 liveStatuses={IN_SERVICE,IDLE} 既有行为），但 IDLE 不入
- * {@link #transitions()} 元数据。Successor：PM 要求正式资产闲置/恢复工作流时实现 suspend/resume 迁移。
+ * <p><strong>IDLE 已实装（RC-R1.54）</strong>：dict {@code erp-ast/asset-status} 值 IDLE 经 suspend 可达、
+ * 经 resume/dispose 出边——不再为死状态。折旧引擎 IN_SERVICE-only 查询 + {@code validateAssetInService} 守卫
+ * 自然满足「IDLE 期间不计提」语义（owner doc §1/UC-AST-03 ③）。
  *
  * <p>分类：initial={DRAFT}，terminal={SCRAPPED, SOLD}。非法边抛 common 层
  * {@link ErpCommonErrors#ERR_ILLEGAL_STATUS_TRANSITION}（参数 {@code currentStatus}/{@code expectedStatus} +
@@ -66,12 +64,35 @@ public class ErpAstAssetStateMachine {
     }
 
     /**
-     * dispose 守卫（disposeScrap/disposeSell 共用来源态判定）：来源态为 {@code IN_SERVICE} 合法。
+     * suspend 守卫（RC-R1.54）：来源态为 {@code IN_SERVICE} 合法（暂停使用→闲置，闲置期停提折旧）。
+     */
+    public void assertCanSuspend(String status) {
+        String s = normalize(status);
+        if (!ErpAstConstants.ASSET_STATUS_IN_SERVICE.equals(s)) {
+            throw illegal("suspend", s, ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+        }
+    }
+
+    /**
+     * resume 守卫（RC-R1.54）：来源态为 {@code IDLE} 合法（闲置恢复→使用中，恢复计提折旧）。
+     */
+    public void assertCanResume(String status) {
+        String s = normalize(status);
+        if (!ErpAstConstants.ASSET_STATUS_IDLE.equals(s)) {
+            throw illegal("resume", s, ErpAstConstants.ASSET_STATUS_IDLE);
+        }
+    }
+
+    /**
+     * dispose 守卫（disposeScrap/disposeSell 共用来源态判定）：来源态为 {@code IN_SERVICE}/{@code IDLE} 合法
+     * （RC-R1.54 扩展 IDLE 来源，对齐 owner doc §2「IN_SERVICE/IDLE → SCRAPPED/SOLD」契约）。
      */
     public void assertCanDispose(String status) {
         String s = normalize(status);
-        if (!ErpAstConstants.ASSET_STATUS_IN_SERVICE.equals(s)) {
-            throw illegal("dispose", s, ErpAstConstants.ASSET_STATUS_IN_SERVICE);
+        if (!ErpAstConstants.ASSET_STATUS_IN_SERVICE.equals(s)
+                && !ErpAstConstants.ASSET_STATUS_IDLE.equals(s)) {
+            throw illegal("dispose", s,
+                    ErpAstConstants.ASSET_STATUS_IN_SERVICE + " 或 " + ErpAstConstants.ASSET_STATUS_IDLE);
         }
     }
 
@@ -88,10 +109,8 @@ public class ErpAstAssetStateMachine {
     }
 
     /**
-     * inventoryShortageDisposal 守卫：来源态为 {@code IN_SERVICE}/{@code IDLE} 合法（盘点盘亏触发处置）。
-     *
-     * <p>IDLE 为预留死状态（owner doc §2/§5 Deferred），运行时守卫按既有盘点范围语义保留合法来源，
-     * 但 {@link #transitions()} 不含 IDLE 边（死状态 metadata 排除）。
+     * inventoryShortageDisposal 守卫：来源态为 {@code IN_SERVICE}/{@code IDLE} 合法（盘点盘亏触发处置，
+     * 对齐盘点范围过滤 liveStatuses={IN_SERVICE,IDLE} 既有行为；RC-R1.54 后 IDLE 经 suspend 可达）。
      */
     public void assertCanShortageDispose(String status) {
         String s = normalize(status);
@@ -111,6 +130,16 @@ public class ErpAstAssetStateMachine {
     /** reverseCapitalize 目标态=DRAFT（资本化 reverseApprove posted 窗口回滚至草稿）。 */
     public String reverseCapitalizeTargetStatus() {
         return ErpAstConstants.ASSET_STATUS_DRAFT;
+    }
+
+    /** suspend 目标态=IDLE（RC-R1.54：暂停使用，闲置期停提折旧）。 */
+    public String suspendTargetStatus() {
+        return ErpAstConstants.ASSET_STATUS_IDLE;
+    }
+
+    /** resume 目标态=IN_SERVICE（RC-R1.54：闲置恢复使用，恢复计提折旧）。 */
+    public String resumeTargetStatus() {
+        return ErpAstConstants.ASSET_STATUS_IN_SERVICE;
     }
 
     public String disposeScrapTargetStatus() {
@@ -144,15 +173,19 @@ public class ErpAstAssetStateMachine {
     // ---------- 只读元数据接口（完备性/可达性分析用，非 Processor 主调用路径） ----------
 
     /**
-     * 迁移元数据：7 条边（6 命名动作——reverseDisposal 双源）。IDLE 死状态不含任何出边
-     * （inventoryShortageDisposal 仅登记 IN_SERVICE 来源；IDLE 来源为死状态运行时守卫豁免）。
+     * 迁移元数据：11 条边（8 命名动作——disposeScrap/disposeSell/reverseDisposal 双源，RC-R1.54 增
+     * suspend/resume + dispose 的 IDLE 来源，IDLE 不再为死状态）。
      */
     public List<TransitionDefinition> transitions() {
         return Collections.unmodifiableList(Arrays.asList(
                 new TransitionDefinition("capitalize", ErpAstConstants.ASSET_STATUS_DRAFT, ErpAstConstants.ASSET_STATUS_IN_SERVICE),
                 new TransitionDefinition("reverseCapitalize", ErpAstConstants.ASSET_STATUS_IN_SERVICE, ErpAstConstants.ASSET_STATUS_DRAFT),
+                new TransitionDefinition("suspend", ErpAstConstants.ASSET_STATUS_IN_SERVICE, ErpAstConstants.ASSET_STATUS_IDLE),
+                new TransitionDefinition("resume", ErpAstConstants.ASSET_STATUS_IDLE, ErpAstConstants.ASSET_STATUS_IN_SERVICE),
                 new TransitionDefinition("disposeScrap", ErpAstConstants.ASSET_STATUS_IN_SERVICE, ErpAstConstants.ASSET_STATUS_SCRAPPED),
+                new TransitionDefinition("disposeScrap", ErpAstConstants.ASSET_STATUS_IDLE, ErpAstConstants.ASSET_STATUS_SCRAPPED),
                 new TransitionDefinition("disposeSell", ErpAstConstants.ASSET_STATUS_IN_SERVICE, ErpAstConstants.ASSET_STATUS_SOLD),
+                new TransitionDefinition("disposeSell", ErpAstConstants.ASSET_STATUS_IDLE, ErpAstConstants.ASSET_STATUS_SOLD),
                 new TransitionDefinition("reverseDisposal", ErpAstConstants.ASSET_STATUS_SCRAPPED, ErpAstConstants.ASSET_STATUS_IN_SERVICE),
                 new TransitionDefinition("reverseDisposal", ErpAstConstants.ASSET_STATUS_SOLD, ErpAstConstants.ASSET_STATUS_IN_SERVICE),
                 new TransitionDefinition("inventoryShortageDisposal", ErpAstConstants.ASSET_STATUS_IN_SERVICE, ErpAstConstants.ASSET_STATUS_SCRAPPED)));

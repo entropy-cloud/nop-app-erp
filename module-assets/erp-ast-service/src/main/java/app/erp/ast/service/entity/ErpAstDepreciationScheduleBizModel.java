@@ -3,6 +3,7 @@ package app.erp.ast.service.entity;
 
 import app.erp.ast.biz.IErpAstDepreciationScheduleBiz;
 import app.erp.ast.dao.entity.ErpAstDepreciationSchedule;
+import app.erp.ast.service.processor.ErpAstDepreciationScheduleCatchUpDepreciationProcessor;
 import app.erp.ast.service.processor.ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor;
 import app.erp.ast.service.processor.ErpAstDepreciationScheduleExecuteDepreciationProcessor;
 import app.erp.ast.service.processor.ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenanceProcessor;
@@ -15,10 +16,11 @@ import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * 折旧计划 BizModel（Facade，{@code processor-extension-pattern.md} 两层结构）。
- * 单资产/批量折旧计提 + 反折旧 + 资本化维修折旧重算编排委托对应 per-mutation Processor（R6.3 拆分，
+ * 单资产/批量折旧计提 + 反折旧 + 资本化维修折旧重算 + 方式B 补提编排委托对应 per-mutation Processor（R6.3 拆分，
  * protected step 方法，下游可逐 step 覆盖）。
  *
  * <p>语义见 {@code depreciation-and-posting.md} §1/§5；{@code @BizMutation} 钉事务/会话边界。
@@ -38,6 +40,9 @@ public class ErpAstDepreciationScheduleBizModel extends CrudBizModel<ErpAstDepre
 
     @Inject
     ErpAstDepreciationScheduleRecalculateForCapitalizationMaintenanceProcessor recalculateProcessor;
+
+    @Inject
+    ErpAstDepreciationScheduleCatchUpDepreciationProcessor catchUpDepreciationProcessor;
 
     public ErpAstDepreciationScheduleBizModel() {
         setEntityName(ErpAstDepreciationSchedule.class.getName());
@@ -71,5 +76,14 @@ public class ErpAstDepreciationScheduleBizModel extends CrudBizModel<ErpAstDepre
                                                        @Name("increment") BigDecimal increment,
                                                        IServiceContext context) {
         return recalculateProcessor.recalculateForCapitalizationMaintenance(assetId, increment, context);
+    }
+
+    @Override
+    @BizMutation
+    public List<ErpAstDepreciationSchedule> catchUpDepreciation(@Name("assetId") Long assetId,
+                                                                @Name("currentPeriod") String currentPeriod,
+                                                                @Name("missedPeriods") List<String> missedPeriods,
+                                                                IServiceContext context) {
+        return catchUpDepreciationProcessor.catchUpDepreciation(assetId, currentPeriod, missedPeriods, context);
     }
 }

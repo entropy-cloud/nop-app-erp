@@ -19,10 +19,14 @@ import java.util.Set;
  *
  * <p>支持单一业务类型 {@link ErpFinBusinessType#DISPOSAL}，按 disposalType 内部分支科目分解
  * （depreciation-and-posting.md §3.1）。统一复式平衡：结转原值（贷固定资产）与累计折旧（借），
- * 按处置收入（借银行存款，>0 时）与清理损益（按 gainLoss 正负 借损失/贷收益）配平：
+ * 经 1606 固定资产清理中间科目腿两步流（RC-R1.53，对齐 L1 UC-AST-04「借 累计折旧, 固定资产清理 / 贷 固定资产」+
+ * owner doc §三:136-137 两步流）——Step1 结转原值+累计折旧至 1606（借 1602 / 借 1606 净值 / 贷 1601），
+ * Step2 处置收入入 1606（借 1002 / 贷 1606）+ 损益从 1606 结转至 6711/6301（收益：借 1606 / 贷 6301；
+ * 损失：借 6711 / 贷 1606）。GL 恒等式 Dr Σ = Cr Σ 保持，1606 网为零（中间科目腿不残留余额）：
  * <ul>
- *   <li>SCRAPPED（报废，收入常为 0）：借累计折旧 / 借清理损失(账面净值) / 贷固定资产。</li>
- *   <li>SOLD（出售）：借累计折旧 / 借银行存款(处置收入) / [借清理损失 | 贷清理收益] / 贷固定资产。</li>
+ *   <li>SCRAPPED（报废，收入常为 0）：借 1602 / 借 1606(净值) / 贷 1601 → 借 6711(净值损失) / 贷 1606。</li>
+ *   <li>SOLD（出售）：借 1602 / 借 1606(净值) / 贷 1601 + 借 1002(处置收入) / 贷 1606 + 损益腿
+ *       [收益：借 1606 / 贷 6301 | 损失：借 6711 / 贷 1606]。</li>
  * </ul>
  * 清理损益科目按类别 disposalGainLossSubjectId，gainLoss 正负定借贷方向（正=营业外收入贷，负=营业外支出借）。
  */
@@ -33,18 +37,21 @@ public class DisposalAcctDocProvider implements IErpFinAcctDocProvider {
 
     static final String SUBJECT_FIXED_ASSET = "1601";       // 固定资产
     static final String SUBJECT_ACCUM_DEPRE = "1602";       // 累计折旧
+    static final String SUBJECT_DISPOSAL_CLEARING = "1606"; // 固定资产清理（RC-R1.53 中间科目腿，网为零）
     static final String SUBJECT_BANK_DEPOSIT = "1002";      // 银行存款
     static final String SUBJECT_DISPOSAL_LOSS = "6711";     // 营业外支出（清理损失）
     static final String SUBJECT_DISPOSAL_GAIN = "6301";     // 营业外收入（清理收益）
 
     /**
      * A1 GL 映射键（plan 2026-07-24-1351-1）：FIXED_ASSET/ACCUMULATED_DEPRECIATION/BANK_DEPOSIT 通用键复用；
-     * NON_OPERATING_EXPENSE 清理损益域专用键（gainLossSubject 默认 6711，借贷方向由 dcDirection 承载）。
+     * NON_OPERATING_EXPENSE 清理损益域专用键（gainLossSubject 默认 6711，借贷方向由 dcDirection 承载）；
+     * DISPOSAL_CLEARING 1606 中间科目腿域专用键（RC-R1.53，无映射规则时 resolver 空匹配回退 Provider 科目编码）。
      */
     static final String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
     static final String ACCOUNT_KEY_ACCUMULATED_DEPRECIATION = "ACCUMULATED_DEPRECIATION";
     static final String ACCOUNT_KEY_BANK_DEPOSIT = "BANK_DEPOSIT";
     static final String ACCOUNT_KEY_NON_OPERATING_EXPENSE = "NON_OPERATING_EXPENSE";
+    static final String ACCOUNT_KEY_DISPOSAL_CLEARING = "DISPOSAL_CLEARING";
 
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
@@ -65,23 +72,38 @@ public class DisposalAcctDocProvider implements IErpFinAcctDocProvider {
         String gainLossSubject = readCode(event, ErpAstConstants.BILL_DATA_DISPOSAL_GAINLOSS_SUBJECT_CODE,
                 SUBJECT_DISPOSAL_LOSS);
 
-        List<VoucherFact> facts = new ArrayList<>(4);
+        // 账面净值 = 原值 − 累计折旧（1606 中间科目 Step1 结转额）
+        BigDecimal net = original.subtract(accumDep);
+
+        List<VoucherFact> facts = new ArrayList<>(7);
+        // ---- Step1：结转原值 + 累计折旧至 1606 固定资产清理 ----
         // 借：累计折旧（结转）
         if (accumDep.signum() != 0) {
             facts.add(fact(accumSubject, "累计折旧", DC_DEBIT, accumDep, event, ACCOUNT_KEY_ACCUMULATED_DEPRECIATION));
         }
-        // 借：银行存款（处置收入，>0 时）
-        if (disposalAmount.signum() > 0) {
-            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, disposalAmount, event, ACCOUNT_KEY_BANK_DEPOSIT));
-        }
-        // 清理损益（gainLoss 正=收益贷，负=损失借）
-        if (gainLoss.signum() > 0) {
-            facts.add(fact(gainLossSubject, "营业外收入", DC_CREDIT, gainLoss, event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
-        } else if (gainLoss.signum() < 0) {
-            facts.add(fact(gainLossSubject, "营业外支出", DC_DEBIT, gainLoss.negate(), event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
+        // 借：固定资产清理（净值结转）
+        if (net.signum() > 0) {
+            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, "固定资产清理", DC_DEBIT, net, event, ACCOUNT_KEY_DISPOSAL_CLEARING));
         }
         // 贷：固定资产（结转原值）
         facts.add(fact(fixedAssetSubject, "固定资产", DC_CREDIT, original, event, ACCOUNT_KEY_FIXED_ASSET));
+        // ---- Step2：处置收入入 1606 + 损益从 1606 结转至 6711/6301 ----
+        // 借：银行存款（处置收入，>0 时）
+        if (disposalAmount.signum() > 0) {
+            facts.add(fact(SUBJECT_BANK_DEPOSIT, "银行存款", DC_DEBIT, disposalAmount, event, ACCOUNT_KEY_BANK_DEPOSIT));
+            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, "固定资产清理", DC_CREDIT, disposalAmount, event,
+                    ACCOUNT_KEY_DISPOSAL_CLEARING));
+        }
+        // 清理损益（gainLoss 正=收益贷，负=损失借；1606 网为零——借 1606(收益) / 贷 1606(损失) 对冲结转）
+        if (gainLoss.signum() > 0) {
+            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, "固定资产清理", DC_DEBIT, gainLoss, event,
+                    ACCOUNT_KEY_DISPOSAL_CLEARING));
+            facts.add(fact(gainLossSubject, "营业外收入", DC_CREDIT, gainLoss, event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
+        } else if (gainLoss.signum() < 0) {
+            facts.add(fact(gainLossSubject, "营业外支出", DC_DEBIT, gainLoss.negate(), event, ACCOUNT_KEY_NON_OPERATING_EXPENSE));
+            facts.add(fact(SUBJECT_DISPOSAL_CLEARING, "固定资产清理", DC_CREDIT, gainLoss.negate(), event,
+                    ACCOUNT_KEY_DISPOSAL_CLEARING));
+        }
         return facts;
     }
 

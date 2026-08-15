@@ -47,15 +47,19 @@ public class DepreciationAcctDocProvider implements IErpFinAcctDocProvider {
         BigDecimal amount = readDecimal(event, ErpAstConstants.BILL_DATA_DEPRECIATION_AMOUNT);
         String expenseSubject = readCode(event, ErpAstConstants.BILL_DATA_EXPENSE_SUBJECT_CODE, SUBJECT_EXPENSE);
         String accumSubject = readCode(event, ErpAstConstants.BILL_DATA_ACCUM_DEPRE_SUBJECT_CODE, SUBJECT_ACCUM_DEPRE);
+        // RC-R1.52 方式B 补提标注（L1 UC-AST-07「补提凭证标注所属期间(审计)」）：CATCHUP_PERIODS 键存在时
+        // 凭证行 memo 记「补提 {periods}」（VoucherFact.memo → ErpFinVoucherLine.memo，审计可追溯）。
+        String catchUpPeriods = readCode(event, ErpAstConstants.BILL_DATA_CATCHUP_PERIODS, null);
+        String memo = catchUpPeriods != null ? "补提折旧(" + catchUpPeriods + ")" : null;
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        facts.add(fact(expenseSubject, "折旧费用", DC_DEBIT, amount, event, ACCOUNT_KEY_DEPRECIATION_EXPENSE));
-        facts.add(fact(accumSubject, "累计折旧", DC_CREDIT, amount, event, ACCOUNT_KEY_ACCUMULATED_DEPRECIATION));
+        facts.add(fact(expenseSubject, "折旧费用", DC_DEBIT, amount, event, ACCOUNT_KEY_DEPRECIATION_EXPENSE, memo));
+        facts.add(fact(accumSubject, "累计折旧", DC_CREDIT, amount, event, ACCOUNT_KEY_ACCUMULATED_DEPRECIATION, memo));
         return facts;
     }
 
     private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event, String accountKey) {
+                             PostingEvent event, String accountKey, String memo) {
         VoucherFact fact = new VoucherFact();
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
@@ -63,6 +67,7 @@ public class DepreciationAcctDocProvider implements IErpFinAcctDocProvider {
         fact.setAmount(amount);
         fact.setAccountKey(accountKey);
         fact.setBusinessType(event.getBusinessType().name());
+        fact.setMemo(memo);
         return fact;
     }
 

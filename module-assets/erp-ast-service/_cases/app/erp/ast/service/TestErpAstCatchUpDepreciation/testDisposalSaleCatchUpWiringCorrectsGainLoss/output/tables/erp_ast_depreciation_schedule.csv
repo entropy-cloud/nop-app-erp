@@ -1,0 +1,5 @@
+_chgType,ID,ASSET_ID,ORG_ID,PERIOD,PLANNED_AMOUNT,ACTUAL_AMOUNT,ACCUMULATED_DEPRECIATION,NET_BOOK_VALUE,STATUS,EXECUTED_AT,POSTED,POSTED_AT,POSTED_BY,VOUCHER_ID,BUSINESS_DATE,CURRENCY_ID,EXCHANGE_RATE,AMOUNT_SOURCE,AMOUNT_FUNCTIONAL,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,18,17,1,2026-05,1000,1000,1000,11000,EXECUTED,,true,,,999000,@var:ErpAstDepreciationSchedule@businessDate,,1,0,0,@var:ErpAstDepreciationSchedule@delVersion_3,0,autotest-ref,*,autotest-ref,*
+A,19,17,1,2026-06,1000,1000,2000,10000,EXECUTED,,true,,,999000,@var:ErpAstDepreciationSchedule@businessDate_1,,1,0,0,@var:ErpAstDepreciationSchedule@delVersion_3,0,autotest-ref,*,autotest-ref,*
+A,20,17,1,2026-08,0.0000,,0.0000,,CANCELLED,,false,,,,,,1.00000000,0.0000,0.0000,@var:ErpAstDepreciationSchedule@delVersion_3,1,autotest-ref,*,autotest-ref,*
+A,22,17,1,2026-07,0,1000.0000,3000.0000,9000.0000,EXECUTED,@var:ErpAstDepreciationSchedule@executedAt,true,@var:ErpAstDepreciationSchedule@postedAt,,23,@var:ErpAstDepreciationSchedule@businessDate_2,,1,0,0,@var:ErpAstDepreciationSchedule@delVersion_3,1,autotest-ref,*,autotest-ref,*

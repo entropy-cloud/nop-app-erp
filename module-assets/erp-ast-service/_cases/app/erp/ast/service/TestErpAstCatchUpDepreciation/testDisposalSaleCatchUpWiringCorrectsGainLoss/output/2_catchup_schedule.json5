@@ -1,0 +1,9 @@
+{
+  "id": 22,
+  "period": "@var:ErpFinAccountingPeriod@code_2",
+  "status": "EXECUTED",
+  "actualAmount": 1000.0000,
+  "netBookValue": 9000.0000,
+  "posted": true,
+  "voucherId": 23
+}

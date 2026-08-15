@@ -276,6 +276,8 @@ public class TestErpAstPostingReverse extends JunitAutoTestCase {
     private void seedCoreBasics() {
         AstTestSupport.seedAcctSchema(daoProvider, 1L);
         AstTestSupport.seedSubject(daoProvider, "1002", "银行存款");
+        // RC-R1.53：处置凭证 1606 固定资产清理中间科目腿（两步流 Provider 引用，缺失则过账 ERR_SUBJECT_NOT_FOUND）
+        AstTestSupport.seedSubject(daoProvider, "1606", "固定资产清理");
     }
 
     @Test

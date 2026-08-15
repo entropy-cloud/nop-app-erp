@@ -18,22 +18,22 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 层 1 矩阵完备性表驱动测试（契约 §10 层 1；plan Phase 1 Proof）。
+ * 层 1 矩阵完备性表驱动测试（契约 §10 层 1；plan Phase 1 Proof + RC-R1.54 扩展）。
  *
- * <p>针对 {@link ErpAstAssetStateMachine}（ErpAstAsset.status 跨实体 writer 轴，6 命名动作）的纯矩阵完备性
- * 遍历：不经 BizModel 入口（层 3 职责），不断言副作用/审计。
+ * <p>针对 {@link ErpAstAssetStateMachine}（ErpAstAsset.status writer 轴，8 命名动作，RC-R1.54 增
+ * suspend/resume + dispose 的 IDLE 来源）的纯矩阵完备性遍历：不经 BizModel 入口（层 3 职责），不断言副作用/审计。
  *
  * <p>覆盖：
  * <ul>
- *   <li>(a) 无重复/冲突边（7 条边，6 命名动作——reverseDisposal 双源）；</li>
- *   <li>(b) 从 DRAFT 可达 IN_SERVICE/SCRAPPED/SOLD，IDLE 显式断言不可达；</li>
+ *   <li>(a) 无重复/冲突边（11 条边，8 命名动作——disposeScrap/disposeSell/reverseDisposal 双源）；</li>
+ *   <li>(b) 从 DRAFT 可达 IN_SERVICE/SCRAPPED/SOLD；IDLE 经 suspend 从 IN_SERVICE 可达（RC-R1.54 实装），
+ *       但无任何边进入 IDLE 之外的其他非 DRAFT 初始态——从 DRAFT 出发不经 suspend 不可达 IDLE（DRAFT 无直接出边到 IDLE）；</li>
  *   <li>(c) 各动作合法来源态通过、非法来源态抛 common 层码（携带 action/currentStatus）；
- *       capitalize null 归一化 DRAFT 合法；inventoryShortageDisposal 运行时守卫接受 IDLE 死状态来源
- *       （对齐盘点范围过滤 liveStatuses 既有行为）；</li>
+ *       capitalize null 归一化 DRAFT 合法；suspend 仅 IN_SERVICE；resume 仅 IDLE；dispose 接受 IN_SERVICE/IDLE；
+ *       inventoryShortageDisposal 运行时守卫接受 IN_SERVICE/IDLE；</li>
  *   <li>(d) {@code transitions()} 元数据与显式方法语义一致；</li>
  *   <li>(e) 终态/初始态集合正确（terminal={SCRAPPED,SOLD}，initial={DRAFT}）；</li>
- *   <li>(f) IDLE 死状态登记：不在 transitions() 任一迁移边、不可达、不在终态/初始态集合
- *       （layer-2 四方对照裁定 intentional reserved）。</li>
+ *   <li>(f) IDLE 不再为死状态（RC-R1.54）：出现在 suspend 目标态 + resume/dispose 来源态，但不在终态/初始态集合。</li>
  * </ul>
  *
  * <p>Bean 严格无状态，直接 {@code new} 实例化测试，无需 IoC 容器。
@@ -61,10 +61,11 @@ public class TestErpAstAssetStateMachineMatrix {
             String key = e.getAction() + "|" + e.getFromStatus();
             assertTrue(seen.add(key), "重复/冲突边: action=" + e.getAction() + ", fromStatus=" + e.getFromStatus());
         }
-        assertEquals(7, edges.size(), "迁移矩阵应有 7 条边（6 命名动作，reverseDisposal 双源；IDLE 死状态无出边）");
+        assertEquals(11, edges.size(),
+                "迁移矩阵应有 11 条边（8 命名动作——disposeScrap/disposeSell/reverseDisposal 双源 + suspend/resume）");
     }
 
-    // ---------- (b) 从 DRAFT 可达全部非初始 live 态；IDLE 不可达 ----------
+    // ---------- (b) 从 DRAFT 可达全部非初始 live 态；IDLE 经 suspend 可达（RC-R1.54 实装） ----------
 
     @Test
     public void reachabilityFromInitial() {
@@ -72,13 +73,19 @@ public class TestErpAstAssetStateMachineMatrix {
         assertTrue(reachable.contains(ErpAstConstants.ASSET_STATUS_IN_SERVICE), "从 DRAFT 应可达 IN_SERVICE");
         assertTrue(reachable.contains(ErpAstConstants.ASSET_STATUS_SCRAPPED), "从 DRAFT 应可达 SCRAPPED");
         assertTrue(reachable.contains(ErpAstConstants.ASSET_STATUS_SOLD), "从 DRAFT 应可达 SOLD");
+        // RC-R1.54：IDLE 经 suspend 实装——IN_SERVICE→IDLE 有出边，DRAFT→IN_SERVICE→IDLE 可达
+        assertTrue(reachable.contains(ErpAstConstants.ASSET_STATUS_IDLE),
+                "IDLE 经 suspend 从 DRAFT 可达（RC-R1.54 实装，不再为死状态）");
     }
 
     @Test
-    public void idleIsDeadStateNotReachable() {
-        Set<String> reachable = reachableFrom(ErpAstConstants.ASSET_STATUS_DRAFT);
-        assertFalse(reachable.contains(ErpAstConstants.ASSET_STATUS_IDLE),
-                "IDLE 为死状态（零 writer），从 DRAFT 不可达");
+    public void idleReachableViaSuspendNotDirectlyFromDraft() {
+        // DRAFT 无直接出边到 IDLE（须先 capitalize 至 IN_SERVICE 再 suspend）
+        for (ErpAstAssetStateMachine.TransitionDefinition e : sm.transitions()) {
+            assertFalse(ErpAstConstants.ASSET_STATUS_DRAFT.equals(e.getFromStatus())
+                            && ErpAstConstants.ASSET_STATUS_IDLE.equals(e.getToStatus()),
+                    "DRAFT 不应有直接出边到 IDLE（须经 IN_SERVICE → suspend）");
+        }
     }
 
     // ---------- (c) 各动作合法/非法来源态 ----------
@@ -102,12 +109,29 @@ public class TestErpAstAssetStateMachineMatrix {
     }
 
     @Test
-    public void disposeAllowsOnlyInService() {
-        // disposeScrap/disposeSell 共用 assertCanDispose 来源态判定（IN_SERVICE），Bean 报告动作名 dispose
-        assertAllowsOnly("disposeScrap", "dispose", ErpAstConstants.ASSET_STATUS_IN_SERVICE, null);
-        assertAllowsOnly("disposeSell", "dispose", ErpAstConstants.ASSET_STATUS_IN_SERVICE, null);
+    public void disposeAllowsOnlyInServiceOrIdle() {
+        // disposeScrap/disposeSell 共用 assertCanDispose 来源态判定（IN_SERVICE/IDLE，RC-R1.54 扩展），
+        // Bean 报告动作名 dispose
+        assertAllowsOnly("disposeScrap", "dispose", ErpAstConstants.ASSET_STATUS_IN_SERVICE,
+                ErpAstConstants.ASSET_STATUS_IDLE);
+        assertAllowsOnly("disposeSell", "dispose", ErpAstConstants.ASSET_STATUS_IN_SERVICE,
+                ErpAstConstants.ASSET_STATUS_IDLE);
         assertEquals(ErpAstConstants.ASSET_STATUS_SCRAPPED, sm.disposeScrapTargetStatus());
         assertEquals(ErpAstConstants.ASSET_STATUS_SOLD, sm.disposeSellTargetStatus());
+    }
+
+    @Test
+    public void suspendAllowsOnlyInService() {
+        assertAllowsOnly("suspend", "suspend", ErpAstConstants.ASSET_STATUS_IN_SERVICE, null);
+        assertEquals(ErpAstConstants.ASSET_STATUS_IDLE, sm.suspendTargetStatus(),
+                "suspend 目标态=IDLE（RC-R1.54）");
+    }
+
+    @Test
+    public void resumeAllowsOnlyIdle() {
+        assertAllowsOnly("resume", "resume", ErpAstConstants.ASSET_STATUS_IDLE, null);
+        assertEquals(ErpAstConstants.ASSET_STATUS_IN_SERVICE, sm.resumeTargetStatus(),
+                "resume 目标态=IN_SERVICE（RC-R1.54）");
     }
 
     @Test
@@ -120,7 +144,7 @@ public class TestErpAstAssetStateMachineMatrix {
 
     @Test
     public void shortageDisposeAllowsOnlyInServiceOrIdle() {
-        // 运行时守卫接受 IN_SERVICE/IDLE（IDLE 死状态豁免对齐盘点范围过滤既有行为）
+        // 运行时守卫接受 IN_SERVICE/IDLE（RC-R1.54 后 IDLE 经 suspend 可达，盘点范围过滤 liveStatuses 既有语义）
         sm.assertCanShortageDispose(ErpAstConstants.ASSET_STATUS_IN_SERVICE);
         sm.assertCanShortageDispose(ErpAstConstants.ASSET_STATUS_IDLE);
         for (String s : ALL_ASSET_STATUSES) {
@@ -159,23 +183,26 @@ public class TestErpAstAssetStateMachineMatrix {
         assertFalse(sm.isTerminal(ErpAstConstants.ASSET_STATUS_DRAFT));
         assertFalse(sm.isTerminal(ErpAstConstants.ASSET_STATUS_IN_SERVICE));
         assertFalse(sm.isTerminal(ErpAstConstants.ASSET_STATUS_IDLE),
-                "IDLE 为预留死状态，非真正终态（终态须无出边）");
+                "IDLE 非真正终态（终态须无出边——IDLE 经 resume 有出边）");
         assertFalse(sm.isTerminal(ErpAstConstants.ASSET_STATUS_DISPOSED),
                 "DISPOSED 归拆分/合并计划 3 范围，本 Bean 不分类为终态");
     }
 
-    // ---------- (f) IDLE 死状态登记 ----------
+    // ---------- (f) IDLE 非死状态登记（RC-R1.54 实装） ----------
 
     @Test
-    public void idleNotInTransitionsNorSets() {
+    public void idleInTransitionsButNotSets() {
+        boolean idleAsFrom = false;
+        boolean idleAsTo = false;
         for (ErpAstAssetStateMachine.TransitionDefinition e : sm.transitions()) {
-            assertFalse(ErpAstConstants.ASSET_STATUS_IDLE.equals(e.getFromStatus()),
-                    "IDLE 不应出现在迁移边来源态: action=" + e.getAction());
-            assertFalse(ErpAstConstants.ASSET_STATUS_IDLE.equals(e.getToStatus()),
-                    "IDLE 不应出现在迁移边目标态: action=" + e.getAction());
+            idleAsFrom = idleAsFrom || ErpAstConstants.ASSET_STATUS_IDLE.equals(e.getFromStatus());
+            idleAsTo = idleAsTo || ErpAstConstants.ASSET_STATUS_IDLE.equals(e.getToStatus());
         }
+        // IDLE 经 suspend 可达（目标态）、经 resume/dispose 有出边（来源态）——不再为死状态
+        assertTrue(idleAsFrom, "IDLE 应出现在迁移边来源态（resume/disposeScrap/disposeSell）");
+        assertTrue(idleAsTo, "IDLE 应出现在迁移边目标态（suspend）");
         assertFalse(sm.terminalStatuses().contains(ErpAstConstants.ASSET_STATUS_IDLE),
-                "IDLE 不在终态集合");
+                "IDLE 不在终态集合（终态须无出边——IDLE 经 resume 有出边）");
         assertFalse(sm.initialStatuses().contains(ErpAstConstants.ASSET_STATUS_IDLE),
                 "IDLE 不在初始态集合");
     }
@@ -227,6 +254,12 @@ public class TestErpAstAssetStateMachineMatrix {
             case "reverseCapitalize":
                 sm.assertCanReverseCapitalize(status);
                 break;
+            case "suspend":
+                sm.assertCanSuspend(status);
+                break;
+            case "resume":
+                sm.assertCanResume(status);
+                break;
             case "disposeScrap":
             case "disposeSell":
                 sm.assertCanDispose(status);
@@ -248,6 +281,10 @@ public class TestErpAstAssetStateMachineMatrix {
                 return sm.capitalizeTargetStatus();
             case "reverseCapitalize":
                 return sm.reverseCapitalizeTargetStatus();
+            case "suspend":
+                return sm.suspendTargetStatus();
+            case "resume":
+                return sm.resumeTargetStatus();
             case "disposeScrap":
                 return sm.disposeScrapTargetStatus();
             case "disposeSell":

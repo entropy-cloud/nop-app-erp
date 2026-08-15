@@ -1,0 +1,12 @@
+[
+  {
+    "status": "IN_SERVICE"
+  },
+  {
+    "id": 12,
+    "period": "@var:ErpFinAccountingPeriod@code",
+    "status": "EXECUTED",
+    "actualAmount": 1000.0000,
+    "posted": true
+  }
+]

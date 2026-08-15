@@ -48,9 +48,64 @@ public class TestErpAstAcctDocProviderAccountKey extends BaseTestCase {
         e.getBillData().put(ErpAstConstants.BILL_DATA_ORIGINAL_VALUE, new BigDecimal("100"));
         e.getBillData().put(ErpAstConstants.BILL_DATA_DISPOSAL_AMOUNT, new BigDecimal("30"));
         e.getBillData().put(ErpAstConstants.BILL_DATA_GAIN_LOSS, new BigDecimal("-10"));
-        // 借累计折旧 / 借银行存款 / 借营业外支出(损失) / 贷固定资产
-        assertKeys(p.createFacts(e, null), "ACCUMULATED_DEPRECIATION", "BANK_DEPOSIT", "NON_OPERATING_EXPENSE",
-                "FIXED_ASSET");
+        // SOLD 损失：借 1602 累计折旧 / 借 1606 固定资产清理(净值40) / 贷 1601 固定资产 / 借 1002 银行存款 /
+        //           贷 1606(30) / 借 6711 营业外支出(10) / 贷 1606(10)（1606 网为零）
+        List<VoucherFact> facts = p.createFacts(e, null);
+        assertKeys(facts, "ACCUMULATED_DEPRECIATION", "DISPOSAL_CLEARING", "FIXED_ASSET",
+                "BANK_DEPOSIT", "DISPOSAL_CLEARING", "NON_OPERATING_EXPENSE", "DISPOSAL_CLEARING");
+        assertDisposalClearingIdentity(facts, new BigDecimal("40"), new BigDecimal("40"));
+    }
+
+    /** SCRAPPED 损失四组合行级结构 + 1606 网为零恒等式（RC-R1.53 新增断言）。 */
+    @Test
+    public void testDisposalScrapLossWithClearingLegs() {
+        DisposalAcctDocProvider p = new DisposalAcctDocProvider();
+        PostingEvent e = event(ErpFinBusinessType.DISPOSAL);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_ACCUMULATED_DEPRECIATION, new BigDecimal("60"));
+        e.getBillData().put(ErpAstConstants.BILL_DATA_ORIGINAL_VALUE, new BigDecimal("100"));
+        e.getBillData().put(ErpAstConstants.BILL_DATA_DISPOSAL_AMOUNT, BigDecimal.ZERO);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_GAIN_LOSS, new BigDecimal("-40"));
+        // 报废损失：借 1602(60) / 借 1606(净值40) / 贷 1601(100) → 借 6711(40) / 贷 1606(40)
+        List<VoucherFact> facts = p.createFacts(e, null);
+        assertKeys(facts, "ACCUMULATED_DEPRECIATION", "DISPOSAL_CLEARING", "FIXED_ASSET",
+                "NON_OPERATING_EXPENSE", "DISPOSAL_CLEARING");
+        assertDisposalClearingIdentity(facts, new BigDecimal("40"), new BigDecimal("40"));
+        assertEquals("6711", facts.get(3).getSubjectCode(), "报废损失借 6711 营业外支出");
+    }
+
+    /** SCRAPPED 无折旧（净值=原值）四组合行级结构（1606 覆盖全部净值）。 */
+    @Test
+    public void testDisposalScrapNoDepreciationWithClearingLegs() {
+        DisposalAcctDocProvider p = new DisposalAcctDocProvider();
+        PostingEvent e = event(ErpFinBusinessType.DISPOSAL);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_ACCUMULATED_DEPRECIATION, BigDecimal.ZERO);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_ORIGINAL_VALUE, new BigDecimal("100"));
+        e.getBillData().put(ErpAstConstants.BILL_DATA_DISPOSAL_AMOUNT, BigDecimal.ZERO);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_GAIN_LOSS, new BigDecimal("-100"));
+        // 无折旧报废：借 1606(净值100) / 贷 1601(100) → 借 6711(100) / 贷 1606(100)，无 1602 腿
+        List<VoucherFact> facts = p.createFacts(e, null);
+        assertKeys(facts, "DISPOSAL_CLEARING", "FIXED_ASSET", "NON_OPERATING_EXPENSE", "DISPOSAL_CLEARING");
+        assertDisposalClearingIdentity(facts, new BigDecimal("100"), new BigDecimal("100"));
+    }
+
+    /** SOLD 收益四组合行级结构 + 1606 网为零恒等式（L1 UC-AST-05 收益分支）。 */
+    @Test
+    public void testDisposalSaleGainWithClearingLegs() {
+        DisposalAcctDocProvider p = new DisposalAcctDocProvider();
+        PostingEvent e = event(ErpFinBusinessType.DISPOSAL);
+        e.getBillData().put(ErpAstConstants.BILL_DATA_ACCUMULATED_DEPRECIATION, new BigDecimal("60"));
+        e.getBillData().put(ErpAstConstants.BILL_DATA_ORIGINAL_VALUE, new BigDecimal("100"));
+        e.getBillData().put(ErpAstConstants.BILL_DATA_DISPOSAL_AMOUNT, new BigDecimal("50"));
+        e.getBillData().put(ErpAstConstants.BILL_DATA_GAIN_LOSS, new BigDecimal("10"));
+        e.getBillData().put(ErpAstConstants.BILL_DATA_DISPOSAL_GAINLOSS_SUBJECT_CODE, "6301");
+        // 出售收益：借 1602(60) / 借 1606(净值40) / 贷 1601(100) / 借 1002(50) / 贷 1606(50) /
+        //           借 1606(收益10) / 贷 6301(10)（1606 网为零）
+        List<VoucherFact> facts = p.createFacts(e, null);
+        assertKeys(facts, "ACCUMULATED_DEPRECIATION", "DISPOSAL_CLEARING", "FIXED_ASSET",
+                "BANK_DEPOSIT", "DISPOSAL_CLEARING", "DISPOSAL_CLEARING", "NON_OPERATING_EXPENSE");
+        assertDisposalClearingIdentity(facts, new BigDecimal("50"), new BigDecimal("50"));
+        assertEquals("6301", facts.get(6).getSubjectCode(), "出售收益贷 6301 营业外收入");
+        assertBalanced(facts);
     }
 
     @Test
@@ -165,5 +220,40 @@ public class TestErpAstAcctDocProviderAccountKey extends BaseTestCase {
             assertEquals(expectedKeys[i], facts.get(i).getAccountKey(),
                     "第 " + i + " 条 fact accountKey 语义不匹配");
         }
+    }
+
+    /**
+     * RC-R1.53 1606 固定资产清理中间科目腿恒等式：借腿合计 = 贷腿合计（网为零，两步流不残留余额）。
+     */
+    private void assertDisposalClearingIdentity(List<VoucherFact> facts, BigDecimal expectedDebit, BigDecimal expectedCredit) {
+        BigDecimal debit = BigDecimal.ZERO;
+        BigDecimal credit = BigDecimal.ZERO;
+        for (VoucherFact fact : facts) {
+            if (!"DISPOSAL_CLEARING".equals(fact.getAccountKey())) {
+                continue;
+            }
+            assertEquals("1606", fact.getSubjectCode(), "1606 腿科目编码=1606");
+            if ("DEBIT".equals(fact.getDcDirection())) {
+                debit = debit.add(fact.getAmount());
+            } else {
+                credit = credit.add(fact.getAmount());
+            }
+        }
+        assertEquals(0, debit.compareTo(expectedDebit), "1606 借腿合计");
+        assertEquals(0, credit.compareTo(expectedCredit), "1606 贷腿合计");
+    }
+
+    /** GL 恒等式：Dr Σ = Cr Σ。 */
+    private void assertBalanced(List<VoucherFact> facts) {
+        BigDecimal debit = BigDecimal.ZERO;
+        BigDecimal credit = BigDecimal.ZERO;
+        for (VoucherFact fact : facts) {
+            if ("DEBIT".equals(fact.getDcDirection())) {
+                debit = debit.add(fact.getAmount());
+            } else {
+                credit = credit.add(fact.getAmount());
+            }
+        }
+        assertEquals(0, debit.compareTo(credit), "GL 借贷平衡 Dr Σ = Cr Σ");
     }
 }

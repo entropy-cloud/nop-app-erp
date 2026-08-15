@@ -160,6 +160,12 @@ public interface ErpAstConstants extends ErpAstDocStatus {
     String BILL_DATA_DISPOSAL_GAINLOSS_SUBJECT_CODE = "DISPOSAL_GAINLOSS_SUBJECT_CODE";
     String BILL_DATA_CREDIT_SUBJECT_CODE = "CREDIT_SUBJECT_CODE";
 
+    // ---- PostingEvent.billData 键（折旧补提专用，RC-R1.52） ----
+    /** 补提归属期间列表（逗号分隔，如 "2026-05,2026-06"），Provider 据此在凭证行 memo 标注「补提 {periods}」（L1 UC-AST-07 方式B 审计标注）。 */
+    String BILL_DATA_CATCHUP_PERIODS = "CATCHUP_PERIODS";
+    /** 补提汇总凭证 billHeadCode 后缀（billHeadCode = 资产编码#当前期间#CATCHUP，作为幂等/红冲键与期间可追溯标注）。 */
+    String CATCHUP_BILL_SUFFIX = "#CATCHUP";
+
     // ---- PostingEvent.billData 键（价值调整过账专用） ----
     /** 调整类型（IMPAIRMENT/REVALUATION_UP/REVALUATION_DOWN）。 */
     String BILL_DATA_ADJUSTMENT_TYPE = "ADJUSTMENT_TYPE";

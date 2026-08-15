@@ -1,0 +1,14 @@
+[
+  {
+    "schedule202607": "absent",
+    "assetCode": "@var:ErpAstAsset@code",
+    "status": "IDLE"
+  },
+  {
+    "id": 13,
+    "period": "@var:ErpFinAccountingPeriod@code",
+    "status": "EXECUTED",
+    "actualAmount": 1000.0000,
+    "posted": true
+  }
+]

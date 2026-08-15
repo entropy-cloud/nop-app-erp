@@ -18,6 +18,7 @@ public interface ErpAstErrors {
     String ARG_ASSET_ID = "assetId";
     String ARG_CATEGORY_ID = "categoryId";
     String ARG_PERIOD = "period";
+    String ARG_CURRENT_PERIOD = "currentPeriod";
     String ARG_CURRENT_STATUS = "currentStatus";
     String ARG_EXPECTED_STATUS = "expectedStatus";
     String ARG_CURRENT_DOC_STATUS = "currentDocStatus";
@@ -87,7 +88,11 @@ public interface ErpAstErrors {
             "erp.err.ast.asset.not-found",
             "资产 {assetId} 不存在",
             ARG_ASSET_ID);
-    ErrorCode ERR_DEPRECIATION_PERIOD_NOT_FOUND = ErrorCode.define(
+    // 资产卡片自有状态机非法迁移（RC-R1.54 suspend/resume，契约 §7 common 作 cause）
+    ErrorCode ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION = ErrorCode.define(
+            "erp.err.ast.asset.illegal-status-transition",
+            "资产 {assetCode} 当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_ASSET_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);    ErrorCode ERR_DEPRECIATION_PERIOD_NOT_FOUND = ErrorCode.define(
             "erp.err.ast.depreciation.period-not-found",
             "折旧期间 {period} 未找到",
             ARG_PERIOD);
@@ -112,6 +117,11 @@ public interface ErpAstErrors {
             "erp.err.ast.depreciation.already-executed",
             "资产 {assetId} 期间 {period} 折旧已由并发事务计提，不可重复计提",
             ARG_ASSET_ID, ARG_PERIOD);
+    // 补提期间不早于当前期间（RC-R1.52：方式B 仅允许补提前期漏提额，不晚于当前期间——出售补提接线含当期）
+    ErrorCode ERR_DEPRECIATION_CATCHUP_PERIOD_INVALID = ErrorCode.define(
+            "erp.err.ast.depreciation.catchup-period-invalid",
+            "补提期间 {period} 无效或不早于当前期间 {currentPeriod}",
+            ARG_PERIOD, ARG_CURRENT_PERIOD);
 
     // --- 处置 ---
     ErrorCode ERR_DISPOSAL_NOT_FOUND = ErrorCode.define(

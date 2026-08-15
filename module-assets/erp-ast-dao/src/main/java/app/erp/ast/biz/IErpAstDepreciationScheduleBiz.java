@@ -47,4 +47,22 @@ public interface IErpAstDepreciationScheduleBiz extends ICrudBiz<ErpAstDepreciat
     int recalculateForCapitalizationMaintenance(@Name("assetId") Long assetId,
                                                 @Name("increment") java.math.BigDecimal increment,
                                                 IServiceContext context);
+
+    /**
+     * 方式B 当期一次性补提前期漏提额（RC-R1.52，L1 UC-AST-07，简化不追溯）：守卫链[资产存在 + 使用中
+     * （IDLE 不允许补提，闲置期无折旧义务）+ currentPeriod 期间 OPEN] + 逐漏提期复用折旧计算补提
+     * （elapsed 含已执行期 + 漏提期序）+ 折旧计划落行（EXECUTED）+ 累计折旧/净值回写 + 单张汇总凭证
+     * （billHeadCode = 资产编码#currentPeriod#CATCHUP + 行 memo「补提 {periods}」标注，isCatchUp 列不落 ORM）。
+     * 已 EXECUTED 的漏提期跳过（幂等）；漏提期可含已结账期间（补提凭证记账于开放 currentPeriod）。
+     *
+     * @param assetId       资产卡片 ID
+     * @param currentPeriod 补提入账的开放期间
+     * @param missedPeriods 漏提期间列表（须不晚于 currentPeriod）
+     * @return 本次补提落行的折旧计划条目
+     */
+    @BizMutation
+    java.util.List<ErpAstDepreciationSchedule> catchUpDepreciation(@Name("assetId") Long assetId,
+                                                                    @Name("currentPeriod") String currentPeriod,
+                                                                    @Name("missedPeriods") java.util.List<String> missedPeriods,
+                                                                    IServiceContext context);
 }

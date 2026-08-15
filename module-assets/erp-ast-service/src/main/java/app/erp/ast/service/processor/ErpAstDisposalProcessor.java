@@ -21,6 +21,7 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.dao.IOrmEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
+import java.util.List;
 import java.util.Objects;
 
 import java.math.BigDecimal;
@@ -58,6 +59,12 @@ public class ErpAstDisposalProcessor {
     ErpAstDepreciationScheduleStateMachine scheduleStateMachine;
 
     @Inject
+    ErpAstDepreciationScheduleProcessor depreciationScheduleFacade;
+
+    @Inject
+    ErpAstDepreciationScheduleCatchUpDepreciationProcessor catchUpDepreciationProcessor;
+
+    @Inject
     ErpAstDisposalApprovalStateMachine approvalStateMachine;
 
     @Inject
@@ -78,6 +85,10 @@ public class ErpAstDisposalProcessor {
     protected ErpAstDisposal executeApprove(String id, ErpAstDisposal disposal, IServiceContext context) {
         ErpAstAsset asset = disposal.getAsset();
         validateAssetDisposable(asset, context);
+
+        // RC-R1.52 出售补提接线（reuse P1-RC-029 投影，L1 UC-AST-05 ⑤「先补提当期折旧至出售日」）：
+        // 损益计算前补提自最近已执行期至出售期的漏提折旧，避免月中处置累计折旧低估→净值高估→gainLoss 误算
+        catchUpDepreciationToDisposalPeriod(disposal, asset, context);
 
         BigDecimal original = nz(asset.getOriginalValue());
         BigDecimal accumDep = nz(asset.getAccumulatedDepreciation());
@@ -227,6 +238,41 @@ public class ErpAstDisposalProcessor {
     }
 
     // ---------- 折旧计划状态联动 ----------
+
+    /**
+     * RC-R1.52 出售补提接线（protected step，下游可覆盖）：在清理损益计算前将资产累计折旧补提至出售期。
+     * 补提期间 = (最近 EXECUTED 折旧期间, 出售期间] 逐月（含出售当期——L1 UC-AST-05 ⑤「补提当期折旧至出售日」）。
+     * 无已执行折旧（无时间基线）或出售期间早于等于最近已执行期时跳过（无漏提）；IDLE 资产跳过
+     * （Phase 1 Decision：IDLE 不允许补提——闲置期无折旧义务，恢复至 IN_SERVICE 后方可补提，出售时 IDLE 以卡片账面计提为准）。
+     * 补提经 {@code catchUpDepreciation} 以出售期间为当前期间落行 + 汇总凭证（billHeadCode 后缀 #CATCHUP）。
+     */
+    protected void catchUpDepreciationToDisposalPeriod(ErpAstDisposal disposal, ErpAstAsset asset, IServiceContext context) {
+        if (asset.getStatus() == null
+                || !Objects.equals(asset.getStatus(), ErpAstConstants.ASSET_STATUS_IN_SERVICE)) {
+            return;
+        }
+        if (disposal.getBusinessDate() == null) {
+            return;
+        }
+        String disposalPeriod;
+        try {
+            disposalPeriod = java.time.YearMonth.from(disposal.getBusinessDate()).toString();
+        } catch (Exception e) {
+            return;
+        }
+        String lastExecuted = depreciationScheduleFacade.findLastExecutedPeriod(asset.getId());
+        if (lastExecuted == null || lastExecuted.compareTo(disposalPeriod) >= 0) {
+            return;
+        }
+        List<String> missed = new java.util.ArrayList<>();
+        java.time.YearMonth cursor = java.time.YearMonth.parse(lastExecuted).plusMonths(1);
+        java.time.YearMonth end = java.time.YearMonth.parse(disposalPeriod);
+        while (!cursor.isAfter(end)) {
+            missed.add(cursor.toString());
+            cursor = cursor.plusMonths(1);
+        }
+        catchUpDepreciationProcessor.catchUpDepreciation(asset.getId(), disposalPeriod, missed, context);
+    }
 
     protected void cancelPendingSchedules(Long assetId) {
         IEntityDao<ErpAstDepreciationSchedule> dao = daoProvider.daoFor(ErpAstDepreciationSchedule.class);

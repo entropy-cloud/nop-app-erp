@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -89,6 +90,84 @@ public class DepreciationPostingDispatcher {
             LOG.warn("折旧过账失败告警派发失败（降级）：assetCode={}, reason={}",
                     asset.getCode(), notifyErr.getMessage());
         }
+    }
+
+    /**
+     * 折旧补提汇总凭证派发（RC-R1.52 方式B，L1 UC-AST-07「当期一次性补提前期漏提额」）。
+     * 多月漏提额在开放当前期间一次性汇总为单张凭证：billHeadCode = 资产编码#当前期间#CATCHUP（幂等/红冲键 +
+     * 期间可追溯标注，镜像 A4.2.66 先例），voucherDate = 当前期间首日（财务引擎 resolveOpenPeriod 按凭证日期落账）。
+     * 逐漏提期的归属经 billData 键 {@code CATCHUP_PERIODS} 传递，Provider 在凭证行 memo 标注「补提 {periods}」
+     * （L1「补提凭证标注所属期间(审计)」）。失败语义对齐 {@link #tryPost}：吞异常返回 null（保持 posted=false），不阻塞补提终态。
+     */
+    public Long tryPostCatchUp(ErpAstAsset asset, ErpAstAssetCategory category, String currentPeriod,
+                               BigDecimal totalAmount, List<String> caughtUpPeriods) {
+        PostingEvent event = buildCatchUpEvent(asset, category, currentPeriod, totalAmount, caughtUpPeriods);
+        try {
+            return executor.postEvent(event);
+        } catch (Exception e) {
+            if (e instanceof NopException) {
+                LOG.warn("折旧补提过账失败，资产 {} 当前期间 {} 保持 posted=false：{}",
+                        asset.getCode(), currentPeriod, e.getMessage());
+            } else {
+                LOG.error("折旧补提过账异常，资产 {} 当前期间 {} 保持 posted=false",
+                        asset.getCode(), currentPeriod, e);
+            }
+            dispatchFailureAlert(asset, currentPeriod, caughtUpPeriods, e);
+            return null;
+        }
+    }
+
+    /** 折旧补提过账失败告警派发（镜像 {@link #dispatchFailureAlert}，event key 复用折旧失败事件使运营感知悬挂）。 */
+    protected void dispatchFailureAlert(ErpAstAsset asset, String currentPeriod, List<String> caughtUpPeriods,
+                                        Exception cause) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> ctx = new LinkedHashMap<>();
+        ctx.put("assetCode", asset.getCode());
+        ctx.put("assetId", asset.getId());
+        ctx.put("period", currentPeriod);
+        ctx.put("catchUpPeriods", String.join(",", caughtUpPeriods));
+        ctx.put("errorCode", cause instanceof NopException ? ((NopException) cause).getErrorCode() : cause.getClass().getName());
+        ctx.put("errorMessage", cause.getMessage());
+        ctx.put("billHeadCode", billHeadCode(asset.getCode(), currentPeriod));
+        IServiceContext serviceCtx = new ServiceContextImpl();
+        try {
+            notificationBiz.notify(NOTIFY_EVENT_DEPRECIATION_FAILURE, ctx, serviceCtx);
+        } catch (Exception notifyErr) {
+            LOG.warn("折旧补提失败告警派发失败（降级）：assetCode={}, reason={}",
+                    asset.getCode(), notifyErr.getMessage());
+        }
+    }
+
+    private PostingEvent buildCatchUpEvent(ErpAstAsset asset, ErpAstAssetCategory category, String currentPeriod,
+                                           BigDecimal totalAmount, List<String> caughtUpPeriods) {
+        PostingEvent event = new PostingEvent();
+        event.setBusinessType(ErpFinBusinessType.DEPRECIATION);
+        event.setBillHeadCode(catchUpBillHeadCode(asset.getCode(), currentPeriod));
+        event.setOrgId(asset.getOrgId());
+        event.setAcctSchemaId(resolveAcctSchemaId(event.getOrgId()));
+        event.setCurrencyId(asset.getCurrencyId());
+        event.setExchangeRate(BigDecimal.ONE);
+        event.setVoucherDate(java.time.YearMonth.parse(currentPeriod).atDay(1));
+
+        Map<String, Object> billData = new LinkedHashMap<>();
+        billData.put(ErpAstConstants.BILL_DATA_DEPRECIATION_AMOUNT, nz(totalAmount));
+        billData.put(ErpAstConstants.BILL_DATA_ASSET_ID, asset.getId());
+        billData.put(ErpAstConstants.BILL_DATA_CATEGORY_ID, asset.getCategoryId());
+        billData.put(ErpAstConstants.BILL_DATA_DEPARTMENT_ID, asset.getDepartmentId());
+        billData.put(ErpAstConstants.BILL_DATA_PERIOD, currentPeriod);
+        billData.put(ErpAstConstants.BILL_DATA_EXPENSE_SUBJECT_CODE,
+                resolveSubjectCode(category != null ? category.getExpenseSubjectId() : null, "6602"));
+        billData.put(ErpAstConstants.BILL_DATA_ACCUM_DEPRE_SUBJECT_CODE,
+                resolveSubjectCode(category != null ? category.getDepreciationSubjectId() : null, "1602"));
+        billData.put(ErpAstConstants.BILL_DATA_CATCHUP_PERIODS, String.join(",", caughtUpPeriods));
+        event.setBillData(billData);
+        return event;
+    }
+
+    static String catchUpBillHeadCode(String assetCode, String currentPeriod) {
+        return billHeadCode(assetCode, currentPeriod) + ErpAstConstants.CATCHUP_BILL_SUFFIX;
     }
 
     /**

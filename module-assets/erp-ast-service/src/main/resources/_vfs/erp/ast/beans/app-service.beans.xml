@@ -202,6 +202,10 @@
           class="app.erp.ast.service.processor.ErpAstCipReverseTransferProcessor"/>
     <bean id="app.erp.ast.service.processor.ErpAstDepreciationScheduleExecuteDepreciationProcessor"
           class="app.erp.ast.service.processor.ErpAstDepreciationScheduleExecuteDepreciationProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstDepreciationScheduleCatchUpDepreciationProcessor"
+          class="app.erp.ast.service.processor.ErpAstDepreciationScheduleCatchUpDepreciationProcessor"/>
+    <bean id="app.erp.ast.service.processor.ErpAstAssetSuspendResumeProcessor"
+          class="app.erp.ast.service.processor.ErpAstAssetSuspendResumeProcessor"/>
     <bean id="app.erp.ast.service.processor.ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor"
           class="app.erp.ast.service.processor.ErpAstDepreciationScheduleExecuteBatchDepreciationProcessor"/>
     <bean id="app.erp.ast.service.processor.ErpAstDepreciationScheduleReverseDepreciationProcessor"
