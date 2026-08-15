@@ -373,6 +373,16 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1405 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R2c 基线上调注记（plan 2026-08-16-0424-2，RC-R1.52/53/54 assets 折旧补提/处置凭证/闲置状态机族）
+
+`2026-08-16-0424-2`（RC-R1.52 方式B 补提 + RC-R1.53 处置 1606 腿 + RC-R1.54 IDLE 状态机）新增 2 个 per-mutation Processor（`ErpAstDepreciationScheduleCatchUpDepreciationProcessor` + `ErpAstAssetSuspendResumeProcessor`，`module-assets/erp-ast-service/.../processor/`），引入 **R2c +3**，全部为既有文档化 pattern 类的合法同型新增（对齐 1057-2 +149 / R6.8 +130 / R1.33 +5 / R1.48 +6 先例——per-mutation Processor 的 `daoProvider.daoFor(<EntityClass>)` 是 Nop 平台读取托管实体 DAO 的标准方式，非业务跨域编排）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2c | 1405 | **1408** | 1408 | **baseline-raise**（+3） | (1) `ErpAstDepreciationScheduleCatchUpDepreciationProcessor:81` `daoFor(ErpAstDepreciationSchedule.class)`——补提逐漏提期落行 + 幂等跳过查询的编排骨架（对齐 per-mutation Processor `dao()` 契约先例）；(2) `ErpAstDepreciationScheduleCatchUpDepreciationProcessor:135` `daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset)`——补提累计折旧/净值回写资产卡片，镜像同文件族 `ExecuteDepreciationProcessor:105` 既有同型站点；(3) `ErpAstAssetSuspendResumeProcessor:71` `assetDao()=daoFor(ErpAstAsset.class)`——suspend/resume 状态机 mutation Processor 的实体存取 helper（1 站点承载 require/save 多调用），镜像 `ErpAstDisposalProcessor.disposalDao()` 既有范式。无 B 类「重构为 I*Biz」候选（per-mutation Processor 编排骨架 + 非 FK 导航直查）。R2a/R2b/R2d 不变（新站点全部为 assets 同域实体，无 BizModel 新增站点，无 ErpMd* 站点）。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1408 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -384,7 +394,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 233
-R2c: 1405
+R2c: 1408
 R2d: 35
 R3: 5
 R4: 0

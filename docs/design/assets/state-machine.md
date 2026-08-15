@@ -16,7 +16,7 @@
 |------|----------|----------|----------|
 | 草稿（DRAFT） | 卡片已创建未生效，等待资本化入账 | 否 | 否 |
 | 使用中（IN_SERVICE） | 已入账，正常使用并计提折旧 | 是 | 是（固定资产原值/累计折旧） |
-| 闲置（IDLE） | 暂停使用（如设备停用但仍保留）⚠ **预留状态** | 可配（默认停提） | 是（⚠ 本期无 writer / 无迁移实现，见下方 Deferred 补注） |
+| 闲置（IDLE） | 暂停使用（如设备停用但仍保留）✅ **已实现**（RC-R1.54 suspend/resume） | 停提（引擎 IN_SERVICE-only） | 是 |
 | 已报废（SCRAPPED） | 终态：报废处置完成 | 否 | 否（已清理） |
 | 已出售（SOLD） | 终态：出售处置完成 | 否 | 否（已清理） |
 
@@ -27,8 +27,8 @@
 ```
 草稿 (DRAFT)
   └─ 资本化入账 → 使用中 (IN_SERVICE)
-                    ├─ ⚠ 预留(Deferred) → 暂停使用 → 闲置 (IDLE)         ← 本期无 writer，不可达
-                    │              └─ ⚠ 预留(Deferred) → 恢复使用 → 使用中 (IN_SERVICE)  ← 本期无 writer，不可达
+                    ├─ ✅ suspend → 闲置 (IDLE)
+                    │              └─ ✅ resume → 使用中 (IN_SERVICE)
                     ├─ 报废处置 → 已报废 (SCRAPPED)
                     └─ 出售处置 → 已出售 (SOLD)
 ```
@@ -38,12 +38,12 @@
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|
 | DRAFT → IN_SERVICE | 资产管理员 | 卡片完整、取得日期有效、折旧方法与年限已配置 | 触发资本化入账凭证（借固定资产/贷在建工程或存货） |
-| IN_SERVICE → IDLE ⚠ **Deferred** | 资产管理员 | 使用中状态 | **本期 Deferred**（无 suspend/toIdle BizMutation writer）。目标语义：可配置是否停提折旧（默认停）。**Successor**：资产暂停/恢复业务上线时实现 |
-| IDLE → IN_SERVICE ⚠ **Deferred** | 资产管理员 | 闲置状态 | **本期 Deferred**（无 resume/fromIdle BizMutation writer）。目标语义：恢复折旧计提。**Successor**：同上 |
+| IN_SERVICE → IDLE ✅ **已实现**（RC-R1.54） | 资产管理员 | 使用中状态 | `suspend` BizMutation（`ErpAstAssetSuspendResumeProcessor`）→ IDLE，停提折旧（引擎仅查 IN_SERVICE + `validateAssetInService` 拒绝 IDLE）；暂停时点经 remark「闲置自 {date}」强制记录（闲置时长派生的时间基准，idleSince 列不落 ORM） |
+| IDLE → IN_SERVICE ✅ **已实现**（RC-R1.54） | 资产管理员 | 闲置状态 | `resume` BizMutation → IN_SERVICE，恢复计提（PENDING 计划保留，后续执行自然恢复——Decision A） |
 | IN_SERVICE/IDLE → SCRAPPED | 资产管理员/管理员 | 资产存在、未处置 | 触发报废清理凭证（结转原值/累计折旧/清理损失） |
 | IN_SERVICE/IDLE → SOLD | 资产管理员/管理员 | 资产存在、未处置、出售金额已定 | 触发出售清理凭证（结转原值/累计折旧/出售收入/清理损益） |
 
-> **Deferred**：资产卡片 `IN_SERVICE↔IDLE` 暂停/恢复迁移为**预留死状态**——`ErpAstConstants.ASSET_STATUS_IDLE = "IDLE"` 常量与 `erp-ast/asset-status` dict 值保留，但本期全 `module-assets` **零 `setStatus(...IDLE)` / `setAssetStatus(ASSET_STATUS_IDLE)` writer**，`ErpAstAssetBizModel` 为 CrudBizModel 桩（17 行，零状态机 mutation），亦无 suspend/resume/toIdle/fromIdle BizMutation。IDLE 当前仅出现在 3 处只读守卫（`ErpAstValueAdjustmentProcessor:204` + `ErpAstDisposalProcessor:200` 读取排除 + `ErpAstInventoryProcessor:193` 盘点范围过滤）。**折旧默认停提语义已等价满足**：折旧引擎 `ErpAstDepreciationScheduleProcessor` 与 KPI（`ErpAstDashboardBizModel:179`）仅查询 `IN_SERVICE`，等价于 owner doc §1「IDLE 默认停提」设计意图，无悬挂数据。IN_SERVICE 折旧主路径（资本化建卡→IN_SERVICE→期末批量折旧→处置终态）完整不受影响。处置：采纳 Decision Deferred（保留 dict 值为预留语义入口 + owner doc 标注，对齐「保留为预留 + 文档 Deferred」先例），不从 ORM 删除。**Successor 触发条件**：PM 要求正式资产闲置/恢复工作流时实现 `suspend`/`resume` BizMutation（IN_SERVICE↔IDLE 迁移 + setStatus writer）+ 折旧引擎扩展查询 IN_SERVICE+IDLE + 闲置超期 TODO cron（经 `IErpSysNotificationBiz`）。
+> **✅ 已实现（RC-R1.54，P1-MA2-061 收敛）**：资产卡片 `IN_SERVICE↔IDLE` 暂停/恢复迁移落地——`ErpAstAssetBizModel` 增 `suspend(assetId)`/`resume(assetId)` @BizMutation（`ErpAstAssetSuspendResumeProcessor` per-mutation Processor），固定来源/目标态判断委托 `ErpAstAssetStateMachine` Bean（契约 §4/§7：`assertCanSuspend` IN_SERVICE-only / `assertCanResume` IDLE-only / `suspendTargetStatus`=IDLE / `resumeTargetStatus`=IN_SERVICE，非法边 common 码作 cause → 领域码 `ERR_AST_ASSET_ILLEGAL_STATUS_TRANSITION`）。**折旧行为语义**：批量仅查 IN_SERVICE（`ExecuteBatchDepreciationProcessor`）+ `validateAssetInService` 拒绝 IDLE + catchUp 拒绝 IDLE（Phase 1 守卫）——「IDLE 期间不计提」天然成立（UC-AST-03 ③）；PENDING 计划 suspend 期间保留（Decision A，不 cancel 不重建）。**处置路径**：`assertCanDispose` 扩展接受 IDLE（对齐本表「IN_SERVICE/IDLE → SCRAPPED/SOLD」契约），IDLE 资产可经处置直接退出（无补提——闲置期无折旧义务，损益按卡片账面计提为准）。**闲置超期提醒 cron**：仍 Deferred → successor（触发条件：运营要求闲置资产自动提醒决策时，按 R1.4 job 范式立项）。
 
 ## 3. 终态与恢复
 
@@ -71,7 +71,7 @@
 
 ## 5. 可达性
 
-> **⚠ 本期可达性修正（Deferred）**：下方为**目标状态机的可达性**。本期 IDLE 因零 writer **不可达**——`IN_SERVICE→IDLE` / `IDLE→IN_SERVICE` 迁移未就绪（见 §2 Deferred 补注）。IDLE 本期保留为预留语义入口（不删除 dict 值）。本期实际可达集为 `DRAFT → IN_SERVICE → {SCRAPPED, SOLD}`；IDLE 及其出边为 successor。
+> **✅ 已实现（RC-R1.54）**：IDLE 经 `suspend` 从 IN_SERVICE 可达，经 `resume` 回 IN_SERVICE、经处置至 SCRAPPED/SOLD。本期实际可达集为 `DRAFT → IN_SERVICE → {IDLE, SCRAPPED, SOLD}`。
 
 - 从 DRAFT 可达 IN_SERVICE；从 IN_SERVICE 可达 IDLE、SCRAPPED、SOLD。
 - IDLE 可回到 IN_SERVICE，也可直接处置。
@@ -106,12 +106,12 @@
 |------|---------------|-----------|
 | DRAFT | 是 | assigned（资产管理员）—— 草稿待完善入账 |
 | IN_SERVICE | 否（正常折旧自动） | — |
-| IDLE ⚠ **Deferred** | 是（目标） | monitor（监控）—— 闲置资产待决策（恢复/处置）。⚠ **本期 IDLE 不可达**（无 writer，见 §2/§5 Deferred 补注），故本期不产生 IDLE TODO |
+| IDLE ✅ **已实现**（RC-R1.54） | 否（提醒 cron Deferred → successor） | monitor（监控）—— 闲置资产待决策（恢复/处置）。⚠ **闲置超期 TODO cron Deferred**，见下方补注 |
 | SCRAPPED/SOLD | 否 | — |
 
 **待处置资产提醒**：闲置超期的资产可产生 TODO 提醒决策（恢复使用或处置），避免资产长期闲置无人处理。
 
-> **⚠ 闲置超期 TODO cron Deferred**：本提醒依赖 IDLE 状态写入 + 闲置时长扫描 cron，两者本期均未就绪（IDLE 零 writer，见 §2 Deferred 补注）。处置：Deferred。**Successor 触发条件**：PM 要求正式资产闲置/恢复工作流时，随 `suspend`/`resume` BizMutation 一并实现闲置超期 TODO 经 `IErpSysNotificationBiz` 派发。
+> **⚠ 闲置超期 TODO cron Deferred → successor**：IDLE 状态写入已实现（RC-R1.54 suspend/resume），但闲置时长扫描 cron（config-gated job.yaml 注册 + 扫描 IDLE + 闲置时长超阈值经 `IErpSysNotificationBiz` 派发）为运营便利性，非 L1 UC-AST-03 字面断言（断言①②③均已被 suspend/resume + 引擎语义覆盖），本期登记 successor。**Successor 触发条件**：运营要求闲置资产自动提醒决策时，按 R1.4 job 范式立项（闲置时长可经 remark「闲置自 {date}」+ 查询派生）。
 
 ## 9. 场景演练
 
@@ -381,9 +381,9 @@ approve/reverseApprove 权限声明沿用各实体 xbiz 既有 `<auth permission
 
 **INLINE→Bean 路径**（Movement 全 5 动作：submitForApproval/approve/reject/reverseApprove/withdrawApproval）：原直接在 xbiz `<source>` 脚本中实现，现**已完成 INLINE→Bean 迁移**（plan `2026-08-13-0805-2`）——xbiz source 经 `inject` 取得 `ErpAstMovementApprovalStateMachine` + `ErpAstMovementDocumentStateMachine` 双 Bean，固定守卫/目标态委托 Bean，动态守卫（isCancelled 防御 + approvedBy/At 审计）保留原位。Movement 无独立 cancel mutation，docStatus=CANCELLED 经 `useLogicalDelete` 承载，isCancelled 守卫为防御性（阻止逻辑删除单据的 approveStatus 副轴漂移）。
 
-### IDLE 暂停/恢复：本期 Deferred
+### IDLE 暂停/恢复：✅ 已实现（RC-R1.54）
 
-资产卡片 `IN_SERVICE↔IDLE` 暂停/恢复迁移本期**无 Processor / 无 INLINE 实现 / 无 BizMutation writer**（`ErpAstAssetBizModel` 为 CrudBizModel 桩）。「IDLE 默认停提折旧」语义由折旧引擎仅查询 `IN_SERVICE` 等价满足（`ErpAstDepreciationScheduleProcessor:138` + `ErpAstDashboardBizModel:179` 均 `eq("status", ASSET_STATUS_IN_SERVICE)`），无需显式停提配置即达成 owner doc §1 设计意图。详细裁决与 successor 见 §2 Deferred 补注。
+资产卡片 `IN_SERVICE↔IDLE` 暂停/恢复迁移已落地：`suspend`/`resume` BizMutation（`ErpAstAssetSuspendResumeProcessor`）+ `ErpAstAssetStateMachine` Bean 扩展（suspend/resume 守卫与目标态 + `assertCanDispose` 接受 IDLE 对齐 §2「IN_SERVICE/IDLE → SCRAPPED/SOLD」）。「IDLE 停提折旧」由引擎仅查询 `IN_SERVICE` + `validateAssetInService` 拒绝 IDLE 天然满足（owner doc §1 设计意图），PENDING 计划 suspend 期间保留（Decision A），暂停时点经 remark「闲置自 {date}」强制记录。闲置超期 cron → successor（见 §8 补注）。
 
 ### reversal listener 回退目标态
 
@@ -405,7 +405,7 @@ approve/reverseApprove 权限声明沿用各实体 xbiz 既有 `<auth permission
 
 审查本状态机时，使用 `docs/skills/state-machine-business-review-prompt.md`，重点检查：
 - 处置（报废/出售）的清理凭证是否完整结转原值与累计折旧。
-- 闲置资产的折旧停提/恢复配置是否明确。（⚠ IDLE 本期 Deferred——`IN_SERVICE↔IDLE` 迁移未就绪、零 writer；折旧引擎仅查 `IN_SERVICE` 等价于「IDLE 默认停提」。审查时应确认文档未声称已就绪 IDLE 暂停/恢复，successor = 资产闲置工作流上线时。）
+- 闲置资产的折旧停提/恢复配置是否明确。（✅ IDLE 已实现（RC-R1.54）——`suspend`/`resume` BizMutation + 引擎 IN_SERVICE-only 天然停提 + PENDING 保留；闲置超期 cron = successor，审查时应确认文档未声称 cron 已就绪。）
 - 终态（报废/出售）是否真正无出边，处置错误的纠正路径是否清晰。
 - 折旧漏提补提路径是否覆盖（反结账 vs 当期补提）。
 - 资本化入账与库存出库的协作（库存转固场景）。
