@@ -198,6 +198,26 @@
 | 余额调整 | 调整不同账套间的余额差异 | 税务调整项处理 |
 | 报表合并 | 合并多账套数据生成综合报表 | 集团报表 |
 
+### 现金流量表：科目三分类 + 间接法（实现注记，RC-R1.45 / P1-RC-007）
+
+> 需求契约段见 `use-cases.md` UC-FIN-16 断言⑧（"按科目现金流分类(经营/投资/筹资)调整 / 间接法: 净利润 + 非现金项目 + 营运资金变动"）。本段仅记录实现口径，不改契约段。
+
+**分类语义（dict `erp-md/cash-flow-type`）**：`ErpMdSubject.cashFlowType` 四值 OPERATING 经营 / INVESTING 投资 / FINANCING 筹资 / NON_CASH 非现金，列**可空无默认**。直接法 section 读 `subject.cashFlowType`，**null 或 NON_CASH 回退 OPERATING**（保持既有全 OPERATING 行为零回归基线）。现金科目准入（哪些科目进表）维持 `isCashSubjectCode` 前缀硬编码（1001/1002/1012/1031，D2 裁决——分类维度由 cashFlowType 承载，准入重构归 successor）。
+
+**直接法（`ErpFinReportBizModel.buildCashFlowDataset`）**：现金类科目行按科目 cashFlowType 三分类（OPERATING/INVESTING/FINANCING），行结构 section/code/name/direction/amount 不变，模板 `cash-flow-statement.xpt.xml` 直接法块（含「现金净增加（直接法）」合计）零改动。
+
+**间接法（`buildIndirectCashFlowDataset`，D3 裁决）**：三组件基于同一已加载凭证行集内存聚合（复用 `loadPostedVoucherLines`，非 GlBalance 差额路径——月中口径缺失 + P2-RC-008 波及）：
+
+- **净利润** = 损益类科目（INCOME/EXPENSE/COST）net 聚合（收入 credit−debit / 费用成本 debit−credit），`businessType=PERIOD_CLOSE` 结转凭证行排除（对齐 `ProfitLossClosingService` 范式）；
+- **非现金项目** = `cashFlowType=NON_CASH` 损益类科目 Σ(debit−credit)（折旧/摊销/减值加回；非现金收入负向抵消）；
+- **营运资金变动** = 流动资产/负债科目 Σ(credit−debit)（资产增加减现金流/负债增加加现金流）。科目判定 = ASSET 类且 direction=DEBIT 且非现金前缀且非 160x 非流动资产前缀 ∪ LIABILITY 类且 direction=CREDIT——CREDIT 方向资产（1231 坏账准备/1602 累计折旧/1604 固定资产减值准备）经 direction 规则天然排除，防与其 P&L 对偶科目（6701/6602/6702）的 NON_CASH 加回重复计算。
+
+**影子凭证过滤（D3 子裁决）**：间接法三组件共享 voucher 头侧 `postingType notIn(BUDGET, COMMITMENT)` 过滤（`loadPostedVoucherLines(periodId, excludeShadowPostings=true)`，`or(isNull, notIn)` 对齐 RC-R1.46 模式）——BUDGET/COMMITMENT 影子凭证的损益类行（6601/6001 等）不得污染净利润。直接法保持不过滤（影子凭证科目分布非现金类，A4.1.22 实证无污染，P2-RC-085 watch-only 边界不扩张）。**与 P2-RC-008 边界**：间接法数据源为 VoucherLine 非 GlBalance，CLOSED 期间门控归 P2-RC-008。
+
+**返回契约（D4 裁决）**：`cashFlowStatementData` @BizQuery 单契约返回直接法 + 间接法行（section=INDIRECT + 组件键 NET_PROFIT/NON_CASH/WORKING_CAPITAL/NET）；`indirectCashFlowData` @BizQuery 独立取间接法行；模板经 `prepareDataset` 注入 `ds`（直接法行）+ `indirectDs`（间接法行）双数据集，新增间接法补充块。
+
+**种子分类义务**：`app-erp-all/_vfs/_init-data/erp_md_subject.csv` 已逐行补充分类值（现金/经营类 → OPERATING；6602 折旧费用/6701 信用减值损失/6702 资产减值损失 → NON_CASH）。**后续数据治理**：新增科目须显式标注 cashFlowType，未标注科目回退经营可能误分类（D1 残留风险）。
+
 ## 账套关闭与归档
 
 ### 账套关闭
