@@ -1,0 +1,23 @@
+{
+  "name": "integration-test",
+  "description": "nop-app-erp 系统级黄金路径集成测试套件（app-erp-all 单模块统一装配）。目标：设计并落地一批覆盖全 19 子系统（18 业务域 + notify）关键路径的集成测试用例（15-25 用例 / 8-12 批），每用例跨 3+ 域、涉及审批/过账/状态机等关键路径，确保核心业务畅通无阻。技术栈：IGraphQLEngine + JunitAutoTestCase 录制回放（三层全比对：response 快照 + DB 状态快照 + JUnit 关键断言），全量 94 张 seed CSV + 1 SQL + fresh-DB 每用例重建（镜像 TestAuthSeedLoadingProof 初始化模式）。工作流：先产出《集成测试用例设计文档》（docs/design/integration-testing.md，独立子代理审查收敛）→ 依设计补充 roadmap 分批工作项 → 逐批执行（每批独立 plan-audit + closure audit）→ MV 全量回归 + 基线登记（known-good-baselines.md），不接 CI。快照维护义务：任何后续 seed CSV 变更必须同步重录受影响用例快照（登记 seed-data.md）。seed 修正授权：测试中发现 seed 缺失/不正确直接修改添加（用户裁决 2026-08-15），同步重录受影响快照。以当前实现为准独立推进，不依赖 requirement-compliance 越界项与 entity-state-machine M5。",
+  "roadmapPath": "docs/backlog/integration-test-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "model": "opencode-go/deepseek-v4-flash",
+  "variant": "max",
+  "auditsDir": "docs/audits",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "test": "mvn test",
+    "build": "mvn clean install -DskipTests",
+    "compliance": "bash docs/audits/nop-compliance-checker.sh",
+    "it": "mvn test -pl app-erp-all"
+  },
+  "prompts": {
+    "multiAudit": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAudit": "docs/skills/open-ended-audit-prompt.md"
+  },
+  "commitFormat": "<type>: <description>"
+}
