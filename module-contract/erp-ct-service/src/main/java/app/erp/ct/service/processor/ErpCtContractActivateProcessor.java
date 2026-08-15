@@ -3,10 +3,13 @@ package app.erp.ct.service.processor;
 import app.erp.contract.dao.entity.ErpCtContract;
 import app.erp.contract.dao.entity.ErpCtContractVersion;
 import app.erp.ct.biz.IErpCtContractVersionBiz;
+import app.erp.ct.service.ErpCtConfigs;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.approval.ErpCtApprovalWorkflowEngine;
 import app.erp.ct.service.statemachine.ErpCtContractStateMachine;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -37,6 +40,9 @@ public class ErpCtContractActivateProcessor {
     IErpCtContractVersionBiz contractVersionBiz;
 
     @Inject
+    ErpCtApprovalWorkflowEngine approvalEngine;
+
+    @Inject
     ErpCtContractStateMachine stateMachine;
 
     public ErpCtContract activate(Long contractId, IServiceContext context) {
@@ -47,6 +53,14 @@ public class ErpCtContractActivateProcessor {
             throw illegalTransition(contract, ErpCtConstants.CONTRACT_STATUS_NEGOTIATION, e);
         }
         validateTypeDirectionCombo(contract);
+        // 审批链完整性联动（RC-R1.34，UC-CT-07 step 5「所有节点通过后合同可进入 ACTIVE 状态」）：
+        // config-gated——approval-enabled=false 或零链记录（矩阵无匹配）时跳过（既有行为零变化）；
+        // 链记录存在且非全 APPROVED → 拒绝激活（L1「可进入 ACTIVE」= 前置满足，签署确认仍须显式 activate）。
+        if (AppConfig.var(ErpCtConfigs.CFG_APPROVAL_ENABLED, false)
+                && !approvalEngine.isChainComplete(contract.getId(), context)) {
+            throw new NopException(ErpCtErrors.ERR_CT_APPROVAL_NOT_COMPLETE)
+                    .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
+        }
 
         // 当前版本须已定稿（FINALIZED），则同步签署为 SIGNED；已签署则放行。
         ErpCtContractVersion current = findCurrentVersion(contract.getId(), context);

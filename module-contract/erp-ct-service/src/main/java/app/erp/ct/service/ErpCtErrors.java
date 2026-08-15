@@ -35,6 +35,14 @@ public interface ErpCtErrors {
     String ARG_VERSION_ID = "versionId";
     String ARG_EVENT_ID = "eventId";
 
+    // --- 审批工作流（RC-R1.34，UC-CT-06/07） ---
+
+    String ARG_APPROVAL_RECORD_ID = "recordId";
+    String ARG_APPROVAL_ORDER = "approvalOrder";
+    String ARG_MAX_RETRIES = "maxRetries";
+    String ARG_APPROVER_ID = "approverId";
+    String ARG_USER_ID = "userId";
+
     // --- 合同头状态机（dict erp-ct/contract-status） ---
 
     ErrorCode ERR_CT_ILLEGAL_STATUS_TRANSITION = ErrorCode.define("erp.err.ct.illegal-status-transition",
@@ -140,4 +148,34 @@ public interface ErpCtErrors {
     ErrorCode ERR_CT_SIGNATURE_INIT_FAILED = ErrorCode.define("erp.err.ct.signature-init-failed",
             "签章请求初始化失败（providerCode={providerCode}）：{errorMsg}",
             ARG_PROVIDER_CODE, "errorMsg");
+
+    // --- 审批工作流（RC-R1.34，UC-CT-07 ApprovalWorkflowEngine） ---
+
+    ErrorCode ERR_CT_APPROVAL_RECORD_NOT_FOUND = ErrorCode.define("erp.err.ct.approval-record-not-found",
+            "审批记录 {recordId} 不存在",
+            ARG_APPROVAL_RECORD_ID);
+
+    ErrorCode ERR_CT_APPROVAL_ILLEGAL_STATUS = ErrorCode.define("erp.err.ct.approval-illegal-status",
+            "审批记录 {recordId} 当前状态={currentStatus}，不允许该操作（期望状态={expectedStatus}）",
+            ARG_APPROVAL_RECORD_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_CT_APPROVAL_APPROVER_MISMATCH = ErrorCode.define("erp.err.ct.approval-approver-mismatch",
+            "审批记录 {recordId} 审批人为 {approverId}，当前用户 {userId} 无权操作",
+            ARG_APPROVAL_RECORD_ID, ARG_APPROVER_ID, ARG_USER_ID);
+
+    ErrorCode ERR_CT_APPROVAL_LOCKED = ErrorCode.define("erp.err.ct.approval-locked",
+            "合同 {contractId} 审批节点 {approvalOrder} 驳回次数已达上限 {maxRetries}，已锁定需强制升级",
+            ARG_CONTRACT_ID, ARG_APPROVAL_ORDER, ARG_MAX_RETRIES);
+
+    ErrorCode ERR_CT_APPROVAL_NOT_COMPLETE = ErrorCode.define("erp.err.ct.approval-not-complete",
+            "合同 {contractCode} 审批链未全部通过，不可激活",
+            ARG_CONTRACT_CODE);
+
+    ErrorCode ERR_CT_APPROVAL_NO_REJECTED = ErrorCode.define("erp.err.ct.approval-no-rejected",
+            "合同 {contractId} 无被驳回的审批节点可重新提交",
+            ARG_CONTRACT_ID);
+
+    ErrorCode ERR_CT_TERMINATE_ALREADY_PENDING = ErrorCode.define("erp.err.ct.terminate-already-pending",
+            "合同 {contractCode} 已有待法务审批的终止申请，不可重复发起",
+            ARG_CONTRACT_CODE);
 }

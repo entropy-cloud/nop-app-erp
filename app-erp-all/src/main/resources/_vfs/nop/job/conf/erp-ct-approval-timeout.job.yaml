@@ -1,0 +1,10 @@
+jobName: erp-ct-approval-timeout
+enabled: "@cfg:nop.job.erp-ct-approval-timeout.enabled|false"
+displayName: Contract Approval Timeout Escalation
+description: 每日 01:00 扫描超时未审批节点（PENDING 且 updateTime 超 erp-ct.approval-timeout-hours 阈值）升级通知上一级审批人/合同经办人；cron 经 erp-ct.approval-timeout-cron 配置门控
+jobGroup: erp-ct
+trigger:
+  cronExpr: "@cfg:nop.job.erp-ct-approval-timeout.cron-expr|0 0 1 * * ?"
+invoker:
+  bean: erpCtApprovalTimeoutEscalationJob
+  method: execute

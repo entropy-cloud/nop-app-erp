@@ -29,8 +29,8 @@ public class TestErpAllJobYamlLoading extends JunitBaseTestCase {
     public void testAllJobYamlFilesLoad() {
         Collection<? extends IResource> resources = VirtualFileSystem.instance()
                 .getAllResources("/nop/job/conf", ".job.yaml");
-        assertEquals(21, resources.size(),
-                "VFS 应在 /nop/job/conf 下看到 21 个 .job.yaml（实际: " + resources.size() + "）");
+        assertEquals(22, resources.size(),
+                "VFS 应在 /nop/job/conf 下看到 22 个 .job.yaml（实际: " + resources.size() + "）");
 
         List<LocalJobConfig> configs = new ArrayList<>();
         for (IResource resource : resources) {
@@ -43,8 +43,8 @@ public class TestErpAllJobYamlLoading extends JunitBaseTestCase {
             }
         }
 
-        assertEquals(21, configs.size(),
-                "全部 21 个 .job.yaml 应被解析为 LocalJobConfig（实际: " + configs.size() + "）");
+        assertEquals(22, configs.size(),
+                "全部 22 个 .job.yaml 应被解析为 LocalJobConfig（实际: " + configs.size() + "）");
         for (LocalJobConfig c : configs) {
             assertTrue(c.getJobName() != null && !c.getJobName().isEmpty(),
                     "每个 job.yaml 必须有 jobName");

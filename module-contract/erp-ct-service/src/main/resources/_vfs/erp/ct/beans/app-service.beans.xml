@@ -13,6 +13,17 @@
     <bean id="app.erp.ct.service.rebate.RebateEngine"
           class="app.erp.ct.service.rebate.RebateEngine"/>
 
+    <!-- RC-R1.34（P1-RC-077，UC-CT-07）：审批工作流引擎——金额匹配矩阵节点 + 记录生成 +
+         链状态推导（D2 角色→用户解析 / D3 派生计数 / D7 追加行语义），mutation 入口归
+         ErpCtApprovalRecordBizModel（approve/reject/resubmit）与 ErpCtContractBizModel
+         （terminate 法务门控 D1 选项 B）。 -->
+    <bean id="app.erp.ct.service.approval.ErpCtApprovalWorkflowEngine"
+          class="app.erp.ct.service.approval.ErpCtApprovalWorkflowEngine"/>
+
+    <!-- RC-R1.34（P1-RC-077 ④）：72h 审批超时升级 job（R1.4 简单 job bean 范式，cron 空值跳过） -->
+    <bean id="erpCtApprovalTimeoutEscalationJob"
+          class="app.erp.ct.service.job.ErpCtApprovalTimeoutEscalationJob"/>
+
     <!-- 电子签章三层 SPI（plan 2026-07-04-2200-2，design e-signature.md §SPI 接口）：Registry 镜像
          logistics ErpLogCarrierGatewayRegistry / finance ErpFinAcctDocRegistry 的 List 注入 + 内部建图范式；
          MockSignatureProvider（providerCode="MOCK"）注册为 Bean。真实三方供应商（e签宝/DocuSign/Tsign）

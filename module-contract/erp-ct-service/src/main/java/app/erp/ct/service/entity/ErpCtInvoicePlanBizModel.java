@@ -100,8 +100,8 @@ public class ErpCtInvoicePlanBizModel extends CrudBizModel<ErpCtInvoicePlan> imp
      * isInvoiced=true 的 InvoicePlan 拒绝修改 amount/planDate/invoiceTerm（已开票一致性）。
      * 已开票状态经 ORM 脏值追踪取"本次更新前"的持久化状态（客户端同请求改 isInvoiced 时也能拿到旧值，
      * 防解锁绕过），对齐 R1.9 publish 守卫范式（{@code ErpHrSurveyBizModel#defaultPrepareUpdate}）。
-     * 非计费字段（remark 等）放行。triggerInvoice 回写经 Processor {@code dao().updateEntity}
-     * 直写绕过本守卫，不阻塞既有触发面。
+     * 非计费字段（remark 等）放行。triggerInvoice 回写经 Processor 层 dao 直写
+     * 绕过本守卫，不阻塞既有触发面。
      */
     @Override
     protected void defaultPrepareUpdate(EntityData<ErpCtInvoicePlan> entityData, IServiceContext context) {

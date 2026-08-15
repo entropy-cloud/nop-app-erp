@@ -13,23 +13,45 @@ import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
 
 import app.erp.common.service.MaskHelper;
+import app.erp.contract.dao.entity.ErpCtApprovalRecord;
 import app.erp.contract.dao.entity.ErpCtContract;
 import app.erp.contract.dao.entity.ErpCtContractLine;
 import app.erp.contract.dao.entity.ErpCtContractVersion;
+import app.erp.contract.dao.entity.ErpCtInvoicePlan;
+import app.erp.ct.biz.IErpCtApprovalRecordBiz;
 import app.erp.ct.biz.IErpCtContractBiz;
 import app.erp.ct.biz.IErpCtContractLineBiz;
 import app.erp.ct.biz.IErpCtContractVersionBiz;
+import app.erp.ct.biz.IErpCtInvoicePlanBiz;
+import app.erp.ct.service.ErpCtConfigs;
 import app.erp.ct.service.ErpCtConstants;
 import app.erp.ct.service.ErpCtErrors;
+import app.erp.ct.service.approval.ErpCtApprovalWorkflowEngine;
 import app.erp.ct.service.processor.ErpCtContractActivateProcessor;
 import app.erp.ct.service.processor.ErpCtContractAmendProcessor;
 import app.erp.ct.service.statemachine.ErpCtContractStateMachine;
+import app.erp.notify.biz.IErpSysNotificationBiz;
+import io.nop.api.core.annotations.biz.BizLoader;
+import io.nop.api.core.annotations.biz.BizModel;
+import io.nop.api.core.annotations.biz.BizMutation;
+import io.nop.api.core.annotations.biz.ContextSource;
+import io.nop.api.core.annotations.core.Name;
+import io.nop.api.core.annotations.core.Optional;
+import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
+import io.nop.biz.crud.CrudBizModel;
+import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
@@ -52,10 +74,22 @@ import io.nop.biz.crud.EntityData;
 public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implements IErpCtContractBiz {
 
     @Inject
+    IErpCtContractLineBiz contractLineBiz;
+
+    @Inject
     IErpCtContractVersionBiz contractVersionBiz;
 
     @Inject
-    IErpCtContractLineBiz contractLineBiz;
+    IErpCtInvoicePlanBiz contractInvoicePlanBiz;
+
+    @Inject
+    IErpCtApprovalRecordBiz approvalRecordBiz;
+
+    @Inject
+    ErpCtApprovalWorkflowEngine approvalEngine;
+
+    @Inject
+    IErpSysNotificationBiz notificationBiz;
 
     @Inject
     ErpCtContractActivateProcessor activateProcessor;
@@ -101,7 +135,30 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
         ensureVersionOnSubmit(contractId, context);
         contract.setStatus(stateMachine.submitTargetStatus());
         updateEntity(contract, null, context);
+        // 审批引擎触发入口（RC-R1.34，UC-CT-07「经办人提交合同」）：config-gated——approval-enabled=false
+        // 时零生成零阻塞（D1/Phase 2 Decision）；矩阵无匹配节点 = 无需审批（零记录）。
+        generateApprovalRecordsIfEnabled(contract, context);
         return contract;
+    }
+
+    /**
+     * 审批记录生成接线（RC-R1.34 submit 后置）：config-gated {@code erp-ct.approval-enabled}——
+     * false 时跳过（既有行为零变化）；true 时按 totalAmount 匹配矩阵节点生成记录
+     * （首 PENDING 其余 WAITING）并通知首节点审批人。
+     */
+    protected void generateApprovalRecordsIfEnabled(ErpCtContract contract, IServiceContext context) {
+        if (!AppConfig.var(ErpCtConfigs.CFG_APPROVAL_ENABLED, false)) {
+            return;
+        }
+        java.util.List<app.erp.contract.dao.entity.ErpCtApprovalMatrix> nodes =
+                approvalEngine.matchByAmount(contract, context);
+        if (nodes.isEmpty()) {
+            return;
+        }
+        java.util.List<ErpCtApprovalRecord> records = approvalEngine.generateRecords(contract, nodes, context);
+        if (!records.isEmpty()) {
+            notifyApprovalTask(contract, records.get(0), context);
+        }
     }
 
     @Override
@@ -158,7 +215,10 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
 
     @Override
     @BizMutation
-    public ErpCtContract terminate(@Name("contractId") Long contractId, IServiceContext context) {
+    public ErpCtContract terminate(@Name("contractId") Long contractId,
+                                   @Optional @Name("reason") String reason,
+                                   @Optional @Name("attachmentId") Long attachmentId,
+                                   IServiceContext context) {
         ErpCtContract contract = requireContract(contractId, context);
         // 守卫接受 ACTIVE（生效合同提前终止）与 NEGOTIATION（谈判破裂放弃）两类源态
         // （对齐 state-machine.md §2 L34/L51 + §3 L58：NEGOTIATION 或后续态不可作废，只能 TERMINATED）。
@@ -169,12 +229,68 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
             throw illegalTransition(contract,
                     ErpCtConstants.CONTRACT_STATUS_ACTIVE + "/" + ErpCtConstants.CONTRACT_STATUS_NEGOTIATION, e);
         }
-        // 作废语义：InvoicePlan 无独立状态列，合同头 TERMINATED 后未开票计划经合同头隐式失效
-        // （triggerInvoice 校验合同 ACTIVE 即拒绝，isInvoiced=false 永不可再触发）。
-        // NEGOTIATION→TERMINATED 谈判破裂，未生效合同放弃，版本归档经 useLogicalDelete 既有语义
-        // （NEGOTIATION 未生效，无需 signDate/version 归档差异；与 ACTIVE 路径仅 setStatus+updateEntity 一致）。
+        // 两段化（RC-R1.34，P1-RC-076，D1 选项 B）：发起终止申请 → 生成法务审批记录（PENDING），
+        // 合同保持原状态；法务经 approveTermination 通过后执行终止操作，rejectTermination 驳回 → 原状态。
+        // 法务门控为 state-machine.md §6 强制义务，不受 erp-ct.approval-enabled config 门控（D1 理由 1）。
+        if (approvalEngine.hasPendingTermination(contractId, context)) {
+            throw new NopException(ErpCtErrors.ERR_CT_TERMINATE_ALREADY_PENDING)
+                    .param(ErpCtErrors.ARG_CONTRACT_CODE, contract.getCode());
+        }
+        ErpCtApprovalRecord record = approvalRecordBiz.newEntity();
+        record.setContractId(contractId);
+        record.setOrgId(contract.getOrgId());
+        // approvalMatrixId=null = 终止法务记录判别（D1 选项 B，与链记录双轨区分）
+        record.setApprovalOrder(1);
+        record.setApproverId(approvalEngine.resolveApproverId(
+                AppConfig.var(ErpCtConfigs.CFG_TERMINATE_APPROVER_ROLE,
+                        ErpCtConfigs.DEFAULT_TERMINATE_APPROVER_ROLE), context));
+        record.setApprovalStatus(ErpCtConstants.APPROVAL_STATUS_PENDING);
+        record.setRemark(buildTerminationRemark(reason, attachmentId));
+        approvalRecordBiz.saveEntity(record, null, context);
+        notifyApprovalTask(contract, record, context);
+        return contract;
+    }
+
+    @Override
+    @BizMutation
+    public ErpCtContract approveTermination(@Name("recordId") Long recordId,
+                                            @Optional @Name("comment") String comment,
+                                            IServiceContext context) {
+        ErpCtApprovalRecord record = requireTerminationRecord(recordId, context);
+        guardTerminationRecord(record, context);
+        ErpCtContract contract = requireContract(record.getContractId(), context);
+        // 执行终止操作（L1 UC-CT-06 step 3）：TERMINATED + 版本归档 + InvoicePlan 截停 + 善后 TODO 通知
         contract.setStatus(stateMachine.terminateTargetStatus());
         updateEntity(contract, null, context);
+        archiveCurrentVersion(contract.getId(), context);
+        haltUnexecutedInvoicePlans(contract.getId(), context);
+        notifyWinddown(contract, record, context);
+        // 审批记录通过态
+        record.setApprovalStatus(ErpCtConstants.APPROVAL_STATUS_APPROVED);
+        record.setApprovedAt(new Timestamp(CoreMetrics.currentTimeMillis()));
+        if (comment != null) {
+            record.setComment(comment);
+        }
+        approvalRecordBiz.updateEntity(record, null, context);
+        return contract;
+    }
+
+    @Override
+    @BizMutation
+    public ErpCtContract rejectTermination(@Name("recordId") Long recordId,
+                                           @Optional @Name("comment") String comment,
+                                           IServiceContext context) {
+        ErpCtApprovalRecord record = requireTerminationRecord(recordId, context);
+        guardTerminationRecord(record, context);
+        ErpCtContract contract = requireContract(record.getContractId(), context);
+        // 法务驳回 → 合同保持原状态（L1 UC-CT-06 异常路径）
+        record.setApprovalStatus(ErpCtConstants.APPROVAL_STATUS_REJECTED);
+        record.setRejectedAt(new Timestamp(CoreMetrics.currentTimeMillis()));
+        if (comment != null) {
+            record.setComment(comment);
+        }
+        approvalRecordBiz.updateEntity(record, null, context);
+        notifyTerminationRejected(contract, context);
         return contract;
     }
 
@@ -207,6 +323,133 @@ public class ErpCtContractBizModel extends CrudBizModel<ErpCtContract> implement
                     .param(ErpCtErrors.ARG_CONTRACT_ID, contractId);
         }
         return contract;
+    }
+
+    // ---------- RC-R1.34 terminate 两段化 helpers（P1-RC-076） ----------
+
+    /** 终止法务记录装载：存在 + approvalMatrixId=null（链记录归 ApprovalRecordBizModel 双轨）。 */
+    protected ErpCtApprovalRecord requireTerminationRecord(Long recordId, IServiceContext context) {
+        ErpCtApprovalRecord record = approvalRecordBiz.get(String.valueOf(recordId), false, context);
+        if (record == null) {
+            throw new NopException(ErpCtErrors.ERR_CT_APPROVAL_RECORD_NOT_FOUND)
+                    .param(ErpCtErrors.ARG_APPROVAL_RECORD_ID, recordId);
+        }
+        if (record.getApprovalMatrixId() != null) {
+            throw new NopException(ErpCtErrors.ERR_CT_APPROVAL_ILLEGAL_STATUS)
+                    .param(ErpCtErrors.ARG_APPROVAL_RECORD_ID, recordId)
+                    .param(ErpCtErrors.ARG_CURRENT_STATUS, record.getApprovalStatus())
+                    .param(ErpCtErrors.ARG_EXPECTED_STATUS, "termination-record");
+        }
+        return record;
+    }
+
+    /** 终止记录守卫：PENDING + 审批人匹配（approverId 空 = 手工指定语义放行任意操作员）。 */
+    protected void guardTerminationRecord(ErpCtApprovalRecord record, IServiceContext context) {
+        if (!ErpCtConstants.APPROVAL_STATUS_PENDING.equals(record.getApprovalStatus())) {
+            throw new NopException(ErpCtErrors.ERR_CT_APPROVAL_ILLEGAL_STATUS)
+                    .param(ErpCtErrors.ARG_APPROVAL_RECORD_ID, record.getId())
+                    .param(ErpCtErrors.ARG_CURRENT_STATUS, record.getApprovalStatus())
+                    .param(ErpCtErrors.ARG_EXPECTED_STATUS, ErpCtConstants.APPROVAL_STATUS_PENDING);
+        }
+        String approverId = record.getApproverId();
+        if (approverId == null || approverId.isBlank()) {
+            return;
+        }
+        String userId = context == null ? null : context.getUserId();
+        if (!approverId.equals(userId)) {
+            throw new NopException(ErpCtErrors.ERR_CT_APPROVAL_APPROVER_MISMATCH)
+                    .param(ErpCtErrors.ARG_APPROVAL_RECORD_ID, record.getId())
+                    .param(ErpCtErrors.ARG_APPROVER_ID, approverId)
+                    .param(ErpCtErrors.ARG_USER_ID, userId);
+        }
+    }
+
+    /** 终止申请 remark 承载（D1 裁决——零 ORM）：reason + 可选附件引用。 */
+    protected String buildTerminationRemark(String reason, Long attachmentId) {
+        StringBuilder sb = new StringBuilder();
+        if (reason != null && !reason.isBlank()) {
+            sb.append(reason);
+        }
+        if (attachmentId != null) {
+            if (sb.length() > 0) {
+                sb.append(" ");
+            }
+            sb.append("[附件:").append(attachmentId).append("]");
+        }
+        return sb.length() == 0 ? null : sb.toString();
+    }
+
+    /** 当前版本归档（L1 UC-CT-06 step 3）：isCurrent=true 版本 → isCurrent=false。 */
+    protected void archiveCurrentVersion(Long contractId, IServiceContext context) {
+        ErpCtContractVersion current = findCurrentVersion(contractId, context);
+        if (current != null && Boolean.TRUE.equals(current.getIsCurrent())) {
+            current.setIsCurrent(false);
+            contractVersionBiz.updateEntity(current, null, context);
+        }
+    }
+
+    /**
+     * InvoicePlan 显式截停（D4 选项 A）：未执行（isInvoiced=false）计划逐条逻辑删除
+     * （useLogicalDelete 既有语义 delVersion=1，「标记作废」显式落库 + TERMINATED 隐式失效双保险）；
+     * 已开票行保留（历史发票证据）。
+     */
+    protected void haltUnexecutedInvoicePlans(Long contractId, IServiceContext context) {
+        List<ErpCtContractLine> lines = findLines(contractId, context);
+        if (lines.isEmpty()) {
+            return;
+        }
+        List<Long> lineIds = new java.util.ArrayList<>();
+        for (ErpCtContractLine line : lines) {
+            lineIds.add(line.getId());
+        }
+        QueryBean query = new QueryBean();
+        query.addFilter(io.nop.api.core.beans.FilterBeans.in("contractLineId", lineIds));
+        query.addFilter(eq("isInvoiced", false));
+        List<ErpCtInvoicePlan> plans = contractInvoicePlanBiz.findList(query, null, context);
+        if (plans == null) {
+            return;
+        }
+        for (ErpCtInvoicePlan plan : plans) {
+            contractInvoicePlanBiz.delete(String.valueOf(plan.getId()), context);
+        }
+    }
+
+    /** 善后 TODO 通知（D5 选项 A）：事件 ct.terminate-winddown，接收人 = 合同经办人 createdBy。 */
+    protected void notifyWinddown(ErpCtContract contract, ErpCtApprovalRecord record, IServiceContext context) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("contractId", contract.getId());
+        map.put("contractCode", contract.getCode());
+        map.put("submitterUserId", contract.getCreatedBy());
+        map.put("terminationReason", record.getRemark());
+        notificationBiz.notify(ErpCtConstants.NOTIFY_EVENT_TERMINATE_WINDDOWN, map, context);
+    }
+
+    /** 终止驳回通知（接收人 = 合同经办人）。 */
+    protected void notifyTerminationRejected(ErpCtContract contract, IServiceContext context) {
+        if (notificationBiz == null) {
+            return;
+        }
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("contractId", contract.getId());
+        map.put("contractCode", contract.getCode());
+        map.put("submitterUserId", contract.getCreatedBy());
+        notificationBiz.notify(ErpCtConstants.NOTIFY_EVENT_TERMINATE_REJECTED, map, context);
+    }
+
+    /** 审批待办通知（best-effort，无 ACTIVE 模板静默跳过 R1.4 范式）。 */
+    protected void notifyApprovalTask(ErpCtContract contract, ErpCtApprovalRecord record, IServiceContext context) {
+        if (notificationBiz == null || record == null) {
+            return;
+        }
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("contractId", contract.getId());
+        map.put("contractCode", contract.getCode());
+        map.put("approvalOrder", record.getApprovalOrder());
+        map.put("approverUserId", record.getApproverId());
+        notificationBiz.notify(ErpCtConstants.NOTIFY_EVENT_APPROVAL_TASK, map, context);
     }
 
     /**

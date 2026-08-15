@@ -74,4 +74,25 @@ public interface ErpCtConstants {
     // --- 消耗计费超量通知事件（RC-R1.33，P1-RC-075，UC-CT-04 异常路径，D5 契约） ---
     // 无 ACTIVE 模板时经 IErpSysNotificationBiz.notify best-effort 静默跳过（R1.4 范式）。
     String NOTIFY_EVENT_CONSUMPTION_OVER_120 = "ct.consumption-over-120-percent";
+
+    // --- 审批状态（dict erp-ct/approval-status，RC-R1.34 UC-CT-07） ---
+    String APPROVAL_STATUS_WAITING = "WAITING";
+    String APPROVAL_STATUS_PENDING = "PENDING";
+    String APPROVAL_STATUS_APPROVED = "APPROVED";
+    String APPROVAL_STATUS_REJECTED = "REJECTED";
+    String APPROVAL_STATUS_SKIPPED = "SKIPPED";
+
+    // --- 审批工作流通知事件（RC-R1.34，UC-CT-06/07；无 ACTIVE 模板时 notify best-effort 静默跳过） ---
+    /** 审批待办通知（新节点激活 / 终止申请发起，接收人 = 当前 PENDING 审批人）。 */
+    String NOTIFY_EVENT_APPROVAL_TASK = "ct.approval-task";
+    /** 审批驳回通知（接收人 = 合同经办人 createdBy）。 */
+    String NOTIFY_EVENT_APPROVAL_REJECTED = "ct.approval-rejected";
+    /** 驳回超限锁定强制升级通知（D3，接收人 = 合同经办人）。 */
+    String NOTIFY_EVENT_APPROVAL_LOCKED = "ct.approval-locked";
+    /** 72h 审批超时升级通知（D6 job，接收人 = 上一节点审批人或合同经办人）。 */
+    String NOTIFY_EVENT_APPROVAL_TIMEOUT_ESCALATION = "ct.approval-timeout-escalation";
+    /** 终止善后 TODO 通知（D5，接收人 = 合同经办人；TODO 语义由通知承载）。 */
+    String NOTIFY_EVENT_TERMINATE_WINDDOWN = "ct.terminate-winddown";
+    /** 终止申请驳回通知（接收人 = 合同经办人）。 */
+    String NOTIFY_EVENT_TERMINATE_REJECTED = "ct.terminate-rejected";
 }

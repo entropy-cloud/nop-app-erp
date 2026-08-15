@@ -1,7 +1,9 @@
-import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMutation, verifyState, eqFilter, findPageTotal, deleteByFilter, deleteById } from './_helper';
+import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMutation, verifyState, eqFilter, andFilter, findPageTotal, findFirst, deleteByFilter, deleteById } from './_helper';
+import { loginAsRole } from '../negative/_helper';
 
 /**
- * contract ErpCtContract 合同生命周期业务动作浏览器层 E2E（plan 2026-07-14-0215-2 Phase 1）。
+ * contract ErpCtContract 合同生命周期业务动作浏览器层 E2E（plan 2026-07-14-0215-2 Phase 1；
+ * RC-R1.34 两段化更新——terminate 发起 + approveTermination 通过后 TERMINATED）。
  *
  * 验证合同 6 动作状态机经 GraphQL /graphql 的全栈可达性 + status 翻转。
  *
@@ -11,6 +13,11 @@ import { test, expect, loginAndNavigate, createViaSave, callMutationOk, callMuta
  *   terminate/expire（终态，须 ACTIVE）/ amend（须 ACTIVE，回 DRAFT + 新建修订版本）。
  *   activate 附加 validateTypeDirectionCombo：SALES→OUTBOUND / PURCHASE→INBOUND。
  *   非法迁移抛 ERR_CT_ILLEGAL_STATUS_TRANSITION（message token「不允许执行该操作」）。
+ *
+ * RC-R1.34 语义：terminate 两段化（发起生成 PENDING 法务记录 + 合同保持原状态 →
+ * approveTermination 通过后 TERMINATED；E2E 环境「合同审批人」角色经
+ * nop_auth_user_role.csv（userId 19 = role-ct-approver）绑定，D2 解析落 approverId=19 →
+ * approveTermination 须切换「合同审批人」账号（见 terminateAndApprove helper））。
  *
  * ORM 无 useWorkflow / 无 useApproval，纯 DIRECT @BizMutation 浏览器层可达。
  *
@@ -49,6 +56,21 @@ async function seedContract(page: import('@playwright/test').Page, o: ContractOp
   );
 }
 
+/**
+ * RC-R1.34 两段化：terminate 发起 → 查 PENDING 法务记录（approvalStatus=PENDING）→
+ * 切「合同审批人」账号（nop_auth_user_role.csv userId 19 绑定，D2 解析落 approverId=19）→
+ * approveTermination。
+ */
+async function terminateAndApprove(page: import('@playwright/test').Page, contractId: string): Promise<void> {
+  await callMutationOk(page, 'ErpCtContract', 'terminate', { contractId }, 'id');
+  const record = await findFirst<{ id: string }>(page, 'ErpCtApprovalRecord', {
+    filter: andFilter(eqFilter('contractId', Number(contractId)), eqFilter('approvalStatus', 'PENDING')),
+  }, 'id');
+  expect(record, 'terminate 应生成 PENDING 法务审批记录').toBeTruthy();
+  await loginAsRole(page, '合同审批人');
+  await callMutationOk(page, 'ErpCtContract', 'approveTermination', { recordId: Number(record.id) }, 'id');
+}
+
 test.describe('contract ErpCtContract lifecycle state machine', () => {
   test('happy path: save(NEGOTIATION) → activate(ACTIVE) → suspend(SUSPENDED) → resume(ACTIVE) → terminate(TERMINATED)', async ({ page }) => {
     await loginAndNavigate(page, '/ErpCtContract-main');
@@ -71,10 +93,10 @@ test.describe('contract ErpCtContract lifecycle state machine', () => {
     s = await verifyState(page, 'ErpCtContract', c.id, 'status');
     expect(s.status, 'after resume status=ACTIVE').toBe('ACTIVE');
 
-    // terminate: ACTIVE → TERMINATED
-    await callMutationOk(page, 'ErpCtContract', 'terminate', { contractId: c.id }, 'id');
+    // terminate 两段化（RC-R1.34）：发起 → 法务 approveTermination → TERMINATED
+    await terminateAndApprove(page, c.id);
     s = await verifyState(page, 'ErpCtContract', c.id, 'status');
-    expect(s.status, 'after terminate status=TERMINATED').toBe('TERMINATED');
+    expect(s.status, 'after terminate approval status=TERMINATED').toBe('TERMINATED');
 
     // 清理
     await deleteById(page, 'ErpCtContract', c.id);
@@ -125,10 +147,10 @@ test.describe('contract ErpCtContract lifecycle state machine', () => {
     expect(rej1.errors, 'activate from DRAFT should be rejected (requires NEGOTIATION)').toBeTruthy();
     expect(JSON.stringify(rej1.errors), 'reject should carry illegal-transition token').toContain('不允许执行该操作');
 
-    // TERMINATED → activate：终态不可再迁移
+    // TERMINATED → activate：终态不可再迁移（两段化：terminate 发起 + approveTermination 通过）
     const term = await seedContract(page, { status: 'NEGOTIATION', tag: 'gt' });
     await callMutationOk(page, 'ErpCtContract', 'activate', { contractId: term.id }, 'id');
-    await callMutationOk(page, 'ErpCtContract', 'terminate', { contractId: term.id }, 'id');
+    await terminateAndApprove(page, term.id);
     const rej2 = await callMutation(page, 'ErpCtContract', 'activate', { contractId: term.id }, 'id');
     expect(rej2.errors, 'activate from TERMINATED should be rejected').toBeTruthy();
     expect(JSON.stringify(rej2.errors), 'reject should carry illegal-transition token').toContain('不允许执行该操作');

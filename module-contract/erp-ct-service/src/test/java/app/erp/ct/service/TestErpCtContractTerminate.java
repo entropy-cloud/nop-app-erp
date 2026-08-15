@@ -1,5 +1,6 @@
 package app.erp.ct.service;
 
+import app.erp.contract.dao.entity.ErpCtApprovalRecord;
 import app.erp.contract.dao.entity.ErpCtContract;
 import app.erp.md.dao.entity.ErpMdCurrency;
 import app.erp.md.dao.entity.ErpMdPartner;
@@ -7,6 +8,7 @@ import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.graphql.core.IGraphQLExecutionContext;
@@ -17,17 +19,25 @@ import jakarta.inject.Inject;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
+import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * 合同 terminate 状态机守卫测试（P1-MA2-072，plan 2026-07-30-0631-2-r1-22）。
+ * 合同 terminate 状态机守卫测试（P1-MA2-072，plan 2026-07-30-0631-2-r1-22；
+ * RC-R1.34 两段化改造——terminate 发起 + approveTermination 通过后 TERMINATED）。
  *
  * <p>覆盖 terminate 守卫扩展：接受 ACTIVE（生效合同提前终止）+ NEGOTIATION（谈判破裂放弃）两类源态，
  * 其余状态（DRAFT/SUSPENDED/EXPIRED/TERMINATED）拒绝。对齐 {@code docs/design/contract/state-machine.md} §2/§3。
+ *
+ * <p>RC-R1.34（P1-RC-076）语义更新：terminate 为两段化发起（生成 PENDING 法务记录 + 合同保持原状态），
+ * 断言 TERMINATED 的路径须经 approveTermination（本测试环境无角色种子 → approverId null →
+ * 任意操作员可批）。非法源态拒绝断言不变（守卫仍在 terminate mutation 上）。
  *
  * <p>沿用 Phase 1 样板（-service 模块、JunitAutoTestCase、@NopTestConfig）；直接经 DAO 校验状态落库，
  * 不依赖快照断言（与 TestErpCtContractPosting 同范式）。
@@ -50,10 +60,18 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
         long vid = contractId;
 
         ApiResponse<?> resp = terminate(contractId);
-        assertEquals(0, resp.getStatus(), "ACTIVE 合同 terminate 应成功: " + resp);
+        assertEquals(0, resp.getStatus(), "ACTIVE 合同 terminate 发起应成功: " + resp);
+        ErpCtContract pending = daoProvider.daoFor(ErpCtContract.class).getEntityById(vid);
+        assertEquals("ACTIVE", pending.getStatus(), "发起终止申请合同保持 ACTIVE");
+        long recordId = pendingTerminationRecordId(contractId);
+        assertNotNull(recordId, "应生成 PENDING 法务记录");
+
+        ApiResponse<?> approve = executeRpc(mutation, "ErpCtContract__approveTermination",
+                ApiRequest.build(Map.of("recordId", recordId)));
+        assertEquals(0, approve.getStatus(), "法务通过后终止执行: " + approve);
 
         ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class).getEntityById(vid);
-        assertEquals("TERMINATED", contract.getStatus(), "ACTIVE→TERMINATED 行为不变");
+        assertEquals("TERMINATED", contract.getStatus(), "ACTIVE→TERMINATED 两段后落地");
     }
 
     @Test
@@ -63,7 +81,12 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
         long contractId = createContract(partnerId, currencyId, "NEGOTIATION");
 
         ApiResponse<?> resp = terminate(contractId);
-        assertEquals(0, resp.getStatus(), "NEGOTIATION 合同 terminate 应成功（谈判破裂出口）: " + resp);
+        assertEquals(0, resp.getStatus(), "NEGOTIATION 合同 terminate 发起应成功（谈判破裂出口）: " + resp);
+        long recordId = pendingTerminationRecordId(contractId);
+        assertNotNull(recordId, "应生成 PENDING 法务记录");
+        ApiResponse<?> approve = executeRpc(mutation, "ErpCtContract__approveTermination",
+                ApiRequest.build(Map.of("recordId", recordId)));
+        assertEquals(0, approve.getStatus(), "法务通过后终止执行: " + approve);
 
         ErpCtContract contract = daoProvider.daoFor(ErpCtContract.class).getEntityById(contractId);
         assertEquals("TERMINATED", contract.getStatus(), "NEGOTIATION→TERMINATED 应落地");
@@ -96,6 +119,22 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
                 illegalStatus + " 合同 terminate 应被拒绝（ERR_CT_ILLEGAL_STATUS_TRANSITION）: " + resp);
     }
 
+    private long pendingTerminationRecordId(long contractId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("contractId", contractId));
+        q.addFilter(eq("approvalMatrixId", null));
+        List<ErpCtApprovalRecord> records = daoProvider.daoFor(ErpCtApprovalRecord.class).findAllByQuery(q);
+        if (records == null) {
+            return 0L;
+        }
+        for (ErpCtApprovalRecord r : records) {
+            if (ErpCtConstants.APPROVAL_STATUS_PENDING.equals(r.getApprovalStatus())) {
+                return r.getId();
+            }
+        }
+        return 0L;
+    }
+
     private long setupContractInStatus(String status) {
         long partnerId = createPartner();
         long currencyId = createCurrency();
@@ -123,6 +162,8 @@ public class TestErpCtContractTerminate extends JunitAutoTestCase {
             case "TERMINATED": {
                 long id = setupContractInStatus("ACTIVE");
                 executeRpc(mutation, "ErpCtContract__terminate", ApiRequest.build(Map.of("contractId", id)));
+                executeRpc(mutation, "ErpCtContract__approveTermination",
+                        ApiRequest.build(Map.of("recordId", pendingTerminationRecordId(id))));
                 return id;
             }
             default:

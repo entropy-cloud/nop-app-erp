@@ -53,6 +53,36 @@ public interface ErpCtConfigs {
     /** 签署截止默认天数（initSignatureRequest 未传 signingDeadline 时使用）。默认 15。 */
     String CFG_SIGNATURE_DEADLINE_DEFAULT_DAYS = "erp-ct.signature-deadline-default-days";
 
+    // --- 审批工作流（RC-R1.34，UC-CT-07；键权威定义 approval-workflow.md §配置点） ---
+
+    /** 审批流整体启用（config-gate = 部署启用决策，对齐 A4.1.4 范式）。默认 false——false 时 submit 零生成零阻塞。 */
+    String CFG_APPROVAL_ENABLED = "erp-ct.approval-enabled";
+
+    /** 单节点最大驳回次数（D3 超限锁定阈值）。默认 3。 */
+    String CFG_APPROVAL_MAX_RETRIES = "erp-ct.approval-max-retries";
+
+    /** 审批节点超时小时数（D6 升级 job 阈值）。默认 72。 */
+    String CFG_APPROVAL_TIMEOUT_HOURS = "erp-ct.approval-timeout-hours";
+
+    /** 需高管审批的金额阈值（design doc 路由表顶层边界默认语义；运行时矩阵边界为权威，本键登记供种子/部署对齐）。默认 500000。 */
+    String CFG_APPROVAL_URGENT_THRESHOLD = "erp-ct.approval-urgent-threshold";
+
+    /** 变更金额超过原合同此比例时需重新审批（approval-workflow.md 版本与审批联动；消费点 = amend→submit 全链重审结构性达成，小额免审快捷通道 Deferred）。默认 0.2。 */
+    String CFG_AMENDMENT_REAPPROVAL_THRESHOLD = "erp-ct.amendment-reapproval-threshold";
+
+    /** 72h 升级 job 执行门控 cron（空值 = 「不调度」语义，R1.4 双键范式——job.yaml cronExpr 为调度键，本键为 bean 执行键）。默认空。 */
+    String CFG_APPROVAL_TIMEOUT_CRON = "erp-ct.approval-timeout-cron";
+
+    /** terminate 法务审批角色（D1 裁决——nop-auth roleName，对齐 nop_auth_role.csv 冻结词表）。默认「合同审批人」。 */
+    String CFG_TERMINATE_APPROVER_ROLE = "erp-ct.terminate-approver-role";
+
+    int DEFAULT_APPROVAL_MAX_RETRIES = 3;
+    long DEFAULT_APPROVAL_TIMEOUT_HOURS = 72;
+    long DEFAULT_APPROVAL_URGENT_THRESHOLD = 500000;
+    double DEFAULT_AMENDMENT_REAPPROVAL_THRESHOLD = 0.2;
+    String DEFAULT_APPROVAL_TIMEOUT_CRON = "0 0 1 * * ?";
+    String DEFAULT_TERMINATE_APPROVER_ROLE = "合同审批人";
+
     String DEFAULT_SIGNATURE_DEFAULT_PROVIDER = "MOCK";
     boolean DEFAULT_SIGNATURE_CALLBACK_SIGNATURE_REQUIRED = true;
     String DEFAULT_SIGNATURE_STATUS_POLLING_CRON = "0 0 */2 * * ?";

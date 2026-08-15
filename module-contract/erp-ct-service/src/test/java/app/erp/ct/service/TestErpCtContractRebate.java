@@ -92,9 +92,13 @@ public class TestErpCtContractRebate extends JunitAutoTestCase {
                 ApiRequest.build(Map.of("id", String.valueOf(contractId)))).getData();
         assertEquals("ACTIVE", contract.get("status"));
 
-        // ACTIVE → TERMINATED
+        // ACTIVE → TERMINATED（RC-R1.34 两段化：terminate 发起 + approveTermination 通过）
         executeRpc(GraphQLOperationType.mutation, "ErpCtContract__terminate",
                 ApiRequest.build(Map.of("contractId", contractId)));
+        Long termRecordId = pendingTerminationRecordId(contractId);
+        assertNotNull(termRecordId, "terminate 发起应生成法务记录");
+        executeRpc(GraphQLOperationType.mutation, "ErpCtContract__approveTermination",
+                ApiRequest.build(Map.of("recordId", termRecordId)));
         contract = (Map<?, ?>) executeRpc(GraphQLOperationType.query, "ErpCtContract__get",
                 ApiRequest.build(Map.of("id", String.valueOf(contractId)))).getData();
         assertEquals("TERMINATED", contract.get("status"));
@@ -502,6 +506,26 @@ public class TestErpCtContractRebate extends JunitAutoTestCase {
             QueryBean q = new QueryBean();
             q.addFilter(eq("contractId", contractId));
             return daoProvider.daoFor(ErpCtContractVersion.class).findAllByQuery(q);
+        });
+    }
+
+    /** RC-R1.34 两段化：查 PENDING 法务记录 id（approvalMatrixId=null 判别）。 */
+    private Long pendingTerminationRecordId(long contractId) {
+        return ormTemplate.runInSession(session -> {
+            QueryBean q = new QueryBean();
+            q.addFilter(eq("contractId", contractId));
+            q.addFilter(eq("approvalMatrixId", null));
+            List<app.erp.contract.dao.entity.ErpCtApprovalRecord> records =
+                    daoProvider.daoFor(app.erp.contract.dao.entity.ErpCtApprovalRecord.class).findAllByQuery(q);
+            if (records == null) {
+                return null;
+            }
+            for (app.erp.contract.dao.entity.ErpCtApprovalRecord r : records) {
+                if (app.erp.ct.service.ErpCtConstants.APPROVAL_STATUS_PENDING.equals(r.getApprovalStatus())) {
+                    return r.getId();
+                }
+            }
+            return null;
         });
     }
 
