@@ -13702,6 +13702,55 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "authRoleBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "authUserRoleBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "matrixBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "recordBiz"
+      }
+    ],
+    "methods": [
+      {
+        "name": "matchAmount",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtApprovalMatrix",
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "matchContractType",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "matchOrg",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.lang.Long"
+        ]
+      }
+    ],
+    "name": "app.erp.ct.service.approval.ErpCtApprovalWorkflowEngine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
     "fields": [],
     "methods": [],
     "name": "app.erp.ct.service.entity.ErpCtApprovalMatrixBizModel"
@@ -13712,8 +13761,99 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
-    "methods": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "contractBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "engine"
+      },
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
+      }
+    ],
+    "methods": [
+      {
+        "name": "activateNext",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.lang.Integer",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "findContract",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "guardApprover",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtApprovalRecord",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "guardNotLocked",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.lang.Integer",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "guardPending",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtApprovalRecord"
+        ]
+      },
+      {
+        "name": "newResubmitRecord",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "app.erp.contract.dao.entity.ErpCtApprovalMatrix",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "notifyLocked",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "notifyRejected",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "notifyTask",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "app.erp.contract.dao.entity.ErpCtApprovalRecord",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "requireChainRecord",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "resolveMaxRetries",
+        "parameterTypes": []
+      }
+    ],
     "name": "app.erp.ct.service.entity.ErpCtApprovalRecordBizModel"
   },
   {
@@ -13748,11 +13888,27 @@
       },
       {
         "allowWrite": true,
+        "name": "approvalEngine"
+      },
+      {
+        "allowWrite": true,
+        "name": "approvalRecordBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "contractInvoicePlanBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "contractLineBiz"
       },
       {
         "allowWrite": true,
         "name": "contractVersionBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
       },
       {
         "allowWrite": true,
@@ -13765,6 +13921,20 @@
         "parameterTypes": [
           "app.erp.contract.dao.entity.ErpCtContract",
           "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "archiveCurrentVersion",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "buildTerminationRemark",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.Long"
         ]
       },
       {
@@ -13810,6 +13980,27 @@
         ]
       },
       {
+        "name": "generateApprovalRecordsIfEnabled",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "guardTerminationRecord",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtApprovalRecord",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "haltUnexecutedInvoicePlans",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "illegalTransition",
         "parameterTypes": [
           "app.erp.contract.dao.entity.ErpCtContract",
@@ -13825,7 +14016,37 @@
         ]
       },
       {
+        "name": "notifyApprovalTask",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "app.erp.contract.dao.entity.ErpCtApprovalRecord",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "notifyTerminationRejected",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "notifyWinddown",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "app.erp.contract.dao.entity.ErpCtApprovalRecord",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "requireContract",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "requireTerminationRecord",
         "parameterTypes": [
           "java.lang.Long",
           "io.nop.core.context.IServiceContext"
@@ -14426,6 +14647,81 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalEngine"
+      },
+      {
+        "allowWrite": true,
+        "name": "approvalRecordBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "contractBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      }
+    ],
+    "methods": [
+      {
+        "name": "escalateRecord",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtApprovalRecord",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "findContract",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "notifyEscalation",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtApprovalRecord",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "resolveCronConfig",
+        "parameterTypes": []
+      },
+      {
+        "name": "resolveEscalationUserId",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtApprovalRecord",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "resolveTimeoutHours",
+        "parameterTypes": []
+      },
+      {
+        "name": "runTimeoutEscalation",
+        "parameterTypes": [
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
+    "name": "app.erp.ct.service.job.ErpCtApprovalTimeoutEscalationJob"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
         "name": "contractVersionBiz"
       },
       {
@@ -14655,6 +14951,10 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [
+      {
+        "allowWrite": true,
+        "name": "approvalEngine"
+      },
       {
         "allowWrite": true,
         "name": "contractVersionBiz"
