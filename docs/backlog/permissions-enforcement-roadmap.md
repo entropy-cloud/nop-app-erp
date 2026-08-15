@@ -16,7 +16,7 @@
 > - **结构要求**：先做**全部准备工作**（P1–P2），再执行**全部后续内容**（E1–E4）。
 > - **非阻塞推进**：P1.2（Q1/Q4 裁决）若未决，仅阻塞 E3.2/E4.x，不阻塞 P 其余项与 E1/E2/E3.1 推进（E1/E2 与 E4 无依赖）。
 >
-> **执行授权（2026-08-06）**：人工授权启动执行，**全部实施决策按最合适方式自主作出**（含 P1.2 Q1/Q4 裁决的推荐决议，须经独立计划审计）；后续由 mission driver 直接执行本 roadmap。保护区域不变：auth/permissions 为 plan-first（每项须 owner doc + tests + 独立 plan-audit）；E2.2 ORM 扩展为 ask-first 可选路径（默认等效方案不触 ORM），触发时暂停等待人工确认；生产翻转不在授权范围。
+> **执行授权（2026-08-06）**：人工授权启动执行，**全部实施决策按最合适方式自主作出**（含 P1.2 Q1/Q4 裁决的推荐决议，须经独立计划审计）；后续由 mission driver 直接执行本 roadmap。保护区域不变：auth/permissions 为 plan-first（每项须 owner doc + tests + 独立 plan-audit）；E2.2 ORM 扩展为 dual-agent-approval 可选路径（默认等效方案不触 ORM），触发时须双独立子 agent 批准；生产翻转不在授权范围。
 
 ## Work Item Status
 
@@ -170,7 +170,7 @@ graph LR
 ## 规则
 
 1. 遵循 `docs/backlog/00-roadmap-authoring-guide.md`。状态只存在于工作项；里程碑不携带状态。
-2. 每个工作项在实施前须形成 `docs/plans/` 下的独立计划并通过独立 plan-audit；涉及保护区域（E2.2 ORM）的须 ask-first。
+2. 每个工作项在实施前须形成 `docs/plans/` 下的独立计划并通过独立 plan-audit；涉及保护区域（E2.2 ORM）的须双独立子 agent 批准。
 3. 工作项 `todo`→`ready` 需独立草案审查；`ready`→`done` 需独立结束审计（mission-driver 或人工按既定顺序推进）。
 4. 每工作项结束审计时更新 `roles-and-permissions.md` / `field-formatting-patterns.md` 等 owner doc 实现注记 + 日志。
 5. Q1/Q4（P1.2）为 E4 里程碑硬前置；**E1 硬前置 = P2.2a（admin 兜底就绪）+ P2.4（dry-run 门控通过）**。
@@ -183,7 +183,7 @@ graph LR
 1. **逐项执行**：每个工作项由 mission driver DRAFT_PLANS → 独立草案审查（fresh-session 子代理，反复至共识）→ EXECUTE → 独立结束审计 → 写回 `done`。计划落盘 `docs/plans/`，命名遵循计划指南。
 2. **Deps 检查义务**：DRAFT_PLANS agent 必须逐行检查 Deps 列，仅 draft 其全部 Deps 已 `done` 的 `todo`/`ready` 工作项（Deps 与依赖图冲突时以表格为准）。
 3. **状态流转**：独立草案审查通过后 `todo`/`ready` → 计划 `active`；独立结束审计通过后工作项 `ready` → `done`。`ready` 仅表示门控满足可被 draft，不预置计划。
-4. **保护区域暂停协议**：触及 ORM（E2.2 可选路径）或财务/成本代码区域（E3.2 取值豁免）的工作项，plan 必须含显式 `ask-first 人工确认` checkbox；mission driver 执行到触及行时**暂停该行**等待人工批准记录（登记于 plan 文件），非触及行继续执行。auth/permissions 整体为 plan-first 区域，每项实施前须 owner doc + tests 证据 + 独立 plan-audit。
+4. **保护区域暂停协议**：触及 ORM（E2.2 可选路径）或财务/成本代码区域（E3.2 取值豁免）的工作项，plan 必须含显式 `双独立子 agent 批准` checkbox；mission driver 执行到触及行时按 `docs/context/ai-autonomy-policy.md` 保护区域规则执行——两个独立子 agent（fresh session）分别检查批准，批准记录落盘 plan 文件，非触及行继续执行。auth/permissions 整体为 plan-first 区域，每项实施前须 owner doc + tests 证据 + 独立 plan-audit。
 5. **执行门控（已满足）**：人工批准（2026-08-05 测试环境 + 2026-08-06 启动执行）+ 触发条件满足 + 首波 P1.1/P1.2/P1.3 已转 `ready`，mission driver 可启动。**E1 硬前置 = P2.2a（admin 兜底就绪）+ P2.4（dry-run 门控通过）**；E1.x 依赖未满足前，DRAFT_PLANS 不得 draft E1-E4 工作项。
 6. **验证收口**：每工作项 closure 前分域 `mvn test` + compliance checker 对比 `known-good-baselines.md`；E1–E4 全 done 后全量 build/test 全绿 + 独立 closure audit，全绿基线记入 git commit message。
 

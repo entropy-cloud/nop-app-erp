@@ -19,7 +19,7 @@
 - 不将 DAO、`I*Biz`、`IServiceContext`、事务或副作用下沉到 StateMachine Bean。
 - 不借迁移改变既有业务状态、动作名、错误码、权限、过账时序或审批语义；发现现存行为/owner-doc 冲突时按独立 Fix plan 裁定。
 - 不迁移无独立业务生命周期的普通 `ACTIVE/INACTIVE` 标志、技术处理状态或 notify 子系统中不含业务迁移矩阵的记录。
-- 不在本路线图中修改 `model/*.orm.xml`；若某个迁移计划需要模型/API 变化，按保护区域规则单独 ask-first。
+- 不在本路线图中修改 `model/*.orm.xml`；若某个迁移计划需要模型/API 变化，按保护区域规则（auto + dual-agent-approval，双独立子 agent 分别批准）执行。
 
 ## Work Item Status
 

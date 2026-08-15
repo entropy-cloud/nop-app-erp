@@ -21,7 +21,7 @@ nop-app-erp 是基于 Nop 平台架构的**产品化通用 ERP 产品**，可快
 
 ## 必须保持不变的约束
 
-- 每业务域一份 `<domain>/model/app-erp-<domain>.orm.xml` 是该域持久化模型的唯一真相源；`model/*.orm.xml` 是 ask-first 保护区域。
+- 每业务域一份 `<domain>/model/app-erp-<domain>.orm.xml` 是该域持久化模型的唯一真相源；`model/*.orm.xml` 是 auto + dual-agent-approval 保护区域（双独立子 agent 分别批准）。
 - 切勿手动编辑生成的代码（`_gen/`、`_` 前缀文件、`_app.orm.xml`、`_service.beans.xml`）。
 - 业务异常扩展 `NopException` 并使用 `ErrorCode`。
 - 跨工程实体不做 ORM 层 `refEntityName` 强引用，走 `I*Biz` + Maven 依赖（DAG）。

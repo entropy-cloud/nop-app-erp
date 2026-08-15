@@ -1,7 +1,7 @@
 # 需求-实现符合性审计提示（Requirement Compliance Audit）
 
 
-> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` ask-first、会计/财务/数据删除）、验证命令（`mvn clean install -DskipTests`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式注入上下文。本提示的通用默认值在本仓库不充分。
+> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` auto + dual-agent-approval、会计/财务/数据删除，双独立子 agent 分别批准）、验证命令（`mvn clean install -DskipTests`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式注入上下文。本提示的通用默认值在本仓库不充分。
 
 
 对 mission `requirement-compliance`（需求→实现符合性审计，从需求真相源出发逐模块逐功能点核对运行时行为）做五级追踪 + §4 三判据核验时使用此提示。
@@ -35,7 +35,7 @@
 - `docs/backlog/requirement-compliance-roadmap.md`（工作项定义）
 - 目标域 use-cases.md + owner doc + ORM 模型 + 代码 + 测试 + 既有 MA2 报告
 
-执行步骤（按 methodology §1-§10）：建五级追踪矩阵（L1 验收标准逐字引用禁止转述）→ 逐 UC 符合性裁决（§2 取最高原则；Q4 例外通道禁令——P0/P1 禁方案 B / 「技术不可行」降级，唯一出口=需求本身不合理经人工批准改 product-scope）→ 完整枚举（§3 禁抽样）→ 冲突裁决（§4 owner doc 与需求冲突一律以需求真相源为准；三判据 (i)→(ii)→(iii)，AI 自写不算）→ 保护区域暂停协议（§5 ORM/会计过账/数据删除 ask-first）→ 9 段落报告（§6 落盘前自查）→ arm-index 衔接（§7 P1-RC-xxx + 「复用 or 新增」裁决，禁止未比对新建）→ 过程纪律自检（§8 checker=纯 reporter 真正门控在 CI）→ 真相源冻结（§9 doc 分歧记入报告不直接改真相源）。
+执行步骤（按 methodology §1-§10）：建五级追踪矩阵（L1 验收标准逐字引用禁止转述）→ 逐 UC 符合性裁决（§2 取最高原则；Q4 例外通道禁令——P0/P1 禁方案 B / 「技术不可行」降级，唯一出口=需求本身不合理经人工批准改 product-scope）→ 完整枚举（§3 禁抽样）→ 冲突裁决（§4 owner doc 与需求冲突一律以需求真相源为准；三判据 (i)→(ii)→(iii)，AI 自写不算）→ 保护区域暂停协议（§5 ORM/会计过账/数据删除须双独立子 agent 批准）→ 9 段落报告（§6 落盘前自查）→ arm-index 衔接（§7 P1-RC-xxx + 「复用 or 新增」裁决，禁止未比对新建）→ 过程纪律自检（§8 checker=纯 reporter 真正门控在 CI）→ 真相源冻结（§9 doc 分歧记入报告不直接改真相源）。
 
 裁决输出：`passes requirement-compliance audit` 或 `needs revision`，附 9 段落报告 + 五级追踪矩阵 + finding 清单（P1-RC-xxx）+ arm-index 衔接表。
 ```

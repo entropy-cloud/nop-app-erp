@@ -6,7 +6,7 @@
 
 保持简短且项目特定。每当团队希望 AI 采取更多或更少主动性时更新此文件。
 
-AI 可以通过标记工作为更受约束来使此文件更严格，但 AI 不得放宽保护区域、将 `ask-first`/`blocked`/`research-only` 工作更改为 `implement`，或在没有明确人工确认或标记为人工批准的 owner-doc 证据的情况下移除阻塞项。
+AI 可以通过标记工作为更受约束来使此文件更严格，但 AI 不得放宽保护区域、将 `ask-first`/`blocked`/`research-only` 工作更改为 `implement`，或在没有明确人工确认或标记为人工批准的 owner-doc 证据的情况下移除阻塞项。**例外（2026-08-15 用户裁决）**：保护区域规则已由人工统一放宽为 `auto + dual-agent-approval`（AI 可自动修改，但须两个独立子 agent 分别检查批准）——此放宽已记录于本文件保护区域表，AI 不得在此基础上进一步放宽。
 
 AI 编写或修改的文档（包括 owner docs）不能作为放宽自主权、清除阻塞项、标记文档新鲜或降级保护区域的证据，除非人工明确批准该证据。
 
@@ -66,26 +66,26 @@ AI 编写或修改的文档（包括 owner docs）不能作为放宽自主权、
 
 | 区域 | 规则 | 必需证据 |
 | ----------------------------- | ----------- | -------------------------------- |
-| `model/*.orm.xml` 模式 | ask first | design doc + plan audit |
-| `model/*.api.xml` 契约 | ask first | design doc + plan audit |
-| `data deletion` | ask first | owner doc + tests |
+| `model/*.orm.xml` 模式 | auto + dual-agent-approval | design doc + plan audit + 两个独立子 agent 批准 |
+| `model/*.api.xml` 契约 | auto + dual-agent-approval | design doc + plan audit + 两个独立子 agent 批准 |
+| `data deletion` | auto + dual-agent-approval | owner doc + tests + 两个独立子 agent 批准 |
 | `accounting/finance` postings | plan-first | owner doc + tests |
 | `auth/permissions` | plan-first | owner doc + tests |
 | `deployment / external integrations` | plan-first | owner doc + tests |
-| nop-chaos-flux / nop-chaos-next / nop-entropy 外部仓库代码 | ask first（仅新增测试/复现用例除外） | 跨仓库 plan + audit |
+| nop-chaos-flux / nop-chaos-next / nop-entropy 外部仓库代码 | auto + dual-agent-approval（仅新增测试/复现用例除外） | 跨仓库 plan + 两个独立子 agent 批准 |
 
 保护区域规则含义：
 
-- `ask first` - 规划或实施前需要人工批准。
+- `auto + dual-agent-approval` - AI 可以自动修改，但修改必须经过**两个独立子 agent 分别检查批准**（各自 fresh session，互不共享执行者上下文）；两个批准均通过后才可实施。第一个子 agent 按 plan-audit 审查计划与设计证据；第二个子 agent 独立复核同一证据并确认无遗漏风险。任一子 agent 未通过则修改不得实施。批准记录（agent 指针 + 结论）必须落盘于计划文件。此规则替代原 `ask-first` 人工确认协议（用户裁决 2026-08-15：保护区域允许 AI 自动修改，但须双独立子 agent 批准）。
 - `plan-first` - AI 可以起草计划，但实施需要计划审计加上表中的必需证据。如果审查者可用性为 `none`，实施保持阻塞。
 - `research-only` 或 `blocked` - AI 不得更改产品行为。
 
-**人工扩展授权登记（2026-08-07 批准 / 2026-08-08 生效）**：`requirement-compliance` mission 存在用户逐项裁决 `docs/discussions/2026-08-07-1140-rc-approval-inventory-analysis.md` §5/§6，对 `model/*.orm.xml`（纯加性变更）与 `accounting/finance`（收敛性修复）两保护区域授予**有限批量授权**，边界判据见 `docs/audits/requirement-compliance-methodology.md §5`（Q3/Q4 人工扩展授权）+ `docs/backlog/requirement-compliance-roadmap.md` 文件头预授权声明。该授权限定于该 mission 已列明子集，不是对保护区域表的普遍放宽；超边界项仍按表中规则 ask first / blocked。另据同一裁决 Q1：该 mission 的 MR1 R1.0 **不自动启动**（保持 todo，待另行人工裁决），driver 在 MA4 完成后不得自动展开 R1.0。
+**人工扩展授权登记（2026-08-07 批准 / 2026-08-08 生效）**：`requirement-compliance` mission 存在用户逐项裁决 `docs/discussions/2026-08-07-1140-rc-approval-inventory-analysis.md` §5/§6，对 `model/*.orm.xml`（纯加性变更）与 `accounting/finance`（收敛性修复）两保护区域授予**有限批量授权**，边界判据见 `docs/audits/requirement-compliance-methodology.md §5`（Q3/Q4 人工扩展授权）+ `docs/backlog/requirement-compliance-roadmap.md` 文件头预授权声明。该授权限定于该 mission 已列明子集，不是对保护区域表的普遍放宽；超边界项仍按表中规则处理。**2026-08-15 起该登记中「须 ask-first 人工确认」的越界项流程同步升级**：越界项不再暂停等待人工，而是按 `auto + dual-agent-approval` 规则执行（两个独立子 agent 分别检查批准，见上表）。另据同一裁决 Q1：该 mission 的 MR1 R1.0 **不自动启动**（保持 todo，待另行人工裁决），driver 在 MA4 完成后不得自动展开 R1.0。
 
 **外部仓库代码边界**（nop-chaos-flux / nop-chaos-next / nop-entropy）：
 
 - 一般情况可以在 `nop-chaos-flux` 等兄弟仓库**增加测试/复现用例**（按各自项目自身流程，如 nop-chaos-flux 的 `flux-guide/13-testing.md` 测试设施）；
-- 原则上**不修改这些仓库的代码**，除非万不得已或确认为明确 bug——此时必须先问（ask first），并携带跨仓库 plan + 审计证据。
+- **修改这些仓库的代码**须经 `auto + dual-agent-approval`：跨仓库 plan + 两个独立子 agent 分别检查批准（fresh session），批准记录落盘计划文件。
 
 ## 待办事项选择规则
 

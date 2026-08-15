@@ -1,6 +1,6 @@
 # Compliance 基线漂移裁决提示
 
-> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` ask-first、会计/财务/数据删除）、验证命令（`bash docs/audits/nop-compliance-checker.sh`、`mvn clean install -DskipTests`）、已知失败模式（见 `docs/lessons/07-compliance-baseline-drift-on-plan-changes.md`）注入上下文。本提示的通用默认值在本仓库不充分。
+> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` auto + dual-agent-approval、会计/财务/数据删除，双独立子 agent 分别批准）、验证命令（`bash docs/audits/nop-compliance-checker.sh`、`mvn clean install -DskipTests`）、已知失败模式（见 `docs/lessons/07-compliance-baseline-drift-on-plan-changes.md`）注入上下文。本提示的通用默认值在本仓库不充分。
 
 在裁决 compliance checker 报出的 `actual > baseline` 漂移时使用此提示——区分「合法新增需 baseline-raise」与「真违规需 Fix」，避免整批 raise 掩盖违规（假阴性）或把合法增长误报回归（假阳性）。
 

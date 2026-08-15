@@ -1,6 +1,6 @@
 # Closure-pending 检测与批量 closure-audit 提示
 
-> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` ask-first、会计/财务/数据删除、auth/permissions）、验证命令（`mvn clean install -DskipTests`）、已知失败模式（见 `docs/lessons/08-plan-closure-without-independent-audit.md`）注入上下文。本提示的通用默认值在本仓库不充分。
+> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` auto + dual-agent-approval、会计/财务/数据删除、auth/permissions，双独立子 agent 分别批准）、验证命令（`mvn clean install -DskipTests`）、已知失败模式（见 `docs/lessons/08-plan-closure-without-independent-audit.md`）注入上下文。本提示的通用默认值在本仓库不充分。
 
 在检测「声称 completed 却缺独立 closure audit 证据」的计划，并批量编排独立子代理 fresh session 补 closure 时使用此提示。这是**检测 + 批量编排**方法，与单计划 closure 审计（`closure-audit-prompt.md`）互补。
 
@@ -42,7 +42,7 @@
    c. 减去已被前序轮次清理的（去重，避免重复审计）。
 
 2. 对每份候选分类 closure 缺口 + 选处置策略：
-   - 保护区域计划（ORM ask-first / deployment / auth）：方案 A（补独立 closure）+ 确认是否也缺实施前 plan-audit。
+   - 保护区域计划（ORM dual-agent-approval / deployment / auth）：方案 A（补独立 closure）+ 确认是否也缺实施前 plan-audit。
    - 非保护区域计划：方案 A（补独立 closure）。
    - 假勾选 Gate：方案 A，但审计时重点核查 Gate 是否实际满足。
 

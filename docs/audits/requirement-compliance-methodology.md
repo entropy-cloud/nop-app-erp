@@ -205,24 +205,24 @@ notify 是已实现的跨域子系统但无 use-cases 文件。**Q1 裁决：0.2
 
 **技术不可行项的处理**：须找到技术可行路径（更深设计变更），而非退缩到方案 B。例：P0-MA2-018 字面 UK 三重契约冲突 → 重构 billR 加 acctSchemaId/postingType/isReversed 判别列 + 对应 UK（而非降级）。
 
-### 保护区域三类 ask-first 门控
+### 保护区域三类 dual-agent-approval 门控
 
-涉及以下三类区域的修复（无论 P0/P1/P2），**必须 ask-first + 独立 plan-audit**（对齐 `docs/context/ai-autonomy-policy.md` 保护区域表）：
+涉及以下三类区域的修复（无论 P0/P1/P2），**必须双独立子 agent 批准 + 独立 plan-audit**（对齐 `docs/context/ai-autonomy-policy.md` 保护区域表 `auto + dual-agent-approval`；2026-08-15 用户裁决：保护区域允许 AI 自动修改，但须两个独立子 agent 分别检查批准）：
 
 | 保护区域 | 范围 | 门控要求 |
 |---------|------|---------|
-| **ORM 结构变更** | `module-<domain>/model/*.orm.xml` 字段/索引/UK/实体 | ask-first + 独立 plan-audit |
-| **会计过账逻辑** | VoucherFact / PostingProcessor 核心路径 | ask-first + 独立 plan-audit |
-| **数据删除 / 数据迁移** | 任何删除/迁移数据的逻辑 | ask-first + 独立 plan-audit |
+| **ORM 结构变更** | `module-<domain>/model/*.orm.xml` 字段/索引/UK/实体 | 双独立子 agent 批准 + 独立 plan-audit |
+| **会计过账逻辑** | VoucherFact / PostingProcessor 核心路径 | 双独立子 agent 批准 + 独立 plan-audit |
+| **数据删除 / 数据迁移** | 任何删除/迁移数据的逻辑 | 双独立子 agent 批准 + 独立 plan-audit |
 
 ### 保护区域暂停协议（无人值守 driver 下可操作）
 
-> 吸取 P2-MA6-001 教训：不能只依赖"草案审查预授权"——触及保护区域的修复行须显式 ask-first 人工确认 checkbox。
+> 吸取 P2-MA6-001 教训：不能只依赖"草案审查预授权"——触及保护区域的修复行须显式双独立子 agent 批准 checkbox（两个独立子 agent fresh session 分别检查批准，批准记录落盘 plan 文件）。
 
 **执行机制**（mission driver 自主驱动时）：
 
 1. **R1.0/MR0 展开时标注**：R1.0 展开为 RC-R1.n 时，每行标注"触及保护区域"（是/否 + 类别）。MR0 动态创建 R0.n 时同理。
-2. **触及行的 plan 须含显式 checkbox**：触及保护区域的修复 plan，其 Phase 须含显式 `- [ ] ask-first 人工确认（保护区域：<类别>）` checkbox。
+2. **触及行的 plan 须含显式 checkbox**：触及保护区域的修复 plan，其 Phase 须含显式 `- [ ] 双独立子 agent 批准（保护区域：<类别>）` checkbox。
 3. **driver 执行到触及行时暂停该行**：mission driver 执行到触及行时，**暂停该行**等待人工批准记录（批准登记于 plan 文件 checkbox）。**非触及行继续执行**（不阻塞整个里程碑）。
 4. **mission 启动前可预授权**：人工可在 mission 启动前按修复类目预授权（须列明授权类目清单，见 roadmap §预授权声明）。
 
@@ -232,26 +232,26 @@ notify 是已实现的跨域子系统但无 use-cases 文件。**Q1 裁决：0.2
 |------|-----------|
 | 文档更新类修复（owner doc / use-cases / arm-index） | 预授权自动执行 |
 | 代码逻辑修复（BizModel / Processor / xbiz / view.xml） | 预授权自动执行 |
-| ORM 结构变更（orm.xml 字段/索引/UK/实体） | **须 ask-first** + 独立 plan-audit |
-| 会计过账逻辑变更（VoucherFact / PostingProcessor 核心路径） | **须 ask-first** + 独立 plan-audit |
-| 数据删除 / 数据迁移 | **须 ask-first** + 独立 plan-audit |
-| 未列明的修复类目 | **默认须 ask-first** |
+| ORM 结构变更（orm.xml 字段/索引/UK/实体） | **须双独立子 agent 批准** + 独立 plan-audit |
+| 会计过账逻辑变更（VoucherFact / PostingProcessor 核心路径） | **须双独立子 agent 批准** + 独立 plan-audit |
+| 数据删除 / 数据迁移 | **须双独立子 agent 批准** + 独立 plan-audit |
+| 未列明的修复类目 | **默认须双独立子 agent 批准** |
 
 ### 人工扩展授权登记（2026-08-07 批准 / 2026-08-08 生效）
 
 > 依据 `docs/discussions/2026-08-07-1140-rc-approval-inventory-analysis.md` §5（批准人：用户，逐项人工裁决）。以下为**人工扩展授权**（human-in-the-loop 扩展，非自动放宽；approver 边界逐项选定，报告 §5/§6 为唯一权威登记）：
 
-| 授权 | 范围（判据，符合才免 ask-first） | 回落条件 |
+| 授权 | 范围（判据，符合才免双 agent 批准） | 回落条件 |
 |------|-----------------------------------|---------|
-| **ORM-Q3 纯加性 ORM 批量授权**（Q3=选项 B） | 表 A 中「**加列 / 加 UK / 新增实体**，不改既有语义、无 NOT NULL 无默认值列、无涉及既有数据的 UK 增设（须先数据变更评估）、无删除/迁移/索引结构改造」 | 超出即回落 ORM ask-first + 独立 fix plan + 独立 plan-audit |
+| **ORM-Q3 纯加性 ORM 批量授权**（Q3=选项 B） | 表 A 中「**加列 / 加 UK / 新增实体**，不改既有语义、无 NOT NULL 无默认值列、无涉及既有数据的 UK 增设（须先数据变更评估）、无删除/迁移/索引结构改造」 | 超出即回落 ORM 双独立子 agent 批准 + 独立 fix plan + 独立 plan-audit |
 | **ACCOUNT-Q4 收敛性会计批量授权**（Q4=选项 B） | 表 B 中「**使实现向 owner doc 契约收敛**」的修复；**不得反向修改 owner doc 契约段**（§9 真相源冻结不因本授权解除）；不涉数据删除/迁移 | VoucherFact / PostingProcessor 核心路径**改动行为**仍须独立 plan-audit |
 | **TRUTH-Q10 use-cases 命名对齐**（Q10=选项 A） | P2-RC-005/011/016/012 的真相源命名修订，经批准按 §9 流程登记（变更理由 + 影响面 + 批准人） | 其他真相源契约段修订仍须 §9 冻结人工批准 |
 
 > **Q1 裁决覆盖自动展开时机**：R1.0 展开器启动时机由同一报告 §5 Q1 约束——「**MA1-MA4 完成后不自动启动，保持 todo，待另行人工裁决**」。cold-start driver 读到本段应据此跳过自动展开。
 >
 > **§7 追加裁决（2026-08-08，同一讨论文档 §7）覆盖本段**：
-> - **R1.0-2026-08-08（A1）**：经人工裁决 **R1.0 分批启动**——第一批纯预授权类修复（A2 代码逻辑类），第二批越界项逐项暂停 ask-first。cold-start driver 据此展开 R1.0，不视为"自动展开"违规（Q1 已由 §7 A1 撤销挂起状态）。
-> - **P1-RC-091（A3）**：试算平衡 BUDGET/COMMITMENT 过滤**属会计核心路径**，须独立 plan-audit + ask-first，不自动执行。
+> - **R1.0-2026-08-08（A1）**：经人工裁决 **R1.0 分批启动**——第一批纯预授权类修复（A2 代码逻辑类），第二批越界项逐项双独立子 agent 批准。cold-start driver 据此展开 R1.0，不视为"自动展开"违规（Q1 已由 §7 A1 撤销挂起状态）。
+> - **P1-RC-091（A3）**：试算平衡 BUDGET/COMMITMENT 过滤**属会计核心路径**，须独立 plan-audit + 双独立子 agent 批准。
 > - **P2-RC-061（A4）**：修复形态=**纯逻辑修复**（`EquipmentStatusLinker.restoreToRunning` 补 IDLE 分支），不改 ORM，按 A2 预授权。
 > - **P2-RC-057（A5）**：修复=ORM `ErpMdMaterialCategory.priceValidationLevel` defaultValue 改 `"WARN"`，纯收敛修复（不改表结构/既有数据/行为），按 ORM-Q3 纯加性类自动执行。
 
@@ -367,7 +367,7 @@ R6.9 closure 误把 checker 脚本退出码（纯 reporter，恒 0）当作门�
 1. 发现 P0 的审计 agent **不等整个里程碑完成**，立即创建独立 fix plan（`docs/plans/YYYY-MM-DD-HHmm-rc-fix-P0-RC-xxx.md`）。
 2. 向 MR0 里程碑表追加实体行（编号 R0.1, R0.2...，含 finding ID / 域 / 修复范围 / Skill / 触及保护区域标注）。
 3. mission driver 按追加行正常执行（DRAFT_PLANS → 独立草案审查 → EXECUTE → 独立结束审计 → done）。
-4. **触及保护区域的 P0 行仍须 ask-first + 独立 plan-audit**（§5 保护区域暂停协议，P0 即时通道不豁免）。
+4. **触及保护区域的 P0 行仍须双独立子 agent 批准 + 独立 plan-audit**（§5 保护区域暂停协议，P0 即时通道不豁免）。
 5. 修复后回写 MA 报告状态 + arm-index finding 修复状态。
 
 **P0 不得留到 MR1 批量修复**——即时通道是 P0 的唯一合法修复路径。
@@ -450,7 +450,7 @@ docs/audits/YYYY-MM-DD-HHmm-rc-<milestone>-<slice>.md
 - [x] §2 P0/P1/P2/接受 分级判据表（4 行 + Q4 修复义务绑定列）
 - [x] §3 完整枚举纪律（反例表 + 完成判据）
 - [x] §4 Q1 真相源层级与冲突裁决规则（层级表 + 冲突规则 + "显式人工批准记录"三判据）
-- [x] §5 Q4 修复义务 + 保护区域暂停协议（修复义务表 + 三类 ask-first 门控 + 暂停协议 + 预授权清单）
+- [x] §5 Q4 修复义务 + 保护区域暂停协议（修复义务表 + 三类 dual-agent-approval 门控 + 暂停协议 + 预授权清单）
 - [x] §6 报告输出格式（9 段落骨架 + 完整性自检）
 - [x] §7 与 arm-index 命名衔接（P1-RC-xxx 命名 + "复用 or 新增"裁决规则 + 双向可追溯）
 - [x] §8 审计过程纪律自检段（checker 退出码门控核查 + closure-audit 独立性 + 交叉去重声明）

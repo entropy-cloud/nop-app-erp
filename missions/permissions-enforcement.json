@@ -1,6 +1,6 @@
 {
   "name": "permissions-enforcement",
-  "description": "nop-app-erp 权限 enforcement 开启（测试环境）：从声明层推进到强制执行层。先全部准备（P1 权限矩阵与种子 / P2 测试与验证基建），后全部执行（E1 action 级强制分域翻转→全量 19 域 / E2 data 级强制 role-row-filter→employee-id 规则→分类审计 / E3 后端响应层脱敏 / E4 采购保密字段级 + 读访问审计）。人工批准：enforcement 可在测试环境开启（2026-08-05）；执行与决策全权委托（2026-08-06），生产翻转另批。触发条件：RBAC 精细化 / 合规审计需求。保护区域：auth/permissions 为 plan-first（每项须 owner doc + tests + 独立 plan-audit）；E2.2 ORM 扩展为 ask-first 可选路径（默认等效方案不触 ORM）；成本/财务代码区域（E3.2）只做取值豁免/脱敏不改业务逻辑。执行门控：E1 硬前置 = P2.2a（admin 兜底就绪）+ P2.4（dry-run 门控通过）；P1.2（Q1/Q4 裁决）未决仅挂 E3.2/E4.x，不阻塞其余。验证标准：enforcement 开启后全 E2E 套件 + 新增负向隔离测试全绿。",
+  "description": "nop-app-erp 权限 enforcement 开启（测试环境）：从声明层推进到强制执行层。先全部准备（P1 权限矩阵与种子 / P2 测试与验证基建），后全部执行（E1 action 级强制分域翻转→全量 19 域 / E2 data 级强制 role-row-filter→employee-id 规则→分类审计 / E3 后端响应层脱敏 / E4 采购保密字段级 + 读访问审计）。人工批准：enforcement 可在测试环境开启（2026-08-05）；执行与决策全权委托（2026-08-06），生产翻转另批。触发条件：RBAC 精细化 / 合规审计需求。保护区域：auth/permissions 为 plan-first（每项须 owner doc + tests + 独立 plan-audit）；E2.2 ORM 扩展为 dual-agent-approval 可选路径（默认等效方案不触 ORM）；成本/财务代码区域（E3.2）只做取值豁免/脱敏不改业务逻辑。执行门控：E1 硬前置 = P2.2a（admin 兜底就绪）+ P2.4（dry-run 门控通过）；P1.2（Q1/Q4 裁决）未决仅挂 E3.2/E4.x，不阻塞其余。验证标准：enforcement 开启后全 E2E 套件 + 新增负向隔离测试全绿。",
   "roadmapPath": "docs/backlog/permissions-enforcement-roadmap.md",
   "plansDir": "docs/plans",
   "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
@@ -13,8 +13,8 @@
     "compliance": "bash docs/audits/nop-compliance-checker.sh"
   },
   "prompts": {
-    "multiAuditPrompt": "docs/skills/multi-dimensional-audit-prompt.md",
-    "openAuditPrompt": "docs/skills/open-ended-audit-prompt.md"
+    "multiAudit": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAudit": "docs/skills/open-ended-audit-prompt.md"
   },
   "commitFormat": "<type>: <description>"
 }

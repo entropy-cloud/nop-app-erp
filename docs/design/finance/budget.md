@@ -99,6 +99,20 @@
 - **成本中心**:budgetLine.costCenterId 依赖 cost-center.md 的 ErpMdCostCenter。
 - **purchase/sales 域**:通过 IErpFinBudgetControlBiz 同步接口(强一致)。
 
+### 5 GL 路径 COMMITMENT 排除（读侧过滤，RC-R1.46 / P1-RC-091）
+
+> 实现注记（对齐控制引擎三通道分离口径，budget.md 规则 4/6/8 的实际读侧落地；裁决关联：A4.1.5 承付试算平衡暴露 + 2026-08-12 批量裁决 B 类）。
+
+- **5 GL 聚合路径**的凭证级过滤条件统一为 `or(isNull("postingType"), notIn("postingType", [BUDGET, COMMITMENT]))`（即 BUDGET-only 排除 → 三通道分离口径，与 `ErpFinBudgetControlBiz.applyPostingTypeFilter` ACTUAL 通道同型）：
+  1. 试算平衡快照 `ErpFinAccountingPeriodProcessor.findPostedVoucherIds`（Dr==Cr 平衡聚合）；
+  2. 年度结转 `AnnualCloseService.findYearPostedVoucherIds`（本年利润→未分配利润）；
+  3. 损益结转 `ProfitLossClosingService.findPostedVoucherIds`（收入/费用/成本聚合）；
+  4. 坏账准备 `BadDebtProvisionService.findPostedVoucherIds`（Allowance 账面 credit−debit 聚合）；
+  5. 汇兑重估 `ExchangeRevaluationService.aggregateBankSubjectBookFunctional`（银行存款账面本位币聚合）。
+- **语义**：BUDGET/COMMITMENT 均为影子凭证（单边或平行入账），`postingType` 为 null/NORMAL 的实际凭证必须保留（`or(isNull, ...)` 结构不变）。承付凭证单行单边 Dr 若混入上述聚合将破坏试算平衡 Dr==Cr 恒等式并污染结转/计提/重估基数。
+- **不改**：`ErpFinBudgetLineBizModel` 的恒真式过滤（三通道分流在内存 per-voucher 谓词完成，非过滤缺口）；承付凭证结构（单边影子凭证语义 by design，caveat 维持接受）。
+- **回归证明**：`TestErpFinTrialBalanceCommitmentExclusion`（承付启用 + 单边承付凭证 → 试算平衡恒等式 + 4 服务过滤断言 + 默认关闭行为不变）；无承付凭证时 notIn 语义 == ne 语义（既有 5 站点测试类零回归）。
+
 ## 关键决策
 
 > **预算凭证用 PostingType=BUDGET** —— 与 iDempiere Fact.java:78-84 完全一致,让预算/实际复用同一套凭证引擎、GlBalance、试算平衡机制,零特例。

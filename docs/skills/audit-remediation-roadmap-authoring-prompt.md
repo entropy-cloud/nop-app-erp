@@ -3,7 +3,7 @@
 
 > **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的验证命令（`mvn clean install -DskipTests` / `mvn test` / `bash docs/audits/nop-compliance-checker.sh`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式（`docs/skills/README.md §已知失败模式` 8 项）注入上下文。本提示的通用默认值在本仓库不充分。
 >
-> **保护区域授权（本提示词特有，覆盖项目默认 ask-first）**：本轮审计-修复已获人工授权，允许修改 `module-<domain>/model/*.orm.xml` ORM 模型源、`*.api.xml` 契约源、会计/财务过账代码、auth/permissions 配置。修改后必须用 `mvn clean install -DskipTests` 触发增量重新生成。**唯一仍禁止的是手编生成产物**（`_gen/` 目录、`_` 前缀文件、`_app.orm.xml`、`_service.beans.xml`）——改模型源而非改生成代码。
+> **保护区域授权（本提示词特有，覆盖项目默认 dual-agent-approval）**：本轮审计-修复已获人工授权，允许修改 `module-<domain>/model/*.orm.xml` ORM 模型源、`*.api.xml` 契约源、会计/财务过账代码、auth/permissions 配置。修改后必须用 `mvn clean install -DskipTests` 触发增量重新生成。**唯一仍禁止的是手编生成产物**（`_gen/` 目录、`_` 前缀文件、`_app.orm.xml`、`_service.beans.xml`）——改模型源而非改生成代码。
 
 
 ## 用途

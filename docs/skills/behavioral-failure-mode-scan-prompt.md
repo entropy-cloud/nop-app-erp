@@ -1,7 +1,7 @@
 # 行为失败模式扫描提示（Behavioral Failure Mode Scan）
 
 
-> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` ask-first、会计/财务/数据删除）、验证命令（`mvn clean install -DskipTests`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式注入上下文。本提示的通用默认值在本仓库不充分。
+> **项目定制化层（nop-app-erp）**：使用本提示前必须先读 `docs/skills/README.md §项目定制化层（nop-app-erp）`，将本仓库的保护区域（`module-<domain>/model/*.orm.xml` auto + dual-agent-approval、会计/财务/数据删除，双独立子 agent 分别批准）、验证命令（`mvn clean install -DskipTests`）、命名约定（`Erp<Domain>` 实体前缀、`erp-<short>/<dict>` 字典、`erp.err.<short>` ErrorCode 前缀）和已知失败模式注入上下文。本提示的通用默认值在本仓库不充分。
 
 
 在 closure 前对一个**单域 / 单切片**做代码层行为失败模式扫描时使用此提示。它把 `docs/lessons/07-11-*.md` 与 `docs/audits/2026-07-04-0000-batch-scheduling-audit.md` 中跨多轮审计反复复发的 4 类代码层行为失败模式（业财过账吞异常悬挂 / dict 死状态 / 调度链断裂 / 守卫散点）固化为可被独立子代理照做的 grep 程式 + 决策树 + 反模式自检表。

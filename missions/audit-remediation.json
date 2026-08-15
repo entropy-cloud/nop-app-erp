@@ -13,8 +13,8 @@
     "compliance": "bash docs/audits/nop-compliance-checker.sh"
   },
   "prompts": {
-    "multiAuditPrompt": "docs/skills/multi-dimensional-audit-prompt.md",
-    "openAuditPrompt": "docs/skills/open-ended-audit-prompt.md"
+    "multiAudit": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAudit": "docs/skills/open-ended-audit-prompt.md"
   },
   "commitFormat": "<type>: <description>"
 }

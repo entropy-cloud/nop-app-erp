@@ -105,13 +105,15 @@
 
 > 此节是本仓库对各技能模板的项目特定覆盖。任何技能在被使用前，必须将下面这些项目事实注入到提示上下文中——技能模板的通用默认值在本仓库不充分。
 
-### 保护区域（ask-first，未经人工批准不得修改）
+### 保护区域（auto + dual-agent-approval，两个独立子 agent 分别检查批准后 AI 可自动修改）
 
-- **ORM 模型**：`module-<domain>/model/app-erp-<domain>.orm.xml` 是代码生成的真相源，**禁止在无人批准下修改**。修改后必须用 `mvn clean install -DskipTests` 触发增量重新生成（不要重跑 `nop-cli gen`）。
+> **规则升级（2026-08-15 用户裁决）**：保护区域由原「ask-first 未经人工批准不得修改」升级为「AI 可自动修改，但必须通过两个独立子 agent 分别检查批准通过」（fresh session，互不共享执行者上下文）；任一未通过则不得实施，批准记录落盘计划文件。
+
+- **ORM 模型**：`module-<domain>/model/app-erp-<domain>.orm.xml` 是代码生成的真相源，修改须经两个独立子 agent 分别批准。修改后必须用 `mvn clean install -DskipTests` 触发增量重新生成（不要重跑 `nop-cli gen`）。
 - **API 契约**：`module-<domain>/model/app-erp-<domain>.api.xml` 同上。
-- **会计/财务/数据删除**：财务凭证、过账、期末结账、坏账、成本核算等代码区域是 ERP 保护区域，无 owner doc 不实现。
+- **会计/财务/数据删除**：财务凭证、过账、期末结账、坏账、成本核算等代码区域是 ERP 保护区域，须有 owner doc + tests + 两个独立子 agent 批准。
 - **生成产物**：`_gen/` 目录、`_` 前缀文件、`_app.orm.xml`、`_service.beans.xml` 永不手写。
-- **批量预授权枚举不可类推（MR1 裁决留痕）**：批量授权（如 Q3「纯加性」授权）严格限定在枚举清单（如「加列 / 加 UK / 新增实体」）内；枚举**不包含**的变更类型，即使语义「纯加性」（如 dict 追加 `<option>`），也走保守选项（不注册并记录残留风险 / ask-first）——不得**类推**清单外变更。（源头：RC-R1.7 dict MANUAL 裁决，2026-08-08）
+- **批量预授权枚举不可类推（MR1 裁决留痕）**：批量授权（如 Q3「纯加性」授权）严格限定在枚举清单（如「加列 / 加 UK / 新增实体」）内；枚举**不包含**的变更类型，即使语义「纯加性」（如 dict 追加 `<option>`），也走保守选项（不注册并记录残留风险 / 需双 agent 批准）——不得**类推**清单外变更。（源头：RC-R1.7 dict MANUAL 裁决，2026-08-08）
 - 完整规则见 `docs/context/ai-autonomy-policy.md` 与 `docs/context/project-context.md §AI 阻塞条件`。
 
 ### 验证命令（按场景）
