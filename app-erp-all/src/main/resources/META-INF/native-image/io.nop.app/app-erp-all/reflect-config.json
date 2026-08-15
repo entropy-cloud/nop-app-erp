@@ -486,6 +486,10 @@
       {
         "allowWrite": true,
         "name": "schedulingProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -494,6 +498,14 @@
         "parameterTypes": [
           "io.nop.biz.crud.EntityData",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.aps.dao.entity.ErpApsOperationOrder",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       }
     ],
@@ -562,6 +574,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -721,6 +737,16 @@
     ],
     "methods": [],
     "name": "app.erp.aps.service.processor.ErpApsSchedulingScheduleForwardProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -2029,11 +2055,23 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
         "allowWrite": true,
+        "name": "assetStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -2046,6 +2084,10 @@
       {
         "allowWrite": true,
         "name": "reverseApproveProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "scheduleStateMachine"
       },
       {
         "allowWrite": true,
@@ -2129,11 +2171,29 @@
         ]
       },
       {
+        "name": "illegalDocTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetCapitalization",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
         "name": "illegalTransition",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstAssetCapitalization",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstAssetCapitalization",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -2793,6 +2853,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "scheduleStateMachine"
       }
     ],
     "methods": [],
@@ -2914,6 +2978,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "scheduleStateMachine"
       }
     ],
     "methods": [],
@@ -3001,11 +3069,23 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
         "allowWrite": true,
+        "name": "assetStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -3018,6 +3098,10 @@
       {
         "allowWrite": true,
         "name": "reverseApproveProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "scheduleStateMachine"
       },
       {
         "allowWrite": true,
@@ -3074,11 +3158,29 @@
         ]
       },
       {
+        "name": "illegalDocTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstDisposal",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
         "name": "illegalTransition",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstDisposal",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstDisposal",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -3515,6 +3617,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -3534,6 +3640,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -3567,6 +3677,10 @@
       },
       {
         "allowWrite": true,
+        "name": "assetStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "capitalizationBiz"
       },
       {
@@ -3580,6 +3694,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -3667,6 +3785,14 @@
         "parameterTypes": []
       },
       {
+        "name": "mapIllegalTransition",
+        "parameterTypes": [
+          "io.nop.api.core.exceptions.NopException",
+          "app.erp.ast.dao.entity.ErpAstInventory",
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "orm",
         "parameterTypes": []
       },
@@ -3728,6 +3854,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -3747,6 +3877,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -3762,6 +3896,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -3850,6 +3988,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -3865,6 +4007,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -3903,6 +4049,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -3934,6 +4084,10 @@
       {
         "allowWrite": true,
         "name": "expenseDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -3972,6 +4126,14 @@
       {
         "name": "maintenanceDao",
         "parameterTypes": []
+      },
+      {
+        "name": "mapIllegalTransition",
+        "parameterTypes": [
+          "io.nop.api.core.exceptions.NopException",
+          "app.erp.ast.dao.entity.ErpAstMaintenance",
+          "java.lang.String"
+        ]
       },
       {
         "name": "orm",
@@ -4049,6 +4211,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -4064,6 +4230,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -4079,6 +4249,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -4209,6 +4383,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
@@ -4218,6 +4396,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -4316,11 +4498,29 @@
         ]
       },
       {
+        "name": "illegalDocTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
         "name": "illegalTransition",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstMerge",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstMerge",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -4832,6 +5032,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
@@ -4841,6 +5045,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -4956,11 +5164,29 @@
         ]
       },
       {
+        "name": "illegalDocTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstSplit",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
         "name": "illegalTransition",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstSplit",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstSplit",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -5461,6 +5687,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
@@ -5470,6 +5700,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -5547,11 +5781,29 @@
         ]
       },
       {
+        "name": "illegalDocTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstValueAdjustment",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
         "name": "illegalTransition",
         "parameterTypes": [
           "app.erp.ast.dao.entity.ErpAstValueAdjustment",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.ast.dao.entity.ErpAstValueAdjustment",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -5940,6 +6192,166 @@
     ],
     "methods": [],
     "name": "app.erp.ast.service.report.ErpAstReportBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstAssetCapitalizationApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstAssetCapitalizationDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstAssetStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstDisposalApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstDisposalDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstInventoryStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstMaintenanceStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstMergeApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstMergeDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstMovementApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstMovementDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstSplitApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstSplitDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstValueAdjustmentApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ast.service.statemachine.ErpAstValueAdjustmentDocumentStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -6396,6 +6808,10 @@
       {
         "allowWrite": true,
         "name": "ediRegistry"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -6509,6 +6925,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -6637,6 +7057,10 @@
       {
         "allowWrite": true,
         "name": "ediDocBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -6702,6 +7126,10 @@
       {
         "allowWrite": true,
         "name": "matchPurchaseOrderProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -6882,6 +7310,26 @@
     ],
     "methods": [],
     "name": "app.erp.b2b.service.spi.ubl.UblInvoiceEdiProvider"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.b2b.service.statemachine.ErpB2bEdiDocStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -7297,6 +7745,10 @@
         ]
       },
       {
+        "name": "rejectedStatus",
+        "parameterTypes": []
+      },
+      {
         "name": "setApproveStatus",
         "parameterTypes": [
           "io.nop.orm.support.OrmEntity",
@@ -7510,6 +7962,16 @@
       }
     ],
     "name": "app.erp.common.service.AbstractWithdrawApprovalProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.common.service.MaskAuditRecorder"
   },
   {
     "allDeclaredConstructors": true,
@@ -9172,6 +9634,10 @@
       },
       {
         "allowWrite": true,
+        "name": "campaignBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "cancelProcessor"
       },
       {
@@ -9181,6 +9647,10 @@
       {
         "allowWrite": true,
         "name": "convertToCustomerProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "convertToOpportunityProcessor"
       },
       {
         "allowWrite": true,
@@ -10011,6 +10481,29 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "leadScoreBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "transactionTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.crm.service.job.ErpCrmLeadScoringRecalcHelper"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
         "name": "leadBiz"
       },
       {
@@ -10073,6 +10566,21 @@
       }
     ],
     "methods": [],
+    "name": "app.erp.crm.service.processor.ErpCrmConversionConvertToOpportunityProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "facade"
+      }
+    ],
+    "methods": [],
     "name": "app.erp.crm.service.processor.ErpCrmConversionConvertToQuotationProcessor"
   },
   {
@@ -10093,6 +10601,14 @@
       {
         "allowWrite": true,
         "name": "quotationBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "stageBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -10154,6 +10670,13 @@
         ]
       },
       {
+        "name": "promoteToOpportunity",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmLead",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "requireLead",
         "parameterTypes": [
           "java.lang.Long",
@@ -10168,6 +10691,14 @@
         ]
       },
       {
+        "name": "validateDocStatus",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmLead",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "validateLeadType",
         "parameterTypes": [
           "app.erp.crm.dao.entity.ErpCrmLead",
@@ -10177,6 +10708,13 @@
       },
       {
         "name": "validateNotConverted",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmLead",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateWonStage",
         "parameterTypes": [
           "app.erp.crm.dao.entity.ErpCrmLead",
           "io.nop.core.context.IServiceContext"
@@ -10203,6 +10741,10 @@
       {
         "allowWrite": true,
         "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -10210,6 +10752,14 @@
         "name": "deriveLeadFields",
         "parameterTypes": [
           "java.lang.Long"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmEvent",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -10246,6 +10796,10 @@
       {
         "allowWrite": true,
         "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -10253,6 +10807,14 @@
         "name": "deriveLeadFields",
         "parameterTypes": [
           "java.lang.Long"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmEvent",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -10496,6 +11058,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -10566,6 +11132,15 @@
           "app.erp.crm.dao.entity.ErpCrmLead",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmLead",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -11153,6 +11728,26 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [],
+    "methods": [],
+    "name": "app.erp.crm.service.statemachine.ErpCrmEventStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.crm.service.statemachine.ErpCrmLeadStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
     "methods": [
       {
         "name": "computeSubtotal",
@@ -11240,6 +11835,16 @@
         "parameterTypes": [
           "app.erp.crm.dao.entity.ErpCrmForecastPeriod",
           "java.lang.String",
+          "java.lang.Long",
+          "app.erp.crm.service.support.ForecastAggregator$ForecastTotals"
+        ]
+      },
+      {
+        "name": "buildForecast",
+        "parameterTypes": [
+          "app.erp.crm.dao.entity.ErpCrmForecastPeriod",
+          "java.lang.String",
+          "java.lang.Long",
           "java.lang.Long",
           "app.erp.crm.service.support.ForecastAggregator$ForecastTotals"
         ]
@@ -12619,6 +13224,10 @@
       },
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "surveyBiz"
       },
       {
@@ -12878,7 +13487,15 @@
         "name": "ticketBiz"
       }
     ],
-    "methods": [],
+    "methods": [
+      {
+        "name": "validateRequiredFormFields",
+        "parameterTypes": [
+          "app.erp.cs.dao.entity.ErpCsServiceCatalogItem",
+          "java.util.Map"
+        ]
+      }
+    ],
     "name": "app.erp.cs.service.processor.ErpCsServiceCatalogItemCreateFromCatalogProcessor"
   },
   {
@@ -12928,6 +13545,10 @@
       },
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "surveyBiz"
       },
       {
@@ -12948,6 +13569,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       },
       {
         "allowWrite": true,
@@ -13019,6 +13644,36 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "app.erp.cs.service.statemachine.ErpCsTicketStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ct.biz.ErpCtConsumptionPeriodSummarizeResult"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ct.biz.ErpCtInvoicePlanGenerateItem"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "app.erp.ct.biz.IErpCtContractVersionBiz"
   },
   {
@@ -13067,7 +13722,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "periodSummarizeProcessor"
+      }
+    ],
     "methods": [],
     "name": "app.erp.ct.service.entity.ErpCtConsumptionLineBizModel"
   },
@@ -13088,10 +13748,32 @@
       },
       {
         "allowWrite": true,
+        "name": "contractLineBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "contractVersionBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
+      {
+        "name": "amountMismatch",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "compareAmount",
+        "parameterTypes": [
+          "java.math.BigDecimal",
+          "java.math.BigDecimal"
+        ]
+      },
       {
         "name": "defaultPrepareSave",
         "parameterTypes": [
@@ -13100,7 +13782,21 @@
         ]
       },
       {
+        "name": "ensureVersionOnSubmit",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "findCurrentVersion",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "findLines",
         "parameterTypes": [
           "java.lang.Long",
           "io.nop.core.context.IServiceContext"
@@ -13121,10 +13817,51 @@
         ]
       },
       {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "java.lang.String",
+          "java.lang.Throwable"
+        ]
+      },
+      {
         "name": "requireContract",
         "parameterTypes": [
           "java.lang.Long",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "restoreCurrentVersion",
+        "parameterTypes": [
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "sumLineAmounts",
+        "parameterTypes": [
+          "java.util.List"
+        ]
+      },
+      {
+        "name": "validateContractFields",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateCreateFields",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract"
+        ]
+      },
+      {
+        "name": "validateDateRange",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract"
         ]
       },
       {
@@ -13156,6 +13893,10 @@
       {
         "allowWrite": true,
         "name": "signVersionProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -13171,6 +13912,14 @@
         "parameterTypes": [
           "app.erp.contract.dao.entity.ErpCtContractVersion",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContractVersion",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -13202,6 +13951,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "generateByTermProcessor"
+      },
+      {
+        "allowWrite": true,
         "name": "triggerDuePlansProcessor"
       },
       {
@@ -13228,6 +13981,13 @@
           "app.erp.contract.dao.entity.ErpCtContractLine",
           "app.erp.contract.dao.entity.ErpCtContract",
           "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
         ]
       },
       {
@@ -13810,11 +14570,102 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "generateByTermProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "notificationBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "triggerInvoiceProcessor"
+      }
+    ],
+    "methods": [
+      {
+        "name": "assertContractActive",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract"
+        ]
+      },
+      {
+        "name": "assertPeriodValid",
+        "parameterTypes": [
+          "java.time.LocalDate",
+          "java.time.LocalDate"
+        ]
+      },
+      {
+        "name": "consumptionLineDao",
+        "parameterTypes": []
+      },
+      {
+        "name": "contractLineDao",
+        "parameterTypes": []
+      },
+      {
+        "name": "nz",
+        "parameterTypes": [
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "overRatioExceeds",
+        "parameterTypes": [
+          "java.math.BigDecimal",
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "ratioOf",
+        "parameterTypes": [
+          "java.math.BigDecimal",
+          "java.math.BigDecimal"
+        ]
+      },
+      {
+        "name": "requireLine",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "sumConsumedQuantity",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.time.LocalDate",
+          "java.time.LocalDate"
+        ]
+      }
+    ],
+    "name": "app.erp.ct.service.processor.ErpCtConsumptionPeriodSummarizeProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
         "name": "contractVersionBiz"
       },
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -13834,6 +14685,14 @@
         "parameterTypes": [
           "app.erp.contract.dao.entity.ErpCtContract",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -13865,6 +14724,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -13887,6 +14750,14 @@
         ]
       },
       {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract",
+          "java.lang.String",
+          "java.lang.Throwable"
+        ]
+      },
+      {
         "name": "requireContract",
         "parameterTypes": [
           "java.lang.Long"
@@ -13905,6 +14776,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -13926,6 +14801,14 @@
         ]
       },
       {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContractVersion",
+          "java.lang.String",
+          "java.lang.Throwable"
+        ]
+      },
+      {
         "name": "requireVersion",
         "parameterTypes": [
           "java.lang.Long"
@@ -13933,6 +14816,65 @@
       }
     ],
     "name": "app.erp.ct.service.processor.ErpCtContractVersionSignVersionProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      }
+    ],
+    "methods": [
+      {
+        "name": "assertContractActive",
+        "parameterTypes": [
+          "app.erp.contract.dao.entity.ErpCtContract"
+        ]
+      },
+      {
+        "name": "assertLineBelongsTo",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "assertNotDuplicate",
+        "parameterTypes": [
+          "app.erp.ct.biz.ErpCtInvoicePlanGenerateItem"
+        ]
+      },
+      {
+        "name": "contractLineDao",
+        "parameterTypes": []
+      },
+      {
+        "name": "createPlan",
+        "parameterTypes": [
+          "app.erp.ct.biz.ErpCtInvoicePlanGenerateItem"
+        ]
+      },
+      {
+        "name": "dao",
+        "parameterTypes": []
+      },
+      {
+        "name": "planDao",
+        "parameterTypes": []
+      },
+      {
+        "name": "requireContract",
+        "parameterTypes": [
+          "java.lang.Long"
+        ]
+      }
+    ],
+    "name": "app.erp.ct.service.processor.ErpCtInvoicePlanGenerateByTermProcessor"
   },
   {
     "allDeclaredConstructors": true,
@@ -14024,6 +14966,10 @@
       {
         "allowWrite": true,
         "name": "rebateEngine"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -14097,6 +15043,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -14134,6 +15084,14 @@
         "name": "findUnsettledAccruals",
         "parameterTypes": [
           "java.lang.Long"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "java.lang.Long",
+          "app.erp.contract.dao.entity.ErpCtRebateSettlement",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -14213,6 +15171,10 @@
       {
         "allowWrite": true,
         "name": "rebateAccrualBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -14283,6 +15245,46 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.ct.service.spi.mock.MockSignatureProvider"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ct.service.statemachine.ErpCtContractStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ct.service.statemachine.ErpCtContractVersionStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ct.service.statemachine.ErpCtRebateAgreementStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.ct.service.statemachine.ErpCtRebateSettlementStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -14593,6 +15595,10 @@
       {
         "allowWrite": true,
         "name": "demandAggregator"
+      },
+      {
+        "allowWrite": true,
+        "name": "planStateMachine"
       }
     ],
     "methods": [],
@@ -14608,6 +15614,14 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "lineStateMachine"
+      },
+      {
+        "allowWrite": true,
+        "name": "planStateMachine"
       }
     ],
     "methods": [],
@@ -14627,6 +15641,10 @@
       {
         "allowWrite": true,
         "name": "drpReleaseService"
+      },
+      {
+        "allowWrite": true,
+        "name": "lineStateMachine"
       },
       {
         "allowWrite": true,
@@ -14807,6 +15825,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "lineStateMachine"
       }
     ],
     "methods": [
@@ -14835,6 +15857,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "lineStateMachine"
       }
     ],
     "methods": [
@@ -14904,6 +15930,14 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "lineStateMachine"
+      },
+      {
+        "allowWrite": true,
+        "name": "planStateMachine"
       }
     ],
     "methods": [
@@ -15130,6 +16164,26 @@
     ],
     "methods": [],
     "name": "app.erp.drp.service.simulation.SimulationDrpEngine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.drp.service.statemachine.ErpDrpLineStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.drp.service.statemachine.ErpDrpPlanStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -16826,6 +17880,10 @@
       },
       {
         "allowWrite": true,
+        "name": "documentStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "rejectProcessor"
       },
       {
@@ -17663,6 +18721,10 @@
       },
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "voucherBiz"
       }
     ],
@@ -17767,6 +18829,13 @@
         ]
       },
       {
+        "name": "statusError",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinReconciliation",
+          "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
         "name": "validateLine",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinReconciliation",
@@ -17824,6 +18893,10 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
+      },
       {
         "allowWrite": true,
         "name": "postingProcessor"
@@ -18801,6 +19874,13 @@
         ]
       },
       {
+        "name": "statusError",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinReconciliation",
+          "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
         "name": "validateLine",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinReconciliation",
@@ -18833,6 +19913,10 @@
       {
         "allowWrite": true,
         "name": "preCheckProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -18863,6 +19947,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -18893,6 +19981,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -19103,6 +20195,14 @@
         ]
       },
       {
+        "name": "mapIllegalTransition",
+        "parameterTypes": [
+          "io.nop.api.core.exceptions.NopException",
+          "app.erp.fin.dao.entity.ErpFinAccountingPeriod",
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "moduleStatusOf",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinAccountingPeriodStatus",
@@ -19211,6 +20311,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -19298,6 +20402,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
@@ -19333,6 +20441,12 @@
       {
         "name": "arApItemDao",
         "parameterTypes": []
+      },
+      {
+        "name": "assertCanReverseApprove",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBadDebt"
+        ]
       },
       {
         "name": "badDebtDao",
@@ -19387,6 +20501,13 @@
           "app.erp.fin.dao.entity.ErpFinBadDebt",
           "app.erp.fin.dao.entity.ErpFinArApItem",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinBadDebt",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -20579,6 +21700,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
@@ -20588,6 +21713,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -20692,11 +21821,29 @@
         ]
       },
       {
+        "name": "illegalDocTransition",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
         "name": "illegalTransition",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinEmployeeAdvance",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinEmployeeAdvance",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -21189,6 +22336,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
@@ -21202,6 +22353,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -21297,11 +22452,29 @@
         ]
       },
       {
+        "name": "illegalDocTransition",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinExpenseClaim",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
+        ]
+      },
+      {
         "name": "illegalTransition",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinExpenseClaim",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinExpenseClaim",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -21835,6 +23008,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -21870,6 +23047,13 @@
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinNotesPayable",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinNotesPayable",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -21965,7 +23149,28 @@
         ]
       },
       {
+        "name": "validateTransitionForDishonor",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinNotesPayable",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "validateTransitionForHonor",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinNotesPayable",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForIssue",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinNotesPayable",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForWriteOff",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinNotesPayable",
           "io.nop.core.context.IServiceContext"
@@ -21999,6 +23204,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -22029,6 +23238,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -22078,6 +23291,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -22149,6 +23366,13 @@
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinNotesReceivable",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinNotesReceivable",
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -22263,6 +23487,20 @@
       },
       {
         "name": "validateTransitionForHonorOrDishonor",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinNotesReceivable",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForReceive",
+        "parameterTypes": [
+          "app.erp.fin.dao.entity.ErpFinNotesReceivable",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForWriteOff",
         "parameterTypes": [
           "app.erp.fin.dao.entity.ErpFinNotesReceivable",
           "io.nop.core.context.IServiceContext"
@@ -22400,7 +23638,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
+      }
+    ],
     "methods": [],
     "name": "app.erp.fin.service.processor.ErpFinReconciliationPostProcessor"
   },
@@ -22410,7 +23653,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
+      }
+    ],
     "methods": [],
     "name": "app.erp.fin.service.processor.ErpFinReconciliationReverseProcessor"
   },
@@ -22802,6 +24050,126 @@
     ],
     "methods": [],
     "name": "app.erp.fin.service.spi.ErpMdEmployeeReferenceCheckerImpl"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinAccountingPeriodStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinBadDebtApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinBudgetScenarioApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinBudgetScenarioDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinEmployeeAdvanceApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinEmployeeAdvanceDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinExpenseClaimApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinExpenseClaimDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinNotesPayableStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinNotesReceivableStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinReconciliationDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.fin.service.statemachine.ErpFinVoucherDocumentStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -24111,7 +25479,15 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "contractStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "departmentBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "employeeStateMachine"
       },
       {
         "allowWrite": true,
@@ -24153,6 +25529,10 @@
       {
         "allowWrite": true,
         "name": "expireOverdueContractsProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -24265,6 +25645,10 @@
       {
         "allowWrite": true,
         "name": "shiftBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       },
       {
         "allowWrite": true,
@@ -24396,6 +25780,10 @@
       {
         "allowWrite": true,
         "name": "markPaidProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "paymentStateMachine"
       },
       {
         "allowWrite": true,
@@ -24704,8 +26092,25 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
-    "methods": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "surveyQuestionBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "surveyResultBiz"
+      }
+    ],
+    "methods": [
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
     "name": "app.erp.hr.service.entity.ErpHrSurveyBizModel"
   },
   {
@@ -24724,7 +26129,16 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "surveyBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "surveyQuestionBiz"
+      }
+    ],
     "methods": [],
     "name": "app.erp.hr.service.entity.ErpHrSurveyResponseBizModel"
   },
@@ -24734,7 +26148,32 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "answerBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "departmentBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "employeeBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "questionBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "responseBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "surveyBiz"
+      }
+    ],
     "methods": [],
     "name": "app.erp.hr.service.entity.ErpHrSurveyResultBizModel"
   },
@@ -24764,7 +26203,16 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "timesheetLineBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "timesheetStateMachine"
+      }
+    ],
     "methods": [
       {
         "name": "defaultPrepareSave",
@@ -24782,8 +26230,35 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
-    "methods": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "timesheetBiz"
+      }
+    ],
+    "methods": [
+      {
+        "name": "afterEntityChange",
+        "parameterTypes": [
+          "app.erp.hr.dao.entity.ErpHrTimesheetLine",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "defaultPrepareSave",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "defaultPrepareUpdate",
+        "parameterTypes": [
+          "io.nop.biz.crud.EntityData",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
     "name": "app.erp.hr.service.entity.ErpHrTimesheetLineBizModel"
   },
   {
@@ -25234,9 +26709,31 @@
       {
         "allowWrite": true,
         "name": "leaveBalanceBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
+      {
+        "name": "assertCanApprove",
+        "parameterTypes": [
+          "app.erp.hr.dao.entity.ErpHrLeaveRequest"
+        ]
+      },
+      {
+        "name": "assertCanCancel",
+        "parameterTypes": [
+          "app.erp.hr.dao.entity.ErpHrLeaveRequest"
+        ]
+      },
+      {
+        "name": "assertCanSubmit",
+        "parameterTypes": [
+          "app.erp.hr.dao.entity.ErpHrLeaveRequest"
+        ]
+      },
       {
         "name": "checkDateOverlap",
         "parameterTypes": [
@@ -25306,7 +26803,15 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "paymentStateMachine"
       }
     ],
     "methods": [
@@ -25879,11 +27384,19 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "contractStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "daoProvider"
       },
       {
         "allowWrite": true,
         "name": "departmentBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "employeeStateMachine"
       },
       {
         "allowWrite": true,
@@ -25966,6 +27479,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -26093,6 +27610,21 @@
       }
     ],
     "name": "app.erp.hr.service.processor.ErpHrRecruitmentHireProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "approvalStateMachine"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.hr.service.processor.ErpHrSalaryApprovalGuard"
   },
   {
     "allDeclaredConstructors": true,
@@ -26371,6 +27903,66 @@
     ],
     "methods": [],
     "name": "app.erp.hr.service.report.ErpHrReportBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.hr.service.statemachine.ErpHrEmployeeStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.hr.service.statemachine.ErpHrEmploymentContractStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.hr.service.statemachine.ErpHrLeaveRequestStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.hr.service.statemachine.ErpHrSalaryPaymentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.hr.service.statemachine.ErpHrTimesheetStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -27598,7 +29190,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
+      }
+    ],
     "methods": [],
     "name": "app.erp.inv.service.entity.ErpInvStockTakeBizModel"
   },
@@ -27859,6 +29456,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -28272,6 +29873,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -28418,6 +30023,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -28541,6 +30150,10 @@
       {
         "allowWrite": true,
         "name": "reverseApproveProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -28725,6 +30338,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -28792,6 +30409,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -28815,6 +30436,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -28849,6 +30474,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -28941,6 +30570,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -29029,6 +30662,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       },
       {
         "allowWrite": true,
@@ -29229,6 +30866,10 @@
       },
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "transferOrderBiz"
       }
     ],
@@ -29272,6 +30913,66 @@
     ],
     "methods": [],
     "name": "app.erp.inv.service.report.ErpInvReportBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.inv.service.statemachine.ErpInvCostAdjustStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.inv.service.statemachine.ErpInvLandedCostStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.inv.service.statemachine.ErpInvOwnershipTransferStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.inv.service.statemachine.ErpInvStockMoveStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.inv.service.statemachine.ErpInvStockTakeStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.inv.service.statemachine.ErpInvTransferOrderStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -29684,6 +31385,10 @@
       {
         "allowWrite": true,
         "name": "notificationBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -29926,6 +31631,16 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.log.service.spi.mock.MockCarrierGatewayClientFactory"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.log.service.statemachine.ErpLogShipmentStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -31057,6 +32772,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "suspendByPartnerProcessor"
       }
     ],
@@ -31110,6 +32829,14 @@
           "app.erp.md.dao.entity.ErpMdSupplierApproval",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.md.dao.entity.ErpMdSupplierApproval",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -31310,6 +33037,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -31323,6 +33054,14 @@
         "name": "findActiveByPartner",
         "parameterTypes": [
           "java.lang.Long"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.md.dao.entity.ErpMdSupplierApproval",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       }
     ],
@@ -31365,6 +33104,16 @@
     ],
     "methods": [],
     "name": "app.erp.md.service.spi.ErpMdOrganizationReferenceChecker"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.md.service.statemachine.ErpMdSupplierApprovalStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -32534,7 +34283,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
+      }
+    ],
     "methods": [],
     "name": "app.erp.mfg.service.entity.ErpMfgForecastBizModel"
   },
@@ -33144,6 +34898,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -33159,6 +34917,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -33375,6 +35137,10 @@
       },
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "stockLedgerBiz"
       },
       {
@@ -33429,6 +35195,13 @@
         "name": "requireIssue",
         "parameterTypes": [
           "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransition",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgMaterialIssue",
           "io.nop.core.context.IServiceContext"
         ]
       }
@@ -33498,6 +35271,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -33526,6 +35303,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -33548,6 +35329,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -33586,6 +35371,15 @@
           "app.erp.mfg.dao.entity.ErpMfgJobCard",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalTransition",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgJobCard",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -33628,6 +35422,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -33663,6 +35461,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -33685,6 +35487,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -33707,6 +35513,10 @@
       {
         "allowWrite": true,
         "name": "facade"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -34079,6 +35889,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -34181,11 +35995,19 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -34402,6 +36224,13 @@
         ]
       },
       {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "validateTransitionForReject",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgSubcontractOrder",
@@ -34457,6 +36286,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -34530,6 +36363,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -34612,6 +36449,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -34669,6 +36510,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -34722,6 +36567,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -34794,6 +36643,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "documentStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "facade"
       }
     ],
@@ -34822,6 +36675,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
@@ -34831,6 +36688,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -35023,7 +36884,35 @@
         ]
       },
       {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForCheckAvailability",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForReportCompletion",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForResume",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
           "io.nop.core.context.IServiceContext"
@@ -35038,6 +36927,13 @@
       },
       {
         "name": "validateTransitionForStart",
+        "parameterTypes": [
+          "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForStop",
         "parameterTypes": [
           "app.erp.mfg.dao.entity.ErpMfgWorkOrder",
           "io.nop.core.context.IServiceContext"
@@ -35082,6 +36978,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -35192,6 +37092,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -35296,6 +37200,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -35353,6 +37261,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -35460,6 +37372,10 @@
       {
         "allowWrite": true,
         "name": "paramResolver"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -35479,6 +37395,86 @@
     ],
     "methods": [],
     "name": "app.erp.mfg.service.simulation.SimulationVersionComparator"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.statemachine.ErpMfgForecastStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.statemachine.ErpMfgJobCardStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.statemachine.ErpMfgMaterialIssueStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.statemachine.ErpMfgMrpPlanStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.statemachine.ErpMfgSubcontractOrderDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.statemachine.ErpMfgWorkOrderApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mfg.service.statemachine.ErpMfgWorkOrderDocumentStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -36215,6 +38211,10 @@
       },
       {
         "allowWrite": true,
+        "name": "reportAdditionalFaultProcessor"
+      },
+      {
+        "allowWrite": true,
         "name": "scheduleProcessor"
       },
       {
@@ -36499,6 +38499,10 @@
       },
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "visitBiz"
       }
     ],
@@ -36509,6 +38513,15 @@
           "app.erp.mnt.dao.entity.ErpMntRequest",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalRequestTransition",
+        "parameterTypes": [
+          "app.erp.mnt.dao.entity.ErpMntRequest",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -36542,7 +38555,15 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -36652,6 +38673,10 @@
       {
         "allowWrite": true,
         "name": "laborPostingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -36661,6 +38686,15 @@
           "app.erp.mnt.dao.entity.ErpMntVisit",
           "java.lang.String",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "illegalVisitTransition",
+        "parameterTypes": [
+          "app.erp.mnt.dao.entity.ErpMntVisit",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.Throwable"
         ]
       },
       {
@@ -36903,8 +38937,55 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "requestBiz"
+      }
+    ],
+    "methods": [
+      {
+        "name": "doAppendVisitRemark",
+        "parameterTypes": [
+          "app.erp.mnt.dao.entity.ErpMntVisit",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "doCreateRequest",
+        "parameterTypes": [
+          "app.erp.mnt.dao.entity.ErpMntVisit",
+          "java.lang.String",
+          "java.lang.String",
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      }
+    ],
+    "name": "app.erp.mnt.service.processor.ErpMntVisitReportAdditionalFaultProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
     "fields": [],
     "methods": [
+      {
+        "name": "checkEquipmentDimensionConflict",
+        "parameterTypes": [
+          "app.erp.mnt.dao.entity.ErpMntVisit"
+        ]
+      },
+      {
+        "name": "checkPersonnelDimensionConflict",
+        "parameterTypes": [
+          "app.erp.mnt.dao.entity.ErpMntVisit"
+        ]
+      },
       {
         "name": "checkScheduleConflict",
         "parameterTypes": [
@@ -36917,6 +38998,13 @@
         "parameterTypes": [
           "app.erp.mnt.dao.entity.ErpMntVisit",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "throwScheduleConflict",
+        "parameterTypes": [
+          "app.erp.mnt.dao.entity.ErpMntVisit",
+          "app.erp.mnt.dao.entity.ErpMntVisit"
         ]
       },
       {
@@ -36969,6 +39057,46 @@
     ],
     "methods": [],
     "name": "app.erp.mnt.service.report.ErpMntReportBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mnt.service.statemachine.ErpMntRequestStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mnt.service.statemachine.ErpMntSparePartUsageApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mnt.service.statemachine.ErpMntSparePartUsageDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.mnt.service.statemachine.ErpMntVisitStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -38018,6 +40146,10 @@
       },
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "taskBiz"
       }
     ],
@@ -38148,7 +40280,12 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
+      }
+    ],
     "methods": [
       {
         "name": "defaultPrepareSave",
@@ -38210,6 +40347,10 @@
       },
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "submitProcessor"
       }
     ],
@@ -38225,6 +40366,29 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.prj.service.entity.ErpPrjTimesheetBizModel__aop"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "ormTemplate"
+      },
+      {
+        "allowWrite": true,
+        "name": "pnlBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "transactionTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "app.erp.prj.service.job.ErpPrjProjectPnlCalcHelper"
   },
   {
     "allDeclaredConstructors": true,
@@ -38366,6 +40530,10 @@
       },
       {
         "allowWrite": true,
+        "name": "stateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "taskBiz"
       }
     ],
@@ -38382,6 +40550,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -38435,6 +40607,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -38580,6 +40756,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
@@ -38593,6 +40773,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "documentStateMachine"
       },
       {
         "allowWrite": true,
@@ -38913,6 +41097,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -38932,6 +41120,10 @@
       {
         "allowWrite": true,
         "name": "postingDispatcher"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -38955,6 +41147,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [],
@@ -38982,6 +41178,56 @@
     ],
     "methods": [],
     "name": "app.erp.prj.service.report.ErpPrjReportBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.prj.service.statemachine.ErpPrjProjectSettlementApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.prj.service.statemachine.ErpPrjProjectSettlementDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.prj.service.statemachine.ErpPrjProjectStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.prj.service.statemachine.ErpPrjTaskStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.prj.service.statemachine.ErpPrjTimesheetStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -39021,16 +41267,6 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
-    "name": "app.erp.pur.biz.SupplierConversionOption"
-  },
-  {
-    "allDeclaredConstructors": true,
-    "allDeclaredMethods": true,
-    "allPublicConstructors": true,
-    "allPublicFields": true,
-    "allPublicMethods": true,
-    "fields": [],
-    "methods": [],
     "name": "app.erp.pur.biz.IErpPurOrderBiz"
   },
   {
@@ -39052,6 +41288,16 @@
     "fields": [],
     "methods": [],
     "name": "app.erp.pur.biz.SettlementAllocation"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.biz.SupplierConversionOption"
   },
   {
     "allDeclaredConstructors": true,
@@ -39729,7 +41975,15 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "eligibilityChecker"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -39846,7 +42100,16 @@
     "allPublicConstructors": true,
     "allPublicFields": true,
     "allPublicMethods": true,
-    "fields": [],
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
+      }
+    ],
     "methods": [],
     "name": "app.erp.pur.service.entity.ErpPurRfqBizModel"
   },
@@ -40403,7 +42666,23 @@
       },
       {
         "allowWrite": true,
+        "name": "documentStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "mdPartnerBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "mdSubjectBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "orderBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "orderProcessor"
       },
       {
         "allowWrite": true,
@@ -40416,6 +42695,10 @@
       {
         "allowWrite": true,
         "name": "reverseApproveProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       },
       {
         "allowWrite": true,
@@ -40482,6 +42765,13 @@
         "name": "doWithdrawSubmit",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "findOrderByCode",
+        "parameterTypes": [
+          "java.lang.String",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -40557,15 +42847,37 @@
         ]
       },
       {
+        "name": "resolveBudgetSubjectId",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "resolveLinkedOrderCodes",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurInvoice"
         ]
       },
       {
+        "name": "restoreCommitmentForOrder",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "runCommitmentReleaseOnInvoiceApproveHook",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "runCommitmentRestoreOnInvoiceReverseHook",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurInvoice",
+          "boolean",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -40645,6 +42957,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -40722,6 +43038,13 @@
       },
       {
         "name": "validateNotCancelled",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForReject",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurInvoice",
           "io.nop.core.context.IServiceContext"
@@ -40819,6 +43142,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -40884,6 +43211,13 @@
           "app.erp.pur.dao.entity.ErpPurInvoice",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurInvoiceSubmitForApprovalProcessor"
@@ -40898,6 +43232,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -40952,6 +43290,13 @@
           "app.erp.pur.dao.entity.ErpPurInvoice",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurInvoiceWithdrawApprovalProcessor"
@@ -40966,6 +43311,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -41058,6 +43407,13 @@
           "app.erp.pur.dao.entity.ErpPurOrder",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurOrderApproveProcessor"
@@ -41072,6 +43428,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -41115,6 +43475,13 @@
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurOrder",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurOrder",
+          "io.nop.core.context.IServiceContext"
         ]
       }
     ],
@@ -41407,6 +43774,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -41488,6 +43859,13 @@
           "app.erp.pur.dao.entity.ErpPurOrder",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurOrderRejectProcessor"
@@ -41502,6 +43880,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -41577,6 +43959,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurOrderReverseApproveProcessor"
@@ -41591,6 +43980,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -41656,6 +44049,13 @@
           "app.erp.pur.dao.entity.ErpPurOrder",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurOrderSubmitForApprovalProcessor"
@@ -41670,6 +44070,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -41720,6 +44124,13 @@
       },
       {
         "name": "validateNotCancelled",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurOrder",
           "io.nop.core.context.IServiceContext"
@@ -41896,6 +44307,10 @@
       },
       {
         "allowWrite": true,
+        "name": "documentStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "mdPartnerBiz"
       },
       {
@@ -41913,6 +44328,10 @@
       {
         "allowWrite": true,
         "name": "reverseApproveProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       },
       {
         "allowWrite": true,
@@ -42119,6 +44538,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -42196,6 +44619,13 @@
       },
       {
         "name": "validateNotCancelled",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurPayment",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForReject",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurPayment",
           "io.nop.core.context.IServiceContext"
@@ -42363,6 +44793,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -42421,6 +44855,13 @@
           "app.erp.pur.dao.entity.ErpPurPayment",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurPayment",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurPaymentSubmitForApprovalProcessor"
@@ -42435,6 +44876,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -42489,6 +44934,13 @@
           "app.erp.pur.dao.entity.ErpPurPayment",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurPayment",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurPaymentWithdrawApprovalProcessor"
@@ -42503,6 +44955,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -42581,6 +45037,13 @@
           "app.erp.pur.dao.entity.ErpPurReceive",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReceive",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReceiveApproveProcessor"
@@ -42595,6 +45058,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -42631,6 +45098,13 @@
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReceive",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReceive",
+          "io.nop.core.context.IServiceContext"
         ]
       }
     ],
@@ -42775,6 +45249,13 @@
         ]
       },
       {
+        "name": "findOrderLine",
+        "parameterTypes": [
+          "java.util.List",
+          "java.lang.Long"
+        ]
+      },
+      {
         "name": "illegalDocTransition",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReceive",
@@ -42831,6 +45312,20 @@
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReceive",
           "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "readBooleanConfig",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "readDecimalConfig",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
         ]
       },
       {
@@ -42894,6 +45389,13 @@
         ]
       },
       {
+        "name": "validateOverReceiptTolerance",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReceive",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "validateTransitionForApprove",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReceive",
@@ -42948,6 +45450,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43029,6 +45535,13 @@
           "app.erp.pur.dao.entity.ErpPurReceive",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReceive",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReceiveRejectProcessor"
@@ -43043,6 +45556,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43104,6 +45621,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReceive",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReceiveReverseApproveProcessor"
@@ -43118,6 +45642,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43183,6 +45711,13 @@
           "app.erp.pur.dao.entity.ErpPurReceive",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReceive",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReceiveSubmitForApprovalProcessor"
@@ -43197,6 +45732,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43251,6 +45790,13 @@
           "app.erp.pur.dao.entity.ErpPurReceive",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReceive",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReceiveWithdrawApprovalProcessor"
@@ -43265,6 +45811,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43343,6 +45893,13 @@
           "app.erp.pur.dao.entity.ErpPurRequisition",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurRequisition",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurRequisitionApproveProcessor"
@@ -43357,6 +45914,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43393,6 +45954,13 @@
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurRequisition",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurRequisition",
+          "io.nop.core.context.IServiceContext"
         ]
       }
     ],
@@ -43505,6 +46073,14 @@
         ]
       },
       {
+        "name": "groupLinesBySupplier",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurRequisition",
+          "java.util.List",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "illegalDocTransition",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurRequisition",
@@ -43573,14 +46149,6 @@
         "name": "validateBusinessRulesForSubmit",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurRequisition",
-          "io.nop.core.context.IServiceContext"
-        ]
-      },
-      {
-        "name": "groupLinesBySupplier",
-        "parameterTypes": [
-          "app.erp.pur.dao.entity.ErpPurRequisition",
-          "java.util.List",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -43661,6 +46229,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43742,6 +46314,13 @@
           "app.erp.pur.dao.entity.ErpPurRequisition",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurRequisition",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurRequisitionRejectProcessor"
@@ -43756,6 +46335,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43824,6 +46407,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurRequisition",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurRequisitionReverseApproveProcessor"
@@ -43838,6 +46428,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43903,6 +46497,13 @@
           "app.erp.pur.dao.entity.ErpPurRequisition",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurRequisition",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurRequisitionSubmitForApprovalProcessor"
@@ -43917,6 +46518,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -43971,6 +46576,13 @@
           "app.erp.pur.dao.entity.ErpPurRequisition",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurRequisition",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurRequisitionWithdrawApprovalProcessor"
@@ -43993,6 +46605,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -44071,6 +46687,13 @@
           "app.erp.pur.dao.entity.ErpPurReturn",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReturnApproveProcessor"
@@ -44085,6 +46708,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -44122,6 +46749,13 @@
           "app.erp.pur.dao.entity.ErpPurReturn",
           "java.lang.String"
         ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReturnCancelProcessor"
@@ -44152,6 +46786,18 @@
       {
         "allowWrite": true,
         "name": "mdPartnerBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "mdSubjectBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "orderBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "orderProcessor"
       },
       {
         "allowWrite": true,
@@ -44246,6 +46892,13 @@
         ]
       },
       {
+        "name": "findOrderByCode",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "illegalDocTransition",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReturn",
@@ -44277,6 +46930,12 @@
         "name": "isApproved",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReturn"
+        ]
+      },
+      {
+        "name": "isCommitmentAlreadyReleased",
+        "parameterTypes": [
+          "io.nop.api.core.exceptions.NopException"
         ]
       },
       {
@@ -44339,6 +46998,13 @@
         ]
       },
       {
+        "name": "resolveBudgetSubjectId",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "resolvePurchaseOrderCode",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReturn"
@@ -44352,6 +47018,13 @@
         ]
       },
       {
+        "name": "restoreCommitmentForOrder",
+        "parameterTypes": [
+          "java.lang.String",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "returnDao",
         "parameterTypes": []
       },
@@ -44359,6 +47032,14 @@
         "name": "runCommitmentReleaseOnReturnHook",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "runCommitmentRestoreOnReturnReverseHook",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReturn",
+          "boolean",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -44445,6 +47126,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -44526,6 +47211,13 @@
           "app.erp.pur.dao.entity.ErpPurReturn",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReturnRejectProcessor"
@@ -44540,6 +47232,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -44601,6 +47297,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReturnReverseApproveProcessor"
@@ -44615,6 +47318,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -44680,6 +47387,13 @@
           "app.erp.pur.dao.entity.ErpPurReturn",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurReturnSubmitForApprovalProcessor"
@@ -44694,6 +47408,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -44744,6 +47462,13 @@
       },
       {
         "name": "validateNotCancelled",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
         "parameterTypes": [
           "app.erp.pur.dao.entity.ErpPurReturn",
           "io.nop.core.context.IServiceContext"
@@ -44821,6 +47546,203 @@
       }
     ],
     "name": "app.erp.pur.service.processor.ErpPurSupplierScorecardFinalizeScorecardProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurInvoiceApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurInvoiceDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurOrderApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurOrderDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurPaymentApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurPaymentDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurQuotationApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurQuotationDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurReceiveApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurReceiveDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurRequisitionApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurRequisitionDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurReturnApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurReturnDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurRfqApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.pur.service.statemachine.ErpPurRfqDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      }
+    ],
+    "methods": [
+      {
+        "name": "findCandidates",
+        "parameterTypes": [
+          "app.erp.md.dao.entity.ErpMdMaterialSku",
+          "java.lang.Long"
+        ]
+      },
+      {
+        "name": "isBetter",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurSupplierPriceList",
+          "app.erp.pur.dao.entity.ErpPurSupplierPriceList"
+        ]
+      },
+      {
+        "name": "matchesPeriod",
+        "parameterTypes": [
+          "app.erp.pur.dao.entity.ErpPurSupplierPriceList",
+          "java.time.LocalDate"
+        ]
+      }
+    ],
+    "name": "app.erp.pur.service.support.ErpPurSupplierPriceResolver"
   },
   {
     "allDeclaredConstructors": true,
@@ -45447,6 +48369,10 @@
       },
       {
         "allowWrite": true,
+        "name": "ncrStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "postNcrProcessor"
       },
       {
@@ -45517,6 +48443,10 @@
       {
         "allowWrite": true,
         "name": "salReturnBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "statusStateMachine"
       },
       {
         "allowWrite": true,
@@ -45753,6 +48683,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "resultStateMachine"
       }
     ],
     "methods": [
@@ -45811,6 +48745,10 @@
       {
         "allowWrite": true,
         "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "ncrStateMachine"
       }
     ],
     "methods": [
@@ -45858,6 +48796,10 @@
       {
         "allowWrite": true,
         "name": "recallTargetBiz"
+      },
+      {
+        "allowWrite": true,
+        "name": "statusStateMachine"
       }
     ],
     "methods": [
@@ -45956,6 +48898,10 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [
+      {
+        "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
       {
         "allowWrite": true,
         "name": "ncrLifecycleService"
@@ -46168,6 +49114,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "approvalStateMachine"
+      },
+      {
+        "allowWrite": true,
         "name": "approveProcessor"
       },
       {
@@ -46181,6 +49131,10 @@
       {
         "allowWrite": true,
         "name": "reverseApproveProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "statusStateMachine"
       },
       {
         "allowWrite": true,
@@ -46769,6 +49723,56 @@
     ],
     "methods": [],
     "name": "app.erp.qa.service.spc.SpcSamplingService"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.qa.service.statemachine.ErpQaInspectionApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.qa.service.statemachine.ErpQaInspectionResultStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.qa.service.statemachine.ErpQaNonConformanceStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.qa.service.statemachine.ErpQaRecallApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.qa.service.statemachine.ErpQaRecallStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -47390,6 +50394,10 @@
       },
       {
         "allowWrite": true,
+        "name": "mdMaterialSkuBiz"
+      },
+      {
+        "allowWrite": true,
         "name": "mdPartnerBiz"
       },
       {
@@ -47462,6 +50470,20 @@
         "name": "resolveCustomerGroup",
         "parameterTypes": [
           "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "resolveMaterialCategoryId",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalOrderLine"
+        ]
+      },
+      {
+        "name": "validatePromotionPrices",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalOrder",
+          "java.util.List",
           "io.nop.core.context.IServiceContext"
         ]
       }
@@ -47786,6 +50808,10 @@
     "fields": [
       {
         "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
         "name": "mdAcctSchemaBiz"
       }
     ],
@@ -47931,6 +50957,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -48002,6 +51032,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalDelivery",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalDeliveryApproveProcessor"
@@ -48016,6 +51053,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -48052,6 +51093,13 @@
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalDelivery",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalDelivery",
+          "io.nop.core.context.IServiceContext"
         ]
       }
     ],
@@ -48373,6 +51421,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -48454,6 +51506,13 @@
           "app.erp.sal.dao.entity.ErpSalDelivery",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalDelivery",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalDeliveryRejectProcessor"
@@ -48468,6 +51527,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -48529,6 +51592,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalDelivery",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalDeliveryReverseApproveProcessor"
@@ -48543,6 +51613,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -48608,6 +51682,13 @@
           "app.erp.sal.dao.entity.ErpSalDelivery",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalDelivery",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalDeliverySubmitForApprovalProcessor"
@@ -48622,6 +51703,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -48676,6 +51761,13 @@
           "app.erp.sal.dao.entity.ErpSalDelivery",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalDelivery",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalDeliveryWithdrawApprovalProcessor"
@@ -48690,6 +51782,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -48761,6 +51857,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalInvoiceApproveProcessor"
@@ -48779,6 +51882,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -48815,6 +51922,13 @@
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalInvoice",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalInvoice",
+          "io.nop.core.context.IServiceContext"
         ]
       }
     ],
@@ -49095,6 +52209,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -49176,6 +52294,13 @@
           "app.erp.sal.dao.entity.ErpSalInvoice",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalInvoiceRejectProcessor"
@@ -49194,6 +52319,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -49255,6 +52384,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalInvoiceReverseApproveProcessor"
@@ -49269,6 +52405,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -49334,6 +52474,13 @@
           "app.erp.sal.dao.entity.ErpSalInvoice",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalInvoiceSubmitForApprovalProcessor"
@@ -49348,6 +52495,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -49402,6 +52553,13 @@
           "app.erp.sal.dao.entity.ErpSalInvoice",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalInvoice",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalInvoiceWithdrawApprovalProcessor"
@@ -49416,6 +52574,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -49515,6 +52677,13 @@
           "app.erp.sal.dao.entity.ErpSalOrder",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalOrderApproveProcessor"
@@ -49529,6 +52698,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -49572,6 +52745,13 @@
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalOrder",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalOrder",
+          "io.nop.core.context.IServiceContext"
         ]
       }
     ],
@@ -49619,6 +52799,10 @@
       {
         "allowWrite": true,
         "name": "reverseApproveProcessor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stockBalanceBiz"
       },
       {
         "allowWrite": true,
@@ -49743,6 +52927,18 @@
         ]
       },
       {
+        "name": "resolveAvailabilityCheckLevel",
+        "parameterTypes": []
+      },
+      {
+        "name": "resolveAvailableQuantity",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.lang.Long",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "resolveBudgetSubjectId",
         "parameterTypes": [
           "java.lang.String"
@@ -49804,6 +53000,13 @@
         ]
       },
       {
+        "name": "validateOrderAvailability",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "validateTransitionForApprove",
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalOrder",
@@ -49858,6 +53061,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -49939,6 +53146,13 @@
           "app.erp.sal.dao.entity.ErpSalOrder",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalOrderRejectProcessor"
@@ -49953,6 +53167,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -50028,6 +53246,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalOrderReverseApproveProcessor"
@@ -50042,6 +53267,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -50107,6 +53336,13 @@
           "app.erp.sal.dao.entity.ErpSalOrder",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalOrderSubmitForApprovalProcessor"
@@ -50121,6 +53357,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -50175,6 +53415,13 @@
           "app.erp.sal.dao.entity.ErpSalOrder",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalOrder",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalOrderWithdrawApprovalProcessor"
@@ -50189,6 +53436,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -50267,6 +53518,13 @@
           "app.erp.sal.dao.entity.ErpSalQuotation",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalQuotation",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalQuotationApproveProcessor"
@@ -50281,6 +53539,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -50317,6 +53579,13 @@
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalQuotation",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalQuotation",
+          "io.nop.core.context.IServiceContext"
         ]
       }
     ],
@@ -50688,6 +53957,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -50769,6 +54042,13 @@
           "app.erp.sal.dao.entity.ErpSalQuotation",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalQuotation",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalQuotationRejectProcessor"
@@ -50783,6 +54063,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -50851,6 +54135,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalQuotation",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalQuotationReverseApproveProcessor"
@@ -50865,6 +54156,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -50930,6 +54225,13 @@
           "app.erp.sal.dao.entity.ErpSalQuotation",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalQuotation",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalQuotationSubmitForApprovalProcessor"
@@ -50944,6 +54246,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -50998,6 +54304,13 @@
           "app.erp.sal.dao.entity.ErpSalQuotation",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalQuotation",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalQuotationWithdrawApprovalProcessor"
@@ -51012,6 +54325,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -51083,6 +54400,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReceipt",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReceiptApproveProcessor"
@@ -51101,6 +54425,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -51137,6 +54465,13 @@
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalReceipt",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReceipt",
+          "io.nop.core.context.IServiceContext"
         ]
       }
     ],
@@ -51366,6 +54701,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -51447,6 +54786,13 @@
           "app.erp.sal.dao.entity.ErpSalReceipt",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReceipt",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReceiptRejectProcessor"
@@ -51465,6 +54811,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -51526,6 +54876,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReceipt",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReceiptReverseApproveProcessor"
@@ -51610,6 +54967,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -51675,6 +55036,13 @@
           "app.erp.sal.dao.entity.ErpSalReceipt",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReceipt",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReceiptSubmitForApprovalProcessor"
@@ -51689,6 +55057,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -51743,6 +55115,13 @@
           "app.erp.sal.dao.entity.ErpSalReceipt",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReceipt",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReceiptWithdrawApprovalProcessor"
@@ -51765,6 +55144,10 @@
       {
         "allowWrite": true,
         "name": "refundOrchestrator"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -51836,6 +55219,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReturnApproveProcessor"
@@ -51850,6 +55240,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -51886,6 +55280,13 @@
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalReturn",
           "java.lang.String"
+        ]
+      },
+      {
+        "name": "validateTransitionForCancel",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReturn",
+          "io.nop.core.context.IServiceContext"
         ]
       }
     ],
@@ -52017,6 +55418,13 @@
         ]
       },
       {
+        "name": "findPeriodByDate",
+        "parameterTypes": [
+          "java.lang.Long",
+          "java.time.LocalDate"
+        ]
+      },
+      {
         "name": "illegalDocTransition",
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalReturn",
@@ -52082,6 +55490,13 @@
         ]
       },
       {
+        "name": "requirePeriodOpen",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "requireReasonIfConfigured",
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalReturn",
@@ -52136,6 +55551,13 @@
         ]
       },
       {
+        "name": "updateUndeliveredQuantity",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
         "name": "validateBusinessRulesForApprove",
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalReturn",
@@ -52146,6 +55568,14 @@
         "name": "validateBusinessRulesForSubmit",
         "parameterTypes": [
           "app.erp.sal.dao.entity.ErpSalReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
+      },
+      {
+        "name": "validateInvoiceNotSettled",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReturn",
+          "java.util.List",
           "io.nop.core.context.IServiceContext"
         ]
       },
@@ -52211,6 +55641,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -52292,6 +55726,13 @@
           "app.erp.sal.dao.entity.ErpSalReturn",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForReject",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReturnRejectProcessor"
@@ -52306,6 +55747,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -52367,6 +55812,13 @@
       {
         "name": "submittedStatus",
         "parameterTypes": []
+      },
+      {
+        "name": "validateTransitionForReverseApprove",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReturnReverseApproveProcessor"
@@ -52381,6 +55833,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -52446,6 +55902,13 @@
           "app.erp.sal.dao.entity.ErpSalReturn",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForSubmit",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReturnSubmitForApprovalProcessor"
@@ -52460,6 +55923,10 @@
       {
         "allowWrite": true,
         "name": "processor"
+      },
+      {
+        "allowWrite": true,
+        "name": "stateMachine"
       }
     ],
     "methods": [
@@ -52514,9 +55981,136 @@
           "app.erp.sal.dao.entity.ErpSalReturn",
           "io.nop.core.context.IServiceContext"
         ]
+      },
+      {
+        "name": "validateTransitionForWithdraw",
+        "parameterTypes": [
+          "app.erp.sal.dao.entity.ErpSalReturn",
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "app.erp.sal.service.processor.ErpSalReturnWithdrawApprovalProcessor"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalDeliveryApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalDeliveryDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalInvoiceApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalInvoiceDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalOrderApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalOrderDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalQuotationApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalQuotationDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalReceiptApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalReceiptDocumentStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalReturnApprovalStateMachine"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "app.erp.sal.service.statemachine.ErpSalReturnDocumentStateMachine"
   },
   {
     "allDeclaredConstructors": true,
@@ -53332,6 +56926,16 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "io.nop.auth.api.messages.MfaVerifyRequest"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "io.nop.auth.api.messages.RefreshTokenRequest"
   },
   {
@@ -53389,6 +56993,10 @@
           "java.lang.String",
           "io.nop.http.api.server.IHttpServerContext"
         ]
+      },
+      {
+        "name": "authCookieName",
+        "parameterTypes": []
       },
       {
         "name": "buildLoginUrlWithState",
@@ -53521,6 +57129,16 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [
+      {
+        "name": "ensureKeys",
+        "parameterTypes": []
+      },
+      {
+        "name": "getKey",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
       {
         "name": "getSignKey",
         "parameterTypes": []
@@ -53656,6 +57274,66 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "io.nop.auth.core.mfa.store.LocalMfaChallengeStore"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.core.mfa.store.LocalSmsCodeStore"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.core.mfa.store.MfaChallengeStore"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.core.mfa.store.MfaChallengeStoreConfig"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.core.mfa.store.SmsCodeStore"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.core.mfa.store.SmsCodeStoreConfig"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "io.nop.auth.core.model.ActionAuthModel"
   },
   {
@@ -53732,6 +57410,16 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.core.totp.TOTPAuthenticator"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
     "methods": [
       {
         "name": "requireUser",
@@ -53791,6 +57479,36 @@
     "fields": [],
     "methods": [],
     "name": "io.nop.auth.dao.entity.NopAuthGroupUser"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.dao.entity.NopAuthMfaChallenge"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.dao.entity.NopAuthMfaRecoveryCode"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.dao.entity.NopAuthMfaSetting"
   },
   {
     "allDeclaredConstructors": true,
@@ -53871,6 +57589,16 @@
     "fields": [],
     "methods": [],
     "name": "io.nop.auth.dao.entity.NopAuthSite"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.dao.entity.NopAuthSmsCode"
   },
   {
     "allDeclaredConstructors": true,
@@ -54000,6 +57728,51 @@
         "parameterTypes": []
       }
     ],
+    "name": "io.nop.auth.dao.entity._gen._NopAuthMfaChallenge"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "newInstance",
+        "parameterTypes": []
+      }
+    ],
+    "name": "io.nop.auth.dao.entity._gen._NopAuthMfaRecoveryCode"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "newInstance",
+        "parameterTypes": []
+      }
+    ],
+    "name": "io.nop.auth.dao.entity._gen._NopAuthMfaSetting"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "newInstance",
+        "parameterTypes": []
+      }
+    ],
     "name": "io.nop.auth.dao.entity._gen._NopAuthOpLog"
   },
   {
@@ -54106,6 +57879,21 @@
       }
     ],
     "name": "io.nop.auth.dao.entity._gen._NopAuthSite"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [
+      {
+        "name": "newInstance",
+        "parameterTypes": []
+      }
+    ],
+    "name": "io.nop.auth.dao.entity._gen._NopAuthSmsCode"
   },
   {
     "allDeclaredConstructors": true,
@@ -54273,6 +58061,12 @@
         "parameterTypes": [
           "io.nop.api.core.auth.IUserContext"
         ]
+      },
+      {
+        "name": "extractClientIp",
+        "parameterTypes": [
+          "io.nop.core.context.IServiceContext"
+        ]
       }
     ],
     "name": "io.nop.auth.service.biz.LoginApiBizModel"
@@ -54299,6 +58093,46 @@
       }
     ],
     "name": "io.nop.auth.service.biz.SiteMapApiBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.biz.dto.MfaBindResult"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.biz.dto.MfaStatusResult"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.channel.ChannelBindServiceImpl"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.channel.UserChannelResolverImpl"
   },
   {
     "allDeclaredConstructors": true,
@@ -54349,6 +58183,36 @@
     "fields": [],
     "methods": [],
     "name": "io.nop.auth.service.entity.NopAuthGroupUserBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.entity.NopAuthMfaChallengeBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.entity.NopAuthMfaRecoveryCodeBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.entity.NopAuthMfaSettingBizModel"
   },
   {
     "allDeclaredConstructors": true,
@@ -54489,6 +58353,16 @@
     "allPublicMethods": true,
     "fields": [],
     "methods": [],
+    "name": "io.nop.auth.service.entity.NopAuthSmsCodeBizModel"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
     "name": "io.nop.auth.service.entity.NopAuthTenantBizModel"
   },
   {
@@ -54505,6 +58379,18 @@
       {
         "allowWrite": true,
         "name": "passwordPolicy"
+      },
+      {
+        "allowWrite": true,
+        "name": "smsCodeStore"
+      },
+      {
+        "allowWrite": true,
+        "name": "smsSender"
+      },
+      {
+        "allowWrite": true,
+        "name": "totpAuthenticator"
       },
       {
         "allowWrite": true,
@@ -54589,7 +58475,23 @@
       },
       {
         "allowWrite": true,
+        "name": "mfaChallengeStore"
+      },
+      {
+        "allowWrite": true,
         "name": "passwordEncoder"
+      },
+      {
+        "allowWrite": true,
+        "name": "smsCodeStore"
+      },
+      {
+        "allowWrite": true,
+        "name": "smsSender"
+      },
+      {
+        "allowWrite": true,
+        "name": "totpAuthenticator"
       },
       {
         "allowWrite": true,
@@ -54619,6 +58521,37 @@
         "parameterTypes": [
           "io.nop.auth.dao.entity.NopAuthUser",
           "io.nop.auth.api.messages.LoginRequest"
+        ]
+      },
+      {
+        "name": "checkMfaRequired",
+        "parameterTypes": [
+          "io.nop.auth.dao.entity.NopAuthUser",
+          "int"
+        ]
+      },
+      {
+        "name": "checkSmsRateLimit",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "completeLogin",
+        "parameterTypes": [
+          "io.nop.auth.dao.entity.NopAuthUser",
+          "io.nop.auth.api.messages.LoginRequest",
+          "java.util.Map",
+          "boolean",
+          "boolean"
+        ]
+      },
+      {
+        "name": "completeMfaLogin",
+        "parameterTypes": [
+          "io.nop.auth.dao.entity.NopAuthUser",
+          "int"
         ]
       },
       {
@@ -54665,15 +58598,120 @@
         ]
       },
       {
+        "name": "incrFailCountOrDiscard",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "loadMfaSetting",
+        "parameterTypes": [
+          "java.lang.String"
+        ]
+      },
+      {
         "name": "saveSession",
         "parameterTypes": [
           "io.nop.auth.core.login.UserContextImpl",
           "io.nop.auth.api.messages.LoginRequest",
           "java.util.Map"
         ]
+      },
+      {
+        "name": "sendSms",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "syntheticRequest",
+        "parameterTypes": [
+          "int"
+        ]
+      },
+      {
+        "name": "verifyRecoveryCode",
+        "parameterTypes": [
+          "java.lang.String",
+          "java.lang.String"
+        ]
+      },
+      {
+        "name": "verifyRecoveryCodeAndComplete",
+        "parameterTypes": [
+          "io.nop.auth.api.messages.MfaVerifyRequest",
+          "io.nop.auth.core.mfa.store.MfaChallenge",
+          "io.nop.auth.dao.entity.NopAuthUser",
+          "io.nop.auth.dao.entity.NopAuthMfaSetting"
+        ]
+      },
+      {
+        "name": "verifySecondFactorAndComplete",
+        "parameterTypes": [
+          "io.nop.auth.api.messages.MfaVerifyRequest",
+          "io.nop.auth.core.mfa.store.MfaChallenge",
+          "io.nop.auth.dao.entity.NopAuthUser",
+          "io.nop.auth.dao.entity.NopAuthMfaSetting"
+        ]
+      },
+      {
+        "name": "verifyTotp",
+        "parameterTypes": [
+          "io.nop.auth.dao.entity.NopAuthMfaSetting",
+          "java.lang.String"
+        ]
       }
     ],
     "name": "io.nop.auth.service.login.LoginServiceImpl"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "io.nop.auth.service.mfa.MfaStoreProvider"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "jdbcTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "io.nop.auth.service.mfa.store.DbMfaChallengeStore"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [
+      {
+        "allowWrite": true,
+        "name": "daoProvider"
+      },
+      {
+        "allowWrite": true,
+        "name": "jdbcTemplate"
+      }
+    ],
+    "methods": [],
+    "name": "io.nop.auth.service.mfa.store.DbSmsCodeStore"
   },
   {
     "allDeclaredConstructors": true,
@@ -62334,6 +66372,21 @@
     "allPublicFields": true,
     "allPublicMethods": true,
     "fields": [],
+    "methods": [
+      {
+        "name": "definitionDao",
+        "parameterTypes": []
+      }
+    ],
+    "name": "io.nop.wf.service.designer.WorkflowDesignerService"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
     "methods": [],
     "name": "io.nop.wf.service.entity.NopWfActionBizModel"
   },
@@ -63955,6 +68008,16 @@
     "fields": [],
     "methods": [],
     "name": "java.util.Collection"
+  },
+  {
+    "allDeclaredConstructors": true,
+    "allDeclaredMethods": true,
+    "allPublicConstructors": true,
+    "allPublicFields": true,
+    "allPublicMethods": true,
+    "fields": [],
+    "methods": [],
+    "name": "java.util.Collections$UnmodifiableMap"
   },
   {
     "allDeclaredConstructors": true,
