@@ -1,6 +1,6 @@
 # 2026-08-15-1605-3-rc-mr1-r1-40-md-price-validation-level-default-convergence RC-R1.40 — master-data priceValidationLevel 默认值收敛（MR1 第一批纯预授权）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-15
 > Mission: requirement-compliance
 > Work Item: RC-R1.40（P2-RC-057：ErpMdMaterialCategory.priceValidationLevel defaultValue "20" → "WARN"，不改表结构/既有数据/行为）
@@ -22,7 +22,7 @@
 - **defaultValue 收敛（P2-RC-057 方案 A 落地）**：`ErpMdMaterialCategory.priceValidationLevel` defaultValue `"20"` → `"WARN"`——新创建分类未显式赋值时物化字典合法值 WARN，孤儿非字典值从模型消除（字典契约收敛）。
 - **行为不变性证明**：新分类默认校验级别 WARN 语义（修复前后一致——"20" 经 resolvePriceValidationLevel 亦归 WARN）；既有行/既有测试零影响。
 - **重生成干净**：`mvn clean install -DskipTests` 增量重生成通过，生成产物（XMeta/DDL）defaultValue 同步且零意外漂移。
-- **验证**：erp-md-service 143 tests 零回归 + 新增 1 个收敛断言测试（不显式赋值创建分类 → 持久化默认 "WARN"）+ 全量构建 + compliance checker 零漂移。
+- **验证**：erp-md-service 143 tests 零回归 + 新增 3 个收敛/兜底断言测试（defaultValue 物化 WARN + 显式 OFF/WARN/HARD 不受影响 + 非字典值兜底回归）+ 全量构建 + compliance checker 零漂移。
 - **回填**：arm-index P2-RC-057 → `done (RC-R1.40)` + roadmap 行 → done ✅ + owner doc 收敛注记 + `docs/logs/2026/08-15.md` 日志条目。
 
 ## Non-Goals
@@ -51,53 +51,53 @@
 
 ### Phase 1 - ORM defaultValue 收敛 + 重生成
 
-Status: planned
+Status: completed
 Targets: `module-master-data/model/app-erp-master-data.orm.xml`（:344 单行）+ 全量重生成
 Item Types: `Fix | Proof`
 Skill: `nop-backend-dev`
 
-- [ ] `priceValidationLevel` 列 defaultValue `"20"` → `"WARN"`（仅属性文本修改，其余列定义不动）；`xmllint --noout` well-formed 校验
+- [x] `priceValidationLevel` 列 defaultValue `"20"` → `"WARN"`（仅属性文本修改，其余列定义不动）；`xmllint --noout` well-formed 校验
   - Skill: `nop-backend-dev`
-- [ ] Proof: `mvn clean install -DskipTests` 增量重生成通过 + 生成产物核对——XMeta `_ErpMdMaterialCategory.xmeta` defaultValue 同步为 "WARN"（若模板传播）+ DDL default 子句更新为 `default 'WARN'`（**defaultValue 令牌同步属预期变化，仅核对无结构性漂移**——DDL 结构/索引/UK 零变更）+ 全仓 grep `priceValidationLevel` 生成侧无 "20" 残留（`_gen` 注释/i18n 核对）
+- [x] Proof: `mvn clean install -DskipTests` 增量重生成通过 + 生成产物核对——XMeta `_ErpMdMaterialCategory.xmeta` defaultValue 同步为 "WARN"（若模板传播）+ DDL default 子句更新为 `default 'WARN'`（**defaultValue 令牌同步属预期变化，仅核对无结构性漂移**——DDL 结构/索引/UK 零变更）+ 全仓 grep `priceValidationLevel` 生成侧无 "20" 残留（`_gen` 注释/i18n 核对）
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] orm.xml 单行收敛 + well-formed + 全量构建通过（重生成干净，无编译错误/无生成产物意外漂移）
-- [ ] 生成侧（XMeta/DDL/i18n）defaultValue "WARN" 同步确认或「不传播」事实记录
+- [x] orm.xml 单行收敛 + well-formed + 全量构建通过（重生成干净，无编译错误/无生成产物意外漂移）
+- [x] 生成侧（XMeta/DDL/i18n）defaultValue "WARN" 同步确认或「不传播」事实记录
 
 ### Phase 2 - 测试与验证
 
-Status: planned
+Status: completed
 Targets: `module-master-data/erp-md-service/src/test`（新增收敛断言）+ 全量验证
 Item Types: `Add | Proof`
 Skill: `nop-testing`
 
-- [ ] 新增收敛断言测试（对齐既有 TestErpMd* 范式）：不显式赋值创建 ErpMdMaterialCategory → 持久化 `priceValidationLevel == "WARN"`（defaultValue 物化断言）+ 显式赋值 OFF/WARN/HARD 路径不受影响
-- [ ] 新增非字典值兜底回归断言（无条件项）：既有 "20" 值行 resolve 行为——`resolvePriceValidationLevel` 非字典值→WARN 兜底保留断言（既有 4 个校验测试仅覆盖 OFF/WARN/HARD/高于底线，非字典兜底路径确实零覆盖——本项补缺口，修复后行为不变性证明）
-- [ ] Proof: `mvn test -pl module-master-data/erp-md-service` 143 基线 + 新增全绿 + 全量 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh` actual==baseline 零漂移（零新增 daoFor/import 面）
+- [x] 新增收敛断言测试（对齐既有 TestErpMd* 范式）：不显式赋值创建 ErpMdMaterialCategory → 持久化 `priceValidationLevel == "WARN"`（defaultValue 物化断言）+ 显式赋值 OFF/WARN/HARD 路径不受影响
+- [x] 新增非字典值兜底回归断言（无条件项）：既有 "20" 值行 resolve 行为——`resolvePriceValidationLevel` 非字典值→WARN 兜底保留断言（既有 4 个校验测试仅覆盖 OFF/WARN/HARD/高于底线，非字典兜底路径确实零覆盖——本项补缺口，修复后行为不变性证明）
+- [x] Proof: `mvn test -pl module-master-data/erp-md-service` 143 基线 + 新增全绿 + 全量 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh` actual==baseline 零漂移（零新增 daoFor/import 面）
   - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 收敛断言 + 兜底回归断言测试 GREEN + erp-md-service 既有 143 tests 零回归
-- [ ] 全量构建通过 + checker 零漂移（R2c=1399 / R10=9 不变）
+- [x] 收敛断言 + 兜底回归断言测试 GREEN + erp-md-service 既有 143 tests 零回归
+- [x] 全量构建通过 + checker 零漂移（R2c=1399 / R10=9 不变）
 
 ### Phase 3 - 回填
 
-Status: planned
+Status: completed
 Targets: arm-index + roadmap + owner doc + docs/logs
 Item Types: `Follow-up`
 Skill: `none`
 
-- [ ] arm-index P2-RC-057 → `done (RC-R1.40)`（含修复落地摘要：A5 裁决引用 + defaultValue 收敛 + 行为不变性证明 + 数据卫生 successor）
-- [ ] roadmap RC-R1.40 行 → done ✅（含落地摘要）
-- [ ] owner doc 注记：master-data 价格校验描述处（sku-multi-unit.md 或对应价格校验节）补收敛实现注记（defaultValue "WARN" + 既有 "20" 值行语义不变 + 数据卫生迁移 successor）
-- [ ] `docs/logs/2026/08-15.md` 顶部追加本计划落地日志条目（格式见 `docs/logs/00-log-writing-guide.md`）
+- [x] arm-index P2-RC-057 → `done (RC-R1.40)`（含修复落地摘要：A5 裁决引用 + defaultValue 收敛 + 行为不变性证明 + 数据卫生 successor）
+- [x] roadmap RC-R1.40 行 → done ✅（含落地摘要）
+- [x] owner doc 注记：master-data 价格校验描述处（sku-multi-unit.md 或对应价格校验节）补收敛实现注记（defaultValue "WARN" + 既有 "20" 值行语义不变 + 数据卫生迁移 successor）
+- [x] `docs/logs/2026/08-15.md` 顶部追加本计划落地日志条目（格式见 `docs/logs/00-log-writing-guide.md`）
 
 Exit Criteria:
 
-- [ ] 回填完成且与 roadmap/arm-index/owner doc/logs 四源一致
+- [x] 回填完成且与 roadmap/arm-index/owner doc/logs 四源一致
 
 ## Draft Review Record
 
@@ -106,14 +106,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（defaultValue 收敛 + 行为不变 + 重生成干净）
-- [ ] 相关文档对齐（owner doc 注记 + arm-index + roadmap + logs）
-- [ ] 已运行验证（`mvn test -pl module-master-data/erp-md-service` + 全量 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh` 零漂移）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（defaultValue 收敛 + 行为不变 + 重生成干净）
+- [x] 相关文档对齐（owner doc 注记 + arm-index + roadmap + logs）
+- [x] 已运行验证（`mvn test -pl module-master-data/erp-md-service` + 全量 `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh` 零漂移）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -125,12 +125,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <pending closure>
+Status Note: completed（2026-08-15 独立结束审计 ACCEPT 后关闭）
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <pending>
-- Evidence: <pending>
+- Auditor / Agent: independent subagent `ses_ffb15c809ffejkBg5UveGPIlPy`（新会话，无执行者上下文）
+- Evidence: 三 Phase 全绿 + 实仓核对（orm.xml:344 defaultValue="WARN" 仅属性单行变更 + XMeta/DDL/_app.orm.xml 同步 + BizModel 注释-only + 3 新测试断言三语义 + 4 快照 CSV 仅 PRICE_VALIDATION_LEVEL 20→WARN）+ 验证复跑（`mvn test -pl module-master-data/erp-md-service` 146/146 + checker R2c=1399/R10=9 零漂移 + sales TestErpSalPricingCompliance 10/10）+ 四源回填一致（arm-index 9-pipe 行结构完好 / roadmap done ✅ / sku-multi-unit.md 注记 / logs 顶部条目）+ 1 项非阻塞 WARN（Goals 测试计数措辞）已由执行者修订后复核一致 → **ACCEPT**
 
 Follow-up:
 
