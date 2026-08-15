@@ -141,6 +141,8 @@
 | COMPLETED | 恢复为 RUNNING 或 IDLE（根据之前状态） |
 | CANCELLED | 不变（或恢复） |
 
+> **§3.3 双分支实现注记（RC-R1.39 / P2-RC-061）**：「恢复为 RUNNING 或 IDLE（根据之前状态）」已实现（visit 路径，`EquipmentStatusLinker`）：`restoreToRunning` 补 IDLE 分支——`linkToUnderMaintenance`（visit start）前置读取设备当前状态，**仅当前==IDLE 时**写入内部 transient 前态缓存 `priorStatusCache`（`ConcurrentHashMap<Long,String>` 包级可见，`MAX_CACHE_ENTRIES=1024` 超限清空 fail-safe）；complete/cancel 恢复时消费缓存：命中 IDLE → 恢复 IDLE（先 remove 再恢复防并发重复消费），未命中（RUNNING 来源/停机路径/缓存缺失）→ 恢复 RUNNING。停机路径（`linkToDown`）不捕获前态，恢复恒 RUNNING（§4.3「更新设备状态为 RUNNING」字面语义，行为零变化）。**残余风险（watch-only）**：缓存为 JVM 内存态——①容器重启/多实例部署缓存丢失 → 回退 RUNNING（= 现状已接受行为，非新退化）；②缓存写入非事务性——`linkToUnderMaintenance` 所在事务回滚后 IDLE 条目残留，污染该设备下一次 restore（恢复 IDLE 而非 RUNNING），方向保守且条目在下一次 linkTo* 覆盖或 restore 消费时清除；③异常路径悬挂条目由下一次 restore 消费或 linkTo* 覆盖清除；④并发同设备双维护由既有 @Version 乐观锁兜底。**Successor 备选**：持久化前态快照列 `ErpMntEquipment.preMaintenanceStatus`（2026-08-08 §7 A4 人工裁决已排除当前实施，需求立项后按 ask-first 流程评估）。测试证据：`TestErpMntVisitRequestStateMachine#testVisitCompleteFromIdleEquipmentRestoresIdle`（IDLE 输入 complete 恢复 IDLE）/`#testVisitCancelFromIdleEquipmentRestoresIdle`（cancel 同语义）/`#testVisitCompleteFromDownEquipmentRestoresRunning`（DOWN 非缓存态回退 RUNNING）/`#testRestoreWithoutPriorLinkFallsBackToRunning`（缓存缺失回退）/`#testVisitHappyPathWithEquipmentLink`（RUNNING 回归）。
+
 ---
 
 ## 四、停机记录与排产影响
