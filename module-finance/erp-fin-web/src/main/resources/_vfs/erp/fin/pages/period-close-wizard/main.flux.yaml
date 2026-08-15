@@ -156,6 +156,11 @@ body:
     - type: text
       text: 一次性执行反结账（红冲结转凭证 + 解锁业务单据 + 重开期间）。反结账后期间状态回退至 OPEN。
       className: text-warning m-b
+    - type: input-text
+      name: reverseCloseReason
+      label: 反结账原因（必填，审计要求）
+      required: true
+      placeholder: 请输入反结账原因（如：更正XX凭证错误）
     - type: button
       label: 执行反结账
       actionType: ajax
@@ -165,6 +170,7 @@ body:
         method: post
         data:
           periodId: ${periodId}
+          reason: ${reverseCloseReason}
       confirmText: 最后确认：执行反结账？此操作将红冲本期结转凭证并重开期间，不可撤销。
       visible: ${periodData?.status == "CLOSED" || periodData?.status == "CLOSED_FINAL"}
       target: periodData

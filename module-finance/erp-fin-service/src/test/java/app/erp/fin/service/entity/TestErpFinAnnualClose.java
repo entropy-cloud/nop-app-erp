@@ -80,7 +80,7 @@ public class TestErpFinAnnualClose extends PeriodCloseTestSupport {
 
         // 最终锁定后尝试反结账：次年期间已创建 → 阻止。
         ormTemplate.runInSession(() -> periodBiz.finalizePeriod(periodId, CTX));
-        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, CTX)),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, "测试反结账原因", CTX)),
                 "次年期间已存在时反结账被阻止");
     }
 

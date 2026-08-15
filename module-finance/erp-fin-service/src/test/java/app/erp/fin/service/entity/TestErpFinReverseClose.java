@@ -33,7 +33,7 @@ public class TestErpFinReverseClose extends PeriodCloseTestSupport {
         assertEquals(0, netCredit("6001", periodId).compareTo(BigDecimal.ZERO),
                 "结账后收入科目净额清零");
 
-        ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, CTX));
+        ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, "测试反结账原因", CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_OPEN, period.getStatus(), "反结账后期间回开 OPEN");
 
         assertEquals(0, netCredit("6001", periodId).compareTo(new BigDecimal("100")),

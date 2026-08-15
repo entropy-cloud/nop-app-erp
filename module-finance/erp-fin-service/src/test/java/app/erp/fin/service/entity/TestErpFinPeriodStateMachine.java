@@ -59,7 +59,7 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
         assertEquals(ErpFinConstants.PERIOD_STATUS_CLOSED_FINAL, period.getStatus(), "最终锁定 CLOSED_FINAL");
 
         // CLOSED_FINAL → OPEN（反结账，审批门控已关闭）
-        period = ormTemplate.runInSession(session -> periodCloseBiz.reverseClose(periodId, CTX));
+        period = ormTemplate.runInSession(session -> periodCloseBiz.reverseClose(periodId, "状态机反结账原因", CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_OPEN, period.getStatus(), "反结账后回开 OPEN");
 
         // 反结账后可重新结账（幂等重结，§反结账步骤7）
@@ -78,7 +78,7 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
                 "OPEN 不允许最终锁定");
 
         // reverseClose 要求 CLOSED_FINAL，当前 OPEN → 拒绝
-        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodCloseBiz.reverseClose(periodId, CTX)),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodCloseBiz.reverseClose(periodId, "测试反结账原因", CTX)),
                 "OPEN 不允许反结账");
 
         // 结账到 CLOSED
@@ -88,7 +88,7 @@ public class TestErpFinPeriodStateMachine extends JunitAutoTestCase {
                 "CLOSED 不允许再次结账");
 
         // reverseClose 要求 CLOSED_FINAL，当前 CLOSED（未最终锁定）→ 拒绝
-        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodCloseBiz.reverseClose(periodId, CTX)),
+        assertThrows(NopException.class, () -> ormTemplate.runInSession(session -> periodCloseBiz.reverseClose(periodId, "测试反结账原因", CTX)),
                 "CLOSED（未最终锁定）不允许反结账");
     }
 

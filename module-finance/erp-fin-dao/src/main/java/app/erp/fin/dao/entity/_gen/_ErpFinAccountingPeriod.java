@@ -97,8 +97,20 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 19;
     
+    /* 反结账人: REVERSED_BY VARCHAR */
+    public static final String PROP_NAME_reversedBy = "reversedBy";
+    public static final int PROP_ID_reversedBy = 20;
+    
+    /* 反结账原因: REVERSE_CLOSE_REASON VARCHAR */
+    public static final String PROP_NAME_reverseCloseReason = "reverseCloseReason";
+    public static final int PROP_ID_reverseCloseReason = 21;
+    
+    /* 反结账时间: REVERSE_CLOSE_AT TIMESTAMP */
+    public static final String PROP_NAME_reverseCloseAt = "reverseCloseAt";
+    public static final int PROP_ID_reverseCloseAt = 22;
+    
 
-    private static int _PROP_ID_BOUND = 20;
+    private static int _PROP_ID_BOUND = 23;
 
     
     /* relation:  */
@@ -111,7 +123,7 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[20];
+    private static final String[] PROP_ID_TO_NAME = new String[23];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -172,6 +184,15 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_reversedBy] = PROP_NAME_reversedBy;
+          PROP_NAME_TO_ID.put(PROP_NAME_reversedBy, PROP_ID_reversedBy);
+      
+          PROP_ID_TO_NAME[PROP_ID_reverseCloseReason] = PROP_NAME_reverseCloseReason;
+          PROP_NAME_TO_ID.put(PROP_NAME_reverseCloseReason, PROP_ID_reverseCloseReason);
+      
+          PROP_ID_TO_NAME[PROP_ID_reverseCloseAt] = PROP_NAME_reverseCloseAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_reverseCloseAt, PROP_ID_reverseCloseAt);
+      
     }
 
     
@@ -231,6 +252,15 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 反结账人: REVERSED_BY */
+    private java.lang.String _reversedBy;
+    
+    /* 反结账原因: REVERSE_CLOSE_REASON */
+    private java.lang.String _reverseCloseReason;
+    
+    /* 反结账时间: REVERSE_CLOSE_AT */
+    private java.sql.Timestamp _reverseCloseAt;
     
 
     public _ErpFinAccountingPeriod(){
@@ -362,6 +392,15 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_reversedBy:
+               return getReversedBy();
+        
+            case PROP_ID_reverseCloseReason:
+               return getReverseCloseReason();
+        
+            case PROP_ID_reverseCloseAt:
+               return getReverseCloseAt();
         
            default:
               return super.orm_propValue(propId);
@@ -564,6 +603,36 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_reversedBy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_reversedBy));
+               }
+               setReversedBy(typedValue);
+               break;
+            }
+        
+            case PROP_ID_reverseCloseReason:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_reverseCloseReason));
+               }
+               setReverseCloseReason(typedValue);
+               break;
+            }
+        
+            case PROP_ID_reverseCloseAt:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
+                       err-> newTypeConversionError(PROP_NAME_reverseCloseAt));
+               }
+               setReverseCloseAt(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -702,6 +771,27 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_reversedBy:{
+               onInitProp(propId);
+               this._reversedBy = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_reverseCloseReason:{
+               onInitProp(propId);
+               this._reverseCloseReason = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_reverseCloseAt:{
+               onInitProp(propId);
+               this._reverseCloseAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1069,6 +1159,63 @@ public class _ErpFinAccountingPeriod extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 反结账人: REVERSED_BY
+     */
+    public final java.lang.String getReversedBy(){
+         onPropGet(PROP_ID_reversedBy);
+         return _reversedBy;
+    }
+
+    /**
+     * 反结账人: REVERSED_BY
+     */
+    public final void setReversedBy(java.lang.String value){
+        if(onPropSet(PROP_ID_reversedBy,value)){
+            this._reversedBy = value;
+            internalClearRefs(PROP_ID_reversedBy);
+            
+        }
+    }
+    
+    /**
+     * 反结账原因: REVERSE_CLOSE_REASON
+     */
+    public final java.lang.String getReverseCloseReason(){
+         onPropGet(PROP_ID_reverseCloseReason);
+         return _reverseCloseReason;
+    }
+
+    /**
+     * 反结账原因: REVERSE_CLOSE_REASON
+     */
+    public final void setReverseCloseReason(java.lang.String value){
+        if(onPropSet(PROP_ID_reverseCloseReason,value)){
+            this._reverseCloseReason = value;
+            internalClearRefs(PROP_ID_reverseCloseReason);
+            
+        }
+    }
+    
+    /**
+     * 反结账时间: REVERSE_CLOSE_AT
+     */
+    public final java.sql.Timestamp getReverseCloseAt(){
+         onPropGet(PROP_ID_reverseCloseAt);
+         return _reverseCloseAt;
+    }
+
+    /**
+     * 反结账时间: REVERSE_CLOSE_AT
+     */
+    public final void setReverseCloseAt(java.sql.Timestamp value){
+        if(onPropSet(PROP_ID_reverseCloseAt,value)){
+            this._reverseCloseAt = value;
+            internalClearRefs(PROP_ID_reverseCloseAt);
             
         }
     }

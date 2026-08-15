@@ -669,6 +669,9 @@
                 <column name="status" displayName="期间状态" ext:dict="erp-fin/period-status" mandatory="true" code="STATUS" propId="11" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="closedBy" stdDomain="userId" displayName="结账人" stdSqlType="VARCHAR" precision="36" code="CLOSED_BY" propId="12" stdDataType="string" i18n-en:displayName='Closed By' />
                 <column name="closedAt" displayName="结账时间" stdSqlType="TIMESTAMP" code="CLOSED_AT" propId="13" tagSet="clock" i18n-en:displayName='Closed At' />
+                <column name="reversedBy" stdDomain="userId" displayName="反结账人" stdSqlType="VARCHAR" precision="36" code="REVERSED_BY" propId="20" stdDataType="string" i18n-en:displayName='Reversed By' />
+                <column name="reverseCloseReason" displayName="反结账原因" stdSqlType="VARCHAR" precision="500" code="REVERSE_CLOSE_REASON" propId="21" stdDataType="string" i18n-en:displayName='Reverse Close Reason' />
+                <column name="reverseCloseAt" displayName="反结账时间" stdSqlType="TIMESTAMP" code="REVERSE_CLOSE_AT" propId="22" tagSet="clock" i18n-en:displayName='Reverse Close At' />
                             <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="14" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="15" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="16" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />

@@ -94,7 +94,7 @@ public class TestErpFinPeriodClosePerf extends JunitAutoTestCase {
                 // 上轮 close 后期间 CLOSED；finalizePeriod → CLOSED_FINAL → reverseClose → OPEN（计时窗口外）。
                 // reverseClose 要求 CLOSED_FINAL（ErpFinAccountingPeriodReverseCloseProcessor.assertPeriodStatus）。
                 ormTemplate.runInSession(session -> periodBiz.finalizePeriod(periodId, CTX));
-                ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, CTX));
+                ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, "性能测试反结账原因", CTX));
             }
             long start = io.nop.api.core.time.CoreMetrics.nanoTime();
             ErpFinAccountingPeriod period = ormTemplate.runInSession(session -> periodBiz.closePeriod(periodId, CTX));

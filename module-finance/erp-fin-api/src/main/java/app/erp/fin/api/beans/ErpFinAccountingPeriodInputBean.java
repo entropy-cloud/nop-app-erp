@@ -195,6 +195,48 @@
         }
 
 
+        private String _reversedBy;
+
+    
+        @PropMeta(propId=20)
+    
+        public String getReversedBy(){
+            return _reversedBy;
+        }
+
+        public void setReversedBy(String value){
+            this._reversedBy = value;
+        }
+
+
+        private String _reverseCloseReason;
+
+    
+        @PropMeta(propId=21)
+    
+        public String getReverseCloseReason(){
+            return _reverseCloseReason;
+        }
+
+        public void setReverseCloseReason(String value){
+            this._reverseCloseReason = value;
+        }
+
+
+        private java.sql.Timestamp _reverseCloseAt;
+
+    
+        @PropMeta(propId=22)
+    
+        public java.sql.Timestamp getReverseCloseAt(){
+            return _reverseCloseAt;
+        }
+
+        public void setReverseCloseAt(java.sql.Timestamp value){
+            this._reverseCloseAt = value;
+        }
+
+
         private List<ErpFinAccountingPeriodStatusInputBean> _statusRecords;
 
         public List<ErpFinAccountingPeriodStatusInputBean> getStatusRecords(){

@@ -67,8 +67,10 @@ public class ErpFinAccountingPeriodBizModel extends CrudBizModel<ErpFinAccountin
 
     @Override
     @BizMutation
-    public ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId, IServiceContext context) {
-        return reverseCloseProcessor.reverseClose(periodId, context);
+    public ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId,
+                                               @Name("reason") String reason,
+                                               IServiceContext context) {
+        return reverseCloseProcessor.reverseClose(periodId, reason, context);
     }
 
     @Override

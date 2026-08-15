@@ -394,20 +394,28 @@ body:
                   body:
                     - type: tpl
                       tpl: '<div class="m-b">当前状态：<span class="label label-${currentStatus == "CLOSED_FINAL" ? "default" : "primary"}">${currentStatus}</span> → 反结账后：<span class="label label-success">OPEN</span></div>'
+                    - type: input-text
+                      name: reverseCloseReason
+                      label: "反结账原因（必填，审计要求）"
+                      required: true
+                      placeholder: "请输入反结账原因（如：更正XX凭证错误）"
+                      clearable: true
                     - type: button
                       label: "我已确认红冲影响，执行反结账"
                       level: danger
                       icon: "fa fa-unlock-alt"
                       actionType: ajax
+                      disabledOn: "${!reverseCloseReason}"
                       confirmText: "最后确认：执行反结账？此操作将红冲本期结转凭证并重开期间，不可撤销。"
                       api:
                         url: /graphql
                         method: post
                         dataType: raw
                         data:
-                          query: "mutation(${'$'}pid:Long){ ErpFinAccountingPeriod__reverseClose(periodId:${'$'}pid){ id status } }"
+                          query: "mutation(${'$'}pid:Long,${'$'}reason:String){ ErpFinAccountingPeriod__reverseClose(periodId:${'$'}pid, reason:${'$'}reason){ id status } }"
                           variables:
                             pid: "${period.id}"
+                            reason: "${reverseCloseReason}"
                         adaptor: |
                           if (payload && payload.data && payload.data.errors) {
                             return { status: 1, msg: (payload.data.errors[0] || {}).message || 'reverseClose failed' };

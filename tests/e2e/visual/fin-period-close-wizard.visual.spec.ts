@@ -113,6 +113,23 @@ test.describe('F16 — period-close-wizard flux wizard DOM structure', () => {
         { timeout: 20_000, message: 'reverse-close step should render on CLOSED period' },
       ).toContain('反结账');
 
+      // ── 3.5 RC-9 反结账审计（plan 2026-08-15-2119-1）：reason 输入控件渲染核对 ──
+      // flux wizard mountOnEnter：step body 仅当该步激活时挂载 → 先经「下一步」导航至反结账步
+      for (let i = 0; i < 6; i++) {
+        const bodyHasReason = (await page.textContent('body'))?.includes('反结账原因') ?? false;
+        if (bodyHasReason) break;
+        const nextBtn = page.getByRole('button', { name: /下一步/ }).first();
+        if (await nextBtn.count().catch(() => 0) === 0) break;
+        await nextBtn.click().catch(() => {});
+        await page.waitForTimeout(600);
+      }
+      await expect.poll(
+        async () => (await page.textContent('body')) || '',
+        { timeout: 20_000, message: 'reverse-close reason input label should render after navigating to step' },
+      ).toContain('反结账原因');
+      const reasonInputCount = await page.locator('input[type="text"], input:not([type])').count().catch(() => 0);
+      expect(reasonInputCount, 'reason input control should exist on the wizard page').toBeGreaterThan(0);
+
       // ── 4. 反结账 confirm dialog 二次确认（best-effort：依赖 closePeriod 成功使 reverseClose button 可见）──
       const reverseBtn = await page.getByRole('button', { name: /执行反结账/ }).count().catch(() => 0);
       if (reverseBtn > 0) {
@@ -127,7 +144,8 @@ test.describe('F16 — period-close-wizard flux wizard DOM structure', () => {
         // closePeriod 未成功（测试环境 org 可能缺账套配置）→ 反结账 button 不可见；wizard 渲染已由步骤标题断言覆盖
       }
     } finally {
-      await callMutationOk(page, 'ErpFinAccountingPeriod', 'reverseClose', { periodId: period.id }, 'id status').catch(() => {});
+      // RC-9：reason 必填契约——清理路径直调 reverseClose 须显式传 reason（缺失抛 ERR_REVERSE_CLOSE_REASON_REQUIRED）
+      await callMutationOk(page, 'ErpFinAccountingPeriod', 'reverseClose', { periodId: period.id, reason: 'E2E visual 清理反结账' }, 'id status').catch(() => {});
       await cleanupPeriod(page, period);
     }
   });

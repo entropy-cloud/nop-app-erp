@@ -59,6 +59,9 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      reversedBy: Reversed By
+      reverseCloseReason: Reverse Close Reason
+      reverseCloseAt: Reverse Close At
       statusRecords: Status Records
       org: null
       org.name: null

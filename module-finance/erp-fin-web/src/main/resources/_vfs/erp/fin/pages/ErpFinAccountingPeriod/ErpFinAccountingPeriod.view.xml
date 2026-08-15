@@ -20,6 +20,8 @@
 =========>status[状态信息]======
  status[期间状态] closedBy[关闭人]
  closedAt[关闭时间]
+ reversedBy[反结账人] reverseCloseReason[反结账原因]
+ reverseCloseAt[反结账时间]
 =========^audit[审计信息]=========
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
@@ -53,6 +55,20 @@
                 <cell id="orgId" filterOp="eq"/>
             </cells>
         </form>
+
+        <!-- RC-9 反结账审计（plan 2026-08-15-2119-1）：reason 必填参数收集表单（对齐 ErpFinBudgetScenario rollForward 参数化 dialog 范式） -->
+        <form id="reverseClose" editMode="add" title="反结账" i18n-en:title="Reverse Close" size="md">
+            <layout>
+ reason[反结账原因]
+</layout>
+            <cells>
+                <cell id="reason" label="反结账原因" i18n-en:label="Reason" custom="true" mandatory="true">
+                    <gen-control>
+                        <input-text placeholder="必填：请输入反结账原因（审计要求，RC-9 全程审计[操作人/原因]）"/>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
@@ -68,17 +84,27 @@
                     </messages>
                     <visibleOn>${status == 'OPEN' || status == 'CLOSING'}</visibleOn>
                 </action>
-                <action id="row-reverse-close-button" label="反结账" i18n-en:label="Un-close" level="warning" icon="fa fa-unlock">
-                    <api url="@mutation:ErpFinAccountingPeriod__reverseClose?periodId=$id"/>
-                    <confirmText>确认反结账此会计期间？</confirmText>
-                    <messages>
-                        <success>会计期间已反结账</success>
-                    </messages>
+                <!-- RC-9 反结账审计（plan 2026-08-15-2119-1）：reason 必填，经 reverseClose 表单 dialog 收集后落库审计轨迹 -->
+                <action id="row-reverse-close-button" label="反结账" i18n-en:label="Un-close" level="warning" icon="fa fa-unlock"
+                        actionType="dialog">
+                    <dialog page="reverseClose" size="md"/>
                     <visibleOn>${status == 'CLOSED' || status == 'CLOSED_FINAL'}</visibleOn>
                 </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
+        <!-- RC-9 反结账提交页（reason 必填，提交 reverseClose(periodId, reason)） -->
+        <simple name="reverseClose" form="reverseClose" useFormActions="true">
+            <api url="@mutation:ErpFinAccountingPeriod__reverseClose?periodId=$id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认反结账" i18n-en:label="Confirm Un-close" actionType="submit" level="warning">
+                    <messages>
+                        <success>会计期间已反结账</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
         <picker name="picker"/>
     </pages>
 </view>

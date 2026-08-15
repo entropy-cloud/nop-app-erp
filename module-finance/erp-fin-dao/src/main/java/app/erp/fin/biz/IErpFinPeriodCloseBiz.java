@@ -40,9 +40,19 @@ public interface IErpFinPeriodCloseBiz {
     /**
      * 反结账：期间 CLOSED_FINAL→OPEN，冲销本期结转/汇兑（及条件折旧）凭证，回开各模块。
      * 受 {@code erp-fin.reverse-close-approval-required} 配置门控。
+     *
+     * <p>审计契约（UC-FIN-07 RC-9「全程审计(记录反结账操作人/原因)」）：{@code reason} 必填——
+     * 缺失抛 {@code ERR_REVERSE_CLOSE_REASON_REQUIRED}；Processor 在状态翻转段落库
+     * {@code reversedBy/reverseCloseReason/reverseCloseAt} 专属审计轨迹（对齐
+     * {@code ErpFinPostingException} resolutionNote/resolvedBy/resolvedAt 写入范式）。
+     *
+     * @param periodId 期间 ID
+     * @param reason   反结账原因（必填，审计要求）
      */
     @BizMutation
-    ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId, IServiceContext context);
+    ErpFinAccountingPeriod reverseClose(@Name("periodId") Long periodId,
+                                        @Name("reason") String reason,
+                                        IServiceContext context);
 
     /**
      * 开启期间：NEVER_OPENED→OPEN（P1-MA2-033，兑现 {@code generateNextYearPeriods} 次年 2-12 月

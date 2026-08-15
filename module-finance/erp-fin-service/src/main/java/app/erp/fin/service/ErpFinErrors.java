@@ -301,6 +301,10 @@ public interface ErpFinErrors {
             "会计期间 {periodCode} 反结账被阻止：次年（{nextYear}）期间已创建，须先删除次年期间再反结账",
             ARG_PERIOD_CODE, ARG_NEXT_YEAR);
 
+    ErrorCode ERR_REVERSE_CLOSE_REASON_REQUIRED = ErrorCode.define("erp.err.fin.period-close.reverse-close-reason-required",
+            "会计期间 {periodCode} 反结账原因必填（审计要求，RC-9 全程审计[操作人/原因]）",
+            ARG_PERIOD_CODE);
+
     ErrorCode ERR_CLOSE_SUBJECT_NOT_CONFIGURED = ErrorCode.define("erp.err.fin.period-close.subject-not-configured",
             "期末结账所需科目/汇率未配置：配置键 {configKey}",
             ARG_CONFIG_KEY);

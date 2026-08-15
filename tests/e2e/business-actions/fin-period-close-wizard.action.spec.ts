@@ -168,10 +168,21 @@ test.describe('Finance period-close wizard action E2E', () => {
       expect(illegalClose.data, 'illegal closePeriod should return null data').toBeNull();
 
       // ── Step 4: reverseClose（@BizMutation）→ status OPEN + 红冲凭证 ──
+      // RC-9 反结账审计（plan 2026-08-15-2119-1）：reason 必填契约——直调须显式传理由文本（缺失抛 ERR_REVERSE_CLOSE_REASON_REQUIRED）
       const reversed = await callMutationOk(
-        page, 'ErpFinAccountingPeriod', 'reverseClose', { periodId: period.id }, 'id status',
+        page, 'ErpFinAccountingPeriod', 'reverseClose', { periodId: period.id, reason: 'E2E 反结账原因验证' }, 'id status',
       );
       expect(reversed.status, 'reverseClose should reopen period to OPEN').toBe('OPEN');
+
+      // 审计轨迹落库断言（RC-9 全程审计[操作人/原因]）：reversedBy/reverseCloseReason/reverseCloseAt 三列回读
+      const reversedAudit = await findFirst<any>(
+        page, 'ErpFinAccountingPeriod', eqFilter('id', Number(period.id)),
+        'id status reversedBy reverseCloseReason reverseCloseAt',
+      );
+      expect(reversedAudit, 'reverseClose audit fields should be readable via __findPage').toBeTruthy();
+      expect(reversedAudit.reverseCloseReason, 'reverseCloseReason should be persisted').toBe('E2E 反结账原因验证');
+      expect(reversedAudit.reversedBy, 'reversedBy should be populated (operator)').toBeTruthy();
+      expect(reversedAudit.reverseCloseAt, 'reverseCloseAt should be populated (timestamp)').toBeTruthy();
 
       const reversedVerify = await verifyState(page, 'ErpFinAccountingPeriod', period.id, 'status');
       expect(reversedVerify.status, '__get should confirm OPEN after reverseClose').toBe('OPEN');

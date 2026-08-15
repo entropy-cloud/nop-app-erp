@@ -7,6 +7,8 @@ import app.erp.fin.service.ErpFinConstants;
 import app.erp.fin.service.ErpFinErrors;
 import app.erp.fin.service.statemachine.ErpFinAccountingPeriodStateMachine;
 import io.nop.api.core.exceptions.NopException;
+import io.nop.api.core.time.CoreMetrics;
+import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -19,6 +21,11 @@ import jakarta.inject.Inject;
  * <b>动态业务守卫保留原位</b>（§11.2 M4 (v)）：反结账 kill-switch（{@code erp-fin.reverse-close-approval-required}）
  * + 年度结转次年期间已创建门控；<b>副作用保留原位</b>（§11.2 M4 (iv)）：{@code reverseCloseVoucher} 期末凭证红冲时序 +
  * 反折旧 + 模块状态回开。
+ *
+ * <p>审计轨迹（RC-9，plan 2026-08-15-2119-1）：{@code reason} 必填守卫（缺失抛
+ * {@code ERR_REVERSE_CLOSE_REASON_REQUIRED}）在状态守卫之前（fail-fast 输入校验）；状态翻转
+ * （setStatus(OPEN)）后、红冲/回开副作用前落库 {@code reverseCloseReason/reversedBy/reverseCloseAt}
+ * 专属审计列（对齐 {@code ErpFinPostingException} resolutionNote/resolvedBy/resolvedAt 写入范式）。
  */
 public class ErpFinAccountingPeriodReverseCloseProcessor {
 
@@ -27,8 +34,14 @@ public class ErpFinAccountingPeriodReverseCloseProcessor {
     @Inject
     ErpFinAccountingPeriodStateMachine stateMachine;
 
-    public ErpFinAccountingPeriod reverseClose(Long periodId, IServiceContext context) {
+    public ErpFinAccountingPeriod reverseClose(Long periodId, String reason, IServiceContext context) {
         ErpFinAccountingPeriod period = facade.requirePeriod(periodId);
+
+        if (StringHelper.isBlank(reason)) {
+            throw new NopException(ErpFinErrors.ERR_REVERSE_CLOSE_REASON_REQUIRED)
+                    .param(ErpFinErrors.ARG_PERIOD_CODE, period.getCode());
+        }
+
         try {
             stateMachine.assertCanReverseClose(period.getStatus());
         } catch (NopException e) {
@@ -49,6 +62,12 @@ public class ErpFinAccountingPeriodReverseCloseProcessor {
 
         // 先回开期间为 OPEN，使红冲可经引擎过账（resolveOpenPeriod 要求 OPEN）。
         period.setStatus(stateMachine.reverseCloseTargetStatus());
+
+        // 审计轨迹（RC-9 全程审计[操作人/原因/时间]）：状态翻转后、红冲/回开前落库专属审计列，
+        // 对齐 ErpFinPostingException resolutionNote/resolvedBy/resolvedAt 写入范式。
+        period.setReverseCloseReason(reason);
+        period.setReversedBy(facade.currentUserId());
+        period.setReverseCloseAt(CoreMetrics.currentTimestamp());
 
         // 冲销本期结转 / 汇兑 / 年度结转（及条件折旧）凭证（红字）。
         facade.reverseCloseVoucher(period, ErpFinAccountingPeriodProcessor.PL_BILL_CODE_PREFIX + period.getCode(),

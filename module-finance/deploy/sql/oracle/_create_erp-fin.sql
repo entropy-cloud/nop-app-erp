@@ -151,6 +151,9 @@ CREATE TABLE erp_fin_accounting_period(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  REVERSED_BY VARCHAR2(36)  ,
+  REVERSE_CLOSE_REASON VARCHAR2(500)  ,
+  REVERSE_CLOSE_AT TIMESTAMP  ,
   constraint PK_erp_fin_accounting_period primary key (ID)
 );
 
@@ -1122,6 +1125,12 @@ CREATE TABLE erp_fin_budget_control_log(
       COMMENT ON COLUMN erp_fin_accounting_period.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_fin_accounting_period.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_fin_accounting_period.REVERSED_BY IS '反结账人';
+                    
+      COMMENT ON COLUMN erp_fin_accounting_period.REVERSE_CLOSE_REASON IS '反结账原因';
+                    
+      COMMENT ON COLUMN erp_fin_accounting_period.REVERSE_CLOSE_AT IS '反结账时间';
                     
       COMMENT ON TABLE erp_fin_fund_account IS '资金账户';
                 

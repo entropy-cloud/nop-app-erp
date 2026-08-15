@@ -53,7 +53,7 @@ public class TestErpFinPeriodCloseEndToEnd extends PeriodCloseTestSupport {
         output("3_finalize_period_response.json5", periodState(period));
 
         // 反结账 → OPEN。
-        period = ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, CTX));
+        period = ormTemplate.runInSession(session -> periodBiz.reverseClose(periodId, "端到端反结账原因", CTX));
         assertEquals(ErpFinConstants.PERIOD_STATUS_OPEN, period.getStatus(), "反结账后 OPEN");
         output("4_reverse_close_response.json5", periodState(period));
 
