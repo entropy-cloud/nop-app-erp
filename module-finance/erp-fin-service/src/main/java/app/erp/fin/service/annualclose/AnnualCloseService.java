@@ -36,6 +36,7 @@ import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.isNull;
 import static io.nop.api.core.beans.FilterBeans.le;
 import static io.nop.api.core.beans.FilterBeans.ne;
+import static io.nop.api.core.beans.FilterBeans.notIn;
 import static io.nop.api.core.beans.FilterBeans.or;
 
 /**
@@ -335,8 +336,10 @@ public class AnnualCloseService {
         vq.addFilter(in("periodId", periodIds));
         vq.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         vq.addFilter(eq("isReversed", Boolean.FALSE));
-        // 预算凭证（postingType=BUDGET）是影子凭证，不得计入实际年度结转/未分配利润（budget.md 规则4/6/8）。
-        vq.addFilter(or(isNull("postingType"), ne("postingType", ErpFinConstants.POSTING_TYPE_BUDGET)));
+        // 预算/承付凭证（postingType=BUDGET/COMMITMENT）是影子凭证，不得计入实际年度结转/未分配利润（budget.md 规则4/6/8）。
+        vq.addFilter(or(isNull("postingType"),
+                notIn("postingType", java.util.Arrays.asList(
+                        ErpFinConstants.POSTING_TYPE_BUDGET, ErpFinConstants.POSTING_TYPE_COMMITMENT))));
         List<Long> ids = new ArrayList<>();
         for (ErpFinVoucher v : vDao.findAllByQuery(vq)) {
             ids.add(v.getId());

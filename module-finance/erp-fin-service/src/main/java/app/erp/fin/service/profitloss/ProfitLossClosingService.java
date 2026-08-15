@@ -188,8 +188,10 @@ public class ProfitLossClosingService {
         q.addFilter(eq("periodId", periodId));
         q.addFilter(eq("docStatus", ErpFinConstants.VOUCHER_STATUS_POSTED));
         q.addFilter(eq("isReversed", Boolean.FALSE));
-        // 预算凭证（postingType=BUDGET）是影子凭证，不得计入实际损益结转（budget.md 规则4/6/8）。
-        q.addFilter(or(isNull("postingType"), ne("postingType", ErpFinConstants.POSTING_TYPE_BUDGET)));
+        // 预算/承付凭证（postingType=BUDGET/COMMITMENT）是影子凭证，不得计入实际损益结转（budget.md 规则4/6/8）。
+        q.addFilter(or(isNull("postingType"),
+                notIn("postingType", java.util.Arrays.asList(
+                        ErpFinConstants.POSTING_TYPE_BUDGET, ErpFinConstants.POSTING_TYPE_COMMITMENT))));
         return dao.findAllByQuery(q).stream().map(ErpFinVoucher::getId).collect(java.util.stream.Collectors.toList());
     }
 
