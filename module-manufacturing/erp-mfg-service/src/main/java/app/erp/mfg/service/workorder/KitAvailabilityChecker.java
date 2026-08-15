@@ -88,7 +88,7 @@ public class KitAvailabilityChecker {
         return result;
     }
 
-    private Map<Long, BigDecimal> aggregateRequirements(List<BomExplosionNode> nodes) {
+    public Map<Long, BigDecimal> aggregateRequirements(List<BomExplosionNode> nodes) {
         Map<Long, BigDecimal> requiredByMaterial = new HashMap<>();
         for (BomExplosionNode node : nodes) {
             if (node.getMaterialId() == null) {
@@ -97,6 +97,13 @@ public class KitAvailabilityChecker {
             requiredByMaterial.merge(node.getMaterialId(), nz(node.getQuantity()), BigDecimal::add);
         }
         return requiredByMaterial;
+    }
+
+    /**
+     * 按 BOM 多级展开子件需求（RC-R1.48 物料预留创建复用；对齐 {@link #check} 的 explode 调用范式）。
+     */
+    public List<BomExplosionNode> explodeRequirements(Long bomId, BigDecimal requestedQty) {
+        return bomExpander.explode(bomId, requestedQty, true);
     }
 
     private Map<Long, BigDecimal> loadAvailableByMaterial(Set<Long> materialIds) {
@@ -130,7 +137,7 @@ public class KitAvailabilityChecker {
         return wo;
     }
 
-    private Long resolveBomId(ErpMfgWorkOrder wo) {
+    public Long resolveBomId(ErpMfgWorkOrder wo) {
         if (wo.getBomId() != null) {
             return wo.getBomId();
         }

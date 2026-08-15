@@ -73,6 +73,19 @@ public interface ErpMfgConstants extends ErpMfgDocStatus {
     String CONFIG_ALLOW_PARTIAL_KIT_START = "erp-mfg.allow-partial-kit-start";
     String CONFIG_INSPECTION_GATE_ENABLED = "erp-mfg.inspection-gate-enabled";
 
+    // ---- 工单物料预留写路径（plan 2026-08-15-2119-3 RC-R1.48；权威：material-reservation.md D1-D3 裁决） ----
+
+    /** 物料预留总开关（默认 true=审核建预留/领料消耗/取消与完工释放全链启用；D3 裁决）。
+     *  owner doc 原 `reservation-on-approve` 已并入本键（本行唯一激活语义 = 审核时建预留，无「enabled 但 approve 不建」组合）。 */
+    String CONFIG_RESERVATION_ENABLED = "erp-mfg.reservation-enabled";
+    /** 超预留领料警告开关（默认 true=LOG.warn 放行不阻断领料主链；D1 裁决）。 */
+    String CONFIG_OVER_PICK_WARNING = "erp-mfg.over-pick-warning";
+    /** 完工自动释放未领料预留开关（默认 true=COMPLETED 时释放；D3 联动语义，enabled=false 时全链跳过）。 */
+    String CONFIG_AUTO_RELEASE_ON_COMPLETE = "erp-mfg.auto-release-on-complete";
+
+    // 工单预留来源单据类型（ErpInvReservation.sourceBillType 码值）
+    String SOURCE_BILL_TYPE_WORK_ORDER = "WORK_ORDER";
+
     // 工单来源单据类型（erp-mfg/source-order-type，plan 2026-07-05-0427-3）
     String SOURCE_ORDER_TYPE_SALES_ORDER = "SALES_ORDER";
     String SOURCE_ORDER_TYPE_FORECAST = "FORECAST";

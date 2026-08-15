@@ -1,8 +1,13 @@
 package app.erp.mfg.service.processor;
 
+import app.erp.inv.biz.IErpInvReservationBiz;
 import app.erp.inv.biz.IErpInvStockMoveBiz;
+import app.erp.inv.biz.ReservationCreateRequest;
+import app.erp.inv.biz.ReservationLineRequest;
 import app.erp.inv.biz.StockMoveLineRequest;
 import app.erp.inv.biz.StockMoveRequest;
+import app.erp.inv.dao.ErpInvDaoConstants;
+import app.erp.mfg.biz.BomExplosionNode;
 import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
@@ -67,6 +72,8 @@ public class ErpMfgWorkOrderProcessor {
     KitAvailabilityChecker kitAvailabilityChecker;
     @Inject
     IErpInvStockMoveBiz stockMoveBiz;
+    @Inject
+    IErpInvReservationBiz reservationBiz;
     @Inject
     IErpQaInspectionBiz inspectionBiz;
     @Inject
@@ -135,6 +142,7 @@ public class ErpMfgWorkOrderProcessor {
         validateTransitionForCancel(wo, context);
         wo.setDocStatus(documentStateMachine.cancelTargetStatus());
         workOrderDao().updateEntity(wo);
+        releaseReservations(wo, context);
         return wo;
     }
 
@@ -244,6 +252,7 @@ public class ErpMfgWorkOrderProcessor {
         wo.setApprovedBy(currentUserId());
         wo.setApprovedAt(CoreMetrics.currentTimestamp());
         workOrderDao().updateEntity(wo);
+        createReservations(wo, context);
     }
 
     protected void doReject(ErpMfgWorkOrder wo, IServiceContext context) {
@@ -477,6 +486,135 @@ public class ErpMfgWorkOrderProcessor {
         } catch (Exception e) {
             return defaultValue;
         }
+    }
+
+    // ---------- step：物料预留写路径（plan 2026-08-15-2119-3 RC-R1.48，UC-MFG-05/06/08；protected 可覆盖） ----------
+
+    /**
+     * 审核触发预留创建（UC-MFG-05 ①②③④）：config-gated（{@code erp-mfg.reservation-enabled} 默认 true）。
+     * BOM 展开子件需求（经 {@link KitAvailabilityChecker} 复用：resolveBomId + explode + aggregateRequirements），
+     * 行维度仓库取 {@link ErpMfgWorkOrderLine#getSourceWarehouseId()}（MINOR-8：null 回退工单头仓库——工单无头仓库字段，
+     * 故直接跳过该行预留 LOG.warn，不阻断 approve）；无 BOM（MINOR-5：ERR_DEFAULT_BOM_NOT_FOUND）或无子件 →
+     * 跳过预留创建 LOG.warn，仅记录工单无预留。min(需求,可用) 由库存侧 createReservation 计算。
+     */
+    protected void createReservations(ErpMfgWorkOrder wo, IServiceContext context) {
+        if (!isReservationEnabled()) {
+            return;
+        }
+        Long bomId;
+        try {
+            bomId = kitAvailabilityChecker.resolveBomId(wo);
+        } catch (NopException e) {
+            if (ErpMfgErrors.ERR_DEFAULT_BOM_NOT_FOUND.getErrorCode().equals(e.getErrorCode())) {
+                LOG.warn("工单 {} 无默认 BOM，跳过物料预留创建（reservation-enabled，不阻断审核）", wo.getCode());
+                return;
+            }
+            throw e;
+        }
+        BigDecimal plannedQty = nz(wo.getPlannedQuantity());
+        if (plannedQty.signum() <= 0) {
+            return;
+        }
+        List<BomExplosionNode> nodes = kitAvailabilityChecker.explodeRequirements(bomId, plannedQty);
+        Map<Long, BigDecimal> requiredByMaterial = kitAvailabilityChecker.aggregateRequirements(nodes);
+        if (requiredByMaterial.isEmpty()) {
+            return;
+        }
+        Map<Long, Long> warehouseByMaterial = new LinkedHashMap<>();
+        Map<Long, String> lineNoByMaterial = new LinkedHashMap<>();
+        Map<Long, Long> uomByMaterial = new LinkedHashMap<>();
+        for (ErpMfgWorkOrderLine wol : wo.getLines()) {
+            if (!ErpMfgConstants.WORK_ORDER_LINE_TYPE_INPUT.equals(wol.getLineType())) {
+                continue;
+            }
+            if (wol.getMaterialId() == null) {
+                continue;
+            }
+            warehouseByMaterial.putIfAbsent(wol.getMaterialId(), wol.getSourceWarehouseId());
+            if (wol.getUoMId() != null) {
+                uomByMaterial.putIfAbsent(wol.getMaterialId(), wol.getUoMId());
+            }
+            if (wol.getLineNo() != null) {
+                lineNoByMaterial.putIfAbsent(wol.getMaterialId(), String.valueOf(wol.getLineNo()));
+            }
+        }
+
+        ReservationCreateRequest request = new ReservationCreateRequest();
+        request.setOrgId(wo.getOrgId());
+        request.setBusinessDate(wo.getBusinessDate() != null ? wo.getBusinessDate() : CoreMetrics.today());
+        request.setSourceBillType(ErpMfgConstants.SOURCE_BILL_TYPE_WORK_ORDER);
+        request.setSourceBillCode(wo.getCode());
+        List<ReservationLineRequest> lines = new ArrayList<>();
+        for (Map.Entry<Long, BigDecimal> e : requiredByMaterial.entrySet()) {
+            Long materialId = e.getKey();
+            Long warehouseId = warehouseByMaterial.get(materialId);
+            if (warehouseId == null) {
+                LOG.warn("工单 {} 子件 {} 无领料仓库（WO 行 sourceWarehouseId 缺失），跳过该行预留", wo.getCode(), materialId);
+                continue;
+            }
+            ReservationLineRequest line = new ReservationLineRequest();
+            line.setMaterialId(materialId);
+            line.setWarehouseId(warehouseId);
+            line.setRequestedQuantity(e.getValue());
+            line.setSourceLineCode(lineNoByMaterial.get(materialId));
+            line.setUomId(resolveReservationUom(materialId, uomByMaterial.get(materialId)));
+            lines.add(line);
+        }
+        if (lines.isEmpty()) {
+            LOG.warn("工单 {} 子件均无领料仓库，跳过全部预留创建", wo.getCode());
+            return;
+        }
+        request.setLines(lines);
+        reservationBiz.createReservation(request, context);
+    }
+
+    /**
+     * 取消释放预留（UC-MFG-08 ⑤⑥⑦）：config-gated + 调 {@code releaseReservation(reason=CANCELLED)}
+     * （未领料全释放 + 库存余额预留量 -= + 头状态 → CANCELLED，D2 映射）。查无预留 no-op 零写入。
+     */
+    protected void releaseReservations(ErpMfgWorkOrder wo, IServiceContext context) {
+        if (!isReservationEnabled()) {
+            return;
+        }
+        reservationBiz.releaseReservation(ErpMfgConstants.SOURCE_BILL_TYPE_WORK_ORDER, wo.getCode(),
+                ErpInvDaoConstants.RESERVATION_STATUS_CANCELLED, context);
+    }
+
+    /**
+     * 完工释放未领料预留（UC-MFG-08 ⑤⑥⑦）：config-gated（{@code erp-mfg.auto-release-on-complete} 默认 true
+     * + reservation-enabled 联动）+ 调 {@code releaseReservation(reason=COMPLETED)}
+     * （未领料部分释放 + 余额 -= + 头状态按 D2 映射：剩余>0 → PARTIALLY_CONSUMED / 已全领 → CONSUMED）。
+     * 查无预留 no-op 零写入。
+     */
+    protected void releaseRemainingReservations(ErpMfgWorkOrder wo, IServiceContext context) {
+        if (!isReservationEnabled() || !isAutoReleaseOnComplete()) {
+            return;
+        }
+        reservationBiz.releaseReservation(ErpMfgConstants.SOURCE_BILL_TYPE_WORK_ORDER, wo.getCode(),
+                "COMPLETED", context);
+    }
+
+    /**
+     * 解析预留行计量单位：WO 行 uoMId 优先，缺失回退物料主数据 uoMId（仍缺失返回 null——库存侧行创建跳过）。
+     */
+    protected Long resolveReservationUom(Long materialId, Long woLineUomId) {
+        if (woLineUomId != null) {
+            return woLineUomId;
+        }
+        ErpMdMaterial material = daoProvider.daoFor(ErpMdMaterial.class).getEntityById(materialId);
+        return material != null ? material.getUoMId() : null;
+    }
+
+    protected boolean isReservationEnabled() {
+        return readBoolConfig(ErpMfgConstants.CONFIG_RESERVATION_ENABLED, true);
+    }
+
+    protected boolean isOverPickWarningEnabled() {
+        return readBoolConfig(ErpMfgConstants.CONFIG_OVER_PICK_WARNING, true);
+    }
+
+    protected boolean isAutoReleaseOnComplete() {
+        return readBoolConfig(ErpMfgConstants.CONFIG_AUTO_RELEASE_ON_COMPLETE, true);
     }
 
     // ---------- misc helpers ----------

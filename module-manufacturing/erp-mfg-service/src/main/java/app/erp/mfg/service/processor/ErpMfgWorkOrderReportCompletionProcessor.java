@@ -79,6 +79,12 @@ public class ErpMfgWorkOrderReportCompletionProcessor {
         }
         facade.workOrderDao().updateEntity(wo);
 
+        // 完工释放未领料预留（UC-MFG-08 ⑤⑥⑦）：config-gated（auto-release-on-complete + reservation-enabled 联动）。
+        // 查无预留 no-op 零写入；不阻断完工主链。
+        if (willFinish) {
+            facade.releaseRemainingReservations(wo, context);
+        }
+
         // 完工达量（willFinish）：config-gated 自动触发生产差异计算 + 过账。G3 错误传播分级（posting-log.md）：
         // 「无 FIRMED 标准成本」（ERR_VARIANCE_NO_STANDARD_COST）容错跳过（差异未配置，非故障）；
         // 其他失败（配置错误/真实故障）不阻断完工（已 COMPLETED）但派发 IErpSysNotificationBiz 告警，
