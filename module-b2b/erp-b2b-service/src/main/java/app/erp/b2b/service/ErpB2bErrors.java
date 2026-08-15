@@ -27,6 +27,12 @@ public interface ErpB2bErrors {
     String ARG_PAYLOAD_SIZE = "payloadSize";
     String ARG_MAX_SIZE = "maxSize";
     String ARG_CREDENTIAL_ID = "credentialId";
+    // RC-R1.36 伙伴上线状态机参数键
+    String ARG_MISSING_FIELDS = "missingFields";
+    String ARG_PASS_RATE = "passRate";
+    String ARG_THRESHOLD = "threshold";
+    String ARG_UNPASSED_ITEMS = "unpassedItems";
+    String ARG_MISSING_KEY_CASES = "missingKeyCases";
 
     ErrorCode ERR_B2B_EDI_FORMAT_NOT_REGISTERED = ErrorCode.define("erp.err.b2b.edi-format-not-registered",
             "EDI 格式 {ediFormatCode} 未注册任何 Provider", ARG_EDI_FORMAT_CODE);
@@ -105,4 +111,22 @@ public interface ErpB2bErrors {
     ErrorCode ERR_B2B_ASN_LINE_MATERIAL_REQUIRED = ErrorCode.define("erp.err.b2b.asn-line-material-required",
             "ASN {asnCode} 行 {lineNo} 缺失物料或物料主数据 {materialId} 不存在，无法回填 ReceiveLine",
             ARG_ASN_CODE, ARG_LINE_NO, ARG_MATERIAL_ID);
+
+    // ---------- RC-R1.36 伙伴上线状态机（UC-B2B-007）----------
+
+    ErrorCode ERR_B2B_PARTNER_ILLEGAL_TRANSITION = ErrorCode.define("erp.err.b2b.partner-illegal-transition",
+            "伙伴 {partnerCode} 当前状态={currentState}，不允许执行该操作（期望状态={expectedState}）",
+            ARG_PARTNER_CODE, ARG_CURRENT_STATE, ARG_EXPECTED_STATE);
+
+    ErrorCode ERR_B2B_PARTNER_PROFILE_INCOMPLETE = ErrorCode.define("erp.err.b2b.partner-profile-incomplete",
+            "伙伴 {partnerCode} 基本配置不完整，缺少：{missingFields}（推进至 TESTING 前须补齐）",
+            ARG_PARTNER_CODE, ARG_MISSING_FIELDS);
+
+    ErrorCode ERR_B2B_PARTNER_PASS_RATE_NOT_MET = ErrorCode.define("erp.err.b2b.partner-pass-rate-not-met",
+            "伙伴 {partnerCode} 测试通过率 {passRate} 低于门槛 {threshold}，无法推进至 CERTIFIED",
+            ARG_PARTNER_CODE, ARG_PASS_RATE, ARG_THRESHOLD);
+
+    ErrorCode ERR_B2B_PARTNER_CERTIFICATION_NOT_MET = ErrorCode.define("erp.err.b2b.partner-certification-not-met",
+            "伙伴 {partnerCode} 认证清单存在未通过的必检项（{unpassedItems}），无法推进至 CERTIFIED",
+            ARG_PARTNER_CODE, ARG_UNPASSED_ITEMS);
 }

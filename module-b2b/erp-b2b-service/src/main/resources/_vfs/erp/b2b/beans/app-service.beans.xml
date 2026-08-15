@@ -71,4 +71,13 @@
           class="app.erp.b2b.service.statemachine.ErpB2bEdiDocStateMachine"/>
     <bean id="app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine"
           class="app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine"/>
+    <!-- 伙伴档案上线状态机（RC-R1.36，P1-RC-080）：REGISTERED→TESTING→CERTIFIED→PRODUCTION +
+         suspend/deactivate 边，严格无状态，供 ErpB2bPartnerProfileBizModel 守卫映射（契约 §7）。 -->
+    <bean id="app.erp.b2b.service.statemachine.ErpB2bPartnerProfileStateMachine"
+          class="app.erp.b2b.service.statemachine.ErpB2bPartnerProfileStateMachine"/>
+
+    <!-- 24h 上线监控 Job Bean（RC-R1.36，P1-RC-080 ④；R1.4 简单 job bean 范式）：
+         供 erp-b2b-onboarding-monitor.job.yaml invoker 反射调用 execute()。 -->
+    <bean id="erpB2bOnboardingMonitorJob"
+          class="app.erp.b2b.service.job.ErpB2bOnboardingMonitorJob"/>
 </beans>

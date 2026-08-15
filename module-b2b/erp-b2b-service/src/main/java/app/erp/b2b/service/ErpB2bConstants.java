@@ -21,6 +21,14 @@ public interface ErpB2bConstants {
     String ASN_STATUS_RECEIVED_TO_STOCK = "RECEIVED_TO_STOCK";
     String ASN_STATUS_CANCELLED = "CANCELLED";
 
+    // ---- 伙伴档案状态（erp-b2b/partner-status）----
+    String PARTNER_STATUS_REGISTERED = "REGISTERED";
+    String PARTNER_STATUS_TESTING = "TESTING";
+    String PARTNER_STATUS_CERTIFIED = "CERTIFIED";
+    String PARTNER_STATUS_PRODUCTION = "PRODUCTION";
+    String PARTNER_STATUS_SUSPENDED = "SUSPENDED";
+    String PARTNER_STATUS_TERMINATED = "TERMINATED";
+
     // ---- EDI 方向（erp-b2b/edi-direction）----
     String DIRECTION_OUTBOUND = "OUTBOUND";
     String DIRECTION_INBOUND = "INBOUND";
@@ -37,6 +45,10 @@ public interface ErpB2bConstants {
     String RELATED_BILL_TYPE_ASN_INBOUND = "ASN_INBOUND";
     String RELATED_BILL_TYPE_PURCHASE_RECEIPT = "PURCHASE_RECEIPT";
     String RELATED_BILL_TYPE_B2B_ASN = "B2B_ASN";
+
+    // ---- 通知事件（notification-strategy.md 事件命名空间 <域>.<主题>）----
+    /** 24h 上线监控告警（RC-R1.36，P1-RC-080 ④）：监控窗口内伙伴 EDI 失败率超阈值。 */
+    String NOTIFY_EVENT_ONBOARDING_MONITOR_ALERT = "b2b.onboarding-monitor-alert";
 
     // ---- 代码映射类型（erp-b2b/mapping-type）----
     String MAPPING_TYPE_MATERIAL = "MATERIAL";
