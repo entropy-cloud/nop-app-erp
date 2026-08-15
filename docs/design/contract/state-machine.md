@@ -48,9 +48,9 @@ DRAFT（草稿）
 > **电子签章接入点**：`IErpCtContractVersionBiz.signVersion`（FINALIZED→SIGNED + isCurrent 翻转）
 > 既是线下签署的确认入口，也是电子签章 FULLY_SIGNED 完成时由 `ErpCtSignatureRequestBizModel.completeFullySigned`
 > 自动调用的接入点（retrieveCertificate 后）。config-gated `erp-ct.e-signature-enabled`（默认关，未启用走线下签署附件上传 + 手动确认 SIGNED）。
-| ACTIVE→EXPIRED | ~~系统自动~~（**Deferred**，见下方注） | endDate < now() | 归档版本，不可再修改 |
+| ACTIVE→EXPIRED | 系统自动（**RC-R1.35 已实现**，见下方注） | endDate < now() | 归档版本，不可再修改 |
 
-> **ACTIVE→EXPIRED 自动化 Deferred 注记**：原设计为「系统自动 endDate<now」，当前**无 `ErpCtContractExpiryJob`**（module-contract 全域零 Job 类、零 scheduler、零 `@CronProvider`），实际经运营手工调 `ErpCtContractBizModel.expire()` @BizMutation（contractId 单点）触发。**Deferred**：到期自动化属 missing-automation（新 Job 类 + scheduler + job.yaml 注册），与危害（状态悬挂非业财破坏——`expire()` 手工路径存在 + InvoicePlan 生成 unposted DRAFT 经人工审批兜底 + 不破坏业财一致）不成比例，对齐 missing-automation Deferred 范式。**Successor**：合同到期自动化需求时实现 `ErpCtContractExpiryJob`（cron-gated 扫描 ACTIVE 且 endDate<now 合同批量 expire），对齐 hr 域 `ErpHrContractExpiryJob` 范式。
+> **ACTIVE→EXPIRED 自动化实现注记（RC-R1.35，plan 2026-08-15-1023-2，P1-MA2-071）**：原 Deferred 注记已收敛为**已实现**——`ErpCtContractExpiryJob`（`app.erp.ct.service.job` 包）+ `erp-ct-contract-expiry.job.yaml`（app-erp-all 注册，enabled 默认 false 部署 opt-in + cronExpr `@cfg:erp-ct.contract-expiry-cron|0 0 1 * * ?`，D5 单键模式——job.yaml cronExpr 与 bean 空值跳过共用 `erp-ct.contract-expiry-cron`，空值 = 「不调度」）。批量路径 `IErpCtContractBiz.expireOverdueContracts`（@BizMutation + @SingleSession）：扫描 `status=ACTIVE AND endDate < today` 逐合同（失败隔离）→ D3 异常路径（isInvoiced=false 且 planDate ≤ today 的 InvoicePlan 先经 triggerInvoice 完成开票，逐条失败隔离）→ D4 续期草稿（config-gated `erp-ct.auto-create-renewal-draft` 默认 false，parentContractId 关联 + DRAFT + 幂等守卫）→ `stateMachine.assertCanExpire`（与手工 `expire()` 同一守卫）置 EXPIRED。手工 `expire()` 单点语义不变（Non-Goal）。
 | ACTIVE→TERMINATED | 合同管理员 | 终止协议签署，填写终止原因 | 版本归档，关联终止协议 |
 | ACTIVE→SUSPENDED | 合同管理员 | 双方确认中止，填写中止原因 | 版本冻结 |
 | SUSPENDED→ACTIVE | 合同管理员 | 中止状态解除，双方确认恢复 | 版本恢复生效 |
@@ -78,9 +78,9 @@ DRAFT（草稿）
 | 异常场景 | 处理 |
 |----------|------|
 | ACTIVE 期间发现条款缺陷 | 创建变更单（Amendment），新建 DRAFT 子合同 → NEGOTIATION → 生效后替换原版本 |
-| endDate 到达但合同仍在执行中 | 先标记 EXPIRED（**当前手工 `expire()`；自动批量见 §2 ACTIVE→EXPIRED Deferred 注**），同时自动创建续期草稿（**Deferred**——见下方注） |
+| endDate 到达但合同仍在执行中 | 先标记 EXPIRED（**自动批量见 §2 ACTIVE→EXPIRED 实现注**），同时自动创建续期草稿（**RC-R1.35 已实现**——见下方注） |
 
-> **续期草稿自动创建 Deferred 注记**：原设计为「`auto-create-renewal-draft` 配置驱动自动创建续期草稿」，当前**无 config 键**（`ErpCtConfigs` 仅有 volume-discount/rebate/invoiceplan-auto-trigger/settlement-mode/e-signature 五键，无 `erp-ct.auto-create-renewal-draft`），`parentContractId` 字段存在但**零业务 Java 代码使用**（grep 全 module-contract `renewal|续期|续签` 无匹配）。**Deferred**：与 EXPIRED Job 同根因（新 Job + config-gated 自动化），危害为状态悬挂非业财破坏。**Successor**：合同到期自动化需求时实现 config-gated `erp-ct.auto-create-renewal-draft`（经 `parentContractId` 关联续期草稿），随 `ErpCtContractExpiryJob` successor 一并接入；`parentContractId` 字段保留为预留语义入口。
+> **续期草稿自动创建实现注记（RC-R1.35，plan 2026-08-15-1023-2，D4 选项 A 到期时创建）**：原 Deferred 注记已收敛为**已实现**——`expireOverdueContracts` 逐合同在置 EXPIRED 前，config-gated `erp-ct.auto-create-renewal-draft`（默认 false）时创建续期草稿：合同头复制（code=原code+"-RN" 满足 UK_CT_CONTRACT_CODE_ORG 唯一性、contractName/contractType/contractDirection/partnerId/currencyId/orgId/totalAmount 复制 + startDate=原endDate+1 + endDate=原endDate+原时长）+ status=DRAFT + parentContractId 关联原合同；幂等守卫（已存在 parentContractId=原合同 且 status=DRAFT 的草稿时跳过）；行不复制（对齐 R1.32 D3 行保留语义，草稿创建后可编辑）。
 
 > **残留风险注记（InvoicePlan triggerInvoice EXPIRED 守卫，watch-only residual）**：`ErpCtInvoicePlanBizModel.triggerInvoice` 仅守卫合同 `status==ACTIVE`——过期但未手工 expire 的 ACTIVE 合同（endDate 已过）仍可生成 **unposted DRAFT** 发票草稿（非 silent posted，经人工审批管道可拦截兜底）。**收敛路径**：`ErpCtContractExpiryJob` successor 接入后，到期合同自动 expire 使 `status=EXPIRED`，triggerInvoice 的 ACTIVE 守卫自然拒绝 EXPIRED 合同（无需独立修改 triggerInvoice 守卫）。
 | SUSPENDED 期间有开票计划到期 | 拦截：SUSPENDED 状态下不可生成新发票 |
@@ -116,7 +116,7 @@ DRAFT（草稿）
 | 采购订单引用合同 | PO 关联合同 code（弱指针），回写已执行金额 |
 | 销售订单引用合同 | SO 关联合同 code（弱指针），回写已执行金额 |
 | 开票计划触发生成发票 | InvoicePlan → 调用 purchase/sales 域 API 生成 AP/AR Invoice |
-| 合同到期提醒 | ~~nop-job 定时扫描 endDate~~（**Deferred**——见 §2 ACTIVE→EXPIRED Deferred 注；到期前 30/15/7 天通知经 `IErpSysNotificationBiz` 随 `ErpCtContractExpiryJob` successor 一并接入，当前经运营手工跟踪 endDate） |
+| 合同到期提醒 | **nop-job 定时扫描 endDate（RC-R1.35 已实现）**——到期前 30/15/7 天分级通知经 `IErpSysNotificationBiz`（`ErpCtContractExpiryJob` 派发：30 天档 `ct.contract-expiry-warning-30` / 15 天档 `ct.contract-expiry-warning-15` 通知经办人 createdBy；7 天档 `ct.contract-expiry-escalation-7` 升级通知经办人上级——D2 解析链 `NopAuthUser.managerId` 直接上级 → 兜底 `NopAuthUser.deptId → NopAuthDept.managerId` 部门负责人，双 null LOG.warn 跳过；窗口 config 化 `erp-ct.contract-expiry-warning-days-30/15/7` 默认 30/15/7；无 ACTIVE 模板 notify 静默跳过） |
 
 外部触发渠道：
 - 合同管理员手工创建（主要渠道）。
@@ -148,8 +148,8 @@ DRAFT（草稿）
 4. 供应商确认条款并签署合同文件上传。
 5. 合同管理员确认签署完成 → ACTIVE（signDate=now，isCurrent version）。
 6. 合同执行期间，采购订单引用合同，回写已执行金额。
-7. endDate 到达 → ~~系统自动标记 EXPIRED~~（**Deferred**：当前经运营手工 `expire()`；自动批量见 §2 ACTIVE→EXPIRED Deferred 注）。
-8. ~~系统按配置 auto-create-renewal-draft=true → 自动创建续期草稿~~（**Deferred**：见 §4 续期草稿 Deferred 注；`parentContractId` 关联原合同）。
+7. endDate 到达 → **系统自动标记 EXPIRED（RC-R1.35 已实现）**：`ErpCtContractExpiryJob` 批量推进（见 §2 ACTIVE→EXPIRED 实现注）；`expire()` 手工单点入口保持。
+8. **系统按配置 auto-create-renewal-draft=true → 自动创建续期草稿（RC-R1.35 已实现）**：见 §4 续期草稿实现注；`parentContractId` 关联原合同。
 
 #### 场景 B：合同变更（Amendment）+ 开票计划
 

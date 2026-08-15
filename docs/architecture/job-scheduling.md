@@ -235,7 +235,7 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-ct-expiry-reminder` | 每日扫 ACTIVE 合同 30/15/7 天分级到期提醒（可选自动建续签草稿） | 每日 | （待实现） | 小 | job | DESIGN | `erp-ct.reminder-days-before-expiry` 等 | `docs/design/contract/use-cases.md:89-107`；`docs/design/contract/README.md:123-128` |
+| `erp-ct-expiry-reminder` | 每日扫 ACTIVE 合同 30/15/7 天分级到期提醒（30/15 天通知经办人 + 7 天升级经办人上级）+ 批量推进已过期合同 EXPIRED（含未完成开票先完成 + config-gated 自动创建续期草稿） | 每日 01:00（默认关） | `ErpCtContractExpiryJob.execute()`（30/15/7 分级通知经 `IErpSysNotificationBiz`；批量 expire 经 `IErpCtContractBiz.expireOverdueContracts`） | 小 | job | SCHEDULED（RC-R1.35，P1-MA2-071） | `nop.job.erp-ct-contract-expiry.enabled`（nop-job 层，默认 false）+ **单键模式（D5）**：job.yaml cronExpr 与 bean 空值跳过共用 `erp-ct.contract-expiry-cron`（默认空 = 「不调度」；job.yaml 侧 `@cfg:...|0 0 1 * * ?` 空值回退默认）；窗口 `erp-ct.contract-expiry-warning-days-30/15/7`（默认 30/15/7）；`erp-ct.auto-create-renewal-draft`（默认 false） | `docs/design/contract/use-cases.md:89-107`；`app-erp-all/src/main/resources/_vfs/nop/job/conf/erp-ct-contract-expiry.job.yaml`；`docs/plans/2026-08-15-1023-2` |
 | `erp-ct-signature-status-poll` | 主动轮询在途电子签署请求状态 | `0 0 */2 * * ?`（每 2 小时） | `queryAndUpdateStatus()` / `findExpiringRequests()` | 小 | job | DEFERRED | `erp-ct.signature-status-polling-cron` | `plans/2026-07-04-2200-2:51,147-150` |
 | `erp-ct-usage-billing-rebate` | 用量计费 / 返利重估 / 多币种重估 | 定期 | （待实现） | 中 | job | DEFERRED | — | `plans/2026-07-04-1115-1:204` |
 
