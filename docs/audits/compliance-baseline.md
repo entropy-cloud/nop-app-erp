@@ -393,6 +393,16 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1413 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R2c 基线上调注记（plan 2026-08-16-0904-2，RC-R1.51 sales 退货换货）
+
+`2026-08-16-0904-2`（RC-R1.51 sales 退货换货，P1-RC-025 UC-SAL-06 四断言）新增 per-mutation Processor `ErpSalReturnGenerateExchangeDeliveryProcessor`（`module-sales/erp-sal-service/.../processor/`），引入 **R2c +2**，全部为既有文档化 pattern 类的合法同型新增（对齐 R1.18/R1.19 `ErpSalReturnProcessor` same-domain daoFor 先例）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2c | 1413 | **1415** | 1415 | **baseline-raise**（+2） | (1) `ErpSalReturnGenerateExchangeDeliveryProcessor.returnDao():382` `daoFor(ErpSalReturn.class)`——per-mutation Processor 编排骨架的退货单加载/同事务回写（exchangeDeliveryId 双写），对齐 1057-2 per-mutation Processor `dao()` 契约先例 + `ReturnRefundOrchestrator` 同模块 daoFor 范式；(2) `ErpSalReturnGenerateExchangeDeliveryProcessor.loadReturnLines:377` `daoFor(ErpSalReturnLine.class)`——换货行缺省复制退货行的按 returnId 批量查询（非 FK 导航，无 ORM to-one getter 可替代），对齐 `ErpSalReturnProcessor.loadLines`/`ReturnRefundOrchestrator` 同模块先例。两站点均为同域（sal）实体，无 BizModel 新增站点（R2a/R2b 不变）、无 ErpMd* 站点（R2d 不变）。跨实体创建（ErpSalDelivery/ErpSalInvoice）全经 I*Biz 注入（deliveryBiz/invoiceBiz）零新增 daoFor 面。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1415 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -404,7 +414,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 233
-R2c: 1413
+R2c: 1415
 R2d: 35
 R3: 5
 R4: 0

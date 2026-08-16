@@ -25,6 +25,16 @@
 | 全额退货 | 退货数量等于原出库数量 | 冲销全部库存和应收 |
 | 换货 | 退货同时重新发货 | 退货+新销售出库 |
 
+> **实现注记（RC-R1.51 / P1-RC-025，UC-SAL-06 四断言）**：
+> - **returnType 列**：`ErpSalReturn.returnType`（propId 29，dict `erp-sal/return-type` 两值 RETURN/EXCHANGE，defaultValue="RETURN"）——既有退货零行为变化（RETURN 类型既有 approve/posting/refund 链零改动，纯加性 ORM 变更）。
+> - **换货触发点（D1 选项 A）**：退货审核（EXCHANGE 类型走既有 APPROVED 主路径：INCOMING 入库移动 + SALES_RETURN 过账 + 退款编排，断言①库存恢复天然成立）后，操作员显式调 `ErpSalReturn__generateExchangeDelivery(returnId, lines[], context)`（@BizMutation + per-mutation `ErpSalReturnGenerateExchangeDeliveryProcessor`）。换货商品/数量由操作员决策（L1「换发等值或不同货物」），`lines` 入参缺省复制退货行。
+> - **双向关联（D2 选项 A + 断言④）**：两 FK 列互指——`ErpSalReturn.exchangeDeliveryId`（propId 30）+ `ErpSalDelivery.exchangeReturnId`（propId 29），同事务双写（生成时回写双方）。域内无 sourceBillType/sourceBillCode 字符串模式，FK 即关联契约。codegen 循环依赖防护：`ErpSalDelivery.exchangeReturn` to-one 标 `ignoreDepends="true"`（拓扑序剔除反向边，运行时关联保留）。
+> - **换货出库单**：复制退货头（customer/warehouse/currency/businessDate）新建 `ErpSalDelivery`（DRAFT + UNSUBMITTED，code 前缀 `EX-`），行金额 = quantity × unitPrice（scale 4 HALF_UP）聚合头金额；走**既有出库状态机**（DRAFT→SUBMITTED→APPROVED，不自动审核）——审核经既有 `DeliveryStockMoveBuilder` 生成 OUTGOING 移动单（relatedBillType=ERP_SAL_DELIVERY + 新出库单 code，与退货 INCOMING 移动单键不冲突）扣库存（断言②运行时成立）。
+> - **价差语义（D3 选项 A）**：头级口径 Δ = 换货出库单 totalAmountWithTax − 退货单 totalAmountWithTax——Δ>0 补差价开票（经既有 `IErpSalInvoiceBiz.save` 建 DRAFT 发票，code 前缀 `EXDIFF-`，remark 记录价差来源，操作员经既有发票审核流提交过账）；Δ<0 退款（复用 `ReturnRefundOrchestrator.orchestrateRefund` 既有 reverse-settlement 能力；**边界**：退货审核时已先行反转客户已核销发票，换货生成时点通常无已核销发票 → 该分支为退款兜底 + remark 审计记录）；Δ=0 无动作。价差金额 + 方向记录换货出库单 remark（审计可追溯）。
+> - **守卫族 + 幂等（D4 选项 A）**：generateExchangeDelivery 前置守卫 = returnType==EXCHANGE 且已 APPROVED + 源出库已审核 + 期间 OPEN + 发票未核销（复用 R1.19 守卫族 helper）；`exchangeDeliveryId` 非空重复调用抛 `ERR_EXCHANGE_DELIVERY_ALREADY_GENERATED`（erp.err.sal.exchange-delivery-already-generated）幂等拒绝；非换货类型抛 `ERR_EXCHANGE_RETURN_TYPE_INVALID`。
+> - **操作引导**：审核通过但未生成换货单的运营跟踪 = `ErpSalReturn.exchangeDeliveryId` 空/非空判定；重复调用需先作废/删除既有换货单再重新生成。
+> - **多轮换货链**（一退货单 → 一换货出库单）与换货出库独立审批流属 Non-Goal（见 plan `2026-08-16-0904-2`）。
+
 ## 退货流程
 
 ### 退货流程总览
