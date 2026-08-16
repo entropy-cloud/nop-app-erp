@@ -1,6 +1,6 @@
 # 2026-08-16-0904-3-rc-mr1-r1-56-inv-stocktake-diff-move RC-R1.56 — inventory 盘点完成自动差异移动单（MR1 越界项：代码逻辑预授权 + product-scope 确认义务）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-16
 > Mission: requirement-compliance
 > Work Item: RC-R1.56（P1-MA2-062 reuse 重开 inventory 盘点完成自动差异移动单[UC-INV-07 四断言]）
@@ -58,73 +58,78 @@
 
 ### Phase 1 - 差异口径/生成语义/过账处理裁决 + product-scope 确认（Decision）
 
-Status: planned
+Status: completed
 Targets: `use-cases.md`（L1 复核）；`product-scope.md`（确认复核）；`InvPostingDispatcher.java`（过账面调研）；`state-machine.md`（注记设计）
 Skill: `nop-backend-dev`
 
 - Item Types: `Decision | Proof`
 - Prereqs: 无（既有基线）
 
-- [ ] `Decision` **D1 差异口径**：**选项 A（倾向选定）** = L1 字面公式 `差异 = actualQuantity − bookQuantity`（`use-cases.md:129` 逐字——盘点行字段快照对账，bookQuantity 为盘点单行账面数量快照）；**选项 B（否决）** = 审计方向 `actualQuantity vs StockBalance.totalQuantity`（实时余额比对——A1.27 :172/P1-MA2-062 方案 A/state-machine.md:173 三处审计文档引用；实时比对含盘点期间发生的移动，口径更严但偏离 L1 字面且需跨实体实时查询）。**理由**：真相源优先级 Q1=(c)（use-cases L1 权威 > owner doc 参考）——L1 公式为唯一契约；bookQuantity 字段在盘点行上为快照值（盘点时点账面），与 L1「账面数量」逐字一致。**残留风险**：盘点期间发生库存移动时 bookQuantity 快照口径与实时余额有差（盘点业务惯例为冻结账面快照，接受；owner doc 注记引导「盘点期间冻结出入库」运营建议）。
+- [x] `Decision` **D1 差异口径**：**选项 A（选定）** = L1 字面公式 `差异 = actualQuantity − bookQuantity`（`use-cases.md:129` 逐字——盘点行字段快照对账，bookQuantity 为盘点单行账面数量快照）；**选项 B（否决）** = 审计方向 `actualQuantity vs StockBalance.totalQuantity`（实时余额比对——A1.27 :172/P1-MA2-062 方案 A/state-machine.md:173 三处审计文档引用；实时比对含盘点期间发生的移动，口径更严但偏离 L1 字面且需跨实体实时查询）。**理由**：真相源优先级 Q1=(c)（use-cases L1 权威 > owner doc 参考）——L1 公式为唯一契约；bookQuantity 字段在盘点行上为快照值（盘点时点账面），与 L1「账面数量」逐字一致。**残留风险**：盘点期间发生库存移动时 bookQuantity 快照口径与实时余额有差（盘点业务惯例为冻结账面快照，接受；owner doc 注记引导「盘点期间冻结出入库」运营建议）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **D2 移动单生成语义**：**选项 A（倾向选定）** = 独立移动单（`relatedBillType=ERP_INV_STOCK_TAKE` + `relatedBillCode=null`——`StockMoveRequest` javadoc :13-14「relatedBillType 为空 → 停 CONFIRMED 待库管员二次确认」的**判别键 = `isBusinessLinked()`（两字段均非空才 true）**，故带类型键 + null code 时仍 `isBusinessLinked()==false` → 停 CONFIRMED 待二次确认 + state-machine.md:129「盘点调整 = 独立创建产生库管员待办」；类型键提供 D3 过账跳过的判别载体，code 置空保持独立语义）；**选项 B（否决）** = business-linked 自动 DONE（relatedBillType=ERP_INV_STOCK_TAKE + relatedBillCode=take.code——幂等 findExisting 自动去重 + doComplete 自动落余额，但绕过库管员二次确认 + 触发 InvPostingDispatcher 误派（见 D3））。**理由**：owner doc 双重证据（state-machine.md:129 独立创建产生待办 + :172 Deferred 语义「经手工 generateMove」= 独立移动单语义）+ 断言⑤「走 DRAFT→DONE 后才影响余额」天然契合停 CONFIRMED 语义 + 库管员二次确认防误盘；与 D3 选项 A 判别载体一致（见 D2/D3 一致性注记）。**残留风险**：独立移动单无 business-linked 幂等键（findExisting 不命中）——completeTake 幂等经状态守卫（CONFIRMED→DONE 单次）保证；移动单与盘点单关联经 remark 承载（code 引用）+ D4-a 裁决（remark 承载，不加新列）。
+- [x] `Decision` **D2 移动单生成语义**：**选项 A（选定）** = 独立移动单（`relatedBillType=ERP_INV_STOCK_TAKE` + `relatedBillCode=null`——`StockMoveRequest` javadoc :13-14「relatedBillType 为空 → 停 CONFIRMED 待库管员二次确认」的**判别键 = `isBusinessLinked()`（两字段均非空才 true）**，故带类型键 + null code 时仍 `isBusinessLinked()==false` → 停 CONFIRMED 待二次确认 + state-machine.md:129「盘点调整 = 独立创建产生库管员待办」；类型键提供 D3 过账跳过的判别载体，code 置空保持独立语义）；**选项 B（否决）** = business-linked 自动 DONE（relatedBillType=ERP_INV_STOCK_TAKE + relatedBillCode=take.code——幂等 findExisting 自动去重 + doComplete 自动落余额，但绕过库管员二次确认 + 触发 InvPostingDispatcher 误派（见 D3））。**理由**：owner doc 双重证据（state-machine.md:129 独立创建产生待办 + :172 Deferred 语义「经手工 generateMove」= 独立移动单语义）+ 断言⑤「走 DRAFT→DONE 后才影响余额」天然契合停 CONFIRMED 语义 + 库管员二次确认防误盘；与 D3 选项 A 判别载体一致（见 D2/D3 一致性注记）。**残留风险**：独立移动单无 business-linked 幂等键（findExisting 不命中）——completeTake 幂等经状态守卫（CONFIRMED→DONE 单次）保证；移动单与盘点单关联经 remark 承载（code 引用）+ D4-a 裁决（remark 承载，不加新列）。
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **D3 过账处理（触会计过账逻辑，保护区域门控）**：**选项 A（倾向选定）** = 差异移动单跳过过账——`InvPostingDispatcher.resolveBusinessType` 跳过集扩展（跳过集加 `ERP_INV_STOCK_TAKE`——判别载体 = D2 选项 A 的 relatedBillType 类型键；实仓核实结论：:152-179 对 relatedBillType==null 的 INCOMING/OUTGOING 仍按 moveType 映射 PURCHASE_INPUT/SALES_OUTPUT 误派，故**必须**有类型键 + 跳过集条目，不能依赖 null 判别）+ owner doc 注记「盘点差异过账（盘盈/盘亏会计凭证）successor」；**选项 B（否决）** = 专属 businessType + AcctDocProvider（盘盈借 1401/贷 待处理财产损溢 或盘亏贷 1401/借 损益——实现完整会计闭环但触会计核心路径，须双独立子 agent 批准 + 独立 plan-audit + 新 Provider 面）。**理由**：L1 断言面仅「移动单 + 余额影响」，无过账断言——A 满足 L1 全断言且最小面；B 为会计完善项超断言面。**残留风险**：盘盈/盘亏金额不入 GL（盘点差异未会计化——登记 successor，触发条件=运营/审计要求盘点差异会计化时立项）。**⚠ 若执行期裁决为 B：本 Phase 升级为双独立子 agent 批准门控前置项（会计过账逻辑变更类，roadmap:17），Phase 2 批准记录同步扩展。**
+- [x] `Decision` **D3 过账处理（触会计过账逻辑，保护区域门控）**：**选项 A（选定）** = 差异移动单跳过过账——`InvPostingDispatcher.resolveBusinessType` 跳过集扩展（跳过集加 `ERP_INV_STOCK_TAKE`——判别载体 = D2 选项 A 的 relatedBillType 类型键；实仓核实结论：:152-179 对 relatedBillType==null 的 INCOMING/OUTGOING 仍按 moveType 映射 PURCHASE_INPUT/SALES_OUTPUT 误派，故**必须**有类型键 + 跳过集条目，不能依赖 null 判别）+ owner doc 注记「盘点差异过账（盘盈/盘亏会计凭证）successor」；**选项 B（否决）** = 专属 businessType + AcctDocProvider（盘盈借 1401/贷 待处理财产损溢 或盘亏贷 1401/借 损益——实现完整会计闭环但触会计核心路径，须双独立子 agent 批准 + 独立 plan-audit + 新 Provider 面）。**理由**：L1 断言面仅「移动单 + 余额影响」，无过账断言——A 满足 L1 全断言且最小面；B 为会计完善项超断言面。**残留风险**：盘盈/盘亏金额不入 GL（盘点差异未会计化——登记 successor，触发条件=运营/审计要求盘点差异会计化时立项）。**⚠ 若执行期裁决为 B：本 Phase 升级为双独立子 agent 批准门控前置项（会计过账逻辑变更类，roadmap:17），Phase 2 批准记录同步扩展。**
       - Skill: `nop-backend-dev`
-- [ ] `Decision` **D4 关联载体 + 失败告警派发 + ErrorCode（原 D2 残留 + completeTake 失败路径合并）**：**D4-a 移动单↔盘点单关联载体**：**选项 A（选定）** = remark 承载（移动单 remark 写「盘点差异 {take.code} 盘盈/盘亏」——零 ORM 变更，Non-Goal「不改 ORM 结构」一致）；**选项 B（否决）** = 新增关联列（如 ErpInvStockMove.stockTakeId——触 ORM 结构变更，违反本计划 Non-Goal 且超代码逻辑预授权范围）。**理由**：A 零模型变更 + 可读性足够（审计经 code 引用追溯）；B 扩 ORM 面无 L1 断言支撑。**残留风险**：remark 关联非结构化——移动单不可按盘点单直接查询（审计仅经 code 引用反向追溯），watch-only 登记。**D4-b 生成失败告警派发**：**选项 A（选定）** = 失败逐行隔离 + LOG.warn + 经 `IErpSysNotificationBiz.notify` 派发盘点差异生成失败告警（对齐 A4.2.4 `dispatchVarianceFailureAlert` 范式——notify 事件 `inv.stocktake-diff-generation-failed` + config `erp-inv.stocktake-diff-alert-enabled` 默认 false 门控[对齐 R1.4 单键门控范式] + 无 ACTIVE 模板静默跳过）；**选项 B（否决）** = 仅 LOG.warn 无告警（运营无感知，与 A4.2.4/A4.2.9 可观测性改进方向相悖）。**理由**：A 对齐既有 best-effort 可观测性范式（R1.3/R1.48 先例），失败可见性运营闭环。**残留风险**：notify 通道零模板/config 默认关闭时静默跳过（既有范式接受，config 键经 ErpInvConfigs 登记）。**D4-c ErrorCode 定义决策**：**选项 A（选定）** = 需要时定义（如盘点差异移动单生成守卫错误码 `ERR_INV_STOCK_TAKE_MOVE_GENERATE`，中文描述 + define 参数表——行加载/差异计算失败守卫与状态迁移守卫不同面）；**选项 B（否决）** = 复用既有错误码族（`ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION` 等——若生成守卫语义可完整映射则零新增）。**理由**：A 显式化盘点差异生成守卫独立语义；B 仅在语义可完整映射时采用。**残留风险**：零新增码（选 B）时守卫错误复用既有码族，Phase 2 实施按 Phase 1 定稿执行。
+- [x] `Decision` **D4 关联载体 + 失败告警派发 + ErrorCode（原 D2 残留 + completeTake 失败路径合并）**：**D4-a 移动单↔盘点单关联载体**：**选项 A（选定）** = remark 承载（移动单 remark 写「盘点差异 {take.code} 盘盈/盘亏」——零 ORM 变更，Non-Goal「不改 ORM 结构」一致）；**选项 B（否决）** = 新增关联列（如 ErpInvStockMove.stockTakeId——触 ORM 结构变更，违反本计划 Non-Goal 且超代码逻辑预授权范围）。**理由**：A 零模型变更 + 可读性足够（审计经 code 引用追溯）；B 扩 ORM 面无 L1 断言支撑。**残留风险**：remark 关联非结构化——移动单不可按盘点单直接查询（审计仅经 code 引用反向追溯），watch-only 登记。**D4-b 生成失败告警派发**：**选项 A（选定）** = 失败逐行隔离 + LOG.warn + 经 `IErpSysNotificationBiz.notify` 派发盘点差异生成失败告警（对齐 A4.2.4 `dispatchVarianceFailureAlert` 范式——notify 事件 `inv.stocktake-diff-generation-failed` + config `erp-inv.stocktake-diff-alert-enabled` 默认 false 门控[对齐 R1.4 单键门控范式] + 无 ACTIVE 模板静默跳过）；**选项 B（否决）** = 仅 LOG.warn 无告警（运营无感知，与 A4.2.4/A4.2.9 可观测性改进方向相悖）。**理由**：A 对齐既有 best-effort 可观测性范式（R1.3/R1.48 先例），失败可见性运营闭环。**残留风险**：notify 通道零模板/config 默认关闭时静默跳过（既有范式接受，config 键经 ErpInvConfigs 登记）。**D4-c ErrorCode 定义决策**：**选项 A（选定）** = 定义 `ERR_INV_STOCK_TAKE_MOVE_GENERATE`（中文描述 + define 参数表 takeId/errorMessage——行加载/差异计算失败守卫与状态迁移守卫不同面）；**选项 B（否决）** = 复用既有错误码族（`ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION` 等——若生成守卫语义可完整映射则零新增）。**理由**：A 显式化盘点差异生成守卫独立语义（行加载失败为全局守卫，非逐行隔离路径）；B 仅在语义可完整映射时采用。**残留风险**：守卫错误显式化后 Phase 2 实施按定稿执行。
       - Skill: `nop-backend-dev`
       - Skill: `nop-backend-dev`
-- [ ] `Proof` **product-scope 确认复核**：`product-scope.md:16` 现行文本 grep `盘点|盘盈|盘亏|差异` 复核 → 未裁剪确认登记（对齐 Q5 换货先例 :190 登记格式）；`use-cases.md:127-134` L1 四断言原文复抄本计划；`InvPostingDispatcher.resolveBusinessType` 对 relatedBillType==null 行为的实仓核实（:152-179 读码 + 单测证实——D3 设计输入）。
+- [x] `Proof` **product-scope 确认复核**：`product-scope.md:16` 现行文本 grep `盘点|盘盈|盘亏|差异` 复核 → 未裁剪确认登记（对齐 Q5 换货先例 :190 登记格式）；`use-cases.md:127-134` L1 四断言原文复抄本计划；`InvPostingDispatcher.resolveBusinessType` 对 relatedBillType==null 行为的实仓核实（:152-179 读码 + 单测证实——D3 设计输入）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] D1-D4 裁决记录落盘（选择 + 备选 + 理由 + 残留风险），product-scope 未裁剪确认登记完成，resolveBusinessType null 行为核实结论产出（D2/D3 一致性注记：独立移动单判别载体 = `relatedBillType=ERP_INV_STOCK_TAKE` + null code，`isBusinessLinked()==false` 保持 CONFIRMED 停 + 跳过集条目生效）
-- [ ] 差异移动单生成设计定稿（逐行差异量/零差异跳过/失败隔离 + D4-b 告警派发/幂等守卫）
+- [x] D1-D4 裁决记录落盘（选择 + 备选 + 理由 + 残留风险），product-scope 未裁剪确认登记完成，resolveBusinessType null 行为核实结论产出（D2/D3 一致性注记：独立移动单判别载体 = `relatedBillType=ERP_INV_STOCK_TAKE` + null code，`isBusinessLinked()==false` 保持 CONFIRMED 停 + 跳过集条目生效）
+- [x] 差异移动单生成设计定稿（逐行差异量/零差异跳过/失败隔离 + D4-b 告警派发/幂等守卫）
 
 ### Phase 2 - completeTake 重写 + 差异移动单生成（双独立子 agent 批准门控）
 
-Status: planned
+Status: completed
 Targets: `ErpInvStockTakeBizModel.java`；新差异移动单生成 helper/Processor；`ErpInvConstants.java`；`ErpInvErrors.java`（决策：按 Phase 1 定稿决定是否定义，定义时中文描述）；`InvPostingDispatcher.java`（D3 选项 A 时跳过集扩展）
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix | Add | Proof`
 - Prereqs: Phase 1 完成
 
-- [ ] `Proof` **双独立子 agent 批准（越界项标准流程门控，硬门，批准落盘前不得实施 Phase 2 变更）**：两个独立子代理（fresh session，无执行者上下文）分别检查批准（批准记录落盘本计划 Draft Review Record/Closure 段，对齐 roadmap:13/29 + ai-autonomy-policy:79/83 2026-08-15 升级「越界项按 auto + dual-agent-approval 执行」）。批准前置条件：D1-D4 裁决与 L1 契约一致、既有 generateMove 链零改动、盘点单本身不改余额原则保持、若 D3 裁决 A 则跳过集扩展语义安全（不影响既有 PURCHASE_INPUT/SALES_OUTPUT 路径）、若 D3 裁决 B 则按会计核心路径复核 Provider 借贷恒等。
+- [x] `Proof` **双独立子 agent 批准（越界项标准流程门控，硬门，批准落盘前不得实施 Phase 2 变更）**：两个独立子代理（fresh session，无执行者上下文）分别检查批准（批准记录落盘本计划 Draft Review Record/Closure 段，对齐 roadmap:13/29 + ai-autonomy-policy:79/83 2026-08-15 升级「越界项按 auto + dual-agent-approval 执行」）。批准前置条件：D1-D4 裁决与 L1 契约一致、既有 generateMove 链零改动、盘点单本身不改余额原则保持、若 D3 裁决 A 则跳过集扩展语义安全（不影响既有 PURCHASE_INPUT/SALES_OUTPUT 路径）、若 D3 裁决 B 则按会计核心路径复核 Provider 借贷恒等。
+
+    **批准记录（2026-08-16，双独立子 agent 均 APPROVE，硬门通过）**：
+    - Agent A：`ses_ff6b3c141ffea8fvB8QYYaFgLK`（general subagent，fresh session）——6 硬门判据全 PASS：①D1-D4 与 L1 契约一致（use-cases.md:127-134 五断言逐条核验，D1 公式 = L1 :129 逐字）；②既有 generateMove 链零改动（doConfirm/doComplete/GenerateMoveProcessor 零改动，Phase 2 面仅 completeTake + 跳过集单行 + 常量/ErrorCode + 新 helper）；③「盘点单本身不改余额」保持（余额影响仅经 generateMove 状态机，D2-A 下生成移动单停 CONFIRMED 零余额写）；④D3-A 跳过集语义安全（跳过集仅按 relatedBillType 精确匹配，ERP_INV_STOCK_TAKE 全仓零既有生产者，PURCHASE_INPUT/SALES_OUTPUT/MANUFACTURING_RECEIPT 路径零影响；额外证实 PPV 侧通道 dispatchPurchasePriceVariance 经 dispatchIfApplicable 早退一并门控，零误派）；⑤D2 判别载体成立（isBusinessLinked() 双字段非空才 true，(ERP_INV_STOCK_TAKE, null)→false→停 CONFIRMED，幂等经 assertCanCompleteTake 单次迁移守卫）；⑥零 ORM/api.xml 变更 + 过账逻辑变更限 D3-A 跳过集。非阻塞：StockMoveRequest javadoc :13-14 陈旧措辞（判别键实为 isBusinessLinked 双字段）；盘亏符号约定建议 abs 归一；D4-b 静默残差已文档化。
+    - Agent B：`ses_ff6b39419ffeeN5T1BmhZkE9yw`（general subagent，fresh session）——7 独立复核焦点全 VERIFIED：D2 停 CONFIRMED 端到端链实证（findExisting 仅 business-linked、doComplete 仅 business-linked、doConfirm 恒执行）；D3 跳过集 air-tight（grep ERP_INV_STOCK_TAKE 生产代码零命中 + PPV 侧通道一并门控 + DeferredPostingSweepJob 重放不重调 resolveBusinessType 无回溯误派）；bookCompletion 全仓唯一调用点 = doComplete:131（结构性保证断言④⑤）；幂等顺序重放成立 + 并发 TOCTOU 由 version prop 乐观锁兜底（非阻塞观察）；零 ORM 变更（生成实体 getter 全齐：materialId/skuId/uoMId/locationId/batchNo/bookQuantity/actualQuantity/differenceQuantity/unitCost/differenceAmount + take.code/warehouseId + getLines()）；项目惯例符合（per-mutation Processor/@BizMutation Facade/ErrorCode 中文描述/@Inject 非 private/notify 范式对齐 ErpInvLandedCostProcessor）。**1 强制修正（实施前落盘）**：逐行失败孤立 DRAFT 移动单处置 + 失败行差异回填语义须显式记录——已按如下裁决落盘（见下）。
+    - **强制修正裁决（reviewer B focus 4，实施前落盘）**：(a) **孤立 DRAFT 处置 = 同事务补偿删除**——逐行失败 catch 分支先同事务删除该行已建移动单（头 + 行，`IEntityDao.deleteEntity`）再 LOG.warn + 告警 + 继续；理由：失败面集中于 `doConfirm.validateAvailable/validateBatchExpiry`（预留/余额变更**之前**抛错），DRAFT 删除零余额/流水/预留副作用，盘点单不留孤立残单；极端边缘（applyReservation 阶段 DB 层异常，同事务部分预留变更无法经删单回退）登记 residual risk（DB 故障类，与既有 UC-INV-08 机制同类，见 Deferred But Adjudicated）。(b) **失败行差异回填语义**：`differenceQuantity/differenceAmount` 回填不依赖移动单生成成败——差异计算完成后统一回填（生成失败不阻断回填），盘点单 DONE 后差异数据完整；运维经告警/日志定位失败行，可经手工 generateMove 补录（对齐 Deferred 前手工入口语义）。
       - Skill: `nop-backend-dev`
-- [ ] `Fix` `ErpInvStockTakeBizModel.completeTake` 重写：加载 lines（:45-62 现状 + 行加载）→ D1 公式逐行计算差异 → 零差异行跳过 → 差异行聚合 → 生成盘盈 INCOMING/盘亏 OUTGOING 差异移动单（D2 选项 A：`relatedBillType=ERP_INV_STOCK_TAKE` + `relatedBillCode=null` → 停 CONFIRMED 待库管员二次确认；按裁决定稿）+ differenceQuantity/differenceAmount 回填（既有零 writer 字段首次业务写入）→ setDocStatus(DONE) 保持既有状态守卫；@BizMutation 事务包裹 + 失败隔离（单行失败不阻断整单，LOG.warn + D4-b 选项 A 告警派发——notify 通道 + 无模板静默跳过）。
+- [x] `Fix` `ErpInvStockTakeBizModel.completeTake` 重写：加载 lines（:45-62 现状 + 行加载）→ D1 公式逐行计算差异 → 零差异行跳过 → 差异行聚合 → 生成盘盈 INCOMING/盘亏 OUTGOING 差异移动单（D2 选项 A：`relatedBillType=ERP_INV_STOCK_TAKE` + `relatedBillCode=null` → 停 CONFIRMED 待库管员二次确认；按裁决定稿）+ differenceQuantity/differenceAmount 回填（既有零 writer 字段首次业务写入）→ setDocStatus(DONE) 保持既有状态守卫；@BizMutation 事务包裹 + 失败隔离（单行失败不阻断整单，LOG.warn + D4-b 选项 A 告警派发——notify 通道 + 无模板静默跳过）。
       - Skill: `nop-backend-dev`
-- [ ] `Add`（D3 选项 A 时）`InvPostingDispatcher.resolveBusinessType` 跳过集扩展（跳过集加 `ERP_INV_STOCK_TAKE`——判别载体 = D2 选项 A 类型键；实仓核实结论：null relatedBillType 仍按 moveType 映射误派，故类型键 + 跳过集条目为必要组合）+ `ErpInvConstants` 新常量 + `ErpInvErrors` 新 ErrorCode（按 Phase 1 D4-c 定稿：需要时定义中文描述——如盘点差异移动单生成守卫错误码）。
+- [x] `Add`（D3 选项 A 时）`InvPostingDispatcher.resolveBusinessType` 跳过集扩展（跳过集加 `ERP_INV_STOCK_TAKE`——判别载体 = D2 选项 A 类型键；实仓核实结论：null relatedBillType 仍按 moveType 映射误派，故类型键 + 跳过集条目为必要组合）+ `ErpInvConstants` 新常量 + `ErpInvErrors` 新 ErrorCode（按 Phase 1 D4-c 定稿：需要时定义中文描述——如盘点差异移动单生成守卫错误码）。
       - Skill: `nop-backend-dev`
-- [ ] `Add`（D3 选项 B 时）专属 businessType + AcctDocProvider（盘盈/盘亏凭证借贷恒等 + seed 科目行纯加性如 R1.50 先例）——按 Phase 1 裁决落地，会计核心路径复核。
+- [x] `Add`（D3 选项 B 时）专属 businessType + AcctDocProvider（盘盈/盘亏凭证借贷恒等 + seed 科目行纯加性如 R1.50 先例）——按 Phase 1 裁决落地，会计核心路径复核。**不适用（guide 规则 10 移出范围并记录理由）**：Phase 1 D3 裁决 = 选项 A（跳过集），选项 B 条件未触发；若未来裁决 B 按会计核心路径另行立项（successor 触发条件见 Deferred But Adjudicated「盘点差异会计化」）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 双独立子 agent 批准记录落盘（批准人 2 个独立子代理 + 结论），completeTake 重写 + 差异移动单生成 + 过账处理落地（grep 证据）
-- [ ] 盘点单本身不改余额（断言④——completeTake 无余额直写代码路径，git diff 证明）+ 既有 generateMove 链零改动
+- [x] 双独立子 agent 批准记录落盘（批准人 2 个独立子代理 + 结论），completeTake 重写 + 差异移动单生成 + 过账处理落地（grep 证据：盘盈/盘亏生成仅 `ErpInvStockTakeCompleteTakeProcessor` + 跳过集条目 `InvPostingDispatcher:158-167` + 常量 `ErpInvConstants.RELATED_BILL_TYPE_STOCK_TAKE`/`CONFIG_STOCKTAKE_DIFF_ALERT_ENABLED` + ErrorCode `ERR_INV_STOCK_TAKE_MOVE_GENERATE`）
+- [x] 盘点单本身不改余额（断言④——completeTake 无余额直写代码路径，git diff 证明：finalizeComplete 仅 setDocStatus；`bookCompletion` 全仓唯一调用点 = `ErpInvStockMoveProcessor.doComplete:131`）+ 既有 generateMove 链零改动（git diff 7 文件 = 0 行变更实证）
 
 ### Phase 3 - 测试 + 文档回填 + 零回归验证
 
-Status: planned
+Status: completed
 Targets: 新增 `TestErpInvStockTakeCompleteDiffMove`；`state-machine.md`；`ui-patterns.md`；`stock-take-flow/main.page.yaml`；arm-index/roadmap/`docs/logs/`
 Skill: `nop-testing` + `nop-backend-dev`
 
 - Item Types: `Add | Proof`
 - Prereqs: Phase 2 完成
 
-- [ ] `Add` 新增 `TestErpInvStockTakeCompleteDiffMove`（8 组）：① 盘盈（差异>0）生成 INCOMING 移动单（行数/量/方向 + D4-a remark 关联断言）；② 盘亏（差异<0）生成 OUTGOING 移动单；③ 零差异不生成；④ 移动单 DONE 后余额变化（断言⑤——按 D2 裁决的完成路径驱动：D2 选项 A 时测试先驱动 confirm→complete（库管员二次确认语义），D2 选项 B 时经 generateMove 自动 DONE；bookCompletion 余额断言）；⑤ 盘点单本身余额不变（断言④）；⑥ 幂等/重复 completeTake 守卫（CONFIRMED→DONE 单次 + 非法边拒绝）；⑦ 部分行失败隔离（单行失败 WARN + D4-b 告警不阻断 + 其余行移动单生成）；⑧ differenceQuantity/differenceAmount 回填断言 + D3 过账处理断言（A：零凭证生成[跳过集生效]；B：凭证借贷恒等）。
+- [x] `Add` 新增 `TestErpInvStockTakeCompleteDiffMove`（8 组）：① 盘盈（差异>0）生成 INCOMING 移动单（行数/量/方向 + D4-a remark 关联断言）；② 盘亏（差异<0）生成 OUTGOING 移动单；③ 零差异不生成；④ 移动单 DONE 后余额变化（断言⑤——按 D2 裁决的完成路径驱动：D2 选项 A 时测试先驱动 confirm→complete（库管员二次确认语义），D2 选项 B 时经 generateMove 自动 DONE；bookCompletion 余额断言）；⑤ 盘点单本身余额不变（断言④）；⑥ 幂等/重复 completeTake 守卫（CONFIRMED→DONE 单次 + 非法边拒绝）；⑦ 部分行失败隔离（单行失败 WARN + D4-b 告警不阻断 + 其余行移动单生成）；⑧ differenceQuantity/differenceAmount 回填断言 + D3 过账处理断言（A：零凭证生成[跳过集生效]；B：凭证借贷恒等）。
       - Skill: `nop-testing`
-- [ ] `Add` owner doc 注记：`state-machine.md §盘点单状态机` :172-173 Deferred 标注更新为已实现（completeTake 自动差异移动单 + D1-D4 裁决 + successor 边界声明「盘点差异会计化」）；`ui-patterns.md` 流程同步；`stock-take-flow/main.page.yaml`/`ErpInvStockTake.view.xml` 文案更新（「未生成盘盈/盘亏移动单」注释 → 已实现）；`use-cases.md` 不动。
+- [x] `Add` owner doc 注记：`state-machine.md §盘点单状态机` :172-173 Deferred 标注更新为已实现（completeTake 自动差异移动单 + D1-D4 裁决 + successor 边界声明「盘点差异会计化」）；`ui-patterns.md` 流程同步；`stock-take-flow/main.page.yaml`/`ErpInvStockTake.view.xml` 文案更新（「未生成盘盈/盘亏移动单」注释 → 已实现）；`use-cases.md` 不动。
       - Skill: `nop-backend-dev`
-- [ ] `Proof` 分域零回归 + 回填：`mvn test -pl module-inventory/erp-inv-service` 全绿（218 基线 + 新增零回归）+ 回填（arm-index P1-MA2-062 → done (RC-R1.56) + roadmap 行 done + `docs/logs/2026/08-16.md` 日志条目）。全仓 `mvn test` + 全量构建 + compliance checker 归 Closure Gates 统一执行（guide 执行时规则 7）。
+- [x] `Proof` 分域零回归 + 回填：`mvn test -pl module-inventory/erp-inv-service` 全绿（218 基线 + 新增零回归）+ 回填（arm-index P1-MA2-062 → done (RC-R1.56) + roadmap 行 done + `docs/logs/2026/08-16.md` 日志条目）。全仓 `mvn test` + 全量构建 + compliance checker 归 Closure Gates 统一执行（guide 执行时规则 7）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 新测试全绿（①-⑧）+ erp-inv-service 既有测试零回归（含状态机矩阵）
-- [ ] owner doc 注记（Deferred→已实现）+ 三处回填（arm-index/roadmap/log）
+- [x] 新测试全绿（①-⑧）+ erp-inv-service 既有测试零回归（含状态机矩阵）：`TestErpInvStockTakeCompleteDiffMove` 10/10 全绿 + `mvn test -pl module-inventory/erp-inv-service` **223 tests 0 failures 0 errors**（结束审计独立复验口径：全新 run 实测 surefire 汇总 223 tests 全绿，含 `TestErpInvStockMoveAndStockTakeStateMachines` 状态机矩阵 + 10 新增零回归；原记录「228（218 基线 + 10 新增）」为计数口径差异——R1.48 的 218 系含 perf 排除外测试类的旧口径，以 223 实测为准）
+- [x] owner doc 注记（Deferred→已实现：`state-machine.md:172-175` 重写 + :276 审查提示同步 + `ErpInvStockTakeStateMachine` javadoc 同步 + `ui-patterns.md` flux 映射/盘点节同步 + `stock-take-flow/main.page.yaml` 三处文案） + 三处回填（arm-index P1-MA2-062 → done (RC-R1.56) 修复记录追加 + roadmap RC-R1.56 → done ✅ + `docs/logs/2026/08-16.md` 日志条目）
 
 ## Draft Review Record
 
@@ -134,14 +139,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（P1-MA2-062：completeTake 差异计算 + 盘盈/盘亏移动单 + 过账处理 + 测试）
-- [ ] 相关文档对齐（state-machine.md Deferred→已实现 + ui-patterns.md + 页面文案 + arm-index P1-MA2-062 → done (RC-R1.56) + roadmap 行 done）
-- [ ] 已运行验证（`mvn test -pl module-inventory/erp-inv-service` + 全仓 `mvn test` + `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（P1-MA2-062：completeTake 差异计算 + 盘盈/盘亏移动单 + 过账处理 + 测试）
+- [x] 相关文档对齐（state-machine.md Deferred→已实现 + ui-patterns.md + 页面文案 + arm-index P1-MA2-062 → done (RC-R1.56) + roadmap 行 done）
+- [x] 已运行验证（`mvn test -pl module-inventory/erp-inv-service` 223/0/0 全绿 + 全仓 `mvn test` + `mvn clean install -DskipTests` BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline——**R2c baseline-raise 1415→1420**（新 Processor 5 处 inv 同域 daoFor 站点，per-site 证据落 `docs/audits/compliance-baseline.md` §R2c 基线上调注记（plan 2026-08-16-0904-3），对齐 R1.48/R1.51 baseline-raise 先例；本计划 Goals 零回归门已预登记「或基线上调带 per-site 证据」路径））
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -159,13 +164,14 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: 草案待独立审查（Plan Status 保持 draft 直至审查收敛）。
+Status Note: 全部 Phase completed + 三处回填落盘 + 验证全绿 + compliance checker baseline-raise 已按计划 Goals 预登记路径落地（per-site 证据入 compliance-baseline.md）——独立结束审计（新会话）逐条核验通过，计划关闭。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 未执行（待实施后独立结束审计）
-- Evidence: —
+- Auditor / Agent: 独立结束审计代理（fresh session，无执行者上下文；mission-driver closure-audit 触发，plan-check --strict 复核）
+- Evidence: ① plan-check --strict 8 项 Closure Gates 全 `[x]` + 全 Phase Exit Criteria `[x]` + Plan Status=completed（本审计轮勾选，脚本复跑 PASS）；② `mvn test -pl module-inventory/erp-inv-service` 独立复跑 **223 tests 0 failures 0 errors**（surefire XML 汇总，含 `TestErpInvStockTakeCompleteDiffMove` 10/10 全绿 + 快照 10 组落盘 + `TestErpInvStockMoveAndStockTakeStateMachines` 状态机矩阵零回归）；③ 全量 `mvn clean install -DskipTests` 复跑 BUILD SUCCESS（app-erp-all runner jar 产出）；④ `bash docs/audits/nop-compliance-checker.sh` 复跑：R2c=1420 超基线 1415 → **baseline-raise 1415→1420**（per-site：`ErpInvStockTakeCompleteTakeProcessor` 5 处 inv 同域 daoFor——loadLines:107 / lineDao():129 / moveDao():218 / moveLineDao():233 / takeDao():248，对齐 1057-2 per-mutation Processor `dao()` 契约 + R1.48/R1.51 同型先例；R2a/R2b/R2d/R8 零变化），复跑 actual ≤ updated baseline 全绿；⑤ 语义逐条核验：completeTake 委托 `ErpInvStockTakeCompleteTakeProcessor`（beans.xml 注册 + BizModel @Inject 消费，非空心）、`InvPostingDispatcher` 跳过集含 `ERP_INV_STOCK_TAKE`（:158-165）、`ErpInvConstants.RELATED_BILL_TYPE_STOCK_TAKE`/`CONFIG_STOCKTAKE_DIFF_ALERT_ENABLED`、`ErpInvErrors.ERR_INV_STOCK_TAKE_MOVE_GENERATE`、`ErpInvConfigs.isStocktakeDiffAlertEnabled`；既有 generateMove 链零改动（git diff 涉 7 生产文件全为新增/跳过错误码，`ErpInvStockMoveProcessor`/`GenerateMoveProcessor`/`StockMoveRequest` 行为零变更）；`bookCompletion` 全仓唯一生产调用点 = `ErpInvStockMoveProcessor.doComplete:131`（断言④⑤结构性保证）；D2 判别载体 `StockMoveRequest.isBusinessLinked()`（:165-168）双字段非空才 true，`(ERP_INV_STOCK_TAKE, null)→false→停 CONFIRMED` 成立；⑥ owner doc 回填核验：`state-machine.md` §盘点单状态机 Deferred→已实现 + 审查提示同步、`ui-patterns.md` flux 映射/盘点节、`stock-take-flow/main.page.yaml` 三处文案、`ErpInvStockTakeStateMachine` javadoc、arm-index P1-MA2-062 → done (RC-R1.56)、roadmap RC-R1.56 → done ✅、`docs/logs/2026/08-16.md` 日志条目；⑦ 结束审计修正落盘：测试计数口径修正（228→223 实测）、`StockMoveRequest` javadoc :13-14 陈旧措辞修正（判别键实为 `isBusinessLinked` 双字段，Agent A 非阻塞观察升级为 doc 修正）、R2c baseline-raise per-site 证据。
 
 Follow-up:
 
-- （无）
+- `StockMoveRequest` javadoc :13-14 陈旧措辞已随本计划结束审计修正（判别键 = `isBusinessLinked()` 双字段，`relatedBillType 非空` 单字段措辞移除）——无遗留。
+- 盘点差异会计化（盘盈/盘亏 GL 凭证）与盘点期间出入库冻结运营建议：见 Deferred But Adjudicated（successor 触发条件已命名）。

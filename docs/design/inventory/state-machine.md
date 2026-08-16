@@ -169,10 +169,11 @@
 
 > **标签映射注记（COUNTING ↔ CONFIRMED，doc label drift，行为一致）**：上图标签「盘点中 (COUNTING)」为业务语义描述；实际持久化 dict `erp-inv/move-status`（`model/app-erp-inventory.orm.xml`）**无 COUNTING 值**，盘点单复用移动单字典，`startTake` 的目标态实际写入 `CONFIRMED`（`ErpInvStockTakeBizModel.startTake` → `setDocStatus(CONFIRMED)`）。即「盘点中 (COUNTING)」标签 ↔ 实际 dict/code 值 `CONFIRMED` 存在标签/命名漂移，**行为一致**（owner doc 的「盘点中」= 代码的 CONFIRMED）。实体级状态机 Bean `ErpInvStockTakeStateMachine` 按既有 writer 建模（`startTakeTargetStatus()=CONFIRMED`），保留 CONFIRMED 行为不改 dict/绑。分类 = `doc label drift`（标签漂移，非行为漂移）。
 
-- **差异调整移动单的自动生成 = Deferred（owner doc 语义对齐）**：`ErpInvStockTakeBizModel.completeTake` 当前仅将盘点单置为 DONE（源态守卫 CONFIRMED → `DOC_STATUS_DONE` + `updateEntity`），**无任何 `StockTakeLine.qtyActual` vs `StockBalance.totalQuantity` 比对、无 `IErpInvStockMoveBiz.generateMove` 调用**——即不自动生成盘盈/盘亏移动单。差异调整当前经库管员**手工 `generateMove`** 处置（创建新 DRAFT 移动单，正数盘盈/负数盘亏），走下方移动单状态机流程。盘点单 DONE 后无悬挂数据（差异未自动入账但不阻塞盘点闭环）。
-- **Successor 触发条件**：盘点闭环自动化需求落地时，在 `completeTake` 内自动比对 `qtyActual` vs `totalQuantity` → 经 `IErpInvStockMoveBiz.generateMove` Facade 生成差异移动单（实现路径与现有 Facade 可复用）。
-- 盘点完成的差异**不直接改余额**，而是经移动单（正数盘盈/负数盘亏）走移动单状态机流程才会影响余额。这一原则保留；当前唯一的偏差是「自动生成」降级为「手工入口」（Deferred）。
-- 这种设计保证所有余额变动都通过移动单流水可追溯，盘点只是发现差异的入口（差异入口当前为手工 `generateMove`，自动比对留 successor）。
+- **差异调整移动单的自动生成 = 已实现（RC-R1.56 / P1-MA2-062，2026-08-16 落地）**：`ErpInvStockTakeBizModel.completeTake`（Facade 保留 `requireEntity` 权限管道）委托 per-mutation `ErpInvStockTakeCompleteTakeProcessor` 完整盘点闭环——行加载 → **D1 差异口径**（L1 逐字公式 `差异 = actualQuantity − bookQuantity`，`use-cases.md:129`；盘点行字段快照对账，否决实时 `StockBalance.totalQuantity` 比对）逐行计算并回填 `differenceQuantity`/`differenceAmount`（零差异行跳过）→ 逐行经 `IErpInvStockMoveBiz.generateMove` Facade 生成差异移动单（差异 >0 → 盘盈 INCOMING / 差异 <0 → 盘亏 OUTGOING，行量 = |差异|，行级 material/sku/uoM/batchNo/location 映射）→ 置 DONE。**D2 生成语义 = 独立移动单**：`relatedBillType=ERP_INV_STOCK_TAKE` + `relatedBillCode=null` → `StockMoveRequest.isBusinessLinked()==false` → 停 **CONFIRMED** 待库管员二次确认（产生库管员待办，对齐 :129「独立创建的移动单才产生库管员待办」；幂等由 CONFIRMED→DONE 单次迁移守卫保证）。**D3 过账处理 = 跳过**：`InvPostingDispatcher.resolveBusinessType` 跳过集加 `ERP_INV_STOCK_TAKE`——差异移动单 DONE 零凭证、`posted=false` 保持（null relatedBillType 仍按 moveType 误派 PURCHASE_INPUT/SALES_OUTPUT，故类型键 + 跳过集条目为必要组合；盘点差异会计化 = successor，见下）。**D4 关联载体**：移动单 remark 承载「盘点差异 {take.code} 盘盈/盘亏」（零 ORM 变更，审计经 code 引用反向追溯）。**失败语义（D4-b）**：逐行生成失败**不阻断整单**——同事务补偿删除该行孤立 DRAFT 移动单（失败面集中于 confirm 的可用量/效期校验，预留/余额变更之前）→ LOG.warn → config `erp-inv.stocktake-diff-alert-enabled`（默认 false）门控派发 `inv.stocktake-diff-generation-failed` 告警（对齐 A4.2.4 dispatchVarianceFailureAlert 范式，无 ACTIVE 模板静默跳过）；`differenceQuantity`/`differenceAmount` 回填不依赖生成成败（盘点单 DONE 后差异数据完整，运维可经手工 generateMove 补录）。守卫错误码 `ERR_INV_STOCK_TAKE_MOVE_GENERATE`（D4-c）。
+- 盘点完成的差异**不直接改余额**，而是经移动单（盘盈 INCOMING/盘亏 OUTGOING 独立单）停 CONFIRMED 待库管员二次确认，走移动单状态机流程（CONFIRMED→DONE 经 `bookCompletion`）才会影响余额。这一原则保留（断言④⑤，`bookCompletion` 全仓唯一调用点 = `ErpInvStockMoveProcessor.doComplete`）。
+- 这种设计保证所有余额变动都通过移动单流水可追溯，盘点只是发现差异的入口（入口 = completeTake 自动生成，2026-08-16 起取代手工 generateMove）。
+- **盘点差异会计化（successor，触发条件已命名）**：盘盈/盘亏金额当前不入 GL（D3 选项 A 跳过过账）。触发条件 = 运营/审计要求盘点差异会计化[盘盈/盘亏 GL 凭证]时，按会计核心路径立项（专属 businessType + AcctDocProvider + 双独立子 agent 批准 + 独立 plan-audit）。
+- **盘点期间出入库冻结运营建议（watch-only residual）**：D1 采用 `bookQuantity` 快照口径，与盘点期间实时余额有差——运营惯例冻结账面快照，建议盘点期间冻结仓库出入库操作（ORM 无显式锁字段，经运营流程保障）。
 
 ## 调拨单状态机（独立）
 
@@ -273,4 +274,4 @@
 - 角色权限是否每个迁移都绑定。
 - TODO 策略是否避免单据沉没。
 - 冲销路径是否完整（已完成单的纠错只能冲销，不能反审核）。
-- **Deferred 标注与代码零 writer 一致**：盘点单「自动生成差异移动单」= Deferred（当前手工 `generateMove` 入口，`completeTake` 仅置 DONE）；拣货单 `PICKING`/`PICKED` = 预留死状态（零 writer，WMS successor）。审查时核对 owner doc 声明的迁移/联动在 BizModel 中确有 `setStatus` writer，否则须显式 Deferred 标注。
+- **Deferred 标注与代码零 writer 一致**：盘点单「自动生成差异移动单」= **已实现**（RC-R1.56，completeTake 经 `ErpInvStockTakeCompleteTakeProcessor` 自动生成盘盈/盘亏移动单，差异回填 `differenceQuantity`/`differenceAmount` 为业务 writer；盘点差异会计化[GL 凭证]仍为 successor）；拣货单 `PICKING`/`PICKED` = 预留死状态（零 writer，WMS successor）。审查时核对 owner doc 声明的迁移/联动在 BizModel 中确有 `setStatus` writer，否则须显式 Deferred 标注。

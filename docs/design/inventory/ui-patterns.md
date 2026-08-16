@@ -4,7 +4,7 @@
 > 字段定义以 `model/app-erp-inventory.orm.xml` 为准，业务语义与状态机见 `state-machine.md`、`cross-domain.md`。
 > 调研引用格式 `[源项目#要点]`，详见 `docs/analysis/erp-survey/`。
 
-> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：盘点 3 阶段流程→flux `crud`（盘点单列表）+ form action 按钮（startTake/completeTake/cancelTake mutation），流程止于 DONE 展示（盘盈/盘亏移动单生成归 watch-only residual，`2026-08-03-1232-4` P4 落地）；库存看板→flux 三段式（`page-structure-patterns.md` §3.0）。
+> **Flux 控件映射**（2026-08-03 全量迁移后，复杂页权威 `docs/design/flux-complex-pages.md` §3）：盘点 3 阶段流程→flux `crud`（盘点单列表）+ form action 按钮（startTake/completeTake/cancelTake mutation），流程止于 DONE 展示（completeTake 自动生成盘盈/盘亏移动单[RC-R1.56 已实现：独立移动单停 CONFIRMED 待库管员二次确认，差异移动单生成失败逐行隔离 + config 门控告警，见 `state-machine.md` §盘点单状态机]，页面文案 2026-08-16 同步）；库存看板→flux 三段式（`page-structure-patterns.md` §3.0）。
 
 ## 设计原则
 
@@ -137,8 +137,8 @@
 **要点**：
 - 盘点单状态基于 `erp-inv/move-status` 字典：DRAFT(草稿) → CONFIRMED(盘点中) → DONE(已完成) → CANCELLED(已取消)
 - CONFIRMED 阶段可录入实盘数量，系统自动计算差异
-- 盘点期间在业务层面建议锁定该仓库的出入库操作（ORM 无显式锁字段，通过盘点期间禁止出入库校验实现）
-- DONE 后自动生成盘盈/盘亏移动单（差异为正→盘盈入库单，差异为负→盘亏出库单）
+- 盘点期间在业务层面建议锁定该仓库的出入库操作（ORM 无显式锁字段，通过盘点期间禁止出入库校验实现；D1 差异口径采用盘点行账面快照，见 `state-machine.md` §盘点单状态机）
+- DONE 后自动生成盘盈/盘亏移动单（差异为正→盘盈入库单，差异为负→盘亏出库单；RC-R1.56 已实现——独立移动单停 CONFIRMED 待库管员二次确认，库管员在移动单列表执行 complete 后差异才影响余额；差异移动单跳过存货估值过账，盘盈/盘亏会计化归 successor）
 - 盘点差异在审核前可修改
 
 ### 批次/序列号台账

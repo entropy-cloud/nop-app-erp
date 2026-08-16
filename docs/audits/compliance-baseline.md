@@ -403,6 +403,16 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1415 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R2c 基线上调注记（plan 2026-08-16-0904-3，RC-R1.56 inventory 盘点完成自动差异移动单）
+
+`2026-08-16-0904-3`（RC-R1.56 / P1-MA2-062，UC-INV-07：completeTake 自动生成盘盈/盘亏差异移动单）新增 per-mutation Processor `ErpInvStockTakeCompleteTakeProcessor`（`module-inventory/erp-inv-service/.../processor/`，经 BizModel `ErpInvStockTakeBizModel` @Inject 路由 + beans.xml 注册），引入 **R2c +5**，全部为既有文档化 pattern 类的合法同型新增（对齐 1057-2 per-mutation Processor `dao()` 契约先例 + R1.48 +6 / R1.51 +2 先例——per-mutation Processor 的 `daoProvider.daoFor(<EntityClass>)` 是 Nop 平台读取托管实体 DAO 的标准方式，非业务跨域编排）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2c | 1415 | **1420** | 1420 | **baseline-raise**（+5） | (1) `ErpInvStockTakeCompleteTakeProcessor.loadLines:107` `daoFor(ErpInvStockTakeLine.class)`——盘点行子表按 takeId 批量查询（非 FK 导航，无 ORM to-one getter 可替代）；(2) `lineDao():129` `daoFor(ErpInvStockTakeLine.class)`——D1 差异回填 updateEntity helper（编排骨架）；(3) `moveDao():218` `daoFor(ErpInvStockMove.class)`——失败行孤立 DRAFT 移动单定位/补偿删除 helper；(4) `moveLineDao():233` `daoFor(ErpInvStockMoveLine.class)`——移动单行加载/删除 helper；(5) `takeDao():248` `daoFor(ErpInvStockTake.class)`——终态 DONE 回写 helper。五站点均为 inv **同域**实体直查（盘点聚合头/行 + 关联移动单头/行），无跨域站点（跨域生成经 `IErpInvStockMoveBiz` Facade 注入，零新增 daoFor 跨域面）。无 BizModel 新增站点（R2a/R2b 不变，`ErpInvStockTakeBizModel` 仅 @Inject 委托无 daoFor）、无 ErpMd* 站点（R2d 不变）、Processor 已被 BizModel 消费（R8 零孤儿）。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1420 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核（plan 0904-3 Closure Audit Evidence ⑦）。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -414,7 +424,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 233
-R2c: 1415
+R2c: 1420
 R2d: 35
 R3: 5
 R4: 0
