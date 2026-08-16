@@ -47,7 +47,7 @@
 | 复检结果与原检冲突 | 以复检结果为准，原检记录保留（审计） |
 | 让步接收未经审批 | 拒绝迁移到 CONDITIONAL |
 | 并发录入同一质检单 | 乐观锁 |
-| 业务单据作废联动 | 关联业务单据作废时，未完成的质检单自动取消（**Deferred**——见 §实现约定 + §CRUD 桩实体状态机，残留经 useLogicalDelete 手工清理，successor：业务作废自动取消质检需求时） |
+| 业务单据作废联动 | 关联业务单据作废时，未完成的质检单自动取消（**已实现**——`IErpQaInspectionBiz.cancelForBusinessBill` Facade + purchase/sales/mfg cancel Processor config-gated wiring，RC-R1.59；见 §实现约定） |
 
 ### 5. 可达性
 
@@ -187,7 +187,7 @@ NCR 关闭（RESOLVED）时，根据处置方式触发不同的财务处理：
 - **让步接收审批流（简化）**：设计 §2 让步 CONDITIONAL 需「让步审批」；本期以 `approveStatus=APPROVED`（质量主管审核）简化，完整多级让步审批工作流 Non-Goal。触发条件：多级审批需求时。
 - **抽检方案自动计算（Non-Goal）**：`ErpQaSamplingPlan` 实体存在但抽样数量自动计算（AQL/GB2828）不落地。触发条件：统计抽样需求时。
 - **校准管理 / 风险登记 / 质量目标 / 评审（Non-Goal）**：`ErpQaCalibration`/`ErpQaRiskRegister`/`ErpQaQualityGoal`/`ErpQaReview` 实体存在但 BizModel 深化不落地（仅标准 CRUD 空壳）。触发条件：计量管理 / QMS 全面需求时。
-- **业务单据作废联动取消（Deferred）**：设计 §4「业务单据作废时关联质检单自动取消」**Deferred**——`IErpQaInspectionBiz.cancelForBusinessBill(billType, billCode)` Facade + 业务域 cancel Processor config-gated wiring 属跨域跨表面实现，本期不落地。残留质检单经 `useLogicalDelete` 手工清理（CANCELLED 业务单据不再流转，不破坏主路径）。**Successor 触发条件**：业务作废自动取消质检需求时，实现上述 Facade + purchase/sales/mfg cancel Processor config-gated 调用（PENDING→cancelled via useLogicalDelete）。
+- **业务单据作废联动取消（已实现）**：设计 §4「业务单据作废时关联质检单自动取消」**已实现**（RC-R1.59 / P1-RC-041，plan `2026-08-16-1634-3-rc-mr1-r1-59-qa-business-cancel-linkage.md`）：`IErpQaInspectionBiz.cancelForBusinessBill(billType, billCode)` Facade——按 relatedBillType+relatedBillCode 精确查询关联质检单，仅 `result=PENDING` 软删取消（useLogicalDelete 置 delVersion，平台逻辑删除，非物理删除），终态（ACCEPTED/CONDITIONAL/REJECTED）不动（历史完整，L1 use-cases.md:141），无匹配零副作用，幂等（重复取消零副作用）。purchase/sales/mfg cancel Processor 作废成功后置调用（`ErpPurReceiveCancelProcessor.cancel` / `ErpSalDeliveryCancelProcessor.cancel` / `ErpMfgWorkOrderProcessor.cancel`，protected step `cancelLinkedInspections`，try/catch LOG.warn 降级不阻断作废主流程——联动为辅助语义）。**D1 取消载体**：方案 A 软删（对齐 arm-index P1-MA2-064 方案 A「PENDING→cancelled via useLogicalDelete」）；方案 B（result dict 加 CANCELLED + 状态机迁移）不选——dict 追加超 B 类枚举（2026-08-08 不可类推规则），且 L1「取消(CANCELLED)」语义经软删已满足（软删后 findByRelatedBill 经平台 delVersion=0 过滤自动不可见，门控/反查语义天然闭合；审计经 delVersion/删除时间可追溯）。**D2 config 门控**：`erp-qua.business-cancel-linkage-enabled` **默认 true**（仅取消 PENDING 且关联已作废单据的质检单，零活跃数据危害；部署侧可显式关闭保持作废零联动）。**D3 接线与 billType 键值**：各域 cancel 接线使用本域创建路径同源常量（pur=`ErpPurConstants.RELATED_BILL_TYPE_PUR_RECEIVE`="ERP_PUR_RECEIVE"、sal=`ErpSalConstants.RELATED_BILL_TYPE_SAL_DELIVERY`、mfg=`ErpMfgConstants.RELATED_BILL_TYPE_MFG_WORK_ORDER`），保证与强制质检触发写入的 relatedBillType 键值一致；残留风险：软删质检单无独立「已取消」状态展示（登记 Deferred But Adjudicated「软删质检单的『已取消』审计展示」）。
 - **行级评测规格类型**：`specMin/specMax/measuredValue` 列域为 DECIMAL（domain measuredValue/specLimit），非数值规格（外观「合格/不合格」）由 `InspectionResultEvaluator`「无规格上下限 + 实测非空即合格」分支处理；纯非数值实测值落库受域强转限制（须人工录入行结果覆盖）。
 - **passInspection/failInspection 状态守卫 + reInspect 废弃**：`passInspection`/`failInspection` 增 `result==PENDING` 单一源态守卫 + 设 `posted=true`（postedAt/postedBy）+ `failInspection` 触发 `autoCreateNcrFromInspection`（与 `recordResult` REJECTED 分支对齐），堵住 silent flip REJECTED→ACCEPTED 绕过强制质检门控。`reInspect` 方法 + `IErpQaInspectionBiz.reInspect` 接口签名删除——终态不可直接翻回 PENDING，复检走 `createForBusinessBill` 新建关联质检单（§3）。
 
