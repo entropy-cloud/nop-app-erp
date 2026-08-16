@@ -16,6 +16,8 @@
 | 已完成（COMPLETED） | 终态：项目正常完成 | 否 |
 | 已取消（CANCELLED） | 终态：项目取消 | 否 |
 
+> **实现注记（RC-R1.62 / P1-RC-050，2026-08-16）**：「可被新单据引用 = 否（新费用不归集）」已运行时成立——`ExpenseCostAggregator.refreshExpenseCost` 归集行写入前经 `IErpPrjProjectBiz.requireReferenceable` 单一咽喉校验项目状态（仅 OPEN 通过，ON_HOLD/COMPLETED/CANCELLED 抛 `ERR_PROJECT_NOT_REFERENCEABLE`，UC-PRJ-09 AC-①「拒绝新费用归集(工时/采购/报销)」费用路径闭合；同咽喉同时闭合 P2-RC-048 requireReferenceable 消费缺口）。工时路径既有 `ErpPrjTimesheetSubmitProcessor.validateProjectReferenceable` + 采购路径 `ErpPrjCostCollectionAggregateMaterialCostProcessor` 已先期接入。`TestErpPrjExpenseAggregation` 新增 ON_HOLD/COMPLETED/CANCELLED 拒绝 + OPEN 回归断言。
+
 ### 2. 迁移完整性
 
 ```
@@ -50,7 +52,7 @@
 | 异常场景 | 处理 |
 |----------|------|
 | 完成时仍有未结束任务 | `closeProject` 经 `validateTasksFinished` 校验：STRICT 模式（`erp-prj.strict-project-task-completion-check` 默认 true）存在未结束任务（TODO/IN_PROGRESS/BLOCKED）时抛 `ERR_PROJECT_HAS_UNFINISHED_TASKS`，提示先 `completeTask` 或取消剩余任务；WARN 模式 LOG.warn 放行 |
-| 暂停后仍有费用流入 | 配置控制：暂停项目拒绝新费用归集（或允许但标记） |
+| 暂停后仍有费用流入 | 配置控制：暂停项目拒绝新费用归集（或允许但标记）——**已实现（RC-R1.62 / P1-RC-050）**：`ExpenseCostAggregator.refreshExpenseCost` 经 `requireReferenceable` 单一咽喉拒绝非 OPEN 项目新归集（抛 `ERR_PROJECT_NOT_REFERENCEABLE`），对齐 §1 实现注记 |
 | 预算超支 | 警告或拦截（按配置），不阻止状态迁移 |
 | 立项时缺必填字段 | `startProject` 经 `validateStartPreconditions` 校验：STRICT 模式（`erp-prj.strict-project-start-precheck` 默认 true）缺项目名/起止日期/预算或 startDate>endDate 时抛 `ERR_PROJECT_START_PRECONDITION_FAILED`；WARN 模式 LOG.warn 放行 |
 | 并发状态变更 | 乐观锁 |

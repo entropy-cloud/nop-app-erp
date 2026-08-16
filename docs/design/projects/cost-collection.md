@@ -130,6 +130,10 @@
 | 采购下单 | 采购金额 | 检查采购金额是否超预算 |
 | 费用报销 | 报销金额 | 检查费用是否超预算 |
 
+> **实现注记（RC-R1.62 / P1-RC-051 报销路径闭合，2026-08-16）**：L1 UC-PRJ-04「报销审核(标注项目时)」时机已运行时成立——`ExpenseCostAggregator.refreshExpenseCost` 在归集行写入前调 `BudgetChecker.check(projectId, 本次新增归集金额 Σ)`（STRICT 超预算抛 `ERR_BUDGET_EXCEEDED` 拒绝 → @BizMutation 事务回滚零落库 / WARNING 放行）。三时机现状：工时提交（既有 `ErpPrjTimesheetSubmitProcessor.runBudgetCheckHook`）+ 采购审核（RC-R1.61 物料归集 `ErpPrjCostCollectionAggregateMaterialCostProcessor` merge）+ 报销审核（本行）——L1 三时机全数闭合。`TestErpPrjExpenseAggregation` 新增 STRICT 拒绝/WARNING 放行断言。
+>
+> **设计后果（残留风险，RC-R1.62 Phase 1 Decision 3）**：`closeProject` 于项目仍 OPEN 时触发费用归集刷新（`ErpPrjProjectCloseProjectProcessor`）——若 STRICT 模式且存在超预算待归集报销行，预算检查将抛 `ERR_BUDGET_EXCEEDED` 使 closeProject 事务回滚（WARNING 默认放行）。该后果在 UC-PRJ-04「报销审核预算检查」语义下可接受（关闭前预算拦截 = 防御性校验）。
+
 ### 3.4 预算检查流程
 
 ```
@@ -304,7 +308,7 @@
 
 ## 七、关键业务规则
 
-1. **项目状态控制**：只有 OPEN 状态的项目才能被新单据引用
+1. **项目状态控制**：只有 OPEN 状态的项目才能被新单据引用——**统一咽喉已消费（RC-R1.62 / P2-RC-048 闭合，2026-08-16）**：`IErpPrjProjectBiz.requireReferenceable` 现为项目归集守卫的单一咽喉——费用路径（`ExpenseCostAggregator.refreshExpenseCost`，本行接入）+ 采购路径（`ErpPrjCostCollectionAggregateMaterialCostProcessor`，RC-R1.61）+ 工时路径（`ErpPrjTimesheetSubmitProcessor.validateProjectReferenceable` 内联自有校验保留为专项错误码语义）；P2-RC-048「API 存在生产代码零调用方」watch-only finding 随费用路径接入闭合。
 2. **预算控制配置化**：支持 WARNING 和 STRICT 两种模式
 3. **成本率优先级**：用户级别 > 角色级别 > 活动类型级别
 4. **项目关闭冻结**：关闭后的项目不可再归集新成本
