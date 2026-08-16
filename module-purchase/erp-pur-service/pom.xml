@@ -47,6 +47,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 入库审核触发项目物料成本归集（RC-R1.61 / P1-RC-049）——IErpPrjCostCollectionBiz
+             Facade 接口位于 projects dao；purchase→projects 单向（matrix §3.2 允许清单 + module-boundaries
+             purchase 允许依赖 projects），DAG 无环。 -->
+        <dependency>
+            <artifactId>app-erp-projects-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- compile: 供应商启用状态校验引用 ErpMdPartner（机制 B notGenCode，实体类不在 purchase dao 生成，须 compile 依赖 master-data dao）。 -->
         <dependency>
             <artifactId>app-erp-master-data-dao</artifactId>
@@ -90,14 +98,17 @@
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
-        <!-- test-only: finance 过账引擎 ORM 模型声明对 assets/projects 实体的关系引用，
-             须在测试 classpath 提供这些 DAO 实体类（与 inventory-service 自身测试依赖一致） -->
+        <!-- test-only: 项目物料归集 IErpPrjCostCollectionBiz Bean 实现注册（ErpPrjCostCollectionBizModel
+             位于 erp-prj-service；app-erp-all 聚合时由 app 层提供）。RC-R1.61 / P1-RC-049。 -->
         <dependency>
-            <artifactId>app-erp-projects-dao</artifactId>
+            <artifactId>app-erp-projects-service</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <!-- test-only: finance 过账引擎 ORM 模型声明对 assets 实体的关系引用，
+             须在测试 classpath 提供这些 DAO 实体类（与 inventory-service 自身测试依赖一致）。
+             projects-dao 已升 compile（RC-R1.61 物料归集 Facade 契约），不再重复 test 声明。 -->
         <dependency>
             <artifactId>app-erp-assets-dao</artifactId>
             <groupId>io.nop.app</groupId>

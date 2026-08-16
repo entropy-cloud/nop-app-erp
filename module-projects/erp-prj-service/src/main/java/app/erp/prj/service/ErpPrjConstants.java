@@ -15,6 +15,8 @@ public interface ErpPrjConstants {
     String CONFIG_DEFAULT_PAYROLL_SUBJECT_ID = "erp-prj.default-payroll-subject-id";
     /** 费用报销归集开关（默认 true）。关闭时 closeProject 跳过费用刷新。 */
     String CONFIG_EXPENSE_AGGREGATION_ENABLED = "erp-prj.expense-aggregation-enabled";
+    /** 物料（采购入库）归集开关（默认 true，RC-R1.61）。关闭时 aggregateMaterialCost 直接返回 0。 */
+    String CONFIG_MATERIAL_AGGREGATION_ENABLED = "erp-prj.material-aggregation-enabled";
 
     /** 损益汇总计算 cron（默认每日凌晨 1 点；空值=禁用——「空值=跳过」语义；消费点：job.yaml
      *  {@code erp-prj-pnl-calc.job.yaml} cronExpr {@code @cfg} 引用 + {@code ErpPrjProjectPnlCalcHelper} 门控，
@@ -72,6 +74,8 @@ public interface ErpPrjConstants {
     // ---- 归集行来源单据类型（sourceBillType 文本，幂等去重键之一） ----
     String SOURCE_BILL_TYPE_TIMESHEET = "TIMESHEET";
     String SOURCE_BILL_TYPE_EXPENSE = "EXPENSE";
+    /** 采购入库（RC-R1.61 / P1-RC-049）：purchase 侧入库审核经 IErpPrjCostCollectionBiz.aggregateMaterialCost 归集。 */
+    String SOURCE_BILL_TYPE_PURCHASE_RECEIVE = "PURCHASE_RECEIVE";
 
     // ---- pnl-calc-status（ErpPrjProjectPnl.calcStatus） ----
     String PNL_CALC_STATUS_PENDING = "PENDING";

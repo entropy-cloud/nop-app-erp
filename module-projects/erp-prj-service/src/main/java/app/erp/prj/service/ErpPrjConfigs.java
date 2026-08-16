@@ -12,6 +12,9 @@ public interface ErpPrjConfigs {
     /** 费用报销归集默认启用。 */
     boolean DEFAULT_EXPENSE_AGGREGATION_ENABLED = true;
 
+    /** 物料（采购入库）归集默认启用。 */
+    boolean DEFAULT_MATERIAL_AGGREGATION_ENABLED = true;
+
     /** 损益汇总自动计算默认关闭（双层门控第二层，需显式开启）。 */
     boolean DEFAULT_PNL_AUTO_CALC_ENABLED = false;
 
@@ -67,6 +70,12 @@ public interface ErpPrjConfigs {
     static boolean expenseAggregationEnabled() {
         Boolean flag = io.nop.api.core.config.AppConfig.var(
                 ErpPrjConstants.CONFIG_EXPENSE_AGGREGATION_ENABLED, DEFAULT_EXPENSE_AGGREGATION_ENABLED);
+        return flag == null || flag;
+    }
+
+    static boolean materialAggregationEnabled() {
+        Boolean flag = io.nop.api.core.config.AppConfig.var(
+                ErpPrjConstants.CONFIG_MATERIAL_AGGREGATION_ENABLED, DEFAULT_MATERIAL_AGGREGATION_ENABLED);
         return flag == null || flag;
     }
 

@@ -5,6 +5,7 @@ import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.entity.ErpInvStockMove;
 import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
+import app.erp.prj.biz.IErpPrjCostCollectionBiz;
 import app.erp.pur.biz.IErpPurOrderBiz;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.dao.entity.ErpPurReceive;
@@ -58,6 +59,9 @@ public class ErpPurReceiveProcessor {
 
     @Inject
     IErpInvStockMoveBiz stockMoveBiz;
+
+    @Inject
+    IErpPrjCostCollectionBiz costCollectionBiz;
 
     @Inject
     ReceiveStockMoveBuilder stockMoveBuilder;
@@ -282,6 +286,35 @@ public class ErpPurReceiveProcessor {
         List<ErpPurReceiveLine> lines = loadLines(receive);
         StockMoveRequest request = stockMoveBuilder.build(receive, lines, context);
         return stockMoveBiz.generateMove(request, context);
+    }
+
+    /**
+     * 项目物料成本归集（RC-R1.61 / P1-RC-049，UC-PRJ-03 采购入库→项目 MATERIAL 来源）。
+     * 入库移动单生成后逐行解析项目维度（{@code receiveLine.orderLineId → orderLine.projectId}，
+     * 行级 projectId 为 null 跳过），调 {@link IErpPrjCostCollectionBiz#aggregateMaterialCost}
+     * 跨域 Facade 归集（projects 侧守卫 requireReferenceable + 预算检查 STRICT 拒绝 + 幂等去重，
+     * 归集行 costCategory=MATERIAL / amount=入库行金额不含税 / sourceBillCode=入库单号-行号）。
+     *
+     * <p>STRICT 预算/非 OPEN 项目经 Facade 异常传播 → 入库审核回滚拒绝（对齐 L1 UC-PRJ-04「采购审核
+     * 拒绝该笔归集」）；config {@code erp-prj.material-aggregation-enabled} 关闭时 Facade 返回 0 零副作用。
+     */
+    protected void collectProjectMaterialCost(ErpPurReceive receive, IServiceContext context) {
+        for (ErpPurReceiveLine line : loadLines(receive)) {
+            Long orderLineId = line.getOrderLineId();
+            if (orderLineId == null) {
+                continue;
+            }
+            ErpPurOrderLine orderLine = line.getOrderLine();
+            if (orderLine == null || orderLine.getProjectId() == null) {
+                continue;
+            }
+            BigDecimal amount = line.getAmount();
+            if (amount == null || amount.signum() <= 0) {
+                continue;
+            }
+            String sourceBillCode = receive.getCode() + "-" + line.getLineNo();
+            costCollectionBiz.aggregateMaterialCost(orderLine.getProjectId(), amount, sourceBillCode, context);
+        }
     }
 
     protected void applyPostingResult(ErpPurReceive receive, ErpInvStockMove move) {

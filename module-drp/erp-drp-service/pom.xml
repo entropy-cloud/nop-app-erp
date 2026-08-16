@@ -94,6 +94,14 @@
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
+        <!-- test-only: purchase-service 的 ErpPurReceiveProcessor 注入 IErpPrjCostCollectionBiz（Bean 实现注册在 projects-service，
+             RC-R1.61 物料归集 Facade）。传递依赖链：drp→purchase→projects。app-erp-all 聚合时由 app 层提供 Bean。 -->
+        <dependency>
+            <artifactId>app-erp-projects-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
         <!-- test-only: IErpSysNotificationBiz Bean 实现（ErpSysNotificationBizModel + Dispatcher）注册。
              drp 经 inventory/purchase-service 传递引入 finance beans，finance 的 ErpFinPostingExceptionBizModel 注入
              IErpSysNotificationBiz；test scope 依赖不传递，单域测试需显式引入。app-erp-all 聚合时由 app 层提供 Bean。 -->

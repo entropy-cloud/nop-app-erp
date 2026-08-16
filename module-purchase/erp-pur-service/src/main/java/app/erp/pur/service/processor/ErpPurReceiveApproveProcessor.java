@@ -43,6 +43,9 @@ public class ErpPurReceiveApproveProcessor extends AbstractApproveProcessor<ErpP
 
         ErpInvStockMove move = processor.triggerIncomingMove(receive, context);
         receive = dao().getEntityById(id);
+        // 项目物料成本归集（RC-R1.61 / P1-RC-049）：移动单生成后同事务归集；
+        // STRICT 预算/非 OPEN 项目异常传播 → 审核回滚拒绝（L1 UC-PRJ-04 采购审核拒绝该笔归集）
+        processor.collectProjectMaterialCost(receive, context);
 
         setApproveStatus(receive, approvedStatus());
         setApprovedBy(receive, currentUserId());

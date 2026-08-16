@@ -51,6 +51,10 @@
     <bean id="app.erp.prj.service.cost.ExpenseCostAggregator"
           class="app.erp.prj.service.cost.ExpenseCostAggregator"/>
 
+    <!-- 物料（采购入库）归集聚合器（RC-R1.61 / P1-RC-049：purchase 侧触发，projects 自写归集行，config-gated） -->
+    <bean id="app.erp.prj.service.cost.MaterialCostAggregator"
+          class="app.erp.prj.service.cost.MaterialCostAggregator"/>
+
     <!-- 项目看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
           经 @BizQuery 暴露 getDashboardKpi/getProjectStatusDistribution/findCostOverrunAlert/findDelayedProjectAlert。 -->
     <bean id="app.erp.prj.service.dashboard.ErpPrjDashboardBizModel" ioc:type="@bean:id"/>
@@ -95,6 +99,8 @@
          类别 B：CostCollection 1 + Project 4 + ProjectPnl 1 + Timesheet 3。 -->
     <bean id="app.erp.prj.service.processor.ErpPrjCostCollectionRefreshExpenseCostProcessor"
           class="app.erp.prj.service.processor.ErpPrjCostCollectionRefreshExpenseCostProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjCostCollectionAggregateMaterialCostProcessor"
+          class="app.erp.prj.service.processor.ErpPrjCostCollectionAggregateMaterialCostProcessor"/>
     <bean id="app.erp.prj.service.processor.ErpPrjProjectCloseProjectProcessor"
           class="app.erp.prj.service.processor.ErpPrjProjectCloseProjectProcessor"/>
     <bean id="app.erp.prj.service.processor.ErpPrjProjectHoldProjectProcessor"
