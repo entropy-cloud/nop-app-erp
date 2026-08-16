@@ -19,6 +19,7 @@ drop table  if exists  erp_crm_bundle_pricing;
 drop table  if exists  erp_crm_sequence;
 drop table  if exists  erp_crm_price_rule;
 drop table  if exists  erp_crm_stage;
+drop table  if exists  erp_crm_team_member;
 drop table  if exists  erp_crm_lead_score_config_line;
 drop table  if exists  erp_crm_forecast;
 drop table  if exists  erp_crm_territory_assignment_rule;

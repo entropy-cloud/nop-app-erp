@@ -100,6 +100,8 @@ public interface ErpCrmConstants {
     String CONFIG_TERRITORY_MAX_DEPTH = "erp-crm.territory.max-depth";
     /** 年度配额均分时是否按月（true=12 月均分，false=4 季均分）。 */
     String CONFIG_QUOTA_DISTRIBUTE_MONTHLY = "erp-crm.quota.distribute-monthly";
+    /** ROUND_ROBIN/LOAD_BALANCED 挑人激活开关（默认 true；false=维持 MANUAL 降级零回归，plan 2026-08-16-1634-1 D3）。 */
+    String CONFIG_TERRITORY_ASSIGNMENT_METHOD_ENABLED = "erp-crm.territory.assignment-method-enabled";
 
     // erp-crm/territory-type 字典
     String TERRITORY_TYPE_REGION = "REGION";

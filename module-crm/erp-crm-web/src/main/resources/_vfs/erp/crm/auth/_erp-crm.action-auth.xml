@@ -460,31 +460,45 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpCrmTerritory-main" displayName="销售区域" orderNo="10097" i18n-en:displayName="Territory"
+                <resource id="ErpCrmTeamMember-main" displayName="团队成员" orderNo="10097"
+                          i18n-en:displayName="Team Member" icon="user-plus" component="FLUX" resourceType="SUBM"
+                          url="/erp/crm/pages/ErpCrmTeamMember/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCrmTeamMember:query" displayName="查询团队成员"
+                                  i18n-en:displayName="Query Team Member" orderNo="10098" resourceType="FNPT">
+                            <permissions>ErpCrmTeamMember:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCrmTeamMember:mutation" displayName="修改团队成员"
+                                  i18n-en:displayName="Modify Team Member" orderNo="10099" resourceType="FNPT">
+                            <permissions>ErpCrmTeamMember:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCrmTerritory-main" displayName="销售区域" orderNo="10100" i18n-en:displayName="Territory"
                           icon="map" component="FLUX" resourceType="SUBM"
                           url="/erp/crm/pages/ErpCrmTerritory/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCrmTerritory:query" displayName="查询销售区域"
-                                  i18n-en:displayName="Query Territory" orderNo="10098" resourceType="FNPT">
+                                  i18n-en:displayName="Query Territory" orderNo="10101" resourceType="FNPT">
                             <permissions>ErpCrmTerritory:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpCrmTerritory:mutation" displayName="修改销售区域"
-                                  i18n-en:displayName="Modify Territory" orderNo="10099" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Territory" orderNo="10102" resourceType="FNPT">
                             <permissions>ErpCrmTerritory:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpCrmTerritoryAssignmentRule-main" displayName="区域分配规则" orderNo="10100"
+                <resource id="ErpCrmTerritoryAssignmentRule-main" displayName="区域分配规则" orderNo="10103"
                           i18n-en:displayName="Territory Assignment Rule" icon="git-branch" component="FLUX"
                           resourceType="SUBM" url="/erp/crm/pages/ErpCrmTerritoryAssignmentRule/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCrmTerritoryAssignmentRule:query" displayName="查询区域分配规则"
-                                  i18n-en:displayName="Query Territory Assignment Rule" orderNo="10101"
+                                  i18n-en:displayName="Query Territory Assignment Rule" orderNo="10104"
                                   resourceType="FNPT">
                             <permissions>ErpCrmTerritoryAssignmentRule:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpCrmTerritoryAssignmentRule:mutation" displayName="修改区域分配规则"
-                                  i18n-en:displayName="Modify Territory Assignment Rule" orderNo="10102"
+                                  i18n-en:displayName="Modify Territory Assignment Rule" orderNo="10105"
                                   resourceType="FNPT">
                             <permissions>ErpCrmTerritoryAssignmentRule:mutation</permissions>
                         </resource>

@@ -6,7 +6,9 @@ import app.erp.crm.biz.IErpCrmStageBiz;
 import app.erp.crm.dao.entity.ErpCrmCampaign;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmStage;
+import app.erp.crm.dao.entity.ErpCrmTeamMember;
 import app.erp.crm.dao.entity.ErpCrmTerritoryAssignmentRule;
+import app.erp.crm.service.ErpCrmConfigs;
 import app.erp.crm.service.ErpCrmConstants;
 import app.erp.crm.service.processor.ErpCrmConversionConvertToCustomerProcessor;
 import app.erp.crm.service.processor.ErpCrmConversionConvertToOpportunityProcessor;
@@ -26,6 +28,7 @@ import io.nop.api.core.annotations.biz.BizMutation;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.annotations.core.Optional;
+import io.nop.api.core.beans.FilterBeans;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.biz.crud.EntityData;
@@ -34,11 +37,15 @@ import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
+import static io.nop.api.core.beans.FilterBeans.in;
+import static io.nop.api.core.beans.FilterBeans.notIn;
 
 /**
  * 线索/商机 BizModel（Facade）。docStatus 状态机（qualify/lose/cancel）+ 漏斗阶段流转（moveStage）+ 线索查重
@@ -139,7 +146,8 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
         ErpCrmLead lead = requireEntity(String.valueOf(leadId), null, context);
         List<ErpCrmTerritoryAssignmentRule> rules = loadActiveRules(lead.getOrgId());
         ErpCrmTerritoryAssignmentRule defaultRule = loadDefaultRule(lead.getOrgId());
-        TerritoryAssignmentEngine.AssignmentResult result = assignmentEngine.assign(lead, rules, defaultRule);
+        TerritoryAssignmentEngine.AssignmentResult result = assignmentEngine.assign(
+                lead, rules, defaultRule, buildTeamMemberResolver(), context);
         if (result == null) {
             return lead;
         }
@@ -149,7 +157,8 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
         if (result.getTeamId() != null) {
             lead.setTeamId(result.getTeamId());
         }
-        // ownerId 按分配方法范围 Decision：本期 MANUAL 降级 → ownerId 留空标记"待分配"，引擎不挑人。
+        // ownerId 按分配方法（plan 2026-08-16-1634-1 RC-R1.57）：ROUND_ROBIN/LOAD_BALANCED 挑人回写；
+        // MANUAL 降级（无成员/resolver 关闭/查询失败）→ ownerId 留空标记"待分配"。
         if (result.getOwnerId() != null) {
             lead.setOwnerId(result.getOwnerId());
         }
@@ -222,7 +231,7 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
                 List<ErpCrmTerritoryAssignmentRule> rules = loadActiveRules(lead.getOrgId());
                 ErpCrmTerritoryAssignmentRule defaultRule = loadDefaultRule(lead.getOrgId());
                 TerritoryAssignmentEngine.AssignmentResult result =
-                        assignmentEngine.assign(lead, rules, defaultRule);
+                        assignmentEngine.assign(lead, rules, defaultRule, buildTeamMemberResolver(), context);
                 if (result != null) {
                     if (result.getTerritoryId() != null) {
                         lead.setTerritoryId(result.getTerritoryId());
@@ -290,6 +299,87 @@ public class ErpCrmLeadBizModel extends CrudBizModel<ErpCrmLead> implements IErp
         }
         q.setLimit(1);
         return assignmentRuleDao().findAllByQuery(q).stream().findFirst().orElse(null);
+    }
+
+    // ---------- 团队成员解析（plan 2026-08-16-1634-1 RC-R1.57，D4 选项 A）----------
+
+    /**
+     * 构建 {@link TerritoryAssignmentEngine.TeamMemberResolver}；config 门控
+     * {@code erp-crm.territory.assignment-method-enabled} 关闭时返回 null（引擎按 MANUAL 降级零回归）。
+     * daoFor 说明（E3 自检）：TerritoryAssignmentEngine 为纯函数式 bean 无 dao 依赖，成员/计数解析
+     * 由本 BizModel 经 daoProvider 提供（同域 ErpCrmTeamMember/ErpCrmLead 子实体访问，架构约束）。
+     */
+    protected TerritoryAssignmentEngine.TeamMemberResolver buildTeamMemberResolver() {
+        if (!ErpCrmConfigs.isAssignmentMethodEnabled()) {
+            return null;
+        }
+        return new TerritoryAssignmentEngine.TeamMemberResolver() {
+            @Override
+            public List<String> resolveTeamMemberUserIds(Long teamId, IServiceContext context) {
+                if (teamId == null) {
+                    return Collections.emptyList();
+                }
+                QueryBean q = new QueryBean();
+                q.addFilter(eq("teamId", teamId));
+                q.addOrderField("id", false);
+                List<ErpCrmTeamMember> members = teamMemberDao().findAllByQuery(q);
+                List<String> userIds = new ArrayList<>();
+                for (ErpCrmTeamMember m : members) {
+                    if (m.getUserId() != null) {
+                        userIds.add(m.getUserId());
+                    }
+                }
+                return userIds;
+            }
+
+            @Override
+            public String resolveLastAssignedOwner(Long teamId, IServiceContext context) {
+                if (teamId == null) {
+                    return null;
+                }
+                QueryBean q = new QueryBean();
+                q.addFilter(eq("teamId", teamId));
+                q.addFilter(FilterBeans.notNull("ownerId"));
+                q.addOrderField("createTime", true);
+                q.setLimit(1);
+                List<ErpCrmLead> last = leadDao().findAllByQuery(q);
+                return last.isEmpty() ? null : last.get(0).getOwnerId();
+            }
+
+            @Override
+            public Map<String, Integer> countActiveLeadsByOwner(Long teamId, IServiceContext context) {
+                if (teamId == null) {
+                    return Collections.emptyMap();
+                }
+                List<String> members = resolveTeamMemberUserIds(teamId, context);
+                if (members.isEmpty()) {
+                    return Collections.emptyMap();
+                }
+                QueryBean q = new QueryBean();
+                q.addFilter(eq("teamId", teamId));
+                q.addFilter(in("ownerId", members));
+                q.addFilter(notIn("docStatus", List.of(
+                        ErpCrmConstants.DOC_STATUS_CONVERTED,
+                        ErpCrmConstants.DOC_STATUS_LOST,
+                        ErpCrmConstants.DOC_STATUS_CANCELLED)));
+                List<ErpCrmLead> active = leadDao().findAllByQuery(q);
+                Map<String, Integer> counts = new HashMap<>();
+                for (ErpCrmLead l : active) {
+                    if (l.getOwnerId() != null) {
+                        counts.merge(l.getOwnerId(), 1, Integer::sum);
+                    }
+                }
+                return counts;
+            }
+        };
+    }
+
+    protected IEntityDao<ErpCrmTeamMember> teamMemberDao() {
+        return daoProvider().daoFor(ErpCrmTeamMember.class);
+    }
+
+    protected IEntityDao<ErpCrmLead> leadDao() {
+        return daoProvider().daoFor(ErpCrmLead.class);
     }
 
     protected IEntityDao<ErpCrmTerritoryAssignmentRule> assignmentRuleDao() {

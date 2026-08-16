@@ -608,6 +608,56 @@
                 <unique-key columns="code,orgId" name="UK_CRM_TEAM_CODE_ORG"/>
             </unique-keys>
         </entity>
+        <entity className="app.erp.crm.dao.entity.ErpCrmTeamMember" createTimeProp="createTime" createrProp="createdBy"
+                deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="团队成员"
+                name="app.erp.crm.dao.entity.ErpCrmTeamMember" registerShortName="true" tableName="erp_crm_team_member"
+                tagSet="gid,erp.crm" updateTimeProp="updateTime" updaterProp="updatedBy" useLogicalDelete="true"
+                versionProp="version" ext:web-renderer="flux" ext:icon="user-plus" i18n-en:displayName="Team Member">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="TEAM_ID" displayName="销售团队" mandatory="true" name="teamId" propId="2" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Team"/>
+                <column code="USER_ID" displayName="成员用户" mandatory="true" name="userId" precision="36" propId="3"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="User"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="5" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="6" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="7" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="8" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="9" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="10" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_CRM_TEAM_MEMBER_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_TEAM_MEMBER_USER_ID" unique="false">
+                    <column name="userId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub"
+                        i18n-en:displayName="Team">
+                    <join>
+                        <on leftProp="teamId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="teamId,userId" name="UK_CRM_TEAM_MEMBER_TEAM_USER"/>
+            </unique-keys>
+        </entity>
         <entity className="app.erp.crm.dao.entity.ErpCrmCampaign" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="营销活动"
                 name="app.erp.crm.dao.entity.ErpCrmCampaign" registerShortName="true" tableName="erp_crm_campaign"

@@ -412,6 +412,38 @@
             </indexes>
         </entity>
 
+        <!-- 团队成员 -->
+        <entity ext:web-renderer="flux" className="app.erp.crm.dao.entity.ErpCrmTeamMember"
+                displayName="团队成员" ext:icon="user-plus" i18n-en:displayName="Team Member" name="app.erp.crm.dao.entity.ErpCrmTeamMember"
+                tableName="erp_crm_team_member" tagSet="gid,erp.crm" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="teamId" displayName="销售团队" stdSqlType="BIGINT" mandatory="true" code="TEAM_ID" propId="2" stdDataType="long" i18n-en:displayName='Team' />
+                <column name="userId" stdDomain="userId" displayName="成员用户" stdSqlType="VARCHAR" precision="36" mandatory="true" code="USER_ID" propId="3" stdDataType="string" i18n-en:displayName='User' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="5" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="6" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="7" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="8" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="9" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="10" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="team" refEntityName="app.erp.crm.dao.entity.ErpCrmTeam" tagSet="pub" i18n-en:displayName='Team'><join><on leftProp="teamId" rightProp="id"/></join></to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_CRM_TEAM_MEMBER_TEAM_USER" columns="teamId,userId"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_CRM_TEAM_MEMBER_TEAM_ID" unique="false">
+                    <column name="teamId"/>
+                </index>
+                <index name="IDX_CRM_TEAM_MEMBER_USER_ID" unique="false">
+                    <column name="userId"/>
+                </index>
+            </indexes>
+        </entity>
+
         <!-- 营销活动（UTM 归因） -->
         <entity ext:web-renderer="flux" className="app.erp.crm.dao.entity.ErpCrmCampaign"
                 displayName="营销活动" ext:icon="megaphone" i18n-en:displayName="Campaign" name="app.erp.crm.dao.entity.ErpCrmCampaign"

@@ -334,6 +334,20 @@ CREATE TABLE erp_crm_stage(
   constraint PK_erp_crm_stage primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_crm_team_member(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  TEAM_ID BIGINT NOT NULL    COMMENT '销售团队',
+  USER_ID VARCHAR(36) NOT NULL    COMMENT '成员用户',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_crm_team_member primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_crm_lead_score_config_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CONFIG_ID BIGINT NOT NULL    COMMENT '评分规则配置',
@@ -821,6 +835,8 @@ CREATE TABLE erp_crm_lead_score_line(
    ALTER TABLE erp_crm_price_rule COMMENT '价格规则';
                 
    ALTER TABLE erp_crm_stage COMMENT '漏斗阶段';
+                
+   ALTER TABLE erp_crm_team_member COMMENT '团队成员';
                 
    ALTER TABLE erp_crm_lead_score_config_line COMMENT '评分准则明细';
                 

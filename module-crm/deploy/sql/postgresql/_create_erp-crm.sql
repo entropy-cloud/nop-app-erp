@@ -334,6 +334,20 @@ CREATE TABLE erp_crm_stage(
   constraint PK_erp_crm_stage primary key (id)
 );
 
+CREATE TABLE erp_crm_team_member(
+  id INT8 NOT NULL ,
+  team_id INT8 NOT NULL ,
+  user_id VARCHAR(36) NOT NULL ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_crm_team_member primary key (id)
+);
+
 CREATE TABLE erp_crm_lead_score_config_line(
   id INT8 NOT NULL ,
   config_id INT8 NOT NULL ,
@@ -1285,6 +1299,28 @@ CREATE TABLE erp_crm_lead_score_line(
       COMMENT ON COLUMN erp_crm_stage.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_crm_stage.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_crm_team_member IS '团队成员';
+                
+      COMMENT ON COLUMN erp_crm_team_member.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_crm_team_member.team_id IS '销售团队';
+                    
+      COMMENT ON COLUMN erp_crm_team_member.user_id IS '成员用户';
+                    
+      COMMENT ON COLUMN erp_crm_team_member.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_crm_team_member.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_crm_team_member.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_crm_team_member.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_crm_team_member.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_crm_team_member.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_crm_team_member.update_time IS '修改时间';
                     
       COMMENT ON TABLE erp_crm_lead_score_config_line IS '评分准则明细';
                 

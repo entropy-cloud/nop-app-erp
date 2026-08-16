@@ -76,4 +76,11 @@ public interface ErpCrmConfigs {
     static int funnelTopLostReasons() {
         return AppConfig.var(ErpCrmConstants.CONFIG_FUNNEL_TOP_LOST_REASONS, 5);
     }
+
+    // ===== 区域分配（plan 2026-07-07-1100-1 + 2026-08-16-1634-1 RC-R1.57） =====
+
+    /** ROUND_ROBIN/LOAD_BALANCED 挑人激活开关（默认 true；false=维持 MANUAL 降级零回归，D3 裁决）。 */
+    static boolean isAssignmentMethodEnabled() {
+        return AppConfig.var(ErpCrmConstants.CONFIG_TERRITORY_ASSIGNMENT_METHOD_ENABLED, Boolean.TRUE);
+    }
 }

@@ -3,6 +3,7 @@ package app.erp.crm.service.support;
 import app.erp.crm.dao.entity.ErpCrmLead;
 import app.erp.crm.dao.entity.ErpCrmTerritoryAssignmentRule;
 import app.erp.crm.service.ErpCrmConstants;
+import io.nop.core.context.IServiceContext;
 import io.nop.core.lang.json.JsonTool;
 
 import java.math.BigDecimal;
@@ -16,11 +17,12 @@ import java.util.Map;
  * 区域分配引擎。按 priority 遍历 {@code isActive=true} 规则，{@link ConditionMatcher} 按 conditionType 解析
  * conditionValue JSON 匹配 lead 字段；命中返回 territoryId/teamId/assignmentMethod，未命中走 isDefault 兜底。
  *
- * <p>对齐 {@code docs/design/crm/territory.md §业务规则 2 线索自动分配 / §实现注记 2 团队成员模型缺失 → MANUAL 降级}：
- * 本期不实现 ROUND_ROBIN/LOAD_BALANCED 挑人逻辑；遇到非 MANUAL 方法按 MANUAL 语义降级（仅回写 territory/team）。
+ * <p>对齐 {@code docs/design/crm/territory.md §业务规则 2 线索自动分配 / §分配执行流程}（plan
+ * 2026-08-16-1634-1 RC-R1.57）：ROUND_ROBIN/LOAD_BALANCED 经 {@link TeamMemberResolver} 挑人回写
+ * ownerId；resolver 不可用 / 成员列表为空 / 查询失败 → 按 MANUAL 语义降级（degraded=true，仅回写 territory/team）。
  *
- * <p>纯函数式 + 注入加载函数便于单测：{@link #assign(ErpCrmLead, List, ErpCrmTerritoryAssignmentRule)}
- * 不依赖 IoC，可独立构造 rules 与 lead 测试四类 conditionType 匹配。
+ * <p>纯函数式 + 注入加载函数便于单测：{@link #assign(ErpCrmLead, List, ErpCrmTerritoryAssignmentRule, TeamMemberResolver, IServiceContext)}
+ * 不依赖 IoC，可独立构造 rules/lead/resolver 测试挑人语义。
  */
 public class TerritoryAssignmentEngine {
 
@@ -35,7 +37,7 @@ public class TerritoryAssignmentEngine {
     }
 
     /**
-     * 按 priority 遍历 rules 找首个匹配的 active 规则；无匹配则用 defaultRule。
+     * 按 priority 遍历 rules 找首个匹配的 active 规则；无匹配则用 defaultRule（resolver 为 null，挑人降级 MANUAL）。
      *
      * @param lead        待分配线索
      * @param rules       active 规则列表（priority 升序，default 规则可单独传入）
@@ -45,6 +47,19 @@ public class TerritoryAssignmentEngine {
     public AssignmentResult assign(ErpCrmLead lead,
                                     List<ErpCrmTerritoryAssignmentRule> rules,
                                     ErpCrmTerritoryAssignmentRule defaultRule) {
+        return assign(lead, rules, defaultRule, null, null);
+    }
+
+    /**
+     * 同上，支持经 {@link TeamMemberResolver} 挑人（ROUND_ROBIN/LOAD_BALANCED）。
+     *
+     * @param teamMemberResolver 团队成员解析器（可为 null——非 MANUAL 方法按 MANUAL 降级，保持既有语义）
+     */
+    public AssignmentResult assign(ErpCrmLead lead,
+                                    List<ErpCrmTerritoryAssignmentRule> rules,
+                                    ErpCrmTerritoryAssignmentRule defaultRule,
+                                    TeamMemberResolver teamMemberResolver,
+                                    IServiceContext context) {
         List<ErpCrmTerritoryAssignmentRule> sorted = new ArrayList<>();
         if (rules != null) {
             for (ErpCrmTerritoryAssignmentRule r : rules) {
@@ -61,26 +76,118 @@ public class TerritoryAssignmentEngine {
 
         for (ErpCrmTerritoryAssignmentRule rule : sorted) {
             if (conditionMatcher.matches(rule, lead)) {
-                return toResult(rule);
+                return toResult(rule, teamMemberResolver, context);
             }
         }
         if (defaultRule != null && Boolean.TRUE.equals(defaultRule.getIsActive())) {
-            return toResult(defaultRule);
+            return toResult(defaultRule, teamMemberResolver, context);
         }
         return null;
     }
 
-    protected AssignmentResult toResult(ErpCrmTerritoryAssignmentRule rule) {
+    /**
+     * 构造分配结果；非 MANUAL 方法经 resolver 挑人回写 ownerId，不可解析时按 MANUAL 降级（degraded=true）。
+     */
+    protected AssignmentResult toResult(ErpCrmTerritoryAssignmentRule rule,
+                                        TeamMemberResolver teamMemberResolver,
+                                        IServiceContext context) {
         AssignmentResult result = new AssignmentResult();
         result.setTerritoryId(rule.getTerritoryId());
         result.setTeamId(rule.getGroupId());
         result.setAssignmentMethod(rule.getAssignmentMethod());
-        // 降级：非 MANUAL 方法按 MANUAL 语义处理（不挑 ownerId，留空标记待分配）
-        if (!ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL.equals(rule.getAssignmentMethod())) {
-            result.setAssignmentMethod(ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL);
-            result.setDegraded(true);
+        String method = rule.getAssignmentMethod();
+        if (ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL.equals(method)) {
+            return result;
         }
+        // 非 MANUAL：resolver 不可用 / 无团队 / 成员不可解析 → MANUAL 降级（既有语义零变化）
+        if (teamMemberResolver == null || rule.getGroupId() == null) {
+            return degradeToManual(result);
+        }
+        Long teamId = rule.getGroupId();
+        List<String> members;
+        try {
+            members = teamMemberResolver.resolveTeamMemberUserIds(teamId, context);
+        } catch (RuntimeException e) {
+            return degradeToManual(result);
+        }
+        if (members == null || members.isEmpty()) {
+            return degradeToManual(result);
+        }
+        String ownerId = null;
+        try {
+            if (ErpCrmConstants.ASSIGNMENT_METHOD_ROUND_ROBIN.equals(method)) {
+                ownerId = pickRoundRobin(teamId, members, teamMemberResolver, context);
+            } else if (ErpCrmConstants.ASSIGNMENT_METHOD_LOAD_BALANCED.equals(method)) {
+                ownerId = pickLoadBalanced(teamId, members, teamMemberResolver, context);
+            }
+        } catch (RuntimeException e) {
+            return degradeToManual(result);
+        }
+        if (ownerId == null) {
+            return degradeToManual(result);
+        }
+        result.setOwnerId(ownerId);
         return result;
+    }
+
+    /**
+     * ROUND_ROBIN：取上次分配 owner 在成员列表中的下一位（循环）；无历史记录 → 第一位成员。
+     */
+    protected String pickRoundRobin(Long teamId, List<String> members,
+                                    TeamMemberResolver teamMemberResolver, IServiceContext context) {
+        String lastOwner = teamMemberResolver.resolveLastAssignedOwner(teamId, context);
+        int index = lastOwner != null ? members.indexOf(lastOwner) : -1;
+        if (index < 0) {
+            return members.get(0);
+        }
+        return members.get((index + 1) % members.size());
+    }
+
+    /**
+     * LOAD_BALANCED：取当前活跃线索最少的成员（平手按成员列表序[id 升序]首个）；无计数成员按 0 计。
+     */
+    protected String pickLoadBalanced(Long teamId, List<String> members,
+                                      TeamMemberResolver teamMemberResolver, IServiceContext context) {
+        Map<String, Integer> counts = teamMemberResolver.countActiveLeadsByOwner(teamId, context);
+        String picked = null;
+        int min = Integer.MAX_VALUE;
+        for (String member : members) {
+            int count = counts == null ? 0 : counts.getOrDefault(member, 0);
+            if (count < min) {
+                min = count;
+                picked = member;
+            }
+        }
+        return picked;
+    }
+
+    protected AssignmentResult degradeToManual(AssignmentResult result) {
+        result.setAssignmentMethod(ErpCrmConstants.ASSIGNMENT_METHOD_MANUAL);
+        result.setDegraded(true);
+        return result;
+    }
+
+    /**
+     * 团队成员解析接口（D4 选项 A，plan 2026-08-16-1634-1 RC-R1.57）：由调用方（BizModel）提供 dao 实现，
+     * 引擎保持纯函数式可测。
+     */
+    public interface TeamMemberResolver {
+
+        /**
+         * 查 teamId 团队成员 userId 列表（按成员行 id 升序）；无成员返回空列表。
+         */
+        List<String> resolveTeamMemberUserIds(Long teamId, IServiceContext context);
+
+        /**
+         * 查 teamId 上次分配记录的 owner（lead.teamId=teamId 且 ownerId 非空，按 createTime desc limit 1）；无记录返回 null。
+         */
+        String resolveLastAssignedOwner(Long teamId, IServiceContext context);
+
+        /**
+         * 查 teamId 各成员当前活跃线索数（count lead.teamId=teamId 且 ownerId=member 且 docStatus 非
+         * CONVERTED/LOST/CANCELLED）；无计数记录的成员视为 0。
+         */
+        Map<String, Integer> countActiveLeadsByOwner(Long teamId, IServiceContext context);
     }
 
     // ---------- 匹配器 ----------

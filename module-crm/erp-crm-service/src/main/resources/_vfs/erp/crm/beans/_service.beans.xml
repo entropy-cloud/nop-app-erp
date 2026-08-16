@@ -116,6 +116,13 @@
         <property name="bizObjName" value="ErpCrmStage"/>
     </bean>
 
+    <bean id="app.erp.crm.service.entity.ErpCrmTeamMemberBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCrmTeamMember" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.crm.biz.IErpCrmTeamMemberBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpCrmTeamMember"/>
+    </bean>
+
     <bean id="app.erp.crm.service.entity.ErpCrmLeadScoreConfigLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpCrmLeadScoreConfigLine" class="io.nop.biz.proxy.BizProxyFactoryBean"

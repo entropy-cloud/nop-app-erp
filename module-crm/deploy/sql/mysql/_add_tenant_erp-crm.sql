@@ -39,6 +39,8 @@ alter table erp_crm_price_rule add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NUL
 
 alter table erp_crm_stage add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_crm_team_member add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_crm_lead_score_config_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_crm_forecast add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -136,6 +138,9 @@ alter table erp_crm_price_rule add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_crm_stage drop primary key;
 alter table erp_crm_stage add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_crm_team_member drop primary key;
+alter table erp_crm_team_member add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_crm_lead_score_config_line drop primary key;
 alter table erp_crm_lead_score_config_line add primary key (NOP_TENANT_ID, ID);

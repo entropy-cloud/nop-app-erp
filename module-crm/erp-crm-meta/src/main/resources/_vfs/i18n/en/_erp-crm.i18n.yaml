@@ -32,6 +32,7 @@ entity:
     ErpCrmSource: Lead Source
     ErpCrmStage: Funnel Stage
     ErpCrmTeam: Sales Team
+    ErpCrmTeamMember: Team Member
     ErpCrmTerritory: Territory
     ErpCrmTerritoryAssignmentRule: Territory Assignment Rule
 prop:
@@ -770,6 +771,18 @@ prop:
       updateTime: Update Time
       org: Org
       org.name: Org
+    ErpCrmTeamMember:
+      id: ID
+      teamId: Team
+      userId: User
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      team: Team
     ErpCrmTerritory:
       id: ID
       code: Code
