@@ -11,103 +11,86 @@ import java.util.HashMap;
 import java.util.Arrays;
 import java.util.List;
 
-import app.erp.prj.dao.entity.ErpPrjProjectUser;
+import app.erp.prj.dao.entity.ErpPrjRole;
 
 // tell cpd to start ignoring code - CPD-OFF
 /**
- *  项目成员: erp_prj_project_user
+ *  项目角色: erp_prj_role
  */
 @SuppressWarnings({"PMD.UselessOverridingMethod","PMD.UnusedLocalVariable","java:S3008","java:S1602","java:S1128","java:S1161",
         "PMD.UnnecessaryFullyQualifiedName","PMD.EmptyControlStatement","java:S116","java:S115","java:S101","java:S3776"})
-public class _ErpPrjProjectUser extends DynamicOrmEntity{
+public class _ErpPrjRole extends DynamicOrmEntity{
     
     /* ID: ID BIGINT */
     public static final String PROP_NAME_id = "id";
     public static final int PROP_ID_id = 1;
     
-    /* 项目: PROJECT_ID BIGINT */
-    public static final String PROP_NAME_projectId = "projectId";
-    public static final int PROP_ID_projectId = 2;
+    /* 角色编码: CODE VARCHAR */
+    public static final String PROP_NAME_code = "code";
+    public static final int PROP_ID_code = 2;
     
-    /* 用户: USER_ID BIGINT */
-    public static final String PROP_NAME_userId = "userId";
-    public static final int PROP_ID_userId = 3;
-    
-    /* 角色: ROLE VARCHAR */
-    public static final String PROP_NAME_role = "role";
-    public static final int PROP_ID_role = 4;
-    
-    /* 加入日期: START_DATE DATE */
-    public static final String PROP_NAME_startDate = "startDate";
-    public static final int PROP_ID_startDate = 5;
-    
-    /* 退出日期: END_DATE DATE */
-    public static final String PROP_NAME_endDate = "endDate";
-    public static final int PROP_ID_endDate = 6;
-    
-    /* 逻辑删除版本: DEL_VERSION BIGINT */
-    public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 7;
-    
-    /* 数据版本: VERSION INTEGER */
-    public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 8;
-    
-    /* 创建人: CREATED_BY VARCHAR */
-    public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 9;
-    
-    /* 创建时间: CREATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 10;
-    
-    /* 修改人: UPDATED_BY VARCHAR */
-    public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 11;
-    
-    /* 修改时间: UPDATE_TIME TIMESTAMP */
-    public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 12;
+    /* 角色名称: NAME VARCHAR */
+    public static final String PROP_NAME_name = "name";
+    public static final int PROP_ID_name = 3;
     
     /* 成本费率: COST_RATE DECIMAL */
     public static final String PROP_NAME_costRate = "costRate";
-    public static final int PROP_ID_costRate = 13;
+    public static final int PROP_ID_costRate = 4;
+    
+    /* 备注: REMARK VARCHAR */
+    public static final String PROP_NAME_remark = "remark";
+    public static final int PROP_ID_remark = 5;
+    
+    /* 逻辑删除版本: DEL_VERSION BIGINT */
+    public static final String PROP_NAME_delVersion = "delVersion";
+    public static final int PROP_ID_delVersion = 6;
+    
+    /* 数据版本: VERSION INTEGER */
+    public static final String PROP_NAME_version = "version";
+    public static final int PROP_ID_version = 7;
+    
+    /* 创建人: CREATED_BY VARCHAR */
+    public static final String PROP_NAME_createdBy = "createdBy";
+    public static final int PROP_ID_createdBy = 8;
+    
+    /* 创建时间: CREATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_createTime = "createTime";
+    public static final int PROP_ID_createTime = 9;
+    
+    /* 修改人: UPDATED_BY VARCHAR */
+    public static final String PROP_NAME_updatedBy = "updatedBy";
+    public static final int PROP_ID_updatedBy = 10;
+    
+    /* 修改时间: UPDATE_TIME TIMESTAMP */
+    public static final String PROP_NAME_updateTime = "updateTime";
+    public static final int PROP_ID_updateTime = 11;
     
 
-    private static int _PROP_ID_BOUND = 14;
+    private static int _PROP_ID_BOUND = 12;
 
-    
-    /* relation:  */
-    public static final String PROP_NAME_project = "project";
-    
-    /* relation:  */
-    public static final String PROP_NAME_user = "user";
     
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[14];
+    private static final String[] PROP_ID_TO_NAME = new String[12];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
           PROP_ID_TO_NAME[PROP_ID_id] = PROP_NAME_id;
           PROP_NAME_TO_ID.put(PROP_NAME_id, PROP_ID_id);
       
-          PROP_ID_TO_NAME[PROP_ID_projectId] = PROP_NAME_projectId;
-          PROP_NAME_TO_ID.put(PROP_NAME_projectId, PROP_ID_projectId);
+          PROP_ID_TO_NAME[PROP_ID_code] = PROP_NAME_code;
+          PROP_NAME_TO_ID.put(PROP_NAME_code, PROP_ID_code);
       
-          PROP_ID_TO_NAME[PROP_ID_userId] = PROP_NAME_userId;
-          PROP_NAME_TO_ID.put(PROP_NAME_userId, PROP_ID_userId);
+          PROP_ID_TO_NAME[PROP_ID_name] = PROP_NAME_name;
+          PROP_NAME_TO_ID.put(PROP_NAME_name, PROP_ID_name);
       
-          PROP_ID_TO_NAME[PROP_ID_role] = PROP_NAME_role;
-          PROP_NAME_TO_ID.put(PROP_NAME_role, PROP_ID_role);
+          PROP_ID_TO_NAME[PROP_ID_costRate] = PROP_NAME_costRate;
+          PROP_NAME_TO_ID.put(PROP_NAME_costRate, PROP_ID_costRate);
       
-          PROP_ID_TO_NAME[PROP_ID_startDate] = PROP_NAME_startDate;
-          PROP_NAME_TO_ID.put(PROP_NAME_startDate, PROP_ID_startDate);
-      
-          PROP_ID_TO_NAME[PROP_ID_endDate] = PROP_NAME_endDate;
-          PROP_NAME_TO_ID.put(PROP_NAME_endDate, PROP_ID_endDate);
+          PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
+          PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
           PROP_ID_TO_NAME[PROP_ID_delVersion] = PROP_NAME_delVersion;
           PROP_NAME_TO_ID.put(PROP_NAME_delVersion, PROP_ID_delVersion);
@@ -127,29 +110,23 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
-          PROP_ID_TO_NAME[PROP_ID_costRate] = PROP_NAME_costRate;
-          PROP_NAME_TO_ID.put(PROP_NAME_costRate, PROP_ID_costRate);
-      
     }
 
     
     /* ID: ID */
     private java.lang.Long _id;
     
-    /* 项目: PROJECT_ID */
-    private java.lang.Long _projectId;
+    /* 角色编码: CODE */
+    private java.lang.String _code;
     
-    /* 用户: USER_ID */
-    private java.lang.Long _userId;
+    /* 角色名称: NAME */
+    private java.lang.String _name;
     
-    /* 角色: ROLE */
-    private java.lang.String _role;
+    /* 成本费率: COST_RATE */
+    private java.math.BigDecimal _costRate;
     
-    /* 加入日期: START_DATE */
-    private java.time.LocalDate _startDate;
-    
-    /* 退出日期: END_DATE */
-    private java.time.LocalDate _endDate;
+    /* 备注: REMARK */
+    private java.lang.String _remark;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -169,24 +146,21 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
     
-    /* 成本费率: COST_RATE */
-    private java.math.BigDecimal _costRate;
-    
 
-    public _ErpPrjProjectUser(){
+    public _ErpPrjRole(){
         // for debug
     }
 
-    protected ErpPrjProjectUser newInstance(){
-        ErpPrjProjectUser entity = new ErpPrjProjectUser();
+    protected ErpPrjRole newInstance(){
+        ErpPrjRole entity = new ErpPrjRole();
         entity.orm_attach(orm_enhancer());
         entity.orm_entityModel(orm_entityModel());
         return entity;
     }
 
     @Override
-    public ErpPrjProjectUser cloneInstance() {
-        ErpPrjProjectUser entity = newInstance();
+    public ErpPrjRole cloneInstance() {
+        ErpPrjRole entity = newInstance();
         orm_forEachInitedProp((value, propId) -> {
             entity.orm_propValue(propId,value);
         });
@@ -199,7 +173,7 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
       IEntityModel entityModel = orm_entityModel();
       if(entityModel != null)
           return entityModel.getName();
-      return "app.erp.prj.dao.entity.ErpPrjProjectUser";
+      return "app.erp.prj.dao.entity.ErpPrjRole";
     }
 
     @Override
@@ -249,20 +223,17 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
             case PROP_ID_id:
                return getId();
         
-            case PROP_ID_projectId:
-               return getProjectId();
+            case PROP_ID_code:
+               return getCode();
         
-            case PROP_ID_userId:
-               return getUserId();
+            case PROP_ID_name:
+               return getName();
         
-            case PROP_ID_role:
-               return getRole();
+            case PROP_ID_costRate:
+               return getCostRate();
         
-            case PROP_ID_startDate:
-               return getStartDate();
-        
-            case PROP_ID_endDate:
-               return getEndDate();
+            case PROP_ID_remark:
+               return getRemark();
         
             case PROP_ID_delVersion:
                return getDelVersion();
@@ -281,9 +252,6 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
-        
-            case PROP_ID_costRate:
-               return getCostRate();
         
            default:
               return super.orm_propValue(propId);
@@ -306,53 +274,43 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_projectId:{
-               java.lang.Long typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
-                       err-> newTypeConversionError(PROP_NAME_projectId));
-               }
-               setProjectId(typedValue);
-               break;
-            }
-        
-            case PROP_ID_userId:{
-               java.lang.Long typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
-                       err-> newTypeConversionError(PROP_NAME_userId));
-               }
-               setUserId(typedValue);
-               break;
-            }
-        
-            case PROP_ID_role:{
+            case PROP_ID_code:{
                java.lang.String typedValue = null;
                if(value != null){
                    typedValue = ConvertHelper.toString(value,
-                       err-> newTypeConversionError(PROP_NAME_role));
+                       err-> newTypeConversionError(PROP_NAME_code));
                }
-               setRole(typedValue);
+               setCode(typedValue);
                break;
             }
         
-            case PROP_ID_startDate:{
-               java.time.LocalDate typedValue = null;
+            case PROP_ID_name:{
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDate(value,
-                       err-> newTypeConversionError(PROP_NAME_startDate));
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_name));
                }
-               setStartDate(typedValue);
+               setName(typedValue);
                break;
             }
         
-            case PROP_ID_endDate:{
-               java.time.LocalDate typedValue = null;
+            case PROP_ID_costRate:{
+               java.math.BigDecimal typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLocalDate(value,
-                       err-> newTypeConversionError(PROP_NAME_endDate));
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_costRate));
                }
-               setEndDate(typedValue);
+               setCostRate(typedValue);
+               break;
+            }
+        
+            case PROP_ID_remark:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_remark));
+               }
+               setRemark(typedValue);
                break;
             }
         
@@ -416,16 +374,6 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_costRate:{
-               java.math.BigDecimal typedValue = null;
-               if(value != null){
-                   typedValue = ConvertHelper.toBigDecimal(value,
-                       err-> newTypeConversionError(PROP_NAME_costRate));
-               }
-               setCostRate(typedValue);
-               break;
-            }
-        
            default:
               super.orm_propValue(propId,value);
         }
@@ -442,37 +390,30 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_projectId:{
+            case PROP_ID_code:{
                onInitProp(propId);
-               this._projectId = (java.lang.Long)value;
+               this._code = (java.lang.String)value;
                
                break;
             }
         
-            case PROP_ID_userId:{
+            case PROP_ID_name:{
                onInitProp(propId);
-               this._userId = (java.lang.Long)value;
+               this._name = (java.lang.String)value;
                
                break;
             }
         
-            case PROP_ID_role:{
+            case PROP_ID_costRate:{
                onInitProp(propId);
-               this._role = (java.lang.String)value;
+               this._costRate = (java.math.BigDecimal)value;
                
                break;
             }
         
-            case PROP_ID_startDate:{
+            case PROP_ID_remark:{
                onInitProp(propId);
-               this._startDate = (java.time.LocalDate)value;
-               
-               break;
-            }
-        
-            case PROP_ID_endDate:{
-               onInitProp(propId);
-               this._endDate = (java.time.LocalDate)value;
+               this._remark = (java.lang.String)value;
                
                break;
             }
@@ -519,13 +460,6 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
                break;
             }
         
-            case PROP_ID_costRate:{
-               onInitProp(propId);
-               this._costRate = (java.math.BigDecimal)value;
-               
-               break;
-            }
-        
            default:
               super.orm_internalSet(propId,value);
         }
@@ -552,96 +486,77 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
     }
     
     /**
-     * 项目: PROJECT_ID
+     * 角色编码: CODE
      */
-    public final java.lang.Long getProjectId(){
-         onPropGet(PROP_ID_projectId);
-         return _projectId;
+    public final java.lang.String getCode(){
+         onPropGet(PROP_ID_code);
+         return _code;
     }
 
     /**
-     * 项目: PROJECT_ID
+     * 角色编码: CODE
      */
-    public final void setProjectId(java.lang.Long value){
-        if(onPropSet(PROP_ID_projectId,value)){
-            this._projectId = value;
-            internalClearRefs(PROP_ID_projectId);
+    public final void setCode(java.lang.String value){
+        if(onPropSet(PROP_ID_code,value)){
+            this._code = value;
+            internalClearRefs(PROP_ID_code);
             
         }
     }
     
     /**
-     * 用户: USER_ID
+     * 角色名称: NAME
      */
-    public final java.lang.Long getUserId(){
-         onPropGet(PROP_ID_userId);
-         return _userId;
+    public final java.lang.String getName(){
+         onPropGet(PROP_ID_name);
+         return _name;
     }
 
     /**
-     * 用户: USER_ID
+     * 角色名称: NAME
      */
-    public final void setUserId(java.lang.Long value){
-        if(onPropSet(PROP_ID_userId,value)){
-            this._userId = value;
-            internalClearRefs(PROP_ID_userId);
+    public final void setName(java.lang.String value){
+        if(onPropSet(PROP_ID_name,value)){
+            this._name = value;
+            internalClearRefs(PROP_ID_name);
             
         }
     }
     
     /**
-     * 角色: ROLE
+     * 成本费率: COST_RATE
      */
-    public final java.lang.String getRole(){
-         onPropGet(PROP_ID_role);
-         return _role;
+    public final java.math.BigDecimal getCostRate(){
+         onPropGet(PROP_ID_costRate);
+         return _costRate;
     }
 
     /**
-     * 角色: ROLE
+     * 成本费率: COST_RATE
      */
-    public final void setRole(java.lang.String value){
-        if(onPropSet(PROP_ID_role,value)){
-            this._role = value;
-            internalClearRefs(PROP_ID_role);
+    public final void setCostRate(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_costRate,value)){
+            this._costRate = value;
+            internalClearRefs(PROP_ID_costRate);
             
         }
     }
     
     /**
-     * 加入日期: START_DATE
+     * 备注: REMARK
      */
-    public final java.time.LocalDate getStartDate(){
-         onPropGet(PROP_ID_startDate);
-         return _startDate;
+    public final java.lang.String getRemark(){
+         onPropGet(PROP_ID_remark);
+         return _remark;
     }
 
     /**
-     * 加入日期: START_DATE
+     * 备注: REMARK
      */
-    public final void setStartDate(java.time.LocalDate value){
-        if(onPropSet(PROP_ID_startDate,value)){
-            this._startDate = value;
-            internalClearRefs(PROP_ID_startDate);
-            
-        }
-    }
-    
-    /**
-     * 退出日期: END_DATE
-     */
-    public final java.time.LocalDate getEndDate(){
-         onPropGet(PROP_ID_endDate);
-         return _endDate;
-    }
-
-    /**
-     * 退出日期: END_DATE
-     */
-    public final void setEndDate(java.time.LocalDate value){
-        if(onPropSet(PROP_ID_endDate,value)){
-            this._endDate = value;
-            internalClearRefs(PROP_ID_endDate);
+    public final void setRemark(java.lang.String value){
+        if(onPropSet(PROP_ID_remark,value)){
+            this._remark = value;
+            internalClearRefs(PROP_ID_remark);
             
         }
     }
@@ -760,70 +675,5 @@ public class _ErpPrjProjectUser extends DynamicOrmEntity{
         }
     }
     
-    /**
-     * 成本费率: COST_RATE
-     */
-    public final java.math.BigDecimal getCostRate(){
-         onPropGet(PROP_ID_costRate);
-         return _costRate;
-    }
-
-    /**
-     * 成本费率: COST_RATE
-     */
-    public final void setCostRate(java.math.BigDecimal value){
-        if(onPropSet(PROP_ID_costRate,value)){
-            this._costRate = value;
-            internalClearRefs(PROP_ID_costRate);
-            
-        }
-    }
-    
-    /**
-     * 
-     */
-    public final app.erp.prj.dao.entity.ErpPrjProject getProject(){
-       return (app.erp.prj.dao.entity.ErpPrjProject)internalGetRefEntity(PROP_NAME_project);
-    }
-
-    public final void setProject(app.erp.prj.dao.entity.ErpPrjProject refEntity){
-   
-           if(refEntity == null){
-           
-                   this.setProjectId(null);
-               
-           }else{
-           internalSetRefEntity(PROP_NAME_project, refEntity,()->{
-           
-                           this.setProjectId(refEntity.getId());
-                       
-           });
-           }
-       
-    }
-       
-    /**
-     * 
-     */
-    public final app.erp.md.dao.entity.ErpMdEmployee getUser(){
-       return (app.erp.md.dao.entity.ErpMdEmployee)internalGetRefEntity(PROP_NAME_user);
-    }
-
-    public final void setUser(app.erp.md.dao.entity.ErpMdEmployee refEntity){
-   
-           if(refEntity == null){
-           
-                   this.setUserId(null);
-               
-           }else{
-           internalSetRefEntity(PROP_NAME_user, refEntity,()->{
-           
-                           this.setUserId(refEntity.getId());
-                       
-           });
-           }
-       
-    }
-       
 }
 // resume CPD analysis - CPD-ON

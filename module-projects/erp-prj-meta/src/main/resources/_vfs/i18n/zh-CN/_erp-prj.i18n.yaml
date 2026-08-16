@@ -14,6 +14,7 @@ entity:
     ErpPrjProjectSettlementLine: 项目结算明细
     ErpPrjProjectType: 项目类型
     ErpPrjProjectUser: 项目成员
+    ErpPrjRole: 项目角色
     ErpPrjTask: 任务
     ErpPrjTimesheet: 工时记录
 prop:
@@ -373,6 +374,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpPrjProjectUser:
+      costRate: 成本费率
       createTime: 创建时间
       createdBy: 创建人
       delVersion: 逻辑删除版本
@@ -387,6 +389,18 @@ prop:
       user: null
       user.name: null
       userId: 用户
+      version: 数据版本
+    ErpPrjRole:
+      code: 角色编码
+      costRate: 成本费率
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      name: 角色名称
+      remark: 备注
+      updateTime: 修改时间
+      updatedBy: 修改人
       version: 数据版本
     ErpPrjTask:
       actualEndDate: 实际结束日期

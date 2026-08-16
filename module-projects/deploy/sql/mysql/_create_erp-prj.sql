@@ -48,6 +48,21 @@ CREATE TABLE erp_md_subject(
   constraint PK_erp_md_subject primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_prj_role(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '角色编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '角色名称',
+  COST_RATE DECIMAL(20,4) NULL    COMMENT '成本费率',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_prj_role primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_prj_project_type(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '类型编码',
@@ -145,6 +160,7 @@ CREATE TABLE erp_prj_project_user(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  COST_RATE DECIMAL(20,4) NULL    COMMENT '成本费率',
   constraint PK_erp_prj_project_user primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -440,6 +456,8 @@ CREATE TABLE erp_prj_project_settlement_line(
    ALTER TABLE erp_md_organization COMMENT '组织';
                 
    ALTER TABLE erp_md_subject COMMENT '会计科目';
+                
+   ALTER TABLE erp_prj_role COMMENT '项目角色';
                 
    ALTER TABLE erp_prj_project_type COMMENT '项目类型';
                 

@@ -96,4 +96,18 @@
         }
 
 
+        private java.math.BigDecimal _costRate;
+
+    
+        @PropMeta(propId=13)
+    
+        public java.math.BigDecimal getCostRate(){
+            return _costRate;
+        }
+
+        public void setCostRate(java.math.BigDecimal value){
+            this._costRate = value;
+        }
+
+
     }

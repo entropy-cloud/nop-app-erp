@@ -1,10 +1,13 @@
 package app.erp.prj.service.cost;
 
 import app.erp.prj.dao.entity.ErpPrjActivityType;
+import app.erp.prj.dao.entity.ErpPrjProjectUser;
+import app.erp.prj.dao.entity.ErpPrjRole;
 import app.erp.prj.dao.entity.ErpPrjTimesheet;
 import app.erp.prj.service.ErpPrjConfigs;
 import app.erp.prj.service.ErpPrjConstants;
 import app.erp.prj.service.ErpPrjErrors;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -12,19 +15,23 @@ import jakarta.inject.Inject;
 
 import java.math.BigDecimal;
 
+import static io.nop.api.core.beans.FilterBeans.eq;
+
 /**
- * 工时成本率解析器。按优先级解析（{@code cost-collection.md §2.2}，实现偏差见计划 Task Route Decision）：
+ * 工时成本率解析器。按优先级解析（{@code cost-collection.md §2.2} + 本计划 RC-R1.60 Phase 1 裁决）：
  * <ol>
- *   <li>{@link ErpPrjTimesheet#getCostRate()}（按单填写，最高优先级）。</li>
+ *   <li>{@link ErpPrjTimesheet#getCostRate()}（按单填写，显式录入优先，最高优先级）。</li>
+ *   <li>{@link ErpPrjProjectUser#getCostRate()}（用户级费率——项目成员按 projectId+userId 查 costRate）。</li>
+ *   <li>{@link ErpPrjRole#getCostRate()}（角色级费率——成员行 role 文本经 {@link ErpPrjRole#getCode()} 精确匹配 costRate）。</li>
  *   <li>{@link ErpPrjActivityType#getCostRate()}（活动类型默认）。</li>
  *   <li>{@code erp-prj.default-labor-cost-rate}（全局默认 config）。</li>
  * </ol>
  *
- * <p><b>实现偏差</b>：设计 §2.2 声明「用户级 &gt; 角色级 &gt; 活动类型级」，但 ORM 中
- * {@code ErpPrjProjectUser.role} 为纯文本无费率列，无用户级/角色级独立费率载体。
- * 本期以「单填 &gt; 活动类型 &gt; 默认」实现；用户级/角色级独立费率为本期 Non-Goal。
+ * <p>L1（{@code use-cases.md:38}）三级优先级「用户费率 &gt; 角色费率 &gt; 活动类型费率」运行时成立；
+ * 单填/全局默认按 RC-R1.60 Phase 1 D2 裁决归位（单填保持最高显式录入优先，全局默认兜底）。
+ * 用户级/角色级费率为 null 或成员行/角色缺失时跳过对应 tier。
  *
- * <p>三处皆无时抛 {@link ErpPrjErrors#ERR_COST_RATE_NOT_AVAILABLE}。
+ * <p>五处皆无时抛 {@link ErpPrjErrors#ERR_COST_RATE_NOT_AVAILABLE}。
  */
 public class CostRateResolver {
 
@@ -34,13 +41,29 @@ public class CostRateResolver {
     /**
      * 解析工时成本率。返回非空 BigDecimal（&gt;= 0）。
      *
-     * @param timesheet 已加载的工时实体（取 costRate/activityTypeId）
+     * @param timesheet 已加载的工时实体（取 costRate/activityTypeId/projectId/userId）
      * @param timesheetCode 用于异常上下文
      */
     public BigDecimal resolve(ErpPrjTimesheet timesheet, String timesheetCode) {
         BigDecimal rate = timesheet.getCostRate();
         if (rate != null && rate.signum() >= 0) {
             return rate;
+        }
+
+        // 用户级 > 角色级：同一次成员行查询承载两级（用户费率 + 角色文本）
+        ErpPrjProjectUser member = findProjectMember(timesheet);
+        if (member != null) {
+            BigDecimal userRate = member.getCostRate();
+            if (userRate != null && userRate.signum() >= 0) {
+                return userRate;
+            }
+            String roleCode = member.getRole();
+            if (roleCode != null && !roleCode.trim().isEmpty()) {
+                BigDecimal roleRate = findRoleRate(roleCode.trim());
+                if (roleRate != null) {
+                    return roleRate;
+                }
+            }
         }
 
         Long activityTypeId = timesheet.getActivityTypeId();
@@ -64,6 +87,36 @@ public class CostRateResolver {
         throw new NopException(ErpPrjErrors.ERR_COST_RATE_NOT_AVAILABLE)
                 .param(ErpPrjErrors.ARG_TIMESHEET_CODE, timesheetCode)
                 .param(ErpPrjErrors.ARG_ACTIVITY_TYPE_ID, activityTypeId);
+    }
+
+    /**
+     * 用户级费率载体：ErpPrjProjectUser 按 (projectId, userId) 查成员行（RC-R1.60 D3）。
+     * 同域直查（非跨域）——与 activityType 查询同型；findFirstByQuery 单行查询不增 R1d 计数面。
+     */
+    private ErpPrjProjectUser findProjectMember(ErpPrjTimesheet timesheet) {
+        if (timesheet.getProjectId() == null || timesheet.getUserId() == null) {
+            return null;
+        }
+        QueryBean query = new QueryBean();
+        query.addFilter(eq("projectId", timesheet.getProjectId()));
+        query.addFilter(eq("userId", timesheet.getUserId()));
+        query.setLimit(1);
+        return daoProvider.daoFor(ErpPrjProjectUser.class).findFirstByQuery(query);
+    }
+
+    /**
+     * 角色级费率载体：ErpPrjRole 按 code 精确匹配（RC-R1.60 D1：role 文本 trim 后与 code 精确相等）。
+     */
+    private BigDecimal findRoleRate(String roleCode) {
+        QueryBean query = new QueryBean();
+        query.addFilter(eq("code", roleCode));
+        query.setLimit(1);
+        ErpPrjRole role = daoProvider.daoFor(ErpPrjRole.class).findFirstByQuery(query);
+        if (role == null) {
+            return null;
+        }
+        BigDecimal rate = role.getCostRate();
+        return rate != null && rate.signum() >= 0 ? rate : null;
     }
 
     private BigDecimal parseDecimal(String text) {

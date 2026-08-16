@@ -14,6 +14,7 @@ entity:
     ErpPrjProjectSettlementLine: Project Settlement Line
     ErpPrjProjectType: Project Type
     ErpPrjProjectUser: Project Member
+    ErpPrjRole: Project Role
     ErpPrjTask: Task
     ErpPrjTimesheet: Timesheet
 prop:
@@ -385,9 +386,22 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      costRate: Cost Rate
       project: Project
       user: User
       user.name: User
+    ErpPrjRole:
+      id: ID
+      code: Code
+      name: Name
+      costRate: Cost Rate
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
     ErpPrjTask:
       id: ID
       projectId: Project

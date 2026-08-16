@@ -9,6 +9,8 @@ alter table erp_md_organization add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NU
 
 alter table erp_md_subject add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_prj_role add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_prj_project_type add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_prj_activity_type add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -55,6 +57,9 @@ alter table erp_md_organization add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_subject drop primary key;
 alter table erp_md_subject add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_prj_role drop primary key;
+alter table erp_prj_role add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_prj_project_type drop primary key;
 alter table erp_prj_project_type add primary key (NOP_TENANT_ID, ID);

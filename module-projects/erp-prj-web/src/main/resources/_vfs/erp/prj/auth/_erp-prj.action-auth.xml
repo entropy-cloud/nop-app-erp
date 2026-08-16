@@ -212,30 +212,44 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpPrjTask-main" displayName="任务" orderNo="10043" i18n-en:displayName="Task"
+                <resource id="ErpPrjRole-main" displayName="项目角色" orderNo="10043" i18n-en:displayName="Project Role"
+                          icon="id-badge" component="FLUX" resourceType="SUBM"
+                          url="/erp/prj/pages/ErpPrjRole/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpPrjRole:query" displayName="查询项目角色"
+                                  i18n-en:displayName="Query Project Role" orderNo="10044" resourceType="FNPT">
+                            <permissions>ErpPrjRole:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpPrjRole:mutation" displayName="修改项目角色"
+                                  i18n-en:displayName="Modify Project Role" orderNo="10045" resourceType="FNPT">
+                            <permissions>ErpPrjRole:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpPrjTask-main" displayName="任务" orderNo="10046" i18n-en:displayName="Task"
                           icon="list-checks" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjTask/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjTask:query" displayName="查询任务" i18n-en:displayName="Query Task"
-                                  orderNo="10044" resourceType="FNPT">
+                                  orderNo="10047" resourceType="FNPT">
                             <permissions>ErpPrjTask:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpPrjTask:mutation" displayName="修改任务" i18n-en:displayName="Modify Task"
-                                  orderNo="10045" resourceType="FNPT">
+                                  orderNo="10048" resourceType="FNPT">
                             <permissions>ErpPrjTask:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpPrjTimesheet-main" displayName="工时记录" orderNo="10046" i18n-en:displayName="Timesheet"
+                <resource id="ErpPrjTimesheet-main" displayName="工时记录" orderNo="10049" i18n-en:displayName="Timesheet"
                           icon="clock" component="FLUX" resourceType="SUBM"
                           url="/erp/prj/pages/ErpPrjTimesheet/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpPrjTimesheet:query" displayName="查询工时记录"
-                                  i18n-en:displayName="Query Timesheet" orderNo="10047" resourceType="FNPT">
+                                  i18n-en:displayName="Query Timesheet" orderNo="10050" resourceType="FNPT">
                             <permissions>ErpPrjTimesheet:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpPrjTimesheet:mutation" displayName="修改工时记录"
-                                  i18n-en:displayName="Modify Timesheet" orderNo="10048" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Timesheet" orderNo="10051" resourceType="FNPT">
                             <permissions>ErpPrjTimesheet:mutation</permissions>
                         </resource>
                     </children>

@@ -5,6 +5,13 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
 
+    <bean id="app.erp.prj.service.entity.ErpPrjRoleBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpPrjRole" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.prj.biz.IErpPrjRoleBiz"
+          ioc:force-lazy-property="true" lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpPrjRole"/>
+    </bean>
+
     <bean id="app.erp.prj.service.entity.ErpPrjProjectTypeBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpPrjProjectType" class="io.nop.biz.proxy.BizProxyFactoryBean"

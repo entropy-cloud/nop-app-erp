@@ -48,6 +48,21 @@ CREATE TABLE erp_md_subject(
   constraint PK_erp_md_subject primary key (id)
 );
 
+CREATE TABLE erp_prj_role(
+  id INT8 NOT NULL ,
+  code VARCHAR(50) NOT NULL ,
+  name VARCHAR(200) NOT NULL ,
+  cost_rate NUMERIC(20,4)  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_prj_role primary key (id)
+);
+
 CREATE TABLE erp_prj_project_type(
   id INT8 NOT NULL ,
   code VARCHAR(50) NOT NULL ,
@@ -145,6 +160,7 @@ CREATE TABLE erp_prj_project_user(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  cost_rate NUMERIC(20,4)  ,
   constraint PK_erp_prj_project_user primary key (id)
 );
 
@@ -441,6 +457,30 @@ CREATE TABLE erp_prj_project_settlement_line(
                 
       COMMENT ON TABLE erp_md_subject IS '会计科目';
                 
+      COMMENT ON TABLE erp_prj_role IS '项目角色';
+                
+      COMMENT ON COLUMN erp_prj_role.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_prj_role.code IS '角色编码';
+                    
+      COMMENT ON COLUMN erp_prj_role.name IS '角色名称';
+                    
+      COMMENT ON COLUMN erp_prj_role.cost_rate IS '成本费率';
+                    
+      COMMENT ON COLUMN erp_prj_role.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_prj_role.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_prj_role.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_prj_role.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_prj_role.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_prj_role.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_prj_role.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_prj_project_type IS '项目类型';
                 
       COMMENT ON COLUMN erp_prj_project_type.id IS 'ID';
@@ -610,6 +650,8 @@ CREATE TABLE erp_prj_project_settlement_line(
       COMMENT ON COLUMN erp_prj_project_user.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_prj_project_user.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_prj_project_user.cost_rate IS '成本费率';
                     
       COMMENT ON TABLE erp_prj_budget IS '项目预算';
                 

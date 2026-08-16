@@ -10,7 +10,7 @@
     @DataBean
     @JsonInclude(JsonInclude.Include.NON_NULL)
     @SuppressWarnings({"PMD","java:S116","java:S115"})
-    public class ErpPrjProjectUserOutputBean {
+    public class ErpPrjRoleOutputBean {
 
     
         private Long _id;
@@ -27,80 +27,66 @@
         }
 
 
-        private Long _projectId;
+        private String _code;
 
     
         @PropMeta(propId=2)
     
-        public Long getProjectId(){
-            return _projectId;
+        public String getCode(){
+            return _code;
         }
 
-        public void setProjectId(Long value){
-            this._projectId = value;
+        public void setCode(String value){
+            this._code = value;
         }
 
 
-        private Long _userId;
+        private String _name;
 
     
         @PropMeta(propId=3)
     
-        public Long getUserId(){
-            return _userId;
+        public String getName(){
+            return _name;
         }
 
-        public void setUserId(Long value){
-            this._userId = value;
+        public void setName(String value){
+            this._name = value;
         }
 
 
-        private String _role;
+        private java.math.BigDecimal _costRate;
 
     
         @PropMeta(propId=4)
     
-        public String getRole(){
-            return _role;
+        public java.math.BigDecimal getCostRate(){
+            return _costRate;
         }
 
-        public void setRole(String value){
-            this._role = value;
+        public void setCostRate(java.math.BigDecimal value){
+            this._costRate = value;
         }
 
 
-        private java.time.LocalDate _startDate;
+        private String _remark;
 
     
         @PropMeta(propId=5)
     
-        public java.time.LocalDate getStartDate(){
-            return _startDate;
+        public String getRemark(){
+            return _remark;
         }
 
-        public void setStartDate(java.time.LocalDate value){
-            this._startDate = value;
-        }
-
-
-        private java.time.LocalDate _endDate;
-
-    
-        @PropMeta(propId=6)
-    
-        public java.time.LocalDate getEndDate(){
-            return _endDate;
-        }
-
-        public void setEndDate(java.time.LocalDate value){
-            this._endDate = value;
+        public void setRemark(String value){
+            this._remark = value;
         }
 
 
         private Long _delVersion;
 
     
-        @PropMeta(propId=7)
+        @PropMeta(propId=6)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -114,7 +100,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=8)
+        @PropMeta(propId=7)
     
         public Integer getVersion(){
             return _version;
@@ -128,7 +114,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=9)
+        @PropMeta(propId=8)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -142,7 +128,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=9)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -156,7 +142,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=10)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -170,7 +156,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=11)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;
@@ -178,42 +164,6 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
-        }
-
-
-        private java.math.BigDecimal _costRate;
-
-    
-        @PropMeta(propId=13)
-    
-        public java.math.BigDecimal getCostRate(){
-            return _costRate;
-        }
-
-        public void setCostRate(java.math.BigDecimal value){
-            this._costRate = value;
-        }
-
-
-        private Map<String,Object> _project;
-
-        public Map<String,Object> getProject(){
-            return _project;
-        }
-
-        public void setProject(Map<String,Object> value){
-            this._project = value;
-        }
-
-
-        private Map<String,Object> _user;
-
-        public Map<String,Object> getUser(){
-            return _user;
-        }
-
-        public void setUser(Map<String,Object> value){
-            this._user = value;
         }
 
 

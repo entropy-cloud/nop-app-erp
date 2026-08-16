@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpPrjProjectUser" xmlns:i18n-en="i18n-en"
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpPrjRole" xmlns:i18n-en="i18n-en"
       xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
 
-    <objMeta>/erp/prj/model/ErpPrjProjectUser/ErpPrjProjectUser.xmeta</objMeta>
+    <objMeta>/erp/prj/model/ErpPrjRole/ErpPrjRole.xmeta</objMeta>
 
     <controlLib>/nop/web/xlib/flux-control.xlib</controlLib>
 
@@ -21,20 +21,17 @@
                 <!--ID-->
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
 
-                <!--项目-->
-                <col id="projectId" mandatory="true" ui:number="true" sortable="true"/>
+                <!--角色编码-->
+                <col id="code" mandatory="true" sortable="true"/>
 
-                <!--用户-->
-                <col id="userId" mandatory="true" ui:number="true" sortable="true"/>
+                <!--角色名称-->
+                <col id="name" mandatory="true" sortable="true"/>
 
-                <!--角色-->
-                <col id="role" sortable="true"/>
+                <!--成本费率-->
+                <col id="costRate" ui:number="true" sortable="true"/>
 
-                <!--加入日期-->
-                <col id="startDate" sortable="true"/>
-
-                <!--退出日期-->
-                <col id="endDate" sortable="true"/>
+                <!--备注-->
+                <col id="remark" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
@@ -50,54 +47,52 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
-
-                <!--成本费率-->
-                <col id="costRate" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
     </grids>
 
     <forms>
-        <form id="view" editMode="view" title="查看-项目成员" i18n-en:title="View Project Member">
+        <form id="view" editMode="view" title="查看-项目角色" i18n-en:title="View Project Role">
             <layout>
- projectId[项目] userId[用户]
- role[角色] startDate[加入日期]
- endDate[退出日期] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
- costRate[成本费率] 
+ code[角色编码]
+ name[角色名称]
+ costRate[成本费率]
+ remark[备注]
+ delVersion[逻辑删除版本]
+ createdBy[创建人]
+ createTime[创建时间]
+ updatedBy[修改人]
+ updateTime[修改时间]
 </layout>
         </form>
-        <form id="add" editMode="add" title="新增-项目成员" i18n-en:title="Add Project Member" x:prototype="edit"/>
-        <form id="edit" editMode="edit" title="编辑-项目成员" i18n-en:title="Edit Project Member">
+        <form id="add" editMode="add" title="新增-项目角色" i18n-en:title="Add Project Role" x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-项目角色" i18n-en:title="Edit Project Role">
             <layout>
- projectId[项目]
- userId[用户]
- role[角色]
- startDate[加入日期]
- endDate[退出日期]
+ code[角色编码]
+ name[角色名称]
  costRate[成本费率]
+ remark[备注]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
         <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
-        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-项目成员" i18n-en:title="Update Project Member"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-项目角色" i18n-en:title="Update Project Role"/>
     </forms>
 
     <pages>
         <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
             <table autoFillHeight="true">
-                <api url="@query:ErpPrjProjectUser__findPage" gql:selection="{@pageSelection}"/>
+                <api url="@query:ErpPrjRole__findPage" gql:selection="{@pageSelection}"/>
             </table>
         </crud>
         <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
             <table autoFillHeight="true">
-                <api url="@query:ErpPrjProjectUser__findPage" gql:selection="{@pageSelection}"/>
+                <api url="@query:ErpPrjRole__findPage" gql:selection="{@pageSelection}"/>
             </table>
             <listActions>
                 <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
-                    <api url="@mutation:ErpPrjProjectUser__batchDelete?ids=${ids}"/>
+                    <api url="@mutation:ErpPrjRole__batchDelete?ids=${ids}"/>
                     <confirmText>@i18n:common.confirmBatchDelete</confirmText>
                 </action>
                 <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
@@ -112,7 +107,7 @@
                     <dialog page="update"/>
                 </action>
                 <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
-                    <api url="@mutation:ErpPrjProjectUser__delete?id=${id}"/>
+                    <api url="@mutation:ErpPrjRole__delete?id=${id}"/>
                     <confirmText>@i18n:common.confirmDelete</confirmText>
                 </action>
                 <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
@@ -120,7 +115,7 @@
                         <dialog page="update"/>
                     </action>
                     <action id="row-delete-button" label="@i18n:common.delete">
-                        <api url="@mutation:ErpPrjProjectUser__delete?id=${id}"/>
+                        <api url="@mutation:ErpPrjRole__delete?id=${id}"/>
                         <confirmText>@i18n:common.confirmDelete</confirmText>
                     </action>
                 </actionGroup>
@@ -128,18 +123,18 @@
         </crud>
         <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
             <table noOperations="true">
-                <api url="@query:ErpPrjProjectUser__findPage" gql:selection="{@pageSelection}"/>
+                <api url="@query:ErpPrjRole__findPage" gql:selection="{@pageSelection}"/>
             </table>
         </picker>
         <simple name="add" form="add">
-            <api url="@mutation:ErpPrjProjectUser__save/id"/>
+            <api url="@mutation:ErpPrjRole__save/id"/>
         </simple>
         <simple name="view" form="view">
-            <initApi url="@query:ErpPrjProjectUser__get?id=${id}" gql:selection="{@formSelection}"/>
+            <initApi url="@query:ErpPrjRole__get?id=${id}" gql:selection="{@formSelection}"/>
         </simple>
         <simple name="update" form="edit">
-            <initApi url="@query:ErpPrjProjectUser__get?id=${id}" gql:selection="{@formSelection}"/>
-            <api url="@mutation:ErpPrjProjectUser__update/id?id=${id}" withFormData="true"/>
+            <initApi url="@query:ErpPrjRole__get?id=${id}" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpPrjRole__update/id?id=${id}" withFormData="true"/>
         </simple>
     </pages>
 </view>
