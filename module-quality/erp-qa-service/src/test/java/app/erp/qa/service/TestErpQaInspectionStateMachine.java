@@ -81,13 +81,13 @@ public class TestErpQaInspectionStateMachine extends JunitAutoTestCase {
     }
 
     @Test
-    public void testRejectedCriticalGoesRejected() {
+    public void testRejectedNoConcessionGoesRejected() {
         Long insId = seedInspection("INS-REJ", withLine("长度", "10", "20"));
         // 5 < min 10 → 不合格，未让步
         recordMeasured(insId, false, lineInput(1, "5"));
 
         ErpQaInspection ins = loadInspection(insId);
-        assertEquals(ErpQaConstants.INSPECTION_RESULT_REJECTED, ins.getResult(), "关键不合格未让步→REJECTED");
+        assertEquals(ErpQaConstants.INSPECTION_RESULT_REJECTED, ins.getResult(), "不合格未让步→REJECTED");
     }
 
     @Test

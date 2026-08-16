@@ -235,6 +235,7 @@ CREATE TABLE erp_qa_inspection_template_line(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  IS_CRITICAL INTEGER  ,
   constraint PK_erp_qa_inspection_template_line primary key (ID)
 );
 
@@ -289,6 +290,7 @@ CREATE TABLE erp_qa_inspection_line(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  IS_CRITICAL INTEGER  ,
   constraint PK_erp_qa_inspection_line primary key (ID)
 );
 
@@ -803,6 +805,8 @@ CREATE TABLE erp_qa_recall_target(
                     
       COMMENT ON COLUMN erp_qa_inspection_template_line.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON COLUMN erp_qa_inspection_template_line.IS_CRITICAL IS '是否关键项';
+                    
       COMMENT ON TABLE erp_qa_spc_chart IS 'SPC 控制图配置';
                 
       COMMENT ON COLUMN erp_qa_spc_chart.ID IS 'ID';
@@ -898,6 +902,8 @@ CREATE TABLE erp_qa_recall_target(
       COMMENT ON COLUMN erp_qa_inspection_line.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_qa_inspection_line.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_qa_inspection_line.IS_CRITICAL IS '是否关键项';
                     
       COMMENT ON TABLE erp_qa_non_conformance IS '不合格品报告';
                 

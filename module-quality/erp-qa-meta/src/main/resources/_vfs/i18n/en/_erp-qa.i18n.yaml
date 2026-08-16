@@ -140,6 +140,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      isCritical: Is Critical
       inspection: Inspection
     ErpQaInspectionTemplate:
       id: ID
@@ -176,6 +177,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      isCritical: Is Critical
       template: Template
     ErpQaNonConformance:
       id: ID

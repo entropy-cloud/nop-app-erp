@@ -12,12 +12,15 @@ import java.util.List;
 
 /**
  * 质检单行级评测 + 结果汇总器。权威：{@code docs/design/quality/state-machine.md §适用对象一}
- * + 计划 Task Route Decision（行级评测规则）。
+ * + 计划 Task Route Decision（行级评测规则）+ {@code docs/design/quality/inspection-integration.md §五}
+ * （关键项否决，UC-QA-06）。
  *
  * <p>行级评测：{@code specMin/specMax} vs {@code measuredValue} 数值比较（三者均为 VARCHAR，解析为 BigDecimal 比较）；
  * 解析失败视为不合格。规格上下限均空时按「实测值非空即合格」（外观类目测项，无数值规格）。
  *
- * <p>汇总：全行 ACCEPTED → ACCEPTED；含 REJECTED 且 allowConcession → CONDITIONAL；含 REJECTED 且未让步 → REJECTED。
+ * <p>汇总：全行 ACCEPTED → ACCEPTED；任一关键项行（{@code isCritical=1}）REJECTED → 强制 REJECTED
+ * （关键项否决，跳过 allowConcession，无论其他项）；含非关键项 REJECTED 且 allowConcession → CONDITIONAL；
+ * 含非关键项 REJECTED 且未让步 → REJECTED。
  */
 public final class InspectionResultEvaluator {
 
@@ -63,10 +66,15 @@ public final class InspectionResultEvaluator {
     }
 
     /**
-     * 汇总全部行结果为质检单结果。
+     * 汇总全部行结果为质检单结果（含关键项否决）。
+     *
+     * <p>循环内统一读 {@code line.getResult()}（显式行结果优先，否则行级评测）；任一关键项行
+     * （{@code line.isCritical == 1}，null/0=非关键项）REJECTED → 强制返回 REJECTED（跳过 allowConcession，
+     * L1 {@code use-cases.md:107-109}「关键项否决，无论其他项」）；否则按既有三分支：
+     * 全 ACCEPTED → ACCEPTED；含非关键项 REJECTED + allowConcession → CONDITIONAL；无让步 → REJECTED。
      *
      * @param lines           质检单行
-     * @param allowConcession 是否允许让步接收（部分不合格 + 让步审批 → CONDITIONAL）
+     * @param allowConcession 是否允许让步接收（部分不合格 + 让步审批 → CONDITIONAL；关键项否决时无效）
      * @param inspectionCode  质检单编码（异常上下文）
      * @return 汇总结果（ACCEPTED / CONDITIONAL / REJECTED）
      */
@@ -82,6 +90,10 @@ public final class InspectionResultEvaluator {
                     : line.getResult();
             if (Objects.equals(lineResult, ErpQaConstants.INSPECTION_RESULT_REJECTED)) {
                 anyRejected = true;
+                // 关键项否决：任一关键项行不合格 → 整体 REJECTED（无论其他项，跳过 allowConcession）
+                if (line.getIsCritical() != null && line.getIsCritical() == 1) {
+                    return ErpQaConstants.INSPECTION_RESULT_REJECTED;
+                }
             }
         }
         if (!anyRejected) {

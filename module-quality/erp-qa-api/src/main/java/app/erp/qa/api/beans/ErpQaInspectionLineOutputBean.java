@@ -263,6 +263,20 @@
         }
 
 
+        private Integer _isCritical;
+
+    
+        @PropMeta(propId=18)
+    
+        public Integer getIsCritical(){
+            return _isCritical;
+        }
+
+        public void setIsCritical(Integer value){
+            this._isCritical = value;
+        }
+
+
         private Map<String,Object> _inspection;
 
         public Map<String,Object> getInspection(){

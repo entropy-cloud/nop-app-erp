@@ -64,6 +64,7 @@ public class ErpQaInspectionCreateForBusinessBillProcessor extends AbstractErpQa
             line.setSpecMin(spec.getSpecMin());
             line.setSpecMax(spec.getSpecMax());
             line.setUnit(spec.getUnit());
+            line.setIsCritical(spec.getIsCritical());
             line.setResult(ErpQaConstants.INSPECTION_RESULT_PENDING);
             lineDao.saveEntity(line);
         }

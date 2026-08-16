@@ -8,12 +8,14 @@ public final class TemplateLineSpec {
     private final BigDecimal specMin;
     private final BigDecimal specMax;
     private final String unit;
+    private final Integer isCritical;
 
-    public TemplateLineSpec(String parameterName, BigDecimal specMin, BigDecimal specMax, String unit) {
+    public TemplateLineSpec(String parameterName, BigDecimal specMin, BigDecimal specMax, String unit, Integer isCritical) {
         this.parameterName = parameterName;
         this.specMin = specMin;
         this.specMax = specMax;
         this.unit = unit;
+        this.isCritical = isCritical;
     }
 
     public String getParameterName() {
@@ -30,5 +32,9 @@ public final class TemplateLineSpec {
 
     public String getUnit() {
         return unit;
+    }
+
+    public Integer getIsCritical() {
+        return isCritical;
     }
 }

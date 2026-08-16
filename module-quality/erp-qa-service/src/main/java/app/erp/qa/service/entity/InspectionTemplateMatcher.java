@@ -19,7 +19,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>匹配顺序：(1) materialId × inspectionType 匹配 active 模板；(2) 无匹配回落到
  * {@code erp-qua.default-inspection-template} 全局默认模板；(3) 仍无则返回 null（质检单无行，人工补录）。
  *
- * <p>模板行 → 质检单行复制：{@code parameterName/specMin/specMax/unit}（模板行无 parameterId 列，
+ * <p>模板行 → 质检单行复制：{@code parameterName/specMin/specMax/unit/isCritical}（模板行无 parameterId 列，
  * 质检单行 parameterId 留空，见 baseline + Draft Review iter-1 B1）。
  */
 public final class InspectionTemplateMatcher {
@@ -41,7 +41,8 @@ public final class InspectionTemplateMatcher {
         List<ErpQaInspectionTemplateLine> templateLines = loadTemplateLines(daoProvider, template.getId());
         List<TemplateLineSpec> specs = new ArrayList<>();
         for (ErpQaInspectionTemplateLine tl : templateLines) {
-            specs.add(new TemplateLineSpec(tl.getParameterName(), tl.getSpecMin(), tl.getSpecMax(), tl.getUnit()));
+            specs.add(new TemplateLineSpec(tl.getParameterName(), tl.getSpecMin(), tl.getSpecMax(), tl.getUnit(),
+                    tl.getIsCritical()));
         }
         return new TemplateMatchResult(template.getId(), specs);
     }

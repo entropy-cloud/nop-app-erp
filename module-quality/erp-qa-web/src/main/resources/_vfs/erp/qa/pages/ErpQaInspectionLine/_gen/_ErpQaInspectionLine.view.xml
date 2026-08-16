@@ -65,6 +65,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--是否关键项-->
+                <col id="isCritical" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -80,7 +83,7 @@
  result[行结果] remark[备注]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] isCritical[是否关键项]
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-质检单行" i18n-en:title="Add Inspection Line" x:prototype="edit"/>
@@ -91,6 +94,7 @@
  specMin[规格下限] specMax[规格上限]
  measuredValue[实测值] unit[计量单位]
  result[行结果] remark[备注]
+ isCritical[是否关键项] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

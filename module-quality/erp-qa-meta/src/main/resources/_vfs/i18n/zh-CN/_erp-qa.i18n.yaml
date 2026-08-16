@@ -128,6 +128,7 @@ prop:
       id: ID
       inspection: null
       inspectionId: 质检单ID
+      isCritical: 是否关键项
       lineNo: 行号
       measuredValue: 实测值
       parameterId: 检验参数
@@ -165,6 +166,7 @@ prop:
       delVersion: 逻辑删除版本
       id: ID
       inspectionMethod: 检验方法
+      isCritical: 是否关键项
       isRequired: 是否必检
       lineNo: 行号
       parameterName: 检验参数名称
