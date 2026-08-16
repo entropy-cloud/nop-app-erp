@@ -168,27 +168,46 @@
 > **实现约定**：本期费用报销归集为 **projects 驱动只读聚合**
 > （`IErpPrjCostCollectionBiz.refreshExpenseCost` 经 `IErpFinExpenseClaimBiz` 只读 R 查报销单 + projects 自写
 > `erp_prj_cost_collection`），而非 finance 回写——对齐 `data-dependency-matrix.md §3.2:160`「finance 从不写业务表」
-> + `§4.2:217` 成本归集为 projects 触发 `confirmCollection()`。采购入库/领料归集为本期 Non-Goal（successor）。
+> + `§4.2:217` 成本归集为 projects 触发 `confirmCollection()`。
+>
+> **实现注记（RC-R1.61，P1-RC-049 落地）**：采购入库物料归集已实现——purchase 侧入库审核（`ErpPurReceiveApproveProcessor.approve`）
+> 在入库移动单生成后经既有 purchase→projects 边调 `IErpPrjCostCollectionBiz.aggregateMaterialCost` 跨域 Facade
+> （行级 projectId 解析：`ErpPurReceiveLine.orderLineId → ErpPurOrderLine.projectId`，null 跳过），projects 侧
+> `ErpPrjCostCollectionAggregateMaterialCostProcessor` 守卫链（config 门控 `erp-prj.material-aggregation-enabled`
+> 默认 true → `requireReferenceable` 单一咽喉 → 预算检查 STRICT 拒绝/WARNING 放行 → 幂等去重）后经
+> `MaterialCostAggregator` 自写归集行（costCategory=MATERIAL / sourceBillType=PURCHASE_RECEIVE /
+> sourceBillCode=入库单号-行号 / amount=入库行金额不含税）+ 头 totalAmount 累加 + actualCost 增量回写。
+> 接线方向裁决：候选 A（InvPostingDispatcher→projects Facade，须新增 inventory→projects 依赖 + 矩阵修订）与
+> 候选 B（projects 聚合器只读 inventory，反向边禁止）均因模块依赖约束否决，选候选 C（purchase 侧触发经既有边，
+> 零新增依赖零矩阵修订）；STRICT 预算拒绝异常传播 → 入库审核回滚（L1「采购审核拒绝该笔归集」）。
+> **领料归集（MATERIAL）载体缺失登记**：本仓无「项目领料单」实体（领料为制造专用 MFG_ISSUE 写 WIP，mfg/inventory
+> orm.xml 零 projectId 列）→ scope 解释登记（watch-only residual，successor 触发条件=项目领料单实体落地）。
+> **分包归集（SUBCONTRACT）载体缺失登记**：manufacturing 域委外链完备（`ErpMfgSubcontractOrder` +
+> SUBCONTRACT_ISSUE/RECEIPT/FEE 三腿 posting）但 mfg orm.xml 零 projectId 列（项目维度不可达），purchase 域无
+> 分包单据类型 → scope 解释登记（watch-only residual，successor 触发条件=分包单/委外链加项目维度列落地）。
 
 ### 4.2 归集流程全景
 
 ```
 多来源成本归集
         │
-        ├─► 工时提交 → 工时成本凭证 → 项目成本归集
+        ├─► 工时提交 → 工时成本凭证 → 项目成本归集（LABOR）
         │
-        ├─► 采购入库（标注项目）→ 材料成本凭证 → 项目成本归集
+        ├─► 采购入库（标注项目）→ 入库移动单生成后 purchase 侧触发 Facade → 项目成本归集（MATERIAL）
+        │         （RC-R1.61：ErpPurReceiveApproveProcessor → IErpPrjCostCollectionBiz.aggregateMaterialCost）
         │
-        ├─► 费用报销（标注项目）→ 费用凭证 → 项目费用归集
+        ├─► 费用报销（标注项目）→ 费用凭证 → 项目费用归集（EXPENSE）
         │
-        ├─► 领料出库（标注项目）→ 领料凭证 → 项目成本归集
+        ├─► 领料出库（标注项目）→ 领料凭证 → 项目成本归集（领料载体缺失，scope 解释登记，successor）
+        │
+        ├─► 分包（委外加工单）→ 分包凭证 → 项目成本归集（项目维度不可达，scope 解释登记，successor）
         │
         └─► 销售发票（标注项目）→ 收入凭证 → 项目收入归集
                     │
                     ▼
             项目成本/收入汇总表
                     │
-                    └─► 项目利润 = 收入 - 成本
+                    └─► 项目利润 = 收入 - 成本（四分类：人工/物料/费用/分包）
 ```
 
 > **CostCollection.docStatus dict-value drift（P1-MA2-069 Deferred）**：`ErpPrjCostCollection.docStatus` 绑定 `erp-prj/project-status` 字典（DRAFT/OPEN/ON_HOLD/COMPLETED/CANCELLED），但 `ProjectCostAggregator`/`ExpenseCostAggregator` 经聚合器单一入口写入 `DOC_STATUS_APPROVED="APPROVED"`——该值**不在 project-status 字典内**，是已知 dict-value drift。归集行为正确（聚合器单一入口写入 + 幂等去重），仅按 dict 筛选层（如下拉过滤）失效。successor 独立 `erp-prj/cost-collection-status` 字典 + ORM `ext:dict` 改绑时收敛。详见 `state-machine.md §适用对象三 CRUD 桩实体状态机（Deferred）`。

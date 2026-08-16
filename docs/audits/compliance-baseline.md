@@ -435,7 +435,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 235
-R2c: 1422
+R2c: 1431
 R2d: 35
 R3: 5
 R4: 0
@@ -449,6 +449,22 @@ R12a: 69
 R12b: 66
 R12c: 40
 ```
+
+## R2c 基线上调注记（plan 2026-08-16-2043-1，RC-R1.61 项目物料归集）
+
+`2026-08-16-2043-1`（RC-R1.61 / P1-RC-049 projects 物料/分包归集）新增 `MaterialCostAggregator`（projects 同域聚合器），R2c 1422 → **1431**（+9）。**per-site 证据**（`MaterialCostAggregator.java` 全 9 处 daoFor，projects 同域聚合器——LABOR `ProjectCostAggregator` / EXPENSE `ExpenseCostAggregator` 同型既有站点，非跨域 daoFor，R2b/R2d 零变化）：
+
+- `:62` `daoFor(ErpPrjCostCollection.class).updateEntity(existingHead)`（head totalAmount 累加）
+- `:64` `daoFor(ErpPrjCostCollection.class).newEntity()`（新 head）
+- `:76` `daoFor(ErpPrjCostCollection.class).saveEntity(newHead)`（新 head）
+- `:82` `daoFor(ErpPrjProject.class).updateEntity(project)`（actualCost 增量回写）
+- `:88` `daoFor(ErpPrjCostCollectionLine.class)`（saveLine）
+- `:101` `daoFor(ErpPrjCostCollectionLine.class)`（existsLine 幂等）
+- `:109` `daoFor(ErpPrjCostCollection.class)`（findHead）
+- `:119` `daoFor(ErpPrjCostCollectionLine.class)`（nextLineNo）
+- `:136` `daoFor(ErpPrjProject.class)`（loadProject）
+
+purchase 侧接线零新增 daoFor（`collectProjectMaterialCost` 走 `line.getOrderLine()` ORM 关系 getter + Facade 调用），Facade/Processor 零 daoFor（守卫链经 `IErpPrjProjectBiz`/`BudgetChecker` 注入）。本块以 1431 为回归门控起点（对齐 R1.48/R1.51/R1.57 baseline-raise 先例）。
 
 ## 关联
 
