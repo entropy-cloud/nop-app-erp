@@ -57,6 +57,8 @@ public interface ErpQaConstants extends ErpQaDocStatus {
     // 质量域配置项（经 AppConfig.var 读取；无 .env/外部服务）
     // 强制质检的业务单据类型列表（逗号分隔，如 ERP_PUR_RECEIPT,ERP_MFG_WORK_ORDER）；空=不强制
     String CONFIG_MANDATORY_INSPECTION_BILL_TYPES = "erp-qua.mandatory-inspection-bill-types";
+    // 业务单据作废联动取消质检开关（RC-R1.59 UC-QA-08；默认 true——仅取消 PENDING 且关联已作废单据的质检单）
+    String CONFIG_BUSINESS_CANCEL_LINKAGE_ENABLED = "erp-qua.business-cancel-linkage-enabled";
     // 全局默认质检模板 ID（无物料匹配模板时回落；空=无默认，质检单无行人工补录）
     String CONFIG_DEFAULT_INSPECTION_TEMPLATE = "erp-qua.default-inspection-template";
     // REJECTED 时是否自动生成 NCR（默认 true）

@@ -43,6 +43,19 @@ public final class ErpQaConfigs {
         }
     }
 
+    /**
+     * 业务单据作废联动取消质检开关（RC-R1.59 UC-QA-08，默认 true）。
+     * true=业务域 cancel 后置调用 {@code IErpQaInspectionBiz.cancelForBusinessBill} 软删 PENDING 质检单；
+     * false=跳过（零副作用，部署侧可显式关闭保持作废零联动）。
+     */
+    public static boolean isBusinessCancelLinkageEnabled() {
+        String raw = AppConfig.var(ErpQaConstants.CONFIG_BUSINESS_CANCEL_LINKAGE_ENABLED, "true");
+        if (raw == null || raw.trim().isEmpty()) {
+            return true;
+        }
+        return Boolean.parseBoolean(raw.trim());
+    }
+
     /** REJECTED 时是否自动生成 NCR（默认 true）。 */
     public static boolean isAutoCreateNcrOnReject() {
         String raw = AppConfig.var(ErpQaConstants.CONFIG_AUTO_CREATE_NCR_ON_REJECT, "true");

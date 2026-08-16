@@ -82,4 +82,20 @@ public interface IErpQaInspectionBiz extends ICrudBiz<ErpQaInspection> {
      */
     @BizMutation
     BatchOperationResult batchPassInspection(@Name("ids") Collection<String> ids, IServiceContext context);
+
+    /**
+     * 业务单据作废联动取消质检（UC-QA-08，P1-RC-041 / RC-R1.59）：按 relatedBillType+relatedBillCode
+     * 精确查询关联质检单，仅 {@code result=PENDING} 的软删取消（CANCELLED 语义，useLogicalDelete 置 delVersion），
+     * 已 ACCEPTED/CONDITIONAL/REJECTED 不动（历史完整，L1 use-cases.md:141）；无匹配零副作用。
+     *
+     * <p>config-gated（{@code erp-qua.business-cancel-linkage-enabled}，默认 true）：关闭时零副作用返回 0。
+     * 幂等：二次调用查无 PENDING 零副作用。返回实际取消的质检单数。
+     *
+     * <p>软删后 {@link #findByRelatedBill} 经平台逻辑删除过滤（delVersion=0）自动不可见，
+     * 门控/反查语义天然闭合。业务域 cancel Processor 后置调用，失败以 LOG.warn 降级不阻断作废主流程。
+     */
+    @BizMutation
+    int cancelForBusinessBill(@Name("billType") String billType,
+                              @Name("billCode") String billCode,
+                              IServiceContext context);
 }

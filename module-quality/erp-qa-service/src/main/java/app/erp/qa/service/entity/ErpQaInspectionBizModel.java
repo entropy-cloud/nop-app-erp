@@ -7,6 +7,7 @@ import app.erp.qa.biz.InspectionLineResultInput;
 import app.erp.qa.dao.entity.ErpQaInspection;
 import app.erp.qa.service.ErpQaConstants;
 import app.erp.qa.service.processor.ErpQaInspectionBatchPassInspectionProcessor;
+import app.erp.qa.service.processor.ErpQaInspectionCancelForBusinessBillProcessor;
 import app.erp.qa.service.processor.ErpQaInspectionCreateForBusinessBillProcessor;
 import app.erp.qa.service.processor.ErpQaInspectionFailInspectionProcessor;
 import app.erp.qa.service.processor.ErpQaInspectionPassInspectionProcessor;
@@ -48,6 +49,8 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
     ErpQaInspectionFailInspectionProcessor failInspectionProcessor;
     @Inject
     ErpQaInspectionBatchPassInspectionProcessor batchPassInspectionProcessor;
+    @Inject
+    ErpQaInspectionCancelForBusinessBillProcessor cancelForBusinessBillProcessor;
 
     public ErpQaInspectionBizModel() {
         setEntityName(ErpQaInspection.class.getName());
@@ -131,5 +134,13 @@ public class ErpQaInspectionBizModel extends CrudBizModel<ErpQaInspection> imple
     @BizMutation
     public BatchOperationResult batchPassInspection(@Name("ids") Collection<String> ids, IServiceContext context) {
         return batchPassInspectionProcessor.batchPassInspection(ids, context);
+    }
+
+    @Override
+    @BizMutation
+    public int cancelForBusinessBill(@Name("billType") String billType,
+                                     @Name("billCode") String billCode,
+                                     IServiceContext context) {
+        return cancelForBusinessBillProcessor.cancelForBusinessBill(billType, billCode, context);
     }
 }

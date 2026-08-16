@@ -1,13 +1,17 @@
 package app.erp.pur.service.processor;
 
 import app.erp.pur.dao.entity.ErpPurReceive;
+import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.statemachine.ErpPurReceiveDocumentStateMachine;
 import app.erp.common.service.AbstractCancelProcessor;
+import app.erp.qa.biz.IErpQaInspectionBiz;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
 import jakarta.inject.Inject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ErpPurReceive cancel per-mutation Processor (plan 2026-07-25-1057-2；
@@ -23,11 +27,16 @@ import jakarta.inject.Inject;
  */
 public class ErpPurReceiveCancelProcessor extends AbstractCancelProcessor<ErpPurReceive> {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ErpPurReceiveCancelProcessor.class);
+
     @Inject
     ErpPurReceiveProcessor processor;
 
     @Inject
     ErpPurReceiveDocumentStateMachine stateMachine;
+
+    @Inject
+    IErpQaInspectionBiz inspectionBiz;
 
     @Override
     public ErpPurReceive cancel(String id, IServiceContext context) {
@@ -39,7 +48,25 @@ public class ErpPurReceiveCancelProcessor extends AbstractCancelProcessor<ErpPur
         }
         setDocStatus(receive, cancelledDocStatus());
         dao().updateEntity(receive);
+        cancelLinkedInspections(receive, context);
         return receive;
+    }
+
+    /**
+     * 作废联动取消质检（RC-R1.59 UC-QA-08，config-gated 在 Facade 内）：作废成功后置调
+     * {@code cancelForBusinessBill}（仅软删 PENDING，终态不动，历史完整）。失败 LOG.warn 降级不阻断作废主流程
+     * （联动为辅助语义，业务作废不受 quality 故障影响）。billType 用本域创建路径同源常量
+     * {@code RELATED_BILL_TYPE_PUR_RECEIVE}（"ERP_PUR_RECEIVE"，与强制质检触发写入值一致，非 qa 域
+     * ERP_PUR_RECEIPT 镜像值）。
+     */
+    protected void cancelLinkedInspections(ErpPurReceive receive, IServiceContext context) {
+        try {
+            inspectionBiz.cancelForBusinessBill(ErpPurConstants.RELATED_BILL_TYPE_PUR_RECEIVE,
+                    receive.getCode(), context);
+        } catch (Exception e) {
+            LOG.warn("入库单作废联动取消质检失败（降级不阻断）：receiveCode={}, reason={}",
+                    receive.getCode(), e.getMessage());
+        }
     }
 
     @Override
