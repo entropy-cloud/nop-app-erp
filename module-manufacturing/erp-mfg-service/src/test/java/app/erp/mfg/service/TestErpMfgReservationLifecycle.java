@@ -15,6 +15,7 @@ import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.ApiRequest;
 import io.nop.api.core.beans.ApiResponse;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.context.ContextProvider;
 import io.nop.autotest.junit.JunitBaseTestCase;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
@@ -31,12 +32,18 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.graphql.core.ast.GraphQLOperationType.mutation;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * RC-R1.48 mfg 侧物料预留写路径集成测试（Phase 4）：工单审核创建预留 → 领料消耗 → 取消/完工释放全链
@@ -338,6 +345,94 @@ public class TestErpMfgReservationLifecycle extends JunitBaseTestCase {
         rpcOk(mutation, "ErpMfgWorkOrder__approve", Map.of("id", String.valueOf(woId)),
                 "无 BOM 工单 approve 不阻断（跳过预留 LOG.warn）");
         assertNull(findReservation("WO-RSV-NOBOM"), "无 BOM → 不创建预留");
+    }
+
+    // ---------- ⑩ 跨工单并发预留探针（A4.2.3 MA4 回队义务，无条件新增） ----------
+
+    /**
+     * 跨工单并发预留 lost-update 防护运行时核验（A4.2.3）：两工单同物料经 mfg approve 集成层并发建预留
+     * （镜像 {@code TestErpInvReservationWriteApi#testConcurrentCreateReservationNoLostUpdate}
+     * ExecutorService + CountDownLatch 模式，但经 {@code ErpMfgWorkOrder__approve} 集成层
+     * → {@code createReservations} → {@code IErpInvReservationBiz.createReservation}
+     * → {@code StockMoveBookkeeper.updateBalanceWithRetry} 乐观锁重试）。
+     *
+     * <p>断言：两工单预留均落库 + reservedQuantity 累加无丢失（4 + 4 = 8）+ available = total − reserved
+     * 恒等式保持（10 − 8 = 2）+ 无异常/无重试耗尽。
+     */
+    @Test
+    public void testConcurrentCrossWorkOrderApproveNoLostUpdate() throws Exception {
+        seedBase(9111L, "WO-RSV-CONC-A", "2");
+        generateIncoming(M1, "PR-RSV-CONC", bd("10"), bd("5"));
+
+        Long woA = seedWorkOrder("WO-RSV-CONC-A", 9111L);
+        seedWorkOrderLine(woA, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
+        seedWorkOrderLine(woA, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
+        Long woB = seedWorkOrder("WO-RSV-CONC-B", 9111L);
+        seedWorkOrderLine(woB, M1, bd("2"), "INPUT", null, WAREHOUSE_ID);
+        seedWorkOrderLine(woB, P, bd("1"), "OUTPUT", WAREHOUSE_ID, null);
+
+        int threadCount = 2;
+        ExecutorService pool = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch startGate = new CountDownLatch(1);
+        CountDownLatch doneLatch = new CountDownLatch(threadCount);
+        AtomicReference<Throwable> firstError = new AtomicReference<>();
+
+        try {
+            for (int i = 0; i < threadCount; i++) {
+                final Long woId = i == 0 ? woA : woB;
+                pool.submit(() -> {
+                    ContextProvider.newContext();
+                    try {
+                        startGate.await();
+                        ApiResponse<?> submitResp = rpc(mutation, "ErpMfgWorkOrder__submitForApproval",
+                                Map.of("id", String.valueOf(woId)));
+                        ApiResponse<?> approveResp = rpc(mutation, "ErpMfgWorkOrder__approve",
+                                Map.of("id", String.valueOf(woId)));
+                        if (submitResp.getStatus() != 0) {
+                            throw new AssertionError("工单 " + woId + " submitForApproval 失败: " + submitResp);
+                        }
+                        if (approveResp.getStatus() != 0) {
+                            throw new AssertionError("工单 " + woId + " approve 失败: " + approveResp);
+                        }
+                    } catch (Throwable t) {
+                        firstError.compareAndSet(null, t);
+                    } finally {
+                        ContextProvider.instance().detachContext();
+                        doneLatch.countDown();
+                    }
+                });
+            }
+            startGate.countDown();
+            assertTrue(doneLatch.await(60, TimeUnit.SECONDS), "全部 worker 应在 60s 内完成");
+            if (firstError.get() != null) {
+                throw new AssertionError("worker 线程抛错: " + firstError.get().getMessage(), firstError.get());
+            }
+        } finally {
+            pool.shutdownNow();
+        }
+
+        // 两工单预留均落库（无丢失）
+        ErpInvReservation resA = findReservation("WO-RSV-CONC-A");
+        assertNotNull(resA, "工单 A 审核后应创建预留头");
+        List<ErpInvReservationLine> linesA = findReservationLines(resA.getId());
+        assertEquals(1, linesA.size(), "工单 A 每个子件一条预留行");
+        assertEquals(0, linesA.get(0).getReservedQuantity().compareTo(bd("4")),
+                "工单 A 预留量 = min(需求 2×2=4, 可用 10) = 4");
+
+        ErpInvReservation resB = findReservation("WO-RSV-CONC-B");
+        assertNotNull(resB, "工单 B 审核后应创建预留头");
+        List<ErpInvReservationLine> linesB = findReservationLines(resB.getId());
+        assertEquals(1, linesB.size(), "工单 B 每个子件一条预留行");
+        assertEquals(0, linesB.get(0).getReservedQuantity().compareTo(bd("4")),
+                "工单 B 预留量 = min(需求 2×2=4, 可用) = 4");
+
+        // reservedQuantity 累加无丢失：4 + 4 = 8；available = total − reserved 恒等式保持
+        ErpInvStockBalance balance = findBalance(M1);
+        assertEquals(0, balance.getTotalQuantity().compareTo(bd("10")), "total 守恒 = 10");
+        assertEquals(0, balance.getReservedQuantity().compareTo(bd("8")),
+                "跨工单并发预留：4 + 4 = 8（无丢失更新，乐观锁重试串行化）");
+        assertEquals(0, balance.getAvailableQuantity().compareTo(bd("2")),
+                "available = total − reserved = 10 − 8 = 2");
     }
 
     // ---------- helpers ----------
