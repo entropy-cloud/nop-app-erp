@@ -221,11 +221,15 @@
 - 经 Phase 1 Decision 落地：`ErpCrmLead` 新增可空 `territoryId`(propId 41, BIGINT, stdDataType=long) + to-one `territory` + 索引 `IDX_CRM_LEAD_TERRITORY_ID`。改动为加性可空列（无数据回填、无破坏性变更），经 codegen 重生成 `erp-crm-dao` + `erp-crm-meta`。替代方案「不新增列，分配仅回写 teamId/ownerId」被拒绝：区域维度在 Lead 上丢失，管道报表无法按 Lead 区域下钻。
 - 分配规则匹配出 territoryId 后回写 `lead.territoryId`；管理员可经 `reassignLead` 手动覆盖。
 
-### 2. 团队成员模型缺失 → 分配方法降级
+### 2. 团队成员模型 + 挑人算法（已实现，plan 2026-08-16-1634-1 RC-R1.57）
 
-- **Phase 1 Explore 结论**：`ErpCrmTeamMember` 实体不存在（全仓 0 源码命中）。`ErpCrmTeam`（orm:380）仅含 `teamLeaderId`，无成员子实体；成员关系当前经 `ownerId`/用户角色隐式表达。
-- **范围收窄**：本期实现 `assignmentMethod=MANUAL` —— 引擎匹配后仅回写 `lead.territoryId` + `lead.teamId`，`lead.ownerId` 留空标记"待分配"。设计 §业务规则 2 / §分配执行流程 中关于 `ROUND_ROBIN`（轮询挑人）/ `LOAD_BALANCED`（按负载挑人）的完整实现归 successor，**触发条件**：团队成员表（`ErpCrmTeamMember` 或等价模型）落地时。
-- `assignmentMethod` 字段仍按 `erp-crm/assignment-method` 字典（含 ROUND_ROBIN/LOAD_BALANCED/MANUAL 全部枚举值）持久化，引擎遇到非 MANUAL 方法时按 MANUAL 语义降级处理（仅写 territory/team，不挑人）。
+- **成员模型落地**：`ErpCrmTeamMember` 实体（tableName `erp_crm_team_member`，propId 1-10）承载团队-成员关系——列集 {id, teamId FK→ErpCrmTeam, userId stdDomain=userId, remark} + 审计列 + UK `UK_CRM_TEAM_MEMBER_TEAM_USER`(teamId,userId)。不设 orgId 冗余列（成员归属经 team 解析）；成员维护走标准 CRUD 生成（无 AMIS 定制页面）。
+- **挑人算法实现（D2 定稿）**：`TerritoryAssignmentEngine` 新增 `TeamMemberResolver` 接口（D4 选项 A——BizModel 提供 dao 实现，引擎保持纯函数式可测）：
+  - **ROUND_ROBIN**：查 teamId 成员列表（成员行 id 升序）→ 查该 team 上次分配记录（lead.teamId=teamId 且 ownerId 非空，createTime desc limit 1）→ 取上次 owner 在成员列表中的下一位（循环）；无历史记录或上次 owner 已不在列表 → 第一位成员；
+  - **LOAD_BALANCED**：查 teamId 成员当前活跃线索数（count lead.teamId=teamId 且 ownerId=member 且 docStatus **非** CONVERTED/LOST/CANCELLED——终态不占负载）→ 取最少者（平手按成员 id 升序首个；无计数成员按 0 计）；
+  - **降级保持**：成员列表为空 / resolver 不可用 / 规则无团队 / 查询失败 → MANUAL 降级（degraded=true，ownerId 留空标记"待分配"）——既有语义零变化。
+- **config 门控（D3 定稿）**：`erp-crm.territory.assignment-method-enabled`（`ErpCrmConstants.CONFIG_TERRITORY_ASSIGNMENT_METHOD_ENABLED` + `ErpCrmConfigs.isAssignmentMethodEnabled()`）控制挑人激活，**默认 TRUE**（对齐 `erp-crm.territory.auto-assign-on-create` 默认 TRUE 先例）。**关闭时**（FALSE）：resolver 不构建，ROUND_ROBIN/LOAD_BALANCED 按 MANUAL 降级——L1 三方法字面仅在部署启用后成立（config-gate 语义）。默认 TRUE 时无成员数据的团队自然保持 MANUAL 降级。
+- 分配执行流程 `:158-160` 字面语义现全部成立：ROUND_ROBIN → 查 teamId 成员列表取上次分配下一位 / LOAD_BALANCED → 查成员当前线索数分给最少的 / MANUAL → 标记待分配；回写 lead.territoryId / lead.teamId / lead.ownerId（ownerId 仅挑人成功时回写）。
 
 ### 3. 自动分配触发点
 

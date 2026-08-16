@@ -413,6 +413,17 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1420 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核（plan 0904-3 Closure Audit Evidence ⑦）。
 
+## R2b/R2c 基线上调注记（plan 2026-08-16-1634-1，RC-R1.57 crm 团队分配 ROUND_ROBIN/LOAD_BALANCED）
+
+`2026-08-16-1634-1`（RC-R1.57 / P1-RC-036，UC-CRM-11：ErpCrmTeamMember 新实体 + TerritoryAssignmentEngine 挑人 + config 门控）在 `ErpCrmLeadBizModel` 新增 2 处 daoFor helper（`TeamMemberResolver` 实现，D4 选项 A——BizModel 提供 dao 实现、引擎保持纯函数式），引入 **R2b +2 / R2c +2**，全部为既有文档化 pattern 类的合法同型新增（对齐 `ReturnRefundOrchestrator`「`daoFor` 处理同模块实体」先例 + R2b 口径含同域 BizModel daoFor 的既有注记）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2b | 233 | **235** | 235 | **baseline-raise**（+2） | 两站点均为 crm **同域** BizModel daoFor：(1) `ErpCrmLeadBizModel.teamMemberDao():377` `daoFor(ErpCrmTeamMember.class)`——resolver 成员列表查询（新实体无 I*Biz 业务面需求，territory.md Non-Goal「成员维护走标准 CRUD 生成」；teamId 批量查询非 FK 导航，无 ORM to-one getter 可替代；TerritoryAssignmentEngine 纯函数式无 dao 依赖，解析职责由 BizModel 承载）；(2) `ErpCrmLeadBizModel.leadDao():381` `daoFor(ErpCrmLead.class)`——resolver 上次分配（createTime desc limit 1）/活跃线索计数（teamId+ownerId+docStatus 组合条件）查询——本 BizModel 即 ErpCrmLead 自身 BizModel（自引用无法注入 `IErpCrmLeadBiz`），raw DAO 批量查询为实体自身 BizModel 的标准直查范式（对齐同文件既有 `assignmentRuleDao():385` 先例）。两处均含 E3 自检注释说明 daoFor 理由。 |
+| R2c | 1420 | **1422** | 1422 | **baseline-raise**（+2） | 同上 2 站点（R2b 增量的 R2c 子集），无跨域站点（ErpCrmTeamMember/ErpCrmLead 均 crm 同域）、无 ErpMd* 站点（R2a/R2d 不变）、引擎 bean 无孤儿注册（R8=0）。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=235 / R2c=1422 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -423,8 +434,8 @@ R1b: 0
 R1c: 0
 R1d: 14
 R2a: 34
-R2b: 233
-R2c: 1420
+R2b: 235
+R2c: 1422
 R2d: 35
 R3: 5
 R4: 0
