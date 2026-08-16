@@ -11,12 +11,14 @@ import app.erp.md.dao.entity.ErpMdSubject;
 import app.erp.md.service.ErpMdConstants;
 import app.erp.prj.biz.IErpPrjCostCollectionBiz;
 import app.erp.prj.biz.IErpPrjProjectBiz;
+import app.erp.prj.dao.entity.ErpPrjCostCollection;
 import app.erp.prj.dao.entity.ErpPrjCostCollectionLine;
 import app.erp.prj.dao.entity.ErpPrjProject;
 import app.erp.prj.dao.entity.ErpPrjProjectType;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.autotest.junit.JunitAutoTestCase;
 import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
@@ -35,6 +37,7 @@ import static io.nop.api.core.beans.FilterBeans.eq;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -45,6 +48,10 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *   <li>幂等去重：重复 refreshExpenseCost 不重复归集。</li>
  *   <li>config-gated：{@code erp-prj.expense-aggregation-enabled=false} 时 refreshExpenseCost 返回 0。</li>
  *   <li>{@code closeProject} 关闭前强制刷新费用归集（actualCost 含费用）。</li>
+ *   <li>状态门控（RC-R1.62 / P1-RC-050，UC-PRJ-09 AC-①）：ON_HOLD/COMPLETED/CANCELLED 项目经
+ *       {@code requireReferenceable} 单一咽喉拒绝新费用归集（零落库 + 既有归集保留）。</li>
+ *   <li>预算检查（RC-R1.62 / P1-RC-051 报销路径，UC-PRJ-04 AC-①）：STRICT 超预算抛
+ *       {@code ERR_BUDGET_EXCEEDED} 零落库 / WARNING 放行落库。</li>
  * </ul>
  *
  * <p>报销单经 finance-service {@link IErpFinExpenseClaimBiz} 直接构造（已审核 APPROVED+未作废），
@@ -184,6 +191,136 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
                 "关闭前已生成 EXPENSE 归集行");
     }
 
+    @Test
+    public void testOnHoldProjectRejectsExpenseAggregation() {
+        Long[] projectHolder = new Long[1];
+        ormTemplate.runInSession(session -> {
+            seedOpenPeriod("2026-07");
+            seedAcctSchema(1L);
+            Long expenseSubjectId = seedSubject("6602", "管理费用");
+            Long projectTypeId = seedProjectType("PT-ONHOLD", "研发", expenseSubjectId);
+            Long projectId = seedProject("PRJ-ONHOLD-001", "暂停项目", projectTypeId,
+                    ErpPrjConstants.PROJECT_STATUS_ON_HOLD);
+            projectHolder[0] = projectId;
+            Long claimantId = seedEmployee();
+            seedApprovedClaimWithProjectLine("EC-ONHOLD-001", claimantId, projectId, expenseSubjectId,
+                    new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
+            // 既有归集保留断言：预先落一条 EXPENSE 归集行
+            seedCostCollectionLine(projectId, "EC-ONHOLD-OLD");
+            return null;
+        });
+
+        NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(
+                () -> collectionBiz.refreshExpenseCost(projectHolder[0], CTX)));
+        assertEquals(ErpPrjErrors.ERR_PROJECT_NOT_REFERENCEABLE.getErrorCode(), ex.getErrorCode(),
+                "ON_HOLD 项目拒绝新费用归集（P1-RC-050，UC-PRJ-09 AC-①）");
+        assertEquals(ErpPrjConstants.PROJECT_STATUS_ON_HOLD, ex.getParam(ErpPrjErrors.ARG_CURRENT_STATUS),
+                "错误携带 currentStatus=ON_HOLD——requireReferenceable Facade 消费路径实证（P2-RC-048 闭合）");
+
+        // 零落库 + 既有归集保留
+        assertNull(findCollectionLine(ErpPrjConstants.SOURCE_BILL_TYPE_EXPENSE, "EC-ONHOLD-001"),
+                "ON_HOLD 拒绝时不写入新归集行");
+        assertTrue(findCollectionLine(ErpPrjConstants.SOURCE_BILL_TYPE_EXPENSE, "EC-ONHOLD-OLD") != null,
+                "既有归集行保留");
+        ErpPrjProject project = daoProvider.daoFor(ErpPrjProject.class).getEntityById(projectHolder[0]);
+        assertEquals(0, project.getActualCost().compareTo(BigDecimal.ZERO), "actualCost 零变化");
+    }
+
+    @Test
+    public void testCompletedAndCancelledProjectRejectExpenseAggregation() {
+        for (String status : new String[]{
+                ErpPrjConstants.PROJECT_STATUS_COMPLETED, ErpPrjConstants.PROJECT_STATUS_CANCELLED}) {
+            String subjectCode = "660" + (status.equals(ErpPrjConstants.PROJECT_STATUS_COMPLETED) ? "4" : "5");
+            String code = "EC-" + status + "-001";
+            Long[] projectHolder = new Long[1];
+            ormTemplate.runInSession(session -> {
+                seedOpenPeriod("2026-07-" + status);
+                seedAcctSchema(status.equals(ErpPrjConstants.PROJECT_STATUS_COMPLETED) ? 1L : 2L);
+                Long expenseSubjectId = seedSubject(subjectCode, status + " 费用");
+                Long projectTypeId = seedProjectType("PT-" + status, status, expenseSubjectId);
+                Long projectId = seedProject("PRJ-" + status + "-001", status + " 项目", projectTypeId,
+                        status);
+                projectHolder[0] = projectId;
+                Long claimantId = seedEmployee();
+                seedApprovedClaimWithProjectLine(code, claimantId, projectId, expenseSubjectId,
+                        new BigDecimal("100"), new BigDecimal("13"), new BigDecimal("113"));
+                return null;
+            });
+
+            NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(
+                    () -> collectionBiz.refreshExpenseCost(projectHolder[0], CTX)));
+            assertEquals(ErpPrjErrors.ERR_PROJECT_NOT_REFERENCEABLE.getErrorCode(), ex.getErrorCode(),
+                    status + " 项目拒绝新费用归集（P1-RC-050）");
+            assertNull(findCollectionLine(ErpPrjConstants.SOURCE_BILL_TYPE_EXPENSE, code),
+                    status + " 拒绝时不写入归集行");
+        }
+    }
+
+    @Test
+    public void testExpenseBudgetStrictRejectsOverBudget() {
+        System.setProperty(ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE, "STRICT");
+        try {
+            Long[] projectHolder = new Long[1];
+            ormTemplate.runInSession(session -> {
+                seedOpenPeriod("2026-07");
+                seedAcctSchema(1L);
+                Long expenseSubjectId = seedSubject("6602", "管理费用");
+                Long projectTypeId = seedProjectType("PT-EXP-S", "STRICT", expenseSubjectId);
+                Long projectId = seedProject("PRJ-EXP-S-001", "STRICT 费用项目", projectTypeId,
+                        ErpPrjConstants.PROJECT_STATUS_OPEN);
+                daoProvider.daoFor(ErpPrjProject.class).getEntityById(projectId)
+                        .setBudget(new BigDecimal("1000"));
+                projectHolder[0] = projectId;
+                Long claimantId = seedEmployee();
+                seedApprovedClaimWithProjectLine("EC-EXP-S-001", claimantId, projectId, expenseSubjectId,
+                        new BigDecimal("1500"), new BigDecimal("195"), new BigDecimal("1695"));
+                return null;
+            });
+
+            NopException ex = assertThrows(NopException.class, () -> ormTemplate.runInSession(
+                    () -> collectionBiz.refreshExpenseCost(projectHolder[0], CTX)));
+            assertEquals(ErpPrjErrors.ERR_BUDGET_EXCEEDED.getErrorCode(), ex.getErrorCode(),
+                    "STRICT 超预算报销归集拒绝（P1-RC-051 报销路径，UC-PRJ-04）");
+            assertNull(findCollectionLine(ErpPrjConstants.SOURCE_BILL_TYPE_EXPENSE, "EC-EXP-S-001"),
+                    "STRICT 拒绝时不写入归集行");
+            ErpPrjProject project = daoProvider.daoFor(ErpPrjProject.class).getEntityById(projectHolder[0]);
+            assertEquals(0, project.getActualCost().compareTo(BigDecimal.ZERO), "STRICT 拒绝 actualCost 零变化（零落库）");
+        } finally {
+            System.clearProperty(ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE);
+        }
+    }
+
+    @Test
+    public void testExpenseBudgetWarningAllowsOverBudget() {
+        System.setProperty(ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE, "WARNING");
+        try {
+            Long[] projectHolder = new Long[1];
+            ormTemplate.runInSession(session -> {
+                seedOpenPeriod("2026-07");
+                seedAcctSchema(1L);
+                Long expenseSubjectId = seedSubject("6602", "管理费用");
+                Long projectTypeId = seedProjectType("PT-EXP-W", "WARNING", expenseSubjectId);
+                Long projectId = seedProject("PRJ-EXP-W-001", "WARNING 费用项目", projectTypeId,
+                        ErpPrjConstants.PROJECT_STATUS_OPEN);
+                daoProvider.daoFor(ErpPrjProject.class).getEntityById(projectId)
+                        .setBudget(new BigDecimal("1000"));
+                projectHolder[0] = projectId;
+                Long claimantId = seedEmployee();
+                seedApprovedClaimWithProjectLine("EC-EXP-W-001", claimantId, projectId, expenseSubjectId,
+                        new BigDecimal("1500"), new BigDecimal("195"), new BigDecimal("1695"));
+                return null;
+            });
+
+            BigDecimal added = ormTemplate.runInSession(session -> collectionBiz.refreshExpenseCost(
+                    projectHolder[0], CTX));
+            assertEquals(0, added.compareTo(new BigDecimal("1500")), "WARNING 放行并写入");
+            assertTrue(findCollectionLine(ErpPrjConstants.SOURCE_BILL_TYPE_EXPENSE, "EC-EXP-W-001") != null,
+                    "WARNING 放行时归集行写入（LOG.warn 放行语义）");
+        } finally {
+            System.clearProperty(ErpPrjConstants.CONFIG_BUDGET_CONTROL_MODE);
+        }
+    }
+
     // ---------- seed helpers ----------
 
     private void seedApprovedClaimWithProjectLine(String code, Long claimantId, Long projectId,
@@ -228,6 +365,34 @@ public class TestErpPrjExpenseAggregation extends JunitAutoTestCase {
         emp.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         dao.saveEntity(emp);
         return emp.getId();
+    }
+
+    /** 预置一条 EXPENSE 归集行（既有归集保留断言用）。 */
+    private void seedCostCollectionLine(Long projectId, String sourceBillCode) {
+        IEntityDao<ErpPrjCostCollection> headDao = daoProvider.daoFor(ErpPrjCostCollection.class);
+        ErpPrjCostCollection head = new ErpPrjCostCollection();
+        head.setCode("CC-EXIST-" + sourceBillCode + "-" + System.nanoTime());
+        head.setProjectId(projectId);
+        head.setOrgId(1L);
+        head.setBusinessDate(LocalDate.of(2026, 7, 15));
+        head.setTotalAmount(BigDecimal.ONE);
+        head.setDocStatus(ErpPrjConstants.DOC_STATUS_APPROVED);
+        head.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_APPROVED);
+        head.setPosted(false);
+        head.setExchangeRate(BigDecimal.ONE);
+        head.setAmountSource(BigDecimal.ONE);
+        head.setAmountFunctional(BigDecimal.ONE);
+        headDao.saveEntity(head);
+
+        IEntityDao<ErpPrjCostCollectionLine> lineDao = daoProvider.daoFor(ErpPrjCostCollectionLine.class);
+        ErpPrjCostCollectionLine line = new ErpPrjCostCollectionLine();
+        line.setCostCollectionId(head.getId());
+        line.setLineNo(1);
+        line.setCostCategory(ErpPrjConstants.COST_CATEGORY_EXPENSE);
+        line.setSourceBillType(ErpPrjConstants.SOURCE_BILL_TYPE_EXPENSE);
+        line.setSourceBillCode(sourceBillCode);
+        line.setAmount(BigDecimal.ONE);
+        lineDao.saveEntity(line);
     }
 
     private Long seedProject(String code, String name, Long projectTypeId, String status) {

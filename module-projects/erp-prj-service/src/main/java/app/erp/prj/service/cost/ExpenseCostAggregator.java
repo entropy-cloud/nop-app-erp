@@ -4,6 +4,7 @@ import app.erp.fin.biz.IErpFinExpenseClaimBiz;
 import app.erp.fin.dao.entity.ErpFinExpenseClaim;
 import app.erp.fin.dao.entity.ErpFinExpenseClaimLine;
 import app.erp.fin.service.ErpFinConstants;
+import app.erp.prj.biz.IErpPrjProjectBiz;
 import app.erp.prj.dao.entity.ErpPrjCostCollection;
 import app.erp.prj.dao.entity.ErpPrjCostCollectionLine;
 import app.erp.prj.dao.entity.ErpPrjProject;
@@ -36,6 +37,16 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *
  * <p>归集行：{@code costCategory=EXPENSE}、{@code sourceBillType=EXPENSE}、
  * {@code sourceBillCode=报销单号}、{@code amount=行金额(不含税)}、{@code subjectId=行科目}。
+ *
+ * <p>守卫（RC-R1.62 / P1-RC-050 + P1-RC-051，{@code state-machine.md §1/§4} + {@code cost-collection.md §3.3}）：
+ * <ul>
+ *   <li>状态门控：归集行写入前经 {@link IErpPrjProjectBiz#requireReferenceable} 单一咽喉校验项目状态
+ *       （仅 OPEN 通过，ON_HOLD/COMPLETED/CANCELLED 抛 {@code ERR_PROJECT_NOT_REFERENCEABLE}，
+ *       对齐 UC-PRJ-09 AC-①「拒绝新费用归集」+ 闭合 P2-RC-048）。</li>
+ *   <li>预算检查：归集行写入前调 {@link BudgetChecker#check}（STRICT 超预算抛
+ *       {@code ERR_BUDGET_EXCEEDED} 拒绝 / WARNING 放行，对齐 UC-PRJ-04 报销审核时机 +
+ *       工时路径 submit 前置时序）。</li>
+ * </ul>
  */
 public class ExpenseCostAggregator {
 
@@ -48,6 +59,10 @@ public class ExpenseCostAggregator {
     IDaoProvider daoProvider;
     @Inject
     IErpFinExpenseClaimBiz expenseClaimBiz;
+    @Inject
+    IErpPrjProjectBiz projectBiz;
+    @Inject
+    BudgetChecker budgetChecker;
 
     /**
      * 刷新项目的费用报销归集。扫描所有已审核报销单中 projectId 命中的行，
@@ -62,6 +77,9 @@ public class ExpenseCostAggregator {
             throw new NopException(ErpPrjErrors.ERR_PROJECT_NOT_REFERENCEABLE)
                     .param(ErpPrjErrors.ARG_PROJECT_ID, projectId);
         }
+        // 状态守卫走单一咽喉 Facade（RC-R1.62 / P1-RC-050：非 OPEN 拒绝新费用归集，对齐 UC-PRJ-09 AC-①
+        // + 闭合 P2-RC-048；直接 Java 调用同事务无 REQUIRES_NEW 分裂，对齐物料路径 Processor 先例）
+        projectBiz.requireReferenceable(projectId, serviceContext());
 
         // 只读查询已审核且未作废的报销单（projects→finance R 读，对齐 matrix §3.2）
         List<ErpFinExpenseClaim> approvedClaims = findApprovedClaims();
@@ -90,6 +108,10 @@ public class ExpenseCostAggregator {
         for (PendingExpenseLine p : pending) {
             addedTotal = addedTotal.add(p.amount);
         }
+
+        // 预算检查在归集行写入前（RC-R1.62 / P1-RC-051 报销路径：STRICT 超预算抛 ERR_BUDGET_EXCEEDED /
+        // WARNING 放行；addAmount=本次新增归集金额 Σ，对齐工时/物料路径写入前时序）
+        budgetChecker.check(projectId, addedTotal);
 
         // 找已有头；不存在则新建（totalAmount 在 save 前设好，避免 SAVING 态 updateEntity 违例）
         ErpPrjCostCollection existingHead = findHead(projectId);
@@ -141,10 +163,7 @@ public class ExpenseCostAggregator {
         // 跨域只读查询经 IBiz 走权限管道（对齐 skill 跨实体访问规则）。
         // xmeta 限制 docStatus 仅允许 eq/in 过滤，故仅按 approveStatus=APPROVED 查询，
         // 作废单据（docStatus=CANCELLED）在 Java 侧过滤。
-        IServiceContext context = IServiceContext.getCtx();
-        if (context == null) {
-            context = new ServiceContextImpl();
-        }
+        IServiceContext context = serviceContext();
         QueryBean q = new QueryBean();
         q.addFilter(eq("approveStatus", FIN_APPROVE_STATUS_APPROVED));
         List<ErpFinExpenseClaim> all = expenseClaimBiz.findList(q, null, context);
@@ -155,6 +174,12 @@ public class ExpenseCostAggregator {
             }
         }
         return result;
+    }
+
+    /** 当前服务上下文；无绑定（如直接 Java 调用）时兜底新建（对齐既有 findApprovedClaims 兜底语义）。 */
+    private IServiceContext serviceContext() {
+        IServiceContext context = IServiceContext.getCtx();
+        return context != null ? context : new ServiceContextImpl();
     }
 
     /**
