@@ -1,0 +1,20 @@
+{
+  "name": "id-string-migration",
+  "description": "nop-app-erp 全部 19 个 orm.xml 的主键/外键 stdDataType 从 long 改为 string（1605 列：PK 463 + FK 1142，DB 列保持 BIGINT，仅 Java/GraphQL/前端类型变 String；规则来源 nop-entropy docs-for-ai/02-core-guides/orm-model-design.md §主键设计 强制规则——JS long 精度问题）。**完成态确认（2026-08-16 用户裁决）**：全部 PK/FK 在 Java 层均为 String——PK 463 全为 id 命名 BIGINT 全覆盖；FK 1182 = BIGINT 1142（含 orgId 226 列等）改造 + 非 BIGINT 40 列实测全 VARCHAR 本就 string（零误改）；**数据库层面零改动**（stdSqlType 不变，DDL/种子/序列引擎不受影响）；未分类 BIGINT 368 列（delVersion 等）非 PK/FK 不在范围。执行策略：**不一次性全局 apply**，按 M0 冻结的模块级依赖拓扑序**逐域增量迁移**（每域一个 plan：cp 该域 dry-run 副本 → 增量重生成 → 编译器驱动修复手写代码 → **快照每域重录（RECORDING→CHECKING，用户裁决——不依赖 JsonMatchHelper Number 宽容）** → 域级 `-am` build verify + 域级测试）。中间态仓库全量构建必然失败属设计使然：**每个 plan 的 build verify 限定域级 `mvn clean install -pl <域模块> -am -DskipTests`**（上游已迁移全绿；未迁移域的 dao 模块实测惰性可编译——手写跨域 import 仅 crm-dao 3 处类型级用法 + pur/sal-dao 4 行非实体 import，由 M0.1 审计逐域证实，证伪则调整顺序），全量 `mvn clean install` + 全量 `mvn test` + E2E 套件修复 + compliance + baseline 更新只在最终收尾 plan（M4.1）执行，中间态不得以全量构建作为 gate。域级合并环（assets↔finance 等 dao/service 交叉边）由 M0.1 跨域实体引用与 id 调用点审计裁决（编译级模块图实测无真环，finance 先行可解开；含 common-service 组织隔离代码 orgId Long 语义适配——M1.3 须先于 M1.1 master-data 完成，因 master-data orm 含 6 个 orgId FK 列）。**M0 冻结顺序完成前任何域迁移工作项不得转 ready；M0.1 完成时把冻结序写回 roadmap 重排 M2/M3 占位表并核验 M1 内部序**。保护区域：每域 plan 修改 `model/*.orm.xml` 须独立 plan-audit + 双独立子 agent 批准（`ai-autonomy-policy.md` 表 `auto + dual-agent-approval`），批准记录落盘计划文件。里程碑：M0 准备与 Proof（seq-string 行为/E2E 影响/跨域审计/顺序冻结/工具）→ M1 根域+基础设施（common-service 适配 → master-data → notify）→ M2 核心域（按冻结序）→ M3 业务与扩展域（按冻结序）→ M4 收尾（全量构建+全量测试+E2E+compliance+baseline+文档）。",
+  "roadmapPath": "docs/backlog/id-string-migration-roadmap.md",
+  "plansDir": "docs/plans",
+  "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
+  "auditsDir": "docs/audits",
+  "contextDir": "docs/context",
+  "moduleDir": ".",
+  "commands": {
+    "test": "mvn test",
+    "build": "mvn clean install -DskipTests",
+    "compliance": "bash docs/audits/nop-compliance-checker.sh"
+  },
+  "prompts": {
+    "multiAudit": "docs/skills/multi-dimensional-audit-prompt.md",
+    "openAudit": "docs/skills/open-ended-audit-prompt.md"
+  },
+  "commitFormat": "<type>: <description>"
+}
