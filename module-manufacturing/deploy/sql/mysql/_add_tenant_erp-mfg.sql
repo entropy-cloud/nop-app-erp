@@ -65,11 +65,17 @@ alter table erp_mfg_crp_load add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_work_order_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_mfg_work_order_bom_snapshot add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_mfg_subcontract_order add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_job_card add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_cost_variance add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_work_order_bom_line_snapshot add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_work_order_bom_operation_snapshot add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_subcontract_order_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
@@ -180,6 +186,9 @@ alter table erp_mfg_crp_load add primary key (NOP_TENANT_ID, ID);
 alter table erp_mfg_work_order_line drop primary key;
 alter table erp_mfg_work_order_line add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_mfg_work_order_bom_snapshot drop primary key;
+alter table erp_mfg_work_order_bom_snapshot add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_mfg_subcontract_order drop primary key;
 alter table erp_mfg_subcontract_order add primary key (NOP_TENANT_ID, ID);
 
@@ -188,6 +197,12 @@ alter table erp_mfg_job_card add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_cost_variance drop primary key;
 alter table erp_mfg_cost_variance add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_work_order_bom_line_snapshot drop primary key;
+alter table erp_mfg_work_order_bom_line_snapshot add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_work_order_bom_operation_snapshot drop primary key;
+alter table erp_mfg_work_order_bom_operation_snapshot add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_subcontract_order_line drop primary key;
 alter table erp_mfg_subcontract_order_line add primary key (NOP_TENANT_ID, ID);

@@ -27,6 +27,9 @@ entity:
     ErpMfgSubcontractOrder: Subcontract Order
     ErpMfgSubcontractOrderLine: Subcontract Order Line
     ErpMfgWorkOrder: Work Order
+    ErpMfgWorkOrderBomLineSnapshot: Work Order BOM Line Snapshot
+    ErpMfgWorkOrderBomOperationSnapshot: Work Order BOM Operation Snapshot
+    ErpMfgWorkOrderBomSnapshot: Work Order BOM Snapshot
     ErpMfgWorkOrderLine: Work Order Line
     ErpMfgWorkcenter: Work Center
     ErpMfgWorkcenterCalendar: Work Center Calendar
@@ -732,6 +735,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      snapshotBomVersion: Snapshot Bom Version
+      snapshotBomId: Snapshot Bom
       bom: Bom
       routing: Routing
       productionVersion: Production Version
@@ -740,10 +745,78 @@ prop:
       currency: Currency
       currency.name: Currency
       lines: Lines
+      bomSnapshot: Bom Snapshot
       jobCards: Job Cards
       org: Org
       org.name: Org
       sourceMrpPlan: Source MRP Plan
+    ErpMfgWorkOrderBomLineSnapshot:
+      id: ID
+      snapshotId: Snapshot
+      lineNo: Line No
+      materialId: Material
+      skuId: SKU
+      uoMId: UoM
+      quantity: Quantity
+      operationId: Operation
+      scrapRate: Scrap Rate
+      warehouseId: Warehouse
+      alternativeMaterialId: Alternative Material
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      snapshot: Snapshot
+      material: Material
+      material.name: Material
+      sku: Sku
+      sku.name: Sku
+      uoM: Uo M
+      uoM.name: Uo M
+      operation: Operation
+      warehouse: Warehouse
+      warehouse.name: Warehouse
+      alternativeMaterial: Alternative Material
+      alternativeMaterial.name: Alternative Material
+    ErpMfgWorkOrderBomOperationSnapshot:
+      id: ID
+      snapshotId: Snapshot
+      lineNo: Line No
+      operationId: Operation
+      workcenterId: Workcenter
+      standardTime: Standard Time
+      timeUnit: Time Unit
+      rate: Rate
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      snapshot: Snapshot
+      operation: Operation
+      workcenter: Workcenter
+    ErpMfgWorkOrderBomSnapshot:
+      id: ID
+      workOrderId: Work Order
+      bomId: Bom
+      productId: Product
+      versionLabel: Version Label
+      qty: Qty
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      workOrder: Work Order
+      bom: Bom
+      product: Product
+      product.name: Product
+      lines: Lines
+      operations: Operations
     ErpMfgWorkOrderLine:
       id: ID
       workOrderId: Work Order

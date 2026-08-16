@@ -9,6 +9,9 @@ import app.erp.mfg.dao.entity.ErpMfgCostVariance;
 import app.erp.mfg.dao.entity.ErpMfgJobCardTimeLog;
 import app.erp.mfg.dao.entity.ErpMfgWorkcenter;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
+import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomOperationSnapshot;
+import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomSnapshot;
+import app.erp.mfg.service.ErpMfgConfigs;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.notify.biz.IErpSysNotificationBiz;
@@ -120,7 +123,7 @@ public class ProductionVarianceCalculator {
         BigDecimal planned = nz(wo.getPlannedQuantity());
         LocalDate bizDate = wo.getBusinessDate() != null ? wo.getBusinessDate() : CoreMetrics.today();
         Long bomId = wo.getBomId();
-        Long workcenterId = resolvePrimaryWorkcenterId(bomId);
+        Long workcenterId = resolvePrimaryWorkcenterId(wo, bomId);
 
         List<ErpMfgCostVariance> lines = new ArrayList<>();
         int lineNo = 10;
@@ -137,14 +140,14 @@ public class ProductionVarianceCalculator {
         lineNo += 10;
 
         // 2/3. 人工效率 + 费率差异：基于 BOM 工艺标准工时 + 作业卡实际工时
-        BigDecimal standardMinsPerUnit = sumBomOperationStandardMins(bomId);
+        BigDecimal standardMinsPerUnit = sumBomOperationStandardMins(wo, bomId);
         BigDecimal standardMins = standardMinsPerUnit.multiply(completed);
         BigDecimal actualMins = sumJobCardActualMins(workOrderId);
         BigDecimal stdLaborPerUnit = nz(stdLine.getLaborCost());
         BigDecimal stdLaborTotal = stdLaborPerUnit.multiply(completed);
         BigDecimal actLabor = nz(wo.getLaborCost());
         // 标准小时费率：优先来自 BOM 工艺工作中心均值（与 CostRollupService 同口径），无工艺时由 rollup 反推
-        BigDecimal stdHourlyRate = deriveStandardLaborRate(bomId, stdLaborPerUnit, standardMinsPerUnit);
+        BigDecimal stdHourlyRate = deriveStandardLaborRate(wo, bomId, stdLaborPerUnit, standardMinsPerUnit);
 
         BigDecimal laborEfficiencyStdAmount = stdLaborTotal;
         BigDecimal laborEfficiencyActAtStdRate = actualMins.divide(SIXTY, SCALE, RM).multiply(stdHourlyRate);
@@ -366,7 +369,19 @@ public class ProductionVarianceCalculator {
         return null;
     }
 
-    private BigDecimal sumBomOperationStandardMins(Long bomId) {
+    /**
+     * BOM 工艺标准工时合计（分钟）。已快照工单（LOCK_AT_CREATION）读快照工艺行（提交时点锁定，UC-MFG-10 断言⑤成本面）；
+     * 无快照 / AUTO_UPGRADE 回退实时 {@code ErpMfgBomOperation}。
+     */
+    private BigDecimal sumBomOperationStandardMins(ErpMfgWorkOrder wo, Long bomId) {
+        List<ErpMfgWorkOrderBomOperationSnapshot> snapOps = snapshotOperationsOrNull(wo);
+        if (snapOps != null) {
+            BigDecimal sum = BigDecimal.ZERO;
+            for (ErpMfgWorkOrderBomOperationSnapshot op : snapOps) {
+                sum = sum.add(nz(op.getStandardTime()));
+            }
+            return sum;
+        }
         if (bomId == null) {
             return BigDecimal.ZERO;
         }
@@ -393,9 +408,29 @@ public class ProductionVarianceCalculator {
     /**
      * 标准人工小时费率：优先取 BOM 工艺工作中心均值（与 {@link CostRollupService} 同口径）；
      * 无工艺工时数据时由 rollup 标准人工成本反推（rollupLaborPerUnit / (stdMinsPerUnit/60)）。
+     * 已快照工单（LOCK_AT_CREATION）以快照工艺行作数据源（工作中心费率为主数据实时读，与实时路径同口径）。
      */
-    private BigDecimal deriveStandardLaborRate(Long bomId, BigDecimal stdLaborPerUnit, BigDecimal stdMinsPerUnit) {
-        if (bomId != null) {
+    private BigDecimal deriveStandardLaborRate(ErpMfgWorkOrder wo, Long bomId,
+                                               BigDecimal stdLaborPerUnit, BigDecimal stdMinsPerUnit) {
+        List<ErpMfgWorkOrderBomOperationSnapshot> snapOps = snapshotOperationsOrNull(wo);
+        if (snapOps != null) {
+            BigDecimal rateSum = BigDecimal.ZERO;
+            int rateCount = 0;
+            for (ErpMfgWorkOrderBomOperationSnapshot op : snapOps) {
+                Long wcId = op.getWorkcenterId();
+                if (wcId == null) {
+                    continue;
+                }
+                ErpMfgWorkcenter wc = daoProvider.daoFor(ErpMfgWorkcenter.class).getEntityById(wcId);
+                if (wc != null && nz(wc.getHourlyRate()).signum() > 0) {
+                    rateSum = rateSum.add(wc.getHourlyRate());
+                    rateCount++;
+                }
+            }
+            if (rateCount > 0) {
+                return rateSum.divide(new BigDecimal(rateCount), SCALE, RM);
+            }
+        } else if (bomId != null) {
             IEntityDao<ErpMfgBomOperation> opDao = daoProvider.daoFor(ErpMfgBomOperation.class);
             List<ErpMfgBomOperation> ops = opDao.findAllByQuery(new QueryBean().addFilter(eq("bomId", bomId)));
             BigDecimal rateSum = BigDecimal.ZERO;
@@ -421,7 +456,11 @@ public class ProductionVarianceCalculator {
         return BigDecimal.ZERO;
     }
 
-    private Long resolvePrimaryWorkcenterId(Long bomId) {
+    private Long resolvePrimaryWorkcenterId(ErpMfgWorkOrder wo, Long bomId) {
+        List<ErpMfgWorkOrderBomOperationSnapshot> snapOps = snapshotOperationsOrNull(wo);
+        if (snapOps != null) {
+            return snapOps.isEmpty() ? null : snapOps.get(0).getWorkcenterId();
+        }
         if (bomId == null) {
             return null;
         }
@@ -434,6 +473,24 @@ public class ProductionVarianceCalculator {
             return null;
         }
         return ops.get(0).getWorkcenterId();
+    }
+
+    /**
+     * 已快照工单（LOCK_AT_CREATION）的快照工艺行；无快照 / AUTO_UPGRADE / 快照头缺失返回 null（读侧回退实时）。
+     * 快照存在但工艺行为空 → 返回空列表（提交时点无工艺 = 锁定空，不回落实时工艺）。
+     */
+    private List<ErpMfgWorkOrderBomOperationSnapshot> snapshotOperationsOrNull(ErpMfgWorkOrder wo) {
+        if (wo == null || wo.getSnapshotBomId() == null && wo.getSnapshotBomVersion() == null) {
+            return null;
+        }
+        if (ErpMfgConfigs.isBomSnapshotAutoUpgrade()) {
+            return null;
+        }
+        io.nop.orm.IOrmEntitySet<ErpMfgWorkOrderBomSnapshot> snaps = wo.getBomSnapshot();
+        if (snaps == null || snaps.isEmpty()) {
+            return null;
+        }
+        return new ArrayList<>(snaps.iterator().next().getOperations());
     }
 
     static BigDecimal nz(BigDecimal v) {

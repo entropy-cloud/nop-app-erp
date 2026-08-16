@@ -179,6 +179,14 @@
         <property name="bizObjName" value="ErpMfgWorkOrderLine"/>
     </bean>
 
+    <bean id="app.erp.mfg.service.entity.ErpMfgWorkOrderBomSnapshotBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgWorkOrderBomSnapshot" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgWorkOrderBomSnapshotBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgWorkOrderBomSnapshot"/>
+    </bean>
+
     <bean id="app.erp.mfg.service.entity.ErpMfgSubcontractOrderBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMfgSubcontractOrder" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -200,6 +208,23 @@
           ioc:type="app.erp.mfg.biz.IErpMfgCostVarianceBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpMfgCostVariance"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgWorkOrderBomLineSnapshotBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMfgWorkOrderBomLineSnapshot" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgWorkOrderBomLineSnapshotBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMfgWorkOrderBomLineSnapshot"/>
+    </bean>
+
+    <bean id="app.erp.mfg.service.entity.ErpMfgWorkOrderBomOperationSnapshotBizModel" ioc:type="@bean:id"
+          ioc:default="true"/>
+
+    <bean id="biz_ErpMfgWorkOrderBomOperationSnapshot" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mfg.biz.IErpMfgWorkOrderBomOperationSnapshotBiz" ioc:force-lazy-property="true"
+          lazy-init="true" primary="true">
+        <property name="bizObjName" value="ErpMfgWorkOrderBomOperationSnapshot"/>
     </bean>
 
     <bean id="app.erp.mfg.service.entity.ErpMfgSubcontractOrderLineBizModel" ioc:type="@bean:id" ioc:default="true"/>

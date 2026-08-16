@@ -2,6 +2,9 @@ package app.erp.mfg.service.bom;
 
 import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgBomLine;
+import app.erp.mfg.dao.entity.ErpMfgBomOperation;
+import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomLineSnapshot;
+import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomSnapshot;
 import app.erp.mfg.biz.BomExplosionNode;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
@@ -33,6 +36,10 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  *   <li>环检测：DFS 访问集合（路径回溯），成环抛 {@code ERR_BOM_CYCLE}；深度超 {@code erp-mfg.bom-max-depth}
  *       抛 {@code ERR_BOM_MAX_DEPTH_EXCEEDED}（环兜底）。</li>
  * </ul>
+ *
+ * <p>快照展开（plan 2026-08-16-0904-1 RC-R1.49，UC-MFG-10 断言④⑤⑥）：{@link #explodeFromSnapshot}
+ * 以工单 BOM 快照头（{@link ErpMfgWorkOrderBomSnapshot}）为数据源展开首级子件，复用本类 DFS/phantom/环检测
+ * 算法；子级制造件仍按实时默认 BOM 递归（快照仅锁定工单自身 BOM 内容，非全局 BOM 版本管理）。
  *
  * <p>本类为非 BizModel 服务助手（对齐 inventory {@code TraceChainQuery} / costing 策略范式），直接用
  * {@link IDaoProvider} 查询 BOM/行（只读展开，无权限管道语义）。
@@ -82,6 +89,22 @@ public class BomExpander {
         return nodes;
     }
 
+    /**
+     * 按工单 BOM 快照展开（plan 2026-08-16-0904-1 RC-R1.49，UC-MFG-10 断言④⑤）。
+     * 首级子件来自快照行（提交时点锁定内容）；子级制造件经 {@link #findDefaultBomOrNull} 实时递归
+     * （快照仅锁定工单自身 BOM，Non-Goal「BOM 自身版本历史管理」）。
+     */
+    public List<BomExplosionNode> explodeFromSnapshot(ErpMfgWorkOrderBomSnapshot snapshot,
+                                                      BigDecimal requestedQty, boolean useMultiLevel) {
+        if (snapshot == null) {
+            return new ArrayList<>();
+        }
+        BigDecimal qty = requestedQty != null ? requestedQty : nz(snapshot.getQty());
+        List<BomExplosionNode> nodes = new ArrayList<>();
+        expandSnapshotLines(snapshot, qty, 1, new LinkedHashSet<>(), useMultiLevel, nodes);
+        return nodes;
+    }
+
     private void expandLines(ErpMfgBom bom, BigDecimal requestedQty, int level,
                              Set<Long> path, boolean recurseMfg, List<BomExplosionNode> nodes) {
         Long product = bom.getProductId();
@@ -107,10 +130,10 @@ public class BomExpander {
                     // phantom：展开其子件并入当前层级，不产生独立节点
                     expandLines(childBom, effQty, level, path, recurseMfg, nodes);
                 } else if (childBom != null && recurseMfg) {
-                    nodes.add(node(line, effQty, bom.getId(), level, true));
+                    nodes.add(node(line.getMaterialId(), line.getOperationId(), effQty, bom.getId(), level, true));
                     expandLines(childBom, effQty, level + 1, path, recurseMfg, nodes);
                 } else {
-                    nodes.add(node(line, effQty, bom.getId(), level, childBom != null));
+                    nodes.add(node(line.getMaterialId(), line.getOperationId(), effQty, bom.getId(), level, childBom != null));
                 }
             }
         } finally {
@@ -118,12 +141,52 @@ public class BomExpander {
         }
     }
 
-    private BomExplosionNode node(ErpMfgBomLine line, BigDecimal effQty, Long sourceBomId, int level,
+    private void expandSnapshotLines(ErpMfgWorkOrderBomSnapshot snapshot, BigDecimal requestedQty, int level,
+                                     Set<Long> path, boolean recurseMfg, List<BomExplosionNode> nodes) {
+        Long product = snapshot.getProductId();
+        if (product != null && path.contains(product)) {
+            throw new NopException(ErpMfgErrors.ERR_BOM_CYCLE)
+                    .param(ErpMfgErrors.ARG_MATERIAL_ID, product)
+                    .param(ErpMfgErrors.ARG_PATH, path.toString());
+        }
+        int maxDepth = AppConfig.var(ErpMfgConstants.CONFIG_BOM_MAX_DEPTH, ErpMfgConstants.DEFAULT_BOM_MAX_DEPTH);
+        if (level > maxDepth) {
+            throw new NopException(ErpMfgErrors.ERR_BOM_MAX_DEPTH_EXCEEDED)
+                    .param(ErpMfgErrors.ARG_DEPTH, maxDepth);
+        }
+
+        if (product != null) {
+            path.add(product);
+        }
+        try {
+            BigDecimal scale = divide(qty(requestedQty), nz(snapshot.getQty()));
+            for (ErpMfgWorkOrderBomLineSnapshot line : snapshot.getLines()) {
+                BigDecimal effQty = nz(line.getQuantity()).multiply(scale);
+                ErpMfgBom childBom = findDefaultBomOrNull(line.getMaterialId());
+                if (childBom != null && childBom.getBomType() != null
+                        && Objects.equals(childBom.getBomType(), ErpMfgConstants.BOM_TYPE_PHANTOM)) {
+                    // phantom：展开其子件并入当前层级，不产生独立节点（子件 BOM 实时——快照仅锁定工单自身 BOM）
+                    expandLines(childBom, effQty, level, path, recurseMfg, nodes);
+                } else if (childBom != null && recurseMfg) {
+                    nodes.add(node(line.getMaterialId(), line.getOperationId(), effQty, snapshot.getBomId(), level, true));
+                    expandLines(childBom, effQty, level + 1, path, recurseMfg, nodes);
+                } else {
+                    nodes.add(node(line.getMaterialId(), line.getOperationId(), effQty, snapshot.getBomId(), level, childBom != null));
+                }
+            }
+        } finally {
+            if (product != null) {
+                path.remove(product);
+            }
+        }
+    }
+
+    private BomExplosionNode node(Long materialId, Long operationId, BigDecimal effQty, Long sourceBomId, int level,
                                   boolean manufactured) {
         BomExplosionNode n = new BomExplosionNode();
-        n.setMaterialId(line.getMaterialId());
+        n.setMaterialId(materialId);
         n.setQuantity(effQty);
-        n.setOperationId(line.getOperationId());
+        n.setOperationId(operationId);
         n.setSourceBomId(sourceBomId);
         n.setLevel(level);
         n.setManufactured(manufactured);
@@ -141,11 +204,20 @@ public class BomExpander {
         return bom;
     }
 
-    private List<ErpMfgBomLine> loadLines(Long bomId) {
+    /** 查询 BOM 子件行（按行号升序）。public 供快照复制（submit）复用。 */
+    public List<ErpMfgBomLine> loadLines(Long bomId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("bomId", bomId));
         q.addOrderField("lineNo", false);
         return daoProvider.daoFor(ErpMfgBomLine.class).findAllByQuery(q);
+    }
+
+    /** 查询 BOM 工艺行（按行号升序）。public 供快照复制（submit）复用。 */
+    public List<ErpMfgBomOperation> loadOperations(Long bomId) {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("bomId", bomId));
+        q.addOrderField("lineNo", false);
+        return daoProvider.daoFor(ErpMfgBomOperation.class).findAllByQuery(q);
     }
 
     private static BigDecimal qty(BigDecimal v) {

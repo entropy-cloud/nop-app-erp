@@ -26,6 +26,17 @@ public interface ErpMfgConstants extends ErpMfgDocStatus {
     String CONFIG_BOM_MAX_DEPTH = "erp-mfg.bom-max-depth";
     int DEFAULT_BOM_MAX_DEPTH = 15;
 
+    // ---- BOM 快照策略（plan 2026-08-16-0904-1 RC-R1.49；权威：bom-and-routing.md §BOM 版本快照规则 :164） ----
+
+    /** BOM 快照策略（提交时点快照 + 读侧按状态切换；默认 LOCK_AT_CREATION=提交时锁定）。 */
+    String CONFIG_BOM_SNAPSHOT_STRATEGY = "erp-mfg.bom-snapshot-strategy";
+    /** 提交时锁定：DRAFT→SUBMITTED 复制 BOM 内容到快照，已审核工单读侧恒用快照。 */
+    String BOM_SNAPSHOT_STRATEGY_LOCK_AT_CREATION = "LOCK_AT_CREATION";
+    /** 自动升级：读侧对已快照工单 re-resolve 默认 BOM 实时展开（不写回快照）。 */
+    String BOM_SNAPSHOT_STRATEGY_AUTO_UPGRADE = "AUTO_UPGRADE";
+    /** CONFIG_BOM_SNAPSHOT_STRATEGY 缺省值（空值=默认 LOCK_AT_CREATION）。 */
+    String DEFAULT_BOM_SNAPSHOT_STRATEGY = BOM_SNAPSHOT_STRATEGY_LOCK_AT_CREATION;
+
     // 工单状态（erp-mfg/work-order-status，10 态；权威：state-machine.md §适用对象一）
     String WORK_ORDER_STATUS_DRAFT = "DRAFT";
     String WORK_ORDER_STATUS_SUBMITTED = "SUBMITTED";

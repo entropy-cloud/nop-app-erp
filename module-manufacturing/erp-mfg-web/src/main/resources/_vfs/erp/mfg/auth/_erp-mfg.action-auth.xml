@@ -392,58 +392,106 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpMfgWorkOrderLine-main" displayName="工单行" orderNo="10082"
+                <resource id="ErpMfgWorkOrderBomLineSnapshot-main" displayName="工单BOM快照行" orderNo="10082"
+                          i18n-en:displayName="Work Order BOM Line Snapshot" icon="list" component="FLUX"
+                          resourceType="SUBM" url="/erp/mfg/pages/ErpMfgWorkOrderBomLineSnapshot/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgWorkOrderBomLineSnapshot:query" displayName="查询工单BOM快照行"
+                                  i18n-en:displayName="Query Work Order BOM Line Snapshot" orderNo="10083"
+                                  resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrderBomLineSnapshot:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgWorkOrderBomLineSnapshot:mutation" displayName="修改工单BOM快照行"
+                                  i18n-en:displayName="Modify Work Order BOM Line Snapshot" orderNo="10084"
+                                  resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrderBomLineSnapshot:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgWorkOrderBomOperationSnapshot-main" displayName="工单BOM快照工艺" orderNo="10085"
+                          i18n-en:displayName="Work Order BOM Operation Snapshot" icon="git-fork" component="FLUX"
+                          resourceType="SUBM" url="/erp/mfg/pages/ErpMfgWorkOrderBomOperationSnapshot/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgWorkOrderBomOperationSnapshot:query" displayName="查询工单BOM快照工艺"
+                                  i18n-en:displayName="Query Work Order BOM Operation Snapshot" orderNo="10086"
+                                  resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrderBomOperationSnapshot:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgWorkOrderBomOperationSnapshot:mutation" displayName="修改工单BOM快照工艺"
+                                  i18n-en:displayName="Modify Work Order BOM Operation Snapshot" orderNo="10087"
+                                  resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrderBomOperationSnapshot:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgWorkOrderBomSnapshot-main" displayName="工单BOM快照" orderNo="10088"
+                          i18n-en:displayName="Work Order BOM Snapshot" icon="camera" component="FLUX"
+                          resourceType="SUBM" url="/erp/mfg/pages/ErpMfgWorkOrderBomSnapshot/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpMfgWorkOrderBomSnapshot:query" displayName="查询工单BOM快照"
+                                  i18n-en:displayName="Query Work Order BOM Snapshot" orderNo="10089"
+                                  resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrderBomSnapshot:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpMfgWorkOrderBomSnapshot:mutation" displayName="修改工单BOM快照"
+                                  i18n-en:displayName="Modify Work Order BOM Snapshot" orderNo="10090"
+                                  resourceType="FNPT">
+                            <permissions>ErpMfgWorkOrderBomSnapshot:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpMfgWorkOrderLine-main" displayName="工单行" orderNo="10091"
                           i18n-en:displayName="Work Order Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/mfg/pages/ErpMfgWorkOrderLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMfgWorkOrderLine:query" displayName="查询工单行"
-                                  i18n-en:displayName="Query Work Order Line" orderNo="10083" resourceType="FNPT">
+                                  i18n-en:displayName="Query Work Order Line" orderNo="10092" resourceType="FNPT">
                             <permissions>ErpMfgWorkOrderLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpMfgWorkOrderLine:mutation" displayName="修改工单行"
-                                  i18n-en:displayName="Modify Work Order Line" orderNo="10084" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Work Order Line" orderNo="10093" resourceType="FNPT">
                             <permissions>ErpMfgWorkOrderLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpMfgWorkcenter-main" displayName="工作中心" orderNo="10085"
+                <resource id="ErpMfgWorkcenter-main" displayName="工作中心" orderNo="10094"
                           i18n-en:displayName="Work Center" icon="cog" component="FLUX" resourceType="SUBM"
                           url="/erp/mfg/pages/ErpMfgWorkcenter/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMfgWorkcenter:query" displayName="查询工作中心"
-                                  i18n-en:displayName="Query Work Center" orderNo="10086" resourceType="FNPT">
+                                  i18n-en:displayName="Query Work Center" orderNo="10095" resourceType="FNPT">
                             <permissions>ErpMfgWorkcenter:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpMfgWorkcenter:mutation" displayName="修改工作中心"
-                                  i18n-en:displayName="Modify Work Center" orderNo="10087" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Work Center" orderNo="10096" resourceType="FNPT">
                             <permissions>ErpMfgWorkcenter:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpMfgWorkcenterCalendar-main" displayName="工作中心日历" orderNo="10088"
+                <resource id="ErpMfgWorkcenterCalendar-main" displayName="工作中心日历" orderNo="10097"
                           i18n-en:displayName="Work Center Calendar" icon="calendar" component="FLUX"
                           resourceType="SUBM" url="/erp/mfg/pages/ErpMfgWorkcenterCalendar/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMfgWorkcenterCalendar:query" displayName="查询工作中心日历"
-                                  i18n-en:displayName="Query Work Center Calendar" orderNo="10089" resourceType="FNPT">
+                                  i18n-en:displayName="Query Work Center Calendar" orderNo="10098" resourceType="FNPT">
                             <permissions>ErpMfgWorkcenterCalendar:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpMfgWorkcenterCalendar:mutation" displayName="修改工作中心日历"
-                                  i18n-en:displayName="Modify Work Center Calendar" orderNo="10090" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Work Center Calendar" orderNo="10099" resourceType="FNPT">
                             <permissions>ErpMfgWorkcenterCalendar:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpMfgWorkcenterCapacity-main" displayName="工作中心产能" orderNo="10091"
+                <resource id="ErpMfgWorkcenterCapacity-main" displayName="工作中心产能" orderNo="10100"
                           i18n-en:displayName="Work Center Capacity" icon="gauge" component="FLUX" resourceType="SUBM"
                           url="/erp/mfg/pages/ErpMfgWorkcenterCapacity/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpMfgWorkcenterCapacity:query" displayName="查询工作中心产能"
-                                  i18n-en:displayName="Query Work Center Capacity" orderNo="10092" resourceType="FNPT">
+                                  i18n-en:displayName="Query Work Center Capacity" orderNo="10101" resourceType="FNPT">
                             <permissions>ErpMfgWorkcenterCapacity:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpMfgWorkcenterCapacity:mutation" displayName="修改工作中心产能"
-                                  i18n-en:displayName="Modify Work Center Capacity" orderNo="10093" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Work Center Capacity" orderNo="10102" resourceType="FNPT">
                             <permissions>ErpMfgWorkcenterCapacity:mutation</permissions>
                         </resource>
                     </children>

@@ -27,6 +27,9 @@ entity:
     ErpMfgSubcontractOrder: 委外加工单
     ErpMfgSubcontractOrderLine: 委外加工单行
     ErpMfgWorkOrder: 工单
+    ErpMfgWorkOrderBomLineSnapshot: 工单BOM快照行
+    ErpMfgWorkOrderBomOperationSnapshot: 工单BOM快照工艺
+    ErpMfgWorkOrderBomSnapshot: 工单BOM快照
     ErpMfgWorkOrderLine: 工单行
     ErpMfgWorkcenter: 工作中心
     ErpMfgWorkcenterCalendar: 工作中心日历
@@ -694,6 +697,7 @@ prop:
       approvedBy: 审核人
       bom: null
       bomId: BOM
+      bomSnapshot: null
       businessDate: 工单日期
       code: 工单号
       completedQuantity: 完工数量
@@ -732,6 +736,8 @@ prop:
       routing: null
       routingId: 工艺路线
       scrappedQuantity: 报废数量
+      snapshotBomId: BOM快照ID
+      snapshotBomVersion: BOM快照版本
       sourceMrpPlan: null
       sourceMrpPlanId: 来源 MRP 计划
       sourceOrderCode: 来源单据号
@@ -744,6 +750,73 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpMfgWorkOrderBomLineSnapshot:
+      alternativeMaterial: null
+      alternativeMaterial.name: null
+      alternativeMaterialId: 替代物料
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      material: null
+      material.name: null
+      materialId: 物料
+      operation: null
+      operationId: 工序ID
+      quantity: 数量
+      scrapRate: 损耗率(%)
+      sku: null
+      sku.name: null
+      skuId: SKU
+      snapshot: null
+      snapshotId: 快照ID
+      uoM: null
+      uoM.name: null
+      uoMId: 计量单位
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      warehouse: null
+      warehouse.name: null
+      warehouseId: 发货仓库
+    ErpMfgWorkOrderBomOperationSnapshot:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      operation: null
+      operationId: 工序ID
+      rate: 效率系数
+      snapshot: null
+      snapshotId: 快照ID
+      standardTime: 标准工时
+      timeUnit: 时间单位
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      workcenter: null
+      workcenterId: 工作中心
+    ErpMfgWorkOrderBomSnapshot:
+      bom: null
+      bomId: BOM ID
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lines: null
+      operations: null
+      product: null
+      product.name: null
+      productId: 产品
+      qty: BOM数量
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      versionLabel: 版本号
+      workOrder: null
+      workOrderId: 工单ID
     ErpMfgWorkOrderLine:
       actualQuantity: 实际数量(完工/领用)
       createTime: 创建时间

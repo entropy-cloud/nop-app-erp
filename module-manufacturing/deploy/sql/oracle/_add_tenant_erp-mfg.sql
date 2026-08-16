@@ -65,11 +65,17 @@ alter table erp_mfg_crp_load add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL
 
 alter table erp_mfg_work_order_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_mfg_work_order_bom_snapshot add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_mfg_subcontract_order add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_job_card add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_cost_variance add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_work_order_bom_line_snapshot add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
+alter table erp_mfg_work_order_bom_operation_snapshot add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_mfg_subcontract_order_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
@@ -180,6 +186,9 @@ alter table erp_mfg_crp_load add constraint PK_erp_mfg_crp_load primary key (NOP
 alter table erp_mfg_work_order_line drop constraint PK_erp_mfg_work_order_line;
 alter table erp_mfg_work_order_line add constraint PK_erp_mfg_work_order_line primary key (NOP_TENANT_ID, ID);
 
+alter table erp_mfg_work_order_bom_snapshot drop constraint PK_erp_mfg_work_order_bom_snapshot;
+alter table erp_mfg_work_order_bom_snapshot add constraint PK_erp_mfg_work_order_bom_snapshot primary key (NOP_TENANT_ID, ID);
+
 alter table erp_mfg_subcontract_order drop constraint PK_erp_mfg_subcontract_order;
 alter table erp_mfg_subcontract_order add constraint PK_erp_mfg_subcontract_order primary key (NOP_TENANT_ID, ID);
 
@@ -188,6 +197,12 @@ alter table erp_mfg_job_card add constraint PK_erp_mfg_job_card primary key (NOP
 
 alter table erp_mfg_cost_variance drop constraint PK_erp_mfg_cost_variance;
 alter table erp_mfg_cost_variance add constraint PK_erp_mfg_cost_variance primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_work_order_bom_line_snapshot drop constraint PK_erp_mfg_work_order_bom_line_snapshot;
+alter table erp_mfg_work_order_bom_line_snapshot add constraint PK_erp_mfg_work_order_bom_line_snapshot primary key (NOP_TENANT_ID, ID);
+
+alter table erp_mfg_work_order_bom_operation_snapshot drop constraint PK_erp_mfg_work_order_bom_operation_snapshot;
+alter table erp_mfg_work_order_bom_operation_snapshot add constraint PK_erp_mfg_work_order_bom_operation_snapshot primary key (NOP_TENANT_ID, ID);
 
 alter table erp_mfg_subcontract_order_line drop constraint PK_erp_mfg_subcontract_order_line;
 alter table erp_mfg_subcontract_order_line add constraint PK_erp_mfg_subcontract_order_line primary key (NOP_TENANT_ID, ID);

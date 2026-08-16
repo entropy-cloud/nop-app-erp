@@ -9,10 +9,16 @@ import app.erp.inv.biz.StockMoveRequest;
 import app.erp.inv.dao.ErpInvDaoConstants;
 import app.erp.mfg.biz.BomExplosionNode;
 import app.erp.mfg.dao.entity.ErpMfgBom;
+import app.erp.mfg.dao.entity.ErpMfgBomLine;
+import app.erp.mfg.dao.entity.ErpMfgBomOperation;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
+import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomLineSnapshot;
+import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomOperationSnapshot;
+import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomSnapshot;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrderLine;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mfg.service.bom.BomExpander;
 import app.erp.mfg.service.statemachine.ErpMfgWorkOrderApprovalStateMachine;
 import app.erp.mfg.service.statemachine.ErpMfgWorkOrderDocumentStateMachine;
 import app.erp.mfg.service.costing.ProductionVarianceCalculator;
@@ -70,6 +76,8 @@ public class ErpMfgWorkOrderProcessor {
     IDaoProvider daoProvider;
     @Inject
     KitAvailabilityChecker kitAvailabilityChecker;
+    @Inject
+    BomExpander bomExpander;
     @Inject
     IErpInvStockMoveBiz stockMoveBiz;
     @Inject
@@ -237,6 +245,7 @@ public class ErpMfgWorkOrderProcessor {
     protected void doSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
         wo.setApproveStatus(approvalStateMachine.submitTargetStatus());
         wo.setDocStatus(ErpMfgConstants.WORK_ORDER_STATUS_SUBMITTED);
+        snapshotBomOnSubmit(wo, context);
         workOrderDao().updateEntity(wo);
     }
 
@@ -490,9 +499,80 @@ public class ErpMfgWorkOrderProcessor {
 
     // ---------- step：物料预留写路径（plan 2026-08-15-2119-3 RC-R1.48，UC-MFG-05/06/08；protected 可覆盖） ----------
 
+    // ---------- step：BOM 快照复制（plan 2026-08-16-0904-1 RC-R1.49，UC-MFG-10 断言④⑤⑥；protected 可覆盖） ----------
+
+    /**
+     * 提交（DRAFT→SUBMITTED）时复制 BOM 头+子件行+工艺行到快照实体族（owner doc
+     * {@code bom-and-routing.md §BOM 版本快照规则 :160-163}：快照时机 = 提交、内容 = 头[版本号/产出量]+子件行+工艺行）。
+     *
+     * <p>幂等：{@code snapshotBomVersion/snapshotBomId} 已存在则跳过（重复 submit / reject→resubmit 不重快照，
+     * 保持首次提交时点内容锁定，D4 内联裁决）。无 BOM 或 BOM 无行 → LOG.warn 不阻断（无快照，
+     * 读侧保持实时 BOM 回退语义）。快照实体经 {@code cascade-delete} 随工单删除级联清理。
+     */
+    protected void snapshotBomOnSubmit(ErpMfgWorkOrder wo, IServiceContext context) {
+        if (wo.getSnapshotBomVersion() != null || wo.getSnapshotBomId() != null) {
+            return;
+        }
+        ErpMfgBom bom = resolveSnapshotSourceBom(wo);
+        if (bom == null) {
+            LOG.warn("工单 {} 无 BOM（bomId 为空且无默认 BOM），跳过 BOM 快照（不阻断提交，读侧保持实时 BOM）",
+                    wo.getCode());
+            return;
+        }
+        IEntityDao<ErpMfgWorkOrderBomSnapshot> snapDao = daoProvider.daoFor(ErpMfgWorkOrderBomSnapshot.class);
+        ErpMfgWorkOrderBomSnapshot snap = snapDao.newEntity();
+        snap.setWorkOrderId(wo.getId());
+        snap.setBomId(bom.getId());
+        snap.setProductId(bom.getProductId());
+        snap.setVersionLabel(bom.getVersionLabel());
+        snap.setQty(bom.getQty());
+        snapDao.saveEntity(snap);
+        IEntityDao<ErpMfgWorkOrderBomLineSnapshot> lineDao = daoProvider.daoFor(ErpMfgWorkOrderBomLineSnapshot.class);
+        for (ErpMfgBomLine line : bomExpander.loadLines(bom.getId())) {
+            ErpMfgWorkOrderBomLineSnapshot sl = lineDao.newEntity();
+            sl.setSnapshotId(snap.getId());
+            sl.setLineNo(line.getLineNo());
+            sl.setMaterialId(line.getMaterialId());
+            sl.setSkuId(line.getSkuId());
+            sl.setUoMId(line.getUoMId());
+            sl.setQuantity(line.getQuantity());
+            sl.setOperationId(line.getOperationId());
+            sl.setScrapRate(line.getScrapRate());
+            sl.setWarehouseId(line.getWarehouseId());
+            sl.setAlternativeMaterialId(line.getAlternativeMaterialId());
+            lineDao.saveEntity(sl);
+        }
+        IEntityDao<ErpMfgWorkOrderBomOperationSnapshot> opDao = daoProvider.daoFor(ErpMfgWorkOrderBomOperationSnapshot.class);
+        for (ErpMfgBomOperation op : bomExpander.loadOperations(bom.getId())) {
+            ErpMfgWorkOrderBomOperationSnapshot so = opDao.newEntity();
+            so.setSnapshotId(snap.getId());
+            so.setLineNo(op.getLineNo());
+            so.setOperationId(op.getOperationId());
+            so.setWorkcenterId(op.getWorkcenterId());
+            so.setStandardTime(op.getStandardTime());
+            so.setTimeUnit(op.getTimeUnit());
+            so.setRate(op.getRate());
+            opDao.saveEntity(so);
+        }
+        wo.setSnapshotBomId(snap.getId());
+        wo.setSnapshotBomVersion(bom.getVersionLabel());
+    }
+
+    /**
+     * 快照来源 BOM 解析：工单 bomId 优先（弱引用，经 to-one 关系 getter 零新增 daoFor），
+     * 缺失回落到产品默认且有效 BOM（与读侧 resolveBomId 同口径）。
+     */
+    protected ErpMfgBom resolveSnapshotSourceBom(ErpMfgWorkOrder wo) {
+        if (wo.getBomId() != null) {
+            return wo.getBom();
+        }
+        return bomExpander.findDefaultBomOrNull(wo.getProductId());
+    }
+
     /**
      * 审核触发预留创建（UC-MFG-05 ①②③④）：config-gated（{@code erp-mfg.reservation-enabled} 默认 true）。
-     * BOM 展开子件需求（经 {@link KitAvailabilityChecker} 复用：resolveBomId + explode + aggregateRequirements），
+     * BOM 展开子件需求（经 {@link KitAvailabilityChecker} 复用：resolveBomId + explode + aggregateRequirements；
+     * 已快照工单经快照感知展开入口——提交后 BOM 编辑不影响预留口径），
      * 行维度仓库取 {@link ErpMfgWorkOrderLine#getSourceWarehouseId()}（MINOR-8：null 回退工单头仓库——工单无头仓库字段，
      * 故直接跳过该行预留 LOG.warn，不阻断 approve）；无 BOM（MINOR-5：ERR_DEFAULT_BOM_NOT_FOUND）或无子件 →
      * 跳过预留创建 LOG.warn，仅记录工单无预留。min(需求,可用) 由库存侧 createReservation 计算。
@@ -501,21 +581,27 @@ public class ErpMfgWorkOrderProcessor {
         if (!isReservationEnabled()) {
             return;
         }
-        Long bomId;
-        try {
-            bomId = kitAvailabilityChecker.resolveBomId(wo);
-        } catch (NopException e) {
-            if (ErpMfgErrors.ERR_DEFAULT_BOM_NOT_FOUND.getErrorCode().equals(e.getErrorCode())) {
-                LOG.warn("工单 {} 无默认 BOM，跳过物料预留创建（reservation-enabled，不阻断审核）", wo.getCode());
-                return;
-            }
-            throw e;
-        }
         BigDecimal plannedQty = nz(wo.getPlannedQuantity());
         if (plannedQty.signum() <= 0) {
             return;
         }
-        List<BomExplosionNode> nodes = kitAvailabilityChecker.explodeRequirements(bomId, plannedQty);
+        List<BomExplosionNode> nodes;
+        if (kitAvailabilityChecker.hasBomSnapshot(wo)) {
+            // 已快照工单：快照感知展开（LOCK_AT_CREATION 读快照 / AUTO_UPGRADE re-resolve 默认 BOM），零异常面
+            nodes = kitAvailabilityChecker.explodeRequirements(wo, plannedQty);
+        } else {
+            Long bomId;
+            try {
+                bomId = kitAvailabilityChecker.resolveBomId(wo);
+            } catch (NopException e) {
+                if (ErpMfgErrors.ERR_DEFAULT_BOM_NOT_FOUND.getErrorCode().equals(e.getErrorCode())) {
+                    LOG.warn("工单 {} 无默认 BOM，跳过物料预留创建（reservation-enabled，不阻断审核）", wo.getCode());
+                    return;
+                }
+                throw e;
+            }
+            nodes = kitAvailabilityChecker.explodeRequirements(bomId, plannedQty);
+        }
         Map<Long, BigDecimal> requiredByMaterial = kitAvailabilityChecker.aggregateRequirements(nodes);
         if (requiredByMaterial.isEmpty()) {
             return;

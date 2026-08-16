@@ -197,8 +197,16 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 44;
     
+    /* BOM快照版本: SNAPSHOT_BOM_VERSION VARCHAR */
+    public static final String PROP_NAME_snapshotBomVersion = "snapshotBomVersion";
+    public static final int PROP_ID_snapshotBomVersion = 45;
+    
+    /* BOM快照ID: SNAPSHOT_BOM_ID BIGINT */
+    public static final String PROP_NAME_snapshotBomId = "snapshotBomId";
+    public static final int PROP_ID_snapshotBomId = 46;
+    
 
-    private static int _PROP_ID_BOUND = 45;
+    private static int _PROP_ID_BOUND = 47;
 
     
     /* relation:  */
@@ -220,6 +228,9 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_lines = "lines";
     
     /* relation:  */
+    public static final String PROP_NAME_bomSnapshot = "bomSnapshot";
+    
+    /* relation:  */
     public static final String PROP_NAME_jobCards = "jobCards";
     
     /* relation:  */
@@ -232,7 +243,7 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[45];
+    private static final String[] PROP_ID_TO_NAME = new String[47];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -368,6 +379,12 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_snapshotBomVersion] = PROP_NAME_snapshotBomVersion;
+          PROP_NAME_TO_ID.put(PROP_NAME_snapshotBomVersion, PROP_ID_snapshotBomVersion);
+      
+          PROP_ID_TO_NAME[PROP_ID_snapshotBomId] = PROP_NAME_snapshotBomId;
+          PROP_NAME_TO_ID.put(PROP_NAME_snapshotBomId, PROP_ID_snapshotBomId);
+      
     }
 
     
@@ -502,6 +519,12 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* BOM快照版本: SNAPSHOT_BOM_VERSION */
+    private java.lang.String _snapshotBomVersion;
+    
+    /* BOM快照ID: SNAPSHOT_BOM_ID */
+    private java.lang.Long _snapshotBomId;
     
 
     public _ErpMfgWorkOrder(){
@@ -708,6 +731,12 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_snapshotBomVersion:
+               return getSnapshotBomVersion();
+        
+            case PROP_ID_snapshotBomId:
+               return getSnapshotBomId();
         
            default:
               return super.orm_propValue(propId);
@@ -1160,6 +1189,26 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_snapshotBomVersion:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_snapshotBomVersion));
+               }
+               setSnapshotBomVersion(typedValue);
+               break;
+            }
+        
+            case PROP_ID_snapshotBomId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_snapshotBomId));
+               }
+               setSnapshotBomId(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -1473,6 +1522,20 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_snapshotBomVersion:{
+               onInitProp(propId);
+               this._snapshotBomVersion = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_snapshotBomId:{
+               onInitProp(propId);
+               this._snapshotBomId = (java.lang.Long)value;
                
                break;
             }
@@ -2320,6 +2383,44 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
     }
     
     /**
+     * BOM快照版本: SNAPSHOT_BOM_VERSION
+     */
+    public final java.lang.String getSnapshotBomVersion(){
+         onPropGet(PROP_ID_snapshotBomVersion);
+         return _snapshotBomVersion;
+    }
+
+    /**
+     * BOM快照版本: SNAPSHOT_BOM_VERSION
+     */
+    public final void setSnapshotBomVersion(java.lang.String value){
+        if(onPropSet(PROP_ID_snapshotBomVersion,value)){
+            this._snapshotBomVersion = value;
+            internalClearRefs(PROP_ID_snapshotBomVersion);
+            
+        }
+    }
+    
+    /**
+     * BOM快照ID: SNAPSHOT_BOM_ID
+     */
+    public final java.lang.Long getSnapshotBomId(){
+         onPropGet(PROP_ID_snapshotBomId);
+         return _snapshotBomId;
+    }
+
+    /**
+     * BOM快照ID: SNAPSHOT_BOM_ID
+     */
+    public final void setSnapshotBomId(java.lang.Long value){
+        if(onPropSet(PROP_ID_snapshotBomId,value)){
+            this._snapshotBomId = value;
+            internalClearRefs(PROP_ID_snapshotBomId);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.mfg.dao.entity.ErpMfgBom getBom(){
@@ -2442,6 +2543,16 @@ public class _ErpMfgWorkOrder extends DynamicOrmEntity{
      */
     public final IOrmEntitySet<app.erp.mfg.dao.entity.ErpMfgWorkOrderLine> getLines(){
        return _lines;
+    }
+       
+    private final OrmEntitySet<app.erp.mfg.dao.entity.ErpMfgWorkOrderBomSnapshot> _bomSnapshot = new OrmEntitySet<>(this, PROP_NAME_bomSnapshot,
+        null, null,app.erp.mfg.dao.entity.ErpMfgWorkOrderBomSnapshot.class);
+
+    /**
+     * 。 refPropName: , keyProp: {rel.keyProp}
+     */
+    public final IOrmEntitySet<app.erp.mfg.dao.entity.ErpMfgWorkOrderBomSnapshot> getBomSnapshot(){
+       return _bomSnapshot;
     }
        
     private final OrmEntitySet<app.erp.mfg.dao.entity.ErpMfgJobCard> _jobCards = new OrmEntitySet<>(this, PROP_NAME_jobCards,

@@ -678,6 +678,34 @@
         }
 
 
+        private String _snapshotBomVersion;
+
+    
+        @PropMeta(propId=45)
+    
+        public String getSnapshotBomVersion(){
+            return _snapshotBomVersion;
+        }
+
+        public void setSnapshotBomVersion(String value){
+            this._snapshotBomVersion = value;
+        }
+
+
+        private Long _snapshotBomId;
+
+    
+        @PropMeta(propId=46)
+    
+        public Long getSnapshotBomId(){
+            return _snapshotBomId;
+        }
+
+        public void setSnapshotBomId(Long value){
+            this._snapshotBomId = value;
+        }
+
+
         private Map<String,Object> _bom;
 
         public Map<String,Object> getBom(){
@@ -741,6 +769,17 @@
 
         public void setLines(List<Map<String,Object>> value){
             this._lines = value;
+        }
+
+
+        private List<Map<String,Object>> _bomSnapshot;
+
+        public List<Map<String,Object>> getBomSnapshot(){
+            return _bomSnapshot;
+        }
+
+        public void setBomSnapshot(List<Map<String,Object>> value){
+            this._bomSnapshot = value;
         }
 
 

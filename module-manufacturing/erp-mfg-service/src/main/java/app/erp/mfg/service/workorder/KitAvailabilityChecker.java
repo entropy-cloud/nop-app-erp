@@ -3,6 +3,8 @@ package app.erp.mfg.service.workorder;
 import app.erp.mfg.biz.BomExplosionNode;
 import app.erp.mfg.dao.entity.ErpMfgBom;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
+import app.erp.mfg.dao.entity.ErpMfgWorkOrderBomSnapshot;
+import app.erp.mfg.service.ErpMfgConfigs;
 import app.erp.mfg.service.ErpMfgErrors;
 import app.erp.mfg.service.bom.BomExpander;
 import app.erp.inv.dao.entity.ErpInvStockBalance;
@@ -32,6 +34,10 @@ import static io.nop.api.core.beans.FilterBeans.in;
  * `docs/design/inventory/cross-domain.md §余量校验规则`）。本类为非 BizModel 服务助手（对齐 {@link BomExpander}
  * 范式），直接用 {@link IDaoProvider} 只读查询库存余额（跨域只读聚合，无权限管道语义）。
  *
+ * <p><b>BOM 快照读侧（plan 2026-08-16-0904-1 RC-R1.49，UC-MFG-10 断言④⑤⑥）</b>：已快照工单
+ * （{@code snapshotBomId/snapshotBomVersion 非空}）恒读快照内容展开（LOCK_AT_CREATION 默认）；无快照
+ * （DRAFT/未提交/旧数据）恒走实时 BOM 零回归；AUTO_UPGRADE 策略下 re-resolve 默认 BOM 实时展开（不写回快照）。
+ *
  * <p>权威：`docs/design/manufacturing/state-machine.md §迁移完整性`、`docs/design/inventory/cross-domain.md §余量校验规则`、
  * `docs/plans/2026-07-02-2237-1-manufacturing-workorder-jobcard-state-machine.md` Phase 2。
  */
@@ -55,15 +61,15 @@ public class KitAvailabilityChecker {
 
     /**
      * 校验工单齐套情况。BOM 取工单 {@code bomId}（缺失则回落到产品的默认 BOM），按 {@code plannedQuantity} 多级展开子件需求。
+     * 已快照工单读快照内容（提交时点锁定），无快照实时 BOM（零回归）。
      *
      * @param workOrderId 工单 ID
      * @return 齐套校验结果（全齐 / 部分齐套）
      */
     public KitAvailabilityResult check(Long workOrderId) {
         ErpMfgWorkOrder wo = requireWorkOrder(workOrderId);
-        Long bomId = resolveBomId(wo);
         BigDecimal plannedQty = nz(wo.getPlannedQuantity());
-        List<BomExplosionNode> nodes = bomExpander.explode(bomId, plannedQty, true);
+        List<BomExplosionNode> nodes = explodeRequirements(wo, plannedQty);
 
         Map<Long, BigDecimal> requiredByMaterial = aggregateRequirements(nodes);
         if (requiredByMaterial.isEmpty()) {
@@ -104,6 +110,46 @@ public class KitAvailabilityChecker {
      */
     public List<BomExplosionNode> explodeRequirements(Long bomId, BigDecimal requestedQty) {
         return bomExpander.explode(bomId, requestedQty, true);
+    }
+
+    /**
+     * 快照感知展开（plan 2026-08-16-0904-1 RC-R1.49）：已快照工单（LOCK_AT_CREATION）经快照内容展开；
+     * AUTO_UPGRADE 时 re-resolve 默认 BOM 实时展开（无默认 BOM 防御回退快照）；无快照走实时 BOM 零回归。
+     * approve 预留路径（{@code createReservations}）复用本入口，快照切换自动继承。
+     */
+    public List<BomExplosionNode> explodeRequirements(ErpMfgWorkOrder wo, BigDecimal requestedQty) {
+        if (hasBomSnapshot(wo)) {
+            if (ErpMfgConfigs.isBomSnapshotAutoUpgrade()) {
+                ErpMfgBom latest = bomExpander.findDefaultBomOrNull(wo.getProductId());
+                if (latest != null) {
+                    return bomExpander.explode(latest.getId(), requestedQty, true);
+                }
+                // 无默认 BOM（升级目标缺失）→ 防御回退快照（保持锁定内容语义）
+                ErpMfgWorkOrderBomSnapshot snap = loadBomSnapshot(wo);
+                if (snap != null) {
+                    return bomExpander.explodeFromSnapshot(snap, requestedQty, true);
+                }
+            } else {
+                ErpMfgWorkOrderBomSnapshot snap = loadBomSnapshot(wo);
+                if (snap != null) {
+                    return bomExpander.explodeFromSnapshot(snap, requestedQty, true);
+                }
+            }
+        }
+        Long bomId = resolveBomId(wo);
+        return bomExpander.explode(bomId, requestedQty, true);
+    }
+
+    /**
+     * 工单是否已快照 BOM（snapshotBomId/snapshotBomVersion 任一非空即视为已快照；提交时点复制后回写）。
+     */
+    public boolean hasBomSnapshot(ErpMfgWorkOrder wo) {
+        return wo != null && (wo.getSnapshotBomId() != null || wo.getSnapshotBomVersion() != null);
+    }
+
+    private ErpMfgWorkOrderBomSnapshot loadBomSnapshot(ErpMfgWorkOrder wo) {
+        io.nop.orm.IOrmEntitySet<ErpMfgWorkOrderBomSnapshot> snaps = wo.getBomSnapshot();
+        return snaps == null || snaps.isEmpty() ? null : snaps.iterator().next();
     }
 
     private Map<Long, BigDecimal> loadAvailableByMaterial(Set<Long> materialIds) {

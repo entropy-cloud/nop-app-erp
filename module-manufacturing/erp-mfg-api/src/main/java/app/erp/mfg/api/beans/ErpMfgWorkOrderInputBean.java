@@ -475,6 +475,34 @@
         }
 
 
+        private String _snapshotBomVersion;
+
+    
+        @PropMeta(propId=45)
+    
+        public String getSnapshotBomVersion(){
+            return _snapshotBomVersion;
+        }
+
+        public void setSnapshotBomVersion(String value){
+            this._snapshotBomVersion = value;
+        }
+
+
+        private Long _snapshotBomId;
+
+    
+        @PropMeta(propId=46)
+    
+        public Long getSnapshotBomId(){
+            return _snapshotBomId;
+        }
+
+        public void setSnapshotBomId(Long value){
+            this._snapshotBomId = value;
+        }
+
+
         private List<ErpMfgWorkOrderLineInputBean> _lines;
 
         public List<ErpMfgWorkOrderLineInputBean> getLines(){
@@ -483,6 +511,17 @@
 
         public void setLines(List<ErpMfgWorkOrderLineInputBean> value){
             this._lines = value;
+        }
+
+
+        private List<ErpMfgWorkOrderBomSnapshotInputBean> _bomSnapshot;
+
+        public List<ErpMfgWorkOrderBomSnapshotInputBean> getBomSnapshot(){
+            return _bomSnapshot;
+        }
+
+        public void setBomSnapshot(List<ErpMfgWorkOrderBomSnapshotInputBean> value){
+            this._bomSnapshot = value;
         }
 
 

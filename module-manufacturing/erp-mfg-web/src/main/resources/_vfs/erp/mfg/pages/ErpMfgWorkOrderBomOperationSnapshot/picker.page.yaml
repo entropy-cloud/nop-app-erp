@@ -1,0 +1,3 @@
+
+x:gen-extends: |
+    <flux-web:GenPage view="ErpMfgWorkOrderBomOperationSnapshot.view.xml" page="picker" xpl:lib="/nop/web/xlib/flux-web.xlib" />

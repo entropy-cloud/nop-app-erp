@@ -471,6 +471,8 @@ CREATE TABLE erp_mfg_work_order(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  SNAPSHOT_BOM_VERSION VARCHAR(50) NULL    COMMENT 'BOM快照版本',
+  SNAPSHOT_BOM_ID BIGINT NULL    COMMENT 'BOM快照ID',
   constraint UK_MFG_WORK_ORDER_CODE_ORG unique (CODE,ORG_ID),
   constraint PK_erp_mfg_work_order primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
@@ -570,6 +572,22 @@ CREATE TABLE erp_mfg_work_order_line(
   constraint PK_erp_mfg_work_order_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_mfg_work_order_bom_snapshot(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  WORK_ORDER_ID BIGINT NULL    COMMENT '工单ID',
+  BOM_ID BIGINT NULL    COMMENT 'BOM ID',
+  PRODUCT_ID BIGINT NULL    COMMENT '产品',
+  VERSION_LABEL VARCHAR(50) NULL    COMMENT '版本号',
+  QTY DECIMAL(20,4) NULL    COMMENT 'BOM数量',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_work_order_bom_snapshot primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_mfg_subcontract_order(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '单号',
@@ -657,6 +675,45 @@ CREATE TABLE erp_mfg_cost_variance(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_mfg_cost_variance primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_work_order_bom_line_snapshot(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SNAPSHOT_ID BIGINT NULL    COMMENT '快照ID',
+  LINE_NO INTEGER NULL    COMMENT '行号',
+  MATERIAL_ID BIGINT NULL    COMMENT '物料',
+  SKU_ID BIGINT NULL    COMMENT 'SKU',
+  UO_M_ID BIGINT NULL    COMMENT '计量单位',
+  QUANTITY DECIMAL(20,4) NULL    COMMENT '数量',
+  OPERATION_ID BIGINT NULL    COMMENT '工序ID',
+  SCRAP_RATE DECIMAL(10,4) NULL    COMMENT '损耗率(%)',
+  WAREHOUSE_ID BIGINT NULL    COMMENT '发货仓库',
+  ALTERNATIVE_MATERIAL_ID BIGINT NULL    COMMENT '替代物料',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_work_order_bom_line_snapshot primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mfg_work_order_bom_operation_snapshot(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SNAPSHOT_ID BIGINT NULL    COMMENT '快照ID',
+  LINE_NO INTEGER NULL    COMMENT '行号',
+  OPERATION_ID BIGINT NULL    COMMENT '工序ID',
+  WORKCENTER_ID BIGINT NULL    COMMENT '工作中心',
+  STANDARD_TIME DECIMAL(12,2) NULL    COMMENT '标准工时',
+  TIME_UNIT VARCHAR(20) NULL    COMMENT '时间单位',
+  RATE DECIMAL(10,4) NULL    COMMENT '效率系数',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mfg_work_order_bom_operation_snapshot primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mfg_subcontract_order_line(
@@ -851,11 +908,17 @@ CREATE TABLE erp_mfg_material_issue_line(
                 
    ALTER TABLE erp_mfg_work_order_line COMMENT '工单行';
                 
+   ALTER TABLE erp_mfg_work_order_bom_snapshot COMMENT '工单BOM快照';
+                
    ALTER TABLE erp_mfg_subcontract_order COMMENT '委外加工单';
                 
    ALTER TABLE erp_mfg_job_card COMMENT '作业卡';
                 
    ALTER TABLE erp_mfg_cost_variance COMMENT '成本差异记录';
+                
+   ALTER TABLE erp_mfg_work_order_bom_line_snapshot COMMENT '工单BOM快照行';
+                
+   ALTER TABLE erp_mfg_work_order_bom_operation_snapshot COMMENT '工单BOM快照工艺';
                 
    ALTER TABLE erp_mfg_subcontract_order_line COMMENT '委外加工单行';
                 

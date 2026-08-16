@@ -197,6 +197,14 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="snapshotBomVersion" displayName="BOM快照版本" propId="45" i18n-en:displayName="Snapshot Bom Version"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="snapshotBomId" displayName="BOM快照ID" propId="46" i18n-en:displayName="Snapshot Bom" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
         <prop name="bom" i18n-en:displayName="Bom" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="bomId" ext:joinRightProp="id" insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpMfgBom"/>
@@ -234,6 +242,13 @@
               updatable="true" lazy="true">
             <schema>
                 <item bizObjName="ErpMfgWorkOrderLine"/>
+            </schema>
+        </prop>
+        <prop name="bomSnapshot" i18n-en:displayName="Bom Snapshot" tagSet="pub,cascade-delete,insertable,updatable"
+              ext:kind="to-many" internal="true" ext:joinLeftProp="id" ext:joinRightProp="workOrderId" insertable="true"
+              updatable="true" lazy="true">
+            <schema>
+                <item bizObjName="ErpMfgWorkOrderBomSnapshot"/>
             </schema>
         </prop>
         <prop name="jobCards" i18n-en:displayName="Job Cards" tagSet="pub,cascade-delete,insertable,updatable"

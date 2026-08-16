@@ -471,6 +471,8 @@ CREATE TABLE erp_mfg_work_order(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  SNAPSHOT_BOM_VERSION VARCHAR2(50)  ,
+  SNAPSHOT_BOM_ID NUMBER(20)  ,
   constraint UK_MFG_WORK_ORDER_CODE_ORG unique (CODE,ORG_ID),
   constraint PK_erp_mfg_work_order primary key (ID)
 );
@@ -570,6 +572,22 @@ CREATE TABLE erp_mfg_work_order_line(
   constraint PK_erp_mfg_work_order_line primary key (ID)
 );
 
+CREATE TABLE erp_mfg_work_order_bom_snapshot(
+  ID NUMBER(20) NOT NULL ,
+  WORK_ORDER_ID NUMBER(20)  ,
+  BOM_ID NUMBER(20)  ,
+  PRODUCT_ID NUMBER(20)  ,
+  VERSION_LABEL VARCHAR2(50)  ,
+  QTY NUMBER(20,4)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_work_order_bom_snapshot primary key (ID)
+);
+
 CREATE TABLE erp_mfg_subcontract_order(
   ID NUMBER(20) NOT NULL ,
   CODE VARCHAR2(50) NOT NULL ,
@@ -657,6 +675,45 @@ CREATE TABLE erp_mfg_cost_variance(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   constraint PK_erp_mfg_cost_variance primary key (ID)
+);
+
+CREATE TABLE erp_mfg_work_order_bom_line_snapshot(
+  ID NUMBER(20) NOT NULL ,
+  SNAPSHOT_ID NUMBER(20)  ,
+  LINE_NO INTEGER  ,
+  MATERIAL_ID NUMBER(20)  ,
+  SKU_ID NUMBER(20)  ,
+  UO_M_ID NUMBER(20)  ,
+  QUANTITY NUMBER(20,4)  ,
+  OPERATION_ID NUMBER(20)  ,
+  SCRAP_RATE NUMBER(10,4)  ,
+  WAREHOUSE_ID NUMBER(20)  ,
+  ALTERNATIVE_MATERIAL_ID NUMBER(20)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_work_order_bom_line_snapshot primary key (ID)
+);
+
+CREATE TABLE erp_mfg_work_order_bom_operation_snapshot(
+  ID NUMBER(20) NOT NULL ,
+  SNAPSHOT_ID NUMBER(20)  ,
+  LINE_NO INTEGER  ,
+  OPERATION_ID NUMBER(20)  ,
+  WORKCENTER_ID NUMBER(20)  ,
+  STANDARD_TIME NUMBER(12,2)  ,
+  TIME_UNIT VARCHAR2(20)  ,
+  RATE NUMBER(10,4)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint PK_erp_mfg_work_order_bom_operation_snapshot primary key (ID)
 );
 
 CREATE TABLE erp_mfg_subcontract_order_line(
@@ -1467,6 +1524,10 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_work_order.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON COLUMN erp_mfg_work_order.SNAPSHOT_BOM_VERSION IS 'BOM快照版本';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order.SNAPSHOT_BOM_ID IS 'BOM快照ID';
+                    
       COMMENT ON TABLE erp_mfg_bom_line IS 'BOM行';
                 
       COMMENT ON COLUMN erp_mfg_bom_line.ID IS 'ID';
@@ -1627,6 +1688,32 @@ CREATE TABLE erp_mfg_material_issue_line(
                     
       COMMENT ON COLUMN erp_mfg_work_order_line.UPDATE_TIME IS '修改时间';
                     
+      COMMENT ON TABLE erp_mfg_work_order_bom_snapshot IS '工单BOM快照';
+                
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.WORK_ORDER_ID IS '工单ID';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.BOM_ID IS 'BOM ID';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.PRODUCT_ID IS '产品';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.VERSION_LABEL IS '版本号';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.QTY IS 'BOM数量';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_snapshot.UPDATE_TIME IS '修改时间';
+                    
       COMMENT ON TABLE erp_mfg_subcontract_order IS '委外加工单';
                 
       COMMENT ON COLUMN erp_mfg_subcontract_order.ID IS 'ID';
@@ -1784,6 +1871,72 @@ CREATE TABLE erp_mfg_material_issue_line(
       COMMENT ON COLUMN erp_mfg_cost_variance.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_mfg_cost_variance.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_work_order_bom_line_snapshot IS '工单BOM快照行';
+                
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.SNAPSHOT_ID IS '快照ID';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.MATERIAL_ID IS '物料';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.SKU_ID IS 'SKU';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.UO_M_ID IS '计量单位';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.QUANTITY IS '数量';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.OPERATION_ID IS '工序ID';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.SCRAP_RATE IS '损耗率(%)';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.WAREHOUSE_ID IS '发货仓库';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.ALTERNATIVE_MATERIAL_ID IS '替代物料';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_line_snapshot.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_mfg_work_order_bom_operation_snapshot IS '工单BOM快照工艺';
+                
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.SNAPSHOT_ID IS '快照ID';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.LINE_NO IS '行号';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.OPERATION_ID IS '工序ID';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.WORKCENTER_ID IS '工作中心';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.STANDARD_TIME IS '标准工时';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.TIME_UNIT IS '时间单位';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.RATE IS '效率系数';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_mfg_work_order_bom_operation_snapshot.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON TABLE erp_mfg_subcontract_order_line IS '委外加工单行';
                 

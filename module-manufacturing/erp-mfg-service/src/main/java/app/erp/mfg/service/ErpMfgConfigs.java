@@ -21,4 +21,20 @@ public final class ErpMfgConfigs {
         }
         return n;
     }
+
+    /**
+     * BOM 快照策略（plan 2026-08-16-0904-1 RC-R1.49）。空值/未知值 = 默认 LOCK_AT_CREATION。
+     * 读侧（齐套/工序标准）按此决定：LOCK_AT_CREATION=恒用快照；AUTO_UPGRADE=re-resolve 默认 BOM 实时展开。
+     */
+    public static String getBomSnapshotStrategy() {
+        String raw = AppConfig.var(ErpMfgConstants.CONFIG_BOM_SNAPSHOT_STRATEGY, null);
+        if (raw == null || raw.trim().isEmpty()) {
+            return ErpMfgConstants.DEFAULT_BOM_SNAPSHOT_STRATEGY;
+        }
+        return raw.trim();
+    }
+
+    public static boolean isBomSnapshotAutoUpgrade() {
+        return ErpMfgConstants.BOM_SNAPSHOT_STRATEGY_AUTO_UPGRADE.equals(getBomSnapshotStrategy());
+    }
 }
