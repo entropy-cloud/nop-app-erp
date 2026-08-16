@@ -1,6 +1,6 @@
 # 2026-08-16-2043-3-rc-mr1-r1-60-prj-cost-rate-tier RC-R1.60 — projects 工时成本率三级降级（P1-RC-048：用户级 > 角色级 > 活动类型级费率载体落地）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-16
 > Mission: requirement-compliance
 > Work Item: RC-R1.60（P1-RC-048，UC-PRJ-02 AC-③ 成本率三级优先级）
@@ -51,75 +51,128 @@
 
 ### Phase 1 - 载体形态 + tier 归位 + product-scope 确认闭环裁决（Decision）
 
-Status: planned
+Status: completed
 Targets: `module-projects/model/app-erp-projects.orm.xml`（只读）、`module-projects/erp-prj-service/.../cost/CostRateResolver.java`（只读）、`docs/design/projects/cost-collection.md`
 Skill: `nop-backend-dev`
 Item Types: `Decision`
 
 - Prereqs: 无
 
-- [ ] Decision：角色费率载体形态（A 类清单「ErpPrjRole 实体 或费率实体」双选项）——候选：A. 新增 `ErpPrjRole` 独立实体（code/name/costRate + 审计列 + UK(code)；`ErpPrjProjectUser.role` 文本按 code 匹配）；B. 用户/角色费率合一实体（如 ErpPrjCostRate 带 scope 判别列）——记录选择、备选、UK/索引设计、与既有 role 文本列的匹配语义（精确匹配 vs 模糊）。
+- [x] Decision：角色费率载体形态（A 类清单「ErpPrjRole 实体 或费率实体」双选项）——候选：A. 新增 `ErpPrjRole` 独立实体（code/name/costRate + 审计列 + UK(code)；`ErpPrjProjectUser.role` 文本按 code 匹配）；B. 用户/角色费率合一实体（如 ErpPrjCostRate 带 scope 判别列）——记录选择、备选、UK/索引设计、与既有 role 文本列的匹配语义（精确匹配 vs 模糊）。
       - Skill: `nop-backend-dev`
-- [ ] Decision：tier 归位——单填(timesheet.costRate)与 L1 三级的层级关系（候选：A. 单填最高[既有行为兼容]；B. 单填移除[严格 L1]；C. 单填仅作录入覆盖用户级）——记录选择与对既有测试（testCostRateFromTimesheetOverridesActivityType）的影响。
+- [x] Decision：tier 归位——单填(timesheet.costRate)与 L1 三级的层级关系（候选：A. 单填最高[既有行为兼容]；B. 单填移除[严格 L1]；C. 单填仅作录入覆盖用户级）——记录选择与对既有测试（testCostRateFromTimesheetOverridesActivityType）的影响。
       - Skill: `nop-backend-dev`
-- [ ] Decision：用户级费率查询载体——`ErpPrjProjectUser` 按 (projectId, userId) 查 costRate（userId = ErpMdEmployee id，timesheet.userId 对齐）——记录 null/行缺失跳过语义。
+- [x] Decision：用户级费率查询载体——`ErpPrjProjectUser` 按 (projectId, userId) 查 costRate（userId = ErpMdEmployee id，timesheet.userId 对齐）——记录 null/行缺失跳过语义。
       - Skill: `nop-backend-dev`
-- [ ] Decision：`CostRateResolver` 数据访问形态——候选：A. 经既有 `daoProvider.daoFor(ErpPrjRole.class)` 同域站点（R2c 计数 +1 基线登记）；B. 经 IBiz 注入（IBiz-first，零 daoFor 面，对齐 AGENTS.md 平台规则）——记录选择与 checker 影响（对齐 R1.57 D4 先例：引擎注入形态显式裁决）。
+- [x] Decision：`CostRateResolver` 数据访问形态——候选：A. 经既有 `daoProvider.daoFor(ErpPrjRole.class)` 同域站点（R2c 计数 +1 基线登记）；B. 经 IBiz 注入（IBiz-first，零 daoFor 面，对齐 AGENTS.md 平台规则）——记录选择与 checker 影响（对齐 R1.57 D4 先例：引擎注入形态显式裁决）。
       - Skill: `nop-backend-dev`
-- [ ] Decision：product-scope 确认闭环——复核 `docs/requirements/product-scope.md` projects 域未裁剪成本率层级 → Q4=(a) 强制实现 + 2026-08-12 A 类裁决声明登记（对齐 RC-R1.56/58/59 范式，审计不复开）。
+- [x] Decision：product-scope 确认闭环——复核 `docs/requirements/product-scope.md` projects 域未裁剪成本率层级 → Q4=(a) 强制实现 + 2026-08-12 A 类裁决声明登记（对齐 RC-R1.56/58/59 范式，审计不复开）。
       - Skill: `none`
-- [ ] Add：**orm.xml 变更草案落盘本计划**——按载体形态裁决产出 `ErpPrjProjectUser` 加 costRate 列 + 新增 ErpPrjRole 实体的完整实体段草案文本（列集/propId/UK/to-one/索引，对齐 RC-R1.57 先例 `2026-08-16-1634-1:95-129` 在计划内先出草案）+ `xmllint --noout` well-formed 验证（作为双独立子 agent 的批准对象，**live orm.xml 不先改**）。
+- [x] Add：**orm.xml 变更草案落盘本计划**——按载体形态裁决产出 `ErpPrjProjectUser` 加 costRate 列 + 新增 ErpPrjRole 实体的完整实体段草案文本（列集/propId/UK/to-one/索引，对齐 RC-R1.57 先例 `2026-08-16-1634-1:95-129` 在计划内先出草案）+ `xmllint --noout` well-formed 验证（作为双独立子 agent 的批准对象，**live orm.xml 不先改**）。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 四裁决落地（计划内记录选择/备选/残留风险）；载体形态与 UK 设计可执行
-- [ ] product-scope 确认闭环登记（复核未裁剪 + Q4=(a) 声明）
-- [ ] orm.xml 变更草案文本落盘本计划 + xmllint --noout 通过（双 agent 批准对象就绪）
+- [x] 四裁决落地（计划内记录选择/备选/残留风险）；载体形态与 UK 设计可执行
+- [x] product-scope 确认闭环登记（复核未裁剪 + Q4=(a) 声明）
+- [x] orm.xml 变更草案文本落盘本计划 + xmllint --noout 通过（双 agent 批准对象就绪）
+
+#### Phase 1 裁决记录（2026-08-17 执行）
+
+**D1 角色费率载体形态（选项 A 通过）**：新增 `ErpPrjRole` 独立实体（tableName `erp_prj_role`，tagSet=gid,erp.projects，useLogicalDelete=true 对齐同域实体惯例）——列集 {id(seq-default), code VARCHAR50 mandatory, name VARCHAR200 mandatory, costRate DECIMAL(20,4), remark} + 审计 6 列（delVersion/version/createdBy/createTime/updatedBy/updateTime），propId 1-11 连续；UK `UK_PRJ_ROLE_CODE`(code)；无 to-one（角色为独立主数据，无跨域引用）；无额外索引（UK(code) 覆盖按 code 精确查询）。**匹配语义 = 精确匹配**：`ErpPrjProjectUser.role` 纯文本（trim 后）与 `ErpPrjRole.code` 精确相等（大小写敏感，对齐既有 role 文本直存语义——Non-Goal 不改 role 列语义）；无精确命中即角色级无费率。**替代方案否决**：B（用户/角色费率合一实体 ErpPrjCostRate 带 scope 判别列）——判别列引入数据歧义（scope 枚举 + 引用 ID 双键语义）+ UK 设计绕圈（需 (scope, refId) 复合）；用户级费率经 `ErpPrjProjectUser.costRate` 列天然承载（per-project 语义），合一实体反致同项目多行歧义；且 2026-08-12 A 类清单（roadmap:39）首选「ErpPrjRole 实体」表述。**残留风险**：角色费率按全局角色码（非 per-project 角色），跨项目共享角色费率语义（L1 无 per-project 角色断言，接受）；角色码与 role 文本大小写不一致时角色级费率不命中（配置侧责任，无断言面）。
+
+**D2 tier 归位（选项 A 通过）**：**单填保持最高**（显式录入优先，既有行为兼容）。完整解析链 = ①单填(timesheet.costRate) > ②用户级(ErpPrjProjectUser.costRate) > ③角色级(ErpPrjRole.costRate) > ④活动类型(ErpPrjActivityType.costRate) > ⑤全局默认(erp-prj.default-labor-cost-rate)，五处皆无抛 `ERR_COST_RATE_NOT_AVAILABLE`（既有错误码）。**理由**：L1（use-cases.md:38）字面仅定义「用户费率 > 角色费率 > 活动类型费率」三级，未否定单填；单填为显式录入值（操作员意图最强），移除/降级将改变既有已发布行为；A1.34 §9 businessType drift 冻结条款不适用（费率非 businessType 维度）。**对既有测试影响**：`testCostRateFromTimesheetOverridesActivityType`（单填 800 > 活动类型 300）断言**零变化**（单填仍最高）；`testCostRateFallsBackToActivityType`（单填空 → 活动类型 300）零变化（无用户/角色级数据时回落链不变）；`testCostRateThrowsWhenNoRateAvailable` 零变化（五处皆无抛同一错误码）。**残留风险**：单填存在时用户级/角色级不生效（显式录入优先语义，L1 无冲突——L1 只定义未单填时的三级顺序）。
+
+**D3 用户级费率查询载体**：`ErpPrjProjectUser` 按 (projectId, userId) 查 costRate——userId = ErpMdEmployee id（timesheet.userId 对齐，`ErpPrjTimesheet.user` to-one ErpMdEmployee）。查询经 `daoProvider.daoFor(ErpPrjProjectUser.class)` + `findFirstByQuery`（FilterBeans.eq projectId + eq userId，limit 1；不用 findAllByQuery 避免 R1d 计数面）。**null/行缺失跳过语义**：行缺失（非项目成员）→ 跳过；costRate null/负数 → 跳过（signum() < 0 视为未配置，对齐既有单填/活动类型费率校验语义 signum() >= 0 才有效）。**残留风险**：同一 (projectId, userId) 多行时取首行（无 UK 约束，既有数据惯例下成员唯一，接受）。
+
+**D4 CostRateResolver 数据访问形态（选项 A 通过）**：经既有 `daoProvider.daoFor(...)` 同域站点——`daoFor(ErpPrjProjectUser.class)` + `daoFor(ErpPrjRole.class)` 2 处新站点（既有 `daoFor(ErpPrjActivityType.class)` 1 处同型）。**理由**：CostRateResolver 是 cost 包纯解析组件（非 BizModel），resolve() 无 IServiceContext 参数（签名 `resolve(timesheet, timesheetCode)`），IBiz 走权限/校验管道需 context 传入 → 改签名波及 Processor 与全部测试；内部解析组件无权限审计需求；对齐 R1.57 D4 先例（纯组件保留 dao 实现 + 注入形态显式裁决）。**checker 影响**：R2c 全生产 daoFor 总量 +2（1431 → 1433，baseline-raise 带 per-site 证据落 compliance-baseline.md，Phase 3 复跑登记）；R2b（BizModel 跨域）零影响（非 BizModel）；R1d 零影响（用 findFirstByQuery 非 findAllByQuery）；同域站点 E3 注释说明原因。**替代方案否决**：B（IBiz 注入 IErpPrjProjectUserBiz/IErpPrjRoleBiz）——生成 CRUD 接口走权限管道且需 context，纯组件内无 context 可用（Processor 调用点可传但破坏组件自含性 + 测试需容器化）。
+
+**D5 product-scope 确认闭环（声明登记）**：复核 `docs/requirements/product-scope.md` projects 域行（:28「项目管理 | app-erp-projects | 项目、任务、工时、项目辅助核算」）——grep `成本率|费率|cost.?rate|用户级|角色级` 全文件**零命中**，成本率层级**未列入范围裁剪** → Q4=(a) 强制实现无例外。2026-08-12 批量裁决 A 类清单（roadmap:39）显式收录 RC-R1.60（ErpPrjProjectUser 加 costRate 列 + 新增 ErpPrjRole 实体 或费率实体）并批量批准 → 本计划裁决声明闭合该确认义务，审计不复开（对齐 RC-R1.56/58/59 范式）。
+
+**orm.xml 变更草案**（本计划内，**live orm.xml 未改动**——批准对象；`xmllint --noout` exit 0 well-formed 通过，namespace 警告为既有 Nop `ext:` 前缀约定）：
+
+变更 1：`ErpPrjProjectUser` 加 costRate 列（propId 13 顺延，endDate(propId 6) 之后、delVersion(propId 7) 之前；可空、无默认、无索引、无 UK）：
+
+```xml
+                <column name="costRate" displayName="成本费率" domain="costRate" code="COST_RATE" propId="13" stdSqlType="DECIMAL" precision="20" scale="4" stdDataType="decimal" i18n-en:displayName='Cost Rate' />
+```
+
+变更 2：新增 `ErpPrjRole` 实体段（置于 ErpPrjProjectUser 实体之后、项目预算头之前）：
+
+```xml
+        <!-- 项目角色（角色级成本费率载体，RC-R1.60：ErpPrjProjectUser.role 纯文本按 code 精确匹配） -->
+        <entity ext:web-renderer="flux" className="app.erp.prj.dao.entity.ErpPrjRole"
+                displayName="项目角色" ext:icon="id-badge" i18n-en:displayName="Project Role" name="app.erp.prj.dao.entity.ErpPrjRole"
+                tableName="erp_prj_role" tagSet="gid,erp.projects" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="code" displayName="角色编码" domain="code" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
+                <column name="name" displayName="角色名称" domain="name" mandatory="true" code="NAME" propId="3" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Name' />
+                <column name="costRate" displayName="成本费率" domain="costRate" code="COST_RATE" propId="4" stdSqlType="DECIMAL" precision="20" scale="4" stdDataType="decimal" i18n-en:displayName='Cost Rate' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                            <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="6" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="7" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="8" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="9" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="10" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="11" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <unique-keys>
+                <unique-key name="UK_PRJ_ROLE_CODE" columns="code"/>
+            </unique-keys>
+        </entity>
+```
 
 ### Phase 2 - 双独立子 agent 批准 → live ORM 变更 → 增量重生成（Decision | Add）
 
-Status: planned
+Status: completed
 Targets: `module-projects/model/app-erp-projects.orm.xml`、`module-projects/erp-prj-service/.../cost/CostRateResolver.java`
 Skill: `nop-backend-dev`
 Item Types: `Decision | Add`
 
 - Prereqs: Phase 1
 
-- [ ] Decision：**双独立子 agent 批准 checkbox**——**批准先于任何 live orm.xml 写入**：两个独立子代理（fresh session，不重用起草者上下文）对 Phase 1 草案分别检查批准（对齐 RC-R1.57/58 先例 + `ai-autonomy-policy.md:79`：两批准均通过后才可实施——纯加性最小性/propId 顺延/无 NOT NULL 无默认/无 UK 增设/无删除迁移/生成产物一致性/无跨域契约影响）；批准记录落盘本计划；**任一拒绝 → 修改不得实施，按拒绝意见修订草案后重新批准**。
+- [x] Decision：**双独立子 agent 批准 checkbox**——**批准先于任何 live orm.xml 写入**：两个独立子代理（fresh session，不重用起草者上下文）对 Phase 1 草案分别检查批准（对齐 RC-R1.57/58 先例 + `ai-autonomy-policy.md:79`：两批准均通过后才可实施——纯加性最小性/propId 顺延/无 NOT NULL 无默认/无 UK 增设/无删除迁移/生成产物一致性/无跨域契约影响）；批准记录落盘本计划；**任一拒绝 → 修改不得实施，按拒绝意见修订草案后重新批准**。
       - Skill: `none`
-- [ ] Add：live orm.xml 纯加性变更——按已批准草案写入 `ErpPrjProjectUser` 加 costRate 列（propId 13，可空无默认无索引无 UK）+ 新增 ErpPrjRole 实体（列集 + UK + to-one 引用 + 索引）。
+- [x] Add：live orm.xml 纯加性变更——按已批准草案写入 `ErpPrjProjectUser` 加 costRate 列（propId 13，可空无默认无索引无 UK）+ 新增 ErpPrjRole 实体（列集 + UK + to-one 引用 + 索引）。
       - Skill: `nop-backend-dev`
-- [ ] Add：`mvn clean install -DskipTests` 增量重生成 BUILD SUCCESS——生成产物核对（_gen Entity/XMeta/i18n/DDL 三方言/api bean 仅新增字段或实体）。
+- [x] Add：`mvn clean install -DskipTests` 增量重生成 BUILD SUCCESS——生成产物核对（_gen Entity/XMeta/i18n/DDL 三方言/api bean 仅新增字段或实体）。
       - Skill: `none`
-- [ ] Add：`CostRateResolver.resolve` 增用户级/角色级 tier（按 Phase 1 裁决归位）——数据访问形态按 Phase 1 Decision（IBiz-first 或 daoFor 同域站点 [R2c 计数登记]）；javadoc 更新三级语义；单填/全局默认分支保持。
+- [x] Add：`CostRateResolver.resolve` 增用户级/角色级 tier（按 Phase 1 裁决归位）——数据访问形态按 Phase 1 Decision（IBiz-first 或 daoFor 同域站点 [R2c 计数登记]）；javadoc 更新三级语义；单填/全局默认分支保持。
       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] 双独立子 agent 批准先行完成（记录落盘）→ live orm.xml 写入仅发生在批准后 → 重生成产物核对通过
-- [ ] resolve 三级（+裁决归位）解析链落地，既有单填/全局行为零回归
+- [x] 双独立子 agent 批准先行完成（记录落盘）→ live orm.xml 写入仅发生在批准后 → 重生成产物核对通过
+- [x] resolve 三级（+裁决归位）解析链落地，既有单填/全局行为零回归
+
+#### 双独立子 agent 批准记录（2026-08-17，实施前落盘）
+
+- **Reviewer A**：ses_ff487f015ffeiZnJkElOIMHLXv（fresh session）——**APPROVE**。检查范围：纯加性最小性实证（live orm.xml ErpPrjProjectUser 列集 propId 1-12 无 costRate + 全仓 grep ErpPrjRole 零命中）；propId 连续（ProjectUser next-free 13 / Role 1-11）；约定一致（tagSet/useLogicalDelete/审计列/domain=costRate 对齐 ErpPrjActivityType.costRate :318 与 ErpPrjTimesheet.costRate :228）；UK 命名无碰撞（10 既有 UK 全枚举）；无跨域契约影响（ErpPrjRole 无 relations、master-data 外部实体已 notGenCode、api 纯加性）；治理排序（roadmap:39 A 类授权 + ai-autonomy-policy:79 双批准先于写入 + Phase 2 首项 checkbox :135 先于 live 写入项 :137）；xmllint 复验 exit 0（+3 警告为既有 ext:/ui: 前缀类别）。Required corrections: none。Optional：costRate 列物理位置在 endDate(6) 与 delVersion(7) 之间打破文件 propId 严格升序惯例——建议置于 updateTime 之后（仍 propId 13，功能等价）。
+- **Reviewer B**：ses_ff487d533ffeGsDlBjbgNr74VB（fresh session）——**APPROVE**。检查范围：纯加性（costRate 可空无默认无索引无 UK + 新表 mandatory 无默认合法[无既有数据]）；propId 程序化合并校验（n=13 唯一连续 / n=11 升序）；约定逐项比对；UK 无碰撞；无 codegen 环/跨域影响（ErpPrjRole 无 relations 有效——全仓 14 实体省略 relations 先例）；治理顺序（批准 checkbox 先于 live 写入 + policy:79 + roadmap:39 A 类授权）；可执行性（CostRateResolver 既有 daoFor(ErpPrjActivityType.class) 形态可直接扩展）；xmllint 合并实测 exit 0。Required corrections: none。Optional：同 A——物理位置建议置 updateTime 之后保持文件升序惯例（功能无害）；ext:icon="id-badge" 未核实平台图标集（未知图标优雅降级）；Phase 3 核实无 JSON 快照测试按列序序列化 ProjectUser。
+
+两个独立子 agent 均 APPROVE，无强制修正。**执行者采纳双方同款 Optional 建议**：costRate 列物理位置置于 updateTime(propId 12) 之后（propId 13 不变，纯文件位置调整，功能/生成产物等价），保持文件 propId 严格升序惯例 → 批准先于 live orm.xml 写入的治理约束满足（ai-autonomy-policy.md:79）。
 
 ### Phase 3 - 测试 + 文档 + 回填（Add | Proof）
 
-Status: planned
+Status: completed
 Targets: `module-projects/erp-prj-service/src/test/`、`docs/design/projects/cost-collection.md`、`docs/audits/arm-index.md`、`docs/backlog/requirement-compliance-roadmap.md`、`docs/logs/2026/08-16.md`
 Skill: `nop-testing`
 Item Types: `Add | Proof`
 
 - Prereqs: Phase 2
 
-- [ ] Proof：新增 `TestErpPrjTimesheetCost` 扩展或新测试类——①用户级费率命中（覆盖活动类型）；②角色级费率命中（低于用户级）；③用户级缺失回落角色级；④三级皆缺回落全局 config；⑤单填覆盖（按裁决）；⑥用户级/角色级 null 跳过；⑦ErpPrjRole CRUD 冒烟（GraphQL save/find）；⑧ERR_COST_RATE_NOT_AVAILABLE 全缺维持。
+- [x] Proof：新增 `TestErpPrjTimesheetCost` 扩展或新测试类——①用户级费率命中（覆盖活动类型）；②角色级费率命中（低于用户级）；③用户级缺失回落角色级；④三级皆缺回落全局 config；⑤单填覆盖（按裁决）；⑥用户级/角色级 null 跳过；⑦ErpPrjRole CRUD 冒烟（GraphQL save/find）；⑧ERR_COST_RATE_NOT_AVAILABLE 全缺维持。
       - Skill: `nop-testing`
-- [ ] Proof：`mvn test -pl module-projects/erp-prj-service` 全绿（既有 138 零回归——testCostRateFromTimesheetOverridesActivityType 等按 Phase 1 裁决可能需调整断言）+ 全量 `mvn test` + `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`（零漂移或 baseline-raise 登记 per-site 证据）。
+- [x] Proof：`mvn test -pl module-projects/erp-prj-service` 全绿（既有 138 零回归——testCostRateFromTimesheetOverridesActivityType 等按 Phase 1 裁决可能需调整断言）+ 全量 `mvn test` + `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`（零漂移或 baseline-raise 登记 per-site 证据）。
       - Skill: `nop-testing`
-- [ ] Add：owner doc 回填——`cost-collection.md §2.2` Non-Goal→已实现（三级载体 + 解析链 + Phase 1 裁决注记）+ §七 规则 3 注记；arm-index P1-RC-048 → done (RC-R1.60)（修复记录 + 历史保留）+ roadmap RC-R1.60 → done ✅ + 本日志条目。
+- [x] Add：owner doc 回填——`cost-collection.md §2.2` Non-Goal→已实现（三级载体 + 解析链 + Phase 1 裁决注记）+ §七 规则 3 注记；arm-index P1-RC-048 → done (RC-R1.60)（修复记录 + 历史保留）+ roadmap RC-R1.60 → done ✅ + 本日志条目。
       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] 新测试全绿 + 既有测试零回归（或按裁决显式调整并记录）+ 全量验证命令通过（成功模式）；任一失败模式须修复或登记后才勾选
-- [ ] owner doc/arm-index/roadmap 回填完成
+- [x] 新测试全绿 + 既有测试零回归（或按裁决显式调整并记录）+ 全量验证命令通过（成功模式）；任一失败模式须修复或登记后才勾选
+- [x] owner doc/arm-index/roadmap 回填完成
 
 ## Draft Review Record
 
@@ -128,14 +181,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（三级费率降级运行时成立 + ORM 载体落地）
-- [ ] 相关文档对齐（cost-collection.md + arm-index + roadmap）
-- [ ] 已运行验证（`mvn test -pl module-projects/erp-prj-service` + 全量 `mvn test` + `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（三级费率降级运行时成立 + ORM 载体落地）
+- [x] 相关文档对齐（cost-collection.md + arm-index + roadmap）
+- [x] 已运行验证（`mvn test -pl module-projects/erp-prj-service` + 全量 `mvn test` + `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -159,13 +212,20 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <why the plan can close>
+Status Note: 执行已完成（2026-08-17）。三 Phase 全勾选 + 双独立子 agent 批准先行（Reviewer A/B 均 APPROVE 无强制修正）+ 独立结束审计 PASS（无 Required corrections）——ORM 纯加性双载体（ErpPrjProjectUser.costRate propId 13 + ErpPrjRole 实体）落地 + `CostRateResolver.resolve` 五级解析链（单填 > 用户级 > 角色级 > 活动类型 > 全局默认）运行时成立 + product-scope 确认闭环（未裁剪 → Q4=(a)）+ `TestErpPrjCostRateTier` 8 组全绿 + erp-prj-service 158 tests 零回归 + 全量 `mvn test` / `mvn clean install -DskipTests` BUILD SUCCESS + compliance checker R2c 1431→1433 baseline-raise 登记（per-site 证据）+ owner doc/arm-index/roadmap/日志回填完整 → Plan Status 置 completed。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（新会话，ses_ff46e1da0ffeZAs1VMqM65mux2——执行者未自我审计）
+- Evidence: 独立复核 live 仓库（非仅信计划文字）：
+  - **ORM**：`app-erp-projects.orm.xml:358` `ErpPrjProjectUser.costRate` propId 13（DECIMAL(20,4)，无 mandatory/default/索引/UK，物理位置于 updateTime:357 之后——采纳双 reviewer 同款 Optional 建议保持文件 propId 升序惯例）+ `:375-394` ErpPrjRole 实体（code/name/costRate/remark + 审计 6 列，propId 1-11，UK_PRJ_ROLE_CODE(code):392）；orm.xml diff = +23/-0 纯加性；xmllint --noout exit 0（namespace 警告为既有 Nop `ext:`/`ui:` 约定）。
+  - **生成产物**：`_gen/_ErpPrjRole.java` + `ErpPrjRole.java` + `IErpPrjRoleBiz.java` + `ErpPrjRoleBizModel.java` + `_ErpPrjRole.xmeta`/`ErpPrjRole.xmeta` + api `ErpPrjRoleInputBean/OutputBean.java`；DDL 三方言 `CREATE TABLE erp_prj_role`（mysql:51 / oracle:51 / postgresql:51）+ `erp_prj_project_user` COST_RATE 列。
+  - **Resolver**：`CostRateResolver.java` 五级链——①timesheet.costRate:48-51 ②用户级 `findProjectMember`:54-59/96-105（findFirstByQuery + eq projectId/userId + limit 1）③角色级 `findRoleRate`:60-66/110-120（role 文本 trim → code 精确匹配）④activityType:69-79 ⑤全局 config:81-85；全缺抛 ERR_COST_RATE_NOT_AVAILABLE:87-89；javadoc 五级语义:21-34。
+  - **测试**：`TestErpPrjCostRateTier.java` 8 @Test（:73/:93/:112/:133/:150/:169/:188/:207，含 GraphQL CRUD 冒烟 + 错误码断言）；`TestErpPrjTimesheetCost` 7 组零改动（git diff 测试目录空）；审计者自跑 `mvn test -pl module-projects/erp-prj-service -o` **158 run / 0 fail / 0 err**（23 测试类）+ `TestErpPrjCostRateTier` 8/0/0 + compliance checker 复跑 **R2c=1433**（与 compliance-baseline.md:438 BASELINE 块一致，R2b=235/R2d=35/R1d=14 零变化）。
+  - **治理**：双独立子 agent 批准记录（Reviewer A `ses_ff487f015ffeiZnJkElOIMHLXv` + Reviewer B `ses_ff487d533ffeGsDlBjbgNr74VB` 均 APPROVE 无强制修正）先于 live orm.xml 写入；独立草案审查 2 轮收敛（iter-2 acceptable as-is）；product-scope 确认闭环（D5 声明登记）；Closure Gates 8/8 勾选。
+  - **文档回填**：`cost-collection.md:58-61` §2.2 Non-Goal→已实现（五级链 + D2 裁决 + 载体）+ `:313` §七 规则 3 注记；`arm-index.md:219` P1-RC-048 → done (RC-R1.60)（修复记录 + 历史保留）；`requirement-compliance-roadmap.md:452` RC-R1.60 → done ✅ + 头行 2026-08-17 更新；`docs/logs/2026/08-17.md:5-9` RC-R1.60 条目；`compliance-baseline.md:469-476` R2c 1431→1433 baseline-raise 注记（per-site 证据 findProjectMember:104/findRoleRate:114）+ :438 机器可读块更新。
+  - **验证记录（审计者未全量复跑，采信执行期记录）**：全量 `mvn test` BUILD SUCCESS（1 次既有 flaky 命中 `TestErpQaSpcSamplingEvaluateBatch` 时间戳毫秒边界 15.999 vs 16.0 快照比对——quality 域与本计划无关，独立重跑 4/4 绿）+ `mvn clean install -DskipTests` 全量 BUILD SUCCESS。
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 无阻塞项。非阻塞：角色管理 UI/角色 CRUD 业务页面（Non-Goal，标准 CRUD 生成）；费率历史版本化/生效日期窗口（successor，触发条件=运营要求费率变更留痕时按 ORM ask-first 立项）；多币种费率（watch-only residual，与 P1-MA1-010 多币种投影同域协同）。

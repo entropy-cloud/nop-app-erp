@@ -55,10 +55,10 @@
 | 角色级别 | 中 | 某角色（如高级工程师）的成本率 |
 | 活动类型级别 | 低 | 某活动类型的默认成本率 |
 
-> **实现约定**：本期实现为「单填 &gt; 活动类型 &gt; 全局默认」优先级——
-> `Timesheet.costRate`（按单填写）→ `ErpPrjActivityType.costRate`（活动类型默认）→ `erp-prj.default-labor-cost-rate`（全局 config）。
-> 用户级/角色级独立费率载体本期不存在（`ErpPrjProjectUser.role` 为纯文本无费率列），为 Non-Goal；
-> 待多级费率配置需求落地时新增用户费率实体（successor）。
+> **实现约定（RC-R1.60 / P1-RC-048 更新）**：解析链 = **单填 &gt; 用户级 &gt; 角色级 &gt; 活动类型 &gt; 全局默认**——
+> `Timesheet.costRate`（按单填写，显式录入优先）→ `ErpPrjProjectUser.costRate`（用户级费率，按 projectId+userId 查成员行）→ `ErpPrjRole.costRate`（角色级费率，`ErpPrjProjectUser.role` 纯文本按 `ErpPrjRole.code` 精确匹配）→ `ErpPrjActivityType.costRate`（活动类型默认）→ `erp-prj.default-labor-cost-rate`（全局 config）。
+> 五处皆无抛 `ERR_COST_RATE_NOT_AVAILABLE`。L1（`use-cases.md:38`）「用户费率 &gt; 角色费率 &gt; 活动类型费率」三级优先级运行时成立；单填保持最高为 RC-R1.60 Phase 1 D2 裁决（显式录入优先，既有行为兼容——L1 字面未定义单填与三级的关系，A1.34 §9 businessType drift 冻结条款不适用费率）；用户级/角色级费率为 null 或成员行/角色缺失时跳过对应 tier。
+> 载体落地：`ErpPrjProjectUser.costRate`（propId 13，可空无默认）+ 新增 `ErpPrjRole` 实体（code/name/costRate + UK(code)，纯加性，2026-08-12 A 类批量授权 + 双独立子 agent 批准，plan `docs/plans/2026-08-16-2043-3`）；角色级费率为全局角色码（非 per-project 角色）语义。角色管理 UI 为 Non-Goal（标准 CRUD 生成）。
 
 ### 2.3 工时提交流程
 
@@ -310,7 +310,7 @@
 
 1. **项目状态控制**：只有 OPEN 状态的项目才能被新单据引用——**统一咽喉已消费（RC-R1.62 / P2-RC-048 闭合，2026-08-16）**：`IErpPrjProjectBiz.requireReferenceable` 现为项目归集守卫的单一咽喉——费用路径（`ExpenseCostAggregator.refreshExpenseCost`，本行接入）+ 采购路径（`ErpPrjCostCollectionAggregateMaterialCostProcessor`，RC-R1.61）+ 工时路径（`ErpPrjTimesheetSubmitProcessor.validateProjectReferenceable` 内联自有校验保留为专项错误码语义）；P2-RC-048「API 存在生产代码零调用方」watch-only finding 随费用路径接入闭合。
 2. **预算控制配置化**：支持 WARNING 和 STRICT 两种模式
-3. **成本率优先级**：用户级别 > 角色级别 > 活动类型级别
+3. **成本率优先级**：用户级别 > 角色级别 > 活动类型级别（**已实现，RC-R1.60 / P1-RC-048，2026-08-17**——`CostRateResolver.resolve` 五级解析链「单填 > 用户级 > 角色级 > 活动类型 > 全局默认」，用户级/角色级载体 `ErpPrjProjectUser.costRate` + `ErpPrjRole` 实体落地，详见 §2.2 实现约定）
 4. **项目关闭冻结**：关闭后的项目不可再归集新成本
 5. **辅助核算追溯**：所有项目相关凭证可按 projectId 汇总查询
 

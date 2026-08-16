@@ -435,7 +435,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 235
-R2c: 1431
+R2c: 1433
 R2d: 35
 R3: 5
 R4: 0
@@ -465,6 +465,15 @@ R12c: 40
 - `:136` `daoFor(ErpPrjProject.class)`（loadProject）
 
 purchase 侧接线零新增 daoFor（`collectProjectMaterialCost` 走 `line.getOrderLine()` ORM 关系 getter + Facade 调用），Facade/Processor 零 daoFor（守卫链经 `IErpPrjProjectBiz`/`BudgetChecker` 注入）。本块以 1431 为回归门控起点（对齐 R1.48/R1.51/R1.57 baseline-raise 先例）。
+
+## R2c 基线上调注记（plan 2026-08-16-2043-3，RC-R1.60 projects 工时成本率三级降级）
+
+`2026-08-16-2043-3`（RC-R1.60 / P1-RC-048，UC-PRJ-02 AC-③：CostRateResolver 用户级/角色级 tier + ErpPrjProjectUser.costRate 列 + ErpPrjRole 实体）在 `CostRateResolver` 新增 2 处 daoFor 站点，R2c 1431 → **1433**（+2）。**per-site 证据**（`CostRateResolver.java`，projects 同域解析组件——既有 `daoFor(ErpPrjActivityType.class):62` 同型站点先例）：
+
+- `findProjectMember:104` `daoFor(ErpPrjProjectUser.class)`——用户级费率 tier 按 (projectId, userId) 单行查询（`findFirstByQuery`，非 FK 导航——members 为 to-many 且 resolve() 无 IServiceContext，经 `ErpPrjProject.getMembers()` 集合过滤需加载整集合且破坏组件自含性；resolve() 非 BizModel 无权限管道需求，R1.57 D4 先例纯组件保留 dao 实现）
+- `findRoleRate:114` `daoFor(ErpPrjRole.class)`——角色级费率 tier 按 role 文本 code 精确匹配单行查询（`findFirstByQuery`）
+
+两站点均为 projects **同域**实体直查、均用 `findFirstByQuery`（R1d 零变化）、无 ErpMd* 站点（R2a/R2d 零变化）、非 BizModel 站点（R2b 零变化）、E3 自检注释说明理由。本块以 1433 为回归门控起点（对齐 R1.48/R1.51/R1.57/R1.61 baseline-raise 先例）。
 
 ## 关联
 
