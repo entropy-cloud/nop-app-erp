@@ -80,6 +80,16 @@ public interface ErpInvConstants extends ErpInvDocStatus {
     // 本地副本（同字面值 ErpMfgConstants.RELATED_BILL_TYPE_MFG_ISSUE），避免 inventory→manufacturing 上行依赖。
     String RELATED_BILL_TYPE_MFG_ISSUE = "ERP_MFG_ISSUE";
 
+    // 盘点差异移动单源单类型键（RC-R1.56 / P1-MA2-062，UC-INV-07；completeTake 自动生成盘盈/盘亏移动单）。
+    // D2 判别载体：relatedBillType=ERP_INV_STOCK_TAKE + relatedBillCode=null → StockMoveRequest.isBusinessLinked()==false
+    // → generateMove 停 CONFIRMED 待库管员二次确认（独立移动单语义，state-machine.md:129）；D3 判别载体：
+    // InvPostingDispatcher.resolveBusinessType 跳过集条目（盘点差异过账 = successor，见 state-machine.md §盘点单状态机）。
+    String RELATED_BILL_TYPE_STOCK_TAKE = "ERP_INV_STOCK_TAKE";
+
+    // 盘点差异移动单生成失败告警总开关（RC-R1.56 D4-b；默认 false，对齐 R1.4 单键门控范式——关闭时失败仅 LOG.warn，
+    // 不派发 IErpSysNotificationBiz 告警；开启时派发事件 inv.stocktake-diff-generation-failed）
+    String CONFIG_STOCKTAKE_DIFF_ALERT_ENABLED = "erp-inv.stocktake-diff-alert-enabled";
+
     // 所有权类型（dict erp-inv/ownership-type，consignment.md）
     String OWNERSHIP_TYPE_OWNED = "OWNED";
     String OWNERSHIP_TYPE_VMI_SUPPLIER = "VMI_SUPPLIER";

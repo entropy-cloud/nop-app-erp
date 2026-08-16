@@ -1,16 +1,16 @@
-# 盘点流程管理（plan 2026-08-03-1232-4 Phase 2）。
+# 盘点流程管理（plan 2026-08-03-1232-4 Phase 2 + RC-R1.56 文案同步）。
 #
 # 引导式流程驱动既有 inventory Facade mutation 链（零后端 delta）：
-#   ErpInvStockTakeBizModel.startTake（DRAFT→IN_PROGRESS）→ completeTake（IN_PROGRESS→DONE）→ cancelTake。
+#   ErpInvStockTakeBizModel.startTake（DRAFT→CONFIRMED）→ completeTake（CONFIRMED→DONE）→ cancelTake。
 #
-# 注：completeTake 仅翻转 DONE，未生成盘盈/盘亏移动单（Phase 0 核实结论）——流程页止于 DONE 展示。
-# 盘盈/盘亏移动单生成归 Deferred（watch-only residual，需后端行为变更 ask-first 评估）。
+# 注：completeTake（RC-R1.56 已实现）自动生成盘盈/盘亏差异移动单——独立移动单（relatedBillType=ERP_INV_STOCK_TAKE）
+# 停 CONFIRMED 待库管员二次确认（移动单列表 complete 后差异才影响余额）；差异移动单跳过存货估值过账。
 type: page
 title: "盘点流程管理"
 body:
   - type: tpl
     className: m-3
-    tpl: '<div class="alert alert-info"><strong>盘点三阶段流程</strong>：DRAFT（待盘点）→ IN_PROGRESS（盘点中，startTake）→ DONE（已完成，completeTake）。盘盈/盘亏移动单生成归 Deferred。</div>'
+    tpl: '<div class="alert alert-info"><strong>盘点三阶段流程</strong>：DRAFT（待盘点）→ IN_PROGRESS（盘点中，startTake）→ DONE（已完成，completeTake）。完成时自动生成盘盈/盘亏移动单（独立单停 CONFIRMED 待库管员二次确认）。</div>'
 
   - type: crud
     name: stockTakeCrud
@@ -82,7 +82,7 @@ body:
         level: success
         icon: "fa fa-check"
         actionType: ajax
-        confirmText: "确认完成盘点？状态将翻转为 DONE（注：不生成盘盈/盘亏移动单）。"
+        confirmText: "确认完成盘点？将自动生成盘盈/盘亏差异移动单（停 CONFIRMED 待库管员二次确认）。"
         api:
           url: /graphql
           method: post

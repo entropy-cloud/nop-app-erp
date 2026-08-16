@@ -149,6 +149,10 @@
           class="app.erp.inv.service.processor.ErpInvStockMoveReverseProcessor"/>
     <bean id="app.erp.inv.service.processor.ErpInvTransferOrderConfirmProcessor"
           class="app.erp.inv.service.processor.ErpInvTransferOrderConfirmProcessor"/>
+    <!-- 盘点完成闭环 per-mutation Processor（RC-R1.56 / P1-MA2-062，UC-INV-07）：completeTake 委托——
+         行加载 + D1 差异计算回填 + 逐行盘盈/盘亏移动单生成（D2 独立移动单停 CONFIRMED + 失败隔离 + D4-b 告警）。 -->
+    <bean id="app.erp.inv.service.processor.ErpInvStockTakeCompleteTakeProcessor"
+          class="app.erp.inv.service.processor.ErpInvStockTakeCompleteTakeProcessor"/>
     <!-- 实体级状态机 Bean（plan 2026-08-13-2045-2）：StockMove/StockTake docStatus 轴迁移矩阵权威来源。
          严格无状态（契约 §2），按类型注入，可经 Delta 同名 bean id 覆盖（契约 §6）。 -->
     <bean id="app.erp.inv.service.statemachine.ErpInvStockMoveStateMachine"

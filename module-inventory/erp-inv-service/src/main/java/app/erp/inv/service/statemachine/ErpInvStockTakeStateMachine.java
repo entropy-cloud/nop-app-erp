@@ -37,9 +37,9 @@ import java.util.List;
  * 本 Bean 按既有 writer 建模（目标态 = CONFIRMED，保持行为），owner doc 补注标签映射。{@link #startTakeTargetStatus()}
  * 返回 CONFIRMED（对应 owner doc 标签「盘点中」）。
  *
- * <p>动态守卫边界（保留 BizModel）：{@code completeTake} 不自动生成差异移动单的 Deferred 行为（无 qtyActual vs
- * totalQuantity 比对、无 {@code IErpInvStockMoveBiz.generateMove} 调用——owner doc §盘点 Deferred）——不属于
- * 状态轴判断，本 Bean 不承载。
+ * <p>动态守卫边界（保留 BizModel/Processor）：{@code completeTake} 的差异移动单自动生成（RC-R1.56 已实现——
+ * 经 {@code ErpInvStockTakeCompleteTakeProcessor} 行加载 + D1 差异计算回填 + 逐行 {@code IErpInvStockMoveBiz.generateMove}
+ * 生成盘盈/盘亏移动单 + 失败逐行隔离告警，owner doc §盘点单状态机）——不属于状态轴判断，本 Bean 不承载。
  */
 public class ErpInvStockTakeStateMachine {
 

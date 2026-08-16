@@ -34,6 +34,7 @@ public interface ErpInvErrors {
     String ARG_LANDED_COST_CODE = "landedCostCode";
     String ARG_RECEIVE_ID = "receiveId";
     String ARG_TAKE_ID = "takeId";
+    String ARG_ERROR_MESSAGE = "errorMessage";
 
     // --- 报表渲染作用域参数键 ---
     String ARG_REPORT_NAME = "reportName";
@@ -182,4 +183,12 @@ public interface ErpInvErrors {
             "erp.err.inv.stock-take.illegal-transition",
             "盘点单[{takeId}]当前状态[{currentStatus}]不允许此操作",
             ARG_TAKE_ID, ARG_CURRENT_STATUS);
+
+    // 盘点差异移动单生成全局守卫（RC-R1.56 / P1-MA2-062，UC-INV-07，D4-c 选项 A）：盘点单行加载等全局失败
+    // （非逐行隔离路径——逐行失败经 D4-b 隔离 + 告警不抛）守卫错误码，与状态迁移守卫（
+    // ERR_INV_STOCK_TAKE_ILLEGAL_TRANSITION）不同面。
+    ErrorCode ERR_INV_STOCK_TAKE_MOVE_GENERATE = ErrorCode.define(
+            "erp.err.inv.stock-take.move-generate",
+            "盘点单[{takeId}]差异移动单生成失败：{errorMessage}",
+            ARG_TAKE_ID, ARG_ERROR_MESSAGE);
 }

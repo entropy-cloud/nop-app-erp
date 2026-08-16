@@ -8,10 +8,11 @@ import java.util.List;
  *
  * <p>跨域调用方（purchase/sales Processor）与库管员手工创建均通过本请求构造移动单。
  *
- * <p>推进策略（对齐 {@code docs/design/inventory/cross-domain.md}）：
+ * <p>推进策略（对齐 {@code docs/design/inventory/cross-domain.md}；判别键 = {@link #isBusinessLinked()}——两字段均非空）：
  * <ul>
- *   <li>{@code relatedBillType} 非空（业务单据联动）→ 自动 DRAFT→CONFIRMED→DONE 一次推进。</li>
- *   <li>{@code relatedBillType} 为空（独立创建）→ 停在 CONFIRMED，待库管员二次确认执行 DONE。</li>
+ *   <li>{@code isBusinessLinked()} 为 true（业务单据联动，relatedBillType + relatedBillCode 均非空）→ 自动 DRAFT→CONFIRMED→DONE 一次推进。</li>
+ *   <li>{@code isBusinessLinked()} 为 false（独立创建，含带类型键但 code 为空的判别载体，如盘点差异移动单
+ *       {@code relatedBillType=ERP_INV_STOCK_TAKE + relatedBillCode=null}，RC-R1.56）→ 停在 CONFIRMED，待库管员二次确认执行 DONE。</li>
  * </ul>
  *
  * <p>幂等键：{@code (relatedBillType, relatedBillCode)}——同源单重复触发反查已有移动单直接返回。

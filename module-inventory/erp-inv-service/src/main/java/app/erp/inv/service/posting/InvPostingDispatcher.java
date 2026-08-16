@@ -155,10 +155,15 @@ public class InvPostingDispatcher {
         // inventory 跳过，避免误派 SALES_OUTPUT 凭证；移动单 DONE 即代表库存已出库。
         // 制造领料出库移动：非销售出库，WIP 过账（MANUFACTURING_ISSUE）由 manufacturing 域独占
         // （Dr: WIP / Cr: Inventory，借方 WIP 科目需 WorkOrder 上下文），inventory 跳过避免误派 SALES_OUTPUT。
+        // 盘点差异移动单（RC-R1.56 / P1-MA2-062，UC-INV-07，D3 选项 A）：盘盈/盘亏差异移动单跳过存货估值过账
+        // （判别载体 = relatedBillType=ERP_INV_STOCK_TAKE + null code 独立移动单；盘盈/盘亏会计化 = successor，
+        // 见 state-machine.md §盘点单状态机）。null relatedBillType 的 INCOMING/OUTGOING 仍按 moveType 映射
+        // PURCHASE_INPUT/SALES_OUTPUT，故须类型键 + 跳过集条目组合，不能依赖 null 判别。
         if (ErpInvConstants.RELATED_BILL_TYPE_PUR_RETURN.equals(move.getRelatedBillType())
                 || ErpInvConstants.RELATED_BILL_TYPE_SAL_RETURN.equals(move.getRelatedBillType())
                 || ErpInvConstants.RELATED_BILL_TYPE_MNT_SPARE_PART.equals(move.getRelatedBillType())
-                || ErpInvConstants.RELATED_BILL_TYPE_MFG_ISSUE.equals(move.getRelatedBillType())) {
+                || ErpInvConstants.RELATED_BILL_TYPE_MFG_ISSUE.equals(move.getRelatedBillType())
+                || ErpInvConstants.RELATED_BILL_TYPE_STOCK_TAKE.equals(move.getRelatedBillType())) {
             return null;
         }
         String moveType = move.getMoveType();
