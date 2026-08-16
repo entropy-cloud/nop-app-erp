@@ -219,6 +219,18 @@ public interface ErpSalErrors {
             "销售退货单 {returnCode} 业务日期所在会计期间 {period} 已结账或不可用，不可退货（期间控制）",
             ARG_RETURN_CODE, ARG_PERIOD);
 
+    // --- 换货作用域错误码（RC-R1.51 P1-RC-025，UC-SAL-06） ---
+
+    // D4 幂等拒绝：换货出库单已生成（exchangeDeliveryId 非空）时重复调用 generateExchangeDelivery
+    ErrorCode ERR_EXCHANGE_DELIVERY_ALREADY_GENERATED = ErrorCode.define("erp.err.sal.exchange-delivery-already-generated",
+            "销售退货单 {returnCode} 已生成换货出库单（出库单 {deliveryId}），不可重复生成",
+            ARG_RETURN_CODE, ARG_DELIVERY_ID);
+
+    // 守卫：generateExchangeDelivery 仅对 returnType=EXCHANGE 的退货单可用
+    ErrorCode ERR_EXCHANGE_RETURN_TYPE_INVALID = ErrorCode.define("erp.err.sal.exchange-return-type-invalid",
+            "销售退货单 {returnCode} 退货类型 {currentStatus} 非换货，不可生成换货出库单",
+            ARG_RETURN_CODE, ARG_CURRENT_STATUS);
+
     // 强制质检阻塞（plan 2026-07-02-2237-3 Phase 2）：出库单 {deliveryCode} 属强制质检类型，
     // 关联质检单未合格/让步，审核暂挂（首次审核已生成 PENDING 质检单，待质检结论后再次审核放行）
     ErrorCode ERR_DELIVERY_INSPECTION_BLOCKED = ErrorCode.define("erp.err.sal.delivery-inspection-blocked",

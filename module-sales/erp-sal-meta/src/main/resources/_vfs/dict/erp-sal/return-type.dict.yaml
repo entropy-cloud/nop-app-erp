@@ -1,0 +1,15 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 退货类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 退货
+    value: RETURN
+    description: 
+  
+  - label: 换货
+    value: EXCHANGE
+    description: 
+  

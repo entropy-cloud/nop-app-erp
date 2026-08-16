@@ -441,6 +441,7 @@ CREATE TABLE erp_sal_delivery(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
+  EXCHANGE_RETURN_ID NUMBER(20)  ,
   constraint PK_erp_sal_delivery primary key (ID)
 );
 
@@ -498,6 +499,8 @@ CREATE TABLE erp_sal_return(
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
   REMARK VARCHAR2(1000)  ,
+  RETURN_TYPE VARCHAR2(20) default 'RETURN'   ,
+  EXCHANGE_DELIVERY_ID NUMBER(20)  ,
   constraint PK_erp_sal_return primary key (ID)
 );
 
@@ -1184,6 +1187,8 @@ CREATE TABLE erp_sal_return_line(
                     
       COMMENT ON COLUMN erp_sal_delivery.REMARK IS '备注';
                     
+      COMMENT ON COLUMN erp_sal_delivery.EXCHANGE_RETURN_ID IS '换货来源退货单';
+                    
       COMMENT ON TABLE erp_sal_delivery_line IS '销售出库单行';
                 
       COMMENT ON COLUMN erp_sal_delivery_line.ID IS 'ID';
@@ -1285,6 +1290,10 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON COLUMN erp_sal_return.UPDATE_TIME IS '修改时间';
                     
       COMMENT ON COLUMN erp_sal_return.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_sal_return.RETURN_TYPE IS '退货类型';
+                    
+      COMMENT ON COLUMN erp_sal_return.EXCHANGE_DELIVERY_ID IS '换货出库单';
                     
       COMMENT ON TABLE erp_sal_invoice_line IS '销售发票行';
                 

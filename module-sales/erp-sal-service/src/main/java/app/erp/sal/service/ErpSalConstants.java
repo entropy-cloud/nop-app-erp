@@ -98,6 +98,10 @@ public interface ErpSalConstants extends ErpSalDocStatus {
     String PERIOD_STATUS_CLOSED_FINAL = "CLOSED_FINAL";
     String PERIOD_STATUS_NEVER_OPENED = "NEVER_OPENED";
 
+    // 退货类型（erp-sal/return-type，RC-R1.51 P1-RC-025；defaultValue=RETURN 既有退货零行为变化）
+    String RETURN_TYPE_RETURN = "RETURN";
+    String RETURN_TYPE_EXCHANGE = "EXCHANGE";
+
     // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
     /** 应收超期预警天数（账龄 > 此值触发）；默认 0=关闭预警。 */
     String CONFIG_DASH_SAL_AR_OVERDUE_DAYS = "erp-dash.sal-ar-overdue-days";

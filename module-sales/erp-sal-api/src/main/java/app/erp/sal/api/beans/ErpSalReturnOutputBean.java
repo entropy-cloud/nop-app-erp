@@ -430,6 +430,46 @@
         }
 
 
+        private String _returnType;
+
+    
+        @PropMeta(propId=29)
+    
+        public String getReturnType(){
+            return _returnType;
+        }
+
+        public void setReturnType(String value){
+            this._returnType = value;
+        }
+
+
+        private String _returnType_label;
+
+    
+        public String getReturnType_label(){
+            return _returnType_label;
+        }
+
+        public void setReturnType_label(String value){
+            this._returnType_label = value;
+        }
+
+
+        private Long _exchangeDeliveryId;
+
+    
+        @PropMeta(propId=30)
+    
+        public Long getExchangeDeliveryId(){
+            return _exchangeDeliveryId;
+        }
+
+        public void setExchangeDeliveryId(Long value){
+            this._exchangeDeliveryId = value;
+        }
+
+
         private Map<String,Object> _delivery;
 
         public Map<String,Object> getDelivery(){
@@ -438,6 +478,17 @@
 
         public void setDelivery(Map<String,Object> value){
             this._delivery = value;
+        }
+
+
+        private Map<String,Object> _exchangeDelivery;
+
+        public Map<String,Object> getExchangeDelivery(){
+            return _exchangeDelivery;
+        }
+
+        public void setExchangeDelivery(Map<String,Object> value){
+            this._exchangeDelivery = value;
         }
 
 

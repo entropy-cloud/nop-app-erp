@@ -83,7 +83,9 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      exchangeReturnId: Exchange Return
       order: Order
+      exchangeReturn: Exchange Return
       customer: Customer
       customer.name: Customer
       warehouse: Warehouse
@@ -530,7 +532,11 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       remark: Remark
+      returnType: Return Type
+      returnType_label: null
+      exchangeDeliveryId: Exchange Delivery
       delivery: Delivery
+      exchangeDelivery: Exchange Delivery
       customer: Customer
       customer.name: Customer
       warehouse: Warehouse
@@ -578,6 +584,7 @@ dict:
     erp-sal/price-list-status: Price List Status
     erp-sal/pricing-rule-type: Pricing Rule Type
     erp-sal/pricing-target: Pricing Target
+    erp-sal/return-type: Return Type
 dict.option.label:
   erp-sal/received-status:
     UNRECEIVED: Unreceived
@@ -610,3 +617,6 @@ dict.option.label:
   erp-sal/pricing-target:
     LINE: Line
     ORDER: Order
+  erp-sal/return-type:
+    RETURN: Return
+    EXCHANGE: Exchange

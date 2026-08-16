@@ -245,6 +245,8 @@
           class="app.erp.sal.service.processor.ErpSalReturnWithdrawApprovalProcessor"/>
     <bean id="app.erp.sal.service.processor.ErpSalReturnCancelProcessor"
           class="app.erp.sal.service.processor.ErpSalReturnCancelProcessor"/>
+    <bean id="app.erp.sal.service.processor.ErpSalReturnGenerateExchangeDeliveryProcessor"
+          class="app.erp.sal.service.processor.ErpSalReturnGenerateExchangeDeliveryProcessor"/>
     <bean id="app.erp.sal.service.processor.ErpSalInvoiceSubmitForApprovalProcessor"
           class="app.erp.sal.service.processor.ErpSalInvoiceSubmitForApprovalProcessor"/>
     <bean id="app.erp.sal.service.processor.ErpSalInvoiceApproveProcessor"

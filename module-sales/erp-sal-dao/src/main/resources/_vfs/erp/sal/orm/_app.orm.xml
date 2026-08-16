@@ -53,6 +53,10 @@
             <option code="LINE" label="行级" value="LINE" i18n-en:label="Line"/>
             <option code="ORDER" label="单级" value="ORDER" i18n-en:label="Order"/>
         </dict>
+        <dict label="退货类型" name="erp-sal/return-type" valueType="string" i18n-en:label="Return Type">
+            <option code="RETURN" label="退货" value="RETURN" i18n-en:label="Return"/>
+            <option code="EXCHANGE" label="换货" value="EXCHANGE" i18n-en:label="Exchange"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -780,6 +784,8 @@
                         propId="27" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="28"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="EXCHANGE_RETURN_ID" displayName="换货来源退货单" name="exchangeReturnId" propId="29"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Exchange Return"/>
             </columns>
             <indexes>
                 <index name="IDX_SAL_DELIVERY_ORG_DOC_STATUS" unique="false">
@@ -808,6 +814,12 @@
                         i18n-en:displayName="Order">
                     <join>
                         <on leftProp="orderId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one ignoreDepends="true" name="exchangeReturn" refEntityName="app.erp.sal.dao.entity.ErpSalReturn"
+                        tagSet="pub" i18n-en:displayName="Exchange Return">
+                    <join>
+                        <on leftProp="exchangeReturnId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
@@ -1463,6 +1475,11 @@
                         propId="27" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="28"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="RETURN_TYPE" defaultValue="RETURN" displayName="退货类型" name="returnType" precision="20"
+                        propId="29" stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-sal/return-type"
+                        i18n-en:displayName="Return Type"/>
+                <column code="EXCHANGE_DELIVERY_ID" displayName="换货出库单" name="exchangeDeliveryId" propId="30"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Exchange Delivery"/>
             </columns>
             <indexes>
                 <index name="IDX_SAL_RETURN_ORG_DOC_STATUS" unique="false">
@@ -1491,6 +1508,12 @@
                         i18n-en:displayName="Delivery">
                     <join>
                         <on leftProp="deliveryId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="exchangeDelivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" tagSet="pub"
+                        i18n-en:displayName="Exchange Delivery">
+                    <join>
+                        <on leftProp="exchangeDeliveryId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"

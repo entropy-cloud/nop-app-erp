@@ -83,6 +83,14 @@ public class TestStubErpSalReturnBiz extends CrudBizModel<ErpSalReturn> implemen
         return get(String.valueOf(returnId), false, context);
     }
 
+    @Override
+    public ErpSalReturn generateExchangeDelivery(Long returnId,
+                                                 List<app.erp.sal.biz.ErpSalExchangeDeliveryLine> lines,
+                                                 IServiceContext context) {
+        // 测试桩：换货出库单生成（RC-R1.51）不在 quality-service 测试范围，占位返回当前退货单
+        return get(String.valueOf(returnId), false, context);
+    }
+
     private static String asString(Object value) {
         return value == null ? null : value.toString();
     }

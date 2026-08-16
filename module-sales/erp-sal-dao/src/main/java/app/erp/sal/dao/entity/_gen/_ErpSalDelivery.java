@@ -133,12 +133,19 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
     public static final String PROP_NAME_remark = "remark";
     public static final int PROP_ID_remark = 28;
     
+    /* 换货来源退货单: EXCHANGE_RETURN_ID BIGINT */
+    public static final String PROP_NAME_exchangeReturnId = "exchangeReturnId";
+    public static final int PROP_ID_exchangeReturnId = 29;
+    
 
-    private static int _PROP_ID_BOUND = 29;
+    private static int _PROP_ID_BOUND = 30;
 
     
     /* relation:  */
     public static final String PROP_NAME_order = "order";
+    
+    /* relation:  */
+    public static final String PROP_NAME_exchangeReturn = "exchangeReturn";
     
     /* relation:  */
     public static final String PROP_NAME_customer = "customer";
@@ -159,7 +166,7 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[29];
+    private static final String[] PROP_ID_TO_NAME = new String[30];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -247,6 +254,9 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
       
+          PROP_ID_TO_NAME[PROP_ID_exchangeReturnId] = PROP_NAME_exchangeReturnId;
+          PROP_NAME_TO_ID.put(PROP_NAME_exchangeReturnId, PROP_ID_exchangeReturnId);
+      
     }
 
     
@@ -333,6 +343,9 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
     
     /* 备注: REMARK */
     private java.lang.String _remark;
+    
+    /* 换货来源退货单: EXCHANGE_RETURN_ID */
+    private java.lang.Long _exchangeReturnId;
     
 
     public _ErpSalDelivery(){
@@ -491,6 +504,9 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
         
             case PROP_ID_remark:
                return getRemark();
+        
+            case PROP_ID_exchangeReturnId:
+               return getExchangeReturnId();
         
            default:
               return super.orm_propValue(propId);
@@ -783,6 +799,16 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_exchangeReturnId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_exchangeReturnId));
+               }
+               setExchangeReturnId(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -984,6 +1010,13 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
             case PROP_ID_remark:{
                onInitProp(propId);
                this._remark = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_exchangeReturnId:{
+               onInitProp(propId);
+               this._exchangeReturnId = (java.lang.Long)value;
                
                break;
             }
@@ -1527,6 +1560,25 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
     }
     
     /**
+     * 换货来源退货单: EXCHANGE_RETURN_ID
+     */
+    public final java.lang.Long getExchangeReturnId(){
+         onPropGet(PROP_ID_exchangeReturnId);
+         return _exchangeReturnId;
+    }
+
+    /**
+     * 换货来源退货单: EXCHANGE_RETURN_ID
+     */
+    public final void setExchangeReturnId(java.lang.Long value){
+        if(onPropSet(PROP_ID_exchangeReturnId,value)){
+            this._exchangeReturnId = value;
+            internalClearRefs(PROP_ID_exchangeReturnId);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.sal.dao.entity.ErpSalOrder getOrder(){
@@ -1543,6 +1595,29 @@ public class _ErpSalDelivery extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_order, refEntity,()->{
            
                            this.setOrderId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.sal.dao.entity.ErpSalReturn getExchangeReturn(){
+       return (app.erp.sal.dao.entity.ErpSalReturn)internalGetRefEntity(PROP_NAME_exchangeReturn);
+    }
+
+    public final void setExchangeReturn(app.erp.sal.dao.entity.ErpSalReturn refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setExchangeReturnId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_exchangeReturn, refEntity,()->{
+           
+                           this.setExchangeReturnId(refEntity.getId());
                        
            });
            }

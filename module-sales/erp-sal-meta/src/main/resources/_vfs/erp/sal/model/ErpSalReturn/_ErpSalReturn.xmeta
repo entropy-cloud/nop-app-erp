@@ -133,9 +133,22 @@
               insertable="true" updatable="true">
             <schema domain="remark" type="java.lang.String" precision="1000"/>
         </prop>
+        <prop name="returnType" displayName="退货类型" propId="29" i18n-en:displayName="Return Type" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="RETURN">
+            <schema type="java.lang.String" precision="20" dict="erp-sal/return-type"/>
+        </prop>
+        <prop name="exchangeDeliveryId" displayName="换货出库单" propId="30" i18n-en:displayName="Exchange Delivery"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="exchangeDelivery">
+            <schema type="java.lang.Long"/>
+        </prop>
         <prop name="delivery" i18n-en:displayName="Delivery" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="deliveryId" ext:joinRightProp="id" insertable="false" updatable="false"
               lazy="true">
+            <schema bizObjName="ErpSalDelivery"/>
+        </prop>
+        <prop name="exchangeDelivery" i18n-en:displayName="Exchange Delivery" tagSet="pub" ext:kind="to-one"
+              internal="true" queryable="true" ext:joinLeftProp="exchangeDeliveryId" ext:joinRightProp="id"
+              insertable="false" updatable="false" lazy="true">
             <schema bizObjName="ErpSalDelivery"/>
         </prop>
         <prop name="customer" i18n-en:displayName="Customer" tagSet="pub" ext:kind="to-one" internal="true"

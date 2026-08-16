@@ -123,4 +123,14 @@ public interface _ErpSalDaoConstants {
      */
     String PRICING_TARGET_ORDER = "ORDER";
                     
+    /**
+     * 退货类型: 退货 
+     */
+    String RETURN_TYPE_RETURN = "RETURN";
+                    
+    /**
+     * 退货类型: 换货 
+     */
+    String RETURN_TYPE_EXCHANGE = "EXCHANGE";
+                    
 }

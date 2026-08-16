@@ -93,6 +93,10 @@
             <option code="LINE" label="行级" value="LINE" i18n-en:label='Line'/>
             <option code="ORDER" label="单级" value="ORDER" i18n-en:label='Order'/>
         </dict>
+        <dict label="退货类型" name="erp-sal/return-type" valueType="string" i18n-en:label='Return Type'>
+            <option code="RETURN" label="退货" value="RETURN" i18n-en:label='Return'/>
+            <option code="EXCHANGE" label="换货" value="EXCHANGE" i18n-en:label='Exchange'/>
+        </dict>
     </dicts>
 
     <entities>
@@ -492,10 +496,14 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="26" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="27" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
                 <column name="remark" code="REMARK" displayName="备注" propId="28" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+                <column name="exchangeReturnId" code="EXCHANGE_RETURN_ID" displayName="换货来源退货单" propId="29" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Exchange Return' />
             </columns>
             <relations>
                 <to-one name="order" refEntityName="app.erp.sal.dao.entity.ErpSalOrder" tagSet="pub" i18n-en:displayName='Order'>
                     <join><on leftProp="orderId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="exchangeReturn" refEntityName="app.erp.sal.dao.entity.ErpSalReturn" tagSet="pub" ignoreDepends="true" i18n-en:displayName='Exchange Return'>
+                    <join><on leftProp="exchangeReturnId" rightProp="id"/></join>
                 </to-one>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Customer'>
                     <join><on leftProp="customerId" rightProp="id"/></join>
@@ -889,10 +897,15 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="26" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="27" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
                 <column name="remark" code="REMARK" displayName="备注" propId="28" domain="remark" stdSqlType="VARCHAR" precision="1000" i18n-en:displayName='Remark' />
+                <column name="returnType" displayName="退货类型" ext:dict="erp-sal/return-type" code="RETURN_TYPE" propId="29" stdSqlType="VARCHAR" precision="20" stdDataType="string" defaultValue="RETURN" i18n-en:displayName='Return Type' />
+                <column name="exchangeDeliveryId" code="EXCHANGE_DELIVERY_ID" displayName="换货出库单" propId="30" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Exchange Delivery' />
             </columns>
             <relations>
                 <to-one name="delivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" tagSet="pub" i18n-en:displayName='Delivery'>
                     <join><on leftProp="deliveryId" rightProp="id"/></join>
+                </to-one>
+                <to-one name="exchangeDelivery" refEntityName="app.erp.sal.dao.entity.ErpSalDelivery" tagSet="pub" i18n-en:displayName='Exchange Delivery'>
+                    <join><on leftProp="exchangeDeliveryId" rightProp="id"/></join>
                 </to-one>
                 <to-one name="customer" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub" i18n-en:displayName='Customer'>
                     <join><on leftProp="customerId" rightProp="id"/></join>

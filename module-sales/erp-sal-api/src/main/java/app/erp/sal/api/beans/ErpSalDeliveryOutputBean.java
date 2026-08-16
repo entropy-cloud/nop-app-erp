@@ -430,6 +430,20 @@
         }
 
 
+        private Long _exchangeReturnId;
+
+    
+        @PropMeta(propId=29)
+    
+        public Long getExchangeReturnId(){
+            return _exchangeReturnId;
+        }
+
+        public void setExchangeReturnId(Long value){
+            this._exchangeReturnId = value;
+        }
+
+
         private Map<String,Object> _order;
 
         public Map<String,Object> getOrder(){
@@ -438,6 +452,17 @@
 
         public void setOrder(Map<String,Object> value){
             this._order = value;
+        }
+
+
+        private Map<String,Object> _exchangeReturn;
+
+        public Map<String,Object> getExchangeReturn(){
+            return _exchangeReturn;
+        }
+
+        public void setExchangeReturn(Map<String,Object> value){
+            this._exchangeReturn = value;
         }
 
 

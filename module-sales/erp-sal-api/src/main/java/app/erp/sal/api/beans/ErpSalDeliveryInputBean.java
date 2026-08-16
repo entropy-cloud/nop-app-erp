@@ -251,6 +251,20 @@
         }
 
 
+        private Long _exchangeReturnId;
+
+    
+        @PropMeta(propId=29)
+    
+        public Long getExchangeReturnId(){
+            return _exchangeReturnId;
+        }
+
+        public void setExchangeReturnId(Long value){
+            this._exchangeReturnId = value;
+        }
+
+
         private List<ErpSalDeliveryLineInputBean> _lines;
 
         public List<ErpSalDeliveryLineInputBean> getLines(){

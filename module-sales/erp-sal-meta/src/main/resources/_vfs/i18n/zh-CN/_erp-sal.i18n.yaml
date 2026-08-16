@@ -73,6 +73,8 @@ prop:
       docStatus: 单据状态
       docStatus_label: 单据状态
       exchangeRate: 汇率
+      exchangeReturn: null
+      exchangeReturnId: 换货来源退货单
       id: ID
       lines: null
       order: null
@@ -521,6 +523,8 @@ prop:
       deliveryId: 出库单
       docStatus: 单据状态
       docStatus_label: 单据状态
+      exchangeDelivery: null
+      exchangeDeliveryId: 换货出库单
       exchangeRate: 汇率
       id: ID
       lines: null
@@ -531,6 +535,8 @@ prop:
       postedAt: 过账时间
       postedBy: 过账人
       remark: 备注
+      returnType: 退货类型
+      returnType_label: 退货类型
       totalAmount: 合计金额(不含税)
       totalAmountWithTax: 合计金额(含税)
       totalTaxAmount: 合计税额

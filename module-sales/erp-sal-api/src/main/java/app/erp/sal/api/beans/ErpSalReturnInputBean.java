@@ -251,6 +251,34 @@
         }
 
 
+        private String _returnType;
+
+    
+        @PropMeta(propId=29)
+    
+        public String getReturnType(){
+            return _returnType;
+        }
+
+        public void setReturnType(String value){
+            this._returnType = value;
+        }
+
+
+        private Long _exchangeDeliveryId;
+
+    
+        @PropMeta(propId=30)
+    
+        public Long getExchangeDeliveryId(){
+            return _exchangeDeliveryId;
+        }
+
+        public void setExchangeDeliveryId(Long value){
+            this._exchangeDeliveryId = value;
+        }
+
+
         private List<ErpSalReturnLineInputBean> _lines;
 
         public List<ErpSalReturnLineInputBean> getLines(){
