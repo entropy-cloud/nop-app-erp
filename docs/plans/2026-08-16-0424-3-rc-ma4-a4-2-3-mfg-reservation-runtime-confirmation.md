@@ -1,6 +1,6 @@
 # 2026-08-16-0424-3-rc-ma4-a4-2-3-mfg-reservation-runtime-confirmation A4.2.3 — mfg 预留写路径落地后 reserved/available 一致性 + 跨工单并发预留运行时验证（MA4 回队行）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-16
 > Mission: requirement-compliance
 > Work Item: A4.2.3（MA4 回队行：MR1 P1-RC-008 预留写路径落地后 reservedQty/availableQuantity 实时一致性 + 跨工单并发预留 lost-update 防护运行时核验）
@@ -46,26 +46,26 @@
 
 ### Phase 1 - 跨工单并发预留 + reserved/available 一致性运行时确认（证据采集）
 
-Status: planned
+Status: completed
 Targets: `module-inventory/erp-inv-service/src/test/java/app/erp/inv/service/TestErpInvReservationWriteApi.java`（只读复跑）+ `module-manufacturing/erp-mfg-service/src/test/java/app/erp/mfg/service/TestErpMfgReservationLifecycle.java`（只读复跑 + 新增跨工单并发探针）
 Skill: `nop-testing`（探针）
 
 - Item Types: `Proof | Add`
 - Prereqs: 无
 
-- [ ] `Proof` 既有测试复跑证据：`mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service` 全绿（inv 218 + mfg 269 tests），记录 `testConcurrentCreateReservationNoLostUpdate`（4+4=8 无丢失 + available=2）与创建/释放/消耗余额断言链输出。
+- [x] `Proof` 既有测试复跑证据：`mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service` 全绿（inv 218 + mfg 269 tests），记录 `testConcurrentCreateReservationNoLostUpdate`（4+4=8 无丢失 + available=2）与创建/释放/消耗余额断言链输出。
       - Skill: none
-- [ ] `Proof` 并发防护机制运行时确认：`updateBalanceWithRetry` 版本乐观锁 + UK 冲突重试路径 grep/read 记录（`StockMoveBookkeeper`），与 A4.2.1 前置结论对照（无 silent split-quantity corruption）。
+- [x] `Proof` 并发防护机制运行时确认：`updateBalanceWithRetry` 版本乐观锁 + UK 冲突重试路径 grep/read 记录（`StockMoveBookkeeper`），与 A4.2.1 前置结论对照（无 silent split-quantity corruption）。
       - Skill: none
-- [ ] `Add` 跨工单并发探针（无条件）：新增测试（镜像 `TestErpMfgReservationLifecycle` seed 范式）——两工单同物料并发 approve（多线程，对齐 `testConcurrentCreateReservationNoLostUpdate` ExecutorService+CountDownLatch 模式）→ 断言两工单预留均落库 + reservedQuantity 累加无丢失 + available = total − reserved 恒等式保持 + 无异常/无重试耗尽。
+- [x] `Add` 跨工单并发探针（无条件）：新增测试（镜像 `TestErpMfgReservationLifecycle` seed 范式）——两工单同物料并发 approve（多线程，对齐 `testConcurrentCreateReservationNoLostUpdate` ExecutorService+CountDownLatch 模式）→ 断言两工单预留均落库 + reservedQuantity 累加无丢失 + available = total − reserved 恒等式保持 + 无异常/无重试耗尽。
       - Skill: `nop-testing`
-- [ ] `Proof` 报告落盘：`docs/audits/2026-08-16-rc-ma4-a4-2-3-mfg-reservation-write-path-runtime.md`（对齐 A4.2.79 报告结构：结论 + 证据链 + 与 A4.2.1/2 前置衔接 + 探针结果 + 无新 finding 声明）+ roadmap A4.2.3 → done + arm-index P1-RC-008 追加 A4.2.3 注记。
+- [x] `Proof` 报告落盘：`docs/audits/2026-08-16-rc-ma4-a4-2-3-mfg-reservation-write-path-runtime.md`（对齐 A4.2.79 报告结构：结论 + 证据链 + 与 A4.2.1/2 前置衔接 + 探针结果 + 无新 finding 声明）+ roadmap A4.2.3 → done + arm-index P1-RC-008 追加 A4.2.3 注记。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 运行时确认结论落盘：跨工单并发预留 lost-update 防护成立（既有断言链复跑 + 跨工单探针断言双实证）+ reserved/available 一致性恒等式成立；零新 finding / 零分级变更。
-- [ ] roadmap A4.2.3 → done + arm-index 注记 + `docs/logs/2026/08-16.md` 聚合日志条目（若仅此一个 MA4 行则与 Phase 1 同步完成）。
+- [x] 运行时确认结论落盘：跨工单并发预留 lost-update 防护成立（既有断言链复跑 + 跨工单探针断言双实证）+ reserved/available 一致性恒等式成立；零新 finding / 零分级变更。
+- [x] roadmap A4.2.3 → done + arm-index 注记 + `docs/logs/2026/08-16.md` 聚合日志条目（若仅此一个 MA4 行则与 Phase 1 同步完成）。
 
 ## Draft Review Record
 
@@ -78,14 +78,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（Phase 1 全部执行项与退出标准）
-- [ ] 相关文档对齐（验证报告 + roadmap A4.2.3 done + arm-index 注记）
-- [ ] 已运行验证：`mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service` + `bash docs/audits/nop-compliance-checker.sh`（actual == baseline 确认探针零生产面漂移——验证类计划门控自定义依据：本计划零生产代码变更，全量 `mvn clean install` 非本计划门控，对齐 A4.2.79 先例）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（Phase 1 全部执行项与退出标准）
+- [x] 相关文档对齐（验证报告 + roadmap A4.2.3 done + arm-index 注记）
+- [x] 已运行验证：`mvn test -pl module-inventory/erp-inv-service,module-manufacturing/erp-mfg-service` + `bash docs/audits/nop-compliance-checker.sh`（actual == baseline 确认探针零生产面漂移——验证类计划门控自定义依据：本计划零生产代码变更，全量 `mvn clean install` 非本计划门控，对齐 A4.2.79 先例）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -97,13 +97,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <待结束审计后填写>
+Status Note: 独立结束审计 PASS（2026-08-16，task `ses_ff80f3b5fffezmMPQQCSXjOrm5`）——Phase 1 全部执行项/退出标准/Closure Gates 勾选完整 + 探针代码（TestErpMfgReservationLifecycle:362-436 add-only +95 行）与计划契约逐项核对通过 + 验证独立复跑（inv 218 + mfg 270 tests 全绿 + checker actual==baseline 零漂移）+ 报告/roadmap A4.2.3 done/arm-index 注记/日志齐备 + 零生产代码漂移。审计提示的 3 个非计划工作树文件（`docs/backlog/README.md` id-string P0 行、`id-string-migration-roadmap.md`、`missions/id-string-migration.json`）属并发独立工作项（id-string-migration mission），非本计划产物，提交时按其自身工作项分隔。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <独立结束审计子代理>
-- Evidence: <task id / 报告链接>
+- Auditor / Agent: 独立结束审计子代理（新会话，不重用执行者上下文）
+- Evidence: task `ses_ff80f3b5fffezmMPQQCSXjOrm5`，8/8 项 PASS（计划一致性 / 探针代码 / 验证证据 218+270+checker 零漂移 / 报告文件 / roadmap A4.2.3 done / arm-index P1-RC-008 注记 / 日志 / 零生产漂移），PASS 裁决 + 1 条非阻塞信息性提示（并发工作项文件分隔，非本计划范围）
 
 Follow-up:
 
-- <仅非阻塞跟进项目>
+- 无（本计划范围内无阻塞/非阻塞跟进项；真并发 check-then-act over-commitment 窗口已归 A2.17 既有追踪，Deferred But Adjudicated 登记不变）
