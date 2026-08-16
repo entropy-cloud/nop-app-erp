@@ -383,6 +383,16 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1408 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R2c 基线上调注记（plan 2026-08-16-0904-1，RC-R1.49 mfg BOM 快照）
+
+`2026-08-16-0904-1`（RC-R1.49 mfg BOM 快照，P1-RC-009 UC-MFG-10 断言④⑤⑥）新增 BOM 快照写路径（`snapshotBomOnSubmit`）+ 快照源工艺行读取 + 快照工艺费率解析，引入 **R2c +5**，全部为既有文档化 pattern 类的合法同型新增（对齐 1057-2 +149 / R6.8 +130 / R1.33 +5 / R1.48 +6 先例）：
+
+| 规则 | 旧基线 | 新基线 | actual | 裁决 | 合法性分类 |
+|------|--------|--------|--------|------|-----------|
+| R2c | 1408 | **1413** | 1413 | **baseline-raise**（+5） | (1) `ErpMfgWorkOrderProcessor.snapshotBomOnSubmit:522` `daoFor(ErpMfgWorkOrderBomSnapshot.class)`——快照头 newEntity/save（提交复制工序唯一写入口，@BizMutation 同事务）；(2) `ErpMfgWorkOrderProcessor.snapshotBomOnSubmit:530` `daoFor(ErpMfgWorkOrderBomLineSnapshot.class)`——快照子件行 newEntity/save（镜像 BOM 行逐行复制）；(3) `ErpMfgWorkOrderProcessor.snapshotBomOnSubmit:545` `daoFor(ErpMfgWorkOrderBomOperationSnapshot.class)`——快照工艺行 newEntity/save（镜像 BOM 工艺行逐行复制）；(4) `BomExpander.loadOperations:220` `daoFor(ErpMfgBomOperation.class)`——快照复制源工艺行读取（public 化对齐既有 `loadLines` 同型只读 helper 范式，`module-manufacturing/erp-mfg-service/.../bom/BomExpander.java`）；(5) `ProductionVarianceCalculator.deriveStandardLaborRate:424` `daoFor(ErpMfgWorkcenter.class).getEntityById(wcId)`——快照工艺行工作中心费率解析（工作中心费率为主数据实时读，与实时路径同口径同工具调用，`costing/ProductionVarianceCalculator.java` 快照分支）。无 B 类「重构为 I*Biz」候选（BOM 快照实体为 mfg 同域新实体无 I*Biz 面需求 + 服务助手直查既有范式 + 非 FK 导航直查）。读侧快照访问（KitAvailabilityChecker.loadBomSnapshot / ProductionVarianceCalculator.snapshotOperationsOrNull / BomExpander.explodeFromSnapshot）全部经 ORM to-many 关系 getter（`wo.getBomSnapshot()`/`snap.getOperations()`/`snap.getLines()`）零新增 daoFor 站点。R2a/R2b/R2d 不变（新站点全部为 mfg 同域实体，无 BizModel 新增站点，无 ErpMd* 站点）。 |
+
+checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=233 / R2c=1413 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -394,7 +404,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 233
-R2c: 1408
+R2c: 1413
 R2d: 35
 R3: 5
 R4: 0

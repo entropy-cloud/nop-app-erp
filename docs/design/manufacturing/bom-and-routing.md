@@ -163,6 +163,18 @@
 - **版本追溯**：工单记录 `snapshotBomVersion` 字段，用于追溯生产时使用的 BOM 版本
 - **策略配置**：`erp-mfg.bom-snapshot-strategy`（LOCK_AT_CREATION：创建时锁定 / AUTO_UPGRADE：自动升级到最新版本，按物料可配）
 
+### §BOM 版本快照规则 实现注记（RC-R1.49，plan 2026-08-16-0904-1）
+
+> 本节为实现落地与概念表述的衔接说明（P1-RC-009 修复，UC-MFG-10 断言④⑤⑥ 运行时成立）。
+
+- **快照载体**：三实体族 + 工单二列（纯加性，Q3 授权 + 双独立子 agent 批准）——`ErpMfgWorkOrderBomSnapshot`（头：workOrderId/bomId/productId/versionLabel/qty）+ `ErpMfgWorkOrderBomLineSnapshot`（行：镜像 `ErpMfgBomLine` 的 materialId/skuId/uoMId/quantity/operationId/scrapRate/warehouseId/alternativeMaterialId/lineNo）+ `ErpMfgWorkOrderBomOperationSnapshot`（工艺行：镜像 `ErpMfgBomOperation` 的 operationId/workcenterId/standardTime/timeUnit/rate/lineNo）+ `ErpMfgWorkOrder.snapshotBomVersion`（版本追溯）/`snapshotBomId`（快照归属锚，= 来源 `ErpMfgBom.id`）。快照实体经 `cascade-delete` 随工单删除级联清理。选实体族而非工单行冻结列/JSON 列的原因见 plan Phase 1 D1 裁决（显式列纪律 + 行/工艺行分离查询 + 纯加性）。
+- **快照时机**：`ErpMfgWorkOrderProcessor.doSubmit` 内 protected step `snapshotBomOnSubmit`（DRAFT→SUBMITTED 同事务复制，下游可 Delta 覆盖）；幂等 = 快照已存在（snapshotBomVersion/snapshotBomId 非空）则跳过（重复 submit / reject→resubmit 不重快照，保持首次提交时点内容锁定）；无 BOM 或 BOM 无行 → 空快照 + LOG.warn 不阻断提交。
+- **读侧切换范围（D2 裁决）**：齐套（`KitAvailabilityChecker`：check/explodeRequirements 对已快照工单读快照行展开）与工序标准（`ProductionVarianceCalculator`：sumBomOperationStandardMins/deriveStandardLaborRate/resolvePrimaryWorkcenterId 读快照工艺行，工作中心费率为主数据实时读与实时路径同口径）切换至快照；**CostRollupService 保留实时读**（BOM 级标准成本维护工具无工单上下文，材料标准经 FIRMED 冻结后消费——已审核工单成本正确性由「快照齐套 + 快照工序标准 + FIRMED 材料标准」三件套保证；与 MA4 §7 字面偏离为显式裁决，plan Phase 1 D2 声明）；MRP/仿真计划期（新建工单语义）不变。
+- **快照展开语义**：快照仅锁定工单自身 BOM 内容（首级子件）；多级展开中制造/phantom 子件的子 BOM 仍实时解析（Non-Goal「BOM 自身版本历史管理」，不扩大快照面）。
+- **AUTO_UPGRADE 语义（D3 裁决）**：全局键两值——`LOCK_AT_CREATION`（默认，提交时快照 + 读侧恒用快照）；`AUTO_UPGRADE`（读侧对已快照工单 re-resolve 默认 BOM（`findDefaultBomOrNull`）实时展开，不写回快照；无默认 BOM 防御回退快照）。owner doc「按物料可配」粒度为 successor（触发条件=运营要求物料级升级控制时立项）。
+- **存量数据**：功能上线前已审核工单无快照 → 读侧保持实时 BOM 回退（零回归正确姿势，未做数据迁移——Q3 授权排除）。
+- **config 键**：`erp-mfg.bom-snapshot-strategy`（`ErpMfgConstants.CONFIG_BOM_SNAPSHOT_STRATEGY` + `ErpMfgConfigs.getBomSnapshotStrategy/isBomSnapshotAutoUpgrade`；空值=默认 LOCK_AT_CREATION；全仓 yaml 零 override）。
+
 ## 实现注记（漂移补注，计划 2026-07-02-1538-2）
 
 > 以下为实现落地与本文档概念表述的偏离裁决，权威计划：`docs/plans/2026-07-02-1538-2-manufacturing-bom-routing-rollup.md`。
@@ -172,4 +184,4 @@
 - **采购件基础成本源**：取默认 SKU 的 `ErpMdMaterialSku.purchasePrice`（DECIMAL 既有）；取最近入库 cost layer（跨 N=1 成本引擎耦合）为准确性增强（Follow-up，Non-Goal）。SKU 未配价时该采购件卷算抛 `ERR_ROLLUP_BASE_COST_MISSING`。
 - **工时/费率列类型修正**：`ErpMfgBomOperation.standardTime`、`ErpMfgRoutingOperation.standardTime`/`setupTime`/`runTime` 原列类型 DATETIME，`ErpMfgWorkcenter.hourlyRate` 原列类型 VARCHAR，与其 DECIMAL domain（`timeInMins`/`hourlyRate`）矛盾（存工时分钟数/费率却用 datetime/字符串，模型类型缺陷）。已修正列类型为 DECIMAL 对齐 domain，使工序成本 `standardTime/60 × workcenter.hourlyRate` 可数值计算。本文档工序行的 `time_in_mins`/`fixed_time`/`hour_rate`/`operating_cost` 为概念名，对应 ORM 列名 `standardTime`/`hourlyRate`。
 - **人工/制造费用分列**：工作中心仅有单一 `hourlyRate`（无独立人工/制造费率分列），故工序工时成本统一计入 `ErpMfgCostRollupLine.laborCost`，`overheadCost`=0；待工作中心费率拆分后细化（Follow-up）。`subcontractCost` 预留给外协工序（Non-Goal）。
-- **本期 Non-Goal**：WorkOrder/JobCard 状态机（2.2）、MRP（2.3）/CRP（2.8）、完工成本结转凭证（依赖 N=1 + WorkOrder）、联副产品分摊（步骤3）、外协工序成本、BOM 版本快照、AUTO_ON_BOM_CHANGE 自动重算、展开结果缓存表、`scrapRate` 纳入有效用量（损耗精细化）。卷算本期仅 MANUAL 触发 + 按标准用量计算。
+- **本期 Non-Goal**：WorkOrder/JobCard 状态机（2.2）、MRP（2.3）/CRP（2.8）、完工成本结转凭证（依赖 N=1 + WorkOrder）、联副产品分摊（步骤3）、外协工序成本、AUTO_ON_BOM_CHANGE 自动重算、展开结果缓存表、`scrapRate` 纳入有效用量（损耗精细化）。**BOM 版本快照已于 RC-R1.49（plan 2026-08-16-0904-1）实现**（见 §BOM 版本快照规则 实现注记），自本 Non-Goal 清单移除。卷算本期仅 MANUAL 触发 + 按标准用量计算。

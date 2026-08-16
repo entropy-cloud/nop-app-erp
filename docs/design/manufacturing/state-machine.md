@@ -69,7 +69,7 @@
 | 齐套校验时子件库存不足 | 进入 STOCK_PARTIAL，提示补料或强制开工 |
 | 领料时可用量不足（部分齐套开工后） | 拒绝本次领料，等待补库 |
 | 报工数量超过工单数量 | **当前硬编码拒绝**（`reportCompletion` 抛 `ERR_OVER_REPORT`，`ErpMfgErrors` 错误文案标注"未启用超产配置"）；可配置超产放行（config-gate）为 **successor，未落地**（`ErpMfgConstants` 无对应 config key） |
-| BOM 变更影响已开工工单 | 已开工工单不追溯 BOM 变更（快照）；新工单用新 BOM |
+| BOM 变更影响已开工工单 | 已开工工单不追溯 BOM 变更（快照）；新工单用新 BOM。**实现注记（RC-R1.49，plan 2026-08-16-0904-1）**：工单 DRAFT→SUBMITTED 时经 `snapshotBomOnSubmit` 复制 BOM 头+子件行+工艺行到快照实体族（`ErpMfgWorkOrderBomSnapshot`/`LineSnapshot`/`OperationSnapshot` + `ErpMfgWorkOrder.snapshotBomVersion/snapshotBomId`）；已审核工单的齐套检查与差异计算工序标准读快照（默认 LOCK_AT_CREATION；`erp-mfg.bom-snapshot-strategy=AUTO_UPGRADE` 时读侧 re-resolve 默认 BOM 实时展开） |
 | 工作中心停机 | 触发 DowntimeEntry，影响排产（人工决策停工或等待） |
 | 完工质检不合格 | quality 域反馈，触发返工（新建返工工单）或降级入库 |
 | 并发领料扣减同一批次 | 乐观锁 |
