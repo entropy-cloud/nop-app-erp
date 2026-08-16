@@ -222,6 +222,14 @@ CAPA 执行
         │                       └─► 非关键项不合格 → 可让步接收
 ```
 
+> **关键项否决实现注记（RC-R1.58，P1-RC-040，2026-08-16）**：本 § 关键项否决（UC-QA-06，L1 `use-cases.md:107-109`「关键项不合格 → 整体 REJECTED，无论其他项」）已运行时成立。
+>
+> - **载体**：`ErpQaInspectionTemplateLine.isCritical`（propId 17）+ `ErpQaInspectionLine.isCritical`（propId 18），INTEGER 可空无默认（null/0=非关键项；D1=选项 C，纯加性边界无 NOT NULL/默认/索引/UK，DDL 三方言 `IS_CRITICAL INTEGER NULL`）。
+> - **否决语义**：`InspectionResultEvaluator.aggregate` 循环内统一读 `line.getResult()`（显式行结果优先，否则 `evaluateLine`），任一关键项行 REJECTED → 强制整体 REJECTED（**跳过 allowConcession**）；关键项合格 + 非关键项 REJECTED + 让步 → CONDITIONAL；无让步 → REJECTED（D2）。
+> - **复制链**：模板行 `isCritical` 经 `TemplateLineSpec` → `InspectionTemplateMatcher.match` → `copyTemplateLinesToInspection` 复制到质检单行；无模板手工建行经 CRUD 直设；`recordResult` 不传 isCritical（否决仅读行实体字段）（D3）。
+> - **门控**：不加 config 门控——否决是验收标准硬契约，门控化会掩盖契约缺失（D4）。
+> - **非目标**：关键项行级 UI 标记样式（XMeta 生成展示）+ 多关键项权重/优先级（L1 无此语义）+ 关键项必检联动（isRequired × isCritical 正交）均不实现。
+
 ---
 
 ## 六、质量指标与报表
