@@ -61,13 +61,16 @@ public class ProjectCostCollectionProvider implements IErpFinAcctDocProvider {
         }
 
         String memo = buildMemo(event, sourceBillType);
+        // RC-R1.64：billData 承载源币种金额，本位币 = source × ctx.exchangeRate（buildEvent 已解析真实汇率，
+        // 镜像 PurAcctDocProvider.resolveRate 范式）
+        BigDecimal rate = resolveRate(ctx);
 
         List<VoucherFact> facts = new ArrayList<>(2);
-        VoucherFact debit = fact(debitSubjectCode, "项目成本", DC_DEBIT, amount, event, memo);
+        VoucherFact debit = fact(debitSubjectCode, "项目成本", DC_DEBIT, amount, rate, event, memo);
         debit.setProjectId(projectId);
         facts.add(debit);
 
-        VoucherFact credit = fact(creditSubjectCode, creditSubjectName(sourceBillType), DC_CREDIT, amount, event, memo);
+        VoucherFact credit = fact(creditSubjectCode, creditSubjectName(sourceBillType), DC_CREDIT, amount, rate, event, memo);
         credit.setProjectId(projectId);
         facts.add(credit);
 
@@ -85,13 +88,26 @@ public class ProjectCostCollectionProvider implements IErpFinAcctDocProvider {
         return sourceBillType == null ? null : sourceBillType;
     }
 
-    private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal amount,
-                             PostingEvent event, String memo) {
+    /** R1.9/RC-R1.64：billData 承载源币种金额；本位币 = source × ctx.exchangeRate（posting.md 文档锁定汇率）。 */
+    private BigDecimal resolveRate(AcctDocContext ctx) {
+        return ctx != null && ctx.getExchangeRate() != null ? ctx.getExchangeRate() : BigDecimal.ONE;
+    }
+
+    /**
+     * 构造单行 fact（RC-R1.64 双金额字段，镜像 PurAcctDocProvider 范式）。{@code sourceAmount} 为源币种金额
+     * （COST_AMOUNT，源币种）；{@code amount}/{@code amountFunctional} = source × rate（amount 保持本位币/功能金额
+     * 语义，GL 借贷与试算平衡以本位币为准）；{@code amountSource} = source。单币种 rate=1 → 三者相等（向后兼容）。
+     */
+    private VoucherFact fact(String subjectCode, String subjectName, String dcDirection, BigDecimal sourceAmount,
+                             BigDecimal rate, PostingEvent event, String memo) {
         VoucherFact fact = new VoucherFact();
+        BigDecimal functional = sourceAmount.multiply(rate);
         fact.setSubjectCode(subjectCode);
         fact.setSubjectName(subjectName);
         fact.setDcDirection(dcDirection);
-        fact.setAmount(amount);
+        fact.setAmount(functional);
+        fact.setAmountSource(sourceAmount);
+        fact.setAmountFunctional(functional);
         fact.setBusinessType(event.getBusinessType().name());
         fact.setMemo(memo);
         return fact;
