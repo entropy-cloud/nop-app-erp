@@ -1,6 +1,6 @@
 # 2026-08-17-0142-2-rc-mr1-r1-64-prj-timesheet-multicurrency-posting RC-R1.64 — projects 工时过账多币种（P1-MA1-010 reuse 重开：TimesheetPostingDispatcher.buildEvent 汇率解析替代 setExchangeRate(ONE)）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-17
 > Mission: requirement-compliance
 > Work Item: RC-R1.64（P1-MA1-010 reuse 重开，A4.2.116 多币种工时过账折算失真）
@@ -59,57 +59,79 @@
 
 ### Phase 1 - Explore + Decision（汇率解析载体）
 
-Status: planned
+Status: completed
 Targets: `module-projects/erp-prj-service/src/main/java/app/erp/prj/service/posting/TimesheetPostingDispatcher.java`（只读核查）、`module-master-data/erp-md-dao/.../biz/IErpMdExchangeRateBiz.java`（只读核查）、`docs/design/finance/posting.md`（只读复核）
 Skill: `nop-backend-dev`
 Item Types: `Decision`
 Prereqs: 无
 
-- [ ] Explore（只读）：① 复核 `TimesheetPostingDispatcher.buildEvent:124-150` 现状（exchangeRate=ONE 硬编码 + currencyId 传入 + 本位账套解析）；② `ProjectCostCollectionProvider.createFacts:49-75` + `fact():88-98` 现状（仅 setAmount，无 amountSource/amountFunctional）——确认双字段迁移落点与 `PurAcctDocProvider:130-131` 镜像范式；③ `ErpMdExchangeRate` 查询面——按 fromCurrencyId+toCurrencyId+validFrom<=date<=validTo 的查找范式（findFirstByQuery + 日期边界排序裁决：最近生效优先 vs 无边界匹配）；④ 跨域只读接入范式——IBizObjectManager 按名解析（对齐 `ErpFinPostingProcessor.findCurrencyById:571-577`）vs 直接注入 `IErpMdExchangeRateBiz`（pom 依赖核查）；⑤ 本位币判定——`IErpMdCurrencyBiz` isFunctional 查询（对齐 guardExchangeRate 语义）。
-      - Skill: `nop-backend-dev`
-- [ ] Decision D1（汇率解析载体 + Provider 双字段 + 缺失错误路径语义）：A. `TimesheetPostingDispatcher` 内联解析——currencyId=null → rate=1；本位币 → rate=1；非本位币 → `ErpMdExchangeRate` 按 currencyId+本位币 toCurrency + voucherDate 解析，命中 → rate，未命中 → 抛 `ERR_EXCHANGE_RATE_REQUIRED`（复用 finance ErpFinErrors 或 projects 新 ErrorCode——裁决错误码归属）；B. 抽共享汇率解析 helper（cost 包，供后续 P2-RC-050 协同复用）——若选 B 记录复用触发条件。**D1 必须同时裁决**：(i) **Provider 双字段迁移范围**（`ProjectCostCollectionProvider.fact()` 增 `setAmount(amountFunctional)` + `setAmountSource(amount)` + `setAmountFunctional(amount×ctx.exchangeRate)`，镜像 PurAcctDocProvider 范式——amountFunctional 折算需 buildEvent 真实 rate + Provider 双字段两点协同，缺一不可）；(ii) **汇率缺失错误路径语义**——选项 α：buildEvent 抛错传播（tryPost 外 → approve 事务回滚 → 单据保持 **SUBMITTED**，无告警，与既有 buildEvent 校验错误先例 `ERR_PROJECT_DEBIT_SUBJECT_NOT_RESOLVED` 同型）；选项 β：把 buildEvent 移入 tryPost 的 try 块（→ dispatchFailureAlert + return false → APPROVED+posted=false）。裁决标准：与既有 buildEvent 校验错误语义一致（α）+ L1 UC-FIN-12「汇率缺失 → 报错拒绝过账」（α 命中）；残留风险（汇率缺失时审批被拒，操作员需补录汇率后重提——无悬挂，显式可恢复）。
-  - Skill: `nop-backend-dev`
+- [x] Explore（只读）：① 复核 `TimesheetPostingDispatcher.buildEvent:124-150` 现状（exchangeRate=ONE 硬编码 + currencyId 传入 + 本位账套解析）；② `ProjectCostCollectionProvider.createFacts:49-75` + `fact():88-98` 现状（仅 setAmount，无 amountSource/amountFunctional）——确认双字段迁移落点与 `PurAcctDocProvider:130-131` 镜像范式；③ `ErpMdExchangeRate` 查询面——按 fromCurrencyId+toCurrencyId+validFrom<=date<=validTo 的查找范式（findFirstByQuery + 日期边界排序裁决：最近生效优先 vs 无边界匹配）；④ 跨域只读接入范式——IBizObjectManager 按名解析（对齐 `ErpFinPostingProcessor.findCurrencyById:571-577`）vs 直接注入 `IErpMdExchangeRateBiz`（pom 依赖核查）；⑤ 本位币判定——`IErpMdCurrencyBiz` isFunctional 查询（对齐 guardExchangeRate 语义）。
+       - Skill: `nop-backend-dev`
+- [x] Decision D1（汇率解析载体 + Provider 双字段 + 缺失错误路径语义）：A. `TimesheetPostingDispatcher` 内联解析——currencyId=null → rate=1；本位币 → rate=1；非本位币 → `ErpMdExchangeRate` 按 currencyId+本位币 toCurrency + voucherDate 解析，命中 → rate，未命中 → 抛 `ERR_EXCHANGE_RATE_REQUIRED`（复用 finance ErpFinErrors 或 projects 新 ErrorCode——裁决错误码归属）；B. 抽共享汇率解析 helper（cost 包，供后续 P2-RC-050 协同复用）——若选 B 记录复用触发条件。**D1 必须同时裁决**：(i) **Provider 双字段迁移范围**（`ProjectCostCollectionProvider.fact()` 增 `setAmount(amountFunctional)` + `setAmountSource(amount)` + `setAmountFunctional(amount×ctx.exchangeRate)`，镜像 PurAcctDocProvider 范式——amountFunctional 折算需 buildEvent 真实 rate + Provider 双字段两点协同，缺一不可）；(ii) **汇率缺失错误路径语义**——选项 α：buildEvent 抛错传播（tryPost 外 → approve 事务回滚 → 单据保持 **SUBMITTED**，无告警，与既有 buildEvent 校验错误先例 `ERR_PROJECT_DEBIT_SUBJECT_NOT_RESOLVED` 同型）；选项 β：把 buildEvent 移入 tryPost 的 try 块（→ dispatchFailureAlert + return false → APPROVED+posted=false）。裁决标准：与既有 buildEvent 校验错误语义一致（α）+ L1 UC-FIN-12「汇率缺失 → 报错拒绝过账」（α 命中）；残留风险（汇率缺失时审批被拒，操作员需补录汇率后重提——无悬挂，显式可恢复）。
+   - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] D1 落地（理由 + 替代方案 + 残留风险）；汇率查询范式/本位币判定/错误码归属明确，解除 Phase 2 阻塞
+- [x] D1 落地（理由 + 替代方案 + 残留风险）；汇率查询范式/本位币判定/错误码归属明确，解除 Phase 2 阻塞
+
+#### D1 裁决记录（2026-08-17，实仓核查）
+
+**Explore 实证**（live code）：
+- ① `buildEvent:124-133` 现状核实：`setAcctSchemaId(resolveAcctSchemaId(orgId)):128` + `setCurrencyId:129` + `setExchangeRate(BigDecimal.ONE):130`；voucherDate=`workDate ?: today`:131-132。
+- ② `ProjectCostCollectionProvider.fact():88-98` 仅 `setAmount(amount):94`，无 amountSource/amountFunctional；镜像范式 `PurAcctDocProvider:113-135`（`resolveRate(ctx)`=ctx.getExchangeRate()?:ONE + `fact()` functional=source×rate，setAmount(functional)+setAmountSource(source)+setAmountFunctional(functional)）。引擎 `persistVoucher:853-879`：ctx.exchangeRate→line.exchangeRate，fact 双字段未设时 fallback amount，GL debit/credit 按 amtFunctional。
+- ③ `ErpMdExchangeRate` 字段齐备（fromCurrencyId/toCurrencyId/rateType[default SPOT]/rate/validFrom/validTo）；objMeta `fromCurrencyId/toCurrencyId/validFrom/validTo/rateType` 全部 `queryable=true`（IBiz findFirst 管道可用）；md 域内既有查询先例 `ErpMdCurrencyRefreshRatesFromApiProcessor.findExistingRate:99-108`（eq from/to + findAllByQuery）。
+- ④ pom 核查：erp-prj-service 对 md-**service** 仅 test-scope（BizModel bean 测试注册），md-**dao** 经 finance-service 链 transitive compile（`AcctSchemaResolver`/`ErpMdSubject` 已 import 实证）——直接 `@Inject IErpMdExchangeRateBiz` 编译可行但单域测试 IoC 解析依赖 test-scope bean；`IBizObjectManager` 按名解析（`io.nop.biz.api`，nop-biz compile dep）为 finance 已验证先例（`findCurrencyById:571-577` + `resolveSubjects:646-648` 注释明示「finance→erp-md-service 仅 test 作用域，故非 BizModel 编排 bean 经 IBizObjectManager 按名解析」）。
+- ⑤ 本位币判定：`ErpMdCurrency.isFunctional`（objMeta queryable=true）；owner doc `posting.md:445` R1.42 注记明示「本位币判定载体 = `ErpMdCurrency.isFunctional` 字段（`eq("isFunctional",TRUE)` 查询范式，`ErpMdAcctSchema.functionalCurrencyId` 作 schema 级细分兜底载体，归 successor）」。
+
+**裁决 A：TimesheetPostingDispatcher 内联解析（Option A）+ IBizObjectManager 按名解析跨域只读（Option ④之 IBizObjectManager 分支）**：
+- `@Inject IBizObjectManager bizObjectManager`（包级可见，镜像 `ErpFinPostingProcessor:90`）；`IErpMdCurrencyBiz`/`IErpMdExchangeRateBiz` 均经 `getBizObject(<Entity>.class.getSimpleName()).asProxy()` 解析——**零新增 daoFor 站点（R2c/R2d 零漂移）**，且与 R1.42 守卫同一解析范式（语义同源）。
+- 三态：currencyId=null → rate=1（行为保持）；币种按 id 解析（findFirst eq("id")）——记录不存在 → rate=1 保守放行（镜像 guardExchangeRate D2 裁决语义，既有 158 测试不 seed ErpMdCurrency 零回归的前提）；`isFunctional=TRUE` → rate=1（本位币折算恒等式）。
+- 非本位币折算目标币种 = `eq("isFunctional",TRUE)` findFirst 解析的本位币（owner doc :445 主载体；schema.functionalCurrencyId 细分归 successor）。本位币缺失（无非本位币可折算目标）与汇率行未命中同归「汇率缺失」→ 抛错。
+- 汇率行查询：`eq(fromCurrencyId)+eq(toCurrencyId)` + `le(validFrom,voucherDate)+ge(validTo,voucherDate)` 边界匹配 + `addOrderField(validFrom,true)` 最近生效优先 + limit 1（**裁决：边界匹配 + 最近生效优先**，无边界匹配行不回退更早汇率——避免静默用错期汇率；rateType 不作过滤条件——ORM default SPOT 与 refresh API 写入 MIDDLE 并存，按类型过滤会漏另一类数据行，rateType 为信息性维度）。
+- 替代方案 B（抽共享 helper 到 cost 包）否决：当前 voucher 面仅此一处消费；P2-RC-050 回队时按 Deferred But Adjudicated 触发条件抽取（复用触发条件已登记）。
+
+**裁决 (i)：Provider 双字段迁移**——`ProjectCostCollectionProvider.createFacts` 增 `resolveRate(ctx)`（镜像 PurAcctDocProvider:114-116），`fact()` 增 rate 参数：`functional = sourceAmount.multiply(rate)`，`setAmount(functional)` + `setAmountSource(sourceAmount)` + `setAmountFunctional(functional)`；source=`BILL_DATA_COST_AMOUNT`（timesheet.costAmount，源币种）。单币种 rate=1 → source==functional==amount 三者相等（向后兼容，既有断言 `amountFunctional==8000.00` 不变）。expense 路径（`SOURCE_BILL_TYPE=EXPENSE`）同 Provider 双字段同享折算——`ErpMdCurrency.isFunctional=TRUE` 单币种主路径行为不变，多币种 EXPENSE 消费方向无既有断言（非回归面）。
+
+**裁决 (ii)：选项 α（buildEvent 抛错传播 → 单据保持 SUBMITTED）**——buildEvent 在 tryPost:61 try 块外（实仓 :61-62 核实），抛 `ERR_EXCHANGE_RATE_REQUIRED` 传播出 tryPost → `ErpPrjTimesheetApproveProcessor.approve:49` → @BizMutation 事务回滚 → 单据保持 SUBMITTED（无告警派发），与既有 buildEvent 校验错误先例（`ERR_PROJECT_DEBIT_SUBJECT_NOT_RESOLVED`:113-116 / `ERR_PAYROLL_SUBJECT_NOT_CONFIGURED`:118-122 同型）。选项 β（移入 try 块 → APPROVED+posted=false+告警）否决：与同类配置缺失校验错误分级不一致。残留风险：汇率缺失时审批被拒，操作员补录 `ErpMdExchangeRate` 后重提 approve 显式可恢复（无悬挂）。
+
+**错误码归属：复用 finance `ErpFinErrors.ERR_EXCHANGE_RATE_REQUIRED`**（`erp.err.fin.exchange-rate-required`，含 `{currencyCode}` 参数）——该错误语义由 R1.42 守卫定义且 owner doc（posting.md:444-445）归 finance「汇率缺失→报错拒绝过账」；工时侧抛同一码使跨域语义统一（调用方单码处理），erp-prj-service 已有 finance-service compile 依赖（`ErpFinBusinessType`/`PostingEvent` import 实证）；projects 侧新建 `ErpPrjErrors` 码会分裂同一语义错误面。
 
 ### Phase 2 - 工时过账汇率解析 + Provider 双字段实现（Add）
 
-Status: planned
+Status: completed
 Targets: `module-projects/erp-prj-service/.../posting/TimesheetPostingDispatcher.java`（buildEvent 改造）、`module-projects/erp-prj-service/.../posting/ProjectCostCollectionProvider.java`（双字段迁移）、`ErpPrjConstants`/`ErpPrjErrors`（按需）
 Skill: `nop-backend-dev`
 Item Types: `Add`
 Prereqs: Phase 1
 
-- [ ] Add：`buildEvent` 汇率解析——按 D1 载体替代 `setExchangeRate(BigDecimal.ONE)`：currencyId=null/本位币 → rate=1 回退（行为保持）；非本位币 → 汇率解析（currencyId + 本位币 + voucherDate 边界），缺失抛 `ERR_EXCHANGE_RATE_REQUIRED`（守卫语义对齐 R1.42）；**缺失错误路径按 D1 (ii) 裁决落地**（选项 α：buildEvent 抛错传播 → approve 事务回滚 → 单据保持 SUBMITTED）。
-      - Skill: `nop-backend-dev`
-- [ ] Add：`ProjectCostCollectionProvider.fact()` 双字段迁移——`setAmount(amountFunctional)` + `setAmountSource(amount)` + `setAmountFunctional(amount×ctx.exchangeRate)`（amount 保持本位币/功能金额语义，镜像 `PurAcctDocProvider:129-131` + P1-MA3-039 方案 A）；单币种路径（rate=1）行为保持（source==functional==amount 向后兼容）。
-      - Skill: `nop-backend-dev`
+- [x] Add：`buildEvent` 汇率解析——按 D1 载体替代 `setExchangeRate(BigDecimal.ONE)`：currencyId=null/本位币 → rate=1 回退（行为保持）；非本位币 → 汇率解析（currencyId + 本位币 + voucherDate 边界），缺失抛 `ERR_EXCHANGE_RATE_REQUIRED`（守卫语义对齐 R1.42）；**缺失错误路径按 D1 (ii) 裁决落地**（选项 α：buildEvent 抛错传播 → approve 事务回滚 → 单据保持 SUBMITTED）。
+       - Skill: `nop-backend-dev`
+- [x] Add：`ProjectCostCollectionProvider.fact()` 双字段迁移——`setAmount(amountFunctional)` + `setAmountSource(amount)` + `setAmountFunctional(amount×ctx.exchangeRate)`（amount 保持本位币/功能金额语义，镜像 `PurAcctDocProvider:129-131` + P1-MA3-039 方案 A）；单币种路径（rate=1）行为保持（source==functional==amount 向后兼容）。
+       - Skill: `nop-backend-dev`
 
 Exit Criteria:
 
-- [ ] buildEvent 汇率解析三态（本位币回退/非本位币解析/缺失拒绝按 D1(ii) 错误路径）+ Provider 双字段折算行为落地，amountFunctional = amount×rate 运行时成立；`mvn compile -DskipTests -pl module-projects/erp-prj-service` 通过（本地化类型检查，解除 Phase 3 阻塞）
+- [x] buildEvent 汇率解析三态（本位币回退/非本位币解析/缺失拒绝按 D1(ii) 错误路径）+ Provider 双字段折算行为落地，amountFunctional = amount×rate 运行时成立；`mvn compile -DskipTests -pl module-projects/erp-prj-service` 通过（本地化类型检查，解除 Phase 3 阻塞）
 
 ### Phase 3 - 测试 + 文档 + 回填（Add | Proof）
 
-Status: planned
+Status: completed
 Targets: `module-projects/erp-prj-service/src/test/`、`docs/design/projects/cost-collection.md`、`docs/audits/arm-index.md`、`docs/backlog/requirement-compliance-roadmap.md`、`docs/logs/2026/08-17.md`
 Skill: `nop-testing`
 Item Types: `Add | Proof`
 Prereqs: Phase 2
 
-- [ ] Proof：新增多币种工时过账测试组——①非本位币（USD 项目 + CNY 本位账套）汇率 seed → approve → 凭证行断言 amountSource=源币金额 + amountFunctional=amount×rate + voucherLine.exchangeRate=rate + fact.amount==amountFunctional（折算失真消除）；②非本位币汇率缺失 → 抛 ERR_EXCHANGE_RATE_REQUIRED + **单据保持 SUBMITTED**（approve 事务回滚，D1(ii) 选项 α 语义；buildEvent 校验错误先例同型，无告警派发）；③本位币/currencyId=null → rate=1 行为保持（既有断言零回归）；④既有 158 tests 零回归。
-      - Skill: `nop-testing`
-- [ ] Proof：`mvn test -pl module-projects/erp-prj-service` 全绿（分域测试，全量验证属 Closure Gates）。
-      - Skill: `nop-testing`
-- [ ] Add：owner doc 回填——`cost-collection.md` §2.4/§六 补多币种工时过账实现注记 + D1 裁决记录；arm-index P1-MA1-010 行追加 RC-R1.64 闭合注记（业务逻辑层闭合 + P2-RC-050 协同边界声明）；roadmap RC-R1.64 → done ✅（行标签按 B 类裁决改写）；本日志条目。
-      - Skill: `none`
+- [x] Proof：新增多币种工时过账测试组——①非本位币（USD 项目 + CNY 本位账套）汇率 seed → approve → 凭证行断言 amountSource=源币金额 + amountFunctional=amount×rate + voucherLine.exchangeRate=rate + fact.amount==amountFunctional（折算失真消除）；②非本位币汇率缺失 → 抛 ERR_EXCHANGE_RATE_REQUIRED + **单据保持 SUBMITTED**（approve 事务回滚，D1(ii) 选项 α 语义；buildEvent 校验错误先例同型，无告警派发）；③本位币/currencyId=null → rate=1 行为保持（既有断言零回归）；④既有 158 tests 零回归。
+       - Skill: `nop-testing`
+- [x] Proof：`mvn test -pl module-projects/erp-prj-service` 全绿（分域测试，全量验证属 Closure Gates）。
+       - Skill: `nop-testing`
+- [x] Add：owner doc 回填——`cost-collection.md` §2.4/§六 补多币种工时过账实现注记 + D1 裁决记录；arm-index P1-MA1-010 行追加 RC-R1.64 闭合注记（业务逻辑层闭合 + P2-RC-050 协同边界声明）；roadmap RC-R1.64 → done ✅（行标签按 B 类裁决改写）；本日志条目。
+       - Skill: `none`
 
 Exit Criteria:
 
-- [ ] 测试组全绿 + 既有 158 tests 零回归（分域 `mvn test -pl module-projects/erp-prj-service`；全量验证 + checker 属 Closure Gates）
-- [ ] owner doc/arm-index/roadmap 回填完成，D1 裁决留痕
+- [x] 测试组全绿 + 既有 158 tests 零回归（分域 `mvn test -pl module-projects/erp-prj-service`；全量验证 + checker 属 Closure Gates）
+- [x] owner doc/arm-index/roadmap 回填完成，D1 裁决留痕
 
 ## Draft Review Record
 
@@ -119,14 +141,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（buildEvent 汇率解析三态 + 凭证折算正确性）
-- [ ] 相关文档对齐（cost-collection.md 注记 + arm-index + roadmap + logs）
-- [ ] 已运行验证（`mvn test -pl module-projects/erp-prj-service` + 全量 `mvn test` + `mvn clean install -DskipTests` + `bash docs/audits/nop-compliance-checker.sh`）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（buildEvent 汇率解析三态 + 凭证折算正确性）
+- [x] 相关文档对齐（cost-collection.md 注记 + arm-index + roadmap + logs）
+- [x] 已运行验证（`mvn test -pl module-projects/erp-prj-service` 172/0/0 + 全量 `mvn test` BUILD SUCCESS 13:01 min + `mvn clean install -DskipTests` BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` 全 19 规则 actual == baseline 零漂移[R2b=235/R2c=1434/R2d=35/R12a=70/R12b=66/R12c=40]）
+- [x] 无范围内项目降级为 deferred/follow-up（Deferred 三项均为计划预裁定 residual，非范围内降级）
+- [x] 独立草案审查已完成并记录（Draft Review Record iter-1 Blocker/iter-2 Major 修复 + iter-3 acceptable as-is）
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -150,13 +172,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: <why the plan can close>
+Status Note: 三 Phase 全部完成且经独立结束审计 PASS——buildEvent 汇率解析三态（null/币种不存在保守放行/本位币 → rate=1；非本位币边界解析缺失抛 ERR_EXCHANGE_RATE_REQUIRED）+ Provider 双字段折算（amountSource/amountFunctional，镜像 PurAcctDocProvider）落地，D1 全部裁决维度（载体/i/ii）按裁决执行；测试 4 组新增全绿 + erp-prj-service 172 tests 零回归 + 全量 mvn test/clean install BUILD SUCCESS + compliance checker 全 19 规则零漂移；owner doc/arm-index/roadmap/logs 回填完成。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立子代理（新会话，general subagent）
+- Evidence: task id `ses_feef01871ffepCeQARuY506EjF`（2026-08-18，verdict **PASS** 全 6 项：D1 代码逐条 file:line 核验[三态 :202-213/边界 :252-258/错误 :269-272/IBizObjectManager :230/:239/:259 零新增 daoFor] + 独立复跑测试[定向 4/0/0 + 全模块 172/0/0] + 文档回填四处核验 + 计划一致性 + 反模式零命中 + checker 复跑零漂移；非阻塞注记：工作树未提交属预期，闭包后由执行者勾选门控）
 
 Follow-up:
 
-- <仅非阻塞跟进项目；已确认的缺陷不得出现在此处>
+- 无（Deferred 三项已裁定归 successor，见 Deferred But Adjudicated；P2-RC-050 协同边界已在 arm-index/owner doc 声明）

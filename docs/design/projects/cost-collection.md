@@ -102,6 +102,17 @@
         └─► 辅助核算：projectId = "PRJ2024001", activityType = "开发"
 ```
 
+> **多币种工时过账实现注记（RC-R1.64 / P1-MA1-010 业务逻辑层闭合，2026-08-17，L1 UC-PRJ-02/06「多币种折算到统一币种」）**：
+> `TimesheetPostingDispatcher.buildEvent` 汇率解析替代 `setExchangeRate(ONE)` 硬编码——三态：
+> currencyId=null / 币种不存在（保守放行，镜像 R1.42 守卫 D2）/ 本位币（`ErpMdCurrency.isFunctional=TRUE`）→ rate=1 回退（单币种行为保持）；
+> 非本位币 → `ErpMdExchangeRate` 按 from=currencyId + to=本位币 + `validFrom<=voucherDate<=validTo` 边界匹配（validFrom 降序最近生效优先，limit 1，rateType 信息性维度不过滤）解析，
+> 本位币缺失或汇率行未命中 → 抛 `ErpFinErrors.ERR_EXCHANGE_RATE_REQUIRED`（复用 finance R1.42 语义，跨域单码处理）。
+> 折算落地为 **buildEvent + Provider 双点协同**：`ProjectCostCollectionProvider.fact()` 增 `setAmount(functional)` + `setAmountSource(source)` + `setAmountFunctional(source×rate)`
+> （镜像 `PurAcctDocProvider` 范式，amount 保持本位币/功能金额语义）——上例 USD 项目场景：amountSource=8000 USD、amountFunctional=8000×rate，GL 借贷按本位币记账，试算平衡不破坏。
+> 汇率缺失错误路径（D1(ii) 选项 α）：buildEvent 在 `tryPost` try 块外抛错传播 → approve 事务回滚 → 单据保持 **SUBMITTED**（与既有 buildEvent 校验错误先例 `ERR_PROJECT_DEBIT_SUBJECT_NOT_RESOLVED` 同型，无告警派发；操作员补录 `ErpMdExchangeRate` 后重提显式可恢复）。
+> 边界查询经 `dateBetween(epoch/2999 哨兵)` 表达（XMeta 过滤算子白名单无 ge/le，对齐 contract/hr 域先例）；跨域只读经 `IBizObjectManager` 按名解析（对齐 `ErpFinPostingProcessor.findCurrencyById` 范式，零新增 daoFor 站点）。
+> 归集头 exchangeRate metadata 面（`ProjectCostAggregator`/`MaterialCostAggregator`/`ExpenseCostAggregator`）与 PnL 快照折算归 P2-RC-050 successor（消费侧=PnL 聚合/辅助核算，非 voucher 路径）。
+
 ---
 
 ## 三、项目预算控制
@@ -287,6 +298,8 @@
 ```
 
 > **工时过账失败告警（G3 错误传播分级）**：`TimesheetPostingDispatcher.tryPost` 过账失败（吞异常保持 APPROVED+posted=false 不阻塞终态）现派发 `IErpSysNotificationBiz` 告警（`prj.timesheet-posting-failure`），使 GL 缺 PROJECT_COST_COLLECTION 凭证悬挂可被运营感知（业财不一致经期末试算平衡人工发现，projects 不纳入期末前置检查覆盖矩阵）。
+
+> **多币种汇率语义（RC-R1.64，与 finance 域同源）**：工时过账汇率由 projects 侧 `buildEvent` 显式解析（`ErpMdExchangeRate` 数据载体）后传入 finance 引擎，使 R1.42 `guardExchangeRate` 守卫对工时路径真正生效（修复前恒传 ONE 导致守卫结构性失效）；本位币判定载体 = `ErpMdCurrency.isFunctional` 字段（schema 级 `functionalCurrencyId` 细分归 successor，语义对齐 `posting.md` R1.42 注记）。跨域只读经 `IBizObjectManager` 按名解析 `IErpMdCurrencyBiz`/`IErpMdExchangeRateBiz`（对齐 finance 引擎既有范式）。
 
 ### 6.2 与采购域协作
 
