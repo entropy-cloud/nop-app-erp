@@ -38,15 +38,21 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
     static final String SUBJECT_FIXED_ASSET = "1601";       // 固定资产（CLOSE 资本化借方）
     static final String SUBJECT_CIP = "1603";               // 在建工程（CLOSE 转固贷方）
     static final String SUBJECT_PROFIT_LOSS = "4103";       // 本年利润（FINAL/INTERIM 损益平衡科目）
+    static final String SUBJECT_RETENTION_RECEIVABLE = "1122";  // 应收账款-质保金（留存借方 / 返还贷方，RC-R1.63 D2）
+    static final String SUBJECT_RETENTION_PAYABLE = "2241";     // 其他应付款-质保金（留存贷方 / 返还借方，RC-R1.63 D2）
 
     /**
      * A1 GL 映射键（plan 2026-07-24-1351-1）：FIXED_ASSET/REVENUE 通用键复用；CIP/PROJECT_COST/PROFIT_LOSS 域专用键。
+     * RETENTION_RECEIVABLE/RETENTION_PAYABLE 为质保金域专用键（RC-R1.63 / P1-RC-052，D2 选项 A：
+     * GL mapping 规则可覆盖 subjectCode，空匹配回退 Provider 默认编码——部署须预置 1122/2241 科目）。
      */
     static final String ACCOUNT_KEY_FIXED_ASSET = "FIXED_ASSET";
     static final String ACCOUNT_KEY_CIP = "CIP";
     static final String ACCOUNT_KEY_PROJECT_COST = "PROJECT_COST";
     static final String ACCOUNT_KEY_PROFIT_LOSS = "PROFIT_LOSS";
     static final String ACCOUNT_KEY_REVENUE = "REVENUE";
+    static final String ACCOUNT_KEY_RETENTION_RECEIVABLE = "RETENTION_RECEIVABLE";
+    static final String ACCOUNT_KEY_RETENTION_PAYABLE = "RETENTION_PAYABLE";
 
     @Override
     public Set<ErpFinBusinessType> getSupportedBusinessTypes() {
@@ -60,6 +66,8 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
         BigDecimal finalCost = readDecimal(event, ErpPrjConstants.BILL_DATA_FINAL_COST);
         Long projectId = readLong(event, ErpPrjConstants.BILL_DATA_PROJECT_ID);
         boolean transferToAsset = readBoolean(event, ErpPrjConstants.BILL_DATA_TRANSFER_TO_ASSET);
+        BigDecimal retentionAmount = readDecimal(event, ErpPrjConstants.BILL_DATA_RETENTION_AMOUNT);
+        boolean retentionReturn = readBoolean(event, ErpPrjConstants.BILL_DATA_RETENTION_RETURN);
         String memo = null;
 
         List<VoucherFact> facts = new ArrayList<>();
@@ -74,9 +82,10 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
             VoucherFact credit = fact(SUBJECT_CIP, "在建工程", DC_CREDIT, finalCost, event, memo, ACCOUNT_KEY_CIP);
             credit.setProjectId(projectId);
             facts.add(credit);
-        } else {
+        } else if (!retentionReturn) {
             // FINAL/INTERIM：借项目成本（结转）+ 本年利润（损益平衡）/ 贷项目收入（结转）。
             // 平衡：finalCost + profitLoss = finalRevenue。
+            // 返还凭证（RETENTION_RETURN=true）跳过主结算腿——仅生成质保金镜像对冲腿，避免重复结转。
             BigDecimal profitLoss = finalRevenue.subtract(finalCost);
             VoucherFact debitCost = fact(SUBJECT_PROJECT_COST, "项目成本", DC_DEBIT, finalCost, event, memo,
                     ACCOUNT_KEY_PROJECT_COST);
@@ -97,6 +106,31 @@ public class ProjectSettlementAcctDocProvider implements IErpFinAcctDocProvider 
                     ACCOUNT_KEY_REVENUE);
             creditRevenue.setProjectId(projectId);
             facts.add(creditRevenue);
+        }
+
+        // RC-R1.63 / P1-RC-052（D2 选项 A）：质保金平衡腿（金额=retentionAmount，标 projectId 辅助核算）。
+        // 留存（主结算凭证内）：借 1122 应收账款-质保金 / 贷 2241 其他应付款-质保金。
+        // 返还（billHeadCode=结算单号#RETURN 独立凭证）：镜像腿 借 2241 / 贷 1122 对冲清零。
+        if (retentionAmount.signum() != 0) {
+            if (retentionReturn) {
+                VoucherFact dr = fact(SUBJECT_RETENTION_PAYABLE, "其他应付款-质保金", DC_DEBIT, retentionAmount, event,
+                        memo, ACCOUNT_KEY_RETENTION_PAYABLE);
+                dr.setProjectId(projectId);
+                facts.add(dr);
+                VoucherFact cr = fact(SUBJECT_RETENTION_RECEIVABLE, "应收账款-质保金", DC_CREDIT, retentionAmount, event,
+                        memo, ACCOUNT_KEY_RETENTION_RECEIVABLE);
+                cr.setProjectId(projectId);
+                facts.add(cr);
+            } else {
+                VoucherFact dr = fact(SUBJECT_RETENTION_RECEIVABLE, "应收账款-质保金", DC_DEBIT, retentionAmount, event,
+                        memo, ACCOUNT_KEY_RETENTION_RECEIVABLE);
+                dr.setProjectId(projectId);
+                facts.add(dr);
+                VoucherFact cr = fact(SUBJECT_RETENTION_PAYABLE, "其他应付款-质保金", DC_CREDIT, retentionAmount, event,
+                        memo, ACCOUNT_KEY_RETENTION_PAYABLE);
+                cr.setProjectId(projectId);
+                facts.add(cr);
+            }
         }
         return facts;
     }

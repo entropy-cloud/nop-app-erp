@@ -46,6 +46,17 @@ public class ErpPrjProjectSettlementCreateSettlementProcessor {
         settlement.setFinalCost(facade.nz(snapshot.getTotalCost()));
         settlement.setFinalProfit(facade.nz(snapshot.getGrossProfit()));
         settlement.setTransferToAsset(ErpPrjConstants.SETTLEMENT_TYPE_CLOSE.equals(settlementType));
+        // RC-R1.63 / P1-RC-052（UC-PRJ-07 ④）：仅 FINAL（竣工结算）自动留存质保金——D1 选项 A（config 驱动）。
+        // retentionAmount = finalRevenue × erp-prj.settlement-retention-ratio（默认 0=设计性 opt-in，零非静默缺失）；
+        // retentionDueDate = businessDate + erp-prj.settlement-retention-due-months（默认 12）。
+        // INTERIM（阶段结算无尾款留存语义）/CLOSE（自建转固非应收）不填；手工覆盖路径保留（CRUD update 可改）。
+        if (ErpPrjConstants.SETTLEMENT_TYPE_FINAL.equals(settlementType)) {
+            BigDecimal retention = facade.computeRetentionAmount(settlement.getFinalRevenue());
+            settlement.setRetentionAmount(retention);
+            if (retention.signum() > 0) {
+                settlement.setRetentionDueDate(facade.computeRetentionDueDate(settlement.getBusinessDate()));
+            }
+        }
         settlement.setDocStatus(ErpPrjConstants.DOC_STATUS_DRAFT);
         settlement.setApproveStatus(ErpPrjConstants.APPROVE_STATUS_UNSUBMITTED);
         settlement.setPosted(false);

@@ -6,6 +6,7 @@ import app.erp.prj.service.processor.ErpPrjProjectSettlementApproveProcessor;
 import app.erp.prj.service.processor.ErpPrjProjectSettlementCancelProcessor;
 import app.erp.prj.service.processor.ErpPrjProjectSettlementCreateSettlementProcessor;
 import app.erp.prj.service.processor.ErpPrjProjectSettlementRejectProcessor;
+import app.erp.prj.service.processor.ErpPrjProjectSettlementReturnRetentionProcessor;
 import app.erp.prj.service.processor.ErpPrjProjectSettlementReverseSettlementProcessor;
 import app.erp.prj.service.processor.ErpPrjProjectSettlementSubmitForApprovalProcessor;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -45,6 +46,9 @@ public class ErpPrjProjectSettlementBizModel extends CrudBizModel<ErpPrjProjectS
 
     @Inject
     ErpPrjProjectSettlementReverseSettlementProcessor reverseSettlementProcessor;
+
+    @Inject
+    ErpPrjProjectSettlementReturnRetentionProcessor returnRetentionProcessor;
 
     public ErpPrjProjectSettlementBizModel() {
         setEntityName(ErpPrjProjectSettlement.class.getName());
@@ -86,6 +90,12 @@ public class ErpPrjProjectSettlementBizModel extends CrudBizModel<ErpPrjProjectS
     @BizMutation
     public ErpPrjProjectSettlement reverseSettlement(@Name("settlementId") Long settlementId, IServiceContext context) {
         return reverseSettlementProcessor.reverseSettlement(settlementId, context);
+    }
+
+    @Override
+    @BizMutation
+    public ErpPrjProjectSettlement returnRetention(@Name("settlementId") Long settlementId, IServiceContext context) {
+        return returnRetentionProcessor.returnRetention(settlementId, context);
     }
 
 }

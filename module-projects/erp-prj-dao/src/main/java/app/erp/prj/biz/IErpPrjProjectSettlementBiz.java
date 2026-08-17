@@ -56,4 +56,13 @@ public interface IErpPrjProjectSettlementBiz extends ICrudBiz<ErpPrjProjectSettl
      */
     @BizMutation
     ErpPrjProjectSettlement reverseSettlement(@Name("settlementId") Long settlementId, IServiceContext context);
+
+    /**
+     * 质保金到期返还（RC-R1.63 / P1-RC-052，UC-PRJ-07 ⑤）。扫描到期结算（docStatus/approveStatus=APPROVED
+     * + posted=true + retentionAmount&gt;0 + retentionDueDate&lt;=today），生成质保金返还凭证（billHeadCode=结算单号#RETURN，
+     * 借 2241 其他应付款-质保金 / 贷 1122 应收账款-质保金 镜像对冲）。幂等：已返还重复调用 no-op 零副作用；
+     * 守卫失败抛 {@code ERR_RETENTION_RETURN_NOT_ALLOWED}；返还过账失败抛 {@code ERR_RETENTION_RETURN_POSTING_FAILED}。
+     */
+    @BizMutation
+    ErpPrjProjectSettlement returnRetention(@Name("settlementId") Long settlementId, IServiceContext context);
 }

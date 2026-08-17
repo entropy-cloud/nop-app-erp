@@ -2,6 +2,8 @@ package app.erp.prj.service.processor;
 
 import app.erp.ast.biz.IErpAstAssetBiz;
 import app.erp.ast.dao.entity.ErpAstAsset;
+import app.erp.fin.dao.ErpFinBusinessType;
+import app.erp.fin.dao.entity.ErpFinVoucherBillR;
 import app.erp.prj.biz.IErpPrjProjectPnlBiz;
 import app.erp.prj.dao.entity.ErpPrjBilling;
 import app.erp.prj.dao.entity.ErpPrjCostCollection;
@@ -282,6 +284,35 @@ public class ErpPrjProjectSettlementProcessor {
 
     protected BigDecimal nz(BigDecimal v) {
         return v != null ? v : BigDecimal.ZERO;
+    }
+
+    // ---- 质保金共享 helper（RC-R1.63 / P1-RC-052；createSettlement 填充 + returnRetention 守卫共用单一真相源） ----
+
+    /** D1 选项 A：留存金额 = finalRevenue × erp-prj.settlement-retention-ratio（scale 4 HALF_UP）。 */
+    protected BigDecimal computeRetentionAmount(BigDecimal finalRevenue) {
+        return nz(finalRevenue).multiply(ErpPrjConfigs.settlementRetentionRatio())
+                .setScale(4, java.math.RoundingMode.HALF_UP);
+    }
+
+    /** D1 选项 A：质保金到期日 = businessDate + erp-prj.settlement-retention-due-months。 */
+    protected java.time.LocalDate computeRetentionDueDate(java.time.LocalDate businessDate) {
+        if (businessDate == null) {
+            return null;
+        }
+        return businessDate.plusMonths(ErpPrjConfigs.settlementRetentionDueMonths());
+    }
+
+    /**
+     * D3 选项 A 返还标记反查：ErpFinVoucherBillR（billCode=结算单号#RETURN + businessType=PROJECT_SETTLEMENT）
+     * 存在性。跨域只读经 daoProvider.daoFor（镜像 R1.52 #CATCHUP 范式——返还标记落 finance 已过账凭证回链，
+     * 零 ORM 变更；E3 自检：projects→fin 跨域回链反查无 I*Biz 查询入口，engine findBillLinks 为 protected）。
+     */
+    protected boolean isRetentionReturned(ErpPrjProjectSettlement settlement) {
+        IEntityDao<ErpFinVoucherBillR> dao = daoProvider.daoFor(ErpFinVoucherBillR.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("billCode", settlement.getCode() + ErpPrjConstants.RETENTION_RETURN_BILL_SUFFIX));
+        q.addFilter(eq("businessType", ErpFinBusinessType.PROJECT_SETTLEMENT.name()));
+        return !dao.findAllByQuery(q).isEmpty();
     }
 
     protected BigDecimal parseAmount(String s) {

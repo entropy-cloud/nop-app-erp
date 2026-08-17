@@ -24,6 +24,13 @@ public interface ErpPrjConfigs {
     /** 项目结算强制审批默认启用。 */
     boolean DEFAULT_SETTLEMENT_REQUIRE_APPROVAL = true;
 
+    /** 结算质保金留存比例默认 0（设计性 opt-in：留存逻辑存在且配置驱动，零为显式 opt-in 默认非静默缺失；
+     *  RC-R1.63 / P1-RC-052 D1 选项 A）。 */
+    java.math.BigDecimal DEFAULT_SETTLEMENT_RETENTION_RATIO = java.math.BigDecimal.ZERO;
+
+    /** 结算质保金到期月数默认 12。 */
+    int DEFAULT_SETTLEMENT_RETENTION_DUE_MONTHS = 12;
+
     /** 任务依赖上行链深度上限默认 100（对齐 task-dag.md §2.3，防恶意长链耗尽栈/堆）。 */
     int DEFAULT_TASK_DEPENDENCY_MAX_DEPTH = 100;
 
@@ -89,6 +96,31 @@ public interface ErpPrjConfigs {
         Boolean flag = io.nop.api.core.config.AppConfig.var(
                 ErpPrjConstants.CONFIG_SETTLEMENT_REQUIRE_APPROVAL, DEFAULT_SETTLEMENT_REQUIRE_APPROVAL);
         return flag == null || flag;
+    }
+
+    /** 结算质保金留存比例（默认 0=设计性 opt-in；非法值回退 0）。 */
+    static java.math.BigDecimal settlementRetentionRatio() {
+        String v = io.nop.api.core.config.AppConfig.var(
+                ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_RATIO, "0");
+        if (v == null || v.trim().isEmpty()) {
+            return DEFAULT_SETTLEMENT_RETENTION_RATIO;
+        }
+        try {
+            return new java.math.BigDecimal(v.trim());
+        } catch (NumberFormatException e) {
+            return DEFAULT_SETTLEMENT_RETENTION_RATIO;
+        }
+    }
+
+    /** 结算质保金到期月数（默认 12；非正数回退默认）。 */
+    static int settlementRetentionDueMonths() {
+        Integer months = io.nop.api.core.config.AppConfig.var(
+                ErpPrjConstants.CONFIG_SETTLEMENT_RETENTION_DUE_MONTHS,
+                DEFAULT_SETTLEMENT_RETENTION_DUE_MONTHS);
+        if (months == null || months <= 0) {
+            return DEFAULT_SETTLEMENT_RETENTION_DUE_MONTHS;
+        }
+        return months;
     }
 
     /** 损益汇总 cron（默认 {@code 0 0 1 * * ?}；显式置空=禁用——「空值=跳过」语义，消费点：

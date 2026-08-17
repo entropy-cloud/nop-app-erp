@@ -157,6 +157,17 @@ public interface ErpPrjErrors {
             "结算单 {settlementCode} 类型={settlementType}，非 CLOSE 不允许转固",
             ARG_SETTLEMENT_CODE, ARG_SETTLEMENT_TYPE);
 
+    // --- 结算质保金（RC-R1.63 / P1-RC-052，UC-PRJ-07 ④⑤；D3 守卫链 + 返还过账隔离语义） ---
+    String ARG_REASON = "reason";
+    ErrorCode ERR_RETENTION_RETURN_NOT_ALLOWED = ErrorCode.define(
+            "erp.err.prj.settlement.retention-return-not-allowed",
+            "结算单 {settlementCode} 质保金返还操作不被允许：{reason}",
+            ARG_SETTLEMENT_CODE, ARG_REASON);
+    ErrorCode ERR_RETENTION_RETURN_POSTING_FAILED = ErrorCode.define(
+            "erp.err.prj.settlement.retention-return-posting-failed",
+            "结算单 {settlementCode} 质保金返还凭证过账失败（返还是用户显式操作，失败须显式暴露）",
+            ARG_SETTLEMENT_CODE);
+
     // --- 任务依赖与状态机（plan 2026-07-07-0930-3 / task-dag.md §7） ---
     ErrorCode ERR_TASK_SELF_DEPENDENCY = ErrorCode.define(
             "erp.err.prj.task.self-dependency",

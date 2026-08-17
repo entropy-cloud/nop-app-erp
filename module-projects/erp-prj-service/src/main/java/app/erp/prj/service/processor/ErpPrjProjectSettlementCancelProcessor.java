@@ -2,6 +2,7 @@ package app.erp.prj.service.processor;
 
 import app.erp.prj.dao.entity.ErpPrjProjectSettlement;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
 import app.erp.common.service.AbstractCancelProcessor;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
@@ -28,6 +29,12 @@ public class ErpPrjProjectSettlementCancelProcessor extends AbstractCancelProces
         ErpPrjProjectSettlement settlement = processor.requireSettlement(longId);
         processor.validateTransitionForCancel(settlement);
         if (Boolean.TRUE.equals(settlement.getPosted())) {
+            // RC-R1.63 / P1-RC-052（D2 选项 A，Explore ⑥）：已返还后取消会悬挂独立返还凭证 → 取消前须守卫「未返还」
+            if (processor.isRetentionReturned(settlement)) {
+                throw new NopException(ErpPrjErrors.ERR_RETENTION_RETURN_NOT_ALLOWED)
+                        .param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode())
+                        .param(ErpPrjErrors.ARG_REASON, "质保金已到期返还（返还凭证独立存在），取消主结算会悬挂返还凭证，不允许");
+            }
             processor.postingDispatcher.reverse(settlement);
             processor.rollbackAssetIfNeeded(settlement);
             settlement = processor.requireSettlement(longId);

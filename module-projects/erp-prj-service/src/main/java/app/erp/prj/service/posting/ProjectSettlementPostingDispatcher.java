@@ -5,6 +5,7 @@ import app.erp.fin.dao.PostingEvent;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.prj.dao.entity.ErpPrjProjectSettlement;
 import app.erp.prj.service.ErpPrjConstants;
+import app.erp.prj.service.ErpPrjErrors;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.dao.api.IDaoProvider;
 import jakarta.inject.Inject;
@@ -68,6 +69,35 @@ public class ProjectSettlementPostingDispatcher {
         }
     }
 
+    /**
+     * 质保金到期返还凭证过账（RC-R1.63 / P1-RC-052，D2 选项 A + D3 选项 A）。
+     * billHeadCode=结算单号#RETURN + billData RETENTION_RETURN=true（Provider 生成镜像对冲腿：借 2241 / 贷 1122）。
+     * 与主结算过账失败隔离语义区分——返还是用户显式操作，失败显式抛
+     * {@link ErpPrjErrors#ERR_RETENTION_RETURN_POSTING_FAILED}（不吞异常）。
+     */
+    public Long postRetentionReturn(ErpPrjProjectSettlement settlement) {
+        PostingEvent event = buildReturnEvent(settlement);
+        try {
+            return executor.postEvent(event);
+        } catch (Exception e) {
+            if (e instanceof NopException) {
+                LOG.warn("质保金返还凭证过账失败，结算单 {}：{}", settlement.getCode(), e.getMessage());
+            } else {
+                LOG.error("质保金返还凭证过账异常，结算单 {}", settlement.getCode(), e);
+            }
+            throw new NopException(ErpPrjErrors.ERR_RETENTION_RETURN_POSTING_FAILED, e)
+                    .param(ErpPrjErrors.ARG_SETTLEMENT_CODE, settlement.getCode());
+        }
+    }
+
+    private PostingEvent buildReturnEvent(ErpPrjProjectSettlement settlement) {
+        PostingEvent event = buildEvent(settlement);
+        event.setBillHeadCode(settlement.getCode() + ErpPrjConstants.RETENTION_RETURN_BILL_SUFFIX);
+        event.getBillData().put(ErpPrjConstants.BILL_DATA_RETENTION_RETURN, Boolean.TRUE);
+        event.getBillData().put(ErpPrjConstants.BILL_DATA_RETENTION_AMOUNT, nz(settlement.getRetentionAmount()));
+        return event;
+    }
+
     private PostingEvent buildEvent(ErpPrjProjectSettlement settlement) {
         PostingEvent event = new PostingEvent();
         event.setBusinessType(ErpFinBusinessType.PROJECT_SETTLEMENT);
@@ -90,6 +120,10 @@ public class ProjectSettlementPostingDispatcher {
                 Boolean.TRUE.equals(settlement.getTransferToAsset()));
         if (settlement.getAssetCardId() != null) {
             billData.put(ErpPrjConstants.BILL_DATA_ASSET_CARD_CODE, settlement.getAssetCardId());
+        }
+        billData.put(ErpPrjConstants.BILL_DATA_RETENTION_AMOUNT, nz(settlement.getRetentionAmount()));
+        if (settlement.getRetentionDueDate() != null) {
+            billData.put(ErpPrjConstants.BILL_DATA_RETENTION_DUE_DATE, settlement.getRetentionDueDate());
         }
         event.setBillData(billData);
         return event;

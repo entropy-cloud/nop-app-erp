@@ -95,6 +95,8 @@
           class="app.erp.prj.service.processor.ErpPrjProjectSettlementCreateSettlementProcessor"/>
     <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementReverseSettlementProcessor"
           class="app.erp.prj.service.processor.ErpPrjProjectSettlementReverseSettlementProcessor"/>
+    <bean id="app.erp.prj.service.processor.ErpPrjProjectSettlementReturnRetentionProcessor"
+          class="app.erp.prj.service.processor.ErpPrjProjectSettlementReturnRetentionProcessor"/>
     <!-- per-mutation Processor beans (R6.6)：projects 9 个 D-mutation 拆分。
          类别 B：CostCollection 1 + Project 4 + ProjectPnl 1 + Timesheet 3。 -->
     <bean id="app.erp.prj.service.processor.ErpPrjCostCollectionRefreshExpenseCostProcessor"

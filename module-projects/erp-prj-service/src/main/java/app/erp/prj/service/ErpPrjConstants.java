@@ -27,6 +27,11 @@ public interface ErpPrjConstants {
     String CONFIG_PNL_AUTO_CALC_ENABLED = "erp-prj.pnl-auto-calc-enabled";
     /** 项目结算强制审批开关（默认 true；关闭时 approve 跳过 SUBMITTED 直接审批）。 */
     String CONFIG_SETTLEMENT_REQUIRE_APPROVAL = "erp-prj.settlement-require-approval";
+    /** 结算质保金留存比例（默认 0=设计性 opt-in——留存逻辑存在且配置驱动，零为显式 opt-in 默认非静默缺失；
+     *  RC-R1.63 / P1-RC-052，UC-PRJ-07 ④）。 */
+    String CONFIG_SETTLEMENT_RETENTION_RATIO = "erp-prj.settlement-retention-ratio";
+    /** 结算质保金到期月数（默认 12；RC-R1.63 / P1-RC-052，UC-PRJ-07 ⑤）。 */
+    String CONFIG_SETTLEMENT_RETENTION_DUE_MONTHS = "erp-prj.settlement-retention-due-months";
 
     /** 任务依赖上行链深度上限（默认 100，防恶意长链耗尽栈/堆；对齐 task-dag.md §2.3）。 */
     String CONFIG_TASK_DEPENDENCY_MAX_DEPTH = "erp-prj.task-dependency-max-depth";
@@ -118,4 +123,14 @@ public interface ErpPrjConstants {
     String BILL_DATA_ASSET_CARD_CODE = "ASSET_CARD_CODE";
     String BILL_DATA_DEBIT_SUBJECT_CODE_SETTLEMENT = "DEBIT_SUBJECT_CODE_SETTLEMENT";
     String BILL_DATA_CREDIT_SUBJECT_CODE_SETTLEMENT = "CREDIT_SUBJECT_CODE_SETTLEMENT";
+
+    // ---- PostingEvent.billData 键（项目结算质保金，RC-R1.63 / P1-RC-052，D2 选项 A 保留 PROJECT_SETTLEMENT businessType） ----
+    String BILL_DATA_RETENTION_AMOUNT = "RETENTION_AMOUNT";
+    String BILL_DATA_RETENTION_DUE_DATE = "RETENTION_DUE_DATE";
+    /** 质保金返还标志：返还凭证 billData 置 true（Provider 据此跳过主结算腿、生成镜像对冲腿）。 */
+    String BILL_DATA_RETENTION_RETURN = "RETENTION_RETURN";
+
+    /** 质保金返还凭证 billHeadCode 后缀（镜像 R1.52 #CATCHUP 范式；返还标记=ErpFinVoucherBillR
+     *  billCode=结算单号#RETURN + businessType=PROJECT_SETTLEMENT 存在性反查，D3 选项 A）。 */
+    String RETENTION_RETURN_BILL_SUFFIX = "#RETURN";
 }

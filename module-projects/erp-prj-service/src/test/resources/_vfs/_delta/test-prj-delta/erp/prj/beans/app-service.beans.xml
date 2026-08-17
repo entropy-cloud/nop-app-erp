@@ -4,9 +4,11 @@
      over the baseline app-service.beans.xml. The same bean id overrides the baseline
      ErpPrjProjectStateMachine with derived ErpPrjProjectStateMachineDelta (tightens cancel source:
      DRAFT/OPEN/ON_HOLD to OPEN only). All other baseline beans (Processors, StateMachines, etc.)
-     are preserved by XDsl merge. -->
+     are preserved by x:extends="super" XDsl merge (delta-customization.md rule 3——缺省整文件替换会丢失基线
+     beans，同 JVM 后续测试类容器解析 prj bean 报 not-find-bean-with-type，RC-R1.63 执行期实测修复)。 -->
 <beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
-       xmlns="http://www.springframework.org/schema/beans">
+       xmlns="http://www.springframework.org/schema/beans"
+       x:extends="super">
 
     <bean id="app.erp.prj.service.statemachine.ErpPrjProjectStateMachine"
           class="app.erp.prj.service.statemachine.ErpPrjProjectStateMachineDelta"/>
