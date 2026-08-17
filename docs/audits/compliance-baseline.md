@@ -435,7 +435,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 235
-R2c: 1433
+R2c: 1434
 R2d: 35
 R3: 5
 R4: 0
@@ -445,7 +445,7 @@ R7: 0
 R8: 0
 R10: 9
 R11: 0
-R12a: 69
+R12a: 70
 R12b: 66
 R12c: 40
 ```
@@ -474,6 +474,13 @@ purchase 侧接线零新增 daoFor（`collectProjectMaterialCost` 走 `line.getO
 - `findRoleRate:114` `daoFor(ErpPrjRole.class)`——角色级费率 tier 按 role 文本 code 精确匹配单行查询（`findFirstByQuery`）
 
 两站点均为 projects **同域**实体直查、均用 `findFirstByQuery`（R1d 零变化）、无 ErpMd* 站点（R2a/R2d 零变化）、非 BizModel 站点（R2b 零变化）、E3 自检注释说明理由。本块以 1433 为回归门控起点（对齐 R1.48/R1.51/R1.57/R1.61 baseline-raise 先例）。
+
+## R2c 基线上调注记（plan 2026-08-17-0142-1，RC-R1.63 projects 质保金到期返还）
+
+`2026-08-17-0142-1`（RC-R1.63 / P1-RC-052，UC-PRJ-07 ④⑤：质保金留存填充 + 到期返还 mutation + 质保金凭证）在 `ErpPrjProjectSettlementProcessor` 新增 1 处跨域 daoFor 站点，R2c 1433 → **1434**（+1）；同站点引入 1 处共享内核 import，R12a 69 → **70**（+1）。**per-site 证据**：
+
+- `isRetentionReturned:311` `daoFor(ErpFinVoucherBillR.class)`——质保金返还幂等标记反查（billCode=结算单号#RETURN + businessType=PROJECT_SETTLEMENT 存在性，`findAllByQuery` 只读），镜像 assets RC-R1.52 `#CATCHUP` 范式（`ErpAstConstants.CATCHUP_BILL_SUFFIX` 同型跨域回链反查先例）。E3 自检：projects→fin 跨域回链无 I*Biz 查询入口（`ErpFinVoucherBillR` 为凭证-单据回链表，`IErpFinVoucherBiz` 未暴露按 billCode 反查的 Facade；引擎 `ErpFinPostingProcessor.findBillLinks` 为 protected 不可注入），daoFor 只读反查为最小合法载体；消费方 `ErpPrjProjectSettlementReturnRetentionProcessor`/`ReverseSettlementProcessor`/`CancelProcessor`（返还幂等 + 红冲/取消未返还守卫）三站点共用单一真相源 helper。非 BizModel 站点（R2b 零变化）、非 ErpMd* 站点（R2a/R2d 零变化）、非 findAllByQuery BizModel 直查（R1d 零变化）。
+- R12a `ErpPrjProjectSettlementProcessor.java` `import app.erp.fin.dao.ErpFinBusinessType`（:5，消费点 :314 `ErpFinBusinessType.PROJECT_SETTLEMENT.name()` 作 businessType 查询过滤值）——与上述 daoFor 反查同站点共生（businessType 过滤需枚举 name() 而非魔法字符串，保跨域契约类型安全；同文件 `ProjectSettlementPostingDispatcher`/`ReverseSettlementProcessor` 邻近站点既有先例——前者 :3 import 属既有 69 基线内），对齐 R1.52 assets #CATCHUP 回链反查同款 import 形态。本块以 R2c=1434 / R12a=70 为回归门控起点（对齐 R1.52 跨域回链 + R1.48/R1.51/R1.57/R1.60/R1.61 baseline-raise 先例）。
 
 ## 关联
 

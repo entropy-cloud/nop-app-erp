@@ -85,6 +85,11 @@
 
 2. **结算**:项目 status→COMPLETED 时,基于最新 PnlSnapshot 生成 ErpPrjProjectSettlement(settlementType=FINAL);如客户合同为总价合同且结算后仍有资产(如自建固定资产),settlementType=CLOSE 触发 transferToAsset=true,调用 IErpAstAssetBiz 生成资产卡片(assets 域),并生成转固凭证(经 finance 域 IErpFinAcctDocProvider 注册 PROJECT_SETTLEMENT 类型)。
 
+> **实现注记（plan 2026-08-17-0142-1，RC-R1.63 P1-RC-052 UC-PRJ-07 ④⑤ 质保金留存 + 到期返还）**：三裁决已落地——
+> **D1 留存填充（选项 A，config 驱动仅 FINAL）**：`createSettlement` 对 `settlementType=FINAL`（竣工结算，L1 UC-PRJ-07 场景）自动填 `retentionAmount = finalRevenue × erp-prj.settlement-retention-ratio`（scale 4 HALF_UP；默认 0=设计性 opt-in——留存逻辑存在且配置驱动，零为显式 opt-in 默认非静默缺失）+ `retentionDueDate = businessDate + erp-prj.settlement-retention-due-months`（默认 12）；INTERIM（阶段结算无尾款留存语义）/CLOSE（自建转固非应收）不填；手工覆盖路径保留（CRUD update 可改）。否决纯手工录入（留存语义依赖操作员自觉，违反 L1「留存」自动行为）。
+> **D2 质保金凭证（选项 A，扩展 ProjectSettlementAcctDocProvider，保留 PROJECT_SETTLEMENT businessType 零字典变更）**：主结算凭证 createFacts 留存时增平衡腿「借 1122 应收账款-质保金 / 贷 2241 其他应付款-质保金」（金额=retentionAmount，标 projectId 辅助核算；ACCOUNT_KEY_RETENTION_RECEIVABLE/RETENTION_PAYABLE 供 GL mapping 规则覆盖 subjectCode，空匹配回退 Provider 默认编码——**部署须预置 1122/2241 科目**，否则过账抛 ERR_SUBJECT_NOT_FOUND）；返还经同 Provider 同 businessType，billData `RETENTION_RETURN=true` + billHeadCode=结算单号`#RETURN` 独立凭证，镜像腿「借 2241 / 贷 1122」对冲清零。生命周期一致性：主结算红冲（reverse 按结算单号自动覆盖留存腿），返还凭证独立存在 → `reverseSettlement`/`cancel` 前置守卫「未返还」（已返还拒绝红冲/取消，避免返还凭证悬挂）。否决新 businessType 枚举（须 orm.xml 字典变更超 B 类授权边界 + 双 Provider 冗余）。
+> **D3 到期返还（选项 A，已过账凭证反查幂等）**：`IErpPrjProjectSettlementBiz.returnRetention(settlementId)` @BizMutation（per-mutation `ErpPrjProjectSettlementReturnRetentionProcessor`）；守卫链 docStatus=APPROVED + approveStatus=APPROVED + posted=true + retentionAmount>0 + retentionDueDate<=today，失败抛 `ERR_RETENTION_RETURN_NOT_ALLOWED`（中文描述 + reason 参数）；幂等标记 = ErpFinVoucherBillR（billCode=结算单号`#RETURN` + businessType=PROJECT_SETTLEMENT）存在性反查（镜像 assets #CATCHUP 范式，零 ORM 变更），已返还重复调用 no-op 零副作用；返还凭证过账失败显式抛 `ERR_RETENTION_RETURN_POSTING_FAILED`（与主结算过账失败隔离——返还是用户显式操作不吞异常）。否决 remark 文本弱标记（不可反查不可红冲）。合同域驱动的留存比例（结算 ORM 无 contractId 维度）登记 successor；测试 `TestErpPrjProjectSettlementRetention` 10 组（填充/零填充/返还成功/幂等/守卫×4/凭证行级 + GL 平衡/红冲守卫）。
+
 3. **业财一体**:Pnl/Settlement 不直接生成凭证,而是通过 posted=false + 事件驱动(模式 B)通知 finance 域,finance 按 ERPNext on_submit 钩子模式统一过账。
 
 ## 与现有实体的关系

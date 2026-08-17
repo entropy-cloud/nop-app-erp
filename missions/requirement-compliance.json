@@ -4,8 +4,6 @@
   "roadmapPath": "docs/backlog/requirement-compliance-roadmap.md",
   "plansDir": "docs/plans",
   "planGuide": "docs/plans/00-plan-authoring-and-execution-guide.md",
-  "model": "opencode-go/deepseek-v4-flash",
-  "variant": "max",
   "auditsDir": "docs/audits",
   "contextDir": "docs/context",
   "moduleDir": ".",
