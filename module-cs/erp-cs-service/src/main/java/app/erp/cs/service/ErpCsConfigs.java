@@ -27,6 +27,15 @@ public final class ErpCsConfigs {
         return boolVar(ErpCsConstants.CONFIG_AUTO_ASSIGN_ON_CREATE, true);
     }
 
+    /** 自动分配算法（ROUND_ROBIN | LEAST_OPEN，默认 ROUND_ROBIN；plan 2026-08-17-2125-1 D4）。 */
+    public static String getAssignMethod() {
+        String raw = AppConfig.var(ErpCsConstants.CONFIG_ASSIGN_METHOD, ErpCsConstants.ASSIGN_METHOD_ROUND_ROBIN);
+        if (raw == null || raw.trim().isEmpty()) {
+            return ErpCsConstants.ASSIGN_METHOD_ROUND_ROBIN;
+        }
+        return raw.trim();
+    }
+
     /** 满意度调查是否启用（默认 true）。 */
     public static boolean isSurveyEnabled() {
         return boolVar(ErpCsConstants.CONFIG_SURVEY_ENABLED, true);

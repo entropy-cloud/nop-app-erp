@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- cs 测试容器专用 crm BizModel mock（RC-R1.65 自动分配候选池；bean id testMock 前缀避免污染生产命名）。
+     生产容器由 app-erp-all 经 crm-service 提供真实实现，本文件按 app- 前缀约定自动合并进 cs 测试容器（test resources 不进生产 classpath）。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="testMockErpCrmTeamBiz"
+          class="app.erp.cs.service.TestMockCrmBizModels$MockErpCrmTeamBiz"
+          ioc:type="app.erp.crm.biz.IErpCrmTeamBiz"/>
+
+    <bean id="testMockErpCrmTeamMemberBiz"
+          class="app.erp.cs.service.TestMockCrmBizModels$MockErpCrmTeamMemberBiz"
+          ioc:type="app.erp.crm.biz.IErpCrmTeamMemberBiz"/>
+</beans>

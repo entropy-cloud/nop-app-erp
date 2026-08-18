@@ -117,5 +117,18 @@ VALUES
    '发运单 ${shipmentCode} 超时未确认',
    '发运单 ${shipmentCode}（ID ${shipmentId}）已超过 ${elapsedHours} 小时未确认，请及时处理',
    'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
-   '业务提醒样例（DRAFT 发运单滞留升级，submitterUserId=发货员 createdBy）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
+   '业务提醒样例（DRAFT 发运单滞留升级，submitterUserId=发货员 createdBy）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 业务提醒：工单创建确认通知（RC-R1.65，P1-RC-054，UC-CS-01 ⑥），5 分钟窗口合并。
+  -- 接收人=提单人 createdBy（USER_LIST ${submitterUserId} 从 notify context 插值；客户邮件/门户实际投递归 nop-notification successor）。
+  (7202, 'cs.ticket-created', '工单创建确认通知', 'IN_APP',
+   '工单已创建: ${ticketCode}',
+   '您的工单 ${ticketCode} 已创建（ID ${ticketId}），客户 ${customerName}，将按 SLA 及时处理',
+   'USER_LIST', '{"userIds":["${submitterUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '业务提醒样例（工单创建确认，submitterUserId=提单人 createdBy）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 异常告警：自动分派无匹配处理人升级（RC-R1.65，P1-RC-054，UC-CS-01 ⑧），5 分钟窗口合并。
+  (7203, 'cs.ticket-assign-no-match', '工单分派无匹配升级', 'IN_APP',
+   '工单分派无匹配: ${ticketCode}',
+   '工单 ${ticketCode}（ID ${ticketId}，客户 ${customerName}）自动分派无匹配处理人，请人工分派',
+   'ROLE', '{"roles":["客服主管"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '异常告警样例（自动分派无匹配 -> 客服主管人工分派）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
 

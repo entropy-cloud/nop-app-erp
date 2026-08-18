@@ -2,8 +2,11 @@ package app.erp.cs.service.entity;
 
 import app.erp.cs.biz.IErpCsTicketActionBiz;
 import app.erp.cs.biz.IErpCsTicketBiz;
+import app.erp.cs.dao.entity.ErpCsSlaPolicy;
+import app.erp.cs.dao.entity.ErpCsTeam;
 import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.dao.entity.ErpCsTicketAction;
+import app.erp.cs.dao.entity.ErpCsTicketType;
 import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
@@ -73,6 +76,8 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     ErpCsTicketResolveProcessor resolveProcessor;
     @Inject
     ErpCsTicketScanOverdueTicketsProcessor scanOverdueTicketsProcessor;
+    @Inject
+    TicketAssignResolver ticketAssignResolver;
 
     public ErpCsTicketBizModel() {
         setEntityName(ErpCsTicket.class.getName());
@@ -85,6 +90,118 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         if (entity.getBusinessDate() == null) {
             entity.setBusinessDate(io.nop.api.core.time.CoreMetrics.today());
         }
+        // 创建自动富化 fill-when-absent（plan 2026-08-17-2125-1 D1/D6，UC-CS-01 ②⑤）：
+        // 显式传入永不覆盖；slaPolicyId 不在 save 侧填充（归属 matchAndAttachSla Processor 单一咽喉）
+        if (entity.getStatus() == null) {
+            entity.setStatus(ErpCsConstants.TICKET_STATUS_NEW);
+        }
+        if (entity.getPriority() == null && entity.getTicketTypeId() != null) {
+            ErpCsTicketType type = entity.getTicketType();
+            if (type != null && type.getDefaultPriority() != null) {
+                entity.setPriority(type.getDefaultPriority());
+            }
+        }
+    }
+
+    /**
+     * save 成功后置富化（plan 2026-08-17-2125-1 D1 选项 A，UC-CS-01 ③④⑤⑥⑦⑧ + UC-CS-09 reuse）：
+     * 仅新建路径（{@code !isRecoverDeleted()}，D6——update/copy-for-new 外路径零触发；逻辑删除恢复不重复富化）。
+     * ① 调用点守卫：slaPolicyId 与 deadlineDateTime 均为空才自动挂载（policy + deadline + 权益三合一，
+     *    Processor 本体零改动）；② 自动分配（config 门控）；③ 客户确认通知（try/catch 降级）。
+     */
+    @Override
+    public void doSaveEntity(EntityData<ErpCsTicket> entityData, IServiceContext context) {
+        super.doSaveEntity(entityData, context);
+        if (Boolean.TRUE.equals(entityData.isRecoverDeleted())) {
+            return;
+        }
+        // 新建实体 flush 使 NEW→MANAGED：后置富化内 Processor/BizModel 的 updateEntity 语义可达
+        // （OrmEntityDao.updateEntity 仅接受 MANAGED 态，未 flush 的同事务新建实体会被拒绝）
+        dao().flushSession();
+        enrichAfterCreate(entityData.getEntity(), context);
+    }
+
+    private void enrichAfterCreate(ErpCsTicket ticket, IServiceContext context) {
+        // ① 自动挂载守卫（D1）：显式 slaPolicyId/deadline 已设 → 跳过（手动 mutation 仍可用）
+        if (ticket.getSlaPolicyId() == null && ticket.getDeadlineDateTime() == null) {
+            try {
+                matchAndAttachSlaProcessor.matchAndAttachSla(ticket.getId(), context);
+            } catch (Exception e) {
+                LOG.warn("自动挂载 SLA 失败（降级，创建主流程继续）：ticketId={}, reason={}",
+                        ticket.getId(), e.getMessage());
+            }
+        }
+        // ② 自动分配（UC-CS-01 ④⑤⑦；config 仅门控分配维度，D6）
+        autoAssignOnCreate(ticket, context);
+        // ③ 客户确认通知（UC-CS-01 ⑥，含 TK 编号；IN_APP 占位语义）
+        notifyTicketCreated(ticket, context);
+    }
+
+    /**
+     * 自动分配（plan D3/D4）：team 解析（挂载策略 teamId → 工单类型默认策略 teamId，ORM 关系 getter）→
+     * 同码 crm 团队成员池 → ROUND_ROBIN/LEAST_OPEN 挑人 → ASSIGNED + ASSIGN 审计（镜像 {@link #assign} 语义）；
+     * config off / 池空 / 失败 → 留 NEW（池空时 ⑧ 升级通知客服主管）。
+     */
+    private void autoAssignOnCreate(ErpCsTicket ticket, IServiceContext context) {
+        if (!ErpCsConfigs.isAutoAssignOnCreate()) {
+            return;
+        }
+        if (!ErpCsConstants.TICKET_STATUS_NEW.equals(ticket.getStatus()) || ticket.getAssignedToId() != null) {
+            return;
+        }
+        ErpCsTeam team = TicketAssignResolver.resolveTeam(ticket.getSlaPolicy(), resolveTypeDefaultPolicy(ticket));
+        List<String> pool = ticketAssignResolver.resolveCandidatePool(team, context);
+        if (pool.isEmpty()) {
+            notifyAssignNoMatch(ticket, context);
+            return;
+        }
+        String assignee = ticketAssignResolver.pickByConfig(pool, findLastAssigned(pool, context),
+                countOpenTickets(pool, context));
+        if (assignee == null) {
+            notifyAssignNoMatch(ticket, context);
+            return;
+        }
+        String from = ticket.getStatus();
+        ticket.setAssignedToId(assignee);
+        ticket.setStatus(stateMachine.assignTargetStatus());
+        updateEntity(ticket, null, context);
+        writeAction(ticket, ErpCsConstants.ACTION_TYPE_ASSIGN, from, stateMachine.assignTargetStatus(),
+                "创建自动分配处理人: " + assignee, context);
+    }
+
+    /** 工单类型默认策略（②建议匹配 slaPolicy 载体；自动挂载主链 team 来源——SlaPolicyMatcher 仅匹配 teamId IS NULL）。 */
+    private ErpCsSlaPolicy resolveTypeDefaultPolicy(ErpCsTicket ticket) {
+        if (ticket.getTicketTypeId() == null) {
+            return null;
+        }
+        ErpCsTicketType type = ticket.getTicketType();
+        return type == null ? null : type.getDefaultSlaPolicy();
+    }
+
+    /** ROUND_ROBIN 历史：候选池成员内最近一张已分配工单（createTime desc limit 1）。 */
+    private String findLastAssigned(List<String> pool, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(in("assignedToId", pool));
+        q.addOrderField("createTime", true);
+        q.setLimit(1);
+        List<ErpCsTicket> last = findList(q, null, context);
+        return last.isEmpty() ? null : last.get(0).getAssignedToId();
+    }
+
+    /** LEAST_OPEN 计数：候选成员活跃工单（ASSIGNED/IN_PROGRESS）按处理人分组计数。 */
+    private Map<String, Integer> countOpenTickets(List<String> pool, IServiceContext context) {
+        QueryBean q = new QueryBean();
+        q.addFilter(in("assignedToId", pool));
+        q.addFilter(in("status", java.util.Arrays.asList(
+                ErpCsConstants.TICKET_STATUS_ASSIGNED, ErpCsConstants.TICKET_STATUS_IN_PROGRESS)));
+        List<ErpCsTicket> open = findList(q, null, context);
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        for (ErpCsTicket t : open) {
+            if (t.getAssignedToId() != null) {
+                counts.merge(t.getAssignedToId(), 1, Integer::sum);
+            }
+        }
+        return counts;
     }
 
     public void setTicketActionBiz(IErpCsTicketActionBiz ticketActionBiz) {
@@ -324,6 +441,42 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         } catch (Exception e) {
             // 通知派发失败不阻断 SLA 升级主流程（config-gated 降级语义）
             LOG.warn("SLA notify 派发失败（降级，主升级流程继续）：ticketId={}, reason={}",
+                    ticket.getId(), e.getMessage());
+        }
+    }
+
+    /**
+     * 工单创建确认通知（UC-CS-01 ⑥，plan D5）：USER_LIST ${submitterUserId}=提单人（createdBy）插值，
+     * 上下文含 TK 编号；客户为 ErpMdPartner 非系统用户，IN_APP 占位语义（实际邮件/门户投递归 nop-notification successor）。
+     * notify 失败静默降级不阻断创建主流程（镜像 {@link #notifySlaOverdue} 范式）。
+     */
+    private void notifyTicketCreated(ErpCsTicket ticket, IServiceContext context) {
+        try {
+            Map<String, Object> ctx = new LinkedHashMap<>();
+            ctx.put("ticketId", ticket.getId());
+            ctx.put("ticketCode", ticket.getCode());
+            ctx.put("customerName", resolveCustomerName(ticket.getCustomerId(), context));
+            ctx.put("submitterUserId", ticket.getCreatedBy());
+            notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_TICKET_CREATED, ctx, context);
+        } catch (Exception e) {
+            LOG.warn("工单创建确认通知派发失败（降级，主流程继续）：ticketId={}, reason={}",
+                    ticket.getId(), e.getMessage());
+        }
+    }
+
+    /**
+     * 自动分派无匹配升级通知（UC-CS-01 ⑧，plan D5）：ROLE 客服主管（对齐 cs.sla-overdue 7101 先例）；
+     * 工单留 NEW 待人工分派。notify 失败静默降级。
+     */
+    private void notifyAssignNoMatch(ErpCsTicket ticket, IServiceContext context) {
+        try {
+            Map<String, Object> ctx = new LinkedHashMap<>();
+            ctx.put("ticketId", ticket.getId());
+            ctx.put("ticketCode", ticket.getCode());
+            ctx.put("customerName", resolveCustomerName(ticket.getCustomerId(), context));
+            notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_TICKET_ASSIGN_NO_MATCH, ctx, context);
+        } catch (Exception e) {
+            LOG.warn("分派无匹配升级通知派发失败（降级，主流程继续）：ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
     }

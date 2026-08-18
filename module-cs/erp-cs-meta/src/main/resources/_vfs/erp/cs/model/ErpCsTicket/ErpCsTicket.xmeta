@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpCsTicket.xmeta">
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:biz="biz"
+      xmlns:c="c" x:extends="_ErpCsTicket.xmeta">
 
-    <props/>
+    <props>
+        <!-- RC-R1.65（P1-RC-054，UC-CS-01 ⑥）TK{YYYYMM}{SEQ4} 编号：派生 xmeta 显式声明（方式 2，零 orm.xml 编辑）。
+             autoExpr when="save" 由平台 OrmEntityCopier/AutoExprRunner 执行（fill-when-absent：显式提交 code
+             ——如 catalog TK-<millis>——加入 ignoreAutoExprProps 不覆盖，update 路径不触发）。
+             autoExpr 体 = meta-gen.xlib GenCodeRuleAutoExpr 对 biz:codeRule 生成的标准内容
+             （nopCodeRuleGenerator.generate(propMeta['biz:codeRule'])）；
+             直接声明原因：模块级派生 xmeta 不经 _delta 层时 DefaultMetaPostExtends 不执行，
+             biz:codeRule 属性不会自动展开为 autoExpr（nop-sys 先例经 _delta/super 层触发，路径不同）。 -->
+        <prop name="code" biz:codeRule="cs-ticket-code">
+            <autoExpr when="save">
+                <c:script>
+                    const codeRuleGenerator = inject('nopCodeRuleGenerator')
+                    return codeRuleGenerator.generate(propMeta['biz:codeRule'], $scope)
+                </c:script>
+            </autoExpr>
+        </prop>
+    </props>
 </meta>

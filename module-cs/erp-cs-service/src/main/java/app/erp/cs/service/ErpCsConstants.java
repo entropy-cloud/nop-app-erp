@@ -70,6 +70,23 @@ public interface ErpCsConstants extends ErpCsDocStatus {
     /** 通知事件类型：SLA 超期/预警（对应 erp_sys_notification_template.notification_type）。 */
     String NOTIFY_EVENT_SLA_OVERDUE = "cs.sla-overdue";
 
+    // === 工单创建自动富化（plan 2026-08-17-2125-1，RC-R1.65，P1-RC-054，UC-CS-01 ②-⑧）===
+
+    /** 自动分配算法（erp-cs/assign-method；plan D4）：轮转——上次分配的下一个，无历史首位。 */
+    String ASSIGN_METHOD_ROUND_ROBIN = "ROUND_ROBIN";
+
+    /** 自动分配算法（erp-cs/assign-method；plan D4）：最少未结——活跃工单（ASSIGNED/IN_PROGRESS）最少者。 */
+    String ASSIGN_METHOD_LEAST_OPEN = "LEAST_OPEN";
+
+    /** 自动分配算法选择（默认 ROUND_ROBIN；plan D4）。 */
+    String CONFIG_ASSIGN_METHOD = "erp-cs.assign-method";
+
+    /** 通知事件类型：工单创建确认（UC-CS-01 ⑥，含 TK 编号；模板种子 7202）。 */
+    String NOTIFY_EVENT_TICKET_CREATED = "cs.ticket-created";
+
+    /** 通知事件类型：自动分派无匹配升级（UC-CS-01 ⑧，客服主管；模板种子 7203）。 */
+    String NOTIFY_EVENT_TICKET_ASSIGN_NO_MATCH = "cs.ticket-assign-no-match";
+
     /** 定时 CSAT 调查到期提醒 cron（空=不调度；plan 2026-07-06-0642-1 §Phase 2）。 */
     String CONFIG_CSAT_REMINDER_CRON = "erp-cs.csat-reminder-cron";
 

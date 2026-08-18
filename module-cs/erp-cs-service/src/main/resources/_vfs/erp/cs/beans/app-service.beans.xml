@@ -54,4 +54,13 @@
           class="app.erp.cs.service.processor.ErpCsTicketResolveProcessor"/>
     <bean id="app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor"
           class="app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor"/>
+
+    <!-- 工单创建自动富化（RC-R1.65，P1-RC-054，UC-CS-01）：候选池跨域解析（cs team code -> crm 同码团队成员）。 -->
+    <bean id="app.erp.cs.service.entity.TicketAssignResolver"
+          class="app.erp.cs.service.entity.TicketAssignResolver"/>
+
+    <!-- TK{YYYYMM}{SEQ4} 按月序列 CodeRule 变量（bean 名前缀 nopCodeRuleVariable_ 经 ioc:collect-beans
+           收集进 DefaultCodeRule.variables，pattern 变量名 = 前缀后缀 csTicketMonthSeq）。 -->
+    <bean id="nopCodeRuleVariable_csTicketMonthSeq"
+          class="app.erp.cs.service.entity.CsTicketMonthSeqCodeRuleVariable"/>
 </beans>

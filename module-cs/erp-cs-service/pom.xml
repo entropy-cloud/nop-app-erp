@@ -54,6 +54,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 工单创建自动分配候选池（RC-R1.65，P1-RC-054，UC-CS-01 ④）经 IErpCrmTeamBiz/
+             IErpCrmTeamMemberBiz 跨域只读查询（cs team code -> crm 同码团队成员 userId）。
+             cs→crm 单向（R），DAG 无环；运行期 BizModel 实现由 app-erp-all 经 crm-web→crm-service 传递提供。 -->
+        <dependency>
+            <artifactId>app-erp-crm-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>
@@ -137,6 +145,17 @@
         <!-- test-only: 引入 master-data BizModel Bean 实现（IErpMdPartnerBiz）使 customerName 查询端到端可运行。 -->
         <dependency>
             <artifactId>app-erp-master-data-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: 工单创建自动分配候选池（RC-R1.65，P1-RC-054，UC-CS-01 ④）跨域查询 crm 团队成员的
+              ErpCrmTeam/ErpCrmTeamMember xmeta。BizModel 实现不经 crm-service 引入（其全量 beans 需
+              sal/inv/quality/finance 服务闭包），测试容器经 test-mock-crm.beans.xml 提供
+              CrudBizModel 直生的 IErpCrmTeamBiz/IErpCrmTeamMemberBiz mock（镜像 nop-entropy
+              add-test-mock-bean runbook）；运行期实现由 app-erp-all 经 crm-web→crm-service 传递提供。 -->
+        <dependency>
+            <artifactId>app-erp-crm-meta</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
