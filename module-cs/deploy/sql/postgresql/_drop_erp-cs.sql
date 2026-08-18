@@ -17,4 +17,5 @@ drop table  if exists  erp_cs_catalog_fulfillment;
 drop table  if exists  erp_cs_ticket_action;
 drop table  if exists  erp_cs_survey;
 drop table  if exists  erp_cs_time_entry;
+drop table  if exists  erp_cs_ticket_timer_session;
 

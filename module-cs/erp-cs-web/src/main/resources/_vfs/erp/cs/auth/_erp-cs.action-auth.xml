@@ -205,30 +205,44 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpCsTicketType-main" displayName="工单类型" orderNo="10043" i18n-en:displayName="Ticket Type"
+                <resource id="ErpCsTicketTimerSession-main" displayName="工单计时器会话" orderNo="10043"
+                          i18n-en:displayName="Ticket Timer Session" icon="timer" component="FLUX" resourceType="SUBM"
+                          url="/erp/cs/pages/ErpCsTicketTimerSession/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpCsTicketTimerSession:query" displayName="查询工单计时器会话"
+                                  i18n-en:displayName="Query Ticket Timer Session" orderNo="10044" resourceType="FNPT">
+                            <permissions>ErpCsTicketTimerSession:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpCsTicketTimerSession:mutation" displayName="修改工单计时器会话"
+                                  i18n-en:displayName="Modify Ticket Timer Session" orderNo="10045" resourceType="FNPT">
+                            <permissions>ErpCsTicketTimerSession:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpCsTicketType-main" displayName="工单类型" orderNo="10046" i18n-en:displayName="Ticket Type"
                           icon="tag" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsTicketType/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsTicketType:query" displayName="查询工单类型"
-                                  i18n-en:displayName="Query Ticket Type" orderNo="10044" resourceType="FNPT">
+                                  i18n-en:displayName="Query Ticket Type" orderNo="10047" resourceType="FNPT">
                             <permissions>ErpCsTicketType:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpCsTicketType:mutation" displayName="修改工单类型"
-                                  i18n-en:displayName="Modify Ticket Type" orderNo="10045" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Ticket Type" orderNo="10048" resourceType="FNPT">
                             <permissions>ErpCsTicketType:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpCsTimeEntry-main" displayName="工单计时条目" orderNo="10046" i18n-en:displayName="Time Entry"
+                <resource id="ErpCsTimeEntry-main" displayName="工单计时条目" orderNo="10049" i18n-en:displayName="Time Entry"
                           icon="clock" component="FLUX" resourceType="SUBM"
                           url="/erp/cs/pages/ErpCsTimeEntry/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpCsTimeEntry:query" displayName="查询工单计时条目"
-                                  i18n-en:displayName="Query Time Entry" orderNo="10047" resourceType="FNPT">
+                                  i18n-en:displayName="Query Time Entry" orderNo="10050" resourceType="FNPT">
                             <permissions>ErpCsTimeEntry:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpCsTimeEntry:mutation" displayName="修改工单计时条目"
-                                  i18n-en:displayName="Modify Time Entry" orderNo="10048" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Time Entry" orderNo="10051" resourceType="FNPT">
                             <permissions>ErpCsTimeEntry:mutation</permissions>
                         </resource>
                     </children>

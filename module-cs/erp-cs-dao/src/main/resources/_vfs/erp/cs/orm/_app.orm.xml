@@ -107,6 +107,11 @@
             <option code="MANUAL" label="手动录入" value="MANUAL" i18n-en:label="Manual"/>
             <option code="TIMER_IMPORT" label="计时器导入" value="TIMER_IMPORT" i18n-en:label="Timer Import"/>
         </dict>
+        <dict label="计时器会话状态" name="erp-cs/timer-session-status" valueType="string" i18n-en:label="Timer Session Status">
+            <option code="RUNNING" label="运行中" value="RUNNING" i18n-en:label="Running"/>
+            <option code="PAUSED" label="已暂停" value="PAUSED" i18n-en:label="Paused"/>
+            <option code="STOPPED" label="已停止" value="STOPPED" i18n-en:label="Stopped"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -1319,6 +1324,79 @@
                     </join>
                 </to-one>
             </relations>
+        </entity>
+        <entity className="app.erp.cs.dao.entity.ErpCsTicketTimerSession" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单计时器会话"
+                name="app.erp.cs.dao.entity.ErpCsTicketTimerSession" registerShortName="true"
+                tableName="erp_cs_ticket_timer_session" tagSet="gid,erp.cs" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="timer" i18n-en:displayName="Ticket Timer Session">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="AGENT_ID" displayName="客服" mandatory="true" name="agentId" precision="36" propId="3"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Agent"/>
+                <column code="TICKET_ID" displayName="关联工单" mandatory="true" name="ticketId" propId="4"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Ticket"/>
+                <column code="START_TIME" displayName="开始时间" mandatory="true" name="startTime" propId="5"
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Start Time"/>
+                <column code="STOP_TIME" displayName="停止时间" name="stopTime" propId="6" stdDataType="timestamp"
+                        stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Stop Time"/>
+                <column code="PAUSE_START_DATE_TIME" displayName="暂停开始时间" name="pauseStartDateTime" propId="7"
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Pause Start"/>
+                <column code="CUMULATIVE_PAUSE_MINUTES" defaultValue="0" displayName="累计暂停时长(分钟)"
+                        name="cumulativePauseMinutes" propId="8" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Cumulative Pause(min)"/>
+                <column code="PAUSE_REASON" displayName="暂停原因" name="pauseReason" precision="500" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Pause Reason"/>
+                <column code="STATUS" defaultValue="RUNNING" displayName="会话状态" mandatory="true" name="status"
+                        precision="20" propId="10" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-cs/timer-session-status" i18n-en:displayName="Status"/>
+                <column code="ACTIVE_FLAG" displayName="进行中标记" name="activeFlag" precision="1" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Active Flag"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="12" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="13" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="14" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="16" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_CS_TIMER_SESSION_TICKET_ID" unique="false">
+                    <column name="ticketId"/>
+                </index>
+                <index name="IDX_CS_TIMER_SESSION_AGENT_ID" unique="false">
+                    <column name="agentId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="ticket" refEntityName="app.erp.cs.dao.entity.ErpCsTicket" tagSet="pub"
+                        i18n-en:displayName="Ticket">
+                    <join>
+                        <on leftProp="ticketId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="agentId,activeFlag" name="UK_CS_TIMER_SESSION_AGENT_ACTIVE"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="ErpMdPartner"
                 name="app.erp.md.dao.entity.ErpMdPartner" notGenCode="true" tableName="erp_md_partner"

@@ -350,6 +350,27 @@ CREATE TABLE erp_cs_time_entry(
   constraint PK_erp_cs_time_entry primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_cs_ticket_timer_session(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  AGENT_ID VARCHAR(36) NOT NULL    COMMENT '客服',
+  TICKET_ID BIGINT NOT NULL    COMMENT '关联工单',
+  START_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '开始时间',
+  STOP_TIME DATETIME(3) NULL    COMMENT '停止时间',
+  PAUSE_START_DATE_TIME DATETIME(3) NULL    COMMENT '暂停开始时间',
+  CUMULATIVE_PAUSE_MINUTES INTEGER default 0  NULL    COMMENT '累计暂停时长(分钟)',
+  PAUSE_REASON VARCHAR(500) NULL    COMMENT '暂停原因',
+  STATUS VARCHAR(20) default 'RUNNING'  NOT NULL    COMMENT '会话状态',
+  ACTIVE_FLAG VARCHAR(1) NULL    COMMENT '进行中标记',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_cs_ticket_timer_session primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 
    ALTER TABLE erp_md_partner COMMENT 'ErpMdPartner';
                 
@@ -386,4 +407,6 @@ CREATE TABLE erp_cs_time_entry(
    ALTER TABLE erp_cs_survey COMMENT '满意度调查';
                 
    ALTER TABLE erp_cs_time_entry COMMENT '工单计时条目';
+                
+   ALTER TABLE erp_cs_ticket_timer_session COMMENT '工单计时器会话';
                 

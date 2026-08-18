@@ -35,6 +35,8 @@ alter table erp_cs_survey add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_cs_time_entry add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_cs_ticket_timer_session add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_partner drop constraint PK_erp_md_partner;
 alter table erp_md_partner add constraint PK_erp_md_partner primary key (NOP_TENANT_ID, id);
 
@@ -88,5 +90,8 @@ alter table erp_cs_survey add constraint PK_erp_cs_survey primary key (NOP_TENAN
 
 alter table erp_cs_time_entry drop constraint PK_erp_cs_time_entry;
 alter table erp_cs_time_entry add constraint PK_erp_cs_time_entry primary key (NOP_TENANT_ID, id);
+
+alter table erp_cs_ticket_timer_session drop constraint PK_erp_cs_ticket_timer_session;
+alter table erp_cs_ticket_timer_session add constraint PK_erp_cs_ticket_timer_session primary key (NOP_TENANT_ID, id);
 
 

@@ -14,6 +14,7 @@ entity:
     ErpCsTeam: 客服团队
     ErpCsTicket: 客服工单
     ErpCsTicketAction: 工单操作日志
+    ErpCsTicketTimerSession: 工单计时器会话
     ErpCsTicketType: 工单类型
     ErpCsTimeEntry: 工单计时条目
 prop:
@@ -334,6 +335,28 @@ prop:
       ticketId: 工单ID
       toStatus: 目标状态
       toStatus_label: 目标状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpCsTicketTimerSession:
+      activeFlag: 进行中标记
+      agentId: 客服
+      createTime: 创建时间
+      createdBy: 创建人
+      cumulativePauseMinutes: 累计暂停时长(分钟)
+      delVersion: 逻辑删除版本
+      id: ID
+      org: null
+      org.name: null
+      orgId: 业务组织
+      pauseReason: 暂停原因
+      pauseStartDateTime: 暂停开始时间
+      startTime: 开始时间
+      status: 会话状态
+      status_label: 会话状态
+      stopTime: 停止时间
+      ticket: null
+      ticketId: 关联工单
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

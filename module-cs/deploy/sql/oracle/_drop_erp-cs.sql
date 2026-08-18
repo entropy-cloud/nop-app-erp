@@ -17,4 +17,5 @@ drop table erp_cs_catalog_fulfillment;
 drop table erp_cs_ticket_action;
 drop table erp_cs_survey;
 drop table erp_cs_time_entry;
+drop table erp_cs_ticket_timer_session;
 

@@ -350,6 +350,27 @@ CREATE TABLE erp_cs_time_entry(
   constraint PK_erp_cs_time_entry primary key (id)
 );
 
+CREATE TABLE erp_cs_ticket_timer_session(
+  id INT8 NOT NULL ,
+  org_id INT8  ,
+  agent_id VARCHAR(36) NOT NULL ,
+  ticket_id INT8 NOT NULL ,
+  start_time TIMESTAMP NOT NULL ,
+  stop_time TIMESTAMP  ,
+  pause_start_date_time TIMESTAMP  ,
+  cumulative_pause_minutes INT4 default 0   ,
+  pause_reason VARCHAR(500)  ,
+  status VARCHAR(20) default 'RUNNING'  NOT NULL ,
+  active_flag VARCHAR(1)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_cs_ticket_timer_session primary key (id)
+);
+
 
       COMMENT ON TABLE erp_md_partner IS 'ErpMdPartner';
                 
@@ -936,4 +957,40 @@ CREATE TABLE erp_cs_time_entry(
       COMMENT ON COLUMN erp_cs_time_entry.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_cs_time_entry.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_cs_ticket_timer_session IS '工单计时器会话';
+                
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.agent_id IS '客服';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.ticket_id IS '关联工单';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.start_time IS '开始时间';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.stop_time IS '停止时间';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.pause_start_date_time IS '暂停开始时间';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.cumulative_pause_minutes IS '累计暂停时长(分钟)';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.pause_reason IS '暂停原因';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.status IS '会话状态';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.active_flag IS '进行中标记';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_timer_session.update_time IS '修改时间';
                     

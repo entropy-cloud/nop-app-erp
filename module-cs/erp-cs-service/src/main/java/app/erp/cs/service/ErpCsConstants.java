@@ -157,4 +157,47 @@ public interface ErpCsConstants extends ErpCsDocStatus {
 
     /** 应答分类最大深度（默认 3；canned-response.md §五，本期仅声明不强制校验）。 */
     String CONFIG_CANNED_RESPONSE_CATEGORY_MAX_DEPTH = "erp-cs.canned-response-category-max-depth";
+
+    // === 工单计时器 session / 计时条目审批（plan 2026-08-17-2125-2，RC-R1.66，P1-RC-055，UC-CS-11）===
+
+    /** 是否启用工单计时（默认 true；time-tracking.md §七，UC-CS-11 ① 前置）。 */
+    String CONFIG_TIME_TRACKING_ENABLED = "erp-cs.time-tracking-enabled";
+
+    /** 时间条目是否必须填写描述（默认 true；time-tracking.md §七）。 */
+    String CONFIG_TIME_ENTRY_REQUIRE_DESCRIPTION = "erp-cs.time-entry-require-description";
+
+    /** 超过此时长（分钟）的条目需审批（默认 480；time-tracking.md §七）。 */
+    String CONFIG_TIME_ENTRY_APPROVAL_THRESHOLD = "erp-cs.time-entry-approval-threshold";
+
+    /** 条目是否自动审批跳过审批流（默认 false；time-tracking.md §七）。 */
+    String CONFIG_TIME_ENTRY_AUTO_APPROVE = "erp-cs.time-entry-auto-approve";
+
+    /** 全局默认计费费率（元/小时，默认 0；time-tracking.md §七 + §1.2 优先级 4）。 */
+    String CONFIG_DEFAULT_BILLING_RATE = "erp-cs.default-billing-rate";
+
+    /** 单次计时器最大时长（小时，超过惰性自动停止，默认 12；time-tracking.md §七，UC-CS-11 ⑧）。 */
+    String CONFIG_TIME_ENTRY_TIMER_MAX_HOURS = "erp-cs.time-entry-timer-max-hours";
+
+    /** 条目审批主管兜底人（userId，空=无兜底；plan D4 §3.3 审批人链末端经 config 显式化）。 */
+    String CONFIG_TIME_ENTRY_APPROVER_ID = "erp-cs.time-entry-approver-id";
+
+    // 计时器会话状态（erp-cs/timer-session-status；权威：app-erp-cs.orm.xml + plan D1）
+    String TIMER_SESSION_STATUS_RUNNING = "RUNNING";
+    String TIMER_SESSION_STATUS_PAUSED = "PAUSED";
+    String TIMER_SESSION_STATUS_STOPPED = "STOPPED";
+
+    /** 单计时器 UK 载体：进行中（RUNNING/PAUSED）='Y'，停止置 NULL（plan D1 单活跃约束）。 */
+    String TIMER_SESSION_ACTIVE_FLAG = "Y";
+
+    // 条目审批状态（erp-cs/time-entry-approve-status；NULL = DRAFT 未提交，plan D4）
+    String TIME_ENTRY_APPROVE_PENDING = "PENDING";
+    String TIME_ENTRY_APPROVE_APPROVED = "APPROVED";
+    String TIME_ENTRY_APPROVE_REJECTED = "REJECTED";
+
+    // 条目来源（erp-cs/time-entry-source）
+    String TIME_ENTRY_SOURCE_MANUAL = "MANUAL";
+    String TIME_ENTRY_SOURCE_TIMER_IMPORT = "TIMER_IMPORT";
+
+    /** D2 映射哨兵：session.agentId（userId 字符串）非数字时写 ErpCsTimeEntry.agentId（BIGINT）取 0。 */
+    long ENTRY_AGENT_ID_UNMAPPED = 0L;
 }

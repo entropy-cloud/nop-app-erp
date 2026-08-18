@@ -308,4 +308,19 @@ public interface _ErpCsDaoConstants {
      */
     String TIME_ENTRY_SOURCE_TIMER_IMPORT = "TIMER_IMPORT";
                     
+    /**
+     * 计时器会话状态: 运行中 
+     */
+    String TIMER_SESSION_STATUS_RUNNING = "RUNNING";
+                    
+    /**
+     * 计时器会话状态: 已暂停 
+     */
+    String TIMER_SESSION_STATUS_PAUSED = "PAUSED";
+                    
+    /**
+     * 计时器会话状态: 已停止 
+     */
+    String TIMER_SESSION_STATUS_STOPPED = "STOPPED";
+                    
 }

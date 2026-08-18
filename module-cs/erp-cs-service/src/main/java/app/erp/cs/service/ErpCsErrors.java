@@ -50,6 +50,13 @@ public interface ErpCsErrors {
     String ARG_CANNED_RESPONSE_ID = "cannedResponseId";
     String ARG_VARIABLE_KEY = "variableKey";
 
+    // --- 计时器 session / 条目审批参数键（plan 2026-08-17-2125-2，RC-R1.66） ---
+    String ARG_SESSION_ID = "sessionId";
+    String ARG_AGENT_ID = "agentId";
+    String ARG_TIME_ENTRY_ID = "timeEntryId";
+    String ARG_MAX_HOURS = "maxHours";
+    String ARG_APPROVER_ID = "approverId";
+
     ErrorCode ERR_TICKET_NOT_FOUND = ErrorCode.define(
             "erp.err.cs.ticket.not-found",
             "客服工单不存在: {ticketId}",
@@ -182,4 +189,46 @@ public interface ErpCsErrors {
             "erp.err.cs.canned-response.required-var-missing",
             "预设应答必填变量[{variableKey}]缺失",
             ARG_VARIABLE_KEY);
+
+    // --- 计时器 session / 条目审批错误码（plan 2026-08-17-2125-2，RC-R1.66，UC-CS-11 ①-⑨） ---
+
+    ErrorCode ERR_CS_TIME_TRACKING_DISABLED = ErrorCode.define(
+            "erp.err.cs.time-tracking.disabled",
+            "工单计时功能未启用（erp-cs.time-tracking-enabled=false），禁止计时器操作",
+            ARG_TICKET_ID);
+
+    ErrorCode ERR_CS_TIMER_ALREADY_ACTIVE = ErrorCode.define(
+            "erp.err.cs.timer.already-active",
+            "客服[{agentId}]已有进行中的计时器（sessionId={sessionId}，工单 {ticketId}），须先停止后再启动",
+            ARG_AGENT_ID, ARG_SESSION_ID, ARG_TICKET_ID);
+
+    ErrorCode ERR_CS_TIMER_SESSION_NOT_FOUND = ErrorCode.define(
+            "erp.err.cs.timer.session-not-found",
+            "计时器会话不存在: {sessionId}",
+            ARG_SESSION_ID);
+
+    ErrorCode ERR_CS_TIMER_SESSION_NOT_OPEN = ErrorCode.define(
+            "erp.err.cs.timer.session-not-open",
+            "计时器会话[{sessionId}]已停止（STOPPED），禁止暂停/恢复/停止操作",
+            ARG_SESSION_ID, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_CS_TIMER_ILLEGAL_STATE = ErrorCode.define(
+            "erp.err.cs.timer.illegal-state",
+            "计时器会话[{sessionId}]当前状态[{currentStatus}]不允许此操作，期望[{expectedStatus}]",
+            ARG_SESSION_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_CS_TIME_ENTRY_NOT_FOUND = ErrorCode.define(
+            "erp.err.cs.time-entry.not-found",
+            "工单计时条目不存在: {timeEntryId}",
+            ARG_TIME_ENTRY_ID);
+
+    ErrorCode ERR_CS_TIME_ENTRY_DESCRIPTION_REQUIRED = ErrorCode.define(
+            "erp.err.cs.time-entry.description-required",
+            "计时条目[{timeEntryId}]提交审批前必须填写工作内容描述（erp-cs.time-entry-require-description=true）",
+            ARG_TIME_ENTRY_ID);
+
+    ErrorCode ERR_CS_TIME_ENTRY_ILLEGAL_APPROVAL_STATUS = ErrorCode.define(
+            "erp.err.cs.time-entry.illegal-approval-status",
+            "计时条目[{timeEntryId}]当前审批状态[{currentStatus}]不允许此操作，期望[{expectedStatus}]",
+            ARG_TIME_ENTRY_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 }

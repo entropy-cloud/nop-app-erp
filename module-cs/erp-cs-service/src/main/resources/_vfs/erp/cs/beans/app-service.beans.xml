@@ -54,6 +54,17 @@
           class="app.erp.cs.service.processor.ErpCsTicketResolveProcessor"/>
     <bean id="app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor"
           class="app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor"/>
+    <!-- 计时器 session per-mutation Processor beans（RC-R1.66，plan 2026-08-17-2125-2 Phase 2）。 -->
+    <bean id="app.erp.cs.service.processor.ErpCsTicketTimerSessionOps"
+          class="app.erp.cs.service.processor.ErpCsTicketTimerSessionOps"/>
+    <bean id="app.erp.cs.service.processor.ErpCsTicketTimerSessionStartTimerProcessor"
+          class="app.erp.cs.service.processor.ErpCsTicketTimerSessionStartTimerProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsTicketTimerSessionPauseTimerProcessor"
+          class="app.erp.cs.service.processor.ErpCsTicketTimerSessionPauseTimerProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsTicketTimerSessionResumeTimerProcessor"
+          class="app.erp.cs.service.processor.ErpCsTicketTimerSessionResumeTimerProcessor"/>
+    <bean id="app.erp.cs.service.processor.ErpCsTicketTimerSessionStopTimerProcessor"
+          class="app.erp.cs.service.processor.ErpCsTicketTimerSessionStopTimerProcessor"/>
 
     <!-- 工单创建自动富化（RC-R1.65，P1-RC-054，UC-CS-01）：候选池跨域解析（cs team code -> crm 同码团队成员）。 -->
     <bean id="app.erp.cs.service.entity.TicketAssignResolver"

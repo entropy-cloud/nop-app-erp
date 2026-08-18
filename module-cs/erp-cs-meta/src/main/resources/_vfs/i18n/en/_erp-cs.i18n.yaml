@@ -14,6 +14,7 @@ entity:
     ErpCsTeam: CS Team
     ErpCsTicket: Ticket
     ErpCsTicketAction: Ticket Action
+    ErpCsTicketTimerSession: Ticket Timer Session
     ErpCsTicketType: Ticket Type
     ErpCsTimeEntry: Time Entry
 prop:
@@ -337,6 +338,28 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       ticket: Ticket
+    ErpCsTicketTimerSession:
+      id: ID
+      orgId: Organization
+      agentId: Agent
+      ticketId: Ticket
+      startTime: Start Time
+      stopTime: Stop Time
+      pauseStartDateTime: Pause Start
+      cumulativePauseMinutes: Cumulative Pause(min)
+      pauseReason: Pause Reason
+      status: Status
+      status_label: null
+      activeFlag: Active Flag
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      ticket: Ticket
+      org: Org
+      org.name: Org
     ErpCsTicketType:
       id: ID
       code: Code
@@ -398,6 +421,7 @@ dict:
     erp-cs/fulfillment-action-type: Fulfillment Action Type
     erp-cs/time-entry-approve-status: Time Entry Approve Status
     erp-cs/time-entry-source: Time Entry Source
+    erp-cs/timer-session-status: Timer Session Status
 dict.option.label:
   erp-cs/ticket-status:
     NEW: New
@@ -474,3 +498,7 @@ dict.option.label:
   erp-cs/time-entry-source:
     MANUAL: Manual
     TIMER_IMPORT: Timer Import
+  erp-cs/timer-session-status:
+    RUNNING: Running
+    PAUSED: Paused
+    STOPPED: Stopped

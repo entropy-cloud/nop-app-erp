@@ -2,11 +2,13 @@ package app.erp.cs.service.entity;
 
 import app.erp.cs.biz.IErpCsTicketActionBiz;
 import app.erp.cs.biz.IErpCsTicketBiz;
+import app.erp.cs.biz.IErpCsTimeEntryBiz;
 import app.erp.cs.dao.entity.ErpCsSlaPolicy;
 import app.erp.cs.dao.entity.ErpCsTeam;
 import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.dao.entity.ErpCsTicketAction;
 import app.erp.cs.dao.entity.ErpCsTicketType;
+import app.erp.cs.dao.entity.ErpCsTimeEntry;
 import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
@@ -66,6 +68,8 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     IErpMdPartnerBiz mdPartnerBiz;
     @Inject
     IErpSysNotificationBiz notificationBiz;
+    @Inject
+    IErpCsTimeEntryBiz timeEntryBiz;
     @Inject
     ErpCsTicketStateMachine stateMachine;
     @Inject
@@ -410,7 +414,7 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     }
 
     private static Map<String, Object> boardNode(String id, String type, String parentId,
-                                                   List<String> children, Map<String, Object> data) {
+                                                    List<String> children, Map<String, Object> data) {
         Map<String, Object> node = new LinkedHashMap<>();
         node.put("id", id);
         node.put("type", type);
@@ -418,6 +422,56 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
         node.put("children", children);
         if (data != null) node.put("data", data);
         return node;
+    }
+
+    // ---------- 工单总计时聚合（RC-R1.66，UC-CS-11 ⑦；口径 owner doc time-tracking.md §四，SQL 聚合零 ticket 加列） ----------
+
+    @Override
+    @BizQuery
+    public long totalTimeSpent(@Name("ticketId") Long ticketId, IServiceContext context) {
+        long sum = 0;
+        for (ErpCsTimeEntry e : findEntries(ticketId, java.util.Arrays.asList(
+                ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED, ErpCsConstants.TIME_ENTRY_APPROVE_PENDING), context)) {
+            if (e.getDuration() != null) {
+                sum += e.getDuration();
+            }
+        }
+        return sum;
+    }
+
+    @Override
+    @BizQuery
+    public long totalBillableTime(@Name("ticketId") Long ticketId, IServiceContext context) {
+        long sum = 0;
+        for (ErpCsTimeEntry e : findEntries(ticketId,
+                java.util.Arrays.asList(ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED), context)) {
+            if (Boolean.TRUE.equals(e.getIsBillable()) && e.getDuration() != null) {
+                sum += e.getDuration();
+            }
+        }
+        return sum;
+    }
+
+    @Override
+    @BizQuery
+    public java.math.BigDecimal totalBilledAmount(@Name("ticketId") Long ticketId, IServiceContext context) {
+        java.math.BigDecimal sum = java.math.BigDecimal.ZERO;
+        for (ErpCsTimeEntry e : findEntries(ticketId,
+                java.util.Arrays.asList(ErpCsConstants.TIME_ENTRY_APPROVE_APPROVED), context)) {
+            if (Boolean.TRUE.equals(e.getIsBillable()) && e.getBillableAmount() != null) {
+                sum = sum.add(e.getBillableAmount());
+            }
+        }
+        return sum;
+    }
+
+    /** 经 IErpCsTimeEntryBiz findList 聚合口径查询（R2b 合规跨 BizModel 注入，plan D5）。 */
+    private List<ErpCsTimeEntry> findEntries(Long ticketId, List<String> approvalStatuses,
+                                             IServiceContext context) {
+        QueryBean query = new QueryBean();
+        query.addFilter(eq("ticketId", ticketId));
+        query.addFilter(in("approvalStatus", approvalStatuses));
+        return timeEntryBiz.findList(query, null, context);
     }
 
     /**

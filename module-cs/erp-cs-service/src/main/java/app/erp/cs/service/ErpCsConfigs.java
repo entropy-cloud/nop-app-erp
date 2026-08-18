@@ -148,6 +148,56 @@ public final class ErpCsConfigs {
         return intVar(ErpCsConstants.CONFIG_CANNED_RESPONSE_CATEGORY_MAX_DEPTH, 3);
     }
 
+    // === 工单计时器 session / 计时条目审批（plan 2026-08-17-2125-2，RC-R1.66；默认值对齐 time-tracking.md §七）===
+
+    /** 是否启用工单计时（默认 true；仅门控计时器 mutation，不门控 MANUAL 条目补录——plan D6）。 */
+    public static boolean isTimeTrackingEnabled() {
+        return boolVar(ErpCsConstants.CONFIG_TIME_TRACKING_ENABLED, true);
+    }
+
+    /** 时间条目提交是否必须填写描述（默认 true）。 */
+    public static boolean isTimeEntryRequireDescription() {
+        return boolVar(ErpCsConstants.CONFIG_TIME_ENTRY_REQUIRE_DESCRIPTION, true);
+    }
+
+    /** 超过此时长（分钟）的条目需审批（默认 480）。 */
+    public static int getTimeEntryApprovalThresholdMinutes() {
+        return intVar(ErpCsConstants.CONFIG_TIME_ENTRY_APPROVAL_THRESHOLD, 480);
+    }
+
+    /** 条目是否自动审批（默认 false）。 */
+    public static boolean isTimeEntryAutoApprove() {
+        return boolVar(ErpCsConstants.CONFIG_TIME_ENTRY_AUTO_APPROVE, false);
+    }
+
+    /** 全局默认计费费率（元/小时，默认 0；停止生成条目时 isBillable 且费率缺失且 rate>0 时填充——plan D6）。 */
+    public static java.math.BigDecimal getDefaultBillingRate() {
+        return decimalVar(ErpCsConstants.CONFIG_DEFAULT_BILLING_RATE, java.math.BigDecimal.ZERO);
+    }
+
+    /** 单次计时器最大时长（小时，默认 12；超时惰性结算自动停止——plan D3）。 */
+    public static int getTimerMaxHours() {
+        return intVar(ErpCsConstants.CONFIG_TIME_ENTRY_TIMER_MAX_HOURS, 12);
+    }
+
+    /** 条目审批主管兜底人（userId，默认空=无兜底；plan D4 审批人链末端）。 */
+    public static String getTimeEntryApproverId() {
+        String raw = AppConfig.var(ErpCsConstants.CONFIG_TIME_ENTRY_APPROVER_ID, "");
+        return raw == null ? "" : raw.trim();
+    }
+
+    private static java.math.BigDecimal decimalVar(String key, java.math.BigDecimal defaultValue) {
+        String raw = AppConfig.var(key, String.valueOf(defaultValue));
+        if (raw == null || raw.trim().isEmpty()) {
+            return defaultValue;
+        }
+        try {
+            return new java.math.BigDecimal(raw.trim());
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
+    }
+
     private static boolean boolVar(String key, boolean defaultValue) {
         String raw = AppConfig.var(key, String.valueOf(defaultValue));
         if (raw == null || raw.trim().isEmpty()) {

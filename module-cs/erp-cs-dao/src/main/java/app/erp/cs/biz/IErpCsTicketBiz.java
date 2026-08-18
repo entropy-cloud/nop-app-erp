@@ -59,4 +59,18 @@ public interface IErpCsTicketBiz extends ICrudBiz<ErpCsTicket> {
      */
     @BizQuery
     Map<String, Object> findBoardData(@Optional @Name("customerId") Long customerId, IServiceContext context);
+
+    // ---------- 工单总计时聚合（RC-R1.66，UC-CS-11 ⑦；SQL 聚合口径 owner doc time-tracking.md §四，零 ticket 加列） ----------
+
+    /** 总处理时长（分钟）＝ SUM(duration)，approvalStatus IN (APPROVED, PENDING)。 */
+    @BizQuery
+    long totalTimeSpent(@Name("ticketId") Long ticketId, IServiceContext context);
+
+    /** 总可计费时长（分钟）＝ SUM(duration)，isBillable=true AND approvalStatus=APPROVED。 */
+    @BizQuery
+    long totalBillableTime(@Name("ticketId") Long ticketId, IServiceContext context);
+
+    /** 总计费金额＝ SUM(billableAmount)，isBillable=true AND approvalStatus=APPROVED。 */
+    @BizQuery
+    java.math.BigDecimal totalBilledAmount(@Name("ticketId") Long ticketId, IServiceContext context);
 }

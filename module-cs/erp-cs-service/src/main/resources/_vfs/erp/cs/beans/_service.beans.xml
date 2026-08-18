@@ -122,4 +122,12 @@
           ioc:type="app.erp.cs.biz.IErpCsTimeEntryBiz" ioc:force-lazy-property="true" lazy-init="true" primary="true">
         <property name="bizObjName" value="ErpCsTimeEntry"/>
     </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsTicketTimerSessionBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsTicketTimerSession" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsTicketTimerSessionBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCsTicketTimerSession"/>
+    </bean>
 </beans>
