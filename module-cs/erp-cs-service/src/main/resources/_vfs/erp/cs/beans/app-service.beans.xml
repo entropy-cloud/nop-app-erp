@@ -23,6 +23,11 @@
     <bean id="erpCsEntitlementExpiryJob"
           class="app.erp.cs.service.job.ErpCsEntitlementExpiryJob"/>
 
+    <!-- 质量升级后台重试 Job Bean（RC-R1.68，P1-RC-057，UC-CS-06 异常条款）。由 nop-job-local scheduler.yaml
+           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-cs.quality-retry-cron 配置门控（空=跳过）。 -->
+    <bean id="erpCsQualityEscalationRetryJob"
+          class="app.erp.cs.service.job.ErpCsQualityEscalationRetryJob"/>
+
     <!-- 客服域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /cs/）。 -->
     <bean id="app.erp.cs.service.report.ErpCsReportBizModel" ioc:type="@bean:id"/>
@@ -54,6 +59,10 @@
           class="app.erp.cs.service.processor.ErpCsTicketResolveProcessor"/>
     <bean id="app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor"
           class="app.erp.cs.service.processor.ErpCsTicketScanOverdueTicketsProcessor"/>
+    <!-- cs 质量事件联动 per-mutation Processor（RC-R1.68，P1-RC-057，UC-CS-06）：NCR 双弱指针创建 +
+           QUALITY_ESCALATE 审计 + 失败降级 PENDING（后台重试队列载体）。 -->
+    <bean id="app.erp.cs.service.processor.ErpCsTicketEscalateToQualityProcessor"
+          class="app.erp.cs.service.processor.ErpCsTicketEscalateToQualityProcessor"/>
     <!-- 计时器 session per-mutation Processor beans（RC-R1.66，plan 2026-08-17-2125-2 Phase 2）。 -->
     <bean id="app.erp.cs.service.processor.ErpCsTicketTimerSessionOps"
           class="app.erp.cs.service.processor.ErpCsTicketTimerSessionOps"/>

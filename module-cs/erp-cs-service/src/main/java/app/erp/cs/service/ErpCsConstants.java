@@ -38,6 +38,46 @@ public interface ErpCsConstants extends ErpCsDocStatus {
     String ACTION_TYPE_CLOSE = "CLOSE";
     String ACTION_TYPE_CANCEL = "CANCEL";
 
+    // === cs 质量事件联动（plan 2026-08-18-1849-1，RC-R1.68，P1-RC-057，UC-CS-06）===
+
+    /**
+     * 质量升级独立 actionType（R1.67 Deferred 协调项承接）：与 SLA 超时路径的 {@link #ACTION_TYPE_ESCALATE}
+     * 语义解耦——SLA 升级计数/时间窗判定不消费本类型，质量升级重试亦不命中 SLA 守卫。
+     */
+    String ACTION_TYPE_QUALITY_ESCALATE = "QUALITY_ESCALATE";
+
+    /** NCR 弱指针反向载体：ErpQaNonConformance.sourceType 值（qa orm 自由 VARCHAR，非 dict）。 */
+    String NCR_SOURCE_TYPE_CS_TICKET = "CS_TICKET";
+
+    /** NCR 严重度默认值（对齐 erp-qa/severity 字典 NORMAL 码；qa 侧无 cs 可引常量，cs 侧镜像声明）。 */
+    String QUALITY_SEVERITY_NORMAL = "NORMAL";
+
+    /** NCR 初始状态（对齐 erp-qa/ncr-status OPEN 码；cs 侧镜像声明，qa-service 不在 cs classpath）。 */
+    String NCR_STATUS_OPEN = "OPEN";
+
+    /** 质量事件联动总门控（默认 true；关闭时 escalateToQuality 拒绝）。 */
+    String CONFIG_QUALITY_ESCALATION_ENABLED = "erp-cs.quality-escalation-enabled";
+
+    /** 质量升级后台重试 cron（空=不调度；job 运行时门控）。 */
+    String CONFIG_QUALITY_RETRY_CRON = "erp-cs.quality-retry-cron";
+
+    /** 质量升级后台重试次数上限（默认 3；超限跳过并 WARN）。 */
+    String CONFIG_QUALITY_RETRY_MAX = "erp-cs.quality-retry-max";
+
+    // === 知识库采纳族（plan 2026-08-18-1849-1，RC-R1.69，P1-RC-058，UC-CS-05 ⑦⑧⑨）===
+
+    /**
+     * 采纳知识库独立 actionType：content 固定整串格式 {@code knowledgeBaseId={id}}（无其他内容，
+     * 统计查询 eq 精确匹配杜绝前缀碰撞——id=1 不误配 id=12）。
+     */
+    String ACTION_TYPE_ADOPT_KNOWLEDGE = "ADOPT_KNOWLEDGE";
+
+    /** resolve 后置「建议创建知识库条目」推送开关（默认 true）。 */
+    String CONFIG_KNOWLEDGE_SUGGEST_ON_RESOLVE = "erp-cs.knowledge-suggest-on-resolve";
+
+    /** 通知事件类型：建议创建知识库条目（UC-CS-05 ⑨，模板种子 7204）。 */
+    String NOTIFY_EVENT_KNOWLEDGE_SUGGEST_CREATE = "cs.knowledge-suggest-create";
+
     // approve-status / doc-status 常量继承自 ErpCsDocStatus（dao 层单一真相源）
 
     // 调查发送渠道（erp-cs/survey-channel）

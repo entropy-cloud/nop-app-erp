@@ -48,10 +48,39 @@ public interface IErpCsTicketBiz extends ICrudBiz<ErpCsTicket> {
     List<ErpCsTicket> findSlaWarnings(@Optional @Name("beforeMinutes") Integer beforeMinutes,
                                       IServiceContext context);
 
+    /**
+     * 采纳知识库文章（UC-CS-05 ⑤⑦⑧，RC-R1.69）：写 ADOPT_KNOWLEDGE 审计行（content 固定整串
+     * {@code knowledgeBaseId={id}}）；{@code autoResolve=true} → 委托 resolveProcessor 转 RESOLVED
+     * （复用既有 resolve 状态机守卫/审计/survey 触发链）。
+     */
     @BizMutation
     ErpCsTicket adoptKnowledge(@Name("ticketId") Long ticketId,
                                @Name("knowledgeBaseId") Long knowledgeBaseId,
+                               @Optional @Name("autoResolve") Boolean autoResolve,
                                IServiceContext context);
+
+    // ---------- cs 质量事件联动（RC-R1.68，P1-RC-057，UC-CS-06） ----------
+
+    /**
+     * 工单升级为质量事件（UC-CS-06 流程①-④）：IN_PROCESS 守卫 + materialId/defectDescription 必填
+     * （守卫链在 Processor 内，参数声明 Optional 以便域错误码成为拒绝点），
+     * 经 {@code IErpQaNonConformanceBiz.save} 创建 NCR（sourceType=CS_TICKET + sourceCode=ticket.code
+     * 双弱指针反向关联），写 QUALITY_ESCALATE 审计行（content=NCR:{code}）；quality 调用失败降级为
+     * PENDING 审计行（工单状态保持，后台 job 重试）。工单不迁移状态（L1 ④ NCR 流程独立）。
+     */
+    @BizMutation
+    ErpCsTicket escalateToQuality(@Name("ticketId") Long ticketId,
+                                  @Optional @Name("materialId") Long materialId,
+                                  @Optional @Name("defectDescription") String defectDescription,
+                                  @Optional @Name("batchInfo") String batchInfo,
+                                  @Optional @Name("quantity") java.math.BigDecimal quantity,
+                                  @Optional @Name("severity") String severity,
+                                  @Optional @Name("supplierId") Long supplierId,
+                                  IServiceContext context);
+
+    /** 工单关联 NCR 闭环结果投影（UC-CS-06 ⑤）：{code,status,severity,ncrDate,resolvedAt,resolution}。 */
+    @BizQuery
+    List<Map<String, Object>> findQualityNcrs(@Name("ticketId") Long ticketId, IServiceContext context);
 
     /**
      * 看板扁平图结构聚合查询（flux kanban 原生渲染）。6 列（NEW/ASSIGNED/IN_PROGRESS/RESOLVED/CLOSED/CANCELLED）

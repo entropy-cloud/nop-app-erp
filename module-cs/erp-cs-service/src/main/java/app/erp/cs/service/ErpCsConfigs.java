@@ -204,6 +204,31 @@ public final class ErpCsConfigs {
         return raw == null ? "" : raw.trim();
     }
 
+    // === cs 质量事件联动（plan 2026-08-18-1849-1，RC-R1.68，UC-CS-06）===
+
+    /** 质量事件联动总门控（默认 true；关闭时 escalateToQuality 拒绝）。 */
+    public static boolean isQualityEscalationEnabled() {
+        return boolVar(ErpCsConstants.CONFIG_QUALITY_ESCALATION_ENABLED, true);
+    }
+
+    /** 质量升级后台重试 cron（默认空=跳过，「不调度」语义）。 */
+    public static String getQualityRetryCron() {
+        String raw = AppConfig.var(ErpCsConstants.CONFIG_QUALITY_RETRY_CRON, "");
+        return raw == null ? "" : raw.trim();
+    }
+
+    /** 质量升级后台重试次数上限（默认 3；负值钳 0 = 立即放弃）。 */
+    public static int getQualityRetryMax() {
+        return Math.max(0, intVar(ErpCsConstants.CONFIG_QUALITY_RETRY_MAX, 3));
+    }
+
+    // === 知识库采纳族（plan 2026-08-18-1849-1，RC-R1.69，UC-CS-05 ⑦⑧⑨）===
+
+    /** resolve 后置「建议创建知识库条目」推送开关（默认 true）。 */
+    public static boolean isKnowledgeSuggestOnResolve() {
+        return boolVar(ErpCsConstants.CONFIG_KNOWLEDGE_SUGGEST_ON_RESOLVE, true);
+    }
+
     private static java.math.BigDecimal decimalVar(String key, java.math.BigDecimal defaultValue) {
         String raw = AppConfig.var(key, String.valueOf(defaultValue));
         if (raw == null || raw.trim().isEmpty()) {

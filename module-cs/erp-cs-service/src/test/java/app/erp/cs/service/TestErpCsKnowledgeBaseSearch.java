@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <ul>
  *   <li>searchKnowledge：命中已发布/排除未发布/categoryId 过滤/limit 钳制/空关键词守门</li>
  *   <li>suggestForTicket：subject 解析/Top 5/过短 subject 守门</li>
- *   <li>adoptKnowledge：采纳登记 TicketAction actionType=NOTE + knowledgeBaseId 引用</li>
+ *   <li>adoptKnowledge：采纳登记 TicketAction actionType=ADOPT_KNOWLEDGE + knowledgeBaseId 固定整串引用（RC-R1.69 D7）</li>
  * </ul>
  */
 @NopTestConfig(localDb = true,
@@ -193,19 +193,15 @@ public class TestErpCsKnowledgeBaseSearch extends JunitAutoTestCase {
         int actionsAfter = countActions(ticketId);
         assertTrue(actionsAfter > actionsBefore, "采纳应生成 TicketAction 审计");
 
-        // 验证 actionType=NOTE 且 content 含 knowledgeBaseId 引用
+        // RC-R1.69 D7：actionType 独立化为 ADOPT_KNOWLEDGE，content 固定整串 knowledgeBaseId={id}
+        //（派生统计 eq 精确匹配载体）
         QueryBean q = new QueryBean();
         q.addFilter(eq("ticketId", ticketId));
-        q.addFilter(eq("actionType", ErpCsConstants.ACTION_TYPE_NOTE));
-        List<ErpCsTicketAction> noteActions = daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q);
-        boolean foundAdopt = false;
-        for (ErpCsTicketAction action : noteActions) {
-            if (action.getContent() != null && action.getContent().contains(String.valueOf(kbId))) {
-                foundAdopt = true;
-                break;
-            }
-        }
-        assertTrue(foundAdopt, "应存在 actionType=NOTE 且 content 含 knowledgeBaseId 的审计记录");
+        q.addFilter(eq("actionType", ErpCsConstants.ACTION_TYPE_ADOPT_KNOWLEDGE));
+        List<ErpCsTicketAction> adoptActions = daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q);
+        assertEquals(1, adoptActions.size(), "应存在 actionType=ADOPT_KNOWLEDGE 审计行");
+        assertEquals("knowledgeBaseId=" + kbId, adoptActions.get(0).getContent(),
+                "content 应为固定整串格式 knowledgeBaseId={id}（无其他内容）");
     }
 
     // ---------- helpers ----------

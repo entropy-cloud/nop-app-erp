@@ -154,6 +154,16 @@ public interface _ErpCsDaoConstants {
     String ACTION_TYPE_CANCEL = "CANCEL";
                     
     /**
+     * 操作类型: 质量升级 
+     */
+    String ACTION_TYPE_QUALITY_ESCALATE = "QUALITY_ESCALATE";
+                    
+    /**
+     * 操作类型: 采纳知识库 
+     */
+    String ACTION_TYPE_ADOPT_KNOWLEDGE = "ADOPT_KNOWLEDGE";
+                    
+    /**
      * 调查发送渠道: 邮件 
      */
     String SURVEY_CHANNEL_EMAIL = "EMAIL";

@@ -464,6 +464,8 @@ dict.option.label:
     ESCALATE: Escalate
     CLOSE: Close
     CANCEL: Cancel
+    QUALITY_ESCALATE: Quality Escalation
+    ADOPT_KNOWLEDGE: Adopt Knowledge
   erp-cs/survey-channel:
     EMAIL: Email
     PHONE: Phone

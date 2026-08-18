@@ -62,6 +62,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: 工单升级为质量事件（RC-R1.68，P1-RC-057，UC-CS-06 ②）经 IErpQaNonConformanceBiz
+             跨域创建 NCR（弱指针 sourceType=CS_TICKET + sourceCode=ticket.code）。cs→qa 单向（C），
+             DAG 无环；运行期 BizModel 实现由 app-erp-all 经 quality-web→quality-service 传递提供。 -->
+        <dependency>
+            <artifactId>app-erp-quality-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>

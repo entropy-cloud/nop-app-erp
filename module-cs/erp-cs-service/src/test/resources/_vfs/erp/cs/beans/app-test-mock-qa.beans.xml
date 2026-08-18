@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- cs 测试容器专用 qa NCR BizModel mock（RC-R1.68 质量事件联动；bean id testMock 前缀避免污染生产命名）。
+     生产容器由 app-erp-all 经 qa-service 提供真实实现，本文件按 app- 前缀约定自动合并进 cs 测试容器（test resources 不进生产 classpath）。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
+
+    <bean id="testMockErpQaNonConformanceBiz"
+          class="app.erp.cs.service.TestMockQaBizModels$MockErpQaNonConformanceBiz"
+          ioc:type="app.erp.qa.biz.IErpQaNonConformanceBiz"/>
+</beans>

@@ -231,4 +231,18 @@ public interface ErpCsErrors {
             "erp.err.cs.time-entry.illegal-approval-status",
             "计时条目[{timeEntryId}]当前审批状态[{currentStatus}]不允许此操作，期望[{expectedStatus}]",
             ARG_TIME_ENTRY_ID, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    // --- cs 质量事件联动错误码（plan 2026-08-18-1849-1，RC-R1.68，UC-CS-06） ---
+
+    String ARG_PARAM_NAME = "paramName";
+
+    ErrorCode ERR_CS_QUALITY_ESCALATION_DISABLED = ErrorCode.define(
+            "erp.err.cs.quality-escalation.disabled",
+            "工单[{ticketId}]质量事件联动未启用（erp-cs.quality-escalation-enabled=false），禁止质量升级",
+            ARG_TICKET_ID);
+
+    ErrorCode ERR_CS_QUALITY_ESCALATION_PARAM_REQUIRED = ErrorCode.define(
+            "erp.err.cs.quality-escalation.param-required",
+            "工单[{ticketId}]质量升级必填参数[{paramName}]缺失（materialId/defectDescription 必填）",
+            ARG_TICKET_ID, ARG_PARAM_NAME);
 }

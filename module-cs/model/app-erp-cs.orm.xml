@@ -68,6 +68,8 @@
             <option code="ESCALATE" label="升级" value="ESCALATE" i18n-en:label='Escalate'/>
             <option code="CLOSE" label="关闭" value="CLOSE" i18n-en:label='Close'/>
             <option code="CANCEL" label="取消" value="CANCEL" i18n-en:label='Cancel'/>
+            <option code="QUALITY_ESCALATE" label="质量升级" value="QUALITY_ESCALATE" i18n-en:label='Quality Escalation'/>
+            <option code="ADOPT_KNOWLEDGE" label="采纳知识库" value="ADOPT_KNOWLEDGE" i18n-en:label='Adopt Knowledge'/>
         </dict>
         <dict label="调查发送渠道" name="erp-cs/survey-channel" valueType="string" i18n-en:label='Survey Channel'>
             <option code="EMAIL" label="邮件" value="EMAIL" i18n-en:label='Email'/>

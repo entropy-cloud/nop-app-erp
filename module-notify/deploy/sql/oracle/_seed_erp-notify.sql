@@ -132,5 +132,12 @@ VALUES
    '工单分派无匹配: ${ticketCode}',
    '工单 ${ticketCode}（ID ${ticketId}，客户 ${customerName}）自动分派无匹配处理人，请人工分派',
    'ROLE', '{"roles":["客服主管"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
-   '异常告警样例（自动分派无匹配 -> 客服主管人工分派）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
+   '异常告警样例（自动分派无匹配 -> 客服主管人工分派）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 业务提醒：无知识库匹配建议创建条目（RC-R1.69，P1-RC-058，UC-CS-05 ⑨），5 分钟窗口合并。
+  -- 接收人=处理人（USER_LIST ${handlerUserId} 从 notify context 插值；assignedToId 回退 operatorId 由调用方归一化）。
+  (7204, 'cs.knowledge-suggest-create', '建议创建知识库条目', 'IN_APP',
+   '工单无知识库匹配: ${ticketCode}',
+   '工单 ${ticketCode}（ID ${ticketId}）解决时未匹配/未采纳知识库文章，建议创建新知识库条目沉淀解决方案',
+   'USER_LIST', '{"userIds":["${handlerUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '业务提醒样例（无匹配建议创建 KB 条目，handlerUserId=处理人 assignedToId 回退 operatorId）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
 

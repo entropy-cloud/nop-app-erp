@@ -2,7 +2,9 @@
 package app.erp.cs.service.entity;
 
 import app.erp.cs.biz.IErpCsKnowledgeBaseBiz;
+import app.erp.cs.biz.IErpCsTicketActionBiz;
 import app.erp.cs.dao.entity.ErpCsKnowledgeBase;
+import app.erp.cs.dao.entity.ErpCsTicketAction;
 import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
@@ -16,6 +18,7 @@ import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.core.context.IServiceContext;
+import jakarta.inject.Inject;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -28,8 +31,16 @@ public class ErpCsKnowledgeBaseBizModel extends CrudBizModel<ErpCsKnowledgeBase>
 
     private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ErpCsKnowledgeBaseBizModel.class);
 
+    /** 同域审计通道注入（R2b 合规：派生统计经 IErpCsTicketActionBiz，零 daoFor 面）。 */
+    @Inject
+    IErpCsTicketActionBiz ticketActionBiz;
+
     public ErpCsKnowledgeBaseBizModel() {
         setEntityName(ErpCsKnowledgeBase.class.getName());
+    }
+
+    public void setTicketActionBiz(IErpCsTicketActionBiz ticketActionBiz) {
+        this.ticketActionBiz = ticketActionBiz;
     }
 
     @Override
@@ -95,6 +106,51 @@ public class ErpCsKnowledgeBaseBizModel extends CrudBizModel<ErpCsKnowledgeBase>
                 ? Math.min(limit, ErpCsConfigs.getKnowledgeSearchMaxLimit())
                 : ErpCsConfigs.getKnowledgeSearchDefaultLimit();
         return searchKnowledge(keyword, null, effectiveLimit, context);
+    }
+
+    /**
+     * 知识库采纳使用统计（UC-CS-05 ⑧，RC-R1.69 B 类裁决 = TicketAction 派生计数，零 KB ORM 列）。
+     *
+     * <p>统计 actionType=ADOPT_KNOWLEDGE 审计行；{@code knowledgeBaseId} 提供时 content eq 精确匹配
+     * （{@code knowledgeBaseId={id}} 固定整串格式，杜绝 like 前缀碰撞——id=1 不误配 id=12）；
+     * 缺省全量 group。遗留 NOTE 旧格式行（历史数据）不计入——owner doc 注记边界。
+     */
+    @Override
+    @BizQuery
+    public List<Map<String, Object>> knowledgeUsageStats(@Optional @Name("knowledgeBaseId") Long knowledgeBaseId,
+                                                         IServiceContext context) {
+        QueryBean query = new QueryBean();
+        query.addFilter(FilterBeans.eq("actionType", ErpCsConstants.ACTION_TYPE_ADOPT_KNOWLEDGE));
+        if (knowledgeBaseId != null) {
+            query.addFilter(FilterBeans.eq("content", "knowledgeBaseId=" + knowledgeBaseId));
+        }
+        List<ErpCsTicketAction> actions = ticketActionBiz.findList(query, null, context);
+
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        for (ErpCsTicketAction action : actions) {
+            String content = action.getContent() == null ? "" : action.getContent();
+            counts.merge(content, 1, Integer::sum);
+        }
+        List<Map<String, Object>> result = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+            Map<String, Object> m = new LinkedHashMap<>();
+            m.put("content", entry.getKey());
+            m.put("knowledgeBaseId", parseKnowledgeBaseId(entry.getKey()));
+            m.put("adoptCount", entry.getValue());
+            result.add(m);
+        }
+        return result;
+    }
+
+    private static Long parseKnowledgeBaseId(String content) {
+        if (content == null || !content.startsWith("knowledgeBaseId=")) {
+            return null;
+        }
+        try {
+            return Long.valueOf(content.substring("knowledgeBaseId=".length()));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private int resolveLimit(Integer limit) {

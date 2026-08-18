@@ -12,6 +12,7 @@ import app.erp.cs.dao.entity.ErpCsTimeEntry;
 import app.erp.cs.service.ErpCsConfigs;
 import app.erp.cs.service.ErpCsConstants;
 import app.erp.cs.service.ErpCsErrors;
+import app.erp.cs.service.processor.ErpCsTicketEscalateToQualityProcessor;
 import app.erp.cs.service.processor.ErpCsTicketMatchAndAttachSlaProcessor;
 import app.erp.cs.service.processor.ErpCsTicketReopenProcessor;
 import app.erp.cs.service.processor.ErpCsTicketResolveProcessor;
@@ -80,6 +81,8 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     ErpCsTicketResolveProcessor resolveProcessor;
     @Inject
     ErpCsTicketScanOverdueTicketsProcessor scanOverdueTicketsProcessor;
+    @Inject
+    ErpCsTicketEscalateToQualityProcessor escalateToQualityProcessor;
     @Inject
     TicketAssignResolver ticketAssignResolver;
 
@@ -313,16 +316,57 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
 
     // ---------- SLA ----------
 
+    /**
+     * 采纳知识库文章（UC-CS-05 ⑤⑦⑧，RC-R1.69）：写独立 {@code ADOPT_KNOWLEDGE} 审计行
+     * （content 固定整串 {@code knowledgeBaseId={id}}——派生统计 eq 精确匹配载体）；
+     * {@code autoResolve=true} → 委托 {@link ErpCsTicketResolveProcessor} 转 RESOLVED
+     * （L1 ⑤「如采纳的文章解决了问题，工单直接标记为 RESOLVED」；状态机守卫/RESOLVED 审计/survey
+     * 触发链复用既有 resolve 路径）。adopt 审计行先写入，resolve 独立审计。
+     */
     @Override
     @BizMutation
     public ErpCsTicket adoptKnowledge(@Name("ticketId") Long ticketId,
                                       @Name("knowledgeBaseId") Long knowledgeBaseId,
+                                      @Optional @Name("autoResolve") Boolean autoResolve,
                                       IServiceContext context) {
         ErpCsTicket ticket = requireTicket(ticketId, context);
         String current = ticket.getStatus();
-        writeAction(ticket, ErpCsConstants.ACTION_TYPE_NOTE, current, current,
-                "采纳知识库文章参考: knowledgeBaseId=" + knowledgeBaseId, context);
+        writeAction(ticket, ErpCsConstants.ACTION_TYPE_ADOPT_KNOWLEDGE, current, current,
+                "knowledgeBaseId=" + knowledgeBaseId, context);
+        if (Boolean.TRUE.equals(autoResolve)) {
+            return resolveProcessor.resolve(ticketId,
+                    "采纳知识库文章解决: knowledgeBaseId=" + knowledgeBaseId, context);
+        }
         return ticket;
+    }
+
+    // ---------- cs 质量事件联动（RC-R1.68，P1-RC-057，UC-CS-06） ----------
+
+    /**
+     * 工单升级为质量事件（UC-CS-06 ①-④）：Facade 委托 per-mutation Processor——
+     * NCR 双弱指针创建 + QUALITY_ESCALATE 审计 + 失败降级 PENDING（详见 Processor javadoc）。
+     */
+    @Override
+    @BizMutation
+    public ErpCsTicket escalateToQuality(@Name("ticketId") Long ticketId,
+                                         @Optional @Name("materialId") Long materialId,
+                                         @Optional @Name("defectDescription") String defectDescription,
+                                         @Optional @Name("batchInfo") String batchInfo,
+                                         @Optional @Name("quantity") java.math.BigDecimal quantity,
+                                         @Optional @Name("severity") String severity,
+                                         @Optional @Name("supplierId") Long supplierId,
+                                         IServiceContext context) {
+        ErpCsTicket ticket = requireTicket(ticketId, context);
+        return escalateToQualityProcessor.escalateToQuality(ticket, materialId, defectDescription,
+                batchInfo, quantity, severity, supplierId, context);
+    }
+
+    /** 工单关联 NCR 闭环结果投影（UC-CS-06 ⑤，弱指针反查）。 */
+    @Override
+    @BizQuery
+    public List<Map<String, Object>> findQualityNcrs(@Name("ticketId") Long ticketId, IServiceContext context) {
+        ErpCsTicket ticket = requireTicket(ticketId, context);
+        return escalateToQualityProcessor.findQualityNcrs(ticket, context);
     }
 
     @Override

@@ -22,6 +22,15 @@ public interface IErpCsKnowledgeBaseBiz extends ICrudBiz<ErpCsKnowledgeBase>{
 
     @BizQuery
     List<Map<String, Object>> suggestForTicket(@Optional @Name("subject") String subject,
-                                               @Optional @Name("limit") Integer limit,
-                                               IServiceContext context);
+                                                @Optional @Name("limit") Integer limit,
+                                                IServiceContext context);
+
+    /**
+     * 知识库采纳使用统计（UC-CS-05 ⑧，RC-R1.69 B 类裁决 = TicketAction 派生，零 KB 加列）：
+     * 统计 ADOPT_KNOWLEDGE 审计行（content 固定整串 {@code knowledgeBaseId={id}}，eq 精确匹配）。
+     * {@code knowledgeBaseId} 提供时返回单条计数；缺省返回全量 group（每 KB 一条 {knowledgeBaseId, adoptCount}）。
+     */
+    @BizQuery
+    List<Map<String, Object>> knowledgeUsageStats(@Optional @Name("knowledgeBaseId") Long knowledgeBaseId,
+                                                  IServiceContext context);
 }

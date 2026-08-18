@@ -150,24 +150,15 @@
                                         <adaptor><![CDATA[var d=payload.data||{};var g=d.data?d.data:d;var it=(g.ErpCsKnowledgeBase__suggestForTicket||[]).map(function(i){return{kbId:i.id,code:i.code,title:i.title,contentSummary:i.contentSummary};});return{status:0,msg:'',data:{items:it}};]]></adaptor>
                                     </api>
                                     <body j:list="true">
-                                        <list source="${'$'}{items}" placeholder="输入工单主题后将显示相关知识库文章">
+                                        <list source="${'$'}{items}" placeholder="${'$'}{subject &amp;&amp; subject.length >= 2 ? '未匹配到知识库文章，建议解决后创建新条目' : '输入工单主题后将显示相关知识库文章'}">
                                             <listItem>
                                                 <body j:list="true">
                                                     <tpl tpl="&lt;strong&gt;${'$'}{title}&lt;/strong&gt;&lt;br/&gt;&lt;span class='text-muted text-sm'&gt;${'$'}{contentSummary}&lt;/span&gt;"/>
                                                 </body>
                                                 <actions j:list="true">
-                                                    <button label="采纳并参考" i18n-en:label="Adopt &amp; Reference" level="primary" size="sm" actionType="ajax"
-                                                            visibleOn="${'$'}{!!id}"
-                                                            confirmText="确认采纳此知识库文章作为工单处理参考？">
-                                                        <api method="post" url="/graphql" dataType="raw">
-                                                            <data>
-                                                                <query><![CDATA[mutation($ticketId:BigDecimal,$knowledgeBaseId:BigDecimal){ ErpCsTicket__adoptKnowledge(ticketId:$ticketId,knowledgeBaseId:$knowledgeBaseId) }]]></query>
-                                                                <variables>
-                                                                    <ticketId>${'$'}{id}</ticketId>
-                                                                    <knowledgeBaseId>${'$'}{kbId}</knowledgeBaseId>
-                                                                </variables>
-                                                            </data>
-                                                        </api>
+                                                    <button label="采纳并参考" i18n-en:label="Adopt &amp; Reference" level="primary" size="sm" actionType="dialog"
+                                                             visibleOn="${'$'}{!!id}">
+                                                        <dialog page="adoptKnowledge" size="sm"/>
                                                     </button>
                                                 </actions>
                                             </listItem>
@@ -223,24 +214,15 @@
                                         <adaptor><![CDATA[var d=payload.data||{};var g=d.data?d.data:d;var it=(g.ErpCsKnowledgeBase__suggestForTicket||[]).map(function(i){return{kbId:i.id,code:i.code,title:i.title,contentSummary:i.contentSummary};});return{status:0,msg:'',data:{items:it}};]]></adaptor>
                                     </api>
                                     <body j:list="true">
-                                        <list source="${'$'}{items}" placeholder="输入工单主题后将显示相关知识库文章">
+                                        <list source="${'$'}{items}" placeholder="${'$'}{subject &amp;&amp; subject.length >= 2 ? '未匹配到知识库文章，建议解决后创建新条目' : '输入工单主题后将显示相关知识库文章'}">
                                             <listItem>
                                                 <body j:list="true">
                                                     <tpl tpl="&lt;strong&gt;${'$'}{title}&lt;/strong&gt;&lt;br/&gt;&lt;span class='text-muted text-sm'&gt;${'$'}{contentSummary}&lt;/span&gt;"/>
                                                 </body>
                                                 <actions j:list="true">
-                                                    <button label="采纳并参考" i18n-en:label="Adopt &amp; Reference" level="primary" size="sm" actionType="ajax"
-                                                            visibleOn="${'$'}{!!id}"
-                                                            confirmText="确认采纳此知识库文章作为工单处理参考？">
-                                                        <api method="post" url="/graphql" dataType="raw">
-                                                            <data>
-                                                                <query><![CDATA[mutation($ticketId:BigDecimal,$knowledgeBaseId:BigDecimal){ ErpCsTicket__adoptKnowledge(ticketId:$ticketId,knowledgeBaseId:$knowledgeBaseId) }]]></query>
-                                                                <variables>
-                                                                    <ticketId>${'$'}{id}</ticketId>
-                                                                    <knowledgeBaseId>${'$'}{kbId}</knowledgeBaseId>
-                                                                </variables>
-                                                            </data>
-                                                        </api>
+                                                    <button label="采纳并参考" i18n-en:label="Adopt &amp; Reference" level="primary" size="sm" actionType="dialog"
+                                                             visibleOn="${'$'}{!!id}">
+                                                        <dialog page="adoptKnowledge" size="sm"/>
                                                     </button>
                                                 </actions>
                                             </listItem>
@@ -277,6 +259,63 @@
                 <cell id="customerId" filterOp="eq"/>
             </cells>
         </form>
+
+        <!-- 质量问题升级参数表单（RC-R1.68，P1-RC-057，UC-CS-06 ①）：materialId/缺陷描述必填 +
+             批次/数量/严重度可选（对齐 ErpFinBudgetScenario rollForward 参数化 dialog 范式）。 -->
+        <form id="escalateQuality" editMode="add" title="质量问题升级" i18n-en:title="Quality Escalation" size="md">
+            <layout>
+ materialId[物料] defectDescription[缺陷描述](2)
+ batchInfo[批次信息] quantity[不合格数量] severity[严重程度]
+</layout>
+            <cells>
+                <cell id="materialId" label="物料" i18n-en:label="Material" domain="long" custom="true" mandatory="true">
+                    <gen-control>
+                        <input-number placeholder="必填：缺陷物料 ID"/>
+                    </gen-control>
+                </cell>
+                <cell id="defectDescription" label="缺陷描述" i18n-en:label="Defect Description" domain="string" custom="true" mandatory="true">
+                    <gen-control>
+                        <textarea placeholder="必填：缺陷现象描述（将作为 NCR 问题描述）" minRows="2"/>
+                    </gen-control>
+                </cell>
+                <cell id="batchInfo" label="批次信息" i18n-en:label="Batch Info" domain="string" custom="true">
+                    <gen-control>
+                        <input-text placeholder="选填：批次号"/>
+                    </gen-control>
+                </cell>
+                <cell id="quantity" label="不合格数量" i18n-en:label="Quantity" domain="decimal" custom="true">
+                    <gen-control>
+                        <input-number placeholder="选填：不合格数量"/>
+                    </gen-control>
+                </cell>
+                <cell id="severity" label="严重程度" i18n-en:label="Severity" domain="string" custom="true">
+                    <gen-control>
+                        <select value="NORMAL">
+                            <options j:list="true">
+                                <_ label="轻微" i18n-en:label="Low" value="LOW"/>
+                                <_ label="一般" i18n-en:label="Normal" value="NORMAL"/>
+                                <_ label="严重" i18n-en:label="High" value="HIGH"/>
+                                <_ label="致命" i18n-en:label="Critical" value="CRITICAL"/>
+                            </options>
+                        </select>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
+
+        <!-- 采纳知识库参数表单（RC-R1.69，P1-RC-058，UC-CS-05 ⑦）：autoResolve 勾选 → 采纳后直接解决。 -->
+        <form id="adoptKnowledge" editMode="add" title="采纳知识库文章" i18n-en:title="Adopt Knowledge" size="sm">
+            <layout>
+ autoResolve[采纳后直接解决]
+</layout>
+            <cells>
+                <cell id="autoResolve" label="采纳后直接解决" i18n-en:label="Resolve after adopt" custom="true">
+                    <gen-control>
+                        <checkbox/>
+                    </gen-control>
+                </cell>
+            </cells>
+        </form>
     </forms>
 
     <pages>
@@ -305,6 +344,13 @@
                         <success>工单已解决</success>
                     </messages>
                 </action>
+                <!-- 质量问题升级（RC-R1.68，P1-RC-057，UC-CS-06 ①-④）：IN_PROCESS 可用，dialog 收集
+                     materialId/缺陷描述（必填）+ 批次/数量/严重度（可选）后调 escalateToQuality 创建 NCR。 -->
+                <action id="row-escalate-quality-button" label="质量问题升级" i18n-en:label="Quality Escalation"
+                        level="warning" icon="fa fa-bug" actionType="dialog">
+                    <dialog page="escalateQuality" size="md"/>
+                    <visibleOn>${status == 'IN_PROGRESS'}</visibleOn>
+                </action>
                 <action id="row-close-button" label="关闭" i18n-en:label="Close" level="info" icon="fa fa-archive">
                     <api url="@mutation:ErpCsTicket__close?ticketId=$id"/>
                     <confirmText>确认关闭此工单？</confirmText>
@@ -330,6 +376,30 @@
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>
+        <!-- 质量问题升级提交页（RC-R1.68）：materialId/defectDescription 必填经 escalateQuality 表单收集 -->
+        <simple name="escalateQuality" form="escalateQuality" useFormActions="true">
+            <api url="@mutation:ErpCsTicket__escalateToQuality?ticketId=$id" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认升级" i18n-en:label="Confirm Escalation" actionType="submit" level="warning">
+                    <messages>
+                        <success>已升级为质量事件（NCR 创建/降级重试见操作历史）</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
+        <!-- 采纳知识库提交页（RC-R1.69，UC-CS-05 ⑦）：autoResolve 勾选经 adoptKnowledge 表单收集 -->
+        <simple name="adoptKnowledge" form="adoptKnowledge" useFormActions="true">
+            <api url="@mutation:ErpCsTicket__adoptKnowledge?ticketId=$id&amp;knowledgeBaseId=$kbId" withFormData="true"/>
+            <actions>
+                <action id="cancel" label="取消" i18n-en:label="Cancel" actionType="cancel"/>
+                <action id="confirm" label="确认采纳" i18n-en:label="Confirm Adopt" actionType="submit" level="primary">
+                    <messages>
+                        <success>已采纳知识库文章</success>
+                    </messages>
+                </action>
+            </actions>
+        </simple>
         <picker name="picker"/>
     </pages>
 </view>

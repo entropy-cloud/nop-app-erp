@@ -29,3 +29,11 @@ options:
     value: CANCEL
     description: 
   
+  - label: 质量升级
+    value: QUALITY_ESCALATE
+    description: 
+  
+  - label: 采纳知识库
+    value: ADOPT_KNOWLEDGE
+    description: 
+  

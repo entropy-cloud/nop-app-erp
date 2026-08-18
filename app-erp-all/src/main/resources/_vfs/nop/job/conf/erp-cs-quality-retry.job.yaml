@@ -1,0 +1,10 @@
+jobName: erp-cs-quality-retry
+enabled: "@cfg:nop.job.erp-cs-quality-retry.enabled|false"
+displayName: Customer Service Quality Escalation Retry
+description: 扫描 PENDING 质量升级审计行重试创建 NCR（UC-CS-06 异常条款）；cron 经 erp-cs.quality-retry-cron 配置门控（空=跳过）
+jobGroup: erp-cs
+trigger:
+  cronExpr: "@cfg:nop.job.erp-cs-quality-retry.cron-expr|0 0/10 * * * ?"
+invoker:
+  bean: erpCsQualityEscalationRetryJob
+  method: execute
