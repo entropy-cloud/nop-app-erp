@@ -223,6 +223,7 @@ prop:
       createdBy: 创建人
       delVersion: 逻辑删除版本
       description: 说明
+      escalationDelayHours: 升级等待小时数
       escalationUserId: 升级通知人
       id: ID
       isWorkingDays: 仅计算工作日
@@ -231,6 +232,7 @@ prop:
       name: 名称
       resolveDays: 解决时限(天)
       resolveHours: 解决时限(小时)
+      secondEscalationUserId: 二级升级通知人
       team: null
       teamId: 适用团队
       ticketType: null
@@ -298,8 +300,11 @@ prop:
       docStatus_label: 单据状态
       duration: 处理时长(分钟)
       endDateTime: 关闭时间
+      escalationCount: 升级通知次数
       id: ID
       isSlaCompleted: SLA 是否完成
+      lastEscalationAt: 最近升级时间
+      lastEscalationLevel: 最近升级级别
       org: null
       org.name: null
       orgId: 业务组织

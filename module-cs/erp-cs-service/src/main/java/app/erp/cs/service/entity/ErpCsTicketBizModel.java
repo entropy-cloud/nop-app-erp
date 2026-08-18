@@ -475,11 +475,11 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
     }
 
     /**
-     * SLA 通知派发（config-gated by {@link ErpCsConfigs#isSlaNotifyEnabled}）。
+     * SLA 预警通知派发（config-gated by {@link ErpCsConfigs#isSlaNotifyEnabled}，findSlaWarnings 路径）。
      *
-     * <p>复用既有 {@code cs.sla-overdue} 模板（plan 2026-07-06-0504-1 Phase 4 已种子）。
-     * 接收人由模板 ROLE resolver 解析（客服主管）；上下文含 ticketId/ticketCode/customerName/deadlineDateTime
-     * + escalationUserId（取分派人，模板可选用）。模板缺失或 notify 失败时静默降级（不阻断业务）。
+     * <p>复用既有 {@code cs.sla-overdue} 模板（7101 已改 USER_LIST 插值）。接收人目标修正（RC-R1.67 plan D4，
+     * 修正既有漂移）：{@code escalationUserId} = policy.escalationUserId（BIGINT → stringify 类型归一化）优先，
+     * 缺失回退 assignedToId。模板缺失或 notify 失败时静默降级（不阻断业务）。
      */
     private void notifySlaOverdue(ErpCsTicket ticket, IServiceContext context) {
         if (!ErpCsConfigs.isSlaNotifyEnabled()) {
@@ -490,13 +490,28 @@ public class ErpCsTicketBizModel extends CrudBizModel<ErpCsTicket> implements IE
             ctx.put("ticketId", ticket.getId());
             ctx.put("ticketCode", ticket.getCode());
             ctx.put("customerName", resolveCustomerName(ticket.getCustomerId(), context));
-            ctx.put("escalationUserId", ticket.getAssignedToId());
+            ctx.put("escalationUserId", resolveEscalationTarget(ticket));
+            // 预警路径（未升级）级别/次数占位 0：模板 7101 主体插值键齐备，避免缺键渲染
+            ctx.put("escalationLevel", 0);
+            ctx.put("repeatCount", 0);
             notificationBiz.notify(ErpCsConstants.NOTIFY_EVENT_SLA_OVERDUE, ctx, context);
         } catch (Exception e) {
             // 通知派发失败不阻断 SLA 升级主流程（config-gated 降级语义）
             LOG.warn("SLA notify 派发失败（降级，主升级流程继续）：ticketId={}, reason={}",
                     ticket.getId(), e.getMessage());
         }
+    }
+
+    /**
+     * L1/预警通知目标：policy.escalationUserId（BIGINT → stringify）优先，缺失回退 assignedToId
+     * （RC-R1.67 plan D4——与 ScanOverdueTicketsProcessor.resolveL1Target 同语义）。
+     */
+    private static String resolveEscalationTarget(ErpCsTicket ticket) {
+        ErpCsSlaPolicy policy = ticket.getSlaPolicy();
+        if (policy != null && policy.getEscalationUserId() != null) {
+            return String.valueOf(policy.getEscalationUserId());
+        }
+        return ticket.getAssignedToId();
     }
 
     /**

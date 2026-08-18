@@ -263,6 +263,34 @@
         }
 
 
+        private Long _secondEscalationUserId;
+
+    
+        @PropMeta(propId=18)
+    
+        public Long getSecondEscalationUserId(){
+            return _secondEscalationUserId;
+        }
+
+        public void setSecondEscalationUserId(Long value){
+            this._secondEscalationUserId = value;
+        }
+
+
+        private Integer _escalationDelayHours;
+
+    
+        @PropMeta(propId=19)
+    
+        public Integer getEscalationDelayHours(){
+            return _escalationDelayHours;
+        }
+
+        public void setEscalationDelayHours(Integer value){
+            this._escalationDelayHours = value;
+        }
+
+
         private Map<String,Object> _ticketType;
 
         public Map<String,Object> getTicketType(){

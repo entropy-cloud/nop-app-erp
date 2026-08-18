@@ -89,8 +89,16 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 17;
     
+    /* 二级升级通知人: SECOND_ESCALATION_USER_ID BIGINT */
+    public static final String PROP_NAME_secondEscalationUserId = "secondEscalationUserId";
+    public static final int PROP_ID_secondEscalationUserId = 18;
+    
+    /* 升级等待小时数: ESCALATION_DELAY_HOURS INTEGER */
+    public static final String PROP_NAME_escalationDelayHours = "escalationDelayHours";
+    public static final int PROP_ID_escalationDelayHours = 19;
+    
 
-    private static int _PROP_ID_BOUND = 18;
+    private static int _PROP_ID_BOUND = 20;
 
     
     /* relation:  */
@@ -103,7 +111,7 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[18];
+    private static final String[] PROP_ID_TO_NAME = new String[20];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -158,6 +166,12 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_secondEscalationUserId] = PROP_NAME_secondEscalationUserId;
+          PROP_NAME_TO_ID.put(PROP_NAME_secondEscalationUserId, PROP_ID_secondEscalationUserId);
+      
+          PROP_ID_TO_NAME[PROP_ID_escalationDelayHours] = PROP_NAME_escalationDelayHours;
+          PROP_NAME_TO_ID.put(PROP_NAME_escalationDelayHours, PROP_ID_escalationDelayHours);
+      
     }
 
     
@@ -211,6 +225,12 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 二级升级通知人: SECOND_ESCALATION_USER_ID */
+    private java.lang.Long _secondEscalationUserId;
+    
+    /* 升级等待小时数: ESCALATION_DELAY_HOURS */
+    private java.lang.Integer _escalationDelayHours;
     
 
     public _ErpCsSlaPolicy(){
@@ -336,6 +356,12 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_secondEscalationUserId:
+               return getSecondEscalationUserId();
+        
+            case PROP_ID_escalationDelayHours:
+               return getEscalationDelayHours();
         
            default:
               return super.orm_propValue(propId);
@@ -518,6 +544,26 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_secondEscalationUserId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_secondEscalationUserId));
+               }
+               setSecondEscalationUserId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_escalationDelayHours:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_escalationDelayHours));
+               }
+               setEscalationDelayHours(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -642,6 +688,20 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_secondEscalationUserId:{
+               onInitProp(propId);
+               this._secondEscalationUserId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_escalationDelayHours:{
+               onInitProp(propId);
+               this._escalationDelayHours = (java.lang.Integer)value;
                
                break;
             }
@@ -971,6 +1031,44 @@ public class _ErpCsSlaPolicy extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 二级升级通知人: SECOND_ESCALATION_USER_ID
+     */
+    public final java.lang.Long getSecondEscalationUserId(){
+         onPropGet(PROP_ID_secondEscalationUserId);
+         return _secondEscalationUserId;
+    }
+
+    /**
+     * 二级升级通知人: SECOND_ESCALATION_USER_ID
+     */
+    public final void setSecondEscalationUserId(java.lang.Long value){
+        if(onPropSet(PROP_ID_secondEscalationUserId,value)){
+            this._secondEscalationUserId = value;
+            internalClearRefs(PROP_ID_secondEscalationUserId);
+            
+        }
+    }
+    
+    /**
+     * 升级等待小时数: ESCALATION_DELAY_HOURS
+     */
+    public final java.lang.Integer getEscalationDelayHours(){
+         onPropGet(PROP_ID_escalationDelayHours);
+         return _escalationDelayHours;
+    }
+
+    /**
+     * 升级等待小时数: ESCALATION_DELAY_HOURS
+     */
+    public final void setEscalationDelayHours(java.lang.Integer value){
+        if(onPropSet(PROP_ID_escalationDelayHours,value)){
+            this._escalationDelayHours = value;
+            internalClearRefs(PROP_ID_escalationDelayHours);
             
         }
     }

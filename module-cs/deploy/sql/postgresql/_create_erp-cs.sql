@@ -119,6 +119,8 @@ CREATE TABLE erp_cs_sla_policy(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  second_escalation_user_id INT8  ,
+  escalation_delay_hours INT4  ,
   constraint PK_erp_cs_sla_policy primary key (id)
 );
 
@@ -262,6 +264,9 @@ CREATE TABLE erp_cs_ticket(
   approved_by VARCHAR(36)  ,
   approved_at TIMESTAMP  ,
   business_date DATE NOT NULL ,
+  last_escalation_level INT4  ,
+  escalation_count INT4  ,
+  last_escalation_at TIMESTAMP  ,
   constraint PK_erp_cs_ticket primary key (id)
 );
 
@@ -562,6 +567,10 @@ CREATE TABLE erp_cs_ticket_timer_session(
                     
       COMMENT ON COLUMN erp_cs_sla_policy.update_time IS '修改时间';
                     
+      COMMENT ON COLUMN erp_cs_sla_policy.second_escalation_user_id IS '二级升级通知人';
+                    
+      COMMENT ON COLUMN erp_cs_sla_policy.escalation_delay_hours IS '升级等待小时数';
+                    
       COMMENT ON TABLE erp_cs_knowledge_base IS '知识库';
                 
       COMMENT ON COLUMN erp_cs_knowledge_base.id IS 'ID';
@@ -811,6 +820,12 @@ CREATE TABLE erp_cs_ticket_timer_session(
       COMMENT ON COLUMN erp_cs_ticket.approved_at IS '审核时间';
                     
       COMMENT ON COLUMN erp_cs_ticket.business_date IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_cs_ticket.last_escalation_level IS '最近升级级别';
+                    
+      COMMENT ON COLUMN erp_cs_ticket.escalation_count IS '升级通知次数';
+                    
+      COMMENT ON COLUMN erp_cs_ticket.last_escalation_at IS '最近升级时间';
                     
       COMMENT ON TABLE erp_cs_catalog_fulfillment IS '目录项履行映射';
                 

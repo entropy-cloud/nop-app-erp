@@ -65,6 +65,12 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--二级升级通知人-->
+                <col id="secondEscalationUserId" ui:number="true" sortable="true"/>
+
+                <!--升级等待小时数-->
+                <col id="escalationDelayHours" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -80,7 +86,8 @@
  escalationUserId[升级通知人] description[说明]
  delVersion[逻辑删除版本] createdBy[创建人]
  createTime[创建时间] updatedBy[修改人]
- updateTime[修改时间] 
+ updateTime[修改时间] secondEscalationUserId[二级升级通知人]
+ escalationDelayHours[升级等待小时数] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-SLA 策略" i18n-en:title="Add SLA Policy" x:prototype="edit"/>
@@ -91,6 +98,7 @@
  teamId[适用团队] resolveHours[解决时限(小时)]
  resolveDays[解决时限(天)] isWorkingDays[仅计算工作日]
  escalationUserId[升级通知人] description[说明]
+ secondEscalationUserId[二级升级通知人] escalationDelayHours[升级等待小时数]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

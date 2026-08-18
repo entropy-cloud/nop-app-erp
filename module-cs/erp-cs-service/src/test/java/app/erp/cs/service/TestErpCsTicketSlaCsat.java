@@ -155,9 +155,10 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
     }
 
     /**
-     * SLA 扫描幂等去重（plan 2026-07-30-0841-2 R1.28 P1-MA2-086 最严重噪音类）：同一超时工单连续两次扫描
-     * 不应重复生成 ESCALATE 审计（避免每分钟重复升级噪音）。isSlaCompleted 仅 resolve 翻转，不随升级翻转，
-     * 故靠既有 ESCALATE 审计存在性去重。
+     * SLA 扫描幂等与升级上限（R1.28 P1-MA2-086 语义保持 + RC-R1.67 窗口/次数封顶改造，plan 2026-08-17-2125-3）：
+     * 同一超时工单窗口内连续扫描不重复生成 ESCALATE 审计（时间窗判据 now−lastEscalationAt≥delayHours，
+     * 替代既有 hasEscalationAction 反查守卫——去重语义等价保持，避免每分钟重复升级噪音）；
+     * 窗口到期后允许重复升级（多级升级链 UC-CS-04 ⑩ 语义，上限封顶归 TestErpCsMultiLevelEscalation 全链覆盖）。
      */
     @Test
     public void testScanOverdueTicketsIdempotentNoDuplicateEscalation() {
@@ -167,11 +168,26 @@ public class TestErpCsTicketSlaCsat extends JunitAutoTestCase {
         rpc(mutation, "ErpCsTicket__scanOverdueTickets", new java.util.HashMap<>());
         assertEquals(1, countActionsByType(ticketId, ErpCsConstants.ACTION_TYPE_ESCALATE),
                 "首次扫描应生成 1 条 ESCALATE 审计");
+        ErpCsTicket escalated = reload(ticketId);
+        assertEquals(Integer.valueOf(1), escalated.getLastEscalationLevel(), "首次升级 level=1 落库");
+        assertEquals(Integer.valueOf(1), escalated.getEscalationCount(), "首次升级 count=1 落库");
+        assertNotNull(escalated.getLastEscalationAt(), "lastEscalationAt 落库");
 
-        // 再次扫描（模拟下一分钟 cron 触发）：去重跳过，无重复 ESCALATE
+        // 再次扫描（模拟下一分钟 cron 触发）：窗口内（<2h）不重复——零新增 ESCALATE（幂等保持）
         rpc(mutation, "ErpCsTicket__scanOverdueTickets", new java.util.HashMap<>());
         assertEquals(1, countActionsByType(ticketId, ErpCsConstants.ACTION_TYPE_ESCALATE),
-                "重复扫描不应重复 ESCALATE（幂等去重，避免每分钟噪音）");
+                "窗口内重复扫描不应重复 ESCALATE（时间窗幂等，避免每分钟噪音）");
+
+        // 模拟窗口到期（lastEscalationAt 回拨 2h）：允许重复升级（每 2h 重复通知语义，UC-CS-04 ⑩）
+        ormTemplate.runInSession(() -> {
+            ErpCsTicket t = daoProvider.daoFor(ErpCsTicket.class).getEntityById(ticketId);
+            t.setLastEscalationAt(java.sql.Timestamp.valueOf(CoreMetrics.currentDateTime().minusHours(2)));
+            daoProvider.daoFor(ErpCsTicket.class).updateEntity(t);
+        });
+        rpc(mutation, "ErpCsTicket__scanOverdueTickets", new java.util.HashMap<>());
+        assertEquals(2, countActionsByType(ticketId, ErpCsConstants.ACTION_TYPE_ESCALATE),
+                "窗口到期后允许重复升级（每 2h 重复通知）");
+        assertEquals(Integer.valueOf(2), reload(ticketId).getEscalationCount(), "重复升级 count=2");
     }
 
     @Test

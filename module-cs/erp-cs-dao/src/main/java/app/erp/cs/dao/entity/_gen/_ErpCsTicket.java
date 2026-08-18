@@ -149,8 +149,20 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     public static final String PROP_NAME_businessDate = "businessDate";
     public static final int PROP_ID_businessDate = 202;
     
+    /* 最近升级级别: LAST_ESCALATION_LEVEL INTEGER */
+    public static final String PROP_NAME_lastEscalationLevel = "lastEscalationLevel";
+    public static final int PROP_ID_lastEscalationLevel = 203;
+    
+    /* 升级通知次数: ESCALATION_COUNT INTEGER */
+    public static final String PROP_NAME_escalationCount = "escalationCount";
+    public static final int PROP_ID_escalationCount = 204;
+    
+    /* 最近升级时间: LAST_ESCALATION_AT TIMESTAMP */
+    public static final String PROP_NAME_lastEscalationAt = "lastEscalationAt";
+    public static final int PROP_ID_lastEscalationAt = 205;
+    
 
-    private static int _PROP_ID_BOUND = 203;
+    private static int _PROP_ID_BOUND = 206;
 
     
     /* relation:  */
@@ -178,7 +190,7 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[203];
+    private static final String[] PROP_ID_TO_NAME = new String[206];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -278,6 +290,15 @@ public class _ErpCsTicket extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
           PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
       
+          PROP_ID_TO_NAME[PROP_ID_lastEscalationLevel] = PROP_NAME_lastEscalationLevel;
+          PROP_NAME_TO_ID.put(PROP_NAME_lastEscalationLevel, PROP_ID_lastEscalationLevel);
+      
+          PROP_ID_TO_NAME[PROP_ID_escalationCount] = PROP_NAME_escalationCount;
+          PROP_NAME_TO_ID.put(PROP_NAME_escalationCount, PROP_ID_escalationCount);
+      
+          PROP_ID_TO_NAME[PROP_ID_lastEscalationAt] = PROP_NAME_lastEscalationAt;
+          PROP_NAME_TO_ID.put(PROP_NAME_lastEscalationAt, PROP_ID_lastEscalationAt);
+      
     }
 
     
@@ -376,6 +397,15 @@ public class _ErpCsTicket extends DynamicOrmEntity{
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
+    
+    /* 最近升级级别: LAST_ESCALATION_LEVEL */
+    private java.lang.Integer _lastEscalationLevel;
+    
+    /* 升级通知次数: ESCALATION_COUNT */
+    private java.lang.Integer _escalationCount;
+    
+    /* 最近升级时间: LAST_ESCALATION_AT */
+    private java.sql.Timestamp _lastEscalationAt;
     
 
     public _ErpCsTicket(){
@@ -546,6 +576,15 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         
             case PROP_ID_businessDate:
                return getBusinessDate();
+        
+            case PROP_ID_lastEscalationLevel:
+               return getLastEscalationLevel();
+        
+            case PROP_ID_escalationCount:
+               return getEscalationCount();
+        
+            case PROP_ID_lastEscalationAt:
+               return getLastEscalationAt();
         
            default:
               return super.orm_propValue(propId);
@@ -878,6 +917,36 @@ public class _ErpCsTicket extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_lastEscalationLevel:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_lastEscalationLevel));
+               }
+               setLastEscalationLevel(typedValue);
+               break;
+            }
+        
+            case PROP_ID_escalationCount:{
+               java.lang.Integer typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toInteger(value,
+                       err-> newTypeConversionError(PROP_NAME_escalationCount));
+               }
+               setEscalationCount(typedValue);
+               break;
+            }
+        
+            case PROP_ID_lastEscalationAt:{
+               java.sql.Timestamp typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toTimestamp(value,
+                       err-> newTypeConversionError(PROP_NAME_lastEscalationAt));
+               }
+               setLastEscalationAt(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -1107,6 +1176,27 @@ public class _ErpCsTicket extends DynamicOrmEntity{
             case PROP_ID_businessDate:{
                onInitProp(propId);
                this._businessDate = (java.time.LocalDate)value;
+               
+               break;
+            }
+        
+            case PROP_ID_lastEscalationLevel:{
+               onInitProp(propId);
+               this._lastEscalationLevel = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_escalationCount:{
+               onInitProp(propId);
+               this._escalationCount = (java.lang.Integer)value;
+               
+               break;
+            }
+        
+            case PROP_ID_lastEscalationAt:{
+               onInitProp(propId);
+               this._lastEscalationAt = (java.sql.Timestamp)value;
                
                break;
             }
@@ -1721,6 +1811,63 @@ public class _ErpCsTicket extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_businessDate,value)){
             this._businessDate = value;
             internalClearRefs(PROP_ID_businessDate);
+            
+        }
+    }
+    
+    /**
+     * 最近升级级别: LAST_ESCALATION_LEVEL
+     */
+    public final java.lang.Integer getLastEscalationLevel(){
+         onPropGet(PROP_ID_lastEscalationLevel);
+         return _lastEscalationLevel;
+    }
+
+    /**
+     * 最近升级级别: LAST_ESCALATION_LEVEL
+     */
+    public final void setLastEscalationLevel(java.lang.Integer value){
+        if(onPropSet(PROP_ID_lastEscalationLevel,value)){
+            this._lastEscalationLevel = value;
+            internalClearRefs(PROP_ID_lastEscalationLevel);
+            
+        }
+    }
+    
+    /**
+     * 升级通知次数: ESCALATION_COUNT
+     */
+    public final java.lang.Integer getEscalationCount(){
+         onPropGet(PROP_ID_escalationCount);
+         return _escalationCount;
+    }
+
+    /**
+     * 升级通知次数: ESCALATION_COUNT
+     */
+    public final void setEscalationCount(java.lang.Integer value){
+        if(onPropSet(PROP_ID_escalationCount,value)){
+            this._escalationCount = value;
+            internalClearRefs(PROP_ID_escalationCount);
+            
+        }
+    }
+    
+    /**
+     * 最近升级时间: LAST_ESCALATION_AT
+     */
+    public final java.sql.Timestamp getLastEscalationAt(){
+         onPropGet(PROP_ID_lastEscalationAt);
+         return _lastEscalationAt;
+    }
+
+    /**
+     * 最近升级时间: LAST_ESCALATION_AT
+     */
+    public final void setLastEscalationAt(java.sql.Timestamp value){
+        if(onPropSet(PROP_ID_lastEscalationAt,value)){
+            this._lastEscalationAt = value;
+            internalClearRefs(PROP_ID_lastEscalationAt);
             
         }
     }

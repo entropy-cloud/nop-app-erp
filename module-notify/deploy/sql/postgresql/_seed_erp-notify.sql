@@ -10,10 +10,12 @@ INSERT INTO erp_sys_notification_template
    REMARK, DEL_VERSION, VERSION, CREATED_BY, CREATE_TIME, UPDATED_BY, UPDATE_TIME)
 VALUES
   -- 业务提醒：SLA 超期预警（customer-service），5 分钟窗口，合并为一条
+  --（RC-R1.67 D4：接收人 ROLE 客服主管 → USER_LIST ${escalationUserId} 按升级级别路由——
+  --   L1=policy.escalationUserId 优先/assignedToId 回退；L2=secondEscalationUserId；L3=config 总监）
   (7101, 'cs.sla-overdue', 'SLA超期预警', 'IN_APP',
    'SLA超期预警: ${customerName}',
-   '客户 ${customerName} 工单 ${ticketCode} 已超 SLA，请跟进',
-   'ROLE', '{"roles":["客服主管"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '客户 ${customerName} 工单 ${ticketCode} 已超 SLA（升级 L${escalationLevel}，第 ${repeatCount} 次），请跟进',
+   'USER_LIST', '{"userIds":["${escalationUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
    '业务提醒样例（notification-strategy.md 业务提醒类）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
   -- 异常告警：过账异常（finance ErpFinPostingException 未处置），1 分钟窗口，合并含次数
   (7102, 'fin.posting-exception', '过账异常告警', 'IN_APP',

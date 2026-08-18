@@ -236,6 +236,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      secondEscalationUserId: Second Escalation User
+      escalationDelayHours: Escalation Delay Hours
       ticketType: Ticket Type
       team: Team
     ErpCsSurvey:
@@ -310,6 +312,9 @@ prop:
       approvedBy: Approved By
       approvedAt: Approved At
       businessDate: Business Date
+      lastEscalationLevel: Last Escalation Level
+      escalationCount: Escalation Count
+      lastEscalationAt: Last Escalation At
       customer: Customer
       customer.name: Customer
       contact: Contact

@@ -168,6 +168,36 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
             </plugin>
+            <!--
+                surefire 隔离覆写（RC-R1.67 Phase 3 执行时发现，2026-08-18）：
+                父 pom（nop-entropy）硬编码 forkCount=4 + reuseForks=true + parallel=classes，
+                使多个测试类共享 JVM 并行执行；而 nop-autotest 的 CoreInitialization/
+                BeanContainer 为全局静态生命周期（NopJunitExtension 每类 beforeAll/afterAll
+                重建/销毁），类间交错会产生部分初始化容器——实测本模块 20 个容器类全量执行时
+                TestErpCsTicketSlaCsat 全部 13 测试以 unknown-operation 失败（调度时序相关，
+                增删任一类即消失；TestErpCsTicketStateMachineDeltaOverride 在场时稳定复现）。
+                覆写为 reuseForks=false（每类独立 JVM）消除共享静态竞争，保留 4 路 fork 并行
+                与 jacoco argLine。测试作用域构建配置，不触及产品行为。
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <argLine>
+                        ${jacocoArgLine}
+                        -Xmx1G
+                        -Xms256m
+                        -XX:MaxMetaspaceSize=256m
+                        -XX:+UseG1GC
+                        -XX:+UseStringDeduplication
+                    </argLine>
+                    <testFailureIgnore>false</testFailureIgnore>
+                    <forkCount>4</forkCount>
+                    <reuseForks>false</reuseForks>
+                    <parallel>classes</parallel>
+                    <threadCount>1</threadCount>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 

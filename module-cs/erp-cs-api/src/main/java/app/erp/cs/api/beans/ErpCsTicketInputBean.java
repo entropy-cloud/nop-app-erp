@@ -349,6 +349,48 @@
         }
 
 
+        private Integer _lastEscalationLevel;
+
+    
+        @PropMeta(propId=203)
+    
+        public Integer getLastEscalationLevel(){
+            return _lastEscalationLevel;
+        }
+
+        public void setLastEscalationLevel(Integer value){
+            this._lastEscalationLevel = value;
+        }
+
+
+        private Integer _escalationCount;
+
+    
+        @PropMeta(propId=204)
+    
+        public Integer getEscalationCount(){
+            return _escalationCount;
+        }
+
+        public void setEscalationCount(Integer value){
+            this._escalationCount = value;
+        }
+
+
+        private java.sql.Timestamp _lastEscalationAt;
+
+    
+        @PropMeta(propId=205)
+    
+        public java.sql.Timestamp getLastEscalationAt(){
+            return _lastEscalationAt;
+        }
+
+        public void setLastEscalationAt(java.sql.Timestamp value){
+            this._lastEscalationAt = value;
+        }
+
+
         private List<ErpCsTicketActionInputBean> _actions;
 
         public List<ErpCsTicketActionInputBean> getActions(){

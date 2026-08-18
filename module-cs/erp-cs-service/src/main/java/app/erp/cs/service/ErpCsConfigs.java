@@ -82,6 +82,24 @@ public final class ErpCsConfigs {
         return boolVar(ErpCsConstants.CONFIG_SLA_NOTIFY_ENABLED, true);
     }
 
+    // === SLA 多级升级链（plan 2026-08-17-2125-3，RC-R1.67，UC-CS-04 ⑩）===
+
+    /** 一级→下一级升级等待小时数（默认 2，对齐 sla.md §5.3 与 UC-CS-04「每 2h」；policy 级 escalationDelayHours 非空时优先）。 */
+    public static int getEscalationL1ToL2Hours() {
+        return intVar(ErpCsConstants.CONFIG_ESCALATION_L1_TO_L2_HOURS, 2);
+    }
+
+    /** L1 重复通知次数上限（默认 3；0 = 首次 L1 后下一窗口直接升级下一级——合法配置边界非错误；负值钳 0）。 */
+    public static int getEscalationMaxRepeat() {
+        return Math.max(0, intVar(ErpCsConstants.CONFIG_ESCALATION_MAX_REPEAT, 3));
+    }
+
+    /** L3 客服总监通知目标 userId（默认空 = L3 跳过 + WARN；plan D6）。 */
+    public static String getEscalationL3UserId() {
+        String raw = AppConfig.var(ErpCsConstants.CONFIG_ESCALATION_L3_USER_ID, "");
+        return raw == null ? "" : raw.trim();
+    }
+
     // === 客户服务权益 / 服务目录（plan 2026-07-07-1430-1）===
 
     /** 创建工单时是否校验权益（默认 true；entitlement.md §五）。 */

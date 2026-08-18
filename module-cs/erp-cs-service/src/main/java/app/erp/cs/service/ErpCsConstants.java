@@ -67,6 +67,20 @@ public interface ErpCsConstants extends ErpCsDocStatus {
     /** SLA 超期/预警通知派发开关（默认 true；plan 2026-07-06-0642-1 §Phase 1）。关闭时跳过 notify 调用。 */
     String CONFIG_SLA_NOTIFY_ENABLED = "erp-cs.sla-notify-enabled";
 
+    // === SLA 多级升级链（plan 2026-08-17-2125-3，RC-R1.67，P1-RC-056，UC-CS-04 ⑩）===
+
+    /** 一级→下一级升级等待小时数（默认 2；sla.md §5.3 + UC-CS-04 ⑩「每 2h」；policy.escalationDelayHours 非空时优先）。 */
+    String CONFIG_ESCALATION_L1_TO_L2_HOURS = "erp-cs.escalation-l1-to-l2-hours";
+
+    /** L1 重复通知次数上限（默认 3 = UC-CS-04 ⑩「最多 3 次」按重复计数解释；0 = 首次 L1 后下一窗口直接升级下一级，合法配置边界；负值钳 0）。 */
+    String CONFIG_ESCALATION_MAX_REPEAT = "erp-cs.escalation-max-repeat";
+
+    /** L3 客服总监通知目标 userId（默认空 = L3 跳过 + WARN + 推进窗口时间戳；plan D6）。 */
+    String CONFIG_ESCALATION_L3_USER_ID = "erp-cs.escalation-l3-user-id";
+
+    /** SLA 升级链封顶级别（L3 后不再升级，等 resolve；plan D1）。 */
+    int ESCALATION_LEVEL_MAX = 3;
+
     /** 通知事件类型：SLA 超期/预警（对应 erp_sys_notification_template.notification_type）。 */
     String NOTIFY_EVENT_SLA_OVERDUE = "cs.sla-overdue";
 
