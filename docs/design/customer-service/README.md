@@ -97,7 +97,7 @@ cs 域 TOPM「售后服务」，分组：客服工单（列表/详情/看板）�
 ## 延迟项与非目标
 
 - **SLA 工作日模式仅跳周末**：策略标记"仅计工作日"时按周一至周五跳周末，不依赖节假日日历主数据；精确工时累计（含工作时段窗口）归 Non-Goal。
-- **仅 L1 升级**：超时仅通知策略配置的升级通知人（单级）；多级升级链（L2/L3）归 Non-Goal。
+- **多级升级链已实现（RC-R1.67，plan `2026-08-17-2125-3`）**：deadline 超时 → L1 通知 `slaPolicy.escalationUserId` → 每 `escalationDelayHours`（policy 优先，默认 2h）重复通知（上限 1+`erp-cs.escalation-max-repeat`，默认重复 3 次）→ L2 通知 `secondEscalationUserId`（空则跳级）→ L3 通知 config 总监（`erp-cs.escalation-l3-user-id`）→ level=3 封顶；完整判定式见 `sla.md` §3.2 实现注记。**行为变更声明**：L1/预警通知接收人从模板 ROLE 客服主管重路由到策略指定人（policy.escalationUserId 优先，缺失回退 assignedToId，UC-CS-04 ③/⑤ 漂移修正）。
 - **无 SLA 暂停/恢复实体**：SLA 暂停与恢复机制（需独立暂停记录与调整后截止时间）归 Non-Goal，核心计时按截止时间与完成标记。
 - **回访问卷状态派生**：问卷状态由发送时间与响应时间派生（待发送/已发送/已响应），失败/过期仅在查询期判定。
 - **升级通知人 ID 源不同**：升级通知人为数值型用户 ID，与工单分派人/操作人的用户标识不同源，通知逻辑按数值 ID 解析用户。

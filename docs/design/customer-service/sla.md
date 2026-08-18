@@ -27,6 +27,8 @@
 | isActive | 是否激活 | — |
 | description | 说明 | 🟢 Axelor Sla.description |
 
+> **实现注记（RC-R1.67，plan `2026-08-17-2125-3`）**：`escalationUserId`/`secondEscalationUserId` 已落地 ORM（`ErpCsSlaPolicy` propId 10/18，BIGINT(long)，非 `stdDomain=userId` 的 VARCHAR(36)——通知 ctx 值统一 stringify 归一化）；`escalationDelayHours` 已落地（propId 19，可空 INTEGER——非空时优先，null 回退 config `erp-cs.escalation-l1-to-l2-hours` 默认 2）。
+
 ### 1.2 SLA 策略匹配规则
 
 ```
@@ -164,6 +166,8 @@ nop-job 定时扫描（默认频率：每分钟）
 | 二级（L2） | slaPolicy.secondEscalationUserId | 一级升级后 escalationDelayHours 未解决 | 站内信 + 邮件 + SMS |
 | 三级（L3，可选） | 客服总监（硬编码或系统配置） | 二级升级后 escalationDelayHours 仍未解决 | 全部通道 + 升级会议 |
 
+> **实现注记（RC-R1.67，plan `2026-08-17-2125-3`，UC-CS-04 ⑩）**：多级升级链已运行时成立（`ErpCsTicketScanOverdueTicketsProcessor.escalateOne`）。「每 2h 重复通知 + 最多 3 次后升级」语义（use-cases L1 逐字）实现裁决：**max-repeat=3 = 重复通知次数上限**——L1 首次通知（count=1）后每经 delayHours 重复通知 escalationUserId，count 达 1+max-repeat=4 后下一窗口升级 L2（`secondEscalationUserId` 空则跳级直达 L3）；L2 后再经 delayHours 升级 L3（config `erp-cs.escalation-l3-user-id` 总监载体；空 = 跳过 + WARN + 仅推进窗口时间戳，配置后补后下一窗口可恢复升级）；level=3 封顶（resolve 前不再升级）。计数器载体 = `ErpCsTicket.lastEscalationLevel/escalationCount/lastEscalationAt`（propId 203-205）——R1.28 幂等语义保持：窗口内（now − lastEscalationAt < delayHours）重复扫描跳过，替代既有 `hasEscalationAction` 反查守卫（已删除）。通知目标重路由（行为变更声明）：L1/预警通知接收人从模板 ROLE 客服主管改为策略指定人（policy.escalationUserId 优先，缺失回退 assignedToId）——模板 7101 RECIPIENT_CONFIG 已改 `USER_LIST ${escalationUserId}` 按级别路由。ESCALATE 审计 content 承载「SLA 超时升级 L{n}（第 {count} 次）通知 {目标}」；**R1.68 协调义务**：质量联动升级落地时须用独立 actionType 或经 fromStatus/toStatus+content 区分，不得与本升级链的计数语义互扰。
+
 ### 3.3 超时后操作
 
 | 操作 | 说明 |
@@ -284,6 +288,8 @@ ErpHolidayCalendar（节假日日历）
 | `erp-cs.sla-scan-cron` | —（默认不执行，运维启用配置键生效） | SLA 超时扫描 cron 门控。**SCHEDULED**：`ErpCsSlaScanJob` + `scheduler.yaml` 已接线，空值=跳过门控；非空时调 `IErpCsTicketBiz.scanOverdueTickets()` |
 | `erp-cs.sla-warning-before` | 60（分钟） | 超时预警提前时间 |
 | `erp-cs.escalation-l1-to-l2-hours` | 2 | 一级→二级升级等待小时数 |
+| `erp-cs.escalation-max-repeat` | 3 | L1 重复通知次数上限（0 = 首次 L1 后下一窗口直接升级下一级，合法配置边界；负值钳 0） |
+| `erp-cs.escalation-l3-user-id` | —（空） | L3 客服总监通知目标 userId（空 = L3 跳过 + WARN + 推进窗口时间戳；RC-R1.67） |
 | `erp-cs.sla-default-working-hours` | 09:00-18:00 | 默认工作时间段 |
 
 ---
@@ -343,7 +349,7 @@ ErpHolidayCalendar（节假日日历）
 - **§1.3 deadline 计算**：日历小时模式 `now + resolveHours`（days 折算 24h/天）；工作日模式仅跳周末（Sat/Sun），不含 `workingHourStart/End` 工作时段窗口与节假日日历（ORM 无 workingHour 字段，`ErpHolidayCalendar` 未确认存在）。精确工时累计与法定节假日准确截止归 Non-Goal。
 - **§2.1 计时起止**：`startDateTime = 首次 IN_PROGRESS 时间`（start 动作设置，非 NEW 创建时）；`duration = resolve 时 now - startDateTime`（分钟）。
 - **§2.2 暂停/恢复机制**：归 Non-Goal（无 `ErpCsTicketSlaPause` 实体与 `adjustedDeadlineDateTime` 列）。
-- **§3.1-3.2 超时升级**：仅 L1 通知 `escalationUserId`（`scanOverdueTickets` 创建 ESCALATE 审计）；L2/L3 多级升级链归 Non-Goal（ORM 无 `secondEscalationUserId`/`escalationDelayHours`）。`escalationUserId` 类型为 BIGINT(long)，非 `stdDomain=userId` 的 VARCHAR(36)。
+- **§3.1-3.2 超时升级**：多级升级链已实现（RC-R1.67，plan `2026-08-17-2125-3`；原「仅 L1、L2/L3 归 Non-Goal」标注失效移除）——`ErpCsTicket` 加 `lastEscalationLevel/escalationCount/lastEscalationAt`（propId 203-205）+ `ErpCsSlaPolicy` 加 `secondEscalationUserId/escalationDelayHours`（propId 18/19，2026-08-12 A 类批量裁决授权纯加性）；完整判定式/重复上限解释/跳级/封顶语义见 §3.2 实现注记。`escalationUserId` 类型为 BIGINT(long)，非 `stdDomain=userId` 的 VARCHAR(36)。
 - **§3.4 预警**：`findSlaWarnings(beforeMinutes)` 查询 `deadlineDateTime BETWEEN now AND now+beforeMinutes`（dateTimeBetween）且未完成，供 nop-job 调用；cron 实际注册归 Non-Goal（Follow-up：生产部署需定时自动触发时接 nop-job）。
 - **§5.2 节假日日历**：`ErpHolidayCalendar` 未确认存在，首版不接入。
 - **配置默认值**：`erp-cs.sla-enabled=true`、`erp-cs.sla-warning-before=60`（分钟）、`erp-cs.auto-assign-on-create=true`。
