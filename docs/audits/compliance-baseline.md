@@ -443,7 +443,7 @@ R5: 0
 R6: 2
 R7: 0
 R8: 0
-R10: 11
+R10: 12
 R11: 0
 R12a: 70
 R12b: 66
@@ -500,6 +500,14 @@ purchase 侧接线零新增 daoFor（`collectProjectMaterialCost` 走 `line.getO
 - R10 `ErpCsTicketTimerSessionOps.java:76` `runInTransaction(null, REQUIRES_NEW, ...)`（`settleIfOverdueInNewTx`）——12h 惰性结算独立事务物化边界（plan D3 裁决：pause/resume 拒绝路径外层异常回滚与 findActiveTimer 只读会话均不得吞掉封顶结算；镜像 R1.65 `CsTicketMonthSeqCodeRuleVariable` REQUIRES_NEW 先例，代码内含来源注释）
 
 本块以 R2c=1439 / R10=11 为回归门控起点（对齐 R1.48/R1.51/R1.56/R1.57/R1.60/R1.61/R1.65 baseline-raise 先例；roadmap 头 A 类批量裁决已预告「新实体 dao 预期 R2c baseline-raise」）。
+
+## R10 基线上调注记（plan 2026-08-18-1849-3，RC-R1.71 cs 目录履行引擎）
+
+`2026-08-18-1849-3`（RC-R1.71 / P1-RC-061，UC-CS-12 ②③④+后置+异常：履行步骤执行行实体 + actionConfig 驱动五动作 + 失败暂停/重试 3 次/终态推进）新增 1 处文档化 REQUIRES_NEW 站点，R10 11 → **12**（+1；R2b=235 / R2c=1439 / R2d=35 / R12a=70 均与基线持平零漂移——履行链模板加载 daoFor 走 per-mutation Processor 自有链路避环先例注释，非新增裸站点）。**per-site 证据**：
+
+- R10 `ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor.notifyStepFailedRequireNew`（`module-cs/erp-cs-service/.../processor/`）1 处 `runInTransaction(null, REQUIRES_NEW, ...)`——重试超限拒绝路径的管理员通知独立事务提交边界：随后的 `ERR_CS_FULFILLMENT_RETRY_EXCEEDED` 拒绝异常会回滚当前 mutation 事务，同事务内插入的通知行会被连带回滚丢失（UC-CS-12 异常「超出后通知管理员人工介入」在拒绝语义下不可达）；镜像 R1.65 `CsTicketMonthSeqCodeRuleVariable.ensureMonthlySequenceRow` REQUIRES_NEW 先例（提交可见性边界），代码内含来源注释。
+
+本块以 R10=12 为回归门控起点（对齐 R1.2/R1.23/R1.65/R1.66 baseline-raise 先例）。
 
 ## 关联
 

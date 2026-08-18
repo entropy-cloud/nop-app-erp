@@ -273,6 +273,9 @@ v2（草稿/待审批） → 审批通过后替换 v1
 | `erp-cs.service-catalog-enabled` | true | 是否启用服务目录 |
 | `erp-cs.service-catalog-self-service` | true | 是否允许客户自助提交 |
 | `erp-cs.catalog-category-max-depth` | 3 | 分类最大深度 |
+| `erp-cs.fulfillment-retry-cron` | （空） | 履行链自动重试 job cron（空=不调度，见 §9.1） |
+| `erp-cs.fulfillment-retry-max` | 3 | 履行步骤重试次数上限（超出后通知管理员人工介入） |
+| `erp-cs.fulfillment-approval-timeout-hours` | 24 | REQUEST_APPROVAL 超时自动审批兜底小时数（actionConfig.timeoutHours 优先） |
 
 ---
 
@@ -294,11 +297,32 @@ v2（草稿/待审批） → 审批通过后替换 v1
 
 ## 九、实现注记
 
-> 本节为本期实现范围收窄、表单字段映射与履行落地的稳定注记，非迁移历史。successor 接线完整履行编排时更新。
+> 本节为表单字段映射与履行编排引擎的稳定实现注记，非迁移历史。
 
-### 9.1 履行编排范围收窄（本期 vs successor）
+### 9.1 履行编排引擎（RC-R1.71 已实现）
 
-> **当前基线范围**：服务目录履行仅落地 **CREATE_TICKET 首步**（工单经 `createFromCatalog` 创建 + 审计登记）。多步履行编排（ASSIGN_TEAM/ASSIGN_AGENT/NOTIFY_CUSTOMER/UPDATE_STATUS/REQUEST_APPROVAL/CLOSE_TICKET/INVOKE_WORKFLOW/CREATE_CHILD_TICKET）为**产品基线外**——`executeStep` 为 `protected` 方法，作为产品化扩展点供下游覆盖实现真实编排。触发条件：跨团队履行工作流需求上线时。
+> **当前基线范围**：目录履行多步编排已实化（RC-R1.71；原「多步履行产品基线外」声明作废——arm-index P1-RC-061 Q4 裁决三判据不成立，2026-08-12 A 类批量裁决授权 ORM）。执行载体 = `ErpCsTicketFulfillmentStep`（per-ticket per-step 执行行，UK(ticketId, fulfillmentId) 幂等物化；status/retryCount/lastError 承载 UC-CS-12 后置「履行流程状态可跟踪，异常可重试」）。
+
+**执行模型**（`ErpCsCatalogFulfillment__executeFulfillmentSteps`）：按目录项加载模板 → 物化执行行（存在即复用，首建写模板快照）→ sequence 升序推进：
+
+| actionType | actionConfig 契约（§3.2 示例的落地收窄） | 语义 |
+|---|---|---|
+| CREATE_TICKET | —（不消费） | DONE 审计（主单已由 createFromCatalog 创建） |
+| ASSIGN_TEAM / ASSIGN_AGENT | `{mode: ROUND_ROBIN\|LEAST_OPEN}`（缺省 `erp-cs.assign-method`） | R1.65 `TicketAssignResolver` 真实分配（挂载策略 team → 类型默认策略 team → 同码 crm 团队成员池 + 纯函数挑人）；ticket 为 NEW 时 NEW→ASSIGNED 迁移 + ASSIGN 审计，非 NEW 幂等仅更新 assignedToId；候选池空 → FAILED |
+| REQUEST_APPROVAL | `{approverRole?, timeoutHours?}` | cs-local 轻量审批（nop-workflow 集成 successor）：step IN_PROGRESS + notify 审批人（ROLE approverRole 缺省客服主管）；`approveFulfillmentStep(stepId, approved, comment)` 审批——驳回 → step FAILED + retryCount 置 max（人工终局，阻断自动重试）；超时自动审批（actionConfig.timeoutHours 覆盖 > config 兜底）→ DONE + 审计 |
+| CREATE_CHILD_TICKET | —（弱指针承载） | 经 `IErpCsTicketBiz.save` 真实子单：subject=`[子工单] `前缀、同 customerId/ticketTypeId、remark=`parentTicketCode={code}`、code 走 TK codeRule；父单写 TicketAction（content 含子单编号）——双向弱指针，无 ORM 亲子列 |
+| NOTIFY_CUSTOMER | — | notify 派发 `cs.fulfillment-notify-customer`（模板种子 7207，ROLE 客服员转达 IN_APP 占位，镜像 7205 范式） |
+| UPDATE_STATUS | `{status}`（必填） | 状态机迁移矩阵守卫真实 setStatus（非法迁移/缺配置 → step FAILED + lastError）；target == 当前状态幂等 DONE no-op |
+| INVOKE_WORKFLOW | — | SKIPPED（L1 UC-CS-12 ② 未枚举值；cs 域工作流引擎集成 successor——arm-index P1-RC-061 done 注记登记残留防重开） |
+| CLOSE_TICKET | — | 审计 DONE 占位（L1 未枚举值，同上 done 注记边界） |
+
+**失败暂停（UC-CS-12 ③）**：步骤失败 → step FAILED + lastError + 中断链（后续保持 PENDING）+ 管理员通知（`cs.fulfillment-step-failed` 模板种子 7206，ROLE 客服主管）。
+
+**终态推进（UC-CS-12 ④）**：链推进执行**最后一个步骤之前** `ensureInProgress` 铺底（NEW 无处理人 → 自动指派当前操作员 → assign 边 → ASSIGNED → start 边 → IN_PROGRESS；ASSIGNED → start；≥IN_PROGRESS/终态幂等跳过）——全部完成后工单 IN_PROGRESS；「或按配置 RESOLVED」经尾部 `UPDATE_STATUS(status=RESOLVED)` 步骤组合达成（末步前铺底 IN_PROGRESS → resolve 边 RESOLVED，零目录级终态配置列）。
+
+**重试（后置 + 异常）**：双入口——手动 `retryFulfillment(ticketId)`（仅 FAILED 步骤；retryCount+1 后**刷新读取模板 actionConfig**（修正配置即生效）再重执行；`retryCount >= erp-cs.fulfillment-retry-max` 拒绝 + 管理员通知人工介入，超限通知经 REQUIRES_NEW 独立事务提交以避免随拒绝异常回滚）+ 自动 `erp-cs-fulfillment-retry` job（cron 空值跳过；REQUEST_APPROVAL 超时自动审批 + FAILED 未超限工单逐张重试，单张失败隔离；审批驳回终局行 retryCount=max 天然排除）。状态跟踪查询 `findFulfillmentProgress(ticketId)`（工单列表「履行进度」drawer 最小展示 + 「重试履行」行动作）。
+
+**证据**：`TestErpCsCatalogFulfillmentEngine` 16 @Test（①-⑩ 引擎路径 + ⑪-⑯ 重试/超时/查询/RPC 冒烟）；`TestErpCsServiceCatalog` 履行链弱断言已改造为步骤执行行强断言。
 
 ### 9.2 表单字段映射（requestFormConfig → ErpCsTicket）
 
