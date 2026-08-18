@@ -50,6 +50,8 @@
 | 设备报修 | maintenance | 工单触发维护请求 → 走 maintenance 流程 |
 | 客户/联系人主数据 | master-data | 引用 ErpMdPartner |
 
+> *实现注记（RC-R1.68，plan `2026-08-18-1849-1`）——质量问题升级已实现*：`ErpCsTicket__escalateToQuality`（IN_PROCESS 守卫 + materialId/缺陷描述必填）经 `IErpQaNonConformanceBiz.save` 创建 NCR，**双弱指针载体（2026-08-12 B 类裁决，零 cs ORM 变更）**：反向 = NCR `sourceType=CS_TICKET` + `sourceCode=ticket.code`，正向 = `QUALITY_ESCALATE` 审计行 content=`NCR:{code}`；工单不改状态（NCR 流程独立），闭环结果经 `ErpCsTicket__findQualityNcrs` 反查投影。quality 调用失败降级 `PENDING:` 审计行 + 后台重试 job（`erp-cs-quality-retry.job.yaml`，创建前反查既有 NCR 防重复，重试上限 `erp-cs.quality-retry-max`）。**残留风险**：弱指针无 FK 强约束；ticket UK=(code,orgId) 而 NCR 无 org 维度——跨组织同 code 工单理论上可交叉匹配（单组织部署无影响）；NCR 强关联（FK/独立关联实体）归 successor=no。
+
 跨域调用走 `I*Biz` 接口，不做 ORM 层跨工程 `refEntityName`。
 
 ## 关键业务规则
@@ -60,8 +62,10 @@
    - *实现注记（RC-R1.65）*：自动分配经 `erp-cs.auto-assign-on-create`（默认 true）门控 + `erp-cs.assign-method`（ROUND_ROBIN | LEAST_OPEN，默认 ROUND_ROBIN）；候选池 = SLA 策略 teamId → 客服团队 → **按 code 相等约定映射同码 crm 团队成员**（`ErpCrmTeamMember.userId`，跨域约定——无同码 crm 团队/成员时池空）；分配成功 NEW→ASSIGNED + ASSIGN 审计；无匹配留 NEW 并升级通知客服主管（`cs.ticket-assign-no-match`）；创建确认通知 `cs.ticket-created`（接收人=提单人 createdBy，IN_APP 占位语义，实际邮件/门户投递归 nop-notification successor）。
 3. **工单与业务单关联**：通过弱指针（relatedBillType/relatedBillCode）关联销售订单/出库单等（核心零污染）。
 4. **知识库建议**：创建工单时按主题关键词检索知识库，向客户推荐可能解决方案。
+   - *实现注记（RC-R1.69，plan `2026-08-18-1849-1`）*：UC-CS-05 ⑦⑧⑨ 运行时成立——⑦ `adoptKnowledge` 增 `autoResolve` 可选参（true → 委托既有 resolve 路径直接标记 RESOLVED，状态机守卫/审计/survey 触发链复用）；⑧ 采纳统计 = 独立 `ADOPT_KNOWLEDGE` 审计行派生计数（content 固定整串 `knowledgeBaseId={id}`，`ErpCsKnowledgeBase__knowledgeUsageStats` 单条 eq 精确/全量 group；**2026-08-12 B 类裁决：usageCount 物化列非结构必需**——遗留 NOTE 旧格式行不计入派生统计，KB 列表排序展示归 successor）；⑨ resolve 后置 config-gated 推送「建议创建知识库条目」（模板种子 7204 `cs.knowledge-suggest-create`，接收人=处理人 assignedToId 回退 operatorId；工单已含 ADOPT_KNOWLEDGE 行时不推送），前端知识库推荐面板空态提示「未匹配到知识库文章，建议解决后创建新条目」。
 5. **工单关闭前检查**：CLOSED 前必须确保 SLA 已完成（超时工单需注明原因）。
-6. **审计动作类型固定**：操作日志 actionType 仅 ASSIGN/NOTE/ATTACH/ESCALATE/CLOSE/CANCEL；start/resolve/reopen 复用 NOTE，状态迁移语义由前后状态承载。
+6. **审计动作类型固定**：操作日志 actionType 仅 ASSIGN/NOTE/ATTACH/ESCALATE/CLOSE/CANCEL/QUALITY_ESCALATE/ADOPT_KNOWLEDGE；start/resolve/reopen 复用 NOTE，状态迁移语义由前后状态承载。
+   - *实现注记（RC-R1.68/R1.69）*：`QUALITY_ESCALATE` = 质量事件升级专用（与 SLA 超时路径的 `ESCALATE` 语义解耦——SLA 升级计数/时间窗判定不消费本类型）；`ADOPT_KNOWLEDGE` = 知识库采纳专用（派生统计载体）。
 
 ## 业财过账
 
@@ -83,6 +87,10 @@
 | `erp-cs.survey-ces-enabled` | false | 是否启用 CES |
 | `erp-cs.survey-reminder-hours` | 48 | 问卷催填间隔（小时） |
 | `erp-cs.survey-expire-days` | 7 | 问卷过期天数 |
+| `erp-cs.quality-escalation-enabled` | true | 质量事件联动总门控（关闭时 escalateToQuality 拒绝；RC-R1.68） |
+| `erp-cs.quality-retry-cron` | （空） | 质量升级后台重试 cron（空=不调度；job 运行时门控；RC-R1.68） |
+| `erp-cs.quality-retry-max` | 3 | 质量升级后台重试次数上限（超限跳过并 WARN；RC-R1.68） |
+| `erp-cs.knowledge-suggest-on-resolve` | true | resolve 后置「建议创建知识库条目」推送开关（RC-R1.69） |
 
 ## 菜单归属
 

@@ -98,7 +98,9 @@
 
 **异常** 无匹配文章 → 提示客服创建新知识库条目（工单解决后自动推送建议）。
 
-> `searchKnowledge`/`suggestForTicket` `@BizQuery` 采用 `LIKE` 关键词匹配（title + content，对齐 ui-patterns.md 既有口径），非全文引擎。采纳登记经 `ErpCsTicketAction` 审计（`actionType=NOTE` + `knowledgeBaseId` 引用）。全文搜索引擎（Elasticsearch/DB FULLTEXT）归 Deferred（触发条件：文章量超万级或 LIKE 搜索时延/相关性质量不满足时）。
+> `searchKnowledge`/`suggestForTicket` `@BizQuery` 采用 `LIKE` 关键词匹配（title + content，对齐 ui-patterns.md 既有口径），非全文引擎。采纳登记经 `ErpCsTicketAction` 审计（RC-R1.69 前为 `actionType=NOTE`，现独立 `ADOPT_KNOWLEDGE`——见下方附录实现注记）。全文搜索引擎（Elasticsearch/DB FULLTEXT）归 Deferred（触发条件：文章量超万级或 LIKE 搜索时延/相关性质量不满足时）。
+
+> **附录实现注记（RC-R1.69，plan `docs/plans/2026-08-18-1849-1-rc-mr1-r1-68-69-cs-quality-escalation-knowledge-adoption.md`，2026-08-18）**：⑦ 采纳转解决 = `adoptKnowledge` 增 `autoResolve` 可选参（true → 委托既有 resolve Processor 直接标记 RESOLVED——状态机守卫/审计/survey 触发链复用）；⑧ 采纳统计 = 独立 `ADOPT_KNOWLEDGE` 审计行派生计数（2026-08-12 B 类裁决「usageCount 可从 TicketAction 派生，非结构必需」，content 固定整串 `knowledgeBaseId={id}`，`ErpCsKnowledgeBase__knowledgeUsageStats` 单条/全量查询；本注记上方 NOTE 旧格式行不再写入且不计入统计——遗留历史行边界）；⑨ 无匹配建议 = resolve 后置 config-gated（`erp-cs.knowledge-suggest-on-resolve` 默认 true）推送「建议创建知识库条目」notify（模板种子 7204 `cs.knowledge-suggest-create`，接收人=处理人 assignedToId 回退 operatorId；已采纳工单不推送）+ 工单表单知识库推荐面板空态文案提示客服建条目。usageCount 物化列与 AMIS 统计报表页归 successor。
 
 ---
 
@@ -118,6 +120,8 @@
 **后置条件** 工单与 NCR 关联，跨域可追溯。
 
 **异常** quality 域服务不可用 → 延迟创建 NCR，工单先保留状态，后台自动重试。
+
+> **附录实现注记（RC-R1.68，plan `docs/plans/2026-08-18-1849-1-rc-mr1-r1-68-69-cs-quality-escalation-knowledge-adoption.md`，2026-08-18）**：流程①-⑤ + 后置 + 异常运行时成立。①④ 载体 = `ErpCsTicket__escalateToQuality` mutation（IN_PROCESS 守卫 + materialId/缺陷描述必填 + 批次/数量/严重度/供应商可选；工单**不迁移状态**——NCR 流程独立）；② 跨域 = 经 `IErpQaNonConformanceBiz.save` data map 创建 NCR（NCR code 显式 `NCR-CS-{ticket.code}`）；③ 审计 = 独立 `QUALITY_ESCALATE` actionType（与 SLA 超时 `ESCALATE` 语义解耦，R1.67 Deferred 协调项闭合），content=`NCR:{code}`；⑤ 闭环可查 = `ErpCsTicket__findQualityNcrs` 弱指针反查投影 `{code,status,severity,ncrDate,resolvedAt,resolution}`；后置跨域可追溯 = 双弱指针（2026-08-12 B 类裁决零 ORM：反向 NCR `sourceType=CS_TICKET`+`sourceCode=ticket.code`、正向审计行 content——残留风险：无 FK 强约束 + NCR 无 org 维度跨组织同 code 理论可交叉匹配，单组织部署无影响）；异常后台重试 = 降级 `PENDING:` 审计行（载荷自足 JSON）+ `erp-cs-quality-retry` job（cron 空值不调度；创建前反查既有 NCR 防重复；重试上限 `erp-cs.quality-retry-max` 默认 3）。AMIS 工单行「质量问题升级」dialog 按钮已接线。
 
 ---
 

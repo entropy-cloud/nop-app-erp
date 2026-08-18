@@ -91,6 +91,8 @@ NEW（新建）
 | 设备报修触发维护 | 处理人标记 maintenance 联动 → 创建维护请求 |
 | SLA 超时通知 | nop-job 定时扫描 deadlineDateTime，触发升级事件 |
 
+> *实现注记（RC-R1.68，plan `2026-08-18-1849-1`）——质量问题升级到 NCR 已实现*：`escalateToQuality` mutation（IN_PROCESS 前置守卫）经 `IErpQaNonConformanceBiz.save` 创建 NCR（弱指针：NCR `sourceType=CS_TICKET` + `sourceCode=ticket.code`；正向 `QUALITY_ESCALATE` 审计行携带 NCR 编号）。工单**不随质量升级迁移状态**——继续原状态机（RESOLVED→CLOSED），NCR 流程在 quality 域独立进行；NCR 闭环结果经 `findQualityNcrs` 反查。quality 服务不可用时降级 `PENDING:` 审计行（工单保持当前状态）+ `erp-cs-quality-retry` 后台 job 自动重试（上限 `erp-cs.quality-retry-max` 默认 3）。
+
 外部触发渠道：
 - 客户自助门户（主要渠道）。
 - 客服人员代录入（电话/邮件接收）。
