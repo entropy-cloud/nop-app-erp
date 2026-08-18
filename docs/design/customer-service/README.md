@@ -55,7 +55,9 @@
 ## 关键业务规则
 
 1. **SLA 自动计时**：工单创建时按 SLA 策略计算截止时间；首次进入 IN_PROGRESS 起算，RESOLVED 时停止并标记完成。超时触发升级通知。
+   - *实现注记（RC-R1.65，plan `2026-08-17-2125-1`）*：创建路径富化 = save 后置钩子（`doSaveEntity`）自动触发 `matchAndAttachSla`（fill-when-absent：slaPolicyId 与 deadlineDateTime 均空才挂载——策略匹配 + deadline 计算 + 权益扣减 UC-CS-09 单次联动三合一）；缺省填充 status=NEW + priority←工单类型默认；`TK{YYYYMM}{SEQ4}` 编号按月序列自动生成（显式 code 不覆盖）。
 2. **分派规则**：NEW 时按工单类型与团队自动匹配处理人（轮转/最少未结工单），也支持手动分派。
+   - *实现注记（RC-R1.65）*：自动分配经 `erp-cs.auto-assign-on-create`（默认 true）门控 + `erp-cs.assign-method`（ROUND_ROBIN | LEAST_OPEN，默认 ROUND_ROBIN）；候选池 = SLA 策略 teamId → 客服团队 → **按 code 相等约定映射同码 crm 团队成员**（`ErpCrmTeamMember.userId`，跨域约定——无同码 crm 团队/成员时池空）；分配成功 NEW→ASSIGNED + ASSIGN 审计；无匹配留 NEW 并升级通知客服主管（`cs.ticket-assign-no-match`）；创建确认通知 `cs.ticket-created`（接收人=提单人 createdBy，IN_APP 占位语义，实际邮件/门户投递归 nop-notification successor）。
 3. **工单与业务单关联**：通过弱指针（relatedBillType/relatedBillCode）关联销售订单/出库单等（核心零污染）。
 4. **知识库建议**：创建工单时按主题关键词检索知识库，向客户推荐可能解决方案。
 5. **工单关闭前检查**：CLOSED 前必须确保 SLA 已完成（超时工单需注明原因）。

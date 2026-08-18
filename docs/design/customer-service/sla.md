@@ -347,6 +347,7 @@ ErpHolidayCalendar（节假日日历）
 - **§3.4 预警**：`findSlaWarnings(beforeMinutes)` 查询 `deadlineDateTime BETWEEN now AND now+beforeMinutes`（dateTimeBetween）且未完成，供 nop-job 调用；cron 实际注册归 Non-Goal（Follow-up：生产部署需定时自动触发时接 nop-job）。
 - **§5.2 节假日日历**：`ErpHolidayCalendar` 未确认存在，首版不接入。
 - **配置默认值**：`erp-cs.sla-enabled=true`、`erp-cs.sla-warning-before=60`（分钟）、`erp-cs.auto-assign-on-create=true`。
+- **auto-assign-on-create 激活注记（RC-R1.65，plan `2026-08-17-2125-1`）**：本 flag 曾为死 flag（声明无消费方，A4.2.124 运行时确认），现已由 `ErpCsTicketBizModel` 创建富化消费——仅门控自动分配维度（关闭时建议匹配/deadline/TK 编号仍执行）；配套 `erp-cs.assign-method`（ROUND_ROBIN | LEAST_OPEN，默认 ROUND_ROBIN）。候选池跨域约定：SLA 策略 teamId → 同码 crm 团队成员（`ErpCrmTeamMember.userId`）；无匹配留 NEW + `cs.ticket-assign-no-match` 升级通知。SLA 挂载守卫：save 侧不预填 slaPolicyId（归属 matchAndAttachSla 单一咽喉），仅当 slaPolicyId 与 deadlineDateTime 均空时创建路径自动触发（含权益扣减 UC-CS-09 单次联动）。
 
 ## 参考
 
