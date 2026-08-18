@@ -107,7 +107,7 @@ cs 域 TOPM「售后服务」，分组：客服工单（列表/详情/看板）�
 - **SLA 工作日模式仅跳周末**：策略标记"仅计工作日"时按周一至周五跳周末，不依赖节假日日历主数据；精确工时累计（含工作时段窗口）归 Non-Goal。
 - **多级升级链已实现（RC-R1.67，plan `2026-08-17-2125-3`）**：deadline 超时 → L1 通知 `slaPolicy.escalationUserId` → 每 `escalationDelayHours`（policy 优先，默认 2h）重复通知（上限 1+`erp-cs.escalation-max-repeat`，默认重复 3 次）→ L2 通知 `secondEscalationUserId`（空则跳级）→ L3 通知 config 总监（`erp-cs.escalation-l3-user-id`）→ level=3 封顶；完整判定式见 `sla.md` §3.2 实现注记。**行为变更声明**：L1/预警通知接收人从模板 ROLE 客服主管重路由到策略指定人（policy.escalationUserId 优先，缺失回退 assignedToId，UC-CS-04 ③/⑤ 漂移修正）。
 - **无 SLA 暂停/恢复实体**：SLA 暂停与恢复机制（需独立暂停记录与调整后截止时间）归 Non-Goal，核心计时按截止时间与完成标记。
-- **回访问卷状态派生**：问卷状态由发送时间与响应时间派生（待发送/已发送/已响应），失败/过期仅在查询期判定。
+- **回访问卷状态已持久化（RC-R1.70，plan `2026-08-18-1849-2`）**：`ErpCsSurvey` 加 `status`（dict `erp-cs/survey-status`：PENDING/SENT/COMPLETED/FAILED）+ `failureCount` 列；写路径显式赋值（createSurvey/submitSurvey/发送链 job），遗留行 null 走时间戳派生兼容（surveySentAt 空=PENDING / respondedAt 非空=COMPLETED / 否则 SENT）；延迟发送链与 FAILED 重试经 `erp-cs-survey-send` job 接线（cron `erp-cs.survey-send-cron`，空=不调度）；EMAIL/SMS 实际通道投递归 nop-notification 独立面 successor。
 - **升级通知人 ID 源不同**：升级通知人为数值型用户 ID，与工单分派人/操作人的用户标识不同源，通知逻辑按数值 ID 解析用户。
 
 ## 本域文档

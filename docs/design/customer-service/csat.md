@@ -184,6 +184,9 @@ ORDER BY avgCsat DESC
 | `erp-cs.survey-enabled` | true | 是否启用满意度调查 |
 | `erp-cs.survey-trigger-status` | RESOLVED | 触发调查的工单状态（RESOLVED/CLOSED） |
 | `erp-cs.survey-send-delay` | 0（小时） | 触发后延迟发送时间 |
+| `erp-cs.survey-send-cron` | 空（不调度） | 延迟发送链 job cron（`erp-cs-survey-send.job.yaml` 双层门控的 bean 侧） |
+| `erp-cs.survey-send-retry-max` | 3 | 发送失败重试次数上限（超限终态 FAILED 保留） |
+| `erp-cs.survey-send-batch-limit` | 200 | 发送链 job 单批扫描上限 |
 | `erp-cs.survey-reminder-hours` | 48 | 未响应提醒延迟（小时） |
 | `erp-cs.survey-expire-days` | 7 | 调查链接有效期（天） |
 | `erp-cs.survey-csat-enabled` | true | 启用 CSAT 评分 |
@@ -214,12 +217,13 @@ ORDER BY avgCsat DESC
 
 > 本节相对 §1-3 设计的实现取舍。
 
-- **§1.1 / §3.1 调查状态持久化**：`ErpCsSurvey` ORM 无独立 `status` 列；状态由时间戳派生——PENDING=`surveySentAt` 空 / SENT=`surveySentAt` 非空且 `respondedAt` 空 / COMPLETED=`respondedAt` 非空。FAILED/EXPIRED 仅查询期判定不持久。扩 `status` 列归 Non-Goal。
+- **§1.1 / §3.1 调查状态持久化**（RC-R1.70 起已实现）：`ErpCsSurvey` 持久化 `status` 列（dict `erp-cs/survey-status`：PENDING/SENT/COMPLETED/FAILED）+ `failureCount`（发送失败计数，纯加性可空列）。写路径显式赋值（createSurvey 按 delay 写 PENDING/SENT、submitSurvey 写 COMPLETED、发送链 job 写 SENT/FAILED）；遗留行 status=null 走时间戳派生兼容——`surveySentAt` 空=PENDING / `respondedAt` 非空=COMPLETED / 否则 SENT。
 - **§1.2 NPS 分类**：9-10 推荐者 / 7-8 被动者 / 0-6 贬损者经 `NpsClassifier` 派生，**不持久化**（ORM 无分类列）；报表需按分类聚合时运行时计算或扩列。
 - **§2.1 触发时机**：`resolve` 动作成功后（config-gated `survey-enabled` + `survey-trigger-status` 默认 RESOLVED）自动调 `createSurvey`。
-- **§2.2 延迟发送**：`survey-send-delay>0` 时 `surveySentAt` 留空（状态 PENDING），实际延迟发送由 nop-job 接线（cron 注册归 Non-Goal）；`delay=0`（默认）立即置 `surveySentAt=now`（状态 SENT）。
-- **§2.3 发送渠道**：`createSurvey` 默认 `surveyChannel=PORTAL`；实际邮件/门户渲染/发送归 nop-notification 独立面。
+- **§2.2 延迟发送**（RC-R1.70 起已接线）：`survey-send-delay>0` 时 `surveySentAt` 留空（状态 PENDING），由 `ErpCsSurveySendJob`（`erp-cs-survey-send.job.yaml`，cron 经 `erp-cs.survey-send-cron` 门控，空=不调度）到期派发；`delay=0`（默认）立即置 `surveySentAt=now`（状态 SENT）。
+- **§2.3 发送渠道**（RC-R1.70 起派发链接已接线）：`createSurvey` 默认 `surveyChannel=PORTAL`；到期派发经 `notificationBiz.notify("cs.survey-invitation", ...)`（模板种子 7205，ROLE 客服员转达 + IN_APP 占位，渠道携带于模板渲染）；EMAIL/SMS 实际通道投递归 nop-notification 独立面 successor。
 - **§2.4 调查链接**：`surveyToken` 为 UUID（无鉴权访问），链接格式 `{portal-url}/cs/survey/{token}` 由前端渲染；本节仅交付 token 生成与提交逻辑。
-- **§3.2 超时提醒**：`findSurveyReminders(reminderHours)` / `findExpiredSurveys(expireDays)` 查询方法交付；cron 实际注册归 Non-Goal。
-- **reopen 取消调查**：工单 RESOLVED→IN_PROGRESS（reopen）时，若调查未响应（`respondedAt` 空）则删除，避免误发。
-- **配置默认值**：`erp-cs.survey-enabled=true`、`erp-cs.survey-trigger-status=RESOLVED`、`erp-cs.survey-send-delay=0`（小时）、`erp-cs.survey-csat-enabled=true`、`erp-cs.survey-nps-enabled=false`、`erp-cs.survey-ces-enabled=false`、`erp-cs.survey-reminder-hours=48`、`erp-cs.survey-expire-days=7`。
+- **§2.2 异常（发送失败）**：派发异常 → `status=FAILED` + `failureCount++`，同 job 后续扫描重试（< `erp-cs.survey-send-retry-max`），成功转 SENT；超限终态 FAILED 保留可查询（手工重发 = CRUD update 将 status 置回 PENDING + failureCount 清零即回队）。
+- **§3.2 超时提醒**：`findSurveyReminders(reminderHours)` / `findExpiredSurveys(expireDays)` 查询方法交付；提醒 cron 经 `erp-cs.csat-reminder-cron` 接线（`erp-cs-csat-reminder.job.yaml`）。
+- **reopen 取消调查**：工单 RESOLVED→IN_PROGRESS（reopen）时，若调查未响应（`respondedAt` 空，覆盖 PENDING/FAILED/SENT）则删除，避免误发。
+- **配置默认值**：`erp-cs.survey-enabled=true`、`erp-cs.survey-trigger-status=RESOLVED`、`erp-cs.survey-send-delay=0`（小时）、`erp-cs.survey-send-cron=空`、`erp-cs.survey-send-retry-max=3`、`erp-cs.survey-send-batch-limit=200`、`erp-cs.survey-csat-enabled=true`、`erp-cs.survey-nps-enabled=false`、`erp-cs.survey-ces-enabled=false`、`erp-cs.survey-reminder-hours=48`、`erp-cs.survey-expire-days=7`。

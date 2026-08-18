@@ -1,7 +1,8 @@
 # 2026-08-18-1849-2-rc-mr1-r1-70-cs-survey-send-chain RC-R1.70 — cs 调查延迟派发与重试（A 类 ORM：ErpCsSurvey 加 status/failureCount 列 + 发送链 job + FAILED 重试）
 
-> Plan Status: active
-> Last Reviewed: 2026-08-18
+> Plan Status: completed
+> Last Reviewed: 2026-08-19
+> Executed: 2026-08-19（MISSION_DRIVER:2026-08-17-212541-mission-driver 执行会话；三 Phase 全 [x] + 分域 169/0/0 + 全仓 install + checker 零漂移）
 > Mission: requirement-compliance
 > Work Item: RC-R1.70（P1-RC-059，UC-CS-08 ①延迟发送调度 + ②渠道派发链接 + 后置 COMPLETED/FAILED 终态 + 异常发送失败标记 FAILED 并重试）
 > Source: `docs/backlog/requirement-compliance-roadmap.md` §MR1 RC-R1.70 行 + `docs/audits/arm-index.md` P1-RC-059 行（:236）+ 2026-08-12 批量裁决 A 类（roadmap 头 :40：「cs: RC-R1.70（ErpCsSurvey 加 status/failureCount 列）」ORM 修改授权已批量批准，对齐 Q3 纯加性类自动执行，越界回落双独立子 agent 批准；行标签仍携旧「越界项」措辞，done 回写时按 R1.61-67 先例同步改写）
@@ -58,65 +59,69 @@
 
 ### Phase 1 - ORM 纯加性 2 列 + dict + 状态写入接线
 
-Status: planned
+Status: completed
 Targets: `module-cs/model/app-erp-cs.orm.xml`（ErpCsSurvey + survey-status dict）、`module-cs/erp-cs-meta/_vfs/dict/erp-cs/survey-status.dict.yaml`（新）、`ErpCsSurveyCreateSurveyProcessor.java`、`ErpCsSurveyBizModel.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: 无
 
-- [ ] **D1 列设计**：`ErpCsSurvey.status`（propId 18，VARCHAR 20，`ext:dict="erp-cs/survey-status"`，可空无默认无索引无 UK）+ `ErpCsSurvey.failureCount`（propId 19，INTEGER，可空无默认）；dict 四值 PENDING/SENT/COMPLETED/FAILED（yaml 手写 + orm dict 声明，R1.45 posted-status 先例）。
+- [x] **D1 列设计**：`ErpCsSurvey.status`（propId 18，VARCHAR 20，`ext:dict="erp-cs/survey-status"`，可空无默认无索引无 UK）+ `ErpCsSurvey.failureCount`（propId 19，INTEGER，可空无默认）；dict 四值 PENDING/SENT/COMPLETED/FAILED（yaml 手写 + orm dict 声明，R1.45 posted-status 先例）。
       - Skill: `nop-backend-dev`
-- [ ] **D2 遗留兼容裁决**：status null → 派生（surveySentAt null=PENDING / respondedAt 非空=COMPLETED / 否则 SENT）；既有读路径（findSurveyReminders/findExpiredSurveys）**零改动**（surveySentAt 过滤保持）；新写路径显式赋值——createSurvey 写 status（delayHours<=0 → SENT；>0 → PENDING）+ submitSurvey 成功响应后写 status=COMPLETED。
+- [x] **D2 遗留兼容裁决**：status null → 派生（surveySentAt null=PENDING / respondedAt 非空=COMPLETED / 否则 SENT）；既有读路径（findSurveyReminders/findExpiredSurveys）**零改动**（surveySentAt 过滤保持）；新写路径显式赋值——createSurvey 写 status（delayHours<=0 → SENT；>0 → PENDING）+ submitSurvey 成功响应后写 status=COMPLETED。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：`mvn clean install -DskipTests` 增量重生成 BUILD SUCCESS + DDL 三方言 NULL 无默认核对 + 既有 TestErpCsTicketSlaCsat 四 survey 测试零回归。
+- [x] **Proof**：`mvn clean install -DskipTests` 增量重生成 BUILD SUCCESS + DDL 三方言 NULL 无默认核对 + 既有 TestErpCsTicketSlaCsat 四 survey 测试零回归。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 2 列 + dict 落地且既有 144 基线零回归（分域 mvn test）
+- [x] 2 列 + dict 落地且既有 144 基线零回归（分域 mvn test）
 
 ### Phase 2 - 发送链 job + FAILED 重试 + reopen 取消断言
 
-Status: planned
+Status: completed
 Targets: `module-cs/erp-cs-service/src/main/java/app/erp/cs/service/job/ErpCsSurveySendJob.java`（新）、`app-erp-all/_vfs/nop/job/conf/erp-cs-survey-send.job.yaml`（新）、`ErpCsConstants.java`、`ErpCsConfigs.java`、`module-notify/deploy/sql/{mysql,oracle,postgresql}/_seed_erp-notify.sql`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1
 
-- [ ] **D3 job 形态 = 简单 job bean**（R1.37 D1 选项 A 范式，否决 batch-task REQUIRES_NEW：单入口浅查询无逐条新事务诉求）：`ErpCsSurveySendJob.execute()` 无参 + cron 空值跳过 + limit 批量 + 逐条 try/catch 失败隔离 + `ormTemplate.runInSession` 包裹；扫描条件 = （status=PENDING **或** [status null 且 surveySentAt null 派生 PENDING]）且 `createTime + delayHours <= now`。
+- [x] **D3 job 形态 = 简单 job bean**（R1.37 D1 选项 A 范式，否决 batch-task REQUIRES_NEW：单入口浅查询无逐条新事务诉求）：`ErpCsSurveySendJob.execute()` 无参 + cron 空值跳过 + limit 批量 + 逐条 try/catch 失败隔离 + `ormTemplate.runInSession` 包裹；扫描条件 = （status=PENDING **或** [status null 且 surveySentAt null 派生 PENDING]）且 `createTime + delayHours <= now`。
       - Skill: `nop-backend-dev`
-- [ ] **D4 派发语义**：`notificationBiz.notify("cs.survey-invitation", {surveyId, surveyToken, ticketCode, channel, customerName}, ctx)`（客户非系统用户 → IN_APP 占位 + 实际投递 successor 注记，R1.65/R1.67 Deferred 同款）；**成功判据 = notify 调用无异常**（占位语义下落库即成功）→ `status=SENT` + `surveySentAt=now`；异常 → `status=FAILED` + `failureCount++`。
+      - 执行注记：扫描落地为统一队列「surveySentAt 空 + respondedAt 空 + createTime+delay 到期」——isNull 算子经 CrudBizModel 管道被 ObjMetaBasedFilterValidator 拒绝（xmeta 默认仅 eq/in/dateBetween/dateTimeBetween），改走 dao 直查（CsatReminderJob job 只读先例同型，R2c +1 per-site 证据）+ 终态 FAILED（failureCount>=retry-max）Java 侧守卫跳过；FAILED 未超限行天然入队（surveySentAt 空）即 D5 重试路径，行为与 D3/D5 分队扫描等价（job javadoc 记载）。
+- [x] **D4 派发语义**：`notificationBiz.notify("cs.survey-invitation", {surveyId, surveyToken, ticketCode, channel, customerName}, ctx)`（客户非系统用户 → IN_APP 占位 + 实际投递 successor 注记，R1.65/R1.67 Deferred 同款）；**成功判据 = notify 调用无异常**（占位语义下落库即成功）→ `status=SENT` + `surveySentAt=now`；异常 → `status=FAILED` + `failureCount++`。
       - Skill: `nop-backend-dev`
-- [ ] **D5 FAILED 重试**：同 job 扫描 `status=FAILED` 且 `failureCount < erp-cs.survey-send-retry-max` → 重试派发（成功转 SENT / 失败 failureCount 再增）；超限 → 终态 FAILED 保留（可查询，L1「标记 FAILED 并重试」达成；L1 无超限管理员通知要求，不加）。
+- [x] **D5 FAILED 重试**：同 job 扫描 `status=FAILED` 且 `failureCount < erp-cs.survey-send-retry-max` → 重试派发（成功转 SENT / 失败 failureCount 再增）；超限 → 终态 FAILED 保留（可查询，L1「标记 FAILED 并重试」达成；L1 无超限管理员通知要求，不加）。
       - Skill: `nop-backend-dev`
-- [ ] reopen 取消显式断言：`cancelUnrespondedSurvey` 覆盖 PENDING/FAILED 未响应行删除（既有逻辑核对 + 测试断言，L1 异常前半）。
+- [x] reopen 取消显式断言：`cancelUnrespondedSurvey` 覆盖 PENDING/FAILED 未响应行删除（既有逻辑核对 + 测试断言，L1 异常前半）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：新 `job/TestErpCsSurveySendJob`：① cron 空值跳过 ② PENDING 到期 → SENT + surveySentAt + notify 落库 ③ 未到期（delay 窗口内）跳过 ④ 遗留 null 行派生兼容派发 ⑤ notify 抛异常 → FAILED + failureCount=1 ⑥ 重试成功 FAILED→SENT ⑦ 超限终态不再重试 ⑧ submitSurvey 写 COMPLETED ⑨ reopen 删 PENDING/FAILED 未响应行 + `_cases/` 快照；TestErpCsTicketSlaCsat/TestErpCsCsatReminderJob 零回归 + TestErpAllJobYamlLoading 计数 +1。验证命令：`mvn test -pl module-cs/erp-cs-service`。
+- [x] **Proof**：新 `job/TestErpCsSurveySendJob`：① cron 空值跳过 ② PENDING 到期 → SENT + surveySentAt + notify 落库 ③ 未到期（delay 窗口内）跳过 ④ 遗留 null 行派生兼容派发 ⑤ notify 抛异常 → FAILED + failureCount=1 ⑥ 重试成功 FAILED→SENT ⑦ 超限终态不再重试 ⑧ submitSurvey 写 COMPLETED ⑨ reopen 删 PENDING/FAILED 未响应行 + `_cases/` 快照；TestErpCsTicketSlaCsat/TestErpCsCsatReminderJob 零回归 + TestErpAllJobYamlLoading 计数 +1。验证命令：`mvn test -pl module-cs/erp-cs-service`。
       - Skill: `nop-testing`
+      - 执行注记：`_cases/` 为空 autotest.yaml 脚手架（R1.65/R1.67/R1.68 断言式先例——通知行/审计列含真实时钟，录制表快照随日期漂移翻红）；测试组 10 @Test（Proof ①-⑨ + execute() 无参 public 反射断言）；分域全量 169/0/0（159 基线 + 10 新增零回归）；TestErpAllJobYamlLoading 27→28 独立绿（基线 27 = 26 + 同批 Plan 1849-1 erp-cs-quality-retry 已落地）。
 
 Exit Criteria:
 
-- [ ] 发送/失败/重试/取消四路径测试绿 + reminder/expiry 既有行为零回归
+- [x] 发送/失败/重试/取消四路径测试绿 + reminder/expiry 既有行为零回归
 
 ### Phase 3 - 验证收口 + 文档回填
 
-Status: planned
-Targets: `docs/design/customer-service/csat.md`、`docs/audits/arm-index.md`、`docs/backlog/requirement-compliance-roadmap.md`、`docs/logs/2026-08/{当期}.md`
+Status: completed
+Targets: `docs/design/customer-service/csat.md`、`docs/audits/arm-index.md`、`docs/backlog/requirement-compliance-roadmap.md`、`docs/logs/2026/08-{当期}.md`
 Skill: none
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 1-2 全绿
 
-- [ ] 全量验证：`mvn test -pl module-cs/erp-cs-service` 全绿（144 基线 + 新增零回归）+ `mvn clean install -DskipTests` BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh`（actual ≤ baseline 或 baseline-raise per-site 证据）+ TestErpAllJobYamlLoading。
+- [x] 全量验证：`mvn test -pl module-cs/erp-cs-service` 全绿（144 基线 + 新增零回归）+ `mvn clean install -DskipTests` BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh`（actual ≤ baseline 或 baseline-raise per-site 证据）+ TestErpAllJobYamlLoading。
       - Skill: none
-- [ ] owner doc 回填：csat.md §实现约定 Non-Goal 三条修正（cron 注册已接线 / status 列已落 / 实际邮件发送维持 successor）+ 配置表补 3 键 + arm-index P1-RC-059 → done (RC-R1.70) + roadmap 行 done + 行标签 A 类改写 + logs 条目（全绿验证状态）。
+      - 执行注记（2026-08-19）：分域 169/0/0（159 现基线[R1.68/69 后] + 10 新增零回归）+ 全仓 156 模块 `mvn clean install -DskipTests` BUILD SUCCESS + checker 19 规则 actual≤baseline 零漂移（R2b=235 / **R2c=1439=基线**——job dao 直查 ErpCsSurveySendJob.java:193 +1 消化 1438→1439 基线余量[isNull 算子被 ObjMetaBasedFilterValidator 拒绝的 per-site 证据在 job javadoc，无需 baseline-raise] / R2d=35 / R10=11 / R12a=70）+ TestErpAllJobYamlLoading 27→28 独立绿。
+- [x] owner doc 回填：csat.md §实现约定 Non-Goal 三条修正（cron 注册已接线 / status 列已落 / 实际邮件发送维持 successor）+ 配置表补 3 键 + arm-index P1-RC-059 → done (RC-R1.70) + roadmap 行 done + 行标签 A 类改写 + logs 条目（全绿验证状态）。
       - Skill: none
+      - 执行注记：csat.md §五 配置表 + §实现约定 5 条改写（status 持久化 / 延迟发送接线 / 渠道派发接线 / 新增异常条款条目 / 配置默认值同步）+ README.md「回访问卷状态」条目同步改写（arm-index 裁决引用的 AI 自标残留清理）+ logs/2026/08-19.md 顶部条目（full-green verification 状态）。
 
 Exit Criteria:
 
-- [ ] 五处回填一致（代码 / csat.md / arm-index / roadmap / logs）
+- [x] 五处回填一致（代码 / csat.md / arm-index / roadmap / logs）
 
 ## Draft Review Record
 
@@ -125,14 +130,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成（UC-CS-08 ①②+后置+异常全路径）
-- [ ] 相关文档对齐
-- [ ] 已运行验证（分域全绿 + 全仓 install + checker）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（UC-CS-08 ①②+后置+异常全路径）
+- [x] 相关文档对齐
+- [x] 已运行验证（分域全绿 + 全仓 install + checker）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -150,12 +155,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: draft（待独立草案审查）
+Status Note: closed（2026-08-19 独立结束审计通过：三 Phase 实仓逐项核验 + 分域测试独立复跑 169/0/0 全绿）
 
 Closure Audit Evidence:
 
-- Auditor / Agent: 待独立结束审计
-- Evidence: 待
+- Auditor / Agent: 独立结束审计子代理（新会话，MISSION_DRIVER:2026-08-17-212541-mission-driver closure-audit 步骤；非执行会话，无执行者上下文）
+- Evidence: 2026-08-19 独立实仓核验——①Phase 1：`app-erp-cs.orm.xml:515-516` status[propId 18，ext:dict erp-cs/survey-status]/failureCount[propId 19] 纯加性 2 列 + `erp-cs-meta/src/main/resources/_vfs/dict/erp-cs/survey-status.dict.yaml` 四值 + `_gen/_ErpCsSurvey.java` 重生产物含 setStatus/setFailureCount + createSurvey/submitSurvey 显式写 status（Processor:50 / BizModel:93）；②Phase 2：`ErpCsSurveySendJob.java`（199 行实质实现：cron 空跳过 + 统一队列扫描 + notify 派发 + FAILED/failureCount++ + 终态守卫，无空壳无吞异常路径）+ `erp-cs-survey-send.job.yaml` 注册（/nop/job/conf 计 28 个 .job.yaml）+ `app-service.beans.xml:33` bean 注册（运行时可达）+ 种子 7205 `cs.survey-invitation` 三方言齐 + config 三键（ErpCsConfigs:84-95）+ `TestErpCsSurveySendJob` 10 @Test 覆盖 Proof ①-⑩；③Phase 3：csat.md 配置表 3 键 + §实现约定改写为已实现注记、arm-index:236 P1-RC-059 → done (RC-R1.70)、roadmap :462 RC-R1.70 → done、logs/2026/08-19.md:5 full-green 条目——五处回填一致；④独立复跑 `mvn test -pl module-cs/erp-cs-service` → **169 run / 0 Failures / 0 Errors / 0 Skipped**（surefire 23 报告文件聚合），与计划声明 169/0/0 一致；TestErpAllJobYamlLoading 断言 28 与实仓 28 一致；⑤Deferred 两项为真 out-of-scope/optimization（successor 显式命名），无范围内缺陷降级；⑥文本一致性：Plan Status=completed = 三 Phase Status = 全部 Exit Criteria = 8 Closure Gates 全 [x] = 本证据记录
 
 Follow-up:
 
