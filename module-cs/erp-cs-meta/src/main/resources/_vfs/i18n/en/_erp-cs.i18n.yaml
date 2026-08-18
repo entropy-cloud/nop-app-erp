@@ -14,6 +14,7 @@ entity:
     ErpCsTeam: CS Team
     ErpCsTicket: Ticket
     ErpCsTicketAction: Ticket Action
+    ErpCsTicketFulfillmentStep: Ticket Fulfillment Step
     ErpCsTicketTimerSession: Ticket Timer Session
     ErpCsTicketType: Ticket Type
     ErpCsTimeEntry: Time Entry
@@ -346,6 +347,34 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       ticket: Ticket
+    ErpCsTicketFulfillmentStep:
+      id: ID
+      orgId: Organization
+      ticketId: Ticket
+      fulfillmentId: Fulfillment
+      catalogItemId: Catalog Item
+      sequence: Sequence
+      actionType: Action Type
+      actionType_label: null
+      actionConfig: Action Config
+      status: Status
+      status_label: null
+      retryCount: Retry Count
+      lastError: Last Error
+      executedAt: Executed At
+      executedBy: Executed By
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      ticket: Ticket
+      fulfillment: Fulfillment
+      catalogItem: Catalog Item
+      org: null
+      org.name: null
     ErpCsTicketTimerSession:
       id: ID
       orgId: Organization
@@ -431,6 +460,7 @@ dict:
     erp-cs/time-entry-approve-status: Time Entry Approve Status
     erp-cs/time-entry-source: Time Entry Source
     erp-cs/timer-session-status: Timer Session Status
+    erp-cs/fulfillment-step-status: Fulfillment Step Status
 dict.option.label:
   erp-cs/ticket-status:
     NEW: New
@@ -518,3 +548,9 @@ dict.option.label:
     RUNNING: Running
     PAUSED: Paused
     STOPPED: Stopped
+  erp-cs/fulfillment-step-status:
+    PENDING: Pending
+    IN_PROGRESS: In Progress
+    DONE: Done
+    SKIPPED: Skipped
+    FAILED: Failed

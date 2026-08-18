@@ -147,5 +147,20 @@ VALUES
    '满意度调查邀请: ${ticketCode}',
    '工单 ${ticketCode} 的满意度调查已就绪（渠道 ${channel}，token ${surveyToken}），请转达客户 ${customerName} 填写',
    'ROLE', '{"roles":["客服员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
-   '业务提醒样例（调查邀请派发，surveyId=${surveyId}）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
+   '业务提醒样例（调查邀请派发，surveyId=${surveyId}）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP)),
+  -- 异常告警：目录履行步骤失败暂停（RC-R1.71，P1-RC-061，UC-CS-12 ③），5 分钟窗口合并。
+  -- 接收人=ROLE 客服主管（失败暂停 + 记录 lastError 后通知管理员；重试超限共用本模板，errorMsg 携带人工介入提示）。
+  (7206, 'cs.fulfillment-step-failed', '履行步骤失败暂停', 'IN_APP',
+   '履行步骤失败: ${ticketCode}',
+   '工单 ${ticketCode} 履行步骤 ${sequence}（${actionType}）失败暂停：${errorMsg}（已重试 ${retryCount} 次），请处理',
+   'ROLE', '{"roles":["客服主管"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '异常告警样例（履行失败暂停/重试超限 -> 客服主管人工介入）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 业务提醒：履行链客户通知（RC-R1.71，P1-RC-061，UC-CS-12 ② NOTIFY_CUSTOMER），5 分钟窗口合并。
+  -- 接收人=ROLE 客服员（客户非系统用户经客服员转达 + IN_APP 占位，镜像 7205 cs.survey-invitation 同款；
+  -- EMAIL/SMS 实际通道投递归 nop-notification 独立面 successor）。
+  (7207, 'cs.fulfillment-notify-customer', '履行链客户通知', 'IN_APP',
+   '履行进度通知: ${ticketCode}',
+   '工单 ${ticketCode}（目录项 ${catalogItemName}）履行进度更新，备注 ${stepRemark}，请转达客户 ${customerName}',
+   'ROLE', '{"roles":["客服员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '业务提醒样例（NOTIFY_CUSTOMER 步骤派发，经客服员转达客户）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
 

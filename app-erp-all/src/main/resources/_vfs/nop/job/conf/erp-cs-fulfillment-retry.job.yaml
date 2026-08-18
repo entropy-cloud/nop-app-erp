@@ -1,0 +1,10 @@
+jobName: erp-cs-fulfillment-retry
+enabled: "@cfg:nop.job.erp-cs-fulfillment-retry.enabled|false"
+displayName: Customer Service Fulfillment Retry
+description: 履行链自动恢复——REQUEST_APPROVAL 超时自动审批（timeoutHours 覆盖/兜底）+ FAILED 未超限步骤自动重试（刷新模板 actionConfig；审批驳回终局行天然排除）；超限通知管理员人工介入（UC-CS-12 后置+异常）；cron 经 erp-cs.fulfillment-retry-cron 配置门控（空=跳过）
+jobGroup: erp-cs
+trigger:
+  cronExpr: "@cfg:nop.job.erp-cs-fulfillment-retry.cron-expr|0 0/5 * * * ?"
+invoker:
+  bean: erpCsFulfillmentRetryJob
+  method: execute

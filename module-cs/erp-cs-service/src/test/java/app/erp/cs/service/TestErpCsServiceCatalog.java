@@ -6,6 +6,7 @@ import app.erp.cs.dao.entity.ErpCsEntitlement;
 import app.erp.cs.dao.entity.ErpCsServiceCatalogItem;
 import app.erp.cs.dao.entity.ErpCsTicket;
 import app.erp.cs.dao.entity.ErpCsTicketAction;
+import app.erp.cs.dao.entity.ErpCsTicketFulfillmentStep;
 import app.erp.md.dao.entity.ErpMdPartner;
 import io.nop.api.core.annotations.autotest.NopTestConfig;
 import io.nop.api.core.annotations.core.OptionalBoolean;
@@ -37,8 +38,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  *   <li>目录分类树校验：parentId 自环/成环/深度超限拒绝，有子节点禁删。</li>
  *   <li>目录项驱动建单 createFromCatalog：ticketType/slaPolicy 自动填充 + catalogItemId 回写 +
  *       表单字段映射（subject/description/urgency→priority）。</li>
- *   <li>履行首步 CREATE_TICKET 落地：建单后 TicketAction 审计含 CREATE_TICKET（DONE） +
- *       INVOKE_WORKFLOW/CREATE_CHILD_TICKET（SKIPPED）。</li>
+ *   <li>履行链引擎实化断言（RC-R1.71）：CREATE_TICKET DONE + INVOKE_WORKFLOW SKIPPED（L1 未枚举边界）+
+ *       ASSIGN_TEAM 无池 FAILED + 失败暂停后续 PENDING（步骤执行行 + TicketAction 审计双侧断言）。</li>
  * </ul>
  */
 @NopTestConfig(localDb = true,
@@ -300,14 +301,15 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "非必填字段缺失应放行: " + resp);
     }
 
-    // ---------- 履行首步 CREATE_TICKET 落地 ----------
+    // ---------- 履行链引擎实化（RC-R1.71 弱断言改造：anyMatch 审计 → 步骤执行行强断言） ----------
 
     @Test
     public void testFulfillmentCreateTicketStepRegistered() {
         seedCustomer(PARTNER_ID, "ACME");
         seedSlaPolicy(SLA_POLICY_ID, TICKET_TYPE_ID);
         Long catalogItemId = seedCatalogItem(6101L, "履行测试项", TICKET_TYPE_ID, SLA_POLICY_ID, true);
-        // 履行步骤：CREATE_TICKET + INVOKE_WORKFLOW（应 SKIPPED）
+        // 履行链：CREATE_TICKET（DONE 审计）+ INVOKE_WORKFLOW（SKIPPED，L1 未枚举边界）+
+        // ASSIGN_TEAM（本测试无团队成员池 → FAILED 触发失败暂停）+ NOTIFY_CUSTOMER（中断后保持 PENDING）
         seedFulfillmentStep(6201L, catalogItemId, 1, ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET);
         seedFulfillmentStep(6202L, catalogItemId, 2, ErpCsConstants.FULFILLMENT_ACTION_INVOKE_WORKFLOW);
         seedFulfillmentStep(6203L, catalogItemId, 3, ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM);
@@ -322,25 +324,38 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         assertEquals(0, resp.getStatus(), "createFromCatalog 应成功: " + resp);
 
         Long ticketId = toLong(((Map<?, ?>) resp.getData()).get("id"));
-        // 验证 TicketAction 审计已登记各步骤
+        List<ErpCsTicketFulfillmentStep> steps = listFulfillmentSteps(ticketId);
+        assertEquals(4, steps.size(), "物化步骤执行行数 = 模板数（4）");
+
+        // 步骤执行行强断言（替代原 anyMatch 弱断言）
+        assertEquals(ErpCsConstants.FULFILLMENT_STEP_DONE, stepStatus(steps, 1), "CREATE_TICKET 步骤 DONE（主单已建）");
+        assertEquals(ErpCsConstants.FULFILLMENT_STEP_SKIPPED, stepStatus(steps, 2),
+                "INVOKE_WORKFLOW 步骤 SKIPPED（L1 未枚举，nop-workflow successor）");
+        assertEquals(ErpCsConstants.FULFILLMENT_STEP_FAILED, stepStatus(steps, 3),
+                "ASSIGN_TEAM 无成员池 → FAILED（真实分配语义）");
+        assertTrue(stepLastError(steps, 3) != null && stepLastError(steps, 3).contains("分配失败"),
+                "FAILED 步骤 lastError 记录错误信息");
+        assertEquals(ErpCsConstants.FULFILLMENT_STEP_PENDING, stepStatus(steps, 4),
+                "失败暂停：后续 NOTIFY_CUSTOMER 保持 PENDING");
+
+        // TicketAction 审计与执行状态一致
         List<ErpCsTicketAction> actions = listTicketActions(ticketId);
         assertFalse(actions.isEmpty(), "履行步骤应写入 TicketAction 审计");
-
-        boolean hasCreateTicket = actions.stream().anyMatch(a ->
-                ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET.equals(a.getActionType())
-                        && a.getContent() != null && a.getContent().contains("DONE"));
-        boolean hasInvokeWorkflowSkipped = actions.stream().anyMatch(a ->
-                ErpCsConstants.FULFILLMENT_ACTION_INVOKE_WORKFLOW.equals(a.getActionType())
-                        && a.getContent() != null && a.getContent().contains("SKIPPED"));
-        boolean hasAssignTeam = actions.stream().anyMatch(a ->
-                ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM.equals(a.getActionType()));
-        boolean hasNotifyCustomer = actions.stream().anyMatch(a ->
-                ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER.equals(a.getActionType()));
-
-        assertTrue(hasCreateTicket, "CREATE_TICKET 步骤应登记为 DONE");
-        assertTrue(hasInvokeWorkflowSkipped, "INVOKE_WORKFLOW 应标记 SKIPPED（Non-Goal successor）");
-        assertTrue(hasAssignTeam, "ASSIGN_TEAM 应登记执行结果");
-        assertTrue(hasNotifyCustomer, "NOTIFY_CUSTOMER 应登记执行结果");
+        assertTrue(actions.stream().anyMatch(a ->
+                        ErpCsConstants.FULFILLMENT_ACTION_CREATE_TICKET.equals(a.getActionType())
+                                && a.getContent() != null && a.getContent().contains("DONE")),
+                "CREATE_TICKET 审计含 DONE");
+        assertTrue(actions.stream().anyMatch(a ->
+                        ErpCsConstants.FULFILLMENT_ACTION_INVOKE_WORKFLOW.equals(a.getActionType())
+                                && a.getContent() != null && a.getContent().contains("SKIPPED")),
+                "INVOKE_WORKFLOW 审计含 SKIPPED");
+        assertTrue(actions.stream().anyMatch(a ->
+                        ErpCsConstants.FULFILLMENT_ACTION_ASSIGN_TEAM.equals(a.getActionType())
+                                && a.getContent() != null && a.getContent().contains("FAILED")),
+                "ASSIGN_TEAM 审计含 FAILED");
+        assertTrue(actions.stream().noneMatch(a ->
+                        ErpCsConstants.FULFILLMENT_ACTION_NOTIFY_CUSTOMER.equals(a.getActionType())),
+                "链中断后 NOTIFY_CUSTOMER 未执行（无审计行）");
     }
 
     // ---------- helpers ----------
@@ -349,6 +364,30 @@ public class TestErpCsServiceCatalog extends JunitAutoTestCase {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(eq("ticketId", ticketId));
         return daoProvider.daoFor(ErpCsTicketAction.class).findAllByQuery(q);
+    }
+
+    private List<ErpCsTicketFulfillmentStep> listFulfillmentSteps(Long ticketId) {
+        io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+        q.addFilter(eq("ticketId", ticketId));
+        return daoProvider.daoFor(ErpCsTicketFulfillmentStep.class).findAllByQuery(q);
+    }
+
+    private static String stepStatus(List<ErpCsTicketFulfillmentStep> steps, int sequence) {
+        for (ErpCsTicketFulfillmentStep s : steps) {
+            if (s.getSequence() != null && s.getSequence() == sequence) {
+                return s.getStatus();
+            }
+        }
+        return null;
+    }
+
+    private static String stepLastError(List<ErpCsTicketFulfillmentStep> steps, int sequence) {
+        for (ErpCsTicketFulfillmentStep s : steps) {
+            if (s.getSequence() != null && s.getSequence() == sequence) {
+                return s.getLastError();
+            }
+        }
+        return null;
     }
 
     private void seedCustomer(Long id, String name) {

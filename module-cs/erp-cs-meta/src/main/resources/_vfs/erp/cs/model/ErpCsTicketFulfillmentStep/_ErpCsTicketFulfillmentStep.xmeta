@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="git-branch" ext:web-renderer="flux" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="工单履行步骤" i18n-en:displayName="Ticket Fulfillment Step"
+      tagSet="gid,erp.cs" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.cs.dao.entity.ErpCsTicketFulfillmentStep</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys>
+        <key name="UK_CS_TICKET_FULFILLMENT_STEP" props="ticketId,fulfillmentId"/>
+    </keys>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="ticketId" displayName="关联工单" propId="3" i18n-en:displayName="Ticket" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="ticket">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="fulfillmentId" displayName="履行映射" propId="4" i18n-en:displayName="Fulfillment" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="fulfillment">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="catalogItemId" displayName="目录项" propId="5" i18n-en:displayName="Catalog Item" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="catalogItem">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="sequence" displayName="执行顺序" propId="6" i18n-en:displayName="Sequence" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="actionType" displayName="动作类型" propId="7" i18n-en:displayName="Action Type" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-cs/fulfillment-action-type"/>
+        </prop>
+        <prop name="actionConfig" displayName="动作配置快照" propId="8" i18n-en:displayName="Action Config" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema domain="json" type="java.lang.String" precision="4000"/>
+        </prop>
+        <prop name="status" displayName="执行状态" propId="9" i18n-en:displayName="Status" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="PENDING">
+            <schema type="java.lang.String" precision="20" dict="erp-cs/fulfillment-step-status"/>
+        </prop>
+        <prop name="retryCount" displayName="重试次数" propId="10" i18n-en:displayName="Retry Count" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="lastError" displayName="最近错误" propId="11" i18n-en:displayName="Last Error" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="500"/>
+        </prop>
+        <prop name="executedAt" displayName="执行时间" propId="12" i18n-en:displayName="Executed At" tagSet="clock"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="executedBy" displayName="执行人" propId="13" i18n-en:displayName="Executed By" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema stdDomain="userId" type="java.lang.String" precision="36"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="14" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="15" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="16" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="17" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="18" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="19" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="20" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="ticket" i18n-en:displayName="Ticket" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="ticketId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
+              lazy="true">
+            <schema bizObjName="ErpCsTicket"/>
+        </prop>
+        <prop name="fulfillment" i18n-en:displayName="Fulfillment" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="fulfillmentId" ext:joinRightProp="id" insertable="false"
+              updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpCsCatalogFulfillment"/>
+        </prop>
+        <prop name="catalogItem" i18n-en:displayName="Catalog Item" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="catalogItemId" ext:joinRightProp="id" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpCsServiceCatalogItem"/>
+        </prop>
+        <prop name="org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true" ext:joinLeftProp="orgId"
+              ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md" insertable="false"
+              updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
+    </props>
+</meta>

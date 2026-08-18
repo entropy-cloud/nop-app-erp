@@ -14,6 +14,7 @@ entity:
     ErpCsTeam: 客服团队
     ErpCsTicket: 客服工单
     ErpCsTicketAction: 工单操作日志
+    ErpCsTicketFulfillmentStep: 工单履行步骤
     ErpCsTicketTimerSession: 工单计时器会话
     ErpCsTicketType: 工单类型
     ErpCsTimeEntry: 工单计时条目
@@ -343,6 +344,34 @@ prop:
       ticketId: 工单ID
       toStatus: 目标状态
       toStatus_label: 目标状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpCsTicketFulfillmentStep:
+      actionConfig: 动作配置快照
+      actionType: 动作类型
+      actionType_label: 动作类型
+      catalogItem: null
+      catalogItemId: 目录项
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      executedAt: 执行时间
+      executedBy: 执行人
+      fulfillment: null
+      fulfillmentId: 履行映射
+      id: ID
+      lastError: 最近错误
+      org: null
+      org.name: null
+      orgId: 业务组织
+      remark: 备注
+      retryCount: 重试次数
+      sequence: 执行顺序
+      status: 执行状态
+      status_label: 执行状态
+      ticket: null
+      ticketId: 关联工单
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本

@@ -120,6 +120,14 @@
             <option code="PAUSED" label="已暂停" value="PAUSED" i18n-en:label="Paused"/>
             <option code="STOPPED" label="已停止" value="STOPPED" i18n-en:label="Stopped"/>
         </dict>
+        <dict label="履行步骤执行状态" name="erp-cs/fulfillment-step-status" valueType="string"
+              i18n-en:label="Fulfillment Step Status">
+            <option code="PENDING" label="待执行" value="PENDING" i18n-en:label="Pending"/>
+            <option code="IN_PROGRESS" label="执行中(待审批)" value="IN_PROGRESS" i18n-en:label="In Progress"/>
+            <option code="DONE" label="已完成" value="DONE" i18n-en:label="Done"/>
+            <option code="SKIPPED" label="已跳过" value="SKIPPED" i18n-en:label="Skipped"/>
+            <option code="FAILED" label="失败" value="FAILED" i18n-en:label="Failed"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -1419,6 +1427,99 @@
             </relations>
             <unique-keys>
                 <unique-key columns="agentId,activeFlag" name="UK_CS_TIMER_SESSION_AGENT_ACTIVE"/>
+            </unique-keys>
+        </entity>
+        <entity className="app.erp.cs.dao.entity.ErpCsTicketFulfillmentStep" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="工单履行步骤"
+                name="app.erp.cs.dao.entity.ErpCsTicketFulfillmentStep" registerShortName="true"
+                tableName="erp_cs_ticket_fulfillment_step" tagSet="gid,erp.cs" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="git-branch" i18n-en:displayName="Ticket Fulfillment Step">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="TICKET_ID" displayName="关联工单" mandatory="true" name="ticketId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Ticket"/>
+                <column code="FULFILLMENT_ID" displayName="履行映射" mandatory="true" name="fulfillmentId" propId="4"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Fulfillment"/>
+                <column code="CATALOG_ITEM_ID" displayName="目录项" name="catalogItemId" propId="5" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Catalog Item"/>
+                <column code="SEQUENCE" displayName="执行顺序" name="sequence" propId="6" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Sequence"/>
+                <column code="ACTION_TYPE" displayName="动作类型" name="actionType" precision="20" propId="7"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-cs/fulfillment-action-type"
+                        i18n-en:displayName="Action Type"/>
+                <column code="ACTION_CONFIG" displayName="动作配置快照" domain="json" name="actionConfig" precision="4000"
+                        propId="8" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Action Config"/>
+                <column code="STATUS" defaultValue="PENDING" displayName="执行状态" mandatory="true" name="status"
+                        precision="20" propId="9" stdDataType="string" stdSqlType="VARCHAR"
+                        ext:dict="erp-cs/fulfillment-step-status" i18n-en:displayName="Status"/>
+                <column code="RETRY_COUNT" defaultValue="0" displayName="重试次数" name="retryCount" propId="10"
+                        stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Retry Count"/>
+                <column code="LAST_ERROR" displayName="最近错误" name="lastError" precision="500" propId="11"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Last Error"/>
+                <column code="EXECUTED_AT" displayName="执行时间" name="executedAt" propId="12" stdDataType="timestamp"
+                        stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Executed At"/>
+                <column code="EXECUTED_BY" displayName="执行人" name="executedBy" precision="36" propId="13"
+                        stdDataType="string" stdDomain="userId" stdSqlType="VARCHAR" i18n-en:displayName="Executed By"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="14"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="15" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="16" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="17" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="18" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="19" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="20" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_CS_TICKET_FULFILLMENT_STEP_TICKET_ID" unique="false">
+                    <column name="ticketId"/>
+                </index>
+                <index name="IDX_CS_TICKET_FULFILLMENT_STEP_FULFILLMENT_ID" unique="false">
+                    <column name="fulfillmentId"/>
+                </index>
+                <index name="IDX_CS_TICKET_FULFILLMENT_STEP_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="ticket" refEntityName="app.erp.cs.dao.entity.ErpCsTicket" tagSet="pub"
+                        i18n-en:displayName="Ticket">
+                    <join>
+                        <on leftProp="ticketId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="fulfillment" refEntityName="app.erp.cs.dao.entity.ErpCsCatalogFulfillment" tagSet="pub"
+                        i18n-en:displayName="Fulfillment">
+                    <join>
+                        <on leftProp="fulfillmentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="catalogItem" refEntityName="app.erp.cs.dao.entity.ErpCsServiceCatalogItem" tagSet="pub"
+                        i18n-en:displayName="Catalog Item">
+                    <join>
+                        <on leftProp="catalogItemId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="ticketId,fulfillmentId" name="UK_CS_TICKET_FULFILLMENT_STEP"/>
             </unique-keys>
         </entity>
         <entity className="app.erp.md.dao.entity.ErpMdPartner" displayName="ErpMdPartner"

@@ -1,0 +1,5 @@
+# fixedProps=ticketId：关联工单的履行进度子表（RC-R1.71，P1-RC-061，UC-CS-12 后置「履行流程状态可跟踪」
+# 前端最小接线）。父页面（ErpCsTicket 列表行）通过 row-action drawer 打开本页，data.ticketId 注入；
+# 范式来源：docs/design/cross-doc-navigation-patterns.md §3.2 方案 A（镜像 ErpCsTicketAction/ref-ticket）。
+x:gen-extends: |
+  <web:GenPage view="ErpCsTicketFulfillmentStep.view.xml" page="main" fixedProps="ticketId" xpl:lib="/nop/web/xlib/web.xlib" />

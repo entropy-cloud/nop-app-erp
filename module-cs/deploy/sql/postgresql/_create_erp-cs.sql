@@ -378,6 +378,30 @@ CREATE TABLE erp_cs_ticket_timer_session(
   constraint PK_erp_cs_ticket_timer_session primary key (id)
 );
 
+CREATE TABLE erp_cs_ticket_fulfillment_step(
+  id INT8 NOT NULL ,
+  org_id INT8  ,
+  ticket_id INT8 NOT NULL ,
+  fulfillment_id INT8 NOT NULL ,
+  catalog_item_id INT8  ,
+  sequence INT4  ,
+  action_type VARCHAR(20)  ,
+  action_config VARCHAR(4000)  ,
+  status VARCHAR(20) default 'PENDING'  NOT NULL ,
+  retry_count INT4 default 0   ,
+  last_error VARCHAR(500)  ,
+  executed_at TIMESTAMP  ,
+  executed_by VARCHAR(36)  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_cs_ticket_fulfillment_step primary key (id)
+);
+
 
       COMMENT ON TABLE erp_md_partner IS 'ErpMdPartner';
                 
@@ -1014,4 +1038,46 @@ CREATE TABLE erp_cs_ticket_timer_session(
       COMMENT ON COLUMN erp_cs_ticket_timer_session.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_cs_ticket_timer_session.update_time IS '修改时间';
+                    
+      COMMENT ON TABLE erp_cs_ticket_fulfillment_step IS '工单履行步骤';
+                
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.ticket_id IS '关联工单';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.fulfillment_id IS '履行映射';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.catalog_item_id IS '目录项';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.sequence IS '执行顺序';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.action_type IS '动作类型';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.action_config IS '动作配置快照';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.status IS '执行状态';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.retry_count IS '重试次数';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.last_error IS '最近错误';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.executed_at IS '执行时间';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.executed_by IS '执行人';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_cs_ticket_fulfillment_step.update_time IS '修改时间';
                     

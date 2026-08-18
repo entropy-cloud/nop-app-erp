@@ -378,6 +378,30 @@ CREATE TABLE erp_cs_ticket_timer_session(
   constraint PK_erp_cs_ticket_timer_session primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_cs_ticket_fulfillment_step(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  TICKET_ID BIGINT NOT NULL    COMMENT '关联工单',
+  FULFILLMENT_ID BIGINT NOT NULL    COMMENT '履行映射',
+  CATALOG_ITEM_ID BIGINT NULL    COMMENT '目录项',
+  SEQUENCE INTEGER NULL    COMMENT '执行顺序',
+  ACTION_TYPE VARCHAR(20) NULL    COMMENT '动作类型',
+  ACTION_CONFIG VARCHAR(4000) NULL    COMMENT '动作配置快照',
+  STATUS VARCHAR(20) default 'PENDING'  NOT NULL    COMMENT '执行状态',
+  RETRY_COUNT INTEGER default 0  NULL    COMMENT '重试次数',
+  LAST_ERROR VARCHAR(500) NULL    COMMENT '最近错误',
+  EXECUTED_AT DATETIME(3) NULL    COMMENT '执行时间',
+  EXECUTED_BY VARCHAR(36) NULL    COMMENT '执行人',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_cs_ticket_fulfillment_step primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 
    ALTER TABLE erp_md_partner COMMENT 'ErpMdPartner';
                 
@@ -416,4 +440,6 @@ CREATE TABLE erp_cs_ticket_timer_session(
    ALTER TABLE erp_cs_time_entry COMMENT '工单计时条目';
                 
    ALTER TABLE erp_cs_ticket_timer_session COMMENT '工单计时器会话';
+                
+   ALTER TABLE erp_cs_ticket_fulfillment_step COMMENT '工单履行步骤';
                 

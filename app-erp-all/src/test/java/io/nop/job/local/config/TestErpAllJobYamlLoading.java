@@ -17,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * 运行时验证（plan 2026-07-18-1600-1 Phase 5 + plan 2026-08-07-1932-3 Phase 1 + RC-R1.35 + RC-R1.36 + RC-R1.37/RC-R1.38 + RC-R1.68 + RC-R1.70）：
- * 确认 {@code /nop/job/conf/} 下全部 28 个 {@code .job.yaml} 文件经 VFS 可见并按
+ * 运行时验证（plan 2026-07-18-1600-1 Phase 5 + plan 2026-08-07-1932-3 Phase 1 + RC-R1.35 + RC-R1.36 + RC-R1.37/RC-R1.38 + RC-R1.68 + RC-R1.70 + RC-R1.71）：
+ * 确认 {@code /nop/job/conf/} 下全部 29 个 {@code .job.yaml} 文件经 VFS 可见并按
  * {@link LocalJobConfigLoader} 相同的解析路径（{@link JsonTool#loadDeltaBeanFromResource}）
  * 成功反序列化为 {@link LocalJobConfig}。
  */
@@ -29,8 +29,8 @@ public class TestErpAllJobYamlLoading extends JunitBaseTestCase {
     public void testAllJobYamlFilesLoad() {
         Collection<? extends IResource> resources = VirtualFileSystem.instance()
                 .getAllResources("/nop/job/conf", ".job.yaml");
-        assertEquals(28, resources.size(),
-                "VFS 应在 /nop/job/conf 下看到 28 个 .job.yaml（实际: " + resources.size() + "）");
+        assertEquals(29, resources.size(),
+                "VFS 应在 /nop/job/conf 下看到 29 个 .job.yaml（实际: " + resources.size() + "）");
 
         List<LocalJobConfig> configs = new ArrayList<>();
         for (IResource resource : resources) {
@@ -43,8 +43,8 @@ public class TestErpAllJobYamlLoading extends JunitBaseTestCase {
             }
         }
 
-        assertEquals(28, configs.size(),
-                "全部 28 个 .job.yaml 应被解析为 LocalJobConfig（实际: " + configs.size() + "）");
+        assertEquals(29, configs.size(),
+                "全部 29 个 .job.yaml 应被解析为 LocalJobConfig（实际: " + configs.size() + "）");
         for (LocalJobConfig c : configs) {
             assertTrue(c.getJobName() != null && !c.getJobName().isEmpty(),
                     "每个 job.yaml 必须有 jobName");

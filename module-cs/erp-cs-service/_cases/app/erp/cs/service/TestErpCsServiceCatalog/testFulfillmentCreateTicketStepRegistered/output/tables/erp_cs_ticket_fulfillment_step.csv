@@ -1,0 +1,5 @@
+_chgType,ID,ORG_ID,TICKET_ID,FULFILLMENT_ID,CATALOG_ITEM_ID,SEQUENCE,ACTION_TYPE,ACTION_CONFIG,STATUS,RETRY_COUNT,LAST_ERROR,EXECUTED_AT,EXECUTED_BY,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,2,,1,6201,6101,1,CREATE_TICKET,,DONE,0,,,,,@var:ErpCsTicketFulfillmentStep@delVersion,0,autotest-ref,*,autotest-ref,*
+A,3,,1,6202,6101,2,INVOKE_WORKFLOW,,SKIPPED,0,,@var:ErpCsTicketFulfillmentStep@executedAt,autotest,,@var:ErpCsTicketFulfillmentStep@delVersion,0,autotest-ref,*,autotest-ref,*
+A,4,,1,6203,6101,3,ASSIGN_TEAM,,FAILED,0,分配失败：无可用处理人（候选池为空）,@var:ErpCsTicketFulfillmentStep@executedAt_1,autotest,,@var:ErpCsTicketFulfillmentStep@delVersion,0,autotest-ref,*,autotest-ref,*
+A,5,,1,6204,6101,4,NOTIFY_CUSTOMER,,PENDING,0,,,,,@var:ErpCsTicketFulfillmentStep@delVersion,0,autotest-ref,*,autotest-ref,*

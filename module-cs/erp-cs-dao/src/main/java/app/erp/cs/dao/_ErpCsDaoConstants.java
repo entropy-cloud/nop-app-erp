@@ -353,4 +353,29 @@ public interface _ErpCsDaoConstants {
      */
     String TIMER_SESSION_STATUS_STOPPED = "STOPPED";
                     
+    /**
+     * 履行步骤执行状态: 待执行 
+     */
+    String FULFILLMENT_STEP_STATUS_PENDING = "PENDING";
+                    
+    /**
+     * 履行步骤执行状态: 执行中(待审批) 
+     */
+    String FULFILLMENT_STEP_STATUS_IN_PROGRESS = "IN_PROGRESS";
+                    
+    /**
+     * 履行步骤执行状态: 已完成 
+     */
+    String FULFILLMENT_STEP_STATUS_DONE = "DONE";
+                    
+    /**
+     * 履行步骤执行状态: 已跳过 
+     */
+    String FULFILLMENT_STEP_STATUS_SKIPPED = "SKIPPED";
+                    
+    /**
+     * 履行步骤执行状态: 失败 
+     */
+    String FULFILLMENT_STEP_STATUS_FAILED = "FAILED";
+                    
 }

@@ -245,4 +245,25 @@ public interface ErpCsErrors {
             "erp.err.cs.quality-escalation.param-required",
             "工单[{ticketId}]质量升级必填参数[{paramName}]缺失（materialId/defectDescription 必填）",
             ARG_TICKET_ID, ARG_PARAM_NAME);
+
+    // --- cs 目录履行引擎错误码（plan 2026-08-18-1849-3，RC-R1.71，UC-CS-12 ②③④+异常） ---
+
+    String ARG_STEP_ID = "stepId";
+    String ARG_ACTION_TYPE = "actionType";
+    String ARG_RETRY_MAX = "retryMax";
+
+    ErrorCode ERR_CS_FULFILLMENT_STEP_NOT_FOUND = ErrorCode.define(
+            "erp.err.cs.fulfillment.step-not-found",
+            "工单履行步骤不存在: {stepId}",
+            ARG_STEP_ID);
+
+    ErrorCode ERR_CS_FULFILLMENT_STEP_NOT_OPEN = ErrorCode.define(
+            "erp.err.cs.fulfillment.step-not-open",
+            "履行步骤[{stepId}]当前状态[{currentStatus}]不允许审批操作，期望 IN_PROGRESS（待审批）",
+            ARG_STEP_ID, ARG_CURRENT_STATUS);
+
+    ErrorCode ERR_CS_FULFILLMENT_RETRY_EXCEEDED = ErrorCode.define(
+            "erp.err.cs.fulfillment.retry-exceeded",
+            "履行步骤[{stepId}]（动作[{actionType}]）重试次数已达上限[{retryMax}]，须管理员人工介入",
+            ARG_STEP_ID, ARG_ACTION_TYPE, ARG_RETRY_MAX);
 }

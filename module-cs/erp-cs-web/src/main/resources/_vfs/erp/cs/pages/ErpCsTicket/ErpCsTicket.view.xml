@@ -373,6 +373,26 @@
                         </data>
                     </drawer>
                 </action>
+                <!-- 履行进度查看（RC-R1.71，P1-RC-061，UC-CS-12 后置「履行流程状态可跟踪」最小接线）：
+                     drawer 展示该工单物化的履行步骤执行行（sequence/actionType/status/retryCount/lastError）。 -->
+                <action id="row-view-fulfillment-button" label="履行进度" i18n-en:label="Fulfillment Progress"
+                        level="info" icon="fa fa-tasks" actionType="drawer">
+                    <drawer page="/erp/cs/pages/ErpCsTicketFulfillmentStep/ref-ticket.page.yaml" size="xl">
+                        <data>
+                            <ticketId>${id}</ticketId>
+                        </data>
+                    </drawer>
+                </action>
+                <!-- 失败链手动重试（RC-R1.71，P1-RC-061，UC-CS-12 异常「支持重试，最多 3 次」）：
+                     仅 FAILED 步骤重执行（刷新模板 actionConfig）；重试超限被拒绝并通知管理员人工介入。 -->
+                <action id="row-retry-fulfillment-button" label="重试履行" i18n-en:label="Retry Fulfillment"
+                        level="warning" icon="fa fa-repeat">
+                    <api url="@mutation:ErpCsCatalogFulfillment__retryFulfillment?ticketId=$id"/>
+                    <confirmText>确认重试此工单的失败履行步骤？（最多 3 次，超限须人工介入）</confirmText>
+                    <messages>
+                        <success>失败履行步骤已重试（进度见「履行进度」）</success>
+                    </messages>
+                </action>
                 <action id="row-delete-button"/>
             </rowActions>
         </crud>

@@ -130,4 +130,12 @@
           primary="true">
         <property name="bizObjName" value="ErpCsTicketTimerSession"/>
     </bean>
+
+    <bean id="app.erp.cs.service.entity.ErpCsTicketFulfillmentStepBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpCsTicketFulfillmentStep" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.cs.biz.IErpCsTicketFulfillmentStepBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpCsTicketFulfillmentStep"/>
+    </bean>
 </beans>

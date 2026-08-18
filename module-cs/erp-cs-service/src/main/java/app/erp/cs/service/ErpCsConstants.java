@@ -185,9 +185,42 @@ public interface ErpCsConstants extends ErpCsDocStatus {
     String FULFILLMENT_ACTION_INVOKE_WORKFLOW = "INVOKE_WORKFLOW";
     String FULFILLMENT_ACTION_CLOSE_TICKET = "CLOSE_TICKET";
 
-    // 履行执行结果（ErpCsTicketAction 审计 content 派生标识；不持久化枚举）
+    // 履行执行结果（ErpCsTicketAction 审计 content 派生标识 + Processor 步骤执行返回值；不持久化枚举）
     String FULFILLMENT_RESULT_DONE = "DONE";
     String FULFILLMENT_RESULT_SKIPPED = "SKIPPED";
+    String FULFILLMENT_RESULT_FAILED = "FAILED";
+    String FULFILLMENT_RESULT_IN_PROGRESS = "IN_PROGRESS";
+
+    // === cs 目录履行引擎（plan 2026-08-18-1849-3，RC-R1.71，P1-RC-061，UC-CS-12 ②③④+后置+异常）===
+
+    /** 履行步骤执行状态（erp-cs/fulfillment-step-status；权威：app-erp-cs.orm.xml + service-catalog.md §9.1）。 */
+    String FULFILLMENT_STEP_PENDING = "PENDING";
+    String FULFILLMENT_STEP_IN_PROGRESS = "IN_PROGRESS";
+    String FULFILLMENT_STEP_DONE = "DONE";
+    String FULFILLMENT_STEP_SKIPPED = "SKIPPED";
+    String FULFILLMENT_STEP_FAILED = "FAILED";
+
+    /** 履行重试 job cron（空=不调度；job 运行时门控）。 */
+    String CONFIG_FULFILLMENT_RETRY_CRON = "erp-cs.fulfillment-retry-cron";
+
+    /** 履行步骤重试次数上限（默认 3；超出后通知管理员人工介入）。 */
+    String CONFIG_FULFILLMENT_RETRY_MAX = "erp-cs.fulfillment-retry-max";
+
+    /** REQUEST_APPROVAL 超时自动审批兜底小时数（默认 24；actionConfig.timeoutHours 非空时优先）。 */
+    String CONFIG_FULFILLMENT_APPROVAL_TIMEOUT_HOURS = "erp-cs.fulfillment-approval-timeout-hours";
+
+    /** 通知事件类型：履行步骤失败暂停（UC-CS-12 ③，模板种子 7206，ROLE 客服主管）。 */
+    String NOTIFY_EVENT_FULFILLMENT_STEP_FAILED = "cs.fulfillment-step-failed";
+
+    /** 通知事件类型：履行链客户通知（UC-CS-12 ② NOTIFY_CUSTOMER，模板种子 7207，客户占位语境经客服员转达）。 */
+    String NOTIFY_EVENT_FULFILLMENT_NOTIFY_CUSTOMER = "cs.fulfillment-notify-customer";
+
+    /** 通知事件类型：履行步骤审批请求（UC-CS-12 ② REQUEST_APPROVAL；ROLE approverRole 缺省客服主管，
+     * 无全局 seed 模板——无 ACTIVE 模板时 notify 静默跳过，部署方按需配置）。 */
+    String NOTIFY_EVENT_FULFILLMENT_APPROVAL_REQUEST = "cs.fulfillment-approval-request";
+
+    /** 默认审批人角色（actionConfig.approverRole 缺省值，对齐 7203/7206 客服主管先例）。 */
+    String FULFILLMENT_DEFAULT_APPROVER_ROLE = "客服主管";
 
     // 权益配置项（经 AppConfig.var 读取；权威：entitlement.md §五 + plan Infrastructure）
     String CONFIG_ENTITLEMENT_CHECK_ENABLED = "erp-cs.entitlement-check-enabled";

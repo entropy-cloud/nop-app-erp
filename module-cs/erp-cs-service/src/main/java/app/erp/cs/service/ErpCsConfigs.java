@@ -247,6 +247,24 @@ public final class ErpCsConfigs {
         return boolVar(ErpCsConstants.CONFIG_KNOWLEDGE_SUGGEST_ON_RESOLVE, true);
     }
 
+    // === cs 目录履行引擎（plan 2026-08-18-1849-3，RC-R1.71，UC-CS-12）===
+
+    /** 履行重试 job cron（默认空=跳过，「不调度」语义）。 */
+    public static String getFulfillmentRetryCron() {
+        String raw = AppConfig.var(ErpCsConstants.CONFIG_FULFILLMENT_RETRY_CRON, "");
+        return raw == null ? "" : raw.trim();
+    }
+
+    /** 履行步骤重试次数上限（默认 3；负值钳 0 = 不重试直接人工介入）。 */
+    public static int getFulfillmentRetryMax() {
+        return Math.max(0, intVar(ErpCsConstants.CONFIG_FULFILLMENT_RETRY_MAX, 3));
+    }
+
+    /** REQUEST_APPROVAL 超时自动审批兜底小时数（默认 24；actionConfig.timeoutHours 非空时优先；负值/0 钳 1）。 */
+    public static int getFulfillmentApprovalTimeoutHours() {
+        return Math.max(1, intVar(ErpCsConstants.CONFIG_FULFILLMENT_APPROVAL_TIMEOUT_HOURS, 24));
+    }
+
     private static java.math.BigDecimal decimalVar(String key, java.math.BigDecimal defaultValue) {
         String raw = AppConfig.var(key, String.valueOf(defaultValue));
         if (raw == null || raw.trim().isEmpty()) {

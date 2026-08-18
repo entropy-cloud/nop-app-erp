@@ -37,6 +37,8 @@ alter table erp_cs_time_entry add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL
 
 alter table erp_cs_ticket_timer_session add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_cs_ticket_fulfillment_step add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_partner drop primary key;
 alter table erp_md_partner add primary key (NOP_TENANT_ID, ID);
 
@@ -93,5 +95,8 @@ alter table erp_cs_time_entry add primary key (NOP_TENANT_ID, ID);
 
 alter table erp_cs_ticket_timer_session drop primary key;
 alter table erp_cs_ticket_timer_session add primary key (NOP_TENANT_ID, ID);
+
+alter table erp_cs_ticket_fulfillment_step drop primary key;
+alter table erp_cs_ticket_fulfillment_step add primary key (NOP_TENANT_ID, ID);
 
 
