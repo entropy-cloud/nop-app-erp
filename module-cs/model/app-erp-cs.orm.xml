@@ -77,6 +77,12 @@
             <option code="PORTAL" label="门户" value="PORTAL" i18n-en:label='Portal'/>
             <option code="CHAT" label="在线聊天" value="CHAT" i18n-en:label='Chat'/>
         </dict>
+        <dict label="调查状态" name="erp-cs/survey-status" valueType="string" i18n-en:label='Survey Status'>
+            <option code="PENDING" label="待发送" value="PENDING" i18n-en:label='Pending'/>
+            <option code="SENT" label="已发送" value="SENT" i18n-en:label='Sent'/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label='Completed'/>
+            <option code="FAILED" label="发送失败" value="FAILED" i18n-en:label='Failed'/>
+        </dict>
         <dict label="服务类型" name="erp-cs/service-type" valueType="string" i18n-en:label='Service Type'>
             <option code="WARRANTY" label="保修期权益" value="WARRANTY" i18n-en:label='Warranty'/>
             <option code="SUPPORT_CONTRACT" label="付费支持合同" value="SUPPORT_CONTRACT" i18n-en:label='Support Contract'/>
@@ -506,6 +512,8 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="15" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="16" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="17" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <column name="status" displayName="调查状态" ext:dict="erp-cs/survey-status" code="STATUS" propId="18" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Survey Status' />
+                <column name="failureCount" displayName="发送失败次数" code="FAILURE_COUNT" propId="19" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Failure Count' />
             </columns>
             <relations>
                 <to-one name="ticket" refEntityName="app.erp.cs.dao.entity.ErpCsTicket" tagSet="pub" i18n-en:displayName='Ticket'><join><on leftProp="ticketId" rightProp="id"/></join></to-one>

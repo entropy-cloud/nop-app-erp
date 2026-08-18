@@ -139,5 +139,13 @@ VALUES
    '工单无知识库匹配: ${ticketCode}',
    '工单 ${ticketCode}（ID ${ticketId}）解决时未匹配/未采纳知识库文章，建议创建新知识库条目沉淀解决方案',
    'USER_LIST', '{"userIds":["${handlerUserId}"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
-   '业务提醒样例（无匹配建议创建 KB 条目，handlerUserId=处理人 assignedToId 回退 operatorId）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
+   '业务提醒样例（无匹配建议创建 KB 条目，handlerUserId=处理人 assignedToId 回退 operatorId）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 业务提醒：满意度调查邀请（RC-R1.70，P1-RC-059，UC-CS-08 ②），5 分钟窗口合并。
+  -- 接收人=ROLE 客服员（客户非系统用户经客服员转达 + IN_APP 占位，镜像 7105 cs.csat-reminder 同款；
+  -- EMAIL/SMS 实际通道投递归 nop-notification 独立面 successor）。
+  (7205, 'cs.survey-invitation', '满意度调查邀请', 'IN_APP',
+   '满意度调查邀请: ${ticketCode}',
+   '工单 ${ticketCode} 的满意度调查已就绪（渠道 ${channel}，token ${surveyToken}），请转达客户 ${customerName} 填写',
+   'ROLE', '{"roles":["客服员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '业务提醒样例（调查邀请派发，surveyId=${surveyId}）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
 

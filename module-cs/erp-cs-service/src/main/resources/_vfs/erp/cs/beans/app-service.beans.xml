@@ -28,6 +28,11 @@
     <bean id="erpCsQualityEscalationRetryJob"
           class="app.erp.cs.service.job.ErpCsQualityEscalationRetryJob"/>
 
+    <!-- 调查延迟发送链 Job Bean（RC-R1.70，P1-RC-059，UC-CS-08 ①②+异常）。由 nop-job-local scheduler.yaml
+           经 BeanMethodJobInvoker 反射调用 execute()。cron 经 erp-cs.survey-send-cron 配置门控（空=跳过）。 -->
+    <bean id="erpCsSurveySendJob"
+          class="app.erp.cs.service.job.ErpCsSurveySendJob"/>
+
     <!-- 客服域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /cs/）。 -->
     <bean id="app.erp.cs.service.report.ErpCsReportBizModel" ioc:type="@bean:id"/>

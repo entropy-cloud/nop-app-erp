@@ -1,0 +1,10 @@
+jobName: erp-cs-survey-send
+enabled: "@cfg:nop.job.erp-cs-survey-send.enabled|false"
+displayName: Customer Service Survey Send
+description: 扫描到期 PENDING/遗留派生 PENDING 调查经 notify 派发调查邀请并置 SENT；FAILED 未超限重试（UC-CS-08 ①②+异常）；cron 经 erp-cs.survey-send-cron 配置门控（空=跳过）
+jobGroup: erp-cs
+trigger:
+  cronExpr: "@cfg:nop.job.erp-cs-survey-send.cron-expr|0 0/10 * * * ?"
+invoker:
+  bean: erpCsSurveySendJob
+  method: execute

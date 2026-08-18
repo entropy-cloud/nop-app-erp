@@ -166,4 +166,32 @@
         }
 
 
+        private String _status;
+
+    
+        @PropMeta(propId=18)
+    
+        public String getStatus(){
+            return _status;
+        }
+
+        public void setStatus(String value){
+            this._status = value;
+        }
+
+
+        private Integer _failureCount;
+
+    
+        @PropMeta(propId=19)
+    
+        public Integer getFailureCount(){
+            return _failureCount;
+        }
+
+        public void setFailureCount(Integer value){
+            this._failureCount = value;
+        }
+
+
     }

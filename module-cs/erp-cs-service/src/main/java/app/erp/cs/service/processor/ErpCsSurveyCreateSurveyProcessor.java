@@ -47,6 +47,7 @@ public class ErpCsSurveyCreateSurveyProcessor {
         int delayHours = ErpCsConfigs.getSurveySendDelayHours();
         // delay=0 立即发送（surveySentAt=now，状态 SENT）；delay>0 留空（状态 PENDING，待 nop-job 延迟发送）
         survey.setSurveySentAt(delayHours <= 0 ? CoreMetrics.currentTimestamp() : null);
+        survey.setStatus(delayHours <= 0 ? ErpCsConstants.SURVEY_STATUS_SENT : ErpCsConstants.SURVEY_STATUS_PENDING);
         dao().saveEntity(survey);
         // 经 ORM to-one 关系 {@code ErpCsSurvey.ticket} 透明懒加载校验工单存在（避免 daoFor 跨聚合访问 +
         // 避免与 ErpCsTicketBizModel 循环依赖）。saveEntity 后实体已入 session，getTicket() 触发懒加载；

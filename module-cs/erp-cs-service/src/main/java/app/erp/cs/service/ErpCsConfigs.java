@@ -77,6 +77,24 @@ public final class ErpCsConfigs {
         return intVar(ErpCsConstants.CONFIG_SURVEY_EXPIRE_DAYS, 7);
     }
 
+    // === 调查发送链（plan 2026-08-18-1849-2，RC-R1.70，UC-CS-08 ①②+异常）===
+
+    /** 调查延迟发送链 cron（默认空=跳过，「不调度」语义；job 运行时门控）。 */
+    public static String getSurveySendCron() {
+        String raw = AppConfig.var(ErpCsConstants.CONFIG_SURVEY_SEND_CRON, "");
+        return raw == null ? "" : raw.trim();
+    }
+
+    /** 调查发送失败重试次数上限（默认 3；负值钳 0 = 不重试直接终态）。 */
+    public static int getSurveySendRetryMax() {
+        return Math.max(0, intVar(ErpCsConstants.CONFIG_SURVEY_SEND_RETRY_MAX, 3));
+    }
+
+    /** 调查发送链单批扫描上限（默认 200；<1 钳 1 防空批）。 */
+    public static int getSurveySendBatchLimit() {
+        return Math.max(1, intVar(ErpCsConstants.CONFIG_SURVEY_SEND_BATCH_LIMIT, 200));
+    }
+
     /** SLA 超期/预警通知派发是否启用（默认 true；plan 2026-07-06-0642-1 §Phase 1）。 */
     public static boolean isSlaNotifyEnabled() {
         return boolVar(ErpCsConstants.CONFIG_SLA_NOTIFY_ENABLED, true);

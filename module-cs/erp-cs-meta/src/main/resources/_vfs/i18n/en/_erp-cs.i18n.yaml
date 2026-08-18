@@ -259,6 +259,9 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      status: Survey Status
+      status_label: null
+      failureCount: Failure Count
       ticket: Ticket
       org: null
       org.name: null
@@ -419,6 +422,7 @@ dict:
     erp-cs/sla-policy: SLA Policy
     erp-cs/action-type: Action Type
     erp-cs/survey-channel: Survey Channel
+    erp-cs/survey-status: Survey Status
     erp-cs/service-type: Service Type
     erp-cs/contract-type: Contract Type
     erp-cs/billing-cycle: Billing Cycle
@@ -471,6 +475,11 @@ dict.option.label:
     PHONE: Phone
     PORTAL: Portal
     CHAT: Chat
+  erp-cs/survey-status:
+    PENDING: Pending
+    SENT: Sent
+    COMPLETED: Completed
+    FAILED: Failed
   erp-cs/service-type:
     WARRANTY: Warranty
     SUPPORT_CONTRACT: Support Contract

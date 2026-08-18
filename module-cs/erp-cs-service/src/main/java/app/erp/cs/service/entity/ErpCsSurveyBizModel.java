@@ -30,11 +30,13 @@ import io.nop.api.core.time.CoreMetrics;
  * 满意度调查 BizModel。权威：{@code docs/design/customer-service/csat.md}、
  * {@code docs/plans/2026-07-04-0700-2-cs-ticket-sla-csat.md} Phase 2。
  *
- * <p>调查生命周期（状态由时间戳派生，无独立 status 列——见 plan Decision）：
+ * <p>调查生命周期（RC-R1.70 起持久化 {@code status} 列，dict {@code erp-cs/survey-status}；
+ * 遗留行 status=null 走时间戳派生兼容——surveySentAt 空=PENDING / respondedAt 非空=COMPLETED / 否则 SENT）：
  * <ul>
- *   <li>PENDING：surveySentAt 空（延迟发送模式，delay&gt;0 时创建后未发送）</li>
+ *   <li>PENDING：延迟发送模式（delay&gt;0 创建后未发送），由 ErpCsSurveySendJob 到期派发</li>
  *   <li>SENT：surveySentAt 非空 且 respondedAt 空</li>
- *   <li>COMPLETED：respondedAt 非空</li>
+ *   <li>COMPLETED：respondedAt 非空（submitSurvey 显式写）</li>
+ *   <li>FAILED：派发异常标记，failureCount 计数，job 扫描重试至上限</li>
  * </ul>
  *
  * <p>NPS 分类（PROMOTER/PASSIVE/DETRACTOR）经 {@link NpsClassifier} 派生，不持久化（ORM 无分类列）。
@@ -88,6 +90,7 @@ public class ErpCsSurveyBizModel extends CrudBizModel<ErpCsSurvey> implements IE
         survey.setCesScore(cesScore);
         survey.setComment(comment);
         survey.setRespondedAt(CoreMetrics.currentTimestamp());
+        survey.setStatus(ErpCsConstants.SURVEY_STATUS_COMPLETED);
         // NPS 分类（派生，不持久化——ORM 无分类列）
         updateEntity(survey, null, context);
         return survey;

@@ -184,6 +184,26 @@ public interface _ErpCsDaoConstants {
     String SURVEY_CHANNEL_CHAT = "CHAT";
                     
     /**
+     * 调查状态: 待发送 
+     */
+    String SURVEY_STATUS_PENDING = "PENDING";
+                    
+    /**
+     * 调查状态: 已发送 
+     */
+    String SURVEY_STATUS_SENT = "SENT";
+                    
+    /**
+     * 调查状态: 已完成 
+     */
+    String SURVEY_STATUS_COMPLETED = "COMPLETED";
+                    
+    /**
+     * 调查状态: 发送失败 
+     */
+    String SURVEY_STATUS_FAILED = "FAILED";
+                    
+    /**
      * 服务类型: 保修期权益 
      */
     String SERVICE_TYPE_WARRANTY = "WARRANTY";

@@ -263,6 +263,46 @@
         }
 
 
+        private String _status;
+
+    
+        @PropMeta(propId=18)
+    
+        public String getStatus(){
+            return _status;
+        }
+
+        public void setStatus(String value){
+            this._status = value;
+        }
+
+
+        private String _status_label;
+
+    
+        public String getStatus_label(){
+            return _status_label;
+        }
+
+        public void setStatus_label(String value){
+            this._status_label = value;
+        }
+
+
+        private Integer _failureCount;
+
+    
+        @PropMeta(propId=19)
+    
+        public Integer getFailureCount(){
+            return _failureCount;
+        }
+
+        public void setFailureCount(Integer value){
+            this._failureCount = value;
+        }
+
+
         private Map<String,Object> _ticket;
 
         public Map<String,Object> getTicket(){

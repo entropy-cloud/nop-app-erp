@@ -65,6 +65,12 @@
             <option code="PORTAL" label="门户" value="PORTAL" i18n-en:label="Portal"/>
             <option code="CHAT" label="在线聊天" value="CHAT" i18n-en:label="Chat"/>
         </dict>
+        <dict label="调查状态" name="erp-cs/survey-status" valueType="string" i18n-en:label="Survey Status">
+            <option code="PENDING" label="待发送" value="PENDING" i18n-en:label="Pending"/>
+            <option code="SENT" label="已发送" value="SENT" i18n-en:label="Sent"/>
+            <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
+            <option code="FAILED" label="发送失败" value="FAILED" i18n-en:label="Failed"/>
+        </dict>
         <dict label="服务类型" name="erp-cs/service-type" valueType="string" i18n-en:label="Service Type">
             <option code="WARRANTY" label="保修期权益" value="WARRANTY" i18n-en:label="Warranty"/>
             <option code="SUPPORT_CONTRACT" label="付费支持合同" value="SUPPORT_CONTRACT" i18n-en:label="Support Contract"/>
@@ -763,6 +769,10 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="17" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="STATUS" displayName="调查状态" name="status" precision="20" propId="18" stdDataType="string"
+                        stdSqlType="VARCHAR" ext:dict="erp-cs/survey-status" i18n-en:displayName="Survey Status"/>
+                <column code="FAILURE_COUNT" displayName="发送失败次数" name="failureCount" propId="19" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Failure Count"/>
             </columns>
             <indexes>
                 <index name="IDX_CS_SURVEY_TICKET_ID" unique="false">

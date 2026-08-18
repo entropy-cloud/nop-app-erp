@@ -84,6 +84,12 @@ public interface ErpCsConstants extends ErpCsDocStatus {
     String SURVEY_CHANNEL_EMAIL = "EMAIL";
     String SURVEY_CHANNEL_PORTAL = "PORTAL";
 
+    // 调查状态（erp-cs/survey-status，propId 18；RC-R1.70——遗留行 null 走时间戳派生兼容）
+    String SURVEY_STATUS_PENDING = "PENDING";
+    String SURVEY_STATUS_SENT = "SENT";
+    String SURVEY_STATUS_COMPLETED = "COMPLETED";
+    String SURVEY_STATUS_FAILED = "FAILED";
+
     // NPS 分类（派生，不持久化；权威：csat.md §1.2）
     String NPS_CATEGORY_PROMOTER = "PROMOTER";   // 9-10 推荐者
     String NPS_CATEGORY_PASSIVE = "PASSIVE";      // 7-8 被动者
@@ -101,6 +107,20 @@ public interface ErpCsConstants extends ErpCsDocStatus {
     String CONFIG_SURVEY_CES_ENABLED = "erp-cs.survey-ces-enabled";
     String CONFIG_SURVEY_REMINDER_HOURS = "erp-cs.survey-reminder-hours";  // 默认 48
     String CONFIG_SURVEY_EXPIRE_DAYS = "erp-cs.survey-expire-days";        // 默认 7
+
+    // === 调查发送链（plan 2026-08-18-1849-2，RC-R1.70，P1-RC-059，UC-CS-08 ①②）===
+
+    /** 调查延迟发送链 cron（空=不调度；job 运行时门控）。 */
+    String CONFIG_SURVEY_SEND_CRON = "erp-cs.survey-send-cron";
+
+    /** 调查发送失败重试次数上限（默认 3；超限终态 FAILED 保留可查询）。 */
+    String CONFIG_SURVEY_SEND_RETRY_MAX = "erp-cs.survey-send-retry-max";
+
+    /** 调查发送链单批扫描上限（默认 200）。 */
+    String CONFIG_SURVEY_SEND_BATCH_LIMIT = "erp-cs.survey-send-batch-limit";
+
+    /** 通知事件类型：满意度调查邀请（UC-CS-08 ②，模板种子 7205；客户非系统用户经客服员转达 + IN_APP 占位）。 */
+    String NOTIFY_EVENT_SURVEY_INVITATION = "cs.survey-invitation";
     /** 定时 SLA 超时扫描 cron（空=不调度；plan 2026-07-05-0306-1 §配置点）。 */
     String CONFIG_SLA_SCAN_CRON = "erp-cs.sla-scan-cron";
 

@@ -247,12 +247,15 @@ prop:
       createdBy: 创建人
       csatScore: CSAT评分
       delVersion: 逻辑删除版本
+      failureCount: 发送失败次数
       id: ID
       npsScore: NPS评分
       org: null
       org.name: null
       orgId: 业务组织
       respondedAt: 响应时间
+      status: 调查状态
+      status_label: 调查状态
       surveyChannel: 发送渠道
       surveyChannel_label: 发送渠道
       surveySentAt: 调查发送时间

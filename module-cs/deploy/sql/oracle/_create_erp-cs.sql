@@ -325,6 +325,8 @@ CREATE TABLE erp_cs_survey(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  STATUS VARCHAR2(20)  ,
+  FAILURE_COUNT INTEGER  ,
   constraint PK_erp_cs_survey primary key (ID)
 );
 
@@ -924,6 +926,10 @@ CREATE TABLE erp_cs_ticket_timer_session(
       COMMENT ON COLUMN erp_cs_survey.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_cs_survey.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_cs_survey.STATUS IS '调查状态';
+                    
+      COMMENT ON COLUMN erp_cs_survey.FAILURE_COUNT IS '发送失败次数';
                     
       COMMENT ON TABLE erp_cs_time_entry IS '工单计时条目';
                 
