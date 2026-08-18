@@ -435,7 +435,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 235
-R2c: 1434
+R2c: 1439
 R2d: 35
 R3: 5
 R4: 0
@@ -443,7 +443,7 @@ R5: 0
 R6: 2
 R7: 0
 R8: 0
-R10: 10
+R10: 11
 R11: 0
 R12a: 70
 R12b: 66
@@ -487,6 +487,19 @@ purchase 侧接线零新增 daoFor（`collectProjectMaterialCost` 走 `line.getO
 `2026-08-17-2125-1`（RC-R1.65 / P1-RC-054，UC-CS-01 ⑥：TK{YYYYMM}{SEQ4} 编号）在 `CsTicketMonthSeqCodeRuleVariable` 新增 1 处 REQUIRES_NEW 站点，R10 9 → **10**（+1）。**per-site 证据**：
 
 - `ensureMonthlySequenceRow:59` `transactionTemplate.runInTransaction(null, TransactionPropagation.REQUIRES_NEW, ...)`——按月序列行（`cs_ticket_code_seq_{yyyyMM}`）懒建查插的独立事务边界，**镜像平台 `SysSequenceGenerator.runLocal:288-294` 序列行初始化边界**（runbook generate-business-code.md「按月 seqName 应用层实现」认可形态）：月行必须先于首次 `generateLong` 提交，否则 `findSeqItem:262-270` 对缺失行落入 uuid 随机项回退（连续号语义破坏）；REQUIRES_NEW 保证外层建单事务未提交时月行对取号新事务可见。非 daoFor 站点（R2b/R2c 零变化），代码内含镜像来源注释（nop-check 自检），并发插入冲突按已有行继续（`findBySeqName` 复查兜底）。本块以 R10=10 为回归门控起点（对齐既有 9 处文档化 REQUIRES_NEW 同类形态）。
+
+## R2c/R10 基线上调注记（plan 2026-08-17-2125-2，RC-R1.66 cs 计时器 session）
+
+`2026-08-17-2125-2`（RC-R1.66 / P1-RC-055，UC-CS-11 ①-⑨：`ErpCsTicketTimerSession` 新实体 + start/pause/resume/stop per-mutation Processor + 条目审批链 + 三聚合）新增 5 处同域 daoFor 站点 + 1 处文档化 REQUIRES_NEW，R2c 1434 → **1439**（+5）、R10 10 → **11**（+1）。**per-site 证据**（全部 cs 同域 `ErpCsTicketTimerSession` 自有实体 DAO 访问，per-mutation Processor 编排骨架强制契约——每 Processor 独立 IoC bean 须独立实现 `dao()`，对齐 2026-07-25-1057-2 AbstractProcessor 契约先例；非 BizModel 站点 R2b 零变化、非 ErpMd* 站点 R2a/R2d 零变化、BizModel 侧跨实体一律走 `IErpCsTimeEntryBiz`/`IErpCsTicketBiz` IBiz 注入）：
+
+- `ErpCsTicketTimerSessionOps.java:161` `daoFor(ErpCsTicketTimerSession.class)`——共享步骤 bean（12h 惰性结算/停止生成条目/requireSession）的 `dao()` accessor
+- `ErpCsTicketTimerSessionStartTimerProcessor.java:91` `daoFor(ErpCsTicketTimerSession.class)`——start 编排（单计时器守卫查 DB 状态 + 会话创建）
+- `ErpCsTicketTimerSessionPauseTimerProcessor.java:83` `daoFor(ErpCsTicketTimerSession.class)`——pause 编排
+- `ErpCsTicketTimerSessionResumeTimerProcessor.java:69` `daoFor(ErpCsTicketTimerSession.class)`——resume 编排
+- `ErpCsTicketTimerSessionStopTimerProcessor.java:57` `daoFor(ErpCsTicketTimerSession.class)`——stop 编排（停止生成条目经 `IErpCsTimeEntryBiz.saveEntity` R2b 合规路径）
+- R10 `ErpCsTicketTimerSessionOps.java:76` `runInTransaction(null, REQUIRES_NEW, ...)`（`settleIfOverdueInNewTx`）——12h 惰性结算独立事务物化边界（plan D3 裁决：pause/resume 拒绝路径外层异常回滚与 findActiveTimer 只读会话均不得吞掉封顶结算；镜像 R1.65 `CsTicketMonthSeqCodeRuleVariable` REQUIRES_NEW 先例，代码内含来源注释）
+
+本块以 R2c=1439 / R10=11 为回归门控起点（对齐 R1.48/R1.51/R1.56/R1.57/R1.60/R1.61/R1.65 baseline-raise 先例；roadmap 头 A 类批量裁决已预告「新实体 dao 预期 R2c baseline-raise」）。
 
 ## 关联
 
