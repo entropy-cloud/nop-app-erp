@@ -281,6 +281,18 @@ SKU 启停规则
 
 停用 SKU 前校验两条业务规则：(1) 若为默认 SKU，必须存在其他可用 SKU 可接替默认标志，否则拒绝；(2) 若被未完成业务单据引用，则拒绝停用。校验逻辑见 erp-md-service 模块。
 
+### 实现注记（RC-R1.72，plan 2026-08-19-0445-1）
+
+- **状态载体**：`ErpMdMaterialSku.status`（propId 19，dict `erp-md/active-status`，可空无默认——null 派生 ACTIVE，存量行零迁移）。停用经标准 CRUD update（status ACTIVE→INACTIVE 迁移触发 `defaultPrepareUpdate` 守卫；非停用编辑/再启用不触发）；`ErpMdMaterialSku.view.xml` grid 增 status 列。
+- **读侧过滤**：`findSkuByBarcode`/`findDefaultSku`/`resolveSku` 跳过 INACTIVE SKU（与物料级 `isMaterialActive` 同层短路）；`hasOtherActiveSku` 的「可用」= status ≠ INACTIVE。
+- **删除/停用守卫**：`validateSkuDeactivation`（守卫 1 默认 SKU 接替 + 守卫 2 引用检查）由 `defaultPrepareDelete`/`defaultPrepareUpdate` 接线；物料整体删除经 `ErpMdMaterialBizModel.defaultPrepareDelete` 对全部子 SKU 逐一**仅引用检查**（守卫 1 在整体删除语境豁免——「接替默认」约束保护的是存活物料），子 SKU 级联删除进入自身守卫时经父物料会话态豁免守卫 1。
+- **「被业务单据引用」口径（D3）**：开放单据行 + 在手量 + 活跃配置三类，经 `IErpMdSkuReferenceChecker` 四域生产实现（app-erp-all 聚合运行时由 md `ErpMdSkuReferenceCheckerRegistry` List 收集器聚合，任一命中即拒绝；单域容器空集合放行）：
+  - purchase：OrderLine/ReceiveLine/ReturnLine 经 header docStatus ≠ CANCELLED；
+  - sales：OrderLine/DeliveryLine/ReturnLine 经 header docStatus ≠ CANCELLED + PriceListLine 经 priceList.isActive=true 且 validTo ≥ 当日或为空（过期价目表不阻断）；
+  - inventory：StockBalance.totalQuantity ≠ 0 + ReservationLine（OPEN/PARTIALLY_CONSUMED 且 reservedQuantity>0）+ CostLayer.remainingQuantity>0 + Batch（OPEN 且 availableQuantity>0）+ SerialNumber（IN_STOCK/RESERVED）+ StockMove/TransferOrder/StockTake/OwnershipTransferLine（DRAFT/CONFIRMED）+ PickingOrderLine（PENDING/PICKING）；StockLedger 不可变历史不阻断（历史完整）；
+  - manufacturing：BomLine/BomByproduct 经 bom.isActive=true + WorkOrderLine 经 docStatus ∉ {CLOSED, CANCELLED} + MaterialIssueLine 经 docStatus ∈ {DRAFT, CONFIRMED}。
+  - 口径偏保守（活跃价目表/开放 BOM 阻断删除）——被阻断时可用「停用」，符合「只能停用」语义。
+
 ## 业务单据 SKU 引用
 
 ### 单据行 SKU 引用

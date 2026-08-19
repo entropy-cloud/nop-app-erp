@@ -435,7 +435,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 235
-R2c: 1439
+R2c: 1460
 R2d: 35
 R3: 5
 R4: 0
@@ -508,6 +508,24 @@ purchase 侧接线零新增 daoFor（`collectProjectMaterialCost` 走 `line.getO
 - R10 `ErpCsCatalogFulfillmentExecuteFulfillmentStepsProcessor.notifyStepFailedRequireNew`（`module-cs/erp-cs-service/.../processor/`）1 处 `runInTransaction(null, REQUIRES_NEW, ...)`——重试超限拒绝路径的管理员通知独立事务提交边界：随后的 `ERR_CS_FULFILLMENT_RETRY_EXCEEDED` 拒绝异常会回滚当前 mutation 事务，同事务内插入的通知行会被连带回滚丢失（UC-CS-12 异常「超出后通知管理员人工介入」在拒绝语义下不可达）；镜像 R1.65 `CsTicketMonthSeqCodeRuleVariable.ensureMonthlySequenceRow` REQUIRES_NEW 先例（提交可见性边界），代码内含来源注释。
 
 本块以 R10=12 为回归门控起点（对齐 R1.2/R1.23/R1.65/R1.66 baseline-raise 先例）。
+
+## R2c 基线上调注记（plan 2026-08-19-0445-1，RC-R1.72 md SKU 独立停用 + 跨域引用检查）
+
+`2026-08-19-0445-1`（RC-R1.72 / P1-RC-062，UC-MD-06 ③④：`ErpMdMaterialSku.status` 列 + `IErpMdSkuReferenceChecker` 四域生产实现 + md List 收集器聚合）新增 21 处同域 daoFor 站点，R2c 1439 → **1460**（+21）。计划 Phase 3 显式预告该路径（「四域 checker 同域 daoFor……若计为新站点则 baseline-raise per-site 证据」），本注记即该裁决的落地。**per-site 证据**（四域 checker 全部为**各自域同域实体**只读 exists 判定——SPI 检查器无 I*Biz 需求，fin `ErpMdEmployeeReferenceCheckerImpl` 同型先例；每站点含 E3 自检注释；exists 经 `setLimit(1)` 非全量加载；非 BizModel 站点 R2b 零变化、零 ErpMd* 站点 R2a/R2d 零变化、md 侧聚合走 Registry bean 零新增 daoFor）：
+
+purchase（3，`ErpPurSkuReferenceChecker.java`，D3 口径 OrderLine/ReceiveLine/ReturnLine 经 header docStatus ≠ CANCELLED）：
+- `:44` `daoFor(ErpPurOrderLine.class)`、`:53` `daoFor(ErpPurReceiveLine.class)`、`:62` `daoFor(ErpPurReturnLine.class)`
+
+sales（4，`ErpSalSkuReferenceChecker.java`，Order/Delivery/ReturnLine 经 docStatus ≠ CANCELLED + PriceListLine 经 isActive+validTo）：
+- `:49` `daoFor(ErpSalOrderLine.class)`、`:58` `daoFor(ErpSalDeliveryLine.class)`、`:67` `daoFor(ErpSalReturnLine.class)`、`:76` `daoFor(ErpSalPriceListLine.class)`
+
+inventory（10，`ErpInvSkuReferenceChecker.java`，在手量 + 开放单据行 + 活跃批次/序列/预留/成本层，StockLedger 历史不阻断）：
+- `:87` StockBalance / `:96` ReservationLine / `:106` CostLayer / `:115` Batch / `:125` SerialNumber / `:134` StockMoveLine / `:143` TransferOrderLine / `:152` StockTakeLine / `:161` OwnershipTransferLine / `:170` PickingOrderLine
+
+manufacturing（4，`ErpMfgSkuReferenceChecker.java`，BomLine/BomByproduct 经 bom.isActive + WorkOrderLine 终态双 ne + MaterialIssueLine DRAFT/CONFIRMED）：
+- `:55` BomLine / `:64` BomByproduct / `:73` WorkOrderLine / `:84` MaterialIssueLine
+
+本块以 R2c=1460 为回归门控起点（对齐 R1.48/R1.51/R1.56/R1.57/R1.60/R1.61/R1.63/R1.66 baseline-raise 先例）。
 
 ## 关联
 
