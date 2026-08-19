@@ -189,7 +189,7 @@
 | 运行中设备 | ErpMntEquipment | count(RUNNING) | KPI |
 | 待处理维护请求 | ErpMntRequest | count(OPEN) | KPI |
 | 本期维护访问数 | ErpMntVisit | count(期内 COMPLETED) | KPI |
-| 设备 OEE | equipment-integration §六 | 可用率×性能×质量（**产品基线外**——精确性能/质量分量需设备采集数据，本期仅交付设备计数/状态分布/停机预警；触发条件：设备 OEE 采集数据落地时） | KPI |
+| 设备 OEE | equipment-integration §六 | 可用率×性能×质量（RC-R1.78 已实现：`ErpMntDashboard__computeOee/computeOeeList` 按需计算 + `getDashboardOeeKpi` 卡片聚合——三分量经设备状态记录/工单报工/质检按窗口实时聚合，无数据设备不计入均值显示 "—"；按设备明细经 computeOeeList 数据面承载） | KPI |
 | 设备状态分布 | ErpMntEquipment | 按 status 聚合 | 占比图 |
 | **预警**:设备停机 | ErpMntEquipment | status=DOWN + ErpMntDowntimeEntry 未恢复 | 预警卡片 |
 | **预警**:维护逾期 | ErpMntSchedule | 计划日期 < today 且 未生成 Visit(见 equipment-integration §五) | 预警列表 |

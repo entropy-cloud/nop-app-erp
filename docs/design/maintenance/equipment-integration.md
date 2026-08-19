@@ -231,7 +231,7 @@
         └─► 产生 TODO 提醒维护主管排程
 ```
 
-> **实现注记（RC-R1.73 / UC-MAIN-02）**：**运行时长来源 = 设备状态记录**（`ErpMntEquipmentStatusLog` 实体，状态变更历史——写点 = `EquipmentStatusLinker` 三迁移方法 + `ErpMntEquipmentBizModel.changeStatus` 同事务追加，来源 dict `erp-mnt/status-log-source` 值集 VISIT/DOWNTIME/MANUAL；RC-R1.77 处置链路追加第六写点 `linkToDecommissionedByDisposal`/`restoreFromDisposal` 写 `DISPOSAL` 来源日志行——dict 选项加性追加归 successor[ORM 变更]，Java 写路径不做 dict 校验，UI 展示回落原值码）。累计运行时长 = `EquipmentRuntimeCalculator` 查询时聚合（**Σ RUNNING 段**，无采集 Job 无物化漂移，状态记录为唯一真相幂等可重算）；遗留无日志设备保守基线——当前 RUNNING 从 createTime 起算，当前非 RUNNING 记 0 直至首条日志行（防虚计触发）。两类计划同一入口评估：TIME 走既有 `nextDueDate ≤ asOfDate` 扫描 + 推进，RUNTIME 分支 `findRuntimeDueSchedules` 在同一 `generateDueVisits` 入口评估（**触发粒度 = job cron 部署节奏**，对齐本节单一定时任务模型；RUNTIME 计划 nextDueDate 不推进保持 null/原值；既有 VST-SCH-{schedId}-{asOfDate} code 幂等锚点双保险保留）。StatusLog 亦为 OEE 可用率分子预留数据源（RC-R1.78 衔接）。产量周期评估分支为 successor（同 §5.1）。测试证据：`TestErpMntRuntimeTrigger`（Σ RUNNING 段聚合数学 / 遗留基线双分支 / 阈值触发 + baseline 重置 / 同日重跑幂等 / TIME 零回归 / linker·manual 写日志行）。
+> **实现注记（RC-R1.73 / UC-MAIN-02）**：**运行时长来源 = 设备状态记录**（`ErpMntEquipmentStatusLog` 实体，状态变更历史——写点 = `EquipmentStatusLinker` 三迁移方法 + `ErpMntEquipmentBizModel.changeStatus` 同事务追加，来源 dict `erp-mnt/status-log-source` 值集 VISIT/DOWNTIME/MANUAL；RC-R1.77 处置链路追加第六写点 `linkToDecommissionedByDisposal`/`restoreFromDisposal` 写 `DISPOSAL` 来源日志行——dict 选项加性追加归 successor[ORM 变更]，Java 写路径不做 dict 校验，UI 展示回落原值码）。累计运行时长 = `EquipmentRuntimeCalculator` 查询时聚合（**Σ RUNNING 段**，无采集 Job 无物化漂移，状态记录为唯一真相幂等可重算）；遗留无日志设备保守基线——当前 RUNNING 从 createTime 起算，当前非 RUNNING 记 0 直至首条日志行（防虚计触发）。两类计划同一入口评估：TIME 走既有 `nextDueDate ≤ asOfDate` 扫描 + 推进，RUNTIME 分支 `findRuntimeDueSchedules` 在同一 `generateDueVisits` 入口评估（**触发粒度 = job cron 部署节奏**，对齐本节单一定时任务模型；RUNTIME 计划 nextDueDate 不推进保持 null/原值；既有 VST-SCH-{schedId}-{asOfDate} code 幂等锚点双保险保留）。StatusLog 亦为 OEE 可用率分子数据源（RC-R1.78 已接线，见 §六 注记）。产量周期评估分支为 successor（同 §5.1）。测试证据：`TestErpMntRuntimeTrigger`（Σ RUNNING 段聚合数学 / 遗留基线双分支 / 阈值触发 + baseline 重置 / 同日重跑幂等 / TIME 零回归 / linker·manual 写日志行）。
 
 ### 5.3 维护任务模板
 
@@ -270,6 +270,8 @@ OEE = 可用率 × 性能效率 × 质量合格率
 | 设备效率日报 | 各设备当日 OEE | 每日 |
 | 设备效率月报 | OEE 趋势、排名 | 月度 |
 | 停机原因分析 | 按原因分类的停机时间 | 月度 |
+
+> **§六 实现注记（RC-R1.78 / UC-MAIN-10 / P1-RC-071，plan `2026-08-20-0518-1`）**：OEE 落地为**按需计算**（B 类 2026-08-12 批量裁决：`computeOee` @BizQuery 查询时聚合，**零聚合实体零物化快照零 ORM 变更**）——载体 `OeeCalculator`（mnt-service support）+ `ErpMntDashboardBizModel.computeOee(equipmentId, dateFrom, dateTo)`（单设备三分量+乘积+分母分子明细）/ `computeOeeList(dateFrom, dateTo)`（按设备聚合）/ `getDashboardOeeKpi`（看板卡片均值，UC-MAIN-11-B）；日报/月报窗口经同一入口参数化（§6.3 前两行 = 日/月窗口口径，成册 nop-report 种子报表归报表域 successor）。**数据源映射（D1-D4 裁决，plan Phase 1）**：可用率分子 = §5.2 StatusLog Σ RUNNING 窗口段（`EquipmentRuntimeCalculator.computeRunningHoursInRange` 复用）；计划运行时间（分母）= `ErpMfgWorkcenterCalendar` 班次窗口时长 − `ErpMntDowntimeEntry` 停机交集（L1「计划生产时长(排除停机)」字面）；性能效率 = Σ `ErpMfgJobCardTimeLog.completedQuantity`（工单报工记录，经 JobCard.workcenterId 桥接）/（`ErpMfgWorkcenterCapacity.capacityPerHour` × 实际运行时间）；质量合格率 = Σ `ErpQaInspection.lotQuantity`（result=ACCEPTED，`relatedBillType=ERP_MFG_WORK_ORDER` 弱指针归因）/ 总产量，零关联质检时回退 mfg 报工 completed/(completed+scrapped)。**null 语义**：任一分量分母 0/无数据（无工作中心/无日历/无产能行/空窗口）→ 分量与 OEE null（无数据 ≠ 零效率），不 config 化。跨域 mfg/qa 只读经 IDaoProvider（矩阵 §2.4 mnt→mfg / mnt→qa 只读 Java 层边）。测试证据：`TestErpMntOee` 9 @Test（三分量数学/乘积恒等/null 四态/跨设备隔离/GraphQL 冒烟×2/月度窗口聚合）。停机原因分析报表（§6.3 第三行）为 successor（触发条件：运营要求按原因分类停机报表时）。
 
 ---
 
@@ -315,7 +317,7 @@ OEE = 可用率 × 性能效率 × 质量合格率
         └─► 工单报工记录（用于计算运行时长和产量）
 ```
 
-> **§7.3 实现注记（RC-R1.76）**：「设备停机/恢复事件」落位为 **mfg 拉取消费 + notify 计划员通知**（D3 裁决，机制实现见 §4.2/§4.3 注记）：mfg `ErpMfgScheduleToJobCardProcessor` 生成 job card 前经 `IErpMntDowntimeEntryBiz.findOpenDowntimeEquipmentWorkcenters` 拉取开放停机窗口做排产门控（Java 边 mfg-service→mnt-dao 登记 `docs/architecture/data-dependency-matrix.md` §2.4——矩阵「maintenance 被 manufacturing 查」预期方向的落地，mnt 不依赖 mfg，DAG 无环；mnt 模块缺失时 mfg `@Nullable` 注入容错零门控）；计划员通知经 notify 7208/7209。「制造域 → 维护域：工单报工记录」为 RC-R1.78 OEE 数据来源 successor，本切片未接线。
+> **§7.3 实现注记（RC-R1.76）**：「设备停机/恢复事件」落位为 **mfg 拉取消费 + notify 计划员通知**（D3 裁决，机制实现见 §4.2/§4.3 注记）：mfg `ErpMfgScheduleToJobCardProcessor` 生成 job card 前经 `IErpMntDowntimeEntryBiz.findOpenDowntimeEquipmentWorkcenters` 拉取开放停机窗口做排产门控（Java 边 mfg-service→mnt-dao 登记 `docs/architecture/data-dependency-matrix.md` §2.4——矩阵「maintenance 被 manufacturing 查」预期方向的落地；mnt 模块缺失时 mfg `@Nullable` 注入容错零门控）；计划员通知经 notify 7208/7209。「制造域 → 维护域：工单报工记录」已于 RC-R1.78 接线（OEE 产量/质量数据源，mnt-service→mfg-dao/qa-dao 只读 Java 层边登记矩阵 §2.4，构成 mfg↔mnt 双向域耦合披露；机制见 §六 注记）。
 
 ### 7.4 事件内容
 

@@ -424,6 +424,23 @@ checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=
 
 checker 复跑全 19 规则 actual ≤ updated baseline（R1d=14 / R2a=34 / R2b=235 / R2c=1422 / R2d=35 / R3=5 / R10=9 / R12a=69 / R12b=66 / R12c=40，其余 = 基线），CI green 保持。独立结束审计按本注记 per-site 证据复核。
 
+## R2b/R2c 基线上调注记（plan 2026-08-20-0518-1，RC-R1.78 mnt OEE 按需计算）
+
+`2026-08-20-0518-1`（RC-R1.78 / P1-RC-071 OEE 引擎）新增 8 处 daoFor 站点，R2b 236 → **237**（+1）、R2c 1497 → **1505**（+8；R1d=14 / R2a=34 / R2d=37 / R3=5 / R5=0 / R6=2 / R10=12 / R12a/b/c=70/66/40 均与基线持平零漂移）。**per-site 证据**（对齐 R1.48/R1.61/R1.76/77/86 baseline-raise 先例）：
+
+- `OeeCalculator.java` 全 7 处（mnt-service support 层新增类，跨域只读聚合）：
+  - `computeCalendarHours` `daoFor(ErpMfgWorkcenterCalendar.class)`（OEE 可用率分母——工作中心日历班次，D1 裁决；矩阵 §2.4 mnt→mfg 只读边登记）
+  - `computeDowntimeHours` `daoFor(ErpMntDowntimeEntry.class)`（同域 mnt——停机交集扣减）
+  - `collectOutput` `daoFor(ErpMfgJobCard.class)`（workcenterId 桥接 + CANCELLED 排除；mnt→mfg）
+  - `collectOutput` `daoFor(ErpMfgJobCardTimeLog.class)`（实际产量 = Σ 窗口报工 completedQuantity；mnt→mfg）
+  - `collectOutput` `daoFor(ErpMfgWorkOrder.class)`（弱指针 relatedBillCode 归因 + 产能产品匹配；mnt→mfg）
+  - `resolveCapacityPerHour` `daoFor(ErpMfgWorkcenterCapacity.class)`（理论产量 = 标准产能 × 运行时间，D2；mnt→mfg）
+  - `findLinkedInspections` `daoFor(ErpQaInspection.class)`（质量合格率 ACCEPTED 批量主路径，D3；mnt→qa）
+- `ErpMntDashboardBizModel.java` +1 处（R2b 同域站点，mnt 自有实体）：
+  - `loadEquipmentsNotDecommissioned` `daoFor(ErpMntEquipment.class)`（computeOeeList/getDashboardOeeKpi 按设备聚合装载）
+
+EquipmentRuntimeCalculator 重构（daoFor 内联 → `loadEquipment` helper）净零变化（1→1）；BizModel computeOee 设备装载委托 calculator（零新增）。跨域只读目标域 mfg 为 §9.4 永久只读豁免目标域（governed-path eval §3.1 裁决分支 b——I*Biz 强注入破坏单模块测试启动）；qa 同型业务域只读豁免口径（矩阵 §2.4 mnt→qa 行注记）。本块以 237/1505 为回归门控起点。
+
 ## BASELINE (machine-readable)
 
 > CI gate 解析本块。格式：`RULE=value`，每行一条。仅含可计数规则（R9 除外）。修改本块须经独立计划裁决（见上文"调高基线的唯一途径"）。
@@ -434,8 +451,8 @@ R1b: 0
 R1c: 0
 R1d: 14
 R2a: 34
-R2b: 236
-R2c: 1497
+R2b: 237
+R2c: 1505
 R2d: 37
 R3: 5
 R4: 0
