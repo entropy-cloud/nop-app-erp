@@ -1,6 +1,6 @@
 # 2026-08-19-0445-3-rc-mr1-r1-76-77-mnt-cross-domain-linkage RC-R1.76/77 — maintenance 跨域联动（停机→制造排产消费 + 资产处置→设备停用与引用守卫）（B 类预授权：零 ORM，Facade/notify 接线）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-19
 > Mission: requirement-compliance
 > Work Item: RC-R1.76（P1-RC-068，UC-MAIN-06 停机事件→制造域排产暂停/恢复）+ RC-R1.77（P1-RC-070，UC-MAIN-08 资产处置→设备 DECOMMISSIONED 联动 + 引用守卫）
@@ -54,61 +54,61 @@
 
 ### Phase 1 - R1.77：资产处置→设备 DECOMMISSIONED 联动 + 引用守卫
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/erp-mnt-dao/.../biz/IErpMntEquipmentBiz.java`（Facade 声明）、`module-maintenance/erp-mnt-service/.../entity/ErpMntEquipmentBizModel.java` + per-mutation Processor、`module-assets/erp-ast-service/.../processor/ErpAstDisposalProcessor.java`（+reverseApprove 接线）、mnt 三 BizModel 守卫、`ErpMntErrors.java`、`module-assets/erp-ast-service/pom.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: 无（与 Plan 2 同域且**共同触及 `ErpMntEquipmentBizModel.java`**——Plan 2 D1 changeStatus 写 StatusLog、本计划 D1 Facade 方法；同批执行时 Plan 2 先落 ORM 后本计划纯代码叠加，文件冲突经串行执行消解）
 
-- [ ] **D1 联动方向 = assets 处置 Processor 直接调 mnt Facade**（否决「mnt 轮询资产状态」：轮询延迟 + 全表扫描；否决「事件总线」：全仓无此基建）。`IErpMntEquipmentBiz` 增 Facade 方法 `changeStatusForAssetDisposal(assetId, disposalType)` + `restoreFromAssetDisposal(assetId)`：按 assetId 查关联设备（to-one 反查）→ 无设备 no-op 返回 0（合法：可选关联 §1.2）；已目标态幂等跳过；成功置 DECOMMISSIONED（经 EquipmentStatusLinker 同链写入——Plan 2 StatusLog 落地后自动记录 DISPOSAL 来源日志行）。**失败语义 = 异常传播回滚处置**（同 JVM 同事务强一致，区别于 R1.59 辅助语义降级——设备停用是 L1 硬断言，处置成功但设备未停用 = 契约破坏；config `erp-mnt.disposal-link-enabled` 关闭时跳过）。approve 后置 protected step + **reverseApprove 对称恢复落位 = 与资产恢复同分支**（`executeReverseApprove` 仅 posted==TRUE 分支恢复资产 IN_SERVICE——restoreFromAssetDisposal 置于同一分支，防「设备 RUNNING / 资产 SCRAPPED」分叉；恢复目标 = RUNNING，§1.3「资产恢复（IN_SERVICE）→ 设备状态改为运行中」字面；设备非 DECOMMISSIONED 时幂等跳过）。
+- [x] **D1 联动方向 = assets 处置 Processor 直接调 mnt Facade**（否决「mnt 轮询资产状态」：轮询延迟 + 全表扫描；否决「事件总线」：全仓无此基建）。`IErpMntEquipmentBiz` 增 Facade 方法 `changeStatusForAssetDisposal(assetId, disposalType)` + `restoreFromAssetDisposal(assetId)`：按 assetId 查关联设备（to-one 反查）→ 无设备 no-op 返回 0（合法：可选关联 §1.2）；已目标态幂等跳过；成功置 DECOMMISSIONED（经 EquipmentStatusLinker 同链写入——Plan 2 StatusLog 落地后自动记录 DISPOSAL 来源日志行）。**失败语义 = 异常传播回滚处置**（同 JVM 同事务强一致，区别于 R1.59 辅助语义降级——设备停用是 L1 硬断言，处置成功但设备未停用 = 契约破坏；config `erp-mnt.disposal-link-enabled` 关闭时跳过）。approve 后置 protected step + **reverseApprove 对称恢复落位 = 与资产恢复同分支**（`executeReverseApprove` 仅 posted==TRUE 分支恢复资产 IN_SERVICE——restoreFromAssetDisposal 置于同一分支，防「设备 RUNNING / 资产 SCRAPPED」分叉；恢复目标 = RUNNING，§1.3「资产恢复（IN_SERVICE）→ 设备状态改为运行中」字面；设备非 DECOMMISSIONED 时幂等跳过）。
       - Skill: `nop-backend-dev`
-- [ ] **D2 引用守卫 = BizModel save 钩子 + 排程迁移门控 + 批次路径豁免**：Schedule/Request/Visit 三 `defaultPrepareSave`（新增行）校验 equipment.status≠DECOMMISSIONED → `ERR_MNT_EQUIPMENT_DECOMMISSIONED`（新错误码，中文描述「设备[{code}]已停用（资产已处置），不可被新维护计划/工单引用」）；存量行 update 非设备维度变更不误伤（仅 equipmentId 变更或新增行时校验）。排程迁移侧（VisitScheduleProcessor）追加同守卫。**内部 save 双路径裁决**：①批量生成路径（generateVisitForSchedule 经 visitBiz.save 触发钩子）——`findDueSchedules` 查询侧排除 DECOMMISSIONED 设备计划 + LOG.warn 跳过（到期访问日批 job 无 per-schedule try/catch，一条违规设备计划中断整批 = 绿基线回归，禁止）；②手工触发路径（generateResponsiveVisit 经 visitBiz.save）——accept 明确拒绝抛同错误码（对已处置设备的**新**维护工作开访问正是 L1 禁止语义，用户显式操作报错可理解且事务回滚）；③Plan 2 的 runtime 触发扫描同口径排除 DECOMMISSIONED 设备（执行期与 Plan 2 协调落点）。
+- [x] **D2 引用守卫 = BizModel save 钩子 + 排程迁移门控 + 批次路径豁免**：Schedule/Request/Visit 三 `defaultPrepareSave`（新增行）校验 equipment.status≠DECOMMISSIONED → `ERR_MNT_EQUIPMENT_DECOMMISSIONED`（新错误码，中文描述「设备[{code}]已停用（资产已处置），不可被新维护计划/工单引用」）；存量行 update 非设备维度变更不误伤（仅 equipmentId 变更或新增行时校验）。排程迁移侧（VisitScheduleProcessor）追加同守卫。**内部 save 双路径裁决**：①批量生成路径（generateVisitForSchedule 经 visitBiz.save 触发钩子）——`findDueSchedules` 查询侧排除 DECOMMISSIONED 设备计划 + LOG.warn 跳过（到期访问日批 job 无 per-schedule try/catch，一条违规设备计划中断整批 = 绿基线回归，禁止）；②手工触发路径（generateResponsiveVisit 经 visitBiz.save）——accept 明确拒绝抛同错误码（对已处置设备的**新**维护工作开访问正是 L1 禁止语义，用户显式操作报错可理解且事务回滚）；③Plan 2 的 runtime 触发扫描同口径排除 DECOMMISSIONED 设备（执行期与 Plan 2 协调落点）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：TestErpMntAssetDisposalLinkage（mock/真实 Facade 双层：①处置 approve → 关联设备 DECOMMISSIONED ②无关联设备 no-op ③幂等 ④reverseApprove posted 分支 → 恢复 RUNNING（含非 DECOMMISSIONED 幂等）⑤config 关闭跳过 ⑥联动失败传播处置回滚）+ TestErpMntEquipmentReferenceGuard（①DECOMMISSIONED 设备新建 Schedule/Request/Visit 拒绝 + 错误码断言 ②RUNNING/IDLE 正常 ③既有行 update 非设备维度不触发 ④DRAFT 排程迁移拒绝 ⑤**到期访问日批 job：DECOMMISSIONED 设备计划被跳过整批完成 + warn** ⑥**DECOMMISSIONED 设备的 OPEN request accept 被拒绝回滚**）+ erp-ast-service 处置测试零回归（联动经真实 IoC 或 mock 注入，对齐 R1.68 cs mock 范式——ast-service 测试容器无 mnt bean 时 @Nullable 注入）+ `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service -pl module-assets/erp-ast-service`。
+- [x] **Proof**：TestErpMntAssetDisposalLinkage（mock/真实 Facade 双层：①处置 approve → 关联设备 DECOMMISSIONED ②无关联设备 no-op ③幂等 ④reverseApprove posted 分支 → 恢复 RUNNING（含非 DECOMMISSIONED 幂等）⑤config 关闭跳过 ⑥联动失败传播处置回滚）+ TestErpMntEquipmentReferenceGuard（①DECOMMISSIONED 设备新建 Schedule/Request/Visit 拒绝 + 错误码断言 ②RUNNING/IDLE 正常 ③既有行 update 非设备维度不触发 ④DRAFT 排程迁移拒绝 ⑤**到期访问日批 job：DECOMMISSIONED 设备计划被跳过整批完成 + warn** ⑥**DECOMMISSIONED 设备的 OPEN request accept 被拒绝回滚**）+ erp-ast-service 处置测试零回归（联动经真实 IoC 或 mock 注入，对齐 R1.68 cs mock 范式——ast-service 测试容器无 mnt bean 时 @Nullable 注入）+ `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service -pl module-assets/erp-ast-service`。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 处置联动 + 引用守卫落地，mnt/ast 两域测试绿零回归
+- [x] 处置联动 + 引用守卫落地，mnt/ast 两域测试绿零回归
 
 ### Phase 2 - R1.76：停机→制造排产消费 + 双向 notify
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/erp-mnt-dao/.../biz/IErpMntDowntimeEntryBiz.java`（既有 Facade 扩展查询声明）、`module-maintenance/erp-mnt-service/.../entity/ErpMntDowntimeEntryBizModel.java`、`ErpMntDowntimeEntryRecordProcessor.java`/`ErpMntDowntimeEntryCompleteProcessor.java`（notify 接线）、`module-notify/deploy/sql/{mysql,oracle,postgresql}/_seed_erp-notify.sql`（7208/7209）、`module-manufacturing/erp-mfg-service/.../processor/ErpMfgScheduleToJobCardProcessor.java`（消费门控）、`module-manufacturing/erp-mfg-service/pom.xml`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（同批 mnt 文件串行）
 
-- [ ] **D3 联动模型 = mfg 拉取消费（查询时判定）+ mnt notify 事件（计划员通知）**（否决「mnt push 写 mfg 工单标记」：mfg 工单无「排产暂停」持久状态列，push 无处落且触 ORM 越界；否决「mnt 写 aps MAINTENANCE constraint」：mnt→aps S 写超出矩阵 :109 允许清单）。**发布侧** = 停机 record/complete Processors 后置 notify（7208/7209，config `erp-mnt.downtime-notify-enabled` 门控，try/catch 静默降级不阻断停机主流程——通知为 L2「通知计划员」辅助语义）；**消费侧** = 既有 `IErpMntDowntimeEntryBiz` 增只读查询 `findOpenDowntimeEquipmentWorkcenters()` 暴露「工作中心→开放停机窗口」（经 equipment.workcenterId 桥接，开放 = endTime null 且设备 status=DOWN），mfg `ErpMfgScheduleToJobCardProcessor` 生成 job card 前拉取一次 → 开放停机工作中心的受影响工序跳过生成 + LOG.warn（排产暂停）；停机 complete 后窗口关闭 → 下次生成自然恢复（恢复排产，拉取模型恢复语义免 push）。恢复即时性 = 下次排产执行时点（L2 §4.3「重新计算生产计划」对齐）。
+- [x] **D3 联动模型 = mfg 拉取消费（查询时判定）+ mnt notify 事件（计划员通知）**（否决「mnt push 写 mfg 工单标记」：mfg 工单无「排产暂停」持久状态列，push 无处落且触 ORM 越界；否决「mnt 写 aps MAINTENANCE constraint」：mnt→aps S 写超出矩阵 :109 允许清单）。**发布侧** = 停机 record/complete Processors 后置 notify（7208/7209，config `erp-mnt.downtime-notify-enabled` 门控，try/catch 静默降级不阻断停机主流程——通知为 L2「通知计划员」辅助语义）；**消费侧** = 既有 `IErpMntDowntimeEntryBiz` 增只读查询 `findOpenDowntimeEquipmentWorkcenters()` 暴露「工作中心→开放停机窗口」（经 equipment.workcenterId 桥接，开放 = endTime null 且设备 status=DOWN），mfg `ErpMfgScheduleToJobCardProcessor` 生成 job card 前拉取一次 → 开放停机工作中心的受影响工序跳过生成 + LOG.warn（排产暂停）；停机 complete 后窗口关闭 → 下次生成自然恢复（恢复排产，拉取模型恢复语义免 push）。恢复即时性 = 下次排产执行时点（L2 §4.3「重新计算生产计划」对齐）。
       - Skill: `nop-backend-dev`
-- [ ] **D4 pom 边 + 矩阵登记**：mfg-service 增 erp-mnt-dao compile 依赖（仅 Facade 接口，矩阵 :109「被 mfg 查」预期方向落地）；Phase 1 assets→mnt-dao 边一并登记 `docs/architecture/data-dependency-matrix.md`（Java 层边注记段；**显式披露 assets↔maintenance 双向域耦合**——mnt-dao 已依赖 ast-dao[pom.xml:41]，ast-service→mnt-dao 构成 Maven 菱形非环，耦合语义与 R1.68 cs→qa 单向叶依赖不同，登记时注明）。
+- [x] **D4 pom 边 + 矩阵登记**：mfg-service 增 erp-mnt-dao compile 依赖（仅 Facade 接口，矩阵 :109「被 mfg 查」预期方向落地）；Phase 1 assets→mnt-dao 边一并登记 `docs/architecture/data-dependency-matrix.md`（Java 层边注记段；**显式披露 assets↔maintenance 双向域耦合**——mnt-dao 已依赖 ast-dao[pom.xml:41]，ast-service→mnt-dao 构成 Maven 菱形非环，耦合语义与 R1.68 cs→qa 单向叶依赖不同，登记时注明）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：TestErpMntDowntimeSchedulingLinkage（①record → 设备 DOWN + notify 7208 落库（ROLE 生产计划员，无角色数据 config-gated 空投递断言）②complete → RUNNING + notify 7209 ③config 关闭零通知 ④Facade 开放窗口查询数学断言[开放/已完/无工作中心设备三态]）+ mfg 侧 TestErpMfgJobCardDowntimeGate（①工作中心开放停机 → 该 workcenter 工序不生成 job card + 其他 workcenter 不受影响 ②停机 complete 后重新生成恢复 ③mnt bean 缺失 @Nullable 容错零回归）+ 既有 downtime/visit 测试零回归 + `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service -pl module-manufacturing/erp-mfg-service`。
+- [x] **Proof**：TestErpMntDowntimeSchedulingLinkage（①record → 设备 DOWN + notify 7208 落库（ROLE 生产计划员，无角色数据 config-gated 空投递断言）②complete → RUNNING + notify 7209 ③config 关闭零通知 ④Facade 开放窗口查询数学断言[开放/已完/无工作中心设备三态]）+ mfg 侧 TestErpMfgJobCardDowntimeGate（①工作中心开放停机 → 该 workcenter 工序不生成 job card + 其他 workcenter 不受影响 ②停机 complete 后重新生成恢复 ③mnt bean 缺失 @Nullable 容错零回归）+ 既有 downtime/visit 测试零回归 + `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service -pl module-manufacturing/erp-mfg-service`。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 停机排产消费链 + 双向通知落地，mnt/mfg 两域测试绿零回归
+- [x] 停机排产消费链 + 双向通知落地，mnt/mfg 两域测试绿零回归
 
 ### Phase 3 - 验证收口 + 文档回填
 
-Status: planned
+Status: completed
 Targets: `docs/design/maintenance/equipment-integration.md`、`docs/architecture/data-dependency-matrix.md`、`docs/architecture/job-scheduling.md`（如涉）、`docs/audits/arm-index.md`、`docs/backlog/requirement-compliance-roadmap.md`、`docs/logs/2026/08-{当期}.md`
 Skill: none
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 1-2 全绿
 
-- [ ] 全量验证：`mvn clean install -DskipTests` BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline（新跨域调用全经 IBiz 注入，预期零漂移）+ TestErpAllJobYamlLoading=29 不变（本计划零新 job.yaml）+ 三域分域全绿。
+- [x] 全量验证：`mvn clean install -DskipTests` BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh` actual ≤ baseline（新跨域调用全经 IBiz 注入，预期零漂移）+ TestErpAllJobYamlLoading=29 不变（本计划零新 job.yaml）+ 三域分域全绿。
       - Skill: none
-- [ ] owner doc 回填：equipment-integration.md §一（处置联动实现注记 + D1 裁决）+ §四/§七（拉取消费模型 + notify 事件 + D3 裁决 + CRP/aps constraint successor）+ data-dependency-matrix.md 两条新 Java 边登记 + arm-index P1-RC-068/070 → done (RC-R1.76/77) + roadmap 两行 done + 行标签 B 类改写 + logs 条目（全绿验证状态）。
+- [x] owner doc 回填：equipment-integration.md §一（处置联动实现注记 + D1 裁决）+ §四/§七（拉取消费模型 + notify 事件 + D3 裁决 + CRP/aps constraint successor）+ data-dependency-matrix.md 两条新 Java 边登记 + arm-index P1-RC-068/070 → done (RC-R1.76/77) + roadmap 两行 done + 行标签 B 类改写 + logs 条目（全绿验证状态）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 六处回填一致（代码 / equipment-integration / 矩阵 / arm-index / roadmap / logs）
+- [x] 六处回填一致（代码 / equipment-integration / 矩阵 / arm-index / roadmap / logs）
 
 ## Draft Review Record
 
@@ -117,14 +117,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn clean install -DskipTests` + 分域 `mvn test` + compliance checker）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn clean install -DskipTests` + 分域 `mvn test` + compliance checker）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -142,12 +142,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: closed（2026-08-19 独立结束审计 PASS，证据见下）
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 独立结束审计子代理（新会话，task `ses_fe6147d34ffeTrjG80sbdLKFOa`，2026-08-19）——**verdict PASS**（1 项非阻塞 MINOR 已修复）
+- Evidence: ①Phase 1 实仓核验——`IErpMntEquipmentBiz.java:25-37` Facade 双方法 @BizMutation + `ErpMntEquipmentBizModel.java:47-61` 实装；`EquipmentStatusLinker.java:76-106` disposalLinkEnabled 门控/no-op/幂等/DISPOSAL 日志源；`ErpAstDisposalProcessor.java:123`（approve 后置）+ `:168`（reverseApprove posted==TRUE 分支 `:156`）+ `:79-81` @Nullable 注入 + 失败异常传播（无 try/catch）；`DecommissionedEquipmentGuard.java:28-41` + Schedule/Request/Visit BizModel save/update 钩子 + VisitScheduleProcessor:35 + RequestAcceptProcessor:35 + ScheduleDueGenerator :102-106/:127-131 双路径批量排除（TIME/RUNTIME）+ beans :27-28；`ErpMntErrors.java:98-99` 错误码中文描述；ast pom :35-39 compile 边。②Phase 2——`IErpMntDowntimeEntryBiz.java:38-39` @BizQuery + MntOpenDowntimeWindow DTO；`ErpMntDowntimeEntryBizModel.java:57-78` 继承 daoFor 无遮蔽字段；`AbstractErpMntDowntimeEntryProcessor.java:75-99` notifyDowntimeEvent 门控+静默降级 + Record:23/Complete:29 接线；三方言 seed :168-177 7208/7209 ROLE 生产计划员 + PK 唯一性 `uniq -d` 空 + max=7209；mfg Processor :75-77 @Nullable + :90-102 拉取 + :109-122 门控 + Generate processor :38-40 + pom :70-74 compile/:174-178 test。③验证复跑（fresh surefire 20:09-20:11）——mnt **147/0/0** + mfg **289/0/0** + ast **318/0/0** + TestErpAllJobYamlLoading 1/0/0（断言恰 29 个 job.yaml）+ checker EXIT=0（R2b=236/R2c=1469 与 compliance-baseline.md BASELINE 块一致 + :540-546 per-site 注记）。④六处回填一致——equipment-integration.md §1.3/§4.2/§4.3/§7.1/§7.3/§7.4/§5.2、矩阵 §2.4 :121-132（菱形/双向耦合披露 :129 + test-scope 注记 :132）、arm-index :253/:255 done、roadmap :468/:469 done B 类改写（对齐 :460 R1.68 先例）、logs :5 条目、Non-Goals 零越界（EventBus/publishEvent/fireEvent grep 零命中 + mfg 无 HOLD 列 + 零 .orm.xml 改动 + module-maintenance 零 ErpApsConstraint）。MINOR 处置：M1 ast 计数 320→318 修正（logs/roadmap/arm-index 三处；surefire XML 权威计数 318 = 314 基线 @Test + 3 新增，console 320 为汇总口径差异，执行者复核确认）；M2 Closure Gates/Status 由执行者按本审计结论落位（本节）；M3 错误码常量名 `ERR_EQUIPMENT_DECOMMISSIONED`（文件级命名约定无 MNT 前缀）与计划速记 `ERR_MNT_EQUIPMENT_DECOMMISSIONED` 字符串/语义完全一致，非偏差。
 
 Follow-up:
 

@@ -42,6 +42,10 @@
                     └─► 资产恢复（IN_SERVICE）→ 设备状态改为运行中
 ```
 
+> **§1.3 实现注记（RC-R1.77 / UC-MAIN-08 / P1-RC-070）**：全仓无事件总线基建，联动落位为 **assets 处置 Processor 直接调 mnt Facade**（D1 裁决：否决 mnt 轮询资产状态[延迟 + 全表扫描]、否决事件总线[全仓无此基建，引入属架构变更另行立项]）——`ErpAstDisposalProcessor.executeApprove` 后置调 `IErpMntEquipmentBiz.changeStatusForAssetDisposal(assetId, disposalCode)`：按 `assetId` 反查关联设备（无关联设备 no-op 返回 0，§1.2 可选关联合法；已 DECOMMISSIONED 幂等跳过）置 **DECOMMISSIONED**，经 `EquipmentStatusLinker.linkToDecommissionedByDisposal` 同链写状态日志行（来源 `DISPOSAL` + sourceBillCode=处置单编码；dict `erp-mnt/status-log-source` 值集仍为 VISIT/DOWNTIME/MANUAL，DISPOSAL 选项加性追加归 successor[ORM 变更]，Java 写路径不做 dict 校验）。**失败语义 = 异常传播回滚处置事务**（同 JVM 同事务强一致——设备停用是 L1 硬断言，处置成功但设备未停用 = 契约破坏）；config `erp-mnt.disposal-link-enabled`（默认 true）关闭时跳过。**对称恢复**：`executeReverseApprove` 仅 posted==TRUE 分支（与资产恢复 IN_SERVICE 同分支，防「设备 RUNNING / 资产 SCRAPPED」分叉）调 `restoreFromAssetDisposal` 恢复 RUNNING（§1.3 字面语义；非 DECOMMISSIONED 幂等跳过）。
+>
+> **引用守卫（L1「设备不可再被新维护计划/工单引用」）**：Schedule/Request/Visit 三 BizModel `defaultPrepareSave`（新增行）+ `defaultPrepareUpdate`（仅 equipmentId 变更时）经 `DecommissionedEquipmentGuard` 校验设备 status≠DECOMMISSIONED → `ERR_MNT_EQUIPMENT_DECOMMISSIONED` 拒绝；Visit 排程迁移（VisitScheduleProcessor）同守卫。**内部 save 双路径裁决**：①批量生成路径（到期访问日批 job）——`ScheduleDueGenerator.findDueSchedules` 查询侧排除 DECOMMISSIONED 设备计划 + LOG.warn 跳过（日批循环无 per-schedule try/catch，一条违规计划中断整批 = 回归，禁止）；②手工触发路径（request accept 生成 RESPONSIVE visit）——`ErpMntRequestAcceptProcessor` 显式拒绝抛同错误码（对已处置设备开新维护工作正是 L1 禁止语义，事务回滚）；③runtime 触发扫描同口径排除。测试证据：`TestErpMntAssetDisposalLinkage`（联动六态）+ `TestErpMntEquipmentReferenceGuard`（守卫六态）+ `TestErpAstDisposalEquipmentLinkage`（ast 侧 mock Facade 三态）。
+
 ---
 
 ## 二、备件消耗流程
@@ -173,6 +177,8 @@
                     └─► 通知计划员调整生产计划
 ```
 
+> **§4.2 实现注记（RC-R1.76 / UC-MAIN-06 / P1-RC-068）**：**联动模型 = mfg 拉取消费（查询时判定）+ mnt notify 事件（计划员通知）**（D3 裁决：否决「mnt push 写 mfg 工单标记」——mfg 工单无「排产暂停」持久状态列，push 无处落且触 ORM 越界；否决「mnt 写 aps MAINTENANCE constraint」——mnt→aps S 写超出依赖矩阵允许清单）。「发布设备停机事件 → 制造域消费」落位为：mnt 侧 `IErpMntDowntimeEntryBiz.findOpenDowntimeEquipmentWorkcenters()` 只读查询暴露**开放停机窗口**（开放 = endTime null 且设备 status=DOWN，经 `equipment.workcenterId` 桥接出「工作中心→窗口」，未映射工作中心的设备不出窗）；mfg 侧 `ErpMfgScheduleToJobCardProcessor` 生成 job card 前拉取一次 → 拟建卡工序任一落在开放停机工作中心 → **该工单本轮跳过建卡 + LOG.warn 保持 pending**（=「暂停该设备的工单排产」，工单级暂停；恢复即时性 = 下次排产执行时点，对齐 §4.3「重新计算生产计划」）。「通知计划员」落位为 notify 模板种子 **7208** `mnt.equipment-downtime`（ROLE 生产计划员，context = 设备/工作中心/原因/起始时间；`erp-mnt.downtime-notify-enabled` 默认 true 门控，try/catch 静默降级不阻断停机主流程；无匹配角色数据 config-gated 空投递）。**successor**：①CRP 负荷停机扣减（L2 §4.2 未断言容量口径，排产门控已达成主语义）；②mnt 自动生成 aps `ErpApsConstraint`(MAINTENANCE) 行（mnt→aps S 写须矩阵修订，RC-R1.86-88 aps 域修复时协同裁决）。测试证据：`TestErpMntDowntimeSchedulingLinkage`（发布侧四态）+ `TestErpMfgJobCardDowntimeGate`（消费侧三态）。
+
 ### 4.3 停机恢复
 
 ```
@@ -190,6 +196,8 @@
                     │
                     └─► 重新计算生产计划
 ```
+
+> **§4.3 实现注记（RC-R1.76）**：停机 `complete`（endTime + totalMinutes + 设备恢复 RUNNING）后**窗口自然关闭**（endTime 非空即退出开放集）→ mfg 下次排产执行时点拉取开放集为空 → 受影响工单自然恢复建卡（**拉取模型恢复语义免 push**）；同时后置 notify 模板种子 **7209** `mnt.equipment-recovered`（ROLE 生产计划员，context 含 endTime；门控与降级语义同 7208）提示计划员「重新计算生产计划」。恢复即时性 = 下次排产执行时点（日批 job / 手动重触发），非事件驱动即时推送。
 
 ---
 
@@ -223,7 +231,7 @@
         └─► 产生 TODO 提醒维护主管排程
 ```
 
-> **实现注记（RC-R1.73 / UC-MAIN-02）**：**运行时长来源 = 设备状态记录**（`ErpMntEquipmentStatusLog` 实体，状态变更历史——写点 = `EquipmentStatusLinker` 三迁移方法 + `ErpMntEquipmentBizModel.changeStatus` 同事务追加，来源 dict `erp-mnt/status-log-source` 值集 VISIT/DOWNTIME/MANUAL；DISPOSAL 待处置链路落地后加性追加）。累计运行时长 = `EquipmentRuntimeCalculator` 查询时聚合（**Σ RUNNING 段**，无采集 Job 无物化漂移，状态记录为唯一真相幂等可重算）；遗留无日志设备保守基线——当前 RUNNING 从 createTime 起算，当前非 RUNNING 记 0 直至首条日志行（防虚计触发）。两类计划同一入口评估：TIME 走既有 `nextDueDate ≤ asOfDate` 扫描 + 推进，RUNTIME 分支 `findRuntimeDueSchedules` 在同一 `generateDueVisits` 入口评估（**触发粒度 = job cron 部署节奏**，对齐本节单一定时任务模型；RUNTIME 计划 nextDueDate 不推进保持 null/原值；既有 VST-SCH-{schedId}-{asOfDate} code 幂等锚点双保险保留）。StatusLog 亦为 OEE 可用率分子预留数据源（RC-R1.78 衔接）。产量周期评估分支为 successor（同 §5.1）。测试证据：`TestErpMntRuntimeTrigger`（Σ RUNNING 段聚合数学 / 遗留基线双分支 / 阈值触发 + baseline 重置 / 同日重跑幂等 / TIME 零回归 / linker·manual 写日志行）。
+> **实现注记（RC-R1.73 / UC-MAIN-02）**：**运行时长来源 = 设备状态记录**（`ErpMntEquipmentStatusLog` 实体，状态变更历史——写点 = `EquipmentStatusLinker` 三迁移方法 + `ErpMntEquipmentBizModel.changeStatus` 同事务追加，来源 dict `erp-mnt/status-log-source` 值集 VISIT/DOWNTIME/MANUAL；RC-R1.77 处置链路追加第六写点 `linkToDecommissionedByDisposal`/`restoreFromDisposal` 写 `DISPOSAL` 来源日志行——dict 选项加性追加归 successor[ORM 变更]，Java 写路径不做 dict 校验，UI 展示回落原值码）。累计运行时长 = `EquipmentRuntimeCalculator` 查询时聚合（**Σ RUNNING 段**，无采集 Job 无物化漂移，状态记录为唯一真相幂等可重算）；遗留无日志设备保守基线——当前 RUNNING 从 createTime 起算，当前非 RUNNING 记 0 直至首条日志行（防虚计触发）。两类计划同一入口评估：TIME 走既有 `nextDueDate ≤ asOfDate` 扫描 + 推进，RUNTIME 分支 `findRuntimeDueSchedules` 在同一 `generateDueVisits` 入口评估（**触发粒度 = job cron 部署节奏**，对齐本节单一定时任务模型；RUNTIME 计划 nextDueDate 不推进保持 null/原值；既有 VST-SCH-{schedId}-{asOfDate} code 幂等锚点双保险保留）。StatusLog 亦为 OEE 可用率分子预留数据源（RC-R1.78 衔接）。产量周期评估分支为 successor（同 §5.1）。测试证据：`TestErpMntRuntimeTrigger`（Σ RUNNING 段聚合数学 / 遗留基线双分支 / 阈值触发 + baseline 重置 / 同日重跑幂等 / TIME 零回归 / linker·manual 写日志行）。
 
 ### 5.3 维护任务模板
 
@@ -280,6 +288,8 @@ OEE = 可用率 × 性能效率 × 质量合格率
         └─► 资产状态变更事件（触发设备状态联动）
 ```
 
+> **§7.1 实现注记（RC-R1.77）**：「资产状态变更事件」落位为 **assets 处置 Processor 直接调 mnt Facade**（全仓零事件总线，直接 Facade + notify 是既有跨域范式；「事件」为 L1 概念措辞，机制实现见 §1.3 注记）：`IErpMntEquipmentBiz.changeStatusForAssetDisposal/restoreFromAssetDisposal`（Java 边 assets-service→mnt-dao 登记 `docs/architecture/data-dependency-matrix.md` §2.4——**assets↔maintenance 双向域耦合显式披露**：mnt-dao 已 pom 依赖 ast-dao[ORM to-one shadow]，ast-service→mnt-dao→ast-dao 构成 Maven 菱形非环，两域互持对方 dao 接口，重构拆分须两域协同）。
+
 ### 7.2 与库存域协作
 
 ```
@@ -305,13 +315,15 @@ OEE = 可用率 × 性能效率 × 质量合格率
         └─► 工单报工记录（用于计算运行时长和产量）
 ```
 
+> **§7.3 实现注记（RC-R1.76）**：「设备停机/恢复事件」落位为 **mfg 拉取消费 + notify 计划员通知**（D3 裁决，机制实现见 §4.2/§4.3 注记）：mfg `ErpMfgScheduleToJobCardProcessor` 生成 job card 前经 `IErpMntDowntimeEntryBiz.findOpenDowntimeEquipmentWorkcenters` 拉取开放停机窗口做排产门控（Java 边 mfg-service→mnt-dao 登记 `docs/architecture/data-dependency-matrix.md` §2.4——矩阵「maintenance 被 manufacturing 查」预期方向的落地，mnt 不依赖 mfg，DAG 无环；mnt 模块缺失时 mfg `@Nullable` 注入容错零门控）；计划员通知经 notify 7208/7209。「制造域 → 维护域：工单报工记录」为 RC-R1.78 OEE 数据来源 successor，本切片未接线。
+
 ### 7.4 事件内容
 
-| 事件 | 关键字段 |
-|------|----------|
-| 设备停机事件 | 设备编码、工作中心、开始时间、停机原因 |
-| 设备恢复事件 | 设备编码、工作中心、结束时间 |
-| 备件消耗事件 | 维护访问编码、物料编码、消耗数量 |
+| 事件 | 关键字段 | 实现载体（RC-R1.76/77 注记） |
+|------|----------|------------------------------|
+| 设备停机事件 | 设备编码、工作中心、开始时间、停机原因 | notify 模板 **7208** `mnt.equipment-downtime` context（equipmentCode/workcenterId/startTime/reason）+ 开放停机窗口查询（mfg 排产消费） |
+| 设备恢复事件 | 设备编码、工作中心、结束时间 | notify 模板 **7209** `mnt.equipment-recovered` context（equipmentCode/workcenterId/endTime）+ 窗口关闭（mfg 拉取模型自然恢复） |
+| 备件消耗事件 | 维护访问编码、物料编码、消耗数量 | SparePartUsage 过账链（§二，既有实现） |
 
 ---
 

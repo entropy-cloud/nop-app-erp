@@ -118,6 +118,19 @@ L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）�
 
 > **关键观察**：`master-data` 是唯一的高入向 R 域（~120 处引用），它是整个系统的根。`finance` 是唯一的入向 S 顶域（被 6 个业务域同步写过账）。这两个域的稳定性直接决定全局稳定性。
 
+### 2.4 Java 层跨域 Facade 边注记（代码层 pom 边，非 ORM 层）
+
+> 本节登记**不出现在 ORM to-one 图或表层 R/S 矩阵中的 Java 层 pom 边**（`erp-xxx-service` → 他域 `erp-yyy-dao`，仅 dao 接口层、不引他域 service；运行期 BizModel 实现由 `app-erp-all` 聚合传递提供，他域模块缺失时消费方须 `@Nullable` 注入容错）。ORM 层依赖（§2.2/§5.6.2）仍是数据依赖的最高权威，本节为代码层补充注记。
+
+| Java 边（compile） | Facade / 用途 | 登记来源 | 耦合语义注记 |
+|---|---|---|---|
+| cs-service → qa-dao | `IErpQaNonConformanceBiz` 工单升级创建 NCR（弱指针回链） | RC-R1.68（P1-RC-057） | 单向叶依赖：qa 对 cs 零反向（ORM + Java 双向均无），DAG 无环 |
+| cs-service / mfg-service / mnt-service → notify-dao | `IErpSysNotificationBiz` 通知派发（notify 为跨域通知子系统，不反向依赖任何业务域） | R1.68 先例 + RC-R1.76（mnt 接线） | 单向星型：notify-dao 是纯消费终点，DAG 无环 |
+| assets-service → mnt-dao | `IErpMntEquipmentBiz.changeStatusForAssetDisposal/restoreFromAssetDisposal` 处置→设备 DECOMMISSIONED 联动（同 JVM 同事务异常传播强一致） | RC-R1.77（P1-RC-070） | **assets↔maintenance 双向域耦合（显式披露）**：mnt-dao 已 pom 依赖 ast-dao（ORM to-one shadow 的 dao 层依赖，见 `erp-mnt-dao/pom.xml`），故 ast-service→mnt-dao→ast-dao 构成 **Maven 菱形非环**（ast-dao 无反向依赖，DAG 仍无环）。耦合语义与 R1.68 cs→qa 单向叶依赖不同：两域互持对方 dao 接口，重构拆分须两域协同 |
+| mfg-service → mnt-dao | `IErpMntDowntimeEntryBiz.findOpenDowntimeEquipmentWorkcenters` 开放停机窗口只读拉取（排产门控，拉取消费模型） | RC-R1.76（P1-RC-068） | 单向只读：§2.2 maintenance 行「被 mfg 查」预期方向的 Java 层落地；mnt 不依赖 mfg，DAG 无环 |
+
+> mfg-service 对 mnt-dao 为 **test scope 另挂 `app-erp-maintenance-service`**（`TestErpMfgJobCardDowntimeGate` 需真实 BizModel Bean）；此为测试装配边，不计入生产依赖方向。
+
 ## 3. 只读依赖（R）明细：哪些模块只读引用哪些表
 
 > 本节回答"哪些模块只读依赖哪些表"。所有 R 依赖都通过**纯外键列**承载，BizModel 通过 `@Inject I*Biz` 只读查询，**零 ORM `<to-one>` 跨域声明**。

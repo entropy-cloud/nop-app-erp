@@ -434,8 +434,8 @@ R1b: 0
 R1c: 0
 R1d: 14
 R2a: 34
-R2b: 235
-R2c: 1468
+R2b: 236
+R2c: 1469
 R2d: 35
 R3: 5
 R4: 0
@@ -536,6 +536,14 @@ manufacturing（4，`ErpMfgSkuReferenceChecker.java`，BomLine/BomByproduct 经 
 - `EquipmentStatusLogWriter.java:31` `daoFor(ErpMntEquipmentStatusLog.class)`（状态迁移同事务追加日志行）+ `EquipmentRuntimeCalculator.java:42` `daoFor(ErpMntEquipment.class).getEntityById`（遗留基线分支当前状态读取）+ `:88` `daoFor(ErpMntEquipmentStatusLog.class)`（Σ RUNNING 段查询时聚合）——3 处 RC-R1.73 support 类（写点单一真相源 + 查询时聚合器），新实体无 I*Biz 业务面需求（StatusLog 为系统追加日志非用户 CRUD 面；calculator 显式 asOf 参数确定性聚合非权限管道查询）
 
 本块以 R2c=1468 为回归门控起点。
+
+## R2b/R2c 基线上调注记（plan 2026-08-19-0445-3，RC-R1.76/77 mnt 跨域联动）
+
+`2026-08-19-0445-3`（RC-R1.76 停机→排产消费 + RC-R1.77 处置→DECOMMISSIONED 联动）新增 1 处同域 BizModel daoFor 站点，R2b 235 → **236**、R2c 1468 → **1469**（+1；R2d=35 / R10=12 / R12a=70 均与基线持平零漂移——**跨域调用全部经 IBiz Facade 注入**：处置联动 `IErpMntEquipmentBiz.changeStatusForAssetDisposal/restoreFromAssetDisposal`（assets→mnt，矩阵 §2.4）+ 排产门控 `IErpMntDowntimeEntryBiz.findOpenDowntimeEquipmentWorkcenters`（mfg→mnt 拉取，`@Nullable` 容错）+ 设备反查走 `IErpMntEquipmentBiz.findFirst`，零新增跨域 daoFor）。**per-site 证据**（mnt 同域实体，对齐 R1.48/R1.51/R1.56/R1.57/R1.60/R1.61/R1.66/R1.72/R1.73-75 baseline-raise 先例）：
+
+- `ErpMntDowntimeEntryBizModel.java` `findOpenDowntimeEquipmentWorkcenters`（1 处）`daoFor(ErpMntDowntimeEntry.class).findAllByQuery`——本 BizModel 即 ErpMntDowntimeEntry 自身 BizModel（自引用无法注入自身 I*Biz），开放停机窗口投影查询（`endTime isNull` 不在该实体 XMeta 可查询运算符集 eq/in/dateBetween，无法走 CRUD findList 管道），raw DAO 直查为实体自身 BizModel 的标准直查范式（对齐 crm `ErpCrmLeadBizModel.leadDao()` 先例）；含 E3 自检注释说明 daoFor 理由。恢复即时性 = 下次排产执行时点（拉取模型），开放集 = 当前未结束停机记录，规模天然受限。
+
+本块以 R2b=236 / R2c=1469 为回归门控起点。
 
 ## 关联
 
