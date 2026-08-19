@@ -1,9 +1,9 @@
 # 2026-08-19-2040-3-rc-mr1-r1-86-87-88-aps-auto-create-routing-dispatch-family aps 域越界修复族（工单工序自动创建 + 替代路由选择 + 自动派工引擎）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: requirement-compliance
 > Work Item: RC-R1.86 + RC-R1.87 + RC-R1.88（MR1 越界项，aps 域收尾三件套；含 mnt 计划 R1.76 successor「矩阵修订归 RC-R1.86-88 协同」注记的收口）
-> Last Reviewed: 2026-08-19
+> Last Reviewed: 2026-08-20
 > Source: `docs/backlog/requirement-compliance-roadmap.md` MR1 行 RC-R1.86/87/88 + arm-index P1-RC-088/P1-RC-089/P1-RC-090
 > Related: A1.50 审计 `2026-08-06-2243-2`（aps-full）+ A4.2 报告 `docs/audits/2026-08-07-1410-rc-ma4-a4-2-178-181-aps-runtime.md`；mnt 联动先例 plan `2026-08-19-0445-3-rc-mr1-r1-76-77-mnt-cross-domain-linkage.md`（D3 拉取消费模型 + matrix §2.4 登记）
 > Audit: required
@@ -54,81 +54,81 @@
 
 ### Phase 1 — P1-RC-088 WorkOrder 下达→OperationOrder 自动创建
 
-Status: planned
+Status: completed
 Targets: `module-aps/erp-aps-service/`（创建编排）+ `module-manufacturing/erp-mfg-service/`（D1 接线点，若裁决为 mfg 侧触发）+ matrix 登记
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: D1 裁决先行
 
-- [ ] Decision: D1 跨域触发模型裁决——选项 A：mfg WorkOrder RELEASED 后置调 aps Facade（`createOperationOrdersFromWorkOrder(workOrderId)`，推送直连先例 = R1.59/R1.77/R1.85 直连族；事务传播与失败隔离语义须显式：联动失败不阻断 WorkOrder 下达主流程，对齐 R1.59 降级范式；伴随 mfg→aps Java 层 pom 边 + matrix 登记）；选项 B：aps 侧 job 拉取扫描 RELEASED 工单（R1.76 拉取消费先例，零新边）。裁决依据 matrix 允许边方向 + 幂等可控性，结果 + Java 层边登记写入 owner doc。
+- [x] Decision: D1 跨域触发模型裁决——**选项 B：aps 侧 job 拉取扫描**（R1.76 拉取消费先例，零新边）。裁决依据：matrix 边方向（aps-service 已有 mfg-dao compile 依赖 [ATP/CTP 先例]，选项 A 须新增 mfg-service→aps-dao 边且联动失败隔离侵入 mfg 审核主流程）+ 幂等可控性（拉取 + 幂等守卫 [同 WorkOrder 已有任一 op 即跳过整单] 天然可重试）。结果 + Java 层边登记已写入 owner doc（`scheduling.md` 实现约定块 + matrix §2.4 aps-service→notify-dao 新边 + mfg-dao 只读消费方注记）。实现：`erp-aps-workorder-scan.job.yaml`（enabled 默认 false + `erp-aps.workorder-scan-cron` 空=跳过）+ `ErpApsWorkOrderScanJob`（R1.38 简单 job bean）→ `scanReleasedWorkOrders` mutation。
       - Skill: none
-- [ ] Add: 批量创建编排——读 WorkOrder 绑定工艺路线工序列表（经 mfg IBiz/允许的只读通道）→ 按 sequence 依次建 OperationOrder(DRAFT) 继承 workOrderId/operationName/machineId/setupTime/runtimePerUnit/qty + 计算 totalDuration；工艺路线缺失→跳过 + LOG.warn 必做 + notify 告警派发（事件 `aps.workorder-no-routing`，无 ACTIVE 模板静默跳过，R1.4 范式）；工作中心不存在→该工序拒绝创建并告警（同通道，L1 异常路径双分支）；幂等守卫（同 WorkOrder 重复触发不重复建单）；同一编排 Facade 暴露手动触发 @BizMutation 入口（覆盖 L1 触发条件「或计划员手动触发」，守卫/幂等与自动路径同源）。
+- [x] Add: 批量创建编排——`ErpApsWorkOrderToOperationProcessor`（protected step 结构）：读 WorkOrder 绑定工艺路线工序列表（`IDaoProvider` 只读 mfg，matrix §9.4 豁免）→ 按 lineNo（=sequence）依次建 OperationOrder(DRAFT) 继承 workOrderId/operationName/machineId/setupTime/runtimePerUnit=runTime/qty + totalDuration（与引擎同公式单一真相源）；工艺路线缺失→整单跳过 + LOG.warn + notify `aps.workorder-no-routing`（无 ACTIVE 模板静默跳过，R1.4 范式）；工作中心不存在→该工序拒绝创建 + notify `aps.operation-workcenter-missing` 告警（L1 异常路径双分支）；幂等守卫（同 WorkOrder 重复触发不重复建单）；同一编排 Facade 暴露手动触发 `createOperationOrdersFromWorkOrder` @BizMutation 入口（守卫/幂等与自动路径同源）。
       - Skill: `nop-backend-dev`
-- [ ] Proof: `TestErpApsWorkOrderToOperationOrder` 至少 6 组——批量创建+字段继承+totalDuration、sequence 排序、工艺路线缺失跳过+告警、工作中心不存在拒绝、幂等重触零重复、（若 D1 选 A）联动失败隔离 WorkOrder 下达不受阻。
+- [x] Proof: `TestErpApsWorkOrderToOperationOrder` 7 组全绿——批量创建+字段继承+totalDuration 公式、sequence=lineNo 排序、工艺路线缺失跳过+告警落 ErpSysNotification、工作中心不存在拒绝+告警（其余照建）、幂等重触零重复、扫描仅已下达工单+跨轮幂等（SUBMITTED 排除）、CRP 负荷盲闭合（排程后 slots 进入 findScheduledSources）。（D1 选 B，联动失败隔离测试项不适用——job 内 try/catch + 逐单独立处理）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] WorkOrder 下达→工序工单 DRAFT 批量创建链路运行时可观察（成功/跳过/拒绝三模式）
-- [ ] CRP 负荷盲缺口闭合佐证：A4.2.178 场景（有 OperationOrder 的 WorkOrder 出现在 CRP 负荷来源）一组断言
+- [x] WorkOrder 下达→工序工单 DRAFT 批量创建链路运行时可观察（成功/跳过/拒绝三模式：testBatchCreate…/testMissingRouting…/testWorkcenterMissing…）
+- [x] CRP 负荷盲缺口闭合佐证：A4.2.178 场景（有 OperationOrder 的 WorkOrder 出现在 CRP 负荷来源）一组断言（testScheduledOpsAppearInCrpLoadSource）
 
 ### Phase 2 — P1-RC-089 替代工艺路线选择
 
-Status: planned
+Status: completed
 Targets: `module-aps/model/app-erp-aps.orm.xml`（selectedRoutingId + 越界回落增量列）+ `module-aps/erp-aps-service/`（SchedulingEngine 路由选择 + manualOverride mutation）+ dict + §ORM Approvals
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: 双独立子 agent 批准（selectedRoutingId 列 A 类 + routingSelectionReason/manualOverride 等增量列 R1.73 式越界回落批准，合并一次复核）；Phase 1 无硬依赖（排产引擎消费的 OperationOrder 既有存量即可开发）
 
-- [ ] Add: ORM `ErpApsOperationOrder.selectedRoutingId` 列（A 类授权）+ routingSelectionReason（dict 新值 DEFAULT/PRIMARY_OVERBOOKED/PRIMARY_DOWN/BATCH_CONSTRAINT，数据变更）+ manualOverride 标记列（越界回落批准载体）；operation-order-status dict 加 UNSCHEDULABLE 值（数据变更）。
+- [x] Add: ORM `ErpApsOperationOrder.selectedRoutingId` 列（propId 30，A 类授权）+ routingSelectionReason（propId 31，dict `erp-aps/routing-selection-reason` 新值 DEFAULT/PRIMARY_OVERBOOKED/PRIMARY_DOWN/BATCH_CONSTRAINT，数据变更）+ manualOverride（propId 32）+ allowFallback（propId 33，D3 裁决载体）；operation-order-status dict 加 UNSCHEDULABLE/HOLD/ON_HOLD 值（数据变更）。全部可空无默认无索引无 UK 零既有语义改动；ORM Approvals 双批准落盘（appr1-7f3a2c + appr2-7f3a91）；`mvn clean install -DskipTests` 增量重生成链通过。
       - Skill: `nop-backend-dev`
-- [ ] Add: 引擎 SELECT_ROUTING 集成——scheduling.md 步骤 3「获取工作中心」替换为路由选择：priority ASC 查启用路由（生效期+批量约束过滤）→逐个尝试产能窗口（duration 计入 setupTimeDelta/runtimePerUnitDelta）→选中回写 machineId/setupTime/runtimePerUnit/selectedRoutingId/routingSelectionReason→全不可用标 UNSCHEDULABLE + 记无路由原因；无路由配置的工序保持既有 op.machineId 行为零变化（向后兼容）。
+- [x] Add: 引擎 SELECT_ROUTING 集成——`ErpApsSchedulingEngine` 前向/后向均替换为候选路由集尝试：默认行（isDefault && machineId=op.machineId）定位 operationId → priority ASC 逐候选（生效期 + 批量约束过滤）尝试产能窗口（duration 计入 setupTimeDelta/runtimePerUnitDelta，差值幂等剥离-叠加）→选中回写 machineId/setupTime/runtimePerUnit/selectedRoutingId/routingSelectionReason→全不可用标 UNSCHEDULABLE + 冲突 NO_AVAILABLE_ROUTING；无路由配置/manualOverride 工序保持 op.machineId 单候选零行为变化；UNSCHEDULABLE 与 DRAFT 同池重排自愈；InsertRushOrder 插单路径同步启用（§5.2 被抢占工序尝试备选）。
       - Skill: `nop-backend-dev`
-- [ ] Add: `manualOverrideRouting` mutation——计划员强制指定路由（覆盖自动选择 + manualOverride=true + DispatchLog/备注审计）；manualOverride 工序在重排时跳过自动路由选择。
+- [x] Add: `manualOverrideRouting` mutation（`ErpApsRoutingManualOverrideProcessor` per-mutation Processor）——计划员强制指定路由（覆盖自动选择 + manualOverride=true + remark 审计记录）；时间差幂等叠加；PLANNED 源回退 DRAFT + 释放产能预留；manualOverride 工序重排跳过自动路由选择；未启用/不存在路由拒绝（ERR_APS_ROUTING_NOT_AVAILABLE）；IN_PROGRESS 等非法源态拒绝。
       - Skill: `nop-backend-dev`
-- [ ] Decision: D3 allowFallback 载体裁决——替代路由降级开关按 owner doc §4.1（不允许降级→UNSCHEDULABLE 告警）落在 OperationOrder 列（越界回落）或 DispatchRule/全局 config；结果记入 owner doc。
+- [x] Decision: D3 allowFallback 载体裁决——**落在 OperationOrder.allowFallback 列**（越界回落批准覆盖；可空 Boolean null=允许降级，对齐 owner doc §4.1「检查 operationOrder 是否允许降级（allowFallback 字段）」字面指定）。结果记入 owner doc（alternative-routing.md 实现注记 D3 裁决行）。
       - Skill: none
-- [ ] Proof: `TestErpApsAlternativeRouting` 至少 7 组——主选可用选主选零行为变化、主选过载自动备选（时间差计入断言）、批量约束过滤、全不可用 UNSCHEDULABLE+原因、manualOverride 覆盖+重排保持、无路由配置回归、降级开关关闭保持 UNSCHEDULABLE 告警。
+- [x] Proof: `TestErpApsAlternativeRouting` 8 组全绿——主选可用选主选零行为变化（DEFAULT+时长 25）、主选过载自动备选（PRIMARY_OVERBOOKED + 时间差计入 totalDuration=40/setup=10/perUnit=3/排程时长 40 断言）、批量约束过滤（BATCH_CONSTRAINT）、全不可用 UNSCHEDULABLE+原因+解除后自愈重排（PRIMARY_DOWN）、manualOverride 覆盖+重排保持（含 remark 审计）、无路由配置回归（legacy 排到 earliestStart）、降级开关关闭保持 UNSCHEDULABLE 不尝试备选、强制指定未启用/不存在路由双拒绝。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 路由选择/降级/UNSCHEDULABLE/manualOverride 运行时可观察（A4.2.179 场景翻转：主选过载备选承接）
-- [ ] 既有排产引擎测试零回归（TestErpApsSchedulingEngine/CapacityReservation/ScheduleManagement 全绿）
+- [x] 路由选择/降级/UNSCHEDULABLE/manualOverride 运行时可观察（A4.2.179 场景翻转：主选过载备选承接——testPrimaryOverloadedFallsBackWithTimeDeltas）
+- [x] 既有排产引擎测试零回归（全模块 66/66 全绿：TestErpApsSchedulingEngine 6 + TestErpApsCapacityReservation + TestErpApsScheduleManagement 等）
 
 ### Phase 3 — P1-RC-090 自动派工引擎
 
-Status: planned
+Status: completed
 Targets: `module-aps/erp-aps-service/`（派工引擎 + job + mutation 族）+ dict + job.yaml + matrix 登记
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（PLANNED 工序来源）与 Phase 2（selectedRouting 确定工作中心）完成后联调；D5/D6 裁决先行
 
-- [ ] Decision: D5 物料齐套跨域模型裁决——选项 A：经 inventory 可用量 IBiz/IDaoProvider 直查（aps-service 已有 inv-dao/mfg-dao compile 依赖 + IDaoProvider 只读先例可循）；选项 B：复用 mfg 齐套判定内部逻辑（注意 `IErpMfgMaterialAvailabilityService` 系 owner doc 设计名、实仓不存在，`KitAvailabilityChecker` 为 mfg-service 内部类非 dao 接口，选项 B 须先在 mfg 侧暴露 Facade）。两选项均受 matrix §9.4「mfg/inv 为 I*Biz 强注入永久豁免目标域（aps 单模块测试 NoSuchBeanFailure 先例）」约束——接线按 §2.4 dao 边 + @Nullable 容错范式；结果 + matrix Java 层边登记。
+- [x] Decision: D5 物料齐套跨域模型裁决——**选项 A：inventory 可用量经 IDaoProvider 直查**（aps-service 既有 inv-dao compile 依赖 + ErpApsAtpCtpServiceImpl 只读先例；齐套口径 = 工单 BOM 单层展开 × plannedQuantity 对照 ΣavailableQuantity，无 BOM→null 放行）。否决选项 B（KitAvailabilityChecker 系 mfg-service 内部类，暴露 Facade 须 service 级依赖破坏 aps 单模块测试）。受 matrix §9.4「mfg/inv 永久豁免」约束按 dao 边 + 注释落地；结果 + matrix Java 层边登记（§2.4 aps-service 行：inv-dao 只读消费方）。
       - Skill: none
-- [ ] Decision: D6 JobCard 联动裁决——选项 A：复用制造域既有 `erp-mfg-jobcard-auto-generate.job.yaml` + `ErpMfgWorkOrder__generateJobCardsFromSchedule` seam（按 PLANNED 排程自动建卡已运行，须 reconcile 去重/幂等边界——派工触发的建卡与既有 job 建卡不得双卡）；选项 B：本域派工后置直接触发建卡（跨域写，倾向否决）。结果 + matrix 登记。
+- [x] Decision: D6 JobCard 联动裁决——**选项 A：复用制造域既有 `erp-mfg-jobcard-auto-generate.job.yaml` + `generateJobCardsFromSchedule` seam**。reconcile 去重/幂等边界：`ApsLoadSourceProvider`（CRP 负荷 SPI 同源）扩展导出 IN_PROGRESS（已派工）工序——派工先于日批建卡的工序下轮建卡自然补齐，同 seam 幂等增量零双卡；选项 B（本域派工后置直接建卡跨域写）否决。结果记入 owner doc（auto-dispatch.md 实现注记 D6 行）+ matrix 登记。
       - Skill: none
-- [ ] Add: 派工引擎——nop-job 周期扫描（enabled 默认 false + cron 空值跳过 + 全局开关；R1.38 简单 job bean 范式）：按工作中心加载 DispatchRule（enableAuto/holdUntil/enabledHours/maxLookahead/dispatchAhead/maxConcurrentOps/priorityThreshold）→查 eligible PLANNED 工序（plannedStartDateT 窗口内 + status != HOLD——保持态由 status dict 值承载，零新列）→按 (plannedStartDateT ASC, priority ASC) 逐个检查物料齐套（D5 通道）/操作工在岗（排班只读，无排班数据视为满足并记条件结果 null）/工装维度（requireTooling=true 且无工装载体→条件结果记 null 放行 + LOG.warn，Deferred 节登记的确定口径）→全满足 status=IN_PROGRESS + 记 DispatchLog（previousStatus/newStatus/dispatchType=AUTO/三维条件结果 JSON/dispatchedBy=系统）→不满足跳过继续；缺料且工序已派工窗口内→status=ON_HOLD + notify 通知计划员（aps→notify Java 边登记；模板无 ACTIVE 静默跳过）。
+- [x] Add: 派工引擎——`ErpApsAutoDispatchProcessor`（protected step 结构）+ `erp-aps-auto-dispatch.job.yaml`（enabled 默认 false）+ `ErpApsAutoDispatchJob`（R1.38 简单 job bean：全局开关 `erp-aps.auto-dispatch-enabled` 默认 false + cron `erp-aps.auto-dispatch-cron` 空值跳过 + runInSession 包裹）：按工作中心加载 DispatchRule（enableAuto/holdUntil/enabledHours/maxLookahead/dispatchAhead/maxConcurrentOps 缺省回落工作中心 capacity/priorityThreshold）→查 eligible PLANNED 工序（窗口内 + status dict 值承载保持态零新列）→(plannedStartDateT ASC, priority ASC) 逐个检查物料齐套（D5 通道）/操作工（无排班载体 null 放行）/工装（requireTooling 且无载体→null 放行 + LOG.warn）→全满足 status=IN_PROGRESS + DispatchLog（previousStatus/newStatus/dispatchType=AUTO/三维条件 JSON/dispatchedBy=system）→不满足跳过继续；缺料且窗口内→status=ON_HOLD + notify `aps.dispatch-material-shortage`（aps→notify Java 边 matrix §2.4 登记；模板无 ACTIVE 静默跳过）。
       - Skill: `nop-backend-dev`
-- [ ] Add: 手动 mutation 族——`dispatchManually`（PLANNED→IN_PROGRESS，DispatchLog dispatchType=MANUAL + note 承载跳检原因，可跳过条件检查但原因必填）/ `hold`/`unhold`（status PLANNED↔HOLD 迁移 + DispatchLog dispatchType=HOLD/UNHOLD，对齐 auto-dispatch.md §3.3 保持语义）；operation-order-status dict 加 HOLD/ON_HOLD 值（数据变更，B 类裁决明示）。
+- [x] Add: 手动 mutation 族——`dispatchManually`（PLANNED→IN_PROGRESS，DispatchLog dispatchType=MANUAL + note 承载跳检原因，可跳过条件检查但原因必填 ERR_APS_DISPATCH_REASON_REQUIRED）/ `hold`/`unhold`（status PLANNED↔HOLD 迁移 + DispatchLog dispatchType=HOLD/UNHOLD，ON_HOLD 经 unhold 解除，状态机 Bean hold/unhold 守卫 + transitions 13 边扩展，对齐 auto-dispatch.md §3.3 保持语义）；operation-order-status dict 加 HOLD/ON_HOLD 值（数据变更，B 类裁决明示）。
       - Skill: `nop-backend-dev`
-- [ ] Proof: `TestErpApsAutoDispatch` 至少 10 组——规则跳过（enableAuto=false/holdUntil 未到/enabledHours 窗口外）、eligible 过滤（窗口/优先级阈值/maxConcurrentOps/HOLD 态排除）、三条件组合满足派工+DispatchLog 完整、缺料跳过+ON_HOLD 通知、操作工无排班降级满足（条件结果 null）、工装开关开+无载体→null 放行+LOG.warn、手动强制派工（跳过检查+原因必填）、hold/unhold（status 迁移+DispatchLog）、并发派工冲突乐观锁、job cron 空值跳过 + 幂等（重复扫描不重复派工）。
+- [x] Proof: `TestErpApsAutoDispatch` 10 组全绿——规则跳过（enableAuto=false/holdUntil 未到/enabledHours 窗口外三模式）、eligible 过滤（前瞻窗口过早/过期+优先级阈值+maxConcurrentOps 满额+HOLD 态排除）、三条件组合满足派工+DispatchLog 完整（AUTO/前後态/三维布尔 null 语义/JSON/dispatchedBy=system）、缺料跳过+ON_HOLD+通知计划员落 ErpSysNotification、无 BOM null 放行（工单级齐套条件结果 null 断言）、工装开关开+无载体→null 放行（testAllConditionsPass 断言 toolingAvailable null）、手动强制派工（跳检+空原因拒绝+note 断言）、hold/unhold（PLANNED↔HOLD/ON_HOLD→PLANNED 迁移+DispatchLog+非法源态拒绝）、并发派工冲突（二次派工拒绝+重复扫描幂等零重复日志）、job cron 空值跳过+job 全链路派工（runInSession 范式）+全局开关关闭跳过（10 组含）。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 自动派工链路运行时可观察（派工/跳过/保持/强制四模式 + ON_HOLD 通知）
-- [ ] TestErpAllJobYamlLoading 计数同步（新增 job.yaml 后）
+- [x] 自动派工链路运行时可观察（派工/跳过/保持/强制四模式 + ON_HOLD 通知：testAllConditionsPass…/testRuleSkips…/testHoldAndUnhold…/testManualDispatch…/testMaterialShortage…）
+- [x] TestErpAllJobYamlLoading 计数同步（30→32：erp-aps-workorder-scan + erp-aps-auto-dispatch，已验证绿）
 
 ## ORM Approvals（双独立子 agent 批准记录 — 执行期填充）
 
 > A 类授权 + 越界回落 dual-agent-approval：两个 fresh session 子 agent 分别独立复核 selectedRoutingId 列（A 类）+ routingSelectionReason/manualOverride/allowFallback 载体列（R1.73 式越界回落；全部可空无默认无索引无 UK、零既有语义改动），各自 APPROVE 后方可执行 ORM 编辑。
 
-- [ ] Approver 1（session id + 结论 + 日期）：______
-- [ ] Approver 2（session id + 结论 + 日期）：______
+- [x] Approver 1（session id + 结论 + 日期）：appr1-7f3a2c / APPROVE / 2026-08-20（纯加性核验：4 列在 aps orm.xml 全文零命中、propId 30-33 无冲突、UK/索引零触及、owner doc §2.2/§4.1/§4.3 逐列背书、ErpApsOpRouting.id 弱引用目标存在、dict 加值纯数据变更）
+- [x] Approver 2（session id + 结论 + 日期）：appr2-7f3a91 / APPROVE / 2026-08-20（独立复核 + 风险面：授权台账/Phase 2 约束逐字核对、_cases CSV 快照 header-based 子集比较零破坏、deploy SQL 为 _ 前缀生成物重生成追加可空列无约束变更、无 orm_propValue(int) 位置引用；非阻塞注记 D3 载体已由 ORM Approvals 明示 allowFallback 为候选列）
 
 ## Draft Review Record
 
@@ -139,14 +139,14 @@ Exit Criteria:
 
 > 完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成（P1-RC-088/089/090 全部验收点落地）
-- [ ] 相关文档对齐（scheduling.md Non-Goal 行 supersede 标注 + alternative-routing.md/auto-dispatch.md/state-machine.md 实现注记 + data-dependency-matrix D1/D5/D6 边 + aps→notify 边登记 + mnt R1.76「矩阵修订归 RC-R1.86-88 协同」successor 收口注记 + arm-index P1-RC-088/089/090 → done (RC-R1.86/87/88) + roadmap 行状态同步 + docs/logs/ 当日条目）
-- [ ] 已运行验证：erp-aps-service 分域 `mvn test`（+ mfg 侧接线分域）+ 全仓 `mvn clean install -DskipTests` + 全仓 `mvn test` + `bash docs/audits/nop-compliance-checker.sh`（若 actual > baseline 则 baseline-raise 登记 per-site 证据）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（P1-RC-088/089/090 全部验收点落地）
+- [x] 相关文档对齐（scheduling.md Non-Goal 行 supersede 标注 + alternative-routing.md/auto-dispatch.md/state-machine.md 实现注记 + data-dependency-matrix D1/D5/D6 边 + aps→notify 边登记 + mnt R1.76「矩阵修订归 RC-R1.86-88 协同」successor 收口注记 + arm-index P1-RC-088/089/090 → done (RC-R1.86/87/88) + roadmap 行状态同步 + docs/logs/ 当日条目）
+- [x] 已运行验证：erp-aps-service 分域 `mvn test`（+ mfg 侧接线分域）+ 全仓 `mvn clean install -DskipTests` + 全仓 `mvn test` + `bash docs/audits/nop-compliance-checker.sh`（若 actual > baseline 则 baseline-raise 登记 per-site 证据）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -170,12 +170,22 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: 三阶段实现与 Proof 已经独立结束审计 round 1 实仓证实全绿；round 1 列出的五项收尾缺口已全部闭合（见 Closure Execution Evidence）——roadmap :478-480 三行 done ✅ + arm-index :291-293 三行 done + docs/logs/2026/08-20.md 聚合条目 + mnt R1.76 successor ② watch-only 裁决收口注记（equipment-integration.md §4.2，RELEASED 触发条件落盘）+ Closure Gates 全仓验证运行并记录。Closure Gates 8 项全部勾选，Plan Status → completed，待独立结束审计 round 2 复核。
+
+Closure Execution Evidence（EXECUTE 侧收尾证据，2026-08-20）:
+
+- 全仓 `mvn clean install -DskipTests`：**BUILD SUCCESS**（156 模块，01:40）
+- 全仓 `mvn test`：**BUILD SUCCESS 3741 tests / 0 failures / 0 errors / 1 skipped**（surefire XML 权威计数 607 文件；前基线 3716 + 本计划新增 25[TestErpApsWorkOrderToOperationOrder 7 + TestErpApsAlternativeRouting 8 + TestErpApsAutoDispatch 10] = 3741 逐字吻合；唯一 skip = 已知 @Disabled ErpAllWebPagesCollectTest）
+- erp-aps-service 分域：**76/0/0 全绿**（surefire XML 13 测试类逐文件核验，含新增三类 7+8+10）
+- `TestErpAllJobYamlLoading`：**绿（计数 30→32**：erp-aps-workorder-scan + erp-aps-auto-dispatch）
+- `bash docs/audits/nop-compliance-checker.sh`：**EXIT=0，19 规则 actual==baseline 零漂移**（R2c 1483→1497 baseline-raise + per-site 证据已登记 compliance-baseline.md「R2c 基线上调注记（plan 2026-08-19-2040-3）」节 + BASELINE 机器可读块 R2c=1497/R2d=37；R1d=14/R2a=34/R2b=236/R3=5/R6=2/R10=12/R12a=70/R12b=66/R12c=40 持平）
+- 文档同步：roadmap RC-R1.86/87/88 三行 done ✅（引用本计划 + 验证证据）+ arm-index P1-RC-088/089/090 三行 done (RC-R1.86/87/88) + owner docs（scheduling.md :9/:11 Non-Goal supersede、alternative-routing.md D3 注记、auto-dispatch.md D5/D6 注记、state-machine.md 新态/新边、data-dependency-matrix §2.4 aps-service→notify-dao + mfg-dao/inv-dao 只读边）+ mnt R1.76 successor ②收口（equipment-integration.md §4.2 实现注记：判归 watch-only successor 不实现、矩阵不修订，RELEASED 触发条件 + 裁决依据 a/b/c 落盘）+ docs/logs/2026/08-20.md 本计划聚合条目
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 独立结束审计 round 1（closure auditor，新会话，2026-08-20，mission 2026-08-17-212541-mission-driver）
+- Evidence: 已独立验证落地——`mvn test -pl module-aps/erp-aps-service` **76/0/0 全绿**（TestErpApsWorkOrderToOperationOrder 7 + TestErpApsAlternativeRouting 8 + TestErpApsAutoDispatch 10 与计划 Proof 计数逐字一致；既有引擎/状态机/排程管理零回归）+ `mvn test -pl app-erp-all -Dtest=TestErpAllJobYamlLoading` 绿（30→32 计数断言通过）+ 实仓命中：ORM propId 30-33 四列、operation-order-status dict UNSCHEDULABLE/HOLD/ON_HOLD（+ dispatch-type dict UNHOLD）、`ErpApsSchedulingEngine` 路由选择/UNSCHEDULABLE、`ErpApsWorkOrderToOperationProcessor`/`ErpApsRoutingManualOverrideProcessor`/`ErpApsAutoDispatchProcessor`、`erp-aps-workorder-scan.job.yaml`/`erp-aps-auto-dispatch.job.yaml`、状态机 HOLD/UNHOLD/shortageHold 边、owner docs（scheduling.md Non-Goal supersede :9/:11、alternative-routing.md D3 注记、auto-dispatch.md D5/D6 注记、state-machine.md 新态/新边、data-dependency-matrix §2.4 aps-service→notify-dao 边）
+- 审计裁决 round 1: **needs completion（closure gaps，返回 EXECUTE）**——①roadmap `docs/backlog/requirement-compliance-roadmap.md:478-480` RC-R1.86/87/88 三行仍 `todo` 未同步 done；②arm-index `docs/audits/arm-index.md:291-293` P1-RC-088/089/090 三行仍 `todo` 未标 done；③`docs/logs/2026/08-20.md` 无本计划执行/验证聚合条目；④Goals 承诺的 mnt R1.76 successor「矩阵修订归 RC-R1.86-88 协同」收口注记未落盘（`equipment-integration.md:180` successor ②「mnt 自动生成 aps ErpApsConstraint(MAINTENANCE)」仍悬置待协同裁决记录）；⑤Closure Gates 全仓验证（全仓 `mvn clean install -DskipTests` + 全仓 `mvn test` + `bash docs/audits/nop-compliance-checker.sh` 含 baseline-raise 登记）未运行未记录（08-20 既有全仓 VERIFY 条目录得 job 计数 30，早于本计划两 job 落地，不可引用为本计划验证）
 
 Follow-up:
 

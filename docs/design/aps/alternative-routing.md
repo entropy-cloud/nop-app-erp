@@ -4,6 +4,14 @@
 
 详细设计替代工艺路线功能：同一工序可配置多个可用工作中心（主选 + 备选），排产时按优先级自动选择，主选被占用或停机时自动回退到备选，记录备选与主选的换模时间差异。提高排产灵活性和产能利用率。
 
+> **实现注记（RC-R1.87，plan 2026-08-19-2040-3）**：
+> - **工序关联键**：`ErpApsOperationOrder` 与 `ErpApsOpRouting` 经「`isDefault=true 且 machineId=工序主工作中心`的默认行」关联——默认行的 `operationId` 定位该工序的全部启用行（priority ASC，生效期以当日判定 + 批量约束过滤）为候选集。无匹配默认行（或 `manualOverride=true`）的工序保持 `op.machineId` 单候选零行为变化。
+> - **时间差幂等**：重复排产先剥离上次选中路由（`selectedRoutingId`）的时间差恢复标准值，再叠加新选中值；上次路由已删除时按当前值处理（等效差值 0）。
+> - **UNSCHEDULABLE 自愈**：全部候选路由无可用产能/被过滤 → `status=UNSCHEDULABLE` + 冲突码 `NO_AVAILABLE_ROUTING`；重排时 UNSCHEDULABLE 与 DRAFT 同池重试，路由/停机恢复后自动翻回 PLANNED。
+> - **D3 裁决（allowFallback 载体）**：降级开关落在 `ErpApsOperationOrder.allowFallback` 列（可空 Boolean，null=允许降级，对齐 §4.1「检查 operationOrder 是否允许降级」）；`false` 时仅尝试主选路由，主选不可用直接 UNSCHEDULABLE + 告警，不尝试备选。
+> - **PRIMARY_DOWN 判定**：主选工作中心时间轴阻塞区间全部为维护停机（无工序占用）时记 `PRIMARY_DOWN`，否则记 `PRIMARY_OVERBOOKED`；主选被批量约束排除而选中备选记 `BATCH_CONSTRAINT`。
+> - **manualOverride**：`manualOverrideRouting` mutation 剥离旧差值→叠加新路由差值→`manualOverride=true` + `routingSelectionReason` 清空（人工语义由标记承载，非四类自动原因）→ 回退 DRAFT + 释放产能预留，remark 追加审计记录；重排时跳过自动路由选择，保持人工指定工作中心与路由。
+
 ## 设计边界
 
 - 本设计负责：替代路由的实体定义、优先级排序、排产引擎调用替代路由的逻辑、换模时间差计算、主选过载时自动降级。

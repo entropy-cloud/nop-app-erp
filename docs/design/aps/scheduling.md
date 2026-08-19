@@ -6,8 +6,9 @@
 > - **工作中心班次日历未展开**：本期工作中心可用时间轴 = horizon 全域 − 维护停机区间；班次/节假日重复展开（`ErpMfgWorkcenterCalendar` shift 模式展开）归 follow-up。
 > - **ATP/CTP 跨域只读聚合经 IDaoProvider**：本期对 inventory/manufacturing 域的 ATP 库存聚合与 CTP 工艺路线追溯采用 `IDaoProvider` 只读实体查询，而非跨域 I*Biz 强注入（I*Biz 强注入在 aps-service 单模块部署/测试时因依赖模块未组装而启动失败）。仅只读聚合、非裸 SQL、未破坏物理边界；完整 `app-erp-all` 部署等价。CTP 影子 OperationOrder 经 `IEntityDao.newEntity()` 构造，仅参与内存模拟，从不 save。
 > - **甘特图前端可视化 / `dragUpdateOperation` 拖拽后端校验**：Non-Goal，归前端计划。
-> - **APS→CRP 负荷来源 re-wiring / maintenance 停机事件订阅扣减 / 自动派工（DispatchRule/DispatchLog）执行 / nop-job 定时自动重排**：均为 Non-Goal，归各 owner 计划 follow-up。
+> - **APS→CRP 负荷来源 re-wiring / maintenance 停机事件订阅扣减 / nop-job 定时自动重排**：均为 Non-Goal，归各 owner 计划 follow-up。~~自动派工（DispatchRule/DispatchLog）执行~~ ——**已 supersede**：RC-R1.88（plan 2026-08-19-2040-3）落地自动派工引擎（`ErpApsAutoDispatchProcessor` + `erp-aps-auto-dispatch.job.yaml` + dispatchManually/hold/unhold mutation 族），详见 `auto-dispatch.md` 实现注记。
 > - **JobCard 按 OperationOrder 排程自动创建**：制造域 `ErpMfgWorkOrder__generateJobCardsFromSchedule` 经 `IErpApsLoadSourceProvider` SPI 消费已排程（PLANNED）的 OperationOrder 时段，按工序生成 JobCard；详见 `docs/design/manufacturing/state-machine.md §APS 排程来源建卡`。
+> - **UC-APS-01 工单下达→工序工单自动创建（RC-R1.86，plan 2026-08-19-2040-3）**：D1 裁决**选项 B 拉取消费模型**（R1.76 先例）——aps 侧 `erp-aps-workorder-scan.job.yaml` 周期拉取扫描已下达（已审核 `NOT_STARTED` 起至 `IN_PROCESS` 的未终态执行段）且尚无 OperationOrder 的工单，经 `ErpApsWorkOrderToOperationProcessor` 读 mfg 工艺路线工序（`IDaoProvider` 只读，matrix §9.4 豁免）批量建 DRAFT；计划员手动触发 `createOperationOrdersFromWorkOrder` mutation 同源同幂等。否决选项 A（mfg RELEASED 后置推送）：需新增 mfg-service→aps-dao Java 边且联动失败须隔离 mfg 审核主流程，拉取模型零新边（复用 aps-service 既有 mfg-dao compile 依赖）且幂等守卫天然可重试。上述「自动派工…执行」Non-Goal 行由 RC-R1.88 supersede（见下）。
 
 ## 目的
 

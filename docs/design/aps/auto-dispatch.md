@@ -4,6 +4,15 @@
 
 详细设计自动派工功能：根据预定义规则（物料已齐套 + 机器可用 + 操作工可用），将 PLANNED 状态的 OperationOrder 自动推动为 IN_PROGRESS，减少人工派工等待时间。支持按工作中心配置规则、手动覆盖/暂停派工、派工操作日志。
 
+> **实现注记（RC-R1.88，plan 2026-08-19-2040-3）**：
+> - **载体口径（B 类裁决「零 ORM 结构变更」）**：派工状态载体 = `operation-order-status` dict 新值 HOLD/ON_HOLD（数据变更）；派工/保持审计载体 = 既有 `ErpApsDispatchLog`（dispatchType/previousStatus/newStatus/conditionCheckResult/三维布尔/dispatchedBy/dispatchedAt 全就绪）；规则载体 = 既有 `ErpApsDispatchRule`。
+> - **D5 裁决（物料齐套跨域模型 = 选项 A）**：inventory 可用量经 `IDaoProvider` 只读直查（aps-service 既有 inv-dao compile 依赖 + ATP/CTP 先例；matrix §9.4 mfg/inv 永久豁免目标域）。齐套口径 = 工单 BOM 单层展开（bomId 缺失回落产品默认 BOM）× plannedQuantity 对照 Σ`ErpInvStockBalance.availableQuantity`（全仓聚合）；无工单/无 BOM/无子件行 → 条件结果 null 放行。否决选项 B（复用 mfg `KitAvailabilityChecker`）：系 mfg-service 内部类，暴露 Facade 须 service 级依赖破坏 aps 单模块测试；多级展开/快照感知/BOM 除数语义归 mfg 域内部。工序级消耗分摊不建模（工单级齐套），successor 归技能矩阵/工序物料模型落地后。
+> - **D6 裁决（JobCard 联动 = 选项 A）**：派工引擎不直接建卡（跨域写否决）；JobCard 由 mfg 既有 `erp-mfg-jobcard-auto-generate.job.yaml` + `generatePendingJobCards/generateJobCardsFromSchedule` 幂等增量建卡 seam 承载。reconcile 去重：`ApsLoadSourceProvider`（CRP 负荷 SPI 同源）已扩展导出 IN_PROGRESS（已派工）工序——派工先于日批建卡的工序下轮建卡自然补齐，同 seam 幂等去重零双卡；CRP 侧 IN_PROGRESS 工序至 plannedEnd 仍占产能，计入负荷语义更完整。
+> - **操作工维度简单口径**：本仓库无工作中心排班载体 → 条件结果恒 null 放行（§2.3「简单场景：至少 1 名在岗操作工」降级语义；排班/技能匹配 successor）。
+> - **工装维度口径（Deferred 裁决）**：requireTooling=true 且仓库无工装主数据载体 → 条件结果 null 放行 + LOG.warn（行为可测试非模糊；工装管理 successor）。
+> - **缺料 ON_HOLD**：eligible 窗口内物料检查失败 → `status=ON_HOLD` + DispatchLog(dispatchType=HOLD, note=material-shortage-auto-hold) + notify `aps.dispatch-material-shortage`（无 ACTIVE 模板 config-gated 静默跳过）；unhold（HOLD/ON_HOLD→PLANNED）后重入派工循环。
+> - **接线**：`erp-aps-auto-dispatch.job.yaml`（enabled 默认 false）+ `ErpApsAutoDispatchJob`（cron `erp-aps.auto-dispatch-cron` 空=跳过）+ 全局开关 `erp-aps.auto-dispatch-enabled`（默认 false，§5.2）门控 `scanAutoDispatch` mutation（job/手动同源入口）；maxConcurrentOps 缺省回落工作中心 capacity（mfg 只读）再缺省 1；扫描经 `runInSession` 包裹（biz 代理直调无请求级 session，对齐 ErpHrLeaveApproverTimeoutJob 范式）。
+
 ## 设计边界
 
 - 本设计负责：自动派工触发条件检查、派工规则配置、派工执行引擎、派工日志、手动强制派工/暂停/保持。

@@ -435,7 +435,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 236
-R2c: 1483
+R2c: 1497
 R2d: 37
 R3: 5
 R4: 0
@@ -578,3 +578,13 @@ R2c 1469 → **1483**（+14）；其中 2 处 ErpMd* 站点位于 Processor，R2
 全部站点为 load-by-id 工具查询或同域批量聚合（非 `getEntityById(FK)` chained 形态，无 Type 1 重构候选）；
 无 BizModel 站点（R2a/R2b 零变化）；跨域消费（sal/qa/pur 读）均经 `@Inject I*Biz` 注入而非 daoFor。
 checker 复跑全 19 规则 actual ≤ updated baseline（R2b=236=R2b 基线不变），CI green 保持。
+
+## R2c 基线上调注记（plan 2026-08-19-2040-3，RC-R1.86/87/88 aps 工单自动创建+替代路由+自动派工）
+
+`2026-08-19-2040-3`（RC-R1.86 WorkOrder 下达→OperationOrder 拉取创建 + RC-R1.87 替代路由选择 + RC-R1.88 自动派工引擎）在 aps 域新增 14 处 daoFor 站点，R2c 1483 → **1497**（+14；R1d=14 / R2a=34 / R2b=236 / R2d=37 / R3=5 / R6=2 / R10=12 / R12a=70 / R12b=66 / R12c=40 均与基线持平零漂移——**BizModel 层零新增 daoFor**，全部新增站点位于 Processor 层；跨域通知派发经 `IErpSysNotificationBiz` IBiz 注入零新增跨域 daoFor 于 BizModel）。**per-site 证据**（同域 6 处 = aps 自有实体 Processor 编排骨架；跨域 8 处 = mfg/inv 只读直访，均按 matrix §9.4 永久豁免目标域裁决 + 代码注释背书，对齐 `ErpApsAtpCtpServiceImpl`/`ApsLoadSourceProvider` 既有 aps 域只读先例）：
+
+- `ErpApsWorkOrderToOperationProcessor`（aps 同域 + mfg 跨域只读）：`requireWorkOrder`/`findReleasedWorkOrders` `daoFor(ErpMfgWorkOrder.class)` ×2（D1 拉取模型工单加载/扫描，只读）、`loadRoutingOperations` `daoFor(ErpMfgRoutingOperation.class)`（工艺路线工序读取，只读）、`workcenterExists` `daoFor(ErpMfgWorkcenter.class)`（工作中心存在性校验，只读）、`opOrderDao` `daoFor(ErpApsOperationOrder.class)`（aps 同域批量创建）
+- `ErpApsSchedulingProcessor`：`opRoutingDao` `daoFor(ErpApsOpRouting.class)`（aps 同域启用路由全集加载，引擎路由选择输入）
+- `ErpApsAutoDispatchProcessor`（aps 同域 + mfg/inv 跨域只读）：`opOrderDao`/`dispatchRuleDao`/`dispatchLogDao` `daoFor(ErpApsOperationOrder/ErpApsDispatchRule/ErpApsDispatchLog.class)`（aps 同域派工/日志，零新列裁决载体）、`resolveMaxConcurrentOps` `daoFor(ErpMfgWorkcenter.class)`（capacity 缺省回落只读）、`checkMaterialAvailability` `daoFor(ErpMfgWorkOrder.class)` + `resolveBom` `daoFor(ErpMfgBom.class)` ×2 + `loadBomLines` `daoFor(ErpMfgBomLine.class)`（D5 裁决选项 A 工单 BOM 单层展开只读）、`sumAvailable` `daoFor(ErpInvStockBalance.class)`（D5 inventory 可用量聚合只读）
+
+全部站点为 load-by-id 工具查询或批量聚合（无 `getEntityById(FK)` chained 形态，无 Type 1 重构候选）；无 BizModel 站点（R2a/R2b 零变化）；跨域通知（notify）经 IBiz 注入。本块以 R2c=1497 为回归门控起点（对齐 R1.48/R1.72/R1.73-75/R1.76/R1.81-82 baseline-raise 先例）。

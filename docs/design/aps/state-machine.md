@@ -15,6 +15,9 @@
 | 执行中（IN_PROGRESS） | 车间开始执行，等待完工 | 工作中心产能被占用，报工中 |
 | 已完成（FINISHED） | 终态：工序已完工 | 释放工作中心产能，触发下工序/工单联动 |
 | 已取消（CANCELLED） | 终态：工序取消（工单变更或取消） | 释放产能预留 |
+| 不可排产（UNSCHEDULABLE） | RC-R1.87：全部候选路由（含主选）无可用产能或被过滤，等待路由/停机恢复 | 不占产能预留；重排时与 DRAFT 同池重试自愈 |
+| 保持（HOLD） | RC-R1.88：计划员暂不派工（§auto-dispatch.md §3.3），等待解除 | 产能仍占用；自动派工扫描跳过 |
+| 缺料暂停（ON_HOLD） | RC-R1.88：派工窗口内物料不齐被系统暂停，等待补料/人工解除 | 产能仍占用；自动派工扫描跳过；通知计划员 |
 
 ### 2. 迁移完整性
 
@@ -36,16 +39,22 @@
 | 迁移 | 触发人 | 前置条件 | 结果 |
 |------|--------|----------|------|
 | DRAFT→PLANNED | APS 引擎 / 计划员 | 排产销入了 plannedStartDateT/plannedEndDateT | 锁定工作中心产能时段 |
-| PLANNED→IN_PROGRESS | 车间调度 | 物料已齐套（可选校验） | JobCard 可开始报工 |
+| PLANNED→IN_PROGRESS | 车间调度（含自动派工引擎，RC-R1.88 dispatch 与 start 同边） | 物料已齐套（可选校验） | JobCard 可开始报工 |
 | IN_PROGRESS→FINISHED | 车间作业人员 | 实际数量 qty 全部报工 | 产能释放，触发下工序或工单收尾 |
-| PLANNED|IN_PROGRESS→CANCELLED | 计划员 / 系统 | 工单取消或工艺路线变更 | 释放预留产能 |
-| PLANNED→DRAFT | APS 引擎（重排） | 区间重排触发 | 解锁产能，待重新排产 |
+| PLANNED\|IN_PROGRESS→CANCELLED | 计划员 / 系统 | 工单取消或工艺路线变更 | 释放预留产能 |
+| PLANNED→DRAFT | APS 引擎（重排）/ 计划员（manualOverrideRouting 强制路由回退，RC-R1.87） | 区间重排触发 / 人工强制指定路由 | 解锁产能，待重新排产 |
+| DRAFT→UNSCHEDULABLE | APS 引擎（RC-R1.87） | 全部候选路由无可用产能/被过滤 | 不占产能；告警冲突 NO_AVAILABLE_ROUTING |
+| UNSCHEDULABLE→PLANNED | APS 引擎（自愈重排，RC-R1.87） | 路由/停机恢复后重排成功 | 锁定产能时段 |
+| PLANNED→HOLD | 计划员（RC-R1.88 hold mutation） | 计划员暂不派工 | DispatchLog(HOLD)；自动派工跳过 |
+| PLANNED→ON_HOLD | 派工引擎（RC-R1.88 缺料暂停） | 派工窗口内物料不齐 | DispatchLog(HOLD)+通知计划员 |
+| HOLD/ON_HOLD→PLANNED | 计划员（RC-R1.88 unhold mutation） | 解除保持 | DispatchLog(UNHOLD)；重入派工循环 |
 
 ### 3. 终态与恢复
 
 - 终态：`已完成（FINISHED）`、`已取消（CANCELLED）`。
 - 终态不可直接恢复。若需修改，重新创建 OperationOrder。
 - 已 FINISHED 的 OperationOrder 不可重排或修改。
+- 非终态暂停类（HOLD/ON_HOLD/UNSCHEDULABLE，RC-R1.87/88）：均可经声明边返回 PLANNED（unhold / 自愈重排），非终态语义。
 - **非法迁移拦截（P1-MA2-077，plan `2026-07-30-0720-2`）**：start 仅接受 PLANNED 源态、complete 仅接受 IN_PROGRESS 源态、cancel 仅接受 DRAFT/PLANNED/IN_PROGRESS 源态；FINISHED/CANCELLED 终态→他态的非法迁移经 `ERR_APS_OP_ILLEGAL_TRANSITION`（`erp.err.aps.op-illegal-transition`）在 `ErpApsOperationOrderBizModel.start/complete/cancel` 入口处拦截。
 
 ### 4. 异常路径
