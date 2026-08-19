@@ -4,9 +4,11 @@ import app.erp.mnt.biz.IErpMntVisitBiz;
 import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.service.ErpMntErrors;
+import app.erp.mnt.service.support.DecommissionedEquipmentGuard;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.exceptions.NopException;
+import jakarta.inject.Inject;
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.in;
@@ -18,6 +20,10 @@ import static io.nop.api.core.beans.FilterBeans.in;
  */
 public class ErpMntVisitScheduleProcessor extends AbstractErpMntVisitProcessor {
 
+    // RC-R1.77 / UC-MAIN-08：处置前创建的 DRAFT visit 排程迁移时校验设备非 DECOMMISSIONED。
+    @Inject
+    DecommissionedEquipmentGuard decommissionedGuard;
+
     public ErpMntVisit schedule(Long visitId, IServiceContext context) {
         ErpMntVisit visit = requireVisit(visitId, context);
         String from = visit.getStatus();
@@ -26,6 +32,7 @@ public class ErpMntVisitScheduleProcessor extends AbstractErpMntVisitProcessor {
         } catch (NopException e) {
             throw illegalVisitTransition(visit, from, ErpMntDaoConstants.VISIT_STATUS_DRAFT, e);
         }
+        decommissionedGuard.rejectIfDecommissioned(visit.getEquipmentId(), context);
         validateSchedulePrereqs(visit, context);
         checkScheduleConflict(visit, context);
         doSchedule(visit, context);

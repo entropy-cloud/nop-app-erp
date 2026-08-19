@@ -57,9 +57,18 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!-- compile: 生产差异阈值告警接入通知派发通道（IErpSysNotificationBiz 位于 erp-notify-dao）。
-             manufacturing→notify 单向（manufacturing 触发通知，notify 不依赖 manufacturing），DAG 无环。 -->
+              manufacturing→notify 单向（manufacturing 触发通知，notify 不依赖 manufacturing），DAG 无环。 -->
         <dependency>
             <artifactId>app-erp-notify-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- compile: 停机排产门控拉取开放停机窗口（IErpMntDowntimeEntryBiz + MntOpenDowntimeWindow DTO
+             位于 maintenance-dao）。manufacturing→maintenance 单向（R，矩阵 :109「maintenance 被 mfg 查」
+             预期方向落地），DAG 无环（mnt-dao 不依赖 mfg）；仅 dao 接口层不引 service，mnt 模块缺失时
+             @Nullable 容错零门控。 -->
+        <dependency>
+            <artifactId>app-erp-maintenance-dao</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
@@ -155,6 +164,15 @@
              app-erp-all 聚合时由 app 层提供；单域测试需引入以使 notify 调用可端到端落 ErpSysNotification。 -->
         <dependency>
             <artifactId>app-erp-notify-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: 停机排产门控 TestErpMfgJobCardDowntimeGate 需真实 IErpMntDowntimeEntryBiz Bean
+             （ErpMntDowntimeEntryBizModel + 开放窗口查询）注册。app-erp-all 聚合时由 app 层提供；
+             既有 mfg 测试不 seed 开放停机 → 门控零命中零回归。 -->
+        <dependency>
+            <artifactId>app-erp-maintenance-service</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>

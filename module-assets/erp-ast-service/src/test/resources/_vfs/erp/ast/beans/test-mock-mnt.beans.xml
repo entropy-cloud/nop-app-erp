@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- ast 测试容器专用 mnt 设备 BizModel mock（RC-R1.77 处置联动接线测试；
+     仅 TestErpAstDisposalEquipmentLinkage 经 testBeansFile 显式加载，不进其余 ast 测试容器。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <bean id="testMockErpMntEquipmentBiz"
+          class="app.erp.ast.service.TestMockMntBizModels$MockErpMntEquipmentBiz"
+          ioc:type="app.erp.mnt.biz.IErpMntEquipmentBiz"/>
+</beans>

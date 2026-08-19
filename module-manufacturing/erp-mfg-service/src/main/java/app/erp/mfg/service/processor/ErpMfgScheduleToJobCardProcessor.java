@@ -6,12 +6,15 @@ import app.erp.mfg.dao.entity.ErpMfgJobCard;
 import app.erp.mfg.dao.entity.ErpMfgWorkOrder;
 import app.erp.mfg.service.ErpMfgConstants;
 import app.erp.mfg.service.ErpMfgErrors;
+import app.erp.mnt.biz.IErpMntDowntimeEntryBiz;
+import app.erp.mnt.biz.MntOpenDowntimeWindow;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,8 +67,58 @@ public class ErpMfgScheduleToJobCardProcessor {
     @Inject
     List<IErpApsLoadSourceProvider> apsLoadSourceProviders;
 
+    /**
+     * RC-R1.76 / UC-MAIN-06 开放停机窗口跨域 Facade（可选注入——mnt 模块缺失时为 null，
+     * {@link #findOpenDowntimeWorkcenterIds} 返回空集 = 无门控零回归）。mfg-service→mnt-dao
+     * Java 层新边（矩阵 :109「maintenance 被 manufacturing 查」预期方向落地，仅 dao 接口层）。
+     */
+    @Nullable
+    @Inject
+    IErpMntDowntimeEntryBiz mntDowntimeEntryBiz;
+
+    public void setMntDowntimeEntryBiz(IErpMntDowntimeEntryBiz mntDowntimeEntryBiz) {
+        this.mntDowntimeEntryBiz = mntDowntimeEntryBiz;
+    }
+
     public void setApsLoadSourceProviders(List<IErpApsLoadSourceProvider> apsLoadSourceProviders) {
         this.apsLoadSourceProviders = apsLoadSourceProviders;
+    }
+
+    /**
+     * 开放停机工作中心集合（排产门控判定，拉取消费模型）：mnt 模块缺失 / 无开放窗口时返回空集。
+     */
+    public Set<Long> findOpenDowntimeWorkcenterIds(IServiceContext context) {
+        if (mntDowntimeEntryBiz == null) {
+            return Collections.emptySet();
+        }
+        List<MntOpenDowntimeWindow> windows = mntDowntimeEntryBiz.findOpenDowntimeEquipmentWorkcenters(context);
+        Set<Long> workcenterIds = new HashSet<>();
+        for (MntOpenDowntimeWindow window : windows) {
+            if (window.getWorkcenterId() != null) {
+                workcenterIds.add(window.getWorkcenterId());
+            }
+        }
+        return workcenterIds;
+    }
+
+    /**
+     * RC-R1.76 / UC-MAIN-06 排产暂停门控（L1「暂停该设备的工单排产」= 工单级暂停）：本次拟建卡工序中
+     * 任一落在开放停机工作中心 → 跳过该工单本轮建卡 + LOG.warn，工单保持 pending（不标记、不建卡），
+     * 下次排产执行时点（日批 job / 手动重触发）自然重试；停机 complete 后窗口关闭 → 自然恢复排产。
+     */
+    protected boolean isPausedByOpenDowntime(ErpMfgWorkOrder wo, List<ApsLoadSlot> slots,
+                                             Set<Long> openDowntimeWorkcenters) {
+        if (openDowntimeWorkcenters.isEmpty()) {
+            return false;
+        }
+        for (ApsLoadSlot slot : slots) {
+            if (slot.getWorkcenterId() != null && openDowntimeWorkcenters.contains(slot.getWorkcenterId())) {
+                LOG.warn("erp-mfg-jobcard-downtime-paused: workOrderId={} code={} workcenterId={} under open downtime, skip this round",
+                        wo.getId(), wo.getCode(), slot.getWorkcenterId());
+                return true;
+            }
+        }
+        return false;
     }
 
     // ---------- :45 只读查询豁免（保留 facade） ----------

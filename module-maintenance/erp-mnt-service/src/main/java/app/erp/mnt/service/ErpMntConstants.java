@@ -58,6 +58,27 @@ public interface ErpMntConstants extends ErpMntDocStatus {
     boolean DEFAULT_AUTO_GENERATE_DUE_VISITS = true;
     boolean DEFAULT_EQUIPMENT_STATUS_LINK_ENABLED = true;
 
+    // ---- 跨域联动配置项（RC-R1.76/77，B 类预授权）----
+    /** 资产处置→设备 DECOMMISSIONED 联动门控（镜像 equipment-status-link-enabled 先例），默认 true。 */
+    String CONFIG_DISPOSAL_LINK_ENABLED = "erp-mnt.disposal-link-enabled";
+    /** 停机 record/complete 双向计划员通知门控（notify 辅助语义），默认 true。 */
+    String CONFIG_DOWNTIME_NOTIFY_ENABLED = "erp-mnt.downtime-notify-enabled";
+
+    boolean DEFAULT_DISPOSAL_LINK_ENABLED = true;
+    boolean DEFAULT_DOWNTIME_NOTIFY_ENABLED = true;
+
+    // ---- 状态日志来源（RC-R1.77 处置链路）----
+    /**
+     * 处置联动状态日志来源。注意：dict erp-mnt/status-log-source 值集当前为 VISIT/DOWNTIME/MANUAL
+     * （零 ORM 约束下不追加 dict 选项）；Java 写路径（EquipmentStatusLogWriter.append）不做 dict 校验，
+     * UI 展示回落原值码。dict 选项加性追加归 successor（ORM 变更）。
+     */
+    String STATUS_LOG_SOURCE_DISPOSAL = "DISPOSAL";
+
+    // ---- notify 事件类型（RC-R1.76 停机双事件，模板种子 7208/7209）----
+    String NOTIFY_EVENT_EQUIPMENT_DOWNTIME = "mnt.equipment-downtime";
+    String NOTIFY_EVENT_EQUIPMENT_RECOVERED = "mnt.equipment-recovered";
+
     // ---- 看板预警阈值配置项（dashboards.md §实现约定 §5，经 AppConfig.var 读取，NopSysVariable 可运行时覆盖）----
     /** 维护逾期预警窗口天数（Schedule.nextDueDate 早于 today-minus-overdueDays 触发预警）；默认 0=直接 < today 比对。 */
     String CONFIG_DASH_MNT_MAINTENANCE_OVERDUE_DAYS = "erp-dash.mnt-maintenance-overdue-days";

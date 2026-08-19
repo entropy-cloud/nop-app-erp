@@ -2,6 +2,7 @@ package app.erp.mnt.service.processor;
 
 import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntDowntimeEntry;
+import app.erp.mnt.service.ErpMntConstants;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.time.CoreMetrics;
 
@@ -11,7 +12,7 @@ import java.time.Duration;
 
 /**
  * ErpMntDowntimeEntry complete per-mutation Processor（R6.7，{@code processor-extension-pattern.md} 每 mutation 一 Processor）。
- * 自包含停机结束编排：已开始守卫 + 未结束守卫 + endTime/totalMinutes 计算 + 落库 + 设备状态恢复（RUNNING）。
+ * 自包含停机结束编排：已开始守卫 + 未结束守卫 + endTime/totalMinutes 计算 + 落库 + 设备状态恢复（RUNNING）+ 计划员通知（7209）。
  * 下游可经 Delta beans.xml 同名 bean id 覆盖本类。共享 helper 单一真相源在 {@link AbstractErpMntDowntimeEntryProcessor}。
  */
 public class ErpMntDowntimeEntryCompleteProcessor extends AbstractErpMntDowntimeEntryProcessor {
@@ -23,6 +24,9 @@ public class ErpMntDowntimeEntryCompleteProcessor extends AbstractErpMntDowntime
         doComplete(downtime, context);
         equipmentStatusLinker.restoreToRunning(downtime.getEquipmentId(),
                 ErpMntDaoConstants.STATUS_LOG_SOURCE_DOWNTIME, context);
+        // RC-R1.76 / UC-MAIN-06：设备恢复事件通知计划员（§4.3「重新计算生产计划」辅助语义；
+        // 排产恢复本身经 mfg 拉取模型在下次排产执行时点自然恢复，免 push）。
+        notifyDowntimeEvent(downtime, ErpMntConstants.NOTIFY_EVENT_EQUIPMENT_RECOVERED, context);
         return downtime;
     }
 

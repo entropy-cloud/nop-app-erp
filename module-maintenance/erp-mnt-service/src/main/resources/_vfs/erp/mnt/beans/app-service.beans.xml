@@ -22,6 +22,11 @@
     <bean id="app.erp.mnt.service.support.EquipmentRuntimeCalculator"
           class="app.erp.mnt.service.support.EquipmentRuntimeCalculator"/>
 
+    <!-- DECOMMISSIONED 设备引用守卫（RC-R1.77 / UC-MAIN-08）：Schedule/Request/Visit save/update 钩子 +
+           Visit 排程迁移 + Request accept + 到期访问批量生成查询侧排除共同消费。 -->
+    <bean id="app.erp.mnt.service.support.DecommissionedEquipmentGuard"
+          class="app.erp.mnt.service.support.DecommissionedEquipmentGuard"/>
+
     <!-- 维护域服务（非 BizModel）：备件领料出库服务（按行调 IErpInvStockMoveBiz.generateMove 跨域出库） -->
     <bean id="app.erp.mnt.service.support.SparePartIssueService"
           class="app.erp.mnt.service.support.SparePartIssueService"/>

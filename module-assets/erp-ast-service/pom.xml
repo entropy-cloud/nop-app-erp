@@ -29,6 +29,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- RC-R1.77 / UC-MAIN-08：资产处置→设备 DECOMMISSIONED 联动（IErpMntEquipmentBiz Facade 位于 maintenance-dao）。
+             assets-service→mnt-dao Java 层新边（矩阵 §2.2 注记登记）。注意 mnt-dao 已 pom 依赖 ast-dao（ORM to-one
+             shadow），ast-service→mnt-dao→ast-dao 构成 Maven 菱形非环（ast-dao 无反向依赖）；仅 dao 接口层不引 service。 -->
+        <dependency>
+            <artifactId>app-erp-maintenance-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <artifactId>app-erp-assets-codegen</artifactId>
             <groupId>io.nop.app</groupId>

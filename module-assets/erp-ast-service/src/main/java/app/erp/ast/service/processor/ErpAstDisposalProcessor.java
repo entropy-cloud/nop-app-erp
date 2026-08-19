@@ -11,6 +11,7 @@ import app.erp.ast.service.statemachine.ErpAstAssetStateMachine;
 import app.erp.ast.service.statemachine.ErpAstDepreciationScheduleStateMachine;
 import app.erp.ast.service.statemachine.ErpAstDisposalApprovalStateMachine;
 import app.erp.ast.service.statemachine.ErpAstDisposalDocumentStateMachine;
+import app.erp.mnt.biz.IErpMntEquipmentBiz;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
@@ -20,6 +21,7 @@ import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
 import io.nop.orm.dao.IOrmEntityDao;
 import io.nop.orm.IOrmTemplate;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 import java.util.List;
 import java.util.Objects;
@@ -70,6 +72,14 @@ public class ErpAstDisposalProcessor {
     @Inject
     ErpAstDisposalDocumentStateMachine documentStateMachine;
 
+    /**
+     * RC-R1.77 / UC-MAIN-08：资产处置→设备 DECOMMISSIONED 联动 Facade（assets→maintenance Java 层新边）。
+     * @Nullable：mnt 模块未部署（单域测试容器/裁剪部署）时跳过联动，不阻断处置主流程。
+     */
+    @Nullable
+    @Inject
+    IErpMntEquipmentBiz mntEquipmentBiz;
+
     public ErpAstDisposal submitForApproval(String id, IServiceContext context) {
         return submitForApprovalProcessor.submitForApproval(id, context);
     }
@@ -106,6 +116,11 @@ public class ErpAstDisposalProcessor {
         daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
 
         cancelPendingSchedules(asset.getId());
+
+        // RC-R1.77 / UC-MAIN-08：处置 approve 后置联动设备 DECOMMISSIONED（同 JVM 同事务，失败异常传播
+        // 回滚处置——设备停用是 L1 硬断言，处置成功但设备未停用 = 契约破坏；mnt 模块缺失或
+        // erp-mnt.disposal-link-enabled 关闭时由 Facade 侧 no-op 跳过）。
+        decommissionLinkedEquipment(disposal, asset, context);
 
         disposal.setGainLoss(gainLoss);
         disposal.setApproveStatus(approvalStateMachine.approveTargetStatus());
@@ -148,6 +163,9 @@ public class ErpAstDisposalProcessor {
                 daoProvider.daoFor(ErpAstAsset.class).saveOrUpdateEntity(asset);
             }
             restoreCancelledSchedules(disposal.getAssetId());
+            // RC-R1.77：冲销对称恢复与资产恢复同分支（仅 posted==TRUE），防「设备 RUNNING / 资产 SCRAPPED」分叉；
+            // 设备非 DECOMMISSIONED 时 Facade 侧幂等跳过。
+            restoreLinkedEquipment(disposal, context);
             disposal = reload(id);
             disposal.setPosted(false);
             disposal.setPostedAt(null);
@@ -235,6 +253,22 @@ public class ErpAstDisposalProcessor {
             throw new NopException(ErpAstErrors.ERR_DISPOSAL_ASSET_NOT_DISPOSABLE)
                     .param(ErpAstErrors.ARG_ASSET_CODE, asset.getCode());
         }
+    }
+
+    // ---------- RC-R1.77：设备停用联动（protected step，下游可覆盖） ----------
+
+    protected void decommissionLinkedEquipment(ErpAstDisposal disposal, ErpAstAsset asset, IServiceContext context) {
+        if (mntEquipmentBiz == null || asset == null || asset.getId() == null) {
+            return;
+        }
+        mntEquipmentBiz.changeStatusForAssetDisposal(asset.getId(), disposal.getCode(), context);
+    }
+
+    protected void restoreLinkedEquipment(ErpAstDisposal disposal, IServiceContext context) {
+        if (mntEquipmentBiz == null || disposal.getAssetId() == null) {
+            return;
+        }
+        mntEquipmentBiz.restoreFromAssetDisposal(disposal.getAssetId(), disposal.getCode(), context);
     }
 
     // ---------- 折旧计划状态联动 ----------

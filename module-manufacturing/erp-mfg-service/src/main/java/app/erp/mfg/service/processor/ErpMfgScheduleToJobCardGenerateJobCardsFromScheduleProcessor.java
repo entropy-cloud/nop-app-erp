@@ -33,6 +33,12 @@ public class ErpMfgScheduleToJobCardGenerateJobCardsFromScheduleProcessor {
                     .param(ErpMfgErrors.ARG_WORK_ORDER_CODE, wo.getCode());
         }
 
+        // RC-R1.76 / UC-MAIN-06 排产门控（拉取一次）：开放停机工作中心的受影响工单本轮暂停
+        // （工单级跳过 + warn，保持 pending 下次排产执行自然恢复——L1「暂停该设备的工单排产」）。
+        if (facade.isPausedByOpenDowntime(wo, slots, facade.findOpenDowntimeWorkcenterIds(context))) {
+            return wo;
+        }
+
         List<ErpMfgJobCard> existing = facade.findJobCardsForWorkOrder(workOrderId);
         List<ApsLoadSlot> toBuild = facade.resolveSlotsToBuild(slots, existing, wo);
         if (toBuild.isEmpty()) {

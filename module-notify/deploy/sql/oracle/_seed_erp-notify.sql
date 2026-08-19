@@ -147,7 +147,7 @@ VALUES
    '满意度调查邀请: ${ticketCode}',
    '工单 ${ticketCode} 的满意度调查已就绪（渠道 ${channel}，token ${surveyToken}），请转达客户 ${customerName} 填写',
    'ROLE', '{"roles":["客服员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
-   '业务提醒样例（调查邀请派发，surveyId=${surveyId}）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP)),
+   '业务提醒样例（调查邀请派发，surveyId=${surveyId}）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
   -- 异常告警：目录履行步骤失败暂停（RC-R1.71，P1-RC-061，UC-CS-12 ③），5 分钟窗口合并。
   -- 接收人=ROLE 客服主管（失败暂停 + 记录 lastError 后通知管理员；重试超限共用本模板，errorMsg 携带人工介入提示）。
   (7206, 'cs.fulfillment-step-failed', '履行步骤失败暂停', 'IN_APP',
@@ -162,5 +162,18 @@ VALUES
    '履行进度通知: ${ticketCode}',
    '工单 ${ticketCode}（目录项 ${catalogItemName}）履行进度更新，备注 ${stepRemark}，请转达客户 ${customerName}',
    'ROLE', '{"roles":["客服员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
-   '业务提醒样例（NOTIFY_CUSTOMER 步骤派发，经客服员转达客户）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
+   '业务提醒样例（NOTIFY_CUSTOMER 步骤派发，经客服员转达客户）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 业务提醒：设备故障停机通知计划员（RC-R1.76，P1-RC-068，UC-MAIN-06 §4.2），5 分钟窗口合并。
+  -- 接收人=ROLE 生产计划员（角色数据属部署数据，无匹配角色 config-gated 空投递）。
+  (7208, 'mnt.equipment-downtime', '设备停机通知', 'IN_APP',
+   '设备停机: ${equipmentCode}',
+   '设备 ${equipmentCode}（工作中心 ${workcenterId}）故障停机（原因 ${reason}），自 ${startTime} 起，受影响工单排产已暂停',
+   'ROLE', '{"roles":["生产计划员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '业务提醒样例（设备停机→计划员调整生产计划，RC-R1.76 停机排产联动）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP),
+  -- 业务提醒：设备恢复通知计划员（RC-R1.76，P1-RC-068，UC-MAIN-06 §4.3），5 分钟窗口合并。
+  (7209, 'mnt.equipment-recovered', '设备恢复通知', 'IN_APP',
+   '设备恢复: ${equipmentCode}',
+   '设备 ${equipmentCode}（工作中心 ${workcenterId}）已恢复运行（停机至 ${endTime}），可重新计算生产计划恢复排产',
+   'ROLE', '{"roles":["生产计划员"]}', 300, 'MERGE_BY_USER_TYPE', 'ACTIVE',
+   '业务提醒样例（设备恢复→计划员重新计算生产计划，拉取模型下次排产执行自然恢复）', 0, 0, 'system', CURRENT_TIMESTAMP, 'system', CURRENT_TIMESTAMP);
 

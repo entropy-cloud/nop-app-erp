@@ -17,4 +17,16 @@ public interface ErpMntConfigs {
                 ErpMntConstants.CONFIG_EQUIPMENT_STATUS_LINK_ENABLED, ErpMntConstants.DEFAULT_EQUIPMENT_STATUS_LINK_ENABLED);
         return flag == null || flag;
     }
+
+    static boolean disposalLinkEnabled() {
+        Boolean flag = io.nop.api.core.config.AppConfig.var(
+                ErpMntConstants.CONFIG_DISPOSAL_LINK_ENABLED, ErpMntConstants.DEFAULT_DISPOSAL_LINK_ENABLED);
+        return flag == null || flag;
+    }
+
+    static boolean downtimeNotifyEnabled() {
+        Boolean flag = io.nop.api.core.config.AppConfig.var(
+                ErpMntConstants.CONFIG_DOWNTIME_NOTIFY_ENABLED, ErpMntConstants.DEFAULT_DOWNTIME_NOTIFY_ENABLED);
+        return flag == null || flag;
+    }
 }

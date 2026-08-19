@@ -92,6 +92,13 @@ public interface ErpMntErrors {
     ErrorCode ERR_EQUIPMENT_NOT_FOUND = ErrorCode.define("erp.err.mnt.equipment-not-found",
             "设备 {equipmentId} 不存在", ARG_EQUIPMENT_ID);
 
+    // --- RC-R1.77 / UC-MAIN-08 引用守卫 ---
+    String ARG_EQUIPMENT_CODE = "equipmentCode";
+
+    ErrorCode ERR_EQUIPMENT_DECOMMISSIONED = ErrorCode.define("erp.err.mnt.equipment-decommissioned",
+            "设备[{equipmentCode}]已停用（资产已处置），不可被新维护计划/工单引用",
+            ARG_EQUIPMENT_CODE, ARG_EQUIPMENT_ID);
+
     // --- 报表渲染作用域（镜像 ErpMfgErrors.ERR_REPORT_*，维护域独立错误码，不跨域 import） ---
 
     ErrorCode ERR_REPORT_NAME_INVALID = ErrorCode.define(

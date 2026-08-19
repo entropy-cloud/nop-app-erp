@@ -4,12 +4,16 @@ import app.erp.mnt.biz.IErpMntEquipmentBiz;
 import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntEquipment;
 import app.erp.mnt.service.ErpMntConfigs;
+import app.erp.mnt.service.ErpMntConstants;
 import app.erp.mnt.service.ErpMntErrors;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
 import java.util.concurrent.ConcurrentHashMap;
+
+import static io.nop.api.core.beans.FilterBeans.eq;
 
 /**
  * 设备状态联动器。访问 start→设备 UNDER_MAINTENANCE、complete/cancel→恢复；
@@ -63,6 +67,51 @@ public class EquipmentStatusLinker {
                 ErpMntDaoConstants.STATUS_LOG_SOURCE_DOWNTIME, context);
     }
 
+    /**
+     * 资产处置→设备停用（RC-R1.77 / UC-MAIN-08）：按 assetId 反查关联设备置 DECOMMISSIONED，
+     * 同链写状态日志行（来源 DISPOSAL，sourceBillCode=处置单编码）。返回联动行数：
+     * 0 = config 关闭 / 无关联设备（§1.2 可选关联 no-op）/ 已 DECOMMISSIONED 幂等跳过。
+     * 经 {@code erp-mnt.disposal-link-enabled} 门控（独立于 equipment-status-link-enabled）。
+     */
+    public int linkToDecommissionedByDisposal(Long assetId, String disposalCode, IServiceContext context) {
+        if (!ErpMntConfigs.disposalLinkEnabled() || assetId == null) {
+            return 0;
+        }
+        ErpMntEquipment equipment = findEquipmentByAssetId(assetId, context);
+        if (equipment == null
+                || ErpMntDaoConstants.EQUIPMENT_STATUS_DECOMMISSIONED.equals(equipment.getStatus())) {
+            return 0;
+        }
+        changeEquipmentStatus(equipment.getId(), ErpMntDaoConstants.EQUIPMENT_STATUS_DECOMMISSIONED,
+                ErpMntConstants.STATUS_LOG_SOURCE_DISPOSAL, disposalCode, context);
+        return 1;
+    }
+
+    /**
+     * 资产处置冲销对称恢复（§1.3 资产恢复分支）：设备 DECOMMISSIONED → RUNNING（字面语义，
+     * 不消费 visit 前态缓存）；非 DECOMMISSIONED 幂等跳过返回 0。
+     */
+    public int restoreFromDisposal(Long assetId, String disposalCode, IServiceContext context) {
+        if (!ErpMntConfigs.disposalLinkEnabled() || assetId == null) {
+            return 0;
+        }
+        ErpMntEquipment equipment = findEquipmentByAssetId(assetId, context);
+        if (equipment == null
+                || !ErpMntDaoConstants.EQUIPMENT_STATUS_DECOMMISSIONED.equals(equipment.getStatus())) {
+            return 0;
+        }
+        changeEquipmentStatus(equipment.getId(), ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING,
+                ErpMntConstants.STATUS_LOG_SOURCE_DISPOSAL, disposalCode, context);
+        return 1;
+    }
+
+    protected ErpMntEquipment findEquipmentByAssetId(Long assetId, IServiceContext context) {
+        QueryBean query = new QueryBean();
+        query.addFilter(eq("assetId", assetId));
+        query.setLimit(1);
+        return equipmentBiz.findFirst(query, null, context);
+    }
+
     public void restoreToRunning(Long equipmentId, IServiceContext context) {
         restoreToRunning(equipmentId, ErpMntDaoConstants.STATUS_LOG_SOURCE_VISIT, context);
     }
@@ -109,7 +158,12 @@ public class EquipmentStatusLinker {
     }
 
     protected void changeEquipmentStatus(Long equipmentId, String newStatus, String logSource,
-                                         IServiceContext context) {
+                                          IServiceContext context) {
+        changeEquipmentStatus(equipmentId, newStatus, logSource, null, context);
+    }
+
+    protected void changeEquipmentStatus(Long equipmentId, String newStatus, String logSource,
+                                          String sourceBillCode, IServiceContext context) {
         ErpMntEquipment equipment = equipmentBiz.get(String.valueOf(equipmentId), false, context);
         if (equipment == null) {
             throw new NopException(ErpMntErrors.ERR_EQUIPMENT_NOT_FOUND)
@@ -118,6 +172,6 @@ public class EquipmentStatusLinker {
         String fromStatus = equipment.getStatus();
         equipment.setStatus(newStatus);
         equipmentBiz.updateEntity(equipment, null, context);
-        statusLogWriter.append(equipmentId, fromStatus, newStatus, logSource, null);
+        statusLogWriter.append(equipmentId, fromStatus, newStatus, logSource, sourceBillCode);
     }
 }
