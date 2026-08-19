@@ -35,6 +35,14 @@
         <property name="bizObjName" value="ErpInvDrpLeadTimeRecord"/>
     </bean>
 
+    <bean id="app.erp.drp.service.entity.ErpInvDrpSupplierScoreBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpInvDrpSupplierScore" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.drp.biz.IErpInvDrpSupplierScoreBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpInvDrpSupplierScore"/>
+    </bean>
+
     <bean id="app.erp.drp.service.entity.ErpDrpLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpDrpLine" class="io.nop.biz.proxy.BizProxyFactoryBean" ioc:type="app.erp.drp.biz.IErpDrpLineBiz"

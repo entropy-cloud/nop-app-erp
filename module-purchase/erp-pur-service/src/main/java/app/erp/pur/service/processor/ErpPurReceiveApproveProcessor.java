@@ -46,6 +46,12 @@ public class ErpPurReceiveApproveProcessor extends AbstractApproveProcessor<ErpP
         // 项目物料成本归集（RC-R1.61 / P1-RC-049）：移动单生成后同事务归集；
         // STRICT 预算/非 OPEN 项目异常传播 → 审核回滚拒绝（L1 UC-PRJ-04 采购审核拒绝该笔归集）
         processor.collectProjectMaterialCost(receive, context);
+        // 越库收货识别（RC-R1.81 / P1-RC-081，D1 裁决选项 A）：PENDING 越库记录→STAGING + inboundMoveId 回写；
+        // drp 模块未部署 @Nullable 跳过 + 失败隔离不阻断主迁移（对齐 RC-R1.85 容错范式）
+        processor.markCrossDockReceived(receive, move, context);
+        // 提前期记录（RC-R1.82 / P1-RC-082，D4 裁决选项 A）：actualLeadTime=DATEDIFF(receiptDate, orderDate)
+        // 落 ErpInvDrpLeadTimeRecord（幂等同单号+物料）；@Nullable 跳过 + 失败隔离同上
+        processor.recordLeadTimeFromReceive(receive, context);
 
         setApproveStatus(receive, approvedStatus());
         setApprovedBy(receive, currentUserId());

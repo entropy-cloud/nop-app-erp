@@ -56,6 +56,23 @@
             <option code="COMPLETED" label="已完成" value="COMPLETED" i18n-en:label="Completed"/>
             <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label="Cancelled"/>
         </dict>
+        <dict label="越库匹配策略" name="erp-inv/drp-xdock-strategy" valueType="string"
+              i18n-en:label="Cross Dock Matching Strategy">
+            <option code="PRE_ALLOCATED" label="预分配" value="PRE_ALLOCATED" i18n-en:label="Pre-allocated"/>
+            <option code="ON_RECEIPT" label="收货时匹配" value="ON_RECEIPT" i18n-en:label="On Receipt"/>
+            <option code="MANUAL" label="人工匹配" value="MANUAL" i18n-en:label="Manual"/>
+        </dict>
+        <dict label="提前期偏差标记" name="erp-inv/drp-lt-flag" valueType="string" i18n-en:label="Lead Time Flag">
+            <option code="ON_TIME" label="准时" value="ON_TIME" i18n-en:label="On Time"/>
+            <option code="EARLY" label="提前" value="EARLY" i18n-en:label="Early"/>
+            <option code="LATE" label="延迟" value="LATE" i18n-en:label="Late"/>
+        </dict>
+        <dict label="供应商评分等级" name="erp-inv/drp-supplier-grade" valueType="string" i18n-en:label="Supplier Grade">
+            <option code="A" label="A级" value="A" i18n-en:label="Grade A"/>
+            <option code="B" label="B级" value="B" i18n-en:label="Grade B"/>
+            <option code="C" label="C级" value="C" i18n-en:label="Grade C"/>
+            <option code="D" label="D级" value="D" i18n-en:label="Grade D"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -530,6 +547,9 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="MATCHING_STRATEGY" displayName="匹配策略" name="matchingStrategy" precision="20" propId="25"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/drp-xdock-strategy"
+                        i18n-en:displayName="Matching Strategy"/>
             </columns>
             <indexes>
                 <index name="IDX_INV_DRP_CROSS_DOCK_ORG_STATUS" unique="false">
@@ -711,7 +731,8 @@
                 <column code="IS_ON_TIME" defaultValue="true" displayName="是否准时" name="isOnTime" propId="11"
                         stdDataType="boolean" stdSqlType="BOOLEAN" i18n-en:displayName="Is On Time"/>
                 <column code="EARLY_LATE_FLAG" displayName="提前/延迟标记" name="earlyLateFlag" precision="50" propId="12"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Early/Late Flag"/>
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-inv/drp-lt-flag"
+                        i18n-en:displayName="Early/Late Flag"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -758,6 +779,107 @@
                     </join>
                 </to-one>
             </relations>
+        </entity>
+        <entity className="app.erp.drp.dao.entity.ErpInvDrpSupplierScore" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion"
+                displayName="供应商可靠性评分" name="app.erp.drp.dao.entity.ErpInvDrpSupplierScore" registerShortName="true"
+                tableName="erp_inv_drp_supplier_score" tagSet="gid,erp.drp" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="star" i18n-en:displayName="Supplier Reliability Score">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="ORG_ID" displayName="业务组织" name="orgId" propId="2" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Organization"/>
+                <column code="SUPPLIER_ID" displayName="供应商" mandatory="true" name="supplierId" propId="3"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Supplier"/>
+                <column code="MATERIAL_ID" displayName="物料" mandatory="true" name="materialId" propId="4"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                <column code="SAMPLE_COUNT" displayName="样本数" name="sampleCount" propId="5" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Sample Count"/>
+                <column code="AVG_LEAD_TIME" displayName="平均提前期(天)" name="avgLeadTime" precision="20" propId="6"
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Avg Lead Time"/>
+                <column code="LEAD_TIME_STD_DEV" displayName="提前期标准差(天)" name="leadTimeStdDev" precision="20" propId="7"
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Lead Time Std Dev"/>
+                <column code="ON_TIME_RATE" displayName="准时率" name="onTimeRate" precision="10" propId="8" scale="4"
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="On Time Rate"/>
+                <column code="VARIATION_COEFFICIENT" displayName="变异系数(σ/μ)" name="variationCoefficient" precision="10"
+                        propId="9" scale="4" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Variation Coefficient"/>
+                <column code="QUANTITY_ACCURACY" displayName="数量准确率" name="quantityAccuracy" precision="10" propId="10"
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity Accuracy"/>
+                <column code="QUALITY_PASS_RATE" displayName="质量合格率" name="qualityPassRate" precision="10" propId="11"
+                        scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quality Pass Rate"/>
+                <column code="ON_TIME_SCORE" displayName="准时率得分(满分40)" name="onTimeScore" precision="6" propId="12"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="On Time Score"/>
+                <column code="STABILITY_SCORE" displayName="稳定性得分(满分30)" name="stabilityScore" precision="6" propId="13"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Stability Score"/>
+                <column code="QUANTITY_SCORE" displayName="数量准确率得分(满分20)" name="quantityScore" precision="6" propId="14"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity Score"/>
+                <column code="QUALITY_SCORE" displayName="质量合格率得分(满分10)" name="qualityScore" precision="6" propId="15"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quality Score"/>
+                <column code="TOTAL_SCORE" displayName="总分(满分100)" name="totalScore" precision="6" propId="16" scale="2"
+                        stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Total Score"/>
+                <column code="GRADE" displayName="评分等级" name="grade" precision="20" propId="17" stdDataType="string"
+                        stdSqlType="VARCHAR" ext:dict="erp-inv/drp-supplier-grade" i18n-en:displayName="Grade"/>
+                <column code="MISSING_DIMENSIONS" displayName="样本缺失标注" name="missingDimensions" precision="200"
+                        propId="18" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Missing Dimensions"/>
+                <column code="WINDOW_FROM" displayName="统计窗口起" name="windowFrom" propId="19" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Window From"/>
+                <column code="WINDOW_TO" displayName="统计窗口止" name="windowTo" propId="20" stdDataType="date"
+                        stdSqlType="DATE" i18n-en:displayName="Window To"/>
+                <column code="LAST_CALCULATED_AT" displayName="计算时间" name="lastCalculatedAt" propId="21"
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock"
+                        i18n-en:displayName="Last Calculated At"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="22"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="23" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="24" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="25" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="27" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="28" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_INV_DRP_SUPPLIER_SCORE_SUPPLIER_ID" unique="false">
+                    <column name="supplierId"/>
+                </index>
+                <index name="IDX_INV_DRP_SUPPLIER_SCORE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="supplier" refEntityName="app.erp.md.dao.entity.ErpMdPartner" tagSet="pub"
+                        i18n-en:displayName="Supplier">
+                    <join>
+                        <on leftProp="supplierId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub"
+                        i18n-en:displayName="Org">
+                    <join>
+                        <on leftProp="orgId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+            <unique-keys>
+                <unique-key columns="supplierId,materialId" name="UK_INV_DRP_SUPPLIER_SCORE_SUPPLIER_MATERIAL"/>
+            </unique-keys>
         </entity>
         <entity className="app.erp.drp.dao.entity.ErpDrpScenario" createTimeProp="createTime" createrProp="createdBy"
                 deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="DRP仿真场景"

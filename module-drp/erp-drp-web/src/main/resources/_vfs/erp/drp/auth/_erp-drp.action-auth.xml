@@ -153,6 +153,22 @@
                         </resource>
                     </children>
                 </resource>
+                <resource id="ErpInvDrpSupplierScore-main" displayName="供应商可靠性评分" orderNo="10031"
+                          i18n-en:displayName="Supplier Reliability Score" icon="star" component="FLUX"
+                          resourceType="SUBM" url="/erp/drp/pages/ErpInvDrpSupplierScore/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpInvDrpSupplierScore:query" displayName="查询供应商可靠性评分"
+                                  i18n-en:displayName="Query Supplier Reliability Score" orderNo="10032"
+                                  resourceType="FNPT">
+                            <permissions>ErpInvDrpSupplierScore:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpInvDrpSupplierScore:mutation" displayName="修改供应商可靠性评分"
+                                  i18n-en:displayName="Modify Supplier Reliability Score" orderNo="10033"
+                                  resourceType="FNPT">
+                            <permissions>ErpInvDrpSupplierScore:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
             </children>
         </resource>
     </site>

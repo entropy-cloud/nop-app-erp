@@ -41,7 +41,9 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <!-- DRP 净需求只读聚合：未到货 PO 算在单量；释放 PURCHASE 行生成采购单。drp→purchase 单向（R+W），DAG 无环 -->
+        <!-- DRP 净需求只读聚合：未到货 PO 算在单量；释放 PURCHASE 行生成采购单；RC-R1.82 评分数量准确率维度
+             读订单行偏差。drp→purchase 单向（R+W 释放 + R 评分），DAG 无环（与 pur-service→drp-dao 构成 Maven 菱形非环，
+             dao 层单向、service 层互不依赖，matrix §2.4 披露）。 -->
         <dependency>
             <artifactId>app-erp-purchase-dao</artifactId>
             <groupId>io.nop.app</groupId>
@@ -51,6 +53,13 @@
              drp→manufacturing 单向（R），DAG 无环（manufacturing 不反向依赖 drp）。 -->
         <dependency>
             <artifactId>app-erp-manufacturing-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- RC-R1.81 越库质检守卫（D2 裁决选项 A）+ RC-R1.82 评分质量合格率维度：drp→quality 只读 Java 边
+            （IErpQaInspectionTemplateBiz / IErpQaInspectionBiz，matrix §2.4 登记）。drp→quality 单向（R），DAG 无环。 -->
+        <dependency>
+            <artifactId>app-erp-quality-dao</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
@@ -107,6 +116,14 @@
              IErpSysNotificationBiz；test scope 依赖不传递，单域测试需显式引入。app-erp-all 聚合时由 app 层提供 Bean。 -->
         <dependency>
             <artifactId>app-erp-notify-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: RC-R1.81 ON_RECEIPT 策略 drp→sal 只读边需要 IErpSalOrderBiz/IErpSalOrderLineBiz Bean 实现
+             （注册在 sales-service）。app-erp-all 聚合时由 app 层提供 Bean；生产消费经 @Nullable 注入容错。 -->
+        <dependency>
+            <artifactId>app-erp-sales-service</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>

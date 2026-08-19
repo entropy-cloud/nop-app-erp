@@ -117,6 +117,10 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="matchingStrategy" displayName="匹配策略" propId="25" i18n-en:displayName="Matching Strategy"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-inv/drp-xdock-strategy"/>
+        </prop>
         <prop name="drpLine" i18n-en:displayName="DRP Line" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="drpLineId" ext:joinRightProp="id" insertable="false" updatable="false"
               lazy="true">

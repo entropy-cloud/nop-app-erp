@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 越库匹配策略
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 预分配
+    value: PRE_ALLOCATED
+    description: 
+  
+  - label: 收货时匹配
+    value: ON_RECEIPT
+    description: 
+  
+  - label: 人工匹配
+    value: MANUAL
+    description: 
+  

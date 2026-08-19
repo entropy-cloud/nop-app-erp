@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 供应商评分等级
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: A级
+    value: A
+    description: 
+  
+  - label: B级
+    value: B
+    description: 
+  
+  - label: C级
+    value: C
+    description: 
+  
+  - label: D级
+    value: D
+    description: 
+  

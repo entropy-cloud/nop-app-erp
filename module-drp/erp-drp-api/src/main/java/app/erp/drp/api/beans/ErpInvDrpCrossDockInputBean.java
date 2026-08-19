@@ -264,4 +264,18 @@
         }
 
 
+        private String _matchingStrategy;
+
+    
+        @PropMeta(propId=25)
+    
+        public String getMatchingStrategy(){
+            return _matchingStrategy;
+        }
+
+        public void setMatchingStrategy(String value){
+            this._matchingStrategy = value;
+        }
+
+
     }

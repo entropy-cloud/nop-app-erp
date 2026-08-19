@@ -361,6 +361,32 @@
         }
 
 
+        private String _matchingStrategy;
+
+    
+        @PropMeta(propId=25)
+    
+        public String getMatchingStrategy(){
+            return _matchingStrategy;
+        }
+
+        public void setMatchingStrategy(String value){
+            this._matchingStrategy = value;
+        }
+
+
+        private String _matchingStrategy_label;
+
+    
+        public String getMatchingStrategy_label(){
+            return _matchingStrategy_label;
+        }
+
+        public void setMatchingStrategy_label(String value){
+            this._matchingStrategy_label = value;
+        }
+
+
         private Map<String,Object> _drpLine;
 
         public Map<String,Object> getDrpLine(){

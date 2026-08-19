@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="star" ext:web-renderer="flux" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="供应商可靠性评分" i18n-en:displayName="Supplier Reliability Score"
+      tagSet="gid,erp.drp" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.drp.dao.entity.ErpInvDrpSupplierScore</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys>
+        <key name="UK_INV_DRP_SUPPLIER_SCORE_SUPPLIER_MATERIAL" props="supplierId,materialId"/>
+    </keys>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="supplierId" displayName="供应商" propId="3" i18n-en:displayName="Supplier" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="supplier">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="materialId" displayName="物料" propId="4" i18n-en:displayName="Material" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="material">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="sampleCount" displayName="样本数" propId="5" i18n-en:displayName="Sample Count" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="avgLeadTime" displayName="平均提前期(天)" propId="6" i18n-en:displayName="Avg Lead Time" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="leadTimeStdDev" displayName="提前期标准差(天)" propId="7" i18n-en:displayName="Lead Time Std Dev"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="onTimeRate" displayName="准时率" propId="8" i18n-en:displayName="On Time Rate" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="10" scale="4"/>
+        </prop>
+        <prop name="variationCoefficient" displayName="变异系数(σ/μ)" propId="9" i18n-en:displayName="Variation Coefficient"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="10" scale="4"/>
+        </prop>
+        <prop name="quantityAccuracy" displayName="数量准确率" propId="10" i18n-en:displayName="Quantity Accuracy"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="10" scale="4"/>
+        </prop>
+        <prop name="qualityPassRate" displayName="质量合格率" propId="11" i18n-en:displayName="Quality Pass Rate"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="10" scale="4"/>
+        </prop>
+        <prop name="onTimeScore" displayName="准时率得分(满分40)" propId="12" i18n-en:displayName="On Time Score"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="6" scale="2"/>
+        </prop>
+        <prop name="stabilityScore" displayName="稳定性得分(满分30)" propId="13" i18n-en:displayName="Stability Score"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="6" scale="2"/>
+        </prop>
+        <prop name="quantityScore" displayName="数量准确率得分(满分20)" propId="14" i18n-en:displayName="Quantity Score"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="6" scale="2"/>
+        </prop>
+        <prop name="qualityScore" displayName="质量合格率得分(满分10)" propId="15" i18n-en:displayName="Quality Score"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="6" scale="2"/>
+        </prop>
+        <prop name="totalScore" displayName="总分(满分100)" propId="16" i18n-en:displayName="Total Score" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="6" scale="2"/>
+        </prop>
+        <prop name="grade" displayName="评分等级" propId="17" i18n-en:displayName="Grade" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-inv/drp-supplier-grade"/>
+        </prop>
+        <prop name="missingDimensions" displayName="样本缺失标注" propId="18" i18n-en:displayName="Missing Dimensions"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="200"/>
+        </prop>
+        <prop name="windowFrom" displayName="统计窗口起" propId="19" i18n-en:displayName="Window From" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="windowTo" displayName="统计窗口止" propId="20" i18n-en:displayName="Window To" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="lastCalculatedAt" displayName="计算时间" propId="21" i18n-en:displayName="Last Calculated At"
+              tagSet="clock" queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="22" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="23" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="24" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="25" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="26" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="27" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="28" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="supplier" i18n-en:displayName="Supplier" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="supplierId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdPartner"/>
+        </prop>
+        <prop name="supplier.name" i18n-en:displayName="Supplier" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="material" i18n-en:displayName="Material" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="materialId" ext:joinRightProp="id" ext:joinRightDisplayProp="name"
+              biz:moduleId="erp/md" insertable="false" updatable="false" mandatory="true" lazy="true">
+            <schema bizObjName="ErpMdMaterial"/>
+        </prop>
+        <prop name="material.name" i18n-en:displayName="Material" internal="true" queryable="true" sortable="true"
+              lazy="true">
+            <schema type="String"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
+    </props>
+</meta>

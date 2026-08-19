@@ -188,6 +188,12 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
     @Test
     public void testResponsiveRequestFullFlow() {
+        // 线程本地冻结时钟（2026-07-17）：accept 生成 RESPONSIVE 访问的 visitDate 取当日
+        // （ErpMntRequestAcceptProcessor CoreMetrics.currentDate()），不冻结则快照 VISIT_DATE 随自然日
+        // 滚动漂移（2026-08-20 发现的日期翻转脆弱点）。仅本方法冻结：downtime 用例混用
+        // currentDateTime（可冻结）与 currentTimeMillis（恒真实），类级冻结会撕裂 totalMinutes 口径。
+        MntFrozenClockExtension.installFrozenClock();
+        try {
         Long requestId = nextId();
         ormTemplate.runInSession(session -> {
             seedEquipment(EQUIPMENT_ID, ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING);
@@ -217,6 +223,9 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         // 手工 completeRequest 两步终结——断言新联动语义取代原手工调用。
         assertEquals(ErpMntDaoConstants.REQUEST_STATUS_COMPLETED, requestStatus(requestId),
                 "visit complete 经 D6 联动写回 request COMPLETED");
+        } finally {
+            MntFrozenClockExtension.restoreSystemClock();
+        }
     }
 
     // ---------- rpc helpers ----------

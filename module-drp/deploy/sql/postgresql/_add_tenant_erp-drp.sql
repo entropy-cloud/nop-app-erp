@@ -19,6 +19,8 @@ alter table erp_drp_parameter add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL
 
 alter table erp_inv_drp_lead_time_record add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_inv_drp_supplier_score add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_drp_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_drp_scenario add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -60,6 +62,9 @@ alter table erp_drp_parameter add constraint PK_erp_drp_parameter primary key (N
 
 alter table erp_inv_drp_lead_time_record drop constraint PK_erp_inv_drp_lead_time_record;
 alter table erp_inv_drp_lead_time_record add constraint PK_erp_inv_drp_lead_time_record primary key (NOP_TENANT_ID, id);
+
+alter table erp_inv_drp_supplier_score drop constraint PK_erp_inv_drp_supplier_score;
+alter table erp_inv_drp_supplier_score add constraint PK_erp_inv_drp_supplier_score primary key (NOP_TENANT_ID, id);
 
 alter table erp_drp_line drop constraint PK_erp_drp_line;
 alter table erp_drp_line add constraint PK_erp_drp_line primary key (NOP_TENANT_ID, id);

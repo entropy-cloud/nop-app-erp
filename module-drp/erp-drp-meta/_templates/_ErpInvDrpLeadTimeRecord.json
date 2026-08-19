@@ -11,6 +11,7 @@
   "purchaseOrderCode": "",
   "isOnTime": false,
   "earlyLateFlag": "",
+  "earlyLateFlag_label": "",
   "remark": "",
   "delVersion": 0,
   "version": 0,

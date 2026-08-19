@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 提前期偏差标记
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 准时
+    value: ON_TIME
+    description: 
+  
+  - label: 提前
+    value: EARLY
+    description: 
+  
+  - label: 延迟
+    value: LATE
+    description: 
+  

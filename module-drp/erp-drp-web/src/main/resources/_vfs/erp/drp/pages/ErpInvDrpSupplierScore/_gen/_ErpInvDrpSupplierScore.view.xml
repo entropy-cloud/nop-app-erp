@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<view x:schema="/nop/schema/xui/xview.xdef" bizObjName="ErpInvDrpSupplierScore" xmlns:i18n-en="i18n-en"
+      xmlns:x="/nop/schema/xdsl.xdef" xmlns:j="j" xmlns:c="c" xmlns:gql="gql" xmlns:view-gen="view-gen" xmlns:xpl="xpl">
+
+    <objMeta>/erp/drp/model/ErpInvDrpSupplierScore/ErpInvDrpSupplierScore.xmeta</objMeta>
+
+    <controlLib>/nop/web/xlib/flux-control.xlib</controlLib>
+
+    <x:gen-extends>
+        <view-gen:DefaultViewGenExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <view-gen:DefaultViewPostExtends xpl:lib="/nop/web/xlib/view-gen.xlib"/>
+    </x:post-extends>
+
+    <grids>
+        <grid id="list" x:abstract="true">
+            <cols>
+
+                <!--ID-->
+                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--业务组织-->
+                <col id="orgId" ui:number="true" sortable="true"/>
+
+                <!--供应商-->
+                <col id="supplierId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--物料-->
+                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--样本数-->
+                <col id="sampleCount" ui:number="true" sortable="true"/>
+
+                <!--平均提前期(天)-->
+                <col id="avgLeadTime" ui:number="true" sortable="true"/>
+
+                <!--提前期标准差(天)-->
+                <col id="leadTimeStdDev" ui:number="true" sortable="true"/>
+
+                <!--准时率-->
+                <col id="onTimeRate" ui:number="true" sortable="true"/>
+
+                <!--变异系数(σ/μ)-->
+                <col id="variationCoefficient" ui:number="true" sortable="true"/>
+
+                <!--数量准确率-->
+                <col id="quantityAccuracy" ui:number="true" sortable="true"/>
+
+                <!--质量合格率-->
+                <col id="qualityPassRate" ui:number="true" sortable="true"/>
+
+                <!--准时率得分(满分40)-->
+                <col id="onTimeScore" ui:number="true" sortable="true"/>
+
+                <!--稳定性得分(满分30)-->
+                <col id="stabilityScore" ui:number="true" sortable="true"/>
+
+                <!--数量准确率得分(满分20)-->
+                <col id="quantityScore" ui:number="true" sortable="true"/>
+
+                <!--质量合格率得分(满分10)-->
+                <col id="qualityScore" ui:number="true" sortable="true"/>
+
+                <!--总分(满分100)-->
+                <col id="totalScore" ui:number="true" sortable="true"/>
+
+                <!--评分等级-->
+                <col id="grade" sortable="true"/>
+
+                <!--样本缺失标注-->
+                <col id="missingDimensions" sortable="true"/>
+
+                <!--统计窗口起-->
+                <col id="windowFrom" sortable="true"/>
+
+                <!--统计窗口止-->
+                <col id="windowTo" sortable="true"/>
+
+                <!--计算时间-->
+                <col id="lastCalculatedAt" sortable="true"/>
+
+                <!--备注-->
+                <col id="remark" sortable="true"/>
+
+                <!--逻辑删除版本-->
+                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
+
+                <!--创建人-->
+                <col id="createdBy" mandatory="true" sortable="true"/>
+
+                <!--创建时间-->
+                <col id="createTime" mandatory="true" sortable="true"/>
+
+                <!--修改人-->
+                <col id="updatedBy" mandatory="true" sortable="true"/>
+
+                <!--修改时间-->
+                <col id="updateTime" mandatory="true" sortable="true"/>
+            </cols>
+        </grid>
+        <grid id="pick-list" x:prototype="list" x:abstract="true"/>
+    </grids>
+
+    <forms>
+        <form id="view" editMode="view" title="查看-供应商可靠性评分" i18n-en:title="View Supplier Reliability Score">
+            <layout>
+ orgId[业务组织] supplierId[供应商]
+ materialId[物料] sampleCount[样本数]
+ avgLeadTime[平均提前期(天)] leadTimeStdDev[提前期标准差(天)]
+ onTimeRate[准时率] variationCoefficient[变异系数(σ/μ)]
+ quantityAccuracy[数量准确率] qualityPassRate[质量合格率]
+ onTimeScore[准时率得分(满分40)] stabilityScore[稳定性得分(满分30)]
+ quantityScore[数量准确率得分(满分20)] qualityScore[质量合格率得分(满分10)]
+ totalScore[总分(满分100)] grade[评分等级]
+ missingDimensions[样本缺失标注] windowFrom[统计窗口起]
+ windowTo[统计窗口止] lastCalculatedAt[计算时间]
+ remark[备注] delVersion[逻辑删除版本]
+ createdBy[创建人] createTime[创建时间]
+ updatedBy[修改人] updateTime[修改时间]
+</layout>
+        </form>
+        <form id="add" editMode="add" title="新增-供应商可靠性评分" i18n-en:title="Add Supplier Reliability Score"
+              x:prototype="edit"/>
+        <form id="edit" editMode="edit" title="编辑-供应商可靠性评分" i18n-en:title="Edit Supplier Reliability Score">
+            <layout>
+ orgId[业务组织] supplierId[供应商]
+ materialId[物料] sampleCount[样本数]
+ avgLeadTime[平均提前期(天)] leadTimeStdDev[提前期标准差(天)]
+ onTimeRate[准时率] variationCoefficient[变异系数(σ/μ)]
+ quantityAccuracy[数量准确率] qualityPassRate[质量合格率]
+ onTimeScore[准时率得分(满分40)] stabilityScore[稳定性得分(满分30)]
+ quantityScore[数量准确率得分(满分20)] qualityScore[质量合格率得分(满分10)]
+ totalScore[总分(满分100)] grade[评分等级]
+ missingDimensions[样本缺失标注] windowFrom[统计窗口起]
+ windowTo[统计窗口止] lastCalculatedAt[计算时间]
+ remark[备注] 
+</layout>
+        </form>
+        <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
+        <form id="asideFilter" editMode="query" x:abstract="true" submitOnChange="true"/>
+        <form id="batchUpdate" editMode="edit" x:abstract="true" title="修改-供应商可靠性评分"
+              i18n-en:title="Update Supplier Reliability Score"/>
+    </forms>
+
+    <pages>
+        <crud name="view-list" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpInvDrpSupplierScore__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </crud>
+        <crud name="main" grid="list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table autoFillHeight="true">
+                <api url="@query:ErpInvDrpSupplierScore__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+            <listActions>
+                <action id="batch-delete-button" label="@i18n:common.batchDelete" batch="true">
+                    <api url="@mutation:ErpInvDrpSupplierScore__batchDelete?ids=${ids}"/>
+                    <confirmText>@i18n:common.confirmBatchDelete</confirmText>
+                </action>
+                <action id="add-button" level="primary" label="@i18n:common.add" icon="fa fa-plus pull-left">
+                    <dialog page="add"/>
+                </action>
+            </listActions>
+            <rowActions>
+                <action id="row-view-button" level="primary" label="@i18n:common.view">
+                    <dialog page="view"/>
+                </action>
+                <action id="row-update-button" level="primary" label="@i18n:common.edit" x:abstract="true">
+                    <dialog page="update"/>
+                </action>
+                <action id="row-delete-button" level="danger" label="@i18n:common.delete" x:abstract="true">
+                    <api url="@mutation:ErpInvDrpSupplierScore__delete?id=${id}"/>
+                    <confirmText>@i18n:common.confirmDelete</confirmText>
+                </action>
+                <actionGroup id="row-more-button" label="@i18n:common.more" level="primary">
+                    <action id="row-update-button" label="@i18n:common.edit">
+                        <dialog page="update"/>
+                    </action>
+                    <action id="row-delete-button" label="@i18n:common.delete">
+                        <api url="@mutation:ErpInvDrpSupplierScore__delete?id=${id}"/>
+                        <confirmText>@i18n:common.confirmDelete</confirmText>
+                    </action>
+                </actionGroup>
+            </rowActions>
+        </crud>
+        <picker name="picker" grid="pick-list" asideFilterForm="asideFilter" filterForm="query" x:abstract="true">
+            <table noOperations="true">
+                <api url="@query:ErpInvDrpSupplierScore__findPage" gql:selection="{@pageSelection}"/>
+            </table>
+        </picker>
+        <simple name="add" form="add">
+            <api url="@mutation:ErpInvDrpSupplierScore__save/id"/>
+        </simple>
+        <simple name="view" form="view">
+            <initApi url="@query:ErpInvDrpSupplierScore__get?id=${id}" gql:selection="{@formSelection}"/>
+        </simple>
+        <simple name="update" form="edit">
+            <initApi url="@query:ErpInvDrpSupplierScore__get?id=${id}" gql:selection="{@formSelection}"/>
+            <api url="@mutation:ErpInvDrpSupplierScore__update/id?id=${id}" withFormData="true"/>
+        </simple>
+    </pages>
+</view>

@@ -10,6 +10,7 @@ entity:
     ErpInvDrpDockAppointment: Dock Appointment
     ErpInvDrpLeadTimeRecord: Lead Time Record
     ErpInvDrpSafetyStockCalc: Safety Stock Calc
+    ErpInvDrpSupplierScore: Supplier Reliability Score
 prop:
   label:
     ErpDrpLine:
@@ -187,6 +188,8 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      matchingStrategy: Matching Strategy
+      matchingStrategy_label: null
       drpLine: DRP Line
       material: Material
       material.name: Material
@@ -233,6 +236,7 @@ prop:
       purchaseOrderCode: Purchase Order Code
       isOnTime: Is On Time
       earlyLateFlag: Early/Late Flag
+      earlyLateFlag_label: null
       remark: Remark
       delVersion: Del Flag
       version: Version
@@ -276,6 +280,42 @@ prop:
       warehouse.name: Warehouse
       org: Org
       org.name: Org
+    ErpInvDrpSupplierScore:
+      id: ID
+      orgId: Organization
+      supplierId: Supplier
+      materialId: Material
+      sampleCount: Sample Count
+      avgLeadTime: Avg Lead Time
+      leadTimeStdDev: Lead Time Std Dev
+      onTimeRate: On Time Rate
+      variationCoefficient: Variation Coefficient
+      quantityAccuracy: Quantity Accuracy
+      qualityPassRate: Quality Pass Rate
+      onTimeScore: On Time Score
+      stabilityScore: Stability Score
+      quantityScore: Quantity Score
+      qualityScore: Quality Score
+      totalScore: Total Score
+      grade: Grade
+      grade_label: null
+      missingDimensions: Missing Dimensions
+      windowFrom: Window From
+      windowTo: Window To
+      lastCalculatedAt: Last Calculated At
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      supplier: Supplier
+      supplier.name: Supplier
+      material: Material
+      material.name: Material
+      org: Org
+      org.name: Org
 dict:
   label:
     erp-drp/drp-plan-status: DRP Plan Status
@@ -285,6 +325,9 @@ dict:
     erp-inv/drp-ss-method: Safety Stock Method
     erp-inv/drp-service-level: Service Level
     erp-inv/drp-xdock-status: Cross Dock Status
+    erp-inv/drp-xdock-strategy: Cross Dock Matching Strategy
+    erp-inv/drp-lt-flag: Lead Time Flag
+    erp-inv/drp-supplier-grade: Supplier Grade
 dict.option.label:
   erp-drp/drp-plan-status:
     DRAFT: Draft
@@ -319,3 +362,16 @@ dict.option.label:
     LOADED: Loaded
     COMPLETED: Completed
     CANCELLED: Cancelled
+  erp-inv/drp-xdock-strategy:
+    PRE_ALLOCATED: Pre-allocated
+    ON_RECEIPT: On Receipt
+    MANUAL: Manual
+  erp-inv/drp-lt-flag:
+    ON_TIME: On Time
+    EARLY: Early
+    LATE: Late
+  erp-inv/drp-supplier-grade:
+    A: Grade A
+    B: Grade B
+    C: Grade C
+    D: Grade D

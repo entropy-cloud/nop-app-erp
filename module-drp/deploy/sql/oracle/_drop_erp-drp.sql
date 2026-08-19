@@ -9,6 +9,7 @@ drop table erp_drp_plan;
 drop table erp_inv_drp_safety_stock_calc;
 drop table erp_drp_parameter;
 drop table erp_inv_drp_lead_time_record;
+drop table erp_inv_drp_supplier_score;
 drop table erp_drp_line;
 drop table erp_drp_scenario;
 drop table erp_inv_drp_cross_dock;

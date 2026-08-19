@@ -134,6 +134,38 @@ CREATE TABLE erp_inv_drp_lead_time_record(
   constraint PK_erp_inv_drp_lead_time_record primary key (id)
 );
 
+CREATE TABLE erp_inv_drp_supplier_score(
+  id INT8 NOT NULL ,
+  org_id INT8  ,
+  supplier_id INT8 NOT NULL ,
+  material_id INT8 NOT NULL ,
+  sample_count INT4  ,
+  avg_lead_time NUMERIC(20,4)  ,
+  lead_time_std_dev NUMERIC(20,4)  ,
+  on_time_rate NUMERIC(10,4)  ,
+  variation_coefficient NUMERIC(10,4)  ,
+  quantity_accuracy NUMERIC(10,4)  ,
+  quality_pass_rate NUMERIC(10,4)  ,
+  on_time_score NUMERIC(6,2)  ,
+  stability_score NUMERIC(6,2)  ,
+  quantity_score NUMERIC(6,2)  ,
+  quality_score NUMERIC(6,2)  ,
+  total_score NUMERIC(6,2)  ,
+  grade VARCHAR(20)  ,
+  missing_dimensions VARCHAR(200)  ,
+  window_from DATE  ,
+  window_to DATE  ,
+  last_calculated_at TIMESTAMP  ,
+  remark VARCHAR(1000)  ,
+  del_version INT8 default 0  NOT NULL ,
+  version INT4 default 0  NOT NULL ,
+  created_by VARCHAR(50) NOT NULL ,
+  create_time TIMESTAMP NOT NULL ,
+  updated_by VARCHAR(50) NOT NULL ,
+  update_time TIMESTAMP NOT NULL ,
+  constraint PK_erp_inv_drp_supplier_score primary key (id)
+);
+
 CREATE TABLE erp_drp_line(
   id INT8 NOT NULL ,
   plan_id INT8 NOT NULL ,
@@ -205,6 +237,7 @@ CREATE TABLE erp_inv_drp_cross_dock(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  matching_strategy VARCHAR(20)  ,
   constraint PK_erp_inv_drp_cross_dock primary key (id)
 );
 
@@ -439,6 +472,64 @@ CREATE TABLE erp_inv_drp_dock_appointment(
                     
       COMMENT ON COLUMN erp_inv_drp_lead_time_record.update_time IS '修改时间';
                     
+      COMMENT ON TABLE erp_inv_drp_supplier_score IS '供应商可靠性评分';
+                
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.id IS 'ID';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.org_id IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.supplier_id IS '供应商';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.material_id IS '物料';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.sample_count IS '样本数';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.avg_lead_time IS '平均提前期(天)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.lead_time_std_dev IS '提前期标准差(天)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.on_time_rate IS '准时率';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.variation_coefficient IS '变异系数(σ/μ)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.quantity_accuracy IS '数量准确率';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.quality_pass_rate IS '质量合格率';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.on_time_score IS '准时率得分(满分40)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.stability_score IS '稳定性得分(满分30)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.quantity_score IS '数量准确率得分(满分20)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.quality_score IS '质量合格率得分(满分10)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.total_score IS '总分(满分100)';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.grade IS '评分等级';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.missing_dimensions IS '样本缺失标注';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.window_from IS '统计窗口起';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.window_to IS '统计窗口止';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.last_calculated_at IS '计算时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.remark IS '备注';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.del_version IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.version IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.created_by IS '创建人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.create_time IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.updated_by IS '修改人';
+                    
+      COMMENT ON COLUMN erp_inv_drp_supplier_score.update_time IS '修改时间';
+                    
       COMMENT ON TABLE erp_drp_line IS 'DRP明细';
                 
       COMMENT ON COLUMN erp_drp_line.id IS 'ID';
@@ -568,6 +659,8 @@ CREATE TABLE erp_inv_drp_dock_appointment(
       COMMENT ON COLUMN erp_inv_drp_cross_dock.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_inv_drp_cross_dock.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_inv_drp_cross_dock.matching_strategy IS '匹配策略';
                     
       COMMENT ON TABLE erp_drp_scenario_version IS 'DRP仿真版本';
                 

@@ -151,4 +151,65 @@ public interface ErpDrpErrors {
             "erp.err.drp.simulation.versions-not-comparable",
             "DRP仿真版本[{scenarioVersionId}]与另一版本不可对比（须同 orgId / 同基线计划）",
             ARG_SCENARIO_VERSION_ID);
+
+    // ---- 越库执行（RC-R1.81 / P1-RC-081；权威：docs/design/drp/cross-dock.md §越库状态机） ----
+
+    String ARG_XDOCK_ID = "crossDockId";
+    String ARG_XDOCK_CODE = "crossDockCode";
+    String ARG_INBOUND_MOVE_ID = "inboundMoveId";
+    String ARG_STRATEGY = "strategy";
+    String ARG_TARGET_BILL_CODE = "targetBillCode";
+
+    ErrorCode ERR_DRP_XDOCK_ILLEGAL_TRANSITION = ErrorCode.define(
+            "erp.err.drp.xdock.illegal-transition",
+            "越库记录[{crossDockCode}]当前状态[{currentStatus}]不允许此操作，期望状态[{expectedStatus}]",
+            ARG_XDOCK_CODE, ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
+
+    ErrorCode ERR_DRP_XDOCK_DISABLED = ErrorCode.define(
+            "erp.err.drp.xdock.disabled",
+            "越库功能未启用（配置 erp-inv.drp-xdock-enabled=true 后重试）");
+
+    ErrorCode ERR_DRP_XDOCK_STRATEGY_UNSUPPORTED = ErrorCode.define(
+            "erp.err.drp.xdock.strategy-unsupported",
+            "越库记录[{crossDockCode}]匹配策略[{strategy}]不支持（须 PRE_ALLOCATED/ON_RECEIPT/MANUAL）",
+            ARG_XDOCK_CODE, ARG_STRATEGY);
+
+    ErrorCode ERR_DRP_XDOCK_NO_PRE_ALLOCATED_TARGET = ErrorCode.define(
+            "erp.err.drp.xdock.no-pre-allocated-target",
+            "越库记录[{crossDockCode}]策略为 PRE_ALLOCATED 但创建时未预分配目标单（targetBillType/targetBillCode 为空）",
+            ARG_XDOCK_CODE);
+
+    ErrorCode ERR_DRP_XDOCK_NO_MATCH = ErrorCode.define(
+            "erp.err.drp.xdock.no-match",
+            "越库记录[{crossDockCode}]按 ON_RECEIPT 策略未找到待出库销售订单（承诺发货日期 ASC + 创建时间 ASC 候选为空）",
+            ARG_XDOCK_CODE);
+
+    ErrorCode ERR_DRP_XDOCK_TARGET_REQUIRED = ErrorCode.define(
+            "erp.err.drp.xdock.target-required",
+            "越库记录[{crossDockCode}]策略为 MANUAL，必须显式指定目标单据类型与单号",
+            ARG_XDOCK_CODE);
+
+    ErrorCode ERR_DRP_XDOCK_QUALITY_GATE_BLOCKED = ErrorCode.define(
+            "erp.err.drp.xdock.quality-gate-blocked",
+            "越库记录[{crossDockCode}]物料[{materialId}]需质检（存在有效检验模板），暂存区快检合格后才可匹配",
+            ARG_XDOCK_CODE, ARG_MATERIAL_ID);
+
+    // ---- 提前期跟踪（RC-R1.82 / P1-RC-082；权威：docs/design/drp/lead-time-tracking.md） ----
+
+    String ARG_SUPPLIER_ID = "supplierId";
+    String ARG_PURCHASE_ORDER_CODE = "purchaseOrderCode";
+
+    ErrorCode ERR_DRP_LT_DATES_INVALID = ErrorCode.define(
+            "erp.err.drp.lt.dates-invalid",
+            "提前期记录输入非法：采购单[{purchaseOrderCode}]订单日期或收货日期缺失/倒置，跳过记录",
+            ARG_PURCHASE_ORDER_CODE);
+
+    ErrorCode ERR_DRP_LT_NO_SAMPLES = ErrorCode.define(
+            "erp.err.drp.lt.no-samples",
+            "供应商[{supplierId}]物料[{materialId}]统计窗口内无提前期样本，无法统计评分",
+            ARG_SUPPLIER_ID, ARG_MATERIAL_ID);
+
+    ErrorCode ERR_DRP_LT_STATS_FILTER_REQUIRED = ErrorCode.define(
+            "erp.err.drp.lt.stats-filter-required",
+            "提前期统计至少需要提供一个过滤参数（supplierId 供应商级 / materialId 物料级 / 两者组合供应商+物料级）");
 }

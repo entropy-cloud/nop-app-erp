@@ -117,8 +117,12 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 24;
     
+    /* 匹配策略: MATCHING_STRATEGY VARCHAR */
+    public static final String PROP_NAME_matchingStrategy = "matchingStrategy";
+    public static final int PROP_ID_matchingStrategy = 25;
+    
 
-    private static int _PROP_ID_BOUND = 25;
+    private static int _PROP_ID_BOUND = 26;
 
     
     /* relation:  */
@@ -143,7 +147,7 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[25];
+    private static final String[] PROP_ID_TO_NAME = new String[26];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -219,6 +223,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_matchingStrategy] = PROP_NAME_matchingStrategy;
+          PROP_NAME_TO_ID.put(PROP_NAME_matchingStrategy, PROP_ID_matchingStrategy);
+      
     }
 
     
@@ -293,6 +300,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 匹配策略: MATCHING_STRATEGY */
+    private java.lang.String _matchingStrategy;
     
 
     public _ErpInvDrpCrossDock(){
@@ -439,6 +449,9 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_matchingStrategy:
+               return getMatchingStrategy();
         
            default:
               return super.orm_propValue(propId);
@@ -691,6 +704,16 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_matchingStrategy:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_matchingStrategy));
+               }
+               setMatchingStrategy(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -864,6 +887,13 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_matchingStrategy:{
+               onInitProp(propId);
+               this._matchingStrategy = (java.lang.String)value;
                
                break;
             }
@@ -1326,6 +1356,25 @@ public class _ErpInvDrpCrossDock extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 匹配策略: MATCHING_STRATEGY
+     */
+    public final java.lang.String getMatchingStrategy(){
+         onPropGet(PROP_ID_matchingStrategy);
+         return _matchingStrategy;
+    }
+
+    /**
+     * 匹配策略: MATCHING_STRATEGY
+     */
+    public final void setMatchingStrategy(java.lang.String value){
+        if(onPropSet(PROP_ID_matchingStrategy,value)){
+            this._matchingStrategy = value;
+            internalClearRefs(PROP_ID_matchingStrategy);
             
         }
     }

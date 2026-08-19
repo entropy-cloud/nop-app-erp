@@ -61,6 +61,9 @@ public interface ErpDrpConstants {
     // 库存移动单作业类型（对齐 ErpInvConstants 码值，出库=需求历史来源）
     String MOVE_TYPE_OUTGOING = "OUTGOING";
 
+    // 库存移动单作业类型：内部转移（越库超时回退 staging→正常存储位；对齐 ErpInvConstants 码值避免跨 service 依赖）
+    String MOVE_TYPE_INTERNAL_TRANSFER = "INTERNAL";
+
     // DDMRP 默认缓冲天数（demandVariabilityDays + orderCycle，无 ORM 列时用配置默认）
     int DDMRP_DEFAULT_DEMAND_VARIABILITY_DAYS = 3;
     int DDMRP_DEFAULT_ORDER_CYCLE_DAYS = 2;
@@ -90,4 +93,54 @@ public interface ErpDrpConstants {
 
     /** promoteToFormalPlan 生成的正式计划 code 后缀模板（{0}=versionNo）。 */
     String SIMULATION_PROMOTED_PLAN_CODE_SUFFIX = "-PROMOTED-{0}";
+
+    // ---- 越库执行（RC-R1.81 / P1-RC-081，UC-DRP-07；权威：docs/design/drp/cross-dock.md） ----
+
+    // 越库状态（erp-inv/drp-xdock-status）
+    String XDOCK_STATUS_PENDING = "PENDING";
+    String XDOCK_STATUS_MATCHED = "MATCHED";
+    String XDOCK_STATUS_STAGING = "STAGING";
+    String XDOCK_STATUS_LOADED = "LOADED";
+    String XDOCK_STATUS_COMPLETED = "COMPLETED";
+    String XDOCK_STATUS_CANCELLED = "CANCELLED";
+
+    // 越库匹配策略（erp-inv/drp-xdock-strategy）
+    String XDOCK_STRATEGY_PRE_ALLOCATED = "PRE_ALLOCATED";
+    String XDOCK_STRATEGY_ON_RECEIPT = "ON_RECEIPT";
+    String XDOCK_STRATEGY_MANUAL = "MANUAL";
+
+    // 越库弱指针 billType（data-dependency-matrix §5.2 登记）：出站移动/暂存区快检反查越库记录
+    String RELATED_BILL_TYPE_DRP_XDOCK = "DRP_XDOCK";
+    // 越库超时回退移动（staging→正常存储位 putaway）billType，独立于 DRP_XDOCK 保证幂等键不冲突
+    String RELATED_BILL_TYPE_DRP_XDOCK_PUTAWAY = "DRP_XDOCK_PUTAWAY";
+
+    // 采购单来源单据类型（CrossDock.sourceBillType 取值，对齐 data-dependency-matrix §5.2 PUR_ORDER）
+    String XDOCK_SOURCE_BILL_TYPE_PUR_ORDER = "PUR_ORDER";
+
+    // 销售订单审核状态（wf/approve-status，ON_RECEIPT 策略只扫 APPROVED 单；字符串对齐避免跨 service 依赖）
+    String SAL_ORDER_APPROVE_STATUS_APPROVED = "APPROVED";
+
+    // ---- 提前期跟踪（RC-R1.82 / P1-RC-082，UC-DRP-08；权威：docs/design/drp/lead-time-tracking.md） ----
+
+    // 提前期偏差标记（erp-inv/drp-lt-flag）
+    String LT_FLAG_ON_TIME = "ON_TIME";
+    String LT_FLAG_EARLY = "EARLY";
+    String LT_FLAG_LATE = "LATE";
+
+    // 供应商评分等级（erp-inv/drp-supplier-grade）阈值（lead-time-tracking.md §评分计算）
+    java.math.BigDecimal GRADE_THRESHOLD_A = new java.math.BigDecimal("90");
+    java.math.BigDecimal GRADE_THRESHOLD_B = new java.math.BigDecimal("75");
+    java.math.BigDecimal GRADE_THRESHOLD_C = new java.math.BigDecimal("60");
+    String SUPPLIER_GRADE_A = "A";
+    String SUPPLIER_GRADE_B = "B";
+    String SUPPLIER_GRADE_C = "C";
+    String SUPPLIER_GRADE_D = "D";
+
+    // 质检结果（对齐 erp-qa/inspection-result 码值；快检通过 = ACCEPTED 或 CONDITIONAL 让步接收）
+    String QA_INSPECTION_RESULT_ACCEPTED = "ACCEPTED";
+    String QA_INSPECTION_RESULT_CONDITIONAL = "CONDITIONAL";
+    String QA_INSPECTION_TYPE_INCOMING = "INCOMING";
+
+    // 采购订单审核状态（wf/approve-status，评分数量准确率维度只统计 APPROVED 单；字符串对齐避免跨 service 依赖）
+    String PUR_ORDER_APPROVE_STATUS_APPROVED = "APPROVED";
 }

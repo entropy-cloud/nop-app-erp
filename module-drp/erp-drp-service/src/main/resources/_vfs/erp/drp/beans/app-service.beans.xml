@@ -60,6 +60,22 @@
     <bean id="app.erp.drp.service.processor.ErpInvDrpSafetyStockCalcConfirmWritebackProcessor"
           class="app.erp.drp.service.processor.ErpInvDrpSafetyStockCalcConfirmWritebackProcessor"/>
 
+    <!-- 越库执行状态机编排 Processor（RC-R1.81 / P1-RC-081）：receiveMark/match[三策略]/load/complete/cancel
+         + purchase 收货审批后置 Facade markReceivedFromPurchase（D1 裁决选项 A）。 -->
+    <bean id="app.erp.drp.service.processor.ErpInvDrpCrossDockProcessor"
+          class="app.erp.drp.service.processor.ErpInvDrpCrossDockProcessor"/>
+
+    <!-- 越库暂存超时回退 Job Bean（RC-R1.81；R1.38 简单 job 范式）：cron 空值跳过 + SCAN_LIMIT 200 + 逐条失败隔离。
+         调度注册见 app-erp-all/_vfs/nop/job/conf/erp-drp-xdock-staging-timeout.job.yaml。 -->
+    <bean id="erpDrpCrossDockStagingTimeoutJob"
+          class="app.erp.drp.service.job.ErpDrpCrossDockStagingTimeoutJob"/>
+
+    <!-- 提前期统计与供应商可靠性评分 Processor（RC-R1.82 / P1-RC-082）：recordFromPurchaseReceive
+         （D4 裁决选项 A purchase 收货审批后置 Facade）/ findLeadTimeStats（三级粒度统计）/
+         recalculateLeadTimeStats（四维评分 40/30/20/10 + 等级 A/B/C/D 回写 ErpInvDrpSupplierScore）。 -->
+    <bean id="app.erp.drp.service.processor.ErpInvDrpLeadTimeProcessor"
+          class="app.erp.drp.service.processor.ErpInvDrpLeadTimeProcessor"/>
+
     <!-- 实体级 StateMachine Bean（plan 2026-08-12-1841-1 M2.14 + M2.15；契约 docs/architecture/entity-state-machine-bean.md §5）：
          一 Bean 对应一实体一轴，严格无状态、可经 Delta 同名 bean id 覆盖。沿用既有 FQN-id 注册范式。 -->
     <bean id="app.erp.drp.service.statemachine.ErpDrpPlanStateMachine"

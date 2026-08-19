@@ -133,4 +133,54 @@ public interface _ErpDrpDaoConstants {
      */
     String DRP_XDOCK_STATUS_CANCELLED = "CANCELLED";
                     
+    /**
+     * 越库匹配策略: 预分配 
+     */
+    String DRP_XDOCK_STRATEGY_PRE_ALLOCATED = "PRE_ALLOCATED";
+                    
+    /**
+     * 越库匹配策略: 收货时匹配 
+     */
+    String DRP_XDOCK_STRATEGY_ON_RECEIPT = "ON_RECEIPT";
+                    
+    /**
+     * 越库匹配策略: 人工匹配 
+     */
+    String DRP_XDOCK_STRATEGY_MANUAL = "MANUAL";
+                    
+    /**
+     * 提前期偏差标记: 准时 
+     */
+    String DRP_LT_FLAG_ON_TIME = "ON_TIME";
+                    
+    /**
+     * 提前期偏差标记: 提前 
+     */
+    String DRP_LT_FLAG_EARLY = "EARLY";
+                    
+    /**
+     * 提前期偏差标记: 延迟 
+     */
+    String DRP_LT_FLAG_LATE = "LATE";
+                    
+    /**
+     * 供应商评分等级: A级 
+     */
+    String DRP_SUPPLIER_GRADE_A = "A";
+                    
+    /**
+     * 供应商评分等级: B级 
+     */
+    String DRP_SUPPLIER_GRADE_B = "B";
+                    
+    /**
+     * 供应商评分等级: C级 
+     */
+    String DRP_SUPPLIER_GRADE_C = "C";
+                    
+    /**
+     * 供应商评分等级: D级 
+     */
+    String DRP_SUPPLIER_GRADE_D = "D";
+                    
 }

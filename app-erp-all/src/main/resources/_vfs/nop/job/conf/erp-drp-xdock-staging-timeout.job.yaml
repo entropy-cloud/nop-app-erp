@@ -1,0 +1,15 @@
+jobName: erp-drp-xdock-staging-timeout
+enabled: "@cfg:nop.job.erp-drp-xdock-staging-timeout.enabled|false"
+displayName: DRP Cross Dock Staging Timeout Fallback
+description: >
+  越库暂存超时回退（RC-R1.81 / P1-RC-081，UC-DRP-07 异常路径）：扫描 STAGING 状态超过
+  erp-inv.drp-xdock-staging-timeout（默认 24）小时未匹配的越库记录，生成 staging→正常存储位
+  移动单（billType DRP_XDOCK_PUTAWAY）并将记录置 CANCELLED。双层门控：本 job.yaml 调度级
+  enabled + bean 内 erp-inv.drp-xdock-staging-timeout-cron 空值跳过（R1.38 范式）+
+  erp-inv.drp-xdock-enabled 功能总开关（默认 false）。
+jobGroup: erp-drp
+trigger:
+  cronExpr: "@cfg:erp-inv.drp-xdock-staging-timeout-cron|0 15 */2 * * ?"
+invoker:
+  bean: erpDrpCrossDockStagingTimeoutJob
+  method: execute

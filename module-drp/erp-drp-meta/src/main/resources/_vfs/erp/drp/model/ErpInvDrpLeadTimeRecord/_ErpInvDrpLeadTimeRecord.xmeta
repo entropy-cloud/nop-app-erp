@@ -65,7 +65,7 @@
         </prop>
         <prop name="earlyLateFlag" displayName="提前/延迟标记" propId="12" i18n-en:displayName="Early/Late Flag"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.String" precision="50"/>
+            <schema type="java.lang.String" precision="50" dict="erp-inv/drp-lt-flag"/>
         </prop>
         <prop name="remark" displayName="备注" propId="13" i18n-en:displayName="Remark" queryable="true" sortable="true"
               insertable="true" updatable="true">

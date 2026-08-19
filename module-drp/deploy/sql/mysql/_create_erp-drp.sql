@@ -134,6 +134,38 @@ CREATE TABLE erp_inv_drp_lead_time_record(
   constraint PK_erp_inv_drp_lead_time_record primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_inv_drp_supplier_score(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  SUPPLIER_ID BIGINT NOT NULL    COMMENT '供应商',
+  MATERIAL_ID BIGINT NOT NULL    COMMENT '物料',
+  SAMPLE_COUNT INTEGER NULL    COMMENT '样本数',
+  AVG_LEAD_TIME DECIMAL(20,4) NULL    COMMENT '平均提前期(天)',
+  LEAD_TIME_STD_DEV DECIMAL(20,4) NULL    COMMENT '提前期标准差(天)',
+  ON_TIME_RATE DECIMAL(10,4) NULL    COMMENT '准时率',
+  VARIATION_COEFFICIENT DECIMAL(10,4) NULL    COMMENT '变异系数(σ/μ)',
+  QUANTITY_ACCURACY DECIMAL(10,4) NULL    COMMENT '数量准确率',
+  QUALITY_PASS_RATE DECIMAL(10,4) NULL    COMMENT '质量合格率',
+  ON_TIME_SCORE DECIMAL(6,2) NULL    COMMENT '准时率得分(满分40)',
+  STABILITY_SCORE DECIMAL(6,2) NULL    COMMENT '稳定性得分(满分30)',
+  QUANTITY_SCORE DECIMAL(6,2) NULL    COMMENT '数量准确率得分(满分20)',
+  QUALITY_SCORE DECIMAL(6,2) NULL    COMMENT '质量合格率得分(满分10)',
+  TOTAL_SCORE DECIMAL(6,2) NULL    COMMENT '总分(满分100)',
+  GRADE VARCHAR(20) NULL    COMMENT '评分等级',
+  MISSING_DIMENSIONS VARCHAR(200) NULL    COMMENT '样本缺失标注',
+  WINDOW_FROM DATE NULL    COMMENT '统计窗口起',
+  WINDOW_TO DATE NULL    COMMENT '统计窗口止',
+  LAST_CALCULATED_AT DATETIME(3) NULL    COMMENT '计算时间',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_inv_drp_supplier_score primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_drp_line(
   ID BIGINT NOT NULL    COMMENT 'ID',
   PLAN_ID BIGINT NOT NULL    COMMENT '计划ID',
@@ -205,6 +237,7 @@ CREATE TABLE erp_inv_drp_cross_dock(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  MATCHING_STRATEGY VARCHAR(20) NULL    COMMENT '匹配策略',
   constraint PK_erp_inv_drp_cross_dock primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -282,6 +315,8 @@ CREATE TABLE erp_inv_drp_dock_appointment(
    ALTER TABLE erp_drp_parameter COMMENT '仓库补货参数';
                 
    ALTER TABLE erp_inv_drp_lead_time_record COMMENT '提前期记录';
+                
+   ALTER TABLE erp_inv_drp_supplier_score COMMENT '供应商可靠性评分';
                 
    ALTER TABLE erp_drp_line COMMENT 'DRP明细';
                 

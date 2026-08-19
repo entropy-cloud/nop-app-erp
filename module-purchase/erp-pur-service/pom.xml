@@ -68,6 +68,14 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- RC-R1.81/RC-R1.82 收货审批后置 Facade（D1/D4 裁决选项 A，镜像 RC-R1.61 projects 接线方向）：
+             IErpInvDrpCrossDockBiz.markReceivedFromPurchase + IErpInvDrpLeadTimeRecordBiz.recordFromPurchaseReceive。
+             purchase→drp 单向 Java 层边（仅 dao 接口层，matrix §2.4 登记），DAG 无环（drp 不反向依赖 purchase service）。 -->
+        <dependency>
+            <artifactId>app-erp-drp-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- compile: 采购发票/付款过账接入财务过账引擎（凭证聚合根 Facade IErpFinVoucherBiz 位于 finance-dao；
              IErpFinAcctDocProvider SPI 位于 finance-service）。purchase→finance 单向无环
              （finance 为 DAG 顶，不依赖 purchase）。 -->

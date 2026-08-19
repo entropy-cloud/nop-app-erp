@@ -7,6 +7,7 @@ import app.erp.md.biz.IErpMdPartnerBiz;
 import app.erp.md.dao.entity.ErpMdPartner;
 import app.erp.prj.biz.IErpPrjCostCollectionBiz;
 import app.erp.pur.biz.IErpPurOrderBiz;
+import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
@@ -16,6 +17,8 @@ import app.erp.common.service.SoDGuard;
 import app.erp.pur.service.entity.ReceiveStockMoveBuilder;
 import app.erp.qa.biz.IErpQaInspectionBiz;
 import app.erp.qa.biz.InspectionTrigger;
+import app.erp.drp.biz.IErpInvDrpCrossDockBiz;
+import app.erp.drp.biz.IErpInvDrpLeadTimeRecordBiz;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -24,6 +27,7 @@ import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +36,11 @@ import java.util.Objects;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static io.nop.api.core.beans.FilterBeans.and;
 import static io.nop.api.core.beans.FilterBeans.eq;
@@ -74,6 +80,14 @@ public class ErpPurReceiveProcessor {
 
     @Inject
     IErpQaInspectionBiz inspectionBiz;
+
+    @Inject
+    @Nullable
+    IErpInvDrpCrossDockBiz crossDockBiz;
+
+    @Inject
+    @Nullable
+    IErpInvDrpLeadTimeRecordBiz leadTimeRecordBiz;
 
     @Inject
     ErpPurReceiveSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -278,6 +292,96 @@ public class ErpPurReceiveProcessor {
 
     protected void postProcessApprove(ErpPurReceive currentReceive, IServiceContext context) {
         rollupOrderReceiveStatus(currentReceive, context);
+    }
+
+    /**
+     * 越库收货识别（RC-R1.81 / P1-RC-081，D1 裁决选项 A，UC-DRP-07 触发方式 3 收货时匹配）：
+     * 入库移动单生成后，按采购单号 + 收货行物料调用 drp Facade 将 PENDING 越库记录标记 STAGING 并回写
+     * inboundMoveId。drp 侧 {@code erp-inv.drp-xdock-enabled} 默认 false 时 Facade 返回 0 零副作用；
+     * 仅 PENDING 可迁移 → 重复审批/并发收货幂等。
+     *
+     * <p>@Nullable：drp 模块未部署（单域测试/裁剪部署）时跳过；失败隔离 try/catch 不阻断
+     * RECEIVED 主迁移与过账（对齐 RC-R1.85 logistics→sal 回写容错范式）。
+     */
+    protected void markCrossDockReceived(ErpPurReceive receive, ErpInvStockMove move, IServiceContext context) {
+        if (crossDockBiz == null) {
+            return;
+        }
+        try {
+            String orderCode = resolveOrderCode(receive.getOrderId());
+            if (orderCode == null) {
+                return;
+            }
+            Set<Long> materialIds = new LinkedHashSet<>();
+            for (ErpPurReceiveLine line : loadLines(receive)) {
+                if (line.getMaterialId() != null) {
+                    materialIds.add(line.getMaterialId());
+                }
+            }
+            if (materialIds.isEmpty()) {
+                return;
+            }
+            crossDockBiz.markReceivedFromPurchase(orderCode, move != null ? move.getId() : null,
+                    new ArrayList<>(materialIds), context);
+        } catch (Exception e) {
+            LOG.warn("入库审批后置：越库收货标记失败（隔离不阻断）：receiveCode={}, reason={}",
+                    receive.getCode(), e.getMessage());
+        }
+    }
+
+    /**
+     * 按订单 id 解析采购单号（drp Facade 弱指针键 = CrossDock.sourceBillCode 存 PO 单号）。
+     */
+    protected String resolveOrderCode(Long orderId) {
+        if (orderId == null) {
+            return null;
+        }
+        ErpPurOrder order = daoProvider.daoFor(ErpPurOrder.class).getEntityById(orderId);
+        return order != null ? order.getCode() : null;
+    }
+
+    /**
+     * 提前期记录（RC-R1.82 / P1-RC-082，D4 裁决选项 A，UC-DRP-08 触发）：收货确认后调 drp Facade
+     * 落 ErpInvDrpLeadTimeRecord（actualLeadTime = DATEDIFF(receiptDate, orderDate)；expected 取订单
+     * deliveryDate - businessDate，缺失传 null 由 drp 侧跳过准时判定）。幂等守卫同单号+物料不重复落。
+     *
+     * <p>@Nullable：drp 模块未部署（单域测试/裁剪部署）时跳过；失败隔离 try/catch 不阻断
+     * RECEIVED 主迁移与过账（订单/收货日期缺失时 drp 侧抛 dates-invalid，此处告警跳过 = L1 异常路径）。
+     */
+    protected void recordLeadTimeFromReceive(ErpPurReceive receive, IServiceContext context) {
+        if (leadTimeRecordBiz == null) {
+            return;
+        }
+        try {
+            if (receive.getOrderId() == null) {
+                return;
+            }
+            ErpPurOrder order = daoProvider.daoFor(ErpPurOrder.class).getEntityById(receive.getOrderId());
+            if (order == null || order.getBusinessDate() == null || receive.getBusinessDate() == null) {
+                return;
+            }
+            Set<Long> materialIds = new LinkedHashSet<>();
+            for (ErpPurReceiveLine line : loadLines(receive)) {
+                if (line.getMaterialId() != null) {
+                    materialIds.add(line.getMaterialId());
+                }
+            }
+            if (materialIds.isEmpty()) {
+                return;
+            }
+            Integer expectedLeadTime = null;
+            if (order.getDeliveryDate() != null
+                    && !order.getDeliveryDate().isBefore(order.getBusinessDate())) {
+                expectedLeadTime = (int) java.time.temporal.ChronoUnit.DAYS
+                        .between(order.getBusinessDate(), order.getDeliveryDate());
+            }
+            leadTimeRecordBiz.recordFromPurchaseReceive(order.getCode(), receive.getSupplierId(),
+                    order.getBusinessDate(), receive.getBusinessDate(), expectedLeadTime,
+                    new ArrayList<>(materialIds), context);
+        } catch (Exception e) {
+            LOG.warn("收货审批后置：提前期记录失败（隔离不阻断）：receiveCode={}, reason={}",
+                    receive.getCode(), e.getMessage());
+        }
     }
 
     // ---------- 库存触发 + 过账接线 + 冲销 ----------

@@ -181,6 +181,18 @@
         }
 
 
+        private String _earlyLateFlag_label;
+
+    
+        public String getEarlyLateFlag_label(){
+            return _earlyLateFlag_label;
+        }
+
+        public void setEarlyLateFlag_label(String value){
+            this._earlyLateFlag_label = value;
+        }
+
+
         private String _remark;
 
     

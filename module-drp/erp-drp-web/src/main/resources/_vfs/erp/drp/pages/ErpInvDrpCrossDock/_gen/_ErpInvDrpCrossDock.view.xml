@@ -86,6 +86,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--匹配策略-->
+                <col id="matchingStrategy" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -105,6 +108,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ matchingStrategy[匹配策略] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-越库执行记录" i18n-en:title="Add Cross Dock" x:prototype="edit"/>
@@ -118,7 +122,7 @@
  quantity[越库数量] stagingLocationId[暂存库位]
  dockSlotTime[月台时间窗口] status[状态]
  matchedAt[匹配时间] loadedAt[装车完成时间]
- remark[备注] 
+ remark[备注] matchingStrategy[匹配策略]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

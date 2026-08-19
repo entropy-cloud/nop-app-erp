@@ -1,6 +1,7 @@
 package app.erp.drp.service.safetystock;
 
 import app.erp.drp.dao.entity.ErpDrpParameter;
+import app.erp.drp.dao.entity.ErpInvDrpLeadTimeRecord;
 import app.erp.drp.dao.entity.ErpInvDrpSafetyStockCalc;
 import app.erp.drp.service.ErpDrpConfigs;
 import app.erp.drp.service.ErpDrpConstants;
@@ -42,20 +43,30 @@ import static io.nop.api.core.beans.FilterBeans.in;
  *   <li><b>DDMRP</b>：{@code SS = μ_d × (leadTime + demandVariabilityDays + orderCycle)}。</li>
  * </ul>
  *
+ * <p><b>联合变分（RC-R1.82 / P1-RC-082）</b>：STATISTICAL 法在提前期统计可得（供应商+物料
+ * {@link ErpInvDrpLeadTimeRecord} 样本数 ≥ 5，L1 UC-DRP-08「样本 &lt;5 降级」；订单/收货日期缺失行不入统计）
+ * 时以 μ_lt 替换配置提前期 L；且 σ_lt/μ_lt &gt; 0.2（lead-time-tracking.md §调整策略中/高变异档，
+ * 高档「额外缓冲」量化系数无 L1/owner doc 依据，显式简化为联合变异值——owner doc 实现注记）时按
+ * {@code SS = Z × √(σ_d² × μ_lt + μ_d² × σ_lt²)} 计算；低变异档（cv ≤ 0.2）维持标准公式。
+ * 供应商解析自 ErpDrpParameter.preferredSupplierId。confirmWriteback 人工审查门不变，
+ * 回写建议 replenishmentLeadTime←μ_lt 经既有确认回写链（D5 裁决选项 A：实时计算不留列）。
+ *
  * <p>数据清洗：零需求月按 {@code erp-inv.drp-ss-zero-demand-policy}（EXCLUDE=排除，KEEP=保留参与标准差）。
  *
  * <p>Z 值映射（{@code drp/safety-stock-optimization.md §核心公式}）：95%→1.645 / 97.5%→1.96 / 99%→2.326 / 99.5%→2.576。
  *
- * <p><b>Non-Goal</b>：联合变分（lead-time variability，需 ORM 列 leadTimeStdDev，归 Deferred）；预测来源；
- * 20% 偏差预警（{@code erp-inv.drp-ss-alert-threshold}，归 follow-up）。
+ * <p><b>Non-Goal</b>：预测来源；20% 偏差预警（{@code erp-inv.drp-ss-alert-threshold}，归 follow-up）。
  *
- * <p>本类为非 BizModel 服务助手（对齐 MRP {@code MrpEngine} 范式），跨域只读聚合（inventory）直接用 {@link IDaoProvider}。
+ * <p>本类为非 BizModel 服务助手（对齐 MRP {@code MrpEngine} 范式），跨域只读聚合（inventory）与本域
+ * LeadTimeRecord 读取直接用 {@link IDaoProvider}。
  */
 public class SafetyStockEngine {
 
     static final BigDecimal DAYS_PER_MONTH = new BigDecimal("30");
     static final BigDecimal DEFAULT_SIMPLE_SAFETY_FACTOR = new BigDecimal("0.5");
     static final MathContext MC = new MathContext(8, RoundingMode.HALF_UP);
+    // 联合变分触发阈值：σ_lt/μ_lt > 0.2（lead-time-tracking.md §调整策略中变异档下界）
+    static final BigDecimal JOINT_VARIATION_CV_THRESHOLD = new BigDecimal("0.2");
 
     @Inject
     IDaoProvider daoProvider;
@@ -108,9 +119,22 @@ public class SafetyStockEngine {
             BigDecimal meanDaily = meanMonthly.divide(DAYS_PER_MONTH, 8, RoundingMode.HALF_UP);
             BigDecimal stddevDaily = stddevMonthly.divide(sqrt(DAYS_PER_MONTH), 8, RoundingMode.HALF_UP);
             BigDecimal z = zForServiceLevel(calc.getServiceLevel());
-            BigDecimal lt = BigDecimal.valueOf(leadTimeDays);
-            safetyStock = z.multiply(stddevDaily).multiply(sqrt(lt)).setScale(2, RoundingMode.HALF_UP);
-            rop = safetyStock.add(meanDaily.multiply(lt)).setScale(2, RoundingMode.HALF_UP);
+            // 联合变分（RC-R1.82）：样本 ≥5 时 μ_lt 替换配置提前期；σ_lt/μ_lt > 0.2 走联合变异公式
+            LeadTimeSample lt = leadTimeSample(calc);
+            BigDecimal leadTime = lt != null && lt.mean.signum() > 0
+                    ? lt.mean : BigDecimal.valueOf(leadTimeDays);
+            boolean jointVariation = lt != null && lt.stddev.signum() > 0 && leadTime.signum() > 0
+                    && lt.stddev.divide(leadTime, 8, RoundingMode.HALF_UP)
+                            .compareTo(JOINT_VARIATION_CV_THRESHOLD) > 0;
+            if (jointVariation) {
+                // SS = Z × √(σ_d² × μ_lt + μ_d² × σ_lt²)（lead-time-tracking.md §联合变异公式）
+                BigDecimal inside = stddevDaily.multiply(stddevDaily).multiply(leadTime)
+                        .add(meanDaily.multiply(meanDaily).multiply(lt.stddev).multiply(lt.stddev));
+                safetyStock = z.multiply(sqrt(inside)).setScale(2, RoundingMode.HALF_UP);
+            } else {
+                safetyStock = z.multiply(stddevDaily).multiply(sqrt(leadTime)).setScale(2, RoundingMode.HALF_UP);
+            }
+            rop = safetyStock.add(meanDaily.multiply(leadTime)).setScale(2, RoundingMode.HALF_UP);
         } else if (ErpDrpConstants.SS_METHOD_SIMPLE.equals(method)) {
             BigDecimal meanDaily = mean(monthlyDemands).divide(DAYS_PER_MONTH, 8, RoundingMode.HALF_UP);
             BigDecimal lt = BigDecimal.valueOf(leadTimeDays);
@@ -175,6 +199,8 @@ public class SafetyStockEngine {
 
     /**
      * 人工确认后回写 ErpDrpParameter.safetyStock。overrideSafetyStock 非空则回写覆盖值，否则回写计算值。
+     * RC-R1.82：提前期统计样本 ≥5 时同步回写建议 replenishmentLeadTime←μ_lt（经既有确认回写链，
+     * 不绕过人工门；D5 裁决选项 A：实时计算不留列）。
      */
     public void confirmWriteback(Long calcId) {
         ErpInvDrpSafetyStockCalc calc = requireCalc(calcId);
@@ -192,7 +218,56 @@ public class SafetyStockEngine {
                     .param(ErpDrpErrors.ARG_WAREHOUSE_ID, calc.getWarehouseId());
         }
         param.setSafetyStock(value);
+        LeadTimeSample lt = leadTimeSample(calc);
+        if (lt != null && lt.mean.signum() > 0) {
+            param.setReplenishmentLeadTime(lt.mean.setScale(0, RoundingMode.HALF_UP).intValue());
+        }
         daoProvider.daoFor(ErpDrpParameter.class).updateEntity(param);
+    }
+
+    /**
+     * 提前期统计样本（D5 裁决选项 A：实时计算）：ErpDrpParameter.preferredSupplierId + materialId
+     * 在统计窗口（erp-inv.drp-lt-stats-window-days，≤0 全历史）内的 ErpInvDrpLeadTimeRecord，
+     * 订单/收货日期缺失行不入统计；样本数 &lt; 5（L1 UC-DRP-08「样本 &lt;5 降级」）返回 null（走配置提前期）。
+     */
+    protected LeadTimeSample leadTimeSample(ErpInvDrpSafetyStockCalc calc) {
+        if (calc.getMaterialId() == null) {
+            return null;
+        }
+        ErpDrpParameter param = findParameter(calc.getMaterialId(), calc.getWarehouseId(), calc.getOrgId());
+        Long supplierId = param != null ? param.getPreferredSupplierId() : null;
+        int windowDays = AppConfig.var(ErpDrpConfigs.CONFIG_DRP_LT_STATS_WINDOW_DAYS,
+                ErpDrpConfigs.DEFAULT_DRP_LT_STATS_WINDOW_DAYS);
+        LocalDate since = windowDays > 0 ? CoreMetrics.today().minusDays(windowDays) : null;
+
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("materialId", calc.getMaterialId()));
+        if (supplierId != null) {
+            q.addFilter(eq("supplierId", supplierId));
+        }
+        if (since != null) {
+            q.addFilter(ge("receiptDate", since));
+        }
+        List<BigDecimal> values = new ArrayList<>();
+        for (ErpInvDrpLeadTimeRecord r : daoProvider.daoFor(ErpInvDrpLeadTimeRecord.class).findAllByQuery(q)) {
+            if (r.getActualLeadTime() != null && r.getOrderDate() != null && r.getReceiptDate() != null) {
+                values.add(BigDecimal.valueOf(r.getActualLeadTime()));
+            }
+        }
+        if (values.size() < ErpDrpConfigs.LT_JOINT_VARIATION_MIN_SAMPLES) {
+            return null;
+        }
+        LeadTimeSample sample = new LeadTimeSample();
+        sample.count = values.size();
+        sample.mean = mean(values);
+        sample.stddev = stddev(values, sample.mean);
+        return sample;
+    }
+
+    protected static final class LeadTimeSample {
+        int count;
+        BigDecimal mean;
+        BigDecimal stddev;
     }
 
     private List<BigDecimal> monthlyDemands(Long materialId, Long warehouseId, int historyMonths) {
