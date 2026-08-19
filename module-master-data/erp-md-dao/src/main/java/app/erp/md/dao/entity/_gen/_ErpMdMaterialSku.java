@@ -93,8 +93,12 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 18;
     
+    /* 状态: STATUS VARCHAR */
+    public static final String PROP_NAME_status = "status";
+    public static final int PROP_ID_status = 19;
+    
 
-    private static int _PROP_ID_BOUND = 19;
+    private static int _PROP_ID_BOUND = 20;
 
     
     /* relation:  */
@@ -110,7 +114,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[19];
+    private static final String[] PROP_ID_TO_NAME = new String[20];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -168,6 +172,9 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_status] = PROP_NAME_status;
+          PROP_NAME_TO_ID.put(PROP_NAME_status, PROP_ID_status);
+      
     }
 
     
@@ -224,6 +231,9 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 状态: STATUS */
+    private java.lang.String _status;
     
 
     public _ErpMdMaterialSku(){
@@ -352,6 +362,9 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_status:
+               return getStatus();
         
            default:
               return super.orm_propValue(propId);
@@ -544,6 +557,16 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_status:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_status));
+               }
+               setStatus(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -675,6 +698,13 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_status:{
+               onInitProp(propId);
+               this._status = (java.lang.String)value;
                
                break;
             }
@@ -1023,6 +1053,25 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 状态: STATUS
+     */
+    public final java.lang.String getStatus(){
+         onPropGet(PROP_ID_status);
+         return _status;
+    }
+
+    /**
+     * 状态: STATUS
+     */
+    public final void setStatus(java.lang.String value){
+        if(onPropSet(PROP_ID_status,value)){
+            this._status = value;
+            internalClearRefs(PROP_ID_status);
             
         }
     }

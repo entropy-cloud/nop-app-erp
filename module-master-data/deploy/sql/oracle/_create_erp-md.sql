@@ -470,6 +470,7 @@ CREATE TABLE erp_md_material_sku(
   CREATE_TIME TIMESTAMP NOT NULL ,
   UPDATED_BY VARCHAR2(50) NOT NULL ,
   UPDATE_TIME TIMESTAMP NOT NULL ,
+  STATUS VARCHAR2(20)  ,
   constraint PK_erp_md_material_sku primary key (ID)
 );
 
@@ -1292,6 +1293,8 @@ CREATE TABLE erp_md_uom_conversion(
       COMMENT ON COLUMN erp_md_material_sku.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_md_material_sku.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_md_material_sku.STATUS IS '状态';
                     
       COMMENT ON TABLE erp_md_uom_conversion IS '单位换算';
                 

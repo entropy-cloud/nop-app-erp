@@ -288,6 +288,8 @@ prop:
       retailPrice: 零售价(不含税)
       salePrice: 销售价(不含税)
       skuCode: SKU编码
+      status: 状态
+      status_label: 状态
       taxRate: null
       taxRate.name: null
       taxRateId: 默认税率

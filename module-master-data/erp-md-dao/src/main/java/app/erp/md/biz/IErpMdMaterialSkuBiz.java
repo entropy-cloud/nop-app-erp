@@ -91,4 +91,16 @@ public interface IErpMdMaterialSkuBiz extends ICrudBiz<ErpMdMaterialSku>{
      */
     @BizQuery
     boolean validateSkuDeactivation(@Name("skuId") Long skuId, IServiceContext context);
+
+    /**
+     * UC-MD-06②：仅引用检查（不含默认 SKU 唯一性守卫）。被业务单据引用抛
+     * {@link NopException}（ERR_SKU_REFERENCED_BY_BILL）。
+     *
+     * <p>物料整体删除语境（ErpMdMaterialBizModel.defaultPrepareDelete 级联旁路堵闭）经本入口委托：
+     * 守卫 1（默认 SKU 接替）保护的是存活物料的默认 SKU 可解析性，物料连同全部 SKU 一起删除时
+     * 不适用（plan 2026-08-19-0445-1 D5 裁决）；经本接口委托使聚合升级（Phase 2 List 收集器）
+     * 单一改造点即自动覆盖物料删除路径。
+     */
+    @BizQuery
+    boolean validateSkuReference(@Name("skuId") Long skuId, IServiceContext context);
 }

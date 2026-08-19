@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 测试专用双桩 bean（RC-R1.72 Phase 2 D4）：注册两个独立 IErpMdSkuReferenceChecker 桩，
+     验证 ErpMdSkuReferenceCheckerRegistry（ioc:collect-beans List 收集器）的多实例 OR 聚合语义。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans">
+
+    <bean id="testStubSkuReferenceChecker"
+          class="app.erp.md.service.TestStubSkuReferenceChecker"/>
+
+    <bean id="testStubSkuReferenceCheckerSecondary"
+          class="app.erp.md.service.TestStubSkuReferenceCheckerSecondary"/>
+</beans>

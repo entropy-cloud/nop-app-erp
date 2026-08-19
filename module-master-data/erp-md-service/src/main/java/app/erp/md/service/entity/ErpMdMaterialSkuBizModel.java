@@ -24,8 +24,8 @@ import app.erp.md.dao.entity.ErpMdMaterialCategory;
 import app.erp.md.dao.entity.ErpMdMaterialSku;
 import app.erp.md.service.ErpMdConstants;
 import app.erp.md.service.ErpMdErrors;
+import app.erp.md.service.spi.ErpMdSkuReferenceCheckerRegistry;
 import app.erp.md.spi.IErpMdCustomerPriceResolver;
-import app.erp.md.spi.IErpMdSkuReferenceChecker;
 import app.erp.md.spi.IErpMdSupplierPriceResolver;
 
 import jakarta.annotation.Nullable;
@@ -53,8 +53,9 @@ import static io.nop.api.core.beans.FilterBeans.eq;
  * <p>条码全局唯一经 {@link #defaultPrepareSave}/{@link #defaultPrepareUpdate} 应用层查重
  * （{@link ErpMdConstants#CONFIG_SKU_BARCODE_UNIQUE} 开时；DB 唯一索引归 Deferred G1）。
  *
- * <p>跨域访问（价格表/引用检查）经 SPI（{@code IErpMdSupplierPriceResolver} / {@code IErpMdSkuReferenceChecker}），
- * 避免基础域反向依赖下游域构成依赖环。
+ * <p>跨域访问（价格表/引用检查）经 SPI（{@code IErpMdSupplierPriceResolver} /
+ * {@code IErpMdSkuReferenceChecker} 四域生产实现经 {@code ErpMdSkuReferenceCheckerRegistry}
+ * List 收集器聚合），避免基础域反向依赖下游域构成依赖环。
  */
 @BizModel("ErpMdMaterialSku")
 public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> implements IErpMdMaterialSkuBiz {
@@ -67,9 +68,13 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
     @Nullable
     protected IErpMdCustomerPriceResolver customerPriceResolver;
 
+    /**
+     * 跨域引用检查聚合（RC-R1.72 Phase 2 D4）：List 收集器 Registry（ioc:collect-beans 收集
+     * 四域生产实现 + 测试桩），任一命中即拒绝；空集合放行（单域测试零回归）。
+     */
     @Inject
     @Nullable
-    protected IErpMdSkuReferenceChecker skuReferenceChecker;
+    protected ErpMdSkuReferenceCheckerRegistry skuReferenceCheckerRegistry;
 
     public ErpMdMaterialSkuBizModel() {
         setEntityName(ErpMdMaterialSku.class.getName());
@@ -85,7 +90,13 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
         }
         QueryBean query = new QueryBean();
         query.addFilter(eq("barcode", barcode));
-        return findFirst(query, null, context);
+        // RC-R1.72 D1：跳过 INACTIVE SKU（独立停用后不可被新单据引用）；null=ACTIVE 派生兼容
+        for (ErpMdMaterialSku sku : findList(query, null, context)) {
+            if (isSkuActive(sku)) {
+                return sku;
+            }
+        }
+        return null;
     }
 
     // ============ UC-MD-05 默认 SKU 兜底 ============
@@ -99,7 +110,13 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
         QueryBean query = new QueryBean();
         query.addFilter(eq("materialId", materialId));
         query.addFilter(eq("isDefault", Boolean.TRUE));
-        return findFirst(query, null, context);
+        // RC-R1.72 D1：默认 SKU 已独立停用则不可被新单据引用（需先设其他可用 SKU 为默认）
+        for (ErpMdMaterialSku sku : findList(query, null, context)) {
+            if (isSkuActive(sku)) {
+                return sku;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -114,9 +131,11 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
             QueryBean query = new QueryBean();
             query.addFilter(eq("materialId", materialId));
             query.addFilter(eq("uoMId", unitId));
-            ErpMdMaterialSku matched = findFirst(query, null, context);
-            if (matched != null) {
-                return matched;
+            // RC-R1.72 D1：单位匹配命中 INACTIVE SKU 不构成可用（继续回退默认/报必填）
+            for (ErpMdMaterialSku sku : findList(query, null, context)) {
+                if (isSkuActive(sku)) {
+                    return sku;
+                }
             }
         }
         ErpMdMaterialSku def = findDefaultSku(materialId, context);
@@ -206,26 +225,49 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
         return new PriceValidationResult(true, true, minPrice, level);
     }
 
-    // ============ UC-MD-06 SKU 状态约束（Phase 3 实现完整守卫；此处先骨架返回 true） ============
+    // ============ UC-MD-06 SKU 状态约束（RC-R1.72：status 列 + 独立停用 + 读侧过滤） ============
 
     @Override
     @BizQuery
     public boolean validateSkuDeactivation(@Name("skuId") Long skuId, IServiceContext context) {
         ErpMdMaterialSku sku = requireSku(skuId, context);
-        // 守卫 1：默认 SKU 唯一性——是默认且无其他可用 SKU 则拒绝
-        if (Boolean.TRUE.equals(sku.getIsDefault())) {
+        // 守卫 1：默认 SKU 唯一性——是默认且无其他可用 SKU 则拒绝。
+        // 物料整体删除语境豁免：CrudBizModel.deleteReferences 对 cascade-delete 子对象逐一经子 BizModel
+        // __delete 级联（父物料先标记删除再级联子 SKU），此时守卫 1 不适用（plan 2026-08-19-0445-1 D5
+        // 迭代 2 裁决：物料连同全部 SKU 一起删除时默认 SKU 可解析性约束无意义）——父物料会话态已 gone
+        // 即整体删除中，跳过；物料级引用拦截由 ErpMdMaterialBizModel.defaultPrepareDelete 前置承担。
+        if (Boolean.TRUE.equals(sku.getIsDefault()) && !isMaterialBeingDeleted(sku)) {
             if (!hasOtherActiveSku(sku.getMaterialId(), skuId, context)) {
                 throw new NopException(ErpMdErrors.ERR_CANNOT_DEACTIVATE_DEFAULT_SKU)
                         .param(ErpMdErrors.ARG_SKU_ID, skuId)
                         .param(ErpMdErrors.ARG_MATERIAL_ID, sku.getMaterialId());
             }
         }
-        // 守卫 2：跨域引用检查经 SPI（域内引用校验也由 checker 承载；无 checker 时仅域内默认 SKU 守卫生效）
-        if (skuReferenceChecker != null && skuReferenceChecker.isReferencedByBill(sku)) {
-            throw new NopException(ErpMdErrors.ERR_SKU_REFERENCED_BY_BILL)
-                    .param(ErpMdErrors.ARG_SKU_ID, skuId);
-        }
+        checkSkuReferenced(sku);
         return true;
+    }
+
+    /**
+     * UC-MD-06②：仅引用检查（守卫 1 不适用场景的独立入口，见 {@link #validateSkuDeactivation} 同类守卫）。
+     * 物料整体删除经本入口逐 SKU 委托（D5），Phase 2 List 聚合升级落 checkSkuReferenced 单点即全覆盖。
+     */
+    @Override
+    @BizQuery
+    public boolean validateSkuReference(@Name("skuId") Long skuId, IServiceContext context) {
+        ErpMdMaterialSku sku = requireSku(skuId, context);
+        checkSkuReferenced(sku);
+        return true;
+    }
+
+    /**
+     * 守卫 2：跨域引用检查经 List 收集器聚合（域内引用校验也由 checker 承载；
+     * 空集合/无 Registry 时仅域内默认 SKU 守卫生效）。
+     */
+    protected void checkSkuReferenced(ErpMdMaterialSku sku) {
+        if (skuReferenceCheckerRegistry != null && skuReferenceCheckerRegistry.isReferencedByBill(sku)) {
+            throw new NopException(ErpMdErrors.ERR_SKU_REFERENCED_BY_BILL)
+                    .param(ErpMdErrors.ARG_SKU_ID, sku.getId());
+        }
     }
 
     // ============ 条码唯一性应用层校验（UC-MD-01 G1 应用层兜底） ============
@@ -240,6 +282,17 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
     protected void defaultPrepareUpdate(EntityData<ErpMdMaterialSku> entityData, IServiceContext context) {
         super.defaultPrepareUpdate(entityData, context);
         enforceBarcodeUnique(entityData.getEntity(), context);
+        // RC-R1.72 D2：status ACTIVE→INACTIVE 迁移（null 视同 ACTIVE）触发停用守卫；
+        // 非停用迁移（改码/改名/已停用行再编辑）不触发
+        ErpMdMaterialSku entity = entityData.getEntity();
+        if (entity != null && ErpMdConstants.ACTIVE_STATUS_INACTIVE.equals(entity.getStatus())) {
+            String oldStatus = (String) entity.orm_propOldValueByName("status");
+            boolean wasActive = oldStatus == null
+                    || !ErpMdConstants.ACTIVE_STATUS_INACTIVE.equals(oldStatus);
+            if (wasActive) {
+                validateSkuDeactivation(entity.getId(), context);
+            }
+        }
     }
 
     /**
@@ -290,7 +343,8 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
     }
 
     /**
-     * 是否存在其他可用（非当前）SKU。当前实体无 status 列（G2），故「可用」=同物料+id 不同。
+     * 是否存在其他可用（非当前、非停用）SKU。RC-R1.72 D1：「可用」= status ≠ INACTIVE
+     * （null 派生 ACTIVE，存量行兼容）；与 {@link #isMaterialActive} 同层短路。
      */
     @SuppressWarnings("unchecked")
     protected boolean hasOtherActiveSku(Long materialId, Long excludeSkuId, IServiceContext context) {
@@ -301,11 +355,28 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
         query.addFilter(eq("materialId", materialId));
         List<ErpMdMaterialSku> list = findList(query, null, context);
         for (ErpMdMaterialSku sku : list) {
-            if (!Objects.equals(sku.getId(), excludeSkuId)) {
+            if (!Objects.equals(sku.getId(), excludeSkuId) && isSkuActive(sku)) {
                 return true;
             }
         }
         return false;
+    }
+
+    /**
+     * RC-R1.72 D1：SKU 可用性判定——status ≠ INACTIVE（null 派生 ACTIVE，对齐
+     * {@link #isMaterialActive} 的 null 宽容语义）。
+     */
+    protected boolean isSkuActive(ErpMdMaterialSku sku) {
+        return sku != null && !ErpMdConstants.ACTIVE_STATUS_INACTIVE.equals(sku.getStatus());
+    }
+
+    /**
+     * RC-R1.72 D5：父物料是否处于整体删除中（会话态 gone = DELETING/DELETED/MISSING）。
+     * CrudBizModel 级联删除先标记父物料删除再逐子 __delete，此时守卫 1 豁免。
+     */
+    protected boolean isMaterialBeingDeleted(ErpMdMaterialSku sku) {
+        ErpMdMaterial material = sku.getMaterial();
+        return material != null && material.orm_state().isGone();
     }
 
     /**
@@ -375,7 +446,8 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     /**
      * UC-MD-06 物料级 status 过滤：物料停用（status != ACTIVE）时其 SKU 不可被新单引用。
-     * G2：SKU 无独立 status 列，联动经物料级 status 承载（Phase 3 Decision 选 (b)）。
+     * RC-R1.72 起 SKU 另有独立 status 列（null=ACTIVE），本物料级门控与 SKU 级
+     * {@link #isSkuActive} 同层短路（两层任一停用均拦截）。
      */
     protected boolean isMaterialActive(Long materialId) {
         if (materialId == null) {

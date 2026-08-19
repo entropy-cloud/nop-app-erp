@@ -265,6 +265,32 @@
         }
 
 
+        private String _status;
+
+    
+        @PropMeta(propId=19)
+    
+        public String getStatus(){
+            return _status;
+        }
+
+        public void setStatus(String value){
+            this._status = value;
+        }
+
+
+        private String _status_label;
+
+    
+        public String getStatus_label(){
+            return _status_label;
+        }
+
+        public void setStatus_label(String value){
+            this._status_label = value;
+        }
+
+
         private Map<String,Object> _material;
 
         public Map<String,Object> getMaterial(){

@@ -9,6 +9,12 @@
 
     <import resource="_service.beans.xml"/>
 
+    <!-- SKU 业务单据引用检查 SPI 生产实现（RC-R1.72，plan 2026-08-19-0445-1 Phase 2）：
+          端口 IErpMdSkuReferenceChecker 声明在 master-data，本实现落在 sales-service（合法 DAG 边）。
+          被 master-data 的 ErpMdSkuReferenceCheckerRegistry（ioc:collect-beans List 收集器）自动收集。 -->
+    <bean id="app.erp.sal.service.spi.ErpSalSkuReferenceChecker"
+          class="app.erp.sal.service.spi.ErpSalSkuReferenceChecker"/>
+
     <!-- 销售域服务（非 BizModel）：出库移动单请求构造器 -->
     <bean id="app.erp.sal.service.entity.DeliveryStockMoveBuilder"
           class="app.erp.sal.service.entity.DeliveryStockMoveBuilder"/>

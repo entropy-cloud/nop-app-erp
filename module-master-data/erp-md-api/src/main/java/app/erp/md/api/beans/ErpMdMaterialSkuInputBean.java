@@ -180,4 +180,18 @@
         }
 
 
+        private String _status;
+
+    
+        @PropMeta(propId=19)
+    
+        public String getStatus(){
+            return _status;
+        }
+
+        public void setStatus(String value){
+            this._status = value;
+        }
+
+
     }

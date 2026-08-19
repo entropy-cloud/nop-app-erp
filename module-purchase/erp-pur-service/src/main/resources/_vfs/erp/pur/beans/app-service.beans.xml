@@ -9,6 +9,14 @@
 
     <import resource="_service.beans.xml"/>
 
+    <!-- SKU 业务单据引用检查 SPI 生产实现（RC-R1.72，plan 2026-08-19-0445-1 Phase 2）：
+          端口 IErpMdSkuReferenceChecker 声明在 master-data，本实现落在 purchase-service（合法 DAG 边，
+          镜像 finance ErpMdEmployeeReferenceCheckerImpl 先例）。被 master-data 的
+          ErpMdSkuReferenceCheckerRegistry（ioc:collect-beans List 收集器）在 app-erp-all 聚合运行时自动收集；
+          purchase 单域测试亦经同 Registry 生效。 -->
+    <bean id="app.erp.pur.service.spi.ErpPurSkuReferenceChecker"
+          class="app.erp.pur.service.spi.ErpPurSkuReferenceChecker"/>
+
     <!-- UC-MD-03 采购方向价格表层：供应商价格清单解析器（实现 IErpMdSupplierPriceResolver SPI，
          由 master-data ErpMdMaterialSkuBizModel @Inject @Nullable 类型注入；无需 ioc:type，
          BeanFinder.findByType 按 isAssignableFrom 匹配，镜像 ErpSalCustomerPriceResolver 同型先例） -->

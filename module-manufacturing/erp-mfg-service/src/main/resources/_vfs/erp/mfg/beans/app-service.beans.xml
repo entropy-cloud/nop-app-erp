@@ -8,6 +8,12 @@
 
     <import resource="_service.beans.xml"/>
 
+    <!-- SKU 业务单据引用检查 SPI 生产实现（RC-R1.72，plan 2026-08-19-0445-1 Phase 2）：
+          端口 IErpMdSkuReferenceChecker 声明在 master-data，本实现落在 mfg-service（合法 DAG 边）。
+          被 master-data 的 ErpMdSkuReferenceCheckerRegistry（ioc:collect-beans List 收集器）自动收集。 -->
+    <bean id="app.erp.mfg.service.spi.ErpMfgSkuReferenceChecker"
+          class="app.erp.mfg.service.spi.ErpMfgSkuReferenceChecker"/>
+
     <!-- BOM 多级展开服务（plan 2026-07-02-1538-2 Phase 2）：phantom/环/深度，供 ErpMfgBomBizModel.explode 调用 -->
     <bean id="app.erp.mfg.service.bom.BomExpander"
           class="app.erp.mfg.service.bom.BomExpander"/>

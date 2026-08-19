@@ -106,12 +106,16 @@ public class ErpMdExchangeRateApiClientFactory {
         this.testClient = client;
     }
 
-    /** 测试钩子：清空缓存 + 限流统计 + 测试 client。 */
+    /**
+     * 测试钩子：清空缓存 + 限流统计 + 测试 client。
+     *
+     * <p>同时清空 {@code limiters}（测试必须）：令牌桶存储量不随 resetStats 重置，且创建时绑定当时的 rps 配置；
+     * 跨测试类复用工厂时残留限流器会让后续类（如冻结时钟的汇率日期测试）在零超时 tryAcquire 下被残留
+     * nextFreeTicket 时间戳误伤（test-order 依赖）。
+     */
     public void resetTestState() {
         responseCache.clear();
-        for (IRateLimiter l : limiters.values()) {
-            l.resetStats();
-        }
+        limiters.clear();
         testClient = null;
     }
 

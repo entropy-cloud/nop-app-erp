@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns:ioc="ioc"
        xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd">
@@ -11,6 +12,19 @@
     <!-- 主数据看板聚合入口（plan 2026-07-06-1606-1）：非实体 BizModel，注入 IDaoProvider/IOrmTemplate，
           经 @BizQuery 暴露 getDashboardKpi/findMaterialWithoutSkuAlert/findSkuWithoutPriceAlert。 -->
     <bean id="app.erp.md.service.dashboard.ErpMdDashboardBizModel" ioc:type="@bean:id"/>
+
+    <!-- SKU 引用检查聚合注册中心（RC-R1.72，plan 2026-08-19-0445-1 Phase 2 D4）：
+         List 收集器范式（镜像 b2b ErpB2bEdiRegistry.setProviders），收集容器内全部
+         IErpMdSkuReferenceChecker bean——app-erp-all 聚合运行时含 purchase/sales/inventory/
+         manufacturing 四域生产实现；md 单域测试含测试桩或空集合。被
+         ErpMdMaterialSkuBizModel.skuReferenceCheckerRegistry 经 @Nullable @Inject 收集。 -->
+    <bean id="app.erp.md.service.spi.ErpMdSkuReferenceCheckerRegistry"
+          class="app.erp.md.service.spi.ErpMdSkuReferenceCheckerRegistry">
+        <property name="checkers">
+            <ioc:collect-beans by-type="app.erp.md.spi.IErpMdSkuReferenceChecker"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
 
     <!-- 主数据域报表渲染入口（plan 2026-07-06-1815-1）：非实体 BizModel，注入平台 IReportEngine，
           经 @BizQuery 暴露 renderHtml/download。镜像 finance ErpFinReportBizModel（域隔离 /md/）。 -->
