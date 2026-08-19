@@ -251,6 +251,20 @@
         }
 
 
+        private Long _requestId;
+
+    
+        @PropMeta(propId=27)
+    
+        public Long getRequestId(){
+            return _requestId;
+        }
+
+        public void setRequestId(Long value){
+            this._requestId = value;
+        }
+
+
         private List<ErpMntVisitTaskInputBean> _tasks;
 
         public List<ErpMntVisitTaskInputBean> getTasks(){

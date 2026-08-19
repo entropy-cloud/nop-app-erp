@@ -1,0 +1,27 @@
+{
+  "data": {
+    "id": "61011",
+    "code": "@var:ErpMntEquipment@code",
+    "name": "运行时长测试设备61011",
+    "orgId": null,
+    "assetId": null,
+    "workcenterId": null,
+    "locationId": null,
+    "categoryId": null,
+    "status": "DOWN",
+    "status_label": "DOWN-故障停机",
+    "serialNo": null,
+    "manufacturer": null,
+    "model": null,
+    "installDate": null,
+    "warrantyExpiry": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpMntEquipment@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMntEquipmentStatusLog@updateTime"
+  },
+  "status": 0
+}

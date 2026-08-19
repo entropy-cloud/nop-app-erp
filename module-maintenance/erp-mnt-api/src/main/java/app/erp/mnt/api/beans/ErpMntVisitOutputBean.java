@@ -414,6 +414,20 @@
         }
 
 
+        private Long _requestId;
+
+    
+        @PropMeta(propId=27)
+    
+        public Long getRequestId(){
+            return _requestId;
+        }
+
+        public void setRequestId(Long value){
+            this._requestId = value;
+        }
+
+
         private Map<String,Object> _schedule;
 
         public Map<String,Object> getSchedule(){
@@ -433,6 +447,17 @@
 
         public void setEquipment(Map<String,Object> value){
             this._equipment = value;
+        }
+
+
+        private Map<String,Object> _request;
+
+        public Map<String,Object> getRequest(){
+            return _request;
+        }
+
+        public void setRequest(Map<String,Object> value){
+            this._request = value;
         }
 
 

@@ -4,12 +4,15 @@ entity:
     ErpMntDowntimeEntry: 停机记录
     ErpMntEquipment: 设备
     ErpMntEquipmentCategory: 设备分类
+    ErpMntEquipmentStatusLog: 设备状态日志
     ErpMntMaintenanceTeam: 维护团队
     ErpMntMaintenanceTeamMember: 维护团队成员
     ErpMntRequest: 维护请求
     ErpMntSchedule: 维护计划
     ErpMntSparePartUsage: 备件消耗
     ErpMntSparePartUsageLine: 备件消耗行
+    ErpMntTaskTemplate: 维护任务模板
+    ErpMntTaskTemplateLine: 维护任务模板行
     ErpMntVisit: 维护访问
     ErpMntVisitTask: 维护任务
 prop:
@@ -110,6 +113,25 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpMntEquipmentStatusLog:
+      changeAt: 变更时间
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      equipment: null
+      equipmentId: 设备ID
+      fromStatus: 原状态
+      fromStatus_label: 原状态
+      id: ID
+      remark: 备注
+      source: 变更来源
+      sourceBillCode: 来源单据编码
+      source_label: 变更来源
+      toStatus: 新状态
+      toStatus_label: 新状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpMntMaintenanceTeam:
       code: 团队编码
       createTime: 创建时间
@@ -185,9 +207,14 @@ prop:
       recurrenceType: 重复类型
       recurrenceType_label: 重复类型
       remark: 备注
+      runtimeBaselineHours: 运行时长基线(小时)
       scheduleType: 计划类型
       scheduleType_label: 计划类型
       startDate: 开始日期
+      templateId: 任务模板ID
+      thresholdHours: 触发阈值(小时)
+      triggerType: 触发类型
+      triggerType_label: 触发类型
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
@@ -247,6 +274,41 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpMntTaskTemplate:
+      category: null
+      code: 模板编码
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      equipmentCategoryId: 适用设备分类(可空=需显式套用)
+      id: ID
+      instruction: 操作说明
+      isActive: 是否启用(空=否)
+      lines: null
+      name: 模板名称
+      remark: 备注
+      standardMinutes: 标准工时(分钟)
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+    ErpMntTaskTemplateLine:
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      lineNo: 行号
+      material: null
+      material.name: null
+      materialId: 标准备件(物料,提示)
+      quantity: 备件数量(提示)
+      remark: 备注
+      standardMinutes: 标准工时(分钟,行级)
+      taskName: 任务名称
+      template: null
+      templateId: 任务模板ID
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
     ErpMntVisit:
       assignedTo: 指派人
       businessDate: 业务日期
@@ -267,6 +329,8 @@ prop:
       postedAt: 过账时间
       postedBy: 过账人
       remark: 备注
+      request: null
+      requestId: 维护请求ID
       result: 执行结果
       result_label: 执行结果
       schedule: null
@@ -292,6 +356,7 @@ prop:
       id: ID
       lineNo: 行号
       remark: 备注
+      standardMinutes: 标准工时(分钟)
       status: 状态
       status_label: 状态
       taskDescription: 任务描述

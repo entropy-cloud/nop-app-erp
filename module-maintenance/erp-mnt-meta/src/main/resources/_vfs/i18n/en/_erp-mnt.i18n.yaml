@@ -4,12 +4,15 @@ entity:
     ErpMntDowntimeEntry: Downtime Entry
     ErpMntEquipment: Equipment
     ErpMntEquipmentCategory: Equipment Category
+    ErpMntEquipmentStatusLog: Equipment Status Log
     ErpMntMaintenanceTeam: Maintenance Team
     ErpMntMaintenanceTeamMember: Maintenance Team Member
     ErpMntRequest: Maintenance Request
     ErpMntSchedule: Maintenance Schedule
     ErpMntSparePartUsage: Spare Part Usage
     ErpMntSparePartUsageLine: Spare Part Usage Line
+    ErpMntTaskTemplate: Maintenance Task Template
+    ErpMntTaskTemplateLine: Maintenance Task Template Line
     ErpMntVisit: Maintenance Visit
     ErpMntVisitTask: Maintenance Task
 prop:
@@ -110,6 +113,25 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       parent: Parent
+    ErpMntEquipmentStatusLog:
+      id: ID
+      equipmentId: Equipment
+      fromStatus: From Status
+      fromStatus_label: null
+      toStatus: To Status
+      toStatus_label: null
+      changeAt: Change At
+      source: Source
+      source_label: null
+      sourceBillCode: Source Bill Code
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      equipment: Equipment
     ErpMntMaintenanceTeam:
       id: ID
       code: Code
@@ -190,6 +212,11 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      triggerType: Trigger Type
+      triggerType_label: null
+      thresholdHours: Threshold Hours
+      runtimeBaselineHours: Runtime Baseline Hours
+      templateId: Task Template
       equipment: Equipment
     ErpMntSparePartUsage:
       id: ID
@@ -247,6 +274,41 @@ prop:
       material.name: Material
       uoM: Uo M
       uoM.name: Uo M
+    ErpMntTaskTemplate:
+      id: ID
+      code: Code
+      name: Name
+      equipmentCategoryId: Equipment Category
+      standardMinutes: Standard Minutes
+      instruction: Instruction
+      isActive: Active
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      category: Category
+      lines: Lines
+    ErpMntTaskTemplateLine:
+      id: ID
+      templateId: Task Template
+      lineNo: Line No
+      taskName: Task Name
+      standardMinutes: Standard Minutes
+      materialId: Material
+      quantity: Quantity
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      template: Task Template
+      material: Material
+      material.name: Material
     ErpMntVisit:
       id: ID
       code: Code
@@ -277,8 +339,10 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      requestId: Request
       schedule: Schedule
       equipment: Equipment
+      request: Request
       tasks: Tasks
       sparePartUsages: Spare Part Usages
       org: null
@@ -292,6 +356,7 @@ prop:
       status_label: null
       completedBy: Completed By
       completedAt: Completed At
+      standardMinutes: Standard Minutes
       remark: Remark
       delVersion: Del Flag
       version: Version
@@ -312,6 +377,8 @@ dict:
     erp-mnt/calibration-result: Calibration Result
     erp-mnt/visit-type: Maintenance Type
     erp-mnt/visit-result: Execution Result
+    erp-mnt/trigger-type: Maintenance Trigger Type
+    erp-mnt/status-log-source: Equipment Status Log Source
 dict.option.label:
   erp-mnt/schedule-type:
     PREVENTIVE: Preventive Maintenance
@@ -363,3 +430,10 @@ dict.option.label:
     NORMAL: Normal
     ABNORMAL: Abnormal
     PARTIAL: Partially Complete
+  erp-mnt/trigger-type:
+    TIME: Time Based
+    RUNTIME: Runtime Based
+  erp-mnt/status-log-source:
+    VISIT: Visit
+    DOWNTIME: Downtime
+    MANUAL: Manual

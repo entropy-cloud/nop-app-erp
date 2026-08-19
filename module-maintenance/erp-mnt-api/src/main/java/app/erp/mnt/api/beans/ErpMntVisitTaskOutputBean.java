@@ -123,10 +123,24 @@
         }
 
 
-        private String _remark;
+        private java.math.BigDecimal _standardMinutes;
 
     
         @PropMeta(propId=8)
+    
+        public java.math.BigDecimal getStandardMinutes(){
+            return _standardMinutes;
+        }
+
+        public void setStandardMinutes(java.math.BigDecimal value){
+            this._standardMinutes = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=9)
     
         public String getRemark(){
             return _remark;
@@ -140,7 +154,7 @@
         private Long _delVersion;
 
     
-        @PropMeta(propId=9)
+        @PropMeta(propId=10)
     
         public Long getDelVersion(){
             return _delVersion;
@@ -154,7 +168,7 @@
         private Integer _version;
 
     
-        @PropMeta(propId=10)
+        @PropMeta(propId=11)
     
         public Integer getVersion(){
             return _version;
@@ -168,7 +182,7 @@
         private String _createdBy;
 
     
-        @PropMeta(propId=11)
+        @PropMeta(propId=12)
     
         public String getCreatedBy(){
             return _createdBy;
@@ -182,7 +196,7 @@
         private java.sql.Timestamp _createTime;
 
     
-        @PropMeta(propId=12)
+        @PropMeta(propId=13)
     
         public java.sql.Timestamp getCreateTime(){
             return _createTime;
@@ -196,7 +210,7 @@
         private String _updatedBy;
 
     
-        @PropMeta(propId=13)
+        @PropMeta(propId=14)
     
         public String getUpdatedBy(){
             return _updatedBy;
@@ -210,7 +224,7 @@
         private java.sql.Timestamp _updateTime;
 
     
-        @PropMeta(propId=14)
+        @PropMeta(propId=15)
     
         public java.sql.Timestamp getUpdateTime(){
             return _updateTime;

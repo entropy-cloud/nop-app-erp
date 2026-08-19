@@ -38,6 +38,9 @@ public class ErpMntRequestAcceptProcessor extends AbstractErpMntRequestProcessor
         data.put("status", ErpMntDaoConstants.VISIT_STATUS_DRAFT);
         data.put("visitType", ErpMntDaoConstants.VISIT_TYPE_RESPONSIVE);
         data.put("assignedTo", request.getAssignedTo() != null ? request.getAssignedTo() : request.getRequestedBy());
+        // RC-R1.75 / UC-MAIN-05（D5）：显式反向指针回填（code 命名约定保留——幂等锚点复用），
+        // 供 visit complete 写回 request COMPLETED 消费；不套用任务模板（模板属计划性维护语义）。
+        data.put("requestId", request.getId());
         return visitBiz.save(data, context);
     }
 

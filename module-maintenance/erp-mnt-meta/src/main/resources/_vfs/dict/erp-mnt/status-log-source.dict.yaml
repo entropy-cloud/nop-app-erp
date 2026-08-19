@@ -1,0 +1,19 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 设备状态日志来源
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 维护访问
+    value: VISIT
+    description: 
+  
+  - label: 停机记录
+    value: DOWNTIME
+    description: 
+  
+  - label: 手动变更
+    value: MANUAL
+    description: 
+  

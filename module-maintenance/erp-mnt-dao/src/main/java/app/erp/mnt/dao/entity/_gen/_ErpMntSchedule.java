@@ -97,8 +97,24 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 19;
     
+    /* 触发类型: TRIGGER_TYPE VARCHAR */
+    public static final String PROP_NAME_triggerType = "triggerType";
+    public static final int PROP_ID_triggerType = 20;
+    
+    /* 触发阈值(小时): THRESHOLD_HOURS DECIMAL */
+    public static final String PROP_NAME_thresholdHours = "thresholdHours";
+    public static final int PROP_ID_thresholdHours = 21;
+    
+    /* 运行时长基线(小时): RUNTIME_BASELINE_HOURS DECIMAL */
+    public static final String PROP_NAME_runtimeBaselineHours = "runtimeBaselineHours";
+    public static final int PROP_ID_runtimeBaselineHours = 22;
+    
+    /* 任务模板ID: TEMPLATE_ID BIGINT */
+    public static final String PROP_NAME_templateId = "templateId";
+    public static final int PROP_ID_templateId = 23;
+    
 
-    private static int _PROP_ID_BOUND = 20;
+    private static int _PROP_ID_BOUND = 24;
 
     
     /* relation:  */
@@ -108,7 +124,7 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[20];
+    private static final String[] PROP_ID_TO_NAME = new String[24];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -169,6 +185,18 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_triggerType] = PROP_NAME_triggerType;
+          PROP_NAME_TO_ID.put(PROP_NAME_triggerType, PROP_ID_triggerType);
+      
+          PROP_ID_TO_NAME[PROP_ID_thresholdHours] = PROP_NAME_thresholdHours;
+          PROP_NAME_TO_ID.put(PROP_NAME_thresholdHours, PROP_ID_thresholdHours);
+      
+          PROP_ID_TO_NAME[PROP_ID_runtimeBaselineHours] = PROP_NAME_runtimeBaselineHours;
+          PROP_NAME_TO_ID.put(PROP_NAME_runtimeBaselineHours, PROP_ID_runtimeBaselineHours);
+      
+          PROP_ID_TO_NAME[PROP_ID_templateId] = PROP_NAME_templateId;
+          PROP_NAME_TO_ID.put(PROP_NAME_templateId, PROP_ID_templateId);
+      
     }
 
     
@@ -228,6 +256,18 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 触发类型: TRIGGER_TYPE */
+    private java.lang.String _triggerType;
+    
+    /* 触发阈值(小时): THRESHOLD_HOURS */
+    private java.math.BigDecimal _thresholdHours;
+    
+    /* 运行时长基线(小时): RUNTIME_BASELINE_HOURS */
+    private java.math.BigDecimal _runtimeBaselineHours;
+    
+    /* 任务模板ID: TEMPLATE_ID */
+    private java.lang.Long _templateId;
     
 
     public _ErpMntSchedule(){
@@ -359,6 +399,18 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_triggerType:
+               return getTriggerType();
+        
+            case PROP_ID_thresholdHours:
+               return getThresholdHours();
+        
+            case PROP_ID_runtimeBaselineHours:
+               return getRuntimeBaselineHours();
+        
+            case PROP_ID_templateId:
+               return getTemplateId();
         
            default:
               return super.orm_propValue(propId);
@@ -561,6 +613,46 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_triggerType:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_triggerType));
+               }
+               setTriggerType(typedValue);
+               break;
+            }
+        
+            case PROP_ID_thresholdHours:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_thresholdHours));
+               }
+               setThresholdHours(typedValue);
+               break;
+            }
+        
+            case PROP_ID_runtimeBaselineHours:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_runtimeBaselineHours));
+               }
+               setRuntimeBaselineHours(typedValue);
+               break;
+            }
+        
+            case PROP_ID_templateId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_templateId));
+               }
+               setTemplateId(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -699,6 +791,34 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_triggerType:{
+               onInitProp(propId);
+               this._triggerType = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_thresholdHours:{
+               onInitProp(propId);
+               this._thresholdHours = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_runtimeBaselineHours:{
+               onInitProp(propId);
+               this._runtimeBaselineHours = (java.math.BigDecimal)value;
+               
+               break;
+            }
+        
+            case PROP_ID_templateId:{
+               onInitProp(propId);
+               this._templateId = (java.lang.Long)value;
                
                break;
             }
@@ -1066,6 +1186,82 @@ public class _ErpMntSchedule extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 触发类型: TRIGGER_TYPE
+     */
+    public final java.lang.String getTriggerType(){
+         onPropGet(PROP_ID_triggerType);
+         return _triggerType;
+    }
+
+    /**
+     * 触发类型: TRIGGER_TYPE
+     */
+    public final void setTriggerType(java.lang.String value){
+        if(onPropSet(PROP_ID_triggerType,value)){
+            this._triggerType = value;
+            internalClearRefs(PROP_ID_triggerType);
+            
+        }
+    }
+    
+    /**
+     * 触发阈值(小时): THRESHOLD_HOURS
+     */
+    public final java.math.BigDecimal getThresholdHours(){
+         onPropGet(PROP_ID_thresholdHours);
+         return _thresholdHours;
+    }
+
+    /**
+     * 触发阈值(小时): THRESHOLD_HOURS
+     */
+    public final void setThresholdHours(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_thresholdHours,value)){
+            this._thresholdHours = value;
+            internalClearRefs(PROP_ID_thresholdHours);
+            
+        }
+    }
+    
+    /**
+     * 运行时长基线(小时): RUNTIME_BASELINE_HOURS
+     */
+    public final java.math.BigDecimal getRuntimeBaselineHours(){
+         onPropGet(PROP_ID_runtimeBaselineHours);
+         return _runtimeBaselineHours;
+    }
+
+    /**
+     * 运行时长基线(小时): RUNTIME_BASELINE_HOURS
+     */
+    public final void setRuntimeBaselineHours(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_runtimeBaselineHours,value)){
+            this._runtimeBaselineHours = value;
+            internalClearRefs(PROP_ID_runtimeBaselineHours);
+            
+        }
+    }
+    
+    /**
+     * 任务模板ID: TEMPLATE_ID
+     */
+    public final java.lang.Long getTemplateId(){
+         onPropGet(PROP_ID_templateId);
+         return _templateId;
+    }
+
+    /**
+     * 任务模板ID: TEMPLATE_ID
+     */
+    public final void setTemplateId(java.lang.Long value){
+        if(onPropSet(PROP_ID_templateId,value)){
+            this._templateId = value;
+            internalClearRefs(PROP_ID_templateId);
             
         }
     }

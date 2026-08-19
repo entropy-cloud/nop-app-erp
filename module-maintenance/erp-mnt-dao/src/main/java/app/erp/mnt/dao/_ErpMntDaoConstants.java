@@ -203,4 +203,29 @@ public interface _ErpMntDaoConstants {
      */
     String VISIT_RESULT_PARTIAL = "PARTIAL";
                     
+    /**
+     * 维护计划触发类型: 时间周期 
+     */
+    String TRIGGER_TYPE_TIME = "TIME";
+                    
+    /**
+     * 维护计划触发类型: 运行时长 
+     */
+    String TRIGGER_TYPE_RUNTIME = "RUNTIME";
+                    
+    /**
+     * 设备状态日志来源: 维护访问 
+     */
+    String STATUS_LOG_SOURCE_VISIT = "VISIT";
+                    
+    /**
+     * 设备状态日志来源: 停机记录 
+     */
+    String STATUS_LOG_SOURCE_DOWNTIME = "DOWNTIME";
+                    
+    /**
+     * 设备状态日志来源: 手动变更 
+     */
+    String STATUS_LOG_SOURCE_MANUAL = "MANUAL";
+                    
 }

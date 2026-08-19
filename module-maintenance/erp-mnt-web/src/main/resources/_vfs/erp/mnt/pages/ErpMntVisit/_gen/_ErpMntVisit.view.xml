@@ -92,6 +92,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--维护请求ID-->
+                <col id="requestId" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -112,6 +115,7 @@
  postedBy[过账人] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ requestId[维护请求ID] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维护访问" i18n-en:title="Add Maintenance Visit" x:prototype="edit"/>
@@ -125,6 +129,7 @@
  totalMinutes[总分钟数] visitType[维护类型]
  result[执行结果] remark[备注]
  orgId[业务组织] businessDate[业务日期]
+ requestId[维护请求ID] 
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

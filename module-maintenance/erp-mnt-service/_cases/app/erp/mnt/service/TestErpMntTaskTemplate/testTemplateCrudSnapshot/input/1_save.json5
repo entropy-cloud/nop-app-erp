@@ -1,0 +1,11 @@
+{
+  data: {
+    data: {
+      code: "TPL-SNAP-001",
+      name: "快照测试模板",
+      standardMinutes: 90,
+      instruction: "断电后按操作手册执行",
+      isActive: 1
+    }
+  }
+}

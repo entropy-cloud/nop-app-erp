@@ -110,10 +110,24 @@
         }
 
 
-        private String _remark;
+        private java.math.BigDecimal _standardMinutes;
 
     
         @PropMeta(propId=8)
+    
+        public java.math.BigDecimal getStandardMinutes(){
+            return _standardMinutes;
+        }
+
+        public void setStandardMinutes(java.math.BigDecimal value){
+            this._standardMinutes = value;
+        }
+
+
+        private String _remark;
+
+    
+        @PropMeta(propId=9)
     
         public String getRemark(){
             return _remark;

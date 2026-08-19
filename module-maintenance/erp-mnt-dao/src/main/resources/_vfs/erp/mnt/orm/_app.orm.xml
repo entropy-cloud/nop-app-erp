@@ -75,6 +75,16 @@
             <option code="ABNORMAL" label="异常" value="ABNORMAL" i18n-en:label="Abnormal"/>
             <option code="PARTIAL" label="部分完成" value="PARTIAL" i18n-en:label="Partially Complete"/>
         </dict>
+        <dict label="维护计划触发类型" name="erp-mnt/trigger-type" valueType="string" i18n-en:label="Maintenance Trigger Type">
+            <option code="TIME" label="时间周期" value="TIME" i18n-en:label="Time Based"/>
+            <option code="RUNTIME" label="运行时长" value="RUNTIME" i18n-en:label="Runtime Based"/>
+        </dict>
+        <dict label="设备状态日志来源" name="erp-mnt/status-log-source" valueType="string"
+              i18n-en:label="Equipment Status Log Source">
+            <option code="VISIT" label="维护访问" value="VISIT" i18n-en:label="Visit"/>
+            <option code="DOWNTIME" label="停机记录" value="DOWNTIME" i18n-en:label="Downtime"/>
+            <option code="MANUAL" label="手动变更" value="MANUAL" i18n-en:label="Manual"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -339,6 +349,16 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="19" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="TRIGGER_TYPE" displayName="触发类型" name="triggerType" precision="20" propId="20"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mnt/trigger-type"
+                        i18n-en:displayName="Trigger Type"/>
+                <column code="THRESHOLD_HOURS" displayName="触发阈值(小时)" name="thresholdHours" precision="12" propId="21"
+                        scale="2" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Threshold Hours"/>
+                <column code="RUNTIME_BASELINE_HOURS" displayName="运行时长基线(小时)" name="runtimeBaselineHours"
+                        precision="12" propId="22" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Runtime Baseline Hours"/>
+                <column code="TEMPLATE_ID" displayName="任务模板ID" name="templateId" propId="23" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Task Template"/>
             </columns>
             <indexes>
                 <index name="IDX_MNT_SCHEDULE_EQUIPMENT_ID" unique="false">
@@ -423,6 +443,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="REQUEST_ID" displayName="维护请求ID" name="requestId" propId="27" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Request"/>
             </columns>
             <indexes>
                 <index name="IDX_MNT_VISIT_ORG_STATUS" unique="false">
@@ -451,6 +473,12 @@
                         i18n-en:displayName="Equipment">
                     <join>
                         <on leftProp="equipmentId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="request" refEntityName="app.erp.mnt.dao.entity.ErpMntRequest" tagSet="pub"
+                        i18n-en:displayName="Request">
+                    <join>
+                        <on leftProp="requestId" rightProp="id"/>
                     </join>
                 </to-one>
                 <to-many cascadeDelete="true" name="tasks" refEntityName="app.erp.mnt.dao.entity.ErpMntVisitTask"
@@ -500,6 +528,66 @@
                         stdSqlType="BIGINT" i18n-en:displayName="Completed By"/>
                 <column code="COMPLETED_AT" displayName="完成时间" name="completedAt" propId="7" stdDataType="timestamp"
                         stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Completed At"/>
+                <column code="STANDARD_MINUTES" displayName="标准工时(分钟)" domain="downtimeMinutes" name="standardMinutes"
+                        precision="12" propId="8" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Standard Minutes"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="9"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="10" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="11" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="12" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="13" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="14" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="15" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_MNT_VISIT_TASK_STATUS" unique="false">
+                    <column name="status"/>
+                </index>
+                <index name="IDX_MNT_VISIT_TASK_VISIT_ID" unique="false">
+                    <column name="visitId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="visit" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit" tagSet="pub"
+                        i18n-en:displayName="Visit">
+                    <join>
+                        <on leftProp="visitId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.mnt.dao.entity.ErpMntTaskTemplate" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护任务模板"
+                name="app.erp.mnt.dao.entity.ErpMntTaskTemplate" registerShortName="true"
+                tableName="erp_mnt_task_template" tagSet="gid,erp.maintenance" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="clipboard-list" i18n-en:displayName="Maintenance Task Template">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="CODE" displayName="模板编码" domain="scheduleCode" mandatory="true" name="code" precision="50"
+                        propId="2" stdDataType="string" stdSqlType="VARCHAR" tagSet="var" i18n-en:displayName="Code"/>
+                <column code="NAME" displayName="模板名称" mandatory="true" name="name" precision="200" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Name"/>
+                <column code="EQUIPMENT_CATEGORY_ID" displayName="适用设备分类(可空=需显式套用)" name="equipmentCategoryId"
+                        propId="4" stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Equipment Category"/>
+                <column code="STANDARD_MINUTES" displayName="标准工时(分钟)" domain="downtimeMinutes" name="standardMinutes"
+                        precision="12" propId="5" scale="2" stdDataType="decimal" stdSqlType="DECIMAL"
+                        i18n-en:displayName="Standard Minutes"/>
+                <column code="INSTRUCTION" displayName="操作说明" name="instruction" precision="2000" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Instruction"/>
+                <column code="IS_ACTIVE" displayName="是否启用(空=否)" name="isActive" propId="7" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Active"/>
                 <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
                 <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
@@ -519,18 +607,87 @@
                         propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
             </columns>
             <indexes>
-                <index name="IDX_MNT_VISIT_TASK_STATUS" unique="false">
-                    <column name="status"/>
-                </index>
-                <index name="IDX_MNT_VISIT_TASK_VISIT_ID" unique="false">
-                    <column name="visitId"/>
+                <index name="IDX_MNT_TASK_TEMPLATE_EQUIPMENT_CATEGORY_ID" unique="false">
+                    <column name="equipmentCategoryId"/>
                 </index>
             </indexes>
             <relations>
-                <to-one name="visit" refEntityName="app.erp.mnt.dao.entity.ErpMntVisit" tagSet="pub"
-                        i18n-en:displayName="Visit">
+                <to-one name="category" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipmentCategory" tagSet="pub"
+                        i18n-en:displayName="Category">
                     <join>
-                        <on leftProp="visitId" rightProp="id"/>
+                        <on leftProp="equipmentCategoryId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-many cascadeDelete="true" name="lines" refEntityName="app.erp.mnt.dao.entity.ErpMntTaskTemplateLine"
+                         tagSet="pub,cascade-delete,insertable,updatable" i18n-en:displayName="Lines" ext:estRows="10">
+                    <join>
+                        <on leftProp="id" rightProp="templateId"/>
+                    </join>
+                </to-many>
+            </relations>
+            <unique-keys>
+                <unique-key columns="code" name="UK_MNT_TASK_TEMPLATE_CODE"/>
+            </unique-keys>
+        </entity>
+        <entity className="app.erp.mnt.dao.entity.ErpMntTaskTemplateLine" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="维护任务模板行"
+                name="app.erp.mnt.dao.entity.ErpMntTaskTemplateLine" registerShortName="true"
+                tableName="erp_mnt_task_template_line" tagSet="gid,erp.maintenance" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="list-ordered" i18n-en:displayName="Maintenance Task Template Line">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="TEMPLATE_ID" displayName="任务模板ID" mandatory="true" name="templateId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Task Template"/>
+                <column code="LINE_NO" displayName="行号" mandatory="true" name="lineNo" propId="3" stdDataType="int"
+                        stdSqlType="INTEGER" i18n-en:displayName="Line No"/>
+                <column code="TASK_NAME" displayName="任务名称" mandatory="true" name="taskName" precision="500" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Task Name"/>
+                <column code="STANDARD_MINUTES" displayName="标准工时(分钟,行级)" domain="downtimeMinutes"
+                        name="standardMinutes" precision="12" propId="5" scale="2" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Standard Minutes"/>
+                <column code="MATERIAL_ID" displayName="标准备件(物料,提示)" name="materialId" propId="6" stdDataType="long"
+                        stdSqlType="BIGINT" i18n-en:displayName="Material"/>
+                <column code="QUANTITY" displayName="备件数量(提示)" domain="quantity" name="quantity" precision="20"
+                        propId="7" scale="4" stdDataType="decimal" stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_MNT_TASK_TEMPLATE_LINE_TEMPLATE_ID" unique="false">
+                    <column name="templateId"/>
+                </index>
+                <index name="IDX_MNT_TASK_TEMPLATE_LINE_MATERIAL_ID" unique="false">
+                    <column name="materialId"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="template" refEntityName="app.erp.mnt.dao.entity.ErpMntTaskTemplate" tagSet="pub"
+                        i18n-en:displayName="Task Template">
+                    <join>
+                        <on leftProp="templateId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="material" refEntityName="app.erp.md.dao.entity.ErpMdMaterial" tagSet="pub"
+                        i18n-en:displayName="Material">
+                    <join>
+                        <on leftProp="materialId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -664,6 +821,63 @@
                 <to-one name="relatedJobOrder" refEntityName="app.erp.mnt.dao.entity.ErpMntDowntimeEntry" tagSet="pub">
                     <join>
                         <on leftProp="relatedJobOrderId" rightProp="id"/>
+                    </join>
+                </to-one>
+            </relations>
+        </entity>
+        <entity className="app.erp.mnt.dao.entity.ErpMntEquipmentStatusLog" createTimeProp="createTime"
+                createrProp="createdBy" deleteFlagProp="delVersion" deleteVersionProp="delVersion" displayName="设备状态日志"
+                name="app.erp.mnt.dao.entity.ErpMntEquipmentStatusLog" registerShortName="true"
+                tableName="erp_mnt_equipment_status_log" tagSet="gid,erp.maintenance" updateTimeProp="updateTime"
+                updaterProp="updatedBy" useLogicalDelete="true" versionProp="version" ext:web-renderer="flux"
+                ext:icon="scroll-text" i18n-en:displayName="Equipment Status Log">
+            <columns>
+                <column code="ID" displayName="ID" mandatory="true" name="id" primary="true" propId="1"
+                        stdDataType="long" stdSqlType="BIGINT" tagSet="seq-default" i18n-en:displayName="ID"/>
+                <column code="EQUIPMENT_ID" displayName="设备ID" mandatory="true" name="equipmentId" propId="2"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Equipment"/>
+                <column code="FROM_STATUS" displayName="原状态" name="fromStatus" precision="20" propId="3"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mnt/equipment-status"
+                        i18n-en:displayName="From Status"/>
+                <column code="TO_STATUS" displayName="新状态" mandatory="true" name="toStatus" precision="20" propId="4"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mnt/equipment-status"
+                        i18n-en:displayName="To Status"/>
+                <column code="CHANGE_AT" displayName="变更时间" mandatory="true" name="changeAt" propId="5"
+                        stdDataType="timestamp" stdSqlType="TIMESTAMP" tagSet="clock" i18n-en:displayName="Change At"/>
+                <column code="SOURCE" displayName="变更来源" mandatory="true" name="source" precision="20" propId="6"
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-mnt/status-log-source"
+                        i18n-en:displayName="Source"/>
+                <column code="SOURCE_BILL_CODE" displayName="来源单据编码" domain="code" name="sourceBillCode" precision="50"
+                        propId="7" stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Source Bill Code"/>
+                <column code="REMARK" displayName="备注" domain="remark" name="remark" precision="1000" propId="8"
+                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Remark"/>
+                <column code="DEL_VERSION" defaultValue="0" displayName="逻辑删除版本" domain="delVersion" mandatory="true"
+                        name="delVersion" propId="9" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Del Flag" ui:show="R"/>
+                <column code="VERSION" defaultValue="0" displayName="数据版本" domain="version" mandatory="true"
+                        name="version" propId="10" stdDataType="int" stdSqlType="INTEGER" i18n-en:displayName="Version"/>
+                <column code="CREATED_BY" displayName="创建人" domain="createdBy" mandatory="true" name="createdBy"
+                        precision="50" propId="11" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Created By"/>
+                <column code="CREATE_TIME" displayName="创建时间" domain="createTime" mandatory="true" name="createTime"
+                        propId="12" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Create Time"/>
+                <column code="UPDATED_BY" displayName="修改人" domain="updatedBy" mandatory="true" name="updatedBy"
+                        precision="50" propId="13" stdDataType="string" stdSqlType="VARCHAR"
+                        i18n-en:displayName="Updated By"/>
+                <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
+                        propId="14" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+            </columns>
+            <indexes>
+                <index name="IDX_MNT_EQUIPMENT_STATUS_LOG_EQUIPMENT_CHANGE_AT" unique="false">
+                    <column name="equipmentId"/>
+                    <column name="changeAt"/>
+                </index>
+            </indexes>
+            <relations>
+                <to-one name="equipment" refEntityName="app.erp.mnt.dao.entity.ErpMntEquipment" tagSet="pub"
+                        i18n-en:displayName="Equipment">
+                    <join>
+                        <on leftProp="equipmentId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>

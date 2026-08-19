@@ -12,6 +12,16 @@
     <bean id="app.erp.mnt.service.support.EquipmentStatusLinker"
           class="app.erp.mnt.service.support.EquipmentStatusLinker"/>
 
+    <!-- 设备状态日志追加器（RC-R1.73 / UC-MAIN-02）：状态迁移同事务追加 ErpMntEquipmentStatusLog 行，
+           供运行时长 Σ RUNNING 段聚合消费（写点：EquipmentStatusLinker 三迁移方法 + changeStatus）。 -->
+    <bean id="app.erp.mnt.service.support.EquipmentStatusLogWriter"
+          class="app.erp.mnt.service.support.EquipmentStatusLogWriter"/>
+
+    <!-- 设备累计运行时长计算器（RC-R1.73 / UC-MAIN-02）：查询时聚合 Σ RUNNING 段（无采集 Job 无物化漂移），
+           供 ScheduleDueGenerator RUNTIME 计划触发评估消费。 -->
+    <bean id="app.erp.mnt.service.support.EquipmentRuntimeCalculator"
+          class="app.erp.mnt.service.support.EquipmentRuntimeCalculator"/>
+
     <!-- 维护域服务（非 BizModel）：备件领料出库服务（按行调 IErpInvStockMoveBiz.generateMove 跨域出库） -->
     <bean id="app.erp.mnt.service.support.SparePartIssueService"
           class="app.erp.mnt.service.support.SparePartIssueService"/>

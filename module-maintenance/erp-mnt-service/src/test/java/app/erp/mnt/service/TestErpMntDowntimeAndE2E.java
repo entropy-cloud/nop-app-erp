@@ -213,8 +213,10 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
         assertEquals(ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING, equipmentStatus(),
                 "完成恢复设备 RUNNING");
 
-        assertEquals(0, completeRequest(requestId).getStatus(), "请求 IN_PROGRESS→COMPLETED");
-        assertEquals(ErpMntDaoConstants.REQUEST_STATUS_COMPLETED, requestStatus(requestId));
+        // RC-R1.75 / UC-MAIN-05（D6）：visit complete 自动写回 request COMPLETED（经既有 complete 边），
+        // 手工 completeRequest 两步终结——断言新联动语义取代原手工调用。
+        assertEquals(ErpMntDaoConstants.REQUEST_STATUS_COMPLETED, requestStatus(requestId),
+                "visit complete 经 D6 联动写回 request COMPLETED");
     }
 
     // ---------- rpc helpers ----------
@@ -245,10 +247,6 @@ public class TestErpMntDowntimeAndE2E extends JunitAutoTestCase {
 
     private ApiResponse<?> startRepair(Long requestId) {
         return executeRpc(mutation, "ErpMntRequest__startRepair", ApiRequest.build(Map.of("requestId", requestId)));
-    }
-
-    private ApiResponse<?> completeRequest(Long requestId) {
-        return executeRpc(mutation, "ErpMntRequest__complete", ApiRequest.build(Map.of("requestId", requestId)));
     }
 
     private ApiResponse<?> confirmUsage(Long usageId) {

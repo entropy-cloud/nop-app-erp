@@ -1,0 +1,19 @@
+{
+  "data": {
+    "id": "1",
+    "code": "@var:ErpMntTaskTemplate@code",
+    "name": "快照测试模板",
+    "standardMinutes": 90,
+    "instruction": "断电后按操作手册执行",
+    "isActive": 1,
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpMntTaskTemplate@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMntTaskTemplate@updateTime",
+    "equipmentCategoryId": null,
+    "remark": null
+  },
+  "status": 0
+}

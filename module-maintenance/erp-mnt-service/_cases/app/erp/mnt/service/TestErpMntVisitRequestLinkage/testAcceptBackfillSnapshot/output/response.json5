@@ -1,0 +1,26 @@
+{
+  "data": {
+    "id": "22101",
+    "code": "@var:ErpMntRequest@code",
+    "equipmentId": 21101,
+    "requestDate": "2026-07-01",
+    "description": "联动测试报修22101",
+    "priority": "NORMAL",
+    "priority_label": "NORMAL-普通",
+    "status": "ACCEPTED",
+    "status_label": "ACCEPTED-已受理",
+    "requestedBy": 401,
+    "assignedTo": 401,
+    "acceptedBy": null,
+    "completedBy": null,
+    "completedAt": null,
+    "remark": null,
+    "delVersion": 0,
+    "version": 1,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpMntRequest@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpMntRequest@updateTime_1"
+  },
+  "status": 0
+}

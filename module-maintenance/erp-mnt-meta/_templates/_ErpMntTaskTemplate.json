@@ -1,0 +1,18 @@
+{
+  "id": 0,
+  "code": "",
+  "name": "",
+  "equipmentCategoryId": 0,
+  "standardMinutes": 0.0,
+  "instruction": "",
+  "isActive": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "category": null,
+  "lines": null
+}

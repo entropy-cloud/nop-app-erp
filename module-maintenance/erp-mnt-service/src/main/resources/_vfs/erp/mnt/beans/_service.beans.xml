@@ -13,6 +13,14 @@
         <property name="bizObjName" value="ErpMntEquipmentCategory"/>
     </bean>
 
+    <bean id="app.erp.mnt.service.entity.ErpMntTaskTemplateBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntTaskTemplate" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntTaskTemplateBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntTaskTemplate"/>
+    </bean>
+
     <bean id="app.erp.mnt.service.entity.ErpMntEquipmentBizModel" ioc:type="@bean:id" ioc:default="true"/>
 
     <bean id="biz_ErpMntEquipment" class="io.nop.biz.proxy.BizProxyFactoryBean"
@@ -26,6 +34,14 @@
           ioc:type="app.erp.mnt.biz.IErpMntMaintenanceTeamBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpMntMaintenanceTeam"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntTaskTemplateLineBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntTaskTemplateLine" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntTaskTemplateLineBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntTaskTemplateLine"/>
     </bean>
 
     <bean id="app.erp.mnt.service.entity.ErpMntScheduleBizModel" ioc:type="@bean:id" ioc:default="true"/>
@@ -48,6 +64,14 @@
           ioc:type="app.erp.mnt.biz.IErpMntDowntimeEntryBiz" ioc:force-lazy-property="true" lazy-init="true"
           primary="true">
         <property name="bizObjName" value="ErpMntDowntimeEntry"/>
+    </bean>
+
+    <bean id="app.erp.mnt.service.entity.ErpMntEquipmentStatusLogBizModel" ioc:type="@bean:id" ioc:default="true"/>
+
+    <bean id="biz_ErpMntEquipmentStatusLog" class="io.nop.biz.proxy.BizProxyFactoryBean"
+          ioc:type="app.erp.mnt.biz.IErpMntEquipmentStatusLogBiz" ioc:force-lazy-property="true" lazy-init="true"
+          primary="true">
+        <property name="bizObjName" value="ErpMntEquipmentStatusLog"/>
     </bean>
 
     <bean id="app.erp.mnt.service.entity.ErpMntCalibrationBizModel" ioc:type="@bean:id" ioc:default="true"/>

@@ -194,4 +194,60 @@
         }
 
 
+        private String _triggerType;
+
+    
+        @PropMeta(propId=20)
+    
+        public String getTriggerType(){
+            return _triggerType;
+        }
+
+        public void setTriggerType(String value){
+            this._triggerType = value;
+        }
+
+
+        private java.math.BigDecimal _thresholdHours;
+
+    
+        @PropMeta(propId=21)
+    
+        public java.math.BigDecimal getThresholdHours(){
+            return _thresholdHours;
+        }
+
+        public void setThresholdHours(java.math.BigDecimal value){
+            this._thresholdHours = value;
+        }
+
+
+        private java.math.BigDecimal _runtimeBaselineHours;
+
+    
+        @PropMeta(propId=22)
+    
+        public java.math.BigDecimal getRuntimeBaselineHours(){
+            return _runtimeBaselineHours;
+        }
+
+        public void setRuntimeBaselineHours(java.math.BigDecimal value){
+            this._runtimeBaselineHours = value;
+        }
+
+
+        private Long _templateId;
+
+    
+        @PropMeta(propId=23)
+    
+        public Long getTemplateId(){
+            return _templateId;
+        }
+
+        public void setTemplateId(Long value){
+            this._templateId = value;
+        }
+
+
     }

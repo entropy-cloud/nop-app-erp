@@ -125,8 +125,12 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 26;
     
+    /* 维护请求ID: REQUEST_ID BIGINT */
+    public static final String PROP_NAME_requestId = "requestId";
+    public static final int PROP_ID_requestId = 27;
+    
 
-    private static int _PROP_ID_BOUND = 27;
+    private static int _PROP_ID_BOUND = 28;
 
     
     /* relation:  */
@@ -134,6 +138,9 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     
     /* relation:  */
     public static final String PROP_NAME_equipment = "equipment";
+    
+    /* relation:  */
+    public static final String PROP_NAME_request = "request";
     
     /* relation:  */
     public static final String PROP_NAME_tasks = "tasks";
@@ -148,7 +155,7 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[27];
+    private static final String[] PROP_ID_TO_NAME = new String[28];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -230,6 +237,9 @@ public class _ErpMntVisit extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_requestId] = PROP_NAME_requestId;
+          PROP_NAME_TO_ID.put(PROP_NAME_requestId, PROP_ID_requestId);
+      
     }
 
     
@@ -310,6 +320,9 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 维护请求ID: REQUEST_ID */
+    private java.lang.Long _requestId;
     
 
     public _ErpMntVisit(){
@@ -462,6 +475,9 @@ public class _ErpMntVisit extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_requestId:
+               return getRequestId();
         
            default:
               return super.orm_propValue(propId);
@@ -734,6 +750,16 @@ public class _ErpMntVisit extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_requestId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_requestId));
+               }
+               setRequestId(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -921,6 +947,13 @@ public class _ErpMntVisit extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_requestId:{
+               onInitProp(propId);
+               this._requestId = (java.lang.Long)value;
                
                break;
             }
@@ -1426,6 +1459,25 @@ public class _ErpMntVisit extends DynamicOrmEntity{
     }
     
     /**
+     * 维护请求ID: REQUEST_ID
+     */
+    public final java.lang.Long getRequestId(){
+         onPropGet(PROP_ID_requestId);
+         return _requestId;
+    }
+
+    /**
+     * 维护请求ID: REQUEST_ID
+     */
+    public final void setRequestId(java.lang.Long value){
+        if(onPropSet(PROP_ID_requestId,value)){
+            this._requestId = value;
+            internalClearRefs(PROP_ID_requestId);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.mnt.dao.entity.ErpMntSchedule getSchedule(){
@@ -1465,6 +1517,29 @@ public class _ErpMntVisit extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_equipment, refEntity,()->{
            
                            this.setEquipmentId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.mnt.dao.entity.ErpMntRequest getRequest(){
+       return (app.erp.mnt.dao.entity.ErpMntRequest)internalGetRefEntity(PROP_NAME_request);
+    }
+
+    public final void setRequest(app.erp.mnt.dao.entity.ErpMntRequest refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setRequestId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_request, refEntity,()->{
+           
+                           this.setRequestId(refEntity.getId());
                        
            });
            }

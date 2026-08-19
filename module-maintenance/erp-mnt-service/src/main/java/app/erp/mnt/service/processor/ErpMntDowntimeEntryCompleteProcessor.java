@@ -1,5 +1,6 @@
 package app.erp.mnt.service.processor;
 
+import app.erp.mnt.dao.ErpMntDaoConstants;
 import app.erp.mnt.dao.entity.ErpMntDowntimeEntry;
 import io.nop.core.context.IServiceContext;
 import io.nop.api.core.time.CoreMetrics;
@@ -20,7 +21,8 @@ public class ErpMntDowntimeEntryCompleteProcessor extends AbstractErpMntDowntime
         validateRecorded(downtime, context);
         validateNotCompleted(downtime, context);
         doComplete(downtime, context);
-        equipmentStatusLinker.restoreToRunning(downtime.getEquipmentId(), context);
+        equipmentStatusLinker.restoreToRunning(downtime.getEquipmentId(),
+                ErpMntDaoConstants.STATUS_LOG_SOURCE_DOWNTIME, context);
         return downtime;
     }
 

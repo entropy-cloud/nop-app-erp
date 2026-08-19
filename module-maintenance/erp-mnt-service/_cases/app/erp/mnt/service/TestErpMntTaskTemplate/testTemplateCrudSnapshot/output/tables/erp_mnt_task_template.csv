@@ -1,0 +1,2 @@
+_chgType,ID,CODE,NAME,EQUIPMENT_CATEGORY_ID,STANDARD_MINUTES,INSTRUCTION,IS_ACTIVE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpMntTaskTemplate@code,快照测试模板,,90,断电后按操作手册执行,1,,@var:ErpMntTaskTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

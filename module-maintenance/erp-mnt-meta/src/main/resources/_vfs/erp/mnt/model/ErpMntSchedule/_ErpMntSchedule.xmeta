@@ -97,6 +97,23 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="triggerType" displayName="触发类型" propId="20" i18n-en:displayName="Trigger Type" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-mnt/trigger-type"/>
+        </prop>
+        <prop name="thresholdHours" displayName="触发阈值(小时)" propId="21" i18n-en:displayName="Threshold Hours"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="12" scale="2"/>
+        </prop>
+        <prop name="runtimeBaselineHours" displayName="运行时长基线(小时)" propId="22"
+              i18n-en:displayName="Runtime Baseline Hours" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.math.BigDecimal" precision="12" scale="2"/>
+        </prop>
+        <prop name="templateId" displayName="任务模板ID" propId="23" i18n-en:displayName="Task Template" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
         <prop name="equipment" i18n-en:displayName="Equipment" tagSet="pub" ext:kind="to-one" internal="true"
               queryable="true" ext:joinLeftProp="equipmentId" ext:joinRightProp="id" insertable="false"
               updatable="false" mandatory="true" lazy="true">

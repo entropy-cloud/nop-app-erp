@@ -40,6 +40,15 @@ CREATE TABLE erp_md_organization(
   constraint PK_erp_md_organization primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_md_material(
+  ID BIGINT NULL    COMMENT 'null',
+  CODE VARCHAR(50) NULL    COMMENT 'null',
+  NAME VARCHAR(200) NULL    COMMENT 'null',
+  MATERIAL_TYPE INTEGER NULL    COMMENT 'null',
+  STATUS INTEGER NULL    COMMENT 'null',
+  constraint PK_erp_md_material primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_employee(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -59,15 +68,6 @@ CREATE TABLE erp_md_warehouse(
   constraint PK_erp_md_warehouse primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
-CREATE TABLE erp_md_material(
-  ID BIGINT NULL    COMMENT 'null',
-  CODE VARCHAR(50) NULL    COMMENT 'null',
-  NAME VARCHAR(200) NULL    COMMENT 'null',
-  MATERIAL_TYPE INTEGER NULL    COMMENT 'null',
-  STATUS INTEGER NULL    COMMENT 'null',
-  constraint PK_erp_md_material primary key (ID)
-)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
-
 CREATE TABLE erp_md_uom(
   ID BIGINT NULL    COMMENT 'null',
   CODE VARCHAR(50) NULL    COMMENT 'null',
@@ -83,6 +83,24 @@ CREATE TABLE erp_md_material_category(
   NAME VARCHAR(200) NULL    COMMENT 'null',
   PARENT_ID BIGINT NULL    COMMENT 'null',
   constraint PK_erp_md_material_category primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mnt_task_template(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  CODE VARCHAR(50) NOT NULL    COMMENT '模板编码',
+  NAME VARCHAR(200) NOT NULL    COMMENT '模板名称',
+  EQUIPMENT_CATEGORY_ID BIGINT NULL    COMMENT '适用设备分类(可空=需显式套用)',
+  STANDARD_MINUTES DECIMAL(12,2) NULL    COMMENT '标准工时(分钟)',
+  INSTRUCTION VARCHAR(2000) NULL    COMMENT '操作说明',
+  IS_ACTIVE INTEGER NULL    COMMENT '是否启用(空=否)',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mnt_task_template primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mnt_equipment(
@@ -127,6 +145,24 @@ CREATE TABLE erp_mnt_maintenance_team(
   constraint PK_erp_mnt_maintenance_team primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_mnt_task_template_line(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  TEMPLATE_ID BIGINT NOT NULL    COMMENT '任务模板ID',
+  LINE_NO INTEGER NOT NULL    COMMENT '行号',
+  TASK_NAME VARCHAR(500) NOT NULL    COMMENT '任务名称',
+  STANDARD_MINUTES DECIMAL(12,2) NULL    COMMENT '标准工时(分钟,行级)',
+  MATERIAL_ID BIGINT NULL    COMMENT '标准备件(物料,提示)',
+  QUANTITY DECIMAL(20,4) NULL    COMMENT '备件数量(提示)',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mnt_task_template_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_mnt_schedule(
   ID BIGINT NOT NULL    COMMENT 'ID',
   CODE VARCHAR(50) NOT NULL    COMMENT '计划编码',
@@ -147,6 +183,10 @@ CREATE TABLE erp_mnt_schedule(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  TRIGGER_TYPE VARCHAR(20) NULL    COMMENT '触发类型',
+  THRESHOLD_HOURS DECIMAL(12,2) NULL    COMMENT '触发阈值(小时)',
+  RUNTIME_BASELINE_HOURS DECIMAL(12,2) NULL    COMMENT '运行时长基线(小时)',
+  TEMPLATE_ID BIGINT NULL    COMMENT '任务模板ID',
   constraint PK_erp_mnt_schedule primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -189,6 +229,24 @@ CREATE TABLE erp_mnt_downtime_entry(
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
   constraint PK_erp_mnt_downtime_entry primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
+CREATE TABLE erp_mnt_equipment_status_log(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  EQUIPMENT_ID BIGINT NOT NULL    COMMENT '设备ID',
+  FROM_STATUS VARCHAR(20) NULL    COMMENT '原状态',
+  TO_STATUS VARCHAR(20) NOT NULL    COMMENT '新状态',
+  CHANGE_AT DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '变更时间',
+  SOURCE VARCHAR(20) NOT NULL    COMMENT '变更来源',
+  SOURCE_BILL_CODE VARCHAR(50) NULL    COMMENT '来源单据编码',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint PK_erp_mnt_equipment_status_log primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
 CREATE TABLE erp_mnt_calibration(
@@ -261,6 +319,7 @@ CREATE TABLE erp_mnt_visit(
   CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
   UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
   UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  REQUEST_ID BIGINT NULL    COMMENT '维护请求ID',
   constraint PK_erp_mnt_visit primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -272,6 +331,7 @@ CREATE TABLE erp_mnt_visit_task(
   STATUS VARCHAR(20) NOT NULL    COMMENT '状态',
   COMPLETED_BY BIGINT NULL    COMMENT '完成人',
   COMPLETED_AT DATETIME(3) NULL    COMMENT '完成时间',
+  STANDARD_MINUTES DECIMAL(12,2) NULL    COMMENT '标准工时(分钟)',
   REMARK VARCHAR(1000) NULL    COMMENT '备注',
   DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
   VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
@@ -338,25 +398,31 @@ CREATE TABLE erp_mnt_spare_part_usage_line(
                 
    ALTER TABLE erp_md_organization COMMENT '组织';
                 
+   ALTER TABLE erp_md_material COMMENT '物料';
+                
    ALTER TABLE erp_md_employee COMMENT '职员';
                 
    ALTER TABLE erp_md_warehouse COMMENT '仓库';
-                
-   ALTER TABLE erp_md_material COMMENT '物料';
                 
    ALTER TABLE erp_md_uom COMMENT '计量单位';
                 
    ALTER TABLE erp_md_material_category COMMENT '物料分类';
                 
+   ALTER TABLE erp_mnt_task_template COMMENT '维护任务模板';
+                
    ALTER TABLE erp_mnt_equipment COMMENT '设备';
                 
    ALTER TABLE erp_mnt_maintenance_team COMMENT '维护团队';
+                
+   ALTER TABLE erp_mnt_task_template_line COMMENT '维护任务模板行';
                 
    ALTER TABLE erp_mnt_schedule COMMENT '维护计划';
                 
    ALTER TABLE erp_mnt_request COMMENT '维护请求';
                 
    ALTER TABLE erp_mnt_downtime_entry COMMENT '停机记录';
+                
+   ALTER TABLE erp_mnt_equipment_status_log COMMENT '设备状态日志';
                 
    ALTER TABLE erp_mnt_calibration COMMENT '校准记录';
                 

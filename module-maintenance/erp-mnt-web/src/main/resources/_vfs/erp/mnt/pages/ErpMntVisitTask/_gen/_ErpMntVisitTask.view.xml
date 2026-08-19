@@ -39,6 +39,9 @@
                 <!--完成时间-->
                 <col id="completedAt" sortable="true"/>
 
+                <!--标准工时(分钟)-->
+                <col id="standardMinutes" ui:number="true" sortable="true"/>
+
                 <!--备注-->
                 <col id="remark" sortable="true"/>
 
@@ -67,9 +70,10 @@
  visitId[维护访问ID] lineNo[行号]
  taskDescription[任务描述] status[状态]
  completedBy[完成人] completedAt[完成时间]
- remark[备注] delVersion[逻辑删除版本]
- createdBy[创建人] createTime[创建时间]
- updatedBy[修改人] updateTime[修改时间]
+ standardMinutes[标准工时(分钟)] remark[备注]
+ delVersion[逻辑删除版本] createdBy[创建人]
+ createTime[创建时间] updatedBy[修改人]
+ updateTime[修改时间] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-维护任务" i18n-en:title="Add Maintenance Task" x:prototype="edit"/>
@@ -81,6 +85,7 @@
  status[状态]
  completedBy[完成人]
  completedAt[完成时间]
+ standardMinutes[标准工时(分钟)]
  remark[备注]
 </layout>
         </form>

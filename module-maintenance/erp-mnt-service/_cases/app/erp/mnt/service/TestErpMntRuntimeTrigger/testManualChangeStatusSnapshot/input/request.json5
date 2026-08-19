@@ -1,0 +1,6 @@
+{
+  data: {
+    equipmentId: 61011,
+    newStatus: 'DOWN'
+  }
+}

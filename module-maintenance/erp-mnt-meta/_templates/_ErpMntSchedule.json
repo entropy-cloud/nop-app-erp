@@ -20,5 +20,10 @@
   "createTime": "2000-01-01 14:00:00",
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
+  "triggerType": "",
+  "triggerType_label": "",
+  "thresholdHours": 0.0,
+  "runtimeBaselineHours": 0.0,
+  "templateId": 0,
   "equipment": null
 }

@@ -49,36 +49,40 @@ public class _ErpMntVisitTask extends DynamicOrmEntity{
     public static final String PROP_NAME_completedAt = "completedAt";
     public static final int PROP_ID_completedAt = 7;
     
+    /* 标准工时(分钟): STANDARD_MINUTES DECIMAL */
+    public static final String PROP_NAME_standardMinutes = "standardMinutes";
+    public static final int PROP_ID_standardMinutes = 8;
+    
     /* 备注: REMARK VARCHAR */
     public static final String PROP_NAME_remark = "remark";
-    public static final int PROP_ID_remark = 8;
+    public static final int PROP_ID_remark = 9;
     
     /* 逻辑删除版本: DEL_VERSION BIGINT */
     public static final String PROP_NAME_delVersion = "delVersion";
-    public static final int PROP_ID_delVersion = 9;
+    public static final int PROP_ID_delVersion = 10;
     
     /* 数据版本: VERSION INTEGER */
     public static final String PROP_NAME_version = "version";
-    public static final int PROP_ID_version = 10;
+    public static final int PROP_ID_version = 11;
     
     /* 创建人: CREATED_BY VARCHAR */
     public static final String PROP_NAME_createdBy = "createdBy";
-    public static final int PROP_ID_createdBy = 11;
+    public static final int PROP_ID_createdBy = 12;
     
     /* 创建时间: CREATE_TIME TIMESTAMP */
     public static final String PROP_NAME_createTime = "createTime";
-    public static final int PROP_ID_createTime = 12;
+    public static final int PROP_ID_createTime = 13;
     
     /* 修改人: UPDATED_BY VARCHAR */
     public static final String PROP_NAME_updatedBy = "updatedBy";
-    public static final int PROP_ID_updatedBy = 13;
+    public static final int PROP_ID_updatedBy = 14;
     
     /* 修改时间: UPDATE_TIME TIMESTAMP */
     public static final String PROP_NAME_updateTime = "updateTime";
-    public static final int PROP_ID_updateTime = 14;
+    public static final int PROP_ID_updateTime = 15;
     
 
-    private static int _PROP_ID_BOUND = 15;
+    private static int _PROP_ID_BOUND = 16;
 
     
     /* relation:  */
@@ -88,7 +92,7 @@ public class _ErpMntVisitTask extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[15];
+    private static final String[] PROP_ID_TO_NAME = new String[16];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -112,6 +116,9 @@ public class _ErpMntVisitTask extends DynamicOrmEntity{
       
           PROP_ID_TO_NAME[PROP_ID_completedAt] = PROP_NAME_completedAt;
           PROP_NAME_TO_ID.put(PROP_NAME_completedAt, PROP_ID_completedAt);
+      
+          PROP_ID_TO_NAME[PROP_ID_standardMinutes] = PROP_NAME_standardMinutes;
+          PROP_NAME_TO_ID.put(PROP_NAME_standardMinutes, PROP_ID_standardMinutes);
       
           PROP_ID_TO_NAME[PROP_ID_remark] = PROP_NAME_remark;
           PROP_NAME_TO_ID.put(PROP_NAME_remark, PROP_ID_remark);
@@ -157,6 +164,9 @@ public class _ErpMntVisitTask extends DynamicOrmEntity{
     
     /* 完成时间: COMPLETED_AT */
     private java.sql.Timestamp _completedAt;
+    
+    /* 标准工时(分钟): STANDARD_MINUTES */
+    private java.math.BigDecimal _standardMinutes;
     
     /* 备注: REMARK */
     private java.lang.String _remark;
@@ -274,6 +284,9 @@ public class _ErpMntVisitTask extends DynamicOrmEntity{
             case PROP_ID_completedAt:
                return getCompletedAt();
         
+            case PROP_ID_standardMinutes:
+               return getStandardMinutes();
+        
             case PROP_ID_remark:
                return getRemark();
         
@@ -373,6 +386,16 @@ public class _ErpMntVisitTask extends DynamicOrmEntity{
                        err-> newTypeConversionError(PROP_NAME_completedAt));
                }
                setCompletedAt(typedValue);
+               break;
+            }
+        
+            case PROP_ID_standardMinutes:{
+               java.math.BigDecimal typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBigDecimal(value,
+                       err-> newTypeConversionError(PROP_NAME_standardMinutes));
+               }
+               setStandardMinutes(typedValue);
                break;
             }
         
@@ -500,6 +523,13 @@ public class _ErpMntVisitTask extends DynamicOrmEntity{
             case PROP_ID_completedAt:{
                onInitProp(propId);
                this._completedAt = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_standardMinutes:{
+               onInitProp(propId);
+               this._standardMinutes = (java.math.BigDecimal)value;
                
                break;
             }
@@ -688,6 +718,25 @@ public class _ErpMntVisitTask extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_completedAt,value)){
             this._completedAt = value;
             internalClearRefs(PROP_ID_completedAt);
+            
+        }
+    }
+    
+    /**
+     * 标准工时(分钟): STANDARD_MINUTES
+     */
+    public final java.math.BigDecimal getStandardMinutes(){
+         onPropGet(PROP_ID_standardMinutes);
+         return _standardMinutes;
+    }
+
+    /**
+     * 标准工时(分钟): STANDARD_MINUTES
+     */
+    public final void setStandardMinutes(java.math.BigDecimal value){
+        if(onPropSet(PROP_ID_standardMinutes,value)){
+            this._standardMinutes = value;
+            internalClearRefs(PROP_ID_standardMinutes);
             
         }
     }
