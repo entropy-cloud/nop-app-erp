@@ -58,7 +58,9 @@
 | updatedBy | VARCHAR(50) | 修改人 |
 | updateTime | TIMESTAMP | 修改时间 |
 
-### ErpLogDeliveryBooking（配送时段预约）— 预留
+### ErpLogDeliveryBooking（配送时段预约）— 已物化（RC-R1.84，P1-RC-086）
+
+> 原标「预留」；2026-08-19 经 plan `2026-08-19-2040-1` Phase 2 物化（A 类纯加性授权 + 双独立子 agent 批准，记录见计划 §ORM Approvals）。字段契约与下表一致；`bookedTime` 实现为 VARCHAR(8)（与 `ErpLogDeliveryWindow.startTime/endTime` 的既有实现同型，本表 TIME 标注为文档侧类型偏差，容量语义承载于窗口行）。幂等 UK：`UK_LOG_DELIVERY_BOOKING_SHIPMENT(shipmentId, delVersion)` =「同一发运单不可重复预约」，逻辑删释放槽位。
 
 每个发运单关联一个预约记录：
 
@@ -105,6 +107,14 @@
 2. 对应预约释放
 3. currentBooked -= 1
 ```
+
+## 实现注记（RC-R1.84 / P1-RC-086，plan `2026-08-19-2040-1`）
+
+- **预约引擎入口**：`ErpLogDeliveryBookingBizModel`（erp-log-service）——`book`（窗口有效期内[isActive + effectiveFrom/effectiveTo] + 星期匹配 + `currentBooked < maxCapacity` 容量守卫 → 创建 BOOKED + 计数 +1；同一发运单重复预约幂等拒绝，应用层守卫 + DB UK 并发兜底）/ `releaseForShipment`（预约 CANCELLED + 计数 -1 下限 0；无有效预约幂等 no-op）/ `markArrived` / `markMissed`（爽约费读系统参数 `erp-log.booking-missed-fee`，默认 0 + priorityScore +10 提升）。容器计数更新经 `ErpLogDeliveryWindow.version` 乐观锁防并发超卖（updateEntity 冲突时事务失败回滚，双读同值仅一笔提交成功）。
+- **发运单状态机联动**：`GatewayDispatcher` 的 `cancelShipment`（→CANCELLED）与 `advanceTracking`（→DELIVERED，webhook/轮询共用）迁移点后置调 `releaseForShipment`，失败隔离 try/catch 不阻断主状态迁移（对齐 R1.59 联动降级范式）。
+- **D2 裁决（预约状态 ↔ 发运单状态映射）**：选择「松耦合对齐 + 人工标记入口」——BOOKED = 预约创建态（发运单 DRAFT/ADVISED 期预约）；CONFIRMED = 预留确认态（发运单 DISPATCHED+ 语义，本切片经通用 update 入口可达）；ARRIVED = 配送到达回执（`markArrived` 人工入口；UC-LOG-07 步骤 5「ARRIVED/DELIVERED」的 DELIVERED 分支由发运单 DELIVERED 迁移点联动释放表达——预约状态字典无 DELIVERED 值，发运单 DELIVERED ⇒ 预约生命周期终结并释放容量）；MISSED = 爽约（`markMissed` 人工标记——调度员线下确认）；CANCELLED = 释放（终态联动自动 + 手工 release）。**替代方案（否决）**：(a) 预约状态机与发运单状态机强绑定自动推进——两状态轴生命周期不同步（预约可先于发运创建、后于发运释放），强绑定引入逆向依赖；(b) MISSED 过期自动扫描 job——本切片零新 job（对齐调度接线家族范围边界），人工入口满足 L1 验收语义。**残留风险（successor）**：CONFIRMED 自动推进（advise 联动）与 MISSED 自动扫描（bookedDate+endTime 过期判定）未自动化——未人工标记的过期预约停留 BOOKED 占位容量，直至发运单终态联动释放兜底。
+- **爽约费配置**：`erp-log.booking-missed-fee`（BigDecimal，默认 0），L1「爽约费金额从系统参数配置读取」。
+- **测试**：`TestErpLogDeliveryBooking` 9 组（容量满拒绝/预约成功计数+1/重复预约幂等拒绝/释放计数-1+下限 0+槽位复用/爽约费+priorityScore+markArrived+终态守卫/窗口过期+星期不匹配/CANCELLED 联动释放/DELIVERED 联动释放/并发计数守卫按最新值复核）。
 
 ## 涉及的领域机制
 

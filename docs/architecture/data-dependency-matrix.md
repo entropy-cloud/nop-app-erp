@@ -128,6 +128,7 @@ L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）�
 | cs-service / mfg-service / mnt-service → notify-dao | `IErpSysNotificationBiz` 通知派发（notify 为跨域通知子系统，不反向依赖任何业务域） | R1.68 先例 + RC-R1.76（mnt 接线） | 单向星型：notify-dao 是纯消费终点，DAG 无环 |
 | assets-service → mnt-dao | `IErpMntEquipmentBiz.changeStatusForAssetDisposal/restoreFromAssetDisposal` 处置→设备 DECOMMISSIONED 联动（同 JVM 同事务异常传播强一致） | RC-R1.77（P1-RC-070） | **assets↔maintenance 双向域耦合（显式披露）**：mnt-dao 已 pom 依赖 ast-dao（ORM to-one shadow 的 dao 层依赖，见 `erp-mnt-dao/pom.xml`），故 ast-service→mnt-dao→ast-dao 构成 **Maven 菱形非环**（ast-dao 无反向依赖，DAG 仍无环）。耦合语义与 R1.68 cs→qa 单向叶依赖不同：两域互持对方 dao 接口，重构拆分须两域协同 |
 | mfg-service → mnt-dao | `IErpMntDowntimeEntryBiz.findOpenDowntimeEquipmentWorkcenters` 开放停机窗口只读拉取（排产门控，拉取消费模型） | RC-R1.76（P1-RC-068） | 单向只读：§2.2 maintenance 行「被 mfg 查」预期方向的 Java 层落地；mnt 不依赖 mfg，DAG 无环 |
+| log-service → sal-dao | `IErpSalDeliveryBiz.findFirst`（按 relatedBillCode 解析销售出库单→orderId）+ `IErpSalOrderBiz.updateDeliveryStatus`（回写源订单 deliveryStatus=DELIVERED，复用既有发货进度字段与动作，sales 侧零改动）SALES_DELIVERY 交付状态回写（UC-LOG-06 步骤 5） | RC-R1.85（P1-RC-087） | 单向叶依赖（D3 裁决直接 Facade，对齐 R1.76 拉取/直连先例）：sal 零依赖 logistics（pom 实证），DAG 无环；sales 模块缺失时消费方 `@Nullable` 注入容错跳过回写；失败隔离 try/catch 不阻断 DELIVERED 主迁移与运费过账 |
 
 > mfg-service 对 mnt-dao 为 **test scope 另挂 `app-erp-maintenance-service`**（`TestErpMfgJobCardDowntimeGate` 需真实 BizModel Bean）；此为测试装配边，不计入生产依赖方向。
 

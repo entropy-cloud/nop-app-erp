@@ -97,6 +97,7 @@
 | 销售出库审核触发发运 | sales 域发布出库事件，本域订阅生成发运单草稿 |
 | 承运商网关回调（追踪更新） | 本域暴露网关回调端点，更新发运单状态和 `ErpLogShipmentLog` |
 | 运费过账 | DELIVERED 后本域**直接调用** `IErpFinVoucherBiz.post(PostingEvent{businessType=FREIGHT})`（参 inventory `InvPostingExecutor` 范式），非事件订阅模型 |
+| 交付状态回写 sales（RC-R1.85，P1-RC-087，UC-LOG-06 步骤 5） | DELIVERED 后（`onDelivered` SALES_DELIVERY 分支，先于运费过账）本域**直接调用** sales Facade：`IErpSalDeliveryBiz.findFirst`（relatedBillCode→orderId）+ `IErpSalOrderBiz.updateDeliveryStatus`（源订单 deliveryStatus=DELIVERED）。D3 裁决直接 Facade（否决 notify 派发——notify 为用户通知子系统非域事件总线，sales 无订阅机制）；logistics→sales 单向 Java 边（sal-dao compile，矩阵 §2.4 登记）；`@Nullable` 容错 + try/catch 失败隔离（不阻断 DELIVERED 主迁移与运费过账）；幂等守卫 = 既有 SETTLED 守卫 + 订单已 DELIVERED 跳过 |
 
 > **实现约定**：原描述"DELIVERED 后本域发布 `ShipmentDeliveredEvent`，finance 域订阅执行过账"已调整为：
 > - **path-1（SALES_DELIVERY）**：**直接调用** `IErpFinVoucherBiz.post(PostingEvent{businessType=FREIGHT})`（参 inventory `InvPostingExecutor` 范式），与现有全域过账一致。
