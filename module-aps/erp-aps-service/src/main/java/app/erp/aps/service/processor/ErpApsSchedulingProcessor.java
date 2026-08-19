@@ -4,6 +4,7 @@ import app.erp.aps.biz.SchedulingResult;
 import app.erp.aps.dao.entity.ErpApsCapacityReservation;
 import app.erp.aps.dao.entity.ErpApsConstraint;
 import app.erp.aps.dao.entity.ErpApsOperationOrder;
+import app.erp.aps.dao.entity.ErpApsOpRouting;
 import app.erp.aps.dao.entity.ErpApsSchedule;
 import app.erp.aps.service.ErpApsConfigs;
 import app.erp.aps.service.ErpApsConstants;
@@ -21,6 +22,7 @@ import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -58,15 +60,17 @@ public class ErpApsSchedulingProcessor {
     protected SchedulingResult run(ErpApsSchedule schedule, String mode, IServiceContext context) {
         List<ErpApsOperationOrder> pending = loadPendingOrders(schedule);
         List<ErpApsConstraint> maintenance = loadMaintenanceConstraints(schedule);
+        // RC-R1.87：启用路由全集（引擎按默认行 machineId 关联 + 生效期/批量过滤）
+        List<ErpApsOpRouting> routings = loadEnabledRoutings();
         int buffer = AppConfig.var(ErpApsConfigs.CONFIG_BUFFER_MINUTES_BETWEEN_OPS,
                 ErpApsConfigs.DEFAULT_BUFFER_MINUTES_BETWEEN_OPS);
         LocalDateTime horizonStart = schedule.getHorizonStart() == null ? null : schedule.getHorizonStart().toLocalDateTime();
         LocalDateTime horizonEnd = schedule.getHorizonEnd() == null ? null : schedule.getHorizonEnd().toLocalDateTime();
 
-        ErpApsSchedulingEngine engine = newEngine(buffer, horizonStart, horizonEnd);
+        ErpApsSchedulingEngine engine = newEngine(buffer, horizonStart, horizonEnd, CoreMetrics.today());
         SchedulingResult result = ErpApsConstants.SCHEDULING_MODE_BACKWARD.equals(mode)
-                ? engine.scheduleBackward(pending, maintenance, horizonStart)
-                : engine.scheduleForward(pending, maintenance, horizonStart);
+                ? engine.scheduleBackward(pending, maintenance, routings, horizonStart)
+                : engine.scheduleForward(pending, maintenance, null, routings, horizonStart);
 
         persist(pending, result);
         return result;
@@ -76,7 +80,9 @@ public class ErpApsSchedulingProcessor {
 
     protected List<ErpApsOperationOrder> loadPendingOrders(ErpApsSchedule schedule) {
         QueryBean q = new QueryBean();
-        q.addFilter(eq("status", ErpApsConstants.OP_STATUS_DRAFT));
+        // UNSCHEDULABLE 与 DRAFT 同池重试（RC-R1.87 自愈语义：路由/停机恢复后重排自动翻回 PLANNED）
+        q.addFilter(in("status", java.util.Arrays.asList(
+                ErpApsConstants.OP_STATUS_DRAFT, ErpApsConstants.OP_STATUS_UNSCHEDULABLE)));
         if (schedule.getHorizonStart() != null) {
             q.addFilter(ge("earliestStartDateT", schedule.getHorizonStart()));
         }
@@ -84,6 +90,13 @@ public class ErpApsSchedulingProcessor {
             q.addFilter(le("earliestStartDateT", schedule.getHorizonEnd()));
         }
         return opOrderDao().findAllByQuery(q);
+    }
+
+    /** 启用路由全集（同域实体，IDaoProvider 直访；引擎负责默认行关联 + 生效期/批量过滤）。 */
+    protected List<ErpApsOpRouting> loadEnabledRoutings() {
+        QueryBean q = new QueryBean();
+        q.addFilter(eq("isEnabled", Boolean.TRUE));
+        return opRoutingDao().findAllByQuery(q);
     }
 
     protected List<ErpApsConstraint> loadMaintenanceConstraints(ErpApsSchedule schedule) {
@@ -247,6 +260,12 @@ public class ErpApsSchedulingProcessor {
         return new ErpApsSchedulingEngine(bufferMinutes, horizonStart, horizonEnd);
     }
 
+    /** 路由生效期判定基准日版构造（RC-R1.87；默认取当前日期，测试可覆盖注入固定日期）。 */
+    protected ErpApsSchedulingEngine newEngine(int bufferMinutes, LocalDateTime horizonStart,
+                                               LocalDateTime horizonEnd, LocalDate routingEffectiveDate) {
+        return new ErpApsSchedulingEngine(bufferMinutes, horizonStart, horizonEnd, routingEffectiveDate);
+    }
+
     // ---------- DAO 访问（同域实体，IDaoProvider 直接访问） ----------
 
     protected IEntityDao<ErpApsOperationOrder> opOrderDao() {
@@ -263,5 +282,9 @@ public class ErpApsSchedulingProcessor {
 
     protected IEntityDao<ErpApsCapacityReservation> capacityReservationDao() {
         return daoProvider.daoFor(ErpApsCapacityReservation.class);
+    }
+
+    protected IEntityDao<ErpApsOpRouting> opRoutingDao() {
+        return daoProvider.daoFor(ErpApsOpRouting.class);
     }
 }

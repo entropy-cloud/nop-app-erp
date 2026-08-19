@@ -1,0 +1,10 @@
+jobName: erp-aps-auto-dispatch
+enabled: "@cfg:nop.job.erp-aps-auto-dispatch.enabled|false"
+displayName: APS Auto Dispatch Scan
+description: 周期扫描 eligible PLANNED 工序按 DispatchRule 自动派工（UC-APS-07）；双层门控：全局开关 erp-aps.auto-dispatch-enabled（默认 false）+ cron 经 erp-aps.auto-dispatch-cron 配置（空=跳过）
+jobGroup: erp-aps
+trigger:
+  cronExpr: "@cfg:nop.job.erp-aps-auto-dispatch.cron-expr|0 * * * * ?"
+invoker:
+  bean: erpApsAutoDispatchJob
+  method: execute

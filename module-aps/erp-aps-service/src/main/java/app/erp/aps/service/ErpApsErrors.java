@@ -28,6 +28,9 @@ public interface ErpApsErrors {
     String ARG_DEMAND_DATE = "demandDate";
     String ARG_QTY = "qty";
     String ARG_PRIORITY = "priority";
+    String ARG_ROUTING_ID = "routingId";
+    String ARG_ROUTING_REASON = "routingReason";
+    String ARG_NOTE = "note";
 
     /** 工作中心在展望期内无可用时段容纳工序。 */
     ErrorCode ERR_APS_NO_AVAILABLE_SLOT = ErrorCode.define(
@@ -124,4 +127,16 @@ public interface ErpApsErrors {
             "erp.err.aps.priority.invalid",
             "工序工单 {operationOrderCode} 优先级 {priority} 非法（须 1~100）",
             ARG_OP_CODE, ARG_PRIORITY);
+
+    /** 替代路由不存在或未启用（RC-R1.87 manualOverrideRouting 强制目标非法）。 */
+    ErrorCode ERR_APS_ROUTING_NOT_AVAILABLE = ErrorCode.define(
+            "erp.err.aps.routing.not-available",
+            "替代路由 {routingId} 不存在或未启用",
+            ARG_ROUTING_ID);
+
+    /** 手动派工跳检原因必填（RC-R1.88，auto-dispatch.md §3.2 强制派工需填写原因）。 */
+    ErrorCode ERR_APS_DISPATCH_REASON_REQUIRED = ErrorCode.define(
+            "erp.err.aps.dispatch.reason-required",
+            "工序工单 {operationOrderCode} 手动强制派工必须填写跳检原因",
+            ARG_OP_CODE);
 }

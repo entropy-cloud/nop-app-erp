@@ -145,6 +145,11 @@ prop:
       earliestStartDateT: Earliest Start Date
       latestEndDateT: Latest End Date
       businessDate: Business Date
+      selectedRoutingId: Selected Routing
+      routingSelectionReason: Routing Selection Reason
+      routingSelectionReason_label: null
+      manualOverride: Manual Override
+      allowFallback: Allow Fallback
       org: Org
       org.name: Org
     ErpApsSchedule:
@@ -172,6 +177,7 @@ prop:
 dict:
   label:
     erp-aps/operation-order-status: Operation Order Status
+    erp-aps/routing-selection-reason: Routing Selection Reason
     erp-aps/schedule-status: Schedule Status
     erp-aps/constraint-type: Constraint Type
     erp-aps/scheduling-mode: Scheduling Mode
@@ -183,6 +189,14 @@ dict.option.label:
     IN_PROGRESS: In Progress
     FINISHED: Finished
     CANCELLED: Cancelled
+    UNSCHEDULABLE: Unschedulable
+    HOLD: Hold
+    ON_HOLD: On Hold (Shortage)
+  erp-aps/routing-selection-reason:
+    DEFAULT: Default
+    PRIMARY_OVERBOOKED: Primary Overbooked
+    PRIMARY_DOWN: Primary Down
+    BATCH_CONSTRAINT: Batch Constraint
   erp-aps/schedule-status:
     DRAFT: Draft
     PUBLISHED: Published

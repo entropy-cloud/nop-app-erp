@@ -1,0 +1,10 @@
+jobName: erp-aps-workorder-scan
+enabled: "@cfg:nop.job.erp-aps-workorder-scan.enabled|false"
+displayName: APS WorkOrder Release Scan to Operation Orders
+description: 周期拉取扫描已下达（已审核）工单，按工艺路线批量创建 DRAFT 工序工单（UC-APS-01，D1 裁决选项 B 拉取消费模型）；cron 经 erp-aps.workorder-scan-cron 配置门控（空=跳过）
+jobGroup: erp-aps
+trigger:
+  cronExpr: "@cfg:nop.job.erp-aps-workorder-scan.cron-expr|0 0/5 * * * ?"
+invoker:
+  bean: erpApsWorkOrderScanJob
+  method: execute

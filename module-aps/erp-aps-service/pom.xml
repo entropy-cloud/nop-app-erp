@@ -51,6 +51,13 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: UC-APS-01 工单下达告警 + UC-APS-07 缺料 ON_HOLD 通知派发（IErpSysNotificationBiz 位于
+             erp-notify-dao）。aps→notify 单向（aps 触发通知，notify 不依赖 aps），DAG 无环（RC-R1.86/R1.88）。 -->
+        <dependency>
+            <groupId>io.nop.app</groupId>
+            <artifactId>app-erp-notify-dao</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-biz</artifactId>
@@ -74,6 +81,14 @@
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>
             <artifactId>nop-autotest-junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- test: 通知派发 BizModel 实现（单域测试使 notify 调用可端到端落 ErpSysNotification；
+             app-erp-all 聚合时由 app 层传递提供，镜像 cs/mnt 先例）。 -->
+        <dependency>
+            <groupId>io.nop.app</groupId>
+            <artifactId>app-erp-notify-service</artifactId>
+            <version>1.0-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>

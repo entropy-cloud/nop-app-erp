@@ -7,12 +7,17 @@ import app.erp.aps.biz.IErpApsAtpCtpService;
 import app.erp.aps.biz.IErpApsOperationOrderBiz;
 import app.erp.aps.biz.SchedulingResult;
 import app.erp.aps.biz.BatchOperationResult;
+import app.erp.aps.biz.WorkOrderOperationCreationResult;
 import app.erp.aps.dao.entity.ErpApsOperationOrder;
 import app.erp.aps.service.ErpApsConstants;
 import app.erp.aps.service.ErpApsErrors;
+import app.erp.aps.service.processor.ErpApsAutoDispatchProcessor;
+import app.erp.aps.service.processor.ErpApsRoutingManualOverrideProcessor;
 import app.erp.aps.service.processor.ErpApsSchedulingInsertRushOrderProcessor;
+import app.erp.aps.service.processor.ErpApsSchedulingProcessor;
 import app.erp.aps.service.processor.ErpApsSchedulingScheduleBackwardProcessor;
 import app.erp.aps.service.processor.ErpApsSchedulingScheduleForwardProcessor;
+import app.erp.aps.service.processor.ErpApsWorkOrderToOperationProcessor;
 import app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -54,6 +59,18 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
 
     @Inject
     ErpApsOperationOrderStateMachine stateMachine;
+
+    @Inject
+    ErpApsWorkOrderToOperationProcessor workOrderToOperationProcessor;
+
+    @Inject
+    ErpApsSchedulingProcessor schedulingProcessor;
+
+    @Inject
+    ErpApsRoutingManualOverrideProcessor routingManualOverrideProcessor;
+
+    @Inject
+    ErpApsAutoDispatchProcessor autoDispatchProcessor;
 
     public ErpApsOperationOrderBizModel() {
         setEntityName(ErpApsOperationOrder.class.getName());
@@ -108,6 +125,75 @@ public class ErpApsOperationOrderBizModel extends CrudBizModel<ErpApsOperationOr
     @BizMutation
     public SchedulingResult insertRushOrder(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
         return insertRushOrderProcessor.insertRushOrder(operationOrderId, context);
+    }
+
+    /**
+     * UC-APS-01 手动触发入口（L1「或计划员手动触发」）：守卫/幂等与 job 拉取扫描同源（同一 Processor）。
+     */
+    @Override
+    @BizMutation
+    public WorkOrderOperationCreationResult createOperationOrdersFromWorkOrder(@Name("workOrderId") Long workOrderId,
+                                                                               IServiceContext context) {
+        return workOrderToOperationProcessor.createOperationOrdersFromWorkOrder(workOrderId, context);
+    }
+
+    /**
+     * UC-APS-01 自动触发（D1 选项 B 拉取扫描）：job bean 调用入口，亦可手动执行。
+     */
+    @Override
+    @BizMutation
+    public Integer scanReleasedWorkOrders(IServiceContext context) {
+        return workOrderToOperationProcessor.scanReleasedWorkOrders(context);
+    }
+
+    /**
+     * UC-APS-06 人工强制指定路由（RC-R1.87）。
+     */
+    @Override
+    @BizMutation
+    public ErpApsOperationOrder manualOverrideRouting(@Name("operationOrderId") Long operationOrderId,
+                                                      @Name("routingId") Long routingId,
+                                                      IServiceContext context) {
+        return routingManualOverrideProcessor.manualOverrideRouting(
+                schedulingProcessor, operationOrderId, routingId, context);
+    }
+
+    /**
+     * UC-APS-07 自动派工扫描入口（RC-R1.88；job bean 与手动共用，全局开关门控在 Processor 内）。
+     */
+    @Override
+    @BizMutation
+    public Integer scanAutoDispatch(IServiceContext context) {
+        return autoDispatchProcessor.scanOnce(context);
+    }
+
+    /**
+     * UC-APS-07 手动强制派工（跳检原因必填）。
+     */
+    @Override
+    @BizMutation
+    public ErpApsOperationOrder dispatchManually(@Name("operationOrderId") Long operationOrderId,
+                                                 @Name("note") String note,
+                                                 IServiceContext context) {
+        return autoDispatchProcessor.dispatchManually(operationOrderId, note, context);
+    }
+
+    /**
+     * UC-APS-07 派工保持（PLANNED→HOLD）。
+     */
+    @Override
+    @BizMutation
+    public ErpApsOperationOrder hold(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
+        return autoDispatchProcessor.hold(operationOrderId, context);
+    }
+
+    /**
+     * UC-APS-07 解除保持（HOLD/ON_HOLD→PLANNED）。
+     */
+    @Override
+    @BizMutation
+    public ErpApsOperationOrder unhold(@Name("operationOrderId") Long operationOrderId, IServiceContext context) {
+        return autoDispatchProcessor.unhold(operationOrderId, context);
     }
 
     @Override

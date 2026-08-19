@@ -25,3 +25,15 @@ options:
     value: CANCELLED
     description: 
   
+  - label: 不可排产
+    value: UNSCHEDULABLE
+    description: 
+  
+  - label: 保持
+    value: HOLD
+    description: 
+  
+  - label: 缺料暂停
+    value: ON_HOLD
+    description: 
+  

@@ -17,6 +17,64 @@ import java.util.Map;
 public interface IErpApsOperationOrderBiz extends ICrudBiz<ErpApsOperationOrder>{
 
     /**
+     * UC-APS-01 工序工单批量创建：读 WorkOrder 绑定工艺路线工序列表，按 sequence 依次创建
+     * OperationOrder(DRAFT)，继承 workOrderId/operationName/machineId/setupTime/runtimePerUnit/qty
+     * 并计算 totalDuration。工艺路线缺失→整单跳过 + notify 告警；工作中心不存在→该工序拒绝创建 + 告警；
+     * 幂等守卫：同 WorkOrder 重复触发不重复建单。计划员手动触发入口（与 job 拉取扫描同源编排）。
+     */
+    @BizMutation
+    WorkOrderOperationCreationResult createOperationOrdersFromWorkOrder(@Name("workOrderId") Long workOrderId,
+                                                                        IServiceContext context);
+
+    /**
+     * UC-APS-01 自动触发（D1 裁决选项 B：aps 侧拉取扫描，R1.76 拉取消费先例）：扫描已下达
+     * （已审核 NOT_STARTED 及其后续未开工/执行态）且尚无 OperationOrder 的工单，逐单调
+     * {@link #createOperationOrdersFromWorkOrder}。返回本次新建 OperationOrder 总数。
+     */
+    @BizMutation
+    Integer scanReleasedWorkOrders(IServiceContext context);
+
+    /**
+     * UC-APS-06 manualOverrideRouting：计划员强制指定路由（覆盖自动选择 + manualOverride=true +
+     * remark 审计）。时间差幂等叠加（剥离上次选中路由差值），工序回退 DRAFT 并释放产能预留，
+     * 下次重排在新工作中心排程且跳过自动路由选择。
+     */
+    @BizMutation
+    ErpApsOperationOrder manualOverrideRouting(@Name("operationOrderId") Long operationOrderId,
+                                               @Name("routingId") Long routingId,
+                                               IServiceContext context);
+
+    /**
+     * UC-APS-07 自动派工扫描（RC-R1.88，D1 拉取模型同构入口）：逐工作中心按 DispatchRule 过滤
+     * eligible PLANNED 工序（前瞻窗口/提前派工/优先级阈值/maxConcurrentOps），三维度条件
+     * （物料齐套/操作工/工装）全满足→IN_PROGRESS + DispatchLog(AUTO)；窗口内缺料→ON_HOLD + 通知计划员。
+     * 受全局开关 {@code erp-aps.auto-dispatch-enabled} 门控。返回本次派工数。job bean 调用入口，亦可手动执行。
+     */
+    @BizMutation
+    Integer scanAutoDispatch(IServiceContext context);
+
+    /**
+     * UC-APS-07 手动强制派工：PLANNED→IN_PROGRESS，可跳过条件检查但跳检原因（note）必填，
+     * DispatchLog dispatchType=MANUAL。
+     */
+    @BizMutation
+    ErpApsOperationOrder dispatchManually(@Name("operationOrderId") Long operationOrderId,
+                                          @Name("note") String note,
+                                          IServiceContext context);
+
+    /**
+     * UC-APS-07 派工保持：PLANNED→HOLD（计划员暂不派工，自动派工扫描跳过），DispatchLog dispatchType=HOLD。
+     */
+    @BizMutation
+    ErpApsOperationOrder hold(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+
+    /**
+     * UC-APS-07 解除保持：HOLD/ON_HOLD→PLANNED（重新进入自动派工检查循环），DispatchLog dispatchType=UNHOLD。
+     */
+    @BizMutation
+    ErpApsOperationOrder unhold(@Name("operationOrderId") Long operationOrderId, IServiceContext context);
+
+    /**
      * 前向排产：按 ErpApsSchedule.horizonStart/horizonEnd 拉取 DRAFT 工序，
      * 从 earliestStartDateT 正向填充工作中心可用时段，写回 plannedStart/EndDateT 并置 PLANNED。
      */

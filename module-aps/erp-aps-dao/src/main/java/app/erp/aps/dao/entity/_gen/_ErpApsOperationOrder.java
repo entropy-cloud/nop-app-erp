@@ -137,8 +137,24 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     public static final String PROP_NAME_businessDate = "businessDate";
     public static final int PROP_ID_businessDate = 29;
     
+    /* 选用路由: SELECTED_ROUTING_ID BIGINT */
+    public static final String PROP_NAME_selectedRoutingId = "selectedRoutingId";
+    public static final int PROP_ID_selectedRoutingId = 30;
+    
+    /* 路由选择原因: ROUTING_SELECTION_REASON VARCHAR */
+    public static final String PROP_NAME_routingSelectionReason = "routingSelectionReason";
+    public static final int PROP_ID_routingSelectionReason = 31;
+    
+    /* 人工强制路由: MANUAL_OVERRIDE BOOLEAN */
+    public static final String PROP_NAME_manualOverride = "manualOverride";
+    public static final int PROP_ID_manualOverride = 32;
+    
+    /* 允许降级备选: ALLOW_FALLBACK BOOLEAN */
+    public static final String PROP_NAME_allowFallback = "allowFallback";
+    public static final int PROP_ID_allowFallback = 33;
+    
 
-    private static int _PROP_ID_BOUND = 30;
+    private static int _PROP_ID_BOUND = 34;
 
     
     /* relation:  */
@@ -148,7 +164,7 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[30];
+    private static final String[] PROP_ID_TO_NAME = new String[34];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -239,6 +255,18 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_businessDate] = PROP_NAME_businessDate;
           PROP_NAME_TO_ID.put(PROP_NAME_businessDate, PROP_ID_businessDate);
       
+          PROP_ID_TO_NAME[PROP_ID_selectedRoutingId] = PROP_NAME_selectedRoutingId;
+          PROP_NAME_TO_ID.put(PROP_NAME_selectedRoutingId, PROP_ID_selectedRoutingId);
+      
+          PROP_ID_TO_NAME[PROP_ID_routingSelectionReason] = PROP_NAME_routingSelectionReason;
+          PROP_NAME_TO_ID.put(PROP_NAME_routingSelectionReason, PROP_ID_routingSelectionReason);
+      
+          PROP_ID_TO_NAME[PROP_ID_manualOverride] = PROP_NAME_manualOverride;
+          PROP_NAME_TO_ID.put(PROP_NAME_manualOverride, PROP_ID_manualOverride);
+      
+          PROP_ID_TO_NAME[PROP_ID_allowFallback] = PROP_NAME_allowFallback;
+          PROP_NAME_TO_ID.put(PROP_NAME_allowFallback, PROP_ID_allowFallback);
+      
     }
 
     
@@ -328,6 +356,18 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
     
     /* 业务日期: BUSINESS_DATE */
     private java.time.LocalDate _businessDate;
+    
+    /* 选用路由: SELECTED_ROUTING_ID */
+    private java.lang.Long _selectedRoutingId;
+    
+    /* 路由选择原因: ROUTING_SELECTION_REASON */
+    private java.lang.String _routingSelectionReason;
+    
+    /* 人工强制路由: MANUAL_OVERRIDE */
+    private java.lang.Boolean _manualOverride;
+    
+    /* 允许降级备选: ALLOW_FALLBACK */
+    private java.lang.Boolean _allowFallback;
     
 
     public _ErpApsOperationOrder(){
@@ -489,6 +529,18 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
         
             case PROP_ID_businessDate:
                return getBusinessDate();
+        
+            case PROP_ID_selectedRoutingId:
+               return getSelectedRoutingId();
+        
+            case PROP_ID_routingSelectionReason:
+               return getRoutingSelectionReason();
+        
+            case PROP_ID_manualOverride:
+               return getManualOverride();
+        
+            case PROP_ID_allowFallback:
+               return getAllowFallback();
         
            default:
               return super.orm_propValue(propId);
@@ -791,6 +843,46 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_selectedRoutingId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_selectedRoutingId));
+               }
+               setSelectedRoutingId(typedValue);
+               break;
+            }
+        
+            case PROP_ID_routingSelectionReason:{
+               java.lang.String typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toString(value,
+                       err-> newTypeConversionError(PROP_NAME_routingSelectionReason));
+               }
+               setRoutingSelectionReason(typedValue);
+               break;
+            }
+        
+            case PROP_ID_manualOverride:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_manualOverride));
+               }
+               setManualOverride(typedValue);
+               break;
+            }
+        
+            case PROP_ID_allowFallback:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_allowFallback));
+               }
+               setAllowFallback(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -999,6 +1091,34 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
             case PROP_ID_businessDate:{
                onInitProp(propId);
                this._businessDate = (java.time.LocalDate)value;
+               
+               break;
+            }
+        
+            case PROP_ID_selectedRoutingId:{
+               onInitProp(propId);
+               this._selectedRoutingId = (java.lang.Long)value;
+               
+               break;
+            }
+        
+            case PROP_ID_routingSelectionReason:{
+               onInitProp(propId);
+               this._routingSelectionReason = (java.lang.String)value;
+               
+               break;
+            }
+        
+            case PROP_ID_manualOverride:{
+               onInitProp(propId);
+               this._manualOverride = (java.lang.Boolean)value;
+               
+               break;
+            }
+        
+            case PROP_ID_allowFallback:{
+               onInitProp(propId);
+               this._allowFallback = (java.lang.Boolean)value;
                
                break;
             }
@@ -1556,6 +1676,82 @@ public class _ErpApsOperationOrder extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_businessDate,value)){
             this._businessDate = value;
             internalClearRefs(PROP_ID_businessDate);
+            
+        }
+    }
+    
+    /**
+     * 选用路由: SELECTED_ROUTING_ID
+     */
+    public final java.lang.Long getSelectedRoutingId(){
+         onPropGet(PROP_ID_selectedRoutingId);
+         return _selectedRoutingId;
+    }
+
+    /**
+     * 选用路由: SELECTED_ROUTING_ID
+     */
+    public final void setSelectedRoutingId(java.lang.Long value){
+        if(onPropSet(PROP_ID_selectedRoutingId,value)){
+            this._selectedRoutingId = value;
+            internalClearRefs(PROP_ID_selectedRoutingId);
+            
+        }
+    }
+    
+    /**
+     * 路由选择原因: ROUTING_SELECTION_REASON
+     */
+    public final java.lang.String getRoutingSelectionReason(){
+         onPropGet(PROP_ID_routingSelectionReason);
+         return _routingSelectionReason;
+    }
+
+    /**
+     * 路由选择原因: ROUTING_SELECTION_REASON
+     */
+    public final void setRoutingSelectionReason(java.lang.String value){
+        if(onPropSet(PROP_ID_routingSelectionReason,value)){
+            this._routingSelectionReason = value;
+            internalClearRefs(PROP_ID_routingSelectionReason);
+            
+        }
+    }
+    
+    /**
+     * 人工强制路由: MANUAL_OVERRIDE
+     */
+    public final java.lang.Boolean getManualOverride(){
+         onPropGet(PROP_ID_manualOverride);
+         return _manualOverride;
+    }
+
+    /**
+     * 人工强制路由: MANUAL_OVERRIDE
+     */
+    public final void setManualOverride(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_manualOverride,value)){
+            this._manualOverride = value;
+            internalClearRefs(PROP_ID_manualOverride);
+            
+        }
+    }
+    
+    /**
+     * 允许降级备选: ALLOW_FALLBACK
+     */
+    public final java.lang.Boolean getAllowFallback(){
+         onPropGet(PROP_ID_allowFallback);
+         return _allowFallback;
+    }
+
+    /**
+     * 允许降级备选: ALLOW_FALLBACK
+     */
+    public final void setAllowFallback(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_allowFallback,value)){
+            this._allowFallback = value;
+            internalClearRefs(PROP_ID_allowFallback);
             
         }
     }

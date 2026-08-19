@@ -101,6 +101,18 @@
 
                 <!--业务日期-->
                 <col id="businessDate" mandatory="true" sortable="true"/>
+
+                <!--选用路由-->
+                <col id="selectedRoutingId" ui:number="true" sortable="true"/>
+
+                <!--路由选择原因-->
+                <col id="routingSelectionReason" sortable="true"/>
+
+                <!--人工强制路由-->
+                <col id="manualOverride" sortable="true"/>
+
+                <!--允许降级备选-->
+                <col id="allowFallback" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -122,7 +134,9 @@
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
  earliestStartDateT[最早开工时间] latestEndDateT[最晚完工时间]
- businessDate[业务日期] 
+ businessDate[业务日期] selectedRoutingId[选用路由]
+ routingSelectionReason[路由选择原因] manualOverride[人工强制路由]
+ allowFallback[允许降级备选] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-工序工单" i18n-en:title="Add Operation Order" x:prototype="edit"/>
@@ -139,6 +153,8 @@
  status[状态] orgId[业务组织]
  remark[备注] earliestStartDateT[最早开工时间]
  latestEndDateT[最晚完工时间] businessDate[业务日期]
+ selectedRoutingId[选用路由] routingSelectionReason[路由选择原因]
+ manualOverride[人工强制路由] allowFallback[允许降级备选]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

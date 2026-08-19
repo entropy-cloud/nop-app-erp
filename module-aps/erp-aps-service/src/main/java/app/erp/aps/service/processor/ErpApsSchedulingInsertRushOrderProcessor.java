@@ -105,8 +105,10 @@ public class ErpApsSchedulingInsertRushOrderProcessor {
         }
 
         List<ErpApsConstraint> maintenance = facade.loadMaintenanceConstraintsByMachine(rush.getMachineId(), windowStart, windowEnd);
-        ErpApsSchedulingEngine engine = facade.newEngine(buffer, windowStart, windowEnd);
-        SchedulingResult result = engine.scheduleForward(toSchedule, maintenance, frozen, windowStart);
+        // RC-R1.87：插单重排同样启用替代路由（alternative-routing.md §5.2 被抢占工序自动尝试备选）
+        List<app.erp.aps.dao.entity.ErpApsOpRouting> routings = facade.loadEnabledRoutings();
+        ErpApsSchedulingEngine engine = facade.newEngine(buffer, windowStart, windowEnd, io.nop.api.core.time.CoreMetrics.today());
+        SchedulingResult result = engine.scheduleForward(toSchedule, maintenance, frozen, routings, windowStart);
         facade.persist(toSchedule, result);
         return result;
     }

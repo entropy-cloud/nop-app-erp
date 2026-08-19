@@ -137,6 +137,23 @@
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
             <schema type="java.time.LocalDate"/>
         </prop>
+        <prop name="selectedRoutingId" displayName="选用路由" propId="30" i18n-en:displayName="Selected Routing"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="routingSelectionReason" displayName="路由选择原因" propId="31"
+              i18n-en:displayName="Routing Selection Reason" queryable="true" sortable="true" insertable="true"
+              updatable="true">
+            <schema type="java.lang.String" precision="50" dict="erp-aps/routing-selection-reason"/>
+        </prop>
+        <prop name="manualOverride" displayName="人工强制路由" propId="32" i18n-en:displayName="Manual Override"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
+        <prop name="allowFallback" displayName="允许降级备选" propId="33" i18n-en:displayName="Allow Fallback"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.Boolean"/>
+        </prop>
         <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
               insertable="false" updatable="false" lazy="true">

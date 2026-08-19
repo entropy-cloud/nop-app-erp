@@ -11,6 +11,16 @@
             <option code="IN_PROGRESS" label="执行中" value="IN_PROGRESS" i18n-en:label='In Progress'/>
             <option code="FINISHED" label="已完成" value="FINISHED" i18n-en:label='Finished'/>
             <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
+            <option code="UNSCHEDULABLE" label="不可排产" value="UNSCHEDULABLE" i18n-en:label='Unschedulable'/>
+            <option code="HOLD" label="保持" value="HOLD" i18n-en:label='Hold'/>
+            <option code="ON_HOLD" label="缺料暂停" value="ON_HOLD" i18n-en:label='On Hold (Shortage)'/>
+        </dict>
+        <!-- 替代路由选择原因（RC-R1.87 / UC-APS-06，owner doc alternative-routing.md §2.2） -->
+        <dict label="路由选择原因" name="erp-aps/routing-selection-reason" valueType="string" i18n-en:label='Routing Selection Reason'>
+            <option code="DEFAULT" label="主选可用" value="DEFAULT" i18n-en:label='Default'/>
+            <option code="PRIMARY_OVERBOOKED" label="主选过载" value="PRIMARY_OVERBOOKED" i18n-en:label='Primary Overbooked'/>
+            <option code="PRIMARY_DOWN" label="主选停机" value="PRIMARY_DOWN" i18n-en:label='Primary Down'/>
+            <option code="BATCH_CONSTRAINT" label="批量约束" value="BATCH_CONSTRAINT" i18n-en:label='Batch Constraint'/>
         </dict>
         <dict label="排产方案状态" name="erp-aps/schedule-status" valueType="string" i18n-en:label='Schedule Status'>
             <option code="DRAFT" label="草稿" value="DRAFT" i18n-en:label='Draft'/>
@@ -85,6 +95,16 @@
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="25" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="26" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
                 <column name="businessDate" displayName="业务日期" stdSqlType="DATE" mandatory="true" code="BUSINESS_DATE" propId="29" tagSet="clock" i18n-en:displayName='Business Date' />
+                <!--
+                    替代路由选择增量列（RC-R1.87 / UC-APS-06，plan 2026-08-19-2040-3 双独立子 agent 批准
+                    appr1-7f3a2c + appr2-7f3a91）：全部可空、无默认、无索引、无 UK、零既有语义改动。
+                    selectedRoutingId 为 ErpApsOpRouting.id 弱引用（无 to-one，对齐跨域弱指针范式——
+                    同域弱引用以纯 ID 列承载，selectedRoutingId 语义详见 alternative-routing.md §2.2）。
+                -->
+                <column name="selectedRoutingId" displayName="选用路由" stdSqlType="BIGINT" code="SELECTED_ROUTING_ID" propId="30" stdDataType="long" i18n-en:displayName='Selected Routing' />
+                <column name="routingSelectionReason" displayName="路由选择原因" ext:dict="erp-aps/routing-selection-reason" stdSqlType="VARCHAR" precision="50" code="ROUTING_SELECTION_REASON" propId="31" stdDataType="string" i18n-en:displayName='Routing Selection Reason' />
+                <column name="manualOverride" displayName="人工强制路由" stdSqlType="BOOLEAN" code="MANUAL_OVERRIDE" propId="32" stdDataType="boolean" i18n-en:displayName='Manual Override' />
+                <column name="allowFallback" displayName="允许降级备选" stdSqlType="BOOLEAN" code="ALLOW_FALLBACK" propId="33" stdDataType="boolean" i18n-en:displayName='Allow Fallback' />
             </columns>
             <relations>
                 <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>

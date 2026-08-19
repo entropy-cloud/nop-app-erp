@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static io.nop.api.core.beans.FilterBeans.eq;
 import static io.nop.api.core.beans.FilterBeans.ge;
 import static io.nop.api.core.beans.FilterBeans.in;
 import static io.nop.api.core.beans.FilterBeans.le;
@@ -49,10 +48,11 @@ public class ApsLoadSourceProvider implements IErpApsLoadSourceProvider {
 
         QueryBean q = new QueryBean();
         q.addFilter(in("workOrderId", new ArrayList<>(workOrderIds)));
-        // 仅 PLANNED 状态的 OperationOrder 才有有效排程时间；
-        // IN_PROGRESS/FINISHED 也已排程，但 CRP 关注未来负荷，故只取 PLANNED；
-        // 已开工/完工归实际负荷跟踪，非本期范围。
-        q.addFilter(eq("status", ErpApsConstants.OP_STATUS_PLANNED));
+        // 仅 PLANNED/IN_PROGRESS 状态的 OperationOrder 才有有效排程时间；IN_PROGRESS（已派工，RC-R1.88 D6
+        // 裁决）一并导出——派工先于 mfg 日批建卡的工序仍须进入建卡来源（mfg 建卡 seam 幂等增量，零双卡）；
+        // FINISHED/CANCELLED 已完工/取消不再构成未来负荷。DRAFT 冲突时引擎已清空时间为 null，自然被过滤。
+        q.addFilter(in("status", java.util.Arrays.asList(
+                ErpApsConstants.OP_STATUS_PLANNED, ErpApsConstants.OP_STATUS_IN_PROGRESS)));
         // 排程时段与 CRP 窗口相交：plannedEndT >= periodFrom AND plannedStartT <= periodTo+1day
         LocalDateTime winFrom = periodFrom == null ? null : periodFrom.atStartOfDay();
         LocalDateTime winTo = periodTo == null ? null : periodTo.plusDays(1).atStartOfDay();

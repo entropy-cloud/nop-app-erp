@@ -51,6 +51,10 @@ CREATE TABLE erp_aps_operation_order(
   EARLIEST_START_DATE_T TIMESTAMP  ,
   LATEST_END_DATE_T TIMESTAMP  ,
   BUSINESS_DATE DATE NOT NULL ,
+  SELECTED_ROUTING_ID NUMBER(20)  ,
+  ROUTING_SELECTION_REASON VARCHAR2(50)  ,
+  MANUAL_OVERRIDE CHAR(1)  ,
+  ALLOW_FALLBACK CHAR(1)  ,
   constraint PK_erp_aps_operation_order primary key (ID)
 );
 
@@ -256,6 +260,14 @@ CREATE TABLE erp_aps_dispatch_log(
       COMMENT ON COLUMN erp_aps_operation_order.LATEST_END_DATE_T IS '最晚完工时间';
                     
       COMMENT ON COLUMN erp_aps_operation_order.BUSINESS_DATE IS '业务日期';
+                    
+      COMMENT ON COLUMN erp_aps_operation_order.SELECTED_ROUTING_ID IS '选用路由';
+                    
+      COMMENT ON COLUMN erp_aps_operation_order.ROUTING_SELECTION_REASON IS '路由选择原因';
+                    
+      COMMENT ON COLUMN erp_aps_operation_order.MANUAL_OVERRIDE IS '人工强制路由';
+                    
+      COMMENT ON COLUMN erp_aps_operation_order.ALLOW_FALLBACK IS '允许降级备选';
                     
       COMMENT ON TABLE erp_aps_schedule IS '排产方案';
                 

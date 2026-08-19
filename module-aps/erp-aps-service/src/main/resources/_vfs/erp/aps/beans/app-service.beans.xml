@@ -37,4 +37,25 @@
          bean id 覆盖替换基线矩阵（契约 §6）。 -->
     <bean id="app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine"
           class="app.erp.aps.service.statemachine.ErpApsOperationOrderStateMachine"/>
+    <!-- UC-APS-01 WorkOrder 下达→OperationOrder 批量创建编排 Processor（RC-R1.86 / P1-RC-088）：
+          跨域只读 mfg（daoFor 直访，matrix §9.4 豁免）+ notify 告警（IErpSysNotificationBiz 位于 erp-notify-dao，
+          aps→notify 单向，DAG 无环；无 ACTIVE 模板 config-gated 静默跳过）。 -->
+    <bean id="app.erp.aps.service.processor.ErpApsWorkOrderToOperationProcessor"
+          class="app.erp.aps.service.processor.ErpApsWorkOrderToOperationProcessor"/>
+
+    <!-- WorkOrder 下达拉取扫描 job bean（D1 裁决选项 B，R1.38 简单 job 范式；erp-aps-workorder-scan.job.yaml） -->
+    <bean id="erpApsWorkOrderScanJob"
+          class="app.erp.aps.service.job.ErpApsWorkOrderScanJob"/>
+    <!-- UC-APS-06 manualOverrideRouting per-mutation Processor（RC-R1.87）：注入 SchedulingProcessor facade 复用
+          requireOperationOrder/opRoutingDao/releaseReservationsByOrder 共享 helper。 -->
+    <bean id="app.erp.aps.service.processor.ErpApsRoutingManualOverrideProcessor"
+          class="app.erp.aps.service.processor.ErpApsRoutingManualOverrideProcessor"/>
+    <!-- UC-APS-07 自动派工引擎 Processor（RC-R1.88 / P1-RC-090）：D5 物料齐套经 IDaoProvider 只读 inv
+          （matrix §9.4 豁免）+ 缺料 ON_HOLD 通知（notify-dao）+ 状态机 Bean 守卫。 -->
+    <bean id="app.erp.aps.service.processor.ErpApsAutoDispatchProcessor"
+          class="app.erp.aps.service.processor.ErpApsAutoDispatchProcessor"/>
+
+    <!-- 自动派工扫描 job bean（R1.38 简单 job 范式；erp-aps-auto-dispatch.job.yaml，全局开关 + cron 双门控） -->
+    <bean id="erpApsAutoDispatchJob"
+          class="app.erp.aps.service.job.ErpApsAutoDispatchJob"/>
 </beans>

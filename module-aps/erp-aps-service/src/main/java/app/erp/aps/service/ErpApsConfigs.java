@@ -29,4 +29,16 @@ public interface ErpApsConfigs {
     /** 相邻工序间缓冲时间（分钟），默认 5。 */
     String CONFIG_BUFFER_MINUTES_BETWEEN_OPS = "erp-aps.buffer-minutes-between-ops";
     int DEFAULT_BUFFER_MINUTES_BETWEEN_OPS = 5;
+
+    /** WorkOrder 下达拉取扫描 cron（RC-R1.86 D1 选项 B）：空 = 不调度（job 跳过）。 */
+    String CONFIG_WORKORDER_SCAN_CRON = "erp-aps.workorder-scan-cron";
+    String DEFAULT_WORKORDER_SCAN_CRON = "";
+
+    /** 自动派工全局开关（RC-R1.88，auto-dispatch.md §5.2）：默认 false，紧急情况一键停用。 */
+    String CONFIG_AUTO_DISPATCH_ENABLED = "erp-aps.auto-dispatch-enabled";
+    boolean DEFAULT_AUTO_DISPATCH_ENABLED = false;
+
+    /** 自动派工扫描 cron（RC-R1.88）：空 = 不调度（job 跳过）。 */
+    String CONFIG_AUTO_DISPATCH_CRON = "erp-aps.auto-dispatch-cron";
+    String DEFAULT_AUTO_DISPATCH_CRON = "";
 }

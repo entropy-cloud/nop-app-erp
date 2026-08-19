@@ -334,4 +334,60 @@
         }
 
 
+        private Long _selectedRoutingId;
+
+    
+        @PropMeta(propId=30)
+    
+        public Long getSelectedRoutingId(){
+            return _selectedRoutingId;
+        }
+
+        public void setSelectedRoutingId(Long value){
+            this._selectedRoutingId = value;
+        }
+
+
+        private String _routingSelectionReason;
+
+    
+        @PropMeta(propId=31)
+    
+        public String getRoutingSelectionReason(){
+            return _routingSelectionReason;
+        }
+
+        public void setRoutingSelectionReason(String value){
+            this._routingSelectionReason = value;
+        }
+
+
+        private Boolean _manualOverride;
+
+    
+        @PropMeta(propId=32)
+    
+        public Boolean getManualOverride(){
+            return _manualOverride;
+        }
+
+        public void setManualOverride(Boolean value){
+            this._manualOverride = value;
+        }
+
+
+        private Boolean _allowFallback;
+
+    
+        @PropMeta(propId=33)
+    
+        public Boolean getAllowFallback(){
+            return _allowFallback;
+        }
+
+        public void setAllowFallback(Boolean value){
+            this._allowFallback = value;
+        }
+
+
     }

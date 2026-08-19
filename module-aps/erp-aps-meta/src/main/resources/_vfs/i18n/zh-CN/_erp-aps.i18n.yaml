@@ -115,6 +115,7 @@ prop:
       updatedBy: 修改人
       version: 数据版本
     ErpApsOperationOrder:
+      allowFallback: 允许降级备选
       assignedToId: 操作工
       businessDate: 业务日期
       code: 编号
@@ -126,6 +127,7 @@ prop:
       isOutsourced: 是否外协
       latestEndDateT: 最晚完工时间
       machineId: 工作中心/设备
+      manualOverride: 人工强制路由
       operationName: 工序名称
       org: null
       org.name: null
@@ -137,7 +139,10 @@ prop:
       realEndDateT: 实际完工时间
       realStartDateT: 实际开工时间
       remark: 备注
+      routingSelectionReason: 路由选择原因
+      routingSelectionReason_label: 路由选择原因
       runtimePerUnit: 每件加工时间(分钟)
+      selectedRoutingId: 选用路由
       sequence: 工序顺序
       setupTime: 准备时间(分钟)
       status: 状态

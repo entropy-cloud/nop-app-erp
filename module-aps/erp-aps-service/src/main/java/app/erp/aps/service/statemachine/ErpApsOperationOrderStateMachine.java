@@ -114,6 +114,35 @@ public class ErpApsOperationOrderStateMachine {
         return ErpApsConstants.OP_STATUS_DRAFT;
     }
 
+    /**
+     * hold 守卫：仅 PLANNED 合法（RC-R1.88，auto-dispatch.md §3.3 派工保持——计划员暂不派工）。
+     */
+    public void assertCanHold(String status) {
+        if (!ErpApsConstants.OP_STATUS_PLANNED.equals(status)) {
+            throw illegal("hold", status, ErpApsConstants.OP_STATUS_PLANNED);
+        }
+    }
+
+    public String holdTargetStatus() {
+        return ErpApsConstants.OP_STATUS_HOLD;
+    }
+
+    /**
+     * unhold 守卫：HOLD（人工保持）/ ON_HOLD（缺料系统暂停）合法（auto-dispatch.md §3.3 解除保持
+     * → 重新进入自动派工检查循环）。
+     */
+    public void assertCanUnhold(String status) {
+        if (!ErpApsConstants.OP_STATUS_HOLD.equals(status)
+                && !ErpApsConstants.OP_STATUS_ON_HOLD.equals(status)) {
+            throw illegal("unhold", status,
+                    ErpApsConstants.OP_STATUS_HOLD + "/" + ErpApsConstants.OP_STATUS_ON_HOLD);
+        }
+    }
+
+    public String unholdTargetStatus() {
+        return ErpApsConstants.OP_STATUS_PLANNED;
+    }
+
     // ---------- 终态/初始态分类 ----------
 
     /**
@@ -129,16 +158,21 @@ public class ErpApsOperationOrderStateMachine {
     // ---------- 只读元数据接口（完备性/可达性分析用，非 Processor 主调用路径） ----------
 
     /**
-     * 返回不可变快照，声明全部 7 条已实现边（按 per-(action, fromStatus, toStatus) 三元组）。
+     * 返回不可变快照，声明全部 13 条已实现边（按 per-(action, fromStatus, toStatus) 三元组）。
      *
-     * <p>含 DRAFT→PLANNED（APS 排产，引擎驱动无 assertCan 守卫但属已实现边，供可达性分析）与
-     * PLANNED→DRAFT（重排回退）。DRAFT→PLANNED 的 action 名为 {@code "schedule"}（语义占位，非命名 mutation），
-     * 该边无对应 assertCan 方法（引擎边界裁定，见类注释）。
+     * <p>含引擎驱动边（DRAFT→PLANNED {@code schedule}、UNSCHEDULABLE→PLANNED 自愈重排 {@code schedule}、
+     * DRAFT→UNSCHEDULABLE {@code markUnschedulable}、PLANNED→ON_HOLD 缺料暂停 {@code shortageHold}——
+     * 引擎按可行性写状态无可集中守卫，仅作可达性分析声明边）；RC-R1.88 新增 hold/unhold 命名动作边
+     * （PLANNED↔HOLD 保持语义 + HOLD/ON_HOLD→PLANNED 解除保持）。
      */
     public List<TransitionDefinition> transitions() {
         return Collections.unmodifiableList(Arrays.asList(
                 new TransitionDefinition("schedule",
                         ErpApsConstants.OP_STATUS_DRAFT, ErpApsConstants.OP_STATUS_PLANNED),
+                new TransitionDefinition("schedule",
+                        ErpApsConstants.OP_STATUS_UNSCHEDULABLE, ErpApsConstants.OP_STATUS_PLANNED),
+                new TransitionDefinition("markUnschedulable",
+                        ErpApsConstants.OP_STATUS_DRAFT, ErpApsConstants.OP_STATUS_UNSCHEDULABLE),
                 new TransitionDefinition("start",
                         ErpApsConstants.OP_STATUS_PLANNED, ErpApsConstants.OP_STATUS_IN_PROGRESS),
                 new TransitionDefinition("complete",
@@ -150,7 +184,15 @@ public class ErpApsOperationOrderStateMachine {
                 new TransitionDefinition("cancel",
                         ErpApsConstants.OP_STATUS_IN_PROGRESS, ErpApsConstants.OP_STATUS_CANCELLED),
                 new TransitionDefinition("revertToDraft",
-                        ErpApsConstants.OP_STATUS_PLANNED, ErpApsConstants.OP_STATUS_DRAFT)));
+                        ErpApsConstants.OP_STATUS_PLANNED, ErpApsConstants.OP_STATUS_DRAFT),
+                new TransitionDefinition("hold",
+                        ErpApsConstants.OP_STATUS_PLANNED, ErpApsConstants.OP_STATUS_HOLD),
+                new TransitionDefinition("unhold",
+                        ErpApsConstants.OP_STATUS_HOLD, ErpApsConstants.OP_STATUS_PLANNED),
+                new TransitionDefinition("unhold",
+                        ErpApsConstants.OP_STATUS_ON_HOLD, ErpApsConstants.OP_STATUS_PLANNED),
+                new TransitionDefinition("shortageHold",
+                        ErpApsConstants.OP_STATUS_PLANNED, ErpApsConstants.OP_STATUS_ON_HOLD)));
     }
 
     public List<String> terminalStatuses() {

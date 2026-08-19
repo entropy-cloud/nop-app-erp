@@ -29,6 +29,41 @@ public interface _ErpApsDaoConstants {
     String OPERATION_ORDER_STATUS_CANCELLED = "CANCELLED";
                     
     /**
+     * 工序工单状态: 不可排产 
+     */
+    String OPERATION_ORDER_STATUS_UNSCHEDULABLE = "UNSCHEDULABLE";
+                    
+    /**
+     * 工序工单状态: 保持 
+     */
+    String OPERATION_ORDER_STATUS_HOLD = "HOLD";
+                    
+    /**
+     * 工序工单状态: 缺料暂停 
+     */
+    String OPERATION_ORDER_STATUS_ON_HOLD = "ON_HOLD";
+                    
+    /**
+     * 路由选择原因: 主选可用 
+     */
+    String ROUTING_SELECTION_REASON_DEFAULT = "DEFAULT";
+                    
+    /**
+     * 路由选择原因: 主选过载 
+     */
+    String ROUTING_SELECTION_REASON_PRIMARY_OVERBOOKED = "PRIMARY_OVERBOOKED";
+                    
+    /**
+     * 路由选择原因: 主选停机 
+     */
+    String ROUTING_SELECTION_REASON_PRIMARY_DOWN = "PRIMARY_DOWN";
+                    
+    /**
+     * 路由选择原因: 批量约束 
+     */
+    String ROUTING_SELECTION_REASON_BATCH_CONSTRAINT = "BATCH_CONSTRAINT";
+                    
+    /**
      * 排产方案状态: 草稿 
      */
     String SCHEDULE_STATUS_DRAFT = "DRAFT";

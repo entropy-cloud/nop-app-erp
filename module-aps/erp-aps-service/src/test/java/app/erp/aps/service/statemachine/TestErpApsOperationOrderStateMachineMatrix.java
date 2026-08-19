@@ -22,9 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * 层 1 矩阵完备性表驱动测试（契约 §10 层 1；plan 2026-08-12-2142-3 Phase 1 Proof）。
  *
  * <p>针对 {@link ErpApsOperationOrderStateMachine} Bean 的纯矩阵完备性遍历：不经 BizModel 入口（层 3 职责），
- * 不断言副作用/审计。覆盖：
+ * 不断言副作用/审计。覆盖（RC-R1.87/RC-R1.88 后 13 条边 = 基线 7 + 引擎边 3 + hold/unhold 命名边 3）：
  * <ul>
- *   <li>(a) 无重复/冲突边（7 条边，cancel 多源占 3）；</li>
+ *   <li>(a) 无重复/冲突边（13 条边，cancel 多源占 3 + unhold 多源占 2）；</li>
  *   <li>(b) 从 DRAFT 经声明边可达全部状态（DRAFT→PLANNED→IN_PROGRESS→FINISHED；
  *       DRAFT/PLANNED/IN_PROGRESS→CANCELLED；PLANNED→DRAFT 回退环）；</li>
  *   <li>(c) cancel 三源 {DRAFT,PLANNED,IN_PROGRESS} 全覆盖、对终态 FINISHED/CANCELLED 非法；</li>
@@ -38,16 +38,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class TestErpApsOperationOrderStateMachineMatrix {
 
-    /** dict {@code erp-aps/operation-order-status} 的 5 值。 */
+    /** dict {@code erp-aps/operation-order-status} 的 8 值（RC-R1.87/88 增 UNSCHEDULABLE/HOLD/ON_HOLD）。 */
     private static final List<String> ALL_STATUSES = Arrays.asList(
             ErpApsConstants.OP_STATUS_DRAFT,
             ErpApsConstants.OP_STATUS_PLANNED,
             ErpApsConstants.OP_STATUS_IN_PROGRESS,
             ErpApsConstants.OP_STATUS_FINISHED,
-            ErpApsConstants.OP_STATUS_CANCELLED);
+            ErpApsConstants.OP_STATUS_CANCELLED,
+            ErpApsConstants.OP_STATUS_UNSCHEDULABLE,
+            ErpApsConstants.OP_STATUS_HOLD,
+            ErpApsConstants.OP_STATUS_ON_HOLD);
 
-    /** 引擎驱动的边（无 assertCan 守卫，仅可达性声明）。 */
-    private static final String ENGINE_ACTION = "schedule";
+    /** 引擎驱动的边（无 assertCan 守卫，仅可达性声明）：排产/自愈重排/不可排产标记/缺料暂停。 */
+    private static final java.util.Set<String> ENGINE_ACTIONS = java.util.Set.of(
+            "schedule", "markUnschedulable", "shortageHold");
 
     private final ErpApsOperationOrderStateMachine sm = new ErpApsOperationOrderStateMachine();
 
@@ -62,7 +66,7 @@ public class TestErpApsOperationOrderStateMachineMatrix {
             // 同一 action + 同一 fromStatus 不得出现多次（否则冲突）；cancel 多源 = 不同 fromStatus，合法
             assertTrue(seen.add(key), "重复/冲突边: action=" + e.getAction() + ", fromStatus=" + e.getFromStatus());
         }
-        assertEquals(7, edges.size(), "迁移矩阵应有 7 条边（cancel 多源占 3 + schedule 引擎边 1）");
+        assertEquals(13, edges.size(), "迁移矩阵应有 13 条边（基线 7 + 引擎边 3 + hold/unhold 命名边 3）");
     }
 
     // ---------- (b) 从 DRAFT 经声明边可达全部状态 ----------
@@ -125,9 +129,9 @@ public class TestErpApsOperationOrderStateMachineMatrix {
     @Test
     public void testTransitionsMetadataConsistentWithExplicitMethods() {
         for (ErpApsOperationOrderStateMachine.TransitionDefinition e : sm.transitions()) {
-            // 引擎边（schedule）无 assertCan 守卫，仅核对目标态与声明 toStatus 不可比（无 scheduleTargetStatus）；
-            // 该边仅作可达性声明，跳过 assertCan 一致性核对（引擎边界裁定，见类注释）。
-            if (ENGINE_ACTION.equals(e.getAction())) {
+            // 引擎边（schedule/markUnschedulable/shortageHold）无 assertCan 守卫，仅作可达性声明，
+            // 跳过 assertCan 一致性核对（引擎边界裁定，见类注释）。
+            if (ENGINE_ACTIONS.contains(e.getAction())) {
                 continue;
             }
             // 每条边的 fromStatus 对该 action 合法（assert 放行不抛）
@@ -163,6 +167,10 @@ public class TestErpApsOperationOrderStateMachineMatrix {
         assertActionAllowsOnly("complete", ErpApsConstants.OP_STATUS_IN_PROGRESS);
         // revertToDraft: 仅 PLANNED 合法（插单回退路径矩阵权威）
         assertActionAllowsOnly("revertToDraft", ErpApsConstants.OP_STATUS_PLANNED);
+        // hold: 仅 PLANNED 合法（RC-R1.88 派工保持）
+        assertActionAllowsOnly("hold", ErpApsConstants.OP_STATUS_PLANNED);
+        // unhold: HOLD/ON_HOLD 合法（解除保持双源，RC-R1.88）
+        assertActionAllowsOnly("unhold", ErpApsConstants.OP_STATUS_HOLD, ErpApsConstants.OP_STATUS_ON_HOLD);
     }
 
     @Test
@@ -171,6 +179,8 @@ public class TestErpApsOperationOrderStateMachineMatrix {
         assertEquals(ErpApsConstants.OP_STATUS_FINISHED, sm.completeTargetStatus());
         assertEquals(ErpApsConstants.OP_STATUS_CANCELLED, sm.cancelTargetStatus());
         assertEquals(ErpApsConstants.OP_STATUS_DRAFT, sm.revertToDraftTargetStatus());
+        assertEquals(ErpApsConstants.OP_STATUS_HOLD, sm.holdTargetStatus());
+        assertEquals(ErpApsConstants.OP_STATUS_PLANNED, sm.unholdTargetStatus());
     }
 
     @Test
@@ -193,9 +203,10 @@ public class TestErpApsOperationOrderStateMachineMatrix {
     /**
      * 断言某 action 仅允许指定来源态：该来源态放行（不抛），其余全部状态非法（抛 common 码 + action 元数据）。
      */
-    private void assertActionAllowsOnly(String action, String allowedFrom) {
+    private void assertActionAllowsOnly(String action, String... allowedFrom) {
+        java.util.Set<String> allowed = new java.util.HashSet<>(Arrays.asList(allowedFrom));
         for (String s : ALL_STATUSES) {
-            if (allowedFrom.equals(s)) {
+            if (allowed.contains(s)) {
                 invokeAssert(action, s); // 不抛 = 合法
             } else {
                 NopException ex = assertThrows(NopException.class, () -> invokeAssert(action, s),
@@ -224,6 +235,12 @@ public class TestErpApsOperationOrderStateMachineMatrix {
             case "revertToDraft":
                 sm.assertCanRevertToDraft(status);
                 break;
+            case "hold":
+                sm.assertCanHold(status);
+                break;
+            case "unhold":
+                sm.assertCanUnhold(status);
+                break;
             default:
                 throw new IllegalArgumentException("unknown action (engine actions have no guard): " + action);
         }
@@ -239,6 +256,10 @@ public class TestErpApsOperationOrderStateMachineMatrix {
                 return sm.cancelTargetStatus();
             case "revertToDraft":
                 return sm.revertToDraftTargetStatus();
+            case "hold":
+                return sm.holdTargetStatus();
+            case "unhold":
+                return sm.unholdTargetStatus();
             default:
                 throw new IllegalArgumentException("unknown action (engine actions have no target method): " + action);
         }
