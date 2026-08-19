@@ -211,8 +211,8 @@ nop-job-local（已接入 app-erp-all 框架，docs/logs/2026/06-23.md:14-17）
 
 | 作业标识 | 业务功能 | 触发频率 | 调用入口 | 量级 | 执行模式 | 状态 | 配置键 | 证据 |
 |----------|----------|----------|----------|------|----------|------|--------|------|
-| `erp-mnt-due-visit-generation` | 扫描 `nextDueDate ≤ asOfDate` 维护计划生成 DRAFT 访问 + 推进 `nextDueDate` | 每日凌晨 | `ErpMntDueVisitJob.execute()` → `IErpMntScheduleBiz.generateDueVisits()` | 小-中 | job | SCHEDULED | `erp-mnt.due-visit-cron` | `docs/design/maintenance/use-cases.md:16-23`；`plans/2026-07-03-1018-3:30`；`plans/2026-07-05-0306-1` |
-| `erp-mnt-usage-based-trigger` | 基于累计运行时长/产量的维护触发 | 按累计 | （待实现） | 中 | job | DESIGN | — | `docs/design/maintenance/equipment-integration.md:196-215` |
+| `erp-mnt-due-visit-generation` | 扫描 `nextDueDate ≤ asOfDate` 维护计划生成 DRAFT 访问 + 推进 `nextDueDate`；**RC-R1.73 起同一入口评估 RUNTIME 计划**（triggerType=RUNTIME：Σ RUNNING 段累计 ≥ baseline + thresholdHours 生成 DRAFT + baseline 重置，nextDueDate 不推进）+ **RC-R1.74 生成后套用任务模板**（显式 templateId / categoryId 唯一 active 回退 → 复制 ErpMntVisitTask 行） | 每日凌晨 | `ErpMntDueVisitJob.execute()` → `IErpMntScheduleBiz.generateDueVisits()`（`ScheduleDueGenerator` TIME/RUNTIME 两分支 + `EquipmentRuntimeCalculator` 查询时聚合） | 小-中 | job | SCHEDULED | `erp-mnt.due-visit-cron`（+ 既有 `erp-mnt.auto-generate-due-visits` 门控） | `docs/design/maintenance/use-cases.md:16-23`；`plans/2026-07-03-1018-3:30`；`plans/2026-07-05-0306-1`；`plans/2026-08-19-0445-2`（RC-R1.73/74 运行时长触发与模板套用并入本 job，无新 job——产量周期 successor） |
+| `erp-mnt-usage-based-trigger` | 基于累计产量的维护触发（运行时长分量已由 `erp-mnt-due-visit-generation` RUNTIME 分支承载，RC-R1.73） | 按累计 | （待实现——产量采集数据落地后接入同一 generateDueVisits 入口） | 中 | job | DESIGN | — | `docs/design/maintenance/equipment-integration.md:196-215`；`plans/2026-08-19-0445-2` Deferred |
 
 ### 3.14 Projects（项目）
 

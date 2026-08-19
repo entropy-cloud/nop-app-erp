@@ -1,6 +1,6 @@
 # 2026-08-19-0445-2-rc-mr1-r1-73-74-75-mnt-schedule-visit-family RC-R1.73/74/75 — maintenance 调度触发与访问生成链补全（A 类 ORM：StatusLog 运行时长 + 任务模板实体 + visit↔request 联动）
 
-> Plan Status: active
+> Plan Status: completed
 > Last Reviewed: 2026-08-19
 > Mission: requirement-compliance
 > Work Item: RC-R1.73（P1-RC-064，UC-MAIN-02 运行时长触发）+ RC-R1.74（P1-RC-065，UC-MAIN-01 任务模板套用）+ RC-R1.75（P1-RC-067，UC-MAIN-05 visit→request 联动）
@@ -50,83 +50,96 @@
 
 ### Phase 1 - R1.73：StatusLog 实体 + 运行时长聚合 + Schedule 触发分支
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/model/app-erp-maintenance.orm.xml`（StatusLog 实体 + Schedule 3 列 + trigger-type dict）、`module-maintenance/erp-mnt-meta/_vfs/dict/erp-mnt/trigger-type.dict.yaml`（新）、`EquipmentStatusLinker.java`、`ErpMntEquipmentBizModel.java`、`ScheduleDueGenerator.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: 无
 
-- [ ] **双独立子 agent 批准（保护区域 checkbox）**：新实体 + 加列（Q3/A 类批量授权范围内），按 R1.49/57/60/66 先例取得两个独立子 agent 分别检查批准，批准记录落盘本计划。
+- [x] **双独立子 agent 批准（保护区域 checkbox）**：新实体 + 加列（Q3/A 类批量授权范围内），按 R1.49/57/60/66 先例取得两个独立子 agent 分别检查批准，批准记录落盘本计划。
       - Skill: none
-- [ ] **D1 运行时长载体 = StatusLog 实体 + 查询时聚合**（否决「累计列物化 + 采集 Job」：增量累加在 job 中断/回滚下漂移需对账，查询时聚合以状态记录为唯一真相幂等可重算）。`ErpMntEquipmentStatusLog`（equipmentId + fromStatus + toStatus + changeAt + source[VISIT/DOWNTIME/MANUAL/DISPOSAL] + sourceBillCode，索引 equipmentId+changeAt）；写点 = `EquipmentStatusLinker` 三个迁移方法 + `ErpMntEquipmentBizModel.changeStatus`（同一事务追加日志行）。**遗留基线语义**：无日志历史设备——当前 status=RUNNING → createTime 起算 RUNNING 段；当前非 RUNNING（IDLE/DOWN/UNDER_MAINTENANCE/DECOMMISSIONED）→ 运行时长记 0 直至首条日志行（保守 fail-safe，防无历史设备虚计触发）。
+      - **批准记录（2026-08-19）**：
+        - Approver A（task `ses_fe852c87cffenZiPm52fDKpCmp`，fresh session）：**approved**。核验：①授权范围在 roadmap:42 批量 A 类授权内（R1.73 StatusLog 分支选择符合 L1 use-cases.md:42）②纯加性确认（无既有结构改动，前向实体引用合法 orm.xml:150 先例）③propId 20-23/27/15 顺序正确 ④最小充分集确认。非阻塞 findings：a) dict `erp-mnt/status-log-source` 去掉 DISPOSAL 值（无写点 = dangling，P2-RC-057 同型）→ **已采纳：初始值集 = VISIT/DOWNTIME/MANUAL**；b) 两个 dict yaml 均须手写（trigger-type + status-log-source）→ 已采纳；c) i18n-en/domain 复用/审计列惯例 → 已采纳；d) isActive 保持可空无默认（Q3 边界），匹配逻辑 null=非启用 → 已采纳；e) templateId/runtimeBaselineHours/standardMinutes 越出 roadmap:42 字面列集但纯加性，归「越界回落双独立子 agent 批准」条款覆盖。
+        - Approver B（task `ses_fe8529b3bffeMt3ftAAp2rSwPR`，fresh session）：**approved**。核验：①授权原文 roadmap:31-33 + :42 逐字确认 + plan:133 draft review acceptable ②无名称/relation/propId 冲突（ErpMntVisit 无既有 requestId/request relation；ErpMntSparePartUsage.request 为他实体非冲突）③跨模块 grep 再生成安全（仅注释/路由字符串弱引用；R1.60 reflect-config 先例）④状态机边集不受影响（D6 仅合成既有边）⑤最小充分。非阻塞 findings：a) 新实体审计列按 sibling 惯例 mandatory+defaultValue（「全可空」仅约束业务列）→ 已采纳；b) 两 dict yaml 均手写 → 已采纳；c) 不加 Visit.requestId/Schedule.triggerType 索引（Q3 禁既有实体索引改造）→ 已采纳。
+- [x] **D1 运行时长载体 = StatusLog 实体 + 查询时聚合**（否决「累计列物化 + 采集 Job」：增量累加在 job 中断/回滚下漂移需对账，查询时聚合以状态记录为唯一真相幂等可重算）。`ErpMntEquipmentStatusLog`（equipmentId + fromStatus + toStatus + changeAt + source[VISIT/DOWNTIME/MANUAL/DISPOSAL] + sourceBillCode，索引 equipmentId+changeAt）；写点 = `EquipmentStatusLinker` 三个迁移方法 + `ErpMntEquipmentBizModel.changeStatus`（同一事务追加日志行）。**遗留基线语义**：无日志历史设备——当前 status=RUNNING → createTime 起算 RUNNING 段；当前非 RUNNING（IDLE/DOWN/UNDER_MAINTENANCE/DECOMMISSIONED）→ 运行时长记 0 直至首条日志行（保守 fail-safe，防无历史设备虚计触发）。
+      - 实现注记：dict 值集按 Approver A finding 落地为 VISIT/DOWNTIME/MANUAL（DISPOSAL 无写点 dangling，落地时移除，见批准记录）；载体 = 新 `EquipmentStatusLogWriter`（写点单一真相）+ `EquipmentRuntimeCalculator`（Σ RUNNING 段查询时聚合，显式 asOf 参数确定性可测）。
       - Skill: `nop-backend-dev`
-- [ ] **D2 触发基线 = schedule.runtimeBaselineHours 列**（否决「从上次生成 visit 反推」：依赖 visit 查询链脆弱且首触发无锚点）。RUNTIME 计划生成 DRAFT 时同事务置 baseline=当前累计运行时长；触发条件 = 当前累计 ≥ baseline + thresholdHours；`advanceNextDueDate` 仅对 TIME 计划执行（RUNTIME 计划 nextDueDate 不推进保持 null/原值）；`findDueSchedules`（nextDueDate 基准）排除 triggerType=RUNTIME，新增 findRuntimeDueSchedules 分支在同一 `generateDueVisits` 入口评估（触发粒度 = job cron 部署节奏，对齐 L2 §5.2 单一定时任务模型）。
+- [x] **D2 触发基线 = schedule.runtimeBaselineHours 列**（否决「从上次生成 visit 反推」：依赖 visit 查询链脆弱且首触发无锚点）。RUNTIME 计划生成 DRAFT 时同事务置 baseline=当前累计运行时长；触发条件 = 当前累计 ≥ baseline + thresholdHours；`advanceNextDueDate` 仅对 TIME 计划执行（RUNTIME 计划 nextDueDate 不推进保持 null/原值）；`findDueSchedules`（nextDueDate 基准）排除 triggerType=RUNTIME，新增 findRuntimeDueSchedules 分支在同一 `generateDueVisits` 入口评估（触发粒度 = job cron 部署节奏，对齐 L2 §5.2 单一定时任务模型）。
+      - 实现注记：thresholdHours 缺失/非正不触发（未配置语义）；既有 VST-SCH-{schedId}-{asOfDate} code 幂等锚点双保险保留。
       - Skill: `nop-backend-dev`
-- [ ] **D3 dict 值域 = TIME/RUNTIME 两值**（产量周期 OUTPUT 不入——无数据源，dangling 值违反 dict 契约先例[priceValidationLevel "20" 孤儿值 P2-RC-057]；null=TIME 派生兼容存量计划）。
+- [x] **D3 dict 值域 = TIME/RUNTIME 两值**（产量周期 OUTPUT 不入——无数据源，dangling 值违反 dict 契约先例[priceValidationLevel "20" 孤儿值 P2-RC-057]；null=TIME 派生兼容存量计划）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：TestErpMntRuntimeTrigger 测试组：①RUNNING 段聚合数学断言（跨多个状态变更周期 + 当前开放段 + 遗留基线双分支[无日志+当前 RUNNING=createTime 起算 / 无日志+当前 IDLE/DOWN=0 直至首条日志]）②累计 ≥ 阈值 → 生成 DRAFT + baseline 重置 ③未达阈值不生成 ④同日 job 重跑幂等（baseline 已推进不重复生成）⑤TIME 计划零回归（null triggerType 走既有 nextDueDate 链）⑥IDLE/DOWN/UNDER_MAINTENANCE 段不计入 ⑦手动 changeStatus 写日志行 + `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service`。
+- [x] **Proof**：TestErpMntRuntimeTrigger 测试组：①RUNNING 段聚合数学断言（跨多个状态变更周期 + 当前开放段 + 遗留基线双分支[无日志+当前 RUNNING=createTime 起算 / 无日志+当前 IDLE/DOWN=0 直至首条日志]）②累计 ≥ 阈值 → 生成 DRAFT + baseline 重置 ③未达阈值不生成 ④同日 job 重跑幂等（baseline 已推进不重复生成）⑤TIME 计划零回归（null triggerType 走既有 nextDueDate 链）⑥IDLE/DOWN/UNDER_MAINTENANCE 段不计入 ⑦手动 changeStatus 写日志行 + `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service`。
+      - 实现注记：11 @Test 全绿（含 linker 三写点来源断言 + `_cases/testManualChangeStatusSnapshot` 快照）；既有 TestErpMntVisitRequestStateMachine/TestErpMntDowntimeAndE2E 因新增 StatusLog 行与 default 序列块分配产生合法 DB 快照漂移，经 forceSaveOutput 重录后归零（业务断言零回归）；模块 108 基线 + 11 新增 = 119 全绿 + `mvn clean install -DskipTests` BUILD SUCCESS。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 运行时长触发链落地 + 既有 TIME 计划与 due-visit job 测试零回归
+- [x] 运行时长触发链落地 + 既有 TIME 计划与 due-visit job 测试零回归
 
 ### Phase 2 - R1.74：任务模板实体 + 套用复制
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/model/app-erp-maintenance.orm.xml`（Template + TemplateLine 实体 + Schedule.templateId + VisitTask.standardMinutes）、`ScheduleDueGenerator.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（同 ORM 文件串行编辑，避免重生成冲突）
 
-- [ ] **D4 模板实体与套用范围**：`ErpMntTaskTemplate`（code UK + name + equipmentCategoryId 可空[适用设备类型] + standardMinutes[标准工时] + instruction[操作说明] + isActive）+ `ErpMntTaskTemplateLine`（templateId + lineNo + taskName + standardMinutes 行级 + materialId/quantity 可空[标准备件提示]）。套用 = `generateVisitForSchedule` 解析模板（**显式 schedule.templateId 优先，空则按 equipment.categoryId 匹配唯一 active 模板回退，零/多匹配跳过 LOG.warn 不阻断**）→ 逐行创建 `ErpMntVisitTask`（taskDescription=taskName，standardMinutes 透传，status=PENDING）+ visit.totalMinutes 不预填（执行时长语义）。RESPONSIVE 访问（generateResponsiveVisit）不套用模板（L1 联动断言不含任务清单；模板属计划性维护语义）。
+- [x] **D4 模板实体与套用范围**：`ErpMntTaskTemplate`（code UK + name + equipmentCategoryId 可空[适用设备类型] + standardMinutes[标准工时] + instruction[操作说明] + isActive）+ `ErpMntTaskTemplateLine`（templateId + lineNo + taskName + standardMinutes 行级 + materialId/quantity 可空[标准备件提示]）。套用 = `generateVisitForSchedule` 解析模板（**显式 schedule.templateId 优先，空则按 equipment.categoryId 匹配唯一 active 模板回退，零/多匹配跳过 LOG.warn 不阻断**）→ 逐行创建 `ErpMntVisitTask`（taskDescription=taskName，standardMinutes 透传，status=PENDING）+ visit.totalMinutes 不预填（执行时长语义）。RESPONSIVE 访问（generateResponsiveVisit）不套用模板（L1 联动断言不含任务清单；模板属计划性维护语义）。
+      - 实现注记：套用落位 = `generateVisit`（TIME/RUNTIME 两计划性路径共享叶子）内 `applyTaskTemplate` protected step + `resolveTaskTemplate` 解析（显式锚定不校验 isActive；回退匹配 eq(isActive,1)；行级 standardMinutes 缺失回落模板级）。ORM/BizModel/meta/web 页面由既有重生成落位（ErpMntTaskTemplate/Line 实体 + ErpMntTaskTemplateBizModel/LineBizModel 纯 CRUD）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：TestErpMntTaskTemplate 测试组：①显式 templateId 套用 → VisitTask 行数/描述/标准工时断言 ②categoryId 自动匹配回退（唯一 active）③无匹配/多匹配跳过不阻断（visit 仍生成，任务零行 + warn）④标准备件行携带提示字段不产生 SparePartUsage ⑤模板 CRUD 冒烟（GraphQL save/findPage）⑥无模板计划零回归（既有 6 字段行为）+ `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service`。
+- [x] **Proof**：TestErpMntTaskTemplate 测试组：①显式 templateId 套用 → VisitTask 行数/描述/标准工时断言 ②categoryId 自动匹配回退（唯一 active）③无匹配/多匹配跳过不阻断（visit 仍生成，任务零行 + warn）④标准备件行携带提示字段不产生 SparePartUsage ⑤模板 CRUD 冒烟（GraphQL save/findPage）⑥无模板计划零回归（既有 6 字段行为）+ `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service`。
+      - 实现注记：7 @Test 全绿（testTemplateCrudSnapshot 含 `_cases/` 快照：1_save/2_findPage response + erp_mnt_task_template/nop_sys_sequence tables）；模块 119 基线 + 7 新增 = 126 全绿 + mnt 链 `mvn clean install -DskipTests` BUILD SUCCESS。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 模板套用链落地 + 无模板路径零回归
+- [x] 模板套用链落地 + 无模板路径零回归
 
 ### Phase 3 - R1.75：visit↔request 双向联动
 
-Status: planned
+Status: completed
 Targets: `module-maintenance/model/app-erp-maintenance.orm.xml`（ErpMntVisit.requestId + to-one request）、`ErpMntRequestAcceptProcessor.java`、`ErpMntVisitCompleteProcessor.java`
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1（ORM 串行）
 
-- [ ] **D5 生成侧回填**：`generateResponsiveVisit` 增设 requestId（code 命名约定保留——幂等锚点复用）；`ErpMntVisit.requestId` 可空 + to-one（PLANNED 访问恒 null 零影响）。
+- [x] **D5 生成侧回填**：`generateResponsiveVisit` 增设 requestId（code 命名约定保留——幂等锚点复用）；`ErpMntVisit.requestId` 可空 + to-one（PLANNED 访问恒 null 零影响）。
+      - 实现注记：ORM requestId propId 27 + to-one request relation，无索引（Approver B finding c：Q3 禁既有实体索引改造）；`mvn clean install -DskipTests` 增量重生成（_gen/_ErpMntVisit + xmeta + api beans + deploy SQL）。
       - Skill: `nop-backend-dev`
-- [ ] **D6 完成侧写回 = 状态机合法边合成迁移**：visit complete 后置 protected step：requestId 非空时读 request——IN_PROGRESS → 经既有 complete 边置 COMPLETED；ACCEPTED → 先 startRepair 后 complete 合成迁移（两条均为既有合法边，不加新边不改状态机契约——否决「加 ACCEPTED→COMPLETED 直边」：A2.14 已审计状态机边集，加边属契约变更）；REJECTED/CANCELLED/COMPLETED 终态 → no-op LOG.warn 不阻断访问完成（幂等 + 容忍请求侧独立关闭）；写回失败（乐观锁冲突）rethrow 回滚 visit complete（联动为 L1 硬语义非 best-effort，区别于 R1.59 辅助语义降级先例）。visit cancel 对 request 无动作（L1 无断言）。
+- [x] **D6 完成侧写回 = 状态机合法边合成迁移**：visit complete 后置 protected step：requestId 非空时读 request——IN_PROGRESS → 经既有 complete 边置 COMPLETED；ACCEPTED → 先 startRepair 后 complete 合成迁移（两条均为既有合法边，不加新边不改状态机契约——否决「加 ACCEPTED→COMPLETED 直边」：A2.14 已审计状态机边集，加边属契约变更）；REJECTED/CANCELLED/COMPLETED 终态 → no-op LOG.warn 不阻断访问完成（幂等 + 容忍请求侧独立关闭）；写回失败（乐观锁冲突）rethrow 回滚 visit complete（联动为 L1 硬语义非 best-effort，区别于 R1.59 辅助语义降级先例）。visit cancel 对 request 无动作（L1 无断言）。
+      - 实现注记：`completeLinkedRequest` protected step（注入实体级 ErpMntRequestStateMachine Bean，非法边映射领域 ERR_INVALID_REQUEST_STATUS_TRANSITION）；既有 TestErpMntDowntimeAndE2E#testResponsiveRequestFullFlow 手工 completeRequest 两步改写为断言 D6 自动联动（行为变更属 UC-MAIN-05 语义本身：终态手工两步 → 自动写回）。
       - Skill: `nop-backend-dev`
-- [ ] **Proof**：TestErpMntVisitRequestLinkage 测试组：①accept 生成访问 requestId 回填断言 ②visit 完整链 start→complete → request=COMPLETED（IN_PROGRESS 输入）③ACCEPTED 输入合成迁移同样 COMPLETED ④request 终态（REJECTED/CANCELLED）no-op 访问正常完成 ⑤PLANNED 访问（requestId null）零影响回归 ⑥request 侧终态 no-op 幂等（visit 侧二次 complete 经既有 assertCanComplete 拒绝——既有行为不重测）+ `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service`。
+- [x] **Proof**：TestErpMntVisitRequestLinkage 测试组：①accept 生成访问 requestId 回填断言 ②visit 完整链 start→complete → request=COMPLETED（IN_PROGRESS 输入）③ACCEPTED 输入合成迁移同样 COMPLETED ④request 终态（REJECTED/CANCELLED）no-op 访问正常完成 ⑤PLANNED 访问（requestId null）零影响回归 ⑥request 侧终态 no-op 幂等（visit 侧二次 complete 经既有 assertCanComplete 拒绝——既有行为不重测）+ `_cases/` 快照。验证命令：`mvn test -pl module-maintenance/erp-mnt-service`。
+      - 实现注记：7 @Test 全绿（testAcceptBackfillSnapshot 含 `_cases/` 快照：accept response + visit/request/equipment/status_log tables）；REQUEST_ID 列新增经列子集比对零快照漂移（无需重录既有基线）；模块 126 + 7 新增 = 133 全绿 + mnt 链 `mvn clean install -DskipTests` BUILD SUCCESS。
       - Skill: `nop-testing`
 
 Exit Criteria:
 
-- [ ] 双向联动落地 + 既有 visit/request 状态机测试零回归
+- [x] 双向联动落地 + 既有 visit/request 状态机测试零回归
 
 ### Phase 4 - 验证收口 + 文档回填
 
-Status: planned
+Status: completed
 Targets: `docs/design/maintenance/equipment-integration.md`、`docs/design/maintenance/state-machine.md`、`docs/architecture/job-scheduling.md`、`docs/audits/arm-index.md`、`docs/backlog/requirement-compliance-roadmap.md`、`docs/logs/2026/08-{当期}.md`
 Skill: none
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 1-3 全绿
 
-- [ ] 全量验证：`mvn test -pl module-maintenance/erp-mnt-service` 全绿（108 基线 + 新增零回归）+ `mvn clean install -DskipTests` BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh`（actual ≤ baseline 或 baseline-raise per-site 证据）+ TestErpAllJobYamlLoading=29 不变。
+- [x] 全量验证：`mvn test -pl module-maintenance/erp-mnt-service` 全绿（108 基线 + 新增零回归）+ `mvn clean install -DskipTests` BUILD SUCCESS + `bash docs/audits/nop-compliance-checker.sh`（actual ≤ baseline 或 baseline-raise per-site 证据）+ TestErpAllJobYamlLoading=29 不变。
+      - 实现注记：mnt-service 133/0/0（108 基线 + 11 RuntimeTrigger + 7 TaskTemplate + 7 VisitRequestLinkage）；全仓 clean install 156 模块 BUILD SUCCESS + 全仓 `mvn test` 3666/0/0/1（唯一 skip = 已知 @Disabled ErpAllWebPagesCollectTest）；checker R2c 1460→1468 baseline-raise（8 per-site 证据落盘 compliance-baseline.md，全部 mnt 同域：VisitCompleteProcessor×3[D6] + ScheduleDueGenerator×2[RUNTIME 分支] + StatusLogWriter/Calculator×3）其余 18 规则零漂移；TestErpAllJobYamlLoading=29 通过（零新 job.yaml）。
       - Skill: none
-- [ ] owner doc 回填：equipment-integration.md §5.1/5.2/5.3 实现注记（StatusLog/trigger-type/模板实体/套用语义/备件提示 successor）+ §3.3 StatusLog 衔接注记 + state-machine.md §4 维护请求联动注记（D6 合成迁移裁决）+ job-scheduling.md §3.13 注记（运行时长评估并入既有 job）+ arm-index P1-RC-064/065/067 → done (RC-R1.73/74/75) + roadmap 三行 done + 行标签改写 + logs 条目（全绿验证状态）。
+- [x] owner doc 回填：equipment-integration.md §5.1/5.2/5.3 实现注记（StatusLog/trigger-type/模板实体/套用语义/备件提示 successor）+ §3.3 StatusLog 衔接注记 + state-machine.md §4 维护请求联动注记（D6 合成迁移裁决）+ job-scheduling.md §3.13 注记（运行时长评估并入既有 job）+ arm-index P1-RC-064/065/067 → done (RC-R1.73/74/75) + roadmap 三行 done + 行标签改写 + logs 条目（全绿验证状态）。
+      - 实现注记：六处回填齐——equipment-integration.md（§5.1 trigger-type/OUTPUT successor + §5.2 StatusLog/聚合/同入口评估 + §5.3 模板实体/套用语义/备件 successor + §3.3 StatusLog 衔接块）+ state-machine.md（§适用对象二 联动注记块）+ job-scheduling.md（§3.13 due-visit 行扩展 + usage-based-trigger 行收窄为产量 successor）+ arm-index 三 finding done + roadmap 三行 done A 类改写 + logs 08-19 条目（full-green verification）。
       - Skill: none
 
 Exit Criteria:
 
-- [ ] 六处回填一致（代码 / equipment-integration / state-machine / arm-index / roadmap / logs）
+- [x] 六处回填一致（代码 / equipment-integration / state-machine / arm-index / roadmap / logs）
 
 ## Draft Review Record
 
@@ -134,14 +147,14 @@ Exit Criteria:
 
 ## Closure Gates
 
-- [ ] 范围内行为完成
-- [ ] 相关文档对齐
-- [ ] 已运行验证（`mvn clean install -DskipTests` + 分域 `mvn test` + compliance checker + TestErpAllJobYamlLoading）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成
+- [x] 相关文档对齐
+- [x] 已运行验证（`mvn clean install -DskipTests` + 分域 `mvn test` + compliance checker + TestErpAllJobYamlLoading）
+- [x] 无范围内项目降级为 deferred/follow-up
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -165,12 +178,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: closed
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 独立结束审计子代理（fresh session，task `ses_fe74d67b5ffe7PuLiPfWzNWB7v`，2026-08-19）
+- Evidence: 审计结论 = 实质工作全部 PASS（7 大项逐项 live-repo 核验：计划文本一致性[Phase 1-4 Status completed + 12 执行项 + 4 Exit Criteria 全 [x]]；ORM 实体/列/dict 值集/无 requestId 索引逐行核对[orm.xml :94-103/:246-250/:298/:303/:344/:368-433/:514-542]；ScheduleDueGenerator RUNTIME 分支 + applyTaskTemplate/resolveTaskTemplate 套用语义[:109/:177/:211-234]；completeLinkedRequest D6 语义[null 短路/终态 no-op/ACCEPTED 合成迁移/失败传播无吞] + ErpMntRequestStateMachine 仍恰 7 边零新边；beans 注册；三测试组 11/7/7 @Test + `_cases/` 快照目录；**live 复跑 `mvn test -pl module-maintenance/erp-mnt-service` = 133/0/0 BUILD SUCCESS**；六处文档回填逐处行号核对；compliance-baseline R2c=1468 + 8 per-site 注记与实仓吻合）。唯一 FAIL 发现 = Closure Gates 1-6 未勾选（程序性遗漏非工作缺口，审计者逐项独立证实为真后要求补勾）——已按审计 remediation 补勾 gates 1-6 并记录本证据后勾选 gates 7-8。
 
 Follow-up:
 

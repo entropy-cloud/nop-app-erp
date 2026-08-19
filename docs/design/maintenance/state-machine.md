@@ -136,6 +136,17 @@
 > 仅可经 `complete` 到达终态（维修中不可再直接 reject/cancel）。`accept` 受理后生成响应式维护访问（跨实体副作用，
 > 保留在 Processor，不在 StateMachine Bean 范围）。
 
+> **§4 维护请求联动注记（RC-R1.75 / UC-MAIN-05，D6 合成迁移裁决）**：UC-MAIN-05 断言「维护访问 COMPLETED → 请求
+> COMPLETED」已实现为 visit complete 后置 protected step（`ErpMntVisitCompleteProcessor.completeLinkedRequest`）：
+> 生成侧 accept 经 `generateResponsiveVisit` 显式回填 `ErpMntVisit.requestId`（可空反向指针，PLANNED 访问恒 null）；
+> 完成侧 requestId 非空时读 request——IN_PROGRESS → 经既有 complete 边置 COMPLETED；**ACCEPTED → 先 startRepair 后
+> complete 合成迁移（两条均为既有合法边，不加新边不改本矩阵契约**——否决「加 ACCEPTED→COMPLETED 直边」：加边属
+> 契约变更）；REJECTED/CANCELLED/COMPLETED 终态 → no-op LOG.warn 不阻断访问完成（幂等 + 容忍请求侧独立关闭）；
+> 写回失败（乐观锁冲突）异常传播回滚 visit complete（联动为 L1 硬语义非 best-effort）。visit cancel 对 request 无动作。
+> 手工 `ErpMntRequest__complete` RPC 保留（IN_PROGRESS 输入合法路径），UC-MAIN-05 的「手工两步」语义由自动联动终结。
+> 测试证据：`TestErpMntVisitRequestLinkage`（回填断言 / IN_PROGRESS·ACCEPTED 双输入写回 / 终态 no-op / PLANNED 零影响 /
+> COMPLETED 幂等）。
+
 | 状态 | 业务含义 | 终态 |
 |------|----------|------|
 | 待受理（OPEN） | 报修已提交，等待维护团队受理 | 否（初始态） |

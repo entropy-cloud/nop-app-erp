@@ -143,6 +143,8 @@
 
 > **§3.3 双分支实现注记（RC-R1.39 / P2-RC-061）**：「恢复为 RUNNING 或 IDLE（根据之前状态）」已实现（visit 路径，`EquipmentStatusLinker`）：`restoreToRunning` 补 IDLE 分支——`linkToUnderMaintenance`（visit start）前置读取设备当前状态，**仅当前==IDLE 时**写入内部 transient 前态缓存 `priorStatusCache`（`ConcurrentHashMap<Long,String>` 包级可见，`MAX_CACHE_ENTRIES=1024` 超限清空 fail-safe）；complete/cancel 恢复时消费缓存：命中 IDLE → 恢复 IDLE（先 remove 再恢复防并发重复消费），未命中（RUNNING 来源/停机路径/缓存缺失）→ 恢复 RUNNING。停机路径（`linkToDown`）不捕获前态，恢复恒 RUNNING（§4.3「更新设备状态为 RUNNING」字面语义，行为零变化）。**残余风险（watch-only）**：缓存为 JVM 内存态——①容器重启/多实例部署缓存丢失 → 回退 RUNNING（= 现状已接受行为，非新退化）；②缓存写入非事务性——`linkToUnderMaintenance` 所在事务回滚后 IDLE 条目残留，污染该设备下一次 restore（恢复 IDLE 而非 RUNNING），方向保守且条目在下一次 linkTo* 覆盖或 restore 消费时清除；③异常路径悬挂条目由下一次 restore 消费或 linkTo* 覆盖清除；④并发同设备双维护由既有 @Version 乐观锁兜底。**Successor 备选**：持久化前态快照列 `ErpMntEquipment.preMaintenanceStatus`（2026-08-08 §7 A4 人工裁决已排除当前实施，需求立项后按 ask-first 流程评估）。测试证据：`TestErpMntVisitRequestStateMachine#testVisitCompleteFromIdleEquipmentRestoresIdle`（IDLE 输入 complete 恢复 IDLE）/`#testVisitCancelFromIdleEquipmentRestoresIdle`（cancel 同语义）/`#testVisitCompleteFromDownEquipmentRestoresRunning`（DOWN 非缓存态回退 RUNNING）/`#testRestoreWithoutPriorLinkFallsBackToRunning`（缓存缺失回退）/`#testVisitHappyPathWithEquipmentLink`（RUNNING 回归）。
 
+> **§3.3 StatusLog 衔接注记（RC-R1.73 / UC-MAIN-02）**：上述五写点（visit start/complete/cancel + downtime record/complete）与手动 `changeStatus` 现于同一事务经 `EquipmentStatusLogWriter` 追加 `ErpMntEquipmentStatusLog` 日志行（fromStatus/toStatus/changeAt/source VISIT/DOWNTIME/MANUAL + sourceBillCode），供 §5.2 运行时长 Σ RUNNING 段聚合消费——状态迁移行为本身零变化，仅增审计轨迹。
+
 ---
 
 ## 四、停机记录与排产影响
@@ -201,6 +203,8 @@
 | 运行时长 | 按设备运行时长 | 每运行 500 小时 |
 | 产量周期 | 按产量 | 每生产 1000 件 |
 
+> **实现注记（RC-R1.73 / UC-MAIN-02）**：触发类型落位为 `ErpMntSchedule.triggerType` 列（dict `erp-mnt/trigger-type`，值集 TIME/RUNTIME；**null=TIME 派生兼容存量计划**）。时间周期 = 既有 nextDueDate 链（recurrenceType DAILY/WEEKLY/MONTHLY/YEARLY + frequency）；运行时长 = `thresholdHours` 阈值列 + `runtimeBaselineHours` 基线列（生成 DRAFT 时同事务置 baseline=当前累计，触发条件 = 累计 ≥ baseline + 阈值；thresholdHours 缺失/非正不触发）。**产量周期（OUTPUT）不入 dict 值集**——产量采集无数据源实体，dangling 字典值违反 dict 契约；触发条件 = 产量采集数据落地或 OEE（RC-R1.78）性能效率分量数据源就绪时加性追加（successor 登记 plan 2026-08-19-0445-2 Deferred）。
+
 ### 5.2 计划生成流程
 
 ```
@@ -219,9 +223,13 @@
         └─► 产生 TODO 提醒维护主管排程
 ```
 
+> **实现注记（RC-R1.73 / UC-MAIN-02）**：**运行时长来源 = 设备状态记录**（`ErpMntEquipmentStatusLog` 实体，状态变更历史——写点 = `EquipmentStatusLinker` 三迁移方法 + `ErpMntEquipmentBizModel.changeStatus` 同事务追加，来源 dict `erp-mnt/status-log-source` 值集 VISIT/DOWNTIME/MANUAL；DISPOSAL 待处置链路落地后加性追加）。累计运行时长 = `EquipmentRuntimeCalculator` 查询时聚合（**Σ RUNNING 段**，无采集 Job 无物化漂移，状态记录为唯一真相幂等可重算）；遗留无日志设备保守基线——当前 RUNNING 从 createTime 起算，当前非 RUNNING 记 0 直至首条日志行（防虚计触发）。两类计划同一入口评估：TIME 走既有 `nextDueDate ≤ asOfDate` 扫描 + 推进，RUNTIME 分支 `findRuntimeDueSchedules` 在同一 `generateDueVisits` 入口评估（**触发粒度 = job cron 部署节奏**，对齐本节单一定时任务模型；RUNTIME 计划 nextDueDate 不推进保持 null/原值；既有 VST-SCH-{schedId}-{asOfDate} code 幂等锚点双保险保留）。StatusLog 亦为 OEE 可用率分子预留数据源（RC-R1.78 衔接）。产量周期评估分支为 successor（同 §5.1）。测试证据：`TestErpMntRuntimeTrigger`（Σ RUNNING 段聚合数学 / 遗留基线双分支 / 阈值触发 + baseline 重置 / 同日重跑幂等 / TIME 零回归 / linker·manual 写日志行）。
+
 ### 5.3 维护任务模板
 
 维护任务模板包含：任务名称、适用设备类型、标准工时、标准备件清单、操作说明。
+
+> **实现注记（RC-R1.74 / UC-MAIN-01）**：模板落位为 `ErpMntTaskTemplate`（code UK + name + equipmentCategoryId 可空[适用设备类型] + standardMinutes[标准工时] + instruction[操作说明] + isActive 空=非启用）+ `ErpMntTaskTemplateLine`（lineNo + taskName + 行级 standardMinutes + materialId/quantity 可空[标准备件提示]）两实体，标准 CRUD 生成。**套用语义**：计划性访问生成（`ScheduleDueGenerator.generateVisit`，TIME/RUNTIME 两路径共享）解析模板——显式 `schedule.templateId` 优先（显式锚定不校验 isActive），空则按 equipment.categoryId 匹配**唯一 active** 模板回退，零/多匹配 LOG.warn 跳过不阻断访问生成 → 模板行逐行复制为 `ErpMntVisitTask`（taskDescription=taskName、standardMinutes 透传[行级缺失回落模板级]、status=PENDING）；visit.totalMinutes 不预填（执行时长语义）。RESPONSIVE 访问（报修受理生成）不套用模板（模板属计划性维护语义）。**标准备件为提示字段不自动产生消耗单据**——实际消耗走既有 confirm 链（SparePartUsage 审批/过账语义保持）；备件自动预填 DRAFT 消耗单为 successor（触发条件：计划性备件预占需求立项）。测试证据：`TestErpMntTaskTemplate`（显式套用 / categoryId 回退 / 零·多匹配跳过 / 备件零消耗单 / CRUD 冒烟 / 无模板零回归）。
 
 ---
 

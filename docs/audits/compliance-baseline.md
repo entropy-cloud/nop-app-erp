@@ -435,7 +435,7 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 235
-R2c: 1460
+R2c: 1468
 R2d: 35
 R3: 5
 R4: 0
@@ -526,6 +526,16 @@ manufacturing（4，`ErpMfgSkuReferenceChecker.java`，BomLine/BomByproduct 经 
 - `:55` BomLine / `:64` BomByproduct / `:73` WorkOrderLine / `:84` MaterialIssueLine
 
 本块以 R2c=1460 为回归门控起点（对齐 R1.48/R1.51/R1.56/R1.57/R1.60/R1.61/R1.63/R1.66 baseline-raise 先例）。
+
+## R2c 基线上调注记（plan 2026-08-19-0445-2，RC-R1.73/74/75 mnt 调度触发与访问生成链）
+
+`2026-08-19-0445-2`（RC-R1.73 运行时长触发 + RC-R1.74 任务模板套用 + RC-R1.75 visit↔request 联动）在 maintenance 域新增 8 处同域 daoFor 站点，R2c 1460 → **1468**（+8；R2b=235 / R2d=35 / R10=12 / R12a=70 均与基线持平零漂移——模板解析/设备加载走 `IErpMntTaskTemplateBiz`/`IErpMntEquipmentBiz` IBiz 注入零新增 daoFor）。**per-site 证据**（全部 mnt 同域实体，对齐 R1.48/R1.51/R1.56/R1.57/R1.60/R1.61/R1.66/R1.72 baseline-raise 先例——per-mutation Processor / support 类的 `daoProvider.daoFor(<EntityClass>)` 是 Nop 平台读取托管实体 DAO 的标准方式，非业务跨域编排）：
+
+- `ErpMntVisitCompleteProcessor.java:83` `daoFor(ErpMntRequest.class).getEntityById` + `:101` `daoFor(ErpMntRequest.class).updateEntity` + `:112` `daoFor(ErpMntRequest.class).updateEntity`（3 处，RC-R1.75 D6 完成侧写回）——visit complete 后置 protected step 读/写关联 request（getEntityById 主键导航 + 状态翻转落库），对齐同族 `AbstractErpMntRequestProcessor.requestDao()` daoFor 范式（Processor 非 CrudBizModel 子类无 `dao()`；自含 per-mutation Processor 不注入其他 Processor 避免处理器间耦合）
+- `ScheduleDueGenerator.java:128` `daoFor(ErpMntSchedule.class).updateEntity`（RUNTIME 触发后 baseline 回写）+ `:154` `daoFor(ErpMntSchedule.class)`（findRuntimeDueSchedules 候选扫描）——2 处 RC-R1.73 运行时长评估分支，与同类既有 TIME 路径 `daoFor` 站点（基线已含）同文件同型
+- `EquipmentStatusLogWriter.java:31` `daoFor(ErpMntEquipmentStatusLog.class)`（状态迁移同事务追加日志行）+ `EquipmentRuntimeCalculator.java:42` `daoFor(ErpMntEquipment.class).getEntityById`（遗留基线分支当前状态读取）+ `:88` `daoFor(ErpMntEquipmentStatusLog.class)`（Σ RUNNING 段查询时聚合）——3 处 RC-R1.73 support 类（写点单一真相源 + 查询时聚合器），新实体无 I*Biz 业务面需求（StatusLog 为系统追加日志非用户 CRUD 面；calculator 显式 asOf 参数确定性聚合非权限管道查询）
+
+本块以 R2c=1468 为回归门控起点。
 
 ## 关联
 
