@@ -93,4 +93,33 @@ public interface ErpLogErrors {
     // 并发重复 trackingNo 被既有 (code,orgId) + 新增 UK_LOG_SHIPMENT_TRACKING_CARRIER 兜底拦截（plan 2026-07-30-0841-2 R1.28 P1-MA2-092）
     ErrorCode ERR_LOG_SHIPMENT_TRACKING_NO_DUPLICATE = ErrorCode.define("erp.err.log.shipment-tracking-no-duplicate",
             "运单号 {trackingNo} 在承运商 {carrierId} 下已存在发运单，不可重复创建", ARG_TRACKING_NO, ARG_CARRIER_ID);
+
+    // RC-R1.83（P1-RC-083，UC-LOG-01 重复发运防护）：同 relatedBillType+relatedBillCode 非 CANCELLED 重复守卫
+    String ARG_RELATED_BILL_TYPE = "relatedBillType";
+    String ARG_RELATED_BILL_CODE = "relatedBillCode";
+    ErrorCode ERR_LOG_SHIPMENT_RELATED_BILL_DUPLICATE = ErrorCode.define("erp.err.log.shipment-related-bill-duplicate",
+            "该出库单已存在有效发运单（单据类型 {relatedBillType} / 单号 {relatedBillCode}），不可重复发运",
+            ARG_RELATED_BILL_TYPE, ARG_RELATED_BILL_CODE);
+
+    // RC-R1.84（P1-RC-086，UC-LOG-07 配送窗口容量预约）
+    String ARG_WINDOW_ID = "windowId";
+    String ARG_BOOKED_DATE = "bookedDate";
+    String ARG_MAX_CAPACITY = "maxCapacity";
+    String ARG_CURRENT_BOOKED = "currentBooked";
+    String ARG_WEEKDAY = "weekday";
+    String ARG_MISSED_FEE = "missedFee";
+    ErrorCode ERR_LOG_BOOKING_WINDOW_NOT_BOOKABLE = ErrorCode.define("erp.err.log.booking-window-not-bookable",
+            "配送窗口 {windowId} 不可预约（未启用或不在生效期 {bookedDate} 内）", ARG_WINDOW_ID, ARG_BOOKED_DATE);
+    ErrorCode ERR_LOG_BOOKING_CAPACITY_FULL = ErrorCode.define("erp.err.log.booking-capacity-full",
+            "配送窗口 {windowId} 容量不足（已预约 {currentBooked}/{maxCapacity}），请选择其他时段",
+            ARG_WINDOW_ID, ARG_CURRENT_BOOKED, ARG_MAX_CAPACITY);
+    ErrorCode ERR_LOG_BOOKING_DUPLICATE = ErrorCode.define("erp.err.log.booking-duplicate",
+            "发运单 {shipmentId} 已存在有效预约（同一发运单不可重复预约）", ARG_SHIPMENT_ID);
+    ErrorCode ERR_LOG_BOOKING_WEEKDAY_MISMATCH = ErrorCode.define("erp.err.log.booking-weekday-mismatch",
+            "预约日期 {bookedDate} 的星期与窗口 {windowId}（星期 {weekday}）不匹配", ARG_BOOKED_DATE, ARG_WINDOW_ID, ARG_WEEKDAY);
+    ErrorCode ERR_LOG_BOOKING_NOT_FOUND = ErrorCode.define("erp.err.log.booking-not-found",
+            "发运单 {shipmentId} 不存在有效预约", ARG_SHIPMENT_ID);
+    ErrorCode ERR_LOG_BOOKING_ILLEGAL_STATUS = ErrorCode.define("erp.err.log.booking-illegal-status",
+            "预约当前状态={currentStatus}，不允许执行该操作（期望状态={expectedStatus}）",
+            ARG_CURRENT_STATUS, ARG_EXPECTED_STATUS);
 }

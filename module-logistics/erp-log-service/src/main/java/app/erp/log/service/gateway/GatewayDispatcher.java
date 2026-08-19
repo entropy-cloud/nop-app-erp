@@ -1,5 +1,6 @@
 package app.erp.log.service.gateway;
 
+import app.erp.log.biz.IErpLogDeliveryBookingBiz;
 import app.erp.log.dao.entity.ErpLogCarrier;
 import app.erp.log.dao.entity.ErpLogShipment;
 import app.erp.log.dao.entity.ErpLogShipmentLog;
@@ -58,6 +59,8 @@ public class GatewayDispatcher {
     IErpSysNotificationBiz notificationBiz;
     @Inject
     ErpLogShipmentStateMachine stateMachine;
+    @Inject
+    IErpLogDeliveryBookingBiz deliveryBookingBiz;
 
     static final String NOTIFY_EVENT_GATEWAY_DEAD_LETTER = "log.gateway-dead-letter";
 
@@ -164,6 +167,7 @@ public class GatewayDispatcher {
         }
         shipment.setStatus(stateMachine.cancelShipmentTargetStatus());
         daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
+        releaseBookingQuietly(shipment);
         return shipment;
     }
 
@@ -193,6 +197,7 @@ public class GatewayDispatcher {
                 shipment.setSignedBy(signedBy);
             }
             daoProvider.daoFor(ErpLogShipment.class).saveOrUpdateEntity(shipment);
+            releaseBookingQuietly(shipment);
             return true;
         }
         if (ErpLogConstants.TRACKING_EVENT_IN_TRANSIT.equals(carrierStatus)
@@ -301,6 +306,21 @@ public class GatewayDispatcher {
     }
 
     // ---------- helpers ----------
+
+    /**
+     * RC-R1.84（P1-RC-086，UC-LOG-07）：发运单 CANCELLED/DELIVERED 迁移点后置释放预约（容量 -1 下限 0）。
+     * 失败隔离 try/catch 不阻断主状态迁移（对齐 R1.59 联动降级范式）。
+     */
+    private void releaseBookingQuietly(ErpLogShipment shipment) {
+        if (shipment.getId() == null) {
+            return;
+        }
+        try {
+            deliveryBookingBiz.releaseForShipment(shipment.getId(), new ServiceContextImpl());
+        } catch (Exception e) {
+            LOG.warn("发运单 {} 状态迁移后释放配送预约失败（降级不阻断）：{}", shipment.getCode(), e.getMessage());
+        }
+    }
 
     private DeliveryOrderRequest buildDeliveryOrderRequest(ErpLogShipment shipment) {
         DeliveryOrderRequest request = new DeliveryOrderRequest();

@@ -70,19 +70,20 @@ public class TestErpLogFreightPosting extends JunitAutoTestCase {
     IGraphQLEngine graphQLEngine;
 
     /**
-     * A4.2.174 重复发运→重复运费过账运行时探针（SP-1 / P1-RC-083）：
-     * 同一出库单（relatedBillType+relatedBillCode 相同）经 BizModel save 路径（defaultPrepareSave 仅
-     * trackingNo+carrierId 维度）可创建 2 条发运单，均 DELIVERED 后各产生 1 张 FREIGHT 凭证 → 重复过账证实。
+     * A4.2.174 探针语义翻转（RC-R1.83，P1-RC-083 修复后回归）：
+     * 同一出库单（relatedBillType+relatedBillCode 相同）第二笔发运单经 BizModel save 路径被
+     * {@code defaultPrepareSave} 重复发运守卫拒绝 → 仅 1 条发运单可 DELIVERED → 仅 1 张 FREIGHT 凭证
+     * （原探针证实双发运单双凭证重复过账；守卫落地后路径收敛为单凭证）。
      */
     @Test
-    public void testDuplicateShipmentSameRelatedBillPostsTwoVouchers() {
+    public void testDuplicateShipmentSameRelatedBillSecondRejectedSingleVoucher() {
         long partnerId = 8804L;
         Long carrierId = ormTemplate.runInSession(session -> {
             seedFinancePrereqs();
             return seedCarrier("MOCK-FRT-CAR", partnerId);
         });
 
-        // 同 relatedBillType+relatedBillCode 创建 2 条发运单：无重复发运防护 → 均 save 成功
+        // 同 relatedBillType+relatedBillCode 创建 2 条发运单：第二笔被重复发运守卫拒绝
         Map<String, Object> d1 = shipmentData("FRT-DUP-1", "MOCK-FRT-DUP-1", carrierId,
                 ErpLogConstants.SHIPMENT_STATUS_DISPATCHED,
                 ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY, "REL-BILL-DUP-001",
@@ -94,28 +95,23 @@ public class TestErpLogFreightPosting extends JunitAutoTestCase {
         ApiResponse<?> first = executeMutation("ErpLogShipment__save", d1);
         ApiResponse<?> second = executeMutation("ErpLogShipment__save", d2);
         assertEquals(0, first.getStatus(), "首次创建应成功: " + first);
-        assertEquals(0, second.getStatus(), "同出库单重复发运应被接受（无 relatedBill 维度防护）: " + second);
+        assertTrue(second.getStatus() != 0, "同出库单重复发运应被拒绝: " + second);
+        assertEquals(ErpLogErrors.ERR_LOG_SHIPMENT_RELATED_BILL_DUPLICATE.getErrorCode(), second.getCode(),
+                "应抛重复发运防护专用错误码");
 
-        // 双 shipment 均 webhook DELIVERED
+        // 首笔 shipment webhook DELIVERED → 单凭证路径保持
         String payload1 = "{\"trackingNo\":\"MOCK-FRT-DUP-1\",\"eventType\":\"DELIVERED\"}";
         String sig1 = hmacSha256(payload1, "MOCK-FRT-CAR");
         ErpLogShipment r1 = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig1, payload1, CTX));
-        String payload2 = "{\"trackingNo\":\"MOCK-FRT-DUP-2\",\"eventType\":\"DELIVERED\"}";
-        String sig2 = hmacSha256(payload2, "MOCK-FRT-CAR");
-        ErpLogShipment r2 = ormTemplate.runInSession(session -> shipmentBiz.handleTrackingWebhook("MOCK-FRT-CAR", sig2, payload2, CTX));
 
         assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, r1.getStatus());
-        assertEquals(ErpLogConstants.SHIPMENT_STATUS_DELIVERED, r2.getStatus());
         assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, r1.getFreightSettlementStatus());
-        assertEquals(ErpLogConstants.SETTLEMENT_STATUS_SETTLED, r2.getFreightSettlementStatus());
 
-        // 凭证数断言：同一出库单 2 条发运单各产生 1 张 FREIGHT 凭证 → 重复运费过账证实
+        // 凭证数断言：该出库单仅 1 条发运单 → 仅 1 张 FREIGHT 凭证（重复过账路径被守卫切断）
         List<ErpFinVoucherBillR> links1 = findBillLinks("FRT-DUP-1");
         List<ErpFinVoucherBillR> links2 = findBillLinks("FRT-DUP-2");
         assertEquals(1, links1.size(), "发运单 FRT-DUP-1 DELIVERED 应产生 1 张 FREIGHT 凭证");
-        assertEquals(1, links2.size(), "发运单 FRT-DUP-2 DELIVERED 应产生 1 张 FREIGHT 凭证");
-        assertTrue(!links1.get(0).getVoucherId().equals(links2.get(0).getVoucherId()),
-                "双发运单的 FREIGHT 凭证应为两张独立凭证（重复过账）");
+        assertEquals(0, links2.size(), "发运单 FRT-DUP-2 被守卫拒绝，不应存在 FREIGHT 凭证");
     }
 
     @Test

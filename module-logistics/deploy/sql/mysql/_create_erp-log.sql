@@ -208,6 +208,27 @@ CREATE TABLE erp_log_shipment_log(
   constraint PK_erp_log_shipment_log primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_log_delivery_booking(
+  ID BIGINT NOT NULL    COMMENT 'ID',
+  SHIPMENT_ID BIGINT NOT NULL    COMMENT '发运单',
+  WINDOW_ID BIGINT NOT NULL    COMMENT '配送窗口',
+  ORG_ID BIGINT NULL    COMMENT '业务组织',
+  BOOKED_DATE DATE NOT NULL    COMMENT '预约日期',
+  BOOKED_TIME VARCHAR(8) NULL    COMMENT '预约时间',
+  STATUS VARCHAR(20) NOT NULL    COMMENT '状态',
+  MISSED_FEE DECIMAL(20,4) NULL    COMMENT '爽约费',
+  PRIORITY_SCORE INTEGER default 0  NULL    COMMENT '优先级评分',
+  REMARK VARCHAR(1000) NULL    COMMENT '备注',
+  DEL_VERSION BIGINT default 0  NOT NULL    COMMENT '逻辑删除版本',
+  VERSION INTEGER default 0  NOT NULL    COMMENT '数据版本',
+  CREATED_BY VARCHAR(50) NOT NULL    COMMENT '创建人',
+  CREATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '创建时间',
+  UPDATED_BY VARCHAR(50) NOT NULL    COMMENT '修改人',
+  UPDATE_TIME DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3)  NOT NULL    COMMENT '修改时间',
+  constraint UK_LOG_DELIVERY_BOOKING_SHIPMENT unique (SHIPMENT_ID,DEL_VERSION),
+  constraint PK_erp_log_delivery_booking primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 
    ALTER TABLE erp_md_partner COMMENT 'ErpMdPartner';
                 
@@ -232,4 +253,6 @@ CREATE TABLE erp_log_shipment_log(
    ALTER TABLE erp_log_shipment_parcel COMMENT '包裹';
                 
    ALTER TABLE erp_log_shipment_log COMMENT '网关交互日志';
+                
+   ALTER TABLE erp_log_delivery_booking COMMENT '配送时段预约';
                 

@@ -38,72 +38,86 @@
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpLogDeliveryWindow-main" displayName="配送时间窗口" orderNo="10007"
+                <resource id="ErpLogDeliveryBooking-main" displayName="配送时段预约" orderNo="10007"
+                          i18n-en:displayName="Delivery Booking" icon="clock" component="FLUX" resourceType="SUBM"
+                          url="/erp/log/pages/ErpLogDeliveryBooking/main.page.yaml">
+                    <children>
+                        <resource id="FNPT:ErpLogDeliveryBooking:query" displayName="查询配送时段预约"
+                                  i18n-en:displayName="Query Delivery Booking" orderNo="10008" resourceType="FNPT">
+                            <permissions>ErpLogDeliveryBooking:query</permissions>
+                        </resource>
+                        <resource id="FNPT:ErpLogDeliveryBooking:mutation" displayName="修改配送时段预约"
+                                  i18n-en:displayName="Modify Delivery Booking" orderNo="10009" resourceType="FNPT">
+                            <permissions>ErpLogDeliveryBooking:mutation</permissions>
+                        </resource>
+                    </children>
+                </resource>
+                <resource id="ErpLogDeliveryWindow-main" displayName="配送时间窗口" orderNo="10010"
                           i18n-en:displayName="Delivery Window" icon="clock" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogDeliveryWindow/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogDeliveryWindow:query" displayName="查询配送时间窗口"
-                                  i18n-en:displayName="Query Delivery Window" orderNo="10008" resourceType="FNPT">
+                                  i18n-en:displayName="Query Delivery Window" orderNo="10011" resourceType="FNPT">
                             <permissions>ErpLogDeliveryWindow:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpLogDeliveryWindow:mutation" displayName="修改配送时间窗口"
-                                  i18n-en:displayName="Modify Delivery Window" orderNo="10009" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Delivery Window" orderNo="10012" resourceType="FNPT">
                             <permissions>ErpLogDeliveryWindow:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpLogShipment-main" displayName="发运单" orderNo="10010" i18n-en:displayName="Shipment"
+                <resource id="ErpLogShipment-main" displayName="发运单" orderNo="10013" i18n-en:displayName="Shipment"
                           icon="package" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogShipment/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogShipment:query" displayName="查询发运单"
-                                  i18n-en:displayName="Query Shipment" orderNo="10011" resourceType="FNPT">
+                                  i18n-en:displayName="Query Shipment" orderNo="10014" resourceType="FNPT">
                             <permissions>ErpLogShipment:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpLogShipment:mutation" displayName="修改发运单"
-                                  i18n-en:displayName="Modify Shipment" orderNo="10012" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Shipment" orderNo="10015" resourceType="FNPT">
                             <permissions>ErpLogShipment:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpLogShipmentLine-main" displayName="发运明细" orderNo="10013"
+                <resource id="ErpLogShipmentLine-main" displayName="发运明细" orderNo="10016"
                           i18n-en:displayName="Shipment Line" icon="list" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogShipmentLine/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogShipmentLine:query" displayName="查询发运明细"
-                                  i18n-en:displayName="Query Shipment Line" orderNo="10014" resourceType="FNPT">
+                                  i18n-en:displayName="Query Shipment Line" orderNo="10017" resourceType="FNPT">
                             <permissions>ErpLogShipmentLine:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpLogShipmentLine:mutation" displayName="修改发运明细"
-                                  i18n-en:displayName="Modify Shipment Line" orderNo="10015" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Shipment Line" orderNo="10018" resourceType="FNPT">
                             <permissions>ErpLogShipmentLine:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpLogShipmentLog-main" displayName="网关交互日志" orderNo="10016"
+                <resource id="ErpLogShipmentLog-main" displayName="网关交互日志" orderNo="10019"
                           i18n-en:displayName="Shipment Log" icon="file-text" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogShipmentLog/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogShipmentLog:query" displayName="查询网关交互日志"
-                                  i18n-en:displayName="Query Shipment Log" orderNo="10017" resourceType="FNPT">
+                                  i18n-en:displayName="Query Shipment Log" orderNo="10020" resourceType="FNPT">
                             <permissions>ErpLogShipmentLog:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpLogShipmentLog:mutation" displayName="修改网关交互日志"
-                                  i18n-en:displayName="Modify Shipment Log" orderNo="10018" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Shipment Log" orderNo="10021" resourceType="FNPT">
                             <permissions>ErpLogShipmentLog:mutation</permissions>
                         </resource>
                     </children>
                 </resource>
-                <resource id="ErpLogShipmentParcel-main" displayName="包裹" orderNo="10019"
+                <resource id="ErpLogShipmentParcel-main" displayName="包裹" orderNo="10022"
                           i18n-en:displayName="Shipment Parcel" icon="package" component="FLUX" resourceType="SUBM"
                           url="/erp/log/pages/ErpLogShipmentParcel/main.page.yaml">
                     <children>
                         <resource id="FNPT:ErpLogShipmentParcel:query" displayName="查询包裹"
-                                  i18n-en:displayName="Query Shipment Parcel" orderNo="10020" resourceType="FNPT">
+                                  i18n-en:displayName="Query Shipment Parcel" orderNo="10023" resourceType="FNPT">
                             <permissions>ErpLogShipmentParcel:query</permissions>
                         </resource>
                         <resource id="FNPT:ErpLogShipmentParcel:mutation" displayName="修改包裹"
-                                  i18n-en:displayName="Modify Shipment Parcel" orderNo="10021" resourceType="FNPT">
+                                  i18n-en:displayName="Modify Shipment Parcel" orderNo="10024" resourceType="FNPT">
                             <permissions>ErpLogShipmentParcel:mutation</permissions>
                         </resource>
                     </children>

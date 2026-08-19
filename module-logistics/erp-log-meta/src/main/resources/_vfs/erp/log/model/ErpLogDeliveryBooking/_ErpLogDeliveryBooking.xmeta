@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" xmlns:i18n-en="i18n-en" xmlns:ext="ext"
+      xmlns:xpl="xpl" ext:model="orm" ext:icon="clock" ext:web-renderer="flux" xmlns:c="c" xmlns:graphql="graphql"
+      xmlns:meta-gen="meta-gen" xmlns:biz="biz" displayName="配送时段预约" i18n-en:displayName="Delivery Booking"
+      tagSet="gid,erp.logistics" xmlns:ui="ui" xmlns:orm="orm">
+
+    <entityName>app.erp.log.dao.entity.ErpLogDeliveryBooking</entityName>
+
+    <primaryKey>id</primaryKey>
+
+    <x:gen-extends>
+        <meta-gen:DefaultMetaGenExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:gen-extends>
+
+    <x:post-extends>
+        <meta-gen:DefaultMetaPostExtends xpl:lib="/nop/core/xlib/meta-gen.xlib"/>
+    </x:post-extends>
+
+    <keys>
+        <key name="UK_LOG_DELIVERY_BOOKING_SHIPMENT" props="shipmentId,delVersion"/>
+    </keys>
+
+    <props>
+        <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="shipmentId" displayName="发运单" propId="2" i18n-en:displayName="Shipment" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="shipment">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="windowId" displayName="配送窗口" propId="3" i18n-en:displayName="Delivery Window" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="window">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="orgId" displayName="业务组织" propId="4" i18n-en:displayName="Organization" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="org">
+            <schema type="java.lang.Long"/>
+        </prop>
+        <prop name="bookedDate" displayName="预约日期" propId="5" i18n-en:displayName="Booked Date" mandatory="true"
+              queryable="true" sortable="true" insertable="true" updatable="true">
+            <schema type="java.time.LocalDate"/>
+        </prop>
+        <prop name="bookedTime" displayName="预约时间" propId="6" i18n-en:displayName="Booked Time" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="8"/>
+        </prop>
+        <prop name="status" displayName="状态" propId="7" i18n-en:displayName="Status" mandatory="true" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.lang.String" precision="20" dict="erp-log/booking-status"/>
+        </prop>
+        <prop name="missedFee" displayName="爽约费" propId="8" i18n-en:displayName="Missed Fee" queryable="true"
+              sortable="true" insertable="true" updatable="true">
+            <schema type="java.math.BigDecimal" precision="20" scale="4"/>
+        </prop>
+        <prop name="priorityScore" displayName="优先级评分" propId="9" i18n-en:displayName="Priority Score" queryable="true"
+              sortable="true" insertable="true" updatable="true" defaultValue="0">
+            <schema type="java.lang.Integer"/>
+        </prop>
+        <prop name="remark" displayName="备注" propId="10" i18n-en:displayName="Remark" queryable="true" sortable="true"
+              insertable="true" updatable="true">
+            <schema domain="remark" type="java.lang.String" precision="1000"/>
+        </prop>
+        <prop name="delVersion" displayName="逻辑删除版本" propId="11" i18n-en:displayName="Del Flag" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">
+            <schema domain="delVersion" type="java.lang.Long"/>
+        </prop>
+        <prop name="version" displayName="数据版本" propId="12" i18n-en:displayName="Version" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false" internal="true" defaultValue="0">
+            <schema domain="version" type="java.lang.Integer"/>
+        </prop>
+        <prop name="createdBy" displayName="创建人" propId="13" i18n-en:displayName="Created By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createdBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="createTime" displayName="创建时间" propId="14" i18n-en:displayName="Create Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="createTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="updatedBy" displayName="修改人" propId="15" i18n-en:displayName="Updated By" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updatedBy" type="java.lang.String" precision="50"/>
+        </prop>
+        <prop name="updateTime" displayName="修改时间" propId="16" i18n-en:displayName="Update Time" mandatory="true"
+              queryable="true" sortable="true" insertable="false" updatable="false">
+            <schema domain="updateTime" type="java.sql.Timestamp"/>
+        </prop>
+        <prop name="shipment" i18n-en:displayName="Shipment" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="shipmentId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpLogShipment"/>
+        </prop>
+        <prop name="window" i18n-en:displayName="Delivery Window" tagSet="pub" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="windowId" ext:joinRightProp="id" insertable="false" updatable="false"
+              mandatory="true" lazy="true">
+            <schema bizObjName="ErpLogDeliveryWindow"/>
+        </prop>
+        <prop name="org" i18n-en:displayName="Org" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
+              ext:joinLeftProp="orgId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/md"
+              insertable="false" updatable="false" lazy="true">
+            <schema bizObjName="ErpMdOrganization"/>
+        </prop>
+        <prop name="org.name" i18n-en:displayName="Org" internal="true" queryable="true" sortable="true" lazy="true">
+            <schema type="String"/>
+        </prop>
+    </props>
+</meta>

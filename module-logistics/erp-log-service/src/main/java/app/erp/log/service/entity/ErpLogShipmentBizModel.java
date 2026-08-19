@@ -3,6 +3,7 @@ package app.erp.log.service.entity;
 
 import app.erp.log.biz.IErpLogShipmentBiz;
 import app.erp.log.dao.entity.ErpLogShipment;
+import app.erp.log.service.ErpLogConstants;
 import app.erp.log.service.ErpLogErrors;
 import app.erp.log.service.processor.ErpLogShipmentAdviseProcessor;
 import app.erp.log.service.processor.ErpLogShipmentCancelShipmentProcessor;
@@ -77,6 +78,26 @@ public class ErpLogShipmentBizModel extends CrudBizModel<ErpLogShipment> impleme
                 throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_TRACKING_NO_DUPLICATE)
                         .param(ErpLogErrors.ARG_TRACKING_NO, entity.getTrackingNo())
                         .param(ErpLogErrors.ARG_CARRIER_ID, entity.getCarrierId());
+            }
+        }
+        // RC-R1.83（P1-RC-083，UC-LOG-01）：relatedBillType+relatedBillCode 非 CANCELLED 重复守卫（重复发运防护）。
+        // 命中则拒绝并携带出库单标识（L1「该出库单已存在有效发运单」）；CANCELLED 不阻断；relatedBill 为空（手工发运）不触发。
+        // status 的 xmeta 过滤面不支持 ne，故 eq 检索后在内存剔除 CANCELLED（参 existsActiveByQuotation 范式）；
+        // 并发 TOCTOU 残余风险见计划 Deferred（DB UK 硬化须另行双独立子 agent 批准）。
+        if (entity.getRelatedBillType() != null && entity.getRelatedBillCode() != null) {
+            io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
+            q.addFilter(io.nop.api.core.beans.FilterBeans.eq("relatedBillType", entity.getRelatedBillType()));
+            q.addFilter(io.nop.api.core.beans.FilterBeans.eq("relatedBillCode", entity.getRelatedBillCode()));
+            for (ErpLogShipment existing : findList(q, null, context)) {
+                if (ErpLogConstants.SHIPMENT_STATUS_CANCELLED.equals(existing.getStatus())) {
+                    continue;
+                }
+                if (entity.orm_id() != null && entity.orm_id().equals(existing.orm_id())) {
+                    continue;
+                }
+                throw new NopException(ErpLogErrors.ERR_LOG_SHIPMENT_RELATED_BILL_DUPLICATE)
+                        .param(ErpLogErrors.ARG_RELATED_BILL_TYPE, entity.getRelatedBillType())
+                        .param(ErpLogErrors.ARG_RELATED_BILL_CODE, entity.getRelatedBillCode());
             }
         }
     }

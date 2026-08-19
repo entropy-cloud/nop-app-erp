@@ -55,6 +55,14 @@
             <option code="TRACK" label="追踪" value="TRACK" i18n-en:label='Track'/>
             <option code="CANCEL" label="取消" value="CANCEL" i18n-en:label='Cancel'/>
         </dict>
+        <!-- RC-R1.84（P1-RC-086）：配送时段预约状态（delivery-window.md:72 契约） -->
+        <dict label="预约状态" name="erp-log/booking-status" valueType="string" i18n-en:label='Booking Status'>
+            <option code="BOOKED" label="已预约" value="BOOKED" i18n-en:label='Booked'/>
+            <option code="CONFIRMED" label="已确认" value="CONFIRMED" i18n-en:label='Confirmed'/>
+            <option code="ARRIVED" label="已到达" value="ARRIVED" i18n-en:label='Arrived'/>
+            <option code="MISSED" label="爽约" value="MISSED" i18n-en:label='Missed'/>
+            <option code="CANCELLED" label="已取消" value="CANCELLED" i18n-en:label='Cancelled'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -387,6 +395,44 @@
             <indexes>
                 <index name="IDX_LOG_DELIVERY_WINDOW_PARTNER_ID" unique="false">
                     <column name="partnerId"/>
+                </index>
+            </indexes>
+        </entity>
+
+        <!-- 配送时段预约（RC-R1.84 / P1-RC-086，delivery-window.md:61-81 契约物化；
+             UK(shipmentId,delVersion) = L1 UC-LOG-07「同一发运单不可重复预约」幂等，逻辑删释放槽位） -->
+        <entity ext:web-renderer="flux" className="app.erp.log.dao.entity.ErpLogDeliveryBooking"
+                displayName="配送时段预约" ext:icon="clock" i18n-en:displayName="Delivery Booking" name="app.erp.log.dao.entity.ErpLogDeliveryBooking"
+                tableName="erp_log_delivery_booking" tagSet="gid,erp.logistics" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
+            <columns>
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="shipmentId" displayName="发运单" stdSqlType="BIGINT" mandatory="true" code="SHIPMENT_ID" propId="2" stdDataType="long" i18n-en:displayName='Shipment' />
+                <column name="windowId" displayName="配送窗口" stdSqlType="BIGINT" mandatory="true" code="WINDOW_ID" propId="3" stdDataType="long" i18n-en:displayName='Delivery Window' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="4" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="bookedDate" displayName="预约日期" stdSqlType="DATE" mandatory="true" code="BOOKED_DATE" propId="5" stdDataType="date" i18n-en:displayName='Booked Date' />
+                <column name="bookedTime" displayName="预约时间" stdSqlType="VARCHAR" precision="8" code="BOOKED_TIME" propId="6" stdDataType="string" i18n-en:displayName='Booked Time' />
+                <column name="status" displayName="状态" ext:dict="erp-log/booking-status" mandatory="true" code="STATUS" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
+                <column name="missedFee" displayName="爽约费" stdSqlType="DECIMAL" precision="20" scale="4" code="MISSED_FEE" propId="8" stdDataType="decimal" i18n-en:displayName='Missed Fee' />
+                <column name="priorityScore" displayName="优先级评分" stdSqlType="INTEGER" defaultValue="0" code="PRIORITY_SCORE" propId="9" stdDataType="int" i18n-en:displayName='Priority Score' />
+                <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="10" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
+                <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="11" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
+                <column name="version" code="VERSION" displayName="数据版本" propId="12" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
+                <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="13" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Created By' />
+                <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="14" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
+                <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="15" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
+                <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="16" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+            </columns>
+            <relations>
+                <to-one name="shipment" refEntityName="app.erp.log.dao.entity.ErpLogShipment" tagSet="pub" i18n-en:displayName='Shipment'><join><on leftProp="shipmentId" rightProp="id"/></join></to-one>
+                <to-one name="window" refEntityName="app.erp.log.dao.entity.ErpLogDeliveryWindow" tagSet="pub" i18n-en:displayName='Delivery Window'><join><on leftProp="windowId" rightProp="id"/></join></to-one>
+                <to-one name="org" refEntityName="app.erp.md.dao.entity.ErpMdOrganization" tagSet="pub" i18n-en:displayName='Org'><join><on leftProp="orgId" rightProp="id"/></join></to-one>
+            </relations>
+            <unique-keys>
+                <unique-key name="UK_LOG_DELIVERY_BOOKING_SHIPMENT" constraint="UK_LOG_DELIVERY_BOOKING_SHIPMENT" columns="shipmentId,delVersion"/>
+            </unique-keys>
+            <indexes>
+                <index name="IDX_LOG_DELIVERY_BOOKING_WINDOW_ID" unique="false">
+                    <column name="windowId"/>
                 </index>
             </indexes>
         </entity>

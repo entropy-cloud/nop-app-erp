@@ -23,6 +23,8 @@ alter table erp_log_shipment_parcel add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NO
 
 alter table erp_log_shipment_log add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_log_delivery_booking add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_partner drop primary key;
 alter table erp_md_partner add primary key (NOP_TENANT_ID, ID);
 
@@ -59,7 +61,13 @@ alter table erp_log_shipment_parcel add primary key (NOP_TENANT_ID, ID);
 alter table erp_log_shipment_log drop primary key;
 alter table erp_log_shipment_log add primary key (NOP_TENANT_ID, ID);
 
+alter table erp_log_delivery_booking drop primary key;
+alter table erp_log_delivery_booking add primary key (NOP_TENANT_ID, ID);
+
 alter table erp_log_shipment drop constraint UK_LOG_SHIPMENT_TRACKING_CARRIER;
 alter table erp_log_shipment add constraint UK_LOG_SHIPMENT_TRACKING_CARRIER unique (NOP_TENANT_ID,TRACKING_NO,CARRIER_ID,DEL_VERSION);
+
+                alter table erp_log_delivery_booking drop constraint UK_LOG_DELIVERY_BOOKING_SHIPMENT;
+alter table erp_log_delivery_booking add constraint UK_LOG_DELIVERY_BOOKING_SHIPMENT unique (NOP_TENANT_ID,SHIPMENT_ID,DEL_VERSION);
 
                 

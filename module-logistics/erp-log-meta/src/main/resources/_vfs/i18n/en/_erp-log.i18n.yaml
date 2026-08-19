@@ -2,6 +2,7 @@ entity:
   label:
     ErpLogCarrier: Carrier
     ErpLogCarrierConfig: Carrier Config
+    ErpLogDeliveryBooking: Delivery Booking
     ErpLogDeliveryWindow: Delivery Window
     ErpLogShipment: Shipment
     ErpLogShipmentLine: Shipment Line
@@ -56,6 +57,28 @@ prop:
       updatedBy: Updated By
       updateTime: Update Time
       carrier: Carrier
+      org: Org
+      org.name: Org
+    ErpLogDeliveryBooking:
+      id: ID
+      shipmentId: Shipment
+      windowId: Delivery Window
+      orgId: Organization
+      bookedDate: Booked Date
+      bookedTime: Booked Time
+      status: Status
+      status_label: null
+      missedFee: Missed Fee
+      priorityScore: Priority Score
+      remark: Remark
+      delVersion: Del Flag
+      version: Version
+      createdBy: Created By
+      createTime: Create Time
+      updatedBy: Updated By
+      updateTime: Update Time
+      shipment: Shipment
+      window: Delivery Window
       org: Org
       org.name: Org
     ErpLogDeliveryWindow:
@@ -207,6 +230,7 @@ dict:
     erp-log/shipment-status: Shipment Status
     erp-log/settlement-status: Settlement Status
     erp-log/gateway-action: Gateway Action
+    erp-log/booking-status: Booking Status
 dict.option.label:
   erp-log/carrier-type:
     EXPRESS: Express
@@ -233,3 +257,9 @@ dict.option.label:
     ADVISE: Advise Pickup
     TRACK: Track
     CANCEL: Cancel
+  erp-log/booking-status:
+    BOOKED: Booked
+    CONFIRMED: Confirmed
+    ARRIVED: Arrived
+    MISSED: Missed
+    CANCELLED: Cancelled

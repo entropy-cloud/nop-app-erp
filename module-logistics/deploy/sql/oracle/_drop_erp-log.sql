@@ -11,4 +11,5 @@ drop table erp_log_shipment;
 drop table erp_log_shipment_line;
 drop table erp_log_shipment_parcel;
 drop table erp_log_shipment_log;
+drop table erp_log_delivery_booking;
 

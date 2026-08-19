@@ -208,6 +208,27 @@ CREATE TABLE erp_log_shipment_log(
   constraint PK_erp_log_shipment_log primary key (ID)
 );
 
+CREATE TABLE erp_log_delivery_booking(
+  ID NUMBER(20) NOT NULL ,
+  SHIPMENT_ID NUMBER(20) NOT NULL ,
+  WINDOW_ID NUMBER(20) NOT NULL ,
+  ORG_ID NUMBER(20)  ,
+  BOOKED_DATE DATE NOT NULL ,
+  BOOKED_TIME VARCHAR2(8)  ,
+  STATUS VARCHAR2(20) NOT NULL ,
+  MISSED_FEE NUMBER(20,4)  ,
+  PRIORITY_SCORE INTEGER default 0   ,
+  REMARK VARCHAR2(1000)  ,
+  DEL_VERSION NUMBER(20) default 0  NOT NULL ,
+  VERSION INTEGER default 0  NOT NULL ,
+  CREATED_BY VARCHAR2(50) NOT NULL ,
+  CREATE_TIME TIMESTAMP NOT NULL ,
+  UPDATED_BY VARCHAR2(50) NOT NULL ,
+  UPDATE_TIME TIMESTAMP NOT NULL ,
+  constraint UK_LOG_DELIVERY_BOOKING_SHIPMENT unique (SHIPMENT_ID,DEL_VERSION),
+  constraint PK_erp_log_delivery_booking primary key (ID)
+);
+
 
       COMMENT ON TABLE erp_md_partner IS 'ErpMdPartner';
                 
@@ -530,4 +551,38 @@ CREATE TABLE erp_log_shipment_log(
       COMMENT ON COLUMN erp_log_shipment_log.UPDATED_BY IS '修改人';
                     
       COMMENT ON COLUMN erp_log_shipment_log.UPDATE_TIME IS '修改时间';
+                    
+      COMMENT ON TABLE erp_log_delivery_booking IS '配送时段预约';
+                
+      COMMENT ON COLUMN erp_log_delivery_booking.ID IS 'ID';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.SHIPMENT_ID IS '发运单';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.WINDOW_ID IS '配送窗口';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.ORG_ID IS '业务组织';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.BOOKED_DATE IS '预约日期';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.BOOKED_TIME IS '预约时间';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.STATUS IS '状态';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.MISSED_FEE IS '爽约费';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.PRIORITY_SCORE IS '优先级评分';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.REMARK IS '备注';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.DEL_VERSION IS '逻辑删除版本';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.VERSION IS '数据版本';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.CREATED_BY IS '创建人';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.CREATE_TIME IS '创建时间';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.UPDATED_BY IS '修改人';
+                    
+      COMMENT ON COLUMN erp_log_delivery_booking.UPDATE_TIME IS '修改时间';
                     

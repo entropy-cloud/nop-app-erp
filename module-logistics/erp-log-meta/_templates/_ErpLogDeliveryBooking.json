@@ -1,0 +1,23 @@
+{
+  "id": 0,
+  "shipmentId": 0,
+  "windowId": 0,
+  "orgId": 0,
+  "bookedDate": "2000-01-01",
+  "bookedTime": "",
+  "status": "",
+  "status_label": "",
+  "missedFee": 0.0,
+  "priorityScore": 0,
+  "remark": "",
+  "delVersion": 0,
+  "version": 0,
+  "createdBy": "",
+  "createTime": "2000-01-01 14:00:00",
+  "updatedBy": "",
+  "updateTime": "2000-01-01 14:00:00",
+  "shipment": null,
+  "window": null,
+  "org": null,
+  "org.name": ""
+}

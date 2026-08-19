@@ -55,4 +55,27 @@ public interface ErpLogConstants {
 
     /** path-2 运费→到岸成本自动创建开关（默认 false，向后兼容）。plan 2026-07-11-2329-1。 */
     String CONFIG_PATH2_LANDED_COST_AUTO_CREATE = "erp-log.path2-landed-cost-auto-create";
+
+    // ---- RC-R1.84（P1-RC-086，UC-LOG-07）：配送窗口容量预约 ----
+
+    // ---- booking-status（erp-log/booking-status） ----
+    String BOOKING_STATUS_BOOKED = "BOOKED";
+    String BOOKING_STATUS_CONFIRMED = "CONFIRMED";
+    String BOOKING_STATUS_ARRIVED = "ARRIVED";
+    String BOOKING_STATUS_MISSED = "MISSED";
+    String BOOKING_STATUS_CANCELLED = "CANCELLED";
+
+    /** 爽约费系统参数键（L1 UC-LOG-07「爽约费金额从系统参数配置读取」，默认 0）。 */
+    String CONFIG_BOOKING_MISSED_FEE = "erp-log.booking-missed-fee";
+
+    /** 爽约后优先级评分提升步长（获得优先重新预约权）。 */
+    int BOOKING_MISSED_PRIORITY_SCORE_STEP = 10;
+
+    // ---- RC-R1.85（P1-RC-087，UC-LOG-06 步骤 5）：交付状态回写 sales ----
+
+    /**
+     * sales 订单发货进度终值（erp-sal/delivery-status 字典 DELIVERED，常量本体位于 sal-service 不入 dao 层，
+     * 此处按值约定镜像，回写经 IErpSalOrderBiz.updateDeliveryStatus 承载）。
+     */
+    String SALES_DELIVERY_STATUS_DELIVERED = "DELIVERED";
 }

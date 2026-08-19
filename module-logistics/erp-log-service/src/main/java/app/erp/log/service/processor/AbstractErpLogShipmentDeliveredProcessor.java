@@ -14,6 +14,11 @@ import app.erp.log.service.event.ShipmentDeliveredEvent;
 import app.erp.log.service.gateway.GatewayDispatcher;
 import app.erp.md.dao.AcctSchemaResolver;
 import app.erp.notify.biz.IErpSysNotificationBiz;
+import app.erp.sal.biz.IErpSalDeliveryBiz;
+import app.erp.sal.biz.IErpSalOrderBiz;
+import app.erp.sal.dao.entity.ErpSalDelivery;
+import app.erp.sal.dao.entity.ErpSalOrder;
+import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
@@ -21,6 +26,7 @@ import io.nop.core.context.IServiceContext;
 import io.nop.core.context.ServiceContextImpl;
 import io.nop.dao.api.IDaoProvider;
 import io.nop.dao.api.IEntityDao;
+import jakarta.annotation.Nullable;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +64,19 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
     IErpSysNotificationBiz notificationBiz;
 
     /**
+     * RC-R1.85（P1-RC-087，UC-LOG-06 步骤 5）：SALES_DELIVERY 交付状态回写 Facade（D3 裁决直接 Facade，
+     * logistics→sales 单向 Java 边，矩阵 §2.4 登记）。
+     *
+     * @Nullable：sales 模块未部署（单域测试容器/裁剪部署）时跳过回写，不阻断 DELIVERED 主迁移与运费过账。
+     */
+    @Inject
+    @Nullable
+    IErpSalDeliveryBiz salDeliveryBiz;
+    @Inject
+    @Nullable
+    IErpSalOrderBiz salOrderBiz;
+
+    /**
      * DELIVERED 触发运费过账/到岸成本编排入口（3.18 wiring + plan 2026-07-11-2329-1 path-2 升级）。
      * <p>按 {@code relatedBillType} 分流：
      * <ul>
@@ -78,6 +97,12 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
                     .param(ErpLogErrors.ARG_SHIPMENT_CODE, shipment.getCode());
         }
         String relatedBillType = shipment.getRelatedBillType();
+
+        // RC-R1.85（P1-RC-087）：SALES_DELIVERY 分支——通知 sales 域更新订单交付状态（L1 UC-LOG-06 步骤 5，
+        // 先于步骤 6 运费过账）；失败隔离不阻断 DELIVERED 主迁移与运费过账；非 SALES_DELIVERY 零行为变化。
+        if (ErpLogConstants.RELATED_BILL_TYPE_SALES_DELIVERY.equals(relatedBillType)) {
+            notifySalesDeliveryStatus(shipment, context);
+        }
 
         if (ErpLogConstants.RELATED_BILL_TYPE_PURCHASE_RECEIPT.equals(relatedBillType)) {
             handlePurchaseReceiptDelivered(shipment, context);
@@ -154,6 +179,42 @@ abstract class AbstractErpLogShipmentDeliveredProcessor {
             } else {
                 LOG.error("path-2 到岸成本自动创建异常，运单 {} 保持 PENDING", shipment.getCode(), e);
             }
+        }
+    }
+
+    /**
+     * SALES_DELIVERY 交付状态回写（RC-R1.85，P1-RC-087，D3 裁决直接 Facade）：
+     * 按 {@code relatedBillCode} 解析销售出库单 → 回写源订单 {@code deliveryStatus=DELIVERED}
+     * （复用既有 {@link IErpSalOrderBiz#updateDeliveryStatus}，发货进度语义与 sales 出库审核 rollup 同字段）。
+     * 幂等守卫：订单已 DELIVERED 则跳过（重复 onDelivered 不重复回写）；出库单/订单缺失静默跳过（WARN）；
+     * 全路径 try/catch 降级——sales 侧任何异常不阻断 DELIVERED 主迁移与运费过账（对齐跨域辅助语义降级先例）。
+     */
+    protected void notifySalesDeliveryStatus(ErpLogShipment shipment, IServiceContext context) {
+        if (salDeliveryBiz == null || salOrderBiz == null) {
+            LOG.info("sales Facade 未部署（@Nullable 容错），跳过交付状态回写：发运单 {}", shipment.getCode());
+            return;
+        }
+        try {
+            QueryBean q = new QueryBean();
+            q.addFilter(io.nop.api.core.beans.FilterBeans.eq("code", shipment.getRelatedBillCode()));
+            ErpSalDelivery delivery = salDeliveryBiz.findFirst(q, null, context);
+            if (delivery == null || delivery.getOrderId() == null) {
+                LOG.warn("销售出库单 {} 不存在或无源订单，跳过交付状态回写（发运单 {}）",
+                        shipment.getRelatedBillCode(), shipment.getCode());
+                return;
+            }
+            ErpSalOrder order = salOrderBiz.get(String.valueOf(delivery.getOrderId()), true, context);
+            if (order == null
+                    || ErpLogConstants.SALES_DELIVERY_STATUS_DELIVERED.equals(order.getDeliveryStatus())) {
+                return;
+            }
+            salOrderBiz.updateDeliveryStatus(delivery.getOrderId(),
+                    ErpLogConstants.SALES_DELIVERY_STATUS_DELIVERED, context);
+            LOG.info("发运单 {} DELIVERED 交付状态回写 sales：出库单 {} → 订单 {} deliveryStatus=DELIVERED",
+                    shipment.getCode(), delivery.getCode(), delivery.getOrderId());
+        } catch (Exception e) {
+            LOG.warn("交付状态回写 sales 失败（降级不阻断 DELIVERED 与运费过账）：shipmentCode={}, reason={}",
+                    shipment.getCode(), e.getMessage());
         }
     }
 

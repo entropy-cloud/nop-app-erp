@@ -46,6 +46,15 @@
         <!-- test-only: path-2 集成测试需 inv-service bean（ErpInvLandedCostBizModel/ErpInvLandedCostProcessor）在 logistics test classpath 上。
              plan 2026-07-11-2329-1 Phase 1 -->
         <dependency><artifactId>app-erp-inventory-service</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
+        <!-- compile: SALES_DELIVERY 交付状态回写 Facade（IErpSalDeliveryBiz/IErpSalOrderBiz 位于 sales-dao）；
+             logistics→sales 单向无环（sales 零依赖 logistics，矩阵 §2.4 Java 层边登记）。
+             RC-R1.85（P1-RC-087，plan 2026-08-19-2040-1 Phase 3，D3 裁决直接 Facade） -->
+        <dependency><artifactId>app-erp-sales-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version></dependency>
+        <!-- test-only: 交付回写集成测试需 sal-service bean（ErpSalDeliveryBizModel/ErpSalOrderBizModel）在 logistics test classpath 上。
+             app-erp-all 聚合时由 app 层提供；单域测试需引入以使 @Inject I*Biz 可解析。RC-R1.85 -->
+        <dependency><artifactId>app-erp-sales-service</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
+        <!-- test-only: sal-service bean（ErpSalDeliveryProcessor）注入 IErpQaInspectionBiz，测试容器需 qa-service bean 可解析。RC-R1.85 -->
+        <dependency><artifactId>app-erp-quality-service</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
         <dependency><artifactId>app-erp-projects-dao</artifactId><groupId>io.nop.app</groupId><version>1.0-SNAPSHOT</version><scope>test</scope></dependency>
         <dependency>
             <artifactId>app-erp-logistics-codegen</artifactId>

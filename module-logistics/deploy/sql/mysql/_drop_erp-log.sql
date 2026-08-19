@@ -11,4 +11,5 @@ drop table  if exists  erp_log_shipment;
 drop table  if exists  erp_log_shipment_line;
 drop table  if exists  erp_log_shipment_parcel;
 drop table  if exists  erp_log_shipment_log;
+drop table  if exists  erp_log_delivery_booking;
 

@@ -103,4 +103,29 @@ public interface _ErpLogDaoConstants {
      */
     String GATEWAY_ACTION_CANCEL = "CANCEL";
                     
+    /**
+     * 预约状态: 已预约 
+     */
+    String BOOKING_STATUS_BOOKED = "BOOKED";
+                    
+    /**
+     * 预约状态: 已确认 
+     */
+    String BOOKING_STATUS_CONFIRMED = "CONFIRMED";
+                    
+    /**
+     * 预约状态: 已到达 
+     */
+    String BOOKING_STATUS_ARRIVED = "ARRIVED";
+                    
+    /**
+     * 预约状态: 爽约 
+     */
+    String BOOKING_STATUS_MISSED = "MISSED";
+                    
+    /**
+     * 预约状态: 已取消 
+     */
+    String BOOKING_STATUS_CANCELLED = "CANCELLED";
+                    
 }

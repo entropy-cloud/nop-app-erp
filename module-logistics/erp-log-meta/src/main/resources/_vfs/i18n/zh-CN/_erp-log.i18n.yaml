@@ -2,6 +2,7 @@ entity:
   label:
     ErpLogCarrier: 承运商
     ErpLogCarrierConfig: 承运商配置
+    ErpLogDeliveryBooking: 配送时段预约
     ErpLogDeliveryWindow: 配送时间窗口
     ErpLogShipment: 发运单
     ErpLogShipmentLine: 发运明细
@@ -58,6 +59,28 @@ prop:
       updateTime: 修改时间
       updatedBy: 修改人
       version: 数据版本
+    ErpLogDeliveryBooking:
+      bookedDate: 预约日期
+      bookedTime: 预约时间
+      createTime: 创建时间
+      createdBy: 创建人
+      delVersion: 逻辑删除版本
+      id: ID
+      missedFee: 爽约费
+      org: null
+      org.name: null
+      orgId: 业务组织
+      priorityScore: 优先级评分
+      remark: 备注
+      shipment: null
+      shipmentId: 发运单
+      status: 状态
+      status_label: 状态
+      updateTime: 修改时间
+      updatedBy: 修改人
+      version: 数据版本
+      window: null
+      windowId: 配送窗口
     ErpLogDeliveryWindow:
       allowedShipmentTypes: 允许发运类型
       createTime: 创建时间
