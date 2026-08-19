@@ -233,6 +233,50 @@ CANCELLED（已取消，终态）
 - ⛔ **所有物料都越库**——越库适合高频、标准包装、无需质检的物料。高价值、需质检、特殊存储条件的物料不应越库。
 - ⛔ **越库不匹配目标订单直接发出**——每笔越库必须有明确的目标订单（销售单/调拨单），否则变成"盲目发货"。
 
+## 实现注记（RC-R1.81 / P1-RC-081）
+
+> 越库执行引擎已落地（`ErpInvDrpCrossDockProcessor` + `ErpInvDrpCrossDockBizModel` + `ErpDrpCrossDockStagingTimeoutJob`，测试 `TestErpDrpCrossDock` 14 组）。与本文设计的差异与裁决记录如下。
+
+### D1 裁决：收货识别越库标记的触发模型
+
+**选项 A（已裁决采纳）**：purchase receive approve Processor 后置直接调 drp Facade `IErpInvDrpCrossDockBiz.markReceivedFromPurchase(purchaseOrderCode, inboundMoveId, materialIds)`——按采购单号（CrossDock.sourceBillType=PUR_ORDER + sourceBillCode）+ 收货行物料匹配 PENDING 记录→STAGING 并回写 inboundMoveId。伴随新 Java 层 pom 边 `pur-service → drp-dao`（data-dependency-matrix §2.4 登记），镜像 R1.61 purchase→projects 接线方向。未采纳选项 B（drp 侧拉取扫描）：matrix 允许边方向下 push 与 pull 均可行，但 push 复用审批后置事务上下文、零轮询延迟，且 @Nullable 注入容错与失败隔离（try/catch 不阻断 RECEIVED 主迁移）对齐 RC-R1.85 先例。`erp-inv.drp-xdock-enabled` 默认 false 时 Facade 返回 0 零副作用；仅 PENDING 可迁移 → 重复审批/并发收货幂等。
+
+### D2 裁决：越库质检守卫载体
+
+ErpMdMaterial 无物料级「需质检」列（禁新增 master-data 列）。三选项裁决：
+
+- **选项 A（已采纳）**：物料存在有效检验模板（`ErpQaInspectionTemplate.materialId` 匹配 + `isActive=1`，quality 域只读）即视为需质检。零模型变更、复用 quality 域既有语义。
+- 选项 B（复用 `erp-qua.mandatory-inspection-bill-types` config 维度）：语义错位——该 config 表达「单据类型强制质检」，非物料级豁免/加强。
+- 选项 C（越库记录自身列）：与 matchingStrategy 同批 A 类可行，但引入第二份「需质检」真相源，与检验模板冗余。
+
+**残留风险**：模板存在 ≠ 每批必检（模板为「该物料有质检要求」的近似载体）；快检通过凭证 = 关联本越库记录（relatedBillType=DRP_XDOCK）结果 ACCEPTED/CONDITIONAL 的质检单。守卫整体 config-gated（`erp-inv.drp-xdock-quality-gate-enabled` 默认 false，opt-in）。
+
+### matchingStrategy 列与三策略
+
+`ErpInvDrpCrossDock.matchingStrategy`（dict `erp-inv/drp-xdock-strategy`，null = 未声明策略，读取时回落 `erp-inv.drp-xdock-default-strategy` 默认 ON_RECEIPT）：
+
+- **PRE_ALLOCATED**：读记录创建时预分配的 targetBillType/targetBillCode；缺失拒绝（ERR no-pre-allocated-target）。
+- **ON_RECEIPT**：扫描该物料存在未出库完行的 APPROVED 未作废销售订单，按承诺发货日期（deliveryDate，null 视为最晚）ASC + 创建时间 ASC 取首个（drp→sal 只读 Java 边，matrix §2.4 登记）；无候选拒绝。
+- **MANUAL**：显式指定 targetBillType/targetBillCode；缺失拒绝。
+
+### 状态机与超时回退实现
+
+- owner doc 状态机全部合法边落地：PENDING→STAGING（receiveMark）/ 直连 PENDING→MATCHED（收货即匹配，match 放行 PENDING）/ STAGING→MATCHED / MATCHED→LOADED（load 生成出站移动，business-linked 自动推进 DONE）/ LOADED→COMPLETED / PENDING|STAGING|MATCHED→CANCELLED；COMPLETED/CANCELLED 终态。
+- 出站移动经 `IErpInvStockMoveBiz.generateMove`（OUTGOING，source=暂存库位，弱指针 relatedBillType=DRP_XDOCK 回链越库记录），满足反模式警示「越库不走入出库移动」。
+- 超时回退：nop-job 调度 `erp-drp-xdock-staging-timeout.job.yaml` + bean `ErpDrpCrossDockStagingTimeoutJob`（R1.38 范式：cron 空值跳过 + SCAN_LIMIT 200 + 逐条失败隔离）；扫描 STAGING 超 `erp-inv.drp-xdock-staging-timeout` 小时记录 → 生成 staging→正常存储位移动单（INTERNAL，billType=DRP_XDOCK_PUTAWAY）+ 记录→CANCELLED（备注超时回退）。暂存仓库不可解析时跳过该条留待人工（不盲取消）。
+
+### 配置点（实现口径）
+
+| 配置项 | 默认值 | 说明 |
+|--------|--------|------|
+| `erp-inv.drp-xdock-enabled` | false | 越库功能总开关（本文 §配置点一致，整体 opt-in） |
+| `erp-inv.drp-xdock-staging-timeout` | 24 | 暂存超时（小时） |
+| `erp-inv.drp-xdock-default-strategy` | ON_RECEIPT | matchingStrategy 为 null 时回落 |
+| `erp-inv.drp-xdock-quality-gate-enabled` | false | D2 质检守卫开关（本计划新增，opt-in） |
+| `erp-inv.drp-xdock-staging-timeout-cron` | （空） | 超时扫描 cron（空值=不调度，R1.38 范式） |
+| `erp-inv.drp-xdock-dock-slot-duration` | 60 | 月台预约（Non-Goal，未消费） |
+| `erp-inv.drp-xdock-dock-no-show-timeout` | 30 | 月台预约（Non-Goal，未消费） |
+
 ## 证据强度
 
 | 证据 | 强度 | 说明 |

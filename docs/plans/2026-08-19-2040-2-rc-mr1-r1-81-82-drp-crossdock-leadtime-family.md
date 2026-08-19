@@ -1,9 +1,9 @@
 # 2026-08-19-2040-2-rc-mr1-r1-81-82-drp-crossdock-leadtime-family drp 域越界修复族（越库状态机 + 提前期统计与供应商评分）
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: requirement-compliance
 > Work Item: RC-R1.81 + RC-R1.82（MR1 越界项，drp 域收尾两件套）
-> Last Reviewed: 2026-08-19
+> Last Reviewed: 2026-08-20
 > Source: `docs/backlog/requirement-compliance-roadmap.md` MR1 行 RC-R1.81/82 + arm-index P1-RC-081/P1-RC-082
 > Related: A1.48 审计 `docs/audits/2026-08-05-1400-3-rc-ma1-a1-48-drp-full.md` + A4.2 报告 `docs/audits/2026-08-07-1410-rc-ma4-a4-2-170-173-drp-runtime.md`；P2-RC-072 联合变分联动注记
 > Audit: required
@@ -49,66 +49,81 @@
 
 ### Phase 1 — P1-RC-081 越库状态机与匹配策略
 
-Status: planned
+Status: completed
 Targets: `module-drp/model/app-erp-drp.orm.xml`（matchingStrategy 列）+ `module-drp/erp-drp-service/`（CrossDock BizModel/Processor/job）+ 双独立子 agent 批准记录（§ORM Approvals）
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: 双独立子 agent 对 matchingStrategy 纯加性可空列（无默认无索引无 UK，dict 复用或新 dict 值属数据变更）批准。
 
-- [ ] Add: ORM `ErpInvDrpCrossDock.matchingStrategy` 列（A 类授权；null = 未声明策略，读取时回落 `erp-inv.drp-xdock-default-strategy`）。
+- [x] Add: ORM `ErpInvDrpCrossDock.matchingStrategy` 列（A 类授权；null = 未声明策略，读取时回落 `erp-inv.drp-xdock-default-strategy`）。
       - Skill: `nop-backend-dev`
-- [ ] Decision: D1 跨域触发模型裁决——收货识别越库标记的载体（选项 A：purchase receive approve Processor 后置调 drp Facade；注意与 R1.61 候选 C 的差异：R1.61 复用了既有 purchase→projects 边，purchase→drp 现无 Java 层边，选项 A 伴随新 pom 边 + matrix 登记；选项 B：drp 侧拉取扫描）。裁决依据 data-dependency-matrix 允许边方向，结果 + matrix Java 层边登记写入 owner doc。
+      - Done: propId 25 追加 + dict `erp-inv/drp-xdock-strategy` 三值；`ErpInvDrpCrossDockProcessor.resolveStrategy` 实现回落链。
+- [x] Decision: D1 跨域触发模型裁决——收货识别越库标记的载体（选项 A：purchase receive approve Processor 后置调 drp Facade；注意与 R1.61 候选 C 的差异：R1.61 复用了既有 purchase→projects 边，purchase→drp 现无 Java 层边，选项 A 伴随新 pom 边 + matrix 登记；选项 B：drp 侧拉取扫描）。裁决依据 data-dependency-matrix 允许边方向，结果 + matrix Java 层边登记写入 owner doc。
       - Skill: none
-- [ ] Decision: D2 越库质检守卫载体裁决——ErpMdMaterial 无物料级「需质检」列（禁新增 master-data 列）。选项 A：物料存在有效检验模板（ErpQaInspectionTemplate 匹配，quality 域只读）即视为需质检；选项 B：复用 `erp-qua.mandatory-inspection-bill-types` config 维度（越库出库视为一种 billType）；选项 C：越库记录自身列（matchingStrategy 同批 A 类）。裁决结果 + 残留风险记入 owner doc；质检分支 config-gated（`erp-inv.drp-xdock-quality-gate-enabled` 默认 false）。
+      - Done: **裁决选项 A（push Facade）**。`IErpInvDrpCrossDockBiz.markReceivedFromPurchase` + `ErpPurReceiveProcessor.markCrossDockReceived`（@Nullable 容错 + 失败隔离）；pom 边 pur-service→drp-dao + matrix §2.4 登记 + cross-dock.md §实现注记 D1 记录（未采纳 B：push 复用审批后置事务上下文、零轮询延迟，对齐 R1.85 容错范式）。
+- [x] Decision: D2 越库质检守卫载体裁决——ErpMdMaterial 无物料级「需质检」列（禁新增 master-data 列）。选项 A：物料存在有效检验模板（ErpQaInspectionTemplate 匹配，quality 域只读）即视为需质检；选项 B：复用 `erp-qua.mandatory-inspection-bill-types` config 维度（越库出库视为一种 billType）；选项 C：越库记录自身列（matchingStrategy 同批 A 类）。裁决结果 + 残留风险记入 owner doc；质检分支 config-gated（`erp-inv.drp-xdock-quality-gate-enabled` 默认 false）。
       - Skill: none
-- [ ] Add: 状态机 mutation 族——receiveMark（收货识别→STAGING + inboundMoveId 回写）/ match（三策略：PRE_ALLOCATED 读 drpLine 预分配目标 / ON_RECEIPT 扫描待出库销售订单按承诺发货日期 ASC + 创建时间 ASC / MANUAL 指定目标单 → MATCHED + targetBill 回写；收货即匹配场景支持直连 PENDING→MATCHED，对齐 owner doc 状态图 `[inbound 到达 + 匹配目标订单] → MATCHED` 边）/ load（生成出站移动 + outboundMoveId 回写 → LOADED）/ complete（出库确认 → COMPLETED）/ cancel（→ CANCELLED）；全迁移经 owner doc 状态机守卫，`erp-inv.drp-xdock-enabled` 默认 false 总门控（功能整体 opt-in，与 owner doc 默认值一致）。
+      - Done: **裁决选项 A（有效检验模板载体）**。B 语义错位（单据类型强制≠物料级）、C 引入第二真相源；残留风险「模板存在≠每批必检」+ 快检凭证口径（relatedBillType=DRP_XDOCK + ACCEPTED/CONDITIONAL）记入 cross-dock.md §实现注记 D2；pom 边 drp-service→qa-dao + matrix §2.4 登记；config 键落地 ErpDrpConfigs。
+- [x] Add: 状态机 mutation 族——receiveMark（收货识别→STAGING + inboundMoveId 回写）/ match（三策略：PRE_ALLOCATED 读 drpLine 预分配目标 / ON_RECEIPT 扫描待出库销售订单按承诺发货日期 ASC + 创建时间 ASC / MANUAL 指定目标单 → MATCHED + targetBill 回写；收货即匹配场景支持直连 PENDING→MATCHED，对齐 owner doc 状态图 `[inbound 到达 + 匹配目标订单] → MATCHED` 边）/ load（生成出站移动 + outboundMoveId 回写 → LOADED）/ complete（出库确认 → COMPLETED）/ cancel（→ CANCELLED）；全迁移经 owner doc 状态机守卫，`erp-inv.drp-xdock-enabled` 默认 false 总门控（功能整体 opt-in，与 owner doc 默认值一致）。
       - Skill: `nop-backend-dev`
-- [ ] Add: 超时回退调度——nop-job 简单 job bean（R1.38 范式：cron 空值跳过 + limit 200 + 逐条失败隔离）扫描 STAGING 超 `drp-xdock-staging-timeout` 小时未匹配记录 → 转正常入库（staging→正常存储位移动单）+ CANCELLED；质检快检分支——按 D2 裁决载体判定「需质检」物料，match 前置守卫（未快检拒绝匹配，提示暂存区快检；config-gated 默认 false）。
+      - Done: `ErpInvDrpCrossDockProcessor`（protected step 族）+ `ErpInvDrpCrossDockBizModel` 薄委派 + `IErpInvDrpCrossDockBiz` 契约；出站移动经 `IErpInvStockMoveBiz.generateMove`（弱指针 DRP_XDOCK 回链）；beans.xml 注册。
+- [x] Add: 超时回退调度——nop-job 简单 job bean（R1.38 范式：cron 空值跳过 + limit 200 + 逐条失败隔离）扫描 STAGING 超 `drp-xdock-staging-timeout` 小时未匹配记录 → 转正常入库（staging→正常存储位移动单）+ CANCELLED；质检快检分支——按 D2 裁决载体判定「需质检」物料，match 前置守卫（未快检拒绝匹配，提示暂存区快检；config-gated 默认 false）。
       - Skill: `nop-backend-dev`
-- [ ] Proof: `TestErpDrpCrossDock` 至少 9 组——状态机合法迁移（含直连 PENDING→MATCHED）/非法迁移拒绝、三策略各自匹配成功与无匹配、超时转正常入库、质检守卫（D2 载体双路径 + config 关闭跳过）、config 关闭整体跳过、CANCELLED 终态、（并发组：双收货同记录匹配幂等）。
+      - Done: `ErpDrpCrossDockStagingTimeoutJob` + `erp-drp-xdock-staging-timeout.job.yaml`（TestErpAllJobYamlLoading 29→30）+ `enforceQualityGate` 前置守卫（quickCheckPassed 凭证查询）。
+- [x] Proof: `TestErpDrpCrossDock` 至少 9 组——状态机合法迁移（含直连 PENDING→MATCHED）/非法迁移拒绝、三策略各自匹配成功与无匹配、超时转正常入库、质检守卫（D2 载体双路径 + config 关闭跳过）、config 关闭整体跳过、CANCELLED 终态、（并发组：双收货同记录匹配幂等）。
       - Skill: `nop-testing`
+      - Done: 14 @Test 全绿（收货迁移/非法迁移×5/PRE_ALLOCATED 成败/ON_RECEIPT 最早承诺发货日/无候选/MANUAL 成败/直连边/全链路 load→complete/超时回退/质检阻断+放行/无模板放行/门关闭跳过/总门拒绝/收货 Facade 幂等/STAGING 取消终态）。
 
 Exit Criteria:
 
-- [ ] 越库状态机 + 匹配 + 超时 + 质检 + config 门控运行时可观察（成功/拒绝模式）
-- [ ] erp-drp-service 分域测试全绿 + TestErpAllJobYamlLoading 计数同步（若注册新 job.yaml）
+- [x] 越库状态机 + 匹配 + 超时 + 质检 + config 门控运行时可观察（成功/拒绝模式）
+- [x] erp-drp-service 分域测试全绿 + TestErpAllJobYamlLoading 计数同步（若注册新 job.yaml）
+      - Done: drp-service 13 测试类 84/0/0（TestErpDrpCrossDock 14/0/0）+ app-erp-all TestErpAllJobYamlLoading 1/0/0（30 job.yaml）。
 
 ### Phase 2 — P1-RC-082 提前期统计与供应商可靠性评分
 
-Status: planned
+Status: completed
 Targets: `module-drp/model/app-erp-drp.orm.xml`（供应商评分汇总实体）+ `module-drp/erp-drp-service/`（LeadTime 统计/评分/回写 + SafetyStockEngine 联合变分）+ purchase 侧接线点（D4 裁决后）+ §ORM Approvals
 Skill: `nop-backend-dev`
 
 - Item Types: `Add | Decision | Proof`
 - Prereqs: Phase 1 无硬依赖（可并行排程，D4/D5 裁决先行）；双独立子 agent 对评分汇总纯加性新实体批准。
 
-- [ ] Add: ORM 新增供应商评分汇总实体（supplierId+materialId 粒度聚合载体：μ/σ/准时率/变异系数/四维得分/总分/等级[A/B/C/D]/统计窗口/样本数 + 自有 UK(supplierId, materialId)——A 类授权「新增供应商评分汇总实体」）。
+- [x] Add: ORM 新增供应商评分汇总实体（supplierId+materialId 粒度聚合载体：μ/σ/准时率/变异系数/四维得分/总分/等级[A/B/C/D]/统计窗口/样本数 + 自有 UK(supplierId, materialId)——A 类授权「新增供应商评分汇总实体」）。
       - Skill: `nop-backend-dev`
-- [ ] Decision: D4 收货确认触发裁决——选项 A：purchase receive approve Processor 后置 protected step 调 drp Facade（actualLeadTime = DATEDIFF(receiptDate, orderDate)，镜像 R1.61 接线方向）；选项 B：drp 侧事件拉取。结果 + matrix Java 层边登记写入 owner doc。
+      - Done: `ErpInvDrpSupplierScore`（28 列含四维得分 + missingDimensions 样本缺失标注 + UK_INV_DRP_SUPPLIER_SCORE_SUPPLIER_MATERIAL）+ dict `erp-inv/drp-supplier-grade`；codegen 链已生成 Entity/IBiz/xmeta/api beans。
+- [x] Decision: D4 收货确认触发裁决——选项 A：purchase receive approve Processor 后置 protected step 调 drp Facade（actualLeadTime = DATEDIFF(receiptDate, orderDate)，镜像 R1.61 接线方向）；选项 B：drp 侧事件拉取。结果 + matrix Java 层边登记写入 owner doc。
       - Skill: none
-- [ ] Decision: D5 σ_lt 持久化载体裁决——选项 A：统计查询时实时计算（不留列，SafetyStockEngine 接联合变分时按 supplier+material 现算 σ/μ）；选项 B：ErpDrpParameter 加 leadTimeStdDev 列（越界回落双独立子 agent 批准）。倾向 A（零越界、统计窗口可控）；裁决与残留风险（实时计算的样本窗口语义）记入 owner doc。
+      - Done: **裁决选项 A（push Facade）**。`IErpInvDrpLeadTimeRecordBiz.recordFromPurchaseReceive` + `ErpPurReceiveProcessor.recordLeadTimeFromReceive`（@Nullable 容错 + 失败隔离）；pom 边 pur-service→drp-dao + matrix §2.4 登记 + lead-time-tracking.md §实现注记 D4 记录（未采纳 B：push 复用审批后置事务上下文、零轮询延迟）。
+- [x] Decision: D5 σ_lt 持久化载体裁决——选项 A：统计查询时实时计算（不留列，SafetyStockEngine 接联合变分时按 supplier+material 现算 σ/μ）；选项 B：ErpDrpParameter 加 leadTimeStdDev 列（越界回落双独立子 agent 批准）。倾向 A（零越界、统计窗口可控）；裁决与残留风险（实时计算的样本窗口语义）记入 owner doc。
       - Skill: none
-- [ ] Add: LeadTime 记录自动计算——按 D4 接线写 ErpInvDrpLeadTimeRecord（varianceDays/isOnTime/earlyLateFlag 按容差系数 config 计算，earlyLateFlag 载体 = 物化 dict `erp-inv/drp-lt-flag` 三值 ON_TIME/EARLY/LATE，属 meta 数据变更）+ 幂等守卫（同 purchaseOrderCode+materialId 不重复落记录）。
+      - Done: **裁决选项 A（实时计算不留列）**。零越界（无 ORM 变更）；窗口 `erp-inv.drp-lt-stats-window-days` 默认 365；残留风险「滚动窗口语义 + 大样本时延」记入 lead-time-tracking.md §实现注记 D5（物化列登记 §Deferred optimization candidate）。
+- [x] Add: LeadTime 记录自动计算——按 D4 接线写 ErpInvDrpLeadTimeRecord（varianceDays/isOnTime/earlyLateFlag 按容差系数 config 计算，earlyLateFlag 载体 = 物化 dict `erp-inv/drp-lt-flag` 三值 ON_TIME/EARLY/LATE，属 meta 数据变更）+ 幂等守卫（同 purchaseOrderCode+materialId 不重复落记录）。
       - Skill: `nop-backend-dev`
-- [ ] Add: 统计分析 + 评分——@BizQuery 统计（供应商级/供应商+物料级/物料级 μ/σ/准时率/中位数/样本数）+ 评分计算（四维权重 40/30/20/10，数量准确率读采购收货偏差[drp→pur 只读]、质量合格率读 quality 来料检验[drp→qa 只读]——两条只读 Java 边按 matrix §2.4 范式登记；等级 A/B/C/D 阈值 90/75/60；无样本维度得分记 0 且汇总行标注样本缺失，不静默忽略）+ 回写评分汇总实体 + `recalculateLeadTimeStats` 触发 mutation。
+      - Done: dict `erp-inv/drp-lt-flag` 物化（string 码值，10/20/30 为 int 时代遗留）+ `ErpInvDrpLeadTimeProcessor.recordFromPurchaseReceive`（容差 0.1 闭区间三档 + expected 缺失留空不可判定 + 幂等守卫 + dates-invalid 守卫）。
+- [x] Add: 统计分析 + 评分——@BizQuery 统计（供应商级/供应商+物料级/物料级 μ/σ/准时率/中位数/样本数）+ 评分计算（四维权重 40/30/20/10，数量准确率读采购收货偏差[drp→pur 只读]、质量合格率读 quality 来料检验[drp→qa 只读]——两条只读 Java 边按 matrix §2.4 范式登记；等级 A/B/C/D 阈值 90/75/60；无样本维度得分记 0 且汇总行标注样本缺失，不静默忽略）+ 回写评分汇总实体 + `recalculateLeadTimeStats` 触发 mutation。
       - Skill: `nop-backend-dev`
-- [ ] Add: 联合变分接入 SafetyStockEngine——STATISTICAL 法在 σ_lt 可得（样本数 ≥ 5，L1 UC-DRP-08 字面「样本 <5 降级」；订单/收货日期缺失行不入统计）且 σ/μ > 0.2 时按 `Z × √(σ_d² × μ_lt + μ_d² × σ_lt²)` 计算（lead-time-tracking.md 调整策略表三档），confirmWriteback 人工审查门保持不变；ErpDrpParameter 回写建议（replenishmentLeadTime←μ_lt / safetyStock←联合变分值）经既有确认回写链（不绕过人工门）。
+      - Done: `findLeadTimeStats`（三级粒度 + 窗口裁剪 + 中位数/极值/变异系数）+ `recalculateLeadTimeStats`（四维合成 + missingDimensions 标注 + UK upsert 幂等）；drp→pur/drp→qa 两只读边 pom + matrix §2.4 登记（含菱形非环披露）。
+- [x] Add: 联合变分接入 SafetyStockEngine——STATISTICAL 法在 σ_lt 可得（样本数 ≥ 5，L1 UC-DRP-08 字面「样本 <5 降级」；订单/收货日期缺失行不入统计）且 σ/μ > 0.2 时按 `Z × √(σ_d² × μ_lt + μ_d² × σ_lt²)` 计算（lead-time-tracking.md 调整策略表三档），confirmWriteback 人工审查门保持不变；ErpDrpParameter 回写建议（replenishmentLeadTime←μ_lt / safetyStock←联合变分值）经既有确认回写链（不绕过人工门）。
       - Skill: `nop-backend-dev`
-- [ ] Proof: `TestErpDrpLeadTimeStats` 至少 9 组——自动计算+幂等、容差三档 flag、统计指标数值断言（构造样本 μ/σ/准时率精确值）、评分四维合成+等级边界（90/75/60 边界值）、无样本维度得分 0 + 标注边界、联合变分低变异走标准公式/中高变异统一走联合公式数值断言、样本不足降级、confirmWriteback 人工门保持、（并发组：统计重算幂等）。
+      - Done: `SafetyStockEngine.leadTimeSample`（preferredSupplierId 解析 + 窗口 + 样本门槛 5）+ STATISTICAL 分支（μ_lt 替换 L + cv>0.2 联合公式，中/高档统一联合值——高档额外缓冲无量化依据显式简化）+ `confirmWriteback` 增补 replenishmentLeadTime←μ_lt（样本 ≥5 时）；safety-stock-optimization.md §联合变分集成注记。
+- [x] Proof: `TestErpDrpLeadTimeStats` 至少 9 组——自动计算+幂等、容差三档 flag、统计指标数值断言（构造样本 μ/σ/准时率精确值）、评分四维合成+等级边界（90/75/60 边界值）、无样本维度得分 0 + 标注边界、联合变分低变异走标准公式/中高变异统一走联合公式数值断言、样本不足降级、confirmWriteback 人工门保持、（并发组：统计重算幂等）。
       - Skill: `nop-testing`
+      - Done: 13 @Test 全绿——自动计算+幂等、日期缺失/倒置拒绝、容差三档（含 9/11 边界 + expected 缺失不入分母）、统计精确值（μ=14/σ=2.8284/中位数/准时率 0.2/cv + 窗口裁剪 + 三粒度）、A(90.00)/B(75.00) 边界精确构造、C(60.00) 精确构造+D、无样本维度 0+QUANTITY,QUALITY 标注、重算幂等 upsert、低变异标准公式（L=μ_lt 替换配置值）/中变异联合公式精确数值（inside=61600）、样本 <5 降级配置 L、confirmWriteback 人工门+μ_lt 回写（样本不足不动提前期）。
 
 Exit Criteria:
 
-- [ ] 提前期自动记录 + 统计 + 评分 + 联合变分 + 回写建议运行时可观察（成功/降级模式）
-- [ ] erp-drp-service 分域测试全绿 + purchase 侧（若接线）分域零回归
+- [x] 提前期自动记录 + 统计 + 评分 + 联合变分 + 回写建议运行时可观察（成功/降级模式）
+- [x] erp-drp-service 分域测试全绿 + purchase 侧（若接线）分域零回归
+      - Done: drp-service 14 测试类 97/0/0（TestErpDrpLeadTimeStats 13/0/0 + 既有 12 类 84 零回归，surefire XML 权威计数）+ pur-service 57 类 328/0/0 零回归。
 
 ## ORM Approvals（双独立子 agent 批准记录 — 执行期填充）
 
 > A 类授权 + 保护区域 dual-agent-approval：两个 fresh session 子 agent 分别独立复核 matchingStrategy 可空列与评分汇总新实体（纯加性、零既有语义改动、零删除/迁移），各自 APPROVE 后方可执行 ORM 编辑。
 
-- [ ] Approver 1（RC-R1.81 列 / RC-R1.82 实体，session id + 结论 + 日期）：______
-- [ ] Approver 2（RC-R1.81 列 / RC-R1.82 实体，session id + 结论 + 日期）：______
+- [x] Approver 1（RC-R1.81 列 / RC-R1.82 实体，session id + 结论 + 日期）：ses_fe594ddacffeDgXos4Fwyx3qH1 — VERDICT-1 APPROVE（propId 25 追加零重编号、可空零默认零索引、dict 无冲突）+ VERDICT-2 APPROVE（实体/表名零冲突、ext:dict 元数据级、notGenCode 引用就绪）— 2026-08-19
+- [x] Approver 2（RC-R1.81 列 / RC-R1.82 实体，session id + 结论 + 日期）：ses_fe594aef4ffeAIiCp7DJ7ARQYT — VERDICT-1 APPROVE（独立核验纯加性 + A 类预授权生效）+ VERDICT-2 APPROVE（含非阻塞注记：owner doc 10/20/30 整型值为 int 时代遗留，按 2026-07-03 字典整型→字符串重构落 string 码值）— 2026-08-19
 
 ## Draft Review Record
 
@@ -119,14 +134,18 @@ Exit Criteria:
 
 > 完整仓库验证在此处运行一次。
 
-- [ ] 范围内行为完成（P1-RC-081/082 全部验收点落地）
-- [ ] 相关文档对齐（cross-dock.md 实现注记 + lead-time-tracking.md 实现注记[含高档额外缓冲简化声明] + safety-stock-optimization.md 联合变分集成注记 + data-dependency-matrix D1/D4 边 + 评分只读 drp→pur/drp→qa 两边 + ON_RECEIPT 策略 drp→sal 只读边登记 + arm-index P1-RC-081/082 → done (RC-R1.81/82) + P2-RC-072 联合变分分量闭合注记 + roadmap 行状态同步 + docs/logs/ 当日条目）
-- [ ] 已运行验证：erp-drp-service 分域 `mvn test`（+ purchase 侧分域）+ 全仓 `mvn clean install -DskipTests` + 全仓 `mvn test` + `bash docs/audits/nop-compliance-checker.sh`（若 actual > baseline 则 baseline-raise 登记 per-site 证据）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（P1-RC-081/082 全部验收点落地）
+- [x] 相关文档对齐（cross-dock.md 实现注记 + lead-time-tracking.md 实现注记[含高档额外缓冲简化声明] + safety-stock-optimization.md 联合变分集成注记 + data-dependency-matrix D1/D4 边 + 评分只读 drp→pur/drp→qa 两边 + ON_RECEIPT 策略 drp→sal 只读边登记 + arm-index P1-RC-081/082 → done (RC-R1.81/82) + P2-RC-072 联合变分分量闭合注记 + roadmap 行状态同步 + docs/logs/ 当日条目）
+- [x] 已运行验证：erp-drp-service 分域 `mvn test`（+ purchase 侧分域）+ 全仓 `mvn clean install -DskipTests` + 全仓 `mvn test` + `bash docs/audits/nop-compliance-checker.sh`（若 actual > baseline 则 baseline-raise 登记 per-site 证据）
+      - Done: drp-service 97/0/0 + pur-service 328/0/0 + 全仓 install 156 模块 BUILD SUCCESS + 全 reactor mvn test BUILD SUCCESS 3716/0/0/1（surefire XML 权威计数 604 文件；唯一 skip = 已知 @Disabled ErpAllWebPagesCollectTest；console 模块汇总口径 3731 为报告口径差异，对齐 known-good-baselines 先例注记）+ checker R2c 1469→1483/R2d 35→37 baseline-raise per-site 登记（compliance-baseline.md BASELINE 块 + 注记）其余 17 规则零漂移。
+- [x] 无范围内项目降级为 deferred/follow-up
+      - Done: 两 Phase 全部执行项 landed；§Deferred But Adjudicated 四项均为计划期 Non-Goal/优化候选裁决（月台调度引擎 / ASN×b2b / 评分策略自动执行 / leadTimeStdDev 物化列），非范围内项目降级。
+- [x] 独立草案审查已完成并记录
+      - Done: §Draft Review Record 两轮（needs revision → accept，session id 在案）。
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+      - Done: Plan Status=completed（结束审计 PASS 后置位）+ Phase 1/2 Status=completed 全项 [x] + Exit Criteria [x]×4 + Closure Gates 全 [x] + docs/logs/2026/08-20.md 条目计数（drp 97 / pur 328 / 全仓 3716/0/0/1 surefire XML 权威计数 / R2c 1483 / R2d 37）与实测一致（结束审计计数勘误后复核：执行者初记 99/3731 为 console 汇总口径高估，XML 权威 97/3716）。
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -156,13 +175,13 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: pending
+Status Note: completed — RC-R1.81（越库执行引擎：状态机 mutation 族 + 三匹配策略 + 超时回退 job + D2 质检守卫 + config 门控 + D1 purchase 接线）与 RC-R1.82（提前期统计与供应商可靠性评分：D4 收货后置自动记录 + 三级粒度统计 + 四维评分 + D5 联合变分接入 SafetyStockEngine + confirmWriteback μ_lt 回写建议）两 Phase 全部执行项 landed 且分域/全仓验证全绿；独立结束审计（首轮 FAIL 计数勘误 → 修正 → 复核 PASS）通过；P2-RC-072 联合变分分量闭合。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: pending
-- Evidence: pending
+- Auditor / Agent: 独立结束审计子代理 ses_fe51d8da2ffemoghuefnD1q1fJ（fresh session，不共享执行者上下文）
+- Evidence: 首轮审计 7 门全查（ORM 纯加性/Phase 1 2 代码/验证命令 live 复跑/文档对齐/文本一致性/反模式抽检）——功能门全 PASS，唯一 BLOCKING = 证据计数误差（drp 实测 97 非执行者初记 99；全仓 surefire XML 权威计数 3716/0/0/1 非初记 3731）+ 3 MINOR（lead-time-tracking.md 高档简化声明缺交叉引用 / compliance-baseline 注记插序 / Job ErpMd* 站点 R2d 口径注记）。执行者按 BLOCKING 清单修正 plan/logs/arm-index/roadmap 五处计数（99→97、3731→3716 XML 权威口径、86→84）+ 补 lead-time-tracking.md 联合变分高档简化声明行 + 基线注记移至时序末位；复核轮全部 fix verified（live awk 复计 drp=97 0 0，BASELINE 块 R2c=1483/R2d=37 与 checker 逐行一致，plan 恰余两审计门未勾）→ VERDICT PASS。附带裁定：本计划范围外 CI-red 阻断 mnt TestErpMntDowntimeAndE2E 日期翻转脆弱点（快照 VISIT_DATE 随自然日滚动）经方法级线程本地冻结时钟确定性修复（测试侧，plan 无范围内项目降级）。
 
 Follow-up:
 
-- 无（已确认缺陷不入此节）
+- 无（已确认缺陷不入此节；§Deferred But Adjudicated 四项维持计划期裁决，successor 触发条件在案）

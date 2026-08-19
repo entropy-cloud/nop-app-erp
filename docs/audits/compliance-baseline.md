@@ -435,8 +435,8 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 236
-R2c: 1469
-R2d: 35
+R2c: 1483
+R2d: 37
 R3: 5
 R4: 0
 R5: 0
@@ -553,3 +553,28 @@ manufacturing（4，`ErpMfgSkuReferenceChecker.java`，BomLine/BomByproduct 经 
 - 计划: `docs/plans/2026-07-24-0930-1-compliance-guard-activation-ci-baseline.md`
 - daoFor 分类（为何 R2c 基线合理）: `docs/plans/2026-07-16-2134-1-ddd-entity-methods-daofor-convergence.md`
 - F15 i18n checker（**已接入 CI**——`.github/workflows/compliance.yml` i18n job，R3.7，基线见上文 §F15 i18n 基线注记）: `docs/audits/i18n-coverage-checker.sh` + 审计 `docs/audits/2026-07-29-0749-arm-ma4-i18n-coverage.md` + 计划 `docs/plans/2026-07-29-0749-3-audit-remediation-ma4-i18n-coverage.md`（CI 接入经 A7.4 裁决，已由 R3.7 plan 2026-07-31-1439-3 落地）
+
+## R2c/R2d 基线上调注记（plan 2026-08-19-2040-2，RC-R1.81/RC-R1.82 drp 越库 + 提前期统计评分）
+
+`2026-08-19-2040-2`（RC-R1.81 越库执行引擎 + RC-R1.82 提前期统计与供应商评分）新增 14 处生产 daoFor 站点，
+R2c 1469 → **1483**（+14）；其中 2 处 ErpMd* 站点位于 Processor，R2d 35 → **37**（+2）。**per-site 证据**：
+
+- `ErpInvDrpCrossDockProcessor`（drp 同域 Processor + 跨域只读聚合，对齐 SafetyStockEngine「非 BizModel 服务助手」先例）：
+  `:401` `daoFor(ErpMdLocation.class)`（stagingLocationId→warehouseId 解析，load-by-id 工具查询非 FK 导航）/
+  `:408` `daoFor(ErpInvStockMove.class)`（inboundMoveId→destWarehouseId 回退解析）/
+  `:423` `daoFor(ErpMdMaterial.class)`（materialId→uoMId 出站行单位解析）/
+  `:482` `daoFor(ErpInvDrpCrossDock.class)`（dockDao 本域自有实体 helper，E3 注释）
+- `ErpDrpCrossDockStagingTimeoutJob`（drp Job bean，同上聚合语义）：`:169`/`:172` `daoFor(ErpInvDrpCrossDock.class)`
+  （超时回退后独立 session 重载+更新，嵌套 biz 调用 session 重绑防御先例）/
+  `:180` `daoFor(ErpMdLocation.class)` + `:186` `daoFor(ErpInvStockMove.class)`（暂存仓库解析）/
+  `:198` `daoFor(ErpMdMaterial.class)`（单位解析）
+- `ErpInvDrpLeadTimeProcessor`（drp 同域 Processor）：`:429` `daoFor(ErpInvDrpLeadTimeRecord.class)`（recordDao 自有实体 helper）/
+  `:433` `daoFor(ErpInvDrpSupplierScore.class)`（scoreDao 自有实体 helper，均 E3 注释）
+- `SafetyStockEngine`（drp 非 BizModel 引擎，D5 裁决选项 A 实时统计）：`:252` `daoFor(ErpInvDrpLeadTimeRecord.class)`
+  （leadTimeSample 同域窗口聚合查询，DrpEngine/既有 monthlyDemands daoFor 同型先例）
+- `ErpPurReceiveProcessor`（purchase 同域）：`:339` `daoFor(ErpPurOrder.class)`（markCrossDockReceived 弱指针键 orderCode 解析）/
+  `:359` `daoFor(ErpPurOrder.class)`（recordLeadTimeFromReceive 订单日期/交货日期解析，均为 load-by-id）
+
+全部站点为 load-by-id 工具查询或同域批量聚合（非 `getEntityById(FK)` chained 形态，无 Type 1 重构候选）；
+无 BizModel 站点（R2a/R2b 零变化）；跨域消费（sal/qa/pur 读）均经 `@Inject I*Biz` 注入而非 daoFor。
+checker 复跑全 19 规则 actual ≤ updated baseline（R2b=236=R2b 基线不变），CI green 保持。

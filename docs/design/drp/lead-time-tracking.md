@@ -188,6 +188,55 @@ ErpInvDrpSafetyStockCalc
 | C | 安全库存取上限（+1σ） | 加强人工审查，增加检验频率 |
 | D | 安全库存显著增加（+2σ） | 触发供应商升级；考虑备选供应商 |
 
+## 实现注记（RC-R1.82 / P1-RC-082）
+
+> 提前期跟踪与供应商可靠性评分已落地（`ErpInvDrpLeadTimeProcessor` + `ErpInvDrpLeadTimeRecordBizModel`，
+> 测试 `TestErpDrpLeadTimeStats` 13 组；联合变分接入 `SafetyStockEngine`）。与本文设计的差异与裁决记录如下。
+
+### D4 裁决：收货确认触发模型
+
+**选项 A（已裁决采纳）**：purchase receive approve Processor 后置直接调 drp Facade
+`IErpInvDrpLeadTimeRecordBiz.recordFromPurchaseReceive(purchaseOrderCode, supplierId, orderDate, receiptDate, expectedLeadTime, materialIds)`——
+actualLeadTime = DATEDIFF(receiptDate, orderDate)（orderDate=订单 businessDate，receiptDate=入库单 businessDate）；
+expectedLeadTime = 订单 deliveryDate − businessDate（缺失传 null）。伴随新 Java 层 pom 边 `pur-service → drp-dao`
+（data-dependency-matrix §2.4 登记，与 D1 越库 Facade 同链路）。未采纳选项 B（drp 侧事件拉取）：push 复用审批后置
+事务上下文、零轮询延迟，@Nullable 注入容错 + 失败隔离（try/catch 不阻断 RECEIVED 主迁移）对齐 D1/RC-R1.85 先例。
+幂等守卫：同 purchaseOrderCode + materialId 不重复落记录。订单/收货日期缺失或倒置抛
+`erp.err.drp.lt.dates-invalid`（purchase 侧隔离告警 = L1「跳过告警」异常路径）。
+
+### D5 裁决：σ_lt 持久化载体
+
+**选项 A（已裁决采纳）：统计查询时实时计算，不留列**。SafetyStockEngine 接联合变分与评分重算均按
+supplier+material（或 material 级）窗口现算 σ/μ；统计窗口 `erp-inv.drp-lt-stats-window-days` 默认 365 天
+（≤0 全历史）。供应商解析自 `ErpDrpParameter.preferredSupplierId`（未配置时按物料跨供应商聚合）。
+**残留风险**：实时计算的样本窗口语义 = 滚动窗口（非「最近 N 单」），大样本量下查询时延可优化（物化列
+`ErpDrpParameter.leadTimeStdDev` 登记 Deferred But Adjudicated optimization candidate，万级样本触发）。
+
+### 字典与容差口径
+
+- dict `erp-inv/drp-lt-flag` 已物化（三值 ON_TIME/EARLY/LATE；owner doc 表中 10/20/30 整型 value 为 int 时代
+  遗留，按 2026-07-03 字典整型→字符串重构落 string 码值）。
+- 容差系数 config `erp-inv.drp-lt-tolerance` 默认 0.1：ON_TIME = actual ∈ [expected×(1−t), expected×(1+t)]
+  （闭区间）；EARLY < 下界；LATE > 上界。
+- expectedLeadTime 缺失行：varianceDays/earlyLateFlag 留空（不可判定）。isOnTime 列有 DDL 默认 true，
+  **准时统计以 earlyLateFlag 非空为已判定标记**（judged 集合），未判定样本不入准时率分母——owner doc
+  公式 `COUNT(isOnTime=true)/COUNT(*)` 的分母精确化为 COUNT(已判定)。
+
+### 统计与评分实现口径
+
+- 统计粒度：`findLeadTimeStats(supplierId?, materialId?)` 参数组合决定供应商级/供应商+物料级/物料级；
+  指标 μ/σ（总体标准差）/min/max/中位数/准时率/变异系数（μ≤0 时 null）/样本数。
+- 评分四维（40/30/20/10）：准时率×40；稳定性 max(0, 1−σ/μ)×30（μ≤0 且有样本视为完全稳定）；
+  **数量准确率维度**（drp→pur 只读 Java 边，matrix §2.4 登记）：统计窗口内该供应商 APPROVED 采购单该物料行
+  ΣreceivedQuantity/Σquantity 偏差，accuracy = max(0, 1−|Σreceived−Σordered|/Σordered)；**质量合格率维度**
+  （drp→qa 只读 Java 边）：INCOMING 检验合格（ACCEPTED 或 CONDITIONAL 让步接收，与越库快检口径一致）占比。
+- 无样本维度：得分记 0 且汇总行 `missingDimensions` 标注（QUANTITY/QUALITY），指标值留空（区别于真实 0 值），
+  不静默忽略；汇总行 UK(supplierId, materialId) upsert，`recalculateLeadTimeStats` 幂等重算。
+- 联合变分：变异分档中/高变异档（σ_lt/μ_lt > 0.2）统一采用联合变异公式 `Z × √(σ_d² × μ_lt + μ_d² × σ_lt²)`；**高档「额外缓冲」（调整策略表「SS 增加 30~80%」）无量化依据，显式简化为联合变异值**（集成口径与声明详见 `safety-stock-optimization.md §联合变分集成注记`）。
+- 等级阈值：A≥90 / B≥75 / C≥60 / D<60（闭区间下界）。评分影响策略的自动执行（等级联动审批放宽/收紧）归
+  successor（现无等级消费方）。
+- 趋势月度/季度报表渲染归报表子系统后续（统计 API 已落地）。
+
 ## 证据强度
 
 | 证据 | 强度 | 说明 |

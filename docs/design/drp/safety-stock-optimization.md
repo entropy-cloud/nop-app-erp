@@ -200,6 +200,26 @@
 | `erp-inv.drp-ss-schedule-cron` | — | 定时计算 cron |
 | `erp-inv.drp-ss-alert-threshold` | 0.2 | 建议值与当前值差异告警阈值 |
 
+## 联合变分集成注记（RC-R1.82 / P1-RC-082）
+
+> 提前期变异维度已接入 `SafetyStockEngine` STATISTICAL 法（plan 2026-08-19-2040-2；owner doc
+> `lead-time-tracking.md` §动态安全库存调整 的落地实现）。口径与简化声明：
+
+- **σ_lt 来源**：`ErpInvDrpLeadTimeRecord` 统计（D5 裁决选项 A 实时计算，不留列）；供应商解析自
+  `ErpDrpParameter.preferredSupplierId`，未配置时按物料跨供应商聚合；统计窗口
+  `erp-inv.drp-lt-stats-window-days` 默认 365 天。
+- **样本门槛**：样本数 < 5 时降级走本文标准公式 `Z × σ_d × √L`（L 取配置 leadTimeDays/参数提前期，
+  L1 UC-DRP-08 字面「样本 <5 降级」）；订单/收货日期缺失行不入统计（写入侧已守卫）。
+- **μ_lt 替换**：样本 ≥ 5 时标准公式与联合公式的提前期 L 均替换为 μ_lt（`lead-time-tracking.md`
+  §与现有安全库存优化集成 leadTimeDays = μ_lt 语义）。
+- **变异分档**：σ_lt/μ_lt ≤ 0.2（低变异）走标准公式；> 0.2（中/高变异档）统一走联合变异公式
+  `SS = Z × √(σ_d² × μ_lt + μ_d² × σ_lt²)`。**高档「额外缓冲」量化系数（owner doc 调整策略表
+  「SS 增加 30~80%」）无 L1/owner doc 量化依据，显式简化为联合变异值**——如需恢复高档额外缓冲，
+  须先在 owner doc 补充量化系数依据（P2-RC-072 联合变分分量由此闭合）。
+- **回写建议**：`confirmWriteback` 人工审查门保持不变（`erp-inv.drp-ss-auto-writeback` 默认 false，
+  必须显式调用）；确认后除回写 `ErpDrpParameter.safetyStock`（计算值/覆盖值）外，样本 ≥ 5 时同步回写
+  建议 `replenishmentLeadTime ← μ_lt`（四舍五入取整）——经既有确认回写链，不绕过人工门。
+
 ## 反模式警示
 
 - ⛔ **安全库存与再订货点混为一谈**——安全库存是"缓冲量"，再订货点是"触发补货的库存水位"。两者都需计算，但语义不同。
