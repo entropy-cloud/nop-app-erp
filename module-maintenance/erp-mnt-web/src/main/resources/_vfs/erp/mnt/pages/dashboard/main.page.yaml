@@ -24,7 +24,7 @@ body:
         label: "刷新"
         icon: "refresh-cw"
         actionType: reload
-        target: "kpiService,statusChart,downtimeCrud,overdueCrud"
+        target: "kpiService,oeeService,statusChart,downtimeCrud,overdueCrud"
 
   - type: service
     name: kpiService
@@ -75,6 +75,33 @@ body:
                 tpl: "<div class='text-muted'>本期维护访问数</div>"
               - type: tpl
                 tpl: "<span class='h3 text-primary'>${periodVisitCount}</span>"
+
+  - type: service
+    name: oeeService
+    api:
+      url: /graphql
+      method: post
+      dataType: raw
+      data:
+        query: "query(${'$'}startDate:String,${'$'}endDate:String){ ErpMntDashboard__getDashboardOeeKpi(startDate:${'$'}startDate,endDate:${'$'}endDate) }"
+        variables:
+          startDate: "${startDate || null}"
+          endDate: "${endDate || null}"
+      adaptor: |
+        const d = payload.data || {};
+        const gql = d.data ? d.data : d;
+        const kpi = gql.ErpMntDashboard__getDashboardOeeKpi || {};
+        return { status: 0, msg: '', data: kpi };
+    body:
+      - type: wrapper
+        className: "border rounded p-3"
+        body:
+          - type: tpl
+            tpl: "<div class='text-muted'>设备 OEE（可用率×性能×质量）</div>"
+          - type: tpl
+            tpl: "<span class='h3 text-danger'>${oeeDisplay}</span>"
+          - type: tpl
+            tpl: "<div class='text-muted text-sm'>可用率 ${availabilityDisplay} · 性能 ${performanceDisplay} · 质量 ${qualityDisplay} · 样本 ${computedCount}/${equipmentTotal} 台</div>"
 
   - type: chart
     name: statusChart

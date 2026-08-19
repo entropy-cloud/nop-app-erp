@@ -27,6 +27,12 @@
     <bean id="app.erp.mnt.service.support.DecommissionedEquipmentGuard"
           class="app.erp.mnt.service.support.DecommissionedEquipmentGuard"/>
 
+    <!-- OEE 按需计算器（RC-R1.78 / UC-MAIN-10）：三分量 + 乘积查询时聚合（无聚合实体），
+           跨域 mfg/qa 只读经 IDaoProvider（矩阵 §2.4 mnt→mfg / mnt→qa 只读 Java 层边），
+           供 ErpMntDashboardBizModel computeOee/computeOeeList/getDashboardOeeKpi 消费。 -->
+    <bean id="app.erp.mnt.service.support.OeeCalculator"
+          class="app.erp.mnt.service.support.OeeCalculator"/>
+
     <!-- 维护域服务（非 BizModel）：备件领料出库服务（按行调 IErpInvStockMoveBiz.generateMove 跨域出库） -->
     <bean id="app.erp.mnt.service.support.SparePartIssueService"
           class="app.erp.mnt.service.support.SparePartIssueService"/>

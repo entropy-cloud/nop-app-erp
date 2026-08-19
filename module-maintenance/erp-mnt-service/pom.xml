@@ -97,6 +97,22 @@
             <artifactId>app-erp-notify-dao</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: OEE 按需计算跨域只读（RC-R1.78 / UC-MAIN-10，plan 2026-08-20-0518-1）——
+             mfg（JobCard/JobCardTimeLog/WorkOrder/WorkcenterCalendar/WorkcenterCapacity）实体经
+             IDaoProvider 只读直查（矩阵 §2.4 mnt→mfg 只读 Java 层边，mnt-service→mfg-dao 与既有
+             mfg-service→mnt-dao 构成 Maven 菱形非环，镜像 R1.77 assets↔mnt 双向披露先例）。 -->
+        <dependency>
+            <artifactId>app-erp-manufacturing-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!-- compile: OEE 质量合格率分量 qa Inspection 只读（RC-R1.78，矩阵 §2.4 mnt→qa 只读 Java 层边；
+             qa 不反向依赖 mnt，DAG 无环）。 -->
+        <dependency>
+            <artifactId>app-erp-quality-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- compile: 报表 PDF 输出（PDFBox 直接渲染，非 xlsx 转换）。 -->
         <dependency>
             <groupId>io.github.entropy-cloud</groupId>

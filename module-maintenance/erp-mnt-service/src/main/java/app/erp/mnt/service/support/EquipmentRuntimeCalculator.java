@@ -39,7 +39,7 @@ public class EquipmentRuntimeCalculator {
      * daoFor 直读说明（E3）：equipment/StatusLog 均为域内实体的只读聚合访问，无业务管道语义。
      */
     public BigDecimal computeRunningHours(Long equipmentId, Timestamp asOf) {
-        ErpMntEquipment equipment = daoProvider.daoFor(ErpMntEquipment.class).getEntityById(equipmentId);
+        ErpMntEquipment equipment = loadEquipment(equipmentId);
         if (equipment == null) {
             return BigDecimal.ZERO;
         }
@@ -58,6 +58,56 @@ public class EquipmentRuntimeCalculator {
             runningSeconds += segmentSeconds(start, end, asOf);
         }
         return toHours(runningSeconds);
+    }
+
+    /**
+     * 计算设备在 [from, to) 窗口内的运行小时数（RC-R1.78 / UC-MAIN-10 OEE 可用率分子）。
+     * 语义与 {@link #computeRunningHours} 同源：Σ RUNNING 段与窗口求交；from=null 时不设下界。
+     * 遗留无日志分支镜像既有保守语义（当前 RUNNING 从 createTime 起算，钳制到窗口内）。
+     */
+    public BigDecimal computeRunningHoursInRange(Long equipmentId, Timestamp from, Timestamp to) {
+        ErpMntEquipment equipment = loadEquipment(equipmentId);
+        if (equipment == null) {
+            return BigDecimal.ZERO;
+        }
+        List<ErpMntEquipmentStatusLog> logs = findLogs(equipmentId);
+        if (logs.isEmpty()) {
+            if (!ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING.equals(equipment.getStatus())
+                    || equipment.getCreateTime() == null) {
+                return BigDecimal.ZERO;
+            }
+            return toHours(overlapSeconds(equipment.getCreateTime(), to, from, to));
+        }
+        long runningSeconds = 0L;
+        for (int i = 0; i < logs.size(); i++) {
+            ErpMntEquipmentStatusLog row = logs.get(i);
+            if (!ErpMntDaoConstants.EQUIPMENT_STATUS_RUNNING.equals(row.getToStatus())) {
+                continue;
+            }
+            Timestamp start = row.getChangeAt();
+            Timestamp end = i + 1 < logs.size() ? logs.get(i + 1).getChangeAt() : to;
+            runningSeconds += overlapSeconds(start, end, from, to);
+        }
+        return toHours(runningSeconds);
+    }
+
+    protected ErpMntEquipment loadEquipment(Long equipmentId) {
+        return daoProvider.daoFor(ErpMntEquipment.class).getEntityById(equipmentId);
+    }
+
+    /** [start, end) ∩ [windowFrom, windowTo) 时长（秒）；windowFrom=null 表示不设下界。 */
+    protected static long overlapSeconds(Timestamp start, Timestamp end, Timestamp windowFrom, Timestamp windowTo) {
+        if (start == null || end == null || windowTo == null || !start.before(end)) {
+            return 0L;
+        }
+        if (windowFrom != null && windowFrom.after(start)) {
+            start = windowFrom;
+        }
+        if (windowTo.before(end)) {
+            end = windowTo;
+        }
+        long seconds = Duration.between(start.toLocalDateTime(), end.toLocalDateTime()).getSeconds();
+        return Math.max(seconds, 0L);
     }
 
     /** 遗留基线：无日志历史设备。当前 RUNNING → createTime 起算；非 RUNNING → 0 直至首条日志行。 */

@@ -7,6 +7,8 @@ import app.erp.mnt.dao.entity.ErpMntRequest;
 import app.erp.mnt.dao.entity.ErpMntSchedule;
 import app.erp.mnt.dao.entity.ErpMntVisit;
 import app.erp.mnt.service.ErpMntConstants;
+import app.erp.mnt.service.ErpMntErrors;
+import app.erp.mnt.service.support.OeeCalculator;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizQuery;
 import io.nop.api.core.annotations.core.Name;
@@ -14,6 +16,7 @@ import io.nop.api.core.annotations.core.Optional;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -21,6 +24,8 @@ import io.nop.dao.api.IEntityDao;
 import io.nop.orm.IOrmTemplate;
 import jakarta.inject.Inject;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,7 +51,10 @@ import static io.nop.api.core.beans.FilterBeans.ne;
  * 运行中设备 count(RUNNING)；待处理维护请求取自 {@link ErpMntRequest}（count OPEN）；
  * 本期维护访问数取自 {@link ErpMntVisit}（count, 期内 COMPLETED）。
  *
- * <p>OEE 指标 Non-Goal（精确性能/质量分量需设备采集数据，见 plan 2026-07-06-1606-1 Non-Goals）。
+ * <p>OEE（RC-R1.78 / UC-MAIN-10，plan 2026-08-20-0518-1）：{@link #computeOee} 单设备三分量明细 +
+ * {@link #computeOeeList} 按设备聚合 + {@link #getDashboardOeeKpi} 看板卡片聚合，
+ * 计算载体 {@link app.erp.mnt.service.support.OeeCalculator}（按需 @BizQuery 查询时聚合，
+ * 无聚合实体；公式与数据源映射见 {@code equipment-integration.md §六}）。
  */
 @BizModel("ErpMntDashboard")
 public class ErpMntDashboardBizModel {
@@ -55,6 +63,8 @@ public class ErpMntDashboardBizModel {
     IDaoProvider daoProvider;
     @Inject
     IOrmTemplate ormTemplate;
+    @Inject
+    OeeCalculator oeeCalculator;
 
     @BizQuery
     public Map<String, Object> getDashboardKpi(@Optional @Name("startDate") LocalDate startDate,
@@ -77,6 +87,104 @@ public class ErpMntDashboardBizModel {
             kpi.put("runningCount", runningCount);
             kpi.put("openRequestCount", openRequestCount);
             kpi.put("periodVisitCount", periodVisitCount);
+            return kpi;
+        });
+    }
+
+    /**
+     * 单设备 OEE 明细（RC-R1.78 / UC-MAIN-10 A-E）：三分量（可用率/性能效率/质量合格率）+ OEE 乘积
+     * + 各分母分子明细；时间窗参数化（日报/月报窗口经同一入口）。空窗口/零分母分量置 null 不抛错（D4）。
+     */
+    @BizQuery
+    public Map<String, Object> computeOee(@Name("equipmentId") Long equipmentId,
+                                           @Optional @Name("dateFrom") LocalDate dateFrom,
+                                           @Optional @Name("dateTo") LocalDate dateTo,
+                                           IServiceContext context) {
+        return ormTemplate.runInSession(session -> {
+            LocalDate today = CoreMetrics.currentDate();
+            LocalDate from = dateFrom != null ? dateFrom : today.withDayOfMonth(1);
+            LocalDate to = dateTo != null ? dateTo : today;
+            Map<String, Object> row = oeeCalculator.computeOee(equipmentId, from, to);
+            if (row == null) {
+                throw new NopException(ErpMntErrors.ERR_EQUIPMENT_NOT_FOUND)
+                        .param(ErpMntErrors.ARG_EQUIPMENT_ID, equipmentId);
+            }
+            return row;
+        });
+    }
+
+    /** 列表级 OEE 查询（按设备聚合，status != DECOMMISSIONED；窗口默认本月至今）。 */
+    @BizQuery
+    public List<Map<String, Object>> computeOeeList(@Optional @Name("dateFrom") LocalDate dateFrom,
+                                                     @Optional @Name("dateTo") LocalDate dateTo,
+                                                     IServiceContext context) {
+        return ormTemplate.runInSession(session -> {
+            LocalDate today = CoreMetrics.currentDate();
+            LocalDate from = dateFrom != null ? dateFrom : today.withDayOfMonth(1);
+            LocalDate to = dateTo != null ? dateTo : today;
+            List<ErpMntEquipment> equipments = loadEquipmentsNotDecommissioned();
+            List<Map<String, Object>> rows = new ArrayList<>(equipments.size());
+            for (ErpMntEquipment equipment : equipments) {
+                rows.add(oeeCalculator.computeOee(equipment, from, to));
+            }
+            return rows;
+        });
+    }
+
+    /**
+     * 看板 OEE 卡片聚合（UC-MAIN-11-B）：fleet 级三分量均值 + OEE 均值（仅统计可计算设备，
+     * 无数据 ≠ 零效率，D4）+ 展示字符串（无数据显示 "—"）。
+     */
+    @BizQuery
+    public Map<String, Object> getDashboardOeeKpi(@Optional @Name("startDate") LocalDate startDate,
+                                                   @Optional @Name("endDate") LocalDate endDate,
+                                                   IServiceContext context) {
+        return ormTemplate.runInSession(session -> {
+            LocalDate today = CoreMetrics.currentDate();
+            LocalDate from = startDate != null ? startDate : today.withDayOfMonth(1);
+            LocalDate to = endDate != null ? endDate : today;
+            long equipmentTotal = countEquipmentNotDecommissioned();
+
+            BigDecimal availabilitySum = BigDecimal.ZERO, performanceSum = BigDecimal.ZERO,
+                    qualitySum = BigDecimal.ZERO, oeeSum = BigDecimal.ZERO;
+            long availabilityCount = 0, performanceCount = 0, qualityCount = 0, computedCount = 0;
+            for (ErpMntEquipment equipment : loadEquipmentsNotDecommissioned()) {
+                Map<String, Object> row = oeeCalculator.computeOee(equipment, from, to);
+                if (row.get("availability") != null) {
+                    availabilitySum = availabilitySum.add((BigDecimal) row.get("availability"));
+                    availabilityCount++;
+                }
+                if (row.get("performance") != null) {
+                    performanceSum = performanceSum.add((BigDecimal) row.get("performance"));
+                    performanceCount++;
+                }
+                if (row.get("quality") != null) {
+                    qualitySum = qualitySum.add((BigDecimal) row.get("quality"));
+                    qualityCount++;
+                }
+                if (row.get("oee") != null) {
+                    oeeSum = oeeSum.add((BigDecimal) row.get("oee"));
+                    computedCount++;
+                }
+            }
+
+            Map<String, Object> kpi = new LinkedHashMap<>();
+            kpi.put("startDate", from);
+            kpi.put("endDate", to);
+            kpi.put("equipmentTotal", equipmentTotal);
+            kpi.put("computedCount", computedCount);
+            BigDecimal availabilityAvg = avg(availabilitySum, availabilityCount);
+            BigDecimal performanceAvg = avg(performanceSum, performanceCount);
+            BigDecimal qualityAvg = avg(qualitySum, qualityCount);
+            BigDecimal oeeAvg = avg(oeeSum, computedCount);
+            kpi.put("availabilityAvg", availabilityAvg);
+            kpi.put("performanceAvg", performanceAvg);
+            kpi.put("qualityAvg", qualityAvg);
+            kpi.put("oeeAvg", oeeAvg);
+            kpi.put("availabilityDisplay", percentDisplay(availabilityAvg));
+            kpi.put("performanceDisplay", percentDisplay(performanceAvg));
+            kpi.put("qualityDisplay", percentDisplay(qualityAvg));
+            kpi.put("oeeDisplay", percentDisplay(oeeAvg));
             return kpi;
         });
     }
@@ -170,6 +278,25 @@ public class ErpMntDashboardBizModel {
         QueryBean q = new QueryBean();
         q.addFilter(ne("status", ErpMntDaoConstants.EQUIPMENT_STATUS_DECOMMISSIONED));
         return dao.countByQuery(q);
+    }
+
+    private List<ErpMntEquipment> loadEquipmentsNotDecommissioned() {
+        IEntityDao<ErpMntEquipment> dao = daoProvider.daoFor(ErpMntEquipment.class);
+        QueryBean q = new QueryBean();
+        q.addFilter(ne("status", ErpMntDaoConstants.EQUIPMENT_STATUS_DECOMMISSIONED));
+        return dao.findAllByQuery(q);
+    }
+
+    private BigDecimal avg(BigDecimal sum, long count) {
+        if (count == 0) {
+            return null;
+        }
+        return sum.divide(BigDecimal.valueOf(count), 4, RoundingMode.HALF_UP);
+    }
+
+    private String percentDisplay(BigDecimal rate) {
+        return rate == null ? "—" : rate.multiply(BigDecimal.valueOf(100))
+                .setScale(1, RoundingMode.HALF_UP).toPlainString() + "%";
     }
 
     private long countEquipmentByStatus(String status) {
