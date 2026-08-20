@@ -52,6 +52,11 @@
           class="app.erp.hr.service.processor.ErpHrSalaryRunPayrollProcessor"/>
     <bean id="app.erp.hr.service.processor.ErpHrSalaryMarkPaidProcessor"
           class="app.erp.hr.service.processor.ErpHrSalaryMarkPaidProcessor"/>
+    <!-- approve 后置计提过账编排 Processor（RC-R1.89）：270/290/300 三连计提 + posted writer D3 语义，
+          由 ErpHrSalary.xbiz approve source 状态写回后一行 inject 委托调用（XScript try/catch 不可行，
+          编排/失败隔离下沉 Java Bean，对齐 M4.64 Guard/StateMachine Bean 范式）。 -->
+    <bean id="app.erp.hr.service.processor.ErpHrSalaryPostApprovalProcessor"
+          class="app.erp.hr.service.processor.ErpHrSalaryPostApprovalProcessor"/>
     <bean id="app.erp.hr.service.processor.ErpHrSalaryGenerateBankFileProcessor"
           class="app.erp.hr.service.processor.ErpHrSalaryGenerateBankFileProcessor"/>
     <bean id="app.erp.hr.service.processor.ErpHrSalarySimulationCreateSimulationProcessor"

@@ -391,7 +391,8 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
             // markPaid 忽略 tryPostPayment 返回值 → 过账失败仍转 PAID（posted=false 悬挂窗口）
             assertEquals(ErpHrConstants.PAYMENT_PAID, paid.getPaymentStatus(),
                     "过账失败不阻塞发放终态：paymentStatus=PAID");
-            // posted 字段 Deferred（无 setPosted writer，见 SalaryPostingDispatcher javadoc + payroll.md §6.1）→ 始终非 true
+            // RC-R1.89 后 posted writer 已激活（approve 侧计提链）；本测试无会计期间种子 →
+            // approve 计提失败于 resolveOpenPeriod → posted 保持 false（悬挂窗口仍可观测）
             ErpHrSalary reloaded = daoProvider.daoFor(ErpHrSalary.class).getEntityById(salaryId);
             assertFalse(Boolean.TRUE.equals(reloaded.getPosted()),
                     "posted=false 可观测：过账悬挂窗口（P1-MA2-048）");
@@ -406,17 +407,17 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
     }
 
     /**
-     * G3（P1-MA4-019 (d)+(e)）公司承担过账负向文档化。P1-MA4-017 Deferred：计提 SALARY(270) + 社保公司承担(290) +
-     * 公积金公司承担(300) 过账链路未实现——{@code tryPostAccrual} 为零调用方死代码，290/300 event 永不组装
-     * （payroll.md §6.5/§9.1 Deferred 标注）。本测试 approve+markPaid 后断言三类凭证当前未生成
-     * （负向文档化 017 缺口 + 注释引用 successor）+ 发放 markPaid→PAID 正常（正向基线，证明非假阴性）。
-     * 017 正向实现（接线 tryPostAccrual/290/300 + 激活 posted writer）属 Deferred successor，不在本测试有效性计划范围。
+     * G3（P1-MA4-019 (d)+(e)）公司承担过账——RC-R1.89 落地后由负向文档化翻转为正向计提链断言：
+     * approve 联动生成计提 SALARY(270) + 社保公司承担(290) + 公积金公司承担(300) 三类凭证
+     * （tryPostAccrual 调用方激活 + 290/300 event 组装 + posted writer，payroll.md §6.5/§9.1），
+     * markPaid→PAID 发放正常（280 正向基线，证明链路非假阴性）。细化断言（科目/金额/Dr==Cr/
+     * billData ER 键/去重守卫/部分失败）见 {@link TestErpHrSalaryPostingChain}。
      */
     @Test
-    public void testCompanyBornePostingDeferredNegativeDocumentation() {
+    public void testCompanyBornePostingAccrualChainPositive() {
         Long employeeId = ormTemplate.runInSession(session -> {
             seedTaxConfig(2026);
-            Long empId = seedEmployee("EMP-DEFER", ErpHrConstants.EMPLOYMENT_ACTIVE);
+            Long empId = seedEmployee("EMP-ACCRUAL", ErpHrConstants.EMPLOYMENT_ACTIVE);
             seedContract(empId, "15000");
             seedSocialInsuranceBase(empId, "SHENZHEN", "15000", "15000");
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_PENSION,
@@ -424,26 +425,86 @@ public class TestErpHrPayrollEngine extends JunitAutoTestCase {
             seedSocialInsuranceConfig("SHENZHEN", ErpHrConstants.INSURANCE_HOUSING_FUND,
                     "0.12", "0.12", "2360", "32694");
             System.setProperty(ErpHrConstants.CONFIG_DEFAULT_PAYROLL_SUBJECT_ID, "2211");
+            // 计提链测试员工带业务组织（PostingEvent.orgId/账套解析回退源）
+            daoProvider.daoFor(ErpHrEmployee.class).getEntityById(empId).setOrgId(1L);
+            seedPostingSubjects();
+            seedAcctSchema(1L);
+            seedOpenPeriod(2026, 4);
+            seedOpenPeriod(2026, 7);
             return empId;
         });
 
         ErpHrSalary salary = ormTemplate.runInSession(session -> salaryBiz.calculateSalary(employeeId, 2026, 4, CTX));
         Long salaryId = salary.getId();
         assertEquals(0, submitSalary(salaryId).getStatus(), "提交应成功");
-        assertEquals(0, approveSalary(salaryId).getStatus(), "审核应成功");
+        assertEquals(0, approveSalary(salaryId).getStatus(), "审核应成功（联动计提过账）");
         ErpHrSalary paid = ormTemplate.runInSession(session -> salaryBiz.markPaid(salaryId, CTX));
 
-        // 正向基线：发放 markPaid→PAID 正常完成（approve+markPaid 链路可达，证明下方负向非假阴性）
+        // 正向基线：发放 markPaid→PAID 正常完成（approve+markPaid 链路可达，证明下方断言非假阴性）
         assertEquals(ErpHrConstants.PAYMENT_PAID, paid.getPaymentStatus(), "正向基线：发放正常 PAID");
 
-        // 负向文档化（P1-MA4-017 Deferred）：计提 270 + 公司承担 290/300 三类凭证当前未生成
+        // 正向断言（RC-R1.89）：approve 联动 270 + 290 + 300 三类计提凭证已生成 + posted writer 激活
+        ErpHrSalary reloaded = daoProvider.daoFor(ErpHrSalary.class).getEntityById(salaryId);
+        assertEquals(Boolean.TRUE, reloaded.getPosted(), "三路计提成功 → posted=true");
         String billCode = salaryBillCode(2026, 4, salaryId);
-        assertEquals(0L, countVoucherBillR(billCode, ErpFinBusinessType.SALARY),
-                "Deferred：计提 SALARY(270) 凭证未生成（tryPostAccrual 零调用方死代码，approve 未接线——017 successor）");
-        assertEquals(0L, countVoucherBillR(billCode, ErpFinBusinessType.SOCIAL_INSURANCE_ER),
-                "Deferred：社保公司承担 SOCIAL_INSURANCE_ER(290) event 永不组装（017 successor）");
-        assertEquals(0L, countVoucherBillR(billCode, ErpFinBusinessType.HOUSING_FUND_ER),
-                "Deferred：公积金公司承担 HOUSING_FUND_ER(300) event 永不组装（017 successor）");
+        assertEquals(1L, countVoucherBillR(billCode, ErpFinBusinessType.SALARY),
+                "计提 SALARY(270) 凭证已生成（approve 联动接线）");
+        assertEquals(1L, countVoucherBillR(billCode, ErpFinBusinessType.SOCIAL_INSURANCE_ER),
+                "社保公司承担 SOCIAL_INSURANCE_ER(290) 凭证已生成");
+        assertEquals(1L, countVoucherBillR(billCode, ErpFinBusinessType.HOUSING_FUND_ER),
+                "公积金公司承担 HOUSING_FUND_ER(300) 凭证已生成");
+        assertEquals(1L, countVoucherBillR(billCode, ErpFinBusinessType.SALARY_PAYMENT),
+                "发放 SALARY_PAYMENT(280) 凭证正常（markPaid 路径零回归）");
+    }
+
+    /** 种计提过账所需科目（6601/6601.01/6601.02/2211/1002，SalaryPostingProvider 默认科目映射）。 */
+    private void seedPostingSubjects() {
+        IEntityDao<app.erp.md.dao.entity.ErpMdSubject> dao =
+                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdSubject.class);
+        for (String[] s : new String[][]{
+                {"6601", "管理费用-工资", "EXPENSE", "DEBIT"},
+                {"6601.01", "管理费用-社保", "EXPENSE", "DEBIT"},
+                {"6601.02", "管理费用-公积金", "EXPENSE", "DEBIT"},
+                {"2211", "应付职工薪酬", "LIABILITY", "CREDIT"},
+                {"1002", "银行存款", "ASSET", "DEBIT"}}) {
+            app.erp.md.dao.entity.ErpMdSubject subject = new app.erp.md.dao.entity.ErpMdSubject();
+            subject.setCode(s[0]);
+            subject.setName(s[1]);
+            subject.setSubjectClass(s[2]);
+            subject.setDirection(s[3]);
+            subject.setStatus("ACTIVE");
+            dao.saveEntity(subject);
+        }
+    }
+
+    /** 种组织主账套（引擎对 null acctSchemaId 返回空集静默零凭证——账套解析补齐前置）。 */
+    private void seedAcctSchema(long orgId) {
+        IEntityDao<app.erp.md.dao.entity.ErpMdAcctSchema> dao =
+                daoProvider.daoFor(app.erp.md.dao.entity.ErpMdAcctSchema.class);
+        app.erp.md.dao.entity.ErpMdAcctSchema schema = new app.erp.md.dao.entity.ErpMdAcctSchema();
+        schema.setCode("AS-" + orgId);
+        schema.setName("账套-" + orgId);
+        schema.setOrgId(orgId);
+        schema.setNature("FINANCIAL");
+        schema.setFunctionalCurrencyId(1L);
+        schema.setStatus("ACTIVE");
+        dao.saveEntity(schema);
+    }
+
+    /** 种 OPEN 会计期间（计提凭证日期=期间 15 日；发放=paymentDate，冻结时钟 2026-07-17）。 */
+    private void seedOpenPeriod(int year, int month) {
+        IEntityDao<app.erp.fin.dao.entity.ErpFinAccountingPeriod> dao =
+                daoProvider.daoFor(app.erp.fin.dao.entity.ErpFinAccountingPeriod.class);
+        app.erp.fin.dao.entity.ErpFinAccountingPeriod period = new app.erp.fin.dao.entity.ErpFinAccountingPeriod();
+        period.setCode(year + "-" + String.format("%02d", month));
+        period.setName(year + "年" + month + "月");
+        period.setOrgId(1L);
+        period.setYear(year);
+        period.setMonth(month);
+        period.setStartDate(LocalDate.of(year, month, 1));
+        period.setEndDate(LocalDate.of(year, month, 1).withDayOfMonth(LocalDate.of(year, month, 1).lengthOfMonth()));
+        period.setStatus("OPEN");
+        dao.saveEntity(period);
     }
 
     /** 薪酬过账业财回链单据号（与 SalaryPostingDispatcher.buildBillCode 一致）。 */

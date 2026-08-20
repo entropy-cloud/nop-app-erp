@@ -15,6 +15,11 @@
         expectedStatus，common 码作 cause 保留）。机制替代注记：计划原案「XScript try/catch」在 XLang 引擎
         不可行（TryStatement 语法节点不被编译支持），映射下沉 Java Guard Bean，行为契约不变（见 Guard javadoc）。
         approve/reject/reverseApprove 由 approval-support.xbiz 标准 source 提供，wf 结束经 .xwf listener 回调。
+
+        approve 后置计提过账（RC-R1.89，payroll.md §6.5/§9.1）：approve 状态写回后委托
+        ErpHrSalaryPostApprovalProcessor（270 SALARY + 290 SOCIAL_INSURANCE_ER + 300 HOUSING_FUND_ER
+        三连计提 + posted writer D3 语义）——编排/失败隔离在 Java Bean 侧（XScript try/catch 不可行，
+        同上机制注记），本 source 仅一行 inject 委托；wf 回调与直批共用本 action 单一接线点。
     -->
     <actions>
         <mutation name="submitForApproval">
@@ -59,6 +64,7 @@
             <source><![CDATA[
                 const approvalSM = inject('app.erp.hr.service.statemachine.ErpHrSalaryApprovalStateMachine');
                 const guard = inject('app.erp.hr.service.processor.ErpHrSalaryApprovalGuard');
+                const postApproval = inject('app.erp.hr.service.processor.ErpHrSalaryPostApprovalProcessor');
                 const entity = thisObj.invoke("requireEntity", {id}, null, svcCtx);
 
                 guard.assertCanApprove(entity);
@@ -66,6 +72,9 @@
                 entity.approveStatus = approvalSM.approveTargetStatus();
                 entity.approvedBy = svcCtx.getUserId();
                 entity.approvedAt = now();
+
+                postApproval.postAccruals(entity, svcCtx);
+
                 return entity;
             ]]></source>
         </mutation>
