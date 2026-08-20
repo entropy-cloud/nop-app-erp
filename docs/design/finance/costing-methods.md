@@ -46,6 +46,7 @@
 - **到岸成本单实体（`ErpInvLandedCost`/`ErpInvLandedCostLine`）**：头-行结构（头携带 code/receiveId/supplierId/allocationMethod/docStatus/approveStatus/posted；行携带 costElement/amount/apPartnerId）。审核时关联采购入库单（`ErpPurReceive`，跨域只读 DAO 访问）。
 - **分摊引擎（`LandedCostAllocationEngine`）**：纯函数式——输入入库行 + 费用要素合计 + allocationMethod(BY_AMOUNT/BY_QUANTITY/BY_WEIGHT)，输出每入库行的分摊金额与新单位成本。末行吸收舍入差保证 Σ=totalCost。
 - **审核编排（`ErpInvLandedCostProcessor`）**：approve 步骤——(1) 加载到岸成本 + 费用行 + 入库单 + 入库行；(2) 校验入库单已审核 + 防重复分摊；(3) 调引擎分摊；(4) 创建 `ErpInvCostAdjust`(type=LANDED_COST_SUPPLEMENT) + 行；(5) 调 `CostAdjustmentService.applyCostAdjust` **直接更新成本层**（不走 `ErpInvCostAdjustProcessor.applyCostAdjust` 完整链，避免 COST_ADJUSTMENT(420) 与 LANDED_COST(490) 双重入账）；(6) LANDED_COST 过账。
+- **防重复分摊守卫（plan 2026-08-20-2052-1，P1-RC-092 MySQL-RR TOCTOU 修复）**：`validateNotAlreadyAllocated` 为锁定读语义——按 receiveId 一致读发现 sibling id 后，逐 sibling（跳过当前单，id 升序）以 PK `SELECT ... FOR UPDATE` 锁定读**最新已提交版本**并评估 approveStatus，跨 H2/PG/MySQL（含 MySQL 默认 REPEATABLE_READ，其一致读快照不随行锁获取刷新）隔离级别一致有效；锁序 = receive 行锁 → sibling PK 单向。实现约束：同事务内不得「INSERT 新到岸成本单头并 approve」（守卫 ID 发现以已提交行集为界，当前创建/审核分属独立 mutation 满足）；generate 入口的 `validateNoDraftExists` 为非锁读（并发双建 DRAFT 的既有竞态为 watch 项，非本守卫范围）。
 - **过账（`LandedCostAcctDocProvider` + `LandedCostPostingDispatcher`）**：业务类型 `LANDED_COST`(490)。借：每入库行分摊金额 → 存货(1401)；贷：每费用要素 → 应付账款(2202, partnerId=费用行应付对象或采购供应商)。
 - **本期 Non-Goal**：多段到岸成本累计管理（同一入库单多次分摊）、到岸成本预估、logistics path-2 运费自动创建到岸成本单的完整编排——各归 successor。
 
