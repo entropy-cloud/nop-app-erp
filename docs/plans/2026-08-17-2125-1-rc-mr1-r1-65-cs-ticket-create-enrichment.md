@@ -268,3 +268,7 @@ Closure Audit Evidence:
 Follow-up:
 
 - 无（范围内零遗留预期；Deferred 两项已裁定分类）
+
+Post-closure 补记（2026-08-20）：
+
+- matrix §2.4 cs-service → crm-dao 边登记由 plan `docs/plans/2026-08-20-2052-2-arch-matrix-cs-crm-edge-registration.md` 补齐完成（来源 multi 审计 F2：`docs/audits/2026-08-17-2125-multi-audit-requirement-compliance.md`——原收尾同步清单漏列 matrix 登记项，属契约漂移文档登记缺失，非实现缺陷；roadmap :457 done 行同步补记登记短语）。
