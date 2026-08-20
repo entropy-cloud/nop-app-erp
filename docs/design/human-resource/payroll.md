@@ -371,9 +371,9 @@
 | 发放执行 | `paymentStatus` | PENDING / PAID / VOID | 业务代码（`markPaid`/`voidSalary`） |
 | 业财过账 | `posted` | boolean | `PostingDispatcher` |
 
-> **`posted` 字段（Deferred）**：`ErpHrSalary.posted` 列存在（ORM，BOOLEAN，默认 false），但本期**无 `setPosted` writer**——`SalaryPostingDispatcher.tryPostPayment`（SALARY_PAYMENT 280）在 markPaid 时被调用但未回写 `posted`；`tryPostAccrual`（SALARY 计提）为零调用方死代码。**Successor**：接线计提 SALARY + 公司承担社保/公积金（SOCIAL_INSURANCE_ER 290 / HOUSING_FUND_ER 300）过账链路时，激活计提调用方并写入 `posted=true`。不写 posted writer（留 successor）。
+> **`posted` 字段（已实现，RC-R1.89 / P1-MA4-017 收口）**：`ErpHrSalary.posted` writer 由 approve 后置编排 Processor `ErpHrSalaryPostApprovalProcessor` 激活——`approve`→APPROVED 状态写回后联动三连计提（SALARY 270 → SOCIAL_INSURANCE_ER 290 → HOUSING_FUND_ER 300，各自失败隔离），**三条全部成功（去重守卫命中计为成功）才 `posted=true`**（「计提链完整」语义，D3 裁决）；任一失败保持 false + `hr.salary-posting-failure` 告警（stage=计提/社保/公积金），280 发放不受影响。**去重守卫**：per-businessType 已过账凭证存在性反查（billCode+businessType 查 `ErpFinVoucherBillR` → POSTED 未冲销即跳过该条计为成功），reverseApprove→再 approve 不产生重复凭证且补投失败条目可收敛 posted=true（计提凭证红冲对称性为 Deferred successor，见 §6.5）。**组织/账套/本位币解析**（执行期发现补齐）：salary.orgId 回退取员工 org，账套经 `AcctSchemaResolver` 解析主账套、币种取其本位币——无此前置引擎对 null acctSchemaId 静默零凭证（280 既有路径同患的潜伏缺口随本计划统一补齐）。
 
-> **过账失败告警（G3 错误传播分级）**：`SalaryPostingDispatcher.tryPostPayment`/`tryPostAccrual` 过账失败（吞异常保持终态不阻塞）派发 `IErpSysNotificationBiz` 告警（`hr.salary-posting-failure`），使 GL 缺 SALARY_PAYMENT 凭证悬挂可被运营感知。posted=false 终态阻断由期末试算平衡人工发现（hr 不纳入期末前置检查覆盖矩阵，与 mfg/projects/maintenance 一致）。
+> **过账失败告警（G3 错误传播分级）**：`SalaryPostingDispatcher.tryPostPayment`/`tryPostAccrual`/`tryPostSocialInsuranceER`/`tryPostHousingFundER` 过账失败（吞异常保持终态不阻塞）派发 `IErpSysNotificationBiz` 告警（`hr.salary-posting-failure`），使 GL 凭证悬挂可被运营感知。posted=false 终态阻断由期末试算平衡人工发现（hr 不纳入期末前置检查覆盖矩阵，与 mfg/projects/maintenance 一致）。
 
 **多级审批链**（HR 复核 → 财务审批 → 经理审批）不在 `approveStatus` 中编码，而是通过 nop-wf 的 **WORKFLOW 模式**实现：
 - 实体标 `tagSet="use-approval"` + `useWorkflow="true"`
@@ -434,13 +434,15 @@
 
 ### 6.5 入账触发时机
 
-> **Deferred（本表 SALARY 270/SOCIAL_INSURANCE_ER 290/HOUSING_FUND_ER 300 三行）**：当前 GL **仅收发放凭证 SALARY_PAYMENT(280)**（`markPaid` 触发 `SalaryPostingDispatcher.tryPostPayment`）。计提 SALARY(270) + 公司承担社保 SOCIAL_INSURANCE_ER(290) + 公积金 HOUSING_FUND_ER(300) 过账链路**留 successor**：`SalaryPostingDispatcher.tryPostAccrual` 当前为零调用方死代码（`approve` action 的 xbiz `<source append>` 未接入——hr 模块零 xbiz 文件）；290/300 event **永不生成**（无代码组装）；`posted` 字段 Deferred（无 `setPosted` writer，见 §6.1 posted 注）。**Successor**：独立计提+公司承担过账链路——(1) 裁决公司承担金额持久化设计（ORM ask-first 加 `socialInsuranceER`/`housingFundER` 列 vs remark 暂存 vs 过账时重算）；(2) 接线 `tryPostAccrual`（`approve`→APPROVED 联动）；(3) 新增 `tryPostSocialInsuranceER`/`tryPostHousingFundER` 组装 290/300 event；(4) 激活 `posted` writer。**残留风险**：GL 永远仅收发放凭证 → 费用+应付职工薪酬低估+资产负债表失衡，直至期末试算平衡人工发现；员工实发工资正确（公司承担不影响个人 net）；过账悬挂告警闭环可观测（`posted=false` 终态悬挂）。
+> **计提链已实现（RC-R1.89 / P1-MA4-017 收口，2026-08-20）**：`approve`→APPROVED 经 `ErpHrSalary.xbiz` approve source 状态写回后委托 `ErpHrSalaryPostApprovalProcessor`（编排/失败隔离在 Java Bean——XScript try/catch 在 XLang 引擎不可行，M4.64 机制注记；wf 回调与直批共用同一 approve action 单一接线点），按 270→290→300 顺序调 `SalaryPostingDispatcher.tryPostAccrual`/`tryPostSocialInsuranceER`/`tryPostHousingFundER` 并按 D3 语义写 `posted` writer（见 §6.1）。**ER（公司承担）金额载体（D1 裁决）**：approve 过账时经 `SocialInsuranceCalculator` 重算（镜像 `PayrollCalculator` 口径），经 PostingEvent billData 承载——`GROSS_AMOUNT` 消费键 + 专用键 `SOCIAL_INSURANCE_ER`/`HOUSING_FUND_ER`（290/300 事件**不带 NET_AMOUNT**，防 ER=0 回退读净额）；失败路径经 `ErpFinPostingException.eventData` JSON 持久化，成功路径经凭证行金额持久化；零 ORM 变更（B 类裁决：否决 ER 列）。**残留风险（显式登记）**：calculate 与 approve 之间社保/公积金 config 变更会使重算值偏离原核算口径（billData 载体无计算时点快照的固有代价）——运营约定 approve 前不改基数据；一致性经 `TestErpHrSalaryPostingChain` ⑤ 断言（同基数据重算 == calculateSalary 局部值）。**280 金额基数纠正（执行期发现）**：`buildEvent` 死参数接线后 GROSS_AMOUNT 消费键承载事件金额——280 由潜伏的应发基数纠正为实发净额（`buildPaymentEvent` 既有参数意图 + 银行实付口径；凭证实际生成前该缺陷不可观测）。**计提红冲对称性**（approve 后反审/驳回的 270/290/300 凭证红冲）为 Deferred successor（触发条件：APPROVED 后反审运营场景确认时立项，对齐 P1-MA2-083 冲销恢复 + postingDispatcher.reverse 范式）；当前 reverseApprove→再 approve 由去重守卫防重复计提。
+>
+> **历史表述纠正**：本节及 arm-index 曾表述「hr 模块零 xbiz 文件」「`approve` action 的 xbiz `<source append>` 未接入」——基于 2026-08-07 审计快照，已因 M4.64（2026-08-14，36 个手写 ErpHr*.xbiz delta 落地，含 `ErpHrSalary.xbiz` 覆写 approve/reverseApprove）过时；RC-R1.89 在该覆写 source 上接线计提委托。
 
 | 动作 | 触发过账 | businessType | 说明 |
 |------|----------|-------------|------|
-| `approveStatus → APPROVED` | 计提 | SALARY(270) | **Deferred**：应付职工薪酬计提，设计为由 `approve` action 的 xbiz `<source append>` 触发（当前未落地） |
-| `paymentStatus → PAID` | 发放 | SALARY_PAYMENT(280) | 银行发放凭证，由 `markPaid` 触发 |
-| 审批时联动 | 计提 | SOCIAL_INSURANCE_ER(290) / HOUSING_FUND_ER(300) | **Deferred**：公司承担部分，设计为由 `approve` action 的 `append` 联动触发（当前未落地） |
+| `approveStatus → APPROVED` | 计提 | SALARY(270) | 应付职工薪酬计提，由 `approve` action 委托 `ErpHrSalaryPostApprovalProcessor` 触发（金额=应发合计） |
+| `paymentStatus → PAID` | 发放 | SALARY_PAYMENT(280) | 银行发放凭证，由 `markPaid` 触发（金额=实发净额） |
+| 审批时联动 | 计提 | SOCIAL_INSURANCE_ER(290) / HOUSING_FUND_ER(300) | 公司承担部分，approve 联动触发（金额=approve 时重算的公司承担社保/公积金，D1） |
 
 详见 `§九` 和 `docs/design/finance/posting.md`。
 
@@ -542,12 +544,12 @@
 
 | businessType | 借方 | 贷方 | 触发时机 |
 |-------------|------|------|---------|
-| SALARY（计提） | 管理费用-工资/制造费用-工资 | 应付职工薪酬 | **Deferred**：设计为 approveStatus → APPROVED（由 `approve` action 的 xbiz `<source append>` 触发）；当前 `tryPostAccrual` 为零调用方死代码，SALARY(270) 凭证永不生成 |
-| SALARY_PAYMENT（发放） | 应付职工薪酬 | 银行存款 | paymentStatus → PAID（由 `markPaid` 触发） |
-| SOCIAL_INSURANCE_ER（社保公司） | 管理费用-社保 | 应付职工薪酬-社保 | **Deferred**：设计为 approveStatus → APPROVED 时联动计提；当前 290 event 永不生成 |
-| HOUSING_FUND_ER（公积金公司） | 管理费用-公积金 | 应付职工薪酬-公积金 | **Deferred**：设计为 approveStatus → APPROVED 时联动计提；当前 300 event 永不生成 |
+| SALARY（计提） | 管理费用-工资/制造费用-工资 | 应付职工薪酬 | approveStatus → APPROVED（由 `approve` action 委托 `ErpHrSalaryPostApprovalProcessor` 触发，金额=应发合计；RC-R1.89 已实现） |
+| SALARY_PAYMENT（发放） | 应付职工薪酬 | 银行存款 | paymentStatus → PAID（由 `markPaid` 触发，金额=实发净额） |
+| SOCIAL_INSURANCE_ER（社保公司） | 管理费用-社保 | 应付职工薪酬-社保 | approveStatus → APPROVED 时联动计提（金额=approve 时重算的公司承担社保，D1；RC-R1.89 已实现） |
+| HOUSING_FUND_ER（公积金公司） | 管理费用-公积金 | 应付职工薪酬-公积金 | approveStatus → APPROVED 时联动计提（金额=approve 时重算的公司承担公积金，D1；RC-R1.89 已实现） |
 
-> **过账链路实现状态**：当前 GL **仅收发放凭证 SALARY_PAYMENT(280)**；计提 SALARY(270) + 公司承担社保(290)/公积金(300) 过账链路留 successor（裁决公司承担金额持久化设计 + 接线 `tryPostAccrual`/290/300 + approve action + 激活 `posted` writer，详见 §6.5）。残留风险：费用+应付职工薪酬低估+资产负债表失衡，直至期末试算平衡人工发现；员工实发工资正确（公司承担不影响个人 net）。
+> **过账链路实现状态（RC-R1.89 后）**：GL 收全四类薪酬凭证——计提 SALARY(270) + 公司承担社保(290)/公积金(300)（approve 联动）+ 发放 SALARY_PAYMENT(280)（markPaid 触发）。`posted`=「计提链完整」语义（三路全成才 true，去重守卫命中计为成功）；计提红冲对称性（approve 后反审的凭证红冲）留 successor（见 §6.5 Deferred successor 注记）。
 
 > 科目映射在 finance/posting.md 中定义，HR 域通过 `IErpFinAcctDocProvider` 提供核算数据。
 > 🟢 Axelor `PayrollLine.xml` + `AccountingSituation.xml` 过账联动。

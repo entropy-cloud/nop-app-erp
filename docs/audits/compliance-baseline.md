@@ -19,20 +19,22 @@
 | R1c | dao().getEntityById (BizModel) | 🔴 高 | 0 |
 | R1d | dao().findAllByQuery (BizModel) | 🔴 高 | 14 |
 | R2a | BizModel daoFor(ErpMd*) | 🔴 高 | 34 |
-| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 230 |
-| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1399 |
-| R2d | Processor daoFor(ErpMd*) | 🔴 高 | 34 |
+| R2b | BizModel daoFor(Erp*) 跨域 | 🔴 高 | 237 |
+| R2c | 全生产代码 daoFor() 总量 | 🔴 高 | 1507 |
+| R2d | Processor daoFor(ErpMd*) | 🔴 高 | 38 |
 | R3 | new Erp*() 构造实体 | 🟡 中 | 5 |
 | R4 | extends RuntimeException | 🟢 低 | 0 |
 | R5 | @Inject private | 🟡 中 | 0 |
 | R6 | @Transactional in BizModel | 🟢 低 | 2 |
 | R7 | System.currentTimeMillis() | 🟢 低 | 0 |
 | R8 | Processor 无 xbiz 接线 | 🔴 高 | 0 |
-| R10 | REQUIRES_NEW 事务 | 🟡 中 | 9 |
+| R10 | REQUIRES_NEW 事务 | 🟡 中 | 12 |
 | R11 | Processor 重复状态判断方法 | 🟡 中 | 0 |
-| R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 69 |
+| R12a | 共享内核 import ErpFinBusinessType | 🟡 中 | 70 |
 | R12b | 共享内核 import PostingEvent | 🟡 中 | 66 |
-| R12c | 共享内核 import AcctSchemaResolver | 🟡 中 | 40 |
+| R12c | 共享内核 import AcctSchemaResolver | 🟡 中 | 41 |
+
+> **表格同步注记（plan 2026-08-20-0518-3 闭包时同步）**：本人类可读表此前多轮 baseline-raise 仅更新 §BASELINE 机器可读块未同步本表（R2b/R2c/R2d/R10/R12a/R12c 六行滞后），本次随 RC-R1.89 上调一并与机器可读块对齐（237/1507/38/12/70/41），消除 §V.2「逐行精确一致」声明的漂移。
 
 > R9（doReverseApprove 一致性）为**定性校验**（输出 ✓/✗ 清单，无数值计数），故不在上表参与数值门控；其输出仍由 checker 打印供人工查阅，CI 不对其做数值断言。
 
@@ -452,8 +454,8 @@ R1c: 0
 R1d: 14
 R2a: 34
 R2b: 237
-R2c: 1505
-R2d: 37
+R2c: 1507
+R2d: 38
 R3: 5
 R4: 0
 R5: 0
@@ -464,8 +466,32 @@ R10: 12
 R11: 0
 R12a: 70
 R12b: 66
-R12c: 40
+R12c: 41
 ```
+
+## R2c/R2d/R12c 基线上调注记（plan 2026-08-20-0518-3，RC-R1.89 hr 薪酬计提过账接线）
+
+新增站点全部位于 `module-hr/erp-hr-service/.../posting/SalaryPostingDispatcher.java`（新编排 Bean
+`ErpHrSalaryPostApprovalProcessor` 零 daoFor/零 import 命中），per-site 证据：
+
+1. **R2c +1 / R2d +1（daoFor(ErpFinVoucherBillR) + daoFor(ErpFinVoucher)，alreadyPosted 去重守卫）**：
+   D3 去重守卫的 (billCode, businessType) → POSTED 未冲销凭证反查——逐行镜像引擎
+   `ErpFinPostingProcessor.alreadyPosted:488-500` + `findBillLinks:944-950` 既有范式（跨域只读反查，
+   非业务实体 CRUD 管道；资产域 TestErpAst* 同型只读反查已登记先例）。
+2. **R2c +1 / R2d +1 / R12c +1（daoFor(ErpMdAcctSchema) + import AcctSchemaResolver，applyOrgAndSchema）**：
+   组织/账套/本位币解析补齐——逐行镜像 assets 域全部 8 个 PostingDispatcher 的
+   `event.setAcctSchemaId(AcctSchemaResolver.resolvePrimarySchemaId(daoProvider, orgId))` 既有范式
+   （`DepreciationPostingDispatcher:149,195` 等，属既有 R2d=37/R12c=40 站点同型）；无此前置引擎对
+   null acctSchemaId 静默零凭证（280 既有路径同患潜伏缺口，G3 吞异常使不可观测）。
+3. **R2c −1（daoFor(ErpHrEmployee) 两处收敛为一处 findEmployee）**：resolveDepartmentId/
+   resolveCostCenterId 重复 daoFor 合并——净减站点。
+
+净漂移：R2c +2（VoucherBillR +1 / Voucher +1 / ErpMdAcctSchema +1 / ErpHrEmployee 收敛 −1）、
+R2d +1（ErpMdAcctSchema 解析站点——VoucherBillR/Voucher 为 ErpFin* 非 ErpMd*，计入 R2c 不计入 R2d）、
+R12c +1（AcctSchemaResolver import）。
+均为已裁决范式的镜像站点（引擎 alreadyPosted + assets AcctSchemaResolver），随本计划闭包裁决性上调
+BASELINE 块（R2c 1505→1507 / R2d 37→38 / R12c 40→41），对齐 `2026-07-31-1705-2` 基线裁决纪律
+（per-site 证据 + 显式更新 BASELINE 块）。checker 复跑 actual == baseline（零裸漂移）。
 
 ## R2c 基线上调注记（plan 2026-08-16-2043-1，RC-R1.61 项目物料归集）
 
