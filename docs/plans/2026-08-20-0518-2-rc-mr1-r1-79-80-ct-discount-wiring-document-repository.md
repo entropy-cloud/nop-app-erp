@@ -1,6 +1,6 @@
 # 2026-08-20-0518-2-rc-mr1-r1-79-80-ct-discount-wiring-document-repository contract 量折扣消费接线 + 文档仓库引擎
 
-> Plan Status: active
+> Plan Status: completed
 > Mission: requirement-compliance
 > Work Item: RC-R1.79（P1-RC-078，UC-CT-08 A）+ RC-R1.80（P1-RC-079，UC-CT-10 A/B/C/D）
 > Last Reviewed: 2026-08-20
@@ -58,102 +58,102 @@
 
 ### Phase 1 - RC-R1.79 折扣消费接线
 
-Status: planned
+Status: completed
 Targets: `module-purchase/`、`module-sales/`（order line 载体 + 消费接线）+ `module-contract/`（IBiz 契约/i18n 如有增量）+ matrix 登记
 Skill: nop-backend-dev
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: 无
 
-- [ ] Decision: D1 合同行引用载体——候选：a) `ErpPurOrderLine` + `ErpSalOrderLine` 加可空 `ctContractLineId` 列（可空无默认无索引无 UK，跨模块 to-one 外部实体声明 + matrix §5.6.2/§2.4 边登记）；b) 头级 ctContractId + 行按物料匹配合同行（弱于 L1「按行引用」粒度）；c) 弱指针 remark 约定（不可查询，否决）。**B 类裁决「不需要 ORM」的理由已被实仓证据超越**——订单行/头现无任何 ErpCt 引用载体（A4.2.161 + 本计划基线核验），无载体则 resolveDiscount 无输入，a) 为唯一可行粒度；Q3 纯加性常设批量授权（`ai-autonomy-policy.md` 登记）覆盖该加列形态，越界回落双独立子 agent 批准条款备而不期。裁决记录选择 + 替代方案 + 残留风险；若选 a) 须列级 DDL 三方言核验纯加性
+- [x] Decision: D1 合同行引用载体——**裁决选项 a**：`ErpPurOrderLine.ctContractLineId`（propId 25）+ `ErpSalOrderLine.ctContractLineId`（propId 103），均为可空 BIGINT 无默认无索引无 UK（DDL 三方言核验：9 SQL 文件 61 行纯插入零删除，`CT_CONTRACT_LINE_ID BIGINT NULL` 三方言一致）；跨模块 to-one 载体 = 机制 B notGenCode 外部实体 `ErpCtContractLine`（biz:moduleId="erp/ct"，pur/sal orm.xml 各 1 声明，实体类由 ct-dao 生成，pur/sal-dao 增 ct-dao compile 依赖支撑生成 getter 编译）。替代方案否决：b) 头级引用弱于 L1「按行引用」粒度；c) remark 弱指针不可查询。残留风险：合同行删除/换版后悬空引用无 FK 约束（对齐既有 projects 引用同型风险，运营侧约定）。授权：Q3 纯加性常设批量授权（可空无默认无索引无 UK 逐项满足）+ B 类预授权（resolveDiscount 消费调用），双独立子 agent 批准条款未触发（未越 Q3 边界）
       - Skill: nop-backend-dev
-- [ ] Decision: D2 应用点与重算时机——候选：a) defaultPrepareSave/Update fill-when-absent（保存时解析折后价写行金额）+ approve 重算守卫（数量变更后以 approve 时点为准）；b) 仅 approve 时应用。与 sales 既有价格链（applyPricingRules/促销 + master-data 取价）的优先级语义：显式合同行引用优先于促销/目录价（记录于 owner doc）
-  - Skill: nop-backend-dev
-- [ ] Decision: D3 config 门控与默认值——`erp-pur.ct-discount-enabled` / `erp-sal.ct-discount-enabled` 默认值裁决（候选 true 对齐 R1.57 auto-assign 先例 vs false 保守）；关闭时引用字段仅存储不应用折扣
-  - Skill: none
-- [ ] Add: pur/sal-service pom 增 erp-ct-dao compile（+ erp-ct-service test 挂载，镜像 R1.61 projects 先例）+ matrix §2.4 Java 层边登记（pur→ct / sal→ct 单向）
-  - Skill: none
-- [ ] Add: 订单行消费接线——引用合同行的行调 `IErpCtVolumeDiscountBiz.resolveDiscount`（qty=行数量，unitPrice=合同行价或订单价经 D2 裁决）计算折后价/discountAmount；无命中回退原价；折扣来源 remark/pricingSource 标记（对齐 P2-RC-023 赠品标记范式）
-  - Skill: nop-backend-dev
-- [ ] Proof: `TestErpPurOrderCtDiscount` + `TestErpSalOrderCtDiscount`——命中区间/覆盖价/无命中回退/数量跨档重算/approve 重算/config 关闭零应用/GraphQL 冒烟
-  - Skill: nop-testing
+- [x] Decision: D2 应用点与重算时机——**裁决选项 a**：defaultPrepareSave/Update fill-when-absent（行级 BizModel + 订单头 BizModel 嵌套子表路径双钩子）+ approve 时点重算守卫（`recalcCtDiscountForApprove` protected step，数量变更后以 approve 时点为准；sales 侧重算先于信用额度/可用量校验保证口径一致，purchase 侧接 `ErpPurOrderApproveProcessor.validateBusinessRules`）。**折扣基数 = 合同行单价 `ctContractLine.unitPrice`（ORM to-one getter，缺失回退订单行现价）**——稳定基数使 save/approve 重复解析无二次折扣；无命中回退原价（行零改写）。sales 优先级语义：显式合同行引用优先于促销/目录价——`persistPricingResult` 跳过 ctContractLineId 非空行的促销改写（促销不叠加）。折后价表达：purchase 行 unitPrice ← 折后价 + remark `[CT_VOLUME_DISCOUNT]节省X` 幂等标记（行无 pricingSource 列，P2-RC-023 范式 remark 载体）；sales 行 unitPrice ← 折后价 + discountRate（隐含率）/discountAmount（基数口径节省额，可见性载体不参与净额减扣）/pricingSource=`CT_VOLUME_DISCOUNT`
+      - Skill: nop-backend-dev
+- [x] Decision: D3 config 门控与默认值——**裁决默认 true**：`erp-pur.ct-discount-enabled` / `erp-sal.ct-discount-enabled`（`ErpPurConstants.CONFIG_CT_DISCOUNT_ENABLED` / `ErpSalConstants.CONFIG_CT_DISCOUNT_ENABLED`）。理由：对齐 ct 侧 owner doc §配置点 `erp-ct.volume-discount-enabled` 默认 true（同一能力两半的开关语义应一致）+ R1.57 auto-assign 先例；关闭时 ctContractLineId 仅存储不应用（测试断言零改写）。ct 侧聚合键 `erp-ct.volume-discount-enabled` 不叠加消费（避免双门控混淆，登记于 volume-discount.md 注记）
+      - Skill: none
+- [x] Add: pur/sal-service pom 增 erp-ct-dao compile（+ erp-ct-service test 挂载，镜像 R1.61 projects 先例）+ matrix §2.4 Java 层边登记（pur→ct / sal→ct 单向）——**已落地**：pur/sal-service pom ct-dao compile + ct-service test；pur/sal-dao pom ct-dao compile（notGenCode getter 编译需要）；matrix §2.4 增 pur-service→ct-dao / sal-service→ct-dao 两行（Maven 菱形非环披露，镜像 assets↔mnt 先例）+ §5.6.2 purchase/sales 行 pur 59/13、sal 56/12（`cross-module-dep-extract.py` 机器核验 640 to-one/113 external 全量同步）+ §6 contract 行 P 反查入口登记
+      - Skill: none
+- [x] Add: 订单行消费接线——`ErpPurCtDiscountApplier` / `ErpSalCtDiscountApplier`（@Nullable IErpCtVolumeDiscountBiz 注入容错，ct 模块缺失跳过）：qty=行数量、unitPrice=D2 裁决合同行价基数；命中 → 折后价/行金额/税额随动（purchase 税额外价 amount×rate/100 scale2 对齐 RequisitionToOrderConverter；sales 价税分离 net×rate/(1+rate) 对齐 recomputeLineAmount）+ approve 重算含头合计 Σ 重算（`recomputeOrderTotals`）；无命中回退原价；折扣来源标记（remark/pricingSource per D2）；beans.xml 注册两 applier
+      - Skill: nop-backend-dev
+- [x] Proof: `TestErpPurOrderCtDiscount`（6 组：命中区间 95/28500/头合计/remark 标记、覆盖价 88/52800、无命中回退 90/4500、数量跨档 90→300 approve 重算、config 关闭零应用、行级 GraphQL 保存即应用）+ `TestErpSalOrderCtDiscount`（6 组镜像：命中 95/28500/discountRate 5%/discountAmount 1500/pricingSource/头合计、覆盖价 88/52800/7200、无命中回退、跨档重算、config 关闭、行级 GraphQL）——**全绿**；erp-pur-service 334 tests / erp-sal-service 309 tests 零回归
+      - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] 引用合同行的订单行按数量匹配折扣率计算折后价（成功/回退两模式断言）；config 关闭零行为变化（既有 pur/sal 测试零回归）
-- [ ] pur/sal→ct 依赖边落 matrix 登记；D1-D3 裁决落盘
+- [x] 引用合同行的订单行按数量匹配折扣率计算折后价（成功/回退两模式断言）；config 关闭零行为变化（既有 pur/sal 测试零回归——pur 334 / sal 309 全绿）
+- [x] pur/sal→ct 依赖边落 matrix 登记；D1-D3 裁决落盘
 
 ### Phase 2 - RC-R1.80 legalHold ORM + Legal Hold 守卫
 
-Status: planned
+Status: completed
 Targets: `module-contract/erp-ct-dao/`（orm.xml + 增量重生成）+ 守卫接线
 Skill: nop-backend-dev
 
 - Item Types: `Add | Decision`
 - Prereqs: 无（与 Phase 1 可并行）
 
-- [ ] Add: `ErpCtDocument.legalHold` 纯加性列（可空无默认无索引无 UK；A 类批量授权 2026-08-12「contract: RC-R1.80」；`mvn clean install -DskipTests` 增量重生成 + DDL 三方言核验）
+- [x] Add: `ErpCtDocument.legalHold` 纯加性列（可空无默认无索引无 UK；A 类批量授权 2026-08-12「contract: RC-R1.80」；`mvn clean install -DskipTests` 增量重生成 + DDL 三方言核验）——已落地核验：orm.xml:725 propId 27 + 三方言 DDL（mysql `LEGAL_HOLD BOOLEAN NULL` / oracle `LEGAL_HOLD CHAR(1)` + COMMENT / postgresql `legal_hold BOOLEAN`）+ `_ErpCtDocument.java`/xmeta/api beans/i18n 生成物全同步
       - Skill: none
-- [ ] Add: Legal Hold 守卫——`legalHold=true` 阻止所有归档/销毁操作（域错误码如 `ERR_CT_DOCUMENT_LEGAL_HOLD`）；归档文档只读守卫（归档后禁改，owner doc「归档后不可修改」）；ACTIVE 合同文档不归档守卫
+- [x] Add: Legal Hold 守卫——`legalHold=true` 阻止所有归档/销毁操作（域错误码如 `ERR_CT_DOCUMENT_LEGAL_HOLD`）；归档文档只读守卫（归档后禁改，owner doc「归档后不可修改」）；ACTIVE 合同文档不归档守卫——`ErpCtDocumentBizModel`：archive 三守卫（legalHold/ACTIVE/已归档幂等）+ defaultPrepareUpdate 归档只读（ORM 脏值取旧值，对齐 InvoicePlan 守卫范式；legalHold 合规字段 admin 例外放行）+ defaultPrepareDelete（legalHold/已归档双阻断）+ generic 管道携带 legalHold 防绕过角色守卫；错误码 ERR_CT_DOCUMENT_LEGAL_HOLD / ERR_CT_DOCUMENT_ARCHIVED_IMMUTABLE / ERR_CT_DOCUMENT_CONTRACT_ACTIVE / ERR_CT_DOCUMENT_ROLE_REQUIRED / ERR_CT_DOCUMENT_NOT_FOUND 落 ErpCtErrors
   - Skill: nop-backend-dev
-- [ ] Decision: legalHold 设置权限面——owner doc「admin 手动设置」：裁决载体（@BizMutation + 角色守卫 vs 仅 XMeta auth），记录选择
+- [x] Decision: legalHold 设置权限面——owner doc「admin 手动设置」：裁决载体 = **@BizMutation + Java 角色守卫**（`IUserContext.isUserInRole(roleId)` fail-closed，镜像 hr ERR_MAKEUP_ROLE_REQUIRED 范式；roleId=`admin` 对齐 nop_auth_role.csv 种子）。否决仅 XMeta auth：action-auth 在测试 enableActionAuth=FALSE 下不可断言，不能作唯一守卫。generic save/update 携带 legalHold 字段同守卫面（防绕过专用入口）
   - Skill: none
 
 Exit Criteria:
 
-- [ ] legalHold=true 时归档/销毁被拒（错误码断言 + 零状态变更）；守卫测试通过
+- [x] legalHold=true 时归档/销毁被拒（错误码断言 + 零状态变更）；守卫测试通过——`TestErpCtDocumentGuards` 4 组全绿（legalHold 阻归档+删除 / 角色守卫双侧+防绕过 / 归档只读+admin 合规例外 / ACTIVE 阻断+EXPIRED 放行+幂等）；erp-ct-service 150 tests 零回归
 
 ### Phase 3 - RC-R1.80 OCR 状态机 + SPI + fullTextSearch + 全文搜索
 
-Status: planned
+Status: completed
 Targets: `module-contract/erp-ct-service/`（OCR SPI + Processor + 搜索 @BizQuery）+ `module-contract/erp-ct-meta/`（dict 物化）+ `module-contract/erp-ct-web/`（ErpCtDocument.view.xml 搜索表单）
 Skill: nop-backend-dev
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 2（legalHold 列与守卫先落位——搜索过滤含归档态、状态机测试依赖 legalHold 守卫面）
 
-- [ ] Decision: D1 OCR 引擎载体——`IErpCtOcrEngine` SPI（输入文档/文件引用 → 输出文本）+ 默认实现（零依赖手动/无操作识别器，ocrText 人工补录通道）+ 注册机制（beans.xml collect-beans，镜像 MockSignatureProvider 先例）；状态机 PENDING→PROCESSING→COMPLETED/FAILED（dict `erp-ct/ocr-status` 随本计划物化，见下项）+ 失败原因记录 + 人工重新提交 OCR mutation + 手动补录 ocrText mutation（补录等同 COMPLETED 语义裁决）
+- [x] Decision: D1 OCR 引擎载体——**裁决**：`IErpCtOcrEngine` SPI（`spi/model/OcrRecognizeRequest|Response` DTO）+ `ErpCtOcrEngineRegistry`（List 注入 + 内部建图，镜像 MockSignatureProvider/SignatureProviderRegistry 先例；config `erp-ct.ocr-engine` 选型默认 manual）+ `ManualOcrEngine`（engineCode="manual"，零依赖无操作识别器——识别恒 FAILED 引导人工补录 ocrText）；状态机 PENDING→PROCESSING→COMPLETED/FAILED（PROCESSING 拒绝并发提交，FAILED/COMPLETED 可重跑）+ 失败原因记 remark + `startOcr` 人工重新提交 mutation + `submitOcrText` 补录 mutation（**补录等同 COMPLETED 语义裁决**——ocrStatus 置 COMPLETED + fullTextSearch 重建）；接口方法参数 @Optional（GraphQL 可空过滤参数，@BizQuery 空参可路由）
       - Skill: nop-backend-dev
-- [ ] Add: dict 物化——`erp-ct/ocr-status`（PENDING/PROCESSING/COMPLETED/FAILED，对齐 owner doc :81）与 `erp-ct/doc-type`（**规范值集 = owner doc :73-79 完整 5 值表：CONTRACT_SCAN 10 / AMENDMENT 20 / ATTACHMENT 30 / CERTIFICATE 40 / OTHER 90**）两 dict yaml 落 erp-ct-meta（R1.81 物化 `erp-inv/drp-lt-flag` 先例）+ ocrStatus/docType 列 dict tag 接线
+- [x] Add: dict 物化——`erp-ct/ocr-status`（PENDING/PROCESSING/COMPLETED/FAILED，对齐 owner doc :81）与 `erp-ct/doc-type`（规范值集 = owner doc :73-79 完整 5 值表：CONTRACT_SCAN 10 / AMENDMENT 20 / ATTACHMENT 30 / CERTIFICATE 40 / OTHER 90）两 dict yaml 落 erp-ct-meta（R1.81 物化 `erp-inv/drp-lt-flag` 先例）+ ocrStatus/docType 列 dict tag 接线——已落地核验：orm.xml:100/:108 dict 定义 + 列 ext:dict 接线（orm.xml:702/:708）+ 生成 dict yaml 两文件 + `_ErpCtDaoConstants` OCR_STATUS_*/DOC_TYPE_* 常量全同步
   - Skill: none
-- [ ] Add: fullTextSearch 构建接线——上传/OCR 完成/补录/metadataTags 变更时重建 `fullTextSearch = docName + ocrText + code + metadataTags 关键值` 拼接（owner doc §索引策略公式）
+- [x] Add: fullTextSearch 构建接线——上传/OCR 完成/补录/metadataTags 变更时重建 `fullTextSearch = docName + ocrText + code + metadataTags 关键值` 拼接（owner doc §索引策略公式）——`rebuildFullTextSearch`（空白分段跳过 + metadataTags 解析 JSON 取键值对 + 非 JSON 原文 + 上限 4000 对齐列宽）；defaultPrepareSave 初始构建 + defaultPrepareUpdate 源字段触及重建 + OCR 完成/补录路径重建；上传缺省填充同落（ocrStatus=PENDING + retentionDate/purgeDate 按 config 年限 fill-when-absent）
   - Skill: nop-backend-dev
-- [ ] Add: 全文 + 高级搜索 @BizQuery——实现过滤集：keyword→fullTextSearch LIKE + code 精确 + docType + contractId + 上传日期范围 + OCR 状态 + 归档（共 7 类，L1「全文搜索**或**高级过滤器」析取满足；owner doc 9 行过滤器表余下文件大小范围/元数据标签键值对按 Deferred 登记）
+- [x] Add: 全文 + 高级搜索 @BizQuery——实现过滤集：keyword→fullTextSearch LIKE + code 精确 + docType + contractId + 上传日期范围 + OCR 状态 + 归档（共 7 类，L1「全文搜索**或**高级过滤器」析取满足；owner doc 9 行过滤器表余下文件大小范围/元数据标签键值对按 Deferred 登记）——`searchDocuments` @BizQuery 返回 `DocumentSearchResult` wrapper；contains/ge/le 过滤运算符经保留层 xmeta `allowFilterOp` 覆盖开放（fullTextSearch + createTime，生成层默认仅 eq/in/dateBetween 不满足 keyword/日期范围语义）
   - Skill: nop-backend-dev
-- [ ] Add: `ErpCtDocument.view.xml` 搜索表单最小接线（keyword 输入 + docType/OCR 状态/归档过滤 + 结果列表列扩展 fullTextSearch 摘要/ocrStatus/归档态）
-  - Skill: nop-frontend-dev
-- [ ] Proof: `TestErpCtDocumentRepository`——OCR 状态机全迁移/失败重试/手动补录/fullTextSearch 拼接断言/keyword+过滤组合搜索/归档文档可搜索不可修改
-  - Skill: nop-testing
+- [x] Add: `ErpCtDocument.view.xml` 搜索表单最小接线（keyword 输入 + docType/OCR 状态/归档过滤 + 结果列表列扩展 fullTextSearch 摘要/ocrStatus/归档态）——query form 增 fullTextSearch[keyword] filterOp=contains + ocrStatus 单元格；grid bounded-merge 收敛为核心列 + ocrStatus/fullTextSearch/isArchived/retentionDate/archiveDate/purgeDate
+      - Skill: nop-frontend-dev
+- [x] Proof: `TestErpCtDocumentRepository`——OCR 状态机全迁移/失败重试/手动补录/fullTextSearch 拼接断言/keyword+过滤组合搜索/归档文档可搜索不可修改——9 组全绿：上传缺省填充（PENDING+retentionDate 2036-07-17+purgeDate 2056-07-17+fullText 含 metadataTags 键值）/手工保留期覆盖/manual FAILED+remark/FAILED→test-fixed 引擎重试 COMPLETED+ocrText+fullText 重建/PROCESSING 拒绝并发/补录 COMPLETED 语义/7 类过滤组合+日期范围/归档可搜索不可修改/RPC 冒烟（FixedTextOcrEngine 经 test-mock.beans.xml 注册 nop test-mock 范式）
+      - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] 上传→OCR（默认引擎）→fullTextSearch 构建→keyword 搜索全链断言；FAILED→人工补录→COMPLETED 语义断言
-- [ ] 两 dict 物化且 ocrStatus/docType 列 dict tag 生效；erp-ct-service 既有测试零回归
+- [x] 上传→OCR（默认引擎）→fullTextSearch 构建→keyword 搜索全链断言；FAILED→人工补录→COMPLETED 语义断言
+- [x] 两 dict 物化且 ocrStatus/docType 列 dict tag 生效；erp-ct-service 既有测试零回归（159 tests 全绿 = 150 既有 + 4 Phase 2 守卫 + 9 本阶段——其中既有 150 含新增 4 守卫后基线）
 
 ### Phase 4 - RC-R1.80 保留策略归档/销毁 + 数据删除双批准
 
-Status: planned
+Status: completed
 Targets: `module-contract/erp-ct-service/`（归档/销毁编排 + job）+ config + owner doc
 Skill: nop-backend-dev
 
 - Item Types: `Decision | Add | Proof`
 - Prereqs: Phase 2（legalHold 守卫先行）
 
-- [ ] Decision: D4 销毁语义（**数据删除保护区域——须双独立子 agent 批准**，批准记录落盘本计划）——候选：a) 逻辑删除（delVersion 软删 + 审计 remark/notification 记录销毁事件，owner doc「软删除或真实删除」左支；推荐）；b) 物理 DELETE（owner doc「完全清除」右支）。裁决记录选择 + 批准双 session id；`doc-auto-purge` 默认 false 人工确认语义保持
+- [x] Decision: D4 销毁语义（**数据删除保护区域——须双独立子 agent 批准**，批准记录落盘本计划）——**裁决选项 a 逻辑删除**：`purge` = delVersion 软删（useLogicalDelete 既有机制，行从全部常规查询消失）+ 销毁前审计（行内 remark 销毁事件[操作人/日期] **耐久载体**——不依赖可静默跳过的通知 + `ct.document-purged` 通知 best-effort R1.4 范式）；物理 DELETE 为显式 successor（触发 = 合规要求真实擦除的部署）。**双独立子 agent 批准（fresh session，互不共享执行者上下文）：APPROVED ses_fe312b7c5ffe8EW1Va8o42aJZ2（2026-08-20）+ APPROVED ses_fe312882dffeVh8nosoYox3lGN（2026-08-20）**，两批准附加条件全数落位：① purge 五守卫（admin 角色 fail-closed[人工销毁入口] / legalHold / 已归档[生命周期顺序] / **ACTIVE 合同[覆盖 SUSPENDED→ACTIVE 与 rejectAmend 重激活路径]** / **purgeDate 到达[保留义务禁提前销毁——提前销毁无通道，successor]**）；② 耐久审计不依赖通知（remark 行内 + 软删行自身）；③ 销毁专用通道独立于 generic delete（defaultPrepareDelete 双阻断保持，purge 为唯一合法销毁入口）；④ 不暴露通用 delVersion 恢复入口；⑤ 测试含 recoverability[disableLogicalDelete 复核 delVersion>0]/无模板静默跳过/mutation+job 双路径守卫断言；⑥ owner doc 回填 D4 裁决 + successor 触发条件。`doc-auto-purge` 默认 false 人工确认语义保持（manual purge mutation = 人工确认通道，同样要求 purgeDate 到达）
       - Skill: none
-- [ ] Add: 保留策略编排——retentionDate 到达→自动归档（isArchived=true + archiveDate，config `doc-auto-archive` 门控）+ 归档只读 + ACTIVE 合同不归档守卫接线；retentionDate/purgeDate 缺省填充（上传时按 config 年限推算，可手工覆盖）；「合同终止后起算」自动重算 successor 登记
+- [x] Add: 保留策略编排——retentionDate 到达→自动归档（isArchived=true + archiveDate，config `doc-auto-archive` 门控）+ 归档只读 + ACTIVE 合同不归档守卫接线；retentionDate/purgeDate 缺省填充（上传时按 config 年限推算，可手工覆盖）；「合同终止后起算」自动重算 successor 登记——`archiveOverdueDocuments`/`purgeOverdueDocuments` @BizMutation 批量入口（dateBetween 表达 ≤today 对齐 expireOverdueContracts 注记 + 单条失败隔离 + 复用 archive/purge mutation 守卫）；缺省填充在 Phase 3 defaultPrepareSave 已落（fill-when-absent）；endDate 联动起算 successor 已登记 contract-repository.md 实现注记
   - Skill: nop-backend-dev
-- [ ] Add: nop-job 归档/销毁扫描（`erp-ct-doc-retention.job.yaml` + simple job bean，R1.37 范式：enabled 默认 false + cron 键 + 逐条失败隔离 + legalHold/ACTIVE 守卫短路 + 销毁前审计记录）
+- [x] Add: nop-job 归档/销毁扫描（`erp-ct-doc-retention.job.yaml` + simple job bean，R1.37 范式：enabled 默认 false + cron 键 + 逐条失败隔离 + legalHold/ACTIVE 守卫短路 + 销毁前审计记录）——`ErpCtDocRetentionJob`（cron 单键 `erp-ct.doc-retention-cron` 空值不调度 + doc-auto-archive 默认 true / doc-auto-purge 默认 false 双行为门控 + runInSession 包裹 IBiz 调用对齐 expiry job 范式）+ beans.xml 注册 + TestErpAllJobYamlLoading 32→33 计数更新通过
   - Skill: none
-- [ ] Add: owner doc 回填——contract-repository.md 实现注记（SPI 载体/搜索实现/软删裁决 D4/自动起算 successor）；volume-discount.md §折扣应用实现注记（D1-D3 + 消费面）；purchase/sales README 衔接注记；arm-index P1-RC-078 / P1-RC-079 → done
+- [x] Add: owner doc 回填——contract-repository.md 实现注记（SPI 载体/搜索实现/软删裁决 D4/自动起算 successor）；volume-discount.md §折扣应用实现注记（D1-D3 + 消费面）；purchase/sales README 衔接注记；arm-index P1-RC-078 / P1-RC-079 → done
   - Skill: none
-- [ ] Proof: `TestErpCtDocRetention`——到期归档/legalHold 阻断归档+销毁/ACTIVE 阻断/purge 逻辑删除或物理删除断言（按 D4）/审计记录/config 关闭零动作/job 幂等
-  - Skill: nop-testing
+- [x] Proof: `TestErpCtDocRetention`——到期归档/legalHold 阻断归档+销毁/ACTIVE 阻断/purge 逻辑删除或物理删除断言（按 D4）/审计记录/config 关闭零动作/job 幂等——9 组全绿：到期归档+未到期零动作 / auto-archive off 零动作 / legalHold 双阻断[归档+销毁行仍可见] / ACTIVE 阻断+EXPIRED 对照 / D4 逻辑删除[常规查询消失 + disableLogicalDelete 复核 delVersion>0 软删行仍在 + remark 销毁事件含操作人 + 审计通知 1 条] / 无模板静默跳过不阻断 / purge 守卫三拒[未归档/purgeDate 未到/非 admin 角色] + 拒绝路径零状态变更 / auto-purge off 不销毁 / job 幂等 + cron 空值跳过
+      - Skill: nop-testing
 
 Exit Criteria:
 
-- [ ] 归档/销毁全链断言（含守卫三阻断路径）；D4 双独立子 agent 批准记录落盘
-- [ ] config 四键 + job 键登记 `ErpCtConfigs`；TestErpAllJobYamlLoading 计数更新通过
+- [x] 归档/销毁全链断言（含守卫三阻断路径）；D4 双独立子 agent 批准记录落盘（双 APPROVE session id 见 Decision 项）
+- [x] config 四键 + job 键登记 `ErpCtConfigs`（CFG_DOC_RETENTION_YEARS/CFG_DOC_ARCHIVE_YEARS/CFG_DOC_AUTO_ARCHIVE/CFG_DOC_AUTO_PURGE/CFG_DOC_RETENTION_CRON + CFG_OCR_ENGINE）；TestErpAllJobYamlLoading 计数更新通过（32→33）
 
 ## Draft Review Record
 
@@ -164,16 +164,16 @@ Exit Criteria:
 
 > 完整仓库验证一次：`mvn clean install -DskipTests`（含 ORM 增量重生成）+ `mvn test`（分域聚焦 pur/sal/ct + 全仓）+ compliance checker（actual ≤ baseline；Q3/A 类加列与新增站点若触发 baseline-raise 须 per-site 证据落 `docs/audits/compliance-baseline.md`）。
 
-- [ ] 范围内行为完成（UC-CT-08 A 折扣应用 + UC-CT-10 A/B/C/D）
-- [ ] 相关文档对齐（contract-repository.md / volume-discount.md / purchase+sales README / arm-index）
-- [ ] 已运行验证（分域 test + 全仓 install/test + checker）
-- [ ] 无范围内项目降级为 deferred/follow-up
-- [ ] D4 数据删除双独立子 agent 批准记录落盘
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计
-- [ ] 结束证据存在于文件中
-- [ ] `docs/logs/2026/08-20.md` 日志条目
+- [x] 范围内行为完成（UC-CT-08 A 折扣应用 + UC-CT-10 A/B/C/D）——Phase 1 前次 run 落地本 run 核验 + Phase 2-4 本 run 落地，守卫/状态机/搜索/保留/销毁全链行为经 22 新增测试断言
+- [x] 相关文档对齐（contract-repository.md / volume-discount.md / purchase+sales README / arm-index）——§实现注记四份 + arm-index P1-RC-078/079 → done + roadmap RC-R1.79/80 → done ✅
+- [x] 已运行验证（分域 test + 全仓 install/test + checker）——`mvn clean install -DskipTests` 156 模块 BUILD SUCCESS（1:49）+ 分域 erp-ct-service 168/0/0 + erp-pur-service 334/0/0 + erp-sal-service 309/0/0 + 全仓 `mvn test` BUILD SUCCESS **3784/0/0/1**（surefire XML 权威计数 613 文件；唯一 skip = 已知 @Disabled ErpAllWebPagesCollectTest）+ checker 19 规则 actual==baseline 零漂移 EXIT=0（零 baseline-raise）
+- [x] 无范围内项目降级为 deferred/follow-up——Deferred But Adjudicated 五项均为草案审查期预裁决（真实 OCR 引擎/审计锁定期/两过滤器/endDate 起算/全文索引化），执行期零新增降级
+- [x] D4 数据删除双独立子 agent 批准记录落盘（Phase 4 Decision 项：APPROVED ses_fe312b7c5ffe8EW1Va8o42aJZ2 + APPROVED ses_fe312882dffeVh8nosoYox3lGN，附加条件六项全数落位）
+- [x] 独立草案审查已完成并记录（Draft Review Record 2 轮收敛：iteration 1 needs revision → iteration 2 acceptable as-is）
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致（四 Phase Status=completed + 全部 Exit Criteria [x] + 本 Gates 全 [x] + docs/logs/2026/08-20.md 条目）
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计——独立结束审计 CLOSURE VERDICT: PASS（ses_fe2f31a8bffe21NMblwdRYwiJQ，2026-08-20，六项检查全 PASS 零 blocker）
+- [x] 结束证据存在于文件中（本节 + Closure Audit Evidence + 日志条目 + D4 批准记录）
+- [x] `docs/logs/2026/08-20.md` 日志条目
 
 ## Deferred But Adjudicated
 
@@ -209,13 +209,18 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: （结束时填写）
+Status Note: 全四 Phase 落地并勾选（Phase 1 前次 run 落地本 run 核验；Phase 2-4 本 run 落地，含 D4 数据删除保护区域双独立子 agent 批准）。全仓验证全绿：install 156 模块 + 全 reactor test 3784/0/0/1 + checker 零漂移。独立结束审计（新会话）CLOSURE VERDICT: PASS，六项检查（Phase 证据/traceability/文本一致性/验证证据/反松弛/已知失败模式）全 PASS 零 blocker。
 
 Closure Audit Evidence:
 
-- Auditor / Agent: <independent auditor or independent subagent>
-- Evidence: <task id / log link / walkthrough record>
+- Auditor / Agent: 独立结束审计子代理（fresh session，ses_fe2f31a8bffe21NMblwdRYwiJQ，2026-08-20）
+- Evidence: 审计走查记录（六项 checklist 全 PASS：Phase 1-4 逐文件存在性 + file:line 证据[pur orm.xml:642/sal orm.xml:414/legalHold orm.xml:725/DDL 三方言/guards BizModel:119-405/purge 五守卫:150-168/config 六键/job yaml/owner docs 四份] + arm-index:264-265 done + roadmap:471-472 done + 文本一致性 + 日志条目 + 反松弛零新增降级 + @Inject private 零命中 + 生成物 diff 纯 regen 风格）；D4 双批准 ses_fe312b7c5ffe8EW1Va8o42aJZ2 / ses_fe312882dffeVh8nosoYox3lGN 落盘 Phase 4；验证计数 ct 168 / pur 334 / sal 309 / 全仓 3784/0/0/1（surefire XML）+ checker EXIT=0
 
 Follow-up:
 
 - 真实 OCR 引擎 SPI 实现 successor（部署选型触发）
+- 物理 DELETE successor（合规要求真实擦除的部署触发）
+- 审计锁定期销毁守卫 successor（审计锁定载体落地触发）
+- 保留起算 endDate 联动重算 successor（合同终止/到期自动化运营化触发）
+- 高级搜索文件大小范围/元数据标签键值对过滤器（运营要求触发，加性追加）
+- 全文索引化 DB FULLTEXT/Elasticsearch（文档量级使 LIKE 不可用触发）

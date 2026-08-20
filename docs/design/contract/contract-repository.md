@@ -248,6 +248,16 @@ fullTextSearch = concat(
 | 保留策略 | 🟢 | SAP CLM 生命周期管理 |
 | 高级搜索 | 🟢 | Elasticsearch / 数据库全文索引模式 |
 
+## 实现注记（RC-R1.80，plan 2026-08-20-0518-2）
+
+> 本节为 2026-08-20 落地实现与本文设计的对齐注记（owner doc 语义不变，登记实现载体与裁决）。
+
+- **OCR 引擎载体**：`IErpCtOcrEngine` SPI（engineCode 派发，config `erp-ct.ocr-engine` 默认 `manual`）+ `ErpCtOcrEngineRegistry`（collect-beans 建图，镜像签章 SPI 先例）+ `ManualOcrEngine` 零依赖基线（识别恒 FAILED 引导人工补录 `submitOcrText`——补录等同 COMPLETED 语义）。状态机 PENDING→PROCESSING→COMPLETED/FAILED 同步执行（PROCESSING 拒绝并发提交；FAILED 可人工重试；失败原因记 remark）。真实引擎（Tesseract/云 OCR/电子 PDF 文字层/OFD 解析）为部署 successor——实现 SPI 即插。
+- **搜索实现**：`searchDocuments` @BizQuery，keyword 经 `fullTextSearch` LIKE（contains）+ 6 类过滤器（code 精确/docType/contractId/上传日期范围/OCR 状态/归档）；未落 Elasticsearch/DB FULLTEXT 索引（跨方言 successor）；文件大小范围/元数据标签键值对两过滤器为加性 successor。`fullTextSearch` 构建公式 = docName + ocrText + code + metadataTags 键值对拼接（上限 4000 对齐列宽）。
+- **保留策略**：上传缺省填充 retentionDate = 上传日 + `erp-ct.doc-retention-years`（10）、purgeDate = retentionDate + `erp-ct.doc-archive-years`（20），fill-when-absent 可手工覆盖；到期扫描 job `erp-ct-doc-retention`（enabled 默认 false + `erp-ct.doc-retention-cron` 空值不调度 + `erp-ct.doc-auto-archive` 默认 true / `erp-ct.doc-auto-purge` 默认 false 需人工确认——人工通道 = `ErpCtDocument__purge` mutation[admin 角色 + 五守卫]）。「合同终止后（endDate）起算保留」的自动重算为 successor（当前 manual retentionDate 录入）。
+- **销毁语义（D4 裁决）**：`purge` = 逻辑删除（delVersion 软删，行从全部常规查询消失）+ 销毁前审计（行内 remark 销毁事件[操作人/日期] 耐久载体 + `ct.document-purged` 通知 best-effort）——owner doc「软删除或真实删除」左支；物理 DELETE 为显式 successor（触发：合规要求真实擦除的部署）。禁止提前销毁（purgeDate 未到拒绝）；不暴露通用恢复入口。「审计锁定期禁止销毁」无审计锁定载体输入面，watch-only residual（legalHold 为运营期替代）。
+- **Legal Hold**：`legalHold` 列（admin 经 `setLegalHold` 设置，Java 角色守卫 fail-closed）阻止所有归档/销毁；归档文档只读（generic update/delete 拒绝，legalHold 合规字段 admin 例外）；ACTIVE 合同文档不归档。
+
 ## 参考
 
 - `contract/README.md`（合同域概览）

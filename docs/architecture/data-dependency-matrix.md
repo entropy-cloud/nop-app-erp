@@ -136,6 +136,8 @@ L3 顶域（业财一体核心，被多业务域 S 写，不反向写业务）�
 | aps-service → notify-dao | `IErpSysNotificationBiz` 通知派发（UC-APS-01 工单下达无工艺路线/工作中心缺失告警 + UC-APS-07 缺料 ON_HOLD 通知计划员；无 ACTIVE 模板 config-gated 静默跳过，失败 try/catch 降级不阻断主流程） | RC-R1.86 + RC-R1.88（P1-RC-088/090） | 单向星型：notify-dao 是纯消费终点不反向依赖 aps，DAG 无环（对齐 cs/mfg/mnt→notify-dao 先例）；test scope 另挂 `app-erp-notify-service`（测试装配边）；aps-service 既有 mfg-dao/inv-dao compile 边（ATP/CTP 先例）本期新增只读消费方：`ErpApsWorkOrderToOperationProcessor` 读 mfg WorkOrder/RoutingOperation/Workcenter（D1 拉取模型）+ 派工引擎读 inv StockBalance（D5 裁决选项 A），均 `IDaoProvider` 只读直访（§9.4 mfg/inv 永久豁免目标域） |
 | mnt-service → mfg-dao | OEE 按需计算跨域只读（RC-R1.78 / UC-MAIN-10，plan `2026-08-20-0518-1`）：`OeeCalculator` 经 `IDaoProvider` 只读 mfg `ErpMfgJobCard`（workcenterId 桥接 + CANCELLED 排除）/ `ErpMfgJobCardTimeLog`（实际产量 = Σ 窗口报工 completedQuantity + 质量回退 scrappedQuantity）/ `ErpMfgWorkOrder`（弱指针 relatedBillCode 归因 + 产能产品匹配 productId）/ `ErpMfgWorkcenterCalendar`（计划运行时间 = 日历班次 − 停机，D1）/ `ErpMfgWorkcenterCapacity`（理论产量 = 标准产能 × 运行时间，D2），供 `ErpMntDashboardBizModel` computeOee/computeOeeList/getDashboardOeeKpi @BizQuery 消费 | RC-R1.78（P1-RC-071） | **mfg↔mnt 双向域耦合（显式披露，镜像 R1.77 assets↔mnt 先例）**：与既有 mfg-service→mnt-dao 边（RC-R1.76）构成 **Maven 菱形非环**（两 service 模块互不依赖，dao 层均无反向依赖，DAG 仍无环；test scope 互挂会成环故 mnt 侧不挂 mfg-service，跨域查询走 dao 直读）；mfg 是 §9.4 永久只读豁免目标域（governed-path eval §3.1 裁决分支 b），I*Biz 强注入破坏单模块测试启动；重构拆分须 mfg/mnt 两域协同 |
 | mnt-service → qa-dao | OEE 质量合格率分量跨域只读（RC-R1.78 / UC-MAIN-10）：`OeeCalculator` 经 `IDaoProvider` 只读 qa `ErpQaInspection`（result=ACCEPTED 批量按 `relatedBillType=ERP_MFG_WORK_ORDER` + `relatedBillCode ∈ 工单 code 集` 弱指针归因，inspectionDate ∈ 窗口；D3 主路径，零关联记录回退 mfg 报工数量） | RC-R1.78（P1-RC-071） | 单向只读：qa 不反向依赖 mnt（quality 被业务域引用不反向，§2.2），DAG 无环；qa 目标域不在 §9.4 清单但同属业务域只读豁免口径（读侧业务规则为空，与 mfg 同型），OEE 聚合消费不涉及 qa 写路径 |
+| pur-service → ct-dao | `IErpCtVolumeDiscountBiz.resolveDiscount`（订单行引用合同行时按实际数量匹配量折扣区间带计算折后价，UC-CT-08 A；消费点 = 订单行保存/更新 fill-when-absent + approve 时点重算（D2 裁决选项 a），折后价写行金额 + remark `[CT_VOLUME_DISCOUNT]` 标记；config `erp-pur.ct-discount-enabled` 默认 true 门控（D3 裁决），关闭时 ctContractLineId 仅存储不应用） | RC-R1.79（P1-RC-078） | 单向叶依赖（Java 层 + ORM notGenCode 双边）：ct 不反向依赖 purchase（ORM 层 contract 无 pur/sal to-one；Java 层 ct-service→pur-dao 为既有发票触发边，两 service 模块互不依赖，构成 Maven 菱形非环，对齐 §2.4 assets↔maintenance 披露先例），DAG 无环；contract 模块缺失时消费方 `@Nullable` 注入容错跳过；test scope 另挂 `app-erp-contract-service`（测试装配边，不计入生产依赖方向） |
+| sal-service → ct-dao | `IErpCtVolumeDiscountBiz.resolveDiscount`（同 RC-R1.79 采购侧镜像：销售订单行引用合同行量折扣，折后价写行金额 + discountRate/discountAmount/pricingSource=`CT_VOLUME_DISCOUNT` 标记（显式合同行引用优先于促销/目录价）；config `erp-sal.ct-discount-enabled` 默认 true 门控） | RC-R1.79（P1-RC-078） | 单向叶依赖（Java 层 + ORM notGenCode 双边）：语义同上 pur-service→ct-dao 行；与既有 ct-service→sal-dao 边构成 Maven 菱形非环；contract 模块缺失时 `@Nullable` 注入容错；test scope 另挂 `app-erp-contract-service`（测试装配边） |
 
 > mfg-service 对 mnt-dao 为 **test scope 另挂 `app-erp-maintenance-service`**（`TestErpMfgJobCardDowntimeGate` 需真实 BizModel Bean）；此为测试装配边，不计入生产依赖方向。
 
@@ -545,8 +547,8 @@ GROUP BY vl.subject.name
 | 业务域 | 引用的 master-data 表 | 跨业务域引用 | 跨模块 to-one / 外部实体声明（实测¹） |
 |---|---|---|---|
 | **inventory** | material / materialSku / warehouse / location / uom / currency / organization / acctSchema | — | 85 / 10 |
-| **purchase** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目采购成本） | 58 / 12 |
-| **sales** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目销售成本） | 55 / 11 |
+| **purchase** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目采购成本）+ **contract.ErpCtContractLine**（订单行 `ctContractLine`，RC-R1.79 量折扣消费输入，pur→ct 单向只读） | 59 / 13 |
+| **sales** | material / materialSku / partner / warehouse / uom / currency / organization / taxRate / settlementMethod / bankAccount | **projects.project**（订单/发票按 `projectId` 建 to-one 只读引用，归集项目销售成本）+ **contract.ErpCtContractLine**（订单行 `ctContractLine`，RC-R1.79 量折扣消费输入，sal→ct 单向只读） | 56 / 12 |
 | **finance** | subject / acctSchema / currency / partner / organization / warehouse / material | **projects.project**（凭证行辅助核算 projectId） | 103 / 12 |
 | **assets** | organization / currency / employee / location / materialCategory / subject | — | 50 / 6 |
 | **projects** | organization / currency / employee / partner / subject | — | 27 / 5 |
@@ -564,7 +566,7 @@ GROUP BY vl.subject.name
 
 > ¹ 实测值由 `docs/audits/scripts/cross-module-dep-extract.py` 机器核验（A1.10 闭合）。to-one 列含该域全部跨模块 `<to-one>`（含跨业务域 to-one，如 purchase→projects 2、sal→projects 1、fin→projects 6、hr→projects 2）；外部实体声明列为该域 `<entity notGenCode="true">` 计数。`master-data`/`notify` 无出向引用，故不在表（to-one=0 / 外部实体声明=0）。
 
-> **终态统计**（机器核验，A1.10 闭合）：17 个业务域（除 master-data 根域）orm.xml 共建立 **625 个跨模块 to-one**（其中 inventory/purchase/sales/finance/assets/projects/manufacturing/quality/maintenance 共 **468** 个 + crm/cs/hr/aps/contract/drp/logistics/b2b 共 **157** 个）+ **0 个跨模块 to-many**，引用 **111 个外部实体声明**（核心 9 域 79 + 扩展 8 域 32）。所有业务域 ORM 层均引用 master-data；跨业务域 ORM 只读引用（机制 B 单向合法）：**finance → projects**（凭证行辅助核算，6）+ **purchase/sales → projects**（项目采购/销售单按 `projectId` 建 to-one 归集项目成本，2+1）+ **hr → projects**（员工项目分配/工时归集，按 `projectId`/`taskId` 建 to-one，projects 不反向，2），零循环依赖。权威值由 `docs/audits/scripts/cross-module-dep-extract.py` 产出，以本文 §5.6.2 实测清单为最高权威。DAG 验证：所有引用边单向合法（24 条唯一 (src,tgt) 边，7 条跨业务域边全部在 allow-list），零循环依赖。
+> **终态统计**（机器核验，最近复核 RC-R1.79）：17 个业务域（除 master-data 根域）orm.xml 共建立 **640 个跨模块 to-one** + **0 个跨模块 to-many**，引用 **113 个外部实体声明**。所有业务域 ORM 层均引用 master-data；跨业务域 ORM 只读引用（机制 B 单向合法）：**finance → projects**（凭证行辅助核算，6）+ **purchase/sales → projects**（项目采购/销售单按 `projectId` 建 to-one 归集项目成本，2+1）+ **hr → projects**（员工项目分配/工时归集，按 `projectId`/`taskId` 建 to-one，projects 不反向，2）+ **manufacturing → inventory**（批次追溯）+ **maintenance → assets**（设备关联）+ **purchase/sales → contract**（订单行按 `ctContractLineId` 建 to-one 量折扣消费输入，RC-R1.79，1+1，contract 不反向），零循环依赖。权威值由 `docs/audits/scripts/cross-module-dep-extract.py` 产出，以本文 §5.6.2 实测清单为最高权威。DAG 验证：所有引用边单向合法，零循环依赖。
 >
 > **关于 finance → assets**：assets 关联走 `voucher_bill_r` 弱指针（`billType=AST_DEPRECIATION` + `billHeadCode` 反查资产），不是固定 `assetId` 外键——因此 finance 不建到 assets 的 to-one（业务单据反查源单应用弱指针，见 §5.1）。
 >
@@ -821,7 +823,7 @@ quotation → order → delivery → invoice → receipt
 | cs | md（organization/partner 等，5 to-one） | 待深化（与 sales 协作：售后工单） | 待深化 |
 | hr | md（organization/employee/partner 等，19 to-one） | 待深化（薪资过账 finance） | 待深化 |
 | aps | md（organization/material/warehouse 等，6 to-one） | 待深化（与 manufacturing 协作：排程→工单） | 待深化 |
-| contract | md（organization/partner/currency 等，10 to-one） | 待深化（合同关联 purchase/sales 单据） | 待深化 |
+| contract | md（organization/partner/currency 等，10 to-one） | InvoicePlan 触发生成 AP/AR 发票草稿（ct-service→pur/sal-dao Java 边）；purchase/sales 订单行引用合同行（RC-R1.79） | ErpPurOrderLine.ctContractLine / ErpSalOrderLine.ctContractLine to-one 反查（RC-R1.79 量折扣消费） |
 | drp | md（organization/material/warehouse 等，7 to-one）+ inventory（`ErpInvStockMove`：跨码头 `inboundMove`/`outboundMove`，R） | 待深化（分销网络与 sales） | 待深化 |
 | logistics | md（organization/partner/material 等，9 to-one） | 待深化（运输与 inventory/sales 发货） | 待深化 |
 | b2b | md（organization/partner/material 等，15 to-one） | 待深化（B2B 订单与 purchase/sales） | 待深化 |

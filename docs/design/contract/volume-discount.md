@@ -55,6 +55,16 @@
   4. 行金额 = 300 × ¥95 = ¥28,500
 ```
 
+#### 实现注记（RC-R1.79，plan 2026-08-20-0518-2）
+
+> 订单侧消费已于 2026-08-20 落地（本节语义不变，登记实现载体与裁决）。
+
+- **引用载体**：`ErpPurOrderLine.ctContractLineId`（propId 25）/ `ErpSalOrderLine.ctContractLineId`（propId 103），可空 BIGINT；跨模块经 notGenCode 外部实体 `ErpCtContractLine`（机制 B）读取合同行单价。
+- **应用点**：订单行保存（fill-when-absent）+ approve 时点重算（数量变更后以 approve 为准）；折扣基数 = 合同行 `unitPrice`（缺失回退订单行现价）——稳定基数保证 save/approve 重复解析无二次折扣；无命中回退原价（行零改写）。
+- **config 门控**：`erp-pur.ct-discount-enabled` / `erp-sal.ct-discount-enabled`（默认 true，与 `erp-ct.volume-discount-enabled` 同一能力两半开关语义一致；ct 侧聚合键不叠加消费，避免双门控）。关闭时 ctContractLineId 仅存储不应用。
+- **sales 优先级**：显式合同行引用优先于促销/目录价——促销改写跳过 ctContractLineId 非空行（不叠加）；折后价载体 = 行 unitPrice + discountRate/discountAmount/pricingSource=`CT_VOLUME_DISCOUNT`；purchase 侧行无 pricingSource 列，以 remark `[CT_VOLUME_DISCOUNT]节省X` 幂等标记（P2-RC-023 范式）。
+- **消费组件**：`ErpPurCtDiscountApplier` / `ErpSalCtDiscountApplier`（@Nullable `IErpCtVolumeDiscountBiz` 注入容错——ct 模块缺失时跳过）。
+
 ## 年度返利协议
 
 ### 业务场景

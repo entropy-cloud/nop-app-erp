@@ -61,6 +61,7 @@
 | 付款触发付款凭证 | finance | 付款单审核 → 财务域生成付款凭证（PAYMENT） |
 | 请购→询价→报价→订单 | 采购域内 | 见 `requisition.md`（请购 APPROVED 可选转询价或直转订单） |
 | 合同开票计划生成发票 | contract | 合同 `InvoicePlan` 到期 → 触发创建 AP 发票草稿 |
+| 订单行引用合同行量折扣 | contract | 订单行 `ctContractLineId` 引用合同行（RC-R1.79，2026-08-20 落地）→ 保存/approve 时经 `ErpPurCtDiscountApplier` 调 `IErpCtVolumeDiscountBiz.resolveDiscount` 按数量匹配折扣率计算折后价（基数 = 合同行单价，无命中回退原价；config `erp-pur.ct-discount-enabled` 默认 true；approve 时点重算 + 头合计 Σ 随动 + remark `[CT_VOLUME_DISCOUNT]节省X` 标记）。详见 `contract/volume-discount.md` §折扣应用实现注记 |
 | DRP 补货计划生成采购单 | drp | DRP APPROVED 且补货类型=PURCHASE → 创建采购订单 |
 | B2B/ASN 入站通知收货 | b2b | ASN RECEIVED → 采购域基于 ASN 创建入库单（ASN 不直接写库存） |
 | 物料/供应商/仓库引用 | master-data | 单据引用主数据编码 + `IErpMd*Biz` |

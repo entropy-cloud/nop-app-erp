@@ -58,6 +58,7 @@
 | 收款触发收款凭证 | finance | 收款单审核 → 财务域生成收款凭证（RECEIPT） |
 | 报价单由 CRM 转化创建 | crm | CRM Lead CONVERTED → `IErpSalQuotationBiz` 创建报价单（弱指针反查，核心零污染） |
 | 合同开票计划生成发票 | contract | 合同 `InvoicePlan` 到期 → 触发创建 AR 发票草稿 |
+| 订单行引用合同行量折扣 | contract | 订单行 `ctContractLineId` 引用合同行（RC-R1.79，2026-08-20 落地）→ 保存/approve 时经 `ErpSalCtDiscountApplier` 调 `IErpCtVolumeDiscountBiz.resolveDiscount` 按数量匹配折扣率计算折后价（基数 = 合同行单价，无命中回退原价；config `erp-sal.ct-discount-enabled` 默认 true；显式合同行引用优先于促销改写[不叠加]——`persistPricingResult` 跳过 ctContractLineId 非空行；折后价载体 = unitPrice + discountRate/discountAmount/pricingSource=`CT_VOLUME_DISCOUNT`；approve 重算先于信用/可用量校验）。详见 `contract/volume-discount.md` §折扣应用实现注记 |
 | 物料/客户/仓库引用 | master-data | 单据引用主数据编码 + `IErpMd*Biz` |
 
 ## 关键业务规则
