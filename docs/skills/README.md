@@ -52,7 +52,7 @@
 | `closure-pending-detection-prompt.md` | 系统性检测「声称 completed 却缺独立 closure audit 证据」的计划，并批量编排独立子代理 fresh session 补 closure（检测+批量编排方法） | 审计**单个**已完成计划（用 closure-audit-prompt）、计划实施前拦截（用 plan-audit）、全新起草计划 | 计划集合、closure 证据判定标准（Independent Closure Audit + task 指针）、保护区域清单、closure-audit-prompt、可调度独立子代理能力 | closure-pending 候选清单 + 每份回填的 Independent Closure Audit 证据（auditor 指针+五点一致性+anti-hollow+deferred honesty）+ 统计 |
 | `configuration-audit-prompt.md` | ERP 配置设计的归类合理性与落地完整性审计（技术运维/系统开关/业务规则/用户偏好四分类 + ORM 字段落地核对） | 需求审计、状态机审计（用对应专项提示） | `domain-design-guidelines.md`、`docs/analysis/*configuration*`、所有 `<domain>/model/*.orm.xml`、`ioc-and-config.md` | 配置归类汇总表 + 业务规则配置的 ORM 字段覆盖清单 + 系统开关/技术配置/用户级配置清单 + 命名一致性结论 |
 | `behavioral-failure-mode-scan-prompt.md` | closure 前对单域/单切片做代码层行为失败模式扫描（B1 业财过账吞异常悬挂 / B2 dict 死状态 / B3 调度链断裂 / B4 守卫散点） | 设计层状态机图审查（用 state-machine-business-review）、单计划闭合（用 closure-audit）、平台规则合规（用 nop-platform-conformance）、多维整件挑战（用 multi-dimensional-audit） | 目标域范围、状态机 owner doc、ORM 模型、调度链描述（job-scheduling.md + batch.xml + cron 键） | 按 B1/B2/B3.1/B3.2/B4 分组的 finding 清单（含 4 信号核查 + 裁决 + 证据编号）+ 复用 or 新增裁决 |
-| `requirement-compliance-audit-prompt.md` | 需求→实现符合性审计的五级追踪矩阵（L1 use-cases → L5 运行时）+ §4 三判据核验 + 方案 B 关闭项复查（mission `requirement-compliance` 入口） | doc↔code 文本一致性（已由 audit-remediation MA1-MA7 收口）、单一对象窄审计、单域行为扫描（用 behavioral-failure-mode-scan）、需求本身的修订（须人工批准） | L1 use-cases + L2 owner doc + L3 代码 + L4 测试 + L5 运行时 + `product-scope.md` + `arm-index.md` | methodology §6 的 9 段落报告骨架 + 五级追踪矩阵 + P1-RC-xxx finding + arm-index 衔接（薄壳指向 methodology 主体） |
+| `requirement-compliance-audit-prompt.md` | 需求→实现符合性审计的五级追踪矩阵（L1 use-cases → L5 运行时）+ §4 三判据核验 + 方案 B 关闭项复查 + MR0/MR1 修复阶段方法路由（§5 保护区域双批准 / §11 批量裁决 + per-site 基线证据 + 生命周期回写）（mission `requirement-compliance` 入口） | doc↔code 文本一致性（已由 audit-remediation MA1-MA7 收口）、单一对象窄审计、单域行为扫描（用 behavioral-failure-mode-scan）、需求本身的修订（须人工批准） | L1 use-cases + L2 owner doc + L3 代码 + L4 测试 + L5 运行时 + `product-scope.md` + `arm-index.md` | methodology §6 的 9 段落报告骨架 + 五级追踪矩阵 + P1-RC-xxx finding + arm-index 衔接（薄壳指向 methodology 主体） |
 
 ## 入门技能
 
@@ -88,7 +88,7 @@
 技能库不替代方法论与执行章程——下列文档是技能的方法论主体或执行规范，技能文件是它们的可路由入口或审查提示：
 
 - `docs/audits/00-audit-execution-guide.md` — 审计执行章程（三个默认审计：文档审计 / 草案审查 / 结束审计；冷重播不是第二位审查者；持久审查证据规则）。`plan-audit-prompt` / `closure-audit-prompt` / `multi-dimensional-audit` / `open-ended-audit` 等技能均在此章程框架下运行。
-- `docs/audits/requirement-compliance-methodology.md` — 需求→实现符合性审计方法论主体（§1 五级追踪矩阵 / §2 P0-P2 分级判据 / §3 完整枚举纪律 / §4 真相源层级与冲突裁决 / §5 修复义务与保护区域暂停协议 / §6 报告 9 段落骨架 / §7 arm-index 命名衔接 / §8 过程纪律自检 / §9 真相源冻结条款 / §10 MR0 即时通道 + MR1 展开器机制）。`requirement-compliance-audit-prompt.md` 是其薄壳入口，冲突时以 methodology 为准。
+- `docs/audits/requirement-compliance-methodology.md` — 需求→实现符合性审计方法论主体（§1 五级追踪矩阵 / §2 P0-P2 分级判据 / §3 完整枚举纪律 / §4 真相源层级与冲突裁决 / §5 修复义务与保护区域暂停协议 / §6 报告 9 段落骨架 / §7 arm-index 命名衔接 / §8 过程纪律自检 / §9 真相源冻结条款 / §10 MR0 即时通道 + MR1 展开器机制 / §11 MR1 修复阶段方法）。`requirement-compliance-audit-prompt.md` 是其薄壳入口，冲突时以 methodology 为准。
 - `docs/lessons/07-11-*.md` + `docs/lessons/README.md` — 系统性行为失败模式来源（compliance 基线漂移 / closure-pending / 业财过账吞异常悬挂 / dict 死状态 / arm-index 状态不回填）。`behavioral-failure-mode-scan-prompt.md` 把 B1/B2 类固化为代码层 grep 程式；§已知失败模式 9-13 项是这些 lesson 的速查入口。
 
 ## 与工具原生技能的关系

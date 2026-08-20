@@ -78,3 +78,7 @@
 - 修复证据：roadmap R1.13（finance）/ R1.14（mfg）/ R1.15（hr）/ R1.19（inv）/ R1.20（qa）/ R1.21（prj）/ R1.22（contract）/ R1.25（aps+logistics）
 - 审查方法：`docs/skills/state-machine-business-review-prompt.md`
 - 平台规则：dict 由 ORM `<dict>` 驱动生成（见 lesson 06——改 dict 必须改模型源）
+
+> **2026-08-20 边界扩展（plan `2026-08-20-1255-2` G.1 候选划界归并）**：本课反模式族覆盖两类 RC 期新证据，与死状态同族（"声明但无写点"）不另立新课：
+> ① **设计侧预防——dangling dict 值**（RC-R1.73 D3 先例，plan `2026-08-19-0445-2`）：新建 dict 时值集须"每个值有写点或显式数据源"——`erp-mnt/status-log-source` 排除无写点的 DISPOSAL 值、`trigger-type` 排除无数据源的 OUTPUT 值（对齐 `priceValidationLevel "20"` 孤儿值 P2-RC-057 先例）。决策树步骤 1 的 grep writer 检查同样适用于**建 dict 时**（预防面），不止审查时（发现面）。
+> ② **修复侧激活——死常量/死列**（RC-R1.89 D1 先例，plan `2026-08-20-0518-3`）：`ErpHrConstants` 的 `BILL_DATA_SOCIAL_INSURANCE_ER`/`BILL_DATA_HOUSING_FUND_ER` 死常量（预留 billData 键从不引用）与 `ErpHrSalary.posted` 死列（存在但无生产 writer）在修复时**优先激活既有预留载体而非新增**（激活 = 常量获引用 / 列获 writer），避免同语义双载体。

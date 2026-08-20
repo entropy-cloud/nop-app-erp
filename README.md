@@ -60,7 +60,7 @@ nop-app-erp 首先是 **Attractor-Guided Engineering (AGE)** 工作流在大型�
 
 ```text
 mvn clean install -DskipTests  → BUILD SUCCESS（156 reactor 模块）
-mvn test                       → BUILD SUCCESS（1902 测试，0 Failure / 0 Error）
+mvn test                       → BUILD SUCCESS（3789 测试，0 Failure / 0 Error，1 skipped 已知 @Disabled；2026-08-20 MV 基线，写时实测）
 ```
 
 ---

@@ -6,9 +6,9 @@
 
 对 mission `requirement-compliance`（需求→实现符合性审计，从需求真相源出发逐模块逐功能点核对运行时行为）做五级追踪 + §4 三判据核验时使用此提示。
 
-**本技能是 `docs/audits/requirement-compliance-methodology.md` 的可路由入口**——方法论主体（§1 五级追踪矩阵 / §2 P0-P2 分级判据 / §3 完整枚举纪律 / §4 真相源层级与冲突裁决 / §5 修复义务与保护区域暂停协议 / §6 报告 9 段落骨架 / §7 arm-index 命名衔接 / §8 过程纪律自检 / §9 真相源冻结条款 / §10 MR0 即时通道 + MR1 展开器机制）与真相源冻结条款以 methodology 为准。本文件不重复方法论主体，只做路由与必需输入声明。
+**本技能是 `docs/audits/requirement-compliance-methodology.md` 的可路由入口**——方法论主体（§1 五级追踪矩阵 / §2 P0-P2 分级判据 / §3 完整枚举纪律 / §4 真相源层级与冲突裁决 / §5 修复义务与保护区域暂停协议 / §6 报告 9 段落骨架 / §7 arm-index 命名衔接 / §8 过程纪律自检 / §9 真相源冻结条款 / §10 MR0 即时通道 + MR1 展开器机制 / §11 MR1 修复阶段方法）与真相源冻结条款以 methodology 为准。本文件不重复方法论主体，只做路由与必需输入声明。
 
-**使用场景**：需求→实现五级追踪矩阵审计（L1 use-cases → L2 owner doc → L3 代码路径 → L4 测试断言 → L5 运行时行为）+ §4 三判据核验（plan-audit 通过 / owner doc 显式 documented simplification + 人工批准痕迹 / product-scope 范围裁剪登记）+ 方案 B 关闭项复查 + successor 触发条件复查。
+**使用场景**：需求→实现五级追踪矩阵审计（L1 use-cases → L2 owner doc → L3 代码路径 → L4 测试断言 → L5 运行时行为）+ §4 三判据核验（plan-audit 通过 / owner doc 显式 documented simplification + 人工批准痕迹 / product-scope 范围裁剪登记）+ 方案 B 关闭项复查 + successor 触发条件复查 + **MR0/MR1 修复阶段**（fix plan 起草与闭包：§5 保护区域双独立子 agent 批准 checkbox 落盘计划文件 + §11.1 越界项 A/B/C 批量裁决 + §11.2 checker baseline-raise per-site 证据 + §11.3 修复完成四点回写——arm-index / roadmap / owner doc / 日志）。
 
 **不使用场景**：
 - audit-remediation 的 doc↔code 文本一致性审计 → 已由 MA1-MA7 收口（methodology §去重协议），本审计不复跑。
@@ -30,7 +30,7 @@
 ```text
 阅读以下文件并严格按 methodology 执行（methodology 是主体，本提示不重复）：
 
-- `docs/audits/requirement-compliance-methodology.md`（§1-§10 + §去重协议 + §归档规范 + §自检清单）
+- `docs/audits/requirement-compliance-methodology.md`（§1-§11 + §去重协议 + §归档规范 + §自检清单）
 - `docs/discussions/2026-08-02-1700-requirement-implementation-compliance-audit.md`（Q1/Q4 裁决原文）
 - `docs/backlog/requirement-compliance-roadmap.md`（工作项定义）
 - 目标域 use-cases.md + owner doc + ORM 模型 + 代码 + 测试 + 既有 MA2 报告
@@ -42,4 +42,4 @@
 
 ## 声明
 
-本技能是 `docs/audits/requirement-compliance-methodology.md` 的可路由入口。方法论主体（§1-§10 全部条款）、真相源冻结条款、Q1=(c) / Q4=(a) 裁决、arm-index 命名衔接规则均以 methodology 为准；本文件冲突时以 methodology 为唯一真相源。本技能存在的理由：methodology（446 行）作为审计契约文件体量大，skill 注册表需要一个薄壳入口让 audit-remediation MR2+ 经 `docs/skills/` 路由复用 §4 三判据核验（NG2：不把 methodology 全文搬进 skills）。
+本技能是 `docs/audits/requirement-compliance-methodology.md` 的可路由入口。方法论主体（§1-§11 全部条款，含 §11 MR1 修复阶段方法）、真相源冻结条款、Q1=(c) / Q4=(a) 裁决、arm-index 命名衔接规则均以 methodology 为准；本文件冲突时以 methodology 为唯一真相源。本技能存在的理由：methodology 作为审计契约文件体量大，skill 注册表需要一个薄壳入口让 audit-remediation MR2+ 经 `docs/skills/` 路由复用 §4 三判据核验与 §11 修复阶段方法（NG2：不把 methodology 全文搬进 skills）。

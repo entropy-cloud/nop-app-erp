@@ -31,7 +31,7 @@
 
 - 后续模型变更用 `mvn clean install` 增量重新生成，**不要**重跑 `nop-cli gen`
 - **工程命名映射**：物理目录 `module-<domain>/` ↔ 逻辑工程名 `app-erp-<domain>` ↔ appName `erp-<简称>` ↔ moduleId `erp/<简称>` 的完整映射见 `docs/architecture/domain-module-split-analysis.md §2.0`
-- 当前重点：需求-实现符合性审计修复批次（requirement-compliance，见 `docs/backlog/requirement-compliance-roadmap.md`）+ 各域细化端到端验证
+- 当前重点：看板运行时视觉/浏览器回归 + 各域细化端到端验证（需求-实现符合性审计批次 requirement-compliance MA1-MA4/MR1/MV/MG 已全部完成，见 `docs/backlog/requirement-compliance-roadmap.md`）
 - 已落地能力见 `AGENTS.md §当前项目阶段`
 
 ## 验证命令
@@ -90,4 +90,7 @@ AI 必须在继续之前停止并等待人工输入，当：
 - **closure-pending 计划缺独立结束审计**：执行者自我声明完成但未由独立子代理（新会话）跑结束审计，留下 hollow 闭包。规避：每个计划完成前必须经独立结束审计（Closure Gates 硬门控），执行者不得自我审计。
 - **`@Inject private` 违反 Nop IoC**：在 Nop IoC 容器中给 `@Inject` 字段加 `private`（checker R5），破坏依赖注入。规避：`@Inject` 字段必须包级可见或以上（AGENTS.md 平台规则 + `nop-backend-dev` skill 反模式表）。
 - **业财过账吞异常致 posted 悬挂**：过账编排中用 `tryPost` 吞掉异常而未将单据回退至非已过账状态，导致 posted 标志与实际过账结果不一致（悬挂）。规避：过账失败必须显式回退单据状态并记录 `PostingException`，不得静默吞异常（owner doc `docs/architecture/processor-extension-pattern.md`）。
+- **文档化简化滥用掩盖需求-实现分歧**：用 documented simplification / Deferred / Non-Goal 标注关闭 P0/P1 级需求分歧，或 AI 自写标注冒充人工批准、"文档提及"冒充"功能存在"。规避：关闭载体必须是代码行为——P0/P1 禁方案 B（Q4=(a) 无例外，唯一出口 = 需求不合理经人工批准改 product-scope）；P2 须过三判据（plan-audit / 人工批准痕迹 / 范围裁剪登记）；引用 resolved finding 前 HEAD 复核实仓。详案 `docs/lessons/12-documented-simplification-abuse.md`。
+- **需求基线陈旧被当前提消费**：真相源计数/结构与 owner doc 事实性表述（「零 xbiz」类审计快照断言）随实现演进被动漂移，下游审计/修复按伪事实推理（曾致 RC-R1.89 草案审查 BLOCKER）。规避：快照型断言引用前 grep 实仓重验；计数类指向权威计数源（`docs/testing/known-good-baselines.md`）不内联复制；里程碑落地新文件族/实体后回扫 docs/ 矛盾旧断言。详案 `docs/lessons/13-requirement-baseline-staleness.md`。
+- **config 默认关闭误判为功能缺失（或反向稀释硬契约）**：把「机制完整 + config-gate 条件启用」误判为需求分歧（假阳性），或把验收标准硬契约 config 化默认关闭（假阴性 = 默认不达标）。规避：三源核对——真相源部署契约声明 / `module-meta.yaml §optionalFeatures` defaultValue 分类 / 生产 application.yaml 覆盖普查；三处零「默认开启」声明则 opt-in 合法；硬契约禁 config 化。详案 `docs/lessons/14-config-gate-deployment-contract-adjudication.md`。
 
