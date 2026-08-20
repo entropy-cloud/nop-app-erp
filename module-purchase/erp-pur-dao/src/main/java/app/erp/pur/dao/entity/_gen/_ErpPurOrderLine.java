@@ -117,8 +117,12 @@ public class _ErpPurOrderLine extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 24;
     
+    /* 合同行: CT_CONTRACT_LINE_ID BIGINT */
+    public static final String PROP_NAME_ctContractLineId = "ctContractLineId";
+    public static final int PROP_ID_ctContractLineId = 25;
+    
 
-    private static int _PROP_ID_BOUND = 25;
+    private static int _PROP_ID_BOUND = 26;
 
     
     /* relation:  */
@@ -142,11 +146,14 @@ public class _ErpPurOrderLine extends DynamicOrmEntity{
     /* relation:  */
     public static final String PROP_NAME_project = "project";
     
+    /* relation:  */
+    public static final String PROP_NAME_ctContractLine = "ctContractLine";
+    
 
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[25];
+    private static final String[] PROP_ID_TO_NAME = new String[26];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -222,6 +229,9 @@ public class _ErpPurOrderLine extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_ctContractLineId] = PROP_NAME_ctContractLineId;
+          PROP_NAME_TO_ID.put(PROP_NAME_ctContractLineId, PROP_ID_ctContractLineId);
+      
     }
 
     
@@ -296,6 +306,9 @@ public class _ErpPurOrderLine extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 合同行: CT_CONTRACT_LINE_ID */
+    private java.lang.Long _ctContractLineId;
     
 
     public _ErpPurOrderLine(){
@@ -442,6 +455,9 @@ public class _ErpPurOrderLine extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_ctContractLineId:
+               return getCtContractLineId();
         
            default:
               return super.orm_propValue(propId);
@@ -694,6 +710,16 @@ public class _ErpPurOrderLine extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_ctContractLineId:{
+               java.lang.Long typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toLong(value,
+                       err-> newTypeConversionError(PROP_NAME_ctContractLineId));
+               }
+               setCtContractLineId(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -867,6 +893,13 @@ public class _ErpPurOrderLine extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_ctContractLineId:{
+               onInitProp(propId);
+               this._ctContractLineId = (java.lang.Long)value;
                
                break;
             }
@@ -1334,6 +1367,25 @@ public class _ErpPurOrderLine extends DynamicOrmEntity{
     }
     
     /**
+     * 合同行: CT_CONTRACT_LINE_ID
+     */
+    public final java.lang.Long getCtContractLineId(){
+         onPropGet(PROP_ID_ctContractLineId);
+         return _ctContractLineId;
+    }
+
+    /**
+     * 合同行: CT_CONTRACT_LINE_ID
+     */
+    public final void setCtContractLineId(java.lang.Long value){
+        if(onPropSet(PROP_ID_ctContractLineId,value)){
+            this._ctContractLineId = value;
+            internalClearRefs(PROP_ID_ctContractLineId);
+            
+        }
+    }
+    
+    /**
      * 
      */
     public final app.erp.pur.dao.entity.ErpPurOrder getOrder(){
@@ -1488,6 +1540,29 @@ public class _ErpPurOrderLine extends DynamicOrmEntity{
            internalSetRefEntity(PROP_NAME_project, refEntity,()->{
            
                            this.setProjectId(refEntity.getId());
+                       
+           });
+           }
+       
+    }
+       
+    /**
+     * 
+     */
+    public final app.erp.contract.dao.entity.ErpCtContractLine getCtContractLine(){
+       return (app.erp.contract.dao.entity.ErpCtContractLine)internalGetRefEntity(PROP_NAME_ctContractLine);
+    }
+
+    public final void setCtContractLine(app.erp.contract.dao.entity.ErpCtContractLine refEntity){
+   
+           if(refEntity == null){
+           
+                   this.setCtContractLineId(null);
+               
+           }else{
+           internalSetRefEntity(PROP_NAME_ctContractLine, refEntity,()->{
+           
+                           this.setCtContractLineId(refEntity.getId());
                        
            });
            }

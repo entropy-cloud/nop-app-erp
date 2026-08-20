@@ -349,6 +349,20 @@
         }
 
 
+        private Long _ctContractLineId;
+
+    
+        @PropMeta(propId=25)
+    
+        public Long getCtContractLineId(){
+            return _ctContractLineId;
+        }
+
+        public void setCtContractLineId(Long value){
+            this._ctContractLineId = value;
+        }
+
+
         private Map<String,Object> _order;
 
         public Map<String,Object> getOrder(){

@@ -99,6 +99,16 @@ CREATE TABLE erp_md_tax_rate(
   constraint PK_erp_md_tax_rate primary key (id)
 );
 
+CREATE TABLE erp_ct_contract_line(
+  id INT8  ,
+  contract_id INT8  ,
+  line_no INT4  ,
+  material_id INT8  ,
+  quantity NUMERIC(20,4)  ,
+  unit_price NUMERIC(20,4)  ,
+  constraint PK_erp_ct_contract_line primary key (id)
+);
+
 CREATE TABLE erp_md_bank_account(
   id INT8  ,
   partner_id INT8  ,
@@ -460,6 +470,7 @@ CREATE TABLE erp_pur_order_line(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  ct_contract_line_id INT8  ,
   constraint PK_erp_pur_order_line primary key (id)
 );
 
@@ -623,6 +634,8 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON TABLE erp_md_material_sku IS '物料SKU';
                 
       COMMENT ON TABLE erp_md_tax_rate IS '税率';
+                
+      COMMENT ON TABLE erp_ct_contract_line IS '合同行';
                 
       COMMENT ON TABLE erp_md_bank_account IS '银行账户';
                 
@@ -1243,6 +1256,8 @@ CREATE TABLE erp_pur_return_line(
       COMMENT ON COLUMN erp_pur_order_line.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_pur_order_line.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_pur_order_line.ct_contract_line_id IS '合同行';
                     
       COMMENT ON TABLE erp_pur_receive IS '采购入库单';
                 

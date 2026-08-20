@@ -92,6 +92,26 @@ public interface ErpCtConfigs {
     /** 到期时是否自动创建续期草稿（D4 到期时触发；parentContractId 关联原合同，DRAFT）。默认 false。 */
     String CFG_AUTO_CREATE_RENEWAL_DRAFT = "erp-ct.auto-create-renewal-draft";
 
+    // --- 合同文档仓库（RC-R1.80，UC-CT-10；键语义 owner doc contract-repository.md §保留策略配置） ---
+
+    /** OCR 引擎选型（匹配 IErpCtOcrEngine#getEngineCode）。默认 manual（零依赖手动/无操作识别器）。 */
+    String CFG_OCR_ENGINE = "erp-ct.ocr-engine";
+
+    /** 保留年限（上传时缺省推算 retentionDate = 上传日 + N 年；可手工覆盖）。默认 10。 */
+    String CFG_DOC_RETENTION_YEARS = "erp-ct.doc-retention-years";
+
+    /** 归档保留年限（缺省推算 purgeDate = retentionDate + N 年；可手工覆盖）。默认 20。 */
+    String CFG_DOC_ARCHIVE_YEARS = "erp-ct.doc-archive-years";
+
+    /** retentionDate 到达是否自动归档（job 门控）。默认 true。 */
+    String CFG_DOC_AUTO_ARCHIVE = "erp-ct.doc-auto-archive";
+
+    /** purgeDate 到达是否自动销毁（job 门控；false = 需人工确认语义保持——手动 purge mutation 仍可用）。默认 false。 */
+    String CFG_DOC_AUTO_PURGE = "erp-ct.doc-auto-purge";
+
+    /** 归档/销毁扫描 job 执行门控 cron（R1.35 D5 单键模式——job.yaml cronExpr 与 bean 空值跳过共用本键；空值 = 不调度）。默认空。 */
+    String CFG_DOC_RETENTION_CRON = "erp-ct.doc-retention-cron";
+
     int DEFAULT_APPROVAL_MAX_RETRIES = 3;
     long DEFAULT_APPROVAL_TIMEOUT_HOURS = 72;
     long DEFAULT_APPROVAL_URGENT_THRESHOLD = 500000;
@@ -104,6 +124,13 @@ public interface ErpCtConfigs {
     int DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS_15 = 15;
     int DEFAULT_CONTRACT_EXPIRY_WARNING_DAYS_7 = 7;
     boolean DEFAULT_AUTO_CREATE_RENEWAL_DRAFT = false;
+
+    String DEFAULT_OCR_ENGINE = ErpCtConstants.OCR_ENGINE_MANUAL;
+    int DEFAULT_DOC_RETENTION_YEARS = 10;
+    int DEFAULT_DOC_ARCHIVE_YEARS = 20;
+    boolean DEFAULT_DOC_AUTO_ARCHIVE = true;
+    boolean DEFAULT_DOC_AUTO_PURGE = false;
+    String DEFAULT_DOC_RETENTION_CRON = "";
 
     String DEFAULT_SIGNATURE_DEFAULT_PROVIDER = "MOCK";
     boolean DEFAULT_SIGNATURE_CALLBACK_SIGNATURE_REQUIRED = true;

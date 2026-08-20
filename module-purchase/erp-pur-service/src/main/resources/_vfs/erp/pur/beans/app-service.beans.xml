@@ -47,6 +47,11 @@
     <bean id="app.erp.pur.service.entity.ThreeWayMatcher"
           class="app.erp.pur.service.entity.ThreeWayMatcher"/>
 
+    <!-- RC-R1.79 合同量折扣订单行应用器（UC-CT-08 A）：跨域 IErpCtVolumeDiscountBiz @Nullable 注入容错，
+         保存/更新/approve 重算共用 -->
+    <bean id="app.erp.pur.service.support.ErpPurCtDiscountApplier"
+          class="app.erp.pur.service.support.ErpPurCtDiscountApplier"/>
+
     <!-- 采购业财过账 Provider（注册为 Bean 后由 ErpFinAcctDocRegistry 自动聚合，处理 AP_INVOICE/PAYMENT） -->
     <bean id="app.erp.pur.service.posting.PurAcctDocProvider"
           class="app.erp.pur.service.posting.PurAcctDocProvider"/>

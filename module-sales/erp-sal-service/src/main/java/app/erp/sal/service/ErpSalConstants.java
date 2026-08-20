@@ -121,4 +121,10 @@ public interface ErpSalConstants extends ErpSalDocStatus {
     String PRICING_SOURCE_PRICE_LIST = "PRICE_LIST";
     String PRICING_SOURCE_PROMOTION = "PROMOTION";
     String PRICING_SOURCE_SKU_DEFAULT = "SKU_DEFAULT";
+
+    // ---- 合同量折扣消费（RC-R1.79 / P1-RC-078，UC-CT-08 A，volume-discount.md §折扣应用）----
+    /** 消费门控（D3 裁决）：默认 true 对齐 erp-ct.volume-discount-enabled；false 时 ctContractLineId 仅存储不应用。 */
+    String CONFIG_CT_DISCOUNT_ENABLED = "erp-sal.ct-discount-enabled";
+    /** 取价来源：合同量折扣（显式合同行引用优先于促销/目录价，优先级语义落 pricingSource 标记）。 */
+    String PRICING_SOURCE_CT_VOLUME_DISCOUNT = "CT_VOLUME_DISCOUNT";
 }

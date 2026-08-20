@@ -1,0 +1,27 @@
+# __XGEN_FORCE_OVERRIDE__
+label: 文档类型
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 合同扫描件
+    value: 10
+    description: 
+  
+  - label: 补充协议
+    value: 20
+    description: 
+  
+  - label: 附件
+    value: 30
+    description: 
+  
+  - label: 证明文件
+    value: 40
+    description: 
+  
+  - label: 其他
+    value: 90
+    description: 
+  

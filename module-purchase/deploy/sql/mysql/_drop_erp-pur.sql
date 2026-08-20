@@ -10,6 +10,7 @@ drop table  if exists  erp_md_warehouse;
 drop table  if exists  erp_md_settlement_method;
 drop table  if exists  erp_md_material_sku;
 drop table  if exists  erp_md_tax_rate;
+drop table  if exists  erp_ct_contract_line;
 drop table  if exists  erp_md_bank_account;
 drop table  if exists  erp_pur_requisition;
 drop table  if exists  erp_pur_supplier_scorecard;

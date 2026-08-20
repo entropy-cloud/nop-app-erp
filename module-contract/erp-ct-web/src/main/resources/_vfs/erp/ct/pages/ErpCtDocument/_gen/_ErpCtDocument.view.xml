@@ -92,6 +92,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--法律保留-->
+                <col id="legalHold" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -112,6 +115,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ legalHold[法律保留] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-合同文档" i18n-en:title="Add Contract Document" x:prototype="edit"/>
@@ -126,7 +130,7 @@
  metadataTags[元数据标签(JSON)] retentionDate[保留截止日期]
  archiveDate[归档日期] purgeDate[销毁日期]
  isArchived[已归档] versionNo[文档版本]
- remark[备注] 
+ remark[备注] legalHold[法律保留]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>

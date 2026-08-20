@@ -15,6 +15,7 @@ import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.ErpSalErrors;
 import app.erp.common.service.SoDGuard;
 import app.erp.sal.service.entity.CreditLimitChecker;
+import app.erp.sal.service.support.ErpSalCtDiscountApplier;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
@@ -64,6 +65,9 @@ public class ErpSalOrderProcessor {
 
     @Inject
     CreditLimitChecker creditLimitChecker;
+
+    @Inject
+    ErpSalCtDiscountApplier ctDiscountApplier;
 
     @Inject
     IErpFinIntercompanyTransferBiz intercompanyTransferBiz;
@@ -169,10 +173,42 @@ public class ErpSalOrderProcessor {
     }
 
     protected void validateBusinessRulesForApprove(ErpSalOrder order, IServiceContext context) {
+        // RC-R1.79（UC-CT-08 A，D2 裁决选项 a）：approve 时点以当前数量重算合同量折扣——
+        // 先于信用额度/可用量校验执行，保证校验口径与过账口径一致（折后金额）
+        recalcCtDiscountForApprove(order, context);
         requireCustomerActive(order, context);
         creditLimitChecker.check(order.getCustomerId(), order.getTotalAmountWithTax(), order.getExchangeRate(),
                 order.getCode(), context);
         validateOrderAvailability(order, context);
+    }
+
+    /**
+     * RC-R1.79：数量在提交后变更时以 approve 时点为准（折后价/行金额/头合计随动）。
+     * 逐行从合同行单价稳定基数重解析，无命中回退原价（行保持现值）；config 关闭或行无
+     * ctContractLineId 时零动作。行实体为 DAO 加载托管态，脏值随事务提交自动落库。
+     */
+    protected void recalcCtDiscountForApprove(ErpSalOrder order, IServiceContext context) {
+        List<ErpSalOrderLine> lines = loadLines(order.getId());
+        boolean changed = false;
+        for (ErpSalOrderLine line : lines) {
+            changed |= ctDiscountApplier.applyToLine(line, context);
+        }
+        if (changed) {
+            recomputeOrderTotals(order, lines);
+        }
+    }
+
+    /** 头合计 = Σ 行不含税金额 / Σ 行税额（scale 4，对齐 recomputeOrderTotals 既有约定，无头级促销扣减参与）。 */
+    protected void recomputeOrderTotals(ErpSalOrder order, List<ErpSalOrderLine> lines) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal totalTaxAmount = BigDecimal.ZERO;
+        for (ErpSalOrderLine line : lines) {
+            totalAmount = totalAmount.add(line.getAmount() == null ? BigDecimal.ZERO : line.getAmount());
+            totalTaxAmount = totalTaxAmount.add(line.getTaxAmount() == null ? BigDecimal.ZERO : line.getTaxAmount());
+        }
+        order.setTotalAmount(totalAmount.setScale(4, java.math.RoundingMode.HALF_UP));
+        order.setTotalTaxAmount(totalTaxAmount.setScale(4, java.math.RoundingMode.HALF_UP));
+        order.setTotalAmountWithTax(totalAmount.add(totalTaxAmount).setScale(4, java.math.RoundingMode.HALF_UP));
     }
 
     /**

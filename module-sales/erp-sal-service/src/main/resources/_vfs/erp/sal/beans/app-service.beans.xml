@@ -190,6 +190,11 @@
     <bean id="app.erp.sal.service.support.ErpSalPricingRuleEngine"
           class="app.erp.sal.service.support.ErpSalPricingRuleEngine"/>
 
+    <!-- RC-R1.79 合同量折扣销售订单行应用器（UC-CT-08 A）：跨域 IErpCtVolumeDiscountBiz @Nullable 注入容错，
+         保存/更新/approve 重算共用 -->
+    <bean id="app.erp.sal.service.support.ErpSalCtDiscountApplier"
+          class="app.erp.sal.service.support.ErpSalCtDiscountApplier"/>
+
     <!-- per-mutation Processor beans (plan 2026-07-25-1057-2) -->
     <bean id="app.erp.sal.service.processor.ErpSalOrderSubmitForApprovalProcessor"
           class="app.erp.sal.service.processor.ErpSalOrderSubmitForApprovalProcessor"/>

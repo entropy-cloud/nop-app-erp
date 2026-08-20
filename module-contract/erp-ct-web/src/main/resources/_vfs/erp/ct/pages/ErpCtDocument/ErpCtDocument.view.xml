@@ -6,30 +6,16 @@
                 <grid id="list">
             <cols x:override="bounded-merge">
                 <col id="id" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="orgId" label="业务组织" i18n-en:label="Business Org"/>
-                <col id="contractId" label="关联合同" i18n-en:label="Linked Contract"/>
                 <col id="code" mandatory="true" sortable="true"/>
                 <col id="docName" mandatory="true" sortable="true"/>
                 <col id="docType" mandatory="true" sortable="true"/>
-                <col id="attachmentFileId" sortable="true"/>
-                <col id="fileSize" ui:number="true" sortable="true"/>
-                <col id="fileHash" sortable="true"/>
-                <col id="mimeType" sortable="true"/>
-                <col id="ocrText" sortable="true"/>
                 <col id="ocrStatus" sortable="true"/>
                 <col id="fullTextSearch" sortable="true"/>
-                <col id="metadataTags" sortable="true"/>
+                <col id="isArchived" sortable="true"/>
                 <col id="retentionDate" sortable="true" align="center"></col>
                 <col id="archiveDate" sortable="true" align="center"></col>
                 <col id="purgeDate" sortable="true" align="center"></col>
-                <col id="isArchived" sortable="true"/>
-                <col id="versionNo" ui:number="true" sortable="true"/>
-                <col id="remark" sortable="true"/>
-                <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>
-                <col id="createdBy" mandatory="true" sortable="true"/>
                 <col id="createTime" mandatory="true" sortable="true" align="center"></col>
-                <col id="updatedBy" mandatory="true" sortable="true"/>
-                <col id="updateTime" mandatory="true" sortable="true" align="center"></col>
             </cols>
         </grid>
         <grid id="pick-list"/>
@@ -84,15 +70,17 @@
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition">
             <layout>
  code[文档编码] docName[文档名称]
- orgId[业务组织] contractId[关联合同]
- docType[文档类型] isArchived[已归档]
+ contractId[关联合同] docType[文档类型]
+ fullTextSearch[关键字] ocrStatus[OCR状态]
+ isArchived[已归档]
             </layout>
             <cells>
                 <cell id="code" filterOp="like"/>
                 <cell id="docName" filterOp="like"/>
-                <cell id="orgId" filterOp="eq"/>
                 <cell id="contractId" filterOp="eq"/>
                 <cell id="docType" filterOp="eq"/>
+                <cell id="fullTextSearch" filterOp="contains"/>
+                <cell id="ocrStatus" filterOp="eq"/>
                 <cell id="isArchived" filterOp="eq"/>
             </cells>
         </form>

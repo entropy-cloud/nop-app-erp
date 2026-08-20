@@ -26,6 +26,7 @@
   "discountRate": 0.0,
   "discountAmount": 0.0,
   "pricingSource": "",
+  "ctContractLineId": 0,
   "order": null,
   "material": null,
   "material.name": "",
@@ -38,5 +39,6 @@
   "warehouse": null,
   "warehouse.name": "",
   "project": null,
-  "project.name": ""
+  "project.name": "",
+  "ctContractLine": null
 }

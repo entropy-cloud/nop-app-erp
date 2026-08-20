@@ -9,6 +9,7 @@ drop table  if exists  erp_md_settlement_method;
 drop table  if exists  erp_md_material_sku;
 drop table  if exists  erp_md_tax_rate;
 drop table  if exists  erp_prj_project;
+drop table  if exists  erp_ct_contract_line;
 drop table  if exists  erp_md_bank_account;
 drop table  if exists  erp_sal_price_list;
 drop table  if exists  erp_sal_quotation;

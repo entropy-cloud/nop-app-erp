@@ -1,0 +1,23 @@
+# __XGEN_FORCE_OVERRIDE__
+label: OCR状态
+locale: zh-CN
+valueType: string
+description: 
+options:
+
+  - label: 等待处理
+    value: 10
+    description: 
+  
+  - label: 处理中
+    value: 20
+    description: 
+  
+  - label: 已完成
+    value: 30
+    description: 
+  
+  - label: 识别失败
+    value: 40
+    description: 
+  

@@ -97,6 +97,18 @@
         }
 
 
+        private String _docType_label;
+
+    
+        public String getDocType_label(){
+            return _docType_label;
+        }
+
+        public void setDocType_label(String value){
+            this._docType_label = value;
+        }
+
+
         private String _attachmentFileId;
 
     
@@ -178,6 +190,18 @@
 
         public void setOcrStatus(String value){
             this._ocrStatus = value;
+        }
+
+
+        private String _ocrStatus_label;
+
+    
+        public String getOcrStatus_label(){
+            return _ocrStatus_label;
+        }
+
+        public void setOcrStatus_label(String value){
+            this._ocrStatus_label = value;
         }
 
 
@@ -374,6 +398,20 @@
 
         public void setUpdateTime(java.sql.Timestamp value){
             this._updateTime = value;
+        }
+
+
+        private Boolean _legalHold;
+
+    
+        @PropMeta(propId=27)
+    
+        public Boolean getLegalHold(){
+            return _legalHold;
+        }
+
+        public void setLegalHold(Boolean value){
+            this._legalHold = value;
         }
 
 

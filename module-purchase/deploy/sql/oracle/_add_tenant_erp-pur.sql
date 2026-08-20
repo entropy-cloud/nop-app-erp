@@ -21,6 +21,8 @@ alter table erp_md_material_sku add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT N
 
 alter table erp_md_tax_rate add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
+alter table erp_ct_contract_line add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_bank_account add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
 
 alter table erp_pur_requisition add NOP_TENANT_ID VARCHAR2(32) DEFAULT '0' NOT NULL;
@@ -95,6 +97,9 @@ alter table erp_md_material_sku add constraint PK_erp_md_material_sku primary ke
 
 alter table erp_md_tax_rate drop constraint PK_erp_md_tax_rate;
 alter table erp_md_tax_rate add constraint PK_erp_md_tax_rate primary key (NOP_TENANT_ID, ID);
+
+alter table erp_ct_contract_line drop constraint PK_erp_ct_contract_line;
+alter table erp_ct_contract_line add constraint PK_erp_ct_contract_line primary key (NOP_TENANT_ID, ID);
 
 alter table erp_md_bank_account drop constraint PK_erp_md_bank_account;
 alter table erp_md_bank_account add constraint PK_erp_md_bank_account primary key (NOP_TENANT_ID, ID);

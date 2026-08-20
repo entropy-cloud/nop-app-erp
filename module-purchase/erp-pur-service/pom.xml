@@ -76,6 +76,15 @@
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- compile: RC-R1.79（P1-RC-078，UC-CT-08 A）合同量折扣消费接线——IErpCtVolumeDiscountBiz.resolveDiscount
+             Facade 接口位于 contract dao；purchase→contract 单向（Java 层边 + ORM notGenCode 只读引用
+             ErpCtContractLine，matrix §2.4/§5.6.2 登记），与既有 ct-service→pur-dao 边构成 Maven 菱形非环
+             （dao 层互不依赖，service 层互不依赖）。 -->
+        <dependency>
+            <artifactId>app-erp-contract-dao</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!-- compile: 采购发票/付款过账接入财务过账引擎（凭证聚合根 Facade IErpFinVoucherBiz 位于 finance-dao；
              IErpFinAcctDocProvider SPI 位于 finance-service）。purchase→finance 单向无环
              （finance 为 DAG 顶，不依赖 purchase）。 -->
@@ -187,6 +196,15 @@
              单域测试需引入以使 notify 调用可端到端落 ErpSysNotification。 -->
         <dependency>
             <artifactId>app-erp-notify-service</artifactId>
+            <groupId>io.nop.app</groupId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- test-only: RC-R1.79 IErpCtVolumeDiscountBiz Bean 实现（ErpCtVolumeDiscountBizModel
+              位于 erp-ct-service；app-erp-all 聚合时由 app 层提供）。单域测试需引入以使量折扣解析
+              可端到端命中 ErpCtVolumeDiscount 区间带（生产消费方 @Nullable 注入容错）。 -->
+        <dependency>
+            <artifactId>app-erp-contract-service</artifactId>
             <groupId>io.nop.app</groupId>
             <version>1.0-SNAPSHOT</version>
             <scope>test</scope>

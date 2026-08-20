@@ -104,4 +104,15 @@ public interface ErpCtConstants {
     String NOTIFY_EVENT_CONTRACT_EXPIRY_WARNING_15 = "ct.contract-expiry-warning-15";
     /** 到期前 7 天升级通知经办人上级（D2：NopAuthUser.managerId → 兜底 NopAuthDept.managerId）。 */
     String NOTIFY_EVENT_CONTRACT_EXPIRY_ESCALATION_7 = "ct.contract-expiry-escalation-7";
+
+    // --- 合同文档仓库（RC-R1.80，P1-RC-079，UC-CT-10；docs/design/contract/contract-repository.md） ---
+
+    /** Legal Hold 设置角色（owner doc §合规规则「admin 手动设置」；roleId 与 nop_auth_role.csv 种子「admin」一致）。 */
+    String LEGAL_HOLD_ROLE_ID = "admin";
+
+    /** OCR 引擎编码（config erp-ct.ocr-engine 匹配值）：零依赖手动/无操作识别器（默认）。 */
+    String OCR_ENGINE_MANUAL = "manual";
+
+    /** 文档销毁审计通知事件（D4 逻辑删除销毁事件记录；无 ACTIVE 模板时 notify 静默跳过）。 */
+    String NOTIFY_EVENT_DOCUMENT_PURGED = "ct.document-purged";
 }

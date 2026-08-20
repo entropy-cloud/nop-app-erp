@@ -29,6 +29,11 @@
     <bean id="erpCtContractExpiryJob"
           class="app.erp.ct.service.job.ErpCtContractExpiryJob"/>
 
+    <!-- RC-R1.80（P1-RC-079，UC-CT-10 D）：合同文档保留策略扫描 job（R1.37 范式——enabled 默认 false +
+         cron 单键空值跳过 + doc-auto-archive/doc-auto-purge 行为门控 + 单条失败隔离 + 守卫短路） -->
+    <bean id="erpCtDocRetentionJob"
+          class="app.erp.ct.service.job.ErpCtDocRetentionJob"/>
+
     <!-- 电子签章三层 SPI（plan 2026-07-04-2200-2，design e-signature.md §SPI 接口）：Registry 镜像
          logistics ErpLogCarrierGatewayRegistry / finance ErpFinAcctDocRegistry 的 List 注入 + 内部建图范式；
          MockSignatureProvider（providerCode="MOCK"）注册为 Bean。真实三方供应商（e签宝/DocuSign/Tsign）
@@ -43,6 +48,21 @@
 
     <bean id="app.erp.ct.service.spi.mock.MockSignatureProvider"
           class="app.erp.ct.service.spi.mock.MockSignatureProvider"/>
+
+    <!-- RC-R1.80（P1-RC-079，UC-CT-10 B/C）：OCR 引擎三层 SPI——Registry 镜像
+         ErpCtSignatureProviderRegistry 的 List 注入 + 内部建图范式；ManualOcrEngine
+         （engineCode="manual"）为零依赖基线识别器（识别恒 FAILED 引导人工补录 ocrText）。
+         真实引擎（Tesseract/云 OCR/OFD 解析）为部署 successor（实现 IErpCtOcrEngine 即插）。 -->
+    <bean id="app.erp.ct.service.spi.ErpCtOcrEngineRegistry"
+          class="app.erp.ct.service.spi.ErpCtOcrEngineRegistry">
+        <property name="engines">
+            <ioc:collect-beans by-type="app.erp.ct.service.spi.IErpCtOcrEngine"
+                               only-concrete-classes="true" ioc:ignore-depends="true"/>
+        </property>
+    </bean>
+
+    <bean id="app.erp.ct.service.spi.manual.ManualOcrEngine"
+          class="app.erp.ct.service.spi.manual.ManualOcrEngine"/>
 
 
     <!-- 实体级 StateMachine Bean（契约 docs/architecture/entity-state-machine-bean.md §5）：一 Bean 对一实体一轴。

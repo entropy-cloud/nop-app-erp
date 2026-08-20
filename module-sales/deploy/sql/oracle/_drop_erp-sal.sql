@@ -9,6 +9,7 @@ drop table erp_md_settlement_method;
 drop table erp_md_material_sku;
 drop table erp_md_tax_rate;
 drop table erp_prj_project;
+drop table erp_ct_contract_line;
 drop table erp_md_bank_account;
 drop table erp_sal_price_list;
 drop table erp_sal_quotation;

@@ -19,6 +19,8 @@ alter table erp_md_tax_rate add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_prj_project add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
+alter table erp_ct_contract_line add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
+
 alter table erp_md_bank_account add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
 
 alter table erp_sal_price_list add NOP_TENANT_ID VARCHAR(32) DEFAULT '0' NOT NULL;
@@ -82,6 +84,9 @@ alter table erp_md_tax_rate add constraint PK_erp_md_tax_rate primary key (NOP_T
 
 alter table erp_prj_project drop constraint PK_erp_prj_project;
 alter table erp_prj_project add constraint PK_erp_prj_project primary key (NOP_TENANT_ID, id);
+
+alter table erp_ct_contract_line drop constraint PK_erp_ct_contract_line;
+alter table erp_ct_contract_line add constraint PK_erp_ct_contract_line primary key (NOP_TENANT_ID, id);
 
 alter table erp_md_bank_account drop constraint PK_erp_md_bank_account;
 alter table erp_md_bank_account add constraint PK_erp_md_bank_account primary key (NOP_TENANT_ID, id);

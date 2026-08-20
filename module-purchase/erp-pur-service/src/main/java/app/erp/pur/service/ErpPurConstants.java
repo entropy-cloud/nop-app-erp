@@ -51,6 +51,13 @@ public interface ErpPurConstants extends ErpPurDocStatus {
     String CONFIG_PRICE_DIFF_STRATEGY = "erp-pur.price-diff-strategy";
     String PRICE_DIFF_STRATEGY_POST_DIFFERENCE = "POST_DIFFERENCE";
 
+    // 合同量折扣消费门控（RC-R1.79 / P1-RC-078，UC-CT-08 A，volume-discount.md §折扣应用）。
+    // 默认 true 对齐 erp-ct.volume-discount-enabled 既有默认；false 时 ctContractLineId 仅存储不应用折扣。
+    String CONFIG_CT_DISCOUNT_ENABLED = "erp-pur.ct-discount-enabled";
+
+    // 量折扣来源标记（订单行 remark 前缀，幂等覆盖；purchase 行无 pricingSource 列故以 remark 载体）
+    String CT_DISCOUNT_REMARK_TAG = "[CT_VOLUME_DISCOUNT]";
+
     // 付款核销三单匹配二次门控（R1.8 P1-MA2-003 方案 A，three-way-match.md §匹配时机「付款前最终校验」）。
     // 默认 false 保护既有测试基线；启用后 settle 路径强制 strict 复核 invoice 三单匹配完成态。
     String CONFIG_SETTLE_RECHECK_THREE_WAY_MATCH = "erp-pur.settle-recheck-three-way-match";

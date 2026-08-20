@@ -125,8 +125,12 @@ public class _ErpCtDocument extends DynamicOrmEntity{
     public static final String PROP_NAME_updateTime = "updateTime";
     public static final int PROP_ID_updateTime = 26;
     
+    /* 法律保留: LEGAL_HOLD BOOLEAN */
+    public static final String PROP_NAME_legalHold = "legalHold";
+    public static final int PROP_ID_legalHold = 27;
+    
 
-    private static int _PROP_ID_BOUND = 27;
+    private static int _PROP_ID_BOUND = 28;
 
     
     /* relation:  */
@@ -142,7 +146,7 @@ public class _ErpCtDocument extends DynamicOrmEntity{
     protected static final List<String> PK_PROP_NAMES = Arrays.asList(PROP_NAME_id);
     protected static final int[] PK_PROP_IDS = new int[]{PROP_ID_id};
 
-    private static final String[] PROP_ID_TO_NAME = new String[27];
+    private static final String[] PROP_ID_TO_NAME = new String[28];
     private static final Map<String,Integer> PROP_NAME_TO_ID = new HashMap<>();
     static{
       
@@ -224,6 +228,9 @@ public class _ErpCtDocument extends DynamicOrmEntity{
           PROP_ID_TO_NAME[PROP_ID_updateTime] = PROP_NAME_updateTime;
           PROP_NAME_TO_ID.put(PROP_NAME_updateTime, PROP_ID_updateTime);
       
+          PROP_ID_TO_NAME[PROP_ID_legalHold] = PROP_NAME_legalHold;
+          PROP_NAME_TO_ID.put(PROP_NAME_legalHold, PROP_ID_legalHold);
+      
     }
 
     
@@ -304,6 +311,9 @@ public class _ErpCtDocument extends DynamicOrmEntity{
     
     /* 修改时间: UPDATE_TIME */
     private java.sql.Timestamp _updateTime;
+    
+    /* 法律保留: LEGAL_HOLD */
+    private java.lang.Boolean _legalHold;
     
 
     public _ErpCtDocument(){
@@ -456,6 +466,9 @@ public class _ErpCtDocument extends DynamicOrmEntity{
         
             case PROP_ID_updateTime:
                return getUpdateTime();
+        
+            case PROP_ID_legalHold:
+               return getLegalHold();
         
            default:
               return super.orm_propValue(propId);
@@ -728,6 +741,16 @@ public class _ErpCtDocument extends DynamicOrmEntity{
                break;
             }
         
+            case PROP_ID_legalHold:{
+               java.lang.Boolean typedValue = null;
+               if(value != null){
+                   typedValue = ConvertHelper.toBoolean(value,
+                       err-> newTypeConversionError(PROP_NAME_legalHold));
+               }
+               setLegalHold(typedValue);
+               break;
+            }
+        
            default:
               super.orm_propValue(propId,value);
         }
@@ -915,6 +938,13 @@ public class _ErpCtDocument extends DynamicOrmEntity{
             case PROP_ID_updateTime:{
                onInitProp(propId);
                this._updateTime = (java.sql.Timestamp)value;
+               
+               break;
+            }
+        
+            case PROP_ID_legalHold:{
+               onInitProp(propId);
+               this._legalHold = (java.lang.Boolean)value;
                
                break;
             }
@@ -1415,6 +1445,25 @@ public class _ErpCtDocument extends DynamicOrmEntity{
         if(onPropSet(PROP_ID_updateTime,value)){
             this._updateTime = value;
             internalClearRefs(PROP_ID_updateTime);
+            
+        }
+    }
+    
+    /**
+     * 法律保留: LEGAL_HOLD
+     */
+    public final java.lang.Boolean getLegalHold(){
+         onPropGet(PROP_ID_legalHold);
+         return _legalHold;
+    }
+
+    /**
+     * 法律保留: LEGAL_HOLD
+     */
+    public final void setLegalHold(java.lang.Boolean value){
+        if(onPropSet(PROP_ID_legalHold,value)){
+            this._legalHold = value;
+            internalClearRefs(PROP_ID_legalHold);
             
         }
     }

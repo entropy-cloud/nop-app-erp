@@ -92,6 +92,16 @@ CREATE TABLE erp_prj_project(
   constraint PK_erp_prj_project primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
+CREATE TABLE erp_ct_contract_line(
+  ID BIGINT NULL    COMMENT 'null',
+  CONTRACT_ID BIGINT NULL    COMMENT 'null',
+  LINE_NO INTEGER NULL    COMMENT 'null',
+  MATERIAL_ID BIGINT NULL    COMMENT 'null',
+  QUANTITY DECIMAL(20,4) NULL    COMMENT 'null',
+  UNIT_PRICE DECIMAL(20,4) NULL    COMMENT 'null',
+  constraint PK_erp_ct_contract_line primary key (ID)
+)CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
+
 CREATE TABLE erp_md_bank_account(
   ID BIGINT NULL    COMMENT 'null',
   PARTNER_ID BIGINT NULL    COMMENT 'null',
@@ -409,6 +419,7 @@ CREATE TABLE erp_sal_order_line(
   DISCOUNT_RATE DECIMAL(10,4) NULL    COMMENT '行折扣率(%)',
   DISCOUNT_AMOUNT DECIMAL(20,4) default 0  NULL    COMMENT '行折扣金额',
   PRICING_SOURCE VARCHAR(50) NULL    COMMENT '取价来源',
+  CT_CONTRACT_LINE_ID BIGINT NULL    COMMENT '合同行',
   constraint PK_erp_sal_order_line primary key (ID)
 )CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_as_cs;
 
@@ -570,6 +581,8 @@ CREATE TABLE erp_sal_return_line(
    ALTER TABLE erp_md_tax_rate COMMENT '税率';
                 
    ALTER TABLE erp_prj_project COMMENT '项目';
+                
+   ALTER TABLE erp_ct_contract_line COMMENT '合同行';
                 
    ALTER TABLE erp_md_bank_account COMMENT '银行账户';
                 

@@ -205,6 +205,7 @@ CREATE TABLE erp_ct_document(
   create_time TIMESTAMP NOT NULL ,
   updated_by VARCHAR(50) NOT NULL ,
   update_time TIMESTAMP NOT NULL ,
+  legal_hold BOOLEAN  ,
   constraint PK_erp_ct_document primary key (id)
 );
 
@@ -675,6 +676,8 @@ CREATE TABLE erp_ct_rebate_settlement(
       COMMENT ON COLUMN erp_ct_document.updated_by IS '修改人';
                     
       COMMENT ON COLUMN erp_ct_document.update_time IS '修改时间';
+                    
+      COMMENT ON COLUMN erp_ct_document.legal_hold IS '法律保留';
                     
       COMMENT ON TABLE erp_ct_invoice_plan IS '开票计划';
                 

@@ -168,6 +168,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      ctContractLineId: Contract Line
       order: Order
       material: Material
       material.name: Material
@@ -180,6 +181,7 @@ prop:
       warehouse: Warehouse
       warehouse.name: Warehouse
       project: Project
+      ctContractLine: Contract Line
     ErpPurPayment:
       id: ID
       code: Code

@@ -115,6 +115,10 @@
               queryable="true" sortable="true" insertable="false" updatable="false">
             <schema domain="updateTime" type="java.sql.Timestamp"/>
         </prop>
+        <prop name="ctContractLineId" displayName="合同行" propId="25" i18n-en:displayName="Contract Line" queryable="true"
+              sortable="true" insertable="true" updatable="true" ext:relation="ctContractLine">
+            <schema type="java.lang.Long"/>
+        </prop>
         <prop name="order" i18n-en:displayName="Order" tagSet="pub" ext:kind="to-one" internal="true" queryable="true"
               ext:joinLeftProp="orderId" ext:joinRightProp="id" insertable="false" updatable="false" mandatory="true"
               lazy="true">
@@ -167,6 +171,11 @@
               ext:joinLeftProp="projectId" ext:joinRightProp="id" ext:joinRightDisplayProp="name" biz:moduleId="erp/prj"
               lazy="true" published="false">
             <schema bizObjName="ErpPrjProject"/>
+        </prop>
+        <prop name="ctContractLine" i18n-en:displayName="Contract Line" ext:kind="to-one" internal="true"
+              queryable="true" ext:joinLeftProp="ctContractLineId" ext:joinRightProp="id" biz:moduleId="erp/ct"
+              lazy="true" published="false">
+            <schema bizObjName="ErpCtContractLine"/>
         </prop>
     </props>
 </meta>

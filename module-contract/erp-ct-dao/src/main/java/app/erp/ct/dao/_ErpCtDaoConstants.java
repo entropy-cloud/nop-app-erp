@@ -228,4 +228,49 @@ public interface _ErpCtDaoConstants {
      */
     String SIGN_PROVIDER_MOCK = "99";
                     
+    /**
+     * 文档类型: 合同扫描件 
+     */
+    String DOC_TYPE_CONTRACT_SCAN = "10";
+                    
+    /**
+     * 文档类型: 补充协议 
+     */
+    String DOC_TYPE_AMENDMENT = "20";
+                    
+    /**
+     * 文档类型: 附件 
+     */
+    String DOC_TYPE_ATTACHMENT = "30";
+                    
+    /**
+     * 文档类型: 证明文件 
+     */
+    String DOC_TYPE_CERTIFICATE = "40";
+                    
+    /**
+     * 文档类型: 其他 
+     */
+    String DOC_TYPE_OTHER = "90";
+                    
+    /**
+     * OCR状态: 等待处理 
+     */
+    String OCR_STATUS_PENDING = "10";
+                    
+    /**
+     * OCR状态: 处理中 
+     */
+    String OCR_STATUS_PROCESSING = "20";
+                    
+    /**
+     * OCR状态: 已完成 
+     */
+    String OCR_STATUS_COMPLETED = "30";
+                    
+    /**
+     * OCR状态: 识别失败 
+     */
+    String OCR_STATUS_FAILED = "40";
+                    
 }

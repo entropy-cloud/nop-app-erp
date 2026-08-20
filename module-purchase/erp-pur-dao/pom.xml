@@ -42,5 +42,12 @@
             <artifactId>app-erp-projects-dao</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <!-- RC-R1.79：订单行引用合同行（notGenCode 外部实体 to-one getter 编译需要；
+             pur-dao→ct-dao 单向，dao 层无反向依赖，DAG 无环） -->
+        <dependency>
+            <groupId>io.nop.app</groupId>
+            <artifactId>app-erp-contract-dao</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 </project>

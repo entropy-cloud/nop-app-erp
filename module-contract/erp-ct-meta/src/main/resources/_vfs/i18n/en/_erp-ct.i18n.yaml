@@ -166,12 +166,14 @@ prop:
       code: Code
       docName: Document Name
       docType: Document Type
+      docType_label: null
       attachmentFileId: Attachment
       fileSize: File Size
       fileHash: File Hash
       mimeType: MIME Type
       ocrText: OCR Text
       ocrStatus: OCR Status
+      ocrStatus_label: null
       fullTextSearch: Full Text Search
       metadataTags: Metadata Tags
       retentionDate: Retention Date
@@ -186,6 +188,7 @@ prop:
       createTime: Create Time
       updatedBy: Updated By
       updateTime: Update Time
+      legalHold: Legal Hold
       contract: Contract
       org: Org
       org.name: Org
@@ -373,6 +376,8 @@ dict:
     erp-ct/accrual-method: Accrual Method
     erp-ct/sign-status: Signature Status
     erp-ct/sign-provider: Signature Provider
+    erp-ct/doc-type: Document Type
+    erp-ct/ocr-status: OCR Status
 dict.option.label:
   erp-ct/contract-status:
     DRAFT: Draft
@@ -431,3 +436,14 @@ dict.option.label:
     '20': DocuSign
     '30': Tsign
     '99': Mock
+  erp-ct/doc-type:
+    '10': Contract Scan
+    '20': Amendment
+    '30': Attachment
+    '40': Certificate
+    '90': Other
+  erp-ct/ocr-status:
+    '10': Pending
+    '20': Processing
+    '30': Completed
+    '40': Failed

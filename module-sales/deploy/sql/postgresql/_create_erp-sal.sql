@@ -92,6 +92,16 @@ CREATE TABLE erp_prj_project(
   constraint PK_erp_prj_project primary key (id)
 );
 
+CREATE TABLE erp_ct_contract_line(
+  id INT8  ,
+  contract_id INT8  ,
+  line_no INT4  ,
+  material_id INT8  ,
+  quantity NUMERIC(20,4)  ,
+  unit_price NUMERIC(20,4)  ,
+  constraint PK_erp_ct_contract_line primary key (id)
+);
+
 CREATE TABLE erp_md_bank_account(
   id INT8  ,
   partner_id INT8  ,
@@ -409,6 +419,7 @@ CREATE TABLE erp_sal_order_line(
   discount_rate NUMERIC(10,4)  ,
   discount_amount NUMERIC(20,4) default 0   ,
   pricing_source VARCHAR(50)  ,
+  ct_contract_line_id INT8  ,
   constraint PK_erp_sal_order_line primary key (id)
 );
 
@@ -570,6 +581,8 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON TABLE erp_md_tax_rate IS '税率';
                 
       COMMENT ON TABLE erp_prj_project IS '项目';
+                
+      COMMENT ON TABLE erp_ct_contract_line IS '合同行';
                 
       COMMENT ON TABLE erp_md_bank_account IS '银行账户';
                 
@@ -1128,6 +1141,8 @@ CREATE TABLE erp_sal_return_line(
       COMMENT ON COLUMN erp_sal_order_line.discount_amount IS '行折扣金额';
                     
       COMMENT ON COLUMN erp_sal_order_line.pricing_source IS '取价来源';
+                    
+      COMMENT ON COLUMN erp_sal_order_line.ct_contract_line_id IS '合同行';
                     
       COMMENT ON TABLE erp_sal_delivery IS '销售出库单';
                 

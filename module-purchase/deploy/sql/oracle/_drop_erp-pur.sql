@@ -10,6 +10,7 @@ drop table erp_md_warehouse;
 drop table erp_md_settlement_method;
 drop table erp_md_material_sku;
 drop table erp_md_tax_rate;
+drop table erp_ct_contract_line;
 drop table erp_md_bank_account;
 drop table erp_pur_requisition;
 drop table erp_pur_supplier_scorecard;

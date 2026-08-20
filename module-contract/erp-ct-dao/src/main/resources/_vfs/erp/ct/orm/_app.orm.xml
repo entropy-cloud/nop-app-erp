@@ -85,6 +85,19 @@
             <option code="TSIGN" label="Tsign" value="30" i18n-en:label="Tsign"/>
             <option code="MOCK" label="Mock(测试)" value="99" i18n-en:label="Mock"/>
         </dict>
+        <dict label="文档类型" name="erp-ct/doc-type" valueType="string" i18n-en:label="Document Type">
+            <option code="CONTRACT_SCAN" label="合同扫描件" value="10" i18n-en:label="Contract Scan"/>
+            <option code="AMENDMENT" label="补充协议" value="20" i18n-en:label="Amendment"/>
+            <option code="ATTACHMENT" label="附件" value="30" i18n-en:label="Attachment"/>
+            <option code="CERTIFICATE" label="证明文件" value="40" i18n-en:label="Certificate"/>
+            <option code="OTHER" label="其他" value="90" i18n-en:label="Other"/>
+        </dict>
+        <dict label="OCR状态" name="erp-ct/ocr-status" valueType="string" i18n-en:label="OCR Status">
+            <option code="PENDING" label="等待处理" value="10" i18n-en:label="Pending"/>
+            <option code="PROCESSING" label="处理中" value="20" i18n-en:label="Processing"/>
+            <option code="COMPLETED" label="已完成" value="30" i18n-en:label="Completed"/>
+            <option code="FAILED" label="识别失败" value="40" i18n-en:label="Failed"/>
+        </dict>
     </dicts>
 
     <domains>
@@ -1148,7 +1161,8 @@
                 <column code="DOC_NAME" displayName="文档名称" mandatory="true" name="docName" precision="200" propId="5"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Document Name"/>
                 <column code="DOC_TYPE" displayName="文档类型" mandatory="true" name="docType" precision="50" propId="6"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Document Type"/>
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/doc-type"
+                        i18n-en:displayName="Document Type"/>
                 <column code="ATTACHMENT_FILE_ID" displayName="附件" name="attachmentFileId" precision="200" propId="7"
                         stdDataType="string" stdDomain="file" stdSqlType="VARCHAR" tagSet="var"
                         i18n-en:displayName="Attachment"/>
@@ -1161,7 +1175,8 @@
                 <column code="OCR_TEXT" displayName="OCR文本" name="ocrText" precision="4000" propId="11"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="OCR Text"/>
                 <column code="OCR_STATUS" displayName="OCR状态" name="ocrStatus" precision="50" propId="12"
-                        stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="OCR Status"/>
+                        stdDataType="string" stdSqlType="VARCHAR" ext:dict="erp-ct/ocr-status"
+                        i18n-en:displayName="OCR Status"/>
                 <column code="FULL_TEXT_SEARCH" displayName="全文检索" name="fullTextSearch" precision="4000" propId="13"
                         stdDataType="string" stdSqlType="VARCHAR" i18n-en:displayName="Full Text Search"/>
                 <column code="METADATA_TAGS" displayName="元数据标签(JSON)" name="metadataTags" precision="2000" propId="14"
@@ -1193,6 +1208,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="26" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="LEGAL_HOLD" displayName="法律保留" name="legalHold" propId="27" stdDataType="boolean"
+                        stdSqlType="BOOLEAN" i18n-en:displayName="Legal Hold"/>
             </columns>
             <indexes>
                 <index name="IDX_CT_DOCUMENT_CONTRACT_ID" unique="false">

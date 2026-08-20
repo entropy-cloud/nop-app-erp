@@ -292,4 +292,18 @@
         }
 
 
+        private Boolean _legalHold;
+
+    
+        @PropMeta(propId=27)
+    
+        public Boolean getLegalHold(){
+            return _legalHold;
+        }
+
+        public void setLegalHold(Boolean value){
+            this._legalHold = value;
+        }
+
+
     }

@@ -276,6 +276,7 @@ prop:
       discountRate: Discount Rate
       discountAmount: Discount Amount
       pricingSource: Pricing Source
+      ctContractLineId: Contract Line
       order: Order
       material: Material
       material.name: Material
@@ -289,6 +290,7 @@ prop:
       warehouse.name: Warehouse
       project: Project
       project.name: Project
+      ctContractLine: Contract Line
     ErpSalPriceList:
       id: ID
       name: Name

@@ -1,0 +1,10 @@
+jobName: erp-ct-doc-retention
+enabled: "@cfg:nop.job.erp-ct-doc-retention.enabled|false"
+displayName: Contract Document Retention Scan
+description: 每日 02:00 扫描合同文档保留策略——retentionDate 到达自动归档（config erp-ct.doc-auto-archive 门控，默认 true）+ purgeDate 到达自动销毁（config erp-ct.doc-auto-purge 门控，默认 false 需人工确认；D4 裁决 = 逻辑删除 + 销毁前审计记录）；legalHold/ACTIVE/purgeDate-due 守卫短路 + 单条失败隔离；cron 经 erp-ct.doc-retention-cron 配置门控（单键模式）
+jobGroup: erp-ct
+trigger:
+  cronExpr: "@cfg:erp-ct.doc-retention-cron|0 0 2 * * ?"
+invoker:
+  bean: erpCtDocRetentionJob
+  method: execute

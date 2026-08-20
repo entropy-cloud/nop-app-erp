@@ -16,6 +16,7 @@ import app.erp.sal.dao.entity.ErpSalQuotationLine;
 import app.erp.sal.service.ErpSalConstants;
 import app.erp.sal.service.processor.ErpSalOrderApproveProcessor;
 import app.erp.sal.service.processor.ErpSalOrderCancelProcessor;
+import app.erp.sal.service.support.ErpSalCtDiscountApplier;
 import app.erp.sal.service.support.ErpSalPricingRuleEngine;
 import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
@@ -24,6 +25,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.biz.crud.EntityData;
 import io.nop.commons.util.StringHelper;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IEntityDao;
@@ -70,8 +72,36 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
     @Inject
     ErpSalPricingRuleEngine pricingRuleEngine;
 
+    @Inject
+    ErpSalCtDiscountApplier ctDiscountApplier;
+
     public ErpSalOrderBizModel() {
         setEntityName(ErpSalOrder.class.getName());
+    }
+
+    /**
+     * RC-R1.79：订单保存/更新时对嵌套订单行（to-many insertable/updatable 子表路径）应用合同量折扣。
+     * 行级直接 CRUD 路径由 {@code ErpSalOrderLineBizModel} 同构钩子覆盖。
+     */
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpSalOrder> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        applyCtDiscountToLines(entityData.getEntity().getLines(), context);
+    }
+
+    @Override
+    protected void defaultPrepareUpdate(EntityData<ErpSalOrder> entityData, IServiceContext context) {
+        super.defaultPrepareUpdate(entityData, context);
+        applyCtDiscountToLines(entityData.getEntity().getLines(), context);
+    }
+
+    private void applyCtDiscountToLines(Collection<ErpSalOrderLine> lines, IServiceContext context) {
+        if (lines == null) {
+            return;
+        }
+        for (ErpSalOrderLine line : lines) {
+            ctDiscountApplier.applyToLine(line, context);
+        }
     }
 
     @Override
@@ -150,13 +180,18 @@ public class ErpSalOrderBizModel extends CrudBizModel<ErpSalOrder> implements IE
 
     /**
      * 持久化促销结果：更新订单行折扣 + 追加赠品行 + 重算订单头合计。
+     * RC-R1.79 优先级语义：引用合同行（ctContractLineId 非空）的行跳过促销改写——
+     * 显式合同行引用（CT_VOLUME_DISCOUNT）优先于促销/目录价，促销引擎不叠加折扣。
      */
     protected void persistPricingResult(ErpSalOrder order,
-                                        ErpSalPricingRuleEngine.EvaluationResult result,
-                                        IServiceContext context) {
+                                         ErpSalPricingRuleEngine.EvaluationResult result,
+                                         IServiceContext context) {
         IEntityDao<ErpSalOrderLine> lineDao = daoFor(ErpSalOrderLine.class);
         int lineNo = nextLineNo(result.getModifiedLines());
         for (ErpSalOrderLine line : result.getModifiedLines()) {
+            if (line.getCtContractLineId() != null) {
+                continue;
+            }
             recomputeLineAmount(line);
             if (line.getId() == null) {
                 line.setOrderId(order.getId());

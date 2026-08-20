@@ -178,4 +178,55 @@ public interface ErpCtErrors {
     ErrorCode ERR_CT_TERMINATE_ALREADY_PENDING = ErrorCode.define("erp.err.ct.terminate-already-pending",
             "合同 {contractCode} 已有待法务审批的终止申请，不可重复发起",
             ARG_CONTRACT_CODE);
+
+    // --- 合同文档仓库（RC-R1.80，P1-RC-079，UC-CT-10；docs/design/contract/contract-repository.md） ---
+
+    String ARG_DOCUMENT_ID = "documentId";
+    String ARG_DOCUMENT_CODE = "documentCode";
+    String ARG_ROLE_NAME = "roleName";
+
+    /** Legal Hold：legalHold=true 阻止所有归档/销毁操作（owner doc §合规规则「法律保留」行）。 */
+    ErrorCode ERR_CT_DOCUMENT_LEGAL_HOLD = ErrorCode.define("erp.err.ct.document-legal-hold",
+            "文档 {documentCode} 已设置法律保留（legalHold=true），禁止归档/销毁操作",
+            ARG_DOCUMENT_CODE);
+
+    /** 文档不存在（专用入口 requireDocument 载体）。 */
+    ErrorCode ERR_CT_DOCUMENT_NOT_FOUND = ErrorCode.define("erp.err.ct.document-not-found",
+            "合同文档 {documentId} 不存在",
+            ARG_DOCUMENT_ID);
+
+    /** 归档只读：归档后不可修改/删除（owner doc §生命周期「归档期只读、可搜索、不可删除」）。 */
+    ErrorCode ERR_CT_DOCUMENT_ARCHIVED_IMMUTABLE = ErrorCode.define("erp.err.ct.document-archived-immutable",
+            "文档 {documentCode} 已归档（archiveDate={archiveDate}），归档文档只读不可修改/删除",
+            ARG_DOCUMENT_CODE, "archiveDate");
+
+    /** ACTIVE 合同不归档（owner doc §合规规则「合同 ACTIVE 期间不允许归档」）。 */
+    ErrorCode ERR_CT_DOCUMENT_CONTRACT_ACTIVE = ErrorCode.define("erp.err.ct.document-contract-active",
+            "合同 {contractCode} 状态为 ACTIVE（当前状态={currentStatus}），ACTIVE 期间文档不允许归档",
+            ARG_CONTRACT_CODE, ARG_CURRENT_STATUS);
+
+    /** Legal Hold 设置角色守卫（admin 手动设置；fail-closed，镜像 hr ERR_MAKEUP_ROLE_REQUIRED 范式）。 */
+    ErrorCode ERR_CT_DOCUMENT_ROLE_REQUIRED = ErrorCode.define("erp.err.ct.document-role-required",
+            "设置法律保留需要 {roleName} 角色",
+            ARG_ROLE_NAME);
+
+    /** OCR 状态机非法迁移（PROCESSING 中不可重复提交）。 */
+    ErrorCode ERR_CT_DOCUMENT_OCR_ILLEGAL_TRANSITION = ErrorCode.define("erp.err.ct.document-ocr-illegal-transition",
+            "文档 {documentCode} 当前 OCR 状态={currentStatus}，不允许该操作（PROCESSING 中不可重复提交）",
+            ARG_DOCUMENT_CODE, ARG_CURRENT_STATUS);
+
+    /** OCR 引擎未注册（config erp-ct.ocr-engine 匹配值无对应 IErpCtOcrEngine Bean）。 */
+    ErrorCode ERR_CT_OCR_ENGINE_NOT_REGISTERED = ErrorCode.define("erp.err.ct.ocr-engine-not-registered",
+            "OCR 引擎 {engineCode} 未注册（无对应 IErpCtOcrEngine Bean）",
+            "engineCode");
+
+    /** 销毁前置：仅归档文档可销毁（owner doc §生命周期 归档期→销毁 顺序）。 */
+    ErrorCode ERR_CT_DOCUMENT_PURGE_NOT_ARCHIVED = ErrorCode.define("erp.err.ct.document-purge-not-archived",
+            "文档 {documentCode} 未归档，仅归档文档可销毁",
+            ARG_DOCUMENT_CODE);
+
+    /** 销毁前置：purgeDate 未到达不可销毁（保留义务——禁止提前销毁；提前销毁无通道，successor 见 owner doc 注记）。 */
+    ErrorCode ERR_CT_DOCUMENT_PURGE_NOT_DUE = ErrorCode.define("erp.err.ct.document-purge-not-due",
+            "文档 {documentCode} 销毁日期未到达（purgeDate={purgeDate}），禁止提前销毁",
+            ARG_DOCUMENT_CODE, "purgeDate");
 }

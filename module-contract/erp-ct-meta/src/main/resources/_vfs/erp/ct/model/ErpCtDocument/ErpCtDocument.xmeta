@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <meta x:schema="/nop/schema/xmeta.xdef" xmlns:x="/nop/schema/xdsl.xdef" x:extends="_ErpCtDocument.xmeta">
 
-        <props/>
+    <!-- RC-R1.80（UC-CT-10 A）：全文检索字段开放 contains/like 过滤运算符（keyword 搜索载体；
+         生成层默认 allowFilterOp 仅 eq/in/dateBetween，不满足 keyword 语义）。 -->
+    <props>
+        <prop name="fullTextSearch" allowFilterOp="contains,like,startsWith,eq,in"/>
+        <!-- 上传日期范围过滤器（createTime ge/le）开放（owner doc §高级搜索「上传日期范围」行） -->
+        <prop name="createTime" allowFilterOp="ge,le,between,eq,in,dateBetween,dateTimeBetween"/>
+    </props>
 </meta>

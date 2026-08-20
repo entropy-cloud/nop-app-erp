@@ -64,6 +64,8 @@ public class ErpPurOrderApproveProcessor extends AbstractApproveProcessor<ErpPur
     protected void validateBusinessRules(ErpPurOrder entity, IServiceContext context) {
         processor.requireSupplierActive(entity, context);
         processor.runBudgetCheckHook(entity, context);
+        // RC-R1.79（UC-CT-08 A）：approve 时点以当前数量重算合同量折扣（数量变更后以 approve 时点为准）
+        processor.recalcCtDiscountForApprove(entity, context);
     }
 
     @Override

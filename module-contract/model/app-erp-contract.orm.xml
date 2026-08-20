@@ -96,6 +96,21 @@
             <option code="TSIGN" label="Tsign" value="30" i18n-en:label='Tsign'/>
             <option code="MOCK" label="Mock(测试)" value="99" i18n-en:label='Mock'/>
         </dict>
+        <!-- RC-R1.80（UC-CT-10 B/C）：文档类型（owner doc contract-repository.md :73-79 规范 5 值表）。 -->
+        <dict label="文档类型" name="erp-ct/doc-type" valueType="string" i18n-en:label='Document Type'>
+            <option code="CONTRACT_SCAN" label="合同扫描件" value="10" i18n-en:label='Contract Scan'/>
+            <option code="AMENDMENT" label="补充协议" value="20" i18n-en:label='Amendment'/>
+            <option code="ATTACHMENT" label="附件" value="30" i18n-en:label='Attachment'/>
+            <option code="CERTIFICATE" label="证明文件" value="40" i18n-en:label='Certificate'/>
+            <option code="OTHER" label="其他" value="90" i18n-en:label='Other'/>
+        </dict>
+        <!-- RC-R1.80（UC-CT-10 B）：OCR 状态机（owner doc contract-repository.md :81 PENDING→PROCESSING→COMPLETED/FAILED）。 -->
+        <dict label="OCR状态" name="erp-ct/ocr-status" valueType="string" i18n-en:label='OCR Status'>
+            <option code="PENDING" label="等待处理" value="10" i18n-en:label='Pending'/>
+            <option code="PROCESSING" label="处理中" value="20" i18n-en:label='Processing'/>
+            <option code="COMPLETED" label="已完成" value="30" i18n-en:label='Completed'/>
+            <option code="FAILED" label="识别失败" value="40" i18n-en:label='Failed'/>
+        </dict>
     </dicts>
 
     <domains>
@@ -684,13 +699,13 @@
                 <column name="contractId" displayName="关联合同" stdSqlType="BIGINT" code="CONTRACT_ID" propId="3" stdDataType="long" i18n-en:displayName='Contract' />
                 <column name="code" displayName="文档编码" domain="orderCode" mandatory="true" code="CODE" propId="4" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="docName" displayName="文档名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="DOC_NAME" propId="5" stdDataType="string" i18n-en:displayName='Document Name' />
-                <column name="docType" displayName="文档类型" stdSqlType="VARCHAR" precision="50" mandatory="true" code="DOC_TYPE" propId="6" stdDataType="string" i18n-en:displayName='Document Type' />
+                <column name="docType" displayName="文档类型" ext:dict="erp-ct/doc-type" stdSqlType="VARCHAR" precision="50" mandatory="true" code="DOC_TYPE" propId="6" stdDataType="string" i18n-en:displayName='Document Type' />
                 <column name="attachmentFileId" displayName="附件" stdSqlType="VARCHAR" precision="200" stdDataType="string" code="ATTACHMENT_FILE_ID" propId="7" i18n-en:displayName='Attachment' stdDomain="file" tagSet="var"/>
                 <column name="fileSize" displayName="文件大小(字节)" stdSqlType="BIGINT" code="FILE_SIZE" propId="8" stdDataType="long" i18n-en:displayName='File Size' />
                 <column name="fileHash" displayName="文件哈希" stdSqlType="VARCHAR" precision="100" code="FILE_HASH" propId="9" stdDataType="string" i18n-en:displayName='File Hash' />
                 <column name="mimeType" displayName="MIME类型" stdSqlType="VARCHAR" precision="100" code="MIME_TYPE" propId="10" stdDataType="string" i18n-en:displayName='MIME Type' />
                 <column name="ocrText" displayName="OCR文本" stdSqlType="VARCHAR" precision="4000" code="OCR_TEXT" propId="11" stdDataType="string" i18n-en:displayName='OCR Text' />
-                <column name="ocrStatus" displayName="OCR状态" stdSqlType="VARCHAR" precision="50" code="OCR_STATUS" propId="12" stdDataType="string" i18n-en:displayName='OCR Status' />
+                <column name="ocrStatus" displayName="OCR状态" ext:dict="erp-ct/ocr-status" stdSqlType="VARCHAR" precision="50" code="OCR_STATUS" propId="12" stdDataType="string" i18n-en:displayName='OCR Status' />
                 <column name="fullTextSearch" displayName="全文检索" stdSqlType="VARCHAR" precision="4000" code="FULL_TEXT_SEARCH" propId="13" stdDataType="string" i18n-en:displayName='Full Text Search' />
                 <column name="metadataTags" displayName="元数据标签(JSON)" stdSqlType="VARCHAR" precision="2000" code="METADATA_TAGS" propId="14" stdDataType="string" i18n-en:displayName='Metadata Tags' />
                 <column name="retentionDate" displayName="保留截止日期" stdSqlType="DATE" code="RETENTION_DATE" propId="15" i18n-en:displayName='Retention Date' />
@@ -705,6 +720,9 @@
                 <column name="createTime" code="CREATE_TIME" displayName="创建时间" propId="24" domain="createTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Create Time' />
                 <column name="updatedBy" code="UPDATED_BY" displayName="修改人" propId="25" domain="updatedBy" stdSqlType="VARCHAR" precision="50" mandatory="true" stdDataType="string" i18n-en:displayName='Updated By' />
                 <column name="updateTime" code="UPDATE_TIME" displayName="修改时间" propId="26" domain="updateTime" stdSqlType="TIMESTAMP" stdDataType="timestamp" mandatory="true" i18n-en:displayName='Update Time' />
+                <!-- RC-R1.80（P1-RC-079，UC-CT-10 D）：法律保留标记（admin 手动设置，true 阻止所有归档/销毁操作；
+                     A 类 ORM 批量授权 2026-08-12「contract: RC-R1.80」，可空无默认无索引无 UK 纯加性） -->
+                <column name="legalHold" displayName="法律保留" stdSqlType="BOOLEAN" code="LEGAL_HOLD" propId="27" stdDataType="boolean" i18n-en:displayName='Legal Hold' />
             </columns>
             <relations>
                 <to-one name="contract" refEntityName="app.erp.contract.dao.entity.ErpCtContract" tagSet="pub" i18n-en:displayName='Contract'><join><on leftProp="contractId" rightProp="id"/></join></to-one>

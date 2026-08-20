@@ -1151,6 +1151,8 @@
                         i18n-en:displayName="Updated By"/>
                 <column code="UPDATE_TIME" displayName="修改时间" domain="updateTime" mandatory="true" name="updateTime"
                         propId="24" stdDataType="timestamp" stdSqlType="TIMESTAMP" i18n-en:displayName="Update Time"/>
+                <column code="CT_CONTRACT_LINE_ID" displayName="合同行" name="ctContractLineId" propId="25"
+                        stdDataType="long" stdSqlType="BIGINT" i18n-en:displayName="Contract Line"/>
             </columns>
             <indexes>
                 <index name="IDX_PUR_ORDER_LINE_ORDER_ID" unique="false">
@@ -1216,6 +1218,12 @@
                         i18n-en:displayName="Project">
                     <join>
                         <on leftProp="projectId" rightProp="id"/>
+                    </join>
+                </to-one>
+                <to-one name="ctContractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine"
+                        i18n-en:displayName="Contract Line">
+                    <join>
+                        <on leftProp="ctContractLineId" rightProp="id"/>
                     </join>
                 </to-one>
             </relations>
@@ -2346,7 +2354,25 @@
                 <column code="CODE" name="code" precision="50" propId="2" stdDataType="string" stdSqlType="VARCHAR"
                         tagSet="var" i18n-en:displayName="Code"/>
                 <column code="NAME" name="name" precision="200" propId="3" stdDataType="string" stdSqlType="VARCHAR"
-                        tagSet="disp" i18n-en:displayName="Name"/>
+                        tagSet="disp"/>
+            </columns>
+        </entity>
+        <entity className="app.erp.contract.dao.entity.ErpCtContractLine" displayName="合同行"
+                name="app.erp.contract.dao.entity.ErpCtContractLine" notGenCode="true" tableName="erp_ct_contract_line"
+                ext:web-renderer="flux" biz:moduleId="erp/ct">
+            <columns>
+                <column code="ID" name="id" primary="true" propId="1" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="ID"/>
+                <column code="CONTRACT_ID" name="contractId" propId="2" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Contract"/>
+                <column code="LINE_NO" name="lineNo" propId="3" stdDataType="int" stdSqlType="INTEGER"
+                        i18n-en:displayName="Line No"/>
+                <column code="MATERIAL_ID" name="materialId" propId="4" stdDataType="long" stdSqlType="BIGINT"
+                        i18n-en:displayName="Material"/>
+                <column code="QUANTITY" name="quantity" precision="20" propId="5" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Quantity"/>
+                <column code="UNIT_PRICE" name="unitPrice" precision="20" propId="6" scale="4" stdDataType="decimal"
+                        stdSqlType="DECIMAL" i18n-en:displayName="Unit Price"/>
             </columns>
         </entity>
     </entities>

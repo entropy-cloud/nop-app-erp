@@ -410,6 +410,8 @@
                 <column name="discountRate" code="DISCOUNT_RATE" displayName="行折扣率(%)" propId="100" domain="discountRate" stdSqlType="DECIMAL" precision="10" scale="4" i18n-en:displayName='Discount Rate' />
                 <column name="discountAmount" code="DISCOUNT_AMOUNT" displayName="行折扣金额" propId="101" domain="amount" stdSqlType="DECIMAL" precision="20" scale="4" defaultValue="0" i18n-en:displayName='Discount Amount' />
                 <column name="pricingSource" code="PRICING_SOURCE" displayName="取价来源" propId="102" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Pricing Source' />
+                <!-- RC-R1.79（P1-RC-078，UC-CT-08 A）：合同量折扣消费载体——引用 ErpCtContractLine（可空无默认无索引无 UK，Q3 纯加性批量授权） -->
+                <column name="ctContractLineId" code="CT_CONTRACT_LINE_ID" displayName="合同行" propId="103" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Contract Line' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="18" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="19" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
                 <column name="createdBy" code="CREATED_BY" displayName="创建人" propId="20" domain="createdBy" stdSqlType="VARCHAR" precision="50" mandatory="true" i18n-en:displayName='Created By' />
@@ -434,6 +436,8 @@
                 <to-one name="taxRateMd" refEntityName="app.erp.md.dao.entity.ErpMdTaxRate" tagSet="pub" i18n-en:displayName='Tax Rate Md'><join><on leftProp="taxRateId" rightProp="id"/></join></to-one>
                 <to-one name="warehouse" refEntityName="app.erp.md.dao.entity.ErpMdWarehouse" tagSet="pub" i18n-en:displayName='Warehouse'><join><on leftProp="warehouseId" rightProp="id"/></join></to-one>
                 <to-one name="project" refEntityName="app.erp.prj.dao.entity.ErpPrjProject" tagSet="pub" i18n-en:displayName='Project'><join><on leftProp="projectId" rightProp="id"/></join></to-one>
+                <!-- RC-R1.79：订单行引用合同行（量折扣消费输入，跨业务域 ORM 只读引用 sal→ct 单向） -->
+                <to-one name="ctContractLine" refEntityName="app.erp.contract.dao.entity.ErpCtContractLine" i18n-en:displayName='Contract Line'><join><on leftProp="ctContractLineId" rightProp="id"/></join></to-one>
             </relations>
             <indexes>
                 <index name="IDX_SAL_ORDER_LINE_ORDER_ID" unique="false">
@@ -1312,6 +1316,19 @@
                 <column name="code" code="CODE" stdSqlType="VARCHAR" precision="50" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
                 <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" i18n-en:displayName='Name'  tagSet="disp"/>
                 <column name="status" code="STATUS" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Status' />
+            </columns>
+        </entity>
+        <!-- RC-R1.79（P1-RC-078，UC-CT-08 A）：合同量折扣消费载体——引用合同行（可空无默认无索引无 UK，Q3 纯加性批量授权；
+             机制 B notGenCode，实体类由 contract-dao 生成，sal→ct ORM 只读单向边） -->
+        <entity ext:web-renderer="flux" displayName="合同行" name="app.erp.contract.dao.entity.ErpCtContractLine"
+                notGenCode="true" biz:moduleId="erp/ct" tableName="erp_ct_contract_line">
+            <columns>
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="contractId" code="CONTRACT_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Contract' />
+                <column name="lineNo" code="LINE_NO" stdSqlType="INTEGER" stdDataType="int" i18n-en:displayName='Line No' />
+                <column name="materialId" code="MATERIAL_ID" stdSqlType="BIGINT" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="quantity" code="QUANTITY" stdSqlType="DECIMAL" precision="20" scale="4" stdDataType="decimal" i18n-en:displayName='Quantity' />
+                <column name="unitPrice" code="UNIT_PRICE" stdSqlType="DECIMAL" precision="20" scale="4" stdDataType="decimal" i18n-en:displayName='Unit Price' />
             </columns>
         </entity>
     </entities>

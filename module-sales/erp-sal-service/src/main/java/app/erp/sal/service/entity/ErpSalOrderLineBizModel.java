@@ -4,16 +4,22 @@ package app.erp.sal.service.entity;
 import app.erp.sal.biz.IErpSalOrderLineBiz;
 import app.erp.sal.dao.entity.ErpSalOrderLine;
 import app.erp.sal.service.ErpSalConstants;
+import app.erp.sal.service.support.ErpSalCtDiscountApplier;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.config.AppConfig;
 import io.nop.biz.crud.CrudBizModel;
 import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
+import jakarta.inject.Inject;
 
 import java.util.List;
 
 @BizModel("ErpSalOrderLine")
 public class ErpSalOrderLineBizModel extends CrudBizModel<ErpSalOrderLine> implements IErpSalOrderLineBiz {
+
+    @Inject
+    ErpSalCtDiscountApplier ctDiscountApplier;
+
     public ErpSalOrderLineBizModel() {
         setEntityName(ErpSalOrderLine.class.getName());
     }
@@ -27,12 +33,16 @@ public class ErpSalOrderLineBizModel extends CrudBizModel<ErpSalOrderLine> imple
     protected void defaultPrepareSave(EntityData<ErpSalOrderLine> entityData, IServiceContext context) {
         super.defaultPrepareSave(entityData, context);
         fillPricingSource(entityData.getEntity());
+        // RC-R1.79（UC-CT-08 A，D2 裁决选项 a）：引用合同行的行解析量折扣折后价写行金额
+        // （fill-when-absent——命中才改写并覆写 pricingSource；无命中回退原价零改写）
+        ctDiscountApplier.applyToLine(entityData.getEntity(), context);
     }
 
     @Override
     protected void defaultPrepareUpdate(EntityData<ErpSalOrderLine> entityData, IServiceContext context) {
         super.defaultPrepareUpdate(entityData, context);
         fillPricingSource(entityData.getEntity());
+        ctDiscountApplier.applyToLine(entityData.getEntity(), context);
     }
 
     protected void fillPricingSource(ErpSalOrderLine line) {

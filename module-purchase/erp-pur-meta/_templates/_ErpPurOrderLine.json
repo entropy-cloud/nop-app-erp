@@ -23,6 +23,7 @@
   "createTime": "2000-01-01 14:00:00",
   "updatedBy": "",
   "updateTime": "2000-01-01 14:00:00",
+  "ctContractLineId": 0,
   "order": null,
   "material": null,
   "material.name": "",
@@ -34,5 +35,6 @@
   "taxRateMd.name": "",
   "warehouse": null,
   "warehouse.name": "",
-  "project": null
+  "project": null,
+  "ctContractLine": null
 }

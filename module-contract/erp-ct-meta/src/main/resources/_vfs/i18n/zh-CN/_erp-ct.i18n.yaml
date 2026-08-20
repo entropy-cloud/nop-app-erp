@@ -171,14 +171,17 @@ prop:
       delVersion: 逻辑删除版本
       docName: 文档名称
       docType: 文档类型
+      docType_label: 文档类型
       fileHash: 文件哈希
       fileSize: 文件大小(字节)
       fullTextSearch: 全文检索
       id: ID
       isArchived: 已归档
+      legalHold: 法律保留
       metadataTags: 元数据标签(JSON)
       mimeType: MIME类型
       ocrStatus: OCR状态
+      ocrStatus_label: OCR状态
       ocrText: OCR文本
       org: null
       org.name: null

@@ -12,6 +12,7 @@ import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import app.erp.pur.service.ErpPurConstants;
 import app.erp.pur.service.ErpPurErrors;
+import app.erp.pur.service.support.ErpPurCtDiscountApplier;
 import app.erp.common.service.SoDGuard;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
@@ -65,6 +66,9 @@ public class ErpPurOrderProcessor {
 
     @Inject
     IErpFinIntercompanyTransferBiz intercompanyTransferBiz;
+
+    @Inject
+    ErpPurCtDiscountApplier ctDiscountApplier;
 
     @Inject
     ErpPurOrderSubmitForApprovalProcessor submitForApprovalProcessor;
@@ -167,6 +171,37 @@ public class ErpPurOrderProcessor {
     protected void validateBusinessRulesForApprove(ErpPurOrder order, IServiceContext context) {
         requireSupplierActive(order, context);
         runBudgetCheckHook(order, context);
+        recalcCtDiscountForApprove(order, context);
+    }
+
+    /**
+     * RC-R1.79（UC-CT-08 A，D2 裁决选项 a）：approve 时点重算合同量折扣——数量在提交后变更时
+     * 以 approve 时点为准（折后价/行金额/头合计随动）。逐行从合同行单价稳定基数重解析，
+     * 无命中回退原价（行保持现值）；config 关闭或行无 ctContractLineId 时零动作。
+     * 行实体经 ORM 关系加载为托管态，脏值随事务提交自动落库。
+     */
+    protected void recalcCtDiscountForApprove(ErpPurOrder order, IServiceContext context) {
+        List<ErpPurOrderLine> lines = loadLines(order);
+        boolean changed = false;
+        for (ErpPurOrderLine line : lines) {
+            changed |= ctDiscountApplier.applyToLine(line, context);
+        }
+        if (changed) {
+            recomputeOrderTotals(order, lines);
+        }
+    }
+
+    /** 头合计 = Σ 行不含税金额 / Σ 行税额（scale 4，对齐行金额约定）。 */
+    protected void recomputeOrderTotals(ErpPurOrder order, List<ErpPurOrderLine> lines) {
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        BigDecimal totalTaxAmount = BigDecimal.ZERO;
+        for (ErpPurOrderLine line : lines) {
+            totalAmount = totalAmount.add(line.getAmount() == null ? BigDecimal.ZERO : line.getAmount());
+            totalTaxAmount = totalTaxAmount.add(line.getTaxAmount() == null ? BigDecimal.ZERO : line.getTaxAmount());
+        }
+        order.setTotalAmount(totalAmount.setScale(4, java.math.RoundingMode.HALF_UP));
+        order.setTotalTaxAmount(totalTaxAmount.setScale(4, java.math.RoundingMode.HALF_UP));
+        order.setTotalAmountWithTax(totalAmount.add(totalTaxAmount).setScale(4, java.math.RoundingMode.HALF_UP));
     }
 
     /**

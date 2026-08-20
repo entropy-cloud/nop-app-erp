@@ -253,6 +253,8 @@ prop:
       amountWithTax: 金额(含税)
       createTime: 创建时间
       createdBy: 创建人
+      ctContractLine: null
+      ctContractLineId: 合同行
       delVersion: 逻辑删除版本
       deliveredQuantity: 已出库数量
       discountAmount: 行折扣金额

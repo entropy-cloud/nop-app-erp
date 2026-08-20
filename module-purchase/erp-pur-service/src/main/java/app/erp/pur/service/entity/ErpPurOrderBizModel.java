@@ -13,6 +13,7 @@ import app.erp.pur.service.ErpPurErrors;
 import app.erp.pur.service.processor.ErpPurOrderApproveProcessor;
 import app.erp.pur.service.processor.ErpPurOrderCancelProcessor;
 import app.erp.pur.service.processor.ErpPurOrderProcessor;
+import app.erp.pur.service.support.ErpPurCtDiscountApplier;
 import io.nop.api.core.annotations.biz.BizAction;
 import io.nop.api.core.annotations.biz.BizModel;
 import io.nop.api.core.annotations.biz.BizMutation;
@@ -20,6 +21,7 @@ import io.nop.api.core.annotations.core.Name;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.biz.crud.CrudBizModel;
+import io.nop.biz.crud.EntityData;
 import io.nop.core.context.IServiceContext;
 import jakarta.inject.Inject;
 
@@ -49,8 +51,36 @@ public class ErpPurOrderBizModel extends CrudBizModel<ErpPurOrder> implements IE
     @Inject
     ErpPurOrderApproveProcessor approveProcessor;
 
+    @Inject
+    ErpPurCtDiscountApplier ctDiscountApplier;
+
     public ErpPurOrderBizModel() {
         setEntityName(ErpPurOrder.class.getName());
+    }
+
+    /**
+     * RC-R1.79：订单保存/更新时对嵌套订单行（to-many insertable/updatable 子表路径）应用合同量折扣。
+     * 行级直接 CRUD 路径由 {@code ErpPurOrderLineBizModel} 同构钩子覆盖。
+     */
+    @Override
+    protected void defaultPrepareSave(EntityData<ErpPurOrder> entityData, IServiceContext context) {
+        super.defaultPrepareSave(entityData, context);
+        applyCtDiscountToLines(entityData.getEntity().getLines(), context);
+    }
+
+    @Override
+    protected void defaultPrepareUpdate(EntityData<ErpPurOrder> entityData, IServiceContext context) {
+        super.defaultPrepareUpdate(entityData, context);
+        applyCtDiscountToLines(entityData.getEntity().getLines(), context);
+    }
+
+    private void applyCtDiscountToLines(Collection<ErpPurOrderLine> lines, IServiceContext context) {
+        if (lines == null) {
+            return;
+        }
+        for (ErpPurOrderLine line : lines) {
+            ctDiscountApplier.applyToLine(line, context);
+        }
     }
 
     @Override

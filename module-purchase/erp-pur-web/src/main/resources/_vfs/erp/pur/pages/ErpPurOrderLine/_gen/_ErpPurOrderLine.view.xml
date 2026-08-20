@@ -86,6 +86,9 @@
 
                 <!--修改时间-->
                 <col id="updateTime" mandatory="true" sortable="true"/>
+
+                <!--合同行-->
+                <col id="ctContractLineId" ui:number="true" sortable="true"/>
             </cols>
         </grid>
         <grid id="pick-list" x:prototype="list" x:abstract="true"/>
@@ -105,6 +108,7 @@
  remark[备注] delVersion[逻辑删除版本]
  createdBy[创建人] createTime[创建时间]
  updatedBy[修改人] updateTime[修改时间]
+ ctContractLineId[合同行] 
 </layout>
         </form>
         <form id="add" editMode="add" title="新增-采购订单行" i18n-en:title="Add Purchase Order Line" x:prototype="edit"/>
@@ -118,7 +122,7 @@
  amount[金额(不含税)] amountWithTax[金额(含税)]
  receivedQuantity[已收货数量] invoicedQuantity[已开票数量]
  warehouseId[收货仓库] projectId[项目]
- remark[备注] 
+ remark[备注] ctContractLineId[合同行]
 </layout>
         </form>
         <form id="query" editMode="query" title="查询条件" i18n-en:title="Query Condition" x:abstract="true"/>
