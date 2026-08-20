@@ -15,6 +15,7 @@ import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import io.nop.api.core.auth.IUserContext;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.beans.query.QueryFieldBean;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -394,19 +395,43 @@ public class ErpInvLandedCostProcessor {
         ormTemplate.lock(receive);
     }
 
+    /**
+     * 防重复分摊守卫（plan 2026-08-20-2052-1，P1-RC-092 MySQL-RR TOCTOU 修复，Phase 1 裁决②-proxy-lock）。
+     *
+     * <p>两段式：①按 receiveId 一致读发现 sibling id（map 投影，不装配 session 实体；EQL 自动附加
+     * delVersion 逻辑删除过滤）——(id, receiveId) 创建后不可变，PK 集在事务读视图内完备；②逐 sibling
+     * （跳过 currentLandedCostId）以 PROXY 形态 PK 锁定读（SELECT ... FOR UPDATE 读最新已提交版本并装配），
+     * 锁后评估 approveStatus。MySQL-RR 下一致读快照固定于事务首读不随 receive 行锁刷新（缺陷根因），
+     * 锁定读读最新已提交版本（MySQL 8.0 Ref Manual §15.7.2.4），跨 H2-RC/PG-RC/MySQL-RR/MySQL-RC 一致有效。
+     *
+     * <p>实现纪律：{@code load} 与 {@code lock} 之间禁止访问 sibling 属性（PROXY 惰性一致读装载会使
+     * internalAssemble 跳过锁读值→陈旧复归）；已被本事务装载过的 sibling 先 unload 重置 PROXY（仅非 dirty；
+     * dirty 交由 lock 抛 ERR_ORM_NOT_ALLOW_LOCK_DIRTY_ENTITY fail-safe）。
+     */
     protected void validateNotAlreadyAllocated(Long receiveId, Long currentLandedCostId) {
-        IEntityDao<ErpInvLandedCost> dao = landedCostDao();
-        QueryBean q = new QueryBean();
-        q.addFilter(and(
-                eq("receiveId", receiveId),
-                eq("approveStatus", ErpInvConstants.APPROVE_STATUS_APPROVED)
-        ));
-        List<ErpInvLandedCost> existing = dao.findAllByQuery(q);
-        for (ErpInvLandedCost lc : existing) {
-            if (!Objects.equals(lc.getId(), currentLandedCostId)) {
+        QueryBean siblingIdQuery = new QueryBean();
+        siblingIdQuery.setSourceName(ErpInvLandedCost.class.getName());
+        siblingIdQuery.setFields(List.of(QueryFieldBean.mainField("id")));
+        siblingIdQuery.addFilter(eq("receiveId", receiveId));
+        // id 升序 = 确定性锁序（receive 行锁 → sibling PK 锁单向，防死锁）
+        siblingIdQuery.addOrderField("id", false);
+        List<Map<String, Object>> siblingRows = ormTemplate.findListByQuery(siblingIdQuery);
+        for (Map<String, Object> row : siblingRows) {
+            Long siblingId = ((Number) row.get("id")).longValue();
+            if (Objects.equals(siblingId, currentLandedCostId))
+                continue;
+            ErpInvLandedCost sibling = (ErpInvLandedCost) ormTemplate.load(ErpInvLandedCost.class.getName(), siblingId);
+            if (!sibling.orm_dirty()) {
+                ormTemplate.runInSession(session -> {
+                    session.unload(sibling);
+                    return null;
+                });
+            }
+            ormTemplate.lock(sibling);
+            if (ErpInvConstants.APPROVE_STATUS_APPROVED.equals(sibling.getApproveStatus())) {
                 throw new NopException(ErpInvErrors.ERR_LANDED_COST_ALREADY_ALLOCATED)
                         .param(ErpInvErrors.ARG_RECEIVE_ID, receiveId)
-                        .param(ErpInvErrors.ARG_LANDED_COST_CODE, lc.getCode());
+                        .param(ErpInvErrors.ARG_LANDED_COST_CODE, sibling.getCode());
             }
         }
     }
