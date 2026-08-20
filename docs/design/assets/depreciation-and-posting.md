@@ -217,6 +217,8 @@
 
 > **定时作业登记**：批量折旧登记于 `docs/architecture/job-scheduling.md` §3.2 `erp-ast-depreciation`（每月 1 日 02:00，`erp-ast.depreciation-cron` 默认 `0 0 2 1 * ?`，nop-batch candidate）。`ErpAstDepreciationJob` + `app-service.beans.xml` `<bean>` + `scheduler.yaml` 三件套接线，cron 配置键默认空=跳过门控（运维启用配置键即按设计 cronExpr 自动执行）。
 
+> **折旧补提（catch-up）方式 B 实现注记（RC-R1.52，P1-RC-029 收敛）**：`IErpAstDepreciationScheduleBiz.catchUpDepreciation(assetId, currentPeriod, missedPeriods[])` @BizMutation + `ErpAstDepreciationScheduleCatchUpDepreciationProcessor`（per-mutation）落地——守卫链：资产存在 + **IN_SERVICE（IDLE 不允许补提，闲置期无折旧义务）** + currentPeriod OPEN + 漏提期不晚于 currentPeriod（`ERR_DEPRECIATION_CATCHUP_PERIOD_INVALID`）；逐漏提期复用 `DepreciationCalculator` 复算（幂等跳过已 EXECUTED 期），计划行落 EXECUTED 并回写资产累计折旧/净值；凭证形态 = **单张汇总凭证**（billHeadCode `资产编码#currentPeriod#CATCHUP`，行 memo「补提 {periods}」标注——已结账漏提期无法逐期过账，财务引擎按凭证日期 resolveOpenPeriod 落账；汇总凭证无法按漏提期单期红冲为登记 follow-up，isCatchUp 列不落 ORM）。出售侧接线（UC-AST-05 ⑤）：`ErpAstDisposalProcessor` protected step `catchUpDepreciationToDisposalPeriod`——损益计算前补提至出售期含当期（无已执行折旧/IDLE 跳过；出售期 CLOSED fail-fast）。`TestErpAstCatchUpDepreciation` 7 组全绿。
+
 ### 折旧调度规则
 
 - **折旧起始月**：资本化入账的次月开始计提折旧（当月增加下月提）
