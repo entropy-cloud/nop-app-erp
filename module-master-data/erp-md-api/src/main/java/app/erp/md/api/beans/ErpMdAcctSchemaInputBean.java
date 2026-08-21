@@ -13,16 +13,16 @@
     public class ErpMdAcctSchemaInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,16 +55,16 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
@@ -83,16 +83,16 @@
         }
 
 
-        private Long _functionalCurrencyId;
+        private String _functionalCurrencyId;
 
     
         @PropMeta(propId=6)
     
-        public Long getFunctionalCurrencyId(){
+        public String getFunctionalCurrencyId(){
             return _functionalCurrencyId;
         }
 
-        public void setFunctionalCurrencyId(Long value){
+        public void setFunctionalCurrencyId(String value){
             this._functionalCurrencyId = value;
         }
 

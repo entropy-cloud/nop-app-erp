@@ -13,44 +13,44 @@
     public class ErpMdExchangeRateOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _fromCurrencyId;
+        private String _fromCurrencyId;
 
     
         @PropMeta(propId=2)
     
-        public Long getFromCurrencyId(){
+        public String getFromCurrencyId(){
             return _fromCurrencyId;
         }
 
-        public void setFromCurrencyId(Long value){
+        public void setFromCurrencyId(String value){
             this._fromCurrencyId = value;
         }
 
 
-        private Long _toCurrencyId;
+        private String _toCurrencyId;
 
     
         @PropMeta(propId=3)
     
-        public Long getToCurrencyId(){
+        public String getToCurrencyId(){
             return _toCurrencyId;
         }
 
-        public void setToCurrencyId(Long value){
+        public void setToCurrencyId(String value){
             this._toCurrencyId = value;
         }
 

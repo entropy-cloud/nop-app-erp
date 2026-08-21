@@ -13,58 +13,58 @@
     public class ErpMdUoMConversionOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=2)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
 
-        private Long _fromUoMId;
+        private String _fromUoMId;
 
     
         @PropMeta(propId=3)
     
-        public Long getFromUoMId(){
+        public String getFromUoMId(){
             return _fromUoMId;
         }
 
-        public void setFromUoMId(Long value){
+        public void setFromUoMId(String value){
             this._fromUoMId = value;
         }
 
 
-        private Long _toUoMId;
+        private String _toUoMId;
 
     
         @PropMeta(propId=4)
     
-        public Long getToUoMId(){
+        public String getToUoMId(){
             return _toUoMId;
         }
 
-        public void setToUoMId(Long value){
+        public void setToUoMId(String value){
             this._toUoMId = value;
         }
 

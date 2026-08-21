@@ -49,7 +49,7 @@ public class TestErpMdMaterialBiz extends JunitAutoTestCase {
 
     @Test
     public void testIsCodeUnique() {
-        Long matId = seedMaterial("E2E-MAT-UNIQ-1");
+        String matId = seedMaterial("E2E-MAT-UNIQ-1");
         // 1. 新编码（无冲突）→ true
         Boolean fresh = (Boolean) rpcData(GraphQLOperationType.query, "ErpMdMaterial__isCodeUnique",
                 Map.of("code", "E2E-MAT-UNIQ-NEW"));
@@ -69,7 +69,7 @@ public class TestErpMdMaterialBiz extends JunitAutoTestCase {
     @Test
     public void testCountReferences() {
         // 1. 0 引用（未在桩中标记）→ 空 Map
-        Long unreferencedId = seedMaterial("E2E-MAT-REF-0");
+        String unreferencedId = seedMaterial("E2E-MAT-REF-0");
         @SuppressWarnings("unchecked")
         Map<String, Long> empty = (Map<String, Long>) rpcData(GraphQLOperationType.query,
                 "ErpMdMaterial__countReferences", Map.of("id", unreferencedId));
@@ -77,7 +77,7 @@ public class TestErpMdMaterialBiz extends JunitAutoTestCase {
         assertTrue(empty.isEmpty(), "0 引用应返回空 Map，实际：" + empty);
 
         // 2. 多引用（经 SPI 桩注入）→ 非零计数
-        Long referencedId = seedMaterial("E2E-MAT-REF-MULTI");
+        String referencedId = seedMaterial("E2E-MAT-REF-MULTI");
         refChecker.markReferenced(referencedId, "purchaseOrder", 5L);
         refChecker.markReferenced(referencedId, "salesOrder", 3L);
         refChecker.markReferenced(referencedId, "stockMove", 2L);
@@ -104,12 +104,12 @@ public class TestErpMdMaterialBiz extends JunitAutoTestCase {
         return resp.getData();
     }
 
-    private Long seedMaterial(String code) {
+    private String seedMaterial(String code) {
         ErpMdMaterial material = new ErpMdMaterial();
         material.setCode(code);
         material.setName("E2E-" + code);
         material.setMaterialType("GOODS");
-        material.setUoMId(1L);
+        material.setUoMId("1");
         material.setStatus("ACTIVE");
         ormTemplate.runInSession(() -> materialDao().saveEntity(material));
         return material.getId();

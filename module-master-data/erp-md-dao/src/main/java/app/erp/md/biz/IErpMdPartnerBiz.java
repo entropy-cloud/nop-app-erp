@@ -19,7 +19,7 @@ public interface IErpMdPartnerBiz extends ICrudBiz<ErpMdPartner> {
      * （经 I*Biz 管道，对齐 data-dependency-matrix §3 / service-layer 跨实体访问规则）。
      */
     @BizAction
-    ErpMdPartner findById(@Name("id") Long id, IServiceContext context);
+    ErpMdPartner findById(@Name("id") String id, IServiceContext context);
 
     /**
      * F7 §3 编码唯一性前置校验（async validator on blur 调用入口）。
@@ -30,7 +30,7 @@ public interface IErpMdPartnerBiz extends ICrudBiz<ErpMdPartner> {
      */
     @BizQuery
     boolean isCodeUnique(@Name("code") String code,
-                         @Optional @Name("excludeId") Long excludeId,
+                         @Optional @Name("excludeId") String excludeId,
                          IServiceContext context);
 
     /**
@@ -42,5 +42,5 @@ public interface IErpMdPartnerBiz extends ICrudBiz<ErpMdPartner> {
      * @return key=引用域名，value=引用行数。无引用或无 SPI 实现返回空 Map
      */
     @BizQuery
-    Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context);
+    Map<String, Long> countReferences(@Name("id") String id, IServiceContext context);
 }

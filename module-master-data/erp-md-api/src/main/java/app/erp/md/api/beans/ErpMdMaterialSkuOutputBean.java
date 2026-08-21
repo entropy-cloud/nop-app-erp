@@ -13,30 +13,30 @@
     public class ErpMdMaterialSkuOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _materialId;
+        private String _materialId;
 
     
         @PropMeta(propId=2)
     
-        public Long getMaterialId(){
+        public String getMaterialId(){
             return _materialId;
         }
 
-        public void setMaterialId(Long value){
+        public void setMaterialId(String value){
             this._materialId = value;
         }
 
@@ -69,16 +69,16 @@
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=5)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 
@@ -153,16 +153,16 @@
         }
 
 
-        private Long _taxRateId;
+        private String _taxRateId;
 
     
         @PropMeta(propId=11)
     
-        public Long getTaxRateId(){
+        public String getTaxRateId(){
             return _taxRateId;
         }
 
-        public void setTaxRateId(Long value){
+        public void setTaxRateId(String value){
             this._taxRateId = value;
         }
 

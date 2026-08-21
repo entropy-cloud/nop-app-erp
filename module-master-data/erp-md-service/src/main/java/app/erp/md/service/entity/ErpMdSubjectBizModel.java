@@ -44,7 +44,7 @@ public class ErpMdSubjectBizModel extends CrudBizModel<ErpMdSubject> implements 
     @Override
     @BizQuery
     public boolean isCodeUnique(@Name("code") String code,
-                                @Optional @Name("excludeId") Long excludeId,
+                                @Optional @Name("excludeId") String excludeId,
                                 IServiceContext context) {
         if (code == null || code.isEmpty()) {
             return true;

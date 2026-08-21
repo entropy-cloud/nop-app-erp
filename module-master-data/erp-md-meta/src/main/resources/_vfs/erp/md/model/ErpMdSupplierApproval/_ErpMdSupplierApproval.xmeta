@@ -20,16 +20,16 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="partnerId" displayName="供应商" propId="2" i18n-en:displayName="Partner" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="partner">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="所属组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="organization">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="approvalType" displayName="准入类型" propId="4" i18n-en:displayName="Approval Type" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -38,7 +38,7 @@
         <prop name="materialCategoryId" displayName="准入物料类别" propId="5" i18n-en:displayName="Material Category"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
               ext:relation="materialCategory">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="validFrom" displayName="生效日期" propId="6" i18n-en:displayName="Valid From" queryable="true"
               sortable="true" insertable="true" updatable="true">

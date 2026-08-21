@@ -21,7 +21,7 @@ public class TestStubSupplierPriceResolver implements IErpMdSupplierPriceResolve
     private final Map<String, BigDecimal> prices = new HashMap<>();
 
     @Override
-    public BigDecimal resolveSupplierPrice(ErpMdMaterialSku sku, Long partnerId) {
+    public BigDecimal resolveSupplierPrice(ErpMdMaterialSku sku, String partnerId) {
         if (sku == null || sku.getId() == null) {
             return null;
         }
@@ -29,7 +29,7 @@ public class TestStubSupplierPriceResolver implements IErpMdSupplierPriceResolve
         return prices.get(key);
     }
 
-    public void putPrice(Long skuId, Long partnerId, BigDecimal price) {
+    public void putPrice(String skuId, String partnerId, BigDecimal price) {
         prices.put(key(skuId, partnerId), price);
     }
 
@@ -37,7 +37,7 @@ public class TestStubSupplierPriceResolver implements IErpMdSupplierPriceResolve
         prices.clear();
     }
 
-    private String key(Long skuId, Long partnerId) {
+    private String key(String skuId, String partnerId) {
         return skuId + "@" + partnerId;
     }
 }

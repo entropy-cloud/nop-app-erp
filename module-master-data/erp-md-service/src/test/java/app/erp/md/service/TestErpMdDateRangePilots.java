@@ -59,8 +59,8 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
 
     @Test
     public void exchangeRate_overlapSameCurrencyPairRejected() {
-        Long usd = seedCurrency("USD-C3-1");
-        Long cny = seedCurrency("CNY-C3-1");
+        String usd = seedCurrency("USD-C3-1");
+        String cny = seedCurrency("CNY-C3-1");
 
         // 第一条 [2026-01-01..2026-06-30]
         saveExchangeRateOk(usd, cny, "SPOT", "2026-01-01", "2026-06-30");
@@ -75,8 +75,8 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
 
     @Test
     public void exchangeRate_adjacentDayNoOverlapPasses() {
-        Long usd = seedCurrency("USD-C3-2");
-        Long cny = seedCurrency("CNY-C3-2");
+        String usd = seedCurrency("USD-C3-2");
+        String cny = seedCurrency("CNY-C3-2");
 
         // 第一条 [2026-01-01..2026-06-30]
         saveExchangeRateOk(usd, cny, "SPOT", "2026-01-01", "2026-06-30");
@@ -87,8 +87,8 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
 
     @Test
     public void exchangeRate_differentRateTypeOverlapPasses() {
-        Long usd = seedCurrency("USD-C3-3");
-        Long cny = seedCurrency("CNY-C3-3");
+        String usd = seedCurrency("USD-C3-3");
+        String cny = seedCurrency("CNY-C3-3");
 
         // 第一条 SPOT [2026-01-01..2026-12-31]
         saveExchangeRateOk(usd, cny, "SPOT", "2026-01-01", "2026-12-31");
@@ -99,8 +99,8 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
 
     @Test
     public void exchangeRate_updateSelfExcluded() {
-        Long usd = seedCurrency("USD-C3-4");
-        Long cny = seedCurrency("CNY-C3-4");
+        String usd = seedCurrency("USD-C3-4");
+        String cny = seedCurrency("CNY-C3-4");
 
         // 新建 [2026-01-01..2026-06-30]
         Map<?, ?> saved = saveExchangeRateOk(usd, cny, "SPOT", "2026-01-01", "2026-06-30");
@@ -145,8 +145,8 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
 
     @Test
     public void supplierApproval_overlapSamePartnerRejected() {
-        Long partnerId = seedPartner("C3-PARTNER-1");
-        Long categoryId = seedMaterialCategory("C3-CAT-1");
+        String partnerId = seedPartner("C3-PARTNER-1");
+        String categoryId = seedMaterialCategory("C3-CAT-1");
 
         // 第一条 [2026-01-01..2026-06-30] APPLIED
         saveApprovalOk(partnerId, categoryId, "APPLIED", "2026-01-01", "2026-06-30");
@@ -160,8 +160,8 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
 
     @Test
     public void supplierApproval_rejectedStatusOverlapPasses() {
-        Long partnerId = seedPartner("C3-PARTNER-2");
-        Long categoryId = seedMaterialCategory("C3-CAT-2");
+        String partnerId = seedPartner("C3-PARTNER-2");
+        String categoryId = seedMaterialCategory("C3-CAT-2");
 
         // 第一条 REJECTED [2026-01-01..2026-12-31]（status=REJECTED 不参与互斥）
         saveApprovalOk(partnerId, categoryId, "REJECTED", "2026-01-01", "2026-12-31");
@@ -172,8 +172,8 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
 
     @Test
     public void supplierApproval_adjacentDayPasses() {
-        Long partnerId = seedPartner("C3-PARTNER-3");
-        Long categoryId = seedMaterialCategory("C3-CAT-3");
+        String partnerId = seedPartner("C3-PARTNER-3");
+        String categoryId = seedMaterialCategory("C3-CAT-3");
         saveApprovalOk(partnerId, categoryId, "APPLIED", "2026-01-01", "2026-06-30");
         saveApprovalOk(partnerId, categoryId, "APPLIED", "2026-07-01", "2026-12-31");
     }
@@ -185,7 +185,7 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Long seedCurrency(String code) {
+    private String seedCurrency(String code) {
         ErpMdCurrency c = new ErpMdCurrency();
         c.setCode(code);
         c.setName("E2E-" + code);
@@ -194,7 +194,7 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
         return c.getId();
     }
 
-    private Long seedPartner(String code) {
+    private String seedPartner(String code) {
         ErpMdPartner p = new ErpMdPartner();
         p.setCode(code);
         p.setName("E2E-" + code);
@@ -204,7 +204,7 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
         return p.getId();
     }
 
-    private Long seedMaterialCategory(String code) {
+    private String seedMaterialCategory(String code) {
         ErpMdMaterialCategory c = new ErpMdMaterialCategory();
         c.setCode(code);
         c.setName("E2E-" + code);
@@ -212,7 +212,7 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
         return c.getId();
     }
 
-    private Map<String, Object> exchangeRatePayload(Long from, Long to, String rateType,
+    private Map<String, Object> exchangeRatePayload(String from, String to, String rateType,
                                                      String validFrom, String validTo) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("fromCurrencyId", String.valueOf(from));
@@ -226,14 +226,14 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
         return data;
     }
 
-    private ApiResponse<?> saveExchangeRate(Long from, Long to, String rateType,
+    private ApiResponse<?> saveExchangeRate(String from, String to, String rateType,
                                             String validFrom, String validTo) {
         return rpc(mutation, "ErpMdExchangeRate__save",
                 ApiRequest.build(Map.of("data", exchangeRatePayload(from, to, rateType, validFrom, validTo))));
     }
 
     @SuppressWarnings("unchecked")
-    private Map<?, ?> saveExchangeRateOk(Long from, Long to, String rateType,
+    private Map<?, ?> saveExchangeRateOk(String from, String to, String rateType,
                                           String validFrom, String validTo) {
         ApiResponse<?> resp = saveExchangeRate(from, to, rateType, validFrom, validTo);
         assertEquals(0, resp.getStatus(),
@@ -272,7 +272,7 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
         return (Map<String, Object>) resp.getData();
     }
 
-    private Map<String, Object> approvalPayload(Long partnerId, Long categoryId, String status,
+    private Map<String, Object> approvalPayload(String partnerId, String categoryId, String status,
                                                  String validFrom, String validTo) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("partnerId", String.valueOf(partnerId));
@@ -285,14 +285,14 @@ public class TestErpMdDateRangePilots extends JunitAutoTestCase {
         return data;
     }
 
-    private ApiResponse<?> saveApproval(Long partnerId, Long categoryId, String status,
+    private ApiResponse<?> saveApproval(String partnerId, String categoryId, String status,
                                         String validFrom, String validTo) {
         return rpc(mutation, "ErpMdSupplierApproval__save",
                 ApiRequest.build(Map.of("data", approvalPayload(partnerId, categoryId, status, validFrom, validTo))));
     }
 
     @SuppressWarnings("unchecked")
-    private Map<?, ?> saveApprovalOk(Long partnerId, Long categoryId, String status,
+    private Map<?, ?> saveApprovalOk(String partnerId, String categoryId, String status,
                                      String validFrom, String validTo) {
         ApiResponse<?> resp = saveApproval(partnerId, categoryId, status, validFrom, validTo);
         assertEquals(0, resp.getStatus(),

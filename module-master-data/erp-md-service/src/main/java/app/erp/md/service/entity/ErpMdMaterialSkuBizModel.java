@@ -103,7 +103,7 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     @Override
     @BizQuery
-    public ErpMdMaterialSku findDefaultSku(@Name("materialId") Long materialId, IServiceContext context) {
+    public ErpMdMaterialSku findDefaultSku(@Name("materialId") String materialId, IServiceContext context) {
         if (materialId == null || !isMaterialActive(materialId)) {
             return null;
         }
@@ -121,8 +121,8 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     @Override
     @BizQuery
-    public ErpMdMaterialSku resolveSku(@Name("materialId") Long materialId,
-                                       @Optional @Name("unitId") Long unitId,
+    public ErpMdMaterialSku resolveSku(@Name("materialId") String materialId,
+                                       @Optional @Name("unitId") String unitId,
                                        IServiceContext context) {
         if (materialId == null || !isMaterialActive(materialId)) {
             return null;
@@ -150,8 +150,8 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     @Override
     @BizQuery
-    public BigDecimal resolvePrice(@Name("skuId") Long skuId,
-                                   @Optional @Name("partnerId") Long partnerId,
+    public BigDecimal resolvePrice(@Name("skuId") String skuId,
+                                   @Optional @Name("partnerId") String partnerId,
                                    @Optional @Name("billType") String billType,
                                    @Optional @Name("manualPrice") BigDecimal manualPrice,
                                    IServiceContext context) {
@@ -178,11 +178,11 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     @Override
     @BizQuery
-    public ResolvedPrice resolvePriceWithSource(@Name("skuId") Long skuId,
-                                                 @Optional @Name("partnerId") Long partnerId,
+    public ResolvedPrice resolvePriceWithSource(@Name("skuId") String skuId,
+                                                 @Optional @Name("partnerId") String partnerId,
                                                  @Optional @Name("billType") String billType,
                                                  @Optional @Name("quantity") BigDecimal quantity,
-                                                 @Optional @Name("currencyId") Long currencyId,
+                                                 @Optional @Name("currencyId") String currencyId,
                                                  IServiceContext context) {
         ErpMdMaterialSku sku = requireSku(skuId, context);
         // 客户价格清单层
@@ -200,9 +200,9 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     @Override
     @BizQuery
-    public PriceValidationResult validatePrice(@Name("skuId") Long skuId,
+    public PriceValidationResult validatePrice(@Name("skuId") String skuId,
                                                @Name("finalPrice") BigDecimal finalPrice,
-                                               @Optional @Name("materialCategoryId") Long materialCategoryId,
+                                               @Optional @Name("materialCategoryId") String materialCategoryId,
                                                IServiceContext context) {
         String level = resolvePriceValidationLevel(materialCategoryId, context);
         if (ErpMdConstants.PRICE_VALIDATION_OFF.equals(level)) {
@@ -229,7 +229,7 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     @Override
     @BizQuery
-    public boolean validateSkuDeactivation(@Name("skuId") Long skuId, IServiceContext context) {
+    public boolean validateSkuDeactivation(@Name("skuId") String skuId, IServiceContext context) {
         ErpMdMaterialSku sku = requireSku(skuId, context);
         // 守卫 1：默认 SKU 唯一性——是默认且无其他可用 SKU 则拒绝。
         // 物料整体删除语境豁免：CrudBizModel.deleteReferences 对 cascade-delete 子对象逐一经子 BizModel
@@ -253,7 +253,7 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
      */
     @Override
     @BizQuery
-    public boolean validateSkuReference(@Name("skuId") Long skuId, IServiceContext context) {
+    public boolean validateSkuReference(@Name("skuId") String skuId, IServiceContext context) {
         ErpMdMaterialSku sku = requireSku(skuId, context);
         checkSkuReferenced(sku);
         return true;
@@ -329,12 +329,12 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
 
     // ============ 内部步骤 ============
 
-    protected ErpMdMaterialSku requireSku(Long skuId, IServiceContext context) {
+    protected ErpMdMaterialSku requireSku(String skuId, IServiceContext context) {
         if (skuId == null) {
             throw new NopException(ErpMdErrors.ERR_SKU_DEFAULT_REQUIRED)
                     .param(ErpMdErrors.ARG_SKU_ID, skuId);
         }
-        ErpMdMaterialSku sku = get(String.valueOf(skuId), true, context);
+        ErpMdMaterialSku sku = get(skuId, true, context);
         if (sku == null) {
             throw new NopException(ErpMdErrors.ERR_SKU_DEFAULT_REQUIRED)
                     .param(ErpMdErrors.ARG_SKU_ID, skuId);
@@ -347,7 +347,7 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
      * （null 派生 ACTIVE，存量行兼容）；与 {@link #isMaterialActive} 同层短路。
      */
     @SuppressWarnings("unchecked")
-    protected boolean hasOtherActiveSku(Long materialId, Long excludeSkuId, IServiceContext context) {
+    protected boolean hasOtherActiveSku(String materialId, String excludeSkuId, IServiceContext context) {
         if (materialId == null) {
             return false;
         }
@@ -425,7 +425,7 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
      * G5：字典值为 string OFF/WARN/HARD；列默认值已收敛为 "WARN"（RC-R1.40），
      * 历史遗留非字典值行（如旧默认 "20"）仍经兜底统一按 WARN 宽松处理。
      */
-    protected String resolvePriceValidationLevel(Long materialCategoryId, IServiceContext context) {
+    protected String resolvePriceValidationLevel(String materialCategoryId, IServiceContext context) {
         if (materialCategoryId == null) {
             return ErpMdConstants.PRICE_VALIDATION_WARN;
         }
@@ -449,7 +449,7 @@ public class ErpMdMaterialSkuBizModel extends CrudBizModel<ErpMdMaterialSku> imp
      * RC-R1.72 起 SKU 另有独立 status 列（null=ACTIVE），本物料级门控与 SKU 级
      * {@link #isSkuActive} 同层短路（两层任一停用均拦截）。
      */
-    protected boolean isMaterialActive(Long materialId) {
+    protected boolean isMaterialActive(String materialId) {
         if (materialId == null) {
             return false;
         }

@@ -82,7 +82,7 @@ public final class ErpDateRangeOverlapValidator {
 
     /**
      * 反射取实体 id（避免强制依赖 {@code io.nop.orm.IOrmEntity} 接口）。
-     * 试点实体均继承 {@code _gen._Erp*} 基类，公共 {@code getId()} 返回 {@code Long}。
+     * 试点实体均继承 {@code _gen._Erp*} 基类，公共 {@code getId()} 返回 {@code String}（plan 2026-08-21-1045-3 迁移后）。
      */
     private static Object idOf(Object entity) {
         try {

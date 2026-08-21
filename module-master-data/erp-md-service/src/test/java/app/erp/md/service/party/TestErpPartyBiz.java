@@ -162,24 +162,24 @@ public class TestErpPartyBiz extends JunitAutoTestCase {
             seedOrganization(1301L, "O-GET-1", "GET-ORG", "ACTIVE");
         });
 
-        PartyRef partner = partyBiz.getParty(ErpPartyType.PARTNER, 1101L, CTX);
+        PartyRef partner = partyBiz.getParty(ErpPartyType.PARTNER, "1101", CTX);
         assertNotNull(partner, "PARTNER getParty 不应返回 null");
         assertEquals(ErpPartyType.PARTNER, partner.getPartyType());
         assertEquals("P-GET-1", partner.getCode());
         assertEquals("GET-PARTNER", partner.getName());
 
-        PartyRef employee = partyBiz.getParty(ErpPartyType.EMPLOYEE, 1201L, CTX);
+        PartyRef employee = partyBiz.getParty(ErpPartyType.EMPLOYEE, "1201", CTX);
         assertNotNull(employee, "EMPLOYEE getParty 不应返回 null");
         assertEquals(ErpPartyType.EMPLOYEE, employee.getPartyType());
         assertEquals("E-GET-1", employee.getCode());
 
-        PartyRef org = partyBiz.getParty(ErpPartyType.ORGANIZATION, 1301L, CTX);
+        PartyRef org = partyBiz.getParty(ErpPartyType.ORGANIZATION, "1301", CTX);
         assertNotNull(org, "ORGANIZATION getParty 不应返回 null");
         assertEquals(ErpPartyType.ORGANIZATION, org.getPartyType());
         assertEquals("O-GET-1", org.getCode());
 
         // 不存在的 ID → null
-        PartyRef missing = partyBiz.getParty(ErpPartyType.PARTNER, 99999999L, CTX);
+        PartyRef missing = partyBiz.getParty(ErpPartyType.PARTNER, "99999999", CTX);
         assertNull(missing, "不存在的 ID 应返回 null");
     }
 
@@ -189,27 +189,27 @@ public class TestErpPartyBiz extends JunitAutoTestCase {
             seedPartnerWithContact(2101L, "P-PROJ", "PROJ-PARTNER",
                     "CUSTOMER", "ACTIVE", "13800000001", "partner@test.com");
             seedEmployeeWithDetails(2201L, "E-PROJ", "PROJ-EMPLOYEE",
-                    "ACTIVE", "13800000002", "emp@test.com", "MANAGER", 9999L, 8888L);
+                    "ACTIVE", "13800000002", "emp@test.com", "MANAGER", "9999", "8888");
             seedOrganization(2301L, "O-PROJ", "PROJ-ORG", "ACTIVE");
         });
 
         // Partner 投影：含 phone/email + extension.partnerType
-        PartyRef partner = partyBiz.getParty(ErpPartyType.PARTNER, 2101L, CTX);
+        PartyRef partner = partyBiz.getParty(ErpPartyType.PARTNER, "2101", CTX);
         assertEquals("13800000001", partner.getPhone());
         assertEquals("partner@test.com", partner.getEmail());
         assertEquals("CUSTOMER", partner.getExtension().get("partnerType"));
         assertEquals("P-PROJ - PROJ-PARTNER", partner.getDisplayName());
 
         // Employee 投影：含 phone/email + extension.position/orgId/partnerId
-        PartyRef employee = partyBiz.getParty(ErpPartyType.EMPLOYEE, 2201L, CTX);
+        PartyRef employee = partyBiz.getParty(ErpPartyType.EMPLOYEE, "2201", CTX);
         assertEquals("13800000002", employee.getPhone());
         assertEquals("emp@test.com", employee.getEmail());
         assertEquals("MANAGER", employee.getExtension().get("position"));
-        assertEquals(9999L, employee.getExtension().get("orgId"));
-        assertEquals(8888L, employee.getExtension().get("partnerId"));
+        assertEquals("9999", employee.getExtension().get("orgId"));
+        assertEquals("8888", employee.getExtension().get("partnerId"));
 
         // Organization 投影：phone/email=null 容忍 + extension.orgType
-        PartyRef org = partyBiz.getParty(ErpPartyType.ORGANIZATION, 2301L, CTX);
+        PartyRef org = partyBiz.getParty(ErpPartyType.ORGANIZATION, "2301", CTX);
         assertNull(org.getPhone(), "Organization 无 phone 列，投影为 null");
         assertNull(org.getEmail(), "Organization 无 email 列，投影为 null");
         assertNotNull(org.getExtension(), "Organization extension Map 应非 null");
@@ -217,18 +217,18 @@ public class TestErpPartyBiz extends JunitAutoTestCase {
 
     @Test
     public void testFindReferencesPartnerPathAndMissingSpisReturnEmpty() {
-        Long partnerId;
-        Long employeeId;
-        Long orgId;
+        String partnerId;
+        String employeeId;
+        String orgId;
         // seed 取得 ID（不固定 ID 便于换库测试）
         ormTemplate.runInSession(() -> {
             seedPartner(3101L, "P-REF", "REF-PARTNER", "ACTIVE");
             seedEmployee(3201L, "E-REF", "REF-EMPLOYEE", "ACTIVE");
             seedOrganization(3301L, "O-REF", "REF-ORG", "ACTIVE");
         });
-        partnerId = 3101L;
-        employeeId = 3201L;
-        orgId = 3301L;
+        partnerId = "3101";
+        employeeId = "3201";
+        orgId = "3301";
 
         // 1. Partner 路径：桩注入 partnerReferenceChecker → 经既有 partnerCheckers 收集
         refChecker.clear();
@@ -284,7 +284,7 @@ public class TestErpPartyBiz extends JunitAutoTestCase {
                                         String status, String phone, String email) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner p = dao.newEntity();
-        p.orm_propValue(1, id);
+        p.orm_propValue(1, String.valueOf(id));
         p.setCode(code);
         p.setName(name);
         p.setPartnerType(partnerType);
@@ -303,10 +303,10 @@ public class TestErpPartyBiz extends JunitAutoTestCase {
     @SuppressWarnings("SameParameterValue")
     private void seedEmployeeWithDetails(long id, String code, String name, String status,
                                          String phone, String email, String position,
-                                         Long orgId, Long partnerId) {
+                                         String orgId, String partnerId) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee e = dao.newEntity();
-        e.orm_propValue(1, id);
+        e.orm_propValue(1, String.valueOf(id));
         e.setCode(code);
         e.setName(name);
         e.setStatus(status);
@@ -321,7 +321,7 @@ public class TestErpPartyBiz extends JunitAutoTestCase {
     private void seedOrganization(long id, String code, String name, String status) {
         IEntityDao<ErpMdOrganization> dao = daoProvider.daoFor(ErpMdOrganization.class);
         ErpMdOrganization o = dao.newEntity();
-        o.orm_propValue(1, id);
+        o.orm_propValue(1, String.valueOf(id));
         o.setCode(code);
         o.setName(name);
         o.setStatus(status);

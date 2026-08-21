@@ -100,7 +100,7 @@ public class ErpPartyBizModel implements IErpPartyBiz {
     @Override
     @BizQuery
     public PartyRef getParty(@Name("partyType") @Nullable ErpPartyType partyType,
-                             @Name("partyId") @Nullable Long partyId,
+                             @Name("partyId") @Nullable String partyId,
                              IServiceContext context) {
         if (partyType == null || partyId == null) {
             return null;
@@ -111,8 +111,8 @@ public class ErpPartyBizModel implements IErpPartyBiz {
     @Override
     @BizQuery
     public Map<String, Long> findReferences(@Name("partyType") @Nullable ErpPartyType partyType,
-                                            @Name("partyId") @Nullable Long partyId,
-                                            IServiceContext context) {
+                                             @Name("partyId") @Nullable String partyId,
+                                             IServiceContext context) {
         if (partyType == null || partyId == null) {
             return Collections.emptyMap();
         }
@@ -223,7 +223,7 @@ public class ErpPartyBizModel implements IErpPartyBiz {
         }
     }
 
-    private PartyRef loadPartyRef(ErpPartyType type, Long partyId) {
+    private PartyRef loadPartyRef(ErpPartyType type, String partyId) {
         switch (type) {
             case PARTNER: {
                 ErpMdPartner e = daoProvider.daoFor(ErpMdPartner.class).getEntityById(partyId);

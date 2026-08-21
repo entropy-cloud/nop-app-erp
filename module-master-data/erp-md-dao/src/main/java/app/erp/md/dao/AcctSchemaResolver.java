@@ -25,7 +25,7 @@ public class AcctSchemaResolver {
      *
      * @return 主账套 ID；无 ACTIVE 账套时返回 null
      */
-    public static Long resolvePrimarySchemaId(IDaoProvider daoProvider, Long orgId) {
+    public static String resolvePrimarySchemaId(IDaoProvider daoProvider, String orgId) {
         if (orgId == null) {
             return null;
         }

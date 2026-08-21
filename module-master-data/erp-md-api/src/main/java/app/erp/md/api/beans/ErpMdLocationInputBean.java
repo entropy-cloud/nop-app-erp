@@ -12,30 +12,30 @@
     public class ErpMdLocationInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _warehouseId;
+        private String _warehouseId;
 
     
         @PropMeta(propId=2)
     
-        public Long getWarehouseId(){
+        public String getWarehouseId(){
             return _warehouseId;
         }
 
-        public void setWarehouseId(Long value){
+        public void setWarehouseId(String value){
             this._warehouseId = value;
         }
 
@@ -68,16 +68,16 @@
         }
 
 
-        private Long _parentId;
+        private String _parentId;
 
     
         @PropMeta(propId=5)
     
-        public Long getParentId(){
+        public String getParentId(){
             return _parentId;
         }
 
-        public void setParentId(Long value){
+        public void setParentId(String value){
             this._parentId = value;
         }
 

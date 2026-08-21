@@ -22,7 +22,7 @@ public interface IErpMdMaterialBiz extends ICrudBiz<ErpMdMaterial> {
      */
     @BizQuery
     boolean isCodeUnique(@Name("code") String code,
-                         @Optional @Name("excludeId") Long excludeId,
+                         @Optional @Name("excludeId") String excludeId,
                          IServiceContext context);
 
     /**
@@ -34,5 +34,5 @@ public interface IErpMdMaterialBiz extends ICrudBiz<ErpMdMaterial> {
      * @return key=引用域名，value=引用行数。无引用或无 SPI 实现返回空 Map
      */
     @BizQuery
-    Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context);
+    Map<String, Long> countReferences(@Name("id") String id, IServiceContext context);
 }

@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -31,7 +31,7 @@
                 <col id="settlementType" mandatory="true" sortable="true"/>
 
                 <!--默认资金账户-->
-                <col id="defaultFundAccountId" ui:number="true" sortable="true"/>
+                <col id="defaultFundAccountId" sortable="true"/>
 
                 <!--默认账期(天)-->
                 <col id="defaultDays" ui:number="true" sortable="true"/>

@@ -26,5 +26,5 @@ public interface IErpMdOrganizationReferenceChecker {
      * @return key=引用域名（如 {@code warehouse}/{@code department} 等），
      *         value=引用行数。无引用或无实现返回空 Map。
      */
-    Map<String, Long> countReferences(Long organizationId);
+    Map<String, Long> countReferences(String organizationId);
 }

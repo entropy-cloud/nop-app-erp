@@ -116,16 +116,16 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 源科目: SOURCE_SUBJECT_ID */
-    private java.lang.Long _sourceSubjectId;
+    private java.lang.String _sourceSubjectId;
     
     /* 目标账套: TARGET_ACCT_SCHEMA_ID */
-    private java.lang.Long _targetAcctSchemaId;
+    private java.lang.String _targetAcctSchemaId;
     
     /* 目标科目: TARGET_SUBJECT_ID */
-    private java.lang.Long _targetSubjectId;
+    private java.lang.String _targetSubjectId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -261,9 +261,9 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -271,9 +271,9 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceSubjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceSubjectId));
                }
                setSourceSubjectId(typedValue);
@@ -281,9 +281,9 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
             }
         
             case PROP_ID_targetAcctSchemaId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_targetAcctSchemaId));
                }
                setTargetAcctSchemaId(typedValue);
@@ -291,9 +291,9 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
             }
         
             case PROP_ID_targetSubjectId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_targetSubjectId));
                }
                setTargetSubjectId(typedValue);
@@ -371,28 +371,28 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_sourceSubjectId:{
                onInitProp(propId);
-               this._sourceSubjectId = (java.lang.Long)value;
+               this._sourceSubjectId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_targetAcctSchemaId:{
                onInitProp(propId);
-               this._targetAcctSchemaId = (java.lang.Long)value;
+               this._targetAcctSchemaId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_targetSubjectId:{
                onInitProp(propId);
-               this._targetSubjectId = (java.lang.Long)value;
+               this._targetSubjectId = (java.lang.String)value;
                
                break;
             }
@@ -448,7 +448,7 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -456,7 +456,7 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -467,7 +467,7 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
     /**
      * 源科目: SOURCE_SUBJECT_ID
      */
-    public final java.lang.Long getSourceSubjectId(){
+    public final java.lang.String getSourceSubjectId(){
          onPropGet(PROP_ID_sourceSubjectId);
          return _sourceSubjectId;
     }
@@ -475,7 +475,7 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
     /**
      * 源科目: SOURCE_SUBJECT_ID
      */
-    public final void setSourceSubjectId(java.lang.Long value){
+    public final void setSourceSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceSubjectId,value)){
             this._sourceSubjectId = value;
             internalClearRefs(PROP_ID_sourceSubjectId);
@@ -486,7 +486,7 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
     /**
      * 目标账套: TARGET_ACCT_SCHEMA_ID
      */
-    public final java.lang.Long getTargetAcctSchemaId(){
+    public final java.lang.String getTargetAcctSchemaId(){
          onPropGet(PROP_ID_targetAcctSchemaId);
          return _targetAcctSchemaId;
     }
@@ -494,7 +494,7 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
     /**
      * 目标账套: TARGET_ACCT_SCHEMA_ID
      */
-    public final void setTargetAcctSchemaId(java.lang.Long value){
+    public final void setTargetAcctSchemaId(java.lang.String value){
         if(onPropSet(PROP_ID_targetAcctSchemaId,value)){
             this._targetAcctSchemaId = value;
             internalClearRefs(PROP_ID_targetAcctSchemaId);
@@ -505,7 +505,7 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
     /**
      * 目标科目: TARGET_SUBJECT_ID
      */
-    public final java.lang.Long getTargetSubjectId(){
+    public final java.lang.String getTargetSubjectId(){
          onPropGet(PROP_ID_targetSubjectId);
          return _targetSubjectId;
     }
@@ -513,7 +513,7 @@ public class _ErpMdSubjectMapping extends DynamicOrmEntity{
     /**
      * 目标科目: TARGET_SUBJECT_ID
      */
-    public final void setTargetSubjectId(java.lang.Long value){
+    public final void setTargetSubjectId(java.lang.String value){
         if(onPropSet(PROP_ID_targetSubjectId,value)){
             this._targetSubjectId = value;
             internalClearRefs(PROP_ID_targetSubjectId);

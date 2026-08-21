@@ -198,11 +198,11 @@ public class ErpMdReportBizModel {
             if (materials.isEmpty()) {
                 return Collections.emptyList();
             }
-            Set<Long> materialIds = new HashSet<>();
+            Set<String> materialIds = new HashSet<>();
             for (ErpMdMaterial m : materials) {
                 if (m.getId() != null) materialIds.add(m.getId());
             }
-            Map<Long, ErpMdMaterialSku> defaultSkuByMaterial = loadDefaultSkus(materialIds);
+            Map<String, ErpMdMaterialSku> defaultSkuByMaterial = loadDefaultSkus(materialIds);
             List<Map<String, Object>> rows = new ArrayList<>(materials.size());
             for (ErpMdMaterial m : materials) {
                 ErpMdMaterialSku sku = defaultSkuByMaterial.get(m.getId());
@@ -264,13 +264,13 @@ public class ErpMdReportBizModel {
         return daoProvider.daoFor(ErpMdMaterial.class).findAllByQuery(q);
     }
 
-    private Map<Long, ErpMdMaterialSku> loadDefaultSkus(Set<Long> materialIds) {
+    private Map<String, ErpMdMaterialSku> loadDefaultSkus(Set<String> materialIds) {
         if (materialIds.isEmpty()) return Collections.emptyMap();
         QueryBean q = new QueryBean();
         q.addFilter(in("materialId", materialIds));
         q.addFilter(eq("isDefault", Boolean.TRUE));
         List<ErpMdMaterialSku> skus = daoProvider.daoFor(ErpMdMaterialSku.class).findAllByQuery(q);
-        Map<Long, ErpMdMaterialSku> map = new HashMap<>();
+        Map<String, ErpMdMaterialSku> map = new HashMap<>();
         for (ErpMdMaterialSku s : skus) {
             map.put(s.getMaterialId(), s);
         }

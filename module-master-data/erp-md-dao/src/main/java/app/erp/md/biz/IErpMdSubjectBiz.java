@@ -27,6 +27,6 @@ public interface IErpMdSubjectBiz extends ICrudBiz<ErpMdSubject> {
      */
     @BizQuery
     boolean isCodeUnique(@Name("code") String code,
-                         @Optional @Name("excludeId") Long excludeId,
+                         @Optional @Name("excludeId") String excludeId,
                          IServiceContext context);
 }

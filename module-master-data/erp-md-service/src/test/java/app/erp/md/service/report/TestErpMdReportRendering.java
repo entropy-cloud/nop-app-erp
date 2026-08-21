@@ -173,11 +173,11 @@ public class TestErpMdReportRendering extends JunitAutoTestCase {
     private void seedMaterial(Long id, String code, String status) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         ErpMdMaterial m = new ErpMdMaterial();
-        m.orm_propValueByName("id", id);
+        m.orm_propValueByName("id", String.valueOf(id));
         m.setCode(code);
         m.setName("物料-" + code);
         m.orm_propValueByName("materialType", "GOODS");
-        m.setUoMId(1L);
+        m.setUoMId("1");
         m.setStatus(status);
         m.orm_propValueByName("costMethod", "MOVING_AVERAGE");
         dao.saveEntity(m);
@@ -187,10 +187,10 @@ public class TestErpMdReportRendering extends JunitAutoTestCase {
                                 BigDecimal wholesale, BigDecimal retail) {
         IEntityDao<ErpMdMaterialSku> dao = daoProvider.daoFor(ErpMdMaterialSku.class);
         ErpMdMaterialSku s = new ErpMdMaterialSku();
-        s.orm_propValueByName("id", id);
-        s.setMaterialId(materialId);
+        s.orm_propValueByName("id", String.valueOf(id));
+        s.setMaterialId(String.valueOf(materialId));
         s.setSkuCode("SKU-" + id);
-        s.setUoMId(1L);
+        s.setUoMId("1");
         s.setPurchasePrice(purchase);
         s.setSalePrice(sale);
         s.setWholesalePrice(wholesale);
@@ -202,7 +202,7 @@ public class TestErpMdReportRendering extends JunitAutoTestCase {
     private void seedPartner(Long id, String code, String name, String partnerType, String status) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner p = new ErpMdPartner();
-        p.orm_propValueByName("id", id);
+        p.orm_propValueByName("id", String.valueOf(id));
         p.setCode(code);
         p.setName(name);
         p.orm_propValueByName("partnerType", partnerType);

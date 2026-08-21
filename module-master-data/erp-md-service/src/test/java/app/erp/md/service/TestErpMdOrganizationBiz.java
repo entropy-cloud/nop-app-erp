@@ -54,14 +54,14 @@ public class TestErpMdOrganizationBiz extends JunitAutoTestCase {
 
         // 有引用组织：employee=2, warehouse=1
         @SuppressWarnings("unchecked")
-        Map<String, Long> refs = (Map<String, Long>) organizationBiz.countReferences(orgId, CTX);
+        Map<String, Long> refs = (Map<String, Long>) organizationBiz.countReferences(String.valueOf(orgId), CTX);
         assertTrue(refs != null && !refs.isEmpty(), "有引用组织应返回非空 Map");
         assertEquals(2L, refs.get("employee"), "应统计 2 个归属员工");
         assertEquals(1L, refs.get("warehouse"), "应统计 1 个归属仓库");
 
         // 无引用组织：返回全 0 计数（SPI 仍返回键，值为 0）
         @SuppressWarnings("unchecked")
-        Map<String, Long> emptyRefs = (Map<String, Long>) organizationBiz.countReferences(emptyOrgId, CTX);
+        Map<String, Long> emptyRefs = (Map<String, Long>) organizationBiz.countReferences(String.valueOf(emptyOrgId), CTX);
         assertEquals(0L, emptyRefs.get("employee"), "无引用组织 employee 计数应为 0");
         assertEquals(0L, emptyRefs.get("warehouse"), "无引用组织 warehouse 计数应为 0");
     }
@@ -71,7 +71,7 @@ public class TestErpMdOrganizationBiz extends JunitAutoTestCase {
     private void seedOrganization(long id, String code, String name) {
         IEntityDao<ErpMdOrganization> dao = daoProvider.daoFor(ErpMdOrganization.class);
         ErpMdOrganization o = dao.newEntity();
-        o.orm_propValue(1, id);
+        o.orm_propValue(1, String.valueOf(id));
         o.setCode(code);
         o.setName(name);
         o.setStatus("ACTIVE");
@@ -82,22 +82,22 @@ public class TestErpMdOrganizationBiz extends JunitAutoTestCase {
     private void seedEmployee(long id, String code, long orgId) {
         IEntityDao<ErpMdEmployee> dao = daoProvider.daoFor(ErpMdEmployee.class);
         ErpMdEmployee e = dao.newEntity();
-        e.orm_propValue(1, id);
+        e.orm_propValue(1, String.valueOf(id));
         e.setCode(code);
         e.setName("员工-" + code);
         e.setStatus("ACTIVE");
-        e.setOrgId(orgId);
+        e.setOrgId(String.valueOf(orgId));
         dao.saveEntity(e);
     }
 
     private void seedWarehouse(long id, String code, long orgId) {
         IEntityDao<ErpMdWarehouse> dao = daoProvider.daoFor(ErpMdWarehouse.class);
         ErpMdWarehouse w = dao.newEntity();
-        w.orm_propValue(1, id);
+        w.orm_propValue(1, String.valueOf(id));
         w.setCode(code);
         w.setName("仓库-" + code);
         w.setStatus("ACTIVE");
-        w.setOrgId(orgId);
+        w.setOrgId(String.valueOf(orgId));
         dao.saveEntity(w);
     }
 }

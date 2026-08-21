@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "fromCurrencyId": 0,
-  "toCurrencyId": 0,
+  "id": "",
+  "fromCurrencyId": "",
+  "toCurrencyId": "",
   "rateType": "",
   "rate": 0.0,
   "validFrom": "2000-01-01",

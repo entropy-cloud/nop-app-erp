@@ -13,58 +13,58 @@
     public class ErpMdSubjectMappingOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
 
-        private Long _sourceSubjectId;
+        private String _sourceSubjectId;
 
     
         @PropMeta(propId=2)
     
-        public Long getSourceSubjectId(){
+        public String getSourceSubjectId(){
             return _sourceSubjectId;
         }
 
-        public void setSourceSubjectId(Long value){
+        public void setSourceSubjectId(String value){
             this._sourceSubjectId = value;
         }
 
 
-        private Long _targetAcctSchemaId;
+        private String _targetAcctSchemaId;
 
     
         @PropMeta(propId=3)
     
-        public Long getTargetAcctSchemaId(){
+        public String getTargetAcctSchemaId(){
             return _targetAcctSchemaId;
         }
 
-        public void setTargetAcctSchemaId(Long value){
+        public void setTargetAcctSchemaId(String value){
             this._targetAcctSchemaId = value;
         }
 
 
-        private Long _targetSubjectId;
+        private String _targetSubjectId;
 
     
         @PropMeta(propId=4)
     
-        public Long getTargetSubjectId(){
+        public String getTargetSubjectId(){
             return _targetSubjectId;
         }
 
-        public void setTargetSubjectId(Long value){
+        public void setTargetSubjectId(String value){
             this._targetSubjectId = value;
         }
 

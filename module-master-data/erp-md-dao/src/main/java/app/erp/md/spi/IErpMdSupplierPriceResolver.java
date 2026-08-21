@@ -24,5 +24,5 @@ public interface IErpMdSupplierPriceResolver {
      * @param partnerId 供应商/客户 ID
      * @return 命中的协议单价；无命中返回 null
      */
-    BigDecimal resolveSupplierPrice(ErpMdMaterialSku sku, Long partnerId);
+    BigDecimal resolveSupplierPrice(ErpMdMaterialSku sku, String partnerId);
 }

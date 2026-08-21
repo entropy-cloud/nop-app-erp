@@ -46,8 +46,8 @@ public class TestErpMdSkuReferenceAggregationMulti extends JunitAutoTestCase {
 
     @Test
     public void testAnyCheckerHitRejects() {
-        Long materialId = seedMaterialWithDefaultAndExtra();
-        Long nonDefaultSkuId = extraSkuId("SKU-AGG-EXTRA");
+        String materialId = seedMaterialWithDefaultAndExtra();
+        String nonDefaultSkuId = extraSkuId("SKU-AGG-EXTRA");
 
         // 两实例均未标记 → 放行
         ApiResponse<?> pass = rpc(query, "ErpMdMaterialSku__validateSkuDeactivation",
@@ -78,26 +78,26 @@ public class TestErpMdSkuReferenceAggregationMulti extends JunitAutoTestCase {
 
     // ---------- seeds ----------
 
-    private Long seedMaterialWithDefaultAndExtra() {
+    private String seedMaterialWithDefaultAndExtra() {
         ErpMdMaterial material = new ErpMdMaterial();
         material.setCode("M-AGG");
         material.setName("物料-AGG");
         material.setMaterialType("GOODS");
-        material.setUoMId(1L);
+        material.setUoMId("1");
         material.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         ormTemplate.runInSession(() -> {
             materialDao().saveEntity(material);
             ErpMdMaterialSku def = new ErpMdMaterialSku();
             def.setMaterialId(material.getId());
             def.setSkuCode("SKU-AGG-DEF");
-            def.setUoMId(1L);
+            def.setUoMId("1");
             def.setConversionRate(BigDecimal.ONE);
             def.setIsDefault(true);
             skuDao().saveEntity(def);
             ErpMdMaterialSku extra = new ErpMdMaterialSku();
             extra.setMaterialId(material.getId());
             extra.setSkuCode("SKU-AGG-EXTRA");
-            extra.setUoMId(1L);
+            extra.setUoMId("1");
             extra.setConversionRate(BigDecimal.ONE);
             extra.setIsDefault(false);
             skuDao().saveEntity(extra);
@@ -105,7 +105,7 @@ public class TestErpMdSkuReferenceAggregationMulti extends JunitAutoTestCase {
         return material.getId();
     }
 
-    private Long extraSkuId(String skuCode) {
+    private String extraSkuId(String skuCode) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("skuCode", skuCode));
         return skuDao().findAllByQuery(q).stream()

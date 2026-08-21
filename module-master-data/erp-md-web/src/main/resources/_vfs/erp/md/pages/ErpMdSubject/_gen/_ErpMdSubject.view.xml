@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--科目编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,7 +28,7 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--父级科目-->
-                <col id="parentId" ui:number="true" sortable="true"/>
+                <col id="parentId" sortable="true"/>
 
                 <!--科目类别-->
                 <col id="subjectClass" mandatory="true" sortable="true"/>
@@ -40,7 +40,7 @@
                 <col id="balanceType" sortable="true"/>
 
                 <!--核算币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--辅助-往来单位-->
                 <col id="isAuxiliaryPartner" sortable="true"/>

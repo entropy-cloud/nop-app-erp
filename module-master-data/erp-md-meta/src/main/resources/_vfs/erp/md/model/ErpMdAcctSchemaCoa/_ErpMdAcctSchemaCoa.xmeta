@@ -22,12 +22,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="acctSchemaId" displayName="账套" propId="2" i18n-en:displayName="Acct Schema" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="acctSchema">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="name" displayName="科目表名称" propId="3" i18n-en:displayName="Name" tagSet="disp" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">

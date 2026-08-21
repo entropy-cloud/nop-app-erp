@@ -23,5 +23,5 @@ public interface IErpMdEmployeeReferenceChecker {
      * @return key=引用域名（如 {@code purchaseOrderBuyer}/{@code salesOrderSalesman} 等），
      *         value=引用行数。无引用或无实现返回空 Map。
      */
-    Map<String, Long> countReferences(Long employeeId);
+    Map<String, Long> countReferences(String employeeId);
 }

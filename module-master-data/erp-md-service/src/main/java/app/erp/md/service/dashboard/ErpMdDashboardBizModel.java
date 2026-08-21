@@ -74,7 +74,7 @@ public class ErpMdDashboardBizModel {
             IEntityDao<ErpMdMaterialSku> skuDao = daoProvider.daoFor(ErpMdMaterialSku.class);
             QueryBean skuQ = new QueryBean();
             skuQ.setLimit(ALERT_MAX_ROWS);
-            Set<Long> materialIdsWithSku = new HashSet<>();
+            Set<String> materialIdsWithSku = new HashSet<>();
             for (ErpMdMaterialSku s : skuDao.findAllByQuery(skuQ)) {
                 if (s.getMaterialId() != null) materialIdsWithSku.add(s.getMaterialId());
             }

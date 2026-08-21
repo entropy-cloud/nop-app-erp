@@ -49,7 +49,7 @@ public class TestErpMdPartnerBiz extends JunitAutoTestCase {
 
     @Test
     public void testIsCodeUnique() {
-        Long partnerId = seedPartner("E2E-PART-UNIQ-1");
+        String partnerId = seedPartner("E2E-PART-UNIQ-1");
         // 1. 新编码（无冲突）→ true
         Boolean fresh = (Boolean) rpcData(GraphQLOperationType.query, "ErpMdPartner__isCodeUnique",
                 Map.of("code", "E2E-PART-UNIQ-NEW"));
@@ -69,7 +69,7 @@ public class TestErpMdPartnerBiz extends JunitAutoTestCase {
     @Test
     public void testCountReferences() {
         // 1. 0 引用（未在桩中标记）→ 空 Map
-        Long unreferencedId = seedPartner("E2E-PART-REF-0");
+        String unreferencedId = seedPartner("E2E-PART-REF-0");
         @SuppressWarnings("unchecked")
         Map<String, Long> empty = (Map<String, Long>) rpcData(GraphQLOperationType.query,
                 "ErpMdPartner__countReferences", Map.of("id", unreferencedId));
@@ -77,7 +77,7 @@ public class TestErpMdPartnerBiz extends JunitAutoTestCase {
         assertTrue(empty.isEmpty(), "0 引用应返回空 Map，实际：" + empty);
 
         // 2. 多引用（经 SPI 桩注入）→ 非零计数
-        Long referencedId = seedPartner("E2E-PART-REF-MULTI");
+        String referencedId = seedPartner("E2E-PART-REF-MULTI");
         refChecker.markReferenced(referencedId, "purchaseOrder", 7L);
         refChecker.markReferenced(referencedId, "salesOrder", 4L);
 
@@ -102,7 +102,7 @@ public class TestErpMdPartnerBiz extends JunitAutoTestCase {
         return resp.getData();
     }
 
-    private Long seedPartner(String code) {
+    private String seedPartner(String code) {
         ErpMdPartner partner = new ErpMdPartner();
         partner.setCode(code);
         partner.setName("E2E-" + code);

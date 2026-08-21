@@ -1,10 +1,10 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
   "name": "",
   "settlementType": "",
   "settlementType_label": "",
-  "defaultFundAccountId": 0,
+  "defaultFundAccountId": "",
   "defaultDays": 0,
   "status": "",
   "status_label": "",

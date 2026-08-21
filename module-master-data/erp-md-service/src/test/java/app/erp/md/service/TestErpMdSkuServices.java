@@ -42,9 +42,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMdSkuServices extends JunitAutoTestCase {
 
-    static final Long UOM_BOTTLE = 8001L;   // 瓶（基本单位）
-    static final Long UOM_CASE = 8002L;     // 箱
-    static final Long UOM_PALLET = 8003L;   // 托盘
+    static final String UOM_BOTTLE = "8001";   // 瓶（基本单位）
+    static final String UOM_CASE = "8002";     // 箱
+    static final String UOM_PALLET = "8003";   // 托盘
 
     @Inject
     IDaoProvider daoProvider;
@@ -57,11 +57,11 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
 
     @Test
     public void testFindSkuByBarcode() {
-        Long materialId = seedMaterialWithSkus("MAT-BC-1", true);
+        String materialId = seedMaterialWithSkus("MAT-BC-1", true);
 
         // 命中：默认 SKU 的 barcode
         ErpMdMaterialSku defaultSku = findDefaultSkuViaRpc(materialId);
-        Long skuId = defaultSku.getId();
+        String skuId = defaultSku.getId();
         ormTemplate.runInSession(() -> {
             ErpMdMaterialSku s = skuDao().getEntityById(skuId);
             s.setBarcode("BC-HIT");
@@ -71,7 +71,7 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
         Map<?, ?> hit = (Map<?, ?>) rpcData(query, "ErpMdMaterialSku__findSkuByBarcode",
                 Map.of("barcode", "BC-HIT"));
         assertNotNull(hit, "条码命中应返回 SKU");
-        assertEquals(skuId, toLong(hit.get("id")));
+        assertEquals(skuId, hit.get("id"));
 
         // 未命中
         assertNull(rpcData(query, "ErpMdMaterialSku__findSkuByBarcode", Map.of("barcode", "NOT-EXIST")));
@@ -82,20 +82,20 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
     @Test
     public void testFindDefaultSku() {
         // 有默认 SKU
-        Long materialId = seedMaterialWithSkus("MAT-DEF-1", true);
+        String materialId = seedMaterialWithSkus("MAT-DEF-1", true);
         Map<?, ?> def = findDefaultSkuMap(materialId);
         assertNotNull(def, "应有默认 SKU");
         assertEquals(Boolean.TRUE, def.get("isDefault"));
 
         // 无默认 SKU
-        Long materialId2 = seedMaterialWithSkus("MAT-DEF-2", false);
+        String materialId2 = seedMaterialWithSkus("MAT-DEF-2", false);
         Map<?, ?> none = findDefaultSkuMap(materialId2);
         assertNull(none, "无默认 SKU 应返回 null");
     }
 
     @Test
     public void testResolveSkuByUnit() {
-        Long materialId = seedMaterialWithSkus("MAT-RSV-1", true);
+        String materialId = seedMaterialWithSkus("MAT-RSV-1", true);
 
         // 按单位匹配（瓶=基本单位 SKU）
         Map<String, Object> byUnitArgs = new java.util.HashMap<>();
@@ -116,10 +116,10 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
     @Test
     public void testResolveSkuNoDefaultRequired() {
         // 物料无默认 SKU + sku-default-required=true（默认） → 抛错
-        Long materialId = seedMaterialWithSkus("MAT-REQ-1", false);
+        String materialId = seedMaterialWithSkus("MAT-REQ-1", false);
 
         ApiResponse<?> resp = rpc(query, "ErpMdMaterialSku__resolveSku",
-                ApiRequest.build(Map.of("materialId", materialId, "unitId", 99999L)));
+                ApiRequest.build(Map.of("materialId", materialId, "unitId", "99999")));
         assertEquals(ErpMdErrors.ERR_SKU_DEFAULT_REQUIRED.getErrorCode(), resp.getCode(),
                 "无默认 SKU 且 sku-default-required=true 应抛错");
     }
@@ -128,7 +128,7 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
 
     @Test
     public void testConvertQtyMaterialLevel() {
-        Long materialId = seedMaterialWithSkus("MAT-CV-1", true);
+        String materialId = seedMaterialWithSkus("MAT-CV-1", true);
         // 物料级换算：1 箱 = 24 瓶
         seedUoMConversion(materialId, UOM_CASE, UOM_BOTTLE, new BigDecimal("24"));
 
@@ -141,7 +141,7 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
 
     @Test
     public void testConvertQtyGenericFallback() {
-        Long materialId = seedMaterialWithSkus("MAT-CV-2", true);
+        String materialId = seedMaterialWithSkus("MAT-CV-2", true);
         // 通用换算（materialId=null）：1 托盘 = 576 瓶
         seedUoMConversion(null, UOM_PALLET, UOM_BOTTLE, new BigDecimal("576"));
 
@@ -154,7 +154,7 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
 
     @Test
     public void testConvertQtyStrictNotFound() {
-        Long materialId = seedMaterialWithSkus("MAT-CV-3", true);
+        String materialId = seedMaterialWithSkus("MAT-CV-3", true);
         // 不配置任何换算系数；strict 默认 true → 抛错
 
         ApiResponse<?> resp = rpc(query, "ErpMdUoMConversion__convertQty",
@@ -169,7 +169,7 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
 
     @Test
     public void testConvertQtySameUnit() {
-        Long materialId = seedMaterialWithSkus("MAT-CV-4", true);
+        String materialId = seedMaterialWithSkus("MAT-CV-4", true);
         Object result = rpcData(query, "ErpMdUoMConversion__convertQty",
                 Map.of("materialId", materialId, "qty", new BigDecimal("7"),
                         "fromUoMId", UOM_BOTTLE, "toUoMId", UOM_BOTTLE));
@@ -185,9 +185,9 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
         ensureUoM(UOM_BOTTLE, "BOTTLE-DUP", "瓶");
         ensureUoM(UOM_CASE, "CASE-DUP", "箱");
         // SKU A 占用 barcode DUP-1
-        Long materialId = seedMaterialWithSkus("MAT-DUP-1", true);
+        String materialId = seedMaterialWithSkus("MAT-DUP-1", true);
         ErpMdMaterialSku skuA = findDefaultSkuViaRpc(materialId);
-        Long skuAId = skuA.getId();
+        String skuAId = skuA.getId();
         ormTemplate.runInSession(() -> {
             ErpMdMaterialSku s = skuDao().getEntityById(skuAId);
             s.setBarcode("DUP-1");
@@ -226,27 +226,16 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
         return resp.getData();
     }
 
-    private ErpMdMaterialSku findDefaultSkuViaRpc(Long materialId) {
+    private ErpMdMaterialSku findDefaultSkuViaRpc(String materialId) {
         Map<?, ?> map = findDefaultSkuMap(materialId);
         if (map == null) {
             return null;
         }
-        Long id = toLong(map.get("id"));
-        return skuDao().getEntityById(id);
+        return skuDao().getEntityById(String.valueOf(map.get("id")));
     }
 
-    private Map<?, ?> findDefaultSkuMap(Long materialId) {
+    private Map<?, ?> findDefaultSkuMap(String materialId) {
         return (Map<?, ?>) rpcData(query, "ErpMdMaterialSku__findDefaultSku", Map.of("materialId", materialId));
-    }
-
-    private Long toLong(Object v) {
-        if (v == null) {
-            return null;
-        }
-        if (v instanceof Number) {
-            return ((Number) v).longValue();
-        }
-        return Long.valueOf(v.toString());
     }
 
     /**
@@ -257,7 +246,7 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
      *
      * @param withDefaultSku true=创建 isDefault=true 的 SKU；false=创建无默认标志的 SKU
      */
-    private Long seedMaterialWithSkus(String codePrefix, boolean withDefaultSku) {
+    private String seedMaterialWithSkus(String codePrefix, boolean withDefaultSku) {
         ErpMdMaterial material = new ErpMdMaterial();
         material.setCode("M-" + codePrefix);
         material.setName("物料-" + codePrefix);
@@ -282,7 +271,7 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
         return material.getId();
     }
 
-    private void seedUoMConversion(Long materialId, Long fromUoMId, Long toUoMId, BigDecimal rate) {
+    private void seedUoMConversion(String materialId, String fromUoMId, String toUoMId, BigDecimal rate) {
         ErpMdUoMConversion conv = new ErpMdUoMConversion();
         conv.setMaterialId(materialId);
         conv.setFromUoMId(fromUoMId);
@@ -309,7 +298,7 @@ public class TestErpMdSkuServices extends JunitAutoTestCase {
 
     /** 幂等创建 UoM（存在则跳过）——barcode save 突变走 FK 校验需 UoM 实体存在。 */
     @SuppressWarnings("unchecked")
-    private void ensureUoM(Long id, String code, String name) {
+    private void ensureUoM(String id, String code, String name) {
         ormTemplate.runInSession(() -> {
             if (uomDao().getEntityById(id) != null) {
                 return;

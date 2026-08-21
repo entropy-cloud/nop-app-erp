@@ -179,10 +179,10 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 物料ID: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* SKU编码: SKU_CODE */
     private java.lang.String _skuCode;
@@ -191,7 +191,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     private java.lang.String _barcode;
     
     /* 计量单位: UOM_ID */
-    private java.lang.Long _uoMId;
+    private java.lang.String _uoMId;
     
     /* 换算系数: CONVERSION_RATE */
     private java.math.BigDecimal _conversionRate;
@@ -209,7 +209,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     private java.math.BigDecimal _retailPrice;
     
     /* 默认税率: TAX_RATE_ID */
-    private java.lang.Long _taxRateId;
+    private java.lang.String _taxRateId;
     
     /* 是否默认SKU: IS_DEFAULT */
     private java.lang.Boolean _isDefault;
@@ -378,9 +378,9 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -388,9 +388,9 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -418,9 +418,9 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
             }
         
             case PROP_ID_uoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_uoMId));
                }
                setUoMId(typedValue);
@@ -478,9 +478,9 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
             }
         
             case PROP_ID_taxRateId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_taxRateId));
                }
                setTaxRateId(typedValue);
@@ -578,14 +578,14 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
@@ -606,7 +606,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
         
             case PROP_ID_uoMId:{
                onInitProp(propId);
-               this._uoMId = (java.lang.Long)value;
+               this._uoMId = (java.lang.String)value;
                
                break;
             }
@@ -648,7 +648,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
         
             case PROP_ID_taxRateId:{
                onInitProp(propId);
-               this._taxRateId = (java.lang.Long)value;
+               this._taxRateId = (java.lang.String)value;
                
                break;
             }
@@ -718,7 +718,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -726,7 +726,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -737,7 +737,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     /**
      * 物料ID: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -745,7 +745,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     /**
      * 物料ID: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -794,7 +794,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     /**
      * 计量单位: UOM_ID
      */
-    public final java.lang.Long getUoMId(){
+    public final java.lang.String getUoMId(){
          onPropGet(PROP_ID_uoMId);
          return _uoMId;
     }
@@ -802,7 +802,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     /**
      * 计量单位: UOM_ID
      */
-    public final void setUoMId(java.lang.Long value){
+    public final void setUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_uoMId,value)){
             this._uoMId = value;
             internalClearRefs(PROP_ID_uoMId);
@@ -908,7 +908,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     /**
      * 默认税率: TAX_RATE_ID
      */
-    public final java.lang.Long getTaxRateId(){
+    public final java.lang.String getTaxRateId(){
          onPropGet(PROP_ID_taxRateId);
          return _taxRateId;
     }
@@ -916,7 +916,7 @@ public class _ErpMdMaterialSku extends DynamicOrmEntity{
     /**
      * 默认税率: TAX_RATE_ID
      */
-    public final void setTaxRateId(java.lang.Long value){
+    public final void setTaxRateId(java.lang.String value){
         if(onPropSet(PROP_ID_taxRateId,value)){
             this._taxRateId = value;
             internalClearRefs(PROP_ID_taxRateId);

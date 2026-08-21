@@ -183,9 +183,9 @@ public class TestErpMdExchangeRateApiClient extends JunitAutoTestCase {
         factory.resetTestState();
 
         // seed 3 币种：USD（基准）+ CNY + EUR（目标）
-        Long usdId = seedCurrency("USD-RT-1", "USD");
-        Long cnyId = seedCurrency("CNY-RT-1", "CNY");
-        Long eurId = seedCurrency("EUR-RT-1", "EUR");
+        String usdId = seedCurrency("USD-RT-1", "USD");
+        String cnyId = seedCurrency("CNY-RT-1", "CNY");
+        String eurId = seedCurrency("EUR-RT-1", "EUR");
 
         // 调 refreshRatesFromApi
         List<ErpMdExchangeRate> result = currencyBiz.refreshRatesFromApi("USD", CTX);
@@ -230,7 +230,7 @@ public class TestErpMdExchangeRateApiClient extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedCurrency(String internalCode, String isoCode) {
+    private String seedCurrency(String internalCode, String isoCode) {
         return ormTemplate.runInSession(session -> {
             ErpMdCurrency c = new ErpMdCurrency();
             // code 字段作为 ISO 4217 货币代码（与 BizModel 用 c.getCode() 匹配 API 返回的 targetCurrency 一致）

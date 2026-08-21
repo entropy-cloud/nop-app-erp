@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--物料(空表示通用)-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--源单位-->
-                <col id="fromUoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="fromUoMId" mandatory="true" sortable="true"/>
 
                 <!--目标单位-->
-                <col id="toUoMId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="toUoMId" mandatory="true" sortable="true"/>
 
                 <!--换算系数-->
                 <col id="conversionRate" mandatory="true" ui:number="true" sortable="true"/>

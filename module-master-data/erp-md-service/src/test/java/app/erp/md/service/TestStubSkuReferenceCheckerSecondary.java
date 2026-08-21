@@ -16,14 +16,14 @@ import java.util.Set;
  */
 public class TestStubSkuReferenceCheckerSecondary implements IErpMdSkuReferenceChecker {
 
-    private final Set<Long> referencedSkuIds = new HashSet<>();
+    private final Set<String> referencedSkuIds = new HashSet<>();
 
     @Override
     public boolean isReferencedByBill(ErpMdMaterialSku sku) {
         return sku != null && sku.getId() != null && referencedSkuIds.contains(sku.getId());
     }
 
-    public void markReferenced(Long skuId) {
+    public void markReferenced(String skuId) {
         referencedSkuIds.add(skuId);
     }
 

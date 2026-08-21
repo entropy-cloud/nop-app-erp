@@ -44,7 +44,7 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
     static final String BC_WHOLESALE = ErpMdConstants.BILL_TYPE_WHOLESALE;
     static final String BC_RETAIL = ErpMdConstants.BILL_TYPE_RETAIL;
     static final String BC_DEFAULT = ErpMdConstants.BILL_TYPE_DEFAULT;
-    static final Long PARTNER_1 = 9001L;
+    static final String PARTNER_1 = "9001";
 
     @Inject
     IDaoProvider daoProvider;
@@ -59,9 +59,9 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
 
     @Test
     public void testResolvePriceManualWins() {
-        Long materialId = seedMaterialAndSku("MAT-PM-1", new BigDecimal("10.00"),
+        String materialId = seedMaterialAndSku("MAT-PM-1", new BigDecimal("10.00"),
                 new BigDecimal("15.00"), new BigDecimal("12.00"), new BigDecimal("18.00"));
-        Long skuId = skuIdFor(materialId);
+        String skuId = skuIdFor(materialId);
         // 也注入一个 SPI 价格，但手工价应优先
         stubResolver.putPrice(skuId, PARTNER_1, new BigDecimal("8.88"));
 
@@ -71,9 +71,9 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
 
     @Test
     public void testResolvePriceFromSupplierList() {
-        Long materialId = seedMaterialAndSku("MAT-PS-1", new BigDecimal("10.00"),
+        String materialId = seedMaterialAndSku("MAT-PS-1", new BigDecimal("10.00"),
                 new BigDecimal("15.00"), new BigDecimal("12.00"), new BigDecimal("18.00"));
-        Long skuId = skuIdFor(materialId);
+        String skuId = skuIdFor(materialId);
         // SPI 价格表命中 7.77（低于默认档采购价 10.00）
         stubResolver.putPrice(skuId, PARTNER_1, new BigDecimal("7.77"));
 
@@ -83,9 +83,9 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
 
     @Test
     public void testResolvePriceDefaultTier() {
-        Long materialId = seedMaterialAndSku("MAT-PD-1", new BigDecimal("10.00"),
+        String materialId = seedMaterialAndSku("MAT-PD-1", new BigDecimal("10.00"),
                 new BigDecimal("15.00"), new BigDecimal("12.00"), new BigDecimal("18.00"));
-        Long skuId = skuIdFor(materialId);
+        String skuId = skuIdFor(materialId);
 
         // 无 SPI + 无手工价 → 按 billType 选默认档（SKU 价格 DECIMAL scale=4，存储为 10.0000）
         assertEquals(new BigDecimal("10.0000"), resolvePrice(skuId, null, BC_PURCHASE, null),
@@ -103,10 +103,10 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
     @Test
     public void testValidatePriceHardReject() {
         // SKU 四档价：purchase=10/wholesale=12/retail=18/sale=15 → 派生底线=10
-        Long materialId = seedMaterialAndSku("MAT-VH-1", new BigDecimal("10.00"),
+        String materialId = seedMaterialAndSku("MAT-VH-1", new BigDecimal("10.00"),
                 new BigDecimal("15.00"), new BigDecimal("12.00"), new BigDecimal("18.00"));
-        Long skuId = skuIdFor(materialId);
-        Long categoryId = seedCategory("CAT-VH-1", ErpMdConstants.PRICE_VALIDATION_HARD);
+        String skuId = skuIdFor(materialId);
+        String categoryId = seedCategory("CAT-VH-1", ErpMdConstants.PRICE_VALIDATION_HARD);
 
         // 最终价 9 < 底线 10 + HARD → 抛错
         ApiResponse<?> resp = rpc(query, "ErpMdMaterialSku__validatePrice",
@@ -120,10 +120,10 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
 
     @Test
     public void testValidatePriceWarnAllows() {
-        Long materialId = seedMaterialAndSku("MAT-VW-1", new BigDecimal("10.00"),
+        String materialId = seedMaterialAndSku("MAT-VW-1", new BigDecimal("10.00"),
                 new BigDecimal("15.00"), new BigDecimal("12.00"), new BigDecimal("18.00"));
-        Long skuId = skuIdFor(materialId);
-        Long categoryId = seedCategory("CAT-VW-1", ErpMdConstants.PRICE_VALIDATION_WARN);
+        String skuId = skuIdFor(materialId);
+        String categoryId = seedCategory("CAT-VW-1", ErpMdConstants.PRICE_VALIDATION_WARN);
 
         // 最终价 9 < 底线 10 + WARN → 放行带警告
         Map<?, ?> result = (Map<?, ?>) rpcData(query, "ErpMdMaterialSku__validatePrice",
@@ -136,10 +136,10 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
 
     @Test
     public void testValidatePriceOff() {
-        Long materialId = seedMaterialAndSku("MAT-VO-1", new BigDecimal("10.00"),
+        String materialId = seedMaterialAndSku("MAT-VO-1", new BigDecimal("10.00"),
                 new BigDecimal("15.00"), new BigDecimal("12.00"), new BigDecimal("18.00"));
-        Long skuId = skuIdFor(materialId);
-        Long categoryId = seedCategory("CAT-VO-1", ErpMdConstants.PRICE_VALIDATION_OFF);
+        String skuId = skuIdFor(materialId);
+        String categoryId = seedCategory("CAT-VO-1", ErpMdConstants.PRICE_VALIDATION_OFF);
 
         // OFF → 不校验（即使低于底线也直接通过，无警告）
         Map<?, ?> result = (Map<?, ?>) rpcData(query, "ErpMdMaterialSku__validatePrice",
@@ -153,10 +153,10 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
     @Test
     public void testValidatePriceAboveMinNoWarning() {
         // 价格高于底线 → 即使 WARN/HARD 也不警告
-        Long materialId = seedMaterialAndSku("MAT-VA-1", new BigDecimal("10.00"),
+        String materialId = seedMaterialAndSku("MAT-VA-1", new BigDecimal("10.00"),
                 new BigDecimal("15.00"), new BigDecimal("12.00"), new BigDecimal("18.00"));
-        Long skuId = skuIdFor(materialId);
-        Long categoryId = seedCategory("CAT-VA-1", ErpMdConstants.PRICE_VALIDATION_HARD);
+        String skuId = skuIdFor(materialId);
+        String categoryId = seedCategory("CAT-VA-1", ErpMdConstants.PRICE_VALIDATION_HARD);
 
         Map<?, ?> result = (Map<?, ?>) rpcData(query, "ErpMdMaterialSku__validatePrice",
                 Map.of("skuId", skuId, "finalPrice", new BigDecimal("20.00"),
@@ -174,7 +174,7 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
         category.setCode("CAT-DEF-1");
         category.setName("分类-CAT-DEF-1");
         ormTemplate.runInSession(() -> categoryDao().saveEntity(category));
-        Long categoryId = category.getId();
+        String categoryId = category.getId();
         assertEquals(ErpMdConstants.PRICE_VALIDATION_WARN,
                 categoryDao().getEntityById(categoryId).getPriceValidationLevel(),
                 "defaultValue 收敛：未显式赋值创建的分类应物化 WARN");
@@ -183,9 +183,9 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
     @Test
     public void testExplicitPriceValidationLevelUnaffected() {
         // 显式赋值 OFF/WARN/HARD 路径不受默认值收敛影响，持久化原样保留
-        Long offId = seedCategory("CAT-EXP-OFF", ErpMdConstants.PRICE_VALIDATION_OFF);
-        Long warnId = seedCategory("CAT-EXP-WARN", ErpMdConstants.PRICE_VALIDATION_WARN);
-        Long hardId = seedCategory("CAT-EXP-HARD", ErpMdConstants.PRICE_VALIDATION_HARD);
+        String offId = seedCategory("CAT-EXP-OFF", ErpMdConstants.PRICE_VALIDATION_OFF);
+        String warnId = seedCategory("CAT-EXP-WARN", ErpMdConstants.PRICE_VALIDATION_WARN);
+        String hardId = seedCategory("CAT-EXP-HARD", ErpMdConstants.PRICE_VALIDATION_HARD);
         assertEquals(ErpMdConstants.PRICE_VALIDATION_OFF,
                 categoryDao().getEntityById(offId).getPriceValidationLevel(), "显式 OFF 应原样持久化");
         assertEquals(ErpMdConstants.PRICE_VALIDATION_WARN,
@@ -197,10 +197,10 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
     @Test
     public void testNonDictValueFallsBackToWarn() {
         // 行为不变性证明：既有历史 "20" 非字典值行 resolve 兜底 → WARN（放行带警告）
-        Long materialId = seedMaterialAndSku("MAT-VN-1", new BigDecimal("10.00"),
+        String materialId = seedMaterialAndSku("MAT-VN-1", new BigDecimal("10.00"),
                 new BigDecimal("15.00"), new BigDecimal("12.00"), new BigDecimal("18.00"));
-        Long skuId = skuIdFor(materialId);
-        Long categoryId = seedCategory("CAT-VN-1", "20");
+        String skuId = skuIdFor(materialId);
+        String categoryId = seedCategory("CAT-VN-1", "20");
 
         Map<?, ?> result = (Map<?, ?>) rpcData(query, "ErpMdMaterialSku__validatePrice",
                 Map.of("skuId", skuId, "finalPrice", new BigDecimal("9.00"),
@@ -212,7 +212,7 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private BigDecimal resolvePrice(Long skuId, Long partnerId, String billType, BigDecimal manual) {
+    private BigDecimal resolvePrice(String skuId, String partnerId, String billType, BigDecimal manual) {
         Map<String, Object> args = new java.util.HashMap<>();
         args.put("skuId", skuId);
         args.put("partnerId", partnerId);
@@ -233,24 +233,24 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
         return resp.getData();
     }
 
-    private Long skuIdFor(Long materialId) {
+    private String skuIdFor(String materialId) {
         return skuDao().findAllByQuery(buildByMaterial(materialId)).stream()
                 .map(ErpMdMaterialSku::getId).findFirst().orElse(null);
     }
 
-    private io.nop.api.core.beans.query.QueryBean buildByMaterial(Long materialId) {
+    private io.nop.api.core.beans.query.QueryBean buildByMaterial(String materialId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("materialId", materialId));
         return q;
     }
 
-    private Long seedMaterialAndSku(String codePrefix, BigDecimal purchase, BigDecimal sale,
+    private String seedMaterialAndSku(String codePrefix, BigDecimal purchase, BigDecimal sale,
                                     BigDecimal wholesale, BigDecimal retail) {
         ErpMdMaterial material = new ErpMdMaterial();
         material.setCode("M-" + codePrefix);
         material.setName("物料-" + codePrefix);
         material.setMaterialType("GOODS");
-        material.setUoMId(1L);
+        material.setUoMId("1");
         material.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
 
         ormTemplate.runInSession(() -> {
@@ -258,7 +258,7 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
             ErpMdMaterialSku sku = new ErpMdMaterialSku();
             sku.setMaterialId(material.getId());
             sku.setSkuCode("SKU-" + codePrefix);
-            sku.setUoMId(1L);
+            sku.setUoMId("1");
             sku.setConversionRate(BigDecimal.ONE);
             sku.setIsDefault(true);
             sku.setPurchasePrice(purchase);
@@ -270,7 +270,7 @@ public class TestErpMdSkuPriceValidation extends JunitAutoTestCase {
         return material.getId();
     }
 
-    private Long seedCategory(String code, String priceValidationLevel) {
+    private String seedCategory(String code, String priceValidationLevel) {
         ErpMdMaterialCategory category = new ErpMdMaterialCategory();
         category.setCode(code);
         category.setName("分类-" + code);

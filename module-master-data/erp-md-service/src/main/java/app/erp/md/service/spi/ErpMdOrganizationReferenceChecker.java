@@ -30,7 +30,7 @@ public class ErpMdOrganizationReferenceChecker implements IErpMdOrganizationRefe
     IDaoProvider daoProvider;
 
     @Override
-    public Map<String, Long> countReferences(Long organizationId) {
+    public Map<String, Long> countReferences(String organizationId) {
         Map<String, Long> refs = new LinkedHashMap<>();
         if (organizationId == null) {
             return refs;
@@ -40,7 +40,7 @@ public class ErpMdOrganizationReferenceChecker implements IErpMdOrganizationRefe
         return refs;
     }
 
-    private <T extends IDaoEntity> long countByOrg(Class<T> entityClass, Long organizationId) {
+    private <T extends IDaoEntity> long countByOrg(Class<T> entityClass, String organizationId) {
         IEntityDao<T> dao = daoProvider.daoFor(entityClass);
         QueryBean q = new QueryBean();
         q.addFilter(eq("orgId", organizationId));

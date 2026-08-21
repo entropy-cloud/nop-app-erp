@@ -13,16 +13,16 @@
     public class ErpMdCostCenterInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,44 +55,44 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=4)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _managerId;
+        private String _managerId;
 
     
         @PropMeta(propId=5)
     
-        public Long getManagerId(){
+        public String getManagerId(){
             return _managerId;
         }
 
-        public void setManagerId(Long value){
+        public void setManagerId(String value){
             this._managerId = value;
         }
 
 
-        private Long _parentId;
+        private String _parentId;
 
     
         @PropMeta(propId=6)
     
-        public Long getParentId(){
+        public String getParentId(){
             return _parentId;
         }
 
-        public void setParentId(Long value){
+        public void setParentId(String value){
             this._parentId = value;
         }
 

@@ -221,7 +221,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 科目编码: CODE */
     private java.lang.String _code;
@@ -230,7 +230,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     private java.lang.String _name;
     
     /* 父级科目: PARENT_ID */
-    private java.lang.Long _parentId;
+    private java.lang.String _parentId;
     
     /* 科目类别: SUBJECT_CLASS */
     private java.lang.String _subjectClass;
@@ -242,7 +242,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     private java.lang.String _balanceType;
     
     /* 核算币种: CURRENCY_ID */
-    private java.lang.Long _currencyId;
+    private java.lang.String _currencyId;
     
     /* 辅助-往来单位: IS_AUXILIARY_PARTNER */
     private java.lang.Boolean _isAuxiliaryPartner;
@@ -456,9 +456,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -486,9 +486,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
             }
         
             case PROP_ID_parentId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_parentId));
                }
                setParentId(typedValue);
@@ -526,9 +526,9 @@ public class _ErpMdSubject extends DynamicOrmEntity{
             }
         
             case PROP_ID_currencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_currencyId));
                }
                setCurrencyId(typedValue);
@@ -716,7 +716,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -737,7 +737,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         
             case PROP_ID_parentId:{
                onInitProp(propId);
-               this._parentId = (java.lang.Long)value;
+               this._parentId = (java.lang.String)value;
                
                break;
             }
@@ -765,7 +765,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
         
             case PROP_ID_currencyId:{
                onInitProp(propId);
-               this._currencyId = (java.lang.Long)value;
+               this._currencyId = (java.lang.String)value;
                
                break;
             }
@@ -898,7 +898,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -906,7 +906,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -955,7 +955,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 父级科目: PARENT_ID
      */
-    public final java.lang.Long getParentId(){
+    public final java.lang.String getParentId(){
          onPropGet(PROP_ID_parentId);
          return _parentId;
     }
@@ -963,7 +963,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 父级科目: PARENT_ID
      */
-    public final void setParentId(java.lang.Long value){
+    public final void setParentId(java.lang.String value){
         if(onPropSet(PROP_ID_parentId,value)){
             this._parentId = value;
             internalClearRefs(PROP_ID_parentId);
@@ -1031,7 +1031,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 核算币种: CURRENCY_ID
      */
-    public final java.lang.Long getCurrencyId(){
+    public final java.lang.String getCurrencyId(){
          onPropGet(PROP_ID_currencyId);
          return _currencyId;
     }
@@ -1039,7 +1039,7 @@ public class _ErpMdSubject extends DynamicOrmEntity{
     /**
      * 核算币种: CURRENCY_ID
      */
-    public final void setCurrencyId(java.lang.Long value){
+    public final void setCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_currencyId,value)){
             this._currencyId = value;
             internalClearRefs(PROP_ID_currencyId);

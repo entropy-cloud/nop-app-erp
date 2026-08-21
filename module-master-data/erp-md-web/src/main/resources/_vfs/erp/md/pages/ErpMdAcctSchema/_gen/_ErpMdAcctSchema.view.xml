@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--账套编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,13 +28,13 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--核算组织-->
-                <col id="orgId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="orgId" mandatory="true" sortable="true"/>
 
                 <!--账套性质-->
                 <col id="nature" mandatory="true" sortable="true"/>
 
                 <!--本位币-->
-                <col id="functionalCurrencyId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="functionalCurrencyId" mandatory="true" sortable="true"/>
 
                 <!--默认成本方法-->
                 <col id="costingMethod" sortable="true"/>

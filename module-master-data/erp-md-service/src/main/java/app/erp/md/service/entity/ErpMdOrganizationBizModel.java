@@ -42,7 +42,7 @@ public class ErpMdOrganizationBizModel extends CrudBizModel<ErpMdOrganization> i
      */
     @Override
     @BizQuery
-    public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context) {
+    public Map<String, Long> countReferences(@Name("id") String id, IServiceContext context) {
         if (id == null || organizationReferenceChecker == null) {
             return Collections.emptyMap();
         }

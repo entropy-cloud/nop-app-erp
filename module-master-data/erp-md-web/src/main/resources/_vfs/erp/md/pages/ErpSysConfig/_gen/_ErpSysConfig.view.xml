@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--配置键-->
                 <col id="configKey" mandatory="true" sortable="true"/>
@@ -28,7 +28,7 @@
                 <col id="configValue" mandatory="true" sortable="true"/>
 
                 <!--所属组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--说明-->
                 <col id="description" sortable="true"/>

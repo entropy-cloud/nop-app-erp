@@ -24,8 +24,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="科目编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -37,7 +37,7 @@
         </prop>
         <prop name="parentId" displayName="父级科目" propId="4" i18n-en:displayName="Parent" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="parent">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="subjectClass" displayName="科目类别" propId="5" i18n-en:displayName="Subject Class" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -53,7 +53,7 @@
         </prop>
         <prop name="currencyId" displayName="核算币种" propId="8" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="isAuxiliaryPartner" displayName="辅助-往来单位" propId="9" i18n-en:displayName="Is Auxiliary Partner"
               queryable="true" sortable="true" insertable="true" updatable="true" defaultValue="false">

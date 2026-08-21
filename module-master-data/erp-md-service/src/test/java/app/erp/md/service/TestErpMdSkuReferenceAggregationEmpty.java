@@ -45,21 +45,21 @@ public class TestErpMdSkuReferenceAggregationEmpty extends JunitAutoTestCase {
         material.setCode("M-AGG-EMPTY");
         material.setName("物料-AGG-EMPTY");
         material.setMaterialType("GOODS");
-        material.setUoMId(1L);
+        material.setUoMId("1");
         material.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
         ormTemplate.runInSession(() -> {
             daoProvider.daoFor(ErpMdMaterial.class).saveEntity(material);
             ErpMdMaterialSku def = new ErpMdMaterialSku();
             def.setMaterialId(material.getId());
             def.setSkuCode("SKU-AGG-EMPTY-DEF");
-            def.setUoMId(1L);
+            def.setUoMId("1");
             def.setConversionRate(BigDecimal.ONE);
             def.setIsDefault(true);
             daoProvider.daoFor(ErpMdMaterialSku.class).saveEntity(def);
             ErpMdMaterialSku extra = new ErpMdMaterialSku();
             extra.setMaterialId(material.getId());
             extra.setSkuCode("SKU-AGG-EMPTY-EXTRA");
-            extra.setUoMId(1L);
+            extra.setUoMId("1");
             extra.setConversionRate(BigDecimal.ONE);
             extra.setIsDefault(false);
             daoProvider.daoFor(ErpMdMaterialSku.class).saveEntity(extra);
@@ -67,7 +67,7 @@ public class TestErpMdSkuReferenceAggregationEmpty extends JunitAutoTestCase {
 
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("skuCode", "SKU-AGG-EMPTY-EXTRA"));
-        Long extraSkuId = daoProvider.daoFor(ErpMdMaterialSku.class).findAllByQuery(q).stream()
+        String extraSkuId = daoProvider.daoFor(ErpMdMaterialSku.class).findAllByQuery(q).stream()
                 .map(ErpMdMaterialSku::getId).findFirst().orElse(null);
 
         IGraphQLExecutionContext ctx = graphQLEngine.newRpcContext(query,

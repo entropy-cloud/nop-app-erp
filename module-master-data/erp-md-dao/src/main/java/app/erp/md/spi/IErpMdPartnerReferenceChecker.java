@@ -22,5 +22,5 @@ public interface IErpMdPartnerReferenceChecker {
      * @return key=引用域名（如 {@code purchaseOrder}/{@code salesOrder}/{@code stockMove} 等），
      *         value=引用行数。无引用或无实现返回空 Map。
      */
-    Map<String, Long> countReferences(Long partnerId);
+    Map<String, Long> countReferences(String partnerId);
 }

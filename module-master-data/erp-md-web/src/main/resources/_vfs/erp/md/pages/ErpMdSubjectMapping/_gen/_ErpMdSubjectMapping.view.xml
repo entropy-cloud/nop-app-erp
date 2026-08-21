@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--源科目-->
-                <col id="sourceSubjectId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="sourceSubjectId" mandatory="true" sortable="true"/>
 
                 <!--目标账套-->
-                <col id="targetAcctSchemaId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="targetAcctSchemaId" mandatory="true" sortable="true"/>
 
                 <!--目标科目-->
-                <col id="targetSubjectId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="targetSubjectId" mandatory="true" sortable="true"/>
 
                 <!--逻辑删除版本-->
                 <col id="delVersion" mandatory="true" ui:number="true" sortable="true"/>

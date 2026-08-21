@@ -24,8 +24,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -41,7 +41,7 @@
         </prop>
         <prop name="defaultFundAccountId" displayName="默认资金账户" propId="5" i18n-en:displayName="Default Fund Account"
               queryable="true" sortable="true" insertable="true" updatable="true">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="defaultDays" displayName="默认账期(天)" propId="6" i18n-en:displayName="Default Days" queryable="true"
               sortable="true" insertable="true" updatable="true">

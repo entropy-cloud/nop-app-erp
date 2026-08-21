@@ -99,7 +99,7 @@ public class ErpMdMaterialCustomsBizModel extends CrudBizModel<ErpMdMaterialCust
      * partnerId 可空（允许无报关行自报场景）；非空时校验类型。
      */
     protected void enforcePartnerIsCustomsBroker(ErpMdMaterialCustoms entity, IServiceContext context) {
-        Long partnerId = entity.getPartnerId();
+        String partnerId = entity.getPartnerId();
         if (partnerId == null) {
             return;
         }

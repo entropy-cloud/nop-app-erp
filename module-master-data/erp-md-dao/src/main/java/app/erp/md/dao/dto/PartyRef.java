@@ -28,7 +28,7 @@ import java.util.Map;
 public class PartyRef {
 
     private ErpPartyType partyType;
-    private Long partyId;
+    private String partyId;
     private String code;
     private String name;
     private String phone;
@@ -48,11 +48,11 @@ public class PartyRef {
         this.partyType = partyType;
     }
 
-    public Long getPartyId() {
+    public String getPartyId() {
         return partyId;
     }
 
-    public void setPartyId(Long partyId) {
+    public void setPartyId(String partyId) {
         this.partyId = partyId;
     }
 

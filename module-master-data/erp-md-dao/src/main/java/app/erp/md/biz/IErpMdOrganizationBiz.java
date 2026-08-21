@@ -21,5 +21,5 @@ public interface IErpMdOrganizationBiz extends ICrudBiz<ErpMdOrganization>{
      * @return key=引用域名，value=引用行数。无引用或无 SPI 实现返回空 Map
      */
     @BizQuery
-    Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context);
+    Map<String, Long> countReferences(@Name("id") String id, IServiceContext context);
 }

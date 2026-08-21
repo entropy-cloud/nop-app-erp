@@ -81,7 +81,7 @@ public class TestErpMdDashboard extends JunitAutoTestCase {
         });
         List<Map<String, Object>> alerts = dashboardBiz.findMaterialWithoutSkuAlert(CTX);
         assertEquals(1, alerts.size(), "仅物料 B 触发预警");
-        assertEquals(112L, alerts.get(0).get("materialId"));
+        assertEquals("112", alerts.get(0).get("materialId"));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class TestErpMdDashboard extends JunitAutoTestCase {
         });
         List<Map<String, Object>> alerts = dashboardBiz.findSkuWithoutPriceAlert(CTX);
         assertEquals(1, alerts.size(), "仅 SKU B 触发预警");
-        assertEquals(222L, alerts.get(0).get("skuId"));
+        assertEquals("222", alerts.get(0).get("skuId"));
     }
 
     // ---------- helpers ----------
@@ -104,11 +104,11 @@ public class TestErpMdDashboard extends JunitAutoTestCase {
     private void seedMaterial(long id, String code, String status) {
         IEntityDao<ErpMdMaterial> dao = daoProvider.daoFor(ErpMdMaterial.class);
         ErpMdMaterial m = dao.newEntity();
-        m.orm_propValue(1, id);
+        m.orm_propValue(1, String.valueOf(id));
         m.setCode(code);
         m.setName("物料-" + code);
         m.setMaterialType("GOODS");
-        m.setUoMId(1L);
+        m.setUoMId("1");
         m.setStatus(status);
         m.setCostMethod("MOVING_AVERAGE");
         dao.saveEntity(m);
@@ -117,7 +117,7 @@ public class TestErpMdDashboard extends JunitAutoTestCase {
     private void seedPartner(long id, String code, String partnerType, String status) {
         IEntityDao<ErpMdPartner> dao = daoProvider.daoFor(ErpMdPartner.class);
         ErpMdPartner p = dao.newEntity();
-        p.orm_propValue(1, id);
+        p.orm_propValue(1, String.valueOf(id));
         p.setCode(code);
         p.setName("单位-" + code);
         p.setPartnerType(partnerType);
@@ -130,10 +130,10 @@ public class TestErpMdDashboard extends JunitAutoTestCase {
     private void seedSku(long id, long materialId, BigDecimal purchasePrice) {
         IEntityDao<ErpMdMaterialSku> dao = daoProvider.daoFor(ErpMdMaterialSku.class);
         ErpMdMaterialSku s = dao.newEntity();
-        s.orm_propValue(1, id);
-        s.setMaterialId(materialId);
+        s.orm_propValue(1, String.valueOf(id));
+        s.setMaterialId(String.valueOf(materialId));
         s.setSkuCode("SKU-" + id);
-        s.setUoMId(1L);
+        s.setUoMId("1");
         s.setConversionRate(BigDecimal.ONE);
         s.setPurchasePrice(purchasePrice);
         dao.saveEntity(s);
@@ -142,10 +142,10 @@ public class TestErpMdDashboard extends JunitAutoTestCase {
     private void seedSkuWithoutPrice(long id, long materialId) {
         IEntityDao<ErpMdMaterialSku> dao = daoProvider.daoFor(ErpMdMaterialSku.class);
         ErpMdMaterialSku s = dao.newEntity();
-        s.orm_propValue(1, id);
-        s.setMaterialId(materialId);
+        s.orm_propValue(1, String.valueOf(id));
+        s.setMaterialId(String.valueOf(materialId));
         s.setSkuCode("SKU-NOPRICE-" + id);
-        s.setUoMId(1L);
+        s.setUoMId("1");
         s.setConversionRate(BigDecimal.ONE);
         dao.saveEntity(s);
     }

@@ -134,13 +134,13 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 源币种: FROM_CURRENCY_ID */
-    private java.lang.Long _fromCurrencyId;
+    private java.lang.String _fromCurrencyId;
     
     /* 目标币种: TO_CURRENCY_ID */
-    private java.lang.Long _toCurrencyId;
+    private java.lang.String _toCurrencyId;
     
     /* 汇率类型: RATE_TYPE */
     private java.lang.String _rateType;
@@ -297,9 +297,9 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -307,9 +307,9 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
             }
         
             case PROP_ID_fromCurrencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fromCurrencyId));
                }
                setFromCurrencyId(typedValue);
@@ -317,9 +317,9 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
             }
         
             case PROP_ID_toCurrencyId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_toCurrencyId));
                }
                setToCurrencyId(typedValue);
@@ -437,21 +437,21 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_fromCurrencyId:{
                onInitProp(propId);
-               this._fromCurrencyId = (java.lang.Long)value;
+               this._fromCurrencyId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_toCurrencyId:{
                onInitProp(propId);
-               this._toCurrencyId = (java.lang.Long)value;
+               this._toCurrencyId = (java.lang.String)value;
                
                break;
             }
@@ -535,7 +535,7 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -543,7 +543,7 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -554,7 +554,7 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
     /**
      * 源币种: FROM_CURRENCY_ID
      */
-    public final java.lang.Long getFromCurrencyId(){
+    public final java.lang.String getFromCurrencyId(){
          onPropGet(PROP_ID_fromCurrencyId);
          return _fromCurrencyId;
     }
@@ -562,7 +562,7 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
     /**
      * 源币种: FROM_CURRENCY_ID
      */
-    public final void setFromCurrencyId(java.lang.Long value){
+    public final void setFromCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_fromCurrencyId,value)){
             this._fromCurrencyId = value;
             internalClearRefs(PROP_ID_fromCurrencyId);
@@ -573,7 +573,7 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
     /**
      * 目标币种: TO_CURRENCY_ID
      */
-    public final java.lang.Long getToCurrencyId(){
+    public final java.lang.String getToCurrencyId(){
          onPropGet(PROP_ID_toCurrencyId);
          return _toCurrencyId;
     }
@@ -581,7 +581,7 @@ public class _ErpMdExchangeRate extends DynamicOrmEntity{
     /**
      * 目标币种: TO_CURRENCY_ID
      */
-    public final void setToCurrencyId(java.lang.Long value){
+    public final void setToCurrencyId(java.lang.String value){
         if(onPropSet(PROP_ID_toCurrencyId,value)){
             this._toCurrencyId = value;
             internalClearRefs(PROP_ID_toCurrencyId);

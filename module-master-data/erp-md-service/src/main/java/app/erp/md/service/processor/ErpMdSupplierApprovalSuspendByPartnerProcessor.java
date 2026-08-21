@@ -41,7 +41,7 @@ public class ErpMdSupplierApprovalSuspendByPartnerProcessor {
     @Inject
     ErpMdSupplierApprovalStateMachine stateMachine;
 
-    public int suspendByPartner(Long partnerId, IServiceContext context) {
+    public int suspendByPartner(String partnerId, IServiceContext context) {
         if (partnerId == null) {
             return 0;
         }
@@ -52,7 +52,7 @@ public class ErpMdSupplierApprovalSuspendByPartnerProcessor {
         return active.size();
     }
 
-    protected List<ErpMdSupplierApproval> findActiveByPartner(Long partnerId) {
+    protected List<ErpMdSupplierApproval> findActiveByPartner(String partnerId) {
         IEntityDao<ErpMdSupplierApproval> dao = daoProvider.daoFor(ErpMdSupplierApproval.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("partnerId", partnerId));

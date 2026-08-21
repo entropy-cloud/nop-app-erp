@@ -49,7 +49,7 @@ public interface IErpPartyBiz {
      */
     @BizQuery
     PartyRef getParty(@Name("partyType") ErpPartyType partyType,
-                      @Name("partyId") Long partyId,
+                      @Name("partyId") String partyId,
                       IServiceContext context);
 
     /**
@@ -73,6 +73,6 @@ public interface IErpPartyBiz {
      */
     @BizQuery
     Map<String, Long> findReferences(@Name("partyType") ErpPartyType partyType,
-                                     @Name("partyId") Long partyId,
+                                     @Name("partyId") String partyId,
                                      IServiceContext context);
 }

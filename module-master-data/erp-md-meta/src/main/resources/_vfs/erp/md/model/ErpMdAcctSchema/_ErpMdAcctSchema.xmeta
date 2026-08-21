@@ -24,8 +24,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="账套编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -37,7 +37,7 @@
         </prop>
         <prop name="orgId" displayName="核算组织" propId="4" i18n-en:displayName="Organization" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="organization">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="nature" displayName="账套性质" propId="5" i18n-en:displayName="Nature" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">
@@ -46,7 +46,7 @@
         <prop name="functionalCurrencyId" displayName="本位币" propId="6" i18n-en:displayName="Functional Currency"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
               ext:relation="functionalCurrency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="costingMethod" displayName="默认成本方法" propId="7" i18n-en:displayName="Costing Method" queryable="true"
               sortable="true" insertable="true" updatable="true">

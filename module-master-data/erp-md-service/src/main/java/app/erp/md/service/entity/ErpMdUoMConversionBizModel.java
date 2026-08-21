@@ -45,10 +45,10 @@ public class ErpMdUoMConversionBizModel extends CrudBizModel<ErpMdUoMConversion>
 
     @Override
     @BizQuery
-    public BigDecimal convertQty(@Name("materialId") Long materialId,
+    public BigDecimal convertQty(@Name("materialId") String materialId,
                                  @Name("qty") BigDecimal qty,
-                                 @Name("fromUoMId") Long fromUoMId,
-                                 @Name("toUoMId") Long toUoMId,
+                                 @Name("fromUoMId") String fromUoMId,
+                                 @Name("toUoMId") String toUoMId,
                                  IServiceContext context) {
         BigDecimal quantity = qty == null ? BigDecimal.ZERO : qty;
         if (fromUoMId == null || toUoMId == null) {
@@ -79,7 +79,7 @@ public class ErpMdUoMConversionBizModel extends CrudBizModel<ErpMdUoMConversion>
     /**
      * 解析换算系数：物料级 → 通用。返回 null 表示两层均未命中。
      */
-    protected BigDecimal resolveConversionRate(Long materialId, Long fromUoMId, Long toUoMId,
+    protected BigDecimal resolveConversionRate(String materialId, String fromUoMId, String toUoMId,
                                                IServiceContext context) {
         BigDecimal rate = findRate(materialId, fromUoMId, toUoMId, context);
         if (rate != null) {
@@ -94,7 +94,7 @@ public class ErpMdUoMConversionBizModel extends CrudBizModel<ErpMdUoMConversion>
      * materialId=null 表示查通用层。
      */
     @SuppressWarnings("unchecked")
-    protected BigDecimal findRate(Long materialId, Long fromUoMId, Long toUoMId, IServiceContext context) {
+    protected BigDecimal findRate(String materialId, String fromUoMId, String toUoMId, IServiceContext context) {
         IEntityDao<ErpMdUoMConversion> conversionDao = daoProvider().daoFor(ErpMdUoMConversion.class);
         QueryBean query = new QueryBean();
         if (materialId == null) {
@@ -118,7 +118,7 @@ public class ErpMdUoMConversionBizModel extends CrudBizModel<ErpMdUoMConversion>
      * 仅当能定位到 (materialId, fromUoMId) 的 SKU 时使用。
      */
     @SuppressWarnings("unchecked")
-    protected BigDecimal fallbackSkuConversionRate(Long materialId, Long fromUoMId, IServiceContext context) {
+    protected BigDecimal fallbackSkuConversionRate(String materialId, String fromUoMId, IServiceContext context) {
         if (materialId == null) {
             return null;
         }

@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--报关记录编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialId" mandatory="true" sortable="true"/>
 
                 <!--报关单号-->
                 <col id="declarationNo" mandatory="true" sortable="true"/>
 
                 <!--报关行-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--报关日期-->
                 <col id="declarationDate" mandatory="true" sortable="true"/>
@@ -46,7 +46,7 @@
                 <col id="amountDeclared" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--申报币种-->
-                <col id="currencyId" ui:number="true" sortable="true"/>
+                <col id="currencyId" sortable="true"/>
 
                 <!--报关日汇率-->
                 <col id="exchangeRate" ui:number="true" sortable="true"/>

@@ -101,7 +101,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
 
     @Override
     @BizMutation
-    public ErpMdSupplierApproval apply(@Name("approvalId") Long approvalId, IServiceContext context) {
+    public ErpMdSupplierApproval apply(@Name("approvalId") String approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         try {
@@ -116,7 +116,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
 
     @Override
     @BizMutation
-    public ErpMdSupplierApproval approve(@Name("approvalId") Long approvalId, IServiceContext context) {
+    public ErpMdSupplierApproval approve(@Name("approvalId") String approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         try {
@@ -134,7 +134,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
 
     @Override
     @BizMutation
-    public ErpMdSupplierApproval probate(@Name("approvalId") Long approvalId, IServiceContext context) {
+    public ErpMdSupplierApproval probate(@Name("approvalId") String approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         try {
@@ -149,20 +149,20 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
 
     @Override
     @BizMutation
-    public ErpMdSupplierApproval suspend(@Name("approvalId") Long approvalId, IServiceContext context) {
+    public ErpMdSupplierApproval suspend(@Name("approvalId") String approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         return doSuspend(approval, context);
     }
 
     @Override
     @BizMutation
-    public int suspendByPartner(@Name("partnerId") Long partnerId, IServiceContext context) {
+    public int suspendByPartner(@Name("partnerId") String partnerId, IServiceContext context) {
         return suspendByPartnerProcessor.suspendByPartner(partnerId, context);
     }
 
     @Override
     @BizMutation
-    public ErpMdSupplierApproval reinstate(@Name("approvalId") Long approvalId, IServiceContext context) {
+    public ErpMdSupplierApproval reinstate(@Name("approvalId") String approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         try {
@@ -179,7 +179,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
 
     @Override
     @BizMutation
-    public ErpMdSupplierApproval reject(@Name("approvalId") Long approvalId, IServiceContext context) {
+    public ErpMdSupplierApproval reject(@Name("approvalId") String approvalId, IServiceContext context) {
         ErpMdSupplierApproval approval = requireApproval(approvalId, context);
         String status = currentStatus(approval);
         try {
@@ -194,7 +194,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
 
     @Override
     @BizQuery
-    public ErpMdSupplierApproval findEffectiveByPartner(@Name("partnerId") Long partnerId, IServiceContext context) {
+    public ErpMdSupplierApproval findEffectiveByPartner(@Name("partnerId") String partnerId, IServiceContext context) {
         if (partnerId == null) {
             return null;
         }
@@ -239,7 +239,7 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
         }
     }
 
-    protected List<ErpMdSupplierApproval> findActiveByPartner(Long partnerId) {
+    protected List<ErpMdSupplierApproval> findActiveByPartner(String partnerId) {
         IEntityDao<ErpMdSupplierApproval> dao = dao();
         QueryBean q = new QueryBean();
         q.addFilter(eq("partnerId", partnerId));
@@ -253,8 +253,8 @@ public class ErpMdSupplierApprovalBizModel extends CrudBizModel<ErpMdSupplierApp
         return list;
     }
 
-    protected ErpMdSupplierApproval requireApproval(Long approvalId, IServiceContext context) {
-        ErpMdSupplierApproval approval = get(String.valueOf(approvalId), true, context);
+    protected ErpMdSupplierApproval requireApproval(String approvalId, IServiceContext context) {
+        ErpMdSupplierApproval approval = get(approvalId, true, context);
         if (approval == null) {
             throw new NopException(ErpMdErrors.ERR_APPROVAL_NOT_FOUND)
                     .param(ErpMdErrors.ARG_APPROVAL_ID, approvalId);

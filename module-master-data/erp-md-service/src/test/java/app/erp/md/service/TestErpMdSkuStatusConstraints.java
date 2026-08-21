@@ -65,8 +65,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     @Test
     public void testCannotDeactivateOnlyDefaultSku() {
         // 物料只有一个默认 SKU → 停用/删除该 SKU 应拒绝
-        Long materialId = seedMaterialAndSku("MAT-DEF-ONLY", true);
-        Long skuId = skuIdFor(materialId);
+        String materialId = seedMaterialAndSku("MAT-DEF-ONLY", true);
+        String skuId = skuIdFor(materialId);
 
         ApiResponse<?> resp = rpc(query, "ErpMdMaterialSku__validateSkuDeactivation",
                 ApiRequest.build(Map.of("skuId", skuId)));
@@ -77,8 +77,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     @Test
     public void testCanDeactivateNonDefaultSku() {
         // 物料有默认 SKU + 另一个非默认 SKU → 停用非默认 SKU 应放行
-        Long materialId = seedMaterialAndSku("MAT-NON-DEF", true);
-        Long nonDefaultSkuId = seedExtraSku(materialId, "SKU-EXTRA", false);
+        String materialId = seedMaterialAndSku("MAT-NON-DEF", true);
+        String nonDefaultSkuId = seedExtraSku(materialId, "SKU-EXTRA", false);
 
         ApiResponse<?> resp = rpc(query, "ErpMdMaterialSku__validateSkuDeactivation",
                 ApiRequest.build(Map.of("skuId", nonDefaultSkuId)));
@@ -90,8 +90,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
 
     @Test
     public void testMaterialDeactivateCascadeGuard() {
-        Long materialId = seedMaterialAndSku("MAT-CASC", true);
-        Long skuId = skuIdFor(materialId);
+        String materialId = seedMaterialAndSku("MAT-CASC", true);
+        String skuId = skuIdFor(materialId);
 
         // 物料 ACTIVE 时，resolveSku 正常返回
         Map<?, ?> active = (Map<?, ?>) rpcData(query, "ErpMdMaterialSku__resolveSku",
@@ -99,7 +99,7 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
         assertNotNull(active, "物料 ACTIVE 时 resolveSku 应返回 SKU");
 
         // 停用物料（status → INACTIVE）
-        Long mid = materialId;
+        String mid = materialId;
         ormTemplate.runInSession(() -> {
             ErpMdMaterial m = materialDao().getEntityById(mid);
             m.setStatus(ErpMdConstants.ACTIVE_STATUS_INACTIVE);
@@ -122,8 +122,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     @Test
     public void testDeleteReferencedSkuRejected() {
         // 物料有两个 SKU（默认 + 非默认），删除非默认 SKU 但它被引用 → 拒绝
-        Long materialId = seedMaterialAndSku("MAT-REF", true);
-        Long nonDefaultSkuId = seedExtraSku(materialId, "SKU-REF-EXTRA", false);
+        String materialId = seedMaterialAndSku("MAT-REF", true);
+        String nonDefaultSkuId = seedExtraSku(materialId, "SKU-REF-EXTRA", false);
         refChecker.markReferenced(nonDefaultSkuId);
 
         ApiResponse<?> resp = rpc(query, "ErpMdMaterialSku__validateSkuDeactivation",
@@ -135,8 +135,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     @Test
     public void testDeleteUnreferencedSkuOk() {
         // 物料有两个 SKU（默认 + 非默认），删除非默认 SKU 且未被引用 → 放行
-        Long materialId = seedMaterialAndSku("MAT-UNREF", true);
-        Long nonDefaultSkuId = seedExtraSku(materialId, "SKU-UNREF-EXTRA", false);
+        String materialId = seedMaterialAndSku("MAT-UNREF", true);
+        String nonDefaultSkuId = seedExtraSku(materialId, "SKU-UNREF-EXTRA", false);
         // 不标记引用
 
         ApiResponse<?> resp = rpc(query, "ErpMdMaterialSku__validateSkuDeactivation",
@@ -152,8 +152,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     /** Proof ①：status=INACTIVE 迁移唯一默认 SKU（update 路径）→ 守卫 1 拒绝。 */
     @Test
     public void testUpdateOnlyDefaultSkuToInactiveRejected() {
-        Long materialId = seedMaterialAndSku("MAT-UPD-DEF-ONLY", true);
-        Long skuId = skuIdFor(materialId);
+        String materialId = seedMaterialAndSku("MAT-UPD-DEF-ONLY", true);
+        String skuId = skuIdFor(materialId);
 
         ApiResponse<?> resp = rpc(mutation, "ErpMdMaterialSku__update",
                 ApiRequest.build(Map.of("data", updatePayload(skuId, "status", ErpMdConstants.ACTIVE_STATUS_INACTIVE))));
@@ -164,8 +164,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     /** Proof ②：非默认 SKU（默认兄弟在场）update → INACTIVE 成功且落库。 */
     @Test
     public void testUpdateNonDefaultSkuToInactiveOk() {
-        Long materialId = seedMaterialAndSku("MAT-UPD-NON-DEF", true);
-        Long nonDefaultSkuId = seedExtraSku(materialId, "SKU-UPD-EXTRA", false);
+        String materialId = seedMaterialAndSku("MAT-UPD-NON-DEF", true);
+        String nonDefaultSkuId = seedExtraSku(materialId, "SKU-UPD-EXTRA", false);
 
         ApiResponse<?> resp = rpc(mutation, "ErpMdMaterialSku__update",
                 ApiRequest.build(Map.of("data", updatePayload(nonDefaultSkuId, "status", ErpMdConstants.ACTIVE_STATUS_INACTIVE))));
@@ -180,8 +180,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     /** Proof ③：默认 SKU 停用后 findDefaultSku/resolveSku/findSkuByBarcode 跳过 INACTIVE。 */
     @Test
     public void testInactiveSkuSkippedByReadApis() {
-        Long materialId = seedMaterialAndSku("MAT-READ-SKIP", true);
-        Long defaultSkuId = skuIdFor(materialId);
+        String materialId = seedMaterialAndSku("MAT-READ-SKIP", true);
+        String defaultSkuId = skuIdFor(materialId);
         // 兄弟 SKU 同单位（可用接替者），默认 SKU 带条码
         setBarcode(defaultSkuId, "BC-READ-SKIP");
         seedExtraSku(materialId, "SKU-READ-SKIP-SIB", false);
@@ -214,7 +214,7 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     @Test
     public void testNullStatusDerivedActive() {
         // 单默认 SKU（status=null）经读侧解析可达
-        Long materialId = seedMaterialAndSku("MAT-NULL-ACTIVE", true);
+        String materialId = seedMaterialAndSku("MAT-NULL-ACTIVE", true);
         Map<?, ?> def = (Map<?, ?>) rpcData(query, "ErpMdMaterialSku__findDefaultSku",
                 Map.of("materialId", materialId));
         assertNotNull(def, "null status 应派生 ACTIVE，findDefaultSku 正常返回");
@@ -224,9 +224,9 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
         assertNotNull(resolved, "null status 应派生 ACTIVE，resolveSku 正常返回");
 
         // null 兄弟 SKU 计为可用接替者：默认 A(null) 停用放行（B(null) 接替在场）
-        Long materialId2 = seedMaterialAndSku("MAT-NULL-SIBLING", true);
+        String materialId2 = seedMaterialAndSku("MAT-NULL-SIBLING", true);
         seedExtraSku(materialId2, "SKU-NULL-SIB", false);
-        Long defaultSkuId2 = skuIdFor(materialId2);
+        String defaultSkuId2 = skuIdFor(materialId2);
         ApiResponse<?> deact = rpc(mutation, "ErpMdMaterialSku__update",
                 ApiRequest.build(Map.of("data", updatePayload(defaultSkuId2, "status", ErpMdConstants.ACTIVE_STATUS_INACTIVE))));
         assertEquals(0, deact.getStatus(), "null status 兄弟应计为可用接替者，停用默认 SKU 放行");
@@ -238,8 +238,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
      */
     @Test
     public void testUpdateGuardTriggersOnlyOnDeactivationTransition() {
-        Long materialId = seedMaterialAndSku("MAT-TRANSITION", true);
-        Long nonDefaultSkuId = seedExtraSku(materialId, "SKU-TRANSITION-EXTRA", false);
+        String materialId = seedMaterialAndSku("MAT-TRANSITION", true);
+        String nonDefaultSkuId = seedExtraSku(materialId, "SKU-TRANSITION-EXTRA", false);
 
         // 非停用迁移：改码（status 未触碰）不触发守卫
         ApiResponse<?> rename = rpc(mutation, "ErpMdMaterialSku__update",
@@ -270,7 +270,7 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
         assertEquals(0, reactivate.getStatus(), "停用→启用恢复应放行");
 
         // null→ACTIVE 显式化（非停用迁移）不触发
-        Long defaultSkuId = skuIdFor(materialId);
+        String defaultSkuId = skuIdFor(materialId);
         ApiResponse<?> explicitActive = rpc(mutation, "ErpMdMaterialSku__update",
                 ApiRequest.build(Map.of("data", updatePayload(defaultSkuId, "status", ErpMdConstants.ACTIVE_STATUS_ACTIVE))));
         assertEquals(0, explicitActive.getStatus(), "null→ACTIVE 显式化不应触发守卫");
@@ -279,8 +279,8 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     /** Proof ⑥：删除含被引用 SKU 的物料被拒绝（级联旁路闭合，错误信息携带阻断 SKU）。 */
     @Test
     public void testDeleteMaterialWithReferencedSkuRejected() {
-        Long materialId = seedMaterialAndSku("MAT-CASC-REF", true);
-        Long referencedSkuId = seedExtraSku(materialId, "SKU-CASC-REF-EXTRA", false);
+        String materialId = seedMaterialAndSku("MAT-CASC-REF", true);
+        String referencedSkuId = seedExtraSku(materialId, "SKU-CASC-REF-EXTRA", false);
         refChecker.markReferenced(referencedSkuId);
 
         ApiResponse<?> resp = rpc(mutation, "ErpMdMaterial__delete",
@@ -294,7 +294,7 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
     /** Proof ⑦（负控）：无引用的单默认 SKU 物料删除成功（守卫 1 不误伤整体删除）。 */
     @Test
     public void testDeleteMaterialWithOnlyDefaultSkuOk() {
-        Long materialId = seedMaterialAndSku("MAT-CASC-SOLO", true);
+        String materialId = seedMaterialAndSku("MAT-CASC-SOLO", true);
 
         ApiResponse<?> resp = rpc(mutation, "ErpMdMaterial__delete",
                 ApiRequest.build(Map.of("id", String.valueOf(materialId))));
@@ -303,14 +303,14 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Map<String, Object> updatePayload(Long skuId, String field, Object value) {
+    private Map<String, Object> updatePayload(String skuId, String field, Object value) {
         Map<String, Object> data = new LinkedHashMap<>();
         data.put("id", String.valueOf(skuId));
         data.put(field, value);
         return data;
     }
 
-    private void setBarcode(Long skuId, String barcode) {
+    private void setBarcode(String skuId, String barcode) {
         ormTemplate.runInSession(() -> {
             ErpMdMaterialSku sku = skuDao().getEntityById(skuId);
             sku.setBarcode(barcode);
@@ -328,23 +328,23 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
         return resp.getData();
     }
 
-    private Long skuIdFor(Long materialId) {
+    private String skuIdFor(String materialId) {
         return skuDao().findAllByQuery(byMaterial(materialId)).stream()
                 .map(ErpMdMaterialSku::getId).findFirst().orElse(null);
     }
 
-    private io.nop.api.core.beans.query.QueryBean byMaterial(Long materialId) {
+    private io.nop.api.core.beans.query.QueryBean byMaterial(String materialId) {
         io.nop.api.core.beans.query.QueryBean q = new io.nop.api.core.beans.query.QueryBean();
         q.addFilter(io.nop.api.core.beans.FilterBeans.eq("materialId", materialId));
         return q;
     }
 
-    private Long seedMaterialAndSku(String codePrefix, boolean withDefaultSku) {
+    private String seedMaterialAndSku(String codePrefix, boolean withDefaultSku) {
         ErpMdMaterial material = new ErpMdMaterial();
         material.setCode("M-" + codePrefix);
         material.setName("物料-" + codePrefix);
         material.setMaterialType("GOODS");
-        material.setUoMId(1L);
+        material.setUoMId("1");
         material.setStatus(ErpMdConstants.ACTIVE_STATUS_ACTIVE);
 
         ormTemplate.runInSession(() -> {
@@ -352,7 +352,7 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
             ErpMdMaterialSku sku = new ErpMdMaterialSku();
             sku.setMaterialId(material.getId());
             sku.setSkuCode("SKU-" + codePrefix);
-            sku.setUoMId(1L);
+            sku.setUoMId("1");
             sku.setConversionRate(BigDecimal.ONE);
             sku.setIsDefault(withDefaultSku);
             sku.setPurchasePrice(new BigDecimal("10.00"));
@@ -361,11 +361,11 @@ public class TestErpMdSkuStatusConstraints extends JunitAutoTestCase {
         return material.getId();
     }
 
-    private Long seedExtraSku(Long materialId, String skuCode, boolean isDefault) {
+    private String seedExtraSku(String materialId, String skuCode, boolean isDefault) {
         ErpMdMaterialSku sku = new ErpMdMaterialSku();
         sku.setMaterialId(materialId);
         sku.setSkuCode(skuCode);
-        sku.setUoMId(1L);
+        sku.setUoMId("1");
         sku.setConversionRate(BigDecimal.ONE);
         sku.setIsDefault(isDefault);
         ormTemplate.runInSession(() -> skuDao().saveEntity(sku));

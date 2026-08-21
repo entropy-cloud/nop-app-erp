@@ -102,7 +102,7 @@ public class ErpMdMaterialBizModel extends CrudBizModel<ErpMdMaterial> implement
     @Override
     @BizQuery
     public boolean isCodeUnique(@Name("code") String code,
-                                @Optional @Name("excludeId") Long excludeId,
+                                @Optional @Name("excludeId") String excludeId,
                                 IServiceContext context) {
         if (code == null || code.isEmpty()) {
             return true;
@@ -120,7 +120,7 @@ public class ErpMdMaterialBizModel extends CrudBizModel<ErpMdMaterial> implement
      */
     @Override
     @BizQuery
-    public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context) {
+    public Map<String, Long> countReferences(@Name("id") String id, IServiceContext context) {
         if (id == null || materialReferenceChecker == null) {
             return Collections.emptyMap();
         }

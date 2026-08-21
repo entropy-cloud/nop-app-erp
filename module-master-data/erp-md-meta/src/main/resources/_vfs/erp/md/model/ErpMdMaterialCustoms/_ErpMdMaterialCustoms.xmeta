@@ -22,8 +22,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="报关记录编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -31,7 +31,7 @@
         </prop>
         <prop name="materialId" displayName="物料" propId="3" i18n-en:displayName="Material" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="material">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="declarationNo" displayName="报关单号" propId="4" i18n-en:displayName="Declaration No" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -39,7 +39,7 @@
         </prop>
         <prop name="partnerId" displayName="报关行" propId="5" i18n-en:displayName="Customs Broker" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="partner">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="declarationDate" displayName="报关日期" propId="6" i18n-en:displayName="Declaration Date"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true">
@@ -59,7 +59,7 @@
         </prop>
         <prop name="currencyId" displayName="申报币种" propId="10" i18n-en:displayName="Currency" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="currency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="exchangeRate" displayName="报关日汇率" propId="11" i18n-en:displayName="Exchange Rate" queryable="true"
               sortable="true" insertable="true" updatable="true">

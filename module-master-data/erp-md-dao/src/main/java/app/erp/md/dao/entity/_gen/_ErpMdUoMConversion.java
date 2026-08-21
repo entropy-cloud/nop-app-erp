@@ -123,16 +123,16 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 物料(空表示通用): MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 源单位: FROM_UOM_ID */
-    private java.lang.Long _fromUoMId;
+    private java.lang.String _fromUoMId;
     
     /* 目标单位: TO_UOM_ID */
-    private java.lang.Long _toUoMId;
+    private java.lang.String _toUoMId;
     
     /* 换算系数: CONVERSION_RATE */
     private java.math.BigDecimal _conversionRate;
@@ -274,9 +274,9 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -284,9 +284,9 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -294,9 +294,9 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
             }
         
             case PROP_ID_fromUoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_fromUoMId));
                }
                setFromUoMId(typedValue);
@@ -304,9 +304,9 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
             }
         
             case PROP_ID_toUoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_toUoMId));
                }
                setToUoMId(typedValue);
@@ -394,28 +394,28 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_fromUoMId:{
                onInitProp(propId);
-               this._fromUoMId = (java.lang.Long)value;
+               this._fromUoMId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_toUoMId:{
                onInitProp(propId);
-               this._toUoMId = (java.lang.Long)value;
+               this._toUoMId = (java.lang.String)value;
                
                break;
             }
@@ -478,7 +478,7 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -486,7 +486,7 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -497,7 +497,7 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
     /**
      * 物料(空表示通用): MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -505,7 +505,7 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
     /**
      * 物料(空表示通用): MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
@@ -516,7 +516,7 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
     /**
      * 源单位: FROM_UOM_ID
      */
-    public final java.lang.Long getFromUoMId(){
+    public final java.lang.String getFromUoMId(){
          onPropGet(PROP_ID_fromUoMId);
          return _fromUoMId;
     }
@@ -524,7 +524,7 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
     /**
      * 源单位: FROM_UOM_ID
      */
-    public final void setFromUoMId(java.lang.Long value){
+    public final void setFromUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_fromUoMId,value)){
             this._fromUoMId = value;
             internalClearRefs(PROP_ID_fromUoMId);
@@ -535,7 +535,7 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
     /**
      * 目标单位: TO_UOM_ID
      */
-    public final java.lang.Long getToUoMId(){
+    public final java.lang.String getToUoMId(){
          onPropGet(PROP_ID_toUoMId);
          return _toUoMId;
     }
@@ -543,7 +543,7 @@ public class _ErpMdUoMConversion extends DynamicOrmEntity{
     /**
      * 目标单位: TO_UOM_ID
      */
-    public final void setToUoMId(java.lang.Long value){
+    public final void setToUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_toUoMId,value)){
             this._toUoMId = value;
             internalClearRefs(PROP_ID_toUoMId);

@@ -18,11 +18,11 @@ import java.util.Set;
  */
 public class TestStubMaterialReferenceChecker implements IErpMdMaterialReferenceChecker {
 
-    private final Map<Long, Map<String, Long>> refs = new HashMap<>();
-    private final Set<Long> knownIds = new HashSet<>();
+    private final Map<String, Map<String, Long>> refs = new HashMap<>();
+    private final Set<String> knownIds = new HashSet<>();
 
     @Override
-    public Map<String, Long> countReferences(Long materialId) {
+    public Map<String, Long> countReferences(String materialId) {
         if (materialId == null) {
             return java.util.Collections.emptyMap();
         }
@@ -31,7 +31,7 @@ public class TestStubMaterialReferenceChecker implements IErpMdMaterialReference
         return m == null ? java.util.Collections.emptyMap() : new HashMap<>(m);
     }
 
-    public void markReferenced(Long materialId, String domain, long count) {
+    public void markReferenced(String materialId, String domain, long count) {
         refs.computeIfAbsent(materialId, k -> new HashMap<>()).put(domain, count);
     }
 

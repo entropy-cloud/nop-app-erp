@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "materialId": 0,
-  "fromUoMId": 0,
-  "toUoMId": 0,
+  "id": "",
+  "materialId": "",
+  "fromUoMId": "",
+  "toUoMId": "",
   "conversionRate": 0.0,
   "delVersion": 0,
   "version": 0,

@@ -14,10 +14,10 @@ import java.util.Map;
  */
 public class TestStubPartnerReferenceChecker implements IErpMdPartnerReferenceChecker {
 
-    private final Map<Long, Map<String, Long>> refs = new HashMap<>();
+    private final Map<String, Map<String, Long>> refs = new HashMap<>();
 
     @Override
-    public Map<String, Long> countReferences(Long partnerId) {
+    public Map<String, Long> countReferences(String partnerId) {
         if (partnerId == null) {
             return java.util.Collections.emptyMap();
         }
@@ -25,7 +25,7 @@ public class TestStubPartnerReferenceChecker implements IErpMdPartnerReferenceCh
         return m == null ? java.util.Collections.emptyMap() : new HashMap<>(m);
     }
 
-    public void markReferenced(Long partnerId, String domain, long count) {
+    public void markReferenced(String partnerId, String domain, long count) {
         refs.computeIfAbsent(partnerId, k -> new HashMap<>()).put(domain, count);
     }
 

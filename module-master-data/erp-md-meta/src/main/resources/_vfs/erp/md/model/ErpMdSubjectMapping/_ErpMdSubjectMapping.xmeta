@@ -22,21 +22,21 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="sourceSubjectId" displayName="源科目" propId="2" i18n-en:displayName="Source Subject" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="sourceSubject">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="targetAcctSchemaId" displayName="目标账套" propId="3" i18n-en:displayName="Target Acct Schema"
               mandatory="true" queryable="true" sortable="true" insertable="true" updatable="true"
               ext:relation="targetAcctSchema">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="targetSubjectId" displayName="目标科目" propId="4" i18n-en:displayName="Target Subject" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="targetSubject">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="delVersion" displayName="逻辑删除版本" propId="5" i18n-en:displayName="Del Flag" mandatory="true"
               queryable="true" sortable="true" insertable="false" updatable="false" ui:show="R" defaultValue="0">

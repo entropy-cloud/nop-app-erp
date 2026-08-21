@@ -32,12 +32,12 @@ public class SubjectMappingResolver {
      * @param targetAcctSchemaId 目标账套 ID
      * @return 映射表：sourceSubjectId → targetSubjectId（无映射时 targetSubjectId = sourceSubjectId）
      */
-    public Map<Long, Long> resolveMappings(List<Long> sourceSubjectIds, Long targetAcctSchemaId) {
-        Map<Long, Long> result = new HashMap<>();
+    public Map<String, String> resolveMappings(List<String> sourceSubjectIds, String targetAcctSchemaId) {
+        Map<String, String> result = new HashMap<>();
         if (sourceSubjectIds == null || sourceSubjectIds.isEmpty() || targetAcctSchemaId == null) {
             return result;
         }
-        for (Long sid : sourceSubjectIds) {
+        for (String sid : sourceSubjectIds) {
             result.put(sid, sid);
         }
         IEntityDao<ErpMdSubjectMapping> dao = daoProvider.daoFor(ErpMdSubjectMapping.class);

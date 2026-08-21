@@ -1,9 +1,9 @@
 {
-  "id": 0,
-  "warehouseId": 0,
+  "id": "",
+  "warehouseId": "",
   "code": "",
   "name": "",
-  "parentId": 0,
+  "parentId": "",
   "isActive": false,
   "delVersion": 0,
   "version": 0,

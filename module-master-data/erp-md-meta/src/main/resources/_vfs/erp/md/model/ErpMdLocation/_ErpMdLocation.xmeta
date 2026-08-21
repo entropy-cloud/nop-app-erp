@@ -24,12 +24,12 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="warehouseId" displayName="仓库ID" propId="2" i18n-en:displayName="Warehouse" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="warehouse">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编码" propId="3" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -41,7 +41,7 @@
         </prop>
         <prop name="parentId" displayName="父级库位" propId="5" i18n-en:displayName="Parent" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="parent">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="isActive" displayName="是否启用" propId="6" i18n-en:displayName="Active" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="true">

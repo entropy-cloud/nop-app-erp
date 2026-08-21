@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- 平台 bean 初始化循环等待兼容层（plan 2026-08-21-1045-3 Phase 3，2026-08-21）：
+     nop-entropy 08-21 09:33 重装 jar 后 IoC 容器启动出现 nopSequenceGenerator 与
+     nopOrmTemplate/nopOrmSessionFactory 循环等待（nop.err.ioc.bean-init-self-wait，
+     bisect 证实为平台重装引发的顺序回归，与本域迁移无关，详见 docs/bugs/ 登记）。
+     本 delta 以 XML 显式 ioc:lazy-property 恢复容器级延迟注入（镜像平台 orm-defaults.beans.xml
+     中 nopDefaultTransactionListener.ormTemplate 先例）。平台修复后移除（见 bug 登记）。 -->
+<beans x:schema="/nop/schema/beans.xdef" xmlns:x="/nop/schema/xdsl.xdef"
+       xmlns="http://www.springframework.org/schema/beans" xmlns:ioc="ioc">
+
+    <bean id="nopSequenceGenerator" class="io.nop.sys.dao.seq.SysSequenceGenerator"
+          ioc:delay-method="lazyInit" x:override="replace">
+        <property name="ormTemplate" ref="nopOrmTemplate" ioc:lazy-property="true"/>
+        <property name="transactionTemplate" ref="nopTransactionTemplate" ioc:lazy-property="true"/>
+    </bean>
+</beans>

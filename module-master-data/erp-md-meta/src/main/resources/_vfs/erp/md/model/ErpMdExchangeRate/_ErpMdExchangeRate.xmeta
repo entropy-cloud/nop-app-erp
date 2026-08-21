@@ -20,16 +20,16 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="fromCurrencyId" displayName="源币种" propId="2" i18n-en:displayName="From Currency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="fromCurrency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="toCurrencyId" displayName="目标币种" propId="3" i18n-en:displayName="To Currency" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="toCurrency">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="rateType" displayName="汇率类型" propId="4" i18n-en:displayName="Rate Type" queryable="true"
               sortable="true" insertable="true" updatable="true" defaultValue="SPOT">

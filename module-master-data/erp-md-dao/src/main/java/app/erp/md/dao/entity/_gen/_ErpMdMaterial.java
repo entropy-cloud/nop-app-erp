@@ -290,7 +290,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* 物料编码: CODE */
     private java.lang.String _code;
@@ -302,10 +302,10 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     private java.lang.String _materialType;
     
     /* 分类ID: CATEGORY_ID */
-    private java.lang.Long _categoryId;
+    private java.lang.String _categoryId;
     
     /* 主计量单位: UOM_ID */
-    private java.lang.Long _uoMId;
+    private java.lang.String _uoMId;
     
     /* 状态: STATUS */
     private java.lang.String _status;
@@ -320,7 +320,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     private java.lang.Boolean _isSerialManaged;
     
     /* 默认仓库: DEFAULT_WAREHOUSE_ID */
-    private java.lang.Long _defaultWarehouseId;
+    private java.lang.String _defaultWarehouseId;
     
     /* 最低库存: MIN_STOCK */
     private java.math.BigDecimal _minStock;
@@ -341,7 +341,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     private java.math.BigDecimal _volume;
     
     /* 默认税率: DEFAULT_TAX_RATE_ID */
-    private java.lang.Long _defaultTaxRateId;
+    private java.lang.String _defaultTaxRateId;
     
     /* 逻辑删除版本: DEL_VERSION */
     private java.lang.Long _delVersion;
@@ -579,9 +579,9 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -619,9 +619,9 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
             }
         
             case PROP_ID_categoryId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_categoryId));
                }
                setCategoryId(typedValue);
@@ -629,9 +629,9 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
             }
         
             case PROP_ID_uoMId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_uoMId));
                }
                setUoMId(typedValue);
@@ -679,9 +679,9 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
             }
         
             case PROP_ID_defaultWarehouseId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_defaultWarehouseId));
                }
                setDefaultWarehouseId(typedValue);
@@ -749,9 +749,9 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
             }
         
             case PROP_ID_defaultTaxRateId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_defaultTaxRateId));
                }
                setDefaultTaxRateId(typedValue);
@@ -929,7 +929,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -957,14 +957,14 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
         
             case PROP_ID_categoryId:{
                onInitProp(propId);
-               this._categoryId = (java.lang.Long)value;
+               this._categoryId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_uoMId:{
                onInitProp(propId);
-               this._uoMId = (java.lang.Long)value;
+               this._uoMId = (java.lang.String)value;
                
                break;
             }
@@ -999,7 +999,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
         
             case PROP_ID_defaultWarehouseId:{
                onInitProp(propId);
-               this._defaultWarehouseId = (java.lang.Long)value;
+               this._defaultWarehouseId = (java.lang.String)value;
                
                break;
             }
@@ -1048,7 +1048,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
         
             case PROP_ID_defaultTaxRateId:{
                onInitProp(propId);
-               this._defaultTaxRateId = (java.lang.Long)value;
+               this._defaultTaxRateId = (java.lang.String)value;
                
                break;
             }
@@ -1174,7 +1174,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -1182,7 +1182,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -1250,7 +1250,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 分类ID: CATEGORY_ID
      */
-    public final java.lang.Long getCategoryId(){
+    public final java.lang.String getCategoryId(){
          onPropGet(PROP_ID_categoryId);
          return _categoryId;
     }
@@ -1258,7 +1258,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 分类ID: CATEGORY_ID
      */
-    public final void setCategoryId(java.lang.Long value){
+    public final void setCategoryId(java.lang.String value){
         if(onPropSet(PROP_ID_categoryId,value)){
             this._categoryId = value;
             internalClearRefs(PROP_ID_categoryId);
@@ -1269,7 +1269,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 主计量单位: UOM_ID
      */
-    public final java.lang.Long getUoMId(){
+    public final java.lang.String getUoMId(){
          onPropGet(PROP_ID_uoMId);
          return _uoMId;
     }
@@ -1277,7 +1277,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 主计量单位: UOM_ID
      */
-    public final void setUoMId(java.lang.Long value){
+    public final void setUoMId(java.lang.String value){
         if(onPropSet(PROP_ID_uoMId,value)){
             this._uoMId = value;
             internalClearRefs(PROP_ID_uoMId);
@@ -1364,7 +1364,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 默认仓库: DEFAULT_WAREHOUSE_ID
      */
-    public final java.lang.Long getDefaultWarehouseId(){
+    public final java.lang.String getDefaultWarehouseId(){
          onPropGet(PROP_ID_defaultWarehouseId);
          return _defaultWarehouseId;
     }
@@ -1372,7 +1372,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 默认仓库: DEFAULT_WAREHOUSE_ID
      */
-    public final void setDefaultWarehouseId(java.lang.Long value){
+    public final void setDefaultWarehouseId(java.lang.String value){
         if(onPropSet(PROP_ID_defaultWarehouseId,value)){
             this._defaultWarehouseId = value;
             internalClearRefs(PROP_ID_defaultWarehouseId);
@@ -1497,7 +1497,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 默认税率: DEFAULT_TAX_RATE_ID
      */
-    public final java.lang.Long getDefaultTaxRateId(){
+    public final java.lang.String getDefaultTaxRateId(){
          onPropGet(PROP_ID_defaultTaxRateId);
          return _defaultTaxRateId;
     }
@@ -1505,7 +1505,7 @@ public class _ErpMdMaterial extends DynamicOrmEntity{
     /**
      * 默认税率: DEFAULT_TAX_RATE_ID
      */
-    public final void setDefaultTaxRateId(java.lang.Long value){
+    public final void setDefaultTaxRateId(java.lang.String value){
         if(onPropSet(PROP_ID_defaultTaxRateId,value)){
             this._defaultTaxRateId = value;
             internalClearRefs(PROP_ID_defaultTaxRateId);

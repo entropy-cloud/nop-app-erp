@@ -19,10 +19,10 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--往来单位-->
-                <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="partnerId" mandatory="true" sortable="true"/>
 
                 <!--地址类型-->
                 <col id="addressType" mandatory="true" sortable="true"/>

@@ -26,16 +26,16 @@ import app.erp.md.dao.entity.ErpMdSupplierApproval;
 public interface IErpMdSupplierApprovalBiz extends ICrudBiz<ErpMdSupplierApproval> {
 
     @BizMutation
-    ErpMdSupplierApproval apply(@Name("approvalId") Long approvalId, IServiceContext context);
+    ErpMdSupplierApproval apply(@Name("approvalId") String approvalId, IServiceContext context);
 
     @BizMutation
-    ErpMdSupplierApproval approve(@Name("approvalId") Long approvalId, IServiceContext context);
+    ErpMdSupplierApproval approve(@Name("approvalId") String approvalId, IServiceContext context);
 
     @BizMutation
-    ErpMdSupplierApproval probate(@Name("approvalId") Long approvalId, IServiceContext context);
+    ErpMdSupplierApproval probate(@Name("approvalId") String approvalId, IServiceContext context);
 
     @BizMutation
-    ErpMdSupplierApproval suspend(@Name("approvalId") Long approvalId, IServiceContext context);
+    ErpMdSupplierApproval suspend(@Name("approvalId") String approvalId, IServiceContext context);
 
     /**
      * 按供应商暂停全部有效（APPLIED/APPROVED/PROBATION）准入资格。供评分 standing=RED 跨域联动调用
@@ -44,17 +44,17 @@ public interface IErpMdSupplierApprovalBiz extends ICrudBiz<ErpMdSupplierApprova
      * @return 被暂停的资格记录数
      */
     @BizMutation
-    int suspendByPartner(@Name("partnerId") Long partnerId, IServiceContext context);
+    int suspendByPartner(@Name("partnerId") String partnerId, IServiceContext context);
 
     @BizMutation
-    ErpMdSupplierApproval reinstate(@Name("approvalId") Long approvalId, IServiceContext context);
+    ErpMdSupplierApproval reinstate(@Name("approvalId") String approvalId, IServiceContext context);
 
     @BizMutation
-    ErpMdSupplierApproval reject(@Name("approvalId") Long approvalId, IServiceContext context);
+    ErpMdSupplierApproval reject(@Name("approvalId") String approvalId, IServiceContext context);
 
     /**
      * 按供应商加载有效的（非 REJECTED）准入资格。供 RFQ 创建校验、评分联动读取 standing。
      */
     @BizQuery
-    ErpMdSupplierApproval findEffectiveByPartner(@Name("partnerId") Long partnerId, IServiceContext context);
+    ErpMdSupplierApproval findEffectiveByPartner(@Name("partnerId") String partnerId, IServiceContext context);
 }

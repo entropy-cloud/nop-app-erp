@@ -13,16 +13,16 @@
     public class ErpMdSubjectInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -55,16 +55,16 @@
         }
 
 
-        private Long _parentId;
+        private String _parentId;
 
     
         @PropMeta(propId=4)
     
-        public Long getParentId(){
+        public String getParentId(){
             return _parentId;
         }
 
-        public void setParentId(Long value){
+        public void setParentId(String value){
             this._parentId = value;
         }
 
@@ -111,16 +111,16 @@
         }
 
 
-        private Long _currencyId;
+        private String _currencyId;
 
     
         @PropMeta(propId=8)
     
-        public Long getCurrencyId(){
+        public String getCurrencyId(){
             return _currencyId;
         }
 
-        public void setCurrencyId(Long value){
+        public void setCurrencyId(String value){
             this._currencyId = value;
         }
 

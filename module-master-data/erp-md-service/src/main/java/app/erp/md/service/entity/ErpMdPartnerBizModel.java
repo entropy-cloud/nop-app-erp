@@ -39,12 +39,12 @@ public class ErpMdPartnerBizModel extends CrudBizModel<ErpMdPartner> implements 
 
     @Override
     @BizAction
-    public ErpMdPartner findById(@Name("id") Long id, IServiceContext context) {
+    public ErpMdPartner findById(@Name("id") String id, IServiceContext context) {
         if (id == null) {
             return null;
         }
         // 经 get() 走数据权限 + Meta 管道（回归默认读取行为，对齐审计 D2 裁决）。
-        return get(String.valueOf(id), true, context);
+        return get(id, true, context);
     }
 
     /**
@@ -56,7 +56,7 @@ public class ErpMdPartnerBizModel extends CrudBizModel<ErpMdPartner> implements 
     @Override
     @BizQuery
     public boolean isCodeUnique(@Name("code") String code,
-                                @Optional @Name("excludeId") Long excludeId,
+                                @Optional @Name("excludeId") String excludeId,
                                 IServiceContext context) {
         if (code == null || code.isEmpty()) {
             return true;
@@ -74,7 +74,7 @@ public class ErpMdPartnerBizModel extends CrudBizModel<ErpMdPartner> implements 
      */
     @Override
     @BizQuery
-    public Map<String, Long> countReferences(@Name("id") Long id, IServiceContext context) {
+    public Map<String, Long> countReferences(@Name("id") String id, IServiceContext context) {
         if (id == null || partnerReferenceChecker == null) {
             return Collections.emptyMap();
         }

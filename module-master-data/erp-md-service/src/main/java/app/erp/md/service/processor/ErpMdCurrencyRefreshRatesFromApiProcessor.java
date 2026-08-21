@@ -97,7 +97,7 @@ public class ErpMdCurrencyRefreshRatesFromApiProcessor {
     }
 
     protected ErpMdExchangeRate findExistingRate(IEntityDao<ErpMdExchangeRate> rateDao,
-                                                  Long fromCurrencyId, Long toCurrencyId, LocalDate validFrom) {
+                                                  String fromCurrencyId, String toCurrencyId, LocalDate validFrom) {
         QueryBean query = new QueryBean();
         query.addFilter(FilterBeans.eq("fromCurrencyId", fromCurrencyId));
         query.addFilter(FilterBeans.eq("toCurrencyId", toCurrencyId));

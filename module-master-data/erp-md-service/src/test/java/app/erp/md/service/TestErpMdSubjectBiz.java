@@ -41,7 +41,7 @@ public class TestErpMdSubjectBiz extends JunitAutoTestCase {
 
     @Test
     public void testIsCodeUnique() {
-        Long subjectId = seedSubject("E2E-SUBJ-UNIQ-1");
+        String subjectId = seedSubject("E2E-SUBJ-UNIQ-1");
         // 1. 新编码（无冲突）→ true
         Boolean fresh = (Boolean) rpcData(GraphQLOperationType.query, "ErpMdSubject__isCodeUnique",
                 Map.of("code", "E2E-SUBJ-UNIQ-NEW"));
@@ -71,7 +71,7 @@ public class TestErpMdSubjectBiz extends JunitAutoTestCase {
         return resp.getData();
     }
 
-    private Long seedSubject(String code) {
+    private String seedSubject(String code) {
         ErpMdSubject subject = new ErpMdSubject();
         subject.setCode(code);
         subject.setName("E2E-" + code);

@@ -35,8 +35,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
         enableActionAuth = OptionalBoolean.FALSE)
 public class TestErpMdSupplierApprovalStateMachine extends JunitAutoTestCase {
 
-    static final Long PARTNER_ID = 7001L;
-    static final Long CATEGORY_ID = 7101L;
+    static final String PARTNER_ID = "7001";
+    static final String CATEGORY_ID = "7101";
 
     @Inject
     IDaoProvider daoProvider;
@@ -110,11 +110,11 @@ public class TestErpMdSupplierApprovalStateMachine extends JunitAutoTestCase {
     @Test
     public void testSuspendByPartnerSuspendsAllActive() {
         ErpMdSupplierApproval a1 = seedApproval(ErpMdConstants.APPROVAL_STATUS_APPROVED, "ISO9001");
-        a1.setPartnerId(7701L);
+        a1.setPartnerId("7701");
         ErpMdSupplierApproval a2 = seedApproval(ErpMdConstants.APPROVAL_STATUS_PROBATION, "ISO14001");
-        a2.setPartnerId(7701L);
+        a2.setPartnerId("7701");
         ErpMdSupplierApproval a3 = seedApproval(ErpMdConstants.APPROVAL_STATUS_REJECTED, null);
-        a3.setPartnerId(7701L);
+        a3.setPartnerId("7701");
         ormTemplate.runInSession(() -> {
             approvalDao().saveEntity(a1);
             approvalDao().saveEntity(a2);
@@ -122,7 +122,7 @@ public class TestErpMdSupplierApprovalStateMachine extends JunitAutoTestCase {
         });
 
         ApiResponse<?> resp = executeRpc(mutation, "ErpMdSupplierApproval__suspendByPartner",
-                ApiRequest.build(Map.of("partnerId", 7701L)));
+                ApiRequest.build(Map.of("partnerId", "7701")));
         assertEquals(0, resp.getStatus(), "suspendByPartner 应成功");
         assertEquals(2, ((Number) resp.getData()).intValue(), "仅暂停 APPROVED+PROBATION 共 2 条，REJECTED 跳过");
 
@@ -134,41 +134,41 @@ public class TestErpMdSupplierApprovalStateMachine extends JunitAutoTestCase {
     @Test
     public void testFindEffectiveByPartner() {
         ErpMdSupplierApproval approval = seedApproval(ErpMdConstants.APPROVAL_STATUS_APPROVED, "ISO9001");
-        approval.setPartnerId(7801L);
+        approval.setPartnerId("7801");
         ormTemplate.runInSession(() -> approvalDao().saveEntity(approval));
 
         ApiResponse<?> resp = executeRpc(query, "ErpMdSupplierApproval__findEffectiveByPartner",
-                ApiRequest.build(Map.of("partnerId", 7801L)));
+                ApiRequest.build(Map.of("partnerId", "7801")));
         assertEquals(0, resp.getStatus());
         assertEquals(ErpMdConstants.APPROVAL_STATUS_APPROVED,
                 ((Map<?, ?>) resp.getData()).get("status"));
 
         // 不存在的供应商返回 null（无有效资格）
         ApiResponse<?> none = executeRpc(query, "ErpMdSupplierApproval__findEffectiveByPartner",
-                ApiRequest.build(Map.of("partnerId", 99999L)));
+                ApiRequest.build(Map.of("partnerId", "99999")));
         assertEquals(0, none.getStatus());
         assertNull(none.getData(), "无有效资格 → 返回 null");
     }
 
     // ---------- helpers ----------
 
-    private ApiResponse<?> approve(Long id) {
+    private ApiResponse<?> approve(String id) {
         return executeRpc(mutation, "ErpMdSupplierApproval__approve", ApiRequest.build(Map.of("approvalId", id)));
     }
 
-    private ApiResponse<?> probate(Long id) {
+    private ApiResponse<?> probate(String id) {
         return executeRpc(mutation, "ErpMdSupplierApproval__probate", ApiRequest.build(Map.of("approvalId", id)));
     }
 
-    private ApiResponse<?> suspend(Long id) {
+    private ApiResponse<?> suspend(String id) {
         return executeRpc(mutation, "ErpMdSupplierApproval__suspend", ApiRequest.build(Map.of("approvalId", id)));
     }
 
-    private ApiResponse<?> reinstate(Long id) {
+    private ApiResponse<?> reinstate(String id) {
         return executeRpc(mutation, "ErpMdSupplierApproval__reinstate", ApiRequest.build(Map.of("approvalId", id)));
     }
 
-    private ApiResponse<?> reject(Long id) {
+    private ApiResponse<?> reject(String id) {
         return executeRpc(mutation, "ErpMdSupplierApproval__reject", ApiRequest.build(Map.of("approvalId", id)));
     }
 
@@ -189,7 +189,7 @@ public class TestErpMdSupplierApprovalStateMachine extends JunitAutoTestCase {
         return approval;
     }
 
-    private ErpMdSupplierApproval reload(Long id) {
+    private ErpMdSupplierApproval reload(String id) {
         return approvalDao().getEntityById(id);
     }
 

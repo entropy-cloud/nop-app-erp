@@ -13,16 +13,16 @@
     public class ErpMdMaterialInputBean extends CrudInputBase {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -69,30 +69,30 @@
         }
 
 
-        private Long _categoryId;
+        private String _categoryId;
 
     
         @PropMeta(propId=5)
     
-        public Long getCategoryId(){
+        public String getCategoryId(){
             return _categoryId;
         }
 
-        public void setCategoryId(Long value){
+        public void setCategoryId(String value){
             this._categoryId = value;
         }
 
 
-        private Long _uoMId;
+        private String _uoMId;
 
     
         @PropMeta(propId=6)
     
-        public Long getUoMId(){
+        public String getUoMId(){
             return _uoMId;
         }
 
-        public void setUoMId(Long value){
+        public void setUoMId(String value){
             this._uoMId = value;
         }
 
@@ -153,16 +153,16 @@
         }
 
 
-        private Long _defaultWarehouseId;
+        private String _defaultWarehouseId;
 
     
         @PropMeta(propId=11)
     
-        public Long getDefaultWarehouseId(){
+        public String getDefaultWarehouseId(){
             return _defaultWarehouseId;
         }
 
-        public void setDefaultWarehouseId(Long value){
+        public void setDefaultWarehouseId(String value){
             this._defaultWarehouseId = value;
         }
 
@@ -251,16 +251,16 @@
         }
 
 
-        private Long _defaultTaxRateId;
+        private String _defaultTaxRateId;
 
     
         @PropMeta(propId=18)
     
-        public Long getDefaultTaxRateId(){
+        public String getDefaultTaxRateId(){
             return _defaultTaxRateId;
         }
 
-        public void setDefaultTaxRateId(Long value){
+        public void setDefaultTaxRateId(String value){
             this._defaultTaxRateId = value;
         }
 

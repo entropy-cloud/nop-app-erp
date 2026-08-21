@@ -24,9 +24,9 @@ public interface IErpMdUoMConversionBiz extends ICrudBiz<ErpMdUoMConversion>{
      * 输出 BigDecimal HALF_UP scale=4。
      */
     @BizQuery
-    java.math.BigDecimal convertQty(@Name("materialId") Long materialId,
+    java.math.BigDecimal convertQty(@Name("materialId") String materialId,
                                     @Name("qty") java.math.BigDecimal qty,
-                                    @Name("fromUoMId") Long fromUoMId,
-                                    @Name("toUoMId") Long toUoMId,
+                                    @Name("fromUoMId") String fromUoMId,
+                                    @Name("toUoMId") String toUoMId,
                                     IServiceContext context);
 }

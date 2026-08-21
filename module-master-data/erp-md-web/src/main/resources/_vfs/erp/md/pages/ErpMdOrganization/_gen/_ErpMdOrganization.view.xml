@@ -19,7 +19,7 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--编码-->
                 <col id="code" mandatory="true" sortable="true"/>
@@ -28,13 +28,13 @@
                 <col id="name" mandatory="true" sortable="true"/>
 
                 <!--父级组织-->
-                <col id="parentId" ui:number="true" sortable="true"/>
+                <col id="parentId" sortable="true"/>
 
                 <!--组织类型-->
                 <col id="orgType" mandatory="true" sortable="true"/>
 
                 <!--本位币-->
-                <col id="functionalCurrencyId" ui:number="true" sortable="true"/>
+                <col id="functionalCurrencyId" sortable="true"/>
 
                 <!--状态-->
                 <col id="status" mandatory="true" sortable="true"/>

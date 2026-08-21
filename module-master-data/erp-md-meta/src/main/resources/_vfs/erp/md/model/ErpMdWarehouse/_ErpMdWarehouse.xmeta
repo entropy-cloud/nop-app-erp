@@ -24,8 +24,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -41,7 +41,7 @@
         </prop>
         <prop name="orgId" displayName="所属组织" propId="5" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="organization">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="address" displayName="地址" propId="6" i18n-en:displayName="Address" queryable="true" sortable="true"
               insertable="true" updatable="true">
@@ -49,7 +49,7 @@
         </prop>
         <prop name="managerId" displayName="负责人(职员)" propId="7" i18n-en:displayName="Manager" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="manager">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="status" displayName="状态" propId="8" i18n-en:displayName="Status" mandatory="true" queryable="true"
               sortable="true" insertable="true" updatable="true">

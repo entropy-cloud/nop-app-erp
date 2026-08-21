@@ -1,0 +1,4 @@
+_chgType,ID,CODE,NAME,PARENT_ID,SORT_NUM,PRICE_VALIDATION_LEVEL,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,1,@var:ErpMdMaterialCategory@code,分类-CAT-EXP-OFF,,,OFF,@var:ErpMdMaterialCategory@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,2,@var:ErpMdMaterialCategory@code_1,分类-CAT-EXP-WARN,,,WARN,@var:ErpMdMaterialCategory@delVersion_2,0,autotest-ref,*,autotest-ref,*
+A,3,@var:ErpMdMaterialCategory@code_2,分类-CAT-EXP-HARD,,,HARD,@var:ErpMdMaterialCategory@delVersion_2,0,autotest-ref,*,autotest-ref,*

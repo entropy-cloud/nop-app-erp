@@ -58,8 +58,8 @@ public class TestErpMdMaterialCustoms extends JunitAutoTestCase {
 
     @Test
     public void testCrudLifecycle() {
-        Long matId = seedMaterial("E2E-MC-CRUD-MAT");
-        Long partnerId = seedCustomsBroker("E2E-MC-CRUD-BROKER");
+        String matId = seedMaterial("E2E-MC-CRUD-MAT");
+        String partnerId = seedCustomsBroker("E2E-MC-CRUD-BROKER");
 
         // 1. save：新建报关记录
         Map<String, Object> data = newCustomsPayload("E2E-MC-CRUD-1", matId, partnerId,
@@ -89,8 +89,8 @@ public class TestErpMdMaterialCustoms extends JunitAutoTestCase {
 
     @Test
     public void testPartnerMustBeCustomsBroker() {
-        Long matId = seedMaterial("E2E-MC-PART-MAT");
-        Long customerPartnerId = seedPartner("E2E-MC-PART-CUSTOMER", "CUSTOMER");
+        String matId = seedMaterial("E2E-MC-PART-MAT");
+        String customerPartnerId = seedPartner("E2E-MC-PART-CUSTOMER", "CUSTOMER");
 
         // partnerType=CUSTOMER（非 CUSTOMS_BROKER）→ 抛 ERR_PARTNER_NOT_CUSTOMS_BROKER
         Map<String, Object> data = newCustomsPayload("E2E-MC-PART-1", matId, customerPartnerId,
@@ -103,8 +103,8 @@ public class TestErpMdMaterialCustoms extends JunitAutoTestCase {
 
     @Test
     public void testSourceBillRequired() {
-        Long matId = seedMaterial("E2E-MC-SRC-MAT");
-        Long partnerId = seedCustomsBroker("E2E-MC-SRC-BROKER");
+        String matId = seedMaterial("E2E-MC-SRC-MAT");
+        String partnerId = seedCustomsBroker("E2E-MC-SRC-BROKER");
 
         // sourceBillType/sourceBillCode 均空 → 抛 ERR_CUSTOMS_SOURCE_BILL_REQUIRED
         Map<String, Object> data = newCustomsPayload("E2E-MC-SRC-1", matId, partnerId,
@@ -117,8 +117,8 @@ public class TestErpMdMaterialCustoms extends JunitAutoTestCase {
 
     @Test
     public void testDeclarationNoUnique() {
-        Long matId = seedMaterial("E2E-MC-DUP-MAT");
-        Long partnerId = seedCustomsBroker("E2E-MC-DUP-BROKER");
+        String matId = seedMaterial("E2E-MC-DUP-MAT");
+        String partnerId = seedCustomsBroker("E2E-MC-DUP-BROKER");
 
         // 第一次保存成功
         Map<String, Object> data1 = newCustomsPayload("E2E-MC-DUP-1", matId, partnerId,
@@ -141,7 +141,7 @@ public class TestErpMdMaterialCustoms extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private Map<String, Object> newCustomsPayload(String code, Long materialId, Long partnerId,
+    private Map<String, Object> newCustomsPayload(String code, String materialId, String partnerId,
                                                    String declarationNo,
                                                    String sourceBillType, String sourceBillCode) {
         Map<String, Object> data = new LinkedHashMap<>();
@@ -196,22 +196,22 @@ public class TestErpMdMaterialCustoms extends JunitAutoTestCase {
         return (Map<String, Object>) resp.getData();
     }
 
-    private Long seedMaterial(String code) {
+    private String seedMaterial(String code) {
         ErpMdMaterial material = new ErpMdMaterial();
         material.setCode(code);
         material.setName("E2E-" + code);
         material.setMaterialType("GOODS");
-        material.setUoMId(1L);
+        material.setUoMId("1");
         material.setStatus("ACTIVE");
         ormTemplate.runInSession(() -> materialDao().saveEntity(material));
         return material.getId();
     }
 
-    private Long seedCustomsBroker(String code) {
+    private String seedCustomsBroker(String code) {
         return seedPartner(code, "CUSTOMS_BROKER");
     }
 
-    private Long seedPartner(String code, String partnerType) {
+    private String seedPartner(String code, String partnerType) {
         ErpMdPartner partner = new ErpMdPartner();
         partner.setCode(code);
         partner.setName("E2E-" + code);

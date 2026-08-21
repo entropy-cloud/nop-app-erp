@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--供应商-->
-                <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="partnerId" mandatory="true" sortable="true"/>
 
                 <!--所属组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--准入类型-->
                 <col id="approvalType" mandatory="true" sortable="true"/>
 
                 <!--准入物料类别-->
-                <col id="materialCategoryId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="materialCategoryId" mandatory="true" sortable="true"/>
 
                 <!--生效日期-->
                 <col id="validFrom" sortable="true"/>

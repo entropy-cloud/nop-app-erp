@@ -29,7 +29,7 @@ public interface IErpMdCustomerPriceResolver {
      * @param context    服务上下文
      * @return 命中的协议价 + 来源信息；无命中返回 null
      */
-    ResolvedPrice resolveCustomerPrice(ErpMdMaterialSku sku, Long partnerId,
-                                       BigDecimal quantity, Long currencyId,
+    ResolvedPrice resolveCustomerPrice(ErpMdMaterialSku sku, String partnerId,
+                                       BigDecimal quantity, String currencyId,
                                        IServiceContext context);
 }
