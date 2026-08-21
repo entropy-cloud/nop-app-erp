@@ -290,11 +290,14 @@ A2 main 临时桥接（2 条；本域 plan 在调用点加 String→Long 桥 + g
 | bridge-main-024 | `module-assets/erp-ast-service/src/main/java/app/erp/ast/service/processor/ErpAstDisposalProcessor.java:264` | IErpMntEquipmentBiz.changeStatusForAssetDisposal | `assetId` | maintenance（11） | M3.2 |
 | bridge-main-025 | `module-assets/erp-ast-service/src/main/java/app/erp/ast/service/processor/ErpAstDisposalProcessor.java:271` | IErpMntEquipmentBiz.restoreFromAssetDisposal | `assetId` | maintenance（11） | M3.2 |
 
-A3 test 桥接（1 条；本域 plan Phase 3 修复本域测试时适配，随后退役）：
+A3 test 桥接（2 条；本域 plan Phase 3 修复本域测试时适配，随后退役）：
 
 | id | 测试文件 | 引用（目标@行） | owner |
 | --- | --- | --- | --- |
 | bridge-test-107 | `module-assets/erp-ast-service/src/test/java/app/erp/ast/service/TestMockMntBizModels.java` | IErpMntEquipmentBiz(maintenance) @L3, ErpMntEquipment(maintenance) @L4 | M2.4 |
+| bridge-test-134 | `module-assets/erp-ast-service/src/test/java/app/erp/ast/service/TestErpAstDisposalEquipmentLinkage.java` | IErpMntEquipmentBiz(maintenance) FQN 内联字段 @L59（无 import）+ test-mock-mnt.beans.xml:9 ioc:type FQN | M2.4 |
+
+> **盲区追注（2026-08-22，M2.4 assets plan Phase 1 FQN 复扫）**：① test 侧——`TestErpAstDisposalEquipmentLinkage:59` 以 FQN 内联字段引用 mnt `IErpMntEquipmentBiz`（无 import 语句，扫描器 import 口径漏扫，A3' b2b 同类），连同同一 mock 基建 `test-mock-mnt.beans.xml:9` ioc:type FQN 补登 **bridge-test-134**（owner M2.4，与 bridge-test-107 同批 Phase 3 适配退役）；② main 侧——backward-134 登记证据 2 文件（`AssetPostingExecutor`/`ErpAstDepreciationScheduleProcessor`）为 **id 语境子集**，实测 ast-service main fin import 面 = **20 文件**（posting Dispatcher ×9 + AcctDocProvider ×9 + AssetPostingExecutor + ErpAstDepreciationScheduleProcessor；Dispatcher/Provider 族经 fin `PostingEvent`/`AcctDocContext` 的 Long id 字段（acctSchemaId/orgId/currencyId/periodId 等）流转 id 值），M2.1 fin String 化后全部为 M2.4 编译修复面——修复以编译器实际清单为准，不以 backward-134 的 2 文件为界。
 
 **B. 退役/翻转义务（作为晚域）**
 
