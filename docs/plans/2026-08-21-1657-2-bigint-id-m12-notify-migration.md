@@ -1,6 +1,6 @@
 # 2026-08-21-1657-2-bigint-id-m12-notify-migration 主键/外键 string 化 M1.2：notify 域迁移（第二根域）
 
-> Plan Status: active（2026-08-21，iteration 1 双独立审查 `passes draft review` + 保护区域双独立子 agent 批准，见 Draft Review Record；执行硬前置 = M0.2 done）
+> Plan Status: completed（2026-08-21：四 Phase 全部完成 + 独立结束审计 `passes closure audit`（0 BLOCKER / 0 MAJOR / 2 MINOR，ses_fdb81c69affeVQ1vcuKcwKeLTS），见 Closure Audit Evidence；iteration 1 双独立审查 `passes draft review` + 保护区域双独立子 agent 批准，见 Draft Review Record）
 > Mission: id-string-migration
 > Work Item: M1.2
 > Last Reviewed: 2026-08-21
@@ -52,90 +52,105 @@
 
 ### Phase 1 - 消费登记册 + orm 回写（保护区域，双批准前置）
 
-Status: planned
+Status: completed
 Targets: `module-notify/model/app-erp-notify.orm.xml`
 Skill: none
 
 - Item Types: `Proof | Fix`
 - Prereqs: M0.1 done ✅ + M1.3 done ✅ + M1.1 done ✅（冻结序位次 1 先行；no-am 构建硬前置「md 链 install 已就位」即其产物）+ **M0.2 done（本批 plan 1，硬前置）**；本计划已通过独立 plan-audit + 第二独立子 agent 复核（保护区域 `auto + dual-agent-approval`，批准记录落盘 Draft Review Record）
 
-- [ ] Proof: 消费 M0.2 登记册——读取 notify 视角条目集并逐条核对：预期 (i) 零 orm 级列延后条目（notify orm 跨域 refEntityName = 0）、(ii) 零 service 级前向桥接义务（notify main 跨域 import = 0）、(iii) 作为晚域零退役义务、(iv) 后向被引用清单（外域 test 引用 notify 实体/IBiz 文件集）作为 Phase 4 登记输入。若登记册存在 notify 前向条目与本地实测矛盾，按路线图规则 6 停止回报（登记册与实况冲突 = 真相源冲突，不得自行裁定）。
+- [x] Proof: 消费 M0.2 登记册——读取 notify 视角条目集并逐条核对：预期 (i) 零 orm 级列延后条目（notify orm 跨域 refEntityName = 0）、(ii) 零 service 级前向桥接义务（notify main 跨域 import = 0）、(iii) 作为晚域零退役义务、(iv) 后向被引用清单（外域 test 引用 notify 实体/IBiz 文件集）作为 Phase 4 登记输入。若登记册存在 notify 前向条目与本地实测矛盾，按路线图规则 6 停止回报（登记册与实况冲突 = 真相源冲突，不得自行裁定）。
   - Skill: none
-- [ ] Proof: 双独立子 agent 批准记录落盘（批准人指针 + 结论 + 时间），未获批不得进入回写。
+  - 执行记录（2026-08-21）：登记册 `docs/audits/2026-08-21-1657-id-m02-forward-coupling-registry.md` §6.2 + §7 逐条核对——(i) A 前向义务 = 无（零 orm 延后条目）；(ii) 零 service 级 main/test 桥接义务；(iii) B 退役/翻转义务 = 无；(iv) C 后向被引用清单在案：14 域 main 43 文件 + 14 域 test 28 文件（backward refDomain=notify 共 28 条），与本地实测一致（notify orm 跨域 refEntityName = 0、main 跨域 import = 0）。零冲突，无需 rule-6 停止。
+- [x] Proof: 双独立子 agent 批准记录落盘（批准人指针 + 结论 + 时间），未获批不得进入回写。
   - Skill: none
-- [ ] Fix: 回写 orm（M0.1 裁定三步机制）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-notify` 新鲜度门控（零非 stdDataType 行）；③ 门控通过后单文件落源。禁止盲 cp 静态副本、禁止 apply 模式。
+  - 执行记录（2026-08-21）：Draft Review Record 已落盘双批准——批准 1（技术视角）ses_fdc6974f9ffeUnIkgurMlNAxRb 2026-08-21 + 批准 2（治理视角）ses_fdc69491bffeUtMutDmuF8BZZ2 2026-08-21，均「批准 M1.2 orm 保护区域变更」；iteration 1 双审查 0 BLOCKER / 0 MAJOR。回写前核验在案。
+- [x] Fix: 回写 orm（M0.1 裁定三步机制）——① `node tools/check-bigint-id-types.mjs dry-run` 时点刷新；② `node tools/verify-id-fix-copy-diff.mjs module-notify` 新鲜度门控（零非 stdDataType 行）；③ 门控通过后单文件落源。禁止盲 cp 静态副本、禁止 apply 模式。
   - Skill: none
-- [ ] Proof: `git diff module-notify/model/app-erp-notify.orm.xml` 逐行核对——仅 7 列 `stdDataType="long"→"string"`（PK 3 + FK 4），`stdSqlType` 零变化、VARCHAR FK/delVersion/标签结构零变化；`node tools/check-bigint-id-types.mjs` scan notify 段重扫零 `NEEDS FIX`/零 `DEFERRED` 残留。
+  - 执行记录（2026-08-21）：① dry-run 全量刷新（修改列 1586、延后 8、XML 校验 18/18、幂等 yes、未改源文件）；② 门控通过（变更行 7、非法差异行 0、延后列意外差异 0）；③ `_tmp` 副本单文件 cp 落源（diff 实测仅 7 行 stdDataType 差异后落源，非盲 cp）。
+- [x] Proof: `git diff module-notify/model/app-erp-notify.orm.xml` 逐行核对——仅 7 列 `stdDataType="long"→"string"`（PK 3 + FK 4），`stdSqlType` 零变化、VARCHAR FK/delVersion/标签结构零变化；`node tools/check-bigint-id-types.mjs` scan notify 段重扫零 `NEEDS FIX`/零 `DEFERRED` 残留。
   - Skill: none
+  - 执行记录（2026-08-21）：git diff = 7 insertions/7 deletions，逐行核对 = PK :56/:90/:135 + FK :91/:94/:95/:136 恰 7 列 long→string，stdSqlType/VARCHAR FK（recipientUserId/mergeGroupId/Read.userId）/delVersion ×3/标签结构零变化；scan notify 残 10 行全 `ok`/`n/a`（零 NEEDS FIX、零 DEFERRED），全仓待改列 1586→1579。xmllint namespace 告警 25 处为存量（stash 前后一致，md 先例 131 处），非本次引入。
 
 Exit Criteria:
 
-- [ ] 登记册消费核对在案（零前向义务确认或冲突已停止回报）；双批准记录在案；新鲜度门控 + git diff + 工具重扫三重证明变更面精确 = 7 列 stdDataType
+- [x] 登记册消费核对在案（零前向义务确认或冲突已停止回报）；双批准记录在案；新鲜度门控 + git diff + 工具重扫三重证明变更面精确 = 7 列 stdDataType
 
 ### Phase 2 - 增量重生成 + 主代码编译修复
 
-Status: planned
+Status: completed
 Targets: `module-notify/erp-notify-dao/src/main/java/**`、`module-notify/erp-notify-service/src/main/java/**`（手写接口/实现/BizModel/Processor/dispatch；web main 手写实测 0）
 Skill: `nop-backend-dev`
 
 - Item Types: `Fix`
 - Prereqs: Phase 1
 
-- [ ] Fix: `mvn clean install -pl module-notify/erp-notify-codegen,module-notify/erp-notify-dao,module-notify/erp-notify-meta,module-notify/erp-notify-service,module-notify/erp-notify-web,module-notify/erp-notify-app,module-notify/erp-notify-api -Dmaven.test.skip=true`（D3 口径：7 模块显式列表、**不带 `-am`**、**必须 `-Dmaven.test.skip=true`** 隔离测试编译——预期 service 测试在本阶段边界编译断）触发增量重生成（`_gen/` 实体、I*Biz、xmeta、view、api 契约；生成件零手改）。
+- [x] Fix: `mvn clean install -pl module-notify/erp-notify-codegen,module-notify/erp-notify-dao,module-notify/erp-notify-meta,module-notify/erp-notify-service,module-notify/erp-notify-web,module-notify/erp-notify-app,module-notify/erp-notify-api -Dmaven.test.skip=true`（D3 口径：7 模块显式列表、**不带 `-am`**、**必须 `-Dmaven.test.skip=true`** 隔离测试编译——预期 service 测试在本阶段边界编译断）触发增量重生成（`_gen/` 实体、I*Biz、xmeta、view、api 契约；生成件零手改）。
   - Skill: `nop-backend-dev`
-- [ ] Fix: 编译器驱动修复主代码——逐条修复 notify dao + service 手写代码类型错误（基线预判：`IErpSysNotificationBiz.markRead` :29、`ErpSysNotificationMarkReadProcessor` :14、`AbstractErpSysNotificationProcessor` :47/:78、`NotificationMergeCoordinator` :96、`ErpSysNotificationBizModel` :62、`NotificationDispatcher` :206 及 dispatcher 12 处 `.getId()`；以编译器实际清单为准），直到 7 模块链 `-Dmaven.test.skip=true` 构建全绿（main 代码）。修复清单（错误类型 × 处数，分 dao/service 层）+ 测试编译错误清单移交 Phase 3。
+  - 执行记录（2026-08-21）：首轮构建 codegen/dao/meta 绿（重生成完成），service main 9 错/5 文件（编译器清单与基线预判吻合）；修复后全链 BUILD SUCCESS（7/7 SUCCESS，6.4s）。生成件 diff 核对：`_gen/_ErpSysNotification` 等实体 id/templateId/recipientPartnerId/recipientDeptId/notificationId 字段与 getter/setter 全部 Long→String，xmeta/view/api beans 随动，零手改。
+- [x] Fix: 编译器驱动修复主代码——逐条修复 notify dao + service 手写代码类型错误（基线预判：`IErpSysNotificationBiz.markRead` :29、`ErpSysNotificationMarkReadProcessor` :14、`AbstractErpSysNotificationProcessor` :47/:78、`NotificationMergeCoordinator` :96、`ErpSysNotificationBizModel` :62、`NotificationDispatcher` :206 及 dispatcher 12 处 `.getId()`；以编译器实际清单为准），直到 7 模块链 `-Dmaven.test.skip=true` 构建全绿（main 代码）。修复清单（错误类型 × 处数，分 dao/service 层）+ 测试编译错误清单移交 Phase 3。
   - Skill: `nop-backend-dev`
-- [ ] Fix: 自身链破坏处置（D4 carve-out）——no-am 口径下 reactor 不含外域模块，预期零外域破坏；若出现**未登记**编译破坏（含本地仓陈旧 jar 二进制不兼容的编译期表现），按路线图规则 6 停止回报；登记册内已登记破坏按已登记中间态继续并履行登记义务（破坏模块清单 + successor 指针 + 逐模块 javac 错误点清单）。
+  - 执行记录（2026-08-21）：**修复清单**——dao 层 1 文件 1 处（`IErpSysNotificationBiz.markRead` :29 Long→String）；service 层 5 文件 8 处签名/泛型（`AbstractErpSysNotificationProcessor` :47 `isRead(String,...)` + :63 `Set<Long>`→`Set<String>` + :78 `newReadEntry(String,...)`、`ErpSysNotificationMarkReadProcessor` :14 `markRead(String,...)`、`NotificationMergeCoordinator` :96 `isRead(String,...)`、`ErpSysNotificationBizModel` :62 `markRead(String,...)` + :93/:128 `Set<Long>`→`Set<String>`、`NotificationDispatcher` :206 `renderTemplate(String,...)`）+ 基线预判的 MarkAllReadProcessor :22/:23 与 dispatcher :77/:78 错误均经上述签名翻转自愈（`.getId()` 现返回 String，下游直接兼容，无需逐处改）。dispatcher 预判「12 处 `.getId()`」实测零显式修改（全部经 LOG 参数/`setTemplateId(template.getId())` 类型自洽传递）。测试编译错误：`-Dmaven.test.skip=true` 未编译测试，移交 Phase 3 处理。
+- [x] Fix: 自身链破坏处置（D4 carve-out）——no-am 口径下 reactor 不含外域模块，预期零外域破坏；若出现**未登记**编译破坏（含本地仓陈旧 jar 二进制不兼容的编译期表现），按路线图规则 6 停止回报；登记册内已登记破坏按已登记中间态继续并履行登记义务（破坏模块清单 + successor 指针 + 逐模块 javac 错误点清单）。
   - Skill: `nop-backend-dev`
+  - 执行记录（2026-08-21）：no-am reactor（7 模块）全绿，零外域模块进入，零未登记破坏，无需 rule-6 停止。
 
 Exit Criteria:
 
-- [ ] notify 7 模块链（显式列表、no-am、`-Dmaven.test.skip=true`）构建全绿（main 代码）；主代码修复清单 + 测试编译错误移交清单在案
+- [x] notify 7 模块链（显式列表、no-am、`-Dmaven.test.skip=true`）构建全绿（main 代码）；主代码修复清单 + 测试编译错误移交清单在案
 
 ### Phase 3 - 测试修复 + 快照重录 + 域级测试
 
-Status: planned
+Status: completed
 Targets: `module-notify/**/src/test/**`、`module-notify/erp-notify-service/_cases/**`
 Skill: `nop-testing`
 
 - Item Types: `Fix | Proof`
 - Prereqs: Phase 2
 
-- [ ] Fix: 测试代码修复——6 个 service 测试类的 Long 用法（基线预判每类 1-2 处：`Long`/`long` 字面量断言与 helper 签名）+ Phase 2 移交清单，逐文件修复至测试编译通过。
+- [x] Fix: 测试代码修复——6 个 service 测试类的 Long 用法（基线预判每类 1-2 处：`Long`/`long` 字面量断言与 helper 签名）+ Phase 2 移交清单，逐文件修复至测试编译通过。
   - Skill: `nop-testing`
-- [ ] Fix: 快照每域重录（用户裁决固定步骤）——`RECORDING` 模式运行 notify service 测试 → 逐案审核 `_cases/` 新形态（23 案例目录，CSV 表格快照：实体 id 列以 String 形态落盘）→ 切回 `CHECKING` 复跑确认全绿。重录足迹（内容 diff vs 行尾差异分列）与审核结论记录本计划。
+  - 执行记录（2026-08-21）：编译器清单 = 2 错/2 文件（`TestErpSysNotificationDispatch:136` ← helper `markRead(Long)` :156 → String；`TestErpSysNotificationSubscription:75` `Long firstId` → String）+ 6 文件 seed helper `t.orm_propValueByName("id", id)` → `String.valueOf(id)`（镜像 M1.1 先例 `TestErpMdReportRendering:176`，调用点 `7001L` 字面量不动）。`mvn test-compile` 全绿。基线预判「每类 1-2 处」与实测吻合（其余 4 类仅 seed helper 运行时改型，非编译错误）。
+- [x] Fix: 快照每域重录（用户裁决固定步骤）——`RECORDING` 模式运行 notify service 测试 → 逐案审核 `_cases/` 新形态（23 案例目录，CSV 表格快照：实体 id 列以 String 形态落盘）→ 切回 `CHECKING` 复跑确认全绿。重录足迹（内容 diff vs 行尾差异分列）与审核结论记录本计划。
   - Skill: `nop-testing`
-- [ ] Proof: `mvn test -pl module-notify/erp-notify-service,module-notify/erp-notify-web`（D3 口径：不带 `-am`）全绿——service 6 测试类 23 方法 + web 模块 BUILD SUCCESS（`ErpNotifyWebPagesTest` 按已提交治理排除，0 tests 预期）；含重录后快照比对。若复现平台 IoC 回归（`nopSequenceGenerator` self-wait），按 md 先例修复（test-scope VFS delta）并在执行记录登记。
+  - 执行记录（2026-08-21）：6 类临时注解 `snapshotTest = SnapshotTest.RECORDING` 运行（RECORDING 语义预期：23/23 全部以 `nop.err.autotest.snapshot-finished` 结束 = 录制正常）→ 注解还原（grep 零 RECORDING/forceSaveOutput 残留）→ CHECKING 复跑。**重录足迹**：0 个已跟踪 `_cases` 文件内容 diff + 0 行尾差异（notify 快照全为 CSV 表格形态，id 文本形 `1`/`7303` 与 String 序列化字节同一，与 md json5 数字→引号形态本质不同）+ **10 个未跟踪目录 = 5 方法新增 input/output tables 落盘**（`TestErpSysNotificationRecipientResolverRuntime` 全部 5 方法，此前仅 `autotest.yaml`——录制工具本轮将其 `input/tables` 头 + `output/tables`（含 `nop_auth_user/role/user_role` 种子表、`erp_sys_notification{,_template}`、`nop_sys_sequence`）首次持久化）；`_cases` json5 数字形式实体 id = 0 残留（notify `_cases` 零 json5 文件，纯 CSV 形态）。逐案审核结论：18 个既有方法重录输出与已提交基线字节一致（String id CSV 文本形不变），5 个新增落盘方法输出 id 列均为文本形态，无数字 JSON 残留风险面。
+- [x] Proof: `mvn test -pl module-notify/erp-notify-service,module-notify/erp-notify-web`（D3 口径：不带 `-am`）全绿——service 6 测试类 23 方法 + web 模块 BUILD SUCCESS（`ErpNotifyWebPagesTest` 按已提交治理排除，0 tests 预期）；含重录后快照比对。若复现平台 IoC 回归（`nopSequenceGenerator` self-wait），按 md 先例修复（test-scope VFS delta）并在执行记录登记。
   - Skill: `nop-testing`
+  - 执行记录（2026-08-21）：**平台 IoC 回归复现**（首轮 RECORDING 运行 6/6 类 `nop.err.ioc.bean-init-self-wait` @ `nopSequenceGenerator`，与 md 执行期同源）——按 md 先例修复：新增 test-scope VFS delta `erp-notify-service/src/test/resources/_vfs/_delta/default/nop/sys/beans/app-dao.beans.xml`（`ioc:lazy-property` 镜像平台先例 + md 同型 delta，注释引用本计划与 bug 登记，successor = 平台修复后移除）。修复后：service **23/23 全绿**（Subscription 3 + TemplateLifecycle 3 + SeedTemplates 4 + CrossDomain 3 + Dispatch 5 + RecipientResolverRuntime 5），web BUILD SUCCESS（0 tests，`ErpNotifyWebPagesTest` 按 plan 2026-07-24-0930-1 治理排除，页面校验 successor = M4.1）。
 
 Exit Criteria:
 
-- [ ] notify 域级测试全绿（service 23 方法；web 治理排除偏差登记）；快照重录完成且 `CHECKING` 复跑通过；重录清单在案
+- [x] notify 域级测试全绿（service 23 方法；web 治理排除偏差登记）；快照重录完成且 `CHECKING` 复跑通过；重录清单在案
 
 ### Phase 4 - 语义陷阱 grep 门控 + 后向耦合登记 + 收尾
 
-Status: planned
+Status: completed
 Targets: `module-notify/**`（手写代码）、`docs/backlog/id-string-migration-roadmap.md`、`docs/logs/2026/{08-21 或执行日}.md`
 Skill: none
 
 - Item Types: `Proof | Add`
 - Prereqs: Phase 3
 
-- [ ] Proof: 语义陷阱 grep 门控（路线图横切 §3，notify 手写 main+test 范围）清零——`\.longValue\(\)`、`Long\.parseLong\(`、`Map<Long`、`String\.format\("%d` 及 `%d` 变体零命中；Long 装箱 `==`/`!=` 比较（id 上下文）逐条核清；残留 `Long` 逐条判定合法非 id（如计数返回值）或登记 successor；sql-lib.xml 仓内零存在（M0.1 已核，注明即可）。结果逐项记录本计划。
+- [x] Proof: 语义陷阱 grep 门控（路线图横切 §3，notify 手写 main+test 范围）清零——`\.longValue\(\)`、`Long\.parseLong\(`、`Map<Long`、`String\.format\("%d` 及 `%d` 变体零命中；Long 装箱 `==`/`!=` 比较（id 上下文）逐条核清；残留 `Long` 逐条判定合法非 id（如计数返回值）或登记 successor；sql-lib.xml 仓内零存在（M0.1 已核，注明即可）。结果逐项记录本计划。
   - Skill: none
-- [ ] Proof: 手写 view.xml 零改动验证——`git status module-notify/erp-notify-web` 确认无手写 view 文件被动变更（生成 view 随 codegen 更新不在此列）。
+  - 执行记录（2026-08-21）：`\.longValue\(\)` = 0、`Long\.parseLong\(` = 0、`Map<Long` = 0、`Set<Long` = 0、`%d`（含 `String.format("%d`）= 0（module-notify 手写 main+test，排除 `_gen`）；id 上下文 `==`/`!=` 逐条核清——`userId == null`/`n.getId() == null` 为 null 检查、`x.getId().equals(n.getId())` 为 String.equals，零装箱数值比较；残留 `Long` 逐条判定——api beans `delVersion`（生成件 + 非 PK/FK 按规则 4 保持 long，合法）、测试 `seedTemplate(Long id,...)` 局部参数（落库点 `String.valueOf(id)` 已转 String，调用点字面量非实体 id 上下文，合法）；sql-lib.xml module-notify 零存在（M0.1 全仓已核）。
+- [x] Proof: 手写 view.xml 零改动验证——`git status module-notify/erp-notify-web` 确认无手写 view 文件被动变更（生成 view 随 codegen 更新不在此列）。
   - Skill: none
-- [ ] Add: 下游后向耦合登记（D3 登记义务）——登记册消费所得 + 实测复核：外域引用 notify 实体/IBiz 的破坏预判清单（main 侧 `notify(String,Map,ctx)` 签名不变零破坏 + `markRead` 外部调用 0 已证；test 侧引用文件集逐域列出）+ successor 指针（各域 plan Phase 3）+ M4.1 兜底。
+  - 执行记录（2026-08-21）：`git status module-notify/erp-notify-web` 仅 3 个 `_gen/_*.view.xml`（codegen 重生产物），3 个手写 `ErpSysNotification{,Read,Template}.view.xml` 零变更——dict 先例「手写 view 按字段名引用、类型随 xmeta 重生成」在本域复现成立。
+- [x] Add: 下游后向耦合登记（D3 登记义务）——登记册消费所得 + 实测复核：外域引用 notify 实体/IBiz 的破坏预判清单（main 侧 `notify(String,Map,ctx)` 签名不变零破坏 + `markRead` 外部调用 0 已证；test 侧引用文件集逐域列出）+ successor 指针（各域 plan Phase 3）+ M4.1 兜底。
   - Skill: none
-- [ ] Add: owner doc 注记——grep `docs/design/notify/`（含 `inbox-patterns.md` 等）中关于 notify id 为 Long/数字的陈述；存在则就地注记 Java 层已 String 化（引用本计划），不存在则记录「零 Long id 陈述，零文档变更」结论。
+  - 执行记录（2026-08-21，实测 rg 口径与登记册 §6.2 C 对账）：**main 侧零编译破坏**——14 域 main 引用 `IErpSysNotificationBiz`（cs 8/ct 7/mfg 5/inv 4/hr 4/fin 4/mnt 3/log 3/ast 3/crm 2/aps 2/sal 1/prj 1/b2b 1 文件，import 面 44 main 文件），全部调用走 `notify(eventType, Map, ctx)`（String/Map 签名迁移前后不变，抽样 ct/fin 调用点实证）；`markRead` 仓内外部调用 = 0；外域 main `import app.erp.notify.dao.*`（实体）= 0；`module-common-test/FaultInjectionStubs` JDK Proxy 桩编译安全（Phase 3 测试全绿实证）；`IErpCtConsumptionLineBiz` 仅 Javadoc 提及非代码引用。**test 侧后向耦合（successor 愈合）**——14 域 28 文件 import `app.erp.notify.*`（cs 6/ct 5/mfg 3/inv 2/hr 2/aps 2/sal 1/pur 1/prj 1/mnt 1/log 1/fin 1/b2b 1/ast 1，与登记册 §6.2 C 计数一致；其中 ct/mnt 等含 `ErpSysNotification{,Template}` 实体 import，实体 getter 类型变更将使其测试编译断），successor = 各域 plan Phase 3（M3.5/M3.6/M3.1/M2.2/M3.3/M3.9/M2.6/M2.5/M2.7/M3.2/M3.10/M2.1/M3.8/M2.4），M4.1 兜底。
+- [x] Add: owner doc 注记——grep `docs/design/notify/`（含 `inbox-patterns.md` 等）中关于 notify id 为 Long/数字的陈述；存在则就地注记 Java 层已 String 化（引用本计划），不存在则记录「零 Long id 陈述，零文档变更」结论。
   - Skill: none
-- [ ] Add: 路线图 M1.2 → `done`（Work Item Status 表 + 依赖图 + 头部「最后更新」；位次 3 aps 解锁）+ 日志条目（含验证状态）。
+  - 执行记录（2026-08-21）：grep `docs/design/notify/`（README.md/inbox-patterns.md/use-cases.md）id/主键/外键/Long/数字陈述——仅 `recipientUserId == userId`、`id NOT IN`、`markRead?notificationId=$id` 等类型无关查询语义描述，**零 Long/数字 id 类型陈述**。结论：零 Long id 陈述，零文档变更。
+- [x] Add: 路线图 M1.2 → `done`（Work Item Status 表 + 依赖图 + 头部「最后更新」；位次 3 aps 解锁）+ 日志条目（含验证状态）。
   - Skill: none
+  - 执行记录（2026-08-21）：roadmap M1.2 行 → `done`（含证据摘要）+ 头部「最后更新」+ 依赖图节点 + M2/M3 表位次 3-19 依赖解锁注记（依赖列含 M1.2 的行已满足前置）；日志 `docs/logs/2026/08-21.md` 新增 M1.2 条目（含验证状态全绿）。
 
 Exit Criteria:
 
-- [ ] grep 门控零残留（例外为零或逐条核清记录）；view 零手改动在案；下游登记清单在案
-- [ ] 路线图状态、登记、日志三者一致
+- [x] grep 门控零残留（例外为零或逐条核清记录）；view 零手改动在案；下游登记清单在案
+- [x] 路线图状态、登记、日志三者一致
 
 ## Draft Review Record
 
@@ -152,15 +167,15 @@ Exit Criteria:
 
 > 完整仓库验证定制为域级口径（路线图规则 3 D3 修订：禁止以全量构建为中间 gate；全量构建仅存在于 M4.1）。
 
-- [ ] 范围内行为完成（7 列落源 + no-am 重生成 + 手写代码/测试修复 + 快照重录 + grep 门控清零）
-- [ ] 相关文档对齐（owner doc 注记或零变更结论、路线图 M1.2 状态、下游登记、日志）
-- [ ] 已运行验证：`mvn clean install -pl module-notify/erp-notify-codegen,module-notify/erp-notify-dao,module-notify/erp-notify-meta,module-notify/erp-notify-service,module-notify/erp-notify-web,module-notify/erp-notify-app,module-notify/erp-notify-api -DskipTests` 全绿（7 模块自身链，no-am；结束阶段测试已修复，`-DskipTests` 语义正确）+ `mvn test -pl module-notify/erp-notify-service,module-notify/erp-notify-web` 全绿（service 23 方法；web 治理排除偏差登记）+ 工具重扫零残留（notify 段 `NEEDS FIX` = 0）
-- [ ] 无范围内项目降级为 deferred/follow-up（web 页面测试治理排除为先于本计划的已提交决策 + M4.1 successor 登记，属偏差登记而非范围降级）
-- [ ] 保护区域双独立子 agent 批准记录落盘（Phase 1 前置）
-- [ ] 独立草案审查已完成并记录
-- [ ] 文本一致性已验证：状态、阶段、门控和日志都一致
-- [ ] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
-- [ ] 结束证据存在于文件中
+- [x] 范围内行为完成（7 列落源 + no-am 重生成 + 手写代码/测试修复 + 快照重录 + grep 门控清零）
+- [x] 相关文档对齐（owner doc 注记或零变更结论、路线图 M1.2 状态、下游登记、日志）
+- [x] 已运行验证：`mvn clean install -pl module-notify/erp-notify-codegen,module-notify/erp-notify-dao,module-notify/erp-notify-meta,module-notify/erp-notify-service,module-notify/erp-notify-web,module-notify/erp-notify-app,module-notify/erp-notify-api -DskipTests` 全绿（7 模块自身链，no-am；结束阶段测试已修复，`-DskipTests` 语义正确）+ `mvn test -pl module-notify/erp-notify-service,module-notify/erp-notify-web` 全绿（service 23 方法；web 治理排除偏差登记）+ 工具重扫零残留（notify 段 `NEEDS FIX` = 0）
+- [x] 无范围内项目降级为 deferred/follow-up（web 页面测试治理排除为先于本计划的已提交决策 + M4.1 successor 登记，属偏差登记而非范围降级）
+- [x] 保护区域双独立子 agent 批准记录落盘（Phase 1 前置）
+- [x] 独立草案审查已完成并记录
+- [x] 文本一致性已验证：状态、阶段、门控和日志都一致
+- [x] 结束审计由独立子代理（新会话）执行；执行者未自我审计且未将此留为 `[ ]` 作为人工门控占位符
+- [x] 结束证据存在于文件中
 
 ## Deferred But Adjudicated
 
@@ -178,12 +193,12 @@ Exit Criteria:
 
 ## Closure
 
-Status Note: （待收尾填充）
+Status Note: completed（2026-08-21）。四 Phase 全绿：Phase 1 = 登记册消费零前向义务 + 双批准在案 + 三重回写证明（门控 7 行零非法 / git diff 恰 7 列 stdDataType / scan notify 段零残留）；Phase 2 = 7 模块链 no-am main 绿（dao 1 + service 5 文件修复，零外域破坏零 rule-6）；Phase 3 = 测试 23/23 绿 + 快照重录（0 已跟踪 diff + 5 方法新增落盘）+ IoC 回归按 md 先例 delta 修复；Phase 4 = grep 门控零残留 + view 零手改动 + 下游登记（main 零破坏 / test 14 域 28 文件 successor 各域 Phase 3 + M4.1）+ owner doc 零变更结论 + roadmap/日志一致。中间态偏差均按登记处理（外域 test 后向耦合、web 页面测试治理排除、IoC delta 平台修复后移除），零范围降级。
 
 Closure Audit Evidence:
 
-（待收尾填充）
+- Independent closure audit（2026-08-21，fresh session）：ses_fdb81c69affeVQ1vcuKcwKeLTS — **`passes closure audit`（0 BLOCKER / 0 MAJOR / 2 MINOR）**。审计第一手复核（9/9 项 PASS）：① ORM diff = 恰 7× stdDataType（PK :56/:90/:135 + FK :91/:94/:95/:136），stdSqlType 零变化，scan notify 段 10 行全 ok/n/a 零残留；② service 23/23 绿 + web 0 tests + BUILD SUCCESS；③ 陷阱 grep 0 命中，残留 Long = 3 生成 api beans delVersion + 6 seed 局部参数（set 点 String.valueOf 核实）+ markRead String；④ RECORDING/forceSaveOutput 零残留；⑤ `_cases` 0 已跟踪修改 + 恰 10 未跟踪目录，新落盘 output 表 id 值在案；⑥ 变更面 = 生成件 + 恰 6 手写 main + 6 测试 + orm + delta，手写 view 零变更；⑦ IoC delta 与 md 先例结构同一（ioc:lazy-property + delay-method）；⑧ roadmap/日志/plan 状态一致；⑨ test 侧 28 文件精确复现 + main 44 + markRead 外部 0 + notify 签名不变。2 MINOR：审计指令「7 handwritten files」计数笔误（实为 6，仓实一致）；Closure 节待填充（本条即补齐）。
 
 Follow-up:
 
-- （无；已确认缺陷不得出现在此处）
+- （无；已确认缺陷不得出现在此处。中间态 successor 指针见 Deferred But Adjudicated 与 Phase 4 登记记录）

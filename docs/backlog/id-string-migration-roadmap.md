@@ -1,6 +1,6 @@
 # 主键/外键 stdDataType string 化迁移路线图（BIGINT PK/FK → String）
 
-> 最后更新：2026-08-21（**M0.2 done**：前向耦合登记册 254 active 条目 + 工具豁免机制 + 每域消费协议落盘，详见 plan `2026-08-21-1657-1` 与「M0.2 产出指针」；下一可执行项 = M1.2 notify（登记册走查结论：零前向义务 + 零退役义务 + 后向被引用清单，见 plan Phase 3）。此前同日：M1.1 done（先导试点 D6 判据成立）、M0 裁决 Decision D 落盘（D3 闭包收窄/D4 登记册/D6 判据修订）、M1.1 rule-6 停止与恢复、M0.1 done 冻结序写回、M1.3 done）
+> 最后更新：2026-08-21（**M1.2 done**：notify 域迁移四 Phase 完成，plan `2026-08-21-1657-2`，见 M1.2 行证据摘要；冻结序位次 3（aps）解锁。此前同日：M0.2 done（前向耦合登记册 254 active 条目 + 工具豁免机制，plan `2026-08-21-1657-1`）、M1.1 done（先导试点 D6 判据成立）、M0 裁决 Decision D 落盘（D3 闭包收窄/D4 登记册/D6 判据修订）、M1.1 rule-6 停止与恢复、M0.1 done 冻结序写回、M1.3 done）
 > 来源：用户请求（「将主键和外键的数据类型全部改成 string」）+ `nop-entropy/docs-for-ai/02-core-guides/orm-model-design.md` §主键设计强制规则
 > 现状：`tools/check-bigint-id-types.mjs` scan/dry-run 可用（19 文件、1662 列、零残留、幂等，08-21 权威口径）；`apply` 模式经实测**不回写源文件**，回写一律走「时点 dry-run + 新鲜度门控」机制（见 §框架/平台复用）。副本在 `_tmp/bigint-id-string-fix/`（08-21 全量刷新，**未回写任何源文件**）。M0.1 产出：冻结序脚本 + 审计工件 + seq-string Proof（module-common-test 4/4 绿）。详见 `docs/audits/2026-08-21-1045-id-migration-m0-freeze-audit.md`。
 
@@ -39,7 +39,7 @@
 | --- | --- | --- | --- |
 | M1.3 | common-service 组织隔离适配（`ErpOrgContext`/`ErpOrgIsolationOrmInterceptor`/`QueryTransformer` 的 orgId Long 语义，走反射 API 编译器不报错） | `done`（2026-08-21，plan `docs/plans/2026-08-21-1045-2-*.md`：三文件 String 语义 + `TestErpOrgContext` 12 单测 + grep 门控零残留；`TestErpOrgIsolation` 编译破坏按中间态登记，successor M2.1） | M0.1 ✅ |
 | M1.1 | master-data 域迁移（根域，~120 处被引用，先导试点） | `done`（2026-08-21，plan `docs/plans/2026-08-21-1045-3-*.md` 四 Phase 完成：68 列落源 + 7 模块链 no-am main 绿 + 测试修复（24 类，含 5 TestStub* 桩）+ 快照重录（93 标记修改 = 44 内容 diff + 49 CRLF 行尾；11 方法新增落盘，String 形态零数字 id 残留）+ `mvn test -pl erp-md-service,erp-md-web` 155/155 绿 + grep 门控零残留；**先导试点结论（D6 判据）成立**：自身模块链全绿 + 闭包破坏仅限已登记耦合点（prj-dao 27/fin-dao 97 错 100% `_gen`，successor M2.7/M2.1 + M4.1 兜底，冻结总序维持）。偏差登记：`ErpMdWebPagesTest` 按已提交治理决策（plan 2026-07-24-0930-1 `@Tag("full-app")` + surefire excludedGroups）模块级排除，实证依赖全量 classpath（`/erp/xlib/control.xlib` 模块级缺失），页面校验 successor = M4.1 app-erp-all `ErpAllWebPagesTest`。平台 IoC 回归 test-scope delta 修复 + bug 登记 `docs/bugs/2026-08-21-nop-sequence-generator-ioc-self-wait-*.md`） | M0.1 + M1.3 |
-| M1.2 | notify 域迁移（跨域通知派发子系统，唯一无 orgId 域） | `todo` | M0.1 |
+| M1.2 | notify 域迁移（跨域通知派发子系统，唯一无 orgId 域） | `done`（2026-08-21，plan `docs/plans/2026-08-21-1657-2-bigint-id-m12-notify-migration.md` 四 Phase 完成：7 列落源（PK 3 + FK 4，新鲜度门控 + git diff + 工具重扫三重证明，登记册消费零前向义务）+ 7 模块链 no-am main 绿（dao 1 文件 + service 5 文件 Long 签名/泛型修复）+ 测试修复（2 编译错 + 6 文件 seed helper `String.valueOf`）+ 快照重录 RECORDING→CHECKING（18 既有方法 CSV 字节同一 + 5 方法新增 input/output 落盘，`TestErpSysNotificationRecipientResolverRuntime` 全量）+ `mvn test -pl erp-notify-service,erp-notify-web` 23/23 绿（web 0 tests 治理排除，successor M4.1）+ grep 门控零残留 + 手写 view 零改动；平台 IoC 回归 `nopSequenceGenerator` self-wait 复现，按 md 先例 test-scope VFS delta 修复（successor 平台修复后移除）；下游登记：main 侧 `notify(String,Map,ctx)` 签名不变零破坏 + `markRead` 外部调用 0，test 侧 14 域 28 文件 successor = 各域 plan Phase 3 + M4.1 兜底） | M0.1 + M0.2 ✅ |
 
 ### Milestones M2/M3 — 域迁移（冻结总序，M0.1 冻结写回）
 
@@ -128,7 +128,7 @@ graph TD
     M0[M0.1 顺序冻结门控 done] --> M1_3[M1.3 common-service 适配 done]
     M1_3 --> M1_1[M1.1 master-data done]
     M0 --> M0_2[M0.2 前向耦合登记册 done]
-    M0 --> M1_2[M1.2 notify]
+    M0 --> M1_2[M1.2 notify done]
     M0_2 --> M1_2
     M1_1 --> SEQ[M2/M3 域迁移冻结总序 位次3-19]
     M1_2 --> SEQ
