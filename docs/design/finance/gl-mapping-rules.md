@@ -56,6 +56,8 @@ A1 仅落地基础规则表 + 多维（partner/material/warehouse/department/pro
 
 真相源：`module-finance/model/app-erp-finance.orm.xml` `ErpFinGlMappingRule` 实体。本节解释字段语义。
 
+> 注（2026-08-22，plan `docs/plans/2026-08-22-0002-1-bigint-id-m21-finance-migration.md`）：id 类字段（id/orgId/acctSchemaId/partnerGroupId/materialCategoryId/warehouseId/departmentId）**Java 层已 String 化**（id-string 迁移 M2.1）；下表「类型」列为 DB 列类型（BIGINT 保持不变，DDL 零变化）。`projectId` 为登记册延后列（prj 未迁移，Java 层暂保持 Long，M2.7 同批翻转）。
+
 | 字段 | 类型 | 必填 | 语义 |
 |------|------|------|------|
 | `id` | BIGINT | ✓ | 主键 |
