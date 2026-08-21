@@ -38,7 +38,7 @@ public class ErpOrgIsolationOrmInterceptor implements IOrmInterceptor {
         if (!ErpOrgContext.isIsolationEnabled()) {
             return;
         }
-        Long orgId = ErpOrgContext.currentOrgId(null);
+        String orgId = ErpOrgContext.currentOrgId(null);
         if (orgId == null) {
             return;
         }
@@ -47,7 +47,7 @@ public class ErpOrgIsolationOrmInterceptor implements IOrmInterceptor {
             return;
         }
         Object current = entity.orm_propValueByName(ErpOrgIsolationConstants.PROP_ORG_ID);
-        if (orgId.equals(current)) {
+        if (orgId.equals(ErpOrgContext.toStringValue(current))) {
             return;
         }
         entity.orm_propValueByName(ErpOrgIsolationConstants.PROP_ORG_ID, orgId);

@@ -57,7 +57,7 @@ public class ErpOrgIsolationQueryTransformer implements IQueryTransformer {
         if (!entityHasOrgId(bizObj)) {
             return;
         }
-        Long orgId = ErpOrgContext.currentOrgId(context);
+        String orgId = ErpOrgContext.currentOrgId(context);
         filter.addFilter(FilterBeans.eq(ErpOrgIsolationConstants.PROP_ORG_ID, orgId));
     }
 
