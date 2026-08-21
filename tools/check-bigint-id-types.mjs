@@ -18,8 +18,51 @@
 import { readFileSync, writeFileSync, readdirSync, statSync, mkdirSync, existsSync, rmSync } from 'fs';
 import path from 'path';
 import { spawnSync } from 'child_process';
+import { pathToFileURL } from 'url';
 
 const OUT_DIR = '_tmp/bigint-id-string-fix';
+const REGISTRY_PATH = path.join('tools', 'id-migration-registry.json5');
+
+// 登记册加载（fail-closed：缺失/不可解析 = 报错 + 非零退出，禁止静默回退——
+// 无豁免机制的 dry-run 会无条件翻转登记册延后列，正是 D4 要预防的破坏）
+export function loadRegistry(rootDir) {
+  const regPath = path.join(rootDir, REGISTRY_PATH);
+  let raw;
+  try {
+    raw = readFileSync(regPath, 'utf-8');
+  } catch (e) {
+    console.error(`[FAIL] 登记册文件缺失或不可读：${regPath}（fail-closed 退出；恢复登记册后方可运行）`);
+    process.exit(1);
+  }
+  let reg;
+  try {
+    reg = JSON.parse(raw.replace(/^[ \t]*\/\/.*$/gm, ''));
+  } catch (e) {
+    console.error(`[FAIL] 登记册文件不可解析：${regPath}（${e.message}；fail-closed 退出）`);
+    process.exit(1);
+  }
+  if (!reg || !Array.isArray(reg.entries)) {
+    console.error(`[FAIL] 登记册结构无效（缺少 entries 数组）：${regPath}`);
+    process.exit(1);
+  }
+  return reg;
+}
+
+// active 的 orm-column-deferral 条目 → { orm relPath → Set('entity.column') }
+export function buildDeferredMap(reg, files) {
+  const map = new Map();
+  for (const e of reg.entries) {
+    if (e.kind !== 'orm-column-deferral' || e.status !== 'active') continue;
+    const f = files.find(x => x.relPath.startsWith(`module-${e.domain}/model/`));
+    if (!f) {
+      console.error(`[FAIL] 登记册条目 ${e.id} 的域 ${e.domain} 无对应 orm 文件（fail-closed 退出）`);
+      process.exit(1);
+    }
+    if (!map.has(f.relPath)) map.set(f.relPath, new Set());
+    map.get(f.relPath).add(`${e.entity}.${e.column}`);
+  }
+  return map;
+}
 
 function extractAttr(s, name) {
   if (!s) return null;
@@ -28,7 +71,7 @@ function extractAttr(s, name) {
   return m ? m[1] : null;
 }
 
-function parseFile(text) {
+export function parseFile(text) {
   // 注释按等长空格打码：避免注释中的 <entity>/<column> 文本干扰正则，且保持绝对偏移不变
   text = text.replace(/<!--[\s\S]*?-->/g, m => ' '.repeat(m.length));
   const domains = {};
@@ -142,7 +185,7 @@ function classify(col, entity) {
   return roles;
 }
 
-function analyzeFile(filePath, relPath, globalIndex, report = true) {
+function analyzeFile(filePath, relPath, globalIndex, report = true, deferredSet = null) {
   const text = readFileSync(filePath, 'utf-8');
   const { domains, entities } = parseFile(text);
   const warnings = [];
@@ -186,6 +229,7 @@ for (const entity of entities) {
       const effType = effectiveStdDataType(col, domains);
       const isBigint = col.stdSqlType === 'BIGINT';
       const needsFix = isBigint && effType !== 'string';
+      const deferred = needsFix && deferredSet != null && deferredSet.has(`${entity.name}.${col.name}`);
 
       if (needsFix && col.domain && domains[col.domain] && domains[col.domain].stdDataType &&
           domains[col.domain].stdDataType !== 'string') {
@@ -198,7 +242,7 @@ for (const entity of entities) {
         entity: entity.name, col: col.name, code: col.code || '',
         role: roles.join('+'), stdSqlType: col.stdSqlType || '(none)',
         stdDataType: col.stdDataType || (effType ? `(default:${effType})` : '(none)'),
-        domain: col.domain || '', effType, isBigint, needsFix, notGenCode: entity.notGenCode,
+        domain: col.domain || '', effType, isBigint, needsFix, deferred, notGenCode: entity.notGenCode,
         absStart: col.absStart, absEnd: col.absEnd, rawTag: col.rawTag, filePath, relPath,
       });
     }
@@ -207,7 +251,7 @@ for (const entity of entities) {
   if (report && rows.length > 0) {
     console.log(`\n=== ${relPath} ===`);
     for (const r of rows) {
-      const mark = r.needsFix ? '!! NEEDS FIX' : (r.isBigint ? 'ok' : 'n/a');
+      const mark = r.deferred ? 'DEFERRED(registry)' : r.needsFix ? '!! NEEDS FIX' : (r.isBigint ? 'ok' : 'n/a');
       console.log(
         `  [${r.role}] ${r.entity}.${r.col} (${r.code}) ${r.stdSqlType}/${r.stdDataType}` +
         (r.domain ? ` domain=${r.domain}` : '') + (r.notGenCode ? ' (notGenCode)' : '') + `  ${mark}`);
@@ -235,7 +279,7 @@ function fixTag(attrs) {
 }
 
 function buildFixedText(text, rows) {
-  const targets = rows.filter(r => r.needsFix).sort((a, b) => b.absStart - a.absStart);
+  const targets = rows.filter(r => r.needsFix && !r.deferred).sort((a, b) => b.absStart - a.absStart);
   let out = text;
   for (const t of targets) {
     const oldTag = t.rawTag;
@@ -255,7 +299,7 @@ function validateXml(filePath) {
 }
 
 function printSummary(results, mode) {
-  let pk = 0, fk = 0, pkFk = 0, bigint = 0, needsFix = 0, alreadyString = 0, other = 0, blockers = 0, warns = 0, unclassified = 0;
+  let pk = 0, fk = 0, pkFk = 0, bigint = 0, needsFix = 0, deferred = 0, alreadyString = 0, other = 0, blockers = 0, warns = 0, unclassified = 0;
   let bigPk = 0, bigFk = 0;
   for (const r of results) {
     for (const row of r.rows) {
@@ -266,7 +310,8 @@ function printSummary(results, mode) {
       else if (isFk) fk++;
       if (row.isBigint) {
         bigint++;
-        if (row.needsFix) needsFix++;
+        if (row.deferred) deferred++;
+        else if (row.needsFix) needsFix++;
         else alreadyString++;
         if (isPk) bigPk++;
         if (isFk) bigFk++;
@@ -282,7 +327,8 @@ function printSummary(results, mode) {
   console.log(`主键 id 列: ${pk}  外键 xx_id 列: ${fk}  PK+FK 双角色列: ${pkFk}`);
   console.log(`主外键列合计: ${pk + fk + pkFk}  (= ${pk} + ${fk} + ${pkFk})`);
   console.log(`BIGINT 主键: ${bigPk}  BIGINT 外键: ${bigFk}  BIGINT 主/外键合计: ${bigint}`);
-  console.log(`实际修改 stdDataType 的列: ${needsFix}  (= BIGINT 合计, 无重复列)`);
+  console.log(`实际修改 stdDataType 的列: ${needsFix}（不含延后列）`);
+  console.log(`DEFERRED(registry) 登记册延后列: ${deferred}（不计入 NEEDS FIX，dry-run/apply 保持 long 不翻转）`);
   console.log(`非 BIGINT 主/外键(不改): ${other}  未分类 BIGINT 列(不改): ${unclassified}`);
   console.log(`校验告警: ${warns}  BLOCKER(domain 冲突): ${blockers}`);
   if (blockers > 0) {
@@ -305,6 +351,9 @@ function main() {
     process.exit(1);
   }
 
+  const reg = loadRegistry(rootDir);
+  const deferredMap = buildDeferredMap(reg, files);
+
   // 全局实体索引（跨文件校验 join rightProp 用）
   const globalIndex = new Map();
   for (const f of files) {
@@ -316,7 +365,16 @@ function main() {
     }
   }
 
-  const results = files.map(f => analyzeFile(f.fullPath, f.relPath, globalIndex));
+  const results = files.map(f => analyzeFile(f.fullPath, f.relPath, globalIndex, true, deferredMap.get(f.relPath)));
+
+  // 登记册豁免命中核对：active 延后条目应命中 NEEDS FIX 列（M2.7 翻转后须同步 retired，否则此处告警）
+  const hitKeys = new Set();
+  for (const r of results) for (const row of r.rows) if (row.deferred) hitKeys.add(`${row.relPath}::${row.entity}.${row.col}`);
+  for (const [rel, set] of deferredMap)
+    for (const k of set)
+      if (!hitKeys.has(`${rel}::${k}`))
+        console.log(`  [WARN] 登记册延后条目未命中任何 NEEDS FIX 列：${rel} ${k}（若该列已翻转，须将条目标 retired）`);
+
   printSummary(results, mode);
 
   if (mode === 'dry-run' || mode === 'apply') {
@@ -344,8 +402,8 @@ function main() {
       mkdirSync(path.dirname(outPath), { recursive: true });
       writeFileSync(outPath, fixed);
       changedFiles++;
-      changedCols += results[i].rows.filter(r => r.needsFix).length;
-      changedDetails.push({ relPath: f.relPath, cols: results[i].rows.filter(r => r.needsFix) });
+      changedCols += results[i].rows.filter(r => r.needsFix && !r.deferred).length;
+      changedDetails.push({ relPath: f.relPath, cols: results[i].rows.filter(r => r.needsFix && !r.deferred) });
 
       if (mode === 'dry-run') {
         const v = validateXml(outPath);
@@ -359,16 +417,16 @@ function main() {
     }
 
     if (mode === 'dry-run') {
-      // 重扫副本：确认零残留 + 幂等
+      // 重扫副本：确认零残留 + 幂等（延后列按登记册豁免，不计入残留）
       let residual = 0, idempotent = true;
       for (const d of changedDetails) {
         const copyPath = path.join(outRoot, d.relPath);
-        const re = analyzeFile(copyPath, `${OUT_DIR}/${d.relPath}`, globalIndex, false);
-        residual += re.rows.filter(r => r.needsFix).length;
+        const re = analyzeFile(copyPath, `${OUT_DIR}/${d.relPath}`, globalIndex, false, deferredMap.get(d.relPath));
+        residual += re.rows.filter(r => r.needsFix && !r.deferred).length;
         if (buildFixedText(re.text, re.rows) !== re.text) idempotent = false;
       }
       console.log(`\n========== DRY-RUN 结果 ==========`);
-      console.log(`修改文件: ${changedFiles}  修改列: ${changedCols}  XML 校验通过: ${validated}/${changedFiles}`);
+      console.log(`修改文件: ${changedFiles}  修改列: ${changedCols}（登记册延后列已排除，保持 long）  XML 校验通过: ${validated}/${changedFiles}`);
       console.log(`副本重扫残留需改: ${residual}  幂等: ${idempotent ? 'yes' : 'NO'}`);
       console.log(`未修改任何源文件。副本位于 ${OUT_DIR}/，审核后执行:`);
       console.log(`  node tools/check-bigint-id-types.mjs apply --yes`);
@@ -381,4 +439,5 @@ function main() {
   }
 }
 
-main();
+const isMain = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+if (isMain) main();
