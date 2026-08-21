@@ -20,16 +20,16 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="orgId" displayName="业务组织" propId="2" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="partnerId" displayName="合作伙伴" propId="3" i18n-en:displayName="Partner" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true" ext:relation="partner">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="protocol" displayName="传输协议" propId="4" i18n-en:displayName="Protocol" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -85,7 +85,7 @@
         </prop>
         <prop name="certId" displayName="关联证书" propId="17" i18n-en:displayName="Certificate" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="cert">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="active" displayName="启用" propId="18" i18n-en:displayName="Active" queryable="true" sortable="true"
               insertable="true" updatable="true" defaultValue="true">

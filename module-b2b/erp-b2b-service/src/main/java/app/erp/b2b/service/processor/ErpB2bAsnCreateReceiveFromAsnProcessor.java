@@ -13,6 +13,7 @@ import app.erp.pur.dao.entity.ErpPurReceive;
 import app.erp.pur.dao.entity.ErpPurReceiveLine;
 import io.nop.api.core.beans.query.QueryBean;
 import io.nop.api.core.config.AppConfig;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.api.core.time.CoreMetrics;
 import io.nop.core.context.IServiceContext;
@@ -46,7 +47,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
     @Inject
     ErpB2bAsnStateMachine stateMachine;
 
-    public ErpB2bAsn createReceiveFromAsn(Long asnId, IServiceContext context) {
+    public ErpB2bAsn createReceiveFromAsn(String asnId, IServiceContext context) {
         boolean enabled = AppConfig.var(ErpB2bConfigs.CONFIG_ASN_AUTO_CREATE_RECEIVE,
                 ErpB2bConfigs.DEFAULT_ASN_AUTO_CREATE_RECEIVE);
         if (!enabled) {
@@ -120,7 +121,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         IEntityDao<ErpMdMaterial> materialDao = daoProvider.daoFor(ErpMdMaterial.class);
 
         for (ErpB2bAsnLine asnLine : asnLines) {
-            Long materialId = asnLine.getMaterialId();
+            String materialId = asnLine.getMaterialId();
             if (materialId == null) {
                 throw new NopException(ErpB2bErrors.ERR_B2B_ASN_LINE_MATERIAL_REQUIRED)
                         .param(ErpB2bErrors.ARG_ASN_CODE, asn.getCode())
@@ -138,8 +139,10 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
             ErpPurReceiveLine receiveLine = lineDao.newEntity();
             receiveLine.setReceiveId(receive.getId());
             receiveLine.setLineNo(asnLine.getLineNo());
-            receiveLine.setMaterialId(materialId);
-            receiveLine.setUoMId(material.getUoMId());
+            // bridge-main-029: b2b String materialId → pur ErpPurReceiveLine Long materialId（退役 owner M2.5）
+            receiveLine.setMaterialId(ConvertHelper.toLong(materialId));
+            // bridge-main-029: md String uoMId → pur Long uoMId（退役 owner M2.5）
+            receiveLine.setUoMId(ConvertHelper.toLong(material.getUoMId()));
 
             // quantity：shippedQty 优先（实际发货），fallback quantity
             BigDecimal qty = asnLine.getShippedQty() != null ? asnLine.getShippedQty() : asnLine.getQuantity();
@@ -187,7 +190,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         }
     }
 
-    protected ErpB2bAsn requireAsn(Long asnId) {
+    protected ErpB2bAsn requireAsn(String asnId) {
         ErpB2bAsn asn = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId);
         if (asn == null) {
             throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION)
@@ -208,7 +211,7 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<ErpB2bAsnLine> findAsnLines(Long asnId) {
+    protected List<ErpB2bAsnLine> findAsnLines(String asnId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("asnId", asnId));
         return daoProvider.daoFor(ErpB2bAsnLine.class).findAllByQuery(q);
@@ -221,12 +224,17 @@ public class ErpB2bAsnCreateReceiveFromAsnProcessor {
         return daoProvider.daoFor(ErpPurOrderLine.class).findAllByQuery(q);
     }
 
-    protected ErpPurOrderLine findMatchingPoLine(List<ErpPurOrderLine> poLines, Long materialId) {
+    protected ErpPurOrderLine findMatchingPoLine(List<ErpPurOrderLine> poLines, String materialId) {
         if (materialId == null) {
             return null;
         }
+        // bridge-main-027: b2b String materialId → pur Long materialId 对比（退役 owner M2.5）
+        Long materialKey = ConvertHelper.toLong(materialId);
+        if (materialKey == null) {
+            return null;
+        }
         for (ErpPurOrderLine line : poLines) {
-            if (materialId.equals(line.getMaterialId())) {
+            if (materialKey.equals(line.getMaterialId())) {
                 return line;
             }
         }

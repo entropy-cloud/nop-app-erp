@@ -58,8 +58,8 @@ public class ErpB2bPartnerProfileBizModel extends CrudBizModel<ErpB2bPartnerProf
 
     @Override
     @BizMutation
-    public ErpB2bPartnerProfile promoteToTesting(@Name("profileId") Long profileId, IServiceContext context) {
-        ErpB2bPartnerProfile profile = requireEntity(String.valueOf(profileId), null, context);
+    public ErpB2bPartnerProfile promoteToTesting(@Name("profileId") String profileId, IServiceContext context) {
+        ErpB2bPartnerProfile profile = requireEntity(profileId, null, context);
         String from = profile.getStatus();
         assertCan("promoteToTesting", profile, from, ErpB2bConstants.PARTNER_STATUS_REGISTERED);
         assertProfileComplete(profile);
@@ -70,8 +70,8 @@ public class ErpB2bPartnerProfileBizModel extends CrudBizModel<ErpB2bPartnerProf
 
     @Override
     @BizMutation
-    public ErpB2bPartnerProfile promoteToCertified(@Name("profileId") Long profileId, IServiceContext context) {
-        ErpB2bPartnerProfile profile = requireEntity(String.valueOf(profileId), null, context);
+    public ErpB2bPartnerProfile promoteToCertified(@Name("profileId") String profileId, IServiceContext context) {
+        ErpB2bPartnerProfile profile = requireEntity(profileId, null, context);
         String from = profile.getStatus();
         assertCan("promoteToCertified", profile, from, ErpB2bConstants.PARTNER_STATUS_TESTING);
         assertPassRateMet(profile, context);
@@ -83,8 +83,8 @@ public class ErpB2bPartnerProfileBizModel extends CrudBizModel<ErpB2bPartnerProf
 
     @Override
     @BizMutation
-    public ErpB2bPartnerProfile activate(@Name("profileId") Long profileId, IServiceContext context) {
-        ErpB2bPartnerProfile profile = requireEntity(String.valueOf(profileId), null, context);
+    public ErpB2bPartnerProfile activate(@Name("profileId") String profileId, IServiceContext context) {
+        ErpB2bPartnerProfile profile = requireEntity(profileId, null, context);
         String from = profile.getStatus();
         assertCan("activate", profile, from, ErpB2bConstants.PARTNER_STATUS_CERTIFIED);
         profile.setStatus(stateMachine.activateTargetStatus());
@@ -95,8 +95,8 @@ public class ErpB2bPartnerProfileBizModel extends CrudBizModel<ErpB2bPartnerProf
 
     @Override
     @BizMutation
-    public ErpB2bPartnerProfile suspend(@Name("profileId") Long profileId, IServiceContext context) {
-        ErpB2bPartnerProfile profile = requireEntity(String.valueOf(profileId), null, context);
+    public ErpB2bPartnerProfile suspend(@Name("profileId") String profileId, IServiceContext context) {
+        ErpB2bPartnerProfile profile = requireEntity(profileId, null, context);
         String from = profile.getStatus();
         assertCan("suspend", profile, from, "REGISTERED/TESTING/CERTIFIED/PRODUCTION");
         profile.setStatus(stateMachine.suspendTargetStatus());
@@ -106,8 +106,8 @@ public class ErpB2bPartnerProfileBizModel extends CrudBizModel<ErpB2bPartnerProf
 
     @Override
     @BizMutation
-    public ErpB2bPartnerProfile deactivate(@Name("profileId") Long profileId, IServiceContext context) {
-        ErpB2bPartnerProfile profile = requireEntity(String.valueOf(profileId), null, context);
+    public ErpB2bPartnerProfile deactivate(@Name("profileId") String profileId, IServiceContext context) {
+        ErpB2bPartnerProfile profile = requireEntity(profileId, null, context);
         String from = profile.getStatus();
         assertCan("deactivate", profile, from, "非终态（REGISTERED/TESTING/CERTIFIED/PRODUCTION/SUSPENDED）");
         profile.setStatus(stateMachine.deactivateTargetStatus());
@@ -196,7 +196,7 @@ public class ErpB2bPartnerProfileBizModel extends CrudBizModel<ErpB2bPartnerProf
         }
     }
 
-    private long countTestExchanges(Long profileId, Boolean passed, IServiceContext context) {
+    private long countTestExchanges(String profileId, Boolean passed, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("partnerProfileId", profileId));
         if (passed != null) {
@@ -205,7 +205,7 @@ public class ErpB2bPartnerProfileBizModel extends CrudBizModel<ErpB2bPartnerProf
         return testExchangeBiz.findCount(query, context);
     }
 
-    private long countKeyCasePassed(Long profileId, String keyCase, IServiceContext context) {
+    private long countKeyCasePassed(String profileId, String keyCase, IServiceContext context) {
         QueryBean query = new QueryBean();
         query.addFilter(eq("partnerProfileId", profileId));
         query.addFilter(eq("passed", true));

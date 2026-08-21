@@ -25,21 +25,21 @@ import java.util.List;
 public interface IErpB2bAsnBiz extends ICrudBiz<ErpB2bAsn> {
 
     @BizMutation
-    Long handleInboundWebhook(@Name("formatCode") String formatCode,
-                              @Name("partnerCode") String partnerCode,
-                              @Name("signature") String signature,
-                              @Name("eventId") String eventId,
-                              @Name("payload") String payload,
-                              IServiceContext context);
+    String handleInboundWebhook(@Name("formatCode") String formatCode,
+                               @Name("partnerCode") String partnerCode,
+                               @Name("signature") String signature,
+                               @Name("eventId") String eventId,
+                               @Name("payload") String payload,
+                               IServiceContext context);
 
     @BizMutation
-    ErpB2bAsn matchPurchaseOrder(@Name("asnId") Long asnId, IServiceContext context);
+    ErpB2bAsn matchPurchaseOrder(@Name("asnId") String asnId, IServiceContext context);
 
     @BizMutation
-    ErpB2bAsn createReceiveFromAsn(@Name("asnId") Long asnId, IServiceContext context);
+    ErpB2bAsn createReceiveFromAsn(@Name("asnId") String asnId, IServiceContext context);
 
     @BizMutation
-    ErpB2bAsn retryMatch(@Name("asnId") Long asnId, IServiceContext context);
+    ErpB2bAsn retryMatch(@Name("asnId") String asnId, IServiceContext context);
 
     @BizQuery
     List<ErpB2bAsn> findUnmatchedAsns(@Name("asOfDate") LocalDate asOfDate, IServiceContext context);

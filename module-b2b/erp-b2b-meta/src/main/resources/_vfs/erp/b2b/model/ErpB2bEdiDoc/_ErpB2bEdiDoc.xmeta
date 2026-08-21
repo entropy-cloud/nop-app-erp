@@ -23,8 +23,8 @@
 
     <props>
         <prop name="id" displayName="ID" propId="1" i18n-en:displayName="ID" tagSet="seq-default" mandatory="true"
-              queryable="true" sortable="true" insertable="true" updatable="false" graphql:type="String">
-            <schema type="java.lang.Long"/>
+              queryable="true" sortable="true" insertable="true" updatable="false">
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="code" displayName="事务编码" propId="2" i18n-en:displayName="Code" tagSet="var" mandatory="true"
               queryable="true" sortable="true" insertable="true" updatable="true">
@@ -32,11 +32,11 @@
         </prop>
         <prop name="orgId" displayName="业务组织" propId="3" i18n-en:displayName="Organization" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="org">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="formatId" displayName="EDI 格式" propId="4" i18n-en:displayName="Format" queryable="true"
               sortable="true" insertable="true" updatable="true" ext:relation="format">
-            <schema type="java.lang.Long"/>
+            <schema type="java.lang.String"/>
         </prop>
         <prop name="relatedBillType" displayName="关联单据类型" propId="5" i18n-en:displayName="Related Bill Type"
               queryable="true" sortable="true" insertable="true" updatable="true">

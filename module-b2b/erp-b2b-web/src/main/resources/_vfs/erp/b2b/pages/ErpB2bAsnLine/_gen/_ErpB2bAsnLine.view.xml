@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--ASN ID-->
-                <col id="asnId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="asnId" mandatory="true" sortable="true"/>
 
                 <!--行号-->
                 <col id="lineNo" mandatory="true" ui:number="true" sortable="true"/>
 
                 <!--物料-->
-                <col id="materialId" ui:number="true" sortable="true"/>
+                <col id="materialId" sortable="true"/>
 
                 <!--供应商料号-->
                 <col id="supplierPartNo" sortable="true"/>

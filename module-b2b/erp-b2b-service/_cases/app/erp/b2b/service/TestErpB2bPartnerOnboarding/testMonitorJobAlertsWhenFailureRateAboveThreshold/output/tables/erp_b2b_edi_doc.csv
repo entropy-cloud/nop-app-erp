@@ -1,0 +1,4 @@
+_chgType,ID,CODE,ORG_ID,FORMAT_ID,RELATED_BILL_TYPE,RELATED_BILL_CODE,STATE,BLOCKING_LEVEL,ERROR,RETRY_COUNT,ATTACHMENT_FILE_ID,SENT_AT,ACKNOWLEDGED_AT,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME,BUSINESS_DATE
+A,8903,@var:ErpB2bEdiDoc@code,1601,8901,SALES_ORDER,@var:ErpB2bEdiDoc@relatedBillCode,SENT,INFO,,0,,,,,@var:ErpB2bEdiDoc@delVersion_2,0,autotest-ref,*,autotest-ref,*,@var:ErpB2bEdiDoc@businessDate
+A,8904,@var:ErpB2bEdiDoc@code_1,1601,8901,SALES_ORDER,@var:ErpB2bEdiDoc@relatedBillCode_1,SENT,INFO,,0,,,,,@var:ErpB2bEdiDoc@delVersion_2,0,autotest-ref,*,autotest-ref,*,@var:ErpB2bEdiDoc@businessDate
+A,8905,@var:ErpB2bEdiDoc@code_2,1601,8901,SALES_ORDER,@var:ErpB2bEdiDoc@relatedBillCode_2,ERROR,INFO,,0,,,,,@var:ErpB2bEdiDoc@delVersion_2,0,autotest-ref,*,autotest-ref,*,@var:ErpB2bEdiDoc@businessDate

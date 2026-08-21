@@ -6,7 +6,7 @@
     "items": [
       {
         "id": "2",
-        "asnId": 1,
+        "asnId": "1",
         "lineNo": 1,
         "materialId": null,
         "supplierPartNo": null,

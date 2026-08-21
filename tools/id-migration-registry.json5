@@ -2077,6 +2077,24 @@
       "status": "active"
     },
     {
+      "id": "bridge-test-133",
+      "kind": "service-bridge",
+      "scope": "test",
+      "domain": "b2b",
+      "callSite": "module-b2b/erp-b2b-service/src/test/java/app/erp/b2b/service/TestErpB2bAsnInventoryIntegration.java",
+      "target": "ErpPurReceive(purchase), ErpPurReceiveLine(purchase), ErpPurOrder(purchase), ErpPurOrderLine(purchase) — FQN 内联引用（无 import 语句）",
+      "longParams": [],
+      "refDomain": "purchase",
+      "evidence": [
+        "module-b2b/erp-b2b-service/src/test/java/app/erp/b2b/service/TestErpB2bAsnInventoryIntegration.java:91-208",
+        "module-b2b/erp-b2b-service/src/test/java/app/erp/b2b/service/TestErpB2bAsnInventoryIntegration.java:328-438"
+      ],
+      "deferredUntil": "M3.8",
+      "retireOwner": "M2.5",
+      "note": "A3' 补登条目（登记册扫描器 import 口径盲区：FQN 内联引用 20 行/22 token 不产生 import 语句，M0.2 扫描器漏扫；补登证据 = b2b plan 2026-08-21-2025-2 Phase 1 FQN 复扫）。已适配退役（本域侧）：M3.8 b2b plan 2026-08-21-2025-2 Phase 3 兑付（ConvertHelper.toLong ×3 seed 桥 + String.valueOf ×3 断言桥；poId/receiveId/pur 种子保持 Long），晚域 M2.5 翻转 pur 时移除桥接点",
+      "status": "retired"
+    },
+    {
       "id": "backward-133",
       "kind": "backward-pointer",
       "scope": "main",
@@ -4364,7 +4382,7 @@
   "counts": {
     "orm-column-deferral": 8,
     "service-bridge:main": 94,
-    "service-bridge:test": 30,
+    "service-bridge:test": 31,
     "backward-pointer:main": 60,
     "backward-pointer:test": 62
   }

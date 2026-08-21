@@ -61,8 +61,8 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
 
     @Test
     public void testOutboundStateMachineFlow() {
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long docId = ormTemplate.runInSession(session -> {
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String docId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = createDoc(formatId, "AR_INVOICE", "INV-TEST-1",
                     ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
             return doc.getId();
@@ -84,8 +84,8 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
 
     @Test
     public void testErrorAndRetry() {
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long docId = ormTemplate.runInSession(session -> {
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String docId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = createDoc(formatId, "AR_INVOICE", "INV-TEST-2",
                     ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
             return doc.getId();
@@ -106,8 +106,8 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
 
     @Test
     public void testCancelFromToSend() {
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long docId = ormTemplate.runInSession(session -> {
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String docId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = createDoc(formatId, "AR_INVOICE", "INV-TEST-3",
                     ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
             return doc.getId();
@@ -119,7 +119,7 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
 
     @Test
     public void testInboundReceivedToArchived() {
-        Long formatId = seedFormat("UBL_DESPATCH_ADVICE", "UBL");
+        String formatId = seedFormat("UBL_DESPATCH_ADVICE", "UBL");
         ErpB2bEdiDoc doc = ormTemplate.runInSession(session -> ediDocBiz.createInbound("ASN_INBOUND", "PO-001", "<xml/>", "UBL_DESPATCH_ADVICE", CTX));
         assertEquals(ErpB2bConstants.EDI_DOC_STATE_RECEIVED, doc.getState());
 
@@ -129,8 +129,8 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
 
     @Test
     public void testIllegalTransitionThrows() {
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long docId = ormTemplate.runInSession(session -> {
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String docId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = createDoc(formatId, "AR_INVOICE", "INV-TEST-4",
                     ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
             return doc.getId();
@@ -166,7 +166,7 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedFormat(String code, String standard) {
+    private String seedFormat(String code, String standard) {
         return ormTemplate.runInSession(session -> {
             ErpB2bEdiFormat format = new ErpB2bEdiFormat();
             format.setCode(code);
@@ -180,7 +180,7 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
         });
     }
 
-    private ErpB2bEdiDoc createDoc(Long formatId, String relatedBillType, String relatedBillCode, String state) {
+    private ErpB2bEdiDoc createDoc(String formatId, String relatedBillType, String relatedBillCode, String state) {
         ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
         doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -196,7 +196,7 @@ public class TestErpB2bEdiEnvelope extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private List<ErpB2bEdiLog> findLogs(Long ediDocId) {
+    private List<ErpB2bEdiLog> findLogs(String ediDocId) {
         IEntityDao<ErpB2bEdiLog> dao = daoProvider.daoFor(ErpB2bEdiLog.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("ediDocId", ediDocId));

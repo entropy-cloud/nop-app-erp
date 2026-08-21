@@ -28,7 +28,7 @@ public class ErpB2bAsnRetryMatchProcessor {
     @Inject
     ErpB2bAsnStateMachine stateMachine;
 
-    public ErpB2bAsn retryMatch(Long asnId, IServiceContext context) {
+    public ErpB2bAsn retryMatch(String asnId, IServiceContext context) {
         ErpB2bAsn asn = requireAsn(asnId);
         // 幂等：已 MATCHED/RECEIVED_TO_STOCK 直接返回（经 Bean helper 判定）
         if (stateMachine.isIdempotentRetryStatus(asn.getStatus())) {
@@ -44,7 +44,7 @@ public class ErpB2bAsnRetryMatchProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected ErpB2bAsn requireAsn(Long asnId) {
+    protected ErpB2bAsn requireAsn(String asnId) {
         ErpB2bAsn asn = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId);
         if (asn == null) {
             throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION)

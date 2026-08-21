@@ -32,21 +32,21 @@ public interface IErpB2bEdiDocBiz extends ICrudBiz<ErpB2bEdiDoc> {
                                 IServiceContext context);
 
     @BizMutation
-    ErpB2bEdiDoc markSent(@Name("ediDocId") Long ediDocId, IServiceContext context);
+    ErpB2bEdiDoc markSent(@Name("ediDocId") String ediDocId, IServiceContext context);
 
     @BizMutation
-    ErpB2bEdiDoc markAcknowledged(@Name("ediDocId") Long ediDocId, IServiceContext context);
+    ErpB2bEdiDoc markAcknowledged(@Name("ediDocId") String ediDocId, IServiceContext context);
 
     @BizMutation
-    ErpB2bEdiDoc markError(@Name("ediDocId") Long ediDocId,
+    ErpB2bEdiDoc markError(@Name("ediDocId") String ediDocId,
                            @Name("error") String error,
                            IServiceContext context);
 
     @BizMutation
-    ErpB2bEdiDoc retry(@Name("ediDocId") Long ediDocId, IServiceContext context);
+    ErpB2bEdiDoc retry(@Name("ediDocId") String ediDocId, IServiceContext context);
 
     @BizMutation
-    ErpB2bEdiDoc cancel(@Name("ediDocId") Long ediDocId, IServiceContext context);
+    ErpB2bEdiDoc cancel(@Name("ediDocId") String ediDocId, IServiceContext context);
 
     @BizMutation
     ErpB2bEdiDoc createInbound(@Name("relatedBillType") String relatedBillType,
@@ -56,5 +56,5 @@ public interface IErpB2bEdiDocBiz extends ICrudBiz<ErpB2bEdiDoc> {
                                IServiceContext context);
 
     @BizMutation
-    ErpB2bEdiDoc archive(@Name("ediDocId") Long ediDocId, IServiceContext context);
+    ErpB2bEdiDoc archive(@Name("ediDocId") String ediDocId, IServiceContext context);
 }

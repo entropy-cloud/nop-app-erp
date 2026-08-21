@@ -70,7 +70,7 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
     @RegisterExtension
     static B2bFrozenClockExtension frozenClock = new B2bFrozenClockExtension();
 
-    static final Long ORG_ID = 1601L;
+    static final String ORG_ID = "1601";
     static final LocalDate FROZEN_TODAY = B2bFrozenClockExtension.REFERENCE_DATE; // 2026-07-17
     static final String ADMIN_USER = "b2b-admin-user";
 
@@ -115,12 +115,12 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testStateGuardRejectsIllegalTransitions() {
-        Long regProfile = seedCompleteProfile(6001L, "P-GUARD-REG", ErpB2bConstants.PARTNER_STATUS_REGISTERED);
-        Long testingProfile = seedCompleteProfile(6002L, "P-GUARD-TST", ErpB2bConstants.PARTNER_STATUS_TESTING);
-        Long certifiedProfile = seedCompleteProfile(6003L, "P-GUARD-CER", ErpB2bConstants.PARTNER_STATUS_CERTIFIED);
-        Long productionProfile = seedCompleteProfile(6004L, "P-GUARD-PRD", ErpB2bConstants.PARTNER_STATUS_PRODUCTION);
-        Long suspendedProfile = seedCompleteProfile(6005L, "P-GUARD-SUS", ErpB2bConstants.PARTNER_STATUS_SUSPENDED);
-        Long terminatedProfile = seedCompleteProfile(6006L, "P-GUARD-TER", ErpB2bConstants.PARTNER_STATUS_TERMINATED);
+        String regProfile = seedCompleteProfile("6001", "P-GUARD-REG", ErpB2bConstants.PARTNER_STATUS_REGISTERED);
+        String testingProfile = seedCompleteProfile("6002", "P-GUARD-TST", ErpB2bConstants.PARTNER_STATUS_TESTING);
+        String certifiedProfile = seedCompleteProfile("6003", "P-GUARD-CER", ErpB2bConstants.PARTNER_STATUS_CERTIFIED);
+        String productionProfile = seedCompleteProfile("6004", "P-GUARD-PRD", ErpB2bConstants.PARTNER_STATUS_PRODUCTION);
+        String suspendedProfile = seedCompleteProfile("6005", "P-GUARD-SUS", ErpB2bConstants.PARTNER_STATUS_SUSPENDED);
+        String terminatedProfile = seedCompleteProfile("6006", "P-GUARD-TER", ErpB2bConstants.PARTNER_STATUS_TERMINATED);
 
         // REGISTERED/TESTING 直跳 PRODUCTION（P1-RC-080 根因）拒绝
         assertRejected(activateRpc(regProfile), "partner-illegal-transition", "不允许执行该操作");
@@ -148,7 +148,7 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
     /** 合法全生命周期：REGISTERED→TESTING→CERTIFIED→PRODUCTION(goLiveDate)→SUSPENDED→TERMINATED(archivedAt)。 */
     @Test
     public void testLegalFullLifecycleWithFieldWriteBack() {
-        Long profileId = seedCompleteProfile(6101L, "P-LIFE", ErpB2bConstants.PARTNER_STATUS_REGISTERED);
+        String profileId = seedCompleteProfile("6101", "P-LIFE", ErpB2bConstants.PARTNER_STATUS_REGISTERED);
         seedPassedExchanges(profileId);
         seedAllMandatoryPassedChecklist(profileId);
 
@@ -176,7 +176,7 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testPromoteToTestingRejectsIncompleteProfile() {
-        Long profileId = seedProfile(6201L, "P-INCOMPLETE", ErpB2bConstants.PARTNER_STATUS_REGISTERED,
+        String profileId = seedProfile("6201", "P-INCOMPLETE", ErpB2bConstants.PARTNER_STATUS_REGISTERED,
                 partnerId(), "HTTPS", "HMAC", null, "[\"UBL_INVOICE\"]", null);
         assertRejected(promoteToTestingRpc(profileId), "profile-incomplete", "基本配置不完整");
         assertEquals(ErpB2bConstants.PARTNER_STATUS_REGISTERED, reload(profileId).getStatus(),
@@ -185,10 +185,10 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testPromoteToCertifiedRejectsLowPassRate() {
-        Long profileId = seedCompleteProfile(6202L, "P-LOWRATE", ErpB2bConstants.PARTNER_STATUS_TESTING);
-        seedTestExchange(6203L, profileId, "TC-001", true);
-        seedTestExchange(6204L, profileId, "TC-002", true);
-        seedTestExchange(6205L, profileId, "TC-003", false);
+        String profileId = seedCompleteProfile("6202", "P-LOWRATE", ErpB2bConstants.PARTNER_STATUS_TESTING);
+        seedTestExchange("6203", profileId, "TC-001", true);
+        seedTestExchange("6204", profileId, "TC-002", true);
+        seedTestExchange("6205", profileId, "TC-003", false);
 
         assertRejected(promoteToCertifiedRpc(profileId), "pass-rate-not-met", "测试通过率");
         assertEquals(ErpB2bConstants.PARTNER_STATUS_TESTING, reload(profileId).getStatus());
@@ -196,9 +196,9 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testPromoteToCertifiedRejectsMissingKeyCase() {
-        Long profileId = seedCompleteProfile(6206L, "P-NOKEY", ErpB2bConstants.PARTNER_STATUS_TESTING);
-        seedTestExchange(6207L, profileId, "TC-001", true);
-        seedTestExchange(6208L, profileId, "TC-002", true);
+        String profileId = seedCompleteProfile("6206", "P-NOKEY", ErpB2bConstants.PARTNER_STATUS_TESTING);
+        seedTestExchange("6207", profileId, "TC-001", true);
+        seedTestExchange("6208", profileId, "TC-002", true);
         // TC-004 无任何通过记录
         seedAllMandatoryPassedChecklist(profileId);
 
@@ -208,7 +208,7 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testPromoteToCertifiedRejectsEmptyChecklist() {
-        Long profileId = seedCompleteProfile(6209L, "P-NOLIST", ErpB2bConstants.PARTNER_STATUS_TESTING);
+        String profileId = seedCompleteProfile("6209", "P-NOLIST", ErpB2bConstants.PARTNER_STATUS_TESTING);
         seedPassedExchanges(profileId);
 
         assertRejected(promoteToCertifiedRpc(profileId), "certification-not-met", "认证清单");
@@ -217,11 +217,11 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testPromoteToCertifiedRejectsUnpassedMandatoryItem() {
-        Long profileId = seedCompleteProfile(6210L, "P-NOTPASS", ErpB2bConstants.PARTNER_STATUS_TESTING);
+        String profileId = seedCompleteProfile("6210", "P-NOTPASS", ErpB2bConstants.PARTNER_STATUS_TESTING);
         seedPassedExchanges(profileId);
-        seedChecklist(6211L, profileId, "传输连接测试通过", true, true);
-        seedChecklist(6212L, profileId, "发票格式正确", true, false);
-        seedChecklist(6213L, profileId, "ASN 格式正确", false, false);
+        seedChecklist("6211", profileId, "传输连接测试通过", true, true);
+        seedChecklist("6212", profileId, "发票格式正确", true, false);
+        seedChecklist("6213", profileId, "ASN 格式正确", false, false);
 
         assertRejected(promoteToCertifiedRpc(profileId), "certification-not-met", "认证清单");
         assertEquals(ErpB2bConstants.PARTNER_STATUS_TESTING, reload(profileId).getStatus());
@@ -229,7 +229,7 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testPromoteToCertifiedSucceedsWhenGatesMet() {
-        Long profileId = seedCompleteProfile(6214L, "P-GATES", ErpB2bConstants.PARTNER_STATUS_TESTING);
+        String profileId = seedCompleteProfile("6214", "P-GATES", ErpB2bConstants.PARTNER_STATUS_TESTING);
         seedPassedExchanges(profileId);
         seedAllMandatoryPassedChecklist(profileId);
 
@@ -241,13 +241,13 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testMonitorJobAlertsWhenFailureRateAboveThreshold() {
-        seedAlertTemplate(8801L);
-        seedFormat(8901L, "UBL_INVOICE");
-        Long profileId = seedProfile(8902L, "P-MON-ALERT", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
+        seedAlertTemplate("8801");
+        seedFormat("8901", "UBL_INVOICE");
+        String profileId = seedProfile("8902", "P-MON-ALERT", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
                 partnerId(), "HTTPS", "HMAC", "https://mock.endpoint/webhook", "[\"UBL_INVOICE\"]", FROZEN_TODAY);
-        seedEdiDoc(8903L, 8901L, profileId, ErpB2bConstants.EDI_DOC_STATE_SENT, FROZEN_TODAY.atTime(9, 0));
-        seedEdiDoc(8904L, 8901L, profileId, ErpB2bConstants.EDI_DOC_STATE_SENT, FROZEN_TODAY.atTime(10, 0));
-        seedEdiDoc(8905L, 8901L, profileId, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(11, 0));
+        seedEdiDoc("8903", "8901", profileId, ErpB2bConstants.EDI_DOC_STATE_SENT, FROZEN_TODAY.atTime(9, 0));
+        seedEdiDoc("8904", "8901", profileId, ErpB2bConstants.EDI_DOC_STATE_SENT, FROZEN_TODAY.atTime(10, 0));
+        seedEdiDoc("8905", "8901", profileId, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(11, 0));
 
         newWiredJob().execute();
 
@@ -259,23 +259,23 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testMonitorJobSilentWhenBelowThresholdAndOutsideWindow() {
-        seedAlertTemplate(8802L);
-        seedFormat(8906L, "UBL_INVOICE");
+        seedAlertTemplate("8802");
+        seedFormat("8906", "UBL_INVOICE");
         // 窗口内但失败率未超阈值：1 ERROR / 30 总件 = 3.3% < 5%
-        Long inWindow = seedProfile(8907L, "P-MON-LOW", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
+        String inWindow = seedProfile("8907", "P-MON-LOW", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
                 partnerId(), "HTTPS", "HMAC", "https://mock.endpoint/webhook", "[\"UBL_INVOICE\"]", FROZEN_TODAY);
         for (int i = 0; i < 29; i++) {
-            seedEdiDoc(9000L + i, 8906L, inWindow, ErpB2bConstants.EDI_DOC_STATE_SENT, FROZEN_TODAY.atTime(9, 0));
+            seedEdiDoc(String.valueOf(9000L + i), "8906", inWindow, ErpB2bConstants.EDI_DOC_STATE_SENT, FROZEN_TODAY.atTime(9, 0));
         }
-        seedEdiDoc(9090L, 8906L, inWindow, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(10, 0));
+        seedEdiDoc("9090", "8906", inWindow, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(10, 0));
         // 窗口外（goLiveDate 早于窗口起点）：即使高失败率也不扫描。
         // 独立格式（UBL_DESPATCH_ADVICE）防跨伙伴泄漏（D4 锚点近似：同 org+同格式伙伴的
         // 事务会互相计入——测试用独立格式隔离，窗口排除语义独立验证）
-        seedFormat(8911L, "UBL_DESPATCH_ADVICE");
-        Long outsideWindow = seedProfile(8908L, "P-MON-OUT", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
+        seedFormat("8911", "UBL_DESPATCH_ADVICE");
+        String outsideWindow = seedProfile("8908", "P-MON-OUT", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
                 partnerId(), "HTTPS", "HMAC", "https://mock.endpoint/webhook", "[\"UBL_DESPATCH_ADVICE\"]",
                 FROZEN_TODAY.minusDays(3));
-        seedEdiDoc(9091L, 8911L, outsideWindow, ErpB2bConstants.EDI_DOC_STATE_ERROR,
+        seedEdiDoc("9091", "8911", outsideWindow, ErpB2bConstants.EDI_DOC_STATE_ERROR,
                 FROZEN_TODAY.minusDays(3).atTime(9, 0));
 
         newWiredJob().execute();
@@ -286,16 +286,16 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testMonitorJobPerPartnerFailureIsolation() {
-        seedAlertTemplate(8803L);
-        seedFormat(8910L, "UBL_INVOICE");
+        seedAlertTemplate("8803");
+        seedFormat("8910", "UBL_INVOICE");
         // 坏数据伙伴：allowedFormats 非法 JSON → 解析失败 WARN 隔离，不阻断正常伙伴
-        Long badPartner = seedProfile(8911L, "P-MON-BAD", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
+        String badPartner = seedProfile("8911", "P-MON-BAD", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
                 partnerId(), "HTTPS", "HMAC", "https://mock/endpoint", "NOT-JSON", FROZEN_TODAY);
-        seedEdiDoc(8912L, 8910L, badPartner, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(9, 0));
+        seedEdiDoc("8912", "8910", badPartner, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(9, 0));
         // 正常伙伴：超阈值
-        Long goodPartner = seedProfile(8913L, "P-MON-GOOD", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
+        String goodPartner = seedProfile("8913", "P-MON-GOOD", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
                 partnerId(), "HTTPS", "HMAC", "https://mock.endpoint/webhook", "[\"UBL_INVOICE\"]", FROZEN_TODAY);
-        seedEdiDoc(8914L, 8910L, goodPartner, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(10, 0));
+        seedEdiDoc("8914", "8910", goodPartner, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(10, 0));
 
         newWiredJob().execute();
 
@@ -310,11 +310,11 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testMonitorJobCronEmptySkips() {
-        seedAlertTemplate(8804L);
-        seedFormat(8915L, "UBL_INVOICE");
-        Long profileId = seedProfile(8916L, "P-MON-SKIP", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
+        seedAlertTemplate("8804");
+        seedFormat("8915", "UBL_INVOICE");
+        String profileId = seedProfile("8916", "P-MON-SKIP", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
                 partnerId(), "HTTPS", "HMAC", "https://mock.endpoint/webhook", "[\"UBL_INVOICE\"]", FROZEN_TODAY);
-        seedEdiDoc(8917L, 8915L, profileId, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(9, 0));
+        seedEdiDoc("8917", "8915", profileId, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(9, 0));
 
         AppConfig.getConfigProvider().assignConfigValue(ErpB2bConfigs.CONFIG_ONBOARDING_MONITOR_CRON, "");
         try {
@@ -329,10 +329,10 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
 
     @Test
     public void testMonitorJobSilentlySkipsWhenNoActiveTemplate() {
-        seedFormat(8918L, "UBL_INVOICE");
-        Long profileId = seedProfile(8919L, "P-MON-NOTPL", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
+        seedFormat("8918", "UBL_INVOICE");
+        String profileId = seedProfile("8919", "P-MON-NOTPL", ErpB2bConstants.PARTNER_STATUS_PRODUCTION,
                 partnerId(), "HTTPS", "HMAC", "https://mock.endpoint/webhook", "[\"UBL_INVOICE\"]", FROZEN_TODAY);
-        seedEdiDoc(8920L, 8918L, profileId, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(9, 0));
+        seedEdiDoc("8920", "8918", profileId, ErpB2bConstants.EDI_DOC_STATE_ERROR, FROZEN_TODAY.atTime(9, 0));
 
         // 无模板 seed：notify 静默跳过（R1.4 范式），job 不抛错
         newWiredJob().execute();
@@ -353,11 +353,11 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
         return job;
     }
 
-    private ErpB2bPartnerProfile reload(Long profileId) {
+    private ErpB2bPartnerProfile reload(String profileId) {
         return daoProvider.daoFor(ErpB2bPartnerProfile.class).getEntityById(profileId);
     }
 
-    private Long partnerId() {
+    private String partnerId() {
         ErpMdPartner partner = daoProvider.daoFor(ErpMdPartner.class).newEntity();
         partner.setCode("MD-P-" + System.nanoTime());
         partner.setName("测试伙伴");
@@ -367,7 +367,7 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
         return partner.getId();
     }
 
-    private Long seedProfile(Long id, String code, String status, Long partnerId, String protocol,
+    private String seedProfile(String id, String code, String status, String partnerId, String protocol,
                              String authMethod, String transportEndpoint, String allowedFormats,
                              LocalDate goLiveDate) {
         ErpB2bPartnerProfile profile = daoProvider.daoFor(ErpB2bPartnerProfile.class).newEntity();
@@ -386,19 +386,19 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
         return id;
     }
 
-    private Long seedCompleteProfile(Long id, String code, String status) {
+    private String seedCompleteProfile(String id, String code, String status) {
         return seedProfile(id, code, status, partnerId(), "HTTPS", "HMAC",
                 "https://mock.endpoint/webhook", "[\"UBL_INVOICE\"]", null);
     }
 
-    private void seedPassedExchanges(Long profileId) {
-        seedTestExchange(7001L, profileId, "TC-001", true);
-        seedTestExchange(7002L, profileId, "TC-002", true);
-        seedTestExchange(7003L, profileId, "TC-003", true);
-        seedTestExchange(7004L, profileId, "TC-004", true);
+    private void seedPassedExchanges(String profileId) {
+        seedTestExchange("7001", profileId, "TC-001", true);
+        seedTestExchange("7002", profileId, "TC-002", true);
+        seedTestExchange("7003", profileId, "TC-003", true);
+        seedTestExchange("7004", profileId, "TC-004", true);
     }
 
-    private void seedTestExchange(Long id, Long profileId, String testCaseCode, boolean passed) {
+    private void seedTestExchange(String id, String profileId, String testCaseCode, boolean passed) {
         ErpB2bTestExchange exchange = daoProvider.daoFor(ErpB2bTestExchange.class).newEntity();
         exchange.setId(id);
         exchange.setPartnerProfileId(profileId);
@@ -409,7 +409,7 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
         daoProvider.daoFor(ErpB2bTestExchange.class).saveEntity(exchange);
     }
 
-    private void seedChecklist(Long id, Long profileId, String item, boolean mandatory, boolean passed) {
+    private void seedChecklist(String id, String profileId, String item, boolean mandatory, boolean passed) {
         ErpB2bCertificationChecklist checklist = daoProvider.daoFor(ErpB2bCertificationChecklist.class).newEntity();
         checklist.setId(id);
         checklist.setPartnerProfileId(profileId);
@@ -419,13 +419,13 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
         daoProvider.daoFor(ErpB2bCertificationChecklist.class).saveEntity(checklist);
     }
 
-    private void seedAllMandatoryPassedChecklist(Long profileId) {
-        seedChecklist(7101L, profileId, "传输连接测试通过", true, true);
-        seedChecklist(7102L, profileId, "入站端点可达", true, true);
-        seedChecklist(7103L, profileId, "证书未过期", true, true);
+    private void seedAllMandatoryPassedChecklist(String profileId) {
+        seedChecklist("7101", profileId, "传输连接测试通过", true, true);
+        seedChecklist("7102", profileId, "入站端点可达", true, true);
+        seedChecklist("7103", profileId, "证书未过期", true, true);
     }
 
-    private void seedFormat(Long id, String code) {
+    private void seedFormat(String id, String code) {
         ErpB2bEdiFormat format = daoProvider.daoFor(ErpB2bEdiFormat.class).newEntity();
         format.setId(id);
         format.setCode(code);
@@ -438,7 +438,7 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
         daoProvider.daoFor(ErpB2bEdiFormat.class).saveEntity(format);
     }
 
-    private void seedEdiDoc(Long id, Long formatId, Long profileId, String state, LocalDateTime createTime) {
+    private void seedEdiDoc(String id, String formatId, String profileId, String state, LocalDateTime createTime) {
         ErpB2bEdiDoc doc = daoProvider.daoFor(ErpB2bEdiDoc.class).newEntity();
         doc.setId(id);
         doc.setCode("EDI-MON-" + id);
@@ -454,7 +454,7 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
         daoProvider.daoFor(ErpB2bEdiDoc.class).saveEntity(doc);
     }
 
-    private void seedAlertTemplate(Long id) {
+    private void seedAlertTemplate(String id) {
         ormTemplate.runInSession(() -> {
             ErpSysNotificationTemplate t = daoProvider.daoFor(ErpSysNotificationTemplate.class).newEntity();
             t.orm_propValueByName("id", id);
@@ -484,27 +484,27 @@ public class TestErpB2bPartnerOnboarding extends JunitAutoTestCase {
         return graphQLEngine.executeRpc(ctx);
     }
 
-    private ApiResponse<?> promoteToTestingRpc(Long profileId) {
+    private ApiResponse<?> promoteToTestingRpc(String profileId) {
         return executeRpc(GraphQLOperationType.mutation, "ErpB2bPartnerProfile__promoteToTesting",
                 ApiRequest.build(Map.of("profileId", profileId)));
     }
 
-    private ApiResponse<?> promoteToCertifiedRpc(Long profileId) {
+    private ApiResponse<?> promoteToCertifiedRpc(String profileId) {
         return executeRpc(GraphQLOperationType.mutation, "ErpB2bPartnerProfile__promoteToCertified",
                 ApiRequest.build(Map.of("profileId", profileId)));
     }
 
-    private ApiResponse<?> activateRpc(Long profileId) {
+    private ApiResponse<?> activateRpc(String profileId) {
         return executeRpc(GraphQLOperationType.mutation, "ErpB2bPartnerProfile__activate",
                 ApiRequest.build(Map.of("profileId", profileId)));
     }
 
-    private ApiResponse<?> suspendRpc(Long profileId) {
+    private ApiResponse<?> suspendRpc(String profileId) {
         return executeRpc(GraphQLOperationType.mutation, "ErpB2bPartnerProfile__suspend",
                 ApiRequest.build(Map.of("profileId", profileId)));
     }
 
-    private ApiResponse<?> deactivateRpc(Long profileId) {
+    private ApiResponse<?> deactivateRpc(String profileId) {
         return executeRpc(GraphQLOperationType.mutation, "ErpB2bPartnerProfile__deactivate",
                 ApiRequest.build(Map.of("profileId", profileId)));
     }

@@ -160,7 +160,7 @@ public class ErpB2bOnboardingMonitorJob {
     protected boolean monitorPartner(ErpB2bPartnerProfile profile, IServiceContext ctx) {
         double threshold = resolveFailureRate();
         long monitorHours = resolveMonitorHours();
-        List<Long> formatIds = resolveFormatIds(profile, ctx);
+        List<String> formatIds = resolveFormatIds(profile, ctx);
         if (formatIds.isEmpty()) {
             return false;
         }
@@ -178,7 +178,7 @@ public class ErpB2bOnboardingMonitorJob {
     }
 
     /** 解析伙伴 allowedFormats JSON（formatCode 数组）→ EdiFormat.id 集；空/非法返回空集（跳过该伙伴）。 */
-    protected List<Long> resolveFormatIds(ErpB2bPartnerProfile profile, IServiceContext ctx) {
+    protected List<String> resolveFormatIds(ErpB2bPartnerProfile profile, IServiceContext ctx) {
         String allowedFormats = profile.getAllowedFormats();
         if (StringHelper.isBlank(allowedFormats)) {
             return Collections.emptyList();
@@ -194,7 +194,7 @@ public class ErpB2bOnboardingMonitorJob {
         if (codes == null || codes.isEmpty()) {
             return Collections.emptyList();
         }
-        List<Long> ids = new ArrayList<>();
+        List<String> ids = new ArrayList<>();
         for (String code : codes) {
             QueryBean q = new QueryBean();
             q.addFilter(eq("code", code));
@@ -209,7 +209,7 @@ public class ErpB2bOnboardingMonitorJob {
     }
 
     /** 统计伙伴窗口内 EDI 事务件数（formatId 锚点 + org 级 scope 兜底 + createTime ∈ [goLiveDate, now]）。 */
-    protected long countEdiDocs(ErpB2bPartnerProfile profile, List<Long> formatIds, boolean onlyErrors, IServiceContext ctx) {
+    protected long countEdiDocs(ErpB2bPartnerProfile profile, List<String> formatIds, boolean onlyErrors, IServiceContext ctx) {
         QueryBean q = new QueryBean();
         q.addFilter(in("formatId", formatIds));
         if (profile.getOrgId() != null) {

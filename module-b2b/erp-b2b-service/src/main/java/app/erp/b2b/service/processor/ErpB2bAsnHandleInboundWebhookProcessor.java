@@ -53,7 +53,7 @@ public class ErpB2bAsnHandleInboundWebhookProcessor {
     @Inject
     IErpB2bEdiDocBiz ediDocBiz;
 
-    public Long handleInboundWebhook(String formatCode, String partnerCode, String signature,
+    public String handleInboundWebhook(String formatCode, String partnerCode, String signature,
                                      String eventId, String payload, IServiceContext context) {
         // 1. 查 PartnerProfile → webhookSecret
         ErpB2bPartnerProfile profile = findPartnerProfileByCode(partnerCode);
@@ -78,13 +78,13 @@ public class ErpB2bAsnHandleInboundWebhookProcessor {
         }
 
         // 4. 解析 + 建 ASN
-        Long asnId = parseToAsn(formatCode, payload, profile, eventId, context);
+        String asnId = parseToAsn(formatCode, payload, profile, eventId, context);
         return asnId;
     }
 
     // ---------- parseToAsn (内部方法) ----------
 
-    protected Long parseToAsn(String formatCode, String payload, ErpB2bPartnerProfile profile,
+    protected String parseToAsn(String formatCode, String payload, ErpB2bPartnerProfile profile,
                               String eventId, IServiceContext context) {
         IErpB2bEdiProvider provider;
         ParsedPayload parsed;

@@ -182,19 +182,19 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* ASN 编码: CODE */
     private java.lang.String _code;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 来源 EDI 文档: SOURCE_EDI_DOC_ID */
-    private java.lang.Long _sourceEdiDocId;
+    private java.lang.String _sourceEdiDocId;
     
     /* 发货方（供应商）: PARTNER_ID */
-    private java.lang.Long _partnerId;
+    private java.lang.String _partnerId;
     
     /* 发货日期: SHIPMENT_DATE */
     private java.time.LocalDate _shipmentDate;
@@ -381,9 +381,9 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -401,9 +401,9 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -411,9 +411,9 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
             }
         
             case PROP_ID_sourceEdiDocId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_sourceEdiDocId));
                }
                setSourceEdiDocId(typedValue);
@@ -421,9 +421,9 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
             }
         
             case PROP_ID_partnerId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_partnerId));
                }
                setPartnerId(typedValue);
@@ -581,7 +581,7 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
@@ -595,21 +595,21 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_sourceEdiDocId:{
                onInitProp(propId);
-               this._sourceEdiDocId = (java.lang.Long)value;
+               this._sourceEdiDocId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_partnerId:{
                onInitProp(propId);
-               this._partnerId = (java.lang.Long)value;
+               this._partnerId = (java.lang.String)value;
                
                break;
             }
@@ -721,7 +721,7 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -729,7 +729,7 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -759,7 +759,7 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -767,7 +767,7 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);
@@ -778,7 +778,7 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
     /**
      * 来源 EDI 文档: SOURCE_EDI_DOC_ID
      */
-    public final java.lang.Long getSourceEdiDocId(){
+    public final java.lang.String getSourceEdiDocId(){
          onPropGet(PROP_ID_sourceEdiDocId);
          return _sourceEdiDocId;
     }
@@ -786,7 +786,7 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
     /**
      * 来源 EDI 文档: SOURCE_EDI_DOC_ID
      */
-    public final void setSourceEdiDocId(java.lang.Long value){
+    public final void setSourceEdiDocId(java.lang.String value){
         if(onPropSet(PROP_ID_sourceEdiDocId,value)){
             this._sourceEdiDocId = value;
             internalClearRefs(PROP_ID_sourceEdiDocId);
@@ -797,7 +797,7 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
     /**
      * 发货方（供应商）: PARTNER_ID
      */
-    public final java.lang.Long getPartnerId(){
+    public final java.lang.String getPartnerId(){
          onPropGet(PROP_ID_partnerId);
          return _partnerId;
     }
@@ -805,7 +805,7 @@ public class _ErpB2bAsn extends DynamicOrmEntity{
     /**
      * 发货方（供应商）: PARTNER_ID
      */
-    public final void setPartnerId(java.lang.Long value){
+    public final void setPartnerId(java.lang.String value){
         if(onPropSet(PROP_ID_partnerId,value)){
             this._partnerId = value;
             internalClearRefs(PROP_ID_partnerId);

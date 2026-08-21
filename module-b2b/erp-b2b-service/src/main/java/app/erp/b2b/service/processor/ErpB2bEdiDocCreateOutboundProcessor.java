@@ -72,7 +72,7 @@ public class ErpB2bEdiDocCreateOutboundProcessor {
 
     // ---------- 内部辅助 ----------
 
-    protected void checkDuplicate(Long formatId, String relatedBillType, String relatedBillCode) {
+    protected void checkDuplicate(String formatId, String relatedBillType, String relatedBillCode) {
         QueryBean q = new QueryBean();
         q.addFilter(and(
                 eq("formatId", formatId),

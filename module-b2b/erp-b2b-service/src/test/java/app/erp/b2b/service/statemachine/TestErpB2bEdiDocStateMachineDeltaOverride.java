@@ -28,13 +28,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * <p>与 {@link TestErpB2bEdiDocStateMachineBaselineIoC} 对照：同一 {@code assertCanCancel(SENT)}
  * 在基线放行、在 Delta 抛异常 —— 构成可区分的基线/Delta 双加载证据（契约 §6 业务级 Delta 实证义务）。
  *
- * <p>Delta 层经 {@code @NopTestProperty} 设置 {@code nop.core.vfs.delta-layer-ids=test-b2b-delta} 激活，
- * Delta 层文件 {@code _vfs/_delta/test-b2b-delta/erp/b2b/beans/app-service.beans.xml} 以同名 bean id 覆盖基线。
+ * <p>Delta 层经 {@code @NopTestProperty} 设置 {@code nop.core.vfs.delta-layer-ids=default,test-b2b-delta} 激活
+ * （含 {@code default} 层以保留 {@code nop/sys/beans/app-dao.beans.xml} 的 nopSequenceGenerator
+ * lazy-property 兼容 delta，对齐 M3.9 aps 先例），Delta 层文件 {@code _vfs/_delta/test-b2b-delta/erp/b2b/beans/app-service.beans.xml} 以同名 bean id 覆盖基线。
  */
 @NopTestConfig(localDb = true,
         initDatabaseSchema = OptionalBoolean.TRUE,
         enableActionAuth = OptionalBoolean.FALSE)
-@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "test-b2b-delta")
+@NopTestProperty(name = "nop.core.vfs.delta-layer-ids", value = "default,test-b2b-delta")
 public class TestErpB2bEdiDocStateMachineDeltaOverride extends JunitAutoTestCase {
 
     @Inject

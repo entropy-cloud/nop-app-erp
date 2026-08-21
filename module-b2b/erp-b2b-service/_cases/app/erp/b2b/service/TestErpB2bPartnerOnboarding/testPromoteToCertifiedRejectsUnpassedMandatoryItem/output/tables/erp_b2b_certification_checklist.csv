@@ -1,0 +1,4 @@
+_chgType,ID,PARTNER_PROFILE_ID,CHECKLIST_ITEM,REQUIRED_DOC_TYPE,IS_MANDATORY,IS_PASSED,CHECKED_BY,CHECKED_AT,EVIDENCE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,6211,6210,传输连接测试通过,,true,true,,,,,@var:ErpB2bCertificationChecklist@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,6212,6210,发票格式正确,,true,false,,,,,@var:ErpB2bCertificationChecklist@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,6213,6210,ASN 格式正确,,false,false,,,,,@var:ErpB2bCertificationChecklist@delVersion_1,0,autotest-ref,*,autotest-ref,*

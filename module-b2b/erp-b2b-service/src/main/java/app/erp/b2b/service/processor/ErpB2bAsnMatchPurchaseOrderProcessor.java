@@ -9,6 +9,7 @@ import app.erp.b2b.service.statemachine.ErpB2bAsnStateMachine;
 import app.erp.pur.dao.entity.ErpPurOrder;
 import app.erp.pur.dao.entity.ErpPurOrderLine;
 import io.nop.api.core.beans.query.QueryBean;
+import io.nop.api.core.convert.ConvertHelper;
 import io.nop.api.core.exceptions.NopException;
 import io.nop.core.context.IServiceContext;
 import io.nop.dao.api.IDaoProvider;
@@ -43,7 +44,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
     @Inject
     ErpB2bAsnStateMachine stateMachine;
 
-    public ErpB2bAsn matchPurchaseOrder(Long asnId, IServiceContext context) {
+    public ErpB2bAsn matchPurchaseOrder(String asnId, IServiceContext context) {
         ErpB2bAsn asn = requireAsn(asnId);
         String from = asn.getStatus();
         assertCanMatch(asn, from);
@@ -118,7 +119,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         }
     }
 
-    protected ErpB2bAsn requireAsn(Long asnId) {
+    protected ErpB2bAsn requireAsn(String asnId) {
         ErpB2bAsn asn = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId);
         if (asn == null) {
             throw new NopException(ErpB2bErrors.ERR_B2B_ASN_ILLEGAL_TRANSITION)
@@ -144,7 +145,7 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    protected List<ErpB2bAsnLine> findAsnLines(Long asnId) {
+    protected List<ErpB2bAsnLine> findAsnLines(String asnId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("asnId", asnId));
         return daoProvider.daoFor(ErpB2bAsnLine.class).findAllByQuery(q);
@@ -157,19 +158,24 @@ public class ErpB2bAsnMatchPurchaseOrderProcessor {
         return daoProvider.daoFor(ErpPurOrderLine.class).findAllByQuery(q);
     }
 
-    protected ErpPurOrderLine findMatchingPoLine(List<ErpPurOrderLine> poLines, Long materialId) {
+    protected ErpPurOrderLine findMatchingPoLine(List<ErpPurOrderLine> poLines, String materialId) {
         if (materialId == null) {
             return null;
         }
+        // bridge-main-031: b2b String materialId → pur Long materialId 对比（退役 owner M2.5）
+        Long materialKey = ConvertHelper.toLong(materialId);
+        if (materialKey == null) {
+            return null;
+        }
         for (ErpPurOrderLine line : poLines) {
-            if (materialId.equals(line.getMaterialId())) {
+            if (materialKey.equals(line.getMaterialId())) {
                 return line;
             }
         }
         return null;
     }
 
-    protected void markEdiDocError(Long ediDocId, String error, IServiceContext context) {
+    protected void markEdiDocError(String ediDocId, String error, IServiceContext context) {
         if (ediDocId == null) {
             return;
         }

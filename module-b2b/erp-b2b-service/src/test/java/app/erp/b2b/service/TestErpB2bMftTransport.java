@@ -65,10 +65,10 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
 
     @Test
     public void testTransportSuccess() {
-        Long partnerId = seedPartner();
-        Long configId = seedMftConfig(partnerId, "HTTPS", true);
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long ediDocId = ormTemplate.runInSession(session -> {
+        String partnerId = seedPartner();
+        String configId = seedMftConfig(partnerId, "HTTPS", true);
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String ediDocId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
             doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -106,10 +106,10 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
 
     @Test
     public void testTransport5xxRetryDeadLetter() {
-        Long partnerId = seedPartner();
-        Long configId = seedMftConfig(partnerId, "HTTPS", true);
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long ediDocId = ormTemplate.runInSession(session -> {
+        String partnerId = seedPartner();
+        String configId = seedMftConfig(partnerId, "HTTPS", true);
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String ediDocId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
             doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -136,10 +136,10 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
 
     @Test
     public void testTransport4xxNoRetryDeadLetter() {
-        Long partnerId = seedPartner();
-        Long configId = seedMftConfig(partnerId, "HTTPS", true);
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long ediDocId = ormTemplate.runInSession(session -> {
+        String partnerId = seedPartner();
+        String configId = seedMftConfig(partnerId, "HTTPS", true);
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String ediDocId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
             doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
             doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -167,7 +167,7 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
 
     @Test
     public void testTransportConfigMissing() {
-        Long partnerId = seedPartner();
+        String partnerId = seedPartner();
         assertThrows(NopException.class,
                 () -> ormTemplate.runInSession(session ->
                         transportManager.send(null, partnerId, "<payload/>", "test.xml")),
@@ -185,7 +185,7 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedPartner() {
+    private String seedPartner() {
         return ormTemplate.runInSession(session -> {
             app.erp.md.dao.entity.ErpMdPartner partner = new app.erp.md.dao.entity.ErpMdPartner();
             partner.setCode("PARTNER-MFT-" + System.nanoTime());
@@ -197,7 +197,7 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
         });
     }
 
-    private Long seedMftConfig(Long partnerId, String protocol, boolean deadLetterEnabled) {
+    private String seedMftConfig(String partnerId, String protocol, boolean deadLetterEnabled) {
         return ormTemplate.runInSession(session -> {
             ErpB2bMftConfig config = new ErpB2bMftConfig();
             config.setPartnerId(partnerId);
@@ -212,7 +212,7 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
         });
     }
 
-    private Long seedFormat(String code, String standard) {
+    private String seedFormat(String code, String standard) {
         return ormTemplate.runInSession(session -> {
             ErpB2bEdiFormat format = new ErpB2bEdiFormat();
             format.setCode(code);
@@ -227,7 +227,7 @@ public class TestErpB2bMftTransport extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private List<ErpB2bMftLog> findMftLogs(Long configId) {
+    private List<ErpB2bMftLog> findMftLogs(String configId) {
         IEntityDao<ErpB2bMftLog> dao = daoProvider.daoFor(ErpB2bMftLog.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("configId", configId));

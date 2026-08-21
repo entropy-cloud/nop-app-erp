@@ -48,8 +48,8 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
 
     @Test
     public void testOutboundFullChainToAcknowledged() {
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long docId = ormTemplate.runInSession(session -> {
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String docId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = createDoc(formatId, "AR_INVOICE", "INV-POST-1",
                     ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
             return doc.getId();
@@ -74,8 +74,8 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
 
     @Test
     public void testErrorAndRetryCycle() {
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long docId = ormTemplate.runInSession(session -> {
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String docId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = createDoc(formatId, "AR_INVOICE", "INV-POST-2",
                     ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
             return doc.getId();
@@ -104,8 +104,8 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
 
     @Test
     public void testArchiveAfterAcknowledged() {
-        Long formatId = seedFormat("UBL_INVOICE", "UBL");
-        Long docId = ormTemplate.runInSession(session -> {
+        String formatId = seedFormat("UBL_INVOICE", "UBL");
+        String docId = ormTemplate.runInSession(session -> {
             ErpB2bEdiDoc doc = createDoc(formatId, "AR_INVOICE", "INV-POST-3",
                     ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
             return doc.getId();
@@ -122,7 +122,7 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
                 daoProvider.daoFor(ErpB2bEdiDoc.class).getEntityById(docId).getState());
     }
 
-    private Long seedFormat(String code, String standard) {
+    private String seedFormat(String code, String standard) {
         return ormTemplate.runInSession(session -> {
             ErpB2bEdiFormat format = new ErpB2bEdiFormat();
             format.setCode(code);
@@ -136,7 +136,7 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
         });
     }
 
-    private ErpB2bEdiDoc createDoc(Long formatId, String relatedBillType, String relatedBillCode, String state) {
+    private ErpB2bEdiDoc createDoc(String formatId, String relatedBillType, String relatedBillCode, String state) {
         ErpB2bEdiDoc doc = new ErpB2bEdiDoc();
         doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
         doc.setBusinessDate(java.time.LocalDate.of(2026, 7, 1));
@@ -152,7 +152,7 @@ public class TestErpB2bEdiPosting extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private List<ErpB2bEdiLog> findLogs(Long ediDocId) {
+    private List<ErpB2bEdiLog> findLogs(String ediDocId) {
         IEntityDao<ErpB2bEdiLog> dao = daoProvider.daoFor(ErpB2bEdiLog.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("ediDocId", ediDocId));

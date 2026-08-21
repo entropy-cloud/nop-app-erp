@@ -2,6 +2,15 @@
   "data": {
     "id": "1",
     "code": "@var:ErpB2bAsn@code",
+    "status": "RECEIVED",
+    "status_label": "RECEIVED-已接收",
+    "delVersion": 0,
+    "version": 0,
+    "createdBy": "autotest-ref",
+    "createTime": "@var:ErpB2bAsn@updateTime",
+    "updatedBy": "autotest-ref",
+    "updateTime": "@var:ErpB2bAsn@updateTime",
+    "businessDate": "@var:ErpB2bAsn@businessDate",
     "orgId": null,
     "sourceEdiDocId": null,
     "partnerId": null,
@@ -10,16 +19,7 @@
     "trackingNo": null,
     "relatedBillType": null,
     "relatedBillCode": null,
-    "status": "RECEIVED",
-    "status_label": "RECEIVED-已接收",
-    "remark": null,
-    "delVersion": 0,
-    "version": 0,
-    "createdBy": "autotest-ref",
-    "createTime": "@var:ErpB2bAsn@updateTime",
-    "updatedBy": "autotest-ref",
-    "updateTime": "@var:ErpB2bAsn@updateTime",
-    "businessDate": "@var:ErpB2bAsn@businessDate"
+    "remark": null
   },
   "status": 0
 }

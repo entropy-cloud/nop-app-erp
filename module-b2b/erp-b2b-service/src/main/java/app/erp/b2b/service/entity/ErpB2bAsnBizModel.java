@@ -63,7 +63,7 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
 
     @Override
     @BizMutation
-    public Long handleInboundWebhook(@Name("formatCode") String formatCode,
+    public String handleInboundWebhook(@Name("formatCode") String formatCode,
                                      @Name("partnerCode") String partnerCode,
                                      @Name("signature") String signature,
                                      @Name("eventId") String eventId,
@@ -74,19 +74,19 @@ public class ErpB2bAsnBizModel extends CrudBizModel<ErpB2bAsn> implements IErpB2
 
     @Override
     @BizMutation
-    public ErpB2bAsn matchPurchaseOrder(@Name("asnId") Long asnId, IServiceContext context) {
+    public ErpB2bAsn matchPurchaseOrder(@Name("asnId") String asnId, IServiceContext context) {
         return matchPurchaseOrderProcessor.matchPurchaseOrder(asnId, context);
     }
 
     @Override
     @BizMutation
-    public ErpB2bAsn createReceiveFromAsn(@Name("asnId") Long asnId, IServiceContext context) {
+    public ErpB2bAsn createReceiveFromAsn(@Name("asnId") String asnId, IServiceContext context) {
         return createReceiveFromAsnProcessor.createReceiveFromAsn(asnId, context);
     }
 
     @Override
     @BizMutation
-    public ErpB2bAsn retryMatch(@Name("asnId") Long asnId, IServiceContext context) {
+    public ErpB2bAsn retryMatch(@Name("asnId") String asnId, IServiceContext context) {
         return retryMatchProcessor.retryMatch(asnId, context);
     }
 

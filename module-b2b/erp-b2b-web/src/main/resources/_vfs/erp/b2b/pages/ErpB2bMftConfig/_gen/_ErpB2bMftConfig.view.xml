@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--合作伙伴-->
-                <col id="partnerId" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="partnerId" mandatory="true" sortable="true"/>
 
                 <!--传输协议-->
                 <col id="protocol" mandatory="true" sortable="true"/>
@@ -67,7 +67,7 @@
                 <col id="signatureAlgo" sortable="true"/>
 
                 <!--关联证书-->
-                <col id="certId" ui:number="true" sortable="true"/>
+                <col id="certId" sortable="true"/>
 
                 <!--启用-->
                 <col id="active" sortable="true"/>

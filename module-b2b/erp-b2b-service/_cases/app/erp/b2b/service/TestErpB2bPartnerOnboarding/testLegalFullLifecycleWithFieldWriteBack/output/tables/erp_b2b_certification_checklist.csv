@@ -1,0 +1,4 @@
+_chgType,ID,PARTNER_PROFILE_ID,CHECKLIST_ITEM,REQUIRED_DOC_TYPE,IS_MANDATORY,IS_PASSED,CHECKED_BY,CHECKED_AT,EVIDENCE,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7101,6101,传输连接测试通过,,true,true,,,,,@var:ErpB2bCertificationChecklist@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,7102,6101,入站端点可达,,true,true,,,,,@var:ErpB2bCertificationChecklist@delVersion_1,0,autotest-ref,*,autotest-ref,*
+A,7103,6101,证书未过期,,true,true,,,,,@var:ErpB2bCertificationChecklist@delVersion_1,0,autotest-ref,*,autotest-ref,*

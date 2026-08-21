@@ -1,7 +1,7 @@
 {
-  "id": 0,
-  "ediDocId": 0,
-  "orgId": 0,
+  "id": "",
+  "ediDocId": "",
+  "orgId": "",
   "direction": "",
   "direction_label": "",
   "requestPayload": "",

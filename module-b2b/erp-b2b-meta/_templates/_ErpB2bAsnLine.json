@@ -1,8 +1,8 @@
 {
-  "id": 0,
-  "asnId": 0,
+  "id": "",
+  "asnId": "",
   "lineNo": 0,
-  "materialId": 0,
+  "materialId": "",
   "supplierPartNo": "",
   "quantity": 0.0,
   "shippedQty": 0.0,

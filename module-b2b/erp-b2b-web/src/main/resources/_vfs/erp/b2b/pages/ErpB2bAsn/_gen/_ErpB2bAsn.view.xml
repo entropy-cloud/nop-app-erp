@@ -19,19 +19,19 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--ASN 编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--来源 EDI 文档-->
-                <col id="sourceEdiDocId" ui:number="true" sortable="true"/>
+                <col id="sourceEdiDocId" sortable="true"/>
 
                 <!--发货方（供应商）-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--发货日期-->
                 <col id="shipmentDate" sortable="true"/>

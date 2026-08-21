@@ -19,13 +19,13 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--合作伙伴-->
-                <col id="partnerId" ui:number="true" sortable="true"/>
+                <col id="partnerId" sortable="true"/>
 
                 <!--证书名称-->
                 <col id="certName" mandatory="true" sortable="true"/>

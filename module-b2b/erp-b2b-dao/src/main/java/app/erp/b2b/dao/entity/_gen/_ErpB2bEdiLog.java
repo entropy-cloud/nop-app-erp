@@ -155,13 +155,13 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* EDI 事务 ID: EDI_DOC_ID */
-    private java.lang.Long _ediDocId;
+    private java.lang.String _ediDocId;
     
     /* 业务组织: ORG_ID */
-    private java.lang.Long _orgId;
+    private java.lang.String _orgId;
     
     /* 方向: DIRECTION */
     private java.lang.String _direction;
@@ -336,9 +336,9 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -346,9 +346,9 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_ediDocId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_ediDocId));
                }
                setEdiDocId(typedValue);
@@ -356,9 +356,9 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
             }
         
             case PROP_ID_orgId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_orgId));
                }
                setOrgId(typedValue);
@@ -506,21 +506,21 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_ediDocId:{
                onInitProp(propId);
-               this._ediDocId = (java.lang.Long)value;
+               this._ediDocId = (java.lang.String)value;
                
                break;
             }
         
             case PROP_ID_orgId:{
                onInitProp(propId);
-               this._orgId = (java.lang.Long)value;
+               this._orgId = (java.lang.String)value;
                
                break;
             }
@@ -625,7 +625,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -633,7 +633,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -644,7 +644,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     /**
      * EDI 事务 ID: EDI_DOC_ID
      */
-    public final java.lang.Long getEdiDocId(){
+    public final java.lang.String getEdiDocId(){
          onPropGet(PROP_ID_ediDocId);
          return _ediDocId;
     }
@@ -652,7 +652,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     /**
      * EDI 事务 ID: EDI_DOC_ID
      */
-    public final void setEdiDocId(java.lang.Long value){
+    public final void setEdiDocId(java.lang.String value){
         if(onPropSet(PROP_ID_ediDocId,value)){
             this._ediDocId = value;
             internalClearRefs(PROP_ID_ediDocId);
@@ -663,7 +663,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final java.lang.Long getOrgId(){
+    public final java.lang.String getOrgId(){
          onPropGet(PROP_ID_orgId);
          return _orgId;
     }
@@ -671,7 +671,7 @@ public class _ErpB2bEdiLog extends DynamicOrmEntity{
     /**
      * 业务组织: ORG_ID
      */
-    public final void setOrgId(java.lang.Long value){
+    public final void setOrgId(java.lang.String value){
         if(onPropSet(PROP_ID_orgId,value)){
             this._orgId = value;
             internalClearRefs(PROP_ID_orgId);

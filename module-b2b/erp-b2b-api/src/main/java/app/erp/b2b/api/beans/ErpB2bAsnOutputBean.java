@@ -14,16 +14,16 @@
     public class ErpB2bAsnOutputBean {
 
     
-        private Long _id;
+        private String _id;
 
     
         @PropMeta(propId=1)
     
-        public Long getId(){
+        public String getId(){
             return _id;
         }
 
-        public void setId(Long value){
+        public void setId(String value){
             this._id = value;
         }
 
@@ -42,44 +42,44 @@
         }
 
 
-        private Long _orgId;
+        private String _orgId;
 
     
         @PropMeta(propId=3)
     
-        public Long getOrgId(){
+        public String getOrgId(){
             return _orgId;
         }
 
-        public void setOrgId(Long value){
+        public void setOrgId(String value){
             this._orgId = value;
         }
 
 
-        private Long _sourceEdiDocId;
+        private String _sourceEdiDocId;
 
     
         @PropMeta(propId=4)
     
-        public Long getSourceEdiDocId(){
+        public String getSourceEdiDocId(){
             return _sourceEdiDocId;
         }
 
-        public void setSourceEdiDocId(Long value){
+        public void setSourceEdiDocId(String value){
             this._sourceEdiDocId = value;
         }
 
 
-        private Long _partnerId;
+        private String _partnerId;
 
     
         @PropMeta(propId=5)
     
-        public Long getPartnerId(){
+        public String getPartnerId(){
             return _partnerId;
         }
 
-        public void setPartnerId(Long value){
+        public void setPartnerId(String value){
             this._partnerId = value;
         }
 

@@ -69,7 +69,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    public ErpB2bEdiDoc markSent(@Name("ediDocId") Long ediDocId, IServiceContext context) {
+    public ErpB2bEdiDoc markSent(@Name("ediDocId") String ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String from = doc.getState();
         assertCan("markSent", doc, from, ErpB2bConstants.EDI_DOC_STATE_TO_SEND);
@@ -83,7 +83,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    public ErpB2bEdiDoc markAcknowledged(@Name("ediDocId") Long ediDocId, IServiceContext context) {
+    public ErpB2bEdiDoc markAcknowledged(@Name("ediDocId") String ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String from = doc.getState();
         assertCan("markAcknowledged", doc, from, ErpB2bConstants.EDI_DOC_STATE_SENT);
@@ -102,7 +102,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
      */
     @Override
     @BizMutation
-    public ErpB2bEdiDoc markError(@Name("ediDocId") Long ediDocId,
+    public ErpB2bEdiDoc markError(@Name("ediDocId") String ediDocId,
                                   @Name("error") String error,
                                   IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
@@ -119,7 +119,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    public ErpB2bEdiDoc retry(@Name("ediDocId") Long ediDocId, IServiceContext context) {
+    public ErpB2bEdiDoc retry(@Name("ediDocId") String ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String from = doc.getState();
         assertCan("retry", doc, from, ErpB2bConstants.EDI_DOC_STATE_ERROR);
@@ -136,7 +136,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    public ErpB2bEdiDoc cancel(@Name("ediDocId") Long ediDocId, IServiceContext context) {
+    public ErpB2bEdiDoc cancel(@Name("ediDocId") String ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String from = doc.getState();
         assertCan("cancel", doc, from, "TO_SEND/SENT/ERROR");
@@ -159,7 +159,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     @Override
     @BizMutation
-    public ErpB2bEdiDoc archive(@Name("ediDocId") Long ediDocId, IServiceContext context) {
+    public ErpB2bEdiDoc archive(@Name("ediDocId") String ediDocId, IServiceContext context) {
         ErpB2bEdiDoc doc = requireDoc(ediDocId);
         String from = doc.getState();
         assertCan("archive", doc, from, ErpB2bConstants.EDI_DOC_STATE_RECEIVED);
@@ -172,7 +172,7 @@ public class ErpB2bEdiDocBizModel extends CrudBizModel<ErpB2bEdiDoc> implements 
 
     // ---------- helpers ----------
 
-    ErpB2bEdiDoc requireDoc(Long ediDocId) {
+    ErpB2bEdiDoc requireDoc(String ediDocId) {
         ErpB2bEdiDoc doc = daoProvider().daoFor(ErpB2bEdiDoc.class).getEntityById(ediDocId);
         if (doc == null) {
             throw new NopException(ErpB2bErrors.ERR_B2B_EDI_DOC_ILLEGAL_TRANSITION)

@@ -1,9 +1,9 @@
 {
-  "id": 0,
+  "id": "",
   "code": "",
-  "orgId": 0,
-  "sourceEdiDocId": 0,
-  "partnerId": 0,
+  "orgId": "",
+  "sourceEdiDocId": "",
+  "partnerId": "",
   "shipmentDate": "2000-01-01",
   "estimatedArrivalDate": "2000-01-01",
   "trackingNo": "",

@@ -1,0 +1,5 @@
+_chgType,ID,PARTNER_PROFILE_ID,DIRECTION,FORMAT_CODE,TEST_CASE_CODE,SENT_PAYLOAD,RECEIVED_PAYLOAD,EXPECTED_RESULT,ACTUAL_RESULT,PASSED,TESTED_BY,TESTED_AT,NOTES,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,7001,6210,OUTBOUND,UBL_INVOICE,TC-001,,,,,true,,,,@var:ErpB2bTestExchange@delVersion,0,autotest-ref,*,autotest-ref,*
+A,7002,6210,OUTBOUND,UBL_INVOICE,TC-002,,,,,true,,,,@var:ErpB2bTestExchange@delVersion,0,autotest-ref,*,autotest-ref,*
+A,7003,6210,OUTBOUND,UBL_INVOICE,TC-003,,,,,true,,,,@var:ErpB2bTestExchange@delVersion,0,autotest-ref,*,autotest-ref,*
+A,7004,6210,OUTBOUND,UBL_INVOICE,TC-004,,,,,true,,,,@var:ErpB2bTestExchange@delVersion,0,autotest-ref,*,autotest-ref,*

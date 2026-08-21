@@ -39,7 +39,7 @@ public class CodeMappingResolver {
      * @param internalCode 内部代码
      * @return 外部代码（未找到返回原值 + WARN）
      */
-    public String resolveOutbound(Long partnerId, String mappingType, String internalCode) {
+    public String resolveOutbound(String partnerId, String mappingType, String internalCode) {
         if (internalCode == null) {
             return null;
         }
@@ -59,7 +59,7 @@ public class CodeMappingResolver {
      * @param externalCode 外部代码
      * @return 内部代码（未找到返回原值 + WARN）
      */
-    public String resolveInbound(Long partnerId, String mappingType, String externalCode) {
+    public String resolveInbound(String partnerId, String mappingType, String externalCode) {
         if (externalCode == null) {
             return null;
         }
@@ -71,7 +71,7 @@ public class CodeMappingResolver {
         return externalCode;
     }
 
-    private ErpB2bCodeMapping findMapping(Long partnerId, String mappingType, String code, boolean byInternal) {
+    private ErpB2bCodeMapping findMapping(String partnerId, String mappingType, String code, boolean byInternal) {
         IEntityDao<ErpB2bCodeMapping> dao = daoProvider.daoFor(ErpB2bCodeMapping.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("mappingType", mappingType));

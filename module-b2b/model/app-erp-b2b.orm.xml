@@ -135,9 +135,9 @@
                 displayName="EDI 格式配置" ext:icon="file-type" i18n-en:displayName="EDI Format" name="app.erp.b2b.dao.entity.ErpB2bEdiFormat"
                 tableName="erp_b2b_edi_format" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="formatName" displayName="格式名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="FORMAT_NAME" propId="4" stdDataType="string" i18n-en:displayName='Format Name' />
                 <column name="formatStandard" displayName="EDI 标准" ext:dict="erp-b2b/edi-standard" mandatory="true" code="FORMAT_STANDARD" propId="5" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Format Standard' />
                 <column name="direction" displayName="方向" ext:dict="erp-b2b/edi-direction" mandatory="true" code="DIRECTION" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Direction' />
@@ -164,10 +164,10 @@
                 displayName="EDI 事务" ext:icon="file-text" i18n-en:displayName="EDI Document" name="app.erp.b2b.dao.entity.ErpB2bEdiDoc"
                 tableName="erp_b2b_edi_doc" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="事务编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="formatId" displayName="EDI 格式" stdSqlType="BIGINT" code="FORMAT_ID" propId="4" stdDataType="long" i18n-en:displayName='Format' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="formatId" displayName="EDI 格式" stdSqlType="BIGINT" code="FORMAT_ID" propId="4" stdDataType="string" i18n-en:displayName='Format' />
                 <column name="relatedBillType" displayName="关联单据类型" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_TYPE" propId="5" stdDataType="string" i18n-en:displayName='Related Bill Type' />
                 <column name="relatedBillCode" displayName="关联单据号" tagSet="var" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_CODE" propId="6" stdDataType="string" i18n-en:displayName='Related Bill Code' />
                 <column name="state" displayName="状态" ext:dict="erp-b2b/edi-doc-state" mandatory="true" code="STATE" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='State' />
@@ -214,11 +214,11 @@
                 displayName="提前发货通知" ext:icon="truck" i18n-en:displayName="Advanced Shipping Notice" name="app.erp.b2b.dao.entity.ErpB2bAsn"
                 tableName="erp_b2b_asn" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="ASN 编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="sourceEdiDocId" displayName="来源 EDI 文档" stdSqlType="BIGINT" code="SOURCE_EDI_DOC_ID" propId="4" stdDataType="long" i18n-en:displayName='Source EDI Document' />
-                <column name="partnerId" displayName="发货方（供应商）" stdSqlType="BIGINT" code="PARTNER_ID" propId="5" stdDataType="long" i18n-en:displayName='Partner' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="sourceEdiDocId" displayName="来源 EDI 文档" stdSqlType="BIGINT" code="SOURCE_EDI_DOC_ID" propId="4" stdDataType="string" i18n-en:displayName='Source EDI Document' />
+                <column name="partnerId" displayName="发货方（供应商）" stdSqlType="BIGINT" code="PARTNER_ID" propId="5" stdDataType="string" i18n-en:displayName='Partner' />
                 <column name="shipmentDate" displayName="发货日期" stdSqlType="DATE" code="SHIPMENT_DATE" propId="6" i18n-en:displayName='Shipment Date' />
                 <column name="estimatedArrivalDate" displayName="预计到货日期" stdSqlType="DATE" code="ESTIMATED_ARRIVAL_DATE" propId="7" i18n-en:displayName='Estimated Arrival Date' />
                 <column name="trackingNo" displayName="物流单号" stdSqlType="VARCHAR" precision="100" code="TRACKING_NO" propId="8" stdDataType="string" i18n-en:displayName='Tracking No' />
@@ -266,10 +266,10 @@
                 displayName="ASN 明细行" ext:icon="list" i18n-en:displayName="ASN Line" name="app.erp.b2b.dao.entity.ErpB2bAsnLine"
                 tableName="erp_b2b_asn_line" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="asnId" displayName="ASN ID" stdSqlType="BIGINT" mandatory="true" code="ASN_ID" propId="2" stdDataType="long" i18n-en:displayName='ASN' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="asnId" displayName="ASN ID" stdSqlType="BIGINT" mandatory="true" code="ASN_ID" propId="2" stdDataType="string" i18n-en:displayName='ASN' />
                 <column name="lineNo" displayName="行号" stdSqlType="INTEGER" mandatory="true" code="LINE_NO" propId="3" stdDataType="int" i18n-en:displayName='Line No' />
-                <column name="materialId" displayName="物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="4" stdDataType="long" i18n-en:displayName='Material' />
+                <column name="materialId" displayName="物料" stdSqlType="BIGINT" code="MATERIAL_ID" propId="4" stdDataType="string" i18n-en:displayName='Material' />
                 <column name="supplierPartNo" displayName="供应商料号" stdSqlType="VARCHAR" precision="100" code="SUPPLIER_PART_NO" propId="5" stdDataType="string" i18n-en:displayName='Supplier Part No' />
                 <column name="quantity" displayName="订单数量" domain="quantity" code="QUANTITY" propId="6" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Quantity' />
                 <column name="shippedQty" displayName="发货数量" domain="quantity" code="SHIPPED_QTY" propId="7" stdSqlType="DECIMAL" stdDataType="decimal" i18n-en:displayName='Shipped Quantity' />
@@ -300,12 +300,12 @@
                 displayName="内外代码映射" ext:icon="shuffle" i18n-en:displayName="Code Mapping" name="app.erp.b2b.dao.entity.ErpB2bCodeMapping"
                 tableName="erp_b2b_code_mapping" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="mappingType" displayName="映射类型" ext:dict="erp-b2b/mapping-type" mandatory="true" code="MAPPING_TYPE" propId="3" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Mapping Type' />
                 <column name="internalCode" displayName="内部代码" stdSqlType="VARCHAR" precision="100" mandatory="true" code="INTERNAL_CODE" propId="4" stdDataType="string" i18n-en:displayName='Internal Code' />
                 <column name="externalCode" displayName="外部代码" stdSqlType="VARCHAR" precision="100" mandatory="true" code="EXTERNAL_CODE" propId="5" stdDataType="string" i18n-en:displayName='External Code' />
-                <column name="partnerId" displayName="Trading Partner" stdSqlType="BIGINT" code="PARTNER_ID" propId="6" stdDataType="long" i18n-en:displayName='Partner' />
+                <column name="partnerId" displayName="Trading Partner" stdSqlType="BIGINT" code="PARTNER_ID" propId="6" stdDataType="string" i18n-en:displayName='Partner' />
                 <column name="remark" displayName="备注" domain="remark" code="REMARK" propId="7" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Remark' />
                 <column name="delVersion" code="DEL_VERSION" displayName="逻辑删除版本" propId="8" domain="delVersion" stdSqlType="BIGINT" stdDataType="long" mandatory="true" defaultValue="0" i18n-en:displayName='Del Flag'  ui:show="R"/>
                 <column name="version" code="VERSION" displayName="数据版本" propId="9" domain="version" stdSqlType="INTEGER" stdDataType="int" mandatory="true" defaultValue="0" i18n-en:displayName='Version' />
@@ -330,9 +330,9 @@
                 displayName="EDI 交互日志" ext:icon="scroll-text" i18n-en:displayName="EDI Log" name="app.erp.b2b.dao.entity.ErpB2bEdiLog"
                 tableName="erp_b2b_edi_log" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="ediDocId" displayName="EDI 事务 ID" stdSqlType="BIGINT" code="EDI_DOC_ID" propId="2" stdDataType="long" i18n-en:displayName='EDI Document' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="ediDocId" displayName="EDI 事务 ID" stdSqlType="BIGINT" code="EDI_DOC_ID" propId="2" stdDataType="string" i18n-en:displayName='EDI Document' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="string" i18n-en:displayName='Organization' />
                 <column name="direction" displayName="方向" ext:dict="erp-b2b/edi-direction" mandatory="true" code="DIRECTION" propId="4" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Direction' />
                 <column name="requestPayload" displayName="请求报文" domain="payload" code="REQUEST_PAYLOAD" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Request Payload' />
                 <column name="responsePayload" displayName="响应报文" domain="payload" code="RESPONSE_PAYLOAD" propId="6" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Response Payload' />
@@ -363,10 +363,10 @@
                 displayName="合作伙伴档案" ext:icon="building" i18n-en:displayName="Partner Profile" name="app.erp.b2b.dao.entity.ErpB2bPartnerProfile"
                 tableName="erp_b2b_partner_profile" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
                 <column name="code" displayName="编码" domain="orderCode" mandatory="true" code="CODE" propId="2" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Code' tagSet="var" />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="partnerId" displayName="关联伙伴" stdSqlType="BIGINT" code="PARTNER_ID" propId="4" stdDataType="long" i18n-en:displayName='Partner' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="3" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="partnerId" displayName="关联伙伴" stdSqlType="BIGINT" code="PARTNER_ID" propId="4" stdDataType="string" i18n-en:displayName='Partner' />
                 <column name="partnerName" displayName="伙伴名称" domain="name" mandatory="true" code="PARTNER_NAME" propId="5" stdSqlType="VARCHAR" stdDataType="string" i18n-en:displayName='Partner Name' />
                 <column name="status" displayName="状态" ext:dict="erp-b2b/partner-status" mandatory="true" code="STATUS" propId="6" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Status' />
                 <column name="protocol" displayName="传输协议" ext:dict="erp-b2b/protocol" mandatory="true" code="PROTOCOL" propId="7" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Protocol' />
@@ -413,8 +413,8 @@
                 displayName="伙伴凭证" ext:icon="key" i18n-en:displayName="Partner Credential" name="app.erp.b2b.dao.entity.ErpB2bPartnerCredential"
                 tableName="erp_b2b_partner_credential" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="partnerProfileId" displayName="伙伴档案" stdSqlType="BIGINT" mandatory="true" code="PARTNER_PROFILE_ID" propId="2" stdDataType="long" i18n-en:displayName='Partner Profile' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="partnerProfileId" displayName="伙伴档案" stdSqlType="BIGINT" mandatory="true" code="PARTNER_PROFILE_ID" propId="2" stdDataType="string" i18n-en:displayName='Partner Profile' />
                 <column name="credentialType" displayName="凭证类型" ext:dict="erp-b2b/credential-type" mandatory="true" code="CREDENTIAL_TYPE" propId="3" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Credential Type' />
                 <column name="credentialKey" displayName="凭证标识" stdSqlType="VARCHAR" precision="200" code="CREDENTIAL_KEY" propId="4" stdDataType="string" i18n-en:displayName='Credential Key' />
                 <column name="credentialValue" displayName="凭证值" stdSqlType="VARCHAR" precision="2000" code="CREDENTIAL_VALUE" propId="5" stdDataType="string" i18n-en:displayName='Credential Value' />
@@ -444,8 +444,8 @@
                 displayName="测试消息交换" ext:icon="test-tube" i18n-en:displayName="Test Exchange" name="app.erp.b2b.dao.entity.ErpB2bTestExchange"
                 tableName="erp_b2b_test_exchange" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="partnerProfileId" displayName="伙伴档案" stdSqlType="BIGINT" mandatory="true" code="PARTNER_PROFILE_ID" propId="2" stdDataType="long" i18n-en:displayName='Partner Profile' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="partnerProfileId" displayName="伙伴档案" stdSqlType="BIGINT" mandatory="true" code="PARTNER_PROFILE_ID" propId="2" stdDataType="string" i18n-en:displayName='Partner Profile' />
                 <column name="direction" displayName="方向" ext:dict="erp-b2b/exchange-direction" mandatory="true" code="DIRECTION" propId="3" stdSqlType="VARCHAR" precision="20" stdDataType="string" i18n-en:displayName='Direction' />
                 <column name="formatCode" displayName="EDI格式" stdSqlType="VARCHAR" precision="50" mandatory="true" code="FORMAT_CODE" propId="4" stdDataType="string" i18n-en:displayName='Format Code' />
                 <column name="testCaseCode" displayName="测试用例编号" stdSqlType="VARCHAR" precision="50" code="TEST_CASE_CODE" propId="5" stdDataType="string" i18n-en:displayName='Test Case Code' />
@@ -479,8 +479,8 @@
                 displayName="认证检查清单" ext:icon="clipboard-list" i18n-en:displayName="Certification Checklist" name="app.erp.b2b.dao.entity.ErpB2bCertificationChecklist"
                 tableName="erp_b2b_certification_checklist" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="partnerProfileId" displayName="伙伴档案" stdSqlType="BIGINT" mandatory="true" code="PARTNER_PROFILE_ID" propId="2" stdDataType="long" i18n-en:displayName='Partner Profile' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="partnerProfileId" displayName="伙伴档案" stdSqlType="BIGINT" mandatory="true" code="PARTNER_PROFILE_ID" propId="2" stdDataType="string" i18n-en:displayName='Partner Profile' />
                 <column name="checklistItem" displayName="检查项" stdSqlType="VARCHAR" precision="500" mandatory="true" code="CHECKLIST_ITEM" propId="3" stdDataType="string" i18n-en:displayName='Checklist Item' />
                 <column name="requiredDocType" displayName="对应文档类型" stdSqlType="VARCHAR" precision="100" code="REQUIRED_DOC_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Required Doc Type' />
                 <column name="isMandatory" displayName="必检" stdSqlType="BOOLEAN" defaultValue="true" code="IS_MANDATORY" propId="5" stdDataType="boolean" i18n-en:displayName='Is Mandatory' />
@@ -511,9 +511,9 @@
                 displayName="MFT 配置" ext:icon="upload-cloud" i18n-en:displayName="MFT Config" name="app.erp.b2b.dao.entity.ErpB2bMftConfig"
                 tableName="erp_b2b_mft_config" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="partnerId" displayName="合作伙伴" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="3" stdDataType="long" i18n-en:displayName='Partner' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="partnerId" displayName="合作伙伴" stdSqlType="BIGINT" mandatory="true" code="PARTNER_ID" propId="3" stdDataType="string" i18n-en:displayName='Partner' />
                 <column name="protocol" displayName="传输协议" ext:dict="erp-b2b/mft-protocol" stdSqlType="VARCHAR" precision="50" mandatory="true" code="PROTOCOL" propId="4" stdDataType="string" i18n-en:displayName='Protocol' />
                 <column name="transportEndpoint" displayName="传输端点" stdSqlType="VARCHAR" precision="500" mandatory="true" code="TRANSPORT_ENDPOINT" propId="5" stdDataType="string" i18n-en:displayName='Transport Endpoint' />
                 <column name="localAs2Id" displayName="本地AS2 ID" stdSqlType="VARCHAR" precision="100" code="LOCAL_AS2_ID" propId="6" stdDataType="string" i18n-en:displayName='Local AS2 ID' />
@@ -527,7 +527,7 @@
                 <column name="encryptionAlgo" displayName="加密算法" stdSqlType="VARCHAR" precision="50" code="ENCRYPTION_ALGO" propId="14" stdDataType="string" i18n-en:displayName='Encryption Algorithm' />
                 <column name="signature" displayName="启用签名" stdSqlType="BOOLEAN" defaultValue="false" code="SIGNATURE" propId="15" stdDataType="boolean" i18n-en:displayName='Signature' />
                 <column name="signatureAlgo" displayName="签名算法" stdSqlType="VARCHAR" precision="50" code="SIGNATURE_ALGO" propId="16" stdDataType="string" i18n-en:displayName='Signature Algorithm' />
-                <column name="certId" displayName="关联证书" stdSqlType="BIGINT" code="CERT_ID" propId="17" stdDataType="long" i18n-en:displayName='Certificate' />
+                <column name="certId" displayName="关联证书" stdSqlType="BIGINT" code="CERT_ID" propId="17" stdDataType="string" i18n-en:displayName='Certificate' />
                 <column name="active" displayName="启用" stdSqlType="BOOLEAN" defaultValue="true" code="ACTIVE" propId="18" stdDataType="boolean" i18n-en:displayName='Active' />
                 <column name="maxRetries" displayName="最大重试次数" stdSqlType="INTEGER" defaultValue="3" code="MAX_RETRIES" propId="19" stdDataType="int" i18n-en:displayName='Max Retries' />
                 <column name="retryIntervalMin" displayName="重试间隔(分钟)" stdSqlType="INTEGER" defaultValue="15" code="RETRY_INTERVAL_MIN" propId="20" stdDataType="int" i18n-en:displayName='Retry Interval Min' />
@@ -570,9 +570,9 @@
                 displayName="MFT 证书" ext:icon="shield" i18n-en:displayName="MFT Certificate" name="app.erp.b2b.dao.entity.ErpB2bMftCertificate"
                 tableName="erp_b2b_mft_certificate" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="partnerId" displayName="合作伙伴" stdSqlType="BIGINT" code="PARTNER_ID" propId="3" stdDataType="long" i18n-en:displayName='Partner' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="partnerId" displayName="合作伙伴" stdSqlType="BIGINT" code="PARTNER_ID" propId="3" stdDataType="string" i18n-en:displayName='Partner' />
                 <column name="certName" displayName="证书名称" stdSqlType="VARCHAR" precision="200" mandatory="true" code="CERT_NAME" propId="4" stdDataType="string" i18n-en:displayName='Certificate Name' />
                 <column name="certType" displayName="证书类型" stdSqlType="VARCHAR" precision="50" mandatory="true" code="CERT_TYPE" propId="5" stdDataType="string" i18n-en:displayName='Certificate Type' />
                 <column name="algorithm" displayName="算法" stdSqlType="VARCHAR" precision="50" mandatory="true" code="ALGORITHM" propId="6" stdDataType="string" i18n-en:displayName='Algorithm' />
@@ -611,9 +611,9 @@
                 displayName="MFT 传输日志" ext:icon="activity" i18n-en:displayName="MFT Log" name="app.erp.b2b.dao.entity.ErpB2bMftLog"
                 tableName="erp_b2b_mft_log" tagSet="gid,erp.b2b" registerShortName="true" useLogicalDelete="true" deleteFlagProp="delVersion" deleteVersionProp="delVersion" versionProp="version" createTimeProp="createTime" createrProp="createdBy" updateTimeProp="updateTime" updaterProp="updatedBy">
             <columns>
-                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="long" i18n-en:displayName='ID' />
-                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="long" i18n-en:displayName='Organization' />
-                <column name="configId" displayName="MFT配置" stdSqlType="BIGINT" mandatory="true" code="CONFIG_ID" propId="3" stdDataType="long" i18n-en:displayName='MFT Config' />
+                <column name="id" displayName="ID" stdSqlType="BIGINT" primary="true" mandatory="true" code="ID" propId="1" tagSet="seq-default" stdDataType="string" i18n-en:displayName='ID' />
+                <column name="orgId" displayName="业务组织" stdSqlType="BIGINT" code="ORG_ID" propId="2" stdDataType="string" i18n-en:displayName='Organization' />
+                <column name="configId" displayName="MFT配置" stdSqlType="BIGINT" mandatory="true" code="CONFIG_ID" propId="3" stdDataType="string" i18n-en:displayName='MFT Config' />
                 <column name="relatedBillType" displayName="关联单据类型" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_TYPE" propId="4" stdDataType="string" i18n-en:displayName='Related Bill Type' />
                 <column name="relatedBillCode" displayName="关联单据号" tagSet="var" stdSqlType="VARCHAR" precision="50" code="RELATED_BILL_CODE" propId="5" stdDataType="string" i18n-en:displayName='Related Bill Code' />
                 <column name="direction" displayName="方向" stdSqlType="VARCHAR" precision="50" mandatory="true" code="DIRECTION" propId="6" stdDataType="string" i18n-en:displayName='Direction' />
@@ -663,21 +663,21 @@
         <entity ext:web-renderer="flux" displayName="ErpMdPartner" name="app.erp.md.dao.entity.ErpMdPartner"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_partner">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="string" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
         <entity ext:web-renderer="flux" displayName="ErpMdOrganization" name="app.erp.md.dao.entity.ErpMdOrganization"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_organization">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="string" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>
         <entity ext:web-renderer="flux" displayName="ErpMdMaterial" name="app.erp.md.dao.entity.ErpMdMaterial"
                 notGenCode="true" biz:moduleId="erp/md" tableName="erp_md_material">
             <columns>
-                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="long" />
+                <column name="id" code="ID" stdSqlType="BIGINT" primary="true" mandatory="true" tagSet="seq-default" stdDataType="string" />
                             <column name="name" code="NAME" stdSqlType="VARCHAR" precision="200" stdDataType="string" tagSet="disp" />
             </columns>
         </entity>

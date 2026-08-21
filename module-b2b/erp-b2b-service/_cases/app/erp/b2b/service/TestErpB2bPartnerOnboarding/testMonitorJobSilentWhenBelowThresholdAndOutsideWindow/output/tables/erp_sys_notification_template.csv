@@ -1,0 +1,2 @@
+_chgType,ID,NOTIFICATION_TYPE,NAME,CHANNEL_SET,SUBJECT_TPL,BODY_TPL,RECIPIENT_RESOLVER,RECIPIENT_CONFIG,MERGE_WINDOW_SECONDS,MERGE_STRATEGY,STATUS,REMARK,DEL_VERSION,VERSION,CREATED_BY,CREATE_TIME,UPDATED_BY,UPDATE_TIME
+A,8802,b2b.onboarding-monitor-alert,TPL-ONBOARDING-MONITOR-ALERT,IN_APP,伙伴上线监控告警: ${partnerCode},伙伴 ${partnerCode} 上线监控窗口内 EDI 失败率 ${failureRate}（${errorCount}/${totalCount}），请核查,USER_LIST,"{""userIds"":[""b2b-admin-user""]}",0,NONE,ACTIVE,,@var:ErpSysNotificationTemplate@delVersion,0,autotest-ref,*,autotest-ref,*

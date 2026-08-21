@@ -19,16 +19,16 @@
             <cols>
 
                 <!--ID-->
-                <col id="id" mandatory="true" ui:number="true" sortable="true"/>
+                <col id="id" mandatory="true" sortable="true"/>
 
                 <!--事务编码-->
                 <col id="code" mandatory="true" sortable="true"/>
 
                 <!--业务组织-->
-                <col id="orgId" ui:number="true" sortable="true"/>
+                <col id="orgId" sortable="true"/>
 
                 <!--EDI 格式-->
-                <col id="formatId" ui:number="true" sortable="true"/>
+                <col id="formatId" sortable="true"/>
 
                 <!--关联单据类型-->
                 <col id="relatedBillType" sortable="true"/>

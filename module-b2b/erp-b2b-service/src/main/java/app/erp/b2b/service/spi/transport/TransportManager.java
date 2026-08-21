@@ -53,7 +53,7 @@ public class TransportManager {
      * @param fileName 文件名
      * @return 传输是否成功
      */
-    public boolean send(Long ediDocId, Long partnerId, String payload, String fileName) {
+    public boolean send(String ediDocId, String partnerId, String payload, String fileName) {
         ErpB2bMftConfig config = findActiveConfig(partnerId);
         if (config == null) {
             throw new NopException(ErpB2bErrors.ERR_B2B_MFT_CONFIG_MISSING)
@@ -103,7 +103,7 @@ public class TransportManager {
         return false;
     }
 
-    private ErpB2bMftConfig findActiveConfig(Long partnerId) {
+    private ErpB2bMftConfig findActiveConfig(String partnerId) {
         QueryBean q = new QueryBean();
         q.addFilter(eq("partnerId", partnerId));
         q.addFilter(eq("active", true));
@@ -112,7 +112,7 @@ public class TransportManager {
         return daoProvider.daoFor(ErpB2bMftConfig.class).findFirstByQuery(q);
     }
 
-    private void markEdiDocSent(Long ediDocId) {
+    private void markEdiDocSent(String ediDocId) {
         if (ediDocId == null) {
             return;
         }
@@ -129,7 +129,7 @@ public class TransportManager {
         }
     }
 
-    private void writeLog(ErpB2bMftConfig config, Long ediDocId, String direction, String status,
+    private void writeLog(ErpB2bMftConfig config, String ediDocId, String direction, String status,
                           TransportResult result, NopException failure,
                           LocalDateTime startTime, long durationMs, int retryCount) {
         IEntityDao<ErpB2bMftLog> dao = daoProvider.daoFor(ErpB2bMftLog.class);

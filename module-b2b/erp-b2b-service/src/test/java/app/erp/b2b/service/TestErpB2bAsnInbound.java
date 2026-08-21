@@ -90,13 +90,13 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
 
     @Test
     public void testWebhookValidSignatureCreatesAsn() {
-        Long partnerId = seedPartner();
+        String partnerId = seedPartner();
         seedPartnerProfile("PARTNER-ASN-1", partnerId, "webhook-secret-1");
 
         String payload = UBL_DESPATCH_ADVICE_XML;
         String sig = hmacSha256(payload, "webhook-secret-1");
 
-        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-1",
+        String asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-1",
                 sig, "EVT-001", payload, CTX));
 
         assertNotNull(asnId, "应创建 ASN 并返回 ID");
@@ -120,7 +120,7 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
 
     @Test
     public void testWebhookInvalidSignatureRejected() {
-        Long partnerId = seedPartner();
+        String partnerId = seedPartner();
         seedPartnerProfile("PARTNER-ASN-2", partnerId, "webhook-secret-2");
 
         assertThrows(NopException.class,
@@ -131,13 +131,13 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
 
     @Test
     public void testWebhookIdempotentDuplicate() {
-        Long partnerId = seedPartner();
+        String partnerId = seedPartner();
         seedPartnerProfile("PARTNER-ASN-3", partnerId, "webhook-secret-3");
 
         String payload = UBL_DESPATCH_ADVICE_XML;
         String sig = hmacSha256(payload, "webhook-secret-3");
 
-        Long asnId1 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-3",
+        String asnId1 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-3",
                 sig, "EVT-DUP-001", payload, CTX));
         assertNotNull(asnId1);
 
@@ -150,13 +150,13 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
 
     @Test
     public void testAsnNoPoMatchStaysReceived() {
-        Long partnerId = seedPartner();
+        String partnerId = seedPartner();
         seedPartnerProfile("PARTNER-ASN-4", partnerId, "webhook-secret-4");
 
         String payload = UBL_DESPATCH_ADVICE_XML;
         String sig = hmacSha256(payload, "webhook-secret-4");
 
-        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-4",
+        String asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-4",
                 sig, "EVT-003", payload, CTX));
 
         // 尝试匹配 PO（无 PO seed → 保留 RECEIVED）
@@ -168,10 +168,10 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
     @Test
     public void testSignatureNotRequired() {
         AppConfig.getConfigProvider().assignConfigValue(ErpB2bConfigs.CONFIG_WEBHOOK_SIGNATURE_REQUIRED, false);
-        Long partnerId = seedPartner();
+        String partnerId = seedPartner();
         seedPartnerProfile("PARTNER-ASN-5", partnerId, "webhook-secret-5");
 
-        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-5",
+        String asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-5",
                 null, "EVT-004", UBL_DESPATCH_ADVICE_XML, CTX));
         assertNotNull(asnId, "签名非必填时应正常创建 ASN");
     }
@@ -183,10 +183,10 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
     @Test
     public void testWebhookDeterministicAsnCode() {
         AppConfig.getConfigProvider().assignConfigValue(ErpB2bConfigs.CONFIG_WEBHOOK_SIGNATURE_REQUIRED, false);
-        Long partnerId = seedPartner();
+        String partnerId = seedPartner();
         seedPartnerProfile("PARTNER-ASN-DET", partnerId, "webhook-secret-det");
 
-        Long asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-DET",
+        String asnId = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-DET",
                 null, "EVT-DET-001", UBL_DESPATCH_ADVICE_XML, CTX));
         ErpB2bAsn asn = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asnId);
         assertEquals("ASN-WEBHOOK-EVT-DET-001", asn.getCode(),
@@ -200,13 +200,13 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
     @Test
     public void testWebhookNullEventIdFallbackDistinct() {
         AppConfig.getConfigProvider().assignConfigValue(ErpB2bConfigs.CONFIG_WEBHOOK_SIGNATURE_REQUIRED, false);
-        Long partnerId = seedPartner();
+        String partnerId = seedPartner();
         seedPartnerProfile("PARTNER-ASN-NULL-1", partnerId, "webhook-secret-n1");
         seedPartnerProfile("PARTNER-ASN-NULL-2", partnerId, "webhook-secret-n2");
 
-        Long asn1 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-NULL-1",
+        String asn1 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-NULL-1",
                 null, null, UBL_DESPATCH_ADVICE_XML, CTX));
-        Long asn2 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-NULL-2",
+        String asn2 = ormTemplate.runInSession(session -> asnBiz.handleInboundWebhook("UBL_DESPATCH_ADVICE", "PARTNER-ASN-NULL-2",
                 null, null, UBL_DESPATCH_ADVICE_XML, CTX));
         String code1 = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asn1).getCode();
         String code2 = daoProvider.daoFor(ErpB2bAsn.class).getEntityById(asn2).getCode();
@@ -216,7 +216,7 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
 
     // ---------- helpers ----------
 
-    private Long seedPartner() {
+    private String seedPartner() {
         return ormTemplate.runInSession(session -> {
             app.erp.md.dao.entity.ErpMdPartner partner = new app.erp.md.dao.entity.ErpMdPartner();
             partner.setCode("P-" + System.nanoTime());
@@ -228,7 +228,7 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
         });
     }
 
-    private void seedPartnerProfile(String code, Long partnerId, String webhookSecret) {
+    private void seedPartnerProfile(String code, String partnerId, String webhookSecret) {
         ormTemplate.runInSession(session -> {
             ErpB2bPartnerProfile profile = new ErpB2bPartnerProfile();
             profile.setCode(code);
@@ -245,7 +245,7 @@ public class TestErpB2bAsnInbound extends JunitAutoTestCase {
     }
 
     @SuppressWarnings("unchecked")
-    private List<ErpB2bAsnLine> findAsnLines(Long asnId) {
+    private List<ErpB2bAsnLine> findAsnLines(String asnId) {
         IEntityDao<ErpB2bAsnLine> dao = daoProvider.daoFor(ErpB2bAsnLine.class);
         QueryBean q = new QueryBean();
         q.addFilter(eq("asnId", asnId));

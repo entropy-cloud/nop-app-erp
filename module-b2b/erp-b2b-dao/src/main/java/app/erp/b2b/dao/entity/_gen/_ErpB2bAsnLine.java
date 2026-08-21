@@ -141,16 +141,16 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
 
     
     /* ID: ID */
-    private java.lang.Long _id;
+    private java.lang.String _id;
     
     /* ASN ID: ASN_ID */
-    private java.lang.Long _asnId;
+    private java.lang.String _asnId;
     
     /* 行号: LINE_NO */
     private java.lang.Integer _lineNo;
     
     /* 物料: MATERIAL_ID */
-    private java.lang.Long _materialId;
+    private java.lang.String _materialId;
     
     /* 供应商料号: SUPPLIER_PART_NO */
     private java.lang.String _supplierPartNo;
@@ -310,9 +310,9 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
         switch(propId){
         
             case PROP_ID_id:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_id));
                }
                setId(typedValue);
@@ -320,9 +320,9 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_asnId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_asnId));
                }
                setAsnId(typedValue);
@@ -340,9 +340,9 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
             }
         
             case PROP_ID_materialId:{
-               java.lang.Long typedValue = null;
+               java.lang.String typedValue = null;
                if(value != null){
-                   typedValue = ConvertHelper.toLong(value,
+                   typedValue = ConvertHelper.toString(value,
                        err-> newTypeConversionError(PROP_NAME_materialId));
                }
                setMaterialId(typedValue);
@@ -460,14 +460,14 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
         
             case PROP_ID_id:{
                onInitProp(propId);
-               this._id = (java.lang.Long)value;
+               this._id = (java.lang.String)value;
                orm_id(); // 如果是设置主键字段，则触发watcher
                break;
             }
         
             case PROP_ID_asnId:{
                onInitProp(propId);
-               this._asnId = (java.lang.Long)value;
+               this._asnId = (java.lang.String)value;
                
                break;
             }
@@ -481,7 +481,7 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
         
             case PROP_ID_materialId:{
                onInitProp(propId);
-               this._materialId = (java.lang.Long)value;
+               this._materialId = (java.lang.String)value;
                
                break;
             }
@@ -565,7 +565,7 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final java.lang.Long getId(){
+    public final java.lang.String getId(){
          onPropGet(PROP_ID_id);
          return _id;
     }
@@ -573,7 +573,7 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
     /**
      * ID: ID
      */
-    public final void setId(java.lang.Long value){
+    public final void setId(java.lang.String value){
         if(onPropSet(PROP_ID_id,value)){
             this._id = value;
             internalClearRefs(PROP_ID_id);
@@ -584,7 +584,7 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
     /**
      * ASN ID: ASN_ID
      */
-    public final java.lang.Long getAsnId(){
+    public final java.lang.String getAsnId(){
          onPropGet(PROP_ID_asnId);
          return _asnId;
     }
@@ -592,7 +592,7 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
     /**
      * ASN ID: ASN_ID
      */
-    public final void setAsnId(java.lang.Long value){
+    public final void setAsnId(java.lang.String value){
         if(onPropSet(PROP_ID_asnId,value)){
             this._asnId = value;
             internalClearRefs(PROP_ID_asnId);
@@ -622,7 +622,7 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final java.lang.Long getMaterialId(){
+    public final java.lang.String getMaterialId(){
          onPropGet(PROP_ID_materialId);
          return _materialId;
     }
@@ -630,7 +630,7 @@ public class _ErpB2bAsnLine extends DynamicOrmEntity{
     /**
      * 物料: MATERIAL_ID
      */
-    public final void setMaterialId(java.lang.Long value){
+    public final void setMaterialId(java.lang.String value){
         if(onPropSet(PROP_ID_materialId,value)){
             this._materialId = value;
             internalClearRefs(PROP_ID_materialId);
